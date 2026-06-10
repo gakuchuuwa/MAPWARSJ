@@ -127,6 +127,8 @@ export class EventParser {
         // ── 2026-05-25 元朝蒙古势力 ──
         // 第一类：西征摧毁政权
         '花剌子模': 'huarazim', '花剌子模帝国': 'huarazim', '撒马尔干': 'huarazim', '撒马尔罕': 'huarazim', '玉龙杰赤': 'huarazim', '乌尔达赤': 'huarazim', '花剌': 'huarazim',
+        '毡的': 'yettishar', '哲德': 'yettishar',
+        '咸海': 'xianhai', '养吉干': 'xianhai',
         '木剌夷': 'mulayi', '亦思马因派': 'mulayi', '阿剌模忒': 'mulayi', '阿剌模忒堡': 'mulayi', '木剌': 'mulayi',
         '蒲甘': 'pagan', '蒲甘王朝': 'pagan', '缅国': 'pagan', '江头城': 'pagan',
         '占城': 'zhancheng', '阇槃': 'zhancheng', '占婆': 'champa', '美山': 'champa', '占城港': 'champa', '归仁': 'champa',
@@ -263,7 +265,6 @@ export class EventParser {
         // 第四类：蒙古/土司/地方武装
         '苗沛霖': 'nian_family', '捻军': 'nian_family', '寿州': 'nian_family',
         // 第五类：外国
-        '阿古柏': 'yettishar', '哲德莎尔': 'yettishar',
         '阮朝': 'nguyen', '顺化': 'nguyen',
 
         // ── 2026-05-25 日本北海道势力 ──
@@ -328,6 +329,7 @@ export class EventParser {
         '归义军': 'guiyi', '曹氏': 'guiyi', '沙州曹氏': 'guiyi', '莫高窟': 'guiyi',
         '安氏': 'an', '粟特安氏': 'an', '布哈拉': 'an', '安国': 'an',
         '石氏': 'shi_clan', '粟特石氏': 'shi_clan', '柘折城': 'shi_clan', '塔什干': 'shi_clan',
+        '难兜': 'nandou', '难兜国': 'nandou',
         '和卓': 'khoja', '白山派': 'khoja', '阿帕克霍加': 'khoja', '香妃墓': 'khoja',
         '额敏和卓': 'emin', '吐鲁番郡王': 'emin', '苏公塔': 'emin',
 
@@ -419,6 +421,12 @@ export class EventParser {
         '费雅喀': 'feiyaka', '费雅喀人': 'feiyaka', '奇集': 'feiyaka', '普禄': 'feiyaka',
         '水达达': 'shuidada', '锡尔喀': 'shuidada',
         '尼夫赫': 'nifuhe', '尼夫赫人': 'nifuhe', '盆奴里': 'nifuhe',
+        // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
+        '茂明安': 'maomingan', '尼布楚': 'maomingan',
+        '敖拉': 'aola', '雅克萨': 'aola',
+        '绰尔纳': 'chaoer', '格尔必齐': 'chaoer',
+        '布拉特': 'bulat', '石勒喀河': 'bulat',
+        '布里亚特': 'buriat', '赤塔': 'buriat',
 
         // ── 2026-05-28 新增：大斗拔谷、伊勒巴斯、南杰、扎敦宗(gandenpozhang) ──
         '大斗拔谷': 'panjun',

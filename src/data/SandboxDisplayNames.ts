@@ -294,7 +294,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qianhui': '回军',
     'miao_qing': '苗军',
     'tuoming': '清真',
-    'yettishar': '哲德',
+'yettishar': '哲德',
     'riben': '日本',
     // ── 2026-05-26 新增：大金、大元 ──
     'dajin': '大金',
@@ -593,7 +593,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'ying': '郢',
     'heng': '衡',
     'chen2': '郴',
-    'shixing': '始兴',
+'shixing': '石兴',
     'yidou': '宜都',
     'boren': '僰',
 'xin2': '信',
@@ -655,4 +655,15 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'beihai': '北海',
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
     'shuidada': '水达',
+    // ── 2026-06-11 新增：东平（州郡·黑龙江下游）──
+    'dongping': '东平',
+    // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
+    'maomingan': '茂明',
+    'aola': '敖拉',
+    'chaoer': '绰尔',
+    'bulat': '布拉',
+    'buriat': '布里',
+    // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
+    'xianhai': '咸海',
+    'nandou': '难兜',
 };

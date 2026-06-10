@@ -804,13 +804,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
 
 
-    {
-        id: 'city_nandou',
-        name: '难兜',
-        factionId: 'yettishar',
-        lat: 36.31, lng: 74.66,
-        type: 'small_city',
-        troops: 5000 },
+    { id: 'city_nandou', name: '难兜国', factionId: 'nandou', lat: 36.31, lng: 74.66, type: 'small_city', troops: 5000, note: '《汉书·西域传》难兜国王治，属罽宾，北接休循、南接婼羌，今瓦罕走廊一带' },
     { id: 'city_xiuxun', name: '休循', factionId: 'khoja', lat: 39.709286, lng: 73.229370, type: 'small_city', troops: 5000 },
     { id: 'city_yinai', name: '英吉沙尔', factionId: 'yarkand', lat: 38.929502, lng: 76.225891, type: 'small_city', troops: 5000 },
     {
@@ -1187,7 +1181,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_emil', name: '也迷里', factionId: 'ogodei', lat: 46.481378, lng: 83.633423, type: 'small_city', region: 'STEPPE', troops: 5000 },
     // 第三类：蒙古草原部落
     { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'small_city', troops: 5000 },
-    { id: 'city_naiman', name: '阿尔泰', factionId: 'panjun', lat: 47.791040, lng: 88.124084, type: 'pass', region: 'STEPPE', troops: 5000 },
+    { id: 'city_naiman', name: '阿尔泰', factionId: 'panjun', lat: 47.64, lng: 88.29, type: 'pass', region: 'STEPPE', troops: 5000 },
     { id: 'city_fuhai', name: '福海', factionId: 'naiman', lat: 47.036450, lng: 87.352295, type: 'small_city', troops: 5000 },
     { id: 'city_tatar', name: '哈拉哈河', factionId: 'tatar', lat: 47.182253, lng: 117.726746, type: 'small_city', troops: 5000 },
 
@@ -1343,7 +1337,7 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     // 第十三类：西南土司
-    // 第十四类：哲德莎尔（阿古柏）
+    // 第十四类：回疆割据（托克逊等）
     { id: 'city_tuokexun', name: '托克逊', factionId: 'duerbote', lat: 42.79, lng: 88.65, type: 'small_city', troops: 5000 },
 
     { id: 'city_dabancheng', name: '达坂城', factionId: 'tuoming', lat: 43.339165, lng: 88.258667, type: 'small_city', troops: 5000 },
@@ -1379,7 +1373,7 @@ export const PERIPHERY: CityDataV2[] = [
     
     // ── 2026-05-26 新增：渤海国王族大氏 ──
     // ── 2026-05-26 新增：漠北草原势力 ──
-    { id: 'city_xiaoyenisei', name: '叶尼塞', factionId: 'dingling', lat: 51.051793, lng: 106.616821, type: 'small_city', region: 'STEPPE', troops: 5300 },
+    { id: 'city_xiaoyenisei', name: '贝加尔湖畔', factionId: 'dingling', lat: 51.8368, lng: 107.6138, type: 'small_city', region: 'STEPPE', troops: 5300 },
     { id: 'city_gaxian', name: '嘎仙洞', factionId: 'xianbei', lat: 49.323391, lng: 120.709534, type: 'pass', troops: 5000 },
     { id: 'city_junjishan', name: '浚稽山', factionId: 'gaoche', lat: 45.767504, lng: 106.284485, type: 'pass', troops: 5000 },
     { id: 'city_otuken', name: '于都斤山', factionId: 'tujue', lat: 47.602542, lng: 101.230774, type: 'pass', troops: 5000 },
@@ -2045,4 +2039,13 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bailao', name: '白老', factionId: 'ayinu', lat: 42.55, lng: 141.36, type: 'small_city', region: 'JAPAN', troops: 5000, note: '北海道南端据泊地方，阿伊努传统聚落（白老古名）' },
     { id: 'city_zonggu', name: '宗谷', factionId: 'beihai', lat: 45.5, lng: 141.93, type: 'small_city', region: 'JAPAN', troops: 5000, note: '北海道北端宗谷海峡，日本最北门户（宗谷古名）' },
     { id: 'city_xierka', name: '锡尔喀', factionId: 'shuidada', lat: 46.9, lng: 134.1, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '黑龙江下游锡尔卡河流域，明水达达部聚居地' },
+    { id: 'city_niman', name: '尼满', factionId: 'dongping', lat: 45.51, lng: 131.96, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '乌苏里江下游尼满河流域，明代东北边陲要地（尼满古名）' },
+    // ── 2026-06-11 新增：外兴安岭/外贝加尔边境据点 ──
+    { id: 'city_nibuchu', name: '尼布楚', factionId: 'maomingan', lat: 51.99, lng: 116.58, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '尼布楚河与石勒喀河汇口，茂明安部游牧地（《朔方备乘》）' },
+    { id: 'city_yakesa', name: '雅克萨', factionId: 'aola', lat: 53.39056, lng: 124.0775, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '黑龙江与额木尔河汇口，达斡尔敖拉氏故地（《朔方备乘》）' },
+    { id: 'city_geerbiqi', name: '格尔必齐', factionId: 'chaoer', lat: 53.33, lng: 121.45, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '格尔必齐河口，中俄《尼布楚条约》界河要地' },
+    { id: 'city_shilekahe', name: '石勒喀河', factionId: 'bulat', lat: 51.7321, lng: 115.8151, type: 'small_city', region: 'STEPPE', troops: 5000, note: '石勒喀河（黑龙江上游），清代舆图所称斡难河源段，布拉特等部游牧地' },
+    { id: 'city_chita', name: '赤塔', factionId: 'buriat', lat: 52.0333, lng: 113.5017, type: 'small_city', region: 'STEPPE', troops: 5000, note: '赤塔河与因戈达河交汇处，外贝加尔布里亚特蒙古传统居地' },
+    { id: 'city_yangjigan', name: '养吉干', factionId: 'xianhai', lat: 45.6, lng: 62, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '锡尔河入咸海处要塞，花剌子模东北边境，术赤克毡的后攻占' },
+    { id: 'city_zhande', name: '毡的', factionId: 'yettishar', lat: 44.85, lng: 65.5, type: 'small_city', troops: 5000, note: '锡尔河中游要塞，Jand/哲德异译，花剌子模东境要地' },
 ];

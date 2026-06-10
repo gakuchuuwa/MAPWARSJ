@@ -354,6 +354,7 @@ export const FACTIONS: Faction[] = [
 
     // 第四类：蒙古/土司/地方武装
     // 第五类：外国
+    // ── 2026-06-11 改绑：哲德(Jand/毡的异译) @ 毡的，非清代哲德莎尔 ──
     { id: 'yettishar', name: '哲德' },
 
     // ── 2026-05-26 新增：大金、大元 ──
@@ -694,7 +695,7 @@ export const FACTIONS: Faction[] = [
     { id: 'ying', name: '郢州' },
     { id: 'heng', name: '衡州' },
     { id: 'chen2', name: '郴州' },
-    { id: 'shixing', name: '始兴' },
+    { id: 'shixing', name: '石兴岭' },
     { id: 'yidou', name: '宜都' },
     { id: 'boren', name: '僰族' },
     { id: 'xin2', name: '信州' },
@@ -745,4 +746,16 @@ export const FACTIONS: Faction[] = [
     { id: 'beihai', name: '北海' },                  // 北海(北海道宗谷/北端门户)
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
     { id: 'shuidada', name: '水达达' },              // 水达达(锡尔卡河流域/锡尔喀), Shuidada
+    // ── 2026-06-11 新增：东平（州郡·黑龙江下游）──
+    { id: 'dongping', name: '东平' },                // 东平(乌苏里江下游/尼满), 州名旗号
+    // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
+    { id: 'maomingan', name: '茂明安' },             // 茂明安(尼布楚), 蒙古部族
+    { id: 'aola', name: '敖拉' },                    // 敖拉(雅克萨), 达斡尔敖拉氏
+    { id: 'chaoer', name: '绰尔纳' },                // 绰尔纳(格尔必齐), 《尼布楚条约》界河
+    { id: 'bulat', name: '布拉特' },                 // 布拉特(石勒喀河), Buryat/布拉特部
+    { id: 'buriat', name: '布里亚特' },              // 布里亚特(赤塔), Buryat
+    // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
+    { id: 'xianhai', name: '咸海' },                  // 咸海(锡尔河入湖口/养吉干), Aral delta
+    // ── 2026-06-11 新增：难兜国（《汉书·西域传》）──
+    { id: 'nandou', name: '难兜国' },
 ];
