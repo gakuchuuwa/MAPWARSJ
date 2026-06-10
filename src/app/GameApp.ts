@@ -42,6 +42,7 @@ import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
 import { Army } from '../legion/Army';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
+import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
 import { gameLog } from '../utils/GameLogger';
 import { tickGameAppFrame } from './GameAppLoop';
 import { exposeGameAppGlobals } from './GameAppExpose';
@@ -93,6 +94,7 @@ export class GameApp {
     private brawlFeedPanel!: BrawlFeedPanel;
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
+    public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥5万解锁）
 
     // Game Loop
     public lastFrameTime: number = 0;
@@ -339,6 +341,11 @@ export class GameApp {
                 this.historicalEventManager.getLegionManager(),
                 this.historicalEventManager.getSiegeManager()
             );
+            if (this.brawlFeedPanel) {
+                this.rebellionSystem.setRestorationReporter((report) => {
+                    this.brawlFeedPanel.pushRestoration(report);
+                });
+            }
             this.perfMonitor.markBootPhase('事件/军团/叛乱管理器');
             await yieldToBrowser();
 
@@ -416,6 +423,15 @@ export class GameApp {
                 (armyId, newName) => legionManager.renameLegion(armyId, newName)
             );
             this.cameraFollowUI.update();
+
+            this.expeditionUI = new ExpeditionUI();
+            this.expeditionUI.init(
+                () => {
+                    const id = this.cameraFollowUI.getFollowedArmyId();
+                    return id ? legionManager.getLegionById(id) ?? null : null;
+                },
+                this.cityManager
+            );
 
             this.map.getLeafletMap().on('dragstart', () => {
                 if (this.cameraFollowUI?.isFollowing()) {

@@ -3,7 +3,11 @@
  *
  * 用户点「播放」后：执行一次出兵检查（runInitialSpawn，仅一次）
  * 每季（15 游戏秒 = 1 季度）：
- *   1. 据点驻军 + 大城400 / 中城300 / 小城200 / 关隘100（见 CityConfig.recruitPerSeason）
+ *   1. 据点产出 大城400 / 中城300 / 小城200 / 关隘100（见 CityConfig.recruitPerSeason）：
+ *      【断粮机制 2026-06-11，GAME_DIRECTION「断粮模式」】产出**优先补从本城出征的自家军团**
+ *      （至文化兵力上限，战斗中暂停），余量进驻军。家城失守 = 军团断粮（无补给），
+ *      且行为树 HasTarget/resolveRecaptureTarget 已有的「强制回师收复家城」对**所有文化**生效，
+ *      无游牧豁免（主人终裁）；唯一例外是远征模式军团（断粮不回师，见 ExpeditionSystem）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
  *      ① 每文化区保底 1 支
  *      ② 优先：视野内、非跟随势力、驻军高的据点
@@ -14,7 +18,7 @@ import { LegionManager } from '../core/LegionManager';
 import { GameConfig } from '../config/GameConfig';
 import { CITY_CONFIG, clampCityTroops } from '../config/CityConfig';
 import { GameTime } from '../core/GameTime';
-import { getCultureTier } from '../types/CultureFormations';
+import { getCultureTier, getArmyMaxTroops } from '../types/CultureFormations';
 import { expandCompositionSlots, expandCompositionScales } from '../types/LegionComposition';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
@@ -108,15 +112,41 @@ export class RecruitmentSystem {
         PerformanceMonitor.getInstance().noteAsyncWork('recruitSeason', performance.now() - t0);
     }
 
-    /** 每季：按据点等级补驻军（大400 / 中300 / 小200 / 关100） */
+    /**
+     * 每季：据点产出（大400 / 中300 / 小200 / 关100）
+     * 断粮机制：优先补从本城出征的自家军团（至文化上限，战斗中暂停），余量进驻军。
+     * 家城被夺则军团拿不到补给（city.factionId 已非军团势力 → 不匹配）。
+     */
     private recruitSeasonGarrison(cities: ReturnType<CityManager['getCities']>): void {
+        // homeCityId → 现役军团（一城一军，首个命中即可）
+        const legionByHome = new Map<string, ReturnType<LegionManager['getArmies']>[number]>();
+        for (const a of this.legionManager.getArmies()) {
+            if (a.isDestroyed || a.type !== 'legion' || a.getTroops() <= 0) continue;
+            const home = a.homeCityId ?? a.getSourceCityId();
+            if (home && !legionByHome.has(home)) legionByHome.set(home, a);
+        }
+
         for (const city of cities) {
             if (!city.factionId || city.factionId === '' || city.factionId === 'panjun') continue;
 
             const cfg = CITY_CONFIG[city.type];
             if (!cfg) continue;
 
-            city.troops = clampCityTroops(city.type, (city.troops || 0) + cfg.recruitPerSeason);
+            let remaining = cfg.recruitPerSeason;
+
+            const legion = legionByHome.get(city.id);
+            if (legion && legion.getFactionId() === city.factionId && !legion.getIsInCombat()) {
+                const armyMax = getArmyMaxTroops(legion.cultureRegion);
+                const toLegion = Math.min(remaining, Math.max(0, armyMax - legion.getTroops()));
+                if (toLegion > 0) {
+                    legion.setTroops(legion.getTroops() + toLegion);
+                    remaining -= toLegion;
+                }
+            }
+
+            if (remaining > 0) {
+                city.troops = clampCityTroops(city.type, (city.troops || 0) + remaining);
+            }
             this.pendingLabelCityIds.add(city.id);
         }
     }

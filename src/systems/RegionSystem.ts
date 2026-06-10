@@ -329,7 +329,7 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
 // ⚠️ 此处的"中心" ≠ big_city
 //    - 区中心是 "文化-政治意义的核心"
 //    - big_city 是 "累计国都年 ≥ 92 或人口 ≥ 50万"
-//    - 二者独立: 例: 羊苴咩城 是 DIANQIAN 中心, 但等级 medium_city
+//    - 二者独立: 例: 姑臧 是 HEXI 中心, 但等级 medium_city
 //                    临淄 可为 medium_city, 但不是 NORTH 中心 (北京才是)
 //
 // ⚠️ 任何 AI 不许擅自改变这 15 个 cityId
@@ -342,7 +342,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     JIANGNAN:     ['city_nanjing'],                  // 南京
     LINGNAN:      ['city_panyu'],                    // 番禺 (古名, 即广州)
     BASHU:        ['city_chengdu'],                  // 成都
-    DIANQIAN:     ['city_dali_city'],                // 羊苴咩城 (大理国都)
+    DIANQIAN:     ['city_ayutthaya'],                // 阿瑜陀耶 (主人 2026-06-11 改: 原羊苴咩城; 阿瑜陀耶更靠边陲, 远征纵深更足)
     HEXI:         ['city_wuwei'],                    // 姑臧 (古名, 即凉州/武威)
     WESTERN:      ['city_yiluolucheng'],             // 伊逻卢城 (龟兹国都; 延城)
     TIBET:        ['city_luoxie'],                   // 逻些 (古名, 即拉萨)

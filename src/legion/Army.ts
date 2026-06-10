@@ -91,6 +91,14 @@ export class Army implements IBattleUnit {
 
     // [NEW] Home City ID (One Legion Per City Rule)
     public homeCityId: string | null = null;
+
+    /**
+     * 远征目标城（GAME_DIRECTION「远征细则」2026-06-11）：
+     * 非 null = 远征模式——目标锁死该城、断粮不回师，直至占领或全军覆没；
+     * null = 基础模式（近 3 敌城抽签 + 家城失守强制回师）。
+     * 仅跟拍军团可被玩家下达远征指令（ExpeditionUI），AI 不会自行远征。
+     */
+    public expeditionTargetCityId: string | null = null;
     
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;

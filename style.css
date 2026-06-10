@@ -827,6 +827,15 @@ path.npc-hitbox {
     text-underline-offset: 3px;
 }
 
+.feed-restore {
+    color: #2e6b4f;
+    font-weight: bold;
+    margin-left: 4px;
+    text-decoration: underline;
+    text-decoration-color: rgba(46, 107, 79, 0.4);
+    text-underline-offset: 3px;
+}
+
 .feed-wipe {
     color: #9c302f; /* 统一为和亡国一样的朱砂红 */
     font-weight: bold;

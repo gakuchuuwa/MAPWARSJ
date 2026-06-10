@@ -428,7 +428,7 @@
 | 日本 | 京都 | `city_kyoto` | big_city | 平安京 1075 年都 |
 | 西域 | 伊逻卢城 | `city_yiluolucheng` | medium | 龟兹国都 (延城) |
 | 青藏 | 逻些 | `city_luoxie` | medium | 吐蕃国都 (即拉萨) |
-| 滇缅 | 羊苴咩城 | `city_dali_city` | medium | 南诏+大理国都 |
+| 滇缅 | 阿瑜陀耶 | `city_ayutthaya` | big_city | 阿瑜陀耶王朝 417 年都（主人 2026-06-11 改，原羊苴咩城：阿瑜陀耶更靠边陲，远征纵深更足） |
 | 中亚 | 撒马尔罕 | `city_samaerhan` | medium | 帖木儿都, 粟特心 |
 
 ### 规则

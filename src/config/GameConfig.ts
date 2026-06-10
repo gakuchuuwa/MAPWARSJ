@@ -34,6 +34,8 @@ export class GameConfig {
         EDITOR_DEBUG: false,
         /** 跟随军经过己方据点补兵 */
         FOLLOW_RESUPPLY: false,
+        /** 远征：下令/功成/覆没/断粮坚持（低频大事，默认开） */
+        EXPEDITION: true,
     };
     static CITY = {
         MIN_GARRISON: 1000
@@ -97,17 +99,25 @@ export class GameConfig {
         BATTLE_JOIN_RADIUS: 0.3,
     };
     /**
-     * 五文化区固定系数（只影响掷色）
-     * 草原/东北/青藏：野战 ×FIELD_ARMY_MULT，守城 ×GARRISON_MULT
-     * 岭南/滇缅：守城 ×FIELD_ARMY_MULT，野战 ×GARRISON_MULT
+     * 五级文化攻防固定系数（只影响掷色，不改显示兵力）
+     * 主人 2026-06-11 拍板（GAME_DIRECTION.md「五级文化攻防」，100 局推演验证：日本胜率 65%→43%）：
+     *   高攻 草原/青藏/东北：野战 ×1.2，守城 ×0.8（蒙古铁骑、吐蕃武士、女真八旗）
+     *   低攻 西域/河西/北方：野战 ×1.1，守城 ×0.9（凉州大马、幽并铁骑）
+     *   中性 中原/中亚：×1.0（四战之地，攻防兼备）
+     *   低防 日本/朝鲜/江南：野战 ×0.9，守城 ×1.1（岛国/江河之险，善守不善攻）
+     *   高防 岭南/滇缅/川蜀：野战 ×0.8，守城 ×1.2（瘴疠山城、蜀道之难）
      */
     static CULTURE_COMBAT = {
-        FIELD_ARMY_MULT: 1.2,
-        GARRISON_MULT: 0.8,
+        /** region → [野战系数, 守城系数]；未列出的区按 1.0 */
+        TIER_TABLE: {
+            STEPPE: [1.2, 0.8], TIBET: [1.2, 0.8], NORTHEAST: [1.2, 0.8],
+            WESTERN: [1.1, 0.9], HEXI: [1.1, 0.9], NORTH: [1.1, 0.9],
+            CENTRAL: [1.0, 1.0], CENTRAL_ASIA: [1.0, 1.0],
+            JAPAN: [0.9, 1.1], KOREA: [0.9, 1.1], JIANGNAN: [0.9, 1.1],
+            LINGNAN: [0.8, 1.2], DIANQIAN: [0.8, 1.2], BASHU: [0.8, 1.2],
+        } as Record<string, readonly [number, number]>,
         /** 关隘据点守军额外系数（与文化区系数相乘，仅 garrison / type===pass） */
         PASS_GARRISON_MULT: 1.2,
-        NOMADIC_REGIONS: ['STEPPE', 'NORTHEAST', 'TIBET'] as const,
-        FORTRESS_REGIONS: ['LINGNAN', 'DIANQIAN'] as const,
     };
     static MORALE = {
         MORALE_LOSS_PER_SECOND: 0.5,
@@ -140,6 +150,18 @@ export class GameConfig {
         },
         /** 扫描间隔（ms），避免每帧复制全图据点列表 */
         SCAN_INTERVAL_MS: 250,
+    };
+    /**
+     * 远征（主人 2026-06-11 拍板，GAME_DIRECTION「远征细则」）：
+     * 跟拍军团兵力 ≥ UNLOCK_TROOPS 解锁；目标仅 15 文化中心城；
+     * 选择面板 SELECT_TIMEOUT_MS 倒计时，超时自动选最近异文化中心；
+     * 远征中断粮不回师，直至占领目标城或全军覆没。
+     */
+    static EXPEDITION = {
+        UNLOCK_TROOPS: 50_000,
+        SELECT_TIMEOUT_MS: 15_000,
+        /** UI 状态扫描间隔（ms） */
+        SCAN_INTERVAL_MS: 500,
     };
 }
 

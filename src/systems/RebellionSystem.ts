@@ -9,11 +9,17 @@ import { SiegeManager } from '../combat/SiegeManager';
 import { GameConfig } from '../config/GameConfig';
 import { isNearCity } from '../core/DistanceUtils';
 
+export type RestorationReport = {
+    factionId: string;
+    cityName: string;
+};
+
 export class RebellionSystem {
     private cityManager: CityManager;
     private timeSystem: TimeSystem;
     private legionManager: LegionManager | null;
     private siegeManager: SiegeManager | null;
+    private restorationReporter: ((report: RestorationReport) => void) | null = null;
 
     /** 城市ID → 开局原生势力 */
     private initialFactionMap: Map<string, string> = new Map();
@@ -38,6 +44,11 @@ export class RebellionSystem {
         this.timeSystem.onYearChange((year: number) => {
             this.executeYearlyRebellion(year);
         });
+    }
+
+    /** 沙盒军情：成功复国时推送「势力 于 据点 复国」，跳过轮不通知 */
+    setRestorationReporter(reporter: ((report: RestorationReport) => void) | null): void {
+        this.restorationReporter = reporter;
     }
 
     /** 以 CityManager 开局快照为准（须与 loadGameAppCityData 沙盒改旗一致，不能用裸 CITIES） */
@@ -249,6 +260,11 @@ export class RebellionSystem {
                 `${this.cityManager.getFactionName(previousFactionId)} 被驱逐，` +
                 `${this.cityManager.getFactionName(originalFactionId)} 复国！`
         );
+
+        this.restorationReporter?.({
+            factionId: originalFactionId,
+            cityName: targetCity.name,
+        });
     }
 
     private formatYear(year: number): string {

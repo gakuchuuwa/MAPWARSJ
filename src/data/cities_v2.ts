@@ -35,6 +35,8 @@ export interface CityDataV2 {
     region?: string;
     /** 关隘/港口朝向镜像 */
     mirror?: boolean;
+    /** 史地备注（人工录入据点时的可考性说明，运行时不使用） */
+    note?: string;
 }
 
 // ============================================================

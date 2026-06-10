@@ -1,10 +1,12 @@
 /**
  * 开战有效战力（固定系数，只影响掷色，不改显示兵力）
  *
- * 文化区（按据点/军团所在区）：
- *   草原/东北/青藏：野战 ×1.2，守军 ×0.8
- *   岭南/滇缅：守军 ×1.2，野战 ×0.8
- *   其余 9 区 ×1.0
+ * 五级文化攻防（主人 2026-06-11 拍板，表在 GameConfig.CULTURE_COMBAT.TIER_TABLE）：
+ *   高攻 草原/青藏/东北：野战 ×1.2，守军 ×0.8
+ *   低攻 西域/河西/北方：野战 ×1.1，守军 ×0.9
+ *   中性 中原/中亚：×1.0
+ *   低防 日本/朝鲜/江南：野战 ×0.9，守军 ×1.1
+ *   高防 岭南/滇缅/川蜀：野战 ×0.8，守军 ×1.2
  *
  * 关隘（type===pass 的守军）：再 × PASS_GARRISON_MULT（默认 1.2），与文化区相乘。
  *   例：岭南关隘守军 = 1.2（文化）× 1.2（关隘）= 1.44，不是 1.2³。
@@ -20,8 +22,7 @@ import { getCityRegion, getRegion, RegionType } from './RegionSystem';
 
 export type CultureCombatRole = 'field' | 'garrison';
 
-const NOMADIC_SET = new Set<RegionType>(GameConfig.CULTURE_COMBAT.NOMADIC_REGIONS);
-const FORTRESS_SET = new Set<RegionType>(GameConfig.CULTURE_COMBAT.FORTRESS_REGIONS);
+const TIER_TABLE = GameConfig.CULTURE_COMBAT.TIER_TABLE;
 
 function isGarrisonUnit(unit: IBattleUnit): boolean {
     return unit.unitType === 'city';
@@ -62,16 +63,11 @@ export function resolveUnitCultureRegion(unit: IBattleUnit): RegionType {
     return getRegion(pos.lat, pos.lng);
 }
 
-/** 文化区固定攻防系数（非随机，不含关隘类型加成） */
+/** 文化区固定攻防系数（非随机，不含关隘类型加成）——五级表，未列出区 ×1.0 */
 export function getCultureCombatMultiplier(region: RegionType, role: CultureCombatRole): number {
-    const c = GameConfig.CULTURE_COMBAT;
-    if (NOMADIC_SET.has(region)) {
-        return role === 'field' ? c.FIELD_ARMY_MULT : c.GARRISON_MULT;
-    }
-    if (FORTRESS_SET.has(region)) {
-        return role === 'field' ? c.GARRISON_MULT : c.FIELD_ARMY_MULT;
-    }
-    return 1;
+    const tier = TIER_TABLE[region];
+    if (!tier) return 1;
+    return role === 'field' ? tier[0] : tier[1];
 }
 
 function getPassGarrisonMultiplier(unit: IBattleUnit): number {

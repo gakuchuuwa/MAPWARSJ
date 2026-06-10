@@ -208,6 +208,66 @@ export class LegionPhalanxDrawer {
         gameLog('unit', '✅ LegionPhalanxDrawer: All dynamic unit assets loaded.');
     }
 
+    // ─── 船贴图懒加载（2026-06-12 修复）────────────────────────────
+    // LAZY_BOOT_UNIT_IDS 当年只做了"启动跳过"没做"事后加载"，
+    // unitSpriteCache 永远没有三种船 → drawNaval 永远早退 → 船从不显示。
+    // 现在由 drawNaval 首次被调用时触发后台加载（与 _doPreload 同样的分批 + 抠绿流程）。
+    private static navalLoadStarted = false;
+
+    private static ensureNavalAssetsLoading(): void {
+        if (this.navalLoadStarted) return;
+        this.navalLoadStarted = true;
+        void this._loadNavalAssets().catch((e) => {
+            gameLog('unit', '❌ 船贴图懒加载失败', e);
+            this.navalLoadStarted = false; // 允许下次重试
+        });
+    }
+
+    private static async _loadNavalAssets(): Promise<void> {
+        const yieldMain = () => document.hidden
+            ? Promise.resolve()
+            : new Promise<void>(r => setTimeout(r, 0));
+        const PROC_BATCH = 4;
+
+        const loadBatch = async (sourcePaths: readonly string[], targetArray: HTMLImageElement[]) => {
+            await AssetLoader.preloadImages([...sourcePaths]);
+            for (let i = 0; i < sourcePaths.length; i += PROC_BATCH) {
+                const slice = sourcePaths.slice(i, i + PROC_BATCH);
+                await Promise.all(slice.map(async (path, batchIdx) => {
+                    const img = AssetLoader.getImage(path);
+                    if (img) {
+                        targetArray[i + batchIdx] = await this.processImage(img);
+                    }
+                }));
+                if (i + PROC_BATCH < sourcePaths.length) await yieldMain();
+            }
+        };
+
+        const unitAssets = SPRITE_PATHS.UNIT_ASSETS as any;
+        for (const key of LAZY_BOOT_UNIT_IDS) {
+            const config = unitAssets?.[key];
+            if (!config || this.unitSpriteCache.has(key)) continue;
+
+            const cacheEntry = {
+                MOVE: [] as HTMLImageElement[],
+                ATTACK: [] as HTMLImageElement[],
+                IDLE: [] as HTMLImageElement[],
+                DAMAGE: [] as HTMLImageElement[],
+                DEATH: [] as HTMLImageElement[],
+            };
+            await Promise.all([
+                loadBatch(config.MOVE, cacheEntry.MOVE),
+                loadBatch(config.ATTACK, cacheEntry.ATTACK),
+                loadBatch(config.IDLE, cacheEntry.IDLE),
+                loadBatch(config.DAMAGE, cacheEntry.DAMAGE),
+                loadBatch(config.DEATH, cacheEntry.DEATH),
+            ]);
+            this.unitSpriteCache.set(key, cacheEntry);
+            await yieldMain();
+        }
+        gameLog('unit', '⛵ 船贴图懒加载完成（1万/2万/5万 三档）');
+    }
+
     private static processImage(img: HTMLImageElement): Promise<HTMLImageElement> {
         return new Promise((resolve) => {
             if (!img.complete || img.naturalWidth === 0) { resolve(img); return; }
@@ -682,7 +742,10 @@ export class LegionPhalanxDrawer {
     ): void {
         const shipId = getNavalShipAssetId(troops);
         const currentSet = this.unitSpriteCache.get(shipId);
-        if (!currentSet) return;
+        if (!currentSet) {
+            this.ensureNavalAssetsLoading(); // 首次海上渲染触发后台加载，加载完成前先不画
+            return;
+        }
 
         let rawSprite: HTMLImageElement | undefined;
         if (state === 'DEATH') {

@@ -2,9 +2,15 @@
  * LegionBehaviors.ts
  *
  * 军团 AI 行为树节点（收复发出点 → 推进锚点近敌池抽签 → 沿路推进 → 攻城）
+ *
+ * 双模式（GAME_DIRECTION 2026-06-11）：
+ *   基础模式：家城失守强制回师（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
+ *           → 推进锚点近 3 敌城抽签
+ *   远征模式：army.expeditionTargetCityId 锁死目标，断粮不回师，直至占领或全军覆没（仅玩家可下令）
  */
 
 import { BTNode, BTStatus, BTContext, Condition, Action, Sequence, Selector } from './BehaviorTree';
+import { gameLog } from '../../utils/GameLogger';
 import {
     btLog,
     clearStrategicTarget,
@@ -37,7 +43,45 @@ export const IsWaitingSiege = new Condition('IsWaitingSiege', (ctx) =>
     ctx.legionManager.isArmyWaitingSiege(ctx.army.id),
 );
 
+/**
+ * 远征模式（GAME_DIRECTION「远征细则」2026-06-11）：
+ * expeditionTargetCityId 非 null 时目标锁死、断粮不回师；
+ * 目标城已属己方（无论谁打下的）→ 远征功成，回归基础模式。
+ * 返回 'locked'（继续远征）| 'done'（刚结束）| null（非远征）。
+ */
+function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
+    const expeditionId: string | null = ctx.army.expeditionTargetCityId ?? null;
+    if (!expeditionId) return null;
+
+    const myFaction = ctx.army.getFactionId();
+    const target = ctx.cityManager.getCity(expeditionId);
+
+    if (!target || target.factionId === myFaction) {
+        ctx.army.expeditionTargetCityId = null;
+        clearStrategicTarget(ctx);
+        ctx.army.setTargetCity(null);
+        gameLog(
+            'expedition',
+            `🐎 [远征] ${ctx.army.name} 远征${target ? `【${target.name}】功成` : '目标已不存在'}，回归基础模式`
+        );
+        return 'done';
+    }
+
+    if (getStrategicTargetId(ctx) !== expeditionId) {
+        setStrategicTarget(ctx, expeditionId, {
+            lat: target.latitude,
+            lng: target.longitude,
+        });
+    }
+    return 'locked';
+}
+
 export const HasTarget = new Condition('HasTarget', (ctx) => {
+    // 远征模式：跳过回师检查（断粮不回），目标锁死
+    const expedition = resolveExpeditionState(ctx);
+    if (expedition === 'locked') return true;
+    if (expedition === 'done') return false;
+
     const myFaction = ctx.army.getFactionId();
     const originCityId = getArmyOriginCityId(ctx.army) ?? '';
     const recaptureId = resolveRecaptureTarget(myFaction, originCityId, ctx.cityManager);
@@ -107,6 +151,10 @@ export const IsNearTarget = new Condition('IsNearTarget', (ctx) => {
 // =====================
 
 export const FindTarget = new Action('FindTarget', (ctx) => {
+    // 远征模式：目标只有一个，不进近 3 敌城抽签、不回师
+    const expedition = resolveExpeditionState(ctx);
+    if (expedition === 'locked') return BTStatus.SUCCESS;
+
     const myFaction = ctx.army.getFactionId();
     const now = performance.now();
     const excludeTargetIds = new Set<string>();

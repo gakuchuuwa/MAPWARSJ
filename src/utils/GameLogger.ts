@@ -16,7 +16,8 @@ export type GameLogChannel =
     | 'world'
     | 'startup'
     | 'editorDebug'
-    | 'followResupply';
+    | 'followResupply'
+    | 'expedition';
 
 function isEnabled(channel: GameLogChannel): boolean {
     const L = GameConfig.LOG;
@@ -36,6 +37,7 @@ function isEnabled(channel: GameLogChannel): boolean {
         case 'startup': return L.STARTUP;
         case 'editorDebug': return L.EDITOR_DEBUG;
         case 'followResupply': return L.FOLLOW_RESUPPLY;
+        case 'expedition': return L.EXPEDITION;
         default: return false;
     }
 }

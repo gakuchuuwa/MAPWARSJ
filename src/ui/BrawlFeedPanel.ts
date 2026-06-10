@@ -40,9 +40,22 @@ function formatLegionAnnihilatedLine(
            `<span class="feed-wipe">全军覆没</span>`;
 }
 
+/** 年季 + 势力 + 于 + 据点 + 复国（势力=getFactionName，非旗面短名） */
+function formatRestorationLine(
+    time: string,
+    factionName: string,
+    cityName: string
+): string {
+    return `<span class="feed-time">${escapeHtml(time)}</span>` +
+           `<span class="feed-faction">${escapeHtml(factionName)}</span>` +
+           `<span class="feed-action">于</span>` +
+           `<span class="feed-city">${escapeHtml(cityName)}</span>` +
+           `<span class="feed-restore">复国</span>`;
+}
+
 /**
  * 大乱斗右侧军情面板（#event-display）
- * 记录：势力灭亡、攻/守军团全军覆没。
+ * 记录：势力灭亡、攻/守军团全军覆没、据点复国。
  */
 export class BrawlFeedPanel {
     private root: HTMLElement | null = null;
@@ -126,6 +139,22 @@ export class BrawlFeedPanel {
             time,
             this.cityManager.getFactionName(params.factionId),
             params.legionName,
+            params.cityName
+        );
+        this.pushFeedLine(line);
+    }
+
+    /** 异文化占领地起义：势力于该据点复国（面板显示势力全名，非旗号） */
+    pushRestoration(params: {
+        factionId: string;
+        cityName: string;
+    }): void {
+        if (!BrawlFeedPanel.isEliminableFaction(params.factionId)) return;
+
+        const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
+        const line = formatRestorationLine(
+            time,
+            this.cityManager.getFactionName(params.factionId),
             params.cityName
         );
         this.pushFeedLine(line);
