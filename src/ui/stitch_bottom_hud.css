@@ -1,22 +1,22 @@
-/* 左下 HUD — 水墨卷轴风格 (Xuan Paper, Lotus, Ink Green) */
+/* 左下 HUD — 水墨儒将风 (Xuan Paper, Lotus, Willow, Ink Green) */
 
 #game-time-hud {
-    --hud-w: 320px;
-    --gold: #151515;          /* 浓墨黑 (主文字) */
-    --gold-glow: #c62828;     /* 朱批红/印章红 (高亮/地形/强调) */
-    --silver: #c62828;        /* 朱红 (用作角落印花 SVG) */
-    --ink-label: #555555;     /* 浅墨灰 (标签) */
-    --panel-bg: linear-gradient(135deg, #eedb9b 0%, #d8ba68 100%); /* 圣旨明黄绢帛底色 */
-    --stone-border: #b89148;  /* 绢帛暗金缝线/边框 */
-    --cinnabar-top: #c62828;  /* 朱砂红顶 */
-    --cinnabar-bot: #8e0000;  /* 朱砂红底 */
+    --hud-w: 200px;
+    --gold: #1d3326;          /* 深黛青/石绿 (用于主要数值) */
+    --gold-glow: #9c302f;     /* 朱砂红/点绛唇 (用于高亮/地形) */
+    --silver: #b3a286;        /* 枯茶色 (用于莲花暗纹 SVG) */
+    --ink-label: #5b7a66;     /* 柳叶青 (用于标签，清新古雅) */
+    --panel-bg: linear-gradient(135deg, #ebdcc3 0%, #d8c5a8 100%); /* 宣纸骨白色 */
+    --stone-border: #7d6f5a;  /* 焦茶色边框 */
+    --cinnabar-top: #9c302f;  /* 朱砂红顶 */
+    --cinnabar-bot: #681b1d;  /* 朱砂红底 */
     
     position: fixed;
     left: 20px;
     bottom: 20px;
     z-index: 5000;
     display: none;
-    flex-direction: column;   /* 改回纵向堆叠 */
+    flex-direction: column;   /* 纵向堆叠 */
     gap: 8px;
     pointer-events: auto;
     font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
@@ -34,14 +34,14 @@
 #game-time-hud .hud-map-panel {
     position: relative;
     width: var(--hud-w);
-    padding: 14px 16px 12px;
+    padding: 10px 12px 8px;
     box-sizing: border-box;
     background: var(--panel-bg);
-    border: 2px solid var(--stone-border);
+    border: 1px solid var(--stone-border);
     border-radius: 2px;
     box-shadow:
-        inset 0 0 30px rgba(184, 145, 72, 0.4),
-        0 4px 12px rgba(0, 0, 0, 0.35);
+        inset 0 0 40px rgba(138, 115, 85, 0.15),
+        0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 /* 模拟宣纸纹理噪点 */
@@ -55,15 +55,15 @@
     background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
 }
 
-/* 莲花纹饰角落 (由原有SVG担任，改变颜色即成线描白描感) */
+/* 莲花纹饰角落 */
 #game-time-hud .hud-corner {
     position: absolute;
     width: 24px;
     height: 24px;
-    color: var(--silver); /* 朱红印章色 */
+    color: var(--silver);
     pointer-events: none;
     z-index: 2;
-    opacity: 0.8; /* 提高不透明度，使其更像盖印 */
+    opacity: 0.6;
 }
 
 #game-time-hud .hud-corner svg {
@@ -99,10 +99,10 @@
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    padding: 7px 4px;
-    font-size: 14px;
+    padding: 5px 4px;
+    font-size: 13px;
     line-height: 1.35;
-    border-bottom: 1px dashed rgba(184, 145, 72, 0.5);
+    border-bottom: 1px dashed rgba(125, 111, 90, 0.35);
 }
 
 #game-time-hud .hud-map-row--terrain {
@@ -112,7 +112,7 @@
 
 #game-time-hud .hud-map-row .label {
     color: var(--ink-label);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.1em;
     flex-shrink: 0;
@@ -121,7 +121,7 @@
 #game-time-hud .hud-map-row .value {
     color: var(--gold);
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     text-align: right;
     font-variant-numeric: tabular-nums;
@@ -130,7 +130,7 @@
 #game-time-hud #terrain-type {
     color: var(--gold-glow);
     font-family: 'Noto Serif SC', 'SimSun', serif;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
 }
 
@@ -138,13 +138,13 @@
 #game-time-hud .hud-zoom {
     display: flex;
     flex-direction: column;
-    width: 36px;
+    width: 28px;
     flex-shrink: 0;
     border-radius: 2px;
     overflow: hidden;
     position: relative;
-    box-shadow: inset 0 0 8px rgba(184, 145, 72, 0.4);
-    border: 1px solid rgba(184, 145, 72, 0.6);
+    box-shadow: inset 0 0 8px rgba(138, 115, 85, 0.2);
+    border: 1px solid rgba(125, 111, 90, 0.35);
 }
 
 #game-time-hud .hud-zoom::before {
@@ -158,12 +158,12 @@
 }
 
 #game-time-hud .hud-zoom-btn {
-    height: 40px;
+    height: 32px;
     border: none;
     padding: 0;
     cursor: pointer;
     font-family: inherit;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
     line-height: 1;
     color: var(--gold);
@@ -175,25 +175,25 @@
 
 #game-time-hud .hud-zoom-btn:hover {
     color: var(--gold-glow);
-    background: rgba(198, 40, 40, 0.1);
+    background: rgba(156, 48, 47, 0.08); /* 微微泛红 */
 }
 
 #game-time-hud .hud-zoom-btn:active {
-    background: rgba(198, 40, 40, 0.2);
+    background: rgba(156, 48, 47, 0.15);
 }
 
 #game-time-hud .hud-zoom-level {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 36px;
+    height: 28px;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--gold-glow);
-    border-top: 1px solid rgba(184, 145, 72, 0.6);
-    border-bottom: 1px solid rgba(184, 145, 72, 0.6);
-    background: rgba(184, 145, 72, 0.15);
+    border-top: 1px solid rgba(125, 111, 90, 0.4);
+    border-bottom: 1px solid rgba(125, 111, 90, 0.4);
+    background: rgba(29, 51, 38, 0.06);
     user-select: none;
     font-variant-numeric: tabular-nums;
     position: relative;
@@ -205,7 +205,7 @@
     display: flex;
     align-items: stretch;
     width: var(--hud-w);
-    min-height: 46px;
+    min-height: 36px;
     box-sizing: border-box;
     border-radius: 2px;
     overflow: hidden;
@@ -214,31 +214,31 @@
 }
 
 #game-time-hud .hud-date-cap {
-    flex: 0 0 32px;
+    flex: 0 0 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, var(--cinnabar-top) 0%, var(--cinnabar-bot) 100%);
-    border-top: 1px solid #7a0000;
-    border-bottom: 1px solid #7a0000;
+    border-top: 1px solid #78201f;
+    border-bottom: 1px solid #78201f;
     position: relative;
 }
 
 #game-time-hud .hud-date-cap svg {
-    width: 14px;
-    height: 14px;
-    color: #eedb9b;
-    opacity: 0.9;
+    width: 12px;
+    height: 12px;
+    color: #ebdcc3;
+    opacity: 0.85;
 }
 
 #game-time-hud .hud-date-cap--l {
-    border-right: 1px solid #600000;
-    box-shadow: inset 2px 0 8px rgba(0, 0, 0, 0.45);
+    border-right: 1px solid #5c181a;
+    box-shadow: inset 2px 0 8px rgba(0, 0, 0, 0.4);
 }
 
 #game-time-hud .hud-date-cap--r {
-    border-left: 1px solid #600000;
-    box-shadow: inset -2px 0 8px rgba(0, 0, 0, 0.45);
+    border-left: 1px solid #5c181a;
+    box-shadow: inset -2px 0 8px rgba(0, 0, 0, 0.4);
 }
 
 #game-time-hud .hud-date-cap--r svg {
@@ -268,8 +268,8 @@
     display: flex;
     align-items: center;
     gap: 0.6em;
-    letter-spacing: 0.15em;
-    font-size: 18px;
+    letter-spacing: 0.1em;
+    font-size: 15px;
     font-weight: 700;
     color: var(--gold);
     position: relative;
@@ -291,7 +291,7 @@
 }
 
 #game-time-hud .game-time-btn {
-    height: 48px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -300,14 +300,14 @@
     border-radius: 2px;
     cursor: pointer;
     font-family: 'Noto Serif SC', 'SimSun', serif;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--gold);
     letter-spacing: 0.08em;
-    background: linear-gradient(180deg, #eedb9b 0%, #d8ba68 100%);
+    background: linear-gradient(180deg, #ebdcc3 0%, #dbcbaf 100%);
     box-shadow:
         inset 1px 1px 2px rgba(255, 255, 255, 0.6),
-        0 2px 4px rgba(0, 0, 0, 0.25);
+        0 2px 4px rgba(0, 0, 0, 0.2);
     transition: all 0.15s ease;
     position: relative;
     overflow: hidden;
@@ -338,12 +338,12 @@
 /* 激活状态：朱砂红印章感 */
 #game-time-hud .game-time-btn.active,
 #game-time-hud .game-time-btn.playing {
-    color: #eedb9b;
+    color: #ebdcc3;
     background: linear-gradient(180deg, var(--cinnabar-top) 0%, var(--cinnabar-bot) 100%);
-    border-color: #8e0000;
+    border-color: #681b1d;
     box-shadow:
-        inset 0 2px 6px rgba(0, 0, 0, 0.6),
-        0 0 8px rgba(198, 40, 40, 0.4);
+        inset 0 2px 6px rgba(0, 0, 0, 0.5),
+        0 0 8px rgba(156, 48, 47, 0.3);
 }
 
 #game-time-hud .game-time-btn.active::before,

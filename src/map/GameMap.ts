@@ -437,28 +437,41 @@ export class GameMap {
         const Control = L.Control.extend({
             onAdd: () => {
                 const div = L.DomUtil.create('div', 'leaflet-bar result-tooltip');
-                div.style.backgroundColor = 'white';
-                div.style.padding = '8px';
+                div.style.background = 'linear-gradient(135deg, rgba(235, 220, 195, 0.85) 0%, rgba(216, 197, 168, 0.9) 100%)';
+                div.style.backdropFilter = 'blur(4px)';
+                div.style.border = 'none';
+                div.style.padding = '10px 12px';
                 div.style.display = 'flex';
                 div.style.flexDirection = 'column';
                 div.style.gap = '8px';
-                div.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                div.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
+                div.style.borderRadius = '8px';
+                div.style.fontFamily = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
+                div.style.color = '#5b7a66';
+                div.style.maxHeight = '85vh';
+                div.style.overflowY = 'auto';
+                
                 let html = `
-                    <div style="font-weight:bold;margin-bottom:4px;font-size:14px;color:#333;">地图切换</div>
+                    <div id="control-panel-header" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:bold; font-size:14px; color:#1d3326; padding-bottom:6px; user-select:none; border-bottom:1px dashed rgba(125, 111, 90, 0.4); margin-bottom:4px;">
+                        <span>⚙️ 调试面板</span>
+                        <span id="control-panel-toggle-icon" style="color:#5b7a66;">▼</span>
+                    </div>
+                    <div id="control-panel-content" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="font-weight:bold;margin-bottom:4px;font-size:13px;color:#9c302f;">地图切换</div>
                     
-                    <button id="btn-source-esri" style="padding:6px;cursor:pointer;background:#4a90e2;color:white;border:none;border-radius:4px;font-weight:bold;">
+                    <button id="btn-source-esri" style="padding:6px;cursor:pointer;background:transparent;color:#1d3326;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-weight:bold;font-family:inherit;transition:all 0.2s;">
                         ⛰️ 立体地形 (ESRI)
                     </button>
                     
-                    <button id="btn-source-local" style="padding:6px;cursor:pointer;background:#f0f0f0;border:1px solid #ccc;border-radius:4px;color:#333;">
+                    <button id="btn-source-local" style="padding:6px;cursor:pointer;background:transparent;border:1px solid rgba(125,111,90,0.5);border-radius:4px;color:#5b7a66;font-family:inherit;transition:all 0.2s;">
                         🗺️ 原始地图 (Local)
                     </button>
                     
-                    <hr style="margin:4px 0;width:100%;border:0;border-top:1px solid #eee;">
+                    <hr style="margin:4px 0;width:100%;border:0;border-top:1px dashed rgba(125, 111, 90, 0.4);">
                     
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#333;">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#5b7a66;">
                         <input type="checkbox" id="chk-hillshade"> 
-                        <b>📐 开启山体高度增强</b>
+                        <b style="color:#1d3326;">📐 开启山体高度增强</b>
                     </label>
 
                     <div id="hillshade-controls" style="margin-left:20px;display:flex;flex-direction:column;gap:4px;">
@@ -590,9 +603,12 @@ export class GameMap {
                     `;
                 }
                 
+                html += `</div>`; // Close control-panel-content
+                
                 div.innerHTML = html;
 
                 L.DomEvent.disableClickPropagation(div);
+                L.DomEvent.disableScrollPropagation(div); // 防止滚动面板时缩放地图
                 return div;
             }
         });
@@ -600,6 +616,21 @@ export class GameMap {
         this.map.addControl(new Control({ position: 'topright' }));
 
         setTimeout(() => {
+            const panelHeader = document.getElementById('control-panel-header');
+            const panelContent = document.getElementById('control-panel-content');
+            const toggleIcon = document.getElementById('control-panel-toggle-icon');
+            if (panelHeader && panelContent && toggleIcon) {
+                panelHeader.addEventListener('click', () => {
+                    if (panelContent.style.display === 'none') {
+                        panelContent.style.display = 'flex';
+                        toggleIcon.innerText = '▼';
+                    } else {
+                        panelContent.style.display = 'none';
+                        toggleIcon.innerText = '◀';
+                    }
+                });
+            }
+
             const btnEsri = document.getElementById('btn-source-esri');
             const btnLocal = document.getElementById('btn-source-local');
             const chkHillshade = document.getElementById('chk-hillshade') as HTMLInputElement;

@@ -35,7 +35,7 @@ export class HistoricalEventPanel {
             this.root?.classList.toggle('expanded', this.expanded);
             if (this.toggleBtn) {
                 this.toggleBtn.textContent = this.expanded ? '▲' : '▼';
-                this.toggleBtn.title = this.expanded ? '收起历史列表' : '展开历史列表';
+                this.toggleBtn.title = this.expanded ? '隐藏历史事件' : '展示历史事件';
             }
             this.render();
         });
@@ -69,9 +69,12 @@ export class HistoricalEventPanel {
         const latest = this.events[this.events.length - 1];
 
         if (!this.expanded) {
-            this.contentEl.innerHTML = this.renderEventBlock(latest, true);
+            this.contentEl.innerHTML = '';
+            this.contentEl.style.display = 'none';
             return;
         }
+        
+        this.contentEl.style.display = 'block';
 
         const groups = new Map<string, HistoricalEvent[]>();
         for (let i = this.events.length - 1; i >= 0; i--) {

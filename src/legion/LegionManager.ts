@@ -10,7 +10,11 @@ import {
     tryEngageFieldBattle,
     type LegionFieldBattleDeps,
 } from './field/LegionFieldBattle';
-import { moveLegionToCity as roadMarchMoveLegionToCity, type LegionRoadMarchDeps } from './march/LegionRoadMarch';
+import {
+    moveLegionToCity as roadMarchMoveLegionToCity,
+    type LegionAttackMarchPayload,
+    type LegionRoadMarchDeps,
+} from './march/LegionRoadMarch';
 import { SpatialRegistry } from '../world/SpatialRegistry';
 import { CombatSystem } from '../combat/CombatSystem';
 import { LegionType } from '../types/UnitTypes';
@@ -498,6 +502,11 @@ export class LegionManager {
 
     public moveLegionToCity(army: Army, targetCityId: string, sourceCityId?: string): boolean {
         return roadMarchMoveLegionToCity(this.roadMarchDeps, army, targetCityId, sourceCityId);
+    }
+
+    /** 大乱斗军情：军团朝敌据点出发时回调 */
+    public setOnLegionAttackMarch(handler: ((payload: LegionAttackMarchPayload) => void) | undefined): void {
+        this.roadMarchDeps.onLegionAttackMarch = handler;
     }
 
     /**

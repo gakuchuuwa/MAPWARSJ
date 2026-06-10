@@ -1,4 +1,4 @@
-﻿html,
+html,
 body {
     height: 100%;
     margin: 0;
@@ -434,17 +434,27 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-size: 16px;
     font-weight: bold;
-    color: #ffd700;
+    color: #1d3326; /* 深黛青 */
+    padding-bottom: 4px;
+    border: none; /* 移除下划线边框 */
 }
 
 .event-header button {
-    border-radius: 4px;
+    background: transparent;
+    border: none;
+    color: #5b7a66; /* 柳叶青 */
     cursor: pointer;
-    font-size: 12px;
-    transition: all 0.2s;
+    font-size: 14px;
+    padding: 4px;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.event-header button:hover {
+    color: #1d3326;
+    transform: scale(1.1);
 }
 
 .tool-btn:hover:not(:disabled) {
@@ -577,28 +587,43 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
-/* Event Display Panel — 固定右侧事件流 */
+/* Event Display Panel — 宣纸透明无框风格 */
 .event-panel {
     position: fixed;
-    top: 16px;
-    right: 16px;
+    top: 0;
+    right: 0;
     left: auto;
-    z-index: 4500;
+    z-index: 900; /* 低于控制面板的 1000 和军团按钮的 10000 */
     display: none;
-    background: rgba(10, 10, 10, 0.88);
-    padding: 14px 16px;
-    width: min(360px, calc(100vw - 32px));
-    max-height: calc(100vh - 32px);
+    background: linear-gradient(to right, rgba(235, 220, 195, 0) 0%, rgba(235, 220, 195, 0.4) 30%, rgba(216, 197, 168, 0.6) 100%);
+    padding: 24px 28px; /* 恢复正常留白 */
+    width: min(380px, calc(100vw - 16px));
+    max-height: 100vh;
     overflow: hidden;
-    color: white;
+    color: #5b7a66; /* 柳叶青 */
     pointer-events: auto;
     transition: opacity 0.3s ease, transform 0.3s ease;
     font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
-    border: 14px solid transparent;
-    border-image: url('/assets/UI/classic_border.png') 33 stretch;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9), 0 8px 16px rgba(0, 0, 0, 0.6);
+    border: none;
+    border-radius: 0 0 0 8px; /* 收起状态下有左下圆角 */
+    box-shadow: none; /* 去除阴影，让透明渐变完美融入地图 */
     backdrop-filter: blur(3px);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%);
+    mask-image: linear-gradient(to right, transparent 0%, black 15%);
     box-sizing: border-box;
+}
+
+/* 宣纸肌理层 */
+.event-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.15;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+    border-radius: 4px;
+    z-index: -1;
 }
 
 
@@ -643,11 +668,38 @@ path.npc-hitbox {
 #event-content {
     margin-top: 8px;
     overflow-y: auto;
-    max-height: calc(100vh - 120px);
+    height: calc(100vh - 80px); /* 占据几乎全部高度 */
+    max-height: none;
+    padding-right: 8px; /* 给滚动条留点空间 */
+}
+
+/* 大乱斗军情：面板背景仍从上到下铺满；仅 #event-content 内文字顶推、不滚动 */
+.event-panel.event-panel--brawl {
+    top: 0;
+    bottom: 0;
+    max-height: none;
+    border-radius: 0;
+}
+
+.event-panel.event-panel--brawl #event-content {
+    position: relative;
+    overflow: hidden;
+    overflow-y: hidden;
+    height: calc(100vh - 80px);
+    max-height: calc(100vh - 80px);
+    padding-right: 0;
+    scrollbar-width: none;
+}
+
+.event-panel.event-panel--brawl #event-content::-webkit-scrollbar {
+    display: none;
 }
 
 .event-panel.expanded {
-    width: min(420px, calc(100vw - 32px));
+    bottom: 0; /* 展开时拉到底部 */
+    padding-bottom: 24px; /* 恢复正常留白，任由军团按钮悬浮在其上层 */
+    border-radius: 0; /* 展开到底部时去掉圆角 */
+    width: min(380px, calc(100vw - 16px));
 }
 
 .event-panel.expanded #event-content {
@@ -656,7 +708,7 @@ path.npc-hitbox {
 
 .event-item {
     padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px dashed rgba(125, 111, 90, 0.35);
     font-size: 0.92em;
 }
 
@@ -669,37 +721,110 @@ path.npc-hitbox {
 }
 
 .event-item--hint {
-    color: rgba(255, 255, 255, 0.55);
+    color: #7d6f5a;
     font-style: italic;
 }
 
 .event-meta {
     font-size: 12px;
-    color: #d4af37;
+    color: #9c302f; /* 朱砂批注 */
     margin-bottom: 4px;
     letter-spacing: 0.06em;
+    font-weight: bold;
 }
 
 .event-title {
     font-weight: 700;
-    color: #ffe9a8;
+    color: #1d3326; /* 深黛青 */
     margin-bottom: 4px;
 }
 
 .event-desc {
     font-size: 14px;
     line-height: 1.45;
-    color: rgba(255, 255, 255, 0.92);
+    color: #5b7a66; /* 柳叶青 */
     white-space: normal;
+}
+
+.event-desc--feed {
+    font-size: 13px;
+    line-height: 1.55;
+    letter-spacing: 0.02em;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.feed-time {
+    color: #9c302f;
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+.feed-faction {
+    color: #1d3326;
+    font-weight: bold;
+}
+
+.feed-legion {
+    color: #5b7a66;
+}
+
+.feed-action {
+    color: #7d6f5a;
+}
+
+.feed-city {
+    color: #9c302f;
+    font-weight: bold;
+    text-decoration: underline;
+    text-decoration-color: rgba(156, 48, 47, 0.3);
+    text-underline-offset: 3px;
+}
+
+@keyframes slideDownEnter {
+    0% {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        max-height: 100px;
+        padding-top: 8px; /* 匹配 .event-item 的上内边距 */
+        padding-bottom: 8px; /* 匹配下内边距 */
+        transform: translateY(0);
+    }
+}
+
+.event-item.animate-in {
+    animation: slideDownEnter 0.4s ease-out forwards;
+    overflow: hidden;
+}
+
+.event-panel--brawl #event-content .event-item {
+    transition: opacity 0.25s ease;
+}
+
+.event-panel--brawl #event-content .event-item:not(.animate-in) {
+    opacity: 0.82;
+}
+
+.event-panel--brawl #event-content .event-item--current {
+    opacity: 1;
 }
 
 .event-history-divider {
     margin: 10px 0 6px;
     padding-top: 8px;
-    border-top: 1px solid rgba(212, 175, 55, 0.35);
+    border-top: 1px dashed rgba(125, 111, 90, 0.35);
     font-size: 12px;
-    color: rgba(212, 175, 55, 0.85);
-    letter-spacing: 0.12em;
+    color: #7d6f5a;
+    text-align: center;
+    font-weight: normal;
 }
 
 .event-time-group {

@@ -38,6 +38,7 @@ import { GameInputManager } from './GameInputManager';
 import { CombatUI } from '../ui/CombatUI'; // [NEW]
 import { GameTimeHUD } from '../ui/GameTimeHUD';
 import { HistoricalEventPanel } from '../ui/HistoricalEventPanel';
+import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
 import { gameLog } from '../utils/GameLogger';
@@ -88,6 +89,7 @@ export class GameApp {
     public combatUI!: CombatUI; // [NEW]
     private gameTimeHUD!: GameTimeHUD;
     private historicalEventPanel!: HistoricalEventPanel;
+    private brawlFeedPanel!: BrawlFeedPanel;
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
 
@@ -297,12 +299,24 @@ export class GameApp {
                 this.combatSystem,
                 this.gameTimeHUD
             );
-            this.historicalEventPanel = new HistoricalEventPanel();
-            this.historicalEventPanel.init();
-            this.historicalEventPanel.setHistory(this.historicalEventManager.getEventHistory());
-            this.historicalEventManager.onEventTriggered((event) => {
-                this.historicalEventPanel.pushEvent(event);
-            });
+            if (GameConfig.SYSTEM.SANDBOX_MODE) {
+                this.brawlFeedPanel = new BrawlFeedPanel(this.timeSystem, this.cityManager);
+                this.brawlFeedPanel.init();
+                this.historicalEventManager.getLegionManager().setOnLegionAttackMarch(({ army, ultimateTargetCityId }) => {
+                    const targetCity = this.cityManager.getCity(ultimateTargetCityId);
+                    if (!targetCity) return;
+                    this.brawlFeedPanel.pushAttackMarch(army, targetCity);
+                });
+            }
+
+            if (GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS) {
+                this.historicalEventPanel = new HistoricalEventPanel();
+                this.historicalEventPanel.init();
+                this.historicalEventPanel.setHistory(this.historicalEventManager.getEventHistory());
+                this.historicalEventManager.onEventTriggered((event) => {
+                    this.historicalEventPanel.pushEvent(event);
+                });
+            }
             this.rebellionSystem = new RebellionSystem(
                 this.cityManager,
                 this.timeSystem,
