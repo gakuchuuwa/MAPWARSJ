@@ -25,6 +25,7 @@ import {
     type ReinforcementJoinDeps,
 } from '../legion/combat/BattleReinforcementPoll';
 import { restoreScriptedQinTroops, resolveSiegeBattleResult, shouldScriptedQinBeDestroyed } from '../legion/ScriptedQinLegion';
+import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
 
 export class SiegeManager {
     private static get JOIN_RADIUS(): number {
@@ -56,6 +57,13 @@ export class SiegeManager {
             spatialRegistry: this.legionManager.getSpatialRegistry(),
             removeArmy: (army) => this.legionManager.removeArmy(army),
             isArmyWaitingSiege: (armyId) => this.isArmyWaitingSiege(armyId),
+            resolveBattleCityName: (center) => {
+                const nearest = this.cityManager.getNearestCity(null, {
+                    latitude: center.lat,
+                    longitude: center.lng,
+                });
+                return nearest?.name ?? '未知';
+            },
         };
     }
 
@@ -580,7 +588,12 @@ export class SiegeManager {
                 const latestCity = this.cityManager.getCity(targetCity.id);
                 if (latestCity && latestCity.factionId !== army.getFactionId()) {
                     siegeLog(`🏰 [Siege] City Conquered by ${army.name}: ${targetCity.name}`);
-                    this.cityManager.updateCity(targetCity.id, { factionId: army.getFactionId(), troops: 1000 });
+                    this.cityManager.updateCity(targetCity.id, {
+                        factionId: army.getFactionId(),
+                        troops: 1000,
+                    }, {
+                        captorLegionName: army.name || '军团',
+                    });
 
                     // [FIX] CityManager 的 updateCity 内部会触发 onCityUpdated 回调，自动调用 legionManager.refreshCityRegistry()
                     // 这里删除了重复调用，避免同一帧内对 607 个城市执行两次 O(N) 的物理引擎重建，解决 31ms 的性能毛刺
@@ -609,6 +622,7 @@ export class SiegeManager {
                 siegeLog(`[Siege] Attacker Defeat!`);
                 this.activeSieges.delete(targetCity.id);
                 if (shouldScriptedQinBeDestroyed(siegePreset, army, 'attacker')) {
+                    markLegionAnnihilationFeed(army, 'attacker', targetCity.name);
                     army.destroy();
                 } else {
                     restoreScriptedQinTroops(army);
@@ -669,6 +683,7 @@ export class SiegeManager {
                 () => { siegeLog(`[Siege] Defender Legion ${legion.name} Victory`); },
                 () => {
                     if (shouldScriptedQinBeDestroyed(siegePreset, legion, 'defender')) {
+                        markLegionAnnihilationFeed(legion, 'defender', targetCity.name);
                         legion.destroy();
                         this.legionManager.removeArmy(legion);
                     } else {
@@ -693,6 +708,7 @@ export class SiegeManager {
                 () => { siegeLog(`[Siege] Attacker Legion ${legion.name} Victory`); },
                 () => {
                     if (shouldScriptedQinBeDestroyed(siegePreset, legion, 'attacker')) {
+                        markLegionAnnihilationFeed(legion, 'attacker', targetCity.name);
                         legion.destroy();
                         this.legionManager.removeArmy(legion);
                     } else {

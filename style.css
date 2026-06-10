@@ -435,7 +435,7 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
-    font-size: 16px;
+    font-size: 18px; /* 加大标题字号 */
     font-weight: bold;
     color: #1d3326; /* 深黛青 */
     padding-bottom: 4px;
@@ -443,18 +443,26 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
 }
 
 .event-header button {
-    background: transparent;
-    border: none;
-    color: #5b7a66; /* 柳叶青 */
+    background: rgba(125, 111, 90, 0.1);
+    border: 1px solid rgba(125, 111, 90, 0.3);
+    border-radius: 4px;
+    color: #1d3326; /* 深黛青 */
     cursor: pointer;
-    font-size: 14px;
-    padding: 4px;
-    transition: color 0.2s, transform 0.2s;
+    font-size: 13px;
+    padding: 4px 10px;
+    transition: all 0.2s ease;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .event-header button:hover {
-    color: #1d3326;
-    transform: scale(1.1);
+    background: rgba(125, 111, 90, 0.2);
+    color: #9c302f;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .tool-btn:hover:not(:disabled) {
@@ -596,8 +604,8 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
     z-index: 900; /* 低于控制面板的 1000 和军团按钮的 10000 */
     display: none;
     background: linear-gradient(to right, rgba(235, 220, 195, 0) 0%, rgba(235, 220, 195, 0.4) 30%, rgba(216, 197, 168, 0.6) 100%);
-    padding: 24px 28px; /* 恢复正常留白 */
-    width: min(380px, calc(100vw - 16px));
+    padding: 60px 28px 24px 90px; /* 顶部留白60px避开右上角的调试面板，左侧留白避开透明遮罩 */
+    width: min(500px, calc(100vw - 16px)); /* 向左扩展宽度 */
     max-height: 100vh;
     overflow: hidden;
     color: #5b7a66; /* 柳叶青 */
@@ -668,38 +676,61 @@ path.npc-hitbox {
 #event-content {
     margin-top: 8px;
     overflow-y: auto;
-    height: calc(100vh - 80px); /* 占据几乎全部高度 */
+    height: calc(100vh - 120px); /* 扣除顶部60px留白、底部24px留白和标题的高度 */
     max-height: none;
     padding-right: 8px; /* 给滚动条留点空间 */
 }
 
+/* 沉浸式定制滚动条 */
+#event-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+#event-content::-webkit-scrollbar-track {
+    background: transparent; /* 轨道完全透明 */
+}
+
+#event-content::-webkit-scrollbar-thumb {
+    background: rgba(125, 111, 90, 0.3); /* 淡淡的枯茶色 */
+    border-radius: 4px;
+}
+
+#event-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(125, 111, 90, 0.6); /* 鼠标悬浮时加深 */
+}
+
 /* 大乱斗军情：面板背景仍从上到下铺满；仅 #event-content 内文字顶推、不滚动 */
-.event-panel.event-panel--brawl {
+.event-panel.event-panel--brawl:not(.collapsed) {
     top: 0;
     bottom: 0;
     max-height: none;
     border-radius: 0;
 }
 
-.event-panel.event-panel--brawl #event-content {
-    position: relative;
-    overflow: hidden;
-    overflow-y: hidden;
-    height: calc(100vh - 80px);
-    max-height: calc(100vh - 80px);
-    padding-right: 0;
-    scrollbar-width: none;
+.event-panel.collapsed {
+    bottom: auto !important; /* 解除底部绑定，让面板缩上去 */
+    border-radius: 0 0 0 8px; /* 恢复左下圆角 */
+    padding-bottom: 24px; /* 紧凑边距 */
 }
 
-.event-panel.event-panel--brawl #event-content::-webkit-scrollbar {
-    display: none;
+.event-panel.collapsed #event-content {
+    display: none !important; /* 隐藏内容 */
+}
+
+.event-panel.event-panel--brawl #event-content {
+    position: relative;
+    overflow-y: auto; /* 允许滚动 */
+    height: calc(100vh - 120px);
+    max-height: calc(100vh - 120px);
+    padding-right: 8px; /* 留出滚动条空间 */
+    /* 移除隐藏滚动条的设定，方便用户滑动 */
 }
 
 .event-panel.expanded {
     bottom: 0; /* 展开时拉到底部 */
     padding-bottom: 24px; /* 恢复正常留白，任由军团按钮悬浮在其上层 */
     border-radius: 0; /* 展开到底部时去掉圆角 */
-    width: min(380px, calc(100vw - 16px));
+    width: min(500px, calc(100vw - 16px)); /* 向左扩展宽度 */
 }
 
 .event-panel.expanded #event-content {
@@ -747,13 +778,13 @@ path.npc-hitbox {
 }
 
 .event-desc--feed {
-    font-size: 13px;
-    line-height: 1.55;
+    font-size: 15px; /* 加大字号 */
+    line-height: 1.6; /* 稍微增加行高 */
     letter-spacing: 0.02em;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 4px;
+    gap: 6px; /* 增加间距 */
 }
 
 .feed-time {
@@ -768,18 +799,40 @@ path.npc-hitbox {
 }
 
 .feed-legion {
-    color: #5b7a66;
+    color: #4a3c28; /* 深古铜色，与势力的深绿色区分 */
+    font-weight: bold;
+    background: rgba(125, 111, 90, 0.15); /* 加一层淡淡的底色 */
+    border: 1px solid rgba(125, 111, 90, 0.3); /* 加一圈细边框，做成标签样式 */
+    border-radius: 4px;
+    padding: 0 5px; /* 左右留一点空隙 */
 }
 
 .feed-action {
-    color: #7d6f5a;
+    color: #1a1a1a; /* 极深的炭黑色，绝对清晰 */
+    font-weight: normal; /* 必须保持常规粗细，这样才能把前后加粗的势力和据点隔开 */
+    padding: 0 4px; /* 左右留出呼吸空间 */
 }
 
 .feed-city {
+    color: #2f5c6e; /* 琉璃蓝/靛青，将城池名称与前后的红绿文字彻底区分 */
+    font-weight: bold;
+}
+
+.feed-fall {
     color: #9c302f;
     font-weight: bold;
+    margin-left: 4px;
     text-decoration: underline;
-    text-decoration-color: rgba(156, 48, 47, 0.3);
+    text-decoration-color: rgba(156, 48, 47, 0.4);
+    text-underline-offset: 3px;
+}
+
+.feed-wipe {
+    color: #6b4c2a;
+    font-weight: bold;
+    margin-left: 4px;
+    text-decoration: underline;
+    text-decoration-color: rgba(107, 76, 42, 0.35);
     text-underline-offset: 3px;
 }
 

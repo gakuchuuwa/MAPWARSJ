@@ -39,6 +39,7 @@ import { CombatUI } from '../ui/CombatUI'; // [NEW]
 import { GameTimeHUD } from '../ui/GameTimeHUD';
 import { HistoricalEventPanel } from '../ui/HistoricalEventPanel';
 import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
+import { Army } from '../legion/Army';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
 import { gameLog } from '../utils/GameLogger';
@@ -302,10 +303,25 @@ export class GameApp {
             if (GameConfig.SYSTEM.SANDBOX_MODE) {
                 this.brawlFeedPanel = new BrawlFeedPanel(this.timeSystem, this.cityManager);
                 this.brawlFeedPanel.init();
-                this.historicalEventManager.getLegionManager().setOnLegionAttackMarch(({ army, ultimateTargetCityId }) => {
-                    const targetCity = this.cityManager.getCity(ultimateTargetCityId);
-                    if (!targetCity) return;
-                    this.brawlFeedPanel.pushAttackMarch(army, targetCity);
+                this.cityManager.setOnCityCaptured((event) => {
+                    if (!event.captorLegionName) return;
+                    if (!BrawlFeedPanel.isEliminableFaction(event.previousFactionId)) return;
+                    if (this.cityManager.getCitiesByFaction(event.previousFactionId).length > 0) return;
+
+                    this.brawlFeedPanel.pushFactionFall({
+                        attackerFactionId: event.newFactionId,
+                        legionName: event.captorLegionName,
+                        defenderFactionId: event.previousFactionId,
+                        cityName: event.cityName,
+                    });
+                });
+                Army.setAnnihilationReporter((army, info) => {
+                    if (!BrawlFeedPanel.isEliminableFaction(army.getFactionId())) return;
+                    this.brawlFeedPanel.pushLegionAnnihilated({
+                        factionId: army.getFactionId(),
+                        legionName: army.name || '军团',
+                        cityName: info.cityName,
+                    });
                 });
             }
 

@@ -13,18 +13,11 @@ import {
 import { canResumeSavedMarch, marchPathPointsFromPreview } from './marchResumePolicy';
 import type { CityManager } from '../../world/CityManager';
 
-export interface LegionAttackMarchPayload {
-    army: Army;
-    ultimateTargetCityId: string;
-}
-
 export interface LegionRoadMarchDeps {
     cityManager: CityManager;
     roadFailureLogCooldown: Map<string, number>;
     marchDiagLogCooldown: Map<string, number>;
     triggerSiege: (army: Army, targetCity: City) => void;
-    /** 大乱斗：军团朝敌据点首次出发行军（非续走、非抵城即战） */
-    onLegionAttackMarch?: (payload: LegionAttackMarchPayload) => void;
 }
 
 function orderRoadMarchStartCandidates(
@@ -268,16 +261,6 @@ export function moveLegionToCity(
     if (pathPoints.length > 0) {
         army.lastPath = [...finalPath];
         army.moveAlongPath(pathPoints);
-
-        const ultimateCity = deps.cityManager.getCity(targetCityId);
-        const ultimateHostile =
-            ultimateCity &&
-            ultimateCity.factionId &&
-            ultimateCity.factionId !== factionId;
-        if (ultimateHostile && deps.onLegionAttackMarch) {
-            deps.onLegionAttackMarch({ army, ultimateTargetCityId: targetCityId });
-        }
-
         notePathfinding();
         return true;
     }

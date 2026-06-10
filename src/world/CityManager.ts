@@ -14,6 +14,20 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { isMacroMapZoom } from '../config/StrategicView';
 
+export interface CityUpdateOptions {
+    skipCaptureLog?: boolean;
+    /** 占城军团名（大乱斗军情用） */
+    captorLegionName?: string;
+}
+
+export interface CityCapturedEvent {
+    cityId: string;
+    cityName: string;
+    previousFactionId: string;
+    newFactionId: string;
+    captorLegionName?: string;
+}
+
 export class CityManager {
     private cities: City[] = [];
     private map: GameMap;
@@ -23,6 +37,7 @@ export class CityManager {
 
     // Callbacks
     private onCityUpdatedCallback: (() => void) | null = null;
+    private onCityCapturedCallback: ((event: CityCapturedEvent) => void) | null = null;
 
     // Debounce for deferred rendering
     private pendingRenderFrame: number | null = null;
@@ -120,6 +135,10 @@ export class CityManager {
 
     public setOnCityUpdated(callback: () => void): void {
         this.onCityUpdatedCallback = callback;
+    }
+
+    public setOnCityCaptured(callback: ((event: CityCapturedEvent) => void) | null): void {
+        this.onCityCapturedCallback = callback;
     }
 
     // [NEW] History & Editor Logic
@@ -406,7 +425,7 @@ export class CityManager {
     public updateCity(
         id: string,
         data: Partial<City>,
-        options?: { skipCaptureLog?: boolean }
+        options?: CityUpdateOptions
     ): void {
         const cityIndex = this.cities.findIndex(c => c.id === id);
         if (cityIndex !== -1) {
@@ -432,6 +451,16 @@ export class CityManager {
 
                 // 旗号立即刷新（全图分块重绘有竞态，会偶发不更新）
                 void this.applyFactionChangeVisual(updatedCity, oldCity.factionId);
+
+                if (this.onCityCapturedCallback) {
+                    this.onCityCapturedCallback({
+                        cityId: id,
+                        cityName: oldCity.name,
+                        previousFactionId: oldCity.factionId,
+                        newFactionId: data.factionId,
+                        captorLegionName: options?.captorLegionName,
+                    });
+                }
             } else if (needsFullRender) {
                 this.requestRender();
             } else if ('troops' in data) {

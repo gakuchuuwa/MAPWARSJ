@@ -26,6 +26,20 @@ export class Army implements IBattleUnit {
     /** 剧本攻城任务的完成回调：只在最终目标城之战结束时触发（途中 hop 战不触发） */
     public siegeMissionComplete: (() => void) | null = null;
 
+    /** 大乱斗军情：全军覆没播报（destroy 时触发） */
+    public feedAnnihilation?: { side: 'attacker' | 'defender'; cityName: string };
+
+    private static annihilationReporter?: (
+        army: Army,
+        info: { side: 'attacker' | 'defender'; cityName: string }
+    ) => void;
+
+    public static setAnnihilationReporter(
+        reporter: ((army: Army, info: { side: 'attacker' | 'defender'; cityName: string }) => void) | null
+    ): void {
+        Army.annihilationReporter = reporter ?? undefined;
+    }
+
     // [NEW] Visibility control for siege battles
     public visible: boolean = true;
     public ignoreCityCollision: boolean = false; // [FIX] Prevent accidental siege during field battles
@@ -527,6 +541,12 @@ export class Army implements IBattleUnit {
                 rendererRef.destroy();
             }, corpseMs);
             this.renderer = null;
+        }
+
+        if (this.type === 'legion' && this.feedAnnihilation && Army.annihilationReporter) {
+            const info = this.feedAnnihilation;
+            this.feedAnnihilation = undefined;
+            Army.annihilationReporter(this, info);
         }
     }
 

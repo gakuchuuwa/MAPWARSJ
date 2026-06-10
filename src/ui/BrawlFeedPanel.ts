@@ -1,42 +1,54 @@
 import { TimeSystem } from '../app/TimeSystem';
 import { formatBcYearChinese } from '../data/QinRegnalCalendar';
-import { Army } from '../legion/Army';
-import { City } from '../types/core';
 import { CityManager } from '../world/CityManager';
 
 const SEASON_NAMES = ['春', '夏', '秋', '冬'] as const;
 
-export interface BrawlAttackFeedEntry {
-    year: number;
-    season: number;
-    attackerFactionName: string;
-    legionName: string;
-    defenderFactionName: string;
-    cityName: string;
-}
+const NON_ELIMINABLE_FACTIONS = new Set(['', 'panjun', 'neutral']);
 
 function formatFeedTime(year: number, season: number): string {
     const seasonLabel = SEASON_NAMES[season] ?? SEASON_NAMES[0];
     return `${formatBcYearChinese(year)} ${seasonLabel}`;
 }
 
-function formatAttackLine(entry: BrawlAttackFeedEntry): string {
-    const time = formatFeedTime(entry.year, entry.season);
+function formatFactionFallLine(
+    time: string,
+    attackerFactionName: string,
+    legionName: string,
+    cityName: string,
+    defenderFactionName: string
+): string {
     return `<span class="feed-time">${escapeHtml(time)}</span>` +
-           `<span class="feed-faction">${escapeHtml(entry.attackerFactionName)}</span>` +
-           `<span class="feed-legion">${escapeHtml(entry.legionName)}</span>` +
-           `<span class="feed-action">攻打</span>` +
-           `<span class="feed-faction">${escapeHtml(entry.defenderFactionName)}</span>` +
-           `<span class="feed-city">${escapeHtml(entry.cityName)}</span>`;
+           `<span class="feed-faction">${escapeHtml(attackerFactionName)}</span>` +
+           `<span class="feed-legion">${escapeHtml(legionName)}</span>` +
+           `<span class="feed-action">攻占</span>` +
+           `<span class="feed-city">${escapeHtml(cityName)}</span>` +
+           `<span class="feed-fall">${escapeHtml(defenderFactionName)}亡</span>`;
+}
+
+function formatLegionAnnihilatedLine(
+    time: string,
+    factionName: string,
+    legionName: string,
+    cityName: string
+): string {
+    return `<span class="feed-time">${escapeHtml(time)}</span>` +
+           `<span class="feed-faction">${escapeHtml(factionName)}</span>` +
+           `<span class="feed-legion">${escapeHtml(legionName)}</span>` +
+           `<span class="feed-action">于</span>` +
+           `<span class="feed-city">${escapeHtml(cityName)}</span>` +
+           `<span class="feed-wipe">全军覆没</span>`;
 }
 
 /**
  * 大乱斗右侧军情面板（#event-display）
- * 新消息从顶部插入，旧消息逐条下移；不删条目、不滚动。
+ * 记录：势力灭亡、攻/守军团全军覆没。
  */
 export class BrawlFeedPanel {
     private root: HTMLElement | null = null;
     private contentEl: HTMLElement | null = null;
+    private toggleBtn: HTMLElement | null = null;
+    private expanded = true;
 
     constructor(
         private timeSystem: TimeSystem,
@@ -59,36 +71,74 @@ export class BrawlFeedPanel {
             headerTitle.textContent = '军情';
         }
 
-        const toggleBtn = document.getElementById('toggle-event-list-btn');
-        if (toggleBtn) {
-            toggleBtn.style.display = 'none';
+        this.toggleBtn = document.getElementById('toggle-event-list-btn');
+        if (this.toggleBtn) {
+            this.toggleBtn.innerHTML = this.expanded ? '▲ 收起' : '▼ 展开';
+            this.toggleBtn.title = this.expanded ? '收起面板' : '展开面板';
+
+            this.toggleBtn.addEventListener('click', () => {
+                this.expanded = !this.expanded;
+                this.root?.classList.toggle('collapsed', !this.expanded);
+                if (this.toggleBtn) {
+                    this.toggleBtn.innerHTML = this.expanded ? '▲ 收起' : '▼ 展开';
+                    this.toggleBtn.title = this.expanded ? '收起面板' : '展开面板';
+                }
+            });
         }
 
         this.root.style.display = 'block';
         this.renderEmpty();
     }
 
-    /** 军团朝敌据点出发时追加一条「攻打」记录 */
-    pushAttackMarch(army: Army, targetCity: City): void {
-        const attackerFactionId = army.getFactionId();
-        if (!attackerFactionId || attackerFactionId === 'neutral') return;
-        if (!targetCity.factionId || targetCity.factionId === attackerFactionId) return;
-        if (!this.contentEl) return;
+    static isEliminableFaction(factionId: string | undefined): boolean {
+        if (!factionId) return false;
+        return !NON_ELIMINABLE_FACTIONS.has(factionId);
+    }
 
-        const entry: BrawlAttackFeedEntry = {
-            year: this.timeSystem.getYear(),
-            season: this.timeSystem.getSeason(),
-            attackerFactionName: this.cityManager.getFactionName(attackerFactionId),
-            legionName: army.name || '军团',
-            defenderFactionName: this.cityManager.getFactionName(targetCity.factionId),
-            cityName: targetCity.name,
-        };
+    /** 势力灭亡：攻方占最后一城，守方势力亡 */
+    pushFactionFall(params: {
+        attackerFactionId: string;
+        legionName: string;
+        defenderFactionId: string;
+        cityName: string;
+    }): void {
+        const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
+        const line = formatFactionFallLine(
+            time,
+            this.cityManager.getFactionName(params.attackerFactionId),
+            params.legionName,
+            params.cityName,
+            this.cityManager.getFactionName(params.defenderFactionId)
+        );
+        this.pushFeedLine(line);
+    }
+
+    /** 攻方或守方军团于某据点全军覆没 */
+    pushLegionAnnihilated(params: {
+        factionId: string;
+        legionName: string;
+        cityName: string;
+    }): void {
+        if (!BrawlFeedPanel.isEliminableFaction(params.factionId)) return;
+
+        const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
+        const line = formatLegionAnnihilatedLine(
+            time,
+            this.cityManager.getFactionName(params.factionId),
+            params.legionName,
+            params.cityName
+        );
+        this.pushFeedLine(line);
+    }
+
+    private pushFeedLine(lineHtml: string): void {
+        if (!this.contentEl) return;
 
         this.contentEl.querySelector('.event-item--hint')?.remove();
         this.contentEl.querySelector('.event-item--current')?.classList.remove('event-item--current');
 
         const wrapper = document.createElement('div');
-        wrapper.innerHTML = this.renderLineBlock(entry, true);
+        wrapper.innerHTML = `<div class="event-item animate-in event-item--current"><div class="event-desc event-desc--feed">${lineHtml}</div></div>`;
         const newEl = wrapper.firstElementChild as HTMLElement | null;
         if (!newEl) return;
 
@@ -99,18 +149,15 @@ export class BrawlFeedPanel {
         };
         newEl.addEventListener('animationend', onSettled, { once: true });
         requestAnimationFrame(onSettled);
+
+        while (this.contentEl.children.length > 1000) {
+            this.contentEl.lastElementChild?.remove();
+        }
     }
 
     private renderEmpty(): void {
         if (!this.contentEl) return;
         this.contentEl.innerHTML = '<div class="event-item event-item--hint">等待军情…</div>';
-    }
-
-    private renderLineBlock(entry: BrawlAttackFeedEntry, highlight: boolean): string {
-        let cls = 'event-item animate-in';
-        if (highlight) cls += ' event-item--current';
-        const line = formatAttackLine(entry);
-        return `<div class="${cls}"><div class="event-desc event-desc--feed">${line}</div></div>`;
     }
 }
 

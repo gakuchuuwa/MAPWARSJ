@@ -18,6 +18,10 @@ import {
     restoreScriptedQinTroops,
     shouldScriptedQinBeDestroyed,
 } from '../ScriptedQinLegion';
+import {
+    markLegionAnnihilationFeed,
+    resolveAnnihilationCityName,
+} from '../LegionAnnihilationFeed';
 import type { CityManager } from '../../world/CityManager';
 import type { SpatialRegistry } from '../../world/SpatialRegistry';
 
@@ -62,7 +66,8 @@ function legionToFieldAdapter(
     deps: LegionFieldBattleDeps,
     legion: Army,
     side: 'attacker' | 'defender',
-    presetResult?: 'attacker_win' | 'defender_win'
+    presetResult: 'attacker_win' | 'defender_win' | undefined,
+    battleCityName: string
 ): IBattleUnit {
     return BattleUnitFactory.createAdapter(
         legion.id,
@@ -80,6 +85,7 @@ function legionToFieldAdapter(
                 legion.setCombatState(false);
                 return;
             }
+            markLegionAnnihilationFeed(legion, side, battleCityName);
             legion.destroy();
             deps.removeArmy(legion);
         }
@@ -223,9 +229,14 @@ function startFieldBattleBetween(
 
     const presetResult = resolveScriptedQinPreset(attLegions, defLegions);
     const allLegions = [...attLegions, ...defLegions];
+    const battleCityName = resolveAnnihilationCityName(deps.getCityManager(), center);
 
-    const attUnits = attLegions.map((l) => legionToFieldAdapter(deps, l, 'attacker', presetResult));
-    const defUnits = defLegions.map((l) => legionToFieldAdapter(deps, l, 'defender', presetResult));
+    const attUnits = attLegions.map((l) =>
+        legionToFieldAdapter(deps, l, 'attacker', presetResult, battleCityName)
+    );
+    const defUnits = defLegions.map((l) =>
+        legionToFieldAdapter(deps, l, 'defender', presetResult, battleCityName)
+    );
 
     for (const legion of allLegions) {
         legion.stopMovement(true);

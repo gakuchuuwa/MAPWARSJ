@@ -12,7 +12,6 @@ import {
 } from './field/LegionFieldBattle';
 import {
     moveLegionToCity as roadMarchMoveLegionToCity,
-    type LegionAttackMarchPayload,
     type LegionRoadMarchDeps,
 } from './march/LegionRoadMarch';
 import { SpatialRegistry } from '../world/SpatialRegistry';
@@ -500,13 +499,12 @@ export class LegionManager {
         return nearest;
     }
 
-    public moveLegionToCity(army: Army, targetCityId: string, sourceCityId?: string): boolean {
-        return roadMarchMoveLegionToCity(this.roadMarchDeps, army, targetCityId, sourceCityId);
+    public getCityManager(): CityManager {
+        return this.cityManager;
     }
 
-    /** 大乱斗军情：军团朝敌据点出发时回调 */
-    public setOnLegionAttackMarch(handler: ((payload: LegionAttackMarchPayload) => void) | undefined): void {
-        this.roadMarchDeps.onLegionAttackMarch = handler;
+    public moveLegionToCity(army: Army, targetCityId: string, sourceCityId?: string): boolean {
+        return roadMarchMoveLegionToCity(this.roadMarchDeps, army, targetCityId, sourceCityId);
     }
 
     /**

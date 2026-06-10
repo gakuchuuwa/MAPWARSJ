@@ -15,6 +15,7 @@ import {
     restoreScriptedQinTroops,
     shouldScriptedQinBeDestroyed,
 } from '../ScriptedQinLegion';
+import { markLegionAnnihilationFeed } from '../LegionAnnihilationFeed';
 
 export const BATTLE_REINFORCEMENT_POLL_INTERVAL_SEC = 0.2;
 
@@ -30,6 +31,7 @@ export interface ReinforcementJoinDeps {
     spatialRegistry: SpatialRegistry;
     removeArmy: (army: Army) => void;
     isArmyWaitingSiege?: (armyId: string) => boolean;
+    resolveBattleCityName?: (center: LatLng) => string;
 }
 
 export function isEligibleReinforcement(
@@ -54,7 +56,8 @@ function createLegionAdapter(
     legion: Army,
     deps: ReinforcementJoinDeps,
     side: 'attacker' | 'defender',
-    presetResult?: 'attacker_win' | 'defender_win'
+    presetResult: 'attacker_win' | 'defender_win' | undefined,
+    battleCityName: string
 ) {
     return BattleUnitFactory.createAdapter(
         legion.id,
@@ -72,6 +75,7 @@ function createLegionAdapter(
                 legion.setCombatState(false);
                 return;
             }
+            markLegionAnnihilationFeed(legion, side, battleCityName);
             legion.destroy();
             deps.removeArmy(legion);
         }
@@ -102,7 +106,8 @@ export function tryJoinLegionToBattle(
     legion.setCombatState(true, battleField.type, center);
 
     const side: 'attacker' | 'defender' = isAttacker ? 'attacker' : 'defender';
-    const adapter = createLegionAdapter(legion, deps, side, battleField.getPresetResult());
+    const battleCityName = deps.resolveBattleCityName?.(center) ?? '未知';
+    const adapter = createLegionAdapter(legion, deps, side, battleField.getPresetResult(), battleCityName);
     battleField.addReinforcement(adapter, isAttacker);
     return true;
 }
@@ -143,10 +148,18 @@ export function pollBattleFieldReinforcements(
 }
 
 function buildJoinDeps(legionManager: LegionManager, siegeWaiter?: (id: string) => boolean): ReinforcementJoinDeps {
+    const cityManager = legionManager.getCityManager();
     return {
         spatialRegistry: legionManager.getSpatialRegistry(),
         removeArmy: (army) => legionManager.removeArmy(army),
         isArmyWaitingSiege: siegeWaiter,
+        resolveBattleCityName: (center) => {
+            const nearest = cityManager.getNearestCity(null, {
+                latitude: center.lat,
+                longitude: center.lng,
+            });
+            return nearest?.name ?? '未知';
+        },
     };
 }
 
