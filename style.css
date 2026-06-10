@@ -828,11 +828,11 @@ path.npc-hitbox {
 }
 
 .feed-wipe {
-    color: #6b4c2a;
+    color: #9c302f; /* 统一为和亡国一样的朱砂红 */
     font-weight: bold;
     margin-left: 4px;
     text-decoration: underline;
-    text-decoration-color: rgba(107, 76, 42, 0.35);
+    text-decoration-color: rgba(156, 48, 47, 0.4);
     text-underline-offset: 3px;
 }
 
