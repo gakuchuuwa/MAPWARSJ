@@ -736,4 +736,10 @@ export const FACTIONS: Faction[] = [
     { id: 'wei2', name: '静塞' },
     { id: 'lingwu', name: '灵武' },
     { id: 'qiepantuo', name: '朅盘陀' },
+    // ── 2026-06-11 新增：库页岛民族（鄂罗克/奇楞/库页）──
+    { id: 'eluoke', name: '鄂罗克' },                // 鄂罗克(库页岛东岸/诺托罗), Oroch
+    { id: 'qileng', name: '奇楞' },                  // 奇楞(库页岛中西部/幌内), Orok
+    { id: 'kuye', name: '库页' },                    // 库页(库页岛南部/白主), Gilyak/Kuye
+    // ── 2026-06-11 新增：阿伊努（北海道）──
+    { id: 'ayinu', name: '阿伊努' },                 // 阿伊努(北海道南端/白老), Ainu
 ];

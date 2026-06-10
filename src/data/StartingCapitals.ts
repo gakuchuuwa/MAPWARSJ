@@ -567,4 +567,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'lingwu': 'city_lingzhou',
     'xin2': 'city_nanpu',
     'qiepantuo': 'city_humicheng',
+    'eluoke': 'city_nuotuoluo',
+    'qileng': 'city_huangnei',
+    'kuye': 'city_baizhu',
+    'ayinu': 'city_bailao',
 };

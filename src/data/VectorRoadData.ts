@@ -25921,6 +25921,23 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
+                name: "胜山馆-囊哈儿卫",
+                type: "road",
+                id: "road_city_katsuyama_city_nanghar_1781106131831",
+                startConnection: "city_katsuyama",
+                endConnection: "city_nanghar"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [140.0994, 41.8008],
+                    [141.951599, 52.209343],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
                 name: "邦敦-三菩(下段)+邦敦-三菩(上段)(上段)",
                 type: "road",
                 id: "road_1780392096396_merge"

@@ -2039,4 +2039,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_juyansai', name: '居延塞', factionId: 'panjun', lat: 41.8942, lng: 101.044, type: 'small_city', troops: 5000 },
     { id: 'city_gongzhubao', name: '公主堡', factionId: 'panjun', lat: 37.2008, lng: 75.3745, type: 'pass', troops: 10000, region: 'WESTERN' },
     { id: 'city_jimai', name: '吉麦', factionId: 'panjun', lat: 29.3012, lng: 90.6812, type: 'small_city', troops: 5000 },
+    // ── 2026-06-11 新增：库页岛民族据点 ──
+    { id: 'city_nuotuoluo', name: '诺托罗', factionId: 'eluoke', lat: 49.2, lng: 143.1, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '库页岛东岸中部河口，鄂罗克渔猎放牧聚散中心' },
+    { id: 'city_huangnei', name: '幌内', factionId: 'qileng', lat: 47.8, lng: 142.3, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '库页岛中西部幌内川山林，奇楞核心狩猎营地' },
+    { id: 'city_baizhu', name: '白主', factionId: 'kuye', lat: 46.15, lng: 142.2, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落' },
+    { id: 'city_bailao', name: '白老', factionId: 'ayinu', lat: 42.55, lng: 141.36, type: 'small_city', region: 'JAPAN', troops: 5000, note: '北海道南端据泊地方，阿伊努传统聚落（白老古名）' },
 ];

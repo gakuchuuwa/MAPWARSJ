@@ -604,6 +604,10 @@ export class CityAssetManager {
         'dangchang': '迭',
         'hai2': '海',
         'qiepantuo': '朅盘',
+        'eluoke': '鄂罗',
+        'qileng': '奇楞',
+        'kuye': '库页',
+        'ayinu': '阿伊',
     };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

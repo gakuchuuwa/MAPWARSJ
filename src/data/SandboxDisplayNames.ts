@@ -646,4 +646,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wei2': '韦',
     'lingwu': '灵',
     'qiepantuo': '朅盘',
+    // ── 2026-06-11 新增：库页岛民族 ──
+    'eluoke': '鄂罗',
+    'qileng': '奇楞',
+    'kuye': '库页',
+    // ── 2026-06-11 新增：阿伊努（北海道）──
+    'ayinu': '阿伊',
 };
