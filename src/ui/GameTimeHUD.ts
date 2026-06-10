@@ -14,7 +14,7 @@ export function formatYearArabic(year: number): string {
 }
 
 /**
- * 左下 HUD（Stitch 303e82de，坐标+纪年+播放）
+ * 左下 HUD（Stitch 833dbd17 切图）
  */
 export class GameTimeHUD {
     private root: HTMLElement | null = null;
@@ -40,7 +40,7 @@ export class GameTimeHUD {
         this.root.style.display = 'flex';
 
         if (this.runBtn) {
-            this.runBtn.textContent = '播放';
+            this.runBtn.setAttribute('aria-label', '播放');
             this.runBtn.addEventListener('click', () => {
                 const game = (window as any).game;
                 if (game?.historicalEventManager) {
@@ -107,7 +107,7 @@ export class GameTimeHUD {
     /** 同步播放/暂停按钮文案 */
     setPlayingState(playing: boolean): void {
         if (!this.runBtn) return;
-        this.runBtn.textContent = playing ? '暂停' : '播放';
+        this.runBtn.setAttribute('aria-label', playing ? '暂停' : '播放');
         this.runBtn.classList.toggle('playing', playing);
     }
 

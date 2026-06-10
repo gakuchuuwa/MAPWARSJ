@@ -1,48 +1,28 @@
-/* Stitch 303e82de · MapWar Bottom-Left HUD（自生成 HTML 提取，无 Tailwind） */
+/* 左下 HUD — Stitch 833dbd17 切图（截图来源，非手写样式） */
 
 #game-time-hud {
-    --hud-width: 304px;
-    --lacquer-dark: rgba(28, 26, 26, 0.85);
-    --gold-accent: #d4af37;
-    --silver-filigree: #c0c0c0;
-    --ink-grey: #8c877d;
+    --hud-w: 336px;
     position: fixed;
     left: 20px;
     bottom: 20px;
     z-index: 5000;
     display: none;
     flex-direction: column;
-    gap: 12px;
-    width: var(--hud-width);
+    gap: 6px;
+    width: var(--hud-w);
     pointer-events: auto;
     font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
-    filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.6));
+    filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.45));
 }
 
+/* 坐标面板 */
 #game-time-hud .hud-map-panel {
     position: relative;
-    padding: 20px;
-    background: rgba(10, 10, 10, 0.85);
-    backdrop-filter: blur(3px);
-    border: 14px solid transparent;
-    border-image: url('/assets/UI/classic_border.png') 33 stretch;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9), 0 8px 16px rgba(0, 0, 0, 0.6);
-    overflow: hidden;
-}
-
-#game-time-hud .hud-map-panel::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.05;
-    pointer-events: none;
-    mix-blend-mode: overlay;
-    background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-}
-
-/* Removed simple stitch filigree corners in favor of the full border-image */
-#game-time-hud .filigree-corner {
-    display: none;
+    width: var(--hud-w);
+    min-height: 112px;
+    background: url('/assets/stitch-hud-833dbd17/panel.png') no-repeat center / 100% 100%;
+    padding: 18px 20px 14px;
+    box-sizing: border-box;
 }
 
 #game-time-hud .hud-map-rows {
@@ -50,126 +30,119 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 #game-time-hud .hud-map-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
     gap: 8px;
-    font-size: 16px;
-    line-height: 1.4;
+    font-size: 14px;
+    line-height: 1.35;
+    /* 遮住切图里的示例字 */
+    background: rgba(12, 11, 10, 0.72);
+    margin: 0 -4px;
+    padding: 1px 4px;
 }
 
 #game-time-hud .hud-map-row .label {
-    color: var(--ink-grey);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    color: rgba(235, 230, 220, 0.9);
     flex-shrink: 0;
 }
 
+#game-time-hud .hud-map-row .label::after {
+    content: ':';
+}
+
 #game-time-hud .hud-map-row .value {
-    color: #fff;
-    font-weight: 700;
+    color: #f4f0e8;
+    font-weight: 600;
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
 
 #terrain-type {
-    color: #f59e0b;
+    color: #e8a030 !important;
     font-weight: 700;
 }
 
+/* 纪年条 */
 #game-time-hud .hud-date-bar {
-    min-height: 60px;
+    position: relative;
+    width: var(--hud-w);
+    height: 48px;
+    background: url('/assets/stitch-hud-833dbd17/date-bar.png') no-repeat center / 100% 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(10, 10, 10, 0.85);
-    border: 14px solid transparent;
-    border-image: url('/assets/UI/classic_border.png') 33 stretch;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9), 0 8px 16px rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(3px);
-    position: relative;
-    overflow: hidden;
-}
-
-/* Hide simple yellow bars as we use border-image now */
-#game-time-hud .hud-date-bar::before,
-#game-time-hud .hud-date-bar::after {
-    display: none;
 }
 
 #game-time-hud .hud-date-inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
-    gap: 16px;
-    letter-spacing: 0.2em;
-    font-size: 14px;
-    font-weight: 500;
-    color: #fff;
+    gap: 0.55em;
+    padding: 4px 12px;
+    background: rgba(8, 7, 6, 0.78);
+    letter-spacing: 0.12em;
+    font-size: 18px;
+    font-weight: 600;
+    color: #e6c96a;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-#game-year-display {
-    font-weight: 700;
-}
-
-#game-time-hud .hud-date-sep {
-    color: var(--gold-accent);
-    opacity: 0.5;
-}
-
+#game-year-display,
 #game-season-display {
-    color: rgba(255, 255, 255, 0.9);
+    color: inherit;
+    font: inherit;
 }
 
+/* 石刻按钮（各键独立切图） */
 #game-time-hud .hud-controls {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    display: flex;
+    gap: 4px;
+    width: var(--hud-w);
 }
 
 #game-time-hud .game-time-btn {
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 3px;
+    flex: 1;
+    height: 68px;
+    border: none;
+    padding: 0;
     cursor: pointer;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 700;
-    color: #ece8e0;
-    letter-spacing: 0.04em;
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
-        linear-gradient(180deg, #3f3a34 0%, #2a2622 42%, #1a1815 100%);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.16),
-        inset 0 -3px 5px rgba(0, 0, 0, 0.8),
-        0 4px 10px rgba(0, 0, 0, 0.7);
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    border: 2px solid #3d3832;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    color: transparent;
+    font-size: 0;
     position: relative;
-    transition: filter 0.15s ease, transform 0.1s ease;
 }
 
-#game-time-hud .game-time-btn:hover {
-    filter: brightness(1.08);
+#game-time-hud #run-event-btn {
+    background-image: url('/assets/stitch-hud-833dbd17/btn-play.png');
 }
 
-#game-time-hud .game-time-btn:active {
-    transform: translateY(1px);
-    box-shadow:
-        inset 0 2px 7px rgba(0, 0, 0, 0.5),
-        0 1px 3px rgba(0, 0, 0, 0.35);
-    filter: brightness(0.85);
+#game-time-hud #speed2-btn {
+    background-image: url('/assets/stitch-hud-833dbd17/btn-speed.png');
+}
+
+#game-time-hud #speed-btn {
+    background-image: url('/assets/stitch-hud-833dbd17/btn-speed5.png');
+}
+
+#game-time-hud #perf-toggle-btn {
+    background-image: url('/assets/stitch-hud-833dbd17/btn-perf.png');
 }
 
 #game-time-hud .game-time-btn.active,
 #game-time-hud .game-time-btn.playing {
-    border-color: #b4271f;
-    filter: brightness(1.15);
+    filter: brightness(1.12) saturate(1.05);
+}
+
+#game-time-hud .game-time-btn:active {
+    filter: brightness(0.92);
+    transform: translateY(1px);
 }
