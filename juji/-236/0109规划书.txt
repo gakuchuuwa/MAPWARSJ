@@ -1,0 +1,237 @@
+The Operations Room
+
+
+【Project Qin】秦汉战争地缘大推演·执行手册 (Part 1 核心篇)
+[!IMPORTANT] 最高指导原则 本项目致力于制作学术级、GIS地理基准的战史复盘视频。 叙事核心：采用**“AVG文戏 + MAP武戏”双轨结构，配合“全知视角史诗旁白”**，拒绝低幼化的角色对话。 史观基准：文戏考据《中国军事通史》，武戏考据《历代战争史》。
+
+第一部分：核心方针与方法论 (Core Methodology)
+1. 双轨并行制 (The Dual-Track Policy)
+本项目在内容构建上严格切割为两条平行的逻辑轨道，确保“考据”与“演出”的学术分离：
+
+Track A - 视觉推演轨 (Mapping / 武戏)
+
+核心依据：《历代战争史》（台湾三军大学编）。
+
+执行标准：提取书中关于行军路线、地形关隘、兵力部署的数据，在 GIS 卫星高程地图上进行精确的兵棋推演。
+
+功能：解决“怎么打”的问题 (Tactics & Execution)。
+
+Track B - 内容骨架轨 (Narrative / 文戏)
+
+核心依据：《中国军事通史》（中国人民革命军事博物馆编）。
+
+执行标准：提取书中关于地缘政治、战略决策、朝堂博弈的论述，通过 AVG (Visual Novel) 形式展现决策瞬间。
+
+功能：解决“为什么打”的问题 (Strategy & Motives)。
+
+2. 制作模式：分段流水线 (Segmented Production)
+为了保证工业化量产质量，每一集视频在物理上拆分为三个独立制作段落，最后在剪辑软件中合并：
+
+Part 1：战略决策 (AVG) —— [静态] 宫廷背景 + 人物立绘 + 史诗旁白。
+
+Part 2：战役执行 (MAP) —— [动态] 卫星地图 + 兵棋推演 + 战术箭头。
+
+Part 3：战果结算 (UI) —— [数据] 结果展示 + 局势复盘面板。
+
+3. 叙事风格：全知旁白 (Omniscient Voiceover)
+绝对禁区：严禁使用角色第一人称对话（如：“李斯：大王，我们要打赵国”）。
+
+执行标准：统一使用第三人称史诗解说（史官视角）。
+
+范例：“公元前236年，依据《军事通史》记载，李斯向秦王剖析了赵国北线空虚的致命破绽...”
+
+文风规范：现代古典风 + 硬核军事术语（如：战略真空、内线作战、钳形攻势、脊柱折断）。
+
+4. 五级地理叙事级联 (The 5-Level Geospatial Cascade)
+此模型对应军事科学中的“战略-战役-战术”三级结构，并细化为适合 GIS 的五层变焦逻辑：
+
+Level 1 (Strategic): 地缘格局
+镜头：Zoom 7 (中原战略全图)。
+任务：【看大局】。展示战前七国态势，明确“谁强谁弱”。
+
+Level 2 (Grand Tactical): 战略决策
+镜头：Zoom 8 (战区/国境线)。
+任务：【找窗口】。指出哪怕只存在一个月的“战略窗口期”。
+
+Level 3 (Operational): 战役行动 —— *核心 Hook 放置处*
+镜头：Zoom 9 (行军路线/地形)。
+任务：【选路径】。展示常规路线 vs 奇袭路线的对比。
+
+Level 4 (Tactical): 战斗执行
+镜头：Zoom 10 (局部战场/城池)。**注：仅在史料支撑时使用。**
+任务：【看细节】。具体的兵棋碰撞、特效演出。如果史料不足，用“兵棋撞击+特效”代替微观厮杀。
+
+Level 5 (Outcome): 战果结算
+镜头：Zoom 8-9 (回拉视角) / UI 面板。
+任务：【算代价】。地图变色，数据展示。战果通常需要“拉远”看版图变化，而非推近。
+
+根据您提供的原稿与我们确立的“工业化生产”逻辑，我对 第二部分：技术架构与工作流 进行了专业化升级。
+
+此次优化重点在于：明确各层级的数据交付标准，并将“Gemini 3 Pro + Claude 4.5 Opus”确立为双核心。
+
+第二部分：技术架构与工作流 (Technical Workflow)
+本系统采用**“从数据到像素” (Data-to-Pixel)** 的四层金字塔架构，确保从史料挖掘到画面渲染的全链路自动化。
+
+1. 情报层 (Intelligence Layer) —— [基石]
+执行者：NotebookLM
+
+核心职责：ETL (数据抽取与清洗)。作为项目启动的绝对基石，负责对核心史料进行分段爆破。
+
+执行标准：
+
+文戏数据源：针对《中国军事通史》，提取“原话引用”、“人物性格”、“决策动机”。
+
+武戏数据源：针对《历代战争史》，提取“兵力数值”、“地理坐标(GIS)”、“行军路线”。
+
+输出物：纯文本格式的《史实摘要》(Fact Sheet)。无情报，不启动。
+
+2. 指挥层 (Command Layer) —— [大脑]
+执行者：Gemini 3 Pro (总监制)
+
+核心职责：无限记忆中枢。利用超长 Context Window 记忆全剧本细节，负责由上至下的逻辑把控。
+执行标准：
+逻辑清洗：将 NotebookLM 提供的散碎史料，重组为符合“三段式架构”的叙事逻辑（势→法→果）。
+
+指令封装：编写发给 DeepSeek 的标准化 Prompt，强制规定输出 JSON 格式。
+明确界限：
+    - 视觉逻辑（Prompt）：可以使用现代比喻（如“切断电源”指代切断补给）。
+    - 最终文案（Script）：**严禁出现现代词汇（如 CPU、主板、电源）。**必须使用纯正的战国策/史记风（如“粮道绝”、“门户开”）。
+
+3. 脚本层 (Scripting Layer) —— [指令]
+执行者：DeepSeek V3 (金牌编剧)
+
+核心职责：中文史诗文案与脚本生成。
+
+执行标准：
+1. 接收 Gemini 的大纲，撰写极具“中国历史味”的旁白。
+2. 将文案与其对应的 GIS 坐标封装为 JSON 格式。
+
+执行标准：输出双模态 JSON 脚本，驱动引擎运行：
+
+Type A - 决策脚本 (AVG Schema)：
+
+包含字段：background_id (场景), actor_asset (立绘), dialogue_text (旁白), bgm_track (音乐)。
+
+Type B - 推演脚本 (MAP Schema)：
+
+包含字段：spawn_unit (生成兵棋), move_path_coords (GIS路径坐标), camera_zoom (镜头高度), battle_fx (特效触发)。
+
+4. 渲染层 (Rendering Layer) —— [演出]
+执行者：Antigravity Engine (TypeScript/WebGL)
+底层架构师：Claude 4.5 Opus (首席工程师)
+
+核心职责：实时仿真与可视化。
+
+核心能力：
+
+混合状态机 (Hybrid State Machine)：支持在 AVG 模式（立绘演出）和 MAP 模式（地图仿真）之间进行帧级无缝切换，保证叙事连贯性。
+
+实体管理 (Entity System)：
+
+加载并渲染 SGZ11 (三国志11) 风格的高精度人物立绘与兵棋 Sprite。
+
+实现基于贝塞尔曲线的平滑行军动画。
+
+导演模式 (Director Mode)：
+
+内置虚拟摄像机插值算法 (Lerp)，实现从 Zoom 7 到 Zoom 11 的丝滑运镜。
+
+一键全屏运行，供 OBS 进行高码率录制。
+
+第三部分：11集详细分期规划 (The 11-Episode Roadmap)
+命名标准：严格遵循 【年份 + 势力对抗 + 核心地名】 的学术战史格式。
+
+专题名：秦灭六国大一统全战史 (The Unification Wars)
+第一阶段：赵国折脊
+EP01：前236年 · 秦赵 · 阏与奇袭战
+自媒体爆点： “消失的秦军”。解读王翦如何利用赵燕战争的窗口期，放弃常规路径，通过太行山脉的极限行军，在阏与完成致命背刺。
+
+EP02：前234年 · 秦赵 · 平阳围歼战
+自媒体爆点： “十万斩首的真相”。深度复盘桓齮如何利用平阳地形实施“围点打援”，展示秦军在野战中恐怖的系统化杀伤力。
+
+EP03：前233年 · 赵秦 · 肥下反击战
+自媒体爆点： “战神李牧的围猎”。解读边防军团如何南下，通过肥下的机动反包围，让大秦铁骑遭遇统一战争中首次成建制的覆灭。
+
+EP04：前232年 · 赵秦 · 番吾防卫战
+自媒体爆点： “最后的落日余晖”。复盘赵国在国力枯竭前，如何通过番吾的多线协同，再次击退秦军双路合围，展现冷兵器防御战的巅峰。
+
+第二阶段：中原震荡
+EP05：前230年 · 秦韩 · 阳翟接管战
+自媒体爆点： “降维打击的行政灭国”。分析内史腾如何以行政接管代替大规模杀伤，通过控制核心枢纽阳翟，标志着战国七雄旧秩序的正式崩溃。
+
+EP06：前229年 · 秦赵 · 井陉对峙战
+自媒体爆点： “王翦VS李牧：名将的超限战”。解析井陉关长达一年的心理博弈。当正面战场无法突破时，秦国如何通过情报战在棋盘外杀掉对手。
+
+EP07：前227年 · 秦燕 · 易水遭遇战
+自媒体爆点： “斩首行动后的暴怒”。荆轲刺秦后的报复性打击，秦军铁骑在易水畔对燕代联军实施的毁灭性扫荡。
+
+第三阶段：终极决战
+EP08：前225年 · 秦魏 · 大梁水淹战
+自媒体爆点： “自然力量武器化”。硬核拆解秦军如何利用流体力学原理，引导黄河、鸿沟之水，将中原最强防御都市大梁化为泽国。
+
+EP09：前224年 · 秦楚 · 蕲南决战
+自媒体爆点： “六十万对六十万的终局”。对比李信的挫败与王翦在蕲南的稳健。复盘冷兵器时代规模最大的总体战，楚魂的最后绝响。
+
+EP10：前222年 · 秦燕代 · 辽东追击战
+自媒体爆点： “跨越地理极缘的远征”。展示秦军在冰天雪地中挺进辽东，彻底清除赵燕残余势力的末端追歼战。
+
+EP11：前221年 · 秦齐 · 临淄入城式
+自媒体爆点： “和平演变下的帝国诞生”。解析秦军如何通过侧翼大纵深穿插，让坐拥百年的齐国在临淄不战而降，见证第一个大一统帝国的剪彩。
+
+第四部分：EP01 第一段【咸阳廷议】执行标准 (EP01 Execution Specs)本部分是 DeepSeek 生成脚本 与 Antigravity 引擎渲染 的直接依据。
+1. 基础参数设定 (Base Parameters)Sequence ID: EP01_SEQ_01 至 EP01_SEQ_05Time Period: -236 BCAsset Pack: Qin_Dynasty_Dark (深色调) + SGZ10_Sprites (三国志10像素兵棋)Audio Vibe: 宫廷-压抑(Deep/Tense) $\rightarrow$ 战场-宏大(Epic/Marching)
+2. 五段式事件序列表 (The 5-Sequence Event Block)Sequence 
+1：战略机遇 (The Opportunity)类型：MODE_AVG (文戏)场景资产：BG_Xianyang_Palace_Night (咸阳章台宫，深夜，烛火动态)人物立绘：Actor_QinWang (黑衣，按剑，面部特写)Actor_LiSi (布衣，拱手)Actor_WeiLiao (阴影中，若隐若现)运镜逻辑：Camera_Slow_Push (呼吸感推拉)。核心旁白：李斯指出赵国主力北攻燕国，南部空虚，此乃“万世之一时”。Sequence 
+2：战场态势 (The Vacuum)类型：MODE_MAP (武戏 - 宏观)地图中心：Coords: [114.4, 36.6] (河北/山西交界)镜头层级：Zoom 7 (战区全览)事件逻辑：动作：红色兵棋 (赵军主力) 从 Handan 出发，向东北 (燕国) 快速移动。结果：邯郸以南 (邺城区域) 迷雾散开，显示无守军状态，标注文字“战略真空 (Vacuum)”。旁白：侧重“势”的分析——庞暖主力北上，赵国门户洞开。Sequence 
+3：钳形攻势 (The Pincer Movement)类型：MODE_MAP (武戏 - 战术)镜头层级：Zoom 9 (地形细节)事件逻辑：左钳 (王翦)：黑色精锐兵棋从 Shangdang (上党) 生成，沿 太行山脉 (Taihang Mts) 蜿蜒穿行，点亮坐标 Eyu (阏与)。右钳 (桓齮)：黑色大部队兵棋从 Henei (河内) 生成，直线跨过 漳水 (Zhang River)，向北推进。视觉重点：必须展现“山路难行(慢)”与“平原推进(快)”的速度差异，最终形成钳子形状。Sequence 
+4：兵权整合 (The Convergence)类型：MODE_MAP (武戏 - 微操特写)镜头层级：Zoom 10 (超清特写)地图中心：City_Yecheng (邺城)核心代码事件：Event_Merge_Army逻辑：两路兵棋在城下接触 $\rightarrow$ 触发粒子特效 $\rightarrow$ 杂兵消失，生成一个体型更大、光效更强的“精锐兵团” (象征王翦“军归斗食以下，留精锐”)。攻城：精锐兵团撞击邺城，播放攻城音效。Sequence 
+5：地缘结算 (The Outcome)类型：MODE_UI (结果展示)镜头层级：Zoom 9 (区域展示)事件逻辑：版图变色：邺城、安阳等9座城池区域，由 Color_Red (赵) 渐变为 Color_Black (秦)。UI 面板：弹出半透明结算框。Text: "秦拔赵九城"Effect: "赵都邯郸，门户大开"旁白收尾：总结此战确立了秦灭六国的首个前进基地。
+
+
+第五部分：自动化技术工作流 (Technical Workflow v5.3)
+1. 系统综述 (System Overview)项目代号：MAPWAR (Based on Antigravity Engine)核心定义：专为战史复盘设计的 “时空数据可视化引擎”。
+技术哲学：Code-Driven (代码驱动)。拒绝传统非线编软件的手动拖拽，通过 TypeScript 事件编辑器实现“脚本加载 $\rightarrow$ 自动演算 $\rightarrow$ 实时渲染”。输出标准：4K / 60fps / 广播级动态动画。
+2. 四层技术栈架构 (The 4-Layer Tech Stack)本系统执行严格的 “Data-to-Pixel” (从数据到像素) 单向流水线：Layer 1：情报层 (Data ETL)核心组件：NotebookLMIO：Raw History Text $\rightarrow$ Structured Fact Sheet职能：分段爆破。针对当前 Sequence 精准提取人物原话与 GIS 坐标。Layer 2：架构层 (Architecture)核心组件：Gemini (Pro/Ultra)IO：Fact Sheet $\rightarrow$ Standardized Prompt职能：逻辑中间件。决定“何时切换地图”、“何时使用特写”，生成发给 DeepSeek 的标准指令。Layer 3：脚本层 (Scripting)核心组件：DeepSeek (Coder)IO：Prompt $\rightarrow$ JSON Script职能：指令封装。生成引擎可读取的 JSON 代码，包含精确的时间戳与贝塞尔曲线参数。Layer 4：渲染层 (Rendering)核心组件：Antigravity Engine (TypeScript + WebGL)IO：JSON Script $\rightarrow$ Pixel Stream (OBS)职能：实时仿真。解析 JSON，驱动 Sprite 移动、相机运镜与特效粒子。
+3. 核心运行逻辑：混合状态机 (Hybrid State Machine)引擎核心是一个无限循环的 Event Loop，根据 JSON 指令在三种状态间切换：State A (AVG)：文戏模式。静态背景 + 动态立绘 + 字幕。State B (MAP)：武戏模式。GIS 瓦片地图 + 兵棋 Sprite + 粒子特效。State C (UI)：结算模式。全屏高斯模糊 + 数据仪表盘。
+4. 标准化数据协议 (JSON Protocol Standard) 所有 DeepSeek 生成的脚本必须遵循 EP_Schema.json 标准 (引入 Zod 严格校验)，包含 sequence_id, assets_preload, timeline 三大核心字段。
+5. 工业化执行标准：7步作业法 (The 7-Step Protocol)
+
+
+
+Pre-Step 1. 事件拆分与定调 (Segmentation & Hook)
+
+执行：Gemini 3 Pro
+
+动作：读取史料，拆解战役阶段，提炼“自媒体爆点” (如“消失的秦军”)。
+
+产出：《分集策划案》 (Episode Plan)。
+
+把每一集的各段按以下执行。
+
+Step 2. 情报爆破 (Data ETL)执行：NotebookLM动作：仅查询当前段落史料（例如战争史，军事史，资治通鉴等）。产出：纯文本《史实摘要》(含 GIS 坐标与名言，数据)。
+
+Step 3. 逻辑架构 (The Bridge)执行：Gemini动作：将摘要转化为结构化指令。产出：Standardized Prompt（包含运镜逻辑与叙事节奏）。
+
+Step 4. 双模脚本生成 (Code Gen)执行：DeepSeek (Coder)动作：依据指令写代码。产出：script.json (包含 dialogue 字段，无需单独 txt)。让 DeepSeek 将四字军事术语（兵临城下、长驱直入、分兵合围、背水一战、弃甲曳兵、全军覆没）直接写入 JSON 对话。
+
+Step 5. 资产并行生产 (Assets) 执行：Asset Bank (复用库) / Midjourney (固定微调模型) / TTS 动作：优先复用通用素材，缺损部分按 JSON 里的 assets_list 生产。产出：统一画风的立绘 Sprite、对齐文件名的语音 MP3。
+
+Step 6. 引擎一键装配 (Assembly) 执行：Antigravity Engine 动作：将 JSON 和素材放入文件夹，热加载启动。产出：可实时预览的动态画面 (开启 Director Mode 拖动时间轴微调)。
+
+Step 7. 导演模式采集 (Capture)执行：OBS动作：引擎开启无 UI 全屏模式，高码率录制。产出：4K 原始视频素材 (Raw Footage)。
+
+Step 8. 灵魂注入 (Soul Injection)执行：剪映 / PR动作：合成声画。产出：添加物理音效（马蹄/兵器声）与史诗 BGM，最终成片。
+
+---
+
+## 🛠️ 标准化提示词库 (Standardized Prompt Library)
+
+为了确保每一集的工业化质量，我们建立了 `MAPWAR/prompts/` 目录，存放每一步的专用提示词模版。请直接复制文件内容发送给对应的 AI 模型。
+
+- **Step 1**: `prompts/01_Segmentation_Hook.md` (Gemini)
+- **Step 2**: `prompts/02_Data_ETL.md` (NotebookLM)
+- **Step 3**: `prompts/03_Logic_Bridge.md` (Gemini)
+- **Step 4**: `prompts/04_Script_Generation.md` (DeepSeek)
+
+
+

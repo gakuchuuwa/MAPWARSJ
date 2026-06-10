@@ -1,0 +1,649 @@
+/**
+ * SandboxDisplayNames.ts
+ *
+ * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
+ *
+ * 历史: 原本作为局部变量定义在 CityAssetManager.getProcessedFlagText 内部，
+ * 但 CityEditor 等 UI 需要在编辑时实时检查"某 faction 是否登记了旗号短名"，
+ * 因此抽取到独立文件，两个消费者都 import。
+ *
+ * ⚠ 规范 (来自 cities.ts 顶部注释 + AGENTS.md §4.4):
+ *   - 单字势力 (如秦、汉、唐): 用单字
+ *   - 复姓/双字势力 (如 hongbang 鸿庞, daxia 大夏, gongsun_d 公孙):
+ *     **必须**用完整双字。系统底层 DynamicFlagTextGenerator 原生支持双字垂直排版，
+ *     **绝对不允许简化为单字**（如把鸿庞简写为"庞"、大夏简写为"大"）。
+ *   - **政权（优先级 2）**：旗号 = 史籍**正式国号**（如 大理、大清、大周、百济、黎）。
+ *     禁止自造截字（后百）、地名代国号（兰）、姓代国号（甄）、后缀国/族/人（黎国）。
+ */
+export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+    'zhancheng': '占城',
+    'monong': '墨侬',
+    'shuizhen': '水真',
+    'wala': '瓦剌',
+    'wuliangha': '兀良',
+    'dingling': '丁零',
+    'nifuhe': '尼夫',
+    'guer': '古尔',
+    'xiajiasi': '坚昆',
+    'zhen': '甄',
+    'dongshengwei': '胜',
+    'dizhou': '棣',
+    fushi: '保大',
+    'weihaiwei': '威海',
+    'xia': '夏',
+    'shang': '商',
+    'zhou': '周',
+    'qi': '齐',
+    'jin': '晋',
+    'chu': '楚',
+    'wu': '吴',
+'yue': '越',
+    'qin': '秦',
+    'song': '宋',
+    'yan': '燕',
+    'zhao': '赵',
+'wei': '魏',
+    'han': '韩',
+    'han_d': '汉',
+    'shu': '蜀',
+    'dian': '通海',
+    'xin': '新',
+    'cheng': '简',
+    'liang': '凉',
+    'juqu_d': '沮渠',
+    'tufa_d': '秃发',
+    'qiuchi': '杨',
+'helian': '赫连',
+    'xiongnu': '匈奴',
+'xianbei': '鲜卑',
+    'jie': '羯',
+    'di': '氐',
+    'qiang': '羌',
+    'tuoba': '拓跋',
+    'yuwen': '宇文',
+    'liang_d': '梁',
+    'chen': '陈',
+    'sui': '随',
+    'tang': '唐',
+    'min': '闽',
+'shatuo': '沙陀',
+'qidan': '契丹',
+'bohai': '渤海',
+    'jurchen': '女真',
+'dangxiang': '大夏',
+'menggu_d': '蒙古',
+    'manzhou_d': '大清',
+    'ming_d': '大明',
+    'liao_d': '大辽',
+    'dai_d': '代',
+    'feng_d': '冯',
+    'zhongshan': '中山',
+    'wang_d': '王',
+    'xiao_d': '萧',
+    'lu_fy_d': '卢',
+    'li_lx_d': '李',
+'pei_hd_d': '裴',
+'yuan_cj_d': '袁',
+    'xie_cj_d': '谢',
+'yue_d': '岳',
+    'qian_d': '钱',
+    'kong_d': '孔',
+    'cao_d': '曹',
+    'jiujiang': '浔',
+    'zhang2_d': '章',   // 章姓
+
+    'quanrong': '犬戎',
+    'sushen': '肃慎',
+'yuezhi': '月氏',
+    'chile': '敕勒',
+'rouran': '柔然',
+    'baiji': '百济',
+'tubo': '吐蕃',
+    'tujue': '突厥',
+'tiele': '铁勒',
+    'huangfu': '泾',
+    'guo': '果',
+    'zi': '资',
+    'jing2': '景',
+    'long2': '陇',
+    'song2': '松',
+'qing': '庆',
+    'ting': '汀',
+    'quan': '权',
+    'huige': '回纥',
+    'dayue': '大越',
+    'yamato': '大和',
+    'kamakura': '镰仓',
+'edo': '德川',
+    'izumo': '出云',
+    'satsuma': '萨摩',
+    'ryukyu': '琉球',
+    'so': '对马',
+    'gaya': '伽倻',
+    'aki': '安艺',
+    'echigo': '越后',
+    'kai': '甲斐',
+    'owari': '尾张',
+    'chosokabe': '土佐',
+    'hashiba': '丰臣',
+    'honda': '下野',
+    'aizu': '会津',
+    'dahan': '大韩',
+    'xingliao': '兴辽',
+'gongsun_d': '公孙',
+    'jiaodong': '胶东',
+    'jibei': '济北',
+    'wusun': '乌孙',
+'dayuan': '大宛',
+    'gouding': '句町',
+    'dongxian': '董',
+    'tongma': '铜马',
+    'baibo': '黄巾',
+    'wuhuan': '乌桓',
+    'xianlingqiang': '先零',
+'cheshihou': '车师',
+'yelang': '夜郎',
+'ailao': '哀牢',
+'fuyu': '夫余',
+'shule': '疏勒',
+    'loulan': '楼兰',
+    'shache': '莎车',
+'qiuci': '龟兹',
+    'yanqi': '焉耆',
+
+    'zhonghua': '中华',
+    'tianchao': '天朝',
+    'gaogouli': '高句',
+    'xinluo': '新罗',
+    'huihui': '回回',
+    'menggu': '蒙元',
+    'qiangzang': '羌藏',
+    'yuenan': '越南',
+    'dianmian': '滇缅',
+    'manzhou': '满洲',
+    'donghu': '东胡',
+    'luoyue': '骆越',
+    'ba': '巴',
+    'wey': '卫',
+'qifu_d': '乞伏',
+    'tuyu_d': '吐谷',
+    'linyi': '林邑',
+
+    // 2026-05-25 两晋核对追加势力
+    'murong': '慕容',
+    'erzhu': '尔朱',
+
+    'xu': '徐',
+    'zhi_d': '智',
+    'cangtou': '苍头',
+
+    // 2026-05-25 汉朝核对追加势力
+'zhai_han': '翟',
+    'yin': '殷',
+    'yingbu': '九江',
+    'ouyue': '台',
+
+    // 2026-05-25 三国核对追加势力
+    'liubiao': '刘',
+    'lvbu': '吕',
+
+    // ── 2026-05-25 新增：隋朝核对追加势力 ──
+    'wazhai': '瓦岗',
+    'liangshidu': '银',
+    'linshihong': '楚南',
+    'lu': '庐',
+'kumo': '奚',
+    'xijue': '十箭',
+    'xian_d': '冼',
+    'xiqin': '西秦',
+
+    // ── 2026-05-25 新增：唐朝核对追加势力 ──
+'xueyantuo': '薛延',
+    'tujishi': '突骑',
+    'nanzhao': '南诏',
+'xiaobolu': '勃律',
+    'qiufu': '裘甫',
+
+    // ── 2026-05-25 五代十国势力 ──
+    'dongdan': '东丹',
+'dali': '大理',
+    'luodian': '罗甸',
+
+    // ── 2026-05-25 北宋辽金势力 ──
+    'gusiluo': '唃厮',
+    'goryeo': '高丽',
+'nongzhigao': '邕',
+    'fangla': '方',
+
+    // ── 2026-05-25 北宋辽金势力 v2 ──
+    'zhongxiang': '钟',
+    'yang_aner': '登',
+    'haoding': '红袄',
+    'liwang': '黑旗',
+
+    // ── 2026-05-25 元朝蒙古势力 ──
+    'huarazim': '花剌',
+    'pagan': '缅',
+    'champa': '占婆',
+'dongxia': '东夏',
+'chagatai': '察合',
+    'ogodei': '窝阔',
+    'kereyid': '克烈',
+    'naiman': '乃蛮',
+    'tatar': '塔塔',
+    'merkit': '蔑儿',
+'ongut': '汪古',
+    'red_turban': '红巾',
+    'zhangshicheng': '大周',
+    'xushouhui': '天完',
+    'luoping': '罗平',
+    'daxing': '大兴',
+    'chendiaoyan': '漳',
+
+    // ── 2026-05-25 明朝势力 ──
+    'fang_guozhen': '浙方',
+    'liutong_yangqing': '汉王',
+    'dengmaoqi': '铲平',
+    'yezongliu': '处',
+    'dada_ming': '鞑靼',
+    'oirat_ming': '卫拉',
+    'jianzhou_nvzhen': '建州',
+'haixi_nvzhen': '海西',
+    'yeren_nvzhen': '东海',
+    'jilimi': '吉里',
+    'hezhe': '赫哲',
+    'kakizaki': '松前',
+    'fujiwara': '奥州',
+'luchuan': '麓川',
+    'chijin': '赤斤',
+    'guiyi': '归义',
+    'anding_wei': '安定',
+    'joseon': '朝鲜',
+    'siam': '暹罗',
+    'chenla': '真腊',
+    // ── 2026-05-25 明清之际势力（28个）──
+    'dashun': '大顺',
+    'daxi_ming': '大西',
+    'hongguang': '弘光',
+    'longwu': '隆武',
+    'lujian': '婺',
+    'yongli': '永历',
+    'chahar': '察哈',
+    'dzungar': '准噶',
+    'khoshut': '和硕',
+    'yarkand': '叶尔',
+    'khoja': '和卓',
+    'gaxa': '噶厦',
+    'jinchuan_g': '金川',
+    'jinchuan_x': '小川',
+    'geng': '靖南',
+    'shuntian': '顺天',
+    'bailian': '白莲',
+    'chimei': '赤眉',
+    'miaomin': '苗民',
+    'gurkha': '廓喀',
+    'kazakh': '哈萨',
+    'kokand': '霍罕',
+    'badakhshan': '达克',
+    // ── 2026-05-25 晚清／近代势力（21个）──
+    'taiping': '太平',
+    'dacheng': '大成',
+    'han_nian': '捻汉',
+    'han_dadian': '大捻',
+'pingnan': '平南',
+    'qianhui': '回军',
+    'miao_qing': '苗军',
+    'tuoming': '清真',
+    'yettishar': '哲德',
+    'riben': '日本',
+    // ── 2026-05-26 新增：大金、大元 ──
+    'dajin': '大金',
+    'yuan_d': '大元',
+
+    // ── 2026-05-26 新增：肃慎系势力（挹娄、勿吉、靺鞨）──
+    'yilou': '挹娄',
+    'wuji': '勿吉',
+'mohe': '靺鞨',
+
+    // ── 2026-05-26 新增：室韦（隋唐时期东北亚部落联盟）──
+'shiwei': '室韦',
+
+    // ── 2026-05-26 新增：濊貊、毛文龙（毛文龙旗号用"毛"）──
+'huimo': '濊貊',
+    'mao_wenlong': '毛文',
+
+    // ── 2026-05-26 新增：满洲贵族世家 ──
+    'tunggiya': '佟佳',
+
+    
+
+    // ── 2026-05-26 新增：漠北草原势力旗号 ──
+'gaoche': '高车',
+    'da_yuan': '北元',
+
+    // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
+'kala': '喀喇',
+'sogdian': '粟特',
+    'kangju': '康居',
+    'geluolu': '葛逻',
+    'yuchi': '尉迟',
+    'an': '安',
+    'shi_clan': '石',
+
+    
+'huyan': '呼衍',
+    'yujiulu': '郁久',
+    'ashina': '史那',
+    'ashide': '史德',
+    'weiming': '嵬名',
+    'kiyad': '乞颜',
+'borjigin': '孛儿',
+    'jalair': '札剌',
+    'hongirad': '弘吉',
+    'choros': '绰罗',
+    // ── 2026-05-26 新增：青藏高原势力旗号（18个）──
+'guge': '古格',
+    'ladakh': '玛域',
+'tsangpa': '藏巴',
+    'ganden': '甘丹',
+    'bailan': '白兰',
+'supi': '苏毗',
+    'monpa': '门巴',
+    'lopi': '珞巴',
+'spurgyal': '悉补',
+'khon': '昆',
+    'lang_clan': '朗',
+    'karmapa': '噶玛',
+    // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力旗号 ──
+    'ava': '掸',
+    'dongxu': '东吁',
+'baiman': '白蛮',
+    'kunming_yi': '昆明',
+    'miao': '苗',
+    'pyu': '骠',
+    'mon': '孟',
+    'yang_bozhou': '播',
+    'tian_sizhou': '田',
+'mu_lijiang': '木',
+    'bayinnaung': '莽应',
+    'ming_zheng': '明郑',
+    'xiou': '西瓯',
+    'jing': '京',
+    'muong': '芒',
+    'paiwan': '排湾',
+    'trinh': '郑主',
+    'nguyen_guangnan': '阮主',
+    'yan_siqi': '闽海',
+
+    // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
+    'cong': '賨',
+    'qiao_d': '谯',
+    'zhe_d': '折',
+    'shanyue': '山越',
+    'she_ethnic': '畲',
+    'pu': '蒲',
+
+    
+    'tu': '土',
+
+    // ── 2026-05-27 新增：汪、向、覃、冉、储 ──
+    'wang_s': '汪',
+    'xiang_d': '向',
+    'tan_d': '覃',
+    'ran_d': '冉',
+    'chu_d': '储',
+
+    // ── 自动补全剩余的特殊势力映射，防止显示英文 ──
+'cen_d': '岑',
+    'hongbang': '鸿庞',
+    'xiyang': '西洋',
+    'xiyu': '西域',
+    'gan': '甘',
+    'jue': '角',
+    'zang': '藏',
+    'e': '鄂',
+    'nan': '南',
+
+    // ── 2026-05-27 补充：旗号文字缺失的14个势力 ──
+    'weili': '尉犁',
+    'pishan': '皮山',
+    'bandun': '板楯',
+    'seljuq': '塞尔',
+
+    // ── 2026-05-27 新增：青衣、五溪、姑蔑 ──
+'qingyi': '青衣',
+    'wuxi': '五溪',
+    'gumie': '衢',
+
+    // ── 2026-05-27 新增：生苗 ──
+    'shengmiao': '生苗',
+
+    // ── 2026-05-27 新增：且兰 ──
+
+    // ── 2026-05-27 新增：土尔扈特、索、伊吾 ──
+    'tuerhute': '土尔',
+
+    // ── 2026-05-27 新增：白马、蒯、庸、申、叟 ──
+    'kuai': '蒯',
+    'yong': '庸',
+'shen': '申',
+    'sou': '叟',
+
+    // ── 2026-05-27 新增：烧当 ──
+    'shaodang': '烧当',
+
+    // ── 2026-05-27 新增：靖江、盘瑶、马楚、排瑶、士、蒋 ──
+    'jingjiang': '靖江',
+    'panyao': '贺',
+'machu': '马楚',
+    'paiyao': '排瑶',
+    'jiang_s': '蒋',
+
+    'li_s': '里',
+    'leizhou': '雷',
+
+    // ── 2026-05-28 新增：黎(崖州) ──
+    // ── 2026-05-28 新增：工布(工布) ──
+
+    // ── 2026-05-28 新增：果洛、土谢图、土默特 ──
+    'golog': '果洛',
+    'tushetu': '土谢',
+    'tumed': '土默',
+
+    
+    'she': '奢',
+
+    
+    'liao': '僚',
+
+    'nong2': '侬',
+
+    // ── 2026-05-27 重制：药罗葛(娑陵) ──
+    'yaoluoge': '药罗',
+
+    // ── 2026-05-28 新增：南部(根城/日本)、萨曼(阿母城/中亚)、西域四政权 ──
+    'nanbu': '陆奥',
+    'saman': '萨曼',
+    'hepan': '喝槃',
+'humi': '瓦罕',
+    'teqin': '活',
+
+    // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──
+    'mamon': '马蒙',
+    'guzgan': '古兹',
+    'dai': '傣',
+    'taiyuan': '泰沅',
+    'luohu': '罗斛',
+
+    // ── 2026-05-28 新增：黑龙江流域民族/家族 ──
+    'nanai': '那乃',
+    'feiyaka': '费雅',
+
+    'anushidgin': '阿努',
+    'nanjie': '南杰',
+    'gandenpozhang': '颇章',
+
+    
+    'dawoer': '达斡',
+    'guangnanguo': '广南',
+    'tumengken': '图蒙',
+    'liren': '俚',
+
+    // ── 2026-05-28 新增：岭、琼波、索伦、图瓦 ──
+    'gling': '岭',
+    'khyungpo': '琼波',
+    'suolun': '索伦',
+    'tuva': '图瓦',
+
+    // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
+    'dayu': '大隅',
+    'anmei': '奄美',
+
+    // ── 2026-05-28 新增：康区藏族土司/部落 ──
+    'dalung': '达隆',
+    'gar_kham': '德司',
+    'kongsa': '孔萨',
+    'mingzheng': '明正',
+
+    // ── 2026-05-28 新增：波密(博窝) ──
+
+    // ── 2026-05-28 新增：达擦(八宿宗/康区) ──
+    'daca': '达擦',
+
+    // ── 2026-05-28 新增：景东(银生城/云南) ──
+    'jingdong': '景东',
+
+    // ── 2026-05-28 新增：霍尔(索宗/那曲) ──
+    'hor': '霍尔',
+
+    // ── 2026-05-28 新增：董(囊谦宗/玉树) ──
+    'dong': '隆庆',
+
+    // ── 2026-05-28 新增：白狼(巴塘宗/康区) ──
+'bailang': '白狼',
+
+    // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
+'duolu': '咄陆',
+'zhuxie': '朱邪',
+'hunxie': '浑邪',
+    'fu': '苻',
+    'tiemuer': '帖木',
+    'kawusi': '卡乌',
+    'keerkezi': '柯尔',
+    'yiduhu': '亦都',
+    'yangshao': '仰韶',
+    'yel': '耶律',
+    'guzhu': '孤竹',
+    'yizhi': '一支',
+    'zhuqian': '筑前',
+    'jibei2': '备中',
+    'jinchuan': '今川',
+    'xuan': '宣府',
+    'yangshe': '羊舌',
+    'henei': '河内',
+    'liguo': '黎',
+    'kang': '康',
+    'shuofang': '朔方',
+    'lushui': '卢水',
+    'yingli': '应理',
+    'guangwu': '广武',
+    'huizhou': '会',
+    'yiwu': '伊吾',
+    'pulei': '蒲类',
+    'duerbote': '杜尔',
+    'zhasaketu': '扎萨',
+    'kaerka': '喀尔',
+    'huihu': '回鹘',
+'wuzhumuqin': '乌珠',
+    'xingan': '兴安',
+    'zhadalan': '扎答',
+    'zhuerqi': '主儿',
+    'chechen': '车臣',
+'panjun': '叛军',
+    'pisha': '毗沙',
+    'yutian': '伏阇',
+    'yumi': '扜弥',
+    'keliya': '克里',
+    'xiye': '西夜',
+    'faqiang': '发羌',
+    'jiantang': '建塘',
+    'gongbu': '工布',
+    'niang': '娘',
+    'galangdiba': '波密',
+    'ali': '阿里',
+    'jieshuai': '竭帅',
+    'pazhu': '帕竹',
+    'qiong': '邛',
+    'zhuoshi': '卓',
+    'pengshi': '彭氏',
+    'qianzhong': '沅',
+    'cuanshi': '爨',
+    'dianguo': '滇',   // 滇国（拓东城）；旗作「滇」
+    'xinggu': '兴古',
+    'zangke': '牂牁',
+    'guangxin': '广信',
+    'kejia': '赣',
+    'ouyang': '欧阳',
+    'ning': '宁',
+'danyang': '宣',
+    'huai': '淮',
+    'huaiyang': '淮阳',
+    'cai': '蔡',
+    'shangzhou': '上洛',
+    'ying': '郢',
+    'heng': '衡',
+    'chen2': '郴',
+    'shixing': '始兴',
+    'yidou': '宜都',
+    'boren': '僰',
+'xin2': '信',
+    'kui': '夔',
+    'qi2': '蕲',
+    'danluo': '耽罗',
+    'woju': '沃沮',
+    'chen3': '月支',
+    'hui': '濊',
+    'dingan': '定安',
+    'wure': '兀惹',
+    'houliao': '后辽',
+    'dazhen': '大真',
+    'jilin': '吉林',
+    'sunite': '苏尼',
+    'dayuzi': '大玉',
+    'yingchuan': '漯',
+    'weiwuer': '维吾',
+    'gumo': '姑墨',
+    'wensu': '温宿',
+    'keerqin': '科尔',
+
+    // ── 2026-05-31 新增：民族起源地6势力 ──
+    'xiangxiong': '象雄',
+    'qingqiang': '茂',
+    'zhaowu': '昭武',
+    'gaoliang': '潘',
+    'ruoqiang': '婼羌',
+
+    // ── 2026-05-31 新增：原生小政权都城4势力 ──
+    'qiemo': '且末',
+    'weitou': '尉头',
+    'dangchang': '迭',
+
+    // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
+    'zhong': '仲',
+    'qingyuan_bd': '清苑',
+    'pingyuan': '高唐',
+    'yao': '尧',
+    'xichu': '西楚',
+    'lulin': '绿林',
+    'yunzhong': '云中',
+    'chunshen': '春申',
+    'qian': '矩',
+    'wan': '舒',
+    'hai2': '海',
+    'fu2': '抚',
+    'xinping': '邠',
+    'huan': '环',
+    'wei2': '韦',
+    'lingwu': '灵',
+    'qiepantuo': '朅盘',
+};

@@ -1,0 +1,10 @@
+{
+  "updated": "2026-06-09",
+  "instruction": "未命中四类审计表，暂按旗号字数落入4/5级。请填 auditCategory + auditNote；确认后写入对应 scratch/*_audit.json",
+  "counts": {
+    "total": 0,
+    "tier4_default": 0,
+    "tier5_default": 0
+  },
+  "pendingAudit": []
+}

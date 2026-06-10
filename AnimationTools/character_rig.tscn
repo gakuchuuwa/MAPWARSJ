@@ -1,0 +1,126 @@
+[gd_scene load_steps=1 format=3 uid="uid://b8j24k300000"]
+
+[node name="CharacterRig" type="Node2D"]
+
+[node name="Skeleton2D" type="Skeleton2D" parent="."]
+position = Vector2(576, 500)
+scale = Vector2(0.5, 0.5)
+
+[node name="Hip" type="Bone2D" parent="Skeleton2D"]
+rest = Transform2D(1, 0, 0, 1, 0, 0)
+
+[node name="TorsoSprite" type="Sprite2D" parent="Skeleton2D/Hip"]
+position = Vector2(0, -60)
+texture = load("res://sprites/torso.png")
+offset = Vector2(0, 0)
+
+[node name="Leg_L_Up" type="Bone2D" parent="Skeleton2D/Hip"]
+position = Vector2(25, 0)
+rest = Transform2D(1, 0, 0, 1, 25, 0)
+
+[node name="Sprite" type="Sprite2D" parent="Skeleton2D/Hip/Leg_L_Up"]
+position = Vector2(0, 30)
+texture = load("res://sprites/leg_l_up.png")
+
+[node name="Leg_L_Low" type="Bone2D" parent="Skeleton2D/Hip/Leg_L_Up"]
+position = Vector2(0, 60)
+rest = Transform2D(1, 0, 0, 1, 0, 60)
+
+[node name="Sprite" type="Sprite2D" parent="Skeleton2D/Hip/Leg_L_Up/Leg_L_Low"]
+position = Vector2(0, 30)
+texture = load("res://sprites/leg_l_low.png")
+
+[node name="Leg_R_Up" type="Bone2D" parent="Skeleton2D/Hip"]
+position = Vector2(-25, 0)
+rest = Transform2D(1, 0, 0, 1, -25, 0)
+
+[node name="Sprite" type="Sprite2D" parent="Skeleton2D/Hip/Leg_R_Up"]
+position = Vector2(0, 30)
+texture = load("res://sprites/leg_r_up.png")
+
+[node name="Leg_R_Low" type="Bone2D" parent="Skeleton2D/Hip/Leg_R_Up"]
+position = Vector2(0, 60)
+rest = Transform2D(1, 0, 0, 1, 0, 60)
+
+[node name="Sprite" type="Sprite2D" parent="Skeleton2D/Hip/Leg_R_Up/Leg_R_Low"]
+position = Vector2(0, 30)
+texture = load("res://sprites/leg_r_low.png")
+
+[node name="Chest" type="Bone2D" parent="Skeleton2D/Hip"]
+position = Vector2(0, -100)
+rest = Transform2D(1, 0, 0, 1, 0, -100)
+
+[node name="Head" type="Bone2D" parent="Skeleton2D/Hip/Chest"]
+position = Vector2(0, -50)
+rest = Transform2D(1, 0, 0, 1, 0, -50)
+
+[node name="HeadSprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Head"]
+position = Vector2(0, -30)
+texture = load("res://sprites/head.png")
+
+[node name="ScarfSprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Head"]
+z_index = -1
+position = Vector2(0, 20)
+texture = load("res://sprites/scarf.png")
+
+[node name="TasselSprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Head"]
+position = Vector2(0, -70)
+texture = load("res://sprites/tassel.png")
+
+[node name="Arm_L_Up" type="Bone2D" parent="Skeleton2D/Hip/Chest"]
+position = Vector2(40, -40)
+rest = Transform2D(1, 0, 0, 1, 40, -40)
+
+[node name="Sprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Arm_L_Up"]
+position = Vector2(0, 30)
+texture = load("res://sprites/arm_l_up.png")
+
+[node name="Arm_L_Low" type="Bone2D" parent="Skeleton2D/Hip/Chest/Arm_L_Up"]
+position = Vector2(0, 60)
+rest = Transform2D(1, 0, 0, 1, 0, 60)
+
+[node name="Sprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Arm_L_Up/Arm_L_Low"]
+position = Vector2(0, 30)
+texture = load("res://sprites/arm_l_low.png")
+
+[node name="Hand_L" type="Bone2D" parent="Skeleton2D/Hip/Chest/Arm_L_Up/Arm_L_Low"]
+position = Vector2(0, 60)
+rest = Transform2D(1, 0, 0, 1, 0, 60)
+
+[node name="HandSprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Arm_L_Up/Arm_L_Low/Hand_L"]
+texture = load("res://sprites/hand_l.png")
+
+[node name="Weapon" type="Bone2D" parent="Skeleton2D/Hip/Chest/Arm_L_Up/Arm_L_Low/Hand_L"]
+rotation = -1.5708
+rest = Transform2D(0.000796327, -1, 1, 0.000796327, 0, 0)
+
+[node name="WeaponSprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Arm_L_Up/Arm_L_Low/Hand_L/Weapon"]
+position = Vector2(0, -50)
+texture = load("res://sprites/weapon.png")
+
+[node name="Arm_R_Up" type="Bone2D" parent="Skeleton2D/Hip/Chest"]
+z_index = -1
+position = Vector2(-40, -40)
+rest = Transform2D(1, 0, 0, 1, -40, -40)
+
+[node name="Sprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Arm_R_Up"]
+position = Vector2(0, 30)
+texture = load("res://sprites/arm_r_up.png")
+
+[node name="Arm_R_Low" type="Bone2D" parent="Skeleton2D/Hip/Chest/Arm_R_Up"]
+position = Vector2(0, 60)
+rest = Transform2D(1, 0, 0, 1, 0, 60)
+
+[node name="Sprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Arm_R_Up/Arm_R_Low"]
+position = Vector2(0, 30)
+texture = load("res://sprites/arm_r_low.png")
+
+[node name="Hand_R" type="Bone2D" parent="Skeleton2D/Hip/Chest/Arm_R_Up/Arm_R_Low"]
+position = Vector2(0, 60)
+rest = Transform2D(1, 0, 0, 1, 0, 60)
+
+[node name="HandSprite" type="Sprite2D" parent="Skeleton2D/Hip/Chest/Arm_R_Up/Arm_R_Low/Hand_R"]
+texture = load("res://sprites/hand_r.png")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Skeleton2D")

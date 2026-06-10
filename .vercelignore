@@ -1,0 +1,20 @@
+# 本地参考资料，不参与线上运行（且含 >100MB PDF 会阻断 Vercel 上传）
+史料
+output_imgs
+input_imgs
+juji
+AnimationTools
+scripts
+backup
+docs
+plans
+# 构建需 factionTierClassify 引用的 4 份审计 JSON；勿整目录排除 scratch
+scratch/*
+!scratch/ethnic_homeland_audit.json
+!scratch/regime_capital_audit.json
+!scratch/family_state_audit.json
+!scratch/county_seat_audit.json
+*.pdf
+san10pk_99026
+public/9dixingtu
+close_cities_report.json

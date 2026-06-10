@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPWAR 原型</title>
+    <!-- Leaflet CSS imported via main.ts (local npm package) — avoids CDN block on cold start -->
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="./src/ui/game_time_hud.css">
+    <link rel="stylesheet" href="./src/ui/city-marker.css">
+</head>
+
+<body>
+    <script type="module" src="/src/debug/perfEarly.ts"></script>
+    <div id="map"></div>
+
+    <!-- SVG Filters for Map Effects -->
+    <svg style="position: absolute; height: 0; width: 0; pointer-events: none;">
+        <defs>
+            <filter id="rough-edge">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+            </filter>
+        </defs>
+    </svg>
+    <div id="notification-area"></div>
+
+    <!-- 左下角：版本 + 纪年 + 播放/倍速 -->
+    <div id="game-time-hud" style="display: none;">
+        <div id="game-version-label">20260602版</div>
+        <div id="game-date-display" aria-live="polite">236 BC · 春</div>
+        <div class="game-time-controls">
+            <button id="run-event-btn" type="button">播放</button>
+            <button id="speed2-btn" type="button" title="2倍速">2×</button>
+            <button id="speed-btn" type="button" title="5倍速">5×</button>
+            <button id="perf-toggle-btn" type="button" title="性能监控 (F3)">性能</button>
+        </div>
+    </div>
+
+    <div id="hud" class="hud">
+        <!-- Control Panel Removed for Simplification -->
+        <div class="info-panel">
+            <div class="info-row">
+                <span class="label">坐标:</span>
+                <span class="value" id="coords">0, 0</span>
+            </div>
+            <div class="info-row">
+                <span class="label">六边形:</span>
+                <span class="value" id="hex-coords">0, 0</span>
+            </div>
+            <div class="info-row">
+                <span class="label">地形:</span>
+                <span class="value" id="terrain-type">-</span>
+            </div>
+            <!-- Speed Display Removed -->
+        </div>
+
+        <!-- 玩家信息面板 -->
+        <div class="player-info info-panel" style="display: none;">
+            <div class="player-title">👤 玩家信息</div>
+            <div class="player-stats">
+                <div class="stat-row">
+                    <span class="stat-label">官职:</span>
+                    <span class="stat-value" id="player-rank">-</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">兵力:</span>
+                    <span class="stat-value" id="player-troops">-</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">功勋:</span>
+                    <span class="stat-value" id="player-merit">-</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">势力:</span>
+                    <span class="stat-value" id="player-faction">未选择</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">无敌:</span>
+                    <button id="toggle-invincible"
+                        style="background: none; border: 1px solid #666; cursor: pointer; color: #aaa; padding: 0 4px; border-radius: 4px; font-size: 0.9em;">关闭</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Event Display Panel -->
+
+        <div id="event-display" class="event-panel" style="display: none;">
+            <div class="event-header">
+                <span>历史事件</span>
+                <button id="toggle-event-list-btn" title="查看历史事件列表">▼</button>
+            </div>
+            <div id="event-content"></div>
+        </div>
+
+        <!-- 通用模态框 -->
+
+
+        <!-- Leaflet script removed, using npm package -->
+        <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>

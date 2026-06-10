@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>中原 + 北方</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>body{margin:0}#map{width:100vw;height:100vh}.legend{background:white;padding:10px;border-radius:4px;font-size:13px;line-height:1.8}</style>
+</head>
+<body><div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var map=L.map('map').setView([38.5,116],6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:12}).addTo(map);
+
+// 中原
+var zy=[
+  ['平阳',36.078,111.517],['安阳',36.10,114.39],
+  ['东北角',36.10,124.0],['东南角',32.59,124.0],
+  ['寿春',32.59,116.80],['襄阳',32.01,112.12],
+  ['汉中',33.07,107.02],['天水',34.58,105.73],
+  ['肤施',36.59,109.48]
+];
+L.polygon(zy.map(c=>[c[1],c[2]]),{color:'#c62828',weight:3,fillColor:'#ef9a9a',fillOpacity:0.1}).addTo(map);
+zy.forEach(c=>L.circleMarker([c[1],c[2]],{radius:5,color:'#c62828',fillColor:'#fff',fillOpacity:1,weight:2}).addTo(map));
+
+// 北方
+var bf=[
+  ['肤施',36.59,109.48],
+  ['归化城',40.84,111.68],
+  ['襄平',41.27,123.17],
+  ['东北角',36.0,124.0]
+];
+L.polygon(bf.map(c=>[c[1],c[2]]),{color:'#1565c0',weight:3,fillColor:'#90caf9',fillOpacity:0.12}).addTo(map).bindPopup('北方');
+bf.forEach(c=>L.circleMarker([c[1],c[2]],{radius:7,color:'#1565c0',fillColor:'#fff',fillOpacity:1,weight:2}).addTo(map).bindPopup('<b>'+c[0]+'</b>'));
+
+// 文化中心
+[['洛阳',34.62,112.45],['长安',34.27,108.93],['北京',39.90,116.41]].forEach(c=>{
+  L.circleMarker([c[1],c[2]],{radius:11,color:'#1b5e20',fillColor:'#4caf50',fillOpacity:0.8,weight:3}).addTo(map).bindPopup('<b>'+c[0]+'</b>');
+});
+
+// 边界线标注
+[[35.5,122,'中原'],[41,114,'北方']].forEach(l=>{
+  L.circleMarker([l[0],l[1]],{radius:0,icon:L.divIcon({className:'',html:'<div style="font-size:14px;font-weight:bold;color:'+(l[2]==='中原'?'#c62828':'#1565c0')+'">'+l[2]+'</div>'})}).addTo(map);
+});
+
+L.control({position:'bottomright'}).onAdd=function(){
+  var d=L.DomUtil.create('div','legend');
+  d.innerHTML='<b>🔴 中原</b> 平阳-安阳-寿春-汉中-天水-肤施<br><b>🔵 北方</b> 延安-归化-襄平-(36,124)';
+  return d;
+}.addTo(map);
+</script>
+</body>
+</html>

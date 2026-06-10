@@ -1,0 +1,66 @@
+/* 左下角：版本 + 纪年 + 播放/倍速 */
+
+#game-time-hud {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 5000;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    pointer-events: auto;
+    font-family: 'SimSun', 'Songti SC', system-ui, 'Microsoft YaHei', sans-serif;
+}
+
+#game-version-label {
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(212, 168, 67, 0.95);
+    letter-spacing: 0.05em;
+    user-select: none;
+}
+
+#game-date-display {
+    padding: 8px 14px;
+    background: rgba(18, 18, 22, 0.88);
+    color: #f5f5f5;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    user-select: none;
+}
+
+.game-time-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+}
+
+.game-time-controls button {
+    min-width: 44px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #f0f0f0;
+    background: rgba(40, 40, 48, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.game-time-controls button:hover {
+    background: rgba(60, 60, 72, 0.95);
+}
+
+.game-time-controls button.active,
+.game-time-controls button.playing {
+    background: #8b3a2e;
+    border-color: #c05040;
+}

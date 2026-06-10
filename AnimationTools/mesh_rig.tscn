@@ -1,0 +1,102 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8j24k300001"]
+
+[ext_resource type="Texture2D" path="res://sprites/body.png" id="1_body"]
+[ext_resource type="Texture2D" path="res://sprites/weapon.png" id="2_weapon"]
+
+[node name="MeshRig" type="Node2D"]
+
+[node name="Skeleton2D" type="Skeleton2D" parent="."]
+position = Vector2(576, 750)
+modification_stack = []
+
+[node name="Hip" type="Bone2D" parent="Skeleton2D"]
+rest = Transform2D(1, 0, 0, 1, 0, 0)
+
+[node name="Torso" type="Bone2D" parent="Skeleton2D/Hip"]
+position = Vector2(0, -100)
+rest = Transform2D(1, 0, 0, 1, 0, -100)
+
+[node name="Head" type="Bone2D" parent="Skeleton2D/Hip/Torso"]
+position = Vector2(0, -120)
+rest = Transform2D(1, 0, 0, 1, 0, -120)
+auto_calculate_length_and_angle = false
+length = 80.0
+bone_angle = -90.0
+
+[node name="Arm_L_Up" type="Bone2D" parent="Skeleton2D/Hip/Torso"]
+position = Vector2(50, -80)
+rest = Transform2D(1, 0, 0, 1, 50, -80)
+
+[node name="Arm_L_Low" type="Bone2D" parent="Skeleton2D/Hip/Torso/Arm_L_Up"]
+position = Vector2(80, 20)
+rest = Transform2D(1, 0, 0, 1, 80, 20)
+
+[node name="Hand_L" type="Bone2D" parent="Skeleton2D/Hip/Torso/Arm_L_Up/Arm_L_Low"]
+position = Vector2(40, 20)
+rest = Transform2D(1, 0, 0, 1, 40, 20)
+auto_calculate_length_and_angle = false
+length = 30.0
+bone_angle = 0.0
+
+[node name="WeaponMount" type="RemoteTransform2D" parent="Skeleton2D/Hip/Torso/Arm_L_Up/Arm_L_Low/Hand_L"]
+remote_path = NodePath("../../../../../../../WeaponSprite")
+update_position = true
+update_rotation = true
+update_scale = true
+
+[node name="Arm_R_Up" type="Bone2D" parent="Skeleton2D/Hip/Torso"]
+position = Vector2(-50, -80)
+rest = Transform2D(1, 0, 0, 1, -50, -80)
+
+[node name="Arm_R_Low" type="Bone2D" parent="Skeleton2D/Hip/Torso/Arm_R_Up"]
+position = Vector2(-80, 20)
+rest = Transform2D(1, 0, 0, 1, -80, 20)
+
+[node name="Hand_R" type="Bone2D" parent="Skeleton2D/Hip/Torso/Arm_R_Up/Arm_R_Low"]
+position = Vector2(-40, 20)
+rest = Transform2D(1, 0, 0, 1, -40, 20)
+auto_calculate_length_and_angle = false
+length = 30.0
+bone_angle = 180.0
+
+[node name="Leg_L_Up" type="Bone2D" parent="Skeleton2D/Hip"]
+position = Vector2(30, 0)
+rest = Transform2D(1, 0, 0, 1, 30, 0)
+
+[node name="Leg_L_Low" type="Bone2D" parent="Skeleton2D/Hip/Leg_L_Up"]
+position = Vector2(10, 120)
+rest = Transform2D(1, 0, 0, 1, 10, 120)
+
+[node name="Foot_L" type="Bone2D" parent="Skeleton2D/Hip/Leg_L_Up/Leg_L_Low"]
+position = Vector2(0, 80)
+rest = Transform2D(1, 0, 0, 1, 0, 80)
+auto_calculate_length_and_angle = false
+length = 40.0
+bone_angle = 90.0
+
+[node name="Leg_R_Up" type="Bone2D" parent="Skeleton2D/Hip"]
+position = Vector2(-30, 0)
+rest = Transform2D(1, 0, 0, 1, -30, 0)
+
+[node name="Leg_R_Low" type="Bone2D" parent="Skeleton2D/Hip/Leg_R_Up"]
+position = Vector2(-10, 120)
+rest = Transform2D(1, 0, 0, 1, -10, 120)
+
+[node name="Foot_R" type="Bone2D" parent="Skeleton2D/Hip/Leg_R_Up/Leg_R_Low"]
+position = Vector2(0, 80)
+rest = Transform2D(1, 0, 0, 1, 0, 80)
+auto_calculate_length_and_angle = false
+length = 40.0
+bone_angle = 90.0
+
+[node name="BodyMesh" type="Polygon2D" parent="."]
+texture = ExtResource("1_body")
+skeleton = NodePath("../Skeleton2D")
+polygon = PackedVector2Array(-300, -500, 300, -500, 300, 500, -300, 500)
+uv = PackedVector2Array(0, 0, 1000, 0, 1000, 1000, 0, 1000)
+
+[node name="WeaponSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_weapon")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Skeleton2D")

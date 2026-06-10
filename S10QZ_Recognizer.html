@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>S10QZ 旗号素材快速识别程序</title>
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; background-color: #1e1e1e; color: #ffffff; text-align: center; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #2d2d2d; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h1 { margin-top: 0; color: #4CAF50; }
+        .image-container { margin: 20px 0; padding: 20px; background: #00FF00; display: inline-block; border-radius: 8px; border: 2px solid #555; }
+        img { max-width: 150px; height: auto; image-rendering: pixelated; }
+        .input-area { margin: 20px 0; }
+        input[type="text"] { font-size: 24px; padding: 10px; width: 100px; text-align: center; border: 2px solid #4CAF50; border-radius: 5px; background: #333; color: #fff; }
+        input[type="text"]:focus { outline: none; border-color: #45a049; }
+        .controls { margin-top: 20px; }
+        button { font-size: 16px; padding: 10px 20px; margin: 0 10px; cursor: pointer; border: none; border-radius: 5px; background: #4CAF50; color: white; transition: background 0.3s; }
+        button:hover { background: #45a049; }
+        button.secondary { background: #555; }
+        button.secondary:hover { background: #777; }
+        .progress { margin-top: 20px; font-size: 18px; color: #aaa; }
+        .instruction { font-size: 14px; color: #888; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>S10QZ 旗号素材快速识别程序</h1>
+        <p>普通的OCR由于古风书法字体无法识别，此工具专为人工快速标记打造。</p>
+        
+        <div class="progress">
+            当前进度: <span id="currentIndexDisplay">59</span> / 464
+            <br>文件: <span id="currentFileName" style="color: #4CAF50; font-weight: bold;">59-1.png</span>
+        </div>
+
+        <div class="image-container">
+            <img id="flagImage" src="../public/SUCAI/S10QZ/59-1.png" alt="Flag Image">
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="charInput" placeholder="输入汉字" autocomplete="off" autofocus>
+        </div>
+
+        <div class="controls">
+            <button class="secondary" onclick="prevImage()">上一张 (Left)</button>
+            <button onclick="nextImage()">下一张 / 保存 (Enter)</button>
+        </div>
+        
+        <div class="controls">
+            <button class="secondary" style="background:#2196F3;" onclick="exportJSON()">导出识别结果 (JSON)</button>
+            <button class="secondary" style="background:#f44336;" onclick="clearProgress()">清除进度</button>
+        </div>
+        
+        <p class="instruction">提示: 输入文字后直接按 Enter 键即可自动保存并进入下一张。</p>
+    </div>
+
+    <script>
+        const START_INDEX = 59;
+        const END_INDEX = 464;
+        let currentIndex = START_INDEX;
+        let results = JSON.parse(localStorage.getItem('s10qz_results')) || {};
+
+        // 尝试从上次保存的位置继续
+        let savedKeys = Object.keys(results).map(Number).sort((a,b)=>a-b);
+        if (savedKeys.length > 0) {
+            let lastSaved = Math.max(...savedKeys);
+            if (lastSaved < END_INDEX) {
+                currentIndex = lastSaved + 1;
+            }
+        }
+
+        const flagImage = document.getElementById('flagImage');
+        const charInput = document.getElementById('charInput');
+        const currentIndexDisplay = document.getElementById('currentIndexDisplay');
+        const currentFileName = document.getElementById('currentFileName');
+
+        function updateUI() {
+            if (currentIndex > END_INDEX) {
+                alert("恭喜！全部识别完成！");
+                currentIndex = END_INDEX;
+            }
+            if (currentIndex < START_INDEX) currentIndex = START_INDEX;
+            
+            flagImage.src = `public/SUCAI/S10QZ/${currentIndex}-1.png`;
+            currentIndexDisplay.innerText = currentIndex;
+            currentFileName.innerText = `${currentIndex}-1.png`;
+            
+            charInput.value = results[currentIndex] || '';
+            charInput.focus();
+        }
+
+        function saveCurrent() {
+            const val = charInput.value.trim();
+            if (val) {
+                results[currentIndex] = val;
+                localStorage.setItem('s10qz_results', JSON.stringify(results));
+            }
+        }
+
+        function nextImage() {
+            saveCurrent();
+            if (currentIndex < END_INDEX) {
+                currentIndex++;
+                updateUI();
+            } else {
+                alert("已经到了最后一张！");
+            }
+        }
+
+        function prevImage() {
+            saveCurrent();
+            if (currentIndex > START_INDEX) {
+                currentIndex--;
+                updateUI();
+            }
+        }
+
+        function exportJSON() {
+            saveCurrent();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "s10qz_flag_map.json");
+            dlAnchorElem.click();
+        }
+
+        function clearProgress() {
+            if (confirm("确定要清除所有识别进度吗？此操作不可恢复！")) {
+                localStorage.removeItem('s10qz_results');
+                results = {};
+                currentIndex = START_INDEX;
+                updateUI();
+            }
+        }
+
+        charInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                nextImage();
+            }
+        });
+
+        // 监听左右方向键
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' && document.activeElement !== charInput) {
+                nextImage();
+            } else if (event.key === 'ArrowLeft' && document.activeElement !== charInput) {
+                prevImage();
+            }
+        });
+
+        updateUI();
+    </script>
+</body>
+</html>

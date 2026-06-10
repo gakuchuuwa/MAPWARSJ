@@ -1,0 +1,3753 @@
+{
+  "updated": "2026-06-09",
+  "instruction": "请填 auditTier: 1大政权 2大民族 3小政权 4小民族 5家族地名 6起义；null 则维持5",
+  "tierLegend": {
+    "1": "大政权 / 旗9",
+    "2": "大民族 / 旗16",
+    "3": "小政权 / 旗26",
+    "4": "小民族 / 旗57",
+    "5": "家族地名 / 旗33",
+    "6": "起义 / 旗53"
+  },
+  "counts": {
+    "pending": 313,
+    "familyConfirmed": 34,
+    "junConfirmed": 26
+  },
+  "pendingAudit": [
+    {
+      "id": "ali",
+      "flag": "阿里",
+      "capitalCityId": "city_gadake",
+      "capitalName": "噶大克",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "anushidgin",
+      "flag": "阿努",
+      "capitalCityId": "city_khiva",
+      "capitalName": "希瓦",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ailao",
+      "flag": "哀牢",
+      "capitalCityId": "city_baoshan",
+      "capitalName": "永昌",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "an",
+      "flag": "安",
+      "capitalCityId": "city_bukhara",
+      "capitalName": "蒲华",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "anding_wei",
+      "flag": "安定",
+      "capitalCityId": "city_anding_qh",
+      "capitalName": "苦峪堡",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "aki",
+      "flag": "安艺",
+      "capitalCityId": "city_yoshida",
+      "capitalName": "吉田郡山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ba",
+      "flag": "巴",
+      "capitalCityId": "city_chongqing",
+      "capitalName": "重庆",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "bade",
+      "flag": "巴德",
+      "capitalCityId": "city_pengdi",
+      "capitalName": "彭迪",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "bailan",
+      "flag": "白兰",
+      "capitalCityId": "city_kangyanchuan",
+      "capitalName": "察木多",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "bailang",
+      "flag": "白狼",
+      "capitalCityId": "city_adunzi",
+      "capitalName": "阿墩子",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "baiman",
+      "flag": "白蛮",
+      "capitalCityId": "city_weichu",
+      "capitalName": "威楚",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "bandun",
+      "flag": "板楯",
+      "capitalCityId": "city_hanchang",
+      "capitalName": "汉昌",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "weihaiwei",
+      "flag": "北洋",
+      "capitalCityId": "city_weihaiwei",
+      "capitalName": "威海卫",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "borjigin",
+      "flag": "孛儿",
+      "capitalCityId": "city_qudiaoalan",
+      "capitalName": "曲雕阿兰",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pyu",
+      "flag": "骠",
+      "capitalCityId": "city_srikshetra",
+      "capitalName": "室利差罗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xinping",
+      "flag": "邠",
+      "capitalCityId": "city_binzhou2",
+      "capitalName": "新平",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "galangdiba",
+      "flag": "波密",
+      "capitalCityId": "city_galangzong",
+      "capitalName": "噶朗宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xiaobolu",
+      "flag": "勃律",
+      "capitalCityId": "city_puticheng",
+      "capitalName": "菩提城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "boren",
+      "flag": "僰",
+      "capitalCityId": "city_bodao",
+      "capitalName": "僰道",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "cai",
+      "flag": "蔡",
+      "capitalCityId": "city_chenjun",
+      "capitalName": "新蔡",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "cangtou",
+      "flag": "苍头",
+      "capitalCityId": "city_xinyang",
+      "capitalName": "新阳",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "chahar",
+      "flag": "察哈",
+      "capitalCityId": "city_xinghe",
+      "capitalName": "兴和",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dengmaoqi",
+      "flag": "铲平",
+      "capitalCityId": "city_shaxian",
+      "capitalName": "沙戍堡",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "chechen",
+      "flag": "车臣",
+      "capitalCityId": "city_bayantumen",
+      "capitalName": "巴彦图门",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "cheshihou",
+      "flag": "车师",
+      "capitalCityId": "city_wutucheng",
+      "capitalName": "务涂城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "chen2",
+      "flag": "郴",
+      "capitalCityId": "city_guiyang",
+      "capitalName": "桂阳",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "izumo",
+      "flag": "出云",
+      "capitalCityId": "city_izumo",
+      "capitalName": "月山富田",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "linshihong",
+      "flag": "楚南",
+      "capitalCityId": "city_raozhou",
+      "capitalName": "鄱阳",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yezongliu",
+      "flag": "处",
+      "capitalCityId": "city_chuzhou_zj",
+      "capitalName": "丽水",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "choros",
+      "flag": "绰罗",
+      "capitalCityId": "city_dzungar_basin",
+      "capitalName": "和布克赛尔",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "cong",
+      "flag": "賨",
+      "capitalCityId": "city_dangqu",
+      "capitalName": "宕渠",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "cuanshi",
+      "flag": "爨",
+      "capitalCityId": "city_weixian2",
+      "capitalName": "曲靖",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "daca",
+      "flag": "达擦",
+      "capitalCityId": "city_basu",
+      "capitalName": "八宿宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "badakhshan",
+      "flag": "达克",
+      "capitalCityId": "city_fayzabad",
+      "capitalName": "法扎巴德",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dalung",
+      "flag": "达隆",
+      "capitalCityId": "city_riwoche",
+      "capitalName": "类乌齐",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dawoer",
+      "flag": "达斡",
+      "capitalCityId": "city_moergen",
+      "capitalName": "莫尔根",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dai",
+      "flag": "傣",
+      "capitalCityId": "city_mengle",
+      "capitalName": "勐泐城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "danluo",
+      "flag": "耽罗",
+      "capitalCityId": "city_xingzhuting",
+      "capitalName": "星主厅",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ava",
+      "flag": "掸",
+      "capitalCityId": "city_ava",
+      "capitalName": "阿瓦",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gar_kham",
+      "flag": "德司",
+      "capitalCityId": "city_derge",
+      "capitalName": "德格",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhai_han",
+      "flag": "翟",
+      "capitalCityId": "city_fushi",
+      "capitalName": "肤施",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dianguo",
+      "flag": "滇",
+      "capitalCityId": "city_tuodongcheng",
+      "capitalName": "拓东城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dangchang",
+      "flag": "迭",
+      "capitalCityId": "city_diezhou",
+      "capitalName": "合川",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dingan",
+      "flag": "定安",
+      "capitalCityId": "city_yalu",
+      "capitalName": "鸭绿府",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dongdan",
+      "flag": "东丹",
+      "capitalCityId": "city_beishacheng",
+      "capitalName": "卑沙城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dongxia",
+      "flag": "东夏",
+      "capitalCityId": "city_aodongcheng",
+      "capitalName": "敖东城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "duerbote",
+      "flag": "杜尔",
+      "capitalCityId": "city_tuokexun",
+      "capitalName": "托克逊",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "so",
+      "flag": "对马",
+      "capitalCityId": "city_tsushima",
+      "capitalName": "金石城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "duolu",
+      "flag": "咄陆",
+      "capitalCityId": "city_beiluocheng",
+      "capitalName": "孛罗城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "faqiang",
+      "flag": "发羌",
+      "capitalCityId": "city_saga",
+      "capitalName": "萨噶",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "fangla",
+      "flag": "方",
+      "capitalCityId": "city_qingxi",
+      "capitalName": "清溪",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "feiyaka",
+      "flag": "费雅",
+      "capitalCityId": "city_qiji",
+      "capitalName": "奇集",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "hashiba",
+      "flag": "丰臣",
+      "capitalCityId": "city_himeji",
+      "capitalName": "姬路城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "fuyu",
+      "flag": "夫余",
+      "capitalCityId": "city_fuyu",
+      "capitalName": "黄龙府",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yutian",
+      "flag": "伏阇",
+      "capitalCityId": "city_yutian2",
+      "capitalName": "于阗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "fu2",
+      "flag": "抚",
+      "capitalCityId": "city_linchuan",
+      "capitalName": "临川",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "mgar",
+      "flag": "噶尔",
+      "capitalCityId": "city_mayoumula",
+      "capitalName": "马攸木拉",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "karmapa",
+      "flag": "噶玛",
+      "capitalCityId": "city_chubusi",
+      "capitalName": "楚布寺",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gaxa",
+      "flag": "噶厦",
+      "capitalCityId": "city_yadong",
+      "capitalName": "卓木",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kejia",
+      "flag": "赣",
+      "capitalCityId": "city_qianzhou",
+      "capitalName": "南康",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gangdisi",
+      "flag": "冈底",
+      "capitalCityId": "city_mapangyongcuo",
+      "capitalName": "玛旁雍错",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "geluolu",
+      "flag": "葛逻",
+      "capitalCityId": "city_almaliq",
+      "capitalName": "弓月城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gongbu",
+      "flag": "工布",
+      "capitalCityId": "city_batangzong",
+      "capitalName": "巴塘宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gumo",
+      "flag": "姑墨",
+      "capitalCityId": "city_bohuancheng",
+      "capitalName": "拨换城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "guzhu",
+      "flag": "孤竹",
+      "capitalCityId": "city_feiru",
+      "capitalName": "肥如",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "guer",
+      "flag": "古尔",
+      "capitalCityId": "city_malulude",
+      "capitalName": "马鲁鲁德",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "guge",
+      "flag": "古格",
+      "capitalCityId": "city_zhaburang2",
+      "capitalName": "札布让",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "guzgan",
+      "flag": "古兹",
+      "capitalCityId": "city_fariyab",
+      "capitalName": "法里亚布",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gusiluo",
+      "flag": "唃厮",
+      "capitalCityId": "city_qingtang",
+      "capitalName": "青唐城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "guangnanguo",
+      "flag": "广南",
+      "capitalCityId": "city_donghai",
+      "capitalName": "洞海城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "guangwu",
+      "flag": "广武",
+      "capitalCityId": "city_lingju",
+      "capitalName": "令居",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "guangxin",
+      "flag": "广信",
+      "capitalCityId": "city_cangwu",
+      "capitalName": "苍梧",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "guiyi",
+      "flag": "归义",
+      "capitalCityId": "city_dunhuang",
+      "capitalName": "敦煌",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qiuci",
+      "flag": "龟兹",
+      "capitalCityId": "city_yiluolucheng",
+      "capitalName": "伊逻卢",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "golog",
+      "flag": "果洛",
+      "capitalCityId": "city_huashixia",
+      "capitalName": "花石峡",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "habibulla",
+      "flag": "哈比",
+      "capitalCityId": "city_xiye",
+      "capitalName": "西夜",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kazakh",
+      "flag": "哈萨",
+      "capitalCityId": "city_turkestan",
+      "capitalName": "亚西",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "liutong_yangqing",
+      "flag": "汉王",
+      "capitalCityId": "city_zaoyang",
+      "capitalName": "舂陵",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "hepan",
+      "flag": "喝槃",
+      "capitalCityId": "city_hepancheng",
+      "capitalName": "塔什库尔干",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "khoshut",
+      "flag": "和硕",
+      "capitalCityId": "city_dangxiong",
+      "capitalName": "当雄",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "khoja",
+      "flag": "和卓",
+      "capitalCityId": "city_xiuxun",
+      "capitalName": "休循",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "panyao",
+      "flag": "贺",
+      "capitalCityId": "city_hezhou",
+      "capitalName": "临贺",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "helian",
+      "flag": "赫连",
+      "capitalCityId": "city_tongwancheng",
+      "capitalName": "统万城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "heng",
+      "flag": "衡",
+      "capitalCityId": "city_linzheng",
+      "capitalName": "临烝",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "hongirad",
+      "flag": "弘吉",
+      "capitalCityId": "city_erguna",
+      "capitalName": "捕鱼儿海",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "houliao",
+      "flag": "后辽",
+      "capitalCityId": "city_xianping",
+      "capitalName": "咸平",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "huyan",
+      "flag": "呼衍",
+      "capitalCityId": "city_naomaohu",
+      "capitalName": "淖毛湖",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "huai",
+      "flag": "淮",
+      "capitalCityId": "city_zhongli",
+      "capitalName": "钟离",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "huaiyang",
+      "flag": "淮阳",
+      "capitalCityId": "city_huaiyang",
+      "capitalName": "宛丘",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "huan",
+      "flag": "环",
+      "capitalCityId": "city_fangqu",
+      "capitalName": "方渠",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "huihu",
+      "flag": "回鹘",
+      "capitalCityId": "city_woluduocheng",
+      "capitalName": "窝鲁朵",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qianhui",
+      "flag": "回军",
+      "capitalCityId": "city_piandaoshui",
+      "capitalName": "偏刀水",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "aizu",
+      "flag": "会津",
+      "capitalCityId": "city_tsuruga",
+      "capitalName": "鹤之城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "hui",
+      "flag": "濊",
+      "capitalCityId": "city_heseluo",
+      "capitalName": "何瑟罗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "hunxie",
+      "flag": "浑邪",
+      "capitalCityId": "city_jiuquan",
+      "capitalName": "酒泉城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "teqin",
+      "flag": "活",
+      "capitalCityId": "city_huoguocheng",
+      "capitalName": "阿缓城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "hor",
+      "flag": "霍尔",
+      "capitalCityId": "city_suozong",
+      "capitalName": "索宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jilimi",
+      "flag": "吉里",
+      "capitalCityId": "city_nanghar",
+      "capitalName": "囊哈儿卫",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jilin",
+      "flag": "吉林",
+      "capitalCityId": "city_kuanchengzi",
+      "capitalName": "宽城子",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gaya",
+      "flag": "伽倻",
+      "capitalCityId": "city_gimhae",
+      "capitalName": "金海",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kai",
+      "flag": "甲斐",
+      "capitalCityId": "city_tsutsujigasaki",
+      "capitalName": "躑躅崎馆",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "cheng",
+      "flag": "简",
+      "capitalCityId": "city_jianzhou",
+      "capitalName": "阳安",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jiantang",
+      "flag": "建塘",
+      "capitalCityId": "city_mufu",
+      "capitalName": "独克宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jianghan",
+      "flag": "江汉",
+      "capitalCityId": "city_fuling",
+      "capitalName": "涪陵",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jiang_s",
+      "flag": "蒋",
+      "capitalCityId": "city_yongzhou_hn",
+      "capitalName": "零陵",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jieshuai",
+      "flag": "竭帅",
+      "capitalCityId": "city_anuyuecheng",
+      "capitalName": "阿弩越",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jinchuan",
+      "flag": "今川",
+      "capitalCityId": "city_junfucheng",
+      "capitalName": "骏府城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jinchuan_g",
+      "flag": "金川",
+      "capitalCityId": "city_leweizhai",
+      "capitalName": "勒乌围",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jing",
+      "flag": "京",
+      "capitalCityId": "city_hoalu",
+      "capitalName": "华闾",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ongut",
+      "flag": "净",
+      "capitalCityId": "city_jingzhou",
+      "capitalName": "净州塞",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jingjiang",
+      "flag": "靖江",
+      "capitalCityId": "city_lingqu",
+      "capitalName": "桂林",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "geng",
+      "flag": "靖南",
+      "capitalCityId": "city_yanping",
+      "capitalName": "延平",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yingbu",
+      "flag": "九江",
+      "capitalCityId": "city_liuxian",
+      "capitalName": "六安",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qian",
+      "flag": "矩",
+      "capitalCityId": "city_juzhou",
+      "capitalName": "顺元",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gouding",
+      "flag": "句町",
+      "capitalCityId": "city_guangnan",
+      "capitalName": "广南",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kaerka",
+      "flag": "喀尔",
+      "capitalCityId": "city_duluohe",
+      "capitalName": "独逻河",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kawusi",
+      "flag": "卡乌",
+      "capitalCityId": "city_jizhake",
+      "capitalName": "吉扎克",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kang",
+      "flag": "康",
+      "capitalCityId": "city_changze",
+      "capitalName": "长泽",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kangju",
+      "flag": "康居",
+      "capitalCityId": "city_kanka",
+      "capitalName": "康卡",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "keerkezi",
+      "flag": "柯尔",
+      "capitalCityId": "city_yierkeshentan",
+      "capitalName": "斯姆哈纳",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "keerqin",
+      "flag": "科尔",
+      "capitalCityId": "city_daerhan",
+      "capitalName": "达尔罕",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "keliya",
+      "flag": "克里",
+      "capitalCityId": "city_duoma",
+      "capitalName": "多玛",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kereyid",
+      "flag": "克烈",
+      "capitalCityId": "city_kereyid",
+      "capitalName": "汪吉河",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kongsa",
+      "flag": "孔萨",
+      "capitalCityId": "city_ganzi",
+      "capitalName": "甘孜",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kuai",
+      "flag": "蒯",
+      "capitalCityId": "city_fangling",
+      "capitalName": "房陵",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kui",
+      "flag": "夔",
+      "capitalCityId": "city_baidicheng2",
+      "capitalName": "白帝城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "khon",
+      "flag": "昆",
+      "capitalCityId": "city_sajia",
+      "capitalName": "萨迦",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kunming_yi",
+      "flag": "昆明",
+      "capitalCityId": "city_huichuan",
+      "capitalName": "会川",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gurkha",
+      "flag": "廓喀",
+      "capitalCityId": "city_kathmandu",
+      "capitalName": "加德满都",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "laduijiang",
+      "flag": "拉堆",
+      "capitalCityId": "city_angren",
+      "capitalName": "昂仁",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "lang_clan",
+      "flag": "朗",
+      "capitalCityId": "city_pibo",
+      "capitalName": "匹播",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "leizhou",
+      "flag": "雷",
+      "capitalCityId": "city_haikang",
+      "capitalName": "海康",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "li_s",
+      "flag": "里",
+      "capitalCityId": "city_hepu",
+      "capitalName": "合浦",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "liren",
+      "flag": "俚",
+      "capitalCityId": "city_yazhou",
+      "capitalName": "珠崖",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "linyi",
+      "flag": "林邑",
+      "capitalCityId": "city_xianglin",
+      "capitalName": "象林",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "lingwu",
+      "flag": "灵",
+      "capitalCityId": "city_lingzhou",
+      "capitalName": "回乐",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gling",
+      "flag": "岭",
+      "capitalCityId": "city_jiegu",
+      "capitalName": "结古宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ryukyu",
+      "flag": "琉球",
+      "capitalCityId": "city_shuri",
+      "capitalName": "首里",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dong",
+      "flag": "隆庆",
+      "capitalCityId": "city_nangqian",
+      "capitalName": "囊谦宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "loulan",
+      "flag": "楼兰",
+      "capitalCityId": "city_loulan",
+      "capitalName": "扜泥城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "lushui",
+      "flag": "卢水",
+      "capitalCityId": "city_aowei",
+      "capitalName": "媪围",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "lu",
+      "flag": "庐",
+      "capitalCityId": "city_hefei",
+      "capitalName": "合肥",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "nanbu",
+      "flag": "陆奥",
+      "capitalCityId": "city_genjo",
+      "capitalName": "根城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "luchuan",
+      "flag": "麓川",
+      "capitalCityId": "city_mengmao",
+      "capitalName": "勐卯",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "luodian",
+      "flag": "罗甸",
+      "capitalCityId": "city_dafang",
+      "capitalName": "大方城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "luohu",
+      "flag": "罗斛",
+      "capitalCityId": "city_khorat",
+      "capitalName": "呵叻城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "luoping",
+      "flag": "罗平",
+      "capitalCityId": "city_xinhui",
+      "capitalName": "新会",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "luoyue",
+      "flag": "骆越",
+      "capitalCityId": "city_huashan",
+      "capitalName": "花山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "lopi",
+      "flag": "珞巴",
+      "capitalCityId": "city_metuo",
+      "capitalName": "墨脱",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "machu",
+      "flag": "马楚",
+      "capitalCityId": "city_changsha",
+      "capitalName": "长沙",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "mamon",
+      "flag": "马蒙",
+      "capitalCityId": "city_dargan",
+      "capitalName": "达尔甘",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ladakh",
+      "flag": "玛域",
+      "capitalCityId": "city_leh",
+      "capitalName": "列城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "muong",
+      "flag": "芒",
+      "capitalCityId": "city_hoabinh",
+      "capitalName": "和平",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "mangbu",
+      "flag": "芒部",
+      "capitalCityId": "city_yongning",
+      "capitalName": "永宁",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "bayinnaung",
+      "flag": "莽应",
+      "capitalCityId": "city_dongxu_old",
+      "capitalName": "东吁",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "mao_wenlong",
+      "flag": "毛文",
+      "capitalCityId": "city_pidao",
+      "capitalName": "皮岛",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qingqiang",
+      "flag": "茂",
+      "capitalCityId": "city_maozhou",
+      "capitalName": "汶川",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "monpa",
+      "flag": "门巴",
+      "capitalCityId": "city_cuona",
+      "capitalName": "错那",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "mon",
+      "flag": "孟",
+      "capitalCityId": "city_thaton",
+      "capitalName": "直通城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "miao",
+      "flag": "苗",
+      "capitalCityId": "city_hezhang",
+      "capitalName": "可乐城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "miao_qing",
+      "flag": "苗军",
+      "capitalCityId": "city_qielancheng",
+      "capitalName": "且兰城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "miaomin",
+      "flag": "苗民",
+      "capitalCityId": "city_pinglong",
+      "capitalName": "平陇",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "merkit",
+      "flag": "蔑儿",
+      "capitalCityId": "city_merkit",
+      "capitalName": "色楞格河",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yan_siqi",
+      "flag": "闽海",
+      "capitalCityId": "city_benkang",
+      "capitalName": "笨港",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "mingzheng",
+      "flag": "明正",
+      "capitalCityId": "city_dajianlu",
+      "capitalName": "打箭炉",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ming_zheng",
+      "flag": "明郑",
+      "capitalCityId": "city_tainan",
+      "capitalName": "承天",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "monong",
+      "flag": "墨侬",
+      "capitalCityId": "city_bangdun",
+      "capitalName": "邦敦",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "mu_lijiang",
+      "flag": "木",
+      "capitalCityId": "city_dayan",
+      "capitalName": "大研",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "murong",
+      "flag": "慕容",
+      "capitalCityId": "city_chaoyang",
+      "capitalName": "朝阳",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "mu",
+      "flag": "穆",
+      "capitalCityId": "city_litangzong",
+      "capitalName": "理塘宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "nanai",
+      "flag": "那乃",
+      "capitalCityId": "city_valen",
+      "capitalName": "瓦伦",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "naiman",
+      "flag": "乃蛮",
+      "capitalCityId": "city_fuhai",
+      "capitalName": "福海",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "nanjie",
+      "flag": "南杰",
+      "capitalCityId": "city_rituzong",
+      "capitalName": "日土宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "niang",
+      "flag": "娘",
+      "capitalCityId": "city_juemuzong",
+      "capitalName": "觉木宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ning",
+      "flag": "宁",
+      "capitalCityId": "city_hongzhou",
+      "capitalName": "豫章",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ningjing",
+      "flag": "宁静",
+      "capitalCityId": "city_mangkangzong",
+      "capitalName": "芒康宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "nong2",
+      "flag": "侬",
+      "capitalCityId": "city_guangyuan",
+      "capitalName": "广源",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "paluan",
+      "flag": "帕銮",
+      "capitalCityId": "city_shuanghe",
+      "capitalName": "双河城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pazhu",
+      "flag": "帕竹",
+      "capitalCityId": "city_jiangzi",
+      "capitalName": "江孜",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "paiwan",
+      "flag": "排湾",
+      "capitalCityId": "city_mudan",
+      "capitalName": "牡丹社",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gaoliang",
+      "flag": "潘",
+      "capitalCityId": "city_panzhou",
+      "capitalName": "茂名",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pengshi",
+      "flag": "彭氏",
+      "capitalCityId": "city_chenzhou2",
+      "capitalName": "沅陵",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pishan",
+      "flag": "皮山",
+      "capitalCityId": "city_pishan",
+      "capitalName": "固玛",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pisha",
+      "flag": "毗沙",
+      "capitalCityId": "city_mazhatage",
+      "capitalName": "麻扎塔格",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pingnan",
+      "flag": "平南",
+      "capitalCityId": "city_tengyuecheng",
+      "capitalName": "腾越城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pu",
+      "flag": "蒲",
+      "capitalCityId": "city_qingjingsi",
+      "capitalName": "刺桐",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pulei",
+      "flag": "蒲类",
+      "capitalCityId": "city_balikun",
+      "capitalName": "巴里坤",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pulige",
+      "flag": "普里",
+      "capitalCityId": "city_kajier",
+      "capitalName": "喀吉尔",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qi2",
+      "flag": "蕲",
+      "capitalCityId": "city_qichun",
+      "capitalName": "蕲春",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kiyad",
+      "flag": "乞颜",
+      "capitalCityId": "city_burhan",
+      "capitalName": "不儿罕山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qiemo",
+      "flag": "且末",
+      "capitalCityId": "city_qiemo",
+      "capitalName": "播仙",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qiepantuo",
+      "flag": "朅盘",
+      "capitalCityId": "city_humicheng",
+      "capitalName": "护密城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qingyi",
+      "flag": "青衣",
+      "capitalCityId": "city_yandao",
+      "capitalName": "严道",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qingyuan_bd",
+      "flag": "清苑",
+      "capitalCityId": "city_baoding",
+      "capitalName": "保定",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tuoming",
+      "flag": "清真",
+      "capitalCityId": "city_dabancheng",
+      "capitalName": "达坂城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qiong",
+      "flag": "邛",
+      "capitalCityId": "city_jianchang",
+      "capitalName": "邛都",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "khyungpo",
+      "flag": "琼波",
+      "capitalCityId": "city_qiongbu",
+      "capitalName": "丁青宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qiufu",
+      "flag": "裘甫",
+      "capitalCityId": "city_shanxian",
+      "capitalName": "剡城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gumie",
+      "flag": "衢",
+      "capitalCityId": "city_quzhou",
+      "capitalName": "信安",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "quan",
+      "flag": "权",
+      "capitalCityId": "city_dangyang",
+      "capitalName": "当阳",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "nguyen_guangnan",
+      "flag": "阮主",
+      "capitalCityId": "city_fuchun",
+      "capitalName": "富春",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ruoqiang",
+      "flag": "婼羌",
+      "capitalCityId": "city_ruoqiang",
+      "capitalName": "卡克里克",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "satsuma",
+      "flag": "萨摩",
+      "capitalCityId": "city_satsuma",
+      "capitalName": "内城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "sapi",
+      "flag": "萨毗",
+      "capitalCityId": "city_xiwanjin",
+      "capitalName": "悉万斤",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shafa",
+      "flag": "沙伐",
+      "capitalCityId": "city_shangzhou",
+      "capitalName": "尚州",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shatuo",
+      "flag": "沙陀",
+      "capitalCityId": "city_guanglu",
+      "capitalName": "光禄城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shache",
+      "flag": "莎车",
+      "capitalCityId": "city_shache",
+      "capitalName": "叶城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shanyue",
+      "flag": "山越",
+      "capitalCityId": "city_wanling",
+      "capitalName": "宛陵城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shaodang",
+      "flag": "烧当",
+      "capitalCityId": "city_maqu",
+      "capitalName": "玛曲",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "she",
+      "flag": "奢",
+      "capitalCityId": "city_yongning2",
+      "capitalName": "叙永",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "she_ethnic",
+      "flag": "畲",
+      "capitalCityId": "city_chimushan",
+      "capitalName": "敕木山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shen",
+      "flag": "申",
+      "capitalCityId": "city_jinzhou_shanxi",
+      "capitalName": "安康",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shengmiao",
+      "flag": "生苗",
+      "capitalCityId": "city_jiading",
+      "capitalName": "甲定",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dongshengwei",
+      "flag": "胜",
+      "capitalCityId": "city_dongshengzhou",
+      "capitalName": "东胜卫",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shi_clan",
+      "flag": "石",
+      "capitalCityId": "city_tashkent",
+      "capitalName": "柘折城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ashide",
+      "flag": "史德",
+      "capitalCityId": "city_heishacheng",
+      "capitalName": "黑沙城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shixing",
+      "flag": "始兴",
+      "capitalCityId": "city_qujiang",
+      "capitalName": "曲江",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shule",
+      "flag": "疏勒",
+      "capitalCityId": "city_shule",
+      "capitalName": "盘橐城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shuizhen",
+      "flag": "水真",
+      "capitalCityId": "city_sanpu",
+      "capitalName": "三菩",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "songlin",
+      "flag": "松林",
+      "capitalCityId": "city_yuegui",
+      "capitalName": "越嶲",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kakizaki",
+      "flag": "松前",
+      "capitalCityId": "city_katsuyama",
+      "capitalName": "胜山馆",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "sou",
+      "flag": "叟",
+      "capitalCityId": "city_leshan",
+      "capitalName": "乐山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "sunite",
+      "flag": "苏尼",
+      "capitalCityId": "city_saihantala",
+      "capitalName": "赛汉塔拉",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "supi",
+      "flag": "苏毗",
+      "capitalCityId": "city_payangyi",
+      "capitalName": "帕羊驿",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "suolun",
+      "flag": "索伦",
+      "capitalCityId": "city_bukui",
+      "capitalName": "卜奎",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tatar",
+      "flag": "塔塔",
+      "capitalCityId": "city_tatar",
+      "capitalName": "哈拉哈河",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tashili",
+      "flag": "踏实",
+      "capitalCityId": "city_guyanshan",
+      "capitalName": "姑衍山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ouyue",
+      "flag": "台",
+      "capitalCityId": "city_taizhou_zj",
+      "capitalName": "临海",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "taiyuan",
+      "flag": "泰沅",
+      "capitalCityId": "city_chingkham",
+      "capitalName": "清坎城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tiemuer",
+      "flag": "帖木",
+      "capitalCityId": "city_samaerhan",
+      "capitalName": "撒马尔罕",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dian",
+      "flag": "通海",
+      "capitalCityId": "city_tonghai",
+      "capitalName": "新兴",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tunggiya",
+      "flag": "佟佳",
+      "capitalCityId": "city_wandu",
+      "capitalName": "丸都",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tongma",
+      "flag": "铜马",
+      "capitalCityId": "city_wenan",
+      "capitalName": "文安",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "toutuo",
+      "flag": "头陀",
+      "capitalCityId": "city_zhenghe",
+      "capitalName": "政和",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tumengken",
+      "flag": "图蒙",
+      "capitalCityId": "city_baidalik",
+      "capitalName": "拜达里克",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tuva",
+      "flag": "图瓦",
+      "capitalCityId": "city_teshuolankalun",
+      "capitalName": "唐努",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tu",
+      "flag": "土",
+      "capitalCityId": "city_wulingshan",
+      "capitalName": "武陵山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tuerhute",
+      "flag": "土尔",
+      "capitalCityId": "city_yingsuochuan",
+      "capitalName": "鹰娑川",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tumed",
+      "flag": "土默",
+      "capitalCityId": "city_guihua",
+      "capitalName": "归化城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tushetu",
+      "flag": "土谢",
+      "capitalCityId": "city_kulun",
+      "capitalName": "库伦",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "chosokabe",
+      "flag": "土佐",
+      "capitalCityId": "city_okafu",
+      "capitalName": "冈丰城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "huang_tianzhou",
+      "flag": "瓦",
+      "capitalCityId": "city_tianzhou",
+      "capitalName": "横山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "humi",
+      "flag": "瓦罕",
+      "capitalCityId": "city_hunduduo",
+      "capitalName": "昏度多",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "wang_s",
+      "flag": "汪",
+      "capitalCityId": "city_yixian",
+      "capitalName": "黟城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "wei2",
+      "flag": "韦",
+      "capitalCityId": "city_jingsai",
+      "capitalName": "静塞",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "weiwuer",
+      "flag": "维吾",
+      "capitalCityId": "city_yuergun",
+      "capitalName": "玉尔滚",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "weiming",
+      "flag": "嵬名",
+      "capitalCityId": "city_ordos",
+      "capitalName": "河南地",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "owari",
+      "flag": "尾张",
+      "capitalCityId": "city_kiyosu",
+      "capitalName": "清洲城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "wey",
+      "flag": "卫",
+      "capitalCityId": "city_puyang",
+      "capitalName": "濮阳",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yuchi",
+      "flag": "尉迟",
+      "capitalCityId": "city_jingjue",
+      "capitalName": "精绝",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "weili",
+      "flag": "尉犁",
+      "capitalCityId": "city_weili",
+      "capitalName": "库尔勒",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "weitou",
+      "flag": "尉头",
+      "capitalCityId": "city_weitoucheng",
+      "capitalName": "阿合奇",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "wensu",
+      "flag": "温宿",
+      "capitalCityId": "city_dawushenkate",
+      "capitalName": "大乌什喀特",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "woju",
+      "flag": "沃沮",
+      "capitalCityId": "city_hamhung",
+      "capitalName": "咸兴",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "wuxi",
+      "flag": "五溪",
+      "capitalCityId": "city_bamian",
+      "capitalName": "八面山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "wure",
+      "flag": "兀惹",
+      "capitalCityId": "city_wushecheng",
+      "capitalName": "乌舍城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "lujian",
+      "flag": "婺",
+      "capitalCityId": "city_wuzhou",
+      "capitalName": "金华",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xiou",
+      "flag": "西瓯",
+      "capitalCityId": "city_bushan",
+      "capitalName": "布山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xiye",
+      "flag": "西夜",
+      "capitalCityId": "city_longmucuo",
+      "capitalName": "龙木错",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kumo",
+      "flag": "奚",
+      "capitalCityId": "city_songmo",
+      "capitalName": "马盂山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "spurgyal",
+      "flag": "悉补",
+      "capitalCityId": "city_jiamachikang",
+      "capitalName": "甲玛赤康",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "honda",
+      "flag": "下野",
+      "capitalCityId": "city_utsunomiya",
+      "capitalName": "宇都宫",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xianlingqiang",
+      "flag": "先零",
+      "capitalCityId": "city_yunwu",
+      "capitalName": "允吾",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jinchuan_x",
+      "flag": "小川",
+      "capitalCityId": "city_meinuozhai",
+      "capitalName": "美诺寨",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xin2",
+      "flag": "信",
+      "capitalCityId": "city_nanpu",
+      "capitalName": "南浦",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xingan",
+      "flag": "兴安",
+      "capitalCityId": "city_halagaitu2",
+      "capitalName": "哈拉盖图",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xinggu",
+      "flag": "兴古",
+      "capitalCityId": "city_luoxiong",
+      "capitalName": "罗雄",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xingliao",
+      "flag": "兴辽",
+      "capitalCityId": "city_longwan",
+      "capitalName": "龙湾",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xu",
+      "flag": "徐",
+      "capitalCityId": "city_xucheng",
+      "capitalName": "符离",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yanqi",
+      "flag": "焉耆",
+      "capitalCityId": "city_yanqi",
+      "capitalName": "员渠城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "anmei",
+      "flag": "奄美",
+      "capitalCityId": "city_akakinagusuku",
+      "capitalName": "赤木名城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yangshe",
+      "flag": "羊舌",
+      "capitalCityId": "city_tongdi",
+      "capitalName": "铜鞮",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qiuchi",
+      "flag": "杨",
+      "capitalCityId": "city_qiuchi",
+      "capitalName": "仇池",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yangshao",
+      "flag": "仰韶",
+      "capitalCityId": "city_mianchi",
+      "capitalName": "渑池",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yao",
+      "flag": "尧",
+      "capitalCityId": "city_linfen",
+      "capitalName": "平阳",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yaoluoge",
+      "flag": "药罗",
+      "capitalCityId": "city_suoling",
+      "capitalName": "娑陵",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yel",
+      "flag": "耶律",
+      "capitalCityId": "city_jiangsheng",
+      "capitalName": "降圣",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yelang",
+      "flag": "夜郎",
+      "capitalCityId": "city_puding",
+      "capitalName": "普定",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yizhi",
+      "flag": "一支",
+      "capitalCityId": "city_yuanzhishi",
+      "capitalName": "原之辻",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yiwu",
+      "flag": "伊吾",
+      "capitalCityId": "city_hamiwei",
+      "capitalName": "哈密卫",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yidou",
+      "flag": "宜都",
+      "capitalCityId": "city_yiling",
+      "capitalName": "夷陵",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yiduhu",
+      "flag": "亦都",
+      "capitalCityId": "city_gaochangcheng",
+      "capitalName": "高昌",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yin",
+      "flag": "殷",
+      "capitalCityId": "city_zhaoge",
+      "capitalName": "朝歌",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "liangshidu",
+      "flag": "银",
+      "capitalCityId": "city_yinzhou",
+      "capitalName": "雕阴",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yingli",
+      "flag": "应理",
+      "capitalCityId": "city_mingsha",
+      "capitalName": "鸣沙",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ying",
+      "flag": "郢",
+      "capitalCityId": "city_shicheng",
+      "capitalName": "石城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "nongzhigao",
+      "flag": "邕",
+      "capitalCityId": "city_yongzhou",
+      "capitalName": "晋兴",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yong",
+      "flag": "庸",
+      "capitalCityId": "city_shangyong",
+      "capitalName": "上庸",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yumi",
+      "flag": "扜弥",
+      "capitalCityId": "city_yumi",
+      "capitalName": "克里雅",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yujiulu",
+      "flag": "郁久",
+      "capitalCityId": "city_ruoshui",
+      "capitalName": "弱水畔",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yutou",
+      "flag": "郁头",
+      "capitalCityId": "city_wosedecheng",
+      "capitalName": "握瑟德",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qianzhong",
+      "flag": "沅",
+      "capitalCityId": "city_yuanzhou",
+      "capitalName": "芷江",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "chen3",
+      "flag": "月支",
+      "capitalCityId": "city_yuezhi",
+      "capitalName": "大木岳",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "echigo",
+      "flag": "越后",
+      "capitalCityId": "city_kasugayama",
+      "capitalName": "春日山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zangke",
+      "flag": "牂牁",
+      "capitalCityId": "city_wanwen",
+      "capitalName": "宛温",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhadalan",
+      "flag": "扎答",
+      "capitalCityId": "city_kuoyitian",
+      "capitalName": "阔亦田",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhasaketu",
+      "flag": "扎萨",
+      "capitalCityId": "city_wuliyasutai",
+      "capitalName": "乌里雅苏台",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jalair",
+      "flag": "札剌",
+      "capitalCityId": "city_kerulen",
+      "capitalName": "克鲁伦河",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhancheng",
+      "flag": "占城",
+      "capitalCityId": "city_dupan",
+      "capitalName": "阇槃",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "champa",
+      "flag": "占婆",
+      "capitalCityId": "city_myson",
+      "capitalName": "美山",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "chendiaoyan",
+      "flag": "漳",
+      "capitalCityId": "city_zhangzhou",
+      "capitalName": "龙溪",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhaowu",
+      "flag": "昭武",
+      "capitalCityId": "city_huzhan",
+      "capitalName": "忽毡",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yettishar",
+      "flag": "哲德",
+      "capitalCityId": "city_nandou",
+      "capitalName": "难兜",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "fang_guozhen",
+      "flag": "浙方",
+      "capitalCityId": "city_qingyuan_zj",
+      "capitalName": "庆元",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "trinh",
+      "flag": "郑主",
+      "capitalCityId": "city_xidu",
+      "capitalName": "西都城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhongshan",
+      "flag": "中山",
+      "capitalCityId": "city_zhending",
+      "capitalName": "真定",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhongxiang",
+      "flag": "钟",
+      "capitalCityId": "city_wuling",
+      "capitalName": "武陵",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhong",
+      "flag": "仲",
+      "capitalCityId": "city_shouxian",
+      "capitalName": "寿春",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhuxie",
+      "flag": "朱邪",
+      "capitalCityId": "city_dashicheng",
+      "capitalName": "大石城",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhuerqi",
+      "flag": "主儿",
+      "capitalCityId": "city_sangguer",
+      "capitalName": "斡难河",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhuoshi",
+      "flag": "卓",
+      "capitalCityId": "city_linqiong",
+      "capitalName": "临邛",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zou",
+      "flag": "邹",
+      "capitalCityId": "city_wenzhou",
+      "capitalName": "永嘉",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zuogong",
+      "flag": "左贡",
+      "capitalCityId": "city_walazong",
+      "capitalName": "瓦拉宗",
+      "currentTier": 5,
+      "currentCategory": "待定→家族地名",
+      "auditTier": null,
+      "auditNote": ""
+    }
+  ],
+  "alreadyTier5Family": [
+    {
+      "id": "cao_d",
+      "flag": "曹",
+      "capitalCityId": "city_qiaojun",
+      "capitalName": "谯都",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "cen_d",
+      "flag": "岑",
+      "capitalCityId": "city_cen",
+      "capitalName": "凌云",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "chu_d",
+      "flag": "储",
+      "capitalCityId": "city_qianshan",
+      "capitalName": "潜山",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "chunshen",
+      "flag": "春申",
+      "capitalCityId": "city_shanghai",
+      "capitalName": "上海",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dai_d",
+      "flag": "代",
+      "capitalCityId": "city_daixian",
+      "capitalName": "代县",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dongxian",
+      "flag": "董",
+      "capitalCityId": "city_tancheng",
+      "capitalName": "郯城",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "feng_d",
+      "flag": "冯",
+      "capitalCityId": "city_shangdang",
+      "capitalName": "长子",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "gongsun_d",
+      "flag": "公孙",
+      "capitalCityId": "city_liaoyang",
+      "capitalName": "襄平",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "juqu_d",
+      "flag": "沮渠",
+      "capitalCityId": "city_zhangye",
+      "capitalName": "张掖",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "kong_d",
+      "flag": "孔",
+      "capitalCityId": "city_qufu",
+      "capitalName": "曲阜",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "li_lx_d",
+      "flag": "李",
+      "capitalCityId": "city_longxi",
+      "capitalName": "陇西",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "liang_d",
+      "flag": "梁",
+      "capitalCityId": "city_shangqiu",
+      "capitalName": "商丘",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "liubiao",
+      "flag": "刘",
+      "capitalCityId": "city_xiangyang",
+      "capitalName": "襄阳",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "lu_fy_d",
+      "flag": "卢",
+      "capitalCityId": "city_fanyang",
+      "capitalName": "范阳",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "lvbu",
+      "flag": "吕",
+      "capitalCityId": "city_xiapi",
+      "capitalName": "下邳",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ouyang",
+      "flag": "欧阳",
+      "capitalCityId": "city_luling",
+      "capitalName": "庐陵",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pei_hd_d",
+      "flag": "裴",
+      "capitalCityId": "city_hedong",
+      "capitalName": "安邑",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qifu_d",
+      "flag": "乞伏",
+      "capitalCityId": "city_fuhan",
+      "capitalName": "枹罕",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qian_d",
+      "flag": "钱",
+      "capitalCityId": "city_jiaxing",
+      "capitalName": "嘉兴",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "qiao_d",
+      "flag": "谯",
+      "capitalCityId": "city_langzhong_gucheng",
+      "capitalName": "阆中",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ran_d",
+      "flag": "冉",
+      "capitalCityId": "city_xiushan",
+      "capitalName": "秀山",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tan_d",
+      "flag": "覃",
+      "capitalCityId": "city_cili",
+      "capitalName": "慈利",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tian_sizhou",
+      "flag": "田",
+      "capitalCityId": "city_zhenyuan",
+      "capitalName": "镇远",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "tufa_d",
+      "flag": "秃发",
+      "capitalCityId": "city_ledu",
+      "capitalName": "浇河",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "wang_d",
+      "flag": "王",
+      "capitalCityId": "city_langya",
+      "capitalName": "琅琊",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xian_d",
+      "flag": "冼",
+      "capitalCityId": "city_gaoliang",
+      "capitalName": "高凉",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xiang_d",
+      "flag": "向",
+      "capitalCityId": "city_laifeng",
+      "capitalName": "来凤",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xiao_d",
+      "flag": "萧",
+      "capitalCityId": "city_lanling",
+      "capitalName": "兰陵",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xie_cj_d",
+      "flag": "谢",
+      "capitalCityId": "city_yiyang",
+      "capitalName": "弋阳",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yuan_cj_d",
+      "flag": "袁",
+      "capitalCityId": "city_xuanhu",
+      "capitalName": "悬瓠",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yue_d",
+      "flag": "岳",
+      "capitalCityId": "city_baling",
+      "capitalName": "巴陵",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhang2_d",
+      "flag": "章",
+      "capitalCityId": "city_hejian",
+      "capitalName": "乐成",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhe_d",
+      "flag": "折",
+      "capitalCityId": "city_fuzhou_fugu",
+      "capitalName": "府谷",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhi_d",
+      "flag": "智",
+      "capitalCityId": "city_jiangzhou",
+      "capitalName": "正平",
+      "currentTier": 5,
+      "currentCategory": "家族",
+      "auditTier": null,
+      "auditNote": ""
+    }
+  ],
+  "alreadyTier5Jun": [
+    {
+      "id": "fujiwara",
+      "flag": "奥州",
+      "capitalCityId": "city_yanaginogosho",
+      "capitalName": "柳之御所",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jibei2",
+      "flag": "备中",
+      "capitalCityId": "city_guizhicheng",
+      "capitalName": "鬼之城",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yang_bozhou",
+      "flag": "播",
+      "capitalCityId": "city_hailongtun",
+      "capitalName": "海龙屯",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "dizhou",
+      "flag": "棣",
+      "capitalCityId": "city_wudingzhou",
+      "capitalName": "乐安",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "pingyuan",
+      "flag": "高唐",
+      "capitalCityId": "city_pingyuan",
+      "capitalName": "平原",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "guo",
+      "flag": "果",
+      "capitalCityId": "city_guozhou",
+      "capitalName": "南充",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "hai2",
+      "flag": "海",
+      "capitalCityId": "city_haeju",
+      "capitalName": "朐山",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "henei",
+      "flag": "河内",
+      "capitalCityId": "city_huojia",
+      "capitalName": "获嘉",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "huizhou",
+      "flag": "会",
+      "capitalCityId": "city_zuli",
+      "capitalName": "祖厉",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jibei",
+      "flag": "济北",
+      "capitalCityId": "city_boyang",
+      "capitalName": "博阳",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jiaodong",
+      "flag": "胶东",
+      "capitalCityId": "city_jimo",
+      "capitalName": "即墨",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "huangfu",
+      "flag": "泾",
+      "capitalCityId": "city_anding",
+      "capitalName": "安定",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jing2",
+      "flag": "景",
+      "capitalCityId": "city_jingzhou2",
+      "capitalName": "蓨城",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "jiujiang",
+      "flag": "九江",
+      "capitalCityId": "city_chaisang",
+      "capitalName": "柴桑",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "long2",
+      "flag": "陇",
+      "capitalCityId": "city_longzhou",
+      "capitalName": "汧源",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yingchuan",
+      "flag": "漯",
+      "capitalCityId": "city_yancheng2",
+      "capitalName": "郾城",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shangzhou",
+      "flag": "上洛",
+      "capitalCityId": "city_shangluo",
+      "capitalName": "商邑",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "wan",
+      "flag": "舒",
+      "capitalCityId": "city_wancheng",
+      "capitalName": "皖城",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "shuofang",
+      "flag": "朔方",
+      "capitalCityId": "city_linrong",
+      "capitalName": "临戎",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "song2",
+      "flag": "松",
+      "capitalCityId": "city_songzhou",
+      "capitalName": "嘉诚",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "ting",
+      "flag": "汀",
+      "capitalCityId": "city_tingzhou",
+      "capitalName": "黄连",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "danyang",
+      "flag": "宣",
+      "capitalCityId": "city_jiuzi",
+      "capitalName": "鸠兹",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "xuan",
+      "flag": "宣府",
+      "capitalCityId": "city_xuanhua",
+      "capitalName": "宣化",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "yunzhong",
+      "flag": "云中",
+      "capitalCityId": "city_shengle",
+      "capitalName": "盛乐",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zhuqian",
+      "flag": "筑前",
+      "capitalCityId": "city_taizaifu",
+      "capitalName": "太宰府",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    },
+    {
+      "id": "zi",
+      "flag": "资",
+      "capitalCityId": "city_zizhou",
+      "capitalName": "盘石",
+      "currentTier": 5,
+      "currentCategory": "州郡",
+      "auditTier": null,
+      "auditNote": ""
+    }
+  ]
+}

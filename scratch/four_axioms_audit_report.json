@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "factions": 495,
+    "cities": 605,
+    "panjunCities": 110,
+    "startingCapitalsEntries": 496,
+    "displayNameEntries": 515,
+    "historicalFixedColors": 51,
+    "factionsTsHasColorField": false
+  },
+  "axiom1_oneCityPerFaction": {
+    "pass": true,
+    "violations": []
+  },
+  "axiom1_factionHasCity": {
+    "pass": true,
+    "count": 0,
+    "sample": []
+  },
+  "startingCapitalsSync": {
+    "capMismatch": {
+      "pass": true,
+      "count": 0,
+      "items": []
+    },
+    "noStarting": {
+      "pass": true,
+      "count": 0,
+      "sample": []
+    },
+    "extraStarting": {
+      "pass": false,
+      "count": 1,
+      "items": [
+        {
+          "factionId": "jieshuai",
+          "capId": "city_anuyuecheng"
+        }
+      ]
+    },
+    "orphanCap": {
+      "pass": true,
+      "count": 0,
+      "items": []
+    }
+  },
+  "flagUniqueness": {
+    "pass": true,
+    "count": 0,
+    "items": []
+  },
+  "flagEqualsCityName": {
+    "pass": true,
+    "count": 0,
+    "items": []
+  },
+  "orphanBindings": {
+    "cityFactionNotInTable": {
+      "count": 1,
+      "items": [
+        {
+          "cityId": "city_anuyuecheng",
+          "name": "阿弩越",
+          "factionId": "jieshuai"
+        }
+      ]
+    },
+    "cityNoCapitalEntry": {
+      "count": 0,
+      "items": []
+    }
+  },
+  "spacingUnder50km": {
+    "count": 0,
+    "worst": []
+  }
+}

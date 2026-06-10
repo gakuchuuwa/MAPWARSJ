@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# AI tools
+.claude/
+.agents/
+.cursorrules
+.codex/
+.cache/
+
+# Misc
+*.bak
+*_backup.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+
+# Large resource folders (not needed in version control)
+public/9dixingtu/
+san10pk_99026/
+
+.vercel
+
+# Large data files and models
+*.geojson
+*.traineddata
+close_cities_report.json
+*.pdf

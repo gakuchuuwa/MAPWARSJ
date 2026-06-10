@@ -1,0 +1,306 @@
+/**
+ * RecruitmentSystem — 乱斗募兵
+ *
+ * 用户点「播放」后：执行一次出兵检查（runInitialSpawn，仅一次）
+ * 每季（15 游戏秒 = 1 季度）：
+ *   1. 据点驻军 + 大城400 / 中城300 / 小城200 / 关隘100（见 CityConfig.recruitPerSeason）
+ *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
+ *      ① 每文化区保底 1 支
+ *      ② 优先：视野内、非跟随势力、驻军高的据点
+ *      ③ 余量：全图驻军最高的据点
+ */
+import { CityManager } from '../core/CityManager';
+import { LegionManager } from '../core/LegionManager';
+import { GameConfig } from '../config/GameConfig';
+import { CITY_CONFIG, clampCityTroops } from '../config/CityConfig';
+import { GameTime } from '../core/GameTime';
+import { getCultureTier } from '../types/CultureFormations';
+import { expandCompositionSlots, expandCompositionScales } from '../types/LegionComposition';
+import { PerformanceMonitor } from '../debug/PerformanceMonitor';
+import { gameLog } from '../utils/GameLogger';
+import { getCityRegion, REGION_ORDER, RegionType } from '../systems/RegionSystem';
+
+type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
+type SpawnCandidate = {
+    city: RecruitmentCity;
+    armySize: number;
+    region: RegionType;
+    inViewport: boolean;
+};
+
+export class RecruitmentSystem {
+    private cityManager: CityManager;
+    private legionManager: LegionManager;
+    private seasonTimer: number = 0;
+    private hasRunInitialSpawn = false;
+    /** 每季募兵后分批刷新城市标签，避免一帧更新 600+ DOM 卡顿 */
+    private pendingLabelCityIds: Set<string> = new Set();
+    private static readonly LABEL_UPDATES_PER_FRAME = 20;
+
+    constructor(cityManager: CityManager, legionManager: LegionManager) {
+        this.cityManager = cityManager;
+        this.legionManager = legionManager;
+    }
+
+    /**
+     * 用户点击「播放」并开始运行后出兵（仅一次，不等第一个 15 秒季度）
+     * 条件与 trySpawnLegions 相同：大城/中城/小城/关隘、无现役军、90% 兵力 ≥ MIN_ARMY_SIZE
+     */
+    public runInitialSpawn(): void {
+        if (this.hasRunInitialSpawn) return;
+        this.hasRunInitialSpawn = true;
+
+        this.legionManager.trimLegionsToCap();
+
+        const cities = this.cityManager.getCities();
+        gameLog('recruitment', '💂 [募兵] 播放开始 — 首次出兵（分帧异步）');
+
+        const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
+        const candidates = this.buildSpawnPlan(cities);
+
+        // 每帧最多生成 5 支，分帧完成避免 INP 卡顿
+        const BATCH = 5;
+        let idx = 0;
+
+        const spawnBatch = () => {
+            const deadline = performance.now() + 8; // 最多占用 8ms/帧
+            while (idx < candidates.length && performance.now() < deadline) {
+                if (this.legionManager.getActiveLegionCount() >= maxLegions) break;
+
+                const { city, armySize } = candidates[idx++];
+                if (this.cityHasActiveLegion(city.id)) continue; // 再次确认
+
+                const newLegion = this.spawnCandidate(city, armySize);
+                if (!newLegion) continue;
+                (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
+            }
+
+            // 还有剩余候选且未达上限，下一帧继续
+            if (idx < candidates.length && this.legionManager.getActiveLegionCount() < maxLegions) {
+                requestAnimationFrame(spawnBatch);
+            } else {
+                gameLog('recruitment', `💂 [募兵] 首次出兵完成，共 ${this.legionManager.getActiveLegionCount()} 支军团`);
+                (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
+            }
+        };
+
+        requestAnimationFrame(spawnBatch);
+    }
+
+    public update(gameDelta: number): void {
+        if (gameDelta <= 0) return;
+
+        this.flushPendingCityLabels();
+
+        this.seasonTimer += gameDelta;
+        if (this.seasonTimer < GameTime.SEASON_DURATION) return;
+
+        // 保留溢出，避免丢帧累积误差
+        this.seasonTimer -= GameTime.SEASON_DURATION;
+        this.runSeasonTick();
+    }
+
+    private runSeasonTick(): void {
+        const t0 = performance.now();
+        const cities = this.cityManager.getCities();
+        this.recruitSeasonGarrison(cities);
+        this.trySpawnLegions(cities);
+        PerformanceMonitor.getInstance().noteAsyncWork('recruitSeason', performance.now() - t0);
+    }
+
+    /** 每季：按据点等级补驻军（大400 / 中300 / 小200 / 关100） */
+    private recruitSeasonGarrison(cities: ReturnType<CityManager['getCities']>): void {
+        for (const city of cities) {
+            if (!city.factionId || city.factionId === '' || city.factionId === 'panjun') continue;
+
+            const cfg = CITY_CONFIG[city.type];
+            if (!cfg) continue;
+
+            city.troops = clampCityTroops(city.type, (city.troops || 0) + cfg.recruitPerSeason);
+            this.pendingLabelCityIds.add(city.id);
+        }
+    }
+
+    private queueCityLabel(cityId: string): void {
+        this.pendingLabelCityIds.add(cityId);
+    }
+
+    private flushPendingCityLabels(): void {
+        if (this.pendingLabelCityIds.size === 0) return;
+
+        let n = 0;
+        for (const cityId of this.pendingLabelCityIds) {
+            if (n >= RecruitmentSystem.LABEL_UPDATES_PER_FRAME) break;
+            this.cityManager.updateCityLabel(cityId);
+            this.pendingLabelCityIds.delete(cityId);
+            n++;
+        }
+    }
+
+    /** 驻军高的优先；同驻军随机，避免 cities_v2 录入顺序让固定录入顺序总是先出兵 */
+    private static sortSpawnCandidates(
+        candidates: Array<{ city: { troops?: number }; armySize: number }>
+    ): void {
+        candidates.sort((a, b) => {
+            const diff = (b.city.troops || 0) - (a.city.troops || 0);
+            return diff !== 0 ? diff : Math.random() - 0.5;
+        });
+    }
+
+    private getCityRegion(city: RecruitmentCity): RegionType {
+        return getCityRegion({
+            latitude: city.latitude,
+            longitude: city.longitude,
+            region: city.region,
+        });
+    }
+
+    private getActiveLegionRegions(): Map<RegionType, number> {
+        const counts = new Map<RegionType, number>();
+        for (const army of this.legionManager.getArmies()) {
+            if (army.isDestroyed || army.type !== 'legion') continue;
+            const region = army.cultureRegion;
+            if (!region) continue;
+            counts.set(region, (counts.get(region) ?? 0) + 1);
+        }
+        return counts;
+    }
+
+    private getCurrentViewportBounds(): { contains(latlng: [number, number]): boolean } | null {
+        const map = (window as any).game?.map?.getLeafletMap?.();
+        return map?.getBounds?.() ?? null;
+    }
+
+    private getFollowedFactionId(): string | null {
+        return this.legionManager.getFollowedLegion()?.getFactionId?.() ?? null;
+    }
+
+    private collectSpawnCandidates(cities: RecruitmentCity[]): SpawnCandidate[] {
+        const minArmySize = GameConfig.LEGION.MIN_ARMY_SIZE;
+        const spawnTypes = GameConfig.LEGION.SPAWN_CITY_TYPES as readonly string[];
+        const bounds = this.getCurrentViewportBounds();
+        const candidates: SpawnCandidate[] = [];
+
+        for (const city of cities) {
+            if (!city.factionId || city.factionId === 'panjun') continue;
+            if (!spawnTypes.includes(city.type)) continue;
+            if (this.cityHasActiveLegion(city.id)) continue;
+
+            const armySize = Math.floor((city.troops || 0) * 0.9);
+            if (armySize < minArmySize) continue;
+
+            candidates.push({
+                city,
+                armySize,
+                region: this.getCityRegion(city),
+                inViewport: bounds?.contains([city.latitude, city.longitude]) ?? false,
+            });
+        }
+
+        RecruitmentSystem.sortSpawnCandidates(candidates);
+        return candidates;
+    }
+
+    private buildSpawnPlan(cities: RecruitmentCity[]): SpawnCandidate[] {
+        const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
+        let remaining = maxLegions - this.legionManager.getActiveLegionCount();
+        if (remaining <= 0) return [];
+
+        const candidates = this.collectSpawnCandidates(cities);
+        const activeRegionCounts = this.getActiveLegionRegions();
+        const selected: SpawnCandidate[] = [];
+        const selectedCityIds = new Set<string>();
+        const baseline = GameConfig.LEGION.REGION_BASELINE_LEGIONS;
+
+        // 第一段：每个文化区先保底 1 支（或配置值），只选该区当前最强候选城。
+        for (const region of REGION_ORDER) {
+            if (remaining <= 0) break;
+            if ((activeRegionCounts.get(region) ?? 0) >= baseline) continue;
+
+            const candidate = candidates.find(
+                (c) => c.region === region && !selectedCityIds.has(c.city.id)
+            );
+            if (!candidate) continue;
+
+            selected.push(candidate);
+            selectedCityIds.add(candidate.city.id);
+            activeRegionCounts.set(region, (activeRegionCounts.get(region) ?? 0) + 1);
+            remaining--;
+        }
+
+        // 第二段（优先）：视野内、非跟随势力、驻军高（已按驻军排序）。
+        const followedFactionId = this.getFollowedFactionId();
+        for (const candidate of candidates) {
+            if (remaining <= 0) break;
+            if (selectedCityIds.has(candidate.city.id)) continue;
+            if (!candidate.inViewport) continue;
+            if (followedFactionId && candidate.city.factionId === followedFactionId) continue;
+
+            selected.push(candidate);
+            selectedCityIds.add(candidate.city.id);
+            remaining--;
+        }
+
+        // 第三段：余量给全图驻军最高的据点（候选已按驻军降序）。
+        for (const candidate of candidates) {
+            if (remaining <= 0) break;
+            if (selectedCityIds.has(candidate.city.id)) continue;
+
+            selected.push(candidate);
+            selectedCityIds.add(candidate.city.id);
+            remaining--;
+        }
+
+        return selected;
+    }
+
+    private spawnCandidate(city: RecruitmentCity, armySize: number) {
+        const newLegion = this.legionManager.createArmy({
+            name: `${city.name}军团`,
+            factionId: city.factionId,
+            position: { lat: city.latitude, lng: city.longitude },
+            troops: armySize,
+            sourceCityId: city.id,
+        });
+
+        if (!newLegion) return null;
+
+        city.troops = (city.troops || 0) - newLegion.getTroops();
+        this.queueCityLabel(city.id);
+        return newLegion;
+    }
+
+    private cityHasActiveLegion(cityId: string): boolean {
+        return this.legionManager.getArmies().some((a) => {
+            if (a.isDestroyed || a.type !== 'legion') return false;
+            return a.homeCityId === cityId || a.getSourceCityId() === cityId;
+        });
+    }
+
+    /** 大城/中城/小城/关隘、无现役军、兵够则出征；文化区保底 → 视野优先 → 全图高兵力 */
+    private trySpawnLegions(cities: ReturnType<CityManager['getCities']>): void {
+        const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
+
+        if (this.legionManager.getActiveLegionCount() >= maxLegions) {
+            return;
+        }
+
+        const candidates = this.buildSpawnPlan(cities);
+
+        for (const { city, armySize } of candidates) {
+            if (this.legionManager.getActiveLegionCount() >= maxLegions) {
+                break;
+            }
+
+            const newLegion = this.spawnCandidate(city, armySize);
+            if (!newLegion) continue;
+
+            const n = this.legionManager.getActiveLegionCount();
+            gameLog(
+                'recruitment',
+                `💂 [募兵] 据点【${city.name}】组建【${newLegion.name}】(${newLegion.getTroops()} 兵，保底/视野/高兵，场上 ${n}/${maxLegions})`
+            );
+        }
+    }
+
+}

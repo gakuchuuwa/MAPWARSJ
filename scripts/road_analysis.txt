@@ -1,0 +1,74 @@
+====== 道路数据统计 ======
+
+道路ID总数: 0
+startConnection数: 233
+endConnection数: 233
+已连接城市(去重): 233
+
+====== 连接最多的枢纽城市(Top 20) ======
+  city_changan → 5次
+  city_luoyang → 5次
+  city_feihu → 5次
+  city_beijing → 4次
+  city_yanmenguan → 4次
+  city_taiyuan → 4次
+  city_jiangzhou → 4次
+  city_kaifeng → 4次
+  city_luzhou → 4次
+  city_jianmenguan → 4次
+  city_licheng → 4次
+  city_yancheng → 4次
+  city_nanyang → 4次
+  city_yueyang → 4次
+  city_shaoguan → 4次
+  city_hanseong → 4次
+  city_weinan → 3次
+  city_muye → 3次
+  city_anyang → 3次
+  city_handan → 3次
+
+只在startConnection出现的城市: 75个
+只在endConnection出现的城市: 53个
+
+====== 道路名样例(前30) ======
+  渑池-洛阳
+  虎牢关-开封
+  长安-武关
+  长安-渭南
+  渭南-潼关
+  渭南-蒲津关
+  长安-金锁关
+  长安-扶风
+  潼关-函谷关
+  函谷关-渑池
+  牧野-安阳
+  安阳-邯郸
+  邯郸-真定
+  真定-保定
+  安定-萧关
+  彬州-安定
+  长安-彬州
+  居庸关-宣化
+  河内-牧野
+  北京-居庸关
+  阳原-宣化
+  阳原-大同
+  大同-雁门关
+  雁门关-太原
+  太原-灵石关
+  灵石关-临汾
+  临汾-绛州
+  绛州-蒲津关
+  开封-白马津
+  白马津-安阳
+
+道路总数(按name字段): 233
+
+====== 分析坐标点数量 ======
+
+坐标点>100的道路(5条,Top15):
+  蓝氏城-贵山城 → 192点
+  楼兰-敦煌 → 189点
+  赤谷城-它乾城 → 155点
+  小宛-且末 → 127点
+  福州-杭州 → 104点

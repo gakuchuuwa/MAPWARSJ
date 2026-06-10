@@ -1,0 +1,2046 @@
+{
+  "summary": {
+    "cities": 606,
+    "factions": 508,
+    "startingCapitals": 0,
+    "factionFlagMap": 508,
+    "sandboxDisplayNames": 526
+  },
+  "issues": {
+    "orphanFactionRef": [],
+    "factionMissingCapital": [
+      {
+        "factionId": "zhancheng",
+        "factionName": "占城国"
+      },
+      {
+        "factionId": "monong",
+        "factionName": "墨侬"
+      },
+      {
+        "factionId": "shuizhen",
+        "factionName": "水真"
+      },
+      {
+        "factionId": "wala",
+        "factionName": "瓦剌"
+      },
+      {
+        "factionId": "wuliangha",
+        "factionName": "兀良"
+      },
+      {
+        "factionId": "dingling",
+        "factionName": "丁零"
+      },
+      {
+        "factionId": "nifuhe",
+        "factionName": "尼夫"
+      },
+      {
+        "factionId": "guer",
+        "factionName": "古尔"
+      },
+      {
+        "factionId": "bade",
+        "factionName": "巴德"
+      },
+      {
+        "factionId": "xiajiasi",
+        "factionName": "坚昆"
+      },
+      {
+        "factionId": "zhen",
+        "factionName": "后百济"
+      },
+      {
+        "factionId": "dongshengwei",
+        "factionName": "东胜卫"
+      },
+      {
+        "factionId": "dizhou",
+        "factionName": "棣州"
+      },
+      {
+        "factionId": "lulin",
+        "factionName": "绿林"
+      },
+      {
+        "factionId": "bailian",
+        "factionName": "白莲"
+      },
+      {
+        "factionId": "chimei",
+        "factionName": "赤眉"
+      },
+      {
+        "factionId": "yunzhong",
+        "factionName": "云中"
+      },
+      {
+        "factionId": "qian",
+        "factionName": "黔中"
+      },
+      {
+        "factionId": "chunshen",
+        "factionName": "春申"
+      },
+      {
+        "factionId": "wan",
+        "factionName": "舒州"
+      },
+      {
+        "factionId": "qingyuan_bd",
+        "factionName": "清苑"
+      },
+      {
+        "factionId": "zhong",
+        "factionName": "仲家"
+      },
+      {
+        "factionId": "xichu",
+        "factionName": "西楚国"
+      },
+      {
+        "factionId": "weihaiwei",
+        "factionName": "威海"
+      },
+      {
+        "factionId": "xia",
+        "factionName": "夏国"
+      },
+      {
+        "factionId": "shang",
+        "factionName": "商国"
+      },
+      {
+        "factionId": "zhou",
+        "factionName": "周国"
+      },
+      {
+        "factionId": "qi",
+        "factionName": "齐国"
+      },
+      {
+        "factionId": "jin",
+        "factionName": "晋国"
+      },
+      {
+        "factionId": "chu",
+        "factionName": "楚国"
+      },
+      {
+        "factionId": "wu",
+        "factionName": "吴国"
+      },
+      {
+        "factionId": "yue",
+        "factionName": "越国"
+      },
+      {
+        "factionId": "qin",
+        "factionName": "秦国"
+      },
+      {
+        "factionId": "song",
+        "factionName": "宋国"
+      },
+      {
+        "factionId": "yan",
+        "factionName": "燕国"
+      },
+      {
+        "factionId": "zhao",
+        "factionName": "赵国"
+      },
+      {
+        "factionId": "wei",
+        "factionName": "魏国"
+      },
+      {
+        "factionId": "han",
+        "factionName": "韩国"
+      },
+      {
+        "factionId": "han_d",
+        "factionName": "汉国"
+      },
+      {
+        "factionId": "shu",
+        "factionName": "蜀国"
+      },
+      {
+        "factionId": "dian",
+        "factionName": "通海"
+      },
+      {
+        "factionId": "xin",
+        "factionName": "新国"
+      },
+      {
+        "factionId": "cheng",
+        "factionName": "成国"
+      },
+      {
+        "factionId": "liang",
+        "factionName": "凉国"
+      },
+      {
+        "factionId": "juqu_d",
+        "factionName": "沮渠"
+      },
+      {
+        "factionId": "tufa_d",
+        "factionName": "秃发"
+      },
+      {
+        "factionId": "qiuchi",
+        "factionName": "杨氏"
+      },
+      {
+        "factionId": "helian",
+        "factionName": "赫连"
+      },
+      {
+        "factionId": "xiongnu",
+        "factionName": "匈奴"
+      },
+      {
+        "factionId": "xianbei",
+        "factionName": "鲜卑"
+      },
+      {
+        "factionId": "jie",
+        "factionName": "羯族"
+      },
+      {
+        "factionId": "di",
+        "factionName": "氐族"
+      },
+      {
+        "factionId": "qiang",
+        "factionName": "羌族"
+      },
+      {
+        "factionId": "tuoba",
+        "factionName": "拓跋"
+      },
+      {
+        "factionId": "yuwen",
+        "factionName": "宇文"
+      },
+      {
+        "factionId": "liang_d",
+        "factionName": "梁国"
+      },
+      {
+        "factionId": "chen",
+        "factionName": "陈国"
+      },
+      {
+        "factionId": "sui",
+        "factionName": "隋国"
+      },
+      {
+        "factionId": "tang",
+        "factionName": "唐国"
+      },
+      {
+        "factionId": "min",
+        "factionName": "闽国"
+      },
+      {
+        "factionId": "shatuo",
+        "factionName": "沙陀"
+      },
+      {
+        "factionId": "qidan",
+        "factionName": "契丹"
+      },
+      {
+        "factionId": "bohai",
+        "factionName": "渤海国"
+      },
+      {
+        "factionId": "jurchen",
+        "factionName": "女真"
+      },
+      {
+        "factionId": "dangxiang",
+        "factionName": "大夏"
+      },
+      {
+        "factionId": "menggu_d",
+        "factionName": "蒙古"
+      },
+      {
+        "factionId": "manzhou",
+        "factionName": "满洲"
+      },
+      {
+        "factionId": "manzhou_d",
+        "factionName": "大清"
+      },
+      {
+        "factionId": "ming_d",
+        "factionName": "大明"
+      },
+      {
+        "factionId": "liao_d",
+        "factionName": "大辽"
+      },
+      {
+        "factionId": "dai_d",
+        "factionName": "代国"
+      },
+      {
+        "factionId": "feng_d",
+        "factionName": "冯氏"
+      },
+      {
+        "factionId": "zhongshan",
+        "factionName": "中山"
+      },
+      {
+        "factionId": "wang_d",
+        "factionName": "王氏"
+      },
+      {
+        "factionId": "xiao_d",
+        "factionName": "萧氏"
+      },
+      {
+        "factionId": "lu_fy_d",
+        "factionName": "卢氏"
+      },
+      {
+        "factionId": "li_lx_d",
+        "factionName": "李氏"
+      },
+      {
+        "factionId": "pei_hd_d",
+        "factionName": "裴氏"
+      },
+      {
+        "factionId": "yuan_cj_d",
+        "factionName": "袁氏"
+      },
+      {
+        "factionId": "xie_cj_d",
+        "factionName": "谢氏"
+      },
+      {
+        "factionId": "yue_d",
+        "factionName": "岳氏"
+      },
+      {
+        "factionId": "qian_d",
+        "factionName": "钱氏"
+      },
+      {
+        "factionId": "kong_d",
+        "factionName": "孔氏"
+      },
+      {
+        "factionId": "cao_d",
+        "factionName": "曹氏"
+      },
+      {
+        "factionId": "jiujiang",
+        "factionName": "柴桑"
+      },
+      {
+        "factionId": "zhang2_d",
+        "factionName": "章氏"
+      },
+      {
+        "factionId": "jiaodong",
+        "factionName": "胶东"
+      },
+      {
+        "factionId": "huangfu",
+        "factionName": "皇甫"
+      },
+      {
+        "factionId": "guo",
+        "factionName": "果州"
+      },
+      {
+        "factionId": "zi",
+        "factionName": "资州"
+      },
+      {
+        "factionId": "jing2",
+        "factionName": "景州"
+      },
+      {
+        "factionId": "long2",
+        "factionName": "陇州"
+      },
+      {
+        "factionId": "song2",
+        "factionName": "松州"
+      },
+      {
+        "factionId": "qing",
+        "factionName": "庆州"
+      },
+      {
+        "factionId": "ting",
+        "factionName": "汀州"
+      },
+      {
+        "factionId": "quan",
+        "factionName": "权州"
+      },
+      {
+        "factionId": "jibei",
+        "factionName": "济北"
+      },
+      {
+        "factionId": "wusun",
+        "factionName": "乌孙国"
+      },
+      {
+        "factionId": "dayuan",
+        "factionName": "大宛"
+      },
+      {
+        "factionId": "gouding",
+        "factionName": "句町国"
+      },
+      {
+        "factionId": "wuhuan",
+        "factionName": "乌桓"
+      },
+      {
+        "factionId": "xianlingqiang",
+        "factionName": "先零"
+      },
+      {
+        "factionId": "yelang",
+        "factionName": "夜郎"
+      },
+      {
+        "factionId": "ailao",
+        "factionName": "哀牢"
+      },
+      {
+        "factionId": "fuyu",
+        "factionName": "夫余国"
+      },
+      {
+        "factionId": "shule",
+        "factionName": "疏勒"
+      },
+      {
+        "factionId": "loulan",
+        "factionName": "楼兰"
+      },
+      {
+        "factionId": "shache",
+        "factionName": "莎车"
+      },
+      {
+        "factionId": "qiuci",
+        "factionName": "龟兹"
+      },
+      {
+        "factionId": "yanqi",
+        "factionName": "焉耆"
+      },
+      {
+        "factionId": "gaogouli",
+        "factionName": "高句国"
+      },
+      {
+        "factionId": "xinluo",
+        "factionName": "新罗国"
+      },
+      {
+        "factionId": "riben",
+        "factionName": "日本"
+      },
+      {
+        "factionId": "quanrong",
+        "factionName": "犬戎"
+      },
+      {
+        "factionId": "sushen",
+        "factionName": "肃慎"
+      },
+      {
+        "factionId": "yuezhi",
+        "factionName": "月氏"
+      },
+      {
+        "factionId": "chile",
+        "factionName": "敕勒国"
+      },
+      {
+        "factionId": "rouran",
+        "factionName": "柔然国"
+      },
+      {
+        "factionId": "baiji",
+        "factionName": "百济国"
+      },
+      {
+        "factionId": "tubo",
+        "factionName": "吐蕃国"
+      },
+      {
+        "factionId": "tujue",
+        "factionName": "突厥国"
+      },
+      {
+        "factionId": "tiele",
+        "factionName": "铁勒"
+      },
+      {
+        "factionId": "huige",
+        "factionName": "回纥国"
+      },
+      {
+        "factionId": "dayue",
+        "factionName": "大越"
+      },
+      {
+        "factionId": "yamato",
+        "factionName": "大和"
+      },
+      {
+        "factionId": "edo",
+        "factionName": "德川"
+      },
+      {
+        "factionId": "izumo",
+        "factionName": "出云"
+      },
+      {
+        "factionId": "satsuma",
+        "factionName": "萨摩"
+      },
+      {
+        "factionId": "ryukyu",
+        "factionName": "琉球国"
+      },
+      {
+        "factionId": "so",
+        "factionName": "对马"
+      },
+      {
+        "factionId": "kakizaki",
+        "factionName": "松前"
+      },
+      {
+        "factionId": "fujiwara",
+        "factionName": "奥州"
+      },
+      {
+        "factionId": "gaya",
+        "factionName": "伽倻国"
+      },
+      {
+        "factionId": "aki",
+        "factionName": "安艺"
+      },
+      {
+        "factionId": "echigo",
+        "factionName": "越后"
+      },
+      {
+        "factionId": "kai",
+        "factionName": "甲斐"
+      },
+      {
+        "factionId": "owari",
+        "factionName": "尾张"
+      },
+      {
+        "factionId": "chosokabe",
+        "factionName": "土佐"
+      },
+      {
+        "factionId": "hashiba",
+        "factionName": "丰臣"
+      },
+      {
+        "factionId": "honda",
+        "factionName": "下野"
+      },
+      {
+        "factionId": "aizu",
+        "factionName": "会津"
+      },
+      {
+        "factionId": "xingliao",
+        "factionName": "兴辽国"
+      },
+      {
+        "factionId": "gongsun_d",
+        "factionName": "公孙"
+      },
+      {
+        "factionId": "donghu",
+        "factionName": "东胡"
+      },
+      {
+        "factionId": "luoyue",
+        "factionName": "骆越"
+      },
+      {
+        "factionId": "ba",
+        "factionName": "巴国"
+      },
+      {
+        "factionId": "qifu_d",
+        "factionName": "乞伏"
+      },
+      {
+        "factionId": "tuyu_d",
+        "factionName": "吐谷浑"
+      },
+      {
+        "factionId": "linyi",
+        "factionName": "林邑国"
+      },
+      {
+        "factionId": "pingyuan",
+        "factionName": "高唐"
+      },
+      {
+        "factionId": "yao",
+        "factionName": "尧帝"
+      },
+      {
+        "factionId": "murong",
+        "factionName": "慕容"
+      },
+      {
+        "factionId": "erzhu",
+        "factionName": "尔朱"
+      },
+      {
+        "factionId": "wey",
+        "factionName": "卫国"
+      },
+      {
+        "factionId": "xu",
+        "factionName": "徐国"
+      },
+      {
+        "factionId": "zhi_d",
+        "factionName": "智氏"
+      },
+      {
+        "factionId": "cangtou",
+        "factionName": "苍头"
+      },
+      {
+        "factionId": "tongma",
+        "factionName": "铜马"
+      },
+      {
+        "factionId": "dongxian",
+        "factionName": "海西"
+      },
+      {
+        "factionId": "baibo",
+        "factionName": "黄巾"
+      },
+      {
+        "factionId": "cheshihou",
+        "factionName": "车师"
+      },
+      {
+        "factionId": "zhai_han",
+        "factionName": "翟国"
+      },
+      {
+        "factionId": "yin",
+        "factionName": "殷国"
+      },
+      {
+        "factionId": "yingbu",
+        "factionName": "九江"
+      },
+      {
+        "factionId": "ouyue",
+        "factionName": "瓯越"
+      },
+      {
+        "factionId": "liubiao",
+        "factionName": "刘氏"
+      },
+      {
+        "factionId": "lvbu",
+        "factionName": "吕氏"
+      },
+      {
+        "factionId": "wazhai",
+        "factionName": "瓦岗"
+      },
+      {
+        "factionId": "liangshidu",
+        "factionName": "梁朔"
+      },
+      {
+        "factionId": "linshihong",
+        "factionName": "楚南"
+      },
+      {
+        "factionId": "lu",
+        "factionName": "东道"
+      },
+      {
+        "factionId": "kumo",
+        "factionName": "奚族"
+      },
+      {
+        "factionId": "xijue",
+        "factionName": "十箭"
+      },
+      {
+        "factionId": "xian_d",
+        "factionName": "冼氏"
+      },
+      {
+        "factionId": "xiqin",
+        "factionName": "西秦国"
+      },
+      {
+        "factionId": "xueyantuo",
+        "factionName": "薛延陀"
+      },
+      {
+        "factionId": "tujishi",
+        "factionName": "突骑施"
+      },
+      {
+        "factionId": "nanzhao",
+        "factionName": "南诏国"
+      },
+      {
+        "factionId": "xiaobolu",
+        "factionName": "勃律"
+      },
+      {
+        "factionId": "qiufu",
+        "factionName": "裘甫"
+      },
+      {
+        "factionId": "dongdan",
+        "factionName": "东丹国"
+      },
+      {
+        "factionId": "dali",
+        "factionName": "大理"
+      },
+      {
+        "factionId": "luodian",
+        "factionName": "罗甸国"
+      },
+      {
+        "factionId": "gusiluo",
+        "factionName": "唃厮啰"
+      },
+      {
+        "factionId": "goryeo",
+        "factionName": "高丽国"
+      },
+      {
+        "factionId": "nongzhigao",
+        "factionName": "大南"
+      },
+      {
+        "factionId": "fangla",
+        "factionName": "圣公"
+      },
+      {
+        "factionId": "zhongxiang",
+        "factionName": "钟楚"
+      },
+      {
+        "factionId": "yang_aner",
+        "factionName": "天顺"
+      },
+      {
+        "factionId": "haoding",
+        "factionName": "红袄"
+      },
+      {
+        "factionId": "liwang",
+        "factionName": "黑旗"
+      },
+      {
+        "factionId": "huarazim",
+        "factionName": "花剌国"
+      },
+      {
+        "factionId": "pagan",
+        "factionName": "缅国"
+      },
+      {
+        "factionId": "champa",
+        "factionName": "占婆国"
+      },
+      {
+        "factionId": "dongxia",
+        "factionName": "东夏"
+      },
+      {
+        "factionId": "chagatai",
+        "factionName": "察合台"
+      },
+      {
+        "factionId": "ogodei",
+        "factionName": "窝阔台"
+      },
+      {
+        "factionId": "kereyid",
+        "factionName": "克烈"
+      },
+      {
+        "factionId": "naiman",
+        "factionName": "乃蛮"
+      },
+      {
+        "factionId": "tatar",
+        "factionName": "塔塔尔"
+      },
+      {
+        "factionId": "merkit",
+        "factionName": "蔑儿乞"
+      },
+      {
+        "factionId": "ongut",
+        "factionName": "汪古"
+      },
+      {
+        "factionId": "red_turban",
+        "factionName": "红巾"
+      },
+      {
+        "factionId": "zhangshicheng",
+        "factionName": "大周"
+      },
+      {
+        "factionId": "xushouhui",
+        "factionName": "天完国"
+      },
+      {
+        "factionId": "luoping",
+        "factionName": "罗平国"
+      },
+      {
+        "factionId": "daxing",
+        "factionName": "大兴"
+      },
+      {
+        "factionId": "toutuo",
+        "factionName": "头陀"
+      },
+      {
+        "factionId": "chendiaoyan",
+        "factionName": "陈吊"
+      },
+      {
+        "factionId": "fang_guozhen",
+        "factionName": "浙方"
+      },
+      {
+        "factionId": "liutong_yangqing",
+        "factionName": "汉王"
+      },
+      {
+        "factionId": "dengmaoqi",
+        "factionName": "铲平"
+      },
+      {
+        "factionId": "yezongliu",
+        "factionName": "太平"
+      },
+      {
+        "factionId": "dada_ming",
+        "factionName": "鞑靼"
+      },
+      {
+        "factionId": "oirat_ming",
+        "factionName": "卫拉特"
+      },
+      {
+        "factionId": "jianzhou_nvzhen",
+        "factionName": "建州"
+      },
+      {
+        "factionId": "haixi_nvzhen",
+        "factionName": "海西"
+      },
+      {
+        "factionId": "yeren_nvzhen",
+        "factionName": "东海"
+      },
+      {
+        "factionId": "jilimi",
+        "factionName": "吉里"
+      },
+      {
+        "factionId": "hezhe",
+        "factionName": "赫哲"
+      },
+      {
+        "factionId": "luchuan",
+        "factionName": "麓川"
+      },
+      {
+        "factionId": "chijin",
+        "factionName": "赤斤"
+      },
+      {
+        "factionId": "guiyi",
+        "factionName": "归义"
+      },
+      {
+        "factionId": "anding_wei",
+        "factionName": "安定"
+      },
+      {
+        "factionId": "joseon",
+        "factionName": "朝鲜国"
+      },
+      {
+        "factionId": "dahan",
+        "factionName": "大韩"
+      },
+      {
+        "factionId": "siam",
+        "factionName": "暹罗国"
+      },
+      {
+        "factionId": "chenla",
+        "factionName": "真腊国"
+      },
+      {
+        "factionId": "dashun",
+        "factionName": "大顺"
+      },
+      {
+        "factionId": "daxi_ming",
+        "factionName": "大西"
+      },
+      {
+        "factionId": "hongguang",
+        "factionName": "弘光"
+      },
+      {
+        "factionId": "longwu",
+        "factionName": "隆武"
+      },
+      {
+        "factionId": "lujian",
+        "factionName": "鲁监"
+      },
+      {
+        "factionId": "yongli",
+        "factionName": "永历"
+      },
+      {
+        "factionId": "chahar",
+        "factionName": "察哈"
+      },
+      {
+        "factionId": "dzungar",
+        "factionName": "准噶尔"
+      },
+      {
+        "factionId": "khoshut",
+        "factionName": "和硕特"
+      },
+      {
+        "factionId": "yarkand",
+        "factionName": "叶尔羌"
+      },
+      {
+        "factionId": "khoja",
+        "factionName": "和卓"
+      },
+      {
+        "factionId": "gaxa",
+        "factionName": "噶厦"
+      },
+      {
+        "factionId": "jinchuan_g",
+        "factionName": "金川"
+      },
+      {
+        "factionId": "jinchuan_x",
+        "factionName": "小川"
+      },
+      {
+        "factionId": "geng",
+        "factionName": "靖南"
+      },
+      {
+        "factionId": "shuntian",
+        "factionName": "顺天国"
+      },
+      {
+        "factionId": "miaomin",
+        "factionName": "苗民"
+      },
+      {
+        "factionId": "gurkha",
+        "factionName": "廓喀"
+      },
+      {
+        "factionId": "kazakh",
+        "factionName": "哈萨"
+      },
+      {
+        "factionId": "kokand",
+        "factionName": "霍罕国"
+      },
+      {
+        "factionId": "badakhshan",
+        "factionName": "达克"
+      },
+      {
+        "factionId": "taiping",
+        "factionName": "太平天国"
+      },
+      {
+        "factionId": "dacheng",
+        "factionName": "大成"
+      },
+      {
+        "factionId": "han_nian",
+        "factionName": "捻汉"
+      },
+      {
+        "factionId": "han_dadian",
+        "factionName": "大捻"
+      },
+      {
+        "factionId": "pingnan",
+        "factionName": "平南"
+      },
+      {
+        "factionId": "qianhui",
+        "factionName": "回军"
+      },
+      {
+        "factionId": "miao_qing",
+        "factionName": "苗军"
+      },
+      {
+        "factionId": "tuoming",
+        "factionName": "清真"
+      },
+      {
+        "factionId": "songlin",
+        "factionName": "松林"
+      },
+      {
+        "factionId": "yettishar",
+        "factionName": "哲德"
+      },
+      {
+        "factionId": "dajin",
+        "factionName": "大金"
+      },
+      {
+        "factionId": "yuan_d",
+        "factionName": "大元"
+      },
+      {
+        "factionId": "yilou",
+        "factionName": "挹娄"
+      },
+      {
+        "factionId": "wuji",
+        "factionName": "勿吉"
+      },
+      {
+        "factionId": "mohe",
+        "factionName": "靺鞨"
+      },
+      {
+        "factionId": "shiwei",
+        "factionName": "室韦"
+      },
+      {
+        "factionId": "huimo",
+        "factionName": "濊貊"
+      },
+      {
+        "factionId": "mao_wenlong",
+        "factionName": "毛文龙"
+      },
+      {
+        "factionId": "tunggiya",
+        "factionName": "佟佳"
+      },
+      {
+        "factionId": "kala",
+        "factionName": "喀喇国"
+      },
+      {
+        "factionId": "sogdian",
+        "factionName": "粟特"
+      },
+      {
+        "factionId": "kangju",
+        "factionName": "康居"
+      },
+      {
+        "factionId": "geluolu",
+        "factionName": "葛逻禄"
+      },
+      {
+        "factionId": "yuchi",
+        "factionName": "尉迟"
+      },
+      {
+        "factionId": "an",
+        "factionName": "安氏"
+      },
+      {
+        "factionId": "shi_clan",
+        "factionName": "石氏"
+      },
+      {
+        "factionId": "gaoche",
+        "factionName": "高车"
+      },
+      {
+        "factionId": "da_yuan",
+        "factionName": "北元国"
+      },
+      {
+        "factionId": "huyan",
+        "factionName": "呼衍"
+      },
+      {
+        "factionId": "yujiulu",
+        "factionName": "郁久闾"
+      },
+      {
+        "factionId": "ashina",
+        "factionName": "阿史那"
+      },
+      {
+        "factionId": "ashide",
+        "factionName": "阿史德"
+      },
+      {
+        "factionId": "kiyad",
+        "factionName": "乞颜"
+      },
+      {
+        "factionId": "borjigin",
+        "factionName": "孛儿只斤"
+      },
+      {
+        "factionId": "jalair",
+        "factionName": "札剌亦儿"
+      },
+      {
+        "factionId": "hongirad",
+        "factionName": "弘吉剌"
+      },
+      {
+        "factionId": "choros",
+        "factionName": "绰罗斯"
+      },
+      {
+        "factionId": "weiming",
+        "factionName": "嵬名"
+      },
+      {
+        "factionId": "guge",
+        "factionName": "古格国"
+      },
+      {
+        "factionId": "ladakh",
+        "factionName": "玛域国"
+      },
+      {
+        "factionId": "tsangpa",
+        "factionName": "藏巴汗国"
+      },
+      {
+        "factionId": "ganden",
+        "factionName": "甘丹国"
+      },
+      {
+        "factionId": "bailan",
+        "factionName": "白兰"
+      },
+      {
+        "factionId": "supi",
+        "factionName": "苏毗"
+      },
+      {
+        "factionId": "monpa",
+        "factionName": "门巴"
+      },
+      {
+        "factionId": "lopi",
+        "factionName": "珞巴"
+      },
+      {
+        "factionId": "spurgyal",
+        "factionName": "悉补野"
+      },
+      {
+        "factionId": "khon",
+        "factionName": "萨迦昆"
+      },
+      {
+        "factionId": "lang_clan",
+        "factionName": "帕竹朗"
+      },
+      {
+        "factionId": "karmapa",
+        "factionName": "噶玛"
+      },
+      {
+        "factionId": "ava",
+        "factionName": "掸族"
+      },
+      {
+        "factionId": "dongxu",
+        "factionName": "东吁国"
+      },
+      {
+        "factionId": "baiman",
+        "factionName": "白蛮"
+      },
+      {
+        "factionId": "kunming_yi",
+        "factionName": "昆明夷"
+      },
+      {
+        "factionId": "miao",
+        "factionName": "苗族"
+      },
+      {
+        "factionId": "pyu",
+        "factionName": "骠族"
+      },
+      {
+        "factionId": "mon",
+        "factionName": "孟族"
+      },
+      {
+        "factionId": "yang_bozhou",
+        "factionName": "播州"
+      },
+      {
+        "factionId": "tian_sizhou",
+        "factionName": "田氏"
+      },
+      {
+        "factionId": "mu_lijiang",
+        "factionName": "木氏"
+      },
+      {
+        "factionId": "bayinnaung",
+        "factionName": "莽应龙"
+      },
+      {
+        "factionId": "ming_zheng",
+        "factionName": "明郑国"
+      },
+      {
+        "factionId": "xiou",
+        "factionName": "西瓯"
+      },
+      {
+        "factionId": "jing",
+        "factionName": "京族"
+      },
+      {
+        "factionId": "muong",
+        "factionName": "芒族"
+      },
+      {
+        "factionId": "paiwan",
+        "factionName": "排湾"
+      },
+      {
+        "factionId": "huang_tianzhou",
+        "factionName": "瓦氏"
+      },
+      {
+        "factionId": "trinh",
+        "factionName": "郑主"
+      },
+      {
+        "factionId": "nguyen_guangnan",
+        "factionName": "阮主"
+      },
+      {
+        "factionId": "yan_siqi",
+        "factionName": "闽海"
+      },
+      {
+        "factionId": "cong",
+        "factionName": "賨族"
+      },
+      {
+        "factionId": "qiao_d",
+        "factionName": "谯氏"
+      },
+      {
+        "factionId": "zhe_d",
+        "factionName": "折氏"
+      },
+      {
+        "factionId": "shanyue",
+        "factionName": "山越"
+      },
+      {
+        "factionId": "she_ethnic",
+        "factionName": "畲族"
+      },
+      {
+        "factionId": "pu",
+        "factionName": "蒲氏"
+      },
+      {
+        "factionId": "tu",
+        "factionName": "土族"
+      },
+      {
+        "factionId": "weili",
+        "factionName": "尉犁"
+      },
+      {
+        "factionId": "pishan",
+        "factionName": "皮山"
+      },
+      {
+        "factionId": "tuerhute",
+        "factionName": "土尔扈特"
+      },
+      {
+        "factionId": "bandun",
+        "factionName": "板楯"
+      },
+      {
+        "factionId": "seljuq",
+        "factionName": "塞尔柱"
+      },
+      {
+        "factionId": "zou",
+        "factionName": "邹氏"
+      },
+      {
+        "factionId": "cen_d",
+        "factionName": "岑氏"
+      },
+      {
+        "factionId": "wang_s",
+        "factionName": "汪氏"
+      },
+      {
+        "factionId": "xiang_d",
+        "factionName": "向氏"
+      },
+      {
+        "factionId": "tan_d",
+        "factionName": "覃氏"
+      },
+      {
+        "factionId": "ran_d",
+        "factionName": "冉氏"
+      },
+      {
+        "factionId": "chu_d",
+        "factionName": "储氏"
+      },
+      {
+        "factionId": "qingyi",
+        "factionName": "青衣"
+      },
+      {
+        "factionId": "wuxi",
+        "factionName": "五溪"
+      },
+      {
+        "factionId": "gumie",
+        "factionName": "姑蔑"
+      },
+      {
+        "factionId": "shengmiao",
+        "factionName": "生苗"
+      },
+      {
+        "factionId": "kuai",
+        "factionName": "蒯氏"
+      },
+      {
+        "factionId": "yong",
+        "factionName": "庸国"
+      },
+      {
+        "factionId": "shen",
+        "factionName": "申国"
+      },
+      {
+        "factionId": "sou",
+        "factionName": "叟族"
+      },
+      {
+        "factionId": "shaodang",
+        "factionName": "烧当"
+      },
+      {
+        "factionId": "jingjiang",
+        "factionName": "靖江"
+      },
+      {
+        "factionId": "panyao",
+        "factionName": "盘瑶"
+      },
+      {
+        "factionId": "jiang_s",
+        "factionName": "蒋氏"
+      },
+      {
+        "factionId": "li_s",
+        "factionName": "里族"
+      },
+      {
+        "factionId": "leizhou",
+        "factionName": "雷州"
+      },
+      {
+        "factionId": "golog",
+        "factionName": "果洛"
+      },
+      {
+        "factionId": "tushetu",
+        "factionName": "土谢图"
+      },
+      {
+        "factionId": "tumed",
+        "factionName": "土默特"
+      },
+      {
+        "factionId": "she",
+        "factionName": "奢氏"
+      },
+      {
+        "factionId": "liao",
+        "factionName": "僚族"
+      },
+      {
+        "factionId": "nong2",
+        "factionName": "侬族"
+      },
+      {
+        "factionId": "yaoluoge",
+        "factionName": "药罗葛"
+      },
+      {
+        "factionId": "nanbu",
+        "factionName": "陆奥"
+      },
+      {
+        "factionId": "saman",
+        "factionName": "萨曼国"
+      },
+      {
+        "factionId": "hepan",
+        "factionName": "喝槃陀"
+      },
+      {
+        "factionId": "humi",
+        "factionName": "瓦罕国"
+      },
+      {
+        "factionId": "teqin",
+        "factionName": "特勤国"
+      },
+      {
+        "factionId": "mamon",
+        "factionName": "马蒙"
+      },
+      {
+        "factionId": "guzgan",
+        "factionName": "古兹根"
+      },
+      {
+        "factionId": "dai",
+        "factionName": "傣族"
+      },
+      {
+        "factionId": "taiyuan",
+        "factionName": "泰沅"
+      },
+      {
+        "factionId": "paluan",
+        "factionName": "帕銮"
+      },
+      {
+        "factionId": "luohu",
+        "factionName": "罗斛"
+      },
+      {
+        "factionId": "nanai",
+        "factionName": "那乃"
+      },
+      {
+        "factionId": "feiyaka",
+        "factionName": "费雅喀"
+      },
+      {
+        "factionId": "anushidgin",
+        "factionName": "伊勒巴斯"
+      },
+      {
+        "factionId": "nanjie",
+        "factionName": "南杰"
+      },
+      {
+        "factionId": "gandenpozhang",
+        "factionName": "甘丹颇章"
+      },
+      {
+        "factionId": "dawoer",
+        "factionName": "达斡尔"
+      },
+      {
+        "factionId": "guangnanguo",
+        "factionName": "广南国"
+      },
+      {
+        "factionId": "tumengken",
+        "factionName": "图蒙肯"
+      },
+      {
+        "factionId": "liren",
+        "factionName": "俚族"
+      },
+      {
+        "factionId": "gling",
+        "factionName": "岭氏"
+      },
+      {
+        "factionId": "khyungpo",
+        "factionName": "琼波"
+      },
+      {
+        "factionId": "suolun",
+        "factionName": "索伦"
+      },
+      {
+        "factionId": "tuva",
+        "factionName": "图瓦"
+      },
+      {
+        "factionId": "dayu",
+        "factionName": "大隅"
+      },
+      {
+        "factionId": "anmei",
+        "factionName": "奄美"
+      },
+      {
+        "factionId": "dalung",
+        "factionName": "达隆"
+      },
+      {
+        "factionId": "gar_kham",
+        "factionName": "德司"
+      },
+      {
+        "factionId": "kongsa",
+        "factionName": "孔萨"
+      },
+      {
+        "factionId": "mingzheng",
+        "factionName": "明正"
+      },
+      {
+        "factionId": "daca",
+        "factionName": "达擦"
+      },
+      {
+        "factionId": "jingdong",
+        "factionName": "景东国"
+      },
+      {
+        "factionId": "hor",
+        "factionName": "霍尔"
+      },
+      {
+        "factionId": "dong",
+        "factionName": "隆庆"
+      },
+      {
+        "factionId": "bailang",
+        "factionName": "白狼"
+      },
+      {
+        "factionId": "duolu",
+        "factionName": "咄陆"
+      },
+      {
+        "factionId": "zhuxie",
+        "factionName": "朱邪"
+      },
+      {
+        "factionId": "hunxie",
+        "factionName": "浑邪"
+      },
+      {
+        "factionId": "fu",
+        "factionName": "苻秦"
+      },
+      {
+        "factionId": "tiemuer",
+        "factionName": "帖木儿"
+      },
+      {
+        "factionId": "kawusi",
+        "factionName": "卡乌斯"
+      },
+      {
+        "factionId": "keerkezi",
+        "factionName": "柯尔克孜"
+      },
+      {
+        "factionId": "yiduhu",
+        "factionName": "亦都护"
+      },
+      {
+        "factionId": "tashili",
+        "factionName": "踏实力"
+      },
+      {
+        "factionId": "yangshao",
+        "factionName": "仰韶"
+      },
+      {
+        "factionId": "yel",
+        "factionName": "耶律"
+      },
+      {
+        "factionId": "guzhu",
+        "factionName": "孤竹"
+      },
+      {
+        "factionId": "yizhi",
+        "factionName": "一支"
+      },
+      {
+        "factionId": "zhuqian",
+        "factionName": "筑前"
+      },
+      {
+        "factionId": "jibei2",
+        "factionName": "备中"
+      },
+      {
+        "factionId": "jinchuan",
+        "factionName": "今川"
+      },
+      {
+        "factionId": "xuan",
+        "factionName": "宣府"
+      },
+      {
+        "factionId": "yangshe",
+        "factionName": "羊舌"
+      },
+      {
+        "factionId": "henei",
+        "factionName": "河内"
+      },
+      {
+        "factionId": "liguo",
+        "factionName": "黎国"
+      },
+      {
+        "factionId": "kang",
+        "factionName": "长泽"
+      },
+      {
+        "factionId": "shuofang",
+        "factionName": "朔方"
+      },
+      {
+        "factionId": "lushui",
+        "factionName": "卢水"
+      },
+      {
+        "factionId": "yingli",
+        "factionName": "应理"
+      },
+      {
+        "factionId": "guangwu",
+        "factionName": "广武"
+      },
+      {
+        "factionId": "huizhou",
+        "factionName": "会州"
+      },
+      {
+        "factionId": "yiwu",
+        "factionName": "伊吾"
+      },
+      {
+        "factionId": "pulei",
+        "factionName": "蒲类"
+      },
+      {
+        "factionId": "duerbote",
+        "factionName": "杜尔伯特"
+      },
+      {
+        "factionId": "zhasaketu",
+        "factionName": "扎萨克图"
+      },
+      {
+        "factionId": "kaerka",
+        "factionName": "喀尔喀"
+      },
+      {
+        "factionId": "huihu",
+        "factionName": "回鹘"
+      },
+      {
+        "factionId": "wuzhumuqin",
+        "factionName": "乌珠穆沁"
+      },
+      {
+        "factionId": "xingan",
+        "factionName": "兴安"
+      },
+      {
+        "factionId": "zhadalan",
+        "factionName": "扎答兰"
+      },
+      {
+        "factionId": "zhuerqi",
+        "factionName": "主儿乞"
+      },
+      {
+        "factionId": "chechen",
+        "factionName": "车臣"
+      },
+      {
+        "factionId": "gangdisi",
+        "factionName": "冈底斯"
+      },
+      {
+        "factionId": "pisha",
+        "factionName": "毗沙"
+      },
+      {
+        "factionId": "yutian",
+        "factionName": "伏阇"
+      },
+      {
+        "factionId": "yumi",
+        "factionName": "扜弥"
+      },
+      {
+        "factionId": "keliya",
+        "factionName": "克里雅"
+      },
+      {
+        "factionId": "xiye",
+        "factionName": "西夜"
+      },
+      {
+        "factionId": "faqiang",
+        "factionName": "发羌"
+      },
+      {
+        "factionId": "jiantang",
+        "factionName": "建塘"
+      },
+      {
+        "factionId": "gongbu",
+        "factionName": "工布"
+      },
+      {
+        "factionId": "niang",
+        "factionName": "觉木宗"
+      },
+      {
+        "factionId": "galangdiba",
+        "factionName": "波密"
+      },
+      {
+        "factionId": "ningjing",
+        "factionName": "宁静"
+      },
+      {
+        "factionId": "ali",
+        "factionName": "阿里"
+      },
+      {
+        "factionId": "sapi",
+        "factionName": "萨毗"
+      },
+      {
+        "factionId": "jieshuai",
+        "factionName": "竭帅"
+      },
+      {
+        "factionId": "pulige",
+        "factionName": "普里格"
+      },
+      {
+        "factionId": "pazhu",
+        "factionName": "帕竹"
+      },
+      {
+        "factionId": "qiong",
+        "factionName": "邛都"
+      },
+      {
+        "factionId": "zhuoshi",
+        "factionName": "卓氏"
+      },
+      {
+        "factionId": "pengshi",
+        "factionName": "彭氏"
+      },
+      {
+        "factionId": "qianzhong",
+        "factionName": "沅州"
+      },
+      {
+        "factionId": "cuanshi",
+        "factionName": "爨族"
+      },
+      {
+        "factionId": "dianguo",
+        "factionName": "滇国"
+      },
+      {
+        "factionId": "xinggu",
+        "factionName": "兴古"
+      },
+      {
+        "factionId": "zangke",
+        "factionName": "牂牁"
+      },
+      {
+        "factionId": "guangxin",
+        "factionName": "广信"
+      },
+      {
+        "factionId": "kejia",
+        "factionName": "客家"
+      },
+      {
+        "factionId": "ouyang",
+        "factionName": "欧阳"
+      },
+      {
+        "factionId": "ning",
+        "factionName": "宁州"
+      },
+      {
+        "factionId": "danyang",
+        "factionName": "宣州"
+      },
+      {
+        "factionId": "huai",
+        "factionName": "淮州"
+      },
+      {
+        "factionId": "huaiyang",
+        "factionName": "淮阳"
+      },
+      {
+        "factionId": "cai",
+        "factionName": "蔡州"
+      },
+      {
+        "factionId": "machu",
+        "factionName": "马楚"
+      },
+      {
+        "factionId": "shangzhou",
+        "factionName": "商州"
+      },
+      {
+        "factionId": "ying",
+        "factionName": "郢州"
+      },
+      {
+        "factionId": "heng",
+        "factionName": "衡州"
+      },
+      {
+        "factionId": "chen2",
+        "factionName": "郴州"
+      },
+      {
+        "factionId": "shixing",
+        "factionName": "始兴"
+      },
+      {
+        "factionId": "yidou",
+        "factionName": "宜都"
+      },
+      {
+        "factionId": "boren",
+        "factionName": "僰族"
+      },
+      {
+        "factionId": "xin2",
+        "factionName": "信州"
+      },
+      {
+        "factionId": "kui",
+        "factionName": "夔州"
+      },
+      {
+        "factionId": "qi2",
+        "factionName": "蕲州"
+      },
+      {
+        "factionId": "danluo",
+        "factionName": "耽罗"
+      },
+      {
+        "factionId": "woju",
+        "factionName": "沃沮"
+      },
+      {
+        "factionId": "chen3",
+        "factionName": "月支"
+      },
+      {
+        "factionId": "hui",
+        "factionName": "濊族"
+      },
+      {
+        "factionId": "dingan",
+        "factionName": "定安"
+      },
+      {
+        "factionId": "wure",
+        "factionName": "兀惹"
+      },
+      {
+        "factionId": "houliao",
+        "factionName": "后辽"
+      },
+      {
+        "factionId": "dazhen",
+        "factionName": "大真"
+      },
+      {
+        "factionId": "jilin",
+        "factionName": "吉林"
+      },
+      {
+        "factionId": "sunite",
+        "factionName": "苏尼特"
+      },
+      {
+        "factionId": "dayuzi",
+        "factionName": "大玉兹"
+      },
+      {
+        "factionId": "yingchuan",
+        "factionName": "漯河"
+      },
+      {
+        "factionId": "weiwuer",
+        "factionName": "维吾尔"
+      },
+      {
+        "factionId": "gumo",
+        "factionName": "姑墨"
+      },
+      {
+        "factionId": "wensu",
+        "factionName": "温宿"
+      },
+      {
+        "factionId": "yutou",
+        "factionName": "郁头"
+      },
+      {
+        "factionId": "keerqin",
+        "factionName": "科尔沁"
+      },
+      {
+        "factionId": "xiangxiong",
+        "factionName": "象雄国"
+      },
+      {
+        "factionId": "qingqiang",
+        "factionName": "青羌"
+      },
+      {
+        "factionId": "zhaowu",
+        "factionName": "昭武"
+      },
+      {
+        "factionId": "gaoliang",
+        "factionName": "高凉"
+      },
+      {
+        "factionId": "ruoqiang",
+        "factionName": "婼羌"
+      },
+      {
+        "factionId": "qiemo",
+        "factionName": "且末"
+      },
+      {
+        "factionId": "weitou",
+        "factionName": "尉头"
+      },
+      {
+        "factionId": "dangchang",
+        "factionName": "宕昌"
+      },
+      {
+        "factionId": "hai2",
+        "factionName": "海州"
+      },
+      {
+        "factionId": "fu2",
+        "factionName": "抚州"
+      },
+      {
+        "factionId": "xinping",
+        "factionName": "新平"
+      },
+      {
+        "factionId": "huan",
+        "factionName": "环州"
+      },
+      {
+        "factionId": "wei2",
+        "factionName": "静塞"
+      },
+      {
+        "factionId": "lingwu",
+        "factionName": "灵武"
+      },
+      {
+        "factionId": "qiepantuo",
+        "factionName": "朅盘陀"
+      }
+    ],
+    "capitalMissingCity": [],
+    "factionMissingFlag": [],
+    "factionMissingDisplay": [],
+    "closeCities": []
+  }
+}

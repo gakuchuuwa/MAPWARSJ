@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-06-09T11:32:15.231Z",
+  "tier1SingleLocked": [
+    "han_d",
+    "shu",
+    "wu",
+    "wei",
+    "qin",
+    "chu",
+    "tang",
+    "song",
+    "jin",
+    "shang",
+    "xia",
+    "sui",
+    "zhou",
+    "yan",
+    "qi",
+    "han",
+    "zhao",
+    "yue"
+  ],
+  "errors": [],
+  "warnings": [
+    "[跨表重复] liao 同时出现在: 政权、州郡",
+    "[跨表重复] danyang 同时出现在: 家族、州郡",
+    "[跨表重复] long2 同时出现在: 家族、州郡",
+    "[跨表重复] yingchuan 同时出现在: 家族、州郡"
+  ],
+  "pass": true
+}

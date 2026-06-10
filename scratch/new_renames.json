@@ -1,0 +1,298 @@
+[
+  {
+    "id": "qiuchi",
+    "oldName": "仇池",
+    "newName": "仇池",
+    "reason": " | 2+ CHAR CONFLICT with city 仇池",
+    "cities": [
+      "仇池"
+    ]
+  },
+  {
+    "id": "shache",
+    "oldName": "莎车",
+    "newName": "莎车",
+    "reason": " | 2+ CHAR CONFLICT with city 莎车",
+    "cities": [
+      "莎车"
+    ]
+  },
+  {
+    "id": "yanqi",
+    "oldName": "焉耆",
+    "newName": "焉耆",
+    "reason": " | 2+ CHAR CONFLICT with city 焉耆",
+    "cities": [
+      "焉耆"
+    ]
+  },
+  {
+    "id": "yuezhi",
+    "oldName": "月氏",
+    "newName": "月",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "蓝氏城"
+    ]
+  },
+  {
+    "id": "chile",
+    "oldName": "敕勒",
+    "newName": "敕勒",
+    "reason": " | 2+ CHAR CONFLICT with city 敕勒川",
+    "cities": [
+      "敕勒川"
+    ]
+  },
+  {
+    "id": "baibo",
+    "oldName": "白波",
+    "newName": "白波",
+    "reason": " | 2+ CHAR CONFLICT with city 白波谷",
+    "cities": [
+      "白波谷"
+    ]
+  },
+  {
+    "id": "pagan",
+    "oldName": "蒲甘",
+    "newName": "蒲甘",
+    "reason": " | 2+ CHAR CONFLICT with city 蒲甘",
+    "cities": [
+      "蒲甘"
+    ]
+  },
+  {
+    "id": "fang_guozhen",
+    "oldName": "方国",
+    "newName": "方",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "庆元"
+    ]
+  },
+  {
+    "id": "yeren_nvzhen",
+    "oldName": "野人",
+    "newName": "野",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "黑龙江城"
+    ]
+  },
+  {
+    "id": "anding_wei",
+    "oldName": "安定",
+    "newName": "安定",
+    "reason": " | 2+ CHAR CONFLICT with city 安定卫",
+    "cities": [
+      "安定卫"
+    ]
+  },
+  {
+    "id": "daming",
+    "oldName": "大明国",
+    "newName": "大明",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": []
+  },
+  {
+    "id": "tunggiya",
+    "oldName": "佟佳",
+    "newName": "佟佳",
+    "reason": " | 2+ CHAR CONFLICT with city 佟佳江",
+    "cities": [
+      "佟佳江"
+    ]
+  },
+  {
+    "id": "ava",
+    "oldName": "阿瓦",
+    "newName": "阿瓦",
+    "reason": " | 2+ CHAR CONFLICT with city 阿瓦",
+    "cities": [
+      "阿瓦"
+    ]
+  },
+  {
+    "id": "weili",
+    "oldName": "尉犁",
+    "newName": "尉犁",
+    "reason": " | 2+ CHAR CONFLICT with city 尉犁",
+    "cities": [
+      "尉犁"
+    ]
+  },
+  {
+    "id": "juandu",
+    "oldName": "捐毒",
+    "newName": "捐毒",
+    "reason": " | 2+ CHAR CONFLICT with city 捐毒",
+    "cities": [
+      "捐毒"
+    ]
+  },
+  {
+    "id": "pishan",
+    "oldName": "皮山",
+    "newName": "皮山",
+    "reason": " | 2+ CHAR CONFLICT with city 皮山",
+    "cities": [
+      "皮山"
+    ]
+  },
+  {
+    "id": "hepan",
+    "oldName": "喝槃陀",
+    "newName": "喝槃陀",
+    "reason": " | 2+ CHAR CONFLICT with city 喝槃陀城",
+    "cities": [
+      "喝槃陀城"
+    ]
+  },
+  {
+    "id": "humi",
+    "oldName": "护密",
+    "newName": "护密",
+    "reason": " | 2+ CHAR CONFLICT with city 护密城",
+    "cities": [
+      "护密城",
+      "昏度多"
+    ]
+  },
+  {
+    "id": "heishui",
+    "oldName": "黑水",
+    "newName": "黑水",
+    "reason": " | 2+ CHAR CONFLICT with city 黑水塞",
+    "cities": [
+      "黑水塞"
+    ]
+  },
+  {
+    "id": "guangnanguo",
+    "oldName": "广南国",
+    "newName": "广南",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "洞海城"
+    ]
+  },
+  {
+    "id": "liren",
+    "oldName": "俚人",
+    "newName": "俚",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "珠崖总峒"
+    ]
+  },
+  {
+    "id": "gar_kham",
+    "oldName": "德格",
+    "newName": "德格",
+    "reason": " | 2+ CHAR CONFLICT with city 德格",
+    "cities": [
+      "德格"
+    ]
+  },
+  {
+    "id": "keerkezi",
+    "oldName": "柯尔克孜",
+    "newName": "柯尔克孜",
+    "reason": " | 2+ CHAR CONFLICT with city 伊尔克什坦",
+    "cities": [
+      "伊尔克什坦"
+    ]
+  },
+  {
+    "id": "liguo",
+    "oldName": "黎国",
+    "newName": "黎",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "阏与"
+    ]
+  },
+  {
+    "id": "lishi",
+    "oldName": "李氏",
+    "newName": "李",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "襄武"
+    ]
+  },
+  {
+    "id": "yutian",
+    "oldName": "于阗",
+    "newName": "于阗",
+    "reason": " | 2+ CHAR CONFLICT with city 于阗",
+    "cities": [
+      "于阗"
+    ]
+  },
+  {
+    "id": "yumi",
+    "oldName": "扜弥",
+    "newName": "扜弥",
+    "reason": " | 2+ CHAR CONFLICT with city 扜弥",
+    "cities": [
+      "扜弥"
+    ]
+  },
+  {
+    "id": "galangdiba",
+    "oldName": "噶朗第巴",
+    "newName": "噶朗第巴",
+    "reason": " | 2+ CHAR CONFLICT with city 噶朗宗",
+    "cities": [
+      "噶朗宗"
+    ]
+  },
+  {
+    "id": "zhuoshi",
+    "oldName": "卓氏",
+    "newName": "卓",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "临邛"
+    ]
+  },
+  {
+    "id": "pengshi",
+    "oldName": "彭氏",
+    "newName": "彭",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "辰州"
+    ]
+  },
+  {
+    "id": "cuanshi",
+    "oldName": "爨氏",
+    "newName": "爨",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "味县"
+    ]
+  },
+  {
+    "id": "dianguo",
+    "oldName": "滇国",
+    "newName": "滇",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "拓东城"
+    ]
+  },
+  {
+    "id": "boren",
+    "oldName": "僰人",
+    "newName": "僰",
+    "reason": "Trimmed suffixes (氏/族/人/国)",
+    "cities": [
+      "僰道"
+    ]
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "name": "mapwar",
+  "version": "1.0.0",
+  "description": "MAPWAR — 历史大乱斗。在真实历史地理地图上，百余势力（历史上的政权、民族、大家族）各据一城，展开跨越时空的沙盘战争。",
+  "main": "game.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "concurrently \"vite\" \"node auto_backup.cjs\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tier:export": "npx tsx scratch/assign_flag_template_by_tier.ts",
+    "tier:check": "npx tsx scratch/check_tier_audit_conflicts.mjs",
+    "flag-text:check": "npx tsx scratch/audit_flag_text_luminance.mjs",
+    "tier:pending": "node scratch/export_faction_tier_pending.mjs",
+    "audit": "node scripts/audit-game-integrity.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/leaflet": "^1.9.21",
+    "@types/node": "^24.10.1",
+    "concurrently": "^10.0.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "pinyin-pro": "^3.28.0"
+  }
+}
