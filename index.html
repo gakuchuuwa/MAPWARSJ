@@ -26,7 +26,7 @@
     </svg>
     <div id="notification-area"></div>
 
-    <!-- 左下 HUD：Stitch 833dbd17 切图 public/assets/stitch-hud-833dbd17/ -->
+    <!-- 左下 HUD：Stitch 833dbd17 风格（纯 CSS，单套） -->
     <div id="game-time-hud" style="display: none;">
         <div class="hud-map-panel">
             <div class="hud-map-rows">
@@ -68,7 +68,7 @@
     </div>
 
     <div id="hud" class="hud">
-        <!-- 玩家信息面板 -->
+        <!-- 玩家信息（坐标/纪年/控制已并入左下 #game-time-hud，勿再建第二套 info-panel） -->
         <div class="player-info info-panel" style="display: none;">
             <div class="player-title">👤 玩家信息</div>
             <div class="player-stats">
@@ -95,13 +95,9 @@
                 </div>
             </div>
         </div>
+    </div>
 
-
-        <!-- 通用模态框 -->
-
-
-        <!-- Leaflet script removed, using npm package -->
-        <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>

@@ -138,11 +138,6 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
     color: #ffffff;
 }
 
-/* Specific styling for Terrain to match the warning orange in screenshot */
-#terrain-type {
-    color: #dd6b20; /* Dark orange */
-}
-
 .control-row {
     display: flex;
     gap: 5px;
