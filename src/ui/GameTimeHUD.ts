@@ -1,5 +1,5 @@
 import { HistoricalEvent } from '../types/core';
-import { formatGameDateChinese } from '../data/QinRegnalCalendar';
+import { formatBcYearChinese } from '../data/QinRegnalCalendar';
 import { GameConfig } from '../config/GameConfig';
 import { Season } from '../core/TimeSystem';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
@@ -14,23 +14,25 @@ export function formatYearArabic(year: number): string {
 }
 
 /**
- * 左下角年季与播放控件（替代原竹简时间轴）
+ * 左下 HUD（Stitch 303e82de，坐标+纪年+播放）
  */
 export class GameTimeHUD {
     private root: HTMLElement | null = null;
-    private dateEl: HTMLElement | null = null;
+    private yearEl: HTMLElement | null = null;
+    private seasonEl: HTMLElement | null = null;
     private runBtn: HTMLElement | null = null;
     private speedBtn: HTMLElement | null = null;
     private speed2Btn: HTMLElement | null = null;
 
     init(): void {
         this.root = document.getElementById('game-time-hud');
-        this.dateEl = document.getElementById('game-date-display');
+        this.yearEl = document.getElementById('game-year-display');
+        this.seasonEl = document.getElementById('game-season-display');
         this.runBtn = document.getElementById('run-event-btn');
         this.speedBtn = document.getElementById('speed-btn');
         this.speed2Btn = document.getElementById('speed2-btn');
 
-        if (!this.root || !this.dateEl) {
+        if (!this.root || !this.yearEl || !this.seasonEl) {
             console.warn('⚠️ [GameTimeHUD] DOM not found');
             return;
         }
@@ -96,10 +98,10 @@ export class GameTimeHUD {
     }
 
     updateTime(year: number, season: Season = Season.春): void {
-        if (!this.dateEl) return;
+        if (!this.yearEl || !this.seasonEl) return;
         const seasonLabel = SEASON_LABELS[season] ?? SEASON_LABELS[0];
-        const regnal = formatGameDateChinese(year);
-        this.dateEl.textContent = `${regnal} · ${seasonLabel}`;
+        this.yearEl.textContent = formatBcYearChinese(year);
+        this.seasonEl.textContent = seasonLabel;
     }
 
     /** 同步播放/暂停按钮文案 */

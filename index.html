@@ -7,7 +7,7 @@
     <title>MAPWAR 原型</title>
     <!-- Leaflet CSS imported via main.ts (local npm package) — avoids CDN block on cold start -->
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="./src/ui/game_time_hud.css">
+    <link rel="stylesheet" href="./src/ui/stitch_bottom_hud.css">
     <link rel="stylesheet" href="./src/ui/city-marker.css">
 </head>
 
@@ -26,36 +26,53 @@
     </svg>
     <div id="notification-area"></div>
 
-    <!-- 左下角：版本 + 纪年 + 播放/倍速 -->
+    <!-- 左下 HUD：Stitch 303e82de（Gemini 3 Flash 生成 HTML 接入） -->
     <div id="game-time-hud" style="display: none;">
-        <div id="game-version-label">20260602版</div>
-        <div id="game-date-display" aria-live="polite">236 BC · 春</div>
-        <div class="game-time-controls">
-            <button id="run-event-btn" type="button">播放</button>
-            <button id="speed2-btn" type="button" title="2倍速">2×</button>
-            <button id="speed-btn" type="button" title="5倍速">5×</button>
-            <button id="perf-toggle-btn" type="button" title="性能监控 (F3)">性能</button>
+        <div class="hud-map-panel">
+            <div class="filigree-corner filigree-tl"></div>
+            <div class="filigree-corner filigree-tr"></div>
+            <div class="filigree-corner filigree-bl"></div>
+            <div class="filigree-corner filigree-br"></div>
+            <div class="hud-map-rows">
+                <div class="hud-map-row">
+                    <span class="label">坐标</span>
+                    <span class="value" id="coords">0, 0</span>
+                </div>
+                <div class="hud-map-row">
+                    <span class="label">六边形</span>
+                    <span class="value" id="hex-coords">0, 0</span>
+                </div>
+                <div class="hud-map-row">
+                    <span class="label">地形</span>
+                    <span class="value" id="terrain-type">-</span>
+                </div>
+            </div>
+        </div>
+        <div id="game-date-display" class="hud-date-bar" aria-live="polite">
+            <div class="hud-date-inner">
+                <span id="game-year-display">前246年</span>
+                <span class="hud-date-sep" aria-hidden="true">|</span>
+                <span id="game-season-display">春</span>
+            </div>
+        </div>
+        <div class="hud-controls">
+            <button id="run-event-btn" type="button" class="game-time-btn">播放</button>
+            <button id="speed2-btn" type="button" class="game-time-btn" title="2倍速">2×</button>
+            <button id="speed-btn" type="button" class="game-time-btn" title="5倍速">5×</button>
+            <button id="perf-toggle-btn" type="button" class="game-time-btn" title="性能监控 (F3)">性能</button>
         </div>
     </div>
 
-    <div id="hud" class="hud">
-        <!-- Control Panel Removed for Simplification -->
-        <div class="info-panel">
-            <div class="info-row">
-                <span class="label">坐标:</span>
-                <span class="value" id="coords">0, 0</span>
-            </div>
-            <div class="info-row">
-                <span class="label">六边形:</span>
-                <span class="value" id="hex-coords">0, 0</span>
-            </div>
-            <div class="info-row">
-                <span class="label">地形:</span>
-                <span class="value" id="terrain-type">-</span>
-            </div>
-            <!-- Speed Display Removed -->
+    <!-- 右侧：历史事件面板（展开/收起列表） -->
+    <div id="event-display" class="event-panel">
+        <div class="event-header">
+            <span>历史事件</span>
+            <button id="toggle-event-list-btn" type="button" title="展开历史列表">▼</button>
         </div>
+        <div id="event-content"></div>
+    </div>
 
+    <div id="hud" class="hud">
         <!-- 玩家信息面板 -->
         <div class="player-info info-panel" style="display: none;">
             <div class="player-title">👤 玩家信息</div>
@@ -84,16 +101,6 @@
             </div>
         </div>
 
-
-        <!-- Event Display Panel -->
-
-        <div id="event-display" class="event-panel" style="display: none;">
-            <div class="event-header">
-                <span>历史事件</span>
-                <button id="toggle-event-list-btn" title="查看历史事件列表">▼</button>
-            </div>
-            <div id="event-content"></div>
-        </div>
 
         <!-- 通用模态框 -->
 

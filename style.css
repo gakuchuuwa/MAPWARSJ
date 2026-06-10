@@ -52,16 +52,14 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
 }
 
 .hud {
-    position: absolute;
-    bottom: 118px;
-    left: 20px;
+    position: fixed;
+    top: 16px;
+    right: 16px;
     z-index: 1000;
-    /* Above map */
     pointer-events: none;
-    /* Let clicks pass through to map */
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
@@ -108,31 +106,41 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
 
 /* Info Panel - Enable interactions */
 .info-panel {
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 15px;
-    border-radius: 8px;
+    background: rgba(10, 10, 10, 0.85);
+    color: #ece8e0;
+    padding: 16px;
     pointer-events: auto;
-    /* Re-enable clicks for panel */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
     margin-bottom: 10px;
+    /* Classic Border Styling */
+    border: 14px solid transparent;
+    border-image: url('/assets/UI/classic_border.png') 33 stretch;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9), 0 8px 16px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .info-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 14px;
+    margin-bottom: 10px;
+    font-size: 18px; /* Larger font to match screenshot */
+    font-weight: 600;
+    letter-spacing: 1px;
 }
 
 .info-row .label {
-    color: #aaa;
-    margin-right: 10px;
+    color: #b0a89c; /* Vintage silver/stone text */
+    margin-right: 15px;
 }
 
 .info-row .value {
-    color: #fff;
-    font-weight: bold;
+    color: #ffffff;
+}
+
+/* Specific styling for Terrain to match the warning orange in screenshot */
+#terrain-type {
+    color: #dd6b20; /* Dark orange */
 }
 
 .control-row {
@@ -421,25 +429,9 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
-/* Event Display Panel */
-.event-panel {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 1500;
-    background: rgba(0, 0, 0, 0.85);
-    border: 2px solid rgba(255, 215, 0, 0.5);
-    border-radius: 8px;
-    padding: 15px;
-    min-width: 300px;
-    max-width: 400px;
-    color: white;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
 .event-panel.ui-hidden {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(20px);
     pointer-events: none;
 }
 
@@ -590,20 +582,28 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
-/* Event Display Panel */
+/* Event Display Panel — 固定右侧事件流 */
 .event-panel {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 1500;
-    background: rgba(0, 0, 0, 0.85);
-    border: 2px solid rgba(255, 215, 0, 0.5);
-    border-radius: 8px;
-    padding: 15px;
-    min-width: 300px;
-    max-width: 400px;
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    left: auto;
+    z-index: 4500;
+    display: none;
+    background: rgba(10, 10, 10, 0.88);
+    padding: 14px 16px;
+    width: min(360px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    overflow: hidden;
     color: white;
+    pointer-events: auto;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
+    border: 14px solid transparent;
+    border-image: url('/assets/UI/classic_border.png') 33 stretch;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9), 0 8px 16px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    box-sizing: border-box;
 }
 
 
@@ -646,30 +646,72 @@ path.npc-hitbox {
 }
 
 #event-content {
-    white-space: nowrap;
+    margin-top: 8px;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
 }
 
 .event-panel.expanded {
-    min-width: 400px;
-    max-width: 600px;
-    height: auto;
-    max-height: 60vh;
-    overflow-y: auto;
+    width: min(420px, calc(100vw - 32px));
 }
 
 .event-panel.expanded #event-content {
-    white-space: normal;
-    margin-top: 10px;
+    max-height: calc(100vh - 100px);
 }
 
 .event-item {
-    padding: 5px 0;
+    padding: 8px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.9em;
+    font-size: 0.92em;
 }
 
 .event-item:last-child {
     border-bottom: none;
+}
+
+.event-item--current {
+    padding-bottom: 10px;
+}
+
+.event-item--hint {
+    color: rgba(255, 255, 255, 0.55);
+    font-style: italic;
+}
+
+.event-meta {
+    font-size: 12px;
+    color: #d4af37;
+    margin-bottom: 4px;
+    letter-spacing: 0.06em;
+}
+
+.event-title {
+    font-weight: 700;
+    color: #ffe9a8;
+    margin-bottom: 4px;
+}
+
+.event-desc {
+    font-size: 14px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.92);
+    white-space: normal;
+}
+
+.event-history-divider {
+    margin: 10px 0 6px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(212, 175, 55, 0.35);
+    font-size: 12px;
+    color: rgba(212, 175, 55, 0.85);
+    letter-spacing: 0.12em;
+}
+
+.event-time-group {
+    font-size: 13px;
+    font-weight: 700;
+    color: #c9a227;
+    margin: 8px 0 4px;
 }
 
 /* ========================================
