@@ -380,7 +380,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     // ── 2026-05-28 新增：黑龙江流域民族/家族 ──
     'nanai': 'city_valen',
-    'feiyaka': 'city_qiji',
+'feiyaka': 'city_qiji',
     
     // ── 2026-05-31 新增：补齐缺失的初始首都 ──
     'weiwuer': 'city_yuergun',
@@ -568,7 +568,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'xin2': 'city_nanpu',
     'qiepantuo': 'city_humicheng',
     'eluoke': 'city_nuotuoluo',
-    'qileng': 'city_huangnei',
     'kuye': 'city_baizhu',
     'ayinu': 'city_bailao',
+    'beihai': 'city_zonggu',
+    'shuidada': 'city_xierka',
 };

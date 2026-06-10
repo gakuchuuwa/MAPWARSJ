@@ -1349,7 +1349,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_dabancheng', name: '达坂城', factionId: 'tuoming', lat: 43.339165, lng: 88.258667, type: 'small_city', troops: 5000 },
 
     // 第十五类：越南阮朝
-    { id: 'city_nanghar', name: '囊哈儿卫', factionId: 'jilimi', lat: 52.209343, lng: 141.951599, type: 'small_city', region: 'NORTHEAST', troops: 5000 },
+    { id: 'city_nanghar', name: '囊哈儿', factionId: 'jilimi', lat: 52.209343, lng: 141.951599, type: 'small_city', region: 'NORTHEAST', troops: 5000 },
     {
         id: 'city_katsuyama', name: '胜山馆', factionId: 'kakizaki',
         lat: 41.8008, lng: 140.0994, type: 'pass', troops: 5000, tier: 4,
@@ -1744,7 +1744,7 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-05-28 新增：黑龙江流域民族/家族据点 ──
     { id: 'city_lahasusu', name: '拉哈苏苏', factionId: 'panjun', lat: 47.654208, lng: 132.497864, type: 'pass', troops: 5000 },
     { id: 'city_valen', name: '瓦伦', factionId: 'nanai', lat: 50.5500, lng: 137.0000, type: 'small_city', troops: 5000, tier: 4 },
-    { id: 'city_qiji', name: '奇集', factionId: 'feiyaka', lat: 51.5800, lng: 140.0000, type: 'small_city', troops: 5000, tier: 4 },
+    { id: 'city_qiji', name: '普禄', factionId: 'feiyaka', lat: 51.5800, lng: 140.0000, type: 'small_city', troops: 5000, tier: 4 },
     // ── 2026-05-28 新增：伊勒巴斯(希瓦)、南杰(日土宗) ──
     { id: 'city_dadoubagu', name: '大斗拔谷', factionId: 'panjun', lat: 38.0011, lng: 100.9125, type: 'pass', mirror: true, troops: 5000, tier: 4 },
     { id: 'city_khiva', name: '希瓦', factionId: 'anushidgin', lat: 41.564038, lng: 60.710449, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000 },
@@ -2041,7 +2041,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jimai', name: '吉麦', factionId: 'panjun', lat: 29.3012, lng: 90.6812, type: 'small_city', troops: 5000 },
     // ── 2026-06-11 新增：库页岛民族据点 ──
     { id: 'city_nuotuoluo', name: '诺托罗', factionId: 'eluoke', lat: 49.2, lng: 143.1, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '库页岛东岸中部河口，鄂罗克渔猎放牧聚散中心' },
-    { id: 'city_huangnei', name: '幌内', factionId: 'qileng', lat: 47.8, lng: 142.3, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '库页岛中西部幌内川山林，奇楞核心狩猎营地' },
-    { id: 'city_baizhu', name: '白主', factionId: 'kuye', lat: 46.15, lng: 142.2, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落' },
+    { id: 'city_baizhu', name: '白主', factionId: 'kuye', lat: 46.71, lng: 142.52, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落' },
     { id: 'city_bailao', name: '白老', factionId: 'ayinu', lat: 42.55, lng: 141.36, type: 'small_city', region: 'JAPAN', troops: 5000, note: '北海道南端据泊地方，阿伊努传统聚落（白老古名）' },
+    { id: 'city_zonggu', name: '宗谷', factionId: 'beihai', lat: 45.5, lng: 141.93, type: 'small_city', region: 'JAPAN', troops: 5000, note: '北海道北端宗谷海峡，日本最北门户（宗谷古名）' },
+    { id: 'city_xierka', name: '锡尔喀', factionId: 'shuidada', lat: 46.9, lng: 134.1, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '黑龙江下游锡尔卡河流域，明水达达部聚居地' },
 ];

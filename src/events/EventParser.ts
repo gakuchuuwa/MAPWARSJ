@@ -22,7 +22,7 @@ export class EventParser {
         '勿吉': 'wuji', '吉林': 'wuji',
         '靺鞨': 'mohe', '龙泉府': 'mohe',
         '室韦': 'shiwei', '蒙兀室韦': 'shiwei', '蒙兀': 'shiwei', '额尔古纳': 'shiwei', '额尔古纳河': 'shiwei',
-        '赫哲': 'hezhe', '瓦尔': 'hezhe', '波罗奈斯克': 'hezhe', '拉哈苏苏': 'hezhe', '乌云': 'hezhe',
+        '赫哲': 'hezhe', '瓦尔': 'hezhe', '波罗奈斯克': 'hezhe', '拉哈苏苏': 'hezhe',
         '濊貊': 'huimo', '东团山': 'huimo',
         '百越': 'yuenan', '滇国': 'dianguo', '拓东城': 'dianguo', '通海': 'dian', '新兴': 'dian', '倭国': 'riben',
         '月氏': 'yuezhi', '拜松': 'yuezhi', '希腊': 'xiyang',
@@ -416,7 +416,8 @@ export class EventParser {
         // ── 2026-05-28 新增：黑龙江流域民族/家族 ──
         '黑水': 'heishui', '黑水靺鞨': 'heishui', '伯力': 'heishui',
         '那乃': 'nanai', '那乃人': 'nanai', '瓦伦': 'nanai',
-        '费雅喀': 'feiyaka', '费雅喀人': 'feiyaka', '奇集': 'feiyaka',
+        '费雅喀': 'feiyaka', '费雅喀人': 'feiyaka', '奇集': 'feiyaka', '普禄': 'feiyaka',
+        '水达达': 'shuidada', '锡尔喀': 'shuidada',
         '尼夫赫': 'nifuhe', '尼夫赫人': 'nifuhe', '盆奴里': 'nifuhe',
 
         // ── 2026-05-28 新增：大斗拔谷、伊勒巴斯、南杰、扎敦宗(gandenpozhang) ──
