@@ -329,7 +329,7 @@ export class EventParser {
         '归义军': 'guiyi', '曹氏': 'guiyi', '沙州曹氏': 'guiyi', '莫高窟': 'guiyi',
         '安氏': 'an', '粟特安氏': 'an', '布哈拉': 'an', '安国': 'an',
         '石氏': 'shi_clan', '粟特石氏': 'shi_clan', '柘折城': 'shi_clan', '塔什干': 'shi_clan',
-        '难兜': 'nandou', '难兜国': 'nandou',
+        '难兜': 'nandou', '难兜国': 'nandou', '孽多': 'nandou', '孽多城': 'nandou',
         '和卓': 'khoja', '白山派': 'khoja', '阿帕克霍加': 'khoja', '香妃墓': 'khoja',
         '额敏和卓': 'emin', '吐鲁番郡王': 'emin', '苏公塔': 'emin',
 
@@ -395,7 +395,6 @@ export class EventParser {
         '郑主': 'trinh', '郑氏': 'trinh', '西都': 'trinh', '清化': 'trinh',
         '阮主': 'nguyen_guangnan', '广南阮氏': 'nguyen_guangnan', '富春': 'nguyen_guangnan',
         '莫氏': 'mac_annam', '莫朝': 'mac_annam', '莫登庸': 'mac_annam', '高平': 'mac_annam',
-        '颜思齐': 'yan_siqi', '郑芝龙': 'yan_siqi', '笨港': 'yan_siqi', '北港': 'yan_siqi',
         '雾峰林家': 'wufeng_lin', '林献堂': 'wufeng_lin',
         '岑氏': 'cen_d', '岑仲淑': 'cen_d', '岑猛': 'cen_d', '凌云': 'cen_d',
 

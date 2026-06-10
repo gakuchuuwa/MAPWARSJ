@@ -310,7 +310,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'paiwan': 'city_mudan',
     'trinh': 'city_xidu',
     'nguyen_guangnan': 'city_fuchun',
-    'yan_siqi': 'city_benkang',
 
     'cong': 'city_dangqu',
     'qiao_d': 'city_langzhong_gucheng',
@@ -477,7 +476,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'niang': 'city_juemuzong',
     'galangdiba': 'city_galangzong',
     'ali': 'city_gadake',
-    'jieshuai': 'city_anuyuecheng',
     'pazhu': 'city_jiangzi',
     'qiong': 'city_jianchang',
     'zhuoshi': 'city_linqiong',
@@ -579,5 +577,5 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'bulat': 'city_shilekahe',
     'buriat': 'city_chita',
     'xianhai': 'city_yangjigan',
-    'nandou': 'city_nandou',
+'nandou': 'city_nieduo',
 };

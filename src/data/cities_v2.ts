@@ -804,7 +804,6 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
 
 
-    { id: 'city_nandou', name: '难兜国', factionId: 'nandou', lat: 36.31, lng: 74.66, type: 'small_city', troops: 5000, note: '《汉书·西域传》难兜国王治，属罽宾，北接休循、南接婼羌，今瓦罕走廊一带' },
     { id: 'city_xiuxun', name: '休循', factionId: 'khoja', lat: 39.709286, lng: 73.229370, type: 'small_city', troops: 5000 },
     { id: 'city_yinai', name: '英吉沙尔', factionId: 'yarkand', lat: 38.929502, lng: 76.225891, type: 'small_city', troops: 5000 },
     {
@@ -1141,7 +1140,7 @@ export const PERIPHERY: CityDataV2[] = [
         type: 'medium_city',
         troops: 10000,
         tier: 1 },
-    { id: 'city_nieduo', name: '孽多城', factionId: 'panjun', lat: 35.92, lng: 74.3, type: 'small_city', troops: 5000 },
+    { id: 'city_nieduo', name: '孽多', factionId: 'nandou', lat: 35.92, lng: 74.3, type: 'small_city', troops: 5000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处' },
 
     // ── 2026-05-26 更新：窝鲁朵八里→富贵城/拜巴里（色楞格河畔漠北回鹘陪都）──
     { id: 'city_ordubaliq', name: '富贵城', factionId: 'huige', lat: 49.437762, lng: 101.428528, type: 'small_city', troops: 5000 },
@@ -1495,8 +1494,6 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_fuchun', name: '富春', factionId: 'nguyen_guangnan',
         lat: 16.4667, lng: 107.5833, type: 'medium_city', troops: 10000, tier: 1 },
-    { id: 'city_benkang', name: '笨港', factionId: 'yan_siqi', lat: 23.506086, lng: 120.226135, type: 'small_city', troops: 5000 },
-    
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
     {
         id: 'city_dangqu', name: '宕渠', factionId: 'cong',
@@ -1910,7 +1907,6 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mengmao', name: '勐卯', factionId: 'luchuan', lat: 24.01, lng: 97.85, type: 'small_city', troops: 5000 },
     { id: 'city_xiwanjin', name: '悉万斤', factionId: 'panjun', lat: 36.66, lng: 65.75, type: 'small_city', troops: 5000 },
     { id: 'city_hunduduo', name: '昏度多', factionId: 'humi', lat: 37.022272, lng: 72.627869, type: 'small_city', troops: 5000 },
-    { id: 'city_anuyuecheng', name: '阿弩越', factionId: 'jieshuai', lat: 36.244303, lng: 72.507019, type: 'small_city', troops: 5000 },
     { id: 'city_puticheng', name: '菩提城', factionId: 'xiaobolu', lat: 35.3, lng: 75.64, type: 'small_city', troops: 5000 },
     { id: 'city_kajier', name: '喀吉尔', factionId: 'panjun', lat: 34.55, lng: 76.13, type: 'small_city', troops: 5000 },
     { id: 'city_zhaburang2', name: '札布让', factionId: 'guge', lat: 31.496599, lng: 79.799194, type: 'small_city', troops: 5000 },
@@ -2048,4 +2044,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_chita', name: '赤塔', factionId: 'buriat', lat: 52.0333, lng: 113.5017, type: 'small_city', region: 'STEPPE', troops: 5000, note: '赤塔河与因戈达河交汇处，外贝加尔布里亚特蒙古传统居地' },
     { id: 'city_yangjigan', name: '养吉干', factionId: 'xianhai', lat: 45.6, lng: 62, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '锡尔河入咸海处要塞，花剌子模东北边境，术赤克毡的后攻占' },
     { id: 'city_zhande', name: '毡的', factionId: 'yettishar', lat: 44.85, lng: 65.5, type: 'small_city', troops: 5000, note: '锡尔河中游要塞，Jand/哲德异译，花剌子模东境要地' },
+    // ── 2026-06-11 新增：琉球/台湾据点（叛军旗）──
+    { id: 'city_mengjia', name: '艋舺', factionId: 'panjun', lat: 25.03, lng: 121.50, type: 'small_city', region: 'LINGNAN', troops: 5000, note: '清代台北府淡水厅南境要地，万华故称艋舺' },
+    { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'panjun', lat: 25.75, lng: 123.50, type: 'small_city', region: 'JAPAN', troops: 5000, note: '钓鱼屿，明清海图及《隋书·流求国传》等见载' },
+    { id: 'city_gugudao', name: '宫古岛', factionId: 'panjun', lat: 24.805, lng: 125.281, type: 'small_city', region: 'JAPAN', troops: 5000, note: '琉球宫古诸岛主岛，见《中山世谱》及明清海图' },
 ];

@@ -373,7 +373,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'paiwan': '排湾',
     'trinh': '郑主',
     'nguyen_guangnan': '阮主',
-    'yan_siqi': '闽海',
 
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
     'cong': '賨',
@@ -571,7 +570,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'niang': '娘',
     'galangdiba': '波密',
     'ali': '阿里',
-    'jieshuai': '竭帅',
     'pazhu': '帕竹',
     'qiong': '邛',
     'zhuoshi': '卓',
@@ -665,5 +663,5 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'buriat': '布里',
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
     'xianhai': '咸海',
-    'nandou': '难兜',
+'nandou': '难兜',
 };

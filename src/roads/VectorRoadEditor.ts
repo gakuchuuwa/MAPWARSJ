@@ -886,7 +886,9 @@ export class VectorRoadEditor implements IEditor {
         if (!this.roadSelect) return;
         const filterText = (this.roadFilter?.value || '').toLowerCase().trim();
         this.roadSelect.innerHTML = '<option value="">-- 已有道路 --</option>';
-        for (const feature of VECTOR_ROAD_DATA.features) {
+        // 倒序：新建道路在数组末尾，下拉列表 newest-first 便于选取
+        const features = VECTOR_ROAD_DATA.features.slice().reverse();
+        for (const feature of features) {
             if (!feature || !feature.properties || !feature.geometry) continue;
             const name = (feature.properties.name || '未命名').toLowerCase();
             const id = feature.properties.id.toLowerCase();

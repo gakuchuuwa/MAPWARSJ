@@ -464,7 +464,6 @@ export const FACTIONS: Faction[] = [
     { id: 'trinh', name: '郑主' },                  // 清化靛蓝 - 郑主(西都城/越南北方)
     { id: 'nguyen_guangnan', name: '阮主' },
     // 高平暗灰 - 莫氏/莫朝(高平)
-    { id: 'yan_siqi', name: '闽海' },              // 海商深绿 - 颜思齐/郑芝龙海商集团(笨港)
 
     // ── 2026-05-26 Phase 3h：西南夷/蛮族/家族门阀/海商 ──
     { id: 'cong', name: '賨族' },
@@ -756,6 +755,6 @@ export const FACTIONS: Faction[] = [
     { id: 'buriat', name: '布里亚特' },              // 布里亚特(赤塔), Buryat
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
     { id: 'xianhai', name: '咸海' },                  // 咸海(锡尔河入湖口/养吉干), Aral delta
-    // ── 2026-06-11 新增：难兜国（《汉书·西域传》）──
-    { id: 'nandou', name: '难兜国' },
+    // ── 2026-06-11 新增：难兜（汉难兜国/唐孽多城）──
+    { id: 'nandou', name: '难兜' },
 ];
