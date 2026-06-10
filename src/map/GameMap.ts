@@ -44,7 +44,7 @@ export class GameMap {
             maxZoom: 13, // [UPDATE] Detailed view enabled
             zoomSnap: 1,
             zoomDelta: 1,
-            zoomControl: true,
+            zoomControl: false,
             attributionControl: false,
             doubleClickZoom: false // [FIX] 禁用双击放大
         });
@@ -81,8 +81,7 @@ export class GameMap {
         // [NEW] Auto-adjust Hillshade Z-Factor based on Zoom
         this.map.on('zoomend', updateZFactor);
 
-        // [NEW] Zoom Level Indicator in top-left
-        this.addZoomIndicator();
+        // 缩放控件已并入左下 #game-time-hud（GameTimeHUD）
 
         // 默认加载源
         const initialSource = (TILE_CONFIG as any).ACTIVE_SOURCE || 'LOCAL';
@@ -862,38 +861,6 @@ export class GameMap {
             this.gridLayer = new StrategicGridLayer(this.map);
         }
         this.gridLayer.toggle(enable);
-    }
-
-    private addZoomIndicator(): void {
-        // Wait for Leaflet zoom control to be rendered
-        setTimeout(() => {
-            const zoomControl = document.querySelector('.leaflet-control-zoom');
-            if (!zoomControl) return;
-
-            // Create zoom level display element
-            const indicator = document.createElement('a');
-            indicator.id = 'zoom-level-display';
-            indicator.className = 'leaflet-control-zoom-level';
-            indicator.style.cssText = `
-                display: block;
-                text-align: center;
-                font-weight: bold;
-                font-size: 12px;
-                color: #333;
-                background: #fff;
-                border-top: 1px solid #ccc;
-                padding: 4px 0;
-                cursor: default;
-                user-select: none;
-            `;
-            indicator.innerText = `${Math.floor(this.map.getZoom())}`;
-            zoomControl.appendChild(indicator);
-
-            // Update on zoom
-            this.map.on('zoom', () => {
-                indicator.innerText = `${Math.floor(this.map.getZoom())}`;
-            });
-        }, 100);
     }
 
     // [RESTORED] User simplified requests

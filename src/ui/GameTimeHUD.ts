@@ -23,6 +23,7 @@ export class GameTimeHUD {
     private runBtn: HTMLElement | null = null;
     private speedBtn: HTMLElement | null = null;
     private speed2Btn: HTMLElement | null = null;
+    private zoomLevelEl: HTMLElement | null = null;
 
     init(): void {
         this.root = document.getElementById('game-time-hud');
@@ -89,12 +90,37 @@ export class GameTimeHUD {
             });
         }
 
+        this.bindZoomControls();
+
         const game = (window as any).game;
         if (game?.timeSystem) {
             this.updateTime(game.timeSystem.getYear(), game.timeSystem.getSeason());
         }
 
         gameLog('startup', '🕐 [GameTimeHUD] Initialized');
+    }
+
+    private bindZoomControls(): void {
+        const zoomIn = document.getElementById('map-zoom-in');
+        const zoomOut = document.getElementById('map-zoom-out');
+        this.zoomLevelEl = document.getElementById('map-zoom-level');
+
+        const getLeafletMap = () => (window as any).game?.map?.getLeafletMap?.();
+
+        const syncZoomLevel = () => {
+            const map = getLeafletMap();
+            if (!map || !this.zoomLevelEl) return;
+            this.zoomLevelEl.textContent = `${Math.floor(map.getZoom())}`;
+        };
+
+        zoomIn?.addEventListener('click', () => getLeafletMap()?.zoomIn());
+        zoomOut?.addEventListener('click', () => getLeafletMap()?.zoomOut());
+
+        const map = getLeafletMap();
+        if (map) {
+            map.on('zoom', syncZoomLevel);
+            syncZoomLevel();
+        }
     }
 
     updateTime(year: number, season: Season = Season.春): void {

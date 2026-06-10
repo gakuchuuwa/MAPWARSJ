@@ -4,8 +4,6 @@ import { HistoricalEventManager } from '../events/HistoricalEventManager';
 import { SpeedOverlayRenderer } from '../map/SpeedOverlayRenderer';
 import { TerrainSpeedSystem, TERRAIN_SPEED_CONFIG } from '../core/TerrainSpeedSystem';
 import { GridSystem } from '../systems/GridSystem';
-import { MARCH_SPEED_MULTIPLIERS } from '../config/GameConfig';
-
 export class GameUIManager {
     private uiElements: Record<string, HTMLElement | null> = {};
 
@@ -44,9 +42,15 @@ export class GameUIManager {
     }
 
     // Called on mouse move from map event directly or via InputManager
+    /** HUD 地形：只显示「平原」「山地」等主名，去掉括号说明 */
+    private static formatTerrainHudLabel(fullName: string): string {
+        const base = fullName.split(/[\s(（]/)[0]?.trim();
+        return base || fullName;
+    }
+
     public updateCursorInfo(lat: number, lng: number) {
         if (this.uiElements.coords) {
-            this.uiElements.coords.textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            this.uiElements.coords.textContent = `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
         }
 
         if (this.uiElements.hexCoords) {
@@ -58,13 +62,7 @@ export class GameUIManager {
             const dummyHex = { q: 0, r: 0 };
             const speedType = TerrainSpeedSystem.getHexSpeed({ lat, lng }, dummyHex);
             const config = TERRAIN_SPEED_CONFIG[speedType];
-            const marchMult =
-                speedType === 'OCEAN' || speedType === 'WATER'
-                    ? MARCH_SPEED_MULTIPLIERS.TERRAIN.sea
-                    : speedType === 'SLOW'
-                        ? MARCH_SPEED_MULTIPLIERS.TERRAIN.mountain
-                        : MARCH_SPEED_MULTIPLIERS.TERRAIN.plain;
-            this.uiElements.terrainType.textContent = `${config.name} ×${marchMult}`;
+            this.uiElements.terrainType.textContent = GameUIManager.formatTerrainHudLabel(config.name);
             this.uiElements.terrainType.style.color = config.color;
         }
     }
