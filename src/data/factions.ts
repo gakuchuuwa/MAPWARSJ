@@ -100,7 +100,6 @@ export const FACTIONS: Faction[] = [
     { id: 'huangfu', name: '皇甫' },
 { id: 'guo', name: '果州' },
     { id: 'zi', name: '资州' },
-    { id: 'jing2', name: '景州' },
     { id: 'long2', name: '陇州' },
     { id: 'song2', name: '松州' },
     { id: 'qing', name: '庆州' },
@@ -202,6 +201,23 @@ export const FACTIONS: Faction[] = [
     { id: 'dongzhuo', name: '董卓' },
     // ── 2026-06-11 新增：西凉（马腾/韩遂军阀/金城皋兰）──
     { id: 'xiliang', name: '西凉' },
+    // ── 2026-06-11 精锐部队缺口批次 ──
+    { id: 'gaoqi_d', name: '北齐' },           // 旗号高齐@渤海蓨城（高欢故里）
+    { id: 'wuzhou_d', name: '武周' },
+    { id: 'anshi_d', name: '安史' },
+    { id: 'chaizhou_d', name: '柴周' },         // 后周@晋阳太原（汴梁属朱梁；邺城过密已删）
+    { id: 'tujia_d', name: '土家族' },          // 旗号土家@石柱
+    { id: 'zhuang_d', name: '壮族' },           // 旗号壮@田州
+    { id: 'xibo_d', name: '锡伯' },
+    { id: 'nantang_d', name: '南唐' },
+    { id: 'beifu_d', name: '北府' },            // 东晋北府兵@京口
+    { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
+    { id: 'ranwei_d', name: '冉魏' },
+    { id: 'zhuliang_d', name: '朱梁' },         // 后梁@汴梁
+    { id: 'zu_d', name: '祖氏' },
+    { id: 'wanyan_d', name: '完颜氏' },         // 女真完颜部族；≠政权大金(dajin)
+    { id: 'aisin_d', name: '爱新觉罗' },        // 建州女真皇族；≠大清(manzhou_d)
+    { id: 'sunwu_d', name: '孙吴' },
 
     // ── 2026-05-26 新增：隋朝核对追加势力 ──
     { id: 'wazhai', name: '瓦岗' },        // 深红 - 瓦岗军/李密魏政权(洛口仓)
@@ -645,7 +661,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jinchuan', name: '今川' },
     { id: 'xuan', name: '宣府' },
     { id: 'yangshe', name: '羊舌' },
-    { id: 'henei', name: '河内' },
+    { id: 'sima_d', name: '司马氏' },   // 河内郡望@获嘉
     { id: 'liguo', name: '黎国' },
     { id: 'kang', name: '长泽' },
     { id: 'shuofang', name: '朔方' },

@@ -27644,5 +27644,26 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "蒲坂-安邑",
+                type: "road",
+                id: "road_city_puban_city_hedong_20260611",
+                startConnection: "city_puban",
+                endConnection: "city_hedong"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [110.450000, 34.870000],
+                    [110.580000, 34.920000],
+                    [110.710000, 34.970000],
+                    [110.840000, 35.010000],
+                    [110.970000, 35.040000],
+                    [111.033325, 35.072716],
+                ]
+            }
+        },
     ]
 };
