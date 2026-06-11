@@ -369,14 +369,21 @@ export class BattleField {
             }
         });
 
+        // 分级战后恢复（2026-06-12）：战场含城则按该城等级（关10%/小20%/中30%/大40%），纯野战 50%
+        const cityUnit =
+            [...winnerGroup.units, ...loserGroup.units].find(u => u.unit.unitType === 'city')?.unit ?? null;
+        const cityType = (cityUnit?.getEntity?.() as { type?: string } | undefined)?.type;
+        const recoveryTable = GameConfig.COMBAT.POST_BATTLE_RECOVERY;
+        const recoveryRate =
+            cityType && recoveryTable[cityType] !== undefined ? recoveryTable[cityType] : recoveryTable.field;
+
         // 处理胜利方
         winnerGroup.units.filter(u => !u.isDefeated).forEach(bu => {
-            // 伤兵恢复 (从 GameConfig 读取)
             const lost = bu.initialTroops - bu.unit.troops;
-            const recovery = Math.floor(lost * GameConfig.COMBAT.WOUNDED_RECOVERY_RATE);
+            const recovery = Math.floor(lost * recoveryRate);
             if (recovery > 0) {
                 bu.unit.setTroops(bu.unit.troops + recovery);
-                gameLog('battle', `🩹 [BattleField] ${bu.unit.name} 恢复 ${recovery} 伤兵`);
+                gameLog('battle', `🩹 [BattleField] ${bu.unit.name} 恢复 ${recovery} 伤兵（恢复率 ${recoveryRate}）`);
             }
 
             // 找一个失败方单位作为对手

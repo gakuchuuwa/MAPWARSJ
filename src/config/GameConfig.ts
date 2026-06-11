@@ -90,7 +90,18 @@ export class GameConfig {
         BATTLE_DURATION_TROOPS_SCALE: 100000,
         THRESHOLD_SMALL: 20000,
         THRESHOLD_LARGE: 100000,
-        WOUNDED_RECOVERY_RATE: 0.3,
+        /**
+         * 分级战后恢复（2026-06-12 主人拍板，替代旧 WOUNDED_RECOVERY_RATE=0.3 一刀切）：
+         * 胜方恢复本场战损的一定比例——攻城按目标城等级，野战 50%。
+         * 守城方胜利同样按本城等级恢复（伤兵就在城中）。
+         */
+        POST_BATTLE_RECOVERY: {
+            field: 0.5,
+            pass: 0.1,
+            small_city: 0.2,
+            medium_city: 0.3,
+            big_city: 0.4,
+        } as Record<string, number>,
         MIN_SURVIVAL_TROOPS: 0.1,
         /** 开战有效战力随机系数：兵力 × [0.8, 1.2] 均匀随机（8～12 成） */
         LUCK_MIN: 0.8,
