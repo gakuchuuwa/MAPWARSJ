@@ -17,7 +17,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> =
   xiongnu: '鸣镝骑兵',      // 头曼城·冒顿鸣镝骑（§6 #6）
   tujue: '突厥狼卫',       // 于都斤山·附离狼卫（§6 #5）
   huige: '回鹘铁骑',       // 富贵城·回鹘重骑（§6 #7）
-  shatuo: '沙陀铁骑',       // 光禄城·沙陀李克用（§6 #8）
+  // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
   xianbei: '弹汗王卫',      // 嘎仙洞·弹汗山王庭卫队（§6 #15）
   gaoche: '高车战车',       // 浚稽山·高车战车兵（§6 #16）
   rouran: '柔然铁骑',       // 赛尔乌苏·柔然（§6 #17）

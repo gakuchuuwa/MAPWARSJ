@@ -211,7 +211,7 @@ export const FACTIONS: Faction[] = [
     { id: 'beifu_d', name: '北府' },            // 北府兵@濡须口（含山东关；京口让位广陵）
     { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
     { id: 'ranwei_d', name: '冉魏' },
-    { id: 'zhuliang_d', name: '朱梁' },         // 后梁@大名（汴梁属魏都大梁）
+    { id: 'zhuliang_d', name: '朱梁' },         // 后梁@濮阳（大名让位天雄；汴梁属魏都大梁）
     { id: 'zu_d', name: '祖氏' },
     { id: 'wanyan_d', name: '完颜氏' },         // 女真完颜部族；≠政权大金(dajin)
     { id: 'aisin_d', name: '爱新觉罗' },        // 建州女真皇族；≠大清(manzhou_d)
@@ -799,8 +799,8 @@ export const FACTIONS: Faction[] = [
     { id: 'anxi', name: '安西' },
     { id: 'konbaung', name: '贡榜王朝' },
     { id: 'qi_d', name: '戚氏' },
-    { id: 'wangyan', name: '王彦' },
+    { id: 'wangyan', name: '太行' }, // 王彦八字军@飞狐；旗号取地名太行（禁人名「彦」）
     // ── 2026-06-11 新增：明末精锐（天雄/潼津）──
-    { id: 'tianxiong', name: '天雄' },
+    { id: 'tianxiong', name: '魏博' },           // 卢象升天雄军@大名（贾庄标志战；旗号魏博≠番号天雄军）
     { id: 'sunqin', name: '潼津' },
     ];

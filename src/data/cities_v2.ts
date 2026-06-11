@@ -242,7 +242,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     {
         id: 'city_hejian',
         name: '乐成',
-        factionId: 'zhang2_d',
+        factionId: 'yin',
         lat: 38.18, lng: 116.12,
         type: 'small_city',
         troops: 5000 },
@@ -555,7 +555,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         tier: 1 },
     { id: 'city_hezhang', name: '可乐城', factionId: 'miao', lat: 27.095807, lng: 104.718933, type: 'small_city', troops: 5000 },
     { id: 'city_tancheng', name: '郯城', factionId: 'dongxian', lat: 34.549568, lng: 118.317261, type: 'small_city', troops: 5000 },
-    { id: 'city_qucheng', name: '朐城', factionId: 'panjun', lat: 34.529200, lng: 119.132996, type: 'small_city', troops: 5000 },
+    { id: 'city_qucheng', name: '朐城', factionId: 'yingbu', lat: 34.529200, lng: 119.132996, type: 'small_city', troops: 5000 },
         { id: 'city_baibogu', name: '白波谷', factionId: 'baibo', lat: 36.135621, lng: 112.206116, type: 'small_city', troops: 5000 },
     { id: 'city_baoshan', name: '永昌', factionId: 'ailao', lat: 25.11, lng: 99.16, type: 'small_city', troops: 5000 },
 
@@ -1086,7 +1086,7 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_puyang',
         name: '濮阳',
-        factionId: 'wey',
+        factionId: 'zhuliang_d',
         lat: 35.740, lng: 115.040,
         type: 'medium_city',
         troops: 10000,
@@ -1111,14 +1111,14 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_zhaoge',
         name: '朝歌',
-        factionId: 'yin',
+        factionId: 'wey',
         lat: 35.60, lng: 114.18,
         type: 'small_city',
         troops: 5000 },
     {
         id: 'city_liuxian',
         name: '六安',
-        factionId: 'yingbu',
+        factionId: 'zhang2_d',
         lat: 31.75, lng: 116.50,
         type: 'small_city',
         troops: 5000 },
@@ -1893,7 +1893,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     // ── 2026-06-11 精锐部队缺口：新建据点 ──
     { id: 'city_jingshan', name: '京山', factionId: 'lulin', lat: 31.020000, lng: 113.110000, type: 'small_city', region: 'JIANGNAN', troops: 5000, note: '绿林山起义故地；江夏已删（距武昌<3km）' },
-    { id: 'city_daming', name: '大名', factionId: 'zhuliang_d', lat: 36.285000, lng: 115.148000, type: 'small_city', region: 'CENTRAL', troops: 5000, note: '后梁朱温魏博重镇；汴梁让位魏都大梁' },
+    { id: 'city_daming', name: '大名', factionId: 'tianxiong', lat: 36.285000, lng: 115.148000, type: 'small_city', region: 'CENTRAL', troops: 5000, note: '卢象升崇祯三年整饬大名府兵备号天雄军（《明史·卢象升传》）；五代天雄节度同名' },
     { id: 'city_shizhu', name: '石柱', factionId: 'tujia_d', lat: 30.000000, lng: 108.110000, type: 'small_city', region: 'BASHU', troops: 5000, note: '秦良玉土司衙门；白杆兵成军出库地（川东近乡，不取辽东浑河）' },
     { id: 'city_tianyang', name: '田阳', factionId: 'zhuang_d', lat: 23.720000, lng: 106.650000, type: 'small_city', region: 'LINGNAN', troops: 5000, note: '瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地' },
     { id: 'city_fengyang', name: '凤阳', factionId: 'ming_d', lat: 32.9469, lng: 117.3038, type: 'small_city', region: 'JIANGNAN', troops: 5000, note: '明军三大营龙兴/京营渊源；土木堡战场距居庸关<50km未立城' },
@@ -2104,5 +2104,5 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.5697, lng: 95.6981, type: 'small_city', region: 'DIANQIAN', troops: 5000, note: '贡榜王朝龙兴之地；卡塞骑兵' },
     { id: 'city_lopburi', name: '华富里', factionId: 'panjun', lat: 14.7995, lng: 100.6533, type: 'small_city', region: 'DIANQIAN', troops: 5000, note: '阿瑜陀耶时代重镇华富里（Lopburi）；叛军旗' },
     { id: 'city_hengyu', name: '横屿', factionId: 'qi_d', lat: 26.77, lng: 119.7, type: 'small_city', region: 'JIANGNAN', troops: 5000, note: '嘉靖横屿大捷古战场；戚家军藤牌灭倭标志战' },
-    { id: 'city_jiazhuang', name: '贾庄', factionId: 'tianxiong', lat: 38.18, lng: 115.20, type: 'small_city', region: 'NORTH', troops: 5000, note: '卢象升天雄军殉国地（崇祯十二年深泽贾庄）' },
+    { id: 'city_jiazhuang', name: '贾庄', factionId: 'panjun', lat: 38.18, lng: 115.20, type: 'small_city', region: 'NORTH', troops: 5000, note: '卢象升天雄军巨鹿贾庄殉国标志战（《明史》蒿水桥）；成军地大名' },
 ];

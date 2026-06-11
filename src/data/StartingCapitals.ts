@@ -34,7 +34,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'ashikaga': 'city_kyoto',
     'zhao': 'city_handan',
 'wei': 'city_bianliang',
-    'zhuliang_d': 'city_daming',
+    'zhuliang_d': 'city_puyang',
     'han': 'city_xinzheng',
     'han_d': 'city_hanzhong',
     'shu': 'city_chengdu',
@@ -64,7 +64,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'donghu': 'city_bayanwula',
     'luoyue': 'city_huashan',
     'ba': 'city_chongqing',
-    'wey': 'city_puyang',
+    'wey': 'city_zhaoge',
 'bohai': 'city_ningan',
     'jurchen': 'city_wuguo',
 'dangxiang': 'city_xingqingfu2',
@@ -94,7 +94,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'gouding': 'city_guangnan',
 
     'jiujiang': 'city_chaisang',
-    'zhang2_d': 'city_hejian',
+    'zhang2_d': 'city_liuxian',
     'quanrong': 'city_weirong',
     'sushen': 'city_dongkang',
 'yuezhi': 'city_lanshi',
@@ -151,8 +151,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'cangtou': 'city_xinyang',
 
 'zhai_han': 'city_fushi',
-    'yin': 'city_zhaoge',
-    'yingbu': 'city_liuxian',
+    'yin': 'city_hejian',
+    'yingbu': 'city_qucheng',
     'ouyue': 'city_taizhou_zj',
 
     'liubiao': 'city_xiangyang',
@@ -610,6 +610,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'konbaung': 'city_shwebo',
 'qi_d': 'city_hengyu',
     'wangyan': 'city_feihu',
-    'tianxiong': 'city_jiazhuang',
+    'tianxiong': 'city_daming',
     'sunqin': 'city_tongguan',
 };

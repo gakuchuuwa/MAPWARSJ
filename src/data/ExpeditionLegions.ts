@@ -1,5 +1,26 @@
 /**
- * 远征精锐番号统一查询（日本 + 朝鲜 + 东北 + 草原 + 西域 + 中亚 + 青藏 + 滇缅 + 岭南 + 南方 + 北方）
+ * 远征精锐番号统一查询（13 文化区）
+ *
+ * ═══════════════════════════════════════════════════════════════════
+ * 【AGENTS.md §十二 — AI 写入前必读，三者防重】
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ * 玩家看见三样东西，必须是三个不同专名：
+ *   ① 旗号（旗面 1–2 字）  ② 据点名（地图城名）  ③ 远征番号（跟拍军团名）
+ *
+ * 红线（违反任一条 = 不得新增条目）：
+ *   · 三者两两严格不相等
+ *   · 旗号、据点名、番号 默认不得共享汉字
+ *   · **例外（§12.1.1）**：仅 §4.1 民族/政权/家族 → 旗号与番号可共享（见 ExpeditionTripleNameAllow.ts）
+ *   · 军镇专名作旗号时番号不得同字（例：❌ 天雄+天雄军 → ✅ 魏博+大名+天雄军）
+ *   · §4.1：据点 XX关/城/邑/州 且旗号=XX → 改据点名
+ *
+ * 安置顺序：据点（主）→ 势力（史地相关、可复用已有 faction）→ 番号
+ * 精锐不另占城、不挪坐标；势力禁止人名。
+ *
+ * 审计：npm run expedition:triple-check  +  npm run expedition:audit
+ * 史料：史料/古代精锐部队.md
+ * ═══════════════════════════════════════════════════════════════════
  */
 import { JAPAN_EXPEDITION_ELITE_LEGIONS } from './JapanExpeditionLegions';
 import { KOREA_EXPEDITION_ELITE_LEGIONS } from './KoreaExpeditionLegions';
@@ -77,15 +98,4 @@ export function commitExpeditionEliteLegionName(army: {
   expeditionSavedName: string | null;
 }): void {
   army.expeditionSavedName = null;
-}
-
-/** 目标城异常消失等：恢复远征前军团名 */
-export function restoreExpeditionLegionName(army: {
-  name: string;
-  expeditionSavedName: string | null;
-}): void {
-  if (army.expeditionSavedName != null) {
-    army.name = army.expeditionSavedName;
-    army.expeditionSavedName = null;
-  }
 }

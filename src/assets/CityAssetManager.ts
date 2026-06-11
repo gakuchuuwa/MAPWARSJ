@@ -646,8 +646,8 @@ export class CityAssetManager {
         'anxi': '安西',
         'konbaung': '贡榜',
 'qi_d': '戚',
-        'wangyan': '彦',
-        'tianxiong': '天雄',
+        'wangyan': '太行',
+        'tianxiong': '魏博',
         'sunqin': '潼津',
     };
 
