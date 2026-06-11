@@ -265,7 +265,7 @@ export class LegionPhalanxDrawer {
             this.unitSpriteCache.set(key, cacheEntry);
             await yieldMain();
         }
-        gameLog('unit', '⛵ 船贴图懒加载完成（1万/2万/5万 三档）');
+        gameLog('unit', '⛵ 船贴图懒加载完成（<2万 / 2-5万 / ≥5万 三档）');
     }
 
     private static processImage(img: HTMLImageElement): Promise<HTMLImageElement> {

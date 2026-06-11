@@ -23,6 +23,7 @@ import { expandCompositionSlots, expandCompositionScales } from '../types/Legion
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, REGION_ORDER, RegionType } from '../systems/RegionSystem';
+import type { SiegeManager } from '../combat/SiegeManager';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -35,15 +36,26 @@ type SpawnCandidate = {
 export class RecruitmentSystem {
     private cityManager: CityManager;
     private legionManager: LegionManager;
+    private siegeManager: SiegeManager | null;
     private seasonTimer: number = 0;
     private hasRunInitialSpawn = false;
     /** 每季募兵后分批刷新城市标签，避免一帧更新 600+ DOM 卡顿 */
     private pendingLabelCityIds: Set<string> = new Set();
     private static readonly LABEL_UPDATES_PER_FRAME = 20;
 
-    constructor(cityManager: CityManager, legionManager: LegionManager) {
+    constructor(
+        cityManager: CityManager,
+        legionManager: LegionManager,
+        siegeManager?: SiegeManager
+    ) {
         this.cityManager = cityManager;
         this.legionManager = legionManager;
+        this.siegeManager = siegeManager ?? null;
+    }
+
+    /** 攻城进行中：驻军已作为 city 单位参战，禁止再募兵/季末补进驻军 */
+    private isCityGarrisonCommitted(cityId: string): boolean {
+        return this.siegeManager?.isCityUnderAttack(cityId) ?? false;
     }
 
     /**
@@ -144,7 +156,8 @@ export class RecruitmentSystem {
                 }
             }
 
-            if (remaining > 0) {
+            // 攻城战中驻军兵力由 BattleUnitFactory 适配器缓存驱动，勿直接改 city.troops
+            if (remaining > 0 && !this.isCityGarrisonCommitted(city.id)) {
                 city.troops = clampCityTroops(city.type, (city.troops || 0) + remaining);
             }
             this.pendingLabelCityIds.add(city.id);
@@ -215,6 +228,7 @@ export class RecruitmentSystem {
             if (!city.factionId || city.factionId === 'panjun') continue;
             if (!spawnTypes.includes(city.type)) continue;
             if (this.cityHasActiveLegion(city.id)) continue;
+            if (this.isCityGarrisonCommitted(city.id)) continue;
 
             const armySize = Math.floor((city.troops || 0) * 0.9);
             if (armySize < minArmySize) continue;

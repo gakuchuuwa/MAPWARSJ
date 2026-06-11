@@ -8,7 +8,7 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
-    { id: 'zhancheng', name: '占城国' },
+    { id: 'zhancheng', name: '占城' },
     { id: 'monong', name: '墨侬' },
     { id: 'shuizhen', name: '水真' },
     { id: 'wala', name: '瓦剌' },
@@ -29,7 +29,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wan', name: '舒州' },          // 舒州(皖城/安庆)；旗号取舒州避与据点皖城重
     { id: 'qingyuan_bd', name: '清苑' },
     { id: 'zhong', name: '仲家' },
-    { id: 'xichu', name: '西楚国' },
+    { id: 'xichu', name: '西楚' },
     { id: 'weihaiwei', name: '威海' },
     { id: 'xia', name: '夏国' },
     { id: 'shang', name: '商国' },
@@ -71,7 +71,7 @@ export const FACTIONS: Faction[] = [
     { id: 'min', name: '闽国' },
     { id: 'shatuo', name: '沙陀' },
     { id: 'qidan', name: '契丹' },
-    { id: 'bohai', name: '渤海国' },
+    { id: 'bohai', name: '渤海' },
     { id: 'jurchen', name: '女真' },
     { id: 'dangxiang', name: '大夏' },
     { id: 'menggu_d', name: '蒙古' },
@@ -107,34 +107,34 @@ export const FACTIONS: Faction[] = [
     { id: 'ting', name: '汀州' },
     { id: 'quan', name: '权州' },
     { id: 'jibei', name: '济北' },
-    { id: 'wusun', name: '乌孙国' },
+    { id: 'wusun', name: '乌孙' },
     { id: 'dayuan', name: '大宛' },
-    { id: 'gouding', name: '句町国' },
+    { id: 'gouding', name: '句町' },
     { id: 'wuhuan', name: '乌桓' },
     { id: 'xianlingqiang', name: '先零' },
     { id: 'yelang', name: '夜郎' },
     { id: 'ailao', name: '哀牢' },
-    { id: 'fuyu', name: '夫余国' },
+    { id: 'fuyu', name: '夫余' },
     { id: 'shule', name: '疏勒' },
     { id: 'loulan', name: '楼兰' },
     { id: 'shache', name: '莎车' },
     { id: 'qiuci', name: '龟兹' },
     { id: 'yanqi', name: '焉耆' },
-    { id: 'gaogouli', name: '高句国' },   // 高句丽（国内城）；「高丽」留给 goryeo
-    { id: 'xinluo', name: '新罗国' },
+    { id: 'gaogouli', name: '高句丽' },   // 高句丽（国内城）；「高丽」留给 goryeo
+    { id: 'xinluo', name: '新罗' },
  
     { id: 'riben', name: '日本' },    // 白色 - 日本
     { id: 'quanrong', name: '犬戎' },
     { id: 'sushen', name: '肃慎' },
     { id: 'yuezhi', name: '月氏' },
 
-    { id: 'chile', name: '敕勒国' },
-    { id: 'rouran', name: '柔然国' },
-    { id: 'baiji', name: '百济国' },
-    { id: 'tubo', name: '吐蕃国' },
-    { id: 'tujue', name: '突厥国' },
+    { id: 'chile', name: '敕勒' },
+    { id: 'rouran', name: '柔然' },
+    { id: 'baiji', name: '百济' },
+    { id: 'tubo', name: '吐蕃' },
+    { id: 'tujue', name: '突厥' },
     { id: 'tiele', name: '铁勒' },
-    { id: 'huige', name: '回纥国' },
+    { id: 'huige', name: '回纥' },
     { id: 'dayue', name: '大越' },
 
     { id: 'yamato', name: '大和' },
@@ -142,11 +142,11 @@ export const FACTIONS: Faction[] = [
 
     { id: 'izumo', name: '出云' },
     { id: 'satsuma', name: '萨摩' },
-    { id: 'ryukyu', name: '琉球国' },
+    { id: 'ryukyu', name: '琉球' },
     { id: 'so', name: '对马' },
     { id: 'kakizaki', name: '松前' },
     { id: 'fujiwara', name: '奥州' },
-    { id: 'gaya', name: '伽倻国' },
+    { id: 'gaya', name: '伽倻' },
     { id: 'aki', name: '安艺' },
     { id: 'echigo', name: '越后' },
     { id: 'kai', name: '甲斐' },
@@ -156,7 +156,7 @@ export const FACTIONS: Faction[] = [
     { id: 'honda', name: '下野' },
     { id: 'aizu', name: '会津' },
 
-    { id: 'xingliao', name: '兴辽国' },
+    { id: 'xingliao', name: '兴辽' },
 
     { id: 'gongsun_d', name: '公孙' },
     { id: 'donghu', name: '东胡' },
@@ -167,7 +167,7 @@ export const FACTIONS: Faction[] = [
     { id: 'qifu_d', name: '乞伏' },
      // 高原栗 - 西秦(乞伏氏/陇西鲜卑)
     { id: 'tuyu_d', name: '吐谷浑' },   // 青海碧 - 吐谷浑
-    { id: 'linyi', name: '林邑国' },
+    { id: 'linyi', name: '林邑' },
     // 紫檀 - 谯国桓氏(桓温/桓玄)
     // 草原灰绿 - 丁零翟魏(翟氏)       // 辽东褐 - 段部鲜卑(段氏)
     { id: 'pingyuan', name: '高唐' },    // 暗金黄 - 平原郡治(平原)；旗号取郡内高唐县避与据点名重
@@ -209,10 +209,10 @@ export const FACTIONS: Faction[] = [
     { id: 'kumo', name: '奚族' },
     { id: 'xijue', name: '十箭' },
     { id: 'xian_d', name: '冼氏' },          // 绯红 - 冼夫人高凉冼氏(高凉)
-    { id: 'xiqin', name: '西秦国' },         // 胡萝卜橙 - 薛举西秦政权(金城)
+    { id: 'xiqin', name: '西秦' },         // 胡萝卜橙 - 薛举西秦政权(金城)
     { id: 'xueyantuo', name: '薛延陀' },
     { id: 'tujishi', name: '突骑施' },     // 巧克力色 - 突骑施汗国(碎叶川)
-    { id: 'nanzhao', name: '南诏国' },        // 南诏深红 - 南诏国(蒙舍城)
+    { id: 'nanzhao', name: '南诏' },        // 南诏深红 - 南诏国(蒙舍城)
     // 西域沙金 - 高昌国(高昌壁)
     // 暗灰 - 黠戛斯(坚昆都督府)
     { id: 'xiaobolu', name: '勃律' },
@@ -221,13 +221,13 @@ export const FACTIONS: Faction[] = [
     // 深红 - 魏博节度使田氏(魏州)
     { id: 'qiufu', name: '裘甫' },
     // ── 2026-05-26 五代十国势力 ──
-    { id: 'dongdan', name: '东丹国' },
+    { id: 'dongdan', name: '东丹' },
     { id: 'dali', name: '大理' },
            // 紫霞紫 - 大理国(段思平 羊苴咩)
-    { id: 'luodian', name: '罗甸国' },        // 土褐 - 罗甸国(西南蛮 大方城)
+    { id: 'luodian', name: '罗甸' },        // 土褐 - 罗甸国(西南蛮 大方城)
     // ── 2026-05-26 北宋辽金势力 ──
     { id: 'gusiluo', name: '唃厮啰' },      // 吐蕃金 - 唃厮啰政权(青唐城)
-    { id: 'goryeo', name: '高丽国' },            // 王氏高丽（开城）
+    { id: 'goryeo', name: '高丽' },            // 王氏高丽（开城）
     // 义军红 - 王则安阳政权(贝州)
     { id: 'nongzhigao', name: '大南' },
         // 南疆橙 - 侬智高南天国(邕州)
@@ -240,10 +240,10 @@ export const FACTIONS: Faction[] = [
     { id: 'liwang', name: '黑旗' },
 
     // ── 2026-05-26 元朝蒙古势力 ──
-    { id: 'huarazim', name: '花剌国' },        // 中亚金 - 花剌子模帝国(撒马尔干)
+    { id: 'huarazim', name: '花剌子模' },        // 中亚金 - 花剌子模帝国(撒马尔干)
     // 暗影黑 - 木剌夷暗杀教团(阿剌模忒堡)
     { id: 'pagan', name: '缅国' },
-    { id: 'champa', name: '占婆国' },
+    { id: 'champa', name: '占婆' },
     { id: 'dongxia', name: '东夏' },
     { id: 'chagatai', name: '察合台' },
            // 汗国深绿 - 察合台汗国(阿力麻里)
@@ -258,8 +258,8 @@ export const FACTIONS: Faction[] = [
     // 大同上褐 - 孛罗帖木儿集团(大同)
     { id: 'red_turban', name: '红巾' },
     { id: 'zhangshicheng', name: '大周' },
-    { id: 'xushouhui', name: '天完国' },
-    { id: 'luoping', name: '罗平国' },
+    { id: 'xushouhui', name: '天完' },
+    { id: 'luoping', name: '罗平' },
     { id: 'daxing', name: '大兴' },
     { id: 'chendiaoyan', name: '陈吊' },
 
@@ -288,10 +288,10 @@ export const FACTIONS: Faction[] = [
     { id: 'anding_wei', name: '安定' },
     // 第六类：周边国家政权
     // 交阯深紫 - 安南胡朝/黎氏
-    { id: 'joseon', name: '朝鲜国' },                  // 朝鲜王朝李朝(平壤)；尚白见 HistoricalFactionColors
+    { id: 'joseon', name: '朝鲜' },                  // 朝鲜王朝李朝(平壤)；尚白见 HistoricalFactionColors
     { id: 'dahan', name: '大韩' },                   // 韩红 - 大韩帝国(汉城)
-    { id: 'siam', name: '暹罗国' },                    // 暹罗橙 - 阿瑜陀耶王朝
-    { id: 'chenla', name: '真腊国' },                  // 吴哥暗紫 - 真腊吴哥王朝
+    { id: 'siam', name: '暹罗' },                    // 暹罗橙 - 阿瑜陀耶王朝
+    { id: 'chenla', name: '真腊' },                  // 吴哥暗紫 - 真腊吴哥王朝
     // 巨港靛紫 - 三佛齐/室利佛逝
 
     // ── 2026-05-26 明清之际势力（28个）──
@@ -325,13 +325,13 @@ export const FACTIONS: Faction[] = [
     { id: 'geng', name: '靖南' },
 
     // 第七类：清代起义
-    { id: 'shuntian', name: '顺天国' },
+    { id: 'shuntian', name: '顺天' },
     { id: 'miaomin', name: '苗民' },
 
     // 第八类：亚洲外国
     { id: 'gurkha', name: '廓喀' },              // 土褐 - 廓尔喀/尼泊尔(加德满都)
     { id: 'kazakh', name: '哈萨' },
-    { id: 'kokand', name: '霍罕国' },                 // 暗紫 - 霍罕/浩罕汗国
+    { id: 'kokand', name: '霍罕' },                 // 暗紫 - 霍罕/浩罕汗国
     { id: 'badakhshan', name: '达克' },
 
     // ── 2026-05-26 晚清／近代势力（21个）──
@@ -379,7 +379,7 @@ export const FACTIONS: Faction[] = [
     // 赤红 - 瓜尔佳氏(苏完部/鳌拜/双阳)
 
 // ── 2026-05-26 新增：西域/中亚势力（25个）──
-{ id: 'kala', name: '喀喇国' },
+{ id: 'kala', name: '喀喇' },
 // 土褐 - 吐火罗(员渠城/焉耆盆地)
 { id: 'sogdian', name: '粟特' },
         // 巧克力色 - 粟特商团(阿弗拉西阿卜/撒马尔罕)
@@ -394,7 +394,7 @@ export const FACTIONS: Faction[] = [
 // ── 2026-05-26 新增：漠北草原势力 ──
     { id: 'gaoche', name: '高车' },
                // 驼褐 - 高车(敕勒/丁零/浚稽山)
-    { id: 'da_yuan', name: '北元国' },
+    { id: 'da_yuan', name: '北元' },
 
     // ── 2026-05-26 新增：漠北草原部落/氏族势力 ──
     // 贝加尔湖绿 - 丁零(贝加尔湖以南/高车前身)
@@ -415,10 +415,10 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 新增：青藏高原势力（24个）──
     // 第一类：高原帝国与割据强权
-    { id: 'guge', name: '古格国' },
-    { id: 'ladakh', name: '玛域国' },
-    { id: 'tsangpa', name: '藏巴汗国' },
-    { id: 'ganden', name: '甘丹国' },                // 金色 - 甘丹颇章(哲蚌寺/五世达赖政权)
+    { id: 'guge', name: '古格' },
+    { id: 'ladakh', name: '玛域' },
+    { id: 'tsangpa', name: '藏巴汗' },
+    { id: 'ganden', name: '甘丹' },                // 金色 - 甘丹颇章(哲蚌寺/五世达赖政权)
 
     // 第二类：雪域土著与古老强族
     { id: 'bailan', name: '白兰' },
@@ -438,7 +438,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力 ──
     // ── 第一类：云贵高原与中南半岛的丛林帝国 ──
     { id: 'ava', name: '掸族' },
-    { id: 'dongxu', name: '东吁国' },
+    { id: 'dongxu', name: '东吁' },
     { id: 'baiman', name: '白蛮' },
                  // 苍山米白 - 白蛮/白族先民(苍山洱海)
                   // 乌蒙碳黑 - 乌蛮/彝族先民(乌蒙山)
@@ -453,7 +453,7 @@ export const FACTIONS: Faction[] = [
                // 丽江明黄 - 丽江木氏(木府)
     { id: 'bayinnaung', name: '莽应龙' },
     // 大肚秘鲁黄 - 大肚王国(台湾原住民联盟)
-    { id: 'ming_zheng', name: '明郑国' },             // 东宁深蓝 - 明郑/东宁王国(安平/热兰遮城)
+    { id: 'ming_zheng', name: '明郑' },             // 东宁深蓝 - 明郑/东宁王国(安平/热兰遮城)
     // ── 第五类：百越余脉与南岛语系 ──
     { id: 'xiou', name: '西瓯' },
     // 大瑶山林越绿 - 瑶族(大瑶山)
@@ -556,11 +556,11 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-28 新增：南部(根城/日本陆奥)、萨曼(阿母城/中亚)、西域四政权 ──
     { id: 'nanbu', name: '陆奥' },                         // 陆奥国(南部氏/根城), Mutsu
-    { id: 'saman', name: '萨曼国' },                         // 萨曼王朝(中亚/阿母城), Samanid Empire
+    { id: 'saman', name: '萨曼' },                         // 萨曼王朝(中亚/阿母城), Samanid Empire
     { id: 'hepan', name: '喝槃陀' },                       // 喝槃陀(西域/喝槃陀城), Khevand/Koband
-    { id: 'humi', name: '瓦罕国' },
+    { id: 'humi', name: '瓦罕' },
                           // 护密(西域/护密城), Wakhan
-    { id: 'teqin', name: '特勤国' },                         // 特勤(西域/活国城), Tegin
+    { id: 'teqin', name: '特勤' },                         // 特勤(西域/活国城), Tegin
 
     // ── 2026-05-28 新增：马蒙(达尔甘城/中亚)、古兹根(法里亚布城/中亚)、傣(勐泐城/云南)、泰沅(清坎城/泰国)、帕銮(双河城/泰国)、罗斛(呵叻城/泰国) ──
     { id: 'mamon', name: '马蒙' },                         // 马蒙(中亚/达尔甘城), Ma'munid
@@ -581,7 +581,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
     { id: 'gandenpozhang', name: '甘丹颇章' },                // 甘丹颇章(扎敦宗/旧仲巴), Ganden Phodrang
     { id: 'dawoer', name: '达斡尔' },                         // 达斡尔(莫尔根), Daur
-    { id: 'guangnanguo', name: '广南国' },                    // 广南国(洞海城), Guangnan
+    { id: 'guangnanguo', name: '广南' },                    // 广南国(洞海城), Guangnan
 
     // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐)、俚(珠崖/海南) ──
     { id: 'tumengken', name: '图蒙肯' },                     // 图蒙肯(拜达里克牙帐), Tumengken
@@ -610,7 +610,7 @@ export const FACTIONS: Faction[] = [
     { id: 'daca', name: '达擦' },                                 // 达察呼图克图(Tatsak)/驻锡八宿, Dacha Hutuktu
 
     // ── 2026-05-28 新增：景东(银生城/云南/政权) ──
-    { id: 'jingdong', name: '景东国' },                              // 景东(银生城/云南/政权), Jingdong
+    { id: 'jingdong', name: '景东' },                              // 景东(银生城/云南/政权), Jingdong
 
     // ── 2026-05-28 新增：霍尔(索宗/那曲/家族) ──
     { id: 'hor', name: '霍尔' },                                   // 霍尔(索宗/那曲/家族), Hor
@@ -718,7 +718,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wensu', name: '温宿' },
     { id: 'keerqin', name: '科尔沁' },
 
-    { id: 'xiangxiong', name: '象雄国' },
+    { id: 'xiangxiong', name: '象雄' },
     { id: 'qingqiang', name: '青羌' },
     { id: 'zhaowu', name: '昭武' },
     { id: 'gaoliang', name: '高凉' },

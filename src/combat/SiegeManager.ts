@@ -91,6 +91,18 @@ export class SiegeManager {
         return !!battle && !battle.isOver;
     }
 
+    /** 该城是否正被围攻或已有军团在途/排队攻城（驻军已投入战场，不可再募兵出城） */
+    public isCityUnderAttack(cityId: string): boolean {
+        if (this.hasActiveSiegeAt(cityId)) return true;
+        if ((this.siegeThirdPartyWaiters.get(cityId)?.length ?? 0) > 0) return true;
+        for (const armyId of this.pendingSieges) {
+            const army = this.legionManager.getArmies().find((a) => a.id === armyId);
+            if (!army || army.isDestroyed) continue;
+            if (army.getTargetCity()?.id === cityId) return true;
+        }
+        return false;
+    }
+
     /** 军团是否在第三方攻城排队中（等候当前战场结束） */
     public isArmyWaitingSiege(armyId: string): boolean {
         for (const queue of this.siegeThirdPartyWaiters.values()) {

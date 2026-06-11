@@ -383,7 +383,11 @@ export class GameApp {
                 roadRegistry,
                 this.historicalEventManager
             );
-            this.recruitmentSystem = new RecruitmentSystem(this.cityManager, legionManager);
+            this.recruitmentSystem = new RecruitmentSystem(
+                this.cityManager,
+                legionManager,
+                this.historicalEventManager.getSiegeManager()
+            );
             this.followResupplySystem = new FollowResupplySystem(this.cityManager);
             legionManager.setFollowResupplySystem(this.followResupplySystem);
 
