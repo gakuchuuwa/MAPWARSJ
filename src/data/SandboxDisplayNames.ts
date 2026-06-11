@@ -171,7 +171,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'erzhu': '尔朱',
 
     'xu': '徐',
-    'zhi_d': '智',
     'cangtou': '苍头',
 
     // 2026-05-25 汉朝核对追加势力
@@ -615,6 +614,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'danluo': '耽罗',
     'woju': '沃沮',
     'chen3': '月支',
+    'sabeol': '沙伐',
     'hui': '濊',
     'dingan': '定安',
     'wure': '兀惹',

@@ -146,7 +146,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'erzhu': 'city_xiurongchuan',
 
     'xu': 'city_xucheng',
-    'zhi_d': 'city_jiangzhou',
     'cangtou': 'city_xinyang',
 
 'zhai_han': 'city_fushi',
@@ -593,4 +592,5 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'buriat': 'city_chita',
     'xianhai': 'city_yangjigan',
 'nandou': 'city_nieduo',
+    'sabeol': 'city_shangzhou',
 };

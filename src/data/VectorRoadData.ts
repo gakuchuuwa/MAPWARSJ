@@ -1077,7 +1077,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "金城-尚州",
+                name: "金城-三白",
                 type: "road",
                 id: "road_city_jincheng_silla_city_shangzhou_1780132067258",
                 startConnection: "city_jincheng_silla",
@@ -1159,7 +1159,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "尚州-汉城",
+                name: "三白-汉城",
                 type: "road",
                 id: "road_city_shangzhou_city_hanseong_1780136184813",
                 startConnection: "city_shangzhou",
@@ -1400,11 +1400,11 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "咸兴-双城",
+                name: "咸兴-德源",
                 type: "road",
-                id: "road_city_hamhung_city_shuangcheng_1780137178444",
+                id: "road_city_hamhung_city_deokwon_1780137178444",
                 startConnection: "city_hamhung",
-                endConnection: "city_shuangcheng"
+                endConnection: "city_deokwon"
             },
             geometry: {
                 type: "LineString",
@@ -1420,10 +1420,10 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "双城-平壤",
+                name: "德源-平壤",
                 type: "road",
-                id: "road_city_shuangcheng_city_pyongyang_1780137182901",
-                startConnection: "city_shuangcheng",
+                id: "road_city_deokwon_city_pyongyang_1780137182901",
+                startConnection: "city_deokwon",
                 endConnection: "city_pyongyang"
             },
             geometry: {
@@ -2732,7 +2732,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "尚州-月支",
+                name: "三白-月支",
                 type: "road",
                 id: "road_city_shangzhou_city_yuezhi_1780142826218",
                 startConnection: "city_shangzhou",
@@ -14289,89 +14289,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "巴陵-江夏",
-                type: "road",
-                id: "road_city_baling_city_jiangxia_1780154542887",
-                startConnection: "city_baling",
-                endConnection: "city_jiangxia"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [113.13, 29.35],
-                    [113.226859, 29.492149],
-                    [113.29285, 29.529269],
-                    [113.338219, 29.525144],
-                    [113.362965, 29.516895],
-                    [113.383587, 29.492149],
-                    [113.428956, 29.471527],
-                    [113.536198, 29.47815],
-                    [113.603329, 29.53123],
-                    [113.650164, 29.539036],
-                    [113.682949, 29.567138],
-                    [113.746536, 29.570513],
-                    [113.783656, 29.657126],
-                    [113.853771, 29.702494],
-                    [113.878518, 29.747863],
-                    [113.866145, 29.784983],
-                    [113.866145, 29.846849],
-                    [113.89914, 29.87572],
-                    [113.903264, 29.933462],
-                    [113.961006, 29.978831],
-                    [114.018748, 30.036573],
-                    [114.055868, 30.044822],
-                    [114.092988, 30.09019],
-                    [114.101237, 30.139683],
-                    [114.064117, 30.172679],
-                    [114.055868, 30.185052],
-                    [114.101237, 30.255167],
-                    [114.117734, 30.325282],
-                    [114.130108, 30.34178],
-                    [114.237343, 30.399522],
-                    [114.3, 30.55],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "江夏-蕲春",
-                type: "road",
-                id: "road_city_jiangxia_city_qichun_1780154561472",
-                startConnection: "city_jiangxia",
-                endConnection: "city_qichun"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [114.3, 30.55],
-                    [114.484808, 30.461388],
-                    [114.526052, 30.449015],
-                    [114.604416, 30.436642],
-                    [114.637412, 30.403646],
-                    [114.691029, 30.399522],
-                    [114.732273, 30.383024],
-                    [114.781766, 30.399522],
-                    [114.831259, 30.391273],
-                    [114.8803, 30.414984],
-                    [114.94394, 30.416042],
-                    [114.987397, 30.407416],
-                    [115.052989, 30.369005],
-                    [115.072846, 30.324246],
-                    [115.061453, 30.270453],
-                    [115.087983, 30.224148],
-                    [115.145518, 30.222357],
-                    [115.189952, 30.208767],
-                    [115.25195, 30.218047],
-                    [115.272573, 30.234545],
-                    [115.284946, 30.284038],
-                    [115.45, 30.23],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "蕲春-柴桑",
                 type: "road",
                 id: "road_city_qichun_city_chaisang_1780154563640",
@@ -16869,29 +16786,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "绛州-安邑",
-                type: "road",
-                id: "road_city_jiangzhou_city_hedong_1780156757873",
-                startConnection: "city_jiangzhou",
-                endConnection: "city_hedong"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [111.22, 35.61],
-                    [111.106906, 35.464312],
-                    [111.135777, 35.44369],
-                    [111.152275, 35.414819],
-                    [111.181146, 35.324082],
-                    [111.102782, 35.249842],
-                    [111.073911, 35.208598],
-                    [111.033325, 35.072716],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "青石关-博阳",
                 type: "road",
                 id: "road_city_qingshiguan_city_boyang_1780156757926",
@@ -17635,31 +17529,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "夏阳渡-绛州",
-                type: "road",
-                id: "road_city_xiayangdu_city_jiangzhou_1780156992105",
-                startConnection: "city_xiayangdu",
-                endConnection: "city_jiangzhou"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [110.44, 35.48],
-                    [110.576192, 35.597993],
-                    [110.674547, 35.605799],
-                    [110.699526, 35.621411],
-                    [110.764579, 35.592169],
-                    [110.781077, 35.588045],
-                    [110.847068, 35.596294],
-                    [110.884187, 35.596294],
-                    [111.032667, 35.616916],
-                    [111.22, 35.61],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "安邑-潼关",
                 type: "road",
                 id: "road_city_hedong_city_tongguan_1780156995902",
@@ -17685,29 +17554,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [110.290271, 34.746663],
                     [110.286146, 34.713667],
                     [110.29, 34.54],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "绛州-平阳",
-                type: "road",
-                id: "road_city_jiangzhou_city_linfen_1780157001678",
-                startConnection: "city_jiangzhou",
-                endConnection: "city_linfen"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [111.22, 35.61],
-                    [111.390391, 35.726142],
-                    [111.411143, 35.785224],
-                    [111.405935, 35.827989],
-                    [111.391491, 35.885003],
-                    [111.405528, 35.930243],
-                    [111.395763, 35.98371],
-                    [111.516724, 36.077963],
                 ]
             }
         },
@@ -17897,45 +17743,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [111.453578, 34.701873],
                     [111.528515, 34.694067],
                     [111.76, 34.76],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "轵关-绛州",
-                type: "road",
-                id: "road_city_zhiguan_city_jiangzhou_1780157130608",
-                startConnection: "city_zhiguan",
-                endConnection: "city_jiangzhou"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [112.3, 35.15],
-                    [112.109141, 35.130234],
-                    [112.051399, 35.101363],
-                    [112.022528, 35.101363],
-                    [111.8658, 35.084865],
-                    [111.787436, 35.150856],
-                    [111.750316, 35.171478],
-                    [111.733818, 35.1921],
-                    [111.696698, 35.212723],
-                    [111.676076, 35.22922],
-                    [111.655454, 35.258091],
-                    [111.601837, 35.245718],
-                    [111.564717, 35.241594],
-                    [111.535846, 35.278713],
-                    [111.457482, 35.299335],
-                    [111.407989, 35.328206],
-                    [111.366745, 35.319958],
-                    [111.321376, 35.332331],
-                    [111.267759, 35.365326],
-                    [111.210017, 35.352953],
-                    [111.168772, 35.385948],
-                    [111.14815, 35.431317],
-                    [111.111031, 35.451939],
-                    [111.22, 35.61],
                 ]
             }
         },
@@ -27647,27 +27454,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "蒲坂-安邑",
-                type: "road",
-                id: "road_city_puban_city_hedong_20260611",
-                startConnection: "city_puban",
-                endConnection: "city_hedong"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [110.450000, 34.870000],
-                    [110.580000, 34.920000],
-                    [110.710000, 34.970000],
-                    [110.840000, 35.010000],
-                    [110.970000, 35.040000],
-                    [111.033325, 35.072716],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "京山-当阳",
                 type: "road",
                 id: "road_city_jingshan_city_dangyang_20260611",
@@ -27682,26 +27468,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [112.600000, 30.900000],
                     [112.350000, 30.850000],
                     [111.790000, 30.820000],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "历阳-广陵",
-                type: "road",
-                id: "road_city_jingkou_city_yangzhou_20260611",
-                startConnection: "city_jingkou",
-                endConnection: "city_yangzhou"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [118.700000, 32.700000],
-                    [118.850000, 32.600000],
-                    [119.050000, 32.520000],
-                    [119.250000, 32.480000],
-                    [119.400000, 32.450000],
                 ]
             }
         },

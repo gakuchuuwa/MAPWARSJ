@@ -181,7 +181,6 @@ export class CityAssetManager {
         'murong': '慕容',
         'erzhu': '尔朱',
         'xu': '徐',
-        'zhi_d': '智',
         'cangtou': '苍头',
 
 'zhai_han': '翟',
@@ -564,6 +563,7 @@ export class CityAssetManager {
         'danluo': '耽罗',
         'woju': '沃沮',
         'chen3': '月支',
+        'sabeol': '沙伐',
         'hui': '濊',
         'dingan': '定安',
         'wure': '兀惹',

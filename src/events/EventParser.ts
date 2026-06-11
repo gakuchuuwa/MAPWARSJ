@@ -48,7 +48,6 @@ export class EventParser {
         '陆浑': 'luhun', '陆浑戎': 'luhun',
         '卫国': 'wey', '卫': 'wey',
         '徐国': 'xu', '徐': 'xu',
-        '智氏': 'zhi_d', '智伯': 'zhi_d',
         '苍头军': 'cangtou', '苍头': 'cangtou',
 
         // 汉朝补全半成品势力 (2026-05-25)
@@ -111,6 +110,7 @@ export class EventParser {
         '高句': 'gaogouli', '高句丽': 'gaogouli', '国内城': 'gaogouli', '丸都': 'gaogouli',
         '高丽': 'goryeo', '王氏高丽': 'goryeo', '高丽王朝': 'goryeo', '开京': 'goryeo', '开城': 'goryeo',
         '彭氏': 'pengshi', '沅陵': 'pengshi', '月支': 'chen3', '月支国': 'chen3', '大木岳': 'chen3',
+        '沙伐': 'sabeol', '沙伐国': 'sabeol', '三白': 'sabeol', '尚州': 'sabeol',
         '申国': 'shen', '申侯': 'shen', '安康': 'shen',
         '安阳': 'anyang_wangze', '王则': 'anyang_wangze', '贝州': 'anyang_wangze',
         '大南': 'nongzhigao', '侬智高': 'nongzhigao', '南天国': 'nongzhigao', '邕州': 'nongzhigao',
@@ -222,7 +222,8 @@ export class EventParser {
         '准噶尔': 'dzungar', '噶尔丹': 'dzungar', '策妄': 'dzungar', '阿睦尔撒纳': 'dzungar', '伊犁': 'dzungar', '准噶': 'dzungar',
         // 第四类：西北/青藏
         '和硕特': 'khoshut', '固始汗': 'khoshut', '西宁': 'khoshut', '和硕': 'khoshut',
-        '叶尔羌': 'yarkand', '叶尔羌汗国': 'yarkand', '叶尔羌老城': 'yarkand', '莎车': 'yarkand', '叶羌': 'yarkand',
+        '叶尔羌': 'yarkand', '叶尔羌汗国': 'yarkand', '叶尔羌老城': 'yarkand', '叶羌': 'yarkand',
+        '莎车': 'shache', '莎车国': 'shache',
         '回部': 'khoja', '大小和卓': 'khoja', '波罗尼都': 'khoja', '霍集占': 'khoja', '喀什噶尔': 'khoja',
         '噶厦': 'gaxa', '达赖': 'gaxa', '拉萨': 'gaxa',
         // 第五类：西南土司

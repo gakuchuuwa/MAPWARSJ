@@ -177,7 +177,6 @@ export const FACTIONS: Faction[] = [
 
     { id: 'wey', name: '卫国' },          // 卫红 - 卫国(濮阳)
     { id: 'xu', name: '徐国' },           // 徐土黄 - 徐国(符离集/宿州北)
-    { id: 'zhi_d', name: '智氏' },        // 智氏青苍 - 智氏(绛都/山西新绛)
     { id: 'cangtou', name: '苍头' },
 
     // ── 2026-05-26 新增：汉朝补全半成品势力 ──
@@ -208,7 +207,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zhuang_d', name: '壮族' },           // 旗号壮@田阳
     { id: 'xibo_d', name: '锡伯' },
     { id: 'nantang_d', name: '南唐' },
-    { id: 'beifu_d', name: '北府' },            // 东晋北府兵@京口
+    { id: 'beifu_d', name: '北府' },            // 北府兵@濡须口（含山东关；京口让位广陵）
     { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
     { id: 'ranwei_d', name: '冉魏' },
     { id: 'zhuliang_d', name: '朱梁' },         // 后梁@大名（汴梁属魏都大梁）
@@ -775,4 +774,6 @@ export const FACTIONS: Faction[] = [
     { id: 'xianhai', name: '咸海' },                  // 咸海(锡尔河入湖口/养吉干), Aral delta
     // ── 2026-06-11 新增：难兜（汉难兜国/唐孽多城）──
     { id: 'nandou', name: '难兜' },
+    // ── 2026-06-11 新增：沙伐（沙伐国/尚州）──
+    { id: 'sabeol', name: '沙伐' },
 ];
