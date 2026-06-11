@@ -12287,7 +12287,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                 type: "road",
                 id: "road_city_yongzhou_city_tianzhou_1780153629043",
                 startConnection: "city_yongzhou",
-                endConnection: "city_tianzhou"
+                endConnection: "city_tianyang"
             },
             geometry: {
                 type: "LineString",
@@ -12317,23 +12317,23 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [107.116607, 23.575312],
                     [107.073221, 23.610723],
                     [107.018647, 23.626247],
-                    [106.87, 23.73],
+                    [106.650000, 23.720000],
                 ]
             }
         },
         {
             type: "Feature",
             properties: {
-                name: "田州-凌云",
+                name: "来安-凌云",
                 type: "road",
                 id: "road_city_tianzhou_city_cen_1780153631661",
-                startConnection: "city_tianzhou",
+                startConnection: "city_tianyang",
                 endConnection: "city_cen"
             },
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [106.87, 23.73],
+                    [106.650000, 23.720000],
                     [106.710272, 23.81282],
                     [106.643972, 23.834784],
                     [106.633556, 23.8817],
@@ -16545,11 +16545,11 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "安陆-江夏",
+                name: "安陆-武昌",
                 type: "road",
                 id: "road_city_anlu_city_jiangxia_1780155919715",
                 startConnection: "city_anlu",
-                endConnection: "city_jiangxia"
+                endConnection: "city_wuchang"
             },
             geometry: {
                 type: "LineString",
@@ -16569,7 +16569,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [114.125983, 30.692356],
                     [114.146605, 30.671734],
                     [114.157549, 30.619376],
-                    [114.3, 30.55],
+                    [114.320000, 30.530000],
                 ]
             }
         },
@@ -19007,11 +19007,11 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "武胜关-江夏",
+                name: "武胜关-武昌",
                 type: "road",
                 id: "road_city_wushengguan_city_jiangxia_1780157971919",
                 startConnection: "city_wushengguan",
-                endConnection: "city_jiangxia"
+                endConnection: "city_wuchang"
             },
             geometry: {
                 type: "LineString",
@@ -19038,7 +19038,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [114.332204, 30.721227],
                     [114.377573, 30.700605],
                     [114.375987, 30.672675],
-                    [114.3, 30.55],
+                    [114.320000, 30.530000],
                 ]
             }
         },
@@ -27662,6 +27662,66 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [110.840000, 35.010000],
                     [110.970000, 35.040000],
                     [111.033325, 35.072716],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "京山-当阳",
+                type: "road",
+                id: "road_city_jingshan_city_dangyang_20260611",
+                startConnection: "city_jingshan",
+                endConnection: "city_dangyang"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [113.110000, 31.020000],
+                    [112.850000, 30.950000],
+                    [112.600000, 30.900000],
+                    [112.350000, 30.850000],
+                    [111.790000, 30.820000],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "历阳-广陵",
+                type: "road",
+                id: "road_city_jingkou_city_yangzhou_20260611",
+                startConnection: "city_jingkou",
+                endConnection: "city_yangzhou"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [118.700000, 32.700000],
+                    [118.850000, 32.600000],
+                    [119.050000, 32.520000],
+                    [119.250000, 32.480000],
+                    [119.400000, 32.450000],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "巨鹿-信都",
+                type: "road",
+                id: "road_city_liyang_city_xingtai_20260611",
+                startConnection: "city_liyang",
+                endConnection: "city_xingtai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [115.040000, 37.220000],
+                    [114.900000, 37.180000],
+                    [114.760000, 37.140000],
+                    [114.620000, 37.120000],
+                    [114.480000, 37.080000],
                 ]
             }
         },

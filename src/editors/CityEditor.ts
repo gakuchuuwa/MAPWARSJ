@@ -234,6 +234,8 @@ export class CityEditor implements IEditor {
             </div>
 
             <!-- 辅助功能 -->
+            <button type="button" id="ce-audit-proximity" style="width: 100%; background: #455A64; color: white; border: none; padding: 8px; cursor: pointer; margin-top: 8px;">📏 全图间距检查 (&lt;50km)</button>
+            <div id="ce-proximity-audit" style="display: none; margin-top: 8px; padding: 8px; background: #1a1a1a; border: 1px solid #444; border-radius: 4px; font-size: 11px; line-height: 1.5; max-height: 220px; overflow-y: auto;"></div>
             <button type="button" id="ce-copy-code" style="width: 100%; background: #9C27B0; color: white; border: none; padding: 8px; cursor: pointer; margin-top: 8px;">📋 复制代码到剪贴板</button>
 
             <div id="ce-status" style="font-size: 12px; color: #aaa; min-height: 1.2em; margin-top: 8px;"></div>
@@ -579,6 +581,15 @@ export class CityEditor implements IEditor {
         }
 
         // Copy Code
+        // [NEW] 全图 <50km 间距审计
+        const auditBtn = this.container.querySelector('#ce-audit-proximity') as HTMLButtonElement;
+        if (auditBtn) {
+            auditBtn.onclick = (e) => {
+                e.stopPropagation(); e.preventDefault();
+                this.runGlobalProximityAudit();
+            };
+        }
+
         const copyBtn = this.container.querySelector('#ce-copy-code') as HTMLButtonElement;
         if (copyBtn) {
             copyBtn.onclick = () => {
@@ -813,6 +824,84 @@ export class CityEditor implements IEditor {
             `<span style="color:#FF5252">⚠ 距离过近 (规范要求 ≥50km):</span>${more}<br>` +
             lines.join('<br>') +
             `<br><span style="color:#999">如真实地理上无法兼容，应删除名气较小的那个；不要硬拉坐标。</span>`;
+    }
+
+    /** 玩家可见旗号（1–2 字）；panjun → 叛军 */
+    private getFlagLabel(factionId: string): string {
+        if (factionId === 'panjun') return '叛军';
+        return SANDBOX_DISPLAY_NAMES[factionId] || factionId;
+    }
+
+    /** 全图两两 Haversine，返回所有 < minKm 的据点对的唯一列表（i<j 去重） */
+    private findAllProximityConflicts(minKm: number = 50): Array<{ km: number; a: City; b: City }> {
+        const cities = this.cityManager.getCities();
+        const MIN_KM = minKm;
+        const BOX_DEG = 0.6;
+        const pairs: Array<{ km: number; a: City; b: City }> = [];
+
+        for (let i = 0; i < cities.length; i++) {
+            const ca = cities[i];
+            for (let j = i + 1; j < cities.length; j++) {
+                const cb = cities[j];
+                if (Math.abs(ca.latitude - cb.latitude) > BOX_DEG) continue;
+                if (Math.abs(ca.longitude - cb.longitude) > BOX_DEG) continue;
+                const meters = calculateDistance(ca.latitude, ca.longitude, cb.latitude, cb.longitude);
+                const km = meters / 1000;
+                if (km < MIN_KM) {
+                    pairs.push({ km, a: ca, b: cb });
+                }
+            }
+        }
+        pairs.sort((x, y) => x.km - y.km);
+        return pairs;
+    }
+
+    /** 全图间距审计：列出所有 <50km 的据点对，点击可定位 */
+    private runGlobalProximityAudit(): void {
+        const panel = this.container?.querySelector('#ce-proximity-audit') as HTMLElement | null;
+        if (!panel) return;
+
+        const pairs = this.findAllProximityConflicts(50);
+        panel.style.display = 'block';
+
+        if (pairs.length === 0) {
+            panel.innerHTML = `<div style="color:#81C784;font-weight:bold;">✓ 全图 ${this.cityManager.getCities().length} 个据点，无 &lt;50km 冲突</div>`;
+            this.setStatus('间距检查完成：无冲突');
+            return;
+        }
+
+        const header = `<div style="color:#FF5252;font-weight:bold;margin-bottom:6px;">⚠ ${pairs.length} 对 &lt;50km（规范 ≥50km）</div>`;
+        const rows = pairs.map((p, idx) => {
+            const flagA = this.getFlagLabel(p.a.factionId);
+            const flagB = this.getFlagLabel(p.b.factionId);
+            return `<div class="ce-prox-pair" data-idx="${idx}" style="padding:4px 2px;border-bottom:1px solid #333;cursor:pointer;" title="点击定位到这对据点">` +
+                `<span style="color:#FFB74D">${p.km.toFixed(1)} km</span> · ` +
+                `<b>${p.a.name}</b>（${flagA}）↔ <b>${p.b.name}</b>（${flagB}）` +
+                `</div>`;
+        }).join('');
+
+        panel.innerHTML = header + rows;
+        this.setStatus(`间距检查：发现 ${pairs.length} 对冲突`);
+
+        panel.querySelectorAll('.ce-prox-pair').forEach(el => {
+            el.addEventListener('click', () => {
+                const idx = parseInt((el as HTMLElement).dataset.idx || '-1', 10);
+                const pair = pairs[idx];
+                if (pair) this.focusProximityPair(pair.a, pair.b);
+            });
+        });
+    }
+
+    /** 定位到冲突据点对的中点，并加载较近的那个到表单 */
+    private focusProximityPair(a: City, b: City): void {
+        const midLat = (a.latitude + b.latitude) / 2;
+        const midLng = (a.longitude + b.longitude) / 2;
+        if (this.map?.setView) {
+            this.map.setView([midLat, midLng], 9);
+        } else if (this.map?.panTo) {
+            this.map.panTo([midLat, midLng], { animate: true });
+        }
+        this.selectCityForEdit(a);
     }
 
     private generateCityCode(forceNewId: boolean = false): string | null {
