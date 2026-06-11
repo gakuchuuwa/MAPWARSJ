@@ -99,6 +99,8 @@ export class Army implements IBattleUnit {
      * 仅跟拍军团可被玩家下达远征指令（ExpeditionUI），AI 不会自行远征。
      */
     public expeditionTargetCityId: string | null = null;
+    /** 远征前军团原名；功成保留番号后清空；仅目标异常时用于恢复 */
+    public expeditionSavedName: string | null = null;
     
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;

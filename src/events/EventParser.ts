@@ -7,7 +7,7 @@ export class EventParser {
         // 统称 (General Terms)
         '中华': 'zhonghua', '天朝': 'tianchao', '朝鲜': 'joseon', '蒙古': 'menggu',
         '羌藏': 'qiangzang', '回回': 'huihui', '满洲': 'manzhou', '越南': 'yuenan', '滇缅': 'dianmian',
-        '日本': 'riben', '西域': 'xiyu', '西洋': 'xiyang', '叛军': 'panjun',
+        '日本': 'ashikaga', '室町': 'ashikaga', '足利': 'ashikaga', '西域': 'xiyu', '西洋': 'xiyang', '叛军': 'panjun',
 
         // 战国列国（势力 id 见 factions.ts）
         '秦朝': 'qin', '秦国': 'qin', '秦': 'qin', '秦军': 'qin',
@@ -24,7 +24,7 @@ export class EventParser {
         '室韦': 'shiwei', '蒙兀室韦': 'shiwei', '蒙兀': 'shiwei', '额尔古纳': 'shiwei', '额尔古纳河': 'shiwei',
         '赫哲': 'hezhe', '瓦尔': 'hezhe', '波罗奈斯克': 'hezhe', '拉哈苏苏': 'hezhe',
         '濊貊': 'huimo', '东团山': 'huimo',
-        '百越': 'yuenan', '滇国': 'dianguo', '拓东城': 'dianguo', '通海': 'dian', '新兴': 'dian', '倭国': 'riben',
+        '百越': 'yuenan', '滇国': 'dianguo', '拓东城': 'dianguo', '通海': 'dian', '新兴': 'dian', '倭国': 'ashikaga',
         '月氏': 'yuezhi', '拜松': 'yuezhi', '希腊': 'xiyang',
         '大月氏': 'yuezhi', '蓝氏城': 'yuezhi', '巴克特拉': 'yuezhi',
 
@@ -277,6 +277,8 @@ export class EventParser {
         // ── 2026-05-25 日本势力重组 ──
         '邪马台国': 'yamatai', '邪马台': 'yamatai', '吉野里': 'yamatai', '邪马': 'yamatai',
         '德川': 'edo', '德川幕府': 'edo', '江户': 'edo',
+        '北条': 'hojo_d', '北条氏': 'hojo_d', '小田原': 'hojo_d', '风魔党': 'hojo_d',
+        '伊贺': 'iga_d', '伊贺众': 'iga_d', '甲贺众': 'iga_d', '名张': 'iga_d', '服部': 'iga_d',
         '毛利氏': 'aki', '毛利': 'aki', '吉田郡山城': 'aki', '安艺': 'aki',
         '武田': 'kai', '武田氏': 'kai', '躑躅崎馆': 'kai', '甲斐': 'kai',
         '织田': 'owari', '织田氏': 'owari', '清洲': 'owari', '尾张': 'owari',

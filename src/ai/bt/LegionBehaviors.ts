@@ -26,6 +26,10 @@ import {
     resolveRecaptureTarget,
 } from '../TargetAnchorResolver';
 import { GameConfig } from '../../config/GameConfig';
+import {
+    commitExpeditionEliteLegionName,
+    restoreExpeditionLegionName,
+} from '../../data/JapanExpeditionLegions';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 
 // =====================
@@ -57,22 +61,26 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
     const target = ctx.cityManager.getCity(expeditionId);
 
     if (!target || target.factionId === myFaction) {
+        const legionName = ctx.army.name;
         ctx.army.expeditionTargetCityId = null;
         clearStrategicTarget(ctx);
         ctx.army.setTargetCity(null);
         gameLog(
             'expedition',
-            `🐎 [远征] ${ctx.army.name} 远征${target ? `【${target.name}】功成` : '目标已不存在'}，回归基础模式`
+            `🐎 [远征] ${legionName} 远征${target ? `【${target.name}】功成` : '目标已不存在'}，回归基础模式`
         );
         if (target) {
             // 军情面板播报「征 · 远征功成」（S 级）
             (window as unknown as {
                 game?: { brawlFeedPanel?: { pushExpedition(p: { legionName: string; cityName: string; kind: 'depart' | 'success' }): void } };
             }).game?.brawlFeedPanel?.pushExpedition({
-                legionName: ctx.army.name,
+                legionName,
                 cityName: target.name,
                 kind: 'success',
             });
+            commitExpeditionEliteLegionName(ctx.army);
+        } else {
+            restoreExpeditionLegionName(ctx.army);
         }
         return 'done';
     }

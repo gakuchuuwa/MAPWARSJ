@@ -48,7 +48,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     STEPPE:       'menggu_d',  // 草原-哈拉和林 → 蒙古
     NORTHEAST:    'bohai',     // 东北-龙源(龙泉府) → 渤海
     KOREA:        'xinluo',    // 朝鲜-庆州(金城) → 新罗
-    JAPAN:        'riben',     // 日本-京都 → 日本
+    JAPAN:        'ashikaga',  // 室町-京都 → 足利
     CENTRAL_ASIA: 'seljuq',    // 中亚-木鹿(梅尔夫) → 塞尔柱
 };
 

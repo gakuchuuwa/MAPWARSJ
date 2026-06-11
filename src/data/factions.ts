@@ -120,7 +120,8 @@ export const FACTIONS: Faction[] = [
     { id: 'gaogouli', name: '高句丽' },   // 高句丽（国内城）；「高丽」留给 goryeo
     { id: 'xinluo', name: '新罗' },
  
-    { id: 'riben', name: '日本' },    // 白色 - 日本
+    // ── 2026-06-11 日本重置：京都改挂室町（足利旗）；远征精锐「足利奉公众」──
+    { id: 'ashikaga', name: '室町' },
     { id: 'quanrong', name: '犬戎' },
     { id: 'sushen', name: '肃慎' },
     { id: 'yuezhi', name: '月氏' },
@@ -776,4 +777,7 @@ export const FACTIONS: Faction[] = [
     { id: 'nandou', name: '难兜' },
     // ── 2026-06-11 新增：沙伐（沙伐国/尚州）──
     { id: 'sabeol', name: '沙伐' },
+    // ── 2026-06-11 新增：日本精锐据点（间距实测合格）──
+    { id: 'hojo_d', name: '北条' },   // 小田原城；远征精锐「风魔党」
+    { id: 'iga_d', name: '伊贺' },    // 名张·伊贺国东境；远征精锐「伊贺众」
 ];

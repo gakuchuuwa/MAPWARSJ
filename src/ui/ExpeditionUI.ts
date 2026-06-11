@@ -11,6 +11,11 @@
  */
 
 import { GameConfig } from '../config/GameConfig';
+import {
+    applyExpeditionEliteRename,
+    canFactionLaunchExpedition,
+    getExpeditionEliteLegionName,
+} from '../data/JapanExpeditionLegions';
 import { REGION_CENTERS, REGION_LABELS, RegionType } from '../systems/RegionSystem';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
@@ -20,6 +25,7 @@ interface ExpeditionArmy {
     name: string;
     isDestroyed: boolean;
     expeditionTargetCityId: string | null;
+    expeditionSavedName: string | null;
     /** 军团出身文化区（远征不可选本文化中心） */
     cultureRegion: RegionType | null;
     getTroops(): number;
@@ -76,7 +82,7 @@ export class ExpeditionUI {
         const btn = document.createElement('button');
         btn.id = 'expedition-btn';
         btn.innerHTML = '🐎 远征';
-        btn.title = `跟拍军团兵力 ≥ ${GameConfig.EXPEDITION.UNLOCK_TROOPS / 10000} 万解锁：直取一座文化中心城`;
+        btn.title = `跟拍军团兵力 ≥ ${GameConfig.EXPEDITION.UNLOCK_TROOPS / 10000} 万，且势力有史籍精锐专名：直取一座文化中心城`;
         btn.style.cssText = `
             position: fixed;
             top: 56px;
@@ -158,6 +164,7 @@ export class ExpeditionUI {
         const army = this.getFollowedArmy?.() ?? null;
         if (!army || army.isDestroyed) return null;
         if (army.getTroops() < GameConfig.EXPEDITION.UNLOCK_TROOPS) return null;
+        if (!canFactionLaunchExpedition(army.getFactionId())) return null;
         if (army.expeditionTargetCityId) return null; // 已在远征中
         if (this.listCandidates(army).length === 0) return null; // 全部文化中心已属己方
         return army;
@@ -225,7 +232,10 @@ export class ExpeditionUI {
             letter-spacing: 2px;
             text-align: center;
         `;
-        header.textContent = `🐎 ${army.name} · 远征何方？`;
+        const eliteHint = getExpeditionEliteLegionName(army.getFactionId());
+        header.textContent = eliteHint
+            ? `🐎 ${army.name} · 远征何方？（将编为「${eliteHint}」）`
+            : `🐎 ${army.name} · 远征何方？`;
         panel.appendChild(header);
 
         const countdown = document.createElement('div');
@@ -309,6 +319,8 @@ export class ExpeditionUI {
         // 倒计时期间军团可能阵亡/被切换/目标易主——逐项复核
         if (!army || army.isDestroyed || army.id !== lockedArmyId) return;
         if (!city) return;
+        if (!applyExpeditionEliteRename(army)) return;
+
         if (city.factionId === army.getFactionId()) {
             // 选定瞬间目标已属己方 → 随机换一个异文化中心（远征细则）
             const rest = this.listCandidates(army);

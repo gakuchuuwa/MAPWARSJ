@@ -39,7 +39,7 @@ const TIER2_ETHNIC_SEED = new Set([
     'xiongnu', 'xianbei', 'tuoba', 'qidan', 'jurchen', 'menggu_d', 'manzhou',
     'tujue', 'tiele', 'huige', 'rouran', 'chile', 'qiang', 'di', 'jie',
     'yuezhi', 'sogdian', 'donghu', 'sushen', 'wuzhumuqin', 'mohe', 'quanrong',
-    'huimo', 'riben', 'xiyu',
+    'huimo', 'ashikaga', 'xiyu',
 ]);
 
 const TIER1_REGIME = new Set([

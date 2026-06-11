@@ -309,7 +309,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'miao_qing': '苗军',
     'tuoming': '清真',
 'yettishar': '哲德',
-    'riben': '日本',
+    'ashikaga': '足利',
     // ── 2026-05-26 新增：大金、大元 ──
     'dajin': '大金',
     'yuan_d': '大元',
@@ -615,6 +615,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'woju': '沃沮',
     'chen3': '月支',
     'sabeol': '沙伐',
+    'hojo_d': '北条',
+    'iga_d': '伊贺',
     'hui': '濊',
     'dingan': '定安',
     'wure': '兀惹',

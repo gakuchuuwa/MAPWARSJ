@@ -60,7 +60,7 @@ export class CityAssetManager {
 
         'liang': '凉',
 
-        'riben': '日本',
+        'ashikaga': '足利',
 
 
         'min': '闽',
@@ -564,6 +564,8 @@ export class CityAssetManager {
         'woju': '沃沮',
         'chen3': '月支',
         'sabeol': '沙伐',
+        'hojo_d': '北条',
+        'iga_d': '伊贺',
         'hui': '濊',
         'dingan': '定安',
         'wure': '兀惹',
