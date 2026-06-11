@@ -117,10 +117,10 @@ export const FACTIONS: Faction[] = [
     { id: 'shache', name: '莎车' },
     { id: 'qiuci', name: '龟兹' },
     { id: 'yanqi', name: '焉耆' },
-    { id: 'gaogouli', name: '高句丽' },   // 高句丽（国内城）；「高丽」留给 goryeo
+    { id: 'gaogouli', name: '高句丽' },   // 高句丽国都平壤（427 起）；「高丽」留给 goryeo
     { id: 'xinluo', name: '新罗' },
  
-    // ── 2026-06-11 日本重置：京都改挂室町（足利旗）；远征精锐「足利奉公众」──
+    // ── 2026-06-11 日本重置：京都改挂室町（足利旗）──
     { id: 'ashikaga', name: '室町' },
     { id: 'quanrong', name: '犬戎' },
     { id: 'sushen', name: '肃慎' },
@@ -306,8 +306,7 @@ export const FACTIONS: Faction[] = [
     { id: 'anding_wei', name: '安定' },
     // 第六类：周边国家政权
     // 交阯深紫 - 安南胡朝/黎氏
-    { id: 'joseon', name: '朝鲜' },                  // 朝鲜王朝李朝(平壤)；尚白见 HistoricalFactionColors
-    { id: 'dahan', name: '大韩' },                   // 韩红 - 大韩帝国(汉城)
+    { id: 'joseon', name: '朝鲜' },                  // 朝鲜王朝李朝都城汉城；尚白见 HistoricalFactionColors
     { id: 'siam', name: '暹罗' },                    // 暹罗橙 - 阿瑜陀耶王朝
     { id: 'chenla', name: '真腊' },                  // 吴哥暗紫 - 真腊吴哥王朝
     // 巨港靛紫 - 三佛齐/室利佛逝
@@ -578,7 +577,7 @@ export const FACTIONS: Faction[] = [
     { id: 'hepan', name: '喝槃陀' },                       // 喝槃陀(西域/喝槃陀城), Khevand/Koband
     { id: 'humi', name: '瓦罕' },
                           // 护密(西域/护密城), Wakhan
-    { id: 'teqin', name: '特勤' },                         // 特勤(西域/活国城), Tegin
+    // 特勤(西域/活国城), Tegin
 
     // ── 2026-05-28 新增：马蒙(达尔甘城/中亚)、古兹根(法里亚布城/中亚)、傣(勐泐城/云南)、泰沅(清坎城/泰国)、帕銮(双河城/泰国)、罗斛(呵叻城/泰国) ──
     { id: 'mamon', name: '马蒙' },                         // 马蒙(中亚/达尔甘城), Ma'munid
@@ -724,6 +723,14 @@ export const FACTIONS: Faction[] = [
     { id: 'chen3', name: '月支' },   // 马韩月支国，辰王治所（三国志·魏书·乌丸鲜卑东夷传）
     { id: 'hui', name: '濊族' },
     { id: 'dingan', name: '定安' },
+    // ── 2026-06-11 国内城改挂玄菟郡（汉代辖境·高句县渊源）──
+    { id: 'xuantu', name: '玄菟' },
+    // ── 2026-06-11 珍岛·三别抄（裴仲孙抗蒙）──
+    { id: 'sambyeol', name: '三别' },
+    // ── 2026-06-11 顺天·全罗左道·龟船水军（李舜臣；旗号≠据点名防重）──
+    { id: 'jeolla', name: '全罗' },
+    // ── 2026-06-11 徒河·锦州卫·辽东铁骑（旗号锦≠据点名徒河）──
+    { id: 'jinzhou', name: '锦州' },
     { id: 'wure', name: '兀惹' },
     { id: 'houliao', name: '后辽' },
     { id: 'dazhen', name: '大真' },
@@ -747,7 +754,7 @@ export const FACTIONS: Faction[] = [
     { id: 'weitou', name: '尉头' },
     { id: 'dangchang', name: '宕昌' },
 
-    { id: 'hai2', name: '海州' },
+    { id: 'hai2', name: '瀑池' },
     { id: 'fu2', name: '抚州' },
     { id: 'xinping', name: '新平' },
     { id: 'huan', name: '环州' },
@@ -779,5 +786,15 @@ export const FACTIONS: Faction[] = [
     { id: 'sabeol', name: '沙伐' },
     // ── 2026-06-11 新增：日本精锐据点（间距实测合格）──
     { id: 'hojo_d', name: '北条' },   // 小田原城；远征精锐「风魔党」
-    { id: 'iga_d', name: '伊贺' },    // 名张·伊贺国东境；远征精锐「伊贺众」
+    { id: 'iga_d', name: '伊贺' },    // 名张·伊贺国东境；远征精锐「伊贺众」,
+    { id: 'yanda', name: '嚈哒' },
+    { id: 'kushan', name: '贵霜国' },
+    { id: 'qincha', name: '钦察' },
+    { id: 'durrani', name: '杜兰尼' },
+    { id: 'rajput', name: '拉杰普特' },
+    { id: 'mughal', name: '莫卧儿' },
+    { id: 'maratha', name: '马拉塔' },
+    { id: 'sikh', name: '锡克' },
+    { id: 'sasan', name: '萨珊' },
+    { id: 'osman', name: '奥斯曼' },
 ];

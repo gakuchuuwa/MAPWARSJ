@@ -29,7 +29,7 @@ import { GameConfig } from '../../config/GameConfig';
 import {
     commitExpeditionEliteLegionName,
     restoreExpeditionLegionName,
-} from '../../data/JapanExpeditionLegions';
+} from '../../data/ExpeditionLegions';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 
 // =====================

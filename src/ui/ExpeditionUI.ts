@@ -15,7 +15,7 @@ import {
     applyExpeditionEliteRename,
     canFactionLaunchExpedition,
     getExpeditionEliteLegionName,
-} from '../data/JapanExpeditionLegions';
+} from '../data/ExpeditionLegions';
 import { REGION_CENTERS, REGION_LABELS, RegionType } from '../systems/RegionSystem';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';

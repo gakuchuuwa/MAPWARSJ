@@ -148,7 +148,6 @@ export class CityAssetManager {
         'hashiba': '丰臣',
         'honda': '下野',
         'aizu': '会津',
-        'dahan': '大韩',
         'xingliao': '兴辽',
 'gongsun_d': '公孙',
 'cen_d': '岑',
@@ -435,7 +434,6 @@ export class CityAssetManager {
         'saman': '萨曼',
         'hepan': '喝槃',
 'humi': '瓦罕',
-        'teqin': '活',
 
         // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──
         'mamon': '马蒙',
@@ -568,6 +566,10 @@ export class CityAssetManager {
         'iga_d': '伊贺',
         'hui': '濊',
         'dingan': '定安',
+        'xuantu': '玄菟',
+        'sambyeol': '三别',
+        'jeolla': '全罗',
+        'jinzhou': '锦',
         'wure': '兀惹',
         'houliao': '后辽',
         'dazhen': '大真',
@@ -632,6 +634,16 @@ export class CityAssetManager {
         'buriat': '布里',
         'xianhai': '咸海',
 'nandou': '难兜',
+        'yanda': '嚈哒',
+        'kushan': '贵霜',
+        'qincha': '钦察',
+        'durrani': '杜兰尼',
+        'rajput': '拉杰',
+        'mughal': '莫卧',
+        'maratha': '马拉',
+        'sikh': '锡克',
+        'sasan': '萨珊',
+        'osman': '奥斯曼',
     };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

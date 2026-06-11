@@ -31,7 +31,7 @@ export class EventParser {
         // 西汉 (Western Han) - Now mapping to Zhonghua
         '西汉': 'zhonghua', '汉': 'zhonghua', '汉军': 'zhonghua', '炎汉': 'zhonghua',
         '南越': 'yuenan', '吴楚': 'zhonghua', '卫满': 'chaoxian',
-        '东胡': 'donghu', '鲜卑': 'xianbei', '乌桓': 'wuhuan', '契丹': 'qidan', '氐羌': 'qiangzang', '匈奴': 'xiongnu', '贵霜': 'xiyu', '罗马': 'xiyang',
+        '东胡': 'donghu', '巴彦乌拉': 'donghu', '契丹': 'qidan', '氐羌': 'qiangzang', '匈奴': 'xiongnu', '贵霜': 'xiyu', '罗马': 'xiyang',
 
         // 其他常见映射 (Other Common Mappings)
         '大汉': 'zhonghua', '蜀汉': 'zhonghua', '曹魏': 'wei', '孙吴': 'wu',
@@ -107,7 +107,8 @@ export class EventParser {
 
         // ── 2026-05-25 北宋辽金势力 ──
         '唃厮啰': 'gusiluo', '唃厮啰政权': 'gusiluo', '廓州': 'gusiluo', '贵德': 'gusiluo', '古斯罗': 'gusiluo', '唃厮': 'gusiluo',
-        '高句': 'gaogouli', '高句丽': 'gaogouli', '国内城': 'gaogouli', '丸都': 'gaogouli',
+        '高句': 'gaogouli', '高句丽': 'gaogouli', '丸都': 'gaogouli',
+        '玄菟': 'xuantu', '玄菟郡': 'xuantu', '国内城': 'xuantu',
         '高丽': 'goryeo', '王氏高丽': 'goryeo', '高丽王朝': 'goryeo', '开京': 'goryeo', '开城': 'goryeo',
         '彭氏': 'pengshi', '沅陵': 'pengshi', '月支': 'chen3', '月支国': 'chen3', '大木岳': 'chen3',
         '沙伐': 'sabeol', '沙伐国': 'sabeol', '三白': 'sabeol', '尚州': 'sabeol',
@@ -189,7 +190,7 @@ export class EventParser {
         '安定卫': 'anding_wei', '安定蒙古': 'anding_wei',
         // 第六类：周边国家
         '安南': 'annam_ho', '胡朝': 'annam_ho', '黎氏': 'annam_ho', '交阯': 'annam_ho', '升龙': 'annam_ho', '河内': 'annam_ho',
-        '李朝': 'joseon', '李成桂': 'joseon', '汉城': 'dahan',
+        '李朝': 'joseon', '李成桂': 'joseon', '汉城': 'joseon', '汉阳': 'joseon',
         '暹罗': 'siam', '阿瑜陀耶': 'siam',
         '真腊': 'chenla', '吴哥': 'chenla',
         '苏门答剌': 'sumatra', '苏门答腊': 'sumatra',
@@ -277,6 +278,8 @@ export class EventParser {
         // ── 2026-05-25 日本势力重组 ──
         '邪马台国': 'yamatai', '邪马台': 'yamatai', '吉野里': 'yamatai', '邪马': 'yamatai',
         '德川': 'edo', '德川幕府': 'edo', '江户': 'edo',
+        '异国警固': 'zhuqian', '异国警固番役': 'zhuqian', '石筑地': 'zhuqian',
+        '书院番': 'edo', '小姓组': 'edo', '两番': 'edo',
         '北条': 'hojo_d', '北条氏': 'hojo_d', '小田原': 'hojo_d', '风魔党': 'hojo_d',
         '伊贺': 'iga_d', '伊贺众': 'iga_d', '甲贺众': 'iga_d', '名张': 'iga_d', '服部': 'iga_d',
         '毛利氏': 'aki', '毛利': 'aki', '吉田郡山城': 'aki', '安艺': 'aki',
@@ -294,10 +297,22 @@ export class EventParser {
 '会津': 'aizu', '会津氏': 'aizu', '鹤之城': 'aizu',
 // ── 2026-05-28 南部/陆奥 ──
 '南部': 'nanbu', '陆奥': 'nanbu',
-
         // ── 2026-05-25 大韩/朝鲜 ──
-        '大韩': 'dahan', '大韩帝国': 'dahan',
-        '朝鲜王朝': 'joseon', '平壤': 'joseon',
+        '朝鲜王朝': 'joseon',
+        '平壤': 'gaogouli', '平壤城': 'gaogouli',
+        '珍岛': 'sambyeol', '三别抄': 'sambyeol', '裴仲孙': 'sambyeol',
+        '全罗': 'jeolla', '全罗左道': 'jeolla', '李舜臣': 'jeolla',
+        '锦州': 'jinzhou', '锦州卫': 'jinzhou', '锦': 'jinzhou', '李成梁': 'jinzhou',
+        '忠孝军': 'qing', '完颜陈和尚': 'qing',
+        '铁浮图': 'dajin', '拐子马': 'wanyan_d', '猛安谋克': 'jurchen',
+        '关宁铁骑': 'zu_d', '辽东铁骑': 'jinzhou', '东江军': 'mao_wenlong',
+        '巴牙喇': 'aisin_d', '八旗军': 'manzhou', '多铎': 'manzhou_d',
+        '索伦兵': 'hezhe', '黑龙江水师': 'aola', '神贲禁卫': 'bohai',
+        '皮室军': 'liao_d', '斡鲁朵': 'qidan', '怯薛': 'menggu_d', '怯薛歹': 'menggu_d',
+        '那可儿': 'borjigin', '探马赤': 'ogodei', '秃鲁花': 'yuan_d',
+        '鸣镝骑': 'xiongnu', '附离': 'tujue', '狼卫': 'tujue',
+        '回鹘铁骑': 'huige', '沙陀铁骑': 'shatuo', '弹汗山': 'xianbei',
+        '柔然铁骑': 'rouran', '瓦剌铁骑': 'wala',
 
         // ── 2026-05-25 兴辽(大延琳) ──
         '兴辽': 'xingliao', '兴辽国': 'xingliao', '大延琳': 'xingliao', '龙湾': 'xingliao',
@@ -322,6 +337,16 @@ export class EventParser {
 
         // ── 2026-05-26 新增：西域/中亚势力（25个）──
         '喀喇': 'kala', '喀喇汗': 'kala', '喀喇汗王朝': 'kala',
+        '龟兹重甲兵': 'qiuci', '伊逻卢': 'qiuci',
+        '于阗尉迟军': 'yutian', '于阗': 'yutian',
+        '喀喇汗铁骑': 'kala',
+        '高昌铁骑': 'yiduhu', '亦都护': 'yiduhu',
+        '盘橐卫': 'shule', '疏勒大黄弩': 'shule', '盘橐城': 'shule',
+        '焉耆龙骑兵': 'yanqi',
+        '乌孙昆莫亲卫': 'wusun', '昆莫亲卫': 'wusun',
+        '蒙兀儿铁骑': 'chagatai', '蒙兀儿': 'chagatai',
+        '汗血天马骑': 'dayuan', '汗血马': 'dayuan', '贵山城': 'dayuan',
+        '莎车左右骑': 'shache', '渠莎': 'shache',
         '吐火罗': 'tokhara', '吐火罗人': 'tokhara', '员渠城': 'tokhara',
         '粟特': 'sogdian', '粟特人': 'sogdian', '粟特商团': 'sogdian', '阿弗拉西阿卜': 'sogdian', '瓦拉赫沙': 'sogdian',
         '塞种': 'sakai', '塞种人': 'sakai', '斯基泰': 'sakai', '特克斯河': 'sakai', '昭苏石人': 'sakai',
