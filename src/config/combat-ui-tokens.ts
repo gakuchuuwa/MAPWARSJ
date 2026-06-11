@@ -16,11 +16,13 @@ export const COMBAT_UI_TOKENS = {
     centerBackdropEdge: 16,
     /** 黑底径向渐隐椭圆半径（%）；越小四边越易透出地图 */
     centerFadeEllipseX: 88,
-    centerFadeEllipseY: 80,
-    /** 径向渐隐色标（%，从中心向外） */
-    centerFadeStopInner: 0,
-    centerFadeStopMid: 34,
-    centerFadeStopOuter: 68,
+    centerFadeEllipseY: 96,
+    /** 径向渐隐色标（%，从中心向外）
+     *  [2026-06-12 美化] 内/中色标外推：文字核心区（势力名/军团名/数字）下必须是实底，
+     *  此前地图标签（朝歌 4081 等）穿透叠在战报文字上。立绘区边缘仍保持渐隐透出地图。 */
+    centerFadeStopInner: 30,
+    centerFadeStopMid: 58,
+    centerFadeStopOuter: 84,
     /** 中央对峙血条最大宽度（设计 px）；屏宽 ≈ uiPx(本值)。略伸入立绘槽底缘以铺满中栏黑底 */
     clashBarTrackWidth: 1280,
     centerMargin: 400,

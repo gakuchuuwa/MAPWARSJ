@@ -519,7 +519,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_toumancheng', name: '头曼城', factionId: 'xiongnu', lat: 41.302589, lng: 108.506470, type: 'small_city', troops: 5000 },
 
     { id: 'city_guangnan', name: '广南', factionId: 'gouding', lat: 23.755260, lng: 105.386353, type: 'small_city', troops: 5000 },    
-    { id: 'city_liaoyang', name: '襄平', factionId: 'gongsun_d', lat: 41.270000, lng: 123.170000, type: 'medium_city', region: 'NORTHEAST', troops: 10000, tier: 1, note: '辽东治所；东北/朝鲜/草原界城锚点' },
+    { id: 'city_liaoyang', name: '襄平', factionId: 'gongsun_d', lat: 41.270000, lng: 123.170000, type: 'medium_city', region: 'NORTH', troops: 10000, tier: 1, note: '辽东治所；东北/朝鲜/草原界城锚点' },
 
     {
         id: 'city_chaoyang',
@@ -1562,7 +1562,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
         type: 'medium_city',
         troops: 10000,
         tier: 1 },
-    { id: 'city_boduo', name: '伯都', factionId: 'wuji', lat: 45.127824, lng: 124.818420, type: 'small_city', troops: 5000 },
+    { id: 'city_boduo', name: '伯都', factionId: 'wuji', lat: 45.4265, lng: 124.6591, type: 'small_city', troops: 5000 },
     { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'small_city', troops: 5000, region: 'CENTRAL_ASIA' },
     {
         id: 'city_raoleshui',
@@ -1879,8 +1879,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_fengyang', name: '凤阳', factionId: 'ming_d', lat: 32.867000, lng: 117.515000, type: 'small_city', region: 'JIANGNAN', troops: 5000, note: '明太祖龙兴之地，南京让位南唐' },
     { id: 'city_jingkou', name: '濡须口', factionId: 'beifu_d', lat: 31.580000, lng: 117.920000, type: 'small_city', region: 'JIANGNAN', troops: 5000, note: '濡须水入巢湖水口（含山东关/濡须山侧）；魏吴濡须之战古战场' },
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.220000, lng: 115.040000, type: 'small_city', region: 'CENTRAL', troops: 5000, note: '冉魏迁巨鹿；黎阳过密冀南' },
-    { id: 'city_ningyuan', name: '宁远', factionId: 'zu_d', lat: 40.618000, lng: 120.720000, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '关宁铁骑，祖大寿宁远卫（今兴城）' },
-    { id: 'city_shuangcheng', name: '双城', factionId: 'wanyan_d', lat: 45.380000, lng: 126.280000, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '完颜氏部族旧地；≠大金政权会宁府' },
+    { id: 'city_ningyuan', name: '宁远', factionId: 'zu_d', lat: 40.618000, lng: 120.720000, type: 'small_city', region: 'NORTH', troops: 5000, note: '关宁铁骑，祖大寿宁远卫（今兴城）' },
+    { id: 'city_shuangcheng', name: '双城', factionId: 'wanyan_d', lat: 45.506341, lng: 125.845642, type: 'small_city', region: 'NORTHEAST', troops: 5000, mirror: true },
     { id: 'city_salhu', name: '萨尔浒', factionId: 'manzhou', lat: 41.841000, lng: 124.046000, type: 'small_city', region: 'NORTHEAST', troops: 5000, note: '满洲八旗龙兴外移；赫图阿拉让位爱新觉罗' },
     { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.530000, lng: 114.320000, type: 'medium_city', region: 'JIANGNAN', troops: 10000, tier: 1, note: '孙吴武昌督治，与春秋吴姑苏区分' },
     { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'medium_city', region: 'CENTRAL', troops: 10000, tier: 1, note: '晋国曲沃，太原让位柴周' },

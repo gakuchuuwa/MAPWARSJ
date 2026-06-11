@@ -9,6 +9,7 @@ import {
 } from '../config/portrait_defaults';
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
+import { getUnitCultureCombatMultiplier } from '../systems/CultureCombat';
 const T = COMBAT_UI_TOKENS;
 
 export class CombatUI {
@@ -41,6 +42,9 @@ export class CombatUI {
     private rightSideTroopsSpan!: HTMLSpanElement;
     private leftSideBarFill!: HTMLDivElement;
     private rightSideBarFill!: HTMLDivElement;
+    /** 战力系数徽章（野战/城防 × 文化关隘综合系数） */
+    private leftMultBadge: HTMLSpanElement | null = null;
+    private rightMultBadge: HTMLSpanElement | null = null;
     private battleTitle!: HTMLDivElement;
     private battleYear!: HTMLDivElement;
     private eventDescription!: HTMLDivElement;
@@ -370,6 +374,29 @@ export class CombatUI {
         this.healthBarContainer.appendChild(this.attackerBar);
         this.healthBarContainer.appendChild(this.clashEffect);
 
+        // [2026-06-12 美化] 比例条两端「攻/守」字：此前这根条无任何标注，观众不知其义
+        const makeBarTag = (text: string, edge: 'left' | 'right') => {
+            const tag = document.createElement('span');
+            tag.textContent = text;
+            tag.style.cssText = `
+                position: absolute;
+                ${edge}: ${uiPx(8)};
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 5;
+                font-family: 'Noto Serif SC', serif;
+                font-size: ${uiPx(13)};
+                font-weight: 900;
+                color: rgba(255, 248, 230, 0.92);
+                text-shadow: 0 1px 3px rgba(0,0,0,0.95);
+                letter-spacing: 0;
+                pointer-events: none;
+            `;
+            return tag;
+        };
+        this.healthBarContainer.appendChild(makeBarTag('攻', 'left'));
+        this.healthBarContainer.appendChild(makeBarTag('守', 'right'));
+
         // 军团信息：以「区域冲突」中线为界，左右各占一半；外缘避开立绘。
         const portraitPad = uiPx(T.portraitHorizontalReserve);
         this.sideStatsRow = document.createElement('div');
@@ -581,18 +608,61 @@ export class CombatUI {
             letter-spacing: 0.02em;
         `;
 
+        // [2026-06-12 美化] 战力系数徽章：把后台的文化攻防/关隘加成晒给观众
+        // （无解说直播里这是"为什么少打多能赢"的唯一解释渠道）
+        const multBadge = document.createElement('span');
+        multBadge.style.cssText = `
+            flex-shrink: 0;
+            margin-left: ${uiPx(8)};
+            padding: 0 ${uiPx(6)};
+            font-size: ${uiPx(12)};
+            font-weight: 700;
+            line-height: 1.5;
+            border-radius: 3px;
+            border: 1px solid ${isAtt ? 'rgba(253, 185, 49, 0.45)' : 'rgba(90, 170, 190, 0.45)'};
+            color: ${isAtt ? 'rgba(255, 218, 130, 0.95)' : 'rgba(150, 210, 225, 0.95)'};
+            background: rgba(0, 0, 0, 0.35);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+            white-space: nowrap;
+            display: none;
+        `;
+
         if (isAtt) {
             this.leftSideNameSpan = nameSpan;
             this.leftSideTroopsSpan = troopsSpan;
+            this.leftMultBadge = multBadge;
         } else {
             this.rightSideNameSpan = nameSpan;
             this.rightSideTroopsSpan = troopsSpan;
+            this.rightMultBadge = multBadge;
         }
 
         label.appendChild(nameSpan);
         label.appendChild(colonSpan);
         label.appendChild(troopsSpan);
+        label.appendChild(multBadge);
         return label;
+    }
+
+    /**
+     * 战力系数徽章：野战/城防 × 综合系数（文化五级 × 关隘，同 CultureCombat 结算口径）。
+     * 双方都常显——「野战×1.2 vs 城防×1.32」本身就是战斗解说。
+     */
+    private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
+        const apply = (badge: HTMLSpanElement | null, unit: IBattleUnit | null) => {
+            if (!badge) return;
+            if (!unit) {
+                badge.style.display = 'none';
+                return;
+            }
+            const isGarrison = unit.unitType === 'city';
+            const mult = getUnitCultureCombatMultiplier(unit);
+            const value = parseFloat(mult.toFixed(2));
+            badge.textContent = `${isGarrison ? '城防' : '野战'}×${value}`;
+            badge.style.display = 'inline-block';
+        };
+        apply(this.leftMultBadge, attacker);
+        apply(this.rightMultBadge, defender);
     }
 
     /** 侧栏小血条 + 攻剑 / 守盾图标（撑满各自半宽） */
@@ -669,12 +739,17 @@ export class CombatUI {
         el.style.color = isAtt ? T.colors.attackerName : T.colors.defenderName;
     }
 
-    /** 渲染「范阳军团: 6,339」式侧栏标签（仅更新文本，不改 DOM 结构） */
+    /**
+     * 渲染「范阳军团: 1.78万」式侧栏标签（仅更新文本，不改 DOM 结构）。
+     * [2026-06-12 美化] 数字与地图标签统一为「万」制：≥1 万显示两位小数（战斗中百位变动可见），
+     * <1 万保留整数。弃用 en-US 千分位逗号（同屏两套数字格式）。
+     */
     private renderSideLabel(side: 'attacker' | 'defender', name: string, troops: number): void {
         const nameEl = side === 'attacker' ? this.leftSideNameSpan : this.rightSideNameSpan;
         const troopsEl = side === 'attacker' ? this.leftSideTroopsSpan : this.rightSideTroopsSpan;
         nameEl.textContent = name;
-        troopsEl.textContent = Math.max(0, Math.floor(troops)).toLocaleString('en-US');
+        const t = Math.max(0, Math.floor(troops));
+        troopsEl.textContent = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : String(t);
     }
 
     private resolveFactionLabel(factionId: string | null): string {
@@ -800,6 +875,7 @@ export class CombatUI {
         this.isVisible = true;
         this.attackerFactionId = battle.attacker.factionId;
         this.defenderFactionId = battle.defender.factionId;
+        this.updateMultiplierBadges(battle.attacker, battle.defender);
         this.updateInfo(battle.attacker, battle.defender, '正在交战', '');
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
@@ -868,6 +944,7 @@ export class CombatUI {
         this.defenderFactionId = defender.factionId;
         this.currentBattleKey = this.buildPortraitConfigKey(displayTitle, attacker, defender);
 
+        this.updateMultiplierBadges(attacker, defender);
         this.updateInfoDirect(attName, defName, displayTitle, displayYear, description);
 
         this.setPortrait(this.leftPortrait, attacker, attacker.generalId, attacker.factionId, attackerPortrait, 'attacker');

@@ -76,7 +76,7 @@ export class GameInputManager {
             e.originalEvent.preventDefault(); // Prevent browser context menu
 
             const { lat, lng } = e.latlng;
-            const coordStr = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            const coordStr = `lat: ${lat.toFixed(4)}, lng: ${lng.toFixed(4)},`;
             (window as any).pickedCoords = { lat, lng };
 
             // Show Toast notification

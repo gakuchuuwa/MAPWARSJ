@@ -1265,40 +1265,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "沈阳-赫图阿拉",
-                type: "road",
-                id: "road_city_shenyang_city_hetuala_1780136330543",
-                startConnection: "city_shenyang",
-                endConnection: "city_hetuala"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [123.43689, 41.80203],
-                    [123.678145, 41.861291],
-                    [123.727638, 41.873664],
-                    [123.78538, 41.877789],
-                    [123.843122, 41.877789],
-                    [123.888491, 41.886038],
-                    [124.016348, 41.894287],
-                    [124.041094, 41.902535],
-                    [124.1772, 41.923157],
-                    [124.333928, 41.960277],
-                    [124.412292, 41.968526],
-                    [124.445288, 41.952028],
-                    [124.478283, 41.902535],
-                    [124.490656, 41.86954],
-                    [124.544274, 41.815923],
-                    [124.585518, 41.782927],
-                    [124.663882, 41.741683],
-                    [124.791739, 41.704563],
-                    [125.032654, 41.715981],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "泗沘-月支",
                 type: "road",
                 id: "road_city_sabi_city_yuezhi_1780137156312",
@@ -12317,7 +12283,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [107.116607, 23.575312],
                     [107.073221, 23.610723],
                     [107.018647, 23.626247],
-                    [106.650000, 23.720000],
+                    [106.65, 23.72],
                 ]
             }
         },
@@ -12333,7 +12299,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [106.650000, 23.720000],
+                    [106.65, 23.72],
                     [106.710272, 23.81282],
                     [106.643972, 23.834784],
                     [106.633556, 23.8817],
@@ -14104,44 +14070,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [107.149425, 29.710639],
                     [107.183442, 29.688747],
                     [107.39, 29.7],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "涪陵-南浦",
-                type: "road",
-                id: "road_city_fuling_city_nanpu_1780154486939",
-                startConnection: "city_fuling",
-                endConnection: "city_nanpu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [107.39, 29.7],
-                    [107.543405, 29.731365],
-                    [107.580525, 29.739614],
-                    [107.630018, 29.789107],
-                    [107.675387, 29.817978],
-                    [107.68776, 29.834476],
-                    [107.737253, 29.87572],
-                    [107.836681, 29.987006],
-                    [107.865896, 30.048163],
-                    [107.860362, 30.07628],
-                    [107.881277, 30.129218],
-                    [107.928233, 30.155544],
-                    [107.937592, 30.193671],
-                    [107.977794, 30.226671],
-                    [108.032319, 30.313096],
-                    [108.08074, 30.332343],
-                    [108.152843, 30.408067],
-                    [108.196869, 30.422146],
-                    [108.217214, 30.435614],
-                    [108.231619, 30.449652],
-                    [108.308116, 30.579535],
-                    [108.348725, 30.638983],
-                    [108.38, 30.82],
                 ]
             }
         },
@@ -16329,31 +16257,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "合肥-鸠兹",
-                type: "road",
-                id: "road_city_hefei_city_jiuzi_1780155856885",
-                startConnection: "city_hefei",
-                endConnection: "city_jiuzi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [117.27, 31.86],
-                    [117.314162, 31.711088],
-                    [117.58392333984376, 31.52275009437261],
-                    [117.78991699218751, 31.623344316132616],
-                    [117.955496, 31.497992],
-                    [117.981456, 31.452908],
-                    [118.030935, 31.438544],
-                    [118.086436, 31.432644],
-                    [118.147472, 31.403998],
-                    [118.38, 31.33],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "独松关-宛陵城",
                 type: "road",
                 id: "road_city_dusong_city_wanling_1780155856932",
@@ -16486,7 +16389,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [114.125983, 30.692356],
                     [114.146605, 30.671734],
                     [114.157549, 30.619376],
-                    [114.320000, 30.530000],
+                    [114.32, 30.53],
                 ]
             }
         },
@@ -16577,7 +16480,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [111.516724, 36.077963],
+                    [111.516724, 36.088],
                     [111.742067, 36.153091],
                     [111.79156, 36.157215],
                     [111.832804, 36.157215],
@@ -17287,7 +17190,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [117.56, 32.86],
+                    [118.497, 33.011],
                     [117.35953, 32.931917],
                     [117.245572, 32.912756],
                     [117.211051, 32.903046],
@@ -17569,7 +17472,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [111.516724, 36.077963],
+                    [111.516724, 36.088],
                     [111.514464, 36.225589],
                     [111.58784, 36.275547],
                     [111.626583, 36.313943],
@@ -17946,32 +17849,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "清流关-钟离",
-                type: "road",
-                id: "road_city_qingliuguan_city_zhongli_1780157191353",
-                startConnection: "city_qingliuguan",
-                endConnection: "city_zhongli"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [118.25, 32.28],
-                    [117.978194, 32.457609],
-                    [117.941074, 32.502977],
-                    [117.86271, 32.511226],
-                    [117.809092, 32.502977],
-                    [117.743101, 32.498853],
-                    [117.718355, 32.622585],
-                    [117.726604, 32.647332],
-                    [117.722479, 32.688576],
-                    [117.701857, 32.738069],
-                    [117.56, 32.86],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "寿春-合肥",
                 type: "road",
                 id: "road_city_shouxian_city_hefei_1780157195060",
@@ -18085,7 +17962,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [117.244046, 32.960788],
                     [117.326535, 32.952539],
                     [117.392526, 32.903046],
-                    [117.56, 32.86],
+                    [118.497, 33.011],
                 ]
             }
         },
@@ -18117,7 +17994,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [117.740001, 33.015896],
                     [117.701427, 32.994412],
                     [117.677257, 32.967231],
-                    [117.56, 32.86],
+                    [118.497, 33.011],
                 ]
             }
         },
@@ -18845,7 +18722,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [114.332204, 30.721227],
                     [114.377573, 30.700605],
                     [114.375987, 30.672675],
-                    [114.320000, 30.530000],
+                    [114.32, 30.53],
                 ]
             }
         },
@@ -19605,41 +19482,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [117.25642, 40.896176],
                     [117.252295, 40.859057],
                     [117.16, 40.69],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "徒河-山海关",
-                type: "road",
-                id: "road_city_tuhe_city_shanhaiguan_1780158231101",
-                startConnection: "city_tuhe",
-                endConnection: "city_shanhaiguan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [121.14, 41.12],
-                    [121.07151, 40.929172],
-                    [121.042639, 40.904425],
-                    [121.009644, 40.883803],
-                    [120.972524, 40.87143],
-                    [120.89416, 40.793066],
-                    [120.861165, 40.764195],
-                    [120.782801, 40.710577],
-                    [120.737432, 40.669333],
-                    [120.712685, 40.607467],
-                    [120.584828, 40.463112],
-                    [120.555957, 40.438365],
-                    [120.514713, 40.413619],
-                    [120.469345, 40.397121],
-                    [120.415727, 40.364126],
-                    [120.366234, 40.339379],
-                    [120.263123, 40.273389],
-                    [120.197133, 40.236269],
-                    [119.99916, 40.145532],
-                    [119.8, 40],
                 ]
             }
         },
@@ -22787,50 +22629,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [109.256991, 34.191366],
                     [109.14927, 34.233518],
                     [108.93, 34.27],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "濮阳-安德",
-                type: "road",
-                id: "road_city_puyang_city_pingyuan_1780305460110",
-                startConnection: "city_puyang",
-                endConnection: "city_pingyuan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [115.04, 35.74],
-                    [115.14884, 35.938621],
-                    [115.169462, 35.98399],
-                    [115.177711, 36.01286],
-                    [115.18596, 36.082976],
-                    [115.214831, 36.198459],
-                    [115.239577, 36.252077],
-                    [115.293195, 36.285072],
-                    [115.32619, 36.371685],
-                    [115.32619, 36.450049],
-                    [115.317941, 36.503667],
-                    [115.317393, 36.528022],
-                    [115.327403, 36.565294],
-                    [115.347748, 36.58161],
-                    [115.399832, 36.671576],
-                    [115.44337, 36.703396],
-                    [115.47755, 36.753485],
-                    [115.543956, 36.767646],
-                    [115.626069, 36.793524],
-                    [115.680593, 36.8428],
-                    [115.734508, 36.854243],
-                    [115.82937, 36.899611],
-                    [115.903609, 36.920233],
-                    [115.977849, 36.957353],
-                    [116.064462, 36.90786],
-                    [116.18407, 36.862491],
-                    [116.237687, 37.027468],
-                    [116.250061, 37.101708],
-                    [116.43, 37.16],
                 ]
             }
         },
@@ -27345,6 +27143,662 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
+                name: "萧关-折墌",
+                type: "road",
+                id: "road_city_xiaoguan_city_zhedi_20260611",
+                startConnection: "city_xiaoguan",
+                endConnection: "city_zhedi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [106.32019, 35.657289],
+                    [106.55, 35.62],
+                    [106.78, 35.58],
+                    [107.01, 35.54],
+                    [107.24, 35.52],
+                    [107.47, 35.51],
+                    [107.7, 35.505],
+                    [107.94, 35.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "折墌-汧源",
+                type: "road",
+                id: "road_city_zhedi_city_longzhou_20260611",
+                startConnection: "city_zhedi",
+                endConnection: "city_longzhou"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [107.94, 35.5],
+                    [107.72, 35.42],
+                    [107.5, 35.34],
+                    [107.28, 35.26],
+                    [107.06, 35.18],
+                    [106.86, 35.08],
+                    [106.86, 34.89],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "京山-当阳",
+                type: "road",
+                id: "road_city_jingshan_city_dangyang_20260611",
+                startConnection: "city_jingshan",
+                endConnection: "city_dangyang"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [113.11, 31.02],
+                    [112.85, 30.95],
+                    [112.6, 30.9],
+                    [112.35, 30.85],
+                    [111.79, 30.82],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大名-安阳",
+                type: "road",
+                id: "road_city_daming_city_anyang_1781182093315",
+                startConnection: "city_daming",
+                endConnection: "city_anyang"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [115.148, 36.285],
+                    [114.785085, 36.229519],
+                    [114.747162, 36.206732],
+                    [114.693614, 36.193305],
+                    [114.673106, 36.191677],
+                    [114.617442, 36.204861],
+                    [114.559581, 36.202826],
+                    [114.501882, 36.232611],
+                    [114.468028, 36.235378],
+                    [114.384369, 36.255886],
+                    [114.371593, 36.25434],
+                    [114.39, 36.1],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大名-濮阳",
+                type: "road",
+                id: "road_city_daming_city_puyang_1781182101474",
+                startConnection: "city_daming",
+                endConnection: "city_puyang"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [115.148, 36.285],
+                    [115.177711, 36.01286],
+                    [115.169462, 35.98399],
+                    [115.14884, 35.938621],
+                    [115.119969, 35.901501],
+                    [115.04, 35.74],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "平原-大名",
+                type: "road",
+                id: "road_city_pingyuan_city_daming_1781182109375",
+                startConnection: "city_pingyuan",
+                endConnection: "city_daming"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [116.43, 37.16],
+                    [116.250061, 37.101708],
+                    [116.237687, 37.027468],
+                    [116.233563, 37.019219],
+                    [116.225314, 36.862491],
+                    [116.167572, 36.866616],
+                    [116.019093, 36.928482],
+                    [115.957227, 36.940855],
+                    [115.858241, 36.903736],
+                    [115.763379, 36.874865],
+                    [115.713886, 36.829496],
+                    [115.664073, 36.815212],
+                    [115.543956, 36.767646],
+                    [115.499278, 36.761583],
+                    [115.423839, 36.686306],
+                    [115.399832, 36.671576],
+                    [115.365245, 36.624294],
+                    [115.343354, 36.57453],
+                    [115.322765, 36.556342],
+                    [115.308849, 36.517401],
+                    [115.274506, 36.45657],
+                    [115.263276, 36.411078],
+                    [115.148, 36.285],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "蓨城-巨鹿",
+                type: "road",
+                id: "road_city_jingzhou2_city_liyang_1781182117870",
+                startConnection: "city_jingzhou2",
+                endConnection: "city_liyang"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [116.27, 37.68],
+                    [116.097457, 37.683251],
+                    [116.04384, 37.699749],
+                    [116.00672, 37.72862],
+                    [115.953102, 37.749242],
+                    [115.887111, 37.786362],
+                    [115.800499, 37.778113],
+                    [115.771628, 37.76574],
+                    [115.697388, 37.720371],
+                    [115.631397, 37.609012],
+                    [115.623148, 37.58839],
+                    [115.606651, 37.571892],
+                    [115.528287, 37.518275],
+                    [115.433425, 37.415164],
+                    [115.396305, 37.382169],
+                    [115.375683, 37.357422],
+                    [115.36331, 37.3368],
+                    [115.305568, 37.328551],
+                    [115.25195, 37.328551],
+                    [115.04, 37.22],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "巨鹿-邢台",
+                type: "road",
+                id: "road_city_liyang_city_xingtai_1781182123459",
+                startConnection: "city_liyang",
+                endConnection: "city_xingtai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [115.04, 37.22],
+                    [115.025107, 37.052215],
+                    [115.016858, 37.010971],
+                    [115.000361, 36.973851],
+                    [114.954992, 36.969726],
+                    [114.89725, 36.973851],
+                    [114.827135, 36.953229],
+                    [114.724024, 36.969726],
+                    [114.625038, 36.998597],
+                    [114.48, 37.08],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "南浦-石柱",
+                type: "road",
+                id: "road_city_nanpu_city_shizhu_1781182184046",
+                startConnection: "city_nanpu",
+                endConnection: "city_shizhu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [108.38, 30.82],
+                    [108.541516, 30.787218],
+                    [108.566262, 30.766595],
+                    [108.599257, 30.754222],
+                    [108.615755, 30.708853],
+                    [108.628128, 30.684107],
+                    [108.624004, 30.646987],
+                    [108.628128, 30.630489],
+                    [108.681746, 30.55625],
+                    [108.694119, 30.523254],
+                    [108.694119, 30.424268],
+                    [108.628128, 30.317033],
+                    [108.607506, 30.26754],
+                    [108.595133, 30.222172],
+                    [108.562138, 30.143808],
+                    [108.541516, 30.114937],
+                    [108.476399, 30.074523],
+                    [108.399901, 30.019881],
+                    [108.347668, 29.966457],
+                    [108.314672, 29.941711],
+                    [108.261055, 29.937587],
+                    [108.244557, 29.921089],
+                    [108.11, 30],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "石柱-涪陵",
+                type: "road",
+                id: "road_city_shizhu_city_fuling_1781182197663",
+                startConnection: "city_shizhu",
+                endConnection: "city_fuling"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [108.11, 30],
+                    [108.005341, 29.87572],
+                    [107.964096, 29.855098],
+                    [107.918728, 29.863347],
+                    [107.873359, 29.817978],
+                    [107.774373, 29.850974],
+                    [107.68776, 29.834476],
+                    [107.675387, 29.817978],
+                    [107.638267, 29.797356],
+                    [107.617645, 29.751988],
+                    [107.543405, 29.731365],
+                    [107.39, 29.7],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "涪陵-南浦",
+                type: "road",
+                id: "road_city_fuling_city_nanpu_1781182216793",
+                startConnection: "city_fuling",
+                endConnection: "city_nanpu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [107.39, 29.7],
+                    [107.479747, 29.841905],
+                    [107.46046, 29.876776],
+                    [107.478038, 29.899034],
+                    [107.55714, 29.867011],
+                    [107.596121, 29.855333],
+                    [107.635916, 29.853054],
+                    [107.676768, 29.860663],
+                    [107.744395, 29.903754],
+                    [107.836681, 29.987006],
+                    [107.865896, 30.048163],
+                    [107.860362, 30.07628],
+                    [107.881277, 30.129218],
+                    [107.928233, 30.155544],
+                    [107.937592, 30.193671],
+                    [107.977794, 30.226671],
+                    [108.032319, 30.313096],
+                    [108.08074, 30.332343],
+                    [108.152843, 30.408067],
+                    [108.196869, 30.422146],
+                    [108.217214, 30.435614],
+                    [108.231619, 30.449652],
+                    [108.308116, 30.579535],
+                    [108.348725, 30.638983],
+                    [108.38, 30.82],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "凤阳-清流关",
+                type: "road",
+                id: "road_city_fengyang_city_qingliuguan_1781182246241",
+                startConnection: "city_fengyang",
+                endConnection: "city_qingliuguan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [117.515, 32.867],
+                    [117.701857, 32.738069],
+                    [117.718355, 32.713323],
+                    [117.726604, 32.647332],
+                    [117.718355, 32.622585],
+                    [117.664737, 32.55247],
+                    [117.743101, 32.498853],
+                    [117.86271, 32.511226],
+                    [117.903954, 32.511226],
+                    [117.941074, 32.502977],
+                    [117.978194, 32.457609],
+                    [118.04006, 32.424613],
+                    [118.089553, 32.366871],
+                    [118.25, 32.28],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "凤阳-寿春",
+                type: "road",
+                id: "road_city_fengyang_city_shouxian_1781182252429",
+                startConnection: "city_fengyang",
+                endConnection: "city_shouxian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [117.515, 32.867],
+                    [117.35953, 32.931917],
+                    [117.244046, 32.960788],
+                    [117.206927, 32.956664],
+                    [117.173432, 32.924669],
+                    [117.169688, 32.851345],
+                    [117.116222, 32.837755],
+                    [117.104421, 32.822292],
+                    [117.085867, 32.766059],
+                    [117.078298, 32.699083],
+                    [117.068126, 32.689765],
+                    [117.010753, 32.668036],
+                    [116.96771, 32.618461],
+                    [116.8, 32.59],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "宁远-徒河",
+                type: "road",
+                id: "road_city_ningyuan_city_tuhe_1781182342587",
+                startConnection: "city_ningyuan",
+                endConnection: "city_tuhe"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [120.72, 40.618],
+                    [120.824045, 40.739448],
+                    [120.861165, 40.764195],
+                    [120.89416, 40.793066],
+                    [120.927155, 40.830186],
+                    [121.042639, 40.904425],
+                    [121.07151, 40.929172],
+                    [121.14, 41.12],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "山海关-宁远",
+                type: "road",
+                id: "road_city_shanhaiguan_city_ningyuan_1781182348131",
+                startConnection: "city_shanhaiguan",
+                endConnection: "city_ningyuan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [119.8, 40],
+                    [119.99916, 40.145532],
+                    [120.197133, 40.236269],
+                    [120.366234, 40.339379],
+                    [120.415727, 40.364126],
+                    [120.469345, 40.397121],
+                    [120.514713, 40.413619],
+                    [120.555957, 40.438365],
+                    [120.584828, 40.463112],
+                    [120.72, 40.618],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "萨尔浒-沈阳",
+                type: "road",
+                id: "road_city_salhu_city_shenyang_1781182422175",
+                startConnection: "city_salhu",
+                endConnection: "city_shenyang"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [124.046, 41.841],
+                    [123.847246, 41.853042],
+                    [123.78538, 41.877789],
+                    [123.727638, 41.873664],
+                    [123.678145, 41.861291],
+                    [123.43689, 41.80203],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "赫图阿拉-萨尔浒",
+                type: "road",
+                id: "road_city_hetuala_city_salhu_1781182427543",
+                startConnection: "city_hetuala",
+                endConnection: "city_salhu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [125.032654, 41.715981],
+                    [124.824734, 41.700439],
+                    [124.758744, 41.712812],
+                    [124.663882, 41.741683],
+                    [124.585518, 41.782927],
+                    [124.544274, 41.815923],
+                    [124.511278, 41.848918],
+                    [124.445288, 41.952028],
+                    [124.420541, 41.972651],
+                    [124.333928, 41.960277],
+                    [124.046, 41.841],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安邑-曲沃",
+                type: "road",
+                id: "road_city_hedong_city_quwo_1781182450522",
+                startConnection: "city_hedong",
+                endConnection: "city_quwo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [111.033325, 35.072716],
+                    [111.234763, 35.150856],
+                    [111.284256, 35.220971],
+                    [111.304878, 35.274589],
+                    [111.321376, 35.299335],
+                    [111.321376, 35.332331],
+                    [111.29663, 35.390073],
+                    [111.3255, 35.423068],
+                    [111.350247, 35.460188],
+                    [111.317252, 35.497308],
+                    [111.313127, 35.542676],
+                    [111.474, 35.631],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "夏阳渡-曲沃",
+                type: "road",
+                id: "road_city_xiayangdu_city_quwo_1781182454543",
+                startConnection: "city_xiayangdu",
+                endConnection: "city_quwo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [110.44, 35.48],
+                    [110.739268, 35.568468],
+                    [110.782481, 35.557888],
+                    [110.921153, 35.572943],
+                    [110.94394, 35.579291],
+                    [111.032667, 35.616916],
+                    [111.094533, 35.616916],
+                    [111.158214, 35.575954],
+                    [111.214141, 35.608667],
+                    [111.229584, 35.614203],
+                    [111.474, 35.631],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "曲沃-平阳",
+                type: "road",
+                id: "road_city_quwo_city_linfen_1781182457245",
+                startConnection: "city_quwo",
+                endConnection: "city_linfen"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [111.474, 35.631],
+                    [111.469855, 35.806639],
+                    [111.465731, 35.860257],
+                    [111.416238, 35.868506],
+                    [111.391491, 35.885003],
+                    [111.405528, 35.930243],
+                    [111.395763, 35.98371],
+                    [111.516724, 36.088],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "塔尔巴哈台-也迷里",
+                type: "road",
+                id: "road_city_tacheng_city_emil_1781182479564",
+                startConnection: "city_tacheng",
+                endConnection: "city_emil"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [82.983, 46.746],
+                    [83.192817, 46.695114],
+                    [83.328922, 46.657994],
+                    [83.378416, 46.637372],
+                    [83.469153, 46.587879],
+                    [83.633423, 46.481378],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "合肥-濡须口",
+                type: "road",
+                id: "road_city_hefei_city_jingkou_1781182573176",
+                startConnection: "city_hefei",
+                endConnection: "city_jingkou"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [117.27, 31.86],
+                    [117.39715576171876, 31.806556976453443],
+                    [117.47406005859376, 31.791387836570376],
+                    [117.586373, 31.711088],
+                    [117.64824, 31.698715],
+                    [117.710106, 31.698715],
+                    [117.734853, 31.686342],
+                    [117.776097, 31.645097],
+                    [117.92, 31.58],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "濡须口-鸠兹",
+                type: "road",
+                id: "road_city_jingkou_city_jiuzi_1781182638823",
+                startConnection: "city_jingkou",
+                endConnection: "city_jiuzi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [117.92, 31.58],
+                    [118.140131, 31.487395],
+                    [118.202578, 31.467099],
+                    [118.227557, 31.429631],
+                    [118.275152, 31.438876],
+                    [118.38, 31.33],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "会宁府-双城",
+                type: "road",
+                id: "road_city_huining_city_shuangcheng_1781182683711",
+                startConnection: "city_huining",
+                endConnection: "city_shuangcheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [126.971741, 45.519798],
+                    [126.829204, 45.614515],
+                    [126.779711, 45.631013],
+                    [126.705471, 45.672257],
+                    [126.643605, 45.701128],
+                    [126.561116, 45.651635],
+                    [126.528121, 45.622764],
+                    [126.474503, 45.548525],
+                    [126.437384, 45.503156],
+                    [126.28, 45.38],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "伯都-双城",
+                type: "road",
+                id: "road_city_boduo_city_shuangcheng_1781182689043",
+                startConnection: "city_boduo",
+                endConnection: "city_shuangcheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [124.81842, 45.127824],
+                    [125.18381500000001, 45.190867999999995],
+                    [125.54921, 45.253912],
+                    [125.914605, 45.316956000000005],
+                    [126.28, 45.38],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
                 name: "邦敦-三菩(下段)+邦敦-三菩(上段)(上段)",
                 type: "road",
                 id: "road_1780392096396_merge"
@@ -27403,91 +27857,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [107.604991, 12.974799],
                     [107.646495, 12.985175],
                     [107.8, 12.87],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "萧关-折墌",
-                type: "road",
-                id: "road_city_xiaoguan_city_zhedi_20260611",
-                startConnection: "city_xiaoguan",
-                endConnection: "city_zhedi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [106.320190, 35.657289],
-                    [106.550000, 35.620000],
-                    [106.780000, 35.580000],
-                    [107.010000, 35.540000],
-                    [107.240000, 35.520000],
-                    [107.470000, 35.510000],
-                    [107.700000, 35.505000],
-                    [107.940000, 35.500000],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "折墌-汧源",
-                type: "road",
-                id: "road_city_zhedi_city_longzhou_20260611",
-                startConnection: "city_zhedi",
-                endConnection: "city_longzhou"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [107.940000, 35.500000],
-                    [107.720000, 35.420000],
-                    [107.500000, 35.340000],
-                    [107.280000, 35.260000],
-                    [107.060000, 35.180000],
-                    [106.860000, 35.080000],
-                    [106.860000, 34.890000],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "京山-当阳",
-                type: "road",
-                id: "road_city_jingshan_city_dangyang_20260611",
-                startConnection: "city_jingshan",
-                endConnection: "city_dangyang"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [113.110000, 31.020000],
-                    [112.850000, 30.950000],
-                    [112.600000, 30.900000],
-                    [112.350000, 30.850000],
-                    [111.790000, 30.820000],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "巨鹿-信都",
-                type: "road",
-                id: "road_city_liyang_city_xingtai_20260611",
-                startConnection: "city_liyang",
-                endConnection: "city_xingtai"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [115.040000, 37.220000],
-                    [114.900000, 37.180000],
-                    [114.760000, 37.140000],
-                    [114.620000, 37.120000],
-                    [114.480000, 37.080000],
                 ]
             }
         },

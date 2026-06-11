@@ -993,7 +993,7 @@ export class EventEditor implements IEditor {
                 </div>
                 <div style="margin-top: 5px;">
                     <label style="font-size: 12px;">或 粘贴坐标 (Lat, Lng):</label>
-                    <input type="text" id="field-siege-source-coords" placeholder="例如: 39.35, 115.5" style="width: 100%; background: #333; color: #fff; border: 1px solid #555; height: 28px; padding: 0 8px;">
+                    <input type="text" id="field-siege-source-coords" placeholder="例如: lat: 39.3500, lng: 115.5000," style="width: 100%; background: #333; color: #fff; border: 1px solid #555; height: 28px; padding: 0 8px;">
                     <small style="color: #888;">可直接粘贴右键获取的坐标，覆盖上方选择</small>
                 </div>
             </div>
@@ -2058,13 +2058,21 @@ export class EventEditor implements IEditor {
                     // [NEW] Parse Manual Coordinates String
                     const coordsVal = (document.getElementById('field-siege-source-coords') as HTMLInputElement)?.value;
                     if (coordsVal && coordsVal.trim() !== '') {
-                        // Split by comma or space, filter empty
-                        const parts = coordsVal.split(/[,，\s]+/).filter(s => s.trim() !== '');
-                        if (parts.length >= 2) {
-                            const lat = parseFloat(parts[0]);
-                            const lng = parseFloat(parts[1]);
+                        const labeled = coordsVal.match(/lat:\s*([-\d.]+)\s*,\s*lng:\s*([-\d.]+)/i);
+                        if (labeled) {
+                            const lat = parseFloat(labeled[1]);
+                            const lng = parseFloat(labeled[2]);
                             if (!isNaN(lat) && !isNaN(lng)) {
                                 siegeData.attackerSourceLocation = { lat, lng };
+                            }
+                        } else {
+                            const parts = coordsVal.split(/[,，\s]+/).filter(s => s.trim() !== '');
+                            if (parts.length >= 2) {
+                                const lat = parseFloat(parts[0]);
+                                const lng = parseFloat(parts[1]);
+                                if (!isNaN(lat) && !isNaN(lng)) {
+                                    siegeData.attackerSourceLocation = { lat, lng };
+                                }
                             }
                         }
                     }
