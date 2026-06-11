@@ -1121,14 +1121,19 @@ export class TerritorySystem {
         this.renderCityLabel(city, displayLat, displayLng, targetLayerGroup, labelsMap);
     }
 
-    private renderCityLabel(
-        city: City,
-        lat: number,
-        lng: number,
-        targetLayerGroup: L.LayerGroup,
-        labelsMap: Map<string, L.Marker>
-    ) {
-        const html = `<div style="
+    /** 兵力标签文案（2026-06-12 降噪）：≥1 万显示「X.X万」，串更短、全图更静 */
+    private static formatTroopsLabel(troops: number): string {
+        const t = Math.floor(troops);
+        if (t >= 10000) {
+            const wan = t / 10000;
+            return `${wan >= 10 ? Math.round(wan) : wan.toFixed(1)}万`;
+        }
+        return String(t);
+    }
+
+    /** 据点标签 HTML（城名 + 城防）。renderCityLabel / updateCityLabel 共用，勿再复制粘贴 */
+    private static buildCityLabelHtml(city: City): string {
+        return `<div style="
             display: flex; justify-content: center; align-items: center; gap: 6px;
             width: 150px; margin-left: -75px; margin-top: 55px;
             cursor: inherit; white-space: nowrap;
@@ -1139,11 +1144,21 @@ export class TerritorySystem {
                 font-size: 13px;
             ">${city.name}</span>
             <span style="
-                color: #ffd700; font-weight: bold;
+                color: #f0c75e; font-weight: bold;
                 text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-                font-size: 13px;
-            ">${Math.floor(city.troops)}</span>
+                font-size: 11px;
+            ">${TerritorySystem.formatTroopsLabel(city.troops)}</span>
         </div>`;
+    }
+
+    private renderCityLabel(
+        city: City,
+        lat: number,
+        lng: number,
+        targetLayerGroup: L.LayerGroup,
+        labelsMap: Map<string, L.Marker>
+    ) {
+        const html = TerritorySystem.buildCityLabelHtml(city);
 
         const labelIcon = L.divIcon({ className: 'city-troop-label', html: html });
 
@@ -1301,25 +1316,10 @@ export class TerritorySystem {
     public updateCityLabel(city: City) {
         const labelOriginal = this.cityLabels.get(city.id);
         if (labelOriginal) {
-            // Re-create HTML logic for consistency - simplified here
-            const html = `<div style="
-                display: flex; justify-content: center; align-items: center; gap: 6px;
-                width: 150px; margin-left: -75px; margin-top: 55px;
-                cursor: inherit; white-space: nowrap;
-            ">
-                <span style="
-                    color: #ffffff; font-weight: bold;
-                    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-                    font-size: 13px;
-                ">${city.name}</span>
-                <span style="
-                    color: #ffd700; font-weight: bold;
-                    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-                    font-size: 12px;
-                ">${Math.floor(city.troops)}</span>
-            </div>`;
-
-            const newIcon = L.divIcon({ className: 'city-troop-label', html: html });
+            const newIcon = L.divIcon({
+                className: 'city-troop-label',
+                html: TerritorySystem.buildCityLabelHtml(city),
+            });
             labelOriginal.setIcon(newIcon);
         }
     }
@@ -1447,7 +1447,7 @@ export class TerritorySystem {
         });
     }
 
-    /** 按缩放档位切换图层：≤7 仅势力色；8 据点+势力色；≥9 常规 */
+    /** 按缩放档位切换图层：6 界线无势力色；7 仅势力色；8 据点+势力色；≥9 常规 */
     public applyZoomLayerVisibility(zoom: number): void {
         const leafletMap = this.map.getLeafletMap();
         const hideCities = isFactionOnlyZoom(zoom);

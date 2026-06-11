@@ -12,7 +12,7 @@ import { TerritorySystem } from '../systems/TerritorySystem';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
-import { isMacroMapZoom } from '../config/StrategicView';
+import { isMacroMapZoom, isRegionBoundaryZoom } from '../config/StrategicView';
 
 export interface CityUpdateOptions {
     skipCaptureLog?: boolean;
@@ -71,16 +71,17 @@ export class CityManager {
     }
 
     /**
-     * zoom ≤ 7：仅势力色；zoom 8：据点 + 势力色；均隐藏军队/道路/河流。
-     * zoom ≥ 9 恢复 chk-faction 对应的势力层开关。
+     * zoom = 6：文化区界线，无势力色、无据点；zoom 7：仅势力色；zoom 8：据点 + 势力色。
+     * 宏观档均隐藏军队/道路/河流。zoom ≥ 9 恢复 chk-faction 对应的势力层开关。
      */
     private applyStrategicMapView(zoom: number): void {
         this.territorySystem.applyZoomLayerVisibility(zoom);
 
         if (isMacroMapZoom(zoom)) {
             this.siegeEffectRenderer.stopAll();
-            this.territorySystem.toggleTerritoryLayer(true);
-            if (this.territorySystem.getPolygonCount() === 0 && this.cities.length > 0) {
+            const showTerritory = !isRegionBoundaryZoom(zoom);
+            this.territorySystem.toggleTerritoryLayer(showTerritory);
+            if (showTerritory && this.territorySystem.getPolygonCount() === 0 && this.cities.length > 0) {
                 void this.renderTerritoryOnly();
             }
         } else {

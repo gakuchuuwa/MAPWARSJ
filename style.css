@@ -845,6 +845,30 @@ path.npc-hitbox {
     text-underline-offset: 3px;
 }
 
+/* ── 军情分级（2026-06-12）：行首汉字徽章 + S 级行高亮 ─────────── */
+.feed-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #f5f0e6;
+    flex-shrink: 0;
+}
+.feed-badge--fall { background: #9c302f; }            /* 灭 · 朱砂 */
+.feed-badge--wipe { background: #6e3a32; }            /* 歼 · 暗红 */
+.feed-badge--restore { background: #2e6b4f; }         /* 复 · 青绿 */
+.feed-badge--expedition { background: #b08530; }      /* 征 · 鎏金 */
+
+/* S 级大事（灭国/远征）：左侧朱砂条 + 微底色，扫一眼即见 */
+.event-item.feed-tier-s {
+    border-left: 3px solid #9c302f;
+    background: rgba(156, 48, 47, 0.07);
+}
+
 @keyframes slideDownEnter {
     0% {
         opacity: 0;

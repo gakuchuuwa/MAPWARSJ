@@ -102,7 +102,7 @@ type Polygon = Point[];
 // v3 (2026-05-28):
 //   - 福建 → LINGNAN (取消独立 MIN, 14 区)
 //   - 东南亚: 越南柬+粤桂海 → LINGNAN, 泰缅 → DIANQIAN
-//   - 岭南南海界（不经过占城据点）: 牡丹社 → 阇槃(必 LINGNAN) → 吴哥(岭南/滇缅角点)
+//   - 岭南南海界（不经过占城据点）: 牡丹社 → 阇槃(必 LINGNAN) → 吴哥(岭南环线西南锚点，文化 LINGNAN)
 //   - 藏南/尼泊尔/列城 → TIBET
 //   - 远北/远东 → NORTHEAST (东北扩大)
 //   - 中亚收紧 lng < 75
@@ -113,19 +113,102 @@ type Polygon = Point[];
 //   - 伊犁固尔札 → STEPPE (准噶尔汗国都城)
 //   - 松州 → TIBET (川西藏羌)
 // ============================================================
+// ── 2026-06-11 文化区界城环线（zoom=6 绘线 + 多边形锚点）──
+//
+// 环线代称（据点名已删或异写时，锚点 cityId 不变）:
+//   威海卫 → city_wendeng 文登（胶东，文化 NORTH）
+//   钓鱼岛城 → city_diaoyudao 钓鱼岛（琉球海界，文化 JAPAN）
+//   也迷离 → city_emil 也迷里（草原环线锚点，文化 STEPPE）
+//   弓月 → city_almaliq 弓月城；江户 → city_edo 江户城
+//
+// 界城 region 标准（环线锚点 vs 实际文化，主人 2026-06-11 拍板）:
+//   据点          cityId              region      说明
+//   石门关        city_shimenguan     BASHU       岭南环线西北锚，文化川蜀门户
+//   临烝          city_linzheng       JIANGNAN    岭南/南方共用
+//   牡丹社        city_mudan          LINGNAN
+//   邦敦/三菩     city_bangdun/sanpu  LINGNAN
+//   吴哥          city_angkor         LINGNAN     岭南环线西南锚（非滇缅）
+//   广陵/襄阳     city_yangzhou/xiangyang JIANGNAN
+//   钓鱼岛        city_diaoyudao      JAPAN       南方/日本环线共用
+//   宫古岛        city_gugudao        JAPAN
+//   江户城        city_edo            JAPAN
+//   根城/宗谷     city_genjo/zonggu   JAPAN       宗谷兼东北/朝鲜/日本锚
+//   星主厅        city_xingzhuting    KOREA       南方/日本/朝鲜共用（济州）
+//   文登          city_wendeng        NORTH       代威海卫，朝鲜环线锚
+//   襄平          city_liaoyang       NORTHEAST   东北/朝鲜/草原三圈共用
+//   白主~尼布楚   city_baizhu…nibuchu NORTHEAST   东北环线
+//   尼布楚        city_nibuchu        NORTHEAST   兼草原环线锚（文化东北）
+//   归化城        city_guihua         STEPPE
+//   哈密卫        city_hamiwei        WESTERN     草原环线锚，文化西域（非草原）
+//   弓月城/也迷里 city_almaliq/emil   STEPPE
+//   乌布萨泊~赤塔 city_wubusabo/chita STEPPE
+//
+// 14 区环线标准（主人 2026-06-11 定稿，zoom=6 绘线唯一来源）:
+//   1 中原  汉中→襄阳→广陵→威海卫→肤施→皋兰
+//   2 北方  威海卫→肤施→归化→襄平
+//   3 东北  襄平→宗谷→白主→诺托罗→囊哈儿→奴儿干→雅克萨→格尔必齐→尼布楚
+//   4 朝鲜  襄平→威海卫→广陵→星主厅→宗谷
+//   5 日本  钓鱼岛→宫古岛→江户→根城→宗谷→星主厅
+//   6 草原  襄平→归化→哈密→弓月→也迷离→乌布萨泊→贝加尔湖畔→赤塔→尼布楚
+//   7 河西  皋兰→姑臧→卡克里克→哈密→归化→肤施
+//   8 川蜀  襄阳→临烝→石门关→打箭炉→皋兰→汉中
+//   9 南方  广陵→襄阳→临烝→牡丹社→钓鱼岛城→星主厅
+//  10 岭南  石门关→临烝→牡丹社→邦敦→三菩→吴哥
+//  11 滇缅  打箭炉→大研→加德满都→勃固→直通→阿瑜陀耶→吴哥→石门关
+//  12 青藏  加德满都→护密城→塔什库尔干→龙木错→卡克里克→姑臧→皋兰→打箭炉→大研
+//  13 中亚  塔什库尔干→护密城→马鲁鲁德→彭迪→梅尔夫→玉龙杰赤→养吉干→弓月
+//  14 西域  哈密→卡克里克→龙木错→塔什库尔干→弓月（文化西域）
+//
+// 绘线: RegionBoundaryLayer @ zoom=6（REGION_BOUNDARY_ZOOM），共 14 区
+// ============================================================
+export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] = [
+    { region: 'CENTRAL', cityIds: ['city_hanzhong', 'city_xiangyang', 'city_yangzhou', 'city_wendeng', 'city_fushi', 'city_lanzhou'] },
+    { region: 'NORTH', cityIds: ['city_wendeng', 'city_fushi', 'city_guihua', 'city_liaoyang'] },
+    { region: 'NORTHEAST', cityIds: ['city_liaoyang', 'city_zonggu', 'city_baizhu', 'city_nuotuoluo', 'city_nanghar', 'city_nuergan', 'city_yakesa', 'city_geerbiqi', 'city_nibuchu'] },
+    { region: 'KOREA', cityIds: ['city_liaoyang', 'city_wendeng', 'city_yangzhou', 'city_xingzhuting', 'city_zonggu'] },
+    { region: 'JAPAN', cityIds: ['city_diaoyudao', 'city_gugudao', 'city_edo', 'city_genjo', 'city_zonggu', 'city_xingzhuting'] },
+    { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_emil', 'city_wubusabo', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu'] },
+    { region: 'HEXI', cityIds: ['city_lanzhou', 'city_wuwei', 'city_ruoqiang', 'city_hamiwei', 'city_guihua', 'city_fushi'] },
+    { region: 'BASHU', cityIds: ['city_xiangyang', 'city_linzheng', 'city_shimenguan', 'city_dajianlu', 'city_lanzhou', 'city_hanzhong'] },
+    { region: 'JIANGNAN', cityIds: ['city_yangzhou', 'city_xiangyang', 'city_linzheng', 'city_mudan', 'city_diaoyudao', 'city_xingzhuting'] },
+    { region: 'LINGNAN', cityIds: ['city_shimenguan', 'city_linzheng', 'city_mudan', 'city_bangdun', 'city_sanpu', 'city_angkor'] },
+    { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_bago', 'city_thaton', 'city_ayutthaya', 'city_angkor', 'city_shimenguan'] },
+    { region: 'TIBET', cityIds: ['city_kathmandu', 'city_humicheng', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan'] },
+    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_humicheng', 'city_malulude', 'city_pengdi', 'city_merv', 'city_urgench', 'city_yangjigan', 'city_almaliq'] },
+    { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_almaliq'] },
+];
+
+/** 界城环线配色（与 REGION_LABELS 对应，zoom=6 虚线） */
+export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
+    CENTRAL: '#8d6e63',
+    NORTH: '#5d4037',
+    JIANGNAN: '#1565c0',
+    LINGNAN: '#e65100',
+    BASHU: '#2e7d32',
+    DIANQIAN: '#6a1b9a',
+    HEXI: '#bf360c',
+    WESTERN: '#f9a825',
+    TIBET: '#00838f',
+    STEPPE: '#c0a050',
+    NORTHEAST: '#388e3c',
+    KOREA: '#7b1fa2',
+    JAPAN: '#c2185b',
+    CENTRAL_ASIA: '#455a64',
+};
+
 const REGIONS: { id: RegionType; polygon: {lat:number,lng:number}[] }[] = [
     { id: 'CENTRAL', polygon: [{lat:33.07,lng:107.02},{lat:32.01,lng:112.12},{lat:32.45,lng:119.40},{lat:37.51,lng:122.12},{lat:36.59,lng:109.48},{lat:36.04,lng:103.82}] },
-    { id: 'NORTH', polygon: [{lat:37.51,lng:122.12},{lat:36.59,lng:109.48},{lat:40.84,lng:111.68},{lat:41.27,lng:123.17}] },
-    { id: 'NORTHEAST', polygon: [{lat:41.27,lng:123.17},{lat:41.13,lng:126.19},{lat:41.80,lng:140.10},{lat:52.21,lng:141.95},{lat:49.25,lng:118.26}] },
-    { id: 'KOREA', polygon: [{lat:41.27,lng:123.17},{lat:37.51,lng:122.12},{lat:32.45,lng:119.40},{lat:34.20,lng:129.29},{lat:41.80,lng:140.10},{lat:41.13,lng:126.19}] },
-    { id: 'JAPAN', polygon: [{lat:41.80,lng:140.10},{lat:34.20,lng:129.29},{lat:32.45,lng:119.40},{lat:28.45,lng:129.67},{lat:35.68,lng:139.76},{lat:38.99,lng:141.12},{lat:40.50,lng:141.46}] },
+    { id: 'NORTH', polygon: [{lat:37.51,lng:122.12},{lat:36.59,lng:109.48},{lat:40.84,lng:111.68},{lat:37.20,lng:122.05}] },
+    { id: 'NORTHEAST', polygon: [{lat:41.27,lng:123.17},{lat:45.50,lng:141.93},{lat:46.71,lng:142.52},{lat:49.20,lng:143.10},{lat:52.21,lng:141.95},{lat:52.92,lng:139.77},{lat:53.39,lng:124.08},{lat:53.33,lng:121.45},{lat:51.99,lng:116.58}] },
+    { id: 'KOREA', polygon: [{lat:41.27,lng:123.17},{lat:37.20,lng:122.05},{lat:32.45,lng:119.40},{lat:33.51,lng:126.52},{lat:45.50,lng:141.93}] },
+    { id: 'JAPAN', polygon: [{lat:25.75,lng:123.50},{lat:24.81,lng:125.28},{lat:35.68,lng:139.76},{lat:40.50,lng:141.46},{lat:45.50,lng:141.93},{lat:33.51,lng:126.52}] },
     { id: 'WESTERN', polygon: [{lat:42.83,lng:93.51},{lat:38.99,lng:88.95},{lat:34.57,lng:80.35},{lat:37.77,lng:75.23},{lat:44.10,lng:79.81}] },
     { id: 'HEXI', polygon: [{lat:36.04,lng:103.82},{lat:37.93,lng:102.64},{lat:38.99,lng:88.95},{lat:42.83,lng:93.51},{lat:40.84,lng:111.68},{lat:36.59,lng:109.48}] },
-    { id: 'STEPPE', polygon: [{lat:41.27,lng:123.17},{lat:40.84,lng:111.68},{lat:42.83,lng:93.51},{lat:44.10,lng:79.81},{lat:46.48,lng:83.63},{lat:47.79,lng:88.12},{lat:49.95,lng:92.10},{lat:49.66,lng:95.77},{lat:50.32,lng:106.49},{lat:49.25,lng:118.26}] },
+    { id: 'STEPPE', polygon: [{lat:41.27,lng:123.17},{lat:40.84,lng:111.68},{lat:42.83,lng:93.51},{lat:43.98,lng:79.65},{lat:46.48,lng:83.63},{lat:49.98,lng:92.09},{lat:51.84,lng:107.61},{lat:52.03,lng:113.50},{lat:51.99,lng:116.58}] },
     { id: 'BASHU', polygon: [{lat:32.01,lng:112.12},{lat:26.89,lng:112.60},{lat:28.08,lng:104.25},{lat:30.05,lng:101.96},{lat:36.04,lng:103.82},{lat:33.07,lng:107.02}] },
-    { id: 'JIANGNAN', polygon: [{lat:32.45,lng:119.40},{lat:32.01,lng:112.12},{lat:26.89,lng:112.60},{lat:28.45,lng:129.67}] },
-    { id: 'LINGNAN', polygon: [{lat:28.08,lng:104.25},{lat:26.89,lng:112.60},{lat:28.45,lng:129.67},{lat:26.22,lng:127.72},{lat:22.20,lng:120.83},{lat:13.93,lng:109.11},{lat:13.41,lng:103.86}] },
-    { id: 'DIANQIAN', polygon: [{lat:30.05,lng:101.96},{lat:26.87,lng:100.22},{lat:27.72,lng:85.19},{lat:17.33,lng:96.47},{lat:16.53,lng:97.63},{lat:14.35,lng:100.58},{lat:13.41,lng:103.86},{lat:28.08,lng:104.25}] },
+    { id: 'JIANGNAN', polygon: [{lat:32.45,lng:119.40},{lat:32.01,lng:112.12},{lat:26.89,lng:112.60},{lat:22.20,lng:120.83},{lat:25.75,lng:123.50},{lat:33.51,lng:126.52}] },
+    { id: 'LINGNAN', polygon: [{lat:28.08,lng:104.25},{lat:26.89,lng:112.60},{lat:22.20,lng:120.83},{lat:12.87,lng:107.80},{lat:12.77,lng:105.97},{lat:13.41,lng:103.87}] },
+    { id: 'DIANQIAN', polygon: [{lat:30.05,lng:101.96},{lat:26.87,lng:100.22},{lat:27.72,lng:85.19},{lat:17.33,lng:96.47},{lat:16.53,lng:97.63},{lat:14.35,lng:100.58},{lat:12.77,lng:105.97},{lat:28.08,lng:104.25}] },
     { id: 'TIBET', polygon: [{lat:27.72,lng:85.19},{lat:36.73,lng:71.61},{lat:37.77,lng:75.23},{lat:34.57,lng:80.35},{lat:38.99,lng:88.95},{lat:37.93,lng:102.64},{lat:36.04,lng:103.82},{lat:30.05,lng:101.96},{lat:26.87,lng:100.22}] },
     { id: 'CENTRAL_ASIA', polygon: [{lat:37.77,lng:75.23},{lat:36.73,lng:71.61},{lat:35.58,lng:63.31},{lat:36.00,lng:62.70},{lat:37.62,lng:62.23},{lat:42.24,lng:59.63},{lat:43.30,lng:68.27},{lat:44.10,lng:79.81}] },
 ];

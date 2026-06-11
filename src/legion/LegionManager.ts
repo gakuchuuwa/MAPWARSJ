@@ -155,7 +155,7 @@ export class LegionManager {
             legion.destroy();
             this.removeArmy(legion);
         }
-        console.log(`[LegionManager] 军团已裁至 ${this.getActiveLegionCount()}/${max}`);
+        gameLog('army', `[LegionManager] 军团已裁至 ${this.getActiveLegionCount()}/${max}`);
     }
 
     public getLegionById(id: string): Army | undefined {
@@ -273,7 +273,7 @@ export class LegionManager {
      * [NEW] 刷新所有现有军队的文化阵型和比例（用于编辑器保存后热更新）
      */
     public refreshCultureFormations(): void {
-        console.log(`[LegionManager] 刷新所有现有军队的文化阵型...`);
+        gameLog('army', `[LegionManager] 刷新所有现有军队的文化阵型...`);
         this.armies.forEach(army => {
             if (isQinMainLegion(army)) {
                 applyQinLegionFormation(army);
@@ -464,7 +464,7 @@ export class LegionManager {
         }
 
         if (army) {
-            console.log(`📛 [LegionManager] Renaming "${army.name}" → "${newName}"`);
+            gameLog('army', `📛 [LegionManager] Renaming "${army.name}" → "${newName}"`);
             army.name = newName;
             return true;
         }
@@ -626,7 +626,7 @@ export class LegionManager {
         // [SIMPLIFIED] Euclidean overlapping check
         const occupants = this.spatialRegistry.getArmiesInRadius(spawnPos.lat, spawnPos.lng, 0.05);
         if (occupants.length > 0) {
-            console.log(`[LegionManager] Spawn location occupied. Applying slight offset...`);
+            gameLog('army', `[LegionManager] Spawn location occupied. Applying slight offset...`);
             // Add a small jitter offset (approx 5-10km)
             spawnPos.lat += (Math.random() - 0.5) * 0.1;
             spawnPos.lng += (Math.random() - 0.5) * 0.1;
@@ -675,7 +675,7 @@ export class LegionManager {
      * [NEW] Recalculate paths for all moving legions (e.g. when road network changes)
      */
     public recalculateAllLegionPaths(): void {
-        console.log(`[LegionManager] Road network updated. Recalculating all legion paths...`);
+        gameLog('legionMarch', `[LegionManager] Road network updated. Recalculating all legion paths...`);
         let updateCount = 0;
 
         this.armies.forEach(army => {
@@ -700,7 +700,7 @@ export class LegionManager {
         });
 
         if (updateCount > 0) {
-            console.log(`🔄 [LegionManager] 共更新了 ${updateCount} 个军团的行军路线。`);
+            gameLog('legionMarch', `🔄 [LegionManager] 共更新了 ${updateCount} 个军团的行军路线。`);
         }
     }
 

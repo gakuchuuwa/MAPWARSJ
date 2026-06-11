@@ -280,9 +280,9 @@ export class BattleField {
         this.distributeDamage(this.defenderGroup, damageToDefenders);
         this.distributeDamage(this.attackerGroup, damageToAttackers);
 
-        // 采样日志
-        if (GameConfig.LOG.BATTLE_TICK && Math.random() < 0.03) {
-            console.log(`[BattleField] 攻方: ${this.attackerGroup.totalTroops.toFixed(0)} | 守方: ${this.defenderGroup.totalTroops.toFixed(0)} | 目标时长: ${targetDuration.toFixed(1)}s`);
+        // 采样日志（BATTLE_TICK 频道，默认关）
+        if (Math.random() < 0.03) {
+            gameLog('battleTick', `[BattleField] 攻方: ${this.attackerGroup.totalTroops.toFixed(0)} | 守方: ${this.defenderGroup.totalTroops.toFixed(0)} | 目标时长: ${targetDuration.toFixed(1)}s`);
         }
     }
 

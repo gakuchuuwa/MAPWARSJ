@@ -1088,8 +1088,15 @@ export class CityAssetManager {
         await this.processPanjunFlags(false);
     }
 
-    /** chromaKey 像素环每帧最多处理行数，避免单次 Long Task >50ms */
-    private static readonly CHROMA_ROWS_PER_SLICE = 36;
+    /**
+     * chromaKey 像素环每步最多处理行数，避免单次 Long Task >50ms。
+     * [PERF 2026-06-12] 36 → 512：整面旗（128×320，约 4 万像素）画布+取像素+像素环+
+     * 写回+toDataURL 全流程只要 ~3ms，远低于 50ms 预算，没必要切片；
+     * 旧值 36 = 每面旗被切成 13 个调度步、步步等 idle（最多 80ms/步），
+     * 实测启动 46.7s 里 ~46s 是旗号在排队等 idle 而不是在干活。
+     * 仅对超大图（>512 行）保留分片保护。
+     */
+    private static readonly CHROMA_ROWS_PER_SLICE = 512;
 
     /**
      * chroma 分片调度：只用 idle/setTimeout，禁止 rAF（与 GameApp / 画布共用 rAF 会「半秒一停」）。
@@ -1421,85 +1428,82 @@ export class CityAssetManager {
             img.onload = () => {
                 const w = img.width;
                 const h = img.height;
-                CityAssetManager.scheduleChromaWorkStep(() => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    if (!ctx) {
-                        reject(new Error('Canvas 2d unavailable'));
-                        return;
+
+                // [PERF 2026-06-12] 整面旗合并为单个调度步（像素算法未动）：
+                // 旧版把 画布→取像素→像素环×9片→写回→toDataURL 切成 13 步、步步等 idle，
+                // 等待时间是实际工作（~3ms）的百倍，是启动 46.7s 的主因。
+                // 现在小图一步做完；超大图（>CHROMA_ROWS_PER_SLICE 行）仍按行分片让步。
+                let tintR = 255;
+                let tintG = 255;
+                let tintB = 255;
+                if (tintColorHex) {
+                    const rgb = CityAssetManager.hexToRgb(tintColorHex);
+                    if (rgb) {
+                        tintR = rgb.r;
+                        tintG = rgb.g;
+                        tintB = rgb.b;
                     }
-                    ctx.drawImage(img, 0, 0);
+                }
 
-                    CityAssetManager.scheduleChromaWorkStep(() => {
-                        let imageData: ImageData;
-                        try {
-                            imageData = ctx.getImageData(0, 0, w, h);
-                        } catch (e) {
-                            reject(e);
-                            return;
-                        }
-                        const data = imageData.data;
+                let canvas: HTMLCanvasElement | null = null;
+                let ctx: CanvasRenderingContext2D | null = null;
+                let imageData: ImageData | null = null;
+                let y0 = 0;
+                const rowsPerSlice = CityAssetManager.CHROMA_ROWS_PER_SLICE;
 
-                        let tintR = 255;
-                        let tintG = 255;
-                        let tintB = 255;
-                        if (tintColorHex) {
-                            const rgb = CityAssetManager.hexToRgb(tintColorHex);
-                            if (rgb) {
-                                tintR = rgb.r;
-                                tintG = rgb.g;
-                                tintB = rgb.b;
-                            }
-                        }
-
-                        const rowsPerSlice = CityAssetManager.CHROMA_ROWS_PER_SLICE;
-                        let y0 = 0;
-
-                        const processRows = () => {
-                            const yEnd = Math.min(y0 + rowsPerSlice, h);
-                            for (let y = y0; y < yEnd; y++) {
-                                let i = y * w * 4;
-                                const rowEnd = i + w * 4;
-                                while (i < rowEnd) {
-                                    const r = data[i];
-                                    const g = data[i + 1];
-                                    const b = data[i + 2];
-                                    const a = data[i + 3];
-
-                                    if (g > 200 && r < 100 && b < 100) {
-                                        data[i + 3] = 0;
-                                    } else if (tintColorHex && a > 0) {
-                                        let lum =
-                                            (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-                                        lum = Math.min(1, lum * 1.5);
-                                        data[i] = Math.round(lum * tintR);
-                                        data[i + 1] = Math.round(lum * tintG);
-                                        data[i + 2] = Math.round(lum * tintB);
-                                    }
-                                    i += 4;
-                                }
-                            }
-                            y0 = yEnd;
-                            if (y0 < h) {
-                                CityAssetManager.scheduleChromaWorkStep(processRows);
+                const processSlice = () => {
+                    try {
+                        if (!canvas) {
+                            canvas = document.createElement('canvas');
+                            canvas.width = w;
+                            canvas.height = h;
+                            ctx = canvas.getContext('2d');
+                            if (!ctx) {
+                                reject(new Error('Canvas 2d unavailable'));
                                 return;
                             }
+                            ctx.drawImage(img, 0, 0);
+                            imageData = ctx.getImageData(0, 0, w, h);
+                        }
+                        const data = imageData!.data;
 
-                            ctx.putImageData(imageData, 0, 0);
-                            CityAssetManager.scheduleChromaWorkStep(() => {
-                                try {
-                                    resolve(canvas.toDataURL('image/png'));
-                                } catch (e) {
-                                    reject(e);
+                        const yEnd = Math.min(y0 + rowsPerSlice, h);
+                        for (let y = y0; y < yEnd; y++) {
+                            let i = y * w * 4;
+                            const rowEnd = i + w * 4;
+                            while (i < rowEnd) {
+                                const r = data[i];
+                                const g = data[i + 1];
+                                const b = data[i + 2];
+                                const a = data[i + 3];
+
+                                if (g > 200 && r < 100 && b < 100) {
+                                    data[i + 3] = 0;
+                                } else if (tintColorHex && a > 0) {
+                                    let lum =
+                                        (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                                    lum = Math.min(1, lum * 1.5);
+                                    data[i] = Math.round(lum * tintR);
+                                    data[i + 1] = Math.round(lum * tintG);
+                                    data[i + 2] = Math.round(lum * tintB);
                                 }
-                            });
-                        };
+                                i += 4;
+                            }
+                        }
+                        y0 = yEnd;
+                        if (y0 < h) {
+                            CityAssetManager.scheduleChromaWorkStep(processSlice);
+                            return;
+                        }
 
-                        CityAssetManager.scheduleChromaWorkStep(processRows);
-                    });
-                });
+                        ctx!.putImageData(imageData!, 0, 0);
+                        resolve(canvas.toDataURL('image/png'));
+                    } catch (e) {
+                        reject(e);
+                    }
+                };
+
+                CityAssetManager.scheduleChromaWorkStep(processSlice);
             };
             img.src = src;
         });

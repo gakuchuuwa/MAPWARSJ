@@ -218,7 +218,6 @@
 ### 工程待办（小，不影响玩法）
 
 - `getEuclideanDistance` 直接用经纬度度数：经度方向实际公里数随 cos(纬度) 缩小，漠北（北纬 48°）的接战圈 / 补兵半径实际比江南窄约 30%。如需全图一致，lng 差乘 cos(lat) 校正即可
-- `src/systems/RegionSystem.ts.bak` 应手动移出 `src/`（**禁止用任何 git 命令清理**，见 AGENTS.md 红线）
 - 战力结算等纯函数补最小单测（`npm test` 目前是占位符），作为批量推演的地基
 
 ---

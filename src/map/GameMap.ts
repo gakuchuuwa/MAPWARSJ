@@ -5,6 +5,7 @@ import { HillshadeLayer } from './HillshadeLayer';
 import { RiverOverlayLayer } from './RiverOverlayLayer';
 import { VectorRiverLayer } from './VectorRiverLayer';
 import { StrategicGridLayer } from './StrategicGridLayer';
+import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { GridSystem } from '../systems/GridSystem';
 import { TreeLayer } from './TreeLayer';
@@ -122,6 +123,9 @@ export class GameMap {
 
         // [NEW] Initialize City Capture Renderer
         this.cityCaptureRenderer = new CityCaptureRenderer(this);
+
+        // 文化区界城环线（仅 zoom=6 显示）
+        new RegionBoundaryLayer(this.map);
 
         // [USER REQUEST] WSAD 移动地图
         this.initKeyboardNavigation();
@@ -437,6 +441,7 @@ export class GameMap {
         const Control = L.Control.extend({
             onAdd: () => {
                 const div = L.DomUtil.create('div', 'leaflet-bar result-tooltip');
+                div.id = 'debug-control-panel'; // 直播模式（StreamModeToggle）按此 id 隐藏
                 div.style.background = 'linear-gradient(135deg, rgba(235, 220, 195, 0.85) 0%, rgba(216, 197, 168, 0.9) 100%)';
                 div.style.backdropFilter = 'blur(4px)';
                 div.style.border = 'none';

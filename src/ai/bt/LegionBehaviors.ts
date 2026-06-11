@@ -64,6 +64,16 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
             'expedition',
             `🐎 [远征] ${ctx.army.name} 远征${target ? `【${target.name}】功成` : '目标已不存在'}，回归基础模式`
         );
+        if (target) {
+            // 军情面板播报「征 · 远征功成」（S 级）
+            (window as unknown as {
+                game?: { brawlFeedPanel?: { pushExpedition(p: { legionName: string; cityName: string; kind: 'depart' | 'success' }): void } };
+            }).game?.brawlFeedPanel?.pushExpedition({
+                legionName: ctx.army.name,
+                cityName: target.name,
+                kind: 'success',
+            });
+        }
         return 'done';
     }
 

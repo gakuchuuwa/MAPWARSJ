@@ -42,7 +42,9 @@ import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
 import { Army } from '../legion/Army';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
+import { FactionForceUI } from '../ui/FactionForceUI'; // [NEW] 势力兵力榜
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
+import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { gameLog } from '../utils/GameLogger';
 import { tickGameAppFrame } from './GameAppLoop';
 import { exposeGameAppGlobals } from './GameAppExpose';
@@ -91,9 +93,10 @@ export class GameApp {
     public combatUI!: CombatUI; // [NEW]
     private gameTimeHUD!: GameTimeHUD;
     private historicalEventPanel!: HistoricalEventPanel;
-    private brawlFeedPanel!: BrawlFeedPanel;
+    public brawlFeedPanel!: BrawlFeedPanel; // 远征播报（ExpeditionUI/行为树）经 window.game 调用
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
+    public factionForceUI!: FactionForceUI; // [NEW] 势力兵力榜
     public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥5万解锁）
 
     // Game Loop
@@ -428,6 +431,14 @@ export class GameApp {
             );
             this.cameraFollowUI.update();
 
+            this.factionForceUI = new FactionForceUI();
+            this.factionForceUI.init(
+                this.cityManager,
+                this.factionManager,
+                () => legionManager.getArmies()
+            );
+            this.factionForceUI.update();
+
             this.expeditionUI = new ExpeditionUI();
             this.expeditionUI.init(
                 () => {
@@ -437,6 +448,8 @@ export class GameApp {
                 this.cityManager
             );
 
+            StreamModeToggle.init();
+
             this.map.getLeafletMap().on('dragstart', () => {
                 if (this.cameraFollowUI?.isFollowing()) {
                     this.cameraFollowUI.cancelFollow();
@@ -445,7 +458,10 @@ export class GameApp {
 
             this.exposeGlobals();
 
-            setInterval(() => this.uiManager.update(), GAME_CONSTANTS.UI_UPDATE_INTERVAL);
+            setInterval(() => {
+                this.uiManager.update();
+                if (this.factionForceUI) this.factionForceUI.update();
+            }, GAME_CONSTANTS.UI_UPDATE_INTERVAL);
 
             gameLog('startup', '🤖 AI 系统已启动');
             legionManager.refreshCityRegistry();

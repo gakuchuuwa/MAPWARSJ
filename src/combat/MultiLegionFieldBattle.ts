@@ -18,6 +18,9 @@ import { LegionType, getDefaultLegionTypeForFaction } from '../types/UnitTypes';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { GameConfig } from '../config/GameConfig';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
+import { gameLog } from '../utils/GameLogger';
+
+const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
 import { PLAYER_SPEED_TIERS } from '../config/GameConfig';
 
 const BATTLE_OFFSET = 0.14;
@@ -61,7 +64,7 @@ export class MultiLegionFieldBattle {
         data: FieldBattleData,
         onBattleEnd?: (winnerFaction: string, winningArmies: Army[]) => void
     ): void {
-        console.log(`🏟️ [MultiLegion] 开始多军团野战处理`);
+        battleLog(`🏟️ [MultiLegion] 开始多军团野战处理`);
 
         const battleLocation = data.location || { lat: 0, lng: 0 };
         const attackerPosition = { lat: battleLocation.lat, lng: battleLocation.lng - BATTLE_OFFSET };
@@ -95,7 +98,7 @@ export class MultiLegionFieldBattle {
 
             if (nearbyDefenders.length > 0) {
                 defenderLegionNames = nearbyDefenders.map(a => a.name || 'Unknown Legion');
-                console.log(`[MultiLegion] 自动检测到防守方军团 (${defenderLegionNames.length}): ${defenderLegionNames.join(', ')}`);
+                battleLog(`[MultiLegion] 自动检测到防守方军团 (${defenderLegionNames.length}): ${defenderLegionNames.join(', ')}`);
             }
         }
 
@@ -119,17 +122,17 @@ export class MultiLegionFieldBattle {
             undefined // Defender source location not supported yet
         );
 
-        console.log(`[MultiLegion] 攻击方军团: ${attackerArmies.map(a => a.name).join(', ')}`);
-        console.log(`[MultiLegion] 防守方军团: ${defenderArmies.map(a => a.name).join(', ')}`);
+        battleLog(`[MultiLegion] 攻击方军团: ${attackerArmies.map(a => a.name).join(', ')}`);
+        battleLog(`[MultiLegion] 防守方军团: ${defenderArmies.map(a => a.name).join(', ')}`);
 
         // [DEBUG] 详细日志：显示每个军团的状态
         attackerArmies.forEach(a => {
             const pos = a.getPosition();
-            console.log(`[DEBUG] 攻击方 ${a.name}: 位置=(${pos.lat.toFixed(2)}, ${pos.lng.toFixed(2)}), 兵力=${a.getTroops()}, 战斗中=${a.getIsInCombat()}, 已销毁=${a.isDestroyed}`);
+            battleLog(`[DEBUG] 攻击方 ${a.name}: 位置=(${pos.lat.toFixed(2)}, ${pos.lng.toFixed(2)}), 兵力=${a.getTroops()}, 战斗中=${a.getIsInCombat()}, 已销毁=${a.isDestroyed}`);
         });
         defenderArmies.forEach(a => {
             const pos = a.getPosition();
-            console.log(`[DEBUG] 防守方 ${a.name}: 位置=(${pos.lat.toFixed(2)}, ${pos.lng.toFixed(2)}), 兵力=${a.getTroops()}, 战斗中=${a.getIsInCombat()}, 已销毁=${a.isDestroyed}`);
+            battleLog(`[DEBUG] 防守方 ${a.name}: 位置=(${pos.lat.toFixed(2)}, ${pos.lng.toFixed(2)}), 兵力=${a.getTroops()}, 战斗中=${a.getIsInCombat()}, 已销毁=${a.isDestroyed}`);
         });
 
         if (attackerArmies.length === 0 || defenderArmies.length === 0) {
@@ -148,11 +151,11 @@ export class MultiLegionFieldBattle {
         const totalArmies = attackerArmies.length + defenderArmies.length;
         let arrivedCount = 0;
 
-        console.log(`[MultiLegion] 总参战单位: ${totalArmies}`);
+        battleLog(`[MultiLegion] 总参战单位: ${totalArmies}`);
 
         const onArmyArrived = () => {
             arrivedCount++;
-            console.log(`[MultiLegion] 单位到达战场 (${arrivedCount}/${totalArmies})`);
+            battleLog(`[MultiLegion] 单位到达战场 (${arrivedCount}/${totalArmies})`);
             if (arrivedCount >= totalArmies) {
                 // 所有军团就位，开始战斗
                 // [FIX] Delay battle start to next tick.
@@ -243,21 +246,21 @@ export class MultiLegionFieldBattle {
                 if (troops) {
                     army.setTroops(troops);
                 } else if (army.getTroops() < targetTroops) {
-                    console.log(`[MultiLegion] 军团 ${army.name} 兵力不足 (${army.getTroops()}), 补齐至 ${targetTroops}`);
+                    battleLog(`[MultiLegion] 军团 ${army.name} 兵力不足 (${army.getTroops()}), 补齐至 ${targetTroops}`);
                     army.setTroops(targetTroops);
                 }
 
                 // [FIX] 已有军队从当前位置出发，不瞬移
                 const pos = army.getPosition();
-                console.log(`[MultiLegion] 复用军团 ${army.name}，从当前位置 (${pos.lat.toFixed(2)}, ${pos.lng.toFixed(2)}) 出发`);
+                battleLog(`[MultiLegion] 复用军团 ${army.name}，从当前位置 (${pos.lat.toFixed(2)}, ${pos.lng.toFixed(2)}) 出发`);
 
                 armies.push(army);
                 // [VISUAL] Ensure army is visible during march
                 army.setVisible(true);
-                console.log(`[MultiLegion] 找到并准备军团: ${army.name} (${army.getTroops()} 兵)`);
+                battleLog(`[MultiLegion] 找到并准备军团: ${army.name} (${army.getTroops()} 兵)`);
             } else {
                 // [NEW] 如果军团不存在或被消灭，重新创建
-                console.log(`[MultiLegion] 军团 "${legionName}" 不存在或已被消灭，重新创建...`);
+                battleLog(`[MultiLegion] 军团 "${legionName}" 不存在或已被消灭，重新创建...`);
 
                 // 从阵营城市征兵
                 const requestedTroops = targetTroops; // 使用计算出的目标兵力
@@ -265,7 +268,7 @@ export class MultiLegionFieldBattle {
 
                 // [FIX] 如果征兵不足（少于目标的 80%），强制补全（剧情需要，确保战斗平衡）
                 if (recruitedTroops < requestedTroops * 0.8) {
-                    console.log(`[MultiLegion] 征兵不足 (${recruitedTroops}/${requestedTroops})，系统强制补给`);
+                    battleLog(`[MultiLegion] 征兵不足 (${recruitedTroops}/${requestedTroops})，系统强制补给`);
                     recruitedTroops = requestedTroops;
                 }
 
@@ -274,20 +277,20 @@ export class MultiLegionFieldBattle {
 
                 if (sourceLocation) {
                     spawnPos = sourceLocation;
-                    console.log(`[MultiLegion] 使用指定出发坐标: ${spawnPos.lat}, ${spawnPos.lng}`);
+                    battleLog(`[MultiLegion] 使用指定出发坐标: ${spawnPos.lat}, ${spawnPos.lng}`);
                 } else if (sourceCityId) {
                     const specificCity = this.cityManager.getCityById(sourceCityId);
                     if (specificCity) {
                         // [FIX] 直接在出发城市生成，让军队有个行军过程，不要直接飞到战场附近
                         spawnPos = { lat: specificCity.latitude, lng: specificCity.longitude };
-                        console.log(`[MultiLegion] 在指定出发城市生成: ${specificCity.name} (${spawnPos.lat.toFixed(4)}, ${spawnPos.lng.toFixed(4)})`);
+                        battleLog(`[MultiLegion] 在指定出发城市生成: ${specificCity.name} (${spawnPos.lat.toFixed(4)}, ${spawnPos.lng.toFixed(4)})`);
                     } else {
                         console.warn(`[MultiLegion] 未找到指定出发城市 ID: ${sourceCityId}，将寻找最近城市`);
                         // Fallback to nearest
                         const spawnCity = this.cityManager.getNearestCity(factionId, { latitude: targetPos.lat, longitude: targetPos.lng });
                         if (spawnCity) {
                             spawnPos = { lat: spawnCity.latitude, lng: spawnCity.longitude };
-                            console.log(`[MultiLegion] 在最近城市生成: ${spawnCity.name}`);
+                            battleLog(`[MultiLegion] 在最近城市生成: ${spawnCity.name}`);
                         }
                     }
                 } else {
@@ -295,7 +298,7 @@ export class MultiLegionFieldBattle {
                     const spawnCity = this.cityManager.getNearestCity(factionId, { latitude: targetPos.lat, longitude: targetPos.lng });
                     if (spawnCity) {
                         spawnPos = { lat: spawnCity.latitude, lng: spawnCity.longitude };
-                        console.log(`[MultiLegion] 在最近城市生成: ${spawnCity.name}`);
+                        battleLog(`[MultiLegion] 在最近城市生成: ${spawnCity.name}`);
                     }
                 }
 
@@ -324,7 +327,7 @@ export class MultiLegionFieldBattle {
                     // [VISUAL] Ensure army is visible during march
                     newArmy.setVisible(true);
                     armies.push(newArmy);
-                    console.log(`[MultiLegion] 重新创建军团: ${legionName} (${recruitedTroops} 兵)`);
+                    battleLog(`[MultiLegion] 重新创建军团: ${legionName} (${recruitedTroops} 兵)`);
                 }
             }
         }
@@ -362,7 +365,7 @@ export class MultiLegionFieldBattle {
             // [FIX] Instant arrival check for extremely short distances (< 2km)
             // 防止防守方生成在战场附近时因距离过近导致速度计算异常或永远不到达
             if (directDist < 0.02) {
-                console.log(`[MultiLegion] Army ${army.name} is already at target (Dist: ${directDist.toFixed(4)}), instant arrival.`);
+                battleLog(`[MultiLegion] Army ${army.name} is already at target (Dist: ${directDist.toFixed(4)}), instant arrival.`);
                 army.setPosition(armyTarget.lat, armyTarget.lng);
                 // Reset states immediately
                 army.setSpeedMultiplier(1.0);
@@ -372,7 +375,7 @@ export class MultiLegionFieldBattle {
 
             // 先设置回调，再开始移动，确保万无一失
             army.setOnArriveCallback(() => {
-                console.log(`[MultiLegion] 军团 ${army.name} 到达战场`);
+                battleLog(`[MultiLegion] 军团 ${army.name} 到达战场`);
                 // [NEW] Reset speed multiplier and collision flags after arrival
                 army.setSpeedMultiplier(1.0);
                 army.ignoreCityCollision = false;
@@ -382,10 +385,10 @@ export class MultiLegionFieldBattle {
 
             const path = roadRegistry.findPathOnRoad(startPos, armyTarget);
 
-            console.log(`[MultiLegion][DEBUG] Army ${army.name}: start=(${startPos.lat.toFixed(2)}, ${startPos.lng.toFixed(2)}) target=(${armyTarget.lat.toFixed(2)}, ${armyTarget.lng.toFixed(2)})`);
-            console.log(`[MultiLegion][DEBUG] Road path result: ${path ? path.length + ' points' : 'null'}`);
+            battleLog(`[MultiLegion][DEBUG] Army ${army.name}: start=(${startPos.lat.toFixed(2)}, ${startPos.lng.toFixed(2)}) target=(${armyTarget.lat.toFixed(2)}, ${armyTarget.lng.toFixed(2)})`);
+            battleLog(`[MultiLegion][DEBUG] Road path result: ${path ? path.length + ' points' : 'null'}`);
             if (path && path.length > 0) {
-                console.log(`[MultiLegion][DEBUG] Path points: ${path.map(p => `(${p.lat.toFixed(2)},${p.lng.toFixed(2)})`).join(' → ')}`);
+                battleLog(`[MultiLegion][DEBUG] Path points: ${path.map(p => `(${p.lat.toFixed(2)},${p.lng.toFixed(2)})`).join(' → ')}`);
             }
 
             if (path && path.length >= 2) {
@@ -395,7 +398,7 @@ export class MultiLegionFieldBattle {
                 }
 
                 army.setSpeedMultiplier(1.0);
-                console.log(`[MultiLegion] Army ${army.name} moving via road (Distance: ${actualPathLength.toFixed(2)})`);
+                battleLog(`[MultiLegion] Army ${army.name} moving via road (Distance: ${actualPathLength.toFixed(2)})`);
                 const marchPath = joinStartToRoadPolyline(startPos, path, GameConfig.ROAD.JOIN_EPS);
                 army.moveAlongPath(marchPath.slice(1));
             } else {
@@ -414,7 +417,7 @@ export class MultiLegionFieldBattle {
         defenderArmies: Army[],
         onBattleEnd?: (winnerFaction: string, winningArmies: Army[]) => void
     ): void {
-        console.log(`⚔️ [MultiLegion] 启动区域战斗!`);
+        battleLog(`⚔️ [MultiLegion] 启动区域战斗!`);
 
         // 显示战斗特效
         const battleId = `mfb_${Date.now()}`;
@@ -446,7 +449,7 @@ export class MultiLegionFieldBattle {
 
         // [NEW] Auto-RTS Trigger
         if (data.autoEnterRTS) {
-            console.log(`[MultiLegion] 🎬 Auto-Triggering RTS Mode`);
+            battleLog(`[MultiLegion] 🎬 Auto-Triggering RTS Mode`);
             const rtsSystem = (window as any).game?.rtsBattleSystem as any;
 
             if (rtsSystem) {
@@ -478,7 +481,7 @@ export class MultiLegionFieldBattle {
             if (!hasTriggeredEnd && onBattleEnd) {
                 hasTriggeredEnd = true;
                 const survivingArmies = attackerArmies.filter(a => !a.isDestroyed);
-                console.log(`[MultiLegion] 攻击方胜利，触发后续逻辑，剩余军团数: ${survivingArmies.length}`);
+                battleLog(`[MultiLegion] 攻击方胜利，触发后续逻辑，剩余军团数: ${survivingArmies.length}`);
                 onBattleEnd(data.attackerFactionId, survivingArmies);
             }
         };
@@ -498,7 +501,7 @@ export class MultiLegionFieldBattle {
                 () => {
                     // Victory
                     onBattleComplete(); // 清除特效
-                    console.log(`[MultiLegion] ${army.name} 获胜!`);
+                    battleLog(`[MultiLegion] ${army.name} 获胜!`);
                     handleAttackerVictory();
                 },
                 () => {
@@ -506,7 +509,7 @@ export class MultiLegionFieldBattle {
                     onBattleComplete(); // 清除特效
 
                     if (attackerShouldSurvive) {
-                        console.log(`[MultiLegion] 剧情保护触发: ${army.name} 虽然兵力耗尽但在剧情中获胜，避免销毁。`);
+                        battleLog(`[MultiLegion] 剧情保护触发: ${army.name} 虽然兵力耗尽但在剧情中获胜，避免销毁。`);
                         army.setTroops(10000); // 剧情幸存 - 保底 10000 兵力
                         // 此时仍视为"Defeat"回调被调用，但我们强制保留军团
                         handleAttackerVictory(); // 强制触发这一方的胜利后续
@@ -533,7 +536,7 @@ export class MultiLegionFieldBattle {
                 () => {
                     onBattleComplete();
                     if (defenderShouldSurvive) {
-                        console.log(`[MultiLegion] 剧情保护触发: ${army.name} 虽然兵力耗尽但在剧情中获胜，避免销毁。`);
+                        battleLog(`[MultiLegion] 剧情保护触发: ${army.name} 虽然兵力耗尽但在剧情中获胜，避免销毁。`);
                         army.setTroops(10000); // 剧情幸存 - 保底 10000 兵力
                     } else {
                         army.destroy();
@@ -578,7 +581,7 @@ export class MultiLegionFieldBattle {
 
         // [NEW] Hook up BattleField completion to external system
         battleField.onBattleComplete = (winnerFactionId) => {
-            console.log(`[MultiLegion] BattleField ${battleField.id} reports completion. Winner: ${winnerFactionId}`);
+            battleLog(`[MultiLegion] BattleField ${battleField.id} reports completion. Winner: ${winnerFactionId}`);
             // Ensure visualizer cleanup
             this.visualizer.hideFieldBattleEffect(effectId);
 
@@ -591,6 +594,6 @@ export class MultiLegionFieldBattle {
             }
         };
 
-        console.log(`[MultiLegion] 战场创建成功: ${battleField.id}`);
+        battleLog(`[MultiLegion] 战场创建成功: ${battleField.id}`);
     }
 }

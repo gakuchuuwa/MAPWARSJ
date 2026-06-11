@@ -11,6 +11,12 @@ function formatFeedTime(year: number, season: number): string {
     return `${formatBcYearChinese(year)} ${seasonLabel}`;
 }
 
+/** 行首汉字徽章（2026-06-12 排版分级）：灭=朱砂 / 歼=暗红 / 复=青绿 / 征=鎏金 */
+function feedBadge(kind: 'fall' | 'wipe' | 'restore' | 'expedition'): string {
+    const char = { fall: '灭', wipe: '歼', restore: '复', expedition: '征' }[kind];
+    return `<span class="feed-badge feed-badge--${kind}">${char}</span>`;
+}
+
 function formatFactionFallLine(
     time: string,
     attackerFactionName: string,
@@ -18,7 +24,8 @@ function formatFactionFallLine(
     cityName: string,
     defenderFactionName: string
 ): string {
-    return `<span class="feed-time">${escapeHtml(time)}</span>` +
+    return feedBadge('fall') +
+           `<span class="feed-time">${escapeHtml(time)}</span>` +
            `<span class="feed-faction">${escapeHtml(attackerFactionName)}</span>` +
            `<span class="feed-legion">${escapeHtml(legionName)}</span>` +
            `<span class="feed-action">攻占</span>` +
@@ -32,7 +39,8 @@ function formatLegionAnnihilatedLine(
     legionName: string,
     cityName: string
 ): string {
-    return `<span class="feed-time">${escapeHtml(time)}</span>` +
+    return feedBadge('wipe') +
+           `<span class="feed-time">${escapeHtml(time)}</span>` +
            `<span class="feed-faction">${escapeHtml(factionName)}</span>` +
            `<span class="feed-legion">${escapeHtml(legionName)}</span>` +
            `<span class="feed-action">于</span>` +
@@ -46,11 +54,26 @@ function formatRestorationLine(
     factionName: string,
     cityName: string
 ): string {
-    return `<span class="feed-time">${escapeHtml(time)}</span>` +
+    return feedBadge('restore') +
+           `<span class="feed-time">${escapeHtml(time)}</span>` +
            `<span class="feed-faction">${escapeHtml(factionName)}</span>` +
            `<span class="feed-action">于</span>` +
            `<span class="feed-city">${escapeHtml(cityName)}</span>` +
            `<span class="feed-restore">复国</span>`;
+}
+
+/** 远征下令/功成（仅玩家跟拍军团会触发，低频大事） */
+function formatExpeditionLine(
+    time: string,
+    legionName: string,
+    cityName: string,
+    kind: 'depart' | 'success'
+): string {
+    return feedBadge('expedition') +
+           `<span class="feed-time">${escapeHtml(time)}</span>` +
+           `<span class="feed-legion">${escapeHtml(legionName)}</span>` +
+           `<span class="feed-action">${kind === 'depart' ? '誓师远征' : '远征功成，攻克'}</span>` +
+           `<span class="feed-city">${escapeHtml(cityName)}</span>`;
 }
 
 /**
@@ -108,7 +131,7 @@ export class BrawlFeedPanel {
         return !NON_ELIMINABLE_FACTIONS.has(factionId);
     }
 
-    /** 势力灭亡：攻方占最后一城，守方势力亡 */
+    /** 势力灭亡：攻方占最后一城，守方势力亡（S 级，行级朱砂高亮） */
     pushFactionFall(params: {
         attackerFactionId: string;
         legionName: string;
@@ -123,7 +146,20 @@ export class BrawlFeedPanel {
             params.cityName,
             this.cityManager.getFactionName(params.defenderFactionId)
         );
-        this.pushFeedLine(line);
+        this.pushFeedLine(line, 's');
+    }
+
+    /** 远征下令/功成（ExpeditionUI / 行为树远征结算调用，S 级） */
+    pushExpedition(params: {
+        legionName: string;
+        cityName: string;
+        kind: 'depart' | 'success';
+    }): void {
+        const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
+        this.pushFeedLine(
+            formatExpeditionLine(time, params.legionName, params.cityName, params.kind),
+            's'
+        );
     }
 
     /** 攻方或守方军团于某据点全军覆没 */
@@ -160,14 +196,16 @@ export class BrawlFeedPanel {
         this.pushFeedLine(line);
     }
 
-    private pushFeedLine(lineHtml: string): void {
+    /** @param tier 's' = 灭国/远征级大事（行级朱砂左条高亮），'a' = 常规军情 */
+    private pushFeedLine(lineHtml: string, tier: 's' | 'a' = 'a'): void {
         if (!this.contentEl) return;
 
         this.contentEl.querySelector('.event-item--hint')?.remove();
         this.contentEl.querySelector('.event-item--current')?.classList.remove('event-item--current');
 
+        const tierClass = tier === 's' ? ' feed-tier-s' : '';
         const wrapper = document.createElement('div');
-        wrapper.innerHTML = `<div class="event-item animate-in event-item--current"><div class="event-desc event-desc--feed">${lineHtml}</div></div>`;
+        wrapper.innerHTML = `<div class="event-item animate-in event-item--current${tierClass}"><div class="event-desc event-desc--feed">${lineHtml}</div></div>`;
         const newEl = wrapper.firstElementChild as HTMLElement | null;
         if (!newEl) return;
 

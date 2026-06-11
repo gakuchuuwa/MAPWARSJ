@@ -319,6 +319,7 @@ export class ExpeditionUI {
                 'expedition',
                 `🐎 [远征] 【${city.name}】已属己方，改道：${army.name} 远征【${swap.city.name}】`
             );
+            this.pushFeed(army.name, swap.city.name, 'depart');
             return;
         }
 
@@ -327,6 +328,14 @@ export class ExpeditionUI {
             'expedition',
             `🐎 [远征] ${army.name}（${Math.floor(army.getTroops() / 10000)} 万兵）${isAuto ? '（超时代选）' : ''}远征【${city.name}】——断粮不回，直至占领或全军覆没`
         );
+        this.pushFeed(army.name, city.name, 'depart');
+    }
+
+    /** 军情面板播报（S 级「征」徽章行） */
+    private pushFeed(legionName: string, cityName: string, kind: 'depart' | 'success'): void {
+        (window as unknown as {
+            game?: { brawlFeedPanel?: { pushExpedition(p: { legionName: string; cityName: string; kind: 'depart' | 'success' }): void } };
+        }).game?.brawlFeedPanel?.pushExpedition({ legionName, cityName, kind });
     }
 
     private closePanel(): void {

@@ -9,7 +9,7 @@
 const _FIXED: Record<string, string> = {
     // ── 红·尚赤 / 火德 / 复明 / 起义 ──
     han_d: '#C41E1E', // 汉（赤旗黑字，史料固定；见 FLAG_TEXT_BLACK_STYLE_FACTIONS）
-    shu: '#A82828', // 蜀
+    shu: '#2E7D32', // 蜀（绿）
     wu: '#C03520', // 吴
     sui: '#B83030', // 隋
     song: '#DC4850', // 宋（明亮珊瑚红；与大明深绛对照）

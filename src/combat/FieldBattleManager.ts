@@ -17,6 +17,9 @@ const FIELD_BATTLE_TROOPS = 10000;
 import { GameConfig, PLAYER_SPEED_TIERS } from '../config/GameConfig';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { getEuclideanDistance } from '../core/DistanceUtils';
+import { gameLog } from '../utils/GameLogger';
+
+const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
 const BATTLE_OFFSET = 0.14; // Approx 16.5km
 const GRID_SIZE = 34.26;
 
@@ -60,9 +63,9 @@ export class FieldBattleManager {
 
         // [UNIFIED] 所有野战事件统一由 MultiLegionFieldBattle 处理
         // 单军团配置会被自动转换为数组格式
-        console.log(`[FieldBattle] 统一使用 MultiLegionFieldBattle 处理野战事件`);
+        battleLog(`[FieldBattle] 统一使用 MultiLegionFieldBattle 处理野战事件`);
         this.multiLegionHandler.handleMultiLegionBattle(fieldBattleData, (winnerFactionId, winningArmies) => {
-            console.log(`[FieldBattle] 野战结束，胜者: ${winnerFactionId}`);
+            battleLog(`[FieldBattle] 野战结束，胜者: ${winnerFactionId}`);
 
             // [NEW] Report Surviving Troops for Winning Armies
             if (this.onLegionUpdate && winningArmies.length > 0) {
@@ -79,7 +82,7 @@ export class FieldBattleManager {
 
             // [NEW] Check for test mode - pause game after test execution
             if ((window as any)._editorTestExecution) {
-                console.log('[FieldBattle] 测试模式：战斗结束，自动暂停游戏');
+                battleLog('[FieldBattle] 测试模式：战斗结束，自动暂停游戏');
                 (window as any)._editorTestExecution = false;
                 const game = (window as any).game;
                 if (game?.timeSystem) {
@@ -140,7 +143,7 @@ export class FieldBattleManager {
             return;
         }
 
-        console.log(`[FieldBattle] Army ${army.name} executing action: ${action}`);
+        battleLog(`[FieldBattle] Army ${army.name} executing action: ${action}`);
         army.setCombatState(false);
 
         // [SPEED OPTIMIZATION] Apply speed multiplier
@@ -158,7 +161,7 @@ export class FieldBattleManager {
                 return;
             }
 
-            console.log(`[FieldBattle] Army ${army.name} marching to SIEGE ${targetCity.name}`);
+            battleLog(`[FieldBattle] Army ${army.name} marching to SIEGE ${targetCity.name}`);
 
             // [FIX] 直接让军团移动到目标城市，到达后触发攻城战
             // 而不是调用 handleSiegeEvent，避免 findCandidate 重复选择同一军团
@@ -172,7 +175,7 @@ export class FieldBattleManager {
 
             // 设置到达回调：到达后触发攻城战
             army.setOnArriveCallback(() => {
-                console.log(`[FieldBattle->Siege] Army ${army.name} arrived at ${targetCity.name}, starting siege...`);
+                battleLog(`[FieldBattle->Siege] Army ${army.name} arrived at ${targetCity.name}, starting siege...`);
                 // [FIX] 使用 startSiegeWithArmy 直接开始攻城，跳过 findCandidate
                 // AND chain the completion callback
                 this.siegeManager.startSiegeWithArmy(army, siegeData, onActionComplete);
@@ -198,24 +201,24 @@ export class FieldBattleManager {
                 return;
             }
 
-            console.log(`[FieldBattle] Army ${army.name} moving to ${targetCity.name}`);
+            battleLog(`[FieldBattle] Army ${army.name} moving to ${targetCity.name}`);
             army.setCombatState(false);
 
             army.setOnArriveCallback(() => {
-                console.log(`[FieldBattle] Army ${army.name} arrived at ${targetCity.name}.`);
+                battleLog(`[FieldBattle] Army ${army.name} arrived at ${targetCity.name}.`);
                 onActionComplete?.();
             });
             this.legionManager.moveLegionToCity(army, targetCity.id);
         } else if (action === 'garrison') {
             // [FIX] 统一与 SiegeManager 的 garrison 逻辑：驻扎 = 军团保留
-            console.log(`[FieldBattle] Army ${army.name} is now garrisoning at battle location.`);
+            battleLog(`[FieldBattle] Army ${army.name} is now garrisoning at battle location.`);
             army.stopMovement();
             army.setTargetCity(null);
             army.setOnArriveCallback(() => { });
             onActionComplete?.();
         } else if (action === 'destroy') {
             // 解散 = 军团销毁
-            console.log(`[FieldBattle] Army ${army.name} executing destroy (Immediate Disband).`);
+            battleLog(`[FieldBattle] Army ${army.name} executing destroy (Immediate Disband).`);
             army.destroy();
             this.legionManager.removeArmy(army);
             onActionComplete?.();

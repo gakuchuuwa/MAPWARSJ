@@ -1,6 +1,9 @@
 import { calculateBattleDurationSec, GameConfig } from '../config/GameConfig';
 import { rollSideEffectivePower, sumCultureAdjustedTroops } from '../systems/CultureCombat';
-import { gameLog } from '../utils/GameLogger';
+import { gameLog, gameWarn } from '../utils/GameLogger';
+
+const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
+const battleTickLog = (...args: unknown[]) => gameLog('battleTick', ...args);
 import type { LegionManager } from '../legion/LegionManager';
 import {
     createReinforcementPollState,
@@ -105,7 +108,7 @@ export class Battle {
         this.predictedLoser = predictedLoser;
         this.predictedWinner = predictedWinner;
 
-        console.log(`⚔️ Battle Parameters: Duration=${targetDuration.toFixed(1)}s, LoserDPS=${loserDPS.toFixed(1)}, WinnerDPS=${winnerDPS.toFixed(1)}`);
+        battleLog(`⚔️ Battle Parameters: Duration=${targetDuration.toFixed(1)}s, LoserDPS=${loserDPS.toFixed(1)}, WinnerDPS=${winnerDPS.toFixed(1)}`);
 
         this.attacker.onBattleStart?.(defender, this.type);
         this.defender.onBattleStart?.(attacker, this.type);
@@ -126,7 +129,7 @@ export class Battle {
         const attAdj = sumCultureAdjustedTroops([this.attacker]);
         const defAdj = sumCultureAdjustedTroops([this.defender]);
 
-        console.log(
+        battleLog(
             `[Battle] ${this.attacker.name} vs ${this.defender.name}: ` +
             `有效战力 ${attPower.toFixed(0)} vs ${defPower.toFixed(0)} ` +
             `(文化修正后 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)}，再 ×[0.8,1.2] 掷一次)`
@@ -179,13 +182,13 @@ export class Battle {
 
     public update(deltaTime: number): void {
         if (this.isOver) {
-            console.log(`[Battle] Skipping update - battle already over`);
+            battleTickLog(`[Battle] Skipping update - battle already over`);
             return;
         }
 
         // [STABILITY] Check if units were destroyed externally
         if (this.attacker.isDestroyed || this.defender.isDestroyed) {
-            console.warn(`[Battle] Unit destroyed externally, force-resolving battle.`);
+            gameWarn('battle', `[Battle] Unit destroyed externally, force-resolving battle.`);
             if (!this.attacker.isDestroyed && this.defender.isDestroyed) {
                 this.resolve(this.attacker, this.defender);
             } else {
@@ -196,7 +199,7 @@ export class Battle {
 
         // Sample log to trace updates
         if (Math.random() < 0.02) {
-            console.log(`[Battle Update] Att: ${this.attacker.name}(${this.attacker.troops.toFixed(1)}) vs Def: ${this.defender.name}(${this.defender.troops.toFixed(1)})`);
+            battleTickLog(`[Battle Update] Att: ${this.attacker.name}(${this.attacker.troops.toFixed(1)}) vs Def: ${this.defender.name}(${this.defender.troops.toFixed(1)})`);
         }
 
         this.elapsed += deltaTime;
@@ -266,16 +269,16 @@ export class Battle {
 
         // Debug Logs
         if (Math.random() < 0.05) { // Sample logs
-            console.log(`[Combat Debug] Atk: ${this.attacker.troops.toFixed(0)}, Def: ${this.defender.troops.toFixed(0)}`);
+            battleTickLog(`[Combat Debug] Atk: ${this.attacker.troops.toFixed(0)}, Def: ${this.defender.troops.toFixed(0)}`);
         }
 
         // Resolve Battle
         // [FIX] Use < 1.0 check to avoid "0.5 troops" keeping battle alive
         if (this.defender.troops < GameConfig.COMBAT.MIN_SURVIVAL_TROOPS) {
-            console.log(`[Combat] Defender troops < ${GameConfig.COMBAT.MIN_SURVIVAL_TROOPS} (${this.defender.troops}), resolving...`);
+            battleLog(`[Combat] Defender troops < ${GameConfig.COMBAT.MIN_SURVIVAL_TROOPS} (${this.defender.troops}), resolving...`);
             this.resolve(this.attacker, this.defender);
         } else if (this.attacker.troops < GameConfig.COMBAT.MIN_SURVIVAL_TROOPS) {
-            console.log(`[Combat] Attacker troops < ${GameConfig.COMBAT.MIN_SURVIVAL_TROOPS} (${this.attacker.troops}), resolving...`);
+            battleLog(`[Combat] Attacker troops < ${GameConfig.COMBAT.MIN_SURVIVAL_TROOPS} (${this.attacker.troops}), resolving...`);
             this.resolve(this.defender, this.attacker);
         }
     }
@@ -293,12 +296,12 @@ export class Battle {
         const recovery = Math.floor(winnerLost * recoveryRate);
         if (recovery > 0) {
             winner.setTroops(winner.troops + recovery);
-            console.log(`[Combat] Winner ${winner.name} recovered ${recovery} wounded troops (rate=${recoveryRate}).`);
+            battleLog(`[Combat] Winner ${winner.name} recovered ${recovery} wounded troops (rate=${recoveryRate}).`);
         }
 
         // [FIX] If winner also has 0 or less troops after recovery, destroy them too
         if (winner.troops <= 0) {
-            console.log(`[Combat] Winner ${winner.name} also has 0 troops, destroying...`);
+            battleLog(`[Combat] Winner ${winner.name} also has 0 troops, destroying...`);
             winner.setTroops(0);
             winner.destroy();
         }
@@ -316,7 +319,7 @@ export class Battle {
             loser.destroy();
         }
 
-        console.log(`Battle ended. Winner: ${winner.name}, Loser: ${loser.name}`);
+        battleLog(`Battle ended. Winner: ${winner.name}, Loser: ${loser.name}`);
     }
 }
 
@@ -387,7 +390,7 @@ export class CombatSystem {
         const battle = new Battle(attacker, defender, presetResult);
         this.battles.push(battle);
 
-        console.log(`⚔️ [CombatSystem] Battle Started: ${attacker.name} vs ${defender.name}`);
+        battleLog(`⚔️ [CombatSystem] Battle Started: ${attacker.name} vs ${defender.name}`);
 
         // [RTS TRIGGER] Global notification
         if (this.onBattleStart) {
