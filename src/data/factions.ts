@@ -20,7 +20,6 @@ export const FACTIONS: Faction[] = [
     { id: 'zhen', name: '后百济' },
     { id: 'dongshengwei', name: '东胜卫' },
     { id: 'dizhou', name: '棣州' },
-    { id: 'lulin', name: '绿林' },
     { id: 'bailian', name: '白莲' },
     { id: 'chimei', name: '赤眉' },
     { id: 'yunzhong', name: '云中' },
@@ -41,6 +40,8 @@ export const FACTIONS: Faction[] = [
     { id: 'chu', name: '楚国' },
     { id: 'wu', name: '吴国' },
     { id: 'yue', name: '越国' },
+    { id: 'nanyue', name: '南越' },                 // 赵佗@龙川（政权·国号）
+    { id: 'guangzhou', name: '广州' },               // 广州@番禺（州府/广南核心）
     { id: 'qin', name: '秦国' },
     { id: 'song', name: '宋国' },
     { id: 'yan', name: '燕国' },
@@ -276,8 +277,8 @@ export const FACTIONS: Faction[] = [
     // 暗板岩灰 - 斡亦剌部(谦河之源/叶尼塞河上游)
     // 大同上褐 - 孛罗帖木儿集团(大同)
     { id: 'red_turban', name: '红巾' },
+    { id: 'xushouhui', name: '天完' },              // 徐寿辉@蕲春·红巾军（元末）
     { id: 'zhangshicheng', name: '大周' },
-    { id: 'xushouhui', name: '天完' },
     { id: 'luoping', name: '罗平' },
     { id: 'daxing', name: '大兴' },
     { id: 'chendiaoyan', name: '陈吊' },
@@ -723,7 +724,6 @@ export const FACTIONS: Faction[] = [
     { id: 'xin2', name: '信州' },
 
     { id: 'kui', name: '夔州' },
-    { id: 'qi2', name: '蕲州' },
     { id: 'danluo', name: '耽罗' },
     { id: 'woju', name: '沃沮' },
     { id: 'chen3', name: '月支' },   // 马韩月支国，辰王治所（三国志·魏书·乌丸鲜卑东夷传）

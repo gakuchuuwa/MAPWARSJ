@@ -16,9 +16,11 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'zhao', // 赵国·赵边骑（§2 #1 政权专名）
   'xiliang', // 西凉·西凉铁骑（§7 #1 凉州军阀专名）
   'daxi_ming', // 大西·大西老营（§8 #10 明末政权专名）
+  'seljuq', // 塞尔柱·桑贾尔禁卫（§13 大塞尔柱政权@梅尔夫）
   // ── 4·家族 ──
   'qi_d',
   'yuan_cj_d', // 袁氏·先登死士（§4 陈郡袁氏；悬瓠≠番号）
+  'guangzhou', // 广州·摧锋军（§9 #15 番禺据点）
   // ── 1·民族 / 部族（史籍专名旗号）──
   'tujue', 'shatuo', 'gaoche', 'rouran', 'naiman', 'ongut', 'wala', 'geluolu',
   'qiuci', 'kala', 'yanqi', 'iga_d', 'sambyeol', 'wuhuan',

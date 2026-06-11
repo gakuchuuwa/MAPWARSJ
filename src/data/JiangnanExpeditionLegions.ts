@@ -8,7 +8,7 @@
  * - 每文化区 ≥10 条；番号 3–6 字，全局不重复
  * - 依据 史料/古代精锐部队.md §9 南方 21 支为主
  * - §1 #34 解烦兵交叉收录（孙吴@武昌，史籍属三国江南精锐）
- * - §9 #18–21 已挂岭南区；#9/#10/#15/#16 无合格势力或与岳军重复不收
+ * - §9 #18–21 已挂岭南区；#9/#10/#16 无合格势力或与岳军重复
  * - 据点优先标志战场（戚家军@横屿等）；§1 #24 丹阳兵@宛陵城·山越（复用 shanyue）
  */
 export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
@@ -29,5 +29,6 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>>
   wu: '锦帆贼',           // 姑苏·§1 #35 甘宁（江南交叉）
   ruochu: '六卒精锐',     // 竟陵·§9 #1 若敖六卒（旗=若敖）
   mi_chu: '左右广军',     // 云梦·§9 #2 楚左广与右广（旗=芈）
+  xushouhui: '红巾军',    // 蕲春·元末徐寿辉天完红巾主力
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）
 };

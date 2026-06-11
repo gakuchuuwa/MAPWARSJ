@@ -24,7 +24,7 @@ export const FACTION_FLAG_TEMPLATE_BY_TIER: Readonly<Record<FactionTier, number>
 
 const TIER6_UPRISING = new Set([
     'wazhai', 'red_turban', 'xushouhui', 'haoding', 'yang_aner', 'chimei',
-    'dashun', 'daxi_ming', 'hongguang', 'longwu', 'yongli', 'lulin', 'baibo',
+    'dashun', 'daxi_ming', 'hongguang', 'longwu', 'yongli', 'baibo',
     'bailian', 'liwang', 'taiping', 'zhangshicheng',
     'cangtou', 'dengmaoqi', 'linshihong', 'yezongliu',
     'fangla', 'liutong_yangqing',

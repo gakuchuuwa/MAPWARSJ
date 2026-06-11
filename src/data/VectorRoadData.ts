@@ -16230,37 +16230,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "安陆-武昌",
-                type: "road",
-                id: "road_city_anlu_city_jiangxia_1780155919715",
-                startConnection: "city_anlu",
-                endConnection: "city_wuchang"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [113.68, 31.27],
-                    [113.697043, 31.104798],
-                    [113.709417, 31.018185],
-                    [113.771283, 30.976941],
-                    [113.816652, 30.952194],
-                    [113.853771, 30.923323],
-                    [113.895016, 30.915075],
-                    [113.961006, 30.861457],
-                    [113.977504, 30.828462],
-                    [113.989877, 30.816088],
-                    [114.026997, 30.758347],
-                    [114.092988, 30.7336],
-                    [114.125983, 30.692356],
-                    [114.146605, 30.671734],
-                    [114.157549, 30.619376],
-                    [114.32, 30.53],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "石城-当阳",
                 type: "road",
                 id: "road_city_shicheng_city_dangyang_1780156091797",
@@ -16307,29 +16276,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [112.414806, 31.318915],
                     [112.446707, 31.302191],
                     [112.58, 31.16],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "随州-安陆",
-                type: "road",
-                id: "road_city_suizhou_city_anlu_1780156176593",
-                startConnection: "city_suizhou",
-                endConnection: "city_anlu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [113.36, 31.71],
-                    [113.494947, 31.616226],
-                    [113.532066, 31.546111],
-                    [113.569186, 31.508991],
-                    [113.577435, 31.496618],
-                    [113.577435, 31.447125],
-                    [113.602182, 31.418254],
-                    [113.68, 31.27],
                 ]
             }
         },
@@ -27771,25 +27717,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "石城-京山",
-                type: "road",
-                id: "road_city_shicheng_city_jingshan_1781183775593",
-                startConnection: "city_shicheng",
-                endConnection: "city_jingshan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [112.58, 31.16],
-                    [112.82679, 31.166664],
-                    [112.929901, 31.0883],
-                    [113.11, 31.02],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "石城-武昌",
                 type: "road",
                 id: "road_city_shicheng_city_wuchang_1781183787668",
@@ -27845,32 +27772,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [114.027436, 30.616645],
                     [114.170665, 30.598212],
                     [114.32, 30.53],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "京山-安陆",
-                type: "road",
-                id: "road_city_jingshan_city_anlu_1781183795727",
-                startConnection: "city_jingshan",
-                endConnection: "city_anlu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [113.11, 31.02],
-                    [113.074256, 31.191411],
-                    [113.053633, 31.232655],
-                    [113.086629, 31.290397],
-                    [113.140246, 31.30277],
-                    [113.185615, 31.278024],
-                    [113.301099, 31.315144],
-                    [113.391836, 31.30277],
-                    [113.441329, 31.290397],
-                    [113.511444, 31.290397],
-                    [113.68, 31.27],
                 ]
             }
         },

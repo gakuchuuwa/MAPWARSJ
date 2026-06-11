@@ -74,6 +74,9 @@ export class EventParser {
         '袁': 'yuan_cj_d', '袁氏': 'yuan_cj_d', '袁绍': 'yuan_cj_d', '悬瓠': 'yuan_cj_d',
         '先登死士': 'yuan_cj_d', '麴义': 'yuan_cj_d',
         '乌桓': 'wuhuan', '乌桓突骑': 'wuhuan', '白狼山': 'wuhuan',
+        '摧锋军': 'guangzhou', '广州': 'guangzhou', '番禺': 'guangzhou',
+        '南越': 'nanyue', '南越国': 'nanyue', '赵佗': 'nanyue', '龙川': 'nanyue',
+        '塞尔柱': 'seljuq', '桑贾尔': 'seljuq', '木鹿': 'seljuq', '梅尔夫': 'seljuq', '桑贾尔禁卫': 'seljuq',
 
         // ── 2026-05-25 新增：隋朝核对追加势力 ──
         '瓦岗': 'wazhai', '瓦岗军': 'wazhai', '李密': 'wazhai', '魏公': 'wazhai', '洛口仓': 'wazhai',
@@ -177,9 +180,9 @@ export class EventParser {
         '刘伯林': 'liu_clan2', '刘黑马': 'liu_clan2', '平阳刘氏': 'liu_clan2',
         '孛罗': 'boluo', '孛罗帖木儿': 'boluo', '大同孛罗': 'boluo',
         // 第五类：元末起义政权
-        '红巾军': 'red_turban', '韩山童': 'red_turban', '刘福通': 'red_turban', '亳州': 'red_turban', '颍州': 'red_turban', '红巾': 'red_turban',
+        '红巾军': 'xushouhui', '徐寿辉': 'xushouhui', '天完': 'xushouhui', '蕲春': 'xushouhui', '蕲水': 'xushouhui',
+        '韩山童': 'red_turban', '刘福通': 'red_turban', '亳州': 'red_turban', '颍州': 'red_turban', '红巾': 'red_turban',
         '张士诚': 'zhangshicheng', '大周': 'zhangshicheng', '高邮': 'zhangshicheng', '周王': 'zhangshicheng',
-        '徐寿辉': 'xushouhui', '天完': 'xushouhui', '蕲水': 'xushouhui', '浠水': 'xushouhui',
         '罗平国': 'luoping', '林桂芳': 'luoping', '欧南喜': 'luoping', '新会': 'luoping',
         '大兴国': 'daxing', '杨镇龙': 'daxing', '宁海': 'daxing',
         '陈吊眼': 'chendiaoyan', '畲族': 'chendiaoyan', '漳州': 'chendiaoyan',
@@ -553,7 +556,6 @@ export class EventParser {
         '思州田氏': 'tian_sizhou', '田氏土司': 'tian_sizhou', '镇远': 'tian_sizhou',
         '丽江木氏': 'mu_lijiang', '木府': 'mu_lijiang',
         '沐氏': 'mu_qian', '黔国公': 'mu_qian', '沐王府': 'mu_qian', '沐英': 'mu_qian',
-        '南越国': 'nanyue', '番禺': 'nanyue', '赵佗': 'nanyue',
         '南汉': 'nanhan', '兴王府': 'nanhan', '刘龑': 'nanhan', '康陵': 'nanhan',
         '瓯雒': 'ouluo', '瓯雒国': 'ouluo', '古螺城': 'ouluo', '安阳王': 'ouluo', '蜀泮': 'ouluo',
         '西山朝': 'nguyen_guangnan',

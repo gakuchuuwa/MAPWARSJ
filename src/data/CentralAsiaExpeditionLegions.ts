@@ -4,7 +4,7 @@
  * 收录红线与日朝东北草原西域一致：
  * - 番号至少 3 个汉字，全局不重复
  * - 同势力只挂一个番号
- * - 依据 史料/古代精锐部队.md §13 共 14 支
+ * - 依据 史料/古代精锐部队.md §13；增补桑贾尔禁卫@梅尔夫（大塞尔柱）
  * - 耶尼切里为史籍专名精锐番号（非泛称火枪兵）；叶尔羌式「火枪兵」后缀不收
  */
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
@@ -22,4 +22,5 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, stri
   sikh: '尼杭武士',           // 阿姆利则·兰吉特·辛格尼杭（§13 #12）
   sasan: '萨瓦兰重骑兵',      // 克特西丰·萨珊具装骑（§13 #13）
   osman: '耶尼切里军',      // 君士坦丁堡·德夫希尔梅新军（§13 #14）
+  seljuq: '桑贾尔禁卫',     // 木鹿·1118—1157 桑贾尔苏丹近卫
 };

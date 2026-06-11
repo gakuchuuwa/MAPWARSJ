@@ -26,7 +26,7 @@ const _FIXED: Record<string, string> = {
     jiujiang: '#A83830', // 九江
     wazhai: '#903028', // 瓦岗
     red_turban: '#A83028', // 红巾
-    xushouhui: '#883030', // 天完
+    xushouhui: '#883030', // 天完·红巾军（元末徐寿辉赤旗；避 lvbu 撞色）
     haoding: '#C05040', // 红袄(郝定)
     chimei: '#972838', // 赤眉
     yang_aner: '#B84838', // 登(杨安儿)
@@ -52,7 +52,6 @@ const _FIXED: Record<string, string> = {
     // ── 青·木德尚青 ──
     xia: '#3A8F83', // 夏
     xiao_d: '#2E7568', // 萧(兰陵萧氏)
-    lulin: '#48A090', // 绿林
 
     // ── 白·金德尚白 / 蒙古尚白 ──
     shang: '#E0CEB0', // 商（暖沙象牙；与晋纯白 #FFFFFF 拉开色差）
@@ -161,6 +160,7 @@ const _FIXED: Record<string, string> = {
     sikh: '#184880', // 锡克·尼杭（尼杭深蓝）
     sasan: '#683878', // 萨珊·萨瓦兰（波斯紫）
     osman: '#782830', // 奥斯曼·耶尼切里（苏丹深红）
+    seljuq: '#487868', // 塞尔·桑贾尔禁卫（木鹿青绿）
 
     // ── 青藏精锐远征势力（2026-06-11；hex 全局唯一）──
     shaodang: '#8A7060', // 烧当·湟中义从羌（河湟褐）
@@ -268,6 +268,8 @@ const _FIXED: Record<string, string> = {
     shanyue: '#687858', // 山越·丹阳兵（宛陵城青灰；避 heng 撞色）
     ruochu: '#984838', // 若敖·六卒精锐（楚系赭红）
     mi_chu: '#8B6848', // 芈氏·左右广军（云梦褐；避 xiliang 撞色）
+    nanyue: '#6B4423', // 南越（龙川）
+    guangzhou: '#8B6914', // 广州·摧锋军（番禺赭黄）
     // chu/song/chen/xiao_d/yue_d/ming_d/haoding 见南方表
 
     // ── 黑·水德尚黑 / 契丹黑旗 ──

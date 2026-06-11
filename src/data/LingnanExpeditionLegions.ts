@@ -18,7 +18,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   guangnanguo: '黑旗军',     // 洞海·§10 #4 刘永福（安南册封）
   ryukyu: '那霸水师',       // 首里·§9 #21 琉球王府水师
   ming_zheng: '郑氏铁人军', // 承天·§9 #18 郑成功铁人军
-  paiwan: '出草勇士',       // 牡丹社·§9 #19 台湾原住民猎首勇士
+  guangzhou: '摧锋军',      // 番禺·§9 #15 广南守城（广州据点）
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占
 };
