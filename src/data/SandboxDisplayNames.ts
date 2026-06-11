@@ -186,6 +186,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // 2026-05-25 三国核对追加势力
     'liubiao': '刘',
     'lvbu': '吕',
+    'dongzhuo': '飞熊',
+    'xiliang': '西凉',
 
     // ── 2026-05-25 新增：隋朝核对追加势力 ──
     'wazhai': '瓦岗',

@@ -193,6 +193,8 @@ export class CityAssetManager {
 
         'liubiao': '刘',
         'lvbu': '吕',
+        'dongzhuo': '飞熊',
+        'xiliang': '西凉',
 
         'wazhai': '瓦岗',
         'liangshidu': '银',

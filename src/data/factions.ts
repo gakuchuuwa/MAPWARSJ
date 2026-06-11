@@ -198,6 +198,10 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 新增：三国核对追加势力 ──
     { id: 'liubiao', name: '刘氏' },      // 荆州深绿 - 刘表集团(襄阳)
     { id: 'lvbu', name: '吕氏' },
+    // ── 2026-06-11 新增：董卓（飞熊军/陇西临洮）──
+    { id: 'dongzhuo', name: '董卓' },
+    // ── 2026-06-11 新增：西凉（马腾/韩遂军阀/金城皋兰）──
+    { id: 'xiliang', name: '西凉' },
 
     // ── 2026-05-26 新增：隋朝核对追加势力 ──
     { id: 'wazhai', name: '瓦岗' },        // 深红 - 瓦岗军/李密魏政权(洛口仓)
@@ -209,7 +213,7 @@ export const FACTIONS: Faction[] = [
     { id: 'kumo', name: '奚族' },
     { id: 'xijue', name: '十箭' },
     { id: 'xian_d', name: '冼氏' },          // 绯红 - 冼夫人高凉冼氏(高凉)
-    { id: 'xiqin', name: '西秦' },         // 胡萝卜橙 - 薛举西秦政权(金城)
+    { id: 'xiqin', name: '西秦' },         // 胡萝卜橙 - 薛举西秦政权(折墌)
     { id: 'xueyantuo', name: '薛延陀' },
     { id: 'tujishi', name: '突骑施' },     // 巧克力色 - 突骑施汗国(碎叶川)
     { id: 'nanzhao', name: '南诏' },        // 南诏深红 - 南诏国(蒙舍城)

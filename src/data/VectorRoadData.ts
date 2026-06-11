@@ -27599,5 +27599,50 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "萧关-折墌",
+                type: "road",
+                id: "road_city_xiaoguan_city_zhedi_20260611",
+                startConnection: "city_xiaoguan",
+                endConnection: "city_zhedi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [106.320190, 35.657289],
+                    [106.550000, 35.620000],
+                    [106.780000, 35.580000],
+                    [107.010000, 35.540000],
+                    [107.240000, 35.520000],
+                    [107.470000, 35.510000],
+                    [107.700000, 35.505000],
+                    [107.940000, 35.500000],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "折墌-汧源",
+                type: "road",
+                id: "road_city_zhedi_city_longzhou_20260611",
+                startConnection: "city_zhedi",
+                endConnection: "city_longzhou"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [107.940000, 35.500000],
+                    [107.720000, 35.420000],
+                    [107.500000, 35.340000],
+                    [107.280000, 35.260000],
+                    [107.060000, 35.180000],
+                    [106.860000, 35.080000],
+                    [106.860000, 34.890000],
+                ]
+            }
+        },
     ]
 };

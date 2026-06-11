@@ -47,7 +47,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'xianbei': 'city_gaxian',
     'jie': 'city_jieshuangna',
     'di': 'city_lueyang',
-    'qiang': 'city_lintao',
+    'qiang': 'city_xiaoguan',
+    'dongzhuo': 'city_lintao',
     'tuoba': 'city_datong',
     'yuwen': 'city_raoleshui',
     'liang_d': 'city_shangqiu',
@@ -152,6 +153,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     'liubiao': 'city_xiangyang',
     'lvbu': 'city_xiapi',
+    'xiliang': 'city_lanzhou',
 
     'wazhai': 'city_dingtao',
     'liangshidu': 'city_yinzhou',
@@ -160,7 +162,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'kumo': 'city_songmo',
     'xijue': 'city_zhizhicheng',
     'xian_d': 'city_gaoliang',
-    'xiqin': 'city_lanzhou',
+    'xiqin': 'city_zhedi',
 
 'xueyantuo': 'city_yanran_stone',
     'tujishi': 'city_talas',

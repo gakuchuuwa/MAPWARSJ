@@ -505,17 +505,18 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         type: 'medium_city',
         troops: 10000,
         tier: 1 },
-    { id: 'city_lanzhou', name: '皋兰', factionId: 'xiqin', lat: 36.044600, lng: 103.818100, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1 },
+    { id: 'city_lanzhou', name: '皋兰', factionId: 'xiliang', lat: 36.044600, lng: 103.818100, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1, note: '金城郡，韩遂遣还金城；西凉军阀根基' },
 
     { id: 'city_ledu', name: '浇河', factionId: 'tufa_d', lat: 35.837926, lng: 101.071472, type: 'small_city', troops: 5000 },
     {
         id: 'city_lintao',
         name: '临洮',
-        factionId: 'qiang',
+        factionId: 'dongzhuo',
         lat: 35.37, lng: 103.86,
         type: 'small_city',
         region: 'HEXI',
-        troops: 5000 },
+        troops: 5000,
+        note: '陇西临洮，董卓故里；飞熊军根基' },
     { id: 'city_songzhou', name: '嘉诚', factionId: 'song2', lat: 32.787239, lng: 103.625793, type: 'small_city', troops: 5000, region: 'TIBET' /* [override] 川西藏羌区, 松潘县 */ },
     { id: 'city_jianchang', name: '邛都', factionId: 'qiong', lat: 27.870652, lng: 102.310181, type: 'small_city', troops: 5000 },
 
@@ -642,7 +643,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_wuguan', name: '武关', factionId: 'panjun', lat: 33.600000, lng: 110.620000, type: 'pass', troops: 10000, mirror: true },
 
 
-    { id: 'city_xiaoguan', name: '萧关', factionId: 'panjun', lat: 35.657289, lng: 106.320190, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_xiaoguan', name: '萧关', factionId: 'qiang', lat: 35.657289, lng: 106.320190, type: 'pass', troops: 10000, mirror: true, note: '萧关道，河西北陆羌族重镇' },
 
     {
         id: 'city_jinsuoguan',
@@ -1871,6 +1872,8 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     { id: 'city_zuli', name: '祖厉', factionId: 'huizhou', lat: 36.56, lng: 104.68, type: 'small_city', troops: 5000 },
+    // ── 2026-06-11 新增：折墌（薛举西秦/薛仁杲据城）──
+    { id: 'city_zhedi', name: '折墌', factionId: 'xiqin', lat: 35.500000, lng: 107.940000, type: 'small_city', region: 'HEXI', troops: 5000, note: '薛仁杲据折墌城；薛举西秦第二据点' },
     { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.83, lng: 93.51, type: 'small_city', region: 'WESTERN', troops: 5000, note: '草原环线西南锚点；文化西域' },
     { id: 'city_bieshibali', name: '别失八里', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'small_city', troops: 5000 },
     { id: 'city_balikun', name: '巴里坤', factionId: 'pulei', lat: 43.6, lng: 93, type: 'small_city', troops: 5000 },
