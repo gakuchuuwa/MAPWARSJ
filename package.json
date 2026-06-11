@@ -15,6 +15,7 @@
     "flag-text:check": "npx tsx scratch/audit_flag_text_luminance.mjs",
     "expedition:audit": "npx tsx scratch/audit_expedition_regions.mjs",
     "expedition:triple-check": "npx tsx scratch/audit_expedition_triple_names.mjs",
+    "expedition:coverage": "npx tsx scratch/audit_expedition_coverage.mjs",
     "tier:pending": "node scratch/export_faction_tier_pending.mjs",
     "audit": "node scripts/audit-game-integrity.mjs",
     "sim": "tsx scripts/sim/headless.ts",

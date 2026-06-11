@@ -14,11 +14,14 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'chen', 'xiao_d', 'song', 'wuzhou_d', 'beifu_d', 'haoding', 'sunqin',
   'edo', 'riben', 'xinluo', 'gaogouli', 'balhae', 'goryeo', 'joseon',
   'zhao', // 赵国·赵边骑（§2 #1 政权专名）
+  'xiliang', // 西凉·西凉铁骑（§7 #1 凉州军阀专名）
+  'daxi_ming', // 大西·大西老营（§8 #10 明末政权专名）
   // ── 4·家族 ──
   'qi_d',
+  'yuan_cj_d', // 袁氏·先登死士（§4 陈郡袁氏；悬瓠≠番号）
   // ── 1·民族 / 部族（史籍专名旗号）──
   'tujue', 'shatuo', 'gaoche', 'rouran', 'naiman', 'ongut', 'wala', 'geluolu',
-  'qiuci', 'kala', 'yanqi', 'iga_d', 'sambyeol',
+  'qiuci', 'kala', 'yanqi', 'iga_d', 'sambyeol', 'wuhuan',
   // 未列入者默认：旗号∩番号 禁止共享（含 tianxiong、北府若改军镇专名等须逐条审核）
 ]);
 

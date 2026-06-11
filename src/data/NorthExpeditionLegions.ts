@@ -34,4 +34,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   shatuo: '鸦儿军',      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
   lingwu: '朔方军',      // 回乐·§1 #53 灵州朔方节度使精锐
   zhongshan: '静塞军',   // 真定·§1 #64 北宋河北静塞军
+  wuhuan: '乌桓突骑',    // 白狼山·§1 #84 曹操收编名骑
 };

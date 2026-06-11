@@ -132,7 +132,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wusun': '乌孙',
 'dayuan': '大宛',
     'gouding': '句町',
-    'dongxian': '董',
+    'dongxian': '郯',
     'tongma': '铜马',
     'baibo': '黄巾',
     'wuhuan': '乌桓',
@@ -179,9 +179,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'ouyue': '台',
 
     // 2026-05-25 三国核对追加势力
-    'liubiao': '刘',
+    'jingzhou': '荆',
     'lvbu': '吕',
-    'dongzhuo': '飞熊',
+    'didao': '狄',
     'xiliang': '西凉',
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
@@ -277,6 +277,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-25 明清之际势力（28个）──
     'dashun': '大顺',
     'daxi_ming': '大西',
+    'chenghan': '成汉',
+    'shuixi': '水西',
     'hongguang': '弘光',
     'longwu': '隆武',
     'lujian': '婺',
@@ -349,6 +351,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'ashina': '史那',
     'ashide': '史德',
     'weiming': '嵬名',
+    'yeli': '野利',
     'kiyad': '乞颜',
 'borjigin': '孛儿',
     'jalair': '札剌',
@@ -667,6 +670,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kuye': '库页',
     // ── 2026-06-11 新增：阿伊努（北海道）──
     'ayinu': '虾夷',
+    'ruochu': '若敖',
+    'mi_chu': '芈',
     // ── 2026-06-11 新增：北海（北海道北端）──
     'beihai': '北海',
     // ── 2026-06-11 新增：水达达（黑龙江下游）──

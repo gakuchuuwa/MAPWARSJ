@@ -25,5 +25,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   xia: '夏后亲卫',      // 安邑·§1 #1 夏后氏
   sui: '骁果军',        // 汉东·§1 #43 隋帝骁果（≠瓦岗军）
   sunqin: '督标秦军',   // 潼关·§1 #81 孙传庭督标秦兵
+  didao: '飞熊军',      // 临洮·§1 #27 陇西董卓系（旗=狄·狄道）
+  yuan_cj_d: '先登死士', // 悬瓠·§1 #25 麴义袁绍
   // wazhai@定陶：§1 无瓦岗军专名，不收远征番号
 };

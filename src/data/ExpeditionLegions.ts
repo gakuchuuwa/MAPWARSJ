@@ -1,5 +1,5 @@
 /**
- * 远征精锐番号统一查询（13 文化区）
+ * 远征精锐番号统一查询（14 文化区）
  *
  * ═══════════════════════════════════════════════════════════════════
  * 【AGENTS.md §十二 — AI 写入前必读，三者防重】
@@ -35,6 +35,7 @@ import { JIANGNAN_EXPEDITION_ELITE_LEGIONS } from './JiangnanExpeditionLegions';
 import { NORTH_EXPEDITION_ELITE_LEGIONS } from './NorthExpeditionLegions';
 import { CENTRAL_EXPEDITION_ELITE_LEGIONS } from './CentralExpeditionLegions';
 import { BASHU_EXPEDITION_ELITE_LEGIONS } from './BashuExpeditionLegions';
+import { HEXI_EXPEDITION_ELITE_LEGIONS } from './HexiExpeditionLegions';
 
 export {
   JAPAN_EXPEDITION_ELITE_LEGIONS,
@@ -50,6 +51,7 @@ export {
   NORTH_EXPEDITION_ELITE_LEGIONS,
   CENTRAL_EXPEDITION_ELITE_LEGIONS,
   BASHU_EXPEDITION_ELITE_LEGIONS,
+  HEXI_EXPEDITION_ELITE_LEGIONS,
 };
 
 export function getExpeditionEliteLegionName(factionId: string): string | null {
@@ -67,6 +69,7 @@ export function getExpeditionEliteLegionName(factionId: string): string | null {
     NORTH_EXPEDITION_ELITE_LEGIONS[factionId] ??
     CENTRAL_EXPEDITION_ELITE_LEGIONS[factionId] ??
     BASHU_EXPEDITION_ELITE_LEGIONS[factionId] ??
+    HEXI_EXPEDITION_ELITE_LEGIONS[factionId] ??
     null
   );
 }
@@ -98,4 +101,15 @@ export function commitExpeditionEliteLegionName(army: {
   expeditionSavedName: string | null;
 }): void {
   army.expeditionSavedName = null;
+}
+
+/** 远征中断（目标消失等）：恢复改名前的军团名 */
+export function restoreExpeditionLegionName(army: {
+  name: string;
+  expeditionSavedName: string | null;
+}): void {
+  if (army.expeditionSavedName != null) {
+    army.name = army.expeditionSavedName;
+    army.expeditionSavedName = null;
+  }
 }
