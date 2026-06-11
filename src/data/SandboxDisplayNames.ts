@@ -629,7 +629,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'dayuzi': '大玉',
     'yingchuan': '漯',
     'weiwuer': '维吾',
-    'gumo': '姑墨',
     'wensu': '温宿',
     'keerqin': '科尔',
 
@@ -693,4 +692,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'sikh': '锡克',
     'sasan': '萨珊',
     'osman': '奥斯曼',
+    'anxi': '安西',
+    'konbaung': '贡榜',
+'qi_d': '戚',
+    'wangyan': '彦',
+    'tianxiong': '天雄',
+    'sunqin': '潼津',
 };

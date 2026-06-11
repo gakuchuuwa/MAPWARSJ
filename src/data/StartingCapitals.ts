@@ -398,7 +398,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     
     // ── 2026-05-31 新增：补齐缺失的初始首都 ──
     'weiwuer': 'city_yuergun',
-    'gumo': 'city_bohuancheng',
 
     'anushidgin': 'city_khiva',
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
@@ -607,4 +606,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'sikh': 'city_amritsar',
     'sasan': 'city_ctesiphon',
     'osman': 'city_constantinople',
+    'anxi': 'city_bohuancheng',
+    'konbaung': 'city_shwebo',
+'qi_d': 'city_hengyu',
+    'wangyan': 'city_feihu',
+    'tianxiong': 'city_jiazhuang',
+    'sunqin': 'city_tongguan',
 };

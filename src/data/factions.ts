@@ -739,7 +739,6 @@ export const FACTIONS: Faction[] = [
     { id: 'dayuzi', name: '大玉兹' },
     { id: 'yingchuan', name: '漯河' },       // 漯河/郾城
     { id: 'weiwuer', name: '维吾尔' },
-    { id: 'gumo', name: '姑墨' },
     { id: 'wensu', name: '温宿' },
     { id: 'keerqin', name: '科尔沁' },
 
@@ -797,4 +796,11 @@ export const FACTIONS: Faction[] = [
     { id: 'sikh', name: '锡克' },
     { id: 'sasan', name: '萨珊' },
     { id: 'osman', name: '奥斯曼' },
-];
+    { id: 'anxi', name: '安西' },
+    { id: 'konbaung', name: '贡榜王朝' },
+    { id: 'qi_d', name: '戚氏' },
+    { id: 'wangyan', name: '王彦' },
+    // ── 2026-06-11 新增：明末精锐（天雄/潼津）──
+    { id: 'tianxiong', name: '天雄' },
+    { id: 'sunqin', name: '潼津' },
+    ];

@@ -21,4 +21,5 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>
   manzhou_d: '多铎精骑',   // 沈阳·大清多铎（§3 #9 三千马队改番号）
   hezhe: '索伦劲旅',       // 乌云·索伦部（§3 #13）
   aola: '黑龙江水师',     // 雅克萨·雅克萨之战（§3 #26）
+  wuliangha: '朵颜三卫',  // 赛音山达·§1 #74 兀良哈三卫（朵颜/泰宁/福余合一）
 };
