@@ -413,10 +413,10 @@ export class VectorRoadEditor implements IEditor {
         `;
         nodeHint.title = '选中道路后：点击黄色中点插入节点；右键红色控制点删除（至少保留首尾两点）';
 
-        // 批量工作流按钮（4 步线性流程）
+        // 批量工作流按钮
         const fullAuditBtn = this.createButton('1️⃣ 🔍 全面审查', '#00bcd4', () => this.detectAllIssues());
-        const cleanAllBtn = this.createButton('2️⃣ 🗑️ 一键清理', '#e91e63', () => this.cleanAllIssues());
-        const orphanReportBtn = this.createButton('3️⃣ 📋 孤儿城', '#ff9800', () => this.reportOrphanCities());
+        const singleRoadBtn = this.createButton('2️⃣ 🛤️ 单路据点', '#ff9800', () => this.reportSingleRoadCities());
+        singleRoadBtn.title = '列出仅连接 1 条道路的据点（正常应 ≥2 条）';
 
         // 距离固定 250km（设计公理，不可调）
         // 超过的需要加历史中转城（如瓜州、玉门关），不放宽距离
@@ -519,7 +519,7 @@ export class VectorRoadEditor implements IEditor {
 
         row2.appendChild(row2Label);
         row2.appendChild(fullAuditBtn);
-        row2.appendChild(cleanAllBtn);
+        row2.appendChild(singleRoadBtn);
         row2.appendChild(distanceLabel);
 
         // [2026-05-30] 区选择器 — 自动连只处理指定区, 不再全世界一起跑
@@ -551,10 +551,8 @@ export class VectorRoadEditor implements IEditor {
 
         // autoConnectBtn — 批量自动连接（batchAutoConnect）
         // [2026-05-30] 引用存类成员, 方便区切换时动态更新颜色
-        this.autoConnectBtn = this.createButton('4️⃣ 🔗 自动连', '#4caf50', () => this.batchAutoConnectGuarded());
+        this.autoConnectBtn = this.createButton('3️⃣ 🔗 自动连', '#4caf50', () => this.batchAutoConnectGuarded());
         row2.appendChild(this.autoConnectBtn);
-
-        row2.appendChild(orphanReportBtn);
 
         // [2026-05-30] 问题路导航 — 配合 1️⃣ 全面审查 用
         const prevProblemBtn = this.createButton('◀ 上问题', '#9c27b0', () => this.selectAdjacentProblem(-1));
@@ -3245,10 +3243,8 @@ export class VectorRoadEditor implements IEditor {
     //   A. 端点完整性 (auditRoads 的 6 类问题)
     //   B. 重复/重叠 (来自 batchDetectOverlaps 的检测逻辑)
     //
-    // 输出: 缓存到 this.pendingIssueRoadIds（供 cleanAllIssues 一键清理用）
-    //       + 控制台详情 + alert 摘要
+    //       + 控制台详情 + 模态报告
     // =====================================================================
-    private pendingIssueRoadIds: Set<string> = new Set();
 
     /**
      * 自动连接的距离限制 (km) — 固定 250
@@ -3413,29 +3409,24 @@ export class VectorRoadEditor implements IEditor {
             }
         }
 
-        // ───── 汇总待清理 ID（供一键清理用） ─────
-        this.pendingIssueRoadIds.clear();
-        issues.invalidStart.forEach(i => this.pendingIssueRoadIds.add(i.id));
-        issues.invalidEnd.forEach(i => this.pendingIssueRoadIds.add(i.id));
-        issues.sameStartEnd.forEach(i => this.pendingIssueRoadIds.add(i.id));
-        issues.tooFewPoints.forEach(i => this.pendingIssueRoadIds.add(i.id));
-        issues.straightLines.forEach(i => this.pendingIssueRoadIds.add(i.id));
-        issues.duplicates.forEach(d => this.pendingIssueRoadIds.add(d.deleteId));
-        // 注意: missingStart/missingEnd 不进清理队列 — 这种路有意义，需后续手工补 endpoint
-
         const totalRoads = features.length;
         const orphanCities = this.getOrphanCities();
+        const singleRoadCities = this.getSingleRoadCities();
         const totalIssues = issues.invalidStart.length + issues.invalidEnd.length +
             issues.sameStartEnd.length + issues.tooFewPoints.length +
             issues.duplicates.length +
             issues.endpointDrift.length;
-        const willDelete = this.pendingIssueRoadIds.size;
 
         // ───── 控制台分组打印 ─────
-        console.group(`🔍 [全面审查] ${totalRoads} 条路 · 问题 ${totalIssues} 项 · 待删 ${willDelete} 条 · 孤儿城 ${orphanCities.length}`);
+        console.group(`🔍 [全面审查] ${totalRoads} 条路 · 问题 ${totalIssues} 项 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length}`);
         if (orphanCities.length) {
             console.group(`📋 孤儿城 (无路连接) [${orphanCities.length}]`);
             orphanCities.forEach(c => console.log(`  ${c.name}  [${c.id}]  (${c.lat.toFixed(2)}, ${c.lng.toFixed(2)})`));
+            console.groupEnd();
+        }
+        if (singleRoadCities.length) {
+            console.group(`🛤️ 单路据点 (仅 1 条路) [${singleRoadCities.length}]`);
+            singleRoadCities.forEach(c => console.log(`  ${c.name}  [${c.id}]  → ${c.roadName} ↔ ${c.peerName}`));
             console.groupEnd();
         }
         if (issues.invalidStart.length) {
@@ -3471,14 +3462,14 @@ export class VectorRoadEditor implements IEditor {
         console.groupEnd();
 
         // ───── 状态栏 + 富文本模态 ─────
-        if (totalIssues === 0 && orphanCities.length === 0) {
-            this.setStatus(`✅ 审查通过：${totalRoads} 条道路全部正常，无孤儿城`);
+        if (totalIssues === 0 && orphanCities.length === 0 && singleRoadCities.length === 0) {
+            this.setStatus(`✅ 审查通过：${totalRoads} 条道路全部正常`);
         } else if (totalIssues === 0) {
-            this.setStatus(`✅ 道路无问题 · ⚠ ${orphanCities.length} 座孤儿城无路`);
+            this.setStatus(`✅ 道路无问题 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length}`);
         } else {
-            this.setStatus(`⚠ 发现 ${totalIssues} 项问题，待删 ${willDelete} 条 · 孤儿城 ${orphanCities.length}`);
+            this.setStatus(`⚠ 问题 ${totalIssues} 项 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length}`);
         }
-        this.showAuditReportModal(issues, totalRoads, totalIssues, willDelete, orphanCities);
+        this.showAuditReportModal(issues, totalRoads, totalIssues, orphanCities, singleRoadCities);
     }
 
     /**
@@ -3489,8 +3480,8 @@ export class VectorRoadEditor implements IEditor {
         issues: any,
         totalRoads: number,
         totalIssues: number,
-        willDelete: number,
-        orphanCities: Array<{ id: string; name: string; lat: number; lng: number }>
+        orphanCities: Array<{ id: string; name: string; lat: number; lng: number }>,
+        singleRoadCities: Array<{ id: string; name: string; lat: number; lng: number; roadName: string; peerName: string }>
     ): void {
         // 已有模态先移除
         document.querySelectorAll('#audit-report-modal').forEach(el => el.remove());
@@ -3515,8 +3506,9 @@ export class VectorRoadEditor implements IEditor {
             overflow: hidden;
         `;
 
-        const okBadge = totalIssues === 0 && orphanCities.length === 0 ? '✅' : '⚠';
-        const titleColor = totalIssues === 0 && orphanCities.length === 0 ? '#4caf50' : '#ff9800';
+        const infoOnly = totalIssues === 0 && orphanCities.length === 0 && singleRoadCities.length === 0;
+        const okBadge = infoOnly ? '✅' : '⚠';
+        const titleColor = infoOnly ? '#4caf50' : '#ff9800';
         const header = document.createElement('div');
         header.style.cssText = `
             padding: 18px 24px; background: rgba(255,215,0,0.08);
@@ -3529,8 +3521,8 @@ export class VectorRoadEditor implements IEditor {
                 <div style="font-size:13px;color:#aaa;margin-top:4px;">
                     📊 道路总数 <b style="color:#fff">${totalRoads}</b> ·
                     问题总数 <b style="color:${totalIssues > 0 ? '#ff9800' : '#4caf50'}">${totalIssues}</b> ·
-                    待删 <b style="color:#f44336">${willDelete}</b> ·
-                    孤儿城 <b style="color:${orphanCities.length > 0 ? '#ff9800' : '#4caf50'}">${orphanCities.length}</b>
+                    孤儿城 <b style="color:${orphanCities.length > 0 ? '#ff9800' : '#4caf50'}">${orphanCities.length}</b> ·
+                    单路据点 <b style="color:${singleRoadCities.length > 0 ? '#ff9800' : '#4caf50'}">${singleRoadCities.length}</b>
                 </div>
             </div>
             <button id="audit-close-btn" style="
@@ -3604,12 +3596,12 @@ export class VectorRoadEditor implements IEditor {
 
         let html = '';
 
-        if (totalIssues === 0 && orphanCities.length === 0) {
+        if (infoOnly) {
             html = `
                 <div style="text-align:center;padding:60px 20px;">
                     <div style="font-size:60px;margin-bottom:16px;">🎉</div>
-                    <div style="font-size:18px;color:#4caf50;margin-bottom:8px;">所有 ${totalRoads} 条道路审查通过，无孤儿城</div>
-                    <div style="color:#aaa;">✓ 端点完整 ✓ 无自环 ✓ 无重叠 (30% 阈值) ✓ 全部城有路</div>
+                    <div style="font-size:18px;color:#4caf50;margin-bottom:8px;">所有 ${totalRoads} 条道路审查通过</div>
+                    <div style="color:#aaa;">✓ 端点完整 ✓ 无自环 ✓ 无重叠 (30% 阈值) ✓ 无孤儿城 ✓ 无单路据点</div>
                 </div>
             `;
         } else {
@@ -3673,6 +3665,15 @@ export class VectorRoadEditor implements IEditor {
                 html += `<div style="color:#888;font-size:12px;margin-bottom:12px;">… 另有 ${orphanCities.length - 80} 座，见 F12 控制台完整列表</div>`;
             }
 
+            const singleRoadItems = singleRoadCities.slice(0, 80).map(c => ({
+                html: `<b>${c.name}</b> · 仅连 <span style="color:#ffb74d">${c.roadName}</span> ↔ <b>${c.peerName}</b> <span style="color:#666;font-size:11px;">[${c.id}]</span>`,
+                cityId: c.id,
+            }));
+            html += citySection('🛤️ 单路据点 (仅 1 条路，正常应 ≥2)', '#ff9800', singleRoadCities.length, singleRoadItems);
+            if (singleRoadCities.length > 80) {
+                html += `<div style="color:#888;font-size:12px;margin-bottom:12px;">… 另有 ${singleRoadCities.length - 80} 座，见 F12 控制台完整列表</div>`;
+            }
+
             // [2026-05-30 新] 端点漂移 (城坐标改了/移走了)
             const sortedDrift = issues.endpointDrift.slice().sort((a: any, b: any) => b.driftKm - a.driftKm);
             const driftItems = sortedDrift.slice(0, 30).map((i: any) => {
@@ -3691,25 +3692,24 @@ export class VectorRoadEditor implements IEditor {
             // 把问题路 id 列表存到编辑器, 供 [◀ 上问题/下问题 ▶] 用
             this.problemRoadIds = allProblemIds;
 
-            // 操作提示
             if (totalIssues > 0) {
                 html += `
                     <div style="margin-top:24px;padding:14px 18px;background:rgba(76,175,80,0.1);border-left:4px solid #4caf50;border-radius:6px;">
                         <div style="font-weight:bold;color:#4caf50;margin-bottom:6px;">下一步操作</div>
                         <div style="color:#ccc;line-height:1.8;">
-                            1. 点 <b>🗑️ 一键清理</b> 删除上述 <b style="color:#f44336">${willDelete}</b> 条问题路<br>
+                            1. 在下拉框选中问题路，逐条 <b>删除</b> 或 <b>改端点</b> 修复<br>
                             2. 看 <b style="color:#e91e63">重叠</b> 项: 如重叠源于据点过近, 考虑移据点 ≥50km<br>
-                            3. 控制台 F12 有完整列表 (超过 50 条的部分)
+                            3. 控制台 F12 有完整列表 (超过 80 条的部分)
                         </div>
                     </div>
                 `;
-            } else if (orphanCities.length > 0) {
+            } else if (orphanCities.length > 0 || singleRoadCities.length > 0) {
                 html += `
                     <div style="margin-top:24px;padding:14px 18px;background:rgba(255,152,0,0.1);border-left:4px solid #ff9800;border-radius:6px;">
-                        <div style="font-weight:bold;color:#ff9800;margin-bottom:6px;">孤儿城提示</div>
+                        <div style="font-weight:bold;color:#ff9800;margin-bottom:6px;">路网补全提示</div>
                         <div style="color:#ccc;line-height:1.8;">
-                            道路数据无问题。上方列表为<strong>没有任何道路连接</strong>的据点。<br>
-                            建议: 点 👁 定位 → 手动画路，或点 <b>🚧 自动连</b> 批量补网。
+                            道路数据无结构性错误。上方 <b>孤儿城</b> / <b>单路据点</b> 为连通性提示。<br>
+                            建议: 点 👁 定位 → 手动画路，或点 <b>🔗 自动连</b> 批量补网。
                         </div>
                     </div>
                 `;
@@ -3781,17 +3781,180 @@ export class VectorRoadEditor implements IEditor {
         });
     }
 
-    /** 没有任何道路 start/end 连接的据点 */
-    private getOrphanCities(): Array<{ id: string; name: string; lat: number; lng: number }> {
-        const connected = new Set<string>();
+    /** 各据点连接的道路条数（start/end 各计 1） */
+    private getCityRoadConnectionCounts(): Map<string, number> {
+        const counts = new Map<string, number>();
         for (const f of VECTOR_ROAD_DATA.features) {
             if (!f?.properties) continue;
-            if (f.properties.startConnection) connected.add(f.properties.startConnection);
-            if (f.properties.endConnection) connected.add(f.properties.endConnection);
+            const start = f.properties.startConnection;
+            const end = f.properties.endConnection;
+            if (start) counts.set(start, (counts.get(start) ?? 0) + 1);
+            if (end) counts.set(end, (counts.get(end) ?? 0) + 1);
         }
+        return counts;
+    }
+
+    /** 没有任何道路 start/end 连接的据点 */
+    private getOrphanCities(): Array<{ id: string; name: string; lat: number; lng: number }> {
+        const counts = this.getCityRoadConnectionCounts();
         return CITIES
-            .filter(c => !connected.has(c.id))
+            .filter(c => !counts.has(c.id))
             .map(c => ({ id: c.id, name: c.name, lat: c.lat, lng: c.lng }));
+    }
+
+    /** 仅连接 1 条道路的据点（正常路网一般 ≥2） */
+    private getSingleRoadCities(): Array<{
+        id: string; name: string; lat: number; lng: number;
+        roadName: string; peerName: string; roadId: string;
+    }> {
+        const counts = this.getCityRoadConnectionCounts();
+        const cityById = new Map(CITIES.map(c => [c.id, c]));
+        const result: Array<{
+            id: string; name: string; lat: number; lng: number;
+            roadName: string; peerName: string; roadId: string;
+        }> = [];
+
+        for (const city of CITIES) {
+            if ((counts.get(city.id) ?? 0) !== 1) continue;
+            let roadName = '(未命名)';
+            let peerName = '?';
+            let roadId = '';
+            for (const f of VECTOR_ROAD_DATA.features) {
+                if (!f?.properties) continue;
+                const start = f.properties.startConnection;
+                const end = f.properties.endConnection;
+                if (start !== city.id && end !== city.id) continue;
+                roadId = f.properties.id || '';
+                roadName = f.properties.name || roadName;
+                const peerId = start === city.id ? end : start;
+                peerName = cityById.get(peerId)?.name ?? peerId ?? '?';
+                break;
+            }
+            result.push({
+                id: city.id,
+                name: city.name,
+                lat: city.lat,
+                lng: city.lng,
+                roadName,
+                peerName,
+                roadId,
+            });
+        }
+        return result.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+    }
+
+    /** 🛤️ 单路据点：仅 1 条路连接的城（独立按钮，亦见全面审查） */
+    private reportSingleRoadCities(): void {
+        const singles = this.getSingleRoadCities();
+        console.group(`🛤️ [单路据点] ${singles.length} 座（仅 1 条路，正常应 ≥2）`);
+        singles.forEach(c => console.log(`  ${c.name}  [${c.id}]  → ${c.roadName} ↔ ${c.peerName}`));
+        console.groupEnd();
+
+        if (singles.length === 0) {
+            this.setStatus(`✅ 全部 ${CITIES.length} 座据点均连接 ≥2 条路`);
+            alert(`✅ 无单路据点\n\n共 ${CITIES.length} 座城，每座至少连接 2 条道路。`);
+            return;
+        }
+
+        this.setStatus(`⚠ ${singles.length} 座单路据点（仅 1 条路）`);
+        this.showCityListModal({
+            title: '🛤️ 单路据点',
+            subtitle: `仅连接 1 条道路 · 共 ${singles.length} 座（正常应 ≥2）`,
+            color: '#ff9800',
+            items: singles.map(c => ({
+                cityId: c.id,
+                html: `<b>${c.name}</b> · 仅连 <span style="color:#ffb74d">${c.roadName}</span> ↔ <b>${c.peerName}</b> <span style="color:#666;font-size:11px;">[${c.id}]</span>`,
+            })),
+            hint: '建议补第二条路或检查是否为路网末梢/待删据点。',
+        });
+    }
+
+    /** 据点列表模态（单路据点等） */
+    private showCityListModal(opts: {
+        title: string;
+        subtitle: string;
+        color: string;
+        items: Array<{ cityId: string; html: string }>;
+        hint?: string;
+    }): void {
+        document.querySelectorAll('#city-list-modal').forEach(el => el.remove());
+
+        const overlay = document.createElement('div');
+        overlay.id = 'city-list-modal';
+        overlay.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.7); z-index: 20000;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Microsoft YaHei', sans-serif;
+        `;
+
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            background: #1e1e28; color: #e0e0e0;
+            width: 85vw; max-width: 900px; height: 75vh;
+            border-radius: 14px; overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+            border: 2px solid rgba(255,152,0,0.4);
+            display: flex; flex-direction: column;
+        `;
+
+        const header = document.createElement('div');
+        header.style.cssText = `
+            padding: 18px 24px; background: rgba(255,152,0,0.08);
+            border-bottom: 1px solid rgba(255,152,0,0.2);
+            display: flex; justify-content: space-between; align-items: center;
+        `;
+        header.innerHTML = `
+            <div>
+                <div style="font-size:20px;font-weight:bold;color:${opts.color};">${opts.title}</div>
+                <div style="font-size:13px;color:#aaa;margin-top:4px;">${opts.subtitle}</div>
+            </div>
+            <button id="city-list-close-btn" style="
+                background:rgba(255,255,255,0.1); color:#e0e0e0; border:none;
+                padding:8px 16px; border-radius:6px; cursor:pointer; font-size:14px;
+            ">✕ 关闭</button>
+        `;
+        modal.appendChild(header);
+
+        const body = document.createElement('div');
+        body.style.cssText = 'flex:1; overflow-y:auto; padding:16px 24px; font-size:13px;';
+        const rowsHtml = opts.items.map(it => `
+            <div class="city-list-row" data-city-id="${it.cityId}" style="
+                padding:8px 12px; border-left:3px solid ${opts.color}; margin:4px 0;
+                background:rgba(255,255,255,0.03); border-radius:4px; cursor:pointer;
+            ">
+                ${it.html}
+                <button class="city-list-locate" data-city-id="${it.cityId}" style="
+                    background:${opts.color}; color:#fff; border:none; border-radius:4px;
+                    padding:3px 10px; cursor:pointer; font-size:12px; margin-left:8px; float:right;
+                ">👁 看</button>
+                <div style="clear:both;"></div>
+            </div>
+        `).join('');
+        body.innerHTML = rowsHtml + (opts.hint
+            ? `<div style="margin-top:16px;padding:12px;background:rgba(255,152,0,0.1);border-radius:6px;color:#ccc;">${opts.hint}</div>`
+            : '');
+        modal.appendChild(body);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        const close = () => overlay.remove();
+        document.getElementById('city-list-close-btn')?.addEventListener('click', close);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+        const goToCity = (cityId: string) => {
+            const city = CITIES.find(c => c.id === cityId);
+            if (!city) return;
+            close();
+            this.map.panTo([city.lat, city.lng], { animate: true, duration: 0.5 });
+            this.setStatus(`📍 ${city.name} (${city.lat.toFixed(2)}, ${city.lng.toFixed(2)})`);
+        };
+        overlay.querySelectorAll('.city-list-locate, .city-list-row').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                goToCity((e.currentTarget as HTMLElement).dataset.cityId || '');
+            });
+        });
     }
 
     /** 算路径总长度 (km，haversine 求和) */
@@ -3801,56 +3964,6 @@ export class VectorRoadEditor implements IEditor {
             total += this.haversine(coords[i - 1][1], coords[i - 1][0], coords[i][1], coords[i][0]);
         }
         return total;
-    }
-
-    // =====================================================================
-    // [NEW 2026] 🗑️ 一键清理：删除上次审查标记的所有问题路
-    // =====================================================================
-    private cleanAllIssues(): void {
-        if (this.pendingIssueRoadIds.size === 0) {
-            const ok = window.confirm(
-                '没有待清理的问题路。\n\n' +
-                '你需要先点 🔍 全面审查 让系统找出所有问题。\n\n' +
-                '点确定立刻执行全面审查。'
-            );
-            if (ok) this.detectAllIssues();
-            return;
-        }
-        const count = this.pendingIssueRoadIds.size;
-        const ok = window.confirm(`确认删除 ${count} 条问题路？\n\n这些路在上次"全面审查"时被标记。\n按 F12 看过控制台清单了吗？\n\n点确定继续。`);
-        if (!ok) return;
-
-        let removed = 0;
-        for (const id of this.pendingIssueRoadIds) {
-            this.deleteRoad(id);
-            removed++;
-        }
-        this.pendingIssueRoadIds.clear();
-        this.renderAllRoads();
-        this.updateRoadSelect();
-        this.setStatus(`✅ 已清理 ${removed} 条问题路。可继续 🚧 自动连`);
-        alert(`✅ 已清理 ${removed} 条问题路。\n\n下一步: 设好距离 (默认 100km) → 点 🚧 自动连`);
-    }
-
-    // =====================================================================
-    // [NEW 2026] 📋 孤儿城报告：哪些城市没有路
-    // =====================================================================
-    private reportOrphanCities(): void {
-        const orphans = this.getOrphanCities();
-
-        console.group(`📋 [孤儿城报告] ${orphans.length} 个无路据点`);
-        orphans.forEach(c => console.log(`  ${c.name}  [${c.id}]  (${c.lat.toFixed(2)}, ${c.lng.toFixed(2)})`));
-        console.groupEnd();
-
-        if (orphans.length === 0) {
-            this.setStatus(`✅ 全部 ${CITIES.length} 座城都有路连接`);
-            alert(`✅ 完美！\n\n共 ${CITIES.length} 座城，全部至少有 1 条路。`);
-        } else {
-            this.setStatus(`⚠ ${orphans.length} 座城仍无路 (按 F12 看详情)`);
-            const top = orphans.slice(0, 15).map(c => `  ${c.name} (${c.lat.toFixed(2)}, ${c.lng.toFixed(2)})`).join('\n');
-            const more = orphans.length > 15 ? `\n  ...还有 ${orphans.length - 15} 个，按 F12 看完整列表` : '';
-            alert(`📋 孤儿城报告 — ${orphans.length} 座城无路\n\n${top}${more}\n\n这些城可能在 100km 内没有邻居。\n建议: 在它们附近手动加新城作为中转。`);
-        }
     }
 
     private auditRoads(): void {

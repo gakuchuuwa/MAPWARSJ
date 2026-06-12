@@ -30,4 +30,6 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>>
   mi_chu: '左右广军',     // 云梦·§9 #2 楚左广与右广（旗=芈）
   xushouhui: '红巾军',    // 蕲春·元末徐寿辉天完红巾主力
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）
+  machu: '武平军',       // 长沙·马楚武平军节度
+  ning: '江西勤王军',     // 豫章·南宋江西勤王
 };

@@ -18,8 +18,8 @@ export const FACTION_FLAG_TEMPLATE_BY_TIER: Readonly<Record<FactionTier, number>
     2: 43,
     3: 14,
     4: 46,
-    5: 31,
-    6: 22,
+    5: 9,
+    6: 8,
 };
 
 const TIER6_UPRISING = new Set([

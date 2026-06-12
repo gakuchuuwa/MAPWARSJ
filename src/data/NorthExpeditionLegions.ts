@@ -36,4 +36,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   lingwu: '朔方军',      // 回乐·§1 #53 灵州朔方节度使精锐
   zhongshan: '静塞军',   // 真定·§1 #64 北宋河北静塞军
   wuhuan: '乌桓突骑',    // 白狼山·§1 #84 曹操收编名骑
+  helian: '铁弗卫队',     // 统万城·赫连勃勃铁弗亲卫
 };
