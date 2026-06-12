@@ -207,9 +207,13 @@ export const FACTIONS: Faction[] = [
     { id: 'chaizhou_d', name: '柴周' },         // 后周@晋阳太原
     { id: 'tujia_d', name: '土家族' },          // 旗号土家@石柱
     { id: 'zhuang_d', name: '壮族' },           // 旗号壮@田阳
+    { id: 'buyi_d', name: '布依族' },
+    { id: 'hani_d', name: '哈尼' },
+    { id: 'basha_d', name: '巴沙' },
     { id: 'xibo_d', name: '锡伯' },
     { id: 'nantang_d', name: '南唐' },
-    { id: 'beifu_d', name: '北府' },            // 北府兵@濡须口（含山东关；京口让位广陵）
+    // ── 2026-06-12 新增：无为（濡须水畔无为州）；北府兵改挂仲@寿春 ──
+    { id: 'wuwu_d', name: '无为' },
     { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
     { id: 'ranwei_d', name: '冉魏' },
     { id: 'zhuliang_d', name: '朱梁' },         // 后梁@濮阳（大名让位天雄；汴梁属魏都大梁）
@@ -351,6 +355,8 @@ export const FACTIONS: Faction[] = [
 
     // 第八类：亚洲外国
     { id: 'gurkha', name: '廓喀' },              // 土褐 - 廓尔喀/尼泊尔(加德满都)
+    // ── 2026-06-12 新增：夏顿（布鲁克巴/竹巴噶举统一不丹）──
+    { id: 'xiadun', name: '夏顿' },
     { id: 'kazakh', name: '哈萨' },
     { id: 'kokand', name: '霍罕' },                 // 暗紫 - 霍罕/浩罕汗国
     { id: 'badakhshan', name: '达克' },

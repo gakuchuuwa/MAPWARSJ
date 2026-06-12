@@ -20,5 +20,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   shache: '莎车左右骑',   // 渠莎·汉书莎车「左右骑君」；后汉莎车王贤数万人征服诸国
   anxi: '大唐安西军',     // 拨换城·高仙芝/郭昕安西都护府精锐（§1 #54）
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
+  loulan: '楼兰戍',      // 扜泥城·汉晋楼兰戍卒（旗=楼兰·§12.1.1）
   // §14 #10 喀喇契丹重骑兵 → 项目无西辽/喀喇契丹独立势力，宁缺毋滥
 };

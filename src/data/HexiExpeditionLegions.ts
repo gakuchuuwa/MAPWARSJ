@@ -18,4 +18,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
   juqu_d: '北凉精锐',         // 张掖·§7 #9 沮渠蒙逊卢水胡（番号避旗号「沮渠」）
   liang: '大甲重阵',          // 姑臧·§7 #10 前凉张氏重甲步阵
   hunxie: '甘州铁骑',         // 酒泉城·§7 #11 甘州回鹘（旗=浑邪；草原 huige 已占「回鹘铁骑」）
+  qifu_d: '苑川突骑',         // 枹罕·西秦乞伏鲜卑突骑（苑川故地）
 };

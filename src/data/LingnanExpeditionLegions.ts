@@ -22,4 +22,5 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占
   zhancheng: '佛逝象军',   // 阇槃·占城佛逝象兵
+  jingjiang: '靖江府卫',   // 桂林·明靖江王府卫（旗=靖江·藩王）
 };

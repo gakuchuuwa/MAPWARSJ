@@ -10,6 +10,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>>
   nanzhao: '南诏罗苴子',    // 蒙舍城·§11 #1
   dali: '大理白军',         // 羊苴咩·§11 #2
   bayinnaung: '东吁象阵兵', // 东吁·辞典东吁象阵（#16，去火枪）
+  dongxu: '南都象阵',       // 勃固城·东吁王朝南都勃固象兵（≠东吁@东吁）
   konbaung: '贡榜卡塞骑',   // 瑞波·§11 #4 卡塞重骑
   siam: '皇家象骑兵',       // 阿瑜陀耶·§11 #5 皇家象骑兵
   pagan: '蒲甘战象军',      // 蒲甘·辞典 #19（阿奴律陀象军）

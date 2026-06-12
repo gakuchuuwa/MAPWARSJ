@@ -18,4 +18,5 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   boren: '悬棺武士',         // 僰道·§8 #8 僰人山地武士（番号避旗号「僰」）
   chenghan: '六夷突骑',      // 鹿头关·§8 #9 成汉李特六夷铁骑
   daxi_ming: '大西老营',     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
+  ba: '合州水军',            // 重庆·南宋合州钓鱼城水军（旗=巴·巴郡）
 };

@@ -15,4 +15,5 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, stri
   tiemuer: '帖木重装骑',    // 撒马尔罕·安卡拉之战（§13 #6）
   kazakh: '哈萨克轻骑兵',     // 亚西·哈斯木汗游击（§13 #7）
   seljuq: '桑贾尔禁卫',     // 木鹿·1118—1157 桑贾尔苏丹近卫
+  ashina: '碎叶镇军',       // 碎叶城·唐碎叶镇阿史那部（旗=史那·§12.1.1）
 };

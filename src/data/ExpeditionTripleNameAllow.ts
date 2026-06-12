@@ -13,7 +13,8 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   // ── 2·政权（国号/政权专名）──
   'wei', 'qin', 'tang', 'qi', 'shang', 'zhou', 'xia', 'han_d', 'fu', 'cao_d', 'lvbu',
   'ranwei_d', 'zhuliang_d', 'xichu', 'sui', 'chu', 'nantang_d', 'ming_d', 'sunwu_d',
-  'chen', 'xiao_d', 'song', 'wuzhou_d', 'beifu_d', 'haoding', 'sunqin',
+  'chen', 'xiao_d', 'song', 'wuzhou_d', 'haoding', 'sunqin',
+  'hongguang', 'min', 'loulan', 'han', 'jingjiang', 'liang_d', 'ashina',
   'edo', 'riben', 'xinluo', 'gaogouli', 'balhae', 'goryeo', 'joseon',
   'zhao', // 赵国·赵边骑
   'xiliang', // 西凉·西凉铁骑

@@ -27,5 +27,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   sunqin: '督标秦军',   // 潼关·§1 #81 孙传庭督标秦兵
   didao: '飞熊军',      // 临洮·§1 #27 陇西董卓系（旗=狄·狄道）
   yuan_cj_d: '先登死士', // 悬瓠·§1 #25 麴义袁绍
+  han: '韩卒击刹',      // 新郑·战国韩都精锐（旗=韩·韩国）
+  liang_d: '梁国劲卒',  // 商丘·战国/汉代梁国劲卒（旗=梁·梁国）
   // wazhai@定陶：§1 无瓦岗军专名，不收远征番号
 };

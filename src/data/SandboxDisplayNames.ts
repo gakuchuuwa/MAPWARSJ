@@ -192,7 +192,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhuang_d': '壮',
     'xibo_d': '锡伯',
     'nantang_d': '南唐',
-    'beifu_d': '北府',
+    'wuwu_d': '无为',
     'shizhao_d': '石赵',
     'ranwei_d': '冉魏',
     'zhuliang_d': '朱梁',
@@ -298,6 +298,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chimei': '赤眉',
     'miaomin': '苗民',
     'gurkha': '廓喀',
+    'xiadun': '夏顿',
     'kazakh': '哈萨',
     'kokand': '霍罕',
     'badakhshan': '达克',
@@ -326,7 +327,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-26 新增：濊貊、毛文龙（毛文龙旗号用"毛"）──
 'huimo': '濊貊',
-    'mao_wenlong': '毛文',
+    'mao_wenlong': '毛',
 
     // ── 2026-05-26 新增：满洲贵族世家 ──
     'tunggiya': '佟佳',
