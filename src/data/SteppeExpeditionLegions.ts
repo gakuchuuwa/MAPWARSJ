@@ -26,4 +26,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> =
   ongut: '汪古突骑',        // 净州塞·汪古白鞑靼（§6 #14）
   wala: '瓦剌铁骑',         // 博尔巴任·也先瓦剌（§6 #12）
   geluolu: '葛逻禄背弓',    // 弓月城·三姓葛逻禄便捷善射（怛罗斯盟军；非铁骑）
+  menggu_d: '怯薛军',     // 哈拉和林·成吉思汗怯薛
 };

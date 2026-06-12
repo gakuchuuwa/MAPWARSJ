@@ -29,4 +29,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   han: '韩卒击刹',      // 新郑·战国韩都精锐（旗=韩·韩国）
   liang_d: '梁国劲卒',  // 商丘·战国/汉代梁国劲卒（旗=梁·梁国）
   // wazhai@定陶：§1 无瓦岗军专名，不收远征番号
+  shang: '殷商王师',       // 安阳·殷商王师
 };

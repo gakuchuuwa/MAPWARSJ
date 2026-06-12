@@ -18,4 +18,5 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   pazhu: '帕竹甲兵',       // 江孜·帕木竹巴绛曲坚赞甲兵（§12 #10）
   gurkha: '廓尔喀弯刀',    // 加德满都·廓尔喀库克里勇士（§12 #11）
   tsangpa: '藏巴汗卫队',   // 桑珠孜·藏巴汗亲卫
+  tubo: '桂级铁骑',       // 逻些·吐蕃桂级骑
 };

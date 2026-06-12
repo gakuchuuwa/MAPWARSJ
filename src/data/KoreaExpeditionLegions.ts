@@ -10,7 +10,7 @@
 export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
   gaogouli: '铠马武士',   // 平壤·高句丽重装骑兵（§4 #1）
   xuantu: '皂衣先人',     // 国内城·玄菟辖境/高句丽早期死士（§4 #2）
-  xinluo: '花郎徒',       // 金城·新罗花郎（§4 #3）
+  xinluo: '花郎道',       // 金城·新罗花郎（§4 #3）
   baiji: '九誓幢',        // 泗沘·统一新罗混编含百济裔（§4 #4）
   goryeo: '鹰扬龙虎军',   // 开城·高丽二军（§4 #5）
   dingan: '别武班',       // 鸭绿府·高丽抗女真野战军（§4 #6）
