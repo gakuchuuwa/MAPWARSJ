@@ -18865,40 +18865,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "朝阳-徒河",
-                type: "road",
-                id: "road_city_chaoyang_city_tuhe_1780158448643",
-                startConnection: "city_chaoyang",
-                endConnection: "city_tuhe"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [120.45, 41.57],
-                    [120.646414, 41.606553],
-                    [120.69101, 41.630683],
-                    [120.854503, 41.736274],
-                    [120.878429, 41.745673],
-                    [120.946788, 41.749864],
-                    [120.975597, 41.744086],
-                    [120.988455, 41.70657],
-                    [121.014171, 41.661322],
-                    [121.083914, 41.599066],
-                    [121.095144, 41.574774],
-                    [121.125418, 41.548651],
-                    [121.175222, 41.558946],
-                    [121.228238, 41.531337],
-                    [121.252985, 41.411729],
-                    [121.265358, 41.370485],
-                    [121.265358, 41.312743],
-                    [121.252985, 41.267374],
-                    [121.14, 41.12],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "兴和-宣化",
                 type: "road",
                 id: "road_city_xinghe_city_xuanhua_1780158462695",
@@ -26125,27 +26091,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "大名-濮阳",
-                type: "road",
-                id: "road_city_daming_city_puyang_1781182101474",
-                startConnection: "city_daming",
-                endConnection: "city_puyang"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [115.148, 36.285],
-                    [115.177711, 36.01286],
-                    [115.169462, 35.98399],
-                    [115.14884, 35.938621],
-                    [115.119969, 35.901501],
-                    [115.04, 35.74],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "蓨城-巨鹿",
                 type: "road",
                 id: "road_city_jingzhou2_city_liyang_1781182117870",
@@ -30214,6 +30159,52 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [116.835729, 36.219082],
                     [116.876973, 36.194335],
                     [117.05, 36.15],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "朝阳-棘城",
+                type: "road",
+                id: "road_city_chaoyang_city_jicheng_1781267160057",
+                startConnection: "city_chaoyang",
+                endConnection: "city_jicheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [120.45, 41.57],
+                    [120.646414, 41.606553],
+                    [120.69101, 41.630683],
+                    [120.854503, 41.736274],
+                    [120.878429, 41.745673],
+                    [120.946788, 41.749864],
+                    [120.975597, 41.744086],
+                    [120.988455, 41.70657],
+                    [121.055, 41.58],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "棘城-徒河",
+                type: "road",
+                id: "road_city_jicheng_city_tuhe_1781267163191",
+                startConnection: "city_jicheng",
+                endConnection: "city_tuhe"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [121.055, 41.58],
+                    [121.236487, 41.490093],
+                    [121.252985, 41.411729],
+                    [121.265358, 41.370485],
+                    [121.265358, 41.312743],
+                    [121.252985, 41.267374],
+                    [121.14, 41.12],
                 ]
             }
         },
