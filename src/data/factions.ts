@@ -202,6 +202,8 @@ export const FACTIONS: Faction[] = [
     { id: 'xiliang', name: '西凉' },
     // ── 2026-06-11 精锐部队缺口批次 ──
     { id: 'gaoqi_d', name: '北齐' },           // 旗号高齐@渤海蓨城（高欢故里）
+    // ── 2026-06-11 新增：营州@朝阳（和龙/黄龙）──
+    { id: 'yingzhou_ying_d', name: '营州' },
     { id: 'wuzhou_d', name: '武周' },
     { id: 'anshi_d', name: '安史' },
     { id: 'chaizhou_d', name: '柴周' },         // 后周@晋阳太原
@@ -822,4 +824,6 @@ export const FACTIONS: Faction[] = [
     { id: 'dang_d', name: '砀郡' },               // 砀@虞城（汉砀郡；豫东梁国属县）
     // ── 2026-06-11 新增：濠州（原凤阳朱氏改挂）──
     { id: 'hao_d', name: '濠州' },                // 濠@蚌埠（隋唐濠州治钟离故地）
+    // ── 2026-06-11 新增：博州 ──
+    { id: 'bozhou_d', name: '博州' },             // 博@聊城（隋唐博州治）
     ];

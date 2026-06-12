@@ -165,7 +165,7 @@ export const T0_CAPITALS: CityDataV2[] = [
         note: '晋阳；后周柴氏河东征战枢纽' },
     { id: 'city_xiangyang', name: '襄阳', factionId: 'jingzhou', lat: 32.01, lng: 112.12, type: 'medium_city', region: 'JIANGNAN', troops: 10000, tier: 1, note: '荆州治所；三国至宋荆襄枢纽' },
 
-    { id: 'city_shouxian', name: '寿春', factionId: 'zhong', lat: 32.59, lng: 116.8, type: 'small_city', troops: 5000 },
+    { id: 'city_shouxian', name: '寿春', factionId: 'zhong', lat: 32.59, lng: 116.8, type: 'medium_city', troops: 10000, tier: 1, note: '楚后期都、淮南/寿州治；淮西重镇' },
 ];
 
 // ============================================================
@@ -240,7 +240,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         factionId: 'yin',
         lat: 38.18, lng: 116.12,
         type: 'small_city',
-        troops: 5000 },
+        troops: 5000,
+        note: '河间郡治；界桥之战标志地（先登死士）' },
     {
         id: 'city_jingzhou2',
         name: '蓨城',
@@ -261,8 +262,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_linfen', name: '平阳', factionId: 'yao', lat: 36.088000, lng: 111.516724, type: 'small_city', troops: 5000, note: '尧都平阳（临汾）；距曲沃≥50km' },
     // ── 太行山脉走廊/八陉周边中城 ──
                 // ── 淮海与齐鲁中原走廊中城 ──
-    { id: 'city_shangqiu', name: '商丘', factionId: 'liang_d', lat: 34.41, lng: 115.66, type: 'small_city', troops: 5000 },
-    { id: 'city_pengcheng', name: '彭城', factionId: 'xichu', lat: 34.27, lng: 117.18, type: 'small_city', troops: 5000 },
+    { id: 'city_shangqiu', name: '商丘', factionId: 'liang_d', lat: 34.41, lng: 115.66, type: 'medium_city', troops: 10000, tier: 1, note: '宋/梁国都、归德府治；豫东府城' },
+    { id: 'city_pengcheng', name: '彭城', factionId: 'xichu', lat: 34.27, lng: 117.18, type: 'medium_city', troops: 10000, tier: 1, note: '西楚都、徐州治；淮海枢纽' },
     { id: 'city_langya', name: '琅琊', factionId: 'wang_d', lat: 35.077231, lng: 118.363953, type: 'small_city', troops: 5000 },
     { id: 'city_ju', name: '莒城', factionId: 'chimei', lat: 35.578000, lng: 118.832000, type: 'small_city', troops: 5000 },
     { id: 'city_lanling', name: '兰陵', factionId: 'xiao_d', lat: 34.798005, lng: 117.647095, type: 'small_city', troops: 5000 },
@@ -318,7 +319,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
 
 
 
-    { id: 'city_hefei', name: '合肥', factionId: 'lu', lat: 31.82, lng: 117.23, type: 'small_city', troops: 5000 },
+    { id: 'city_hefei', name: '合肥', factionId: 'lu', lat: 31.82, lng: 117.23, type: 'medium_city', troops: 10000, tier: 1, note: '庐州府治；江淮要冲' },
     {
         id: 'city_yangzhou',
         name: '广陵',
@@ -481,10 +482,19 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     {
         id: 'city_chaoyang',
         name: '朝阳',
-        factionId: 'murong',
+        factionId: 'yingzhou_ying_d',
         lat: 41.57, lng: 120.45,
         type: 'small_city',
-        troops: 5000 },
+        troops: 5000,
+        note: '营州治所和龙/龙城；北齐黄龙兵标志地（《北齐书·高宝宁传》）' },
+    {
+        id: 'city_jicheng',
+        name: '棘城',
+        factionId: 'murong',
+        lat: 41.580, lng: 121.055,
+        type: 'small_city',
+        troops: 5000,
+        note: '昌黎棘城（义县西北）；前燕旧都；慕容恪籍贯（《晋书·慕容恪传》）' },
     {
         id: 'city_bailangshan',
         name: '白狼山',
@@ -1817,7 +1827,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shizhu', name: '石柱', factionId: 'tujia_d', lat: 30.000000, lng: 108.110000, type: 'small_city', region: 'BASHU', troops: 5000, note: '秦良玉土司衙门；白杆兵成军出库地（川东近乡，不取辽东浑河）' },
     { id: 'city_bijie', name: '毕节', factionId: 'shuixi', lat: 27.302000, lng: 105.285000, type: 'small_city', region: 'BASHU', troops: 5000, note: '水西安氏土司治所；罗罗兵（奢香/安邦彦）' },
     { id: 'city_tianyang', name: '田阳', factionId: 'zhuang_d', lat: 23.720000, lng: 106.650000, type: 'small_city', region: 'LINGNAN', troops: 5000, note: '瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地' },
-    { id: 'city_jingkou', name: '濡须口', factionId: 'wuwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', troops: 5000, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
+    { id: 'city_jingkou', name: '濡须口', factionId: 'wuwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', troops: 5000, mirror: true },//镜像, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.220000, lng: 115.040000, type: 'small_city', region: 'CENTRAL', troops: 5000, note: '冉魏迁巨鹿；黎阳过密冀南' },
     { id: 'city_ningyuan', name: '宁远', factionId: 'zu_d', lat: 40.618000, lng: 120.720000, type: 'small_city', region: 'NORTH', troops: 5000, note: '关宁铁骑，祖大寿宁远卫（今兴城）' },
     { id: 'city_shuangcheng', name: '双城', factionId: 'wanyan_d', lat: 45.506341, lng: 125.845642, type: 'small_city', region: 'NORTHEAST', troops: 5000, mirror: true },
@@ -1908,8 +1918,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_qingliuguan', name: '清流关', factionId: 'panjun', lat: 32.280000, lng: 118.250000, type: 'pass', troops: 10000, mirror: true },
     { id: 'city_zhongli', name: '盱眙', factionId: 'huai', lat: 33.011000, lng: 118.497000, type: 'small_city', troops: 5000, note: '淮州治盱眙' },
-    { id: 'city_bianliang', name: '汴梁', factionId: 'wei', lat: 34.8, lng: 114.31, type: 'small_city', troops: 5000 },
- // [2026-05-30] 升 big_city
+    { id: 'city_bianliang', name: '汴梁', factionId: 'wei', lat: 34.8, lng: 114.31, type: 'big_city', troops: 20000, tier: 0, note: '北宋京师；20城白名单' },
     { id: 'city_shangluo', name: '商邑', factionId: 'shangzhou', lat: 33.87, lng: 109.94, type: 'small_city', troops: 5000 },
     { id: 'city_shicheng', name: '石城', factionId: 'ying', lat: 31.16, lng: 112.58, type: 'small_city', troops: 5000 },
     { id: 'city_baling', name: '巴陵', factionId: 'yue_d', lat: 29.35, lng: 113.13, type: 'small_city', troops: 5000 },
@@ -2031,4 +2040,5 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_kunyang', name: '昆阳', factionId: 'lulin', lat: 33.22, lng: 113.22, type: 'small_city', troops: 5000, note: '昆阳故城（叶县北）；绿林—刘秀昆阳之战' },
     { id: 'city_yucheng', name: '虞城', factionId: 'dang_d', lat: 34.7758, lng: 116.0678, type: 'small_city', troops: 5000, note: '汉砀郡属/虞国故地；豫东商丘东翼' },
     { id: 'city_bengbu', name: '蚌埠', factionId: 'hao_d', lat: 32.92, lng: 117.38, type: 'small_city', troops: 5000, note: '濠州治钟离故地；淮滨津渡（今蚌埠）' },
+    { id: 'city_liaocheng', name: '聊城', factionId: 'bozhou_d', lat: 36.4322, lng: 115.9552, type: 'small_city', troops: 5000, note: '隋唐博州治；春秋聊城邑' },
     ];

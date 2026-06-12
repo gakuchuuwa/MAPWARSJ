@@ -168,6 +168,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // 2026-05-25 两晋核对追加势力
     'murong': '慕容',
+    'yingzhou_ying_d': '营',
     'erzhu': '尔朱',
 
 'xu': '徐',
@@ -702,4 +703,5 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'lulin': '绿林',
     'dang_d': '砀',
     'hao_d': '濠',
+    'bozhou_d': '博',
 };

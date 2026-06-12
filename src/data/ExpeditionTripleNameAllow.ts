@@ -44,7 +44,6 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'chenla', // 真腊·双弓弩象营（吴哥；岭南区）
   // ── 4·家族 ──
   'qi_d',
-  'yuan_cj_d', // 袁氏·先登死士
   'ming_zheng', // 明郑·郑氏铁人军（郑成功）
   // ── 1·民族 / 部族（史籍专名旗号）──
   'tujue', 'shatuo', 'gaoche', 'rouran', 'naiman', 'ongut', 'wala', 'geluolu',
