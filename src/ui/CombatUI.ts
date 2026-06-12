@@ -589,18 +589,12 @@ export class CombatUI {
             color: ${isAtt ? T.colors.attackerName : T.colors.defenderName};
         `;
 
-        const colonSpan = document.createElement('span');
-        colonSpan.textContent = ': ';
-        colonSpan.style.cssText = `
-            color: rgba(255,255,255,0.85);
-            flex-shrink: 0;
-        `;
-
         const troopsSpan = document.createElement('span');
         troopsSpan.style.cssText = `
             color: rgba(255,255,255,0.92);
             font-weight: 700;
             flex-shrink: 0;
+            margin-left: ${uiPx(8)};
             min-width: ${T.sideBar.troopsMinCh}ch;
             font-variant-numeric: tabular-nums;
             font-feature-settings: "tnum" 1;
@@ -638,7 +632,6 @@ export class CombatUI {
         }
 
         label.appendChild(nameSpan);
-        label.appendChild(colonSpan);
         label.appendChild(troopsSpan);
         label.appendChild(multBadge);
         return label;

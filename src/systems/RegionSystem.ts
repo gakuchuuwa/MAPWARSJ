@@ -197,18 +197,18 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
 };
 
 const REGIONS: { id: RegionType; polygon: {lat:number,lng:number}[] }[] = [
-    { id: 'CENTRAL', polygon: [{lat:33.07,lng:107.02},{lat:32.01,lng:112.12},{lat:32.45,lng:119.40},{lat:37.51,lng:122.12},{lat:36.59,lng:109.48},{lat:36.04,lng:103.82}] },
-    { id: 'NORTH', polygon: [{lat:37.51,lng:122.12},{lat:36.59,lng:109.48},{lat:40.84,lng:111.68},{lat:37.20,lng:122.05}] },
+    { id: 'CENTRAL', polygon: [{lat:33.07,lng:107.02},{lat:32.01,lng:112.12},{lat:32.45,lng:119.40},{lat:37.20,lng:122.12},{lat:36.59,lng:109.48},{lat:36.04,lng:103.82}] },
+    { id: 'NORTH', polygon: [{lat:37.20,lng:122.12},{lat:36.59,lng:109.48},{lat:40.84,lng:111.68},{lat:41.27,lng:123.17}] },
     { id: 'NORTHEAST', polygon: [{lat:41.27,lng:123.17},{lat:45.50,lng:141.93},{lat:46.71,lng:142.52},{lat:49.20,lng:143.10},{lat:52.21,lng:141.95},{lat:52.92,lng:139.77},{lat:53.39,lng:124.08},{lat:53.33,lng:121.45},{lat:51.99,lng:116.58}] },
     { id: 'KOREA', polygon: [{lat:41.27,lng:123.17},{lat:37.20,lng:122.05},{lat:32.45,lng:119.40},{lat:33.51,lng:126.52},{lat:45.50,lng:141.93}] },
     { id: 'JAPAN', polygon: [{lat:25.75,lng:123.50},{lat:24.81,lng:125.28},{lat:35.68,lng:139.76},{lat:40.50,lng:141.46},{lat:45.50,lng:141.93},{lat:33.51,lng:126.52}] },
     { id: 'WESTERN', polygon: [{lat:42.83,lng:93.51},{lat:38.99,lng:88.95},{lat:34.57,lng:80.35},{lat:37.77,lng:75.23},{lat:44.10,lng:79.81}] },
     { id: 'HEXI', polygon: [{lat:36.04,lng:103.82},{lat:37.93,lng:102.64},{lat:38.99,lng:88.95},{lat:42.83,lng:93.51},{lat:40.84,lng:111.68},{lat:36.59,lng:109.48}] },
-    { id: 'STEPPE', polygon: [{lat:41.27,lng:123.17},{lat:40.84,lng:111.68},{lat:42.83,lng:93.51},{lat:43.98,lng:79.65},{lat:46.48,lng:83.63},{lat:49.98,lng:92.09},{lat:51.84,lng:107.61},{lat:52.03,lng:113.50},{lat:51.99,lng:116.58}] },
+    { id: 'STEPPE', polygon: [{lat:41.27,lng:123.17},{lat:40.84,lng:111.68},{lat:42.83,lng:93.51},{lat:44.10,lng:79.65},{lat:46.48,lng:83.63},{lat:49.98,lng:92.09},{lat:51.84,lng:107.61},{lat:52.03,lng:113.50},{lat:51.99,lng:116.58}] },
     { id: 'BASHU', polygon: [{lat:32.01,lng:112.12},{lat:26.89,lng:112.60},{lat:28.08,lng:104.25},{lat:30.05,lng:101.96},{lat:36.04,lng:103.82},{lat:33.07,lng:107.02}] },
     { id: 'JIANGNAN', polygon: [{lat:32.45,lng:119.40},{lat:32.01,lng:112.12},{lat:26.89,lng:112.60},{lat:22.20,lng:120.83},{lat:25.75,lng:123.50},{lat:33.51,lng:126.52}] },
     { id: 'LINGNAN', polygon: [{lat:28.08,lng:104.25},{lat:26.89,lng:112.60},{lat:22.20,lng:120.83},{lat:12.87,lng:107.80},{lat:12.77,lng:105.97},{lat:13.41,lng:103.87}] },
-    { id: 'DIANQIAN', polygon: [{lat:30.05,lng:101.96},{lat:26.87,lng:100.22},{lat:27.72,lng:85.19},{lat:17.33,lng:96.47},{lat:16.53,lng:97.63},{lat:14.35,lng:100.58},{lat:12.77,lng:105.97},{lat:28.08,lng:104.25}] },
+    { id: 'DIANQIAN', polygon: [{lat:30.05,lng:101.96},{lat:26.87,lng:100.22},{lat:27.72,lng:85.19},{lat:17.33,lng:96.47},{lat:16.53,lng:97.63},{lat:14.35,lng:100.58},{lat:13.41,lng:103.87},{lat:28.08,lng:104.25}] },
     { id: 'TIBET', polygon: [{lat:27.72,lng:85.19},{lat:36.73,lng:71.61},{lat:37.77,lng:75.23},{lat:34.57,lng:80.35},{lat:38.99,lng:88.95},{lat:37.93,lng:102.64},{lat:36.04,lng:103.82},{lat:30.05,lng:101.96},{lat:26.87,lng:100.22}] },
     { id: 'CENTRAL_ASIA', polygon: [{lat:37.77,lng:75.23},{lat:36.73,lng:71.61},{lat:35.58,lng:63.31},{lat:36.00,lng:62.70},{lat:37.62,lng:62.23},{lat:42.24,lng:59.63},{lat:43.30,lng:68.27},{lat:44.10,lng:79.81}] },
 ];
