@@ -27,7 +27,7 @@ export const FACTIONS: Faction[] = [
     { id: 'chunshen', name: '春申' },
     { id: 'wan', name: '舒州' },          // 舒州(皖城/安庆)；旗号取舒州避与据点皖城重
     { id: 'qingyuan_bd', name: '清苑' },
-    { id: 'zhong', name: '仲家' },
+    { id: 'zhong', name: '袁术' },
     { id: 'xichu', name: '西楚' },
     { id: 'weihaiwei', name: '威海' },
     { id: 'xia', name: '夏国' },
@@ -188,7 +188,8 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 新增：汉朝核对追加势力 ──
     { id: 'zhai_han', name: '翟国' },
     { id: 'yin', name: '殷国' },
-    { id: 'liu', name: '九江' },      // 陶褐 - 英布/九江王(六县)
+    { id: 'liu', name: '九江' },
+      // 陶褐 - 英布/九江王(六县)
     { id: 'ouyue', name: '瓯越' },
 
     // ── 2026-05-26 新增：三国核对追加势力 ──
@@ -227,7 +228,8 @@ export const FACTIONS: Faction[] = [
     { id: 'liangshidu', name: '梁朔' },
     // 深紫 - 宇文化及许政权(魏县/江都)           // 道奇蓝 - 罗艺燕政权(渔阳)
     { id: 'linshihong', name: '楚南' },    // 暗紫 - 林士弘楚政权(豫章)
-    { id: 'lu', name: '东道' },       // 秘鲁黄 - 杜伏威楚政权(历阳)
+    { id: 'lu', name: '庐州' },
+       // 秘鲁黄 - 杜伏威楚政权(历阳)
     { id: 'kumo', name: '奚族' },
     { id: 'xijue', name: '十箭' },
     { id: 'xian_d', name: '冼氏' },          // 绯红 - 冼夫人高凉冼氏(高凉)
@@ -278,7 +280,6 @@ export const FACTIONS: Faction[] = [
     { id: 'ongut', name: '汪古' },
     // 暗板岩灰 - 斡亦剌部(谦河之源/叶尼塞河上游)
     // 大同上褐 - 孛罗帖木儿集团(大同)
-    { id: 'red_turban', name: '红巾' },
     { id: 'xushouhui', name: '天完' },              // 徐寿辉@蕲春·红巾军（元末）
     { id: 'zhangshicheng', name: '大周' },
     { id: 'luoping', name: '罗平' },
@@ -364,7 +365,6 @@ export const FACTIONS: Faction[] = [
     // 第一类：农民革命政权
     { id: 'taiping', name: '太平天国' },
     { id: 'dacheng', name: '大成' },
-    { id: 'han_nian', name: '捻汉' },
     { id: 'han_dadian', name: '大捻' },             // 李永和蓝朝鼎捻军（兴势）
 
     // 第二类：少数民族起义
@@ -715,8 +715,9 @@ export const FACTIONS: Faction[] = [
     { id: 'ning', name: '宁州' },
     { id: 'danyang', name: '宣州' },       // 宣州(芜湖/鸠兹)
     { id: 'huai', name: '淮州' },
-    { id: 'huaiyang', name: '淮阳' },   // 淮阳郡治宛丘(陈州)
-    { id: 'cai', name: '蔡州' },
+    { id: 'huaiyang', name: '淮阳' },
+   // 淮阳郡治宛丘(陈州)
+    { id: 'cai', name: '蔡国' },
     { id: 'machu', name: '马楚' },
     { id: 'shangzhou', name: '商州' },   // 旗号上洛(商邑=商州治；避与商字重)
     { id: 'ying', name: '郢州' },
@@ -809,10 +810,17 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 新增：明末精锐（天雄/潼津）──
     { id: 'tianxiong', name: '魏博' },           // 卢象升天雄军@大名（贾庄标志战；旗号魏博≠番号天雄军）
     { id: 'sunqin', name: '潼津' },
-    // ── 2026-06-11 新增：中原走廊16核补点（淮西—豫东）──
-    { id: 'yingzhou_d', name: '颍州' },           // 颍@汝阴（颍州治；避与据点名重复）
-    { id: 'yanchuan_d', name: '郾川' },           // 郾@郾城（颍川郡郾县；原漯河旗号改郾）
-    { id: 'huang_d', name: '黄国' },              // 黄@潢川（春秋黄国故地/光州）
-    { id: 'qiguo_d', name: '杞国' },              // 杞@雍丘（杞国故都）
-    { id: 'hao_d', name: '濠州' },                // 濠@钟离（濠州治钟离县）
+    // ── 2026-06-11 中原走廊21座（淮西—豫东—江淮西翼）──
+    { id: 'yingzhou_d', name: '颍州' },           // 颍@汝阴
+    { id: 'yanchuan_d', name: '郾川' },           // 郾@郾城
+    { id: 'huang_d', name: '黄国' },              // 黄@潢川
+    { id: 'qiguo_d', name: '杞国' },              // 杞@雍丘
+    { id: 'yiyang_d', name: '义阳' },             // 义@武胜关
+    { id: 'yanling_d', name: '鄢国' },            // 鄢@鄢陵
+    { id: 'guan_d', name: '管仲' },               // 管@颍上
+    { id: 'mengcheng_d', name: '蒙城' },          // 蒙@蒙城
+    { id: 'guide_d', name: '归德府' },            // 归德@永城（归德府/州治）
+    { id: 'zhu', name: '朱氏' },                  // 朱@凤阳（凤阳朱氏/明皇族祖籍）
+    { id: 'lulin', name: '绿林' },                // 绿林@昆阳（新莽末起义；昆阳之战）
+    { id: 'dang_d', name: '砀郡' },               // 砀@虞城（汉砀郡；豫东梁国属县）
     ];

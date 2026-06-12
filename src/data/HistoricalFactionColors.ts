@@ -19,6 +19,7 @@ const _FIXED: Record<string, string> = {
     sui: '#B83030', // 隋
     song: '#DC4850', // 宋（明亮珊瑚红；与大明深绛对照）
     ming_d: '#7A1418', // 大明（深绛暗红；南京↔临安邻近易混）
+    zhu: '#B83828', // 朱·凤阳朱氏（明皇族祖籍，赤朱红）
     chu: '#C03028', // 楚
     yue_d: '#D03030', // 岳（黑旗白字，史料固定；见 FLAG_TEXT_WHITE_STYLE_FACTIONS）
     xichu: '#B03830', // 西楚
