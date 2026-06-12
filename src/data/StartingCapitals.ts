@@ -86,7 +86,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yue_d': 'city_baling',
     'qian_d': 'city_jiaxing',
     'kong_d': 'city_qufu',
-    'cao_d': 'city_qiaojun',
+'cao_d': 'city_qiaojun',
     'jiaodong': 'city_jimo',
     'jibei': 'city_boyang',
     'wusun': 'city_chigucheng',
@@ -146,8 +146,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'murong': 'city_chaoyang',
     'erzhu': 'city_xiurongchuan',
 
-    'xu': 'city_xucheng',
-    'cangtou': 'city_xinyang',
+'xu': 'city_xucheng',
 
 'zhai_han': 'city_fushi',
     'yin': 'city_hejian',
@@ -210,7 +209,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'tatar': 'city_tatar',
     'merkit': 'city_merkit',
     'ongut': 'city_jingzhou',
-    'red_turban': 'city_shunchang',
+'red_turban': 'city_xinyang',
     'zhangshicheng': 'city_changzhou',
     'nanyue': 'city_longchuan',
     'guangzhou': 'city_panyu',
@@ -483,7 +482,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'wuzhumuqin': 'city_wuliyasitai',
     'xingan': 'city_halagaitu2',
     'zhadalan': 'city_kuoyitian',
-    'zhu': 'city_fengyang',
     'zhuerqi': 'city_sangguer',
     'chechen': 'city_bayantumen',
     'pisha': 'city_mazhatage',
@@ -539,7 +537,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'jilin': 'city_kuanchengzi',
     'sunite': 'city_saihantala',
     'dayuzi': 'city_sailan',
-    'yingchuan': 'city_yancheng2',
     'keerqin': 'city_daerhan',
     // -- 2026-05-31 民族起源地6势力 --
     'xiangxiong': 'city_qionglong',
@@ -614,4 +611,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'wangyan': 'city_feihu',
     'tianxiong': 'city_daming',
     'sunqin': 'city_tongguan',
+    'yingzhou_d': 'city_shunchang',
+    'yanchuan_d': 'city_yancheng2',
+    'huang_d': 'city_huangchuan',
+    'qiguo_d': 'city_yongqiu',
+    'hao_d': 'city_zhongli_anhui',
 };

@@ -26,7 +26,7 @@ const TIER6_UPRISING = new Set([
     'wazhai', 'red_turban', 'xushouhui', 'haoding', 'yang_aner', 'chimei',
     'dashun', 'daxi_ming', 'hongguang', 'longwu', 'yongli', 'baibo',
     'bailian', 'liwang', 'taiping', 'zhangshicheng',
-    'cangtou', 'dengmaoqi', 'linshihong', 'yezongliu',
+    'dengmaoqi', 'linshihong', 'yezongliu',
     'fangla', 'liutong_yangqing',
     'qianhui',
     'miao_qing', 'miaomin',

@@ -50,7 +50,6 @@ export class EventParser {
         '陆浑': 'luhun', '陆浑戎': 'luhun',
         '卫国': 'wey', '卫': 'wey',
         '徐国': 'xu', '徐': 'xu',
-        '苍头军': 'cangtou', '苍头': 'cangtou',
 
         // 汉朝补全半成品势力 (2026-05-25)
         '铜马': 'tongma', '铜马军': 'tongma',
@@ -71,8 +70,9 @@ export class EventParser {
         '吕布': 'lvbu', '吕奉先': 'lvbu', '下邳': 'lvbu',
         '陷阵营': 'lvbu', '高顺': 'lvbu',
         '临洮': 'didao', '狄道': 'didao', '狄道县': 'didao', '飞熊军': 'didao',
-        '袁': 'yuan_cj_d', '袁氏': 'yuan_cj_d', '袁绍': 'yuan_cj_d', '悬瓠': 'yuan_cj_d',
+        '袁': 'yuan_cj_d', '袁氏': 'yuan_cj_d', '袁绍': 'yuan_cj_d', '悬瓠': 'yuan_cj_d', '汝南': 'yuan_cj_d',
         '先登死士': 'yuan_cj_d', '麴义': 'yuan_cj_d',
+        '蔡': 'cai', '新蔡': 'cai',
         '乌桓': 'wuhuan', '乌桓突骑': 'wuhuan', '白狼山': 'wuhuan',
         '摧锋军': 'guangzhou', '广州': 'guangzhou', '番禺': 'guangzhou',
         '南越': 'nanyue', '南越国': 'nanyue', '赵佗': 'nanyue', '龙川': 'nanyue',
@@ -181,7 +181,13 @@ export class EventParser {
         '孛罗': 'boluo', '孛罗帖木儿': 'boluo', '大同孛罗': 'boluo',
         // 第五类：元末起义政权
         '红巾军': 'xushouhui', '徐寿辉': 'xushouhui', '天完': 'xushouhui', '蕲春': 'xushouhui', '蕲水': 'xushouhui',
-        '韩山童': 'red_turban', '刘福通': 'red_turban', '亳州': 'red_turban', '颍州': 'red_turban', '红巾': 'red_turban',
+        '韩山童': 'red_turban', '刘福通': 'red_turban', '红巾': 'red_turban',
+        '亳州': 'cao_d', '谯县': 'cao_d', '谯都': 'cao_d',
+        '颍州': 'yingzhou_d', '汝阴': 'yingzhou_d', '顺昌': 'yingzhou_d',
+        '郾城': 'yanchuan_d', '郾': 'yanchuan_d',
+        '潢川': 'huang_d', '光州': 'huang_d',
+        '雍丘': 'qiguo_d', '杞': 'qiguo_d',
+        '钟离': 'hao_d', '濠州': 'hao_d',
         '张士诚': 'zhangshicheng', '大周': 'zhangshicheng', '高邮': 'zhangshicheng', '周王': 'zhangshicheng',
         '罗平国': 'luoping', '林桂芳': 'luoping', '欧南喜': 'luoping', '新会': 'luoping',
         '大兴国': 'daxing', '杨镇龙': 'daxing', '宁海': 'daxing',

@@ -264,7 +264,6 @@ const _FIXED: Record<string, string> = {
     mi_chu: '#8B6848', // 芈氏·左右广军（云梦褐；避 xiliang 撞色）
     nanyue: '#6B4423', // 南越（龙川）
     guangzhou: '#8B6914', // 广州·摧锋军（番禺赭黄）
-    zhu: '#B83828', // 朱·凤阳朱氏（明皇族祖籍，赤朱红）
     // chu/song/chen/xiao_d/yue_d/ming_d/haoding 见南方表
 
     // ── 黑·水德尚黑 / 契丹黑旗 ──

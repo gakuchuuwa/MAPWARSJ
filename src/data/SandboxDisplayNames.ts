@@ -88,7 +88,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yue_d': '岳',
     'qian_d': '钱',
     'kong_d': '孔',
-    'cao_d': '曹',
+'cao_d': '曹',
     'jiujiang': '浔',
 
     'quanrong': '犬戎',
@@ -170,8 +170,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'murong': '慕容',
     'erzhu': '尔朱',
 
-    'xu': '徐',
-    'cangtou': '苍头',
+'xu': '徐',
 
     // 2026-05-25 汉朝核对追加势力
 'zhai_han': '翟',
@@ -247,7 +246,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tatar': '塔塔',
     'merkit': '蔑儿',
 'ongut': '汪古',
-    'red_turban': '红巾',
+'red_turban': '红巾',
     'xushouhui': '天完',
     'zhangshicheng': '大周',
     'luoping': '罗平',
@@ -573,7 +572,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'wuzhumuqin': '乌珠',
     'xingan': '兴安',
     'zhadalan': '扎答',
-    'zhu': '朱',
     'zhuerqi': '主儿',
     'chechen': '车臣',
 'panjun': '叛军',
@@ -632,7 +630,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jilin': '吉林',
     'sunite': '苏尼',
     'dayuzi': '大玉',
-    'yingchuan': '漯',
     'weiwuer': '维吾',
     'wensu': '温宿',
     'keerqin': '科尔',
@@ -697,4 +694,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wangyan': '太行',
     'tianxiong': '魏博',
     'sunqin': '潼津',
+    'yingzhou_d': '颍',
+    'yanchuan_d': '郾',
+    'huang_d': '黄',
+    'qiguo_d': '杞',
+    'hao_d': '濠',
 };

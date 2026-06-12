@@ -16715,7 +16715,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [118.2, 33.5],
+                    [116.97, 33.63],
                     [117.9287, 33.472216],
                     [117.870959, 33.468092],
                     [117.86271, 33.480465],
@@ -18053,7 +18053,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "新蔡-顺昌",
+                name: "新蔡-汝阴",
                 type: "road",
                 id: "road_city_chenjun_city_shunchang_1780157781797",
                 startConnection: "city_chenjun",
@@ -26726,35 +26726,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "凤阳-清流关",
-                type: "road",
-                id: "road_city_fengyang_city_qingliuguan_1781182246241",
-                startConnection: "city_fengyang",
-                endConnection: "city_qingliuguan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [117.3038, 32.9469],
-                    [117.701857, 32.738069],
-                    [117.718355, 32.713323],
-                    [117.726604, 32.647332],
-                    [117.718355, 32.622585],
-                    [117.664737, 32.55247],
-                    [117.743101, 32.498853],
-                    [117.86271, 32.511226],
-                    [117.903954, 32.511226],
-                    [117.941074, 32.502977],
-                    [117.978194, 32.457609],
-                    [118.04006, 32.424613],
-                    [118.089553, 32.366871],
-                    [118.25, 32.28],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "宁远-徒河",
                 type: "road",
                 id: "road_city_ningyuan_city_tuhe_1781182342587",
@@ -27121,35 +27092,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "凤阳-寿春",
-                type: "road",
-                id: "road_city_fengyang_city_shouxian_1781183436169",
-                startConnection: "city_fengyang",
-                endConnection: "city_shouxian"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [117.3038, 32.9469],
-                    [117.35953, 32.931917],
-                    [117.244046, 32.960788],
-                    [117.206927, 32.956664],
-                    [117.173432, 32.924669],
-                    [117.169688, 32.851345],
-                    [117.116222, 32.837755],
-                    [117.104421, 32.822292],
-                    [117.085867, 32.766059],
-                    [117.078298, 32.699083],
-                    [117.068126, 32.689765],
-                    [117.010753, 32.668036],
-                    [116.96771, 32.618461],
-                    [116.8, 32.59],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "盱眙-广陵",
                 type: "road",
                 id: "road_city_zhongli_city_yangzhou_1781183476235",
@@ -27179,86 +27121,26 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "雉河集-凤阳",
+                name: "符离-钟离",
                 type: "road",
-                id: "road_city_zhiheji_city_fengyang_1781183509170",
-                startConnection: "city_zhiheji",
-                endConnection: "city_fengyang"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [116.22, 33.5],
-                    [116.336673, 33.385604],
-                    [116.365544, 33.369106],
-                    [116.505775, 33.27012],
-                    [116.588263, 33.19588],
-                    [116.695498, 33.142263],
-                    [116.888061, 33.070436],
-                    [116.951212, 33.010281],
-                    [117.079069, 32.94429],
-                    [117.169807, 32.960788],
-                    [117.206927, 32.956664],
-                    [117.244046, 32.960788],
-                    [117.326535, 32.952539],
-                    [117.3038, 32.9469],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "凤阳-盱眙",
-                type: "road",
-                id: "road_city_fengyang_city_zhongli_1781183622391",
-                startConnection: "city_fengyang",
-                endConnection: "city_zhongli"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [117.3038, 32.9469],
-                    [117.520341, 33.001743],
-                    [117.599961, 32.967397],
-                    [117.672986, 32.977286],
-                    [117.705982, 32.993783],
-                    [117.734853, 33.043276],
-                    [117.783946, 33.054063],
-                    [117.825694, 33.036078],
-                    [117.888927, 33.049831],
-                    [117.898855, 33.075141],
-                    [117.912203, 33.129889],
-                    [117.947276, 33.169013],
-                    [117.979015, 33.168158],
-                    [118.034109, 33.161078],
-                    [118.151134, 33.177558],
-                    [118.216238, 33.117051],
-                    [118.248139, 33.013292],
-                    [118.289073, 32.978339],
-                    [118.314138, 32.970974],
-                    [118.497, 33.011],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "符离-盱眙",
-                type: "road",
-                id: "road_city_xucheng_city_zhongli_1781183676357",
+                id: "road_city_xucheng_city_zhongli_anhui_1781183676357",
                 startConnection: "city_xucheng",
-                endConnection: "city_zhongli"
+                endConnection: "city_zhongli_anhui"
             },
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [118.2, 33.5],
-                    [118.176166, 33.364981],
-                    [118.176166, 33.224751],
-                    [118.233908, 33.167009],
-                    [118.29165, 33.134014],
-                    [118.332894, 33.12164],
-                    [118.497, 33.011],
+                    [116.97, 33.63],
+                    [117.032, 33.553],
+                    [117.094, 33.476],
+                    [117.156, 33.399],
+                    [117.218, 33.322],
+                    [117.28, 33.245],
+                    [117.342, 33.168],
+                    [117.404, 33.091],
+                    [117.466, 33.014],
+                    [117.528, 32.937],
+                    [117.59, 32.86],
                 ]
             }
         },
@@ -29976,6 +29858,214 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [107.8, 12.87],
                 ]
             }
+        },,
+        {
+            type: "Feature",
+            properties: {
+                name: "武胜关-潢川",
+                type: "road",
+                id: "road_city_wushengguan_city_huangchuan_1781184000001",
+                startConnection: "city_wushengguan",
+                endConnection: "city_huangchuan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [114.07, 31.75],
+                    [114.168, 31.788],
+                    [114.266, 31.826],
+                    [114.364, 31.864],
+                    [114.462, 31.902],
+                    [114.56, 31.94],
+                    [114.658, 31.978],
+                    [114.756, 32.016],
+                    [114.854, 32.054],
+                    [114.952, 32.092],
+                    [115.05, 32.13],
+                ]
+            }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "潢川-汝南",
+                type: "road",
+                id: "road_city_huangchuan_city_xuanhu_1781184000002",
+                startConnection: "city_huangchuan",
+                endConnection: "city_xuanhu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [115.05, 32.13],
+                    [114.981, 32.218],
+                    [114.912, 32.306],
+                    [114.843, 32.394],
+                    [114.774, 32.482],
+                    [114.705, 32.57],
+                    [114.636, 32.658],
+                    [114.567, 32.746],
+                    [114.498, 32.834],
+                    [114.429, 32.922],
+                    [114.36, 33.01],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "汴梁-雍丘",
+                type: "road",
+                id: "road_city_bianliang_city_yongqiu_1781184000003",
+                startConnection: "city_bianliang",
+                endConnection: "city_yongqiu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [114.31, 34.8],
+                    [114.357, 34.775],
+                    [114.404, 34.75],
+                    [114.451, 34.725],
+                    [114.498, 34.7],
+                    [114.545, 34.675],
+                    [114.592, 34.65],
+                    [114.639, 34.625],
+                    [114.686, 34.6],
+                    [114.733, 34.575],
+                    [114.78, 34.55],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "雍丘-商丘",
+                type: "road",
+                id: "road_city_yongqiu_city_shangqiu_1781184000004",
+                startConnection: "city_yongqiu",
+                endConnection: "city_shangqiu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [114.78, 34.55],
+                    [114.867, 34.536],
+                    [114.954, 34.522],
+                    [115.041, 34.508],
+                    [115.128, 34.494],
+                    [115.215, 34.48],
+                    [115.302, 34.466],
+                    [115.389, 34.452],
+                    [115.476, 34.438],
+                    [115.563, 34.424],
+                    [115.65, 34.41],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "寿春-钟离",
+                type: "road",
+                id: "road_city_shouxian_city_zhongli_anhui_1781184000005",
+                startConnection: "city_shouxian",
+                endConnection: "city_zhongli_anhui"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [116.8, 32.59],
+                    [116.879, 32.617],
+                    [116.958, 32.644],
+                    [117.037, 32.671],
+                    [117.116, 32.698],
+                    [117.195, 32.725],
+                    [117.274, 32.752],
+                    [117.353, 32.779],
+                    [117.432, 32.806],
+                    [117.511, 32.833],
+                    [117.59, 32.86],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "钟离-合肥",
+                type: "road",
+                id: "road_city_zhongli_anhui_city_hefei_1781184000006",
+                startConnection: "city_zhongli_anhui",
+                endConnection: "city_hefei"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [117.59, 32.86],
+                    [117.558, 32.76],
+                    [117.526, 32.66],
+                    [117.494, 32.56],
+                    [117.462, 32.46],
+                    [117.43, 32.36],
+                    [117.398, 32.26],
+                    [117.366, 32.16],
+                    [117.334, 32.06],
+                    [117.302, 31.96],
+                    [117.27, 31.86],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "彭城-符离",
+                type: "road",
+                id: "road_city_pengcheng_city_xucheng_1781184000007",
+                startConnection: "city_pengcheng",
+                endConnection: "city_xucheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [117.19, 34.27],
+                    [117.168, 34.206],
+                    [117.146, 34.142],
+                    [117.124, 34.078],
+                    [117.102, 34.014],
+                    [117.08, 33.95],
+                    [117.058, 33.886],
+                    [117.036, 33.822],
+                    [117.014, 33.758],
+                    [116.992, 33.694],
+                    [116.97, 33.63],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "雉河集-寿春",
+                type: "road",
+                id: "road_city_zhiheji_city_shouxian_1781184100001",
+                startConnection: "city_zhiheji",
+                endConnection: "city_shouxian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [116.22, 33.5],
+                    [116.278, 33.391],
+                    [116.336, 33.282],
+                    [116.394, 33.173],
+                    [116.452, 33.064],
+                    [116.51, 32.955],
+                    [116.568, 32.846],
+                    [116.626, 32.737],
+                    [116.684, 32.628],
+                    [116.742, 32.519],
+                    [116.8, 32.59],
+                ]
+            }
+        }
     ]
 };

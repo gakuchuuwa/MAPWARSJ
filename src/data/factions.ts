@@ -177,9 +177,8 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'wey', name: '卫国' },          // 卫红 - 卫国(濮阳)
-    { id: 'xu', name: '徐国' },           // 徐土黄 - 徐国(符离集/宿州北)
-    { id: 'cangtou', name: '苍头' },
-
+    { id: 'xu', name: '徐国' },
+           // 徐土黄 - 徐国(符离集/宿州北)
     // ── 2026-05-26 新增：汉朝补全半成品势力 ──
     { id: 'tongma', name: '铜马' },
     { id: 'dongxian', name: '海西' },
@@ -687,7 +686,6 @@ export const FACTIONS: Faction[] = [
     { id: 'wuzhumuqin', name: '乌珠穆沁' },
     { id: 'xingan', name: '兴安' },
     { id: 'zhadalan', name: '扎答兰' },
-    { id: 'zhu', name: '朱' },
     { id: 'zhuerqi', name: '主儿乞' },
     { id: 'chechen', name: '车臣' },
     { id: 'panjun', name: '叛军' },
@@ -749,7 +747,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jilin', name: '吉林' },
     { id: 'sunite', name: '苏尼特' },
     { id: 'dayuzi', name: '大玉兹' },
-    { id: 'yingchuan', name: '漯河' },       // 漯河/郾城
+    // 漯河/郾城
     { id: 'weiwuer', name: '维吾尔' },
     { id: 'wensu', name: '温宿' },
     { id: 'keerqin', name: '科尔沁' },
@@ -811,4 +809,10 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 新增：明末精锐（天雄/潼津）──
     { id: 'tianxiong', name: '魏博' },           // 卢象升天雄军@大名（贾庄标志战；旗号魏博≠番号天雄军）
     { id: 'sunqin', name: '潼津' },
+    // ── 2026-06-11 新增：中原走廊16核补点（淮西—豫东）──
+    { id: 'yingzhou_d', name: '颍州' },           // 颍@汝阴（颍州治；避与据点名重复）
+    { id: 'yanchuan_d', name: '郾川' },           // 郾@郾城（颍川郡郾县；原漯河旗号改郾）
+    { id: 'huang_d', name: '黄国' },              // 黄@潢川（春秋黄国故地/光州）
+    { id: 'qiguo_d', name: '杞国' },              // 杞@雍丘（杞国故都）
+    { id: 'hao_d', name: '濠州' },                // 濠@钟离（濠州治钟离县）
     ];
