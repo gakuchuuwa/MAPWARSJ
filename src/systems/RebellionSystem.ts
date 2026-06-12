@@ -1,5 +1,5 @@
 import { CityManager } from '../world/CityManager';
-import { TimeSystem } from '../app/TimeSystem';
+import { TimeSystem, Season } from '../app/TimeSystem';
 import { getCityRegion, REGION_LABELS, RegionType } from './RegionSystem';
 import { gameLog } from '../utils/GameLogger';
 import { City } from '../types/core';
@@ -41,8 +41,8 @@ export class RebellionSystem {
 
         this.initializeCaches();
 
-        this.timeSystem.onYearChange((year: number) => {
-            this.executeYearlyRebellion(year);
+        this.timeSystem.onSeasonChange((season: Season, year: number) => {
+            this.executeSeasonalRebellion(season, year);
         });
     }
 
@@ -172,7 +172,7 @@ export class RebellionSystem {
         return { city, priorityExtinctCulture };
     }
 
-    private executeYearlyRebellion(year: number): void {
+    private executeSeasonalRebellion(season: Season, year: number): void {
         const cities = this.cityManager.getCities();
         if (cities.length === 0) return;
 
@@ -194,19 +194,19 @@ export class RebellionSystem {
         const dominantCount = cultureCityCount.get(dominantCulture) ?? 0;
         const dominantLabel = REGION_LABELS[dominantCulture] ?? dominantCulture;
 
-        // ── 2026-06-12 增加复国系统触发阈值（防独大而非前期惩罚） ──
-        // 统计该文化占领了多少个“非本土”据点（帝国过度扩张指标）
-        let foreignCityCount = 0;
-        cities.forEach((city) => {
-            if (!city.factionId || city.factionId === 'panjun') return;
-            if (this.getFactionNativeRegion(city.factionId) === dominantCulture && getCityRegion(city) !== dominantCulture) {
-                foreignCityCount++;
-            }
-        });
+        // ── 2026-06-12 阶梯式季度复国 ──
+        let shouldRebel = false;
+        if (dominantCount >= 160) {
+            shouldRebel = true; // 春、夏、秋、冬皆触发（4次/年）
+        } else if (dominantCount >= 120) {
+            shouldRebel = (season !== Season.冬); // 春、夏、秋触发（3次/年）
+        } else if (dominantCount >= 80) {
+            shouldRebel = (season === Season.春 || season === Season.秋); // 春、秋触发（2次/年）
+        } else if (dominantCount >= 40) {
+            shouldRebel = (season === Season.春); // 仅春季触发（1次/年）
+        }
 
-        // 阈值：总城池数 >= 40 且 跨区占领 >= 10 时，才算真正的“一家独大”
-        if (dominantCount < 40 || foreignCityCount < 10) {
-            // 未达到独大标准，本年不触发复国
+        if (!shouldRebel) {
             return;
         }
 
@@ -235,13 +235,15 @@ export class RebellionSystem {
         });
 
         if (validTargetCities.length === 0) {
+            // 为避免每个季度都刷屏，如果只是没找到目标，不强行写日志，或者仅春季写日志（可选）
+            // 这里为了让玩家感受到霸主的阻力，依然打印跳过日志。
             const skipReason =
                 blockedByLegions > 0
                     ? `可起义据点均仍有军团驻守或正被围攻（${blockedByLegions}座），本轮跳过`
                     : '但无无主异文化占领据点可起义，本轮跳过';
             gameLog(
                 'world',
-                `📜 【复国】${this.formatYear(year)}：${dominantLabel}文化扩张极度强势（总计${dominantCount}城，跨区${foreignCityCount}城），${skipReason}。`
+                `📜 【复国】${this.formatYear(year)}：${dominantLabel}文化扩张极度强势（总计${dominantCount}城），${skipReason}。`
             );
             return;
         }

@@ -94,7 +94,6 @@ export const FACTIONS: Faction[] = [
     { id: 'kong_d', name: '孔氏' },
     { id: 'cao_d', name: '曹氏' },
     { id: 'jiujiang', name: '柴桑' },       // 橄榄 - 柴桑/浔阳(九江郡)
-    { id: 'zhang2_d', name: '章氏' },
     { id: 'jiaodong', name: '胶东' },
     { id: 'huangfu', name: '皇甫' },
 { id: 'guo', name: '果州' },
@@ -190,7 +189,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 新增：汉朝核对追加势力 ──
     { id: 'zhai_han', name: '翟国' },
     { id: 'yin', name: '殷国' },
-    { id: 'yingbu', name: '九江' },      // 陶褐 - 英布/九江王(六县)
+    { id: 'liu', name: '九江' },      // 陶褐 - 英布/九江王(六县)
     { id: 'ouyue', name: '瓯越' },
 
     // ── 2026-05-26 新增：三国核对追加势力 ──
@@ -216,7 +215,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zhuliang_d', name: '朱梁' },         // 后梁@濮阳（大名让位天雄；汴梁属魏都大梁）
     { id: 'zu_d', name: '祖氏' },
     { id: 'wanyan_d', name: '完颜氏' },         // 女真完颜部族；≠政权大金(dajin)
-    { id: 'aisin_d', name: '爱新觉罗' },        // 建州女真皇族；≠大清(manzhou_d)
+    { id: 'aisin_d', name: '爱新觉罗' },        // 旗号爱新；≠大清(manzhou_d)
     { id: 'sunwu_d', name: '孙吴' },
 
     // ── 2026-05-26 新增：隋朝核对追加势力 ──
@@ -682,6 +681,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wuzhumuqin', name: '乌珠穆沁' },
     { id: 'xingan', name: '兴安' },
     { id: 'zhadalan', name: '扎答兰' },
+    { id: 'zhu', name: '朱' },
     { id: 'zhuerqi', name: '主儿乞' },
     { id: 'chechen', name: '车臣' },
     { id: 'panjun', name: '叛军' },
@@ -759,6 +759,7 @@ export const FACTIONS: Faction[] = [
     { id: 'weitou', name: '尉头' },
     { id: 'dangchang', name: '宕昌' },
 
+    { id: 'mi', name: '糜' },
     { id: 'hai2', name: '瀑池' },
     { id: 'fu2', name: '抚州' },
     { id: 'xinping', name: '新平' },
@@ -796,15 +797,7 @@ export const FACTIONS: Faction[] = [
     { id: 'hojo_d', name: '北条' },   // 小田原城；远征精锐「风魔党」
     { id: 'iga_d', name: '伊贺' },    // 名张·伊贺国东境；远征精锐「伊贺众」,
     { id: 'yanda', name: '嚈哒' },
-    { id: 'kushan', name: '贵霜国' },
     { id: 'qincha', name: '钦察' },
-    { id: 'durrani', name: '杜兰尼' },
-    { id: 'rajput', name: '拉杰普特' },
-    { id: 'mughal', name: '莫卧儿' },
-    { id: 'maratha', name: '马拉塔' },
-    { id: 'sikh', name: '锡克' },
-    { id: 'sasan', name: '萨珊' },
-    { id: 'osman', name: '奥斯曼' },
     { id: 'anxi', name: '安西' },
     { id: 'konbaung', name: '贡榜王朝' },
     { id: 'qi_d', name: '戚氏' },

@@ -90,7 +90,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kong_d': '孔',
     'cao_d': '曹',
     'jiujiang': '浔',
-    'zhang2_d': '章',   // 章姓
 
     'quanrong': '犬戎',
     'sushen': '肃慎',
@@ -177,7 +176,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // 2026-05-25 汉朝核对追加势力
 'zhai_han': '翟',
     'yin': '殷',
-    'yingbu': '九江',
+    'liu': '九江',
     'ouyue': '台',
 
     // 2026-05-25 三国核对追加势力
@@ -199,7 +198,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhuliang_d': '朱梁',
     'zu_d': '祖',
     'wanyan_d': '完颜',   // 女真完颜部族；≠大金(dajin)
-    'aisin_d': '爱新觉罗', // 建州女真皇族；≠大清(manzhou_d)
+    'aisin_d': '爱新', // 建州女真皇族；≠大清(manzhou_d)
     'sunwu_d': '孙吴',
 
     // ── 2026-05-25 新增：隋朝核对追加势力 ──
@@ -573,6 +572,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'wuzhumuqin': '乌珠',
     'xingan': '兴安',
     'zhadalan': '扎答',
+    'zhu': '朱',
     'zhuerqi': '主儿',
     'chechen': '车臣',
 'panjun': '叛军',
@@ -658,6 +658,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chunshen': '春申',
     'qian': '矩',
     'wan': '舒',
+    'mi': '糜',
     'hai2': '瀑池',
     'fu2': '抚',
     'xinping': '邠',
@@ -688,15 +689,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xianhai': '咸海',
 'nandou': '难兜',
     'yanda': '嚈哒',
-    'kushan': '贵霜',
     'qincha': '钦察',
-    'durrani': '杜兰尼',
-    'rajput': '拉杰',
-    'mughal': '莫卧',
-    'maratha': '马拉',
-    'sikh': '锡克',
-    'sasan': '萨珊',
-    'osman': '奥斯曼',
     'anxi': '安西',
     'konbaung': '贡榜',
 'qi_d': '戚',

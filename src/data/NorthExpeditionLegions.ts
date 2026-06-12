@@ -17,7 +17,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
 
   // ── §2 北方 12 支 ──
   zhao: '赵边骑',        // 邯郸·§2 #1 赵武灵王胡服骑射
-  yan: '幽州突骑',       // 北京·§2 #2 光武幽州精骑（蓟为幽州治）
+  yan: '幽州突骑',       // 古北口·§2 #2 光武幽州精骑
   gongsun_d: '白马义从', // 襄平·§2 #3 公孙瓒白马义从（辽东据地）
   shizhao_d: '黑槊龙骧', // 邢台·§2 #4 石勒石虎后赵禁军
   yunzhong: '苍头军',    // 盛乐·§2 #5 拓跋珪代北苍头
@@ -28,6 +28,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   yin: '黄龙兵',         // 乐成·§2 #10 北齐黄龙兵（河间；代@代县触防重）
   chile: '两池军',       // 云中·§2 #11 北齐两池军
   murong: '鲜卑燕骑',    // 朝阳·§2 #12 慕容恪连环马铁骑
+  ming_d: '明军三大营',   // 北京·§1 #72–73、#79 五军/神机/三千营合称（自江南凤阳迁）
 
   // ── §1 中原表·地理偏北（用户指定）──
   anshi_d: '曳落河',     // 范阳·§1 #48 安禄山蕃胡骑兵

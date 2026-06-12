@@ -121,7 +121,7 @@ export const T0_CAPITALS: CityDataV2[] = [
     {
         id: 'city_beijing',
         name: '北京',
-        factionId: 'yan',
+        factionId: 'ming_d',
         lat: 39.90, lng: 116.41,
         type: 'big_city',
         troops: 20000,
@@ -542,7 +542,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         tier: 1 },
     { id: 'city_hezhang', name: '可乐城', factionId: 'miao', lat: 27.095807, lng: 104.718933, type: 'small_city', troops: 5000 },
     { id: 'city_tancheng', name: '郯城', factionId: 'dongxian', lat: 34.549568, lng: 118.317261, type: 'small_city', troops: 5000 },
-    { id: 'city_qucheng', name: '朐城', factionId: 'yingbu', lat: 34.529200, lng: 119.132996, type: 'small_city', troops: 5000 },
+    { id: 'city_qucheng', name: '朐城', factionId: 'mi', lat: 34.529200, lng: 119.132996, type: 'small_city', troops: 5000 },
         { id: 'city_baibogu', name: '白波谷', factionId: 'baibo', lat: 36.135621, lng: 112.206116, type: 'small_city', troops: 5000 },
     { id: 'city_baoshan', name: '永昌', factionId: 'ailao', lat: 25.11, lng: 99.16, type: 'small_city', troops: 5000 },
 
@@ -1105,7 +1105,7 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_liuxian',
         name: '六安',
-        factionId: 'zhang2_d',
+        factionId: 'liu',
         lat: 31.75, lng: 116.50,
         type: 'small_city',
         troops: 5000 },
@@ -1283,7 +1283,7 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_angkor', name: '吴哥', factionId: 'chenla',
         lat: 13.41, lng: 103.87, type: 'big_city', troops: 20000, tier: 4,
-        region: 'LINGNAN', note: '真腊都城；岭南南海界西南锚点' },
+        region: 'DIANQIAN', note: '真腊吴哥王朝都城；滇缅文化区' },
     // ── 2026-05-25 明清之际新城市 ──
     { id: 'city_shenyang', name: '沈阳', factionId: 'manzhou_d', lat: 41.802030, lng: 123.436890, type: 'big_city', troops: 20000, tier: 0, note: '大清皇朝都城；≠爱新觉罗氏族旗号(aisin_d@赫图阿拉)' },
     {
@@ -1581,7 +1581,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
 
     // ── 新增关隘（2026-05-26） ──
-    { id: 'city_gubeikou', name: '古北口', factionId: 'panjun', lat: 40.69, lng: 117.16, type: 'pass', troops: 10000, tier: 2 },
+    { id: 'city_gubeikou', name: '古北口', factionId: 'yan', lat: 40.69, lng: 117.16, type: 'pass', troops: 10000, tier: 2 },
     { id: 'city_shimenguan', name: '石门关', factionId: 'panjun', lat: 28.079264, lng: 104.254761, type: 'pass', region: 'BASHU', troops: 10000, note: '岭南环线西北锚点；文化川蜀（入蜀要道）' },
 
 
@@ -1885,7 +1885,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shizhu', name: '石柱', factionId: 'tujia_d', lat: 30.000000, lng: 108.110000, type: 'small_city', region: 'BASHU', troops: 5000, note: '秦良玉土司衙门；白杆兵成军出库地（川东近乡，不取辽东浑河）' },
     { id: 'city_bijie', name: '毕节', factionId: 'shuixi', lat: 27.302000, lng: 105.285000, type: 'small_city', region: 'BASHU', troops: 5000, note: '水西安氏土司治所；罗罗兵（奢香/安邦彦）' },
     { id: 'city_tianyang', name: '田阳', factionId: 'zhuang_d', lat: 23.720000, lng: 106.650000, type: 'small_city', region: 'LINGNAN', troops: 5000, note: '瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地' },
-    { id: 'city_fengyang', name: '凤阳', factionId: 'ming_d', lat: 32.9469, lng: 117.3038, type: 'small_city', region: 'JIANGNAN', troops: 5000, note: '明军三大营龙兴/京营渊源；土木堡战场距居庸关<50km未立城' },
+    { id: 'city_fengyang', name: '凤阳', factionId: 'zhu', lat: 32.9469, lng: 117.3038, type: 'small_city', region: 'JIANGNAN', troops: 5000, note: '凤阳朱氏（明皇族祖籍）；大明已迁北京' },
     { id: 'city_jingkou', name: '濡须口', factionId: 'beifu_d', lat: 31.580000, lng: 117.920000, type: 'small_city', region: 'JIANGNAN', troops: 5000, note: '濡须水入巢湖水口（含山东关/濡须山侧）；魏吴濡须之战古战场' },
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.220000, lng: 115.040000, type: 'small_city', region: 'CENTRAL', troops: 5000, note: '冉魏迁巨鹿；黎阳过密冀南' },
     { id: 'city_ningyuan', name: '宁远', factionId: 'zu_d', lat: 40.618000, lng: 120.720000, type: 'small_city', region: 'NORTH', troops: 5000, note: '关宁铁骑，祖大寿宁远卫（今兴城）' },
@@ -2085,17 +2085,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mengjia', name: '艋舺', factionId: 'panjun', lat: 25.03, lng: 121.50, type: 'small_city', region: 'LINGNAN', troops: 5000, note: '清代台北府淡水厅南境要地，万华故称艋舺' },
     { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'panjun', lat: 25.75, lng: 123.50, type: 'small_city', region: 'JAPAN', troops: 5000, note: '南方/日本环线共用锚点；南方环线所称钓鱼岛城即本据点；明清海图及《隋书·流求国传》等见载' },
     { id: 'city_gugudao', name: '宫古岛', factionId: 'panjun', lat: 24.805, lng: 125.281, type: 'small_city', region: 'JAPAN', troops: 5000, note: '琉球宫古诸岛主岛，见《中山世谱》及明清海图' },
-    { id: 'city_fulou_sha', name: '富楼沙', factionId: 'kushan', lat: 34.015, lng: 71.528, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '贵霜帝国首都 Purushapura' },
-    { id: 'city_qihe', name: '七河', factionId: 'qincha', lat: 44.15, lng: 65.25, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '钦察汗国七河草原核心带' },
-    { id: 'city_kandahar', name: '坎大哈', factionId: 'durrani', lat: 31.628, lng: 65.737, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '杜兰尼王朝首都；第三次帕尼帕特' },
-    { id: 'city_chittor', name: '奇托尔', factionId: 'rajput', lat: 24.882, lng: 74.626, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '梅瓦尔拉杰普特要塞；萨卡殉城' },
-    { id: 'city_delhi', name: '德里', factionId: 'mughal', lat: 28.613, lng: 77.209, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '莫卧儿帝国首都；巴布尔帕尼帕特' },
-    { id: 'city_pune', name: '浦那', factionId: 'maratha', lat: 18.52, lng: 73.856, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '马拉塔帝国中枢；希瓦吉游击' },
-    { id: 'city_amritsar', name: '阿姆利则', factionId: 'sikh', lat: 31.634, lng: 74.872, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '兰吉特·辛格锡克帝国；尼杭武士' },
-    { id: 'city_ctesiphon', name: '克特西丰', factionId: 'sasan', lat: 33.093, lng: 44.58, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '萨珊波斯首都；萨瓦兰具装重骑' },
-    { id: 'city_constantinople', name: '君士坦丁堡', factionId: 'osman', lat: 41.008, lng: 28.978, type: 'pass', region: 'CENTRAL_ASIA', troops: 10000, note: '奥斯曼帝国首都；耶尼切里近卫军' },
+    { id: 'city_qihe', name: '七河', factionId: 'qincha', lat: 44.2219, lng: 64.3332, type: 'small_city', region: 'CENTRAL_ASIA', troops: 5000, note: '钦察汗国七河草原核心带' },
     { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.5697, lng: 95.6981, type: 'small_city', region: 'DIANQIAN', troops: 5000, note: '贡榜王朝龙兴之地；卡塞骑兵' },
-    { id: 'city_lopburi', name: '华富里', factionId: 'panjun', lat: 14.7995, lng: 100.6533, type: 'small_city', region: 'DIANQIAN', troops: 5000, note: '阿瑜陀耶时代重镇华富里（Lopburi）；叛军旗' },
     { id: 'city_hengyu', name: '横屿', factionId: 'qi_d', lat: 26.77, lng: 119.7, type: 'small_city', region: 'JIANGNAN', troops: 5000, note: '嘉靖横屿大捷古战场；戚家军藤牌灭倭标志战' },
-    { id: 'city_jiazhuang', name: '贾庄', factionId: 'panjun', lat: 38.18, lng: 115.20, type: 'small_city', region: 'NORTH', troops: 5000, note: '卢象升天雄军巨鹿贾庄殉国标志战（《明史》蒿水桥）；成军地大名' },
 ];

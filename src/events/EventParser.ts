@@ -33,7 +33,7 @@ export class EventParser {
         // 西汉 (Western Han) - Now mapping to Zhonghua
         '西汉': 'zhonghua', '汉': 'zhonghua', '汉军': 'zhonghua', '炎汉': 'zhonghua',
         '南越': 'yuenan', '吴楚': 'zhonghua', '卫满': 'chaoxian',
-        '东胡': 'donghu', '巴彦乌拉': 'donghu', '契丹': 'qidan', '氐羌': 'qiangzang', '匈奴': 'xiongnu', '贵霜': 'kushan', '罗马': 'xiyang',
+        '东胡': 'donghu', '巴彦乌拉': 'donghu', '契丹': 'qidan', '氐羌': 'qiangzang', '匈奴': 'xiongnu', '罗马': 'xiyang',
 
         // 其他常见映射 (Other Common Mappings)
         '大汉': 'zhonghua', '蜀汉': 'zhonghua', '曹魏': 'wei', '孙吴': 'wu',
@@ -62,7 +62,7 @@ export class EventParser {
         // 汉朝核对追加势力 (2026-05-25)
         '翟': 'zhai_han', '翟国': 'zhai_han', '董翳': 'zhai_han',
         '殷': 'yin', '殷国': 'yin', '司马卬': 'yin', '朝歌': 'yin',
-        '英布': 'yingbu', '九江王': 'yingbu', '六县': 'yingbu',
+        '英布': 'liu', '九江王': 'liu', '六县': 'liu',
         '瓯越': 'ouyue', '东瓯': 'ouyue', '东瓯国': 'ouyue',
 
         // 三国核对追加势力 (2026-05-25)
@@ -400,7 +400,7 @@ export class EventParser {
         '忠孝军': 'qing', '完颜陈和尚': 'qing',
         '铁浮图': 'dajin', '拐子马': 'wanyan_d', '猛安谋克': 'jurchen',
         '关宁铁骑': 'zu_d', '辽东铁骑': 'jinzhou', '东江军': 'mao_wenlong',
-        '巴牙喇': 'aisin_d', '八旗军': 'manzhou', '多铎': 'manzhou_d',
+        '巴牙喇': 'aisin_d', '爱新': 'aisin_d', '爱新觉罗': 'aisin_d', '八旗军': 'manzhou', '多铎': 'manzhou_d',
         '索伦兵': 'hezhe', '黑龙江水师': 'aola', '神贲禁卫': 'bohai',
         '皮室军': 'liao_d', '斡鲁朵': 'qidan', '怯薛': 'menggu_d', '怯薛歹': 'menggu_d',
         '那可儿': 'borjigin', '探马赤': 'ogodei', '秃鲁花': 'yuan_d',
@@ -469,20 +469,12 @@ export class EventParser {
         '大唐安西军': 'anxi', '安西军': 'anxi', '安西': 'anxi', '安西都护府': 'anxi', '拨换城': 'anxi',
 
         // ── 2026-06-11 中亚远征精锐（§13 共 14 支）──
-        '贵霜重装甲骑': 'kushan', '贵霜国': 'kushan', '贵霜帝国': 'kushan', '富楼沙': 'kushan', '迦腻色伽': 'kushan',
         '嚈哒铁骑': 'yanda', '嚈哒': 'yanda', '白匈奴': 'yanda', '阿缓城': 'yanda',
         '古拉姆近卫军': 'saman', '古拉姆': 'saman', '萨曼': 'saman', '萨曼王朝': 'saman', '阿母城': 'saman',
         '花剌子模铁骑': 'huarazim',
         '钦察康里精骑': 'qincha', '钦察': 'qincha', '康里': 'qincha', '七河': 'qincha',
         '帖木儿重装突骑': 'tiemuer', '帖木儿': 'tiemuer', '帖木儿帝国': 'tiemuer', '帖木': 'tiemuer',
         '哈萨克轻骑兵': 'kazakh',
-        '阿卜达里重骑兵': 'durrani', '杜兰尼': 'durrani', '杜兰尼王朝': 'durrani', '坎大哈': 'durrani',
-        '拉杰普特武士': 'rajput', '拉杰普特': 'rajput', '奇托尔': 'rajput', '拉杰': 'rajput',
-        '莫卧儿战象军': 'mughal', '莫卧儿': 'mughal', '莫卧儿帝国': 'mughal', '莫卧': 'mughal', '德里': 'mughal',
-        '马拉塔轻骑兵': 'maratha', '马拉塔': 'maratha', '马拉塔帝国': 'maratha', '马拉': 'maratha', '浦那': 'maratha',
-        '尼杭武士': 'sikh', '尼杭': 'sikh', '锡克': 'sikh', '锡克帝国': 'sikh', '阿姆利则': 'sikh',
-        '萨瓦兰重骑兵': 'sasan', '萨瓦兰': 'sasan', '萨珊': 'sasan', '萨珊波斯': 'sasan', '克特西丰': 'sasan',
-        '耶尼切里近卫军': 'osman', '耶尼切里': 'osman', '奥斯曼': 'osman', '奥斯曼帝国': 'osman', '君士坦丁堡': 'osman',
 
         '吐火罗': 'tokhara', '吐火罗人': 'tokhara', '员渠城': 'tokhara',
         '粟特': 'sogdian', '粟特人': 'sogdian', '粟特商团': 'sogdian', '阿弗拉西阿卜': 'sogdian', '瓦拉赫沙': 'sogdian',
