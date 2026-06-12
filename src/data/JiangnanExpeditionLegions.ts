@@ -18,6 +18,7 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>>
   nantang_d: '黑云长剑都', // 南京·§9 #4 南唐杨行密
   zhong: '北府兵',        // 寿春·§9 #5 谢玄刘牢之（旗=仲·袁术仲家）
   hongguang: '弘光四镇',  // 广陵·南明弘光四镇（高杰刘良佐黄得功刘泽清）
+  lu: '逍遥津死士',       // 合肥·张辽八百破十万（旗=庐·庐州）
   min: '长乐控鹤',        // 冶城·闽国控鹤军（≠武周洛阳控鹤军）
   chen: '建康水军',       // 清远·§9 #6 陈霸先江南水师
   xiao_d: '白袍军',       // 兰陵·§9 #7 陈庆之南梁

@@ -11,7 +11,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   // ── 太行/河北（§1 交叉 + 明末）──
   wangyan: '八字军',     // 飞狐·§9 #12 王彦太行寨；旗=太行（地名§4.1-5，禁人名）
   tianxiong: '天雄军',   // 大名·§1 #75 明史天雄军；旗=魏博
-  chaizhou_d: '殿前诸班', // 太原·§1 #66 后周殿前司创制（954），北宋沿置；旗=柴周（≠临安宋）
   huan: '宣毅军',        // 方渠·§1 #65 环州；范仲淹庆历沿边
   qingyuan_bd: '神臂营', // 保定·§1 #68 河北禁军强弩营（定州路武库）
 
@@ -38,4 +37,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   zhongshan: '静塞军',   // 真定·§1 #64 北宋河北静塞军
   wuhuan: '乌桓突骑',    // 白狼山·§1 #84 曹操收编名骑
   helian: '铁弗卫队',     // 统万城·赫连勃勃铁弗亲卫
+  bing: '并州狼骑',     // 晋阳·并州狼骑
 };

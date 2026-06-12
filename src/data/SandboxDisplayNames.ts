@@ -70,6 +70,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'min': '闽',
 'shatuo': '沙陀',
 'qidan': '契丹',
+    'bing': '并州',
 'bohai': '渤海',
     'jurchen': '女真',
 'dangxiang': '大夏',
@@ -187,7 +188,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
     'anshi_d': '安史',
-    'chaizhou_d': '柴周',
     'tujia_d': '土家',
     'zhuang_d': '壮',
     'xibo_d': '锡伯',
@@ -195,7 +195,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wuwu_d': '无为',
     'shizhao_d': '石赵',
     'ranwei_d': '冉魏',
-    'zhuliang_d': '朱梁',
     'zu_d': '祖',
     'wanyan_d': '完颜',   // 女真完颜部族；≠大金(dajin)
     'aisin_d': '爱新', // 建州女真皇族；≠大清(manzhou_d)

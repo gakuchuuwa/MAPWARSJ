@@ -17,7 +17,6 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   lvbu: '陷阵营',       // 下邳·§1 #23 高顺部曲
   cao_d: '虎豹骑',      // 谯都·§1 #31 曹纯曹真（#32青州兵让位）
   ranwei_d: '乞活军',   // 巨鹿·§1 #41 冉闵陈午
-  zhuliang_d: '魏博牙兵', // 濮阳·§1 #57 后梁/五代魏博（大名让位天雄；#58–61合流）
   wuzhou_d: '控鹤军',   // 洛阳·§1 #47 武则天北衙
   fu: '皂衣队',         // 大散关·§1 #39 苻坚前秦
   shang: '商王射士',    // 安阳·§1 #2 多子族与三百射

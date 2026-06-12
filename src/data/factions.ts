@@ -72,6 +72,7 @@ export const FACTIONS: Faction[] = [
     { id: 'min', name: '闽国' },
     { id: 'shatuo', name: '沙陀' },
     { id: 'qidan', name: '契丹' },
+    { id: 'bing', name: '并州' },
     { id: 'bohai', name: '渤海' },
     { id: 'jurchen', name: '女真' },
     { id: 'dangxiang', name: '大夏' },
@@ -206,7 +207,6 @@ export const FACTIONS: Faction[] = [
     { id: 'yingzhou_ying_d', name: '营州' },
     { id: 'wuzhou_d', name: '武周' },
     { id: 'anshi_d', name: '安史' },
-    { id: 'chaizhou_d', name: '柴周' },         // 后周@晋阳太原
     { id: 'tujia_d', name: '土家族' },          // 旗号土家@石柱
     { id: 'zhuang_d', name: '壮族' },           // 旗号壮@田阳
     { id: 'buyi_d', name: '布依族' },
@@ -218,7 +218,6 @@ export const FACTIONS: Faction[] = [
     { id: 'wuwu_d', name: '无为' },
     { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
     { id: 'ranwei_d', name: '冉魏' },
-    { id: 'zhuliang_d', name: '朱梁' },         // 后梁@濮阳（大名让位天雄；汴梁属魏都大梁）
     { id: 'zu_d', name: '祖氏' },
     { id: 'wanyan_d', name: '完颜氏' },         // 女真完颜部族；≠政权大金(dajin)
     { id: 'aisin_d', name: '爱新觉罗' },        // 旗号爱新；≠大清(manzhou_d)

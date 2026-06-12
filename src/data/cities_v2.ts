@@ -156,13 +156,13 @@ export const T0_CAPITALS: CityDataV2[] = [
     
     {
         id: 'city_taiyuan',
-        name: '太原',
-        factionId: 'chaizhou_d',
+        name: '晋阳',
+        factionId: 'bing',
         lat: 37.87, lng: 112.55,
         type: 'big_city',
         troops: 20000,
         tier: 0,
-        note: '晋阳；后周柴氏河东征战枢纽' },
+        note: '并州治所晋阳' },
     { id: 'city_xiangyang', name: '襄阳', factionId: 'jingzhou', lat: 32.01, lng: 112.12, type: 'medium_city', region: 'JIANGNAN', troops: 10000, tier: 1, note: '荆州治所；三国至宋荆襄枢纽' },
 
     { id: 'city_shouxian', name: '寿春', factionId: 'zhong', lat: 32.59, lng: 116.8, type: 'medium_city', troops: 10000, tier: 1, note: '楚后期都、淮南/寿州治；淮西重镇' },
@@ -236,12 +236,12 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         tier: 1 },
     {
         id: 'city_hejian',
-        name: '乐成',
-        factionId: 'yin',
+        name: '河间',
+        factionId: 'hejian',
         lat: 38.18, lng: 116.12,
         type: 'small_city',
         troops: 5000,
-        note: '河间郡治；界桥之战标志地（先登死士）' },
+        note: '河间郡治（殷迁朝歌）' },
     {
         id: 'city_jingzhou2',
         name: '蓨城',
@@ -1044,7 +1044,7 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_puyang',
         name: '濮阳',
-        factionId: 'zhuliang_d',
+        factionId: 'wey',
         lat: 35.740, lng: 115.040,
         type: 'medium_city',
         troops: 10000,
@@ -1056,7 +1056,7 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_zhaoge',
         name: '朝歌',
-        factionId: 'wey',
+        factionId: 'yin',
         lat: 35.60, lng: 114.18,
         type: 'small_city',
         troops: 5000 },
@@ -1222,7 +1222,7 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_yeren_base', name: '瑷珲', factionId: 'yeren_nvzhen',
         lat: 50.25, lng: 127.50, type: 'small_city', troops: 5000, tier: 4,
-        region: 'NORTH' },
+         },
     { id: 'city_chijin', name: '赤金堡', factionId: 'chijin', lat: 40.000221, lng: 97.437744, type: 'pass', troops: 10000 },
     { id: 'city_anding_qh', name: '苦峪堡', factionId: 'anding_wei', lat: 36.230961, lng: 100.599060, type: 'pass', troops: 10000 },
 
