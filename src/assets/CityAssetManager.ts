@@ -648,13 +648,11 @@ export class CityAssetManager {
 'huang_d': '黄',
 'qiguo_d': '杞',
 'yiyang_d': '义',
-        'mengcheng_d': '蒙',
-        'guan_d': '管',
-        'yanling_d': '鄢',
+'mengcheng_d': '山桑',
         'guide_d': '归德',
-        'zhu': '朱',
         'lulin': '绿林',
         'dang_d': '砀',
+        'hao_d': '濠',
     };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

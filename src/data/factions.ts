@@ -816,11 +816,10 @@ export const FACTIONS: Faction[] = [
     { id: 'huang_d', name: '黄国' },              // 黄@潢川
     { id: 'qiguo_d', name: '杞国' },              // 杞@雍丘
     { id: 'yiyang_d', name: '义阳' },             // 义@武胜关
-    { id: 'yanling_d', name: '鄢国' },            // 鄢@鄢陵
-    { id: 'guan_d', name: '管仲' },               // 管@颍上
-    { id: 'mengcheng_d', name: '蒙城' },          // 蒙@蒙城
+    { id: 'mengcheng_d', name: '山桑' },          // 山桑@蒙城（汉书沛郡山桑县）
     { id: 'guide_d', name: '归德府' },            // 归德@永城（归德府/州治）
-    { id: 'zhu', name: '朱氏' },                  // 朱@凤阳（凤阳朱氏/明皇族祖籍）
     { id: 'lulin', name: '绿林' },                // 绿林@昆阳（新莽末起义；昆阳之战）
     { id: 'dang_d', name: '砀郡' },               // 砀@虞城（汉砀郡；豫东梁国属县）
+    // ── 2026-06-11 新增：濠州（原凤阳朱氏改挂）──
+    { id: 'hao_d', name: '濠州' },                // 濠@蚌埠（隋唐濠州治钟离故地）
     ];

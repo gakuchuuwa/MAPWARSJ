@@ -1907,7 +1907,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_hongzhou', name: '豫章', factionId: 'ning', lat: 28.6828, lng: 115.8575, type: 'small_city', troops: 5000 },
 
     { id: 'city_qingliuguan', name: '清流关', factionId: 'panjun', lat: 32.280000, lng: 118.250000, type: 'pass', troops: 10000, mirror: true },
-    { id: 'city_zhongli', name: '盱眙', factionId: 'huai', lat: 33.011000, lng: 118.497000, type: 'small_city', troops: 5000, note: '淮州治盱眙（钟离另立@濠州）' },
+    { id: 'city_zhongli', name: '盱眙', factionId: 'huai', lat: 33.011000, lng: 118.497000, type: 'small_city', troops: 5000, note: '淮州治盱眙' },
     { id: 'city_bianliang', name: '汴梁', factionId: 'wei', lat: 34.8, lng: 114.31, type: 'small_city', troops: 5000 },
  // [2026-05-30] 升 big_city
     { id: 'city_shangluo', name: '商邑', factionId: 'shangzhou', lat: 33.87, lng: 109.94, type: 'small_city', troops: 5000 },
@@ -2026,11 +2026,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_tingbu', name: '廷布', factionId: 'xiadun', lat: 27.472, lng: 89.639, type: 'small_city', region: 'TIBET', troops: 5000, note: '夏仲阿旺朗杰1616年统一不丹后定夏季都城；清史及藏文史籍称布鲁克巴政教合一政权' },
     { id: 'city_huangchuan', name: '潢川', factionId: 'huang_d', lat: 32.13, lng: 115.05, type: 'small_city', troops: 5000 },
     { id: 'city_yongqiu', name: '雍丘', factionId: 'qiguo_d', lat: 34.55, lng: 114.78, type: 'small_city', troops: 5000 },
-    { id: 'city_mengcheng', name: '蒙城', factionId: 'mengcheng_d', lat: 33.27, lng: 116.56, type: 'small_city', troops: 5000, note: '庄子故里；走廊21座之东纵' },
-    { id: 'city_yingshang', name: '颍上', factionId: 'guan_d', lat: 32.63, lng: 116.26, type: 'small_city', troops: 5000, note: '管仲故里；颍州属县，旗号管' },
-    { id: 'city_yanling', name: '鄢陵', factionId: 'yanling_d', lat: 34.1, lng: 114.18, type: 'small_city', troops: 5000, note: '鄢国故地；郑伯克段于鄢' },
+    { id: 'city_mengcheng', name: '蒙城', factionId: 'mengcheng_d', lat: 33.27, lng: 116.56, type: 'small_city', troops: 5000, note: '汉沛郡山桑县治地；唐天宝改蒙城县；庄子故里（有争议）' },
     { id: 'city_yongcheng', name: '永城', factionId: 'guide_d', lat: 33.93, lng: 116.37, type: 'small_city', troops: 5000, note: '归德府辖；芒砀山/汉高潜居；走廊东翼' },
-    { id: 'city_fengyang', name: '凤阳', factionId: 'zhu', lat: 32.867, lng: 117.515, type: 'small_city', troops: 5000, note: '朱氏祖籍/明太祖龙兴之地（中都）' },
     { id: 'city_kunyang', name: '昆阳', factionId: 'lulin', lat: 33.22, lng: 113.22, type: 'small_city', troops: 5000, note: '昆阳故城（叶县北）；绿林—刘秀昆阳之战' },
     { id: 'city_yucheng', name: '虞城', factionId: 'dang_d', lat: 34.7758, lng: 116.0678, type: 'small_city', troops: 5000, note: '汉砀郡属/虞国故地；豫东商丘东翼' },
+    { id: 'city_bengbu', name: '蚌埠', factionId: 'hao_d', lat: 32.92, lng: 117.38, type: 'small_city', troops: 5000, note: '濠州治钟离故地；淮滨津渡（今蚌埠）' },
     ];
