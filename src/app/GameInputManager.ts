@@ -1,3 +1,4 @@
+import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { GameMap } from '../map/GameMap';
 import { SpeedOverlayRenderer } from '../map/SpeedOverlayRenderer';
 import { VectorRoadEditor } from '../roads/VectorRoadEditor';
@@ -144,6 +145,7 @@ export class GameInputManager {
                 case 's': map.panBy([0, step]); break;
                 case 'a': map.panBy([-step, 0]); break;
                 case 'd': map.panBy([step, 0]); break;
+                case 'p': PerformanceMonitor.getInstance().logSnapshot(); break;
                 case 'h':
                     // Reset Camera / Help
                     this.map.flyTo({ lat: 34.5, lng: 112.5 }, 2, { zoom: 6 });

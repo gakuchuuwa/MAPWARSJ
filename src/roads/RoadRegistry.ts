@@ -41,6 +41,54 @@ interface PathResult {
     coordinates: [number, number][]; // 完整路径坐标 [lng, lat][]
 }
 
+/** Dijkstra 小根堆（替代每轮 array.sort，避免 O(V² log V)） */
+class DijkstraMinHeap {
+    private items: { nodeId: string; dist: number }[] = [];
+
+    get size(): number {
+        return this.items.length;
+    }
+
+    push(item: { nodeId: string; dist: number }): void {
+        this.items.push(item);
+        this.bubbleUp(this.items.length - 1);
+    }
+
+    pop(): { nodeId: string; dist: number } | undefined {
+        if (this.items.length === 0) return undefined;
+        const top = this.items[0];
+        const last = this.items.pop()!;
+        if (this.items.length > 0) {
+            this.items[0] = last;
+            this.bubbleDown(0);
+        }
+        return top;
+    }
+
+    private bubbleUp(i: number): void {
+        while (i > 0) {
+            const parent = (i - 1) >> 1;
+            if (this.items[parent].dist <= this.items[i].dist) break;
+            [this.items[parent], this.items[i]] = [this.items[i], this.items[parent]];
+            i = parent;
+        }
+    }
+
+    private bubbleDown(i: number): void {
+        const n = this.items.length;
+        while (true) {
+            let smallest = i;
+            const left = 2 * i + 1;
+            const right = 2 * i + 2;
+            if (left < n && this.items[left].dist < this.items[smallest].dist) smallest = left;
+            if (right < n && this.items[right].dist < this.items[smallest].dist) smallest = right;
+            if (smallest === i) break;
+            [this.items[smallest], this.items[i]] = [this.items[i], this.items[smallest]];
+            i = smallest;
+        }
+    }
+}
+
 // ===== 主类 =====
 
 export class RoadRegistry {
@@ -249,14 +297,14 @@ export class RoadRegistry {
         const dist = new Map<string, number>();
         const prev = new Map<string, { nodeId: string; edge: GraphEdge }>();
         const visited = new Set<string>();
-        const pq: { nodeId: string; dist: number }[] = [];
+        const pq = new DijkstraMinHeap();
 
         dist.set(startNodeId, 0);
         pq.push({ nodeId: startNodeId, dist: 0 });
 
-        while (pq.length > 0) {
-            pq.sort((a, b) => a.dist - b.dist);
-            const { nodeId: current } = pq.shift()!;
+        while (pq.size > 0) {
+            const entry = pq.pop()!;
+            const current = entry.nodeId;
 
             if (visited.has(current)) continue;
             visited.add(current);
