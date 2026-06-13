@@ -70,7 +70,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'min': '闽',
 'shatuo': '沙陀',
 'qidan': '契丹',
-    'bing': '太原',
+    'bing': '并',
 'bohai': '渤海',
     'jurchen': '女真',
 'dangxiang': '大夏',

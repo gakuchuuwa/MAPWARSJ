@@ -1,13 +1,15 @@
 /**
- * BattleField - 区域战斗管理器
- * 
- * 支持多单位、多势力的混战，每个单位独立计算兵力。
- * 例如：玩家+华夏军团+城市 vs 蒙古军团
- * 
+ * BattleField - 区域战斗管理器（N 对 N 援军混战）
+ *
+ * 攻方一旗 vs 守方一旗（乱斗 1 势力 = 1 旗，无联军）；每侧可有多支**同旗**军团
+ * （多见于：后期占多城的大势力、或回师救城的防守方），各单位独立计兵力。
+ *
  * 设计原则：
- * 1. 势力编组：同一势力的单位自动编为一组
- * 2. 独立兵力：每个单位独立受损，"谁带的兵死谁的"
- * 3. 伤害分配：进攻方总伤害按比例分配给防守方各单位
+ * 1. 一侧 = 一 factionId；同旗援军经 BattleReinforcementPoll 在 30km 圈内实时编入
+ * 2. 独立兵力：每个单位独立受损，「谁带的兵死谁的」
+ * 3. 伤害分配：一侧总伤害按各单位兵力比例分摊（兵多的扛更多）
+ * 4. 援军编入后重算强弱（refreshPredictedSidesFromTotals，按文化修正兵力、不重掷 luck——
+ *    刻意为之：避免每 0.2s 轮询重掷导致胜方闪烁，详见 GAME_DIRECTION 战斗审计）
  */
 
 import { IBattleUnit, BattleType, UnitType } from './CombatSystem';
@@ -26,6 +28,8 @@ export interface BattleFieldUnit {
     unit: IBattleUnit;
     initialTroops: number;
     isDefeated: boolean;
+    /** 编入顺序：0 = 初始主力（军团/驻军），1+ = 援军波次 */
+    waveIndex: number;
 }
 
 export interface FactionGroup {
@@ -56,6 +60,7 @@ export class BattleField {
     private predictedWeakerGroup!: FactionGroup;
     private presetResult?: 'attacker_win' | 'defender_win';
     private customDuration?: number; // [NEW] Director-controlled duration override
+    private nextReinforcementWave = 1; // 下一波援军编号，从 1 开始
 
     // 伤害系数现在从 GameConfig 读取
 
@@ -78,7 +83,8 @@ export class BattleField {
             units: attackerUnits.map(u => ({
                 unit: u,
                 initialTroops: u.troops,
-                isDefeated: false
+                isDefeated: false,
+                waveIndex: 0,
             })),
             totalTroops: attackerInitialTotal,
             initialTotalTroops: attackerInitialTotal,
@@ -92,7 +98,8 @@ export class BattleField {
             units: defenderUnits.map(u => ({
                 unit: u,
                 initialTroops: u.troops,
-                isDefeated: false
+                isDefeated: false,
+                waveIndex: 0,
             })),
             totalTroops: defenderInitialTotal,
             initialTotalTroops: defenderInitialTotal,
@@ -305,7 +312,7 @@ export class BattleField {
      * 分配策略：按兵力比例分配（兵多的扛更多伤害）
      * 这模拟了"前线接战"的概念
      */
-    private distributeDamage(group: FactionGroup, totalDamage: number, damageMultiplier: number = 1.0): void {
+    private distributeDamage(group: FactionGroup, totalDamage: number): void {
         const aliveUnits = group.units.filter(u => !u.isDefeated && u.unit.troops > 0);
         if (aliveUnits.length === 0) return;
 
@@ -314,20 +321,11 @@ export class BattleField {
         if (totalTroops <= 0 || isNaN(totalTroops)) return;
 
         aliveUnits.forEach(bu => {
-            // 按兵力比例分配伤害
+            // 按兵力比例分配伤害（兵多的扛更多）
             const ratio = bu.unit.troops / totalTroops;
             let damage = totalDamage * ratio;
 
-            // [NEW] Apply Flanking Damage Multiplier
-            // Override: If Director Mode (customDuration set), disable dynamic multipliers to ensure strict timing
-            if (this.customDuration) {
-                // Force linear damage to respect targetDuration
-                damage *= 1.0;
-            } else {
-                damage *= damageMultiplier;
-            }
-
-            // 检查无敌状态
+            // 无敌状态（武将技「临时不掉血」等可用，见 IBattleUnit.isInvincible）
             if (bu.unit.isInvincible) {
                 damage = 0;
             }
@@ -543,10 +541,12 @@ export class BattleField {
         }
 
         const joinedTroops = unit.troops;
+        const wave = this.nextReinforcementWave++;
         group.units.push({
             unit,
             initialTroops: joinedTroops,
-            isDefeated: false
+            isDefeated: false,
+            waveIndex: wave,
         });
         group.initialTotalTroops += joinedTroops;
 
@@ -593,6 +593,13 @@ export class BattleField {
     public hasParticipant(unitId: string): boolean {
         const all = [...this.attackerGroup.units, ...this.defenderGroup.units];
         return all.some((p) => p.unit.id === unitId);
+    }
+
+    /** 查询单位在战场中的波次编号（0 = 主力，1+ = 援军波次） */
+    public getUnitWaveIndex(unitId: string): number {
+        const all = [...this.attackerGroup.units, ...this.defenderGroup.units];
+        const found = all.find((p) => p.unit.id === unitId);
+        return found?.waveIndex ?? 0;
     }
 
     /**

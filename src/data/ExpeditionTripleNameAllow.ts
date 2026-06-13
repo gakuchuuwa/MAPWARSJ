@@ -24,7 +24,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'shache', // 莎车·莎车左右骑
   // 中亚
   'yanda', // 嚈哒·嚈哒铁骑
-  'huarazim', // 花剌·花剌子模铁骑
+  'huarazim', // 花剌·花剌子模
   'tiemuer', // 帖木·帖木重装骑
   // 青藏
   'tubo', // 吐蕃·吐蕃桂级骑
@@ -38,7 +38,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'konbaung', // 贡榜·贡榜卡塞骑
   'pyu', // 骠·骠国巨象阵
   'champa', // 占婆·占婆国水师
-  'luchuan', // 麓川·麓川百夷象兵
+  'luchuan', // 麓川·麓川夷象
   'guangzhou', // 广州·摧锋军（广南核心；§9 #15 番禺）
   'chenla', // 真腊·双弓弩象营（吴哥；岭南区）
   // ── 4·家族 ──
@@ -48,10 +48,10 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'tujue', 'shatuo', 'gaoche', 'rouran', 'naiman', 'ongut', 'wala', 'geluolu',
   'qiuci', 'kala', 'yanqi', 'iga_d', 'sambyeol', 'wuhuan',
   'huige', // 回纥·回鹘铁骑
-  'wusun', // 乌孙·乌孙昆莫亲卫
+  'wusun', // 乌孙·昆莫亲卫
   'borjigin', // 孛儿·那可儿军（孛儿只斤）
-  'qincha', // 钦察·钦察康里精骑
-  'kazakh', // 哈萨·哈萨克轻骑兵
+  'qincha', // 钦察·康里精骑
+  'kazakh', // 哈萨·哈萨克骑
   'gurkha', // 廓喀·廓尔喀弯刀
   // 未列入者默认：旗号∩番号 禁止共享（含 tianxiong、北府若改军镇专名等须逐条审核）
 ]);

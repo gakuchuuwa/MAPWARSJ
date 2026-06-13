@@ -5,6 +5,7 @@
 import {
     PORTRAIT_ADJUST_NEUTRAL,
     applyPortraitAdjustToElement,
+    applyPortraitEdgeMask,
     hasPortraitImageOverride,
     resolvePortraitAdjust,
 } from '../config/PortraitAdjust';
@@ -215,18 +216,11 @@ function injectStyles(): void {
       }
       .pt-img-slot {
         position: absolute; inset: 0;
-        display: flex; align-items: flex-end; justify-content: center;
+        display: flex; align-items: flex-end;
         overflow: hidden;
       }
-      .pt-img-slot::after {
-        content: '';
-        position: absolute;
-        left: 0; right: 0; bottom: 0;
-        height: 22%;
-        pointer-events: none;
-        z-index: 2;
-        background: linear-gradient(to top, #2e2e34 0%, rgba(46, 46, 52, 0) 100%);
-      }
+      .pt-view-sample .pt-img-slot { justify-content: flex-end; }
+      .pt-view-current .pt-img-slot { justify-content: flex-start; }
       .pt-img-slot img {
         height: 100%; width: auto; max-width: 100%;
         display: block;
@@ -471,6 +465,7 @@ function updateHint(): void {
 function updateCurrentTransforms(): void {
     imgSample.style.transform = '';
     imgSample.style.transformOrigin = '';
+    applyPortraitEdgeMask(imgSample);
     applyPortraitAdjustToElement(imgCurrent, selectedImage, getPreviewAdjustData());
 }
 

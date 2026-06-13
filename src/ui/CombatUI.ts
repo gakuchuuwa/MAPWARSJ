@@ -208,7 +208,6 @@ export class CombatUI {
         this.leftPortrait = this.createPortraitImage();
         this.setupPortraitInteraction(this.leftPortrait, true);
         this.leftPortraitWrap.appendChild(this.leftPortrait);
-        this.leftPortraitWrap.appendChild(this.createPortraitBottomFade());
         leftFrame.appendChild(this.leftPortraitWrap);
 
         const rightFrame = this.createPortraitFrame();
@@ -219,7 +218,6 @@ export class CombatUI {
         this.rightPortrait = this.createPortraitImage();
         this.setupPortraitInteraction(this.rightPortrait, false);
         this.rightPortraitWrap.appendChild(this.rightPortrait);
-        this.rightPortraitWrap.appendChild(this.createPortraitBottomFade());
         rightFrame.appendChild(this.rightPortraitWrap);
 
         // --- 中栏黑底：椭圆径向 alpha 渐隐（勿 multiply + transparent），HUD 叠在上 ---
@@ -236,7 +234,8 @@ export class CombatUI {
             background: ${this.buildCenterBackdropBackground()};
             background-repeat: no-repeat;
             background-size: 100% 100%;
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
         `;
 
         this.centerPanel = document.createElement('div');
@@ -251,7 +250,7 @@ export class CombatUI {
             justify-content: center;
             align-items: center;
             z-index: ${T.zIndex.centerCard};
-            padding: ${uiPx(18)} ${uiPx(42)} ${uiPx(18)};
+            padding: ${uiPx(20)} ${uiPx(42)} ${uiPx(18)};
             box-sizing: border-box;
             pointer-events: auto;
             overflow: visible;
@@ -585,7 +584,8 @@ export class CombatUI {
         const nameSpan = document.createElement('span');
         nameSpan.style.cssText = `
             overflow: visible;
-            white-space: nowrap;
+            white-space: pre-wrap;
+            line-height: 1.15;
             flex-shrink: 1;
             min-width: 0;
             max-width: ${T.sideBar.maxDisplayNameCh + T.sideBar.maxNameSuffixCh}ch;
@@ -743,7 +743,7 @@ export class CombatUI {
     private renderSideLabel(side: 'attacker' | 'defender', name: string, troops: number): void {
         const nameEl = side === 'attacker' ? this.leftSideNameSpan : this.rightSideNameSpan;
         const troopsEl = side === 'attacker' ? this.leftSideTroopsSpan : this.rightSideTroopsSpan;
-        nameEl.textContent = name;
+        nameEl.innerHTML = name;
         const t = Math.max(0, Math.floor(troops));
         troopsEl.textContent = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : String(t);
     }
@@ -818,7 +818,7 @@ export class CombatUI {
             height: 100%;
             display: flex;
             align-items: flex-end;
-            ${side === 'right' ? 'justify-content: flex-end;' : ''}
+            ${side === 'left' ? 'justify-content: flex-end;' : 'justify-content: flex-start;'}
             transform-origin: center bottom;
             pointer-events: none;
             -webkit-mask-image: ${cornerMask};
@@ -827,23 +827,6 @@ export class CombatUI {
             mask-composite: add, add;
         `;
         return wrap;
-    }
-
-    /** 立绘底缘渐隐层（叠在 img 上，与角部 mask 互补） */
-    private createPortraitBottomFade(): HTMLDivElement {
-        const fade = document.createElement('div');
-        const h = T.portraitBottomFadeHeight;
-        fade.style.cssText = `
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: ${h}%;
-            pointer-events: none;
-            z-index: 2;
-            background: linear-gradient(to top, rgba(12, 11, 10, 0.97) 0%, rgba(12, 11, 10, 0) 100%);
-        `;
-        return fade;
     }
 
     private createPortraitImage(): HTMLImageElement {
@@ -950,8 +933,33 @@ export class CombatUI {
 
         const attacker = attackers[0];
         const defender = defenders[0];
-        const attName = attacker.name + (attackers.length > 1 ? ` +${attackers.length - 1}` : '');
-        const defName = (defender.unitType === 'city' ? `${defender.name}守军` : defender.name) + (defenders.length > 1 ? ` +${defenders.length - 1}` : '');
+        
+        const buildWaveGroupedName = (units: IBattleUnit[], _isAttacker: boolean): string => {
+            const waves = new Map<number, IBattleUnit[]>();
+            for (const u of units) {
+                const wi = this.boundRegionalBattleField?.getUnitWaveIndex(u.id) ?? 0;
+                if (!waves.has(wi)) waves.set(wi, []);
+                waves.get(wi)!.push(u);
+            }
+            const sortedWaves = [...waves.entries()].sort((a, b) => b[0] - a[0]);
+
+            const maxWave = sortedWaves.length > 0 ? sortedWaves[0][0] : 0;
+            let html = '';
+            for (const [wi, waveUnits] of sortedWaves) {
+                const dim = maxWave <= 1 ? 1 : wi === 0 ? 1 : wi === 1 ? 0.82 : 0.62;
+                const size = maxWave <= 1 ? '1em' : wi === 0 ? '1em' : wi === 1 ? '0.92em' : '0.82em';
+                
+                for (const u of waveUnits) {
+                    const base = u.name.replace(/(军团|驻军|守军|军)$/, '');
+                    const suffix = u.unitType === 'city' ? '驻军' : '军团';
+                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>` +
+                            `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}</span>`;
+                }
+            }
+            return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; row-gap: 4px; text-align: inherit;">${html}</div>`;
+        };
+        const attName = buildWaveGroupedName(attackers, true);
+        const defName = buildWaveGroupedName(defenders, false);
 
         this.attackerFactionId = attacker.factionId;
         this.defenderFactionId = defender.factionId;
@@ -1062,8 +1070,13 @@ export class CombatUI {
     }
 
     private updateInfo(att: IBattleUnit, def: IBattleUnit, title: string, year: string) {
-        this.attackerDisplayName = att.name;
-        this.defenderDisplayName = def.unitType === 'city' ? `${def.name}守军` : def.name;
+        const mapName = (u: IBattleUnit) => {
+            let base = u.name.replace(/(军团|驻军|守军|军)$/, '');
+            let suffix = u.unitType === 'city' ? '驻军' : '军团';
+            return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; text-align: inherit;"><span style="white-space: nowrap;">${base}</span><span style="opacity: 0.85; font-size: 0.95em; margin-left: 2px; white-space: nowrap;">${suffix}</span></div>`;
+        };
+        this.attackerDisplayName = mapName(att);
+        this.defenderDisplayName = mapName(def);
         this.attackerFactionId = att.factionId;
         this.defenderFactionId = def.factionId;
         this.battleTitle.textContent = title;

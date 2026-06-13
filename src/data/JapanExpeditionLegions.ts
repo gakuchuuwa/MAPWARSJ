@@ -9,7 +9,7 @@
 export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
   // ── 元寇 ──
   so: '弘安御敌',           // 对马·宗氏抗元
-  zhuqian: '异国警固番役',  // 太宰府·异国警固番役
+  zhuqian: '警固番役',  // 太宰府·警固番役
 
   // ── 室町—战国—江户（辞典映射表）──
   ashikaga: '奉公侍',         // 京都·§5 #31 足利奉公众
@@ -23,7 +23,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   jinchuan: '马回众',       // 骏府城·§5 #9
   echigo: '轩猿众',         // 春日山·§5 #18
   aki: '九鬼水军',          // 吉田郡山·§5 #13 冷兵接舷
-  chosokabe: '长宗我部水军', // 冈丰城·§5 #34
+  chosokabe: '长宗我部', // 冈丰城·§5 #34
   aizu: '大番众',           // 鹤之城·§5 #21 大番
   izumo: '长柄足轻',        // 月山富田·§5 #14
   honda: '长枪足轻',        // 宇都宫·§5 #14 分流

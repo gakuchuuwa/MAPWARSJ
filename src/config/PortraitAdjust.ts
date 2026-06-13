@@ -1,4 +1,4 @@
-import { COMBAT_UI_SCALE } from './combat-ui-tokens';
+import { COMBAT_UI_SCALE, COMBAT_UI_TOKENS as T } from './combat-ui-tokens';
 import {
     DEFAULT_PORTRAIT_ADJUST,
     PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X,
@@ -54,6 +54,22 @@ export function resolvePortraitTransformOrigin(
     return `${x * 100}% ${y * 100}%`;
 }
 
+/**
+ * 底缘 + 右缘透明渐隐（mask 作用在 img 像素上，不叠不透明色块，避免槽位空白区出现硬黑边）
+ */
+export function applyPortraitEdgeMask(img: HTMLElement): void {
+    const b = T.portraitBottomFadeHeight;
+    const r = T.portraitRightFadeWidth;
+    const bottom = `linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${b}%)`;
+    const right = `linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${r}%)`;
+    const base = 'linear-gradient(rgb(0,0,0) 0 0)';
+    const mask = `${bottom}, ${right}, ${base}`;
+    img.style.webkitMaskImage = mask;
+    img.style.maskImage = mask;
+    img.style.webkitMaskComposite = 'source-in, source-in';
+    img.style.maskComposite = 'intersect, intersect';
+}
+
 /** 将调校参数应用到立绘 img（以眼线/胸线交汇处为缩放锚点，再用 offset 微调） */
 export function applyPortraitAdjustToElement(
     img: HTMLElement,
@@ -65,4 +81,5 @@ export function applyPortraitAdjustToElement(
     const oy = Math.round(adj.offsetY * COMBAT_UI_SCALE);
     img.style.transformOrigin = resolvePortraitTransformOrigin(portraitPath, data);
     img.style.transform = `translate(${ox}px, ${oy}px) scale(${adj.scale})`;
+    applyPortraitEdgeMask(img);
 }

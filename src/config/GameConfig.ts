@@ -130,15 +130,10 @@ export class GameConfig {
         /** 关隘据点守军额外系数（与文化区系数相乘，仅 garrison / type===pass） */
         PASS_GARRISON_MULT: 1.2,
     };
-    static MORALE = {
-        MORALE_LOSS_PER_SECOND: 0.5,
-        FLANKING: {
-            DAMAGE_MULTIPLIER_2: 1.2,
-            DAMAGE_MULTIPLIER_3: 1.5,
-            MORALE_DECAY_MULTIPLIER_2: 1.5,
-            MORALE_DECAY_MULTIPLIER_3: 2.0
-        }
-    };
+    // [2026-06-12 删除] static MORALE（士气衰减 + FLANKING 侧翼系数）——全项目零引用的死配置。
+    //   主人裁定：点线移动的大战略图无战术战斗界面，士气/侧翼加进来仍是「看数字掉」，
+    //   只增 BUG 面无收益。战斗只靠兵力 + 文化五级系数（CultureCombat），保持简单明了。
+    //   注：IBattleUnit.morale 字段仍存在但恒为 100、不驱动任何逻辑（拆除需动 5 文件，留作惰性管线）。
     /** 沙盒军团 AI：进攻目标在「道路最近的 N 座敌城」里均匀抽签 */
     static AI = {
         TARGET_NEAR_POOL: 3,

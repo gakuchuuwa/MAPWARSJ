@@ -17,6 +17,6 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>>
   pyu: '骠国巨象阵',        // 室利差罗·辞典 #22（新唐书·骠国乐）
   champa: '占婆国水师',     // 美山·§10 #7（占族航海精锐）
   chenla: '双弓弩象营',     // 吴哥·辞典 #93 高棉弩象营
-  luchuan: '麓川百夷象兵', // 勐卯·辞典 #96 三征麓川象兵
+  luchuan: '麓川夷象', // 勐卯·辞典 #96 三征麓川象兵
   dianguo: '滇池水军',     // 拓东城·滇国水师
 };

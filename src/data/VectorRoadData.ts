@@ -3263,7 +3263,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "和布克赛尔-福海",
+                name: "和博克-福海",
                 type: "road",
                 id: "road_city_dzungar_basin_city_fuhai_1780144046666",
                 startConnection: "city_dzungar_basin",
@@ -3558,7 +3558,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "扎布汗军台-乌里雅苏台",
+                name: "扎布汗军台-乌城",
                 type: "road",
                 id: "road_city_zhabuhanjuntai_city_wuliyasutai_1780144046777",
                 startConnection: "city_zhabuhanjuntai",
@@ -3604,7 +3604,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "也迷里-和布克赛尔",
+                name: "也迷里-和博克",
                 type: "road",
                 id: "road_city_emil_city_dzungar_basin_1780144046787",
                 startConnection: "city_emil",
@@ -3645,7 +3645,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "伊犁固尔札-孛罗城",
+                name: "固尔札-孛罗城",
                 type: "road",
                 id: "road_city_yili_city_beiluocheng_1780144046801",
                 startConnection: "city_yili",
@@ -5358,7 +5358,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "鹰娑川-伊犁固尔札",
+                name: "鹰娑川-固尔札",
                 type: "road",
                 id: "road_city_yingsuochuan_city_yili_1780146082949",
                 startConnection: "city_yingsuochuan",
@@ -5581,7 +5581,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "乌里雅苏台-特尔浑军台",
+                name: "乌城-特尔浑军台",
                 type: "road",
                 id: "road_city_wuliyasutai_city_teerhunjuntai_1780146303223",
                 startConnection: "city_wuliyasutai",
@@ -5604,7 +5604,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "乌里雅苏台-拜达里克",
+                name: "乌城-拜达里克",
                 type: "road",
                 id: "road_city_wuliyasutai_city_baidalik_1780146358408",
                 startConnection: "city_wuliyasutai",
@@ -5838,7 +5838,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "巴彦乌拉-乌里雅斯太",
+                name: "巴彦乌拉-乌珠穆沁",
                 type: "road",
                 id: "road_city_bayanwula_city_wuliyasitai_1780148069296",
                 startConnection: "city_bayanwula",
@@ -5870,7 +5870,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "乌里雅斯太-哈拉盖图",
+                name: "乌珠穆沁-哈拉盖图",
                 type: "road",
                 id: "road_city_wuliyasitai_city_halagaitu2_1780148071635",
                 startConnection: "city_wuliyasitai",
@@ -7136,7 +7136,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "昆岗-大乌什喀特",
+                name: "昆岗-三重城",
                 type: "road",
                 id: "road_city_kungang_city_dawushenkate_1780150467237",
                 startConnection: "city_kungang",
@@ -10131,7 +10131,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "龙木错-克里雅山口",
+                name: "龙木错-克里雅",
                 type: "road",
                 id: "road_city_longmucuo_city_keliyashankou_1780152795137",
                 startConnection: "city_longmucuo",
@@ -10151,7 +10151,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "克里雅山口-于阗",
+                name: "克里雅-于阗",
                 type: "road",
                 id: "road_city_keliyashankou_city_yutian2_1780152818774",
                 startConnection: "city_keliyashankou",
@@ -20608,7 +20608,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "伊逻卢城-大乌什喀特",
+                name: "伊逻卢城-三重城",
                 type: "road",
                 id: "road_city_yiluolucheng_city_dawushenkate_1780164352303",
                 startConnection: "city_yiluolucheng",
@@ -22490,7 +22490,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "公主堡-塔什库尔干",
+                name: "公主堡-石头城",
                 type: "road",
                 id: "road_city_gongzhubao_city_hepancheng_1780641882977",
                 startConnection: "city_gongzhubao",
@@ -23052,7 +23052,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "弓月城-伊犁固尔札",
+                name: "弓月城-固尔札",
                 type: "road",
                 id: "road_city_almaliq_city_yili_1780869876566",
                 startConnection: "city_almaliq",
@@ -23407,7 +23407,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "乌里雅斯太-哈拉哈河",
+                name: "乌珠穆沁-哈拉哈河",
                 type: "road",
                 id: "road_city_wuliyasitai_city_tatar_1780902247503",
                 startConnection: "city_wuliyasitai",
@@ -25575,7 +25575,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "贝加尔湖畔-赤塔",
+                name: "贝加尔-赤塔",
                 type: "road",
                 id: "road_city_xiaoyenisei_city_chita_1781120055908",
                 startConnection: "city_xiaoyenisei",
@@ -26427,7 +26427,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "塔尔巴哈台-也迷里",
+                name: "塔城-也迷里",
                 type: "road",
                 id: "road_city_tacheng_city_emil_1781182479564",
                 startConnection: "city_tacheng",
@@ -28442,7 +28442,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "塔尔巴哈台-孛罗城",
+                name: "塔城-孛罗城",
                 type: "road",
                 id: "road_city_tacheng_city_beiluocheng_1781253435490",
                 startConnection: "city_tacheng",

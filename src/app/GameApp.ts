@@ -54,6 +54,8 @@ import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import {
     setupGameAppVisibilityHandler,
     showGameAppErrorOverlay,
+    showLoadingOverlay,
+    hideLoadingOverlay,
     yieldToBrowser,
 } from './boot/GameAppBootUtils';
 
@@ -124,6 +126,7 @@ export class GameApp {
 
 
     public async start() {
+        showLoadingOverlay();
         try {
             gameLog('startup', 'Game starting...');
             this.perfMonitor.markBootPhase('GameApp.start');
@@ -287,6 +290,7 @@ export class GameApp {
             });
 
             void this.completeLateBoot();
+            hideLoadingOverlay();
         } catch (error) {
             console.error('❌ 游戏初始化失败:', error);
             showGameAppErrorOverlay(error instanceof Error ? error.message : '未知错误');

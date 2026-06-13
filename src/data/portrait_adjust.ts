@@ -1,7 +1,6 @@
 /**
  * 立绘显示调校：文件夹默认 + 单张覆盖 + 调校尺（样片/标线）
- * 由 PortraitTuner（/portrait-tuner.html）维护。
- * CombatUI 读取 folders / images（缩放偏移）及 folderGuides（缩放锚点：眼线×胸线交汇处）。
+ * 由 PortraitTuner（/portrait-tuner.html）维护；CombatUI 仅读取 folders / images。
  *
  * folders 键示例："/assets/daming/"
  * images 键示例："/assets/daming/daming (1).png"
@@ -15,7 +14,12 @@ export interface PortraitAdjustValues {
     offsetY?: number;
 }
 
-/** 样片 + 眼线/胸线（调校尺；CombatUI 亦读此项定缩放锚点） */
+/** 全局默认：胸线水平位置（画布归一化 0–1，左→右） */
+export const PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X = 0.5;
+/** 全局默认：眼线垂直位置（画布归一化 0–1，顶→底） */
+export const PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y = 0.24;
+
+/** 调校工具专用：样片 + 眼线/胸线（CombatUI 不读取） */
 export interface PortraitFolderGuide {
     /** 样片路径 */
     samplePath: string;
@@ -30,16 +34,6 @@ export interface PortraitAdjustData {
     images?: Record<string, PortraitAdjustValues>;
     folderGuides?: Record<string, PortraitFolderGuide>;
 }
-
-/** 768×1024 朝右半身立绘 — 标线默认（常见构图区间中点） */
-export const PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y = 0.24;
-export const PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X = 0.5;
-
-export const PORTRAIT_GUIDE_DEFAULT: PortraitFolderGuide = {
-    samplePath: '',
-    eyeLineY: PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y,
-    chestLineX: PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X,
-};
 
 export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
     "folders": {
@@ -89,6 +83,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -22
+        },
+        "/assets/riben/06a6555d-67de-4959-8dce-9a890c7c70bd.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/riben/23580f3f-dee5-42ac-8ff7-fb9037b645b1.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/riben/3efc90e2-6cbc-4d62-8c2b-687560468b96.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/riben/4119c0e6-71b4-488a-85b9-2ea6a6a61087.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -8
         }
     },
     "folderGuides": {
@@ -99,6 +113,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/beifang/": {
             "samplePath": "/assets/beifang/04919ff4-54ff-4c95-861b-94d651e8701f.png",
+            "eyeLineY": 0.24,
+            "chestLineX": 0.5
+        },
+        "/assets/riben/": {
+            "samplePath": "/assets/riben/4d3fef9d-9372-4949-b73f-9c73e7675d43.png",
             "eyeLineY": 0.24,
             "chestLineX": 0.5
         }
