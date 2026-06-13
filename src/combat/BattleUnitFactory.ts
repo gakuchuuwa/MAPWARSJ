@@ -2,6 +2,7 @@ import { Army } from '../legion/Army';
 import { IBattleUnit, UnitType } from './CombatSystem';
 import { HistoricalEventManager } from '../events/HistoricalEventManager';
 import { gameLog } from '../utils/GameLogger';
+import { getRandomFactionPortrait } from '../config/portrait_defaults';
 
 export class BattleUnitFactory {
     /**
@@ -46,6 +47,18 @@ export class BattleUnitFactory {
         // 可移动单位 (军团、玩家、土匪)
         const isMobile = !isCity;
 
+        // 立绘：仅军团在 Army 构造时抽签一次并固定；守军不设 portraitPath，由 UI 每次随机
+        let portraitPath: string | undefined;
+        if (isLegion) {
+            const army = entity as Army;
+            if (!army.portraitPath) {
+                army.portraitPath = getRandomFactionPortrait(
+                    army.getFactionId?.() ?? army.factionId ?? factionId,
+                );
+            }
+            portraitPath = army.portraitPath;
+        }
+
         return {
             id,
             name,
@@ -58,6 +71,7 @@ export class BattleUnitFactory {
             unitType,
             legionType: entity.legionType,
             generalId: entity.generalId,
+            portraitPath,
             getEntity: () => entity,
 
             maxTroops,

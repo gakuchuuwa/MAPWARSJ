@@ -1120,7 +1120,7 @@ export class CombatUI {
 
     // --- SHARED UTILS ---
 
-    // Priority: ① portrait_config → ② providedDefault → ③④ GENERAL_PORTRAITS（将领/势力）→ ⑤ 文化区 → ⑥ default
+    // Priority: ① portrait_config → ② providedDefault → ③ portraitPath（军团/守军已固定）→ ④⑤ GENERAL_PORTRAITS → ⑥ 文化区 → ⑦ default
     private setPortrait(
         img: HTMLImageElement,
         unit: IBattleUnit | undefined,
@@ -1156,18 +1156,23 @@ export class CombatUI {
             setSrc(providedDefault);
             return;
         }
+        // ③ 军团创建时已固定的立绘（守军不设 portraitPath，走下方随机逻辑）
+        if (unit?.portraitPath) {
+            setSrc(unit.portraitPath);
+            return;
+        }
         const portraits = (SPRITE_PATHS.GENERAL_PORTRAITS || {}) as Record<string, string>;
-        // ③ 将领 ID（如 baiqi）
+        // ④ 将领 ID（如 baiqi）
         if (generalId && portraits[generalId]) {
             setSrc(portraits[generalId]);
             return;
         }
-        // ④ 势力默认（秦国 qin → qinjiang.png）
+        // ⑤ 势力默认（秦国 qin → qinjiang.png）
         if (factionId && portraits[factionId]) {
             setSrc(portraits[factionId]);
             return;
         }
-        // ⑤ 文化区军队/守军 + panjun
+        // ⑥ 文化区军队/守军 + panjun
         if (unit) {
             setSrc(getCombatPortraitPath(unit));
             return;

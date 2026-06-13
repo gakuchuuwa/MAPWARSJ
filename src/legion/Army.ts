@@ -12,6 +12,7 @@ import type { RegionType } from '../systems/RegionSystem';
 
 import { IBattleUnit } from '../combat/CombatSystem';
 import { gameLog } from '../utils/GameLogger';
+import { getRandomFactionPortrait } from '../config/portrait_defaults';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 
 export class Army implements IBattleUnit {
@@ -254,6 +255,7 @@ export class Army implements IBattleUnit {
     public cultureRegion: RegionType | null = null;
     public name: string; // [IBattleUnit]
     public generalId?: string; // [NEW] UI Avatar ID
+    public portraitPath?: string; // [NEW] 军队创建时随机固定立绘
 
     // [IBattleUnit Implementation]
     public get factionId(): string {
@@ -287,6 +289,7 @@ export class Army implements IBattleUnit {
         this.name = name || `Army ${this.id.substr(-4)}`; // [FIX] Ensure name is never undefined
         if (legionType) this.legionType = legionType;
         this.generalId = generalId; // Store for UI use only
+        this.portraitPath = getRandomFactionPortrait(factionId); // 随机立绘，跟定此军队
 
         this.createMarker();
         this.updateTerrainSpeed();

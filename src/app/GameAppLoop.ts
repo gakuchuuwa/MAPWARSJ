@@ -6,8 +6,12 @@ import type { GameApp } from './GameApp';
 
 /** 与 VectorRoadEditor.LOCKED_ZOOM / AGENTS.md 地图缩放锁定一致 */
 const LOCKED_MAP_ZOOM = 9;
-/** 跟随镜头：小于此距离不重复 setView，减轻瓦片抖动 */
-const FOLLOW_RECENTER_DEADZONE_M = 30;
+/** 跟随镜头：小于此距离视为已对准，不再 setView（避免静止时微抖） */
+const FOLLOW_RECENTER_DEADZONE_M = 120;
+/** 距离过大（切换跟随目标等）时直接吸附，不做插值 */
+const FOLLOW_SNAP_DISTANCE_M = 12000;
+/** 每帧向目标追近的比例（指数平滑；越大跟得越紧，越小越柔） */
+const FOLLOW_LERP_FACTOR = 0.22;
 /** 跟随中重复插队旗号优先（毫秒），避免每帧 setView 刷屏 */
 const FOLLOW_FLAG_PRIORITY_INTERVAL_MS = 600;
 let lastFollowFlagPriorityKick = 0;
@@ -83,10 +87,20 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             lMap.setView(target, LOCKED_MAP_ZOOM, { animate: false });
                             return;
                         }
-                        const dist = lMap.getCenter().distanceTo(target);
+                        const center = lMap.getCenter();
+                        const dist = center.distanceTo(target);
                         if (dist <= FOLLOW_RECENTER_DEADZONE_M) return;
-                        // 每帧无动画居中：避免 panTo 动画叠加造成背景「一步一步拖」
-                        lMap.setView(target, LOCKED_MAP_ZOOM, { animate: false });
+                        if (dist >= FOLLOW_SNAP_DISTANCE_M) {
+                            lMap.setView(target, LOCKED_MAP_ZOOM, { animate: false });
+                            return;
+                        }
+                        // 每帧向目标插值一小段（指数平滑追踪）：
+                        // 比「攒距离整步跳」平滑，比 panTo 动画叠加可控。
+                        const next = L.latLng(
+                            center.lat + (target.lat - center.lat) * FOLLOW_LERP_FACTOR,
+                            center.lng + (target.lng - center.lng) * FOLLOW_LERP_FACTOR,
+                        );
+                        lMap.setView(next, LOCKED_MAP_ZOOM, { animate: false });
                     }
                 );
                 const now = performance.now();

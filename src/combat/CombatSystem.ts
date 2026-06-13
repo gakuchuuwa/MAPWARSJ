@@ -68,6 +68,8 @@ export interface IBattleUnit {
     setMorale(count: number): void;
     // [NEW] UI Avatar
     generalId?: string;
+    /** 军队创建时随机固定；守城方留空则每次随机 */
+    portraitPath?: string;
 }
 
 export class Battle {

@@ -827,7 +827,12 @@ export class CityAssetManager {
         const ts = game?.timeSystem;
         if (!ts || typeof ts.isGamePaused !== 'function') return false;
         if (ts.isGamePaused()) return false;
-        return performance.now() - this.lastMapInteractionAt < this.MAP_INTERACTION_PAUSE_MS;
+        return this.mapInteractionPauseRemainingMs() > 0;
+    }
+
+    private static mapInteractionPauseRemainingMs(): number {
+        if (this.lastMapInteractionAt <= 0) return 0;
+        return Math.max(0, this.MAP_INTERACTION_PAUSE_MS - (performance.now() - this.lastMapInteractionAt));
     }
 
     private static needsFactionTint(factionId: string): boolean {
@@ -904,9 +909,23 @@ export class CityAssetManager {
                 this.backgroundDrainActive = false;
                 return;
             }
-            // 仅暂停全图 deferred；跟随/视口 onDemand 在镜头移动时仍须染色
+            // 地图/跟拍移动期间，除当前跟随军团所属势力外，不做 chromaKey，避免旗号抢主线程。
+            const isFollowPriority = !!this.followPriorityFactionId && next.id === this.followPriorityFactionId;
+            if (!isFollowPriority && (next.mode === 'background' || next.mode === 'onDemand')) {
+                const pauseMs = this.mapInteractionPauseRemainingMs();
+                if (pauseMs > 0) {
+                    if (next.mode === 'onDemand') {
+                        this.onDemandFactionQueue.unshift(next.id);
+                    } else {
+                        this.deferredFactionQueue.unshift(next.id);
+                    }
+                    setTimeout(step, Math.min(pauseMs + 50, this.MAP_INTERACTION_PAUSE_MS));
+                    return;
+                }
+            }
             if (next.mode === 'background' && this.shouldPauseBackgroundDrain()) {
-                CityAssetManager.scheduleChromaWorkStep(step);
+                this.deferredFactionQueue.unshift(next.id);
+                setTimeout(step, this.MAP_INTERACTION_PAUSE_MS);
                 return;
             }
             this.chromaScheduleMode = next.mode;
