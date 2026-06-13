@@ -208,6 +208,7 @@ export class CombatUI {
         this.leftPortrait = this.createPortraitImage();
         this.setupPortraitInteraction(this.leftPortrait, true);
         this.leftPortraitWrap.appendChild(this.leftPortrait);
+        this.leftPortraitWrap.appendChild(this.createPortraitBottomFade());
         leftFrame.appendChild(this.leftPortraitWrap);
 
         const rightFrame = this.createPortraitFrame();
@@ -218,6 +219,7 @@ export class CombatUI {
         this.rightPortrait = this.createPortraitImage();
         this.setupPortraitInteraction(this.rightPortrait, false);
         this.rightPortraitWrap.appendChild(this.rightPortrait);
+        this.rightPortraitWrap.appendChild(this.createPortraitBottomFade());
         rightFrame.appendChild(this.rightPortraitWrap);
 
         // --- 中栏黑底：椭圆径向 alpha 渐隐（勿 multiply + transparent），HUD 叠在上 ---
@@ -825,6 +827,23 @@ export class CombatUI {
             mask-composite: add, add;
         `;
         return wrap;
+    }
+
+    /** 立绘底缘渐隐层（叠在 img 上，与角部 mask 互补） */
+    private createPortraitBottomFade(): HTMLDivElement {
+        const fade = document.createElement('div');
+        const h = T.portraitBottomFadeHeight;
+        fade.style.cssText = `
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: ${h}%;
+            pointer-events: none;
+            z-index: 2;
+            background: linear-gradient(to top, rgba(12, 11, 10, 0.97) 0%, rgba(12, 11, 10, 0) 100%);
+        `;
+        return fade;
     }
 
     private createPortraitImage(): HTMLImageElement {

@@ -1,23 +1,23 @@
 /**
- * MAPWAR 立绘调校工具
+ * MAPWAR 立绘调校（眼线 / 胸线对齐版）
  * 访问：http://localhost:5173/portrait-tuner.html
  */
 import {
-    COMBAT_UI_TOKENS as T,
-    COMBAT_UI_SCALE,
-    uiPx,
-} from '../config/combat-ui-tokens';
-import {
-    DEFAULT_PORTRAIT_ADJUST,
-    type PortraitAdjustData,
-    type PortraitAdjustValues,
-} from '../data/portrait_adjust';
-import {
     PORTRAIT_ADJUST_NEUTRAL,
-    extractPortraitFolder,
+    applyPortraitAdjustToElement,
     hasPortraitImageOverride,
     resolvePortraitAdjust,
 } from '../config/PortraitAdjust';
+
+import {
+    DEFAULT_PORTRAIT_ADJUST,
+    PORTRAIT_GUIDE_DEFAULT,
+    PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X,
+    PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y,
+    type PortraitAdjustData,
+    type PortraitAdjustValues,
+    type PortraitFolderGuide,
+} from '../data/portrait_adjust';
 
 type EditMode = 'image' | 'folder';
 type CatalogEntry = { folder: string; label: string; images: string[] };
@@ -27,21 +27,19 @@ const SLIDER = {
     offset: { min: -240, max: 240, step: 1 },
 } as const;
 
-/** 与 CombatUI 一致：768×1024 在战斗 UI 中的显示尺寸（设计 px） */
-const PORTRAIT_CANVAS_H = 550;
-const PORTRAIT_CANVAS_W = PORTRAIT_CANVAS_H * (768 / 1024);
+/** 调校区 768×1024 画布显示高度（px） */
+const CANVAS_H = 300;
+const CANVAS_W = CANVAS_H * (768 / 1024);
 
-/** scale=1.0 时半身立绘常见人物占原图高度比（在此附近视为「不用缩」） */
-const BASELINE_CHAR_RATIO_AT_SCALE_1 = 0.88;
-/** 人物占比与基准相差在此范围内 → 保持当前锚定 scale，不自动缩小 */
-const AUTO_SCALE_TOLERANCE = 0.05;
+const DEFAULT_GUIDE: PortraitFolderGuide = { ...PORTRAIT_GUIDE_DEFAULT };
+
+const SAMPLE_INSET = { left: 20, bottom: 20 } as const;
+const VIEW_GAP = 16;
 
 let adjustData: PortraitAdjustData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
 let portraitCatalog: CatalogEntry[] = [];
 let selectedFolder = '';
 let selectedImage = '';
-/** 滑块/写入实际作用的图片；对比模式下可与 selectedImage（右边）分离 */
-let editingImagePath = '';
 let editMode: EditMode = 'image';
 let draft: Required<PortraitAdjustValues> = { ...PORTRAIT_ADJUST_NEUTRAL };
 let dirty = false;
@@ -53,7 +51,7 @@ app.innerHTML = `
   <div class="pt-header-actions">
     <a href="/" class="pt-link">← 返回游戏</a>
     <button type="button" id="pt-reload" class="pt-btn pt-btn-ghost">重新加载</button>
-    <button type="button" id="pt-save-file" class="pt-btn pt-btn-primary">保存到 portrait_adjust.ts</button>
+    <button type="button" id="pt-save-file" class="pt-btn pt-btn-primary">保存</button>
   </div>
 </header>
 <div class="pt-body">
@@ -66,23 +64,29 @@ app.innerHTML = `
     <div id="pt-stats" class="pt-stats"></div>
   </aside>
   <main class="pt-main">
-    <div class="pt-preview-wrap">
-      <div class="pt-preview-hint">琥珀+青双边框 = 768×1024 PNG 画布（与战斗 UI 同尺寸）· 灰点外框 = 战斗立绘槽 · 红虚线 = 脚底线 · 灰格纹 = 透明区域</div>
-      <div class="pt-preview-stage">
-        <div class="pt-stage-midline" aria-hidden="true"></div>
-        <div class="pt-slot pt-slot-left">
-          <div class="pt-slot-label" id="pt-label-left">攻方</div>
-          <div class="pt-slot-frame" id="pt-frame-left"></div>
+    <div class="pt-hint" id="pt-hint"></div>
+    <div class="pt-stage" id="pt-stage">
+      <div class="pt-view pt-view-sample" id="pt-view-sample">
+        <div class="pt-view-tag">样片（尺）</div>
+        <div class="pt-canvas" id="pt-canvas-sample">
+          <div class="pt-img-slot" id="pt-slot-sample"></div>
         </div>
-        <div class="pt-slot pt-slot-right">
-          <div class="pt-slot-label" id="pt-label-right">守方（镜像）</div>
-          <div class="pt-slot-frame" id="pt-frame-right"></div>
+      </div>
+      <div class="pt-view pt-view-current" id="pt-view-current">
+        <div class="pt-view-tag">当前张（对照）</div>
+        <div class="pt-canvas" id="pt-canvas-current">
+          <div class="pt-img-slot" id="pt-slot-current"></div>
         </div>
+      </div>
+      <div class="pt-guide-layer" id="pt-guide-layer">
+        <div class="pt-guide pt-guide-eye" id="pt-guide-eye" title="拖动调整眼线"></div>
+        <div class="pt-guide pt-guide-chest" id="pt-guide-chest" title="拖动调整胸线"></div>
+        <div class="pt-guide pt-guide-chest-mirror" id="pt-guide-chest-mirror" aria-hidden="true"></div>
       </div>
     </div>
     <div class="pt-controls">
       <div class="pt-mode">
-        <label><input type="radio" name="pt-mode" value="image" checked /> 单张覆盖</label>
+        <label><input type="radio" name="pt-mode" value="image" checked /> 单张例外</label>
         <label><input type="radio" name="pt-mode" value="folder" /> 文件夹默认</label>
       </div>
       <div id="pt-edit-target" class="pt-edit-target"></div>
@@ -98,13 +102,22 @@ app.innerHTML = `
         </label>
       </div>
       <div class="pt-actions">
-        <button type="button" id="pt-apply" class="pt-btn">写入当前模式</button>
-        <button type="button" id="pt-auto" class="pt-btn">自动估算缩放</button>
+        <button type="button" id="pt-set-sample" class="pt-btn">当前张设为样片</button>
+        <button type="button" id="pt-reset-guides" class="pt-btn pt-btn-ghost">标线复位</button>
+        <button type="button" id="pt-center-chest" class="pt-btn pt-btn-ghost">胸线居中</button>
         <button type="button" id="pt-reset-draft" class="pt-btn pt-btn-ghost">重置滑块</button>
-        <button type="button" id="pt-clear-override" class="pt-btn pt-btn-ghost">清除单张覆盖</button>
-        <button type="button" id="pt-pin-ref" class="pt-btn pt-btn-ghost">钉住当前为对比样片</button>
+        <button type="button" id="pt-clear-override" class="pt-btn pt-btn-ghost">清除单张例外</button>
         <button type="button" id="pt-prev" class="pt-btn pt-btn-ghost">上一张</button>
         <button type="button" id="pt-next" class="pt-btn pt-btn-ghost">下一张</button>
+      </div>
+      <div class="pt-save-bar">
+        <div class="pt-save-bar-title">保存</div>
+        <div class="pt-save-bar-hint">滑块与标线调好后，点「保存」一并写入 portrait_adjust.ts（游戏内 F5 生效）</div>
+        <div class="pt-save-bar-actions">
+          <button type="button" id="pt-save-bottom" class="pt-btn pt-btn-primary pt-btn-large pt-btn-save">保存</button>
+        </div>
+        <div id="pt-dirty-hint" class="pt-dirty-hint"></div>
+        <div id="pt-save-toast" class="pt-save-toast"></div>
       </div>
       <div id="pt-effective" class="pt-effective"></div>
     </div>
@@ -119,8 +132,14 @@ const els = {
     search: document.getElementById('pt-search') as HTMLInputElement,
     imageList: document.getElementById('pt-image-list')!,
     stats: document.getElementById('pt-stats')!,
-    frameLeft: document.getElementById('pt-frame-left')!,
-    frameRight: document.getElementById('pt-frame-right')!,
+    hint: document.getElementById('pt-hint')!,
+    stage: document.getElementById('pt-stage')!,
+    viewSample: document.getElementById('pt-view-sample')!,
+    viewCurrent: document.getElementById('pt-view-current')!,
+    guideLayer: document.getElementById('pt-guide-layer')!,
+    guideEye: document.getElementById('pt-guide-eye')!,
+    guideChest: document.getElementById('pt-guide-chest')!,
+    guideChestMirror: document.getElementById('pt-guide-chest-mirror')!,
     editTarget: document.getElementById('pt-edit-target')!,
     scale: document.getElementById('pt-scale') as HTMLInputElement,
     offsetX: document.getElementById('pt-offsetX') as HTMLInputElement,
@@ -129,34 +148,26 @@ const els = {
     valOffsetX: document.getElementById('pt-val-offsetX')!,
     valOffsetY: document.getElementById('pt-val-offsetY')!,
     effective: document.getElementById('pt-effective')!,
-    labelLeft: document.getElementById('pt-label-left')!,
-    labelRight: document.getElementById('pt-label-right')!,
-    pinRefBtn: document.getElementById('pt-pin-ref') as HTMLButtonElement,
-    autoBtn: document.getElementById('pt-auto') as HTMLButtonElement,
-    previewHint: document.querySelector('.pt-preview-hint') as HTMLDivElement,
+    dirtyHint: document.getElementById('pt-dirty-hint')!,
+    saveToast: document.getElementById('pt-save-toast')!,
 };
 
-let previewImgLeft: HTMLImageElement;
-let previewImgRight: HTMLImageElement;
-let previewCanvasLeft: HTMLDivElement;
-let previewCanvasRight: HTMLDivElement;
-/** 钉住的样片路径；翻页时左侧固定显示它，右侧显示当前张 */
-let pinnedReferencePath: string | null = null;
+let imgSample: HTMLImageElement;
+let imgCurrent: HTMLImageElement;
 
 function injectStyles(): void {
     const style = document.createElement('style');
     style.textContent = `
       .pt-header {
         display: flex; align-items: center; justify-content: space-between;
-        padding: 10px 16px; border-bottom: 1px solid #2a2620;
-        background: #141210;
+        padding: 10px 16px; border-bottom: 1px solid #2a2620; background: #141210;
       }
       .pt-title { font-size: 18px; font-weight: 700; color: #f5e6c8; }
       .pt-header-actions { display: flex; gap: 8px; align-items: center; }
       .pt-link { color: #8ab4c4; font-size: 13px; text-decoration: none; }
       .pt-body { flex: 1; display: flex; min-height: 0; }
       .pt-sidebar {
-        width: 280px; border-right: 1px solid #2a2620; padding: 12px;
+        width: 260px; border-right: 1px solid #2a2620; padding: 12px;
         display: flex; flex-direction: column; gap: 8px; background: #12100e;
       }
       .pt-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
@@ -173,120 +184,96 @@ function injectStyles(): void {
       }
       .pt-image-item:hover { background: #1a1815; }
       .pt-image-item.is-active { background: #2a2418; color: #f5d78e; }
-      .pt-image-item.is-check { box-shadow: inset 3px 0 0 #7cb87c; }
+      .pt-image-item.is-sample::after { content: ' 样'; color: #f5d78e; font-size: 10px; }
       .pt-image-item.is-tuned::before { content: '● '; color: #7cb87c; }
-      .pt-image-item.is-ref-pin::after { content: ' 样'; color: #f5d78e; font-size: 10px; }
       .pt-stats { font-size: 11px; color: #888; }
-      .pt-preview-wrap { flex: 1; padding: 16px 16px 48px; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
-      .pt-preview-hint { font-size: 12px; color: #9a8f7a; line-height: 1.45; }
-      .pt-preview-stage {
-        flex: 1; position: relative; min-height: 320px;
-        background:
-          radial-gradient(ellipse 90% 80% at 50% 55%, rgba(42, 38, 34, 0.55), rgba(14, 13, 12, 0.2)),
-          #1a1816;
-        border: 1px solid #4a4238; border-radius: 8px; overflow: visible;
+      .pt-hint {
+        padding: 10px 16px 0; font-size: 12px; color: #9a8f7a; line-height: 1.5;
       }
-      .pt-stage-midline {
-        position: absolute; top: 8%; bottom: 8%; left: 50%;
-        width: 0; border-left: 1px dashed rgba(253, 185, 49, 0.35);
-        transform: translateX(-0.5px); pointer-events: none; z-index: 1;
+      .pt-stage {
+        position: relative; flex: 1; min-height: 480px; margin: 12px 16px;
+        background: #1a1816; border: 1px solid #4a4238; border-radius: 8px; overflow: visible;
       }
-      .pt-slot { position: absolute; bottom: 0; width: 50%; height: 100%; }
-      .pt-slot-left { left: 0; }
-      .pt-slot-right { right: 0; }
-      .pt-slot-label { position: absolute; top: 8px; font-size: 11px; color: #666; z-index: 2; }
-      .pt-slot-left .pt-slot-label { left: 12px; }
-      .pt-slot-right .pt-slot-label { right: 12px; }
-      .pt-slot-frame {
-        position: absolute; bottom: ${uiPx(T.portraitBottom)};
-        overflow: visible;
-        border: 1px dotted rgba(180, 170, 150, 0.45);
-        border-radius: 4px;
-        background: transparent;
+      .pt-view {
+        position: absolute; width: ${CANVAS_W}px; height: ${CANVAS_H}px; overflow: visible;
       }
-      .pt-slot-frame.is-editing-target {
-        box-shadow: 0 0 0 2px rgba(245, 215, 142, 0.7);
+      .pt-view-tag {
+        position: absolute; top: -20px; left: 0; font-size: 10px; color: #8a8070; white-space: nowrap;
       }
-      .pt-slot-frame.is-clickable { cursor: pointer; }
-      .pt-slot-frame::before {
-        content: '战斗UI槽';
-        position: absolute; top: 4px; left: 6px;
-        font-size: 10px; color: rgba(180, 170, 150, 0.7);
-        pointer-events: none; z-index: 2;
-      }
-      .pt-slot-left .pt-slot-frame {
-        left: ${uiPx(T.portraitInset + T.portraitPullToCenter)};
-        width: ${uiPx(T.portraitSlotWidth)}; height: ${uiPx(620)};
-      }
-      .pt-slot-right .pt-slot-frame {
-        right: ${uiPx(T.portraitInset + T.portraitPullToCenter)};
-        width: ${uiPx(T.portraitSlotWidth)}; height: ${uiPx(620)};
-      }
-      .pt-canvas-box {
-        position: absolute;
-        bottom: 0;
-        width: ${uiPx(PORTRAIT_CANVAS_W)};
-        height: ${uiPx(PORTRAIT_CANVAS_H)};
-        z-index: 2;
-        transform-origin: center center;
-        border: 2px dashed rgba(253, 185, 49, 0.88);
-        box-shadow: inset 0 0 0 1px rgba(96, 196, 255, 0.95);
-        border-radius: 2px;
+      .pt-canvas {
+        width: 100%; height: 100%; position: relative; overflow: hidden;
+        border: 2px dashed rgba(253, 185, 49, 0.85);
+        box-shadow: inset 0 0 0 1px rgba(96, 196, 255, 0.9);
         background-color: #2e2e34;
         background-image:
           linear-gradient(45deg, #3a3a42 25%, transparent 25%),
           linear-gradient(-45deg, #3a3a42 25%, transparent 25%),
           linear-gradient(45deg, transparent 75%, #3a3a42 75%),
           linear-gradient(-45deg, transparent 75%, #3a3a42 75%);
-        background-size: 14px 14px;
-        background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+        background-size: 12px 12px;
+        background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+      }
+      .pt-img-slot {
+        position: absolute; inset: 0;
+        display: flex; align-items: flex-end; justify-content: center;
         overflow: hidden;
       }
-      .pt-slot-left .pt-canvas-box { left: ${uiPx(-T.portraitImageOffset)}; }
-      .pt-slot-right .pt-canvas-box { right: ${uiPx(-T.portraitImageOffset)}; }
-      .pt-preview-img {
-        width: 100%;
-        height: 100%;
-        display: block;
-        object-fit: fill;
-        box-shadow: 0 16px 28px rgba(0, 0, 0, 0.45);
-      }
-      .pt-slot-right.pt-slot-compare .pt-slot-frame {
-        box-shadow: 0 0 0 2px rgba(126, 200, 140, 0.45);
-      }
-      .pt-slot-label.is-ref { color: #f5d78e; }
-      .pt-slot-label.is-current { color: #9fd4a8; }
-      .pt-foot-line {
+      .pt-img-slot::after {
+        content: '';
         position: absolute;
-        left: -6px;
-        right: -6px;
-        bottom: 0;
-        height: 4px;
-        z-index: 30;
+        left: 0; right: 0; bottom: 0;
+        height: 22%;
         pointer-events: none;
-        background: repeating-linear-gradient(
-          90deg,
-          #ff5a45 0 10px,
-          transparent 10px 16px
-        );
-        box-shadow:
-          0 0 0 1px rgba(255, 255, 255, 0.55),
-          0 0 10px rgba(255, 72, 48, 0.95);
+        z-index: 2;
+        background: linear-gradient(to top, #2e2e34 0%, rgba(46, 46, 52, 0) 100%);
       }
-      .pt-foot-line::before {
-        content: '脚底线';
+      .pt-img-slot img {
+        height: 100%; width: auto; max-width: 100%;
+        display: block;
+        filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.5));
+      }
+      .pt-view-sample .pt-canvas { border-color: rgba(245, 215, 142, 0.95); }
+      .pt-view-current .pt-canvas { border-color: rgba(126, 200, 140, 0.85); }
+      .pt-guide-layer {
         position: absolute;
-        left: 4px;
-        bottom: 6px;
-        font-size: 10px;
-        line-height: 1;
-        color: #ffb4a8;
-        text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
-        white-space: nowrap;
+        pointer-events: none;
+        z-index: 30;
+      }
+      .pt-guide {
+        position: absolute; pointer-events: auto;
+      }
+      .pt-guide-eye { z-index: 1; }
+      .pt-guide-chest { z-index: 2; }
+      .pt-guide-eye {
+        left: 0; right: 0;
+        height: 12px; margin-top: -6px; cursor: ns-resize;
+      }
+      .pt-guide-eye::after {
+        content: ''; position: absolute; left: 0; right: 0; top: 5px; height: 2px;
+        background: repeating-linear-gradient(90deg, #6ec8ff 0 8px, transparent 8px 14px);
+        box-shadow: 0 0 8px rgba(96, 196, 255, 0.9);
+      }
+      .pt-guide-chest {
+        top: 0; bottom: 0;
+        width: 12px; margin-left: -6px; cursor: ew-resize;
+      }
+      .pt-guide-chest-mirror {
+        top: 0; bottom: 0;
+        width: 12px; margin-left: -6px;
+        pointer-events: none;
+        z-index: 2;
+      }
+      .pt-guide-chest::after,
+      .pt-guide-chest-mirror::after {
+        content: ''; position: absolute; top: 0; bottom: 0; left: 5px; width: 2px;
+        background: repeating-linear-gradient(180deg, #ff9a7a 0 8px, transparent 8px 14px);
+        box-shadow: 0 0 10px rgba(255, 120, 80, 0.95);
       }
       .pt-controls {
-        border-top: 1px solid #2a2620; padding: 14px 16px; background: #141210;
-        display: flex; flex-direction: column; gap: 10px;
+        border-top: 1px solid #2a2620; padding: 12px 16px 16px; background: #141210;
+        display: flex; flex-direction: column; gap: 8px;
+        position: sticky; bottom: 0; z-index: 20;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
       }
       .pt-mode { display: flex; gap: 16px; font-size: 13px; }
       .pt-edit-target { font-size: 12px; color: #c4b89a; word-break: break-all; }
@@ -301,104 +288,71 @@ function injectStyles(): void {
       .pt-btn-primary { background: #5a4a28; border-color: #8a7038; color: #fff8e8; }
       .pt-btn-ghost { background: transparent; }
       .pt-effective { font-size: 11px; color: #7a9aaf; line-height: 1.5; }
+      .pt-save-bar {
+        margin-top: 4px; padding: 12px 14px; border-radius: 8px;
+        background: #1e1a14; border: 1px solid #6a5a30;
+      }
+      .pt-save-bar-title { font-size: 14px; font-weight: 700; color: #f5d78e; }
+      .pt-save-bar-hint { font-size: 11px; color: #a89f7a; line-height: 1.45; margin-top: 4px; }
+      .pt-save-bar-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+      .pt-btn-large { padding: 10px 20px; font-size: 15px; font-weight: 600; }
+      .pt-btn-save { min-width: 160px; padding: 12px 32px; font-size: 17px; }
+      .pt-dirty-hint { font-size: 11px; margin-top: 8px; color: #7cb87c; }
+      .pt-dirty-hint.is-dirty { color: #ffb86c; }
+      .pt-save-toast {
+        margin-top: 8px; padding: 8px 10px; border-radius: 4px; font-size: 12px;
+        background: #1a3020; color: #9fd4a8; border: 1px solid #3a6a48;
+        min-height: 1.2em;
+      }
+      .pt-save-toast:empty { display: none; }
+      .pt-save-toast.is-error { background: #301a1a; color: #ffb4a8; border-color: #6a3a3a; }
       #app { height: 100vh; }
     `;
     document.head.appendChild(style);
 }
 
-function initPreviewImages(): void {
-    const mount = (frame: HTMLElement, side: 'left' | 'right') => {
-        const canvas = document.createElement('div');
-        canvas.className = 'pt-canvas-box';
-        const img = document.createElement('img');
-        img.className = 'pt-preview-img';
-        img.alt = side === 'left' ? '攻方立绘预览' : '守方立绘预览';
-        canvas.appendChild(img);
-
-        const footLine = document.createElement('div');
-        footLine.className = 'pt-foot-line';
-        footLine.setAttribute('aria-hidden', 'true');
-
-        frame.appendChild(canvas);
-        frame.appendChild(footLine);
-        return { img, canvas };
-    };
-    const left = mount(els.frameLeft, 'left');
-    const right = mount(els.frameRight, 'right');
-    previewImgLeft = left.img;
-    previewImgRight = right.img;
-    previewCanvasLeft = left.canvas;
-    previewCanvasRight = right.canvas;
-
-    els.frameLeft.addEventListener('click', () => selectEditingTarget('left'));
-    els.frameRight.addEventListener('click', () => selectEditingTarget('right'));
+function mountImgInSlot(slotId: string): HTMLImageElement {
+    const slot = document.getElementById(slotId)!;
+    const img = document.createElement('img');
+    img.alt = '立绘';
+    slot.appendChild(img);
+    return img;
 }
 
-function withDraftOverlay(
-    data: PortraitAdjustData,
-    portraitPath: string,
-    values: PortraitAdjustValues,
-): PortraitAdjustData {
+function getPreviewAdjustData(): PortraitAdjustData {
+    if (editMode === 'folder') {
+        return {
+            ...adjustData,
+            folders: {
+                ...adjustData.folders,
+                [selectedFolder]: { ...draft },
+            },
+        };
+    }
     return {
-        ...data,
+        ...adjustData,
         images: {
-            ...data.images,
-            [portraitPath]: { ...values },
+            ...adjustData.images,
+            [selectedImage]: { ...draft },
         },
     };
 }
 
-function selectEditingTarget(side: 'left' | 'right'): void {
-    if (side === 'left' && pinnedReferencePath) {
-        if (editingImagePath === pinnedReferencePath) return;
-        editingImagePath = pinnedReferencePath;
-        loadDraftFromMode();
-        refreshEditFocusUI();
-        return;
-    }
-    if (editingImagePath === selectedImage && !pinnedReferencePath) return;
-    editingImagePath = selectedImage;
-    loadDraftFromMode();
-    refreshEditFocusUI();
-}
-
-function refreshEditFocusUI(): void {
-    const editingLeft = pinnedReferencePath !== null && editingImagePath === pinnedReferencePath;
-    const editingRight = editingImagePath === selectedImage;
-
-    els.frameLeft.classList.toggle('is-editing-target', editingLeft);
-    els.frameRight.classList.toggle('is-editing-target', editingRight);
-    els.frameLeft.classList.toggle('is-clickable', pinnedReferencePath !== null);
-    els.frameRight.classList.toggle('is-clickable', pinnedReferencePath !== null);
-
-    updateEditTargetLabel();
-    updateEffectiveLabel();
-    updatePreviewTransforms();
-    renderImageList();
-}
-
-function setupSliders(): void {
-    const bind = (input: HTMLInputElement, key: keyof PortraitAdjustValues, label: HTMLElement) => {
-        input.min = String(key === 'scale' ? SLIDER.scale.min : SLIDER.offset.min);
-        input.max = String(key === 'scale' ? SLIDER.scale.max : SLIDER.offset.max);
-        input.step = String(key === 'scale' ? SLIDER.scale.step : SLIDER.offset.step);
-        input.addEventListener('input', () => {
-            const v = key === 'scale' ? parseFloat(input.value) : parseInt(input.value, 10);
-            draft[key] = v as never;
-            label.textContent = key === 'scale' ? v.toFixed(2) : String(v);
-            updatePreviewTransforms();
-        });
+function getFolderGuide(folder: string): PortraitFolderGuide {
+    const g = adjustData.folderGuides?.[folder];
+    if (!g) return { ...DEFAULT_GUIDE };
+    return {
+        samplePath: g.samplePath ?? '',
+        eyeLineY: g.eyeLineY ?? DEFAULT_GUIDE.eyeLineY,
+        chestLineX: g.chestLineX ?? DEFAULT_GUIDE.chestLineX,
     };
-    bind(els.scale, 'scale', els.valScale);
-    bind(els.offsetX, 'offsetX', els.valOffsetX);
-    bind(els.offsetY, 'offsetY', els.valOffsetY);
 }
 
-function populateFolders(): void {
-    els.folder.innerHTML = portraitCatalog.map(
-        (c) => `<option value="${c.folder}">${c.label} (${c.images.length})</option>`,
-    ).join('');
-    if (selectedFolder) els.folder.value = selectedFolder;
+function saveFolderGuide(folder: string, guide: PortraitFolderGuide): void {
+    adjustData.folderGuides = adjustData.folderGuides ?? {};
+    adjustData.folderGuides[folder] = guide;
+    dirty = true;
+    updateDirtyHint();
 }
 
 function getFilteredImages(): string[] {
@@ -411,56 +365,32 @@ function getFilteredImages(): string[] {
 
 function renderImageList(): void {
     const images = getFilteredImages();
+    const guide = getFolderGuide(selectedFolder);
     if (!images.includes(selectedImage) && images.length > 0) {
         selectedImage = images[0];
-        editingImagePath = selectedImage;
     }
+
     els.imageList.innerHTML = images.map((path) => {
         const name = path.split('/').pop() ?? path;
-        const active = path === editingImagePath ? ' is-active' : '';
-        const check = pinnedReferencePath && path === selectedImage && path !== editingImagePath
-            ? ' is-check'
-            : '';
-        const refPin = pinnedReferencePath && path === pinnedReferencePath ? ' is-ref-pin' : '';
+        const active = path === selectedImage ? ' is-active' : '';
+        const sample = path === guide.samplePath ? ' is-sample' : '';
         const mark = hasPortraitImageOverride(path, adjustData) ? ' is-tuned' : '';
-        return `<button type="button" class="pt-image-item${active}${check}${refPin}${mark}" data-path="${path}">${name}</button>`;
+        return `<button type="button" class="pt-image-item${active}${sample}${mark}" data-path="${path}">${name}</button>`;
     }).join('');
 
     els.imageList.querySelectorAll('.pt-image-item').forEach((btn) => {
         btn.addEventListener('click', () => {
-            const path = (btn as HTMLElement).dataset.path!;
-            if (pinnedReferencePath && path === pinnedReferencePath) {
-                editingImagePath = pinnedReferencePath;
-                loadDraftFromMode();
-                refreshEditFocusUI();
-                return;
-            }
-            selectedImage = path;
-            if (!pinnedReferencePath || editingImagePath !== pinnedReferencePath) {
-                editingImagePath = path;
-            }
+            selectedImage = (btn as HTMLElement).dataset.path!;
             renderImageList();
             loadDraftFromMode();
             refreshPreview();
         });
     });
 
-    updateStats();
-}
-
-function updateStats(): void {
     const imageCount = Object.keys(adjustData.images ?? {}).length;
     const folderCount = Object.keys(adjustData.folders ?? {}).length;
-    const total = ALL_PORTRAIT_COUNT();
+    const total = portraitCatalog.reduce((n, c) => n + c.images.length, 0);
     els.stats.textContent = `已调校：单张 ${imageCount} · 文件夹 ${folderCount} · 库内 ${total} 张`;
-}
-
-function ALL_PORTRAIT_COUNT(): number {
-    return portraitCatalog.reduce((n, c) => n + c.images.length, 0);
-}
-
-function getEditKey(): string {
-    return editMode === 'folder' ? selectedFolder : editingImagePath;
 }
 
 function loadDraftFromMode(): void {
@@ -472,7 +402,7 @@ function loadDraftFromMode(): void {
             offsetY: f?.offsetY ?? PORTRAIT_ADJUST_NEUTRAL.offsetY,
         };
     } else {
-        draft = { ...resolvePortraitAdjust(editingImagePath, adjustData) };
+        draft = { ...resolvePortraitAdjust(selectedImage, adjustData) };
     }
     syncSlidersToDraft();
     updateEditTargetLabel();
@@ -488,134 +418,118 @@ function syncSlidersToDraft(): void {
     els.valOffsetY.textContent = String(draft.offsetY);
 }
 
+function updateDirtyHint(): void {
+    els.dirtyHint.textContent = dirty
+        ? '有改动未保存，请点「保存」'
+        : '✓ 已保存到 portrait_adjust.ts';
+    els.dirtyHint.className = dirty ? 'pt-dirty-hint is-dirty' : 'pt-dirty-hint';
+}
+
+function showSaveToast(message: string, isError = false): void {
+    els.saveToast.textContent = message;
+    els.saveToast.className = isError ? 'pt-save-toast is-error' : 'pt-save-toast';
+}
+
 function updateEditTargetLabel(): void {
-    const key = getEditKey();
-    if (editMode === 'folder') {
-        els.editTarget.textContent = `正在编辑文件夹默认：${key}（该文件夹内未单独覆盖的图共用）`;
-        return;
-    }
-    if (pinnedReferencePath && editingImagePath === pinnedReferencePath) {
-        els.editTarget.textContent = `正在编辑左边样片：${key}`;
-        return;
-    }
-    if (pinnedReferencePath) {
-        els.editTarget.textContent = `正在编辑右边当前张：${key}`;
-        return;
-    }
-    els.editTarget.textContent = `正在编辑单张：${key}`;
+    const key = editMode === 'folder' ? selectedFolder : selectedImage;
+    els.editTarget.textContent = editMode === 'folder'
+        ? `保存时将写入：文件夹默认 ${key}`
+        : `保存时将写入：单张例外 ${key}`;
 }
 
 function updateEffectiveLabel(): void {
-    const eff = resolvePortraitAdjust(editingImagePath, adjustData);
-    const parts: string[] = [
-        `当前编辑有效值：scale ${eff.scale.toFixed(2)}，offsetX ${eff.offsetX}，offsetY ${eff.offsetY}`,
+    const path = editMode === 'folder' ? (getFolderGuide(selectedFolder).samplePath || selectedImage) : selectedImage;
+    const eff = resolvePortraitAdjust(path, adjustData);
+    const parts = [
+        `滑块预览：scale ${draft.scale.toFixed(2)}，offsetX ${draft.offsetX}，offsetY ${draft.offsetY}`,
+        `｜已保存有效值：scale ${eff.scale.toFixed(2)}，offsetX ${eff.offsetX}，offsetY ${eff.offsetY}`,
     ];
-    if (hasPortraitImageOverride(editingImagePath, adjustData)) {
-        parts.push('（含单张覆盖）');
-    } else if (adjustData.folders?.[extractPortraitFolder(editingImagePath) ?? '']) {
-        parts.push('（来自文件夹默认）');
-    } else {
-        parts.push('（未调校，使用默认）');
-    }
-    if (pinnedReferencePath && editingImagePath === pinnedReferencePath && selectedImage !== editingImagePath) {
-        parts.push(`；右边对照：${selectedImage.split('/').pop()}`);
-    }
-    els.effective.textContent = parts.join(' ');
+    if (hasPortraitImageOverride(selectedImage, adjustData)) parts.push('（当前张有单张覆盖）');
+    els.effective.textContent = parts.join('');
 }
 
-function applyCanvasTransform(
-    canvas: HTMLElement,
-    portraitPath: string,
-    data: PortraitAdjustData,
-    mirror: boolean,
-): void {
-    const adj = resolvePortraitAdjust(portraitPath, data);
-    const ox = Math.round(adj.offsetX * COMBAT_UI_SCALE);
-    const oy = Math.round(adj.offsetY * COMBAT_UI_SCALE);
-    const base = `translate(${ox}px, ${oy}px) scale(${adj.scale})`;
-    canvas.style.transform = mirror ? `${base} scaleX(-1)` : base;
+function imageNeedsReload(img: HTMLImageElement, path: string): boolean {
+    if (!path) return false;
+    return !(img.src.endsWith(path) || img.src.endsWith(encodeURI(path)));
 }
 
-function updateCompareLabels(): void {
-    const leftSlot = els.labelLeft.parentElement!;
-    const rightSlot = els.labelRight.parentElement!;
-    if (pinnedReferencePath) {
-        els.labelLeft.textContent = '对比样片（点左边可选中）';
-        els.labelRight.textContent = '当前这张（点右边可选中）';
-        els.labelLeft.className = 'pt-slot-label is-ref';
-        els.labelRight.className = 'pt-slot-label is-current';
-        leftSlot.classList.remove('pt-slot-compare');
-        rightSlot.classList.add('pt-slot-compare');
-        els.pinRefBtn.textContent = '取消样片对比';
-        els.autoBtn.textContent = '对齐样片大小';
-        els.previewHint.textContent =
-            '对比模式：左 = 样片 · 右 = 翻页对照 · 点左边/列表带「样」= 编辑样片；点右边/其他列表项 = 编辑当前张';
-    } else {
-        els.labelLeft.textContent = '攻方';
-        els.labelRight.textContent = '守方（镜像）';
-        els.labelLeft.className = 'pt-slot-label';
-        els.labelRight.className = 'pt-slot-label';
-        rightSlot.classList.remove('pt-slot-compare');
-        els.pinRefBtn.textContent = '钉住当前为对比样片';
-        els.autoBtn.textContent = '自动估算缩放';
-        els.previewHint.textContent =
-            '琥珀+青双边框 = 768×1024 PNG 画布 · 灰点外框 = 战斗立绘槽 · 红虚线 = 脚底线 · 顺眼就 scale=1 直接写入，自动估算不会把普通半身缩小';
-    }
+/** 统一刷新预览与标线（保存/滑块/翻页后都走这里） */
+function syncPreviewUI(): void {
+    updateCurrentTransforms();
+    layoutStage();
 }
 
-function updatePreviewTransforms(): void {
-    if (pinnedReferencePath) {
-        const leftData = editingImagePath === pinnedReferencePath
-            ? withDraftOverlay(adjustData, pinnedReferencePath, draft)
-            : adjustData;
-        const rightData = editingImagePath === selectedImage
-            ? withDraftOverlay(adjustData, selectedImage, draft)
-            : adjustData;
-        applyCanvasTransform(previewCanvasLeft, pinnedReferencePath, leftData, false);
-        applyCanvasTransform(previewCanvasRight, selectedImage, rightData, false);
+function updateHint(): void {
+    const guide = getFolderGuide(selectedFolder);
+    if (!guide.samplePath) {
+        els.hint.textContent = '① 选中等构图 →「当前张设为样片」→ 拖蓝线(眼)、橙线(胸) → 文件夹默认 → 保存';
         return;
     }
+    els.hint.textContent = `左=样片 右=对照。标线默认眼线 ${(PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y * 100).toFixed(0)}%、胸线 ${(PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X * 100).toFixed(0)}%。缩放锚点=两线交汇处。左栏拖线，双击橙线居中。`;
+}
 
-    const previewData = withDraftOverlay(adjustData, selectedImage, draft);
-    applyCanvasTransform(previewCanvasLeft, selectedImage, previewData, false);
-    applyCanvasTransform(previewCanvasRight, selectedImage, previewData, true);
+function updateCurrentTransforms(): void {
+    imgSample.style.transform = '';
+    imgSample.style.transformOrigin = '';
+    applyPortraitAdjustToElement(imgCurrent, selectedImage, getPreviewAdjustData());
+}
+
+function applyGuidePositions(): void {
+    const guide = getFolderGuide(selectedFolder);
+    const sampleLeft = SAMPLE_INSET.left;
+    const sampleBottom = SAMPLE_INSET.bottom;
+    const spanW = CANVAS_W * 2 + VIEW_GAP;
+
+    els.guideLayer.style.left = `${sampleLeft}px`;
+    els.guideLayer.style.bottom = `${sampleBottom}px`;
+    els.guideLayer.style.width = `${spanW}px`;
+    els.guideLayer.style.height = `${CANVAS_H}px`;
+
+    els.guideEye.style.top = `${guide.eyeLineY * CANVAS_H}px`;
+    const chestX = guide.chestLineX * CANVAS_W;
+    els.guideChest.style.left = `${chestX}px`;
+    els.guideChestMirror.style.left = `${CANVAS_W + VIEW_GAP + chestX}px`;
+}
+
+function layoutStage(): void {
+    const sampleLeft = SAMPLE_INSET.left;
+    const sampleBottom = SAMPLE_INSET.bottom;
+    const currentLeft = sampleLeft + CANVAS_W + VIEW_GAP;
+
+    els.viewSample.style.left = `${sampleLeft}px`;
+    els.viewSample.style.bottom = `${sampleBottom}px`;
+    els.viewCurrent.style.left = `${currentLeft}px`;
+    els.viewCurrent.style.bottom = `${sampleBottom}px`;
+
+    applyGuidePositions();
 }
 
 function refreshPreview(): void {
-    if (pinnedReferencePath) {
-        previewImgLeft.src = pinnedReferencePath;
-        previewImgRight.src = selectedImage;
+    const guide = getFolderGuide(selectedFolder);
+    const sampleSrc = guide.samplePath || selectedImage;
+    const needSample = imageNeedsReload(imgSample, sampleSrc);
+    const needCurrent = imageNeedsReload(imgCurrent, selectedImage);
+
+    if (needSample) imgSample.src = sampleSrc;
+    if (needCurrent) imgCurrent.src = selectedImage;
+
+    if (needSample || needCurrent) {
+        let pending = (needSample ? 1 : 0) + (needCurrent ? 1 : 0);
+        const onload = () => {
+            pending -= 1;
+            if (pending <= 0) syncPreviewUI();
+        };
+        if (needSample) imgSample.onload = onload;
+        if (needCurrent) imgCurrent.onload = onload;
     } else {
-        previewImgLeft.src = selectedImage;
-        previewImgRight.src = selectedImage;
+        syncPreviewUI();
     }
-    previewImgRight.onload = () => updatePreviewTransforms();
-    previewImgLeft.onload = () => updatePreviewTransforms();
-    updatePreviewTransforms();
+
+    updateHint();
     updateEffectiveLabel();
-    updateCompareLabels();
-    refreshEditFocusUI();
 }
 
-function togglePinReference(): void {
-    if (pinnedReferencePath === selectedImage) {
-        pinnedReferencePath = null;
-        editingImagePath = selectedImage;
-    } else {
-        pinnedReferencePath = selectedImage;
-        editingImagePath = selectedImage;
-    }
-    refreshPreview();
-}
-
-function clearPinnedReference(): void {
-    pinnedReferencePath = null;
-    editingImagePath = selectedImage;
-    updateCompareLabels();
-    refreshEditFocusUI();
-}
-
-function writeCurrentMode(): void {
+function commitDraftToAdjustData(): void {
     const values: PortraitAdjustValues = {
         scale: draft.scale,
         offsetX: draft.offsetX,
@@ -626,19 +540,47 @@ function writeCurrentMode(): void {
         adjustData.folders[selectedFolder] = values;
     } else {
         adjustData.images = adjustData.images ?? {};
-        adjustData.images[editingImagePath] = values;
+        adjustData.images[selectedImage] = values;
     }
-    dirty = true;
+}
+
+
+function setCurrentAsSample(): void {
+    const guide = getFolderGuide(selectedFolder);
+    guide.samplePath = selectedImage;
+    saveFolderGuide(selectedFolder, guide);
     renderImageList();
-    updateEffectiveLabel();
-    updatePreviewTransforms();
+    refreshPreview();
+}
+
+/** 一键保存：滑块 + 标线 + folderGuides 一并写入 portrait_adjust.ts */
+async function saveEverything(): Promise<void> {
+    commitDraftToAdjustData();
+    dirty = true;
+    updateDirtyHint();
+    try {
+        await saveAdjustToServer();
+        loadDraftFromMode();
+        syncPreviewUI();
+        const guide = getFolderGuide(selectedFolder);
+        const target = editMode === 'folder'
+            ? `文件夹默认 ${selectedFolder}`
+            : `单张 ${selectedImage.split('/').pop()}`;
+        showSaveToast(
+            `已保存：${target}（scale ${draft.scale.toFixed(2)}，offsetY ${draft.offsetY}，眼线 ${(guide.eyeLineY * 100).toFixed(1)}%，胸线 ${(guide.chestLineX * 100).toFixed(1)}%）· 回游戏刷新后生效`,
+        );
+    } catch (err) {
+        showSaveToast(`保存失败：${err}`, true);
+        throw err;
+    }
 }
 
 function clearImageOverride(): void {
-    if (!adjustData.images?.[editingImagePath]) return;
-    delete adjustData.images[editingImagePath];
+    if (!adjustData.images?.[selectedImage]) return;
+    delete adjustData.images[selectedImage];
     if (Object.keys(adjustData.images).length === 0) delete adjustData.images;
     dirty = true;
+    updateDirtyHint();
     loadDraftFromMode();
     refreshPreview();
     renderImageList();
@@ -651,108 +593,68 @@ function navigateImage(delta: number): void {
     const next = images[idx + delta];
     if (!next) return;
     selectedImage = next;
-    if (!pinnedReferencePath || editingImagePath !== pinnedReferencePath) {
-        editingImagePath = selectedImage;
-    }
+    if (editMode === 'image') loadDraftFromMode();
     renderImageList();
-    loadDraftFromMode();
     refreshPreview();
 }
 
-type CharBBoxMeasure = {
-    charRatio: number;
-    /** 人物 bbox 底边到原图底边的留白占比 */
-    bottomMarginRatio: number;
-};
-
-async function loadImageForMeasure(src: string): Promise<HTMLImageElement> {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = src;
-    await img.decode().catch(() => {
-        throw new Error(`图片加载失败：${src}`);
-    });
-    return img;
+function resetGuideLines(): void {
+    const guide = getFolderGuide(selectedFolder);
+    guide.eyeLineY = DEFAULT_GUIDE.eyeLineY;
+    guide.chestLineX = DEFAULT_GUIDE.chestLineX;
+    saveFolderGuide(selectedFolder, guide);
+    syncPreviewUI();
 }
 
-async function measureCharacterBBox(portraitPath: string): Promise<CharBBoxMeasure | null> {
-    const img = await loadImageForMeasure(portraitPath);
-
-    const canvas = document.createElement('canvas');
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return null;
-
-    ctx.drawImage(img, 0, 0);
-    const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-    let minY = height;
-    let maxY = 0;
-    let found = false;
-
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-            const a = data[(y * width + x) * 4 + 3];
-            if (a > 16) {
-                found = true;
-                if (y < minY) minY = y;
-                if (y > maxY) maxY = y;
-            }
-        }
-    }
-
-    if (!found) return null;
-
-    const bboxH = maxY - minY + 1;
-    return {
-        charRatio: bboxH / height,
-        bottomMarginRatio: (height - maxY) / height,
-    };
+function centerChestLine(): void {
+    const guide = getFolderGuide(selectedFolder);
+    guide.chestLineX = PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X;
+    saveFolderGuide(selectedFolder, guide);
+    syncPreviewUI();
 }
 
-function clampScale(value: number): number {
-    return Math.min(SLIDER.scale.max, Math.max(SLIDER.scale.min, value));
-}
+function bindGuideDrag(
+    handle: HTMLElement,
+    axis: 'eye' | 'chest',
+): void {
+    let dragging = false;
 
-function clampOffset(value: number): number {
-    return Math.min(SLIDER.offset.max, Math.max(SLIDER.offset.min, Math.round(value)));
-}
+    const onMove = (clientX: number, clientY: number) => {
+        const guide = getFolderGuide(selectedFolder);
+        const layerRect = els.guideLayer.getBoundingClientRect();
 
-async function estimateAutoScale(): Promise<void> {
-    const measurePath = editingImagePath || selectedImage;
-    const curMeasure = await measureCharacterBBox(measurePath);
-    if (!curMeasure) {
-        alert('未检测到不透明像素，请手动调节');
-        return;
-    }
-
-    if (pinnedReferencePath && measurePath === selectedImage && measurePath !== pinnedReferencePath) {
-        const refMeasure = await measureCharacterBBox(pinnedReferencePath);
-        if (!refMeasure) {
-            alert('样片未检测到不透明像素，请换一张样片或手动调节');
-            return;
-        }
-
-        const refAdj = resolvePortraitAdjust(pinnedReferencePath, adjustData);
-        const suggestedScale = refAdj.scale * (refMeasure.charRatio / curMeasure.charRatio);
-        draft.scale = clampScale(suggestedScale);
-    } else {
-        const folderAdj = adjustData.folders?.[selectedFolder];
-        const anchorScale = folderAdj?.scale ?? PORTRAIT_ADJUST_NEUTRAL.scale;
-        const ratioGap = Math.abs(curMeasure.charRatio - BASELINE_CHAR_RATIO_AT_SCALE_1);
-
-        if (ratioGap <= AUTO_SCALE_TOLERANCE) {
-            draft.scale = anchorScale;
+        if (axis === 'eye') {
+            const y = Math.max(0.05, Math.min(0.55, (clientY - layerRect.top) / CANVAS_H));
+            guide.eyeLineY = y;
         } else {
-            draft.scale = clampScale(
-                anchorScale * (BASELINE_CHAR_RATIO_AT_SCALE_1 / curMeasure.charRatio),
-            );
+            let x = Math.max(0.15, Math.min(0.85, (clientX - layerRect.left) / CANVAS_W));
+            if (Math.abs(x - PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X) < 0.02) {
+                x = PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X;
+            }
+            guide.chestLineX = x;
         }
-    }
+        saveFolderGuide(selectedFolder, guide);
+        applyGuidePositions();
+        updateCurrentTransforms();
+    };
 
-    syncSlidersToDraft();
-    updatePreviewTransforms();
+    handle.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        handle.setPointerCapture(e.pointerId);
+        e.preventDefault();
+    });
+    handle.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        onMove(e.clientX, e.clientY);
+    });
+    handle.addEventListener('pointerup', () => { dragging = false; });
+    handle.addEventListener('pointercancel', () => { dragging = false; });
+    if (axis === 'chest') {
+        handle.addEventListener('dblclick', (e) => {
+            centerChestLine();
+            e.preventDefault();
+        });
+    }
 }
 
 async function loadCatalogFromServer(): Promise<void> {
@@ -762,14 +664,15 @@ async function loadCatalogFromServer(): Promise<void> {
     if (portraitCatalog.length === 0) throw new Error('未扫描到任何立绘 PNG');
     selectedFolder = portraitCatalog[0].folder;
     selectedImage = portraitCatalog[0].images[0] ?? '';
-    editingImagePath = selectedImage;
 }
 
 async function loadAdjustFromServer(): Promise<void> {
     const res = await fetch('/api/portrait-adjust');
     if (!res.ok) throw new Error(await res.text());
     adjustData = await res.json();
+    if (!adjustData.folderGuides) adjustData.folderGuides = {};
     dirty = false;
+    updateDirtyHint();
 }
 
 async function saveAdjustToServer(): Promise<void> {
@@ -778,19 +681,21 @@ async function saveAdjustToServer(): Promise<void> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(adjustData),
     });
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `HTTP ${res.status}`);
+    }
     const result = await res.json();
     if (!result.ok) throw new Error(result.error || '保存失败');
     dirty = false;
-    alert('已写入 src/data/portrait_adjust.ts');
+    updateDirtyHint();
 }
 
 function bindEvents(): void {
     els.folder.addEventListener('change', () => {
         selectedFolder = els.folder.value;
-        clearPinnedReference();
         const cat = portraitCatalog.find((c) => c.folder === selectedFolder);
         selectedImage = cat?.images[0] ?? '';
-        editingImagePath = selectedImage;
         renderImageList();
         loadDraftFromMode();
         refreshPreview();
@@ -802,14 +707,38 @@ function bindEvents(): void {
         radio.addEventListener('change', (e) => {
             editMode = (e.target as HTMLInputElement).value as EditMode;
             loadDraftFromMode();
-            updatePreviewTransforms();
+            refreshPreview();
         });
     });
 
-    document.getElementById('pt-apply')!.addEventListener('click', writeCurrentMode);
-    document.getElementById('pt-auto')!.addEventListener('click', () => {
-        estimateAutoScale().catch((err) => alert(String(err)));
+    const onSlider = () => {
+        dirty = true;
+        updateDirtyHint();
+        syncPreviewUI();
+        updateEffectiveLabel();
+    };
+    els.scale.addEventListener('input', () => {
+        draft.scale = parseFloat(els.scale.value);
+        els.valScale.textContent = draft.scale.toFixed(2);
+        onSlider();
     });
+    els.offsetX.addEventListener('input', () => {
+        draft.offsetX = parseInt(els.offsetX.value, 10);
+        els.valOffsetX.textContent = String(draft.offsetX);
+        onSlider();
+    });
+    els.offsetY.addEventListener('input', () => {
+        draft.offsetY = parseInt(els.offsetY.value, 10);
+        els.valOffsetY.textContent = String(draft.offsetY);
+        onSlider();
+    });
+
+    document.getElementById('pt-set-sample')!.addEventListener('click', setCurrentAsSample);
+    document.getElementById('pt-reset-guides')!.addEventListener('click', resetGuideLines);
+    document.getElementById('pt-center-chest')!.addEventListener('click', centerChestLine);
+    const saveHandler = () => { saveEverything().catch(() => {}); };
+    document.getElementById('pt-save-file')!.addEventListener('click', saveHandler);
+    document.getElementById('pt-save-bottom')!.addEventListener('click', saveHandler);
     document.getElementById('pt-reset-draft')!.addEventListener('click', () => {
         if (editMode === 'folder') {
             draft = { ...PORTRAIT_ADJUST_NEUTRAL };
@@ -822,10 +751,9 @@ function bindEvents(): void {
             };
         }
         syncSlidersToDraft();
-        updatePreviewTransforms();
+        refreshPreview();
     });
     document.getElementById('pt-clear-override')!.addEventListener('click', clearImageOverride);
-    document.getElementById('pt-pin-ref')!.addEventListener('click', togglePinReference);
     document.getElementById('pt-prev')!.addEventListener('click', () => navigateImage(-1));
     document.getElementById('pt-next')!.addEventListener('click', () => navigateImage(1));
     document.getElementById('pt-reload')!.addEventListener('click', () => {
@@ -834,24 +762,41 @@ function bindEvents(): void {
                 loadDraftFromMode();
                 refreshPreview();
                 renderImageList();
+                updateDirtyHint();
             })
             .catch((err) => alert(String(err)));
     });
-    document.getElementById('pt-save-file')!.addEventListener('click', () => {
-        saveAdjustToServer().catch((err) => alert(String(err)));
-    });
 
+    window.addEventListener('resize', () => syncPreviewUI());
     window.addEventListener('beforeunload', (e) => {
         if (dirty) {
             e.preventDefault();
             e.returnValue = '';
         }
     });
+
+    bindGuideDrag(els.guideEye, 'eye');
+    bindGuideDrag(els.guideChest, 'chest');
+}
+
+function populateFolders(): void {
+    els.folder.innerHTML = portraitCatalog.map(
+        (c) => `<option value="${c.folder}">${c.label} (${c.images.length})</option>`,
+    ).join('');
+    if (selectedFolder) els.folder.value = selectedFolder;
 }
 
 async function boot(): Promise<void> {
-    initPreviewImages();
-    setupSliders();
+    imgSample = mountImgInSlot('pt-slot-sample');
+    imgCurrent = mountImgInSlot('pt-slot-current');
+
+    els.scale.min = String(SLIDER.scale.min);
+    els.scale.max = String(SLIDER.scale.max);
+    els.scale.step = String(SLIDER.scale.step);
+    els.offsetX.min = els.offsetY.min = String(SLIDER.offset.min);
+    els.offsetX.max = els.offsetY.max = String(SLIDER.offset.max);
+    els.offsetX.step = els.offsetY.step = String(SLIDER.offset.step);
+
     bindEvents();
 
     await loadCatalogFromServer();
@@ -867,6 +812,7 @@ async function boot(): Promise<void> {
     renderImageList();
     loadDraftFromMode();
     refreshPreview();
+    updateDirtyHint();
 }
 
 boot().catch((err) => {

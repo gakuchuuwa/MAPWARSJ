@@ -1,6 +1,8 @@
 import { COMBAT_UI_SCALE } from './combat-ui-tokens';
 import {
     DEFAULT_PORTRAIT_ADJUST,
+    PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X,
+    PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y,
     type PortraitAdjustData,
     type PortraitAdjustValues,
 } from '../data/portrait_adjust';
@@ -40,15 +42,27 @@ export function hasPortraitImageOverride(
     return portraitPath in (data.images ?? {});
 }
 
-/** 将调校参数应用到立绘 img（画布中心缩放，再用 offset 微调位置） */
+/** 缩放锚点：眼线 × 胸线交汇处（与调校尺一致；无 folderGuides 时用全局默认 24% / 50%） */
+export function resolvePortraitTransformOrigin(
+    portraitPath: string,
+    data: PortraitAdjustData = DEFAULT_PORTRAIT_ADJUST,
+): string {
+    const folder = extractPortraitFolder(portraitPath);
+    const guide = folder ? data.folderGuides?.[folder] : undefined;
+    const x = guide?.chestLineX ?? PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X;
+    const y = guide?.eyeLineY ?? PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y;
+    return `${x * 100}% ${y * 100}%`;
+}
+
+/** 将调校参数应用到立绘 img（以眼线/胸线交汇处为缩放锚点，再用 offset 微调） */
 export function applyPortraitAdjustToElement(
     img: HTMLElement,
     portraitPath: string,
-    data?: PortraitAdjustData,
+    data: PortraitAdjustData = DEFAULT_PORTRAIT_ADJUST,
 ): void {
     const adj = resolvePortraitAdjust(portraitPath, data);
     const ox = Math.round(adj.offsetX * COMBAT_UI_SCALE);
     const oy = Math.round(adj.offsetY * COMBAT_UI_SCALE);
-    img.style.transformOrigin = 'center center';
+    img.style.transformOrigin = resolvePortraitTransformOrigin(portraitPath, data);
     img.style.transform = `translate(${ox}px, ${oy}px) scale(${adj.scale})`;
 }

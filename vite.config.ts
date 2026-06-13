@@ -949,7 +949,11 @@ function serverReplaceFormationMode(text: string, culture: string, mode: string)
 }
 
 /** 从 portrait_adjust.ts 解析 DEFAULT_PORTRAIT_ADJUST 对象 */
-function serverParsePortraitAdjustExport(text: string): { folders?: Record<string, unknown>; images?: Record<string, unknown> } {
+function serverParsePortraitAdjustExport(text: string): {
+    folders?: Record<string, unknown>;
+    images?: Record<string, unknown>;
+    folderGuides?: Record<string, unknown>;
+} {
     const marker = 'export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = ';
     const start = text.indexOf(marker);
     if (start === -1) throw new Error('DEFAULT_PORTRAIT_ADJUST not found');
@@ -975,21 +979,27 @@ function serverParsePortraitAdjustExport(text: string): { folders?: Record<strin
     return new Function(`return (${objText});`)() as {
         folders?: Record<string, unknown>;
         images?: Record<string, unknown>;
+        folderGuides?: Record<string, unknown>;
     };
 }
 
 /** 将调校数据写回 portrait_adjust.ts（保留文件头注释与类型导出） */
-function serverFormatPortraitAdjustFile(data: { folders?: Record<string, unknown>; images?: Record<string, unknown> }): string {
+function serverFormatPortraitAdjustFile(data: {
+    folders?: Record<string, unknown>;
+    images?: Record<string, unknown>;
+    folderGuides?: Record<string, unknown>;
+}): string {
     const normalized = {
         folders: data.folders ?? {},
         images: data.images ?? {},
+        folderGuides: data.folderGuides ?? {},
     };
 
     const body = JSON.stringify(normalized, null, 4);
 
     return `/**
- * 立绘显示调校：文件夹默认 + 单张覆盖
- * 由 PortraitTuner（/portrait-tuner.html）维护；CombatUI 读取本文件。
+ * 立绘显示调校：文件夹默认 + 单张覆盖 + 调校尺（样片/标线）
+ * 由 PortraitTuner（/portrait-tuner.html）维护；CombatUI 仅读取 folders / images。
  *
  * folders 键示例："/assets/daming/"
  * images 键示例："/assets/daming/daming (1).png"
@@ -1003,9 +1013,20 @@ export interface PortraitAdjustValues {
     offsetY?: number;
 }
 
+/** 调校工具专用：样片 + 眼线/胸线（CombatUI 不读取） */
+export interface PortraitFolderGuide {
+    /** 样片路径 */
+    samplePath: string;
+    /** 眼线 Y：768×1024 画布归一化 0–1（顶→底） */
+    eyeLineY: number;
+    /** 胸线 X：画布归一化 0–1（左→右） */
+    chestLineX: number;
+}
+
 export interface PortraitAdjustData {
     folders?: Record<string, PortraitAdjustValues>;
     images?: Record<string, PortraitAdjustValues>;
+    folderGuides?: Record<string, PortraitFolderGuide>;
 }
 
 export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = ${body};
