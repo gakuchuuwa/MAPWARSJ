@@ -205,44 +205,50 @@
     display: flex;
     align-items: stretch;
     width: var(--hud-w);
-    min-height: 36px;
+    min-height: 42px;
     box-sizing: border-box;
-    border-radius: 2px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--stone-border);
+    /* 移除 overflow hidden，改用 filter 统一投影，这样边缘能有更生动的立体感 */
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+    margin-bottom: 2px;
 }
 
 #game-time-hud .hud-date-cap {
-    flex: 0 0 24px;
+    flex: 0 0 18px;
+    /* 模拟垂直漆器卷轴的圆柱高光 */
+    background: linear-gradient(to right, #3a0d0d 0%, #8b2323 30%, #c43838 50%, #8b2323 70%, #3a0d0d 100%);
+    position: relative;
+    z-index: 2;
+    border-top: 2px solid #220505;
+    border-bottom: 2px solid #220505;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--cinnabar-top) 0%, var(--cinnabar-bot) 100%);
-    border-top: 1px solid #78201f;
-    border-bottom: 1px solid #78201f;
-    position: relative;
 }
 
+/* 隐藏原本单薄的 teardrop SVG */
 #game-time-hud .hud-date-cap svg {
-    width: 12px;
-    height: 12px;
-    color: #ebdcc3;
-    opacity: 0.85;
+    display: none;
+}
+
+/* 卷轴中间的鎏金细线装饰 */
+#game-time-hud .hud-date-cap::after {
+    content: '';
+    position: absolute;
+    top: 6px; bottom: 6px;
+    left: 45%; right: 45%;
+    background: linear-gradient(to bottom, #b38728 0%, #fdf5a9 50%, #b38728 100%);
+    border-radius: 1px;
+    box-shadow: 0 0 4px rgba(253, 245, 169, 0.6);
 }
 
 #game-time-hud .hud-date-cap--l {
-    border-right: 1px solid #5c181a;
-    box-shadow: inset 2px 0 8px rgba(0, 0, 0, 0.4);
+    border-radius: 5px 0 0 5px;
+    border-left: 2px solid #220505;
 }
 
 #game-time-hud .hud-date-cap--r {
-    border-left: 1px solid #5c181a;
-    box-shadow: inset -2px 0 8px rgba(0, 0, 0, 0.4);
-}
-
-#game-time-hud .hud-date-cap--r svg {
-    transform: scaleX(-1);
+    border-radius: 0 5px 5px 0;
+    border-right: 2px solid #220505;
 }
 
 #game-time-hud .hud-date-body {
@@ -250,15 +256,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--panel-bg);
+    /* 更温润的宣纸渐变 */
+    background: linear-gradient(135deg, #f0e6d2 0%, #dfcba4 100%);
     position: relative;
+    z-index: 1;
+    border-top: 1px solid #b89d71;
+    border-bottom: 1px solid #b89d71;
+    /* 卷轴在轴承处的自然纸张内阴影（阴影贴合两侧木轴） */
+    box-shadow: 
+        inset 14px 0 14px -10px rgba(0,0,0,0.65),
+        inset -14px 0 14px -10px rgba(0,0,0,0.65);
 }
 
 #game-time-hud .hud-date-body::before {
     content: '';
     position: absolute;
     inset: 0;
-    opacity: 0.25;
+    opacity: 0.35;
     pointer-events: none;
     mix-blend-mode: multiply;
     background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
@@ -267,13 +281,15 @@
 #game-time-hud .hud-date-inner {
     display: flex;
     align-items: center;
-    gap: 0.6em;
-    letter-spacing: 0.1em;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--gold);
+    gap: 0.8em;
+    letter-spacing: 0.15em;
+    font-size: 17px;
+    font-weight: 900;
+    color: #1a2f22; /* 浓重的徽墨色/深黛绿 */
     position: relative;
     z-index: 1;
+    /* 活字印刷的微凹陷质感：一点点白色下沉高光 */
+    text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.55);
 }
 
 #game-year-display,

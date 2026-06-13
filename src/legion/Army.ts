@@ -458,9 +458,6 @@ export class Army implements IBattleUnit {
     }
 
     private getSpeed(): number {
-        // [SIMPLIFIED] Unified Speed Mode (Video Deduction)
-        // Ignores unit type, weight, terrain (via multiplier=1), etc.
-        // Multiplier is only for game TimeScale or Event overrides (e.g. stop=0)
         return PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED * this.speedMultiplier;
     }
 

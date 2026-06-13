@@ -92,15 +92,14 @@ export const COMBAT_UI_TOKENS = {
         centerVsIconSize: 56,
         /**
          * 侧栏字号（设计 px）。半宽 ≈ (1190-600)/2 ≈ 295 屏 px；
-         * 8 字名 + 冒号 + 8ch 兵力 ≈ 17ch × 10px ≈ 170px，可贴中线对齐。
          */
-        labelSize: 28,
-        maxDisplayNameCh: 8,
-        maxNameSuffixCh: 5,
+        labelSize: 22,
+        maxDisplayNameCh: 12,
+        maxNameSuffixCh: 6,
         /** 十万 → "100,000" 7 字符，固定 8ch 防抖动 */
         troopsMinCh: 8,
         /** 侧栏势力名称字号（设计 px）；略大于军团名 labelSize */
-        factionNameSize: 30,
+        factionNameSize: 24,
     },
 
     zIndex: {

@@ -335,9 +335,8 @@ export class CombatUI {
         this.defenderBar = document.createElement('div');
         this.defenderBar.style.cssText = `
             position: absolute;
-            top: 0; right: 0; bottom: 0;
-            width: 50%;
-            background: linear-gradient(270deg, #162530 0%, #2a5565 30%, #3d7a8f 60%, #5aacbe 100%);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, #162530 0%, #2a5565 35%, #3d7a8f 65%, #5aacbe 100%);
             z-index: 1;
             animation: bar-glow-def 3s ease-in-out infinite;
         `;
@@ -767,13 +766,10 @@ export class CombatUI {
     private createPortraitFacingWrap(side: 'left' | 'right'): HTMLDivElement {
         const wrap = document.createElement('div');
         const edge = side === 'left' ? 'left' : 'right';
-        const fx = T.portraitCornerFadeX;
-        const fy = T.portraitCornerFadeY;
-        const cornerMask = [
-            `radial-gradient(ellipse ${fx}% ${fy}% at 0% 100%, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%)`,
-            `radial-gradient(ellipse ${fx}% ${fy}% at 100% 100%, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%)`,
-            'linear-gradient(#000 0 0)',
-        ].join(', ');
+        const fadeDir = side === 'left' ? 'right' : 'left';
+        
+        const maskCSS = `linear-gradient(to ${fadeDir}, transparent 0px, black 12px, black 100%)`;
+
         wrap.style.cssText = `
             position: absolute;
             bottom: 0;
@@ -784,10 +780,8 @@ export class CombatUI {
             ${side === 'left' ? 'justify-content: flex-end;' : 'justify-content: flex-start;'}
             transform-origin: center bottom;
             pointer-events: none;
-            -webkit-mask-image: ${cornerMask};
-            mask-image: ${cornerMask};
-            -webkit-mask-composite: source-over, source-over;
-            mask-composite: add, add;
+            -webkit-mask-image: ${maskCSS};
+            mask-image: ${maskCSS};
         `;
         return wrap;
     }
@@ -1111,7 +1105,6 @@ export class CombatUI {
         let attPct = total > 0 ? (attCurrent / total) * 100 : 50;
 
         this.attackerBar.style.width = `${attPct}%`;
-        this.defenderBar.style.width = `calc(${100 - attPct}% + ${uiPx(T.clashBar.clipPx + 10)})`;
         this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
     }
 

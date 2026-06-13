@@ -29,6 +29,13 @@ export interface PortraitFolderGuide {
     chestLineX: number;
 }
 
+/** 文件夹未配置 guide 时的默认值 */
+export const PORTRAIT_GUIDE_DEFAULT: PortraitFolderGuide = {
+    samplePath: '',
+    eyeLineY: PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y,
+    chestLineX: PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X,
+};
+
 export interface PortraitAdjustData {
     folders?: Record<string, PortraitAdjustValues>;
     images?: Record<string, PortraitAdjustValues>;
@@ -103,6 +110,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -8
+        },
+        "/assets/qin/baiqi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/qin/qinjiang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
         }
     },
     "folderGuides": {
@@ -118,6 +135,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/riben/": {
             "samplePath": "/assets/riben/4d3fef9d-9372-4949-b73f-9c73e7675d43.png",
+            "eyeLineY": 0.24,
+            "chestLineX": 0.5
+        },
+        "/assets/qin/": {
+            "samplePath": "/assets/qin/xirong.png",
             "eyeLineY": 0.24,
             "chestLineX": 0.5
         }

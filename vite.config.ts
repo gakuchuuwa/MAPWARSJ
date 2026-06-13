@@ -1013,6 +1013,11 @@ export interface PortraitAdjustValues {
     offsetY?: number;
 }
 
+/** 全局默认：胸线水平位置（画布归一化 0–1，左→右） */
+export const PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X = 0.5;
+/** 全局默认：眼线垂直位置（画布归一化 0–1，顶→底） */
+export const PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y = 0.24;
+
 /** 调校工具专用：样片 + 眼线/胸线（CombatUI 不读取） */
 export interface PortraitFolderGuide {
     /** 样片路径 */
@@ -1022,6 +1027,13 @@ export interface PortraitFolderGuide {
     /** 胸线 X：画布归一化 0–1（左→右） */
     chestLineX: number;
 }
+
+/** 文件夹未配置 guide 时的默认值 */
+export const PORTRAIT_GUIDE_DEFAULT: PortraitFolderGuide = {
+    samplePath: '',
+    eyeLineY: PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y,
+    chestLineX: PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X,
+};
 
 export interface PortraitAdjustData {
     folders?: Record<string, PortraitAdjustValues>;

@@ -210,7 +210,7 @@ export const MARCH_SPEED_MULTIPLIERS = {
     TERRAIN: {
         mountain: 1.0,
         plain: 1.5,
-        sea: 2.0,
+        sea: 1.2,     // 帆船纯速度快但贴岸绕/等风/昼行夜泊，有效推进不如平原行军
     },
     /** 三角纯骑文化（STEPPE/TIBET/WESTERN）仅在陆地生效 */
     CAVALRY_LAND: {
