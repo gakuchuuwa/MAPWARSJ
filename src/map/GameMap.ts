@@ -605,6 +605,11 @@ export class GameMap {
                         <input type="checkbox" id="chk-editor-army">
                         <b>⚔ 军队编辑</b>
                     </label>
+
+                    <a href="/portrait-tuner.html" target="_blank" rel="noopener"
+                       style="display:block;margin-top:6px;font-size:13px;color:#8E24AA;text-decoration:none;">
+                        🖼 立绘调校（新标签页）
+                    </a>
                     `;
                 }
                 

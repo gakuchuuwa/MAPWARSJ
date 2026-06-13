@@ -223,6 +223,71 @@ export default defineConfig({
                         }
                     });
                 });
+
+                // ========================================================
+                // [NEW 2026-06-13] 立绘显示调校 portrait_adjust.ts
+                // ========================================================
+                const portraitAdjustPath = path.resolve(__dirname, 'src/data/portrait_adjust.ts');
+
+                server.middlewares.use('/api/portrait-adjust', (req, res) => {
+                    if (req.method !== 'GET') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    try {
+                        const text = fs.readFileSync(portraitAdjustPath, 'utf-8');
+                        const data = serverParsePortraitAdjustExport(text);
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify(data));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: false, error: err.message }));
+                    }
+                });
+
+                server.middlewares.use('/api/portrait-catalog', (req, res) => {
+                    if (req.method !== 'GET') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    try {
+                        const catalog = serverBuildPortraitCatalog(path.resolve(__dirname, 'public/assets'));
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify(catalog));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: false, error: err.message }));
+                    }
+                });
+
+                server.middlewares.use('/api/save-portrait-adjust', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    let body = '';
+                    req.on('data', chunk => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(body);
+                            const content = serverFormatPortraitAdjustFile(data);
+                            fs.writeFileSync(portraitAdjustPath, content, 'utf-8');
+                            console.log(`✅ [PortraitAdjust] Saved to ${portraitAdjustPath}`);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                        } catch (err: any) {
+                            console.error(`❌ [PortraitAdjust] Failed:`, err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
             }
         }
     ]
@@ -881,4 +946,101 @@ function serverReplaceFormationMode(text: string, culture: string, mode: string)
         throw new Error(`Cannot find formation mode entry for ${culture}`);
     }
     return text.replace(pattern, `$1'${mode}'`);
+}
+
+/** 从 portrait_adjust.ts 解析 DEFAULT_PORTRAIT_ADJUST 对象 */
+function serverParsePortraitAdjustExport(text: string): { folders?: Record<string, unknown>; images?: Record<string, unknown> } {
+    const marker = 'export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = ';
+    const start = text.indexOf(marker);
+    if (start === -1) throw new Error('DEFAULT_PORTRAIT_ADJUST not found');
+
+    const open = text.indexOf('{', start);
+    if (open === -1) throw new Error('DEFAULT_PORTRAIT_ADJUST object not found');
+
+    let depth = 0;
+    let end = -1;
+    for (let i = open; i < text.length; i++) {
+        if (text[i] === '{') depth++;
+        else if (text[i] === '}') {
+            depth--;
+            if (depth === 0) {
+                end = i + 1;
+                break;
+            }
+        }
+    }
+    if (end === -1) throw new Error('Unclosed DEFAULT_PORTRAIT_ADJUST object');
+
+    const objText = text.slice(open, end);
+    return new Function(`return (${objText});`)() as {
+        folders?: Record<string, unknown>;
+        images?: Record<string, unknown>;
+    };
+}
+
+/** 将调校数据写回 portrait_adjust.ts（保留文件头注释与类型导出） */
+function serverFormatPortraitAdjustFile(data: { folders?: Record<string, unknown>; images?: Record<string, unknown> }): string {
+    const normalized = {
+        folders: data.folders ?? {},
+        images: data.images ?? {},
+    };
+
+    const body = JSON.stringify(normalized, null, 4);
+
+    return `/**
+ * 立绘显示调校：文件夹默认 + 单张覆盖
+ * 由 PortraitTuner（/portrait-tuner.html）维护；CombatUI 读取本文件。
+ *
+ * folders 键示例："/assets/daming/"
+ * images 键示例："/assets/daming/daming (1).png"
+ */
+export interface PortraitAdjustValues {
+    /** 相对缩放，默认 1 */
+    scale?: number;
+    /** 水平偏移（设计 px，CombatUI 会乘 COMBAT_UI_SCALE） */
+    offsetX?: number;
+    /** 垂直偏移（设计 px，正值向下） */
+    offsetY?: number;
+}
+
+export interface PortraitAdjustData {
+    folders?: Record<string, PortraitAdjustValues>;
+    images?: Record<string, PortraitAdjustValues>;
+}
+
+export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = ${body};
+`;
+}
+
+/** 扫描 public/assets 生成立绘调校目录（开发服务器专用） */
+function serverBuildPortraitCatalog(assetsRoot: string): { folder: string; label: string; images: string[] }[] {
+    const EXCLUDED = new Set(['UI', 'avg']);
+    const byFolder = new Map<string, string[]>();
+
+    if (!fs.existsSync(assetsRoot)) return [];
+
+    for (const entry of fs.readdirSync(assetsRoot, { withFileTypes: true })) {
+        if (!entry.isDirectory() || EXCLUDED.has(entry.name)) continue;
+        const dirPath = path.join(assetsRoot, entry.name);
+        const folderKey = `/assets/${entry.name}/`;
+        const images: string[] = [];
+
+        for (const file of fs.readdirSync(dirPath)) {
+            if (!file.toLowerCase().endsWith('.png')) continue;
+            images.push(`${folderKey}${file}`);
+        }
+
+        if (images.length > 0) {
+            images.sort((a, b) => a.localeCompare(b, 'zh-CN'));
+            byFolder.set(folderKey, images);
+        }
+    }
+
+    return [...byFolder.entries()]
+        .sort(([a], [b]) => a.localeCompare(b, 'zh-CN'))
+        .map(([folder, images]) => ({
+            folder,
+            label: folder.replace('/assets/', '').replace(/\/$/, ''),
+            images,
+        }));
 }

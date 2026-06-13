@@ -7,6 +7,7 @@ import {
     shouldMirrorPortraitForSide,
     type PortraitSourceFacing,
 } from '../config/portrait_defaults';
+import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier } from '../systems/CultureCombat';
@@ -1138,9 +1139,13 @@ export class CombatUI {
         };
         const setSrc = (url: string) => {
             rememberFacing(url);
-            img.addEventListener('load', applyFacing, { once: true });
+            img.addEventListener('load', () => {
+                applyFacing();
+                applyPortraitAdjustToElement(img, url);
+            }, { once: true });
             img.src = url;
             applyFacing();
+            applyPortraitAdjustToElement(img, url);
         };
 
         // ① 场次立绘路径（localStorage / 自选 JSON）
