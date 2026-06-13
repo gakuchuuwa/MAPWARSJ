@@ -57,8 +57,6 @@ export class CombatUI {
     private leftFactionNameSpan!: HTMLSpanElement;
     private rightFactionNameSpan!: HTMLSpanElement;
 
-    private skipBtn!: HTMLButtonElement;
-
     private currentBattle: Battle | null = null;
     private currentRegionalUnits: { attackers: IBattleUnit[], defenders: IBattleUnit[] } | null = null;
     private isVisible: boolean = false;
@@ -159,7 +157,7 @@ export class CombatUI {
         div.id = 'combat-ui-panel';
         div.style.cssText = `
             position: fixed;
-            bottom: ${uiPx(40)}; 
+            bottom: 0; 
             left: 50%;
             transform: translate(-50%, 250%);
             width: ${uiPx(T.panelWidth)};
@@ -225,8 +223,8 @@ export class CombatUI {
         this.centerBackdrop = document.createElement('div');
         this.centerBackdrop.style.cssText = `
             position: absolute;
-            left: ${backdropEdge};
-            right: ${backdropEdge};
+            left: -100px;
+            right: -100px;
             top: 0;
             bottom: 0;
             z-index: 0;
@@ -234,8 +232,10 @@ export class CombatUI {
             background: ${this.buildCenterBackdropBackground()};
             background-repeat: no-repeat;
             background-size: 100% 100%;
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 100%);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            -webkit-mask-image: radial-gradient(ellipse 45% 100% at 50% 50%, black 75%, transparent 100%);
+            mask-image: radial-gradient(ellipse 45% 100% at 50% 50%, black 75%, transparent 100%);
         `;
 
         this.centerPanel = document.createElement('div');
@@ -335,8 +335,9 @@ export class CombatUI {
         this.defenderBar = document.createElement('div');
         this.defenderBar.style.cssText = `
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, #162530 0%, #2a5565 35%, #3d7a8f 65%, #5aacbe 100%);
+            top: 0; right: 0; bottom: 0;
+            width: 50%;
+            background: linear-gradient(270deg, #162530 0%, #2a5565 30%, #3d7a8f 60%, #5aacbe 100%);
             z-index: 1;
             animation: bar-glow-def 3s ease-in-out infinite;
         `;
@@ -434,42 +435,6 @@ export class CombatUI {
         rightHud.appendChild(this.createSideBarRow('defender', this.rightSideBarFill));
         this.sideStatsRow.appendChild(rightHud);
 
-        // [NEW] Skip Battle Button (Absolute Positioned, Minimal)
-        this.skipBtn = document.createElement('button');
-        this.skipBtn.textContent = '跳过 ⏭';
-        this.skipBtn.style.cssText = `
-            position: absolute;
-            bottom: ${uiPx(8)};
-            right: 0;
-            padding: ${uiPx(4)} ${uiPx(10)};
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid ${T.colors.skipBorder};
-            border-radius: 2px;
-            color: rgba(216, 200, 160, 0.75);
-            font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(T.typography.skipSize)};
-            cursor: pointer;
-            letter-spacing: 1px;
-            transition: color 0.2s, border-color 0.2s, background 0.2s;
-            z-index: 100;
-        `;
-
-        this.skipBtn.onmouseover = () => {
-            this.skipBtn.style.color = '#fff';
-            this.skipBtn.style.textShadow = '0 0 8px rgba(255, 215, 0, 0.6)';
-        };
-        this.skipBtn.onmouseout = () => {
-            this.skipBtn.style.color = 'rgba(216, 200, 160, 0.5)';
-            this.skipBtn.style.textShadow = 'none';
-        };
-        // Removed mousedown/mouseup scale transform for minimal link style
-        this.skipBtn.onclick = () => {
-            console.log('⏩ [CombatUI] Skip Battle clicked');
-            const game = (window as any).game;
-            if (game && game.combatSystem) {
-                game.combatSystem.forceResolveAll();
-            }
-        };
 
         this.bottomInfoRow = document.createElement('div');
         this.bottomInfoRow.style.display = 'none';
@@ -479,8 +444,6 @@ export class CombatUI {
         this.centerPanel.appendChild(this.healthBarContainer);
         this.centerPanel.appendChild(this.sideStatsRow);
         this.centerPanel.appendChild(this.eventDescription);
-        this.centerPanel.appendChild(this.skipBtn);
-
         this.container.appendChild(this.centerBackdrop);
         this.container.appendChild(this.centerPanel);
         this.container.appendChild(leftFrame);
@@ -1148,6 +1111,7 @@ export class CombatUI {
         let attPct = total > 0 ? (attCurrent / total) * 100 : 50;
 
         this.attackerBar.style.width = `${attPct}%`;
+        this.defenderBar.style.width = `calc(${100 - attPct}% + ${uiPx(T.clashBar.clipPx + 10)})`;
         this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
     }
 

@@ -17,9 +17,10 @@ import { gameLog } from '../utils/GameLogger';
 import {
     calculateBattleDurationSec,
     clampBattleDurationSec,
-    GameConfig
+    GameConfig,
+    rollCombatLuckMultiplier,
 } from '../config/GameConfig';
-import { rollSideEffectivePower, sumCultureAdjustedTroops } from '../systems/CultureCombat';
+import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitCultureCombatMultiplier } from '../systems/CultureCombat';
 import { restoreScriptedQinTroopsInBattle } from '../legion/ScriptedQinLegion';
 
 // ==================== 类型定义 ====================
@@ -61,6 +62,8 @@ export class BattleField {
     private presetResult?: 'attacker_win' | 'defender_win';
     private customDuration?: number; // [NEW] Director-controlled duration override
     private nextReinforcementWave = 1; // 下一波援军编号，从 1 开始
+    /** 援军编入时掷定的有效战力系数（waveIndex≥1），不重掷 */
+    private readonly reinforcementLuckByUnitId = new Map<string, number>();
 
     // 伤害系数现在从 GameConfig 读取
 
@@ -174,21 +177,32 @@ export class BattleField {
     }
 
     /**
-     * 援军编入后按当前文化修正兵力重算强弱（不重新掷色）。
+     * 一侧文化修正战力 + 援军系数：兵力 × 文化关隘系数 × 援军编入 luck。
+     * 援军 = waveIndex≥1，编入时掷 [LUCK_MIN,LUCK_MAX] 一次；主力 waveIndex=0 恒 ×1。
+     */
+    private adjustedPowerWithReinforcement(group: FactionGroup): number {
+        let sum = 0;
+        for (const bu of group.units) {
+            if (bu.isDefeated || bu.unit.troops <= 0) continue;
+            const mult =
+                bu.waveIndex >= 1
+                    ? (this.reinforcementLuckByUnitId.get(bu.unit.id) ?? 1)
+                    : 1;
+            sum += bu.unit.troops * getUnitCultureCombatMultiplier(bu.unit) * mult;
+        }
+        return sum;
+    }
+
+    /**
+     * 援军编入后按当前文化修正兵力（含援军加成）重算强弱（不重新掷色）。
      * 开战时的 pickPredictedSides 不会随 initialTotalTroops 更新，会导致
      * 「兵力已逆转却仍按旧强弱承伤」的 NvN 异常。
      */
     private refreshPredictedSidesFromTotals(): void {
         if (this.presetResult) return;
 
-        const attUnits = this.attackerGroup.units
-            .filter((u) => !u.isDefeated)
-            .map((bu) => bu.unit);
-        const defUnits = this.defenderGroup.units
-            .filter((u) => !u.isDefeated)
-            .map((bu) => bu.unit);
-        const attAdj = sumCultureAdjustedTroops(attUnits);
-        const defAdj = sumCultureAdjustedTroops(defUnits);
+        const attAdj = this.adjustedPowerWithReinforcement(this.attackerGroup);
+        const defAdj = this.adjustedPowerWithReinforcement(this.defenderGroup);
 
         const prevStronger = this.predictedStrongerGroup.factionId;
         this.applyPredictedSidesFromRoll(attAdj, defAdj);
@@ -542,6 +556,8 @@ export class BattleField {
 
         const joinedTroops = unit.troops;
         const wave = this.nextReinforcementWave++;
+        const joinLuck = rollCombatLuckMultiplier();
+        this.reinforcementLuckByUnitId.set(unit.id, joinLuck);
         group.units.push({
             unit,
             initialTroops: joinedTroops,
@@ -567,7 +583,7 @@ export class BattleField {
         gameLog(
             'battle',
             `📯 [BattleField] ${unit.name}(${joinedTroops}) 加入${isAttacker ? '攻方' : '守方'}! ` +
-            `编组兵力→${group.initialTotalTroops}` +
+            `有效战力×${joinLuck.toFixed(2)}, 编组兵力→${group.initialTotalTroops}` +
             (this.customDuration ? '' : `, 目标时长 ${prevDuration.toFixed(1)}s→${this.targetDuration.toFixed(1)}s`)
         );
 

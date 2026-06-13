@@ -15,8 +15,8 @@ export const COMBAT_UI_TOKENS = {
     /** 黑底条距容器左右边距（越小条越宽） */
     centerBackdropEdge: 16,
     /** 黑底径向渐隐椭圆半径（%）；越小四边越易透出地图 */
-    centerFadeEllipseX: 88,
-    centerFadeEllipseY: 96,
+    centerFadeEllipseX: 45,
+    centerFadeEllipseY: 100,
     /** 径向渐隐色标（%，从中心向外）
      *  [2026-06-12 美化] 内/中色标外推：文字核心区（势力名/军团名/数字）下必须是实底，
      *  此前地图标签（朝歌 4081 等）穿透叠在战报文字上。立绘区边缘仍保持渐隐透出地图。 */

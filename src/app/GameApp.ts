@@ -189,6 +189,7 @@ export class GameApp {
             // [PERF] 让浏览器立刻 paint 一次空地图，用户感知"已经开始加载"
             // 否则下面的同步初始化会让整个页面看起来卡死直到结束。
             await yieldToBrowser();
+            hideLoadingOverlay(); // 地图已可见，撤掉加载画面
 
             // 3. Initialize remaining Core Managers (Lightweight JS)
             this.gridManager = new GridManager(this.map);
@@ -290,7 +291,6 @@ export class GameApp {
             });
 
             void this.completeLateBoot();
-            hideLoadingOverlay();
         } catch (error) {
             console.error('❌ 游戏初始化失败:', error);
             showGameAppErrorOverlay(error instanceof Error ? error.message : '未知错误');

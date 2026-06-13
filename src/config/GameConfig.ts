@@ -103,7 +103,7 @@ export class GameConfig {
             big_city: 0.4,
         } as Record<string, number>,
         MIN_SURVIVAL_TROOPS: 0.1,
-        /** 开战有效战力随机系数：兵力 × [0.8, 1.2] 均匀随机（8～12 成） */
+        /** 有效战力随机系数 [0.8, 1.2]：开战整侧掷一次；援军每路编入时再掷一次（复用 rollCombatLuckMultiplier） */
         LUCK_MIN: 0.8,
         LUCK_MAX: 1.2,
         /** 开战编入半径（经纬度欧氏距离，约 0.3 ≈ 30km；开战瞬间 + 每 0.2s 圈内扫描，可随时加入） */
