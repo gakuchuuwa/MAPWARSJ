@@ -167,8 +167,16 @@ const _lingnanPortraitGlob = import.meta.glob<string>(
 );
 const _lingnanPortraitPool: string[] = Object.values(_lingnanPortraitGlob);
 
+/** 秦国立绘池 */
+const _qinPortraitGlob = import.meta.glob<string>(
+    '../../public/assets/qin/*.png',
+    { eager: true, query: '?url', import: 'default' },
+);
+const _qinPortraitPool: string[] = Object.values(_qinPortraitGlob);
+
 /** 势力专属立绘池（factionId → 图片路径数组） */
 const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
+    'qin': _qinPortraitPool,
     'wuzhou_d': _wuzhouPortraitPool,
     'tang': _litangPortraitPool,
     'ming_d': _damingPortraitPool,
