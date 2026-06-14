@@ -199,12 +199,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'nguyen_guangnan': _guangzhouPortraitPool,
     'paiwan': _guangzhouPortraitPool,
     'shu': _shuguoPortraitPool,
-    // 川蜀全境套用蜀国
-    'han_d': _shuguoPortraitPool,
-    'shuixi': _shuguoPortraitPool,
-    'tujia_d': _shuguoPortraitPool,
     // 川蜀全境 43 势力套用蜀国
-    'shu': _shuguoPortraitPool,
     'guo': _shuguoPortraitPool,
     'daxi_ming': _shuguoPortraitPool,
     'ba': _shuguoPortraitPool,
@@ -615,7 +610,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'qi': _zhongyuanPortraitPool,
     'qiang': _zhongyuanPortraitPool,
     'qiguo_d': _zhongyuanPortraitPool,
-    'qin': _zhongyuanPortraitPool,
+    // 'qin': _zhongyuanPortraitPool,  // qin 有专属池
     'qing': _zhongyuanPortraitPool,
     'quanrong': _zhongyuanPortraitPool,
     'shang': _zhongyuanPortraitPool,

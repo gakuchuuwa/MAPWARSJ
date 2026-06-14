@@ -112,6 +112,18 @@ export class PerformanceMonitor {
     private sessionAvg: Record<string, number> = {};
     private static readonly AVG_ALPHA = 0.32;
 
+    // ── 频率统计（2026-06-12）：区分「偶发尖峰」vs「持续拖累」──
+    /** 每个 noteAsyncWork 事件 key 的近 1 秒时间戳（滚动） */
+    private eventTimes: Record<string, number[]> = {};
+    /** 最近异步事件 [key, durationMs, ts]（供慢帧归因关联） */
+    private recentAsync: Array<[string, number, number]> = [];
+    /** 上次 >50ms 慢帧的归因快照：那一帧各系统耗时 + 邻近异步事件（按 key 聚合 [key, 总ms, 次数]） */
+    private lastSlowFrame: {
+        elapsed: number;
+        breakdown: Array<[string, number]>;
+        asyncTail: Array<[string, number, number]>;
+    } | null = null;
+
     // 元素计数（由各系统在每帧上报）
     private counts: Record<string, number> = {};
     /** 最近一次非零计数（避免 sporadic 指标闪一下变 0） */
@@ -173,9 +185,28 @@ export class PerformanceMonitor {
     public noteAsyncWork(key: string, durationMs: number): void {
         this.bumpSessionPeak(key, durationMs);
         this.bumpSessionAvg(key, durationMs);
+        // 频率：记一条近 1 秒时间戳（用于「每秒次数」列）
+        const now = performance.now();
+        const arr = (this.eventTimes[key] ??= []);
+        arr.push(now);
+        const cutoff = now - 1000;
+        while (arr.length && arr[0] < cutoff) arr.shift();
+        // 慢帧归因关联：保留最近 40 条异步事件
+        this.recentAsync.push([key, durationMs, now]);
+        if (this.recentAsync.length > 40) this.recentAsync.shift();
         if (durationMs >= 1000) {
             this.logWallHitch(`${key} 阻塞`, durationMs);
         }
+    }
+
+    /** 某 key 近 1 秒发生次数（次/秒）。仅 noteAsyncWork 类事件有意义 */
+    private eventRate(key: string): number {
+        const arr = this.eventTimes[key];
+        if (!arr || arr.length === 0) return 0;
+        const cutoff = performance.now() - 1000;
+        let n = 0;
+        for (let i = arr.length - 1; i >= 0 && arr[i] >= cutoff; i--) n++;
+        return n;
     }
 
     /** 画布 rAF 每帧开头调用 */
@@ -278,6 +309,10 @@ export class PerformanceMonitor {
         this.frameTimes = [];
         this.lastMainFrameEnd = 0;
         this.lastCanvasFrameEnd = 0;
+        // 频率/慢帧归因同步清零
+        this.eventTimes = {};
+        this.recentAsync = [];
+        this.lastSlowFrame = null;
         if (this.visible) this.renderOverlay();
     }
 
@@ -502,6 +537,9 @@ export class PerformanceMonitor {
 
     /** 更新 DOM 元素计数（每 500ms 一次避免开销） */
     private updateDomCounts(): void {
+        // [2026-06-12 优化] 这些计数只在面板里显示；面板关着时全图 eachLayer 遍历纯属白费。
+        // 守卫掉 → 侦察器关闭时零开销（不再每 500ms 遍历 648 城 + 标记/图层）。
+        if (!this.visible) return;
         const now = performance.now();
         if (now - this.lastDomCount < 500) return;
         this.lastDomCount = now;
@@ -614,21 +652,24 @@ export class PerformanceMonitor {
             </div>
             ${this.buildStutterLine(s)}
             ${this.buildRatioLine()}
+            ${this.buildSlowFrameLine()}
             <div style="color:#888;font-size:10px;margin-bottom:4px;font-weight:bold;">耗时最高 (ms) · 仅显示 &gt;0</div>
             <table style="${PerformanceMonitor.PERF_TABLE_STYLE}">
                 <colgroup>
                     <col />
-                    <col style="width:9ch" />
-                    <col style="width:9ch" />
+                    <col style="width:8ch" />
+                    <col style="width:8ch" />
+                    <col style="width:6ch" />
                 </colgroup>
                 <tr>
                     <td></td>
                     <td style="text-align:right;color:#666;font-size:10px;padding-bottom:2px;">最高</td>
                     <td style="text-align:right;color:#666;font-size:10px;padding-bottom:2px;padding-left:8px;">短均</td>
+                    <td style="text-align:right;color:#666;font-size:10px;padding-bottom:2px;padding-left:8px;">次/秒</td>
                 </tr>
                 ${this.buildMetricTable(s)}
             </table>
-            <div style="color:#666;font-size:10px;margin-top:4px;">最高=开页峰值 · 短均=仅有活动时更新(空闲不拉零) · resetPeaks()清零</div>
+            <div style="color:#666;font-size:10px;margin-top:4px;">最高=开页峰值 · 短均=仅有活动时更新 · 次/秒=近1秒频率(橙=>3/s持续拖累) · resetPeaks()清零</div>
             <div style="color:#555;font-size:9px;margin-top:2px;">旗号三行=异步任务累计耗时，非每帧；游玩中应看主循环空档/LongTask</div>
             <div style="border-top:1px solid #333; margin:6px 0 4px 0;"></div>
             <div style="color:#888;font-size:10px;margin-bottom:4px;font-weight:bold;">DOM / 实体</div>
@@ -681,9 +722,35 @@ export class PerformanceMonitor {
         };
     }
 
-    private recordFrameMetrics(_frameTime: number): void {
+    private recordFrameMetrics(frameTime: number): void {
         const t = this.getMainLoopTimes();
         const renderTime = this.counts['renderDrawMs'] ?? 0;
+
+        // 慢帧归因（>50ms）：快照这一帧各系统耗时 + 邻近 200ms 内的异步事件（旗号/占城/寻路）
+        if (frameTime >= PerformanceMonitor.HITCH_THRESHOLD_MS) {
+            const breakdown = ([
+                ['AI', t.aiTime], ['战斗', t.combatTime], ['镜头跟随', t.cameraTime],
+                ['历史事件', t.historicalEventTime], ['军团逻辑', t.legionTime],
+                ['征兵', t.recruitmentTime], ['日历', t.calendarTime],
+                ['画布绘制', renderTime], ['主循环未计入', t.unaccountedTime],
+            ] as Array<[string, number]>)
+                .filter(([, v]) => v >= 0.5)
+                .sort((a, b) => b[1] - a[1]);
+            const now = performance.now();
+            // 邻近 200ms 异步事件按 key 聚合（[总ms, 次数]），滤掉 <0.5ms 噪音（如 cityLabel 0ms 刷屏）
+            const agg = new Map<string, { ms: number; n: number }>();
+            for (const [k, d, ts] of this.recentAsync) {
+                if (now - ts > 200) continue;
+                const e = agg.get(k) ?? { ms: 0, n: 0 };
+                e.ms += d; e.n++;
+                agg.set(k, e);
+            }
+            const asyncTail = [...agg.entries()]
+                .map(([k, e]) => [k, e.ms, e.n] as [string, number, number])
+                .filter(([, ms]) => ms >= 0.5)
+                .sort((a, b) => b[1] - a[1]);
+            this.lastSlowFrame = { elapsed: frameTime, breakdown, asyncTail };
+        }
 
         this.bumpSessionPeak('ai', t.aiTime);
         this.bumpSessionPeak('combat', t.combatTime);
@@ -778,12 +845,14 @@ export class PerformanceMonitor {
     }
 
     /** 仅当最高值 > 0 时输出一行（避免满屏 0.00） */
+    /** @param freqKey 传入则在第 4 列显示该 noteAsyncWork 事件的「每秒次数」（区分偶发尖峰 vs 持续拖累） */
     private metricRowMax(
         label: string,
         maxMs: number,
         avgMs: number,
         warnMs: number,
         danger = false,
+        freqKey?: string,
     ): string {
         if (maxMs < 0.05 && avgMs < 0.05) return '';
         const style = maxMs >= warnMs
@@ -792,61 +861,56 @@ export class PerformanceMonitor {
         const avgStyle = avgMs >= warnMs
             ? (danger ? 'color:#ff8a80;font-weight:bold;' : 'color:#ffd180;font-weight:bold;')
             : (avgMs >= warnMs * 0.6 ? 'color:#9e9e9e;' : 'color:#777;');
+        // 频率：偶发(≤1/s)灰、密集(>3/s)橙——持续高频才是真拖累
+        let freqCell = '';
+        if (freqKey) {
+            const r = this.eventRate(freqKey);
+            const fStyle = r > 3 ? 'color:#FF9800;font-weight:bold;' : (r > 0 ? 'color:#aaa;' : 'color:#555;');
+            freqCell = `<td style="${PerformanceMonitor.PERF_NUM_CELL}${fStyle}">${r > 0 ? r + '/s' : '·'}</td>`;
+        } else {
+            freqCell = `<td style="${PerformanceMonitor.PERF_NUM_CELL}color:#444;">·</td>`;
+        }
         return `<tr>
             <td style="${PerformanceMonitor.PERF_LABEL_CELL}">${label}</td>
             <td style="${PerformanceMonitor.PERF_NUM_CELL}${style}">${this.formatPerfMs(maxMs)}</td>
             <td style="${PerformanceMonitor.PERF_NUM_CELL}${avgStyle}">${this.formatPerfMs(avgMs)}</td>
+            ${freqCell}
         </tr>`;
     }
 
     private buildMetricTable(s: PerfSnapshot): string {
         const rows = [
             this.metricRowMax('AI', s.aiTimePeak, this.sessionAvg['ai'] ?? 0, 3),
-            this.metricRowMax('寻路计算', this.sessionPeak('pathfinding'), this.sessionAvg['pathfinding'] ?? 0, 8),
-            this.metricRowMax('道路编辑寻路', this.sessionPeak('vectorPathfinding'), this.sessionAvg['vectorPathfinding'] ?? 0, 12, true),
-            this.metricRowMax('领土BFS', this.sessionPeak('territoryBFS'), this.sessionAvg['territoryBFS'] ?? 0, 20, true),
-            this.metricRowMax('领土BFS(增量)', this.sessionPeak('territoryBFSIncremental'), this.sessionAvg['territoryBFSIncremental'] ?? 0, 12, true),
-            this.metricRowMax('领土BFS(全量)', this.sessionPeak('territoryBFSFull'), this.sessionAvg['territoryBFSFull'] ?? 0, 25, true),
+            this.metricRowMax('寻路计算', this.sessionPeak('pathfinding'), this.sessionAvg['pathfinding'] ?? 0, 8, false, 'pathfinding'),
+            this.metricRowMax('道路编辑寻路', this.sessionPeak('vectorPathfinding'), this.sessionAvg['vectorPathfinding'] ?? 0, 12, true, 'vectorPathfinding'),
+            this.metricRowMax('领土BFS', this.sessionPeak('territoryBFS'), this.sessionAvg['territoryBFS'] ?? 0, 20, true, 'territoryBFS'),
+            this.metricRowMax('领土BFS(增量)', this.sessionPeak('territoryBFSIncremental'), this.sessionAvg['territoryBFSIncremental'] ?? 0, 12, true, 'territoryBFSIncremental'),
+            this.metricRowMax('领土BFS(全量)', this.sessionPeak('territoryBFSFull'), this.sessionAvg['territoryBFSFull'] ?? 0, 25, true, 'territoryBFSFull'),
             this.metricRowMax('战斗', s.combatTimePeak, this.sessionAvg['combat'] ?? 0, 5),
             this.metricRowMax('征兵', s.recruitmentTimePeak, this.sessionAvg['recruitment'] ?? 0, 3),
             this.metricRowMax('历史事件', s.historicalEventTimePeak, this.sessionAvg['historicalEvent'] ?? 0, 2),
             this.metricRowMax('军团逻辑', s.legionTimePeak, this.sessionAvg['legion'] ?? 0, 5),
             this.metricRowMax('日历', s.calendarTimePeak, this.sessionAvg['calendar'] ?? 0, 3),
-            this.metricRowMax('据点变更', this.sessionPeak('cityFactionChange'), this.sessionAvg['cityFactionChange'] ?? 0, 20, true),
-            this.metricRowMax('据点标签', this.sessionPeak('cityLabel'), this.sessionAvg['cityLabel'] ?? 0, 5),
+            this.metricRowMax('└时间update', this.sessionPeak('timeUpdate'), this.sessionAvg['timeUpdate'] ?? 0, 10, true, 'timeUpdate'),
+            this.metricRowMax('└城updateYear', this.sessionPeak('cityUpdateYear'), this.sessionAvg['cityUpdateYear'] ?? 0, 10, true, 'cityUpdateYear'),
+            this.metricRowMax('复国(季)', this.sessionPeak('rebellion'), this.sessionAvg['rebellion'] ?? 0, 15, true, 'rebellion'),
+            this.metricRowMax('据点变更', this.sessionPeak('cityFactionChange'), this.sessionAvg['cityFactionChange'] ?? 0, 20, true, 'cityFactionChange'),
+            this.metricRowMax('据点标签', this.sessionPeak('cityLabel'), this.sessionAvg['cityLabel'] ?? 0, 5, false, 'cityLabel'),
             this.metricRowMax('战斗UI', s.combatUITimePeak, this.sessionAvg['combatUI'] ?? 0, 3),
             this.metricRowMax('镜头跟随', s.cameraTimePeak, this.sessionAvg['camera'] ?? 0, 5),
             this.metricRowMax('主循环未计入', s.unaccountedTimePeak, this.sessionAvg['unaccounted'] ?? 0, 8, true),
             this.metricRowMax('画布绘制', s.renderTimePeak, this.sessionAvg['renderDrawMs'] ?? 0, 8),
-            this.metricRowMax('主循环空档', this.sessionPeak('mainGap'), this.sessionAvg['mainGap'] ?? 0, 50, true),
-            this.metricRowMax('画布空档', this.sessionPeak('canvasGap'), this.sessionAvg['canvasGap'] ?? 0, 50, true),
-            this.metricRowMax('领土重绘', this.sessionPeak('territoryRender'), this.sessionAvg['territoryRender'] ?? 0, 50, true),
-            this.metricRowMax('季末募兵', this.sessionPeak('recruitSeason'), this.sessionAvg['recruitSeason'] ?? 0, 50, true),
-            this.metricRowMax(
-                '旗号(启动)',
-                this.sessionPeak('flagLoadBoot'),
-                this.sessionAvg['flagLoadBoot'] ?? 0,
-                50,
-                true,
-            ),
-            this.metricRowMax(
-                '旗号(后台)',
-                this.sessionPeak('flagLoadBg'),
-                this.sessionAvg['flagLoadBg'] ?? 0,
-                50,
-                true,
-            ),
-            this.metricRowMax(
-                '旗号(按需)',
-                this.sessionPeak('flagLoadOnDemand'),
-                this.sessionAvg['flagLoadOnDemand'] ?? 0,
-                50,
-                true,
-            ),
-            this.metricRowMax('LongTask', this.sessionPeak('longTask'), this.sessionAvg['longTask'] ?? 0, 50, true),
+            this.metricRowMax('主循环空档', this.sessionPeak('mainGap'), this.sessionAvg['mainGap'] ?? 0, 50, true, 'mainGap'),
+            this.metricRowMax('画布空档', this.sessionPeak('canvasGap'), this.sessionAvg['canvasGap'] ?? 0, 50, true, 'canvasGap'),
+            this.metricRowMax('领土重绘', this.sessionPeak('territoryRender'), this.sessionAvg['territoryRender'] ?? 0, 50, true, 'territoryRender'),
+            this.metricRowMax('季末募兵', this.sessionPeak('recruitSeason'), this.sessionAvg['recruitSeason'] ?? 0, 50, true, 'recruitSeason'),
+            this.metricRowMax('旗号(启动)', this.sessionPeak('flagLoadBoot'), this.sessionAvg['flagLoadBoot'] ?? 0, 50, true, 'flagLoadBoot'),
+            this.metricRowMax('旗号(后台)', this.sessionPeak('flagLoadBg'), this.sessionAvg['flagLoadBg'] ?? 0, 50, true, 'flagLoadBg'),
+            this.metricRowMax('旗号(按需)', this.sessionPeak('flagLoadOnDemand'), this.sessionAvg['flagLoadOnDemand'] ?? 0, 50, true, 'flagLoadOnDemand'),
+            this.metricRowMax('LongTask', this.sessionPeak('longTask'), this.sessionAvg['longTask'] ?? 0, 50, true, 'longTask'),
         ].filter(Boolean);
         if (rows.length === 0) {
-            return '<tr><td colspan="3" style="color:#666;font-size:11px;">暂无耗时记录</td></tr>';
+            return '<tr><td colspan="4" style="color:#666;font-size:11px;">暂无耗时记录</td></tr>';
         }
         return rows.join('');
     }
@@ -873,6 +937,25 @@ export class PerformanceMonitor {
             return '<div style="font-size:11px;color:#666;margin-bottom:6px;">微卡/重卡：暂无</div>';
         }
         return `<div style="margin-bottom:6px;font-size:11px;">${parts.join(' · ')}<span style="color:#666;"> /60帧窗</span></div>`;
+    }
+
+    /** 慢帧归因（2026-06-12）：上次 >50ms 卡顿那一帧，是哪些系统/异步事件干的 */
+    private buildSlowFrameLine(): string {
+        const sf = this.lastSlowFrame;
+        if (!sf) return '';
+        const top = sf.breakdown
+            .slice(0, 4)
+            .map(([k, v]) => `${k} ${v.toFixed(1)}`)
+            .join(' · ');
+        const asyncPart = sf.asyncTail.length
+            ? ` <span style="color:#ffab91;">⟂邻近异步: ${sf.asyncTail
+                  .slice(0, 3)
+                  .map(([k, ms, n]) => `${k} ${ms.toFixed(0)}ms${n > 1 ? `×${n}` : ''}`)
+                  .join(' · ')}</span>`
+            : '';
+        return `<div style="background:rgba(244,67,54,0.12);border-left:2px solid #f44336;padding:3px 6px;margin-bottom:6px;font-size:10px;color:#ffcdd2;">
+            <b style="color:#ff8a80;">⚡上次慢帧 ${sf.elapsed.toFixed(0)}ms</b> · ${top || '主循环外'}${asyncPart}
+        </div>`;
     }
 
     private buildRatioLine(): string {

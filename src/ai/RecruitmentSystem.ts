@@ -26,6 +26,7 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, REGION_ORDER, RegionType } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
+import { SCRIPTED_CAMPAIGNS, getScriptedCampaignByFaction } from '../data/ScriptedCampaigns';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -70,6 +71,9 @@ export class RecruitmentSystem {
 
         this.legionManager.trimLegionsToCap();
 
+        // 剧本军团先生成（占住出生城，普通募兵据此自动跳过该城）
+        this.spawnScriptedCampaigns();
+
         const cities = this.cityManager.getCities();
         gameLog('recruitment', '💂 [募兵] 播放开始 — 首次出兵（分帧异步）');
 
@@ -103,6 +107,46 @@ export class RecruitmentSystem {
         };
 
         requestAnimationFrame(spawnBatch);
+    }
+
+    /**
+     * 剧本军团（2026-06-12）：开局即出征的剧本（如白起秦锐士→邯郸）。
+     * 剧本军团：数据初始设定，与据点驻军无关（不读、不扣 city.troops）。
+     * 在出生城生成 → 精锐+将领+立绘+兵力 → 设远征目标；占住「一城一军」名额。
+     */
+    private spawnScriptedCampaigns(): void {
+        for (const campaign of SCRIPTED_CAMPAIGNS) {
+            if (!campaign.spawnAtStart) continue;
+
+            const spawnCity = this.cityManager.getCity(campaign.spawnCityId);
+            if (!spawnCity || spawnCity.factionId !== campaign.factionId) continue;
+            if (this.cityHasActiveLegion(spawnCity.id)) continue;
+
+            // 兵力/精锐/将领/立绘/目标均由剧本数据预设；不扣 spawnCity.troops
+            const legion = this.legionManager.createArmy({
+                name: campaign.eliteName,
+                factionId: campaign.factionId,
+                position: { lat: spawnCity.latitude, lng: spawnCity.longitude },
+                troops: campaign.troops,
+                sourceCityId: campaign.spawnCityId,
+            });
+            if (!legion) continue;
+
+            legion.generalId = campaign.generalId;
+            legion.portraitPath = campaign.portrait; // 一剧本一精锐一将领一立绘，不走势力随机池
+            // 目标 = 序列最后一城（如邯郸）；就像远征军：锁定目标实时行军，真实结算
+            legion.expeditionTargetCityId =
+                campaign.targetSequence[campaign.targetSequence.length - 1] ?? null;
+            this.queueCityLabel(campaign.spawnCityId);
+
+            const targetCity = legion.expeditionTargetCityId
+                ? this.cityManager.getCity(legion.expeditionTargetCityId)
+                : null;
+            gameLog(
+                'expedition',
+                `🎬 [剧本] ${campaign.generalName} 率【${campaign.eliteName}】（${legion.getTroops()} 兵）自 ${spawnCity.name} 出征，目标【${targetCity?.name ?? '?'}】`
+            );
+        }
     }
 
     public update(gameDelta: number): void {
@@ -208,6 +252,8 @@ export class RecruitmentSystem {
         for (const city of cities) {
             if (!city.factionId || city.factionId === 'panjun') continue;
             if (!spawnTypes.includes(city.type)) continue;
+            // 有剧本的势力（如秦）由 spawnScriptedCampaigns 专门出兵，普通募兵跳过
+            if (getScriptedCampaignByFaction(city.factionId)) continue;
             if (this.cityHasActiveLegion(city.id)) continue;
             if (this.isCityGarrisonCommitted(city.id)) continue;
 

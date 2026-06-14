@@ -14,11 +14,6 @@ import { City, LatLng } from '../../types/core';
 import { gameLog } from '../../utils/GameLogger';
 import { Army } from '../Army';
 import {
-    resolveScriptedQinPreset,
-    restoreScriptedQinTroops,
-    shouldScriptedQinBeDestroyed,
-} from '../ScriptedQinLegion';
-import {
     markLegionAnnihilationFeed,
     resolveAnnihilationCityName,
 } from '../LegionAnnihilationFeed';
@@ -80,11 +75,6 @@ function legionToFieldAdapter(
             legion.setCombatState(false);
         },
         () => {
-            if (!shouldScriptedQinBeDestroyed(presetResult, legion, side)) {
-                restoreScriptedQinTroops(legion);
-                legion.setCombatState(false);
-                return;
-            }
             markLegionAnnihilationFeed(legion, side, battleCityName);
             legion.destroy();
             deps.removeArmy(legion);
@@ -227,7 +217,6 @@ function startFieldBattleBetween(
         return;
     }
 
-    const presetResult = resolveScriptedQinPreset(attLegions, defLegions);
     const allLegions = [...attLegions, ...defLegions];
     const battleCityName = resolveAnnihilationCityName(deps.getCityManager(), center);
 

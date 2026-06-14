@@ -7,7 +7,6 @@
  */
 
 import { Army } from '../core/Army';
-import { isScriptedQinLegion } from '../legion/ScriptedQinLegion';
 import { LegionManager } from '../core/LegionManager';
 import { CityManager } from '../core/CityManager';
 import { HistoricalEventManager } from '../core/HistoricalEventManager';
@@ -88,7 +87,7 @@ export class AIController {
             !this.armyContexts.has(a.id) && 
             !a.isDestroyed && 
             a.type === 'legion' &&
-            !isScriptedQinLegion(a)
+            true
         );
 
         for (const army of newArmies) {
@@ -106,9 +105,6 @@ export class AIController {
 
             // 跳过无效或非 AI 军团
             if (army.isDestroyed || army.type !== 'legion') continue;
-
-            // [FIX] 跳过事件控制的军团（如被 garrison 指令驻扎的）
-            if (isScriptedQinLegion(army)) continue;
 
             // 新军团刚才已经优先 tick 过了，本帧内轮询若再抽到可直接跳过
             if (newArmies.includes(army)) continue;

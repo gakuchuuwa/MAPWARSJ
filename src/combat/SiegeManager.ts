@@ -4,7 +4,7 @@ import { CombatSystem, IBattleUnit } from './CombatSystem';
 import { GameMap } from '../map/GameMap';
 import { EventVisualizer } from '../core/EventVisualizer';
 import { SiegeData } from '../types/core';
-import { applyQinLegionFormation, HISTORICAL_LEGIONS, QIN_MAIN_LEGION_NAME } from '../data/legions';
+import { HISTORICAL_LEGIONS } from '../data/legions';
 import { Army } from '../legion/Army';
 import { BattleUnitFactory } from './BattleUnitFactory';
 import { BattleField } from './BattleField';
@@ -24,7 +24,6 @@ import {
     tryJoinLegionToBattle,
     type ReinforcementJoinDeps,
 } from '../legion/combat/BattleReinforcementPoll';
-import { restoreScriptedQinTroops, resolveSiegeBattleResult, shouldScriptedQinBeDestroyed } from '../legion/ScriptedQinLegion';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
 
 export class SiegeManager {
@@ -306,9 +305,6 @@ export class SiegeManager {
                 `[SiegeManager] Normalizing legion faction ${attackerArmy.getFactionId()} → ${siegeData.attackerFactionId}`
             );
             attackerArmy.setFactionId(siegeData.attackerFactionId);
-        }
-        if (siegeData.legionName === QIN_MAIN_LEGION_NAME) {
-            applyQinLegionFormation(attackerArmy);
         }
 
         if (siegeData.attackerTroops != null && attackerArmy.getTroops() !== siegeData.attackerTroops) {
@@ -633,13 +629,8 @@ export class SiegeManager {
             () => { // Defeat
                 siegeLog(`[Siege] Attacker Defeat!`);
                 this.activeSieges.delete(targetCity.id);
-                if (shouldScriptedQinBeDestroyed(siegePreset, army, 'attacker')) {
-                    markLegionAnnihilationFeed(army, 'attacker', targetCity.name);
-                    army.destroy();
-                } else {
-                    restoreScriptedQinTroops(army);
-                    army.setCombatState(false);
-                }
+                markLegionAnnihilationFeed(army, 'attacker', targetCity.name);
+                army.destroy();
             }
         );
 
@@ -694,14 +685,9 @@ export class SiegeManager {
                 legion.getTroops(),
                 () => { siegeLog(`[Siege] Defender Legion ${legion.name} Victory`); },
                 () => {
-                    if (shouldScriptedQinBeDestroyed(siegePreset, legion, 'defender')) {
-                        markLegionAnnihilationFeed(legion, 'defender', targetCity.name);
-                        legion.destroy();
-                        this.legionManager.removeArmy(legion);
-                    } else {
-                        restoreScriptedQinTroops(legion);
-                        legion.setCombatState(false);
-                    }
+                    markLegionAnnihilationFeed(legion, 'defender', targetCity.name);
+                    legion.destroy();
+                    this.legionManager.removeArmy(legion);
                 }
             );
             defenderUnits.push(legionAdapter);
@@ -719,14 +705,9 @@ export class SiegeManager {
                 legion.getTroops(),
                 () => { siegeLog(`[Siege] Attacker Legion ${legion.name} Victory`); },
                 () => {
-                    if (shouldScriptedQinBeDestroyed(siegePreset, legion, 'attacker')) {
-                        markLegionAnnihilationFeed(legion, 'attacker', targetCity.name);
-                        legion.destroy();
-                        this.legionManager.removeArmy(legion);
-                    } else {
-                        restoreScriptedQinTroops(legion);
-                        legion.setCombatState(false);
-                    }
+                    markLegionAnnihilationFeed(legion, 'attacker', targetCity.name);
+                    legion.destroy();
+                    this.legionManager.removeArmy(legion);
                 }
             );
             attackerUnits.push(legionAdapter);

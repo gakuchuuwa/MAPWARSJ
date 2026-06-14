@@ -376,28 +376,6 @@ export class CombatUI {
         this.healthBarContainer.appendChild(this.attackerBar);
         this.healthBarContainer.appendChild(this.clashEffect);
 
-        // [2026-06-12 美化] 比例条两端「攻/守」字：此前这根条无任何标注，观众不知其义
-        const makeBarTag = (text: string, edge: 'left' | 'right') => {
-            const tag = document.createElement('span');
-            tag.textContent = text;
-            tag.style.cssText = `
-                position: absolute;
-                ${edge}: ${uiPx(8)};
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 5;
-                font-family: 'Noto Serif SC', serif;
-                font-size: ${uiPx(13)};
-                font-weight: 900;
-                color: rgba(255, 248, 230, 0.92);
-                text-shadow: 0 1px 3px rgba(0,0,0,0.95);
-                letter-spacing: 0;
-                pointer-events: none;
-            `;
-            return tag;
-        };
-        this.healthBarContainer.appendChild(makeBarTag('攻', 'left'));
-        this.healthBarContainer.appendChild(makeBarTag('守', 'right'));
 
         // 军团信息：以「区域冲突」中线为界，左右各占一半；外缘避开立绘。
         const portraitPad = uiPx(T.portraitHorizontalReserve);

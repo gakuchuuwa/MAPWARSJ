@@ -1,7 +1,5 @@
 
 import type { Army } from '../legion/Army';
-import { getQinLegionTier } from '../types/CultureFormations';
-import { expandCompositionSlots, expandCompositionScales } from '../types/LegionComposition';
 
 export interface LegionConfig {
     id: string;
@@ -13,17 +11,8 @@ export interface LegionConfig {
 
 export const HISTORICAL_LEGIONS: LegionConfig[] = [
 
-    // 秦国
-    {
-        id: 'legion_qin',
-        name: '秦军',
-        factionId: 'qin',
-        type: 'mixed',
-        generalId: 'baiqi'
-    },
-
     // ═══════════════════════════════════════════════════════════════
-    // 其他势力军团（使用基础兵种）
+    // 赵军
     // ═══════════════════════════════════════════════════════════════
 
     // 赵军
@@ -188,23 +177,3 @@ export const HISTORICAL_LEGIONS: LegionConfig[] = [
     },
 
 ];
-
-export const QIN_MAIN_LEGION_NAME = '秦军';
-
-export function isQinMainLegion(army: Pick<Army, 'name'> & { getFactionId(): string }): boolean {
-    return army.name === QIN_MAIN_LEGION_NAME && army.getFactionId() === 'qin';
-}
-
-/** 历史剧本「秦军」：专用 3×3 步骑（枪+轻骑+弩） */
-export function applyQinLegionFormation(army: Army): void {
-    if (!isQinMainLegion(army)) return;
-    army.cultureRegion = 'NORTH';
-    army.legionType = 'mixed';
-    const tier = getQinLegionTier(army.getTroops());
-    if (!tier) return;
-    army.cultureSlots = expandCompositionSlots(tier.slots);
-    army.cultureScales = expandCompositionScales(tier.slots);
-}
-
-/** @deprecated 使用 applyQinLegionFormation */
-export const applyQinLegionNorthFormation = applyQinLegionFormation;

@@ -10,11 +10,6 @@ import { Army } from '../Army';
 import { LatLng } from '../../types/core';
 import { SpatialRegistry } from '../../world/SpatialRegistry';
 import type { LegionManager } from '../LegionManager';
-import {
-    applyScriptedQinReinforcementPreset,
-    restoreScriptedQinTroops,
-    shouldScriptedQinBeDestroyed,
-} from '../ScriptedQinLegion';
 import { markLegionAnnihilationFeed } from '../LegionAnnihilationFeed';
 
 export const BATTLE_REINFORCEMENT_POLL_INTERVAL_SEC = 0.2;
@@ -70,11 +65,6 @@ function createLegionAdapter(
             legion.setCombatState(false);
         },
         () => {
-            if (!shouldScriptedQinBeDestroyed(presetResult, legion, side)) {
-                restoreScriptedQinTroops(legion);
-                legion.setCombatState(false);
-                return;
-            }
             markLegionAnnihilationFeed(legion, side, battleCityName);
             legion.destroy();
             deps.removeArmy(legion);
@@ -99,8 +89,6 @@ export function tryJoinLegionToBattle(
     if (!isEligibleReinforcement(legion, factionId, battleField, center, deps)) {
         return false;
     }
-
-    applyScriptedQinReinforcementPreset(battleField, legion, isAttacker);
 
     legion.stopMovement(true);
     legion.setCombatState(true, battleField.type, center);

@@ -3,7 +3,6 @@ import { CityManager } from '../world/CityManager';
 import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
 import { City, LatLng, SiegeData } from '../types/core';
-import { isScriptedQinLegion } from './ScriptedQinLegion';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import {
     releaseFieldBattleCombatState,
@@ -25,7 +24,6 @@ import {
     getCultureTier,
     getLegionTypeForCulture,
 } from '../types/CultureFormations';
-import { applyQinLegionFormation, isQinMainLegion, QIN_MAIN_LEGION_NAME } from '../data/legions';
 import { expandCompositionSlots, expandCompositionScales } from '../types/LegionComposition';
 import { gameLog } from '../utils/GameLogger';
 import { FollowResupplySystem } from './FollowResupplySystem';
@@ -263,8 +261,6 @@ export class LegionManager {
             army.cultureSlots = expandCompositionSlots(cultureTier.slots);
             army.cultureScales = expandCompositionScales(cultureTier.slots);
         }
-        applyQinLegionFormation(army);
-
         this.addArmy(army);
         return army;
     }
@@ -275,10 +271,6 @@ export class LegionManager {
     public refreshCultureFormations(): void {
         gameLog('army', `[LegionManager] 刷新所有现有军队的文化阵型...`);
         this.armies.forEach(army => {
-            if (isQinMainLegion(army)) {
-                applyQinLegionFormation(army);
-                return;
-            }
             const pos = army.getPosition();
             const region = this.resolveCultureRegion(pos, army.homeCityId ?? army.getSourceCityId());
             army.cultureRegion = region;
@@ -447,7 +439,6 @@ export class LegionManager {
             ...(army.siegeMissionData ?? {}),
             defenderCityId: targetCity.id,
             attackerFactionId: army.getFactionId(),
-            ...(isScriptedQinLegion(army) ? { result: 'attacker_win' as const } : {}),
         };
 
         this.siegeManager.startSiegeWithArmy(army, siegeData);
@@ -511,25 +502,6 @@ export class LegionManager {
      * Find a suitable legion for an event.
      */
     public findCandidate(allArmies: Army[], factionId: string, targetPos: LatLng, name?: string): Army | null {
-        // 剧本全局唯一「秦军」：按名称匹配，兼容旧 huaxia 等错误 factionId
-        if (name === QIN_MAIN_LEGION_NAME) {
-            const scripted = allArmies.filter(
-                (a) =>
-                    a.name === QIN_MAIN_LEGION_NAME &&
-                    a.type === 'legion' &&
-                    !a.isDestroyed
-            );
-            if (scripted.length > 0) {
-                const army = scripted[0];
-                if (army.getFactionId() !== factionId) {
-                    army.setFactionId(factionId);
-                    applyQinLegionFormation(army);
-                }
-                return army;
-            }
-            return null;
-        }
-
         // Filter valid candidates (Same faction, Legion type, Not destroyed, Idle)
         let candidates = allArmies.filter(a =>
             a.getFactionId() === factionId &&
@@ -664,8 +636,6 @@ export class LegionManager {
             army.cultureSlots = expandCompositionSlots(cultureTier.slots);
             army.cultureScales = expandCompositionScales(cultureTier.slots);
         }
-        applyQinLegionFormation(army);
-
         this.addArmy(army);
 
         return army;

@@ -8,6 +8,7 @@ import { LegionManager } from '../legion/LegionManager';
 import { SiegeManager } from '../combat/SiegeManager';
 import { GameConfig } from '../config/GameConfig';
 import { isNearCity } from '../core/DistanceUtils';
+import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 
 export type RestorationReport = {
     factionId: string;
@@ -42,7 +43,9 @@ export class RebellionSystem {
         this.initializeCaches();
 
         this.timeSystem.onSeasonChange((season: Season, year: number) => {
+            const t0 = performance.now();
             this.executeSeasonalRebellion(season, year);
+            PerformanceMonitor.getInstance().noteAsyncWork('rebellion', performance.now() - t0);
         });
     }
 
@@ -210,6 +213,30 @@ export class RebellionSystem {
             return;
         }
 
+        // [2026-06-12 性能优化] 军团数据预计算一次（替代每城重扫全部军团的 O(候选×军团)）：
+        //   home/target → Set（O(1) 查），位置 → 数组（紧凑数值距离循环）。结果与 hasLegionsAtCity 一致。
+        const tiedCityIds = new Set<string>();
+        const legionPositions: Array<{ lat: number; lng: number }> = [];
+        if (this.legionManager) {
+            for (const army of this.legionManager.getArmies()) {
+                if (army.isDestroyed) continue;
+                const homeId = army.homeCityId ?? army.getSourceCityId();
+                if (homeId) tiedCityIds.add(homeId);
+                const targetId = army.getTargetCity()?.id;
+                if (targetId) tiedCityIds.add(targetId);
+                legionPositions.push(army.getPosition());
+            }
+        }
+        const cityBlockedByLegion = (city: City): boolean => {
+            if (this.siegeManager?.hasActiveSiegeAt(city.id)) return true;
+            if (tiedCityIds.has(city.id)) return true;
+            const pos = { lat: city.latitude, lng: city.longitude };
+            for (let i = 0; i < legionPositions.length; i++) {
+                if (isNearCity(legionPositions[i], pos)) return true;
+            }
+            return false;
+        };
+
         const validTargetCities: City[] = [];
         let blockedByLegions = 0;
 
@@ -226,7 +253,7 @@ export class RebellionSystem {
             if (!originalFactionId) return;
             if (city.factionId === originalFactionId) return;
 
-            if (this.hasLegionsAtCity(city.id)) {
+            if (cityBlockedByLegion(city)) {
                 blockedByLegions++;
                 return;
             }

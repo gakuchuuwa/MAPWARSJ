@@ -37,16 +37,9 @@ export const SPRITE_PATHS = {
     },
     // [NEW] General Portraits (Mapped by General ID)
     GENERAL_PORTRAITS: {
-        'default': '/assets/portraits/CENTRAL_field.png',
-        'qin': '/assets/qin/qinjiang.png',
-
-        // ── 01秦朝剧本立绘 @ public/assets/qin/ ──
+        'default': '/assets/zhongyuan/CENTRAL_field.png',  // TODO: 待替换
+        // ── 01秦朝剧本立绘 ──
         'baiqi': '/assets/qin/baiqi.png',
-        'wang_jian': '/assets/qin/wang_jian.png',
-        'zhao_general': '/assets/qin/zhao_general.png',
-        'xirong': '/assets/qin/xirong.png',
-        // 'li_mu': '/SUCAI/S10QZ/100-1.png',
-        // 'huan_yi': '/SUCAI/S10QZ/100-1.png',
     },
     PLAYER_DEFAULT: {
         frames: [

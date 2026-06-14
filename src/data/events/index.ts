@@ -1,6 +1,9 @@
 import { HistoricalEvent } from '../../types/core';
 
-import { EVENTS_QIN } from './index_01_qin';
+// [2026-06-12 主人裁定] 秦灭六国改为「剧本军团」实时行军（秦锐士远征邯郸，见 ScriptedCampaigns.ts），
+//   不再用逐年攻城事件卡进度。EVENTS_QIN 在此**禁用不删**（文件 index_01_qin.ts 原样保留，
+//   想恢复只需取消下面两处注释）。
+// import { EVENTS_QIN } from './index_01_qin';
 import { EVENTS_HAN } from './index_02_han';
 import { EVENTS_THREE_KINGDOMS } from './index_03_three_kingdoms';
 import { EVENTS_JIN_SIXTEEN } from './index_04_jin_sixteen';
@@ -16,7 +19,7 @@ import { EVENTS_EARLY_QING } from './index_13_early_qing';
 import { EVENTS_LATE_QING } from './index_14_late_qing';
 
 export const HISTORICAL_EVENTS: HistoricalEvent[] = [
-    ...EVENTS_QIN,
+    // ...EVENTS_QIN,  // [2026-06-12] 禁用：秦改剧本军团实时行军（见上方注释 + ScriptedCampaigns.ts）
     ...EVENTS_HAN,
     ...EVENTS_THREE_KINGDOMS,
     ...EVENTS_JIN_SIXTEEN,

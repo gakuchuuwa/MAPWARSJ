@@ -35,8 +35,13 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             const gameDelta = GameTime.toGameDelta(deltaTime, app.timeSystem.getSpeed());
 
             perfMonitor.startTimer('calendar');
+            const _tA = performance.now();
             app.timeSystem.update(gameDelta);
+            const _tB = performance.now();
             app.cityManager.updateYear(app.timeSystem.getYear());
+            const _tC = performance.now();
+            perfMonitor.noteAsyncWork('timeUpdate', _tB - _tA);
+            perfMonitor.noteAsyncWork('cityUpdateYear', _tC - _tB);
             perfMonitor.endTimer('calendar');
 
             if (app.historicalEventManager) {

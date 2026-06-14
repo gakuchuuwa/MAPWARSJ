@@ -21,8 +21,7 @@ import {
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
 import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitCultureCombatMultiplier } from '../systems/CultureCombat';
-import { restoreScriptedQinTroopsInBattle } from '../legion/ScriptedQinLegion';
-
+import { BattleUnitFactory } from './BattleUnitFactory';
 // ==================== 类型定义 ====================
 
 export interface BattleFieldUnit {
@@ -419,10 +418,6 @@ export class BattleField {
 
         // 防止个别单位未收到 onBattleEnd 而长期停在战斗姿态
         this.releaseAllMobileCombatStates();
-        restoreScriptedQinTroopsInBattle([
-            ...this.attackerGroup.units.map((bu) => bu.unit),
-            ...this.defenderGroup.units.map((bu) => bu.unit),
-        ]);
         this.onBattleComplete?.(winnerGroup.factionId); // [NEW] Notify System after settlement callbacks
     }
 
