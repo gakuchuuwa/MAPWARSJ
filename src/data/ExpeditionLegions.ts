@@ -37,6 +37,7 @@ import { NORTH_EXPEDITION_ELITE_LEGIONS } from './NorthExpeditionLegions';
 import { CENTRAL_EXPEDITION_ELITE_LEGIONS } from './CentralExpeditionLegions';
 import { BASHU_EXPEDITION_ELITE_LEGIONS } from './BashuExpeditionLegions';
 import { HEXI_EXPEDITION_ELITE_LEGIONS } from './HexiExpeditionLegions';
+import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
 export {
   JAPAN_EXPEDITION_ELITE_LEGIONS,
@@ -79,12 +80,14 @@ export function canFactionLaunchExpedition(factionId: string): boolean {
   return factionId !== 'panjun' && getExpeditionEliteLegionName(factionId) != null;
 }
 
-/** 远征下令：保存原名并改为精锐名；已保存则不再覆盖 */
-export function applyExpeditionEliteRename(army: {
-  name: string;
-  expeditionSavedName: string | null;
-  getFactionId(): string;
-}): boolean {
+/** 远征下令：保存原名并改为精锐名；秦国同时重申 QIN_FACTION_COMPOSITION */
+export function applyExpeditionEliteRename(
+  army: LegionCompositionTarget & {
+    name: string;
+    expeditionSavedName: string | null;
+    getFactionId(): string;
+  },
+): boolean {
   const elite = getExpeditionEliteLegionName(army.getFactionId());
   if (!elite) return false;
   if (army.name !== elite) {
@@ -93,6 +96,7 @@ export function applyExpeditionEliteRename(army: {
     }
     army.name = elite;
   }
+  applyLegionCultureComposition(army);
   return true;
 }
 

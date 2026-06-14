@@ -19,14 +19,13 @@ import { LegionType } from '../types/UnitTypes';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { getCityRegion, RegionType } from '../systems/RegionSystem';
 import {
+    applyLegionCultureComposition,
     getArmyMaxTroops,
-    getCultureFormationMode,
-    getCultureTier,
     getLegionTypeForCulture,
 } from '../types/CultureFormations';
-import { expandCompositionSlots, expandCompositionScales } from '../types/LegionComposition';
 import { gameLog } from '../utils/GameLogger';
 import { FollowResupplySystem } from './FollowResupplySystem';
+import { getScriptedSiegeResult, isScriptedLegion } from './LegionSpawnPolicy';
 
 export class LegionManager {
     private cityManager: CityManager;
@@ -142,7 +141,9 @@ export class LegionManager {
     /** 若场上军团超过上限，按兵力从低到高裁掉多余（纠正旧存档/漏检） */
     public trimLegionsToCap(): void {
         const max = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
-        const legions = this.armies.filter((a) => a.type === 'legion' && !a.isDestroyed);
+        const legions = this.armies.filter(
+            (a) => a.type === 'legion' && !a.isDestroyed && !isScriptedLegion(a),
+        );
         if (legions.length <= max) return;
 
         legions.sort((a, b) => a.getTroops() - b.getTroops());
@@ -255,12 +256,7 @@ export class LegionManager {
             army.homeCityId = config.sourceCityId;
         }
 
-        // 14 文化阵型（与军队编辑器一致）
-        const cultureTier = getCultureTier(region, troops);
-        if (cultureTier) {
-            army.cultureSlots = expandCompositionSlots(cultureTier.slots);
-            army.cultureScales = expandCompositionScales(cultureTier.slots);
-        }
+        applyLegionCultureComposition(army, region);
         this.addArmy(army);
         return army;
     }
@@ -274,12 +270,7 @@ export class LegionManager {
             const pos = army.getPosition();
             const region = this.resolveCultureRegion(pos, army.homeCityId ?? army.getSourceCityId());
             army.cultureRegion = region;
-            const cultureTier = getCultureTier(region, army.getTroops());
-            if (cultureTier) {
-                army.cultureSlots = expandCompositionSlots(cultureTier.slots);
-                army.cultureScales = expandCompositionScales(cultureTier.slots);
-            }
-            army.legionType = getCultureFormationMode(region) === 'triangle' ? 'cavalry' : 'mixed';
+            applyLegionCultureComposition(army, region);
         });
     }
 
@@ -435,10 +426,12 @@ export class LegionManager {
         army.stopMovement(true);
         army.setCombatState(true, 'siege', { lat: targetCity.latitude, lng: targetCity.longitude });
 
+        const scriptedResult = getScriptedSiegeResult(army, targetCity.id);
         const siegeData: SiegeData = {
             ...(army.siegeMissionData ?? {}),
             defenderCityId: targetCity.id,
             attackerFactionId: army.getFactionId(),
+            ...(scriptedResult ? { result: scriptedResult } : {}),
         };
 
         this.siegeManager.startSiegeWithArmy(army, siegeData);
@@ -630,12 +623,7 @@ export class LegionManager {
             army.homeCityId = sourceCityId;
         }
 
-        // 14 文化阵型（与军队编辑器一致）
-        const cultureTier = getCultureTier(region, cappedTroops);
-        if (cultureTier) {
-            army.cultureSlots = expandCompositionSlots(cultureTier.slots);
-            army.cultureScales = expandCompositionScales(cultureTier.slots);
-        }
+        applyLegionCultureComposition(army, region);
         this.addArmy(army);
 
         return army;

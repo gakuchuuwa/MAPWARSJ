@@ -102,6 +102,13 @@ export class Army implements IBattleUnit {
     public expeditionTargetCityId: string | null = null;
     /** 远征前军团原名；功成保留番号后清空；仅目标异常时用于恢复 */
     public expeditionSavedName: string | null = null;
+
+    /**
+     * 剧本军团标记；语义与策略见 LegionSpawnPolicy。
+     * scriptedCampaignId 非空 = scripted 来源；禁止御驾亲征抽兵，兵力帽 = scriptedTroopsCap。
+     */
+    public scriptedCampaignId: string | null = null;
+    public scriptedTroopsCap: number | null = null;
     
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;
@@ -235,13 +242,12 @@ export class Army implements IBattleUnit {
     }
 
     public addTroops(amount: number): void {
-        // [USER REQUIREMENT] Cap recovery at initial formation size
-        // If it's a 50k legion, it can't grow beyond 50k via recovery
-        const space = this.initialTroops - this.troops;
+        const cap = this.scriptedTroopsCap ?? this.initialTroops;
+        const space = cap - this.troops;
         const actualAdd = Math.min(amount, space);
 
         if (actualAdd > 0) {
-            this.troops += actualAdd;
+            this.setTroops(this.troops + actualAdd);
         }
     }
     private initialTroops: number = 0;
@@ -513,6 +519,8 @@ export class Army implements IBattleUnit {
         newArmy.type = this.type; // Inherit type (legion/army)
         newArmy.cultureSlots = this.cultureSlots ? [...this.cultureSlots] : null; // [NEW] Inherit culture slots
         newArmy.cultureScales = this.cultureScales ? [...this.cultureScales] : null; // [NEW] Inherit culture scales
+        newArmy.scriptedCampaignId = this.scriptedCampaignId;
+        newArmy.scriptedTroopsCap = this.scriptedTroopsCap;
 
         gameLog('army', `[Army] Splitting ${amount} from ${this.id}. Remaining: ${this.troops}. New Army: ${newArmy.id}`);
         return newArmy;
@@ -586,7 +594,11 @@ export class Army implements IBattleUnit {
     }
 
     public setTroops(troops: number): void {
-        this.troops = troops;
+        let next = Math.max(0, Math.floor(troops));
+        if (this.scriptedTroopsCap != null) {
+            next = Math.min(next, this.scriptedTroopsCap);
+        }
+        this.troops = next;
         if (this.label) {
             // Label update logic...
             // Kept for minimizing diff but practically unused if label is null

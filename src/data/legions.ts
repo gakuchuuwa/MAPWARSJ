@@ -15,7 +15,6 @@ export const HISTORICAL_LEGIONS: LegionConfig[] = [
     // 赵军
     // ═══════════════════════════════════════════════════════════════
 
-    // 赵军
     {
         id: 'legion_huihui_limu',
         name: '赵-李牧军',

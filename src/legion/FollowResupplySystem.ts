@@ -10,7 +10,7 @@
 import { Army } from './Army';
 import { CityManager } from '../world/CityManager';
 import { GameConfig } from '../config/GameConfig';
-import { getArmyMaxTroops } from '../types/CultureFormations';
+import { canFollowResupplyFromCity, getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 
@@ -33,11 +33,12 @@ export class FollowResupplySystem {
         if (!cfg.ENABLED || !GameConfig.SYSTEM.SANDBOX_MODE) return;
         if (army.isDestroyed || army.getTroops() <= 0) return;
         if (army.getIsInCombat()) return;
+        if (!canFollowResupplyFromCity(army)) return;
 
         const factionId = army.getFactionId();
         if (!factionId || factionId === 'neutral' || factionId === 'panjun') return;
 
-        const armyMax = getArmyMaxTroops(army.cultureRegion);
+        const armyMax = getLegionTroopCap(army);
         if (army.getTroops() >= armyMax) return;
 
         const now = performance.now();

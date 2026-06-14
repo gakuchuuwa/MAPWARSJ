@@ -30,6 +30,10 @@ import {
     commitExpeditionEliteLegionName,
     restoreExpeditionLegionName,
 } from '../../data/ExpeditionLegions';
+import {
+    getScriptedCampaignById,
+    tickScriptedCampaignExpedition,
+} from '../../legion/LegionSpawnPolicy';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 
 // =====================
@@ -51,26 +55,73 @@ export const IsWaitingSiege = new Condition('IsWaitingSiege', (ctx) =>
  * 远征模式（GAME_DIRECTION「远征细则」2026-06-11）：
  * expeditionTargetCityId 非 null 时目标锁死、断粮不回师；
  * 目标城已属己方（无论谁打下的）→ 远征功成，回归基础模式。
+ * 剧本军团：targetSequence 逐城推进，仅破末城算剧本完成。
  * 返回 'locked'（继续远征）| 'done'（刚结束）| null（非远征）。
  */
 function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
-    const expeditionId: string | null = ctx.army.expeditionTargetCityId ?? null;
+    const army = ctx.army;
+
+    if (army.scriptedCampaignId) {
+        const scriptedTick = tickScriptedCampaignExpedition(army, (id) => ctx.cityManager.getCity(id));
+        const campaign = getScriptedCampaignById(army.scriptedCampaignId);
+
+        if (scriptedTick === 'campaign_complete') {
+            clearStrategicTarget(ctx);
+            army.setTargetCity(null);
+            gameLog(
+                'expedition',
+                `🎬 [剧本] ${campaign?.generalName ?? ''} 率【${army.name}】完成剧本，回归基础模式`,
+            );
+            return 'done';
+        }
+
+        if (scriptedTick === 'stage_advanced' && army.expeditionTargetCityId) {
+            const next = ctx.cityManager.getCity(army.expeditionTargetCityId);
+            clearStrategicTarget(ctx);
+            army.setTargetCity(null);
+            if (next) {
+                setStrategicTarget(ctx, army.expeditionTargetCityId, {
+                    lat: next.latitude,
+                    lng: next.longitude,
+                });
+            }
+            gameLog(
+                'expedition',
+                `🎬 [剧本] 【${army.name}】攻破前一城，下一目标【${next?.name ?? '?'}】`,
+            );
+            return 'locked';
+        }
+
+        if (scriptedTick === 'locked' && army.expeditionTargetCityId) {
+            const target = ctx.cityManager.getCity(army.expeditionTargetCityId);
+            if (target && getStrategicTargetId(ctx) !== army.expeditionTargetCityId) {
+                setStrategicTarget(ctx, army.expeditionTargetCityId, {
+                    lat: target.latitude,
+                    lng: target.longitude,
+                });
+            }
+            return 'locked';
+        }
+
+        if (!army.expeditionTargetCityId) return null;
+    }
+
+    const expeditionId: string | null = army.expeditionTargetCityId ?? null;
     if (!expeditionId) return null;
 
-    const myFaction = ctx.army.getFactionId();
+    const myFaction = army.getFactionId();
     const target = ctx.cityManager.getCity(expeditionId);
 
     if (!target || target.factionId === myFaction) {
-        const legionName = ctx.army.name;
-        ctx.army.expeditionTargetCityId = null;
+        const legionName = army.name;
+        army.expeditionTargetCityId = null;
         clearStrategicTarget(ctx);
-        ctx.army.setTargetCity(null);
+        army.setTargetCity(null);
         gameLog(
             'expedition',
             `🐎 [远征] ${legionName} 远征${target ? `【${target.name}】功成` : '目标已不存在'}，回归基础模式`
         );
         if (target) {
-            // 军情面板播报「征 · 远征功成」（S 级）
             (window as unknown as {
                 game?: { brawlFeedPanel?: { pushExpedition(p: { legionName: string; cityName: string; kind: 'depart' | 'success' }): void } };
             }).game?.brawlFeedPanel?.pushExpedition({
@@ -78,9 +129,9 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
                 cityName: target.name,
                 kind: 'success',
             });
-            commitExpeditionEliteLegionName(ctx.army);
+            commitExpeditionEliteLegionName(army);
         } else {
-            restoreExpeditionLegionName(ctx.army);
+            restoreExpeditionLegionName(army);
         }
         return 'done';
     }

@@ -19966,31 +19966,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "泾州-萧关",
-                type: "road",
-                id: "road_city_anding_city_xiaoguan_1780161240045",
-                startConnection: "city_anding",
-                endConnection: "city_xiaoguan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [107.358398, 35.327451],
-                    [106.895871, 35.460188],
-                    [106.862876, 35.476686],
-                    [106.788636, 35.497308],
-                    [106.706148, 35.530303],
-                    [106.643972, 35.562608],
-                    [106.586539, 35.62104],
-                    [106.528797, 35.649911],
-                    [106.5123, 35.649911],
-                    [106.32019, 35.657289],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "于阗-扜弥",
                 type: "road",
                 id: "road_city_yutian2_city_yumi_1780161414674",
@@ -21492,39 +21467,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [106.264834, 37.910095],
                     [106.235963, 37.951339],
                     [106.295471, 37.998341],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "邠州-安化",
-                type: "road",
-                id: "road_city_binzhou2_city_xingqing_1780270901749",
-                startConnection: "city_binzhou2",
-                endConnection: "city_xingqing"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [108.08, 35.03],
-                    [107.936697, 35.145453],
-                    [107.941905, 35.178494],
-                    [107.964122, 35.225857],
-                    [107.934255, 35.281602],
-                    [107.892019, 35.324897],
-                    [107.882253, 35.346259],
-                    [107.880789, 35.396308],
-                    [107.896495, 35.444363],
-                    [107.929128, 35.567003],
-                    [107.929861, 35.609442],
-                    [107.922374, 35.664333],
-                    [107.922455, 35.685167],
-                    [107.930431, 35.726345],
-                    [107.922455, 35.767768],
-                    [107.937429, 35.794949],
-                    [107.954519, 35.846503],
-                    [107.87, 36.01],
                 ]
             }
         },
@@ -26019,51 +25961,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "萧关-折墌",
-                type: "road",
-                id: "road_city_xiaoguan_city_zhedi_20260611",
-                startConnection: "city_xiaoguan",
-                endConnection: "city_zhedi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [106.32019, 35.657289],
-                    [106.55, 35.62],
-                    [106.78, 35.58],
-                    [107.01, 35.54],
-                    [107.24, 35.52],
-                    [107.47, 35.51],
-                    [107.7, 35.505],
-                    [107.94, 35.5],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "折墌-汧源",
-                type: "road",
-                id: "road_city_zhedi_city_longzhou_20260611",
-                startConnection: "city_zhedi",
-                endConnection: "city_longzhou"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [107.94, 35.5],
-                    [107.72, 35.42],
-                    [107.5, 35.34],
-                    [107.28, 35.26],
-                    [107.06, 35.18],
-                    [106.86, 35.08],
-                    [106.86, 34.89],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "大名-安阳",
                 type: "road",
                 id: "road_city_daming_city_anyang_1781182093315",
@@ -30205,6 +30102,77 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [121.265358, 41.312743],
                     [121.252985, 41.267374],
                     [121.14, 41.12],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安定-萧关",
+                type: "road",
+                id: "road_city_anding_city_xiaoguan_1781418547992",
+                startConnection: "city_anding",
+                endConnection: "city_xiaoguan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [107.358398, 35.327451],
+                    [106.861257, 35.499579],
+                    [106.788636, 35.497308],
+                    [106.752533, 35.528917],
+                    [106.689871, 35.554226],
+                    [106.643972, 35.562608],
+                    [106.586539, 35.62104],
+                    [106.528797, 35.649911],
+                    [106.5123, 35.649911],
+                    [106.32019, 35.657289],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "新平-折墌",
+                type: "road",
+                id: "road_city_binzhou2_city_zhedi_1781418588806",
+                startConnection: "city_binzhou2",
+                endConnection: "city_zhedi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [108.08, 35.03],
+                    [107.936697, 35.145453],
+                    [107.941905, 35.178494],
+                    [107.964122, 35.225857],
+                    [107.934255, 35.281602],
+                    [107.892019, 35.324897],
+                    [107.882253, 35.346259],
+                    [107.94, 35.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安化-折墌",
+                type: "road",
+                id: "road_city_xingqing_city_zhedi_1781418644544",
+                startConnection: "city_xingqing",
+                endConnection: "city_zhedi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [107.87, 36.01],
+                    [107.956716, 35.873847],
+                    [107.948009, 35.820624],
+                    [107.922455, 35.767768],
+                    [107.930919, 35.748236],
+                    [107.922455, 35.685167],
+                    [107.922374, 35.664333],
+                    [107.94, 35.5],
                 ]
             }
         },

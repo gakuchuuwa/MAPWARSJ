@@ -11,6 +11,7 @@ import { EventVisualizer } from '../core/EventVisualizer';
 import { GameConfig } from '../config/GameConfig';
 import { GameTimeHUD } from '../ui/GameTimeHUD';
 import { gameLog } from '../utils/GameLogger';
+import { getScriptedFollowLegionName } from '../legion/LegionSpawnPolicy';
 
 export class HistoricalEventManager {
     private timeSystem: TimeSystem;
@@ -275,12 +276,19 @@ export class HistoricalEventManager {
             if (event.type === 'siege' && event.siegeData) {
                 // [NEW] 优先查找已存在的进攻方军团
                 if (event.siegeData.legionName) {
+                    const legionName = event.siegeData.legionName;
+                    const attackerFactionId = event.siegeData.attackerFactionId;
+                    const scriptedElite = attackerFactionId
+                        ? getScriptedFollowLegionName(attackerFactionId)
+                        : null;
                     const existingArmy = this.legionManager.getArmies().find(
                         (a) =>
-                            a.name === event.siegeData!.legionName &&
                             !a.isDestroyed &&
-                            (a.getFactionId() === event.siegeData!.attackerFactionId ||
-                                a.name === '秦军')
+                            (a.name === legionName ||
+                                (scriptedElite != null && a.name === scriptedElite)) &&
+                            (attackerFactionId == null ||
+                                a.getFactionId() === attackerFactionId ||
+                                (scriptedElite != null && a.name === scriptedElite)),
                     );
                     if (existingArmy) {
                         const armyPos = existingArmy.getPosition();

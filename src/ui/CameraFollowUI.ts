@@ -336,25 +336,22 @@ export class CameraFollowUI {
         const banner = document.createElement('div');
         banner.id = 'follow-banner';
         banner.style.cssText = `
-            position: fixed;
-            top: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10002;
             display: none;
             align-items: center;
             gap: 12px;
-            padding: 8px 20px;
+            padding: 6px 16px;
             font-size: 14px;
             font-weight: bold;
             color: #f0e6d2;
-            background: linear-gradient(135deg, rgba(40,30,15,0.94), rgba(55,40,20,0.96));
-            border: 2px solid rgba(220,180,70,0.6);
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            background: rgba(30, 25, 20, 0.85);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(220,180,70,0.5);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
             font-family: 'SimSun', 'Songti SC', serif;
             letter-spacing: 1px;
             pointer-events: auto;
+            white-space: nowrap;
         `;
 
         const text = document.createElement('span');
@@ -424,7 +421,12 @@ export class CameraFollowUI {
         banner.appendChild(renameBtn);
         banner.appendChild(closeBtn);
 
-        document.body.appendChild(banner);
+        const container = document.getElementById('top-center-hud');
+        if (container) {
+            container.appendChild(banner);
+        } else {
+            document.body.appendChild(banner);
+        }
         this.followBanner = banner;
     }
 

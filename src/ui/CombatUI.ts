@@ -1,3 +1,4 @@
+import { getScriptedCampaignById } from '../data/ScriptedCampaigns';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
 import { SPRITE_PATHS } from '../config/GameConfig';
@@ -22,6 +23,8 @@ export class CombatUI {
     private rightPortraitWrap!: HTMLDivElement;
     private leftPortraitFrame!: HTMLDivElement;
     private rightPortraitFrame!: HTMLDivElement;
+    private leftGeneralNameTag!: HTMLDivElement;
+    private rightGeneralNameTag!: HTMLDivElement;
 
     // UI Elements
     private centerBackdrop!: HTMLDivElement;
@@ -207,6 +210,8 @@ export class CombatUI {
         this.setupPortraitInteraction(this.leftPortrait, true);
         this.leftPortraitWrap.appendChild(this.leftPortrait);
         leftFrame.appendChild(this.leftPortraitWrap);
+        this.leftGeneralNameTag = this.createGeneralNameTag('left');
+        leftFrame.appendChild(this.leftGeneralNameTag);
 
         const rightFrame = this.createPortraitFrame();
         this.rightPortraitFrame = rightFrame;
@@ -217,6 +222,8 @@ export class CombatUI {
         this.setupPortraitInteraction(this.rightPortrait, false);
         this.rightPortraitWrap.appendChild(this.rightPortrait);
         rightFrame.appendChild(this.rightPortraitWrap);
+        this.rightGeneralNameTag = this.createGeneralNameTag('right');
+        rightFrame.appendChild(this.rightGeneralNameTag);
 
         // --- 中栏黑底：椭圆径向 alpha 渐隐（勿 multiply + transparent），HUD 叠在上 ---
         const backdropEdge = uiPx(T.centerBackdropEdge);
@@ -906,6 +913,23 @@ export class CombatUI {
         this.setPortrait(this.leftPortrait, attacker, attacker.generalId, attacker.factionId, attackerPortrait, 'attacker');
         this.setPortrait(this.rightPortrait, defender, defender.generalId, defender.factionId, defenderPortrait, 'defender');
 
+        const setGeneralName = (tag: HTMLDivElement, unit: IBattleUnit) => {
+            let name = '';
+            const entity = unit.getEntity?.();
+            if (entity?.scriptedCampaignId) {
+                const campaign = getScriptedCampaignById(entity.scriptedCampaignId);
+                if (campaign?.generalName) name = campaign.generalName;
+            }
+            if (name) {
+                tag.textContent = name;
+                tag.style.display = 'block';
+            } else {
+                tag.style.display = 'none';
+            }
+        };
+        setGeneralName(this.leftGeneralNameTag, attacker);
+        setGeneralName(this.rightGeneralNameTag, defender);
+
         this.updateStats();
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
@@ -1084,6 +1108,31 @@ export class CombatUI {
 
         this.attackerBar.style.width = `${attPct}%`;
         this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
+    }
+
+    private createGeneralNameTag(side: 'left' | 'right'): HTMLDivElement {
+        const tag = document.createElement('div');
+        tag.style.cssText = `
+            position: absolute;
+            bottom: 52%;
+            ${side === 'left' ? 'right' : 'left'}: -${uiPx(25)};
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(18)};
+            font-weight: 900;
+            color: #fff8e0;
+            background: linear-gradient(to bottom, rgba(20, 5, 0, 0.85), rgba(40, 10, 5, 0.85));
+            border: 1px solid rgba(220, 160, 60, 0.5);
+            border-radius: 4px;
+            padding: ${uiPx(14)} ${uiPx(8)};
+            box-shadow: 0 4px 15px rgba(0,0,0,0.9);
+            text-shadow: 0 2px 4px rgba(0,0,0,1);
+            z-index: ${T.zIndex.portrait + 5};
+            display: none;
+            letter-spacing: 4px;
+        `;
+        return tag;
     }
 
     // --- SHARED UTILS ---

@@ -24,7 +24,7 @@
 
 import { GameConfig } from '../config/GameConfig';
 import { RegionType } from '../systems/RegionSystem';
-import { CompositionSlot, CompositionTier } from './LegionComposition';
+import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
 import type { LegionType } from './UnitTypes';
 
 /** 军队编辑器可选阵型：3×3 方阵 (9人) 或 1-2-3 三角 (6人) */
@@ -144,6 +144,61 @@ function buildTriangleCavalry(unitType1: string, unitType2: string, unitType3: s
 }
 
 // ============================================================
+// 势力专属方阵（优先于文化区默认）
+// ============================================================
+
+/**
+ * 秦国固定 3×3 方阵：枪兵 + 轻骑/刀骑/轻骑 + 弩手。
+ * 中列中心 general_cavalry 写死，全项目不可省略。
+ *
+ * 适用范围（凡 factionId === 'qin' 的现役军团）：
+ *   · 据点军团 — LegionManager.createArmy / createLegion
+ *   · 剧本军团 — 同上（spawnScriptedCampaigns）
+ *   · 远征军团 — applyExpeditionEliteRename 下令时重申
+ */
+export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
+    { type: 'spear', count: 3 },
+    { type: 'lancer', count: 1, scale: 1.2 },
+    { type: 'general_cavalry', count: 1 },
+    { type: 'lancer', count: 1, scale: 1.2 },
+    { type: 'crossbow', count: 3 },
+];
+
+/** 势力专属阵型；无则返回 null，由调用方回退文化区 tier */
+export function getFactionCompositionSlots(factionId: string): CompositionSlot[] | null {
+    if (factionId === 'qin') {
+        return [...QIN_FACTION_COMPOSITION];
+    }
+    return null;
+}
+
+export interface LegionCompositionTarget {
+    factionId: string;
+    cultureRegion: RegionType | null;
+    cultureSlots: string[] | null;
+    cultureScales: number[] | null;
+    legionType: LegionType;
+    getTroops(): number;
+}
+
+/** 写入军团 cultureSlots / cultureScales / legionType（势力专属优先于文化区） */
+export function applyLegionCultureComposition(army: LegionCompositionTarget, region?: RegionType): void {
+    const culture = region ?? army.cultureRegion ?? 'CENTRAL';
+    const factionSlots = getFactionCompositionSlots(army.factionId);
+    const slots = factionSlots ?? getCultureTier(culture, army.getTroops())?.slots;
+    if (!slots) return;
+
+    army.cultureSlots = expandCompositionSlots(slots);
+    army.cultureScales = expandCompositionScales(slots);
+    army.legionType =
+        army.factionId === 'qin'
+            ? 'mixed'
+            : getCultureFormationMode(culture) === 'triangle'
+              ? 'cavalry'
+              : 'mixed';
+}
+
+// ============================================================
 // 14 文化区阵型 (用户 2026-05-30 拍板)
 // ============================================================
 
@@ -165,22 +220,6 @@ export const CENTRAL_TIERS: CompositionTier[] = [
 /** 2. 北方 步骑 枪+弓骑+弩 */
 export const NORTH_TIERS: CompositionTier[] = [
     build3x3('spear', 'horse_archer', 'crossbow')
-];
-
-/** 剧本「秦军」专用 步骑 3×3：枪+轻骑+弩（轻骑 scale 1.2） */
-export const QIN_LEGION_TIERS: CompositionTier[] = [
-    {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: 'spear', count: 3 },
-            { type: 'lancer', count: 1, scale: 1.2 },
-            { type: 'general_cavalry', count: 1, scale: 1.2 },
-            { type: 'lancer', count: 1, scale: 1.2 },
-            { type: 'crossbow', count: 3 },
-        ],
-    },
 ];
 
 /** 3. 东北 步骑 重+弓骑+弓兵 */
@@ -395,14 +434,6 @@ export function getCultureTier(culture: RegionType, troops: number = 5000): Comp
         if (troops >= t.minTroops && troops <= t.maxTroops) return t;
     }
     return tiers[tiers.length - 1] || null;
-}
-
-/** 历史剧本「秦军」专用阵型 tier */
-export function getQinLegionTier(troops: number = 5000): CompositionTier | null {
-    for (const t of QIN_LEGION_TIERS) {
-        if (troops >= t.minTroops && troops <= t.maxTroops) return t;
-    }
-    return QIN_LEGION_TIERS[QIN_LEGION_TIERS.length - 1] || null;
 }
 
 /**

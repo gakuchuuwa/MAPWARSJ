@@ -1,5 +1,13 @@
 import { gameLog } from '../../utils/GameLogger';
 
+function escapeHtml(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
 /** 启动批次之间让出主线程，避免首屏卡死（后台标签不节流）。 */
 export function yieldToBrowser(): Promise<void> {
     if (document.hidden) return Promise.resolve();
@@ -28,7 +36,7 @@ export function showGameAppErrorOverlay(message: string): void {
         `;
     overlay.innerHTML = `
             <h1 style="color: #ff5722; margin-bottom: 20px;">❌ 游戏加载失败</h1>
-            <p style="color: #aaa; max-width: 600px; text-align: center;">${message}</p>
+            <pre style="color: #ccc; max-width: 90vw; max-height: 50vh; overflow: auto; text-align: left; font-size: 12px; white-space: pre-wrap; word-break: break-word; background: rgba(255,255,255,0.06); padding: 12px 16px; border-radius: 6px;">${escapeHtml(message)}</pre>
             <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 30px; cursor: pointer;">重试</button>
         `;
     document.body.appendChild(overlay);

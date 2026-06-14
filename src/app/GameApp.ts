@@ -395,6 +395,9 @@ export class GameApp {
                 legionManager,
                 this.historicalEventManager.getSiegeManager()
             );
+            this.timeSystem.onYearChange((year) => {
+                this.recruitmentSystem.onScriptedCampaignYear(year);
+            });
             this.followResupplySystem = new FollowResupplySystem(this.cityManager);
             legionManager.setFollowResupplySystem(this.followResupplySystem);
 

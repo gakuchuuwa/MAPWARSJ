@@ -84,23 +84,21 @@ export class ExpeditionUI {
         btn.innerHTML = '🐎 远征';
         btn.title = `跟拍军团兵力 ≥ ${GameConfig.EXPEDITION.UNLOCK_TROOPS / 10000} 万，且势力有史籍精锐专名：直取一座文化中心城`;
         btn.style.cssText = `
-            position: fixed;
-            top: 56px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10002;
             display: none;
-            padding: 6px 18px;
+            padding: 6px 16px;
             font-size: 14px;
             font-weight: bold;
             color: #f0e6d2;
-            background: linear-gradient(135deg, rgba(90,30,20,0.94), rgba(120,50,25,0.96));
-            border: 2px solid rgba(220,140,70,0.7);
-            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(90,30,20,0.85), rgba(120,50,25,0.85));
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(220,140,70,0.5);
+            border-radius: 6px;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
             font-family: 'SimSun', 'Songti SC', serif;
             letter-spacing: 2px;
+            pointer-events: auto;
+            white-space: nowrap;
         `;
         btn.addEventListener('mouseenter', () => {
             btn.style.borderColor = 'rgba(255,180,90,0.95)';
@@ -109,7 +107,13 @@ export class ExpeditionUI {
             btn.style.borderColor = 'rgba(220,140,70,0.7)';
         });
         btn.addEventListener('click', () => this.openPanel());
-        document.body.appendChild(btn);
+        
+        const container = document.getElementById('top-center-hud');
+        if (container) {
+            container.appendChild(btn);
+        } else {
+            document.body.appendChild(btn);
+        }
         this.button = btn;
     }
 
@@ -118,24 +122,28 @@ export class ExpeditionUI {
         const banner = document.createElement('div');
         banner.id = 'expedition-status';
         banner.style.cssText = `
-            position: fixed;
-            top: 56px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10002;
             display: none;
-            padding: 5px 16px;
-            font-size: 13px;
+            padding: 6px 16px;
+            font-size: 14px;
             font-weight: bold;
             color: #f5d9a8;
-            background: linear-gradient(135deg, rgba(70,35,15,0.92), rgba(95,50,20,0.94));
-            border: 2px solid rgba(220,140,70,0.6);
-            border-radius: 8px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+            background: rgba(50, 25, 10, 0.85);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(220,140,70,0.5);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
             font-family: 'SimSun', 'Songti SC', serif;
             letter-spacing: 1px;
+            pointer-events: auto;
+            white-space: nowrap;
         `;
-        document.body.appendChild(banner);
+        
+        const container = document.getElementById('top-center-hud');
+        if (container) {
+            container.appendChild(banner);
+        } else {
+            document.body.appendChild(banner);
+        }
         this.statusBanner = banner;
     }
 

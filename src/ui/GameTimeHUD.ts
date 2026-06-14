@@ -1,5 +1,6 @@
 import { HistoricalEvent } from '../types/core';
 import { formatBcYearChinese } from '../data/QinRegnalCalendar';
+import { getPlayStartFollowLegionName } from '../legion/LegionSpawnPolicy';
 import { GameConfig } from '../config/GameConfig';
 import { Season } from '../core/TimeSystem';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
@@ -48,8 +49,9 @@ export class GameTimeHUD {
                     const isPlaying = game.historicalEventManager.togglePlayback();
                     if (isPlaying) {
                         game.recruitmentSystem?.runInitialSpawn();
-                        if (GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS) {
-                            game.cameraFollowUI?.followByNameWhenReady('秦军');
+                        const followName = getPlayStartFollowLegionName();
+                        if (followName) {
+                            game.cameraFollowUI?.followByNameWhenReady(followName);
                         }
                     }
                     this.setPlayingState(isPlaying);

@@ -25,6 +25,7 @@ import {
     type ReinforcementJoinDeps,
 } from '../legion/combat/BattleReinforcementPoll';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
+import { logScriptedFinaleDefeat } from '../legion/LegionSpawnPolicy';
 
 export class SiegeManager {
     private static get JOIN_RADIUS(): number {
@@ -569,12 +570,7 @@ export class SiegeManager {
             excludedIds
         );
 
-        const siegePreset = resolveSiegeBattleResult(
-            siegeData,
-            army,
-            nearbyAttackerLegions,
-            nearbyDefenderLegions
-        );
+        const siegePreset = siegeData.result;
 
         // Adapters
         const attackerAdapter = BattleUnitFactory.createAdapter(
@@ -629,7 +625,9 @@ export class SiegeManager {
             () => { // Defeat
                 siegeLog(`[Siege] Attacker Defeat!`);
                 this.activeSieges.delete(targetCity.id);
+                logScriptedFinaleDefeat(army, targetCity.id, targetCity.name);
                 markLegionAnnihilationFeed(army, 'attacker', targetCity.name);
+                army.expeditionTargetCityId = null;
                 army.destroy();
             }
         );
