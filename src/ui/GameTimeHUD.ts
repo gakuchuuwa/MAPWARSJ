@@ -49,9 +49,11 @@ export class GameTimeHUD {
                     const isPlaying = game.historicalEventManager.togglePlayback();
                     if (isPlaying) {
                         game.recruitmentSystem?.runInitialSpawn();
-                        const followName = getPlayStartFollowLegionName();
-                        if (followName) {
-                            game.cameraFollowUI?.followByNameWhenReady(followName);
+                        if (GameConfig.SYSTEM.ENABLE_SCRIPTED_CAMPAIGNS) {
+                            const followName = getPlayStartFollowLegionName();
+                            if (followName) {
+                                game.cameraFollowUI?.followByNameWhenReady(followName);
+                            }
                         }
                     }
                     this.setPlayingState(isPlaying);

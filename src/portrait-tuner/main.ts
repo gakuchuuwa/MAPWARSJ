@@ -9,6 +9,7 @@ import {
     hasPortraitImageOverride,
     resolvePortraitAdjust,
 } from '../config/PortraitAdjust';
+import { autoFitPortraitFromUrl } from '../config/portraitAutoFit';
 
 import {
     DEFAULT_PORTRAIT_ADJUST,
@@ -116,7 +117,10 @@ app.innerHTML = `
         <div class="pt-save-bar-hint">滑块与标线调好后，点「保存」一并写入 portrait_adjust.ts（游戏内 F5 生效）</div>
         <div class="pt-save-bar-actions">
           <button type="button" id="pt-save-bottom" class="pt-btn pt-btn-primary pt-btn-large pt-btn-save">保存</button>
+          <button type="button" id="pt-autofit-folder" class="pt-btn pt-btn-large">🪄 本文件夹自动校正</button>
+          <button type="button" id="pt-autofit-all" class="pt-btn pt-btn-large">🪄 全库自动校正</button>
         </div>
+        <div id="pt-autofit-progress" class="pt-autofit-progress"></div>
         <div id="pt-dirty-hint" class="pt-dirty-hint"></div>
         <div id="pt-save-toast" class="pt-save-toast"></div>
       </div>
@@ -151,6 +155,7 @@ const els = {
     effective: document.getElementById('pt-effective')!,
     dirtyHint: document.getElementById('pt-dirty-hint')!,
     saveToast: document.getElementById('pt-save-toast')!,
+    autofitProgress: document.getElementById('pt-autofit-progress')!,
 };
 
 let imgSample: HTMLImageElement;
@@ -291,6 +296,8 @@ function injectStyles(): void {
       .pt-save-bar-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
       .pt-btn-large { padding: 10px 20px; font-size: 15px; font-weight: 600; }
       .pt-btn-save { min-width: 160px; padding: 12px 32px; font-size: 17px; }
+      .pt-autofit-progress { font-size: 12px; margin-top: 8px; color: #8ab4c4; min-height: 1.2em; }
+      .pt-autofit-progress:empty { display: none; }
       .pt-dirty-hint { font-size: 11px; margin-top: 8px; color: #7cb87c; }
       .pt-dirty-hint.is-dirty { color: #ffb86c; }
       .pt-save-toast {
@@ -570,6 +577,53 @@ async function saveEverything(): Promise<void> {
     }
 }
 
+/** 对一批图片跑自动校正，写入 adjustData.images，返回 {done, failed} */
+async function autoFitImages(images: string[]): Promise<{ done: number; failed: string[] }> {
+    const failed: string[] = [];
+    let done = 0;
+    for (const path of images) {
+        const folder = path.match(/^(\/assets\/[^/]+\/)/)?.[1] ?? '';
+        const eyeLineY = getFolderGuide(folder).eyeLineY;
+        const fit = await autoFitPortraitFromUrl(path, eyeLineY);
+        if (fit) {
+            adjustData.images = adjustData.images ?? {};
+            adjustData.images[path] = fit;
+            done += 1;
+        } else {
+            failed.push(path);
+        }
+        els.autofitProgress.textContent =
+            `自动校正中… ${done + failed.length}/${images.length}（成功 ${done}，失败 ${failed.length}）`;
+        // 让出主线程，避免长任务卡 UI
+        await new Promise((r) => setTimeout(r, 0));
+    }
+    return { done, failed };
+}
+
+/** 自动校正一组图片 → 保存 → 刷新界面 */
+async function runAutoFit(images: string[], label: string): Promise<void> {
+    if (images.length === 0) return;
+    if (!confirm(`将对${label}共 ${images.length} 张立绘自动校正（覆盖现有单张设置），并保存到 portrait_adjust.ts。继续？`)) {
+        return;
+    }
+    els.autofitProgress.textContent = `自动校正中… 0/${images.length}`;
+    try {
+        const { done, failed } = await autoFitImages(images);
+        dirty = true;
+        updateDirtyHint();
+        await saveAdjustToServer();
+        loadDraftFromMode();
+        refreshPreview();
+        renderImageList();
+        const failNote = failed.length ? `，${failed.length} 张读取失败（已跳过）` : '';
+        els.autofitProgress.textContent = `✓ ${label}完成：${done} 张已校正并保存${failNote} · 回游戏 F5 生效`;
+        showSaveToast(`自动校正已保存：${done} 张${failNote}`);
+    } catch (err) {
+        els.autofitProgress.textContent = `保存失败：${err}`;
+        showSaveToast(`自动校正保存失败：${err}`, true);
+    }
+}
+
 function clearImageOverride(): void {
     if (!adjustData.images?.[selectedImage]) return;
     delete adjustData.images[selectedImage];
@@ -747,6 +801,14 @@ function bindEvents(): void {
         }
         syncSlidersToDraft();
         refreshPreview();
+    });
+    document.getElementById('pt-autofit-folder')!.addEventListener('click', () => {
+        const cat = portraitCatalog.find((c) => c.folder === selectedFolder);
+        runAutoFit(cat?.images ?? [], `文件夹「${selectedFolder}」`).catch(() => {});
+    });
+    document.getElementById('pt-autofit-all')!.addEventListener('click', () => {
+        const all = portraitCatalog.flatMap((c) => c.images);
+        runAutoFit(all, '全库').catch(() => {});
     });
     document.getElementById('pt-clear-override')!.addEventListener('click', clearImageOverride);
     document.getElementById('pt-prev')!.addEventListener('click', () => navigateImage(-1));

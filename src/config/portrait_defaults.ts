@@ -83,6 +83,13 @@ const _dianmianPortraitGlob = import.meta.glob<string>(
 );
 const _dianmianPortraitPool: string[] = Object.values(_dianmianPortraitGlob);
 
+/** 蒲甘专属立绘池 */
+const _puganPortraitGlob = import.meta.glob<string>(
+    '../../public/assets/pugan/*.png',
+    { eager: true, query: '?url', import: 'default' },
+);
+const _puganPortraitPool: string[] = Object.values(_puganPortraitGlob);
+
 /** 北方立绘池 */
 const _beifangPortraitGlob = import.meta.glob<string>(
     '../../public/assets/beifang/*.png',
@@ -247,7 +254,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'ailao': _dianmianPortraitPool,
     'dali': _dianmianPortraitPool,
     'nanzhao': _dianmianPortraitPool,
-    'pagan': _dianmianPortraitPool,
+    'pagan': _puganPortraitPool,
     'siam': _dianmianPortraitPool,
     'chenla': _dianmianPortraitPool,
     'ava': _dianmianPortraitPool,

@@ -95,7 +95,7 @@ export class GameApp {
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
     public factionForceUI!: FactionForceUI; // [NEW] 势力兵力榜
-    public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥5万解锁）
+    public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥4万解锁）
 
     // Game Loop
     public lastFrameTime: number = 0;

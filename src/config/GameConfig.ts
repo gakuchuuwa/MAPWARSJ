@@ -168,7 +168,7 @@ export class GameConfig {
      * 远征中断粮不回师，直至占领目标城或全军覆没。
      */
     static EXPEDITION = {
-        UNLOCK_TROOPS: 50_000,
+        UNLOCK_TROOPS: 40_000,
         SELECT_TIMEOUT_MS: 15_000,
         /** UI 状态扫描间隔（ms） */
         SCAN_INTERVAL_MS: 500,

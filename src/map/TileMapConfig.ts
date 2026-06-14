@@ -124,10 +124,10 @@ export const TILE_CONFIG: TileConfigType = {
     // 瓦片资源路径（已移除本地瓦片，全程序生成）
     TILE_PATHS: {},
 
-    // 地图初始中心点（天水 — 游戏起步地点）
+    // 地图初始中心点（长安 — 游戏起步地点）
     MAP_CENTER: {
-        lat: 34.58,
-        lng: 105.73
+        lat: 34.27,
+        lng: 108.93
     },
 
     // Web墨卡托投影参数
