@@ -145,10 +145,6 @@ export function getScriptedSiegeResult(
         return 'defender_win';
     }
 
-    if (campaign.targetSequence.includes(defenderCityId)) {
-        return 'attacker_win';
-    }
-
     return undefined;
 }
 

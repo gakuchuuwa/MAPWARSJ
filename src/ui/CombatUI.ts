@@ -12,7 +12,7 @@ import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier } from '../systems/CultureCombat';
-import { getOpeningTacticalPowerMultiplier } from '../combat/GeneralSkillCombat';
+import { getOpeningTacticalPowerMultiplier, getStrategicBattlePowerMultiplier, getGeneralSkillDisplayTags } from '../combat/GeneralSkillCombat';
 const T = COMBAT_UI_TOKENS;
 
 export class CombatUI {
@@ -50,9 +50,6 @@ export class CombatUI {
     private rightSideTroopsSpan!: HTMLSpanElement;
     private leftSideBarFill!: HTMLDivElement;
     private rightSideBarFill!: HTMLDivElement;
-    /** 战力系数徽章（野战/城防 × 文化关隘综合系数） */
-    private leftMultBadge: HTMLSpanElement | null = null;
-    private rightMultBadge: HTMLSpanElement | null = null;
     private battleTitle!: HTMLDivElement;
     private battleYear!: HTMLDivElement;
     private eventDescription!: HTMLDivElement;
@@ -61,8 +58,13 @@ export class CombatUI {
     private defenderDisplayName = '';
     private attackerFactionId: string | null = null;
     private defenderFactionId: string | null = null;
+    private leftMultBadge: HTMLSpanElement | null = null;
+    private rightMultBadge: HTMLSpanElement | null = null;
     private leftFactionNameSpan!: HTMLSpanElement;
     private rightFactionNameSpan!: HTMLSpanElement;
+    /** 势力名前的战力系数链（例 1.2×1.2×1.2） */
+    private leftFactionMultSpan!: HTMLSpanElement;
+    private rightFactionMultSpan!: HTMLSpanElement;
 
     private currentBattle: Battle | null = null;
     private currentRegionalUnits: { attackers: IBattleUnit[], defenders: IBattleUnit[] } | null = null;
@@ -74,6 +76,8 @@ export class CombatUI {
     /** 绑定战场后按「剩余游戏时长」刷新，避免援军加时 / 暂停时 UI 提前关 */
     private regionalSafetyDeadline = 0;
     private boundRegionalBattleField: BattleField | null = null;
+    /** 旧版 1v1 Battle 无 BattleField 时，用此字段供徽章识别攻城/野战 */
+    private currentBattleType: import('../combat/CombatSystem').BattleType | undefined;
     private lastTimeScale = 1;
     private tacticalSkillBanner!: HTMLDivElement;
     private tacticalSkillHideTimer: ReturnType<typeof setTimeout> | null = null;
@@ -540,15 +544,31 @@ export class CombatUI {
         return wrap;
     }
 
-    /** 侧栏势力名称（位于「军团名: 兵力」之上） */
+    /** 侧栏势力名称 + 其前战力系数链（位于「军团名: 兵力」之上） */
     private createFactionRow(side: 'attacker' | 'defender'): HTMLDivElement {
         const isAtt = side === 'attacker';
         const row = document.createElement('div');
         row.style.cssText = `
             width: 100%;
             margin-bottom: ${uiPx(6)};
-            text-align: ${isAtt ? 'right' : 'left'};
+            display: flex;
+            flex-direction: ${isAtt ? 'row' : 'row-reverse'};
+            align-items: baseline;
             pointer-events: none;
+        `;
+        const multSpan = document.createElement('span');
+        multSpan.style.cssText = `
+            margin-${isAtt ? 'left' : 'right'}: auto;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: ${uiPx(T.sideBar.factionMultSize)};
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum" 1;
+            color: ${isAtt ? 'rgba(255, 218, 130, 0.95)' : 'rgba(150, 210, 225, 0.95)'};
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+            white-space: nowrap;
+            display: none;
         `;
 
         const nameSpan = document.createElement('span');
@@ -562,10 +582,13 @@ export class CombatUI {
         `;
 
         row.appendChild(nameSpan);
+        row.appendChild(multSpan);
 
         if (isAtt) {
+            this.leftFactionMultSpan = multSpan;
             this.leftFactionNameSpan = nameSpan;
         } else {
+            this.rightFactionMultSpan = multSpan;
             this.rightFactionNameSpan = nameSpan;
         }
         return row;
@@ -577,8 +600,8 @@ export class CombatUI {
         const label = document.createElement('div');
         this.applySideLabelStyle(label, side);
         label.style.display = 'flex';
+        label.style.flexDirection = isAtt ? 'row' : 'row-reverse';
         label.style.alignItems = 'baseline';
-        label.style.justifyContent = isAtt ? 'flex-start' : 'flex-end';
         label.style.flexWrap = 'nowrap';
         label.style.width = '100%';
         label.style.maxWidth = '100%';
@@ -600,7 +623,7 @@ export class CombatUI {
             color: rgba(255,255,255,0.92);
             font-weight: 700;
             flex-shrink: 0;
-            margin-left: ${uiPx(8)};
+            margin-${isAtt ? 'left' : 'right'}: auto;
             min-width: ${T.sideBar.troopsMinCh}ch;
             font-variant-numeric: tabular-nums;
             font-feature-settings: "tnum" 1;
@@ -608,12 +631,10 @@ export class CombatUI {
             letter-spacing: 0.02em;
         `;
 
-        // [2026-06-12 美化] 战力系数徽章：把后台的文化攻防/关隘加成晒给观众
-        // （无解说直播里这是"为什么少打多能赢"的唯一解释渠道）
         const multBadge = document.createElement('span');
         multBadge.style.cssText = `
             flex-shrink: 0;
-            margin-left: ${uiPx(8)};
+            margin-${isAtt ? 'left' : 'right'}: ${uiPx(8)};
             padding: 0 ${uiPx(6)};
             font-size: ${uiPx(12)};
             font-weight: 700;
@@ -643,12 +664,30 @@ export class CombatUI {
         return label;
     }
 
-    /**
-     * 战力系数徽章：文化 × 剧本/远征 × 开局战术（仅非 1 的因子串联显示）。
-     * 例：秦之锐士 + 侵掠如火 → 「野战×1.2×1.2」
-     */
+    /** 战力系数链：写在势力名前方，多一层非 1 系数就多叠一个（例 1.2×1.2×1.2） */
     private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
-        const apply = (badge: HTMLSpanElement | null, unit: IBattleUnit | null) => {
+        const applyChain = (multSpan: HTMLSpanElement, unit: IBattleUnit | null) => {
+            if (!unit) {
+                multSpan.style.display = 'none';
+                multSpan.removeAttribute('title');
+                multSpan.textContent = '';
+                return;
+            }
+            const { chain, title } = this.formatBattlePowerFactorChain(unit);
+            if (!chain) {
+                multSpan.style.display = 'none';
+                multSpan.removeAttribute('title');
+                multSpan.textContent = '';
+                return;
+            }
+            multSpan.textContent = chain;
+            multSpan.title = title;
+            multSpan.style.display = 'inline';
+        };
+        applyChain(this.leftFactionMultSpan, attacker);
+        applyChain(this.rightFactionMultSpan, defender);
+
+        const applyTotal = (badge: HTMLSpanElement | null, unit: IBattleUnit | null) => {
             if (!badge) return;
             if (!unit) {
                 badge.style.display = 'none';
@@ -657,8 +696,22 @@ export class CombatUI {
             badge.textContent = this.formatBattlePowerBadge(unit);
             badge.style.display = 'inline-block';
         };
-        apply(this.leftMultBadge, attacker);
-        apply(this.rightMultBadge, defender);
+        applyTotal(this.leftMultBadge, attacker);
+        applyTotal(this.rightMultBadge, defender);
+    }
+
+    private getPrimaryBattler(side: 'attacker' | 'defender'): IBattleUnit | null {
+        if (this.currentBattle) {
+            return side === 'attacker' ? this.currentBattle.attacker : this.currentBattle.defender;
+        }
+        if (this.currentRegionalUnits) {
+            const units =
+                side === 'attacker'
+                    ? this.currentRegionalUnits.attackers
+                    : this.currentRegionalUnits.defenders;
+            return units[0] ?? null;
+        }
+        return null;
     }
 
     private updateSkillBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
@@ -706,33 +759,64 @@ export class CombatUI {
             return tag;
         };
 
-        // TODO: Map real skills when data is available
-        if (attacker && attacker.generalId === 'baiqi') {
-            this.leftSkillsBox.appendChild(createSkillTag('侵掠如火', '己战×1.2', true));
-            this.leftSkillsBox.appendChild(createSkillTag('因粮于敌', '兵回×20%', true));
-        }
-        if (defender && defender.generalId === 'baiqi') {
-            this.rightSkillsBox.appendChild(createSkillTag('侵掠如火', '己战×1.2', true));
-            this.rightSkillsBox.appendChild(createSkillTag('因粮于敌', '兵回×20%', true));
-        }
+        const renderSide = (box: HTMLDivElement, unit: IBattleUnit | null) => {
+            if (!unit) return;
+            
+            if (unit.generalId) {
+                for (const tag of getGeneralSkillDisplayTags(unit)) {
+                    box.appendChild(createSkillTag(tag.name, tag.effectLabel, tag.isFamous));
+                }
+            }
+
+            const legionMult = getCampaignLegionCombatMultiplier(unit);
+            if (Math.abs(legionMult - 1) > 0.001) {
+                const troopsName = unit.name || '精锐部队';
+                const badgeName = troopsName.replace(/(军团|驻军|守军|军)$/, '').trim();
+                const effectLabel = `剧本×${parseFloat(legionMult.toFixed(2))}`;
+                box.appendChild(createSkillTag(badgeName, effectLabel, true));
+            }
+        };
+        renderSide(this.leftSkillsBox, attacker);
+        renderSide(this.rightSkillsBox, defender);
     }
 
     private formatBattlePowerBadge(unit: IBattleUnit): string {
         const isGarrison = unit.unitType === 'city';
-        const prefix = isGarrison ? '城防' : '野战';
-        const factors: number[] = [];
-        const pushIfNotOne = (n: number) => {
-            if (Math.abs(n - 1) > 0.001) factors.push(n);
-        };
-        pushIfNotOne(getUnitCultureCombatMultiplier(unit));
-        pushIfNotOne(getCampaignLegionCombatMultiplier(unit));
-        pushIfNotOne(getOpeningTacticalPowerMultiplier(unit));
+        const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
+        const role = isGarrison ? '城防' : battleType === 'siege' ? '攻城' : '野战';
         
         let product = 1;
-        for (const f of factors) product *= f;
+        product *= getUnitCultureCombatMultiplier(unit);
+        product *= getCampaignLegionCombatMultiplier(unit);
+        product *= getOpeningTacticalPowerMultiplier(unit);
+        product *= getStrategicBattlePowerMultiplier(unit, battleType);
         
-        if (Math.abs(product - 1) <= 0.001) return `${prefix}×1`;
-        return `${prefix}×${parseFloat(product.toFixed(2))}`;
+        if (Math.abs(product - 1) <= 0.001) return `${role}×1`;
+        return `${role}×${parseFloat(product.toFixed(2))}`;
+    }
+
+    private formatBattlePowerFactorChain(unit: IBattleUnit): { chain: string; title: string } {
+        const isGarrison = unit.unitType === 'city';
+        const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
+        const role = isGarrison ? '城防' : battleType === 'siege' ? '攻城' : '野战';
+        const fmt = (n: number) => String(parseFloat(n.toFixed(2)));
+
+        const labeled: { label: string; value: number }[] = [];
+        const pushIfNotOne = (label: string, n: number) => {
+            if (Math.abs(n - 1) > 0.001) labeled.push({ label, value: n });
+        };
+        pushIfNotOne('文化', getUnitCultureCombatMultiplier(unit));
+        pushIfNotOne('剧本', getCampaignLegionCombatMultiplier(unit));
+        pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(unit));
+        pushIfNotOne('战略', getStrategicBattlePowerMultiplier(unit, battleType));
+
+        if (labeled.length === 0) {
+            return { chain: '', title: '' };
+        }
+
+        const chain = labeled.map((l) => fmt(l.value)).join('×');
+        const title = `${role}：${labeled.map((l) => `${l.label}×${fmt(l.value)}`).join(' ')}`;
+        return { chain, title };
     }
 
     /** 侧栏小血条 + 攻剑 / 守盾图标（撑满各自半宽） */
@@ -937,6 +1021,8 @@ export class CombatUI {
     public show(battle: Battle) {
         this.currentBattle = battle;
         this.currentRegionalUnits = null;
+        this.boundRegionalBattleField = null;
+        this.currentBattleType = battle.type;
         this.isVisible = true;
         this.attackerFactionId = battle.attacker.factionId;
         this.defenderFactionId = battle.defender.factionId;
@@ -966,6 +1052,7 @@ export class CombatUI {
         this.currentBattle = null;
         this.currentRegionalUnits = { attackers, defenders };
         this.boundRegionalBattleField = battleField ?? null;
+        this.currentBattleType = battleField?.type;
         this.lastTimeScale = Math.max(0.1, timeScale);
         this.isVisible = true;
 
@@ -1096,6 +1183,7 @@ export class CombatUI {
         this.currentBattle = null;
         this.currentRegionalUnits = null;
         this.boundRegionalBattleField = null;
+        this.currentBattleType = undefined;
         this.regionalSafetyDeadline = 0;
         this.attackerFactionId = null;
         this.defenderFactionId = null;
@@ -1244,6 +1332,10 @@ export class CombatUI {
         this.renderSideLabel('attacker', this.attackerDisplayName, attCurrent);
         this.renderSideLabel('defender', this.defenderDisplayName, defCurrent);
         this.updateFactionDisplay();
+        this.updateMultiplierBadges(
+            this.getPrimaryBattler('attacker'),
+            this.getPrimaryBattler('defender'),
+        );
 
         const attSidePct = attMax > 0 ? Math.max(0, Math.min(100, (attCurrent / attMax) * 100)) : 0;
         const defSidePct = defMax > 0 ? Math.max(0, Math.min(100, (defCurrent / defMax) * 100)) : 0;

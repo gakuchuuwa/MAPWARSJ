@@ -51,7 +51,6 @@ function createLegionAdapter(
     legion: Army,
     deps: ReinforcementJoinDeps,
     side: 'attacker' | 'defender',
-    presetResult: 'attacker_win' | 'defender_win' | undefined,
     battleCityName: string
 ) {
     return BattleUnitFactory.createAdapter(
@@ -95,7 +94,7 @@ export function tryJoinLegionToBattle(
 
     const side: 'attacker' | 'defender' = isAttacker ? 'attacker' : 'defender';
     const battleCityName = deps.resolveBattleCityName?.(center) ?? '未知';
-    const adapter = createLegionAdapter(legion, deps, side, battleField.getPresetResult(), battleCityName);
+    const adapter = createLegionAdapter(legion, deps, side, battleCityName);
     battleField.addReinforcement(adapter, isAttacker);
     return true;
 }

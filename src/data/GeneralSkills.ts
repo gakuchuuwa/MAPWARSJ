@@ -65,7 +65,7 @@ export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
 /** 战略七格 */
 export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.2 },
-    str_02: { id: 'str_02', grid: 'S②', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.2 },
+    str_02: { id: 'str_02', grid: 'S②', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.1 },
     str_03: { id: 'str_03', grid: 'S③', displayName: '攻城拔寨', effect: 'siege_power_mult', magnitude: 1.2 },
     str_04: { id: 'str_04', grid: 'S④', displayName: '所向披靡', effect: 'field_power_mult', magnitude: 1.2 },
     str_05: { id: 'str_05', grid: 'S⑤', displayName: '长驱直入', effect: 'plain_power_mult', magnitude: 1.2 },
@@ -79,7 +79,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         generalId: 'baiqi',
         tier: 'famous',
         tacticalSkillId: 'tac_03', // ③ 侵掠如火
-        strategicSkillId: 'str_02', // S② 因粮于敌
+        strategicSkillId: 'str_03', // S③ 攻城拔寨
     },
 };
 

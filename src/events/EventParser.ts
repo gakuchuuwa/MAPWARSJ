@@ -747,8 +747,6 @@ export class EventParser {
             }
         }
 
-        const result = text.includes('胜') ? 'attacker_win' : 'defender_win';
-
         return {
             year: year,
             season: 0, // Default Spring
@@ -757,7 +755,6 @@ export class EventParser {
             siegeData: {
                 attackerFactionId: attackerFactionId,
                 defenderCityId: cityId,
-                result: result
             }
         };
     }

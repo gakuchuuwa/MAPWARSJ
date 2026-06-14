@@ -61,7 +61,6 @@ function legionToFieldAdapter(
     deps: LegionFieldBattleDeps,
     legion: Army,
     side: 'attacker' | 'defender',
-    presetResult: 'attacker_win' | 'defender_win' | undefined,
     battleCityName: string
 ): IBattleUnit {
     return BattleUnitFactory.createAdapter(
@@ -221,10 +220,10 @@ function startFieldBattleBetween(
     const battleCityName = resolveAnnihilationCityName(deps.getCityManager(), center);
 
     const attUnits = attLegions.map((l) =>
-        legionToFieldAdapter(deps, l, 'attacker', presetResult, battleCityName)
+        legionToFieldAdapter(deps, l, 'attacker', battleCityName)
     );
     const defUnits = defLegions.map((l) =>
-        legionToFieldAdapter(deps, l, 'defender', presetResult, battleCityName)
+        legionToFieldAdapter(deps, l, 'defender', battleCityName)
     );
 
     for (const legion of allLegions) {
@@ -247,6 +246,6 @@ function startFieldBattleBetween(
         attUnits,
         defFaction,
         defUnits,
-        presetResult
+        undefined
     );
 }

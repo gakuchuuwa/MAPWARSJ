@@ -21,7 +21,7 @@ import {
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
 import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitBattlePowerMultiplier } from '../systems/CultureCombat';
-import { applyOpeningTacticalToRolls, applyPostBattleStrategicBonus } from './GeneralSkillCombat';
+import { applyOpeningTacticalToRolls, applyPostBattleStrategicBonus, applyStrategicBattleToRolls } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 // ==================== 类型定义 ====================
 
@@ -158,13 +158,20 @@ export class BattleField {
         const attRoll = rollSideEffectivePower(attUnits);
         const defRoll = rollSideEffectivePower(defUnits);
         const adjusted = applyOpeningTacticalToRolls(attUnits, defUnits, attRoll, defRoll);
+        const strategic = applyStrategicBattleToRolls(
+            attUnits,
+            defUnits,
+            adjusted.attRoll,
+            adjusted.defRoll,
+            this.type,
+        );
         gameLog(
             'battle',
-            `[BattleField] 掷色: 攻有效 ${adjusted.attRoll.toFixed(0)} vs 守有效 ${adjusted.defRoll.toFixed(0)} ` +
+            `[BattleField] 掷色: 攻有效 ${strategic.attRoll.toFixed(0)} vs 守有效 ${strategic.defRoll.toFixed(0)} ` +
             `(文化修正后 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)}，` +
             `原兵力 ${this.attackerGroup.initialTotalTroops} vs ${this.defenderGroup.initialTotalTroops}，再 ×[0.8,1.2])`
         );
-        this.applyPredictedSidesFromRoll(adjusted.attRoll, adjusted.defRoll);
+        this.applyPredictedSidesFromRoll(strategic.attRoll, strategic.defRoll);
     }
 
     private applyPredictedSidesFromRoll(attRoll: number, defRoll: number): void {

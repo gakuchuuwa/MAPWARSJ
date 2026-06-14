@@ -100,6 +100,8 @@ export const COMBAT_UI_TOKENS = {
         troopsMinCh: 8,
         /** 侧栏势力名称字号（设计 px）；略大于军团名 labelSize */
         factionNameSize: 24,
+        /** 势力名前的战力系数链字号 */
+        factionMultSize: 20,
     },
 
     zIndex: {
