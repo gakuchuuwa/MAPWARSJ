@@ -665,34 +665,55 @@ export class CombatUI {
         this.leftSkillsBox.innerHTML = '';
         this.rightSkillsBox.innerHTML = '';
 
-        const createSkillTag = (name: string, isFamous: boolean) => {
+        const createSkillTag = (name: string, effect: string, isFamous: boolean) => {
             const tag = document.createElement('div');
             const borderColor = isFamous ? 'rgba(255, 215, 0, 0.7)' : 'rgba(200, 200, 200, 0.6)';
             const bgColor = isFamous ? 'rgba(80, 20, 0, 0.8)' : 'rgba(20, 40, 60, 0.8)';
             tag.style.cssText = `
-                font-family: 'Noto Serif SC', serif;
-                font-size: ${uiPx(12)};
-                font-weight: 700;
-                color: #fff8e0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 background: ${bgColor};
                 border: 1px solid ${borderColor};
-                border-radius: 2px;
-                padding: ${uiPx(2)} ${uiPx(6)};
-                box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+                border-radius: 4px;
+                padding: ${uiPx(4)} ${uiPx(10)};
+                box-shadow: 0 2px 6px rgba(0,0,0,0.85);
+            `;
+            
+            const nameEl = document.createElement('div');
+            nameEl.style.cssText = `
+                font-family: 'Noto Serif SC', serif;
+                font-size: ${uiPx(16)};
+                font-weight: 900;
+                color: #fff8e0;
+                letter-spacing: 2px;
+                margin-bottom: ${uiPx(2)};
+            `;
+            nameEl.textContent = name;
+            
+            const effectEl = document.createElement('div');
+            effectEl.style.cssText = `
+                font-family: 'Noto Sans SC', sans-serif;
+                font-size: ${uiPx(10)};
+                font-weight: 400;
+                color: rgba(255, 255, 255, 0.7);
                 letter-spacing: 1px;
             `;
-            tag.textContent = name;
+            effectEl.textContent = effect;
+            
+            tag.appendChild(nameEl);
+            tag.appendChild(effectEl);
             return tag;
         };
 
         // TODO: Map real skills when data is available
         if (attacker && attacker.generalId === 'baiqi') {
-            this.leftSkillsBox.appendChild(createSkillTag('侵掠如火', true));
-            this.leftSkillsBox.appendChild(createSkillTag('因粮于敌', true));
+            this.leftSkillsBox.appendChild(createSkillTag('侵掠如火', '己战×1.2', true));
+            this.leftSkillsBox.appendChild(createSkillTag('因粮于敌', '兵回×20%', true));
         }
         if (defender && defender.generalId === 'baiqi') {
-            this.rightSkillsBox.appendChild(createSkillTag('侵掠如火', true));
-            this.rightSkillsBox.appendChild(createSkillTag('因粮于敌', true));
+            this.rightSkillsBox.appendChild(createSkillTag('侵掠如火', '己战×1.2', true));
+            this.rightSkillsBox.appendChild(createSkillTag('因粮于敌', '兵回×20%', true));
         }
     }
 
