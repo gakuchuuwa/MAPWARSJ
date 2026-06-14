@@ -51,6 +51,12 @@ export default defineConfig({
         include: ['leaflet', 'pinyin-pro'],
     },
     server: {
+        // [立绘校正] 游戏内保存会写 portrait_adjust.ts；若被 HMR 监听会触发整页重载、
+        // 把正在跑的对局重置。排除监听 → 保存不重载，改动下次 F5 / 新战斗时生效
+        // （DEFAULT_PORTRAIT_ADJUST 在保存时同步写回内存，本场即时生效）。
+        watch: {
+            ignored: ['**/src/data/portrait_adjust.ts'],
+        },
         // [PERF] Warm up the most expensive modules on dev server start
         // so the browser's first request hits a ready cache.
         warmup: {

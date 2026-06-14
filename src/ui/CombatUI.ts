@@ -8,7 +8,14 @@ import {
     shouldMirrorPortraitForSide,
     type PortraitSourceFacing,
 } from '../config/portrait_defaults';
-import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
+import { applyPortraitAdjustToElement, extractPortraitFolder, resolvePortraitAdjust } from '../config/PortraitAdjust';
+import { autoFitPortraitFromUrl } from '../config/portraitAutoFit';
+import {
+    DEFAULT_PORTRAIT_ADJUST,
+    PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y,
+    type PortraitAdjustData,
+    type PortraitAdjustValues,
+} from '../data/portrait_adjust';
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier } from '../systems/CultureCombat';
@@ -96,6 +103,17 @@ export class CombatUI {
     /** 旧版右键翻转曾用泛用标题作 key，勿再让 mirror 覆盖自动朝向 */
     private static readonly LEGACY_GENERIC_PORTRAIT_KEYS = new Set(['区域冲突']);
 
+    /** 暂停钩子（GameApp 注入 timeSystem），游戏内校正立绘时暂停推演 */
+    public pauseHook?: { setPaused(p: boolean): void; isGamePaused(): boolean };
+    /** 立绘校正面板（游戏内一键校正 + 方向键微调 + 保存） */
+    private correctorOpen = false;
+    private correctorSide: 'attacker' | 'defender' = 'attacker';
+    private correctorPanel: HTMLDivElement | null = null;
+    private correctorPrevPaused = false;
+    /** 实时预览用：DEFAULT_PORTRAIT_ADJUST 的工作副本，仅覆盖当前编辑张 */
+    private correctorData: PortraitAdjustData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
+    private correctorDraft: Required<PortraitAdjustValues> = { scale: 1, offsetX: 0, offsetY: 0 };
+
     constructor() {
         document.querySelectorAll('#combat-ui-panel').forEach((el) => el.remove());
         this.portraitConfig = new PortraitConfigManager();
@@ -103,6 +121,7 @@ export class CombatUI {
         this.container = this.createContainer();
         this.createElements();
         document.body.appendChild(this.container);
+        this.setupCorrectorHotkeys();
     }
 
     // [NEW] Inject Keyframes for high-end animations
@@ -1173,7 +1192,219 @@ export class CombatUI {
         return this.isRegionalVisible() && this.boundRegionalBattleField === battleField;
     }
 
+    // ============================================================
+    // 游戏内立绘校正：战斗中按 F2 暂停 → 一键自动校正 + 方向键微调 → 保存
+    // ============================================================
+
+    private setupCorrectorHotkeys(): void {
+        document.addEventListener('keydown', (e) => {
+            // F2 在战斗界面可见时开关校正面板
+            if (e.key === 'F2') {
+                if (!this.isVisible) return;
+                e.preventDefault();
+                if (this.correctorOpen) this.closeCorrector();
+                else this.openCorrector();
+                return;
+            }
+            if (!this.correctorOpen) return;
+
+            const tag = (document.activeElement?.tagName ?? '').toUpperCase();
+            if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+            const fine = e.shiftKey ? 5 : 1;
+            switch (e.key) {
+                case 'Escape': e.preventDefault(); this.closeCorrector(); break;
+                case 'Tab': e.preventDefault(); this.switchCorrectorSide(); break;
+                case 'Enter': e.preventDefault(); this.saveCorrector(); break;
+                case 'ArrowLeft': e.preventDefault(); this.nudgeCorrector(0, -fine, 0); break;
+                case 'ArrowRight': e.preventDefault(); this.nudgeCorrector(0, fine, 0); break;
+                case 'ArrowUp': e.preventDefault(); this.nudgeCorrector(0, 0, -fine); break;
+                case 'ArrowDown': e.preventDefault(); this.nudgeCorrector(0, 0, fine); break;
+                case '[': case '-': e.preventDefault(); this.nudgeCorrector(-0.02, 0, 0); break;
+                case ']': case '=': case '+': e.preventDefault(); this.nudgeCorrector(0.02, 0, 0); break;
+                case 'a': case 'A': e.preventDefault(); this.autoFitCorrectorCurrent(); break;
+                default: break;
+            }
+        });
+    }
+
+    private correctorImg(): HTMLImageElement {
+        return this.correctorSide === 'attacker' ? this.leftPortrait : this.rightPortrait;
+    }
+
+    /** 从 img.src 取出 "/assets/.../x.png" 形式路径（解码空格等） */
+    private correctorPath(): string {
+        const src = this.correctorImg().currentSrc || this.correctorImg().src;
+        if (!src) return '';
+        try {
+            return decodeURIComponent(new URL(src, location.href).pathname);
+        } catch {
+            return '';
+        }
+    }
+
+    private openCorrector(): void {
+        this.correctorOpen = true;
+        this.correctorPrevPaused = this.pauseHook?.isGamePaused() ?? false;
+        this.pauseHook?.setPaused(true);
+        this.correctorData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
+        if (!this.correctorPanel) this.correctorPanel = this.buildCorrectorPanel();
+        this.correctorPanel.style.display = 'flex';
+        this.loadCorrectorDraft();
+        this.highlightCorrectorSide();
+    }
+
+    private closeCorrector(): void {
+        this.correctorOpen = false;
+        if (this.correctorPanel) this.correctorPanel.style.display = 'none';
+        this.leftPortraitFrame.style.outline = '';
+        this.rightPortraitFrame.style.outline = '';
+        // 仅当进入校正前游戏在运行时才恢复运行（尊重用户原本的暂停）
+        if (!this.correctorPrevPaused) this.pauseHook?.setPaused(false);
+    }
+
+    private loadCorrectorDraft(): void {
+        const path = this.correctorPath();
+        const r = resolvePortraitAdjust(path, this.correctorData);
+        this.correctorDraft = { scale: r.scale, offsetX: r.offsetX, offsetY: r.offsetY };
+        this.renderCorrectorReadout();
+    }
+
+    private applyCorrectorPreview(): void {
+        const path = this.correctorPath();
+        if (!path) return;
+        this.correctorData.images = this.correctorData.images ?? {};
+        this.correctorData.images[path] = { ...this.correctorDraft };
+        applyPortraitAdjustToElement(this.correctorImg(), path, this.correctorData);
+        this.renderCorrectorReadout();
+    }
+
+    private nudgeCorrector(dScale: number, dx: number, dy: number): void {
+        const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+        this.correctorDraft.scale = Math.round(clamp(this.correctorDraft.scale + dScale, 0.4, 2.2) * 100) / 100;
+        this.correctorDraft.offsetX = clamp(this.correctorDraft.offsetX + dx, -240, 240);
+        this.correctorDraft.offsetY = clamp(this.correctorDraft.offsetY + dy, -240, 240);
+        this.applyCorrectorPreview();
+    }
+
+    private async autoFitCorrectorCurrent(): Promise<void> {
+        const path = this.correctorPath();
+        if (!path) return;
+        this.setCorrectorStatus('自动校正中…');
+        const folder = extractPortraitFolder(path) ?? '';
+        const eyeY = this.correctorData.folderGuides?.[folder]?.eyeLineY ?? PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y;
+        const fit = await autoFitPortraitFromUrl(path, eyeY);
+        if (!fit) { this.setCorrectorStatus('⚠ 读取像素失败，请手动微调'); return; }
+        this.correctorDraft = { scale: fit.scale, offsetX: fit.offsetX, offsetY: fit.offsetY };
+        this.applyCorrectorPreview();
+        this.setCorrectorStatus('已自动校正，可方向键微调');
+    }
+
+    private switchCorrectorSide(): void {
+        this.correctorSide = this.correctorSide === 'attacker' ? 'defender' : 'attacker';
+        this.loadCorrectorDraft();
+        this.highlightCorrectorSide();
+    }
+
+    private highlightCorrectorSide(): void {
+        const on = '3px solid #f5d78e';
+        this.leftPortraitFrame.style.outline = this.correctorSide === 'attacker' ? on : '';
+        this.rightPortraitFrame.style.outline = this.correctorSide === 'defender' ? on : '';
+    }
+
+    private async saveCorrector(): Promise<void> {
+        const path = this.correctorPath();
+        if (!path) { this.setCorrectorStatus('⚠ 当前无立绘路径'); return; }
+        this.setCorrectorStatus('保存中…');
+        try {
+            // 先取磁盘上最新数据再合并，避免覆盖其它编辑
+            const res = await fetch('/api/portrait-adjust');
+            const disk: PortraitAdjustData = res.ok ? await res.json() : structuredClone(DEFAULT_PORTRAIT_ADJUST);
+            disk.images = disk.images ?? {};
+            disk.images[path] = { ...this.correctorDraft };
+            const save = await fetch('/api/save-portrait-adjust', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(disk),
+            });
+            if (!save.ok) throw new Error(`HTTP ${save.status}`);
+            const result = await save.json();
+            if (!result.ok) throw new Error(result.error || '保存失败');
+            // 写回内存中的 DEFAULT，本场及后续战斗立即生效（无需 F5）
+            DEFAULT_PORTRAIT_ADJUST.images = DEFAULT_PORTRAIT_ADJUST.images ?? {};
+            DEFAULT_PORTRAIT_ADJUST.images[path] = { ...this.correctorDraft };
+            const name = path.split('/').pop() ?? path;
+            this.setCorrectorStatus(`✓ 已保存：${name}（已永久生效）`);
+        } catch (err) {
+            this.setCorrectorStatus(`⚠ 保存失败：${err}`);
+        }
+    }
+
+    private renderCorrectorReadout(): void {
+        if (!this.correctorPanel) return;
+        const readout = this.correctorPanel.querySelector('.cc-readout');
+        if (readout) {
+            const sideLabel = this.correctorSide === 'attacker' ? '左·攻' : '右·守';
+            const name = (this.correctorPath().split('/').pop() ?? '—');
+            readout.textContent =
+                `${sideLabel}　${name}　缩放 ${this.correctorDraft.scale.toFixed(2)}　X ${this.correctorDraft.offsetX}　Y ${this.correctorDraft.offsetY}`;
+        }
+    }
+
+    private setCorrectorStatus(msg: string): void {
+        const el = this.correctorPanel?.querySelector('.cc-status');
+        if (el) el.textContent = msg;
+    }
+
+    private buildCorrectorPanel(): HTMLDivElement {
+        const panel = document.createElement('div');
+        panel.id = 'portrait-corrector-panel';
+        panel.style.cssText = `
+            position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+            display: none; flex-direction: column; gap: 8px;
+            background: rgba(20,18,16,0.96); border: 1px solid #6a5a30; border-radius: 10px;
+            padding: 12px 16px; z-index: ${T.zIndex.portrait + 20};
+            font-family: "Noto Serif SC","Microsoft YaHei",serif; color: #e8e0d0;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.6); min-width: 460px; pointer-events: auto;
+        `;
+        const btn = (label: string, primary = false) =>
+            `<button type="button" class="cc-btn${primary ? ' cc-btn-primary' : ''}">${label}</button>`;
+        panel.innerHTML = `
+            <div style="font-size:14px;font-weight:700;color:#f5d78e;">立绘校正（已暂停）</div>
+            <div class="cc-readout" style="font-size:13px;color:#c4b89a;"></div>
+            <div class="cc-actions" style="display:flex;flex-wrap:wrap;gap:8px;">
+                ${btn('🪄 自动校正本张 (A)')}
+                ${btn('切换左右 (Tab)')}
+                ${btn('保存 (Enter)', true)}
+                ${btn('关闭 (Esc)')}
+            </div>
+            <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
+                方向键微调位置（Shift=快），<b>[ ]</b> 缩放，A 自动校正，Tab 换左右，Enter 保存，Esc 关闭
+            </div>
+            <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
+        `;
+        const style = document.createElement('style');
+        style.textContent = `
+            #portrait-corrector-panel .cc-btn {
+                background:#2a2620;color:#e8e0d0;border:1px solid #4a4238;border-radius:5px;
+                padding:7px 12px;cursor:pointer;font-size:13px;
+            }
+            #portrait-corrector-panel .cc-btn:hover { background:#3a342c; }
+            #portrait-corrector-panel .cc-btn-primary { background:#5a4a28;border-color:#8a7038;color:#fff8e8; }
+        `;
+        document.head.appendChild(style);
+        const [autoBtn, switchBtn, saveBtn, closeBtn] =
+            Array.from(panel.querySelectorAll('.cc-btn')) as HTMLButtonElement[];
+        autoBtn.addEventListener('click', () => this.autoFitCorrectorCurrent());
+        switchBtn.addEventListener('click', () => this.switchCorrectorSide());
+        saveBtn.addEventListener('click', () => this.saveCorrector());
+        closeBtn.addEventListener('click', () => this.closeCorrector());
+        document.body.appendChild(panel);
+        return panel;
+    }
+
     public hide() {
+        if (this.correctorOpen) this.closeCorrector();
         this.clearRegionalTimers();
         this.isVisible = false;
         this.currentBattle = null;

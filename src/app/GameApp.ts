@@ -262,6 +262,8 @@ export class GameApp {
 
             // [NEW] Combat UI
             this.combatUI = new CombatUI();
+            // 游戏内立绘校正（战斗中 F2）需要暂停推演
+            this.combatUI.pauseHook = this.timeSystem;
 
             this.gameTimeHUD = new GameTimeHUD();
             this.gameTimeHUD.init();
