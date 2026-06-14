@@ -1,5 +1,10 @@
 import { gameLog } from '../../utils/GameLogger';
 import type { GameApp } from '../GameApp';
+import type { LegionManager } from '../../legion/LegionManager';
+import {
+    setGeneralSkillLegionManager,
+    setOnTacticalSkillTriggered,
+} from '../../combat/GeneralSkillCombat';
 
 /** 战斗 UI：仅在镜头跟随军团参战时才弹出。 */
 export function wireGameAppCombatUiHooks(app: GameApp): void {
@@ -85,4 +90,14 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             battleField
         );
     };
+}
+
+/** 武将技：绑定 LegionManager 与战术技 UI 闪光 */
+export function wireGeneralSkillCombat(app: GameApp, legionManager: LegionManager): void {
+    setGeneralSkillLegionManager(legionManager);
+    setOnTacticalSkillTriggered((info) => {
+        if (!app.combatUI.isRegionalVisible()) return;
+        app.combatUI.flashTacticalSkill(info.displayName);
+        gameLog('battle', `✨ [CombatUI] 战术技展示: 【${info.displayName}】 (${info.generalId})`);
+    });
 }

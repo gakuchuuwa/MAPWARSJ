@@ -20,7 +20,8 @@ import {
     GameConfig,
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
-import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitCultureCombatMultiplier } from '../systems/CultureCombat';
+import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitBattlePowerMultiplier } from '../systems/CultureCombat';
+import { applyOpeningTacticalToRolls, applyPostBattleStrategicBonus } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 // ==================== 类型定义 ====================
 
@@ -156,13 +157,14 @@ export class BattleField {
         const defAdj = sumCultureAdjustedTroops(defUnits);
         const attRoll = rollSideEffectivePower(attUnits);
         const defRoll = rollSideEffectivePower(defUnits);
+        const adjusted = applyOpeningTacticalToRolls(attUnits, defUnits, attRoll, defRoll);
         gameLog(
             'battle',
-            `[BattleField] 掷色: 攻有效 ${attRoll.toFixed(0)} vs 守有效 ${defRoll.toFixed(0)} ` +
+            `[BattleField] 掷色: 攻有效 ${adjusted.attRoll.toFixed(0)} vs 守有效 ${adjusted.defRoll.toFixed(0)} ` +
             `(文化修正后 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)}，` +
             `原兵力 ${this.attackerGroup.initialTotalTroops} vs ${this.defenderGroup.initialTotalTroops}，再 ×[0.8,1.2])`
         );
-        this.applyPredictedSidesFromRoll(attRoll, defRoll);
+        this.applyPredictedSidesFromRoll(adjusted.attRoll, adjusted.defRoll);
     }
 
     private applyPredictedSidesFromRoll(attRoll: number, defRoll: number): void {
@@ -187,7 +189,7 @@ export class BattleField {
                 bu.waveIndex >= 1
                     ? (this.reinforcementLuckByUnitId.get(bu.unit.id) ?? 1)
                     : 1;
-            sum += bu.unit.troops * getUnitCultureCombatMultiplier(bu.unit) * mult;
+            sum += bu.unit.troops * getUnitBattlePowerMultiplier(bu.unit) * mult;
         }
         return sum;
     }
@@ -395,6 +397,11 @@ export class BattleField {
             if (recovery > 0) {
                 bu.unit.setTroops(bu.unit.troops + recovery);
                 gameLog('battle', `🩹 [BattleField] ${bu.unit.name} 恢复 ${recovery} 伤兵（恢复率 ${recoveryRate}）`);
+            }
+
+            const strategicBonus = applyPostBattleStrategicBonus(bu.unit, this.type);
+            if (strategicBonus > 0) {
+                gameLog('battle', `🌾 [BattleField] ${bu.unit.name} 战略增兵 +${strategicBonus}`);
             }
 
             // 找一个失败方单位作为对手

@@ -1,0 +1,97 @@
+/**
+ * 武将技数据（格号 = 机制真理，displayName = 展示皮肤）
+ * 设计文档：docs/02-design/GENERAL_SKILLS_武将技系统.md
+ */
+
+export type GeneralTier = 'famous' | 'ordinary';
+
+export type TacticalTiming = 'opening' | 'comeback';
+
+export type TacticalEffect =
+    | 'ally_add_troops'
+    | 'enemy_sub_troops'
+    | 'ally_mult_1_2'
+    | 'enemy_mult_0_8'
+    | 'ally_invincible';
+
+export type StrategicEffect =
+    | 'march_speed_mult'
+    | 'post_battle_troop_pct'
+    | 'siege_power_mult'
+    | 'field_power_mult'
+    | 'plain_power_mult'
+    | 'mountain_power_mult'
+    | 'water_power_mult';
+
+export interface TacticalSkillDef {
+    id: string;
+    grid: string;
+    displayName: string;
+    timing: TacticalTiming;
+    effect: TacticalEffect;
+    magnitude: number;
+}
+
+export interface StrategicSkillDef {
+    id: string;
+    grid: string;
+    displayName: string;
+    effect: StrategicEffect;
+    magnitude: number;
+}
+
+export interface GeneralProfile {
+    generalId: string;
+    tier: GeneralTier;
+    tacticalSkillId: string;
+    /** 仅名将；普将省略 */
+    strategicSkillId?: string;
+}
+
+/** 战术十格 */
+export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
+    tac_01: { id: 'tac_01', grid: '①', displayName: '以逸待劳', timing: 'opening', effect: 'ally_add_troops', magnitude: 0.15 },
+    tac_02: { id: 'tac_02', grid: '②', displayName: '避实击虚', timing: 'opening', effect: 'enemy_sub_troops', magnitude: 0.15 },
+    tac_03: { id: 'tac_03', grid: '③', displayName: '侵掠如火', timing: 'opening', effect: 'ally_mult_1_2', magnitude: 1.2 },
+    tac_04: { id: 'tac_04', grid: '④', displayName: '不战而屈', timing: 'opening', effect: 'enemy_mult_0_8', magnitude: 0.8 },
+    tac_05: { id: 'tac_05', grid: '⑤', displayName: '不动如山', timing: 'opening', effect: 'ally_invincible', magnitude: 3 },
+    tac_06: { id: 'tac_06', grid: '⑥', displayName: '哀兵必胜', timing: 'comeback', effect: 'ally_add_troops', magnitude: 0.15 },
+    tac_07: { id: 'tac_07', grid: '⑦', displayName: '攻其不备', timing: 'comeback', effect: 'enemy_sub_troops', magnitude: 0.15 },
+    tac_08: { id: 'tac_08', grid: '⑧', displayName: '置之死地', timing: 'comeback', effect: 'ally_mult_1_2', magnitude: 1.2 },
+    tac_09: { id: 'tac_09', grid: '⑨', displayName: '釜底抽薪', timing: 'comeback', effect: 'enemy_mult_0_8', magnitude: 0.8 },
+    tac_10: { id: 'tac_10', grid: '⑩', displayName: '深沟高垒', timing: 'comeback', effect: 'ally_invincible', magnitude: 3 },
+};
+
+/** 战略七格 */
+export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
+    str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.2 },
+    str_02: { id: 'str_02', grid: 'S②', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.2 },
+    str_03: { id: 'str_03', grid: 'S③', displayName: '攻城拔寨', effect: 'siege_power_mult', magnitude: 1.2 },
+    str_04: { id: 'str_04', grid: 'S④', displayName: '所向披靡', effect: 'field_power_mult', magnitude: 1.2 },
+    str_05: { id: 'str_05', grid: 'S⑤', displayName: '长驱直入', effect: 'plain_power_mult', magnitude: 1.2 },
+    str_06: { id: 'str_06', grid: 'S⑥', displayName: '居高临下', effect: 'mountain_power_mult', magnitude: 1.2 },
+    str_07: { id: 'str_07', grid: 'S⑦', displayName: '乘风破浪', effect: 'water_power_mult', magnitude: 1.2 },
+};
+
+/** 将领装配表 */
+export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
+    baiqi: {
+        generalId: 'baiqi',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火
+        strategicSkillId: 'str_02', // S② 因粮于敌
+    },
+};
+
+export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {
+    if (!generalId) return null;
+    return GENERAL_PROFILES[generalId] ?? null;
+}
+
+export function getTacticalSkillDef(skillId: string): TacticalSkillDef | null {
+    return TACTICAL_SKILL_CATALOG[skillId] ?? null;
+}
+
+export function getStrategicSkillDef(skillId: string): StrategicSkillDef | null {
+    return STRATEGIC_SKILL_CATALOG[skillId] ?? null;
+}

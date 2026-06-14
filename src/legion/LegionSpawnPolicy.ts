@@ -11,6 +11,7 @@
  * | 立绘             | 势力随机池           | 剧本 portrait 固定     |
  * | 该势力普通募兵   | 正常                 | 整势力跳过             |
  * | 阵型             | 文化区 / 势力模板    | 同左（秦→QIN 模板）    |
+ * | 开战战力         | 文化系数 only        | 文化 × **1.2**（剧本/远征） |
  *
  * 远征 = 行军模式（expeditionTargetCityId），不是第三种出生来源。
  * 剧本 targetSequence：逐城推进；末城可为 finaleDefeatCityId（兵败覆没，非功成）。
@@ -37,6 +38,13 @@ export function getLegionOrigin(army: Pick<Army, 'scriptedCampaignId'>): LegionO
 
 export function isScriptedLegion(army: Pick<Army, 'scriptedCampaignId'>): boolean {
     return getLegionOrigin(army) === 'scripted';
+}
+
+/** 剧本军团或远征军团（行军锁目标：scriptedCampaignId 或 expeditionTargetCityId） */
+export function isCampaignLegion(
+    army: Pick<Army, 'scriptedCampaignId' | 'expeditionTargetCityId'>,
+): boolean {
+    return isScriptedLegion(army) || army.expeditionTargetCityId != null;
 }
 
 /** 该势力是否已有剧本（1 势力 = 1 剧本 → 普通募兵跳过） */

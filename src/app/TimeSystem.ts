@@ -35,15 +35,31 @@ export class TimeSystem {
     }
 
     /** @param gameDelta 已乘 timeScale 的游戏时间秒数 */
+    /**
+     * 单帧最多补算几个季度（2026-06-12 性能）：正常游玩每帧只推进一点点，永远 ≤1 季；
+     * 仅在卡顿/切后台再切回那一帧会欠下大量时间——封顶后把补算摊到接下来几帧，
+     * 避免所有季度回调（复国/募兵/标签刷新）挤在一帧爆发造成顿挫。
+     */
+    private static readonly MAX_SEASON_CATCHUP_PER_UPDATE = 4;
+
     public update(gameDelta: number): void {
         if (this.isPaused || gameDelta <= 0) return;
 
         this.accumulatedTime += gameDelta;
 
         const seasonDuration = GameTime.SEASON_DURATION;
-        while (this.accumulatedTime >= seasonDuration) {
+        let processed = 0;
+        while (
+            this.accumulatedTime >= seasonDuration &&
+            processed < TimeSystem.MAX_SEASON_CATCHUP_PER_UPDATE
+        ) {
             this.accumulatedTime -= seasonDuration;
             this.advanceSeason();
+            processed++;
+        }
+        // 长时间后台等导致欠太多时，钳住溢出（下一帧继续补），避免无限堆积拖慢
+        if (this.accumulatedTime > seasonDuration * 2) {
+            this.accumulatedTime = seasonDuration;
         }
     }
 

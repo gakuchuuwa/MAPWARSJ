@@ -30,6 +30,8 @@ export class SimpleVectorRoadRenderer {
     private layerGroup: L.LayerGroup;
     private visible: boolean = true;
     private currentYear: number = -236; // 默认值，由外部 setYear 同步
+    /** 上次重绘时的「可见路网签名」：年份变了但可见路网没变 → 跳过全量重绘（2026-06-12 性能） */
+    private lastRenderedYearSignature: string | null = null;
 
     constructor(map: L.Map) {
         this.map = map;
@@ -50,14 +52,35 @@ export class SimpleVectorRoadRenderer {
         });
     }
 
+    /** 某年可见路网签名（仅按 startYear/endYear 过滤，不做几何/绘制，廉价 O(features)） */
+    private computeYearSignature(year: number): string {
+        const feats = VECTOR_ROAD_DATA.features;
+        let sig = '';
+        for (let i = 0; i < feats.length; i++) {
+            const f = feats[i];
+            if (!f || !f.properties || !f.geometry) continue;
+            const s = f.properties.startYear;
+            const e = f.properties.endYear;
+            if (s !== undefined && year < s) continue;
+            if (e !== undefined && year > e) continue;
+            sig += i + ',';
+        }
+        return sig;
+    }
+
     public setYear(year: number): void {
         if (year === this.currentYear) return;
         this.currentYear = year;
+        // 绝大多数年份路网可见集不变（仅少数路有年份限制）→ 跳过 40ms 全量重绘，消除每年顿挫
+        const sig = this.computeYearSignature(year);
+        if (sig === this.lastRenderedYearSignature) return;
         this.render();
     }
 
     public render(): void {
         this.layerGroup.clearLayers();
+        // 记录本次重绘对应的可见路网签名，供 setYear 判断「年份变了但路网没变」跳过重绘
+        this.lastRenderedYearSignature = this.computeYearSignature(this.currentYear);
 
         const zoom = this.map.getZoom();
         if (zoom < MIN_RENDER_ZOOM) {

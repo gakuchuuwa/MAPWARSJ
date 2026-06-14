@@ -12,6 +12,9 @@
  *   例：岭南关隘守军 = 1.2（文化）× 1.2（关隘）= 1.44，不是 1.2³。
  *
  * 一侧合算后再 × 总 luck [0.8, 1.2] 掷一次（与上述固定系数独立）。
+ *
+ * 剧本军团 / 远征军团（LegionSpawnPolicy.isCampaignLegion）：
+ *   野战单位再 × CAMPAIGN_LEGION_MULT（默认 1.2），与文化系数相乘。
  */
 
 import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';
@@ -19,6 +22,7 @@ import type { IBattleUnit } from '../core/CombatSystem';
 import type { Army } from '../core/Army';
 import type { City } from '../types/core';
 import { getCityRegion, getRegion, RegionType } from './RegionSystem';
+import { isCampaignLegion } from '../legion/LegionSpawnPolicy';
 
 export type CultureCombatRole = 'field' | 'garrison';
 
@@ -86,12 +90,25 @@ export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
     return getCultureCombatMultiplier(region, role) * getPassGarrisonMultiplier(unit);
 }
 
-/** 文化修正后兵力（固定系数相乘，未掷总 luck） */
+/** 剧本军团 / 远征军团 ×1.2；城防单位恒为 1 */
+export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
+    if (isGarrisonUnit(unit)) return 1;
+    const army = unit.getEntity?.() as Army | undefined;
+    if (!army || !isCampaignLegion(army)) return 1;
+    return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT;
+}
+
+/** 开战掷色用综合系数 = 文化（含关隘）× 剧本/远征 */
+export function getUnitBattlePowerMultiplier(unit: IBattleUnit): number {
+    return getUnitCultureCombatMultiplier(unit) * getCampaignLegionCombatMultiplier(unit);
+}
+
+/** 文化 + 剧本/远征修正后兵力（固定系数相乘，未掷总 luck） */
 export function sumCultureAdjustedTroops(units: IBattleUnit[]): number {
     let sum = 0;
     for (const u of units) {
         if (u.troops <= 0) continue;
-        sum += u.troops * getUnitCultureCombatMultiplier(u);
+        sum += u.troops * getUnitBattlePowerMultiplier(u);
     }
     return sum;
 }

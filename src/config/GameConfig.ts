@@ -108,6 +108,8 @@ export class GameConfig {
         LUCK_MAX: 1.2,
         /** 开战编入半径（经纬度欧氏距离，约 0.3 ≈ 30km；开战瞬间 + 每 0.2s 圈内扫描，可随时加入） */
         BATTLE_JOIN_RADIUS: 0.3,
+        /** 剧本军团 / 远征军团有效战力 ×1.2（与文化系数相乘，见 CultureCombat） */
+        CAMPAIGN_LEGION_MULT: 1.2,
     };
     /**
      * 五级文化攻防固定系数（只影响掷色，不改显示兵力）

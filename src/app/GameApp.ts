@@ -48,7 +48,7 @@ import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐
 import { gameLog } from '../utils/GameLogger';
 import { tickGameAppFrame } from './GameAppLoop';
 import { exposeGameAppGlobals } from './GameAppExpose';
-import { wireGameAppCombatUiHooks } from './boot/GameAppCombatHooks';
+import { wireGameAppCombatUiHooks, wireGeneralSkillCombat } from './boot/GameAppCombatHooks';
 import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameAppCityLoader';
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import {
@@ -384,6 +384,7 @@ export class GameApp {
             }
 
             const legionManager = this.historicalEventManager.getLegionManager();
+            wireGeneralSkillCombat(this, legionManager);
             this.aiController = new AIController(
                 legionManager,
                 this.cityManager,

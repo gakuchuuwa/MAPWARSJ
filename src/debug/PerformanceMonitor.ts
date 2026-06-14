@@ -117,12 +117,14 @@ export class PerformanceMonitor {
     private eventTimes: Record<string, number[]> = {};
     /** 最近异步事件 [key, durationMs, ts]（供慢帧归因关联） */
     private recentAsync: Array<[string, number, number]> = [];
-    /** 上次 >50ms 慢帧的归因快照：那一帧各系统耗时 + 邻近异步事件（按 key 聚合 [key, 总ms, 次数]） */
-    private lastSlowFrame: {
+    /** >50ms 慢帧归因快照：那一帧各系统耗时 + 邻近异步事件（按 key 聚合 [key, 总ms, 次数]） */
+    private slowFrames: Array<{
         elapsed: number;
         breakdown: Array<[string, number]>;
         asyncTail: Array<[string, number, number]>;
-    } | null = null;
+    }> = [];
+    /** 最近慢帧保留条数（看规律：重复出现的才是真问题，偶发一次不算） */
+    private static readonly SLOW_FRAME_HISTORY = 10;
 
     // 元素计数（由各系统在每帧上报）
     private counts: Record<string, number> = {};
@@ -312,7 +314,7 @@ export class PerformanceMonitor {
         // 频率/慢帧归因同步清零
         this.eventTimes = {};
         this.recentAsync = [];
-        this.lastSlowFrame = null;
+        this.slowFrames = [];
         if (this.visible) this.renderOverlay();
     }
 
@@ -749,7 +751,10 @@ export class PerformanceMonitor {
                 .map(([k, e]) => [k, e.ms, e.n] as [string, number, number])
                 .filter(([, ms]) => ms >= 0.5)
                 .sort((a, b) => b[1] - a[1]);
-            this.lastSlowFrame = { elapsed: frameTime, breakdown, asyncTail };
+            this.slowFrames.unshift({ elapsed: frameTime, breakdown, asyncTail });
+            if (this.slowFrames.length > PerformanceMonitor.SLOW_FRAME_HISTORY) {
+                this.slowFrames.length = PerformanceMonitor.SLOW_FRAME_HISTORY;
+            }
         }
 
         this.bumpSessionPeak('ai', t.aiTime);
@@ -939,22 +944,45 @@ export class PerformanceMonitor {
         return `<div style="margin-bottom:6px;font-size:11px;">${parts.join(' · ')}<span style="color:#666;"> /60帧窗</span></div>`;
     }
 
-    /** 慢帧归因（2026-06-12）：上次 >50ms 卡顿那一帧，是哪些系统/异步事件干的 */
+    /** 慢帧归因（2026-06-12）：最近 10 次 >50ms 卡顿各是谁干的——看规律，重复出现的才是真凶 */
     private buildSlowFrameLine(): string {
-        const sf = this.lastSlowFrame;
-        if (!sf) return '';
-        const top = sf.breakdown
-            .slice(0, 4)
-            .map(([k, v]) => `${k} ${v.toFixed(1)}`)
-            .join(' · ');
-        const asyncPart = sf.asyncTail.length
-            ? ` <span style="color:#ffab91;">⟂邻近异步: ${sf.asyncTail
-                  .slice(0, 3)
-                  .map(([k, ms, n]) => `${k} ${ms.toFixed(0)}ms${n > 1 ? `×${n}` : ''}`)
-                  .join(' · ')}</span>`
-            : '';
+        if (this.slowFrames.length === 0) return '';
+
+        // 统计「头号主因」出现次数：重复最多的就是真凶
+        const culpritCount = new Map<string, number>();
+        for (const sf of this.slowFrames) {
+            const top = sf.breakdown[0]?.[0];
+            if (top) culpritCount.set(top, (culpritCount.get(top) ?? 0) + 1);
+        }
+        const ranked = [...culpritCount.entries()].sort((a, b) => b[1] - a[1]);
+        const verdict = ranked.length
+            ? ranked.map(([k, n]) => `${k}×${n}`).join(' · ')
+            : '—';
+
+        // 逐条列出最近慢帧（最新在上）
+        const rows = this.slowFrames
+            .map((sf, i) => {
+                const top = sf.breakdown
+                    .slice(0, 3)
+                    .map(([k, v]) => `${k} ${v.toFixed(0)}`)
+                    .join('·');
+                const asyncPart = sf.asyncTail.length
+                    ? ` <span style="color:#ffab91;">⟂${sf.asyncTail
+                          .slice(0, 2)
+                          .map(([k, ms, n]) => `${k}${n > 1 ? `×${n}` : ''}`)
+                          .join('·')}</span>`
+                    : '';
+                return `<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    <span style="color:#888;">#${i + 1}</span>
+                    <b style="color:#ff8a80;">${sf.elapsed.toFixed(0)}ms</b>
+                    <span style="color:#ffcdd2;"> ${top || '主循环外'}</span>${asyncPart}
+                </div>`;
+            })
+            .join('');
+
         return `<div style="background:rgba(244,67,54,0.12);border-left:2px solid #f44336;padding:3px 6px;margin-bottom:6px;font-size:10px;color:#ffcdd2;">
-            <b style="color:#ff8a80;">⚡上次慢帧 ${sf.elapsed.toFixed(0)}ms</b> · ${top || '主循环外'}${asyncPart}
+            <b style="color:#ff8a80;">⚡最近 ${this.slowFrames.length} 次慢帧(&gt;50ms) — 头号主因: <span style="color:#ffd54f;">${verdict}</span></b>
+            ${rows}
         </div>`;
     }
 

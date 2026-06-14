@@ -11,7 +11,8 @@ import {
 import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
-import { getUnitCultureCombatMultiplier } from '../systems/CultureCombat';
+import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier } from '../systems/CultureCombat';
+import { getOpeningTacticalPowerMultiplier } from '../combat/GeneralSkillCombat';
 const T = COMBAT_UI_TOKENS;
 
 export class CombatUI {
@@ -36,6 +37,9 @@ export class CombatUI {
     private clashEffect!: HTMLDivElement;
     private bottomInfoRow!: HTMLDivElement;
     private sideStatsRow!: HTMLDivElement;
+    private skillsRow!: HTMLDivElement;
+    private leftSkillsBox!: HTMLDivElement;
+    private rightSkillsBox!: HTMLDivElement;
 
     // Text Elements
     private leftSideLabel!: HTMLDivElement;
@@ -71,6 +75,8 @@ export class CombatUI {
     private regionalSafetyDeadline = 0;
     private boundRegionalBattleField: BattleField | null = null;
     private lastTimeScale = 1;
+    private tacticalSkillBanner!: HTMLDivElement;
+    private tacticalSkillHideTimer: ReturnType<typeof setTimeout> | null = null;
 
     // Interactive Customization (Per-Event Keying)
     private fileInput!: HTMLInputElement;
@@ -131,6 +137,12 @@ export class CombatUI {
                 0% { transform: scale(1); }
                 40% { transform: scale(1.12); }
                 100% { transform: scale(1); }
+            }
+            @keyframes tactical-skill-pop {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+                15% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+                85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); }
             }
             @keyframes panel-entrance {
                 0% { transform: translate(-50%, 250%); }
@@ -265,6 +277,30 @@ export class CombatUI {
         `;
         this.centerPanel.appendChild(this.createCenterGoldAccent());
 
+        this.tacticalSkillBanner = document.createElement('div');
+        this.tacticalSkillBanner.style.cssText = `
+            position: absolute;
+            left: 50%;
+            top: 38%;
+            transform: translate(-50%, -50%);
+            z-index: ${T.zIndex.centerCard + 2};
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(42)};
+            font-weight: 900;
+            color: #fff8e8;
+            letter-spacing: 0.35em;
+            text-indent: 0.35em;
+            pointer-events: none;
+            opacity: 0;
+            white-space: nowrap;
+            text-shadow:
+                0 0 12px rgba(255, 120, 40, 0.9),
+                0 0 28px rgba(255, 60, 20, 0.65),
+                0 4px 16px rgba(0, 0, 0, 0.95);
+            -webkit-text-stroke: 1px rgba(120, 20, 0, 0.55);
+        `;
+        this.centerPanel.appendChild(this.tacticalSkillBanner);
+
         // [NEW] Description Text (Minimal & Elegant)
         this.eventDescription = document.createElement('div');
         this.eventDescription.style.cssText = `
@@ -321,6 +357,25 @@ export class CombatUI {
         // 中央对峙条（攻橙 / 守蓝，参考稿主进度条）
         this.topInfoRow = document.createElement('div');
         this.topInfoRow.style.display = 'none';
+
+        this.skillsRow = document.createElement('div');
+        this.skillsRow.style.cssText = `
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: ${uiPx(6)};
+            padding: 0 ${uiPx(T.portraitHorizontalReserve)};
+            box-sizing: border-box;
+            pointer-events: none;
+            z-index: ${T.zIndex.portrait + 2};
+        `;
+        this.leftSkillsBox = document.createElement('div');
+        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(6)}; flex-wrap: wrap; justify-content: flex-start;`;
+        this.rightSkillsBox = document.createElement('div');
+        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(6)}; flex-wrap: wrap; justify-content: flex-end;`;
+        this.skillsRow.appendChild(this.leftSkillsBox);
+        this.skillsRow.appendChild(this.rightSkillsBox);
 
         this.healthBarContainer = document.createElement('div');
         this.healthBarContainer.style.cssText = `
@@ -425,6 +480,7 @@ export class CombatUI {
 
         this.centerPanel.appendChild(this.battleYear);
         this.centerPanel.appendChild(this.battleTitle);
+        this.centerPanel.appendChild(this.skillsRow);
         this.centerPanel.appendChild(this.healthBarContainer);
         this.centerPanel.appendChild(this.sideStatsRow);
         this.centerPanel.appendChild(this.eventDescription);
@@ -588,8 +644,8 @@ export class CombatUI {
     }
 
     /**
-     * 战力系数徽章：野战/城防 × 综合系数（文化五级 × 关隘，同 CultureCombat 结算口径）。
-     * 双方都常显——「野战×1.2 vs 城防×1.32」本身就是战斗解说。
+     * 战力系数徽章：文化 × 剧本/远征 × 开局战术（仅非 1 的因子串联显示）。
+     * 例：秦之锐士 + 侵掠如火 → 「野战×1.2×1.2」
      */
     private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
         const apply = (badge: HTMLSpanElement | null, unit: IBattleUnit | null) => {
@@ -598,14 +654,64 @@ export class CombatUI {
                 badge.style.display = 'none';
                 return;
             }
-            const isGarrison = unit.unitType === 'city';
-            const mult = getUnitCultureCombatMultiplier(unit);
-            const value = parseFloat(mult.toFixed(2));
-            badge.textContent = `${isGarrison ? '城防' : '野战'}×${value}`;
+            badge.textContent = this.formatBattlePowerBadge(unit);
             badge.style.display = 'inline-block';
         };
         apply(this.leftMultBadge, attacker);
         apply(this.rightMultBadge, defender);
+    }
+
+    private updateSkillBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
+        this.leftSkillsBox.innerHTML = '';
+        this.rightSkillsBox.innerHTML = '';
+
+        const createSkillTag = (name: string, isFamous: boolean) => {
+            const tag = document.createElement('div');
+            const borderColor = isFamous ? 'rgba(255, 215, 0, 0.7)' : 'rgba(200, 200, 200, 0.6)';
+            const bgColor = isFamous ? 'rgba(80, 20, 0, 0.8)' : 'rgba(20, 40, 60, 0.8)';
+            tag.style.cssText = `
+                font-family: 'Noto Serif SC', serif;
+                font-size: ${uiPx(12)};
+                font-weight: 700;
+                color: #fff8e0;
+                background: ${bgColor};
+                border: 1px solid ${borderColor};
+                border-radius: 2px;
+                padding: ${uiPx(2)} ${uiPx(6)};
+                box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+                letter-spacing: 1px;
+            `;
+            tag.textContent = name;
+            return tag;
+        };
+
+        // TODO: Map real skills when data is available
+        if (attacker && attacker.generalId === 'baiqi') {
+            this.leftSkillsBox.appendChild(createSkillTag('侵掠如火', true));
+            this.leftSkillsBox.appendChild(createSkillTag('因粮于敌', true));
+        }
+        if (defender && defender.generalId === 'baiqi') {
+            this.rightSkillsBox.appendChild(createSkillTag('侵掠如火', true));
+            this.rightSkillsBox.appendChild(createSkillTag('因粮于敌', true));
+        }
+    }
+
+    private formatBattlePowerBadge(unit: IBattleUnit): string {
+        const isGarrison = unit.unitType === 'city';
+        const prefix = isGarrison ? '城防' : '野战';
+        const factors: number[] = [];
+        const pushIfNotOne = (n: number) => {
+            if (Math.abs(n - 1) > 0.001) factors.push(n);
+        };
+        pushIfNotOne(getUnitCultureCombatMultiplier(unit));
+        pushIfNotOne(getCampaignLegionCombatMultiplier(unit));
+        pushIfNotOne(getOpeningTacticalPowerMultiplier(unit));
+        
+        let product = 1;
+        for (const f of factors) product *= f;
+        
+        if (Math.abs(product - 1) <= 0.001) return `${prefix}×1`;
+        return `${prefix}×${parseFloat(product.toFixed(2))}`;
     }
 
     /** 侧栏小血条 + 攻剑 / 守盾图标（撑满各自半宽） */
@@ -814,6 +920,7 @@ export class CombatUI {
         this.attackerFactionId = battle.attacker.factionId;
         this.defenderFactionId = battle.defender.factionId;
         this.updateMultiplierBadges(battle.attacker, battle.defender);
+        this.updateSkillBadges(battle.attacker, battle.defender);
         this.updateInfo(battle.attacker, battle.defender, '正在交战', '');
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
@@ -908,6 +1015,7 @@ export class CombatUI {
         this.currentBattleKey = this.buildPortraitConfigKey(displayTitle, attacker, defender);
 
         this.updateMultiplierBadges(attacker, defender);
+        this.updateSkillBadges(attacker, defender);
         this.updateInfoDirect(attName, defName, displayTitle, displayYear, description);
 
         this.setPortrait(this.leftPortrait, attacker, attacker.generalId, attacker.factionId, attackerPortrait, 'attacker');
@@ -937,6 +1045,24 @@ export class CombatUI {
 
     public isRegionalVisible(): boolean {
         return this.isVisible && this.currentRegionalUnits !== null;
+    }
+
+    /** 战术武将技大字（如 ③ 侵掠如火） */
+    public flashTacticalSkill(displayName: string): void {
+        if (!displayName) return;
+        if (this.tacticalSkillHideTimer) {
+            clearTimeout(this.tacticalSkillHideTimer);
+            this.tacticalSkillHideTimer = null;
+        }
+        this.tacticalSkillBanner.textContent = `【${displayName}】`;
+        this.tacticalSkillBanner.style.animation = 'none';
+        void this.tacticalSkillBanner.offsetWidth;
+        this.tacticalSkillBanner.style.animation = 'tactical-skill-pop 2.2s ease-out forwards';
+        this.tacticalSkillHideTimer = setTimeout(() => {
+            this.tacticalSkillBanner.style.animation = 'none';
+            this.tacticalSkillBanner.style.opacity = '0';
+            this.tacticalSkillHideTimer = null;
+        }, 2300);
     }
 
     public isBoundToBattleField(battleField: BattleField): boolean {
