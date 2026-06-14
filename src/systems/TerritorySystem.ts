@@ -392,6 +392,10 @@ export class TerritorySystem {
         let cityIndex = 0;
 
         while (cityIndex < toAdd.length) {
+            // [2026-06-12 性能] 在每批（含第一批）前让出主线程：
+            //   appendCityMarkers 由跟拍 moveend 同步调起，第一批 12 城的 renderSingleCity（建 DOM+旗号）
+            //   原本卡在镜头帧里（峰值~73ms，慢帧头号「镜头跟随」）。先 yield → 渲染全部异步，镜头帧只剩廉价过滤。
+            await new Promise((r) => setTimeout(r, 0));
             if (this.renderCounter !== renderId) return;
             const end = Math.min(cityIndex + chunkSize, toAdd.length);
             for (let i = cityIndex; i < end; i++) {
@@ -400,9 +404,6 @@ export class TerritorySystem {
                 this.renderSingleCity(city, this.layerGroup, this.cityMarkers, this.cityLabels, isGhost);
             }
             cityIndex = end;
-            if (cityIndex < toAdd.length) {
-                await new Promise((r) => setTimeout(r, 0));
-            }
         }
         this.updateCityScales();
     }

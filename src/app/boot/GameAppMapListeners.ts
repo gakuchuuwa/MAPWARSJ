@@ -1,5 +1,6 @@
 import { CityAssetManager } from '../../assets/CityAssetManager';
 import { getGlobalUnitRenderer } from '../../map/UnitRenderer';
+import { GameConfig } from '../../config/GameConfig';
 import type { GameApp } from '../GameApp';
 
 /** 地图面板 toggle 与编辑器开关（从 GameApp 抽出）。 */
@@ -60,6 +61,11 @@ export function setupGameAppMapListeners(app: GameApp): void {
     window.addEventListener('toggle-script-mode', (e: Event) => {
         const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
         app.historicalEventManager?.setScriptModeEnabled(!!detail?.enabled);
+    });
+
+    window.addEventListener('toggle-scripted-campaign', (e: Event) => {
+        const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
+        GameConfig.SYSTEM.ENABLE_SCRIPTED_CAMPAIGNS = !!detail?.enabled;
     });
 
     const leaflet = app.map?.getLeafletMap?.();

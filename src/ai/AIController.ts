@@ -9,7 +9,7 @@
 import { Army } from '../core/Army';
 import { LegionManager } from '../core/LegionManager';
 import { CityManager } from '../core/CityManager';
-import { HistoricalEventManager } from '../core/HistoricalEventManager';
+import { HistoricalEventManager } from '../events/HistoricalEventManager';
 import { roadRegistry } from '../core/RoadRegistry';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';

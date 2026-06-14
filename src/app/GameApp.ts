@@ -16,7 +16,6 @@ import { TimeSystem } from './TimeSystem';
 import { HistoricalEventManager } from '../events/HistoricalEventManager';
 
 import { CombatSystem } from '../combat/CombatSystem';
-import { EventEditor } from '../editors/EventEditor';
 import { CityEditor } from '../editors/CityEditor';
 import { VectorRoadEditor } from '../roads/VectorRoadEditor';
 import { ArmyEditor } from '../editors/ArmyEditor';
@@ -37,7 +36,6 @@ import { GameUIManager } from './GameUIManager';
 import { GameInputManager } from './GameInputManager';
 import { CombatUI } from '../ui/CombatUI'; // [NEW]
 import { GameTimeHUD } from '../ui/GameTimeHUD';
-import { HistoricalEventPanel } from '../ui/HistoricalEventPanel';
 import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
 import { Army } from '../legion/Army';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
@@ -74,7 +72,6 @@ export class GameApp {
     public cityManager!: CityManager;
     private gridManager!: GridManager;
     public combatSystem!: CombatSystem;
-    public eventEditor!: EventEditor;
     public cityEditor!: CityEditor;
     public roadEditor!: VectorRoadEditor;
     private unifiedEditorManager!: UnifiedEditorManager;
@@ -94,7 +91,6 @@ export class GameApp {
     private inputManager!: GameInputManager;
     public combatUI!: CombatUI; // [NEW]
     private gameTimeHUD!: GameTimeHUD;
-    private historicalEventPanel!: HistoricalEventPanel;
     public brawlFeedPanel!: BrawlFeedPanel; // 远征播报（ExpeditionUI/行为树）经 window.game 调用
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
@@ -334,14 +330,6 @@ export class GameApp {
                 });
             }
 
-            if (GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS) {
-                this.historicalEventPanel = new HistoricalEventPanel();
-                this.historicalEventPanel.init();
-                this.historicalEventPanel.setHistory(this.historicalEventManager.getEventHistory());
-                this.historicalEventManager.onEventTriggered((event) => {
-                    this.historicalEventPanel.pushEvent(event);
-                });
-            }
             this.rebellionSystem = new RebellionSystem(
                 this.cityManager,
                 this.timeSystem,
@@ -355,14 +343,6 @@ export class GameApp {
             }
             this.perfMonitor.markBootPhase('事件/军团/叛乱管理器');
             await yieldToBrowser();
-
-            if (import.meta.env.DEV) {
-                this.eventEditor = new EventEditor(
-                    this.cityManager,
-                    this.historicalEventManager.getLegionManager(),
-                    this.map.getLeafletMap()
-                );
-            }
 
             this.roadRenderer = new SimpleVectorRoadRenderer(this.map.getLeafletMap());
             this.roadRenderer.setYear(this.timeSystem.getYear());
@@ -417,8 +397,7 @@ export class GameApp {
                 this.roadEditor,
                 this.cityEditor,
                 this.cityManager,
-                this.uiManager,
-                this.eventEditor
+                this.uiManager
             );
 
             this.cameraFollowUI = new CameraFollowUI();

@@ -576,8 +576,8 @@ export class GameMap {
                     </label>
 
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#1565C0;margin-top:4px;">
-                        <input type="checkbox" id="chk-script-mode"> 
-                        <b>📜 开启剧本模式</b>
+                        <input type="checkbox" id="chk-scripted-campaign"> 
+                        <b>⚔️ 开启剧本</b>
                     </label>
                 `;
 
@@ -830,11 +830,11 @@ export class GameMap {
                 });
             }
 
-            const chkScriptMode = document.getElementById('chk-script-mode') as HTMLInputElement;
-            if (chkScriptMode) {
-                chkScriptMode.checked = GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS;
-                chkScriptMode.addEventListener('change', (e: any) => {
-                    window.dispatchEvent(new CustomEvent('toggle-script-mode', {
+            const chkScriptedCampaign = document.getElementById('chk-scripted-campaign') as HTMLInputElement;
+            if (chkScriptedCampaign) {
+                chkScriptedCampaign.checked = GameConfig.SYSTEM.ENABLE_SCRIPTED_CAMPAIGNS;
+                chkScriptedCampaign.addEventListener('change', (e: any) => {
+                    window.dispatchEvent(new CustomEvent('toggle-scripted-campaign', {
                         detail: { enabled: e.target.checked }
                     }));
                 });

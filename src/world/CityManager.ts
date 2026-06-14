@@ -314,15 +314,40 @@ export class CityManager {
     }
 
     private viewportCitySyncBound = false;
+    /** [2026-06-12 性能] 视口据点同步节流：跟拍每帧 setView 都触发 moveend，此前每帧全城同步(峰值~150ms，
+     *  慢帧头号主因「镜头跟随」)。节流到最多每 THROTTLE_MS 一次 + 停下后补一次，新城仍 120ms 内出现，肉眼无感。 */
+    private lastViewportSyncAt = 0;
+    private viewportSyncTrailingTimer: ReturnType<typeof setTimeout> | null = null;
+    private static readonly VIEWPORT_SYNC_THROTTLE_MS = 120;
 
     /** 拖图后补画视口内据点；首次拖图解锁全图旗号 deferred */
     public bindViewportCitySync(): void {
         if (this.viewportCitySyncBound) return;
         const leaflet = this.map.getLeafletMap();
-        leaflet.on('moveend', () => {
+
+        const doSync = () => {
+            this.lastViewportSyncAt = performance.now();
             void this.syncViewportCities();
             // 镜头跟随用 setView 不会触发 dragend，moveend 也需解锁全图 deferred
             CityAssetManager.unlockDeferredFlagDrain();
+        };
+
+        leaflet.on('moveend', () => {
+            const since = performance.now() - this.lastViewportSyncAt;
+            const throttle = CityManager.VIEWPORT_SYNC_THROTTLE_MS;
+            if (since >= throttle) {
+                if (this.viewportSyncTrailingTimer !== null) {
+                    clearTimeout(this.viewportSyncTrailingTimer);
+                    this.viewportSyncTrailingTimer = null;
+                }
+                doSync();
+            } else if (this.viewportSyncTrailingTimer === null) {
+                // 连续跟拍期间：安排一次尾随，确保停下后最终视口也补齐
+                this.viewportSyncTrailingTimer = setTimeout(() => {
+                    this.viewportSyncTrailingTimer = null;
+                    doSync();
+                }, throttle - since);
+            }
         });
         leaflet.on('dragend', () => {
             CityAssetManager.unlockDeferredFlagDrain();

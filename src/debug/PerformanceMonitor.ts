@@ -123,8 +123,8 @@ export class PerformanceMonitor {
         breakdown: Array<[string, number]>;
         asyncTail: Array<[string, number, number]>;
     }> = [];
-    /** 最近慢帧保留条数（看规律：重复出现的才是真问题，偶发一次不算） */
-    private static readonly SLOW_FRAME_HISTORY = 10;
+    /** 最近慢帧保留条数（看规律：重复出现的才是真问题，偶发一次不算）。20 条给混合/偶发卡多点样本 */
+    private static readonly SLOW_FRAME_HISTORY = 20;
 
     // 元素计数（由各系统在每帧上报）
     private counts: Record<string, number> = {};

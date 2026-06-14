@@ -425,7 +425,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     JIANGNAN:     ['city_nanjing'],                  // 南京
     LINGNAN:      ['city_panyu'],                    // 番禺 (古名, 即广州)
     BASHU:        ['city_chengdu'],                  // 成都
-    DIANQIAN:     ['city_ayutthaya'],                // 阿瑜陀耶 (主人 2026-06-11 改: 原羊苴咩城; 阿瑜陀耶更靠边陲, 远征纵深更足)
+    DIANQIAN:     ['city_pagan'],                  // 蒲甘 (主人 2026-06-14 改: 原阿瑜陀耶)
     HEXI:         ['city_wuwei'],                    // 姑臧 (古名, 即凉州/武威)
     WESTERN:      ['city_yiluolucheng'],             // 伊逻卢城 (龟兹国都; 延城)
     TIBET:        ['city_luoxie'],                   // 逻些 (古名, 即拉萨)

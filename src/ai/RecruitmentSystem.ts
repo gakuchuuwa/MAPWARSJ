@@ -122,6 +122,7 @@ export class RecruitmentSystem {
      * 剧本军团：数据初始设定，与据点驻军无关（不读、不扣 city.troops）。
      */
     private spawnScriptedCampaigns(): void {
+        if (!GameConfig.SYSTEM.ENABLE_SCRIPTED_CAMPAIGNS) return;
         for (const campaign of getSpawnAtStartCampaigns()) {
             this.trySpawnScriptedCampaign(campaign);
         }
@@ -133,6 +134,7 @@ export class RecruitmentSystem {
     }
 
     private spawnScriptedCampaignsForYear(year: number): void {
+        if (!GameConfig.SYSTEM.ENABLE_SCRIPTED_CAMPAIGNS) return;
         for (const campaign of getScriptedCampaignsForYear(year)) {
             this.trySpawnScriptedCampaign(campaign);
         }

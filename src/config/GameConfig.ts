@@ -8,6 +8,8 @@ export class GameConfig {
         /** 剧本模式：右上面板「开启剧本模式」；默认关 = 纯沙盒 */
         ENABLE_HISTORICAL_EVENTS: false,
         SANDBOX_MODE: true,
+        /** 剧本军团（秦锐士等）：右上面板「开启剧本」；默认关 */
+        ENABLE_SCRIPTED_CAMPAIGNS: false,
     };
     /**
      * F12 控制台日志频道（默认关 = 少刷屏）。
@@ -67,7 +69,7 @@ export class GameConfig {
         /** 方阵文化军团兵力上限（出征 / 跟随补兵） */
         ARMY_MAX_TROOPS: 100_000,
         /** 纯骑三角文化（草原/青藏/西域）军团兵力上限 */
-        TRIANGLE_CAVALRY_ARMY_MAX_TROOPS: 80_000,
+        TRIANGLE_CAVALRY_ARMY_MAX_TROOPS: 70_000,
     };
     /** 乱斗游戏时间：现实 1 分钟 = 游戏 1 年（1x 倍速） */
     static TIME = {

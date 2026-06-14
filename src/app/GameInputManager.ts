@@ -7,7 +7,6 @@ import { CityManager } from '../world/CityManager';
 import { GameUIManager } from './GameUIManager';
 import { GridSystem } from '../systems/GridSystem';
 import * as L from 'leaflet';
-import { EventEditor } from '../editors/EventEditor';
 import { TargetEvaluator } from '../ai/TargetEvaluator';
 
 export class GameInputManager {
@@ -17,7 +16,6 @@ export class GameInputManager {
     private cityEditor: CityEditor;
     private cityManager: CityManager;
     private uiManager: GameUIManager;
-    private eventEditor: EventEditor;
 
     private lastMouseMoveTime: number = 0;
 
@@ -27,8 +25,7 @@ export class GameInputManager {
         roadEditor: VectorRoadEditor,
         cityEditor: CityEditor,
         cityManager: CityManager,
-        uiManager: GameUIManager,
-        eventEditor: EventEditor
+        uiManager: GameUIManager
     ) {
         this.map = map;
         this.speedOverlay = speedOverlay;
@@ -36,7 +33,6 @@ export class GameInputManager {
         this.cityEditor = cityEditor;
         this.cityManager = cityManager;
         this.uiManager = uiManager;
-        this.eventEditor = eventEditor;
 
         this.bindEvents();
     }
@@ -49,10 +45,6 @@ export class GameInputManager {
             // 编辑器优先级：Speed Editor > City Editor > Event Editor
             if (this.speedOverlay.isEditing) return;
             if (this.cityEditor && this.cityEditor.isPickingLocation()) return;
-            if (this.eventEditor && this.eventEditor.isPickingLocation()) {
-                this.eventEditor.handleMapClick(e.latlng);
-                return;
-            }
         });
 
         // 2. Mouse Move (Throttled UI Update)
@@ -105,10 +97,6 @@ export class GameInputManager {
         // 3. City Click
         this.cityManager.setOnCityClick((city: any, e?: any) => {
             // Priority 1: Event Editor Picking (Modal State)
-            if (this.eventEditor && this.eventEditor.isPickingLocation()) {
-                if (this.eventEditor.handleCityClick(city.id)) return;
-            }
-
             // Priority 2: City Editor
             if (this.cityEditor && this.cityEditor.isEditMode()) {
                 this.cityEditor.selectCityForEdit(city);

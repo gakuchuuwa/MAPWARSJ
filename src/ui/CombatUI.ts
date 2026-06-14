@@ -111,32 +111,10 @@ export class CombatUI {
         style.innerHTML = `
             @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Cinzel:wght@700&display=swap');
 
-            @keyframes magma-flow {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
-            }
-            @keyframes clash-pulse {
-                0% { box-shadow: 0 0 18px rgba(255, 200, 100, 0.7); transform: skewX(-18deg) scale(1); }
-                50% { box-shadow: 0 0 32px rgba(255, 250, 200, 1.0), 0 0 48px rgba(255, 120, 40, 0.5); transform: skewX(-18deg) scale(1.15); }
-                100% { box-shadow: 0 0 18px rgba(255, 200, 100, 0.7); transform: skewX(-18deg) scale(1); }
-            }
             @keyframes text-shimmer {
                 0% { text-shadow: 0 0 5px rgba(255,215,0,0.3); }
                 50% { text-shadow: 0 0 15px rgba(255,215,0,0.8), 0 0 30px rgba(255,100,0,0.6); }
                 100% { text-shadow: 0 0 5px rgba(255,215,0,0.3); }
-            }
-            @keyframes bar-glow-att {
-                0%, 100% { filter: brightness(1); }
-                50% { filter: brightness(1.15); }
-            }
-            @keyframes bar-glow-def {
-                0%, 100% { filter: brightness(1); }
-                50% { filter: brightness(1.1); }
-            }
-            @keyframes title-glow {
-                0%, 100% { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.9)) drop-shadow(0 0 4px rgba(255,215,0,0.15)); }
-                50% { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.9)) drop-shadow(0 0 12px rgba(255,215,0,0.4)); }
             }
             @keyframes troop-pulse {
                 0% { transform: scale(1); }
@@ -163,10 +141,6 @@ export class CombatUI {
             @keyframes portrait-frame-enter-right {
                 0% { opacity: 0; transform: translateX(72px); }
                 100% { opacity: 1; transform: translateX(0); }
-            }
-            @keyframes gold-line-shimmer {
-                0% { background-position: -200% 0; }
-                100% { background-position: 200% 0; }
             }
         `;
         document.head.appendChild(style);
@@ -202,8 +176,6 @@ export class CombatUI {
             right: 5%;
             height: 1px;
             background: linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.6) 20%, rgba(253, 185, 49, 0.85) 50%, rgba(255, 215, 0, 0.6) 80%, transparent 100%);
-            background-size: 200% 100%;
-            animation: gold-line-shimmer 6s ease-in-out infinite;
             pointer-events: none;
         `;
         return accent;
@@ -354,7 +326,6 @@ export class CombatUI {
             background-clip: text;
             letter-spacing: ${uiPx(10)};
             margin-bottom: ${uiPx(12)};
-            animation: title-glow 4s ease-in-out infinite;
             white-space: nowrap;
             text-align: center;
         `;
@@ -405,7 +376,6 @@ export class CombatUI {
             top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(90deg, #162530 0%, #2a5565 35%, #3d7a8f 65%, #5aacbe 100%);
             z-index: 1;
-            animation: bar-glow-def 3s ease-in-out infinite;
         `;
 
         this.attackerBar = document.createElement('div');
@@ -414,8 +384,6 @@ export class CombatUI {
             top: 0; left: 0; bottom: 0;
             width: 50%;
             background: linear-gradient(90deg, #7a1528 0%, #b04818 30%, #d47020 60%, #f0a830 100%);
-            background-size: 200% 100%;
-            animation: magma-flow 4s ease infinite, bar-glow-att 2.5s ease-in-out infinite;
             z-index: 2;
             transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
             clip-path: polygon(0 0, 100% 0, calc(100% - ${uiPx(T.clashBar.clipPx)}) 100%, 0% 100%);
@@ -436,7 +404,6 @@ export class CombatUI {
             margin-left: -${uiPx(T.clashBar.clashWidth / 2 + 2)};
             pointer-events: none;
             transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-            animation: clash-pulse 1.8s infinite;
         `;
 
         this.healthBarContainer.appendChild(this.defenderBar);
