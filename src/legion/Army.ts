@@ -109,6 +109,8 @@ export class Army implements IBattleUnit {
      */
     public scriptedCampaignId: string | null = null;
     public scriptedTroopsCap: number | null = null;
+    /** 剧本 targetSequence 扫描起点（只进不退；后方失守不回援） */
+    public scriptedSequenceIndex: number = 0;
     
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;
@@ -521,6 +523,7 @@ export class Army implements IBattleUnit {
         newArmy.cultureScales = this.cultureScales ? [...this.cultureScales] : null; // [NEW] Inherit culture scales
         newArmy.scriptedCampaignId = this.scriptedCampaignId;
         newArmy.scriptedTroopsCap = this.scriptedTroopsCap;
+        newArmy.scriptedSequenceIndex = this.scriptedSequenceIndex;
 
         gameLog('army', `[Army] Splitting ${amount} from ${this.id}. Remaining: ${this.troops}. New Army: ${newArmy.id}`);
         return newArmy;

@@ -65,12 +65,55 @@ export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
 /** 战略七格 */
 export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.2 },
-    str_02: { id: 'str_02', grid: 'S②', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.1 },
+    str_02: { id: 'str_02', grid: 'S②', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.12 },
     str_03: { id: 'str_03', grid: 'S③', displayName: '攻城拔寨', effect: 'siege_power_mult', magnitude: 1.2 },
     str_04: { id: 'str_04', grid: 'S④', displayName: '所向披靡', effect: 'field_power_mult', magnitude: 1.2 },
     str_05: { id: 'str_05', grid: 'S⑤', displayName: '长驱直入', effect: 'plain_power_mult', magnitude: 1.2 },
     str_06: { id: 'str_06', grid: 'S⑥', displayName: '居高临下', effect: 'mountain_power_mult', magnitude: 1.2 },
     str_07: { id: 'str_07', grid: 'S⑦', displayName: '乘风破浪', effect: 'water_power_mult', magnitude: 1.2 },
+};
+
+/** 剧本军团系统层：全员胜后 S② 因粮于敌（与将领档案战略独立，不占用名将战略格） */
+export const SCRIPTED_LEGION_POST_BATTLE_SKILL_ID = 'str_02';
+
+/** 守军系统技 effect（非战术十格 / 战略七格） */
+export type GarrisonSystemEffect = 'pass_garrison_mult';
+
+export interface GarrisonSystemSkillDef {
+    id: string;
+    displayName: string;
+    effect: GarrisonSystemEffect;
+    magnitude: number;
+}
+
+/**
+ * 关隘守军系统技：type===pass 据点城防再 ×1.2
+ * magnitude 须与 GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT 一致
+ */
+export const PASS_GARRISON_DEFENSE_SKILL: GarrisonSystemSkillDef = {
+    id: 'garr_pass_juxian',
+    displayName: '拒险而守',
+    effect: 'pass_garrison_mult',
+    magnitude: 1.2,
+};
+
+/** 援军系统技：编入战场时掷定 [luckMin, luckMax]（与 GameConfig.COMBAT.LUCK_MIN/MAX 须一致） */
+export type ReinforcementSystemEffect = 'reinforcement_join_luck';
+
+export interface ReinforcementJoinSkillDef {
+    id: string;
+    displayName: string;
+    effect: ReinforcementSystemEffect;
+    luckMin: number;
+    luckMax: number;
+}
+
+export const REINFORCEMENT_JOIN_SKILL: ReinforcementJoinSkillDef = {
+    id: 'sys_reinf_hebing',
+    displayName: '合兵一处',
+    effect: 'reinforcement_join_luck',
+    luckMin: 0.8,
+    luckMax: 1.2,
 };
 
 /** 将领装配表 */

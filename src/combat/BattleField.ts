@@ -8,8 +8,7 @@
  * 1. 一侧 = 一 factionId；同旗援军经 BattleReinforcementPoll 在 30km 圈内实时编入
  * 2. 独立兵力：每个单位独立受损，「谁带的兵死谁的」
  * 3. 伤害分配：一侧总伤害按各单位兵力比例分摊（兵多的扛更多）
- * 4. 援军编入后重算强弱（refreshPredictedSidesFromTotals，按文化修正兵力、不重掷 luck——
- *    刻意为之：避免每 0.2s 轮询重掷导致胜方闪烁，详见 GAME_DIRECTION 战斗审计）
+ * 4. 援军编入后重算强弱（refreshPredictedSidesFromTotals：文化修正兵力 + 援军编入 luck + 武将技侧乘区，不重掷侧 luck）
  */
 
 import { IBattleUnit, BattleType, UnitType } from './CombatSystem';
@@ -21,7 +20,7 @@ import {
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
 import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitBattlePowerMultiplier } from '../systems/CultureCombat';
-import { applyOpeningTacticalToRolls, applyPostBattleStrategicBonus, applyStrategicBattleToRolls } from './GeneralSkillCombat';
+import { applyOpeningTacticalToRolls, applyPostBattleStrategicBonus, applyGeneralSkillSideRollMultipliers, tryEmitOpeningTacticalOnReinforcementJoin } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 // ==================== 类型定义 ====================
 
@@ -157,12 +156,11 @@ export class BattleField {
         const defAdj = sumCultureAdjustedTroops(defUnits);
         const attRoll = rollSideEffectivePower(attUnits);
         const defRoll = rollSideEffectivePower(defUnits);
-        const adjusted = applyOpeningTacticalToRolls(attUnits, defUnits, attRoll, defRoll);
-        const strategic = applyStrategicBattleToRolls(
+        const strategic = applyGeneralSkillSideRollMultipliers(
             attUnits,
             defUnits,
-            adjusted.attRoll,
-            adjusted.defRoll,
+            attRoll,
+            defRoll,
             this.type,
         );
         gameLog(
@@ -209,17 +207,33 @@ export class BattleField {
     private refreshPredictedSidesFromTotals(): void {
         if (this.presetResult) return;
 
+        const attUnits = this.attackerGroup.units
+            .filter((bu) => !bu.isDefeated && bu.unit.troops > 0)
+            .map((bu) => bu.unit);
+        const defUnits = this.defenderGroup.units
+            .filter((bu) => !bu.isDefeated && bu.unit.troops > 0)
+            .map((bu) => bu.unit);
+
         const attAdj = this.adjustedPowerWithReinforcement(this.attackerGroup);
         const defAdj = this.adjustedPowerWithReinforcement(this.defenderGroup);
+        const withSkills = applyGeneralSkillSideRollMultipliers(
+            attUnits,
+            defUnits,
+            attAdj,
+            defAdj,
+            this.type,
+            { emitTacticalUi: false },
+        );
 
         const prevStronger = this.predictedStrongerGroup.factionId;
-        this.applyPredictedSidesFromRoll(attAdj, defAdj);
+        this.applyPredictedSidesFromRoll(withSkills.attRoll, withSkills.defRoll);
 
         if (this.predictedStrongerGroup.factionId !== prevStronger) {
             gameLog(
                 'battle',
                 `[BattleField] 援军编入后强弱重算: ${this.predictedStrongerGroup.factionId} 占优 ` +
-                `(文化修正 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)})`
+                `(有效战力 ${withSkills.attRoll.toFixed(0)} vs ${withSkills.defRoll.toFixed(0)}，` +
+                `文化修正 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)})`
             );
         }
     }
@@ -589,10 +603,17 @@ export class BattleField {
         }
         this.refreshPredictedSidesFromTotals();
 
+        tryEmitOpeningTacticalOnReinforcementJoin(
+            unit,
+            isAttacker,
+            this.getAttackerUnits(),
+            this.getDefenderUnits(),
+        );
+
         gameLog(
             'battle',
             `📯 [BattleField] ${unit.name}(${joinedTroops}) 加入${isAttacker ? '攻方' : '守方'}! ` +
-            `有效战力×${joinLuck.toFixed(2)}, 编组兵力→${group.initialTotalTroops}` +
+            `【合兵一处】有效战力×${joinLuck.toFixed(2)}, 编组兵力→${group.initialTotalTroops}` +
             (this.customDuration ? '' : `, 目标时长 ${prevDuration.toFixed(1)}s→${this.targetDuration.toFixed(1)}s`)
         );
 
@@ -625,6 +646,15 @@ export class BattleField {
         const all = [...this.attackerGroup.units, ...this.defenderGroup.units];
         const found = all.find((p) => p.unit.id === unitId);
         return found?.waveIndex ?? 0;
+    }
+
+    /**
+     * 援军合兵一处：waveIndex≥1 时返回编入时掷定的 luck [0.8, 1.2]；主力返回 null。
+     */
+    public getReinforcementJoinLuck(unitId: string): number | null {
+        if (this.getUnitWaveIndex(unitId) < 1) return null;
+        const luck = this.reinforcementLuckByUnitId.get(unitId);
+        return luck ?? null;
     }
 
     /**

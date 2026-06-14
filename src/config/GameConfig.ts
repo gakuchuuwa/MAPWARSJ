@@ -103,7 +103,7 @@ export class GameConfig {
             big_city: 0.4,
         } as Record<string, number>,
         MIN_SURVIVAL_TROOPS: 0.1,
-        /** 有效战力随机系数 [0.8, 1.2]：开战整侧掷一次；援军每路编入时再掷一次（复用 rollCombatLuckMultiplier） */
+        /** 有效战力随机系数 [0.8, 1.2]：开战整侧掷一次；援军编入再掷一次（系统技「合兵一处」） */
         LUCK_MIN: 0.8,
         LUCK_MAX: 1.2,
         /** 开战编入半径（经纬度欧氏距离，约 0.3 ≈ 30km；开战瞬间 + 每 0.2s 圈内扫描，可随时加入） */
@@ -129,7 +129,7 @@ export class GameConfig {
             JAPAN: [0.9, 1.1], KOREA: [0.9, 1.1], JIANGNAN: [0.9, 1.1],
             LINGNAN: [0.8, 1.2], DIANQIAN: [0.8, 1.2], BASHU: [0.8, 1.2],
         } as Record<string, readonly [number, number]>,
-        /** 关隘据点守军额外系数（与文化区系数相乘，仅 garrison / type===pass） */
+        /** 关隘据点守军额外系数（拒险而守；与 PASS_GARRISON_DEFENSE_SKILL.magnitude 须一致） */
         PASS_GARRISON_MULT: 1.2,
     };
     // [2026-06-12 删除] static MORALE（士气衰减 + FLANKING 侧翼系数）——全项目零引用的死配置。

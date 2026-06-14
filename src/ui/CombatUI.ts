@@ -11,8 +11,9 @@ import {
 import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
-import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier } from '../systems/CultureCombat';
-import { getOpeningTacticalPowerMultiplier, getStrategicBattlePowerMultiplier, getGeneralSkillDisplayTags } from '../combat/GeneralSkillCombat';
+import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier } from '../systems/CultureCombat';
+import { getOpeningTacticalPowerMultiplier, getStrategicBattlePowerMultiplier, getGeneralSkillDisplayTags, getPassGarrisonDefenseSkillDisplay, getReinforcementJoinSkillDisplay } from '../combat/GeneralSkillCombat';
+import { PASS_GARRISON_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL } from '../data/GeneralSkills';
 const T = COMBAT_UI_TOKENS;
 
 export class CombatUI {
@@ -285,7 +286,7 @@ export class CombatUI {
         this.tacticalSkillBanner.style.cssText = `
             position: absolute;
             left: 50%;
-            top: 38%;
+            top: 6%;
             transform: translate(-50%, -50%);
             z-index: ${T.zIndex.centerCard + 2};
             font-family: 'Noto Serif SC', serif;
@@ -709,6 +710,12 @@ export class CombatUI {
                 side === 'attacker'
                     ? this.currentRegionalUnits.attackers
                     : this.currentRegionalUnits.defenders;
+            const followedId = (window as unknown as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } })
+                .game?.cameraFollowUI?.getFollowedArmyId();
+            if (followedId) {
+                const followed = units.find((u) => u.id === followedId);
+                if (followed) return followed;
+            }
             return units[0] ?? null;
         }
         return null;
@@ -761,7 +768,18 @@ export class CombatUI {
 
         const renderSide = (box: HTMLDivElement, unit: IBattleUnit | null) => {
             if (!unit) return;
-            
+
+            const passSkill = getPassGarrisonDefenseSkillDisplay(unit);
+            if (passSkill) {
+                box.appendChild(createSkillTag(passSkill.name, passSkill.effectLabel, false));
+            }
+
+            const joinLuck = this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
+            const reinfSkill = getReinforcementJoinSkillDisplay(joinLuck);
+            if (reinfSkill) {
+                box.appendChild(createSkillTag(reinfSkill.name, reinfSkill.effectLabel, false));
+            }
+
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {
                     box.appendChild(createSkillTag(tag.name, tag.effectLabel, tag.isFamous));
@@ -780,6 +798,10 @@ export class CombatUI {
         renderSide(this.rightSkillsBox, defender);
     }
 
+    private getReinforcementJoinLuckForUnit(unit: IBattleUnit): number | null {
+        return this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
+    }
+
     private formatBattlePowerBadge(unit: IBattleUnit): string {
         const isGarrison = unit.unitType === 'city';
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
@@ -790,6 +812,8 @@ export class CombatUI {
         product *= getCampaignLegionCombatMultiplier(unit);
         product *= getOpeningTacticalPowerMultiplier(unit);
         product *= getStrategicBattlePowerMultiplier(unit, battleType);
+        const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
+        if (joinLuck !== null) product *= joinLuck;
         
         if (Math.abs(product - 1) <= 0.001) return `${role}×1`;
         return `${role}×${parseFloat(product.toFixed(2))}`;
@@ -805,10 +829,15 @@ export class CombatUI {
         const pushIfNotOne = (label: string, n: number) => {
             if (Math.abs(n - 1) > 0.001) labeled.push({ label, value: n });
         };
-        pushIfNotOne('文化', getUnitCultureCombatMultiplier(unit));
+        pushIfNotOne('文化', getCultureOnlyCombatMultiplier(unit));
+        pushIfNotOne(PASS_GARRISON_DEFENSE_SKILL.displayName, getPassGarrisonCombatMultiplier(unit));
         pushIfNotOne('剧本', getCampaignLegionCombatMultiplier(unit));
         pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(unit));
         pushIfNotOne('战略', getStrategicBattlePowerMultiplier(unit, battleType));
+        const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
+        if (joinLuck !== null) {
+            pushIfNotOne(REINFORCEMENT_JOIN_SKILL.displayName, joinLuck);
+        }
 
         if (labeled.length === 0) {
             return { chain: '', title: '' };

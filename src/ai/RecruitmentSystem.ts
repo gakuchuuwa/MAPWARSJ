@@ -9,7 +9,7 @@
  *      军团兵力的恢复改为**分级战后恢复**（CombatSystem.getPostBattleRecoveryRate：
  *      关10%/小20%/中30%/大40%/野战50%）。
  *      家城失守仍强制回师（行为树 resolveRecaptureTarget，游戏原生行为，所有文化无豁免；
- *      唯一例外：远征模式军团不回师）。
+ *      例外：远征 / 剧本军团（shouldSkipHomeRecapture）不回师）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
  *      ① 每文化区保底 1 支
  *      ② 优先：视野内、非跟随势力、驻军高的据点

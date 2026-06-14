@@ -39,7 +39,8 @@
 | 精锐番号 | 秦之锐士 |
 | 将领 | `baiqi` / 白起 |
 | 战术 | ③ `tac_03` 侵掠如火 |
-| 战略 | S③ `str_03` 攻城拔寨 |
+| 战略（将领） | S③ `str_03` 攻城拔寨 |
+| 战略（剧本系统） | S② `str_02` 因粮于敌（全员，胜后 +12%） |
 
 **将阶**：名将 = 战术 ①–⑤ 选一 + 战略 S①–S⑦ 选一；普将 = 战术 ⑥–⑩ 选一，**无战略**。
 
@@ -50,7 +51,10 @@
 | 层 | 谁有 | 典型数值 | 数据来源 | 算武将技吗 |
 |:---|:---|:---|:---|:---:|
 | **A 系统·文化** | 所有军团 | 野战 0.8～1.2 | `GameConfig.CULTURE_COMBAT.TIER_TABLE` | 否 |
+| **A′ 系统·关隘守军** | `type===pass` 城防 | **×1.2** | `PASS_GARRISON_DEFENSE_SKILL` 拒险而守 | 否 |
+| **R 系统·援军编入** | `waveIndex≥1` 军团 | **×[0.8,1.2]** 编入时掷定 | `REINFORCEMENT_JOIN_SKILL` 合兵一处 | 否 |
 | **B 系统·剧本/远征** | `scriptedCampaignId` 或 `expeditionTargetCityId` 非空 | **×1.2** | `CAMPAIGN_LEGION_MULT` → `CultureCombat` | 否 |
+| **B′ 系统·剧本胜后** | 仅 `scriptedCampaignId` 非空 | 胜后当前兵 **+12%** | `SCRIPTED_LEGION_POST_BATTLE_SKILL_ID`（S② 因粮于敌） | 否 |
 | **C 战术** | 跟拍 + 有 `GENERAL_PROFILES` 的将 | 见 §5.1 | `GeneralSkillCombat` | 是 |
 | **D 战略** | 仅名将，同上门禁 | 见 §5.2 | `GeneralSkillCombat` | 是 |
 
@@ -66,7 +70,8 @@
 
 ```
 先 GameConfig.POST_BATTLE_RECOVERY（关10%～野战50%）
-再 战略S②：troops += floor(当前兵 × 0.1)
+再 战略S②（剧本军团系统）：troops += floor(当前兵 × 0.2)
+再 将领档案胜后战略（若有且非 S②）
 ```
 
 **战斗 UI 系数链**（`CombatUI`，势力名前方）：凡 ≠1 的因子按层串联，**多一层就多叠一个数字**（例：剧本+战术+战略 → `1.2×1.2×1.2` 写在「秦国」前）；军团名旁不再显示。悬停 `title` 见文化/剧本/战术/战略拆解。
@@ -108,7 +113,7 @@
 | 格 | 技能名 | 类型 | 效果摘要 |
 |:---:|:---|:---|:---|
 | S① | 兵贵神速 | 军机运营 | 行军速度 ×1.2 |
-| S② | 因粮于敌 | 军机运营 | 胜后当前兵 +10% |
+| S② | 因粮于敌 | 军机运营 | 胜后当前兵 +12% |
 | S③ | 攻城拔寨 | 城野专精 | 攻城战掷色 ×1.2 |
 | S④ | 所向披靡 | 城野专精 | 野战掷色 ×1.2 |
 | S⑤ | 长驱直入 | 地形专精 | 平原掷色 ×1.2 |
@@ -140,12 +145,18 @@
 | effect | 含义 | magnitude 单位 |
 |:---|:---|:---|
 | `march_speed_mult` | 行军速度 | 倍数（1.2） |
-| `post_battle_troop_pct` | 胜后加兵 | 比例（0.1 = 10% 当前兵） |
+| `post_battle_troop_pct` | 胜后加兵 | 比例（magnitude；例 0.12 = 12% 当前兵） |
 | `siege_power_mult` | 攻城战掷色 | 倍数（1.2） |
 | `field_power_mult` | 野战掷色 | 倍数（1.2） |
 | `plain_power_mult` | 平原掷色 | 倍数（1.2） |
 | `mountain_power_mult` | 山地掷色 | 倍数（1.2） |
 | `water_power_mult` | 水域掷色 | 倍数（1.2） |
+
+**守军 `GarrisonSystemEffect`（非十格 / 七格，系统层）**：
+
+| effect | 含义 | magnitude 单位 |
+|:---|:---|:---|
+| `pass_garrison_mult` | 关隘城防掷色 | 倍数（1.2） |
 
 ### 5.1 战术十格（公式 + 实装）
 
@@ -170,7 +181,7 @@
 | 格 | id | 技能名 | effect | magnitude | **公式（写死）** | 挂载点 | 实装 |
 |:---:|:---|:---|:---|:---:|:---|:---|:---:|
 | S① | `str_01` | 兵贵神速 | `march_speed_mult` | 1.2 | 跟拍军团行军：`最终速度 × 1.2` | `Army` 速度链 | ❌ |
-| S② | `str_02` | 因粮于敌 | `post_battle_troop_pct` | 0.1 | 仅**胜方**跟拍：`troops += floor(当前兵力 × 0.1)`，在 `POST_BATTLE_RECOVERY` **之后** | `BattleField.resolve` | ✅ |
+| S② | `str_02` | 因粮于敌 | `post_battle_troop_pct` | 0.12 | 仅**胜方**跟拍：`troops += floor(当前兵力 × 0.12)`，在 `POST_BATTLE_RECOVERY` **之后** | `BattleField.resolve` | ✅ |
 | S③ | `str_03` | 攻城拔寨 | `siege_power_mult` | 1.2 | `BattleField.type === 'siege'` 时跟拍侧掷色 `× 1.2` | 开战 | ✅ |
 | S④ | `str_04` | 所向披靡 | `field_power_mult` | 1.2 | `type === 'field'` 时跟拍侧掷色 `× 1.2` | 开战 | ❌ |
 | S⑤ | `str_05` | 长驱直入 | `plain_power_mult` | 1.2 | 战场锚点 `plain` 时跟拍侧掷色 `× 1.2` | 开战 | ❌ |
@@ -179,8 +190,10 @@
 
 ### 5.3 系统层（非武将技）
 
-| 常量 / 函数 | 值 | 公式 |
+| 常量 / 技能 | 值 | 公式 |
 |:---|:---:|:---|
+| `PASS_GARRISON_DEFENSE_SKILL` 拒险而守 | 1.2 | `type===pass` 城防：`getPassGarrisonCombatMultiplier` → 掷色 `× 1.2`（与文化 A 相乘） |
+| `REINFORCEMENT_JOIN_SKILL` 合兵一处 | 0.8～1.2 | `waveIndex≥1`：`rollCombatLuckMultiplier()` 编入时掷定，计入 `adjustedPowerWithReinforcement` |
 | `GameConfig.COMBAT.CAMPAIGN_LEGION_MULT` | 1.2 | 剧本/远征军团单位：`getUnitBattlePowerMultiplier` 内含 |
 | `POST_BATTLE_RECOVERY` | 0.1～0.5 | 胜方恢复 `floor(本场损失 × 率)`；关10% / 小20% / 中30% / 大40% / 野战50% |
 | `CULTURE_COMBAT.TIER_TABLE` | 0.8～1.2 | 按军团**出身**文化区 |
@@ -212,6 +225,11 @@
 3. **将领档案**：`generalId` 在 `GENERAL_PROFILES`，且将阶与格号匹配（名将不得 ⑥–⑩，普将不得 ①–⑤ 与战略）
 
 **例外**：`BattleField.presetResult` 非空 → 可播 UI，**不得改变预设胜负**。
+
+**援军编入**（`addReinforcement` → `refreshPredictedSidesFromTotals`）：
+- 新单位按 `troops × 文化/剧本/关隘` × **合兵一处 luck [0.8,1.2]**（编入时掷定一次）计入该侧有效战力；
+- **跟拍侧**战术③ / 战略 S③ 等**侧乘区**随当前在场单位重算（不重复掷侧 luck、不重发战术 UI，除非该跟拍军团本场首次入战则补闪光）；
+- 胜后剧本 S② / 拒险而守等按单位类型在 `resolve` 结算，援军胜方同样适用。
 
 据点募兵军团、无 `generalId`、不跟拍 → 不触发 C/D 层；仍可有 A/B 层（若属剧本/远征）。
 
@@ -259,7 +277,7 @@ some_general: {
 
 | 将领 | 将阶 | 精锐 | 战术 id / 名 | 战略 id / 名 |
 |:---|:---|:---|:---|:---|
-| 白起 | 名将 | 秦之锐士 | `tac_03` 侵掠如火 | `str_03` 攻城拔寨 |
+| 白起 | 名将 | 秦之锐士 | `tac_03` 侵掠如火 | `str_03` 攻城拔寨 + 剧本 `str_02` 因粮于敌 |
 | 王翦 | 名将 | （待定） | `tac_05` 不动如山 | `str_03` 攻城拔寨 |
 | 霍去病 | 名将 | （待定） | `tac_03` 侵掠如火 | `str_01` 兵贵神速 |
 | 曹纯 | 普将 | 虎豹骑 | `tac_08` 置之死地 | — |
@@ -282,9 +300,11 @@ some_general: {
 
 | 已实装 ✅ | 未实装 ❌ |
 |:---|:---|
-| 系统 B：剧本/远征 ×1.2 | 战术 ①②④⑤⑥⑦⑧⑨⑩ |
-| 战术 ③ 侵掠如火 | 战略 S① S④–S⑦ |
-| 战略 S② 因粮于敌 | |
+| 系统 A′：关隘守军拒险而守 ×1.2 | 战术 ①②④⑤⑥⑦⑧⑨⑩ |
+| 系统 R：援军合兵一处 luck | |
+| 系统 B：剧本/远征 ×1.2 | 战略 S① S④–S⑦ |
+| 系统 B′：剧本军团胜后 S② +12% | |
+| 战术 ③ 侵掠如火 | |
 | 战略 S③ 攻城拔寨 | |
 | UI：战术大字（③）、势力前系数链 + 悬停拆解 | |
 

@@ -47,6 +47,13 @@ export function isCampaignLegion(
     return isScriptedLegion(army) || army.expeditionTargetCityId != null;
 }
 
+/** 剧本/远征军团：家城（出发点）失守也不回师，直至剧本目标或全军覆没 */
+export function shouldSkipHomeRecapture(
+    army: Pick<Army, 'scriptedCampaignId' | 'expeditionTargetCityId'>,
+): boolean {
+    return isCampaignLegion(army);
+}
+
 /** 该势力是否已有剧本（1 势力 = 1 剧本 → 普通募兵跳过） */
 export function factionHasScriptedCampaign(factionId: string): boolean {
     return getScriptedCampaignByFaction(factionId) != null;
@@ -70,20 +77,50 @@ export function getLegionTroopCap(army: Pick<Army, 'scriptedTroopsCap' | 'cultur
 }
 
 /**
- * 目标序列中首个仍非己方据点 = 当前推进目标；全属己方 → null（剧本已完成）。
+ * 目标序列中从 startIndex 起首个仍非己方据点 = 当前推进目标；全属己方 → null。
+ * 剧本军团用 scriptedSequenceIndex 作起点，避免后方失守时从头回扫。
  */
 export function getScriptedSequenceTarget(
     campaign: ScriptedCampaign,
     factionId: string,
     getCity: (cityId: string) => CityFactionView | undefined,
+    startIndex = 0,
 ): string | null {
-    for (const cityId of campaign.targetSequence) {
+    const from = Math.max(0, Math.min(startIndex, campaign.targetSequence.length));
+    for (let i = from; i < campaign.targetSequence.length; i++) {
+        const cityId = campaign.targetSequence[i];
         const city = getCity(cityId);
         if (!city || city.factionId !== factionId) {
             return cityId;
         }
     }
     return null;
+}
+
+/** 剧本游标：已保存则用；否则从当前 expedition 目标推导（兼容旧存档） */
+export function resolveScriptedScanStartIndex(
+    army: Pick<Army, 'scriptedSequenceIndex' | 'expeditionTargetCityId'>,
+    campaign: ScriptedCampaign,
+): number {
+    if (army.scriptedSequenceIndex > 0) {
+        return Math.min(army.scriptedSequenceIndex, campaign.targetSequence.length);
+    }
+    if (army.expeditionTargetCityId) {
+        const idx = campaign.targetSequence.indexOf(army.expeditionTargetCityId);
+        if (idx >= 0) return idx;
+    }
+    return 0;
+}
+
+function syncScriptedSequenceIndex(
+    army: Pick<Army, 'scriptedSequenceIndex'>,
+    campaign: ScriptedCampaign,
+    cityId: string,
+): void {
+    const idx = campaign.targetSequence.indexOf(cityId);
+    if (idx >= 0) {
+        army.scriptedSequenceIndex = Math.max(army.scriptedSequenceIndex, idx);
+    }
 }
 
 export type ScriptedExpeditionTick = 'locked' | 'stage_advanced' | 'campaign_complete';
@@ -95,7 +132,10 @@ export type ScriptedExpeditionTick = 'locked' | 'stage_advanced' | 'campaign_com
  * - campaign_complete：序列全破，清空 expeditionTargetCityId
  */
 export function tickScriptedCampaignExpedition(
-    army: Pick<Army, 'scriptedCampaignId' | 'expeditionTargetCityId' | 'getFactionId'>,
+    army: Pick<
+        Army,
+        'scriptedCampaignId' | 'expeditionTargetCityId' | 'scriptedSequenceIndex' | 'getFactionId'
+    >,
     getCity: (cityId: string) => CityFactionView | undefined,
 ): ScriptedExpeditionTick | null {
     if (!army.scriptedCampaignId) return null;
@@ -103,7 +143,8 @@ export function tickScriptedCampaignExpedition(
     if (!campaign) return null;
 
     const factionId = army.getFactionId();
-    const nextTarget = getScriptedSequenceTarget(campaign, factionId, getCity);
+    const scanFrom = resolveScriptedScanStartIndex(army, campaign);
+    const nextTarget = getScriptedSequenceTarget(campaign, factionId, getCity, scanFrom);
 
     if (nextTarget === null) {
         // 末城为兵败点时，不以占满序列作为「剧本完成」
@@ -118,15 +159,21 @@ export function tickScriptedCampaignExpedition(
     }
 
     if (army.expeditionTargetCityId === nextTarget) {
+        syncScriptedSequenceIndex(army, campaign, nextTarget);
         return 'locked';
     }
 
     const prevId = army.expeditionTargetCityId;
     army.expeditionTargetCityId = nextTarget;
+    syncScriptedSequenceIndex(army, campaign, nextTarget);
 
     if (prevId != null) {
         const prev = getCity(prevId);
         if (prev && prev.factionId === factionId) {
+            const prevIdx = campaign.targetSequence.indexOf(prevId);
+            if (prevIdx >= 0) {
+                army.scriptedSequenceIndex = Math.max(army.scriptedSequenceIndex, prevIdx + 1);
+            }
             return 'stage_advanced';
         }
     }
@@ -176,8 +223,12 @@ export function bindScriptedCampaign(
     legion.portraitPath = campaign.portrait;
     legion.scriptedCampaignId = campaign.id;
     legion.scriptedTroopsCap = campaign.troops;
+    const scanFrom = resolveScriptedScanStartIndex(legion, campaign);
     legion.expeditionTargetCityId =
-        getScriptedSequenceTarget(campaign, legion.getFactionId(), getCity);
+        getScriptedSequenceTarget(campaign, legion.getFactionId(), getCity, scanFrom);
+    if (legion.expeditionTargetCityId) {
+        syncScriptedSequenceIndex(legion, campaign, legion.expeditionTargetCityId);
+    }
 }
 
 /** 开局播放时跟拍：取首个 spawnAtStart 剧本的精锐名（不限势力） */

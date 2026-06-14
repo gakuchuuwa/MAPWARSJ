@@ -8,6 +8,9 @@ import {
     getGeneralProfile,
     getStrategicSkillDef,
     getTacticalSkillDef,
+    SCRIPTED_LEGION_POST_BATTLE_SKILL_ID,
+    PASS_GARRISON_DEFENSE_SKILL,
+    REINFORCEMENT_JOIN_SKILL,
     type TacticalSkillDef,
 } from '../data/GeneralSkills';
 import { gameLog } from '../utils/GameLogger';
@@ -92,7 +95,56 @@ export function getStrategicBattlePowerMultiplier(
     }
 }
 
-/** 技能面板展示用（战术 + 战略各一条） */
+function isScriptedLegionUnit(unit: IBattleUnit): boolean {
+    const army = getArmyEntity(unit);
+    return !!army?.scriptedCampaignId;
+}
+
+/** 关隘守军（type===pass 城防）是否适用拒险而守 */
+export function unitQualifiesForPassGarrisonDefenseSkill(unit: IBattleUnit): boolean {
+    if (unit.unitType !== 'city') return false;
+    const city = unit.getEntity?.() as { type?: string } | undefined;
+    return city?.type === 'pass';
+}
+
+/** 守军系统技面板：拒险而守 */
+export function getPassGarrisonDefenseSkillDisplay(
+    unit: IBattleUnit,
+): { name: string; effectLabel: string } | null {
+    if (!unitQualifiesForPassGarrisonDefenseSkill(unit)) return null;
+    const skill = PASS_GARRISON_DEFENSE_SKILL;
+    return {
+        name: skill.displayName,
+        effectLabel: `城防×${parseFloat(skill.magnitude.toFixed(2))}`,
+    };
+}
+
+/** 援军系统技面板：合兵一处（编入 luck 已掷定） */
+export function getReinforcementJoinSkillDisplay(
+    joinLuck: number | null,
+): { name: string; effectLabel: string } | null {
+    if (joinLuck === null) return null;
+    return {
+        name: REINFORCEMENT_JOIN_SKILL.displayName,
+        effectLabel: `×${parseFloat(joinLuck.toFixed(2))}`,
+    };
+}
+
+function appendStrategicDisplayTag(
+    tags: { name: string; effectLabel: string; isFamous: boolean }[],
+    skillId: string,
+): void {
+    const str = getStrategicSkillDef(skillId);
+    if (!str) return;
+    if (tags.some((t) => t.name === str.displayName)) return;
+    tags.push({
+        name: str.displayName,
+        effectLabel: formatStrategicEffectLabel(str),
+        isFamous: true,
+    });
+}
+
+/** 技能面板展示用（战术 + 战略；剧本军团另附系统层 S②） */
 export function getGeneralSkillDisplayTags(
     unit: IBattleUnit,
 ): { name: string; effectLabel: string; isFamous: boolean }[] {
@@ -109,16 +161,22 @@ export function getGeneralSkillDisplayTags(
             isFamous: famous,
         });
     }
-    if (profile.strategicSkillId) {
-        const str = getStrategicSkillDef(profile.strategicSkillId);
-        if (str) {
-            tags.push({
-                name: str.displayName,
-                effectLabel: formatStrategicEffectLabel(str),
-                isFamous: true,
-            });
-        }
+
+    if (isScriptedLegionUnit(unit) && canUnitUseGeneralSkills(unit)) {
+        appendStrategicDisplayTag(tags, SCRIPTED_LEGION_POST_BATTLE_SKILL_ID);
     }
+    if (
+        profile.strategicSkillId &&
+        profile.strategicSkillId !== SCRIPTED_LEGION_POST_BATTLE_SKILL_ID
+    ) {
+        appendStrategicDisplayTag(tags, profile.strategicSkillId);
+    } else if (
+        profile.strategicSkillId &&
+        !isScriptedLegionUnit(unit)
+    ) {
+        appendStrategicDisplayTag(tags, profile.strategicSkillId);
+    }
+
     return tags;
 }
 
@@ -162,6 +220,58 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
 }
 
 /**
+ * 跟拍侧开局战术 + 战略战力乘区（开战掷色 / 援军编入后强弱重算共用）
+ */
+export function applyGeneralSkillSideRollMultipliers(
+    attackerUnits: IBattleUnit[],
+    defenderUnits: IBattleUnit[],
+    attRoll: number,
+    defRoll: number,
+    battleType: BattleType,
+    options?: { emitTacticalUi?: boolean },
+): { attRoll: number; defRoll: number } {
+    const emitUi = options?.emitTacticalUi !== false;
+    const tactical = applyOpeningTacticalToRolls(
+        attackerUnits,
+        defenderUnits,
+        attRoll,
+        defRoll,
+        emitUi,
+    );
+    return applyStrategicBattleToRolls(
+        attackerUnits,
+        defenderUnits,
+        tactical.attRoll,
+        tactical.defRoll,
+        battleType,
+    );
+}
+
+/**
+ * 援军编入：跟拍剧本/远征军团首次入战时可补发战术技 UI（开战时不在场则错过首次闪光）
+ */
+export function tryEmitOpeningTacticalOnReinforcementJoin(
+    joinedUnit: IBattleUnit,
+    isAttacker: boolean,
+    attackerUnits: IBattleUnit[],
+    defenderUnits: IBattleUnit[],
+): void {
+    if (!canUnitUseGeneralSkills(joinedUnit)) return;
+    const sideUnits = isAttacker ? attackerUnits : defenderUnits;
+    const eligible = findEligibleFollowedUnit(sideUnits);
+    if (eligible?.id !== joinedUnit.id) return;
+
+    const skill = getOpeningTacticalSkill(joinedUnit);
+    if (!skill || skill.effect !== 'ally_mult_1_2') return;
+
+    onTacticalSkillTriggered?.({
+        displayName: skill.displayName,
+        generalId: joinedUnit.generalId!,
+        skillId: skill.id,
+    });
+}
+
+/**
  * 开局战术：跟拍侧有效战力掷色结果乘区（如 ③ 侵掠如火 ×1.2）
  */
 export function applyOpeningTacticalToRolls(
@@ -169,6 +279,7 @@ export function applyOpeningTacticalToRolls(
     defenderUnits: IBattleUnit[],
     attRoll: number,
     defRoll: number,
+    emitUi = true,
 ): { attRoll: number; defRoll: number; trigger?: TacticalSkillTrigger } {
     const followedAtt = findEligibleFollowedUnit(attackerUnits);
     const followedDef = findEligibleFollowedUnit(defenderUnits);
@@ -186,20 +297,24 @@ export function applyOpeningTacticalToRolls(
 
     if (followedAtt) {
         const next = attRoll * skill.magnitude;
-        gameLog(
-            'battle',
-            `⚔️ [武将技] ${followed.generalId} 【${skill.displayName}】 攻方有效战力 ×${skill.magnitude} (${attRoll.toFixed(0)}→${next.toFixed(0)})`,
-        );
-        onTacticalSkillTriggered?.(trigger);
+        if (emitUi) {
+            gameLog(
+                'battle',
+                `⚔️ [武将技] ${followed.generalId} 【${skill.displayName}】 攻方有效战力 ×${skill.magnitude} (${attRoll.toFixed(0)}→${next.toFixed(0)})`,
+            );
+            onTacticalSkillTriggered?.(trigger);
+        }
         return { attRoll: next, defRoll, trigger };
     }
 
     const next = defRoll * skill.magnitude;
-    gameLog(
-        'battle',
-        `⚔️ [武将技] ${followed.generalId} 【${skill.displayName}】 守方有效战力 ×${skill.magnitude} (${defRoll.toFixed(0)}→${next.toFixed(0)})`,
-    );
-    onTacticalSkillTriggered?.(trigger);
+    if (emitUi) {
+        gameLog(
+            'battle',
+            `⚔️ [武将技] ${followed.generalId} 【${skill.displayName}】 守方有效战力 ×${skill.magnitude} (${defRoll.toFixed(0)}→${next.toFixed(0)})`,
+        );
+        onTacticalSkillTriggered?.(trigger);
+    }
     return { attRoll, defRoll: next, trigger };
 }
 
@@ -245,25 +360,54 @@ export function applyStrategicBattleToRolls(
 }
 
 /**
- * 战后战略：S② 因粮于敌 — 底座恢复后当前兵力 +10%
+ * 战后加兵：按战略技能 magnitude 对当前兵力比例结算
  */
-export function applyPostBattleStrategicBonus(
+function applyPostBattleTroopPct(
     unit: IBattleUnit,
-    _battleType: BattleType,
+    skill: NonNullable<ReturnType<typeof getStrategicSkillDef>>,
+    source: string,
 ): number {
-    if (!canUnitUseGeneralSkills(unit)) return 0;
-    const profile = getGeneralProfile(unit.generalId);
-    if (!profile?.strategicSkillId) return 0;
-    const skill = getStrategicSkillDef(profile.strategicSkillId);
-    if (!skill || skill.effect !== 'post_battle_troop_pct') return 0;
-
+    if (skill.effect !== 'post_battle_troop_pct') return 0;
     const bonus = Math.floor(unit.troops * skill.magnitude);
     if (bonus <= 0) return 0;
 
     unit.setTroops(unit.troops + bonus);
     gameLog(
         'battle',
-        `🌾 [武将技] ${unit.generalId} 【${skill.displayName}】 +${bonus}（当前兵 +${(skill.magnitude * 100).toFixed(0)}%）`,
+        `🌾 [武将技] ${unit.generalId ?? '?'} ${source}【${skill.displayName}】 +${bonus}（当前兵 +${(skill.magnitude * 100).toFixed(0)}%）`,
     );
     return bonus;
+}
+
+/**
+ * 战后战略：剧本军团系统 S② + 将领档案胜后战略（若有）
+ */
+export function applyPostBattleStrategicBonus(
+    unit: IBattleUnit,
+    _battleType: BattleType,
+): number {
+    if (!canUnitUseGeneralSkills(unit)) return 0;
+
+    let total = 0;
+
+    if (isScriptedLegionUnit(unit)) {
+        const scriptedSkill = getStrategicSkillDef(SCRIPTED_LEGION_POST_BATTLE_SKILL_ID);
+        if (scriptedSkill) {
+            total += applyPostBattleTroopPct(unit, scriptedSkill, '[剧本] ');
+        }
+    }
+
+    const profile = getGeneralProfile(unit.generalId);
+    if (profile?.strategicSkillId) {
+        const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
+        if (
+            profileSkill &&
+            profileSkill.effect === 'post_battle_troop_pct' &&
+            profile.strategicSkillId !== SCRIPTED_LEGION_POST_BATTLE_SKILL_ID
+        ) {
+            total += applyPostBattleTroopPct(unit, profileSkill, '');
+        }
+    }
+
+    return total;
 }

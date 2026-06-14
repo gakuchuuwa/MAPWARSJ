@@ -6,7 +6,7 @@
  * 双模式（GAME_DIRECTION 2026-06-11）：
  *   基础模式：家城失守强制回师（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
  *           → 推进锚点近 3 敌城抽签
- *   远征模式：army.expeditionTargetCityId 锁死目标，断粮不回师，直至占领或全军覆没（仅玩家可下令）
+ *   远征/剧本：目标锁死、家城失守不回师（shouldSkipHomeRecapture），直至占领/兵败或全军覆没
  */
 
 import { BTNode, BTStatus, BTContext, Condition, Action, Sequence, Selector } from './BehaviorTree';
@@ -32,6 +32,9 @@ import {
 } from '../../data/ExpeditionLegions';
 import {
     getScriptedCampaignById,
+    getScriptedSequenceTarget,
+    resolveScriptedScanStartIndex,
+    shouldSkipHomeRecapture,
     tickScriptedCampaignExpedition,
 } from '../../legion/LegionSpawnPolicy';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
@@ -62,8 +65,21 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
     const army = ctx.army;
 
     if (army.scriptedCampaignId) {
-        const scriptedTick = tickScriptedCampaignExpedition(army, (id) => ctx.cityManager.getCity(id));
         const campaign = getScriptedCampaignById(army.scriptedCampaignId);
+        if (!campaign) return null;
+
+        const getCity = (id: string) => ctx.cityManager.getCity(id);
+        if (!army.expeditionTargetCityId) {
+            const restored = getScriptedSequenceTarget(
+                campaign,
+                army.getFactionId(),
+                getCity,
+                resolveScriptedScanStartIndex(army, campaign),
+            );
+            if (restored) army.expeditionTargetCityId = restored;
+        }
+
+        const scriptedTick = tickScriptedCampaignExpedition(army, getCity);
 
         if (scriptedTick === 'campaign_complete') {
             clearStrategicTarget(ctx);
@@ -152,19 +168,21 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     if (expedition === 'done') return false;
 
     const myFaction = ctx.army.getFactionId();
-    const originCityId = getArmyOriginCityId(ctx.army) ?? '';
-    const recaptureId = resolveRecaptureTarget(myFaction, originCityId, ctx.cityManager);
+    if (!shouldSkipHomeRecapture(ctx.army)) {
+        const originCityId = getArmyOriginCityId(ctx.army) ?? '';
+        const recaptureId = resolveRecaptureTarget(myFaction, originCityId, ctx.cityManager);
 
-    if (recaptureId) {
-        const strategicId = getStrategicTargetId(ctx);
-        if (strategicId !== recaptureId) {
-            if (strategicId) {
-                markTargetCooldown(ctx, strategicId, 'capital_recapture');
+        if (recaptureId) {
+            const strategicId = getStrategicTargetId(ctx);
+            if (strategicId !== recaptureId) {
+                if (strategicId) {
+                    markTargetCooldown(ctx, strategicId, 'capital_recapture');
+                }
+                clearStrategicTarget(ctx);
+                ctx.army.setTargetCity(null);
             }
-            clearStrategicTarget(ctx);
-            ctx.army.setTargetCity(null);
+            return false;
         }
-        return false;
     }
 
     const strategicId = getStrategicTargetId(ctx);
@@ -242,22 +260,24 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         return BTStatus.FAILURE;
     }
 
-    const recaptureId = resolveRecaptureTarget(myFaction, originCityId, ctx.cityManager);
-    if (recaptureId) {
-        const recaptureCity = ctx.cityManager.getCity(recaptureId);
-        if (!recaptureCity) {
-            return BTStatus.FAILURE;
+    if (!shouldSkipHomeRecapture(ctx.army)) {
+        const recaptureId = resolveRecaptureTarget(myFaction, originCityId, ctx.cityManager);
+        if (recaptureId) {
+            const recaptureCity = ctx.cityManager.getCity(recaptureId);
+            if (!recaptureCity) {
+                return BTStatus.FAILURE;
+            }
+            setStrategicTarget(ctx, recaptureId, {
+                lat: recaptureCity.latitude,
+                lng: recaptureCity.longitude,
+            });
+            btLog(
+                ctx,
+                `recapture:${recaptureId}`,
+                `[AI] ${ctx.army.name} 收复本军出发点【${recaptureCity.name}】`
+            );
+            return BTStatus.SUCCESS;
         }
-        setStrategicTarget(ctx, recaptureId, {
-            lat: recaptureCity.latitude,
-            lng: recaptureCity.longitude,
-        });
-        btLog(
-            ctx,
-            `recapture:${recaptureId}`,
-            `[AI] ${ctx.army.name} 收复本军出发点【${recaptureCity.name}】`
-        );
-        return BTStatus.SUCCESS;
     }
 
     const anchorId = resolveForwardAnchor(

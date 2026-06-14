@@ -8,7 +8,7 @@
  *   低防 日本/朝鲜/江南：野战 ×0.9，守军 ×1.1
  *   高防 岭南/滇缅/川蜀：野战 ×0.8，守军 ×1.2
  *
- * 关隘（type===pass 的守军）：再 × PASS_GARRISON_MULT（默认 1.2），与文化区相乘。
+ * 关隘（type===pass 的守军）：再 × 拒险而守（`PASS_GARRISON_DEFENSE_SKILL`，默认 1.2），与文化区相乘。
  *   例：岭南关隘守军 = 1.2（文化）× 1.2（关隘）= 1.44，不是 1.2³。
  *
  * 一侧合算后再 × 总 luck [0.8, 1.2] 掷一次（与上述固定系数独立）。
@@ -18,6 +18,7 @@
  */
 
 import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';
+import { PASS_GARRISON_DEFENSE_SKILL } from '../data/GeneralSkills';
 import type { IBattleUnit } from '../core/CombatSystem';
 import type { Army } from '../core/Army';
 import type { City } from '../types/core';
@@ -78,16 +79,26 @@ function getPassGarrisonMultiplier(unit: IBattleUnit): number {
     if (!isGarrisonUnit(unit)) return 1;
     const city = unit.getEntity?.() as City | undefined;
     if (city?.type === 'pass') {
-        return GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT;
+        return PASS_GARRISON_DEFENSE_SKILL.magnitude;
     }
     return 1;
 }
 
-/** 单单位固定战力系数 = 文化区 ×（关隘守军时 ×PASS_GARRISON_MULT） */
-export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
+/** 文化区固定系数（不含关隘拒险而守） */
+export function getCultureOnlyCombatMultiplier(unit: IBattleUnit): number {
     const region = resolveUnitCultureRegion(unit);
     const role: CultureCombatRole = isGarrisonUnit(unit) ? 'garrison' : 'field';
-    return getCultureCombatMultiplier(region, role) * getPassGarrisonMultiplier(unit);
+    return getCultureCombatMultiplier(region, role);
+}
+
+/** 关隘守军拒险而守系数（非 pass 或非农夫城防恒为 1） */
+export function getPassGarrisonCombatMultiplier(unit: IBattleUnit): number {
+    return getPassGarrisonMultiplier(unit);
+}
+
+/** 单单位固定战力系数 = 文化区 ×（关隘守军时拒险而守 ×1.2） */
+export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
+    return getCultureOnlyCombatMultiplier(unit) * getPassGarrisonMultiplier(unit);
 }
 
 /** 剧本军团 / 远征军团 ×1.2；城防单位恒为 1 */

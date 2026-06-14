@@ -1,17 +1,19 @@
 import { GameConfig } from '../../config/GameConfig';
 import { PerformanceMonitor } from '../../debug/PerformanceMonitor';
-import { getEuclideanDistance } from '../../core/DistanceUtils';
+import { getEuclideanDistance, distanceAlongPolyline } from '../../core/DistanceUtils';
 import { roadRegistry } from '../../roads/RoadRegistry';
 import { City, LatLng } from '../../types/core';
 import { gameLog } from '../../utils/GameLogger';
 import { Army } from '../Army';
 import {
     buildRoadMarchPath,
+    findFirstHostileAlongPolyline,
     logSuspiciousMarchFirstLeg,
     resolveMarchTargetOnPath,
 } from '../LegionMarchPath';
 import { canResumeSavedMarch, marchPathPointsFromPreview } from './marchResumePolicy';
 import type { CityManager } from '../../world/CityManager';
+import { isCampaignLegion } from '../LegionSpawnPolicy';
 
 export interface LegionRoadMarchDeps {
     cityManager: CityManager;
@@ -56,21 +58,40 @@ function orderRoadMarchStartCandidates(
 
 function resolveMarchTarget(
     deps: LegionRoadMarchDeps,
+    army: Army,
     factionId: string,
     startCityId: string | undefined,
     targetCityId: string,
-    marchPath: { lat: number; lng: number }[]
+    marchPath: { lat: number; lng: number }[],
+    currentPos: LatLng,
 ): string {
-    return resolveMarchTargetOnPath(
-        factionId,
-        startCityId,
-        targetCityId,
-        marchPath,
-        (id) => deps.cityManager.getCity(id)?.factionId,
-        deps.cityManager,
-        (fid, start, target, getFaction) =>
-            roadRegistry.resolveFirstHostileCityOnPath(fid, start, target, getFaction)
-    );
+    let marchTargetId = targetCityId;
+    // 远征/剧本：直取战略目标，不从路网起点重扫身后敌城
+    if (startCityId && !isCampaignLegion(army)) {
+        marchTargetId = resolveMarchTargetOnPath(
+            factionId,
+            startCityId,
+            targetCityId,
+            marchPath,
+            (id) => deps.cityManager.getCity(id)?.factionId,
+            deps.cityManager,
+            (fid, start, target, getFaction) =>
+                roadRegistry.resolveFirstHostileCityOnPath(fid, start, target, getFaction)
+        );
+    }
+    if (marchPath.length >= 2) {
+        const polylineOpts = isCampaignLegion(army)
+            ? { minAlong: Math.max(0, distanceAlongPolyline(currentPos, marchPath) - 0.02) }
+            : undefined;
+        marchTargetId = findFirstHostileAlongPolyline(
+            factionId,
+            marchPath,
+            marchTargetId,
+            deps.cityManager,
+            polylineOpts,
+        );
+    }
+    return marchTargetId;
 }
 
 /**
@@ -156,10 +177,12 @@ export function moveLegionToCity(
         : [];
     const hopForResume = resolveMarchTarget(
         deps,
+        army,
         factionId,
         nearestStartCityId ?? undefined,
         targetCityId,
-        pathPreviewForResume
+        pathPreviewForResume,
+        currentPos,
     );
     if (tryResumeRoadMarch(deps, army, targetCityId, hopForResume, currentPos)) {
         notePathfinding();
@@ -182,10 +205,12 @@ export function moveLegionToCity(
         const pathPreview = roadRegistry.getFullPathToCity(currentPos, targetCityId, candidateStartId);
         const candidateMarchTargetId = resolveMarchTarget(
             deps,
+            army,
             factionId,
             candidateStartId,
             targetCityId,
-            pathPreview ?? []
+            pathPreview ?? [],
+            currentPos,
         );
         const candidatePath = roadRegistry.getFullPathToCity(
             currentPos,

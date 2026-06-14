@@ -42,9 +42,11 @@ export function findFirstHostileAlongPolyline(
     factionId: string,
     path: LatLng[],
     fallbackTargetId: string,
-    cities: MarchCityAccess
+    cities: MarchCityAccess,
+    options?: { minAlong?: number },
 ): string {
     const zoc = GameConfig.SIEGE.COMBAT_RADIUS;
+    const minAlong = options?.minAlong ?? 0;
     let bestId = fallbackTargetId;
     const fallbackCity = cities.getCity(fallbackTargetId);
     let bestAlong = fallbackCity
@@ -61,6 +63,8 @@ export function findFirstHostileAlongPolyline(
         if (getEuclideanDistance(cpos, path[0]) <= zoc) continue;
         if (minDistanceToPolyline(cpos, path) > zoc) continue;
         const along = distanceAlongPolyline(cpos, path);
+        // 远征/剧本：忽略身后路径上的敌城，避免后方失守时折返「回援」
+        if (along < minAlong) continue;
         if (along < bestAlong) {
             bestAlong = along;
             bestId = city.id;

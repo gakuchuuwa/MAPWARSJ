@@ -13,6 +13,9 @@
  *
  * 一条剧本 = 一份数据：出生（城+时间）→ 精锐+将领+立绘+兵力 → 目标序列（实时 march 逐城）
  *
+ * **剧本军团系统战略**：全员胜后 S② 因粮于敌（`SCRIPTED_LEGION_POST_BATTLE_SKILL_ID`），
+ * 与将领 `GENERAL_PROFILES` 战略格独立；将领仍可另配 S①/S③–S⑦。
+ *
  * 运行驱动：RecruitmentSystem.spawnScriptedCampaigns / onScriptedCampaignYear → LegionSpawnPolicy
  * 目标推进：LegionBehaviors.resolveExpeditionState → tickScriptedCampaignExpedition（逐城换目标）
  * 策略表：src/legion/LegionSpawnPolicy.ts（补兵/募兵/兵力/立绘判定集中在此）
