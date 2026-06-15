@@ -39,6 +39,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     guangzhou: { generalId: 'liulong', generalName: '刘龑', portrait: '/assets/lingnan/liulong.png' },
     shu: { generalId: 'wangping', generalName: '王平', portrait: '/assets/shuguo/wangping.png' },
     pagan: { generalId: 'anuluvtuo', generalName: '阿奴律陀', portrait: '/assets/dianmian/anuluvtuo.png' },
+    liang: { generalId: 'machao', generalName: '马超', portrait: '/assets/hexi/machao.png' },
+    qiuci: { generalId: 'baiba', generalName: '白霸', portrait: '/assets/xiyu/baiba.png' },
+    tubo: { generalId: 'lunqinling', generalName: '论钦陵', portrait: '/assets/tubo/lunqinling.png' },
+    menggu_d: { generalId: 'chengjisihan', generalName: '成吉思汗', portrait: '/assets/caoyuan/chengjisihan.png' },
+    bohai: { generalId: 'dazuorong', generalName: '大祚荣', portrait: '/assets/dongbei/dazuorong.png' },
+    goryeo: { generalId: 'jiangganzan', generalName: '姜邯赞', portrait: '/assets/chaoxian/jiangganzan.png' },
+    ashikaga: { generalId: 'zulijunshi', generalName: '足利尊氏', portrait: '/assets/riben/zulijunshi.png' },
+    tiemuer: { generalId: 'tiemuer', generalName: '帖木儿', portrait: '/assets/zhongya/tiemuer.png' },
+    siam: { generalId: 'nalixuan', generalName: '纳黎萱', portrait: '/assets/dianmian/nalixuan.png' },
+    shang: { generalId: 'fuhao', generalName: '妇好', portrait: '/assets/yinshang/fuhao.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

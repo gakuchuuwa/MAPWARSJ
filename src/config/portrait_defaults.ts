@@ -153,6 +153,13 @@ const _zhongyuanPortraitGlob = import.meta.glob<string>(
 );
 const _zhongyuanPortraitPool: string[] = Object.values(_zhongyuanPortraitGlob);
 
+/** 殷商专属立绘池（商@安阳 + 殷@朝歌） */
+const _yinshangPortraitGlob = import.meta.glob<string>(
+    '../../public/assets/yinshang/*.png',
+    { eager: true, query: '?url', import: 'default' },
+);
+const _yinshangPortraitPool: string[] = Object.values(_yinshangPortraitGlob);
+
 /** 南方立绘池 */
 const _nanfangPortraitGlob = import.meta.glob<string>(
     '../../public/assets/nanfang/*.png',
@@ -620,7 +627,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     // 'qin': _zhongyuanPortraitPool,  // qin 有专属池
     'qing': _zhongyuanPortraitPool,
     'quanrong': _zhongyuanPortraitPool,
-    'shang': _zhongyuanPortraitPool,
+    'shang': _yinshangPortraitPool,
     'shangzhou': _zhongyuanPortraitPool,
     'shen': _zhongyuanPortraitPool,
     'sima_d': _zhongyuanPortraitPool,
@@ -640,7 +647,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'yanchuan_d': _zhongyuanPortraitPool,
     'yangshao': _zhongyuanPortraitPool,
     'yao': _zhongyuanPortraitPool,
-    'yin': _zhongyuanPortraitPool,
+    'yin': _yinshangPortraitPool,
     'yingzhou_d': _zhongyuanPortraitPool,
     'yuan_cj_d': _zhongyuanPortraitPool,
     'zhao': _zhongyuanPortraitPool,

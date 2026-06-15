@@ -19,7 +19,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   ranwei_d: '乞活军',   // 巨鹿·§1 #41 冉闵陈午
   wuzhou_d: '控鹤军',   // 洛阳·§1 #47 武则天北衙
   fu: '皂衣队',         // 大散关·§1 #39 苻坚前秦
-  shang: '殷商质子',    // 安阳·§1 #2 殷商质子
+  shang: '虎贲多射',       // 安阳·殷商虎贲与多射（妇好征伐）
   zhou: '岐阳周师',     // 岐山·§1 #3 虎贲三千（岐阳即岐周故地）
   xia: '夏后亲卫',      // 安邑·§1 #1 夏后氏
   sui: '骁果军',        // 汉东·§1 #43 隋帝骁果（≠瓦岗军）

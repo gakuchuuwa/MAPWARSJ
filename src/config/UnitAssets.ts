@@ -50,6 +50,16 @@ export const SPRITE_PATHS = {
         'liulong': '/assets/lingnan/liulong.png',
         'wangping': '/assets/shuguo/wangping.png',
         'anuluvtuo': '/assets/dianmian/anuluvtuo.png',
+        'machao': '/assets/hexi/machao.png',
+        'baiba': '/assets/xiyu/baiba.png',
+        'lunqinling': '/assets/tubo/lunqinling.png',
+        'chengjisihan': '/assets/caoyuan/chengjisihan.png',
+        'dazuorong': '/assets/dongbei/dazuorong.png',
+        'jiangganzan': '/assets/chaoxian/jiangganzan.png',
+        'zulijunshi': '/assets/riben/zulijunshi.png',
+        'tiemuer': '/assets/zhongya/tiemuer.png',
+        'nalixuan': '/assets/dianmian/nalixuan.png',
+        'fuhao': '/assets/yinshang/fuhao.png',
     },
     PLAYER_DEFAULT: {
         frames: [

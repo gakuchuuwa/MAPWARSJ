@@ -162,6 +162,64 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tacticalSkillId: 'tac_03', // ③ 侵掠如火（战象冲锋，统一缅甸）
         strategicSkillId: 'str_04', // S④ 所向披靡（蒲甘王朝缔造）
     },
+    machao: {
+        generalId: 'machao',
+        tier: 'ordinary',
+        tacticalSkillId: 'tac_08', // ⑧ 置之死地（潼关复仇，凉州突骑）
+    },
+    baiba: {
+        generalId: 'baiba',
+        tier: 'ordinary',
+        tacticalSkillId: 'tac_06', // ⑥ 哀兵必胜（班超所立，孤悬西域）
+    },
+    lunqinling: {
+        generalId: 'lunqinling',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（大非川歼灭唐军十万）
+        strategicSkillId: 'str_06', // S⑥ 居高临下（青藏高原主场）
+    },
+    chengjisihan: {
+        generalId: 'chengjisihan',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（蒙古铁骑摧枯拉朽）
+        strategicSkillId: 'str_01', // S① 兵贵神速（闪电征服欧亚）
+    },
+    dazuorong: {
+        generalId: 'dazuorong',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（天门岭败唐立国）
+        strategicSkillId: 'str_06', // S⑥ 居高临下（长白山脉主场）
+    },
+    jiangganzan: {
+        generalId: 'jiangganzan',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（龟州大捷水攻破契丹十万）
+        strategicSkillId: 'str_04', // S④ 所向披靡（高丽抗辽决战）
+    },
+    zulijunshi: {
+        generalId: 'zulijunshi',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（建武新政讨幕）
+        strategicSkillId: 'str_04', // S④ 所向披靡（室町幕府开创）
+    },
+    tiemuer: {
+        generalId: 'tiemuer',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（重装骑兵横扫中亚）
+        strategicSkillId: 'str_01', // S① 兵贵神速（闪电征服波斯印度）
+    },
+    nalixuan: {
+        generalId: 'nalixuan',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（象战决斗击杀缅甸王储）
+        strategicSkillId: 'str_04', // S④ 所向披靡（复国独立战争）
+    },
+    fuhao: {
+        generalId: 'fuhao',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（征鬼方羌方，甲骨文十战）
+        strategicSkillId: 'str_04', // S④ 所向披靡（商朝第一女将）
+    },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {
