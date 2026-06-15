@@ -124,6 +124,44 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tacticalSkillId: 'tac_03', // ③ 侵掠如火
         strategicSkillId: 'str_03', // S③ 攻城拔寨
     },
+    lishimin: {
+        generalId: 'lishimin',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（玄甲骑冲锋）
+        strategicSkillId: 'str_04', // S④ 所向披靡（虎牢关野战）
+    },
+    direnjie: {
+        generalId: 'direnjie',
+        tier: 'ordinary',
+        tacticalSkillId: 'tac_10', // ⑩ 深沟高垒（固守不破）
+    },
+    zhudi: {
+        generalId: 'zhudi',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（神机营火器+五军营冲锋）
+        strategicSkillId: 'str_01', // S① 兵贵神速（五征漠北急行军）
+    },
+    lisheng: {
+        generalId: 'lisheng',
+        tier: 'ordinary',
+        tacticalSkillId: 'tac_09', // ⑨ 釜底抽薪（徐知诰代吴建唐）
+    },
+    liulong: {
+        generalId: 'liulong',
+        tier: 'ordinary',
+        tacticalSkillId: 'tac_08', // ⑧ 置之死地（割据岭南，残暴治国）
+    },
+    wangping: {
+        generalId: 'wangping',
+        tier: 'ordinary',
+        tacticalSkillId: 'tac_10', // ⑩ 深沟高垒（镇守汉中，无当飞军）
+    },
+    anuluvtuo: {
+        generalId: 'anuluvtuo',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（战象冲锋，统一缅甸）
+        strategicSkillId: 'str_04', // S④ 所向披靡（蒲甘王朝缔造）
+    },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

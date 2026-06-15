@@ -32,6 +32,13 @@ export interface FactionGeneral {
 /** factionId → 开局名将。先做秦/白起跑通，其余知名势力逐个补（廉颇、韩信、项羽…）。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     qin: { generalId: 'baiqi', generalName: '白起', portrait: '/assets/qin/baiqi.png' },
+    tang: { generalId: 'lishimin', generalName: '李世民', portrait: '/assets/litang/lishimin.png' },
+    wuzhou_d: { generalId: 'direnjie', generalName: '狄仁杰', portrait: '/assets/wuzhou/direnjie.png' },
+    ming_d: { generalId: 'zhudi', generalName: '朱棣', portrait: '/assets/daming/zhudi.png' },
+    nantang_d: { generalId: 'lisheng', generalName: '李昪', portrait: '/assets/litang/lisheng.png' },
+    guangzhou: { generalId: 'liulong', generalName: '刘龑', portrait: '/assets/lingnan/liulong.png' },
+    shu: { generalId: 'wangping', generalName: '王平', portrait: '/assets/shuguo/wangping.png' },
+    pagan: { generalId: 'anuluvtuo', generalName: '阿奴律陀', portrait: '/assets/dianmian/anuluvtuo.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

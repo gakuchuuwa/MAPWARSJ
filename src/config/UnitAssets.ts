@@ -40,6 +40,16 @@ export const SPRITE_PATHS = {
         'default': '/assets/zhongyuan/CENTRAL_field.png',  // TODO: 待替换
         // ── 01秦朝剧本立绘 ──
         'baiqi': '/assets/qin/baiqi.png',
+        // ── 02 大唐将领 ──
+        'lishimin': '/assets/litang/lishimin.png',
+        // ── 03 武周将领 ──
+        'direnjie': '/assets/wuzhou/direnjie.png',
+        // ── 04 大明将领 ──
+        'zhudi': '/assets/daming/zhudi.png',
+        'lisheng': '/assets/litang/lisheng.png',
+        'liulong': '/assets/lingnan/liulong.png',
+        'wangping': '/assets/shuguo/wangping.png',
+        'anuluvtuo': '/assets/dianmian/anuluvtuo.png',
     },
     PLAYER_DEFAULT: {
         frames: [

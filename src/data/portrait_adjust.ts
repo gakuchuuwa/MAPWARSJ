@@ -169,12 +169,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/public/assets/zhongyuan/e7fcf159-f365-48a8-9c8d-e344fbc93d35.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": 10
+            "offsetY": 11
         },
         "/public/assets/zhongyuan/47d98392-6b34-4087-aaa2-d972594d5fa1.png": {
-            "scale": 1.02,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": -10
+            "offsetY": -9
         },
         "/public/assets/zhongyuan/b6171829-5227-4837-8cd6-870fd2039c68.png": {
             "scale": 1,
@@ -255,6 +255,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 15,
             "offsetY": -35
+        },
+        "/public/assets/zhongyuan/56670b99-112e-48d5-932f-b48b3017cf55.png": {
+            "scale": 1.04,
+            "offsetX": 18,
+            "offsetY": 14
+        },
+        "/public/assets/zhongya/e7a82f49-2f9f-45c6-bdd9-1b5221ad376a.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/public/assets/zhongya/CENTRAL_ASIA_garrison.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/public/assets/zhongya/25057c7e-74c4-4baf-bb62-8b5c2f416a77.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 2
         }
     },
     "folderGuides": {
