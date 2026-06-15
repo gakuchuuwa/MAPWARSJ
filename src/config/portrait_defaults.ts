@@ -90,13 +90,6 @@ const _puganPortraitGlob = import.meta.glob<string>(
 );
 const _puganPortraitPool: string[] = Object.values(_puganPortraitGlob);
 
-/** 北方立绘池 */
-const _beifangPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/beifang/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _beifangPortraitPool: string[] = Object.values(_beifangPortraitGlob);
-
 /** 西域立绘池 */
 const _xiyuPortraitGlob = import.meta.glob<string>(
     '../../public/assets/xiyu/*.png',
@@ -276,34 +269,34 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'konbaung': _dianmianPortraitPool,
     'hani_d': _dianmianPortraitPool,
     // 北方 28 势力
-    'anshi_d': _beifangPortraitPool,
-    'bing': _beifangPortraitPool,
-    'dai_d': _beifangPortraitPool,
-    'dizhou': _beifangPortraitPool,
-    'dongdan': _beifangPortraitPool,
-    'erzhu': _beifangPortraitPool,
-    'gaoqi_d': _beifangPortraitPool,
-    'guzhu': _beifangPortraitPool,
-    'hejian': _beifangPortraitPool,
-    'jinzhou': _beifangPortraitPool,
-    'kumo': _beifangPortraitPool,
-    'liangshidu': _beifangPortraitPool,
-    'pingyuan': _beifangPortraitPool,
-    'qingyuan_bd': _beifangPortraitPool,
-    'ranwei_d': _beifangPortraitPool,
-    'shizhao_d': _beifangPortraitPool,
-    'tongma': _beifangPortraitPool,
-    'tuoba': _beifangPortraitPool,
-    'wangyan': _beifangPortraitPool,
-    'weihaiwei': _beifangPortraitPool,
-    'xuan': _beifangPortraitPool,
-    'yan': _beifangPortraitPool,
-    'yang_aner': _beifangPortraitPool,
-    'yangshe': _beifangPortraitPool,
-    'yunzhong': _beifangPortraitPool,
-    'zhe_d': _beifangPortraitPool,
-    'zhongshan': _beifangPortraitPool,
-    'zu_d': _beifangPortraitPool,
+    'anshi_d': _zhongyuanPortraitPool,
+    'bing': _zhongyuanPortraitPool,
+    'dai_d': _zhongyuanPortraitPool,
+    'dizhou': _zhongyuanPortraitPool,
+    'dongdan': _zhongyuanPortraitPool,
+    'erzhu': _zhongyuanPortraitPool,
+    'gaoqi_d': _zhongyuanPortraitPool,
+    'guzhu': _zhongyuanPortraitPool,
+    'hejian': _zhongyuanPortraitPool,
+    'jinzhou': _zhongyuanPortraitPool,
+    'kumo': _zhongyuanPortraitPool,
+    'liangshidu': _zhongyuanPortraitPool,
+    'pingyuan': _zhongyuanPortraitPool,
+    'qingyuan_bd': _zhongyuanPortraitPool,
+    'ranwei_d': _zhongyuanPortraitPool,
+    'shizhao_d': _zhongyuanPortraitPool,
+    'tongma': _zhongyuanPortraitPool,
+    'tuoba': _zhongyuanPortraitPool,
+    'wangyan': _zhongyuanPortraitPool,
+    'weihaiwei': _zhongyuanPortraitPool,
+    'xuan': _zhongyuanPortraitPool,
+    'yan': _zhongyuanPortraitPool,
+    'yang_aner': _zhongyuanPortraitPool,
+    'yangshe': _zhongyuanPortraitPool,
+    'yunzhong': _zhongyuanPortraitPool,
+    'zhe_d': _zhongyuanPortraitPool,
+    'zhongshan': _zhongyuanPortraitPool,
+    'zu_d': _zhongyuanPortraitPool,
     // 西域 22 势力
     'anxi': _xiyuPortraitPool,
     'duerbote': _xiyuPortraitPool,
@@ -749,7 +742,20 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'yettishar': _zhongyaPortraitPool,
 };
 
-function pickRandom(arr: string[]): string {
+/** 比较两个立绘路径是否指向同一文件（浏览器 src 可能解析为完整 URL） */
+export function portraitUrlsEqual(a: string, b: string): boolean {
+    if (a === b) return true;
+    // 兜底：比文件名
+    const aName = a.split('/').pop() || a;
+    const bName = b.split('/').pop() || b;
+    return aName === bName;
+}
+
+function pickRandom(arr: string[], exclude?: string): string {
+    if (exclude && arr.length > 1) {
+        const filtered = arr.filter(p => !portraitUrlsEqual(p, exclude));
+        if (filtered.length > 0) return filtered[Math.floor(Math.random() * filtered.length)];
+    }
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
@@ -764,18 +770,19 @@ export function getRandomFactionPortrait(factionId: string): string | undefined 
 }
 
 /** 按参战单位文化区与军队/守军选默认立绘路径 */
-export function getCombatPortraitPath(unit: IBattleUnit): string {
+export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): string {
     if (unit.factionId === 'panjun') {
         return '/assets/panjun/panjun.png';
     }
     // 军团创建时已固定 portraitPath（见 Army 构造、BattleUnitFactory）
-    if (unit.portraitPath) {
+    // 若与攻方立绘相同则跳过，走下方随机逻辑
+    if (unit.portraitPath && !(excludePath && portraitUrlsEqual(unit.portraitPath, excludePath))) {
         return unit.portraitPath;
     }
-    // 守城方：每次从势力立绘池随机选（代表不同守将）
+    // 守城方：每次从势力立绘池随机选，排除攻方立绘
     const factionId = unit.factionId;
     if (factionId && FACTION_PORTRAIT_POOLS[factionId]) {
-        return pickRandom(FACTION_PORTRAIT_POOLS[factionId]);
+        return pickRandom(FACTION_PORTRAIT_POOLS[factionId], excludePath);
     }
     const region = resolveUnitCultureRegion(unit);
     const role = getCulturePortraitRole(unit);

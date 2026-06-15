@@ -130,6 +130,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -17
+        },
+        "/public/assets/litang/litang (1).png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/public/assets/zhongyuan/9ce2262a-f91f-4367-8d70-7b9548788156.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/public/assets/litang/litang (7).png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/public/assets/zhongyuan/37f49d28-6658-49eb-b2aa-ec1d3f27df89.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/public/assets/wuzhou/wuzhou (5).png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/public/assets/zhongyuan/5d03016a-3228-4c25-b871-332f97bc15b3.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/public/assets/zhongyuan/CENTRAL_garrison.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 13
         }
     },
     "folderGuides": {

@@ -4,6 +4,7 @@ import { BattleField } from '../core/BattleField';
 import { SPRITE_PATHS } from '../config/GameConfig';
 import {
     getCombatPortraitPath,
+    portraitUrlsEqual,
     resolvePortraitSourceFacing,
     shouldMirrorPortraitForSide,
     type PortraitSourceFacing,
@@ -1149,7 +1150,7 @@ export class CombatUI {
         this.updateInfoDirect(attName, defName, displayTitle, displayYear, description);
 
         this.setPortrait(this.leftPortrait, attacker, attacker.generalId, attacker.factionId, attackerPortrait, 'attacker');
-        this.setPortrait(this.rightPortrait, defender, defender.generalId, defender.factionId, defenderPortrait, 'defender');
+        this.setPortrait(this.rightPortrait, defender, defender.generalId, defender.factionId, defenderPortrait, 'defender', this.leftPortrait.src || undefined);
 
         const setGeneralName = (tag: HTMLDivElement, unit: IBattleUnit) => {
             let name = '';
@@ -1594,7 +1595,7 @@ export class CombatUI {
 
         this.currentBattleKey = title || `battle_${Date.now()}`;
         this.setPortrait(this.leftPortrait, att, att.generalId, att.factionId, undefined, 'attacker');
-        this.setPortrait(this.rightPortrait, def, def.generalId, def.factionId, undefined, 'defender');
+        this.setPortrait(this.rightPortrait, def, def.generalId, def.factionId, undefined, 'defender', this.leftPortrait.src || undefined);
         this.updateStats();
     }
 
@@ -1699,6 +1700,7 @@ export class CombatUI {
         factionId?: string | null,
         providedDefault?: string,
         side?: 'attacker' | 'defender',
+        excludePath?: string,
     ) {
         const rememberFacing = (url: string) => {
             if (!side) return;
@@ -1731,10 +1733,13 @@ export class CombatUI {
             setSrc(providedDefault);
             return;
         }
-        // ③ 军团创建时已固定的立绘（守军不设 portraitPath，走下方随机逻辑）
+        // ③ 军团创建时已固定的立绘（若与攻方相同则跳过，走下方随机逻辑）
         if (unit?.portraitPath) {
-            setSrc(unit.portraitPath);
-            return;
+            if (!excludePath || !portraitUrlsEqual(unit.portraitPath, excludePath)) {
+                setSrc(unit.portraitPath);
+                return;
+            }
+            // 与攻方相同 → 跳过，走下方随机去重
         }
         const portraits = (SPRITE_PATHS.GENERAL_PORTRAITS || {}) as Record<string, string>;
         // ④ 将领 ID（如 baiqi）
@@ -1749,7 +1754,7 @@ export class CombatUI {
         }
         // ⑥ 文化区军队/守军 + panjun
         if (unit) {
-            setSrc(getCombatPortraitPath(unit));
+            setSrc(getCombatPortraitPath(unit, excludePath));
             return;
         }
         setSrc(portraits['default'] || '/assets/general_default.png');
