@@ -96,6 +96,7 @@ export function applyExpeditionEliteRename(
     }
     army.name = elite;
   }
+  // 名将不在此处绑定：名将归势力（开局配将，见 FactionGenerals.ts），远征只改番号
   applyLegionCultureComposition(army);
   return true;
 }

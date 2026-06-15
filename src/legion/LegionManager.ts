@@ -1,4 +1,5 @@
 import { Army } from './Army';
+import { getFactionGeneral } from '../data/FactionGenerals';
 import { CityManager } from '../world/CityManager';
 import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
@@ -258,7 +259,26 @@ export class LegionManager {
 
         applyLegionCultureComposition(army, region);
         this.addArmy(army);
+        this.assignFactionGeneralIfVacant(army);
         return army;
+    }
+
+    /**
+     * 名将归势力：知名势力的军团出生即配名将（每势力一名将，单载体不变式）。
+     * 若该势力已有在世军团扛着名将，则本军团不重复挂——避免「白起×3」。
+     * 载体覆没后，下一支新建的同势力军团会接过名将。
+     */
+    private assignFactionGeneralIfVacant(army: Army): void {
+        const general = getFactionGeneral(army.getFactionId());
+        if (!general) return;
+        const hasCarrier = this.armies.some(
+            (a) => a !== army && !a.isDestroyed
+                && a.getFactionId() === army.getFactionId()
+                && a.generalId === general.generalId,
+        );
+        if (hasCarrier) return;
+        army.generalId = general.generalId;
+        army.portraitPath = general.portrait;
     }
 
     /**

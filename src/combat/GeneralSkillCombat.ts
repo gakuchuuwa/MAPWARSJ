@@ -40,17 +40,21 @@ function getArmyEntity(unit: IBattleUnit): Army | null {
     return (entity as Army) ?? null;
 }
 
-/** 跟拍 + 剧本/远征军团 + 有将领档案 */
+/**
+ * 名将归势力（2026-06-15）：只要军团带 generalId 且该 id 有武将技档案即生效，
+ * 不再要求跟随/剧本/远征——AI 名将同样触发，攻守双方各自结算。
+ * （跟随判定 legionManagerRef 保留供他处/未来用。）
+ */
 export function canUnitUseGeneralSkills(unit: IBattleUnit): boolean {
-    if (!legionManagerRef?.isFollowedLegion(unit.id)) return false;
+    void legionManagerRef;
     const army = getArmyEntity(unit);
     if (!army) return false;
-    if (!army.scriptedCampaignId && !army.expeditionTargetCityId) return false;
     if (!getGeneralProfile(unit.generalId)) return false;
     return true;
 }
 
-function findEligibleFollowedUnit(units: IBattleUnit[]): IBattleUnit | null {
+/** 取某侧第一支可用武将技的军团（带名将档案的） */
+function findEligibleGeneralUnit(units: IBattleUnit[]): IBattleUnit | null {
     for (const u of units) {
         if (canUnitUseGeneralSkills(u)) return u;
     }
@@ -258,7 +262,7 @@ export function tryEmitOpeningTacticalOnReinforcementJoin(
 ): void {
     if (!canUnitUseGeneralSkills(joinedUnit)) return;
     const sideUnits = isAttacker ? attackerUnits : defenderUnits;
-    const eligible = findEligibleFollowedUnit(sideUnits);
+    const eligible = findEligibleGeneralUnit(sideUnits);
     if (eligible?.id !== joinedUnit.id) return;
 
     const skill = getOpeningTacticalSkill(joinedUnit);
@@ -281,41 +285,35 @@ export function applyOpeningTacticalToRolls(
     defRoll: number,
     emitUi = true,
 ): { attRoll: number; defRoll: number; trigger?: TacticalSkillTrigger } {
-    const followedAtt = findEligibleFollowedUnit(attackerUnits);
-    const followedDef = findEligibleFollowedUnit(defenderUnits);
-    const followed = followedAtt ?? followedDef;
-    if (!followed?.generalId) return { attRoll, defRoll };
+    let lastTrigger: TacticalSkillTrigger | undefined;
 
-    const skill = getOpeningTacticalSkill(followed);
-    if (!skill || skill.effect !== 'ally_mult_1_2') return { attRoll, defRoll };
-
-    const trigger: TacticalSkillTrigger = {
-        displayName: skill.displayName,
-        generalId: followed.generalId,
-        skillId: skill.id,
-    };
-
-    if (followedAtt) {
-        const next = attRoll * skill.magnitude;
+    // 一侧的开局战术：有名将且为 ③侵掠如火（己战×1.2）则乘到该侧掷色
+    const applySide = (units: IBattleUnit[], roll: number, sideLabel: string): number => {
+        const unit = findEligibleGeneralUnit(units);
+        if (!unit?.generalId) return roll;
+        const skill = getOpeningTacticalSkill(unit);
+        if (!skill || skill.effect !== 'ally_mult_1_2') return roll;
+        const next = roll * skill.magnitude;
         if (emitUi) {
             gameLog(
                 'battle',
-                `⚔️ [武将技] ${followed.generalId} 【${skill.displayName}】 攻方有效战力 ×${skill.magnitude} (${attRoll.toFixed(0)}→${next.toFixed(0)})`,
+                `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}有效战力 ×${skill.magnitude} (${roll.toFixed(0)}→${next.toFixed(0)})`,
             );
+            const trigger: TacticalSkillTrigger = {
+                displayName: skill.displayName,
+                generalId: unit.generalId,
+                skillId: skill.id,
+            };
             onTacticalSkillTriggered?.(trigger);
+            lastTrigger = trigger;
         }
-        return { attRoll: next, defRoll, trigger };
-    }
+        return next;
+    };
 
-    const next = defRoll * skill.magnitude;
-    if (emitUi) {
-        gameLog(
-            'battle',
-            `⚔️ [武将技] ${followed.generalId} 【${skill.displayName}】 守方有效战力 ×${skill.magnitude} (${defRoll.toFixed(0)}→${next.toFixed(0)})`,
-        );
-        onTacticalSkillTriggered?.(trigger);
-    }
-    return { attRoll, defRoll: next, trigger };
+    // 攻守双方各自结算（白起对廉颇：两边名将技都生效）
+    const outAtt = applySide(attackerUnits, attRoll, '攻方');
+    const outDef = applySide(defenderUnits, defRoll, '守方');
+    return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }
 
 /**
@@ -328,35 +326,28 @@ export function applyStrategicBattleToRolls(
     defRoll: number,
     battleType: BattleType,
 ): { attRoll: number; defRoll: number } {
-    const followedAtt = findEligibleFollowedUnit(attackerUnits);
-    const followedDef = findEligibleFollowedUnit(defenderUnits);
-    const followed = followedAtt ?? followedDef;
-    if (!followed?.generalId) return { attRoll, defRoll };
-
-    const mult = getStrategicBattlePowerMultiplier(followed, battleType);
-    if (Math.abs(mult - 1) < 0.001) return { attRoll, defRoll };
-
-    const profile = getGeneralProfile(followed.generalId);
-    const skill = profile?.strategicSkillId
-        ? getStrategicSkillDef(profile.strategicSkillId)
-        : null;
-    const label = skill?.displayName ?? '战略';
-
-    if (followedAtt) {
-        const next = attRoll * mult;
+    // 一侧的战略乘区（如 S③攻城拔寨，仅 siege；按战场类型匹配）
+    const applySide = (units: IBattleUnit[], roll: number, sideLabel: string): number => {
+        const unit = findEligibleGeneralUnit(units);
+        if (!unit?.generalId) return roll;
+        const mult = getStrategicBattlePowerMultiplier(unit, battleType);
+        if (Math.abs(mult - 1) < 0.001) return roll;
+        const profile = getGeneralProfile(unit.generalId);
+        const skill = profile?.strategicSkillId
+            ? getStrategicSkillDef(profile.strategicSkillId)
+            : null;
+        const label = skill?.displayName ?? '战略';
+        const next = roll * mult;
         gameLog(
             'battle',
-            `🏰 [武将技] ${followed.generalId} 【${label}】 攻方有效战力 ×${mult} (${attRoll.toFixed(0)}→${next.toFixed(0)})`,
+            `🏰 [武将技] ${unit.generalId} 【${label}】 ${sideLabel}有效战力 ×${mult} (${roll.toFixed(0)}→${next.toFixed(0)})`,
         );
-        return { attRoll: next, defRoll };
-    }
+        return next;
+    };
 
-    const next = defRoll * mult;
-    gameLog(
-        'battle',
-        `🏰 [武将技] ${followed.generalId} 【${label}】 守方有效战力 ×${mult} (${defRoll.toFixed(0)}→${next.toFixed(0)})`,
-    );
-    return { attRoll, defRoll: next };
+    const outAtt = applySide(attackerUnits, attRoll, '攻方');
+    const outDef = applySide(defenderUnits, defRoll, '守方');
+    return { attRoll: outAtt, defRoll: outDef };
 }
 
 /**

@@ -59,9 +59,35 @@ export class TargetEvaluator {
         );
         if (reachable.length === 0) return null;
 
+        // 枪打出头鸟（反雪球）：领先势力过大时，概率改打它最近的城（见 GameConfig.AI.LEADER_HUNT）
+        const hunt = GameConfig.AI.LEADER_HUNT;
+        if (hunt?.ENABLED && Math.random() < hunt.PROBABILITY) {
+            const leader = TargetEvaluator.findLeaderFaction(cities);
+            if (leader && leader.factionId !== factionId && leader.count >= hunt.CITY_THRESHOLD) {
+                const factionById = new Map(cities.map((c) => [c.id, c.factionId]));
+                const leaderTarget = reachable.find(
+                    (s) => factionById.get(s.targetId) === leader.factionId
+                );
+                if (leaderTarget) return leaderTarget; // reachable 已按道路距离升序 → 最近的领先城
+            }
+        }
+
         const poolSize = Math.max(1, GameConfig.AI.TARGET_NEAR_POOL);
         const pool = reachable.slice(0, Math.min(poolSize, reachable.length));
         return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    /** 当前据点最多的势力（排除无主/叛军 panjun） */
+    private static findLeaderFaction(cities: City[]): { factionId: string; count: number } | null {
+        const counts = new Map<string, number>();
+        for (const c of cities) {
+            if (!c.factionId || c.factionId === 'panjun') continue;
+            counts.set(c.factionId, (counts.get(c.factionId) ?? 0) + 1);
+        }
+        let bestId = '';
+        let bestN = 0;
+        counts.forEach((n, f) => { if (n > bestN) { bestN = n; bestId = f; } });
+        return bestId ? { factionId: bestId, count: bestN } : null;
     }
 
     private static collectReachableEnemies(

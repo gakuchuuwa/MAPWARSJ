@@ -28,6 +28,9 @@ export class CameraFollowUI {
     private limitLabel: HTMLSpanElement | null = null;
     private listHeader: HTMLDivElement | null = null;
     private lastLegionCount: number = -1;
+    /** 势力统计数据源（合并势力榜后，每行附带势力兵力/据点数） */
+    private cityManager: { getCities(): any[] } | null = null;
+    private factionManager: { getFactionName(id: string): string | undefined; getFactionColor(id: string): string | undefined } | null = null;
 
     constructor() {
         this.createListButton();
@@ -52,6 +55,34 @@ export class CameraFollowUI {
         this.onFollowChange = onFollowChange;
         this.onLegionCapChange = onLegionCapChange ?? null;
         this.onRenameLegion = onRenameLegion ?? null;
+    }
+
+    /** 注入势力统计数据源（合并势力榜：每行显示该军团所属势力的兵力与据点数） */
+    public setFactionStats(
+        cityManager: { getCities(): any[] },
+        factionManager: { getFactionName(id: string): string | undefined; getFactionColor(id: string): string | undefined },
+    ): void {
+        this.cityManager = cityManager;
+        this.factionManager = factionManager;
+    }
+
+    /** 一次性汇总各势力的总兵力（城防+军团）与据点数 */
+    private computeFactionTotals(): Map<string, { troops: number; cities: number }> {
+        const totals = new Map<string, { troops: number; cities: number }>();
+        const bump = (fid: string, troops: number, cities: number) => {
+            if (!fid || fid === 'panjun') return;
+            const e = totals.get(fid) ?? { troops: 0, cities: 0 };
+            e.troops += troops; e.cities += cities;
+            totals.set(fid, e);
+        };
+        if (this.cityManager) {
+            for (const c of this.cityManager.getCities()) bump(c.factionId, c.troops ?? 0, 1);
+        }
+        for (const a of this.getArmiesFn?.() ?? []) {
+            if (a.isDestroyed) continue;
+            bump(a.getFactionId?.() ?? '', a.getTroops?.() ?? 0, 0);
+        }
+        return totals;
     }
 
     // ─── 1. 入口按钮（右下角） ──────────────────────────
@@ -128,7 +159,7 @@ export class CameraFollowUI {
             letter-spacing: 3px;
             text-align: center;
         `;
-        header.textContent = '⚔ 野战军团 (0) ⚔';
+        header.textContent = '⚔ 军团·势力榜 (0) ⚔';
         panel.appendChild(header);
         this.listHeader = header;
 
@@ -235,7 +266,7 @@ export class CameraFollowUI {
             this.listButton.innerHTML = `🎖️ 军团 (${count})`;
         }
         if (this.listHeader) {
-            this.listHeader.textContent = `⚔ 野战军团 (${count}) ⚔`;
+            this.listHeader.textContent = `⚔ 军团·势力榜 (${count}) ⚔`;
         }
         this.syncLimitLabel();
     }
@@ -278,34 +309,50 @@ export class CameraFollowUI {
             return;
         }
 
-        // 按兵力降序排列
+        // 按军团兵力降序排列（合并后仍以军团为主）
         armies.sort((a: any, b: any) => (b.getTroops?.() || 0) - (a.getTroops?.() || 0));
 
-        for (const army of armies) {
+        const factionTotals = this.computeFactionTotals();
+
+        for (let idx = 0; idx < armies.length; idx++) {
+            const army = armies[idx];
             const item = document.createElement('div');
             const troops = army.getTroops?.() || 0;
             const name = army.name || army.id;
             const isFollowed = army.id === this.followedArmyId;
+            const fid = army.getFactionId?.() ?? '';
+            const fTotal = factionTotals.get(fid) ?? { troops: 0, cities: 0 };
+            const fName = this.factionManager?.getFactionName(fid) ?? fid;
+            const fColor = this.factionManager?.getFactionColor(fid) ?? '#ffffff';
 
             item.style.cssText = `
-                padding: 8px 14px;
+                padding: 7px 14px;
                 cursor: pointer;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
                 border-bottom: 1px solid rgba(100,80,40,0.2);
                 transition: background 0.15s;
                 font-size: 13px;
                 ${isFollowed ? 'background: rgba(180,140,60,0.25);' : ''}
             `;
 
+            // 第一行：名次 + 军团名 + 军团兵力；第二行：势力色点 + 势力名 + 势力兵力 + 据点数
             item.innerHTML = `
-                <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                    ${isFollowed ? '🎥 ' : ''}${name}
-                </span>
-                <span style="color:#aaa; font-size:12px; margin-left:8px; white-space:nowrap;">
-                    ${this.formatTroops(troops)}
-                </span>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070;">${idx + 1}.</span> ${name}
+                    </span>
+                    <span style="color:#e0c878; font-size:12px; margin-left:8px; white-space:nowrap;">
+                        军 ${this.formatTroops(troops)}
+                    </span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px; color:#9a8f7a;">
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:5px;">
+                        <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(255,255,255,0.3);"></span>
+                        ${fName}
+                    </span>
+                    <span style="margin-left:8px; white-space:nowrap;">
+                        势力 ${this.formatTroops(fTotal.troops)} · ${fTotal.cities}城
+                    </span>
+                </div>
             `;
 
             item.addEventListener('mouseenter', () => {

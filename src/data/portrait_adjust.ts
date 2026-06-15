@@ -120,6 +120,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 10
+        },
+        "/public/assets/lingnan/guangzhou (19).png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/panjun/panjun.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -17
         }
     },
     "folderGuides": {

@@ -141,6 +141,17 @@ export class GameConfig {
     /** 沙盒军团 AI：进攻目标在「道路最近的 N 座敌城」里均匀抽签 */
     static AI = {
         TARGET_NEAR_POOL: 3,
+        /**
+         * 枪打出头鸟（反雪球）：某势力据点数 ≥ CITY_THRESHOLD 时，
+         * 各军团选目标有 PROBABILITY 概率改打该领先势力最近的城。
+         * 无头推演 30 局×300 年实测（648 城）：关闭 → 第78年必有一家破百城、终局仅存4势力；
+         * th40/p0.20 → 雪球被打掉，终局存活 34 势力，37% 的局仍能在约第276年苦战分胜负。
+         */
+        LEADER_HUNT: {
+            ENABLED: true,
+            CITY_THRESHOLD: 40,
+            PROBABILITY: 0.20,
+        },
         /** 行军首段超过此距离（LatLng 单位）时打诊断日志 */
         MARCH_DIAG_FIRST_LEG: 0.35,
         /** 距出兵/驻地据点超过此距离时，寻路优先用当前位置最近城作道路起点（避免野战后折返首都） */

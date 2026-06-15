@@ -603,7 +603,11 @@ async function autoFitImages(images: string[]): Promise<{ done: number; failed: 
 /** 自动校正一组图片 → 保存 → 刷新界面 */
 async function runAutoFit(images: string[], label: string): Promise<void> {
     if (images.length === 0) return;
-    if (!confirm(`将对${label}共 ${images.length} 张立绘自动校正（覆盖现有单张设置），并保存到 portrait_adjust.ts。继续？`)) {
+    if (!confirm(
+        `将对${label}共 ${images.length} 张立绘按「轮廓」自动校正并保存。\n\n` +
+        `注意：满幅立绘轮廓占满画框，自动校正几乎不改变（仅对四周有留白的图有效），` +
+        `且会覆盖你在游戏内 F2 手动调好的这些立绘。确定继续？`,
+    )) {
         return;
     }
     els.autofitProgress.textContent = `自动校正中… 0/${images.length}`;

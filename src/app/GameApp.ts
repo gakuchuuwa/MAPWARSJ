@@ -418,15 +418,14 @@ export class GameApp {
                 () => legionManager.trimLegionsToCap(),
                 (armyId, newName) => legionManager.renameLegion(armyId, newName)
             );
+            // 合并势力榜：军团列表每行附带所属势力的兵力/据点数
+            this.cameraFollowUI.setFactionStats(this.cityManager, this.factionManager);
             this.cameraFollowUI.update();
 
-            this.factionForceUI = new FactionForceUI();
-            this.factionForceUI.init(
-                this.cityManager,
-                this.factionManager,
-                () => legionManager.getArmies()
-            );
-            this.factionForceUI.update();
+            // [合并 2026-06-15] 势力兵力榜已并入军团列表（CameraFollowUI），不再单独建面板
+            // this.factionForceUI = new FactionForceUI();
+            // this.factionForceUI.init(this.cityManager, this.factionManager, () => legionManager.getArmies());
+            // this.factionForceUI.update();
 
             this.expeditionUI = new ExpeditionUI();
             this.expeditionUI.init(
