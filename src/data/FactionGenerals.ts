@@ -49,6 +49,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     tiemuer: { generalId: 'tiemuer', generalName: '帖木儿', portrait: '/assets/zhongya/tiemuer.png' },
     siam: { generalId: 'nalixuan', generalName: '纳黎萱', portrait: '/assets/dianmian/nalixuan.png' },
     shang: { generalId: 'fuhao', generalName: '妇好', portrait: '/assets/yinshang/fuhao.png' },
+    bing: { generalId: 'lvbu', generalName: '吕布', portrait: '/assets/zhongyuan/lvbu.png' },
+    han_d: { generalId: 'hanxin', generalName: '韩信', portrait: '/assets/liuhan/hanxin.png' },
+    wei: { generalId: 'wuqi', generalName: '吴起', portrait: '/assets/zhou/wuqi.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

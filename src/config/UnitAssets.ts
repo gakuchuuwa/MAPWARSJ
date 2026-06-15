@@ -60,6 +60,9 @@ export const SPRITE_PATHS = {
         'tiemuer': '/assets/zhongya/tiemuer.png',
         'nalixuan': '/assets/dianmian/nalixuan.png',
         'fuhao': '/assets/yinshang/fuhao.png',
+        'lvbu': '/assets/zhongyuan/lvbu.png',
+        'hanxin': '/assets/liuhan/hanxin.png',
+        'wuqi': '/assets/zhou/wuqi.png',
     },
     PLAYER_DEFAULT: {
         frames: [

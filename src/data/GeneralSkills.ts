@@ -220,6 +220,23 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tacticalSkillId: 'tac_03', // ③ 侵掠如火（征鬼方羌方，甲骨文十战）
         strategicSkillId: 'str_04', // S④ 所向披靡（商朝第一女将）
     },
+    lvbu: {
+        generalId: 'lvbu',
+        tier: 'ordinary',
+        tacticalSkillId: 'tac_08', // ⑧ 置之死地（辕门射戟，并州狼骑）
+    },
+    hanxin: {
+        generalId: 'hanxin',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（背水一战，暗度陈仓）
+        strategicSkillId: 'str_04', // S④ 所向披靡（兵仙灭楚）
+    },
+    wuqi: {
+        generalId: 'wuqi',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（魏武卒横扫诸侯）
+        strategicSkillId: 'str_04', // S④ 所向披靡（战国兵家亚圣）
+    },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {
