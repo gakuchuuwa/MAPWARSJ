@@ -237,6 +237,41 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tacticalSkillId: 'tac_03', // ③ 侵掠如火（魏武卒横扫诸侯）
         strategicSkillId: 'str_04', // S④ 所向披靡（战国兵家亚圣）
     },
+    nuerhachi: {
+        generalId: 'nuerhachi',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（八旗铁骑萨尔浒大捷）
+        strategicSkillId: 'str_04', // S④ 所向披靡（统一女真建国后金）
+    },
+    jinyixin: {
+        generalId: 'jinyixin',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（花郎精神统一三韩）
+        strategicSkillId: 'str_04', // S④ 所向披靡（新罗统一战争）
+    },
+    benduozhongsheng: {
+        generalId: 'benduozhongsheng',
+        tier: 'ordinary',
+        tacticalSkillId: 'tac_10', // ⑩ 深沟高垒（百战无伤，德川四天王）
+    },
+    sangjiaer: {
+        generalId: 'sangjiaer',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（古拉姆禁卫军）
+        strategicSkillId: 'str_04', // S④ 所向披靡（大塞尔柱末代雄主）
+    },
+    suyebamo: {
+        generalId: 'suyebamo',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（双弓弩象营）
+        strategicSkillId: 'str_04', // S④ 所向披靡（吴哥窟缔造者）
+    },
+    menggong: {
+        generalId: 'menggong',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03', // ③ 侵掠如火（御前诸军灭金抗蒙）
+        strategicSkillId: 'str_04', // S④ 所向披靡（南宋最后的名将）
+    },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

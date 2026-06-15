@@ -52,6 +52,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     bing: { generalId: 'lvbu', generalName: '吕布', portrait: '/assets/zhongyuan/lvbu.png' },
     han_d: { generalId: 'hanxin', generalName: '韩信', portrait: '/assets/liuhan/hanxin.png' },
     wei: { generalId: 'wuqi', generalName: '吴起', portrait: '/assets/zhou/wuqi.png' },
+    manzhou_d: { generalId: 'nuerhachi', generalName: '努尔哈赤', portrait: '/assets/dongbei/nuerhachi.png' },
+    xinluo: { generalId: 'jinyixin', generalName: '金庾信', portrait: '/assets/chaoxian/jinyixin.png' },
+    edo: { generalId: 'benduozhongsheng', generalName: '本多忠胜', portrait: '/assets/riben/benduozhongsheng.png' },
+    seljuq: { generalId: 'sangjiaer', generalName: '桑贾尔', portrait: '/assets/zhongya/sangjiaer.png' },
+    chenla: { generalId: 'suyebamo', generalName: '苏耶跋摩', portrait: '/assets/dianmian/suyebamo.png' },
+    song: { generalId: 'menggong', generalName: '孟珙', portrait: '/assets/zhaosong/menggong.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

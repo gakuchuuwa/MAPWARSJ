@@ -167,6 +167,13 @@ const _liuhanPortraitGlob = import.meta.glob<string>(
 );
 const _liuhanPortraitPool: string[] = Object.values(_liuhanPortraitGlob);
 
+/** 赵宋专属立绘池（临安） */
+const _zhaosongPortraitGlob = import.meta.glob<string>(
+    '../../public/assets/zhaosong/*.png',
+    { eager: true, query: '?url', import: 'default' },
+);
+const _zhaosongPortraitPool: string[] = Object.values(_zhaosongPortraitGlob);
+
 /** 南方立绘池 */
 const _nanfangPortraitGlob = import.meta.glob<string>(
     '../../public/assets/nanfang/*.png',
@@ -693,7 +700,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'shanyue': _nanfangPortraitPool,
     'she_ethnic': _nanfangPortraitPool,
     'shuntian': _nanfangPortraitPool,
-    'song': _nanfangPortraitPool,
+    'song': _zhaosongPortraitPool,
     'sui': _nanfangPortraitPool,
     'sunwu_d': _nanfangPortraitPool,
     'ting': _nanfangPortraitPool,

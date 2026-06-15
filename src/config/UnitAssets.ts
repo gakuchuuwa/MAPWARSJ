@@ -63,6 +63,12 @@ export const SPRITE_PATHS = {
         'lvbu': '/assets/zhongyuan/lvbu.png',
         'hanxin': '/assets/liuhan/hanxin.png',
         'wuqi': '/assets/zhou/wuqi.png',
+        'nuerhachi': '/assets/dongbei/nuerhachi.png',
+        'jinyixin': '/assets/chaoxian/jinyixin.png',
+        'benduozhongsheng': '/assets/riben/benduozhongsheng.png',
+        'sangjiaer': '/assets/zhongya/sangjiaer.png',
+        'suyebamo': '/assets/dianmian/suyebamo.png',
+        'menggong': '/assets/zhaosong/menggong.png',
     },
     PLAYER_DEFAULT: {
         frames: [

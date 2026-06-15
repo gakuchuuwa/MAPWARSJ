@@ -18,7 +18,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>
   mao_wenlong: '东江劲旅', // 皮岛·毛文龙（§1 #86）
   aisin_d: '巴牙喇军',     // 赫图阿拉·后金白甲近卫（§3 #27）
   manzhou: '八旗劲旅',     // 萨尔浒·满洲八旗龙兴（§3 #8）
-  manzhou_d: '多铎精骑',   // 沈阳·大清多铎（§3 #9 三千马队改番号）
+  manzhou_d: '满洲八旗',   // 沈阳·努尔哈赤八旗劲旅
   hezhe: '索伦劲旅',       // 乌云·索伦部（§3 #13）
   aola: '黑龙江水师',     // 雅克萨·雅克萨之战（§3 #26）
   wuliangha: '朵颜三卫',  // 赛音山达·§1 #74 兀良哈三卫（朵颜/泰宁/福余合一）
