@@ -75,13 +75,24 @@
 
 > **背景**：观赏产品最该有的是「白起对廉颇」这种历史名场面。早先「名将只给远征军/跟拍军团」是错的——那永远是玩家名将打 AI 无名，单边碾压，且 AI 永不出名将。
 
-**定案**：名将是**势力的属性**，知名势力**开局**自带史实名将，**AI 也有**。
-- **配置**：[`FactionGenerals.ts`](../src/data/FactionGenerals.ts)（factionId→名将+立绘）+ [`GeneralSkills.ts`](../src/data/GeneralSkills.ts) 的武将技档案。一势力一名将一立绘，禁随机池/复用。
-- **载体**：[`LegionManager.createArmy`](../src/legion/LegionManager.ts) 给该势力一支军团挂名将（单载体不变式，覆没后下支接替），避免「白起×3」。
-- **生效**：[`GeneralSkillCombat.canUnitUseGeneralSkills`](../src/combat/GeneralSkillCombat.ts) 只看「带 generalId 且有档案」，**不再要求跟随/远征** → AI 名将同样触发；开局战术/战略**攻守双方各自结算**。
-- **远征解绑名将**：远征回归玩家**唯一干预手段**（指哪打哪），不再兼任发名将。
+**定案**：名将是**势力的属性**，**AI 也有**，随「精锐军团」一起出现。
 
-**现状**：先做秦/白起跑通；其余知名势力（赵→廉颇、汉→韩信…）逐个补档案+立绘。AI 调参注意：现行平衡推演（`npm run sim`）**不含**武将技层，名将多了要另行验平衡。
+**军团分三层（2026-06-16 定案，已实装）**：
+| 层 | 条件 | 拥有 |
+|---|---|---|
+| 普通据点军团 | 势力无精锐番号，或 <4万未中签 | 无 |
+| **精锐军团（无将）** | 有番号且 <4万，**50% 概率** | 精锐番号 + 战力加成；**无名将** |
+| **精锐 + 名将** | 有番号且 **≥4万**（必） | 精锐番号 + **名将** + 战力加成 |
+| **远征军** | **当前跟随的那支精锐**（同时仅一支） | 同上，且可被下🐎远征令（需≥4万） |
+
+- **名将专属大军（≥4万）**——观赏定案 2026-06-16：名将脸 = 一眼读出「这是主力大军」，且名将越稀有越值钱（白起对廉颇才有分量）。小股部队顶多是番号劲旅（精锐无将）。
+- 一势力可多精锐（「一据点一精锐」由「一城一军」天然满足）；**远征军只一支 = 跟随的那支**。
+- **配置**：精锐番号 [`ExpeditionLegions.ts`](../src/data/ExpeditionLegions.ts)；名将 [`FactionGenerals.ts`](../src/data/FactionGenerals.ts)（factionId→名将+立绘，已 27 条）+ [`GeneralSkills.ts`](../src/data/GeneralSkills.ts) 档案。一势力一名将一立绘，禁随机池/复用。
+- **分层逻辑**：[`LegionManager.applyLegionTier`](../src/legion/LegionManager.ts)（出生定）+ `tickLegionTiers`（每季扫描，长到4万晋升）。出生定，**不降级**。
+- **精锐战力加成**：`isElite` 享 `CAMPAIGN_LEGION_MULT`，但**不吃「断粮不回师」**（那只跟远征令 `expeditionTargetCityId` 走）。
+- **生效**：[`GeneralSkillCombat.canUnitUseGeneralSkills`](../src/combat/GeneralSkillCombat.ts) 只看「带 generalId 且有档案」，**不要求跟随/远征** → AI 名将同样触发；开局战术/战略**攻守双方各自结算**。
+
+**AI 调参注意**：现行平衡推演（`npm run sim`）**不含**精锐/武将技层，精锐铺开后要另行验平衡。
 
 ---
 

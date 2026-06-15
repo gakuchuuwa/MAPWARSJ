@@ -193,6 +193,7 @@ export class RecruitmentSystem {
         const cities = this.cityManager.getCities();
         this.recruitSeasonGarrison(cities);
         this.trySpawnLegions(cities);
+        this.legionManager.tickLegionTiers(); // 兵力长到 4万的军团晋升精锐（含名将）
         PerformanceMonitor.getInstance().noteAsyncWork('recruitSeason', performance.now() - t0);
     }
 

@@ -264,6 +264,8 @@ export class Army implements IBattleUnit {
     public name: string; // [IBattleUnit]
     public generalId?: string; // [NEW] UI Avatar ID
     public portraitPath?: string; // [NEW] 军队创建时随机固定立绘
+    /** 精锐军团（精锐番号 + 名将 + 战力加成）；≥4万必精锐，<4万 50% 概率。出生定，不降级 */
+    public isElite: boolean = false;
 
     // [IBattleUnit Implementation]
     public get factionId(): string {

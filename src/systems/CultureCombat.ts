@@ -105,7 +105,9 @@ export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
 export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
     if (isGarrisonUnit(unit)) return 1;
     const army = unit.getEntity?.() as Army | undefined;
-    if (!army || !isCampaignLegion(army)) return 1;
+    if (!army) return 1;
+    // 精锐军团同享此战力加成（含远征军）；但「断粮不回师」march 行为仍只看 isCampaignLegion
+    if (!army.isElite && !isCampaignLegion(army)) return 1;
     return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT;
 }
 
