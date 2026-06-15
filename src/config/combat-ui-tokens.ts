@@ -34,10 +34,8 @@ export const COMBAT_UI_TOKENS = {
     /** 立绘左下/右下水印渐隐（椭圆半径%，相对立绘槽） */
     portraitCornerFadeX: 48,
     portraitCornerFadeY: 30,
-    /** 立绘底缘横向渐隐（槽高 %），与角部遮罩叠加，弱化缩放露边 */
-    portraitBottomFadeHeight: 22,
-    /** 立绘右缘纵向渐隐（槽宽 %） */
-    portraitRightFadeWidth: 18,
+    /** 立绘四缘渐隐（%），均等弱化硬边 */
+    portraitEdgeFade: 15,
     /**
      * 立绘横占宽度（设计 px）= inset + slot + pull ≈ 428 → 屏 300px。
      * 军团信息区须落在此线以右（左）/以左（右），否则被立绘遮挡。

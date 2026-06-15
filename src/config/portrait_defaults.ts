@@ -174,6 +174,13 @@ const _qinPortraitGlob = import.meta.glob<string>(
 );
 const _qinPortraitPool: string[] = Object.values(_qinPortraitGlob);
 
+/** 叛军立绘池 */
+const _panjunPortraitGlob = import.meta.glob<string>(
+    '../../public/assets/panjun/*.png',
+    { eager: true, query: '?url', import: 'default' },
+);
+const _panjunPortraitPool: string[] = Object.values(_panjunPortraitGlob);
+
 /** 势力专属立绘池（factionId → 图片路径数组） */
 const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'qin': _qinPortraitPool,
@@ -740,6 +747,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'qincha': _zhongyaPortraitPool,
     'xianhai': _zhongyaPortraitPool,
     'yettishar': _zhongyaPortraitPool,
+    'panjun': _panjunPortraitPool,
 };
 
 /** 比较两个立绘路径是否指向同一文件（浏览器 src 可能解析为完整 URL） */
@@ -771,9 +779,6 @@ export function getRandomFactionPortrait(factionId: string): string | undefined 
 
 /** 按参战单位文化区与军队/守军选默认立绘路径 */
 export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): string {
-    if (unit.factionId === 'panjun') {
-        return '/assets/panjun/panjun.png';
-    }
     // 军团创建时已固定 portraitPath（见 Army 构造、BattleUnitFactory）
     // 若与攻方立绘相同则跳过，走下方随机逻辑
     if (unit.portraitPath && !(excludePath && portraitUrlsEqual(unit.portraitPath, excludePath))) {

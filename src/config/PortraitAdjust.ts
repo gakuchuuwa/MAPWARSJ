@@ -55,19 +55,20 @@ export function resolvePortraitTransformOrigin(
 }
 
 /**
- * 底缘 + 右缘透明渐隐（mask 作用在 img 像素上，不叠不透明色块，避免槽位空白区出现硬黑边）
+ * 四缘透明渐隐（mask 作用在 img 像素上，不叠不透明色块，避免槽位空白区出现硬黑边）
  */
 export function applyPortraitEdgeMask(img: HTMLElement): void {
-    const b = T.portraitBottomFadeHeight;
-    const r = T.portraitRightFadeWidth;
-    const bottom = `linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${b}%)`;
-    const right = `linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${r}%)`;
-    const base = 'linear-gradient(rgb(0,0,0) 0 0)';
-    const mask = `${bottom}, ${right}, ${base}`;
+    const f = T.portraitEdgeFade;
+    const top    = `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%)`;
+    const bottom = `linear-gradient(to top,    rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%)`;
+    const left   = `linear-gradient(to right,  rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%)`;
+    const right  = `linear-gradient(to left,   rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%)`;
+    const base   = 'linear-gradient(rgb(0,0,0) 0 0)';
+    const mask   = `${top}, ${bottom}, ${left}, ${right}, ${base}`;
     img.style.webkitMaskImage = mask;
     img.style.maskImage = mask;
-    img.style.webkitMaskComposite = 'source-in, source-in';
-    img.style.maskComposite = 'intersect, intersect';
+    img.style.webkitMaskComposite = 'source-in, source-in, source-in, source-in';
+    img.style.maskComposite = 'intersect, intersect, intersect, intersect';
 }
 
 /** 将调校参数应用到立绘 img（以眼线/胸线交汇处为缩放锚点，再用 offset 微调） */

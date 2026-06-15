@@ -16289,26 +16289,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "安阳-朝歌",
-                type: "road",
-                id: "road_city_anyang_city_zhaoge_1780156758260",
-                startConnection: "city_anyang",
-                endConnection: "city_zhaoge"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [114.39, 36.1],
-                    [114.340453, 35.926248],
-                    [114.307458, 35.819013],
-                    [114.310545, 35.721327],
-                    [114.18, 35.6],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "卢氏-函谷关",
                 type: "road",
                 id: "road_city_lushi_city_hanguguan_1780156758313",
@@ -30175,6 +30155,28 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [106.204275, 13.582709],
                     [106.151947, 13.585557],
                     [106.0098, 13.5581],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "朝歌-安阳",
+                type: "road",
+                id: "road_city_zhaoge_city_anyang_1781512849436",
+                startConnection: "city_zhaoge",
+                endConnection: "city_anyang"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [114.18, 35.6],
+                    [114.262089, 35.748897],
+                    [114.307458, 35.819013],
+                    [114.362064, 35.841538],
+                    [114.385482, 35.893057],
+                    [114.391727, 35.932087],
+                    [114.39, 36.1],
                 ]
             }
         },

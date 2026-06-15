@@ -132,9 +132,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -17
         },
         "/public/assets/litang/litang (1).png": {
-            "scale": 1.09,
+            "scale": 1.04,
             "offsetX": 0,
-            "offsetY": -8
+            "offsetY": -7
         },
         "/public/assets/zhongyuan/9ce2262a-f91f-4367-8d70-7b9548788156.png": {
             "scale": 0.99,
@@ -165,6 +165,96 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 13
+        },
+        "/public/assets/zhongyuan/e7fcf159-f365-48a8-9c8d-e344fbc93d35.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/public/assets/zhongyuan/47d98392-6b34-4087-aaa2-d972594d5fa1.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/public/assets/zhongyuan/b6171829-5227-4837-8cd6-870fd2039c68.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/public/assets/panjun/panjun.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/public/assets/riben/3efc90e2-6cbc-4d62-8c2b-687560468b96.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 27
+        },
+        "/public/assets/riben/7240bef9-e904-41d3-a8e5-58f324a3755d.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -27
+        },
+        "/public/assets/dongbei/df9c8961-f32f-4683-abbf-b39bbc77589b.png": {
+            "scale": 1.08,
+            "offsetX": -12,
+            "offsetY": -40
+        },
+        "/public/assets/dongbei/NORTHEAST_field.png": {
+            "scale": 1.04,
+            "offsetX": -12,
+            "offsetY": 18
+        },
+        "/public/assets/panjun/f22e8a3e-f4f3-43f9-b776-54e36eba58fe.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/public/assets/litang/litang (5).png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/public/assets/zhongyuan/aa5cf86c-cf24-46d1-9e00-e646972e7992.png": {
+            "scale": 0.94,
+            "offsetX": 4,
+            "offsetY": -18
+        },
+        "/public/assets/zhongyuan/0f046975-f45a-4653-9cb8-b3a52391458e.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/public/assets/zhongyuan/9868e5c5-c87d-4ecf-9001-0cbb23950165.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/public/assets/riben/c67e7a78-cfaf-451c-8592-40e971a2d329.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/public/assets/riben/857f35ee-4144-4b76-af60-f059b79b7064.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/public/assets/riben/e1c43fe5-ca7a-4bb9-88bb-78dab712fa60.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/public/assets/riben/42a245b0-9213-4bc7-9f23-755037b5325a.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/public/assets/riben/a0a2d446-cac2-4389-878b-b10df25f98c3.png": {
+            "scale": 1.02,
+            "offsetX": 15,
+            "offsetY": -35
         }
     },
     "folderGuides": {
