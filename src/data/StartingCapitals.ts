@@ -693,4 +693,5 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kangba': 'city_litangzong',
     'nvguo': 'city_mapangyongcuo',
     'jiashi': 'city_kajier',
+    'wuhu': 'city_zhenzhuhe',
 };

@@ -1996,7 +1996,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_pengdi', name: '彭迪', factionId: 'panjun', lat: 36, lng: 62.7, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },
     // 黠戛斯（坚昆）汗庭漠北牧地
     { id: 'city_wubusabo', name: '乌布萨泊', factionId: 'xiajiasi', lat: 49.9762, lng: 92.0929, type: 'small_city', region: 'STEPPE', troops: 10000 },
-    { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'panjun', lat: 41.2773, lng: 67.9312, type: 'pass', troops: 10000, mirror: true },//镜像
+    { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'wuhu', lat: 41.2773, lng: 67.9312, type: 'pass', troops: 10000, mirror: true },//镜像
     { id: 'city_wuyun', name: '乌云', factionId: 'hezhe', lat: 49.018048, lng: 129.915390, type: 'small_city', troops: 10000 },
     // 占城国（林邑/环王国）佛临城阇槃；与占婆国（美山）分立，各 1 势力 1 据点
     { id: 'city_dupan', name: '阇槃', factionId: 'zhancheng', lat: 13.93, lng: 109.11, type: 'medium_city', troops: 10000, region: 'LINGNAN' },

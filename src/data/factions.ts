@@ -888,4 +888,5 @@ export const FACTIONS: Faction[] = [
     { id: 'kangba', name: '康巴' },
     { id: 'nvguo', name: '女国' },
     { id: 'jiashi', name: '迦湿弥罗' },
+    { id: 'wuhu', name: '乌护' },
 ];

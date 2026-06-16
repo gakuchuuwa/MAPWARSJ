@@ -767,4 +767,5 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kangba': '康巴',
     'nvguo': '女国',
     'jiashi': '迦湿',
+    'wuhu': '乌护',
 };

@@ -718,6 +718,7 @@ export class CityAssetManager {
         'kangba': '康巴',
         'nvguo': '女国',
         'jiashi': '迦湿',
+        'wuhu': '乌护',
     };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

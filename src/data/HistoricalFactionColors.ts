@@ -349,7 +349,7 @@ const _FIXED: Record<string, string> = {
     jiliemi: '#4A235A', // 吉列迷（暗紫）
     wula: '#9A7D0A', // 乌拉（暗金）
     mengwu: '#1B4F72', // 蒙兀（深蓝）
-    pugu: '#A93226', // 仆骨（暗红）
+    pugu: '#932A22', // 仆骨（暗红；避 hani_d #A93226）
     bayegu: '#9B59B6', // 拔野古（紫）
     ketagalan: '#D35400', // 凯达格兰（赤土）
     shanrong: '#7B7D7D', // 山戎（石灰）
@@ -359,14 +359,15 @@ const _FIXED: Record<string, string> = {
     baiyang: '#ECF0F1', // 白羊（银白）
     baidi: '#D0D3D4', // 白狄（灰白）
     wulei: '#7F8C8D', // 无雷（石灰）
-    duomi: '#9B59B6', // 多弥（紫）
-    wumeng: '#E67E22', // 乌蒙（橙褐）
-    lelang: '#F39C12', // 乐浪（黄）
+    duomi: '#8848A8', // 多弥（暗紫；避 bayegu #9B59B6）
+    wumeng: '#D96A18', // 乌蒙（橙褐；避 gaochang #E67E22）
+    lelang: '#E0A010', // 乐浪（黄；避 daozhou #F39C12）
     huite: '#34495E', // 辉特（深蓝灰）
     zubu: '#2C3E50', // 阻卜（暗蓝）
-    kangba: '#C0392B', // 康巴（深红）
-    nvguo: '#8E44AD', // 女国（紫罗兰）
+    kangba: '#B43228', // 康巴（深红；避 taira #C0392B）
+    nvguo: '#7D3C98', // 女国（紫罗兰；避 chuyue #8E44AD）
     jiashi: '#27AE60', // 迦湿弥罗（翠绿）
+    wuhu: '#16A085', // 乌护（孔雀绿）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

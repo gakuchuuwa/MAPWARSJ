@@ -28,7 +28,8 @@ const T = COMBAT_UI_TOKENS;
 function getLegionEliteBadgeName(unit: IBattleUnit): string {
     const raw = (unit.name ?? '').trim();
     if (!raw) return '精锐';
-    const stripped = raw.replace(/(军团|驻军|守军|军)$/, '').trim();
+    const match = raw.match(/(军团|驻军|守军)$/);
+    const stripped = match ? raw.substring(0, match.index).trim() : raw;
     return stripped || raw;
 }
 
@@ -1161,10 +1162,13 @@ export class CombatUI {
                 const size = maxWave <= 1 ? '1em' : wi === 0 ? '1em' : wi === 1 ? '0.92em' : '0.82em';
                 
                 for (const u of waveUnits) {
-                    const base = u.name.replace(/(军团|驻军|守军|军)$/, '');
-                    const suffix = u.unitType === 'city' ? '驻军' : '军团';
-                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>` +
-                            `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}</span>`;
+                    const match = u.name.match(/(军团|驻军|守军)$/);
+                    const base = match ? u.name.substring(0, match.index) : u.name;
+                    const suffix = match ? match[0] : '';
+                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>`;
+                    if (suffix) {
+                        html += `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}</span>`;
+                    }
                 }
             }
             return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; row-gap: 4px; text-align: inherit;">${html}</div>`;
@@ -1614,8 +1618,12 @@ export class CombatUI {
 
     private updateInfo(att: IBattleUnit, def: IBattleUnit, title: string, year: string) {
         const mapName = (u: IBattleUnit) => {
-            let base = u.name.replace(/(军团|驻军|守军|军)$/, '');
-            let suffix = u.unitType === 'city' ? '驻军' : '军团';
+            const match = u.name.match(/(军团|驻军|守军)$/);
+            const base = match ? u.name.substring(0, match.index) : u.name;
+            const suffix = match ? match[0] : '';
+            if (!suffix) {
+                return `<div style="text-align: inherit;"><span style="white-space: nowrap;">${base}</span></div>`;
+            }
             return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; text-align: inherit;"><span style="white-space: nowrap;">${base}</span><span style="opacity: 0.85; font-size: 0.95em; margin-left: 2px; white-space: nowrap;">${suffix}</span></div>`;
         };
         this.attackerDisplayName = mapName(att);
