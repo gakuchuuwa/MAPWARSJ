@@ -19,4 +19,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>>
   chenla: '双弓弩象营',     // 吴哥·辞典 #93 高棉弩象营
   luchuan: '麓川夷象', // 勐卯·辞典 #96 三征麓川象兵
   dianguo: '滇池水军',     // 拓东城·滇国水师
+  buyi_d: '仲家兵',        // 罗博·布依族仲家兵
+  hani_d: '思陀甸兵',      // 思陀·哈尼族思陀甸兵
+  wuman: '东爨乌蛮兵',     // 乌蒙山·东爨乌蛮兵
 };

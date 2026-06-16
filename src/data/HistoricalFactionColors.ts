@@ -336,6 +336,20 @@ const _FIXED: Record<string, string> = {
     dayu: '#5D6D7E', // 大庾（大庾青灰，南赣标军）
     yingzhou: '#1ABC9C', // 英州（英州青，南汉巨象军）
     chuzhou_d: '#8A3A3A', // 滁州（淮西赤，大明龙骧卫）
+    buyi_d: '#1F618D', // 布依族（布依靛蓝，仲家兵）
+    hani_d: '#A93226', // 哈尼族（哈尼砖红，思陀甸兵）
+    basha_d: '#D68910', // 巴沙（湄公土金，湄公象卫）
+    taira: '#C0392B', // 平氏（平家赤，平家水军）
+    yao_qiang: '#8E44AD', // 姚氏（后秦紫，赤亭羌骑）
+    juyan: '#D4AC0D', // 居延（居延黄，居延戍卒）
+    wuman: '#2E4053', // 乌蛮（东爨玄，东爨乌蛮兵）
+    yehe: '#7D6608', // 叶赫（叶赫褐）
+    hujie: '#283747', // 呼揭（呼揭灰）
+    xiutu: '#A04000', // 休屠（赤铜）
+    dongzu: '#148F77', // 侗族（翠青）
+    jiliemi: '#4A235A', // 吉列迷（暗紫）
+    wula: '#9A7D0A', // 乌拉（暗金）
+    mengwu: '#1B4F72', // 蒙兀（深蓝）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

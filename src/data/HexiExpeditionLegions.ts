@@ -22,4 +22,6 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
   anding_wei: '长征健儿',      // 苦峪堡·安定卫长征健儿
   qiang: '北地骑',             // 萧关·羌族北地骑
   chijin: '赤斤蒙古卫',        // 赤金堡·赤斤蒙古卫
+  yao_qiang: '赤亭羌骑', // 赤亭关·后秦姚氏羌骑
+  juyan: '居延戍卒', // 肩水金关·汉居延戍卒
 };

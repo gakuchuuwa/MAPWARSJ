@@ -29,4 +29,5 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   daozhou: '湘军道营',     // 麦岭关·晚清湘军道州营
   dayu: '南赣标军',        // 横浦关·明王阳明南赣标军
   yingzhou: '南汉巨象军',  // 湟溪关·五代南汉重装象军
+  basha_d: '湄公象卫',     // 上丁·巴沙国湄公象卫
 };

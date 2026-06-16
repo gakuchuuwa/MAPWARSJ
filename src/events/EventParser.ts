@@ -73,6 +73,8 @@ export class EventParser {
         '袁': 'yuan_cj_d', '袁氏': 'yuan_cj_d', '袁绍': 'yuan_cj_d', '悬瓠': 'yuan_cj_d', '汝南': 'yuan_cj_d',
         '河间': 'hejian', '河间郡': 'hejian', '乐成': 'hejian',
         '先登死士': 'hejian', '麴义': 'hejian', '界桥': 'hejian',
+        '轵国': 'zhi_state', '轵': 'zhi_state', '野王': 'zhi_state', '轵关': 'zhi_state', '太行飞军': 'zhi_state',
+        '穆氏': 'mushi', '大岴': 'mushi', '穆陵关': 'mushi', '丘穆陵骑': 'mushi',
         '蔡': 'cai', '新蔡': 'cai',
         '乌桓': 'wuhuan', '乌桓突骑': 'wuhuan', '白狼山': 'wuhuan',
         '摧锋军': 'guangzhou', '广州': 'guangzhou', '番禺': 'guangzhou',

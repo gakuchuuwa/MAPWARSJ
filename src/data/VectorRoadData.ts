@@ -16335,7 +16335,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "临淄-穆陵关",
+                name: "临淄-大岴",
                 type: "road",
                 id: "road_city_linzi_city_mulingguan_1780156758517",
                 startConnection: "city_linzi",
@@ -16475,7 +16475,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "轵关-洛阳",
+                name: "野王-洛阳",
                 type: "road",
                 id: "road_city_zhiguan_city_luoyang_1780156758829",
                 startConnection: "city_zhiguan",
@@ -23519,7 +23519,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "穆陵关-莒",
+                name: "大岴-莒",
                 type: "road",
                 id: "road_city_mulingguan_city_ju_1780981931701",
                 startConnection: "city_mulingguan",
@@ -26469,7 +26469,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "胶西-穆陵关",
+                name: "胶西-大岴",
                 type: "road",
                 id: "road_city_jiaoxi_city_mulingguan_1781183313189",
                 startConnection: "city_jiaoxi",
@@ -28505,7 +28505,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "曲沃-轵关",
+                name: "曲沃-野王",
                 type: "road",
                 id: "road_city_quwo_city_zhiguan_1781253918142",
                 startConnection: "city_quwo",
