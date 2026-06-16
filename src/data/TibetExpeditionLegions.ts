@@ -18,4 +18,28 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   pazhu: '帕竹甲兵',       // 江孜·帕木竹巴绛曲坚赞甲兵（§12 #10）
   gurkha: '廓尔喀弯刀',    // 加德满都·廓尔喀库克里勇士（§12 #11）
   tsangpa: '藏巴汗卫队',   // 桑珠孜·藏巴汗亲卫
+  // ── 2026-06-16 新增：青藏大区平衡补全（23支） ──
+  yangtong: '羊同勇士',
+  supi: '苏毗女卫',
+  xiaobolu: '勃律轻骑',
+  gandenpozhang: '甘丹颇章军',
+  gaxa: '噶厦代本',
+  ladakh: '拉达克卫队',
+  spurgyal: '悉补野王军',
+  khon: '萨迦法王军',
+  lang_clan: '帕木竹巴军',
+  karmapa: '噶玛巴护教',
+  jinchuan_g: '金川土司兵',
+  golog: '果洛游骑',
+  monpa: '门巴勇士',
+  lopi: '珞巴武士',
+  humi: '瓦罕弓骑',
+  nvguo: '女国禁卫',
+  kangba: '康区长刀卒',
+  bailang: '白狼锐卒',
+  faqiang: '发羌劲卒',
+  duomi: '多弥山兵',
+  xiutu: '休屠王骑',
+  jiashi: '迦湿弥罗卫',
+  gongbu: '工布长弓手',
 };

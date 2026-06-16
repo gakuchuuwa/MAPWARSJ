@@ -24,4 +24,12 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>
   wuliangha: '朵颜三卫',  // 赛音山达·§1 #74 兀良哈三卫（朵颜/泰宁/福余合一）
   dazhen: '渤海八猛安',    // 恤品·大真渤海八猛安
   fuyu: '金源边军',       // 黄龙府·辽金黄龙府女真边军（据点今名黄龙府）
+  // ── 2026-06-16 新增：东北大区平衡补全（7支，精锐随据点，全图无六字番号） ──
+  heishui: '拉哈苏苏兵',
+  sushen: '东康坚甲',
+  haixi_nvzhen: '辉发城铁骑',
+  mohe: '勃利勇士',
+  suolun: '卜奎索伦营',
+  keerqin: '达尔罕卫',
+  yehe: '八面关骁骑',
 };

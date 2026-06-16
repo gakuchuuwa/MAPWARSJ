@@ -3,6 +3,21 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+  'heishui': 'city_lahasusu',
+  'kelie': 'city_douweihunhe',
+  'donghui': 'city_deokwon',
+  'gonggu': 'city_gugudao',
+  'fuguo': 'city_mangkangzong',
+  'gongtang': 'city_jimai',
+  'chizhou': 'city_datong2',
+
+  'yada': 'city_xiwanjin',
+  'quli': 'city_luntai',
+  'guishuang': 'city_pengdi',
+  'juandu': 'city_paixiucheng',
+  'sai': 'city_wosedecheng',
+  'yangtong': 'city_longmucuo',
+
     'zhancheng': 'city_dupan',
     'monong': 'city_bangdun',
     'shuizhen': 'city_sanpu',
@@ -421,7 +436,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'tuva': 'city_teshuolankalun',
 
     // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
-    'dayu': 'city_akaogicheng',
+    'osumi': 'city_akaogicheng',
     'anmei': 'city_akakinagusuku',
 
     // ── 2026-05-28 新增：康区藏族土司/部落 ──

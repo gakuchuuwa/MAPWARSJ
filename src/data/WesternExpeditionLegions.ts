@@ -22,4 +22,10 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
   loulan: '楼兰戍',      // 扜泥城·汉晋楼兰戍卒（旗=楼兰·§12.1.1）
   // §14 #10 喀喇契丹重骑兵 → 项目无西辽/喀喇契丹独立势力，宁缺毋滥
+  // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
+  quli: '轮台戍卒',
+  dzungar: '塔城卫队',
+  yarkand: '英吉沙骑兵',
+  tuerhute: '鹰娑川铁骑',
+  gaochang: '赤亭关守军',
 };

@@ -25,7 +25,7 @@ import {
     type ReinforcementJoinDeps,
 } from '../legion/combat/BattleReinforcementPoll';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
-import { logScriptedFinaleDefeat } from '../legion/LegionSpawnPolicy';
+import { logScriptedFinaleDefeat, shouldSkipHomeRecapture } from '../legion/LegionSpawnPolicy';
 
 export class SiegeManager {
     private static get JOIN_RADIUS(): number {
@@ -107,6 +107,34 @@ export class SiegeManager {
     public isArmyWaitingSiege(armyId: string): boolean {
         for (const queue of this.siegeThirdPartyWaiters.values()) {
             if (queue.some((e) => e.army.id === armyId)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * 将军团移出第三方攻城排队（如出发点失守须改走收复）。
+     * 调用 onSiegeComplete 以免攻城事件队列卡死。
+     */
+    public dequeueArmyFromThirdPartyWaiters(armyId: string): boolean {
+        for (const [cityId, queue] of this.siegeThirdPartyWaiters.entries()) {
+            const idx = queue.findIndex((e) => e.army.id === armyId);
+            if (idx === -1) continue;
+
+            const entry = queue[idx];
+            if (!entry.army.isDestroyed) {
+                entry.army.setCombatState(false);
+                entry.army.ignoreCityCollision = false;
+                entry.army.ignoreUnitCollision = false;
+            }
+            entry.onSiegeComplete?.();
+            queue.splice(idx, 1);
+            if (queue.length === 0) {
+                this.siegeThirdPartyWaiters.delete(cityId);
+            } else {
+                this.siegeThirdPartyWaiters.set(cityId, queue);
+            }
+            siegeLog(`↩️ [SiegeManager] ${entry.army.name ?? armyId} 离开第三方排队（${cityId}）`);
+            return true;
         }
         return false;
     }
@@ -1010,7 +1038,7 @@ export class SiegeManager {
     // 使用 DISTANCE_THRESHOLDS.REINFORCEMENT_RANGE 替代硬编码
 
     /**
-     * 触发防御增援：附近的同阵营空闲军团将前往被围困的城市支援
+     * 触发防御增援：距被围城市 ≤2 hex 的同阵营空闲军团前往支援（非「回援」，不拉第三方排队/远征军）
      */
     public triggerDefensiveReinforcements(targetCity: { id: string; name: string; latitude: number; longitude: number; factionId: string; troops: number }): void {
         const defenderFactionId = targetCity.factionId;
@@ -1039,7 +1067,9 @@ export class SiegeManager {
             army.type === 'legion' &&
             !army.isDestroyed &&
             army.isIdle() &&
-            !army.getIsInCombat() // 不在战斗中
+            !army.getIsInCombat() &&
+            !this.isArmyWaitingSiege(army.id) &&
+            !shouldSkipHomeRecapture(army)
         );
 
         if (candidates.length === 0) {

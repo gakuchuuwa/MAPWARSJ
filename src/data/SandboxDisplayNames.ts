@@ -16,6 +16,21 @@
  *     禁止自造截字（后百）、地名代国号（兰）、姓代国号（甄）、后缀国/族/人（黎国）。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+  heishui: '黑水',
+  kelie: '克烈',
+  donghui: '东濊',
+  gonggu: '宫古',
+  fuguo: '附国',
+  gongtang: '贡唐',
+  chizhou: '池',
+
+  yada: '嚈哒',
+  quli: '渠犁',
+  guishuang: '贵霜',
+  juandu: '捐毒',
+  sai: '塞',
+  yangtong: '羊同',
+
     'zhancheng': '占城',
     'monong': '墨侬',
     'shuizhen': '水真',
@@ -512,7 +527,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tuva': '图瓦',
 
     // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
-    'dayu': '大隅',
+    'osumi': '大隅',
     'anmei': '奄美',
 
     // ── 2026-05-28 新增：康区藏族土司/部落 ──

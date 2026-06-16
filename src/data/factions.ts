@@ -8,6 +8,21 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
+  { id: 'heishui', name: '黑水靺鞨' },
+  { id: 'kelie', name: '克烈部' },
+  { id: 'donghui', name: '东濊' },
+  { id: 'gonggu', name: '宫古' },
+  { id: 'fuguo', name: '附国' },
+  { id: 'gongtang', name: '贡唐' },
+  { id: 'chizhou', name: '池州' },
+
+  { id: 'yada', name: '嚈哒帝国' },
+  { id: 'quli', name: '渠犁国' },
+  { id: 'guishuang', name: '贵霜帝国' },
+  { id: 'juandu', name: '捐毒国' },
+  { id: 'sai', name: '塞种' },
+  { id: 'yangtong', name: '羊同' },
+
     { id: 'zhancheng', name: '占城' },
     { id: 'monong', name: '墨侬' },
     { id: 'shuizhen', name: '水真' },
@@ -624,7 +639,7 @@ export const FACTIONS: Faction[] = [
     { id: 'suolun', name: '索伦' },                           // 索伦(卜奎), Solon
     { id: 'tuva', name: '图瓦' },                             // 图瓦(唐努), Tuvan/Tuva
 
-    { id: 'dayu', name: '大隅' },                            // 大隅国(赤尾木城/九州), Osumi
+    { id: 'osumi', name: '大隅' },                            // 大隅国(赤尾木城/九州), Osumi
     { id: 'anmei', name: '奄美' },
 
     // ── 2026-05-28 新增：康区藏族土司/部落势力 ──

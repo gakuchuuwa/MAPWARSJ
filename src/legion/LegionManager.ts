@@ -493,6 +493,10 @@ export class LegionManager {
         return this.siegeManager?.isArmyWaitingSiege?.(armyId) ?? false;
     }
 
+    public dequeueArmyFromThirdPartyWaiters(armyId: string): boolean {
+        return this.siegeManager?.dequeueArmyFromThirdPartyWaiters?.(armyId) ?? false;
+    }
+
     public triggerSiege(army: Army, targetCity: City): void {
         if (!this.siegeManager) {
             console.warn('[LegionManager] SiegeManager not linked! Cannot trigger siege.');

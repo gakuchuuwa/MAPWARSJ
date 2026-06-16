@@ -49,10 +49,25 @@ export const IsPostBattleResting = new Condition('IsPostBattleResting', (ctx) =>
     return ctx.army.isPostBattleResting?.() ?? false;
 });
 
-/** 第三方攻城排队中：原地待命，不重新选目标 */
-export const IsWaitingSiege = new Condition('IsWaitingSiege', (ctx) =>
-    ctx.legionManager.isArmyWaitingSiege(ctx.army.id),
-);
+/** 第三方攻城排队中：原地待命；出发点已失守则打断排队改走收复 */
+export const IsWaitingSiege = new Condition('IsWaitingSiege', (ctx) => {
+    if (!ctx.legionManager.isArmyWaitingSiege(ctx.army.id)) {
+        return false;
+    }
+    if (!shouldSkipHomeRecapture(ctx.army)) {
+        const originCityId = getArmyOriginCityId(ctx.army) ?? '';
+        const recaptureId = resolveRecaptureTarget(
+            ctx.army.getFactionId(),
+            originCityId,
+            ctx.cityManager,
+        );
+        if (recaptureId) {
+            ctx.legionManager.dequeueArmyFromThirdPartyWaiters?.(ctx.army.id);
+            return false;
+        }
+    }
+    return true;
+});
 
 /**
  * 远征模式（GAME_DIRECTION「远征细则」2026-06-11）：

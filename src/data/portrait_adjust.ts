@@ -275,6 +275,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 2
+        },
+        "/assets/yinshang/fuhao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/public/assets/zhongyuan/0768b7fc-1481-4d75-a895-a8dc197226d1.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 1
         }
     },
     "folderGuides": {

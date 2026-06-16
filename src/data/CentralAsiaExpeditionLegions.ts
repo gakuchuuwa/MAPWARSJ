@@ -16,4 +16,17 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, stri
   kazakh: '哈萨克骑',     // 亚西·哈斯木汗游击（§13 #7）
   seljuq: '古拉姆禁卫',     // 木鹿·桑贾尔苏丹古拉姆近卫
   ashina: '碎叶镇军',       // 碎叶城·唐碎叶镇阿史那部（旗=史那·§12.1.1）
+  // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
+  guishuang: '彭迪甲骑',
+  guer: '马鲁鲁德骑',
+  yuezhi: '蓝氏城铁骑',
+  xijue: '郅支城坚兵',
+  tujishi: '怛罗斯突骑',
+  kokand: '浩罕轻骑',
+  sogdian: '瓦拉赫沙卫',
+  kangju: '康卡控弦',
+  anushidgin: '希瓦铁骑',
+  dayuzi: '讹答剌卫队',
+  zhaowu: '忽毡城武士',
+  yada: '悉万斤重甲',
 };

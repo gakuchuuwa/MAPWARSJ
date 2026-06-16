@@ -28,4 +28,25 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> =
   geluolu: '葛逻禄背弓',    // 弓月城·三姓葛逻禄便捷善射（怛罗斯盟军；非铁骑）
   kiyad: '那可儿',         // 不儿罕山·乞颜那可儿
   kumo: '楮特奥隗部',     // 马盂山·奚族楮特奥隗部
+  // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
+  kelie: '克烈护卫军',
+  dingling: '丁零游骑',
+  xiajiasi: '黠戛斯锐卒',
+  donghu: '东胡控弦',
+  tiele: '铁勒骁骑',
+  xibo_d: '锡伯索伦营',
+  tatar: '塔塔儿死士',
+  merkit: '蔑儿乞猎骑',
+  chahar: '察哈尔八旗',
+  da_yuan: '北元怯薛',
+  huyan: '呼衍精骑',
+  yujiulu: '郁久闾王骑',
+  jalair: '札剌亦儿军',
+  hongirad: '弘吉剌护卫',
+  choros: '绰罗斯骁骑',
+  duolu: '咄陆部铁骑',
+  kaerka: '喀尔喀重骑',
+  zhasaketu: '扎萨克铁骑',
+  buriat: '林中射手',
+  cheshihou: '车师后王卫',
 };
