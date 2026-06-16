@@ -836,4 +836,16 @@ export const FACTIONS: Faction[] = [
     { id: 'hao_d', name: '濠州' },                // 濠@蚌埠（隋唐濠州治钟离故地）
     // ── 2026-06-11 新增：博州 ──
     { id: 'bozhou_d', name: '博州' },             // 博@聊城（隋唐博州治）
-    ];
+    // ── 2026-06-16 新增：11大名关势力 ──
+    { id: 'hongnong_jun', name: '弘农郡' },
+    { id: 'zheng', name: '郑国' },
+    { id: 'ruo', name: '鄀国' },
+    { id: 'ruzhou', name: '汝州' },
+    { id: 'yun', name: '允戎' },
+    { id: 'zhi_state', name: '轵国' },
+    { id: 'xiongding', name: '雄定' },
+    { id: 'yaozhou', name: '耀州' },
+    { id: 'huo', name: '霍国' },
+    { id: 'mushi', name: '穆氏' },
+    { id: 'lai', name: '莱国' },
+];

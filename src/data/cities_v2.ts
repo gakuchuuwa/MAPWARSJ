@@ -589,12 +589,12 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_mianzhuguan', name: '鹿头关', factionId: 'chenghan', lat: 31.325490, lng: 104.172363, type: 'pass', troops: 10000, tier: 2, note: '梓潼鹿头关；成汉李特入蜀要道' },
 
     // ── 崤函古道沿线关隘 ──
-    { id: 'city_hanguguan', name: '函谷关', factionId: 'panjun', lat: 34.615131, lng: 110.915222, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_hanguguan', name: '函谷关', factionId: 'hongnong_jun', lat: 34.615131, lng: 110.915222, type: 'pass', troops: 10000, mirror: true },
     { id: 'city_tongguan', name: '潼关', factionId: 'sunqin', lat: 34.540000, lng: 110.290000, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true, note: '孙传庭督标秦军潼关战死故地' },
     // ── 中原北线黄河走廊关隘 ──
-    { id: 'city_hulaoguan', name: '虎牢关', factionId: 'panjun', lat: 34.810000, lng: 113.170000, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_hulaoguan', name: '虎牢关', factionId: 'zheng', lat: 34.810000, lng: 113.170000, type: 'pass', troops: 10000, mirror: true },
     // ── 洛阳周边防御关隘群 ──
-    { id: 'city_guangchengguan', name: '广成关', factionId: 'panjun', lat: 34.139089, lng: 112.887268, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_guangchengguan', name: '广成关', factionId: 'ruzhou', lat: 34.139089, lng: 112.887268, type: 'pass', troops: 10000, mirror: true },
     
     // ── 京同山川走廊关隘 ──
     { id: 'city_juyongguan', name: '居庸关', factionId: 'you', lat: 40.280000, lng: 116.060000, type: 'pass', troops: 10000, mirror: true },
@@ -602,9 +602,9 @@ export const T2_STRATEGIC: CityDataV2[] = [
     // ── 晋西北外三关及晋东北内长城关隘 ──
     { id: 'city_piantouguan', name: '偏头关', factionId: 'linhu', lat: 39.430000, lng: 111.500000, type: 'pass', troops: 10000, mirror: true },
     { id: 'city_pingxingguan', name: '平型关', factionId: 'lingqiu', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 10000, mirror: true },
-    { id: 'city_lingshiguan', name: '灵石关', factionId: 'panjun', lat: 36.844462, lng: 111.796875, type: 'pass', troops: 10000 },
+    { id: 'city_lingshiguan', name: '灵石关', factionId: 'huo', lat: 36.844462, lng: 111.796875, type: 'pass', troops: 10000 },
         // ── 关中盆地防御要塞群 ──
-    { id: 'city_wuguan', name: '武关', factionId: 'panjun', lat: 33.600000, lng: 110.620000, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_wuguan', name: '武关', factionId: 'ruo', lat: 33.600000, lng: 110.620000, type: 'pass', troops: 10000, mirror: true },
 
 
     { id: 'city_xiaoguan', name: '萧关', factionId: 'qiang', lat: 35.657289, lng: 106.320190, type: 'pass', troops: 10000, mirror: true, note: '萧关道，河西北陆羌族重镇' },
@@ -612,13 +612,13 @@ export const T2_STRATEGIC: CityDataV2[] = [
     {
         id: 'city_jinsuoguan',
         name: '金锁关',
-        factionId: 'panjun',
+        factionId: 'yaozhou',
         lat: 35.19, lng: 109.11,
         type: 'pass',
         troops: 10000,
         tier: 2 },
     // ── 太行八陉防御要塞关隘群 ──
-    { id: 'city_zhiguan', name: '轵关', factionId: 'panjun', lat: 35.150000, lng: 112.300000, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_zhiguan', name: '轵关', factionId: 'zhi_state', lat: 35.150000, lng: 112.300000, type: 'pass', troops: 10000, mirror: true },
             {
         id: 'city_jingxingguan',
         name: '井陉关',
@@ -641,8 +641,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
         tier: 2 },
     { id: 'city_wushengguan', name: '武胜关', factionId: 'yiyang_d', lat: 31.83, lng: 114.01, type: 'pass', troops: 10000 },
     // ── 齐鲁关隘 ──
-    { id: 'city_mulingguan', name: '穆陵关', factionId: 'panjun', lat: 36.275259, lng: 118.660583, type: 'pass', troops: 10000 },
-    { id: 'city_qingshiguan', name: '青石关', factionId: 'panjun', lat: 36.246502, lng: 117.715759, type: 'pass', troops: 10000 },
+    { id: 'city_mulingguan', name: '穆陵关', factionId: 'mushi', lat: 36.275259, lng: 118.660583, type: 'pass', troops: 10000 },
+    { id: 'city_qingshiguan', name: '青石关', factionId: 'lai', lat: 36.246502, lng: 117.715759, type: 'pass', troops: 10000 },
     {
         id: 'city_diaoyucheng',
         name: '钓鱼城',
@@ -814,7 +814,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
         tier: 2 },
 
     // ── 太行陉关隘 ──
-    { id: 'city_tianjinguan', name: '天井关', factionId: 'panjun', lat: 35.270000, lng: 112.930000, type: 'pass', troops: 10000, mirror: true } ];
+    { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.270000, lng: 112.930000, type: 'pass', troops: 10000, mirror: true } ];
 
 // ============================================================
 // 周边 — 待添加 (日本七道、朝鲜八道、各古政权首都)
@@ -1035,7 +1035,7 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_lushi',
         name: '陆浑关',
-        factionId: 'panjun',
+        factionId: 'yun',
         lat: 34.05, lng: 111.05,
         type: 'pass',
         troops: 10000,

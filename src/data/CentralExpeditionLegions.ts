@@ -30,5 +30,16 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   wey: '朱龙骑',          // 濮阳·卫国朱龙骑
   liguo: '黎之耆戎',       // 阏与·黎国耆戎
   yiyang_d: '申息锐师',    // 武胜关·义阳申息锐师
-  // wazhai@定陶：§1 无瓦岗军专名，不收远征番号
+  // ── 2026-06-16 新增：11大名关 ──
+  hongnong_jun: '桃林射士',
+  zheng: '成皋部曲',
+  ruo: '商於材官',
+  ruzhou: '广成健卒',
+  yun: '陆浑戎骑',
+  zhi_state: '太行飞军',
+  xiongding: '碗子城军',
+  yaozhou: '金甲卫',
+  huo: '霍邑锐士',
+  mushi: '丘穆陵骑',
+  lai: '齐莱锐士',
 };
