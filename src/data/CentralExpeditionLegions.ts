@@ -22,7 +22,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   shang: { name: '虎贲多射', tier: 1 },       // 安阳·殷商虎贲与多射（妇好征伐）
   zhou: { name: '岐阳周师', tier: 3 },     // 岐山·§1 #3 虎贲三千（岐阳即岐周故地）
   xia: { name: '夏后亲卫', tier: 1 },      // 安邑·§1 #1 夏后氏
-  sui: { name: '骁果军', tier: 1 },        // 汉东·§1 #43 隋帝骁果（≠瓦岗军）
+  sui: { name: '骁果军', tier: 1 },        // 汉东·隋帝禁卫骁果；615雁门李世民解围（根基在中央，河套用武地）
   sunqin: { name: '督标秦军', tier: 1 },   // 潼关·§1 #81 孙传庭督标秦兵
   didao: { name: '飞熊军', tier: 3 },      // 临洮·§1 #27 陇西董卓系（旗=狄·狄道）
   han: { name: '韩卒击刹', tier: 3 },      // 新郑·战国韩都精锐（旗=韩·韩国）

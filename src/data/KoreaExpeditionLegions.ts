@@ -14,10 +14,10 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   baiji: { name: '九誓幢', tier: 2 },        // 泗沘·统一新罗混编含百济裔（§4 #4）
   goryeo: { name: '鹰扬龙虎军', tier: 1 },   // 开城·高丽二军（§4 #5）
   dingan: { name: '别武班', tier: 2 },       // 鸭绿府·高丽抗女真野战军（§4 #6）
-  sambyeol: { name: '龟甲板屋船', tier: 2 },     // 鸣梁·李舜臣（原属全罗左道）
+  sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣龟甲船海战（原属全罗左道）
   hai2: { name: '朝鲜甲士', tier: 3 },       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
   joseon: { name: '内禁卫', tier: 1 },       // 汉城·国王贴身近卫（§4 #9）
-  jeolla: { name: '全罗水军', tier: 0 },       // 顺天·全罗左道水军
+  jeolla: { name: '蒙冲营', tier: 1 },       // 顺天·全罗左道水军蒙冲（龟船编制前系）
   chen3: { name: '击刹兵', tier: 3 },         // 大木岳·月支击刹兵
   danluo: { name: '三别抄', tier: 3 },        // 星主厅·耽罗三别抄
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收

@@ -13,7 +13,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   dongxu: { name: '南都象阵', tier: 2 },       // 勃固城·东吁王朝南都勃固象兵（≠东吁@东吁）
   konbaung: { name: '贡榜卡塞骑', tier: 2 },   // 瑞波·§11 #4 卡塞重骑
   siam: { name: '皇家象骑兵', tier: 2 },       // 阿瑜陀耶·暹罗王家象兵（纳黎萱等；泰籍战史名，非中原式以少胜多顶格）
-  pagan: { name: '蒲甘战象军', tier: 3 },      // 蒲甘·辞典 #19（阿奴律陀象军）
+  pagan: { name: '战象禁卫', tier: 3 },      // 蒲甘·阿奴律陀象军禁卫（无古籍固定番号）
   pyu: { name: '骠国巨象阵', tier: 2 },        // 室利差罗·辞典 #22（新唐书·骠国乐）
   champa: { name: '占婆国水师', tier: 2 },     // 美山·§10 #7（占族航海精锐）
   chenla: { name: '双弓弩象营', tier: 2 },     // 吴哥·辞典 #93 高棉弩象营

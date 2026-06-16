@@ -92,7 +92,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jurchen', name: '女真' },
     { id: 'dangxiang', name: '大夏' },
     { id: 'menggu_d', name: '蒙古' },
-    { id: 'manzhou', name: '满洲' },
+    { id: 'houjin', name: '后金' },              // 旗号后金@萨尔浒；1616 国号，1636 改大清
     { id: 'manzhou_d', name: '大清' },
     { id: 'ming_d', name: '大明' },
     { id: 'liao_d', name: '大辽' },

@@ -39,6 +39,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'champa', // 占婆·占婆国水师
   'luchuan', // 麓川·麓川夷象
   'guangzhou', // 广州·摧锋军（广南核心；§9 #15 番禺）
+  'dayue', // 大越·铁突军（势力皇黎；旗号大越）
   'chenla', // 真腊·双弓弩象营（吴哥；岭南区）
   // ── 4·家族 ──
   'qi_d',

@@ -53,7 +53,7 @@ export class CityAssetManager {
         'dizhou': '棣',
         'gaogouli': '高句',
         'xinluo': '新罗',
-        'manzhou': '满洲',
+        'houjin': '后金',
         'weihaiwei': '威海',
 
         'shu': '蜀',
@@ -463,7 +463,7 @@ export class CityAssetManager {
         'tuva': '图瓦',
 
         // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
-        'dayu': '大隅',
+        'osumi': '大隅',
         'anmei': '奄美',
 
         // ── 2026-05-28 新增：康区藏族土司/部落 ──
@@ -719,7 +719,7 @@ export class CityAssetManager {
         'nvguo': '女国',
         'jiashi': '迦湿',
         'wuhu': '乌护',
-            sanada_d: '真田',
+        'sanada_d': '真田',
         };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

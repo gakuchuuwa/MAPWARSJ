@@ -9,11 +9,11 @@
  * - 据点优先标志战场；王江泾距嘉兴<50km时取成军地
  */
 export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  zhuang_d: { name: '广西狼兵', tier: 0 },     // 田阳·§10 #8 标志战王江泾（瓦氏抗倭）
+  zhuang_d: { name: '广西俍兵', tier: 0 },     // 田阳·1555 瓦氏率俍兵6870王江泾斩级1900+（俍兵绿）
   xian_d: { name: '俚人武士', tier: 2 },       // 高凉·§10 #9 冼夫人卫队
-  dayue: { name: '安南神武军', tier: 2 },       // 昇龙·§10 #6 大越禁军
-  jing: { name: '铁突军', tier: 2 },           // 华闾·§10 #2 陈朝抗元（陈兴道）
-  trinh: { name: '圣翊军', tier: 2 },          // 西都·§10 #2 陈朝圣翊（陈兴道）
+  dayue: { name: '铁突军', tier: 1 },           // 昇龙·宣德二年支棱黎问黎魁铁突三千（《大越史记全书》卷十）
+  jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
+  trinh: { name: '府僚营', tier: 3 },          // 宣光·郑主府僚军政（无史籍固定精锐番号）
   nguyen_guangnan: { name: '西山军', tier: 2 }, // 富春·§10 #3 阮惠西山朝
   guangnanguo: { name: '黑旗军', tier: 2 },     // 洞海·§10 #4 刘永福（安南册封）
   ryukyu: { name: '那霸水师', tier: 2 },       // 首里·§9 #21 琉球王府水师

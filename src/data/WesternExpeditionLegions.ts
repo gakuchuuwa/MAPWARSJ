@@ -12,7 +12,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yutian: { name: '于阗尉迟军', tier: 2 },  // 于阗·尉迟王族精锐（§14 #2）
   kala: { name: '阿斯古拉姆', tier: 0 },      // 奥什·1006 玉素甫·卡迪尔汗灭于阗（策勒决战）
   an: { name: '伊列克近卫', tier: 1 },        // 蒲华·999 纳斯尔·伊列克汗奇袭布哈拉灭萨曼
-  yiduhu: { name: '阿斯兰军', tier: 1 },      // 高昌·咸通七年仆固俊北庭回鹘克西州（新唐书·回鹘传「斩论尚热」）
+  yiduhu: { name: '阿斯兰军', tier: 1 },      // 西州·咸通七年仆固俊北庭回鹘克西州（新唐书·回鹘传「斩论尚热」）
   shule: { name: '盘橐卫', tier: 2 },       // 盘橐城·疏勒强弩守军（§14 #5；班超大本营）
   yanqi: { name: '焉耆龙骑兵', tier: 2 },   // 员渠城·焉耆龙骑（§14 #6）
   wusun: { name: '昆莫亲卫', tier: 1 }, // 赤谷城·乌孙王帐亲卫（§14 #7）

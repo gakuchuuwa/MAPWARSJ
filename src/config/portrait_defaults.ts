@@ -506,7 +506,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'jurchen': _dongbeiPortraitPool,
     'keerqin': _dongbeiPortraitPool,
     'kuye': _dongbeiPortraitPool,
-    'manzhou': _dongbeiPortraitPool,
+    'houjin': _dongbeiPortraitPool,
     'manzhou_d': _dongbeiPortraitPool,
     'mohe': _dongbeiPortraitPool,
     'nanai': _dongbeiPortraitPool,

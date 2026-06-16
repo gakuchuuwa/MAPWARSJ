@@ -1,4 +1,4 @@
-/**
+﻿/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -1721,7 +1721,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_teshuolankalun', name: '唐努', factionId: 'tuva', lat: 49.419915, lng: 98.432007, type: 'small_city', troops: 10000 },
 
     // ── 2026-05-28 新增：大隅(赤尾木城/九州)、奄美(赤木名城/琉球) ──
-    { id: 'city_akaogicheng', name: '赤尾木城', factionId: 'dayu', lat: 30.7300, lng: 131.0000, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_akaogicheng', name: '赤尾木城', factionId: 'osumi', lat: 30.7300, lng: 131.0000, type: 'small_city', troops: 10000, tier: 4, region: 'JAPAN' },
     { id: 'city_akakinagusuku', name: '赤木名城', factionId: 'anmei', lat: 28.4540, lng: 129.6740, type: 'small_city', region: 'JAPAN', troops: 10000, tier: 4 },
 
     // ── 2026-05-28 新增：康区藏族土司/部落据点 ──
@@ -1833,7 +1833,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.220000, lng: 115.040000, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '冉魏迁巨鹿；黎阳过密冀南' },
     { id: 'city_ningyuan', name: '宁远', factionId: 'zu_d', lat: 40.618000, lng: 120.720000, type: 'small_city', region: 'NORTH', troops: 10000, note: '关宁铁骑，祖大寿宁远卫（今兴城）' },
     { id: 'city_shuangcheng', name: '双城', factionId: 'wanyan_d', lat: 45.506341, lng: 125.845642, type: 'small_city', region: 'NORTHEAST', troops: 10000, mirror: true },
-    { id: 'city_salhu', name: '萨尔浒', factionId: 'manzhou', lat: 41.841000, lng: 124.046000, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '满洲八旗龙兴外移；赫图阿拉让位爱新觉罗' },
+    { id: 'city_salhu', name: '萨尔浒', factionId: 'houjin', lat: 41.841000, lng: 124.046000, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '后金政权据点；1619 萨尔浒之战努尔哈赤白甲兵破明四路' },
     { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.530000, lng: 114.320000, type: 'medium_city', region: 'JIANGNAN', troops: 10000, tier: 1, note: '孙吴武昌督治，与春秋吴姑苏区分' },
     { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '晋国曲沃，太原让位柴周' },
     { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746000, lng: 82.983000, type: 'small_city', region: 'WESTERN', troops: 10000, note: '准噶尔汗国西北翼；伊犁让位锡伯营' },

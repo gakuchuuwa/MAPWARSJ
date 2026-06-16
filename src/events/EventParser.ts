@@ -6,7 +6,7 @@ export class EventParser {
     private static factionMap: { [key: string]: string } = {
         // 统称 (General Terms)
         '中华': 'zhonghua', '天朝': 'tianchao', '朝鲜': 'joseon', '蒙古': 'menggu',
-        '羌藏': 'qiangzang', '回回': 'huihui', '满洲': 'manzhou', '越南': 'yuenan', '滇缅': 'dianmian',
+        '羌藏': 'qiangzang', '回回': 'huihui', '满洲': 'houjin', '越南': 'yuenan', '滇缅': 'dianmian',
         '日本': 'ashikaga', '室町': 'ashikaga', '足利': 'ashikaga', '西域': 'xiyu', '西洋': 'xiyang', '叛军': 'panjun',
 
         // 战国列国（势力 id 见 factions.ts）
@@ -420,13 +420,15 @@ export class EventParser {
         '朝鲜王朝': 'joseon',
         '平壤': 'gaogouli', '平壤城': 'gaogouli',
         '珍岛': 'sambyeol', '三别抄': 'sambyeol', '裴仲孙': 'sambyeol',
-        '全罗': 'jeolla', '全罗左道': 'jeolla', '李舜臣': 'jeolla',
+        '全罗': 'jeolla', '全罗左道': 'jeolla', '蒙冲营': 'jeolla', '李舜臣': 'jeolla',
         '锦州': 'jinzhou', '锦州卫': 'jinzhou', '锦': 'jinzhou', '李成梁': 'jinzhou',
         '忠孝军': 'qing', '完颜陈和尚': 'qing',
         '铁浮图': 'dajin', '拐子马': 'wanyan_d', '猛安谋克': 'jurchen',
         '金源边军': 'fuyu', '黄龙府': 'fuyu',
         '关宁铁骑': 'zu_d', '辽东铁骑': 'jinzhou', '东江军': 'mao_wenlong',
-        '巴牙喇': 'aisin_d', '爱新': 'aisin_d', '爱新觉罗': 'aisin_d', '八旗军': 'manzhou', '多铎': 'manzhou_d',
+        '巴牙喇': 'aisin_d', '爱新': 'aisin_d', '爱新觉罗': 'aisin_d',
+        '后金': 'houjin', '白甲兵': 'houjin', '白摆牙喇': 'houjin', '萨尔浒': 'houjin',
+        '八旗军': 'houjin', '多铎': 'manzhou_d',
         '索伦兵': 'hezhe', '黑龙江水师': 'aola', '神贲禁卫': 'bohai',
         '皮室军': 'liao_d', '斡鲁朵': 'qidan', '怯薛': 'menggu_d', '怯薛歹': 'menggu_d',
         '那可儿': 'borjigin', '探马赤': 'ogodei', '秃鲁花': 'yuan_d',
@@ -655,8 +657,11 @@ export class EventParser {
         '图瓦': 'tuva', '唐努': 'tuva', '特斯郭勒卡伦': 'tuva',
 
         // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
-        '大隅': 'dayu', '赤尾木城': 'dayu',
+        '大隅': 'osumi', '赤尾木城': 'osumi',
         '奄美': 'anmei', '赤木名城': 'anmei',
+
+        // ── 2026-06-17 新增：真田氏@上田城 ──
+        '真田氏': 'sanada_d', '真田': 'sanada_d', '上田城': 'sanada_d', '真田赤备': 'sanada_d',
 
         // ── 2026-05-28 新增：康区藏族土司/部落 ──
         '达隆': 'dalung', '类乌齐': 'dalung',
