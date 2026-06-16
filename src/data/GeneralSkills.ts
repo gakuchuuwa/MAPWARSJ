@@ -106,7 +106,7 @@ export interface GarrisonSystemSkillDef {
  */
 export const PASS_GARRISON_DEFENSE_SKILL: GarrisonSystemSkillDef = {
     id: 'garr_pass_juxian',
-    displayName: '拒险而守',
+    displayName: '拒险而战',
     effect: 'pass_garrison_mult',
     magnitude: 1.2,
 };

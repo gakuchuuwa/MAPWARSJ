@@ -303,14 +303,28 @@ export class GameApp {
                 this.cityManager.setOnCityCaptured((event) => {
                     if (!event.captorLegionName) return;
                     if (!BrawlFeedPanel.isEliminableFaction(event.previousFactionId)) return;
-                    if (this.cityManager.getCitiesByFaction(event.previousFactionId).length > 0) return;
 
-                    this.brawlFeedPanel.pushFactionFall({
-                        attackerFactionId: event.newFactionId,
-                        legionName: event.captorLegionName,
-                        defenderFactionId: event.previousFactionId,
-                        cityName: event.cityName,
-                    });
+                    const citiesLeft = this.cityManager.getCitiesByFaction(event.previousFactionId).length;
+                    if (citiesLeft === 0) {
+                        this.brawlFeedPanel.pushFactionFall({
+                            attackerFactionId: event.newFactionId,
+                            legionName: event.captorLegionName,
+                            defenderFactionId: event.previousFactionId,
+                            cityName: event.cityName,
+                        });
+                        return;
+                    }
+
+                    // 攻占大城（或同级核心据点）
+                    const city = this.cityManager.getCity(event.cityId);
+                    if (city && (city.type === 'big_city' || city.tier <= 1)) {
+                        this.brawlFeedPanel.pushCityCapture({
+                            attackerFactionId: event.newFactionId,
+                            legionName: event.captorLegionName,
+                            regionKey: city.region,
+                            cityName: event.cityName
+                        });
+                    }
                 });
                 Army.setAnnihilationReporter((army, info) => {
                     if (!BrawlFeedPanel.isEliminableFaction(army.getFactionId())) return;

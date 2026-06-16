@@ -355,9 +355,16 @@ export class ExpeditionUI {
 
     /** 军情面板播报（S 级「征」徽章行） */
     private pushFeed(legionName: string, cityName: string, kind: 'depart' | 'success'): void {
-        (window as unknown as {
-            game?: { brawlFeedPanel?: { pushExpedition(p: { legionName: string; cityName: string; kind: 'depart' | 'success' }): void } };
-        }).game?.brawlFeedPanel?.pushExpedition({ legionName, cityName, kind });
+        if (window.game?.brawlFeedPanel) {
+            (window as unknown as {
+                game?: { brawlFeedPanel?: { pushExpedition(p: { factionId?: string; legionName: string; cityName: string; kind: 'depart' | 'success' }): void } };
+            }).game?.brawlFeedPanel?.pushExpedition({ 
+                factionId: this.currentArmy?.getFactionId(),
+                legionName, 
+                cityName, 
+                kind 
+            });
+        }
     }
 
     private closePanel(): void {

@@ -862,6 +862,7 @@ path.npc-hitbox {
 .feed-badge--wipe { background: #6e3a32; }            /* 歼 · 暗红 */
 .feed-badge--restore { background: #2e6b4f; }         /* 复 · 青绿 */
 .feed-badge--expedition { background: #b08530; }      /* 征 · 鎏金 */
+.feed-badge--pass { background: #555555; }            /* 隘 · 常灰 */
 
 /* S 级大事（灭国/远征）：左侧朱砂条 + 微底色，扫一眼即见 */
 .event-item.feed-tier-s {

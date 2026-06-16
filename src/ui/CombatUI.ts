@@ -1,4 +1,5 @@
 import { getScriptedCampaignById } from '../data/ScriptedCampaigns';
+import { getFactionGeneral } from '../data/FactionGenerals';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
 import { SPRITE_PATHS, GameConfig } from '../config/GameConfig';
@@ -1193,6 +1194,12 @@ export class CombatUI {
             if (entity?.scriptedCampaignId) {
                 const campaign = getScriptedCampaignById(entity.scriptedCampaignId);
                 if (campaign?.generalName) name = campaign.generalName;
+            }
+            if (!name && unit.generalId) {
+                const gen = getFactionGeneral(unit.factionId || '');
+                if (gen && gen.generalId === unit.generalId) {
+                    name = gen.generalName;
+                }
             }
             if (name) {
                 tag.textContent = name;

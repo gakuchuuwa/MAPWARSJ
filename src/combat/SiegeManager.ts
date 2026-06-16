@@ -10,6 +10,7 @@ import { BattleUnitFactory } from './BattleUnitFactory';
 import { BattleField } from './BattleField';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
+import { getFactionGeneral } from '../data/FactionGenerals';
 
 const siegeLog = (...args: unknown[]) => gameLog('siege', ...args);
 import { LegionType, getDefaultLegionTypeForFaction } from '../types/UnitTypes';
@@ -579,6 +580,16 @@ export class SiegeManager {
 
         siegeLog(`[SiegeManager] Army arrived at ${targetCity.name}, starting battle...`);
 
+        // [新增] 触发关隘攻打军情
+        if (targetCity.type === 'pass') {
+            window.game?.brawlFeedPanel?.pushPassSiege({
+                attackerFactionId: army.getFactionId(),
+                legionName: army.name,
+                cityId: targetCity.id,
+                cityName: targetCity.name
+            });
+        }
+
         // 沙盒：在哪接触就在哪打，不沿 lastPath 回溯 setPosition（易瞬移到错误路段/远端）
         siegeLog(`🛤️ [Sandbox Siege] ${army.name} 原地开战，不校正坐标`);
 
@@ -739,6 +750,15 @@ export class SiegeManager {
             attackerUnits.push(legionAdapter);
         });
 
+        let finalTitle = siegeData.title;
+        if (targetCity.type === 'pass') {
+            if (finalTitle) {
+                finalTitle = finalTitle + ' (关隘)';
+            } else {
+                finalTitle = `${targetCity.name}防守战 (关隘)`;
+            }
+        }
+
         const battleField = this.combatSystem.startRegionalBattle(
             army.getFactionId(),
             attackerUnits,
@@ -748,7 +768,7 @@ export class SiegeManager {
             siegeData.customDuration, // [NEW] 传递导演指定时长
             siegeData.attackerPortrait, // [NEW] 传递攻击方立绘
             siegeData.defenderPortrait, // [NEW] 传递防守方立绘
-            siegeData.title, // [NEW] 传递战斗标题
+            finalTitle, // [NEW] 传递战斗标题
             siegeData.description // [NEW] 传递历史描述
         );
 
