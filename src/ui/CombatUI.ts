@@ -24,6 +24,14 @@ import { getOpeningTacticalPowerMultiplier, getStrategicBattlePowerMultiplier, g
 import { PASS_GARRISON_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL } from '../data/GeneralSkills';
 const T = COMBAT_UI_TOKENS;
 
+/** 战报技能条/系数链：精锐或远征 ×1.2 用番号专名作标签（去「军团」等尾缀） */
+function getLegionEliteBadgeName(unit: IBattleUnit): string {
+    const raw = (unit.name ?? '').trim();
+    if (!raw) return '精锐';
+    const stripped = raw.replace(/(军团|驻军|守军|军)$/, '').trim();
+    return stripped || raw;
+}
+
 export class CombatUI {
     private container: HTMLDivElement;
     private leftPortrait!: HTMLImageElement;
@@ -805,10 +813,8 @@ export class CombatUI {
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
-                const troopsName = unit.name || '精锐部队';
-                const badgeName = troopsName.replace(/(军团|驻军|守军|军)$/, '').trim();
-                const effectLabel = `精锐×${parseFloat(legionMult.toFixed(2))}`;
-                box.appendChild(createSkillTag(badgeName, effectLabel, true));
+                const effectLabel = `×${parseFloat(legionMult.toFixed(2))}`;
+                box.appendChild(createSkillTag(getLegionEliteBadgeName(unit), effectLabel, true));
             }
         };
         renderSide(this.leftSkillsBox, attacker);
@@ -848,7 +854,7 @@ export class CombatUI {
         };
         pushIfNotOne('文化', getCultureOnlyCombatMultiplier(unit));
         pushIfNotOne(PASS_GARRISON_DEFENSE_SKILL.displayName, getPassGarrisonCombatMultiplier(unit));
-        pushIfNotOne('剧本', getCampaignLegionCombatMultiplier(unit));
+        pushIfNotOne(getLegionEliteBadgeName(unit), getCampaignLegionCombatMultiplier(unit));
         pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(unit));
         pushIfNotOne('战略', getStrategicBattlePowerMultiplier(unit, battleType));
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);

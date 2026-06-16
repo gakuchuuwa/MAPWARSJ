@@ -8,7 +8,7 @@ export class GameConfig {
         /** 剧本模式：右上面板「开启剧本模式」；默认关 = 纯沙盒 */
         ENABLE_HISTORICAL_EVENTS: false,
         SANDBOX_MODE: true,
-        /** 剧本军团（秦锐士等）：右上面板「开启剧本」；默认关 */
+        /** 剧本军团（秦锐士等）：右上面板「开启剧本」；默认关 = 纯乱斗，直播主路径不依赖（GAME_DIRECTION 渐进原则） */
         ENABLE_SCRIPTED_CAMPAIGNS: false,
     };
     /**
@@ -183,6 +183,18 @@ export class GameConfig {
         SELECT_TIMEOUT_MS: 15_000,
         /** UI 状态扫描间隔（ms） */
         SCAN_INTERVAL_MS: 500,
+    };
+
+    /**
+     * 军团分层（GAME_DIRECTION 改进 B′，2026-06-16）：
+     *   有番号据点、&lt;4万：四档各 25%（普通 / 仅精锐 / 仅将领 / 精锐+将领）。
+     *   ≥4万：仍必精锐+将领（大军规则）。
+     */
+    static LEGION_TIER = {
+        SPAWN_PLAIN_CHANCE: 0.25,
+        SPAWN_ELITE_CHANCE: 0.25,
+        SPAWN_GENERAL_ONLY_CHANCE: 0.25,
+        SPAWN_ELITE_GENERAL_CHANCE: 0.25,
     };
 }
 

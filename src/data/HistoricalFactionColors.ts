@@ -340,7 +340,6 @@ const _FIXED: Record<string, string> = {
     hani_d: '#A93226', // 哈尼族（哈尼砖红，思陀甸兵）
     basha_d: '#D68910', // 巴沙（湄公土金，湄公象卫）
     taira: '#C0392B', // 平氏（平家赤，平家水军）
-    yao_qiang: '#8E44AD', // 姚氏（后秦紫，赤亭羌骑）
     juyan: '#D4AC0D', // 居延（居延黄，居延戍卒）
     wuman: '#2E4053', // 乌蛮（东爨玄，东爨乌蛮兵）
     yehe: '#7D6608', // 叶赫（叶赫褐）
@@ -350,6 +349,24 @@ const _FIXED: Record<string, string> = {
     jiliemi: '#4A235A', // 吉列迷（暗紫）
     wula: '#9A7D0A', // 乌拉（暗金）
     mengwu: '#1B4F72', // 蒙兀（深蓝）
+    pugu: '#A93226', // 仆骨（暗红）
+    bayegu: '#9B59B6', // 拔野古（紫）
+    ketagalan: '#D35400', // 凯达格兰（赤土）
+    shanrong: '#7B7D7D', // 山戎（石灰）
+    suke: '#F1C40F', // 素可泰（佛金）
+    gaochang: '#E67E22', // 高昌（沙黄）
+    chuyue: '#8E44AD', // 处月（深紫）
+    baiyang: '#ECF0F1', // 白羊（银白）
+    baidi: '#D0D3D4', // 白狄（灰白）
+    wulei: '#7F8C8D', // 无雷（石灰）
+    duomi: '#9B59B6', // 多弥（紫）
+    wumeng: '#E67E22', // 乌蒙（橙褐）
+    lelang: '#F39C12', // 乐浪（黄）
+    huite: '#34495E', // 辉特（深蓝灰）
+    zubu: '#2C3E50', // 阻卜（暗蓝）
+    kangba: '#C0392B', // 康巴（深红）
+    nvguo: '#8E44AD', // 女国（紫罗兰）
+    jiashi: '#27AE60', // 迦湿弥罗（翠绿）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
