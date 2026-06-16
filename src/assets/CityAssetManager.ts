@@ -532,7 +532,7 @@ export class CityAssetManager {
        'changshan': '常山',
        'linhu': '林胡',
        'lingqiu': '灵丘',
-       'linyu': '临榆',
+       'linyu': '榆',
        'loufan': '楼烦',
        'xianyu': '鲜虞',
        'yi': '易',
