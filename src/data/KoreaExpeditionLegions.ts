@@ -18,5 +18,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   hai2: '朝鲜甲士',       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
   joseon: '内禁卫',       // 汉城·国王贴身近卫（§4 #9）
   jeolla: '龟船水军',     // 顺天·全罗左道水军（§4 #11，李舜臣）
+  chen3: '击刹兵',         // 大木岳·月支击刹兵
+  danluo: '三别抄',        // 星主厅·耽罗三别抄
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
 };

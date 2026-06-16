@@ -28,5 +28,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   han: '韩卒击刹',      // 新郑·战国韩都精锐（旗=韩·韩国）
   liang_d: '梁国劲卒',  // 商丘·战国/汉代梁国劲卒（旗=梁·梁国）
   wey: '朱龙骑',          // 濮阳·卫国朱龙骑
+  liguo: '黎之耆戎',       // 阏与·黎国耆戎
+  yiyang_d: '申息锐师',    // 武胜关·义阳申息锐师
   // wazhai@定陶：§1 无瓦岗军专名，不收远征番号
 };

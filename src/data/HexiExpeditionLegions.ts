@@ -19,4 +19,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
   liang: '凉州突骑',          // 姑臧·后汉凉州精锐骑兵（突骑＝冲锋陷阵突击力量）
   hunxie: '甘州铁骑',         // 酒泉城·§7 #11 甘州回鹘（旗=浑邪；草原 huige 已占「回鹘铁骑」）
   qifu_d: '苑川突骑',         // 枹罕·西秦乞伏鲜卑突骑（苑川故地）
+  anding_wei: '长征健儿',      // 苦峪堡·安定卫长征健儿
+  qiang: '北地骑',             // 萧关·羌族北地骑
+  chijin: '赤斤蒙古卫',        // 赤金堡·赤斤蒙古卫
 };
