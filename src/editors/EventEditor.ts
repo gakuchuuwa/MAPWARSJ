@@ -924,7 +924,7 @@ export class EventEditor implements IEditor {
             { id: 'menggu', name: '蒙古' },
             { id: 'qiangzang', name: '羌藏' },
             { id: 'huihui', name: '回回' },
-            { id: 'houjin', name: '后金' },
+            { id: 'manzhou', name: '满洲' },
             { id: 'yuenan', name: '越南' },
             { id: 'dianmian', name: '滇缅' },
             { id: 'ashikaga', name: '室町' },

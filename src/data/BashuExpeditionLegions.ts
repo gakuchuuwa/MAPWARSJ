@@ -18,7 +18,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   boren: { name: '悬棺武士', tier: 2 },         // 僰道·§8 #8 僰人山地武士（番号避旗号「僰」）
   chenghan: { name: '六夷突骑', tier: 2 },      // 鹿头关·§8 #9 成汉李特六夷铁骑
   daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
-  ba: { name: '合州水军', tier: 2 },            // 重庆·南宋合州钓鱼城水军（旗=巴·巴郡）
+  ba: { name: '钓鳌军', tier: 1 },              // 钓鱼城·南宋合州守城劲卒（旗=巴·巴国；钓鳌取钓鱼城典故）
   // ── 2026-06-16 新增：4座西南名关 ──
   lizhou_d: { name: '白水军', tier: 2 },        // 剑门关·刘璋白水关旧部
   xiazhou: { name: '峡江水军', tier: 2 },       // 瞿塘关·三峡重防区（原白杆兵防重）

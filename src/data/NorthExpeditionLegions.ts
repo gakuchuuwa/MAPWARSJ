@@ -23,11 +23,11 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tuoba: { name: '虎纹突骑', tier: 1 },     // 大同·§2 #6 拓跋焘具装骑
   yuwen: { name: '宿卫虎贲', tier: 1 },     // 饶乐水·§2 #7 北魏/宇文宿卫
   erzhu: { name: '六镇戍兵', tier: 3 },     // 秀容川·§2 #8 六镇鲜卑军人（尔朱荣圈）
-  gaoqi_d: { name: '百保鲜卑', tier: 2 },   // 蓨城·§2 #9
+  gaoqi_d: { name: '百保鲜卑', tier: 0 },   // 蓨城·§2 #9 北齐百保精兵
   yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
   hejian: { name: '先登死士', tier: 0 },    // 乐成·§1 #25 界桥（番号随城）
   chile: { name: '两池军', tier: 3 },       // 云中·§2 #11
-  murong: { name: '鲜卑燕骑', tier: 3 },    // 棘城·§2 #12 慕容恪连环马（棘城之战）
+  murong: { name: '龙城甲骑', tier: 0 },    // 棘城·§2 #12 慕容燕龙城具装骑（原鲜卑燕骑）
   ming_d: { name: '明军三大营', tier: 1 },   // 北京·§1 #72–73、#79 五军/神机/三千营合称
 
   // ── §1 中原表·地理偏北（用户指定）──
@@ -46,5 +46,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   lingqiu: { name: '飞虎军', tier: 3 },       // 平型关·灵丘（五代）
   loufan: { name: '楼烦兵', tier: 3 },        // 宁武关·楼烦（秦汉）
   linyu: { name: '夷丁突骑', tier: 3 },       // 山海关·临榆（明末）
-  heng1: { name: '恒山军', tier: 3 },          // 雁门关·元岳（唐代）
+  heng1: { name: '长平骑军', tier: 1 },        // 雁门关·卫青河西击匈奴所部骑军（旗=恒·元岳）
 };

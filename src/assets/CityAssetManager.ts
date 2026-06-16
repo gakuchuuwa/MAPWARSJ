@@ -53,7 +53,7 @@ export class CityAssetManager {
         'dizhou': '棣',
         'gaogouli': '高句',
         'xinluo': '新罗',
-        'houjin': '后金',
+        'manzhou': '满洲',
         'weihaiwei': '威海',
 
         'shu': '蜀',
@@ -327,7 +327,8 @@ export class CityAssetManager {
 'gaoche': '高车',
         'da_yuan': '北元',
 
-'kala': '喀喇',
+'kala': '喀汗',
+        'xiliao': '喀喇',
 'sogdian': '粟特',
         'guer': '古尔',
         'kangju': '康居',

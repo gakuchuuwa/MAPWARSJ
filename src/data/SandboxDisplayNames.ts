@@ -90,7 +90,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jurchen': '女真',
 'dangxiang': '大夏',
 'menggu_d': '蒙古',
-    'houjin': '后金',
+    'manzhou': '满洲',
     'manzhou_d': '大清',
 'ming_d': '大明',
     'liao_d': '大辽',
@@ -354,7 +354,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'da_yuan': '北元',
 
     // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
-'kala': '喀喇',
+'kala': '喀汗',
+    'xiliao': '喀喇',
 'sogdian': '粟特',
     'kangju': '康居',
     'geluolu': '葛逻',

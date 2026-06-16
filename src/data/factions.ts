@@ -92,7 +92,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jurchen', name: '女真' },
     { id: 'dangxiang', name: '大夏' },
     { id: 'menggu_d', name: '蒙古' },
-    { id: 'houjin', name: '后金' },              // 旗号后金@萨尔浒；1616 国号，1636 改大清
+    { id: 'manzhou', name: '满洲' },
     { id: 'manzhou_d', name: '大清' },
     { id: 'ming_d', name: '大明' },
     { id: 'liao_d', name: '大辽' },
@@ -424,6 +424,8 @@ export const FACTIONS: Faction[] = [
 
 // ── 2026-05-26 新增：西域/中亚势力（25个）──
 { id: 'kala', name: '喀喇汗王朝' },
+    // ── 2026-06-17 新增：喀喇契丹（西辽·虎思/碎叶故地）──
+    { id: 'xiliao', name: '喀喇契丹' },
 // 土褐 - 吐火罗(员渠城/焉耆盆地)
 { id: 'sogdian', name: '粟特' },
         // 巧克力色 - 粟特商团(阿弗拉西阿卜/撒马尔罕)

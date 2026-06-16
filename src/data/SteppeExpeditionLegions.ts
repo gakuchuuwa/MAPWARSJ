@@ -8,15 +8,16 @@
  * - 依据 史料/古代精锐部队.md §6 #1–3、#5–12、#14–19
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  liao_d: { name: '皮室军', tier: 3 },         // 临潢·辽太祖皮室军（§6 #1）
-  qidan: { name: '斡鲁朵军', tier: 3 },       // 木叶山·契丹斡鲁朵护卫（§6 #9）
+  liao_d: { name: '属珊军', tier: 0 },         // 临潢府·《辽史·兵卫志》述律平属珊三万骑；917幽州
+  qidan: { name: '皮室军', tier: 1 },         // 木叶山·辽太祖皮室军（§6 #1；原挂临潢让位属珊）
+  yel: { name: '斡鲁朵军', tier: 1 },         // 降圣·契丹斡鲁朵护卫（原木叶山）
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 哈拉和林·蒙古帝国怯薛（§6 #2）
   borjigin: { name: '那可儿军', tier: 3 },     // 曲雕阿兰·铁木真那可儿（§6 #10）
   ogodei: { name: '探马赤军', tier: 0 },       // 也迷里·木华黎探马赤（§6 #3）
   yuan_d: { name: '秃鲁花军', tier: 1 },       // 上都·元怯薛白昼警卫（§6 #11）
-  xiongnu: { name: '鸣镝骑兵', tier: 2 },      // 头曼城·冒顿鸣镝骑（§6 #6）
-  tujue: { name: '突厥狼卫', tier: 2 },       // 于都斤山·附离狼卫（§6 #5）
-  huige: { name: '回鹘铁骑', tier: 1 },       // 富贵城·回鹘重骑（§6 #7）
+  xiongnu: { name: '控弦之士', tier: 1 },      // 头曼城·冒顿控弦三十万（《史记》；原鸣镝骑兵）
+  tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
+  huige: { name: '毗伽近卫', tier: 1 },       // 富贵城·回鹘毗伽可汗近卫（原回鹘铁骑）
   // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
   xianbei: { name: '弹汗王卫', tier: 3 },      // 嘎仙洞·弹汗山王庭卫队（§6 #15）
   gaoche: { name: '高车战车', tier: 3 },       // 浚稽山·高车战车兵（§6 #16）

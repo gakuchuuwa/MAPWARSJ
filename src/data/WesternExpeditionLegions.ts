@@ -5,12 +5,12 @@
  * - 番号至少 3 个汉字
  * - 同势力只挂一个番号（比知名度分流）
  * - 不收热兵器专名（§14 #9 叶尔羌火枪兵等）
- * - 依据 史料/古代精锐部队.md §14 #1–8；#10 喀喇契丹无合格势力故不收
+ * - 依据 史料/古代精锐部队.md §14 #1–8；#10 喀喇契丹→中亚 xiliao@屈耽·斡耳朵亲卫
  */
 export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   qiuci: { name: '龟兹重甲兵', tier: 2 },   // 伊逻卢·龟兹国冶铁重装（§14 #1）
   yutian: { name: '于阗尉迟军', tier: 2 },  // 于阗·尉迟王族精锐（§14 #2）
-  kala: { name: '阿斯古拉姆', tier: 0 },      // 奥什·1006 玉素甫·卡迪尔汗灭于阗（策勒决战）
+  kala: { name: '阿斯古拉姆', tier: 0 },      // 奥什·阿斯卡里古拉姆 Askari Ghulam；1006策勒灭于阗
   an: { name: '伊列克近卫', tier: 1 },        // 蒲华·999 纳斯尔·伊列克汗奇袭布哈拉灭萨曼
   yiduhu: { name: '阿斯兰军', tier: 1 },      // 西州·咸通七年仆固俊北庭回鹘克西州（新唐书·回鹘传「斩论尚热」）
   shule: { name: '盘橐卫', tier: 2 },       // 盘橐城·疏勒强弩守军（§14 #5；班超大本营）
@@ -22,7 +22,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   anxi: { name: '大唐安西军', tier: 0 },     // 拨换城·高仙芝/郭昕安西都护府精锐（§1 #54）
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
   loulan: { name: '楼兰戍', tier: 3 },      // 扜泥城·汉晋楼兰戍卒（旗=楼兰·§12.1.1）
-  // §14 #10 喀喇契丹重骑兵 → 项目无西辽/喀喇契丹独立势力，宁缺毋滥
+  // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
   // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
   quli: { name: '轮台戍卒', tier: 3 },
   dzungar: { name: '塔城卫队', tier: 3 },

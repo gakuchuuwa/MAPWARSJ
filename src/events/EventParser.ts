@@ -6,7 +6,7 @@ export class EventParser {
     private static factionMap: { [key: string]: string } = {
         // 统称 (General Terms)
         '中华': 'zhonghua', '天朝': 'tianchao', '朝鲜': 'joseon', '蒙古': 'menggu',
-        '羌藏': 'qiangzang', '回回': 'huihui', '满洲': 'houjin', '越南': 'yuenan', '滇缅': 'dianmian',
+        '羌藏': 'qiangzang', '回回': 'huihui', '满洲': 'manzhou', '越南': 'yuenan', '滇缅': 'dianmian',
         '日本': 'ashikaga', '室町': 'ashikaga', '足利': 'ashikaga', '西域': 'xiyu', '西洋': 'xiyang', '叛军': 'panjun',
 
         // 战国列国（势力 id 见 factions.ts）
@@ -116,7 +116,7 @@ export class EventParser {
         '百保鲜卑': 'gaoqi_d', '百保': 'gaoqi_d',
         '黄龙兵': 'yingzhou_ying_d', '高宝宁': 'yingzhou_ying_d', '营州': 'yingzhou_ying_d',
         '两池军': 'chile', '高洋': 'chile',
-        '鲜卑燕骑': 'murong', '慕容恪': 'murong', '连环马': 'murong', '棘城': 'murong',
+        '鲜卑燕骑': 'murong', '龙城甲骑': 'murong', '慕容恪': 'murong', '连环马': 'murong', '棘城': 'murong',
         '曳落河': 'anshi_d', '安禄山': 'anshi_d',
         '鸦儿军': 'shatuo', '李克用': 'shatuo',
         '朔方军': 'lingwu', '郭子仪': 'lingwu', '李光弼': 'lingwu', '灵武': 'lingwu', '回乐': 'lingwu',
@@ -261,13 +261,14 @@ export class EventParser {
         '弘光四镇': 'hongguang', '高杰': 'hongguang', '刘良佐': 'hongguang', '黄得功': 'hongguang', '刘泽清': 'hongguang',
         '长乐控鹤': 'min', '闽之控鹤': 'min',
         '无为': 'wuwu_d', '濡须口': 'wuwu_d', '濡须': 'wuwu_d',
-        '合州水军': 'ba', '合州': 'ba',
+        '钓鳌军': 'ba', '钓鱼城': 'ba', '合州': 'ba',
         '韩卒击刹': 'han',
         '梁国劲卒': 'liang_d', '梁国': 'liang_d',
         '靖江府卫': 'jingjiang',
         '楼兰戍': 'loulan', '扜泥城': 'loulan',
         '苑川突骑': 'qifu_d', '苑川': 'qifu_d',
-        '碎叶镇军': 'ashina', '碎叶城': 'ashina', '碎叶': 'ashina', '屈耽': 'ashina',
+        '碎叶镇军': 'ashina', '碎叶城': 'xiliao', '碎叶': 'xiliao', '屈耽': 'xiliao',
+        '斡耳朵亲卫': 'xiliao', '虎思': 'xiliao', '八剌沙衮': 'xiliao',
         '建康水军': 'chen',
         '白袍军': 'xiao_d', '陈庆之': 'xiao_d',
         '背嵬军': 'yue_d', '背嵬': 'yue_d', '岳飞': 'yue_d', '岳云': 'yue_d',
@@ -427,13 +428,16 @@ export class EventParser {
         '金源边军': 'fuyu', '黄龙府': 'fuyu',
         '关宁铁骑': 'zu_d', '辽东铁骑': 'jinzhou', '东江军': 'mao_wenlong',
         '巴牙喇': 'aisin_d', '爱新': 'aisin_d', '爱新觉罗': 'aisin_d',
-        '后金': 'houjin', '白甲兵': 'houjin', '白摆牙喇': 'houjin', '萨尔浒': 'houjin',
-        '八旗军': 'houjin', '多铎': 'manzhou_d',
+        '白甲兵': 'manzhou', '白摆牙喇': 'manzhou', '萨尔浒': 'manzhou',
+        '八旗军': 'manzhou', '多铎': 'manzhou_d',
         '索伦兵': 'hezhe', '黑龙江水师': 'aola', '神贲禁卫': 'bohai',
-        '皮室军': 'liao_d', '斡鲁朵': 'qidan', '怯薛': 'menggu_d', '怯薛歹': 'menggu_d',
+        '皮室军': 'qidan', '属珊军': 'liao_d', '属珊': 'liao_d', '斡鲁朵': 'yel', '临潢府': 'liao_d', '上京': 'liao_d',
+        '怯薛': 'menggu_d', '怯薛歹': 'menggu_d',
         '那可儿': 'borjigin', '探马赤': 'ogodei', '秃鲁花': 'yuan_d',
-        '鸣镝骑': 'xiongnu', '附离': 'tujue', '狼卫': 'tujue',
-        '回鹘铁骑': 'huige', '沙陀铁骑': 'shatuo', '弹汗山': 'xianbei',
+        '鸣镝骑': 'xiongnu', '控弦': 'xiongnu', '控弦之士': 'xiongnu',
+        '附离': 'tujue', '附离亲卫': 'tujue', '狼卫': 'tujue',
+        '回鹘铁骑': 'huige', '毗伽近卫': 'huige', '毗伽': 'huige',
+        '沙陀铁骑': 'shatuo', '弹汗山': 'xianbei',
         '柔然铁骑': 'rouran', '瓦剌铁骑': 'wala',
 
         // ── 2026-05-25 兴辽(大延琳) ──
@@ -458,10 +462,11 @@ export class EventParser {
         '绰罗斯': 'choros', '绰罗斯氏': 'choros', '瓦剌王族': 'choros', '准噶尔盆地': 'choros',
 
         // ── 2026-05-26 新增：西域/中亚势力（25个）──
-        '喀喇': 'kala', '喀喇汗': 'kala', '喀喇汗王朝': 'kala',
+        '喀喇': 'xiliao', '喀喇契丹': 'xiliao', '西辽': 'xiliao', '耶律大石': 'xiliao',
+        '喀喇汗': 'kala', '喀喇汗王朝': 'kala', '黑汗': 'kala',
         '龟兹重甲兵': 'qiuci', '伊逻卢': 'qiuci',
         '于阗尉迟军': 'yutian', '于阗': 'yutian',
-        '喀喇汗铁骑': 'kala', '阿斯古拉姆': 'kala',
+        '喀喇汗铁骑': 'kala', '阿斯古拉姆': 'kala', '阿斯卡里古拉姆': 'kala', '阿斯卡里': 'kala',
         '伊列克近卫': 'an',
         '高昌铁骑': 'gaochang', '阿斯兰军': 'yiduhu', '亦都护': 'yiduhu', '高昌回鹘': 'yiduhu',
         '盘橐卫': 'shule', '疏勒大黄弩': 'shule', '盘橐城': 'shule',
@@ -480,7 +485,7 @@ export class EventParser {
         '南凉铁骑': 'tufa_d', '秃发乌孤': 'tufa_d', '秃发傉檀': 'tufa_d',
         '北凉精锐': 'juqu_d', '沮渠蒙逊': 'juqu_d',
         '大甲重阵': 'liang', '张轨': 'liang', '前凉': 'liang',
-        '甘州铁骑': 'hunxie', '夜落纥': 'hunxie',
+        '骠骑冠军': 'hunxie', '夜落纥': 'hunxie',
 
         // ── 2026-06-11 川蜀远征精锐番号 ──
         '賨人勇士': 'bandun', '板楯蛮': 'bandun', '板楯': 'bandun',

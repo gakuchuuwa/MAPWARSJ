@@ -23,7 +23,7 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   chen: { name: '建康水军', tier: 2 },       // 清远·§9 #6 陈霸先江南水师
   xiao_d: { name: '白袍军', tier: 1 },       // 兰陵·§9 #7 陈庆之南梁
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
-  jingzhou: { name: '忠顺军', tier: 2 },     // 襄阳·§9 #11 《宋史·孟珙传》忠顺军（旗=荆·荆州；成军枣阳）
+  jingzhou: { name: '忠顺军', tier: 1 },     // 襄阳·§9 #11 《宋史·孟珙传》忠顺军（旗=荆·荆州；成军枣阳）
   song: { name: '御前诸军', tier: 2 },       // 临安·孟珙南宋御前诸军
   qian_d: { name: '游奕军', tier: 2 },       // 嘉兴·§9 #13 踏白游奕（岳飞系）
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）

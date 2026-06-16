@@ -10,7 +10,7 @@
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   bohai: { name: '神贲禁卫', tier: 1 },       // 龙泉府·渤海左右神贲军（§1 #85）
   dajin: { name: '铁浮图', tier: 0 },         // 会宁府·金军重装（§3 #1）
-  houjin: { name: '白甲兵', tier: 0 },       // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
+  manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
   wanyan_d: { name: '拐子马队', tier: 1 },    // 双城·完颜氏拐子马（§3 #2）
   jurchen: { name: '猛安谋克', tier: 3 },     // 五国城·女真兵民合一（§3 #25）
   jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·明锦州卫；李成梁（§3 #6）

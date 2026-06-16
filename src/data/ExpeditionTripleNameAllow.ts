@@ -14,6 +14,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'wei', 'qin', 'tang', 'qi', 'shang', 'zhou', 'xia', 'han_d', 'fu', 'cao_d',
   'chen', 'xiao_d', 'song', 'wuzhou_d', 'haoding', 'sunqin',
   'hongguang', 'min', 'loulan', 'han', 'jingjiang', 'liang_d', 'ashina',
+  'xiliao', // 喀喇契丹·斡耳朵亲卫（西辽政权）
   'edo', 'riben', 'xinluo', 'gaogouli', 'balhae', 'goryeo', 'joseon',
   'zhao', // 赵国·赵边骑
   'xiliang', // 西凉·西凉铁骑
@@ -47,7 +48,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   // ── 1·民族 / 部族（史籍专名旗号）──
   'tujue', 'shatuo', 'gaoche', 'rouran', 'naiman', 'ongut', 'wala', 'geluolu',
   'qiuci', 'yanqi', 'iga_d', 'sambyeol', 'wuhuan',
-  'huige', // 回纥·回鹘铁骑
+  'huige', // 回纥·毗伽近卫
   'wusun', // 乌孙·昆莫亲卫
   'borjigin', // 孛儿·那可儿军（孛儿只斤）
   'qincha', // 钦察·康里精骑
