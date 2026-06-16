@@ -7,18 +7,18 @@
  * - 不收热兵器/近代专名（训练都监、别技军、捉虎甲士火绳枪、壮勇营等）
  * - 依据 史料/古代精锐部队.md §4 #1–11
  */
-export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
-  gaogouli: '铠马武士',   // 平壤·高句丽重装骑兵（§4 #1）
-  xuantu: '皂衣先人',     // 国内城·玄菟辖境/高句丽早期死士（§4 #2）
-  xinluo: '花郎道',       // 金城·新罗花郎（§4 #3）
-  baiji: '九誓幢',        // 泗沘·统一新罗混编含百济裔（§4 #4）
-  goryeo: '鹰扬龙虎军',   // 开城·高丽二军（§4 #5）
-  dingan: '别武班',       // 鸭绿府·高丽抗女真野战军（§4 #6）
-  sambyeol: '蒙冲营',     // 鸣梁·沃州蒙冲营
-  hai2: '朝鲜甲士',       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
-  joseon: '内禁卫',       // 汉城·国王贴身近卫（§4 #9）
-  jeolla: '龟船水军',     // 顺天·全罗左道水军（§4 #11，李舜臣）
-  chen3: '击刹兵',         // 大木岳·月支击刹兵
-  danluo: '三别抄',        // 星主厅·耽罗三别抄
+export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  gaogouli: { name: '铠马武士', tier: 2 },   // 平壤·高句丽重装骑兵（§4 #1）
+  xuantu: { name: '皂衣先人', tier: 3 },     // 国内城·玄菟辖境/高句丽早期死士（§4 #2）
+  xinluo: { name: '花郎道', tier: 3 },       // 金城·新罗花郎（§4 #3）
+  baiji: { name: '九誓幢', tier: 3 },        // 泗沘·统一新罗混编含百济裔（§4 #4）
+  goryeo: { name: '鹰扬龙虎军', tier: 3 },   // 开城·高丽二军（§4 #5）
+  dingan: { name: '别武班', tier: 3 },       // 鸭绿府·高丽抗女真野战军（§4 #6）
+  sambyeol: { name: '蒙冲营', tier: 3 },     // 鸣梁·沃州蒙冲营
+  hai2: { name: '朝鲜甲士', tier: 3 },       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
+  joseon: { name: '内禁卫', tier: 0 },       // 汉城·国王贴身近卫（§4 #9）
+  jeolla: { name: '龟船水军', tier: 1 },     // 顺天·全罗左道水军（§4 #11，李舜臣）
+  chen3: { name: '击刹兵', tier: 3 },         // 大木岳·月支击刹兵
+  danluo: { name: '三别抄', tier: 3 },        // 星主厅·耽罗三别抄
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
 };

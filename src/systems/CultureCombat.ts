@@ -23,6 +23,7 @@ import type { IBattleUnit } from '../core/CombatSystem';
 import type { Army } from '../core/Army';
 import type { City } from '../types/core';
 import { getCityRegion, getRegion, RegionType } from './RegionSystem';
+import { getLegionEliteConfig } from '../data/ExpeditionLegions';
 import { isCampaignLegion } from '../legion/LegionSpawnPolicy';
 
 export type CultureCombatRole = 'field' | 'garrison';
@@ -101,14 +102,30 @@ export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
     return getCultureOnlyCombatMultiplier(unit) * getPassGarrisonMultiplier(unit);
 }
 
-/** 剧本军团 / 远征军团 ×1.2；城防单位恒为 1 */
+/** 剧本军团 / 远征精锐根据层级加成；城防单位恒为 1 */
 export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
     if (isGarrisonUnit(unit)) return 1;
     const army = unit.getEntity?.() as Army | undefined;
     if (!army) return 1;
-    // 精锐军团同享此战力加成（含远征军）；但「断粮不回师」march 行为仍只看 isCampaignLegion
-    if (!army.isElite && !isCampaignLegion(army)) return 1;
-    return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT;
+    
+    // 如果是精锐，根据配置的 tier 返回阶梯乘数
+    if (army.isElite) {
+        const config = getLegionEliteConfig(army);
+        if (config) {
+            switch (config.tier) {
+                case 0: return 1.5;
+                case 1: return 1.4;
+                case 2: return 1.3;
+                case 3: return 1.2;
+            }
+        }
+        return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT; // 兜底 1.2
+    }
+    
+    // 如果不是精锐，但属于纯剧本特殊编队
+    if (isCampaignLegion(army)) return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT;
+    
+    return 1;
 }
 
 /** 开战掷色用综合系数 = 文化（含关隘）× 剧本/远征 */

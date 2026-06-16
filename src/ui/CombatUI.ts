@@ -101,8 +101,6 @@ export class CombatUI {
     /** 旧版 1v1 Battle 无 BattleField 时，用此字段供徽章识别攻城/野战 */
     private currentBattleType: import('../combat/CombatSystem').BattleType | undefined;
     private lastTimeScale = 1;
-    private tacticalSkillBanner!: HTMLDivElement;
-    private tacticalSkillHideTimer: ReturnType<typeof setTimeout> | null = null;
 
     // Interactive Customization (Per-Event Keying)
     private fileInput!: HTMLInputElement;
@@ -293,30 +291,6 @@ export class CombatUI {
             background: transparent;
         `;
         this.centerPanel.appendChild(this.createCenterGoldAccent());
-
-        this.tacticalSkillBanner = document.createElement('div');
-        this.tacticalSkillBanner.style.cssText = `
-            position: absolute;
-            left: 50%;
-            top: 6%;
-            transform: translate(-50%, -50%);
-            z-index: ${T.zIndex.centerCard + 2};
-            font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(42)};
-            font-weight: 900;
-            color: #fff8e8;
-            letter-spacing: 0.35em;
-            text-indent: 0.35em;
-            pointer-events: none;
-            opacity: 0;
-            white-space: nowrap;
-            text-shadow:
-                0 0 12px rgba(255, 120, 40, 0.9),
-                0 0 28px rgba(255, 60, 20, 0.65),
-                0 4px 16px rgba(0, 0, 0, 0.95);
-            -webkit-text-stroke: 1px rgba(120, 20, 0, 0.55);
-        `;
-        this.centerPanel.appendChild(this.tacticalSkillBanner);
 
         // [NEW] Description Text (Minimal & Elegant)
         this.eventDescription = document.createElement('div');
@@ -1220,22 +1194,17 @@ export class CombatUI {
         return this.isVisible && this.currentRegionalUnits !== null;
     }
 
-    /** 战术武将技大字（如 ③ 侵掠如火） */
+    /** 战术武将技触发效果（侧边徽章闪烁，不再弹大字） */
     public flashTacticalSkill(displayName: string): void {
         if (!displayName) return;
-        if (this.tacticalSkillHideTimer) {
-            clearTimeout(this.tacticalSkillHideTimer);
-            this.tacticalSkillHideTimer = null;
-        }
-        this.tacticalSkillBanner.textContent = `【${displayName}】`;
-        this.tacticalSkillBanner.style.animation = 'none';
-        void this.tacticalSkillBanner.offsetWidth;
-        this.tacticalSkillBanner.style.animation = 'tactical-skill-pop 2.2s ease-out forwards';
-        this.tacticalSkillHideTimer = setTimeout(() => {
-            this.tacticalSkillBanner.style.animation = 'none';
-            this.tacticalSkillBanner.style.opacity = '0';
-            this.tacticalSkillHideTimer = null;
-        }, 2300);
+        const addFlash = (badge: HTMLSpanElement | null) => {
+            if (!badge || !badge.textContent?.includes(displayName)) return;
+            badge.style.animation = 'none';
+            void badge.offsetWidth;
+            badge.style.animation = 'tactical-skill-pop 1.5s ease-out forwards';
+        };
+        addFlash(this.leftMultBadge);
+        addFlash(this.rightMultBadge);
     }
 
     public isBoundToBattleField(battleField: BattleField): boolean {
@@ -1719,10 +1688,12 @@ export class CombatUI {
     private renderOdds(winAtt: number): void {
         const att = '#f0a830', def = '#5aacbe';
         let html: string;
+        const lockSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: sub; margin-right: 4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+        
         if (winAtt >= 0.995) {
-            html = `<span style="color:${att};">🔒 攻方必胜</span>`;
+            html = `<span style="color:${att}; font-weight: 900; text-shadow: 0 0 8px rgba(240,168,48,0.5);">${lockSvg} 攻方必胜</span>`;
         } else if (winAtt <= 0.005) {
-            html = `<span style="color:${def};">🔒 守方必胜</span>`;
+            html = `<span style="color:${def}; font-weight: 900; text-shadow: 0 0 8px rgba(90,172,190,0.5);">${lockSvg} 守方必胜</span>`;
         } else {
             const a = Math.round(winAtt * 100);
             html = `<span style="color:${att};">胜率 ${a}%</span>`

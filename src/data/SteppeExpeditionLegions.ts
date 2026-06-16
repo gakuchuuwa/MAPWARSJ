@@ -7,46 +7,46 @@
  * - 不收热兵器/近代/汉军混编专名（§6 #4 大汉军、#13 准噶尔驼城火枪军等）
  * - 依据 史料/古代精锐部队.md §6 #1–3、#5–12、#14–19
  */
-export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
-  liao_d: '皮室军',         // 临潢·辽太祖皮室军（§6 #1）
-  qidan: '斡鲁朵军',       // 木叶山·契丹斡鲁朵护卫（§6 #9）
-  menggu_d: '怯薛宿卫',     // 哈拉和林·蒙古帝国怯薛（§6 #2）
-  borjigin: '那可儿军',     // 曲雕阿兰·铁木真那可儿（§6 #10）
-  ogodei: '探马赤军',       // 也迷里·木华黎探马赤（§6 #3）
-  yuan_d: '秃鲁花军',       // 上都·元怯薛白昼警卫（§6 #11）
-  xiongnu: '鸣镝骑兵',      // 头曼城·冒顿鸣镝骑（§6 #6）
-  tujue: '突厥狼卫',       // 于都斤山·附离狼卫（§6 #5）
-  huige: '回鹘铁骑',       // 富贵城·回鹘重骑（§6 #7）
+export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  liao_d: { name: '皮室军', tier: 3 },         // 临潢·辽太祖皮室军（§6 #1）
+  qidan: { name: '斡鲁朵军', tier: 3 },       // 木叶山·契丹斡鲁朵护卫（§6 #9）
+  menggu_d: { name: '怯薛宿卫', tier: 0 },     // 哈拉和林·蒙古帝国怯薛（§6 #2）
+  borjigin: { name: '那可儿军', tier: 3 },     // 曲雕阿兰·铁木真那可儿（§6 #10）
+  ogodei: { name: '探马赤军', tier: 0 },       // 也迷里·木华黎探马赤（§6 #3）
+  yuan_d: { name: '秃鲁花军', tier: 3 },       // 上都·元怯薛白昼警卫（§6 #11）
+  xiongnu: { name: '鸣镝骑兵', tier: 3 },      // 头曼城·冒顿鸣镝骑（§6 #6）
+  tujue: { name: '突厥狼卫', tier: 2 },       // 于都斤山·附离狼卫（§6 #5）
+  huige: { name: '回鹘铁骑', tier: 1 },       // 富贵城·回鹘重骑（§6 #7）
   // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
-  xianbei: '弹汗王卫',      // 嘎仙洞·弹汗山王庭卫队（§6 #15）
-  gaoche: '高车战车',       // 浚稽山·高车战车兵（§6 #16）
-  rouran: '柔然铁骑',       // 赛尔乌苏·柔然（§6 #17）
-  xueyantuo: '同罗突骑',    // 燕然勒石·薛延陀亲卫（§6 #18）
-  naiman: '乃蛮重骑',       // 福海·乃蛮重装骑兵（§6 #19）
-  ongut: '汪古突骑',        // 净州塞·汪古白鞑靼（§6 #14）
-  wala: '瓦剌铁骑',         // 博尔巴任·也先瓦剌（§6 #12）
-  geluolu: '葛逻禄背弓',    // 弓月城·三姓葛逻禄便捷善射（怛罗斯盟军；非铁骑）
-  kiyad: '那可儿',         // 不儿罕山·乞颜那可儿
-  kumo: '楮特奥隗部',     // 马盂山·奚族楮特奥隗部
+  xianbei: { name: '弹汗王卫', tier: 3 },      // 嘎仙洞·弹汗山王庭卫队（§6 #15）
+  gaoche: { name: '高车战车', tier: 3 },       // 浚稽山·高车战车兵（§6 #16）
+  rouran: { name: '柔然铁骑', tier: 1 },       // 赛尔乌苏·柔然（§6 #17）
+  xueyantuo: { name: '同罗突骑', tier: 2 },    // 燕然勒石·薛延陀亲卫（§6 #18）
+  naiman: { name: '乃蛮重骑', tier: 2 },       // 福海·乃蛮重装骑兵（§6 #19）
+  ongut: { name: '汪古突骑', tier: 2 },        // 净州塞·汪古白鞑靼（§6 #14）
+  wala: { name: '瓦剌铁骑', tier: 1 },         // 博尔巴任·也先瓦剌（§6 #12）
+  geluolu: { name: '葛逻禄背弓', tier: 3 },    // 弓月城·三姓葛逻禄便捷善射（怛罗斯盟军；非铁骑）
+  kiyad: { name: '那可儿', tier: 3 },         // 不儿罕山·乞颜那可儿
+  kumo: { name: '楮特奥隗部', tier: 3 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
-  kelie: '克烈护卫军',
-  dingling: '丁零游骑',
-  xiajiasi: '黠戛斯锐卒',
-  donghu: '东胡控弦',
-  tiele: '铁勒骁骑',
-  xibo_d: '锡伯索伦营',
-  tatar: '塔塔儿死士',
-  merkit: '蔑儿乞猎骑',
-  chahar: '察哈尔八旗',
-  da_yuan: '北元怯薛',
-  huyan: '呼衍精骑',
-  yujiulu: '郁久闾王骑',
-  jalair: '札剌亦儿军',
-  hongirad: '弘吉剌护卫',
-  choros: '绰罗斯骁骑',
-  duolu: '咄陆部铁骑',
-  kaerka: '喀尔喀重骑',
-  zhasaketu: '扎萨克铁骑',
-  buriat: '林中射手',
-  cheshihou: '车师后王卫',
+  kelie: { name: '克烈护卫军', tier: 1 },
+  dingling: { name: '丁零游骑', tier: 3 },
+  xiajiasi: { name: '黠戛斯锐卒', tier: 2 },
+  donghu: { name: '东胡控弦', tier: 2 },
+  tiele: { name: '铁勒骁骑', tier: 2 },
+  xibo_d: { name: '锡伯索伦营', tier: 3 },
+  tatar: { name: '塔塔儿死士', tier: 2 },
+  merkit: { name: '蔑儿乞猎骑', tier: 3 },
+  chahar: { name: '察哈尔八旗', tier: 1 },
+  da_yuan: { name: '北元怯薛', tier: 0 },
+  huyan: { name: '呼衍精骑', tier: 2 },
+  yujiulu: { name: '郁久闾王骑', tier: 1 },
+  jalair: { name: '札剌亦儿军', tier: 3 },
+  hongirad: { name: '弘吉剌护卫', tier: 1 },
+  choros: { name: '绰罗斯骁骑', tier: 2 },
+  duolu: { name: '咄陆部铁骑', tier: 1 },
+  kaerka: { name: '喀尔喀重骑', tier: 2 },
+  zhasaketu: { name: '扎萨克铁骑', tier: 1 },
+  buriat: { name: '林中射手', tier: 3 },
+  cheshihou: { name: '车师后王卫', tier: 3 },
 };

@@ -904,4 +904,5 @@ export const FACTIONS: Faction[] = [
     { id: 'nvguo', name: '女国' },
     { id: 'jiashi', name: '迦湿弥罗' },
     { id: 'wuhu', name: '乌护' },
+  { id: 'sanada_d', name: '真田氏', culture: 'JAPAN', description: '表里比兴，赤备绝唱。' },
 ];

@@ -41,8 +41,14 @@ import { HEXI_EXPEDITION_ELITE_LEGIONS } from './HexiExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
+export type EliteTier = 0 | 1 | 2 | 3;
+export interface EliteLegionConfig {
+  name: string;
+  tier: EliteTier;
+}
+
 /** 数据录入：factionId → 番号（14 区表合并，供审计与推导 cityId 映射） */
-const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
+const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
   ...JAPAN_EXPEDITION_ELITE_LEGIONS,
   ...KOREA_EXPEDITION_ELITE_LEGIONS,
   ...NORTHEAST_EXPEDITION_ELITE_LEGIONS,
@@ -59,8 +65,8 @@ const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
   ...HEXI_EXPEDITION_ELITE_LEGIONS,
 };
 
-function buildCityEliteLegionMap(): Readonly<Record<string, string>> {
-  const map: Record<string, string> = {};
+function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> {
+  const map: Record<string, EliteLegionConfig> = {};
   for (const [factionId, cityId] of Object.entries(STARTING_CAPITALS)) {
     const elite = ALL_FACTION_ELITE_LEGIONS[factionId];
     if (elite) map[cityId] = elite;
@@ -69,7 +75,7 @@ function buildCityEliteLegionMap(): Readonly<Record<string, string>> {
 }
 
 /** 运行时：出兵据点 cityId → 精锐番号（番号随城） */
-export const CITY_ELITE_LEGIONS: Readonly<Record<string, string>> = buildCityEliteLegionMap();
+export const CITY_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = buildCityEliteLegionMap();
 
 /** 查番号/远征解锁时的军团最小接口 */
 export type LegionEliteLookup = {
@@ -97,19 +103,33 @@ export {
 
 /** 数据录入/审计：factionId → 番号（运行时募兵请用 getLegionEliteLegionName） */
 export function getExpeditionEliteLegionName(factionId: string): string | null {
+  return ALL_FACTION_ELITE_LEGIONS[factionId]?.name ?? null;
+}
+
+export function getExpeditionEliteConfig(factionId: string): EliteLegionConfig | null {
   return ALL_FACTION_ELITE_LEGIONS[factionId] ?? null;
 }
 
-/** 番号随城：据出兵 cityId 查精锐番号 */
-export function getCityEliteLegionName(cityId: string | null | undefined): string | null {
+/** 番号随城：据出兵 cityId 查精锐配置 */
+export function getCityEliteConfig(cityId: string | null | undefined): EliteLegionConfig | null {
   if (!cityId) return null;
   return CITY_ELITE_LEGIONS[cityId] ?? null;
 }
 
+/** 番号随城：据出兵 cityId 查精锐番号 */
+export function getCityEliteLegionName(cityId: string | null | undefined): string | null {
+  return getCityEliteConfig(cityId)?.name ?? null;
+}
+
+/** 番号随城：按军团 homeCityId / sourceCityId 查精锐配置 */
+export function getLegionEliteConfig(army: LegionEliteLookup): EliteLegionConfig | null {
+  const cityId = army.homeCityId ?? army.getSourceCityId();
+  return getCityEliteConfig(cityId);
+}
+
 /** 番号随城：按军团 homeCityId / sourceCityId 查精锐番号 */
 export function getLegionEliteLegionName(army: LegionEliteLookup): string | null {
-  const cityId = army.homeCityId ?? army.getSourceCityId();
-  return getCityEliteLegionName(cityId);
+  return getLegionEliteConfig(army)?.name ?? null;
 }
 
 /** 远征解锁：跟拍军团须从有番号的据点出身（非 panjun） */

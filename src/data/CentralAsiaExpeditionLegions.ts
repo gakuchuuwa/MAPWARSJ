@@ -7,26 +7,26 @@
  * - 依据 史料/古代精锐部队.md §13；增补桑贾尔禁卫@梅尔夫（大塞尔柱）
  * - 耶尼切里为史籍专名精锐番号（非泛称火枪兵）；叶尔羌式「火枪兵」后缀不收
  */
-export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
-  yanda: '嚈哒铁骑',          // 阿缓城·白匈奴横扫中亚（§13 #2）
-  saman: '古拉姆卫',      // 阿母城·萨曼/加兹尼古拉姆（§13 #3）
-  huarazim: '花剌子模',     // 玉龙杰赤·札兰丁八鲁湾（§13 #4；去「重装」≤6字）
-  qincha: '康里精骑',     // 七河·钦察雇佣骑（§13 #5）
-  tiemuer: '帖木重装骑',    // 撒马尔罕·安卡拉之战（§13 #6）
-  kazakh: '哈萨克骑',     // 亚西·哈斯木汗游击（§13 #7）
-  seljuq: '古拉姆禁卫',     // 木鹿·桑贾尔苏丹古拉姆近卫
-  ashina: '碎叶镇军',       // 碎叶城·唐碎叶镇阿史那部（旗=史那·§12.1.1）
+export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  yanda: { name: '嚈哒铁骑', tier: 1 },          // 阿缓城·白匈奴横扫中亚（§13 #2）
+  saman: { name: '古拉姆卫', tier: 0 },      // 阿母城·萨曼/加兹尼古拉姆（§13 #3）
+  huarazim: { name: '花剌子模', tier: 3 },     // 玉龙杰赤·札兰丁八鲁湾（§13 #4；去「重装」≤6字）
+  qincha: { name: '康里精骑', tier: 2 },     // 七河·钦察雇佣骑（§13 #5）
+  tiemuer: { name: '帖木重装骑', tier: 3 },    // 撒马尔罕·安卡拉之战（§13 #6）
+  kazakh: { name: '哈萨克骑', tier: 3 },     // 亚西·哈斯木汗游击（§13 #7）
+  seljuq: { name: '古拉姆禁卫', tier: 0 },     // 木鹿·桑贾尔苏丹古拉姆近卫
+  ashina: { name: '碎叶镇军', tier: 3 },       // 碎叶城·唐碎叶镇阿史那部（旗=史那·§12.1.1）
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
-  guishuang: '彭迪甲骑',
-  guer: '马鲁鲁德骑',
-  yuezhi: '蓝氏城铁骑',
-  xijue: '郅支城坚兵',
-  tujishi: '怛罗斯突骑',
-  kokand: '浩罕轻骑',
-  sogdian: '瓦拉赫沙卫',
-  kangju: '康卡控弦',
-  anushidgin: '希瓦铁骑',
-  dayuzi: '讹答剌卫队',
-  zhaowu: '忽毡城武士',
-  yada: '悉万斤重甲',
+  guishuang: { name: '彭迪甲骑', tier: 3 },
+  guer: { name: '马鲁鲁德骑', tier: 3 },
+  yuezhi: { name: '蓝氏城铁骑', tier: 1 },
+  xijue: { name: '郅支城坚兵', tier: 3 },
+  tujishi: { name: '怛罗斯突骑', tier: 2 },
+  kokand: { name: '浩罕轻骑', tier: 2 },
+  sogdian: { name: '瓦拉赫沙卫', tier: 3 },
+  kangju: { name: '康卡控弦', tier: 2 },
+  anushidgin: { name: '希瓦铁骑', tier: 1 },
+  dayuzi: { name: '讹答剌卫队', tier: 3 },
+  zhaowu: { name: '忽毡城武士', tier: 2 },
+  yada: { name: '悉万斤重甲', tier: 3 },
 };

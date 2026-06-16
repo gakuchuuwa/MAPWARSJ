@@ -63,7 +63,7 @@ function findEligibleGeneralUnit(units: IBattleUnit[]): IBattleUnit | null {
 
 function getOpeningTacticalSkill(unit: IBattleUnit): TacticalSkillDef | null {
     const profile = getGeneralProfile(unit.generalId);
-    if (!profile || profile.tier !== 'famous') return null;
+    if (!profile) return null;
     const def = getTacticalSkillDef(profile.tacticalSkillId);
     if (!def || def.timing !== 'opening') return null;
     return def;
@@ -284,12 +284,24 @@ export function applyOpeningTacticalToRolls(
 ): { attRoll: number; defRoll: number; trigger?: TacticalSkillTrigger } {
     let lastTrigger: TacticalSkillTrigger | undefined;
 
-    // 一侧的开局战术：有名将且为 ③侵掠如火（己战×1.2）则乘到该侧掷色
-    const applySide = (units: IBattleUnit[], roll: number, sideLabel: string): number => {
+    // 一侧的开局战术：普将（逆风触发）或名将（稳定触发）的战术乘区（如 ③侵掠如火）
+    const applySide = (units: IBattleUnit[], roll: number, opponentRoll: number, sideLabel: string): number => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return roll;
+        
+        const profile = getGeneralProfile(unit.generalId);
+        if (!profile) return roll;
+
         const skill = getOpeningTacticalSkill(unit);
         if (!skill || skill.effect !== 'ally_mult_1_2') return roll;
+
+        // 普将（ordinary）逆风翻盘机制：己方 roll 必须小于敌方 roll 才触发
+        if (profile.tier === 'ordinary') {
+            if (roll >= opponentRoll) {
+                return roll; // 优势或势均力敌时不触发普将技能
+            }
+        }
+
         const next = roll * skill.magnitude;
         if (emitUi) {
             gameLog(
@@ -308,8 +320,8 @@ export function applyOpeningTacticalToRolls(
     };
 
     // 攻守双方各自结算（白起对廉颇：两边名将技都生效）
-    const outAtt = applySide(attackerUnits, attRoll, '攻方');
-    const outDef = applySide(defenderUnits, defRoll, '守方');
+    const outAtt = applySide(attackerUnits, attRoll, defRoll, '攻方');
+    const outDef = applySide(defenderUnits, defRoll, attRoll, '守方');
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }
 

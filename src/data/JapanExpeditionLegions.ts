@@ -6,33 +6,33 @@
  *
  * 不收：#11–12/#22 热兵器；#23–30 幕末—明治近代；那霸水师→岭南。
  */
-export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
+export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // ── 元寇 ──
-  so: '弘安御敌',           // 对马·宗氏抗元
-  zhuqian: '警固番役',  // 太宰府·警固番役
+  so: { name: '弘安御敌', tier: 3 },           // 对马·宗氏抗元
+  zhuqian: { name: '警固番役', tier: 3 },  // 太宰府·警固番役
 
   // ── 室町—战国—江户（辞典映射表）──
-  ashikaga: '奉公侍',         // 京都·§5 #31 足利奉公众
-  edo: '旗本武士',          // 江户城·§5 #20 旗本（Hatamoto）
-  satsuma: '隼人众',        // 内城·§5 #35 萨摩隼人
-  hojo_d: '风魔党',         // 小田原·§5 #17
-  iga_d: '伊贺众',          // 名张·§5 #16
-  hashiba: '七手组',        // 姬路城·§5 #10
-  kai: '武田赤备',          // 躑躅崎馆·§5 #7
-  owari: '母衣众',          // 清洲城·§5 #8
-  jinchuan: '马回众',       // 骏府城·§5 #9
-  echigo: '轩猿众',         // 春日山·§5 #18
-  aki: '九鬼水军',          // 吉田郡山·§5 #13 冷兵接舷
-  chosokabe: '一领具足',     // 冈丰城·长宗我部半农半兵精锐
-  aizu: '大番众',           // 鹤之城·§5 #21 大番
-  izumo: '新宫党',          // 月山富田·尼子氏最强武装精锐
-  honda: '纪清两党',        // 宇都宫·下野国极度尚武的精锐武士集团
-  fujiwara: '平泉骑马队',     // 柳之御所·奥州藤原氏重装骑兵
-  kakizaki: '虾夷探题',     // 胜山馆·蛎崎氏/松前氏边区武士
-  nanbu: '南部铁骑',        // 根城·陆奥名马产地、战国闻名的南部骑兵
-  osumi: '九州防人',         // 赤尾木城·§5 #1 防人
-  anmei: '奄美岛勇',         // 赤木名城·琉球/奄美诸岛死士
-  ayinu: '阿伊努猎兵',       // 白老·虾夷特有猛毒箭射手
-  beihai: '雪国斥候',       // 宗谷·极北严寒适应兵
-  yamato: '健儿武士',       // 飞鸟宫·§5 #2
+  ashikaga: { name: '奉公侍', tier: 3 },         // 京都·§5 #31 足利奉公众
+  edo: { name: '旗本武士', tier: 0 },          // 江户城·§5 #20 旗本（Hatamoto）
+  satsuma: { name: '隼人众', tier: 3 },        // 内城·§5 #35 萨摩隼人
+  hojo_d: { name: '风魔党', tier: 2 },         // 小田原·§5 #17
+  iga_d: { name: '伊贺众', tier: 2 },          // 名张·§5 #16
+  hashiba: { name: '七手组', tier: 2 },        // 姬路城·§5 #10
+  kai: { name: '武田赤备', tier: 0 },          // 躑躅崎馆·§5 #7
+  owari: { name: '母衣众', tier: 2 },          // 清洲城·§5 #8
+  jinchuan: { name: '马回众', tier: 2 },       // 骏府城·§5 #9
+  echigo: { name: '轩猿众', tier: 3 },         // 春日山·§5 #18
+  aki: { name: '九鬼水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷
+  chosokabe: { name: '一领具足', tier: 3 },     // 冈丰城·长宗我部半农半兵精锐
+  aizu: { name: '大番众', tier: 3 },           // 鹤之城·§5 #21 大番
+  izumo: { name: '新宫党', tier: 3 },          // 月山富田·尼子氏最强武装精锐
+  honda: { name: '纪清两党', tier: 3 },        // 宇都宫·下野国极度尚武的精锐武士集团
+  fujiwara: { name: '平泉骑马队', tier: 3 },     // 柳之御所·奥州藤原氏重装骑兵
+  kakizaki: { name: '虾夷探题', tier: 3 },     // 胜山馆·蛎崎氏/松前氏边区武士
+  nanbu: { name: '南部铁骑', tier: 1 },        // 根城·陆奥名马产地、战国闻名的南部骑兵
+  osumi: { name: '九州防人', tier: 3 },         // 赤尾木城·§5 #1 防人
+  anmei: { name: '奄美岛勇', tier: 3 },         // 赤木名城·琉球/奄美诸岛死士
+  ayinu: { name: '阿伊努猎兵', tier: 3 },       // 白老·虾夷特有猛毒箭射手
+  beihai: { name: '雪国斥候', tier: 3 },       // 宗谷·极北严寒适应兵
+  yamato: { name: '健儿武士', tier: 2 },       // 飞鸟宫·§5 #2
 };
