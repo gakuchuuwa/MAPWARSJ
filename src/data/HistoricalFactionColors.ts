@@ -305,6 +305,37 @@ const _FIXED: Record<string, string> = {
     xiongding: '#6B4A5A', // 雄定（碗子城紫褐，碗子城军）
     yaozhou: '#9A8A3A', // 耀州（金甲铜黄，金甲卫）
     mushi: '#5A5A7A', // 穆氏（丘穆陵靛紫，丘穆陵骑）
+    xiazhou: '#3A7A6B', // 峡州（峡江碧绿，峡江水军）
+    zuo_d: '#7A5A3A', // 笮人（南中赭褐，南中叟兵）
+    lizhou_d: '#6A8A9A', // 利州（白水青蓝，白水军）
+    hongnong: '#8B6A4B', // 弘农郡（桃林棕褐，桃林射士）
+    zheng_state: '#A55146', // 郑国（成皋赤铜，成皋部曲）
+    ruo_state: '#4B6554', // 鄀国（商於暗绿，商於材官）
+    huo: '#5C6B73', // 霍国（霍邑冷铁，霍邑锐士）
+    lai: '#3E7C85', // 莱国（齐莱海青，齐莱锐士）
+    zangke: '#2F7A50', // 牂牁（夜郎雨林绿，夜郎锐卒）
+    wey: '#6D323A', // 卫国（卫国暗红，朱龙骑）
+    liguo: '#857053', // 黎国（黎国沙土褐，黎之耆戎）
+    yiyang_d: '#4F6B8A', // 义阳（义阳青蓝，申息锐师）
+    anding_wei: '#614B3B', // 安定（安定卫土褐，长征健儿）
+    chijin: '#C14B3A', // 赤斤（赤斤红，赤斤蒙古卫）
+    ning: '#355C4A', // 宁州（宁州墨绿，江西勤王军）
+    chen3: '#8F6E8F', // 月支（月支紫褐，击刹兵）
+    danluo: '#325272', // 耽罗（耽罗海蓝，三别抄）
+    dengmaoqi: '#9C4A3A', // 铲平（铲平起义红，铲平军）
+    dazhen: '#737A6A', // 大真（大真冷灰绿，渤海八猛安）
+    helian: '#3D4E5B', // 赫连（铁弗钢蓝，铁弗卫队）
+    kiyad: '#70593B', // 乞颜（乞颜草原黄，那可儿）
+    kumo: '#6B5C4D', // 奚族（奚族皮甲褐，楮特奥隗部）
+    tsangpa: '#A18A4A', // 藏巴汗（藏巴汗藏金，藏巴汗卫队）
+    huangwang: '#B58A3A', // 黄王（冲天黄，冲天军）
+    shenshi: '#4A6B5A', // 吴兴沈氏（吴兴墨绿，吴兴部曲）
+    guizhou: '#A569BD', // 桂州（桂州紫，静江军）
+    paiyao: '#2E86C1', // 排瑶（排瑶蓝，八排瑶丁）
+    daozhou: '#F39C12', // 道州（道州土黄，湘军道营）
+    dayu: '#5D6D7E', // 大庾（大庾青灰，南赣标军）
+    yingzhou: '#1ABC9C', // 英州（英州青，南汉巨象军）
+    chuzhou_d: '#8A3A3A', // 滁州（淮西赤，大明龙骧卫）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

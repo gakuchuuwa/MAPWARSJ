@@ -848,4 +848,16 @@ export const FACTIONS: Faction[] = [
     { id: 'huo', name: '霍国' },
     { id: 'mushi', name: '穆氏' },
     { id: 'lai', name: '莱国' },
+    // ── 2026-06-16 新增：4座巴蜀西南名关 ──
+    { id: 'lizhou_d', name: '利州' },
+    { id: 'xiazhou', name: '峡州' },
+    { id: 'zuo_d', name: '笮人' },
+    { id: 'huangwang', name: '黄王' },
+    { id: 'shenshi', name: '吴兴沈氏' },
+    { id: 'chuzhou_d', name: '滁州' },
+    { id: 'guizhou', name: '桂州' },
+    { id: 'paiyao', name: '排瑶' },
+    { id: 'daozhou', name: '道州' },
+    { id: 'dayu', name: '大庾' },
+    { id: 'yingzhou', name: '英州' },
 ];

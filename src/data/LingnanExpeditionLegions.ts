@@ -24,4 +24,9 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   zhancheng: '佛逝象军',   // 阇槃·占城佛逝象兵
   jingjiang: '靖江府卫',   // 桂林·明靖江王府卫（旗=靖江·藩王）
   dengmaoqi: '铲平军',     // 沙戍堡·邓茂七铲平军
+  guizhou: '静江军',       // 古严关·宋桂州静江军
+  paiyao: '八排瑶丁',      // 阳山关·明清连阳八排瑶丁
+  daozhou: '湘军道营',     // 麦岭关·晚清湘军道州营
+  dayu: '南赣标军',        // 横浦关·明王阳明南赣标军
+  yingzhou: '南汉巨象军',  // 湟溪关·五代南汉重装象军
 };

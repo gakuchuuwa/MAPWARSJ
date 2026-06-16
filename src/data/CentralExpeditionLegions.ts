@@ -42,4 +42,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   huo: '霍邑锐士',
   mushi: '丘穆陵骑',
   lai: '齐莱锐士',
+  chuzhou_d: '大明龙骧卫',      // 清流关·明开国龙骧卫
 };

@@ -567,8 +567,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
         type: 'pass',
         troops: 10000,
         tier: 2 },
-    { id: 'city_dusong', name: '独松关', factionId: 'panjun', lat: 30.566952, lng: 119.679565, type: 'pass', troops: 10000, mirror: true },//镜像
-    { id: 'city_xianxia', name: '仙霞关', factionId: 'panjun', lat: 28.35, lng: 118.51, type: 'pass', troops: 10000, tier: 2 },
+    { id: 'city_dusong', name: '独松关', factionId: 'shenshi', lat: 30.566952, lng: 119.679565, type: 'pass', troops: 10000, mirror: true },//镜像
+    { id: 'city_xianxia', name: '仙霞关', factionId: 'huangwang', lat: 28.35, lng: 118.51, type: 'pass', troops: 10000, tier: 2 },
     { id: 'city_wuzhou', name: '金华', factionId: 'lujian', lat: 29.08, lng: 119.65, type: 'small_city', troops: 10000 },
     { id: 'city_quzhou', name: '信安', factionId: 'gumie', lat: 28.96, lng: 118.87, type: 'small_city', troops: 10000 },
     { id: 'city_raozhou', name: '鄱阳', factionId: 'linshihong', lat: 28.99, lng: 116.66, type: 'small_city', troops: 10000 },
@@ -579,7 +579,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     {
         id: 'city_jianmenguan',
         name: '剑门关',
-        factionId: 'panjun',
+        factionId: 'lizhou_d',
         lat: 32.30, lng: 105.53,
         type: 'pass',
         troops: 10000,
@@ -664,7 +664,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     {
         id: 'city_hengpuguan',
         name: '横浦关',
-        factionId: 'panjun',
+        factionId: 'dayu',
         lat: 25.32, lng: 114.26,
         type: 'pass',
         troops: 10000,
@@ -672,7 +672,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     {
         id: 'city_yangshanguan',
         name: '阳山关',
-        factionId: 'panjun',
+        factionId: 'paiyao',
         lat: 24.78, lng: 112.65,
         type: 'pass',
         troops: 10000,
@@ -681,7 +681,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     {
         id: 'city_huangxiguan',
         name: '湟溪关',
-        factionId: 'panjun',
+        factionId: 'yingzhou',
         lat: 24.16, lng: 113.38,
         type: 'pass',
         troops: 10000,
@@ -924,7 +924,7 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_qutangguan',
         name: '瞿塘关',
-        factionId: 'panjun',
+        factionId: 'xiazhou',
         lat: 31.03, lng: 110.15,
         type: 'pass',
         troops: 10000,
@@ -1621,7 +1621,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
     {
         id: 'city_guyanguan',
         name: '古严关',
-        factionId: 'panjun',
+        factionId: 'guizhou',
         lat: 25.68, lng: 110.62,
         type: 'pass',
         troops: 10000,
@@ -1638,7 +1638,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
     {
         id: 'city_mailingguan',
         name: '麦岭关',
-        factionId: 'panjun',
+        factionId: 'daozhou',
         lat: 25.02, lng: 111.23,
         type: 'pass',
         troops: 10000,
@@ -1887,14 +1887,14 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jiangzi', name: '江孜', factionId: 'pazhu', lat: 28.92, lng: 89.59, type: 'small_city', troops: 10000 },
     { id: 'city_linqiong', name: '临邛', factionId: 'zhuoshi', lat: 30.4149, lng: 103.4619, type: 'small_city', troops: 10000 },
     { id: 'city_yandao', name: '严道', factionId: 'qingyi', lat: 30.000133, lng: 102.972107, type: 'small_city', troops: 10000 },
-    { id: 'city_qingxiguan', name: '清溪关', factionId: 'panjun', lat: 29.3667, lng: 102.6333, type: 'pass', troops: 10000, tier: 2 },
+    { id: 'city_qingxiguan', name: '清溪关', factionId: 'zuo_d', lat: 29.3667, lng: 102.6333, type: 'pass', troops: 10000, tier: 2 },
     { id: 'city_yuegui', name: '越嶲', factionId: 'panjun', lat: 28.422864, lng: 102.680969, type: 'small_city', troops: 10000 },
     { id: 'city_huichuan', name: '会川', factionId: 'kunming_yi', lat: 26.6545, lng: 102.2454, type: 'small_city', troops: 10000 },
 
     { id: 'city_chenzhou2', name: '沅陵', factionId: 'pengshi', lat: 28.227028, lng: 110.291748, type: 'small_city', troops: 10000 },
     { id: 'city_yuanzhou', name: '芷江', factionId: 'qianzhong', lat: 27.566688, lng: 109.909973, type: 'small_city', troops: 10000 },
     { id: 'city_puding', name: '普定', factionId: 'yelang', lat: 26.25, lng: 105.93, type: 'small_city', troops: 10000 },
-    { id: 'city_shengjingguan', name: '胜境关', factionId: 'panjun', lat: 25.651438, lng: 104.350891, type: 'pass', troops: 10000 },
+    { id: 'city_shengjingguan', name: '胜境关', factionId: 'zangke', lat: 25.651438, lng: 104.350891, type: 'pass', troops: 10000 },
     { id: 'city_weixian2', name: '曲靖', factionId: 'cuanshi', lat: 25.49, lng: 103.79, type: 'small_city', troops: 10000 },
     { id: 'city_weichu', name: '威楚', factionId: 'baiman', lat: 25.045791, lng: 101.574097, type: 'small_city', troops: 10000 },
     { id: 'city_tuodongcheng', name: '拓东城', factionId: 'dianguo', lat: 25.0453, lng: 102.71, type: 'medium_city', troops: 10000, tier: 1, region: 'DIANQIAN', note: '滇国都城；滇池水军' },
@@ -1917,7 +1917,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_luling', name: '庐陵', factionId: 'ouyang', lat: 27.1133, lng: 114.9806, type: 'small_city', troops: 10000 },
     { id: 'city_hongzhou', name: '豫章', factionId: 'ning', lat: 28.6828, lng: 115.8575, type: 'medium_city', troops: 10000 },
 
-    { id: 'city_qingliuguan', name: '清流关', factionId: 'panjun', lat: 32.280000, lng: 118.250000, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_qingliuguan', name: '清流关', factionId: 'chuzhou_d', lat: 32.280000, lng: 118.250000, type: 'pass', troops: 10000, mirror: true },
     { id: 'city_zhongli', name: '盱眙', factionId: 'huai', lat: 33.011000, lng: 118.497000, type: 'small_city', troops: 10000, note: '淮州治盱眙' },
     { id: 'city_bianliang', name: '汴梁', factionId: 'wei', lat: 34.8, lng: 114.31, type: 'big_city', troops: 20000, tier: 0, note: '北宋京师；20城白名单' },
     { id: 'city_shangluo', name: '商邑', factionId: 'shangzhou', lat: 33.87, lng: 109.94, type: 'small_city', troops: 10000 },

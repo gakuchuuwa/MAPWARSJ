@@ -35,4 +35,6 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>>
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）
   machu: '武平军',       // 长沙·马楚武平军节度
   ning: '江西勤王军',     // 豫章·南宋江西勤王
+  huangwang: '冲天军',       // 仙霞关·黄王冲天军
+  shenshi: '吴兴部曲',       // 独松关·吴兴沈氏部曲
 };
