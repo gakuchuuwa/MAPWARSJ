@@ -138,7 +138,8 @@ export class CityAssetManager {
         'ryukyu': '琉球',
         'so': '对马',
         'kakizaki': '松前',
-        'fujiwara': '奥州',
+        // ── 2026-06-16 改：旗号「藤原」（§4.4 家族；禁「州」字）──
+        'fujiwara': '藤原',
         'gaya': '伽倻',
         'aki': '安艺',
         'echigo': '越后',
@@ -184,11 +185,12 @@ export class CityAssetManager {
 
 'zhai_han': '翟',
         'yin': '殷',
+        'hejian': '河间',
 'liu': '九江',
         'ouyue': '台',
 
         'jingzhou': '荆',
-        'lvbu': '吕',
+        'suzhou_d': '宿',
         'didao': '狄',
         'xiliang': '西凉',
         'gaoqi_d': '高齐',
@@ -263,7 +265,7 @@ export class CityAssetManager {
         'oirat_ming': '卫拉',
         'wala': '瓦剌',
         'wuliangha': '兀良',
-        'jianzhou_nvzhen': '建州',
+        'jianzhou_nvzhen': '建',
 'haixi_nvzhen': '海西',
         'yeren_nvzhen': '东海',
         'jilimi': '吉里',

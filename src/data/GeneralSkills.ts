@@ -65,7 +65,7 @@ export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
 /** 战略七格 */
 export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.2 },
-    str_02: { id: 'str_02', grid: 'S②', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.12 },
+    // S② 空出：原「因粮于敌」非战略技，已移为远征军系统技（见 EXPEDITION_FORAGE_SKILL）
     str_03: { id: 'str_03', grid: 'S③', displayName: '攻城拔寨', effect: 'siege_power_mult', magnitude: 1.2 },
     str_04: { id: 'str_04', grid: 'S④', displayName: '所向披靡', effect: 'field_power_mult', magnitude: 1.2 },
     str_05: { id: 'str_05', grid: 'S⑤', displayName: '长驱直入', effect: 'plain_power_mult', magnitude: 1.2 },
@@ -73,8 +73,22 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     str_07: { id: 'str_07', grid: 'S⑦', displayName: '乘风破浪', effect: 'water_power_mult', magnitude: 1.2 },
 };
 
-/** 剧本军团系统层：全员胜后 S② 因粮于敌（与将领档案战略独立，不占用名将战略格） */
-export const SCRIPTED_LEGION_POST_BATTLE_SKILL_ID = 'str_02';
+/**
+ * 远征军系统技：胜后「因粮于敌」补兵（远征断粮、就食于敌）。
+ * 仅远征军（army.expeditionTargetCityId）享；**非战略格 / 非战术格**，独立系统技，不占名将技格。
+ */
+export interface ExpeditionSystemSkillDef {
+    id: string;
+    displayName: string;
+    effect: 'post_battle_troop_pct';
+    magnitude: number;
+}
+export const EXPEDITION_FORAGE_SKILL: ExpeditionSystemSkillDef = {
+    id: 'sys_exp_yinliang',
+    displayName: '因粮于敌',
+    effect: 'post_battle_troop_pct',
+    magnitude: 0.12,
+};
 
 /** 守军系统技 effect（非战术十格 / 战略七格） */
 export type GarrisonSystemEffect = 'pass_garrison_mult';

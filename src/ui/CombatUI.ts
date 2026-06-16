@@ -20,7 +20,7 @@ import {
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier } from '../systems/CultureCombat';
-import { getOpeningTacticalPowerMultiplier, getStrategicBattlePowerMultiplier, getGeneralSkillDisplayTags, getPassGarrisonDefenseSkillDisplay, getReinforcementJoinSkillDisplay, canUnitUseGeneralSkills } from '../combat/GeneralSkillCombat';
+import { getOpeningTacticalPowerMultiplier, getStrategicBattlePowerMultiplier, getGeneralSkillDisplayTags, getPassGarrisonDefenseSkillDisplay, getReinforcementJoinSkillDisplay, getExpeditionForageSkillDisplay, canUnitUseGeneralSkills } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL } from '../data/GeneralSkills';
 const T = COMBAT_UI_TOKENS;
 
@@ -792,6 +792,11 @@ export class CombatUI {
                 box.appendChild(createSkillTag(reinfSkill.name, reinfSkill.effectLabel, false));
             }
 
+            const forageSkill = getExpeditionForageSkillDisplay(unit); // 远征军：因粮于敌
+            if (forageSkill) {
+                box.appendChild(createSkillTag(forageSkill.name, forageSkill.effectLabel, true));
+            }
+
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {
                     box.appendChild(createSkillTag(tag.name, tag.effectLabel, tag.isFamous));
@@ -802,7 +807,7 @@ export class CombatUI {
             if (Math.abs(legionMult - 1) > 0.001) {
                 const troopsName = unit.name || '精锐部队';
                 const badgeName = troopsName.replace(/(军团|驻军|守军|军)$/, '').trim();
-                const effectLabel = `剧本×${parseFloat(legionMult.toFixed(2))}`;
+                const effectLabel = `精锐×${parseFloat(legionMult.toFixed(2))}`;
                 box.appendChild(createSkillTag(badgeName, effectLabel, true));
             }
         };

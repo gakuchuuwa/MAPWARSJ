@@ -13,8 +13,8 @@
 import { GameConfig } from '../config/GameConfig';
 import {
     applyExpeditionEliteRename,
-    canFactionLaunchExpedition,
-    getExpeditionEliteLegionName,
+    canLegionLaunchExpedition,
+    getLegionEliteLegionName,
 } from '../data/ExpeditionLegions';
 import { REGION_CENTERS, REGION_LABELS, RegionType } from '../systems/RegionSystem';
 import { getEuclideanDistance } from '../core/DistanceUtils';
@@ -28,8 +28,10 @@ interface ExpeditionArmy {
     expeditionSavedName: string | null;
     /** 军团出身文化区（远征不可选本文化中心） */
     cultureRegion: RegionType | null;
+    homeCityId?: string | null;
     getTroops(): number;
     getFactionId(): string;
+    getSourceCityId(): string | null;
     getPosition(): { lat: number; lng: number };
 }
 
@@ -172,7 +174,7 @@ export class ExpeditionUI {
         const army = this.getFollowedArmy?.() ?? null;
         if (!army || army.isDestroyed) return null;
         if (army.getTroops() < GameConfig.EXPEDITION.UNLOCK_TROOPS) return null;
-        if (!canFactionLaunchExpedition(army.getFactionId())) return null;
+        if (!canLegionLaunchExpedition(army)) return null;
         if (army.expeditionTargetCityId) return null; // 已在远征中
         if (this.listCandidates(army).length === 0) return null; // 全部文化中心已属己方
         return army;
@@ -240,7 +242,7 @@ export class ExpeditionUI {
             letter-spacing: 2px;
             text-align: center;
         `;
-        const eliteHint = getExpeditionEliteLegionName(army.getFactionId());
+        const eliteHint = getLegionEliteLegionName(army);
         header.textContent = eliteHint
             ? `🐎 ${army.name} · 远征何方？（将编为「${eliteHint}」）`
             : `🐎 ${army.name} · 远征何方？`;

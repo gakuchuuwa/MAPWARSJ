@@ -25,7 +25,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   erzhu: '六镇戍兵',     // 秀容川·§2 #8 六镇鲜卑军人（尔朱荣圈）
   gaoqi_d: '百保鲜卑',   // 蓨城·§2 #9
   yingzhou_ying_d: '黄龙兵', // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
-  yin: '先登死士',       // 乐成·§1 #25 界桥
+  hejian: '先登死士',    // 乐成·§1 #25 界桥（番号随城）
   chile: '两池军',       // 云中·§2 #11
   murong: '鲜卑燕骑',    // 棘城·§2 #12 慕容恪连环马（棘城之战）
   ming_d: '明军三大营',   // 北京·§1 #72–73、#79 五军/神机/三千营合称

@@ -1,6 +1,6 @@
 import { Army } from './Army';
 import { getFactionGeneral } from '../data/FactionGenerals';
-import { getExpeditionEliteLegionName } from '../data/ExpeditionLegions';
+import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
 import { CityManager } from '../world/CityManager';
 import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
@@ -268,24 +268,24 @@ export class LegionManager {
      * 军团分层（精锐 / 普通）：
      *   - 势力无精锐番号数据 → 永远普通据点军团（直接返回）。
      *   - 兵力 ≥ 4万 → 必精锐；< 4万 → 50% 概率精锐。
-     *   - 精锐 = 精锐番号 + 名将（势力有名将则挂）+ 战力加成（isElite）。出生定，不降级。
+     *   - 精锐 = 精锐番号（番号随城，看出兵据点）+ 将领（将领随势，≥4万挂）+ 战力加成（isElite）。出生定，不降级。
      *   - 「一据点一精锐」由「一城一军」天然满足（spawn 每城至多一支现役）。
      *   - 远征军 = 当前跟随的那支精锐（同时仅一支），由跟随系统 + 远征指令处理，非此处。
      */
     private applyLegionTier(army: Army): void {
-        const eliteName = getExpeditionEliteLegionName(army.getFactionId());
-        if (!eliteName) return; // 该势力无精锐番号 → 普通据点军团
+        const eliteName = getLegionEliteLegionName(army);
+        if (!eliteName) return; // 出兵据点无番号 → 普通据点军团
         const expeditionGrade = army.getTroops() >= GameConfig.EXPEDITION.UNLOCK_TROOPS;
         if (expeditionGrade) {
-            // ≥4万 大军：精锐 + 名将
+            // ≥4万 大军：精锐 + 将领（将领随势）
             this.makeElite(army, eliteName, true);
         } else if (Math.random() < 0.5) {
-            // <4万 据点军团：50% 精锐番号（无名将——名将专属大军）
+            // <4万 据点军团：50% 精锐番号（无将领——将领专属大军）
             this.makeElite(army, eliteName, false);
         }
     }
 
-    /** 升为精锐：番号 + isElite 战力加成；withGeneral 时再挂名将（仅 ≥4万 大军） */
+    /** 升为精锐：番号 + isElite 战力加成；withGeneral 时再挂将领（仅 ≥4万 大军，将领随势） */
     private makeElite(army: Army, eliteName: string, withGeneral: boolean): void {
         if (!army.isElite) {
             army.name = eliteName;
@@ -301,7 +301,7 @@ export class LegionManager {
     }
 
     /**
-     * 每季扫描：兵力长到 ≥4万 的军团晋升为「精锐 + 名将」。
+     * 每季扫描：兵力长到 ≥4万 的军团晋升为「精锐 + 将领」。
      * 普通军团长到 4万 → 精锐+名将；已是精锐（无将）的小军长到 4万 → 补名将。
      * 由 RecruitmentSystem 每季调用一次。
      */
@@ -311,7 +311,7 @@ export class LegionManager {
             if (army.isDestroyed || army.type !== 'legion') continue;
             if (army.getTroops() < threshold) continue;
             if (army.isElite && army.generalId) continue;
-            const eliteName = getExpeditionEliteLegionName(army.getFactionId());
+            const eliteName = getLegionEliteLegionName(army);
             if (!eliteName) continue;
             this.makeElite(army, eliteName, true);
         }

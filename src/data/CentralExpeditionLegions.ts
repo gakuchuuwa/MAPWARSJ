@@ -14,7 +14,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   qi: '齐之技击',       // 临淄·§1 #13 田忌孙膑
   xichu: '江东子弟',    // 彭城·§1 #15 八千子弟兵（项羽会稽起兵）
   han_d: '轻勇骑',      // 南郑·§1 #18 韩信背水之战的夺旗骑兵
-  lvbu: '陷阵营',       // 下邳·§1 #23 高顺部曲
+  xu: '陷阵营',          // 下邳·§1 #23 高顺部曲（番号随城；旗号徐·徐国）
   cao_d: '虎豹骑',      // 谯都·§1 #31 曹纯曹真（#32青州兵让位）
   ranwei_d: '乞活军',   // 巨鹿·§1 #41 冉闵陈午
   wuzhou_d: '控鹤军',   // 洛阳·§1 #47 武则天北衙
@@ -27,5 +27,6 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> 
   didao: '飞熊军',      // 临洮·§1 #27 陇西董卓系（旗=狄·狄道）
   han: '韩卒击刹',      // 新郑·战国韩都精锐（旗=韩·韩国）
   liang_d: '梁国劲卒',  // 商丘·战国/汉代梁国劲卒（旗=梁·梁国）
+  wey: '朱龙骑',          // 濮阳·卫国朱龙骑
   // wazhai@定陶：§1 无瓦岗军专名，不收远征番号
 };

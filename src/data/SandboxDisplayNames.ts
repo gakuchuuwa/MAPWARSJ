@@ -177,12 +177,14 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // 2026-05-25 汉朝核对追加势力
 'zhai_han': '翟',
     'yin': '殷',
+    'hejian': '河间',
 'liu': '九江',
     'ouyue': '台',
 
     // 2026-05-25 三国核对追加势力
     'jingzhou': '荆',
-    'lvbu': '吕',
+    // ── 2026-06-16 改：符离·宿州（§4.7；旗号「徐」让位下邳徐国）──
+    'suzhou_d': '宿',
     'didao': '狄',
     'xiliang': '西凉',
     'gaoqi_d': '高齐',
@@ -265,7 +267,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jilimi': '吉里',
     'hezhe': '赫哲',
     'kakizaki': '松前',
-    'fujiwara': '奥州',
+    // ── 2026-06-16 改：旗号「藤原」（§4.4 家族；禁「州」字；势力全名仍奥州）──
+    'fujiwara': '藤原',
 'luchuan': '麓川',
     'chijin': '赤斤',
     'guiyi': '归义',

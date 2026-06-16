@@ -11,7 +11,7 @@
  */
 export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   // ── 2·政权（国号/政权专名）──
-  'wei', 'qin', 'tang', 'qi', 'shang', 'zhou', 'xia', 'han_d', 'fu', 'cao_d', 'lvbu',
+  'wei', 'qin', 'tang', 'qi', 'shang', 'zhou', 'xia', 'han_d', 'fu', 'cao_d',
   'chen', 'xiao_d', 'song', 'wuzhou_d', 'haoding', 'sunqin',
   'hongguang', 'min', 'loulan', 'han', 'jingjiang', 'liang_d', 'ashina',
   'edo', 'riben', 'xinluo', 'gaogouli', 'balhae', 'goryeo', 'joseon',

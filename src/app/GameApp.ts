@@ -54,6 +54,7 @@ import {
     showGameAppErrorOverlay,
     showLoadingOverlay,
     hideLoadingOverlay,
+    setLoadingMessage,
     yieldToBrowser,
 } from './boot/GameAppBootUtils';
 
@@ -146,19 +147,6 @@ export class GameApp {
             FactionTintSystem.bindFactionManager(this.factionManager);
             CityAssetManager.bindFactionManager(this.factionManager);
 
-            const _PANJUN_ID_BOOT = 'pan' + 'jun';
-            const activeFactionsBoot = [...new Set([...CITIES.map(c => c.factionId), _PANJUN_ID_BOOT])];
-            await CityAssetManager.seedBootPlaceholderFlags(activeFactionsBoot);
-
-            // [OPTIMIZATION-STARTUP] 1. Start Heavy Async Tasks IMMEDIATELY (Network/IO)
-            // [PERF 2026-05-29] activeFactions 从据点实际引用反推, 不再读 STARTING_CAPITALS:
-            //   - 沙盒/非沙盒模式同一份逻辑, 自动跟上数据漂移
-            //   - 86 个孤儿势力 (注册了但没城用) 自动不加载, 省 chromaKey 时间 -18%
-            //   - 加新势力据点时下次启动自动包含; 删势力但留城仍包含 (panjun fallback)
-            //   - 参见 AGENTS.md §三: 1 势力 = 1 据点 (反推合理)
-            // [FIX 2026-05-29] 不能在这里出现字符串 'panjun', 否则 serverReplaceObjectLine
-            // 会用 indexOf('panjun') 在 STARTING_CAPITALS 之后找首匹配, 错误命中此处.
-            // 改用变量 + 数组合并, 不暴露字符串字面量.
             const _PANJUN_ID = 'pan' + 'jun';
             const activeFactions = [...new Set([...CITIES.map(c => c.factionId), _PANJUN_ID])];
             const flagCities = CITIES.map((c) => ({
@@ -169,23 +157,25 @@ export class GameApp {
             }));
             CityAssetManager.registerFlagCities(flagCities);
             CityAssetManager.prepareDeferredFlagQueue(activeFactions);
-            // 军团贴图延后到首帧之后，避免与旗号 chromaKey 抢主线程
-            void GlobalUnitRenderer.preloadAssets().catch((e) =>
-                console.warn('[GameApp] Unit asset preload failed', e)
-            );
-            this.perfMonitor.markBootPhase('旗号队列(待视口/拖图)');
 
-            // [OPTIMIZATION-STARTUP] 2. Initialize Main Map (DOM/WebGL)
+            // [OPTIMIZATION-STARTUP] 先出地图+山体，再 await 旗号占位（避免长时间纯黑屏）
             this.map = new GameMap('map');
             this.perfMonitor.markBootPhase('Leaflet 地图');
             LandSeaSystem.initialize();
             LandTerrainSystem.initialize();
             LandSeaSystem.bindLeafletMap(this.map.getLeafletMap());
 
-            // [PERF] 让浏览器立刻 paint 一次空地图，用户感知"已经开始加载"
-            // 否则下面的同步初始化会让整个页面看起来卡死直到结束。
             await yieldToBrowser();
-            hideLoadingOverlay(); // 地图已可见，撤掉加载画面
+            hideLoadingOverlay();
+
+            setLoadingMessage('正在整理旗号…');
+            await CityAssetManager.seedBootPlaceholderFlags(activeFactions);
+
+            // 军团贴图延后到首帧之后，避免与旗号 chromaKey 抢主线程
+            void GlobalUnitRenderer.preloadAssets().catch((e) =>
+                console.warn('[GameApp] Unit asset preload failed', e)
+            );
+            this.perfMonitor.markBootPhase('旗号占位');
 
             // 3. Initialize remaining Core Managers (Lightweight JS)
             this.gridManager = new GridManager(this.map);

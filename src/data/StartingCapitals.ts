@@ -146,7 +146,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'yingzhou_ying_d': 'city_chaoyang',
     'erzhu': 'city_xiurongchuan',
 
-'xu': 'city_xucheng',
+'xu': 'city_xiapi',
+    'suzhou_d': 'city_xucheng',
 
 'zhai_han': 'city_fushi',
     'yin': 'city_zhaoge',
@@ -154,7 +155,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'ouyue': 'city_taizhou_zj',
 
     'jingzhou': 'city_xiangyang',
-    'lvbu': 'city_xiapi',
     'xiliang': 'city_lanzhou',
     'gaoqi_d': 'city_jingzhou2',
     'tujia_d': 'city_shizhu',

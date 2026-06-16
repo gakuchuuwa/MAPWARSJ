@@ -236,12 +236,12 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         tier: 1 },
     {
         id: 'city_hejian',
-        name: '河间',
+        name: '乐成',
         factionId: 'hejian',
         lat: 38.18, lng: 116.12,
         type: 'small_city',
         troops: 10000,
-        note: '河间郡治（殷迁朝歌）' },
+        note: '河间郡治；界桥之战；先登死士成军地' },
     {
         id: 'city_jingzhou2',
         name: '蓨城',
@@ -1049,7 +1049,7 @@ export const PERIPHERY: CityDataV2[] = [
         type: 'medium_city',
         troops: 10000,
         tier: 1 },
-    { id: 'city_xucheng', name: '符离', factionId: 'xu', lat: 33.65, lng: 116.97, type: 'small_city', troops: 10000 },
+    { id: 'city_xucheng', name: '符离', factionId: 'suzhou_d', lat: 33.65, lng: 116.97, type: 'small_city', troops: 10000, note: '宿州治境；符离古邑，唐宿州治所近此' },
     // ── 2026-05-25 新增：汉朝补全半成品势力城市 ──
     
     // ── 2026-05-25 新增：汉朝核对追加势力都城 ──
@@ -1067,11 +1067,12 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_xiapi',
         name: '下邳',
-        factionId: 'lvbu',
+        factionId: 'xu',
         lat: 33.888642,
         lng: 117.877808,
         type: 'small_city',
-        troops: 10000 },
+        troops: 10000,
+        note: '徐国故都；淮泗徐夷核心；汉初楚都下邳；陷阵营成军地' },
     // ── 2026-05-25 新增：两晋核对追加势力城市 ──
     {
         id: 'city_xiurongchuan',

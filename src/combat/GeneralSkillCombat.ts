@@ -8,7 +8,7 @@ import {
     getGeneralProfile,
     getStrategicSkillDef,
     getTacticalSkillDef,
-    SCRIPTED_LEGION_POST_BATTLE_SKILL_ID,
+    EXPEDITION_FORAGE_SKILL,
     PASS_GARRISON_DEFENSE_SKILL,
     REINFORCEMENT_JOIN_SKILL,
     type TacticalSkillDef,
@@ -99,10 +99,6 @@ export function getStrategicBattlePowerMultiplier(
     }
 }
 
-function isScriptedLegionUnit(unit: IBattleUnit): boolean {
-    const army = getArmyEntity(unit);
-    return !!army?.scriptedCampaignId;
-}
 
 /** 关隘守军（type===pass 城防）是否适用拒险而守 */
 export function unitQualifiesForPassGarrisonDefenseSkill(unit: IBattleUnit): boolean {
@@ -148,7 +144,7 @@ function appendStrategicDisplayTag(
     });
 }
 
-/** 技能面板展示用（战术 + 战略；剧本军团另附系统层 S②） */
+/** 技能面板展示用（名将的战术 + 战略；远征军的「因粮于敌」另由 getExpeditionForageSkillDisplay 提供） */
 export function getGeneralSkillDisplayTags(
     unit: IBattleUnit,
 ): { name: string; effectLabel: string; isFamous: boolean }[] {
@@ -166,22 +162,23 @@ export function getGeneralSkillDisplayTags(
         });
     }
 
-    if (isScriptedLegionUnit(unit) && canUnitUseGeneralSkills(unit)) {
-        appendStrategicDisplayTag(tags, SCRIPTED_LEGION_POST_BATTLE_SKILL_ID);
-    }
-    if (
-        profile.strategicSkillId &&
-        profile.strategicSkillId !== SCRIPTED_LEGION_POST_BATTLE_SKILL_ID
-    ) {
-        appendStrategicDisplayTag(tags, profile.strategicSkillId);
-    } else if (
-        profile.strategicSkillId &&
-        !isScriptedLegionUnit(unit)
-    ) {
+    if (profile.strategicSkillId) {
         appendStrategicDisplayTag(tags, profile.strategicSkillId);
     }
 
     return tags;
+}
+
+/** 远征军系统技面板：因粮于敌（仅远征军 expeditionTargetCityId 显示） */
+export function getExpeditionForageSkillDisplay(
+    unit: IBattleUnit,
+): { name: string; effectLabel: string } | null {
+    const army = getArmyEntity(unit);
+    if (!army?.expeditionTargetCityId) return null;
+    return {
+        name: EXPEDITION_FORAGE_SKILL.displayName,
+        effectLabel: `胜后+${Math.round(EXPEDITION_FORAGE_SKILL.magnitude * 100)}%`,
+    };
 }
 
 function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
@@ -355,7 +352,7 @@ export function applyStrategicBattleToRolls(
  */
 function applyPostBattleTroopPct(
     unit: IBattleUnit,
-    skill: NonNullable<ReturnType<typeof getStrategicSkillDef>>,
+    skill: { displayName: string; effect: string; magnitude: number },
     source: string,
 ): number {
     if (skill.effect !== 'post_battle_troop_pct') return 0;
@@ -371,32 +368,28 @@ function applyPostBattleTroopPct(
 }
 
 /**
- * 战后战略：剧本军团系统 S② + 将领档案胜后战略（若有）
+ * 战后战略：远征军系统技「因粮于敌」（仅远征军）+ 将领档案胜后战略（若有）
  */
 export function applyPostBattleStrategicBonus(
     unit: IBattleUnit,
     _battleType: BattleType,
 ): number {
-    if (!canUnitUseGeneralSkills(unit)) return 0;
-
     let total = 0;
 
-    if (isScriptedLegionUnit(unit)) {
-        const scriptedSkill = getStrategicSkillDef(SCRIPTED_LEGION_POST_BATTLE_SKILL_ID);
-        if (scriptedSkill) {
-            total += applyPostBattleTroopPct(unit, scriptedSkill, '[剧本] ');
-        }
+    // 因粮于敌：仅远征军（被下远征令、有 expeditionTargetCityId）享，与是否有名将无关
+    const army = getArmyEntity(unit);
+    if (army?.expeditionTargetCityId) {
+        total += applyPostBattleTroopPct(unit, EXPEDITION_FORAGE_SKILL, '[远征] ');
     }
 
-    const profile = getGeneralProfile(unit.generalId);
-    if (profile?.strategicSkillId) {
-        const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
-        if (
-            profileSkill &&
-            profileSkill.effect === 'post_battle_troop_pct' &&
-            profile.strategicSkillId !== SCRIPTED_LEGION_POST_BATTLE_SKILL_ID
-        ) {
-            total += applyPostBattleTroopPct(unit, profileSkill, '');
+    // 名将自身的胜后战略（若其战略技恰为 post_battle_troop_pct）
+    if (canUnitUseGeneralSkills(unit)) {
+        const profile = getGeneralProfile(unit.generalId);
+        if (profile?.strategicSkillId) {
+            const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
+            if (profileSkill && profileSkill.effect === 'post_battle_troop_pct') {
+                total += applyPostBattleTroopPct(unit, profileSkill, '');
+            }
         }
     }
 

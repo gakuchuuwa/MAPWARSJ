@@ -15,9 +15,10 @@
  *   · 军镇专名作旗号时番号不得同字（例：❌ 天雄+天雄军 → ✅ 魏博+大名+天雄军）
  *   · §4.1：据点 XX关/城/邑/州 且旗号=XX → 改据点名
  *
- * 唯一锚点：据点。旗号（§4.1 定旗）、远征番号（标志战/成军地）**都只和据点有关**；
- *   彼此、与时代 **无绑定**（见 AGENTS.md §12.2）。实现上番号写入占该点的 factionId。
- * 禁止为番号/旗号迁点、迁势力。
+ * **运行时定案（2026-06-16）：番号随城、将领随势**（见 GAME_DIRECTION.md）
+ *   · 精锐番号：按军团 **出兵据点** cityId 查 CITY_ELITE_LEGIONS（占城后可募当地番号）
+ *   · 将领：仍绑 factionId（FactionGenerals.ts），占城 **不** 过户将领
+ * 数据录入仍用 factionId→番号 + STARTING_CAPITALS 推导 cityId 映射；禁止为番号迁点。
  *
  * 审计：npm run expedition:triple-check  +  npm run expedition:audit
  * 史料：史料/古代精锐部队.md
@@ -37,7 +38,45 @@ import { NORTH_EXPEDITION_ELITE_LEGIONS } from './NorthExpeditionLegions';
 import { CENTRAL_EXPEDITION_ELITE_LEGIONS } from './CentralExpeditionLegions';
 import { BASHU_EXPEDITION_ELITE_LEGIONS } from './BashuExpeditionLegions';
 import { HEXI_EXPEDITION_ELITE_LEGIONS } from './HexiExpeditionLegions';
+import { STARTING_CAPITALS } from './StartingCapitals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
+
+/** 数据录入：factionId → 番号（14 区表合并，供审计与推导 cityId 映射） */
+const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, string>> = {
+  ...JAPAN_EXPEDITION_ELITE_LEGIONS,
+  ...KOREA_EXPEDITION_ELITE_LEGIONS,
+  ...NORTHEAST_EXPEDITION_ELITE_LEGIONS,
+  ...STEPPE_EXPEDITION_ELITE_LEGIONS,
+  ...WESTERN_EXPEDITION_ELITE_LEGIONS,
+  ...CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS,
+  ...TIBET_EXPEDITION_ELITE_LEGIONS,
+  ...DIANQIAN_EXPEDITION_ELITE_LEGIONS,
+  ...LINGNAN_EXPEDITION_ELITE_LEGIONS,
+  ...JIANGNAN_EXPEDITION_ELITE_LEGIONS,
+  ...NORTH_EXPEDITION_ELITE_LEGIONS,
+  ...CENTRAL_EXPEDITION_ELITE_LEGIONS,
+  ...BASHU_EXPEDITION_ELITE_LEGIONS,
+  ...HEXI_EXPEDITION_ELITE_LEGIONS,
+};
+
+function buildCityEliteLegionMap(): Readonly<Record<string, string>> {
+  const map: Record<string, string> = {};
+  for (const [factionId, cityId] of Object.entries(STARTING_CAPITALS)) {
+    const elite = ALL_FACTION_ELITE_LEGIONS[factionId];
+    if (elite) map[cityId] = elite;
+  }
+  return map;
+}
+
+/** 运行时：出兵据点 cityId → 精锐番号（番号随城） */
+export const CITY_ELITE_LEGIONS: Readonly<Record<string, string>> = buildCityEliteLegionMap();
+
+/** 查番号/远征解锁时的军团最小接口 */
+export type LegionEliteLookup = {
+  getFactionId(): string;
+  homeCityId?: string | null;
+  getSourceCityId(): string | null;
+};
 
 export {
   JAPAN_EXPEDITION_ELITE_LEGIONS,
@@ -56,39 +95,41 @@ export {
   HEXI_EXPEDITION_ELITE_LEGIONS,
 };
 
+/** 数据录入/审计：factionId → 番号（运行时募兵请用 getLegionEliteLegionName） */
 export function getExpeditionEliteLegionName(factionId: string): string | null {
-  return (
-    JAPAN_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    KOREA_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    NORTHEAST_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    STEPPE_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    WESTERN_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    TIBET_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    DIANQIAN_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    LINGNAN_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    JIANGNAN_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    NORTH_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    CENTRAL_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    BASHU_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    HEXI_EXPEDITION_ELITE_LEGIONS[factionId] ??
-    null
-  );
+  return ALL_FACTION_ELITE_LEGIONS[factionId] ?? null;
 }
 
+/** 番号随城：据出兵 cityId 查精锐番号 */
+export function getCityEliteLegionName(cityId: string | null | undefined): string | null {
+  if (!cityId) return null;
+  return CITY_ELITE_LEGIONS[cityId] ?? null;
+}
+
+/** 番号随城：按军团 homeCityId / sourceCityId 查精锐番号 */
+export function getLegionEliteLegionName(army: LegionEliteLookup): string | null {
+  const cityId = army.homeCityId ?? army.getSourceCityId();
+  return getCityEliteLegionName(cityId);
+}
+
+/** 远征解锁：跟拍军团须从有番号的据点出身（非 panjun） */
+export function canLegionLaunchExpedition(army: LegionEliteLookup): boolean {
+  return army.getFactionId() !== 'panjun' && getLegionEliteLegionName(army) != null;
+}
+
+/** @deprecated 运行时改用 canLegionLaunchExpedition；保留供仅知 factionId 的旧调用 */
 export function canFactionLaunchExpedition(factionId: string): boolean {
   return factionId !== 'panjun' && getExpeditionEliteLegionName(factionId) != null;
 }
 
-/** 远征下令：保存原名并改为精锐名；秦国同时重申 QIN_FACTION_COMPOSITION */
+/** 远征下令：保存原名并改为精锐名（番号随城） */
 export function applyExpeditionEliteRename(
-  army: LegionCompositionTarget & {
+  army: LegionEliteLookup & {
     name: string;
     expeditionSavedName: string | null;
-    getFactionId(): string;
   },
 ): boolean {
-  const elite = getExpeditionEliteLegionName(army.getFactionId());
+  const elite = getLegionEliteLegionName(army);
   if (!elite) return false;
   if (army.name !== elite) {
     if (army.expeditionSavedName == null) {
@@ -96,8 +137,8 @@ export function applyExpeditionEliteRename(
     }
     army.name = elite;
   }
-  // 名将不在此处绑定：名将归势力（开局配将，见 FactionGenerals.ts），远征只改番号
-  applyLegionCultureComposition(army);
+  // 将领不在此处绑定：将领随势（FactionGenerals.ts），远征只改番号
+  applyLegionCultureComposition(army as LegionCompositionTarget);
   return true;
 }
 
