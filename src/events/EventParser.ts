@@ -459,8 +459,9 @@ export class EventParser {
         '喀喇': 'kala', '喀喇汗': 'kala', '喀喇汗王朝': 'kala',
         '龟兹重甲兵': 'qiuci', '伊逻卢': 'qiuci',
         '于阗尉迟军': 'yutian', '于阗': 'yutian',
-        '喀喇汗铁骑': 'kala',
-        '高昌铁骑': 'yiduhu', '亦都护': 'yiduhu',
+        '喀喇汗铁骑': 'kala', '阿斯古拉姆': 'kala',
+        '伊列克近卫': 'an',
+        '高昌铁骑': 'gaochang', '阿斯兰军': 'yiduhu', '亦都护': 'yiduhu', '高昌回鹘': 'yiduhu',
         '盘橐卫': 'shule', '疏勒大黄弩': 'shule', '盘橐城': 'shule',
         '焉耆龙骑兵': 'yanqi',
         '乌孙昆莫亲卫': 'wusun', '昆莫亲卫': 'wusun',
@@ -497,9 +498,9 @@ export class EventParser {
         // ── 2026-06-11 中亚远征精锐（§13 共 14 支）──
         '嚈哒铁骑': 'yanda', '嚈哒': 'yanda', '白匈奴': 'yanda', '阿缓城': 'yanda',
         '古拉姆近卫军': 'saman', '古拉姆': 'saman', '萨曼': 'saman', '萨曼王朝': 'saman', '阿母城': 'saman',
-        '花剌子模铁骑': 'huarazim',
+        '花剌子模铁骑': 'huarazim', '花剌子模骑': 'huarazim',
         '钦察康里精骑': 'qincha', '钦察': 'qincha', '康里': 'qincha', '七河': 'qincha',
-        '帖木儿重装突骑': 'tiemuer', '帖木儿': 'tiemuer', '帖木儿帝国': 'tiemuer', '帖木': 'tiemuer',
+        '帖木儿重装突骑': 'tiemuer', '帖木重装骑': 'tiemuer', '河中怯薛': 'tiemuer', '帖木儿': 'tiemuer', '帖木儿帝国': 'tiemuer', '帖木': 'tiemuer',
         '哈萨克轻骑兵': 'kazakh',
 
         '吐火罗': 'tokhara', '吐火罗人': 'tokhara', '员渠城': 'tokhara',
@@ -547,7 +548,7 @@ export class EventParser {
         // ── 2026-06-11 青藏远征精锐（§12 共 11 支）──
         '湟中义从羌': 'shaodang', '烧当': 'shaodang', '烧当羌': 'shaodang', '玛曲': 'shaodang',
         '青唐甲骑': 'gusiluo',
-        '吐蕃桂级骑': 'tubo', '吐蕃虎皮卫': 'tubo', '桂级骑': 'tubo',
+        '吐蕃桂级骑': 'tubo', '吐蕃虎皮卫': 'tubo', '桂级骑': 'tubo', '却杰': 'tubo', '却杰军': 'tubo',
         '青海骢精骑': 'tuyu_d', '青海骢': 'tuyu_d',
         '象雄武士': 'xiangxiong',
         '康巴骁骑': 'gar_kham', '朵康兵': 'gar_kham', '德司': 'gar_kham',

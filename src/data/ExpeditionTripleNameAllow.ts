@@ -2,7 +2,7 @@
  * AGENTS.md §12.1.1 — 旗号与番号可共享汉字的势力白名单
  *
  * 仅当势力按 §4.1 定为 **1·民族 / 2·政权 / 4·家族** 时，
- * 允许番号包含旗号（如 魏+魏武卒、大理+大理白军、吐蕃+吐蕃桂级骑）。
+ * 允许番号包含旗号（如 魏+魏武卒、大理+大理白军）。
  *
  * 军镇专名、州郡、关名、番号即势力名者 **不得** 列入（例：tianxiong 天雄 ≠ 天雄军）。
  * 新增条目：先定 §4.1 级别，再决定是否加入本表。
@@ -21,21 +21,20 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'seljuq', // 塞尔柱·桑贾尔禁卫
   // 西域
   'anxi', // 安西·大唐安西军（都护府专名）
+  'gaochang', // 高昌·高昌铁骑（麴氏高昌政权）
   'shache', // 莎车·莎车左右骑
   // 中亚
   'yanda', // 嚈哒·嚈哒铁骑
-  'huarazim', // 花剌·花剌子模
-  'tiemuer', // 帖木·帖木重装骑
+  'huarazim', // 花剌·花剌子模骑
+  // tiemuer 河中怯薛：旗号帖木，无共享汉字
   // 青藏
-  'tubo', // 吐蕃·吐蕃桂级骑
   'xiangxiong', // 象雄·象雄武士
   'guge', // 古格·古格甲兵
   'khoshut', // 和硕·和硕特铁骑
   'pazhu', // 帕竹·帕竹甲兵
   // 滇缅
-  'nanzhao', // 南诏·南诏罗苴子
-  'dali', // 大理·大理白军
   'konbaung', // 贡榜·贡榜卡塞骑
+  'dali', // 大理·大理白军
   'pyu', // 骠·骠国巨象阵
   'champa', // 占婆·占婆国水师
   'luchuan', // 麓川·麓川夷象
@@ -46,7 +45,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'ming_zheng', // 明郑·郑氏铁人军（郑成功）
   // ── 1·民族 / 部族（史籍专名旗号）──
   'tujue', 'shatuo', 'gaoche', 'rouran', 'naiman', 'ongut', 'wala', 'geluolu',
-  'qiuci', 'kala', 'yanqi', 'iga_d', 'sambyeol', 'wuhuan',
+  'qiuci', 'yanqi', 'iga_d', 'sambyeol', 'wuhuan',
   'huige', // 回纥·回鹘铁骑
   'wusun', // 乌孙·昆莫亲卫
   'borjigin', // 孛儿·那可儿军（孛儿只斤）

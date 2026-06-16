@@ -15,36 +15,36 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   qingyuan_bd: { name: '神臂营', tier: 1 }, // 保定·§1 #68 河北禁军强弩营（定州路武库）
 
   // ── §2 北方 12 支 ──
-  zhao: { name: '赵边骑', tier: 3 },        // 邯郸·§2 #1 赵武灵王胡服骑射
+  zhao: { name: '赵边骑', tier: 1 },        // 邯郸·§2 #1 赵武灵王胡服骑射
   yan: { name: '渔阳突骑', tier: 2 },       // 古北口·§2 #2 光武幽州精骑（燕国北京）
-  gongsun_d: { name: '辽东坚甲', tier: 3 }, // 襄平·公孙氏凭恃的辽东坚甲重步骑
+  gongsun_d: { name: '辽东坚甲', tier: 2 }, // 襄平·公孙氏凭恃的辽东坚甲重步骑
   shizhao_d: { name: '黑槊龙骧', tier: 1 }, // 邢台·§2 #4 石勒石虎后赵禁军
   yunzhong: { name: '苍头军', tier: 1 },    // 盛乐·§2 #5 拓跋珪代北苍头
-  tuoba: { name: '虎纹突骑', tier: 2 },     // 大同·§2 #6 拓跋焘具装骑
+  tuoba: { name: '虎纹突骑', tier: 1 },     // 大同·§2 #6 拓跋焘具装骑
   yuwen: { name: '宿卫虎贲', tier: 1 },     // 饶乐水·§2 #7 北魏/宇文宿卫
   erzhu: { name: '六镇戍兵', tier: 3 },     // 秀容川·§2 #8 六镇鲜卑军人（尔朱荣圈）
-  gaoqi_d: { name: '百保鲜卑', tier: 3 },   // 蓨城·§2 #9
+  gaoqi_d: { name: '百保鲜卑', tier: 2 },   // 蓨城·§2 #9
   yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
   hejian: { name: '先登死士', tier: 0 },    // 乐成·§1 #25 界桥（番号随城）
   chile: { name: '两池军', tier: 3 },       // 云中·§2 #11
   murong: { name: '鲜卑燕骑', tier: 3 },    // 棘城·§2 #12 慕容恪连环马（棘城之战）
-  ming_d: { name: '明军三大营', tier: 3 },   // 北京·§1 #72–73、#79 五军/神机/三千营合称
+  ming_d: { name: '明军三大营', tier: 1 },   // 北京·§1 #72–73、#79 五军/神机/三千营合称
 
   // ── §1 中原表·地理偏北（用户指定）──
-  anshi_d: { name: '曳落河', tier: 3 },     // 范阳·§1 #48 安禄山蕃胡骑兵
-  shatuo: { name: '鸦儿军', tier: 3 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
-  lingwu: { name: '朔方军', tier: 3 },      // 回乐·§1 #53 灵州朔方节度使精锐
-  zhongshan: { name: '白狄武卒', tier: 3 },   // 真定·中山国千乘步卒
+  anshi_d: { name: '曳落河', tier: 1 },     // 范阳·§1 #48 安禄山蕃胡骑兵
+  shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
+  lingwu: { name: '朔方军', tier: 1 },      // 回乐·§1 #53 灵州朔方节度使精锐
+  zhongshan: { name: '白狄武卒', tier: 2 },   // 真定·中山国千乘步卒
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
-  helian: { name: '铁弗卫队', tier: 3 },     // 统万城·赫连勃勃铁弗亲卫
-  bing: { name: '并州狼骑', tier: 2 },     // 晋阳·并州狼骑
+  helian: { name: '铁弗卫队', tier: 2 },     // 统万城·赫连勃勃铁弗亲卫
+  bing: { name: '并州狼骑', tier: 1 },     // 晋阳·并州狼骑
   you: { name: '上谷突骑', tier: 2 },        // 居庸关·幽州上谷郡
-  yi: { name: '白马义从', tier: 0 },           // 紫荆关·易京要塞公孙瓒
-  changshan: { name: '常山义军', tier: 2 },   // 倒马关·常山颜杲卿义军
-  xianyu: { name: '中山铁卒', tier: 2 },      // 井陉关·鲜虞（战国）
+  yi: { name: '白马义从', tier: 1 },           // 紫荆关·易京要塞公孙瓒
+  changshan: { name: '常山义军', tier: 1 },   // 倒马关·常山颜杲卿义军
+  xianyu: { name: '中山铁卒', tier: 3 },      // 井陉关·鲜虞（战国）
   linhu: { name: '林胡骑', tier: 3 },         // 偏头关·林胡族
   lingqiu: { name: '飞虎军', tier: 3 },       // 平型关·灵丘（五代）
   loufan: { name: '楼烦兵', tier: 3 },        // 宁武关·楼烦（秦汉）
-  linyu: { name: '夷丁突骑', tier: 2 },       // 山海关·临榆（明末）
+  linyu: { name: '夷丁突骑', tier: 3 },       // 山海关·临榆（明末）
   heng1: { name: '恒山军', tier: 3 },          // 雁门关·元岳（唐代）
 };

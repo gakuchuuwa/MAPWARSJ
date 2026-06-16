@@ -719,7 +719,8 @@ export class CityAssetManager {
         'nvguo': '女国',
         'jiashi': '迦湿',
         'wuhu': '乌护',
-    };
+            sanada_d: '真田',
+        };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts
     private static readonly factionFlagTextMap: { [key: string]: string } = {};

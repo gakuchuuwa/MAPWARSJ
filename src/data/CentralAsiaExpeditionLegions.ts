@@ -9,23 +9,23 @@
  */
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   yanda: { name: '嚈哒铁骑', tier: 1 },          // 阿缓城·白匈奴横扫中亚（§13 #2）
-  saman: { name: '古拉姆卫', tier: 0 },      // 阿母城·萨曼/加兹尼古拉姆（§13 #3）
-  huarazim: { name: '花剌子模', tier: 3 },     // 玉龙杰赤·札兰丁八鲁湾（§13 #4；去「重装」≤6字）
+  saman: { name: '古拉姆卫', tier: 1 },      // 阿母城·萨曼/加兹尼古拉姆（§13 #3）
+  huarazim: { name: '花剌子模骑', tier: 0 },   // 玉龙杰赤·札兰丁八鲁湾突围（§13 #4）
   qincha: { name: '康里精骑', tier: 2 },     // 七河·钦察雇佣骑（§13 #5）
-  tiemuer: { name: '帖木重装骑', tier: 3 },    // 撒马尔罕·安卡拉之战（§13 #6）
+  tiemuer: { name: '河中怯薛', tier: 0 },      // 撒马尔罕·帖木儿河中怯薛（Transoxiana keshik）
   kazakh: { name: '哈萨克骑', tier: 3 },     // 亚西·哈斯木汗游击（§13 #7）
-  seljuq: { name: '古拉姆禁卫', tier: 0 },     // 木鹿·桑贾尔苏丹古拉姆近卫
-  ashina: { name: '碎叶镇军', tier: 3 },       // 碎叶城·唐碎叶镇阿史那部（旗=史那·§12.1.1）
+  seljuq: { name: '古拉姆禁卫', tier: 1 },     // 木鹿·桑贾尔苏丹古拉姆近卫
+  ashina: { name: '碎叶镇军', tier: 2 },       // 碎叶城·唐碎叶镇阿史那部（旗=史那·§12.1.1）
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
   guishuang: { name: '彭迪甲骑', tier: 3 },
-  guer: { name: '马鲁鲁德骑', tier: 3 },
+  guer: { name: '马鲁鲁德骑', tier: 2 },
   yuezhi: { name: '蓝氏城铁骑', tier: 1 },
-  xijue: { name: '郅支城坚兵', tier: 3 },
+  xijue: { name: '郅支城坚兵', tier: 2 },
   tujishi: { name: '怛罗斯突骑', tier: 2 },
   kokand: { name: '浩罕轻骑', tier: 2 },
-  sogdian: { name: '瓦拉赫沙卫', tier: 3 },
+  sogdian: { name: '瓦拉赫沙卫', tier: 2 },
   kangju: { name: '康卡控弦', tier: 2 },
-  anushidgin: { name: '希瓦铁骑', tier: 1 },
+  anushidgin: { name: '希瓦铁骑', tier: 3 },
   dayuzi: { name: '讹答剌卫队', tier: 3 },
   zhaowu: { name: '忽毡城武士', tier: 2 },
   yada: { name: '悉万斤重甲', tier: 3 },

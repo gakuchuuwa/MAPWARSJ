@@ -13,8 +13,8 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 哈拉和林·蒙古帝国怯薛（§6 #2）
   borjigin: { name: '那可儿军', tier: 3 },     // 曲雕阿兰·铁木真那可儿（§6 #10）
   ogodei: { name: '探马赤军', tier: 0 },       // 也迷里·木华黎探马赤（§6 #3）
-  yuan_d: { name: '秃鲁花军', tier: 3 },       // 上都·元怯薛白昼警卫（§6 #11）
-  xiongnu: { name: '鸣镝骑兵', tier: 3 },      // 头曼城·冒顿鸣镝骑（§6 #6）
+  yuan_d: { name: '秃鲁花军', tier: 1 },       // 上都·元怯薛白昼警卫（§6 #11）
+  xiongnu: { name: '鸣镝骑兵', tier: 2 },      // 头曼城·冒顿鸣镝骑（§6 #6）
   tujue: { name: '突厥狼卫', tier: 2 },       // 于都斤山·附离狼卫（§6 #5）
   huige: { name: '回鹘铁骑', tier: 1 },       // 富贵城·回鹘重骑（§6 #7）
   // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
@@ -24,29 +24,29 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   xueyantuo: { name: '同罗突骑', tier: 2 },    // 燕然勒石·薛延陀亲卫（§6 #18）
   naiman: { name: '乃蛮重骑', tier: 2 },       // 福海·乃蛮重装骑兵（§6 #19）
   ongut: { name: '汪古突骑', tier: 2 },        // 净州塞·汪古白鞑靼（§6 #14）
-  wala: { name: '瓦剌铁骑', tier: 1 },         // 博尔巴任·也先瓦剌（§6 #12）
+  wala: { name: '瓦剌铁骑', tier: 2 },         // 博尔巴任·也先瓦剌（§6 #12）
   geluolu: { name: '葛逻禄背弓', tier: 3 },    // 弓月城·三姓葛逻禄便捷善射（怛罗斯盟军；非铁骑）
   kiyad: { name: '那可儿', tier: 3 },         // 不儿罕山·乞颜那可儿
   kumo: { name: '楮特奥隗部', tier: 3 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
-  kelie: { name: '克烈护卫军', tier: 1 },
+  kelie: { name: '克烈护卫军', tier: 2 },
   dingling: { name: '丁零游骑', tier: 3 },
-  xiajiasi: { name: '黠戛斯锐卒', tier: 2 },
-  donghu: { name: '东胡控弦', tier: 2 },
-  tiele: { name: '铁勒骁骑', tier: 2 },
+  xiajiasi: { name: '黠戛斯锐卒', tier: 3 },
+  donghu: { name: '东胡控弦', tier: 3 },
+  tiele: { name: '铁勒骁骑', tier: 3 },
   xibo_d: { name: '锡伯索伦营', tier: 3 },
-  tatar: { name: '塔塔儿死士', tier: 2 },
+  tatar: { name: '塔塔儿死士', tier: 3 },
   merkit: { name: '蔑儿乞猎骑', tier: 3 },
-  chahar: { name: '察哈尔八旗', tier: 1 },
-  da_yuan: { name: '北元怯薛', tier: 0 },
-  huyan: { name: '呼衍精骑', tier: 2 },
-  yujiulu: { name: '郁久闾王骑', tier: 1 },
+  chahar: { name: '察哈尔八旗', tier: 2 },
+  da_yuan: { name: '北元怯薛', tier: 2 },
+  huyan: { name: '呼衍精骑', tier: 3 },
+  yujiulu: { name: '郁久闾王骑', tier: 2 },
   jalair: { name: '札剌亦儿军', tier: 3 },
-  hongirad: { name: '弘吉剌护卫', tier: 1 },
-  choros: { name: '绰罗斯骁骑', tier: 2 },
-  duolu: { name: '咄陆部铁骑', tier: 1 },
-  kaerka: { name: '喀尔喀重骑', tier: 2 },
-  zhasaketu: { name: '扎萨克铁骑', tier: 1 },
+  hongirad: { name: '弘吉剌护卫', tier: 2 },
+  choros: { name: '绰罗斯骁骑', tier: 3 },
+  duolu: { name: '咄陆部铁骑', tier: 2 },
+  kaerka: { name: '喀尔喀重骑', tier: 3 },
+  zhasaketu: { name: '扎萨克铁骑', tier: 2 },
   buriat: { name: '林中射手', tier: 3 },
   cheshihou: { name: '车师后王卫', tier: 3 },
 };
