@@ -38,4 +38,13 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   wuhuan: '乌桓突骑',    // 白狼山·§1 #84 曹操收编名骑
   helian: '铁弗卫队',     // 统万城·赫连勃勃铁弗亲卫
   bing: '并州狼骑',     // 晋阳·并州狼骑
+  you: '幽州突骑',        // 居庸关·幽州
+  yi: '静塞军',           // 紫荆关·易州（北宋河北静塞军）
+  changshan: '白马义从',   // 倒马关·常山（东汉末）
+  xianyu: '中山铁卒',      // 井陉关·鲜虞（战国）
+  linhu: '林胡骑',         // 偏头关·林胡族
+  lingqiu: '飞虎军',       // 平型关·灵丘（五代）
+  loufan: '楼烦兵',        // 宁武关·楼烦（秦汉）
+  linyu: '夷丁突骑',       // 山海关·临榆（明末）
+  heng1: '恒山军',          // 雁门关·元岳（唐代）
 };

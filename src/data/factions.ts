@@ -692,6 +692,15 @@ export const FACTIONS: Faction[] = [
     { id: 'zhuerqi', name: '主儿乞' },
     { id: 'chechen', name: '车臣' },
     { id: 'panjun', name: '叛军' },
+    { id: 'changshan', name: '常山' },          // 倒马关·常山郡
+    { id: 'linhu', name: '林胡' },              // 偏头关·林胡族
+    { id: 'lingqiu', name: '灵丘' },            // 平型关·灵丘县
+    { id: 'linyu', name: '临榆' },              // 山海关·临榆
+    { id: 'loufan', name: '楼烦' },             // 宁武关·楼烦族
+    { id: 'xianyu', name: '鲜虞' },             // 井陉关·鲜虞国
+    { id: 'yi', name: '易州' },                 // 紫荆关·易州
+    { id: 'you', name: '幽州' },                // 居庸关·幽州
+    { id: 'heng1', name: '元岳' },              // 雁门关·元岳（旗=恒）
     { id: 'pisha', name: '毗沙' },
     { id: 'yutian', name: '伏阇' },
     { id: 'yumi', name: '扜弥' },
@@ -740,7 +749,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 国内城改挂玄菟郡（汉代辖境·高句县渊源）──
     { id: 'xuantu', name: '玄菟' },
     // ── 2026-06-11 珍岛·三别抄（裴仲孙抗蒙）──
-    { id: 'sambyeol', name: '三别' },
+    { id: 'sambyeol', name: '沃州' },
     // ── 2026-06-11 顺天·全罗左道·龟船水军（李舜臣；旗号≠据点名防重）──
     { id: 'jeolla', name: '全罗' },
     // ── 2026-06-11 徒河·锦州卫·辽东铁骑（旗号锦≠据点名徒河）──

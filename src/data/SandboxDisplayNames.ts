@@ -183,7 +183,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // 2026-05-25 三国核对追加势力
     'jingzhou': '荆',
-    // ── 2026-06-16 改：符离·宿州（§4.7；旗号「徐」让位下邳徐国）──
+    // ── 2026-06-16 改：符离·宿（§4.7；旗号「徐」让位下邳徐国）──
     'suzhou_d': '宿',
     'didao': '狄',
     'xiliang': '西凉',
@@ -199,7 +199,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'ranwei_d': '冉魏',
     'zu_d': '祖',
     'wanyan_d': '完颜',   // 女真完颜部族；≠大金(dajin)
-    'aisin_d': '爱新', // 建州女真皇族；≠大清(manzhou_d)
+    'aisin_d': '爱新', // 建女真皇族；≠大清(manzhou_d)
     'sunwu_d': '孙吴',
 
     // ── 2026-05-25 新增：隋朝核对追加势力 ──
@@ -267,7 +267,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jilimi': '吉里',
     'hezhe': '赫哲',
     'kakizaki': '松前',
-    // ── 2026-06-16 改：旗号「藤原」（§4.4 家族；禁「州」字；势力全名仍奥州）──
+    // ── 2026-06-16 改：旗号「藤原」（§4.4 家族；禁「」字；势力全名仍奥）──
     'fujiwara': '藤原',
 'luchuan': '麓川',
     'chijin': '赤斤',
@@ -459,7 +459,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'li_s': '里',
     'leizhou': '雷',
 
-    // ── 2026-05-28 新增：黎(崖州) ──
+    // ── 2026-05-28 新增：黎(崖) ──
     // ── 2026-05-28 新增：工布(工布) ──
 
     // ── 2026-05-28 新增：果洛、土谢图、土默特 ──
@@ -576,6 +576,15 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhuerqi': '主儿',
     'chechen': '车臣',
 'panjun': '叛军',
+'changshan': '常山',
+'linhu': '林胡',
+'lingqiu': '灵丘',
+'linyu': '临榆',
+'loufan': '楼烦',
+'xianyu': '鲜虞',
+'yi': '易',
+'you': '幽',
+'heng1': '恒',
     'pisha': '毗沙',
     'yutian': '伏阇',
     'yumi': '扜弥',
@@ -622,7 +631,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'hui': '濊',
     'dingan': '定安',
     'xuantu': '玄菟',
-    'sambyeol': '三别',
+    'sambyeol': '沃',
     'jeolla': '全罗',
     'jinzhou': '锦',
     'wure': '兀惹',
@@ -676,7 +685,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'beihai': '北海',
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
     'shuidada': '水达',
-    // ── 2026-06-11 新增：东平（州郡·黑龙江下游）──
+    // ── 2026-06-11 新增：东平（郡·黑龙江下游）──
     'dongping': '东平',
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
     'maomingan': '茂明',

@@ -14,7 +14,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> = 
   baiji: '九誓幢',        // 泗沘·统一新罗混编含百济裔（§4 #4）
   goryeo: '鹰扬龙虎军',   // 开城·高丽二军（§4 #5）
   dingan: '别武班',       // 鸭绿府·高丽抗女真野战军（§4 #6）
-  sambyeol: '三别抄',     // 珍岛·武臣政权抗蒙（§4 #7）
+  sambyeol: '蒙冲营',     // 鸣梁·沃州蒙冲营
   hai2: '朝鲜甲士',       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
   joseon: '内禁卫',       // 汉城·国王贴身近卫（§4 #9）
   jeolla: '龟船水军',     // 顺天·全罗左道水军（§4 #11，李舜臣）

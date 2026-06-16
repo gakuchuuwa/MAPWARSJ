@@ -288,6 +288,15 @@ const _FIXED: Record<string, string> = {
     ashina: '#3B6294', // 阿史那（突厥幽蓝/蓝突厥，碎叶镇军）
     dongxu: '#BA7A36', // 东吁（琥珀金/缅甸金，南都象阵）
     jingjiang: '#488A6E', // 靖江（桂林碧绿，靖江府卫）
+    you: '#2B5E4B', // 幽州（燕山苍翠，居庸关）
+    heng1: '#3A5B6B', // 恒岳（恒山青蓝，雁门关）
+    yi: '#6B3A4A', // 易州（紫荆暗红，紫荆关）
+    changshan: '#B8C4D0', // 常山（白马银灰，白马义从）
+    xianyu: '#7B6B4A', // 鲜虞（中山古铜，中山铁卒）
+    linhu: '#8B6B3A', // 林胡（草原赭黄，林胡骑）
+    lingqiu: '#9B3A3A', // 灵丘（飞虎赤褐，飞虎军）
+    linyu: '#4A5A6B', // 临榆（碣石靛蓝，夷丁突骑）
+    loufan: '#6B5B4A', // 楼烦（塞北土棕，楼烦兵）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

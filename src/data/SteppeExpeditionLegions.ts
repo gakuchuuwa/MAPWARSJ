@@ -27,5 +27,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, string>> =
   wala: '瓦剌铁骑',         // 博尔巴任·也先瓦剌（§6 #12）
   geluolu: '葛逻禄背弓',    // 弓月城·三姓葛逻禄便捷善射（怛罗斯盟军；非铁骑）
   kiyad: '那可儿',         // 不儿罕山·乞颜那可儿
-  kumo: '曳落河',          // 马盂山·奚族曳落河
+  kumo: '楮特奥隗部',     // 马盂山·奚族楮特奥隗部
 };

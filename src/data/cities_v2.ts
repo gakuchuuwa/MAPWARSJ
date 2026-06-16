@@ -597,11 +597,11 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_guangchengguan', name: '广成关', factionId: 'panjun', lat: 34.139089, lng: 112.887268, type: 'pass', troops: 10000, mirror: true },
     
     // ── 京同山川走廊关隘 ──
-    { id: 'city_juyongguan', name: '居庸关', factionId: 'panjun', lat: 40.280000, lng: 116.060000, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_juyongguan', name: '居庸关', factionId: 'you', lat: 40.280000, lng: 116.060000, type: 'pass', troops: 10000, mirror: true },
 
     // ── 晋西北外三关及晋东北内长城关隘 ──
-    { id: 'city_piantouguan', name: '偏头关', factionId: 'panjun', lat: 39.430000, lng: 111.500000, type: 'pass', troops: 10000, mirror: true },
-    { id: 'city_pingxingguan', name: '平型关', factionId: 'panjun', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_piantouguan', name: '偏头关', factionId: 'linhu', lat: 39.430000, lng: 111.500000, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_pingxingguan', name: '平型关', factionId: 'lingqiu', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 10000, mirror: true },
     { id: 'city_lingshiguan', name: '灵石关', factionId: 'panjun', lat: 36.844462, lng: 111.796875, type: 'pass', troops: 10000 },
         // ── 关中盆地防御要塞群 ──
     { id: 'city_wuguan', name: '武关', factionId: 'panjun', lat: 33.600000, lng: 110.620000, type: 'pass', troops: 10000, mirror: true },
@@ -622,19 +622,19 @@ export const T2_STRATEGIC: CityDataV2[] = [
             {
         id: 'city_jingxingguan',
         name: '井陉关',
-        factionId: 'panjun',
+        factionId: 'xianyu',
         lat: 38.02, lng: 114.00,
         type: 'pass',
         troops: 10000,
         tier: 2 },
-    { id: 'city_daomaguan', name: '倒马关', factionId: 'panjun', lat: 38.841851, lng: 114.807129, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_daomaguan', name: '倒马关', factionId: 'changshan', lat: 38.841851, lng: 114.807129, type: 'pass', troops: 10000, mirror: true },
     { id: 'city_feihu', name: '飞狐', factionId: 'wangyan', lat: 39.3487, lng: 114.6986, type: 'small_city', troops: 10000 },
-    { id: 'city_zijingguan', name: '紫荆关', factionId: 'panjun', lat: 39.472238, lng: 115.265808, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_zijingguan', name: '紫荆关', factionId: 'yi', lat: 39.472238, lng: 115.265808, type: 'pass', troops: 10000, mirror: true },
     // ── 辽东幽州走廊关隘 ──
     {
         id: 'city_shanhaiguan',
         name: '山海关',
-        factionId: 'panjun',
+        factionId: 'linyu',
         lat: 40.0, lng: 119.8,
         type: 'pass',
         troops: 10000,
@@ -866,7 +866,7 @@ export const PERIPHERY: CityDataV2[] = [
         region: 'KOREA' },
     {
         id: 'city_jindo',
-        name: '珍岛',
+        name: '鸣梁',
         factionId: 'sambyeol',
         lat: 34.487, lng: 126.263,
         type: 'small_city',
@@ -1491,9 +1491,9 @@ export const PERIPHERY: CityDataV2[] = [
 export const RESTORED_CITIES: CityDataV2[] = [
 
 
-{ id: 'city_ningwuguan', name: '宁武关', factionId: 'panjun', lat: 39.050000, lng: 112.240000, type: 'pass', troops: 10000, mirror: true },
+{ id: 'city_ningwuguan', name: '宁武关', factionId: 'loufan', lat: 39.050000, lng: 112.240000, type: 'pass', troops: 10000, mirror: true },
 
-{ id: 'city_yanmenguan', name: '雁门关', factionId: 'panjun', lat: 39.190000, lng: 112.870000, type: 'pass', troops: 10000, mirror: true },
+{ id: 'city_yanmenguan', name: '雁门关', factionId: 'heng1', lat: 39.190000, lng: 112.870000, type: 'pass', troops: 10000, mirror: true },
 
 
 { id: 'city_xingqing', name: '安化', factionId: 'qing', lat: 36.01, lng: 107.87, type: 'small_city', troops: 10000 },
