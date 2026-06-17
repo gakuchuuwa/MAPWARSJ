@@ -23,11 +23,11 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tuoba: { name: '拓跋虎骑', tier: 1 },     // 大同·拓跋鲜卑
   yuwen: { name: '宇文部骑', tier: 2 },     // 饶乐水·宇文鲜卑
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
-  gaoqi_d: { name: '百保鲜卑', tier: 0 },   // 蓨城·§2 #9 北齐百保精兵
+  gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵（无经典以少胜多）
   yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
   hejian: { name: '先登死士', tier: 0 },    // 乐成·§1 #25 界桥（番号随城）
   chile: { name: '两池军', tier: 3 },       // 云中·§2 #11
-  murong: { name: '龙城甲骑', tier: 0 },    // 棘城·§2 #12 慕容燕龙城具装骑（原鲜卑燕骑）
+  murong: { name: '龙城甲骑', tier: 1 },    // 棘城·慕容燕具装骑（无经典以少胜多）
   ming_d: { name: '明军三大营', tier: 2 },   // 北京·五军神机三千营
 
   // ── §1 中原表·地理偏北（用户指定）──

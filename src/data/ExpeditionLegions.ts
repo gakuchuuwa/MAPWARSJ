@@ -21,6 +21,7 @@
  * 数据录入仍用 factionId→番号 + STARTING_CAPITALS 推导 cityId 映射；禁止为番号迁点。
  *
  * 审计：npm run expedition:triple-check  +  npm run expedition:audit
+ * tier 标准：AGENTS.md §12.3.1（T0 以少胜多 / T1 胜仗 / T2 有名 / T3 可考存在；乘数 1.5/1.4/1.2/1.1）
  * tier 重评：十四区各 **1–3 支 T0**（锚点见 scratch/elite_tier_region_anchors.json）；锚点下调须有区内替代。T0 锁定后再审 T1。
  * 史料：史料/古代精锐部队.md
  * ═══════════════════════════════════════════════════════════════════

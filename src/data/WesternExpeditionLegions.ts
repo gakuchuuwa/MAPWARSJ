@@ -10,16 +10,16 @@
 export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   qiuci: { name: '龟兹重甲兵', tier: 2 },   // 伊逻卢·龟兹国冶铁重装（§14 #1）
   yutian: { name: '于阗尉迟军', tier: 2 },  // 于阗·尉迟王族精锐（§14 #2）
-  kala: { name: '阿斯古拉姆', tier: 0 },      // 奥什·阿斯卡里古拉姆 Askari Ghulam；1006策勒灭于阗
+  kala: { name: '阿斯古拉姆', tier: 1 },      // 奥什·喀喇汗古拉姆（灭于阗非以少胜多）
   an: { name: '伊列克近卫', tier: 1 },        // 蒲华·999 纳斯尔·伊列克汗奇袭布哈拉灭萨曼
-  yiduhu: { name: '阿斯兰军', tier: 1 },      // 西州·咸通七年仆固俊北庭回鹘克西州（新唐书·回鹘传「斩论尚热」）
-  shule: { name: '盘橐卫', tier: 2 },       // 盘橐城·疏勒强弩守军（§14 #5；班超大本营）
+  yiduhu: { name: '西州回鹘', tier: 1 },      // 高昌·北庭回鹘取西州
+  shule: { name: '阿斯兰近卫', tier: 0 },       // 盘橐城·卡迪尔汗玉素甫灭于阗
   yanqi: { name: '焉耆龙骑兵', tier: 2 },   // 员渠城·焉耆龙骑（§14 #6）
   wusun: { name: '昆莫亲卫', tier: 2 }, // 赤谷城·乌孙王帐
   chagatai: { name: '蒙兀儿铁骑', tier: 2 }, // 别失八里·东察合台
-  dayuan: { name: '汗血天马骑', tier: 0 },   // 贵山城·史记「汗血天马子」；贵山守战四十余日抗汉（大宛列传）
+  dayuan: { name: '汗血天马骑', tier: 2 },   // 贵山城·大宛（守城非以少胜多）
   shache: { name: '莎车左右骑', tier: 2 },   // 渠莎·汉代西域强国
-  anxi: { name: '大唐安西军', tier: 0 },     // 拨换城·高仙芝/郭昕安西都护府精锐（§1 #54）
+  anxi: { name: '大唐安西军', tier: 2 },     // 拨换城·安西都护府（无经典以少胜多）
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
   loulan: { name: '楼兰戍', tier: 3 },      // 扜泥城·汉晋楼兰戍卒（旗=楼兰·§12.1.1）
   zhuxie: { name: '朱邪部兵', tier: 3 },      // 大石城·沙陀朱邪部

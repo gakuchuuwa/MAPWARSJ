@@ -8,7 +8,7 @@
  * - 依据 史料/古代精锐部队.md §6 #1–3、#5–12、#14–19
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  liao_d: { name: '属珊军', tier: 0 },         // 临潢府·《辽史·兵卫志》述律平属珊三万骑；917幽州
+  liao_d: { name: '属珊军', tier: 1 },         // 临潢府·述律平属珊（无经典以少胜多）
   qidan: { name: '皮室军', tier: 1 },         // 木叶山·辽太祖皮室军（§6 #1；原挂临潢让位属珊）
   yel: { name: '斡鲁朵军', tier: 2 },         // 降圣·契丹宫帐制
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 哈拉和林·蒙古帝国怯薛（§6 #2）

@@ -17,11 +17,11 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   sunwu_d: { name: '解烦兵', tier: 2 },      // 武昌·孙吴禁卫
   nantang_d: { name: '黑云长剑都', tier: 2 }, // 南京·§9 #4 南唐杨行密
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=仲·袁术仲家）
-  hongguang: { name: '克敌军', tier: 0 },       // 广陵·黄天荡8千困10万（《宋史·韩世忠传》）
-  lu: { name: '逍遥津死士', tier: 0 },       // 合肥·张辽800破孙权十万（《三国志》）
+  hongguang: { name: '克敌军', tier: 1 },       // 广陵·韩世忠黄天荡
+  lu: { name: '逍遥津死士', tier: 1 },       // 合肥·张辽800破十万（《三国志》）
   min: { name: '长乐控鹤', tier: 2 },        // 冶城·闽国控鹤军（≠武周洛阳控鹤军）
   chen: { name: '建康水军', tier: 2 },       // 清远·§9 #6 陈霸先江南水师
-  xiao_d: { name: '白袍军', tier: 0 },       // 兰陵·陈庆之7000横扫北魏（《梁书》）
+  xiao_d: { name: '白袍军', tier: 1 },       // 兰陵·陈庆之七千白袍（《梁书》）
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
   jingzhou: { name: '忠顺军', tier: 2 },     // 襄阳·南宋京湖制置司
   song: { name: '御前诸军', tier: 2 },       // 临安·孟珙南宋御前诸军

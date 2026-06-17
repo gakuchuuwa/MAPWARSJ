@@ -18,8 +18,8 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   xiliao: { name: '斡耳朵亲卫', tier: 0 },     // 屈耽·西辽虎思斡鲁朵禁卫（碎叶/八剌沙衮）
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
   guishuang: { name: '彭迪甲骑', tier: 3 },
-  guer: { name: '马鲁鲁德卫队', tier: 3 },
-  yuezhi: { name: '蓝氏城铁骑', tier: 1 },
+  guer: { name: '马鲁卫队', tier: 3 },
+  yuezhi: { name: '蓝氏城铁骑', tier: 2 },
   xijue: { name: '郅支城坚兵', tier: 2 },
   tujishi: { name: '怛罗斯突骑', tier: 2 },
   kokand: { name: '浩罕轻骑', tier: 2 },

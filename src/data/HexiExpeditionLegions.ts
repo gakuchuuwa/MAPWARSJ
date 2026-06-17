@@ -22,7 +22,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   qifu_d: { name: '苑川突骑', tier: 2 },         // 枹罕·西秦乞伏鲜卑突骑（苑川故地）
   anding_wei: { name: '长征健儿', tier: 2 },      // 苦峪堡·唐安西征募健儿
   qiang: { name: '北地骑', tier: 3 },             // 萧关·羌族北地骑
-  yingli: { name: '泼喜军', tier: 1 },            // 鸣沙·西夏泼喜旋风砲驼兵
+  yingli: { name: '泼喜军', tier: 2 },            // 鸣沙·西夏砲驼兵
   chijin: { name: '赤斤蒙古卫', tier: 2 },        // 赤金堡·明关西七卫
   dongshengwei: { name: '东胜卫戍', tier: 3 },     // 东胜卫·明代卫所
   zhai_han: { name: '翟国狄骑', tier: 3 },         // 肤施·春秋赤狄翟国

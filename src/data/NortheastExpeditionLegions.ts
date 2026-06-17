@@ -8,16 +8,16 @@
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  bohai: { name: '渤海禁卫', tier: 1 },       // 龙泉府·渤海国
-  dajin: { name: '铁浮图', tier: 0 },         // 会宁府·金军重装（§3 #1）
+  bohai: { name: '渤海禁卫', tier: 2 },       // 龙泉府·渤海国
+  dajin: { name: '铁浮图', tier: 1 },         // 会宁府·金军重装（灭北宋非以少胜多）
   manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
   wanyan_d: { name: '拐子马', tier: 2 },    // 双城·金两翼骑兵
-  jurchen: { name: '猛安谋克', tier: 2 },     // 五国城·金代根本军制
+  jurchen: { name: '合扎猛安', tier: 0 },     // 五国城·阿骨打护步达冈2万破70万（《金史》）
   jinzhou: { name: '辽东铁骑', tier: 2 },     // 徒河·李成梁辽东骑兵
   zu_d: { name: '关宁铁骑', tier: 0 },       // 宁远·宁远大捷破努尔哈赤（《明史·袁崇焕传》）
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
   aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
-  manzhou_d: { name: '满洲八旗', tier: 0 },   // 沈阳·萨尔浒定鼎（《清太祖实录》）
+  manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）
   hezhe: { name: '索伦劲旅', tier: 3 },       // 乌云·索伦部（§3 #13）
   aola: { name: '黑龙江水师', tier: 2 },     // 雅克萨·清水师
   wuliangha: { name: '朵颜三卫', tier: 3 },  // 赛音山达·§1 #74 兀良哈三卫（朵颜/泰宁/福余合一）
