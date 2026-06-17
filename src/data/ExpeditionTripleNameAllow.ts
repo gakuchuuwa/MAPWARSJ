@@ -45,6 +45,9 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   // ── 4·家族 ──
   'qi_d',
   'ming_zheng', // 明郑·郑氏铁人军（郑成功）
+  'date_d', // 伊达·伊达铁骑
+  'otomo_d', // 大友·大友水军
+  'suwa_d', // 诹访·诹访神党
   // ── 1·民族 / 部族（史籍专名旗号）──
   'tujue', 'shatuo', 'gaoche', 'rouran', 'naiman', 'ongut', 'wala', 'geluolu',
   'qiuci', 'yanqi', 'iga_d', 'sambyeol', 'wuhuan',

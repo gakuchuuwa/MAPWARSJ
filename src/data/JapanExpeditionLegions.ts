@@ -9,7 +9,7 @@
 export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // ── 元寇 ──
   so: { name: '弘安御敌', tier: 2 },           // 对马·金石城·宗氏抗元（1281 弘安役首当锋；≠太宰府警固）
-  zhuqian: { name: '警固番役', tier: 2 },  // 福冈城·太宰府警固番役旧关联
+  zhuqian: { name: '警固番役', tier: 2 },  // 太宰府·警固番役
 
   // ── 室町—战国—江户（辞典映射表）──
   ashikaga: { name: '奉公众', tier: 2 },         // 京都·§5 #31 足利奉公众
@@ -36,4 +36,12 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   beihai: { name: '雪国斥候', tier: 3 },       // 宗谷界城·极北严寒适应兵
   yamato: { name: '健儿武士', tier: 2 },       // 飞鸟宫·§5 #2
   sanada_d: { name: '真田赤备', tier: 0 },
+  // ── 2026-06-17 令制国补点（古代据点名 + 精锐）──
+  kaga_d: { name: '一向军', tier: 2 },       // 江沼·加贺一向一揆
+  date_d: { name: '伊达铁骑', tier: 2 },     // 仙台·伊达氏（家族旗号可含「伊达」）
+  higo_d: { name: '菊池党', tier: 2 },       // 熊本·菊池氏
+  iyo_d: { name: '河野水军', tier: 2 },     // 松山·河野氏（伊予水军）
+  otomo_d: { name: '大友水军', tier: 2 },   // 府内·大友氏（家族旗号可含「大友」）
+  ise_d: { name: '神宫骑', tier: 2 },        // 宇治山田·伊势神宫卫
+  suwa_d: { name: '诹访神党', tier: 2 },     // 高岛·诹访氏最强武装（家族旗号可含「诹访」）
 };

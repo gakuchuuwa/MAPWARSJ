@@ -529,7 +529,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'hai2': _chaoxianPortraitPool,
     'hui': _chaoxianPortraitPool,
     'huimo': _chaoxianPortraitPool,
-    'jeolla': _chaoxianPortraitPool,
+    'sheng_d': _chaoxianPortraitPool,
     'jianzhou_nvzhen': _chaoxianPortraitPool,
     'joseon': _chaoxianPortraitPool,
     'mao_wenlong': _chaoxianPortraitPool,
