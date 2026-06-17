@@ -635,7 +635,7 @@ const _FIXED: Record<string, string> = {
     'chechen': '#635DD3', // 自动分配 (邻域相斥)
     'pisha': '#4D54CE', // 自动分配 (邻域相斥)
     'yumi': '#98733B', // 自动分配 (邻域相斥)
-    'keliya': '#3C448E', // 自动分配 (邻域相斥)
+    'keliya': '#3C448E', // 克里雅·阿什库尔山口
     'xiye': '#498D4A', // 自动分配 (邻域相斥)
     'faqiang': '#6868B9', // 自动分配 (邻域相斥)
     'jiantang': '#BD6AC7', // 自动分配 (邻域相斥)

@@ -561,6 +561,7 @@ export class EventParser {
         // 第二类：新增势力
         '白兰': 'bailan', '白兰羌': 'bailan', '白海堡': 'bailan', '柴达木': 'bailan',
         '羊同': 'yangtong', '羊同国': 'yangtong', '玛旁雍错': 'yangtong', '大羊同': 'yangtong',
+        '克里雅': 'keliya', '阿什库尔': 'keliya', '克里雅山口': 'keliya',
         '苏毗': 'supi', '东女国': 'supi', '康延川': 'supi', '苏毗女国': 'supi', '昌都': 'supi', '黑河宗': 'supi',
         '门巴': 'monpa', '门隅': 'monpa', '错那': 'monpa', '门巴族': 'monpa', '达旺': 'monpa',
         '珞巴': 'lopi', '墨脱': 'lopi', '白马狗熊': 'lopi', '雅鲁藏布大峡谷': 'lopi', '珞巴族': 'lopi',

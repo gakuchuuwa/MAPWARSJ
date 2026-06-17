@@ -800,7 +800,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'huite': '辉特',
     'zubu': '阻卜',
     'kangba': '康巴',
-    'nvguo': '女国',
+    'nvguo': '女',
     'jiashi': '迦湿',
     'wuhu': '乌护',
   sanada_d: '真田',

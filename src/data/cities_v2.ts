@@ -1897,10 +1897,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_kungang', name: '昆岗', factionId: 'panjun', lat: 40.54, lng: 81.26, type: 'pass', troops: 10000 },
     { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'pisha', lat: 38.58, lng: 80.8, type: 'small_city', troops: 10000 },
     { id: 'city_yutian2', name: '于阗', factionId: 'yutian', lat: 37.140606, lng: 79.818420, type: 'medium_city', troops: 10000 },
-    { id: 'city_yumi', name: '克里雅', factionId: 'yumi', lat: 36.85, lng: 81.65, type: 'small_city', troops: 10000 },
-    { id: 'city_keliyashankou', name: '克里雅', factionId: 'panjun', lat: 35.45, lng: 81.1, type: 'pass', region: 'TIBET', troops: 10000 },
+    { id: 'city_yumi', name: '阿赫雅尔', factionId: 'yumi', lat: 36.85, lng: 81.65, type: 'small_city', troops: 10000 },
+    { id: 'city_keliyashankou', name: '阿什库尔', factionId: 'keliya', lat: 35.45, lng: 81.1, type: 'pass', region: 'TIBET', troops: 10000, note: '昆仑山克里雅山口；塔克拉玛干南缘入绿洲道（据点名≠旗号「克里」）' },
     { id: 'city_longmucuo', name: '龙木错', factionId: 'yangtong', lat: 34.572168, lng: 80.348511, type: 'small_city', region: 'TIBET', troops: 10000 },
-    { id: 'city_duoma', name: '多玛', factionId: 'keliya', lat: 34.059431, lng: 79.480591, type: 'small_city', troops: 10000 },
     { id: 'city_gadake', name: '噶大克', factionId: 'ali', lat: 31.940459, lng: 80.139771, type: 'small_city', troops: 10000 },
 
     { id: 'city_payangyi', name: '帕羊驿', factionId: 'supi', lat: 30.140235, lng: 83.281860, type: 'small_city', troops: 10000 },

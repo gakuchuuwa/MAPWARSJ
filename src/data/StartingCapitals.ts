@@ -514,7 +514,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'pisha': 'city_mazhatage',
     'yutian': 'city_yutian2',
     'yumi': 'city_yumi',
-    'keliya': 'city_duoma',
+    'keliya': 'city_keliyashankou',
     'xiye': 'city_xiye',
     'faqiang': 'city_saga',
 'panjun': 'city_tongguan',

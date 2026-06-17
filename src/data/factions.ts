@@ -727,7 +727,7 @@ export const FACTIONS: Faction[] = [
     { id: 'pisha', name: '毗沙' },
     { id: 'yutian', name: '伏阇' },
     { id: 'yumi', name: '扜弥' },
-    { id: 'keliya', name: '克里雅' },
+    { id: 'keliya', name: '克里雅' },              // 阿什库尔·昆仑克里雅山口
     { id: 'xiye', name: '西夜' },
     { id: 'faqiang', name: '发羌' },
     { id: 'jiantang', name: '建塘' },
