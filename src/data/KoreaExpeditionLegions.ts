@@ -20,5 +20,9 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   jeolla: { name: '蒙冲营', tier: 1 },       // 顺天·全罗左道水军蒙冲（龟船编制前系）
   chen3: { name: '击刹兵', tier: 3 },         // 大木岳·月支击刹兵
   danluo: { name: '三别抄', tier: 3 },        // 星主厅·耽罗三别抄
+  jianzhou_nvzhen: { name: '建州劲卒', tier: 3 },  // 浑江·建州女真
+  zhen: { name: '后百济锐卒', tier: 3 },          // 完山·后百济甄萱
+  woju: { name: '沃沮戍兵', tier: 3 },            // 咸兴·沃沮
+  tunggiya: { name: '佟佳部兵', tier: 3 },        // 丸都·佟佳部
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
 };

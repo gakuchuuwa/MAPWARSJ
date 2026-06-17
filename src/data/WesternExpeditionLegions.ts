@@ -22,6 +22,10 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   anxi: { name: '大唐安西军', tier: 0 },     // 拨换城·高仙芝/郭昕安西都护府精锐（§1 #54）
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
   loulan: { name: '楼兰戍', tier: 3 },      // 扜泥城·汉晋楼兰戍卒（旗=楼兰·§12.1.1）
+  zhuxie: { name: '朱邪部兵', tier: 3 },      // 大石城·沙陀朱邪部
+  yuchi: { name: '精绝卫士', tier: 3 },      // 精绝·尉迟氏
+  juandu: { name: '捐毒戍卒', tier: 3 },     // 排修城·汉西域捐毒国
+  wensu: { name: '温宿锐卒', tier: 3 },      // 三重城·温宿国
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
   // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
   quli: { name: '轮台戍卒', tier: 3 },

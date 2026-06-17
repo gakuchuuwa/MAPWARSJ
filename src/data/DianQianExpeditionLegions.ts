@@ -22,4 +22,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   buyi_d: { name: '仲家兵', tier: 3 },        // 罗博·布依族仲家兵
   hani_d: { name: '思陀甸兵', tier: 3 },      // 思陀·哈尼族思陀甸兵
   wuman: { name: '东爨乌蛮兵', tier: 3 },     // 乌蒙山·东爨乌蛮兵
+  cuanshi: { name: '爨族部兵', tier: 3 },      // 曲靖·爨氏
+  sukhotai: { name: '素可泰兵', tier: 3 },     // 双河城·素可泰王国
+  ailao: { name: '哀牢戍兵', tier: 3 },        // 永昌·哀牢国
 };

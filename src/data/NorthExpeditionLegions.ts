@@ -47,4 +47,10 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   loufan: { name: '楼烦兵', tier: 3 },        // 宁武关·楼烦（秦汉）
   linyu: { name: '夷丁突骑', tier: 3 },       // 山海关·临榆（明末）
   heng1: { name: '恒山军', tier: 3 },          // 雁门关·代北恒山防线戍军（旗=恒·元岳）
+  dai_d: { name: '代国锐卒', tier: 3 },         // 代县·春秋代国
+  dongdan: { name: '东丹卫兵', tier: 3 },       // 卑沙城·东丹国
+  xuan: { name: '宣府镇军', tier: 3 },          // 宣化·明九边宣府镇
+  zhe_d: { name: '折家将兵', tier: 3 },         // 府谷·五代宋初折氏
+  shanrong: { name: '山戎突骑', tier: 3 },      // 无终·山戎族
+  pingyuan: { name: '高唐戍卒', tier: 3 },      // 平原·高唐州
 };

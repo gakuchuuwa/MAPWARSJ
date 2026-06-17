@@ -23,6 +23,9 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   anding_wei: { name: '长征健儿', tier: 3 },      // 苦峪堡·安定卫长征健儿
   qiang: { name: '北地骑', tier: 3 },             // 萧关·羌族北地骑
   chijin: { name: '赤斤蒙古卫', tier: 3 },        // 赤金堡·赤斤蒙古卫
+  dongshengwei: { name: '东胜卫戍', tier: 3 },     // 东胜卫·明代卫所
+  zhai_han: { name: '翟国狄骑', tier: 3 },         // 肤施·春秋赤狄翟国
+  huizhou: { name: '会州边兵', tier: 3 },          // 祖厉·唐代会州
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang
   juyan: { name: '居延戍卒', tier: 2 }, // 肩水金关·汉居延戍卒
 };

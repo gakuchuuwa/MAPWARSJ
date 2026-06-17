@@ -24,6 +24,13 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // ── 2026-06-16 新增：4座西南名关 ──
   lizhou_d: { name: '白水军', tier: 2 },        // 剑门关·刘璋白水关旧部
   xiazhou: { name: '峡江水军', tier: 2 },       // 瞿塘关·三峡重防区（原白杆兵防重）
+  yang_bozhou: { name: '播州土兵', tier: 3 },    // 海龙屯·播州杨氏
+  yong: { name: '庸国戍卒', tier: 3 },           // 上庸·古庸国
+  cong: { name: '賨族勇士', tier: 3 },           // 宕渠·賨族
+  wuxi: { name: '五溪蛮兵', tier: 3 },           // 八面山·五溪蛮
+  song2: { name: '松州戍卒', tier: 3 },          // 嘉诚·唐蕃古道松州
+  yidou: { name: '夷陵守军', tier: 3 },          // 夷陵·三国夷陵之战
+  quan: { name: '权州戍兵', tier: 3 },           // 当阳·权州
   zuo_d: { name: '南中叟兵', tier: 3 },         // 清溪关·西南夷王牌
   zangke: { name: '夜郎锐卒', tier: 3 },        // 胜境关·古夜郎国地
 };

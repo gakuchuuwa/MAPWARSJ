@@ -36,5 +36,12 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   machu: { name: '武平军', tier: 2 },       // 长沙·马楚武平军节度
   ning: { name: '江西勤王军', tier: 3 },     // 豫章·南宋江西勤王
   huangwang: { name: '冲天军', tier: 2 },       // 仙霞关·黄王冲天军
+  yue: { name: '越君子军', tier: 1 },          // 会稽·勾践近卫亲兵（《国语·吴语》）
+  zhangshicheng: { name: '盐丁锐旅', tier: 3 }, // 延陵·张士诚盐丁起兵（《明史》）
+  ouyue: { name: '东瓯舟师', tier: 3 },        // 临海·东瓯王国水师（《史记·东越列传》）
+  huang_d: { name: '黄国锐卒', tier: 3 },      // 潢川·周代黄国（春申君故里）
+  chizhou: { name: '池州戍兵', tier: 3 },        // 大通·池州
+  ting: { name: '汀州戍卒', tier: 3 },           // 黄连·汀州
+  wan: { name: '舒州戍兵', tier: 3 },            // 皖城·舒州
   shenshi: { name: '吴兴部曲', tier: 2 },       // 独松关·吴兴沈氏部曲
 };
