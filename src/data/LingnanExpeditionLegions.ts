@@ -11,11 +11,11 @@
 export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   zhuang_d: { name: '广西俍兵', tier: 0 },     // 田阳·1555 瓦氏率俍兵6870王江泾斩级1900+（俍兵绿）
   xian_d: { name: '俚人武士', tier: 2 },       // 高凉·§10 #9 冼夫人卫队
-  dayue: { name: '铁突军', tier: 1 },           // 昇龙·宣德二年支棱黎问黎魁铁突三千（《大越史记全书》卷十）
+  dayue: { name: '铁突军', tier: 0 },           // 昇龙·白藤江灭元（《大越史记全书》）
   jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
   trinh: { name: '府僚营', tier: 3 },          // 宣光·郑主府僚军政（无史籍固定精锐番号）
   nguyen_guangnan: { name: '西山军', tier: 2 }, // 富春·§10 #3 阮惠西山朝
-  guangnanguo: { name: '黑旗军', tier: 2 },     // 洞海·§10 #4 刘永福（安南册封）
+  guangnanguo: { name: '黑旗军', tier: 1 },     // 洞海·刘永福抗法（纸桥斩李维业）
   ryukyu: { name: '那霸水师', tier: 2 },       // 首里·§9 #21 琉球王府水师
   ming_zheng: { name: '郑氏铁人军', tier: 1 }, // 承天·§9 #18 郑成功铁人军
   guangzhou: { name: '摧锋军', tier: 2 },      // 番禺·§9 #15 广南守城（广州据点）
@@ -24,7 +24,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   zhancheng: { name: '佛逝象军', tier: 2 },   // 阇槃·占城佛逝象兵
   jingjiang: { name: '靖江府卫', tier: 3 },   // 桂林·明靖江王府卫（旗=靖江·藩王）
   // 铲平军除名（非正式官军番号）
-  nanyue: { name: '南越戍卒', tier: 2 },        // 龙川·赵佗南越国秦戍（《史记·南越列传》）
+  nanyue: { name: '南越戍卒', tier: 3 },        // 龙川·赵佗南越国秦戍（《史记》）
   nongzhigao: { name: '侬峒劲卒', tier: 2 },    // 晋兴·侬智高侬峒兵（《宋史·蛮夷传》）
   yelang: { name: '夜郎锐卒', tier: 3 },        // 普定·夜郎国西南夷（《史记》）
   dacheng: { name: '永安戍卒', tier: 3 },       // 永安·明永安千户所戍卒（原大成水师）
@@ -32,7 +32,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   xiou: { name: '西瓯戍兵', tier: 3 },           // 布山·西瓯
   luoyue: { name: '骆越部卒', tier: 3 },         // 花山·骆越
   guangxin: { name: '苍梧戍卒', tier: 3 },       // 苍梧·广信
-  chen: { name: '楼船士', tier: 1 },              // 清远·《汉书》杨仆楼船征南越
+  chen: { name: '楼船士', tier: 2 },              // 清远·汉楼船兵种
   taiping: { name: '太平军', tier: 2 },          // 金田村·太平天国
   leizhou: { name: '雷州戍兵', tier: 3 },        // 海康·雷州
   li_s: { name: '大汉伏波', tier: 0 },            // 合浦·马援伏波军征交趾

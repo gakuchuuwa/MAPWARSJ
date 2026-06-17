@@ -8,13 +8,13 @@
  * - 三者防重：见 ExpeditionLegions.ts、ExpeditionTripleNameAllow.ts
  */
 export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  xiliang: { name: '西凉铁骑', tier: 1 },       // 皋兰·凉州三明淬炼；董卓三千骑震慑京师（旗=西凉·政权，§12.1.1）
+  xiliang: { name: '西凉铁骑', tier: 2 },       // 皋兰·凉州骑兵泛称
   dangxiang: { name: '铁鹞子', tier: 0 },        // 兴庆府·1041好水川诱伏，铁鹞子冲阵，任福战死（李元昊）
   qing: { name: '忠孝军', tier: 0 },         // 安化·庆州治；大昌原四百破八千（完颜陈和尚）
   weiming: { name: '步跋子', tier: 2 },          // 河南地·§7 #3 西夏步战精锐
-  yeli: { name: '擒生军', tier: 1 },             // 克夷门·§7 #6 西夏监军司擒俘前锋（野利氏权臣）
+  yeli: { name: '擒生军', tier: 2 },             // 克夷门·西夏监军司
   guiyi: { name: '沙州劲旅', tier: 2 },          // 敦煌·§7 #4 张议潮归义军（番号避旗号「归义」及「义」字）
-  xianlingqiang: { name: '凉州大马', tier: 1 },  // 允吾·§7 #7 金城羌氐·凉州边民铁骑
+  xianlingqiang: { name: '凉州大马', tier: 2 },  // 允吾·凉州骑兵泛称
   tufa_d: { name: '南凉铁骑', tier: 2 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）
   juqu_d: { name: '北凉精锐', tier: 2 },         // 张掖·沮渠蒙逊卢水胡
   liang: { name: '凉州突骑', tier: 2 },          // 姑臧·窦融河西骑兵美称（史书泛称，非固定番号；突骑＝突击骑）
@@ -28,5 +28,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   zhai_han: { name: '翟国狄骑', tier: 3 },         // 肤施·春秋赤狄翟国
   huizhou: { name: '会州边兵', tier: 3 },          // 祖厉·唐代会州
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang
-  juyan: { name: '居延戍卒', tier: 2 }, // 肩水金关·汉居延戍卒
+  juyan: { name: '居延戍卒', tier: 3 },              // 肩水金关·汉居延戍卒（居延汉简）
 };

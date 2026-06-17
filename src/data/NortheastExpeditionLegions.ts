@@ -8,25 +8,25 @@
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  bohai: { name: '神贲禁卫', tier: 1 },       // 龙泉府·渤海左右神贲军（§1 #85）
+  bohai: { name: '渤海禁卫', tier: 1 },       // 龙泉府·渤海国
   dajin: { name: '铁浮图', tier: 0 },         // 会宁府·金军重装（§3 #1）
   manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
-  wanyan_d: { name: '拐子马', tier: 1 },    // 双城·完颜氏拐子马（§3 #2）
+  wanyan_d: { name: '拐子马', tier: 2 },    // 双城·金两翼骑兵
   jurchen: { name: '猛安谋克', tier: 2 },     // 五国城·金代根本军制
-  jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·明锦州卫；李成梁（§3 #6）
-  zu_d: { name: '关宁铁骑', tier: 1 },       // 宁远·祖大寿（§3 #5）
+  jinzhou: { name: '辽东铁骑', tier: 2 },     // 徒河·李成梁辽东骑兵
+  zu_d: { name: '关宁铁骑', tier: 0 },       // 宁远·宁远大捷破努尔哈赤（《明史·袁崇焕传》）
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
   aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
-  manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·努尔哈赤八旗劲旅
+  manzhou_d: { name: '满洲八旗', tier: 0 },   // 沈阳·萨尔浒定鼎（《清太祖实录》）
   hezhe: { name: '索伦劲旅', tier: 3 },       // 乌云·索伦部（§3 #13）
-  aola: { name: '黑龙江水师', tier: 1 },     // 雅克萨·雅克萨之战（§3 #26）
+  aola: { name: '黑龙江水师', tier: 2 },     // 雅克萨·清水师
   wuliangha: { name: '朵颜三卫', tier: 3 },  // 赛音山达·§1 #74 兀良哈三卫（朵颜/泰宁/福余合一）
   // 渤海八猛安除名（渤海无猛安制，金制错代）
   fuyu: { name: '金源边军', tier: 3 },       // 黄龙府·辽金黄龙府女真边军（据点今名黄龙府）
   // ── 2026-06-16 新增：东北大区平衡补全（7支，精锐随据点，全图无六字番号） ──
   // 拉哈苏苏兵除名（无史载专名）
   // 东康坚甲除名（东康无此古地名）
-  haixi_nvzhen: { name: '辉发城铁骑', tier: 1 },
+  // 辉发城铁骑除名
   // 勃利勇士除名（唐黑水都督府地，无专名）
   // 卜奎索伦营除名（索伦营在新疆，卜奎错位）
   keerqin: { name: '达尔罕卫', tier: 3 },

@@ -13,7 +13,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tuyu_d: { name: '青海骢精骑', tier: 2 },    // 伏俟城·吐谷浑青海骢（§12 #4）
   xiangxiong: { name: '象雄武士', tier: 2 },  // 穹窿银·象雄铜铁甲武士（§12 #5）
   gar_kham: { name: '康巴骁骑', tier: 2 },    // 德格·康巴朵康先锋骑（§12 #7）
-  guge: { name: '古格甲兵', tier: 3 },        // 札布让·古格锁子甲步兵（§12 #8）
+  guge: { name: '古格甲兵', tier: 2 },        // 札布让·阿里古格王国
   khoshut: { name: '和硕特铁骑', tier: 3 },   // 当雄·固始汗卫拉特铁骑（§12 #9）
   pazhu: { name: '帕竹甲兵', tier: 3 },       // 江孜·帕木竹巴绛曲坚赞甲兵（§12 #10）
   gurkha: { name: '廓尔喀弯刀', tier: 1 },    // 加德满都·廓尔喀库克里勇士（§12 #11）
@@ -26,7 +26,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   gaxa: { name: '噶厦代本', tier: 3 },
   ladakh: { name: '拉达克卫队', tier: 3 },
   spurgyal: { name: '悉补野王军', tier: 3 },
-  khon: { name: '萨迦法王军', tier: 3 },
+  khon: { name: '萨迦法王军', tier: 2 },
   lang_clan: { name: '帕木竹巴军', tier: 3 },
   karmapa: { name: '噶玛巴护教', tier: 3 },
   jinchuan_g: { name: '金川土司兵', tier: 3 },

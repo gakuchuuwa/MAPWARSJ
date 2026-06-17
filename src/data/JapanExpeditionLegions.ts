@@ -27,14 +27,14 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   aizu: { name: '会津藩士', tier: 3 },         // 鹤之城·会津藩（原大番众）
   izumo: { name: '新宫党', tier: 3 },          // 月山富田·尼子氏最强武装精锐
   honda: { name: '宇都宫势', tier: 3 },        // 宇都宫·下野宇都宫氏武士团（原纪清两党）
-  fujiwara: { name: '平泉骑马队', tier: 2 },     // 柳之御所·奥州藤原氏重装骑兵
+  fujiwara: { name: '奥州武士', tier: 3 },     // 柳之御所·奥州藤原氏
   kakizaki: { name: '安藤氏兵', tier: 3 },     // 胜山馆·安藤氏虾夷管领（原虾夷探题）
-  nanbu: { name: '南部铁骑', tier: 1 },        // 根城·陆奥名马产地、战国闻名的南部骑兵
+  nanbu: { name: '南部铁骑', tier: 2 },        // 根城·南部氏骑兵
   osumi: { name: '九州防人', tier: 3 },         // 赤尾木城·§5 #1 防人
   // 奄美岛勇除名（名称现代，无史载）
   ayinu: { name: '阿伊努猎兵', tier: 3 },       // 白老·虾夷特有猛毒箭射手
   beihai: { name: '越后山伏', tier: 3 },       // 宗谷界城·越后修验道武者（原雪国斥候）
-  yamato: { name: '健儿武士', tier: 2 },       // 飞鸟宫·§5 #2
+  yamato: { name: '飞鸟卫府', tier: 3 },       // 飞鸟宫·大和朝廷
   sanada_d: { name: '真田赤备', tier: 1 },
   // ── 2026-06-17 令制国补点（古代据点名 + 精锐）──
   kaga_d: { name: '一向军', tier: 2 },       // 江沼·加贺一向一揆

@@ -15,7 +15,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛
   shu: { name: '无当飞军', tier: 0 },           // 成都·街亭（228）王平千余人退张郃
   shuixi: { name: '罗罗兵', tier: 3 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
-  boren: { name: '悬棺武士', tier: 2 },         // 僰道·§8 #8 僰人山地武士（番号避旗号「僰」）
+  // 悬棺武士除名
   chenghan: { name: '六夷突骑', tier: 2 },      // 鹿头关·§8 #9 成汉李特六夷铁骑
   daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
   ba: { name: '兴戎军', tier: 2 },              // 钓鱼城·南宋兴戎司禁军（《宋史》王坚合州知州；旗=巴·巴国）
