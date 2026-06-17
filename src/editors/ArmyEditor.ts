@@ -42,7 +42,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     LINGNAN:      'yue',       // 岭南-番禺 → 越
     BASHU:        'shu',       // 川蜀-成都 → 蜀
     DIANQIAN:     'dali',      // 滇缅-大理(羊苴咩城) → 大理
-    HEXI:         'liang',     // 河西-武威(姑臧) → 凉 (旗号 凉)
+    HEXI:         'liangzhou',     // 河西-武威(姑臧) → 凉州
     WESTERN:      'qiuci',     // 西域-龟兹(伊逻卢城) → 龟兹
     TIBET:        'tubo',      // 青藏-拉萨(逻些) → 吐蕃
     STEPPE:       'menggu_d',  // 草原-哈拉和林 → 蒙古

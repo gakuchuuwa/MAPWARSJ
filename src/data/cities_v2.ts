@@ -408,7 +408,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     {
         id: 'city_wuwei',
         name: '姑臧',
-        factionId: 'liang',
+        factionId: 'liangzhou',
         lat: 37.93, lng: 102.64,
         type: 'big_city',
         troops: 20000,
@@ -417,12 +417,12 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     {
         id: 'city_zhangye',
         name: '张掖',
-        factionId: 'juqu_d',
+        factionId: 'ganzhou',
         lat: 38.93, lng: 100.45,
         type: 'medium_city',
         troops: 10000,
         tier: 1 },
-    { id: 'city_jiuquan', name: '酒泉城', factionId: 'hunxie', lat: 39.73, lng: 98.49, type: 'small_city', troops: 10000 },
+    { id: 'city_jiuquan', name: '酒泉城', factionId: 'suzhou', lat: 39.73, lng: 98.49, type: 'small_city', troops: 10000 },
 
 
     // ── 塞北与西域中城 ──
@@ -454,7 +454,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     {
         id: 'city_dunhuang',
         name: '敦煌',
-        factionId: 'guiyi',
+        factionId: 'shazhou',
         lat: 40.14, lng: 94.66,
         type: 'medium_city',
         troops: 10000,
@@ -774,7 +774,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     {
         id: 'city_yumenguan',
         name: '玉门关',
-        factionId: 'panjun',
+        factionId: 'guiyi',
         lat: 40.35, lng: 93.86,
         type: 'pass',
         troops: 10000,
@@ -1691,7 +1691,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
     // ── 2026-05-28 新增：工布(江达宗) ──
     // [2026-05-29] 原 gongbu 势力已删, 暂归叛军
     // ── 2026-05-28 新增：果洛(花石峡)、察哈尔(多伦) ──
-    { id: 'city_huashixia', name: '花石峡', factionId: 'golog', lat: 35.115369, lng: 98.857727, type: 'small_city', troops: 10000 },
+    { id: 'city_huashixia', name: '花石峡', factionId: 'golog', lat: 35.196235, lng: 98.907166, type: 'small_city', troops: 10000, mirror: true },
 
     // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
     { id: 'city_wendeng', name: '文登', factionId: 'weihaiwei', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', troops: 10000, note: '朝鲜环线锚点（代威海卫）；文化北方' } ];
@@ -1741,7 +1741,7 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、叛军(三陇沙/肩水金关) ──
     { id: 'city_zhadunzong', name: '扎敦宗', factionId: 'gandenpozhang', lat: 29.645092, lng: 84.171753, type: 'small_city', troops: 10000 },
     { id: 'city_sanlongsha', name: '三陇沙', factionId: 'panjun', lat: 40.4000, lng: 92.5000, type: 'small_city', region: 'WESTERN', troops: 10000, tier: 4 },
-    { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'juyan', lat: 40.413414, lng: 99.434509, type: 'pass', troops: 10000, mirror: true },//镜像
+    { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'hunxie', lat: 40.413414, lng: 99.434509, type: 'pass', troops: 10000, mirror: true },//镜像
 
     // ── 2026-05-28 新增：药罗葛(博尔巴任)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
     // 瓦剌（卫拉特）药罗葛部牧地，与明代卫拉（科布多）分立
@@ -1797,7 +1797,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_gaochangcheng', name: '高昌', factionId: 'yiduhu', lat: 42.8533, lng: 89.53, type: 'medium_city', troops: 10000, mirror: true, tier: 1 },
 
 
-    { id: 'city_jinchangcheng', name: '晋昌城', factionId: 'panjun', lat: 40.534600, lng: 95.820007, type: 'small_city', troops: 10000 },
+    { id: 'city_jinchangcheng', name: '晋昌城', factionId: 'guazhou', lat: 40.534600, lng: 95.820007, type: 'small_city', troops: 10000, note: '唐瓜州治晋昌郡' },
     { id: 'city_jieshuangna', name: '羯霜那', factionId: 'jie', lat: 40.124284, lng: 65.341187, type: 'small_city', troops: 10000 },
     {
         id: 'city_samaerhan',
@@ -2043,7 +2043,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bangdun', name: '邦敦', factionId: 'monong', lat: 12.87, lng: 107.8, type: 'small_city', troops: 10000 , region: 'LINGNAN' },
     // 水真腊南境部族
     { id: 'city_sanpu', name: '三菩', factionId: 'shuizhen', lat: 12.77, lng: 105.97, type: 'small_city', troops: 10000 , region: 'LINGNAN' },
-    { id: 'city_juyansai', name: '居延塞', factionId: 'panjun', lat: 41.8942, lng: 101.044, type: 'small_city', troops: 10000 },
+    { id: 'city_juyansai', name: '居延塞', factionId: 'ningkou', lat: 41.8942, lng: 101.044, type: 'small_city', troops: 10000 },
     { id: 'city_gongzhubao', name: '公主堡', factionId: 'wulei', lat: 37.2008, lng: 75.3745, type: 'pass', troops: 10000, region: 'WESTERN' },
     { id: 'city_jimai', name: '吉麦', factionId: 'gongtang', lat: 29.3012, lng: 90.6812, type: 'small_city', troops: 10000 },
     // ── 2026-06-11 新增：库页岛民族据点 ──
@@ -2082,10 +2082,12 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bengbu', name: '蚌埠', factionId: 'hao_d', lat: 32.92, lng: 117.38, type: 'small_city', troops: 10000, note: '濠州治钟离故地；淮滨津渡（今蚌埠）' },
     { id: 'city_liaocheng', name: '聊城', factionId: 'bozhou_d', lat: 36.4322, lng: 115.9552, type: 'small_city', troops: 10000, note: '隋唐博州治；春秋聊城邑' },
     { id: 'city_sapi', name: '萨毗城', factionId: 'rulun', lat: 37.631470, lng: 88.884888, type: 'small_city', region: 'TIBET', troops: 10000 },
-    { id: 'city_shayuan', name: '沙苑', factionId: 'panjun', lat: 34.70, lng: 109.95, type: 'small_city', troops: 10000, note: '大荔沙苑；西魏沙苑之战古战场；唐沙苑监牧马地' },
+    { id: 'city_shayuan', name: '长宁', factionId: 'tongzhou', lat: 35.0032, lng: 109.9319, type: 'small_city', troops: 10000, note: '大荔沙苑；西魏沙苑之战古战场；唐沙苑监牧马地；同州治' },
     { id: 'city_gasikou', name: '噶斯口', factionId: 'panjun', lat: 38.078345, lng: 89.288635, type: 'small_city', region: 'TIBET', troops: 10000, mirror: true },
     { id: 'city_niubiziliang', name: '牛鼻子梁', factionId: 'panjun', lat: 37.838198, lng: 91.678162, type: 'small_city', region: 'TIBET', troops: 10000, mirror: true },
     { id: 'city_mahaitai', name: '马海台', factionId: 'panjun', lat: 38.045995, lng: 94.622498, type: 'small_city', region: 'TIBET', troops: 10000, mirror: true },
     { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.8960, type: 'small_city', region: 'TIBET', troops: 10000, note: '柴达木台吉乃尔' },
-    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'panjun', lat: 38.3593, lng: 90.1334, type: 'pass', region: 'TIBET', troops: 10000, note: '柴达木西缘尕斯淖尔盐泽' },
+    { id: 'city_bayinbulage', name: '巴音布拉格', factionId: 'panjun', lat: 41.3775, lng: 102.9694, type: 'small_city', troops: 10000, note: '沮渠已迁表氏' },
+    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'panjun', lat: 38.3593, lng: 90.1334, type: 'pass', mirror: true, region: 'TIBET', troops: 10000, note: '柴达木西缘尕斯淖尔盐泽' },
+    { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8000, lng: 99.8000, type: 'small_city', troops: 10000, note: '汉酒泉郡表氏县；沮渠卢水胡故地' },
     ];

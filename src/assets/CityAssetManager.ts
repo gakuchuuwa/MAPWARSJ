@@ -58,6 +58,7 @@ export class CityAssetManager {
 
         'shu': '蜀',
 
+        'liangzhou': '凉',
         'liang': '凉',
 
         'ashikaga': '足利',
@@ -97,6 +98,7 @@ export class CityAssetManager {
         'chen': '陈',
         'sui': '随',
         'tang': '唐',
+        'shazhou': '沙',
 'shatuo': '沙陀',
 'qidan': '契丹',
         'bing': '并',
@@ -121,6 +123,7 @@ export class CityAssetManager {
 'cao_d': '曹',
         'jiujiang': '浔',
         'quanrong': '犬戎',
+        'suzhou': '肃',
         'sushen': '肃慎',
 'yuezhi': '月氏',
         'chile': '敕勒',
@@ -163,6 +166,7 @@ export class CityAssetManager {
         'gouding': '句町',
         'dongxian': '郯',
         'tongma': '铜马',
+        'tongzhou': '同',
         'baibo': '黄巾',
         'wuhuan': '乌桓',
         'xianlingqiang': '先零',
@@ -227,6 +231,7 @@ export class CityAssetManager {
 'dali': '大理',
         'luodian': '罗甸',
 
+        'guazhou': '瓜',
         'gusiluo': '唃厮',
         'goryeo': '高丽',
 'nongzhigao': '邕',
@@ -624,6 +629,7 @@ export class CityAssetManager {
         'xuan': '宣府',
         'yiwu': '伊吾',
         'yutian': '伏阇',
+        'ningkou': '宁寇',
         'ning': '宁',
         'machu': '马楚',
         'weiwuer': '维吾',
@@ -632,6 +638,7 @@ export class CityAssetManager {
         'xiangxiong': '象雄',
         'qingqiang': '茂',
         'zhaowu': '昭武',
+        'ganzhou': '甘',
         'gaoliang': '潘',
         'ruoqiang': '婼羌',
         'qiemo': '且末',

@@ -131,6 +131,7 @@ const _FIXED: Record<string, string> = {
     tujue: '#4878A0', // 突厥·狼卫（狼青）
     huige: '#9A8048', // 回纥·铁骑（金黄）
     shatuo: '#585868', // 沙陀·铁骑（铁灰）
+    shazhou: '#7B5A3E', // 沙州（敦煌赭）
     xianbei: '#6A8878', // 鲜卑·王庭（弹汗青）
     gaoche: '#7A6848', // 高车·战车（轮车褐）
     rouran: '#8A4858', // 柔然·铁骑（蠕蠕紫褐）
@@ -234,6 +235,8 @@ const _FIXED: Record<string, string> = {
     // tuoba/erzhu/yuwen/shatuo 见上方尚色/草原表
 
     // ── 河西精锐远征势力（2026-06-11；§7 全 10 + 野利·擒生军）──
+    ganzhou: '#7A6D4E', // 甘州（张掖灰褐）
+    suzhou: '#6A7B5E', // 肃州（酒泉灰绿）
     xiliang: '#7A5838', // 西凉·西凉铁骑（金城土褐）
     qing: '#906838', // 庆州·忠孝军（陇东琥珀；安化治）
     weiming: '#A89888', // 嵬名·步跋子（党项灰褐）
@@ -242,8 +245,9 @@ const _FIXED: Record<string, string> = {
     xianlingqiang: '#688850', // 先零·凉州大马（允吾青绿）
     tufa_d: '#4A5868', // 秃发·南凉铁骑（浇河铁青）
     juqu_d: '#9A7858', // 沮渠·北凉精锐（张掖赭褐）
-    liang: '#B89048', // 凉·大甲重阵（姑臧铜甲黄）
-    hunxie: '#508898', // 浑邪·甘州铁骑（酒泉青蓝）
+    liang: '#B89048', // 凉（姑臧铜甲黄）
+    liangzhou: '#8A7B5E', // 凉州（姑臧土褐）
+    hunxie: '#508898', // 浑邪（肩水金关青蓝）
     // dangxiang 见上方大夏白
 
     // ── 川蜀精锐远征势力（2026-06-11；§8 全 10 支）──
@@ -329,6 +333,7 @@ const _FIXED: Record<string, string> = {
     anding_wei: '#614B3B', // 安定（安定卫土褐，长征健儿）
     chijin: '#C14B3A', // 赤斤（赤斤红，赤斤蒙古卫）
     ning: '#355C4A', // 宁州（宁州墨绿，江西勤王军）
+    ningkou: '#6B5E4A', // 宁寇（居延暗棕）
     chen3: '#8F6E8F', // 月支（月支紫褐，击刹兵）
     danluo: '#325272', // 耽罗（耽罗海蓝，三别抄）
     dengmaoqi: '#9C4A3A', // 铲平（铲平起义红，铲平军）
@@ -387,6 +392,7 @@ const _FIXED: Record<string, string> = {
     'chizhou': '#BC87C1', // 自动分配 (邻域相斥)
     'yada': '#65AC41', // 自动分配 (邻域相斥)
     'quli': '#6EC99A', // 自动分配 (邻域相斥)
+    'guazhou': '#8A7A5E', // 瓜州（晋昌瓜褐）
     'guishuang': '#D64242', // 自动分配 (邻域相斥)
     'juandu': '#CF4FAD', // 自动分配 (邻域相斥)
     'sai': '#818B48', // 自动分配 (邻域相斥)
@@ -430,6 +436,7 @@ const _FIXED: Record<string, string> = {
     'yelang': '#86407D', // 自动分配 (邻域相斥)
     'ailao': '#A641D4', // 自动分配 (邻域相斥)
     'quanrong': '#C068C3', // 自动分配 (邻域相斥)
+    'suzhou': '#6A7B5E', // 肃州（酒泉灰绿）
     'sushen': '#75CD9E', // 自动分配 (邻域相斥)
     'yuezhi': '#D7CE4D', // 自动分配 (邻域相斥)
     'tiele': '#8FC362', // 自动分配 (邻域相斥)
@@ -441,6 +448,7 @@ const _FIXED: Record<string, string> = {
     'pingyuan': '#BF2FCC', // 自动分配 (邻域相斥)
     'yao': '#6D9625', // 自动分配 (邻域相斥)
     'tongma': '#458134', // 自动分配 (邻域相斥)
+    'tongzhou': '#6B5A4A', // 同州（沙苑同褐）
     'dongxian': '#C12A9E', // 自动分配 (邻域相斥)
     'cheshihou': '#A3C179', // 自动分配 (邻域相斥)
     'zhai_han': '#3ABB76', // 自动分配 (邻域相斥)
@@ -665,6 +673,7 @@ const _FIXED: Record<string, string> = {
     'keerqin': '#AA4023', // 自动分配 (邻域相斥)
     'qingqiang': '#67D287', // 自动分配 (邻域相斥)
     'zhaowu': '#8160C0', // 自动分配 (邻域相斥)
+    'ganzhou': '#7A6D4E', // 甘州（张掖灰褐）
     'gaoliang': '#B85563', // 自动分配 (邻域相斥)
     'ruoqiang': '#5AAE62', // 自动分配 (邻域相斥)
     'qiemo': '#8736A6', // 自动分配 (邻域相斥)

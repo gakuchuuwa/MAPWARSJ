@@ -18,6 +18,7 @@ export const FACTIONS: Faction[] = [
 
   { id: 'yada', name: '嚈哒帝国' },
   { id: 'quli', name: '渠犁国' },
+  { id: 'guazhou', name: '瓜州' },
   { id: 'guishuang', name: '贵霜帝国' },
   { id: 'juandu', name: '捐毒国' },
   { id: 'sai', name: '塞种' },
@@ -68,6 +69,7 @@ export const FACTIONS: Faction[] = [
     { id: 'dian', name: '通海' },       // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '新国' },
     { id: 'cheng', name: '成国' },
+    { id: 'liangzhou', name: '凉州' },
     { id: 'liang', name: '凉国' },
     { id: 'juqu_d', name: '沮渠' },
     { id: 'tufa_d', name: '秃发' },
@@ -85,6 +87,7 @@ export const FACTIONS: Faction[] = [
     { id: 'sui', name: '隋国' },
     { id: 'tang', name: '唐国' },
     { id: 'min', name: '闽国' },
+    { id: 'shazhou', name: '沙州' },
     { id: 'shatuo', name: '沙陀' },
     { id: 'qidan', name: '契丹' },
     { id: 'bing', name: '并州' },
@@ -139,6 +142,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 日本重置：京都改挂室町（足利旗）──
     { id: 'ashikaga', name: '室町' },
     { id: 'quanrong', name: '犬戎' },
+    { id: 'suzhou', name: '肃州' },
     { id: 'sushen', name: '肃慎' },
     { id: 'yuezhi', name: '月氏' },
 
@@ -196,6 +200,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xu', name: '徐国' },          // 徐土黄 - 徐国(下邳故都)
     // ── 2026-05-26 新增：汉朝补全半成品势力 ──
     { id: 'tongma', name: '铜马' },
+    { id: 'tongzhou', name: '同州' },
     { id: 'dongxian', name: '海西' },
     { id: 'baibo', name: '黄巾' },
     { id: 'cheshihou', name: '车师' },
@@ -728,6 +733,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jiantang', name: '建塘' },
     { id: 'gongbu', name: '工布' },
     { id: 'niang', name: '觉木宗' },
+    { id: 'ganzhou', name: '甘州' },
     { id: 'galangdiba', name: '波密' },
     { id: 'ali', name: '阿里' },
     { id: 'pazhu', name: '帕竹' },
@@ -742,6 +748,7 @@ export const FACTIONS: Faction[] = [
     { id: 'guangxin', name: '广信' },
     { id: 'kejia', name: '客家' },
     { id: 'ouyang', name: '欧阳' },
+    { id: 'ningkou', name: '宁寇' },
     { id: 'ning', name: '宁州' },
     { id: 'danyang', name: '宣州' },       // 宣州(芜湖/鸠兹)
     { id: 'huai', name: '淮州' },
