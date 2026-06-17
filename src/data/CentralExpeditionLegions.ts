@@ -16,13 +16,13 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   han_d: { name: '轻勇骑', tier: 1 },      // 南郑·§1 #18 韩信背水之战的夺旗骑兵
   xu: { name: '陷阵营', tier: 0 },          // 下邳·§1 #23 高顺部曲（番号随城；旗号徐·徐国）
   cao_d: { name: '虎豹骑', tier: 0 },      // 谯都·§1 #31 曹纯曹真（#32青州兵让位）
-  ranwei_d: { name: '乞活军', tier: 1 },   // 巨鹿·§1 #41 冉闵陈午
-  wuzhou_d: { name: '控鹤军', tier: 1 },   // 洛阳·§1 #47 武则天北衙
+  ranwei_d: { name: '乞活军', tier: 2 },   // 巨鹿·§1 #41 冉闵陈午
+  wuzhou_d: { name: '控鹤军', tier: 2 },   // 洛阳·§1 #47 武则天北衙
   fu: { name: '皂衣队', tier: 1 },         // 大散关·§1 #39 苻坚前秦
   shang: { name: '虎贲多射', tier: 1 },       // 安阳·殷商虎贲与多射（妇好征伐）
   zhou: { name: '岐阳周师', tier: 3 },     // 岐山·§1 #3 虎贲三千（岐阳即岐周故地）
   xia: { name: '夏后亲卫', tier: 1 },      // 安邑·§1 #1 夏后氏
-  sui: { name: '骁果军', tier: 1 },        // 汉东·隋帝禁卫骁果；615雁门李世民解围（根基在中央，河套用武地）
+  sui: { name: '骁果军', tier: 2 },        // 汉东·隋帝禁卫骁果；615雁门李世民解围（根基在中央，河套用武地）
   sunqin: { name: '督标秦军', tier: 1 },   // 潼关·§1 #81 孙传庭督标秦兵
   didao: { name: '飞熊军', tier: 3 },      // 临洮·§1 #27 陇西董卓系（旗=狄·狄道）
   han: { name: '韩卒击刹', tier: 3 },      // 新郑·战国韩都精锐（旗=韩·韩国）
@@ -32,7 +32,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
   yiyang_d: { name: '申息锐师', tier: 3 },    // 武胜关·义阳申息锐师
   // ── 2026-06-16 新增：11大名关 ──
-  hongnong_jun: { name: '神策军', tier: 1 },       // 函谷关·鱼朝恩陕州兵，唐中央禁军
+  hongnong_jun: { name: '神策军', tier: 2 },       // 函谷关·鱼朝恩陕州兵，唐中央禁军
   zheng: { name: '成皋部曲', tier: 3 },
   ruo: { name: '商於材官', tier: 3 },
   ruzhou: { name: '广成健卒', tier: 3 },

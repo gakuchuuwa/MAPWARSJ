@@ -34,7 +34,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   monpa: { name: '门巴勇士', tier: 3 },
   lopi: { name: '珞巴武士', tier: 3 },
   humi: { name: '瓦罕弓骑', tier: 3 },
-  nvguo: { name: '女国禁卫', tier: 1 },
+  nvguo: { name: '女国禁卫', tier: 2 },
   kangba: { name: '康区长刀卒', tier: 3 },
   bailang: { name: '白狼锐卒', tier: 3 },
   faqiang: { name: '发羌劲卒', tier: 3 },

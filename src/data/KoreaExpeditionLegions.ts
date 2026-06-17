@@ -16,7 +16,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dingan: { name: '别武班', tier: 2 },       // 鸭绿府·高丽抗女真野战军（§4 #6）
   sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣龟甲船海战（原属全罗左道）
   hai2: { name: '朝鲜甲士', tier: 3 },       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
-  joseon: { name: '内禁卫', tier: 1 },       // 汉城·国王贴身近卫（§4 #9）
+  joseon: { name: '内禁卫', tier: 3 },       // 汉城·国王贴身近卫（§4 #9）
   sheng_d: { name: '升州束伍军', tier: 2 },   // 顺天·升州牧地方军（束伍编伍）
   chen3: { name: '击刹兵', tier: 3 },         // 大木岳·月支击刹兵
   danluo: { name: '三别抄', tier: 3 },        // 星主厅·耽罗三别抄

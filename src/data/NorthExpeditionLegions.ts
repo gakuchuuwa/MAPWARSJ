@@ -40,7 +40,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   bing: { name: '并州狼骑', tier: 1 },     // 晋阳·并州狼骑
   you: { name: '上谷突骑', tier: 2 },        // 居庸关·幽州上谷郡
   yi: { name: '白马义从', tier: 1 },           // 紫荆关·易京要塞公孙瓒
-  changshan: { name: '常山义军', tier: 1 },   // 倒马关·常山颜杲卿义军
+  changshan: { name: '常山义军', tier: 2 },   // 倒马关·常山颜杲卿义军
   xianyu: { name: '中山铁卒', tier: 3 },      // 井陉关·鲜虞（战国）
   linhu: { name: '林胡骑', tier: 3 },         // 偏头关·林胡族
   lingqiu: { name: '飞虎军', tier: 3 },       // 平型关·灵丘（五代）
