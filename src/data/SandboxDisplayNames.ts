@@ -556,6 +556,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
 'duolu': '咄陆',
+'dulan': '都兰',
 'zhuxie': '朱邪',
 'hunxie': '浑邪',
     'fu': '苻',
@@ -743,6 +744,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'hongnong_jun': '弘农',
     'zheng': '郑',
     'ruo': '鄀',
+    'rulun': '如论',
     'ruzhou': '汝',
     'yun': '允',
     'zhi_state': '轵',

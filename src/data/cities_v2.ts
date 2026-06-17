@@ -1,4 +1,4 @@
-﻿/**
+/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -217,7 +217,6 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
 
     // ── 崤函古道沿线 (洛阳→长安 的中城) ──
 
-    { id: 'city_weinan', name: '渭南', factionId: 'dashun', lat: 34.500000, lng: 109.500000, type: 'small_city', troops: 10000 },
     // ── 中原北线/冀南走廊 (洛阳→安阳 的中城) ──
     // ── 幽冀古道/平原走廊 (安阳→北京 的中城) ──
     {
@@ -588,7 +587,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
         troops: 10000,
         tier: 2 },
     //── 子午道秦岭关隘 ──
-    { id: 'city_ziwu', name: '子午谷', factionId: 'panjun', lat: 33.312230, lng: 108.124695, type: 'small_city', region: 'HEXI', troops: 10000 },
+    { id: 'city_ziwu', name: '子午谷', factionId: 'dashun', lat: 33.312230, lng: 108.124695, type: 'small_city', region: 'HEXI', troops: 10000, note: '崇祯九年高迎祥出子午谷被伏，李自成接掌闯营；大顺老营驻地' },
     { id: 'city_mianzhuguan', name: '鹿头关', factionId: 'chenghan', lat: 31.325490, lng: 104.172363, type: 'pass', troops: 10000, tier: 2, note: '梓潼鹿头关；成汉李特入蜀要道' },
 
     // ── 崤函古道沿线关隘 ──
@@ -1555,10 +1554,12 @@ export const RESTORED_CITIES: CityDataV2[] = [
     {
         id: 'city_raoleshui',
         name: '饶乐水',
-        factionId: 'yuwen',
+        factionId: 'panjun',
         lat: 43.27, lng: 118.48,
         type: 'small_city',
         troops: 10000 },
+    // ── 武川镇 ──
+    { id: 'city_wuchuanzhen', name: '武川镇', factionId: 'yuwen', lat: 41.2661, lng: 111.1322, type: 'small_city', region: 'STEPPE', troops: 10000, note: '北魏六镇之武川镇；宇文氏祖地；沙苑之战（537）宇文泰以少胜多之战主将' },
 
 
     // ── 新增关隘（2026-05-26） ──
@@ -2080,4 +2081,11 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yucheng', name: '虞城', factionId: 'dang_d', lat: 34.7758, lng: 116.0678, type: 'small_city', troops: 10000, note: '汉砀郡属/虞国故地；豫东商丘东翼' },
     { id: 'city_bengbu', name: '蚌埠', factionId: 'hao_d', lat: 32.92, lng: 117.38, type: 'small_city', troops: 10000, note: '濠州治钟离故地；淮滨津渡（今蚌埠）' },
     { id: 'city_liaocheng', name: '聊城', factionId: 'bozhou_d', lat: 36.4322, lng: 115.9552, type: 'small_city', troops: 10000, note: '隋唐博州治；春秋聊城邑' },
+    { id: 'city_sapi', name: '萨毗城', factionId: 'rulun', lat: 37.631470, lng: 88.884888, type: 'small_city', region: 'TIBET', troops: 10000 },
+    { id: 'city_shayuan', name: '沙苑', factionId: 'panjun', lat: 34.70, lng: 109.95, type: 'small_city', troops: 10000, note: '大荔沙苑；西魏沙苑之战古战场；唐沙苑监牧马地' },
+    { id: 'city_gasikou', name: '噶斯口', factionId: 'panjun', lat: 38.078345, lng: 89.288635, type: 'small_city', region: 'TIBET', troops: 10000, mirror: true },
+    { id: 'city_niubiziliang', name: '牛鼻子梁', factionId: 'panjun', lat: 37.838198, lng: 91.678162, type: 'small_city', region: 'TIBET', troops: 10000, mirror: true },
+    { id: 'city_mahaitai', name: '马海台', factionId: 'panjun', lat: 38.045995, lng: 94.622498, type: 'small_city', region: 'TIBET', troops: 10000, mirror: true },
+    { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.8960, type: 'small_city', region: 'TIBET', troops: 10000, note: '柴达木台吉乃尔' },
+    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'panjun', lat: 38.3593, lng: 90.1334, type: 'pass', region: 'TIBET', troops: 10000, note: '柴达木西缘尕斯淖尔盐泽' },
     ];

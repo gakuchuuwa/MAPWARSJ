@@ -42,4 +42,5 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   xiutu: { name: '休屠王骑', tier: 3 },
   jiashi: { name: '迦湿弥罗卫', tier: 3 },
   gongbu: { name: '工布长弓手', tier: 3 },
+  rulun: { name: '萨毗泽驻军', tier: 2 },
 };

@@ -67,7 +67,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'qiang': 'city_xiaoguan',
     'didao': 'city_lintao',
     'tuoba': 'city_datong',
-    'yuwen': 'city_raoleshui',
+    'yuwen': 'city_wuchuanzhen',
 'liang_d': 'city_shangqiu',
     'chen': 'city_qingyuan',
     'sui': 'city_suizhou',
@@ -260,7 +260,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'joseon': 'city_hanseong',
     'siam': 'city_ayutthaya',
     'chenla': 'city_angkor',
-'dashun': 'city_weinan',
+'dashun': 'city_ziwu',
     'daxi_ming': 'city_mianyang',
     'chenghan': 'city_mianzhuguan',
     'shuixi': 'city_bijie',
@@ -470,6 +470,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // ── 2026-05-28 新增：白狼(巴塘宗/康区) ──
 'bailang': 'city_adunzi',
 
+'dulan': 'city_taijinaier',
 'duolu': 'city_beiluocheng',
 'zhuxie': 'city_dashicheng',
 'hunxie': 'city_jiuquan',
@@ -525,6 +526,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'hongnong_jun': 'city_hanguguan',
 'zheng': 'city_hulaoguan',
 'ruo': 'city_wuguan',
+'rulun': 'city_sapi',
 'ruzhou': 'city_guangchengguan',
 'yun': 'city_luhunguan',
 'zhi_state': 'city_zhiguan',

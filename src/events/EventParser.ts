@@ -111,7 +111,7 @@ export class EventParser {
         '黑槊龙骧': 'shizhao_d', '黑槊龙骧军': 'shizhao_d', '石勒': 'shizhao_d',
         '苍头军': 'yunzhong',
         '虎纹突骑': 'tuoba', '拓跋焘': 'tuoba',
-        '宿卫虎贲': 'yuwen',
+        '宿卫虎贲': 'yuwen', '武川镇': 'yuwen', '武川镇军': 'yuwen', '沙苑': 'yuwen',
         '六镇戍兵': 'erzhu', '六镇': 'erzhu',
         '百保鲜卑': 'gaoqi_d', '百保': 'gaoqi_d',
         '黄龙兵': 'yingzhou_ying_d', '高宝宁': 'yingzhou_ying_d', '营州': 'yingzhou_ying_d',

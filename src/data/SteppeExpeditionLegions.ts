@@ -13,7 +13,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   yel: { name: '斡鲁朵军', tier: 2 },         // 降圣·契丹宫帐制
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 区T0锚·怯薛参与西征诸役；蒙古西征整体史家论以少胜多（§6 #2）
   borjigin: { name: '那可儿军', tier: 3 },     // 曲雕阿兰·铁木真那可儿（§6 #10）
-  ogodei: { name: '探马赤军', tier: 0 },       // 探马赤：大都守御、两都之战（1328）及木华黎攻金诸役，史载以少击多（§6 #3）
+  ogodei: { name: '探马赤军', tier: 1 },       // 也迷里·木华黎探马赤（原T0；降为T1，无单独少胜多招牌仗）
   yuan_d: { name: '秃鲁花军', tier: 2 },       // 上都·元质子军
   xiongnu: { name: '控弦之士', tier: 2 },      // 头曼城·匈奴骑兵
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
@@ -39,6 +39,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tatar: { name: '塔塔儿死士', tier: 3 },
   merkit: { name: '蔑儿乞猎骑', tier: 3 },
   chahar: { name: '察哈尔八旗', tier: 2 },
+  yuwen: { name: '武川镇军', tier: 0 },     // 武川镇·537沙苑之战宇文泰以少胜多大败高欢（《周书·宇文泰传》；接替探马赤T0）
   da_yuan: { name: '北元怯薛', tier: 2 },
   huyan: { name: '呼衍精骑', tier: 3 },
   yujiulu: { name: '郁久闾王骑', tier: 2 },

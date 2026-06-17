@@ -490,6 +490,7 @@ export class CityAssetManager {
         // ── 2026-05-28 新增：白狼(巴塘宗/康区) ──
 'bailang': '白狼',
 
+'dulan': '都兰',
 'duolu': '咄陆',
 'zhuxie': '朱邪',
 'hunxie': '浑邪',
@@ -677,6 +678,7 @@ export class CityAssetManager {
         'hongnong_jun': '弘农',
         'zheng': '郑',
         'ruo': '鄀',
+        'rulun': '如论',
         'ruzhou': '汝',
         'yun': '允',
         'zhi_state': '轵',

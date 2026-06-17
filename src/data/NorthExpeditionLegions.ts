@@ -22,7 +22,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   shizhao_d: { name: '黑槊龙骧', tier: 1 }, // 邢台·§2 #4 石勒石虎后赵禁军
   yunzhong: { name: '苍头军', tier: 3 },    // 盛乐·拓跋代北
   tuoba: { name: '拓跋虎骑', tier: 1 },     // 大同·拓跋鲜卑
-  yuwen: { name: '宇文部骑', tier: 3 },     // 饶乐水·宇文鲜卑
+  // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
   gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵（无经典以少胜多）
   yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
