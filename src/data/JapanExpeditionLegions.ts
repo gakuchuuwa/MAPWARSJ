@@ -9,12 +9,12 @@
 export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // ── 元寇 ──
   so: { name: '弘安御敌', tier: 2 },           // 对马·金石城·宗氏抗元（1281 弘安役首当锋；≠太宰府警固）
-  zhuqian: { name: '警固番役', tier: 2 },  // 太宰府·警固番役
+  zhuqian: { name: '警固番役', tier: 2 },  // 福冈城·太宰府警固番役旧关联
 
   // ── 室町—战国—江户（辞典映射表）──
   ashikaga: { name: '奉公众', tier: 2 },         // 京都·§5 #31 足利奉公众
   edo: { name: '旗本武士', tier: 1 },          // 江户城·§5 #20 旗本（Hatamoto）
-  satsuma: { name: '隼人众', tier: 3 },        // 内城·§5 #35 萨摩隼人
+  satsuma: { name: '隼人众', tier: 3 },        // 鹿儿岛城·§5 #35 萨摩隼人
   hojo_d: { name: '风魔党', tier: 2 },         // 小田原·§5 #17
   iga_d: { name: '伊贺众', tier: 2 },          // 名张·§5 #16
   hashiba: { name: '七手组', tier: 3 },        // 姬路城·§5 #10
@@ -33,7 +33,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   osumi: { name: '九州防人', tier: 3 },         // 赤尾木城·§5 #1 防人
   anmei: { name: '奄美岛勇', tier: 3 },         // 赤木名城·琉球/奄美诸岛死士
   ayinu: { name: '阿伊努猎兵', tier: 3 },       // 白老·虾夷特有猛毒箭射手
-  beihai: { name: '雪国斥候', tier: 3 },       // 宗谷·极北严寒适应兵
+  beihai: { name: '雪国斥候', tier: 3 },       // 宗谷界城·极北严寒适应兵
   yamato: { name: '健儿武士', tier: 2 },       // 飞鸟宫·§5 #2
   sanada_d: { name: '真田赤备', tier: 0 },
 };

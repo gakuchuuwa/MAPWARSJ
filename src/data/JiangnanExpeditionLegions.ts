@@ -17,7 +17,7 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   sunwu_d: { name: '解烦兵', tier: 1 },      // 武昌·§1 #34 孙吴解烦（江南交叉）
   nantang_d: { name: '黑云长剑都', tier: 2 }, // 南京·§9 #4 南唐杨行密
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=仲·袁术仲家）
-  hongguang: { name: '弘光四镇', tier: 3 },  // 广陵·南明弘光四镇（高杰刘良佐黄得功刘泽清）
+  hongguang: { name: '克敌军', tier: 1 },       // 广陵·韩世忠黄天荡大破金兵
   lu: { name: '逍遥津死士', tier: 1 },       // 合肥·《三国志·张辽传》八百突围（「十万」见《魏略》注，非演义独有）
   min: { name: '长乐控鹤', tier: 2 },        // 冶城·闽国控鹤军（≠武周洛阳控鹤军）
   chen: { name: '建康水军', tier: 2 },       // 清远·§9 #6 陈霸先江南水师

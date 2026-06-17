@@ -32,7 +32,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
   yiyang_d: { name: '申息锐师', tier: 3 },    // 武胜关·义阳申息锐师
   // ── 2026-06-16 新增：11大名关 ──
-  hongnong_jun: { name: '神策军', tier: 0 },       // 函谷关·鱼朝恩陕州兵，唐中央禁军
+  hongnong_jun: { name: '神策军', tier: 1 },       // 函谷关·鱼朝恩陕州兵，唐中央禁军
   zheng: { name: '成皋部曲', tier: 3 },
   ruo: { name: '商於材官', tier: 3 },
   ruzhou: { name: '广成健卒', tier: 3 },
@@ -49,5 +49,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   suzhou_d: { name: '汴河戍旅', tier: 3 },     // 符离·宿州
   qiguo_d: { name: '夏裔锐士', tier: 3 },      // 雍丘·杞国夏后氏苗裔
   xin: { name: '新室卫士', tier: 3 },          // 宛城·王莽新室（《汉书》）
+  yingzhou_d: { name: '选锋军', tier: 1 },       // 顺昌·刘锜顺昌大捷选锋破金
+  dashun: { name: '北门飞骑', tier: 1 },          // 渭南·唐太宗玄武门北门屯营
   chuzhou_d: { name: '大明龙骧卫', tier: 1 },      // 清流关·明开国龙骧卫
 };

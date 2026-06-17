@@ -315,7 +315,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     // ── 淮河流域与中原周边中城 ──
     
     { id: 'city_huaiyang', name: '宛丘', factionId: 'huaiyang', lat: 33.63, lng: 114.7, type: 'small_city', troops: 10000 },
-    { id: 'city_shunchang', name: '汝阴', factionId: 'yingzhou_d', lat: 32.9, lng: 115.81, type: 'small_city', troops: 10000 },
+    { id: 'city_shunchang', name: '顺昌', factionId: 'yingzhou_d', lat: 32.9, lng: 115.81, type: 'small_city', troops: 10000 },
     { id: 'city_qiaojun', name: '谯县', factionId: 'cao_d', lat: 33.88, lng: 115.77, type: 'small_city', troops: 10000 },
 
 
@@ -1028,7 +1028,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_shengle', name: '盛乐', factionId: 'yunzhong', lat: 40.38, lng: 111.82, type: 'small_city', troops: 10000, note: '北魏前期都城；峰值人口未达中城门槛，2026-06-12 降级' },
     
     { id: 'city_izumo', name: '月山富田', factionId: 'izumo', lat: 35.377853, lng: 133.148804, type: 'pass', troops: 10000, region: 'JAPAN', note: '出云国月山富田城；尼子氏（新宫党）' },
-    { id: 'city_satsuma', name: '内城', factionId: 'satsuma', lat: 31.6003, lng: 130.5583, type: 'small_city', troops: 10000 },
+    { id: 'city_satsuma', name: '鹿儿岛城', factionId: 'satsuma', lat: 31.6003, lng: 130.5583, type: 'small_city', region: 'JAPAN', troops: 10000, note: '萨摩国鹿儿岛城；岛津氏（隼人众）' },
     // // [DATA LOST - emishi deleted]
     { id: 'city_shuri', name: '首里', factionId: 'ryukyu', lat: 26.22, lng: 127.72, type: 'medium_city', region: 'LINGNAN', troops: 10000, tier: 1, note: '琉球王国都城；那霸水师' },
     { id: 'city_tsushima', name: '金石城', factionId: 'so', lat: 34.2031, lng: 129.2892, type: 'small_city', troops: 10000, region: 'JAPAN' },
@@ -1043,43 +1043,6 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 2026-06-11 日本精锐：北条@小田原、伊贺@名张（恶党/千早城距飞鸟宫3km，另议）──
     { id: 'city_odawara', name: '小田原城', factionId: 'hojo_d', lat: 35.256, lng: 139.154, type: 'pass', region: 'JAPAN', troops: 10000, note: '相模国小田原城；北条氏（风魔党；距江户城约72km）' },
     { id: 'city_nabari', name: '名张', factionId: 'iga_d', lat: 34.627, lng: 136.108, type: 'small_city', region: 'JAPAN', troops: 10000, note: '伊贺国名张郡；伊贺众东境门户（距京都约53km，避上野城址与京都<50km冲突）' },
-    // ── 2026-06-16 东海道五国（间距≥50km 审计合格）──
-    { id: 'city_ujiyamada', name: '宇治山田', factionId: 'ise_d', lat: 34.455, lng: 136.725, type: 'small_city', region: 'JAPAN', troops: 10000, note: '伊势神宫门前旧称；伊势国治（志摩国代指）' },
-    { id: 'city_hamamatsu', name: '滨松城', factionId: 'totomi_d', lat: 34.711, lng: 137.726, type: 'small_city', region: 'JAPAN', troops: 10000, note: '远江国滨松城；东海道中段（距骏府城约66km）' },
-    { id: 'city_mito', name: '水户城', factionId: 'hitachi_d', lat: 36.341, lng: 140.447, type: 'small_city', region: 'JAPAN', troops: 10000, note: '常陆国水户城；水户德川藩（距宇都宫城约60km）' },
-    { id: 'city_tateyama', name: '馆山城', factionId: 'awa_d', lat: 35.048, lng: 139.839, type: 'pass', region: 'JAPAN', troops: 10000, note: '安房国馆山城；北条旧领（距小田原城约66km）' },
-    { id: 'city_sawara', name: '佐原城', factionId: 'kazusa_d', lat: 35.433, lng: 140.317, type: 'small_city', region: 'JAPAN', troops: 10000, note: '上总国佐原城；房总北国（距江户城约57km；下总代指）' },
-    // ── 2026-06-16 东山道七国（间距≥50km 审计合格）──
-    { id: 'city_iwamura', name: '岩村城', factionId: 'mino_d', lat: 35.373, lng: 137.441, type: 'pass', region: 'JAPAN', troops: 10000, note: '美浓国岩村城；断崖山城（距清洲城约56km）' },
-    { id: 'city_takayama', name: '高山城', factionId: 'hida_d', lat: 36.146, lng: 137.252, type: 'small_city', region: 'JAPAN', troops: 10000, note: '飞驒国高山城；东山道西段（距上田城约94km）' },
-    { id: 'city_maebashi', name: '前桥城', factionId: 'kozuke_d', lat: 36.391, lng: 139.061, type: 'small_city', region: 'JAPAN', troops: 10000, note: '上野国前桥城；关东内陆（距上田城约73km）' },
-    { id: 'city_sendai', name: '仙台城', factionId: 'rikuzen_d', lat: 38.269, lng: 140.872, type: 'small_city', region: 'JAPAN', troops: 10000, note: '陆前国仙台城；伊达氏（距柳之御所约83km）' },
-    { id: 'city_morioka', name: '盛冈城', factionId: 'rikuchu_d', lat: 39.704, lng: 141.153, type: 'small_city', region: 'JAPAN', troops: 10000, note: '陆中国盛冈城；南部氏（距柳之御所约79km）' },
-    { id: 'city_sakata', name: '鸟海城', factionId: 'uzen_d', lat: 38.914, lng: 139.836, type: 'small_city', region: 'JAPAN', troops: 10000, note: '羽前庄内鸟海城；本庄氏（距柳之御所约111km）' },
-    { id: 'city_akita', name: '秋田城', factionId: 'ugo_d', lat: 39.719, lng: 140.103, type: 'small_city', region: 'JAPAN', troops: 10000, note: '羽后国秋田城；佐竹氏（距柳之御所约119km）' },
-    // ── 2026-06-16 北陆道六国（城名优先；间距≥50km；越后@春日山已有）──
-    { id: 'city_obamajo', name: '小滨城', factionId: 'wakasa_d', lat: 35.503, lng: 135.749, type: 'small_city', region: 'JAPAN', troops: 10000, note: '若狭国小滨城；小滨氏（距京都约55km）' },
-    { id: 'city_ichijodani', name: '一乘谷城', factionId: 'echizen_d', lat: 35.989, lng: 136.293, type: 'pass', region: 'JAPAN', troops: 10000, note: '越前国一乘谷城；朝仓氏山城（距高山城约88km）' },
-    { id: 'city_kanazawajo', name: '金泽城', factionId: 'kaga_d', lat: 36.561, lng: 136.656, type: 'small_city', region: 'JAPAN', troops: 10000, note: '加贺国金泽城；前田氏（距高山城约71km）' },
-    { id: 'city_hakuijo', name: '羽咋城', factionId: 'noto_d', lat: 37.032, lng: 136.766, type: 'small_city', region: 'JAPAN', troops: 10000, note: '能登国羽咋城；能登众（距富山城约55km）' },
-    { id: 'city_toyamajo', name: '富山城', factionId: 'etchu_d', lat: 36.695, lng: 137.211, type: 'small_city', region: 'JAPAN', troops: 10000, note: '越中国富山城；马场氏·上杉氏（距高山城约61km）' },
-    { id: 'city_kanaiyamajo', name: '金井山城', factionId: 'sado_d', lat: 38.015, lng: 138.350, type: 'pass', region: 'JAPAN', troops: 10000, note: '佐渡国金井山城；佐渡金山（距春日山约96km）' },
-    // ── 2026-06-16 山阴道五国（知名度优先；间距≥50km；出云@月山富田）──
-    { id: 'city_tottorijo', name: '鸟取城', factionId: 'inaba_d', lat: 35.503, lng: 134.238, type: 'small_city', region: 'JAPAN', troops: 10000, note: '因幡国鸟取城；山阴东门户（距姬路城约85km）' },
-    { id: 'city_toyookajo', name: '丰冈城', factionId: 'tajima_d', lat: 35.544, lng: 134.820, type: 'small_city', region: 'JAPAN', troops: 10000, note: '但马国丰冈城；山阴道要冲（距姬路城约79km）' },
-    { id: 'city_oniyamajo', name: '鬼山城', factionId: 'hoki_d', lat: 35.564, lng: 133.685, type: 'pass', region: 'JAPAN', troops: 10000, note: '伯耆国鬼山城；山阴中央（距月山富田约53km）' },
-    { id: 'city_hamadajo', name: '滨田城', factionId: 'iwami_d', lat: 34.899, lng: 132.082, type: 'small_city', region: 'JAPAN', troops: 10000, note: '石见国滨田城；山阴西段（距月山富田约111km）' },
-    { id: 'city_aburatsu', name: '油津', factionId: 'oki_d', lat: 36.232, lng: 133.327, type: 'small_city', region: 'JAPAN', troops: 10000, note: '隐岐国油津；后鸟羽院配流·国衙港（距月山富田约96km）' },
-    // ── 2026-06-16 山阳道四国（间距≥50km 审计合格；播磨@姬路、备中@鬼之城、安艺@吉田郡山、长门@赤间关已有）──
-    { id: 'city_kume', name: '久米', factionId: 'mimasaka_d', lat: 35.060, lng: 134.120, type: 'small_city', region: 'JAPAN', troops: 10000, note: '美作国久米郡旧称；国东门户（津山·林野城址距鸟取/姬路/鬼之城均<50km未能单列）' },
-    { id: 'city_ushimadojo', name: '牛窗城', factionId: 'bizen_d', lat: 34.538, lng: 134.280, type: 'small_city', region: 'JAPAN', troops: 10000, note: '备前国牛窗浦·宇都宫氏居城；国南段（距鬼之城>50km；冈山城址过近未能单列）' },
-    { id: 'city_miharajo', name: '三原城', factionId: 'bingo_d', lat: 34.400, lng: 133.087, type: 'small_city', region: 'JAPAN', troops: 10000, note: '备后国三原城；毛利氏（距吉田郡山约51km）' },
-    { id: 'city_yanaijo', name: '柳井城', factionId: 'suo_d', lat: 34.066, lng: 132.102, type: 'pass', region: 'JAPAN', troops: 10000, note: '周防国柳井城；大内氏·柳井氏（距吉田郡山约55km）' },
-    // ── 2026-06-16 南海道五国（间距≥50km；淡路洲本距和歌山约26km/德岛约43km 暂缺；土佐@冈丰已有）──
-    { id: 'city_wakayamajo', name: '和歌山城', factionId: 'kii_d', lat: 34.226, lng: 135.150, type: 'small_city', region: 'JAPAN', troops: 10000, note: '纪伊国和歌山城；关白丰臣秀吉筑（距飞鸟宫约51km；西移约2km凑间距）' },
-    { id: 'city_tokushimajo', name: '德岛城', factionId: 'awa2_d', lat: 34.075, lng: 134.553, type: 'small_city', region: 'JAPAN', troops: 10000, note: '阿波国德岛城；蜂须贺氏（距丸龟城约57km）' },
-    { id: 'city_marugamejo', name: '丸龟城', factionId: 'sanuki_d', lat: 34.268, lng: 133.798, type: 'small_city', region: 'JAPAN', troops: 10000, note: '赞岐国丸龟城；生驹氏（高松城址距牛窗/鬼之城<50km未能单列）' },
-    { id: 'city_matsuyamajo', name: '松山城', factionId: 'iyo_d', lat: 33.845, lng: 132.766, type: 'pass', region: 'JAPAN', troops: 10000, note: '伊予国松山城；松山氏·加藤氏（距冈丰城约66km）' },
     { id: 'city_shangdang', name: '长子', factionId: 'feng_d', lat: 36.148974, lng: 113.008118, type: 'small_city', troops: 10000 },
 
     { id: 'city_fanyang', name: '范阳', factionId: 'anshi_d', lat: 39.48, lng: 115.98, type: 'medium_city', troops: 10000, note: '安禄山范阳节度使根基；安史叛军' },
@@ -1854,8 +1817,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_wuzhong', name: '无终', factionId: 'shanrong', lat: 39.95, lng: 117.4, type: 'small_city', troops: 10000 },
     { id: 'city_wugucheng', name: '乌骨城', factionId: 'huimo', lat: 40.7685, lng: 123.9395, type: 'small_city', troops: 10000 },
     { id: 'city_shangzhou', name: '三白', factionId: 'sabeol', lat: 36.410000, lng: 128.160000, type: 'small_city', region: 'KOREA', troops: 10000, note: '尚州(沙伐州)旧称；沙伐国都；三白为尚州别称(稻·茧·柿)' },
-    { id: 'city_yuanzhishi', name: '原之辻', factionId: 'yizhi', lat: 33.75, lng: 129.75, type: 'small_city', troops: 10000 },
-    { id: 'city_taizaifu', name: '太宰府', factionId: 'zhuqian', lat: 33.51, lng: 130.52, type: 'medium_city', troops: 10000 },
+    { id: 'city_yuanzhishi', name: '原之辻', factionId: 'yizhi', lat: 33.791, lng: 129.703, type: 'small_city', region: 'JAPAN', troops: 10000, note: '壹岐国府旧址' },
+    { id: 'city_taizaifu', name: '福冈城', factionId: 'zhuqian', lat: 33.585, lng: 130.378, type: 'medium_city', region: 'JAPAN', troops: 10000, note: '筑前国福冈城；黑田/福冈藩（太宰府警固番役旧关联·距旧址约15km）' },
     { id: 'city_chijianguan', name: '赤间关', factionId: 'taira', lat: 33.95, lng: 130.93, type: 'pass', troops: 10000, tier: 2 },
     { id: 'city_guizhicheng', name: '鬼之城', factionId: 'jibei2', lat: 34.72, lng: 133.76, type: 'small_city', region: 'JAPAN', troops: 10000, note: '备中国鬼之城；宇喜多氏·备中名城（距冈山/福山城址<50km）' },
     { id: 'city_junfucheng', name: '骏府城', factionId: 'jinchuan', lat: 34.97, lng: 138.38, type: 'small_city', region: 'JAPAN', troops: 10000 },
@@ -2079,7 +2042,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_nuotuoluo', name: '诺托罗', factionId: 'eluoke', lat: 49.2, lng: 143.1, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '库页岛东岸中部河口，鄂罗克渔猎放牧聚散中心' },
     { id: 'city_baizhu', name: '白主', factionId: 'kuye', lat: 46.71, lng: 142.52, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落' },
     { id: 'city_bailao', name: '白老', factionId: 'ayinu', lat: 42.55, lng: 141.36, type: 'small_city', region: 'JAPAN', troops: 10000, note: '北海道南端据泊地方，阿伊努传统聚落（白老古名）' },
-    { id: 'city_zonggu', name: '宗谷', factionId: 'beihai', lat: 45.5, lng: 141.93, type: 'small_city', region: 'JAPAN', troops: 10000, note: '东北/日本/朝鲜环线共用锚点，文化日本；北海道北端宗谷海峡（宗谷古名）' },
+    { id: 'city_zonggu', name: '宗谷', factionId: 'beihai', lat: 45.5, lng: 141.93, type: 'small_city', region: 'JAPAN', troops: 10000, note: '宗谷海峡界城；日本—库页（白主）水陆枢纽；地名江户期可考' },
     { id: 'city_xierka', name: '锡尔喀', factionId: 'shuidada', lat: 46.9, lng: 134.1, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '黑龙江下游锡尔卡河流域，明水达达部聚居地' },
     { id: 'city_niman', name: '尼满', factionId: 'dongping', lat: 45.51, lng: 131.96, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '乌苏里江下游尼满河流域，明代东北边陲要地（尼满古名）' },
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境据点 ──

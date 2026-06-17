@@ -489,7 +489,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'zhuerqi': _caoyuanPortraitPool,
     // 东北 32 势力
     'aisin_d': _dongbeiPortraitPool,
-    'beihai': _dongbeiPortraitPool,
     'bohai': _dongbeiPortraitPool,
     'dajin': _dongbeiPortraitPool,
     'dawoer': _dongbeiPortraitPool,
@@ -548,6 +547,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'anmei': _ribenPortraitPool,
     'ashikaga': _ribenPortraitPool,
     'ayinu': _ribenPortraitPool,
+    'beihai': _dongbeiPortraitPool,
     'chosokabe': _ribenPortraitPool,
     'dayu': _ribenPortraitPool,
     'echigo': _ribenPortraitPool,

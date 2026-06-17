@@ -132,7 +132,7 @@ type Polygon = Point[];
 //   钓鱼岛        city_diaoyudao      JAPAN       南方/日本环线共用
 //   宫古岛        city_gugudao        JAPAN
 //   江户城        city_edo            JAPAN
-//   根城/宗谷     city_genjo/zonggu   JAPAN       宗谷兼东北/朝鲜/日本锚
+//   根城/宗谷     city_genjo/zonggu   JAPAN       宗谷界城兼东北/朝鲜/日本锚
 //   星主厅        city_xingzhuting    KOREA       南方/日本/朝鲜共用（济州）
 //   文登          city_wendeng        NORTH       代威海卫，朝鲜环线锚
 //   襄平          city_liaoyang       NORTHEAST   东北/朝鲜/草原三圈共用

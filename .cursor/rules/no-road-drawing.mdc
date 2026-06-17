@@ -1,0 +1,28 @@
+---
+description: 道路网由项目主人亲自绘制；AI 禁止画路、改路、自动连线
+alwaysApply: true
+---
+
+# 道路网：主人亲自画，AI 禁止碰
+
+## 铁律
+
+**道路由项目主人自己在 VectorRoadEditor 里画。** AI **永远**不要代画、代连、代修道路。
+
+## 禁止（含「帮忙」场景）
+
+- 修改 `src/data/VectorRoadData.ts`（增删改任何 `road` Feature）
+- 删据点时**顺带**删道路（可提醒主人自行在编辑器处理，但 AI 不写入道路文件）
+- 脚本批量「自动连线」「补悬空路段」「间距合格自动 connect」
+- FactionEditor / 批量导入的副作用若会写道路 → **不触发**；只改五文件时明确不写道路
+- 用两点直线、Haversine 凑路径等「简化路段」
+
+## 允许
+
+- 只改据点五文件：`factions.ts`、`cities_v2.ts`、`StartingCapitals.ts`、`SandboxDisplayNames.ts`、`CityAssetManager.ts`
+- 口头说明某城缺路、与库页/宗谷等需主人后续手画
+- 只读查看 `VectorRoadData.ts` 作审计（不写入）
+
+## 原因（勿再犯）
+
+主人反馈：**AI 自动连接的都不对，越搞越乱。** 路网是手工心血，只能主人画。

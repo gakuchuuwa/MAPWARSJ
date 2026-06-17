@@ -34,6 +34,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   guangxin: { name: '苍梧戍卒', tier: 3 },       // 苍梧·广信
   taiping: { name: '太平军', tier: 2 },          // 金田村·太平天国
   leizhou: { name: '雷州戍兵', tier: 3 },        // 海康·雷州
+  li_s: { name: '大汉伏波', tier: 0 },            // 合浦·马援伏波军征交趾
   guizhou: { name: '静江军', tier: 2 },       // 古严关·宋桂州静江军
   paiyao: { name: '八排瑶丁', tier: 3 },      // 阳山关·明清连阳八排瑶丁
   daozhou: { name: '湘军道营', tier: 3 },     // 麦岭关·晚清湘军道州营
