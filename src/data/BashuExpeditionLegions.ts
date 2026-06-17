@@ -11,7 +11,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   bandun: { name: '賨人勇士', tier: 2 },       // 汉昌·§8 #1 板楯蛮（賨人）
   kui: { name: '白毦兵', tier: 1 },             // 白帝城·§8 #2 陈到永安白毦
   qiao_d: { name: '虎步军', tier: 3 },          // 阆中·§8 #3 蜀汉虎步营
-  zhuoshi: { name: '连弩士', tier: 2 },         // 临邛·§8 #4 诸葛连弩营
+  zhuoshi: { name: '连弩士', tier: 3 },         // 临邛·诸葛连弩营
   tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛
   shu: { name: '无当飞军', tier: 1 },           // 成都·王平街亭断后（非以少胜多经典）
   shuixi: { name: '罗罗兵', tier: 3 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）

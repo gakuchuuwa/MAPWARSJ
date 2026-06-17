@@ -692,6 +692,7 @@ export const FACTIONS: Faction[] = [
     { id: 'sima_d', name: '司马氏' },   // 河内郡望@获嘉
     { id: 'liguo', name: '黎国' },
     { id: 'kang', name: '长泽' },
+    { id: 'woye', name: '沃野' },
     { id: 'shuofang', name: '朔方' },
     { id: 'lushui', name: '卢水' },
     { id: 'yingli', name: '应理' },

@@ -12,6 +12,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wangyan: { name: '八字军', tier: 0 },     // 飞狐·顺昌大捷2万破10万（《宋史·刘锜传》）
   tianxiong: { name: '天雄军', tier: 2 },   // 大名·唐末河朔雄藩
   // 宣毅军除名（泛称非专属，与方渠无关）
+  huan: { name: '步跋子', tier: 3 },        // 方渠·西夏步跋子（原嵬名/鸡鹿塞）
   qingyuan_bd: { name: '神臂营', tier: 2 }, // 保定·北宋强弩营
 
   // ── §2 北方 12 支 ──

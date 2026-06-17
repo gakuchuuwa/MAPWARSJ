@@ -20,14 +20,15 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   wuzhou_d: { name: '控鹤军', tier: 2 },   // 洛阳·§1 #47 武则天北衙
   fu: { name: '皂衣队', tier: 1 },         // 大散关·§1 #39 苻坚前秦
   shang: { name: '虎贲多射', tier: 1 },       // 安阳·殷商虎贲与多射（妇好征伐）
-  zhou: { name: '岐阳周师', tier: 2 },     // 岐山·武王伐纣王师
-  xia: { name: '夏后亲卫', tier: 2 },      // 安邑·夏后氏
+  zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）
+  // 夏后亲卫除名（夏代无信史）
   sui: { name: '骁果军', tier: 2 },        // 汉东·隋帝禁卫骁果；615雁门李世民解围（根基在中央，河套用武地）
   sunqin: { name: '督标秦军', tier: 2 },   // 潼关·孙传庭督标
   // 飞熊军除名（小说番号）
   // 韩卒击刹除名（无史载）
-  liang_d: { name: '宋公徒旅', tier: 3 },  // 商丘·春秋宋国公室徒旅（《左传》；原梁国劲卒，都大梁非商丘）
+  liang_d: { name: '捧日军', tier: 1 },  // 商丘·宋州归德军，赵匡胤发迹地
   // 公行锐士除名
+  jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
   // 朱龙骑除名（无此番号）
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
   yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师
@@ -37,7 +38,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   ruo: { name: '商於材官', tier: 3 },
   ruzhou: { name: '广成健卒', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 3 },
-  zhi_state: { name: '太行飞军', tier: 2 },
+  zhi_state: { name: '太行飞军', tier: 3 },
   xiongding: { name: '碗子城军', tier: 3 },
   // 金甲卫除名（生造）
   huo: { name: '霍邑锐士', tier: 3 },
@@ -52,4 +53,6 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yingzhou_d: { name: '选锋军', tier: 2 },       // 顺昌·南宋选锋
   // 北门飞骑除名
   chuzhou_d: { name: '大明龙骧卫', tier: 2 },      // 清流关·明初亲军卫
+  lulin: { name: '云台突骑', tier: 1 },        // 昆阳·刘秀昆阳之战（《后汉书》）
+  feng_d: { name: '殿前诸班', tier: 1 },      // 长子·后周柴荣禁军（《旧五代史》）
 };

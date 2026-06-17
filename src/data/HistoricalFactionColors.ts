@@ -606,7 +606,8 @@ const _FIXED: Record<string, string> = {
     'yangshe': '#4A4CC0', // 自动分配 (邻域相斥)
     'sima_d': '#65338C', // 自动分配 (邻域相斥)
     'kang': '#C081AD', // 自动分配 (邻域相斥)
-    'shuofang': '#B25343', // 自动分配 (邻域相斥)
+    'woye': '#B25343', // 沃野
+    'shuofang': '#8A6040', // 朔方
     'lushui': '#57D74B', // 自动分配 (邻域相斥)
     'yingli': '#8040D4', // 自动分配 (邻域相斥)
     'guangwu': '#68CEE2', // 自动分配 (邻域相斥)

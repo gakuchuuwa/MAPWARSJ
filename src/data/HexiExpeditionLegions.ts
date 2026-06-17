@@ -29,4 +29,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   huizhou: { name: '会州边兵', tier: 3 },          // 祖厉·唐代会州
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang
   juyan: { name: '居延戍卒', tier: 3 },              // 肩水金关·汉居延戍卒（居延汉简）
+  shuofang: { name: '期门郎骑', tier: 1 },      // 河南地·汉武帝期门郎戍朔方
 };

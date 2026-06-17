@@ -309,7 +309,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
 'huyan': 'city_naomaohu',
     'yujiulu': 'city_ruoshui',
-    'weiming': 'city_ordos',
+    'weiming': 'city_jilusai',
     'yeli': 'city_keyimen',
     'kiyad': 'city_burhan',
 'borjigin': 'city_qudiaoalan',
@@ -489,7 +489,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'sima_d': 'city_huojia',
     'liguo': 'city_eyu',
     'kang': 'city_changze',
-    'shuofang': 'city_linrong',
+    'woye': 'city_linrong',
+    'shuofang': 'city_ordos',
     'lushui': 'city_aowei',
     'yingli': 'city_mingsha',
     'guangwu': 'city_lingju',

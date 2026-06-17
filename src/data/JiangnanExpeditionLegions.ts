@@ -13,14 +13,14 @@
  */
 export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   shanyue: { name: '丹阳兵', tier: 2 },      // 宛陵城·§1 #24 丹阳郡精兵；旗=山越 据点=宛陵城 番=丹阳兵 ✅
-  chu: { name: '申息之师', tier: 1 },        // 郢城·§9 #3 楚国申息故地精兵
+  chu: { name: '楚左右广军', tier: 1 },        // 郢城·邲之战破晋（《左传》）
   sunwu_d: { name: '解烦兵', tier: 2 },      // 武昌·孙吴禁卫
   nantang_d: { name: '黑云长剑都', tier: 2 }, // 南京·§9 #4 南唐杨行密
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=仲·袁术仲家）
   hongguang: { name: '克敌军', tier: 1 },       // 广陵·韩世忠黄天荡
   lu: { name: '逍遥津死士', tier: 1 },       // 合肥·张辽800破十万（《三国志》）
   min: { name: '长乐控鹤', tier: 2 },        // 冶城·闽国控鹤军（≠武周洛阳控鹤军）
-  chen: { name: '建康水军', tier: 2 },       // 清远·§9 #6 陈霸先江南水师
+  chen: { name: '建康水军', tier: 3 },       // 清远·陈霸先水师
   xiao_d: { name: '白袍军', tier: 1 },       // 兰陵·陈庆之七千白袍（《梁书》）
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
   jingzhou: { name: '忠顺军', tier: 2 },     // 襄阳·南宋京湖制置司
@@ -28,7 +28,7 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   qian_d: { name: '游奕军', tier: 2 },       // 嘉兴·§9 #13 踏白游奕（岳飞系）
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
   haoding: { name: '红袄军', tier: 2 },      // 历城·§9 #14 李全杨妙真
-  wu: { name: '锦帆贼', tier: 2 },           // 姑苏·甘宁锦帆
+  wu: { name: '锦帆贼', tier: 3 },           // 姑苏·甘宁锦帆
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
   mi_chu: { name: '左右广军', tier: 2 },     // 云梦·§9 #2 楚左广与右广（旗=芈）
   xushouhui: { name: '红巾军', tier: 2 },    // 蕲春·元末徐寿辉天完红巾主力
@@ -36,7 +36,7 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   machu: { name: '武平军', tier: 2 },       // 长沙·马楚武平军节度
   ning: { name: '江西勤王军', tier: 3 },     // 豫章·南宋江西勤王
   huangwang: { name: '冲天军', tier: 2 },       // 仙霞关·黄王冲天军
-  yue: { name: '越君子军', tier: 2 },          // 会稽·勾践越军
+  yue: { name: '越君子军', tier: 3 },          // 会稽·勾践越军
   zhangshicheng: { name: '盐丁锐旅', tier: 3 }, // 延陵·张士诚盐丁起兵（《明史》）
   ouyue: { name: '东瓯舟师', tier: 3 },        // 临海·东瓯王国水师（《史记·东越列传》）
   huang_d: { name: '黄国锐卒', tier: 3 },      // 潢川·周代黄国（春申君故里）
@@ -45,4 +45,5 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   ting: { name: '汀州戍卒', tier: 3 },           // 黄连·汀州
   wan: { name: '舒州戍兵', tier: 3 },            // 皖城·舒州
   shenshi: { name: '吴兴部曲', tier: 2 },       // 独松关·吴兴沈氏部曲
+  wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）
 };

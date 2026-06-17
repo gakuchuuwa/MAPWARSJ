@@ -789,7 +789,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
         troops: 10000,
         tier: 2, mirror: true },
     { id: 'city_wuzhousai', name: '武州塞', factionId: 'panjun', lat: 39.998214, lng: 112.420349, type: 'small_city', troops: 10000, mirror: true },
-    { id: 'city_jilusai', name: '鸡鹿塞', factionId: 'panjun', lat: 40.807568, lng: 106.630554, type: 'small_city', troops: 10000, mirror: true, tier: 2 },
+    { id: 'city_jilusai', name: '鸡鹿塞', factionId: 'weiming', lat: 40.807568, lng: 106.630554, type: 'small_city', troops: 10000, mirror: true, tier: 2 },
     {
         id: 'city_guyangsai',
         name: '固阳塞',
@@ -1383,7 +1383,7 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     // ── 2026-05-26 新增：漠北草原部落/氏族势力据点 ──
-    { id: 'city_ordos', name: '河南地', factionId: 'weiming', lat: 39.620517, lng: 108.852539, type: 'small_city', troops: 10000 },
+    { id: 'city_ordos', name: '延恩', factionId: 'shuofang', lat: 39.620517, lng: 108.852539, type: 'small_city', troops: 10000 },
     { id: 'city_ruoshui', name: '弱水畔', factionId: 'yujiulu', lat: 42.457925, lng: 101.186829, type: 'small_city', troops: 10000 },
     
     { id: 'city_suoling', name: '娑陵', factionId: 'yaoluoge', lat: 49.364493, lng: 102.840271, type: 'small_city', troops: 10000 },
@@ -1847,7 +1847,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'pass', troops: 10000 },    
     { id: 'city_fushi', name: '肤施', factionId: 'zhai_han', lat: 36.59, lng: 109.48, type: 'small_city', region: 'HEXI', troops: 10000 },
     { id: 'city_changze', name: '长泽', factionId: 'kang', lat: 39.1, lng: 107.98, type: 'small_city', troops: 10000 },
-    { id: 'city_linrong', name: '临戎', factionId: 'shuofang', lat: 40.3, lng: 107, type: 'small_city', troops: 10000 },
+    { id: 'city_linrong', name: '临戎', factionId: 'woye', lat: 40.3, lng: 107, type: 'small_city', troops: 10000 },
     { id: 'city_aowei', name: '媪围', factionId: 'lushui', lat: 37.396289, lng: 104.111938, type: 'small_city', troops: 10000 },
     { id: 'city_mingsha', name: '鸣沙', factionId: 'yingli', lat: 37.51, lng: 105.18, type: 'small_city', troops: 10000 },
     { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 10000 },
