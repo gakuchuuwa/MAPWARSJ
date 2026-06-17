@@ -15,6 +15,9 @@
  *
  * 剧本军团 / 远征军团（LegionSpawnPolicy.isCampaignLegion）：
  *   野战单位再 × CAMPAIGN_LEGION_MULT（默认 1.2），与文化系数相乘。
+ *
+ * 精锐 tier 加成（GameConfig.COMBAT.ELITE_TIER_MULT）：
+ *   T0 ×1.5 | T1 ×1.4 | T2 ×1.2 | T3 ×1.1
  */
 
 import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';
@@ -112,12 +115,8 @@ export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
     if (army.isElite) {
         const config = getLegionEliteConfig(army);
         if (config) {
-            switch (config.tier) {
-                case 0: return 1.5;
-                case 1: return 1.4;
-                case 2: return 1.3;
-                case 3: return 1.2;
-            }
+            const mult = GameConfig.COMBAT.ELITE_TIER_MULT[config.tier];
+            if (mult !== undefined) return mult;
         }
         return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT; // 兜底 1.2
     }

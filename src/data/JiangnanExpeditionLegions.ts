@@ -29,7 +29,7 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
   haoding: { name: '红袄军', tier: 2 },      // 历城·§9 #14 李全杨妙真
   wu: { name: '锦帆贼', tier: 1 },           // 姑苏·§1 #35 甘宁（江南交叉）
-  ruochu: { name: '六卒精锐', tier: 3 },     // 竟陵·§9 #1 若敖六卒（旗=若敖）
+  // 六卒精锐除名（非正式番号，《吴子》军事术语）
   mi_chu: { name: '左右广军', tier: 2 },     // 云梦·§9 #2 楚左广与右广（旗=芈）
   xushouhui: { name: '红巾军', tier: 2 },    // 蕲春·元末徐寿辉天完红巾主力
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）

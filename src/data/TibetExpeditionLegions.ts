@@ -8,7 +8,7 @@
  */
 export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   shaodang: { name: '湟中义从羌', tier: 3 },  // 玛曲·河湟烧当羌义从骑（§12 #1）
-  gusiluo: { name: '青唐甲骑', tier: 3 },     // 青唐城·唃厮啰青唐甲（§12 #2）
+  gusiluo: { name: '青唐甲骑', tier: 2 },     // 青唐城·唃厮啰抗夏
   tubo: { name: '却杰军', tier: 0 },           // 逻些·大非川（671）论钦陵破薛仁贵；chos-rje 赞普法王武士
   tuyu_d: { name: '青海骢精骑', tier: 2 },    // 伏俟城·吐谷浑青海骢（§12 #4）
   xiangxiong: { name: '象雄武士', tier: 2 },  // 穹窿银·象雄铜铁甲武士（§12 #5）
@@ -35,7 +35,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   lopi: { name: '珞巴武士', tier: 3 },
   humi: { name: '瓦罕弓骑', tier: 3 },
   nvguo: { name: '女国禁卫', tier: 2 },
-  kangba: { name: '康区长刀卒', tier: 3 },
+  // 康区长刀卒除名（无此兵种）
   bailang: { name: '白狼锐卒', tier: 3 },
   faqiang: { name: '发羌劲卒', tier: 3 },
   duomi: { name: '多弥山兵', tier: 3 },

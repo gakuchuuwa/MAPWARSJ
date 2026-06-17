@@ -10,8 +10,8 @@
 export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // ── 太行/河北（§1 交叉 + 明末）──
   wangyan: { name: '八字军', tier: 1 },     // 飞狐·§9 #12 王彦太行寨；旗=太行（地名§4.1-5，禁人名）
-  tianxiong: { name: '天雄军', tier: 3 },   // 大名·§1 #75 明史天雄军；旗=魏博
-  huan: { name: '宣毅军', tier: 3 },        // 方渠·§1 #65 环州；范仲淹庆历沿边
+  tianxiong: { name: '天雄军', tier: 2 },   // 大名·唐末河朔雄藩
+  // 宣毅军除名（泛称非专属，与方渠无关）
   qingyuan_bd: { name: '神臂营', tier: 1 }, // 保定·§1 #68 河北禁军强弩营（定州路武库）
 
   // ── §2 北方 12 支 ──
@@ -22,7 +22,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   yunzhong: { name: '苍头军', tier: 1 },    // 盛乐·§2 #5 拓跋珪代北苍头
   tuoba: { name: '虎纹突骑', tier: 1 },     // 大同·§2 #6 拓跋焘具装骑
   yuwen: { name: '宿卫虎贲', tier: 1 },     // 饶乐水·§2 #7 北魏/宇文宿卫
-  erzhu: { name: '六镇戍兵', tier: 3 },     // 秀容川·§2 #8 六镇鲜卑军人（尔朱荣圈）
+  erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
   gaoqi_d: { name: '百保鲜卑', tier: 0 },   // 蓨城·§2 #9 北齐百保精兵
   yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
   hejian: { name: '先登死士', tier: 0 },    // 乐成·§1 #25 界桥（番号随城）
@@ -43,14 +43,14 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   changshan: { name: '常山义军', tier: 2 },   // 倒马关·常山颜杲卿义军
   xianyu: { name: '中山铁卒', tier: 3 },      // 井陉关·鲜虞（战国）
   linhu: { name: '林胡骑', tier: 3 },         // 偏头关·林胡族
-  lingqiu: { name: '飞虎军', tier: 3 },       // 平型关·灵丘（五代）
-  loufan: { name: '楼烦兵', tier: 3 },        // 宁武关·楼烦（秦汉）
+  // 飞虎军除名（李克用置，平型关时代错位）
+  loufan: { name: '楼烦兵', tier: 2 },        // 宁武关·战国楼烦胡骑
   linyu: { name: '夷丁突骑', tier: 3 },       // 山海关·临榆（明末）
-  heng1: { name: '恒山军', tier: 3 },          // 雁门关·代北恒山防线戍军（旗=恒·元岳）
+  // 恒山军除名（泛称无固定番号）
   dai_d: { name: '代国锐卒', tier: 3 },         // 代县·春秋代国
   dongdan: { name: '东丹卫兵', tier: 3 },       // 卑沙城·东丹国
   xuan: { name: '宣府镇军', tier: 3 },          // 宣化·明九边宣府镇
-  zhe_d: { name: '折家将兵', tier: 3 },         // 府谷·五代宋初折氏
+  zhe_d: { name: '折家将兵', tier: 2 },         // 府谷·宋府州折氏十世将门
   shanrong: { name: '山戎突骑', tier: 3 },      // 无终·山戎族
   pingyuan: { name: '高唐戍卒', tier: 3 },      // 平原·高唐州
   dada_ming: { name: '度辽营', tier: 1 },          // 河套·东汉度辽将军镇北百五十年

@@ -20,17 +20,17 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   wuzhou_d: { name: '控鹤军', tier: 2 },   // 洛阳·§1 #47 武则天北衙
   fu: { name: '皂衣队', tier: 1 },         // 大散关·§1 #39 苻坚前秦
   shang: { name: '虎贲多射', tier: 1 },       // 安阳·殷商虎贲与多射（妇好征伐）
-  zhou: { name: '岐阳周师', tier: 3 },     // 岐山·§1 #3 虎贲三千（岐阳即岐周故地）
+  zhou: { name: '岐阳周师', tier: 2 },     // 岐山·武王伐纣王师
   xia: { name: '夏后亲卫', tier: 1 },      // 安邑·§1 #1 夏后氏
   sui: { name: '骁果军', tier: 2 },        // 汉东·隋帝禁卫骁果；615雁门李世民解围（根基在中央，河套用武地）
   sunqin: { name: '督标秦军', tier: 1 },   // 潼关·§1 #81 孙传庭督标秦兵
-  didao: { name: '飞熊军', tier: 3 },      // 临洮·§1 #27 陇西董卓系（旗=狄·狄道）
-  han: { name: '韩卒击刹', tier: 3 },      // 新郑·战国韩都精锐（旗=韩·韩国）
-  liang_d: { name: '梁国劲卒', tier: 3 },  // 商丘·战国/汉代梁国劲卒（旗=梁·梁国）
+  // 飞熊军除名（小说番号）
+  // 韩卒击刹除名（无史载）
+  liang_d: { name: '宋公徒旅', tier: 3 },  // 商丘·春秋宋国公室徒旅（《左传》；原梁国劲卒，都大梁非商丘）
   jin: { name: '公行锐士', tier: 1 },        // 曲沃·晋文公三行步战近卫（城濮之战）
-  wey: { name: '朱龙骑', tier: 3 },          // 濮阳·卫国朱龙骑
+  // 朱龙骑除名（无此番号）
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
-  yiyang_d: { name: '申息锐师', tier: 3 },    // 武胜关·义阳申息锐师
+  yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师
   // ── 2026-06-16 新增：11大名关 ──
   hongnong_jun: { name: '神策军', tier: 2 },       // 函谷关·鱼朝恩陕州兵，唐中央禁军
   zheng: { name: '成皋部曲', tier: 3 },
@@ -39,14 +39,14 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yun: { name: '陆浑戎骑', tier: 3 },
   zhi_state: { name: '太行飞军', tier: 1 },
   xiongding: { name: '碗子城军', tier: 3 },
-  yaozhou: { name: '金甲卫', tier: 3 },
+  // 金甲卫除名（生造）
   huo: { name: '霍邑锐士', tier: 3 },
   mushi: { name: '丘穆陵骑', tier: 3 },
-  lai: { name: '齐莱锐士', tier: 3 },
+  // 齐莱锐士除名（无典）
   yin: { name: '殷商多射', tier: 1 },          // 朝歌·商王直属射兵（甲骨文"多射"）
-  cai: { name: '蔡国劲卒', tier: 3 },          // 新蔡·古蔡国
+  // 蔡国劲卒除名（无此部队）
   shen: { name: '申伯亲卫', tier: 3 },         // 安康·西周申国
-  suzhou_d: { name: '汴河戍旅', tier: 3 },     // 符离·宿州
+  // 汴河戍旅除名（无此编制）
   qiguo_d: { name: '夏裔锐士', tier: 3 },      // 雍丘·杞国夏后氏苗裔
   xin: { name: '新室卫士', tier: 3 },          // 宛城·王莽新室（《汉书》）
   yingzhou_d: { name: '选锋军', tier: 1 },       // 顺昌·刘锜顺昌大捷选锋破金

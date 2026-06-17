@@ -30,7 +30,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wuxi: { name: '五溪蛮兵', tier: 3 },           // 八面山·五溪蛮
   song2: { name: '松州戍卒', tier: 3 },          // 嘉诚·唐蕃古道松州
   yidou: { name: '夷陵守军', tier: 3 },          // 夷陵·三国夷陵之战
-  quan: { name: '权州戍兵', tier: 3 },           // 当阳·权州
+  // 权州戍兵除名（生造）
   zuo_d: { name: '南中叟兵', tier: 3 },         // 清溪关·西南夷王牌
   zangke: { name: '夜郎锐卒', tier: 3 },        // 胜境关·古夜郎国地
 };

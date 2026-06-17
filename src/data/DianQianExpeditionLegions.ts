@@ -19,10 +19,10 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   chenla: { name: '双弓弩象营', tier: 2 },     // 吴哥·辞典 #93 高棉弩象营
   luchuan: { name: '麓川夷象', tier: 2 }, // 勐卯·辞典 #96 三征麓川象兵
   dianguo: { name: '滇池水军', tier: 2 },     // 拓东城·滇国水师
-  buyi_d: { name: '仲家兵', tier: 3 },        // 罗博·布依族仲家兵
+  // 仲家兵除名（无此编制）
   hani_d: { name: '思陀甸兵', tier: 3 },      // 思陀·哈尼族思陀甸兵
   wuman: { name: '东爨乌蛮兵', tier: 3 },     // 乌蒙山·东爨乌蛮兵
   cuanshi: { name: '爨族部兵', tier: 3 },      // 曲靖·爨氏
-  sukhotai: { name: '素可泰兵', tier: 3 },     // 双河城·素可泰王国
+  suke: { name: '素可泰兵', tier: 3 },     // 双河城·素可泰王国
   ailao: { name: '哀牢戍兵', tier: 3 },        // 永昌·哀牢国
 };

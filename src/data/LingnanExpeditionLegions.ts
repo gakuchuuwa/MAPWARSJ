@@ -23,11 +23,11 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占
   zhancheng: { name: '佛逝象军', tier: 2 },   // 阇槃·占城佛逝象兵
   jingjiang: { name: '靖江府卫', tier: 3 },   // 桂林·明靖江王府卫（旗=靖江·藩王）
-  dengmaoqi: { name: '铲平军', tier: 3 },     // 沙戍堡·邓茂七铲平军
+  // 铲平军除名（非正式官军番号）
   nanyue: { name: '南越戍卒', tier: 2 },        // 龙川·赵佗南越国秦戍（《史记·南越列传》）
   nongzhigao: { name: '侬峒劲卒', tier: 2 },    // 晋兴·侬智高侬峒兵（《宋史·蛮夷传》）
   yelang: { name: '夜郎锐卒', tier: 3 },        // 普定·夜郎国西南夷（《史记》）
-  dacheng: { name: '大成水师', tier: 3 },       // 永安·陈开大成国水师（西江）
+  dacheng: { name: '永安戍卒', tier: 3 },       // 永安·明永安千户所戍卒（原大成水师）
   linyi: { name: '林邑象兵', tier: 3 },          // 象林·林邑国
   xiou: { name: '西瓯戍兵', tier: 3 },           // 布山·西瓯
   luoyue: { name: '骆越部卒', tier: 3 },         // 花山·骆越
@@ -38,7 +38,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   li_s: { name: '大汉伏波', tier: 0 },            // 合浦·马援伏波军征交趾
   guizhou: { name: '静江军', tier: 2 },       // 古严关·宋桂州静江军
   paiyao: { name: '八排瑶丁', tier: 3 },      // 阳山关·明清连阳八排瑶丁
-  daozhou: { name: '湘军道营', tier: 3 },     // 麦岭关·晚清湘军道州营
+  // 湘军道营除名（无此编制）
   dayu: { name: '南赣标军', tier: 3 },        // 横浦关·明王阳明南赣标军
   yingzhou: { name: '南汉巨象军', tier: 1 },  // 湟溪关·五代南汉重装象军
   basha_d: { name: '湄公象卫', tier: 3 },     // 上丁·巴沙国湄公象卫

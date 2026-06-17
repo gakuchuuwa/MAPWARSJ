@@ -26,16 +26,16 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   naiman: { name: '乃蛮重骑', tier: 2 },       // 福海·乃蛮重装骑兵（§6 #19）
   ongut: { name: '汪古突骑', tier: 2 },        // 净州塞·汪古白鞑靼（§6 #14）
   wala: { name: '瓦剌铁骑', tier: 2 },         // 博尔巴任·也先瓦剌（§6 #12）
-  geluolu: { name: '葛逻禄背弓', tier: 3 },    // 弓月城·三姓葛逻禄便捷善射（怛罗斯盟军；非铁骑）
+  geluolu: { name: '葛逻禄背弓', tier: 2 },    // 弓月城·三姓葛逻禄
   kiyad: { name: '那可儿', tier: 3 },         // 不儿罕山·乞颜那可儿
   kumo: { name: '楮特奥隗部', tier: 3 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
   kelie: { name: '克烈护卫军', tier: 2 },
   dingling: { name: '丁零游骑', tier: 3 },
   xiajiasi: { name: '黠戛斯锐卒', tier: 3 },
-  donghu: { name: '东胡控弦', tier: 3 },
+  donghu: { name: '东胡骑', tier: 3 },
   tiele: { name: '铁勒骁骑', tier: 3 },
-  xibo_d: { name: '锡伯索伦营', tier: 3 },
+  xibo_d: { name: '索伦营', tier: 3 },
   tatar: { name: '塔塔儿死士', tier: 3 },
   merkit: { name: '蔑儿乞猎骑', tier: 3 },
   chahar: { name: '察哈尔八旗', tier: 2 },
