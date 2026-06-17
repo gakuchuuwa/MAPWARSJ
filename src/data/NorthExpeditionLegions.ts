@@ -20,9 +20,9 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   yan: { name: '渔阳突骑', tier: 2 },       // 古北口·§2 #2 光武幽州精骑（燕国北京）
   gongsun_d: { name: '辽东戍卒', tier: 3 }, // 襄平·公孙氏辽东
   shizhao_d: { name: '黑槊龙骧', tier: 1 }, // 邢台·§2 #4 石勒石虎后赵禁军
-  yunzhong: { name: '苍头军', tier: 2 },    // 盛乐·拓跋代北
+  yunzhong: { name: '苍头军', tier: 3 },    // 盛乐·拓跋代北
   tuoba: { name: '拓跋虎骑', tier: 1 },     // 大同·拓跋鲜卑
-  yuwen: { name: '宇文部骑', tier: 2 },     // 饶乐水·宇文鲜卑
+  yuwen: { name: '宇文部骑', tier: 3 },     // 饶乐水·宇文鲜卑
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
   gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵（无经典以少胜多）
   yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
@@ -45,7 +45,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   xianyu: { name: '中山铁卒', tier: 3 },      // 井陉关·鲜虞（战国）
   linhu: { name: '林胡骑', tier: 3 },         // 偏头关·林胡族
   // 飞虎军除名（李克用置，平型关时代错位）
-  loufan: { name: '楼烦兵', tier: 2 },        // 宁武关·战国楼烦胡骑
+  loufan: { name: '楼烦兵', tier: 3 },        // 宁武关·战国楼烦胡骑
   linyu: { name: '夷丁突骑', tier: 3 },       // 山海关·临榆（明末）
   // 恒山军除名（泛称无固定番号）
   dai_d: { name: '代国锐卒', tier: 3 },         // 代县·春秋代国

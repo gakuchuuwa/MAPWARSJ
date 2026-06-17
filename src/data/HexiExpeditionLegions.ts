@@ -11,7 +11,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   xiliang: { name: '西凉铁骑', tier: 2 },       // 皋兰·凉州骑兵泛称
   dangxiang: { name: '铁鹞子', tier: 0 },        // 兴庆府·1041好水川诱伏，铁鹞子冲阵，任福战死（李元昊）
   qing: { name: '忠孝军', tier: 0 },         // 安化·庆州治；大昌原四百破八千（完颜陈和尚）
-  weiming: { name: '步跋子', tier: 2 },          // 河南地·§7 #3 西夏步战精锐
+  // 步跋子已迁环洲（huan@方渠）
   yeli: { name: '擒生军', tier: 2 },             // 克夷门·西夏监军司
   guiyi: { name: '沙州劲旅', tier: 2 },          // 敦煌·§7 #4 张议潮归义军（番号避旗号「归义」及「义」字）
   xianlingqiang: { name: '凉州大马', tier: 2 },  // 允吾·凉州骑兵泛称

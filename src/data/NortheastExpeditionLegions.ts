@@ -8,7 +8,7 @@
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  bohai: { name: '渤海禁卫', tier: 2 },       // 龙泉府·渤海国
+  bohai: { name: '渤海猛贲', tier: 2 },       // 龙泉府·渤海左右猛贲卫
   dajin: { name: '铁浮图', tier: 1 },         // 会宁府·金军重装（灭北宋非以少胜多）
   manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
   wanyan_d: { name: '拐子马', tier: 2 },    // 双城·金两翼骑兵
@@ -19,7 +19,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
   manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）
   hezhe: { name: '索伦劲旅', tier: 3 },       // 乌云·索伦部（§3 #13）
-  aola: { name: '黑龙江水师', tier: 2 },     // 雅克萨·清水师
+  aola: { name: '黑龙江水师', tier: 3 },     // 雅克萨·清水师
   wuliangha: { name: '朵颜三卫', tier: 3 },  // 赛音山达·§1 #74 兀良哈三卫（朵颜/泰宁/福余合一）
   // 渤海八猛安除名（渤海无猛安制，金制错代）
   fuyu: { name: '金源边军', tier: 3 },       // 黄龙府·辽金黄龙府女真边军（据点今名黄龙府）

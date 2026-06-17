@@ -11,9 +11,9 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   liao_d: { name: '属珊军', tier: 1 },         // 临潢府·述律平属珊（无经典以少胜多）
   qidan: { name: '皮室军', tier: 1 },         // 木叶山·辽太祖皮室军（§6 #1；原挂临潢让位属珊）
   yel: { name: '斡鲁朵军', tier: 2 },         // 降圣·契丹宫帐制
-  menggu_d: { name: '怯薛宿卫', tier: 0 },     // 哈拉和林·蒙古帝国怯薛（§6 #2）
+  menggu_d: { name: '怯薛宿卫', tier: 0 },     // 区T0锚·怯薛参与西征诸役；蒙古西征整体史家论以少胜多（§6 #2）
   borjigin: { name: '那可儿军', tier: 3 },     // 曲雕阿兰·铁木真那可儿（§6 #10）
-  ogodei: { name: '探马赤军', tier: 0 },       // 也迷里·木华黎探马赤（§6 #3）
+  ogodei: { name: '探马赤军', tier: 0 },       // 探马赤：大都守御、两都之战（1328）及木华黎攻金诸役，史载以少击多（§6 #3）
   yuan_d: { name: '秃鲁花军', tier: 2 },       // 上都·元质子军
   xiongnu: { name: '控弦之士', tier: 2 },      // 头曼城·匈奴骑兵
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
@@ -27,7 +27,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   ongut: { name: '汪古突骑', tier: 2 },        // 净州塞·汪古白鞑靼（§6 #14）
   wala: { name: '瓦剌铁骑', tier: 2 },         // 博尔巴任·也先瓦剌（§6 #12）
   geluolu: { name: '葛逻禄背弓', tier: 2 },    // 弓月城·三姓葛逻禄
-  kiyad: { name: '那可儿', tier: 3 },         // 不儿罕山·乞颜那可儿
+  // 那可儿除名（与那可儿军重复）
   kumo: { name: '楮特奥隗部', tier: 3 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
   kelie: { name: '克烈护卫军', tier: 2 },

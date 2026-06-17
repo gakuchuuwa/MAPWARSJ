@@ -690,7 +690,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
         troops: 10000,
         tier: 2 },
     { id: 'city_yinzhou', name: '雕阴', factionId: 'liangshidu', lat: 37.796785, lng: 110.206604, type: 'small_city', troops: 10000 },
-    { id: 'city_dongshengzhou', name: '东胜卫', factionId: 'dongshengwei', lat: 39.810643, lng: 109.959412, type: 'small_city', troops: 10000 },
+    { id: 'city_dongshengzhou', name: '榆林', factionId: 'dongshengwei', lat: 39.810643, lng: 109.959412, type: 'small_city', troops: 10000 },
     // ── 战略要塞/县级城镇 (移入的小城) ──
     {
         id: 'city_lueyang',
@@ -965,7 +965,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_tongwancheng', name: '统万城', factionId: 'helian', lat: 38.024286, lng: 109.149170, type: 'small_city', troops: 10000, note: '大夏都城遗址；峰值人口未达中城门槛，2026-06-12 降级' },
 
     { id: 'city_qiuchi', name: '仇池', factionId: 'qiuchi', lat: 33.86, lng: 105.3, type: 'small_city', troops: 10000 },
-    { id: 'city_daixian', name: '代县', factionId: 'dai_d', lat: 39.842285, lng: 114.408875, type: 'small_city', troops: 10000 },
+    { id: 'city_daixian', name: '广武', factionId: 'dai_d', lat: 39.842285, lng: 114.408875, type: 'small_city', troops: 10000 },
     {
         id: 'city_ningan',
         name: '龙泉府',
@@ -1622,7 +1622,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
     { id: 'city_fangling', name: '房陵', factionId: 'kuai', lat: 32.043007, lng: 110.692749, type: 'small_city', troops: 10000 },
 
     // ── 2026-05-27 新增：庸(上庸) ──
-    { id: 'city_shangyong', name: '上庸', factionId: 'yong', lat: 32.349768, lng: 109.885254, type: 'small_city', troops: 10000 },
+    { id: 'city_shangyong', name: '竹山', factionId: 'yong', lat: 32.349768, lng: 109.885254, type: 'small_city', troops: 10000 },
     { id: 'city_junzhou', name: '武当', factionId: 'bailian', lat: 32.541700, lng: 111.513300, type: 'small_city', troops: 10000 },
 
     // ── 2026-05-27 新增：申(金州) ──
@@ -2072,7 +2072,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shangding', name: '上丁', factionId: 'basha_d', lat: 13.5581, lng: 106.0098, type: 'small_city', troops: 10000 },
     // ── 2026-06-12 新增：夏顿@廷布 ──
     { id: 'city_tingbu', name: '廷布', factionId: 'xiadun', lat: 27.472, lng: 89.639, type: 'small_city', region: 'TIBET', troops: 10000, note: '夏仲阿旺朗杰1616年统一不丹后定夏季都城；清史及藏文史籍称布鲁克巴政教合一政权' },
-    { id: 'city_huangchuan', name: '潢川', factionId: 'huang_d', lat: 32.13, lng: 115.05, type: 'small_city', troops: 10000 },
+    { id: 'city_huangchuan', name: '弋阳', factionId: 'huang_d', lat: 32.1310, lng: 115.0510, type: 'small_city', troops: 10000 },
     { id: 'city_yongqiu', name: '雍丘', factionId: 'qiguo_d', lat: 34.55, lng: 114.78, type: 'small_city', troops: 10000 },
     { id: 'city_mengcheng', name: '蒙城', factionId: 'mengcheng_d', lat: 33.27, lng: 116.56, type: 'small_city', troops: 10000, note: '汉沛郡山桑县治地；唐天宝改蒙城县；庄子故里（有争议）' },
     { id: 'city_yongcheng', name: '永城', factionId: 'guide_d', lat: 33.93, lng: 116.37, type: 'small_city', troops: 10000, note: '归德府辖；芒砀山/汉高潜居；走廊东翼' },

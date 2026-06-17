@@ -13,10 +13,10 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   kala: { name: '阿斯古拉姆', tier: 1 },      // 奥什·喀喇汗古拉姆（灭于阗非以少胜多）
   an: { name: '伊列克近卫', tier: 1 },        // 蒲华·999 纳斯尔·伊列克汗奇袭布哈拉灭萨曼
   yiduhu: { name: '西州回鹘', tier: 1 },      // 高昌·北庭回鹘取西州
-  shule: { name: '阿斯兰近卫', tier: 0 },       // 盘橐城·卡迪尔汗玉素甫灭于阗
+  shule: { name: '阿斯兰近卫', tier: 0 },       // 区T0锚·西域须保1支；盘橐城·喀喇汗玉素甫阿斯兰近卫（灭于阗）
   yanqi: { name: '焉耆龙骑兵', tier: 2 },   // 员渠城·焉耆龙骑（§14 #6）
   wusun: { name: '昆莫亲卫', tier: 2 }, // 赤谷城·乌孙王帐
-  chagatai: { name: '蒙兀儿铁骑', tier: 2 }, // 别失八里·东察合台
+  chagatai: { name: '蒙兀儿铁骑', tier: 3 }, // 别失八里·东察合台
   dayuan: { name: '汗血天马骑', tier: 2 },   // 贵山城·大宛（守城非以少胜多）
   shache: { name: '莎车左右骑', tier: 2 },   // 渠莎·汉代西域强国
   anxi: { name: '大唐安西军', tier: 2 },     // 拨换城·安西都护府（无经典以少胜多）
@@ -31,6 +31,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   quli: { name: '轮台戍卒', tier: 3 },
   dzungar: { name: '塔城卫队', tier: 3 },
   yarkand: { name: '英吉沙骑兵', tier: 3 },
-  tuerhute: { name: '鹰娑川铁骑', tier: 2 },
+  tuerhute: { name: '鹰娑川铁骑', tier: 3 },
   gaochang: { name: '高昌铁骑', tier: 2 },    // 赤亭关·麴氏高昌具装骑（都城高昌，咸通前）
 };

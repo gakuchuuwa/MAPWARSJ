@@ -9,7 +9,7 @@
 export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   nanzhao: { name: '罗苴子', tier: 1 },        // 蒙舍城·天宝伏击唐军（联军占优非以少胜多）
   dali: { name: '大理白军', tier: 2 },         // 羊苴咩·§11 #2
-  bayinnaung: { name: '东吁象阵兵', tier: 0 }, // 东吁·莽应龙灭勃固征暹罗（《琉璃宫史》）
+  bayinnaung: { name: '东吁象阵兵', tier: 0 }, // 区T0锚·滇缅须保1支；东吁·莽应龙象阵（《琉璃宫史》）
   dongxu: { name: '南都象阵', tier: 2 },       // 勃固城·东吁王朝南都勃固象兵（≠东吁@东吁）
   konbaung: { name: '瑞波卫队', tier: 3 },   // 瑞波·贡榜王朝
   siam: { name: '皇家象骑兵', tier: 2 },       // 阿瑜陀耶·暹罗王家象兵（纳黎萱等；泰籍战史名，非中原式以少胜多顶格）
