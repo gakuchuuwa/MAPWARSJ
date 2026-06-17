@@ -40,6 +40,7 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   zhangshicheng: { name: '盐丁锐旅', tier: 3 }, // 延陵·张士诚盐丁起兵（《明史》）
   ouyue: { name: '东瓯舟师', tier: 3 },        // 临海·东瓯王国水师（《史记·东越列传》）
   huang_d: { name: '黄国锐卒', tier: 3 },      // 潢川·周代黄国（春申君故里）
+  qiufu: { name: '横海校尉', tier: 1 },           // 剡城·《汉书》韩说横海征东越
   chizhou: { name: '池州戍兵', tier: 3 },        // 大通·池州
   ting: { name: '汀州戍卒', tier: 3 },           // 黄连·汀州
   wan: { name: '舒州戍兵', tier: 3 },            // 皖城·舒州

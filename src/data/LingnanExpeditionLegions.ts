@@ -32,6 +32,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   xiou: { name: '西瓯戍兵', tier: 3 },           // 布山·西瓯
   luoyue: { name: '骆越部卒', tier: 3 },         // 花山·骆越
   guangxin: { name: '苍梧戍卒', tier: 3 },       // 苍梧·广信
+  chen: { name: '楼船士', tier: 1 },              // 清远·《汉书》杨仆楼船征南越
   taiping: { name: '太平军', tier: 2 },          // 金田村·太平天国
   leizhou: { name: '雷州戍兵', tier: 3 },        // 海康·雷州
   li_s: { name: '大汉伏波', tier: 0 },            // 合浦·马援伏波军征交趾

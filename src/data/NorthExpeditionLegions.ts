@@ -53,4 +53,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zhe_d: { name: '折家将兵', tier: 3 },         // 府谷·五代宋初折氏
   shanrong: { name: '山戎突骑', tier: 3 },      // 无终·山戎族
   pingyuan: { name: '高唐戍卒', tier: 3 },      // 平原·高唐州
+  dada_ming: { name: '度辽营', tier: 1 },          // 河套·东汉度辽将军镇北百五十年
 };

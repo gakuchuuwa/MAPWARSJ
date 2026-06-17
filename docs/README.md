@@ -37,6 +37,7 @@ phase: production
 - 2025-11-05 — [MULTI_FACTION_BATTLE_UPDATE.md](02-design/battle/MULTI_FACTION_BATTLE_UPDATE.md)：多势力混战支持与新增流程。
 
 **world/**
+- 2026-06-16 — [REGION_PLAYABLE_AREA.md](02-design/world/REGION_PLAYABLE_AREA.md)：**14 文化区可玩陆地与据点比例测算**（界城环线 + 扣大漠/沙漠/无人区/雨林；脚本 `scratch/region_playable_area.mjs`）。
 - 2025-11-05 — [TILE_MAP_IMPLEMENTATION.md](02-design/world/TILE_MAP_IMPLEMENTATION.md)：瓦片地图渲染实现细节。
 - 2025-11-05 — [TILEMAP_USAGE.md](02-design/world/TILEMAP_USAGE.md)：编辑器与数据使用指南。
 - 2025-11-05 — [EVENT_DISPLAY_OPTIMIZATION.md](02-design/world/EVENT_DISPLAY_OPTIMIZATION.md)：历史事件渲染性能优化。
