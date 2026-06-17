@@ -840,7 +840,6 @@ export const FACTIONS: Faction[] = [
     { id: 'higo_d', name: '肥后' },   // 熊本·菊池党
     { id: 'iyo_d', name: '伊予' },    // 松山·河野水军
     { id: 'otomo_d', name: '大友' },  // 府内·丰后；大友水军
-    { id: 'ise_d', name: '伊势' },    // 宇治山田·神宫骑
     // ── 2026-06-17 新增：诹访氏@高岛（信浓诹访；间距合规坐标）──
     { id: 'suwa_d', name: '诹访氏' }, // 高岛·诹访氏本据
     { id: 'yanda', name: '嚈哒' },

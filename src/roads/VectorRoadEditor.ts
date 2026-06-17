@@ -132,9 +132,9 @@ export class VectorRoadEditor implements IEditor {
     /** 智能候选池上限 */
     private static readonly MAX_ROUTE_CANDIDATES = 6;
     private static readonly WATER_VARIANTS_PER_MODE = 3;
-    private static readonly LAND_VARIANTS_PER_MODE = 2;
+    private static readonly LAND_VARIANTS_PER_MODE = 3;
     private static readonly WATER_TRUNK_MIN_RATIO = 0.35;
-    private static readonly VARIANT_PENALTY_FACTOR = 4.0;
+    private static readonly VARIANT_PENALTY_FACTOR = 5.5;
 
     private map: L.Map;
     private cityManager: CityManager;
@@ -402,7 +402,7 @@ export class VectorRoadEditor implements IEditor {
         // 切换路径（只在有多候选时显示）
         this.switchRouteBtn = this.createButton('🔀 切换路径', '#009688', () => this.cycleCandidates());
         this.switchRouteBtn.style.visibility = 'hidden';
-        this.switchRouteBtn.title = '在智能候选池中切换（水路主干/陆路捷径/临近替代线，最多6条）';
+        this.switchRouteBtn.title = '在智能候选池中切换（水路/陆路捷径/偏西偏东侧路/直线，最多6条）';
 
         const nodeHint = document.createElement('span');
         nodeHint.textContent = '🟡黄点=加节点 · 🔴红点右键=删节点';
@@ -1483,9 +1483,9 @@ export class VectorRoadEditor implements IEditor {
             return;
         }
 
-        // 找最近的图节点 (减少 K 以优化性能)
-        const startCandidates = this.findKNearestGeoNodes(startCity.lat, startCity.lng, 2);
-        let endCandidates = this.findKNearestGeoNodes(endCity.lat, endCity.lng, 2);
+        // 找最近的图节点（略多几个，便于接到不同走廊）
+        const startCandidates = this.findKNearestGeoNodes(startCity.lat, startCity.lng, 4);
+        let endCandidates = this.findKNearestGeoNodes(endCity.lat, endCity.lng, 4);
 
         // [FIX] 不再注入项目已有道路，不再做分支合流
         // 纯粹在 Natural Earth 路网上寻最短路径
@@ -2257,7 +2257,7 @@ export class VectorRoadEditor implements IEditor {
                 // 显示 🔀 按钮 (悬停提示懒计算)
                 if (this.switchRouteBtn) {
                     this.switchRouteBtn.style.visibility = 'visible';
-                    this.switchRouteBtn.title = '在智能候选池中切换（水路主干/陆路捷径/临近替代线，最多6条）';
+                    this.switchRouteBtn.title = '在智能候选池中切换（水路/陆路捷径/偏西偏东侧路/直线，最多6条）';
                 }
             } else {
                 if (this.switchRouteBtn) this.switchRouteBtn.style.visibility = 'hidden';
@@ -2345,7 +2345,11 @@ export class VectorRoadEditor implements IEditor {
             const exBucket = Math.round(ex.totalDistance / 5) * 5;
             if (Math.abs(bucket - exBucket) <= 10) {
                 const overlap = this.edgeKeyOverlap(candidate.edgeKeys, ex.edgeKeys);
-                if (overlap >= 0.75) return true;
+                const lenRatio = Math.abs(candidate.totalDistance - ex.totalDistance)
+                    / Math.max(candidate.totalDistance, ex.totalDistance);
+                // 里程差 >20% 时放宽重合判定，保留绕西山/绕东路等走廊
+                const overlapLimit = lenRatio > 0.2 ? 0.9 : 0.75;
+                if (overlap >= overlapLimit) return true;
             }
             if (this.arePathsEqual(candidate.coordinates, ex.coordinates)) return true;
         }
@@ -2464,7 +2468,7 @@ export class VectorRoadEditor implements IEditor {
         const ec = this.findKNearestGeoNodes(endCity.lat, endCity.lng, 6);
         const penaltyEdges = new Set<string>();
         const variants: RouteCandidate[] = [];
-        const maxRounds = maxVariants * 3;
+        const maxRounds = maxVariants * 4;
 
         for (let round = 0; round < maxRounds && variants.length < maxVariants; round++) {
             const variantIndex = variants.length;
@@ -2509,6 +2513,83 @@ export class VectorRoadEditor implements IEditor {
     }
 
     /**
+     * 在起终点连线中点向两侧偏移设途经点，各拼一条陆路。
+     * 用于近距双走廊（如琵琶湖捷径 vs 日本海沿岸）。
+     */
+    private findLateralLandVariants(
+        startCity: { lat: number; lng: number; name?: string },
+        endCity: { lat: number; lng: number; name?: string },
+        maxVariants: number
+    ): RouteCandidate[] {
+        if (!this.geoGraphBuilt || this.geoNodes.length === 0) return [];
+
+        const directDist = this.haversine(startCity.lat, startCity.lng, endCity.lat, endCity.lng);
+        if (directDist < 50) return [];
+
+        const midLat = (startCity.lat + endCity.lat) / 2;
+        const midLng = (startCity.lng + endCity.lng) / 2;
+        const dLat = endCity.lat - startCity.lat;
+        const dLng = (endCity.lng - startCity.lng) * Math.cos(midLat * Math.PI / 180);
+        const len = Math.hypot(dLat, dLng) || 1e-9;
+        const nLat = -dLng / len;
+        const nLng = dLat / len;
+        const cosMid = Math.cos(midLat * Math.PI / 180);
+
+        const sc = this.findKNearestGeoNodes(startCity.lat, startCity.lng, 5);
+        const ec = this.findKNearestGeoNodes(endCity.lat, endCity.lng, 5);
+        const sideKm = Math.min(55, Math.max(28, directDist * 0.22));
+        const offsetDeg = sideKm / 111;
+
+        const out: RouteCandidate[] = [];
+        const sides: { sign: -1 | 1; label: string }[] = [
+            { sign: -1, label: '陆路偏西' },
+            { sign: 1, label: '陆路偏东' },
+        ];
+
+        for (const { sign, label } of sides) {
+            if (out.length >= maxVariants) break;
+
+            const wLat = midLat + nLat * offsetDeg * sign;
+            const wLng = midLng + (nLng * offsetDeg * sign) / cosMid;
+            const wc = this.findKNearestGeoNodes(wLat, wLng, 3);
+
+            const leg1 = this.dijkstraBestAmongNodes(sc, wc, {
+                forbidWater: true,
+                routePreference: 'land_first',
+            });
+            const leg2 = this.dijkstraBestAmongNodes(wc, ec, {
+                forbidWater: true,
+                routePreference: 'land_first',
+            });
+            if (!leg1?.coordinates?.length || !leg2?.coordinates?.length) continue;
+
+            const coordinates = [
+                ...leg1.coordinates,
+                ...leg2.coordinates.slice(1),
+            ] as [number, number][];
+            const totalDistance = leg1.totalDistance + leg2.totalDistance;
+            if (this.isExtremeDetour(totalDistance, directDist)) continue;
+
+            const edgeKeys = new Set<string>([...leg1.edgeKeys, ...leg2.edgeKeys]);
+            const draft: RouteCandidate = {
+                mode: 'prefer_land',
+                label,
+                coordinates,
+                totalDistance,
+                edgeKeys,
+                isManualStraightLine: false,
+                waterRatio: 0,
+                detourRatio: totalDistance / Math.max(1, directDist),
+                variantReason: `侧向${sideKm.toFixed(0)}km`,
+            };
+            if (this.isCandidateDuplicate(draft, out)) continue;
+            out.push(draft);
+        }
+
+        return out;
+    }
+
+    /**
      * 智能候选池：每模式多条变体 → 评分排序 → 去重 → 截断前 6 条。
      * 排序：水路 2–3 条 → 陆路 2 条 → 直线兜底。
      */
@@ -2545,6 +2626,15 @@ export class VectorRoadEditor implements IEditor {
         }
         for (const c of landRanked) {
             if (!this.isCandidateDuplicate(c, merged)) merged.push(c);
+        }
+        // 侧向途经：中点偏西/偏东各试一条，挖北陆道等第二条陆路走廊
+        const lateralLand = this.findLateralLandVariants(startCity, endCity, 2);
+        for (const c of lateralLand) {
+            if (merged.length >= VectorRoadEditor.MAX_ROUTE_CANDIDATES) break;
+            if (!this.isCandidateDuplicate(c, merged)) {
+                c.score = this.scoreRouteCandidate(c, directDist, merged);
+                merged.push(c);
+            }
         }
         const straight = straightRaw[0];
         if (straight && merged.length < VectorRoadEditor.MAX_ROUTE_CANDIDATES) {

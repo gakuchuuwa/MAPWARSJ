@@ -42,6 +42,5 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   higo_d: { name: '菊池党', tier: 2 },       // 熊本·菊池氏
   iyo_d: { name: '河野水军', tier: 2 },     // 松山·河野氏（伊予水军）
   otomo_d: { name: '大友水军', tier: 2 },   // 府内·大友氏（家族旗号可含「大友」）
-  ise_d: { name: '神宫骑', tier: 2 },        // 宇治山田·伊势神宫卫
   suwa_d: { name: '诹访神党', tier: 2 },     // 高岛·诹访氏最强武装（家族旗号可含「诹访」）
 };

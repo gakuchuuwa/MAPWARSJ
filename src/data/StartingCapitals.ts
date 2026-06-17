@@ -143,7 +143,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'higo_d': 'city_xiongben',
     'iyo_d': 'city_songshan',
     'otomo_d': 'city_funei',
-    'ise_d': 'city_yuzhishantian',
     'suwa_d': 'city_gaodao',
     'iga_d': 'city_nabari',
     'yizhi': 'city_yuanzhishi',

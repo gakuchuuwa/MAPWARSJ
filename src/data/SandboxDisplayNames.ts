@@ -651,7 +651,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'higo_d': '肥后',
     'iyo_d': '伊予',
     'otomo_d': '大友',
-    'ise_d': '伊势',
     'suwa_d': '诹访',
     'beihai': '北海',
     'hui': '濊',

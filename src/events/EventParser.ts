@@ -411,7 +411,6 @@ export class EventParser {
         '肥后': 'higo_d', '熊本': 'higo_d',
         '伊予': 'iyo_d', '松山': 'iyo_d',
         '大友': 'otomo_d', '大友氏': 'otomo_d', '府内': 'otomo_d', '丰后': 'otomo_d',
-        '伊势': 'ise_d', '伊势国': 'ise_d', '宇治山田': 'ise_d',
         '诹访': 'suwa_d', '诹访氏': 'suwa_d', '高岛': 'suwa_d', '诹访神党': 'suwa_d',
         '毛利氏': 'aki', '毛利': 'aki', '吉田郡山城': 'aki', '安艺': 'aki',
         '武田': 'kai', '武田氏': 'kai', '躑躅崎馆': 'kai', '甲斐': 'kai',

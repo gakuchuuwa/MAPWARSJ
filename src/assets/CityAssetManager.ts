@@ -582,7 +582,6 @@ export class CityAssetManager {
         'higo_d': '肥后',
         'iyo_d': '伊予',
         'otomo_d': '大友',
-        'ise_d': '伊势',
         'suwa_d': '诹访',
         'beihai': '北海',
         'hui': '濊',
