@@ -27,6 +27,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   didao: { name: '飞熊军', tier: 3 },      // 临洮·§1 #27 陇西董卓系（旗=狄·狄道）
   han: { name: '韩卒击刹', tier: 3 },      // 新郑·战国韩都精锐（旗=韩·韩国）
   liang_d: { name: '梁国劲卒', tier: 3 },  // 商丘·战国/汉代梁国劲卒（旗=梁·梁国）
+  jin: { name: '公行锐士', tier: 1 },        // 曲沃·晋文公三行步战近卫（城濮之战）
   wey: { name: '朱龙骑', tier: 3 },          // 濮阳·卫国朱龙骑
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
   yiyang_d: { name: '申息锐师', tier: 3 },    // 武胜关·义阳申息锐师

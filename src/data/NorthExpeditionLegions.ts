@@ -46,5 +46,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   lingqiu: { name: '飞虎军', tier: 3 },       // 平型关·灵丘（五代）
   loufan: { name: '楼烦兵', tier: 3 },        // 宁武关·楼烦（秦汉）
   linyu: { name: '夷丁突骑', tier: 3 },       // 山海关·临榆（明末）
-  heng1: { name: '长平骑军', tier: 1 },        // 雁门关·卫青河西击匈奴所部骑军（旗=恒·元岳）
+  heng1: { name: '恒山军', tier: 3 },          // 雁门关·代北恒山防线戍军（旗=恒·元岳）
 };

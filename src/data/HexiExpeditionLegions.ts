@@ -18,7 +18,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   tufa_d: { name: '南凉铁骑', tier: 2 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）
   juqu_d: { name: '北凉精锐', tier: 3 },         // 张掖·§7 #9 沮渠蒙逊卢水胡（番号避旗号「沮渠」）
   liang: { name: '凉州突骑', tier: 2 },          // 姑臧·窦融河西骑兵美称（史书泛称，非固定番号；突骑＝突击骑）
-  hunxie: { name: '骠骑冠军', tier: 0 },         // 酒泉城·霍去病河西击匈奴，「酒泉」因赐酒军士得名（旗=浑邪·部族）
+  hunxie: { name: '甘州铁骑', tier: 2 },         // 酒泉城·§7 #11 甘州回鹘铁骑（夜落纥；旗=浑邪·部族）
   qifu_d: { name: '苑川突骑', tier: 2 },         // 枹罕·西秦乞伏鲜卑突骑（苑川故地）
   anding_wei: { name: '长征健儿', tier: 3 },      // 苦峪堡·安定卫长征健儿
   qiang: { name: '北地骑', tier: 3 },             // 萧关·羌族北地骑

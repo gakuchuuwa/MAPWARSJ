@@ -24,6 +24,10 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   zhancheng: { name: '佛逝象军', tier: 2 },   // 阇槃·占城佛逝象兵
   jingjiang: { name: '靖江府卫', tier: 3 },   // 桂林·明靖江王府卫（旗=靖江·藩王）
   dengmaoqi: { name: '铲平军', tier: 3 },     // 沙戍堡·邓茂七铲平军
+  nanyue: { name: '南越戍卒', tier: 2 },        // 龙川·赵佗南越国秦戍（《史记·南越列传》）
+  nongzhigao: { name: '侬峒劲卒', tier: 2 },    // 晋兴·侬智高侬峒兵（《宋史·蛮夷传》）
+  yelang: { name: '夜郎锐卒', tier: 3 },        // 普定·夜郎国西南夷（《史记》）
+  dacheng: { name: '大成水师', tier: 3 },       // 永安·陈开大成国水师（西江）
   guizhou: { name: '静江军', tier: 2 },       // 古严关·宋桂州静江军
   paiyao: { name: '八排瑶丁', tier: 3 },      // 阳山关·明清连阳八排瑶丁
   daozhou: { name: '湘军道营', tier: 3 },     // 麦岭关·晚清湘军道州营
