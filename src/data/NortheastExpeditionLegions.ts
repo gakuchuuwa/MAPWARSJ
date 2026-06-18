@@ -25,7 +25,6 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   // 东康坚甲除名（东康无此古地名）
   // 辉发城铁骑除名
   // 勃利勇士除名（唐黑水都督府地，无专名）
-  // 卜奎索伦营除名（索伦营在新疆，卜奎错位）
   keerqin: { name: '达尔罕卫', tier: 3 },
   yehe: { name: '八面关骁骑', tier: 3 },
   // ── 2026-06-18 东北首都势力补精锐（有将无番号者）──
@@ -33,7 +32,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   dongxia: { name: '东夏锐卒', tier: 3 },       // 曷苏馆·蒲鲜万奴东夏国
   haixi_nvzhen: { name: '海西女骑', tier: 3 },  // 辉发城·王台哈达部
   houliao: { name: '东辽骑队', tier: 2 },       // 咸平·耶律留哥东辽
-  suolun: { name: '索伦三部', tier: 3 },        // 布库伊·博穆博果尔索伦诸部
+  suolun: { name: '索伦营', tier: 3 },          // 卜奎·清代黑龙江索伦营（达斡尔/鄂温克/鄂伦春；§3 #13）
   wula: { name: '乌拉国兵', tier: 3 },          // 龙潭山城·布占泰乌拉贝勒
   wure: { name: '兀惹部卒', tier: 3 },          // 乌舍城·乌昭度兀惹部
   heishui: { name: '黑水锐卒', tier: 3 },        // 拉哈苏苏·黑水靺鞨（金源出黑水）

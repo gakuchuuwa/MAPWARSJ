@@ -12,7 +12,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wangyan: { name: '八字军', tier: 0 },     // 飞狐·顺昌大捷2万破10万（《宋史·刘锜传》）
   tianxiong: { name: '天雄军', tier: 2 },   // 大名·唐末河朔雄藩
   // 宣毅军除名（泛称非专属，与方渠无关）
-  huan: { name: '步跋子', tier: 3 },        // 方渠·西夏步跋子（原嵬名/鸡鹿塞）
+  huan: { name: '环州戍兵', tier: 3 },      // 方渠·宋代环州边防（原步跋子，归嵬名）
   qingyuan_bd: { name: '神臂营', tier: 2 }, // 保定·北宋强弩营
 
   // ── §2 北方 12 支 ──
@@ -24,9 +24,9 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tuoba: { name: '拓跋虎骑', tier: 1 },     // 大同·拓跋鲜卑
   // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
-  gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵（无经典以少胜多）
-    beiqi: { name: '百保鲜卑', tier: 1 },       // 蓨城·高长恭北齐鲜卑禁卫（T1有名且胜仗）
-  yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
+  gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵·高长恭禁卫
+  yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 棘城·营州黄龙（《北齐书·高宝宁传》）
+  feng_d: { name: '龙城铁骑', tier: 2 },      // 朝阳·北燕冯跋龙城骑兵（《魏书·冯跋传》）
   hejian: { name: '先登死士', tier: 0 },    // 乐成·§1 #25 界桥（番号随城）
   chile: { name: '两池军', tier: 3 },       // 云中·§2 #11
   murong: { name: '龙城甲骑', tier: 1 },    // 棘城·慕容燕具装骑（无经典以少胜多）

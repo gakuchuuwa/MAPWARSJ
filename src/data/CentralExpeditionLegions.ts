@@ -17,7 +17,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   xu: { name: '陷阵营', tier: 1 },          // 下邳·高顺部曲（无独立以少胜多经典）
   cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
   ranwei_d: { name: '乞活军', tier: 2 },   // 巨鹿·§1 #41 冉闵陈午
-  wuzhou_d: { name: '控鹤军', tier: 2 },   // 洛阳·§1 #47 武则天北衙
+    wuzhou_d: { name: '神都禁卫', tier: 2 },   // 洛阳·狄仁杰武周禁军（原控鹤军，与狄仁杰立场冲突）
   fu: { name: '皂衣队', tier: 1 },         // 大散关·§1 #39 苻坚前秦
   shang: { name: '虎贲多射', tier: 1 },       // 安阳·殷商虎贲与多射（妇好征伐）
   zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）
@@ -26,7 +26,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   sunqin: { name: '督标秦军', tier: 2 },   // 潼关·孙传庭督标
   // 飞熊军除名（小说番号）
   // 韩卒击刹除名（无史载）
-  liang_d: { name: '捧日军', tier: 1 },  // 商丘·宋州归德军，赵匡胤发迹地
+    liang_d: { name: '捧日军', tier: 2 },       // 商丘·朱温后梁禁军
   // 公行锐士除名
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
   // 朱龙骑除名（无此番号）
@@ -34,6 +34,8 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师
   // ── 2026-06-16 新增：11大名关 ──
                       hongnong_jun: { name: '函谷营', tier: 1 },       // 函谷关·樗里疾崤函锐士
+  huangfu: { name: '神策军', tier: 1 },       // 安定·李晟神策军（T1有名且胜仗）
+  chiling: { name: '石堡戍卒', tier: 3 },       // 石堡城·哥舒翰边防戍兵
   zheng: { name: '成皋部曲', tier: 3 },
   ruo: { name: '商於材官', tier: 3 },
   ruzhou: { name: '广成健卒', tier: 3 },
@@ -52,7 +54,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   xin: { name: '新室卫士', tier: 3 },          // 宛城·王莽新室（《汉书》）
   yingzhou_d: { name: '选锋军', tier: 2 },       // 顺昌·南宋选锋
   // 北门飞骑除名
-  chuzhou_d: { name: '大明龙骧卫', tier: 2 },      // 清流关·明初亲军卫
+  chuzhou_d: { name: '殿前诸班', tier: 1 },      // 清流关·后周殿前军（赵匡胤曾任殿前都点检，《旧五代史》）
+  // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
   lulin: { name: '云台突骑', tier: 1 },           // 昆阳·云台二十八将突骑
-  feng_d: { name: '殿前诸班', tier: 1 },      // 长子·后周柴荣禁军（《旧五代史》）
 };

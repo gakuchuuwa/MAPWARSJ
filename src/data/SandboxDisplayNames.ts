@@ -17,7 +17,7 @@
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   heishui: '黑水',
-  kelie: '克烈',
+  kelie: '札合',
   donghui: '东濊',
   gonggu: '宫古',
   fuguo: '附国',
@@ -808,4 +808,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jiashi': '迦湿',
     'wuhu': '乌护',
   sanada_d: '真田',
+  jiazini: '伽',
+  yisifahan: '法罕',
+  gaofu: '高附',
+  fanyanna: '梵衍',
+  chiling: '石堡',
 };

@@ -255,6 +255,7 @@ export class CityAssetManager {
 'dongxia': '东夏',
 'chagatai': '察合',
         'ogodei': '窝阔',
+        'kelie': '札合',
         'kereyid': '克烈',
         'naiman': '乃蛮',
         'tatar': '塔塔',
@@ -743,6 +744,11 @@ export class CityAssetManager {
         'jiashi': '迦湿',
         'wuhu': '乌护',
         'sanada_d': '真田',
+        'jiazini': '伽',
+        'yisifahan': '法罕',
+        'gaofu': '高附',
+        'fanyanna': '梵衍',
+        'chiling': '石堡',
         };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

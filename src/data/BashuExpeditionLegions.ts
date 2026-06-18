@@ -21,7 +21,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   chenghan: { name: '六夷突骑', tier: 2 },      // 鹿头关·§8 #9 成汉李特六夷铁骑
   daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
   ba: { name: '兴戎军', tier: 0 },              // 钓鱼城·王坚抗蒙毙蒙哥（《宋史》）
-  kui: { name: '霆军', tier: 1 },               // 鱼复·鲍超霆军（奉节籍湘军猛将）
+  kui: { name: '鱼复霆军', tier: 1 },           // 鱼复·鲍超霆军（奉节籍湘军猛将）
   qiuchi: { name: '武都部曲', tier: 3 },          // 仇池·杨氏世袭部曲（《宋书》杨难当拥部曲数万）
   // ── 2026-06-16 新增：4座西南名关 ──
   lizhou_d: { name: '蜀口守军', tier: 1 },        // 剑门关·吴玠和尚原仙人关守蜀

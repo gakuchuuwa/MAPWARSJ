@@ -19,7 +19,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
   huige: { name: '毗伽近卫', tier: 1 },       // 富贵城·回鹘毗伽可汗近卫（原回鹘铁骑）
   // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
-  xianbei: { name: '弹汗王卫', tier: 3 },      // 嘎仙洞·弹汗山王庭卫队（§6 #15）
+  // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
   gaoche: { name: '高车战车', tier: 3 },       // 浚稽山·高车战车兵（§6 #16）
   rouran: { name: '柔然铁骑', tier: 2 },       // 赛尔乌苏·柔然骑兵
   xueyantuo: { name: '同罗突骑', tier: 2 },    // 燕然勒石·薛延陀亲卫（§6 #18）
@@ -30,12 +30,13 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   // 那可儿除名（与那可儿军重复）
   kumo: { name: '楮特奥隗部', tier: 3 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
-  kelie: { name: '克烈护卫军', tier: 2 },
+  kelie: { name: '札合骁骑', tier: 3 },         // 都尉溷河·札合敢不克烈支系
+  kereyid: { name: '克烈护卫军', tier: 2 },     // 汪吉河·王汗克烈部（原kelie迁此）
   dingling: { name: '丁零游骑', tier: 3 },
   xiajiasi: { name: '黠戛斯锐卒', tier: 3 },
   donghu: { name: '东胡骑', tier: 3 },
   tiele: { name: '铁勒骁骑', tier: 3 },
-  xibo_d: { name: '索伦营', tier: 3 },
+  xibo_d: { name: '锡伯箭手', tier: 3 },        // 固尔札·清代锡伯营（原索伦营错族）
   tatar: { name: '塔塔儿死士', tier: 3 },
   merkit: { name: '蔑儿乞猎骑', tier: 3 },
   chahar: { name: '察哈尔八旗', tier: 2 },
@@ -48,7 +49,21 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   choros: { name: '绰罗斯骁骑', tier: 3 },
   duolu: { name: '咄陆部铁骑', tier: 2 },
   kaerka: { name: '喀尔喀重骑', tier: 3 },
-  zhasaketu: { name: '扎萨克图骁骑', tier: 3 }, // 乌城·喀尔喀蒙古（原回鹘牙帐骑严重错代错位）
+  zhasaketu: { name: '扎萨克图骑', tier: 3 }, // 乌城·喀尔喀蒙古（原扎萨克图骁骑）
   buriat: { name: '林中射手', tier: 3 },
   cheshihou: { name: '车师后王卫', tier: 3 },
+  // ── 2026-06-19 有将无番号补全 ──
+  kiyad: { name: '乞颜宿卫', tier: 3 },         // 不儿罕山·也速该乞颜部
+  mengwu: { name: '忙古勒骑', tier: 3 },        // 狼居胥·合不勒汗
+  zhadalan: { name: '札剌儿军', tier: 3 },      // 阔亦田·札木合
+  oirat_ming: { name: '卫拉特骑', tier: 2 },    // 科布多·也先（≠wala博尔巴任）
+  tumed: { name: '土默特骑', tier: 2 },         // 归化城·俺答汗
+  tushetu: { name: '库伦铁骑', tier: 3 },       // 库伦·土谢图汗
+  yaoluoge: { name: '药罗葛骑', tier: 3 },      // 娑陵·药罗葛部
+  huihu: { name: '回鹘牙帐骑', tier: 3 },      // 窝鲁朵·回鹘汗庭
+  ashide: { name: '阿史德骑', tier: 3 },        // 黑沙城·阿史德氏
+  pugu: { name: '仆固部兵', tier: 3 },          // 燕然山·仆固氏铁勒
+  pulei: { name: '蒲类戍卒', tier: 3 },         // 巴里坤·蒲类国故地
+  chechen: { name: '车臣汗骑', tier: 3 },       // 巴彦图门·车臣汗硕垒
+  zhuerqi: { name: '斡难河骑', tier: 3 },       // 斡难河·撒察别乞
 };

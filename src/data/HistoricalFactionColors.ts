@@ -708,6 +708,12 @@ const _FIXED: Record<string, string> = {
     'hao_d': '#756CC2', // 自动分配 (邻域相斥)
     'bozhou_d': '#9348A5', // 自动分配 (邻域相斥)
     'zheng': '#76D2AB', // 自动分配 (邻域相斥)
+    jiazini: '#6A3A2A', // 加兹尼·伽色尼城
+    yisifahan: '#3A5A8A', // 伊斯法罕·蓝
+    gaofu: '#5A3A4A', // 高附·紫褐
+    fanyanna: '#4A3A6A', // 梵衍那·深紫
+    chiling: '#8A3A2A', // 赤岭·石堡
+    dingxiang_d: '#3A4A5A', // 定襄·暗青
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
