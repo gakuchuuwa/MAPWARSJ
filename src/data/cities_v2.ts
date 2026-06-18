@@ -194,7 +194,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_mianyang', name: '涪城', factionId: 'daxi_ming', lat: 31.482545, lng: 104.718933, type: 'small_city', troops: 10000 },
     {
         id: 'city_chongqing',
-        name: '江州',
+        name: '重庆',
         factionId: 'ba',
         lat: 29.56, lng: 106.58,
         type: 'medium_city',
@@ -232,7 +232,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     {
         id: 'city_baoding', name: '保定', factionId: 'qingyuan_bd',
         lat: 38.87, lng: 115.48,
-        type: 'medium_city',
+        type: 'small_city',
         troops: 10000,
         tier: 1 },
     {
@@ -281,8 +281,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
 
     {
         id: 'city_licheng',
-        name: '历城',
-        factionId: 'haoding',
+        name: '历下',
+        factionId: 'jinan',
         lat: 36.67, lng: 117.00,
         type: 'medium_city',
         troops: 10000,
@@ -330,7 +330,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         region: 'JIANGNAN', troops: 10000,
         tier: 1 },
 
-    { id: 'city_nanyang', name: '宛城', factionId: 'liutong_yangqing', lat: 32.955682, lng: 112.516479, type: 'medium_city', troops: 10000, note: '刘縯战死于宛；汉南都，东汉南阳郡240万，2026-06-18 升为中城' },
+    { id: 'city_nanyang', name: '宛城', factionId: 'dixiang', lat: 32.955682, lng: 112.516479, type: 'medium_city', troops: 10000, note: '刘縯战死于宛；汉南都，东汉南阳郡240万，2026-06-18 升为中城' },
     // ── 荆楚与三峡巴蜀沿线中城 ──
     {
         id: 'city_fuling',
@@ -369,7 +369,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         type: 'small_city',
         troops: 10000,
         region: 'JIANGNAN' },
-    { id: 'city_changsha', name: '长沙', factionId: 'machu', lat: 28.19, lng: 112.97, type: 'medium_city', troops: 10000, tier: 1, note: '马楚政权都城；武平军' },
+    { id: 'city_changsha', name: '临湘', factionId: 'changshaguo', lat: 28.19, lng: 112.97, type: 'medium_city', troops: 10000, tier: 1, note: '马楚政权都城；武平军' },
 
     {
         id: 'city_changzhou',
@@ -380,7 +380,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         troops: 10000 },
     {
         id: 'city_gusu',
-        name: '姑苏',
+        name: '阊门',
         factionId: 'wu',
         lat: 31.30, lng: 120.62,
         type: 'medium_city',
@@ -420,7 +420,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         name: '张掖',
         factionId: 'ganzhou',
         lat: 38.93, lng: 100.45,
-        type: 'medium_city',
+        type: 'small_city',
         troops: 10000,
         tier: 1 },
     { id: 'city_jiuquan', name: '酒泉城', factionId: 'suzhou', lat: 39.73, lng: 98.49, type: 'small_city', troops: 10000 },
@@ -448,7 +448,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         region: 'WESTERN',
         troops: 10000,
         note: '莎车国都；≠西夜叶城' },
-    { id: 'city_shule', name: '盘橐城', factionId: 'shule', lat: 39.47, lng: 75.99, type: 'medium_city', troops: 10000,        region: 'WESTERN', tier: 1 },
+    { id: 'city_shule', name: '盘橐', factionId: 'shule', lat: 39.4850, lng: 76.0007, type: 'medium_city', troops: 10000,        region: 'WESTERN', tier: 1 },
 
     { id: 'city_yanqi', name: '员渠城', factionId: 'yanqi', lat: 42.06, lng: 86.56, type: 'small_city', troops: 10000 },
 
@@ -649,7 +649,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     {
         id: 'city_diaoyucheng',
         name: '钓鱼城',
-        factionId: 'ba',
+        factionId: 'hezhou',
         lat: 30.04, lng: 106.30,
         type: 'small_city',
         troops: 10000 },

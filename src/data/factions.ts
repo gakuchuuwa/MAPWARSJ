@@ -70,7 +70,6 @@ export const FACTIONS: Faction[] = [
     { id: 'shu', name: '蜀国' },
     { id: 'shu_han', name: '蜀汉' }, // ── 2026-06-18：王平@兴势（兴势之战）──
     { id: 'hanzhong_d', name: '汉中' }, // ── 2026-06-18：魏延@略阳（阳平关·汉中太守）──
-    { id: 'ju_d', name: '苴国' }, // ── 2026-06-18：司马错@重庆（灭苴入蜀）──
     { id: 'dingxiang_d', name: '定襄' }, // ── 2026-06-18：李靖@恶阳岭（贞观四年定襄夜袭；旗号定襄）──
     { id: 'dian', name: '通海' },       // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '新国' },
@@ -185,6 +184,7 @@ export const FACTIONS: Faction[] = [
     { id: 'donghu', name: '东胡' },
     { id: 'luoyue', name: '骆越' },
     { id: 'ba', name: '巴国' },
+    { id: 'hezhou', name: '合州' },
 
     // ── 2026-05-26 新增：用户核对追加势力 ──
     { id: 'qifu_d', name: '乞伏' },
@@ -290,7 +290,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 北宋辽金势力 v2 ──
     { id: 'zhongxiang', name: '钟楚' },      // 洞庭绿 - 钟相杨幺大圣天王政权(鼎州)
     { id: 'yang_aner', name: '天顺' },          // 红袄赤 - 杨安儿天顺政权(登州)
-    { id: 'haoding', name: '红袄' },
+    { id: 'jinan', name: '济南' },
     // 草原金 - 德寿身圣政权(信州)
     { id: 'liwang', name: '河间' },
 
@@ -321,6 +321,7 @@ export const FACTIONS: Faction[] = [
     // 第二类：元末群雄割据政权
     { id: 'fang_guozhen', name: '浙方' },
     // 第三类：明代中后期农民起义与割据政权
+    { id: 'dixiang', name: '帝乡' },
     { id: 'liutong_yangqing', name: '汉王' },
     { id: 'dengmaoqi', name: '铲平' },
     { id: 'yezongliu', name: '太平' },
@@ -766,6 +767,7 @@ export const FACTIONS: Faction[] = [
     { id: 'huaiyang', name: '淮阳' },
    // 淮阳郡治宛丘(陈州)
     { id: 'cai', name: '蔡国' },
+    { id: 'changshaguo', name: '长沙国' },
     { id: 'machu', name: '马楚' },
     { id: 'shangzhou', name: '商州' },   // 旗号上洛(商邑=商州治；避与商字重)
     { id: 'ying', name: '郢州' },
@@ -898,7 +900,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yaozhou', name: '耀州' },
     { id: 'huo', name: '霍国' },
     { id: 'mushi', name: '穆氏' },
-    { id: 'lai', name: '莱国' },
+    { id: 'lai', name: '莱州' },
     // ── 2026-06-16 新增：4座巴蜀西南名关 ──
     { id: 'lizhou_d', name: '利州' },
     { id: 'xiazhou', name: '峡州' },

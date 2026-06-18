@@ -26,9 +26,10 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   sunqin: { name: '督标秦军', tier: 2 },   // 潼关·孙传庭督标
   // 飞熊军除名（小说番号）
   // 韩卒击刹除名（无史载）
-    liang_d: { name: '捧日军', tier: 2 },       // 商丘·朱温后梁禁军
+    liang_d: { name: '睢阳戍卒', tier: 1 },     // 睢阳·张巡守睢阳（《新唐书·忠义传》）
   // 公行锐士除名
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
+  dixiang: { name: '南阳材官', tier: 3 },   // 宛城·张绣南阳材官
   // 朱龙骑除名（无此番号）
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
   yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师

@@ -17,9 +17,9 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   sunwu_d: { name: '解烦兵', tier: 2 },      // 武昌·孙吴禁卫
   nantang_d: { name: '黑云长剑都', tier: 2 }, // 南京·§9 #4 南唐杨行密
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=寿·寿州）
-  hongguang: { name: '维扬义军', tier: 2 },       // 扬州·史可法守江（克敌军迁宋@临安）
+  hongguang: { name: '扬州义兵', tier: 2 },       // 广陵·史可法扬州义兵
   lu: { name: '逍遥津死士', tier: 1 },       // 合肥·张辽800破十万（《三国志》）
-  min: { name: '长乐控鹤', tier: 2 },        // 冶城·闽国控鹤军（≠武周洛阳控鹤军）
+  min: { name: '闽国亲从', tier: 2 },        // 冶城·王审知闽国亲从
   chen: { name: '建康水军', tier: 3 },       // 清远·陈霸先水师
   xiao_d: { name: '白袍军', tier: 1 },       // 兰陵·陈庆之七千白袍（《梁书》）
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
@@ -28,12 +28,14 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   song: { name: '克敌军', tier: 1 },       // 临安·韩世忠（《宋史·韩世忠传》克敌军）
   qian_d: { name: '游奕军', tier: 2 },       // 嘉兴·§9 #13 踏白游奕（岳飞系）
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
-  haoding: { name: '红袄军', tier: 2 },      // 历城·§9 #14 李全杨妙真
-  wu: { name: '锦帆贼', tier: 3 },           // 姑苏·甘宁锦帆
+  jinan: { name: '济南卫', tier: 2 },        // 历下·铁铉守济南卫
+  lai: { name: '红袄军', tier: 2 },          // 青石关·杨安儿红袄军
+  wu: { name: '句吴利趾', tier: 1 },        // 阊门·孙武句吴利趾
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
   xushouhui: { name: '红巾军', tier: 2 },    // 蕲春·元末徐寿辉天完红巾主力
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）
-  machu: { name: '武平军', tier: 2 },       // 长沙·马楚武平军节度
+  changshaguo: { name: '武平军', tier: 2 },   // 临湘·马殷长沙国武平军
+  machu: { name: '武平军', tier: 2 },       // 马楚武平军（据点待定）
   ning: { name: '江西勤王军', tier: 3 },     // 豫章·南宋江西勤王
   huangwang: { name: '冲天军', tier: 2 },       // 仙霞关·黄王冲天军
   yue: { name: '越君子军', tier: 3 },          // 会稽·勾践越军

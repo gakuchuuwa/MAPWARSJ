@@ -16,7 +16,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   qingyuan_bd: { name: '神臂营', tier: 2 }, // 保定·北宋强弩营
 
   // ── §2 北方 12 支 ──
-  zhao: { name: '赵边骑', tier: 1 },        // 邯郸·§2 #1 赵武灵王胡服骑射
+  zhao: { name: '邯郸坚兵', tier: 1 },     // 邯郸·§2 #1 廉颇赵国坚兵
   yan: { name: '渔阳突骑', tier: 2 },       // 古北口·§2 #2 光武幽州精骑（燕国北京）
   gongsun_d: { name: '辽东戍卒', tier: 3 }, // 襄平·公孙氏辽东
   shizhao_d: { name: '黑槊龙骧', tier: 1 }, // 邢台·§2 #4 石勒石虎后赵禁军
@@ -36,7 +36,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
   lingwu: { name: '朔方军', tier: 1 },      // 回乐·§1 #53 灵州朔方节度使精锐
   dingxiang_d: { name: '恶阳骑', tier: 1 }, // 恶阳岭·贞观四年李靖三千轻骑夜袭定襄（《旧唐书·李靖传》）
-  zhongshan: { name: '中山劲卒', tier: 2 },   // 真定·战国中山千乘
+  zhongshan: { name: '恒州弩手', tier: 2 },   // 真定·颜杲卿恒州弩手
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
   helian: { name: '铁弗卫队', tier: 2 },     // 统万城·赫连勃勃铁弗亲卫
   bing: { name: '并州狼骑', tier: 2 },     // 晋阳·并州骑兵

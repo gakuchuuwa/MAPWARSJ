@@ -17,7 +17,6 @@ const _FIXED: Record<string, string> = {
     shu: '#2E7D32', // 蜀（绿）
     shu_han: '#388E3C', // 蜀汉·兴势（王平，略浅绿）
     hanzhong_d: '#3A9E42', // 汉中·略阳（魏延，蜀绿偏青）
-    ju_d: '#4A6FA5', // 苴国·重庆（司马错灭蜀前）
     wu: '#C03520', // 吴
     sui: '#B83030', // 隋
     song: '#DC4850', // 宋（明亮珊瑚红；与大明深绛对照）
@@ -30,7 +29,6 @@ const _FIXED: Record<string, string> = {
     wazhai: '#903028', // 瓦岗
     red_turban: '#A83028', // 红巾
     xushouhui: '#883030', // 天完·红巾军（元末徐寿辉赤旗；避 lvbu 撞色）
-    haoding: '#C05040', // 红袄(郝定)
     chimei: '#972838', // 赤眉
     yang_aner: '#B84838', // 登(杨安儿)
     dashun: '#9A3030', // 大顺
@@ -206,6 +204,7 @@ const _FIXED: Record<string, string> = {
     paiwan: '#6A5840', // 排湾·出草勇士（山地褐）
     // ryukyu 见日本区旁注（改挂岭南远征）
 
+    'changshaguo': '#3A6830', // 长沙国（楚地青，武平军·马殷）
     machu: '#4A7840', // 马楚·武平军（楚地青）
     // ── 南方精锐远征势力（2026-06-11；hex 全局唯一）──
     nantang_d: '#4A68A0', // 南唐·黑云长剑都（金陵青）
@@ -235,7 +234,7 @@ const _FIXED: Record<string, string> = {
     chile: '#5A7060', // 敕勒·两池军（阴山青灰）
     anshi_d: '#482838', // 安史·曳落河（范阳暗绛）
     lingwu: '#587878', // 灵·朔方军（灵武青灰）
-    zhongshan: '#6888A0', // 中山·静塞军（真定水蓝）
+    zhongshan: '#6888A0', // 中山·恒州弩手（真定水蓝·颜杲卿）
     huan: '#6A8870', // 环·宣毅军（环州青绿）
     qingyuan_bd: '#708898', // 清苑·神臂营（保定弩阵灰蓝）
     // tuoba/erzhu/yuwen/shatuo 见上方尚色/草原表
@@ -286,8 +285,7 @@ const _FIXED: Record<string, string> = {
     mi_chu: '#8B6848', // 芈氏·左右广军（云梦褐；避 xiliang 撞色）
     nanyue: '#6B4423', // 南越（龙川）
     guangzhou: '#1F7060', // 广州·清海军（南海碧玉/深水绿）
-    // chu/song/chen/xiao_d/yue_d/ming_d/haoding 见南方表
-
+    // chu/song/chen/xiao_d/yue_d/ming_d 见南方表\r\n
     // ── 黑·水德尚黑 / 契丹黑旗 ──
     qin: '#1C1C1C', // 秦
     liao_d: '#302E28', // 大辽·属珊军（上京临潢）
@@ -296,9 +294,10 @@ const _FIXED: Record<string, string> = {
     qidan: '#36322C', // 契丹
 
     // ── 补全中城随机势力专属色（2026-06-12） ──
-    ba: '#326850', // 巴国（巴山青，巴渝劲卒@江州）
-    liang_d: '#9C6035', // 梁国（梁土赭，中原重步兵）
-    min: '#664A6A', // 闽国（长乐紫，长乐控鹤）
+    ba: '#326850', // 巴国（巴山青，巴渝劲卒@重庆）
+    hezhou: '#5A7885', // 合州（钓鱼青灰，兴戎军@钓鱼城）
+    liang_d: '#9C6035', // 梁国（梁土赭，睢阳戍卒·张巡）
+    min: '#664A6A', // 闽国（长乐紫，闽国亲从·王审知）
     lu: '#6B7A60', // 庐州（淮西青灰，江淮要冲）
     loulan: '#A6855B', // 楼兰（黄沙褐，楼兰戍）
     fuyu: '#5A6878', // 夫余（雪原蓝灰，金源边军）
@@ -481,6 +480,7 @@ const _FIXED: Record<string, string> = {
     'daxing': '#CF48BB', // 自动分配 (邻域相斥)
     'chendiaoyan': '#AC2A72', // 自动分配 (邻域相斥)
     'fang_guozhen': '#BF6683', // 自动分配 (邻域相斥)
+    'dixiang': '#9B7030', // 帝乡（宛土赭，南阳材官·张绣）
     'liutong_yangqing': '#844FCE', // 自动分配 (邻域相斥)
     'yezongliu': '#2195A0', // 自动分配 (邻域相斥)
     'dada_ming': '#A6D43C', // 自动分配 (邻域相斥)

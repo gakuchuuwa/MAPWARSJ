@@ -15,12 +15,12 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   shu: { name: '无当飞军', tier: 1 },           // 成都·诸葛亮连弩山地劲旅（王平统率史载）
   shu_han: { name: '兴势守军', tier: 1 },       // 兴势·244年王平兴势之战
   hanzhong_d: { name: '汉中镇远军', tier: 1 },  // 略阳·魏延汉中太守
-  ju_d: { name: '巴蜀锐士', tier: 1 },          // 重庆·司马错灭蜀秦军
   shuixi: { name: '罗罗兵', tier: 3 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名
   chenghan: { name: '六夷突骑', tier: 2 },      // 鹿头关·§8 #9 成汉李特六夷铁骑
   daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
-  ba: { name: '巴渝劲卒', tier: 1 },          // 江州·巴国巴蔓子劲卒（《华阳国志·巴志》）
+  ba: { name: '巴渝劲卒', tier: 1 },          // 重庆·巴国巴蔓子劲卒（《华阳国志·巴志》）
+  hezhou: { name: '兴戎军', tier: 0 },          // 钓鱼城·王坚抗蒙毙蒙哥（《宋史》）
   kui: { name: '鱼复霆军', tier: 1 },           // 鱼复·鲍超霆军（奉节籍湘军猛将）
   qiuchi: { name: '武都部曲', tier: 3 },          // 仇池·杨氏世袭部曲（《宋书》杨难当拥部曲数万）
   // ── 2026-06-16 新增：4座西南名关 ──

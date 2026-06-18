@@ -3,12 +3,11 @@
 | 据点ID | 中城据点 | 势力ID | 势力名 | 武将 | 专属精锐 |
 | --- | --- | --- | --- | --- | --- |
 | city_datong | **大同** | tuoba | 拓跋 | 拓跋珪 | 拓跋虎骑 |
-| city_xiangyang | **襄阳** | jingzhou | 荆州 | 吕文焕 | 荆鄂都统司 |
-| city_shouxian | **寿春** | zhong | 袁术 | 袁术 | 北府兵 |
-| city_chongqing | **重庆** | ju_d | 苴国 | 司马错 | 巴蜀锐士 |
-| city_handan | **邯郸** | zhao | 赵国 | 无 | 赵边骑 |
-| city_zhending | **真定** | zhongshan | 中山 | 无 | 中山劲卒 |
-| city_baoding | **保定** | qingyuan_bd | 清苑 | 张柔 | 神臂营 |
+| city_xiangyang | **襄阳** | xiangzhou | 襄州 | 吕文焕 | 襄鄂都统司 |
+| city_shouxian | **寿春** | zhong | 寿州 | 谢玄 | 北府兵 |
+| city_chongqing | **重庆** | ba | 巴国 | 巴蔓子 | 巴渝劲卒 |
+| city_handan | **邯郸** | zhao | 赵国 | 无 | 邯郸坚兵 |
+| city_zhending | **真定** | zhongshan | 中山 | 颜杲卿 | 恒州弩手 |
 | city_shangqiu | **商丘** | liang_d | 梁国 | 无 | 捧日军 |
 | city_pengcheng | **彭城** | xichu | 西楚 | 项羽 | 江东子弟 |
 | city_licheng | **历城** | haoding | 红袄 | 杨安儿 | 红袄军 |

@@ -18544,36 +18544,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "茂州-涪城",
-                type: "road",
-                id: "road_city_maozhou_city_mianyang_1780159009064",
-                startConnection: "city_maozhou",
-                endConnection: "city_mianyang"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [103.867493, 31.693115],
-                    [104.004651, 31.764706],
-                    [104.054144, 31.772954],
-                    [104.070642, 31.781203],
-                    [104.149006, 31.801825],
-                    [104.19025, 31.80595],
-                    [104.256241, 31.834821],
-                    [104.375849, 31.867816],
-                    [104.429467, 31.859567],
-                    [104.470711, 31.797701],
-                    [104.458338, 31.760581],
-                    [104.466586, 31.669844],
-                    [104.516079, 31.574982],
-                    [104.421218, 31.6286],
-                    [104.718933, 31.482545],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "打箭炉-严道",
                 type: "road",
                 id: "road_city_dajianlu_city_yandao_1780159009127",

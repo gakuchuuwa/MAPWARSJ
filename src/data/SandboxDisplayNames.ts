@@ -67,7 +67,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shu': '蜀',
     'shu_han': '平魏',
     'hanzhong_d': '阳平',
-    'ju_d': '苴',
     'dian': '通海',
     'xin': '新',
     'cheng': '简',
@@ -186,6 +185,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'donghu': '东胡',
     'luoyue': '骆越',
     'ba': '巴',
+    'hezhou': '合',
     'wey': '卫',
 'qifu_d': '乞伏',
     'tuyu_d': '吐谷',
@@ -259,7 +259,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-25 北宋辽金势力 v2 ──
     'zhongxiang': '钟',
     'yang_aner': '登',
-    'haoding': '红袄',
+    'jinan': '历',
+    'dixiang': '宛',
     'liwang': '河间',
 
     // ── 2026-05-25 元朝蒙古势力 ──
@@ -479,7 +480,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-27 新增：靖江、盘瑶、马楚、排瑶、士、蒋 ──
     'jingjiang': '靖江',
     'panyao': '贺',
-'machu': '马楚',
+'changshaguo': '长沙',
+    'machu': '马楚',
     'paiyao': '排瑶',
     'jiang_s': '蒋',
 
