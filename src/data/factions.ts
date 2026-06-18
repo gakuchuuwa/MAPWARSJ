@@ -43,7 +43,7 @@ export const FACTIONS: Faction[] = [
     { id: 'chunshen', name: '春申' },
     { id: 'wan', name: '舒州' },          // 舒州(皖城/安庆)；旗号取舒州避与据点皖城重
     { id: 'qingyuan_bd', name: '清苑' },
-    { id: 'zhong', name: '袁术' },
+    { id: 'zhong', name: '寿州' },
     { id: 'xichu', name: '西楚' },
     { id: 'weihaiwei', name: '威海' },
     { id: 'xia', name: '夏国' },
@@ -84,7 +84,6 @@ export const FACTIONS: Faction[] = [
     { id: 'xiongnu', name: '匈奴' },
     { id: 'xianbei', name: '鲜卑' },
     { id: 'jie', name: '羯族' },
-    { id: 'di', name: '氐族' },
     { id: 'qiang', name: '羌族' },
     { id: 'tuoba', name: '拓跋' },
     { id: 'yuwen', name: '宇文' },
@@ -112,7 +111,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xiao_d', name: '萧氏' },
     { id: 'li_lx_d', name: '李氏' },
     { id: 'yuan_cj_d', name: '袁氏' },
-    { id: 'xie_cj_d', name: '谢氏' },
+    { id: 'xie_cj_d', name: '信州' },
     // 金黄 - 春申黄氏
     { id: 'yue_d', name: '岳氏' },
     { id: 'qian_d', name: '钱氏' },
@@ -216,13 +215,14 @@ export const FACTIONS: Faction[] = [
     { id: 'yin', name: '殷国' },
     // ── 2026-06-16 新增：河间郡治乐成（§4.3；先登死士@界桥）──
     { id: 'hejian', name: '莫' },
+    { id: 'qu_d', name: '麴氏' },                 // 麴义·先登死士@界桥
     { id: 'liu', name: '九江' },
       // 陶褐 - 英布/九江王(六县)
     { id: 'ouyue', name: '瓯越' },
 
     // ── 2026-05-26 新增：三国核对追加势力 ──
-    // ── 2026-06-11 改：襄阳·荆州州名旗号（§4.1-5）──
-    { id: 'jingzhou', name: '荆州' },
+    // ── 2026-06-19 改：襄阳·襄州州名旗号（§4.1-5）──
+    { id: 'xiangzhou', name: '襄州' },
     // ── 2026-06-19 新增：枣阳@枣阳（孟珙·忠顺军；《宋史·孟珙传》；旗号舂陵≠枣阳）──
     { id: 'zaoyang_d', name: '枣阳' },
     // ── 2026-06-16 改：符离·宿州治（§4.7；旗号「徐」让位下邳徐国）──
@@ -338,7 +338,6 @@ export const FACTIONS: Faction[] = [
     { id: 'hezhe', name: '赫哲' },                   // 河口青 - 赫哲/那乃人(黑龙江下游/库页岛)
     { id: 'luchuan', name: '麓川' },
     { id: 'chijin', name: '赤斤' },
-    { id: 'chiling', name: '赤岭' },          // 赤岭(石堡城/哥舒翰)
     { id: 'guiyi', name: '归义' },
     { id: 'anding_wei', name: '安定' },
     // 第六类：周边国家政权

@@ -80,7 +80,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xiongnu': '匈奴',
 'xianbei': '鲜卑',
     'jie': '羯',
-    'di': '氐',
     'qiang': '羌',
     'tuoba': '拓跋',
     'yuwen': '宇文',
@@ -109,7 +108,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xiao_d': '萧',
     'li_lx_d': '李',
 'yuan_cj_d': '袁',
-    'xie_cj_d': '谢',
+    'xie_cj_d': '信',
 'yue_d': '岳',
     'qian_d': '钱',
     'kong_d': '孔',
@@ -203,11 +202,12 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'zhai_han': '翟',
     'yin': '殷',
     'hejian': '莫',
+    'qu_d': '麴',
 'liu': '九江',
     'ouyue': '台',
 
     // 2026-05-25 三国核对追加势力
-    'jingzhou': '荆',
+    'xiangzhou': '襄',
     'zaoyang_d': '舂陵',
     // ── 2026-06-16 改：符离·宿（§4.7；旗号「徐」让位下邳徐国）──
     'suzhou_d': '宿',
@@ -698,7 +698,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'dangchang': '迭',
 
     // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
-'zhong': '仲',
+'zhong': '寿',
     'qingyuan_bd': '清苑',
     'pingyuan': '高唐',
     'yao': '尧',
@@ -815,5 +815,4 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   yisifahan: '法罕',
   gaofu: '高附',
   fanyanna: '梵衍',
-  chiling: '石堡',
 };

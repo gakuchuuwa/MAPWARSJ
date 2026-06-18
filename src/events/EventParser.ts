@@ -65,8 +65,8 @@ export class EventParser {
         '瓯越': 'ouyue', '东瓯': 'ouyue', '东瓯国': 'ouyue',
 
         // 三国核对追加势力 (2026-05-25)
-        '荆州': 'jingzhou', '荆': 'jingzhou', '襄阳': 'jingzhou',
-        '刘表': 'jingzhou', '刘景升': 'jingzhou',
+        '襄州': 'xiangzhou', '襄': 'xiangzhou', '襄阳': 'xiangzhou',
+        '刘表': 'xiangzhou', '刘景升': 'xiangzhou',
         '下邳': 'xu', '陷阵营': 'xu', '高顺': 'xu',
         '宿州': 'suzhou_d', '符离': 'suzhou_d', '符离集': 'suzhou_d',
         '临洮': 'didao', '狄道': 'didao', '狄道县': 'didao', '飞熊军': 'didao',
@@ -268,7 +268,7 @@ export class EventParser {
         '弘光四镇': 'hongguang', '高杰': 'hongguang', '刘良佐': 'hongguang', '黄得功': 'hongguang', '刘泽清': 'hongguang',
         '长乐控鹤': 'min', '闽之控鹤': 'min',
         '无为': 'wuwu_d', '濡须口': 'wuwu_d', '濡须': 'wuwu_d',
-        '兴戎军': 'ba', '钓鱼城': 'ba', '合州': 'ba',
+        '巴渝劲卒': 'ba', '江州': 'ba', '巴蔓子': 'ba',
         '韩卒击刹': 'han',
         '梁国劲卒': 'liang_d', '梁国': 'liang_d',
         '靖江府卫': 'jingjiang',

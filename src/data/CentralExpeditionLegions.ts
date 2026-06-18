@@ -35,7 +35,6 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // ── 2026-06-16 新增：11大名关 ──
                       hongnong_jun: { name: '函谷营', tier: 1 },       // 函谷关·樗里疾崤函锐士
   huangfu: { name: '神策军', tier: 1 },       // 安定·李晟神策军（T1有名且胜仗）
-  chiling: { name: '石堡戍卒', tier: 3 },       // 石堡城·哥舒翰边防戍兵
   zheng: { name: '成皋部曲', tier: 3 },
   ruo: { name: '商於材官', tier: 3 },
   ruzhou: { name: '广成健卒', tier: 3 },

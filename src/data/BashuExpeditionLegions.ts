@@ -20,7 +20,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 悬棺武士除名
   chenghan: { name: '六夷突骑', tier: 2 },      // 鹿头关·§8 #9 成汉李特六夷铁骑
   daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
-  ba: { name: '兴戎军', tier: 0 },              // 钓鱼城·王坚抗蒙毙蒙哥（《宋史》）
+  ba: { name: '巴渝劲卒', tier: 1 },          // 江州·巴国巴蔓子劲卒（《华阳国志·巴志》）
   kui: { name: '鱼复霆军', tier: 1 },           // 鱼复·鲍超霆军（奉节籍湘军猛将）
   qiuchi: { name: '武都部曲', tier: 3 },          // 仇池·杨氏世袭部曲（《宋书》杨难当拥部曲数万）
   // ── 2026-06-16 新增：4座西南名关 ──
@@ -35,7 +35,6 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 权州戍兵除名（生造）
   zuo_d: { name: '南中叟兵', tier: 3 },         // 清溪关·西南夷王牌
   zangke: { name: '牂牁戍卒', tier: 3 },        // 胜境关·古牂牁国地（原夜郎锐卒，避岭南同名）
-  di: { name: '氐豪锐骑', tier: 3 },              // 成县·前秦苻氏氐族核心骑兵
   xin2: { name: '北伐前军', tier: 1 },          // 南浦·姜维九伐中原前军
   cheng: { name: '西川绿营', tier: 2 },          // 阳安·岳钟琪川督绿营
 };

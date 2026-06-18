@@ -1,0 +1,3078 @@
+[
+  {
+    "id": "city_ueda",
+    "name": "上田城",
+    "factionId": "sanada_d",
+    "line": 169
+  },
+  {
+    "id": "city_anding",
+    "name": "安定",
+    "factionId": "huangfu",
+    "line": 178
+  },
+  {
+    "id": "city_guozhou",
+    "startLine": 188,
+    "name": "南充",
+    "factionId": "guo",
+    "type": "small_city"
+  },
+  {
+    "id": "city_mianyang",
+    "name": "涪城",
+    "factionId": "daxi_ming",
+    "line": 194
+  },
+  {
+    "id": "city_jianzhou",
+    "startLine": 205,
+    "name": "阳安",
+    "factionId": "cheng",
+    "type": "small_city"
+  },
+  {
+    "id": "city_zizhou",
+    "startLine": 212,
+    "name": "盘石",
+    "factionId": "zi",
+    "type": "small_city"
+  },
+  {
+    "id": "city_hejian",
+    "startLine": 239,
+    "name": "乐成",
+    "factionId": "liwang",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jingzhou2",
+    "startLine": 247,
+    "name": "蓨城",
+    "factionId": "gaoqi_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_pingyuan",
+    "startLine": 255,
+    "name": "平原",
+    "factionId": "pingyuan",
+    "type": "small_city"
+  },
+  {
+    "id": "city_linfen",
+    "name": "平阳",
+    "factionId": "yao",
+    "line": 263
+  },
+  {
+    "id": "city_langya",
+    "name": "琅琊",
+    "factionId": "wang_d",
+    "line": 268
+  },
+  {
+    "id": "city_ju",
+    "name": "莒城",
+    "factionId": "chimei",
+    "line": 269
+  },
+  {
+    "id": "city_lanling",
+    "name": "兰陵",
+    "factionId": "xiao_d",
+    "line": 270
+  },
+  {
+    "id": "city_dingtao",
+    "name": "定陶",
+    "factionId": "wazhai",
+    "line": 272
+  },
+  {
+    "id": "city_jimo",
+    "name": "即墨",
+    "factionId": "jiaodong",
+    "line": 273
+  },
+  {
+    "id": "city_boyang",
+    "startLine": 275,
+    "name": "博阳",
+    "factionId": "jibei",
+    "type": "small_city"
+  },
+  {
+    "id": "city_bushan",
+    "startLine": 300,
+    "name": "布山",
+    "factionId": "xiou",
+    "type": "small_city"
+  },
+  {
+    "id": "city_huaiyang",
+    "name": "宛丘",
+    "factionId": "huaiyang",
+    "line": 317
+  },
+  {
+    "id": "city_shunchang",
+    "name": "顺昌",
+    "factionId": "yingzhou_d",
+    "line": 318
+  },
+  {
+    "id": "city_qiaojun",
+    "name": "谯县",
+    "factionId": "cao_d",
+    "line": 319
+  },
+  {
+    "id": "city_nanyang",
+    "name": "宛城",
+    "factionId": "liutong_yangqing",
+    "line": 333
+  },
+  {
+    "id": "city_fuling",
+    "startLine": 336,
+    "name": "涪陵",
+    "factionId": "panjun",
+    "type": "small_city"
+  },
+  {
+    "id": "city_yiling",
+    "name": "夷陵",
+    "factionId": "yidou",
+    "line": 342
+  },
+  {
+    "id": "city_suizhou",
+    "startLine": 356,
+    "name": "汉东",
+    "factionId": "sui",
+    "type": "small_city"
+  },
+  {
+    "id": "city_chaisang",
+    "startLine": 364,
+    "name": "柴桑",
+    "factionId": "jiujiang",
+    "type": "small_city"
+  },
+  {
+    "id": "city_changzhou",
+    "startLine": 375,
+    "name": "延陵",
+    "factionId": "zhangshicheng",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jiaxing",
+    "startLine": 390,
+    "name": "嘉兴",
+    "factionId": "qian_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_shanxian",
+    "name": "剡城",
+    "factionId": "qiufu",
+    "line": 396
+  },
+  {
+    "id": "city_longzhou",
+    "name": "汧源",
+    "factionId": "long2",
+    "line": 407
+  },
+  {
+    "id": "city_longxi",
+    "name": "陇西",
+    "factionId": "li_lx_d",
+    "line": 408
+  },
+  {
+    "id": "city_jiuquan",
+    "name": "酒泉城",
+    "factionId": "suzhou",
+    "line": 426
+  },
+  {
+    "id": "city_zhizhicheng",
+    "name": "郅支城",
+    "factionId": "xijue",
+    "line": 430
+  },
+  {
+    "id": "city_chigucheng",
+    "name": "赤谷城",
+    "factionId": "wusun",
+    "line": 431
+  },
+  {
+    "id": "city_guishancheng",
+    "name": "贵山城",
+    "factionId": "dayuan",
+    "line": 432
+  },
+  {
+    "id": "city_loulan",
+    "startLine": 435,
+    "name": "扜泥城",
+    "factionId": "loulan",
+    "type": "small_city"
+  },
+  {
+    "id": "city_shache",
+    "startLine": 443,
+    "name": "渠莎",
+    "factionId": "shache",
+    "type": "small_city"
+  },
+  {
+    "id": "city_yanqi",
+    "name": "员渠城",
+    "factionId": "yanqi",
+    "line": 453
+  },
+  {
+    "id": "city_dunhuang",
+    "startLine": 456,
+    "name": "敦煌",
+    "factionId": "shazhou",
+    "type": "small_city"
+  },
+  {
+    "id": "city_ledu",
+    "name": "浇河",
+    "factionId": "tufa_d",
+    "line": 465
+  },
+  {
+    "id": "city_lintao",
+    "startLine": 467,
+    "name": "临洮",
+    "factionId": "didao",
+    "type": "small_city"
+  },
+  {
+    "id": "city_songzhou",
+    "name": "嘉诚",
+    "factionId": "song2",
+    "line": 475
+  },
+  {
+    "id": "city_jianchang",
+    "name": "邛都",
+    "factionId": "qiong",
+    "line": 476
+  },
+  {
+    "id": "city_toumancheng",
+    "name": "头曼城",
+    "factionId": "xiongnu",
+    "line": 478
+  },
+  {
+    "id": "city_guangnan",
+    "name": "广南",
+    "factionId": "gouding",
+    "line": 480
+  },
+  {
+    "id": "city_liaoyang",
+    "name": "襄平",
+    "factionId": "murong",
+    "line": 481
+  },
+  {
+    "id": "city_chaoyang",
+    "startLine": 484,
+    "name": "朝阳",
+    "factionId": "feng_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jicheng",
+    "startLine": 492,
+    "name": "棘城",
+    "factionId": "yingzhou_ying_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_bailangshan",
+    "startLine": 500,
+    "name": "白狼山",
+    "factionId": "wuhuan",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jiangsheng",
+    "startLine": 509,
+    "name": "降圣",
+    "factionId": "yel",
+    "type": "small_city"
+  },
+  {
+    "id": "city_hezhang",
+    "name": "可乐城",
+    "factionId": "miao",
+    "line": 526
+  },
+  {
+    "id": "city_tancheng",
+    "name": "郯城",
+    "factionId": "dongxian",
+    "line": 527
+  },
+  {
+    "id": "city_qucheng",
+    "name": "朐城",
+    "factionId": "mi",
+    "line": 528
+  },
+  {
+    "id": "city_baibogu",
+    "name": "白波谷",
+    "factionId": "baibo",
+    "line": 529
+  },
+  {
+    "id": "city_baoshan",
+    "name": "永昌",
+    "factionId": "ailao",
+    "line": 530
+  },
+  {
+    "id": "city_guoneicheng",
+    "startLine": 533,
+    "name": "国内城",
+    "factionId": "xuantu",
+    "type": "small_city"
+  },
+  {
+    "id": "city_wuling",
+    "startLine": 550,
+    "name": "武陵",
+    "factionId": "zhongxiang",
+    "type": "small_city"
+  },
+  {
+    "id": "city_wuzhou",
+    "name": "金华",
+    "factionId": "lujian",
+    "line": 575
+  },
+  {
+    "id": "city_quzhou",
+    "name": "信安",
+    "factionId": "gumie",
+    "line": 576
+  },
+  {
+    "id": "city_raozhou",
+    "name": "鄱阳",
+    "factionId": "linshihong",
+    "line": 577
+  },
+  {
+    "id": "city_qianzhou",
+    "name": "南康",
+    "factionId": "dayu",
+    "line": 580
+  },
+  {
+    "id": "city_ziwu",
+    "name": "子午谷",
+    "factionId": "dashun",
+    "line": 591
+  },
+  {
+    "id": "city_feihu",
+    "name": "飞狐",
+    "factionId": "wangyan",
+    "line": 634
+  },
+  {
+    "id": "city_diaoyucheng",
+    "startLine": 650,
+    "name": "钓鱼城",
+    "factionId": "ba",
+    "type": "small_city"
+  },
+  {
+    "id": "city_diezhou",
+    "name": "合川",
+    "factionId": "dangchang",
+    "line": 656
+  },
+  {
+    "id": "city_panzhou",
+    "name": "茂名",
+    "factionId": "gaoliang",
+    "line": 657
+  },
+  {
+    "id": "city_maozhou",
+    "name": "汶川",
+    "factionId": "qingqiang",
+    "line": 658
+  },
+  {
+    "id": "city_qingyuan",
+    "startLine": 660,
+    "name": "清远",
+    "factionId": "chen",
+    "type": "small_city"
+  },
+  {
+    "id": "city_yinzhou",
+    "name": "雕阴",
+    "factionId": "liangshidu",
+    "line": 692
+  },
+  {
+    "id": "city_dongshengzhou",
+    "name": "榆林",
+    "factionId": "dongshengwei",
+    "line": 693
+  },
+  {
+    "id": "city_lueyang",
+    "startLine": 696,
+    "name": "略阳",
+    "factionId": "hanzhong_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_mianchi",
+    "name": "渑池",
+    "factionId": "yangshao",
+    "line": 703
+  },
+  {
+    "id": "city_huaiyin",
+    "startLine": 706,
+    "name": "淮阴",
+    "factionId": "panjun",
+    "type": "small_city"
+  },
+  {
+    "id": "city_dangyang",
+    "startLine": 713,
+    "name": "当阳",
+    "factionId": "quan",
+    "type": "small_city"
+  },
+  {
+    "id": "city_zaoyang",
+    "startLine": 720,
+    "name": "枣阳",
+    "factionId": "zaoyang_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_ruoqiang",
+    "name": "卡克里克",
+    "factionId": "ruoqiang",
+    "line": 729
+  },
+  {
+    "id": "city_qiemo",
+    "startLine": 731,
+    "name": "播仙",
+    "factionId": "qiemo",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jingjue",
+    "startLine": 738,
+    "name": "精绝",
+    "factionId": "yuchi",
+    "type": "small_city"
+  },
+  {
+    "id": "city_pishan",
+    "name": "固玛",
+    "factionId": "pishan",
+    "line": 744
+  },
+  {
+    "id": "city_weili",
+    "startLine": 746,
+    "name": "库尔勒",
+    "factionId": "weili",
+    "type": "small_city"
+  },
+  {
+    "id": "city_yingsuochuan",
+    "name": "鹰娑川",
+    "factionId": "tuerhute",
+    "line": 754
+  },
+  {
+    "id": "city_xingxingxia",
+    "name": "星星峡",
+    "factionId": "panjun",
+    "line": 758
+  },
+  {
+    "id": "city_xiye",
+    "startLine": 763,
+    "name": "叶城",
+    "factionId": "xiye",
+    "type": "small_city"
+  },
+  {
+    "id": "city_xiuxun",
+    "name": "休循",
+    "factionId": "khoja",
+    "line": 776
+  },
+  {
+    "id": "city_yinai",
+    "name": "英吉沙尔",
+    "factionId": "yarkand",
+    "line": 777
+  },
+  {
+    "id": "city_wuzhousai",
+    "name": "武州塞",
+    "factionId": "panjun",
+    "line": 794
+  },
+  {
+    "id": "city_jilusai",
+    "name": "鸡鹿塞",
+    "factionId": "weiming",
+    "line": 797
+  },
+  {
+    "id": "city_xiayangdu",
+    "startLine": 807,
+    "name": "夏阳渡",
+    "factionId": "panjun",
+    "type": "small_city"
+  },
+  {
+    "id": "city_piaoyujin",
+    "startLine": 816,
+    "name": "漂渝津",
+    "factionId": "panjun",
+    "type": "small_city"
+  },
+  {
+    "id": "city_mengshe",
+    "name": "蒙舍城",
+    "factionId": "nanzhao",
+    "line": 843
+  },
+  {
+    "id": "city_hamhung",
+    "name": "咸兴",
+    "factionId": "woju",
+    "line": 865
+  },
+  {
+    "id": "city_longer",
+    "startLine": 867,
+    "name": "笼耳",
+    "factionId": "jingcheng_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_guoyuancheng",
+    "startLine": 876,
+    "name": "国原城",
+    "factionId": "chungju_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_geumseong",
+    "startLine": 885,
+    "name": "锦城",
+    "factionId": "naju_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jeonju",
+    "startLine": 894,
+    "name": "完山",
+    "factionId": "zhen",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jindo",
+    "startLine": 903,
+    "name": "鸣梁",
+    "factionId": "sambyeol",
+    "type": "small_city"
+  },
+  {
+    "id": "city_suncheon_k",
+    "startLine": 913,
+    "name": "顺天",
+    "factionId": "sheng_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_gimhae",
+    "startLine": 923,
+    "name": "金海",
+    "factionId": "gaya",
+    "type": "small_city"
+  },
+  {
+    "id": "city_haeju",
+    "startLine": 933,
+    "name": "朐山",
+    "factionId": "hai2",
+    "type": "small_city"
+  },
+  {
+    "id": "city_longwan",
+    "startLine": 942,
+    "name": "龙湾",
+    "factionId": "xingliao",
+    "type": "small_city"
+  },
+  {
+    "id": "city_fuhan",
+    "startLine": 952,
+    "name": "枹罕",
+    "factionId": "qifu_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_qishan",
+    "name": "岐山",
+    "factionId": "zhou",
+    "line": 968
+  },
+  {
+    "id": "city_tongwancheng",
+    "name": "统万城",
+    "factionId": "helian",
+    "line": 969
+  },
+  {
+    "id": "city_qiuchi",
+    "name": "仇池",
+    "factionId": "qiuchi",
+    "line": 971
+  },
+  {
+    "id": "city_daixian",
+    "name": "广武",
+    "factionId": "dai_d",
+    "line": 972
+  },
+  {
+    "id": "city_yalu",
+    "name": "鸭绿府",
+    "factionId": "dingan",
+    "line": 984
+  },
+  {
+    "id": "city_hetuala",
+    "name": "赫图阿拉",
+    "factionId": "aisin_d",
+    "line": 992
+  },
+  {
+    "id": "city_wuguo",
+    "name": "五国城",
+    "factionId": "jurchen",
+    "line": 993
+  },
+  {
+    "id": "city_guanglu",
+    "name": "光禄城",
+    "factionId": "shatuo",
+    "line": 1008
+  },
+  {
+    "id": "city_yanran_stone",
+    "name": "燕然勒石",
+    "factionId": "xueyantuo",
+    "line": 1009
+  },
+  {
+    "id": "city_chilechuan",
+    "name": "云中",
+    "factionId": "chile",
+    "line": 1011
+  },
+  {
+    "id": "city_lanshi",
+    "name": "蓝氏城",
+    "factionId": "yuezhi",
+    "line": 1012
+  },
+  {
+    "id": "city_weirong",
+    "name": "威戎",
+    "factionId": "quanrong",
+    "line": 1030
+  },
+  {
+    "id": "city_xingtai",
+    "name": "邢台",
+    "factionId": "shizhao_d",
+    "line": 1031
+  },
+  {
+    "id": "city_shengle",
+    "name": "盛乐",
+    "factionId": "yunzhong",
+    "line": 1032
+  },
+  {
+    "id": "city_satsuma",
+    "name": "鹿儿岛城",
+    "factionId": "satsuma",
+    "line": 1035
+  },
+  {
+    "id": "city_tsushima",
+    "name": "金石城",
+    "factionId": "so",
+    "line": 1038
+  },
+  {
+    "id": "city_kiyosu",
+    "name": "清洲城",
+    "factionId": "owari",
+    "line": 1041
+  },
+  {
+    "id": "city_tsutsujigasaki",
+    "name": "躑躅崎馆",
+    "factionId": "kai",
+    "line": 1042
+  },
+  {
+    "id": "city_okafu",
+    "name": "冈丰城",
+    "factionId": "chosokabe",
+    "line": 1043
+  },
+  {
+    "id": "city_himeji",
+    "name": "姬路城",
+    "factionId": "hashiba",
+    "line": 1044
+  },
+  {
+    "id": "city_utsunomiya",
+    "name": "宇都宫城",
+    "factionId": "honda",
+    "line": 1045
+  },
+  {
+    "id": "city_tsuruga",
+    "name": "鹤之城",
+    "factionId": "aizu",
+    "line": 1046
+  },
+  {
+    "id": "city_nabari",
+    "name": "名张",
+    "factionId": "iga_d",
+    "line": 1049
+  },
+  {
+    "id": "city_jianghu",
+    "name": "江沼",
+    "factionId": "kaga_d",
+    "line": 1051
+  },
+  {
+    "id": "city_xiantai",
+    "name": "仙台",
+    "factionId": "date_d",
+    "line": 1052
+  },
+  {
+    "id": "city_xiongben",
+    "name": "熊本",
+    "factionId": "higo_d",
+    "line": 1053
+  },
+  {
+    "id": "city_songshan",
+    "name": "松山",
+    "factionId": "iyo_d",
+    "line": 1054
+  },
+  {
+    "id": "city_funei",
+    "name": "府内",
+    "factionId": "otomo_d",
+    "line": 1055
+  },
+  {
+    "id": "city_gaodao",
+    "name": "高岛",
+    "factionId": "suwa_d",
+    "line": 1056
+  },
+  {
+    "id": "city_shangdang",
+    "name": "长子",
+    "factionId": "xin",
+    "line": 1057
+  },
+  {
+    "id": "city_chenjun",
+    "name": "新蔡",
+    "factionId": "cai",
+    "line": 1061
+  },
+  {
+    "id": "city_qufu",
+    "name": "曲阜",
+    "factionId": "kong_d",
+    "line": 1063
+  },
+  {
+    "id": "city_fusicheng",
+    "name": "伏俟城",
+    "factionId": "tuyu_d",
+    "line": 1067
+  },
+  {
+    "id": "city_xianglin",
+    "startLine": 1069,
+    "name": "象林",
+    "factionId": "linyi",
+    "type": "small_city"
+  },
+  {
+    "id": "city_xucheng",
+    "name": "符离",
+    "factionId": "suzhou_d",
+    "line": 1093
+  },
+  {
+    "id": "city_zhaoge",
+    "startLine": 1098,
+    "name": "朝歌",
+    "factionId": "yin",
+    "type": "small_city"
+  },
+  {
+    "id": "city_liuxian",
+    "name": "六安",
+    "factionId": "liu",
+    "line": 1104
+  },
+  {
+    "id": "city_xiurongchuan",
+    "startLine": 1119,
+    "name": "秀容川",
+    "factionId": "erzhu",
+    "type": "small_city"
+  },
+  {
+    "id": "city_gaoliang",
+    "startLine": 1135,
+    "name": "高凉",
+    "factionId": "xian_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_beishacheng",
+    "name": "卑沙城",
+    "factionId": "gongsun_d",
+    "line": 1141
+  },
+  {
+    "id": "city_nieduo",
+    "name": "孽多",
+    "factionId": "nandou",
+    "line": 1153
+  },
+  {
+    "id": "city_ordubaliq",
+    "name": "富贵城",
+    "factionId": "huige",
+    "line": 1156
+  },
+  {
+    "id": "city_dafang",
+    "name": "大方城",
+    "factionId": "luodian",
+    "line": 1159
+  },
+  {
+    "id": "city_yongzhou",
+    "name": "晋兴",
+    "factionId": "nongzhigao",
+    "line": 1160
+  },
+  {
+    "id": "city_qingxi",
+    "startLine": 1163,
+    "name": "清溪",
+    "factionId": "fangla",
+    "type": "small_city"
+  },
+  {
+    "id": "city_dengzhou",
+    "startLine": 1173,
+    "name": "蓬莱",
+    "factionId": "yang_aner",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jiaoxi",
+    "name": "胶西",
+    "factionId": "tongma",
+    "line": 1181
+  },
+  {
+    "id": "city_almaliq",
+    "name": "弓月城",
+    "factionId": "geluolu",
+    "line": 1190
+  },
+  {
+    "id": "city_emil",
+    "name": "也迷里",
+    "factionId": "ogodei",
+    "line": 1191
+  },
+  {
+    "id": "city_kereyid",
+    "name": "汪吉河",
+    "factionId": "kereyid",
+    "line": 1193
+  },
+  {
+    "id": "city_fuhai",
+    "name": "福海",
+    "factionId": "naiman",
+    "line": 1195
+  },
+  {
+    "id": "city_tatar",
+    "name": "哈拉哈河",
+    "factionId": "tatar",
+    "line": 1196
+  },
+  {
+    "id": "city_merkit",
+    "name": "色楞格河",
+    "factionId": "merkit",
+    "line": 1198
+  },
+  {
+    "id": "city_xinhui",
+    "startLine": 1203,
+    "name": "新会",
+    "factionId": "luoping",
+    "type": "small_city"
+  },
+  {
+    "id": "city_ninghai",
+    "startLine": 1207,
+    "name": "宁海",
+    "factionId": "daxing",
+    "type": "small_city"
+  },
+  {
+    "id": "city_zhenghe",
+    "startLine": 1211,
+    "name": "政和",
+    "factionId": "dacheng",
+    "type": "small_city"
+  },
+  {
+    "id": "city_zhangzhou",
+    "startLine": 1215,
+    "name": "龙溪",
+    "factionId": "chendiaoyan",
+    "type": "small_city"
+  },
+  {
+    "id": "city_tingzhou",
+    "name": "黄连",
+    "factionId": "kejia",
+    "line": 1218
+  },
+  {
+    "id": "city_qingyuan_zj",
+    "startLine": 1223,
+    "name": "庆元",
+    "factionId": "fang_guozhen",
+    "type": "small_city"
+  },
+  {
+    "id": "city_taizhou_zj",
+    "startLine": 1227,
+    "name": "临海",
+    "factionId": "ouyue",
+    "type": "small_city"
+  },
+  {
+    "id": "city_wenzhou",
+    "startLine": 1231,
+    "name": "永嘉",
+    "factionId": "ting",
+    "type": "small_city"
+  },
+  {
+    "id": "city_yanping",
+    "startLine": 1242,
+    "name": "延平",
+    "factionId": "geng",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jianning",
+    "startLine": 1246,
+    "name": "建宁",
+    "factionId": "longwu",
+    "type": "small_city"
+  },
+  {
+    "id": "city_chuzhou_zj",
+    "startLine": 1250,
+    "name": "丽水",
+    "factionId": "yezongliu",
+    "type": "small_city"
+  },
+  {
+    "id": "city_wenan",
+    "startLine": 1254,
+    "name": "文安",
+    "factionId": "hejian",
+    "type": "small_city"
+  },
+  {
+    "id": "city_wudingzhou",
+    "name": "乐安",
+    "factionId": "dizhou",
+    "line": 1258
+  },
+  {
+    "id": "city_hetao",
+    "name": "河套",
+    "factionId": "dada_ming",
+    "line": 1261
+  },
+  {
+    "id": "city_kobdo",
+    "startLine": 1263,
+    "name": "科布多",
+    "factionId": "oirat_ming",
+    "type": "small_city"
+  },
+  {
+    "id": "city_yeren_base",
+    "startLine": 1267,
+    "name": "瑷珲",
+    "factionId": "yeren_nvzhen",
+    "type": "small_city"
+  },
+  {
+    "id": "city_guihua",
+    "startLine": 1286,
+    "name": "归化城",
+    "factionId": "tumed",
+    "type": "small_city"
+  },
+  {
+    "id": "city_kulun",
+    "startLine": 1291,
+    "name": "库伦",
+    "factionId": "tushetu",
+    "type": "small_city"
+  },
+  {
+    "id": "city_yili",
+    "name": "固尔札",
+    "factionId": "xibo_d",
+    "line": 1293
+  },
+  {
+    "id": "city_yadong",
+    "name": "卓木",
+    "factionId": "gaxa",
+    "line": 1294
+  },
+  {
+    "id": "city_leweizhai",
+    "name": "勒乌围",
+    "factionId": "jinchuan_g",
+    "line": 1295
+  },
+  {
+    "id": "city_meinuozhai",
+    "startLine": 1297,
+    "name": "美诺寨",
+    "factionId": "jinchuan_x",
+    "type": "small_city"
+  },
+  {
+    "id": "city_zhaoqing",
+    "startLine": 1300,
+    "name": "肇庆",
+    "factionId": "duanzhou_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_changhua_tw",
+    "startLine": 1303,
+    "name": "彰化",
+    "factionId": "shuntian",
+    "type": "small_city"
+  },
+  {
+    "id": "city_pinglong",
+    "name": "平陇",
+    "factionId": "miaomin",
+    "line": 1305
+  },
+  {
+    "id": "city_turkestan",
+    "startLine": 1308,
+    "name": "亚西",
+    "factionId": "kazakh",
+    "type": "small_city"
+  },
+  {
+    "id": "city_kokand",
+    "name": "浩罕",
+    "factionId": "kokand",
+    "line": 1311
+  },
+  {
+    "id": "city_fayzabad",
+    "name": "法扎巴德",
+    "factionId": "badakhshan",
+    "line": 1313
+  },
+  {
+    "id": "city_jintian",
+    "startLine": 1318,
+    "name": "金田村",
+    "factionId": "taiping",
+    "type": "small_city"
+  },
+  {
+    "id": "city_shanghai",
+    "startLine": 1322,
+    "name": "上海",
+    "factionId": "chunshen",
+    "type": "small_city"
+  },
+  {
+    "id": "city_yangxian",
+    "startLine": 1327,
+    "name": "兴势",
+    "factionId": "shu_han",
+    "type": "small_city"
+  },
+  {
+    "id": "city_piandaoshui",
+    "name": "偏刀水",
+    "factionId": "qianhui",
+    "line": 1337
+  },
+  {
+    "id": "city_wuliyasutai",
+    "name": "乌城",
+    "factionId": "zhasaketu",
+    "line": 1343
+  },
+  {
+    "id": "city_tuokexun",
+    "name": "托克逊",
+    "factionId": "duerbote",
+    "line": 1348
+  },
+  {
+    "id": "city_dabancheng",
+    "name": "达坂城",
+    "factionId": "tuoming",
+    "line": 1350
+  },
+  {
+    "id": "city_nanghar",
+    "name": "囊哈儿",
+    "factionId": "jilimi",
+    "line": 1353
+  },
+  {
+    "id": "city_yanaginogosho",
+    "startLine": 1359,
+    "name": "柳之御所",
+    "factionId": "fujiwara",
+    "type": "small_city"
+  },
+  {
+    "id": "city_fenglin",
+    "name": "凤林城",
+    "factionId": "yilou",
+    "line": 1364
+  },
+  {
+    "id": "city_pidao",
+    "startLine": 1370,
+    "name": "皮岛",
+    "factionId": "mao_wenlong",
+    "type": "small_city"
+  },
+  {
+    "id": "city_tongjiajiang",
+    "startLine": 1376,
+    "name": "浑江",
+    "factionId": "jianzhou_nvzhen",
+    "type": "small_city"
+  },
+  {
+    "id": "city_xiaoyenisei",
+    "name": "贝加尔",
+    "factionId": "dingling",
+    "line": 1383
+  },
+  {
+    "id": "city_yingchang",
+    "name": "应昌",
+    "factionId": "da_yuan",
+    "line": 1387
+  },
+  {
+    "id": "city_ordos",
+    "name": "延恩",
+    "factionId": "shuofang",
+    "line": 1391
+  },
+  {
+    "id": "city_ruoshui",
+    "name": "弱水畔",
+    "factionId": "yujiulu",
+    "line": 1392
+  },
+  {
+    "id": "city_suoling",
+    "name": "娑陵",
+    "factionId": "yaoluoge",
+    "line": 1394
+  },
+  {
+    "id": "city_kerulen",
+    "name": "克鲁伦河",
+    "factionId": "jalair",
+    "line": 1400
+  },
+  {
+    "id": "city_erguna",
+    "name": "捕鱼儿海",
+    "factionId": "hongirad",
+    "line": 1401
+  },
+  {
+    "id": "city_dzungar_basin",
+    "name": "和博克",
+    "factionId": "choros",
+    "line": 1402
+  },
+  {
+    "id": "city_hanhai",
+    "name": "瀚海",
+    "factionId": "tiele",
+    "line": 1403
+  },
+  {
+    "id": "city_talas",
+    "name": "怛罗斯",
+    "factionId": "tujishi",
+    "line": 1407
+  },
+  {
+    "id": "city_bukhara",
+    "startLine": 1409,
+    "name": "蒲华",
+    "factionId": "an",
+    "type": "small_city"
+  },
+  {
+    "id": "city_tashkent",
+    "startLine": 1412,
+    "name": "柘折城",
+    "factionId": "shi_clan",
+    "type": "small_city"
+  },
+  {
+    "id": "city_qionglong",
+    "name": "穹窿银",
+    "factionId": "xiangxiong",
+    "line": 1416
+  },
+  {
+    "id": "city_leh",
+    "name": "列城",
+    "factionId": "ladakh",
+    "line": 1417
+  },
+  {
+    "id": "city_qingtang",
+    "startLine": 1420,
+    "name": "青唐城",
+    "factionId": "gusiluo",
+    "type": "small_city"
+  },
+  {
+    "id": "city_dangxiong",
+    "name": "当雄",
+    "factionId": "khoshut",
+    "line": 1422
+  },
+  {
+    "id": "city_mapangyongcuo",
+    "name": "玛旁雍错",
+    "factionId": "nvguo",
+    "line": 1426
+  },
+  {
+    "id": "city_kangyanchuan",
+    "startLine": 1429,
+    "name": "察木多",
+    "factionId": "bailan",
+    "type": "small_city"
+  },
+  {
+    "id": "city_heizong",
+    "name": "黑河宗",
+    "factionId": "ganden",
+    "line": 1431
+  },
+  {
+    "id": "city_cuona",
+    "name": "错那",
+    "factionId": "monpa",
+    "line": 1432
+  },
+  {
+    "id": "city_metuo",
+    "name": "墨脱",
+    "factionId": "lopi",
+    "line": 1433
+  },
+  {
+    "id": "city_chubusi",
+    "name": "楚布寺",
+    "factionId": "karmapa",
+    "line": 1435
+  },
+  {
+    "id": "city_ava",
+    "startLine": 1440,
+    "name": "阿瓦",
+    "factionId": "ava",
+    "type": "small_city"
+  },
+  {
+    "id": "city_srikshetra",
+    "startLine": 1448,
+    "name": "室利差罗",
+    "factionId": "pyu",
+    "type": "small_city"
+  },
+  {
+    "id": "city_thaton",
+    "startLine": 1451,
+    "name": "直通城",
+    "factionId": "mon",
+    "type": "small_city"
+  },
+  {
+    "id": "city_tonghai",
+    "startLine": 1455,
+    "name": "新兴",
+    "factionId": "dian",
+    "type": "small_city"
+  },
+  {
+    "id": "city_hailongtun",
+    "name": "海龙屯",
+    "factionId": "yang_bozhou",
+    "line": 1457
+  },
+  {
+    "id": "city_zhenyuan",
+    "name": "镇远",
+    "factionId": "tian_sizhou",
+    "line": 1458
+  },
+  {
+    "id": "city_mufu",
+    "name": "独克宗",
+    "factionId": "jiantang",
+    "line": 1460
+  },
+  {
+    "id": "city_huashan",
+    "name": "花山",
+    "factionId": "luoyue",
+    "line": 1470
+  },
+  {
+    "id": "city_hepu",
+    "name": "合浦",
+    "factionId": "li_s",
+    "line": 1471
+  },
+  {
+    "id": "city_haikang",
+    "name": "海康",
+    "factionId": "leizhou",
+    "line": 1472
+  },
+  {
+    "id": "city_myson",
+    "startLine": 1474,
+    "name": "美山",
+    "factionId": "champa",
+    "type": "small_city"
+  },
+  {
+    "id": "city_hoalu",
+    "startLine": 1478,
+    "name": "华闾",
+    "factionId": "jing",
+    "type": "small_city"
+  },
+  {
+    "id": "city_hoabinh",
+    "startLine": 1488,
+    "name": "和平",
+    "factionId": "muong",
+    "type": "small_city"
+  },
+  {
+    "id": "city_mudan",
+    "startLine": 1492,
+    "name": "牡丹社",
+    "factionId": "paiwan",
+    "type": "small_city"
+  },
+  {
+    "id": "city_cen",
+    "name": "凌云",
+    "factionId": "cen_d",
+    "line": 1495
+  },
+  {
+    "id": "city_xidu",
+    "startLine": 1499,
+    "name": "西都城",
+    "factionId": "trinh",
+    "type": "small_city"
+  },
+  {
+    "id": "city_dangqu",
+    "startLine": 1506,
+    "name": "宕渠",
+    "factionId": "cong",
+    "type": "small_city"
+  },
+  {
+    "id": "city_fuzhou_fugu",
+    "startLine": 1511,
+    "name": "府谷",
+    "factionId": "zhe_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_wanling",
+    "startLine": 1514,
+    "name": "宛陵城",
+    "factionId": "shanyue",
+    "type": "small_city"
+  },
+  {
+    "id": "city_chimushan",
+    "startLine": 1517,
+    "name": "敕木山",
+    "factionId": "she_ethnic",
+    "type": "small_city"
+  },
+  {
+    "id": "city_qingjingsi",
+    "startLine": 1520,
+    "name": "刺桐",
+    "factionId": "pu",
+    "type": "small_city"
+  },
+  {
+    "id": "city_wulingshan",
+    "startLine": 1525,
+    "name": "武陵山",
+    "factionId": "tu",
+    "type": "small_city"
+  },
+  {
+    "id": "city_xingqing",
+    "name": "安化",
+    "factionId": "qing",
+    "line": 1542
+  },
+  {
+    "id": "city_yongan",
+    "name": "永安",
+    "factionId": "jingjiang",
+    "line": 1545
+  },
+  {
+    "id": "city_dongkang",
+    "name": "东康",
+    "factionId": "sushen",
+    "line": 1547
+  },
+  {
+    "id": "city_kanka",
+    "name": "康卡",
+    "factionId": "kangju",
+    "line": 1548
+  },
+  {
+    "id": "city_asuka",
+    "name": "千早城",
+    "factionId": "yamato",
+    "line": 1549
+  },
+  {
+    "id": "city_boduo",
+    "name": "伯都",
+    "factionId": "wuji",
+    "line": 1558
+  },
+  {
+    "id": "city_varaksha",
+    "name": "瓦拉赫沙",
+    "factionId": "sogdian",
+    "line": 1559
+  },
+  {
+    "id": "city_raoleshui",
+    "startLine": 1561,
+    "name": "饶乐水",
+    "factionId": "panjun",
+    "type": "small_city"
+  },
+  {
+    "id": "city_wuchuanzhen",
+    "name": "武川镇",
+    "factionId": "yuwen",
+    "line": 1568
+  },
+  {
+    "id": "city_yixian",
+    "startLine": 1578,
+    "name": "黟城",
+    "factionId": "wang_s",
+    "type": "small_city"
+  },
+  {
+    "id": "city_laifeng",
+    "startLine": 1587,
+    "name": "来凤",
+    "factionId": "xiang_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_cili",
+    "startLine": 1594,
+    "name": "慈利",
+    "factionId": "tan_d",
+    "type": "small_city"
+  },
+  {
+    "id": "city_xiushan",
+    "name": "秀山",
+    "factionId": "ran_d",
+    "line": 1600
+  },
+  {
+    "id": "city_qianshan",
+    "name": "潜山",
+    "factionId": "chu_d",
+    "line": 1601
+  },
+  {
+    "id": "city_bamian",
+    "startLine": 1606,
+    "name": "八面山",
+    "factionId": "wuxi",
+    "type": "small_city"
+  },
+  {
+    "id": "city_jiading",
+    "name": "甲定",
+    "factionId": "shengmiao",
+    "line": 1614
+  },
+  {
+    "id": "city_qielancheng",
+    "name": "且兰城",
+    "factionId": "miao_qing",
+    "line": 1617
+  },
+  {
+    "id": "city_yunwu",
+    "startLine": 1621,
+    "name": "允吾",
+    "factionId": "xianlingqiang",
+    "type": "small_city"
+  },
+  {
+    "id": "city_fangling",
+    "name": "房陵",
+    "factionId": "kuai",
+    "line": 1629
+  },
+  {
+    "id": "city_shangyong",
+    "name": "竹山",
+    "factionId": "yong",
+    "line": 1632
+  },
+  {
+    "id": "city_junzhou",
+    "name": "武当",
+    "factionId": "bailian",
+    "line": 1633
+  },
+  {
+    "id": "city_jinzhou_shanxi",
+    "startLine": 1637,
+    "name": "安康",
+    "factionId": "shen",
+    "type": "small_city"
+  },
+  {
+    "id": "city_leshan",
+    "startLine": 1646,
+    "name": "乐山",
+    "factionId": "sou",
+    "type": "small_city"
+  },
+  {
+    "id": "city_hanchang",
+    "startLine": 1655,
+    "name": "汉昌",
+    "factionId": "bandun",
+    "type": "small_city"
+  },
+  {
+    "id": "city_maqu",
+    "name": "玛曲",
+    "factionId": "shaodang",
+    "line": 1663
+  },
+  {
+    "id": "city_hezhou",
+    "startLine": 1676,
+    "name": "临贺",
+    "factionId": "panyao",
+    "type": "small_city"
+  },
+  {
+    "id": "city_yongzhou_hn",
+    "name": "零陵",
+    "factionId": "jiang_s",
+    "line": 1692
+  },
+  {
+    "id": "city_yazhou",
+    "name": "珠崖",
+    "factionId": "liren",
+    "line": 1694
+  },
+  {
+    "id": "city_pibo",
+    "name": "匹播",
+    "factionId": "lang_clan",
+    "line": 1696
+  },
+  {
+    "id": "city_huashixia",
+    "name": "花石峡",
+    "factionId": "golog",
+    "line": 1700
+  },
+  {
+    "id": "city_wendeng",
+    "name": "文登",
+    "factionId": "weihaiwei",
+    "line": 1703
+  },
+  {
+    "id": "city_guangyuan",
+    "name": "广源",
+    "factionId": "nong2",
+    "line": 1714
+  },
+  {
+    "id": "city_yongning2",
+    "name": "叙永",
+    "factionId": "she",
+    "line": 1716
+  },
+  {
+    "id": "city_jiangyang",
+    "name": "江阳",
+    "factionId": "liao",
+    "line": 1718
+  },
+  {
+    "id": "city_juzhou",
+    "name": "顺元",
+    "factionId": "qian",
+    "line": 1720
+  },
+  {
+    "id": "city_genjo",
+    "name": "根城",
+    "factionId": "nanbu",
+    "line": 1723
+  },
+  {
+    "id": "city_amucheng",
+    "name": "阿母城",
+    "factionId": "saman",
+    "line": 1724
+  },
+  {
+    "id": "city_hepancheng",
+    "name": "石头城",
+    "factionId": "hepan",
+    "line": 1725
+  },
+  {
+    "id": "city_humicheng",
+    "name": "护密城",
+    "factionId": "qiepantuo",
+    "line": 1726
+  },
+  {
+    "id": "city_huoguocheng",
+    "name": "阿缓城",
+    "factionId": "yanda",
+    "line": 1727
+  },
+  {
+    "id": "city_dargan",
+    "name": "达尔甘",
+    "factionId": "mamon",
+    "line": 1730
+  },
+  {
+    "id": "city_fariyab",
+    "name": "法里亚布",
+    "factionId": "guzgan",
+    "line": 1731
+  },
+  {
+    "id": "city_mengle",
+    "name": "勐泐城",
+    "factionId": "dai",
+    "line": 1732
+  },
+  {
+    "id": "city_chingkham",
+    "name": "清坎城",
+    "factionId": "taiyuan",
+    "line": 1733
+  },
+  {
+    "id": "city_shuanghe",
+    "name": "双河城",
+    "factionId": "suke",
+    "line": 1734
+  },
+  {
+    "id": "city_khorat",
+    "name": "呵叻城",
+    "factionId": "luohu",
+    "line": 1735
+  },
+  {
+    "id": "city_valen",
+    "name": "瓦伦",
+    "factionId": "nanai",
+    "line": 1739
+  },
+  {
+    "id": "city_qiji",
+    "name": "普禄",
+    "factionId": "feiyaka",
+    "line": 1740
+  },
+  {
+    "id": "city_khiva",
+    "name": "希瓦",
+    "factionId": "anushidgin",
+    "line": 1743
+  },
+  {
+    "id": "city_rituzong",
+    "name": "日土宗",
+    "factionId": "nanjie",
+    "line": 1744
+  },
+  {
+    "id": "city_zhadunzong",
+    "name": "扎敦宗",
+    "factionId": "gandenpozhang",
+    "line": 1748
+  },
+  {
+    "id": "city_sanlongsha",
+    "name": "三陇沙",
+    "factionId": "panjun",
+    "line": 1749
+  },
+  {
+    "id": "city_porbazhyn",
+    "name": "博尔巴任",
+    "factionId": "wala",
+    "line": 1754
+  },
+  {
+    "id": "city_moergen",
+    "name": "莫尔根",
+    "factionId": "dawoer",
+    "line": 1755
+  },
+  {
+    "id": "city_donghai",
+    "name": "洞海城",
+    "factionId": "guangnanguo",
+    "line": 1756
+  },
+  {
+    "id": "city_baidalik",
+    "name": "拜达里克",
+    "factionId": "tumengken",
+    "line": 1759
+  },
+  {
+    "id": "city_jiegu",
+    "name": "结古宗",
+    "factionId": "gling",
+    "line": 1762
+  },
+  {
+    "id": "city_qiongbu",
+    "name": "丁青宗",
+    "factionId": "khyungpo",
+    "line": 1763
+  },
+  {
+    "id": "city_bukui",
+    "name": "卜奎",
+    "factionId": "suolun",
+    "line": 1764
+  },
+  {
+    "id": "city_teshuolankalun",
+    "name": "唐努",
+    "factionId": "tuva",
+    "line": 1765
+  },
+  {
+    "id": "city_akaogicheng",
+    "name": "赤尾木城",
+    "factionId": "osumi",
+    "line": 1768
+  },
+  {
+    "id": "city_akakinagusuku",
+    "name": "赤木名城",
+    "factionId": "anmei",
+    "line": 1769
+  },
+  {
+    "id": "city_riwoche",
+    "name": "类乌齐",
+    "factionId": "dalung",
+    "line": 1772
+  },
+  {
+    "id": "city_derge",
+    "name": "德格",
+    "factionId": "gar_kham",
+    "line": 1773
+  },
+  {
+    "id": "city_ganzi",
+    "name": "甘孜",
+    "factionId": "kongsa",
+    "line": 1774
+  },
+  {
+    "id": "city_dajianlu",
+    "name": "打箭炉",
+    "factionId": "mingzheng",
+    "line": 1775
+  },
+  {
+    "id": "city_basu",
+    "name": "八宿宗",
+    "factionId": "daca",
+    "line": 1778
+  },
+  {
+    "id": "city_yinsheng",
+    "name": "银生城",
+    "factionId": "jingdong",
+    "line": 1782
+  },
+  {
+    "id": "city_suozong",
+    "name": "索宗",
+    "factionId": "hor",
+    "line": 1785
+  },
+  {
+    "id": "city_nangqian",
+    "name": "囊谦宗",
+    "factionId": "dong",
+    "line": 1788
+  },
+  {
+    "id": "city_nichi",
+    "name": "太昭",
+    "factionId": "gongbu",
+    "line": 1791
+  },
+  {
+    "id": "city_litangzong",
+    "name": "理塘宗",
+    "factionId": "kangba",
+    "line": 1792
+  },
+  {
+    "id": "city_heishacheng",
+    "name": "黑沙城",
+    "factionId": "ashide",
+    "line": 1795
+  },
+  {
+    "id": "city_beiluocheng",
+    "name": "孛罗城",
+    "factionId": "duolu",
+    "line": 1797
+  },
+  {
+    "id": "city_wutucheng",
+    "name": "务涂城",
+    "factionId": "cheshihou",
+    "line": 1801
+  },
+  {
+    "id": "city_gaochangcheng",
+    "name": "高昌",
+    "factionId": "yiduhu",
+    "line": 1803
+  },
+  {
+    "id": "city_jinchangcheng",
+    "name": "晋昌城",
+    "factionId": "guazhou",
+    "line": 1806
+  },
+  {
+    "id": "city_jieshuangna",
+    "name": "羯霜那",
+    "factionId": "jie",
+    "line": 1807
+  },
+  {
+    "id": "city_jizhake",
+    "name": "吉扎克",
+    "factionId": "kawusi",
+    "line": 1818
+  },
+  {
+    "id": "city_yierkeshentan",
+    "name": "斯姆哈纳",
+    "factionId": "keerkezi",
+    "line": 1819
+  },
+  {
+    "id": "city_luntai",
+    "name": "轮台",
+    "factionId": "quli",
+    "line": 1821
+  },
+  {
+    "id": "city_duluohe",
+    "name": "独逻河",
+    "factionId": "kaerka",
+    "line": 1822
+  },
+  {
+    "id": "city_guyanshan",
+    "name": "姑衍山",
+    "factionId": "panjun",
+    "line": 1823
+  },
+  {
+    "id": "city_naomaohu",
+    "name": "淖毛湖",
+    "factionId": "huyan",
+    "line": 1824
+  },
+  {
+    "id": "city_aodongcheng",
+    "name": "敖东城",
+    "factionId": "dongdan",
+    "line": 1826
+  },
+  {
+    "id": "city_tuhe",
+    "name": "徒河",
+    "factionId": "jinzhou",
+    "line": 1829
+  },
+  {
+    "id": "city_feiru",
+    "name": "肥如",
+    "factionId": "guzhu",
+    "line": 1830
+  },
+  {
+    "id": "city_wuzhong",
+    "name": "无终",
+    "factionId": "shanrong",
+    "line": 1831
+  },
+  {
+    "id": "city_wugucheng",
+    "name": "乌骨城",
+    "factionId": "huimo",
+    "line": 1832
+  },
+  {
+    "id": "city_shangzhou",
+    "name": "三白",
+    "factionId": "sabeol",
+    "line": 1833
+  },
+  {
+    "id": "city_yuanzhishi",
+    "name": "原之辻",
+    "factionId": "yizhi",
+    "line": 1834
+  },
+  {
+    "id": "city_taizaifu",
+    "name": "太宰府",
+    "factionId": "zhuqian",
+    "line": 1835
+  },
+  {
+    "id": "city_guizhicheng",
+    "name": "鬼之城",
+    "factionId": "jibei2",
+    "line": 1837
+  },
+  {
+    "id": "city_junfucheng",
+    "name": "骏府城",
+    "factionId": "jinchuan",
+    "line": 1838
+  },
+  {
+    "id": "city_xuanhua",
+    "startLine": 1840,
+    "name": "宣化",
+    "factionId": "xuan",
+    "type": "small_city"
+  },
+  {
+    "id": "city_xinghe",
+    "name": "兴和",
+    "factionId": "chahar",
+    "line": 1847
+  },
+  {
+    "id": "city_jining",
+    "name": "集宁",
+    "factionId": "baidi",
+    "line": 1848
+  },
+  {
+    "id": "city_jingzhou",
+    "name": "净州塞",
+    "factionId": "ongut",
+    "line": 1849
+  },
+  {
+    "id": "city_saierwusu",
+    "name": "赛尔乌苏",
+    "factionId": "rouran",
+    "line": 1851
+  },
+  {
+    "id": "city_tongdi",
+    "name": "铜鞮",
+    "factionId": "yangshe",
+    "line": 1852
+  },
+  {
+    "id": "city_huojia",
+    "name": "获嘉",
+    "factionId": "sima_d",
+    "line": 1853
+  },
+  {
+    "id": "city_fushi",
+    "name": "肤施",
+    "factionId": "zhai_han",
+    "line": 1855
+  },
+  {
+    "id": "city_changze",
+    "name": "长泽",
+    "factionId": "kang",
+    "line": 1856
+  },
+  {
+    "id": "city_linrong",
+    "name": "临戎",
+    "factionId": "woye",
+    "line": 1857
+  },
+  {
+    "id": "city_aowei",
+    "name": "媪围",
+    "factionId": "lushui",
+    "line": 1858
+  },
+  {
+    "id": "city_mingsha",
+    "name": "鸣沙",
+    "factionId": "yingli",
+    "line": 1859
+  },
+  {
+    "id": "city_lingju",
+    "name": "令居",
+    "factionId": "guangwu",
+    "line": 1861
+  },
+  {
+    "id": "city_zuli",
+    "name": "祖厉",
+    "factionId": "huizhou",
+    "line": 1865
+  },
+  {
+    "id": "city_zhedi",
+    "name": "折墌",
+    "factionId": "xiqin",
+    "line": 1867
+  },
+  {
+    "id": "city_jingling",
+    "name": "竟陵",
+    "factionId": "ruochu",
+    "line": 1870
+  },
+  {
+    "id": "city_yunmeng",
+    "name": "云梦",
+    "factionId": "mi_chu",
+    "line": 1871
+  },
+  {
+    "id": "city_shizhu",
+    "name": "石柱",
+    "factionId": "tujia_d",
+    "line": 1873
+  },
+  {
+    "id": "city_bijie",
+    "name": "毕节",
+    "factionId": "shuixi",
+    "line": 1874
+  },
+  {
+    "id": "city_tianyang",
+    "name": "田阳",
+    "factionId": "zhuang_d",
+    "line": 1875
+  },
+  {
+    "id": "city_liyang",
+    "name": "巨鹿",
+    "factionId": "ranwei_d",
+    "line": 1877
+  },
+  {
+    "id": "city_ningyuan",
+    "name": "宁远",
+    "factionId": "zu_d",
+    "line": 1878
+  },
+  {
+    "id": "city_shuangcheng",
+    "name": "双城",
+    "factionId": "wanyan_d",
+    "line": 1879
+  },
+  {
+    "id": "city_salhu",
+    "name": "萨尔浒",
+    "factionId": "manzhou",
+    "line": 1880
+  },
+  {
+    "id": "city_quwo",
+    "name": "曲沃",
+    "factionId": "jin",
+    "line": 1882
+  },
+  {
+    "id": "city_tacheng",
+    "name": "塔城",
+    "factionId": "dzungar",
+    "line": 1883
+  },
+  {
+    "id": "city_hamiwei",
+    "name": "哈密卫",
+    "factionId": "yiwu",
+    "line": 1884
+  },
+  {
+    "id": "city_bieshibali",
+    "name": "别失八里",
+    "factionId": "chagatai",
+    "line": 1885
+  },
+  {
+    "id": "city_balikun",
+    "name": "巴里坤",
+    "factionId": "pulei",
+    "line": 1886
+  },
+  {
+    "id": "city_woluduocheng",
+    "name": "窝鲁朵",
+    "factionId": "huihu",
+    "line": 1890
+  },
+  {
+    "id": "city_douweihunhe",
+    "name": "都尉溷河",
+    "factionId": "kelie",
+    "line": 1891
+  },
+  {
+    "id": "city_qudiaoalan",
+    "name": "曲雕阿兰",
+    "factionId": "borjigin",
+    "line": 1893
+  },
+  {
+    "id": "city_bayanwula",
+    "name": "巴彦乌拉",
+    "factionId": "donghu",
+    "line": 1895
+  },
+  {
+    "id": "city_halagaitu2",
+    "name": "哈拉盖图",
+    "factionId": "xingan",
+    "line": 1896
+  },
+  {
+    "id": "city_kuoyitian",
+    "name": "阔亦田",
+    "factionId": "zhadalan",
+    "line": 1897
+  },
+  {
+    "id": "city_sangguer",
+    "name": "斡难河",
+    "factionId": "zhuerqi",
+    "line": 1898
+  },
+  {
+    "id": "city_bayantumen",
+    "name": "巴彦图门",
+    "factionId": "chechen",
+    "line": 1899
+  },
+  {
+    "id": "city_huzhan",
+    "name": "忽毡",
+    "factionId": "zhaowu",
+    "line": 1900
+  },
+  {
+    "id": "city_aoshen",
+    "name": "奥什",
+    "factionId": "kala",
+    "line": 1901
+  },
+  {
+    "id": "city_dawushenkate",
+    "name": "三重城",
+    "factionId": "wensu",
+    "line": 1902
+  },
+  {
+    "id": "city_mazhatage",
+    "name": "麻扎塔格",
+    "factionId": "pisha",
+    "line": 1904
+  },
+  {
+    "id": "city_yumi",
+    "name": "阿赫雅尔",
+    "factionId": "yumi",
+    "line": 1906
+  },
+  {
+    "id": "city_longmucuo",
+    "name": "龙木错",
+    "factionId": "yangtong",
+    "line": 1908
+  },
+  {
+    "id": "city_gadake",
+    "name": "噶大克",
+    "factionId": "ali",
+    "line": 1909
+  },
+  {
+    "id": "city_payangyi",
+    "name": "帕羊驿",
+    "factionId": "supi",
+    "line": 1911
+  },
+  {
+    "id": "city_saga",
+    "name": "萨噶",
+    "factionId": "faqiang",
+    "line": 1912
+  },
+  {
+    "id": "city_sajia",
+    "name": "萨迦",
+    "factionId": "khon",
+    "line": 1914
+  },
+  {
+    "id": "city_sangzhuzi",
+    "name": "桑珠孜",
+    "factionId": "tsangpa",
+    "line": 1916
+  },
+  {
+    "id": "city_jiamachikang",
+    "name": "甲玛赤康",
+    "factionId": "spurgyal",
+    "line": 1918
+  },
+  {
+    "id": "city_juemuzong",
+    "name": "觉木宗",
+    "factionId": "niang",
+    "line": 1919
+  },
+  {
+    "id": "city_galangzong",
+    "name": "噶朗宗",
+    "factionId": "galangdiba",
+    "line": 1920
+  },
+  {
+    "id": "city_mangkangzong",
+    "name": "芒康宗",
+    "factionId": "fuguo",
+    "line": 1921
+  },
+  {
+    "id": "city_adunzi",
+    "name": "阿墩子",
+    "factionId": "bailang",
+    "line": 1922
+  },
+  {
+    "id": "city_dayan",
+    "name": "大研",
+    "factionId": "mu_lijiang",
+    "line": 1923
+  },
+  {
+    "id": "city_tengyuecheng",
+    "name": "腾越城",
+    "factionId": "pingnan",
+    "line": 1924
+  },
+  {
+    "id": "city_mengmao",
+    "name": "勐卯",
+    "factionId": "luchuan",
+    "line": 1925
+  },
+  {
+    "id": "city_xiwanjin",
+    "name": "悉万斤",
+    "factionId": "yada",
+    "line": 1926
+  },
+  {
+    "id": "city_hunduduo",
+    "name": "昏度多",
+    "factionId": "humi",
+    "line": 1927
+  },
+  {
+    "id": "city_puticheng",
+    "name": "菩提城",
+    "factionId": "xiaobolu",
+    "line": 1928
+  },
+  {
+    "id": "city_kajier",
+    "name": "喀吉尔",
+    "factionId": "jiashi",
+    "line": 1929
+  },
+  {
+    "id": "city_zhaburang2",
+    "name": "札布让",
+    "factionId": "guge",
+    "line": 1930
+  },
+  {
+    "id": "city_jiangzi",
+    "name": "江孜",
+    "factionId": "pazhu",
+    "line": 1931
+  },
+  {
+    "id": "city_linqiong",
+    "name": "临邛",
+    "factionId": "zhuoshi",
+    "line": 1932
+  },
+  {
+    "id": "city_yandao",
+    "name": "严道",
+    "factionId": "qingyi",
+    "line": 1933
+  },
+  {
+    "id": "city_yuegui",
+    "name": "越嶲",
+    "factionId": "panjun",
+    "line": 1935
+  },
+  {
+    "id": "city_huichuan",
+    "name": "会川",
+    "factionId": "kunming_yi",
+    "line": 1936
+  },
+  {
+    "id": "city_chenzhou2",
+    "name": "沅陵",
+    "factionId": "pengshi",
+    "line": 1938
+  },
+  {
+    "id": "city_yuanzhou",
+    "name": "芷江",
+    "factionId": "qianzhong",
+    "line": 1939
+  },
+  {
+    "id": "city_puding",
+    "name": "普定",
+    "factionId": "yelang",
+    "line": 1940
+  },
+  {
+    "id": "city_weixian2",
+    "name": "曲靖",
+    "factionId": "cuanshi",
+    "line": 1942
+  },
+  {
+    "id": "city_weichu",
+    "name": "威楚",
+    "factionId": "baiman",
+    "line": 1943
+  },
+  {
+    "id": "city_luoxiong",
+    "name": "罗雄",
+    "factionId": "xinggu",
+    "line": 1945
+  },
+  {
+    "id": "city_wanwen",
+    "name": "宛温",
+    "factionId": "zangke",
+    "line": 1946
+  },
+  {
+    "id": "city_cangwu",
+    "name": "苍梧",
+    "factionId": "guangxin",
+    "line": 1947
+  },
+  {
+    "id": "city_longchuan",
+    "name": "龙川",
+    "factionId": "nanyue",
+    "line": 1959
+  },
+  {
+    "id": "city_kuaiji",
+    "name": "会稽",
+    "factionId": "yue",
+    "line": 1960
+  },
+  {
+    "id": "city_luling",
+    "name": "庐陵",
+    "factionId": "ouyang",
+    "line": 1961
+  },
+  {
+    "id": "city_zhongli",
+    "name": "盱眙",
+    "factionId": "huai",
+    "line": 1965
+  },
+  {
+    "id": "city_shangluo",
+    "name": "商邑",
+    "factionId": "shangzhou",
+    "line": 1967
+  },
+  {
+    "id": "city_shicheng",
+    "name": "郊郢",
+    "factionId": "ying",
+    "line": 1968
+  },
+  {
+    "id": "city_baling",
+    "name": "巴陵",
+    "factionId": "yue_d",
+    "line": 1969
+  },
+  {
+    "id": "city_linzheng",
+    "name": "临烝",
+    "factionId": "heng",
+    "line": 1970
+  },
+  {
+    "id": "city_guiyang",
+    "name": "桂阳",
+    "factionId": "chen2",
+    "line": 1971
+  },
+  {
+    "id": "city_qujiang",
+    "name": "韶关",
+    "factionId": "shaozhou",
+    "line": 1972
+  },
+  {
+    "id": "city_bodao",
+    "name": "珙县",
+    "factionId": "boren",
+    "line": 1973
+  },
+  {
+    "id": "city_nanpu",
+    "name": "南浦",
+    "factionId": "xin2",
+    "line": 1974
+  },
+  {
+    "id": "city_baidicheng2",
+    "name": "鱼复",
+    "factionId": "kui",
+    "line": 1975
+  },
+  {
+    "id": "city_qichun",
+    "name": "蕲春",
+    "factionId": "xushouhui",
+    "line": 1976
+  },
+  {
+    "id": "city_wancheng",
+    "name": "皖城",
+    "factionId": "wan",
+    "line": 1977
+  },
+  {
+    "id": "city_jiuzi",
+    "name": "鸠兹",
+    "factionId": "danyang",
+    "line": 1979
+  },
+  {
+    "id": "city_datong2",
+    "name": "大通",
+    "factionId": "chizhou",
+    "line": 1980
+  },
+  {
+    "id": "city_heseluo",
+    "name": "何瑟罗",
+    "factionId": "hui",
+    "line": 1996
+  },
+  {
+    "id": "city_wushecheng",
+    "name": "乌舍城",
+    "factionId": "wula",
+    "line": 1997
+  },
+  {
+    "id": "city_xianping",
+    "name": "咸平",
+    "factionId": "houliao",
+    "line": 1999
+  },
+  {
+    "id": "city_huifa",
+    "name": "辉发",
+    "factionId": "haixi_nvzhen",
+    "line": 2001
+  },
+  {
+    "id": "city_julunbo",
+    "name": "俱轮泊",
+    "factionId": "shiwei",
+    "line": 2003
+  },
+  {
+    "id": "city_boli2",
+    "name": "勃利",
+    "factionId": "mohe",
+    "line": 2004
+  },
+  {
+    "id": "city_kuanchengzi",
+    "name": "宽城子",
+    "factionId": "jilin",
+    "line": 2005
+  },
+  {
+    "id": "city_wuliyasitai",
+    "name": "乌珠穆沁",
+    "factionId": "wuzhumuqin",
+    "line": 2006
+  },
+  {
+    "id": "city_saihantala",
+    "name": "赛汉塔拉",
+    "factionId": "sunite",
+    "line": 2007
+  },
+  {
+    "id": "city_sailan",
+    "name": "讹答剌",
+    "factionId": "dayuzi",
+    "line": 2008
+  },
+  {
+    "id": "city_yancheng2",
+    "name": "郾城",
+    "factionId": "yanchuan_d",
+    "line": 2010
+  },
+  {
+    "id": "city_xuanhu",
+    "name": "汝南",
+    "factionId": "yuan_cj_d",
+    "line": 2011
+  },
+  {
+    "id": "city_yuergun",
+    "name": "玉尔滚",
+    "factionId": "weiwuer",
+    "line": 2022
+  },
+  {
+    "id": "city_bohuancheng",
+    "name": "拨换城",
+    "factionId": "anxi",
+    "line": 2023
+  },
+  {
+    "id": "city_dashicheng",
+    "name": "大石城",
+    "factionId": "zhuxie",
+    "line": 2024
+  },
+  {
+    "id": "city_weitoucheng",
+    "name": "阿合奇",
+    "factionId": "weitou",
+    "line": 2025
+  },
+  {
+    "id": "city_wosedecheng",
+    "name": "握瑟德",
+    "factionId": "sai",
+    "line": 2026
+  },
+  {
+    "id": "city_fanyanna",
+    "name": "巴米扬",
+    "factionId": "fanyanna",
+    "line": 2029
+  },
+  {
+    "id": "city_paixiucheng",
+    "name": "排修城",
+    "factionId": "juandu",
+    "line": 2030
+  },
+  {
+    "id": "city_daerhan",
+    "name": "达尔罕",
+    "factionId": "keerqin",
+    "line": 2031
+  },
+  {
+    "id": "city_yiyang",
+    "name": "弋阳",
+    "factionId": "xie_cj_d",
+    "line": 2032
+  },
+  {
+    "id": "city_linchuan",
+    "name": "临川",
+    "factionId": "fu2",
+    "line": 2033
+  },
+  {
+    "id": "city_binzhou2",
+    "name": "新平",
+    "factionId": "xinping",
+    "line": 2034
+  },
+  {
+    "id": "city_fangqu",
+    "name": "方渠",
+    "factionId": "huan",
+    "line": 2035
+  },
+  {
+    "id": "city_jingsai",
+    "name": "静塞",
+    "factionId": "wei2",
+    "line": 2036
+  },
+  {
+    "id": "city_lingzhou",
+    "name": "回乐",
+    "factionId": "lingwu",
+    "line": 2037
+  },
+  {
+    "id": "city_pennuli",
+    "name": "盆奴里",
+    "factionId": "nifuhe",
+    "line": 2039
+  },
+  {
+    "id": "city_malulude",
+    "name": "马鲁鲁德",
+    "factionId": "guer",
+    "line": 2041
+  },
+  {
+    "id": "city_pengdi",
+    "name": "彭迪",
+    "factionId": "guishuang",
+    "line": 2043
+  },
+  {
+    "id": "city_wubusabo",
+    "name": "乌布萨泊",
+    "factionId": "xiajiasi",
+    "line": 2045
+  },
+  {
+    "id": "city_wuyun",
+    "name": "乌云",
+    "factionId": "hezhe",
+    "line": 2047
+  },
+  {
+    "id": "city_bangdun",
+    "name": "邦敦",
+    "factionId": "monong",
+    "line": 2051
+  },
+  {
+    "id": "city_sanpu",
+    "name": "三菩",
+    "factionId": "shuizhen",
+    "line": 2053
+  },
+  {
+    "id": "city_juyansai",
+    "name": "居延塞",
+    "factionId": "ningkou",
+    "line": 2054
+  },
+  {
+    "id": "city_jimai",
+    "name": "吉麦",
+    "factionId": "gongtang",
+    "line": 2056
+  },
+  {
+    "id": "city_nuotuoluo",
+    "name": "诺托罗",
+    "factionId": "eluoke",
+    "line": 2058
+  },
+  {
+    "id": "city_baizhu",
+    "name": "白主",
+    "factionId": "kuye",
+    "line": 2059
+  },
+  {
+    "id": "city_bailao",
+    "name": "白老",
+    "factionId": "ayinu",
+    "line": 2060
+  },
+  {
+    "id": "city_zonggu",
+    "name": "宗谷",
+    "factionId": "beihai",
+    "line": 2061
+  },
+  {
+    "id": "city_xierka",
+    "name": "锡尔喀",
+    "factionId": "dongping",
+    "line": 2062
+  },
+  {
+    "id": "city_niman",
+    "name": "尼满",
+    "factionId": "wure",
+    "line": 2063
+  },
+  {
+    "id": "city_nibuchu",
+    "name": "尼布楚",
+    "factionId": "shuidada",
+    "line": 2065
+  },
+  {
+    "id": "city_yakesa",
+    "name": "雅克萨",
+    "factionId": "aola",
+    "line": 2066
+  },
+  {
+    "id": "city_geerbiqi",
+    "name": "格尔必齐",
+    "factionId": "maomingan",
+    "line": 2067
+  },
+  {
+    "id": "city_shilekahe",
+    "name": "石勒喀河",
+    "factionId": "bulat",
+    "line": 2068
+  },
+  {
+    "id": "city_chita",
+    "name": "赤塔",
+    "factionId": "buriat",
+    "line": 2069
+  },
+  {
+    "id": "city_yangjigan",
+    "name": "养吉干",
+    "factionId": "xianhai",
+    "line": 2070
+  },
+  {
+    "id": "city_zhande",
+    "name": "毡的",
+    "factionId": "yettishar",
+    "line": 2071
+  },
+  {
+    "id": "city_mengjia",
+    "name": "艋舺",
+    "factionId": "ketagalan",
+    "line": 2073
+  },
+  {
+    "id": "city_diaoyudao",
+    "name": "钓鱼岛",
+    "factionId": "panjun",
+    "line": 2074
+  },
+  {
+    "id": "city_gugudao",
+    "name": "宫古岛",
+    "factionId": "gonggu",
+    "line": 2075
+  },
+  {
+    "id": "city_qihe",
+    "name": "七河",
+    "factionId": "qincha",
+    "line": 2076
+  },
+  {
+    "id": "city_hengyu",
+    "name": "横屿",
+    "factionId": "qi_d",
+    "line": 2078
+  },
+  {
+    "id": "city_luobo",
+    "name": "罗博",
+    "factionId": "buyi_d",
+    "line": 2079
+  },
+  {
+    "id": "city_situo",
+    "name": "思陀",
+    "factionId": "hani_d",
+    "line": 2080
+  },
+  {
+    "id": "city_shangding",
+    "name": "上丁",
+    "factionId": "basha_d",
+    "line": 2081
+  },
+  {
+    "id": "city_tingbu",
+    "name": "廷布",
+    "factionId": "xiadun",
+    "line": 2083
+  },
+  {
+    "id": "city_huangchuan",
+    "name": "弋阳",
+    "factionId": "huang_d",
+    "line": 2084
+  },
+  {
+    "id": "city_yongqiu",
+    "name": "雍丘",
+    "factionId": "qiguo_d",
+    "line": 2085
+  },
+  {
+    "id": "city_mengcheng",
+    "name": "蒙城",
+    "factionId": "mengcheng_d",
+    "line": 2086
+  },
+  {
+    "id": "city_yongcheng",
+    "name": "永城",
+    "factionId": "guide_d",
+    "line": 2087
+  },
+  {
+    "id": "city_kunyang",
+    "name": "昆阳",
+    "factionId": "lulin",
+    "line": 2088
+  },
+  {
+    "id": "city_yucheng",
+    "name": "虞城",
+    "factionId": "dang_d",
+    "line": 2089
+  },
+  {
+    "id": "city_bengbu",
+    "name": "蚌埠",
+    "factionId": "hao_d",
+    "line": 2090
+  },
+  {
+    "id": "city_liaocheng",
+    "name": "聊城",
+    "factionId": "bozhou_d",
+    "line": 2091
+  },
+  {
+    "id": "city_sapi",
+    "name": "萨毗城",
+    "factionId": "rulun",
+    "line": 2092
+  },
+  {
+    "id": "city_shayuan",
+    "name": "长宁",
+    "factionId": "tongzhou",
+    "line": 2093
+  },
+  {
+    "id": "city_gasikou",
+    "name": "噶斯口",
+    "factionId": "panjun",
+    "line": 2094
+  },
+  {
+    "id": "city_niubiziliang",
+    "name": "牛鼻子梁",
+    "factionId": "panjun",
+    "line": 2095
+  },
+  {
+    "id": "city_mahaitai",
+    "name": "马海台",
+    "factionId": "panjun",
+    "line": 2096
+  },
+  {
+    "id": "city_taijinaier",
+    "name": "台吉乃尔",
+    "factionId": "dulan",
+    "line": 2097
+  },
+  {
+    "id": "city_bayinbulage",
+    "name": "巴音布拉格",
+    "factionId": "panjun",
+    "line": 2098
+  },
+  {
+    "id": "city_biaoshi",
+    "name": "表氏",
+    "factionId": "juqu_d",
+    "line": 2101
+  }
+]

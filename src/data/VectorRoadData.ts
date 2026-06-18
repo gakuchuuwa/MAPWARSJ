@@ -31239,5 +31239,61 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "大名-界桥",
+                type: "road",
+                id: "road_city_daming_city_jieqiao_1781807503217",
+                startConnection: "city_daming",
+                endConnection: "city_jieqiao"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [115.148, 36.285],
+                    [115.2706, 36.432725],
+                    [115.27589, 36.4796],
+                    [115.317393, 36.528022],
+                    [115.327403, 36.565294],
+                    [115.347748, 36.58161],
+                    [115.399832, 36.671576],
+                    [115.44337, 36.703396],
+                    [115.47755, 36.753485],
+                    [115.543956, 36.767646],
+                    [115.626069, 36.793524],
+                    [115.5, 36.95],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "界桥-平原",
+                type: "road",
+                id: "road_city_jieqiao_city_pingyuan_1781807509309",
+                startConnection: "city_jieqiao",
+                endConnection: "city_pingyuan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [115.5, 36.95],
+                    [115.606651, 37.056339],
+                    [115.660268, 37.064588],
+                    [115.685015, 37.093459],
+                    [115.767503, 37.109957],
+                    [115.784001, 37.118206],
+                    [115.841743, 37.134703],
+                    [115.907734, 37.138828],
+                    [115.948978, 37.175948],
+                    [116.093333, 37.171823],
+                    [116.138701, 37.15945],
+                    [116.196443, 37.155325],
+                    [116.233563, 37.142952],
+                    [116.43, 37.16],
+                ]
+            }
+        },
     ]
 };

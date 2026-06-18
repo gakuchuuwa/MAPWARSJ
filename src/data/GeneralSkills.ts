@@ -550,7 +550,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     hanshizhong: { generalId: 'hanshizhong', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 黄天荡
     diqing: { generalId: 'diqing', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 面涅将军
     dixin: { generalId: 'dixin', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 纣王征东夷
-    doujiande: { generalId: 'doujiande', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 河北义军
+    liguangbi: { generalId: 'liguangbi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 太原守城·河间突骑
     baoyuan_han: { generalId: 'baoyuan_han', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 韩将暴鸢
     liufutong: { generalId: 'liufutong', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 红巾白莲
     shenbo: { generalId: 'shenbo', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 申国受封
@@ -577,7 +577,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tuobagui: { generalId: 'tuobagui', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 参合陂
     liukun: { generalId: 'liukun', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 并州孤守
     zhangrou: { generalId: 'zhangrou', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 保定重建
-    zhanghe: { generalId: 'zhanghe', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 街亭破马谡
+    quyi: { generalId: 'quyi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 界桥先登破白马
     gaochanggong: { generalId: 'gaochanggong', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 邙山五百骑
     yanzhenqing: { generalId: 'yanzhenqing', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 平原抗安史
     gongsunzan: { generalId: 'gongsunzan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 白马义从

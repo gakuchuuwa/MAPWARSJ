@@ -61,4 +61,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   jinzhou: { name: '辽东铁骑', tier: 2 },     // 徒河·李成梁辽东骑兵（§3 #6）
   zu_d: { name: '关宁铁骑', tier: 0 },       // 宁远·宁远大捷破努尔哈赤（§3 #5）
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
+  liwang: { name: '河间突骑', tier: 1 },     // 乐成·李光弼河朔骑兵
+  qu_d: { name: '先登死士', tier: 0 },       // 界桥·麴义破公孙瓒（192年）
 };
