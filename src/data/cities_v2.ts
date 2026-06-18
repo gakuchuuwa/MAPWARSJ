@@ -983,7 +983,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_yalu', name: '鸭绿府', factionId: 'dingan', lat: 41.81, lng: 126.91, type: 'small_city', troops: 10000 },
 
     // ── 2026-05-26 新建势力：大金(会宁府)、大元(上都) ──
-    { id: 'city_huining', name: '会宁府', factionId: 'dajin', lat: 45.519798, lng: 126.971741, type: 'medium_city', troops: 10000, tier: 1, note: '大金政权都城；铁浮图；≠完颜部族旗号(wanyan_d@双城)' },
+    { id: 'city_huining', name: '会宁府', factionId: 'dajin', lat: 45.519798, lng: 126.971741, type: 'medium_city', troops: 10000, tier: 1, note: '大金政权都城；合扎猛安；≠完颜部族旗号(wanyan_d@双城)' },
     { id: 'city_shangdu', name: '上都', factionId: 'yuan_d', lat: 42.275283, lng: 115.760193, type: 'medium_city', troops: 10000, tier: 1, note: '大元夏都；秃鲁花军' },
 
 
@@ -1965,7 +1965,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_zhongli', name: '盱眙', factionId: 'huai', lat: 33.011000, lng: 118.497000, type: 'small_city', troops: 10000, note: '淮州治盱眙' },
     { id: 'city_bianliang', name: '汴梁', factionId: 'wei', lat: 34.8, lng: 114.31, type: 'big_city', troops: 20000, tier: 0, note: '北宋京师；20城白名单' },
     { id: 'city_shangluo', name: '商邑', factionId: 'shangzhou', lat: 33.87, lng: 109.94, type: 'small_city', troops: 10000 },
-    { id: 'city_shicheng', name: '石城', factionId: 'ying', lat: 31.16, lng: 112.58, type: 'small_city', troops: 10000 },
+    { id: 'city_shicheng', name: '郊郢', factionId: 'ying', lat: 31.16, lng: 112.58, type: 'small_city', troops: 10000 },
     { id: 'city_baling', name: '巴陵', factionId: 'yue_d', lat: 29.35, lng: 113.13, type: 'small_city', troops: 10000 },
     { id: 'city_linzheng', name: '临烝', factionId: 'heng', lat: 26.89, lng: 112.6, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '岭南/南方环线共用锚点；文化南方' },
     { id: 'city_guiyang', name: '桂阳', factionId: 'chen2', lat: 25.78, lng: 113, type: 'small_city', troops: 10000 },

@@ -12,8 +12,8 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wangyan: { name: '八字军', tier: 0 },     // 飞狐·顺昌大捷2万破10万（《宋史·刘锜传》）
   tianxiong: { name: '天雄军', tier: 2 },   // 大名·唐末河朔雄藩
   // 宣毅军除名（泛称非专属，与方渠无关）
-  huan: { name: '大宋西军', tier: 3 },        // 方渠·北宋种师道西军锐卒（原西夏步跋子，敌我错位）
-  qingyuan_bd: { name: '保定汉军', tier: 2 }, // 保定·张柔顺天汉军（原北宋神臂营，时空错位）
+  huan: { name: '步跋子', tier: 3 },        // 方渠·西夏步跋子（原嵬名/鸡鹿塞）
+  qingyuan_bd: { name: '神臂营', tier: 2 }, // 保定·北宋强弩营
 
   // ── §2 北方 12 支 ──
   zhao: { name: '赵边骑', tier: 1 },        // 邯郸·§2 #1 赵武灵王胡服骑射
@@ -24,7 +24,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tuoba: { name: '拓跋虎骑', tier: 1 },     // 大同·拓跋鲜卑
   // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
-  gaoqi_d: { name: '河北义军', tier: 1 },   // 蓨城·颜真卿抗击安史平原义军（原百保鲜卑，与武将时空种族互斥）
+  gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵（无经典以少胜多）
     beiqi: { name: '百保鲜卑', tier: 1 },       // 蓨城·高长恭北齐鲜卑禁卫（T1有名且胜仗）
   yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
   hejian: { name: '先登死士', tier: 0 },    // 乐成·§1 #25 界桥（番号随城）
@@ -56,5 +56,10 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zhe_d: { name: '折家将兵', tier: 2 },         // 府谷·宋府州折氏十世将门
   shanrong: { name: '山戎突骑', tier: 3 },      // 无终·山戎族
   pingyuan: { name: '高唐戍卒', tier: 3 },      // 平原·高唐州
-  dada_ming: { name: '鞑靼游骑', tier: 2 },          // 河套·明代鞑靼部游骑（原度辽营，时代错位）
+  dada_ming: { name: '度辽营', tier: 2 },          // 河套·东汉度辽将军部
+
+  // ── 2026-06-18 自东北文件迁回：首都在北方区（徒河/宁远/皮岛）──
+  jinzhou: { name: '辽东铁骑', tier: 2 },     // 徒河·李成梁辽东骑兵（§3 #6）
+  zu_d: { name: '关宁铁骑', tier: 0 },       // 宁远·宁远大捷破努尔哈赤（§3 #5）
+  mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
 };

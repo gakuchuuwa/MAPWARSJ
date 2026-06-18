@@ -436,7 +436,7 @@ export class EventParser {
         '升州': 'sheng_d', '升州牧': 'sheng_d', '升州束伍军': 'sheng_d', '束伍军': 'sheng_d',
         '锦州': 'jinzhou', '锦州卫': 'jinzhou', '锦': 'jinzhou', '李成梁': 'jinzhou',
         '忠孝军': 'qing', '完颜陈和尚': 'qing',
-        '铁浮图': 'dajin', '拐子马': 'wanyan_d', '猛安谋克': 'jurchen',
+        '铁浮图': 'jurchen', '拐子马': 'wanyan_d', '猛安谋克': 'dajin',
         '金源边军': 'fuyu', '黄龙府': 'fuyu',
         '关宁铁骑': 'zu_d', '辽东铁骑': 'jinzhou', '东江军': 'mao_wenlong',
         '巴牙喇': 'aisin_d', '爱新': 'aisin_d', '爱新觉罗': 'aisin_d',

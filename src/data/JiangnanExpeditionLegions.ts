@@ -13,11 +13,11 @@
  */
 export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   shanyue: { name: '丹阳兵', tier: 2 },      // 宛陵城·§1 #24 丹阳郡精兵；旗=山越 据点=宛陵城 番=丹阳兵 ✅
-  chu: { name: '楚左右广军', tier: 1 },        // 郢城·邲之战破晋（《左传》）
+    chu: { name: '荆州水军', tier: 2 },       // 江陵·关羽水师
   sunwu_d: { name: '解烦兵', tier: 2 },      // 武昌·孙吴禁卫
   nantang_d: { name: '黑云长剑都', tier: 2 }, // 南京·§9 #4 南唐杨行密
-  zhong: { name: '淮南锐卒', tier: 2 },        // 寿春·袁术仲家禁卫（原北府兵，时代错位）
-  hongguang: { name: '扬州守军', tier: 1 },       // 广陵·史可法抗清守军（原克敌军，时代错位）
+  zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=仲·袁术仲家）
+  hongguang: { name: '克敌军', tier: 1 },       // 广陵·韩世忠黄天荡
   lu: { name: '逍遥津死士', tier: 1 },       // 合肥·张辽800破十万（《三国志》）
   min: { name: '长乐控鹤', tier: 2 },        // 冶城·闽国控鹤军（≠武周洛阳控鹤军）
   chen: { name: '建康水军', tier: 3 },       // 清远·陈霸先水师
@@ -25,12 +25,11 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
       jingzhou: { name: '忠顺军', tier: 1 },       // 襄阳·张顺忠顺军
   song: { name: '御前诸军', tier: 2 },       // 临安·孟珙南宋御前诸军
-  qian_d: { name: '吴越水师', tier: 2 },       // 嘉兴·钱镠吴越水军（原游奕军，时代错位）
+  qian_d: { name: '游奕军', tier: 2 },       // 嘉兴·§9 #13 踏白游奕（岳飞系）
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
   haoding: { name: '红袄军', tier: 2 },      // 历城·§9 #14 李全杨妙真
   wu: { name: '锦帆贼', tier: 3 },           // 姑苏·甘宁锦帆
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
-  mi_chu: { name: '左右广军', tier: 2 },     // 云梦·§9 #2 楚左广与右广（旗=芈）
   xushouhui: { name: '红巾军', tier: 2 },    // 蕲春·元末徐寿辉天完红巾主力
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）
   machu: { name: '武平军', tier: 2 },       // 长沙·马楚武平军节度
