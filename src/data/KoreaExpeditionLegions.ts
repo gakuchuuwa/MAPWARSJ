@@ -13,16 +13,15 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   xinluo: { name: '花郎道', tier: 2 },       // 金城·新罗花郎（§4 #3）
   baiji: { name: '百济达率兵', tier: 2 },        // 泗沘·百济达率制精兵
   goryeo: { name: '鹰扬军', tier: 2 },   // 开城·高丽鹰扬军
-  dingan: { name: '别武班', tier: 1 },       // 鸭绿府·尹瓘征女真筑九城
+  dingan: { name: '定安戍兵', tier: 3 },       // 鸭绿府·渤海国遗民定安国（原别武班错位）
   sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣龟甲船海战（原属全罗左道）
   hai2: { name: '朝鲜甲士', tier: 3 },       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
   joseon: { name: '内禁卫', tier: 3 },       // 汉城·国王贴身近卫（§4 #9）
   sheng_d: { name: '全罗左水军', tier: 2 },   // 顺天·朝鲜全罗左道水军
-  chen3: { name: '击刹兵', tier: 3 },         // 大木岳·月支击刹兵
+  chen3: { name: '月支戍卒', tier: 3 },         // 大木岳·马韩月支国
   danluo: { name: '三别抄', tier: 1 },        // 星主厅·高丽武人抗蒙
   jianzhou_nvzhen: { name: '建州劲卒', tier: 3 },  // 浑江·建州女真
   zhen: { name: '后百济锐卒', tier: 3 },          // 完山·后百济甄萱
-  woju: { name: '沃沮戍兵', tier: 3 },            // 咸兴·沃沮
-  tunggiya: { name: '高句丽戍卒', tier: 3 },        // 丸都·高句丽丸都山城戍卒（原佟佳部兵）
+  woju: { name: '别武班', tier: 1 },            // 咸兴·高丽尹瓘征女真筑九城（原属鸭绿府地域错位）
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
 };

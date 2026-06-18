@@ -18,10 +18,10 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   tufa_d: { name: '南凉铁骑', tier: 2 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）
   juqu_d: { name: '卢水胡兵', tier: 3 },         // 表氏·沮渠卢水胡兵
   liangzhou: { name: '凉州突骑', tier: 2 },     // 姑臧·窦融河西骑兵美称（史书泛称，非固定番号；突骑＝突击骑）
-  hunxie: { name: '甘州铁骑', tier: 2 },         // 肩水金关·§7 #11 甘州回鹘铁骑（夜落纥；旗=浑邪·部族）
+  hunxie: { name: '浑邪胡骑', tier: 2 },         // 肩水金关·匈奴浑邪王骑兵（原甘州铁骑，与匈奴错位）
   qifu_d: { name: '苑川突骑', tier: 2 },         // 枹罕·西秦乞伏鲜卑突骑（苑川故地）
-  anding_wei: { name: '长征健儿', tier: 2 },      // 苦峪堡·唐安西征募健儿
-  qiang: { name: '北地骑', tier: 3 },             // 萧关·羌族北地骑
+  anding_wei: { name: '安定蒙古卫', tier: 2 },      // 苦峪堡·明代安定卫番骑（原长征健儿，与蒙古武将错位）
+  qiang: { name: '西羌锐卒', tier: 3 },             // 萧关·羌族（原北地骑，具有汉朝编制色彩）
   yingli: { name: '泼喜军', tier: 2 },            // 鸣沙·西夏砲驼兵
   chijin: { name: '赤斤蒙古卫', tier: 2 },        // 赤金堡·明关西七卫
   dongshengwei: { name: '东胜卫戍', tier: 3 },     // 东胜卫·明代卫所

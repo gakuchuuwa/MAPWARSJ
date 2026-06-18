@@ -14,7 +14,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   dayue: { name: '铁突军', tier: 0 },           // 昇龙·白藤江灭元（《大越史记全书》）
   jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
   trinh: { name: '府僚营', tier: 3 },          // 宣光·郑主府僚军政（无史籍固定精锐番号）
-  nguyen_guangnan: { name: '西山军', tier: 2 }, // 富春·§10 #3 阮惠西山朝
+  nguyen_guangnan: { name: '广南水师', tier: 2 }, // 富春·阮主水师（原西山军，与阮潢敌我错位）
   guangnanguo: { name: '黑旗军', tier: 1 },     // 洞海·刘永福抗法（纸桥斩李维业）
   ryukyu: { name: '那霸水师', tier: 2 },       // 首里·§9 #21 琉球王府水师
   ming_zheng: { name: '郑氏铁人军', tier: 1 }, // 承天·§9 #18 郑成功铁人军
@@ -40,6 +40,6 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   paiyao: { name: '八排瑶丁', tier: 3 },      // 阳山关·明清连阳八排瑶丁
   // 湘军道营除名（无此编制）
   dayu: { name: '南赣标军', tier: 3 },        // 横浦关·明王阳明南赣标军
-  yingzhou: { name: '南汉巨象军', tier: 2 },  // 湟溪关·五代南汉象军
+  yongli: { name: '永历铁骑', tier: 1 },       // 肇庆·李定国两蹶名王（南明抗清）
   basha_d: { name: '湄公象卫', tier: 3 },     // 上丁·巴沙国湄公象卫
 };

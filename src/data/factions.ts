@@ -66,6 +66,10 @@ export const FACTIONS: Faction[] = [
     { id: 'han', name: '韩国' },
     { id: 'han_d', name: '汉国' },
     { id: 'shu', name: '蜀国' },
+    { id: 'shu_han', name: '蜀汉' }, // ── 2026-06-18：王平@兴势（兴势之战）──
+    { id: 'hanzhong_d', name: '汉中' }, // ── 2026-06-18：魏延@略阳（阳平关·汉中太守）──
+    { id: 'ju_d', name: '苴国' }, // ── 2026-06-18：司马错@重庆（灭苴入蜀）──
+    { id: 'dingxiang_d', name: '定襄' }, // ── 2026-06-18：李靖@恶阳岭（贞观四年定襄夜袭；旗号定襄）──
     { id: 'dian', name: '通海' },       // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '新国' },
     { id: 'cheng', name: '成国' },
@@ -330,6 +334,7 @@ export const FACTIONS: Faction[] = [
     { id: 'hezhe', name: '赫哲' },                   // 河口青 - 赫哲/那乃人(黑龙江下游/库页岛)
     { id: 'luchuan', name: '麓川' },
     { id: 'chijin', name: '赤斤' },
+    { id: 'chiling', name: '赤岭' },          // 赤岭(石堡城/哥舒翰)
     { id: 'guiyi', name: '归义' },
     { id: 'anding_wei', name: '安定' },
     // 第六类：周边国家政权
@@ -388,7 +393,7 @@ export const FACTIONS: Faction[] = [
     // 第一类：农民革命政权
     { id: 'taiping', name: '太平天国' },
     { id: 'dacheng', name: '大成' },
-    { id: 'han_dadian', name: '大捻' },             // 李永和蓝朝鼎捻军（兴势）
+    { id: 'han_dadian', name: '大捻' },             // 李永和蓝朝鼎捻军；据点待录（兴势已改蜀汉）
 
     // 第二类：少数民族起义
     { id: 'pingnan', name: '平南' },
@@ -423,14 +428,16 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 新增：濊貊、毛文龙、满洲贵族世家 ──
     { id: 'huimo', name: '濊貊' },
     { id: 'mao_wenlong', name: '毛文龙' },       // 明黄 - 毛文龙(明末/东江镇/皮岛)
-    { id: 'tunggiya', name: '佟佳' },
-    // 紫檀 - 赫舍里氏(绥芬河/索尼/索额图)
+    // 紫檀 - 赫舍里氏
     // 赤红 - 瓜尔佳氏(苏完部/鳌拜/双阳)
 
 // ── 2026-05-26 新增：西域/中亚势力（25个）──
 { id: 'kala', name: '喀喇汗王朝' },
     // ── 2026-06-17 新增：喀喇契丹（西辽·虎思/碎叶故地）──
     { id: 'xiliao', name: '喀喇契丹' },
+    { id: 'jiazini', name: '加兹尼' },      // 加兹尼王朝(伽色尼城/马哈茂德), Ghaznavid
+    { id: 'gaofu', name: '高附' },          // 喀布尔沙希王朝(高附城/阇耶波罗), Kabul Shahi
+    { id: 'fanyanna', name: '梵衍那' },      // 梵衍那国(巴米扬/兴都库什), Bamiyan
 // 土褐 - 吐火罗(员渠城/焉耆盆地)
 { id: 'sogdian', name: '粟特' },
         // 巧克力色 - 粟特商团(阿弗拉西阿卜/撒马尔罕)
@@ -538,7 +545,8 @@ export const FACTIONS: Faction[] = [
 
     // ── 自动补充：cities_v2 使用但 factions.ts 缺失的势力 ──
     { id: 'bandun', name: '板楯' },                      // 板楯蛮(巴人分支/鱼涪津/岷江渡口)
-    { id: 'seljuq', name: '塞尔柱' },
+    { id: 'seljuq', name: '塞尔柱' },      // 桑贾尔·木鹿
+    { id: 'yisifahan', name: '伊斯法罕' },  // 阿尔普·阿尔斯兰·曼齐克特
     // 阮氏(安南权阀/占城/广南)
     // 党项部族(拓跋氏/玛曲/黄河第一弯)
     // 雅隆部落(吐蕃前身/雅砻河谷/悉补野氏)

@@ -57,6 +57,9 @@ export class CityAssetManager {
         'weihaiwei': '威海',
 
         'shu': '蜀',
+        'shu_han': '平魏',
+        'hanzhong_d': '阳平',
+        'ju_d': '苴',
 
         'liangzhou': '凉',
         'liang': '凉',
@@ -110,6 +113,7 @@ export class CityAssetManager {
 'ming_d': '大明',
         'liao_d': '大辽',
         'dai_d': '代',
+        'dingxiang_d': '定襄',
         'feng_d': '冯',
         'zhongshan': '中山',
         'wang_d': '王',

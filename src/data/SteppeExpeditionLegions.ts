@@ -48,7 +48,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   choros: { name: '绰罗斯骁骑', tier: 3 },
   duolu: { name: '咄陆部铁骑', tier: 2 },
   kaerka: { name: '喀尔喀重骑', tier: 3 },
-  zhasaketu: { name: '回鹘牙帐骑', tier: 2 },
+  zhasaketu: { name: '扎萨克图骁骑', tier: 3 }, // 乌城·喀尔喀蒙古（原回鹘牙帐骑严重错代错位）
   buriat: { name: '林中射手', tier: 3 },
   cheshihou: { name: '车师后王卫', tier: 3 },
 };

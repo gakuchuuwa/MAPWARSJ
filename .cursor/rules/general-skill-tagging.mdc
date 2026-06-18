@@ -1,0 +1,39 @@
+---
+description: 武将技分配 — 品阶、风格标签、首选证据、④⑨门槛（编辑 GENERAL_PROFILES 时必读）
+globs: src/data/GeneralSkills.ts,src/data/FactionGenerals.ts,src/data/GeneralSkillTags.ts
+alwaysApply: false
+---
+
+# 武将技标签化分配
+
+**真理源**：`src/data/GeneralSkillTags.ts`
+
+## 流程
+
+1. 品阶 → 名将 ①–⑤+S①–S⑥；普将 ⑥–⑩
+2. 主风格 → 五种 archetype 选一（见下表）
+3. **理由** → 必须写一场正史具体战役，禁「擅长XX」「以XX著称」
+
+## 跨界主风格优先级
+
+改变历史进程 > 史著篇幅最大的名役 > 局部胜利。  
+例：韩信主②（暗度陈仓），非泛称「会用兵」。
+
+## ④⑨ 红线
+
+| 格 | 门槛 |
+|----|------|
+| **④** | 敌**未战**而降 / 说退；赤壁、七擒 → **②③**，禁④ |
+| **⑨** | 普将；断粮离间后**仍可交战** |
+
+## archetype 对照
+
+| 风格 | 名将 | 普将 |
+|------|------|------|
+| 防反 | ① | ⑥ |
+| 奇袭 | ② | ⑦ |
+| 猛攻 | ③（少用） | ⑧ |
+| 谋略 | ④（门槛极高） | ⑨ |
+| 死守 | ⑤ | ⑩ |
+
+写入 `GENERAL_PROFILES`；Prompt 用 `SKILL_ASSIGNMENT_PROMPT`。

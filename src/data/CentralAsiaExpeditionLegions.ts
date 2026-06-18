@@ -29,4 +29,8 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   dayuzi: { name: '讹答剌卫队', tier: 3 },
   zhaowu: { name: '忽毡城武士', tier: 3 },
   yada: { name: '悉万斤重甲', tier: 3 },
+  jiazini: { name: '伽色尼突骑', tier: 1 },       // 伽色尼城·马哈茂德十七征印度
+  yisifahan: { name: '曼齐克特铁骑', tier: 1 }, // 伊斯法罕·阿尔普·阿尔斯兰
+  gaofu: { name: '高附甲卫', tier: 3 },          // 高附城·喀布尔沙希武士
+  fanyanna: { name: '梵衍那僧兵', tier: 3 },      // 梵衍那城·兴都库什僧兵
 };

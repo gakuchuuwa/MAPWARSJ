@@ -933,30 +933,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "国内城-丸都",
-                type: "road",
-                id: "road_city_guoneicheng_city_wandu_1780140221368",
-                startConnection: "city_guoneicheng",
-                endConnection: "city_wandu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [126.19, 41.13],
-                    [126.074434, 41.279748],
-                    [126.041439, 41.341614],
-                    [126.024941, 41.391107],
-                    [125.991946, 41.428227],
-                    [125.921831, 41.428227],
-                    [125.884711, 41.494218],
-                    [125.888835, 41.535462],
-                    [125.980225, 41.689294],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "咸平-八面城",
                 type: "road",
                 id: "road_city_xianping_city_bamiancheng_1780140221372",
@@ -976,35 +952,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [124.218444, 42.933641],
                     [124.296808, 43.028503],
                     [124.354248, 43.189189],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "赫图阿拉-丸都",
-                type: "road",
-                id: "road_city_hetuala_city_wandu_1780140221377",
-                startConnection: "city_hetuala",
-                endConnection: "city_wandu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [125.032654, 41.715981],
-                    [125.228928, 41.675692],
-                    [125.294919, 41.683941],
-                    [125.327914, 41.712812],
-                    [125.348536, 41.725185],
-                    [125.398029, 41.741683],
-                    [125.509389, 41.749932],
-                    [125.550633, 41.725185],
-                    [125.579504, 41.725185],
-                    [125.616623, 41.708688],
-                    [125.645494, 41.704563],
-                    [125.682614, 41.712812],
-                    [125.756854, 41.671568],
-                    [125.980225, 41.689294],
                 ]
             }
         },
@@ -17982,38 +17929,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "盛乐-偏头关",
-                type: "road",
-                id: "road_city_shengle_city_piantouguan_1780158486904",
-                startConnection: "city_shengle",
-                endConnection: "city_piantouguan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [111.82, 40.38],
-                    [111.729694, 40.256891],
-                    [111.758565, 40.207398],
-                    [111.750316, 40.174402],
-                    [111.68845, 40.170278],
-                    [111.638957, 40.104287],
-                    [111.610086, 40.025923],
-                    [111.610086, 40.001177],
-                    [111.676076, 39.931062],
-                    [111.605961, 39.922813],
-                    [111.564717, 39.848573],
-                    [111.469855, 39.811453],
-                    [111.453358, 39.766085],
-                    [111.420362, 39.72484],
-                    [111.420095, 39.672431],
-                    [111.426768, 39.658881],
-                    [111.5, 39.43],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "河南地-东胜州",
                 type: "road",
                 id: "road_city_ordos_city_dongshengzhou_1780158502641",
@@ -20834,47 +20749,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [118.166671, 36.862553],
                     [118.204139, 36.854747],
                     [118.43, 36.88],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "辉发-丸都",
-                type: "road",
-                id: "road_city_huifa_city_wandu_1780340403318",
-                startConnection: "city_huifa",
-                endConnection: "city_wandu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [125.922546, 42.70463],
-                    [125.756854, 42.570692],
-                    [125.71561, 42.562443],
-                    [125.707361, 42.51295],
-                    [125.7816, 42.380968],
-                    [125.789849, 42.37272],
-                    [125.777476, 42.306729],
-                    [125.814596, 42.269609],
-                    [125.888835, 42.248987],
-                    [125.901209, 42.215991],
-                    [125.925955, 42.178872],
-                    [125.934204, 42.15825],
-                    [125.917706, 42.133503],
-                    [125.851716, 42.104632],
-                    [125.810471, 42.100508],
-                    [125.769227, 42.075761],
-                    [125.765103, 42.059263],
-                    [125.7816, 42.034517],
-                    [125.785725, 42.013895],
-                    [125.752729, 41.964402],
-                    [125.703236, 41.947904],
-                    [125.703236, 41.881913],
-                    [125.732107, 41.848918],
-                    [125.793974, 41.811798],
-                    [125.826969, 41.782927],
-                    [125.980225, 41.689294],
                 ]
             }
         },
@@ -25488,7 +25362,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "京都-飞鸟宫",
+                name: "京都-千早城",
                 type: "road",
                 id: "road_city_kyoto_city_asuka_1781186199939",
                 startConnection: "city_kyoto",
@@ -26525,7 +26399,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "飞鸟宫-名张",
+                name: "千早城-名张",
                 type: "road",
                 id: "road_city_asuka_city_nabari_1781251849483",
                 startConnection: "city_asuka",
@@ -29859,7 +29733,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "冈丰城-飞鸟宫",
+                name: "冈丰城-千早城",
                 type: "road",
                 id: "road_city_okafu_city_asuka_1781686350899",
                 startConnection: "city_okafu",
@@ -31291,6 +31165,77 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [80.029385, 33.575327],
                     [80.000514, 33.575327],
                     [79.705811, 33.367241],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "盛乐-恶阳岭",
+                type: "road",
+                id: "road_city_shengle_city_eyangling_1781789141370",
+                startConnection: "city_shengle",
+                endConnection: "city_eyangling"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [111.82, 40.38],
+                    [111.729694, 40.256891],
+                    [111.758565, 40.207398],
+                    [111.750316, 40.174402],
+                    [111.68845, 40.170278],
+                    [111.638957, 40.104287],
+                    [111.65, 39.91],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "恶阳岭-偏头关",
+                type: "road",
+                id: "road_city_eyangling_city_piantouguan_1781789143960",
+                startConnection: "city_eyangling",
+                endConnection: "city_piantouguan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [111.65, 39.91],
+                    [111.469855, 39.811453],
+                    [111.453358, 39.766085],
+                    [111.420362, 39.72484],
+                    [111.420095, 39.672431],
+                    [111.426768, 39.658881],
+                    [111.5, 39.43],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "恶阳岭-武州塞",
+                type: "road",
+                id: "road_city_eyangling_city_wuzhousai_1781789147157",
+                startConnection: "city_eyangling",
+                endConnection: "city_wuzhousai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [111.65, 39.91],
+                    [111.82868, 39.906315],
+                    [111.894671, 39.860946],
+                    [111.931791, 39.827951],
+                    [111.935915, 39.807329],
+                    [112.00603, 39.782582],
+                    [112.047274, 39.790831],
+                    [112.113265, 39.766085],
+                    [112.125638, 39.757836],
+                    [112.282366, 39.840324],
+                    [112.327735, 39.87332],
+                    [112.420349, 39.998214],
                 ]
             }
         },

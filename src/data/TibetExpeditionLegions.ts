@@ -15,7 +15,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   gar_kham: { name: '康巴骁骑', tier: 2 },    // 德格·康巴朵康先锋骑（§12 #7）
   guge: { name: '古格甲兵', tier: 2 },        // 札布让·阿里古格王国
   khoshut: { name: '和硕特铁骑', tier: 3 },   // 当雄·固始汗卫拉特铁骑（§12 #9）
-  pazhu: { name: '帕竹甲兵', tier: 3 },       // 江孜·帕木竹巴绛曲坚赞甲兵（§12 #10）
+  pazhu: { name: '江孜宗武士', tier: 3 },       // 江孜·江孜法王热丹衮桑帕（原帕竹甲兵，与lang_clan重复且与江孜据点及武将错位）
   gurkha: { name: '廓尔喀弯刀', tier: 1 },    // 加德满都·廓尔喀库克里勇士（§12 #11）
   tsangpa: { name: '藏巴汗卫队', tier: 3 },   // 桑珠孜·藏巴汗亲卫
   // ── 2026-06-16 新增：青藏大区平衡补全（23支） ──

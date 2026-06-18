@@ -120,6 +120,7 @@ export class EventParser {
         '曳落河': 'anshi_d', '安禄山': 'anshi_d',
         '鸦儿军': 'shatuo', '李克用': 'shatuo',
         '朔方军': 'lingwu', '郭子仪': 'lingwu', '李光弼': 'lingwu', '灵武': 'lingwu', '回乐': 'lingwu',
+        '定襄': 'dingxiang_d', '李靖': 'dingxiang_d', '恶阳岭': 'dingxiang_d', '恶阳骑': 'dingxiang_d',
         '静塞军': 'zhongshan', '李继隆': 'zhongshan',
         '裘甫': 'qiufu', '浙东': 'qiufu', '剡县': 'qiufu',
 
@@ -508,11 +509,17 @@ export class EventParser {
 
         // ── 2026-06-11 川蜀远征精锐番号 ──
         '賨人勇士': 'bandun', '板楯蛮': 'bandun', '板楯': 'bandun',
-        '白毦兵': 'kui', '陈到': 'kui', '白帝城': 'kui', '鱼复': 'kui',
+        '白毦兵': 'xiazhou', '陈到': 'xiazhou', '瞿塘关': 'xiazhou',
+        '白帝城': 'kui', '鱼复': 'kui',
         '虎步军': 'qiao_d',
         '连弩士': 'zhuoshi', '诸葛亮': 'zhuoshi',
         '白杆兵': 'tujia_d', '秦良玉': 'tujia_d',
-        '无当飞军': 'shu', '王平': 'shu',
+        '无当飞军': 'shu', '王平': 'shu_han', '兴势': 'shu_han', '蜀汉': 'shu_han', '平魏': 'shu_han',
+        '魏延': 'hanzhong_d', '略阳': 'hanzhong_d', '阳平': 'hanzhong_d',
+        '司马错': 'ju_d', '重庆': 'ju_d', '苴国': 'ju_d',
+        '吴玠': 'lizhou_d', '剑门关': 'lizhou_d',
+        '岳钟琪': 'cheng', '鲍超': 'kui', '霆军': 'kui',
+        '姜维': 'xin2', '南浦': 'xin2',
         '罗罗兵': 'shuixi', '水西': 'shuixi', '安邦彦': 'shuixi', '奢香夫人': 'shuixi',
         '悬棺武士': 'boren', '僰人': 'boren', '珙县': 'boren', '僰道': 'boren',
         '六夷突骑': 'chenghan', '李特': 'chenghan', '李雄': 'chenghan', '成汉': 'chenghan',

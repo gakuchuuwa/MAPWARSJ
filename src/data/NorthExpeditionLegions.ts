@@ -12,8 +12,8 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wangyan: { name: '八字军', tier: 0 },     // 飞狐·顺昌大捷2万破10万（《宋史·刘锜传》）
   tianxiong: { name: '天雄军', tier: 2 },   // 大名·唐末河朔雄藩
   // 宣毅军除名（泛称非专属，与方渠无关）
-  huan: { name: '步跋子', tier: 3 },        // 方渠·西夏步跋子（原嵬名/鸡鹿塞）
-  qingyuan_bd: { name: '神臂营', tier: 2 }, // 保定·北宋强弩营
+  huan: { name: '大宋西军', tier: 3 },        // 方渠·北宋种师道西军锐卒（原西夏步跋子，敌我错位）
+  qingyuan_bd: { name: '保定汉军', tier: 2 }, // 保定·张柔顺天汉军（原北宋神臂营，时空错位）
 
   // ── §2 北方 12 支 ──
   zhao: { name: '赵边骑', tier: 1 },        // 邯郸·§2 #1 赵武灵王胡服骑射
@@ -24,7 +24,8 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tuoba: { name: '拓跋虎骑', tier: 1 },     // 大同·拓跋鲜卑
   // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
-  gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵（无经典以少胜多）
+  gaoqi_d: { name: '河北义军', tier: 1 },   // 蓨城·颜真卿抗击安史平原义军（原百保鲜卑，与武将时空种族互斥）
+    beiqi: { name: '百保鲜卑', tier: 1 },       // 蓨城·高长恭北齐鲜卑禁卫（T1有名且胜仗）
   yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·§2 #10 营州黄龙（《北齐书·高宝宁传》）
   hejian: { name: '先登死士', tier: 0 },    // 乐成·§1 #25 界桥（番号随城）
   chile: { name: '两池军', tier: 3 },       // 云中·§2 #11
@@ -35,6 +36,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   anshi_d: { name: '曳落河', tier: 1 },     // 范阳·§1 #48 安禄山蕃胡骑兵
   shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
   lingwu: { name: '朔方军', tier: 1 },      // 回乐·§1 #53 灵州朔方节度使精锐
+  dingxiang_d: { name: '恶阳骑', tier: 1 }, // 恶阳岭·贞观四年李靖三千轻骑夜袭定襄（《旧唐书·李靖传》）
   zhongshan: { name: '中山劲卒', tier: 2 },   // 真定·战国中山千乘
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
   helian: { name: '铁弗卫队', tier: 2 },     // 统万城·赫连勃勃铁弗亲卫
@@ -54,5 +56,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zhe_d: { name: '折家将兵', tier: 2 },         // 府谷·宋府州折氏十世将门
   shanrong: { name: '山戎突骑', tier: 3 },      // 无终·山戎族
   pingyuan: { name: '高唐戍卒', tier: 3 },      // 平原·高唐州
-  dada_ming: { name: '度辽营', tier: 2 },          // 河套·东汉度辽将军部
+  dada_ming: { name: '鞑靼游骑', tier: 2 },          // 河套·明代鞑靼部游骑（原度辽营，时代错位）
 };

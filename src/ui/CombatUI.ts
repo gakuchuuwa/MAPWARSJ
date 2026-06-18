@@ -21,7 +21,17 @@ import {
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier } from '../systems/CultureCombat';
-import { getOpeningTacticalPowerMultiplier, getStrategicBattlePowerMultiplier, getGeneralSkillDisplayTags, getPassGarrisonDefenseSkillDisplay, getReinforcementJoinSkillDisplay, getExpeditionForageSkillDisplay, canUnitUseGeneralSkills } from '../combat/GeneralSkillCombat';
+import type { LandTerrainKind } from '../world/land-sea';
+import {
+    getOpeningTacticalPowerMultiplier,
+    getStrategicBattlePowerMultiplier,
+    getGeneralSkillDisplayTags,
+    getPassGarrisonDefenseSkillDisplay,
+    getReinforcementJoinSkillDisplay,
+    getExpeditionForageSkillDisplay,
+    canUnitUseGeneralSkills,
+    getBattleTerrainKind,
+} from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL } from '../data/GeneralSkills';
 const T = COMBAT_UI_TOKENS;
 
@@ -801,16 +811,26 @@ export class CombatUI {
         return this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
     }
 
+    private getBattleTerrainForUi(): LandTerrainKind | null {
+        if (!this.boundRegionalBattleField) return null;
+        const units = [
+            ...this.boundRegionalBattleField.getAttackerUnits(),
+            ...this.boundRegionalBattleField.getDefenderUnits(),
+        ];
+        return getBattleTerrainKind(units, this.boundRegionalBattleField.type);
+    }
+
     private formatBattlePowerBadge(unit: IBattleUnit): string {
         const isGarrison = unit.unitType === 'city';
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
+        const terrain = this.getBattleTerrainForUi();
         const role = isGarrison ? '城防' : battleType === 'siege' ? '攻城' : '野战';
         
         let product = 1;
         product *= getUnitCultureCombatMultiplier(unit);
         product *= getCampaignLegionCombatMultiplier(unit);
         product *= getOpeningTacticalPowerMultiplier(unit);
-        product *= getStrategicBattlePowerMultiplier(unit, battleType);
+        product *= getStrategicBattlePowerMultiplier(unit, battleType, terrain);
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
         if (joinLuck !== null) product *= joinLuck;
         
@@ -821,6 +841,7 @@ export class CombatUI {
     private formatBattlePowerFactorChain(unit: IBattleUnit): { chain: string; title: string } {
         const isGarrison = unit.unitType === 'city';
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
+        const terrain = this.getBattleTerrainForUi();
         const role = isGarrison ? '城防' : battleType === 'siege' ? '攻城' : '野战';
         const fmt = (n: number) => String(parseFloat(n.toFixed(2)));
 
@@ -832,7 +853,7 @@ export class CombatUI {
         pushIfNotOne(PASS_GARRISON_DEFENSE_SKILL.displayName, getPassGarrisonCombatMultiplier(unit));
         pushIfNotOne(getLegionEliteBadgeName(unit), getCampaignLegionCombatMultiplier(unit));
         pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(unit));
-        pushIfNotOne('战略', getStrategicBattlePowerMultiplier(unit, battleType));
+        pushIfNotOne('战略', getStrategicBattlePowerMultiplier(unit, battleType, terrain));
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
         if (joinLuck !== null) {
             pushIfNotOne(REINFORCEMENT_JOIN_SKILL.displayName, joinLuck);
@@ -1647,10 +1668,11 @@ export class CombatUI {
                 * getPassGarrisonCombatMultiplier(u);
         }
         // 名将技乘区（该侧第一支可用名将的军团，开局战术 × 战略）
+        const terrain = this.getBattleTerrainForUi();
         for (const u of units) {
             if (canUnitUseGeneralSkills(u)) {
                 base *= getOpeningTacticalPowerMultiplier(u)
-                    * getStrategicBattlePowerMultiplier(u, this.currentBattleType);
+                    * getStrategicBattlePowerMultiplier(u, this.currentBattleType, terrain);
                 break;
             }
         }

@@ -20,7 +20,15 @@ import {
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
 import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitBattlePowerMultiplier } from '../systems/CultureCombat';
-import { applyOpeningTacticalToRolls, applyPostBattleStrategicBonus, applyGeneralSkillSideRollMultipliers, tryEmitOpeningTacticalOnReinforcementJoin } from './GeneralSkillCombat';
+import {
+    applyGeneralSkillSideRollMultipliers,
+    applyOpeningTacticalPreRoll,
+    applyPostBattleStrategicBonus,
+    applyStrategicRollMultipliersOnly,
+    applyComebackRollMultipliersForSide,
+    tryApplyComebackTacticalForSide,
+    tryEmitOpeningTacticalOnReinforcementJoin,
+} from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 // ==================== 类型定义 ====================
 
@@ -63,6 +71,13 @@ export class BattleField {
     private nextReinforcementWave = 1; // 下一波援军编号，从 1 开始
     /** 援军编入时掷定的有效战力系数（waveIndex≥1），不重掷 */
     private readonly reinforcementLuckByUnitId = new Map<string, number>();
+    /** 每侧已触发的战术技 id（①–⑩ 每场一次类） */
+    private readonly attackerTacticalTriggered = new Set<string>();
+    private readonly defenderTacticalTriggered = new Set<string>();
+    /** 名将开局战术 UI 是否已展示 */
+    private readonly openingTacticalUiShown = { attacker: false, defender: false };
+    /** unitId → 免伤窗口（游戏内 elapsed） */
+    private readonly invincibleWindowByUnitId = new Map<string, { start: number; until: number }>();
 
     // 伤害系数现在从 GameConfig 读取
 
@@ -154,6 +169,23 @@ export class BattleField {
         const defUnits = this.defenderGroup.units.map((bu) => bu.unit);
         const attAdj = sumCultureAdjustedTroops(attUnits);
         const defAdj = sumCultureAdjustedTroops(defUnits);
+
+        applyOpeningTacticalPreRoll(
+            attUnits,
+            defUnits,
+            this.elapsed,
+            (unit, startElapsed, durationSec) => this.scheduleInvincible(unit, startElapsed, durationSec),
+            {
+                attacker: this.attackerTacticalTriggered,
+                defender: this.defenderTacticalTriggered,
+            },
+            true,
+            this.openingTacticalUiShown,
+        );
+        this.updateGroupStats();
+        this.attackerGroup.initialTotalTroops = this.attackerGroup.totalTroops;
+        this.defenderGroup.initialTotalTroops = this.defenderGroup.totalTroops;
+
         const attRoll = rollSideEffectivePower(attUnits);
         const defRoll = rollSideEffectivePower(defUnits);
         const strategic = applyGeneralSkillSideRollMultipliers(
@@ -162,6 +194,7 @@ export class BattleField {
             attRoll,
             defRoll,
             this.type,
+            { openingUiShown: this.openingTacticalUiShown },
         );
         gameLog(
             'battle',
@@ -216,14 +249,35 @@ export class BattleField {
 
         const attAdj = this.adjustedPowerWithReinforcement(this.attackerGroup);
         const defAdj = this.adjustedPowerWithReinforcement(this.defenderGroup);
-        const withSkills = applyGeneralSkillSideRollMultipliers(
+        let withSkills = applyStrategicRollMultipliersOnly(
             attUnits,
             defUnits,
             attAdj,
             defAdj,
             this.type,
-            { emitTacticalUi: false },
         );
+        const attComeback = applyComebackRollMultipliersForSide(
+            attUnits,
+            defUnits,
+            withSkills.attRoll,
+            withSkills.defRoll,
+            this.attackerTacticalTriggered,
+        );
+        withSkills = {
+            attRoll: attComeback.sideRoll,
+            defRoll: attComeback.opponentRoll,
+        };
+        const defComeback = applyComebackRollMultipliersForSide(
+            defUnits,
+            attUnits,
+            withSkills.defRoll,
+            withSkills.attRoll,
+            this.defenderTacticalTriggered,
+        );
+        withSkills = {
+            attRoll: defComeback.opponentRoll,
+            defRoll: defComeback.sideRoll,
+        };
 
         const prevStronger = this.predictedStrongerGroup.factionId;
         this.applyPredictedSidesFromRoll(withSkills.attRoll, withSkills.defRoll);
@@ -323,6 +377,9 @@ export class BattleField {
         this.distributeDamage(this.defenderGroup, damageToDefenders);
         this.distributeDamage(this.attackerGroup, damageToAttackers);
 
+        this.tickInvincibleStates();
+        this.tryComebackTacticalSkills();
+
         // 采样日志（BATTLE_TICK 频道，默认关）
         if (Math.random() < 0.03) {
             gameLog('battleTick', `[BattleField] 攻方: ${this.attackerGroup.totalTroops.toFixed(0)} | 守方: ${this.defenderGroup.totalTroops.toFixed(0)} | 目标时长: ${targetDuration.toFixed(1)}s`);
@@ -332,6 +389,72 @@ export class BattleField {
     /**
      * 更新各组的总兵力统计
      */
+    private scheduleInvincible(
+        unit: IBattleUnit,
+        startElapsed: number,
+        durationSec: number,
+    ): void {
+        this.invincibleWindowByUnitId.set(unit.id, {
+            start: startElapsed,
+            until: startElapsed + durationSec,
+        });
+    }
+
+    private tickInvincibleStates(): void {
+        const all = [...this.attackerGroup.units, ...this.defenderGroup.units];
+        for (const bu of all) {
+            const win = this.invincibleWindowByUnitId.get(bu.unit.id);
+            if (!win) continue;
+            bu.unit.isInvincible = this.elapsed >= win.start && this.elapsed < win.until;
+            if (this.elapsed >= win.until) {
+                bu.unit.isInvincible = false;
+                this.invincibleWindowByUnitId.delete(bu.unit.id);
+            }
+        }
+    }
+
+    private tryComebackTacticalSkills(): void {
+        if (this.presetResult) return;
+
+        const attUnits = this.attackerGroup.units
+            .filter((bu) => !bu.isDefeated && bu.unit.troops > 0)
+            .map((bu) => bu.unit);
+        const defUnits = this.defenderGroup.units
+            .filter((bu) => !bu.isDefeated && bu.unit.troops > 0)
+            .map((bu) => bu.unit);
+
+        const ctxBase = {
+            battleElapsed: this.elapsed,
+            scheduleInvincible: (unit: IBattleUnit, start: number, dur: number) =>
+                this.scheduleInvincible(unit, start, dur),
+            onSidesChanged: () => this.refreshPredictedSidesFromTotals(),
+            emitUi: true,
+        };
+
+        tryApplyComebackTacticalForSide(
+            attUnits,
+            defUnits,
+            this.attackerGroup.totalTroops,
+            this.attackerGroup.initialTotalTroops,
+            '攻方',
+            {
+                ...ctxBase,
+                triggeredSkillIds: this.attackerTacticalTriggered,
+            },
+        );
+        tryApplyComebackTacticalForSide(
+            defUnits,
+            attUnits,
+            this.defenderGroup.totalTroops,
+            this.defenderGroup.initialTotalTroops,
+            '守方',
+            {
+                ...ctxBase,
+                triggeredSkillIds: this.defenderTacticalTriggered,
+            },
+        );
+    }
+
     private updateGroupStats(): void {
         this.attackerGroup.totalTroops = this.attackerGroup.units
             .filter(u => !u.isDefeated)
@@ -608,6 +731,7 @@ export class BattleField {
             isAttacker,
             this.getAttackerUnits(),
             this.getDefenderUnits(),
+            this.openingTacticalUiShown,
         );
 
         gameLog(

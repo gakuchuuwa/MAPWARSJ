@@ -13,6 +13,7 @@ import type { RegionType } from '../systems/RegionSystem';
 import { IBattleUnit } from '../combat/CombatSystem';
 import { gameLog } from '../utils/GameLogger';
 import { getRandomFactionPortrait } from '../config/portrait_defaults';
+import { getGeneralMarchSpeedMultiplier } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 
 export class Army implements IBattleUnit {
@@ -468,7 +469,11 @@ export class Army implements IBattleUnit {
     }
 
     private getSpeed(): number {
-        return PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED * this.speedMultiplier;
+        return (
+            PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED
+            * this.speedMultiplier
+            * getGeneralMarchSpeedMultiplier(this)
+        );
     }
 
     public setSpeedMultiplier(multiplier: number): void {

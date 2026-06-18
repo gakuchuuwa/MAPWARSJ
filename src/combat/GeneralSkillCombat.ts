@@ -1,5 +1,5 @@
 /**
- * 武将技战斗挂载：门禁、开局战术、战后战略
+ * 武将技战斗挂载：门禁、开局战术、普将逆局、战后战略
  */
 import type { IBattleUnit, BattleType } from './CombatSystem';
 import type { Army } from '../legion/Army';
@@ -12,13 +12,43 @@ import {
     PASS_GARRISON_DEFENSE_SKILL,
     REINFORCEMENT_JOIN_SKILL,
     type TacticalSkillDef,
+    type GeneralTier,
 } from '../data/GeneralSkills';
+import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
 import { gameLog } from '../utils/GameLogger';
+
+/** 普将逆局：侧总兵力 ≤ 开战该侧总兵力 × 此比例时触发 */
+export const COMEBACK_TROOP_THRESHOLD = 0.5;
+
+/** 名将开局战术 UI 延迟（秒）：对峙立绘就绪后再闪字 */
+export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
+
+/** ⑥–⑩ 逆局技：每场每侧仅触发一次（含 ⑧⑨，避免每帧重复乘区） */
+const ONCE_PER_BATTLE_TACTICAL_IDS = new Set([
+    'tac_01',
+    'tac_02',
+    'tac_05',
+    'tac_06',
+    'tac_07',
+    'tac_08',
+    'tac_09',
+    'tac_10',
+]);
 
 export type TacticalSkillTrigger = {
     displayName: string;
     generalId: string;
     skillId: string;
+    /** 0 = 立即；名将开局默认 OPENING_TACTICAL_UI_DELAY_SEC */
+    uiDelaySec?: number;
+};
+
+export type ComebackTacticalContext = {
+    battleElapsed: number;
+    triggeredSkillIds: Set<string>;
+    scheduleInvincible: (unit: IBattleUnit, startElapsed: number, durationSec: number) => void;
+    onSidesChanged: () => void;
+    emitUi: boolean;
 };
 
 let legionManagerRef: LegionManager | null = null;
@@ -41,9 +71,7 @@ function getArmyEntity(unit: IBattleUnit): Army | null {
 }
 
 /**
- * 名将归势力（2026-06-15）：只要军团带 generalId 且该 id 有武将技档案即生效，
- * 不再要求跟随/剧本/远征——AI 名将同样触发，攻守双方各自结算。
- * （跟随判定 legionManagerRef 保留供他处/未来用。）
+ * 名将归势力：军团带 generalId 且档案存在即生效，AI 同样触发。
  */
 export function canUnitUseGeneralSkills(unit: IBattleUnit): boolean {
     void legionManagerRef;
@@ -53,7 +81,6 @@ export function canUnitUseGeneralSkills(unit: IBattleUnit): boolean {
     return true;
 }
 
-/** 取某侧第一支可用武将技的军团（带名将档案的） */
 function findEligibleGeneralUnit(units: IBattleUnit[]): IBattleUnit | null {
     for (const u of units) {
         if (canUnitUseGeneralSkills(u)) return u;
@@ -61,28 +88,122 @@ function findEligibleGeneralUnit(units: IBattleUnit[]): IBattleUnit | null {
     return null;
 }
 
-function getOpeningTacticalSkill(unit: IBattleUnit): TacticalSkillDef | null {
+function getTacticalSkill(unit: IBattleUnit): TacticalSkillDef | null {
     const profile = getGeneralProfile(unit.generalId);
     if (!profile) return null;
-    const def = getTacticalSkillDef(profile.tacticalSkillId);
-    if (!def || def.timing !== 'opening') return null;
-    return def;
+    return getTacticalSkillDef(profile.tacticalSkillId) ?? null;
 }
 
-/** 开局战术战力乘区（UI 徽章 / 与侧总掷色一致，如 ③ 侵掠如火 ×1.2） */
+function getTacticalSkillForTiming(
+    unit: IBattleUnit,
+    timing: 'opening' | 'comeback',
+): TacticalSkillDef | null {
+    const skill = getTacticalSkill(unit);
+    if (!skill || skill.timing !== timing) return null;
+    return skill;
+}
+
+function isOncePerBattleTactical(skillId: string): boolean {
+    return ONCE_PER_BATTLE_TACTICAL_IDS.has(skillId);
+}
+
+function emitTacticalUi(
+    unit: IBattleUnit,
+    skill: TacticalSkillDef,
+    sideLabel: string,
+    options?: { uiDelaySec?: number; immediate?: boolean },
+): void {
+    const delay =
+        options?.immediate === true
+            ? 0
+            : (options?.uiDelaySec ?? 0);
+    const trigger: TacticalSkillTrigger = {
+        displayName: skill.displayName,
+        generalId: unit.generalId!,
+        skillId: skill.id,
+        uiDelaySec: delay > 0 ? delay : undefined,
+    };
+    gameLog(
+        'battle',
+        `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}`,
+    );
+    if (delay > 0) {
+        window.setTimeout(() => onTacticalSkillTriggered?.(trigger), delay * 1000);
+    } else {
+        onTacticalSkillTriggered?.(trigger);
+    }
+}
+
+function sideMeetsComebackThreshold(currentTroops: number, initialTroops: number): boolean {
+    if (initialTroops <= 0) return false;
+    return currentTroops <= initialTroops * COMEBACK_TROOP_THRESHOLD;
+}
+
+function applyTroopAddToUnits(units: IBattleUnit[], ratio: number): number {
+    let added = 0;
+    for (const u of units) {
+        if (u.troops <= 0) continue;
+        const bonus = Math.floor(u.troops * ratio);
+        if (bonus <= 0) continue;
+        u.setTroops(u.troops + bonus);
+        added += bonus;
+    }
+    return added;
+}
+
+function applyTroopSubToUnits(units: IBattleUnit[], ratio: number): number {
+    let removed = 0;
+    for (const u of units) {
+        if (u.troops <= 0) continue;
+        const loss = Math.floor(u.troops * ratio);
+        if (loss <= 0) continue;
+        u.setTroops(Math.max(0, u.troops - loss));
+        removed += loss;
+    }
+    return removed;
+}
+
+function canTriggerTactical(
+    skill: TacticalSkillDef,
+    tier: GeneralTier,
+    triggeredSkillIds: Set<string>,
+): boolean {
+    if (skill.timing === 'opening' && tier !== 'famous') return false;
+    if (skill.timing === 'comeback' && tier !== 'ordinary') return false;
+    if (isOncePerBattleTactical(skill.id) && triggeredSkillIds.has(skill.id)) return false;
+    return true;
+}
+
+/** 战场锚点地形（攻城取城坐标，野战取首个存活单位） */
+export function getBattleTerrainKind(
+    units: IBattleUnit[],
+    battleType: BattleType,
+): LandTerrainKind | null {
+    const alive = units.filter((u) => u.troops > 0);
+    if (alive.length === 0) return null;
+    const city = alive.find((u) => u.unitType === 'city');
+    const anchor = (battleType === 'siege' && city ? city : alive[0]).getPosition();
+    if (LandSeaSystem.isSeaAt(anchor)) return 'sea';
+    return LandTerrainSystem.classifyAt(anchor) ?? 'plain';
+}
+
+/** 开局战术战力乘区（UI 徽章；仅名将开局 ③④ 类） */
 export function getOpeningTacticalPowerMultiplier(unit: IBattleUnit): number {
     if (!canUnitUseGeneralSkills(unit)) return 1;
-    const skill = getOpeningTacticalSkill(unit);
+    const profile = getGeneralProfile(unit.generalId);
+    if (profile?.tier !== 'famous') return 1;
+    const skill = getTacticalSkillForTiming(unit, 'opening');
     if (!skill || skill.effect !== 'ally_mult_1_2') return 1;
     return skill.magnitude;
 }
 
 /**
- * 战略开战战力乘区（须匹配战场类型；与掷色 `applyStrategicBattleToRolls` 一致）
+ * 战略开战战力乘区（须匹配战场类型 / 地形）
  */
 export function getStrategicBattlePowerMultiplier(
     unit: IBattleUnit,
     battleType?: BattleType,
+    terrain?: LandTerrainKind | null,
 ): number {
     if (!canUnitUseGeneralSkills(unit) || !battleType) return 1;
     const profile = getGeneralProfile(unit.generalId);
@@ -94,20 +215,33 @@ export function getStrategicBattlePowerMultiplier(
             return battleType === 'siege' ? skill.magnitude : 1;
         case 'field_power_mult':
             return battleType === 'field' ? skill.magnitude : 1;
+        case 'plain_power_mult':
+            return terrain === 'plain' ? skill.magnitude : 1;
+        case 'mountain_power_mult':
+            return terrain === 'mountain' ? skill.magnitude : 1;
+        case 'water_power_mult':
+            return terrain === 'sea' ? skill.magnitude : 1;
         default:
             return 1;
     }
 }
 
+/** 名将 S① 兵贵神速：行军速度乘区 */
+export function getGeneralMarchSpeedMultiplier(unit: IBattleUnit): number {
+    if (!canUnitUseGeneralSkills(unit)) return 1;
+    const profile = getGeneralProfile(unit.generalId);
+    if (!profile?.strategicSkillId) return 1;
+    const skill = getStrategicSkillDef(profile.strategicSkillId);
+    if (!skill || skill.effect !== 'march_speed_mult') return 1;
+    return skill.magnitude;
+}
 
-/** 关隘守军（type===pass 城防）是否适用拒险而守 */
 export function unitQualifiesForPassGarrisonDefenseSkill(unit: IBattleUnit): boolean {
     if (unit.unitType !== 'city') return false;
     const city = unit.getEntity?.() as { type?: string } | undefined;
     return city?.type === 'pass';
 }
 
-/** 守军系统技面板：拒险而守 */
 export function getPassGarrisonDefenseSkillDisplay(
     unit: IBattleUnit,
 ): { name: string; effectLabel: string } | null {
@@ -119,7 +253,6 @@ export function getPassGarrisonDefenseSkillDisplay(
     };
 }
 
-/** 援军系统技面板：合兵一处（编入 luck 已掷定） */
 export function getReinforcementJoinSkillDisplay(
     joinLuck: number | null,
 ): { name: string; effectLabel: string } | null {
@@ -144,7 +277,6 @@ function appendStrategicDisplayTag(
     });
 }
 
-/** 技能面板展示用（名将的战术 + 战略；远征军的「因粮于敌」另由 getExpeditionForageSkillDisplay 提供） */
 export function getGeneralSkillDisplayTags(
     unit: IBattleUnit,
 ): { name: string; effectLabel: string; isFamous: boolean }[] {
@@ -169,7 +301,6 @@ export function getGeneralSkillDisplayTags(
     return tags;
 }
 
-/** 远征军系统技面板：因粮于敌（仅远征军 expeditionTargetCityId 显示） */
 export function getExpeditionForageSkillDisplay(
     unit: IBattleUnit,
 ): { name: string; effectLabel: string } | null {
@@ -221,7 +352,92 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
 }
 
 /**
- * 跟拍侧开局战术 + 战略战力乘区（开战掷色 / 援军编入后强弱重算共用）
+ * 名将开局：①②⑤ 改兵力 / 免伤（在掷色前调用一次）
+ */
+export function applyOpeningTacticalPreRoll(
+    attackerUnits: IBattleUnit[],
+    defenderUnits: IBattleUnit[],
+    battleElapsed: number,
+    scheduleInvincible: (unit: IBattleUnit, startElapsed: number, durationSec: number) => void,
+    triggeredSkillIds: { attacker: Set<string>; defender: Set<string> },
+    emitUi: boolean,
+    openingUiShown?: { attacker: boolean; defender: boolean },
+): void {
+    const markOpeningUiShown = (sideLabel: string) => {
+        if (!openingUiShown) return;
+        if (sideLabel === '攻方') openingUiShown.attacker = true;
+        else openingUiShown.defender = true;
+    };
+
+    const applySide = (
+        units: IBattleUnit[],
+        opponents: IBattleUnit[],
+        sideLabel: string,
+        triggered: Set<string>,
+    ) => {
+        const unit = findEligibleGeneralUnit(units);
+        if (!unit?.generalId) return;
+        const profile = getGeneralProfile(unit.generalId);
+        const skill = getTacticalSkillForTiming(unit, 'opening');
+        if (!profile || !skill || profile.tier !== 'famous') return;
+        if (!canTriggerTactical(skill, profile.tier, triggered)) return;
+
+        switch (skill.effect) {
+            case 'ally_add_troops': {
+                const added = applyTroopAddToUnits(units, skill.magnitude);
+                if (added <= 0) return;
+                triggered.add(skill.id);
+                gameLog(
+                    'battle',
+                    `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} +${added} 兵`,
+                );
+                if (emitUi) {
+                    markOpeningUiShown(sideLabel);
+                    emitTacticalUi(unit, skill, sideLabel, {
+                        uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+                    });
+                }
+                break;
+            }
+            case 'enemy_sub_troops': {
+                const removed = applyTroopSubToUnits(opponents, skill.magnitude);
+                if (removed <= 0) return;
+                triggered.add(skill.id);
+                gameLog(
+                    'battle',
+                    `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 削敌 ${removed} 兵`,
+                );
+                if (emitUi) {
+                    markOpeningUiShown(sideLabel);
+                    emitTacticalUi(unit, skill, sideLabel, {
+                        uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+                    });
+                }
+                break;
+            }
+            case 'ally_invincible': {
+                triggered.add(skill.id);
+                const startAt = battleElapsed + (emitUi ? OPENING_TACTICAL_UI_DELAY_SEC : 0);
+                scheduleInvincible(unit, startAt, skill.magnitude);
+                if (emitUi) {
+                    markOpeningUiShown(sideLabel);
+                    emitTacticalUi(unit, skill, sideLabel, {
+                        uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+                    });
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    };
+
+    applySide(attackerUnits, defenderUnits, '攻方', triggeredSkillIds.attacker);
+    applySide(defenderUnits, attackerUnits, '守方', triggeredSkillIds.defender);
+}
+
+/**
+ * 跟拍侧开局战术 + 战略战力乘区（开战掷色）
  */
 export function applyGeneralSkillSideRollMultipliers(
     attackerUnits: IBattleUnit[],
@@ -229,15 +445,23 @@ export function applyGeneralSkillSideRollMultipliers(
     attRoll: number,
     defRoll: number,
     battleType: BattleType,
-    options?: { emitTacticalUi?: boolean },
+    options?: {
+        emitTacticalUi?: boolean;
+        terrain?: LandTerrainKind | null;
+        openingUiShown?: { attacker: boolean; defender: boolean };
+    },
 ): { attRoll: number; defRoll: number } {
     const emitUi = options?.emitTacticalUi !== false;
+    const terrain =
+        options?.terrain ??
+        getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
     const tactical = applyOpeningTacticalToRolls(
         attackerUnits,
         defenderUnits,
         attRoll,
         defRoll,
         emitUi,
+        options?.openingUiShown,
     );
     return applyStrategicBattleToRolls(
         attackerUnits,
@@ -245,35 +469,61 @@ export function applyGeneralSkillSideRollMultipliers(
         tactical.attRoll,
         tactical.defRoll,
         battleType,
+        terrain,
+    );
+}
+
+/** 援军编入后强弱重算：仅战略乘区（不重发开局/逆局战术） */
+export function applyStrategicRollMultipliersOnly(
+    attackerUnits: IBattleUnit[],
+    defenderUnits: IBattleUnit[],
+    attRoll: number,
+    defRoll: number,
+    battleType: BattleType,
+): { attRoll: number; defRoll: number } {
+    const terrain = getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
+    return applyStrategicBattleToRolls(
+        attackerUnits,
+        defenderUnits,
+        attRoll,
+        defRoll,
+        battleType,
+        terrain,
     );
 }
 
 /**
- * 援军编入：跟拍剧本/远征军团首次入战时可补发战术技 UI（开战时不在场则错过首次闪光）
+ * 援军编入：名将首次入战补发开局战术 UI（机制已在开战结算）
  */
 export function tryEmitOpeningTacticalOnReinforcementJoin(
     joinedUnit: IBattleUnit,
     isAttacker: boolean,
     attackerUnits: IBattleUnit[],
     defenderUnits: IBattleUnit[],
+    openingUiShown: { attacker: boolean; defender: boolean },
 ): void {
     if (!canUnitUseGeneralSkills(joinedUnit)) return;
     const sideUnits = isAttacker ? attackerUnits : defenderUnits;
     const eligible = findEligibleGeneralUnit(sideUnits);
     if (eligible?.id !== joinedUnit.id) return;
 
-    const skill = getOpeningTacticalSkill(joinedUnit);
-    if (!skill || skill.effect !== 'ally_mult_1_2') return;
+    const profile = getGeneralProfile(joinedUnit.generalId);
+    const skill = getTacticalSkillForTiming(joinedUnit, 'opening');
+    if (!profile || profile.tier !== 'famous' || !skill) return;
 
-    onTacticalSkillTriggered?.({
-        displayName: skill.displayName,
-        generalId: joinedUnit.generalId!,
-        skillId: skill.id,
+    const shown = isAttacker ? openingUiShown.attacker : openingUiShown.defender;
+    if (shown) return;
+
+    if (isAttacker) openingUiShown.attacker = true;
+    else openingUiShown.defender = true;
+
+    emitTacticalUi(joinedUnit, skill, isAttacker ? '攻方' : '守方', {
+        uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
     });
 }
 
 /**
- * 开局战术：跟拍侧有效战力掷色结果乘区（如 ③ 侵掠如火 ×1.2）
+ * 名将开局战术掷色乘区（③ 己×1.2、④ 敌×0.8）
  */
 export function applyOpeningTacticalToRolls(
     attackerUnits: IBattleUnit[],
@@ -281,65 +531,212 @@ export function applyOpeningTacticalToRolls(
     attRoll: number,
     defRoll: number,
     emitUi = true,
+    openingUiShown?: { attacker: boolean; defender: boolean },
 ): { attRoll: number; defRoll: number; trigger?: TacticalSkillTrigger } {
     let lastTrigger: TacticalSkillTrigger | undefined;
 
-    // 一侧的开局战术：普将（逆风触发）或名将（稳定触发）的战术乘区（如 ③侵掠如火）
-    const applySide = (units: IBattleUnit[], roll: number, opponentRoll: number, sideLabel: string): number => {
+    const markShown = (isAttacker: boolean) => {
+        if (!openingUiShown) return;
+        if (isAttacker) openingUiShown.attacker = true;
+        else openingUiShown.defender = true;
+    };
+
+    const applyAllyMult = (
+        units: IBattleUnit[],
+        roll: number,
+        sideLabel: string,
+        isAttacker: boolean,
+    ): number => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return roll;
-        
         const profile = getGeneralProfile(unit.generalId);
-        if (!profile) return roll;
+        const skill = getTacticalSkillForTiming(unit, 'opening');
+        if (!profile || profile.tier !== 'famous' || !skill) return roll;
 
-        const skill = getOpeningTacticalSkill(unit);
-        if (!skill || skill.effect !== 'ally_mult_1_2') return roll;
-
-        // 普将（ordinary）逆风翻盘机制：己方 roll 必须小于敌方 roll 才触发
-        if (profile.tier === 'ordinary') {
-            if (roll >= opponentRoll) {
-                return roll; // 优势或势均力敌时不触发普将技能
-            }
-        }
-
-        const next = roll * skill.magnitude;
-        if (emitUi) {
+        if (skill.effect === 'ally_mult_1_2') {
+            const next = roll * skill.magnitude;
             gameLog(
                 'battle',
                 `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}有效战力 ×${skill.magnitude} (${roll.toFixed(0)}→${next.toFixed(0)})`,
             );
-            const trigger: TacticalSkillTrigger = {
-                displayName: skill.displayName,
-                generalId: unit.generalId,
-                skillId: skill.id,
-            };
-            onTacticalSkillTriggered?.(trigger);
-            lastTrigger = trigger;
+            if (emitUi) {
+                markShown(isAttacker);
+                const trigger: TacticalSkillTrigger = {
+                    displayName: skill.displayName,
+                    generalId: unit.generalId,
+                    skillId: skill.id,
+                    uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+                };
+                window.setTimeout(
+                    () => onTacticalSkillTriggered?.(trigger),
+                    OPENING_TACTICAL_UI_DELAY_SEC * 1000,
+                );
+                lastTrigger = trigger;
+            }
+            return next;
         }
-        return next;
+        return roll;
     };
 
-    // 攻守双方各自结算（白起对廉颇：两边名将技都生效）
-    const outAtt = applySide(attackerUnits, attRoll, defRoll, '攻方');
-    const outDef = applySide(defenderUnits, defRoll, attRoll, '守方');
+    const applyEnemyDebuff = (
+        units: IBattleUnit[],
+        opponentRoll: number,
+        sideLabel: string,
+        isAttacker: boolean,
+    ): number => {
+        const unit = findEligibleGeneralUnit(units);
+        if (!unit?.generalId) return opponentRoll;
+        const profile = getGeneralProfile(unit.generalId);
+        const skill = getTacticalSkillForTiming(unit, 'opening');
+        if (!profile || profile.tier !== 'famous' || !skill) return opponentRoll;
+
+        if (skill.effect === 'enemy_mult_0_8') {
+            const next = opponentRoll * skill.magnitude;
+            gameLog(
+                'battle',
+                `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}压制敌战力 ×${skill.magnitude}`,
+            );
+            if (emitUi) {
+                markShown(isAttacker);
+                const trigger: TacticalSkillTrigger = {
+                    displayName: skill.displayName,
+                    generalId: unit.generalId,
+                    skillId: skill.id,
+                    uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+                };
+                window.setTimeout(
+                    () => onTacticalSkillTriggered?.(trigger),
+                    OPENING_TACTICAL_UI_DELAY_SEC * 1000,
+                );
+                lastTrigger = trigger;
+            }
+            return next;
+        }
+        return opponentRoll;
+    };
+
+    let outAtt = applyAllyMult(attackerUnits, attRoll, '攻方', true);
+    let outDef = applyAllyMult(defenderUnits, defRoll, '守方', false);
+    outDef = applyEnemyDebuff(attackerUnits, outDef, '攻方', true);
+    outAtt = applyEnemyDebuff(defenderUnits, outAtt, '守方', false);
+
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }
 
 /**
- * 战略开战：跟拍侧有效战力掷色再乘区（如 S③ 攻城拔寨，仅 siege）
+ * 普将逆局战术（侧兵力 ≤ 开战 50% 时触发，⑥–⑩）
  */
+export function tryApplyComebackTacticalForSide(
+    sideUnits: IBattleUnit[],
+    opponentUnits: IBattleUnit[],
+    sideTotalTroops: number,
+    sideInitialTroops: number,
+    sideLabel: string,
+    ctx: ComebackTacticalContext,
+): boolean {
+    if (!sideMeetsComebackThreshold(sideTotalTroops, sideInitialTroops)) return false;
+
+    const unit = findEligibleGeneralUnit(sideUnits);
+    if (!unit?.generalId) return false;
+    const profile = getGeneralProfile(unit.generalId);
+    const skill = getTacticalSkillForTiming(unit, 'comeback');
+    if (!profile || profile.tier !== 'ordinary' || !skill) return false;
+    if (!canTriggerTactical(skill, profile.tier, ctx.triggeredSkillIds)) return false;
+
+    let applied = false;
+
+    switch (skill.effect) {
+        case 'ally_add_troops': {
+            const added = applyTroopAddToUnits(sideUnits, skill.magnitude);
+            if (added <= 0) return false;
+            ctx.triggeredSkillIds.add(skill.id);
+            applied = true;
+            gameLog(
+                'battle',
+                `⚔️ [武将技·逆局] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} +${added} 兵（兵力≤${COMEBACK_TROOP_THRESHOLD * 100}%）`,
+            );
+            ctx.onSidesChanged();
+            break;
+        }
+        case 'enemy_sub_troops': {
+            const removed = applyTroopSubToUnits(opponentUnits, skill.magnitude);
+            if (removed <= 0) return false;
+            ctx.triggeredSkillIds.add(skill.id);
+            applied = true;
+            gameLog(
+                'battle',
+                `⚔️ [武将技·逆局] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 削敌 ${removed} 兵`,
+            );
+            ctx.onSidesChanged();
+            break;
+        }
+        case 'ally_invincible': {
+            ctx.triggeredSkillIds.add(skill.id);
+            applied = true;
+            ctx.scheduleInvincible(unit, ctx.battleElapsed, skill.magnitude);
+            gameLog(
+                'battle',
+                `⚔️ [武将技·逆局] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 免伤 ${skill.magnitude} 秒`,
+            );
+            break;
+        }
+        case 'ally_mult_1_2':
+        case 'enemy_mult_0_8':
+            ctx.triggeredSkillIds.add(skill.id);
+            applied = true;
+            gameLog(
+                'battle',
+                `⚔️ [武将技·逆局] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 战力乘区生效`,
+            );
+            ctx.onSidesChanged();
+            break;
+        default:
+            return false;
+    }
+
+    if (applied && ctx.emitUi) {
+        emitTacticalUi(unit, skill, sideLabel, { immediate: true });
+    }
+    return applied;
+}
+
+/** 逆局 ⑧⑨：对已触发的乘区技能做掷色修正（在 onSidesChanged 内调用） */
+export function applyComebackRollMultipliersForSide(
+    sideUnits: IBattleUnit[],
+    opponentUnits: IBattleUnit[],
+    sideRoll: number,
+    opponentRoll: number,
+    triggeredSkillIds: Set<string>,
+): { sideRoll: number; opponentRoll: number } {
+    const unit = findEligibleGeneralUnit(sideUnits);
+    if (!unit?.generalId) return { sideRoll, opponentRoll };
+    const skill = getTacticalSkillForTiming(unit, 'comeback');
+    if (!skill || !triggeredSkillIds.has(skill.id)) return { sideRoll, opponentRoll };
+
+    if (skill.effect === 'ally_mult_1_2') {
+        return { sideRoll: sideRoll * skill.magnitude, opponentRoll };
+    }
+    if (skill.effect === 'enemy_mult_0_8') {
+        return { sideRoll, opponentRoll: opponentRoll * skill.magnitude };
+    }
+    return { sideRoll, opponentRoll };
+}
+
 export function applyStrategicBattleToRolls(
     attackerUnits: IBattleUnit[],
     defenderUnits: IBattleUnit[],
     attRoll: number,
     defRoll: number,
     battleType: BattleType,
+    terrain?: LandTerrainKind | null,
 ): { attRoll: number; defRoll: number } {
-    // 一侧的战略乘区（如 S③攻城拔寨，仅 siege；按战场类型匹配）
+    const terrainKind =
+        terrain ?? getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
+
     const applySide = (units: IBattleUnit[], roll: number, sideLabel: string): number => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return roll;
-        const mult = getStrategicBattlePowerMultiplier(unit, battleType);
+        const mult = getStrategicBattlePowerMultiplier(unit, battleType, terrainKind);
         if (Math.abs(mult - 1) < 0.001) return roll;
         const profile = getGeneralProfile(unit.generalId);
         const skill = profile?.strategicSkillId
@@ -359,9 +756,6 @@ export function applyStrategicBattleToRolls(
     return { attRoll: outAtt, defRoll: outDef };
 }
 
-/**
- * 战后加兵：按战略技能 magnitude 对当前兵力比例结算
- */
 function applyPostBattleTroopPct(
     unit: IBattleUnit,
     skill: { displayName: string; effect: string; magnitude: number },
@@ -379,22 +773,17 @@ function applyPostBattleTroopPct(
     return bonus;
 }
 
-/**
- * 战后战略：远征军系统技「因粮于敌」（仅远征军）+ 将领档案胜后战略（若有）
- */
 export function applyPostBattleStrategicBonus(
     unit: IBattleUnit,
     _battleType: BattleType,
 ): number {
     let total = 0;
 
-    // 因粮于敌：仅远征军（被下远征令、有 expeditionTargetCityId）享，与是否有名将无关
     const army = getArmyEntity(unit);
     if (army?.expeditionTargetCityId) {
         total += applyPostBattleTroopPct(unit, EXPEDITION_FORAGE_SKILL, '[远征] ');
     }
 
-    // 名将自身的胜后战略（若其战略技恰为 post_battle_troop_pct）
     if (canUnitUseGeneralSkills(unit)) {
         const profile = getGeneralProfile(unit.generalId);
         if (profile?.strategicSkillId) {
