@@ -630,6 +630,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'jibei': _zhongyuanPortraitPool,
     'jin': _zhongyuanPortraitPool,
     'jingzhou': _zhongyuanPortraitPool,
+    'zaoyang_d': _zhongyuanPortraitPool,
     'kong_d': _zhongyuanPortraitPool,
     'liang_d': _zhongyuanPortraitPool,
     'liguo': _zhongyuanPortraitPool,
@@ -748,6 +749,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'qian': _lingnanPortraitPool,
     'shengmiao': _lingnanPortraitPool,
     'shixing': _lingnanPortraitPool,
+    'shaozhou': _lingnanPortraitPool,
     'taiping': _lingnanPortraitPool,
     'tian_sizhou': _lingnanPortraitPool,
     'trinh': _lingnanPortraitPool,
@@ -756,6 +758,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'xiou': _lingnanPortraitPool,
     'yelang': _lingnanPortraitPool,
     'yongli': _lingnanPortraitPool,
+    'duanzhou_d': _lingnanPortraitPool,
     'zangke': _lingnanPortraitPool,
     // 边缘 15 划归各区
     'aola': _dongbeiPortraitPool,

@@ -39,6 +39,7 @@ const _FIXED: Record<string, string> = {
     hongguang: '#B82E2E', // 弘光(南明复明)
     longwu: '#B43434', // 隆武
     yongli: '#AA3636', // 永历
+    duanzhou_d: '#3D7A5A', // 端州（肇庆·摧锋军）
 
     // ── 黄·土德尚黄 ──
     wei: '#B07818', // 魏（深琥珀土黄；汴梁↔长安邻近易混）
@@ -210,7 +211,8 @@ const _FIXED: Record<string, string> = {
     nantang_d: '#4A68A0', // 南唐·黑云长剑都（金陵青）
     zhong: '#4E7080', // 仲·北府兵（江淮青灰；原北府@濡须口）
     wuwu_d: '#6A8A7A', // 无为·濡须水畔州治
-    jingzhou: '#3E7858', // 荆·忠顺军（荆州深绿；襄阳治所）
+    jingzhou: '#3E7858', // 荆·汉水哨船（襄阳治所）
+    zaoyang_d: '#4A6B3A', // 枣阳·忠顺军（孟珙）
     sunwu_d: '#2878A0', // 孙吴·解烦兵（武昌蓝）
     qian_d: '#5888A8', // 钱·游奕军（吴越水蓝）
     heng: '#6A7858', // 衡州（临烝；无远征番号）
@@ -228,7 +230,7 @@ const _FIXED: Record<string, string> = {
     yingzhou_ying_d: '#887040', // 营·朝阳（黄龙兵）
     gaoqi_d: '#6A4858', // 高齐·百保鲜卑 T0（蓨城）
     yin: '#A08038', // 殷·朝歌（汉初司马卬殷国）
-    hejian: '#756048', // 河间·先登死士（乐成/界桥；≠高车 gaoche）
+    hejian: '#756048', // 莫州·文安（原河间·先登死士）
     chile: '#5A7060', // 敕勒·两池军（阴山青灰）
     anshi_d: '#482838', // 安史·曳落河（范阳暗绛）
     lingwu: '#587878', // 灵·朔方军（灵武青灰）
@@ -282,7 +284,7 @@ const _FIXED: Record<string, string> = {
     ruochu: '#984838', // 若敖·六卒精锐（楚系赭红）
     mi_chu: '#8B6848', // 芈氏·左右广军（云梦褐；避 xiliang 撞色）
     nanyue: '#6B4423', // 南越（龙川）
-    guangzhou: '#1F7060', // 广州·摧锋军（南海碧玉/深水绿，契合岭南与南海水师）
+    guangzhou: '#1F7060', // 广州·清海军（南海碧玉/深水绿）
     // chu/song/chen/xiao_d/yue_d/ming_d/haoding 见南方表
 
     // ── 黑·水德尚黑 / 契丹黑旗 ──
@@ -662,6 +664,7 @@ const _FIXED: Record<string, string> = {
     'ying': '#30338B', // 自动分配 (邻域相斥)
     'chen2': '#8E934F', // 自动分配 (邻域相斥)
     'shixing': '#228E9D', // 自动分配 (邻域相斥)
+    'shaozhou': '#8B6914', // 韶州（曲江旗·岭南宋末）
     'yidou': '#3B8251', // 自动分配 (邻域相斥)
     'xin2': '#3EA198', // 自动分配 (邻域相斥)
     'woju': '#B16665', // 自动分配 (邻域相斥)

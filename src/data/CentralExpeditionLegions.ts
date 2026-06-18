@@ -57,4 +57,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   chuzhou_d: { name: '殿前诸班', tier: 1 },      // 清流关·后周殿前军（赵匡胤曾任殿前都点检，《旧五代史》）
   // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
   lulin: { name: '云台突骑', tier: 1 },           // 昆阳·云台二十八将突骑
+  lai: { name: '齐关弩手', tier: 2 },           // 青石关·齐长城弩兵
 };

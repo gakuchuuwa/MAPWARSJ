@@ -18,7 +18,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   guangnanguo: { name: '黑旗军', tier: 1 },     // 洞海·刘永福抗法（纸桥斩李维业）
   ryukyu: { name: '那霸水师', tier: 2 },       // 首里·§9 #21 琉球王府水师
   ming_zheng: { name: '郑氏铁人军', tier: 1 }, // 承天·§9 #18 郑成功铁人军
-  guangzhou: { name: '摧锋军', tier: 2 },      // 番禺·§9 #15 广南守城（广州据点）
+  guangzhou: { name: '清海军', tier: 2 },      // 番禺·刘隐清海军节度（《旧唐书·刘隐传》）
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占
   zhancheng: { name: '佛逝象军', tier: 2 },   // 阇槃·占城佛逝象兵
@@ -36,10 +36,12 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   taiping: { name: '太平军', tier: 2 },          // 金田村·太平天国
   leizhou: { name: '雷州戍兵', tier: 3 },        // 海康·雷州
   li_s: { name: '大汉伏波', tier: 1 },            // 合浦·马援征交趾（非以少胜多）
-  guizhou: { name: '静江军', tier: 2 },       // 古严关·宋桂州静江军
+  shaozhou: { name: '大庾岭义旅', tier: 2 },   // 韶关·张镇孙抗元义军（1277–1278）
+  guizhou: { name: '永历铁骑', tier: 1 },       // 古严关·李定国（原肇庆永历，2026-06-19 迁桂州）
   paiyao: { name: '八排瑶丁', tier: 3 },      // 阳山关·明清连阳八排瑶丁
   // 湘军道营除名（无此编制）
   dayu: { name: '南赣标军', tier: 3 },        // 横浦关·明王阳明南赣标军
-  yongli: { name: '永历铁骑', tier: 1 },       // 肇庆·李定国两蹶名王（南明抗清）
+  duanzhou_d: { name: '摧锋军', tier: 2 },       // 肇庆·马暨摧锋军（《宋史》）
+  yongli: { name: '桂西义兵', tier: 3 },       // 桂林·永历行在（1647）
   basha_d: { name: '湄公象卫', tier: 3 },     // 上丁·巴沙国湄公象卫
 };

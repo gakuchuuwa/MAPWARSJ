@@ -51,11 +51,12 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhou': '周',
     'qi': '齐',
     'jin': '晋',
-    'chu': '楚',
+    'chu': '江陵',
     'wu': '吴',
 'yue': '越',
     'nanyue': '南越',
     'guangzhou': '广',
+    'duanzhou_d': '端',
     'qin': '秦',
     'song': '宋',
     'yan': '燕',
@@ -201,12 +202,13 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // 2026-05-25 汉朝核对追加势力
 'zhai_han': '翟',
     'yin': '殷',
-    'hejian': '河间',
+    'hejian': '莫',
 'liu': '九江',
     'ouyue': '台',
 
     // 2026-05-25 三国核对追加势力
     'jingzhou': '荆',
+    'zaoyang_d': '舂陵',
     // ── 2026-06-16 改：符离·宿（§4.7；旗号「徐」让位下邳徐国）──
     'suzhou_d': '宿',
     'didao': '狄',
@@ -258,7 +260,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhongxiang': '钟',
     'yang_aner': '登',
     'haoding': '红袄',
-    'liwang': '黑旗',
+    'liwang': '河间',
 
     // ── 2026-05-25 元朝蒙古势力 ──
     'huarazim': '花剌',
@@ -645,6 +647,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'heng': '衡',
     'chen2': '郴',
 'shixing': '石兴',
+    'shaozhou': '曲江',
     'yidou': '宜都',
     'boren': '僰',
 'xin2': '信',
@@ -699,7 +702,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qingyuan_bd': '清苑',
     'pingyuan': '高唐',
     'yao': '尧',
-'xichu': '西楚',
+'xichu': '楚',
     'yunzhong': '云中',
     'chunshen': '春申',
     'qian': '矩',

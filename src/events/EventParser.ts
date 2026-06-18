@@ -77,7 +77,9 @@ export class EventParser {
         '穆氏': 'mushi', '大岴': 'mushi', '穆陵关': 'mushi', '丘穆陵骑': 'mushi',
         '蔡': 'cai', '新蔡': 'cai',
         '乌桓': 'wuhuan', '乌桓突骑': 'wuhuan', '白狼山': 'wuhuan',
-        '摧锋军': 'guangzhou', '广州': 'guangzhou', '番禺': 'guangzhou',
+        '摧锋军': 'duanzhou_d', '马暨': 'duanzhou_d', '马塈': 'duanzhou_d', '端州': 'duanzhou_d',
+        '广州': 'guangzhou', '番禺': 'guangzhou',
+        '清海军': 'guangzhou', '刘隐': 'guangzhou',
         '南越': 'nanyue', '南越国': 'nanyue', '赵佗': 'nanyue', '龙川': 'nanyue',
         '塞尔柱': 'seljuq', '桑贾尔': 'seljuq', '木鹿': 'seljuq', '梅尔夫': 'seljuq', '桑贾尔禁卫': 'seljuq',
 
@@ -274,11 +276,11 @@ export class EventParser {
         '苑川突骑': 'qifu_d', '苑川': 'qifu_d',
         '碎叶镇军': 'ashina', '碎叶城': 'xiliao', '碎叶': 'xiliao', '屈耽': 'xiliao',
         '斡耳朵亲卫': 'xiliao', '虎思': 'xiliao', '八剌沙衮': 'xiliao',
-        '建康水军': 'chen',
+        '清海军': 'guangzhou', '刘隐': 'guangzhou',
         '白袍军': 'xiao_d', '陈庆之': 'xiao_d',
         '背嵬军': 'yue_d', '背嵬': 'yue_d', '岳飞': 'yue_d', '岳云': 'yue_d',
-        '中兴护军': 'song', '韩世忠': 'song',
-        '忠顺军': 'jingzhou', '孟珙': 'jingzhou', '孟宗政': 'jingzhou', '枣阳': 'jingzhou',
+        '中兴护军': 'song', '韩世忠': 'song', '克敌军': 'song',
+        '忠顺军': 'zaoyang_d', '孟珙': 'zaoyang_d', '孟宗政': 'zaoyang_d', '枣阳': 'zaoyang_d', '舂陵': 'zaoyang_d',
         '游奕军': 'qian_d', '踏白军': 'qian_d',
         '明军三大营': 'ming_d', '三大营': 'ming_d', '五军营': 'ming_d', '神机营': 'ming_d', '三千营': 'ming_d',
         '戚家军': 'qi_d', '戚继光': 'qi_d', '戚': 'qi_d', '横屿': 'qi_d', '横屿大捷': 'qi_d',
@@ -329,7 +331,8 @@ export class EventParser {
         '尔朱': 'erzhu', '尔朱荣': 'erzhu', '尔朱兆': 'erzhu', '尔朱氏': 'erzhu',
         '契胡': 'erzhu', '秀容川': 'erzhu', '秀容': 'erzhu',
         '陈': 'chen', '陈霸先': 'chen', '陈武帝': 'chen', '陈朝': 'chen',
-        '韶关': 'chen', '始兴': 'chen', '始兴郡': 'chen',
+        '韶关': 'shaozhou', '曲江': 'shaozhou', '始兴': 'shixing', '始兴郡': 'shixing',
+        '张镇孙': 'shaozhou', '大庾岭义旅': 'shaozhou', '大庾岭': 'shaozhou',
 
         // ── 2026-05-25 明清之际势力 ──
         // 第一类：明末农民军
@@ -339,7 +342,7 @@ export class EventParser {
         '弘光': 'hongguang', '朱由崧': 'hongguang', '福王': 'hongguang', '南京': 'hongguang',
         '隆武': 'longwu', '朱聿键': 'longwu', '唐王': 'longwu', '福州': 'longwu',
         '鲁监国': 'lujian', '朱以海': 'lujian', '绍兴': 'lujian',
-        '永历': 'yongli', '朱由榔': 'yongli', '肇庆': 'yongli', '桂王': 'yongli', '晋王': 'yongli',
+        '永历': 'yongli', '朱由榔': 'yongli', '肇庆': 'duanzhou_d', '桂王': 'yongli', '晋王': 'yongli',
         '毛文龙': 'mao_wenlong', '东江镇': 'mao_wenlong', '皮岛': 'mao_wenlong',
         // 第三类：蒙古诸部
         '察哈尔': 'chahar', '林丹汗': 'chahar', '插汉': 'chahar', '察哈': 'chahar',

@@ -53,11 +53,13 @@ export const FACTIONS: Faction[] = [
     // 春秋战国列国
     { id: 'qi', name: '齐国' },
     { id: 'jin', name: '晋国' },
-    { id: 'chu', name: '楚国' },
+    { id: 'chu', name: '江陵' },
     { id: 'wu', name: '吴国' },
     { id: 'yue', name: '越国' },
     { id: 'nanyue', name: '南越' },                 // 赵佗@龙川（政权·国号）
     { id: 'guangzhou', name: '广州' },               // 广州@番禺（州府/广南核心）
+    // ── 2026-06-19 新增：端州@肇庆（摧锋军；旗号端≠据点名肇庆）──
+    { id: 'duanzhou_d', name: '端州' },
     { id: 'qin', name: '秦国' },
     { id: 'song', name: '宋国' },
     { id: 'yan', name: '燕国' },
@@ -213,7 +215,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zhai_han', name: '翟国' },
     { id: 'yin', name: '殷国' },
     // ── 2026-06-16 新增：河间郡治乐成（§4.3；先登死士@界桥）──
-    { id: 'hejian', name: '河间' },
+    { id: 'hejian', name: '莫' },
     { id: 'liu', name: '九江' },
       // 陶褐 - 英布/九江王(六县)
     { id: 'ouyue', name: '瓯越' },
@@ -221,6 +223,8 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 新增：三国核对追加势力 ──
     // ── 2026-06-11 改：襄阳·荆州州名旗号（§4.1-5）──
     { id: 'jingzhou', name: '荆州' },
+    // ── 2026-06-19 新增：枣阳@枣阳（孟珙·忠顺军；《宋史·孟珙传》；旗号舂陵≠枣阳）──
+    { id: 'zaoyang_d', name: '枣阳' },
     // ── 2026-06-16 改：符离·宿州治（§4.7；旗号「徐」让位下邳徐国）──
     { id: 'suzhou_d', name: '宿州' },
     // ── 2026-06-11：狄道（古临洮/陇西；旗号狄，据点临洮）──
@@ -288,7 +292,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yang_aner', name: '天顺' },          // 红袄赤 - 杨安儿天顺政权(登州)
     { id: 'haoding', name: '红袄' },
     // 草原金 - 德寿身圣政权(信州)
-    { id: 'liwang', name: '黑旗' },
+    { id: 'liwang', name: '河间' },
 
     // ── 2026-05-26 元朝蒙古势力 ──
     { id: 'huarazim', name: '花剌子模' },        // 中亚金 - 花剌子模帝国(撒马尔干)
@@ -769,6 +773,8 @@ export const FACTIONS: Faction[] = [
     { id: 'heng', name: '衡州' },
     { id: 'chen2', name: '郴州' },
     { id: 'shixing', name: '石兴岭' },
+    // ── 2026-06-19 新增：韶州@韶关（张镇孙·大庾岭义旅；旗号曲江≠据点名韶关）──
+    { id: 'shaozhou', name: '韶州' },
     { id: 'yidou', name: '宜都' },
     { id: 'boren', name: '僰族' },
     { id: 'xin2', name: '信州' },
