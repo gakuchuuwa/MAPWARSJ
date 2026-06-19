@@ -95,7 +95,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ayinu: { generalId: 'hushemoquan', generalName: '胡奢魔犬', portrait: '/assets/riben/hushemoquan.png' },
     so: { generalId: 'zongyizhi', generalName: '宗义智', portrait: '/assets/riben/zongyizhi.png' },
     taira: { generalId: 'pingzhisheng', generalName: '平知盛', portrait: '/assets/riben/pingzhisheng.png' },
-    // ── 朝鲜区 2026-06-18 ──
+        lelang: { generalId: 'wangqi', generalName: '王颀', portrait: '/assets/chaoxian/wangqi.png' },
+    anmei: { generalId: 'yuwandaqin', generalName: '与湾大亲', portrait: '/assets/riben/yuwandaqin.png' },
+
+// ── 朝鲜区 2026-06-18 ──
     chen3: { generalId: 'chenwang', generalName: '辰王', portrait: '/assets/chaoxian/chenwang.png' },
     joseon: { generalId: 'lichenggui', generalName: '李成桂', portrait: '/assets/chaoxian/lichenggui.png' },
     gaogouli: { generalId: 'yizhiwende', generalName: '乙支文德', portrait: '/assets/chaoxian/yizhiwende.png' },
@@ -110,7 +113,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     naju_d: { generalId: 'cuiying', generalName: '崔莹', portrait: '/assets/chaoxian/cuiying.png' },
     chungju_d: { generalId: 'quanli', generalName: '权栗', portrait: '/assets/chaoxian/quanli.png' },
     sabeol: { generalId: 'jinshimin', generalName: '金时敏', portrait: '/assets/chaoxian/jinshimin.png' },
-    // ── 东北区 2026-06-18 ──
+        huimo: { generalId: 'gaoyanshou', generalName: '高延寿', portrait: '/assets/dongbei/gaoyanshou.png' },
+    aola: { generalId: 'menglielun', generalName: '孟烈伦', portrait: '/assets/dongbei/menglielun.png' },
+    qidan: { generalId: 'yelvabaoji', generalName: '耶律阿保机', portrait: '/assets/dongbei/yelvabaoji.png' },
+    haixi_nvzhen: { generalId: 'baiyindali', generalName: '拜音达里', portrait: '/assets/dongbei/baiyindali.png' },
+    dazhen: { generalId: 'wanyantiege', generalName: '完颜铁哥', portrait: '/assets/dongbei/wanyantiege.png' },
+    yehe: { generalId: 'jintaiji', generalName: '金台吉', portrait: '/assets/dongbei/jintaiji.png' },
+
+// ── 东北区 2026-06-18 ──
     jilizhou: { generalId: 'chengmingzhen', generalName: '程名振', portrait: '/assets/dongbei/chengmingzhen.png' },
     nuergan: { generalId: 'kangwang', generalName: '康旺', portrait: '/assets/dongbei/kangwang.png' },
     manzhou: { generalId: 'nuerhachi', generalName: '努尔哈赤', portrait: '/assets/dongbei/nuerhachi.png' },
@@ -120,7 +130,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dajin: { generalId: 'wanyanaguda', generalName: '阿骨打', portrait: '/assets/dongbei/wanyanaguda.png' },
     yizhou: { generalId: 'wanyanloushi', generalName: '完颜娄室', portrait: '/assets/dongbei/wanyanloushi.png' },
     aisin_d: { generalId: 'huangtaiji', generalName: '皇太极', portrait: '/assets/dongbei/huangtaiji.png' },
-    xianbei: { generalId: 'tanshihuai', generalName: '檀石槐', portrait: '/assets/dongbei/tanshihuai.png' },
+    xianbei: { generalId: 'tuobamao', generalName: '拓跋毛', portrait: '/assets/dongbei/tanshihuai.png' },
     suolun: { generalId: 'bomuboguoer', generalName: '博穆博果尔', portrait: '/assets/dongbei/bomuboguoer.png' },
     dongxia: { generalId: 'puxianwannu', generalName: '蒲鲜万奴', portrait: '/assets/dongbei/puxianwannu.png' },
     wula: { generalId: 'buzhantai', generalName: '布占泰', portrait: '/assets/dongbei/buzhantai.png' },
@@ -129,15 +139,21 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     wure: { generalId: 'wuzhaodu', generalName: '乌昭度', portrait: '/assets/dongbei/wuzhaodu.png' },
     houliao: { generalId: 'yelvliuge', generalName: '耶律留哥', portrait: '/assets/dongbei/yelvliuge.png' },
     haixi_nvzhen: { generalId: 'wangtai', generalName: '王台', portrait: '/assets/dongbei/wangtai.png' },
-    heishui: { generalId: 'shilu', generalName: '石鲁', portrait: '/assets/dongbei/NORTHEAST_field.png' },
-    hezhe: { generalId: 'hailancha', generalName: '海兰察', portrait: '/assets/dongbei/NORTHEAST_field.png' },
+    heishui: { generalId: 'nishuli', generalName: '倪属利稽', portrait: '/assets/dongbei/NORTHEAST_field.png' },
+    hezhe: { generalId: 'sharhuda', generalName: '沙尔虎达', portrait: '/assets/dongbei/NORTHEAST_field.png' },
     aola: { generalId: 'menglelun', generalName: '孟烈伦', portrait: '/assets/dongbei/NORTHEAST_field.png' },
-    dawoer: { generalId: 'sabusu', generalName: '萨布素', portrait: '/assets/dongbei/NORTHEAST_field.png' },
+    dawoer: { generalId: 'baldaqi', generalName: '巴尔达齐', portrait: '/assets/dongbei/NORTHEAST_field.png' },
     mohe: { generalId: 'wanyanzonghan', generalName: '完颜宗翰', portrait: '/assets/dongbei/wanyanzonghan.png' },
     woju: { generalId: 'yinguan', generalName: '尹瓘', portrait: '/assets/chaoxian/yinguan.png' },
     luzhou: { generalId: 'zhangwenxiu', generalName: '张文休', portrait: '/assets/chaoxian/zhangwenxiu.png' },
     jurchen: { generalId: 'wanyanzongbi', generalName: '完颜宗弼', portrait: '/assets/dongbei/wanyanzongbi.png' },
-    // ── 草原区 2026-06-18 ──
+        // ── 草原关隘 ──
+    wuzhou: { generalId: 'liguang', generalName: '李广', portrait: '/assets/caoyuan/liguang.png' },
+    hujie: { generalId: 'ashinayandu', generalName: '阿史那燕都', portrait: '/assets/caoyuan/ashinayandu.png' },
+    yuwen: { generalId: 'yuwentai', generalName: '宇文泰', portrait: '/assets/caoyuan/yuwentai.png' },
+    wala: { generalId: 'yexian', generalName: '也先', portrait: '/assets/caoyuan/yexian.png' },
+    // 马盂山·奚族 宁缺毋滥
+// ── 草原区 2026-06-18 ──
     liao_d: { generalId: 'yelvabaoji', generalName: '阿保机', portrait: '/assets/caoyuan/yelvabaoji.png' },
     qidan: { generalId: 'yelvdeguang', generalName: '耶律德光', portrait: '/assets/caoyuan/yelvdeguang.png' },
     yel: { generalId: 'yelvxiuge', generalName: '耶律休哥', portrait: '/assets/caoyuan/yelvxiuge.png' },
@@ -192,7 +208,20 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     zhadalan: { generalId: 'zhamuhe', generalName: '札木合', portrait: '/assets/caoyuan/zhamuhe.png' },
     zhuerqi: { generalId: 'sachabieqi', generalName: '撒察别乞', portrait: '/assets/caoyuan/sachabieqi.png' },
     chechen: { generalId: 'chechenhanshuolei', generalName: '车臣汗硕垒', portrait: '/assets/caoyuan/chechenhanshuolei.png' },
-    // ── 西域区 2026-06-18 ──
+        // ── 西域关隘 ──
+    hepan: { generalId: 'peishenfu', generalName: '裴神符', portrait: '/assets/xiyu/peishenfu.png' },
+    kepantuo: { generalId: 'hanritianzhong', generalName: '汉日天种王', portrait: '/assets/xiyu/hanritianzhong.png' },
+    zhasaketu: { generalId: 'cewangzhabu', generalName: '策旺扎布', portrait: '/assets/xiyu/cewangzhabu.png' },
+    huite: { generalId: 'amuersana', generalName: '阿睦尔撒纳', portrait: '/assets/xiyu/amuersana.png' },
+    tuoming: { generalId: 'liujintang', generalName: '刘锦棠', portrait: '/assets/xiyu/liujintang.png' },
+    chuyue: { generalId: 'shatuonasu', generalName: '沙陀那速', portrait: '/assets/xiyu/shatuonasu.png' },
+    keerkezi: { generalId: 'manasi', generalName: '玛纳斯', portrait: '/assets/xiyu/manasi.png' },
+    pisha: { generalId: 'yuchiyao', generalName: '尉迟曜', portrait: '/assets/xiyu/yuchiyao.png' },
+    xingxingxia: { generalId: 'zhangyao_x', generalName: '张曜', portrait: '/assets/xiyu/zhangyao.png' },
+    yangguan: { generalId: 'banchao', generalName: '班超', portrait: '/assets/xiyu/banchao.png' },
+    wulianghai: { generalId: 'chelingwubashi', generalName: '车凌乌巴什', portrait: '/assets/xiyu/chelingwubashi.png' },
+    // 三陇沙·白龙 宁缺毋滥
+// ── 西域区 2026-06-18 ──
     shache: { generalId: 'xian_suoche_wang', generalName: '贤', portrait: '/assets/xiyu/xian_suoche.png' },
     shule: { generalId: 'aersilan', generalName: '阿尔斯兰', portrait: '/assets/xiyu/aersilanhan.png' },
     dzungar: { generalId: 'gaerdancelin', generalName: '噶尔丹策零', portrait: '/assets/xiyu/gaerdancelin.png' },
@@ -212,7 +241,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xiliao: { generalId: 'yelvdashi', generalName: '耶律大石', portrait: '/assets/xiyu/yelvdashi.png' },
     jiazini: { generalId: 'mahamaode', generalName: '马哈茂德', portrait: '/assets/zhongya/mahamaode.png' },
     gaofu: { generalId: 'sheyeboluo', generalName: '阇耶波罗', portrait: '/assets/zhongya/sheyeboluo.png' },
-    // ── 中亚区 2026-06-18 ──
+        xijue: { generalId: 'ganshouchang', generalName: '甘延寿', portrait: '/assets/zhongya/chentang.png' },
+    // 养吉干·咸海 / 真珠河·乌护 宁缺毋滥
+
+// ── 中亚区 2026-06-18 ──
     huarazim: { generalId: 'mohemo', generalName: '摩诃末', portrait: '/assets/zhongya/mohemo.png' },
     kazakh: { generalId: 'hasimu', generalName: '哈斯木', portrait: '/assets/zhongya/hasimu.png' },
     sogdian: { generalId: 'dewasitiqi', generalName: '德瓦什提奇', portrait: '/assets/zhongya/dewasitiqi.png' },
@@ -238,7 +270,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     loulan: { generalId: 'banchao', generalName: '班超', portrait: '/assets/zhongya/banchao.png' },
     nandou: { generalId: 'gaoxianzhi', generalName: '高仙芝', portrait: '/assets/zhongya/gaoxianzhi.png' },
     juandu: { generalId: 'peixingjian', generalName: '裴行俭', portrait: '/assets/zhongya/peixingjian.png' },
-    // ── 青藏区 2026-06-18 ──
+        qinghai: { generalId: 'yuezhongqi', generalName: '岳钟琪', portrait: '/assets/tubo/yuezhongqi.png' },
+    dulan: { generalId: 'dashibatuer', generalName: '达什巴图尔', portrait: '/assets/tubo/dashibatuer.png' },
+    // 克里雅/赤斤/西宁/卡伦/果洛 宁缺毋滥
+
+// ── 青藏区 2026-06-18 ──
     song2: { generalId: 'houjunji', generalName: '侯君集', portrait: '/assets/tubo/houjunji.png' },
     gurkha: { generalId: 'baduersaye', generalName: '巴都尔萨野', portrait: '/assets/tubo/baduersaye.png' },
     gongbu: { generalId: 'gongbumangbuzhi', generalName: '工布莽布支', portrait: '/assets/tubo/gongbumangbuzhi.png' },
@@ -349,7 +385,19 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     buyi_d: { generalId: 'weichaoyuan', generalName: '韦朝元', portrait: '/assets/lingnan/weichaoyuan.png' },
     // basha_d: { generalId: 'sheyebamo7_bs', generalName: '阇耶跋摩七世', portrait: '/assets/dianmian/sheyebamo7.png' }, // [已按禁止复用立绘规则注释] 与 chenla 完全重复
       lizhou_d: { generalId: 'wulin', generalName: '吴璘', portrait: '/assets/bashu/wulin.png' },
-  // ── 巴蜀区 2026-06-18 ──
+      // ── 巴蜀关隘 2026-06-19 ──
+    kui: { generalId: 'liubei', generalName: '刘备', portrait: '/assets/bashu/liubei.png' },
+    lizhou_d: { generalId: 'wulin', generalName: '吴璘', portrait: '/assets/bashu/wulin.png' },
+    yangzhou: { generalId: 'wangping', generalName: '王平', portrait: '/assets/bashu/wangping.png' },
+    yang_bozhou: { generalId: 'yangyinglong', generalName: '杨应龙', portrait: '/assets/bashu/yangyinglong.png' },
+    chenghan: { generalId: 'lite', generalName: '李特', portrait: '/assets/bashu/lite.png' },
+    jinchuan_x: { generalId: 'suonuomu', generalName: '索诺木', portrait: '/assets/bashu/suonuomu.png' },
+    zuo_d: { generalId: 'wufu_zd', generalName: '吴复', portrait: '/assets/bashu/wufu.png' },
+    miaomin: { generalId: 'shiliudeng', generalName: '石柳邓', portrait: '/assets/bashu/shiliudeng.png' },
+    dongzu: { generalId: 'wumian_dz', generalName: '吴勉', portrait: '/assets/bashu/wumian.png' },
+    wumeng: { generalId: 'azi_wm', generalName: '阿资', portrait: '/assets/bashu/pengshichou.png' },
+    // 勒乌围·金川 / 乌蒙山·乌蛮 宁缺毋滥
+// ── 巴蜀区 2026-06-18 ──
     tujia_d: { generalId: 'qinliangyu', generalName: '秦良玉', portrait: '/assets/bashu/qinliangyu.png' },
         xiangzhou: { generalId: 'lvwenhuan', generalName: '吕文焕', portrait: '/assets/jiangnan/lvwenhuan.png' },
     zaoyang_d: { generalId: 'menggong', generalName: '孟珙', portrait: '/assets/zhaosong/menggong.png' },
@@ -379,7 +427,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     she: { generalId: 'shechongming', generalName: '奢崇明', portrait: '/assets/bashu/shechongming.png' },
     boren: { generalId: 'ada', generalName: '阿大', portrait: '/assets/bashu/ada.png' },
     kui: { generalId: 'liubei', generalName: '刘备', portrait: '/assets/shuguo/liubei.png' },
-      wumeng: { generalId: 'pengshichou', generalName: '彭仕愁', portrait: '/assets/bashu/pengshichou.png' },
+      wumeng: { generalId: 'azi_wm', generalName: '阿资', portrait: '/assets/bashu/pengshichou.png' },
     quan: { generalId: 'zhaoyun', generalName: '赵云', portrait: '/assets/bashu/zhaoyun.png' },
     pengshi: { generalId: 'shiliudeng', generalName: '石柳邓', portrait: '/assets/bashu/shiliudeng.png' },
     miaomin: { generalId: 'shiliudeng', generalName: '石柳邓', portrait: '/assets/bashu/liyan.png' },
@@ -512,7 +560,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     zhao: { generalId: 'lianpo', generalName: '廉颇', portrait: '/assets/zhongyuan/lianpo.png' },
         zhao_d: { generalId: 'lianpo', generalName: '廉颇', portrait: '/assets/zhongyuan/lianpo.png' },
     yunzhong: { generalId: 'tuobaliwei', generalName: '拓跋力微', portrait: '/assets/beifang/tuobaliwei.png' },
-    // ── 江南区 2026-06-18 ──
+        wuling: { generalId: 'xiangdancheng', generalName: '相单程', portrait: '/assets/jiangnan/xiangdancheng.png' },
+
+// ── 江南区 2026-06-18 ──
         hongguang: { generalId: 'shikefa', generalName: '史可法', portrait: '/assets/jiangnan/shikefa.png' },
     jiujiang: { generalId: 'zhouyu', generalName: '周瑜', portrait: '/assets/jiangnan/zhouyu.png' },
     fangla: { generalId: 'fangla_jn', generalName: '方腊', portrait: '/assets/jiangnan/fangla.png' },
@@ -530,11 +580,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     wu: { generalId: 'sunwu', generalName: '孙武', portrait: '/assets/jiangnan/sunwu.png' },
     qian_d: { generalId: 'qianliu', generalName: '钱镠', portrait: '/assets/jiangnan/qianliu.png' },
     qiufu: { generalId: 'qiufu_jn', generalName: '裘甫', portrait: '/assets/jiangnan/qiufu.png' },
+    yiyang_d: { generalId: 'mengzongzheng', generalName: '孟宗政', portrait: '/assets/jiangnan/mengzongzheng.png' },
     shenshi: { generalId: 'shenqingzhi', generalName: '沈庆之', portrait: '/assets/jiangnan/shenqingzhi.png' },
     huangwang: { generalId: 'huangchao', generalName: '黄巢', portrait: '/assets/jiangnan/huangchao.png' },
     lujian: { generalId: 'zhanghuangyan', generalName: '张煌言', portrait: '/assets/jiangnan/zhanghuangyan.png' },
     linshihong: { generalId: 'linshihong', generalName: '林士弘', portrait: '/assets/jiangnan/linshihong.png' },
-    yiyang_d: { generalId: 'mengzongzheng', generalName: '孟宗政', portrait: '/assets/jiangnan/mengzongzheng.png' },
     liu: { generalId: 'yingbu', generalName: '英布', portrait: '/assets/jiangnan/yingbu.png' },
     ting: { generalId: 'wangchao', generalName: '王潮', portrait: '/assets/jiangnan/wangchao.png' },
     shuntian: { generalId: 'linshuangwen', generalName: '林爽文', portrait: '/assets/jiangnan/linshuangwen.png' },
@@ -549,6 +599,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     chizhou: { generalId: 'wumingche', generalName: '吴明彻', portrait: '/assets/jiangnan/wumingche.png' },
     xie_cj_d: { generalId: 'xiexuan', generalName: '谢玄', portrait: '/assets/jiangnan/xiexuan.png' },
     gumie: { generalId: 'liuyu', generalName: '刘裕', portrait: '/assets/jiangnan/liuyu.png' },
+    sagami: { generalId: 'hojoujiyasu', generalName: '北条氏康', portrait: '/assets/riben/hojoujiyasu.png' },
+    mino: { generalId: 'otaniyoshitsugu', generalName: '大谷吉继', portrait: '/assets/riben/otaniyoshitsugu.png' },
+    ssangseong: { generalId: 'cuiying', generalName: '崔莹', portrait: '/assets/chaoxian/cuiying.png' },
+    gyeongsang: { generalId: 'shenla', generalName: '申砬', portrait: '/assets/chaoxian/shenla.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

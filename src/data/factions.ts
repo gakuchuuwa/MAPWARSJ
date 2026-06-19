@@ -540,7 +540,7 @@ export const FACTIONS: Faction[] = [
     { id: 'she_ethnic', name: '畲族' },                 // 敕木暗紫 - 畲族(敕木山/闽浙交界)
 
     // ── 2026-05-26 Phase 3i：新罗门阀/巴人后裔 ──
-    { id: 'tu', name: '土族' },
+    { id: 'wuling', name: '武陵' },
     // ── 2026-05-26 新增：西域三十六国独立势力 ──
     // 天山秋褐 - 且弥/迪化(清)
     { id: 'weili', name: '尉犁' },
@@ -952,4 +952,8 @@ export const FACTIONS: Faction[] = [
     { id: 'qinghai', name: '青海' },
     { id: 'xining', name: '西宁' },
     { id: 'kalun', name: '卡伦' },
+    { id: 'sagami', name: '相模' },
+    { id: 'mino', name: '美浓' },
+    { id: 'ssangseong', name: '双城' },
+    { id: 'gyeongsang', name: '庆尚' },
 ];

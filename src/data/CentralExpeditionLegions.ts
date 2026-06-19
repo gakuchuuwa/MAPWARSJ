@@ -38,7 +38,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
   yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师
   // ── 2026-06-16 新增：11大名关 ──
-                      hongnong_jun: { name: '函谷营', tier: 1 },       // 函谷关·樗里疾崤函锐士
+                      hongnong_jun: { name: '函谷锐士', tier: 1 },    // 函谷关·樗里疾崤函锐士
   huangfu: { name: '神策军', tier: 1 },       // 安定·李晟神策军（T1有名且胜仗）
   zhengzhou: { name: '玄甲军', tier: 0 },  // 虎牢关·李世民玄甲骑
   ruo: { name: '商於材官', tier: 3 },

@@ -11,7 +11,12 @@
  * - §9 #18–21 已挂岭南区；#9/#10/#16 无合格势力或与岳军重复
  * - 据点优先标志战场（戚家军@横屿等）；§1 #24 丹阳兵@宛陵城·山越（复用 shanyue）
  */
-export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
+name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  wuling: { name: '武陵蛮兵', tier: 3 },
+  chuzhou_d: { name: '清流关戍卒', tier: 3 },
+  yiyang_d: { name: '义阳戍卒', tier: 3 },    // 武胜关·孟宗政三关之捷
+  she_ethnic: { name: '畲族山兵', tier: 3 },  // 敕木山·畲族祖山 // 清流关·滁州戍卒     // 武陵山·相单程武陵蛮
   shanyue: { name: '丹阳兵', tier: 2 },      // 宛陵城·§1 #24 丹阳郡精兵；旗=山越 据点=宛陵城 番=丹阳兵 ✅
     chu: { name: '荆州锐士', tier: 2 },       // 金鳞·陆逊镇守江陵
   sunwu_d: { name: '解烦兵', tier: 2 },      // 武昌·孙吴禁卫

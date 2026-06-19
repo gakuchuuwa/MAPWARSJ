@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 朝鲜文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与日本区一致：
@@ -7,7 +7,13 @@
  * - 不收热兵器/近代专名（训练都监、别技军、捉虎甲士火绳枪、壮勇营等）
  * - 依据 史料/古代精锐部队.md §4 #1–11
  */
-export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
+  name: string;
+  tier: 0 | 1 | 2 | 3;
+}>> = {
+  // === 初始/默认（1） ===
+  lelang: { name: '乐浪材官', tier: 3 },    // 息城·王颀乐浪材官
+  donghui: { name: '檀弓猎手', tier: 3 },  // 德源·东濊檀弓
   gaogouli: { name: '高句丽铁骑', tier: 1 },   // 平壤·高句丽铁骑（§4 #）
   xuantu: { name: '皂衣先人', tier: 3 },     // 国内城·玄菟辖境/高句丽早期死士（§4 #2）
   xinluo: { name: '花郎道', tier: 2 },       // 金城·新罗花郎（§4 #3）
@@ -23,5 +29,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   jianzhou_nvzhen: { name: '建州劲卒', tier: 3 },  // 浑江·建州女真
   zhen: { name: '后百济锐卒', tier: 3 },          // 完山·后百济甄萱
   woju: { name: '别武班', tier: 1 },            // 咸兴·尹瓘别武班
+  ssangseong: { name: '双城重甲骑', tier: 2 }, // 铁岭关·崔莹
+  gyeongsang: { name: '庆尚射手', tier: 3 },   // 鸟岭关·申砬
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
 };

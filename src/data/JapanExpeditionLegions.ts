@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 日本文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 跟拍军团兵力 ≥ 5 万且势力在此表中有映射时，方可下达远征；
@@ -32,7 +32,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   nanbu: { name: '南部铁骑', tier: 2 },        // 根城·南部氏骑兵（原 T3）
   osumi: { name: '九州防人', tier: 3 },         // 赤尾木城·§5 #1 防人
   // 奄美岛勇除名（名称现代，无史载）
-  anmei: { name: '奄美众', tier: 3 },   // 赤木名城·尚巴志奄美
+  anmei: { name: '奄美岛兵', tier: 3 }, // 赤木名城·与湾大亲奄美
   ayinu: { name: '阿伊努猎兵', tier: 3 },       // 白老·虾夷特有猛毒箭射手
   beihai: { name: '雪国斥候', tier: 3 },       // 宗谷界城·（原雪国斥候，避开越后地域错位）
   yamato: { name: '千早众', tier: 0 },       // 千早城·楠木正成千早笼城以少胜多（原飞鸟卫府 T3）
@@ -46,4 +46,6 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   suwa_d: { name: '诹访神党', tier: 2 },     // 高岛·诹访氏最强武装（家族旗号可含「诹访」）
   jibei2: { name: '备中众', tier: 3 },         // 鬼之城·宇喜多氏
   taira: { name: '平家水军', tier: 2 },         // 赤间关·坛之浦
+  sagami: { name: '箱根守备', tier: 3 },       // 箱根关·北条氏康
+  mino: { name: '大谷部众', tier: 2 },         // 不破关·大谷吉继
 };

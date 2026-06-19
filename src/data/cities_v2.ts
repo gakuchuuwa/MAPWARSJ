@@ -1514,7 +1514,7 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 2026-05-26 Phase 3i：新增朴(新罗门阀)、土(巴人后裔) ──
     
     {
-        id: 'city_wulingshan', name: '武陵山', factionId: 'tu',
+        id: 'city_wulingshan', name: '武陵山', factionId: 'wuling',
         lat: 29.1167, lng: 110.4667, type: 'pass', troops: 10000, tier: 4 }
 ];
 
@@ -1826,7 +1826,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yuanzhishi', name: '原之辻', factionId: 'yizhi', lat: 33.791, lng: 129.703, type: 'small_city', region: 'JAPAN', troops: 10000, note: '壹岐国府旧址' },
     { id: 'city_taizaifu', name: '太宰府', factionId: 'zhuqian', lat: 33.51, lng: 130.52, type: 'small_city', region: 'JAPAN', troops: 10000, note: '筑前国太宰府；九州律令国府、防佛渡海咽喉；室町期警固番役驻地（江户期福冈城在其北约15km，据点名取史地知名度更大者）' },
     { id: 'city_chijianguan', name: '赤间关', factionId: 'taira', lat: 33.95, lng: 130.93, type: 'pass', region: 'JAPAN', troops: 10000, tier: 2 },
-    { id: 'city_guizhicheng', name: '鬼之城', factionId: 'jibei2', lat: 34.72, lng: 133.76, type: 'pass', region: 'JAPAN', troops: 10000, note: '备中国鬼之城；宇喜多氏·备中名城（距冈山/福山城址<50km）' },
+    { id: 'city_guizhicheng', name: '备中高松城', factionId: 'jibei2', lat: 34.69, lng: 133.82, type: 'pass', region: 'JAPAN', troops: 10000, note: '备中高松城·清水宗治水攻切腹（1582）' },
     { id: 'city_junfucheng', name: '骏府', factionId: 'jinchuan', lat: 34.97, lng: 138.38, type: 'medium_city', region: 'JAPAN', troops: 10000 },
     {
         id: 'city_xuanhua',
@@ -2022,7 +2022,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_fangqu', name: '方渠', factionId: 'huan', lat: 36.58, lng: 107.3, type: 'small_city', troops: 10000 },
     { id: 'city_jingsai', name: '静塞', factionId: 'wei2', lat: 37.448637, lng: 106.674500, type: 'pass', troops: 10000, mirror: true },//镜像
     { id: 'city_lingzhou', name: '回乐', factionId: 'lingwu', lat: 37.998341, lng: 106.295471, type: 'small_city', troops: 10000 },
-    { id: 'city_nuergan', name: '奴儿干', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'small_city', region: 'NORTHEAST', troops: 10000 },
+    { id: 'city_nuergan', name: '奴儿干城', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'small_city', region: 'NORTHEAST', troops: 10000 },
     { id: 'city_pennuli', name: '盆奴里', factionId: 'nifuhe', lat: 47.708134, lng: 130.933685, type: 'small_city', troops: 10000 },
     // 古尔王朝（Ghurids）呼罗珊边缘要塞
     { id: 'city_malulude', name: '马鲁鲁德', factionId: 'guer', lat: 35.58, lng: 63.31, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },
@@ -2086,4 +2086,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'pass', mirror: true, region: 'TIBET', troops: 10000, note: '柴达木西缘尕斯淖尔盐泽' },
     { id: 'city_jieqiao', name: '界桥', factionId: 'qu_d', lat: 36.95, lng: 115.50, type: 'pass', region: 'NORTH', troops: 10000, note: '麴义先登死士破公孙瓒白马义从（192年）' },
     { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8000, lng: 99.8000, type: 'small_city', troops: 10000, note: '汉酒泉郡表氏县；沮渠卢水胡故地' },
+    { id: 'city_hakone', name: '箱根关', factionId: 'sagami', lat: 35.1925, lng: 139.0261, type: 'pass', region: 'JAPAN', troops: 10000, note: '天下第一关，关东的物理大门' },
+    { id: 'city_fuwa', name: '不破关', factionId: 'mino', lat: 35.3577, lng: 136.4602, type: 'pass', region: 'JAPAN', troops: 10000, note: '关原所在地，畿内防御东国大军的终极险地' },
+    { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', region: 'KOREA', troops: 10000, note: '引爆威化岛回军，终结高丽王朝命脉' },
+    { id: 'city_saejae', name: '鸟岭关', factionId: 'gyeongsang', lat: 36.7833, lng: 128.0667, type: 'pass', region: 'KOREA', troops: 10000, note: '闻庆鸟岭，半岛中部最强天险' },
 ];

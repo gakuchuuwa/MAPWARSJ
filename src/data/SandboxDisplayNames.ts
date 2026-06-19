@@ -433,7 +433,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'she_ethnic': '畲',
 
     
-    'tu': '土',
+    'wuling': '武陵',
 
     // ── 2026-05-27 新增：汪、向、覃、冉、储 ──
     'wang_s': '汪',
@@ -831,4 +831,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chijin': '赤斤',
     'xining': '西宁',
     'kalun': '卡伦',
+    'sagami': '相模',
+    'mino': '美浓',
+    'ssangseong': '双城',
+    'gyeongsang': '庆尚',
 };

@@ -372,7 +372,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'she_ethnic': 'city_chimushan',
     'pu': 'city_qingjingsi',
 
-    'tu': 'city_wulingshan',
+    'wuling': 'city_wulingshan',
     'seljuq': 'city_merv',
 'bandun': 'city_hanchang',
 

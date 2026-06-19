@@ -403,7 +403,7 @@ export class CityAssetManager {
         'shanyue': '山越',
         'she_ethnic': '畲',
 
-        'tu': '土',
+        'wuling': '武陵',
 
         'wang_s': '汪',
         'xiang_d': '向',

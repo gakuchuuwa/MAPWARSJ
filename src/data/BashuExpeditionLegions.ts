@@ -8,6 +8,11 @@
  * - 据点取川东近乡或史载成军/战场地
  */
 export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  jinchuan_g: { name: '金川番兵', tier: 3 },    // 勒乌围·金川土兵
+  miaomin: { name: '苗疆义军', tier: 3 },      // 平陇·石柳邓苗民
+  dongzu: { name: '侗家义军', tier: 3 },       // 雷公山·吴勉侗族
+  wuman: { name: '乌蛮山兵', tier: 3 },        // 乌蒙山·乌蛮部
+
   bandun: { name: '賨人勇士', tier: 2 },       // 汉昌·§8 #1 板楯蛮（賨人）
   langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒
   zhuoshi: { name: '连弩士', tier: 3 },         // 临邛·诸葛连弩营
