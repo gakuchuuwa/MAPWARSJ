@@ -10,12 +10,12 @@
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   yanda: { name: '嚈哒铁骑', tier: 1 },          // 阿缓城·白匈奴横扫中亚（§13 #2）
   saman: { name: '古拉姆卫', tier: 1 },      // 阿母城·萨曼/加兹尼古拉姆（§13 #3）
-  huarazim: { name: '花剌子模骑', tier: 1 },   // 玉龙杰赤·河中大国骑（§13 #4；泛称非专名，非T0）
+  huarazim: { name: '钦察精骑', tier: 1 },      // 玉龙杰赤·摩诃末钦察卫（§13 #4）
   qincha: { name: '康里精骑', tier: 2 },     // 七河·钦察雇佣骑（§13 #5）
-  tiemuer: { name: '河中怯薛', tier: 0 },      // 区T0锚·中亚须保1支；撒马尔罕·帖木儿河中怯薛（Transoxiana keshik）
+  tiemuer: { name: '察合台突骑', tier: 0 },      // 区T0锚·撒马尔罕·帖木儿察合台突骑
   kazakh: { name: '哈萨克骑', tier: 3 },     // 亚西·哈斯木汗游击（§13 #7）
   seljuq: { name: '古拉姆禁卫', tier: 1 },     // 木鹿·桑贾尔苏丹古拉姆近卫
-  xiliao: { name: '斡耳朵亲卫', tier: 0 },     // 区T0锚·大石西迁建西辽，以少击多连战（屈耽·虎思斡鲁朵禁卫）
+  xiliao: { name: '斡耳朵亲卫', tier: 0 },     // 区T0锚·虎思·耶律大石斡耳朵亲卫
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
   guishuang: { name: '彭迪甲骑', tier: 3 },
   guer: { name: '马鲁卫队', tier: 3 },

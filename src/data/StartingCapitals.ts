@@ -347,7 +347,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'karmapa': 'city_chubusi',
 
     'ava': 'city_ava',
-    'dongxu': 'city_bago',
+    'dongxu': 'city_dongxu_old',
 'baiman': 'city_weichu',
     'kunming_yi': 'city_huichuan',
     'miao': 'city_hezhang',
@@ -365,7 +365,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'nguyen_guangnan': 'city_fuchun',
 
     'cong': 'city_dangqu',
-    'qiao_d': 'city_langzhong_gucheng',
+    'langzhou': 'city_langzhong_gucheng',
     'zhe_d': 'city_fuzhou_fugu',
     'shanyue': 'city_wanling',
     'she_ethnic': 'city_chimushan',
@@ -440,7 +440,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
     'gandenpozhang': 'city_zhadunzong',
     'dawoer': 'city_moergen',
-    'guangnanguo': 'city_donghai',
+
 
     // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐)、俚(珠崖) ──
     'tumengken': 'city_baidalik',
@@ -517,7 +517,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'zhuerqi': 'city_sangguer',
     'chechen': 'city_bayantumen',
     'pisha': 'city_mazhatage',
-    'yutian': 'city_yutian2',
+    'yuchi': 'city_yutian2',
     'yumi': 'city_yumi',
     'keliya': 'city_keliyashankou',
     'xiye': 'city_xiye',
@@ -565,7 +565,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kejia': 'city_tingzhou',
     'ouyang': 'city_luling',
 'ningkou': 'city_juyansai',
-    'ning': 'city_hongzhou',
+    'hongzhou': 'city_hongzhou',
 'danyang': 'city_jiuzi',
     'huai': 'city_zhongli',
 'huaiyang': 'city_huaiyang',

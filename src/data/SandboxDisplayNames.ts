@@ -366,7 +366,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
 'kala': '喀汗',
-    'xiliao': '喀喇',
+    'xiliao': '辽',
 'sogdian': '粟特',
     'kangju': '康居',
     'geluolu': '葛逻',
@@ -402,6 +402,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力旗号 ──
     'ava': '掸',
     'dongxu': '东吁',
+    'hantawadi': '汉达',
 'baiman': '白蛮',
     'kunming_yi': '昆明',
     'miao': '苗',
@@ -417,11 +418,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'muong': '芒',
     'paiwan': '排湾',
     'trinh': '郑主',
-    'nguyen_guangnan': '阮主',
+    'nguyen_guangnan': '广南',
 
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
     'cong': '賨',
-    'qiao_d': '谯',
+    'langzhou': '阆',
     'zhe_d': '折',
     'shanyue': '山越',
     'she_ethnic': '畲',
@@ -478,6 +479,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-27 新增：靖江、盘瑶、马楚、排瑶、士、蒋 ──
     'jingjiang': '靖江',
+    'xinjiang': '静江',
     'panyao': '贺',
 'changshaguo': '长沙',
     'paiyao': '排瑶',
@@ -528,7 +530,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     
     'dawoer': '达斡',
-    'guangnanguo': '广南',
+
     'tumengken': '图蒙',
     'liren': '俚',
 
@@ -571,7 +573,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'zhuxie': '朱邪',
 'hunxie': '浑邪',
     'fu': '苻',
-    'tiemuer': '帖木',
+    'tiemuer': '帖木儿',
     'kawusi': '卡乌',
     'keerkezi': '柯尔',
     'yiduhu': '亦都',
@@ -581,7 +583,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yizhi': '一支',
     'zhuqian': '筑前',
     'jibei2': '备中',
-    'jinchuan': '今川',
+    'jinchuan': '骏河',
     'xuan': '宣府',
     'yangshe': '羊舌',
     'sima_d': '司马',
@@ -637,7 +639,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kejia': '赣',
     'ouyang': '欧阳',
     'ningkou': '宁寇',
-    'ning': '宁',
+    'hongzhou': '洪',
 'danyang': '宣',
     'huai': '淮',
 'huaiyang': '淮阳',

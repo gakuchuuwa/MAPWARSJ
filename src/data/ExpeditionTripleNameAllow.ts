@@ -26,7 +26,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   // 中亚
   'yanda', // 嚈哒·嚈哒铁骑
   'huarazim', // 花剌·花剌子模骑
-  // tiemuer 河中怯薛：旗号帖木，无共享汉字
+  // tiemuer 察合台突骑：旗号帖木儿
   // 青藏
   'xiangxiong', // 象雄·象雄武士
   'guge', // 古格·古格甲兵
@@ -39,7 +39,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'champa', // 占婆·占婆国水师
   'luchuan', // 麓川·麓川夷象
   'guangzhou', // 广州·清海军（广南核心；番禺）
-  'dayue', // 大越·铁突军（势力皇黎；旗号大越）
+  'dayue', // 大越·白藤江水师
   'chenla', // 真腊·双弓弩象营（吴哥；岭南区）
   // ── 4·家族 ──
   'qi_d',

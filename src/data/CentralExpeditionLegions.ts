@@ -12,6 +12,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   wei: { name: '魏之武卒', tier: 0 },        // 汴梁·吴起练武卒阴晋破秦（《荀子·议兵》）
   qin: { name: '秦之锐士', tier: 1 },        // 天水·§1 #12 司马错白起
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
+  han: { name: '韩之劲弩', tier: 2 },        // 新郑·暴鸢韩弩
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
   han_d: { name: '轻勇骑', tier: 1 },      // 南郑·§1 #18 韩信背水之战的夺旗骑兵
   pizhou: { name: '陷阵营', tier: 1 },        // 下邳·高顺陷阵营

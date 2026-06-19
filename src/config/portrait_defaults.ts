@@ -349,7 +349,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'yiduhu': _xiyuPortraitPool,
     'yuchi': _xiyuPortraitPool,
     'yumi': _xiyuPortraitPool,
-    'yutian': _xiyuPortraitPool,
+    'yuchi': _xiyuPortraitPool,
     'zhuxie': _xiyuPortraitPool,
     // 河西 22 势力
     'chijin': _hexiPortraitPool,
@@ -695,7 +695,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'mi_chu': _nanfangPortraitPool,
     'min': _nanfangPortraitPool,
     'ming_zheng': _nanfangPortraitPool,
-    'ning': _nanfangPortraitPool,
+    'hongzhou': _nanfangPortraitPool,
     'ouyang': _nanfangPortraitPool,
     'ouyue': _nanfangPortraitPool,
     'pu': _nanfangPortraitPool,
@@ -732,7 +732,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'dacheng': _lingnanPortraitPool,
     'dayue': _lingnanPortraitPool,
     'gouding': _lingnanPortraitPool,
-    'guangnanguo': _lingnanPortraitPool,
+
     'guangxin': _lingnanPortraitPool,
     'jiang_s': _lingnanPortraitPool,
     'jingjiang': _lingnanPortraitPool,

@@ -339,7 +339,7 @@ export class CityAssetManager {
         'da_yuan': '北元',
 
 'kala': '喀汗',
-        'xiliao': '喀喇',
+        'xiliao': '辽',
 'sogdian': '粟特',
         'guer': '古尔',
         'kangju': '康居',
@@ -389,10 +389,10 @@ export class CityAssetManager {
         'muong': '芒',
         'paiwan': '排湾',
         'trinh': '郑主',
-        'nguyen_guangnan': '阮主',
+        'nguyen_guangnan': '广南',
 
         'cong': '賨',
-        'qiao_d': '谯',
+        'langzhou': '阆',
         'zhe_d': '折',
         'shanyue': '山越',
         'she_ethnic': '畲',
@@ -431,6 +431,7 @@ export class CityAssetManager {
         'shaodang': '烧当',
 
         'jingjiang': '靖江',
+        'xinjiang': '静江',
         'panyao': '贺',
         'jiang_s': '蒋',
         'li_s': '里',
@@ -465,7 +466,7 @@ export class CityAssetManager {
         'nanjie': '南杰',
         'gandenpozhang': '颇章',
         'dawoer': '达斡',
-        'guangnanguo': '广南',
+
         'tumengken': '图蒙',
         'liren': '俚',
 
@@ -507,7 +508,7 @@ export class CityAssetManager {
 'zhuxie': '朱邪',
 'hunxie': '浑邪',
         'fu': '苻',
-        'tiemuer': '帖木',
+        'tiemuer': '帖木儿',
         'kawusi': '卡乌',
         'keerkezi': '柯尔',
         'yiduhu': '亦都',
@@ -517,7 +518,7 @@ export class CityAssetManager {
         'yizhi': '一支',
         'zhuqian': '筑前',
         'jibei2': '备中',
-        'jinchuan': '今川',
+        'jinchuan': '骏河',
         'yangshe': '羊舌',
         'sima_d': '司马',
         'liguo': '黎',
@@ -636,9 +637,9 @@ export class CityAssetManager {
 'lu': '庐',
         'xuan': '宣府',
         'yiwu': '伊吾',
-        'yutian': '伏阇',
+
         'ningkou': '宁寇',
-        'ning': '宁',
+        'hongzhou': '洪',
         'changshaguo': '长沙',
         'weiwuer': '维吾',
         'wensu': '温宿',

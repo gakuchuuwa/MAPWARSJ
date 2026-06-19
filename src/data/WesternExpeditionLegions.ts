@@ -8,8 +8,8 @@
  * - 依据 史料/古代精锐部队.md §14 #1–8；#10 喀喇契丹→中亚 xiliao@屈耽·斡耳朵亲卫
  */
 export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  qiuci: { name: '龟兹重甲兵', tier: 2 },   // 伊逻卢·龟兹国冶铁重装（§14 #1）
-  yutian: { name: '于阗尉迟军', tier: 2 },  // 于阗·尉迟王族精锐（§14 #2）
+  qiuci: { name: '龟兹精兵', tier: 3 },   // 伊逻卢·龟兹精兵
+  // yutian → yuchi
   kala: { name: '阿斯古拉姆', tier: 1 },      // 奥什·喀喇汗古拉姆（灭于阗非以少胜多）
   an: { name: '昭武精骑', tier: 2 },        // 蒲华·昭武九姓安国（原伊列克近卫严重错代错位）
   yiduhu: { name: '西州回鹘', tier: 1 },      // 高昌·北庭回鹘取西州
@@ -23,7 +23,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
   loulan: { name: '楼兰戍', tier: 3 },      // 扜泥城·汉晋楼兰戍卒（旗=楼兰·§12.1.1）
   zhuxie: { name: '朱邪部兵', tier: 3 },      // 大石城·沙陀朱邪部
-  yuchi: { name: '精绝卫士', tier: 3 },      // 精绝·尉迟氏
+  yuchi: { name: '于阗精兵', tier: 3 },       // 于阗·尉迟王族精兵（§14 #2）
   juandu: { name: '捐毒戍卒', tier: 3 },     // 排修城·汉西域捐毒国
   wensu: { name: '温宿锐卒', tier: 3 },      // 三重城·温宿国
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao

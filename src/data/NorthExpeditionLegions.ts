@@ -10,7 +10,7 @@
 export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // ── 太行/河北（§1 交叉 + 明末）──
   wangyan: { name: '八字军', tier: 0 },     // 飞狐·顺昌大捷2万破10万（《宋史·刘锜传》）
-  tianxiong: { name: '天雄军', tier: 2 },   // 大名·唐末河朔雄藩
+  tianxiong: { name: '魏博牙兵', tier: 1 },   // 大名·田承嗣魏博牙兵
   // 宣毅军除名（泛称非专属，与方渠无关）
   huan: { name: '环州戍兵', tier: 3 },      // 方渠·宋代环州边防（原步跋子，归嵬名）
   qingyuan_bd: { name: '神臂营', tier: 2 }, // 保定·北宋强弩营

@@ -20,7 +20,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   hashiba: { name: '黄母衣众', tier: 2 },        // 姬路城·秀吉亲卫母衣黄组（原七手组 T3）
   kai: { name: '武田赤备', tier: 1 },          // 躑躅崎馆·§5 #7
   owari: { name: '母衣众', tier: 1 },          // 清洲城·桶狭间（1560）3000破25000，织田信长（§5 #8）
-  jinchuan: { name: '马回众', tier: 2 },       // 骏府城·§5 #9
+  jinchuan: { name: '骏河弓取', tier: 1 },       // 府中·骏河弓取众
   echigo: { name: '毘沙門衆', tier: 2 },         // 春日山·上杉谦信亲卫队（原轩猿众 T3）
   aki: { name: '村上水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷（毛利氏水军主力）
   chosokabe: { name: '一领具足', tier: 2 },     // 冈丰城·长宗我部半农半兵精锐

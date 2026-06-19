@@ -358,7 +358,6 @@ export const FACTIONS: Faction[] = [
     { id: 'hongguang', name: '弘光' },
     { id: 'longwu', name: '隆武' },
     { id: 'lujian', name: '鲁监' },
-    { id: 'yongli', name: '永历' },
 
     // 第三类：蒙古诸部
     { id: 'chahar', name: '察哈' },
@@ -437,7 +436,7 @@ export const FACTIONS: Faction[] = [
 // ── 2026-05-26 新增：西域/中亚势力（25个）──
 { id: 'kala', name: '喀喇汗王朝' },
     // ── 2026-06-17 新增：喀喇契丹（西辽·虎思/碎叶故地）──
-    { id: 'xiliao', name: '喀喇契丹' },
+    { id: 'xiliao', name: '西辽' },
     { id: 'jiazini', name: '加兹尼' },      // 加兹尼王朝(伽色尼城/马哈茂德), Ghaznavid
     { id: 'gaofu', name: '高附' },          // 喀布尔沙希王朝(高附城/阇耶波罗), Kabul Shahi
     { id: 'fanyanna', name: '梵衍那' },      // 梵衍那国(巴米扬/兴都库什), Bamiyan
@@ -525,13 +524,13 @@ export const FACTIONS: Faction[] = [
     { id: 'paiwan', name: '排湾' },
     // ── 第六类：岭南土司、安南权臣与海商门阀 ──
     { id: 'trinh', name: '郑主' },                  // 清化靛蓝 - 郑主(西都城/越南北方)
-    { id: 'nguyen_guangnan', name: '阮主' },
+    { id: 'nguyen_guangnan', name: '广南' },
     // 高平暗灰 - 莫氏/莫朝(高平)
 
     // ── 2026-05-26 Phase 3h：西南夷/蛮族/家族门阀/海商 ──
     { id: 'cong', name: '賨族' },
     // 瘗棺苔绿 - 僰人(僰王山/珙县悬棺)
-    { id: 'qiao_d', name: '谯氏' },                    // 阆苑明黄 - 谯氏(蜀地第一高门/阆中)
+    { id: 'langzhou', name: '阆州' },                  // 阆州(隆城)；巴西劲卒张飞
     { id: 'zhe_d', name: '折氏' },
     { id: 'shanyue', name: '山越' },
     { id: 'she_ethnic', name: '畲族' },                 // 敕木暗紫 - 畲族(敕木山/闽浙交界)
@@ -588,7 +587,8 @@ export const FACTIONS: Faction[] = [
     { id: 'shaodang', name: '烧当' },                      // 烧当羌(玛曲/河湟西羌部落)
 
     // ── 2026-05-27 新增：靖江、盘瑶、马楚、排瑶、士、蒋 ──
-    { id: 'jingjiang', name: '靖江' },                      // 靖江王(桂林/明藩王)
+    { id: 'jingjiang', name: '靖江' },
+    { id: 'xinjiang', name: '静江' },                      // 靖江王(桂林/明藩王)
     { id: 'panyao', name: '盘瑶' },                         // 盘瑶(贺州/岭南瑶族)
     // 士氏(广信/交趾士燮)
     { id: 'jiang_s', name: '蒋氏' },                          // 蒋氏(永州/湘南),
@@ -645,7 +645,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
     { id: 'gandenpozhang', name: '甘丹颇章' },                // 甘丹颇章(扎敦宗/旧仲巴), Ganden Phodrang
     { id: 'dawoer', name: '达斡尔' },                         // 达斡尔(莫尔根), Daur
-    { id: 'guangnanguo', name: '广南' },                    // 广南国(洞海城), Guangnan
+                    // 广南国(洞海城), Guangnan
 
     // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐)、俚(珠崖/海南) ──
     { id: 'tumengken', name: '图蒙肯' },                     // 图蒙肯(拜达里克牙帐), Tumengken
@@ -702,7 +702,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yizhi', name: '一支' },
     { id: 'zhuqian', name: '筑前' },
     { id: 'jibei2', name: '备中' },
-    { id: 'jinchuan', name: '今川' },
+    { id: 'jinchuan', name: '骏河' },
     { id: 'xuan', name: '宣府' },
     { id: 'yangshe', name: '羊舌' },
     { id: 'sima_d', name: '司马氏' },   // 河内郡望@获嘉
@@ -736,7 +736,7 @@ export const FACTIONS: Faction[] = [
     { id: 'you', name: '幽州' },                // 居庸关·幽州
     { id: 'heng1', name: '元岳' },              // 雁门关·元岳（旗=恒）
     { id: 'pisha', name: '毗沙' },
-    { id: 'yutian', name: '伏阇' },
+   
     { id: 'yumi', name: '扜弥' },
     { id: 'keliya', name: '克里雅' },              // 阿什库尔·昆仑克里雅山口
     { id: 'xiye', name: '西夜' },
@@ -760,7 +760,7 @@ export const FACTIONS: Faction[] = [
     { id: 'kejia', name: '客家' },
     { id: 'ouyang', name: '欧阳' },
     { id: 'ningkou', name: '宁寇' },
-    { id: 'ning', name: '宁州' },
+    { id: 'hongzhou', name: '洪州' },
     { id: 'danyang', name: '宣州' },       // 宣州(芜湖/鸠兹)
     { id: 'huai', name: '淮州' },
     { id: 'huaiyang', name: '淮阳' },

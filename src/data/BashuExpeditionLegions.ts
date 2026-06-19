@@ -9,7 +9,7 @@
  */
 export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   bandun: { name: '賨人勇士', tier: 2 },       // 汉昌·§8 #1 板楯蛮（賨人）
-  qiao_d: { name: '虎步军', tier: 3 },          // 阆中·§8 #3 蜀汉虎步营
+  langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒
   zhuoshi: { name: '连弩士', tier: 3 },         // 临邛·诸葛连弩营
   tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛
   shu: { name: '无当飞军', tier: 1 },           // 成都·诸葛亮连弩山地劲旅（王平统率史载）

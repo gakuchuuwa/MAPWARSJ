@@ -271,7 +271,7 @@ export class EventParser {
         '兴戎军': 'hezhou', '钓鱼城': 'hezhou', '合州': 'hezhou', '王坚': 'hezhou',
         '韩卒击刹': 'han',
         '睢阳戍卒': 'liang_d', '梁国': 'liang_d', '张巡': 'liang_d',
-        '靖江府卫': 'jingjiang',
+        '靖江': 'jingjiang', '静江': 'xinjiang', '始安': 'xinjiang', '马塈': 'xinjiang',
         '楼兰戍': 'loulan', '扜泥城': 'loulan',
         '苑川突骑': 'qifu_d', '苑川': 'qifu_d',
         '碎叶镇军': 'ashina', '碎叶城': 'xiliao', '碎叶': 'xiliao', '屈耽': 'xiliao',
@@ -298,11 +298,11 @@ export class EventParser {
         // ── 2026-06-11 岭南远征精锐（§10 共 10 支）──
         '广西狼兵': 'zhuang_d', '俍兵': 'zhuang_d', '狼兵': 'zhuang_d', '瓦氏夫人': 'zhuang_d',
         '俚人武士': 'xian_d', '冼夫人卫队': 'xian_d',
-        '安南神武军': 'dayue', '神武军': 'dayue',
+        '白藤江水师': 'dayue', '安南神武军': 'dayue', '神武军': 'dayue',
         '铁突军': 'jing', '陈兴道': 'jing',
         '圣翊军': 'trinh',
         '西山军': 'nguyen_guangnan', '阮惠': 'nguyen_guangnan', '光中': 'nguyen_guangnan',
-        '黑旗军': 'guangnanguo', '刘永福': 'guangnanguo',
+        '黑旗军': 'panjun', '刘永福': 'panjun',
         '那霸水师': 'ryukyu', '琉球水师': 'ryukyu',
         '郑氏铁人军': 'ming_zheng', '铁人军': 'ming_zheng',
         '出草勇士': 'paiwan',
@@ -310,7 +310,7 @@ export class EventParser {
         // ── 2026-06-11 滇缅远征精锐（≥10 条；辞典具名）──
         '南诏罗苴子': 'nanzhao', '罗苴子': 'nanzhao',
         '大理白军': 'dali',
-        '东吁象阵兵': 'bayinnaung', '东吁象阵': 'bayinnaung', '莽应龙': 'bayinnaung', '莽应': 'bayinnaung',
+        '汉达瓦底': 'hantawadi', '莽应龙': 'hantawadi', '莽应': 'hantawadi',
         '南都象阵': 'dongxu', '勃固城': 'dongxu', '勃固': 'dongxu',
         '贡榜卡塞骑': 'konbaung', '贡榜': 'konbaung', '卡塞骑': 'konbaung', '瑞波': 'konbaung',
         '皇家象骑兵': 'siam', '阿瑜陀耶象骑': 'siam',
@@ -343,7 +343,7 @@ export class EventParser {
         '弘光': 'hongguang', '朱由崧': 'hongguang', '福王': 'hongguang', '南京': 'hongguang',
         '隆武': 'longwu', '朱聿键': 'longwu', '唐王': 'longwu', '福州': 'longwu',
         '鲁监国': 'lujian', '朱以海': 'lujian', '绍兴': 'lujian',
-        '永历': 'yongli', '朱由榔': 'yongli', '肇庆': 'duanzhou_d', '桂王': 'yongli', '晋王': 'yongli',
+
         '毛文龙': 'mao_wenlong', '东江镇': 'mao_wenlong', '皮岛': 'mao_wenlong',
         // 第三类：蒙古诸部
         '察哈尔': 'chahar', '林丹汗': 'chahar', '插汉': 'chahar', '察哈': 'chahar',
@@ -481,7 +481,7 @@ export class EventParser {
         '喀喇': 'xiliao', '喀喇契丹': 'xiliao', '西辽': 'xiliao', '耶律大石': 'xiliao',
         '喀喇汗': 'kala', '喀喇汗王朝': 'kala', '黑汗': 'kala',
         '龟兹重甲兵': 'qiuci', '伊逻卢': 'qiuci',
-        '于阗尉迟军': 'yutian', '于阗': 'yutian',
+        '于阗精兵': 'yuchi', '于阗': 'yuchi',
         '喀喇汗铁骑': 'kala', '阿斯古拉姆': 'kala', '阿斯卡里古拉姆': 'kala', '阿斯卡里': 'kala',
         '伊列克近卫': 'an',
         '高昌铁骑': 'gaochang', '阿斯兰军': 'yiduhu', '亦都护': 'yiduhu', '高昌回鹘': 'yiduhu',
@@ -515,7 +515,7 @@ export class EventParser {
         '賨人勇士': 'bandun', '板楯蛮': 'bandun', '板楯': 'bandun',
         '白毦兵': 'xiazhou', '陈到': 'xiazhou', '瞿塘关': 'xiazhou',
         '白帝城': 'kui', '鱼复': 'kui',
-        '虎步军': 'qiao_d',
+        '巴西劲卒': 'langzhou',
         '连弩士': 'zhuoshi', '诸葛亮': 'zhuoshi',
         '白杆兵': 'tujia_d', '秦良玉': 'tujia_d',
         '无当飞军': 'shu', '王平': 'shu_han', '兴势': 'shu_han', '蜀汉': 'shu_han', '平魏': 'shu_han',
@@ -534,7 +534,7 @@ export class EventParser {
         // ── 2026-06-11 中亚远征精锐（§13 共 14 支）──
         '嚈哒铁骑': 'yanda', '嚈哒': 'yanda', '白匈奴': 'yanda', '阿缓城': 'yanda',
         '古拉姆近卫军': 'saman', '古拉姆': 'saman', '萨曼': 'saman', '萨曼王朝': 'saman', '阿母城': 'saman',
-        '花剌子模铁骑': 'huarazim', '花剌子模骑': 'huarazim',
+        '花剌子模铁骑': 'huarazim', '钦察精骑': 'huarazim',
         '钦察康里精骑': 'qincha', '钦察': 'qincha', '康里': 'qincha', '七河': 'qincha',
         '帖木儿重装突骑': 'tiemuer', '帖木重装骑': 'tiemuer', '河中怯薛': 'tiemuer', '帖木儿': 'tiemuer', '帖木儿帝国': 'tiemuer', '帖木': 'tiemuer',
         '哈萨克轻骑兵': 'kazakh',
@@ -633,7 +633,7 @@ export class EventParser {
         // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
         '賨': 'cong', '賨人': 'cong', '板楯蛮': 'cong', '宕渠': 'cong',
         '僰': 'bo', '僰人': 'bo', '僰王山': 'bo', '悬棺': 'bo', '珙县': 'bo',
-        '谯': 'qiao_d', '谯周': 'qiao_d', '谯氏': 'qiao_d', '阆中谯氏': 'qiao_d', '阆中': 'qiao_d',
+        '谯': 'langzhou', '谯周': 'langzhou', '谯氏': 'langzhou', '阆中谯氏': 'langzhou', '阆中': 'langzhou', '隆城': 'langzhou',
         '折': 'zhe_d', '折氏': 'zhe_d', '折家将': 'zhe_d', '府州': 'zhe_d', '府谷': 'zhe_d', '折克行': 'zhe_d', '折可适': 'zhe_d', '折继闵': 'zhe_d',
         '山越': 'shanyue', '山越蛮': 'shanyue', '宛陵': 'shanyue', '宣城': 'shanyue',
         '畲': 'she_ethnic', '畲人': 'she_ethnic', '敕木山': 'she_ethnic', '景宁': 'she_ethnic',
@@ -671,7 +671,7 @@ export class EventParser {
 
         // ── 2026-05-28 新增：达斡尔、广南国、洞海城、图蒙肯、俚人 ──
         '达斡尔': 'dawoer', '莫尔根': 'dawoer',
-        '广南国': 'guangnanguo', '洞海城': 'guangnanguo',
+ '洞海城': 'panjun',
         '图蒙肯': 'tumengken', '拜达里克': 'tumengken',
         '俚': 'liren', '俚族': 'liren', '珠崖': 'liren',
         '里': 'li_s', '合浦': 'li_s',

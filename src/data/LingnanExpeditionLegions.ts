@@ -11,18 +11,19 @@
 export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   zhuang_d: { name: '广西俍兵', tier: 1 },     // 田阳·王江泾抗倭（非以少胜多）
   xian_d: { name: '俚人武士', tier: 2 },       // 高凉·§10 #9 冼夫人卫队
-  dayue: { name: '铁突军', tier: 0 },           // 昇龙·白藤江灭元（《大越史记全书》）
+  dayue: { name: '白藤江水师', tier: 1 },           // 昇龙·白藤江灭元（伏击非以少胜多）
   jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
   trinh: { name: '府僚营', tier: 3 },          // 宣光·郑主府僚军政（无史籍固定精锐番号）
-  nguyen_guangnan: { name: '广南水师', tier: 2 }, // 富春·阮主水师（原西山军，与阮潢敌我错位）
-  guangnanguo: { name: '黑旗军', tier: 1 },     // 洞海·刘永福抗法（纸桥斩李维业）
+  nguyen_guangnan: { name: '禁兵', tier: 1 },       // 富春·阮福映禁兵
+  // guangnanguo → 洞海城归 panjun
   ryukyu: { name: '那霸水师', tier: 2 },       // 首里·§9 #21 琉球王府水师
-  ming_zheng: { name: '郑氏铁人军', tier: 1 }, // 承天·§9 #18 郑成功铁人军
+  ming_zheng: { name: '郑氏铁人军', tier: 0 }, // 区T0锚·承天·郑成功收复台湾（以少胜多）
   guangzhou: { name: '清海军', tier: 2 },      // 番禺·刘隐清海军节度（《旧唐书·刘隐传》）
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占
   zhancheng: { name: '佛逝象军', tier: 2 },   // 阇槃·占城佛逝象兵
-  jingjiang: { name: '靖江府卫', tier: 3 },   // 桂林·明靖江王府卫（旗=靖江·藩王）
+  jingjiang: { name: '靖江府卫', tier: 3 },   // 桂林·明靖江王府卫
+  xinjiang: { name: '静江弩手', tier: 1 },      // 始安·马塈静江弩手（南宋）
   // 铲平军除名（非正式官军番号）
   nanyue: { name: '南越戍卒', tier: 3 },        // 龙川·赵佗南越国秦戍（《史记》）
   nongzhigao: { name: '侬峒劲卒', tier: 2 },    // 晋兴·侬智高侬峒兵（《宋史·蛮夷传》）
