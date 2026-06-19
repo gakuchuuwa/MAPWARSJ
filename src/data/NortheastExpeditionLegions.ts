@@ -35,5 +35,6 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   heishui: { name: '黑水锐卒', tier: 3 },        // 拉哈苏苏·黑水靺鞨
   dawoer: { name: '达斡尔骑', tier: 3 },         // 莫尔根·清代黑龙江将军辖区
   mohe: { name: '粟末劲卒', tier: 3 },
+  ewenki: { name: '石勒喀河猎兵', tier: 3 },   // 尼布楚·博木博果尔鄂温克
   dazhen: { name: '女真拐子马', tier: 2 },   // 恤品·完颜铁哥大真国           // 勃利·靺鞨故地
 };

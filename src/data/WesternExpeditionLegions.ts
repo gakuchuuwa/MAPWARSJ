@@ -13,7 +13,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   kepantuo: { name: '公主堡戍卒', tier: 3 }, // 公主堡·汉日天种王
   zhasaketu: { name: '札萨克图骑兵', tier: 3 }, // 扎布汗·策旺扎布
   huite: { name: '辉特部骑', tier: 1 }, // 金山·阿睦尔撒纳
-  tuoming: { name: '湘军锐营', tier: 1 }, // 达坂城·刘锦棠
+  tuoming: { name: '回民团练', tier: 3 },  // 达坂城·妥明清真王
   chuyue: { name: '处月骑兵', tier: 3 }, // 独山城·沙陀那速
   keerkezi: { name: '柯尔克孜骑兵', tier: 3 }, // 斯姆哈纳·玛纳斯
   pisha: { name: '毗沙戍卒', tier: 3 }, // 麻扎塔格·毗沙

@@ -9,7 +9,7 @@
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   wuzhou: { name: '雁门边骑', tier: 1 },   // 善无·李广雁门
-  hujie: { name: '金山突厥兵', tier: 1 }, // 阿尔泰·阿史那燕都
+  ashina: { name: '金山突厥兵', tier: 1 }, // 阿尔泰·阿史那燕都（阿史那氏突厥起源地）
   liao_d: { name: '皮室军', tier: 1 },         // 临潢府·辽太祖皮室军（§6 #1）
   yel: { name: '斡鲁朵军', tier: 2 },         // 降圣·契丹宫帐制
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 区T0锚·怯薛参与西征诸役；蒙古西征整体史家论以少胜多（§6 #2）
@@ -24,7 +24,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
   gaoche: { name: '高车战车', tier: 3 },       // 浚稽山·高车战车兵（§6 #16）
   rouran: { name: '柔然铁骑', tier: 2 },       // 赛尔乌苏·柔然骑兵
-  xueyantuo: { name: '同罗突骑', tier: 2 },    // 燕然勒石·薛延陀亲卫（§6 #18）
+  xueyantuo: { name: '燕然铁骑', tier: 2 },    // 燕然勒石·窦宪破北匈奴刻石
   naiman: { name: '乃蛮重骑', tier: 2 },       // 福海·乃蛮重装骑兵（§6 #19）
   ongut: { name: '汪古骑', tier: 3 },        // 净州塞·汪古部阿剌兀思
   wala: { name: '瓦剌铁骑', tier: 2 },         // 博尔巴任·也先瓦剌（§6 #12）
@@ -49,6 +49,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   jalair: { name: '札剌亦儿军', tier: 3 },
   hongirad: { name: '弘吉剌护卫', tier: 2 },
   choros: { name: '绰罗斯骁骑', tier: 3 },
+  dada_ming: { name: '鞑靼铁骑', tier: 2 },  // 河套·达延汗鞑靼部（明蒙古中兴）
   duolu: { name: '咄陆部铁骑', tier: 2 },
   kaerka: { name: '喀尔喀重骑', tier: 3 },
   zhasaketu: { name: '扎萨克图骑', tier: 3 }, // 乌城·喀尔喀蒙古（原扎萨克图骁骑）

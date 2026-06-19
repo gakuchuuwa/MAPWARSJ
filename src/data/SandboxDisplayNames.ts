@@ -68,8 +68,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'han': '韩',
     'han_d': '汉',
     'shu': '蜀',
-    'shu_han': '平魏',
-    'hanzhong_d': '阳平',
     'dian': '通海',
     'xin': '新',
     'cheng': '简',
@@ -310,10 +308,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'daxi_ming': '大西',
     'chenghan': '成汉',
     'shuixi': '水西',
-    'hongguang': '弘光',
+    'yang_zhou': '扬',
     'longwu': '隆武',
     'lujian': '婺',
-    'yongli': '永历',
     'chahar': '察哈',
     'dzungar': '准噶',
     'khoshut': '和硕',
@@ -587,6 +584,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jibei2': '备中',
     'jinchuan': '骏河',
     'totomi': '远江',
+    'owari': '尾张',
     'xuan': '宣府',
     'yangshe': '羊舌',
     'sima_d': '司马',
@@ -728,7 +726,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'mi_chu': '芈',
     // ── 2026-06-11 新增：北海（北海道北端）──
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
-    'shuidada': '水达',
+    'ewenki': '鄂温',
     // ── 2026-06-11 新增：东平（郡·黑龙江下游）──
     'dongping': '东平',
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
@@ -789,7 +787,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'juyan': '居延',
     'wuman': '乌蛮',
     'yehe': '叶赫',
-    'hujie': '呼揭',
+    
     'xiutu': '休屠',
     'dongzu': '侗',
     'jiliemi': '吉列',
@@ -825,6 +823,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kepantuo': '渴盘陀',
     'zhasaketu': '札萨克图',
     'xingxingxia': '星',
+    'yangguan': '敦煌',
     'wulianghai': '乌梁海',
     'qinghai': '青海',
     'chijin': '赤斤',

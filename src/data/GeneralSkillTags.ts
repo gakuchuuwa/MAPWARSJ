@@ -113,6 +113,7 @@ export const SINGLE_TAG_IMMUTABLE_ASSIGNMENTS: Readonly<
     jiebai: { archetype: 'assault_break', evidence: '车昌野隘突击' },
     wanyanaguda: { archetype: 'assault_break', evidence: '阿骨打破辽神速突击' },
     // 仅②合理
+    zhitianxinchang: { archetype: 'mobile_raid', evidence: '桶狭间奇袭破今川' },
     maoliyuanjiu: { archetype: 'mobile_raid', evidence: '严岛夜袭少胜多' },
     yuanyijing: { archetype: 'mobile_raid', evidence: '屋岛冲夜袭' },
 };

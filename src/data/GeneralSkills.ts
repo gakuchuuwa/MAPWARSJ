@@ -171,7 +171,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     hanritianzhongwang: { generalId: 'hanritianzhongwang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 公主堡渴盘陀戍守
     cewangzhabu: { generalId: 'cewangzhabu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 札萨克图汗部
     amursana: { generalId: 'amursana', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 金山辉特部反清
-    liujintang: { generalId: 'liujintang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 达坂城收复新疆
     shatuonasu: { generalId: 'shatuonasu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 独山城处月部
     manasi: { generalId: 'manasi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 柯尔克孜史诗英雄
     zhangyao: { generalId: 'zhangyao', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 星星峡嵩武军入疆
@@ -184,6 +183,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     fengchenxiuji: { generalId: 'fengchenxiuji', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 鸟取忍城粮道奇袭
     zhentianxingcun: { generalId: 'zhentianxingcun', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 大阪夏之阵赤备突击
     yidazhengzong: { generalId: 'yidazhengzong', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 独眼兜冲阵
+    zhitianxinchang: { generalId: 'zhitianxinchang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_02' }, // 桶狭间奇袭破今川
     sakaitadatsugu: { generalId: 'sakaitadatsugu', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 浜松城·德川四天王
     jinchuanyiyuan: { generalId: 'jinchuanyiyuan', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 骏河经营逐个蚕食周边（非④非防反）
     maoliyuanjiu: { generalId: 'maoliyuanjiu', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_06' }, // 严岛夜袭少胜多
@@ -306,6 +306,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     alagusi: { generalId: 'alagusi', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 汪古部外交附蒙
     shelun: { generalId: 'shelun', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 柔然脱鲜卑神速立国
     tuhulutiemuer: { generalId: 'tuhulutiemuer', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 东察合台统一蒙兀儿斯坦
+    dongmohedagan: { generalId: 'dongmohedagan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 回鹘·合骨咄禄毗伽可汗
     gulipeiluo: { generalId: 'gulipeiluo', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 骨力裴罗统一回鹘诸部
     dougu: { generalId: 'dougu', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 东汉窦固击北匈奴于蒲类海
     zakulan: { generalId: 'zakulan', tier: 'ordinary', tacticalSkillId: 'tac_02' }, // 锡伯神箭手传说
@@ -319,7 +320,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     hanritianzhong: { generalId: 'hanritianzhong', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     cewangzhabu: { generalId: 'cewangzhabu', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     amuersana: { generalId: 'amuersana', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
-    liujintang: { generalId: 'liujintang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' },
     shatuonasu: { generalId: 'shatuonasu', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     manasi: { generalId: 'manasi', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     yuchiyao: { generalId: 'yuchiyao', tier: 'ordinary', tacticalSkillId: 'tac_10' },

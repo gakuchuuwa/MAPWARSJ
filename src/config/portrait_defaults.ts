@@ -228,8 +228,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'nguyen_guangnan': _guangzhouPortraitPool,
     'paiwan': _guangzhouPortraitPool,
     'shu': _shuguoPortraitPool,
-    'shu_han': _shuguoPortraitPool,
-    'hanzhong_d': _shuguoPortraitPool,
     // 川蜀全境 43 势力套用蜀国
     'guo': _shuguoPortraitPool,
     'daxi_ming': _shuguoPortraitPool,
@@ -566,6 +564,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'jibei2': _ribenPortraitPool,
     'jinchuan': _ribenPortraitPool,
     'totomi': _ribenPortraitPool,
+    'owari': _ribenPortraitPool,
     'kai': _ribenPortraitPool,
     'kakizaki': _ribenPortraitPool,
     'satsuma': _ribenPortraitPool,

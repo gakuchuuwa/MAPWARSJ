@@ -15,8 +15,6 @@ const _FIXED: Record<string, string> = {
     // ── 红·尚赤 / 火德 / 复明 / 起义 ──
     han_d: '#C41E1E', // 汉（赤旗黑字，史料固定；见 FLAG_TEXT_BLACK_STYLE_FACTIONS）
     shu: '#2E7D32', // 蜀（绿）
-    shu_han: '#388E3C', // 蜀汉·兴势（王平，略浅绿）
-    hanzhong_d: '#3A9E42', // 汉中·略阳（魏延，蜀绿偏青）
     wu: '#C03520', // 吴
     sui: '#B83030', // 隋
     song: '#DC4850', // 宋（明亮珊瑚红；与大明深绛对照）
@@ -91,7 +89,8 @@ const _FIXED: Record<string, string> = {
     hashiba: '#D8A010', // 丰臣七手组（丰臣金）
     kai: '#C82030', // 武田赤备（赤备红）
     jinchuan: '#68B0C8', // 骏河
-    totomi: '#3C6E8A', // 远江 // 骏河·弓取（骏河蓝）
+    totomi: '#3C6E8A', // 远江
+    owari: '#705818', // 远江 // 骏河·弓取（骏河蓝）
     echigo: '#B0C0D0', // 上杉轩猿众（白旗银）
     aki: '#103858', // 安艺九鬼水军（濑户深青）
     izumo: '#607888', // 出云（阴山灰蓝）

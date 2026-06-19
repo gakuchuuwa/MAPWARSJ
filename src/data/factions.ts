@@ -70,8 +70,7 @@ export const FACTIONS: Faction[] = [
     { id: 'han', name: '韩国' },
     { id: 'han_d', name: '汉国' },
     { id: 'shu', name: '蜀国' },
-    { id: 'yangzhou', name: '洋州' },
-    { id: 'shu_han', name: '蜀汉' }, // ── 洋州@兴势（王平·无当飞军T1）──
+    { id: 'yangzhou', name: '洋州' }, // ── 兴势山（王平·无当飞军T1）──
     { id: 'dingxiang_d', name: '定襄' }, // ── 2026-06-18：李靖@恶阳岭（贞观四年定襄夜袭；旗号定襄）──
     { id: 'dian', name: '通海' },       // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '新国' },
@@ -396,7 +395,7 @@ export const FACTIONS: Faction[] = [
     // 第一类：农民革命政权
     { id: 'taiping', name: '太平天国' },
     { id: 'dacheng', name: '大成' },
-    { id: 'han_dadian', name: '大捻' },             // 李永和蓝朝鼎捻军；据点待录（兴势已改蜀汉）
+    { id: 'han_dadian', name: '大捻' },             // 李永和蓝朝鼎捻军；据点待录（兴势山已归洋州）
 
     // 第二类：少数民族起义
     { id: 'pingnan', name: '平南' },
@@ -503,6 +502,7 @@ export const FACTIONS: Faction[] = [
     // ── 第一类：云贵高原与中南半岛的丛林帝国 ──
     { id: 'ava', name: '掸族' },
     { id: 'dongxu', name: '东吁' },
+    { id: 'hantawadi', name: '汉达瓦底' }, // ── 2026-06-19：勃固城·莽应龙象兵 ──
     { id: 'baiman', name: '白蛮' },
                  // 苍山米白 - 白蛮/白族先民(苍山洱海)
                   // 乌蒙碳黑 - 乌蛮/彝族先民(乌蒙山)
@@ -704,6 +704,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jibei2', name: '备中' },
     { id: 'jinchuan', name: '骏河' },
     { id: 'totomi', name: '远江' },
+    { id: 'owari', name: '尾张' },
     { id: 'xuan', name: '宣府' },
     { id: 'yangshe', name: '羊舌' },
     { id: 'sima_d', name: '司马氏' },   // 河内郡望@获嘉
@@ -838,7 +839,7 @@ export const FACTIONS: Faction[] = [
     { id: 'ruochu', name: '若敖' },
     { id: 'mi_chu', name: '芈氏' },
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
-    { id: 'shuidada', name: '水达达' },              // 水达达(锡尔卡河流域/锡尔喀), Shuidada
+    { id: 'ewenki', name: '鄂温克' },  // 鄂温克(尼布楚/石勒喀河上游), Ewenki
     // ── 2026-06-11 新增：东平（州郡·黑龙江下游）──
     { id: 'dongping', name: '东平' },                // 东平(乌苏里江下游/尼满), 州名旗号
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
@@ -914,10 +915,11 @@ export const FACTIONS: Faction[] = [
     { id: 'juyan', name: '居延' },
     { id: 'wuman', name: '乌蛮' },
     { id: 'yehe', name: '叶赫部' },
-    { id: 'hujie', name: '呼揭' },
+    
     { id: 'xiutu', name: '休屠王部' },
     { id: 'dongzu', name: '侗族' },
     { id: 'jiliemi', name: '吉列迷' },
+    { id: 'nuergan', name: '奴儿干' }, // ── 2026-06-19：奴儿干城·康旺 ──
     { id: 'wula', name: '乌拉部' },
     { id: 'mengwu', name: '蒙兀' },
     { id: 'pugu', name: '仆骨' },
