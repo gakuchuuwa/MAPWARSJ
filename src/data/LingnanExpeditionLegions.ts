@@ -45,4 +45,8 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   duanzhou_d: { name: '摧锋军', tier: 2 },       // 肇庆·马暨摧锋军（《宋史》）
   yongli: { name: '桂西义兵', tier: 3 },       // 桂林·永历行在（1647）
   basha_d: { name: '湄公象卫', tier: 3 },     // 上丁·巴沙国湄公象卫
+  dengmaoqi: { name: '铲平义军', tier: 3 },
+  shixing: { name: '岭南劲卒', tier: 1 },
+  yingzhou: { name: '南汉禁兵', tier: 1 },
+  daozhou: { name: '道州弩手', tier: 3 },
 };

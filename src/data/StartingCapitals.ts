@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 沙盒模式：势力 id → 首都 cityId（1 势力 = 1 据点）。
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
@@ -66,7 +66,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'xiongnu': 'city_toumancheng',
 'xianbei': 'city_gaxian',
     'jie': 'city_jieshuangna',
-    'qiang': 'city_xiaoguan',
+    'beidi': 'city_xiaoguan',
     'didao': 'city_lintao',
     'tuoba': 'city_datong',
     'yuwen': 'city_wuchuanzhen',
@@ -534,7 +534,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'you': 'city_juyongguan',
 'heng1': 'city_yanmenguan',
 'hongnong_jun': 'city_hanguguan',
-'zheng': 'city_hulaoguan',
+'zhengzhou': 'city_hulaoguan',
 'ruo': 'city_wuguan',
 'rulun': 'city_sapi',
 'ruzhou': 'city_guangchengguan',

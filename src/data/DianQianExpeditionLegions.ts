@@ -25,4 +25,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   cuanshi: { name: '爨族部兵', tier: 3 },      // 曲靖·爨氏
   suke: { name: '素可泰兵', tier: 3 },     // 双河城·素可泰王国
   ailao: { name: '哀牢戍兵', tier: 3 },        // 永昌·哀牢国
+  miaomin: { name: '苗疆义军', tier: 3 },
+  dongzu: { name: '侗家义军', tier: 3 },
+  zuo_d: { name: '清溪关弩手', tier: 3 },
 };

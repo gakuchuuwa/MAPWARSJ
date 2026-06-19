@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 中原文化区远征精锐军团名（CENTRAL）
  *
  * 收录红线：
@@ -9,7 +9,7 @@
  */
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   xiezhou: { name: '河东军', tier: 2 },   // 安邑·马燧河东节度使
-  tang: { name: '玄甲军', tier: 0 },       // 长安·§1 #44 李世民玄甲骑
+  tang: { name: '神策军', tier: 2 },       // 长安·李晟神策军（唐禁军）
   wei: { name: '魏之武卒', tier: 0 },        // 汴梁·吴起练武卒阴晋破秦（《荀子·议兵》）
   qin: { name: '秦之锐士', tier: 1 },        // 天水·§1 #12 司马错白起
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
@@ -40,7 +40,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // ── 2026-06-16 新增：11大名关 ──
                       hongnong_jun: { name: '函谷营', tier: 1 },       // 函谷关·樗里疾崤函锐士
   huangfu: { name: '神策军', tier: 1 },       // 安定·李晟神策军（T1有名且胜仗）
-  zheng: { name: '成皋部曲', tier: 3 },
+  zhengzhou: { name: '玄甲军', tier: 0 },  // 虎牢关·李世民玄甲骑
   ruo: { name: '商於材官', tier: 3 },
   ruzhou: { name: '广成健卒', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 3 },

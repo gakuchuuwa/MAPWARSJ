@@ -1,4 +1,4 @@
-﻿// 势力数据 (Faction Data)
+// 势力数据 (Faction Data)
 // 每个势力：id、name（旗号汉字见 SandboxDisplayNames）
 // 显示色：固定见 HistoricalFactionColors.ts；其余每局由 FactionManager 随机分配
 // 命名规则：政权用正式国号(部分加"大")，民族用最高知名度2字简称，军阀用人名姓氏，家族用单姓氏
@@ -85,7 +85,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xiongnu', name: '匈奴' },
     { id: 'xianbei', name: '鲜卑' },
     { id: 'jie', name: '羯族' },
-    { id: 'qiang', name: '羌族' },
+    { id: 'beidi', name: '北地' },
     { id: 'tuoba', name: '拓跋' },
     { id: 'yuwen', name: '宇文' },
     { id: 'liang_d', name: '梁国' },
@@ -375,7 +375,7 @@ export const FACTIONS: Faction[] = [
 
     // 第五类：西南土司
     { id: 'jinchuan_g', name: '金川' },
-    { id: 'jinchuan_x', name: '小川' },
+    { id: 'jinchuan_x', name: '小金川' },
     // 沙褐 - 班禅系统(日喀则)
 
     // 第六类：三藩之乱
@@ -889,7 +889,7 @@ export const FACTIONS: Faction[] = [
     { id: 'bozhou_d', name: '博州' },             // 博@聊城（隋唐博州治）
     // ── 2026-06-16 新增：11大名关势力 ──
     { id: 'hongnong_jun', name: '弘农郡' },
-    { id: 'zheng', name: '郑国' },
+    { id: 'zhengzhou', name: '郑州' },
     { id: 'ruo', name: '鄀国' },
     { id: 'gar', name: '噶尔氏' },
     { id: 'ruzhou', name: '汝州' },
@@ -901,7 +901,7 @@ export const FACTIONS: Faction[] = [
     { id: 'mushi', name: '穆氏' },
     { id: 'lai', name: '莱州' },
     // ── 2026-06-16 新增：4座巴蜀西南名关 ──
-    { id: 'lizhou_d', name: '利州' },
+    { id: 'lizhou_d', name: '剑州' },
     { id: 'zuo_d', name: '笮人' },
     { id: 'huangwang', name: '黄王' },
     { id: 'shenshi', name: '吴兴沈氏' },
@@ -933,7 +933,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wulei', name: '无雷' },
     { id: 'dulan', name: '都兰' },
     { id: 'duomi', name: '多弥' },
-    { id: 'wumeng', name: '乌蒙' },
+    { id: 'wumeng', name: '溪州' },
     { id: 'lelang', name: '乐浪' },
     { id: 'huite', name: '辉特' },
     { id: 'zubu', name: '阻卜' },

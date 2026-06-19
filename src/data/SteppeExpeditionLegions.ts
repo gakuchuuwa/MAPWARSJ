@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 草原文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与日朝东北一致：
@@ -26,7 +26,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   rouran: { name: '柔然铁骑', tier: 2 },       // 赛尔乌苏·柔然骑兵
   xueyantuo: { name: '同罗突骑', tier: 2 },    // 燕然勒石·薛延陀亲卫（§6 #18）
   naiman: { name: '乃蛮重骑', tier: 2 },       // 福海·乃蛮重装骑兵（§6 #19）
-  ongut: { name: '汪古突骑', tier: 2 },        // 净州塞·汪古白鞑靼（§6 #14）
+  ongut: { name: '汪古骑', tier: 3 },        // 净州塞·汪古部阿剌兀思
   wala: { name: '瓦剌铁骑', tier: 2 },         // 博尔巴任·也先瓦剌（§6 #12）
   geluolu: { name: '葛逻禄背弓', tier: 2 },    // 弓月城·三姓葛逻禄
   // 那可儿除名（与那可儿军重复）

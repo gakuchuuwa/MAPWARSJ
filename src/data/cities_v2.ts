@@ -1,4 +1,4 @@
-﻿/**
+/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -595,7 +595,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_hanguguan', name: '函谷关', factionId: 'hongnong_jun', lat: 34.615131, lng: 110.915222, type: 'pass', troops: 10000, mirror: true },
     { id: 'city_tongguan', name: '潼关', factionId: 'sunqin', lat: 34.540000, lng: 110.290000, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true, note: '孙传庭督标秦军潼关战死故地' },
     // ── 中原北线黄河走廊关隘 ──
-    { id: 'city_hulaoguan', name: '虎牢关', factionId: 'zheng', lat: 34.810000, lng: 113.170000, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_hulaoguan', name: '虎牢关', factionId: 'zhengzhou', lat: 34.810000, lng: 113.170000, type: 'pass', troops: 10000, mirror: true },
     // ── 洛阳周边防御关隘群 ──
     { id: 'city_guangchengguan', name: '广成关', factionId: 'ruzhou', lat: 34.139089, lng: 112.887268, type: 'pass', troops: 10000, mirror: true },
     
@@ -610,7 +610,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_wuguan', name: '武关', factionId: 'ruo', lat: 33.600000, lng: 110.620000, type: 'pass', troops: 10000, mirror: true },
 
 
-    { id: 'city_xiaoguan', name: '萧关', factionId: 'qiang', lat: 35.657289, lng: 106.320190, type: 'pass', troops: 10000, mirror: true, note: '萧关道，河西北陆羌族重镇' },
+    { id: 'city_xiaoguan', name: '萧关', factionId: 'beidi', lat: 35.657289, lng: 106.320190, type: 'pass', troops: 10000, mirror: true, note: '萧关道，北地郡萧关·孙卬戍守' },
 
     {
         id: 'city_jinsuoguan',

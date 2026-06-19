@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 北方文化区远征精锐军团名（NORTH）
  *
  * 收录红线：
@@ -35,16 +35,20 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zhuozhou: { name: '曳落河', tier: 1 },     // 范阳·§1 #48 安禄山蕃胡骑兵
   shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
   lingwu: { name: '朔方军', tier: 1 },      // 回乐·§1 #53 灵州朔方节度使精锐
-  dingxiang_d: { name: '恶阳骑', tier: 1 }, // 恶阳岭·贞观四年李靖三千轻骑夜袭定襄（《旧唐书·李靖传》）
+  dingxiang_d: { name: '定襄骁骑', tier: 2 }, // 恶阳岭·贞观四年李靖三千骁骑出恶阳岭夜袭定襄（《旧唐书·李靖传》）
   zhongshan: { name: '常山兵', tier: 1 },   // 真定·常山兵
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
   helian: { name: '铁弗卫队', tier: 2 },     // 统万城·赫连勃勃铁弗亲卫
   bing: { name: '并州狼骑', tier: 2 },     // 晋阳·并州骑兵
   you: { name: '上谷突骑', tier: 2 },        // 居庸关·幽州上谷郡
-  yi: { name: '白马义从', tier: 1 },           // 紫荆关·易京要塞公孙瓒
+  yi: { name: '易州戍兵', tier: 3 },           // 紫荆关·杨洪明代易州戍守
   changshan: { name: '倒马关卒', tier: 3 },   // 倒马关·常山
   xianyu: { name: '中山铁卒', tier: 3 },      // 井陉关·鲜虞（战国）
   linhu: { name: '林胡骑', tier: 3 },         // 偏头关·林胡族
+  lingqiu: { name: '宁武边军', tier: 3 },    // 平型关·周遇吉宁武边军
+  huo: { name: '霍国甲士', tier: 3 },       // 灵石关·霍叔处霍国甲士
+  lai: { name: '青石关卒', tier: 3 },       // 青石关·齐长城戍卒
+  mushi: { name: '穆陵戍卒', tier: 3 },
   // 飞虎军除名（李克用置，平型关时代错位）
   loufan: { name: '楼烦兵', tier: 3 },        // 宁武关·战国楼烦胡骑
   linyu: { name: '夷丁突骑', tier: 3 },       // 山海关·临榆（明末）

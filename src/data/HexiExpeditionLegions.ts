@@ -13,7 +13,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   qing: { name: '忠孝军', tier: 0 },         // 安化·庆州治；大昌原四百破八千（完颜陈和尚）
   // 步跋子已迁环洲（huan@方渠）
   yeli: { name: '擒生军', tier: 2 },             // 克夷门·西夏监军司
-    weiming: { name: '步跋子', tier: 3 },       // 鸡鹿塞·西夏山地劲卒（T3真实存在）
+    weiming: { name: '嵬名亲卫', tier: 1 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽
   guiyi: { name: '沙州劲旅', tier: 2 },          // 玉门关·§7 #4 张议潮归义军（番号避旗号「归义」及「义」字）
   xianlingqiang: { name: '凉州大马', tier: 2 },  // 允吾·凉州骑兵泛称
   tufa_d: { name: '南凉铁骑', tier: 2 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）
@@ -22,7 +22,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   hunxie: { name: '肩水胡骑', tier: 2 },          // 肩水金关·匈奴浑邪部（原甘州铁骑，归甘）
   qifu_d: { name: '苑川突骑', tier: 2 },         // 枹罕·西秦乞伏鲜卑突骑（苑川故地）
   anding_wei: { name: '长征健儿', tier: 2 },      // 苦峪堡·唐安西征募健儿
-  qiang: { name: '北地骑', tier: 3 },             // 萧关·羌族北地骑
+  beidi: { name: '北地骑', tier: 3 },             // 萧关·北地郡孙卬戍卒
   yingli: { name: '泼喜军', tier: 2 },            // 鸣沙·西夏砲驼兵
   chijin: { name: '赤斤蒙古卫', tier: 2 },        // 赤金堡·明关西七卫
   dongshengwei: { name: '东胜卫戍', tier: 3 },     // 东胜卫·明代卫所
@@ -34,4 +34,8 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   dashun: { name: '老营军', tier: 1 },            // 子午谷·李自成老营精锐
     ganzhou: { name: '甘州铁骑', tier: 2 },       // 张掖·窦融河西骑兵（T2有名史载专名）
     anxi: { name: '安西驻军', tier: 3 },       // 拨换城·郭昕安西军（T3真实存在）
+  baibo: { name: '白波黄巾', tier: 3 },
+  xiqin: { name: '夏州戍兵', tier: 3 },
+  baiyang: { name: '长城戍卒', tier: 3 },
+  wei2: { name: '静塞军', tier: 1 },
 };
