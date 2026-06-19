@@ -478,7 +478,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_toumancheng', name: '头曼城', factionId: 'xiongnu', lat: 41.302589, lng: 108.506470, type: 'small_city', troops: 10000 },
 
     { id: 'city_guangnan', name: '广南', factionId: 'gouding', lat: 23.755260, lng: 105.386353, type: 'small_city', troops: 10000 },    
-    { id: 'city_liaoyang', name: '襄平', factionId: 'murong', lat: 41.270000, lng: 123.170000, type: 'small_city', region: 'NORTH', troops: 10000, note: '辽东襄平；前燕慕容氏活动核心（《晋书·慕容廆传》）' },
+    { id: 'city_liaoyang', name: '襄平', factionId: 'gongsun_d', lat: 41.270000, lng: 123.170000, type: 'small_city', region: 'NORTH', troops: 10000, note: '公孙度辽东治所；辽东铁骑' },
 
     {
         id: 'city_chaoyang',
@@ -1139,7 +1139,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 21.90, lng: 110.80,
         type: 'small_city',
         troops: 10000 },
-    { id: 'city_beishacheng', name: '卑沙城', factionId: 'gongsun_d', lat: 39.444692, lng: 121.959229, type: 'small_city', troops: 10000, note: '辽东卑沙城；公孙氏辽东翼境' },
+    { id: 'city_beishacheng', name: '卑沙城', factionId: 'panjun', lat: 39.444692, lng: 121.959229, type: 'small_city', troops: 10000, note: '辽东卑沙城；公孙氏辽东翼境' },
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
     {
         id: 'city_suiye',
@@ -1836,7 +1836,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_taizaifu', name: '太宰府', factionId: 'zhuqian', lat: 33.51, lng: 130.52, type: 'small_city', region: 'JAPAN', troops: 10000, note: '筑前国太宰府；九州律令国府、防佛渡海咽喉；室町期警固番役驻地（江户期福冈城在其北约15km，据点名取史地知名度更大者）' },
     { id: 'city_chijianguan', name: '赤间关', factionId: 'taira', lat: 33.95, lng: 130.93, type: 'pass', region: 'JAPAN', troops: 10000, tier: 2 },
     { id: 'city_guizhicheng', name: '鬼之城', factionId: 'jibei2', lat: 34.72, lng: 133.76, type: 'small_city', region: 'JAPAN', troops: 10000, note: '备中国鬼之城；宇喜多氏·备中名城（距冈山/福山城址<50km）' },
-    { id: 'city_junfucheng', name: '府中', factionId: 'jinchuan', lat: 34.97, lng: 138.38, type: 'medium_city', region: 'JAPAN', troops: 10000 },
+    { id: 'city_junfucheng', name: '骏府', factionId: 'jinchuan', lat: 34.97, lng: 138.38, type: 'medium_city', region: 'JAPAN', troops: 10000 },
     {
         id: 'city_xuanhua',
         name: '宣化',
@@ -2070,7 +2070,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'panjun', lat: 25.75, lng: 123.50, type: 'small_city', region: 'JAPAN', troops: 10000, note: '南方/日本环线共用锚点；南方环线所称钓鱼岛城即本据点；明清海图及《隋书·流求国传》等见载' },
     { id: 'city_gugudao', name: '宫古岛', factionId: 'gonggu', lat: 24.805, lng: 125.281, type: 'small_city', region: 'JAPAN', troops: 10000, note: '琉球宫古诸岛主岛，见《中山世谱》及明清海图' },
     { id: 'city_qihe', name: '七河', factionId: 'qincha', lat: 44.2219, lng: 64.3332, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '钦察汗国七河草原核心带' },
-    { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.5697, lng: 95.6981, type: 'medium_city', region: 'DIANQIAN', troops: 10000, note: '贡榜王朝龙兴之地；卡塞骑兵' },
+    { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.5697, lng: 95.6981, type: 'small_city', region: 'DIANQIAN', troops: 10000, note: '贡榜龙兴之地；贡榜禁军' },
     { id: 'city_hengyu', name: '横屿', factionId: 'qi_d', lat: 26.77, lng: 119.7, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '嘉靖横屿大捷古战场；戚家军藤牌灭倭标志战' },
     { id: 'city_luobo', name: '罗博', factionId: 'buyi_d', lat: 25.4112, lng: 106.7377, type: 'small_city', troops: 10000 },
     { id: 'city_situo', name: '思陀', factionId: 'hani_d', lat: 23.2243, lng: 102.8485, type: 'small_city', troops: 10000 },

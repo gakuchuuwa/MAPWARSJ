@@ -18,12 +18,12 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   nantang_d: { name: '黑云长剑都', tier: 2 }, // 南京·§9 #4 南唐杨行密
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=寿·寿州）
   hongguang: { name: '扬州义兵', tier: 2 },       // 广陵·史可法扬州义兵
-  lu: { name: '逍遥津死士', tier: 1 },       // 合肥·张辽800破十万（《三国志》）
+  lu: { name: '合肥锐士', tier: 1 },       // 合肥·张辽八百破十万
   min: { name: '闽国亲从', tier: 2 },        // 冶城·王审知闽国亲从
   chen: { name: '建康水军', tier: 3 },       // 清远·陈霸先水师
   xiao_d: { name: '白袍军', tier: 1 },       // 兰陵·陈庆之七千白袍（《梁书》）
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
-      xiangzhou: { name: '襄鄂都统司', tier: 2 },     // 襄阳·吕文焕守襄（1267-1273）
+      xiangzhou: { name: '荆鄂都统司', tier: 1 },     // 襄阳·京湖战区
   zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
   song: { name: '克敌军', tier: 1 },       // 临安·韩世忠（《宋史·韩世忠传》克敌军）
   qian_d: { name: '游奕军', tier: 2 },       // 嘉兴·§9 #13 踏白游奕（岳飞系）

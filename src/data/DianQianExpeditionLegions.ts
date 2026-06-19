@@ -11,7 +11,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   dali: { name: '大理白军', tier: 2 },         // 羊苴咩·§11 #2
   hantawadi: { name: '东吁象兵', tier: 0 },    // 区T0锚·勃固城·莽应龙象兵（原 bayinnaung）
   dongxu: { name: '东吁铁骑', tier: 1 },       // 东吁城·莽瑞体东吁铁骑
-  konbaung: { name: '瑞波卫队', tier: 3 },   // 瑞波·贡榜王朝
+  konbaung: { name: '贡榜禁军', tier: 1 },   // 瑞波·贡榜禁军
   siam: { name: '皇家象骑兵', tier: 2 },       // 阿瑜陀耶·暹罗王家象兵（纳黎萱等；泰籍战史名，非中原式以少胜多顶格）
   pagan: { name: '缅王战象', tier: 1 },      // 蒲甘·阿奴律陀象军
   pyu: { name: '骠国戍卒', tier: 3 },        // 室利差罗·骠国

@@ -109,7 +109,7 @@ export class EventParser {
         '天雄军': 'tianxiong', '卢象升': 'tianxiong', '大名': 'tianxiong', '贾庄': 'tianxiong',
         '邯郸坚兵': 'zhao', '赵武灵王': 'zhao', '廉颇': 'zhao',
         '幽州突骑': 'yan', '幽州': 'yan',
-        '白马义从': 'gongsun_d', '公孙瓒': 'gongsun_d',
+        '辽东铁骑': 'gongsun_d', '公孙度': 'gongsun_d',
         '黑槊龙骧': 'shizhao_d', '黑槊龙骧军': 'shizhao_d', '石勒': 'shizhao_d',
         '苍头军': 'yunzhong',
         '虎纹突骑': 'tuoba', '拓跋焘': 'tuoba',
@@ -118,7 +118,7 @@ export class EventParser {
         '百保鲜卑': 'gaoqi_d', '百保': 'gaoqi_d',
         '黄龙兵': 'yingzhou_ying_d', '高宝宁': 'yingzhou_ying_d', '营州': 'yingzhou_ying_d',
         '两池军': 'chile', '高洋': 'chile',
-        '鲜卑燕骑': 'murong', '龙城甲骑': 'murong', '慕容恪': 'murong', '连环马': 'murong', '棘城': 'murong',
+        // murong → deleted
         '曳落河': 'zhuozhou', '安禄山': 'zhuozhou', '范阳': 'zhuozhou',
         '鸦儿军': 'shatuo', '李克用': 'shatuo',
         '朔方军': 'lingwu', '郭子仪': 'lingwu', '李光弼': 'lingwu', '灵武': 'lingwu', '回乐': 'lingwu',
@@ -326,8 +326,8 @@ export class EventParser {
         '三佛齐': 'srivijaya', '室利佛逝': 'srivijaya', '旧港': 'srivijaya', '巨港': 'srivijaya', '施进卿': 'srivijaya',
 
         // 2026-05-25 两晋核对追加势力
-        '慕容': 'murong', '慕容皝': 'murong', '慕容垂': 'murong', '慕容恪': 'murong',
-        '前燕': 'murong', '后燕': 'murong', '南燕': 'murong', '西燕': 'murong',
+        // murong → deleted
+        // murong → deleted
         '龙城': 'yingzhou_ying_d', '朝阳': 'yingzhou_ying_d',
         '尔朱': 'erzhu', '尔朱荣': 'erzhu', '尔朱兆': 'erzhu', '尔朱氏': 'erzhu',
         '契胡': 'erzhu', '秀容川': 'erzhu', '秀容': 'erzhu',

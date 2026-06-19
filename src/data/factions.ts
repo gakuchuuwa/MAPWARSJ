@@ -105,7 +105,7 @@ export const FACTIONS: Faction[] = [
     { id: 'liao_d', name: '大辽' },
     { id: 'dai_d', name: '代国' },
     { id: 'feng_d', name: '冯氏' },
-    { id: 'zhongshan', name: '中山' },
+    { id: 'zhongshan', name: '恒州' },
     { id: 'wang_d', name: '王氏' },
     { id: 'xiao_d', name: '萧氏' },
     { id: 'li_lx_d', name: '李氏' },
@@ -179,7 +179,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'xingliao', name: '兴辽' },
 
-    { id: 'gongsun_d', name: '公孙' },
+    { id: 'gongsun_d', name: '辽东' },
     { id: 'donghu', name: '东胡' },
     { id: 'luoyue', name: '骆越' },
     { id: 'ba', name: '巴国' },
@@ -437,7 +437,7 @@ export const FACTIONS: Faction[] = [
 { id: 'kala', name: '喀喇汗王朝' },
     // ── 2026-06-17 新增：喀喇契丹（西辽·虎思/碎叶故地）──
     { id: 'xiliao', name: '西辽' },
-    { id: 'jiazini', name: '加兹尼' },      // 加兹尼王朝(伽色尼城/马哈茂德), Ghaznavid
+    { id: 'jiazini', name: '伽色尼' },      // 伽色尼王朝(哥疾宁/马哈茂德), Ghaznavid
     { id: 'gaofu', name: '高附' },          // 喀布尔沙希王朝(高附城/阇耶波罗), Kabul Shahi
     { id: 'fanyanna', name: '梵衍那' },      // 梵衍那国(巴米扬/兴都库什), Bamiyan
 // 土褐 - 吐火罗(员渠城/焉耆盆地)
@@ -866,7 +866,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yanda', name: '嚈哒' },
     { id: 'qincha', name: '钦察' },
     { id: 'anxi', name: '安西' },
-    { id: 'konbaung', name: '贡榜王朝' },
+    { id: 'konbaung', name: '贡榜' },
     { id: 'qi_d', name: '戚氏' },
     { id: 'wangyan', name: '太行' }, // 王彦八字军@飞狐；旗号取地名太行（禁人名「彦」）
     // ── 2026-06-11 新增：明末精锐（天雄/潼津）──

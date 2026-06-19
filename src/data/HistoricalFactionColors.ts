@@ -183,7 +183,7 @@ const _FIXED: Record<string, string> = {
     nanzhao: '#8C3830', // 南诏·罗苴子（南诏深红）
     dali: '#5A9880', // 大理·白军（苍洱碧玉）
     bayinnaung: '#B88840', // 莽应·东吁象阵兵（象阵金褐）
-    konbaung: '#A87848', // 贡榜·卡塞骑（缅北金褐）
+    konbaung: '#A87848', // 贡榜·禁军（缅北金褐）
     siam: '#D07028', // 暹罗·皇家象骑兵（暹罗橙）
     pagan: '#9A7048', // 蒲甘·缅王战象（蒲甘赭）
     pyu: '#A09068', // 骠国·巨象阵（骠国沙褐）
@@ -191,7 +191,7 @@ const _FIXED: Record<string, string> = {
     chenla: '#8A7850', // 真腊·双弓弩象营（吴哥金褐）
     luchuan: '#6A9858', // 麓川·百夷象兵（傣掸绿）
 
-    zhancheng: '#C88830', // 占城·佛逝象军（占婆金）
+    zhancheng: '#C88830', // 占城·象兵（占婆金）
     // ── 岭南精锐远征势力（2026-06-11；hex 全局唯一）──
     zhuang_d: '#5A8848', // 壮·广西狼兵（俍兵绿）
     xian_d: '#C84868', // 冼·俚人武士（高凉绯）
@@ -221,7 +221,7 @@ const _FIXED: Record<string, string> = {
     // ── 北方精锐远征势力（2026-06-11；§2 全 12 + §1 偏北）──
     zhao: '#488898', // 赵·赵边骑（邯郸赵氏青）
     yan: '#8A3838', // 燕·幽州突骑（燕国绛）
-    gongsun_d: '#E8E4D8', // 公孙·白马义从（白马白）
+    gongsun_d: '#E8E4D8', // 辽东·铁骑（白马白）
     shizhao_d: '#3A2820', // 石赵·黑槊龙骧（羯族玄褐）
     yunzhong: '#8A7858', // 云中·苍头军（代北土黄）
     murong: '#508868', // 慕容·龙城甲骑 T0（棘城）
@@ -233,7 +233,7 @@ const _FIXED: Record<string, string> = {
     chile: '#5A7060', // 敕勒·两池军（阴山青灰）
     zhuozhou: '#482838', // 涿州·曳落河（范阳暗绛）
     lingwu: '#587878', // 灵·朔方军（灵武青灰）
-    zhongshan: '#6888A0', // 中山·恒州弩手（真定水蓝·颜杲卿）
+    zhongshan: '#6888A0', // 恒州·常山兵（真定水蓝）
     huan: '#6A8870', // 环·宣毅军（环州青绿）
     qingyuan_bd: '#708898', // 清苑·神臂营（保定弩阵灰蓝）
     // tuoba/erzhu/yuwen/shatuo 见上方尚色/草原表
@@ -307,7 +307,7 @@ const _FIXED: Record<string, string> = {
     you: '#2B5E4B', // 幽州（燕山苍翠，居庸关）
     heng1: '#3A5B6B', // 恒岳（恒山青蓝，恒山军@雁门关）
     yi: '#6B3A4A', // 易州（紫荆暗红，紫荆关）
-    changshan: '#B8C4D0', // 常山（白马银灰，白马义从）
+    changshan: '#B8C4D0', // 常山·倒马关卒（白马银灰）
     xianyu: '#7B6B4A', // 鲜虞（中山古铜，中山铁卒）
     linhu: '#8B6B3A', // 林胡（草原赭黄，林胡骑）
     lingqiu: '#9B3A3A', // 灵丘（飞虎赤褐，飞虎军）
@@ -708,9 +708,9 @@ const _FIXED: Record<string, string> = {
     'hao_d': '#756CC2', // 自动分配 (邻域相斥)
     'bozhou_d': '#9348A5', // 自动分配 (邻域相斥)
     'zheng': '#76D2AB', // 自动分配 (邻域相斥)
-    jiazini: '#6A3A2A', // 加兹尼·伽色尼城
+    jiazini: '#6A3A2A', // 伽色尼·古拉姆
     yisifahan: '#3A5A8A', // 伊斯法罕·蓝
-    gaofu: '#5A3A4A', // 高附·紫褐
+    gaofu: '#5A3A4A', // 高附·高附兵
     fanyanna: '#4A3A6A', // 梵衍那·深紫
     dingxiang_d: '#3A4A5A', // 定襄·暗青
 };
