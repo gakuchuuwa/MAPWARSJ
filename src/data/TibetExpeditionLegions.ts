@@ -52,5 +52,4 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   kangba: { name: '康巴骁骑', tier: 3 },   // 理塘宗·康巴
   song2: { name: '松州边军', tier: 3 },      // 嘉诚·唐松州抗蕃戍卒
   xiadun: { name: '廷布卫队', tier: 3 },     // 廷布·夏仲不丹亲卫
-  rulun: { name: '萨毗泽驻军', tier: 2 },
 };

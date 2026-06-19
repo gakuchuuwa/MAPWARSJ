@@ -1,4 +1,4 @@
-/**
+﻿/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -483,19 +483,19 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     {
         id: 'city_chaoyang',
         name: '朝阳',
-        factionId: 'feng_d',
+        factionId: 'yingzhou_ying_d',
         lat: 41.57, lng: 120.45,
         type: 'small_city',
         troops: 10000,
-        note: '北燕都和龙/龙城（《魏书·冯跋传》）；冯跋于此开国' },
+        note: '营州治柳城（《隋书·地理志》）；北齐黄龙；高宝宁营州刺史（《北齐书》）' },
     {
         id: 'city_jicheng',
         name: '棘城',
-        factionId: 'yingzhou_ying_d',
+        factionId: 'murong',
         lat: 41.580, lng: 121.055,
         type: 'small_city',
         troops: 10000,
-        note: '昌黎棘城；营州翼境；北齐黄龙兵标志地（《北齐书·高宝宁传》）' },
+        note: '昌黎棘城；前燕/后燕龙城南移前重镇；慕容恪龙城甲骑标志地' },
     {
         id: 'city_bailangshan',
         name: '白狼山',
@@ -2027,7 +2027,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_fangqu', name: '方渠', factionId: 'huan', lat: 36.58, lng: 107.3, type: 'small_city', troops: 10000 },
     { id: 'city_jingsai', name: '静塞', factionId: 'wei2', lat: 37.448637, lng: 106.674500, type: 'pass', troops: 10000, mirror: true },//镜像
     { id: 'city_lingzhou', name: '回乐', factionId: 'lingwu', lat: 37.998341, lng: 106.295471, type: 'small_city', troops: 10000 },
-    { id: 'city_nuergan', name: '奴儿干城', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'small_city', region: 'NORTHEAST', troops: 10000 },
+    { id: 'city_nuergan', name: '奴儿干城', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '明奴儿干都司；康旺；旗面「都卫」避与据点名 §4.1 防重' },
     { id: 'city_pennuli', name: '盆奴里', factionId: 'nifuhe', lat: 47.708134, lng: 130.933685, type: 'small_city', troops: 10000 },
     // 古尔王朝（Ghurids）呼罗珊边缘要塞
     { id: 'city_malulude', name: '马鲁鲁德', factionId: 'guer', lat: 35.58, lng: 63.31, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },

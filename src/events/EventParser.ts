@@ -460,7 +460,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         type: 'small_city',
         troops: 10000,
         tier: 1 },
-    { id: 'city_lanzhou', name: '金城', factionId: 'lanzhou', lat: 36.05, lng: 103.8333, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1, note: '金城郡·兰州治所；赵充国屯田金城' },
+    { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.05, lng: 103.8333, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1, note: '金城郡·兰州治所；赵充国屯田金城' },
 
     { id: 'city_ledu', name: '浇河', factionId: 'tufa_d', lat: 35.837926, lng: 101.071472, type: 'small_city', troops: 10000 },
     {
@@ -483,19 +483,19 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     {
         id: 'city_chaoyang',
         name: '朝阳',
-        factionId: 'feng_d',
+        factionId: 'yingzhou_ying_d',
         lat: 41.57, lng: 120.45,
         type: 'small_city',
         troops: 10000,
-        note: '北燕都和龙/龙城（《魏书·冯跋传》）；冯跋于此开国' },
+        note: '营州治柳城（《隋书·地理志》）；北齐黄龙；高宝宁营州刺史（《北齐书》）' },
     {
         id: 'city_jicheng',
         name: '棘城',
-        factionId: 'yingzhou_ying_d',
+        factionId: 'murong',
         lat: 41.58, lng: 121.055,
         type: 'small_city',
         troops: 10000,
-        note: '昌黎棘城；营州翼境；北齐黄龙兵标志地（《北齐书·高宝宁传》）' },
+        note: '昌黎棘城；前燕/后燕龙城南移前重镇；慕容恪龙城甲骑标志地' },
     {
         id: 'city_bailangshan',
         name: '白狼山',
@@ -1181,7 +1181,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_emil', name: '也迷里', factionId: 'ogodei', lat: 46.481378, lng: 83.633423, type: 'small_city', region: 'STEPPE', troops: 10000, note: '草原环线锚点；环线所称也迷离即本据点' },
     // 第三类：蒙古草原部落
     { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'small_city', troops: 10000 },
-    { id: 'city_naiman', name: '阿尔泰', factionId: 'hujie', lat: 47.64, lng: 88.29, type: 'pass', region: 'STEPPE', troops: 10000 },
+    { id: 'city_naiman', name: '阿尔泰', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'pass', region: 'STEPPE', troops: 10000 },
     { id: 'city_fuhai', name: '福海', factionId: 'naiman', lat: 47.03645, lng: 87.352295, type: 'small_city', troops: 10000 },
     { id: 'city_tatar', name: '哈拉哈河', factionId: 'tatar', lat: 47.182253, lng: 117.726746, type: 'small_city', troops: 10000 },
 
@@ -1194,7 +1194,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 22.53, lng: 113.04, type: 'small_city', troops: 10000, tier: 4,
         region: 'LINGNAN' },
     {
-        id: 'city_ninghai', name: '宁海', factionId: 'daxing',
+        id: 'city_ninghai', name: '宁海', factionId: 'panjun',
         lat: 29.28, lng: 121.42, type: 'small_city', troops: 10000, tier: 4,
         region: 'JIANGNAN' },
     {
@@ -1218,7 +1218,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 28.66, lng: 121.42, type: 'small_city', troops: 10000, tier: 4,
         region: 'JIANGNAN' },
     {
-        id: 'city_wenzhou', name: '永嘉', factionId: 'ting',
+        id: 'city_wenzhou', name: '永嘉', factionId: 'wenzhou',
         lat: 28, lng: 120.7, type: 'small_city', troops: 10000, tier: 4,
         region: 'JIANGNAN' },
 
@@ -2027,7 +2027,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_fangqu', name: '方渠', factionId: 'huan', lat: 36.58, lng: 107.3, type: 'small_city', troops: 10000 },
     { id: 'city_jingsai', name: '静塞', factionId: 'wei2', lat: 37.448637, lng: 106.6745, type: 'pass', troops: 10000, mirror: true },//镜像
     { id: 'city_lingzhou', name: '回乐', factionId: 'lingwu', lat: 37.998341, lng: 106.295471, type: 'small_city', troops: 10000 },
-    { id: 'city_nuergan', name: '奴儿干城', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'pass', region: 'NORTHEAST', troops: 10000 },
+    { id: 'city_nuergan', name: '奴儿干城', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'small_city', region: 'NORTHEAST', troops: 10000 },
     { id: 'city_pennuli', name: '盆奴里', factionId: 'nifuhe', lat: 47.708134, lng: 130.933685, type: 'small_city', troops: 10000 },
     // 古尔王朝（Ghurids）呼罗珊边缘要塞
     { id: 'city_malulude', name: '马鲁鲁德', factionId: 'guer', lat: 35.58, lng: 63.31, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },

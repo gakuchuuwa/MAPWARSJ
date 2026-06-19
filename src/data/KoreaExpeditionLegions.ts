@@ -20,7 +20,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   baiji: { name: '百济五方兵', tier: 2 },        // 泗沘·百济五方兵制
   goryeo: { name: '鹰扬军', tier: 2 },   // 开城·高丽鹰扬军
   luzhou: { name: '鸭绿水师', tier: 2 },       // 鸭绿府·渌州水师（§4 #）
-  sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣龟甲船海战（原属全罗左道）
+  sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣12破330（区T0锚点）
   hai2: { name: '朝鲜甲士', tier: 3 },       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
   joseon: { name: '义兴亲军卫', tier: 1 },       // 汉城·李成桂义兴亲军卫（§4 #9）
   sheng_d: { name: '全罗左水军', tier: 2 },   // 顺天·朝鲜全罗左道水军

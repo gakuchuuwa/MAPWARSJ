@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -102,7 +102,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'liao_d': '大辽',
     'dai_d': '代',
     'dingxiang_d': '定襄',
-    'feng_d': '冯',
     'zhongshan': '恒',
     'wang_d': '王',
     'xiao_d': '萧',
@@ -277,7 +276,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xushouhui': '天完',
     'zhangshicheng': '大周',
     'luoping': '罗平',
-    'daxing': '大兴（未启用）',
     'chendiaoyan': '漳',
 
     // ── 2026-05-25 明朝势力 ──
@@ -330,12 +328,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-25 晚清／近代势力（21个）──
     'taiping': '太平',
     'dacheng': '大成',
-    'han_dadian': '大捻',
 'pingnan': '平南',
     'qianhui': '回军',
     'miao_qing': '苗军',
     'tuoming': '清真',
-'yettishar': '哲德',
     'ashikaga': '室町',
     // ── 2026-05-26 新增：大金、大元 ──
     'dajin': '大金',
@@ -410,7 +406,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yang_bozhou': '播',
     'tian_sizhou': '田',
 'mu_lijiang': '木',
-    'bayinnaung': '莽应',
     'ming_zheng': '明郑',
     'xiou': '西瓯',
     'jing': '京',
@@ -729,7 +724,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
     'maomingan': '茂明',
     'aola': '敖拉',
-    'chaoer': '绰尔',
     'bulat': '布拉',
     'buriat': '布里',
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
@@ -780,13 +774,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'basha_d': '巴沙',
     'chuzhou_d': '滁',
     'taira': '平',
-    'juyan': '居延',
     'wuman': '乌蛮',
     'yehe': '叶赫',
     
     'xiutu': '休屠',
     'dongzu': '侗',
-    'jiliemi': '吉列',
     'wula': '乌拉',
     'mengwu': '蒙兀',
     'pugu': '仆骨',
@@ -798,7 +790,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chuyue': '处月',
     'baiyang': '白羊',
     'baidi': '白狄',
-    'wulei': '无雷',
     'duomi': '多弥',
     'wumeng': '溪',
     'lelang': '乐浪',
@@ -815,7 +806,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wuzhou': '武',
     'bailong': '白龙',
     'jilizhou': '积',
-    'nuergan': '奴儿干',
+    'nuergan': '都卫', // 奴儿干都司；据点名奴儿干城，旗面避 §4.1 防重
     'kepantuo': '渴盘陀',
     'xingxingxia': '星',
     'yangguan': '敦煌',

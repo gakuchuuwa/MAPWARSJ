@@ -614,7 +614,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'dang_d': _zhongyuanPortraitPool,
     'dashun': _zhongyuanPortraitPool,
     'dongxian': _zhongyuanPortraitPool,
-    'feng_d': _zhongyuanPortraitPool,
     'fu': _zhongyuanPortraitPool,
     'guide_d': _zhongyuanPortraitPool,
     'han': _zhongyuanPortraitPool,

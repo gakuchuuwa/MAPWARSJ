@@ -9,7 +9,7 @@
 export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // ── 元寇 ──
   so: { name: '弘安御敌', tier: 2 },           // 对马·金石城·宗氏抗元（1281 弘安役首当锋；≠太宰府警固）
-  zhuqian: { name: '警固番役', tier: 0 },  // 太宰府·警固番役（元寇：文永/弘安两役以少胜多，日本区T0锚点）
+  zhuqian: { name: '警固番役', tier: 1 },  // 太宰府·元寇海防（防御战，降T1）
 
   // ── 室町—战国—江户（辞典映射表）──
   ashikaga: { name: '奉公众', tier: 1 },         // 京都·§5 #31 足利奉公众
@@ -35,7 +35,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   anmei: { name: '奄美岛兵', tier: 3 }, // 赤木名城·与湾大亲奄美
   ayinu: { name: '阿伊努猎兵', tier: 3 },       // 白老·虾夷特有猛毒箭射手
   beihai: { name: '雪国斥候', tier: 3 },       // 宗谷界城·（原雪国斥候，避开越后地域错位）
-  yamato: { name: '千早众', tier: 0 },       // 千早城·楠木正成千早笼城以少胜多（原飞鸟卫府 T3）
+  yamato: { name: '千早众', tier: 1 },       // 千早城·楠木正成笼城（防御战，降T1）
   sanada_d: { name: '真田赤备', tier: 1 },
   // ── 2026-06-17 令制国补点（古代据点名 + 精锐）──
   kaga_d: { name: '一向宗门徒', tier: 1 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）

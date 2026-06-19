@@ -37,4 +37,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   didao: { name: '狄道戍骑', tier: 3 },
   baiyang: { name: '长城戍卒', tier: 3 },
   wei2: { name: '静塞军', tier: 1 },
+  guazhou: { name: '瓜州镇兵', tier: 3 },  // 晋昌城·唐瓜州镇兵
+  shazhou: { name: '归义精骑', tier: 2 },  // 敦煌·张议潮归义军精骑（有名且复河西）
+  suzhou: { name: '酒泉戍兵', tier: 3 },  // 酒泉·汉唐酒泉戍兵
 };

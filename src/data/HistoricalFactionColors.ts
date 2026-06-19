@@ -34,7 +34,6 @@ const _FIXED: Record<string, string> = {
     xiqin: '#AE3434', // 西秦
     hongguang: '#B82E2E', // 弘光(南明复明)
     longwu: '#B43434', // 隆武
-    yongli: '#AA3636', // 永历
     duanzhou_d: '#3D7A5A', // 端州（肇庆·摧锋军）
 
     // ── 黄·土德尚黄 ──
@@ -181,7 +180,6 @@ const _FIXED: Record<string, string> = {
     // ── 滇缅精锐远征势力（2026-06-11；hex 全局唯一）──
     nanzhao: '#8C3830', // 南诏·罗苴子（南诏深红）
     dali: '#5A9880', // 大理·白军（苍洱碧玉）
-    bayinnaung: '#B88840', // 莽应·东吁象阵兵（象阵金褐）
     konbaung: '#A87848', // 贡榜·禁军（缅北金褐）
     siam: '#D07028', // 暹罗·皇家象骑兵（暹罗橙）
     pagan: '#9A7048', // 蒲甘·缅王战象（蒲甘赭）
@@ -223,8 +221,8 @@ const _FIXED: Record<string, string> = {
     gongsun_d: '#E8E4D8', // 辽东·铁骑（白马白）
     shizhao_d: '#3A2820', // 石赵·黑槊龙骧（羯族玄褐）
     yunzhong: '#8A7858', // 云中·苍头军（代北土黄）
-    murong: '#508868', // 慕容·龙城甲骑 T0（棘城）
-    yingzhou_ying_d: '#887040', // 营·朝阳（黄龙兵）
+    murong: '#508868', // 慕容·龙城甲骑（棘城）
+    yingzhou_ying_d: '#887040', // 营州·黄龙兵（朝阳/柳城）
     gaoqi_d: '#6A4858', // 高齐·百保鲜卑 T0（蓨城）
     yin: '#A08038', // 殷·朝歌（汉初司马卬殷国）
     hejian: '#756048', // 莫州·文安
@@ -285,7 +283,6 @@ const _FIXED: Record<string, string> = {
     // ── 黑·水德尚黑 / 契丹黑旗 ──
     qin: '#1C1C1C', // 秦
     liao_d: '#302E28', // 大辽·皮室军（上京临潢）
-    fu: '#444030', // 苻
     yuwen: '#565048', // 宇文
     qidan: '#36322C', // 契丹
 
@@ -314,7 +311,6 @@ const _FIXED: Record<string, string> = {
     loufan: '#6B5B4A', // 楼烦（塞北土棕，楼烦兵）
     hongnong_jun: '#5A8A3A', // 弘农（桃林翠绿，桃林射士）
     ruo: '#7A6A4A', // 鄀国（商於赭石，商於材官）
-    rulun: '#8C6E4E', // 如论氏（萨毗赭褐，萨毗泽驻军）
     ruzhou: '#6B6B5A', // 汝州（广成灰褐，广成健卒）
     yun: '#8A6A3A', // 允戎（陆浑赭黄，陆浑戎骑）
     zhi_state: '#5A6B7A', // 轵国（太行钢蓝，太行飞军）
@@ -357,13 +353,11 @@ const _FIXED: Record<string, string> = {
     hani_d: '#A93226', // 哈尼族（哈尼砖红，思陀甸兵）
     basha_d: '#D68910', // 巴沙（湄公土金，湄公象卫）
     taira: '#C0392B', // 平氏（平家赤，平家水军）
-    juyan: '#D4AC0D', // 居延（居延黄，居延戍卒）
     wuman: '#2E4053', // 乌蛮（东爨玄，东爨乌蛮兵）
     yehe: '#7D6608', // 叶赫（叶赫褐）
     hujie: '#283747', // 呼揭（呼揭灰）
     xiutu: '#A04000', // 休屠（赤铜）
     dongzu: '#148F77', // 侗族（翠青）
-    jiliemi: '#4A235A', // 吉列迷（暗紫）
     wula: '#9A7D0A', // 乌拉（暗金）
     mengwu: '#1B4F72', // 蒙兀（深蓝）
     pugu: '#932A22', // 仆骨（暗红；避 hani_d #A93226）
@@ -375,7 +369,6 @@ const _FIXED: Record<string, string> = {
     chuyue: '#8E44AD', // 处月（深紫）
     baiyang: '#ECF0F1', // 白羊（银白）
     baidi: '#D0D3D4', // 白狄（灰白）
-    wulei: '#7F8C8D', // 无雷（石灰）
     duomi: '#8848A8', // 多弥（暗紫；避 bayegu #9B59B6）
     wumeng: '#D96A18', // 乌蒙（橙褐；避 gaochang #E67E22）
     lelang: '#E0A010', // 乐浪（黄；避 daozhou #F39C12）
@@ -421,7 +414,6 @@ const _FIXED: Record<string, string> = {
     'di': '#9AA948', // 自动分配 (邻域相斥)
     'qiang': '#995ACA', // 自动分配 (邻域相斥)
     'dai_d': '#6045B9', // 自动分配 (邻域相斥)
-    'feng_d': '#6CD670', // 自动分配 (邻域相斥)
     'wang_d': '#B2C058', // 自动分配 (邻域相斥)
     'li_lx_d': '#5E38C9', // 自动分配 (邻域相斥)
     'xie_cj_d': '#B1BD5F', // 自动分配 (邻域相斥)
@@ -474,7 +466,6 @@ const _FIXED: Record<string, string> = {
     'tatar': '#5F3B87', // 自动分配 (邻域相斥)
     'merkit': '#DB4A95', // 自动分配 (邻域相斥)
     'luoping': '#2EC931', // 自动分配 (邻域相斥)
-    'daxing': '#CF48BB', // 自动分配 (邻域相斥)
     'chendiaoyan': '#AC2A72', // 自动分配 (邻域相斥)
     'fang_guozhen': '#BF6683', // 自动分配 (邻域相斥)
     'dixiang': '#9B7030', // 帝乡（宛土赭，南阳材官·张绣）
@@ -501,12 +492,10 @@ const _FIXED: Record<string, string> = {
     'badakhshan': '#B75797', // 自动分配 (邻域相斥)
     'taiping': '#CE3DBB', // 自动分配 (邻域相斥)
     'dacheng': '#392898', // 自动分配 (邻域相斥)
-    'han_dadian': '#3BA9B3', // 自动分配 (邻域相斥)
     'pingnan': '#DA529D', // 自动分配 (邻域相斥)
     'qianhui': '#A9B527', // 自动分配 (邻域相斥)
     'miao_qing': '#219323', // 自动分配 (邻域相斥)
     'tuoming': '#B03166', // 自动分配 (邻域相斥)
-    'yettishar': '#BE35D0', // 自动分配 (邻域相斥)
     'yilou': '#A53C68', // 自动分配 (邻域相斥)
     'wuji': '#64AF95', // 自动分配 (邻域相斥)
     'mohe': '#66A056', // 自动分配 (邻域相斥)
@@ -690,7 +679,6 @@ const _FIXED: Record<string, string> = {
     'shuidada': '#8C9B4F', // 自动分配 (邻域相斥)
     'dongping': '#7D92C1', // 自动分配 (邻域相斥)
     'maomingan': '#5F9FB8', // 自动分配 (邻域相斥)
-    'chaoer': '#C79B34', // 自动分配 (邻域相斥)
     'bulat': '#831F9A', // 自动分配 (邻域相斥)
     'buriat': '#9C4F36', // 自动分配 (邻域相斥)
     'xianhai': '#79823D', // 自动分配 (邻域相斥)

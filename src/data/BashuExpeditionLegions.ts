@@ -15,7 +15,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
 
   chenzhou_d: { name: '辰州戍兵', tier: 3 },     // 沅陵·辰州戍兵
   jingmen: { name: '长坂兵', tier: 3 },          // 当阳·赵云长坂坡
-  bandun: { name: '賨人勇士', tier: 2 },       // 汉昌·§8 #1 板楯蛮（賨人）
+  bandun: { name: '賨人勇士', tier: 1 },       // 汉昌·范目率板楯七姓助刘邦定三秦（T1有名且胜仗）
   langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒
   zhuoshi: { name: '连弩士', tier: 3 },         // 临邛·诸葛连弩营
   tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛
@@ -26,7 +26,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   chenghan: { name: '六夷突骑', tier: 2 },      // 鹿头关·§8 #9 成汉李特六夷铁骑
   daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
   ba: { name: '巴渝劲卒', tier: 1 },          // 重庆·巴国巴蔓子劲卒（《华阳国志·巴志》）
-  hezhou: { name: '兴戎军', tier: 0 },          // 钓鱼城·王坚抗蒙毙蒙哥（《宋史》）
+  hezhou: { name: '兴戎军', tier: 1 },          // 钓鱼城·王坚抗蒙毙蒙哥（防御战，降T1）
   kui: { name: '白毦兵', tier: 1 },             // 白帝城·刘备白毦兵（夔州）
   qiuchi: { name: '武都部曲', tier: 3 },          // 仇池·杨氏世袭部曲（《宋书》杨难当拥部曲数万）
   // ── 2026-06-16 新增：4座西南名关 ──
@@ -46,4 +46,6 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   cheng: { name: '西川绿营', tier: 2 },          // 阳安·岳钟琪川督绿营
   wumeng: { name: '溪州土兵', tier: 3 },
   jinchuan_x: { name: '金川土兵', tier: 3 },
+  fuguo: { name: '附国羌兵', tier: 3 },  // 芒康宗·隋附国羌人部落兵
+  jie: { name: '柘羯武士', tier: 2 },  // 羯霜那·玄奘《大唐西域记》载柘羯勇士
 };

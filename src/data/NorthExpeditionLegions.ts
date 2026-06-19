@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 北方文化区远征精锐军团名（NORTH）
  *
  * 收录红线：
@@ -9,7 +9,7 @@
  */
 export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // ── 太行/河北（§1 交叉 + 明末）──
-  wangyan: { name: '八字军', tier: 1 },     // 飞狐·王彦八字军（原T0降级）
+  wangyan: { name: '八字军', tier: 0 },     // 飞狐·王彦八字军（区T0锚点·新乡大捷）
   // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
   huan: { name: '环州戍兵', tier: 3 },      // 方渠·宋代环州边防（原步跋子，归嵬名）
@@ -25,8 +25,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
   gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵·高长恭禁卫
-  yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 棘城·营州黄龙（《北齐书·高宝宁传》）
-  feng_d: { name: '龙城铁骑', tier: 2 },      // 朝阳·北燕冯跋龙城骑兵（《魏书·冯跋传》）
+  yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·营州黄龙（《北齐书·高宝宁传》）
   chile: { name: '两池军', tier: 3 },       // 云中·§2 #11
   murong: { name: '龙城甲骑', tier: 1 },    // 棘城·慕容燕具装骑（无经典以少胜多）
   ming_d: { name: '明军三大营', tier: 2 },   // 北京·五军神机三千营

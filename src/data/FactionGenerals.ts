@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 势力将领：势力开局自带的史实将领（一势力一将领一立绘，AI 也有）。
  *
  * 设计定案（GAME_DIRECTION.md「番号随城，将领随势」2026-06-16）：
@@ -34,7 +34,7 @@ export interface FactionGeneral {
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     qin: { generalId: 'baiqi', generalName: '白起', portrait: '/assets/qin/baiqi.png' },
-    tang: { generalId: 'lisheng_tang2', generalName: '李晟', portrait: '/assets/zhongyuan/lisheng.png' },
+    tang: { generalId: 'lisheng_tang', generalName: '李晟', portrait: '/assets/zhongyuan/lisheng.png' },
     wuzhou_d: { generalId: 'liduozuo', generalName: '李多祚', portrait: '/assets/wuzhou/liduozuo.png' },
         ming_d: { generalId: 'yuqian', generalName: '于谦', portrait: '/assets/daming/yuqian.png' },
     nantang_d: { generalId: 'lisheng', generalName: '李昪', portrait: '/assets/litang/lisheng.png' },
@@ -213,12 +213,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     keerkezi: { generalId: 'manasi', generalName: '玛纳斯', portrait: '/assets/xiyu/manasi.png' },
     pisha: { generalId: 'yuchisheng', generalName: '尉迟胜', portrait: '/assets/xiyu/yuchiyao.png' },
     xingxingxia: { generalId: 'zhangyao_x', generalName: '张曜', portrait: '/assets/xiyu/zhangyao.png' },
-    yangguan: { generalId: 'banchao', generalName: '班超', portrait: '/assets/xiyu/banchao.png' },
+    yangguan: { generalId: 'banyong', generalName: '班勇', portrait: '/assets/xiyu/banyong.png' },
     wulianghai: { generalId: 'chelingwubashi', generalName: '车凌乌巴什', portrait: '/assets/xiyu/chelingwubashi.png' },
     // 三陇沙·白龙 宁缺毋滥
 // ── 西域区 2026-06-18 ──
     shache: { generalId: 'xian_suoche_wang', generalName: '贤', portrait: '/assets/xiyu/xian_suoche.png' },
-    shule: { generalId: 'aersilan', generalName: '阿尔斯兰', portrait: '/assets/xiyu/aersilanhan.png' },
+    shule: { generalId: 'banchao', generalName: '班超', portrait: '/assets/xiyu/banchao.png' },
     dzungar: { generalId: 'gaerdancelin', generalName: '噶尔丹策零', portrait: '/assets/xiyu/gaerdancelin.png' },
     anxi: { generalId: 'guoxin', generalName: '郭昕', portrait: '/assets/xiyu/guoxin.png' },
     yanqi: { generalId: 'longtuqizhi', generalName: '龙突骑支', portrait: '/assets/xiyu/longtuqizhi.png' },
@@ -251,7 +251,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     qincha: { generalId: 'baqiman', generalName: '巴奇曼', portrait: '/assets/zhongya/baqiman.png' },
     dayuan: { generalId: 'wugua', generalName: '毋寡', portrait: '/assets/zhongya/wugua.png' },
     kokand: { generalId: 'alimukuli', generalName: '阿里木·库力', portrait: '/assets/zhongya/alimukuli.png' },
-    yettishar: { generalId: 'agubai', generalName: '阿古柏', portrait: '/assets/zhongya/agubai.png' },
     dayuzi: { generalId: 'yinalechihei', generalName: '亦纳勒赤黑', portrait: '/assets/zhongya/yinalechihei.png' },
     shi_clan: { generalId: 'moheduotutun', generalName: '莫贺咄吐屯', portrait: '/assets/zhongya/shijingtang.png' },
     mamon: { generalId: 'mameng', generalName: '马蒙', portrait: '/assets/zhongya/mameng.png' },
@@ -477,7 +476,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dixiang: { generalId: 'zhangxiu', generalName: '张绣', portrait: '/assets/zhongyuan/zhangxiu.png' },
     zhou: { generalId: 'jifa', generalName: '姬发', portrait: '/assets/zhongyuan/jifa.png' },
     quanrong: { generalId: 'quanrongwang', generalName: '犬戎王', portrait: '/assets/zhongyuan/quanrongwang.png' },
-    feng_d: { generalId: 'chairong', generalName: '柴荣', portrait: '/assets/zhongyuan/chairong.png' },
     cai: { generalId: 'caishudu', generalName: '蔡叔度', portrait: '/assets/zhongyuan/caishudu.png' },
     yun: { generalId: 'luhunrongwang', generalName: '陆浑戎王', portrait: '/assets/zhongyuan/luhunrongwang.png' },
         suzhou_d: { generalId: 'shikefa', generalName: '史可法', portrait: '/assets/jiangnan/shikefa.png' },
@@ -492,7 +490,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
             liguo: { generalId: 'zhaoshe_zd', generalName: '赵奢', portrait: '/assets/zhongyuan/zhaoshe.png' },
     huai: { generalId: 'zhuyuanzhang', generalName: '朱元璋', portrait: '/assets/zhongyuan/zhuyuanzhang.png' },
     shangzhou: { generalId: 'shangyang', generalName: '商鞅', portrait: '/assets/zhongyuan/shangyang.png' },
-    yuan_cj_d: { generalId: 'yuanshu', generalName: '袁术', portrait: '/assets/zhongyuan/yuanshu.png' },
+    yuan_cj_d: { generalId: 'yuanshu_zn', generalName: '袁术', portrait: '/assets/zhongyuan/yuanshu.png' },
     xinping: { generalId: 'haozhao', generalName: '郝昭', portrait: '/assets/zhongyuan/haozhao.png' },
     qiguo_d: { generalId: 'qihuangong', generalName: '杞桓公', portrait: '/assets/zhongyuan/qihuangong.png' },
     mengcheng_d: { generalId: 'gaoqiong', generalName: '高琼', portrait: '/assets/zhongyuan/gaoqiong.png' },

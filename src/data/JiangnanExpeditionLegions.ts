@@ -62,4 +62,14 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   shenshi: { name: '吴兴部曲', tier: 2 },       // 独松关·吴兴沈氏部曲
   wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）
   xie_cj_d: { name: '信州弩士', tier: 3 },      // 葛溪·信州弩士
+  chimei: { name: '赤眉军', tier: 2 },  // 莒城·樊崇赤眉军（《后汉书》有名）
+  chunshen: { name: '申江戍卒', tier: 3 },  // 上海·春申君黄歇封地戍卒
+  wang_d: { name: '琅琊部曲', tier: 3 },  // 琅琊·王氏部曲私兵
+  jiaodong: { name: '即墨死士', tier: 1 },  // 即墨·田单火牛阵大破燕军（《史记》）
+  guo: { name: '果州戍兵', tier: 3 },  // 南充·唐果州戍兵
+  zi: { name: '资州戍兵', tier: 3 },  // 盘石·唐资州戍兵
+  long2: { name: '陇州戍兵', tier: 3 },  // 汧源·唐陇州戍兵
+  jibei: { name: '济北卒', tier: 3 },  // 博阳·汉济北国卒
+  gouding: { name: '句町部兵', tier: 3 },  // 广南·西南夷句町国部兵
+  quanrong: { name: '犬戎骑', tier: 3 },  // 威戎·西周犬戎游骑（《史记·周本纪》）
 };
