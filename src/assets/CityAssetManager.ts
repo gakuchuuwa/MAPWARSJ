@@ -756,7 +756,19 @@ export class CityAssetManager {
          'jiazini': '伽色尼',
         'gaofu': '高附',
         'fanyanna': '梵衍',
-        };
+                'wuzhou': '武',
+        'bailong': '白龙',
+        'jilizhou': '积',
+        'nuergan': '奴儿干',
+        'kepantuo': '渴盘陀',
+        'zhasaketu': '札萨克图',
+        'xingxingxia': '星',
+        'wulianghai': '乌梁海',
+        'qinghai': '青海',
+        'chijin': '赤斤',
+        'xining': '西宁',
+        'kalun': '卡伦',
+};
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts
     private static readonly factionFlagTextMap: { [key: string]: string } = {};
@@ -1669,6 +1681,3 @@ export class CityAssetManager {
         });
     }
 }
-
-        'jilizhou': '积',
-        'nuergan': '奴儿干',

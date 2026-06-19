@@ -725,7 +725,17 @@ export const STARTING_CAPITALS: Record<string, string> = {
     jiazini: 'city_jiaseni',
     chiling: 'city_shibaocheng',
     qu_d: 'city_jieqiao',
-};
-
+    'wuzhou': 'city_wuzhousai',
+    'bailong': 'city_sanlongsha',
     'jilizhou': 'city_beishacheng',
     'nuergan': 'city_nuergan',
+    'kepantuo': 'city_gongzhubao',
+    'zhasaketu': 'city_zhabuhanjuntai',
+    'xingxingxia': 'city_xingxingxia',
+    'yangguan': 'city_yangguan',
+    'wulianghai': 'city_bulgan',
+    'qinghai': 'city_gasikou',
+    'chijin': 'city_niubiziliang',
+    'xining': 'city_mahatai',
+    'kalun': 'city_gasinaoer',
+};

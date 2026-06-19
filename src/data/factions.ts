@@ -623,7 +623,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-28 新增：南部(根城/日本陆奥)、萨曼(阿母城/中亚)、西域四政权 ──
     { id: 'nanbu', name: '陆奥' },                         // 陆奥国(南部氏/根城), Mutsu
     { id: 'saman', name: '萨曼' },                         // 萨曼王朝(中亚/阿母城), Samanid Empire
-    { id: 'hepan', name: '喝槃陀' },                       // 喝槃陀(西域/喝槃陀城), Khevand/Koband
+    { id: 'hepan', name: '朅盘陀' },                       // 喝槃陀(西域/喝槃陀城), Khevand/Koband
     { id: 'humi', name: '瓦罕' },
                           // 护密(西域/护密城), Wakhan
     // 特勤(西域/活国城), Tegin
@@ -942,7 +942,14 @@ export const FACTIONS: Faction[] = [
     { id: 'jiashi', name: '迦湿弥罗' },
     { id: 'wuhu', name: '乌护' },
   { id: 'sanada_d', name: '真田氏' },
+    { id: 'wuzhou', name: '武州' },
+    { id: 'bailong', name: '白龙' },
+    { id: 'jilizhou', name: '积利州' },
+    { id: 'xingxingxia', name: '星星峡' },
+    { id: 'yangguan', name: '敦煌' },
+    { id: 'wulianghai', name: '乌梁海' },
+    { id: 'kepantuo', name: '渴盘陀' },
+    { id: 'qinghai', name: '青海' },
+    { id: 'xining', name: '西宁' },
+    { id: 'kalun', name: '卡伦' },
 ];
-
-    { id: 'jilizhou', name: '积利州' },  // 卑沙城·唐程名振
-    { id: 'nuergan', name: '奴儿干都司' },  // 奴儿干·明康旺

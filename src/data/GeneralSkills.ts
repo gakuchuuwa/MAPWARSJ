@@ -161,6 +161,23 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     jinyixin: { generalId: 'jinyixin', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_03' }, // 萨円大捷守城反攻
     sangjiaer: { generalId: 'sangjiaer', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 中亚草原对峙以逸待变
     menggong: { generalId: 'menggong', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_02' }, // 枣阳孤城死守破蒙古
+    yangxingmi: { generalId: 'yangxingmi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_02' }, // 清口之战破孙儒守淮南
+    nanmuzhengcheng: { generalId: 'nanmuzhengcheng', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 千早城笼城死守抗幕府
+    qingshuizongzhi: { generalId: 'qingshuizongzhi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 备中高松城笼城死守
+    chenwang: { generalId: 'chenwang', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 马韩辰王治月支国
+    chengmingzhen: { generalId: 'chengmingzhen', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' }, // 卑沙城水陆并进攻克
+    kangwang: { generalId: 'kangwang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 奴儿干都司戍边
+    ashinayandu: { generalId: 'ashinayandu', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 阿尔泰金山突厥
+    peishenfu: { generalId: 'peishenfu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 朅盘陀石头城戍守
+    hanritianzhongwang: { generalId: 'hanritianzhongwang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 公主堡渴盘陀戍守
+    cewangzhabu: { generalId: 'cewangzhabu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 札萨克图汗部
+    amursana: { generalId: 'amursana', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 金山辉特部反清
+    liujintang: { generalId: 'liujintang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 达坂城收复新疆
+    shatuonasu: { generalId: 'shatuonasu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 独山城处月部
+    manasi: { generalId: 'manasi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 柯尔克孜史诗英雄
+    zhangyao: { generalId: 'zhangyao', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 星星峡嵩武军入疆
+    banchao: { generalId: 'banchao', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 阳关定远侯通西域
+    chelingwubashi: { generalId: 'chelingwubashi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 布尔根乌梁海部
     // ── 日本 ──
     dechuangjiakang: { generalId: 'dechuangjiakang', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 关原后稳坐江户待变
     zhitianxinchang: { generalId: 'zhitianxinchang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_02' }, // 桶狭间奇袭破今川
@@ -182,7 +199,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     baididanbo: { generalId: 'baididanbo', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 伊贺忍者夜袭
     nanmuzhengcheng: { generalId: 'nanmuzhengcheng', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 千早城笼城死守抗幕府
     qingshuizongzhi: { generalId: 'qingshuizongzhi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 备中高松城笼城死守
-    shangbazhi: { generalId: 'shangbazhi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' }, // 尚巴志统一琉球奄美
     zoufanglaizhong: { generalId: 'zoufanglaizhong', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 诹访据险反击
     yudugongguogang: { generalId: 'yudugongguogang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 宇都宫筑城固守
     cunshangwuji: { generalId: 'cunshangwuji', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 村上水军奇袭

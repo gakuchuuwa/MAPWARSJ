@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 草原文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与日朝东北一致：
@@ -8,6 +8,8 @@
  * - 依据 史料/古代精锐部队.md §6 #1–3、#5–12、#14–19
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  wuzhou: { name: '雁门边骑', tier: 1 },   // 善无·李广雁门
+  hujie: { name: '金山突厥兵', tier: 1 }, // 阿尔泰·阿史那燕都
   liao_d: { name: '皮室军', tier: 1 },         // 临潢府·辽太祖皮室军（§6 #1）
   yel: { name: '斡鲁朵军', tier: 2 },         // 降圣·契丹宫帐制
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 区T0锚·怯薛参与西征诸役；蒙古西征整体史家论以少胜多（§6 #2）

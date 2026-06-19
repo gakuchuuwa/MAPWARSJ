@@ -82,7 +82,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     kaga_d: { generalId: 'lingmuzhongxiu', generalName: '铃木重秀', portrait: '/assets/riben/lingmuzhongxiu.png' },
     iga_d: { generalId: 'baididanbo', generalName: '百地丹波', portrait: '/assets/riben/baididanbo.png' },
     jibei2: { generalId: 'qingshuizongzhi', generalName: '清水宗治', portrait: '/assets/riben/qingshuizongzhi.png' },
-    anmei: { generalId: 'shangbazhi', generalName: '尚巴志', portrait: '/assets/riben/shangbazhi.png' },
     yamato: { generalId: 'nanmuzhengcheng', generalName: '楠木正成', portrait: '/assets/riben/nanmuzhengcheng.png' },
     aizu: { generalId: 'pushengshixiang', generalName: '蒲生氏乡', portrait: '/assets/riben/pushengshixiang.png' },
     suwa_d: { generalId: 'zoufanglaizhong', generalName: '诹访赖重', portrait: '/assets/riben/zoufanglaizhong.png' },
@@ -411,7 +410,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ningkou: { generalId: 'lubode', generalName: '路博德', portrait: '/assets/hexi/lubode.png' },
     juqu_d: { generalId: 'juqumengxun', generalName: '沮渠蒙逊', portrait: '/assets/hexi/juqumengxun.png' },
     // ── 中原区 2026-06-18 ──
-    li_lx_d: { generalId: 'liguang', generalName: '李广', portrait: '/assets/zhongyuan/liguang.png' },
     sunqin: { generalId: 'sunchuanting', generalName: '孙传庭', portrait: '/assets/zhongyuan/sunchuanting.png' },
     tianxiong: { generalId: 'tianchengsi', generalName: '田承嗣', portrait: '/assets/zhongyuan/tianchengsi.png' },
     ranwei_d: { generalId: 'ranmin', generalName: '冉闵', portrait: '/assets/zhongyuan/ranmin.png' },

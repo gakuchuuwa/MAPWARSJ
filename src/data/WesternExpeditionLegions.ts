@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 西域文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与日朝东北草原一致：
@@ -8,6 +8,18 @@
  * - 依据 史料/古代精锐部队.md §14 #1–8；#10 喀喇契丹→中亚 xiliao@屈耽·斡耳朵亲卫
  */
 export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  hepan: { name: '朅盘陀戍卒', tier: 3 }, // 石头城·裴神符
+  bailong: { name: '白龙堆戍卒', tier: 3 }, // 三陇沙·白龙堆
+  kepantuo: { name: '公主堡戍卒', tier: 3 }, // 公主堡·汉日天种王
+  zhasaketu: { name: '札萨克图骑兵', tier: 3 }, // 扎布汗·策旺扎布
+  huite: { name: '辉特部骑', tier: 1 }, // 金山·阿睦尔撒纳
+  tuoming: { name: '湘军锐营', tier: 1 }, // 达坂城·刘锦棠
+  chuyue: { name: '处月骑兵', tier: 3 }, // 独山城·沙陀那速
+  keerkezi: { name: '柯尔克孜骑兵', tier: 3 }, // 斯姆哈纳·玛纳斯
+  pisha: { name: '毗沙戍卒', tier: 3 }, // 麻扎塔格·毗沙
+  xingxingxia: { name: '嵩武军', tier: 1 }, // 星星峡·张曜
+  yangguan: { name: '阳关戍卒', tier: 3 }, // 阳关·班超
+  wulianghai: { name: '乌梁海巡骑', tier: 3 }, // 布尔根·车凌乌巴什
   qiuci: { name: '龟兹精兵', tier: 3 },   // 伊逻卢·龟兹精兵
   yuchi: { name: '于阗精兵', tier: 3 },       // 于阗·尉迟王族精兵
   kala: { name: '阿斯古拉姆', tier: 1 },      // 奥什·喀喇汗古拉姆（灭于阗非以少胜多）
