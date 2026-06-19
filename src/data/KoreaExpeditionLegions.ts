@@ -30,6 +30,5 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   zhen: { name: '后百济锐卒', tier: 3 },          // 完山·后百济甄萱
   woju: { name: '别武班', tier: 1 },            // 咸兴·尹瓘别武班
   ssangseong: { name: '双城重甲骑', tier: 2 }, // 铁岭关·崔莹
-  gyeongsang: { name: '庆尚射手', tier: 3 },   // 鸟岭关·申砬
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
 };

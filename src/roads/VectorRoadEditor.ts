@@ -3189,6 +3189,12 @@ export class VectorRoadEditor implements IEditor {
     // =====================================================================
 
     private static readonly ENDPOINT_MISMATCH_THRESHOLD_KM = 5; // 5km 触发修复
+    /** 据点变更后道路仍挂旧端点 → 地图超长直线（全面审查） */
+    private static readonly STALE_STRETCH_DRIFT_KM = 5;
+    private static readonly STALE_STRETCH_MIN_SPAN_KM = 80;
+    private static readonly STALE_STRETCH_CITY_EXTRA_KM = 30;
+    /** 相邻坐标单段过长：城挪走后常见「一端已对齐、中段仍拴旧路网」 */
+    private static readonly STALE_SEGMENT_JUMP_KM = 150;
 
     /**
      * 🔧 批量修复端点不匹配
@@ -3331,7 +3337,8 @@ export class VectorRoadEditor implements IEditor {
     //
     // 检查类别:
     //   A. 端点完整性 (auditRoads 的 6 类问题)
-    //   B. 重复/重叠 (来自 batchDetectOverlaps 的检测逻辑)
+    //   C. 据点变更拉伸线 (端点仍拴旧坐标 → 超长直线)
+    //   D. 端点漂移 (城移了但拉伸不显著)
     //
     //       + 控制台详情 + 模态报告
     // =====================================================================
@@ -3358,7 +3365,15 @@ export class VectorRoadEditor implements IEditor {
             invalidEnd: [] as Array<{ id: string; name: string; ref: string }>,
             sameStartEnd: [] as Array<{ id: string; name: string; ref: string }>,
             tooFewPoints: [] as Array<{ id: string; name: string; count: number }>,
-            // [2026-05-30 删除] 直线检测已停用 (用户公理: 没什么用)
+            // [2026-06-19] 据点变更拉伸线：城已挪走, 道路 geometry 仍拴旧端点 → 地图超长直线
+            staleStretchLines: [] as Array<{
+                id: string; name: string; startName: string; endName: string;
+                startDriftKm: number; endDriftKm: number;
+                pathKm: number; geomSpanKm: number; cityDirectKm: number; pointCount: number;
+                maxSegmentKm: number;
+                reason: 'endpointDrift' | 'segmentJump' | 'both';
+            }>,
+            // [2026-05-30 删除] 旧直线检测 (未区分据点变更) 已停用
             straightLines: [] as Array<{ id: string; name: string; pointCount: number; lengthKm: number; straightKm: number; ratio: number; startName: string; endName: string }>,
             // [2026-05-30 新] 端点漂移: 城坐标改了, 但道路 coords[0]/[-1] 是旧坐标
             endpointDrift: [] as Array<{ id: string; name: string; whichEnd: 'start' | 'end'; cityName: string; driftKm: number; cityCoord: [number, number]; roadCoord: [number, number] }>,
@@ -3385,36 +3400,104 @@ export class VectorRoadEditor implements IEditor {
             if (startId && endId && startId === endId) issues.sameStartEnd.push({ id, name, ref: startId });
             if (coords.length < 2) issues.tooFewPoints.push({ id, name, count: coords.length });
 
-            // [2026-05-30 删除] 直线检测已停用 (用户公理: 没什么用)
+            // [2026-05-30 删除] 旧 NE 直线检测已停用
 
-            // [2026-05-30 新] 端点漂移检测 (城坐标改了 / 移走了)
-            const DRIFT_THRESHOLD_KM = 5; // 漂移 > 5km 算异常
-            if (startId && validCityIds.has(startId) && coords.length >= 1) {
-                const c = CITIES.find(x => x.id === startId)!;
+            const DRIFT_THRESHOLD_KM = VectorRoadEditor.STALE_STRETCH_DRIFT_KM;
+            const startCity = startId && validCityIds.has(startId) ? CITIES.find(x => x.id === startId) : undefined;
+            const endCity = endId && validCityIds.has(endId) ? CITIES.find(x => x.id === endId) : undefined;
+
+            let startDriftKm = 0;
+            let endDriftKm = 0;
+            if (startCity && coords.length >= 1) {
                 const [lng0, lat0] = coords[0];
-                const drift = this.haversine(lat0, lng0, c.lat, c.lng);
-                if (drift > DRIFT_THRESHOLD_KM) {
+                startDriftKm = this.haversine(lat0, lng0, startCity.lat, startCity.lng);
+            }
+            if (endCity && coords.length >= 2) {
+                const [lng1, lat1] = coords[coords.length - 1];
+                endDriftKm = this.haversine(lat1, lng1, endCity.lat, endCity.lng);
+            }
+            const maxDriftKm = Math.max(startDriftKm, endDriftKm);
+
+            // 据点变更拉伸线：端点漂移和/或相邻坐标出现超长跳段
+            if (startCity && endCity && coords.length >= 2) {
+                const pathKm = this.computePathLength(coords);
+                const [lng0, lat0] = coords[0];
+                const [lng1, lat1] = coords[coords.length - 1];
+                const geomSpanKm = this.haversine(lat0, lng0, lat1, lng1);
+                const cityDirectKm = this.haversine(startCity.lat, startCity.lng, endCity.lat, endCity.lng);
+
+                let maxSegmentKm = 0;
+                let maxSegmentIdx = 0;
+                for (let si = 0; si < coords.length - 1; si++) {
+                    const [lngA, latA] = coords[si];
+                    const [lngB, latB] = coords[si + 1];
+                    const segKm = this.haversine(latA, lngA, latB, lngB);
+                    if (segKm > maxSegmentKm) {
+                        maxSegmentKm = segKm;
+                        maxSegmentIdx = si;
+                    }
+                }
+                const jumpAtRoadEnd = maxSegmentIdx === 0 || maxSegmentIdx === coords.length - 2;
+
+                const driftStretch =
+                    maxDriftKm > DRIFT_THRESHOLD_KM &&
+                    geomSpanKm >= VectorRoadEditor.STALE_STRETCH_MIN_SPAN_KM &&
+                    geomSpanKm > cityDirectKm + VectorRoadEditor.STALE_STRETCH_CITY_EXTRA_KM;
+
+                const segmentJump =
+                    coords.length >= 3 &&
+                    maxSegmentKm >= VectorRoadEditor.STALE_SEGMENT_JUMP_KM &&
+                    jumpAtRoadEnd &&
+                    (
+                        maxDriftKm > DRIFT_THRESHOLD_KM ||
+                        maxSegmentKm > cityDirectKm + VectorRoadEditor.STALE_STRETCH_CITY_EXTRA_KM ||
+                        (cityDirectKm > 0 && pathKm > cityDirectKm * 1.35 + 50) ||
+                        maxSegmentKm >= 400
+                    );
+
+                if (driftStretch || segmentJump) {
+                    issues.staleStretchLines.push({
+                        id,
+                        name,
+                        startName: startCity.name,
+                        endName: endCity.name,
+                        startDriftKm: Math.round(startDriftKm * 10) / 10,
+                        endDriftKm: Math.round(endDriftKm * 10) / 10,
+                        pathKm: Math.round(pathKm),
+                        geomSpanKm: Math.round(geomSpanKm),
+                        cityDirectKm: Math.round(cityDirectKm),
+                        pointCount: coords.length,
+                        maxSegmentKm: Math.round(maxSegmentKm),
+                        reason: driftStretch && segmentJump ? 'both' : driftStretch ? 'endpointDrift' : 'segmentJump',
+                    });
+                }
+            }
+
+            // 端点漂移（非超长拉伸的轻微偏差）
+            if (startCity && coords.length >= 1 && startDriftKm > DRIFT_THRESHOLD_KM) {
+                const alreadyStale = issues.staleStretchLines.some(s => s.id === id);
+                if (!alreadyStale) {
+                    const [lng0, lat0] = coords[0];
                     issues.endpointDrift.push({
                         id, name,
                         whichEnd: 'start',
-                        cityName: c.name,
-                        driftKm: Math.round(drift * 10) / 10,
-                        cityCoord: [c.lat, c.lng],
+                        cityName: startCity.name,
+                        driftKm: Math.round(startDriftKm * 10) / 10,
+                        cityCoord: [startCity.lat, startCity.lng],
                         roadCoord: [lat0, lng0],
                     });
                 }
             }
-            if (endId && validCityIds.has(endId) && coords.length >= 2) {
-                const c = CITIES.find(x => x.id === endId)!;
-                const [lng1, lat1] = coords[coords.length - 1];
-                const drift = this.haversine(lat1, lng1, c.lat, c.lng);
-                if (drift > DRIFT_THRESHOLD_KM) {
+            if (endCity && coords.length >= 2 && endDriftKm > DRIFT_THRESHOLD_KM) {
+                const alreadyStale = issues.staleStretchLines.some(s => s.id === id);
+                if (!alreadyStale) {
+                    const [lng1, lat1] = coords[coords.length - 1];
                     issues.endpointDrift.push({
                         id, name,
                         whichEnd: 'end',
-                        cityName: c.name,
-                        driftKm: Math.round(drift * 10) / 10,
-                        cityCoord: [c.lat, c.lng],
+                        cityName: endCity.name,
+                        driftKm: Math.round(endDriftKm * 10) / 10,
+                        cityCoord: [endCity.lat, endCity.lng],
                         roadCoord: [lat1, lng1],
                     });
                 }
@@ -3505,6 +3588,7 @@ export class VectorRoadEditor implements IEditor {
         const totalIssues = issues.invalidStart.length + issues.invalidEnd.length +
             issues.sameStartEnd.length + issues.tooFewPoints.length +
             issues.duplicates.length +
+            issues.staleStretchLines.length +
             issues.endpointDrift.length;
 
         // ───── 控制台分组打印 ─────
@@ -3537,6 +3621,23 @@ export class VectorRoadEditor implements IEditor {
         if (issues.tooFewPoints.length) {
             console.group(`❌ 坐标点 < 2 [${issues.tooFewPoints.length}] → 将被清理`);
             issues.tooFewPoints.forEach(i => console.log(`  ${i.name}  只有 ${i.count} 个点`));
+            console.groupEnd();
+        }
+        if (issues.staleStretchLines.length) {
+            console.group(`📐 据点变更拉伸线 (端点仍拴旧坐标) [${issues.staleStretchLines.length}] → 删后重画或 🔧 修端点`);
+            issues.staleStretchLines.forEach(s => {
+                const tag = s.reason === 'segmentJump' ? '跳段' : s.reason === 'both' ? '漂移+跳段' : '端点漂移';
+                console.log(
+                    `  ${s.startName} ↔ ${s.endName} [${tag}] 最长段${s.maxSegmentKm}km 几何${s.geomSpanKm}km 城距${s.cityDirectKm}km 起漂${s.startDriftKm}km 终漂${s.endDriftKm}km [${s.id}]`
+                );
+            });
+            console.groupEnd();
+        }
+        if (issues.endpointDrift.length) {
+            console.group(`🚶 端点漂移 (轻微, 非超长直线) [${issues.endpointDrift.length}]`);
+            issues.endpointDrift.forEach(i => console.log(
+                `  ${i.name} · ${i.whichEnd === 'start' ? '起' : '终'}点 ${i.cityName} 漂移 ${i.driftKm}km [${i.id}]`
+            ));
             console.groupEnd();
         }
         if (issues.straightLines.length) {
@@ -3691,14 +3792,36 @@ export class VectorRoadEditor implements IEditor {
                 <div style="text-align:center;padding:60px 20px;">
                     <div style="font-size:60px;margin-bottom:16px;">🎉</div>
                     <div style="font-size:18px;color:#4caf50;margin-bottom:8px;">所有 ${totalRoads} 条道路审查通过</div>
-                    <div style="color:#aaa;">✓ 端点完整 ✓ 无自环 ✓ 无重叠 (30% 阈值) ✓ 无孤儿城 ✓ 无单路据点</div>
+                    <div style="color:#aaa;">✓ 端点完整 ✓ 无据点变更拉伸线 ✓ 无自环 ✓ 无重叠 (30% 阈值) ✓ 无孤儿城 ✓ 无单路据点</div>
                 </div>
             `;
         } else {
             // [2026-05-30] 收集所有问题路 id (供编辑器内 ◀ ▶ 导航用)
             const allProblemIds: string[] = [];
 
-            // [2026-05-30 删除] 直线检测已停用 (用户公理)
+            // [2026-06-19] 据点变更拉伸线 — 优先展示（截图里那种超长橙线）
+            const sortedStale = issues.staleStretchLines.slice().sort((a: any, b: any) => b.maxSegmentKm - a.maxSegmentKm);
+            const staleItems = sortedStale.slice(0, 50).map((s: any) => {
+                allProblemIds.push(s.id);
+                const reasonTag = s.reason === 'segmentJump'
+                    ? '超长跳段'
+                    : s.reason === 'both' ? '漂移+跳段' : '端点漂移';
+                const spanTag = `<span style="background:rgba(244,67,54,0.5);color:#fff;border-radius:8px;padding:2px 10px;font-size:12px;font-weight:bold;margin-right:8px;">${s.maxSegmentKm} km 段</span>`;
+                return {
+                    html: `${spanTag}<b>${s.name}</b> · <b>${s.startName}</b> ↔ <b>${s.endName}</b> <span style="color:#ffab91;font-size:11px;">${reasonTag}</span><br>`
+                        + `<span style="color:#aaa;font-size:12px;margin-left:16px;">└ 最长段 ${s.maxSegmentKm}km · 路径 ${s.pathKm}km · 两城现距 ${s.cityDirectKm}km · 几何跨度 ${s.geomSpanKm}km · 起漂 ${s.startDriftKm}km 终漂 ${s.endDriftKm}km · ${s.pointCount} 点</span>`
+                        + `<span style="color:#666;font-size:11px;"> [${s.id}]</span>`,
+                    roadId: s.id,
+                };
+            });
+            html += section(
+                '📐 据点变更拉伸线 (城已挪走, 道路仍拴旧坐标 → 地图超长直线)',
+                '#f44336',
+                issues.staleStretchLines.length,
+                staleItems,
+            );
+
+            // [2026-05-30 删除] 旧直线检测已停用
 
             // 重叠 (30% 阈值)
             // [2026-05-30 v3] 按重叠点数降序: 重叠点最多的在最上面
@@ -3775,7 +3898,7 @@ export class VectorRoadEditor implements IEditor {
                     roadId: i.id,
                 };
             });
-            html += section('🚶 端点漂移 (城坐标已改, 道路端点未跟)', '#ff9800', issues.endpointDrift.length, driftItems);
+            html += section('🚶 端点漂移 (城已移, 拉伸不显著)', '#ff9800', issues.endpointDrift.length, driftItems);
 
             // [2026-05-30 删除] 名称过期检测停用 (用户公理: 不影响功能)
 
@@ -3787,9 +3910,10 @@ export class VectorRoadEditor implements IEditor {
                     <div style="margin-top:24px;padding:14px 18px;background:rgba(76,175,80,0.1);border-left:4px solid #4caf50;border-radius:6px;">
                         <div style="font-weight:bold;color:#4caf50;margin-bottom:6px;">下一步操作</div>
                         <div style="color:#ccc;line-height:1.8;">
-                            1. 在下拉框选中问题路，逐条 <b>删除</b> 或 <b>改端点</b> 修复<br>
-                            2. 看 <b style="color:#e91e63">重叠</b> 项: 如重叠源于据点过近, 考虑移据点 ≥50km<br>
-                            3. 控制台 F12 有完整列表 (超过 80 条的部分)
+                            1. 优先处理 <b style="color:#f44336">据点变更拉伸线</b>：删除该路后按新城位重画，或点 <b>🔧 修端点</b><br>
+                            2. 在下拉框选中问题路，逐条 <b>删除</b> 或 <b>改端点</b> 修复<br>
+                            3. 看 <b style="color:#e91e63">重叠</b> 项: 如重叠源于据点过近, 考虑移据点 ≥50km<br>
+                            4. 控制台 F12 有完整列表 (超过 80 条的部分)
                         </div>
                     </div>
                 `;

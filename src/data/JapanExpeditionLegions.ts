@@ -15,18 +15,17 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   ashikaga: { name: '奉公众', tier: 1 },         // 京都·§5 #31 足利奉公众
   edo: { name: '旗本武士', tier: 1 },          // 江户城·§5 #20 旗本（Hatamoto）
   satsuma: { name: '萨摩隼人', tier: 1 },        // 鹿儿岛城·岛津氏冲田畷钓野伏（原隼人众 T2）
-  hojo_d: { name: '风魔党', tier: 2 },         // 小田原·§5 #17
   iga_d: { name: '伊贺众', tier: 2 },          // 名张·§5 #16
   hashiba: { name: '黄母衣众', tier: 2 },        // 姬路城·秀吉亲卫母衣黄组（原七手组 T3）
   kai: { name: '武田赤备', tier: 1 },          // 躑躅崎馆·§5 #7
-  owari: { name: '母衣众', tier: 1 },          // 清洲城·桶狭间（1560）3000破25000，织田信长（§5 #8）
-  jinchuan: { name: '骏河弓取', tier: 1 },       // 骏府·骏河弓取众
+  jinchuan: { name: '骏河弓取', tier: 1 },
+  totomi: { name: '浜松众', tier: 1 },       // 骏府·骏河弓取众
   echigo: { name: '毘沙門衆', tier: 2 },         // 春日山·上杉谦信亲卫队（原轩猿众 T3）
   aki: { name: '村上水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷（毛利氏水军主力）
   chosokabe: { name: '一领具足', tier: 2 },     // 冈丰城·长宗我部半农半兵精锐
   aizu: { name: '会津藩士', tier: 3 },         // 鹤之城·会津藩（原大番众）
   izumo: { name: '新宫党', tier: 2 },          // 月山富田·尼子氏最强武装（原 T3）
-  honda: { name: '宇都宫势', tier: 3 },        // 宇都宫·下野宇都宫氏武士团（原纪清两党）
+  shimotsuke: { name: '宇都宫弓取', tier: 3 },        // 宇都宫·下野宇都宫氏武士团（原纪清两党）
   fujiwara: { name: '奥州武士', tier: 3 },     // 柳之御所·奥州藤原氏
   kakizaki: { name: '安藤氏兵', tier: 3 },     // 胜山馆·安藤氏虾夷管领（原虾夷探题）
   nanbu: { name: '南部铁骑', tier: 2 },        // 根城·南部氏骑兵（原 T3）
@@ -38,7 +37,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   yamato: { name: '千早众', tier: 0 },       // 千早城·楠木正成千早笼城以少胜多（原飞鸟卫府 T3）
   sanada_d: { name: '真田赤备', tier: 1 },
   // ── 2026-06-17 令制国补点（古代据点名 + 精锐）──
-  kaga_d: { name: '一向军', tier: 2 },       // 江沼·加贺一向一揆
+  kaga_d: { name: '一向宗门徒', tier: 1 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）
   date_d: { name: '伊达铁骑', tier: 2 },     // 仙台·伊达氏（家族旗号可含「伊达」）
   higo_d: { name: '菊池党', tier: 1 },       // 熊本·菊池氏筑後川大捷（原 T2）
   iyo_d: { name: '河野水军', tier: 2 },     // 松山·河野氏（伊予水军）
@@ -48,4 +47,6 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   taira: { name: '平家水军', tier: 2 },         // 赤间关·坛之浦
   sagami: { name: '箱根守备', tier: 3 },       // 箱根关·北条氏康
   mino: { name: '大谷部众', tier: 2 },         // 不破关·大谷吉继
+  yizhi: { name: '原之辻戍卒', tier: 3 },       // 原之辻·壹岐国元寇戍卒（《元史》《高丽史》壹岐守备）
+  gonggu: { name: '宫古岛卒', tier: 3 },       // 宫古岛·琉球宫古守卒（《中山世谱》见载）
 };

@@ -104,34 +104,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "躑躅崎馆-骏府城",
-                type: "road",
-                id: "road_city_tsutsujigasaki_city_junfucheng_1780126728457",
-                startConnection: "city_tsutsujigasaki",
-                endConnection: "city_junfucheng"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [138.4991, 35.6688],
-                    [138.464199, 35.567423],
-                    [138.439452, 35.472561],
-                    [138.439452, 35.381824],
-                    [138.422954, 35.344704],
-                    [138.422954, 35.315833],
-                    [138.439452, 35.299335],
-                    [138.443577, 35.270464],
-                    [138.484821, 35.237469],
-                    [138.501318, 35.216847],
-                    [138.513692, 35.159105],
-                    [138.509567, 35.068368],
-                    [138.38, 34.97],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "吉田郡山城-鬼之城",
                 type: "road",
                 id: "road_city_yoshida_city_guizhicheng_1780126728461",
@@ -155,7 +127,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [133.502519, 34.548691],
                     [133.535514, 34.552815],
                     [133.679869, 34.58581],
-                    [133.76, 34.72],
+                    [133.82, 34.69],
                 ]
             }
         },
@@ -317,7 +289,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [133.76, 34.72],
+                    [133.82, 34.69],
                     [133.943832, 34.693045],
                     [133.956205, 34.66005],
                     [133.976827, 34.647677],
@@ -332,50 +304,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [134.504753, 34.816778],
                     [134.5295, 34.80028],
                     [134.6939, 34.8394],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "骏府城-清洲",
-                type: "road",
-                id: "road_city_junfucheng_city_kiyosu_1780127767231",
-                startConnection: "city_junfucheng",
-                endConnection: "city_kiyosu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [138.38, 34.97],
-                    [138.290973, 34.853898],
-                    [138.266226, 34.812654],
-                    [138.220858, 34.779658],
-                    [138.142494, 34.754912],
-                    [138.047632, 34.742538],
-                    [138.014637, 34.759036],
-                    [137.994015, 34.775534],
-                    [137.961019, 34.783783],
-                    [137.853784, 34.763161],
-                    [137.779545, 34.763161],
-                    [137.717678, 34.771409],
-                    [137.67231, 34.783783],
-                    [137.622817, 34.804405],
-                    [137.577448, 34.833276],
-                    [137.565075, 34.849773],
-                    [137.511457, 34.841525],
-                    [137.45784, 34.841525],
-                    [137.387724, 34.853898],
-                    [137.34648, 34.882769],
-                    [137.313485, 34.891018],
-                    [137.222748, 34.965257],
-                    [137.160881, 34.969382],
-                    [137.140259, 34.97763],
-                    [137.107264, 34.998253],
-                    [137.049522, 35.047746],
-                    [137.008278, 35.064243],
-                    [136.995904, 35.084865],
-                    [136.85, 35.22],
                 ]
             }
         },
@@ -2384,46 +2312,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "狼居胥山-库伦",
-                type: "road",
-                id: "road_city_langjuxu_city_kulun_1780144046502",
-                startConnection: "city_langjuxu",
-                endConnection: "city_kulun"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [108.528442, 47.687578],
-                    [108.281677, 47.684975],
-                    [108.19094, 47.697349],
-                    [108.108451, 47.713846],
-                    [108.063083, 47.717971],
-                    [108.038336, 47.730344],
-                    [107.997092, 47.734468],
-                    [107.943474, 47.750966],
-                    [107.918728, 47.763339],
-                    [107.860986, 47.800459],
-                    [107.819742, 47.771588],
-                    [107.770249, 47.755091],
-                    [107.696009, 47.779837],
-                    [107.671262, 47.779837],
-                    [107.621769, 47.804584],
-                    [107.568152, 47.821081],
-                    [107.47329, 47.79221],
-                    [107.403175, 47.788086],
-                    [107.341309, 47.796335],
-                    [107.275318, 47.79221],
-                    [107.196954, 47.821081],
-                    [107.176332, 47.858201],
-                    [107.163958, 47.86645],
-                    [107.11859, 47.882948],
-                    [106.91, 47.92],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "阔亦田-巴彦图门",
                 type: "road",
                 id: "road_city_kuoyitian_city_bayantumen_1780144046518",
@@ -3593,64 +3481,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "唐努-富贵城",
-                type: "road",
-                id: "road_city_teshuolankalun_city_ordubaliq_1780145589312",
-                startConnection: "city_teshuolankalun",
-                endConnection: "city_ordubaliq"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [98.432007, 49.419915],
-                    [98.688271, 49.524468],
-                    [98.725391, 49.532716],
-                    [98.791381, 49.540965],
-                    [98.840874, 49.540965],
-                    [98.886243, 49.553339],
-                    [98.931612, 49.557463],
-                    [98.981105, 49.549214],
-                    [99.030598, 49.536841],
-                    [99.063593, 49.520343],
-                    [99.100713, 49.512094],
-                    [99.166704, 49.516219],
-                    [99.19145, 49.512094],
-                    [99.290436, 49.532716],
-                    [99.385298, 49.540965],
-                    [99.434791, 49.553339],
-                    [99.500782, 49.594583],
-                    [99.587395, 49.586334],
-                    [99.628639, 49.598707],
-                    [99.707003, 49.602832],
-                    [99.735874, 49.611081],
-                    [99.748247, 49.627578],
-                    [99.781243, 49.656449],
-                    [99.888478, 49.644076],
-                    [99.975091, 49.652325],
-                    [100.04933, 49.668822],
-                    [100.206058, 49.627578],
-                    [100.379284, 49.619329],
-                    [100.461772, 49.627578],
-                    [100.498892, 49.644076],
-                    [100.531888, 49.644076],
-                    [100.602003, 49.631703],
-                    [100.676242, 49.623454],
-                    [100.750482, 49.627578],
-                    [100.804099, 49.635827],
-                    [100.87009, 49.639951],
-                    [100.948454, 49.639951],
-                    [101.092809, 49.569836],
-                    [101.142302, 49.549214],
-                    [101.183546, 49.540965],
-                    [101.22479, 49.516219],
-                    [101.228915, 49.50797],
-                    [101.428528, 49.437762],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "色楞格河-库伦",
                 type: "road",
                 id: "road_city_merkit_city_kulun_1780145605229",
@@ -3711,7 +3541,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [106.611286, 47.920067],
                     [106.640157, 47.90357],
                     [106.681401, 47.891196],
-                    [106.91, 47.92],
+                    [106.84, 47.92],
                 ]
             }
         },
@@ -4935,7 +4765,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [106.91, 47.92],
+                    [106.84, 47.92],
                     [106.706148, 47.887072],
                     [106.640157, 47.90357],
                     [106.528797, 47.911819],
@@ -5223,7 +5053,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [106.68965, 47.701473],
                     [106.702023, 47.734468],
                     [106.697899, 47.779837],
-                    [106.91, 47.92],
+                    [106.84, 47.92],
                 ]
             }
         },
@@ -5596,7 +5426,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [110.455247, 44.814377],
                     [110.376883, 44.843248],
                     [110.343888, 44.851497],
-                    [110.1544, 44.8751],
+                    [101.428528, 49.437762],
                 ]
             }
         },
@@ -5612,7 +5442,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [110.1544, 44.8751],
+                    [101.428528, 49.437762],
                     [109.943819, 44.79788],
                     [109.894326, 44.773133],
                     [109.848957, 44.76076],
@@ -6474,7 +6304,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [79.81842, 37.140606],
+                    [79.92, 37.1],
                     [79.687058, 37.241938],
                     [79.666436, 37.233689],
                     [79.637565, 37.213067],
@@ -7378,7 +7208,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [91.293182, 29.653001],
                     [91.227191, 29.636504],
                     [91.185947, 29.632379],
-                    [91.021729, 29.659414],
+                    [91.1, 29.65],
                 ]
             }
         },
@@ -7473,7 +7303,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [90.76938, 29.776734],
                     [90.794127, 29.743739],
                     [90.827122, 29.714868],
-                    [91.021729, 29.659414],
+                    [91.1, 29.65],
                 ]
             }
         },
@@ -9304,7 +9134,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [79.899913, 36.941107],
                     [79.916108, 36.982489],
                     [79.9428, 37.03087],
-                    [79.81842, 37.140606],
+                    [79.92, 37.1],
                 ]
             }
         },
@@ -9534,7 +9364,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [106.16, 33.33],
+                    [106.1, 34.33],
                     [106.044444, 33.45893],
                     [106.019786, 33.503119],
                     [106.045502, 33.546902],
@@ -9553,7 +9383,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [106.681733, 34.025458],
                     [106.724132, 34.081326],
                     [106.757904, 34.146999],
-                    [106.95, 34.21],
+                    [106.95, 34.28],
                 ]
             }
         },
@@ -9621,7 +9451,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [103.852047, 30.853208],
                     [103.889167, 30.816088],
                     [103.93866, 30.778969],
-                    [104.07, 30.66],
+                    [104.07, 30.57],
                 ]
             }
         },
@@ -9668,7 +9498,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [103.880918, 30.48201],
                     [103.918038, 30.539752],
                     [103.93866, 30.585121],
-                    [104.07, 30.66],
+                    [104.07, 30.57],
                 ]
             }
         },
@@ -9797,7 +9627,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [102.792071, 24.790308],
                     [102.80032, 24.852174],
                     [102.796195, 24.881045],
-                    [102.71, 25.0453],
+                    [102.7, 25.05],
                 ]
             }
         },
@@ -9830,7 +9660,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [102.969421, 25.120261],
                     [102.891057, 25.070768],
                     [102.874559, 25.046022],
-                    [102.71, 25.0453],
+                    [102.7, 25.05],
                 ]
             }
         },
@@ -9916,7 +9746,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [102.71, 25.0453],
+                    [102.7, 25.05],
                     [102.540481, 24.959409],
                     [102.486864, 24.934662],
                     [102.457993, 24.930538],
@@ -11286,7 +11116,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [104.07, 30.66],
+                    [104.07, 30.57],
                     [103.918038, 30.552125],
                     [103.893292, 30.506757],
                     [103.880918, 30.457264],
@@ -11321,7 +11151,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [104.07, 30.66],
+                    [104.07, 30.57],
                     [104.239743, 30.576872],
                     [104.26449, 30.568623],
                     [104.293361, 30.564499],
@@ -11344,7 +11174,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [104.07, 30.66],
+                    [104.07, 30.57],
                     [104.219121, 30.882079],
                     [104.231494, 30.890328],
                     [104.256241, 30.931572],
@@ -12877,10 +12707,11 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [109.17685, 30.97663],
                     [109.258881, 30.963568],
                     [109.296641, 30.965847],
-                    [109.57, 31.04],
+                    [109.57, 31.043],
                 ]
             }
-        },{
+        },
+        {
             type: "Feature",
             properties: {
                 name: "白帝城-夷陵",
@@ -12892,7 +12723,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [110.15, 31.03],
+                    [109.57, 31.043],
                     [110.321544, 31.031846],
                     [110.328868, 31.037909],
                     [110.384288, 31.040839],
@@ -13105,7 +12936,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [118.53476, 31.884467],
                     [118.586355, 31.949571],
                     [118.629852, 31.942056],
-                    [118.79, 32.06],
+                    [118.77, 32.05],
                 ]
             }
         },
@@ -13121,13 +12952,13 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [118.79, 32.06],
+                    [118.77, 32.05],
                     [118.927745, 32.176825],
                     [119.027843, 32.2213],
                     [119.078705, 32.232733],
                     [119.145405, 32.263761],
                     [119.256764, 32.30088],
-                    [119.4, 32.45],
+                    [119.42, 32.393],
                 ]
             }
         },
@@ -13143,7 +12974,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [118.79, 32.06],
+                    [118.77, 32.05],
                     [118.600981, 32.135904],
                     [118.547364, 32.135904],
                     [118.510244, 32.152401],
@@ -13165,7 +12996,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [118.79, 32.06],
+                    [118.77, 32.05],
                     [118.89794, 31.929682],
                     [118.922686, 31.892563],
                     [118.96393, 31.847194],
@@ -13278,7 +13109,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [120.419851, 30.515006],
                     [120.337363, 30.461388],
                     [120.28787, 30.420144],
-                    [120.16, 30.27],
+                    [120.16, 30.25],
                 ]
             }
         },
@@ -13694,7 +13525,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [120.16, 30.27],
+                    [120.16, 30.25],
                     [120.230128, 30.399522],
                     [120.352329, 30.288405],
                     [120.360135, 30.22908],
@@ -13918,7 +13749,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [115.79225, 28.964223],
                     [115.812872, 28.865237],
                     [115.833494, 28.823993],
-                    [115.8575, 28.6828],
+                    [115.88, 28.68],
                 ]
             }
         },
@@ -14677,7 +14508,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [115.8575, 28.6828],
+                    [115.88, 28.68],
                     [115.823985, 28.510606],
                     [115.828054, 28.493923],
                     [115.820323, 28.468695],
@@ -14825,7 +14656,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [120.16, 30.27],
+                    [120.16, 30.25],
                     [120.028031, 30.387149],
                     [119.957916, 30.411895],
                     [119.924921, 30.428393],
@@ -15179,7 +15010,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [107.196954, 33.117516],
                     [107.234074, 33.129889],
                     [107.341309, 33.138138],
-                    [107.55, 33.22],
+                    [107.35, 33.15],
                 ]
             }
         },
@@ -15328,7 +15159,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [107.55, 33.22],
+                    [107.35, 33.15],
                     [107.731714, 33.259339],
                     [107.812896, 33.276512],
                     [107.947157, 33.28744],
@@ -15462,7 +15293,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [106.95, 34.21],
+                    [106.95, 34.28],
                     [107.126839, 34.30535],
                     [107.151585, 34.338345],
                     [107.287691, 34.338345],
@@ -15661,7 +15492,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [115.04, 35.74],
+                    [115.0291, 35.7621],
                     [114.868379, 35.674658],
                     [114.769393, 35.633414],
                     [114.691029, 35.608667],
@@ -16130,7 +15961,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [118.662848, 33.690811],
                     [118.691719, 33.69906],
                     [118.794829, 33.694935],
-                    [119.02, 33.62],
+                    [119.13, 33.5],
                 ]
             }
         },
@@ -16146,7 +15977,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [119.02, 33.62],
+                    [119.13, 33.5],
                     [119.128907, 33.468092],
                     [119.227893, 33.344359],
                     [119.302133, 33.233],
@@ -16160,7 +15991,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [119.442363, 32.771065],
                     [119.450612, 32.680327],
                     [119.475359, 32.573092],
-                    [119.4, 32.45],
+                    [119.42, 32.393],
                 ]
             }
         },
@@ -18449,7 +18280,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [106.056519, 31.416987],
+                    [105.97, 31.583],
                     [105.918383, 31.327517],
                     [105.901885, 31.311019],
                     [105.86889, 31.261526],
@@ -18489,7 +18320,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [106.318452, 31.455374],
                     [106.264834, 31.410005],
                     [106.219466, 31.364637],
-                    [106.056519, 31.416987],
+                    [105.97, 31.583],
                 ]
             }
         },
@@ -18882,7 +18713,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [79.81842, 37.140606],
+                    [79.92, 37.1],
                     [80.000514, 37.08521],
                     [80.037634, 37.072837],
                     [80.169615, 37.060464],
@@ -19042,7 +18873,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [105.893636, 33.369106],
                     [105.947254, 33.344359],
                     [105.996747, 33.33611],
-                    [106.16, 33.33],
+                    [106.1, 34.33],
                 ]
             }
         },
@@ -19126,7 +18957,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [79.81842, 37.140606],
+                    [79.92, 37.1],
                     [79.909776, 37.291431],
                     [79.951021, 37.369795],
                     [79.979991, 37.385688],
@@ -20016,7 +19847,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [106.636032, 47.783961],
                     [106.681401, 47.821081],
                     [106.735019, 47.837579],
-                    [106.91, 47.92],
+                    [106.84, 47.92],
                 ]
             }
         },
@@ -20185,7 +20016,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [116.064462, 28.333186],
                     [115.973724, 28.399177],
                     [115.924231, 28.477541],
-                    [115.8575, 28.6828],
+                    [115.88, 28.68],
                 ]
             }
         },
@@ -21735,7 +21566,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [106.16, 33.33],
+                    [106.1, 34.33],
                     [106.347323, 33.27012],
                     [106.409189, 33.249498],
                     [106.433936, 33.212378],
@@ -21896,7 +21727,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [90.822998, 29.384914],
                     [90.897237, 29.413785],
                     [90.913735, 29.438531],
-                    [91.021729, 29.659414],
+                    [91.1, 29.65],
                 ]
             }
         },
@@ -22262,7 +22093,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [119.80041503906251, 29.88961393565491],
                     [119.96109008789064, 30.040670238830234],
                     [120.17395019531251, 30.109578318490918],
-                    [120.16, 30.27],
+                    [120.16, 30.25],
                 ]
             }
         },
@@ -24625,7 +24456,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [115.148, 36.285],
+                    [115.3043, 36.5138],
                     [114.785085, 36.229519],
                     [114.747162, 36.206732],
                     [114.693614, 36.193305],
@@ -25129,7 +24960,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [119.161903, 32.564843],
                     [119.207271, 32.535973],
                     [119.248516, 32.519475],
-                    [119.4, 32.45],
+                    [119.42, 32.393],
                 ]
             }
         },
@@ -25230,56 +25061,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [135.614223, 34.503322],
                     [135.589476, 34.470327],
                     [135.689392, 34.336668],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "骏府城-小田原",
-                type: "road",
-                id: "road_city_junfucheng_city_odawara_1781186215048",
-                startConnection: "city_junfucheng",
-                endConnection: "city_odawara"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [138.38, 34.97],
-                    [138.526065, 35.072492],
-                    [138.59618, 35.130234],
-                    [138.629176, 35.171478],
-                    [138.781779, 35.134359],
-                    [138.897263, 35.101363],
-                    [138.930258, 35.101363],
-                    [138.983876, 35.117861],
-                    [139.029245, 35.146732],
-                    [139.154, 35.256],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "小田原-江户城",
-                type: "road",
-                id: "road_city_odawara_city_edo_1781186220076",
-                startConnection: "city_odawara",
-                endConnection: "city_edo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [139.154, 35.256],
-                    [139.334452, 35.34058],
-                    [139.495304, 35.373575],
-                    [139.557171, 35.439566],
-                    [139.577793, 35.456063],
-                    [139.63141, 35.451939],
-                    [139.664406, 35.48081],
-                    [139.693277, 35.493183],
-                    [139.738645, 35.534427],
-                    [139.76, 35.68],
                 ]
             }
         },
@@ -25718,7 +25499,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [120.366234, 30.172679],
                     [120.296119, 30.143808],
                     [120.263123, 30.135559],
-                    [120.16, 30.27],
+                    [120.16, 30.25],
                 ]
             }
         },
@@ -26211,35 +25992,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [107.23342895507814, 31.41126925248229],
                     [106.91482543945314, 31.73060399686179],
                     [106.75, 31.86],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "名张-清洲城",
-                type: "road",
-                id: "road_city_nabari_city_kiyosu_1781251843909",
-                startConnection: "city_nabari",
-                endConnection: "city_kiyosu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [136.108, 34.627],
-                    [136.158647, 34.763161],
-                    [136.265882, 34.829151],
-                    [136.315375, 34.8374],
-                    [136.34837, 34.8374],
-                    [136.401988, 34.829151],
-                    [136.430859, 34.882769],
-                    [136.505098, 34.936386],
-                    [136.52572, 34.969382],
-                    [136.571089, 34.994128],
-                    [136.612333, 35.027124],
-                    [136.665951, 35.08899],
-                    [136.698946, 35.117861],
-                    [136.85, 35.22],
                 ]
             }
         },
@@ -26807,7 +26559,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [119.250133, 33.969678],
                     [119.225154, 33.882252],
                     [119.215787, 33.821365],
-                    [119.02, 33.62],
+                    [119.13, 33.5],
                 ]
             }
         },
@@ -28409,7 +28161,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [115.04, 35.74],
+                    [115.0291, 35.7621],
                     [115.14884, 35.938621],
                     [115.231328, 35.926248],
                     [115.36331, 35.922123],
@@ -28437,7 +28189,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [115.148, 36.285],
+                    [115.3043, 36.5138],
                     [115.2706, 36.432725],
                     [115.27589, 36.4796],
                     [115.346812, 36.503667],
@@ -29056,43 +28808,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [136.686573, 36.569657],
                     [136.645328, 36.540787],
                     [136.56284, 36.503667],
-                    [136.54, 36.37],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "清洲城-京都",
-                type: "road",
-                id: "road_city_kiyosu_city_kyoto_1781684995482",
-                startConnection: "city_kiyosu",
-                endConnection: "city_kyoto"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [136.85, 35.22],
-                    [136.678324, 35.30346],
-                    [136.641204, 35.30346],
-                    [136.620582, 35.307584],
-                    [136.566964, 35.328206],
-                    [136.505098, 35.34058],
-                    [136.472103, 35.34058],
-                    [136.418485, 35.332331],
-                    [136.397863, 35.324082],
-                    [136.364868, 35.30346],
-                    [136.335997, 35.26634],
-                    [136.327748, 35.196225],
-                    [136.319499, 35.163229],
-                    [136.294753, 35.117861],
-                    [136.237011, 35.084865],
-                    [136.187518, 35.064243],
-                    [136.117402, 35.047746],
-                    [136.072034, 35.01475],
-                    [136.006043, 34.985879],
-                    [135.95655, 34.94876],
-                    [135.77, 35.01],
+                    [136.65, 36.56],
                 ]
             }
         },
@@ -29125,7 +28841,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [133.828348, 34.276479],
                     [133.81185, 34.528068],
                     [133.844846, 34.556939],
-                    [133.76, 34.72],
+                    [133.82, 34.69],
                 ]
             }
         },
@@ -29331,46 +29047,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [132.306, 33.6],
                     [132.538, 33.720000000000006],
                     [132.77, 33.84],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "高岛-清洲城",
-                type: "road",
-                id: "road_city_gaodao_city_kiyosu_1781686144062",
-                startConnection: "city_gaodao",
-                endConnection: "city_kiyosu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [137.9662, 36.0138],
-                    [137.95277, 35.864381],
-                    [137.928024, 35.798391],
-                    [137.923899, 35.761271],
-                    [137.907402, 35.674658],
-                    [137.874406, 35.604543],
-                    [137.841411, 35.567423],
-                    [137.804291, 35.538552],
-                    [137.779545, 35.497308],
-                    [137.746549, 35.484934],
-                    [137.730052, 35.447815],
-                    [137.709429, 35.439566],
-                    [137.664061, 35.460188],
-                    [137.618692, 35.468437],
-                    [137.573323, 35.489059],
-                    [137.511457, 35.489059],
-                    [137.478462, 35.460188],
-                    [137.449591, 35.451939],
-                    [137.367102, 35.44369],
-                    [137.263992, 35.402446],
-                    [137.202125, 35.394197],
-                    [137.127886, 35.373575],
-                    [137.0289, 35.319958],
-                    [136.99178, 35.291087],
-                    [136.85, 35.22],
                 ]
             }
         },
@@ -29736,7 +29412,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [136.54, 36.37],
+                    [136.65, 36.56],
                     [136.344246, 36.330441],
                     [136.31125, 36.305694],
                     [136.290628, 36.268575],
@@ -31098,7 +30774,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [115.148, 36.285],
+                    [115.3043, 36.5138],
                     [115.2706, 36.432725],
                     [115.27589, 36.4796],
                     [115.317393, 36.528022],
@@ -31285,5 +30961,405 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                 ]
             }
         },
-    ]
+        {
+            type: "Feature",
+            properties: {
+                name: "唐努-薛灵哥",
+                type: "road",
+                id: "road_city_teshuolankalun_city_saiyinshanda_1781879030950",
+                startConnection: "city_teshuolankalun",
+                endConnection: "city_saiyinshanda"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [98.432007, 49.419915],
+                    [98.688271, 49.524468],
+                    [98.725391, 49.532716],
+                    [98.791381, 49.540965],
+                    [98.840874, 49.540965],
+                    [98.886243, 49.553339],
+                    [98.931612, 49.557463],
+                    [98.981105, 49.549214],
+                    [99.030598, 49.536841],
+                    [99.063593, 49.520343],
+                    [99.100713, 49.512094],
+                    [99.166704, 49.516219],
+                    [99.19145, 49.512094],
+                    [99.290436, 49.532716],
+                    [99.385298, 49.540965],
+                    [99.434791, 49.553339],
+                    [99.500782, 49.594583],
+                    [99.587395, 49.586334],
+                    [99.628639, 49.598707],
+                    [99.707003, 49.602832],
+                    [99.735874, 49.611081],
+                    [99.748247, 49.627578],
+                    [99.781243, 49.656449],
+                    [99.888478, 49.644076],
+                    [99.975091, 49.652325],
+                    [100.04933, 49.668822],
+                    [100.206058, 49.627578],
+                    [100.379284, 49.619329],
+                    [100.461772, 49.627578],
+                    [100.498892, 49.644076],
+                    [100.531888, 49.644076],
+                    [100.602003, 49.631703],
+                    [100.676242, 49.623454],
+                    [100.750482, 49.627578],
+                    [100.804099, 49.635827],
+                    [100.87009, 49.639951],
+                    [100.948454, 49.639951],
+                    [101.092809, 49.569836],
+                    [101.142302, 49.549214],
+                    [101.183546, 49.540965],
+                    [101.22479, 49.516219],
+                    [101.228915, 49.50797],
+                    [101.428528, 49.437762],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "窝鲁朵八里-库伦",
+                type: "road",
+                id: "road_city_woluduobali_city_kulun_1781879045432",
+                startConnection: "city_woluduobali",
+                endConnection: "city_kulun"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [107.5, 47.8],
+                    [107.275318, 47.79221],
+                    [107.196954, 47.821081],
+                    [107.176332, 47.858201],
+                    [107.163958, 47.86645],
+                    [107.11859, 47.882948],
+                    [106.84, 47.92],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "窝鲁朵八里-狼居胥山",
+                type: "road",
+                id: "road_city_woluduobali_city_langjuxu_1781879050545",
+                startConnection: "city_woluduobali",
+                endConnection: "city_langjuxu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [107.5, 47.8],
+                    [107.729004, 47.767464],
+                    [107.782622, 47.755091],
+                    [107.844488, 47.79221],
+                    [107.881608, 47.788086],
+                    [107.918728, 47.763339],
+                    [107.943474, 47.750966],
+                    [107.997092, 47.734468],
+                    [108.038336, 47.730344],
+                    [108.063083, 47.717971],
+                    [108.108451, 47.713846],
+                    [108.19094, 47.697349],
+                    [108.528442, 47.687578],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "哥疾宁-喀布尔",
+                type: "road",
+                id: "road_city_jiaseni_city_gaofu_1781879109133",
+                startConnection: "city_jiaseni",
+                endConnection: "city_gaofu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [68.42, 33.55],
+                    [68.505749, 33.703184],
+                    [68.53462, 33.748553],
+                    [68.670726, 33.930027],
+                    [68.732592, 34.037262],
+                    [68.790334, 34.173368],
+                    [68.806832, 34.23111],
+                    [68.831578, 34.292976],
+                    [68.843952, 34.342469],
+                    [68.848076, 34.379589],
+                    [68.897569, 34.437331],
+                    [68.980058, 34.490949],
+                    [69.17, 34.53],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "喀布尔-巴米扬",
+                type: "road",
+                id: "road_city_gaofu_city_fanyanna_1781879124949",
+                startConnection: "city_gaofu",
+                endConnection: "city_fanyanna"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [69.17, 34.53],
+                    [68.980058, 34.490949],
+                    [68.897569, 34.437331],
+                    [68.82333, 34.441456],
+                    [68.773836, 34.470327],
+                    [68.71197, 34.4827],
+                    [68.67485, 34.4827],
+                    [68.633606, 34.470327],
+                    [68.592362, 34.44558],
+                    [68.57174, 34.437331],
+                    [68.468629, 34.429082],
+                    [68.415012, 34.457953],
+                    [68.373768, 34.453829],
+                    [68.258284, 34.474451],
+                    [68.250035, 34.4827],
+                    [68.217039, 34.536317],
+                    [68.122178, 34.614681],
+                    [68.101556, 34.651801],
+                    [68.027316, 34.66005],
+                    [68.010818, 34.676548],
+                    [68.00257, 34.726041],
+                    [67.9807, 34.8659],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "箱根关-江户城",
+                type: "road",
+                id: "road_city_hakone_city_edo_1781879143122",
+                startConnection: "city_hakone",
+                endConnection: "city_edo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [139.0261, 35.1925],
+                    [139.185973, 35.291087],
+                    [139.289083, 35.328206],
+                    [139.334452, 35.34058],
+                    [139.495304, 35.373575],
+                    [139.557171, 35.439566],
+                    [139.577793, 35.456063],
+                    [139.63141, 35.451939],
+                    [139.664406, 35.48081],
+                    [139.693277, 35.493183],
+                    [139.738645, 35.534427],
+                    [139.76, 35.68],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "骏府-躑躅崎馆",
+                type: "road",
+                id: "road_city_junfucheng_city_tsutsujigasaki_1781879163420",
+                startConnection: "city_junfucheng",
+                endConnection: "city_tsutsujigasaki"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [138.38, 34.97],
+                    [138.509567, 35.068368],
+                    [138.513692, 35.187976],
+                    [138.484821, 35.237469],
+                    [138.45595, 35.258091],
+                    [138.439452, 35.299335],
+                    [138.422954, 35.315833],
+                    [138.422954, 35.344704],
+                    [138.439452, 35.381824],
+                    [138.447701, 35.44369],
+                    [138.447701, 35.534427],
+                    [138.4991, 35.6688],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "骏府-箱根关",
+                type: "road",
+                id: "road_city_junfucheng_city_hakone_1781879166817",
+                startConnection: "city_junfucheng",
+                endConnection: "city_hakone"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [138.38, 34.97],
+                    [138.526065, 35.072492],
+                    [138.59618, 35.130234],
+                    [138.629176, 35.171478],
+                    [138.781779, 35.134359],
+                    [138.897263, 35.101363],
+                    [139.0261, 35.1925],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "不破关-京都",
+                type: "road",
+                id: "road_city_fuwa_city_kyoto_1781879178974",
+                startConnection: "city_fuwa",
+                endConnection: "city_kyoto"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [136.4602, 35.3577],
+                    [136.335997, 35.26634],
+                    [136.327748, 35.196225],
+                    [136.319499, 35.163229],
+                    [136.294753, 35.117861],
+                    [136.237011, 35.084865],
+                    [136.187518, 35.064243],
+                    [136.117402, 35.047746],
+                    [136.072034, 35.01475],
+                    [136.006043, 34.985879],
+                    [135.95655, 34.94876],
+                    [135.77, 35.01],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "德源-铁岭关",
+                type: "road",
+                id: "road_city_deokwon_city_cheollyeong_1781879212139",
+                startConnection: "city_deokwon",
+                endConnection: "city_cheollyeong"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [127.24, 39.54],
+                    [127.204526, 39.403136],
+                    [127.225148, 39.378389],
+                    [127.229273, 39.366016],
+                    [127.28289, 39.295901],
+                    [127.328259, 39.275278],
+                    [127.340632, 39.254656],
+                    [127.361254, 39.196914],
+                    [127.381876, 39.176292],
+                    [127.456116, 39.130924],
+                    [127.447867, 39.102053],
+                    [127.451991, 39.040186],
+                    [127.443743, 38.986569],
+                    [127.443743, 38.953573],
+                    [127.4959, 38.8102],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "铁岭关-开城",
+                type: "road",
+                id: "road_city_cheollyeong_city_kaesong_1781879217261",
+                startConnection: "city_cheollyeong",
+                endConnection: "city_kaesong"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [127.4959, 38.8102],
+                    [127.381876, 38.697859],
+                    [127.373627, 38.656615],
+                    [127.332383, 38.582375],
+                    [127.295263, 38.524634],
+                    [127.278766, 38.471016],
+                    [127.249895, 38.454518],
+                    [127.188028, 38.44627],
+                    [127.101415, 38.462767],
+                    [127.060171, 38.479265],
+                    [126.994181, 38.51226],
+                    [126.969434, 38.51226],
+                    [126.903443, 38.495763],
+                    [126.870448, 38.429772],
+                    [126.845701, 38.388528],
+                    [126.81683, 38.355532],
+                    [126.717844, 38.326661],
+                    [126.688973, 38.314288],
+                    [126.660102, 38.293666],
+                    [126.63948, 38.260671],
+                    [126.606485, 38.240048],
+                    [126.548743, 38.2318],
+                    [126.507499, 38.198804],
+                    [126.474503, 38.178182],
+                    [126.445632, 38.165809],
+                    [126.55, 37.97],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "巴米扬-阿缓城",
+                type: "road",
+                id: "road_city_fanyanna_city_huoguocheng_1781879249150",
+                startConnection: "city_fanyanna",
+                endConnection: "city_huoguocheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [67.9807, 34.8659],
+                    [67.990196, 35.027124],
+                    [68.00257, 35.093114],
+                    [68.023192, 35.12611],
+                    [68.019067, 35.175603],
+                    [68.064436, 35.262216],
+                    [68.089182, 35.270464],
+                    [68.109805, 35.282838],
+                    [68.113929, 35.336455],
+                    [68.167546, 35.369451],
+                    [68.188169, 35.385948],
+                    [68.291279, 35.501432],
+                    [68.324274, 35.530303],
+                    [68.377892, 35.567423],
+                    [68.439758, 35.588045],
+                    [68.546993, 35.616916],
+                    [68.579989, 35.616916],
+                    [68.641855, 35.608667],
+                    [68.691348, 35.612792],
+                    [68.736717, 35.666409],
+                    [68.753214, 35.703529],
+                    [68.761463, 35.740649],
+                    [68.794459, 35.831386],
+                    [68.769712, 35.876755],
+                    [68.670726, 36.000487],
+                    [68.678975, 36.070602],
+                    [68.67485, 36.095349],
+                    [68.687224, 36.12422],
+                    [68.707846, 36.153091],
+                    [68.740841, 36.177837],
+                    [68.78621, 36.235579],
+                    [68.802707, 36.280948],
+                    [68.843952, 36.342814],
+                    [68.876947, 36.351063],
+                    [68.901694, 36.379934],
+                    [68.918191, 36.425303],
+                    [68.914067, 36.528413],
+                    [68.8681, 36.7286],
+                ]
+            }
+        },
+        ]
 };

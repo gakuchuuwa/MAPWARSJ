@@ -128,7 +128,7 @@ export const FACTIONS: Faction[] = [
     { id: 'song2', name: '松州' },
     { id: 'qing', name: '庆州' },
     { id: 'ting', name: '汀州' },
-    { id: 'quan', name: '权州' },
+    { id: 'jingmen', name: '荆门' },
     { id: 'jibei', name: '济北' },
     { id: 'wusun', name: '乌孙' },
     { id: 'dayuan', name: '大宛' },
@@ -174,10 +174,9 @@ export const FACTIONS: Faction[] = [
     { id: 'aki', name: '安艺' },
     { id: 'echigo', name: '越后' },
     { id: 'kai', name: '甲斐' },
-    { id: 'owari', name: '尾张' },
     { id: 'chosokabe', name: '土佐' },
     { id: 'hashiba', name: '丰臣' },
-    { id: 'honda', name: '下野' },
+    { id: 'shimotsuke', name: '下野' },
     { id: 'aizu', name: '会津' },
 
     { id: 'xingliao', name: '兴辽' },
@@ -704,6 +703,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zhuqian', name: '筑前' },
     { id: 'jibei2', name: '备中' },
     { id: 'jinchuan', name: '骏河' },
+    { id: 'totomi', name: '远江' },
     { id: 'xuan', name: '宣府' },
     { id: 'yangshe', name: '羊舌' },
     { id: 'sima_d', name: '司马氏' },   // 河内郡望@获嘉
@@ -751,7 +751,7 @@ export const FACTIONS: Faction[] = [
     { id: 'pazhu', name: '帕竹' },
     { id: 'qiong', name: '邛都' },
     { id: 'zhuoshi', name: '卓氏' },
-    { id: 'pengshi', name: '彭氏' },
+    { id: 'chenzhou_d', name: '辰州' },
     { id: 'qianzhong', name: '沅州' },
     { id: 'cuanshi', name: '爨族' },
     { id: 'dianguo', name: '滇国' },       // 滇国（拓东城）；旗号「滇」
@@ -777,7 +777,7 @@ export const FACTIONS: Faction[] = [
     { id: 'shaozhou', name: '韶州' },
     { id: 'yidou', name: '宜都' },
     { id: 'boren', name: '僰族' },
-    { id: 'xin2', name: '信州' },
+    { id: 'wanzhou', name: '万州' },
 
     { id: 'kui', name: '夔州' },
     { id: 'danluo', name: '耽罗' },
@@ -854,10 +854,9 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 新增：沙伐（沙伐国/尚州）──
     { id: 'sabeol', name: '沙伐' },
     // ── 2026-06-11 新增：日本精锐据点（间距实测合格）──
-    { id: 'hojo_d', name: '北条' },   // 小田原城；远征精锐「风魔党」
     { id: 'iga_d', name: '伊贺' },    // 名张·伊贺国东境；远征精锐「伊贺众」,
     // ── 2026-06-16 新增：日本令制国补点（方案A·6城·间距≥50km）──
-    { id: 'kaga_d', name: '加贺' },   // 江沼·加贺国府；一向军
+    { id: 'kaga_d', name: '一向宗' },   // 金泽·加贺一向一揆；一向宗门徒
     { id: 'date_d', name: '伊达' },   // 仙台·陆前；伊达铁骑
     { id: 'higo_d', name: '肥后' },   // 熊本·菊池党
     { id: 'iyo_d', name: '伊予' },    // 松山·河野水军
@@ -955,5 +954,4 @@ export const FACTIONS: Faction[] = [
     { id: 'sagami', name: '相模' },
     { id: 'mino', name: '美浓' },
     { id: 'ssangseong', name: '双城' },
-    { id: 'gyeongsang', name: '庆尚' },
 ];

@@ -13,6 +13,8 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dongzu: { name: '侗家义军', tier: 3 },       // 雷公山·吴勉侗族
   wuman: { name: '乌蛮山兵', tier: 3 },        // 乌蒙山·乌蛮部
 
+  chenzhou_d: { name: '辰州戍兵', tier: 3 },     // 沅陵·辰州戍兵
+  jingmen: { name: '长坂兵', tier: 3 },          // 当阳·赵云长坂坡
   bandun: { name: '賨人勇士', tier: 2 },       // 汉昌·§8 #1 板楯蛮（賨人）
   langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒
   zhuoshi: { name: '连弩士', tier: 3 },         // 临邛·诸葛连弩营
@@ -40,7 +42,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 权州戍兵除名（生造）
   zuo_d: { name: '南中叟兵', tier: 3 },         // 清溪关·西南夷王牌
   zangke: { name: '牂牁戍卒', tier: 3 },        // 胜境关·古牂牁国地（原夜郎锐卒，避岭南同名）
-  xin2: { name: '北伐前军', tier: 1 },          // 南浦·姜维九伐中原前军
+  wanzhou: { name: '天生城军', tier: 3 },       // 南浦·上官夔天生城
   cheng: { name: '西川绿营', tier: 2 },          // 阳安·岳钟琪川督绿营
   wumeng: { name: '溪州土兵', tier: 3 },
   jinchuan_x: { name: '金川土兵', tier: 3 },
