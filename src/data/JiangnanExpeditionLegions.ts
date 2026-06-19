@@ -35,8 +35,15 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   sizhou: { name: '克敌军', tier: 1 },       // 淮安·韩世忠克敌军（泗州）
   qian_d: { name: '游奕军', tier: 2 },       // 嘉兴·§9 #13 踏白游奕（岳飞系）
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
+  jiujiang: { name: '柴桑水师', tier: 2 },     // 柴桑·周瑜鄱阳湖练水军
+  fangla: { name: '圣公兵', tier: 1 },         // 睦州·方腊圣公起义克六州
+  fang_guozhen: { name: '浙东舟师', tier: 3 }, // 庆元·方国珍浙东割据水师
+  ruochu: { name: '若敖六卒', tier: 1 },       // 竟陵·楚若敖氏精锐（《左传》）
+  mi_chu: { name: '左广右广', tier: 2 },       // 云梦·楚庄王亲兵（《左传·宣公》）
+  heng: { name: '衡州义军', tier: 3 },         // 临烝·何腾蛟南明衡州抗清
+  yezongliu: { name: '矿工义军', tier: 3 },     // 丽水·叶宗留矿工起义
   jinan: { name: '济南卫', tier: 2 },        // 历下·铁铉守济南卫
-  lai: { name: '红袄军', tier: 2 },          // 青石关·杨安儿红袄军
+  lai: { name: '莱国义军', tier: 2 },          // 青石关·杨安儿莱国义军
   wu: { name: '句吴利趾', tier: 1 },        // 阊门·孙武句吴利趾
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
   xushouhui: { name: '红巾军', tier: 2 },    // 蕲春·元末徐寿辉天完红巾主力
@@ -50,7 +57,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   huang_d: { name: '黄国锐卒', tier: 3 },      // 潢川·周代黄国（春申君故里）
   // 横海校尉除名
   chizhou: { name: '池州戍兵', tier: 3 },        // 大通·池州
-  ting: { name: '汀州戍卒', tier: 3 },           // 黄连·汀州
+  wenzhou: { name: '永嘉水师', tier: 3 },    // 永嘉·温州水师
   wan: { name: '舒州戍兵', tier: 3 },            // 皖城·舒州
   shenshi: { name: '吴兴部曲', tier: 2 },       // 独松关·吴兴沈氏部曲
   wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）

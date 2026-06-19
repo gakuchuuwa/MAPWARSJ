@@ -10,7 +10,7 @@
 export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   lanzhou: { name: '金城突骑', tier: 1 },     // 金城·赵充国金城突骑
   dangxiang: { name: '铁鹞子', tier: 0 },        // 兴庆府·1041好水川诱伏，铁鹞子冲阵，任福战死（李元昊）
-  qing: { name: '忠孝军', tier: 0 },         // 安化·庆州治；大昌原四百破八千（完颜陈和尚）
+  qing: { name: '忠孝军', tier: 0 },         // 安化·完颜陈和尚大昌原四百破八千（《金史》）
   // 步跋子已迁环洲（huan@方渠）
   yeli: { name: '擒生军', tier: 2 },             // 克夷门·西夏监军司
     weiming: { name: '嵬名亲卫', tier: 1 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽
@@ -31,11 +31,10 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang
   ningkou: { name: '居延戍卒', tier: 3 },            // 居延塞·汉居延戍卒（居延汉简）
   shuofang: { name: '期门郎骑', tier: 1 },      // 河南地·汉武帝期门郎戍朔方
-  dashun: { name: '老营军', tier: 1 },            // 子午谷·李自成老营精锐
     ganzhou: { name: '甘州铁骑', tier: 2 },       // 张掖·窦融河西骑兵（T2有名史载专名）
     anxi: { name: '安西驻军', tier: 3 },       // 拨换城·郭昕安西军（T3真实存在）
-  baibo: { name: '白波黄巾', tier: 3 },
-  xiqin: { name: '夏州戍兵', tier: 3 },
+  xiqin: { name: '西秦锐卒', tier: 3 },
+  didao: { name: '狄道戍骑', tier: 3 },
   baiyang: { name: '长城戍卒', tier: 3 },
   wei2: { name: '静塞军', tier: 1 },
 };

@@ -247,7 +247,6 @@ const _FIXED: Record<string, string> = {
     xianlingqiang: '#688850', // 先零·凉州大马（允吾青绿）
     tufa_d: '#4A5868', // 秃发·南凉铁骑（浇河铁青）
     juqu_d: '#9A7858', // 沮渠·北凉精锐（张掖赭褐）
-    liang: '#B89048', // 凉（姑臧铜甲黄）
     liangzhou: '#8A7B5E', // 凉州（姑臧土褐）
     hunxie: '#508898', // 浑邪（肩水金关青蓝）
     // dangxiang 见上方大夏白

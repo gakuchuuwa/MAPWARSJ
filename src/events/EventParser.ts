@@ -1396,8 +1396,8 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 2026-05-26 新增：西域/中亚城池（14个）──
     { id: 'city_talas', name: '怛罗斯', factionId: 'tujishi', lat: 42.885995, lng: 71.347961, type: 'small_city', troops: 10000 },
     {
-        id: 'city_bukhara', name: '蒲华', factionId: 'saman',
-        lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 10000 },
+        id: 'city_bukhara', name: '蒲华', factionId: 'an',
+        lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 10000, region: 'CENTRAL_ASIA', note: '昭武九姓安国故地（布哈拉）；昭武精骑' },
     {
         id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan',
         lat: 41.3, lng: 69.3, type: 'small_city', troops: 10000 },
@@ -1711,7 +1711,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     // ── 2026-05-28 新增：南部(根城/日本)、萨曼(阿母城/中亚)、西域四政权 ──
     { id: 'city_genjo', name: '根城', factionId: 'nanbu', lat: 40.5047, lng: 141.4644, type: 'small_city', region: 'JAPAN', troops: 10000, tier: 4 },
-    { id: 'city_amucheng', name: '阿母城', factionId: 'panjun', lat: 39.0833, lng: 63.5786, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 4 },
+    { id: 'city_amucheng', name: '阿母城', factionId: 'saman', lat: 39.0833, lng: 63.5786, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '阿姆河要冲；萨曼王朝域内重镇' },
     { id: 'city_hepancheng', name: '石头城', factionId: 'hepan', lat: 37.7725, lng: 75.2264, type: 'pass', region: 'WESTERN', troops: 10000, tier: 4 },
     { id: 'city_humicheng', name: '护密城', factionId: 'qiepantuo', lat: 36.7266, lng: 71.6133, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 4, note: '青藏/中亚环线共用锚点' },
     { id: 'city_huoguocheng', name: '阿缓城', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },
@@ -1949,7 +1949,7 @@ export const CITIES_V2: CityDataV2[] = [
         region: 'LINGNAN',
         note: '广州府治番禺；刘隐清海军节度故地（《旧唐书·刘隐传》）' },
     { id: 'city_longchuan', name: '龙川', factionId: 'nanyue', lat: 24.1, lng: 115.26, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '赵佗为龙川令；南越龙兴之地' },
-    { id: 'city_kuaiji', name: '会稽', factionId: 'yue', lat: 29.997, lng: 120.582, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '越国都城' },
+    { id: 'city_kuaiji', name: '会稽', factionId: 'yue', lat: 29.987, lng: 120.582, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '越国都城；lat 南微调 0.01° 与临安间距≥50km' },
     { id: 'city_luling', name: '庐陵', factionId: 'ouyang', lat: 27.1133, lng: 114.9806, type: 'small_city', troops: 10000 },
     { id: 'city_hongzhou', name: '豫章', factionId: 'hongzhou', lat: 28.68, lng: 115.88, type: 'medium_city', troops: 10000 },
 

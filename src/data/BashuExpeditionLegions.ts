@@ -9,8 +9,8 @@
  */
 export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   jinchuan_g: { name: '金川番兵', tier: 3 },    // 勒乌围·金川土兵
-  miaomin: { name: '苗疆义军', tier: 3 },      // 平陇·石柳邓苗民
-  dongzu: { name: '侗家义军', tier: 3 },       // 雷公山·吴勉侗族
+  //  miaomin: { name: '苗疆义军', tier: 3 },      // 平陇·石柳邓苗民 — 已迁 DianQianExpeditionLegions
+  //  dongzu: { name: '侗家义军', tier: 3 },       // 雷公山·吴勉侗族 — 已迁 DianQianExpeditionLegions
   wuman: { name: '乌蛮山兵', tier: 3 },        // 乌蒙山·乌蛮部
 
   chenzhou_d: { name: '辰州戍兵', tier: 3 },     // 沅陵·辰州戍兵

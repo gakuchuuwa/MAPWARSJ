@@ -363,7 +363,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'hunxie': _hexiPortraitPool,
     'juqu_d': _hexiPortraitPool,
     'kang': _hexiPortraitPool,
-    'liang': _hexiPortraitPool,
     'lingwu': _hexiPortraitPool,
     'lushui': _hexiPortraitPool,
     'shuofang': _hexiPortraitPool,
@@ -781,6 +780,89 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'panjun': _panjunPortraitPool,
 };
 
+// ── 立绘资源登记：构建时扫描 public/assets，缺失路径走占位 fallback（避免 404 刷屏）──
+
+const _allPortraitAssetGlob = import.meta.glob<string>(
+    '../../public/assets/**/*.png',
+    { eager: true, query: '?url', import: 'default' },
+);
+
+/** 将 Vite ?url 结果规范为 `/assets/...`  web 路径 */
+export function normalizePortraitWebPath(url: string): string {
+    const idx = url.indexOf('/assets/');
+    if (idx >= 0) return url.slice(idx);
+    try {
+        return new URL(url, 'http://local').pathname;
+    } catch {
+        return url;
+    }
+}
+
+const KNOWN_PORTRAIT_PATHS = new Set(
+    Object.values(_allPortraitAssetGlob).map(normalizePortraitWebPath),
+);
+
+/** 文化区默认 field 立绘（文件已存在于各文化素材夹） */
+const REGION_FIELD_PORTRAIT: Partial<Record<string, string>> = {
+    CENTRAL: '/assets/litang/CENTRAL_field.png',
+    JIANGNAN: '/assets/daming/JIANGNAN_field.png',
+    NORTH: '/assets/nanfang/NORTH_field.png',
+    NORTHEAST: '/assets/dongbei/NORTHEAST_field.png',
+    STEPPE: '/assets/caoyuan/STEPPE_field.png',
+    WESTERN: '/assets/xiyu/WESTERN_field.png',
+    CENTRAL_ASIA: '/assets/zhongya/CENTRAL_ASIA_field.png',
+    TIBET: '/assets/tubo/TIBET_field.png',
+    JAPAN: '/assets/riben/JAPAN_field.png',
+    KOREA: '/assets/chaoxian/KOREA_field.png',
+};
+
+/** 目录别名：将领表常用 beifang 等路径，实际素材在 zhongyuan 等池 */
+const PORTRAIT_FOLDER_POOL: Record<string, string[]> = {
+    '/assets/beifang/': _zhongyuanPortraitPool,
+    '/assets/jiangnan/': _lingnanPortraitPool.length ? _lingnanPortraitPool : _damingPortraitPool,
+};
+
+export function portraitAssetExists(path: string | undefined): boolean {
+    if (!path) return false;
+    return KNOWN_PORTRAIT_PATHS.has(normalizePortraitWebPath(path));
+}
+
+/**
+ * 立绘路径 fallback：优先请求路径 → 同目录池 → 势力池 → 文化区 field → 全局占位。
+ * 美术未补齐前避免 img 404。
+ */
+export function resolvePortraitAssetPath(
+    requested: string | undefined,
+    options?: { factionId?: string; region?: string; role?: CultureCombatRole },
+): string {
+    if (requested && portraitAssetExists(requested)) {
+        return normalizePortraitWebPath(requested);
+    }
+
+    if (requested) {
+        const folder = requested.match(/^(\/assets\/[^/]+\/)/)?.[1];
+        const aliasPool = folder ? PORTRAIT_FOLDER_POOL[folder] : undefined;
+        const fromFolder = aliasPool?.find(p => portraitAssetExists(p));
+        if (fromFolder) return normalizePortraitWebPath(fromFolder);
+    }
+
+    const { factionId, region, role = 'field' } = options ?? {};
+    const factionPool = factionId ? FACTION_PORTRAIT_POOLS[factionId] : undefined;
+    const fromFaction = factionPool?.find(p => portraitAssetExists(p));
+    if (fromFaction) return normalizePortraitWebPath(fromFaction);
+
+    const regional = region ? REGION_FIELD_PORTRAIT[region] : undefined;
+    if (regional && portraitAssetExists(regional)) return regional;
+
+    const generic = `${PORTRAIT_ASSETS_DIR}/${region ?? 'CENTRAL'}_${role}.png`;
+    if (portraitAssetExists(generic)) return generic;
+
+    const central = REGION_FIELD_PORTRAIT.CENTRAL;
+    if (central && portraitAssetExists(central)) return central;
+
+    return KNOWN_PORTRAIT_PATHS.values().next().value ?? '/assets/litang/CENTRAL_field.png';
+}
+
 /** 比较两个立绘路径是否指向同一文件（浏览器 src 可能解析为完整 URL） */
 export function portraitUrlsEqual(a: string, b: string): boolean {
     if (a === b) return true;
@@ -805,22 +887,25 @@ function pickRandom(arr: string[], exclude?: string): string {
 export function getRandomFactionPortrait(factionId: string): string | undefined {
     const pool = FACTION_PORTRAIT_POOLS[factionId];
     if (!pool || pool.length === 0) return undefined;
-    return pickRandom(pool);
+    const picked = pickRandom(pool);
+    return resolvePortraitAssetPath(picked, { factionId });
 }
 
 /** 按参战单位文化区与军队/守军选默认立绘路径 */
 export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): string {
+    const region = resolveUnitCultureRegion(unit);
+    const role = getCulturePortraitRole(unit);
+    const resolveOpts = { factionId: unit.factionId, region, role };
+
     // 军团创建时已固定 portraitPath（见 Army 构造、BattleUnitFactory）
     // 若与攻方立绘相同则跳过，走下方随机逻辑
     if (unit.portraitPath && !(excludePath && portraitUrlsEqual(unit.portraitPath, excludePath))) {
-        return unit.portraitPath;
+        return resolvePortraitAssetPath(unit.portraitPath, resolveOpts);
     }
     // 守城方：每次从势力立绘池随机选，排除攻方立绘
     const factionId = unit.factionId;
     if (factionId && FACTION_PORTRAIT_POOLS[factionId]) {
-        return pickRandom(FACTION_PORTRAIT_POOLS[factionId], excludePath);
+        return resolvePortraitAssetPath(pickRandom(FACTION_PORTRAIT_POOLS[factionId], excludePath), resolveOpts);
     }
-    const region = resolveUnitCultureRegion(unit);
-    const role = getCulturePortraitRole(unit);
-    return `${PORTRAIT_ASSETS_DIR}/${region}_${role}.png`;
+    return resolvePortraitAssetPath(`${PORTRAIT_ASSETS_DIR}/${region}_${role}.png`, resolveOpts);
 }

@@ -460,7 +460,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         type: 'small_city',
         troops: 10000,
         tier: 1 },
-    { id: 'city_lanzhou', name: '金城', factionId: 'lanzhou', lat: 36.0500, lng: 103.8333, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1, note: '金城郡·兰州治所；赵充国屯田金城' },
+    { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.0500, lng: 103.8333, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1, note: '金城郡·兰州治所；赵充国屯田金城' },
 
     { id: 'city_ledu', name: '浇河', factionId: 'tufa_d', lat: 35.837926, lng: 101.071472, type: 'small_city', troops: 10000 },
     {
@@ -526,7 +526,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_hezhang', name: '可乐城', factionId: 'miao', lat: 27.095807, lng: 104.718933, type: 'small_city', troops: 10000 },
     { id: 'city_tancheng', name: '郯城', factionId: 'dongxian', lat: 34.549568, lng: 118.317261, type: 'small_city', troops: 10000 },
     { id: 'city_qucheng', name: '朐城', factionId: 'mi', lat: 34.529200, lng: 119.132996, type: 'small_city', troops: 10000 },
-        { id: 'city_baibogu', name: '白波谷', factionId: 'baibo', lat: 36.135621, lng: 112.206116, type: 'pass', region: 'HEXI', troops: 10000 },
+        { id: 'city_baibogu', name: '白波谷', factionId: 'baibo', lat: 36.135621, lng: 112.206116, type: 'pass', region: 'CENTRAL', troops: 10000 },
     { id: 'city_baoshan', name: '永昌', factionId: 'ailao', lat: 25.11, lng: 99.16, type: 'small_city', troops: 10000 },
 
     {
@@ -1195,7 +1195,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 22.53, lng: 113.04, type: 'small_city', troops: 10000, tier: 4,
         region: 'LINGNAN' },
     {
-        id: 'city_ninghai', name: '宁海', factionId: 'daxing',
+        id: 'city_ninghai', name: '宁海', factionId: 'panjun',
         lat: 29.28, lng: 121.42, type: 'small_city', troops: 10000, tier: 4,
         region: 'JIANGNAN' },
     {
@@ -1219,7 +1219,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 28.66, lng: 121.42, type: 'small_city', troops: 10000, tier: 4,
         region: 'JIANGNAN' },
     {
-        id: 'city_wenzhou', name: '永嘉', factionId: 'ting',
+        id: 'city_wenzhou', name: '永嘉', factionId: 'wenzhou',
         lat: 28.00, lng: 120.70, type: 'small_city', troops: 10000, tier: 4,
         region: 'JIANGNAN' },
 
@@ -1283,10 +1283,10 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 47.92, lng: 106.84, type: 'small_city', troops: 10000 },
     { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'small_city', region: 'STEPPE', troops: 10000, note: '清代锡伯营西迁戍边；伊犁将军辖区' },
     { id: 'city_yadong', name: '卓木', factionId: 'gaxa', lat: 28.243709, lng: 89.376526, type: 'small_city', troops: 10000 },
-    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', troops: 10000 },
+    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', troops: 10000, mirror: true },//镜像 },
     {
         id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_x',
-        lat: 31.00, lng: 102.40, type: 'pass', troops: 10000 },
+        lat: 31.00, lng: 102.40, type: 'pass', troops: 10000, mirror: true },//镜像 },
     {
         id: 'city_zhaoqing', name: '肇庆', factionId: 'duanzhou_d',
         lat: 23.05, lng: 112.45, type: 'small_city', troops: 10000, region: 'LINGNAN', note: '端州治；马暨统摧锋军抗元（1278）' },
@@ -1397,8 +1397,8 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 2026-05-26 新增：西域/中亚城池（14个）──
     { id: 'city_talas', name: '怛罗斯', factionId: 'tujishi', lat: 42.885995, lng: 71.347961, type: 'small_city', troops: 10000 },
     {
-        id: 'city_bukhara', name: '蒲华', factionId: 'saman',
-        lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 10000 },
+        id: 'city_bukhara', name: '蒲华', factionId: 'an',
+        lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 10000, region: 'CENTRAL_ASIA', note: '昭武九姓安国故地（布哈拉）；昭武精骑' },
     {
         id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan',
         lat: 41.30, lng: 69.30, type: 'small_city', troops: 10000 },
@@ -1712,7 +1712,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     // ── 2026-05-28 新增：南部(根城/日本)、萨曼(阿母城/中亚)、西域四政权 ──
     { id: 'city_genjo', name: '根城', factionId: 'nanbu', lat: 40.5047, lng: 141.4644, type: 'small_city', region: 'JAPAN', troops: 10000, tier: 4 },
-    { id: 'city_amucheng', name: '阿母城', factionId: 'panjun', lat: 39.0833, lng: 63.5786, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 4 },
+    { id: 'city_amucheng', name: '阿母城', factionId: 'saman', lat: 39.0833, lng: 63.5786, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '阿姆河要冲；萨曼王朝域内重镇' },
     { id: 'city_hepancheng', name: '石头城', factionId: 'hepan', lat: 37.7725, lng: 75.2264, type: 'pass', region: 'WESTERN', troops: 10000, tier: 4 },
     { id: 'city_humicheng', name: '护密城', factionId: 'qiepantuo', lat: 36.7266, lng: 71.6133, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 4, note: '青藏/中亚环线共用锚点' },
     { id: 'city_huoguocheng', name: '阿缓城', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },
@@ -1950,7 +1950,7 @@ export const CITIES_V2: CityDataV2[] = [
         region: 'LINGNAN',
         note: '广州府治番禺；刘隐清海军节度故地（《旧唐书·刘隐传》）' },
     { id: 'city_longchuan', name: '龙川', factionId: 'nanyue', lat: 24.100000, lng: 115.260000, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '赵佗为龙川令；南越龙兴之地' },
-    { id: 'city_kuaiji', name: '会稽', factionId: 'yue', lat: 29.997000, lng: 120.582000, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '越国都城' },
+    { id: 'city_kuaiji', name: '会稽', factionId: 'yue', lat: 29.987000, lng: 120.582000, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '越国都城；lat 南微调 0.01° 与临安间距≥50km' },
     { id: 'city_luling', name: '庐陵', factionId: 'ouyang', lat: 27.1133, lng: 114.9806, type: 'small_city', troops: 10000 },
     { id: 'city_hongzhou', name: '豫章', factionId: 'hongzhou', lat: 28.6800, lng: 115.8800, type: 'medium_city', troops: 10000 },
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 青藏文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与其它文化区一致：
@@ -19,7 +19,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   gar: { name: '却杰军', tier: 0 },           // 萨毗城·论钦陵却杰军（大非川破薛仁贵）
   tuyu_d: { name: '青海骢精骑', tier: 2 },    // 伏俟城·吐谷浑青海骢（§12 #4）
   xiangxiong: { name: '象雄武士', tier: 2 },  // 穹窿银·象雄铜铁甲武士（§12 #5）
-  gar_kham: { name: '康巴骁骑', tier: 2 },    // 德格·康巴朵康先锋骑（§12 #7）
+  gar_kham: { name: '德格骁骑', tier: 2 },    // 德格·康巴朵康先锋骑（§12 #7）
   guge: { name: '古格甲兵', tier: 2 },        // 札布让·阿里古格王国
   khoshut: { name: '和硕特铁骑', tier: 3 },   // 当雄·固始汗卫拉特铁骑（§12 #9）
   pazhu: { name: '江孜宗武士', tier: 3 },       // 江孜·江孜法王热丹衮桑帕（原帕竹甲兵，与lang_clan重复且与江孜据点及武将错位）
@@ -49,5 +49,8 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   xiutu: { name: '休屠王骑', tier: 3 },
   jiashi: { name: '迦湿弥罗卫', tier: 3 },
   gongbu: { name: '工布长弓手', tier: 3 },
+  kangba: { name: '康巴骁骑', tier: 3 },   // 理塘宗·康巴
+  song2: { name: '松州边军', tier: 3 },      // 嘉诚·唐松州抗蕃戍卒
+  xiadun: { name: '廷布卫队', tier: 3 },     // 廷布·夏仲不丹亲卫
   rulun: { name: '萨毗泽驻军', tier: 2 },
 };

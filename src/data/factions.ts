@@ -76,7 +76,6 @@ export const FACTIONS: Faction[] = [
     { id: 'xin', name: '新国' },
     { id: 'cheng', name: '成国' },
     { id: 'liangzhou', name: '凉州' },
-    { id: 'liang', name: '凉国' },
     { id: 'juqu_d', name: '沮渠' },
     { id: 'tufa_d', name: '秃发' },
     { id: 'qiuchi', name: '杨氏' },
@@ -126,7 +125,7 @@ export const FACTIONS: Faction[] = [
     { id: 'long2', name: '陇州' },
     { id: 'song2', name: '松州' },
     { id: 'qing', name: '庆州' },
-    { id: 'ting', name: '汀州' },
+
     { id: 'jingmen', name: '荆门' },
     { id: 'jibei', name: '济北' },
     { id: 'wusun', name: '乌孙' },
@@ -314,7 +313,8 @@ export const FACTIONS: Faction[] = [
     { id: 'xushouhui', name: '天完' },              // 徐寿辉@蕲春·红巾军（元末）
     { id: 'zhangshicheng', name: '大周' },
     { id: 'luoping', name: '罗平' },
-    { id: 'daxing', name: '大兴' },
+    { id: 'daxing', name: '大兴（未启用）' },
+    { id: 'wenzhou', name: '温州' },
     { id: 'chendiaoyan', name: '陈吊' },
 
     // ── 2026-05-26 明朝势力 ──
@@ -736,7 +736,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xianyu', name: '鲜虞' },             // 井陉关·鲜虞国
     { id: 'yi', name: '易州' },                 // 紫荆关·易州
     { id: 'you', name: '幽州' },                // 居庸关·幽州
-    { id: 'heng1', name: '元岳' },              // 雁门关·元岳（旗=恒）
+    { id: 'heng1', name: '元岳' },              // 雁门关·元岳（旗=元岳，避恒州「恒」撞旗）
     { id: 'pisha', name: '毗沙' },
    
     { id: 'yumi', name: '扜弥' },
@@ -827,7 +827,7 @@ export const FACTIONS: Faction[] = [
     { id: 'huan', name: '环州' },
     { id: 'wei2', name: '静塞' },
     { id: 'lingwu', name: '灵武' },
-    { id: 'qiepantuo', name: '朅盘陀' },
+    { id: 'qiepantuo', name: '护密' },
     // ── 2026-06-11 新增：库页岛民族（鄂罗克/库页）──
     { id: 'eluoke', name: '鄂罗克' },                // 鄂罗克(库页岛东岸/诺托罗), Oroch
     { id: 'kuye', name: '库页' },                    // 库页(库页岛南部/白主), Gilyak/Kuye

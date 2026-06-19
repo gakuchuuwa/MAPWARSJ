@@ -9,8 +9,8 @@
  */
 export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // ── 太行/河北（§1 交叉 + 明末）──
-  wangyan: { name: '八字军', tier: 0 },     // 飞狐·顺昌大捷2万破10万（《宋史·刘锜传》）
-  tianxiong: { name: '魏博牙兵', tier: 1 },   // 大名·田承嗣魏博牙兵
+  wangyan: { name: '八字军', tier: 1 },     // 飞狐·王彦八字军（原T0降级）
+  // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
   huan: { name: '环州戍兵', tier: 3 },      // 方渠·宋代环州边防（原步跋子，归嵬名）
   qingyuan_bd: { name: '神臂营', tier: 2 }, // 保定·北宋强弩营
@@ -18,7 +18,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // ── §2 北方 12 支 ──
   zhao: { name: '邯郸锐卒', tier: 1 },     // 邯郸·廉颇赵国锐卒
   yan: { name: '渔阳突骑', tier: 2 },       // 古北口·§2 #2 光武幽州精骑（燕国北京）
-  gongsun_d: { name: '辽东铁骑', tier: 1 }, // 襄平·公孙度辽东铁骑
+  gongsun_d: { name: '襄平铁骑', tier: 1 }, // 襄平·公孙度襄平铁骑
   shizhao_d: { name: '黑槊龙骧', tier: 1 }, // 邢台·§2 #4 石勒石虎后赵禁军
   yunzhong: { name: '苍头军', tier: 3 },    // 盛乐·拓跋代北
   tuoba: { name: '拓跋虎骑', tier: 1 },     // 大同·拓跋鲜卑
@@ -64,8 +64,11 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
 
   // ── 2026-06-18 自东北文件迁回
   jinzhou: { name: '辽东铁骑', tier: 2 },     // 徒河·李成梁辽东骑兵（§3 #6）
-  zu_d: { name: '关宁铁骑', tier: 0 },       // 宁远·宁远大捷破努尔哈赤（§3 #5）
+  zu_d: { name: '关宁铁骑', tier: 1 },       // 宁远·祖大寿（原T0降级，防御战）
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
   liwang: { name: '河间突骑', tier: 1 },     // 乐成·李光弼河朔骑兵
   qu_d: { name: '先登死士', tier: 0 },       // 界桥·麴义破公孙瓒（192年）
+  yang_aner: { name: '天顺红袄', tier: 1 },        // 蓬莱·杨安儿天顺红袄克登莱
+  weihaiwei: { name: '登州水师', tier: 3 },    // 文登·明代山东备倭水师
+  jianzhou_nvzhen: { name: '建州卫兵', tier: 3 }, // 浑江·建州女真卫所兵
 };

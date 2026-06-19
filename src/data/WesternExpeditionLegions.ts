@@ -35,7 +35,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
   loulan: { name: '楼兰戍', tier: 3 },      // 扜泥城·汉晋楼兰戍卒（旗=楼兰·§12.1.1）
   zhuxie: { name: '朱邪部兵', tier: 3 },      // 大石城·沙陀朱邪部
-  yuchi: { name: '于阗精兵', tier: 3 },       // 于阗·尉迟王族精兵（§14 #2）
+  // 重复行已删
   juandu: { name: '捐毒戍卒', tier: 3 },     // 排修城·汉西域捐毒国
   wensu: { name: '温宿锐卒', tier: 3 },      // 三重城·温宿国
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
@@ -44,5 +44,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   dzungar: { name: '塔城卫队', tier: 3 },
   yarkand: { name: '英吉沙骑兵', tier: 3 },
   tuerhute: { name: '鹰娑川铁骑', tier: 3 },
-  gaochang: { name: '高昌铁骑', tier: 2 },    // 赤亭关·麴氏高昌具装骑（都城高昌，咸通前）
+  gaochang: { name: '高昌铁骑', tier: 2 },    // 赤亭关·麴氏高昌具装骑
+  yiwu: { name: '哈密卫戍', tier: 3 },       // 哈密卫·明关西七卫戍卒（都城高昌，咸通前）
 };

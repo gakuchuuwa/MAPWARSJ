@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 中亚文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与日朝东北草原西域一致：
@@ -9,9 +9,10 @@
  */
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   yanda: { name: '嚈哒铁骑', tier: 1 },          // 阿缓城·白匈奴横扫中亚（§13 #2）
-  saman: { name: '萨曼古拉姆', tier: 1 },     // 蒲华·伊斯梅尔萨曼古拉姆
+  saman: { name: '萨曼古拉姆', tier: 1 },     // 阿母城·伊斯梅尔萨曼古拉姆
   huarazim: { name: '钦察精骑', tier: 1 },      // 玉龙杰赤·摩诃末钦察卫（§13 #4）
-  qincha: { name: '康里精骑', tier: 2 },     // 七河·钦察雇佣骑（§13 #5）
+  qincha: { name: '康里精骑', tier: 2 },
+  qiepantuo: { name: '护密戍卒', tier: 3 },   // 护密城·瓦罕走廊戍卒
   tiemuer: { name: '察合台突骑', tier: 0 },      // 区T0锚·撒马尔罕·帖木儿察合台突骑
   kazakh: { name: '哈萨克骑', tier: 3 },     // 亚西·哈斯木汗游击（§13 #7）
   seljuq: { name: '古拉姆禁卫', tier: 1 },     // 木鹿·桑贾尔苏丹古拉姆近卫

@@ -33,13 +33,17 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     liang_d: { name: '睢阳义兵', tier: 1 },     // 商丘·张巡守睢阳
   // 公行锐士除名
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
+  li_lx_d: { name: '陇西戍骑', tier: 3 },   // 陇西·李崇秦陇西郡守戍兵
+  baibo: { name: '白波黄巾', tier: 3 },     // 白波谷·郭太白波黄巾
+  dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
+  tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
   dixiang: { name: '南阳材官', tier: 3 },   // 宛城·张绣南阳材官
   // 朱龙骑除名（无此番号）
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
   yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师
   // ── 2026-06-16 新增：11大名关 ──
                       hongnong_jun: { name: '函谷锐士', tier: 1 },    // 函谷关·樗里疾崤函锐士
-  huangfu: { name: '神策军', tier: 1 },       // 安定·李晟神策军（T1有名且胜仗）
+  huangfu: { name: '安定神策', tier: 1 },       // 安定·李晟安定神策（T1有名且胜仗）
   zhengzhou: { name: '玄甲军', tier: 0 },  // 虎牢关·李世民玄甲骑
   ruo: { name: '商於材官', tier: 3 },
   ruzhou: { name: '广成健卒', tier: 3 },
