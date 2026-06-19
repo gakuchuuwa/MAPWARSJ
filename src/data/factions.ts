@@ -28,7 +28,7 @@ export const FACTIONS: Faction[] = [
     { id: 'monong', name: '墨侬' },
     { id: 'shuizhen', name: '水真' },
     { id: 'wala', name: '瓦剌' },
-    { id: 'wuliangha', name: '兀良' },   // 旗号二字（全称兀良哈/乌梁海）
+    { id: 'wuliangha', name: '兀良哈' },
     { id: 'dingling', name: '丁零' },
     { id: 'nifuhe', name: '尼夫' },     // 旗号二字（全称尼夫赫）
     { id: 'guer', name: '古尔' },       // 古尔王朝（Ghurids）
@@ -91,6 +91,7 @@ export const FACTIONS: Faction[] = [
     { id: 'sui', name: '隋国' },
     { id: 'tang', name: '唐国' },
     { id: 'min', name: '闽国' },
+    { id: 'quanzhou', name: '泉州' },
     { id: 'shazhou', name: '沙州' },
     { id: 'shatuo', name: '沙陀' },
     { id: 'qidan', name: '契丹' },
@@ -200,7 +201,7 @@ export const FACTIONS: Faction[] = [
     { id: 'erzhu', name: '尔朱' },      // 铁锈红 - 契胡尔朱氏(秀容川/北魏权臣)
 
 
-    { id: 'wey', name: '卫国' },          // 卫红 - 卫国(濮阳)
+    { id: 'chanzhou', name: '澶州' },       // 澶州(濮阳)；澶州弩手
     { id: 'pizhou', name: '邳州' },       // 邳州(下邳)；陷阵营高顺
     // ── 2026-05-26 新增：汉朝补全半成品势力 ──
     { id: 'tongma', name: '铜马' },
@@ -534,7 +535,6 @@ export const FACTIONS: Faction[] = [
     { id: 'zhe_d', name: '折氏' },
     { id: 'shanyue', name: '山越' },
     { id: 'she_ethnic', name: '畲族' },                 // 敕木暗紫 - 畲族(敕木山/闽浙交界)
-    { id: 'pu', name: '蒲氏' },
 
     // ── 2026-05-26 Phase 3i：新罗门阀/巴人后裔 ──
     { id: 'tu', name: '土族' },
@@ -941,5 +941,5 @@ export const FACTIONS: Faction[] = [
     { id: 'nvguo', name: '女国' },
     { id: 'jiashi', name: '迦湿弥罗' },
     { id: 'wuhu', name: '乌护' },
-  { id: 'sanada_d', name: '真田氏', culture: 'JAPAN', description: '表里比兴，赤备绝唱。' },
+  { id: 'sanada_d', name: '真田氏' },
 ];

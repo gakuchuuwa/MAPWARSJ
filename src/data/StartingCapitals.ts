@@ -82,7 +82,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'luoyue': 'city_huashan',
     'ba': 'city_chongqing',
     'hezhou': 'city_diaoyucheng',
-    'wey': 'city_puyang',
+    'chanzhou': 'city_puyang',
 'bohai': 'city_ningan',
     'jurchen': 'city_wuguo',
 'dangxiang': 'city_xingqingfu2',
@@ -123,7 +123,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'tubo': 'city_luoxie',
     'tujue': 'city_otuken',
     'tiele': 'city_hanhai',
-    'huige': 'city_ordubaliq',
+
+    'huige': 'city_woluduobali',
     'dayue': 'city_shenglong',
     'yamato': 'city_asuka',
 'edo': 'city_edo',
@@ -418,7 +419,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     // ── 2026-05-28 新增：南部(根城)、萨曼(阿母城)、西域四政权 ──
     'nanbu': 'city_genjo',
-    'saman': 'city_amucheng',
+    'saman': 'city_bukhara',
     'hepan': 'city_hepancheng',
 'humi': 'city_hunduduo',
 

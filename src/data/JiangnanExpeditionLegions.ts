@@ -19,7 +19,8 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=寿·寿州）
   hongguang: { name: '扬州义兵', tier: 2 },       // 广陵·史可法扬州义兵
   lu: { name: '合肥锐士', tier: 1 },       // 合肥·张辽八百破十万
-  min: { name: '闽国亲从', tier: 2 },        // 冶城·王审知闽国亲从
+  min: { name: '闽国亲从', tier: 3 },        // 冶城·王审知闽国亲从
+  quanzhou: { name: '清源军', tier: 1 },        // 刺桐·留从效清源军
   chen: { name: '建康水军', tier: 3 },       // 清远·陈霸先水师
   xiao_d: { name: '白袍军', tier: 1 },       // 兰陵·陈庆之七千白袍（《梁书》）
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云

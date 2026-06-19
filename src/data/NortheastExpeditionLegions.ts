@@ -18,7 +18,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）
   hezhe: { name: '索伦劲旅', tier: 3 },       // 乌云·索伦部（§3 #13）
   aola: { name: '黑龙江水师', tier: 3 },     // 雅克萨·清水师
-  wuliangha: { name: '朵颜三卫', tier: 3 },  // 赛音山达·§1 #74 兀良哈三卫（朵颜/泰宁/福余合一）
+  wuliangha: { name: '兀良哈猎兵', tier: 1 },  // 薛灵哥·者勒蔑兀良哈猎兵
   // 渤海八猛安除名（渤海无猛安制，金制错代）
   fuyu: { name: '夫余步骑', tier: 3 },       // 黄龙府·夫余步骑（§1）
   // ── 2026-06-16 新增：东北大区平衡补全（7支，精锐随据点，全图无六字番号） ──

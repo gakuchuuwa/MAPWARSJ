@@ -21268,37 +21268,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "富贵城-娑陵",
-                type: "road",
-                id: "road_city_ordubaliq_city_suoling_1780641765267",
-                startConnection: "city_ordubaliq",
-                endConnection: "city_suoling"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [101.428528, 49.437762],
-                    [101.657855, 49.458477],
-                    [101.686726, 49.458477],
-                    [101.752717, 49.487348],
-                    [101.793961, 49.495597],
-                    [101.864076, 49.516219],
-                    [101.90532, 49.532716],
-                    [101.938316, 49.536841],
-                    [102.235274, 49.524468],
-                    [102.272394, 49.532716],
-                    [102.313638, 49.520343],
-                    [102.392002, 49.520343],
-                    [102.499237, 49.50797],
-                    [102.577601, 49.425482],
-                    [102.614721, 49.408984],
-                    [102.840271, 49.364493],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "公主堡-石头城",
                 type: "road",
                 id: "road_city_gongzhubao_city_hepancheng_1780641882977",

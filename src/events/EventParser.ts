@@ -217,7 +217,7 @@ export class EventParser {
         // 第五类：边疆民族
         '鞑靼': 'dada_ming', '俺答': 'dada_ming', '河套': 'dada_ming', '丰州': 'dada_ming',
         '瓦剌': 'wala', '卫拉': 'oirat_ming', '也先': 'oirat_ming', '明瓦剌': 'oirat_ming',
-        '兀良哈': 'wuliangha', '乌梁海': 'wuliangha', '唐努山': 'wuliangha', '朵颜': 'wuliangha', '泰宁': 'wuliangha', '福余': 'wuliangha',
+        '兀良哈猎兵': 'wuliangha', '兀良哈': 'wuliangha', '乌梁海': 'wuliangha', '唐努山': 'wuliangha', '朵颜': 'wuliangha', '泰宁': 'wuliangha', '福余': 'wuliangha',
         '建州女真': 'jianzhou_nvzhen', '建州': 'jianzhou_nvzhen', '苏子河': 'jianzhou_nvzhen', '婆猪江': 'jianzhou_nvzhen',
         '海西女真': 'haixi_nvzhen', '扈伦': 'haixi_nvzhen', '乌拉': 'haixi_nvzhen', '叶赫': 'haixi_nvzhen', '呼兰河': 'haixi_nvzhen',
         '野人女真': 'yeren_nvzhen', '东海女真': 'yeren_nvzhen', '瑷珲': 'yeren_nvzhen', '黑龙江': 'yeren_nvzhen',
@@ -483,7 +483,7 @@ export class EventParser {
         '龟兹重甲兵': 'qiuci', '伊逻卢': 'qiuci',
         '于阗精兵': 'yuchi', '于阗': 'yuchi',
         '喀喇汗铁骑': 'kala', '阿斯古拉姆': 'kala', '阿斯卡里古拉姆': 'kala', '阿斯卡里': 'kala',
-        '伊列克近卫': 'an',
+        // 'an' → deleted
         '高昌铁骑': 'gaochang', '阿斯兰军': 'yiduhu', '亦都护': 'yiduhu', '高昌回鹘': 'yiduhu',
         '阿斯兰近卫': 'shule', '盘橐': 'shule', '阿尔斯兰汗': 'shule',
         '焉耆龙骑兵': 'yanqi',
@@ -533,7 +533,7 @@ export class EventParser {
 
         // ── 2026-06-11 中亚远征精锐（§13 共 14 支）──
         '嚈哒铁骑': 'yanda', '嚈哒': 'yanda', '白匈奴': 'yanda', '阿缓城': 'yanda',
-        '古拉姆近卫军': 'saman', '古拉姆': 'saman', '萨曼': 'saman', '萨曼王朝': 'saman', '阿母城': 'saman',
+        '萨曼古拉姆': 'saman', '古拉姆': 'saman', '萨曼': 'saman', '萨曼王朝': 'saman', '蒲华': 'saman',
         '花剌子模铁骑': 'huarazim', '钦察精骑': 'huarazim',
         '钦察康里精骑': 'qincha', '钦察': 'qincha', '康里': 'qincha', '七河': 'qincha',
         '帖木儿重装突骑': 'tiemuer', '帖木重装骑': 'tiemuer', '河中怯薛': 'tiemuer', '帖木儿': 'tiemuer', '帖木儿帝国': 'tiemuer', '帖木': 'tiemuer',
@@ -547,7 +547,7 @@ export class EventParser {
         '尉迟': 'yuchi', '尉迟氏': 'yuchi', '伏阇氏': 'yuchi', '于阗王族': 'yuchi', '丹丹乌里克': 'yuchi',
         '麴氏': 'qu_clan', '高昌王族': 'qu_clan', '柏孜克里克': 'qu_clan', '柏孜克里克千佛洞': 'qu_clan',
         '归义军': 'guiyi', '曹氏': 'guiyi', '沙州曹氏': 'guiyi', '莫高窟': 'guiyi',
-        '安氏': 'an', '粟特安氏': 'an', '布哈拉': 'an', '安国': 'an',
+        // 'an' → deleted
         '石氏': 'shi_clan', '粟特石氏': 'shi_clan', '柘折城': 'shi_clan', '塔什干': 'shi_clan',
         '难兜': 'nandou', '难兜国': 'nandou', '孽多': 'nandou', '孽多城': 'nandou',
         '和卓': 'khoja', '白山派': 'khoja', '阿帕克霍加': 'khoja', '香妃墓': 'khoja',
@@ -637,7 +637,7 @@ export class EventParser {
         '折': 'zhe_d', '折氏': 'zhe_d', '折家将': 'zhe_d', '府州': 'zhe_d', '府谷': 'zhe_d', '折克行': 'zhe_d', '折可适': 'zhe_d', '折继闵': 'zhe_d',
         '山越': 'shanyue', '山越蛮': 'shanyue', '宛陵': 'shanyue', '宣城': 'shanyue',
         '畲': 'she_ethnic', '畲人': 'she_ethnic', '敕木山': 'she_ethnic', '景宁': 'she_ethnic',
-        '蒲': 'pu', '蒲氏': 'pu', '蒲寿庚': 'pu', '泉州蒲氏': 'pu', '清净寺': 'pu',
+        // pu → deleted
 
         // ── 2026-05-26 Phase 3i：新增朴(新罗门阀)、土(巴人后裔) ──
         '朴': 'piao', '朴氏': 'piao', '新罗朴氏': 'piao', '大陵苑': 'piao', '庆州朴氏': 'piao', '骨品': 'piao',
@@ -683,7 +683,7 @@ export class EventParser {
         '古尔': 'guer', '古尔王朝': 'guer', '马鲁鲁德': 'guer',
         '巴德': 'bade', '巴达赫尚': 'bade', '彭迪': 'bade',
         '乌布萨泊': 'xiajiasi',
-        '赛音山达': 'wuliangha',
+        '薛灵哥': 'wuliangha',
 
         // ── 2026-05-28 新增：岭(结古宗)、琼波(丁青宗)、索伦(卜奎)、图瓦(特斯郭勒卡伦) ──
         '岭': 'gling', '结古宗': 'gling',

@@ -16,7 +16,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   qingyuan_bd: { name: '神臂营', tier: 2 }, // 保定·北宋强弩营
 
   // ── §2 北方 12 支 ──
-  zhao: { name: '邯郸坚兵', tier: 1 },     // 邯郸·§2 #1 廉颇赵国坚兵
+  zhao: { name: '邯郸锐卒', tier: 1 },     // 邯郸·廉颇赵国锐卒
   yan: { name: '渔阳突骑', tier: 2 },       // 古北口·§2 #2 光武幽州精骑（燕国北京）
   gongsun_d: { name: '辽东铁骑', tier: 1 }, // 襄平·公孙度辽东铁骑
   shizhao_d: { name: '黑槊龙骧', tier: 1 }, // 邢台·§2 #4 石勒石虎后赵禁军

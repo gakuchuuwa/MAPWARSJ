@@ -9,7 +9,7 @@
  */
 export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   qiuci: { name: '龟兹精兵', tier: 3 },   // 伊逻卢·龟兹精兵
-  // yutian → yuchi
+  yuchi: { name: '于阗精兵', tier: 3 },       // 于阗·尉迟王族精兵
   kala: { name: '阿斯古拉姆', tier: 1 },      // 奥什·喀喇汗古拉姆（灭于阗非以少胜多）
   an: { name: '昭武精骑', tier: 2 },        // 蒲华·昭武九姓安国（原伊列克近卫严重错代错位）
   yiduhu: { name: '西州回鹘', tier: 1 },      // 高昌·北庭回鹘取西州

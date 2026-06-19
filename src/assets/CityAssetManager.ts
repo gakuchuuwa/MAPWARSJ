@@ -67,6 +67,7 @@ export class CityAssetManager {
 
 
         'min': '闽',
+        'quanzhou': '泉',
         'xiezhou': '解',
         'shang': '商',
         'zhou': '周',
@@ -161,7 +162,7 @@ export class CityAssetManager {
         'luoyue': '骆越',
         'ba': '巴',
         'hezhou': '合',
-        'wey': '卫',
+        'chanzhou': '澶',
         'jiaodong': '胶东',
         'jibei': '济北',
         'wusun': '乌孙',
@@ -202,6 +203,7 @@ export class CityAssetManager {
         'suzhou_d': '宿',
         'didao': '狄',
         'lanzhou': '兰',
+        'lu': '庐',
         'gaoqi_d': '高齐',
         'wuzhou_d': '武周',
         'zhuozhou': '涿',
@@ -275,7 +277,7 @@ export class CityAssetManager {
         'dada_ming': '鞑靼',
         'oirat_ming': '卫拉',
         'wala': '瓦剌',
-        'wuliangha': '兀良',
+        'wuliangha': '兀良哈',
         'jianzhou_nvzhen': '建',
 'haixi_nvzhen': '海西',
         'yeren_nvzhen': '东海',
@@ -396,7 +398,6 @@ export class CityAssetManager {
         'zhe_d': '折',
         'shanyue': '山越',
         'she_ethnic': '畲',
-        'pu': '蒲',
 
         'tu': '土',
 
@@ -440,7 +441,7 @@ export class CityAssetManager {
         'nong2': '侬',
         'golog': '果洛',
         'tushetu': '土谢',
-        'tumed': '土默',
+        'tumed': '土默特',
         'she': '奢',
         'liao': '僚',
         'yaoluoge': '药罗',
@@ -694,6 +695,7 @@ export class CityAssetManager {
         'bozhou_d': '博',
         'hongnong_jun': '弘农',
         'zheng': '郑',
+        'zhong': '寿',
         'ruo': '鄀',
         'rulun': '如论',
         'ruzhou': '汝',

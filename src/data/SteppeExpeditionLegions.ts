@@ -16,7 +16,8 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   yuan_d: { name: '秃鲁花军', tier: 2 },       // 上都·元质子军
   xiongnu: { name: '控弦之士', tier: 2 },      // 头曼城·匈奴骑兵
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
-  huige: { name: '毗伽近卫', tier: 1 },       // 富贵城·回鹘毗伽可汗近卫（原回鹘铁骑）
+
+  huige: { name: '回鹘精骑', tier: 1 },       // 窝鲁朵八里·骨力裴罗回鹘精骑
   // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
   // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
   gaoche: { name: '高车战车', tier: 3 },       // 浚稽山·高车战车兵（§6 #16）
@@ -56,7 +57,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   mengwu: { name: '忙古勒骑', tier: 3 },        // 狼居胥·合不勒汗
   zhadalan: { name: '札剌儿军', tier: 3 },      // 阔亦田·札木合
   oirat_ming: { name: '卫拉特骑', tier: 2 },    // 科布多·也先（≠wala博尔巴任）
-  tumed: { name: '土默特骑', tier: 2 },         // 归化城·俺答汗
+  tumed: { name: '土默特精骑', tier: 1 },         // 归化城·俺答汗土默特精骑
   tushetu: { name: '库伦铁骑', tier: 3 },       // 库伦·土谢图汗
   yaoluoge: { name: '药罗葛骑', tier: 3 },      // 娑陵·药罗葛部
   huihu: { name: '回鹘牙帐骑', tier: 3 },      // 窝鲁朵·回鹘汗庭

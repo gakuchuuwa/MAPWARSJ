@@ -23,6 +23,8 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   shang: { name: '虎贲多射', tier: 1 },       // 安阳·殷商虎贲与多射（妇好征伐）
   zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）
   // 夏后亲卫除名（夏代无信史）
+  yuan_cj_d: { name: '大戟士', tier: 1 },    // 汝南·袁术大戟士
+  chanzhou: { name: '澶州弩手', tier: 1 },   // 濮阳·李继隆澶州弩手
   sui: { name: '骁果军', tier: 2 },        // 汉东·隋帝禁卫骁果；615雁门李世民解围（根基在中央，河套用武地）
   sunqin: { name: '督标秦军', tier: 2 },   // 潼关·孙传庭督标
   // 飞熊军除名（小说番号）
