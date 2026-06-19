@@ -1,837 +1,2089 @@
-import { HistoricalEvent, EventType, SiegeData, FieldBattleData } from '../types/core';
-
-export class EventParser {
-    // Mapping Chinese faction names to IDs
-    // If a name is not found here, it will be returned as 'UNKNOWN'
-    private static factionMap: { [key: string]: string } = {
-        // 统称 (General Terms)
-        '中华': 'zhonghua', '天朝': 'tianchao', '朝鲜': 'joseon', '蒙古': 'menggu',
-        '羌藏': 'qiangzang', '回回': 'huihui', '满洲': 'manzhou', '越南': 'yuenan', '滇缅': 'dianmian',
-        '日本': 'ashikaga', '室町': 'ashikaga', '足利': 'ashikaga', '西域': 'xiyu', '西洋': 'xiyang', '叛军': 'panjun',
-
-        // 战国列国（势力 id 见 factions.ts）
-        '秦朝': 'qin', '秦国': 'qin', '秦': 'qin', '秦军': 'qin',
-        '齐国': 'qi', '齐': 'qi',
-        '楚国': 'chu', '楚': 'chu',
-        '若敖': 'ruochu', '若敖氏': 'ruochu', '竟陵': 'ruochu',
-        '芈': 'mi_chu', '芈氏': 'mi_chu', '云梦': 'mi_chu',
-        '燕国': 'yan', '燕': 'yan',
-        '魏国': 'wei', '魏': 'wei',
-        '韩国': 'han', '韩': 'han',
-        '赵国': 'zhao', '赵': 'zhao', '赵军': 'zhao',
-        '肃慎': 'sushen', '吉里迷': 'jilimi', '囊哈儿': 'jilimi',
-        '挹娄': 'yilou', '凤林古城': 'yilou',
-        '勿吉': 'wuji', '吉林': 'wuji',
-        '靺鞨': 'mohe', '龙泉府': 'mohe',
-        '室韦': 'shiwei', '蒙兀室韦': 'shiwei', '蒙兀': 'shiwei', '额尔古纳': 'shiwei', '额尔古纳河': 'shiwei',
-        '赫哲': 'hezhe', '瓦尔': 'hezhe', '波罗奈斯克': 'hezhe', '拉哈苏苏': 'hezhe',
-        '濊貊': 'huimo', '东团山': 'huimo',
-        '百越': 'yuenan', '滇国': 'dianguo', '拓东城': 'dianguo', '通海': 'dian', '新兴': 'dian', '倭国': 'ashikaga',
-        '月氏': 'guishuang', '贵霜': 'guishuang', '拜松': 'guishuang', '希腊': 'xiyang',
-        '大月氏': 'guishuang', '蓝氏城': 'guishuang', '巴克特拉': 'guishuang',
-
-        // 西汉 (Western Han) - Now mapping to Zhonghua
-        '西汉': 'zhonghua', '汉': 'zhonghua', '汉军': 'zhonghua', '炎汉': 'zhonghua',
-        '南越': 'yuenan', '吴楚': 'zhonghua', '卫满': 'chaoxian',
-        '东胡': 'donghu', '巴彦乌拉': 'donghu', '契丹': 'qidan', '氐羌': 'qiangzang', '匈奴': 'xiongnu', '罗马': 'xiyang',
-
-        // 其他常见映射 (Other Common Mappings)
-        '大汉': 'zhonghua', '蜀汉': 'zhonghua', '曹魏': 'wei', '孙吴': 'wu',
-        '晋': 'jin', '西晋': 'jin', '东晋': 'jin',
-        '隋': 'sui', '隋朝': 'sui',
-        '唐': 'tang', '唐朝': 'tang',
-        '宋': 'song', '北宋': 'song', '南宋': 'song',
-        '元': 'menggu', '元朝': 'menggu',
-        '明': 'ming_d', '明朝': 'ming_d',
-        '清': 'manzhou_d', '清朝': 'manzhou_d', '大清': 'manzhou_d',
-        '大金': 'dajin', '大元': 'yuan_d',
-
-        // 秦朝追加核对势力 (2026-05-25)
-        '陆浑': 'luhun', '陆浑戎': 'luhun',
-        '卫国': 'wey', '卫': 'wey',
-        '徐国': 'pizhou', '徐': 'pizhou', '邳州': 'pizhou',
-
-        // 汉朝补全半成品势力 (2026-05-25)
-        '铜马': 'tongma', '铜马军': 'tongma',
-        '董宪': 'dongxian', '海西王': 'dongxian',
-        '白波': 'baibo', '白波军': 'baibo',
-        '车师后': 'cheshihou', '车师后国': 'cheshihou', '金满城': 'cheshihou',
-        '二征': 'erzheng', '征侧': 'erzheng', '征贰': 'erzheng',
-
-        // 汉朝核对追加势力 (2026-05-25)
-        '翟': 'zhai_han', '翟国': 'zhai_han', '董翳': 'zhai_han',
-        '殷': 'yin', '殷国': 'yin', '司马卬': 'yin', '朝歌': 'yin',
-        '英布': 'liu', '九江王': 'liu', '六县': 'liu',
-        '瓯越': 'ouyue', '东瓯': 'ouyue', '东瓯国': 'ouyue',
-
-        // 三国核对追加势力 (2026-05-25)
-        '襄州': 'xiangzhou', '襄': 'xiangzhou', '襄阳': 'xiangzhou',
-        '刘表': 'xiangzhou', '刘景升': 'xiangzhou',
-        '下邳': 'pizhou', '陷阵营': 'pizhou', '高顺': 'pizhou',
-        '宿州': 'suzhou_d', '符离': 'suzhou_d', '符离集': 'suzhou_d',
-        '临洮': 'didao', '狄道': 'didao', '狄道县': 'didao', '飞熊军': 'didao',
-        '袁': 'yuan_cj_d', '袁氏': 'yuan_cj_d', '袁绍': 'yuan_cj_d', '悬瓠': 'yuan_cj_d', '汝南': 'yuan_cj_d',
-        '河间': 'hejian', '河间郡': 'hejian', '乐成': 'hejian',
-        '先登死士': 'hejian', '麴义': 'hejian', '界桥': 'hejian',
-        '轵国': 'zhi_state', '轵': 'zhi_state', '野王': 'zhi_state', '轵关': 'zhi_state', '太行飞军': 'zhi_state',
-        '穆氏': 'mushi', '大岴': 'mushi', '穆陵关': 'mushi', '丘穆陵骑': 'mushi',
-        '蔡': 'cai', '新蔡': 'cai',
-        '乌桓': 'wuhuan', '乌桓突骑': 'wuhuan', '白狼山': 'wuhuan',
-        '摧锋军': 'duanzhou_d', '马暨': 'duanzhou_d', '马塈': 'duanzhou_d', '端州': 'duanzhou_d',
-        '广州': 'guangzhou', '番禺': 'guangzhou',
-        '清海军': 'guangzhou', '刘隐': 'guangzhou',
-        '南越': 'nanyue', '南越国': 'nanyue', '赵佗': 'nanyue', '龙川': 'nanyue',
-        '塞尔柱': 'seljuq', '桑贾尔': 'seljuq', '木鹿': 'seljuq', '梅尔夫': 'seljuq', '桑贾尔禁卫': 'seljuq',
-
-        // ── 2026-05-25 新增：隋朝核对追加势力 ──
-        '瓦岗': 'wazhai', '瓦岗军': 'wazhai', '李密': 'wazhai', '魏公': 'wazhai', '洛口仓': 'wazhai',
-        '窦建德': 'doujiande', '夏王': 'doujiande', '河北义军': 'doujiande', '乐寿': 'doujiande',
-        '刘武周': 'liuwuzhou', '定杨': 'liuwuzhou', '马邑': 'liuwuzhou',
-        '梁师都': 'liangshidu', '梁帝': 'liangshidu', '朔方': 'liangshidu', '解事天子': 'liangshidu',
-        '罗艺': 'luoyi', '燕王': 'luoyi', '渔阳': 'luoyi', '幽燕': 'luoyi',
-        '林士弘': 'linshihong', '楚帝': 'linshihong', '豫章': 'linshihong',
-        '杜伏威': 'dufuwei', '楚王': 'dufuwei', '历阳': 'dufuwei',
-        '库莫奚': 'kumo', '奚': 'kumo', '奚族': 'kumo', '松漠': 'kumo', '饶乐': 'kumo',
-        '西突厥': 'xijue', '统叶护': 'xijue', '十箭': 'xijue', '千泉': 'xijue',
-        '冼': 'xian_d', '冼夫人': 'xian_d', '高凉冼氏': 'xian_d', '高凉': 'xian_d',
-        '薛举': 'xiqin', '西秦': 'xiqin', '薛仁果': 'xiqin', '金城': 'xiqin',
-
-        // ── 2026-05-25 新增：唐朝核对追加势力 ──
-        '薛延陀': 'xueyantuo', '薛延陀汗国': 'xueyantuo', '薛延': 'xueyantuo',
-        '突骑施': 'tujishi', '突骑施汗国': 'tujishi', '突骑': 'tujishi',
-        '南诏': 'nanzhao', '南诏国': 'nanzhao', '蒙舍诏': 'nanzhao', '皮逻阁': 'nanzhao', '蒙舍城': 'nanzhao',
-        '高昌': 'gaochang', '高昌国': 'gaochang', '交河': 'gaochang', '高昌壁': 'gaochang', '麴文泰': 'gaochang',
-        '黠戛斯': 'xiajiasi', '坚昆': 'xiajiasi', '黠戛斯汗国': 'xiajiasi', '黠戛': 'xiajiasi',
-        '小勃律': 'xiaobolu', '勃律': 'xiaobolu',
-        '大食': 'dashi', '大食国': 'dashi', '白衣大食': 'dashi', '黑衣大食': 'dashi',
-        '李希烈': 'lixilie', '淮西': 'lixilie', '蔡州': 'lixilie', '建兴王': 'lixilie',
-        '魏博': 'tianxiong', '魏博节度': 'tianxiong', '魏州': 'tianxiong',
-        '天雄军': 'tianxiong', '卢象升': 'tianxiong', '大名': 'tianxiong', '贾庄': 'tianxiong',
-        '邯郸坚兵': 'zhao', '赵武灵王': 'zhao', '廉颇': 'zhao',
-        '幽州突骑': 'yan', '幽州': 'yan',
-        '辽东铁骑': 'gongsun_d', '公孙度': 'gongsun_d',
-        '黑槊龙骧': 'shizhao_d', '黑槊龙骧军': 'shizhao_d', '石勒': 'shizhao_d',
-        '苍头军': 'yunzhong',
-        '虎纹突骑': 'tuoba', '拓跋焘': 'tuoba',
-        '宿卫虎贲': 'yuwen', '武川镇': 'yuwen', '武川镇军': 'yuwen',
-        '六镇戍兵': 'erzhu', '六镇': 'erzhu',
-        '百保鲜卑': 'gaoqi_d', '百保': 'gaoqi_d',
-        '黄龙兵': 'yingzhou_ying_d', '高宝宁': 'yingzhou_ying_d', '营州': 'yingzhou_ying_d',
-        '两池军': 'chile', '高洋': 'chile',
-        // murong → deleted
-        '曳落河': 'zhuozhou', '安禄山': 'zhuozhou', '范阳': 'zhuozhou',
-        '鸦儿军': 'shatuo', '李克用': 'shatuo',
-        '朔方军': 'lingwu', '郭子仪': 'lingwu', '李光弼': 'lingwu', '灵武': 'lingwu', '回乐': 'lingwu',
-        '定襄': 'dingxiang_d', '李靖': 'dingxiang_d', '恶阳岭': 'dingxiang_d', '恶阳骑': 'dingxiang_d',
-        '恒州弩手': 'zhongshan', '颜杲卿': 'zhongshan',
-        '裘甫': 'qiufu', '浙东': 'qiufu', '剡县': 'qiufu',
-
-        // ── 2026-05-25 五代十国势力 ──
-        '东丹': 'dongdan', '东丹国': 'dongdan', '耶律倍': 'dongdan', '渤海': 'dongdan',
-        '大理': 'dali', '大理国': 'dali', '段思平': 'dali', '段氏': 'dali', '羊苴咩': 'dali',
-        '罗甸': 'luodian', '罗甸国': 'luodian', '大方': 'luodian',
-        '回鹘': 'huige', '回纥': 'huige', '甘州回鹘': 'huige',
-        '党项': 'dangxiang', '拓跋': 'dangxiang', '夏州': 'dangxiang',
-        '嵬名': 'weiming', '嵬名氏': 'weiming', '西夏皇族': 'weiming', '黑水城': 'weiming',
-        '野利': 'yeli', '野利氏': 'yeli', '克夷门': 'yeli',
-        '突厥': 'tujue', '阿史那': 'tujue', '金山': 'tujue',
-        '阿史那氏': 'ashina', '阿史那家族': 'ashina', '土门可汗': 'ashina',
-        '夫余': 'fuyu', '夫余国': 'fuyu', '农安': 'fuyu',
-
-
-        // ── 2026-05-25 北宋辽金势力 ──
-        '唃厮啰': 'gusiluo', '唃厮啰政权': 'gusiluo', '廓州': 'gusiluo', '贵德': 'gusiluo', '古斯罗': 'gusiluo', '唃厮': 'gusiluo',
-        '高句': 'gaogouli', '高句丽': 'gaogouli', '丸都': 'gaogouli',
-        '玄菟': 'xuantu', '玄菟郡': 'xuantu', '国内城': 'xuantu',
-        '高丽': 'goryeo', '王氏高丽': 'goryeo', '高丽王朝': 'goryeo', '开京': 'goryeo', '开城': 'goryeo',
-        '镜城': 'jingcheng_d', '笼耳': 'jingcheng_d', '笼耳县': 'jingcheng_d',
-        '忠州': 'chungju_d', '忠州牧': 'chungju_d', '国原城': 'chungju_d', '大原城': 'chungju_d', '薮原城': 'chungju_d', '中原京': 'chungju_d',
-        '罗州': 'naju_d', '罗州牧': 'naju_d', '锦城': 'naju_d', '发罗郡': 'naju_d', '通义县': 'naju_d',
-        '彭氏': 'pengshi', '沅陵': 'pengshi', '月支': 'chen3', '月支国': 'chen3', '大木岳': 'chen3',
-        '沙伐': 'sabeol', '沙伐国': 'sabeol', '三白': 'sabeol', '尚州': 'sabeol',
-        '申国': 'shen', '申侯': 'shen', '安康': 'shen',
-        '安阳': 'anyang_wangze', '王则': 'anyang_wangze', '贝州': 'anyang_wangze',
-        '大南': 'nongzhigao', '侬智高': 'nongzhigao', '南天国': 'nongzhigao', '邕州': 'nongzhigao',
-        '方腊': 'fangla', '方腊起义': 'fangla', '清溪': 'fangla', '明教': 'fangla', '摩尼': 'fangla', '方': 'fangla',
-
-        // ── 2026-05-25 北宋辽金势力 v2 ──
-        '钟相': 'zhongxiang', '杨幺': 'zhongxiang', '钟相杨幺': 'zhongxiang', '大圣天王': 'zhongxiang',
-        '鼎州': 'zhongxiang', '武陵': 'zhongxiang', '天子冈': 'zhongxiang', '洞庭': 'zhongxiang',
-        '杨安儿': 'yang_aner', '天顺': 'yang_aner', '登州': 'yang_aner', '蓬莱': 'yang_aner',
-        '德寿': 'deshou', '身圣': 'deshou', '信州': 'deshou',
-        '李旺': 'liwang', '胶西': 'liwang', '胶县': 'liwang',
-
-        // ── 2026-05-25 元朝蒙古势力 ──
-        // 第一类：西征摧毁政权
-        '花剌子模': 'huarazim', '花剌子模帝国': 'huarazim', '撒马尔干': 'huarazim', '撒马尔罕': 'huarazim', '玉龙杰赤': 'huarazim', '乌尔达赤': 'huarazim', '花剌': 'huarazim',
-        '毡的': 'yettishar', '哲德': 'yettishar',
-        '咸海': 'xianhai', '养吉干': 'xianhai',
-        '木剌夷': 'mulayi', '亦思马因派': 'mulayi', '阿剌模忒': 'mulayi', '阿剌模忒堡': 'mulayi', '木剌': 'mulayi',
-        '蒲甘': 'pagan', '蒲甘王朝': 'pagan', '缅国': 'pagan', '江头城': 'pagan',
-        '占城': 'zhancheng', '阇槃': 'zhancheng', '占婆': 'champa', '美山': 'champa', '占城港': 'champa', '归仁': 'champa',
-        '东夏': 'dongxia', '东夏国': 'dongxia', '大真': 'dongxia', '大真国': 'dongxia', '蒲鲜万奴': 'dongxia', '城子山': 'dongxia',
-        // 第二类：四大汗国
-        '察合台': 'chagatai', '察合台汗国': 'chagatai', '阿力麻里': 'chagatai', '察合': 'chagatai',
-        '窝阔台': 'ogodei', '窝阔台汗国': 'ogodei', '也迷里': 'ogodei', '窝阔': 'ogodei',
-        '伊儿汗': 'ilkhanate', '伊儿汗国': 'ilkhanate', '旭烈兀': 'ilkhanate', '玛拉固阿': 'ilkhanate', '伊儿': 'ilkhanate',
-        // 第三类：蒙古草原部落
-        '克烈': 'kereyid', '克烈部': 'kereyid', '黑林': 'kereyid', '土兀剌河': 'kereyid',
-        '乃蛮': 'naiman', '乃蛮部': 'naiman', '科布多': 'naiman', '阿勒台山': 'naiman',
-        '塔塔儿': 'tatar', '塔塔儿部': 'tatar', '哈拉哈河': 'tatar', '贝尔湖': 'tatar', '塔塔': 'tatar', '塔塔尔': 'tatar',
-        '蔑儿乞': 'merkit', '蔑儿乞部': 'merkit', '薛良格河': 'merkit', '色楞格': 'merkit', '蔑乞': 'merkit',
-        '汪古': 'ongut', '汪古部': 'ongut', '阴山': 'ongut',
-        '斡亦剌': 'oirat', '斡亦剌部': 'oirat', '林木中百姓': 'oirat', '谦河': 'oirat', '斡剌': 'oirat',
-        // 第四类：汉军世侯及元末军阀
-        '张柔': 'zhang_clan', '张弘范': 'zhang_clan', '顺天': 'zhang_clan',
-        '刘伯林': 'liu_clan2', '刘黑马': 'liu_clan2', '平阳刘氏': 'liu_clan2',
-        '孛罗': 'boluo', '孛罗帖木儿': 'boluo', '大同孛罗': 'boluo',
-        // 第五类：元末起义政权
-        '红巾军': 'xushouhui', '徐寿辉': 'xushouhui', '天完': 'xushouhui', '蕲春': 'xushouhui', '蕲水': 'xushouhui',
-        '韩山童': 'xushouhui', '刘福通': 'xushouhui',
-        '亳州': 'cao_d', '谯县': 'cao_d', '谯都': 'cao_d',
-        '颍州': 'yingzhou_d', '汝阴': 'yingzhou_d', '顺昌': 'yingzhou_d',
-        '郾城': 'yanchuan_d', '郾': 'yanchuan_d',
-        '潢川': 'huang_d', '光州': 'huang_d',
-        '武胜关': 'yiyang_d', '义阳': 'yiyang_d', '义阳三关': 'yiyang_d',
-        '雍丘': 'qiguo_d', '杞': 'qiguo_d',
-        '蒙城': 'mengcheng_d', '山桑': 'mengcheng_d', '山桑县': 'mengcheng_d',
-        '宛丘': 'huaiyang', '淮阳': 'huaiyang',
-        '永城': 'guide_d', '归德': 'guide_d', '芒砀': 'panjun',
-        '虞城': 'dang_d', '砀': 'dang_d', '砀郡': 'dang_d',
-        '昆阳': 'lulin', '绿林': 'lulin', '王匡': 'lulin', '王凤': 'lulin',
-        '蚌埠': 'hao_d', '濠州': 'hao_d', '濠': 'hao_d', '钟离': 'hao_d',
-        '聊城': 'bozhou_d', '博州': 'bozhou_d', '博': 'bozhou_d',
-        '张士诚': 'zhangshicheng', '大周': 'zhangshicheng', '高邮': 'zhangshicheng', '周王': 'zhangshicheng',
-        '罗平国': 'luoping', '林桂芳': 'luoping', '欧南喜': 'luoping', '新会': 'luoping',
-        '大兴国': 'daxing', '杨镇龙': 'daxing', '宁海': 'daxing',
-        '陈吊眼': 'chendiaoyan', '畲族': 'chendiaoyan', '漳州': 'chendiaoyan',
-
-        // ── 2026-05-25 明朝势力 ──
-        // 第二类：元末群雄
-        '方国珍': 'fang_guozhen', '庆元': 'fang_guozhen', '台州': 'fang_guozhen', '温州': 'fang_guozhen',
-        // 第三类：农民起义
-        '南阳材官': 'dixiang', '张绣': 'dixiang', '宛': 'dixiang',         '邓茂七': 'dengmaoqi', '铲平王': 'dengmaoqi', '沙县': 'dengmaoqi', '延平': 'dengmaoqi', '建宁': 'dengmaoqi',
-        '叶宗留': 'yezongliu', '太平国': 'yezongliu', '处州': 'yezongliu', '陈鉴胡': 'yezongliu',
-        // 第四类：藩王叛乱
-        '朱高煦': 'zhu_gaoxu', '汉王叛': 'zhu_gaoxu', '乐安': 'zhu_gaoxu', '武定州': 'zhu_gaoxu',
-        // 第五类：边疆民族
-        '鞑靼': 'dada_ming', '俺答': 'dada_ming', '河套': 'dada_ming', '丰州': 'dada_ming',
-        '瓦剌': 'wala', '卫拉': 'oirat_ming', '也先': 'oirat_ming', '明瓦剌': 'oirat_ming',
-        '兀良哈猎兵': 'wuliangha', '兀良哈': 'wuliangha', '乌梁海': 'wuliangha', '唐努山': 'wuliangha', '朵颜': 'wuliangha', '泰宁': 'wuliangha', '福余': 'wuliangha',
-        '建州女真': 'jianzhou_nvzhen', '建州': 'jianzhou_nvzhen', '苏子河': 'jianzhou_nvzhen', '婆猪江': 'jianzhou_nvzhen',
-        '海西女真': 'haixi_nvzhen', '扈伦': 'haixi_nvzhen', '乌拉': 'haixi_nvzhen', '叶赫': 'haixi_nvzhen', '呼兰河': 'haixi_nvzhen',
-        '野人女真': 'yeren_nvzhen', '东海女真': 'yeren_nvzhen', '瑷珲': 'yeren_nvzhen', '黑龙江': 'yeren_nvzhen',
-
-        // ── 2026-05-26 新增：满洲贵族世家 ──
-        '佟佳': 'tunggiya', '佟佳氏': 'tunggiya', '佟半朝': 'tunggiya', '佟佳江': 'tunggiya',
-        '富察': 'fuca', '富察氏': 'fuca', '沙济': 'fuca', '沙济城': 'fuca', '傅恒': 'fuca', '孝贤': 'fuca',
-        '钮祜禄': 'niohuru', '钮祜禄氏': 'niohuru', '英额': 'niohuru', '英额城': 'niohuru', '额亦都': 'niohuru', '和珅': 'niohuru',
-        '赫舍里': 'heseri', '赫舍里氏': 'heseri', '索尼': 'heseri', '索额图': 'heseri', '绥芬河': 'heseri',
-        '瓜尔佳': 'guwalgiya', '瓜尔佳氏': 'guwalgiya', '苏完': 'guwalgiya', '苏完部': 'guwalgiya', '鳌拜': 'guwalgiya',
-        '大氏': 'da_shi', '渤海王族': 'da_shi', '大祚荣': 'da_shi', '东牟山': 'da_shi',
-
-        '麓川': 'luchuan', '思任发': 'luchuan', '思伦发': 'luchuan', '腾冲': 'luchuan',
-        '大藤峡': 'datengxia', '侯大苟': 'datengxia', '断藤峡': 'datengxia', '瑶壮': 'datengxia',
-        '哈密': 'yiwu', '哈密卫': 'yiwu',
-        '赤斤': 'chijin', '赤斤蒙古': 'chijin', '赤金堡': 'chijin',
-        '沙州': 'shazhou', '沙州卫': 'shazhou', '敦煌': 'shazhou',
-        '归义军': 'guiyi', '张议潮': 'guiyi', '玉门关': 'guiyi',
-        '安定卫': 'anding_wei', '安定蒙古': 'anding_wei',
-        // 第六类：周边国家
-        '安南': 'annam_ho', '胡朝': 'annam_ho', '黎氏': 'annam_ho', '交阯': 'annam_ho', '升龙': 'annam_ho', '河内': 'annam_ho',
-        '李朝': 'joseon', '李成桂': 'joseon', '汉城': 'joseon', '汉阳': 'joseon', '义兴亲军卫': 'joseon',
-        '暹罗': 'siam', '阿瑜陀耶': 'siam',
-
-        // ── 2026-06-11 中原远征精锐（§1 共 13 支）──
-        '玄甲军': 'tang', '李世民': 'tang', '玄甲骑': 'tang',
-        '魏武卒': 'wei', '吴起': 'wei',
-        '秦之锐士': 'qin', '秦锐士': 'qin', '白起': 'qin', '司马错': 'qin',
-        '齐之技击': 'qi', '技击': 'qi', '田忌': 'qi', '孙膑': 'qi',
-        '江东子弟': 'xichu', '八千子弟兵': 'xichu', '项羽': 'xichu', '彭城': 'xichu',
-        '虎豹骑': 'cao_d', '曹纯': 'cao_d', '曹真': 'cao_d',
-        '乞活军': 'ranwei_d', '冉闵': 'ranwei_d',
-        '控鹤军': 'wuzhou_d', '武则天': 'wuzhou_d',
-        '皂衣队': 'fushi', '苻坚': 'fushi',
-        '商王射士': 'shang', '三百射': 'shang',
-        '岐阳周师': 'zhou', '虎贲三千': 'zhou', '岐阳': 'zhou',
-        '虎贲军': 'han_d', '南郑': 'han_d', '刘邦': 'han_d',
-        '夏后亲卫': 'xiezhou', '安邑': 'xiezhou', '解县弩手': 'xiezhou',
-        '骁果军': 'sui', '骁果': 'sui', '司马德戡': 'sui', '宇文化及': 'sui',
-
-        // ── 2026-06-11 南方远征精锐（§9 共 12 支）──
-        '申息之师': 'chu', '申息': 'chu',
-        '解烦兵': 'sunwu_d', '解烦': 'sunwu_d',
-        '黑云长剑都': 'nantang_d', '黑云长剑': 'nantang_d',
-        '北府兵': 'zhong', '北府': 'zhong', '谢玄': 'zhong', '刘牢之': 'zhong',
-        '扬州义兵': 'hongguang', '史可法': 'hongguang', '弘光四镇': 'hongguang', '高杰': 'hongguang', '刘良佐': 'hongguang', '黄得功': 'hongguang', '刘泽清': 'hongguang',
-        '闽国亲从': 'min', '王审知': 'min',
-        '逍遥津死士': 'lu', '张辽': 'lu', '庐州': 'lu',
-        '无为': 'wuwu_d', '濡须口': 'wuwu_d', '濡须': 'wuwu_d',
-        '巴渝劲卒': 'ba', '巴蔓子': 'ba', '重庆': 'ba',
-        '兴戎军': 'hezhou', '钓鱼城': 'hezhou', '合州': 'hezhou', '王坚': 'hezhou',
-        '韩卒击刹': 'han',
-        '睢阳戍卒': 'liang_d', '梁国': 'liang_d', '张巡': 'liang_d',
-        '靖江': 'jingjiang', '静江': 'xinjiang', '始安': 'xinjiang', '马塈': 'xinjiang',
-        '楼兰戍': 'loulan', '扜泥城': 'loulan',
-        '苑川突骑': 'qifu_d', '苑川': 'qifu_d',
-        '碎叶镇军': 'ashina', '碎叶城': 'xiliao', '碎叶': 'xiliao', '屈耽': 'xiliao',
-        '斡耳朵亲卫': 'xiliao', '虎思': 'xiliao', '八剌沙衮': 'xiliao',
-        '清海军': 'guangzhou', '刘隐': 'guangzhou',
-        '白袍军': 'xiao_d', '陈庆之': 'xiao_d',
-        '背嵬军': 'yue_d', '背嵬': 'yue_d', '岳飞': 'yue_d', '岳云': 'yue_d',
-        '中兴护军': 'song', '韩世忠': 'song', '克敌军': 'song',
-        '忠顺军': 'zaoyang_d', '孟珙': 'zaoyang_d', '孟宗政': 'zaoyang_d', '枣阳': 'zaoyang_d', '舂陵': 'zaoyang_d',
-        '游奕军': 'qian_d', '踏白军': 'qian_d',
-        '明军三大营': 'ming_d', '三大营': 'ming_d', '五军营': 'ming_d', '神机营': 'ming_d', '三千营': 'ming_d',
-        '戚家军': 'qi_d', '戚继光': 'qi_d', '戚': 'qi_d', '横屿': 'qi_d', '横屿大捷': 'qi_d',
-        '督标秦军': 'sunqin', '秦兵': 'sunqin', '孙传庭': 'sunqin', '潼津': 'sunqin',
-        '朵颜三卫': 'wuliangha',
-        '白杆兵': 'tujia_d', '秦良玉': 'tujia_d', '石柱': 'tujia_d',
-        '王江泾': 'zhuang_d',
-        '红袄军': 'lai', '杨安儿': 'lai', '青石关': 'lai',
-        '济南卫': 'jinan', '铁铉': 'jinan', '历下': 'jinan',
-        '锦帆贼': 'wu', '甘宁': 'wu',
-        '八字军': 'wangyan', '王彦': 'wangyan', '飞狐': 'wangyan', '太行': 'wangyan',
-        '宣毅军': 'huan', '范仲淹': 'huan', '环州': 'huan', '环庆': 'huan',
-        '神臂营': 'qingyuan_bd', '神臂弓': 'qingyuan_bd', '神臂': 'qingyuan_bd',
-
-        // ── 2026-06-11 岭南远征精锐（§10 共 10 支）──
-        '广西狼兵': 'zhuang_d', '俍兵': 'zhuang_d', '狼兵': 'zhuang_d', '瓦氏夫人': 'zhuang_d',
-        '俚人武士': 'xian_d', '冼夫人卫队': 'xian_d',
-        '白藤江水师': 'dayue', '安南神武军': 'dayue', '神武军': 'dayue',
-        '铁突军': 'jing', '陈兴道': 'jing',
-        '圣翊军': 'trinh',
-        '西山军': 'nguyen_guangnan', '阮惠': 'nguyen_guangnan', '光中': 'nguyen_guangnan',
-        '黑旗军': 'panjun', '刘永福': 'panjun',
-        '那霸水师': 'ryukyu', '琉球水师': 'ryukyu',
-        '郑氏铁人军': 'ming_zheng', '铁人军': 'ming_zheng',
-        '出草勇士': 'paiwan',
-
-        // ── 2026-06-11 滇缅远征精锐（≥10 条；辞典具名）──
-        '南诏罗苴子': 'nanzhao', '罗苴子': 'nanzhao',
-        '大理白军': 'dali',
-        '汉达瓦底': 'hantawadi', '莽应龙': 'hantawadi', '莽应': 'hantawadi',
-        '南都象阵': 'dongxu', '勃固城': 'dongxu', '勃固': 'dongxu',
-        '贡榜卡塞骑': 'konbaung', '贡榜': 'konbaung', '卡塞骑': 'konbaung', '瑞波': 'konbaung',
-        '皇家象骑兵': 'siam', '阿瑜陀耶象骑': 'siam',
-        '蒲甘战象军': 'pagan', '蒲甘象军': 'pagan',
-        '骠国巨象阵': 'pyu', '骠国乐': 'pyu',
-        '占婆国水师': 'champa', '占婆水师': 'champa',
-        '双弓弩象营': 'chenla', '弩象营': 'chenla', '吴哥象营': 'chenla',
-        '麓川百夷象兵': 'luchuan', '百夷象兵': 'luchuan', '勐卯': 'luchuan',
-        '真腊': 'chenla', '吴哥': 'chenla',
-        '苏门答剌': 'sumatra', '苏门答腊': 'sumatra',
-        '爪哇': 'majapahit', '满者伯夷': 'majapahit',
-        '渤泥': 'brunei', '文莱': 'brunei',
-        '三佛齐': 'srivijaya', '室利佛逝': 'srivijaya', '旧港': 'srivijaya', '巨港': 'srivijaya', '施进卿': 'srivijaya',
-
-        // 2026-05-25 两晋核对追加势力
-        // murong → deleted
-        // murong → deleted
-        '龙城': 'yingzhou_ying_d', '朝阳': 'yingzhou_ying_d',
-        '尔朱': 'erzhu', '尔朱荣': 'erzhu', '尔朱兆': 'erzhu', '尔朱氏': 'erzhu',
-        '契胡': 'erzhu', '秀容川': 'erzhu', '秀容': 'erzhu',
-        '陈': 'chen', '陈霸先': 'chen', '陈武帝': 'chen', '陈朝': 'chen',
-        '韶关': 'shaozhou', '曲江': 'shaozhou', '始兴': 'shixing', '始兴郡': 'shixing',
-        '张镇孙': 'shaozhou', '大庾岭义旅': 'shaozhou', '大庾岭': 'shaozhou',
-
-        // ── 2026-05-25 明清之际势力 ──
-        // 第一类：明末农民军
-        '大顺': 'dashun', '李自成': 'dashun', '闯王': 'dashun', '顺军': 'dashun',
-        '大西': 'daxi_ming', '张献忠': 'daxi_ming', '八大王': 'daxi_ming', '西军': 'daxi_ming',
-        // 第二类：南明五政权
-        '弘光': 'hongguang', '朱由崧': 'hongguang', '福王': 'hongguang', '南京': 'hongguang',
-        '隆武': 'longwu', '朱聿键': 'longwu', '唐王': 'longwu', '福州': 'longwu',
-        '鲁监国': 'lujian', '朱以海': 'lujian', '绍兴': 'lujian',
-
-        '毛文龙': 'mao_wenlong', '东江镇': 'mao_wenlong', '皮岛': 'mao_wenlong',
-        // 第三类：蒙古诸部
-        '察哈尔': 'chahar', '林丹汗': 'chahar', '插汉': 'chahar', '察哈': 'chahar',
-        '喀尔喀': 'khalkha', '土谢图': 'khalkha', '札萨克图': 'khalkha', '车臣': 'khalkha', '喀喀': 'khalkha',
-        '准噶尔': 'dzungar', '噶尔丹': 'dzungar', '策妄': 'dzungar', '阿睦尔撒纳': 'dzungar', '伊犁': 'dzungar', '准噶': 'dzungar',
-        // 第四类：西北/青藏
-        '和硕特': 'khoshut', '固始汗': 'khoshut', '西宁': 'khoshut', '和硕': 'khoshut',
-        '叶尔羌': 'yarkand', '叶尔羌汗国': 'yarkand', '叶尔羌老城': 'yarkand', '叶羌': 'yarkand',
-        '莎车': 'shache', '莎车国': 'shache',
-        '回部': 'khoja', '大小和卓': 'khoja', '波罗尼都': 'khoja', '霍集占': 'khoja', '喀什噶尔': 'khoja',
-        '噶厦': 'gaxa', '达赖': 'gaxa', '拉萨': 'gaxa',
-        // 第五类：西南土司
-        '大金川': 'jinchuan_g', '莎罗奔': 'jinchuan_g', '勒乌围': 'jinchuan_g', '索诺木': 'jinchuan_g', '金川': 'jinchuan_g',
-        '小金川': 'jinchuan_x', '僧格桑': 'jinchuan_x', '美诺': 'jinchuan_x', '小川': 'jinchuan_x',
-        '班禅': 'panchen', '日喀则': 'panchen', '札什伦布': 'panchen',
-        // 第六类：三藩之乱
-        '吴三桂': 'wusangui', '周军': 'wusangui', '吴周': 'wusangui',
-        '耿精忠': 'geng', '靖南': 'geng',
-        // 第七类：清代起义
-        '林爽文': 'shuntian', '彰化': 'shuntian',
-        '白莲教': 'bailian', '白莲': 'bailian', '王聪儿': 'bailian',
-        '天理教': 'tianli', '李文成': 'tianli', '林清': 'tianli', '滑县': 'tianli',
-        '苗民': 'miaomin', '石三保': 'miaomin', '平陇': 'miaomin', '乾嘉苗变': 'miaomin',
-        // 第八类：亚洲外国
-        '廓尔喀': 'gurkha', '尼泊尔': 'gurkha', '加德满都': 'gurkha', '廓喀': 'gurkha',
-        '夏顿': 'xiadun', '廷布': 'xiadun', '布鲁克巴': 'xiadun', '不丹': 'xiadun', '夏仲': 'xiadun',
-        '哈萨克': 'kazakh', '哈萨克汗国': 'kazakh', '哈萨': 'kazakh',
-        '霍罕': 'kokand', '浩罕': 'kokand', '浩罕汗国': 'kokand',
-        '巴达克山': 'badakhshan', '达克': 'badakhshan',
-
-        // ── 2026-05-25 晚清／近代势力 ──
-        // 第一类：农民革命政权
-        '太平天国': 'taiping', '洪秀全': 'taiping', '天军': 'taiping', '天京': 'taiping',
-        '大成国': 'dacheng', '陈开': 'dacheng', '李文茂': 'dacheng', '秀京': 'dacheng', '浔州': 'dacheng',
-        '大明国': 'daming', '小刀会': 'daming', '刘丽川': 'daming', '上海': 'daming',
-        '捻军大汉': 'panjun', '张乐行': 'panjun', '雉河集': 'panjun',
-        '李蓝大汉': 'han_dadian', '李永和': 'han_dadian', '蓝朝鼎': 'han_dadian', '洋县': 'han_dadian',
-        '湖北军政府': 'republic', '辛亥革命': 'republic', '革命军': 'republic', '武昌起义': 'republic',
-        // 第二类：少数民族起义
-        '平南国': 'pingnan', '杜文秀': 'pingnan',
-        '陕甘回民': 'huimin', '马化龙': 'huimin', '马占鳌': 'huimin', '金积堡': 'huimin',
-        '白旗起义': 'qianhui', '黔西南回军': 'qianhui', '张凌翔': 'qianhui',
-        '苗民起义': 'miao_qing', '张秀眉': 'miao_qing', '台拱': 'miao_qing', '苗军': 'miao_qing',
-        // 第三类：新疆同治割据
-        '热西丁': 'rexidin', '黄和卓': 'rexidin', '库车': 'rexidin',
-        '妥明': 'tuoming', '妥得璘': 'tuoming', '乌鲁木齐': 'tuoming', '清真王': 'tuoming',
-        '和田': 'xiye', '西夜国': 'xiye',
-        '迈孜木杂特': 'maizanik', '惠远': 'maizanik', '伊犁苏丹': 'maizanik',
-        '金相印': 'jinsi', '思的克': 'jinsi', '回庄': 'jinsi',
-        // 第四类：蒙古/土司/地方武装
-        '苗沛霖': 'nian_family', '捻军': 'nian_family', '寿州': 'nian_family',
-        // 第五类：外国
-        '阮朝': 'nguyen', '顺化': 'nguyen',
-
-        // ── 2026-05-25 日本北海道势力 ──
-        '蛎崎': 'kakizaki', '蛎崎氏': 'kakizaki', '胜山馆': 'kakizaki', '松前': 'kakizaki',
-
-        // ── 2026-05-25 奥州藤原氏 ──
-        '藤原': 'fujiwara', '藤原氏': 'fujiwara', '奥州': 'fujiwara', '柳之御所': 'fujiwara', '平泉': 'fujiwara',
-
-        // ── 2026-05-25 日本势力重组 ──
-        '邪马台国': 'yamatai', '邪马台': 'yamatai', '吉野里': 'yamatai', '邪马': 'yamatai',
-        '德川': 'edo', '德川幕府': 'edo', '江户': 'edo',
-        '异国警固': 'zhuqian', '异国警固番役': 'zhuqian', '石筑地': 'zhuqian',
-        '太宰府': 'zhuqian', '筑前': 'zhuqian', '警固番役': 'zhuqian', '福冈': 'zhuqian', '福冈城': 'zhuqian',
-        '书院番': 'edo', '小姓组': 'edo', '两番': 'edo',
-        '北条': 'hojo_d', '北条氏': 'hojo_d', '小田原': 'hojo_d', '风魔党': 'hojo_d',
-        '伊贺': 'iga_d', '伊贺众': 'iga_d', '甲贺众': 'iga_d', '名张': 'iga_d', '服部': 'iga_d',
-        '加贺': 'kaga_d', '前田': 'kaga_d', '前田氏': 'kaga_d', '金泽': 'kaga_d', '江沼': 'kaga_d',
-        '伊达': 'date_d', '伊达氏': 'date_d', '仙台': 'date_d', '陆前': 'date_d',
-        '肥后': 'higo_d', '熊本': 'higo_d',
-        '伊予': 'iyo_d', '松山': 'iyo_d',
-        '大友': 'otomo_d', '大友氏': 'otomo_d', '府内': 'otomo_d', '丰后': 'otomo_d',
-        '诹访': 'suwa_d', '诹访氏': 'suwa_d', '高岛': 'suwa_d', '诹访神党': 'suwa_d',
-        '毛利氏': 'aki', '毛利': 'aki', '吉田郡山城': 'aki', '安艺': 'aki',
-        '武田': 'kai', '武田氏': 'kai', '躑躅崎馆': 'kai', '甲斐': 'kai',
-        '织田': 'owari', '织田氏': 'owari', '清洲': 'owari', '尾张': 'owari',
-        '长宗我部': 'chosokabe', '长宗我部氏': 'chosokabe', '冈丰城': 'chosokabe', '长宗': 'chosokabe', '土佐': 'chosokabe',
-        '上杉': 'echigo', '上杉氏': 'echigo', '春日山': 'echigo', '越后': 'echigo',
-        '大仓御所': 'kamakura',
-        '岛津氏': 'satsuma', '岛津': 'satsuma', '内城': 'satsuma', '萨摩': 'satsuma',
-        '金石城': 'so', '对马': 'so',
-        '尼子': 'izumo', '尼子氏': 'izumo', '月山富田城': 'izumo', '出云': 'izumo',
-// ── 2026-05-25 羽柴/本多/会津 ──
-'羽柴': 'hashiba', '羽柴氏': 'hashiba', '丰臣': 'hashiba', '丰臣氏': 'hashiba', '姬路城': 'hashiba',
-'本多': 'honda', '本多氏': 'honda', '宇都宫城': 'honda', '下野': 'honda',
-'会津': 'aizu', '会津氏': 'aizu', '鹤之城': 'aizu',
-// ── 2026-05-28 南部/陆奥 ──
-'南部': 'nanbu', '陆奥': 'nanbu',
-        // ── 2026-05-25 大韩/朝鲜 ──
-        '朝鲜王朝': 'joseon',
-        '平壤': 'gaogouli', '平壤城': 'gaogouli', '高句丽铁骑': 'gaogouli',
-        '珍岛': 'sambyeol', '三别抄': 'sambyeol', '裴仲孙': 'sambyeol',
-        '升州': 'sheng_d', '升州牧': 'sheng_d', '升州束伍军': 'sheng_d', '束伍军': 'sheng_d',
-        '锦州': 'jinzhou', '锦州卫': 'jinzhou', '锦': 'jinzhou', '李成梁': 'jinzhou',
-        '忠孝军': 'qing', '完颜陈和尚': 'qing',
-        '铁浮图': 'jurchen', '猛安谋克': 'dajin',
-        '夫余步骑': 'fuyu', '黄龙府': 'fuyu',
-        '关宁铁骑': 'zu_d', '辽东铁骑': 'jinzhou', '东江军': 'mao_wenlong',
-        '巴牙喇': 'aisin_d', '爱新': 'aisin_d', '爱新觉罗': 'aisin_d',
-        '白甲兵': 'manzhou', '白摆牙喇': 'manzhou', '萨尔浒': 'manzhou',
-        '八旗军': 'manzhou', '多铎': 'manzhou_d',
-        '索伦兵': 'hezhe', '黑龙江水师': 'aola', '神贲禁卫': 'bohai',
-        '皮室军': 'liao_d', '斡鲁朵': 'yel', '临潢府': 'liao_d', '上京': 'liao_d',
-        '怯薛': 'menggu_d', '怯薛歹': 'menggu_d',
-        '那可儿': 'borjigin', '探马赤': 'ogodei', '秃鲁花': 'yuan_d',
-        '鸣镝骑': 'xiongnu', '控弦': 'xiongnu', '控弦之士': 'xiongnu',
-        '附离': 'tujue', '附离亲卫': 'tujue', '狼卫': 'tujue',
-        '回鹘铁骑': 'huige', '毗伽近卫': 'huige', '毗伽': 'huige',
-        '沙陀铁骑': 'shatuo', '弹汗山': 'xianbei',
-        '柔然铁骑': 'rouran', '瓦剌铁骑': 'wala',
-
-        // ── 2026-05-25 兴辽(大延琳) ──
-        '兴辽': 'xingliao', '兴辽国': 'xingliao', '大延琳': 'xingliao', '龙湾': 'xingliao',
-
-        // ── 2026-05-26 新增：漠北草原势力 ──
-        '高车': 'gaoche', '敕勒': 'gaoche', '浚稽山': 'gaoche',
-        '大蒙古': 'menggu_d', '大蒙古国': 'menggu_d', '蒙古帝国': 'menggu_d',
-        '大元政权': 'da_yuan', '北元': 'da_yuan', '应昌': 'da_yuan',
-
-        // ── 2026-05-26 新增：漠北草原部落/氏族势力 ──
-        '丁零': 'dingling', '丁零人': 'dingling', '叶尼塞': 'dingling',
-        '呼衍': 'huyan', '呼衍氏': 'huyan', '须卜': 'huyan', '兰氏': 'huyan',
-        '郁久闾': 'yujiulu', '郁久闾氏': 'yujiulu', '木骨闾': 'yujiulu', '柔然王族': 'yujiulu', '弱水': 'yujiulu',
-        '阿史德': 'ashide', '阿史德氏': 'ashide', '总材山': 'ashide',
-        '药罗葛': 'yaoluoge', '药罗葛氏': 'yaoluoge', '骨力裴罗': 'yaoluoge', '回鹘王族': 'yaoluoge', '仙娥河': 'yaoluoge', '娑陵': 'yaoluoge',
-        '乞颜': 'kiyad', '乞颜部': 'kiyad', '苍狼白鹿': 'kiyad', '不儿罕山': 'kiyad',
-        '孛儿只斤': 'borjigin', '孛儿只斤氏': 'borjigin', '黄金家族': 'borjigin', '铁木真': 'borjigin', '成吉思汗': 'borjigin', '斡难河源': 'borjigin',
-        '泰赤乌': 'tayichiud', '泰赤乌部': 'tayichiud', '斡难河中游': 'tayichiud',
-        '札剌亦儿': 'jalair', '札剌亦儿部': 'jalair', '克鲁伦河': 'jalair',
-        '弘吉剌': 'hongirad', '弘吉剌部': 'hongirad', '孛儿帖': 'hongirad', '捕鱼儿海': 'hongirad',
-        '绰罗斯': 'choros', '绰罗斯氏': 'choros', '瓦剌王族': 'choros', '准噶尔盆地': 'choros',
-
-        // ── 2026-05-26 新增：西域/中亚势力（25个）──
-        '喀喇': 'xiliao', '喀喇契丹': 'xiliao', '西辽': 'xiliao', '耶律大石': 'xiliao',
-        '喀喇汗': 'kala', '喀喇汗王朝': 'kala', '黑汗': 'kala',
-        '龟兹重甲兵': 'qiuci', '伊逻卢': 'qiuci',
-        '于阗精兵': 'yuchi', '于阗': 'yuchi',
-        '喀喇汗铁骑': 'kala', '阿斯古拉姆': 'kala', '阿斯卡里古拉姆': 'kala', '阿斯卡里': 'kala',
-        // 'an' → deleted
-        '高昌铁骑': 'gaochang', '阿斯兰军': 'yiduhu', '亦都护': 'yiduhu', '高昌回鹘': 'yiduhu',
-        '阿斯兰近卫': 'shule', '盘橐': 'shule', '阿尔斯兰汗': 'shule',
-        '焉耆龙骑兵': 'yanqi',
-        '乌孙昆莫亲卫': 'wusun', '昆莫亲卫': 'wusun',
-        '蒙兀儿铁骑': 'chagatai', '蒙兀儿': 'chagatai',
-        '汗血天马骑': 'dayuan', '汗血马': 'dayuan', '贵山城': 'dayuan',
-
-        // ── 2026-06-11 河西远征精锐番号 ──
-        '金城突骑': 'lanzhou', '赵充国': 'lanzhou',
-        '铁鹞子': 'dangxiang', '元昊': 'dangxiang', '李元昊': 'dangxiang',
-        '步跋子': 'weiming',
-        '擒生军': 'yeli', '野利遇乞': 'yeli', '野利仁荣': 'yeli',
-        '沙州劲旅': 'guiyi', '曹氏': 'guiyi', '沙州曹氏': 'guiyi', '莫高窟': 'guiyi',
-        '凉州大马': 'xianlingqiang',
-        '南凉铁骑': 'tufa_d', '秃发乌孤': 'tufa_d', '秃发傉檀': 'tufa_d',
-        '北凉精锐': 'juqu_d', '沮渠蒙逊': 'juqu_d',
-        '凉州突骑': 'liangzhou',
-        '大甲重阵': 'liangzhou', '张轨': 'liangzhou', '前凉': 'liangzhou', '姑臧': 'liangzhou', '凉州': 'liangzhou',
-        '甘州': 'ganzhou', '张掖': 'ganzhou',
-        '肃州': 'suzhou', '酒泉': 'suzhou', '酒泉城': 'suzhou',
-        '同州': 'tongzhou', '沙苑': 'tongzhou', '长宁': 'tongzhou',
-        '宁寇': 'ningkou', '居延': 'ningkou', '居延塞': 'ningkou',
-        '巴音布拉格': 'panjun',
-        '表氏': 'juqu_d',
-        '甘州铁骑': 'hunxie', '夜落纥': 'hunxie',
-        '居延戍卒': 'ningkou',
-
-        // ── 2026-06-11 川蜀远征精锐番号 ──
-        '賨人勇士': 'bandun', '板楯蛮': 'bandun', '板楯': 'bandun',
-        '白帝城': 'kui', '鱼复': 'kui',
-        '巴西劲卒': 'langzhou',
-        '连弩士': 'zhuoshi',
-        '白杆兵': 'tujia_d', '秦良玉': 'tujia_d',
-        '无当飞军': 'yangzhou', '武侯连弩': 'shu', '王平': 'yangzhou', '兴势': 'yangzhou',
-        '苻洪': 'fushi', '略阳': 'fushi', '氐族劲卒': 'fushi',
-        '吴玠': 'fengzhou', '大散关': 'fengzhou', '蜀口禁军': 'fengzhou', '剑门关': 'lizhou_d', '元从军': 'shu', '诸葛亮': 'shu', '成都': 'shu',
-        '岳钟琪': 'cheng', '刘备': 'kui', '白毦兵': 'kui', '白帝城': 'kui',
-        '姜维': 'xin2', '南浦': 'xin2',
-        '罗罗兵': 'shuixi', '水西': 'shuixi', '安邦彦': 'shuixi', '奢香夫人': 'shuixi',
-        '悬棺武士': 'boren', '僰人': 'boren', '珙县': 'boren', '僰道': 'boren',
-        '六夷突骑': 'chenghan', '李特': 'chenghan', '李雄': 'chenghan', '成汉': 'chenghan',
-        '大西老营': 'daxi_ming', '张献忠': 'daxi_ming', '李定国': 'daxi_ming',
-        '莎车左右骑': 'shache', '渠莎': 'shache',
-        '葛逻禄背弓': 'geluolu', '葛逻': 'geluolu', '弓月城': 'geluolu',
-        '大唐安西军': 'anxi', '安西军': 'anxi', '安西': 'anxi', '安西都护府': 'anxi', '拨换城': 'anxi',
-
-        // ── 2026-06-11 中亚远征精锐（§13 共 14 支）──
-        '嚈哒铁骑': 'yanda', '嚈哒': 'yanda', '白匈奴': 'yanda', '阿缓城': 'yanda',
-        '萨曼古拉姆': 'saman', '古拉姆': 'saman', '萨曼': 'saman', '萨曼王朝': 'saman', '蒲华': 'saman',
-        '花剌子模铁骑': 'huarazim', '钦察精骑': 'huarazim',
-        '钦察康里精骑': 'qincha', '钦察': 'qincha', '康里': 'qincha', '七河': 'qincha',
-        '帖木儿重装突骑': 'tiemuer', '帖木重装骑': 'tiemuer', '河中怯薛': 'tiemuer', '帖木儿': 'tiemuer', '帖木儿帝国': 'tiemuer', '帖木': 'tiemuer',
-        '哈萨克轻骑兵': 'kazakh',
-
-        '吐火罗': 'tokhara', '吐火罗人': 'tokhara', '员渠城': 'tokhara',
-        '粟特': 'sogdian', '粟特人': 'sogdian', '粟特商团': 'sogdian', '阿弗拉西阿卜': 'sogdian', '瓦拉赫沙': 'sogdian',
-        '塞种': 'sakai', '塞种人': 'sakai', '斯基泰': 'sakai', '特克斯河': 'sakai', '昭苏石人': 'sakai',
-        '康居': 'kangju', '康居国': 'kangju', '卑阗城': 'kangju',
-        '葛逻禄': 'geluolu', '葛逻禄部': 'geluolu', '怛罗斯': 'geluolu',
-        '尉迟': 'yuchi', '尉迟氏': 'yuchi', '伏阇氏': 'yuchi', '于阗王族': 'yuchi', '丹丹乌里克': 'yuchi',
-        '麴氏': 'qu_clan', '高昌王族': 'qu_clan', '柏孜克里克': 'qu_clan', '柏孜克里克千佛洞': 'qu_clan',
-        '归义军': 'guiyi', '曹氏': 'guiyi', '沙州曹氏': 'guiyi', '莫高窟': 'guiyi',
-        // 'an' → deleted
-        '石氏': 'shi_clan', '粟特石氏': 'shi_clan', '柘折城': 'shi_clan', '塔什干': 'shi_clan',
-        '难兜': 'nandou', '难兜国': 'nandou', '孽多': 'nandou', '孽多城': 'nandou',
-        '和卓': 'khoja', '白山派': 'khoja', '阿帕克霍加': 'khoja', '香妃墓': 'khoja',
-        '额敏和卓': 'emin', '吐鲁番郡王': 'emin', '苏公塔': 'emin',
-
-        // ── 2026-05-26 新增：青藏高原势力别名（含已有势力补充别名 + 18个新增势力）──
-        // 第一类：高原帝国与割据强权（补充已有势力别名）
-        '吐蕃': 'tubo', '吐蕃帝国': 'tubo', '逻些': 'tubo', '布达拉宫': 'tubo', '红山': 'tubo',
-        '吐谷浑': 'tuyu_d', '吐谷浑汗国': 'tuyu_d', '伏俟城': 'tuyu_d',
-        '青唐': 'gusiluo', '青唐城': 'gusiluo',
-        '当雄': 'khoshut', '当雄大营': 'khoshut',
-        // 第一类：新增势力
-        '象雄': 'xiangxiong', '象雄国': 'xiangxiong', '穹窿银城': 'xiangxiong', '苯教': 'xiangxiong', '古象雄': 'xiangxiong',
-        '古格': 'guge', '古格王国': 'guge', '扎布让': 'guge', '扎布让城堡': 'guge', '阿里': 'guge',
-        '玛域': 'ladakh', '拉达克': 'ladakh', '列城': 'ladakh', '列城皇宫': 'ladakh', '玛域政权': 'ladakh',
-        '藏巴汗': 'tsangpa', '藏巴汗政权': 'tsangpa', '桑珠孜': 'tsangpa', '桑珠孜宗堡': 'tsangpa',
-        '甘丹颇章': 'gandenpozhang', '甘丹': 'ganden', '哲蚌寺': 'ganden', '五世达赖': 'ganden', '甘丹政权': 'ganden',
-        // 第二类：雪域土著与古老强族（补充已有势力别名）
-        '赐支河曲': 'qiang',
-        '析支': 'dangxiang', '析支故地': 'dangxiang', '党项羌': 'dangxiang',
-        // 第二类：新增势力
-        '白兰': 'bailan', '白兰羌': 'bailan', '白海堡': 'bailan', '柴达木': 'bailan',
-        '羊同': 'yangtong', '羊同国': 'yangtong', '玛旁雍错': 'yangtong', '大羊同': 'yangtong',
-        '克里雅': 'keliya', '阿什库尔': 'keliya', '克里雅山口': 'keliya',
-        '苏毗': 'supi', '东女国': 'supi', '康延川': 'supi', '苏毗女国': 'supi', '昌都': 'supi', '黑河宗': 'supi',
-        '门巴': 'monpa', '门隅': 'monpa', '错那': 'monpa', '门巴族': 'monpa', '达旺': 'monpa',
-        '珞巴': 'lopi', '墨脱': 'lopi', '白马狗熊': 'lopi', '雅鲁藏布大峡谷': 'lopi', '珞巴族': 'lopi',
-        // 第三类：新增势力
-        '悉补野': 'spurgyal', '悉补野氏': 'spurgyal', '吐蕃王族': 'spurgyal', '雍布拉康': 'spurgyal', '雅砻河谷': 'spurgyal',
-        '噶尔': 'mgar', '噶尔氏': 'mgar', '禄东赞': 'mgar', '堆龙德庆': 'mgar', '吐蕃权臣': 'mgar', '论钦陵': 'mgar',
-        '昆氏': 'khon', '萨迦': 'khon', '萨迦寺': 'khon', '萨迦政权': 'khon', '萨迦班智达': 'khon', '八思巴': 'khon', '昆': 'khon',
-        '朗氏': 'lang_clan', '帕竹政权': 'lang_clan', '乃东': 'lang_clan', '泽当': 'lang_clan', '大司徒': 'lang_clan', '朗': 'lang_clan',
-        '帕竹': 'pazhu', '江孜': 'pazhu',
-
-        // ── 2026-06-11 青藏远征精锐（§12 共 11 支）──
-        '湟中义从羌': 'shaodang', '烧当': 'shaodang', '烧当羌': 'shaodang', '玛曲': 'shaodang',
-        '青唐甲骑': 'gusiluo',
-        '吐蕃桂级骑': 'tubo', '吐蕃虎皮卫': 'tubo', '桂级骑': 'tubo', '却杰': 'tubo', '却杰军': 'tubo',
-        '青海骢精骑': 'tuyu_d', '青海骢': 'tuyu_d',
-        '象雄武士': 'xiangxiong',
-        '康巴骁骑': 'gar_kham', '朵康兵': 'gar_kham', '德司': 'gar_kham',
-        '古格甲兵': 'guge', '札布让': 'guge',
-        '和硕特铁骑': 'khoshut',
-        '帕竹甲兵': 'pazhu',
-        '廓尔喀弯刀': 'gurkha', '廓尔喀勇士': 'gurkha',
-        '仁蚌巴': 'ringpung', '仁蚌': 'ringpung', '仁蚌宗': 'ringpung', '仁蚌家族': 'ringpung', '后藏门阀': 'ringpung',
-        '拉加里': 'lhagyari', '拉加里王宫': 'lhagyari', '拉加里王系': 'lhagyari', '吐蕃王室直系': 'lhagyari',
-        '扎氏': 'zhag', '夏鲁': 'zhag', '夏鲁寺': 'zhag', '夏鲁万户': 'zhag', '扎巴氏': 'zhag',
-        '噶玛巴': 'karmapa', '黑帽系': 'karmapa', '楚布寺': 'karmapa', '大宝法王': 'karmapa', '噶玛噶举': 'karmapa', '都松钦巴': 'karmapa',
-
-        // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力 ──
-        '阿瓦': 'ava', '阿瓦王朝': 'ava', '阿瓦古城': 'ava',
-        '东吁': 'dongxu', '东吁王朝': 'dongxu', '勃固': 'dongxu', '莽瑞体': 'dongxu',
-        '白蛮': 'baiman', '白族': 'baiman', '苍山洱海': 'baiman',
-        '乌蛮': 'wuman', '彝族先民': 'wuman', '乌蒙': 'wuman',
-        '昆明夷': 'kunming_yi', '昆明部落': 'kunming_yi',
-        '骠': 'pyu', '骠国': 'pyu', '骠人': 'pyu', '室利差罗': 'pyu',
-        '孟族': 'mon', '直通': 'mon', '孟人': 'mon',
-        '高氏': 'gao_shi_dali', '弄栋': 'gao_shi_dali', '姚安': 'gao_shi_dali', '高': 'gao_shi_dali',
-        '播州杨氏': 'yang_bozhou', '杨应龙': 'yang_bozhou', '海龙屯': 'yang_bozhou',
-        '水西安氏': 'an_shuixi', '慕俄格': 'an_shuixi', '奢香': 'an_shuixi',
-        '思州田氏': 'tian_sizhou', '田氏土司': 'tian_sizhou', '镇远': 'tian_sizhou',
-        '丽江木氏': 'mu_lijiang', '木府': 'mu_lijiang',
-        '沐氏': 'mu_qian', '黔国公': 'mu_qian', '沐王府': 'mu_qian', '沐英': 'mu_qian',
-        '南汉': 'nanhan', '兴王府': 'nanhan', '刘龑': 'nanhan', '康陵': 'nanhan',
-        '瓯雒': 'ouluo', '瓯雒国': 'ouluo', '古螺城': 'ouluo', '安阳王': 'ouluo', '蜀泮': 'ouluo',
-        '西山朝': 'nguyen_guangnan',
-        '大肚': 'dadu', '大肚王国': 'dadu', '大肚社': 'dadu',
-        '明郑': 'ming_zheng', '东宁': 'ming_zheng', '郑成功': 'ming_zheng', '郑经': 'ming_zheng', '热兰遮': 'ming_zheng', '安平': 'ming_zheng',
-        '西瓯': 'xiou', '灵渠': 'xiou', '桂林': 'xiou',
-        '瑶族': 'yao', '大瑶山': 'yao', '瑶': 'yao',
-        '京族': 'jing', '华闾': 'jing', '丁朝': 'jing', '前李': 'jing',
-        '芒族': 'muong', '和平省': 'muong',
-        '西拉雅': 'siraya', '麻豆': 'siraya',
-        '排湾': 'paiwan', '牡丹社': 'paiwan', '牡丹': 'paiwan', '牡丹社事件': 'paiwan',
-        '曲氏': 'qu_annam', '曲承裕': 'qu_annam', '龙编': 'qu_annam', '静海': 'qu_annam',
-        '郑主': 'trinh', '郑氏': 'trinh', '西都': 'trinh', '清化': 'trinh',
-        '阮主': 'nguyen_guangnan', '广南阮氏': 'nguyen_guangnan', '富春': 'nguyen_guangnan',
-        '莫氏': 'mac_annam', '莫朝': 'mac_annam', '莫登庸': 'mac_annam', '高平': 'mac_annam',
-        '雾峰林家': 'wufeng_lin', '林献堂': 'wufeng_lin',
-        '岑氏': 'cen_d', '岑仲淑': 'cen_d', '岑猛': 'cen_d', '凌云': 'cen_d',
-
-        // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
-        '賨': 'cong', '賨人': 'cong', '板楯蛮': 'cong', '宕渠': 'cong',
-        '僰': 'bo', '僰人': 'bo', '僰王山': 'bo', '悬棺': 'bo', '珙县': 'bo',
-        '谯': 'langzhou', '谯周': 'langzhou', '谯氏': 'langzhou', '阆中谯氏': 'langzhou', '阆中': 'langzhou', '隆城': 'langzhou',
-        '折': 'zhe_d', '折氏': 'zhe_d', '折家将': 'zhe_d', '府州': 'zhe_d', '府谷': 'zhe_d', '折克行': 'zhe_d', '折可适': 'zhe_d', '折继闵': 'zhe_d',
-        '山越': 'shanyue', '山越蛮': 'shanyue', '宛陵': 'shanyue', '宣城': 'shanyue',
-        '畲': 'she_ethnic', '畲人': 'she_ethnic', '敕木山': 'she_ethnic', '景宁': 'she_ethnic',
-        // pu → deleted
-
-        // ── 2026-05-26 Phase 3i：新增朴(新罗门阀)、土(巴人后裔) ──
-        '朴': 'piao', '朴氏': 'piao', '新罗朴氏': 'piao', '大陵苑': 'piao', '庆州朴氏': 'piao', '骨品': 'piao',
-        '土': 'tu', '土人': 'tu', '土家族': 'tu', '武陵蛮': 'tu', '武陵山区': 'tu', '湘西土人': 'tu',
-
-        // Old term compatibility
-        '大秦': 'xiyang',
-
-        // ── 2026-05-28 新增：黑龙江流域民族/家族 ──
-        '黑水': 'heishui', '黑水靺鞨': 'heishui', '伯力': 'heishui',
-        '那乃': 'nanai', '那乃人': 'nanai', '瓦伦': 'nanai',
-        '费雅喀': 'feiyaka', '费雅喀人': 'feiyaka', '奇集': 'feiyaka', '普禄': 'feiyaka',
-        '水达达': 'shuidada', '锡尔喀': 'shuidada',
-        '尼夫赫': 'nifuhe', '尼夫赫人': 'nifuhe', '盆奴里': 'nifuhe',
-        // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
-        '茂明安': 'maomingan', '尼布楚': 'maomingan',
-        '敖拉': 'aola', '雅克萨': 'aola',
-        '绰尔纳': 'chaoer', '格尔必齐': 'chaoer',
-        '布拉特': 'bulat', '石勒喀河': 'bulat',
-        '布里亚特': 'buriat', '赤塔': 'buriat',
-
-        // ── 2026-05-28 新增：大斗拔谷、伊勒巴斯、南杰、扎敦宗(gandenpozhang) ──
-        '大斗拔谷': 'panjun',
-        '伊勒巴斯': 'anushidgin', '阿努什的斤': 'anushidgin', '希瓦': 'anushidgin',
-        '南杰': 'nanjie', '日土宗': 'nanjie',
-        '扎敦宗': 'gandenpozhang', '旧仲巴': 'gandenpozhang',
-
-        // ── 2026-05-28 新增：三陇沙、肩水金关、博尔巴任、莫尔根 ──
-        '三陇沙': 'panjun', '肩水金关': 'panjun',
-        '博尔巴任': 'wala', '墨尔根城': 'dawoer',
-
-        // ── 2026-05-28 新增：达斡尔、广南国、洞海城、图蒙肯、俚人 ──
-        '达斡尔': 'dawoer', '莫尔根': 'dawoer',
- '洞海城': 'panjun',
-        '图蒙肯': 'tumengken', '拜达里克': 'tumengken',
-        '俚': 'liren', '俚族': 'liren', '珠崖': 'liren',
-        '里': 'li_s', '合浦': 'li_s',
-        '雷': 'leizhou', '雷州': 'leizhou', '海康': 'leizhou',
-
-        // ── 岭南诸族、中亚王朝、草原部族（旗号与 factions.ts / cities_v2 一致）──
-        '墨侬': 'monong', '孟邦': 'monong', '邦敦': 'monong',
-        '水真': 'shuizhen', '水真腊': 'shuizhen', '三菩': 'shuizhen',
-        '古尔': 'guer', '古尔王朝': 'guer', '马鲁鲁德': 'guer',
-        '巴德': 'bade', '巴达赫尚': 'bade', '彭迪': 'bade',
-        '乌布萨泊': 'xiajiasi',
-        '薛灵哥': 'wuliangha',
-
-        // ── 2026-05-28 新增：岭(结古宗)、琼波(丁青宗)、索伦(卜奎)、图瓦(特斯郭勒卡伦) ──
-        '岭': 'gling', '结古宗': 'gling',
-        '琼波': 'khyungpo', '丁青宗': 'khyungpo',
-        '索伦': 'suolun', '卜奎': 'suolun',
-        '图瓦': 'tuva', '唐努': 'tuva', '特斯郭勒卡伦': 'tuva',
-
-        // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
-        '大隅': 'osumi', '赤尾木城': 'osumi',
-        '奄美': 'anmei', '赤木名城': 'anmei',
-
-        // ── 2026-06-17 新增：真田氏@上田城 ──
-        '真田氏': 'sanada_d', '真田': 'sanada_d', '上田城': 'sanada_d', '真田赤备': 'sanada_d',
-
-        // ── 2026-05-28 新增：康区藏族土司/部落 ──
-        '达隆': 'dalung', '类乌齐': 'dalung',
-        '德格': 'gar_kham',
-        '孔萨': 'kongsa', '甘孜': 'kongsa',
-        '明正': 'mingzheng', '打箭炉': 'mingzheng',
-        '芒康': 'markam', '江卡宗': 'markam',
-
-        // ── 2026-05-28 新增：波密(博窝) ──
-        '波密': 'bomi', '博窝': 'bomi',
-
-        // ── 2026-05-28 新增：达擦(八宿宗/康区) ──
-        '达擦': 'daca', '八宿宗': 'daca',
-
-        // ── 2026-05-28 新增：景东(银生城/云南) ──
-        '景东': 'jingdong', '银生城': 'jingdong',
-
-        // ── 2026-05-28 修复：丽江(独克宗) ──
-        '独克宗': 'mu_lijiang',
-
-        // ── 2026-05-28 新增：霍尔(索宗/那曲) ──
-        '霍尔': 'hor', '索宗': 'hor',
-
-        // ── 2026-05-28 新增：董(囊谦宗/玉树) ──
-        '董': 'dong', '囊谦宗': 'dong',
-
-        // ── 2026-05-28 新增：白狼(巴塘宗/康区) ──
-        '白狼': 'bailang', '巴塘宗': 'bailang',
-
-        // ── 2026-05-28 新增：穆(理塘宗/康区) ──
-        '穆': 'mu', '理塘宗': 'mu',
-    };
-
-    // Mapping Chinese city names to IDs
-    private static cityMap: { [key: string]: string } = {
-        '长安': 'changan',
-        '洛阳': 'luoyang',
-        '青州': 'qingzhou',
-        '寿春': 'city_shouxian',
-        '幽州': 'youzhou',
-        '开封': 'kaifeng',
-        '新郑': 'xinzheng',
-        '邯郸': 'handan',
-        '平壤': 'city_pyongyang',
-        '龙湾': 'city_longwan'
-    };
-
-    public static parse(text: string): HistoricalEvent | null {
-        try {
-            const year = this.parseYear(text);
-            if (year === null) return null;
-
-            // Default to Siege for now based on "攻打"
-            if (text.includes('攻打')) {
-                return this.parseSiege(text, year);
-            } else if (text.includes('野战')) {
-                return this.parseFieldBattle(text, year);
-            } else {
-                return this.parseNarrative(text, year);
-            }
-        } catch (e) {
-            console.error('Failed to parse event text:', e);
-            return null;
-        }
-    }
-
-    private static parseYear(text: string): number | null {
-        const match = text.match(/(前|公元前)?(\d+)年/);
-        if (!match) return null;
-        const isBC = match[1] !== undefined;
-        const yearNum = parseInt(match[2]);
-        return isBC ? -yearNum : yearNum;
-    }
-
-    private static parseSiege(text: string, year: number): HistoricalEvent {
-        // Example: [秦]王翦攻打[赵]邯郸
-        // Regex to extract content between brackets
-        const factions = text.match(/\[(.*?)\]/g);
-        let attackerFactionId = 'UNKNOWN';
-
-        if (factions && factions.length > 0) {
-            const attackerName = factions[0].replace(/[\[\]]/g, '');
-            attackerFactionId = this.factionMap[attackerName] || 'UNKNOWN';
-        }
-
-        // Find city name
-        let cityId = 'UNKNOWN';
-        for (const [name, id] of Object.entries(this.cityMap)) {
-            if (text.includes(name)) {
-                cityId = id;
-                break;
-            }
-        }
-
-        return {
-            year: year,
-            season: 0, // Default Spring
-            description: text,
-            type: 'siege',
-            siegeData: {
-                attackerFactionId: attackerFactionId,
-                defenderCityId: cityId,
-            }
-        };
-    }
-
-    private static parseFieldBattle(text: string, year: number): HistoricalEvent {
-        // Placeholder for field battle parsing
-        // Need to extract attacker, defender, and location
-        // For now, returning a placeholder structure
-        return {
-            year: year,
-            season: 0,
-            description: text,
-            type: 'field_battle',
-            fieldBattleData: {
-                attackerFactionId: 'UNKNOWN',
-                defenderFactionId: 'UNKNOWN',
-                location: { lat: 0, lng: 0 }, // Needs manual setting or map click
-                result: 'attacker_win'
-            }
-        };
-    }
-
-    private static parseNarrative(text: string, year: number): HistoricalEvent {
-        return {
-            year: year,
-            season: 0,
-            description: text,
-            type: 'field_battle',
-            fieldBattleData: {
-                attackerFactionId: 'UNKNOWN',
-                defenderFactionId: 'UNKNOWN',
-                isNarrative: true,
-                location: { lat: 34.27, lng: 108.94 }
-            }
-        };
-    }
+﻿/**
+ * cities_v2.ts — 重构版城市数据
+ *
+ * 架构原则:
+ * - T0 大城 (big_city): 锁定 20 座 — 见 cities.ts §6 / AGENTS.md §六（不以旧版 17 城名单为准）
+ * - T1 中城 (medium_city): 现代省会 + 朝代府治 — 待补充
+ * - T2 关隘/要塞 (pass): 战略要冲 — 渡口据点归入 small_city
+ * - 周边: 日本七道、朝鲜八道、各古代政权首都 — 待补充
+ *
+ * 命名原则:
+ * - 历史大乱斗游戏, 使用各城市最有知名度的名字
+ * - 朝代切换时, 通过 historicalNames 数组 (待实现) 动态改名
+ *
+ * 距离约束 (来自 cities.ts):
+ * - 任意两据点距离 >= 50km (经纬度差 >= 0.4°)
+ * - 已校验所有 T0 之间满足
+ *
+ * 14 区文化中心 (15 城, 见 RegionSystem.REGION_CENTERS):
+ * - 开局兵力统一 troops: 20000（大城/中城均有）
+ *
+ * 界城 region 标准（环线锚点 vs 实际文化，详见 RegionSystem.ts REGION_BOUNDARY_LOOPS 注释）:
+ * - 环线代称: 威海卫→文登、钓鱼岛城→钓鱼岛、也迷离→也迷里
+ * - 哈密卫: 草原环线锚点，文化西域 WESTERN
+ * - 石门关: 岭南环线锚点，文化川蜀 BASHU
+ * - 尼布楚: 东北/草原共用锚点，文化东北 NORTHEAST
+ * - 14 区环线主人定稿见 RegionSystem.ts REGION_BOUNDARY_LOOPS 注释（zoom=6 绘线）
+ * - 威海卫/钓鱼岛城/也迷离/哈密/弓月/护密城 等代称与锚点 cityId 见该文件
+ */
+
+import { CityType } from '../types/core';
+
+export interface CityDataV2 {
+        id: string;
+        name: string;
+        factionId: string;
+        lat: number;
+        lng: number;
+        type: CityType;
+    troops?: number;
+    /** 城市层级: 0=大城, 1=中城, 2=要塞/关隘/渡口/港口, 4=周边 (3 暂留备扩展) */
+        tier?: 0 | 1 | 2 | 4;
+    /** 文化区域分类 (如 KOREA, JAPAN 等) */
+    region?: string;
+    /** 关隘/港口朝向镜像 */
+    mirror?: boolean;
+    /** 史地备注（人工录入据点时的可考性说明，运行时不使用） */
+    note?: string;
 }
+
+// ============================================================
+// T0 — 中国十大古都 (基于 2016 成都共识, 有一处替换)
+// ============================================================
+//
+// 长安、洛阳、北京、南京、杭州、成都、汉中、番禺、汴梁、姑臧、太原、安阳、沈阳、哈拉和林、逻些
+// + 外国: 梅尔夫、阿瑜陀耶、吴哥、江户、金城（新罗都）
+//
+// 替换说明 (郑州 → 新郑):
+// - 原 2016 成都共识列入"郑州"(因郑州商城遗址)
+// - 替换为"新郑": 黄帝故里 + 春秋郑国都城 + 战国韩国都城, 历史代入感更强
+// - 地理上, 新郑南移 ~40km 后, 与虎牢关 / 开封 错开成"川"字形,
+//   主干道线路更舒展, 减少节点拥挤
+//
+// 命名说明:
+// - 西安 → 显示"长安" (历史游戏汉唐千年知名度)
+// - 其余按现代/历史最知名名字 (北京/南京/杭州/开封/大同/新郑/安阳/成都)
+//
+// 距离自检:
+// - 洛阳 (34.62, 112.45) ↔ 新郑 (34.39, 113.72): Δ ≈ 130 km ✓
+// - 新郑 ↔ 开封: Δ ≈ 80 km  ✓
+// - 新郑 ↔ 安阳: Δ ≈ 190 km ✓
+// - 开封 ↔ 安阳: Δ ≈ 145 km ✓
+// - 安阳 ↔ 北京: Δ ≈ 420 km ✓
+// - 北京 ↔ 大同: Δ ≈ 265 km ✓
+// - 长安 ↔ 洛阳: Δ ≈ 320 km ✓
+// - 长安 ↔ 成都: Δ ≈ 660 km ✓
+// - 洛阳 ↔ 南京: Δ ≈ 700 km ✓
+// - 南京 ↔ 杭州: Δ ≈ 250 km ✓
+// - 开封 ↔ 南京: Δ ≈ 500 km ✓
+
+export const T0_CAPITALS: CityDataV2[] = [
+    // ── 关中 / 西部 ──
+    {
+        id: 'city_changan',
+        name: '长安',
+        factionId: 'tang',
+        lat: 34.27, lng: 108.93,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0, note: '南唐李昪建都金陵（建业）；神武军T1' },
+    {
+        id: 'city_chengdu',
+        name: '成都',
+        factionId: 'shu',
+        lat: 30.5700, lng: 104.0700,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0, note: '南唐李昪建都金陵（建业）；神武军T1' },
+
+    // ── 中原核心 ──
+    {
+        id: 'city_luoyang',
+        name: '洛阳',
+        factionId: 'wuzhou_d',
+        lat: 34.62, lng: 112.45,
+        type: 'big_city',
+        troops: 20000,
+        mirror: true, // 洛阳 ↔ 新郑 镜像分布
+        tier: 0,
+        note: '武周神都' },
+    
+    {
+        id: 'city_anyang',
+        name: '安阳',
+        factionId: 'shang',
+        lat: 36.10, lng: 114.39,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0, note: '南唐李昪建都金陵（建业）；神武军T1' },
+
+    // ── 北方 ──
+    {
+        id: 'city_beijing',
+        name: '北京',
+        factionId: 'ming_d',
+        lat: 39.90, lng: 116.41,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0,
+        note: '元大都/明永乐后京师；大明国都' },
+    {
+        id: 'city_datong',
+        name: '大同',
+        factionId: 'tuoba',
+        lat: 40.08, lng: 113.30,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1 },
+
+    // ── 江南 ──
+    {
+        id: 'city_nanjing',
+        name: '建业',
+        factionId: 'nantang_d',
+        lat: 32.0500, lng: 118.7700,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0, note: '南唐李昪建都金陵（建业）；神武军T1' },
+    {
+        id: 'city_hangzhou',
+        name: '临安',
+        factionId: 'song',
+        lat: 30.2500, lng: 120.1600,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0, note: '南唐李昪建都金陵（建业）；神武军T1' },
+    
+    {
+        id: 'city_taiyuan',
+        name: '晋阳',
+        factionId: 'bing',
+        lat: 37.87, lng: 112.55,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0,
+        note: '并州治所晋阳' },
+    { id: 'city_xiangyang', name: '襄阳', factionId: 'xiangzhou', lat: 32.01, lng: 112.12, type: 'medium_city', region: 'JIANGNAN', troops: 10000, tier: 1, note: '襄州治所；三国至宋荆襄枢纽' },
+
+    { id: 'city_shouxian', name: '寿春', factionId: 'zhong', lat: 32.59, lng: 116.8, type: 'medium_city', troops: 10000, tier: 1, note: '楚后期都、淮南/寿州治；淮西重镇' },
+    { id: 'city_ueda', name: '上田城', factionId: 'sanada_d', lat: 36.4025, lng: 138.2464, type: 'small_city', troops: 10000, region: 'JAPAN', note: '真田氏名城，两次击退德川大军' },
+];
+
+// ============================================================
+// T1 中城 — 待添加 (省会 + 朝代府治)
+// ============================================================
+export const T1_MEDIUM_CITIES: CityDataV2[] = [
+    // ── 蜀道沿线 (长安→成都 的中城) ──
+        // ── 关中平原历史名城 ──
+        { id: 'city_anding', name: '安定', factionId: 'huangfu', lat: 35.327451, lng: 107.358398, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_hanzhong',
+        name: '南郑',
+        factionId: 'han_d',
+        lat: 33.07, lng: 107.02,
+        type: 'big_city',
+        region: 'BASHU', troops: 20000,
+        tier: 0 },
+    {
+        id: 'city_guozhou',
+        name: '南充',
+        factionId: 'guo',
+        lat: 30.83, lng: 106.11,
+        type: 'small_city',
+        troops: 10000 },
+    { id: 'city_mianyang', name: '涪城', factionId: 'daxi_ming', lat: 31.482545, lng: 104.718933, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_chongqing',
+        name: '重庆',
+        factionId: 'ba',
+        lat: 29.56, lng: 106.58,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1,
+        note: '巴国都·江州；巴蔓子将军故地（《华阳国志·巴志》）' },
+    {
+        id: 'city_jianzhou',
+        name: '阳安',
+        factionId: 'cheng',
+        lat: 30.38, lng: 104.55,
+        type: 'small_city',
+        troops: 10000 },
+    {
+        id: 'city_zizhou',
+        name: '盘石',
+        factionId: 'zi',
+        lat: 29.78, lng: 104.85,
+        type: 'small_city',
+        troops: 10000 },
+
+    // ── 崤函古道沿线 (洛阳→长安 的中城) ──
+
+    // ── 中原北线/冀南走廊 (洛阳→安阳 的中城) ──
+    // ── 幽冀古道/平原走廊 (安阳→北京 的中城) ──
+    {
+        id: 'city_handan',
+        name: '邯郸',
+        factionId: 'zhao',
+        lat: 36.61, lng: 114.49,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1 },
+    { id: 'city_zhending', name: '真定', factionId: 'zhongshan', lat: 38.130241, lng: 114.590149, type: 'medium_city', troops: 10000, note: '中山国故都；北宋崇宁真定府人口超16万' },
+    {
+        id: 'city_baoding', name: '保定', factionId: 'qingyuan_bd',
+        lat: 38.87, lng: 115.48,
+        type: 'small_city',
+        troops: 10000,
+        tier: 1 },
+    {
+        id: 'city_hejian',
+        name: '乐成',
+        factionId: 'liwang',
+        lat: 38.18, lng: 116.12,
+        type: 'small_city',
+        troops: 10000,
+        note: '乐成（乐寿）；窦建德夏国都（《旧唐书·窦建德传》）' },
+    {
+        id: 'city_jingzhou2',
+        name: '蓨城',
+        factionId: 'gaoqi_d',
+        lat: 37.68, lng: 116.27,
+        type: 'small_city',
+        troops: 10000,
+        note: '渤海蓨县；北齐神武帝高欢故里（《北齐书·神武帝纪》）' },
+    {
+        id: 'city_pingyuan',
+        name: '平原',
+        factionId: 'pingyuan',
+        lat: 37.16, lng: 116.43,
+        type: 'small_city',
+        troops: 10000 },
+        // ── 京同山川走廊 (北京→大同 的中城) ──
+    // ── 晋陕走廊/汾河谷地 (大同→长安 的中城) ──
+    { id: 'city_linfen', name: '平阳', factionId: 'yao', lat: 36.088000, lng: 111.516724, type: 'small_city', troops: 10000, note: '尧都平阳（临汾）；距曲沃≥50km' },
+    // ── 太行山脉走廊/八陉周边中城 ──
+                // ── 淮海与齐鲁中原走廊中城 ──
+    { id: 'city_shangqiu', name: '商丘', factionId: 'liang_d', lat: 34.41, lng: 115.66, type: 'medium_city', troops: 10000, tier: 1, note: '宋/梁国都、归德府治；豫东府城' },
+    { id: 'city_pengcheng', name: '彭城', factionId: 'xichu', lat: 34.27, lng: 117.18, type: 'medium_city', troops: 10000, tier: 1, note: '西楚都、徐州治；淮海枢纽' },
+    { id: 'city_langya', name: '琅琊', factionId: 'wang_d', lat: 35.077231, lng: 118.363953, type: 'small_city', troops: 10000 },
+    { id: 'city_ju', name: '莒城', factionId: 'chimei', lat: 35.578000, lng: 118.832000, type: 'small_city', troops: 10000 },
+    { id: 'city_lanling', name: '兰陵', factionId: 'xiao_d', lat: 34.798005, lng: 117.647095, type: 'small_city', troops: 10000 },
+    // ── 齐鲁古国与半岛走廊中城 ──
+    { id: 'city_dingtao', name: '定陶', factionId: 'wazhai', lat: 35.200716, lng: 115.471802, type: 'small_city', troops: 10000 },
+    { id: 'city_jimo', name: '即墨', factionId: 'jiaodong', lat: 36.403591, lng: 120.445862, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_boyang',
+        name: '博阳',
+        factionId: 'jibei',
+        lat: 36.15, lng: 117.05,
+        type: 'small_city',
+        troops: 10000 },
+
+    {
+        id: 'city_licheng',
+        name: '历下',
+        factionId: 'jinan',
+        lat: 36.67, lng: 117.00,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1 },
+    {
+        id: 'city_linzi',
+        name: '临淄',
+        factionId: 'qi',
+        lat: 36.88, lng: 118.43,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1 },
+    // ── 岭南、东南与西南地区中城 ──
+    {
+        id: 'city_bushan',
+        name: '布山',
+        factionId: 'xiou',
+        lat: 23.10, lng: 109.60,
+        type: 'small_city',
+        troops: 10000 },
+    {
+        id: 'city_fuzhou',
+        name: '冶城',
+        factionId: 'min',
+        lat: 26.07, lng: 119.30,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1,
+        note: '闽国都城故地（史籍亦称长乐府）；番号长乐控鹤，据点名避重改冶城' },
+    // ── 淮河流域与中原周边中城 ──
+    
+    { id: 'city_huaiyang', name: '宛丘', factionId: 'huaiyang', lat: 33.63, lng: 114.7, type: 'small_city', troops: 10000 },
+    { id: 'city_shunchang', name: '顺昌', factionId: 'yingzhou_d', lat: 32.9, lng: 115.81, type: 'small_city', troops: 10000 },
+    { id: 'city_qiaojun', name: '谯县', factionId: 'cao_d', lat: 33.88, lng: 115.77, type: 'small_city', troops: 10000 },
+
+
+
+    { id: 'city_hefei', name: '合肥', factionId: 'lu', lat: 31.82, lng: 117.23, type: 'medium_city', troops: 10000, tier: 1, note: '庐州府治；江淮要冲' },
+    {
+        id: 'city_yangzhou',
+        name: '广陵',
+        factionId: 'yang_zhou',
+        lat: 32.3930, lng: 119.4200,
+        type: 'medium_city',
+        region: 'JIANGNAN', troops: 10000,
+        tier: 1, note: '杨行密吴国都城；黑云长剑都T1' },
+
+    { id: 'city_nanyang', name: '宛城', factionId: 'dixiang', lat: 32.955682, lng: 112.516479, type: 'medium_city', troops: 10000, note: '刘縯战死于宛；汉南都，东汉南阳郡240万，2026-06-18 升为中城' },
+    // ── 荆楚与三峡巴蜀沿线中城 ──
+    {
+        id: 'city_fuling',
+        name: '涪陵',
+        factionId: 'panjun',
+        lat: 29.70, lng: 107.39,
+        type: 'small_city',
+        troops: 10000 },
+    { id: 'city_yiling', name: '夷陵', factionId: 'yidou', lat: 30.7, lng: 111.28, type: 'small_city', troops: 10000 },
+
+    {
+        id: 'city_ying',
+        name: '金鳞',
+        factionId: 'chu',
+        lat: 30.35, lng: 112.18,
+        type: 'medium_city',
+        region: 'JIANGNAN', 
+        troops: 10000,
+        tier: 1 },
+
+
+    {
+        id: 'city_suizhou',
+        name: '汉东',
+        factionId: 'sui',
+        lat: 31.71, lng: 113.36,
+        type: 'small_city',
+        troops: 10000 },
+
+    {
+        id: 'city_chaisang',
+        name: '柴桑',
+        factionId: 'jiujiang',
+        lat: 29.6802,
+        lng: 115.9964,
+        type: 'small_city',
+        troops: 10000,
+        region: 'JIANGNAN' },
+    { id: 'city_changsha', name: '临湘', factionId: 'changshaguo', lat: 28.19, lng: 112.97, type: 'medium_city', troops: 10000, tier: 1, note: '马楚政权都城；武平军' },
+
+    {
+        id: 'city_changzhou',
+        name: '延陵',
+        factionId: 'zhangshicheng',
+        lat: 31.78, lng: 119.97,
+        type: 'small_city',
+        troops: 10000 },
+    {
+        id: 'city_gusu',
+        name: '阊门',
+        factionId: 'wu',
+        lat: 31.30, lng: 120.62,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1 },
+    {
+        id: 'city_jiaxing',
+        name: '嘉兴',
+        factionId: 'qian_d',
+        lat: 30.75, lng: 120.76,
+        type: 'small_city',
+        troops: 10000 },
+    { id: 'city_shanxian', name: '剡城', factionId: 'qiufu', lat: 29.556746, lng: 120.822144, type: 'small_city', troops: 10000, mirror: true },
+
+    // ── 陇右与河西走廊中城 ──
+    {
+        id: 'city_tianshui',
+        name: '天水',
+        factionId: 'qin',
+        lat: 34.58, lng: 105.73,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1 },
+    { id: 'city_longzhou', name: '汧源', factionId: 'long2', lat: 34.89, lng: 106.86, type: 'small_city', troops: 10000 },
+    { id: 'city_longxi', name: '陇西', factionId: 'li_lx_d', lat: 35.032229, lng: 104.587097, type: 'small_city', region: 'CENTRAL', troops: 10000 },
+    {
+        id: 'city_wuwei',
+        name: '姑臧',
+        factionId: 'liangzhou',
+        lat: 37.93, lng: 102.64,
+        type: 'big_city',
+        troops: 20000,
+        region: 'HEXI', 
+        tier: 0 },
+    {
+        id: 'city_zhangye',
+        name: '张掖',
+        factionId: 'ganzhou',
+        lat: 38.93, lng: 100.45,
+        type: 'small_city',
+        troops: 10000,
+        tier: 1 },
+    { id: 'city_jiuquan', name: '酒泉', factionId: 'suzhou', lat: 39.73, lng: 98.49, type: 'small_city', troops: 10000 },
+
+
+    // ── 塞北与西域中城 ──
+    { id: 'city_zhizhicheng', name: '郅支城', factionId: 'xijue', lat: 42.906205, lng: 72.765198, type: 'pass', troops: 10000 },
+    { id: 'city_chigucheng', name: '赤谷城', factionId: 'wusun', lat: 42.153304, lng: 77.585449, type: 'small_city', troops: 10000 },
+    { id: 'city_guishancheng', name: '贵山城', factionId: 'dayuan', lat: 41.290174, lng: 71.666565, type: 'small_city', troops: 10000 },
+
+    {
+        id: 'city_loulan',
+        name: '扜泥城',
+        factionId: 'loulan',
+        lat: 40.5158, lng: 89.92,
+        type: 'small_city',
+        troops: 10000,
+        tier: 1 },
+    {
+        id: 'city_shache',
+        name: '渠莎',
+        factionId: 'shache',
+        lat: 38.41, lng: 77.24,
+        type: 'small_city',
+        region: 'WESTERN',
+        troops: 10000,
+        note: '莎车国都；≠西夜叶城' },
+    { id: 'city_shule', name: '盘橐', factionId: 'shule', lat: 39.4850, lng: 76.0007, type: 'medium_city', troops: 10000,        region: 'WESTERN', tier: 1 },
+
+    { id: 'city_yanqi', name: '员渠城', factionId: 'yanqi', lat: 42.06, lng: 86.56, type: 'small_city', troops: 10000 },
+
+    {
+        id: 'city_dunhuang',
+        name: '敦煌',
+        factionId: 'shazhou',
+        lat: 40.14, lng: 94.66,
+        type: 'small_city',
+        troops: 10000,
+        tier: 1 },
+    { id: 'city_lanzhou', name: '金城', factionId: 'lanzhou', lat: 36.0500, lng: 103.8333, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1, note: '金城郡·兰州治所；赵充国屯田金城' },
+
+    { id: 'city_ledu', name: '浇河', factionId: 'tufa_d', lat: 35.837926, lng: 101.071472, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_lintao',
+        name: '临洮',
+        factionId: 'didao',
+        lat: 35.37, lng: 103.86,
+        type: 'small_city',
+        region: 'HEXI',
+        troops: 10000,
+        note: '陇西临洮，汉置狄道县；古名狄道，今临洮' },
+    { id: 'city_songzhou', name: '嘉诚', factionId: 'song2', lat: 32.787239, lng: 103.625793, type: 'small_city', troops: 10000, region: 'TIBET' /* [override] 川西藏羌区, 松潘县 */ },
+    { id: 'city_jianchang', name: '邛都', factionId: 'qiong', lat: 27.870652, lng: 102.310181, type: 'small_city', troops: 10000 },
+
+    { id: 'city_toumancheng', name: '头曼城', factionId: 'xiongnu', lat: 41.302589, lng: 108.506470, type: 'small_city', troops: 10000 },
+
+    { id: 'city_guangnan', name: '广南', factionId: 'gouding', lat: 23.755260, lng: 105.386353, type: 'small_city', troops: 10000 },    
+    { id: 'city_liaoyang', name: '襄平', factionId: 'gongsun_d', lat: 41.270000, lng: 123.170000, type: 'small_city', region: 'NORTH', troops: 10000, note: '公孙度辽东治所；辽东铁骑' },
+
+    {
+        id: 'city_chaoyang',
+        name: '朝阳',
+        factionId: 'feng_d',
+        lat: 41.57, lng: 120.45,
+        type: 'small_city',
+        troops: 10000,
+        note: '北燕都和龙/龙城（《魏书·冯跋传》）；冯跋于此开国' },
+    {
+        id: 'city_jicheng',
+        name: '棘城',
+        factionId: 'yingzhou_ying_d',
+        lat: 41.580, lng: 121.055,
+        type: 'small_city',
+        troops: 10000,
+        note: '昌黎棘城；营州翼境；北齐黄龙兵标志地（《北齐书·高宝宁传》）' },
+    {
+        id: 'city_bailangshan',
+        name: '白狼山',
+        factionId: 'wuhuan',
+        lat: 41.40, lng: 119.64,
+        type: 'pass',
+        troops: 10000 },
+
+    { id: 'city_chifeng', name: '木叶山', factionId: 'qidan', lat: 42.718800, lng: 120.726013, type: 'pass', troops: 10000 },
+    {
+        id: 'city_jiangsheng',
+        name: '降圣',
+        factionId: 'yel',
+        lat: 42.5610,
+        lng: 119.4818,
+        type: 'small_city',
+        troops: 10000 },
+    {
+        id: 'city_linhuang',
+        name: '临潢府',
+        factionId: 'liao_d',
+        lat: 43.96, lng: 119.38,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1,
+        region: 'STEPPE',
+        note: '辽上京临潢府（今巴林左旗）；皮室军辽太祖直属精锐' },
+    { id: 'city_hezhang', name: '可乐城', factionId: 'miao', lat: 27.095807, lng: 104.718933, type: 'small_city', troops: 10000 },
+    { id: 'city_tancheng', name: '郯城', factionId: 'dongxian', lat: 34.549568, lng: 118.317261, type: 'small_city', troops: 10000 },
+    { id: 'city_qucheng', name: '朐城', factionId: 'mi', lat: 34.529200, lng: 119.132996, type: 'small_city', troops: 10000 },
+        { id: 'city_baibogu', name: '白波谷', factionId: 'baibo', lat: 36.135621, lng: 112.206116, type: 'pass', region: 'HEXI', troops: 10000 },
+    { id: 'city_baoshan', name: '永昌', factionId: 'ailao', lat: 25.11, lng: 99.16, type: 'small_city', troops: 10000 },
+
+    {
+        id: 'city_guoneicheng',
+        name: '国内城',
+        factionId: 'xuantu',
+        lat: 41.13, lng: 126.19,
+        type: 'small_city',
+        region: 'KOREA', troops: 10000,
+        tier: 1,
+        note: '高句丽早期都城；汉代玄菟郡高句县渊源；旗号玄菟（2026-06-11）' },
+    {
+        id: 'city_fuyu',
+        name: '黄龙府',
+        factionId: 'fuyu',
+        lat: 44.4278, lng: 125.1758,
+        type: 'medium_city',
+        troops: 10000 },
+    
+    {
+        id: 'city_wuling',
+        name: '武陵',
+        factionId: 'zhongxiang',
+        lat: 29.03, lng: 111.69,
+        type: 'small_city',
+        troops: 10000 },
+    // ── 2026-05-25 唐朝势力新增据点 ──
+
+];
+
+// ============================================================
+// T2 关隘/要塞/渡口/港口 — 待添加
+// ============================================================
+export const T2_STRATEGIC: CityDataV2[] = [
+    // ── 蜀道沿线关隘 (长安→成都) ──
+    {
+        id: 'city_dasanguan',
+        name: '大散关',
+        factionId: 'fengzhou',
+        lat: 34.2800, lng: 106.9500,
+        type: 'pass',
+        troops: 10000,
+        tier: 2 },
+    { id: 'city_dusong', name: '独松关', factionId: 'shenshi', lat: 30.566952, lng: 119.679565, type: 'pass', troops: 10000, mirror: true },//镜像
+    { id: 'city_xianxia', name: '仙霞关', factionId: 'huangwang', lat: 28.35, lng: 118.51, type: 'pass', troops: 10000, tier: 2 },
+    { id: 'city_wuzhou', name: '金华', factionId: 'lujian', lat: 29.08, lng: 119.65, type: 'small_city', troops: 10000 },
+    { id: 'city_quzhou', name: '信安', factionId: 'gumie', lat: 28.96, lng: 118.87, type: 'small_city', troops: 10000 },
+    { id: 'city_raozhou', name: '鄱阳', factionId: 'linshihong', lat: 28.99, lng: 116.66, type: 'small_city', troops: 10000 },
+
+    
+    { id: 'city_qianzhou', name: '南康', factionId: 'dayu', lat: 25.8509, lng: 114.93, type: 'small_city', troops: 10000 },
+
+    {
+        id: 'city_jianmenguan',
+        name: '剑门关',
+        factionId: 'lizhou_d',
+        lat: 32.30, lng: 105.53,
+        type: 'pass',
+        troops: 10000,
+        tier: 2 },
+    //── 子午道秦岭关隘 ──
+    { id: 'city_ziwu', name: '子午谷', factionId: 'dashun', lat: 33.312230, lng: 108.124695, type: 'pass', region: 'HEXI', troops: 10000, note: '崇祯九年高迎祥出子午谷被伏，李自成接掌闯营；大顺老营驻地' },
+    { id: 'city_mianzhuguan', name: '鹿头关', factionId: 'chenghan', lat: 31.325490, lng: 104.172363, type: 'pass', troops: 10000, tier: 2, note: '梓潼鹿头关；成汉李特入蜀要道' },
+
+    // ── 崤函古道沿线关隘 ──
+    { id: 'city_hanguguan', name: '函谷关', factionId: 'hongnong_jun', lat: 34.615131, lng: 110.915222, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_tongguan', name: '潼关', factionId: 'sunqin', lat: 34.540000, lng: 110.290000, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true, note: '孙传庭督标秦军潼关战死故地' },
+    // ── 中原北线黄河走廊关隘 ──
+    { id: 'city_hulaoguan', name: '虎牢关', factionId: 'zheng', lat: 34.810000, lng: 113.170000, type: 'pass', troops: 10000, mirror: true },
+    // ── 洛阳周边防御关隘群 ──
+    { id: 'city_guangchengguan', name: '广成关', factionId: 'ruzhou', lat: 34.139089, lng: 112.887268, type: 'pass', troops: 10000, mirror: true },
+    
+    // ── 京同山川走廊关隘 ──
+    { id: 'city_juyongguan', name: '居庸关', factionId: 'you', lat: 40.280000, lng: 116.060000, type: 'pass', troops: 10000, mirror: true },
+
+    // ── 晋西北外三关及晋东北内长城关隘 ──
+    { id: 'city_piantouguan', name: '偏头关', factionId: 'linhu', lat: 39.430000, lng: 111.500000, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_pingxingguan', name: '平型关', factionId: 'lingqiu', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_lingshiguan', name: '灵石关', factionId: 'huo', lat: 36.844462, lng: 111.796875, type: 'pass', troops: 10000 },
+        // ── 关中盆地防御要塞群 ──
+    { id: 'city_wuguan', name: '武关', factionId: 'ruo', lat: 33.600000, lng: 110.620000, type: 'pass', troops: 10000, mirror: true },
+
+
+    { id: 'city_xiaoguan', name: '萧关', factionId: 'qiang', lat: 35.657289, lng: 106.320190, type: 'pass', troops: 10000, mirror: true, note: '萧关道，河西北陆羌族重镇' },
+
+    {
+        id: 'city_jinsuoguan',
+        name: '金锁关',
+        factionId: 'yaozhou',
+        lat: 35.19, lng: 109.11,
+        type: 'pass',
+        troops: 10000,
+        tier: 2 },
+    // ── 太行八陉防御要塞关隘群 ──
+    { id: 'city_zhiguan', name: '野王', factionId: 'zhi_state', lat: 35.150000, lng: 112.300000, type: 'pass', troops: 10000, mirror: true, note: '轵关/太行陉要隘；汉野王县治轵；旗号轵避§4.1防重' },
+            {
+        id: 'city_jingxingguan',
+        name: '井陉关',
+        factionId: 'xianyu',
+        lat: 38.02, lng: 114.00,
+        type: 'pass',
+        troops: 10000,
+        tier: 2 },
+    { id: 'city_daomaguan', name: '倒马关', factionId: 'changshan', lat: 38.841851, lng: 114.807129, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_feihu', name: '飞狐', factionId: 'wangyan', lat: 39.3487, lng: 114.6986, type: 'small_city', troops: 10000 },
+    { id: 'city_zijingguan', name: '紫荆关', factionId: 'yi', lat: 39.472238, lng: 115.265808, type: 'pass', troops: 10000, mirror: true },
+    // ── 辽东幽州走廊关隘 ──
+    {
+        id: 'city_shanhaiguan',
+        name: '山海关',
+        factionId: 'linyu',
+        lat: 40.0, lng: 119.8,
+        type: 'pass',
+        troops: 10000,
+        tier: 2 },
+    { id: 'city_wushengguan', name: '武胜关', factionId: 'yiyang_d', lat: 31.83, lng: 114.01, type: 'pass', mirror: true, troops: 10000 },
+    // ── 齐鲁关隘 ──
+    { id: 'city_mulingguan', name: '大岴', factionId: 'mushi', lat: 36.275259, lng: 118.660583, type: 'pass', troops: 10000, note: '穆陵关齐长城要隘旧称大岴；旗号穆避§4.1防重' },
+    { id: 'city_qingshiguan', name: '青石关', factionId: 'lai', lat: 36.246502, lng: 117.715759, type: 'pass', troops: 10000 },
+    {
+        id: 'city_diaoyucheng',
+        name: '钓鱼城',
+        factionId: 'hezhou',
+        lat: 30.04, lng: 106.30,
+        type: 'small_city',
+        troops: 10000 },
+    { id: 'city_diezhou', name: '合川', factionId: 'dangchang', lat: 33.975273, lng: 103.482971, type: 'small_city', troops: 10000 },
+    { id: 'city_panzhou', name: '茂名', factionId: 'gaoliang', lat: 33.578015, lng: 103.029785, type: 'small_city', troops: 10000 },
+    { id: 'city_maozhou', name: '汶川', factionId: 'qingqiang', lat: 31.693115, lng: 103.867493, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_qingyuan',
+        name: '清远',
+        factionId: 'chen',
+        lat: 23.68, lng: 113.06,
+        type: 'small_city',
+        troops: 10000 },
+    { id: 'city_gaoque', name: '高阙塞', factionId: 'baiyang', lat: 41.195202, lng: 107.166138, type: 'pass', mirror: true, troops: 10000, tier: 2 },
+    {
+        id: 'city_hengpuguan',
+        name: '横浦关',
+        factionId: 'shixing',
+        lat: 25.32, lng: 114.26,
+        type: 'pass',
+        troops: 10000,
+        tier: 2 },
+    {
+        id: 'city_yangshanguan',
+        name: '阳山关',
+        factionId: 'paiyao',
+        lat: 24.78, lng: 112.65,
+        type: 'pass',
+        troops: 10000,
+        mirror: true,
+        tier: 2 },
+    {
+        id: 'city_huangxiguan',
+        name: '湟溪关',
+        factionId: 'yingzhou',
+        lat: 24.16, lng: 113.38,
+        type: 'pass',
+        troops: 10000,
+        tier: 2 },
+    { id: 'city_yinzhou', name: '雕阴', factionId: 'liangshidu', lat: 37.796785, lng: 110.206604, type: 'small_city', troops: 10000 },
+    { id: 'city_dongshengzhou', name: '榆林', factionId: 'dongshengwei', lat: 39.810643, lng: 109.959412, type: 'small_city', troops: 10000 },
+    // ── 战略要塞/县级城镇 (移入的小城) ──
+    {
+        id: 'city_lueyang',
+        name: '略阳',
+        factionId: 'fushi',
+        lat: 34.3300, lng: 106.1000,
+        type: 'small_city',
+        troops: 10000,
+        note: '苻洪故地；氐族劲卒T1（原阳平关/魏延移驻）' },
+    { id: 'city_mianchi', name: '渑池', factionId: 'yangshao', lat: 34.76, lng: 111.76, type: 'small_city', troops: 10000 },
+
+        {
+        id: 'city_huaiyin',
+        name: '淮安',
+        factionId: 'sizhou',
+        lat: 33.5000, lng: 119.1300,
+        type: 'small_city',
+        troops: 10000, note: '韩世忠故里；克敌军T1（泗州）' },
+    {
+        id: 'city_dangyang',
+        name: '当阳',
+        factionId: 'quan',
+        lat: 30.82, lng: 111.79,
+        type: 'small_city',
+        troops: 10000 },
+        {
+        id: 'city_zaoyang',
+        name: '枣阳',
+        factionId: 'zaoyang_d',
+        lat: 32.13, lng: 112.75,
+        type: 'small_city',
+        region: 'JIANGNAN',
+        troops: 10000,
+        note: '枣阳军；孟珙统忠顺军抗蒙（《宋史·孟珙传》）' },
+
+    { id: 'city_ruoqiang', name: '卡克里克', factionId: 'ruoqiang', lat: 38.987176, lng: 88.948059, type: 'small_city', region: 'WESTERN', troops: 10000 },
+    {
+        id: 'city_qiemo',
+        name: '播仙',
+        factionId: 'qiemo',
+        lat: 38.14, lng: 85.53,
+        type: 'small_city',
+        troops: 10000 },
+    {
+        id: 'city_jingjue',
+        name: '精绝',
+        factionId: 'yuchi',
+        lat: 37.06, lng: 82.69,
+        type: 'small_city',
+        troops: 10000 },
+    { id: 'city_pishan', name: '固玛', factionId: 'pishan', lat: 37.570718, lng: 78.250122, type: 'small_city', troops: 10000 },
+        {
+        id: 'city_weili',
+        name: '库尔勒',
+        factionId: 'weili',
+        lat: 41.33, lng: 86.26,
+        type: 'small_city',
+        troops: 10000 },
+    // 迪化 — 且弥清新都 (原庭州已删除)
+    // 鹰娑川 — 土尔扈特 (天山尤鲁都斯/巴音布鲁克)
+    { id: 'city_yingsuochuan', name: '鹰娑川', factionId: 'tuerhute', lat: 42.869899, lng: 83.773499, type: 'pass', troops: 10000 },
+    // 沙图阿满 — 叛军 (清军哨卡)
+
+    // 星星峡 — 叛军 (丝路关隘)
+    { id: 'city_xingxingxia', name: '星星峡', factionId: 'panjun', lat: 41.611382, lng: 95.267944, type: 'pass', troops: 10000 },
+    // 赤亭 — 叛军 (吐鲁番绿洲)
+    { id: 'city_chiting', name: '赤亭关', factionId: 'gaochang', lat: 42.85, lng: 91.5, type: 'pass', troops: 10000 },
+
+    {
+        id: 'city_xiye',
+        name: '叶城',
+        factionId: 'xiye',
+        lat: 37.884, lng: 77.430,
+        type: 'small_city',
+        region: 'WESTERN',
+        troops: 10000,
+        note: '西夜国都（漂沙）；≠莎车' },
+
+
+
+
+
+    { id: 'city_xiuxun', name: '休循', factionId: 'khoja', lat: 39.709286, lng: 73.229370, type: 'small_city', troops: 10000 },
+    { id: 'city_yinai', name: '英吉沙尔', factionId: 'yarkand', lat: 38.929502, lng: 76.225891, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_yumenguan',
+        name: '玉门关',
+        factionId: 'guiyi',
+        lat: 40.35, lng: 93.86,
+        type: 'pass',
+        troops: 10000,
+        tier: 2 },
+    {
+        id: 'city_yangguan',
+        name: '阳关',
+        factionId: 'panjun',
+        lat: 39.92, lng: 94.06,
+        type: 'pass',
+        troops: 10000,
+        tier: 2, mirror: true },
+    { id: 'city_wuzhousai', name: '武州塞', factionId: 'panjun', lat: 39.998214, lng: 112.420349, type: 'pass', region: 'STEPPE', troops: 10000, mirror: true },
+    // ── 2026-06-18 新增：李靖@恶阳岭（贞观四年定襄夜袭）──
+    { id: 'city_eyangling', name: '恶阳岭', factionId: 'dingxiang_d', lat: 39.910000, lng: 111.650000, type: 'pass', troops: 10000, region: 'NORTH', mirror: true, note: '贞观四年李靖三千骑出恶阳岭夜袭定襄城（《旧唐书·李靖传》）；清水河南缘，距盛乐≥50km' },
+    { id: 'city_jilusai', name: '鸡鹿塞', factionId: 'weiming', lat: 40.807568, lng: 106.630554, type: 'pass', troops: 10000, mirror: true, tier: 2 },
+    {
+        id: 'city_guyangsai',
+        name: '固阳塞',
+        factionId: 'panjun',
+        lat: 41.10, lng: 110.08,
+        type: 'pass',
+        troops: 10000,
+        tier: 2 },
+    {
+        id: 'city_xiayangdu',
+        name: '夏阳渡',
+        factionId: 'panjun',
+        lat: 35.48, lng: 110.44,
+        type: 'small_city',
+        troops: 10000,
+        tier: 2 },
+    // ── 战略渡口 ──
+    {
+        id: 'city_piaoyujin',
+        name: '漂渝津',
+        factionId: 'panjun',
+        lat: 39.1, lng: 117.2,
+        type: 'small_city',
+        troops: 10000,
+        tier: 2 },
+
+    // ── 太行陉关隘 ──
+    { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.270000, lng: 112.930000, type: 'pass', troops: 10000, mirror: true } ];
+
+// ============================================================
+// 周边 — 待添加 (日本七道、朝鲜八道、各古政权首都)
+// ============================================================
+export const PERIPHERY: CityDataV2[] = [
+    {
+        id: 'city_dali_city',
+        name: '羊苴咩',
+        factionId: 'dali',
+        lat: 25.698300,
+        lng: 100.148800,
+        type: 'medium_city',
+        region: 'DIANQIAN',
+        troops: 10000,
+        tier: 1 },
+
+    // ── 2026-05-25 唐朝势力新增周边据点 ──
+    { id: 'city_mengshe', name: '蒙舍城', factionId: 'nanzhao', lat: 25.058278, lng: 100.500183, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_hanseong',
+        name: '汉城',
+        factionId: 'joseon',
+        lat: 37.52, lng: 126.98,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1,
+        region: 'KOREA',
+        note: '朝鲜王朝（李朝）都城汉阳/汉城' },
+    { id: 'city_pyongyang', name: '平壤', factionId: 'gaogouli', lat: 39.020000, lng: 125.760000, type: 'medium_city', region: 'KOREA', troops: 10000, tier: 1, note: '高句丽中后期国都（427 年迁平壤城）' },
+
+    {
+        id: 'city_kaesong',
+        name: '开城',
+        factionId: 'goryeo',
+        lat: 37.97, lng: 126.55,
+        type: 'medium_city',
+        troops: 20000,
+        tier: 1,
+        region: 'KOREA' },
+    { id: 'city_hamhung', name: '咸兴', factionId: 'woju', lat: 39.968685, lng: 127.499084, type: 'small_city', troops: 10000, region: 'KOREA' },
+    {
+        id: 'city_longer',
+        name: '笼耳',
+        factionId: 'jingcheng_d',
+        lat: 40.9670, lng: 129.5510,
+        type: 'small_city',
+        troops: 10000,
+        region: 'KOREA',
+        note: '女真旧地；高丽睿宗二年（1107）筑城置笼耳县；今咸镜北道清津/镜城' },
+    {
+        id: 'city_guoyuancheng',
+        name: '国原城',
+        factionId: 'chungju_d',
+        lat: 36.9910, lng: 127.9260,
+        type: 'small_city',
+        troops: 10000,
+        region: 'KOREA',
+        note: '忠州牧治所；古称国原城、大原城、薮原城、中原京；无政权定都' },
+    {
+        id: 'city_geumseong',
+        name: '锦城',
+        factionId: 'naju_d',
+        lat: 35.0150, lng: 126.7100,
+        type: 'small_city',
+        troops: 10000,
+        region: 'KOREA',
+        note: '罗州牧治所（全罗南道）；古称发罗郡、通义县；无政权定都' },
+    {
+        id: 'city_jeonju',
+        name: '完山',
+        factionId: 'zhen',
+        lat: 35.75, lng: 127.14,
+        type: 'small_city',
+        troops: 10000,
+        tier: 4,
+        region: 'KOREA' },
+    {
+        id: 'city_jindo',
+        name: '鸣梁',
+        factionId: 'sambyeol',
+        lat: 34.487, lng: 126.263,
+        type: 'pass',
+        troops: 10000,
+        tier: 4,
+        region: 'KOREA',
+        note: '高丽三别抄抗蒙根据地（1232 裴仲孙）' },
+    {
+        id: 'city_suncheon_k',
+        name: '顺天',
+        factionId: 'sheng_d',
+        lat: 34.9652, lng: 127.4991,
+        type: 'small_city',
+        troops: 10000,
+        tier: 4,
+        region: 'KOREA',
+        note: '高丽成宗升州牧治所；古称升州；壬辰倭乱水军重镇' },
+    {
+        id: 'city_gimhae',
+        name: '金海',
+        factionId: 'gaya',
+        lat: 35.23, lng: 128.88,
+        type: 'small_city',
+        troops: 10000,
+        tier: 4,
+         region: 'KOREA' },
+    { id: 'city_jincheng_silla', name: '金城', factionId: 'xinluo', lat: 35.808912, lng: 129.210205, type: 'big_city', region: 'KOREA', troops: 20000, tier: 0 }, // [2026-05-30] 升 big_city: 新罗 57BC-935AD = 992 年首都
+        {
+        id: 'city_haeju',
+        name: '朐山',
+        factionId: 'hai2',
+        lat: 38.03, lng: 125.71,
+        type: 'small_city',
+        troops: 10000,
+        tier: 4,
+        region: 'KOREA' },
+    {
+        id: 'city_longwan',
+        name: '龙湾',
+        factionId: 'xingliao',
+        lat: 40.1967, lng: 124.5306,
+        type: 'small_city',
+        troops: 10000,
+        tier: 4,
+        region: 'KOREA' },
+    // === 第三批新增据点 ===
+    {
+        id: 'city_fuhan',
+        name: '枹罕',
+        factionId: 'qifu_d',
+        lat: 35.60, lng: 103.21,
+        type: 'small_city',
+        troops: 10000 },
+    // ---- 从 CITIES_LEGACY 迁移的城市 ----
+    { id: 'city_qishan', name: '岐山', factionId: 'zhou', lat: 34.506539, lng: 107.487488, type: 'small_city', troops: 10000 },
+    { id: 'city_tongwancheng', name: '统万城', factionId: 'helian', lat: 38.024286, lng: 109.149170, type: 'small_city', troops: 10000, note: '大夏都城遗址；峰值人口未达中城门槛，2026-06-12 降级' },
+
+    { id: 'city_qiuchi', name: '仇池', factionId: 'qiuchi', lat: 33.86, lng: 105.3, type: 'pass', region: 'HEXI', troops: 10000 },
+    { id: 'city_daixian', name: '广武', factionId: 'dai_d', lat: 39.842285, lng: 114.408875, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_ningan',
+        name: '龙泉府',
+        factionId: 'bohai',
+        lat: 44.128997,
+        lng: 129.295349,
+        type: 'medium_city',
+        troops: 20000,
+        tier: 1,
+        region: 'NORTHEAST' },
+
+    { id: 'city_yalu', name: '鸭绿府', factionId: 'luzhou', lat: 41.81, lng: 126.91, type: 'small_city', troops: 10000 },
+    { id: 'city_jilishan', name: '蒺藜山', factionId: 'yizhou', lat: 42.25, lng: 121.80, type: 'pass', troops: 10000, region: 'NORTHEAST' },
+
+    // ── 2026-05-26 新建势力：大金(会宁府)、大元(上都) ──
+    { id: 'city_huining', name: '会宁府', factionId: 'dajin', lat: 45.519798, lng: 126.971741, type: 'medium_city', troops: 10000, tier: 1, note: '大金政权都城；合扎猛安' },
+    { id: 'city_shangdu', name: '上都', factionId: 'yuan_d', lat: 42.275283, lng: 115.760193, type: 'medium_city', troops: 10000, tier: 1, note: '大元夏都；秃鲁花军' },
+
+
+    // 额尔古纳已删：室韦都城为俱轮泊 city_julunbo
+    { id: 'city_hetuala', name: '赫图阿拉', factionId: 'aisin_d', lat: 41.715981, lng: 125.032654, type: 'small_city', troops: 10000, tier: 1, note: '爱新觉罗氏兴起地；≠大清皇朝旗号' },
+    { id: 'city_wuguo', name: '五国城', factionId: 'jurchen', lat: 46.32, lng: 129.56, type: 'small_city', troops: 10000 },
+    
+    { id: 'city_yanran', name: '燕然山', factionId: 'pugu', lat: 46.276728, lng: 102.801819, type: 'pass', troops: 10000 },
+    { id: 'city_langjuxu', name: '狼居胥山', factionId: 'mengwu', lat: 47.687578, lng: 108.528442, type: 'pass', troops: 10000 },
+    {
+        id: 'city_luoxie',
+        name: '逻些',
+        factionId: 'tubo',
+        lat: 29.659414,
+        lng: 91.021729,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0, note: '南唐李昪建都金陵（建业）；神武军T1' },
+
+
+    { id: 'city_guanglu', name: '光禄城', factionId: 'shatuo', lat: 41.9000, lng: 108.2000, type: 'small_city', troops: 10000 },
+    { id: 'city_yanran_stone', name: '燕然勒石', factionId: 'xueyantuo', lat: 45.203318, lng: 104.677734, type: 'small_city', troops: 10000 },
+    { id: 'city_luhun', name: '涿邪山', factionId: 'panjun', lat: 43.588290, lng: 104.661255, type: 'pass', troops: 10000 },
+    { id: 'city_chilechuan', name: '云中', factionId: 'chile', lat: 40.591029, lng: 110.044556, type: 'small_city', troops: 10000 },
+    { id: 'city_lanshi', name: '蓝氏城', factionId: 'guishuang', lat: 36.712480, lng: 67.082520, type: 'medium_city', troops: 10000, note: '大夏故都，城市之母，鼎盛人口20万，2026-06-18 升为中城' },
+
+    { id: 'city_sabi', name: '泗沘', factionId: 'baiji', lat: 36.255354, lng: 126.949768, type: 'medium_city', troops: 10000 },
+    
+    { id: 'city_edo', name: '江户城', factionId: 'edo', lat: 35.68, lng: 139.76, type: 'big_city', region: 'JAPAN', troops: 20000 }, // [2026-05-30] 升 big_city: 江户幕府 264 年 + 1700 年代百万人口世界第一
+
+    {
+        id: 'city_kyoto',
+        name: '京都',
+        factionId: 'ashikaga',
+        lat: 35.01,
+        lng: 135.77,
+        type: 'medium_city',
+        troops: 20000,
+        tier: 1,
+        region: 'JAPAN',
+        note: '室町幕府足利将军治所' },
+    { id: 'city_tainan', name: '承天', factionId: 'ming_zheng', lat: 22.99, lng: 120.2, type: 'medium_city', troops: 10000, tier: 1, note: '明郑政权都城；郑氏铁人军' },
+    { id: 'city_weirong', name: '威戎', factionId: 'quanrong', lat: 35.585841, lng: 105.512695, type: 'small_city', troops: 10000 },
+    { id: 'city_xingtai', name: '邢台', factionId: 'shizhao_d', lat: 37.08, lng: 114.48, type: 'small_city', troops: 10000, note: '襄国，后赵石勒都城' },
+    { id: 'city_shengle', name: '盛乐', factionId: 'yunzhong', lat: 40.38, lng: 111.82, type: 'small_city', troops: 10000, note: '北魏前期都城；峰值人口未达中城门槛，2026-06-12 降级' },
+    
+    { id: 'city_izumo', name: '月山富田', factionId: 'izumo', lat: 35.377853, lng: 133.148804, type: 'pass', troops: 10000, region: 'JAPAN', note: '出云国月山富田城；尼子氏（新宫党）' },
+    { id: 'city_satsuma', name: '鹿儿岛城', factionId: 'satsuma', lat: 31.6003, lng: 130.5583, type: 'small_city', region: 'JAPAN', troops: 10000, note: '萨摩国鹿儿岛城；岛津氏（隼人众）' },
+    // // [DATA LOST - emishi deleted]
+    { id: 'city_shuri', name: '首里', factionId: 'ryukyu', lat: 26.22, lng: 127.72, type: 'small_city', region: 'LINGNAN', troops: 10000, tier: 1, note: '琉球王国都城；那霸水师' },
+    { id: 'city_tsushima', name: '金石城', factionId: 'so', lat: 34.2031, lng: 129.2892, type: 'small_city', troops: 10000, region: 'JAPAN' },
+    { id: 'city_yoshida', name: '吉田郡山', factionId: 'aki', lat: 34.438616, lng: 132.530823, type: 'pass', troops: 10000, region: 'JAPAN' },
+    { id: 'city_kasugayama', name: '春日山', factionId: 'echigo', lat: 37.16, lng: 138.24, type: 'pass', troops: 10000, region: 'JAPAN', note: '越后国春日山城；上杉氏（轩猿众）' },
+    { id: 'city_kiyosu', name: '清洲城', factionId: 'owari', lat: 35.22, lng: 136.85, type: 'small_city', region: 'JAPAN', troops: 10000 },
+    { id: 'city_tsutsujigasaki', name: '躑躅崎馆', factionId: 'kai', lat: 35.6688, lng: 138.4991, type: 'small_city', region: 'JAPAN', troops: 10000 },
+    { id: 'city_okafu', name: '冈丰城', factionId: 'chosokabe', lat: 33.5972, lng: 133.5756, type: 'pass', region: 'JAPAN', troops: 10000, note: '土佐国冈丰城；长宗我部氏（一领具足）' },
+    { id: 'city_himeji', name: '姬路城', factionId: 'hashiba', lat: 34.8394, lng: 134.6939, type: 'small_city', region: 'JAPAN', troops: 10000 },
+    { id: 'city_utsunomiya', name: '宇都宫城', factionId: 'honda', lat: 36.604491, lng: 139.858704, type: 'small_city', region: 'JAPAN', troops: 10000, note: '下野国宇都宫城；宇都宫氏' },
+    { id: 'city_tsuruga', name: '鹤之城', factionId: 'aizu', lat: 37.4878, lng: 139.9297, type: 'small_city', region: 'JAPAN', troops: 10000 },
+    // ── 2026-06-11 日本精锐：北条@小田原、伊贺@名张（恶党/千早城距飞鸟宫旧址3km）──
+    { id: 'city_odawara', name: '小田原城', factionId: 'hojo_d', lat: 35.256, lng: 139.154, type: 'small_city', region: 'JAPAN', troops: 10000, note: '相模国小田原城；北条氏（风魔党；距江户城约72km）' },
+    { id: 'city_nabari', name: '名张', factionId: 'iga_d', lat: 34.627, lng: 136.108, type: 'small_city', region: 'JAPAN', troops: 10000, note: '伊贺国名张郡；伊贺众锚点（2026-06-17 主人裁定：必须名张；上野虽名气更大但与京都<50km，删小留大留京都）' },
+    // ── 2026-06-16 新增：日本令制国补点（方案A·6城）──
+    { id: 'city_jianghu', name: '江沼', factionId: 'kaga_d', lat: 36.37, lng: 136.54, type: 'small_city', region: 'JAPAN', troops: 10000, note: '加贺国府江沼；加贺一向一揆故地（国府旧称，名气大于江户期金泽城）' },
+    { id: 'city_xiantai', name: '仙台', factionId: 'date_d', lat: 38.27, lng: 140.87, type: 'small_city', region: 'JAPAN', troops: 10000, note: '陆前国仙台平；伊达氏居城（古代地名，非江户城专名）' },
+    { id: 'city_xiongben', name: '熊本', factionId: 'higo_d', lat: 32.81, lng: 130.71, type: 'medium_city', region: 'JAPAN', troops: 10000, note: '肥后国熊本；菊池氏故地；江户期人口破10万，2026-06-18 升为中城' },
+    { id: 'city_songshan', name: '松山', factionId: 'iyo_d', lat: 33.84, lng: 132.77, type: 'small_city', region: 'JAPAN', troops: 10000, note: '伊予国松山；河野氏水军根据地（古代地名）' },
+    { id: 'city_funei', name: '府内', factionId: 'otomo_d', lat: 33.24, lng: 131.61, type: 'small_city', region: 'JAPAN', troops: 10000, note: '丰后国府内；大友氏九州据地（府内为大友氏居城旧称）' },
+    { id: 'city_gaodao', name: '高岛', factionId: 'suwa_d', lat: 36.0138, lng: 137.9662, type: 'small_city', region: 'JAPAN', troops: 10000, note: '信浓国诹访郡高岛；诹访氏中世本据（考据138.0515°E；与躑躅崎馆<50km，经度西移约7.7km）' },
+    { id: 'city_shangdang', name: '长子', factionId: 'xin', lat: 36.148974, lng: 113.008118, type: 'small_city', troops: 10000 },
+
+    { id: 'city_fanyang', name: '范阳', factionId: 'zhuozhou', lat: 39.48, lng: 115.98, type: 'medium_city', troops: 10000, note: '安禄山范阳节度使根基；安史叛军' },
+    { id: 'city_hedong', name: '安邑', factionId: 'xiezhou', lat: 35.072716, lng: 111.033325, type: 'medium_city', troops: 10000, note: '夏禹之都（《史记·夏本纪》）；阳城过近洛阳已删' },
+    { id: 'city_chenjun', name: '新蔡', factionId: 'cai', lat: 32.75, lng: 114.98, type: 'small_city', troops: 10000 },
+
+    { id: 'city_qufu', name: '曲阜', factionId: 'kong_d', lat: 35.6, lng: 116.98, type: 'small_city', troops: 10000 },
+
+        
+
+    { id: 'city_fusicheng', name: '伏俟城', factionId: 'tuyu_d', lat: 36.760890, lng: 99.742126, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_xianglin',
+        name: '象林',
+        factionId: 'linyi',
+        lat: 15.00, lng: 108.50,
+        type: 'small_city',
+        troops: 10000 },
+    // ── 2026-05-25 新增：秦朝核对追加势力城市 ──
+    {
+        id: 'city_lushi',
+        name: '陆浑关',
+        factionId: 'yun',
+        lat: 34.05, lng: 111.05,
+        type: 'pass',
+        troops: 10000,
+        mirror: true },//镜像
+    
+    {
+        id: 'city_puyang',
+        name: '濮阳',
+        factionId: 'chanzhou',
+        lat: 35.7621, lng: 115.0291,
+        type: 'small_city',
+        troops: 10000,
+        tier: 1 },
+    { id: 'city_xucheng', name: '符离', factionId: 'suzhou_d', lat: 33.65, lng: 116.97, type: 'small_city', troops: 10000, note: '宿州治境；符离古邑，唐宿州治所近此' },
+    // ── 2026-05-25 新增：汉朝补全半成品势力城市 ──
+    
+    // ── 2026-05-25 新增：汉朝核对追加势力都城 ──
+    {
+        id: 'city_zhaoge',
+        name: '朝歌',
+        factionId: 'yin',
+        lat: 35.60, lng: 114.18,
+        type: 'small_city',
+        troops: 10000 },
+    { id: 'city_liuxian', name: '六安', factionId: 'liu', lat: 31.74, lng: 116.5, type: 'small_city', troops: 10000 },
+    
+
+    // ── 2026-05-25 新增：三国核对追加势力都城 ──
+    {
+        id: 'city_xiapi',
+        name: '下邳',
+        factionId: 'pizhou',
+        lat: 33.888642,
+        lng: 117.877808,
+        type: 'medium_city',
+        troops: 10000,
+        note: '徐国故都；淮泗徐夷核心；汉初楚都下邳；陷阵营成军地' },
+    // ── 2026-05-25 新增：两晋核对追加势力城市 ──
+    {
+        id: 'city_xiurongchuan',
+        name: '秀容川',
+        factionId: 'erzhu',
+        lat: 38.42, lng: 112.73,
+        type: 'small_city',
+        troops: 10000 },
+
+    // ── 2026-05-25 新增：隋朝核对追加势力城市 ──
+    
+    
+    
+    
+
+    { id: 'city_songmo', name: '马盂山', factionId: 'kumo', lat: 41.017350, lng: 118.699036, type: 'pass', region: 'STEPPE', troops: 10000 },
+
+    {
+        id: 'city_gaoliang',
+        name: '高凉',
+        factionId: 'xian_d',
+        lat: 21.90, lng: 110.80,
+        type: 'small_city',
+        troops: 10000 },
+    { id: 'city_beishacheng', name: '卑沙城', factionId: 'panjun', lat: 39.444692, lng: 121.959229, type: 'pass', region: 'NORTHEAST', troops: 10000, note: '辽东卑沙城；公孙氏辽东翼境' },
+    // ── 2026-05-25 唐朝势力新增周边据点(续) ──
+    {
+        id: 'city_suiye',
+        name: '屈耽',
+        factionId: 'xiliao',
+        lat: 42.80, lng: 75.2667,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1,
+        region: 'CENTRAL_ASIA',
+        note: '碎叶/八剌沙衮故地（唐屈耽；喀喇契丹虎思斡耳朵）' },
+    { id: 'city_nieduo', name: '孽多', factionId: 'nandou', lat: 35.92, lng: 74.3, type: 'small_city', troops: 10000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处' },
+
+    // ── 2026-05-26 更新：窝鲁朵八里→富贵城/拜巴里（色楞格河畔漠北回鹘陪都）──
+
+    { id: 'city_woluduobali', name: '窝鲁朵八里', factionId: 'huige', lat: 47.8000, lng: 107.5000, type: 'medium_city', region: 'STEPPE', troops: 10000 },
+    
+    { id: 'city_jinshan', name: '金山', factionId: 'huite', lat: 46.939014, lng: 89.598999, type: 'pass', troops: 10000 },
+    { id: 'city_dafang', name: '大方城', factionId: 'luodian', lat: 27.046910, lng: 105.707703, type: 'small_city', troops: 10000 },
+    { id: 'city_yongzhou', name: '晋兴', factionId: 'nongzhigao', lat: 22.81, lng: 108.31, type: 'small_city', troops: 10000 },
+
+    {
+        id: 'city_qingxi',
+        name: '清溪',
+        factionId: 'fangla',
+        lat: 29.60, lng: 119.04,
+        type: 'small_city',
+        troops: 10000,
+        tier: 4,
+        region: 'JIANGNAN' },
+    // ── 2026-05-25 北宋辽金势力 v2 ──
+    {
+        id: 'city_dengzhou',
+        name: '蓬莱',
+        factionId: 'yang_aner',
+        lat: 37.82, lng: 120.72,
+        type: 'small_city',
+        troops: 10000,
+        tier: 4,
+        region: 'NORTH' },
+    { id: 'city_jiaoxi', name: '胶西', factionId: 'tongma', lat: 36.228777, lng: 119.924011, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-25 元朝蒙古势力新增城市 ──
+    // 第一类：西征摧毁政权
+    { id: 'city_urgench', name: '玉龙杰赤', factionId: 'huarazim', lat: 42.244805, lng: 59.631042, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 1 },
+    { id: 'city_merv', name: '木鹿', factionId: 'seljuq', lat: 37.616410, lng: 62.234802, type: 'big_city', region: 'CENTRAL_ASIA', troops: 20000, note: '大塞尔柱都城马鲁/梅尔夫；史籍常称木鹿' },
+    { id: 'city_pagan', name: '蒲甘', factionId: 'pagan', lat: 21.207449, lng: 94.894409, type: 'medium_city', troops: 20000, tier: 1, region: 'DIANQIAN', note: '蒲甘王朝都城；缅王战象' },
+        // 第二类：四大汗国
+    { id: 'city_almaliq', name: '弓月城', factionId: 'geluolu', lat: 43.979013, lng: 79.648132, type: 'small_city', region: 'STEPPE', troops: 10000, mirror: true },
+    { id: 'city_emil', name: '也迷里', factionId: 'ogodei', lat: 46.481378, lng: 83.633423, type: 'small_city', region: 'STEPPE', troops: 10000, note: '草原环线锚点；环线所称也迷离即本据点' },
+    // 第三类：蒙古草原部落
+    { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'small_city', troops: 10000 },
+    { id: 'city_naiman', name: '阿尔泰', factionId: 'hujie', lat: 47.64, lng: 88.29, type: 'pass', region: 'STEPPE', troops: 10000 },
+    { id: 'city_fuhai', name: '福海', factionId: 'naiman', lat: 47.036450, lng: 87.352295, type: 'small_city', troops: 10000 },
+    { id: 'city_tatar', name: '哈拉哈河', factionId: 'tatar', lat: 47.182253, lng: 117.726746, type: 'small_city', troops: 10000 },
+
+    { id: 'city_merkit', name: '色楞格河', factionId: 'merkit', lat: 50.264779, lng: 106.152649, type: 'small_city', region: 'STEPPE', troops: 10000 },
+    // 第四类：汉军世侯及元末军阀
+    // 第五类：元末起义政权
+    
+    {
+        id: 'city_xinhui', name: '新会', factionId: 'luoping',
+        lat: 22.53, lng: 113.04, type: 'small_city', troops: 10000, tier: 4,
+        region: 'LINGNAN' },
+    {
+        id: 'city_ninghai', name: '宁海', factionId: 'daxing',
+        lat: 29.28, lng: 121.42, type: 'small_city', troops: 10000, tier: 4,
+        region: 'JIANGNAN' },
+    {
+        id: 'city_zhenghe', name: '政和', factionId: 'dacheng',
+        lat: 27.37, lng: 118.86, type: 'small_city', troops: 10000, tier: 4,
+        region: 'LINGNAN' },
+    {
+        id: 'city_zhangzhou', name: '龙溪', factionId: 'chendiaoyan',
+        lat: 24.51, lng: 117.65, type: 'small_city', troops: 10000,
+        region: 'LINGNAN' },
+    { id: 'city_tingzhou', name: '黄连', factionId: 'kejia', lat: 25.767779, lng: 116.317749, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-25 明朝势力新增城市 ──
+    // 第二类：元末群雄
+    {
+        id: 'city_qingyuan_zj', name: '庆元', factionId: 'fang_guozhen',
+        lat: 29.87, lng: 121.54, type: 'small_city', troops: 10000, tier: 4,
+        region: 'JIANGNAN' },
+    {
+        id: 'city_taizhou_zj', name: '临海', factionId: 'ouyue',
+        lat: 28.66, lng: 121.42, type: 'small_city', troops: 10000, tier: 4,
+        region: 'JIANGNAN' },
+    {
+        id: 'city_wenzhou', name: '永嘉', factionId: 'ting',
+        lat: 28.00, lng: 120.70, type: 'small_city', troops: 10000, tier: 4,
+        region: 'JIANGNAN' },
+
+    // 第三类：农民起义
+
+    {
+        id: 'city_shaxian', name: '沙戍堡', factionId: 'dengmaoqi',
+        lat: 26.40, lng: 117.79, type: 'pass', troops: 10000, tier: 4,
+        region: 'LINGNAN' },
+    {
+        id: 'city_yanping', name: '延平', factionId: 'geng',
+        lat: 26.670, lng: 118.210, type: 'small_city', troops: 10000, tier: 4,
+        region: 'LINGNAN' },
+    {
+        id: 'city_jianning', name: '建宁', factionId: 'longwu',
+        lat: 26.83, lng: 116.62, type: 'small_city', troops: 10000, tier: 4,
+        region: 'LINGNAN' },
+    {
+        id: 'city_chuzhou_zj', name: '丽水', factionId: 'yezongliu',
+        lat: 28.46, lng: 119.91, type: 'small_city', troops: 10000, tier: 4,
+        region: 'JIANGNAN' },
+    {
+        id: 'city_wenan', name: '文安', factionId: 'hejian',
+        lat: 38.87, lng: 116.46, type: 'small_city', troops: 10000, tier: 4,
+        region: 'NORTH', note: '河间郡文安；界桥先登死士翼境（《三国志·袁绍传》）' },
+    // 第四类：藩王叛乱
+    { id: 'city_wudingzhou', name: '乐安', factionId: 'dizhou', lat: 37.501018, lng: 117.518005, type: 'small_city', troops: 10000 },
+
+    // 第五类：边疆民族
+    { id: 'city_hetao', name: '河套', factionId: 'dada_ming', lat: 40.442769, lng: 109.333191, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_kobdo', name: '科布多', factionId: 'oirat_ming',
+        lat: 48.01, lng: 91.64, type: 'small_city', troops: 10000, tier: 4,
+        region: 'STEPPE' },
+    {
+        id: 'city_yeren_base', name: '瑷珲', factionId: 'yeren_nvzhen',
+        lat: 50.25, lng: 127.50, type: 'small_city', troops: 10000, tier: 4,
+         },
+    { id: 'city_chijin', name: '赤金堡', factionId: 'chijin', lat: 40.000221, lng: 97.437744, type: 'pass', troops: 10000 },
+    { id: 'city_anding_qh', name: '苦峪堡', factionId: 'anding_wei', lat: 36.230961, lng: 100.599060, type: 'pass', troops: 10000 },
+
+    // 第六类：周边国家
+    
+    {
+        id: 'city_ayutthaya', name: '阿瑜陀耶', factionId: 'siam',
+        lat: 14.35, lng: 100.58, type: 'big_city', troops: 20000, tier: 4,
+        region: 'DIANQIAN' },
+    {
+        id: 'city_angkor', name: '吴哥', factionId: 'chenla',
+        lat: 13.41, lng: 103.87, type: 'big_city', troops: 20000, tier: 4,
+        region: 'DIANQIAN', note: '真腊吴哥王朝都城；滇缅文化区' },
+    // ── 2026-05-25 明清之际新城市 ──
+    { id: 'city_shenyang', name: '沈阳', factionId: 'manzhou_d', lat: 41.802030, lng: 123.436890, type: 'big_city', troops: 20000, tier: 0, note: '大清皇朝都城；≠爱新觉罗氏族旗号(aisin_d@赫图阿拉)' },
+    {
+        id: 'city_guihua', name: '归化城', factionId: 'tumed',
+        lat: 40.84, lng: 111.68, type: 'medium_city', troops: 10000,
+        region: 'STEPPE',  // [override] 蒙古土默特部都城, 文化属塞外
+    },
+    {
+        id: 'city_kulun', name: '库伦', factionId: 'tushetu',
+        lat: 47.92, lng: 106.84, type: 'small_city', troops: 10000 },
+    { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'small_city', region: 'STEPPE', troops: 10000, note: '清代锡伯营西迁戍边；伊犁将军辖区' },
+    { id: 'city_yadong', name: '卓木', factionId: 'gaxa', lat: 28.243709, lng: 89.376526, type: 'small_city', troops: 10000 },
+    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', troops: 10000 },
+    {
+        id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_x',
+        lat: 31.00, lng: 102.40, type: 'pass', troops: 10000 },
+    {
+        id: 'city_zhaoqing', name: '肇庆', factionId: 'duanzhou_d',
+        lat: 23.05, lng: 112.45, type: 'small_city', troops: 10000, region: 'LINGNAN', note: '端州治；马暨统摧锋军抗元（1278）' },
+    {
+        id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian',
+        lat: 24.08, lng: 120.56, type: 'small_city', troops: 10000 },
+    { id: 'city_pinglong', name: '平陇', factionId: 'miaomin', lat: 28.304379, lng: 109.671021, type: 'pass', troops: 10000 },
+    { id: 'city_kathmandu', name: '加德满都', factionId: 'gurkha', lat: 27.715138, lng: 85.185242, type: 'small_city', region: 'TIBET', troops: 10000, tier: 1 },
+    {
+        id: 'city_turkestan', name: '亚西', factionId: 'kazakh',
+        lat: 43.297, lng: 68.270, type: 'small_city', troops: 10000, tier: 4,
+        region: 'CENTRAL_ASIA' },
+    { id: 'city_kokand', name: '浩罕', factionId: 'kokand', lat: 40.5333, lng: 70.9333, type: 'small_city', troops: 10000 },
+
+    { id: 'city_fayzabad', name: '法扎巴德', factionId: 'badakhshan', lat: 37.068341, lng: 70.675049, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-25 晚清／近代城市（35个）──
+    // 第一类：太平天国
+    {
+        id: 'city_jintian', name: '金田村', factionId: 'taiping',
+        lat: 23.40, lng: 110.08, type: 'small_city', troops: 10000 },
+    // 第三类：大明国/小刀会
+    {
+        id: 'city_shanghai', name: '上海', factionId: 'chunshen',
+        lat: 31.23, lng: 121.47, type: 'small_city', troops: 10000 },
+
+    // ── 洋州@兴势（王平·兴势之战/无当飞军T1）──
+    {
+        id: 'city_yangxian', name: '兴势', factionId: 'yangzhou',
+        lat: 33.1500, lng: 107.3500, type: 'pass', troops: 10000,
+        note: '244年王平兴势之战大破曹爽；洋州·无当飞军T1' },
+
+    // 第六类：平南国（杜文秀）
+    // 大理已存在 (city_dali_city), 不再新建
+
+    // 第七类：陕甘回军
+    // 第八类：号军/江汉政权
+    
+    { id: 'city_piandaoshui', name: '偏刀水', factionId: 'qianhui', lat: 27.921633, lng: 107.685242, type: 'small_city', troops: 10000 },
+    // 第九类：黔西南回军
+    // 第十类：苗民起义
+    
+    // 第十一类：新疆同治割据
+
+    { id: 'city_wuliyasutai', name: '乌城', factionId: 'zhasaketu', lat: 47.74, lng: 96.84, type: 'small_city', troops: 10000 },
+
+
+    // 第十三类：西南土司
+    // 第十四类：回疆割据（托克逊等）
+    { id: 'city_tuokexun', name: '托克逊', factionId: 'duerbote', lat: 42.79, lng: 88.65, type: 'small_city', troops: 10000 },
+
+    { id: 'city_dabancheng', name: '达坂城', factionId: 'tuoming', lat: 43.339165, lng: 88.258667, type: 'pass', troops: 10000 },
+
+    // 第十五类：越南阮朝
+    { id: 'city_nanghar', name: '囊哈儿', factionId: 'jilimi', lat: 52.209343, lng: 141.951599, type: 'small_city', region: 'NORTHEAST', troops: 10000 },
+    {
+        id: 'city_katsuyama', name: '胜山馆', factionId: 'kakizaki',
+        lat: 41.8008, lng: 140.0994, type: 'pass', troops: 10000, tier: 4,
+        region: 'JAPAN' },
+    {
+        id: 'city_yanaginogosho', name: '柳之御所', factionId: 'fujiwara',
+        lat: 38.99, lng: 141.1208, type: 'small_city', troops: 10000,
+        region: 'JAPAN' },
+
+    // ── 2026-05-26 新增：肃慎系势力都城（挹娄、勿吉、靺鞨）──
+    { id: 'city_fenglin', name: '凤林城', factionId: 'yilou', lat: 46.318508, lng: 132.187500, type: 'small_city', troops: 10000 },
+    
+
+    // ── 2026-05-26 新增：濊貊、毛文龙 ──
+    
+    {
+        id: 'city_pidao', name: '皮岛', factionId: 'mao_wenlong',
+        lat: 39.5539, lng: 124.6611, type: 'pass', troops: 10000,
+        region: 'NORTHEAST' },
+
+    // ── 2026-05-26 新增：满洲贵族世家 ──
+    {
+        id: 'city_tongjiajiang', name: '浑江', factionId: 'jianzhou_nvzhen',
+        lat: 41.2681, lng: 125.3625, type: 'small_city', troops: 10000,
+        region: 'NORTH' },
+    
+    
+    // ── 2026-05-26 新增：渤海国王族大氏 ──
+    // ── 2026-05-26 新增：漠北草原势力 ──
+    { id: 'city_xiaoyenisei', name: '贝加尔', factionId: 'dingling', lat: 51.8368, lng: 107.6138, type: 'small_city', region: 'STEPPE', troops: 10000 },
+    { id: 'city_gaxian', name: '嘎仙洞', factionId: 'xianbei', lat: 49.323391, lng: 120.709534, type: 'pass', troops: 10000 },
+    { id: 'city_junjishan', name: '浚稽山', factionId: 'gaoche', lat: 45.767504, lng: 106.284485, type: 'pass', troops: 10000 },
+    { id: 'city_otuken', name: '于都斤山', factionId: 'tujue', lat: 47.602542, lng: 101.230774, type: 'pass', troops: 10000 },
+    { id: 'city_yingchang', name: '应昌', factionId: 'da_yuan', lat: 43.385052, lng: 116.823120, type: 'small_city', troops: 10000 },
+
+
+    // ── 2026-05-26 新增：漠北草原部落/氏族势力据点 ──
+    { id: 'city_ordos', name: '延恩', factionId: 'shuofang', lat: 39.620517, lng: 108.852539, type: 'small_city', troops: 10000 },
+    { id: 'city_ruoshui', name: '弱水畔', factionId: 'yujiulu', lat: 42.457925, lng: 101.186829, type: 'small_city', troops: 10000 },
+    
+    { id: 'city_suoling', name: '娑陵', factionId: 'yaoluoge', lat: 49.364493, lng: 102.840271, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_burhan', name: '不儿罕山', factionId: 'kiyad',
+        lat: 48.50, lng: 109.00, type: 'pass', troops: 10000, tier: 4,
+        region: 'STEPPE' },
+    
+    { id: 'city_kerulen', name: '克鲁伦河', factionId: 'jalair', lat: 47.969654, lng: 113.005371, type: 'small_city', troops: 10000 },
+    { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.787170, type: 'pass', troops: 10000 },
+    { id: 'city_dzungar_basin', name: '和博克', factionId: 'choros', lat: 46.713523, lng: 85.685120, type: 'small_city', troops: 10000 },
+    { id: 'city_hanhai', name: '瀚海', factionId: 'tiele', lat: 44.144832, lng: 103.697205, type: 'small_city', troops: 10000 },
+    { id: 'city_keyimen', name: '克夷门', factionId: 'yeli', lat: 39.289647, lng: 106.776123, type: 'pass', troops: 10000, tier: 2, note: '西夏野利氏权臣据险；铁鹞子克夷门之战' },
+
+    // ── 2026-05-26 新增：西域/中亚城池（14个）──
+    { id: 'city_talas', name: '怛罗斯', factionId: 'tujishi', lat: 42.885995, lng: 71.347961, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_bukhara', name: '蒲华', factionId: 'saman',
+        lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 10000 },
+    {
+        id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan',
+        lat: 41.30, lng: 69.30, type: 'small_city', troops: 10000 },
+    // ── 2026-05-26 新增：青藏高原势力城市（24个）──
+    // === 第一类：高原帝国与割据强权 ===
+    { id: 'city_qionglong', name: '穹窿银', factionId: 'xiangxiong', lat: 31.193972, lng: 80.771484, type: 'small_city', troops: 10000 },  // [2026-05-29] 原 xiangxiong 势力已删, 暂归叛军
+    { id: 'city_leh', name: '列城', factionId: 'ladakh', lat: 34.16, lng: 77.58, type: 'small_city', troops: 10000 },
+
+    {
+        id: 'city_qingtang', name: '青唐城', factionId: 'gusiluo',
+        lat: 36.625, lng: 101.775, type: 'small_city', troops: 10000 },
+    { id: 'city_dangxiong', name: '当雄', factionId: 'khoshut', lat: 30.48, lng: 91.1, type: 'small_city', troops: 10000 },
+
+    // === 第二类：雪域土著与古老强族 ===
+    { id: 'city_buerhanbuda', name: '白海堡', factionId: 'duomi', lat: 34.9100, lng: 98.2100, type: 'pass', troops: 10000 },
+    { id: 'city_mapangyongcuo', name: '玛旁雍错', factionId: 'nvguo', lat: 30.814997, lng: 81.430664, type: 'small_city', troops: 10000 },
+
+    {
+        id: 'city_kangyanchuan', name: '察木多', factionId: 'bailan',
+        lat: 31.1333, lng: 97.1667, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_heizong', name: '黑河宗', factionId: 'ganden', lat: 31.456786, lng: 92.040710, type: 'small_city', troops: 10000 },
+    { id: 'city_cuona', name: '错那', factionId: 'monpa', lat: 27.979850, lng: 91.928101, type: 'small_city', region: 'TIBET', troops: 10000 },
+    { id: 'city_metuo', name: '墨脱', factionId: 'lopi', lat: 29.250477, lng: 95.213013, type: 'small_city', troops: 10000 },
+    // === 第三类：世袭门阀与政教寡头 ===
+    { id: 'city_chubusi', name: '楚布寺', factionId: 'karmapa', lat: 30.059496, lng: 90.532837, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力 ──
+    // ── 第一类：云贵高原与中南半岛的丛林帝国 ──
+    {
+        id: 'city_ava', name: '阿瓦', factionId: 'ava',
+        lat: 21.85, lng: 96.0667, type: 'small_city', troops: 10000, tier: 4 },
+    {
+        id: 'city_bago', name: '勃固城', factionId: 'hantawadi',
+        lat: 17.3333, lng: 96.4667, type: 'medium_city', region: 'DIANQIAN', troops: 10000, tier: 4 },
+    { id: 'city_wumeng', name: '乌蒙山', factionId: 'wuman', lat: 26.497640, lng: 103.897705, type: 'pass', troops: 10000 },
+    { id: 'city_leigong', name: '雷公山', factionId: 'dongzu', lat: 26.573781, lng: 108.091736, type: 'pass', troops: 10000 },
+    {
+        id: 'city_srikshetra', name: '室利差罗', factionId: 'pyu',
+        lat: 18.8333, lng: 95.25, type: 'small_city', troops: 10000, tier: 4 },
+    {
+        id: 'city_thaton', name: '直通城', factionId: 'mon',
+        lat: 16.5333, lng: 97.6333, type: 'small_city', region: 'DIANQIAN', troops: 10000, tier: 4 },
+    // ── 第三类：世袭土司与门阀 ──
+    {
+        id: 'city_tonghai', name: '新兴', factionId: 'dian',
+        lat: 24.11, lng: 102.76, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_hailongtun', name: '海龙屯', factionId: 'yang_bozhou', lat: 27.751638, lng: 106.924438, type: 'pass', troops: 10000 },
+    { id: 'city_zhenyuan', name: '镇远', factionId: 'tian_sizhou', lat: 27.05, lng: 108.42, type: 'small_city', troops: 10000 },
+
+    { id: 'city_mufu', name: '独克宗', factionId: 'jiantang', lat: 27.82, lng: 99.7, type: 'small_city', troops: 10000 },
+
+    {
+        id: 'city_dongxu_old', name: '凯图玛蒂', factionId: 'dongxu',
+        lat: 18.80, lng: 96.40, type: 'medium_city', troops: 10000, tier: 4 },
+    // ── 第四类：岭南帝国、安南正统与海岛王国 ──
+    // ── 第五类：百越余脉与南岛语系 ──
+    {
+        id: 'city_lingqu', name: '始安', factionId: 'xinjiang',
+        lat: 25.27, lng: 110.29, type: 'medium_city', troops: 10000, tier: 4 },
+    { id: 'city_huashan', name: '花山', factionId: 'luoyue', lat: 22.159442, lng: 107.418823, type: 'small_city', troops: 10000 },
+    { id: 'city_hepu', name: '合浦', factionId: 'li_s', lat: 21.663000, lng: 109.207000, type: 'small_city', troops: 10000 },
+    { id: 'city_haikang', name: '海康', factionId: 'leizhou', lat: 20.9100, lng: 110.0800, type: 'small_city', troops: 10000, region: 'LINGNAN' },
+    {
+        id: 'city_myson', name: '美山', factionId: 'champa',
+        lat: 15.50, lng: 108.50, type: 'small_city', troops: 10000, tier: 4 },
+    
+    {
+        id: 'city_hoalu',
+        name: '华闾',
+        factionId: 'jing',
+        lat: 20.25,
+        lng: 105.9167,
+        type: 'small_city',
+        troops: 10000,
+        tier: 1,
+        region: 'LINGNAN' },
+    {
+        id: 'city_hoabinh', name: '和平', factionId: 'muong',
+        lat: 20.7667, lng: 105.3333, type: 'small_city', troops: 10000, tier: 4 },
+    
+    {
+        id: 'city_mudan', name: '牡丹社', factionId: 'paiwan',
+        lat: 22.20, lng: 120.8333, type: 'small_city', region: 'LINGNAN', troops: 10000, tier: 4, note: '岭南/南方环线共用锚点；文化岭南' },
+    // ── 第六类：岭南土司、安南权臣与海商门阀 ──
+    { id: 'city_cen', name: '凌云', factionId: 'cen_d', lat: 24.462119, lng: 106.627808, type: 'small_city', troops: 10000 },
+
+
+    {
+        id: 'city_xidu', name: '西都城', factionId: 'trinh',
+        lat: 19.80, lng: 105.7833, type: 'small_city', troops: 10000, tier: 4 },
+    {
+        id: 'city_fuchun', name: '富春', factionId: 'nguyen_guangnan',
+        lat: 16.4667, lng: 107.5833, type: 'medium_city', troops: 10000, tier: 1, region: 'LINGNAN', note: '阮主/西山朝都城；西山军' },
+    // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
+    {
+        id: 'city_dangqu', name: '宕渠', factionId: 'cong',
+        lat: 30.87, lng: 106.94, type: 'small_city', troops: 10000 },
+
+    { id: 'city_langzhong_gucheng', name: '隆城', factionId: 'langzhou', lat: 31.5830, lng: 105.9700, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_fuzhou_fugu', name: '府谷', factionId: 'zhe_d',
+        lat: 39.0278, lng: 111.0583, type: 'small_city', troops: 10000, tier: 4 },
+    {
+        id: 'city_wanling', name: '宛陵城', factionId: 'shanyue',
+        lat: 30.9333, lng: 118.75, type: 'small_city', troops: 10000, tier: 4 },
+    {
+        id: 'city_chimushan', name: '敕木山', factionId: 'she_ethnic',
+        lat: 27.9250, lng: 119.6333, type: 'pass', troops: 10000, tier: 4 },
+    {
+        id: 'city_qingjingsi', name: '刺桐', factionId: 'quanzhou',
+        lat: 24.90, lng: 118.5833, type: 'medium_city', troops: 10000, tier: 4 },
+    // ── 2026-05-26 Phase 3i：新增朴(新罗门阀)、土(巴人后裔) ──
+    
+    {
+        id: 'city_wulingshan', name: '武陵山', factionId: 'tu',
+        lat: 29.1167, lng: 110.4667, type: 'pass', troops: 10000, tier: 4 }
+];
+
+// ============================================================
+// 汇总导出
+// ============================================================
+
+// RESTORED CITIES
+export const RESTORED_CITIES: CityDataV2[] = [
+
+
+{ id: 'city_ningwuguan', name: '宁武关', factionId: 'loufan', lat: 39.050000, lng: 112.240000, type: 'pass', troops: 10000, mirror: true },
+
+{ id: 'city_yanmenguan', name: '雁门关', factionId: 'heng1', lat: 39.190000, lng: 112.870000, type: 'pass', troops: 10000, mirror: true },
+
+
+{ id: 'city_xingqing', name: '安化', factionId: 'qing', lat: 36.01, lng: 107.87, type: 'small_city', troops: 10000 },
+
+// ── 大夏(西夏)都城：兴庆府 ──
+{ id: 'city_yongan', name: '永安', factionId: 'jingjiang', lat: 24.066563, lng: 110.626831, type: 'small_city', troops: 10000 },
+    { id: 'city_xinzheng', name: '新郑', factionId: 'han', lat: 34.4, lng: 113.74, type: 'small_city', troops: 10000 },
+    { id: 'city_dongkang', name: '东康', factionId: 'sushen', lat: 44.427920, lng: 131.388245, type: 'small_city', troops: 10000 },
+    { id: 'city_kanka', name: '康卡', factionId: 'kangju', lat: 40.832522, lng: 68.634338, type: 'small_city', troops: 10000 },
+    { id: 'city_asuka', name: '千早城', factionId: 'yamato', lat: 34.336668, lng: 135.689392, type: 'pass', region: 'JAPAN', troops: 10000 },
+    {
+        id: 'city_shenglong',
+        name: '昇龙',
+        factionId: 'dayue',
+        lat: 21.03, lng: 105.85,
+        type: 'medium_city',
+        troops: 10000,
+        tier: 1 },
+    { id: 'city_boduo', name: '伯都', factionId: 'wuji', lat: 45.4265, lng: 124.6591, type: 'small_city', troops: 10000 },
+    { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'small_city', troops: 10000, region: 'CENTRAL_ASIA' },
+    {
+        id: 'city_raoleshui',
+        name: '饶乐水',
+        factionId: 'panjun',
+        lat: 43.27, lng: 118.48,
+        type: 'small_city',
+        troops: 10000 },
+    // ── 武川镇 ──
+    { id: 'city_wuchuanzhen', name: '武川镇', factionId: 'yuwen', lat: 41.2661, lng: 111.1322, type: 'pass', region: 'STEPPE', troops: 10000, note: '北魏六镇之武川镇；宇文氏祖地；沙苑之战（537）宇文泰以少胜多之战主将' },
+
+
+    // ── 新增关隘（2026-05-26） ──
+    { id: 'city_gubeikou', name: '古北口', factionId: 'yan', lat: 40.69, lng: 117.16, type: 'pass', troops: 10000, tier: 2 },
+    { id: 'city_shimenguan', name: '石门关', factionId: 'wumeng', lat: 28.079264, lng: 104.254761, type: 'pass', region: 'BASHU', troops: 10000, note: '岭南环线西北锚点；文化川蜀（入蜀要道）' },
+
+
+    // ── 2026-05-27 新增：汪(黟县) ──
+    {
+        id: 'city_yixian',
+        name: '黟城',
+        factionId: 'wang_s',
+        lat: 29.93, lng: 117.94,
+        type: 'small_city',
+        troops: 10000 },
+
+    // ── 2026-05-27 新增：向(来凤)、覃(慈利)、冉(秀山)、储(潜山) ──
+    {
+        id: 'city_laifeng',
+        name: '来凤',
+        factionId: 'xiang_d',
+        lat: 29.49, lng: 109.41,
+        type: 'small_city',
+        troops: 10000 },
+    {
+        id: 'city_cili',
+        name: '慈利',
+        factionId: 'tan_d',
+        lat: 29.43, lng: 111.12,
+        type: 'small_city',
+        troops: 10000 },
+    { id: 'city_xiushan', name: '秀山', factionId: 'ran_d', lat: 28.379316, lng: 109.061279, type: 'small_city', troops: 10000 },
+    { id: 'city_qianshan', name: '潜山', factionId: 'chu_d', lat: 30.616642, lng: 116.485291, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-27 新增：青衣(雅州) ──
+    // ── 2026-05-27 新增：五溪(八面山) ──
+    {
+        id: 'city_bamian',
+        name: '八面山',
+        factionId: 'wuxi',
+        lat: 28.83, lng: 109.280000,
+        type: 'pass',
+        troops: 10000 },
+
+    // ── 2026-05-27 新增：生苗(甲定) ──
+    { id: 'city_jiading', name: '甲定', factionId: 'shengmiao', lat: 26.485279, lng: 107.523193, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-27 新增：且兰(且兰城) ──
+    { id: 'city_qielancheng', name: '且兰城', factionId: 'miao_qing', lat: 27.247242, lng: 107.880249, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-27 新增：先零(允吾) ──
+    {
+        id: 'city_yunwu',
+        name: '允吾',
+        factionId: 'xianlingqiang',
+        lat: 36.32, lng: 102.82,
+        type: 'small_city',
+        troops: 10000 },
+
+    // ── 2026-05-27 新增：蒯(房陵) ──
+    { id: 'city_fangling', name: '房陵', factionId: 'kuai', lat: 32.043007, lng: 110.692749, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-27 新增：庸(上庸) ──
+    { id: 'city_shangyong', name: '竹山', factionId: 'yong', lat: 32.349768, lng: 109.885254, type: 'small_city', troops: 10000 },
+    { id: 'city_junzhou', name: '武当', factionId: 'bailian', lat: 32.541700, lng: 111.513300, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-27 新增：申(金州) ──
+    {
+        id: 'city_jinzhou_shanxi',
+        name: '安康',
+        factionId: 'shen',
+        lat: 32.68, lng: 109.02,
+        type: 'small_city',
+        troops: 10000 },
+
+    // ── 2026-05-27 新增：叟(乐山) ──
+    {
+        id: 'city_leshan',
+        name: '乐山',
+        factionId: 'sou',
+        lat: 29.60, lng: 103.79,
+        type: 'small_city',
+        troops: 10000 },
+
+    // ── 2026-05-27 新增：板楯(汉昌) ──
+    {
+        id: 'city_hanchang',
+        name: '汉昌',
+        factionId: 'bandun',
+        lat: 31.86, lng: 106.75,
+        type: 'small_city',
+        troops: 10000 },
+
+    // ── 2026-05-27 新增：烧当(玛曲) ──
+    { id: 'city_maqu', name: '玛曲', factionId: 'shaodang', lat: 34.309295, lng: 101.513672, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-27 新增：叛军(古严关)、盘瑶(贺州)、马楚(麦岭关)、排瑶(连州)、士(广信)、蒋(永州) ──
+    {
+        id: 'city_guyanguan',
+        name: '古严关',
+        factionId: 'guizhou',
+        lat: 25.68, lng: 110.62,
+        type: 'pass',
+        troops: 10000,
+        mirror: true,
+        tier: 4 },
+    {
+        id: 'city_hezhou',
+        name: '临贺',
+        factionId: 'panyao',
+        lat: 24.40, lng: 111.55,
+        type: 'small_city',
+        troops: 10000,
+        tier: 4 },
+    {
+        id: 'city_mailingguan',
+        name: '麦岭关',
+        factionId: 'daozhou',
+        lat: 25.02, lng: 111.23,
+        type: 'pass',
+        troops: 10000,
+        mirror: true,
+        tier: 4 },
+    { id: 'city_yongzhou_hn', name: '零陵', factionId: 'jiang_s', lat: 26.231835, lng: 111.588135, type: 'small_city', troops: 10000 },
+    // ── 2026-05-28 新增：黎(崖州) ──
+    { id: 'city_yazhou', name: '珠崖', factionId: 'liren', lat: 18.432692, lng: 108.989868, type: 'small_city', troops: 10000 },
+    // ── 2026-05-28 新增：悉勃野(匹播) ──
+    { id: 'city_pibo', name: '匹播', factionId: 'lang_clan', lat: 29.224032, lng: 91.746826, type: 'small_city', troops: 10000 },
+    // ── 2026-05-28 新增：工布(江达宗) ──
+    // [2026-05-29] 原 gongbu 势力已删, 暂归叛军
+    // ── 2026-05-28 新增：果洛(花石峡)、察哈尔(多伦) ──
+    { id: 'city_huashixia', name: '花石峡', factionId: 'golog', lat: 35.196235, lng: 98.907166, type: 'pass', troops: 10000, mirror: true },
+
+    // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
+    { id: 'city_wendeng', name: '文登', factionId: 'weihaiwei', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', troops: 10000, note: '朝鲜环线锚点（代威海卫）；文化北方' } ];
+
+// ============================================================
+// 汇总导出
+// ============================================================
+export const CITIES_V2: CityDataV2[] = [
+    ...T0_CAPITALS,
+    ...T1_MEDIUM_CITIES,
+    ...T2_STRATEGIC,
+    ...PERIPHERY,
+    ...RESTORED_CITIES,
+    { id: 'city_guangyuan', name: '广源', factionId: 'nong2', lat: 22.644425, lng: 106.273499, type: 'small_city', troops: 10000 },
+    // ── 2026-05-28 新增：奢氏(永宁/四川叙永) ──
+    { id: 'city_yongning2', name: '叙永', factionId: 'she', lat: 28.17, lng: 105.44, type: 'small_city', troops: 10000 },
+    // ── 2026-05-28 新增：僚(江阳/四川泸州) ──
+    { id: 'city_jiangyang', name: '江阳', factionId: 'liao', lat: 28.87, lng: 105.42, type: 'small_city', troops: 10000 },
+    // ── 2026-05-28 新增：普氏(矩州/贵州贵阳) ──
+    { id: 'city_juzhou', name: '顺元', factionId: 'qian', lat: 26.576247, lng: 106.685486, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-28 新增：南部(根城/日本)、萨曼(阿母城/中亚)、西域四政权 ──
+    { id: 'city_genjo', name: '根城', factionId: 'nanbu', lat: 40.5047, lng: 141.4644, type: 'small_city', region: 'JAPAN', troops: 10000, tier: 4 },
+    { id: 'city_amucheng', name: '阿母城', factionId: 'panjun', lat: 39.0833, lng: 63.5786, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 4 },
+    { id: 'city_hepancheng', name: '石头城', factionId: 'hepan', lat: 37.7725, lng: 75.2264, type: 'pass', region: 'WESTERN', troops: 10000, tier: 4 },
+    { id: 'city_humicheng', name: '护密城', factionId: 'qiepantuo', lat: 36.7266, lng: 71.6133, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 4, note: '青藏/中亚环线共用锚点' },
+    { id: 'city_huoguocheng', name: '阿缓城', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },
+
+    // ── 2026-05-28 新增：马蒙(达尔甘)、古兹根(法里亚布)、傣(勐泐城)、泰沅(清坎城)、帕銮(双河城)、罗斛(呵叻城) ──
+    { id: 'city_dargan', name: '达尔甘', factionId: 'mamon', lat: 40.5333, lng: 62.2667, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_fariyab', name: '法里亚布', factionId: 'guzgan', lat: 35.9200, lng: 64.7800, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_mengle', name: '勐泐城', factionId: 'dai', lat: 22.0000, lng: 100.8000, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_chingkham', name: '清坎城', factionId: 'taiyuan', lat: 19.5200, lng: 100.3000, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_shuanghe', name: '双河城', factionId: 'suke', lat: 16.830829, lng: 100.395813, type: 'small_city', troops: 10000 },
+    { id: 'city_khorat', name: '呵叻城', factionId: 'luohu', lat: 14.9700, lng: 102.1000, type: 'small_city', troops: 10000, tier: 4 },
+
+    // ── 2026-05-28 新增：黑龙江流域民族/家族据点 ──
+    { id: 'city_lahasusu', name: '拉哈苏苏', factionId: 'heishui', lat: 47.654208, lng: 132.497864, type: 'pass', troops: 10000 },
+    { id: 'city_valen', name: '瓦伦', factionId: 'nanai', lat: 50.5500, lng: 137.0000, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_qiji', name: '普禄', factionId: 'feiyaka', lat: 51.5800, lng: 140.0000, type: 'small_city', troops: 10000, tier: 4 },
+    // ── 2026-05-28 新增：伊勒巴斯(希瓦)、南杰(日土宗) ──
+    { id: 'city_dadoubagu', name: '大斗拔谷', factionId: 'xiutu', lat: 38.0011, lng: 100.9125, type: 'pass', mirror: true, troops: 10000, tier: 4 },
+    { id: 'city_khiva', name: '希瓦', factionId: 'anushidgin', lat: 41.564038, lng: 60.710449, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },
+    { id: 'city_rituzong', name: '日土宗', factionId: 'nanjie', lat: 33.367241, lng: 79.705811, type: 'small_city', troops: 10000 },
+
+
+    // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、叛军(三陇沙/肩水金关) ──
+    { id: 'city_zhadunzong', name: '扎敦宗', factionId: 'gandenpozhang', lat: 29.645092, lng: 84.171753, type: 'small_city', troops: 10000 },
+    { id: 'city_sanlongsha', name: '三陇沙', factionId: 'panjun', lat: 40.4000, lng: 92.5000, type: 'pass', region: 'WESTERN', troops: 10000, tier: 4 },
+    { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'hunxie', lat: 40.413414, lng: 99.434509, type: 'pass', troops: 10000, mirror: true },//镜像
+
+    // ── 2026-05-28 新增：药罗葛(博尔巴任)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
+    // 瓦剌（卫拉特）药罗葛部牧地，与明代卫拉（科布多）分立
+    { id: 'city_porbazhyn', name: '博尔巴任', factionId: 'wala', lat: 49.664324, lng: 95.767822, type: 'pass', region: 'STEPPE', troops: 10000 },
+    { id: 'city_moergen', name: '莫尔根', factionId: 'dawoer', lat: 49.1760, lng: 125.2280, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_donghai', name: '洞海城', factionId: 'panjun', lat: 17.620424, lng: 106.495972, type: 'pass', troops: 10000 },
+
+    // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐) ──
+    { id: 'city_baidalik', name: '拜达里克', factionId: 'tumengken', lat: 46.189304, lng: 99.159851, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-28 新增：岭(结古宗)、琼波(丁青宗)、索伦(卜奎)、图瓦(唐努) ──
+    { id: 'city_jiegu', name: '结古宗', factionId: 'gling', lat: 33.001753, lng: 97.012024, type: 'small_city', troops: 10000 },
+    { id: 'city_qiongbu', name: '丁青宗', factionId: 'khyungpo', lat: 31.4100, lng: 95.5900, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_bukui', name: '卜奎', factionId: 'suolun', lat: 47.305322, lng: 123.752747, type: 'small_city', troops: 10000 },
+    { id: 'city_teshuolankalun', name: '唐努', factionId: 'tuva', lat: 49.419915, lng: 98.432007, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-28 新增：大隅(赤尾木城/九州)、奄美(赤木名城/琉球) ──
+    { id: 'city_akaogicheng', name: '赤尾木城', factionId: 'osumi', lat: 30.7300, lng: 131.0000, type: 'small_city', troops: 10000, tier: 4, region: 'JAPAN' },
+    { id: 'city_akakinagusuku', name: '赤木名城', factionId: 'anmei', lat: 28.4540, lng: 129.6740, type: 'pass', region: 'JAPAN', troops: 10000, tier: 4 },
+
+    // ── 2026-05-28 新增：康区藏族土司/部落据点 ──
+    { id: 'city_riwoche', name: '类乌齐', factionId: 'dalung', lat: 31.3600, lng: 96.5000, type: 'small_city', troops: 10000, tier: 4 },
+    { id: 'city_derge', name: '德格', factionId: 'gar_kham', lat: 31.924163, lng: 99.181824, type: 'small_city', troops: 10000 },
+    { id: 'city_ganzi', name: '甘孜', factionId: 'kongsa', lat: 31.615967, lng: 99.981079, type: 'small_city', troops: 10000 },
+    { id: 'city_dajianlu', name: '打箭炉', factionId: 'mingzheng', lat: 30.0500, lng: 101.9600, type: 'small_city', region: 'DIANQIAN', troops: 10000, tier: 4 },
+    // ── 2026-05-28 新增：波密(博窝/西藏) ──
+    // ── 2026-05-28 新增：达擦(八宿宗/达察呼图克图/家族) ──
+    { id: 'city_basu', name: '八宿宗', factionId: 'daca', lat: 30.185461, lng: 97.283936, type: 'small_city', troops: 10000 },
+
+
+    // ── 2026-05-28 新增：景东(银生城/云南/政权) ──
+    { id: 'city_yinsheng', name: '银生城', factionId: 'jingdong', lat: 23.873432, lng: 100.914917, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-28 新增：霍尔(索宗/那曲/家族) ──
+    { id: 'city_suozong', name: '索宗', factionId: 'hor', lat: 31.889225, lng: 93.804016, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-28 新增：董(囊谦宗/玉树/家族) ──
+    { id: 'city_nangqian', name: '囊谦宗', factionId: 'dong', lat: 32.2000, lng: 96.4800, type: 'small_city', troops: 10000, tier: 4 },
+
+    // ── 工布土王(尼池/林芝)；巴塘宗改叛军点 ──
+    { id: 'city_nichi', name: '太昭', factionId: 'gongbu', lat: 29.752, lng: 93.232, type: 'small_city', region: 'TIBET', troops: 10000 },
+    { id: 'city_litangzong', name: '理塘宗', factionId: 'kangba', lat: 30.0000, lng: 100.2700, type: 'small_city', region: 'TIBET', troops: 10000 },
+
+    // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
+    { id: 'city_heishacheng', name: '黑沙城', factionId: 'ashide', lat: 43.5, lng: 96.6, type: 'small_city', troops: 10000 },
+
+    { id: 'city_beiluocheng', name: '孛罗城', factionId: 'duolu', lat: 44.9, lng: 82.07, type: 'small_city', troops: 10000 },
+
+    { id: 'city_dushancheng', name: '独山城', factionId: 'chuyue', lat: 44.42, lng: 84.92, type: 'pass', troops: 10000 },
+
+    { id: 'city_wutucheng', name: '务涂城', factionId: 'cheshihou', lat: 43.735353, lng: 87.574768, type: 'small_city', troops: 10000 },
+
+    { id: 'city_gaochangcheng', name: '高昌', factionId: 'yiduhu', lat: 42.8533, lng: 89.53, type: 'small_city', troops: 10000, mirror: true, tier: 1 },
+
+
+    { id: 'city_jinchangcheng', name: '晋昌城', factionId: 'guazhou', lat: 40.534600, lng: 95.820007, type: 'small_city', troops: 10000, note: '唐瓜州治晋昌郡' },
+    { id: 'city_jieshuangna', name: '羯霜那', factionId: 'jie', lat: 40.124284, lng: 65.341187, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_samaerhan',
+        name: '撒马尔罕',
+        factionId: 'tiemuer',
+        lat: 39.652500,
+        lng: 66.971400,
+        type: 'medium_city',
+        troops: 20000,
+        tier: 1,
+        region: 'CENTRAL_ASIA' },
+    { id: 'city_jizhake', name: '吉扎克', factionId: 'kawusi', lat: 40.1167, lng: 67.8333, type: 'small_city', troops: 10000 },
+    { id: 'city_yierkeshentan', name: '斯姆哈纳', factionId: 'keerkezi', lat: 39.67, lng: 73.9, type: 'pass', troops: 10000 },
+
+    { id: 'city_luntai', name: '轮台', factionId: 'quli', lat: 41.77, lng: 84.25, type: 'small_city', troops: 10000 },
+    { id: 'city_duluohe', name: '独逻河', factionId: 'kaerka', lat: 45.826868, lng: 101.878967, type: 'small_city', troops: 10000 },
+    { id: 'city_guyanshan', name: '姑衍山', factionId: 'panjun', lat: 43.812726, lng: 98.489685, type: 'pass', troops: 10000 },
+    { id: 'city_naomaohu', name: '淖毛湖', factionId: 'huyan', lat: 43.279321, lng: 94.713135, type: 'small_city', troops: 10000, mirror: true },
+    { id: 'city_jiluoshan', name: '稽落山', factionId: 'bayegu', lat: 44.974390, lng: 99.113159, type: 'pass', troops: 10000 },
+    { id: 'city_aodongcheng', name: '敖东城', factionId: 'dongdan', lat: 43.37, lng: 128.22, type: 'small_city', troops: 10000, note: '东丹国都城敖东城' },
+    { id: 'city_longtanshancheng', name: '龙潭山', factionId: 'dongxia', lat: 43.834536, lng: 126.589966, type: 'pass', troops: 10000, note: '东夏国蒲鲜万奴翼境要地' },
+    { id: 'city_bamiancheng', name: '八面关', factionId: 'yehe', lat: 43.189189, lng: 124.354248, type: 'pass', troops: 10000 },
+    { id: 'city_tuhe', name: '徒河', factionId: 'jinzhou', lat: 41.12, lng: 121.14, type: 'small_city', troops: 10000, note: '徒河水/明锦州卫；旗号锦@锦州（2026-06-11）' },
+    { id: 'city_feiru', name: '肥如', factionId: 'guzhu', lat: 39.89, lng: 118.89, type: 'small_city', troops: 10000 },
+    { id: 'city_wuzhong', name: '无终', factionId: 'shanrong', lat: 39.95, lng: 117.4, type: 'small_city', troops: 10000 },
+    { id: 'city_wugucheng', name: '乌骨城', factionId: 'huimo', lat: 40.7685, lng: 123.9395, type: 'pass', region: 'NORTHEAST', troops: 10000 },
+    { id: 'city_shangzhou', name: '三白', factionId: 'sabeol', lat: 36.410000, lng: 128.160000, type: 'small_city', region: 'KOREA', troops: 10000, note: '尚州(沙伐州)旧称；沙伐国都；三白为尚州别称(稻·茧·柿)' },
+    { id: 'city_yuanzhishi', name: '原之辻', factionId: 'yizhi', lat: 33.791, lng: 129.703, type: 'small_city', region: 'JAPAN', troops: 10000, note: '壹岐国府旧址' },
+    { id: 'city_taizaifu', name: '太宰府', factionId: 'zhuqian', lat: 33.51, lng: 130.52, type: 'small_city', region: 'JAPAN', troops: 10000, note: '筑前国太宰府；九州律令国府、防佛渡海咽喉；室町期警固番役驻地（江户期福冈城在其北约15km，据点名取史地知名度更大者）' },
+    { id: 'city_chijianguan', name: '赤间关', factionId: 'taira', lat: 33.95, lng: 130.93, type: 'pass', region: 'JAPAN', troops: 10000, tier: 2 },
+    { id: 'city_guizhicheng', name: '鬼之城', factionId: 'jibei2', lat: 34.72, lng: 133.76, type: 'pass', region: 'JAPAN', troops: 10000, note: '备中国鬼之城；宇喜多氏·备中名城（距冈山/福山城址<50km）' },
+    { id: 'city_junfucheng', name: '骏府', factionId: 'jinchuan', lat: 34.97, lng: 138.38, type: 'medium_city', region: 'JAPAN', troops: 10000 },
+    {
+        id: 'city_xuanhua',
+        name: '宣化',
+        factionId: 'xuan',
+        lat: 40.6090, lng: 115.0520,
+        type: 'small_city',
+        troops: 10000,
+        region: 'NORTH' },
+    { id: 'city_xinghe', name: '兴和', factionId: 'chahar', lat: 41.15, lng: 114.7, type: 'small_city', troops: 10000 },
+    { id: 'city_jining', name: '集宁', factionId: 'baidi', lat: 41.03, lng: 113.1, type: 'small_city', troops: 10000 },
+    { id: 'city_jingzhou', name: '净州塞', factionId: 'ongut', lat: 41.56, lng: 111.66, type: 'pass', troops: 10000 },
+
+    { id: 'city_saierwusu', name: '赛尔乌苏', factionId: 'rouran', lat: 44.818872, lng: 106.800842, type: 'small_city', troops: 10000 },
+    { id: 'city_tongdi', name: '铜鞮', factionId: 'yangshe', lat: 36.824653, lng: 112.826843, type: 'small_city', troops: 10000 },
+    { id: 'city_huojia', name: '获嘉', factionId: 'sima_d', lat: 35.26, lng: 113.66, type: 'small_city', troops: 10000, note: '河内郡；司马氏郡望' },
+    { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'pass', troops: 10000 },    
+    { id: 'city_fushi', name: '肤施', factionId: 'zhai_han', lat: 36.59, lng: 109.48, type: 'small_city', region: 'HEXI', troops: 10000 },
+    { id: 'city_changze', name: '长泽', factionId: 'kang', lat: 39.1, lng: 107.98, type: 'small_city', troops: 10000 },
+    { id: 'city_linrong', name: '临戎', factionId: 'woye', lat: 40.3, lng: 107, type: 'small_city', troops: 10000 },
+    { id: 'city_aowei', name: '媪围', factionId: 'lushui', lat: 37.396289, lng: 104.111938, type: 'small_city', troops: 10000 },
+    { id: 'city_mingsha', name: '鸣沙', factionId: 'yingli', lat: 37.51, lng: 105.18, type: 'small_city', troops: 10000 },
+    { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 10000 },
+    { id: 'city_lingju', name: '令居', factionId: 'guangwu', lat: 36.73, lng: 103.26, type: 'small_city', troops: 10000 },
+
+
+
+    { id: 'city_zuli', name: '祖厉', factionId: 'huizhou', lat: 36.56, lng: 104.68, type: 'small_city', troops: 10000 },
+    // ── 2026-06-11 新增：折墌（薛举西秦/薛仁杲据城）──
+    { id: 'city_zhedi', name: '折墌', factionId: 'xiqin', lat: 35.500000, lng: 107.940000, type: 'pass', region: 'HEXI', troops: 10000, note: '薛仁杲据折墌城；薛举西秦第二据点' },
+
+    // ── 2026-06-11 精锐部队缺口：新建据点 ──
+    { id: 'city_jingling', name: '竟陵', factionId: 'ruochu', lat: 30.662000, lng: 113.166000, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '楚若敖氏旧地；若敖六卒（《左传》）' },
+    { id: 'city_yunmeng', name: '云梦', factionId: 'mi_chu', lat: 31.020000, lng: 113.750000, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '云梦泽故地；楚左广与右广（《左传·宣公》）' },
+    { id: 'city_daming', name: '大名', factionId: 'tianxiong', lat: 36.5138, lng: 115.3043, type: 'medium_city', region: 'CENTRAL', troops: 10000, note: '魏博节度使田承嗣治所；魏博牙兵' },
+    { id: 'city_shizhu', name: '石柱', factionId: 'tujia_d', lat: 30.000000, lng: 108.110000, type: 'small_city', region: 'BASHU', troops: 10000, note: '秦良玉土司衙门；白杆兵成军出库地（川东近乡，不取辽东浑河）' },
+    { id: 'city_bijie', name: '毕节', factionId: 'shuixi', lat: 27.302000, lng: 105.285000, type: 'small_city', region: 'BASHU', troops: 10000, note: '水西安氏土司治所；罗罗兵（奢香/安邦彦）' },
+    { id: 'city_tianyang', name: '田阳', factionId: 'zhuang_d', lat: 23.720000, lng: 106.650000, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地' },
+    { id: 'city_jingkou', name: '濡须口', factionId: 'wuwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', troops: 10000, mirror: true },//镜像, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
+    { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.220000, lng: 115.040000, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '冉魏迁巨鹿；黎阳过密冀南' },
+    { id: 'city_ningyuan', name: '宁远', factionId: 'zu_d', lat: 40.618000, lng: 120.720000, type: 'small_city', region: 'NORTH', troops: 10000, note: '关宁铁骑，祖大寿宁远卫（今兴城）' },
+
+    { id: 'city_salhu', name: '萨尔浒', factionId: 'manzhou', lat: 41.841000, lng: 124.046000, type: 'pass', region: 'NORTHEAST', troops: 10000, note: '满洲@萨尔浒；1619 白摆牙喇破明四路（≠后金国号@沈阳系）' },
+    { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.530000, lng: 114.320000, type: 'medium_city', region: 'JIANGNAN', troops: 10000, tier: 1, note: '孙吴武昌督治，与春秋吴姑苏区分' },
+    { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '晋国曲沃，太原让位柴周' },
+    { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746000, lng: 82.983000, type: 'small_city', region: 'WESTERN', troops: 10000, note: '准噶尔汗国西北翼；伊犁让位锡伯营' },
+    { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.83, lng: 93.51, type: 'small_city', region: 'WESTERN', troops: 10000, note: '草原环线西南锚点；文化西域' },
+    { id: 'city_bieshibali', name: '别失八里', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'small_city', troops: 10000 },
+    { id: 'city_balikun', name: '巴里坤', factionId: 'pulei', lat: 43.6, lng: 93, type: 'small_city', troops: 10000 },
+    { id: 'city_buergenjuntai', name: '布尔根', factionId: 'panjun', lat: 46.09, lng: 91.53, type: 'pass', troops: 10000 },
+    { id: 'city_zhabuhanjuntai', name: '扎布汗', factionId: 'panjun', lat: 47.844489, lng: 94.174805, type: 'pass', troops: 10000 },
+    { id: 'city_teerhunjuntai', name: '特尔浑', factionId: 'zubu', lat: 48.089107, lng: 99.538879, type: 'pass', troops: 10000 },
+    { id: 'city_woluduocheng', name: '窝鲁朵', factionId: 'huihu', lat: 47.698601, lng: 102.631531, type: 'small_city', troops: 10000 },
+    { id: 'city_douweihunhe', name: '都尉溷河', factionId: 'kelie', lat: 47.859243, lng: 103.966370, type: 'small_city', troops: 10000 },
+    { id: 'city_xicheng', name: '息城', factionId: 'lelang', lat: 39.62, lng: 125.66, type: 'pass', troops: 10000 },
+    { id: 'city_qudiaoalan', name: '曲雕阿兰', factionId: 'borjigin', lat: 47.146753, lng: 109.204102, type: 'small_city', troops: 10000 },
+
+    { id: 'city_bayanwula', name: '巴彦乌拉', factionId: 'donghu', lat: 44.53, lng: 117.6, type: 'small_city', troops: 10000, note: '东胡旗号首都；辽西—漠南草原界' },
+    { id: 'city_halagaitu2', name: '哈拉盖图', factionId: 'xingan', lat: 45.780925, lng: 119.245605, type: 'small_city', troops: 10000 },
+    { id: 'city_kuoyitian', name: '阔亦田', factionId: 'zhadalan', lat: 47.135705, lng: 115.290527, type: 'small_city', troops: 10000 },
+    { id: 'city_sangguer', name: '斡难河', factionId: 'zhuerqi', lat: 47.262466, lng: 110.717468, type: 'small_city', troops: 10000 },
+    { id: 'city_bayantumen', name: '巴彦图门', factionId: 'chechen', lat: 48.053, lng: 114.538, type: 'small_city', troops: 10000 },
+    { id: 'city_huzhan', name: '忽毡', factionId: 'zhaowu', lat: 40.248096, lng: 69.658813, type: 'small_city', troops: 10000 },
+    { id: 'city_aoshen', name: '奥什', factionId: 'kala', lat: 40.53, lng: 72.79, type: 'small_city', troops: 10000 },
+    { id: 'city_dawushenkate', name: '三重城', factionId: 'wensu', lat: 41.13, lng: 82.78, type: 'small_city', troops: 10000 },
+    { id: 'city_kungang', name: '昆岗', factionId: 'panjun', lat: 40.54, lng: 81.26, type: 'pass', troops: 10000 },
+    { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'pisha', lat: 38.58, lng: 80.8, type: 'pass', troops: 10000 },
+    { id: 'city_yutian2', name: '于阗', factionId: 'yuchi', lat: 37.1000, lng: 79.9200, type: 'medium_city', troops: 10000 },
+    { id: 'city_yumi', name: '阿赫雅尔', factionId: 'yumi', lat: 36.85, lng: 81.65, type: 'small_city', troops: 10000 },
+    { id: 'city_keliyashankou', name: '阿什库尔', factionId: 'keliya', lat: 35.45, lng: 81.1, type: 'pass', region: 'TIBET', troops: 10000, note: '昆仑山克里雅山口；塔克拉玛干南缘入绿洲道（据点名≠旗号「克里」）' },
+    { id: 'city_longmucuo', name: '龙木错', factionId: 'yangtong', lat: 34.572168, lng: 80.348511, type: 'small_city', region: 'TIBET', troops: 10000 },
+    { id: 'city_gadake', name: '噶大克', factionId: 'ali', lat: 31.940459, lng: 80.139771, type: 'small_city', troops: 10000 },
+
+    { id: 'city_payangyi', name: '帕羊驿', factionId: 'supi', lat: 30.140235, lng: 83.281860, type: 'small_city', troops: 10000 },
+    { id: 'city_saga', name: '萨噶', factionId: 'faqiang', lat: 29.33, lng: 85.23, type: 'small_city', troops: 10000 },
+
+    { id: 'city_sajia', name: '萨迦', factionId: 'khon', lat: 29.101759, lng: 87.665405, type: 'small_city', troops: 10000,
+        region: 'TIBET' },
+    { id: 'city_sangzhuzi', name: '桑珠孜', factionId: 'tsangpa', lat: 29.303155, lng: 88.862915, type: 'small_city', troops: 10000 },
+
+    { id: 'city_jiamachikang', name: '甲玛赤康', factionId: 'spurgyal', lat: 29.74, lng: 91.7, type: 'small_city', troops: 10000 },
+    { id: 'city_juemuzong', name: '觉木宗', factionId: 'niang', lat: 29.571086, lng: 94.476929, type: 'small_city', troops: 10000 },
+    { id: 'city_galangzong', name: '噶朗宗', factionId: 'galangdiba', lat: 29.86, lng: 95.77, type: 'small_city', troops: 10000 },
+    { id: 'city_mangkangzong', name: '芒康宗', factionId: 'fuguo', lat: 29.67, lng: 98.59, type: 'small_city', troops: 10000 },
+    { id: 'city_adunzi', name: '阿墩子', factionId: 'bailang', lat: 28.48, lng: 98.85, type: 'small_city', troops: 10000 },
+    { id: 'city_dayan', name: '大研', factionId: 'mu_lijiang', lat: 26.87, lng: 100.22, type: 'small_city', region: 'DIANQIAN', troops: 10000 },
+    { id: 'city_tengyuecheng', name: '腾越城', factionId: 'pingnan', lat: 25.02, lng: 98.48, type: 'small_city', troops: 10000 },
+    { id: 'city_mengmao', name: '勐卯', factionId: 'luchuan', lat: 24.01, lng: 97.85, type: 'small_city', troops: 10000 },
+    { id: 'city_xiwanjin', name: '悉万斤', factionId: 'yada', lat: 36.66, lng: 65.75, type: 'small_city', troops: 10000 },
+    { id: 'city_hunduduo', name: '昏度多', factionId: 'humi', lat: 37.022272, lng: 72.627869, type: 'small_city', troops: 10000 },
+    { id: 'city_puticheng', name: '菩提城', factionId: 'xiaobolu', lat: 35.3, lng: 75.64, type: 'small_city', troops: 10000 },
+    { id: 'city_kajier', name: '喀吉尔', factionId: 'jiashi', lat: 34.55, lng: 76.13, type: 'small_city', troops: 10000 },
+    { id: 'city_zhaburang2', name: '札布让', factionId: 'guge', lat: 31.496599, lng: 79.799194, type: 'small_city', troops: 10000 },
+    { id: 'city_jiangzi', name: '江孜', factionId: 'pazhu', lat: 28.92, lng: 89.59, type: 'small_city', troops: 10000 },
+    { id: 'city_linqiong', name: '临邛', factionId: 'zhuoshi', lat: 30.4149, lng: 103.4619, type: 'small_city', troops: 10000 },
+    { id: 'city_yandao', name: '严道', factionId: 'qingyi', lat: 30.000133, lng: 102.972107, type: 'small_city', troops: 10000 },
+    { id: 'city_qingxiguan', name: '清溪关', factionId: 'zuo_d', lat: 29.3667, lng: 102.6333, type: 'pass', troops: 10000, tier: 2 },
+    { id: 'city_yuegui', name: '越嶲', factionId: 'panjun', lat: 28.422864, lng: 102.680969, type: 'small_city', troops: 10000 },
+    { id: 'city_huichuan', name: '会川', factionId: 'kunming_yi', lat: 26.6545, lng: 102.2454, type: 'small_city', troops: 10000 },
+
+    { id: 'city_chenzhou2', name: '沅陵', factionId: 'pengshi', lat: 28.227028, lng: 110.291748, type: 'small_city', troops: 10000 },
+    { id: 'city_yuanzhou', name: '芷江', factionId: 'qianzhong', lat: 27.566688, lng: 109.909973, type: 'small_city', troops: 10000 },
+    { id: 'city_puding', name: '普定', factionId: 'yelang', lat: 26.25, lng: 105.93, type: 'small_city', troops: 10000 },
+    { id: 'city_shengjingguan', name: '胜境关', factionId: 'zangke', lat: 25.651438, lng: 104.350891, type: 'pass', troops: 10000 },
+    { id: 'city_weixian2', name: '曲靖', factionId: 'cuanshi', lat: 25.49, lng: 103.79, type: 'small_city', troops: 10000 },
+    { id: 'city_weichu', name: '威楚', factionId: 'baiman', lat: 25.045791, lng: 101.574097, type: 'small_city', troops: 10000 },
+    { id: 'city_tuodongcheng', name: '滇池', factionId: 'dianguo', lat: 25.0500, lng: 102.7000, type: 'small_city', troops: 10000, tier: 1, region: 'DIANQIAN', note: '滇国都城；滇池兵' },
+    { id: 'city_luoxiong', name: '罗雄', factionId: 'xinggu', lat: 24.769307, lng: 104.224548, type: 'small_city', troops: 10000 },
+    { id: 'city_wanwen', name: '宛温', factionId: 'zangke', lat: 25.09, lng: 104.89, type: 'small_city', troops: 10000 },
+    { id: 'city_cangwu', name: '苍梧', factionId: 'guangxin', lat: 23.47, lng: 111.31, type: 'small_city', troops: 10000 },
+    {
+        id: 'city_panyu',
+        name: '番禺',
+        factionId: 'guangzhou',
+        lat: 23.120000,
+        lng: 113.260000,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0,
+        region: 'LINGNAN',
+        note: '广州府治番禺；刘隐清海军节度故地（《旧唐书·刘隐传》）' },
+    { id: 'city_longchuan', name: '龙川', factionId: 'nanyue', lat: 24.100000, lng: 115.260000, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '赵佗为龙川令；南越龙兴之地' },
+    { id: 'city_kuaiji', name: '会稽', factionId: 'yue', lat: 29.997000, lng: 120.582000, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '越国都城' },
+    { id: 'city_luling', name: '庐陵', factionId: 'ouyang', lat: 27.1133, lng: 114.9806, type: 'small_city', troops: 10000 },
+    { id: 'city_hongzhou', name: '豫章', factionId: 'hongzhou', lat: 28.6800, lng: 115.8800, type: 'medium_city', troops: 10000 },
+
+    { id: 'city_qingliuguan', name: '清流关', factionId: 'chuzhou_d', lat: 32.280000, lng: 118.250000, type: 'pass', troops: 10000, mirror: true },
+    { id: 'city_zhongli', name: '盱眙', factionId: 'huai', lat: 33.011000, lng: 118.497000, type: 'small_city', troops: 10000, note: '淮州治盱眙' },
+    { id: 'city_bianliang', name: '汴梁', factionId: 'wei', lat: 34.8, lng: 114.31, type: 'big_city', troops: 20000, tier: 0, note: '北宋京师；20城白名单' },
+    { id: 'city_shangluo', name: '商邑', factionId: 'shangzhou', lat: 33.87, lng: 109.94, type: 'small_city', troops: 10000 },
+    { id: 'city_shicheng', name: '郊郢', factionId: 'ying', lat: 31.16, lng: 112.58, type: 'small_city', troops: 10000 },
+    { id: 'city_baling', name: '巴陵', factionId: 'yue_d', lat: 29.35, lng: 113.13, type: 'medium_city', troops: 10000, note: '岳州治所，湖广重镇，2026-06-18 升为中城' },
+    { id: 'city_linzheng', name: '临烝', factionId: 'heng', lat: 26.89, lng: 112.6, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '岭南/南方环线共用锚点；文化南方' },
+    { id: 'city_guiyang', name: '桂阳', factionId: 'chen2', lat: 25.78, lng: 113, type: 'small_city', troops: 10000 },
+    { id: 'city_qujiang', name: '韶关', factionId: 'shaozhou', lat: 24.8, lng: 113.59, type: 'pass', troops: 10000, region: 'LINGNAN', note: '韶州治；张镇孙南宋末抗元，殉国大庾岭（1278）' },
+    { id: 'city_bodao', name: '珙县', factionId: 'boren', lat: 28.76, lng: 104.62, type: 'small_city', troops: 10000, note: '僰人悬棺故地；原僰道旧称，避旗号「僰」防重' },
+    { id: 'city_nanpu', name: '南浦', factionId: 'xin2', lat: 30.82, lng: 108.38, type: 'small_city', troops: 10000 },
+    { id: 'city_baidicheng2', name: '白帝城', factionId: 'kui', lat: 31.0430, lng: 109.5700, type: 'pass', troops: 10000, note: '夔门·白帝城；刘备白毦兵永安托孤' },
+    { id: 'city_qichun', name: '蕲春', factionId: 'xushouhui', lat: 30.23, lng: 115.45, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '元末徐寿辉天完政权龙兴地（蕲水/蕲春）' },
+    { id: 'city_wancheng', name: '皖城', factionId: 'wan', lat: 30.51, lng: 117.04, type: 'small_city', troops: 10000 },
+
+    { id: 'city_jiuzi', name: '鸠兹', factionId: 'danyang', lat: 31.33, lng: 118.38, type: 'small_city', troops: 10000 },
+    { id: 'city_datong2', name: '大通', factionId: 'chizhou', lat: 30.8188, lng: 117.7762, type: 'small_city', troops: 10000 },
+
+    // ── 2026-05-30 新增：哈拉和林(蒙古帝国首都) ──
+    {
+        id: 'city_karakorum',
+        name: '哈拉和林',
+        factionId: 'menggu_d',
+        lat: 47.137441,
+        lng: 103.035278,
+        type: 'big_city',
+        troops: 20000,
+        tier: 0,
+        region: 'STEPPE' },
+    { id: 'city_xingzhuting', name: '星主厅', factionId: 'danluo', lat: 33.5131, lng: 126.5215, type: 'small_city', region: 'KOREA', troops: 10000, note: '南方/日本/朝鲜环线共用锚点；文化朝鲜（济州）' },
+    { id: 'city_deokwon', name: '德源', factionId: 'donghui', lat: 39.54, lng: 127.24, type: 'pass', troops: 10000, note: '朝鲜德源郡旧地；咸兴—平壤道关隘；≠黑龙江双城' },
+    { id: 'city_yuezhi', name: '大木岳', factionId: 'chen3', lat: 36.8353, lng: 127.0417, type: 'pass', region: 'KOREA', troops: 10000 },
+    { id: 'city_heseluo', name: '何瑟罗', factionId: 'hui', lat: 37.75, lng: 128.89, type: 'small_city', troops: 10000 },
+    { id: 'city_wushecheng', name: '乌舍城', factionId: 'wula', lat: 45.821125, lng: 128.161011, type: 'small_city', troops: 10000, note: '乌拉部乌舍城故地（布占泰）' },
+
+    { id: 'city_xianping', name: '咸平', factionId: 'houliao', lat: 42.579367, lng: 124.079590, type: 'small_city', troops: 10000 },
+    { id: 'city_xupin', name: '恤品', factionId: 'dazhen', lat: 42.994587, lng: 129.828186, type: 'pass', troops: 10000 },
+    { id: 'city_huifa', name: '辉发', factionId: 'haixi_nvzhen', lat: 42.704630, lng: 125.922546, type: 'pass', troops: 10000 },
+
+    { id: 'city_julunbo', name: '俱轮泊', factionId: 'shiwei', lat: 49.251593, lng: 118.262329, type: 'small_city', region: 'STEPPE', troops: 10000 },
+    { id: 'city_boli2', name: '勃利', factionId: 'mohe', lat: 48.48, lng: 135.07, type: 'small_city', troops: 10000 },
+    { id: 'city_kuanchengzi', name: '宽城子', factionId: 'jilin', lat: 43.8725, lng: 125.3595, type: 'small_city', troops: 10000 },
+    { id: 'city_wuliyasitai', name: '乌珠穆沁', factionId: 'wuzhumuqin', lat: 45.519, lng: 116.9604, type: 'small_city', troops: 10000 },
+    { id: 'city_saihantala', name: '赛汉塔拉', factionId: 'sunite', lat: 42.7701, lng: 112.6099, type: 'small_city', troops: 10000 },
+    { id: 'city_sailan', name: '讹答剌', factionId: 'dayuzi', lat: 42.2863, lng: 69.5709, type: 'small_city', troops: 10000 },
+    { id: 'city_saiyinshanda', name: '薛灵哥', factionId: 'wuliangha', lat: 49.437762, lng: 101.428528, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '兀良哈部故地；者勒蔑' },
+    { id: 'city_yancheng2', name: '郾城', factionId: 'yanchuan_d', lat: 33.58, lng: 114.03, type: 'small_city', troops: 10000 },
+    { id: 'city_xuanhu', name: '汝南', factionId: 'yuan_cj_d', lat: 33.01, lng: 114.36, type: 'medium_city', troops: 10000 },
+    {
+        id: 'city_yiluolucheng',
+        name: '伊逻卢',
+        factionId: 'qiuci',
+        lat: 41.720000, lng: 82.930000, type: 'medium_city', troops: 10000, tier: 1, region: 'WESTERN' },
+    { id: 'city_yuergun', name: '玉尔滚', factionId: 'weiwuer', lat: 41.35, lng: 81.3, type: 'small_city', troops: 10000 },
+    { id: 'city_bohuancheng', name: '拨换城', factionId: 'anxi', lat: 41.17, lng: 80.25, type: 'small_city', region: 'WESTERN', troops: 10000, note: '唐安西都护府四镇要冲；怛罗斯道拨换城' },
+    { id: 'city_dashicheng', name: '大石城', factionId: 'zhuxie', lat: 41.28, lng: 79.22, type: 'pass', troops: 10000 },
+    { id: 'city_weitoucheng', name: '阿合奇', factionId: 'weitou', lat: 40.3, lng: 79.05, type: 'small_city', troops: 10000 },
+    { id: 'city_wosedecheng', name: '握瑟德', factionId: 'sai', lat: 39.77, lng: 78.56, type: 'small_city', troops: 10000 },
+    { id: 'city_jiaseni', name: '哥疾宁', factionId: 'jiazini', lat: 33.55, lng: 68.42, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 1 },
+    { id: 'city_gaofu', name: '喀布尔', factionId: 'gaofu', lat: 34.53, lng: 69.17, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 1 },
+    { id: 'city_fanyanna', name: '巴米扬', factionId: 'fanyanna', lat: 34.8659, lng: 67.9807, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },
+    { id: 'city_paixiucheng', name: '排修城', factionId: 'juandu', lat: 39.48, lng: 76.72, type: 'small_city', troops: 10000 },
+    { id: 'city_daerhan', name: '达尔罕', factionId: 'keerqin', lat: 43.6064, lng: 122.2229, type: 'small_city', troops: 10000 },
+    { id: 'city_yiyang', name: '葛溪', factionId: 'xie_cj_d', lat: 28.3524, lng: 117.4466, type: 'small_city', troops: 10000 },
+    { id: 'city_linchuan', name: '临川', factionId: 'fu2', lat: 27.9779, lng: 116.3562, type: 'small_city', troops: 10000 },
+    { id: 'city_binzhou2', name: '新平', factionId: 'xinping', lat: 35.03, lng: 108.08, type: 'small_city', troops: 10000 },
+    { id: 'city_fangqu', name: '方渠', factionId: 'huan', lat: 36.58, lng: 107.3, type: 'small_city', troops: 10000 },
+    { id: 'city_jingsai', name: '静塞', factionId: 'wei2', lat: 37.448637, lng: 106.674500, type: 'pass', troops: 10000, mirror: true },//镜像
+    { id: 'city_lingzhou', name: '回乐', factionId: 'lingwu', lat: 37.998341, lng: 106.295471, type: 'small_city', troops: 10000 },
+    { id: 'city_nuergan', name: '奴儿干', factionId: 'jiliemi', lat: 52.92, lng: 139.77, type: 'pass', region: 'NORTHEAST', troops: 10000 },
+    { id: 'city_pennuli', name: '盆奴里', factionId: 'nifuhe', lat: 47.708134, lng: 130.933685, type: 'small_city', troops: 10000 },
+    // 古尔王朝（Ghurids）呼罗珊边缘要塞
+    { id: 'city_malulude', name: '马鲁鲁德', factionId: 'guer', lat: 35.58, lng: 63.31, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },
+    // 巴达赫尚（Badakhshan）山地政权
+    { id: 'city_pengdi', name: '彭迪', factionId: 'guishuang', lat: 36, lng: 62.7, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },
+    // 黠戛斯（坚昆）汗庭漠北牧地
+    { id: 'city_wubusabo', name: '乌布萨泊', factionId: 'xiajiasi', lat: 49.9762, lng: 92.0929, type: 'small_city', region: 'STEPPE', troops: 10000 },
+    { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'wuhu', lat: 41.2773, lng: 67.9312, type: 'pass', troops: 10000, mirror: true },//镜像
+    { id: 'city_wuyun', name: '乌云', factionId: 'hezhe', lat: 49.018048, lng: 129.915390, type: 'small_city', troops: 10000 },
+    // 占城国（林邑/环王国）佛临城阇槃；与占婆国（美山）分立，各 1 势力 1 据点
+    { id: 'city_dupan', name: '阇槃', factionId: 'zhancheng', lat: 13.93, lng: 109.11, type: 'medium_city', troops: 10000, region: 'LINGNAN' },
+    // 孟邦墨侬族故地
+    { id: 'city_bangdun', name: '邦敦', factionId: 'monong', lat: 12.87, lng: 107.8, type: 'small_city', troops: 10000 , region: 'LINGNAN' },
+    // 水真腊南境部族
+    { id: 'city_sanpu', name: '三菩', factionId: 'shuizhen', lat: 12.77, lng: 105.97, type: 'small_city', troops: 10000 , region: 'LINGNAN' },
+    { id: 'city_juyansai', name: '居延塞', factionId: 'ningkou', lat: 41.8942, lng: 101.044, type: 'pass', troops: 10000 },
+    { id: 'city_gongzhubao', name: '公主堡', factionId: 'wulei', lat: 37.2008, lng: 75.3745, type: 'pass', troops: 10000, region: 'WESTERN' },
+    { id: 'city_jimai', name: '吉麦', factionId: 'gongtang', lat: 29.3012, lng: 90.6812, type: 'small_city', troops: 10000 },
+    // ── 2026-06-11 新增：库页岛民族据点 ──
+    { id: 'city_nuotuoluo', name: '诺托罗', factionId: 'eluoke', lat: 49.2, lng: 143.1, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '库页岛东岸中部河口，鄂罗克渔猎放牧聚散中心' },
+    { id: 'city_baizhu', name: '白主', factionId: 'kuye', lat: 46.71, lng: 142.52, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '库页岛南部白主土城，元代征骨嵬遗址，库页族核心聚落' },
+    { id: 'city_bailao', name: '白老', factionId: 'ayinu', lat: 42.55, lng: 141.36, type: 'small_city', region: 'JAPAN', troops: 10000, note: '北海道南端据泊地方，阿伊努传统聚落（白老古名）' },
+    { id: 'city_zonggu', name: '宗谷', factionId: 'beihai', lat: 45.5, lng: 141.93, type: 'small_city', region: 'JAPAN', troops: 10000, note: '宗谷海峡界城；日本—库页（白主）水陆枢纽；地名江户期可考' },
+    { id: 'city_xierka', name: '锡尔喀', factionId: 'dongping', lat: 46.9, lng: 134.1, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '乌苏里江下游；东平州尼满河流域邻境' },
+    { id: 'city_niman', name: '尼满', factionId: 'wure', lat: 45.51, lng: 131.96, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '兀惹部乌昭度居地（《辽史》）' },
+    // ── 2026-06-11 新增：外兴安岭/外贝加尔边境据点 ──
+    { id: 'city_nibuchu', name: '尼布楚', factionId: 'shuidada', lat: 51.99, lng: 116.58, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '黑龙江上游尼布楚河；水达达部聚居地' },
+    { id: 'city_yakesa', name: '雅克萨', factionId: 'aola', lat: 53.39056, lng: 124.0775, type: 'pass', region: 'NORTHEAST', troops: 10000, note: '黑龙江与额木尔河汇口，达斡尔敖拉氏故地（《朔方备乘》）' },
+    { id: 'city_geerbiqi', name: '格尔必齐', factionId: 'maomingan', lat: 53.33, lng: 121.45, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '茂明安部游牧地；格尔必齐河口（《尼布楚条约》界河）' },
+    { id: 'city_shilekahe', name: '石勒喀河', factionId: 'bulat', lat: 51.7321, lng: 115.8151, type: 'small_city', region: 'STEPPE', troops: 10000, note: '石勒喀河（黑龙江上游），清代舆图所称斡难河源段，布拉特等部游牧地' },
+    { id: 'city_chita', name: '赤塔', factionId: 'buriat', lat: 52.0333, lng: 113.5017, type: 'small_city', region: 'STEPPE', troops: 10000, note: '赤塔河与因戈达河交汇处，外贝加尔布里亚特蒙古传统居地' },
+    { id: 'city_yangjigan', name: '养吉干', factionId: 'xianhai', lat: 45.6, lng: 62, type: 'pass', region: 'CENTRAL_ASIA', troops: 10000, note: '中亚环线锚点；锡尔河入咸海处要塞，花剌子模东北边境' },
+    { id: 'city_zhande', name: '毡的', factionId: 'yettishar', lat: 44.85, lng: 65.5, type: 'pass', troops: 10000, note: '锡尔河中游要塞，Jand/哲德异译，花剌子模东境要地' },
+    // ── 2026-06-11 新增：琉球/台湾据点（叛军旗）──
+    { id: 'city_mengjia', name: '艋舺', factionId: 'ketagalan', lat: 25.03, lng: 121.50, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '清代台北府淡水厅南境要地，万华故称艋舺' },
+    { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'panjun', lat: 25.75, lng: 123.50, type: 'small_city', region: 'JAPAN', troops: 10000, note: '南方/日本环线共用锚点；南方环线所称钓鱼岛城即本据点；明清海图及《隋书·流求国传》等见载' },
+    { id: 'city_gugudao', name: '宫古岛', factionId: 'gonggu', lat: 24.805, lng: 125.281, type: 'small_city', region: 'JAPAN', troops: 10000, note: '琉球宫古诸岛主岛，见《中山世谱》及明清海图' },
+    { id: 'city_qihe', name: '七河', factionId: 'qincha', lat: 44.2219, lng: 64.3332, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '钦察汗国七河草原核心带' },
+    { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.5697, lng: 95.6981, type: 'small_city', region: 'DIANQIAN', troops: 10000, note: '贡榜龙兴之地；贡榜禁军' },
+    { id: 'city_hengyu', name: '横屿', factionId: 'qi_d', lat: 26.77, lng: 119.7, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '嘉靖横屿大捷古战场；戚家军藤牌灭倭标志战' },
+    { id: 'city_luobo', name: '罗博', factionId: 'buyi_d', lat: 25.4112, lng: 106.7377, type: 'small_city', troops: 10000 },
+    { id: 'city_situo', name: '思陀', factionId: 'hani_d', lat: 23.2243, lng: 102.8485, type: 'small_city', troops: 10000 },
+    { id: 'city_shangding', name: '上丁', factionId: 'basha_d', lat: 13.5581, lng: 106.0098, type: 'small_city', troops: 10000 },
+    // ── 2026-06-12 新增：夏顿@廷布 ──
+    { id: 'city_tingbu', name: '廷布', factionId: 'xiadun', lat: 27.472, lng: 89.639, type: 'small_city', region: 'TIBET', troops: 10000, note: '夏仲阿旺朗杰1616年统一不丹后定夏季都城；清史及藏文史籍称布鲁克巴政教合一政权' },
+    { id: 'city_huangchuan', name: '弋阳', factionId: 'huang_d', lat: 32.1310, lng: 115.0510, type: 'small_city', troops: 10000 },
+    { id: 'city_yongqiu', name: '雍丘', factionId: 'qiguo_d', lat: 34.55, lng: 114.78, type: 'small_city', troops: 10000 },
+    { id: 'city_mengcheng', name: '蒙城', factionId: 'mengcheng_d', lat: 33.27, lng: 116.56, type: 'small_city', troops: 10000, note: '汉沛郡山桑县治地；唐天宝改蒙城县；庄子故里（有争议）' },
+    { id: 'city_yongcheng', name: '永城', factionId: 'guide_d', lat: 33.93, lng: 116.37, type: 'small_city', troops: 10000, note: '归德府辖；芒砀山/汉高潜居；走廊东翼' },
+    { id: 'city_kunyang', name: '昆阳', factionId: 'lulin', lat: 33.22, lng: 113.22, type: 'small_city', troops: 10000, note: '昆阳故城（叶县北）；绿林—刘秀昆阳之战' },
+    { id: 'city_yucheng', name: '虞城', factionId: 'dang_d', lat: 34.7758, lng: 116.0678, type: 'small_city', troops: 10000, note: '汉砀郡属/虞国故地；豫东商丘东翼' },
+    { id: 'city_bengbu', name: '蚌埠', factionId: 'hao_d', lat: 32.92, lng: 117.38, type: 'small_city', troops: 10000, note: '濠州治钟离故地；淮滨津渡（今蚌埠）' },
+    { id: 'city_liaocheng', name: '聊城', factionId: 'bozhou_d', lat: 36.4322, lng: 115.9552, type: 'small_city', troops: 10000, note: '隋唐博州治；春秋聊城邑' },
+    { id: 'city_sapi', name: '萨毗城', factionId: 'rulun', lat: 37.631470, lng: 88.884888, type: 'small_city', region: 'TIBET', troops: 10000 },
+    { id: 'city_shayuan', name: '长宁', factionId: 'tongzhou', lat: 35.0032, lng: 109.9319, type: 'small_city', troops: 10000, note: '大荔沙苑；西魏沙苑之战古战场；唐沙苑监牧马地；同州治' },
+    { id: 'city_gasikou', name: '噶斯口', factionId: 'panjun', lat: 38.078345, lng: 89.288635, type: 'pass', region: 'TIBET', troops: 10000, mirror: true },
+    { id: 'city_niubiziliang', name: '牛鼻子梁', factionId: 'panjun', lat: 37.838198, lng: 91.678162, type: 'pass', region: 'TIBET', troops: 10000, mirror: true },
+    { id: 'city_mahaitai', name: '马海台', factionId: 'panjun', lat: 38.045995, lng: 94.622498, type: 'pass', region: 'TIBET', troops: 10000, mirror: true },
+    { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.8960, type: 'pass', region: 'TIBET', troops: 10000, note: '柴达木台吉乃尔' },
+    { id: 'city_bayinbulage', name: '巴音布拉格', factionId: 'panjun', lat: 41.3775, lng: 102.9694, type: 'small_city', troops: 10000, note: '沮渠已迁表氏' },
+    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'panjun', lat: 38.3593, lng: 90.1334, type: 'pass', mirror: true, region: 'TIBET', troops: 10000, note: '柴达木西缘尕斯淖尔盐泽' },
+    { id: 'city_jieqiao', name: '界桥', factionId: 'qu_d', lat: 36.95, lng: 115.50, type: 'pass', region: 'NORTH', troops: 10000, note: '麴义先登死士破公孙瓒白马义从（192年）' },
+    { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8000, lng: 99.8000, type: 'small_city', troops: 10000, note: '汉酒泉郡表氏县；沮渠卢水胡故地' },
+];

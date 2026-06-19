@@ -1,4 +1,4 @@
-import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
+﻿import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
 import { FLAG_TEXT_WHITE_STYLE_FACTIONS, FLAG_TEXT_BLACK_STYLE_FACTIONS, HISTORICAL_FACTION_COLORS, FLAG_TEXT_LUM_THRESHOLD } from '../data/HistoricalFactionColors';
 import type { FactionManager } from '../world/FactionManager';
@@ -58,6 +58,7 @@ export class CityAssetManager {
 
         'shu': '蜀',
         'yangzhou': '洋',
+        'sizhou': '泗',
         'fengzhou': '凤',
         'fushi': '苻',
         'shu_han': '平魏',
@@ -699,7 +700,7 @@ export class CityAssetManager {
         'zheng': '郑',
         'zhong': '寿',
         'ruo': '鄀',
-        'rulun': '如论',
+        'gar': '噶尔',
         'ruzhou': '汝',
         'yun': '允',
         'zhi_state': '轵',
@@ -753,7 +754,6 @@ export class CityAssetManager {
         'wuhu': '乌护',
         'sanada_d': '真田',
          'jiazini': '伽色尼',
-        'yisifahan': '法罕',
         'gaofu': '高附',
         'fanyanna': '梵衍',
         };

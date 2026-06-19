@@ -1,4 +1,4 @@
-// 势力数据 (Faction Data)
+﻿// 势力数据 (Faction Data)
 // 每个势力：id、name（旗号汉字见 SandboxDisplayNames）
 // 显示色：固定见 HistoricalFactionColors.ts；其余每局由 FactionManager 随机分配
 // 命名规则：政权用正式国号(部分加"大")，民族用最高知名度2字简称，军阀用人名姓氏，家族用单姓氏
@@ -358,7 +358,7 @@ export const FACTIONS: Faction[] = [
     { id: 'shuixi', name: '水西' },
 
     // 第二类：南明五政权
-    { id: 'hongguang', name: '弘光' },
+    { id: 'yang_zhou', name: '扬州' },
     { id: 'longwu', name: '隆武' },
     { id: 'lujian', name: '鲁监' },
 
@@ -513,6 +513,7 @@ export const FACTIONS: Faction[] = [
     { id: 'mon', name: '孟族' },                      // 孟族暗紫 - 孟族(直通城/中南半岛最早佛国)
     // ── 第三类：世袭土司与门阀 ──
     { id: 'yang_bozhou', name: '播州' },             // 海龙棕 - 播州杨氏(海龙屯/贵州第一土司)
+    { id: 'sizhou', name: '泗州' },
     { id: 'tian_sizhou', name: '田氏' },
     { id: 'mu_lijiang', name: '木氏' },
                // 丽江明黄 - 丽江木氏(木府)
@@ -550,7 +551,6 @@ export const FACTIONS: Faction[] = [
     // ── 自动补充：cities_v2 使用但 factions.ts 缺失的势力 ──
     { id: 'bandun', name: '板楯' },                      // 板楯蛮(巴人分支/鱼涪津/岷江渡口)
     { id: 'seljuq', name: '塞尔柱' },      // 桑贾尔·木鹿
-    { id: 'yisifahan', name: '伊斯法罕' },  // 阿尔普·阿尔斯兰·曼齐克特
     // 阮氏(安南权阀/占城/广南)
     // 党项部族(拓跋氏/玛曲/黄河第一弯)
     // 雅隆部落(吐蕃前身/雅砻河谷/悉补野氏)
@@ -891,7 +891,7 @@ export const FACTIONS: Faction[] = [
     { id: 'hongnong_jun', name: '弘农郡' },
     { id: 'zheng', name: '郑国' },
     { id: 'ruo', name: '鄀国' },
-    { id: 'rulun', name: '如论氏' },
+    { id: 'gar', name: '噶尔氏' },
     { id: 'ruzhou', name: '汝州' },
     { id: 'yun', name: '允戎' },
     { id: 'zhi_state', name: '轵国' },

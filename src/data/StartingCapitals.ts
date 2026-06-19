@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 沙盒模式：势力 id → 首都 cityId（1 势力 = 1 据点）。
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
@@ -720,7 +720,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'nvguo': 'city_mapangyongcuo',
     'jiashi': 'city_kajier',
     ziranzhi: 'city_ziranzhi',
-    yisifahan: 'city_yisifahan',
     gaofu: 'city_gaofu',
     fanyanna: 'city_fanyanna',
     jiazini: 'city_jiaseni',

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将技数据（格号 = 机制真理，displayName = 展示皮肤）
  * 设计文档：docs/02-design/GENERAL_SKILLS_武将技系统.md
  * AI 分配标签：src/data/GeneralSkillTags.ts（品阶 + 五种战术风格）
@@ -141,6 +141,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     zhudi: { generalId: 'zhudi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 靖难军白沟突击
     yuqian: { generalId: 'yuqian', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 京师保卫战
     lisheng: { generalId: 'lisheng', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 保境：断敌粮道后反击
+    yangxingmi: { generalId: 'yangxingmi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_02' }, // 清口之战破孙儒、守淮南
     wangping: { generalId: 'wangping', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 244年兴势之战据险大破曹爽
     anuluvtuo: { generalId: 'anuluvtuo', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 蒲甘王朝东征西讨
     machao: { generalId: 'machao', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 潼关决死突击
@@ -299,7 +300,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     zhuxiechixin: { generalId: 'zhuxiechixin', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 朱邪赤心骑破庞勋
     yisimayi: { generalId: 'yisimayi', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 萨曼埃米尔巴尔赫以逸待劳
     satuke: { generalId: 'satuke', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 喀喇汗圣战统一
-    aerpu: { generalId: 'aerpu', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 曼齐克特俘虏拜占庭皇帝
     sulukehan: { generalId: 'sulukehan', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 突骑施公牛抗阿拉伯
     yelvdashi: { generalId: 'yelvdashi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 西辽西迁卡特万以少胜多
     mahamaode: { generalId: 'mahamaode', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 马哈茂德十七征印度

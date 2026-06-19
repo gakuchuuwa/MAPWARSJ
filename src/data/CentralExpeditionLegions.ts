@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 中原文化区远征精锐军团名（CENTRAL）
  *
  * 收录红线：
@@ -8,6 +8,7 @@
  * - §1 他区已占：#34–35 江南、#54 西域、#70 草原、#72–79 南方/东北、#75 北方
  */
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  xiezhou: { name: '河东军', tier: 2 },   // 安邑·马燧河东节度使
   tang: { name: '玄甲军', tier: 0 },       // 长安·§1 #44 李世民玄甲骑
   wei: { name: '魏之武卒', tier: 0 },        // 汴梁·吴起练武卒阴晋破秦（《荀子·议兵》）
   qin: { name: '秦之锐士', tier: 1 },        // 天水·§1 #12 司马错白起
@@ -18,7 +19,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   pizhou: { name: '陷阵营', tier: 1 },        // 下邳·高顺陷阵营
   cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
   ranwei_d: { name: '乞活军', tier: 2 },   // 巨鹿·§1 #41 冉闵陈午
-    wuzhou_d: { name: '神都禁卫', tier: 2 },   // 洛阳·狄仁杰武周禁军（原控鹤军，与狄仁杰立场冲突）
+    wuzhou_d: { name: '羽林军', tier: 1 },     // 洛阳·李多祚羽林军（武周）
   fu: { name: '皂衣队', tier: 1 },         // 大散关·§1 #39 苻坚前秦
   shang: { name: '虎贲多射', tier: 1 },       // 安阳·殷商虎贲与多射（妇好征伐）
   zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）

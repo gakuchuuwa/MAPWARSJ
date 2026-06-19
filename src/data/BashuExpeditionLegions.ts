@@ -12,7 +12,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒
   zhuoshi: { name: '连弩士', tier: 3 },         // 临邛·诸葛连弩营
   tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛
-  shu: { name: '元从军', tier: 1 },             // 成都·诸葛亮元从军（蜀国/刘备旧部）
+  shu: { name: '诸葛连弩', tier: 1 },           // 成都·诸葛亮连弩兵（蜀国）
   yangzhou: { name: '无当飞军', tier: 1 },   // 兴势·王平统率山地劲旅（洋州）
   shuixi: { name: '罗罗兵', tier: 3 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名

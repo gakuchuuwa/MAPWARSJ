@@ -15,9 +15,9 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   shanyue: { name: '丹阳兵', tier: 2 },      // 宛陵城·§1 #24 丹阳郡精兵；旗=山越 据点=宛陵城 番=丹阳兵 ✅
     chu: { name: '荆州锐士', tier: 2 },       // 金鳞·陆逊镇守江陵
   sunwu_d: { name: '解烦兵', tier: 2 },      // 武昌·孙吴禁卫
-  nantang_d: { name: '黑云长剑都', tier: 2 }, // 南京·§9 #4 南唐杨行密
+  nantang_d: { name: '神武军', tier: 1 },     // 建业·李昪南唐神武军
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=寿·寿州）
-  hongguang: { name: '扬州义兵', tier: 2 },       // 广陵·史可法扬州义兵
+  yang_zhou: { name: '黑云长剑都', tier: 1 },   // 广陵·杨行密黑云长剑都（扬州）
   lu: { name: '合肥锐士', tier: 1 },       // 合肥·张辽八百破十万
   min: { name: '闽国亲从', tier: 3 },        // 冶城·王审知闽国亲从
   quanzhou: { name: '清源军', tier: 1 },        // 刺桐·留从效清源军
@@ -26,7 +26,8 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
       xiangzhou: { name: '荆鄂都统司', tier: 1 },     // 襄阳·京湖战区
   zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
-  song: { name: '克敌军', tier: 1 },       // 临安·韩世忠（《宋史·韩世忠传》克敌军）
+  song: { name: '殿前护圣军', tier: 1 },   // 临安·杨沂中殿前护圣军（宋国）
+  sizhou: { name: '克敌军', tier: 1 },       // 淮安·韩世忠克敌军（泗州）
   qian_d: { name: '游奕军', tier: 2 },       // 嘉兴·§9 #13 踏白游奕（岳飞系）
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
   jinan: { name: '济南卫', tier: 2 },        // 历下·铁铉守济南卫

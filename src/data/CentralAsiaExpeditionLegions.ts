@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 中亚文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与日朝东北草原西域一致：
@@ -29,7 +29,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   zhaowu: { name: '忽毡城武士', tier: 3 },
   yada: { name: '悉万斤重甲', tier: 3 },
   jiazini: { name: '伽色尼古拉姆', tier: 1 },       // 哥疾宁·马哈茂德古拉姆
-  yisifahan: { name: '曼齐克特骑', tier: 1 }, // 伊斯法罕·阿尔普·阿尔斯兰（原曼齐克特铁骑）
   gaofu: { name: '高附兵', tier: 3 },          // 喀布尔·喀布尔沙希兵
   fanyanna: { name: '梵衍那僧兵', tier: 3 },      // 梵衍那城·兴都库什僧兵
 };
