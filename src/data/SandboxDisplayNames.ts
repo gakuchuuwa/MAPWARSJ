@@ -17,6 +17,9 @@
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   heishui: '黑水',
+  yangzhou: '洋',
+  fengzhou: '凤',
+  fushi: '苻',
   kelie: '札合',
   donghui: '东濊',
   gonggu: '宫古',
@@ -44,7 +47,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhen': '甄',
     'dongshengwei': '胜',
     'dizhou': '棣',
-    fushi: '保大',
     'weihaiwei': '威海',
     'xiezhou': '解',
     'shang': '商',
@@ -573,7 +575,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dulan': '都兰',
 'zhuxie': '朱邪',
 'hunxie': '浑邪',
-    'fu': '苻',
     'tiemuer': '帖木儿',
     'kawusi': '卡乌',
     'keerkezi': '柯尔',
@@ -772,7 +773,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'mushi': '穆',
     'lai': '莱',
     'lizhou_d': '利',
-    'xiazhou': '峡',
     'zuo_d': '笮',
     'zangke': '牂牁',
     'huangwang': '黄',

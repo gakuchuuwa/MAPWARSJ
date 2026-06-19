@@ -12880,38 +12880,13 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [109.57, 31.04],
                 ]
             }
-        },
-        {
+        },{
             type: "Feature",
             properties: {
-                name: "白帝城-瞿塘关",
+                name: "白帝城-夷陵",
                 type: "road",
-                id: "road_city_baidicheng2_city_qutangguan_1780154491899",
+                id: "road_city_baidicheng2_city_yiling_1780154494015",
                 startConnection: "city_baidicheng2",
-                endConnection: "city_qutangguan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [109.57, 31.04],
-                    [109.731456, 31.021267],
-                    [109.765636, 31.047553],
-                    [109.784679, 31.053656],
-                    [109.871755, 31.067572],
-                    [109.896658, 31.068549],
-                    [109.933849, 31.064561],
-                    [109.976085, 31.068427],
-                    [110.15, 31.03],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "瞿塘关-夷陵",
-                type: "road",
-                id: "road_city_qutangguan_city_yiling_1780154494015",
-                startConnection: "city_qutangguan",
                 endConnection: "city_yiling"
             },
             geometry: {

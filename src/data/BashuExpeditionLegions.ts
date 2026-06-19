@@ -12,21 +12,21 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒
   zhuoshi: { name: '连弩士', tier: 3 },         // 临邛·诸葛连弩营
   tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛
-  shu: { name: '无当飞军', tier: 1 },           // 成都·诸葛亮连弩山地劲旅（王平统率史载）
-  shu_han: { name: '兴势守军', tier: 1 },       // 兴势·244年王平兴势之战
-  hanzhong_d: { name: '汉中镇远军', tier: 1 },  // 略阳·魏延汉中太守
+  shu: { name: '元从军', tier: 1 },             // 成都·诸葛亮元从军（蜀国/刘备旧部）
+  yangzhou: { name: '无当飞军', tier: 1 },   // 兴势·王平统率山地劲旅（洋州）
   shuixi: { name: '罗罗兵', tier: 3 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名
   chenghan: { name: '六夷突骑', tier: 2 },      // 鹿头关·§8 #9 成汉李特六夷铁骑
   daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
   ba: { name: '巴渝劲卒', tier: 1 },          // 重庆·巴国巴蔓子劲卒（《华阳国志·巴志》）
   hezhou: { name: '兴戎军', tier: 0 },          // 钓鱼城·王坚抗蒙毙蒙哥（《宋史》）
-  kui: { name: '鱼复霆军', tier: 1 },           // 鱼复·鲍超霆军（奉节籍湘军猛将）
+  kui: { name: '白毦兵', tier: 1 },             // 白帝城·刘备白毦兵（夔州）
   qiuchi: { name: '武都部曲', tier: 3 },          // 仇池·杨氏世袭部曲（《宋书》杨难当拥部曲数万）
   // ── 2026-06-16 新增：4座西南名关 ──
-  lizhou_d: { name: '蜀口守军', tier: 1 },        // 剑门关·吴玠和尚原仙人关守蜀
-  xiazhou: { name: '白毦兵', tier: 1 },       // 瞿塘关·陈到永安白毦（夔门护卫）
-  yang_bozhou: { name: '播州土兵', tier: 3 },    // 海龙屯·播州杨氏
+  lizhou_d: { name: '蜀口守军', tier: 1 },        // 剑门关·吴玠移驻大散关（蜀口禁军）
+  fengzhou: { name: '蜀口禁军', tier: 1 },       // 大散关·吴玠蜀口禁军（凤州）
+  fushi: { name: '氐族劲卒', tier: 2 },         // 略阳·苻洪氐族劲卒（苻氏）
+    yang_bozhou: { name: '播州土兵', tier: 3 },    // 海龙屯·播州杨氏
   yong: { name: '庸国戍卒', tier: 3 },           // 上庸·古庸国
   cong: { name: '賨族勇士', tier: 3 },           // 宕渠·賨族
   wuxi: { name: '五溪蛮兵', tier: 3 },           // 八面山·五溪蛮

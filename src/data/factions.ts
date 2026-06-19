@@ -13,6 +13,8 @@ export const FACTIONS: Faction[] = [
   { id: 'donghui', name: '东濊' },
   { id: 'gonggu', name: '宫古' },
   { id: 'fuguo', name: '附国' },
+  { id: 'fengzhou', name: '凤州' },
+  { id: 'fushi', name: '苻氏' },
   { id: 'gongtang', name: '贡唐' },
   { id: 'chizhou', name: '池州' },
 
@@ -68,8 +70,8 @@ export const FACTIONS: Faction[] = [
     { id: 'han', name: '韩国' },
     { id: 'han_d', name: '汉国' },
     { id: 'shu', name: '蜀国' },
-    { id: 'shu_han', name: '蜀汉' }, // ── 2026-06-18：王平@兴势（兴势之战）──
-    { id: 'hanzhong_d', name: '汉中' }, // ── 2026-06-18：魏延@略阳（阳平关·汉中太守）──
+    { id: 'yangzhou', name: '洋州' },
+    { id: 'shu_han', name: '蜀汉' }, // ── 洋州@兴势（王平·无当飞军T1）──
     { id: 'dingxiang_d', name: '定襄' }, // ── 2026-06-18：李靖@恶阳岭（贞观四年定襄夜袭；旗号定襄）──
     { id: 'dian', name: '通海' },       // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '新国' },
@@ -691,7 +693,6 @@ export const FACTIONS: Faction[] = [
     { id: 'duolu', name: '咄陆' },
     { id: 'zhuxie', name: '朱邪' },
     { id: 'hunxie', name: '浑邪' },
-    { id: 'fu', name: '苻秦' },
     { id: 'tiemuer', name: '帖木儿' },
     { id: 'kawusi', name: '卡乌斯' },
     { id: 'keerkezi', name: '柯尔克孜' },
@@ -901,7 +902,6 @@ export const FACTIONS: Faction[] = [
     { id: 'lai', name: '莱州' },
     // ── 2026-06-16 新增：4座巴蜀西南名关 ──
     { id: 'lizhou_d', name: '利州' },
-    { id: 'xiazhou', name: '峡州' },
     { id: 'zuo_d', name: '笮人' },
     { id: 'huangwang', name: '黄王' },
     { id: 'shenshi', name: '吴兴沈氏' },

@@ -57,6 +57,9 @@ export class CityAssetManager {
         'weihaiwei': '威海',
 
         'shu': '蜀',
+        'yangzhou': '洋',
+        'fengzhou': '凤',
+        'fushi': '苻',
         'shu_han': '平魏',
         'hanzhong_d': '阳平',
 
@@ -508,7 +511,6 @@ export class CityAssetManager {
 'duolu': '咄陆',
 'zhuxie': '朱邪',
 'hunxie': '浑邪',
-        'fu': '苻',
         'tiemuer': '帖木儿',
         'kawusi': '卡乌',
         'keerkezi': '柯尔',
@@ -707,7 +709,6 @@ export class CityAssetManager {
         'mushi': '穆',
         'lai': '莱',
         'lizhou_d': '利',
-        'xiazhou': '峡',
         'zuo_d': '笮',
         'zangke': '牂牁',
         'huangwang': '黄',
