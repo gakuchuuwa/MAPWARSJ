@@ -9,9 +9,10 @@
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   bohai: { name: '渤海猛贲', tier: 2 },       // 龙泉府·渤海左右猛贲卫
-  dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（娄室@都城）
+  dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（阿骨打@都城）
+  yizhou: { name: '金源精骑', tier: 1 },      // 蒺藜山·娄室金源精骑
   manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
-  wanyan_d: { name: '拐子马', tier: 2 },    // 双城·金两翼骑兵
+
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
   aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
   manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）
@@ -19,7 +20,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   aola: { name: '黑龙江水师', tier: 3 },     // 雅克萨·清水师
   wuliangha: { name: '朵颜三卫', tier: 3 },  // 赛音山达·§1 #74 兀良哈三卫（朵颜/泰宁/福余合一）
   // 渤海八猛安除名（渤海无猛安制，金制错代）
-  fuyu: { name: '金源边军', tier: 3 },       // 黄龙府·辽金黄龙府女真边军（据点今名黄龙府）
+  fuyu: { name: '夫余步骑', tier: 3 },       // 黄龙府·夫余步骑（§1）
   // ── 2026-06-16 新增：东北大区平衡补全（7支，精锐随据点，全图无六字番号） ──
   // 拉哈苏苏兵除名（无史载专名）
   // 东康坚甲除名（东康无此古地名）

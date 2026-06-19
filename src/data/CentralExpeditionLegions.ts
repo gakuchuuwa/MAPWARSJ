@@ -14,7 +14,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
   han_d: { name: '轻勇骑', tier: 1 },      // 南郑·§1 #18 韩信背水之战的夺旗骑兵
-  xu: { name: '陷阵营', tier: 1 },          // 下邳·高顺部曲（无独立以少胜多经典）
+  pizhou: { name: '陷阵营', tier: 1 },        // 下邳·高顺陷阵营
   cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
   ranwei_d: { name: '乞活军', tier: 2 },   // 巨鹿·§1 #41 冉闵陈午
     wuzhou_d: { name: '神都禁卫', tier: 2 },   // 洛阳·狄仁杰武周禁军（原控鹤军，与狄仁杰立场冲突）

@@ -35,7 +35,6 @@ export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   xushouhui: { name: '红巾军', tier: 2 },    // 蕲春·元末徐寿辉天完红巾主力
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）
   changshaguo: { name: '武平军', tier: 2 },   // 临湘·马殷长沙国武平军
-  machu: { name: '武平军', tier: 2 },       // 马楚武平军（据点待定）
   ning: { name: '江西勤王军', tier: 3 },     // 豫章·南宋江西勤王
   huangwang: { name: '冲天军', tier: 2 },       // 仙霞关·黄王冲天军
   yue: { name: '越君子军', tier: 3 },          // 会稽·勾践越军

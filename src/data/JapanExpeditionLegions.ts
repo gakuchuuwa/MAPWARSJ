@@ -12,7 +12,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zhuqian: { name: '警固番役', tier: 0 },  // 太宰府·警固番役（元寇：文永/弘安两役以少胜多，日本区T0锚点）
 
   // ── 室町—战国—江户（辞典映射表）──
-  ashikaga: { name: '奉公众', tier: 2 },         // 京都·§5 #31 足利奉公众
+  ashikaga: { name: '奉公众', tier: 1 },         // 京都·§5 #31 足利奉公众
   edo: { name: '旗本武士', tier: 1 },          // 江户城·§5 #20 旗本（Hatamoto）
   satsuma: { name: '萨摩隼人', tier: 1 },        // 鹿儿岛城·岛津氏冲田畷钓野伏（原隼人众 T2）
   hojo_d: { name: '风魔党', tier: 2 },         // 小田原·§5 #17

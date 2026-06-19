@@ -46,7 +46,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'dizhou': '棣',
     fushi: '保大',
     'weihaiwei': '威海',
-    'xia': '夏',
+    'xiezhou': '解',
     'shang': '商',
     'zhou': '周',
     'qi': '齐',
@@ -117,7 +117,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'quanrong': '犬戎',
     'suzhou': '肃',
     'sushen': '肃慎',
-'yuezhi': '月氏',
     'chile': '敕勒',
 'rouran': '柔然',
     'baiji': '百济',
@@ -196,7 +195,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yingzhou_ying_d': '营',
     'erzhu': '尔朱',
 
-'xu': '徐',
+'pizhou': '邳',
 
     // 2026-05-25 汉朝核对追加势力
 'zhai_han': '翟',
@@ -212,10 +211,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-16 改：符离·宿（§4.7；旗号「徐」让位下邳徐国）──
     'suzhou_d': '宿',
     'didao': '狄',
-    'xiliang': '西凉',
+    'lanzhou': '兰',
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
-    'anshi_d': '安史',
+    'zhuozhou': '涿',
     'tujia_d': '土家',
     'zhuang_d': '壮',
     'xibo_d': '锡伯',
@@ -224,7 +223,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shizhao_d': '石赵',
     'ranwei_d': '冉魏',
     'zu_d': '祖',
-    'wanyan_d': '完颜',   // 女真完颜部族；≠大金(dajin)
+
     'aisin_d': '爱新', // 建女真皇族；≠大清(manzhou_d)
     'sunwu_d': '孙吴',
 
@@ -283,7 +282,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-25 明朝势力 ──
     'fang_guozhen': '浙方',
-    'liutong_yangqing': '汉王',
     'dengmaoqi': '铲平',
     'yezongliu': '处',
     'dada_ming': '鞑靼',
@@ -339,9 +337,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'miao_qing': '苗军',
     'tuoming': '清真',
 'yettishar': '哲德',
-    'ashikaga': '足利',
+    'ashikaga': '室町',
     // ── 2026-05-26 新增：大金、大元 ──
     'dajin': '大金',
+    'yizhou': '懿',
     'yuan_d': '大元',
 
     // ── 2026-05-26 新增：肃慎系势力（挹娄、勿吉、靺鞨）──
@@ -481,7 +480,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jingjiang': '靖江',
     'panyao': '贺',
 'changshaguo': '长沙',
-    'machu': '马楚',
     'paiyao': '排瑶',
     'jiang_s': '蒋',
 
@@ -671,7 +669,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'suwa_d': '诹访',
     'beihai': '北海',
     'hui': '濊',
-    'dingan': '定安',
+    'luzhou': '渌',
     'xuantu': '玄菟',
     'sambyeol': '沃',
     'sheng_d': '升',

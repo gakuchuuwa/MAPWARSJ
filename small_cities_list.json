@@ -671,7 +671,7 @@
   {
     "id": "city_yalu",
     "name": "鸭绿府",
-    "factionId": "dingan",
+    "factionId": "luzhou",
     "line": 984
   },
   {
@@ -2226,7 +2226,7 @@
   {
     "id": "city_shuangcheng",
     "name": "双城",
-    "factionId": "wanyan_d",
+    "factionId": "yizhou",
     "line": 1879
   },
   {

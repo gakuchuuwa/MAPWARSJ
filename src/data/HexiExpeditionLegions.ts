@@ -8,7 +8,7 @@
  * - 三者防重：见 ExpeditionLegions.ts、ExpeditionTripleNameAllow.ts
  */
 export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  xiliang: { name: '西凉铁骑', tier: 2 },       // 皋兰·凉州骑兵泛称
+  lanzhou: { name: '金城突骑', tier: 1 },     // 金城·赵充国金城突骑
   dangxiang: { name: '铁鹞子', tier: 0 },        // 兴庆府·1041好水川诱伏，铁鹞子冲阵，任福战死（李元昊）
   qing: { name: '忠孝军', tier: 0 },         // 安化·庆州治；大昌原四百破八千（完颜陈和尚）
   // 步跋子已迁环洲（huan@方渠）

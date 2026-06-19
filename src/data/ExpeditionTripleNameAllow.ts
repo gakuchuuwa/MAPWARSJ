@@ -11,14 +11,13 @@
  */
 export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   // ── 2·政权（国号/政权专名）──
-  'wei', 'qin', 'tang', 'qi', 'shang', 'zhou', 'xia', 'han_d', 'fu', 'cao_d',
+  'wei', 'qin', 'tang', 'qi', 'shang', 'zhou', 'xiezhou', 'han_d', 'fu', 'cao_d',
   'chen', 'xiao_d', 'song', 'wuzhou_d', 'sunqin',
   'hongguang', 'min', 'loulan', 'han', 'jingjiang', 'liang_d', 'ashina',
   'xiliao', // 喀喇契丹·斡耳朵亲卫（西辽政权）
   'edo', 'riben', 'xinluo', 'gaogouli', 'balhae', 'goryeo', 'joseon',
   'zhao', // 赵国·赵边骑
-  'xiliang', // 西凉·西凉铁骑
-  'daxi_ming', // 大西·大西老营
+    'daxi_ming', // 大西·大西老营
   'seljuq', // 塞尔柱·桑贾尔禁卫
   // 西域
   'anxi', // 安西·大唐安西军（都护府专名）

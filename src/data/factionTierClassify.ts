@@ -27,7 +27,7 @@ const TIER6_UPRISING = new Set([
     'dashun', 'daxi_ming', 'hongguang', 'longwu', 'yongli', 'baibo',
     'bailian', 'liwang', 'taiping', 'zhangshicheng',
     'dengmaoqi', 'linshihong', 'yezongliu',
-    'fangla', 'liutong_yangqing',
+    'fangla',
     'qianhui',
     'miao_qing', 'miaomin',
     'tuoming', 'qiufu',
@@ -38,13 +38,13 @@ const TIER6_UPRISING = new Set([
 const TIER2_ETHNIC_SEED = new Set([
     'xiongnu', 'xianbei', 'tuoba', 'qidan', 'jurchen', 'menggu_d', 'manzhou',
     'tujue', 'tiele', 'huige', 'rouran', 'chile', 'qiang', 'di', 'jie',
-    'yuezhi', 'sogdian', 'donghu', 'sushen', 'wuzhumuqin', 'mohe', 'quanrong',
+    'guishuang', 'sogdian', 'donghu', 'sushen', 'wuzhumuqin', 'mohe', 'quanrong',
     'huimo', 'ashikaga', 'xiyu',
 ]);
 
 const TIER1_REGIME = new Set([
     'han_d', 'shu', 'wu', 'wei', 'qin', 'chu', 'tang', 'song', 'ming_d',
-    'yuan_d', 'manzhou_d', 'dajin', 'jin', 'shang', 'xia', 'liao_d', 'sui',
+    'yuan_d', 'manzhou_d', 'dajin', 'jin', 'shang', 'xiezhou', 'liao_d', 'sui',
     'nanzhao', 'dali', 'goryeo', 'joseon', 'bohai', 'baiji', 'xinluo',
     'gaogouli', 'yamato', 'dayue', 'tubo', 'dangxiang', 'siam', 'chenla',
     'zhou', 'yan', 'qi', 'han', 'zhao', 'wu_yue', 'yue',

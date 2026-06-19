@@ -27,8 +27,8 @@ export class EventParser {
         '赫哲': 'hezhe', '瓦尔': 'hezhe', '波罗奈斯克': 'hezhe', '拉哈苏苏': 'hezhe',
         '濊貊': 'huimo', '东团山': 'huimo',
         '百越': 'yuenan', '滇国': 'dianguo', '拓东城': 'dianguo', '通海': 'dian', '新兴': 'dian', '倭国': 'ashikaga',
-        '月氏': 'yuezhi', '拜松': 'yuezhi', '希腊': 'xiyang',
-        '大月氏': 'yuezhi', '蓝氏城': 'yuezhi', '巴克特拉': 'yuezhi',
+        '月氏': 'guishuang', '贵霜': 'guishuang', '拜松': 'guishuang', '希腊': 'xiyang',
+        '大月氏': 'guishuang', '蓝氏城': 'guishuang', '巴克特拉': 'guishuang',
 
         // 西汉 (Western Han) - Now mapping to Zhonghua
         '西汉': 'zhonghua', '汉': 'zhonghua', '汉军': 'zhonghua', '炎汉': 'zhonghua',
@@ -49,7 +49,7 @@ export class EventParser {
         // 秦朝追加核对势力 (2026-05-25)
         '陆浑': 'luhun', '陆浑戎': 'luhun',
         '卫国': 'wey', '卫': 'wey',
-        '徐国': 'xu', '徐': 'xu',
+        '徐国': 'pizhou', '徐': 'pizhou', '邳州': 'pizhou',
 
         // 汉朝补全半成品势力 (2026-05-25)
         '铜马': 'tongma', '铜马军': 'tongma',
@@ -67,7 +67,7 @@ export class EventParser {
         // 三国核对追加势力 (2026-05-25)
         '襄州': 'xiangzhou', '襄': 'xiangzhou', '襄阳': 'xiangzhou',
         '刘表': 'xiangzhou', '刘景升': 'xiangzhou',
-        '下邳': 'xu', '陷阵营': 'xu', '高顺': 'xu',
+        '下邳': 'pizhou', '陷阵营': 'pizhou', '高顺': 'pizhou',
         '宿州': 'suzhou_d', '符离': 'suzhou_d', '符离集': 'suzhou_d',
         '临洮': 'didao', '狄道': 'didao', '狄道县': 'didao', '飞熊军': 'didao',
         '袁': 'yuan_cj_d', '袁氏': 'yuan_cj_d', '袁绍': 'yuan_cj_d', '悬瓠': 'yuan_cj_d', '汝南': 'yuan_cj_d',
@@ -119,7 +119,7 @@ export class EventParser {
         '黄龙兵': 'yingzhou_ying_d', '高宝宁': 'yingzhou_ying_d', '营州': 'yingzhou_ying_d',
         '两池军': 'chile', '高洋': 'chile',
         '鲜卑燕骑': 'murong', '龙城甲骑': 'murong', '慕容恪': 'murong', '连环马': 'murong', '棘城': 'murong',
-        '曳落河': 'anshi_d', '安禄山': 'anshi_d',
+        '曳落河': 'zhuozhou', '安禄山': 'zhuozhou', '范阳': 'zhuozhou',
         '鸦儿军': 'shatuo', '李克用': 'shatuo',
         '朔方军': 'lingwu', '郭子仪': 'lingwu', '李光弼': 'lingwu', '灵武': 'lingwu', '回乐': 'lingwu',
         '定襄': 'dingxiang_d', '李靖': 'dingxiang_d', '恶阳岭': 'dingxiang_d', '恶阳骑': 'dingxiang_d',
@@ -210,9 +210,7 @@ export class EventParser {
         // 第二类：元末群雄
         '方国珍': 'fang_guozhen', '庆元': 'fang_guozhen', '台州': 'fang_guozhen', '温州': 'fang_guozhen',
         // 第三类：农民起义
-        '刘通': 'liutong_yangqing', '李原': 'liutong_yangqing', '郧阳': 'liutong_yangqing',
-        '南阳材官': 'dixiang', '张绣': 'dixiang', '宛': 'dixiang', '房县': 'liutong_yangqing',
-        '邓茂七': 'dengmaoqi', '铲平王': 'dengmaoqi', '沙县': 'dengmaoqi', '延平': 'dengmaoqi', '建宁': 'dengmaoqi',
+        '南阳材官': 'dixiang', '张绣': 'dixiang', '宛': 'dixiang',         '邓茂七': 'dengmaoqi', '铲平王': 'dengmaoqi', '沙县': 'dengmaoqi', '延平': 'dengmaoqi', '建宁': 'dengmaoqi',
         '叶宗留': 'yezongliu', '太平国': 'yezongliu', '处州': 'yezongliu', '陈鉴胡': 'yezongliu',
         // 第四类：藩王叛乱
         '朱高煦': 'zhu_gaoxu', '汉王叛': 'zhu_gaoxu', '乐安': 'zhu_gaoxu', '武定州': 'zhu_gaoxu',
@@ -241,7 +239,7 @@ export class EventParser {
         '安定卫': 'anding_wei', '安定蒙古': 'anding_wei',
         // 第六类：周边国家
         '安南': 'annam_ho', '胡朝': 'annam_ho', '黎氏': 'annam_ho', '交阯': 'annam_ho', '升龙': 'annam_ho', '河内': 'annam_ho',
-        '李朝': 'joseon', '李成桂': 'joseon', '汉城': 'joseon', '汉阳': 'joseon',
+        '李朝': 'joseon', '李成桂': 'joseon', '汉城': 'joseon', '汉阳': 'joseon', '义兴亲军卫': 'joseon',
         '暹罗': 'siam', '阿瑜陀耶': 'siam',
 
         // ── 2026-06-11 中原远征精锐（§1 共 13 支）──
@@ -257,7 +255,7 @@ export class EventParser {
         '商王射士': 'shang', '三百射': 'shang',
         '岐阳周师': 'zhou', '虎贲三千': 'zhou', '岐阳': 'zhou',
         '虎贲军': 'han_d', '南郑': 'han_d', '刘邦': 'han_d',
-        '夏后亲卫': 'xia',
+        '夏后亲卫': 'xiezhou', '安邑': 'xiezhou', '解县弩手': 'xiezhou',
         '骁果军': 'sui', '骁果': 'sui', '司马德戡': 'sui', '宇文化及': 'sui',
 
         // ── 2026-06-11 南方远征精锐（§9 共 12 支）──
@@ -437,19 +435,19 @@ export class EventParser {
 '南部': 'nanbu', '陆奥': 'nanbu',
         // ── 2026-05-25 大韩/朝鲜 ──
         '朝鲜王朝': 'joseon',
-        '平壤': 'gaogouli', '平壤城': 'gaogouli',
+        '平壤': 'gaogouli', '平壤城': 'gaogouli', '高句丽铁骑': 'gaogouli',
         '珍岛': 'sambyeol', '三别抄': 'sambyeol', '裴仲孙': 'sambyeol',
         '升州': 'sheng_d', '升州牧': 'sheng_d', '升州束伍军': 'sheng_d', '束伍军': 'sheng_d',
         '锦州': 'jinzhou', '锦州卫': 'jinzhou', '锦': 'jinzhou', '李成梁': 'jinzhou',
         '忠孝军': 'qing', '完颜陈和尚': 'qing',
-        '铁浮图': 'jurchen', '拐子马': 'wanyan_d', '猛安谋克': 'dajin',
-        '金源边军': 'fuyu', '黄龙府': 'fuyu',
+        '铁浮图': 'jurchen', '猛安谋克': 'dajin',
+        '夫余步骑': 'fuyu', '黄龙府': 'fuyu',
         '关宁铁骑': 'zu_d', '辽东铁骑': 'jinzhou', '东江军': 'mao_wenlong',
         '巴牙喇': 'aisin_d', '爱新': 'aisin_d', '爱新觉罗': 'aisin_d',
         '白甲兵': 'manzhou', '白摆牙喇': 'manzhou', '萨尔浒': 'manzhou',
         '八旗军': 'manzhou', '多铎': 'manzhou_d',
         '索伦兵': 'hezhe', '黑龙江水师': 'aola', '神贲禁卫': 'bohai',
-        '皮室军': 'qidan', '属珊军': 'liao_d', '属珊': 'liao_d', '斡鲁朵': 'yel', '临潢府': 'liao_d', '上京': 'liao_d',
+        '皮室军': 'liao_d', '斡鲁朵': 'yel', '临潢府': 'liao_d', '上京': 'liao_d',
         '怯薛': 'menggu_d', '怯薛歹': 'menggu_d',
         '那可儿': 'borjigin', '探马赤': 'ogodei', '秃鲁花': 'yuan_d',
         '鸣镝骑': 'xiongnu', '控弦': 'xiongnu', '控弦之士': 'xiongnu',
@@ -494,7 +492,7 @@ export class EventParser {
         '汗血天马骑': 'dayuan', '汗血马': 'dayuan', '贵山城': 'dayuan',
 
         // ── 2026-06-11 河西远征精锐番号 ──
-        '西凉铁骑': 'xiliang', '马腾': 'xiliang', '韩遂': 'xiliang', '马超': 'xiliang',
+        '金城突骑': 'lanzhou', '赵充国': 'lanzhou',
         '铁鹞子': 'dangxiang', '元昊': 'dangxiang', '李元昊': 'dangxiang',
         '步跋子': 'weiming',
         '擒生军': 'yeli', '野利遇乞': 'yeli', '野利仁荣': 'yeli',

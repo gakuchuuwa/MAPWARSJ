@@ -63,11 +63,11 @@ export class CityAssetManager {
         'liangzhou': '凉',
         'liang': '凉',
 
-        'ashikaga': '足利',
+        'ashikaga': '室町',
 
 
         'min': '闽',
-        'xia': '夏',
+        'xiezhou': '解',
         'shang': '商',
         'zhou': '周',
         'qi': '齐',
@@ -127,7 +127,7 @@ export class CityAssetManager {
         'quanrong': '犬戎',
         'suzhou': '肃',
         'sushen': '肃慎',
-'yuezhi': '月氏',
+'guishuang': '贵霜',
         'chile': '敕勒',
 'rouran': '柔然',
         'baiji': '百济',
@@ -188,7 +188,7 @@ export class CityAssetManager {
         'murong': '慕容',
         'yingzhou_ying_d': '营',
         'erzhu': '尔朱',
-'xu': '徐',
+'pizhou': '邳',
 
 'zhai_han': '翟',
         'yin': '殷',
@@ -201,10 +201,10 @@ export class CityAssetManager {
         'zaoyang_d': '舂陵',
         'suzhou_d': '宿',
         'didao': '狄',
-        'xiliang': '西凉',
+        'lanzhou': '兰',
         'gaoqi_d': '高齐',
         'wuzhou_d': '武周',
-        'anshi_d': '安史',
+        'zhuozhou': '涿',
         'tujia_d': '土家',
         'zhuang_d': '壮',
         'xibo_d': '锡伯',
@@ -213,7 +213,7 @@ export class CityAssetManager {
         'shizhao_d': '石赵',
         'ranwei_d': '冉魏',
         'zu_d': '祖',
-        'wanyan_d': '完颜',
+
         'aisin_d': '爱新',
         'sunwu_d': '孙吴',
 
@@ -270,7 +270,6 @@ export class CityAssetManager {
         'chendiaoyan': '漳',
 
         'fang_guozhen': '浙方',
-        'liutong_yangqing': '汉王',
         'dengmaoqi': '铲平',
         'yezongliu': '处',
         'dada_ming': '鞑靼',
@@ -408,6 +407,7 @@ export class CityAssetManager {
         'chu_d': '储',
 
         'dajin': '大金',
+        'yizhou': '懿',
         'yuan_d': '大元',
         'weili': '尉犁',
         'pishan': '皮山',
@@ -599,7 +599,7 @@ export class CityAssetManager {
         'suwa_d': '诹访',
         'beihai': '北海',
         'hui': '濊',
-        'dingan': '定安',
+        'luzhou': '渌',
         'xuantu': '玄菟',
         'sambyeol': '三别',
         'sheng_d': '升',
@@ -640,7 +640,6 @@ export class CityAssetManager {
         'ningkou': '宁寇',
         'ning': '宁',
         'changshaguo': '长沙',
-        'machu': '马楚',
         'weiwuer': '维吾',
         'wensu': '温宿',
         'keerqin': '科尔',

@@ -46,7 +46,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zhong', name: '寿州' },
     { id: 'xichu', name: '西楚' },
     { id: 'weihaiwei', name: '威海' },
-    { id: 'xia', name: '夏国' },
+    { id: 'xiezhou', name: '解州' },
     { id: 'shang', name: '商国' },
     { id: 'zhou', name: '周国' },
     
@@ -148,7 +148,6 @@ export const FACTIONS: Faction[] = [
     { id: 'quanrong', name: '犬戎' },
     { id: 'suzhou', name: '肃州' },
     { id: 'sushen', name: '肃慎' },
-    { id: 'yuezhi', name: '月氏' },
 
     { id: 'chile', name: '敕勒' },
     { id: 'rouran', name: '柔然' },
@@ -202,7 +201,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'wey', name: '卫国' },          // 卫红 - 卫国(濮阳)
-    { id: 'xu', name: '徐国' },          // 徐土黄 - 徐国(下邳故都)
+    { id: 'pizhou', name: '邳州' },       // 邳州(下邳)；陷阵营高顺
     // ── 2026-05-26 新增：汉朝补全半成品势力 ──
     { id: 'tongma', name: '铜马' },
     { id: 'tongzhou', name: '同州' },
@@ -230,13 +229,13 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11：狄道（古临洮/陇西；旗号狄，据点临洮）──
     { id: 'didao', name: '狄道' },
     // ── 2026-06-11 新增：西凉（马腾/韩遂军阀/金城皋兰）──
-    { id: 'xiliang', name: '西凉' },
+    { id: 'lanzhou', name: '兰州' },
     // ── 2026-06-11 精锐部队缺口批次 ──
     { id: 'gaoqi_d', name: '北齐' },           // 旗号高齐@渤海蓨城（高欢故里）
     // ── 2026-06-11 新增：营州@朝阳（和龙/黄龙）──
     { id: 'yingzhou_ying_d', name: '营州' },
     { id: 'wuzhou_d', name: '武周' },
-    { id: 'anshi_d', name: '安史' },
+    { id: 'zhuozhou', name: '涿州' },
     { id: 'tujia_d', name: '土家族' },          // 旗号土家@石柱
     { id: 'zhuang_d', name: '壮族' },           // 旗号壮@田阳
     { id: 'buyi_d', name: '布依族' },
@@ -249,7 +248,7 @@ export const FACTIONS: Faction[] = [
     { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
     { id: 'ranwei_d', name: '冉魏' },
     { id: 'zu_d', name: '祖氏' },
-    { id: 'wanyan_d', name: '完颜氏' },         // 女真完颜部族；≠政权大金(dajin)
+
     { id: 'aisin_d', name: '爱新觉罗' },        // 旗号爱新；≠大清(manzhou_d)
     { id: 'sunwu_d', name: '孙吴' },
 
@@ -322,7 +321,6 @@ export const FACTIONS: Faction[] = [
     { id: 'fang_guozhen', name: '浙方' },
     // 第三类：明代中后期农民起义与割据政权
     { id: 'dixiang', name: '帝乡' },
-    { id: 'liutong_yangqing', name: '汉王' },
     { id: 'dengmaoqi', name: '铲平' },
     { id: 'yezongliu', name: '太平' },
     // 第四类：明朝藩王叛乱
@@ -417,6 +415,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 新增：大金、大元 ──
     { id: 'dajin', name: '大金' },
+    { id: 'yizhou', name: '懿州' },
     { id: 'yuan_d', name: '大元' },
 
     // ── 2026-05-26 新增：肃慎系势力（挹娄、勿吉、靺鞨）──
@@ -768,7 +767,6 @@ export const FACTIONS: Faction[] = [
    // 淮阳郡治宛丘(陈州)
     { id: 'cai', name: '蔡国' },
     { id: 'changshaguo', name: '长沙国' },
-    { id: 'machu', name: '马楚' },
     { id: 'shangzhou', name: '商州' },   // 旗号上洛(商邑=商州治；避与商字重)
     { id: 'ying', name: '郢州' },
     { id: 'heng', name: '衡州' },
@@ -789,7 +787,7 @@ export const FACTIONS: Faction[] = [
     { id: 'chungju_d', name: '忠州' },
     { id: 'naju_d', name: '罗州' },
     { id: 'hui', name: '濊族' },
-    { id: 'dingan', name: '定安' },
+    { id: 'luzhou', name: '渌州' },
     // ── 2026-06-11 国内城改挂玄菟郡（汉代辖境·高句县渊源）──
     { id: 'xuantu', name: '玄菟' },
     // ── 2026-06-11 珍岛·三别抄（裴仲孙抗蒙）──

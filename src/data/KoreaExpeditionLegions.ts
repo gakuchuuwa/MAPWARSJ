@@ -8,20 +8,20 @@
  * - 依据 史料/古代精锐部队.md §4 #1–11
  */
 export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  gaogouli: { name: '盖马铠骑', tier: 2 },   // 平壤·高句丽盖马部铠骑
+  gaogouli: { name: '高句丽铁骑', tier: 1 },   // 平壤·高句丽铁骑（§4 #）
   xuantu: { name: '皂衣先人', tier: 3 },     // 国内城·玄菟辖境/高句丽早期死士（§4 #2）
   xinluo: { name: '花郎道', tier: 2 },       // 金城·新罗花郎（§4 #3）
-  baiji: { name: '百济达率兵', tier: 2 },        // 泗沘·百济达率制精兵
+  baiji: { name: '百济五方兵', tier: 2 },        // 泗沘·百济五方兵制
   goryeo: { name: '鹰扬军', tier: 2 },   // 开城·高丽鹰扬军
-  dingan: { name: '定安戍兵', tier: 3 },       // 鸭绿府·渤海国遗民定安国（原别武班错位）
+  luzhou: { name: '鸭绿水师', tier: 2 },       // 鸭绿府·渌州水师（§4 #）
   sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣龟甲船海战（原属全罗左道）
   hai2: { name: '朝鲜甲士', tier: 3 },       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
-  joseon: { name: '内禁卫', tier: 3 },       // 汉城·国王贴身近卫（§4 #9）
+  joseon: { name: '义兴亲军卫', tier: 1 },       // 汉城·李成桂义兴亲军卫（§4 #9）
   sheng_d: { name: '全罗左水军', tier: 2 },   // 顺天·朝鲜全罗左道水军
   chen3: { name: '月支戍卒', tier: 3 },         // 大木岳·马韩月支国
   danluo: { name: '三别抄', tier: 1 },        // 星主厅·高丽武人抗蒙
   jianzhou_nvzhen: { name: '建州劲卒', tier: 3 },  // 浑江·建州女真
   zhen: { name: '后百济锐卒', tier: 3 },          // 完山·后百济甄萱
-  woju: { name: '别武班', tier: 1 },            // 咸兴·高丽尹瓘征女真筑九城（原属鸭绿府地域错位）
+  woju: { name: '别武班', tier: 1 },            // 咸兴·尹瓘别武班
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
 };

@@ -19,7 +19,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
   guishuang: { name: '彭迪甲骑', tier: 3 },
   guer: { name: '马鲁卫队', tier: 3 },
-  yuezhi: { name: '蓝氏城铁骑', tier: 2 },
+  guishuang: { name: '大月氏兵', tier: 3 },
   xijue: { name: '郅支城坚兵', tier: 2 },
   tujishi: { name: '怛罗斯突骑', tier: 2 },
   kokand: { name: '浩罕轻骑', tier: 3 },

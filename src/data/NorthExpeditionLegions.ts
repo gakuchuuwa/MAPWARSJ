@@ -32,7 +32,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   ming_d: { name: '明军三大营', tier: 2 },   // 北京·五军神机三千营
 
   // ── §1 中原表·地理偏北（用户指定）──
-  anshi_d: { name: '曳落河', tier: 1 },     // 范阳·§1 #48 安禄山蕃胡骑兵
+  zhuozhou: { name: '曳落河', tier: 1 },     // 范阳·§1 #48 安禄山蕃胡骑兵
   shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
   lingwu: { name: '朔方军', tier: 1 },      // 回乐·§1 #53 灵州朔方节度使精锐
   dingxiang_d: { name: '恶阳骑', tier: 1 }, // 恶阳岭·贞观四年李靖三千轻骑夜袭定襄（《旧唐书·李靖传》）
@@ -56,8 +56,9 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   shanrong: { name: '山戎突骑', tier: 3 },      // 无终·山戎族
   pingyuan: { name: '高唐戍卒', tier: 3 },      // 平原·高唐州
   dada_ming: { name: '度辽营', tier: 2 },          // 河套·东汉度辽将军部
+  xiezhou: { name: '解县弩手', tier: 3 },       // 安邑·解县弩手
 
-  // ── 2026-06-18 自东北文件迁回：首都在北方区（徒河/宁远/皮岛）──
+  // ── 2026-06-18 自东北文件迁回
   jinzhou: { name: '辽东铁骑', tier: 2 },     // 徒河·李成梁辽东骑兵（§3 #6）
   zu_d: { name: '关宁铁骑', tier: 0 },       // 宁远·宁远大捷破努尔哈赤（§3 #5）
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
