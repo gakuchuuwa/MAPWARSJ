@@ -782,7 +782,7 @@ export const FACTIONS: Faction[] = [
     { id: 'kui', name: '夔州' },
     { id: 'danluo', name: '耽罗' },
     { id: 'woju', name: '沃沮' },
-    { id: 'chen3', name: '月支' },   // 马韩月支国，辰王治所（三国志·魏书·乌丸鲜卑东夷传）
+    { id: 'chen3', name: '欢州' },   // 马韩月支国，辰王治所（三国志·魏书·乌丸鲜卑东夷传）
     // ── 2026-06-17 新增：朝鲜八道（镜城·笼耳 / 忠州·国原城 / 罗州·锦城）──
     { id: 'jingcheng_d', name: '镜城' },
     { id: 'chungju_d', name: '忠州' },
@@ -943,3 +943,6 @@ export const FACTIONS: Faction[] = [
     { id: 'wuhu', name: '乌护' },
   { id: 'sanada_d', name: '真田氏' },
 ];
+
+    { id: 'jilizhou', name: '积利州' },  // 卑沙城·唐程名振
+    { id: 'nuergan', name: '奴儿干都司' },  // 奴儿干·明康旺

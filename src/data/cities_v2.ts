@@ -1130,7 +1130,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 21.90, lng: 110.80,
         type: 'small_city',
         troops: 10000 },
-    { id: 'city_beishacheng', name: '卑沙城', factionId: 'panjun', lat: 39.444692, lng: 121.959229, type: 'pass', region: 'NORTHEAST', troops: 10000, note: '辽东卑沙城；公孙氏辽东翼境' },
+    { id: 'city_beishacheng', name: '卑沙城', factionId: 'jilizhou', lat: 39.444692, lng: 121.959229, type: 'pass', region: 'NORTHEAST', troops: 10000, note: '辽东卑沙城；公孙氏辽东翼境' },
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
     {
         id: 'city_suiye',
@@ -2022,7 +2022,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_fangqu', name: '方渠', factionId: 'huan', lat: 36.58, lng: 107.3, type: 'small_city', troops: 10000 },
     { id: 'city_jingsai', name: '静塞', factionId: 'wei2', lat: 37.448637, lng: 106.674500, type: 'pass', troops: 10000, mirror: true },//镜像
     { id: 'city_lingzhou', name: '回乐', factionId: 'lingwu', lat: 37.998341, lng: 106.295471, type: 'small_city', troops: 10000 },
-    { id: 'city_nuergan', name: '奴儿干', factionId: 'jiliemi', lat: 52.92, lng: 139.77, type: 'pass', region: 'NORTHEAST', troops: 10000 },
+    { id: 'city_nuergan', name: '奴儿干', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'small_city', region: 'NORTHEAST', troops: 10000 },
     { id: 'city_pennuli', name: '盆奴里', factionId: 'nifuhe', lat: 47.708134, lng: 130.933685, type: 'small_city', troops: 10000 },
     // 古尔王朝（Ghurids）呼罗珊边缘要塞
     { id: 'city_malulude', name: '马鲁鲁德', factionId: 'guer', lat: 35.58, lng: 63.31, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000 },

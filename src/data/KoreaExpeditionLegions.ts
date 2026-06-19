@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 朝鲜文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与日本区一致：
@@ -18,7 +18,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   hai2: { name: '朝鲜甲士', tier: 3 },       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
   joseon: { name: '义兴亲军卫', tier: 1 },       // 汉城·李成桂义兴亲军卫（§4 #9）
   sheng_d: { name: '全罗左水军', tier: 2 },   // 顺天·朝鲜全罗左道水军
-  chen3: { name: '月支戍卒', tier: 3 },         // 大木岳·马韩月支国
+  chen3: { name: '马韩部族', tier: 3 },         // 欢州·辰王马韩
   danluo: { name: '三别抄', tier: 1 },        // 星主厅·高丽武人抗蒙
   jianzhou_nvzhen: { name: '建州劲卒', tier: 3 },  // 浑江·建州女真
   zhen: { name: '后百济锐卒', tier: 3 },          // 完山·后百济甄萱

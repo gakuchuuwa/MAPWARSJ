@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 东北文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与日朝一致：
@@ -8,6 +8,9 @@
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  jilizhou: { name: '卑沙戍卒', tier: 3 },   // 卑沙城·程名振
+  nuergan: { name: '奴儿干卫军', tier: 3 }, // 奴儿干·康旺
+  huimo: { name: '乌骨城守军', tier: 3 }, // 乌骨城·濊貊
   bohai: { name: '渤海猛贲', tier: 2 },       // 龙泉府·渤海左右猛贲卫
   dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（阿骨打@都城）
   yizhou: { name: '金源精骑', tier: 1 },      // 蒺藜山·娄室金源精骑

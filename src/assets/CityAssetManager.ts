@@ -592,7 +592,7 @@ export class CityAssetManager {
         'jingcheng_d': '镜',
         'chungju_d': '忠',
         'naju_d': '罗',
-        'chen3': '月支',
+        'chen3': '欢',
         'sabeol': '沙伐',
         'hojo_d': '北条',
         'iga_d': '伊贺',
@@ -1669,3 +1669,6 @@ export class CityAssetManager {
         });
     }
 }
+
+        'jilizhou': '积',
+        'nuergan': '奴儿干',

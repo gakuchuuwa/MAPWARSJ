@@ -726,3 +726,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     chiling: 'city_shibaocheng',
     qu_d: 'city_jieqiao',
 };
+
+    'jilizhou': 'city_beishacheng',
+    'nuergan': 'city_nuergan',
