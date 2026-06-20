@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -603,7 +603,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kaerka': '喀尔',
     'huihu': '回鹘',
 'wuzhumuqin': '乌珠',
-    'xingan': '兴安',
+    'xingan': '兴',
     'zhadalan': '扎答',
     'zhuerqi': '主儿',
     'chechen': '车臣',
@@ -728,7 +728,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
     'ewenki': '鄂温',
     // ── 2026-06-11 新增：东平（郡·黑龙江下游）──
-    'dongping': '东平',
+    'dongping': '东',
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
     'maomingan': '茂明',
     'aola': '敖拉',
@@ -838,5 +838,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jiluo_d': '涿',    // 涿邪山·窦宪出涿邪
     'changli_d': '昌黎', // 饶乐水·昌黎郡
     'heisha_d': '黑沙',  // 特尔门·漠北黑沙境
+    // ── Phase 1 Missing Flags ──
+    'zasagtu': '札',
+    'kumoxi': '奚',
+    'haikou': '寇',
+    'shanshan': '鄯',
 };
-    

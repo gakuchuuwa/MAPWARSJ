@@ -85,4 +85,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   wuli_d: { name: '喀尔喀劲骑', tier: 2 },      // 扎布汗·乌里雅苏台喀尔喀骑兵
   jiluo_d: { name: '燕然突骑', tier: 2 },       // 涿邪山·窦宪出涿邪突击骑
   heisha_d: { name: '黑沙射雕者', tier: 2 },    // 特尔门·匈奴射雕扈从（漠北黑沙系）
+    zasagtu: { name: '札萨克图骑兵', tier: 3 },
 };

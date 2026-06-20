@@ -50,4 +50,5 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   mino: { name: '大谷部众', tier: 2 },         // 不破关·大谷吉继
   yizhi: { name: '原之辻戍卒', tier: 3 },       // 原之辻·壹岐国元寇戍卒（《元史》《高丽史》壹岐守备）
   gonggu: { name: '宫古岛卒', tier: 3 },       // 宫古岛·琉球宫古守卒（《中山世谱》见载）
+    haikou: { name: '五岛水军', tier: 3 },
 };

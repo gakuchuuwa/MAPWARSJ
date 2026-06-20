@@ -348,7 +348,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'yiduhu': _xiyuPortraitPool,
     'yuchi': _xiyuPortraitPool,
     'yumi': _xiyuPortraitPool,
-    'yuchi': _xiyuPortraitPool,
     'zhuxie': _xiyuPortraitPool,
     // 河西 22 势力
     'chijin': _hexiPortraitPool,

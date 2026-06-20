@@ -749,4 +749,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'guangping': 'city_donghai',
     'nanzhong': 'city_wanwen',
     'yueyi': 'city_yuegui',
+    'zasagtu': 'city_temermen',
+    'kumoxi': 'city_raoleshui',
+    'haikou': 'city_diaoyudao',
+    'shanshan': 'city_loulan',
 };

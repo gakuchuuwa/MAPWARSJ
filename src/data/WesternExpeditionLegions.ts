@@ -57,4 +57,5 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   sai: { name: '塞种弓骑', tier: 3 },         // 握瑟德·塞种部落
   xiye: { name: '西夜国兵', tier: 3 },        // 叶城·西夜国
   weiwuer: { name: '回部伯克兵', tier: 3 },   // 玉尔滚·回部伯克
+    shanshan: { name: '楼兰弓手', tier: 3 },
 };

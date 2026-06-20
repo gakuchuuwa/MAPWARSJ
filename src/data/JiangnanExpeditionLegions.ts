@@ -67,6 +67,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   shenshi: { name: '吴兴部曲', tier: 2 },       // 独松关·吴兴沈氏部曲
   wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）
   xie_cj_d: { name: '信州弩士', tier: 2 },      // 葛溪·谢枋得信州抗元
+  liu: { name: '九江劲卒', tier: 1 },            // 六安·英布九江王封地
   chimei: { name: '赤眉军', tier: 1 },  // 莒城·樊崇起兵攻入长安灭新莽
   chunshen: { name: '申江戍卒', tier: 3 },  // 上海·春申君黄歇封地戍卒
   wang_d: { name: '琅琊王氏部曲', tier: 2 },  // 琅琊·王导东晋开国丞相

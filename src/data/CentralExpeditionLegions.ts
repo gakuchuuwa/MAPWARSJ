@@ -79,4 +79,14 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yanchuan_d: { name: '唐·淮西行营军', tier: 3 }, // 郾城·韩愈随裴度督师郾城，参赞军务
   guide_d: { name: '隋·永城屯守兵', tier: 3 },   // 永城·麻叔谋镇守永城
   tongzhou: { name: '隋·同州府兵', tier: 3 },    // 长宁·杨智积镇守同州
+  hao_d: { name: '濠州红巾军', tier: 3 },
+  suzhou_d: { name: '江北团练', tier: 3 },
+  sima_d: { name: '河内甲士', tier: 3 },
+  bozhou_d: { name: '聊城义勇', tier: 3 },
+  mengcheng_d: { name: '山桑弓手', tier: 3 },
+  shangzhou: { name: '商州锐士', tier: 3 },
+  bailian: { name: '白莲教众', tier: 3 },
+  xinping: { name: '新平戍军', tier: 3 },
+  huai: { name: '淮西子弟', tier: 3 },
+  dang_d: { name: '砀山义军', tier: 3 },
 };
