@@ -33,6 +33,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 公行锐士除名
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
   li_lx_d: { name: '陇西戍骑', tier: 3 },   // 陇西·李崇秦陇西郡守戍兵
+  xiayang_d: { name: '龙门戍卒', tier: 3 }, // 龙门·唐同州境黄河禹门戍防（《水经注》夏阳龙门）
   baibo: { name: '白波黄巾', tier: 3 },     // 白波谷·郭太白波黄巾
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
   tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
@@ -48,7 +49,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   ruzhou: { name: '广成健卒', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 3 },
   zhi_state: { name: '太行飞军', tier: 3 },
-  xiongding: { name: '碗子城军', tier: 3 },
+  xiongding: { name: '鲜卑燕军', tier: 2 }, // 天井关·慕容永西燕末代君主
   // 金甲卫除名（生造）
   huo: { name: '霍邑锐士', tier: 3 },
   mushi: { name: '丘穆陵骑', tier: 3 },
@@ -64,5 +65,18 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   chuzhou_d: { name: '殿前诸班', tier: 1 },      // 清流关·后周殿前军（赵匡胤曾任殿前都点检，《旧五代史》）
   // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
   lulin: { name: '云台突骑', tier: 1 },           // 昆阳·云台二十八将突骑
-  lai: { name: '齐关弩手', tier: 2 },           // 青石关·齐长城弩兵
+  lai: { name: '齐关弩手', tier: 1 },           // 青石关·王师范屡败朱温（正史胜仗）
+  yangshao: { name: '材官骑士', tier: 1 },     // 渑池·周勃大破秦军
+  dongxian: { name: '郯城戍卒', tier: 2 },     // 郯城·徐盛东吴宿将
+  mi: { name: '朐城弩手', tier: 2 },         // 朐城·麋竺家兵
+  yaozhou: { name: '耀州牙兵', tier: 2 },       // 金锁关·李茂贞岐军
+  cai: { name: '蔡国甲士', tier: 2 },          // 新蔡·蔡叔度开国君主
+  wazhai: { name: '瓦岗军', tier: 1 },           // 定陶·李密破张须陀瓦岗崛起
+  huaiyang: { name: '大楚戍卒义军', tier: 2 },     // 宛丘·陈胜称王建都起义领袖
+  yao: { name: '匈奴五部', tier: 2 },        // 平阳·刘渊建都平阳，指挥灭晋
+  kong_d: { name: '北海郡兵', tier: 3 },       // 曲阜·孔融以北海相保境，孔融本人极有名
+  tongma: { name: '胶西郡国兵', tier: 3 },       // 胶西·刘卬发国兵参与七国之乱，战败
+  yanchuan_d: { name: '唐·淮西行营军', tier: 3 }, // 郾城·韩愈随裴度督师郾城，参赞军务
+  guide_d: { name: '隋·永城屯守兵', tier: 3 },   // 永城·麻叔谋镇守永城
+  tongzhou: { name: '隋·同州府兵', tier: 3 },    // 长宁·杨智积镇守同州
 };

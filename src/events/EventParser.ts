@@ -805,18 +805,20 @@ export const T2_STRATEGIC: CityDataV2[] = [
         tier: 2 },
     {
         id: 'city_xiayangdu',
-        name: '夏阳渡',
-        factionId: 'panjun',
-        lat: 35.48, lng: 110.44,
-        type: 'small_city',
+        name: '龙门',
+        factionId: 'xiayang_d',
+        lat: 35.6020, lng: 110.4520,
+        type: 'pass',
+        region: 'CENTRAL',
         troops: 10000,
-        tier: 2 },
+        tier: 2,
+        note: '黄河禹门口（龙门）险隘；河津韩城交界，冯翊夏阳故境；司马迁故里（《水经注》）；唐同州河东要冲' },
     // ── 战略渡口 ──
     {
         id: 'city_piaoyujin',
         name: '漂渝津',
-        factionId: 'panjun',
-        lat: 39.1, lng: 117.2,
+        factionId: 'pinghai',
+        lat: 39.02, lng: 117.60,
         type: 'small_city',
         troops: 10000,
         tier: 2 },
@@ -1194,8 +1196,8 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 22.53, lng: 113.04, type: 'small_city', troops: 10000, tier: 4,
         region: 'LINGNAN' },
     {
-        id: 'city_ninghai', name: '宁海', factionId: 'panjun',
-        lat: 29.28, lng: 121.42, type: 'small_city', troops: 10000, tier: 4,
+        id: 'city_ninghai', name: '白峤', factionId: 'hu_d',
+        lat: 29.2757, lng: 121.4182, type: 'small_city', troops: 10000, tier: 4,
         region: 'JIANGNAN' },
     {
         id: 'city_zhenghe', name: '政和', factionId: 'dacheng',
@@ -1205,7 +1207,7 @@ export const PERIPHERY: CityDataV2[] = [
         id: 'city_zhangzhou', name: '龙溪', factionId: 'chendiaoyan',
         lat: 24.51, lng: 117.65, type: 'small_city', troops: 10000,
         region: 'LINGNAN' },
-    { id: 'city_tingzhou', name: '黄连', factionId: 'kejia', lat: 25.767779, lng: 116.317749, type: 'small_city', troops: 10000 },
+    { id: 'city_tingzhou', name: '黄连', factionId: 'kejia', lat: 26.863, lng: 116.637, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '唐黄连县故地（今宁化）；汀州客家祖地，非文天祥故里' },
 
     // ── 2026-05-25 明朝势力新增城市 ──
     // 第二类：元末群雄
@@ -1234,8 +1236,8 @@ export const PERIPHERY: CityDataV2[] = [
         region: 'LINGNAN' },
     {
         id: 'city_jianning', name: '建宁', factionId: 'longwu',
-        lat: 26.83, lng: 116.62, type: 'small_city', troops: 10000, tier: 4,
-        region: 'LINGNAN' },
+        lat: 27.12, lng: 118.26, type: 'small_city', troops: 10000, tier: 4,
+        region: 'LINGNAN', note: '建宁府治建瓯（今福建建瓯）；非闽西宁化一带' },
     {
         id: 'city_chuzhou_zj', name: '丽水', factionId: 'yezongliu',
         lat: 28.46, lng: 119.91, type: 'small_city', troops: 10000, tier: 4,
@@ -1588,7 +1590,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
         type: 'small_city',
         troops: 10000 },
     { id: 'city_xiushan', name: '秀山', factionId: 'ran_d', lat: 28.379316, lng: 109.061279, type: 'small_city', troops: 10000 },
-    { id: 'city_qianshan', name: '潜山', factionId: 'chu_d', lat: 30.616642, lng: 116.485291, type: 'small_city', troops: 10000 },
+    { id: 'city_qianshan', name: '潜山', factionId: 'chu_d', lat: 30.616642, lng: 116.485291, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '唐舒州同安郡；储氏地方望族，唐团练（非储光羲里居）' },
 
     // ── 2026-05-27 新增：青衣(雅州) ──
     // ── 2026-05-27 新增：五溪(八面山) ──
@@ -1950,14 +1952,15 @@ export const CITIES_V2: CityDataV2[] = [
         note: '广州府治番禺；刘隐清海军节度故地（《旧唐书·刘隐传》）' },
     { id: 'city_longchuan', name: '龙川', factionId: 'nanyue', lat: 24.1, lng: 115.26, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '赵佗为龙川令；南越龙兴之地' },
     { id: 'city_kuaiji', name: '会稽', factionId: 'yue', lat: 29.987, lng: 120.582, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '越国都城；lat 南微调 0.01° 与临安间距≥50km' },
-    { id: 'city_luling', name: '庐陵', factionId: 'ouyang', lat: 27.1133, lng: 114.9806, type: 'small_city', troops: 10000 },
+    { id: 'city_luling', name: '庐陵', factionId: 'ouyang', lat: 27.1133, lng: 114.9806, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '吉州治庐陵；欧阳頠世居，梁庐陵蛮兵' },
     { id: 'city_hongzhou', name: '豫章', factionId: 'hongzhou', lat: 28.68, lng: 115.88, type: 'medium_city', troops: 10000 },
 
     { id: 'city_qingliuguan', name: '清流关', factionId: 'chuzhou_d', lat: 32.28, lng: 118.25, type: 'pass', troops: 10000, mirror: true },
     { id: 'city_zhongli', name: '盱眙', factionId: 'huai', lat: 33.011, lng: 118.497, type: 'small_city', troops: 10000, note: '淮州治盱眙' },
     { id: 'city_bianliang', name: '汴梁', factionId: 'wei', lat: 34.8, lng: 114.31, type: 'big_city', troops: 20000, tier: 0, note: '北宋京师；20城白名单' },
     { id: 'city_shangluo', name: '商邑', factionId: 'shangzhou', lat: 33.87, lng: 109.94, type: 'small_city', troops: 10000 },
-    { id: 'city_shicheng', name: '郊郢', factionId: 'ying', lat: 31.16, lng: 112.58, type: 'small_city', troops: 10000 },
+    { id: 'city_shicheng', name: '郊郢', factionId: 'panjun', lat: 31.16, lng: 112.58, type: 'pass', region: 'JIANGNAN', troops: 10000, note: '战国楚郢都郊郢故址（荆门）；非南朝郢州治所' },
+    { id: 'city_xiakou', name: '夏口', factionId: 'ying', lat: 30.35, lng: 114.85, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '梁郢州治夏口（《宋书·志第二十七》）；曹景宗据城退魏' },
     { id: 'city_baling', name: '巴陵', factionId: 'yue_d', lat: 29.35, lng: 113.13, type: 'medium_city', troops: 10000, note: '岳州治所，湖广重镇，2026-06-18 升为中城' },
     { id: 'city_linzheng', name: '临烝', factionId: 'heng', lat: 26.89, lng: 112.6, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '岭南/南方环线共用锚点；文化南方' },
     { id: 'city_guiyang', name: '桂阳', factionId: 'chen2', lat: 25.78, lng: 113, type: 'small_city', troops: 10000 },
@@ -2022,7 +2025,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_paixiucheng', name: '排修城', factionId: 'juandu', lat: 39.48, lng: 76.72, type: 'small_city', troops: 10000 },
     { id: 'city_daerhan', name: '达尔罕', factionId: 'keerqin', lat: 43.6064, lng: 122.2229, type: 'small_city', troops: 10000 },
     { id: 'city_yiyang', name: '葛溪', factionId: 'xie_cj_d', lat: 28.3524, lng: 117.4466, type: 'small_city', troops: 10000 },
-    { id: 'city_linchuan', name: '临川', factionId: 'fu2', lat: 27.9779, lng: 116.3562, type: 'small_city', troops: 10000 },
+    { id: 'city_linchuan', name: '临川', factionId: 'fu2', lat: 27.9779, lng: 116.3562, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '抚州治临川；陈周迪据守，临川郡兵' },
     { id: 'city_binzhou2', name: '新平', factionId: 'xinping', lat: 35.03, lng: 108.08, type: 'small_city', troops: 10000 },
     { id: 'city_fangqu', name: '方渠', factionId: 'huan', lat: 36.58, lng: 107.3, type: 'small_city', troops: 10000 },
     { id: 'city_jingsai', name: '静塞', factionId: 'wei2', lat: 37.448637, lng: 106.6745, type: 'pass', troops: 10000, mirror: true },//镜像

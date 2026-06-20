@@ -1,0 +1,50 @@
+# 新增据点 / 势力 — 录入不丢项
+
+AI 新增或改绑 **据点、势力、武将、精锐** 时，**必须**按本清单执行；改完 **必跑** `npm run add:check -- <据点名>`。
+
+## 1. 势力 + 据点 + 旗号 + 首都（五文件）
+
+**只用 FactionEditor `/api/batch-import`**，禁止手改分散五处。
+
+| 文件 | 内容 |
+|------|------|
+| `factions.ts` | 势力全名（禁止单字） |
+| `cities_v2.ts` | 据点名、坐标、type、**region**、**note** |
+| `StartingCapitals.ts` | factionId → cityId |
+| `SandboxDisplayNames.ts` | 旗号 1–2 字（禁「州」「国」） |
+| `CityAssetManager.ts` | factionFlagMap 同旗号 |
+
+## 2. batch-import **不会**自动写的（最易漏）
+
+| 文件 | 何时必写 |
+|------|----------|
+| `EventParser.ts` | **每次**改 cities_v2 同名城块（军情/事件） |
+| `FactionGenerals.ts` | 要武将时 |
+| `GeneralSkills.ts` | 有武将时（无档案 = 技能不触发） |
+| `*ExpeditionLegions.ts` | 要精锐时（写进**正确文化区**文件） |
+| `HistoricalFactionColors.ts` | 仅固定色势力（可选） |
+
+## 3. 录入后验收（按顺序）
+
+```bash
+npm run add:check -- 龙门          # 单点：硬缺口必须为 0
+npm run faction:sync-audit
+npm run expedition:triple-check    # 有精锐时
+npm run city:spacing               # 新坐标时
+npm run city:dossier               # 刷新全档 JSON
+```
+
+## 4. 分级（缺了可以空，不许硬凑）
+
+| 级别 | 据点 | 武将 | 精锐 |
+|------|------|------|------|
+| A 大城/区中心 | 冻结 | 应有 | 应有 T0–T1 |
+| B 中城 | 稳定 | 建议 | 建议 T1–T3 |
+| C 小城/pass | 可增 | 可无 | 可无 |
+
+## 5. 禁止
+
+- 只改 cities_v2 不 sync EventParser
+- 只写 FactionGenerals 不写 GeneralSkills
+- 只写精锐不写 STARTING_CAPITALS / 错文化区 ExpeditionLegions
+- AI 改 `VectorRoadData.ts`（道路主人手画）

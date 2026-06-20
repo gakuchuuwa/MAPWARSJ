@@ -46,7 +46,7 @@
 
 禁止：不看完格式就写 sed；不确定命中数就执行替换；用通用值做全局替换；**不跑间距审计就改 cities_v2**；**未经主人同意新增 city_* 条目**。
 
-**审核自主处理**：审核据点-势力-武将-精锐相关性时，发现**武将错位、精锐缺失、势力名不匹配**等非结构性错误 → 直接修正，不用问。C 级势力（小城/关隘/边陲部族）无将无精 = 正常，不硬补。
+**审核自主处理**：审核据点-势力-武将-精锐相关性时，发现**武将错位、精锐缺失、势力名不匹配**等非结构性错误 → 直接修正，不用问。C 级势力（小城/关隘/边陲部族）无将无精 = 正常，不硬补。**但若能沾边（姓氏/部族名/地名巧合等弱关联），有就比没有强——优先挂将挂精，宁松勿缺。**
 **须问的情况**：旗号冲突（两面旗严格相等）、坐标改动、删城/删势力、新增 city_* 条目。
 
 ---
@@ -545,6 +545,31 @@
 
 两者都自动同步 5 文件，原子性写入（任一失败全部回滚）。
 
+### 5.4 录入后验收（防丢项 — AI 必跑）
+
+**batch-import 只写五文件**；以下须**另补**，最易漏 **EventParser**、**GeneralSkills**、**精锐区文件**。
+
+| 步骤 | 文件 / 命令 | 说明 |
+|------|-------------|------|
+| 1 | FactionEditor `/api/batch-import` | 势力、据点、首都、旗号×2 |
+| 2 | `EventParser.ts` | 与 cities_v2 **同 id** 城块同步（name/factionId/lat/lng/type/region） |
+| 3 | `FactionGenerals.ts` | 要武将时；一势力一将 |
+| 4 | `GeneralSkills.ts` `GENERAL_PROFILES` | **有将必写**；无档案则武将技不触发 |
+| 5 | `*ExpeditionLegions.ts` | 要精锐时；写进**正确 14 区**文件 |
+| 6 | `cities_v2` 的 `region` + `note` | 文化区显式标注 + 史地备注 |
+| 7 | 道路 | 主人 VectorRoadEditor 手画（**AI 禁止**改 VectorRoadData） |
+
+**改完必跑**（硬缺口须为 0）：
+
+```bash
+npm run add:check -- <据点名>    # 单点验收清单
+npm run faction:sync-audit
+npm run expedition:triple-check   # 有精锐时
+npm run city:spacing              # 新坐标时
+npm run city:dossier              # 刷新 scratch/city_dossier.json
+```
+
+单点查询：`npm run city:lookup -- 龙门`。细则见 `.cursor/rules/add-entry-completeness.mdc` 与 §5.5 势力分级。
 
 ---
 
@@ -795,14 +820,15 @@ npm run skeleton:audit
 ## 十一、AI 工作流推荐
 
 1. 查 `AGENTS.md`（本文件） + `docs/GAME_DIRECTION.md`（玩法/战斗/观战 UI 方向基准） + `src/data/cities.ts` 头部约定 + **第十节（旗号/领土）**
-2. **据点间距（最先于增删城）** → `npm run city:spacing`（§2.1 ≥50 km 硬顶；拟新建 `--probe`）
-3. **骨架锚点审计（先于增势）** → `npm run skeleton:audit`（20 大城 + 15 中心；见 §5.5）
-4. **文化区据点密度审计** → 读 `docs/02-design/world/REGION_PLAYABLE_AREA.md`，运行 `npx tsx scratch/region_playable_area.mjs`（两层审计；**增补优先、删留仅硬伤**；**日本刚精简勿再删**）
-5. 任何对 5 文件的批量改动 → 用 FactionEditor 或现有 `/api/batch-*` 接口
-6. 任何对道路网的改动 → 用 `VectorRoadEditor` 或对应脚本；**删据点必须同步删道路**（§2.1 删点连带）
-7. 动 `CityAssetManager` / `CityManager` 旗号或领土 → 先对照第十节，不确定问项目主人
-8. 不确定历史出处 → **宁可不写**，不要编
-9. **远征精锐**（§十二）：先据点→再势力→再番号；写入 `*ExpeditionLegions.ts` 后 **必须**跑 `npm run expedition:triple-check`，违规 **不得提交**
+2. **查据点全档（文化区/势力/武将/精锐）** → `npm run city:lookup -- 龙门`（单点）；`npm run city:dossier` 刷新 `scratch/city_dossier.json`（674 座机器可读索引）
+3. **据点间距（最先于增删城）** → `npm run city:spacing`（§2.1 ≥50 km 硬顶；拟新建 `--probe`）
+4. **骨架锚点审计（先于增势）** → `npm run skeleton:audit`（20 大城 + 15 中心；见 §5.5）
+5. **文化区据点密度审计** → 读 `docs/02-design/world/REGION_PLAYABLE_AREA.md`，运行 `npx tsx scratch/region_playable_area.mjs`（两层审计；**增补优先、删留仅硬伤**；**日本刚精简勿再删**）
+6. 任何对 5 文件的批量改动 → 用 FactionEditor 或现有 `/api/batch-*` 接口
+7. 任何对道路网的改动 → 用 `VectorRoadEditor` 或对应脚本；**删据点必须同步删道路**（§2.1 删点连带）
+8. 动 `CityAssetManager` / `CityManager` 旗号或领土 → 先对照第十节，不确定问项目主人
+9. 不确定历史出处 → **宁可不写**，不要编
+10. **远征精锐**（§十二）：先据点→再势力→再番号；写入 `*ExpeditionLegions.ts` 后 **必须**跑 `npm run expedition:triple-check`，违规 **不得提交**
 
 
 ---

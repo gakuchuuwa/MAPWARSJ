@@ -547,6 +547,7 @@ const _FIXED: Record<string, string> = {
     'tan_d': '#982F63', // 自动分配 (邻域相斥)
     'ran_d': '#B6AE6C', // 自动分配 (邻域相斥)
     'chu_d': '#9BC636', // 自动分配 (邻域相斥)
+    'hu_d': '#8B5E3C', // 自动分配 (邻域相斥)
     'qingyi': '#47C5C3', // 自动分配 (邻域相斥)
     'wuxi': '#278FB1', // 自动分配 (邻域相斥)
     'gumie': '#BB773B', // 自动分配 (邻域相斥)
@@ -699,6 +700,7 @@ const _FIXED: Record<string, string> = {
     gaofu: '#5A3A4A', // 高附·高附兵
     fanyanna: '#4A3A6A', // 梵衍那·深紫
     dingxiang_d: '#3A4A5A', // 定襄·暗青
+    xiayang_d: '#4A5A48', // 夏阳·禹门青褐
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

@@ -674,6 +674,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'zhou': _zhongyuanPortraitPool,
     // 江南 47 势力
     'chu_d': _nanfangPortraitPool,
+    'hu_d': _nanfangPortraitPool,
     'chunshen': _nanfangPortraitPool,
     'danyang': _nanfangPortraitPool,
     'daxing': _nanfangPortraitPool,

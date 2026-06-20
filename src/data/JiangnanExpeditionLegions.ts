@@ -27,23 +27,22 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   min: { name: '闽国亲从', tier: 3 },        // 冶城·王审知闽国亲从
   quanzhou: { name: '清源军', tier: 1 },        // 刺桐·留从效清源军
   chen: { name: '建康水军', tier: 3 },       // 清远·陈霸先水师
-  xiao_d: { name: '白袍军', tier: 1 },       // 兰陵·陈庆之七千白袍（《梁书》）
+  xiao_d: { name: '白袍军', tier: 0 },       // 兰陵·陈庆之七千白袍四十七战全胜（《梁书》）
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
       xiangzhou: { name: '荆鄂都统司', tier: 1 },     // 襄阳·京湖战区
   zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
   song: { name: '殿前护圣军', tier: 1 },   // 临安·杨沂中殿前护圣军（宋国）
-  sizhou: { name: '克敌军', tier: 1 },       // 淮安·韩世忠克敌军（泗州）
+  sizhou: { name: '克敌军', tier: 0 },       // 淮安·韩世忠大仪镇大捷以少胜多（泗州）
   qian_d: { name: '游奕军', tier: 2 },       // 嘉兴·§9 #13 踏白游奕（岳飞系）
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
-  jiujiang: { name: '柴桑水师', tier: 2 },     // 柴桑·周瑜鄱阳湖练水军
+  jiujiang: { name: '九江劲卒', tier: 2 },     // 六安·英布九江王封地
   fangla: { name: '圣公兵', tier: 1 },         // 睦州·方腊圣公起义克六州
   fang_guozhen: { name: '浙东舟师', tier: 3 }, // 庆元·方国珍浙东割据水师
   ruochu: { name: '若敖六卒', tier: 1 },       // 竟陵·楚若敖氏精锐（《左传》）
   mi_chu: { name: '左广右广', tier: 2 },       // 云梦·楚庄王亲兵（《左传·宣公》）
   heng: { name: '衡州义军', tier: 3 },         // 临烝·何腾蛟南明衡州抗清
   yezongliu: { name: '矿工义军', tier: 3 },     // 丽水·叶宗留矿工起义
-  jinan: { name: '济南卫', tier: 2 },        // 历下·铁铉守济南卫
-  lai: { name: '莱国义军', tier: 2 },          // 青石关·杨安儿莱国义军
+  jinan: { name: '济南守城义军', tier: 1 },   // 历下·铁铉固守济南屡挫朱棣
   wu: { name: '句吴利趾', tier: 1 },        // 阊门·孙武句吴利趾
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
   xushouhui: { name: '红巾军', tier: 2 },    // 蕲春·元末徐寿辉天完红巾主力
@@ -58,18 +57,31 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // 横海校尉除名
   chizhou: { name: '池州戍兵', tier: 3 },        // 大通·池州
   wenzhou: { name: '永嘉水师', tier: 3 },    // 永嘉·温州水师
+  hu_d: { name: '浙东义兵', tier: 3 },          // 白峤·胡三省浙东抗元义兵
   wan: { name: '舒州戍兵', tier: 3 },            // 皖城·舒州
+  ying: { name: '郢州水军', tier: 1 },           // 夏口·梁郢州治；曹景宗据城退魏（《梁书·曹景宗传》）
+  kejia: { name: '客家义军', tier: 2 },          // 黄连·汀州客家区募兵（无特定名将）
+  fu2: { name: '临川郡兵', tier: 2 },            // 临川·周迪陈朝据守
+  ouyang: { name: '庐陵蛮兵', tier: 2 },         // 庐陵·欧阳頠世居统蛮兵（《梁书》）
+  chu_d: { name: '舒州团练兵', tier: 3 },       // 潜山·唐舒州同安郡地方团练
   shenshi: { name: '吴兴部曲', tier: 2 },       // 独松关·吴兴沈氏部曲
   wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）
   xie_cj_d: { name: '信州弩士', tier: 3 },      // 葛溪·信州弩士
-  chimei: { name: '赤眉军', tier: 2 },  // 莒城·樊崇赤眉军（《后汉书》有名）
+  chimei: { name: '赤眉军', tier: 1 },  // 莒城·樊崇起兵攻入长安灭新莽
   chunshen: { name: '申江戍卒', tier: 3 },  // 上海·春申君黄歇封地戍卒
-  wang_d: { name: '琅琊部曲', tier: 3 },  // 琅琊·王氏部曲私兵
-  jiaodong: { name: '即墨死士', tier: 1 },  // 即墨·田单火牛阵大破燕军（《史记》）
+  wang_d: { name: '琅琊王氏部曲', tier: 2 },  // 琅琊·王导东晋开国丞相
+  jiaodong: { name: '火牛阵死士', tier: 1 },  // 即墨·田单火牛阵大破燕军（《史记》）
   guo: { name: '果州戍兵', tier: 3 },  // 南充·唐果州戍兵
   zi: { name: '资州戍兵', tier: 3 },  // 盘石·唐资州戍兵
-  long2: { name: '陇州戍兵', tier: 3 },  // 汧源·唐陇州戍兵
-  jibei: { name: '济北卒', tier: 3 },  // 博阳·汉济北国卒
+  long2: { name: '陇州府兵', tier: 2 },  // 汧源·韦孝宽北周陇州总管
+  jibei: { name: '赤眉余部', tier: 2 },  // 博阳·徐宣赤眉余部退守
   gouding: { name: '句町部兵', tier: 3 },  // 广南·西南夷句町国部兵
-  quanrong: { name: '犬戎骑', tier: 3 },  // 威戎·西周犬戎游骑（《史记·周本纪》）
+  quanrong: { name: '西戎骑兵', tier: 3 },  // 威戎·犬戎部落武装
+qiufu: { name: '剡城义军', tier: 1 },     // 剡城·裘甫起义大破唐军
+  shuntian: { name: '天地会义军', tier: 1 }, // 彰化·林爽文台湾最大民变
+  lujian: { name: '义乌营', tier: 2 },       // 金华·张煌言募兵抗清
+  danyang: { name: '采石水军', tier: 2 },     // 鸠兹·虞允文督师采石矶
+  linshihong: { name: '大楚水军', tier: 2 },  // 鄱阳·林士弘称帝建楚
+  gumie: { name: '却月阵兵', tier: 2 },       // 信安·刘裕却月阵破魏
+  wang_s: { name: '新安兵', tier: 2 },       // 黟城·汪华保据新安六州
 };

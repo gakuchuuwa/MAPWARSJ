@@ -72,6 +72,7 @@ export const FACTIONS: Faction[] = [
     { id: 'shu', name: '蜀国' },
     { id: 'yangzhou', name: '洋州' }, // ── 兴势山（王平·无当飞军T1）──
     { id: 'dingxiang_d', name: '定襄' }, // ── 2026-06-18：李靖@恶阳岭（贞观四年定襄夜袭；旗号定襄）──
+    { id: 'xiayang_d', name: '夏阳' },   // ── 2026-06-18：李勣@龙门（冯翊夏阳故地·禹门险隘；旗号夏阳）──
     { id: 'dian', name: '通海' },       // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '新国' },
     { id: 'cheng', name: '成国' },
@@ -396,6 +397,7 @@ export const FACTIONS: Faction[] = [
 
     // 第二类：少数民族起义
     { id: 'pingnan', name: '平南' },
+{ id: 'pinghai', name: '平海' },       // 漂渝津·来护儿征东舟师
                 // 深绿 - 杜文秀平南国(大理)
     { id: 'qianhui', name: '回军' },
     { id: 'miao_qing', name: '苗军' },
@@ -559,6 +561,7 @@ export const FACTIONS: Faction[] = [
     { id: 'tan_d', name: '覃氏' },                          // 覃氏(慈利/澧水流域)
     { id: 'ran_d', name: '冉氏' },                          // 冉氏(秀山/酉水流域)
     { id: 'chu_d', name: '储氏' },                          // 储氏(潜山/皖西南)
+    { id: 'hu_d', name: '胡氏' },                            // 胡氏(宁海/浙东/胡三省)
 
     // ── 2026-05-27 新增：青衣(雅州)、五溪(八面山)、姑蔑(衢州) ──
     { id: 'qingyi', name: '青衣' },
@@ -754,7 +757,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xinggu', name: '兴古' },
     { id: 'zangke', name: '牂牁' },
     { id: 'guangxin', name: '广信' },
-    { id: 'kejia', name: '客家' },
+    { id: 'kejia', name: '客家' },                          // 黄连·旗号客（客家民族）
     { id: 'ouyang', name: '欧阳' },
     { id: 'ningkou', name: '宁寇' },
     { id: 'hongzhou', name: '洪州' },
@@ -765,7 +768,7 @@ export const FACTIONS: Faction[] = [
     { id: 'cai', name: '蔡国' },
     { id: 'changshaguo', name: '长沙国' },
     { id: 'shangzhou', name: '商州' },   // 旗号上洛(商邑=商州治；避与商字重)
-    { id: 'ying', name: '郢州' },
+    { id: 'ying', name: '郢州' },               // 夏口·梁郢州治（非楚郊郢）
     { id: 'heng', name: '衡州' },
     { id: 'chen2', name: '郴州' },
     { id: 'shixing', name: '石兴岭' },

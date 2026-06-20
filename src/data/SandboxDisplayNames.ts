@@ -102,6 +102,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'liao_d': '大辽',
     'dai_d': '代',
     'dingxiang_d': '定襄',
+    'xiayang_d': '夏阳',
     'zhongshan': '恒',
     'wang_d': '王',
     'xiao_d': '萧',
@@ -329,6 +330,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'taiping': '太平',
     'dacheng': '大成',
 'pingnan': '平南',
+    'pinghai': '平海',
     'qianhui': '回军',
     'miao_qing': '苗军',
     'tuoming': '清真',
@@ -430,6 +432,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tan_d': '覃',
     'ran_d': '冉',
     'chu_d': '储',
+    'hu_d': '胡',
 
     // ── 自动补全剩余的特殊势力映射，防止显示英文 ──
 'cen_d': '岑',
@@ -629,7 +632,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'dianguo': '滇',   // 滇国（拓东城）；旗作「滇」
     'xinggu': '兴古',
     'guangxin': '广信',
-    'kejia': '赣',
+    'kejia': '客',
     'ouyang': '欧阳',
     'ningkou': '宁寇',
     'hongzhou': '洪',

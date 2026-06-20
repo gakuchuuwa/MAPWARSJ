@@ -22,7 +22,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   hunxie: { name: '肩水胡骑', tier: 2 },          // 肩水金关·匈奴浑邪部（原甘州铁骑，归甘）
   qifu_d: { name: '苑川突骑', tier: 2 },         // 枹罕·西秦乞伏鲜卑突骑（苑川故地）
   anding_wei: { name: '长征健儿', tier: 2 },      // 苦峪堡·唐安西征募健儿
-  beidi: { name: '北地骑', tier: 3 },             // 萧关·北地郡孙卬戍卒
+  beidi: { name: '萧关弩手', tier: 3 },           // 萧关·孙卬守关战死
   yingli: { name: '泼喜军', tier: 2 },            // 鸣沙·西夏砲驼兵
   chijin: { name: '赤斤蒙古卫', tier: 2 },        // 赤金堡·明关西七卫
   dongshengwei: { name: '东胜卫戍', tier: 3 },     // 东胜卫·明代卫所
