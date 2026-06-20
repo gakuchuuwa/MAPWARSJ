@@ -177,7 +177,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     nanjiewangqiu: { generalId: 'nanjiewangqiu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 日土：边军驻防
     zhudi: { generalId: 'zhudi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 靖难军白沟突击
     yuqian: { generalId: 'yuqian', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 京师保卫战
-    lisheng: { generalId: 'lisheng', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 保境：断敌粮道后反击
+    tandaoji: { generalId: 'tandaoji', tier: 'famous', tacticalSkillId: 'tac_09' }, // 唱筹量沙：断敌粮道后反击
     yangxingmi: { generalId: 'yangxingmi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_02' }, // 清口之战破孙儒、守淮南
     wangping: { generalId: 'wangping', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 244年兴势之战据险大破曹爽
     anuluvtuo: { generalId: 'anuluvtuo', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 蒲甘王朝东征西讨
@@ -426,7 +426,10 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     wutang: { generalId: 'wutang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 度辽将军护南匈奴
     sanyinnuoyan: { generalId: 'sanyinnuoyan', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 赛音诺颜部
     celeng: { generalId: 'celeng', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 定边左副将军乌里雅苏台
-    chenxin: { generalId: 'chenxin', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 出涿邪山破北匈奴
+    zhangyi: { generalId: 'zhangyi', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 蜀汉后期名将
+    yanghuai: { generalId: 'yanghuai', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 白水关守将
+    dengai: { generalId: 'dengai', tier: 'famous', tacticalSkillId: 'tac_07', strategicSkillId: 'str_04' }, // 偷渡阴平灭蜀
+    douxian: { generalId: 'douxian', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 燕然勒石破北匈奴
     qizhijian: { generalId: 'qizhijian', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 东汉鲜卑大人寇边
     houlilu: { generalId: 'houlilu', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 匈奴右贤王自立单于
     apakhoja: { generalId: 'apakhoja', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 白山派领袖据守休循

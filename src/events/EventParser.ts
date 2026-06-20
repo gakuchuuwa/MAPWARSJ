@@ -148,7 +148,7 @@ export const T0_CAPITALS: CityDataV2[] = [
     {
         id: 'city_nanjing',
         name: '建业',
-        factionId: 'nantang_d',
+        factionId: 'jinling',
         lat: 32.05, lng: 118.77,
         type: 'big_city',
         region: 'JIANGNAN',

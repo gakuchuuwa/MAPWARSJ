@@ -67,6 +67,7 @@ const _FIXED: Record<string, string> = {
     gaogouli: '#354E78', // 高句丽·铁骑（钢蓝）
     xuantu: '#1A1A24', // 玄菟·皂衣（墨黑）
     xinluo: '#2858A0', // 新罗·花郎（王室蓝）
+    baishui: '#8FAFB8', // 白水郡·杨怀白水关（水青）
     baiji: '#3A8868', // 百济·九誓幢（翡翠绿）
     goryeo: '#52A0B8', // 高丽·鹰扬龙虎（青瓷）
     luzhou: '#528870', // 渌州·鸭绿水师（江绿）
@@ -200,7 +201,7 @@ const _FIXED: Record<string, string> = {
 
     'changshaguo': '#3A6830', // 长沙国（楚地青，武平军·马殷）
     // ── 南方精锐远征势力（2026-06-11；hex 全局唯一）──
-    nantang_d: '#4A68A0', // 南唐·黑云长剑都（金陵青）
+    jinling: '#4A68A0', // 南京·量沙军（金陵青）
     zhong: '#4E7080', // 寿·北府兵（江淮青灰；寿州·谢玄）
     wuwu_d: '#6A8A7A', // 无为·濡须水畔州治
     xiangzhou: '#3E7858', // 襄·汉水哨船（襄阳治所）
@@ -267,6 +268,7 @@ const _FIXED: Record<string, string> = {
     zhou: '#6A7A90', // 周·岐阳周师（岐山青灰）
     qi: '#387858', // 齐·齐之技击（临淄碧青）
     suzhou_d: '#6D5B48', // 宿·宿州（符离）
+    dangzhou: '#7B8E5A', // 宕州·邓艾平蜀先锋（山青）
     didao: '#5C3828', // 狄·飞熊军（陇西临洮古狄道县）
     yuan_cj_d: '#8C5840', // 袁·大戟士（汝南赭）
     wuhuan: '#506858', // 乌桓·乌桓突骑（辽西青灰）
@@ -599,6 +601,7 @@ const _FIXED: Record<string, string> = {
     'yangshe': '#4A4CC0', // 自动分配 (邻域相斥)
     'sima_d': '#65338C', // 自动分配 (邻域相斥)
     'kang': '#C081AD', // 自动分配 (邻域相斥)
+    'wudu': '#9EB870', // 武都·张翼甘泉驿骑（驿青）
     'woye': '#B25343', // 沃野
     'shuofang': '#8A6040', // 朔方
     'lushui': '#57D74B', // 自动分配 (邻域相斥)

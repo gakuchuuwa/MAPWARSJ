@@ -8,6 +8,9 @@
  * - 据点取川东近乡或史载成军/战场地
  */
 export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+  wudu: { name: '甘泉驿骑', tier: 3 },         // 甘泉驿·张翼甘泉驿骑
+  baishui: { name: '白水戍卒', tier: 3 },       // 白水关·杨怀守关
+  dangzhou: { name: '平蜀先锋军', tier: 1 },     // 宕昌·邓艾偷渡阴平
   jinchuan_g: { name: '金川番兵', tier: 3 },    // 勒乌围·金川土兵
   //  miaomin: { name: '苗疆义军', tier: 3 },      // 平陇·石柳邓苗民 — 已迁 DianQianExpeditionLegions
   //  dongzu: { name: '侗家义军', tier: 3 },       // 雷公山·吴勉侗族 — 已迁 DianQianExpeditionLegions
@@ -52,7 +55,8 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
 qianzhong: { name: '乾嘉苗兵', tier: 1 },     // 芷江·吴八月攻克沅州
   dangchang: { name: '宕昌羌步', tier: 2 },   // 合川·梁弥定宕昌王
   liao: { name: '巴僚弩手', tier: 2 },        // 江阳·侯弘远僚人酋帅
-  sou: { name: '越巂叟兵', tier: 2 },         // 乐山·高定元叟族反蜀  qingqiang: { name: '青羌突骑', tier: 2 },    // 汶川·姜维青羌兵源
+  sou: { name: '越巂叟兵', tier: 2 },         // 乐山·高定元叟族反蜀
+  qingqiang: { name: '青羌突骑', tier: 2 },    // 汶川·姜维青羌兵源
   qingyi: { name: '青衣羌兵', tier: 2 },       // 严道·青衣羌活动区
   // ── 2026-06-18：武陵/叙永/慈利/秀山/房陵/珙县/来凤精锐 ──
   zhongxiang: { name: '钟相义军', tier: 1 },   // 武陵·钟相杨幺起义攻占州县（《宋史》）

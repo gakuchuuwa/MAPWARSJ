@@ -107,6 +107,7 @@ export const FACTIONS: Faction[] = [
     { id: 'manzhou_d', name: '大清' },
     { id: 'ming_d', name: '大明' },
     { id: 'liao_d', name: '大辽' },
+    { id: 'dangzhou', name: '宕州' },
     { id: 'dai_d', name: '代国' },
     { id: 'zhongshan', name: '恒州' },
     { id: 'wang_d', name: '王氏' },
@@ -154,6 +155,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'chile', name: '敕勒' },
     { id: 'rouran', name: '柔然' },
+    { id: 'baishui', name: '白水郡' },
     { id: 'baiji', name: '百济' },
     { id: 'tubo', name: '吐蕃' },
     { id: 'tujue', name: '突厥' },
@@ -244,7 +246,7 @@ export const FACTIONS: Faction[] = [
     { id: 'hani_d', name: '哈尼' },
     { id: 'basha_d', name: '巴沙' },
     { id: 'xibo_d', name: '锡伯' },
-    { id: 'nantang_d', name: '南唐' },
+    { id: 'jinling', name: '南京' },
     // ── 2026-06-12 新增：无为（濡须水畔无为州）；北府兵改挂仲@寿春 ──
     { id: 'wuwu_d', name: '无为' },
     { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
@@ -713,6 +715,7 @@ export const FACTIONS: Faction[] = [
     { id: 'sima_d', name: '司马氏' },   // 河内郡望@获嘉
     { id: 'liguo', name: '黎国' },
     { id: 'kang', name: '长泽' },
+    { id: 'wudu', name: '武都' },
     { id: 'woye', name: '沃野' },
     { id: 'shuofang', name: '朔方' },
     { id: 'lushui', name: '卢水' },
@@ -976,7 +979,7 @@ export const FACTIONS: Faction[] = [
     { id: 'chenli_d', name: '撑犁' },              // 姑衍山·匈奴祭天（撑犁=天）
     { id: 'nuoyan_d', name: '诺颜' },              // 赛音山达·赛音诺颜部
     { id: 'wuli_d', name: '乌里' },                // 扎布汗·乌里雅苏台辖区
-    { id: 'jiluo_d', name: '稽落' },               // 涿邪山·窦宪出稽落/涿邪
+    { id: 'jiluo_d', name: '涿涂' },               // 涿邪山·窦宪北征突骑
     { id: 'heisha_d', name: '黑沙' },              // 特尔门·漠北黑沙/后突厥境
   { id: 'sanada_d', name: '真田氏' },
     { id: 'wuzhou', name: '武州' },

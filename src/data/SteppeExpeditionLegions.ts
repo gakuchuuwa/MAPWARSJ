@@ -85,5 +85,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   nuoyan_d: { name: '漠北驿骑', tier: 3 },      // 赛音山达·清代大漠驿站护军
   wuli_d: { name: '喀尔喀劲骑', tier: 2 },      // 扎布汗·乌里雅苏台喀尔喀骑兵
   heisha_d: { name: '黑沙精骑', tier: 3 },  // 特尔门·后突厥黑沙道
-  jiluo_d: { name: '燕然突骑', tier: 2 },       // 涿邪山·窦宪出涿邪突击骑
+  jiluo_d: { name: '北征突骑', tier: 2 },       // 涿邪山·窦宪燕然勒石
 };

@@ -208,7 +208,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'wuzhou_d': _wuzhouPortraitPool,
     'tang': _litangPortraitPool,
     'ming_d': _damingPortraitPool,
-    'nantang_d': _litangPortraitPool,
+    'jinling': _litangPortraitPool,
     'guangzhou': _guangzhouPortraitPool,
     // 岭南全境套用广州
     'sagami': _ribenPortraitPool,
@@ -353,6 +353,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'chijin': _hexiPortraitPool,
     'chile': _hexiPortraitPool,
     'dada_ming': _hexiPortraitPool,
+    'dangzhou': _shuguoPortraitPool,
     'dangxiang': _hexiPortraitPool,
     'dongshengwei': _hexiPortraitPool,
     'guiyi': _hexiPortraitPool,
@@ -521,6 +522,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'yilou': _dongbeiPortraitPool,
     'yizhou': _dongbeiPortraitPool,
     // 朝鲜 21 势力
+    'baishui': _shuguoPortraitPool,
     'baiji': _chaoxianPortraitPool,
     'chen3': _chaoxianPortraitPool,
     'danluo': _chaoxianPortraitPool,

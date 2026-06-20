@@ -18,9 +18,9 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   yiyang_d: { name: '义阳戍卒', tier: 3 },    // 武胜关·孟宗政三关之捷
   she_ethnic: { name: '畲族山兵', tier: 3 },  // 敕木山·畲族祖山 // 清流关·滁州戍卒     // 武陵山·相单程武陵蛮
   shanyue: { name: '丹阳兵', tier: 2 },      // 宛陵城·§1 #24 丹阳郡精兵；旗=山越 据点=宛陵城 番=丹阳兵 ✅
-    chu: { name: '荆州锐士', tier: 2 },       // 金鳞·陆逊镇守江陵
+    chu: { name: '荆州锐士', tier: 2 },       // 金鳞·关羽水淹七军
   sunwu_d: { name: '解烦兵', tier: 2 },      // 武昌·孙吴禁卫
-  nantang_d: { name: '神武军', tier: 1 },     // 建业·李昪南唐神武军
+  jinling: { name: '量沙军', tier: 1 },     // 金陵·檀道济南京量沙军
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=寿·寿州）
   yang_zhou: { name: '黑云长剑都', tier: 1 },   // 广陵·杨行密黑云长剑都（扬州）
   lu: { name: '合肥锐士', tier: 1 },       // 合肥·张辽八百破十万

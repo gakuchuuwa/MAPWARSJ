@@ -1,4 +1,4 @@
-/**
+﻿/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -154,14 +154,14 @@ export const T0_CAPITALS: CityDataV2[] = [
     // ── 江南 ──
     {
         id: 'city_nanjing',
-        name: '建业',
-        factionId: 'nantang_d',
+        name: '金陵',
+        factionId: 'jinling',
         lat: 32.0500, lng: 118.7700,
         type: 'big_city',
         region: 'JIANGNAN',
         troops: 20000,
         tier: 0,
-        note: '六朝建业；三国吴与明初都邑',
+        note: '南京金陵；刘宋檀道济唱筹量沙',
     },
     {
         id: 'city_hangzhou',
@@ -198,7 +198,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     // ── 蜀道沿线 (长安→成都 的中城) ──
         // ── 关中平原历史名城 ──
         { id: 'city_anding', name: '安定', factionId: 'huangfu', lat: 35.327451, lng: 107.358398, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '安定；皇甫小城',
+        note: '安定；皇甫嵩三河骑士',
     },
     {
         id: 'city_hanzhong',
@@ -431,7 +431,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         region: 'JIANGNAN', 
         troops: 10000,
         tier: 1,
-        note: '金鳞；江陵治所/重镇',
+        note: '金鳞；关羽镇守江陵，水淹七军',
     },
 
 
@@ -750,13 +750,14 @@ export const T2_STRATEGIC: CityDataV2[] = [
         id: 'city_jianmenguan',
         name: '剑门关',
         factionId: 'lizhou_d',
-        lat: 32.30, lng: 105.53,
+        lat: 32.28, lng: 105.53,
         type: 'pass',
         region: 'BASHU',
         troops: 10000,
         tier: 2,
         note: '剑门关；剑州关隘',
     },
+    { id: 'city_baishuiguan', name: '白水关', factionId: 'baishui', lat: 32.74, lng: 105.50, type: 'pass', region: 'BASHU', troops: 10000, mirror: true,       note: '白水关；杨怀白水戍卒',    },
     //── 子午道秦岭关隘 ──
     { id: 'city_ziwu', name: '子午谷', factionId: 'dashun', lat: 33.312230, lng: 108.124695, type: 'pass', region: 'CENTRAL', troops: 10000, note: '崇祯九年高迎祥出子午谷被伏，李自成接掌闯营；大顺老营驻地' },
     { id: 'city_mianzhuguan', name: '鹿头关', factionId: 'chenghan', lat: 31.325490, lng: 104.172363, type: 'pass', region: 'BASHU', troops: 10000, tier: 2, note: '梓潼鹿头关；成汉李特入蜀要道' },
@@ -1245,6 +1246,12 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_qiuchi', name: '仇池', factionId: 'qiuchi', lat: 33.86, lng: 105.3, type: 'small_city', region: 'BASHU', troops: 10000,
         note: '仇池；杨氏小城',
     },
+    { id: 'city_ganquanyi', name: '甘泉驿', factionId: 'wudu', lat: 33.4293, lng: 105.1419, type: 'small_city', region: 'BASHU', troops: 10000,
+        note: '甘泉驿；张翼甘泉驿骑',
+    },
+    { id: 'city_dangchang', name: '宕昌', factionId: 'dangzhou', lat: 33.6997, lng: 104.5239, type: 'small_city', region: 'BASHU', troops: 10000,
+        note: '宕昌；邓艾平蜀先锋军',
+    },
     { id: 'city_daixian', name: '广武', factionId: 'dai_d', lat: 39.842285, lng: 114.408875, type: 'small_city', region: 'NORTH', troops: 10000,
         note: '广武；代国小城',
     },
@@ -1303,7 +1310,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_yanran_stone', name: '燕然勒石', factionId: 'xueyantuo', lat: 45.203318, lng: 104.677734, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '燕然勒石；薛延陀小城',
     },
-    { id: 'city_luhun', name: '涿邪山', factionId: 'jiluo_d', lat: 43.588290, lng: 104.661255, type: 'pass', region: 'STEPPE', troops: 10000, note: '汉匈漠北分界；窦宪出涿邪山破北匈奴（《后汉书·窦宪传》）' },
+    { id: 'city_luhun', name: '涿邪山', factionId: 'jiluo_d', lat: 43.588290, lng: 104.661255, type: 'pass', region: 'STEPPE', troops: 10000, note: '窦宪燕然勒石，北征突骑' },
     { id: 'city_chilechuan', name: '云中', factionId: 'chile', lat: 40.591029, lng: 110.044556, type: 'small_city', region: 'HEXI', troops: 10000,
         note: '云中；敕勒小城',
     },
