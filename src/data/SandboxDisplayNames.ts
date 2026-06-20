@@ -831,4 +831,5 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   delan: '德兰',
   huluo: '呼罗',
   aba: '阿巴',
+  wenling: '温陵',
 };

@@ -646,7 +646,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tiandan: { generalId: 'tiandan', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 即墨火牛
     xuxuan_cm: { generalId: 'xuxuan_cm', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 赤眉丞相
     sunbin: { generalId: 'sunbin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 围魏救赵·长驱直入（陆战奇谋，非水战）
-    chensheng: { generalId: 'chensheng', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 大泽乡起义
+    zhouyafu: { generalId: 'zhouyafu', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 周亚夫平七国：敌战计避实击虚+长驱直入
     liuqi: { generalId: 'liuqi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 顺昌破金
     caocao: { generalId: 'caocao', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 官渡之战
     weixiaokuan: { generalId: 'weixiaokuan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 玉壁之战
@@ -656,7 +656,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     geshuhan: { generalId: 'geshuhan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 潼关守将
     zongze: { generalId: 'zongze', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 东京留守
     limaozhen: { generalId: 'limaozhen', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 岐国军阀
-    kouxun: { generalId: 'kouxun', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 云台河内
+    caocan: { generalId: 'caocan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 曹参身被七十创攻城略地功最多
     mengzongzheng_jn: { generalId: 'mengzongzheng', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 三关之捷
 
     lvmeng: { generalId: 'lvmeng', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_06' }, // 白衣渡江
@@ -665,7 +665,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     jifa: { generalId: 'jifa', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 武王伐纣
     quanrongwang: { generalId: 'quanrongwang', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 犬戎弑幽王
     chairong: { generalId: 'chairong', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 高平之战·殿前诸班
-    caishudu: { generalId: 'caishudu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 蔡国始祖
+    wangjian: { generalId: 'wangjian', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_02' }, // 王翦灭楚灭赵：敌战计避实击虚+攻城拔寨
     luhunrongwang: { generalId: 'luhunrongwang', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 陆浑戎
     hanshizhong: { generalId: 'hanshizhong', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 黄天荡
     diqing: { generalId: 'diqing', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 面涅将军
@@ -693,7 +693,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     // ── 北方区 2026-06-18 ──
     gongsundu: { generalId: 'gongsundu', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 辽东割据
     yanganer2: { generalId: 'yanganer2', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 红袄天顺
-    mafang: { generalId: 'mafang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 马太师
+    mafang: { generalId: 'mafang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 开国第一功臣
     tuobagui: { generalId: 'tuobagui', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 参合陂
     liukun: { generalId: 'liukun', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 晋阳孤守抗刘渊
     zhangrou: { generalId: 'zhangrou', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 保定重建
@@ -1134,6 +1134,13 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
   sulun: { generalId: 'sulun', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 苏伦·德兰吉亚：敌战计避实击虚+长驱直入，帕提亚回马箭灭克拉苏
   abumusilin: { generalId: 'abumusilin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 阿布·穆斯林·呼罗珊：敌战计避实击虚+长驱直入，黑旗席卷波斯
   shapuer: { generalId: 'shapuer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 沙普尔·阿巴尔：攻战计侵掠如火+长驱直入，三破罗马擒瓦勒良
+    shilang: {
+        generalId: 'shilang',
+        tier: 'famous',
+        tacticalSkillId: 'tac_02',
+        strategicSkillId: 'str_04',
+    },
+
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

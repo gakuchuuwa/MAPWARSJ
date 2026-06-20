@@ -53,7 +53,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 恒山军除名（泛称无固定番号）
   dai_d: { name: '代国锐卒', tier: 3 },         // 代县·春秋代国
   dongdan: { name: '东丹卫兵', tier: 2 },       // 敖东城·耶律倍东丹国
-  xuan: { name: '宣府镇军', tier: 3 },          // 宣化·明九边宣府镇
+  xuan: { name: '大明北伐军', tier: 1 },          // 宣化·明九边宣府镇
   zhe_d: { name: '折家将兵', tier: 2 },         // 府谷·宋府州折氏十世将门
   shanrong: { name: '山戎突骑', tier: 2 },      // 无终·齐桓公伐山戎
   pingyuan: { name: '平原义军', tier: 1 },      // 平原·颜真卿首倡义兵

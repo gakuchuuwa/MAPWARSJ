@@ -2521,7 +2521,7 @@ export const CITIES_V2: CityDataV2[] = [
         type: 'small_city',
         troops: 10000,
         
-        note: '宣化；宣府小城', region: 'NORTH' },
+        note: '徐达宣府筑城防守', region: 'NORTH' },
     { id: 'city_xinghe', name: '兴和', factionId: 'chahar', lat: 41.15, lng: 114.7, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '兴和；察哈小城',
     },
@@ -2996,4 +2996,5 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_hakone', name: '箱根关', factionId: 'sagami', lat: 35.1925, lng: 139.0261, type: 'pass', region: 'JAPAN', troops: 10000, note: '天下第一关，关东的物理大门' },
     { id: 'city_fuwa', name: '不破关', factionId: 'mino', lat: 35.3577, lng: 136.4602, type: 'pass', region: 'JAPAN', troops: 10000, note: '关原所在地，畿内防御东国大军的终极险地' },
     { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', region: 'KOREA', troops: 10000, note: '引爆威化岛回军，终结高丽王朝命脉' },
+    { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '施琅福建水师' },
 ];

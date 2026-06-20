@@ -763,4 +763,5 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'aba': 'city_nishabuer',
     'shanshan': 'city_loulan',
 
+    'wenling': 'city_penghu',
 };

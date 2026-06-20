@@ -554,7 +554,8 @@ const _FIXED: Record<string, string> = {
     'tushetu': '#9046AB', // 自动分配 (邻域相斥)
     tumed: '#B8A060', // 土默特·精骑（草原金）
     'she': '#C36DA6', // 自动分配 (邻域相斥)
-    'liao': '#C565D9', // 自动分配 (邻域相斥)
+    'liao': '#C565D9',
+    'wenling': '#3A6EA5', // 温陵·福建水师 // 自动分配 (邻域相斥)
     'nong2': '#CA9B61', // 自动分配 (邻域相斥)
     'yaoluoge': '#ACCA26', // 自动分配 (邻域相斥)
     'hepan': '#C46B7F', // 自动分配 (邻域相斥)

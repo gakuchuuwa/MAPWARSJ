@@ -48,7 +48,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   ruo: { name: '商於材官', tier: 3 },
   ruzhou: { name: '广成健卒', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 3 },
-  zhi_state: { name: '太行飞军', tier: 3 },
+  zhi_state: { name: '丰沛子弟', tier: 1 },
   xiongding: { name: '鲜卑燕军', tier: 2 }, // 天井关·慕容永西燕末代君主
   // 金甲卫除名（生造）
   huo: { name: '霍邑锐士', tier: 3 },
@@ -70,9 +70,9 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   dongxian: { name: '郯城戍卒', tier: 2 },     // 郯城·徐盛东吴宿将
   mi: { name: '朐城弩手', tier: 2 },         // 朐城·麋竺家兵
   yaozhou: { name: '耀州牙兵', tier: 2 },       // 金锁关·李茂贞岐军
-  cai: { name: '蔡国甲士', tier: 2 },          // 新蔡·蔡叔度开国君主
+  cai: { name: '灭楚锐士', tier: 1 },          // 新蔡·王翦六十万秦军破楚
   wazhai: { name: '瓦岗军', tier: 1 },           // 定陶·李密破张须陀瓦岗崛起
-  huaiyang: { name: '大楚义军', tier: 2 },     // 宛丘·陈胜称王建都起义领袖
+  huaiyang: { name: '细柳营', tier: 1 },     // 宛丘·周亚夫绝吴楚粮道三月平七国
   yao: { name: '匈奴五部', tier: 2 },        // 平阳·刘渊建都平阳，指挥灭晋
   kong_d: { name: '北海郡兵', tier: 3 },       // 曲阜·孔融以北海相保境，孔融本人极有名
   tongma: { name: '胶西郡国兵', tier: 3 },       // 胶西·刘卬发国兵参与七国之乱，战败

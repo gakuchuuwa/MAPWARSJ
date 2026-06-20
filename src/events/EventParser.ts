@@ -2517,7 +2517,7 @@ export const CITIES_V2: CityDataV2[] = [
         type: 'small_city',
         troops: 10000,
         
-        note: '宣化；宣府小城', region: 'NORTH' },
+        note: '徐达宣府筑城防守', region: 'NORTH' },
     { id: 'city_xinghe', name: '兴和', factionId: 'chahar', lat: 41.15, lng: 114.7, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '兴和；察哈小城',
     },
@@ -2984,4 +2984,5 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', region: 'KOREA', troops: 10000, note: '引爆威化岛回军，终结高丽王朝命脉' },
     { id: 'city_saiyinshanda', name: '薛灵哥', factionId: 'wuliangha', lat: 49.437762, lng: 101.428528, type: 'pass', troops: 10000 },
     { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8, lng: 99.8, type: 'small_city', region: 'HEXI', troops: 10000, note: '汉酒泉郡表氏县；沮渠卢水胡故地' },
+    { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '施琅福建水师' },
 ];
