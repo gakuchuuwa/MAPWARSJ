@@ -181,7 +181,7 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'LINGNAN', cityIds: ['city_shimenguan', 'city_linzheng', 'city_mudan', 'city_bangdun', 'city_sanpu', 'city_angkor'] },
     { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_bago', 'city_thaton', 'city_ayutthaya', 'city_angkor', 'city_shimenguan'] },
     { region: 'TIBET', cityIds: ['city_kathmandu', 'city_humicheng', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan'] },
-    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_humicheng', 'city_malulude', 'city_pengdi', 'city_merv', 'city_urgench', 'city_yangjigan', 'city_almaliq'] },
+    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_atuoke', 'city_kandaha', 'city_bosite', 'city_fala', 'city_nishabuer', 'city_urgench', 'city_yangjigan', 'city_almaliq'] },
     { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_almaliq'] },
 ];
 
@@ -217,7 +217,7 @@ const REGIONS: { id: RegionType; polygon: {lat:number,lng:number}[] }[] = [
     { id: 'LINGNAN', polygon: [{lat:28.08,lng:104.25},{lat:26.89,lng:112.60},{lat:22.20,lng:120.83},{lat:12.87,lng:107.80},{lat:12.77,lng:105.97},{lat:13.41,lng:103.87}] },
     { id: 'DIANQIAN', polygon: [{lat:30.05,lng:101.96},{lat:26.87,lng:100.22},{lat:27.72,lng:85.19},{lat:17.33,lng:96.47},{lat:16.53,lng:97.63},{lat:14.35,lng:100.58},{lat:13.41,lng:103.87},{lat:28.08,lng:104.25}] },
     { id: 'TIBET', polygon: [{lat:27.72,lng:85.19},{lat:36.73,lng:71.61},{lat:37.77,lng:75.23},{lat:34.57,lng:80.35},{lat:38.99,lng:88.95},{lat:37.93,lng:102.64},{lat:36.04,lng:103.82},{lat:30.05,lng:101.96},{lat:26.87,lng:100.22}] },
-    { id: 'CENTRAL_ASIA', polygon: [{lat:37.77,lng:75.23},{lat:36.73,lng:71.61},{lat:35.58,lng:63.31},{lat:36.00,lng:62.70},{lat:37.62,lng:62.23},{lat:42.24,lng:59.63},{lat:45.60,lng:62.00},{lat:43.98,lng:79.65}] },
+    { id: 'CENTRAL_ASIA', polygon: [{lat:37.77,lng:75.23},{lat:33.77,lng:72.36},{lat:31.63,lng:65.74},{lat:31.58,lng:64.36},{lat:32.37,lng:62.11},{lat:36.21,lng:58.80},{lat:42.24,lng:59.63},{lat:45.60,lng:62.00},{lat:43.98,lng:79.65}] },
 ];
 
 export function getRegion(lat: number, lng: number): RegionType {

@@ -34,7 +34,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wuliangha', name: '兀良哈' },
     { id: 'dingling', name: '丁零' },
     { id: 'nifuhe', name: '尼夫' },     // 旗号二字（全称尼夫赫）
-    { id: 'guer', name: '古尔' },       // 古尔王朝（Ghurids）
+    { id: 'muer', name: '穆尔加布' },   // 穆尔加布/马尔夫鲁德（Murghab）
     { id: 'xiajiasi', name: '坚昆' },   // 旗号二字；唐称黠戛斯，同族
     { id: 'zhen', name: '后百济' },
     { id: 'dongshengwei', name: '东胜卫' },
@@ -944,6 +944,17 @@ export const FACTIONS: Faction[] = [
     
     
     
+    
+    // ── 2026-06-20 新增：锡斯坦（博斯特）/ 德兰吉亚（法拉）──
+    { id: 'xisi', name: '锡斯坦' },
+    { id: 'delan', name: '德兰吉亚' },
+
+    
+    // ── 2026-06-20 新增：布兹詹（扎姆）/ 哈里（萨拉赫斯）/ 卡伦（图斯）──
+    { id: 'baha', name: '巴哈尔兹' },
+    { id: 'hali', name: '哈里' },
+    { id: 'kalan', name: '卡伦' },
+
     // ── 2026-06-20 新增：杜兰尼（坎大哈）/ 呼罗珊（赫拉特）/ 阿巴尔（尼沙布尔）──
     { id: 'dulan_d', name: '杜兰尼' },
     { id: 'huluo', name: '呼罗珊' },

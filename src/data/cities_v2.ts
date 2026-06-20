@@ -2457,7 +2457,7 @@ export const CITIES_V2: CityDataV2[] = [
         factionId: 'tiemuer',
         lat: 39.652500,
         lng: 66.971400,
-        type: 'medium_city',
+        type: 'big_city',
         troops: 20000,
         tier: 1,
         
@@ -2880,8 +2880,8 @@ export const CITIES_V2: CityDataV2[] = [
         note: '盆奴里；尼夫小城',
     },
     // 古尔王朝（Ghurids）呼罗珊边缘要塞
-    { id: 'city_malulude', name: '马鲁鲁德', factionId: 'guer', lat: 35.58, lng: 63.31, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
-        note: '马鲁鲁德；古尔小城',
+    { id: 'city_malulude', name: '马尔夫鲁德', factionId: 'muer', lat: 35.5833, lng: 63.3167, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
+        note: '马尔夫鲁德/小木鹿；穆尔加布河畔要塞，花剌子模东境重镇',
     },
     // 巴达赫尚（Badakhshan）山地政权
     { id: 'city_pengdi', name: '彭迪', factionId: 'maer_d', lat: 36, lng: 62.7, type: 'pass', region: 'CENTRAL_ASIA', troops: 10000, note: '马尔吉亚纳(Margiana)穆尔加布河下游绿洲；波斯至萨珊东北边镇（彭迪城）' },
@@ -2932,12 +2932,22 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'haikou', lat: 25.75, lng: 123.50, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '南方/日本环线共用锚点；南方环线所称钓鱼岛城即本据点；明清海图及《隋书·流求国传》等见载' },
     { id: 'city_gugudao', name: '宫古岛', factionId: 'gonggu', lat: 24.805, lng: 125.281, type: 'small_city', region: 'JAPAN', troops: 10000, note: '琉球宫古诸岛主岛，见《中山世谱》及明清海图' },
     { id: 'city_qihe', name: '七河', factionId: 'qincha', lat: 44.2219, lng: 64.3332, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '钦察汗国七河草原核心带' },
+    // ── 2026-06-20 替换：巴哈尔兹·泰巴德（原扎姆）──
+    { id: 'city_taibade', name: '泰巴德', factionId: 'baha', lat: 34.7763, lng: 60.7764, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '巴哈尔兹区泰巴德；呼罗珊东南边境重镇，巴哈尔兹重甲戟兵驻防' },
+    // ── 2026-06-20 新增：哈里·萨拉赫斯 ──
+    { id: 'city_salahesi', name: '萨拉赫斯', factionId: 'hali', lat: 36.5449, lng: 61.1577, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '哈里河畔萨拉赫斯；1040年塞尔柱丹达纳克大破伽色尼，呼罗珊北境锁钥' },
+    // ── 2026-06-20 新增：卡伦·图斯 ──
+    { id: 'city_tusi', name: '图斯', factionId: 'kalan', lat: 36.3244, lng: 59.6201, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '古图斯/马什哈德近郊；卡伦家族（Karen-Pahlav）世袭领地，萨珊东北边防元帅驻跸' },
+    // ── 2026-06-20 新增：锡斯坦·博斯特 ──
+    { id: 'city_bosite', name: '博斯特', factionId: 'xisi', lat: 31.5833, lng: 64.3600, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '赫尔曼德河畔博斯特/拉什卡尔加；萨法尔王朝雅库布铜匠起兵之地，锡斯坦核心重镇' },
+    // ── 2026-06-20 新增：德兰吉亚·法拉 ──
+    { id: 'city_fala', name: '法拉', factionId: 'delan', lat: 32.3700, lng: 62.1100, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '古德兰吉亚省法拉河畔要塞；苏伦家族世袭领地，帕提亚东境战略枢纽' },
     // ── 2026-06-20 新增：杜兰尼·坎大哈 ──
-    { id: 'city_kandaha', name: '坎大哈', factionId: 'dulan_d', lat: 31.6289, lng: 65.7372, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '杜兰尼帝国第一首都；艾哈迈德沙阿1747年在此加冕为阿富汗王' },
+    { id: 'city_kandaha', name: '坎大哈', factionId: 'dulan_d', lat: 31.6289, lng: 65.7372, type: 'medium_city', tier: 1, region: 'CENTRAL_ASIA', troops: 10000, note: '杜兰尼帝国第一首都；艾哈迈德沙阿1747年在此加冕为阿富汗王' },
     // ── 2026-06-20 新增：呼罗珊·赫拉特 ──
-    { id: 'city_helate', name: '赫拉特', factionId: 'huluo', lat: 34.3419, lng: 62.2031, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '呼罗珊四大名城；阿布·穆斯林阿拔斯革命策源地，帖木儿帝国沙哈鲁治下文化中心' },
+    { id: 'city_helate', name: '赫拉特', factionId: 'huluo', lat: 34.3419, lng: 62.2031, type: 'medium_city', tier: 1, region: 'CENTRAL_ASIA', troops: 10000, note: '呼罗珊四大名城；阿布·穆斯林阿拔斯革命策源地，帖木儿帝国沙哈鲁治下文化中心' },
     // ── 2026-06-20 新增：阿巴尔·尼沙布尔 ──
-    { id: 'city_nishabuer', name: '尼沙布尔', factionId: 'aba', lat: 36.2133, lng: 58.7958, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '萨珊阿巴尔沙赫尔省治；沙普尔一世敕建，呼罗珊大道枢纽' },
+    { id: 'city_nishabuer', name: '尼沙布尔', factionId: 'aba', lat: 36.2133, lng: 58.7958, type: 'medium_city', tier: 1, region: 'CENTRAL_ASIA', troops: 10000, note: '萨珊阿巴尔沙赫尔省治；沙普尔一世敕建，呼罗珊大道枢纽' },
     // —— 2026-06-20 新增：那竭国·顶骨城 ——
     { id: 'city_dinggucheng', name: '顶骨城', factionId: 'najie', lat: 34.4300, lng: 70.4500, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '那揭罗曷/贾拉拉巴德；法显《佛国记》那竭国，玄奘《大唐西域记》那揭罗曷，印度-希腊王米南德一世东进重镇' },
     // —— 2026-06-20 新增：旁遮普·阿托克 ——

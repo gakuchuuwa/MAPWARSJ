@@ -578,7 +578,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'dayuan': _zhongyaPortraitPool,
     'dayuzi': _zhongyaPortraitPool,
     'geluolu': _caoyuanPortraitPool,
-    'guer': _zhongyaPortraitPool,
+    'muer': _zhongyaPortraitPool,
     'guzgan': _zhongyaPortraitPool,
     'hepan': _zhongyaPortraitPool,
     'jie': _zhongyaPortraitPool,

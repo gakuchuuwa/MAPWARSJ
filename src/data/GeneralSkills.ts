@@ -1126,6 +1126,12 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
   halixingge: { generalId: 'halixingge', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 哈里·辛格·旁遮普：攻战计侵掠如火+攻城拔寨，开伯尔山口工程
   minande: { generalId: 'minande', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 米南德·那竭：攻战计侵掠如火+攻城拔寨，印度-希腊东进兴都库什
   aihamaide: { generalId: 'aihamaide', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 艾哈迈德·杜兰尼：攻战计侵掠如火+攻城拔寨，九征印度建帝国
+  mujier: { generalId: 'mujier', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 穆吉尔·穆尔加布：哀兵必胜守小木鹿
+  gaiwamu: { generalId: 'gaiwamu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 盖瓦姆·巴哈尔兹：深沟高垒守泰巴德
+  subashi: { generalId: 'subashi', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 苏巴什·哈里：置之死地丹达纳克破阵
+  suhela: { generalId: 'suhela', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_02' }, // 苏赫拉·卡伦：敌战计避实击虚+攻城拔寨，萨珊东北铁壁
+  yakubusafaer: { generalId: 'yakubusafaer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 雅库布·萨法尔·锡斯坦：攻战计侵掠如火+攻城拔寨，铜匠起兵席卷呼罗珊
+  sulun: { generalId: 'sulun', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 苏伦·德兰吉亚：敌战计避实击虚+长驱直入，帕提亚回马箭灭克拉苏
   abumusilin: { generalId: 'abumusilin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 阿布·穆斯林·呼罗珊：敌战计避实击虚+长驱直入，黑旗席卷波斯
   shapuer: { generalId: 'shapuer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 沙普尔·阿巴尔：攻战计侵掠如火+长驱直入，三破罗马擒瓦勒良
 };

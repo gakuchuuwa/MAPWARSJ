@@ -45,7 +45,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'dingling': '丁零',
     'nifuhe': '尼夫',
     'nanzhong': '南中',
-    'guer': '古尔',
+    'muer': '穆尔',
     'xiajiasi': '坚昆',
     'zhen': '甄',
     'dongshengwei': '胜',
@@ -824,6 +824,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   // —— 2026-06-20 新增：那竭国·顶骨城 ——
   najie: '那竭',
   dulan_d: '杜兰',
+  baha: '巴哈',
+  hali: '哈里',
+  kalan: '卡兰',
+  xisi: '锡斯',
+  delan: '德兰',
   huluo: '呼罗',
   aba: '阿巴',
 };

@@ -750,6 +750,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
   pangzha: { generalId: 'halixingge', generalName: '哈里·辛格', portrait: '/assets/zhongya/halixingge.png' },
   najie: { generalId: 'minande', generalName: '米南德', portrait: '/assets/zhongya/minande.png' },
   dulan_d: { generalId: 'aihamaide', generalName: '艾哈迈德', portrait: '/assets/zhongya/aihamaide.png' },
+  muer: { generalId: 'mujier', generalName: '穆吉尔', portrait: '/assets/zhongya/mujier.png' },
+  baha: { generalId: 'gaiwamu', generalName: '盖瓦姆', portrait: '/assets/zhongya/gaiwamu.png' },
+  hali: { generalId: 'subashi', generalName: '苏巴什', portrait: '/assets/zhongya/subashi.png' },
+  kalan: { generalId: 'suhela', generalName: '苏赫拉', portrait: '/assets/zhongya/suhela.png' },
+  xisi: { generalId: 'yakubusafaer', generalName: '雅库布·萨法尔', portrait: '/assets/zhongya/yakubusafaer.png' },
+  delan: { generalId: 'sulun', generalName: '苏伦', portrait: '/assets/zhongya/sulun.png' },
   huluo: { generalId: 'abumusilin', generalName: '阿布·穆斯林', portrait: '/assets/zhongya/abumusilin.png' },
   aba: { generalId: 'shapuer', generalName: '沙普尔', portrait: '/assets/zhongya/shapuer.png' },
 };
