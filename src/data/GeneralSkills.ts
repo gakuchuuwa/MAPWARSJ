@@ -1000,6 +1000,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     dinglingwang: {
         generalId: 'dinglingwang',
         tacticalSkillId: 'tac_09',
+    },
+    bunaibou: {
         generalId: 'bunaibou',
         tacticalSkillId: 'tac_09',
     },
@@ -1060,17 +1062,14 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
     fulianchou: { generalId: 'fulianchou', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 吐谷浑可汗伏俟城
 
-    abulihalisi: { generalId: "abulihalisi", tier: "ordinary", tacticalSkillId: "tac_10" }, // ??????????
     yaerbeige: { generalId: 'yaerbeige', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 雅尔贝格
-    haidaer: { generalId: "haidaer", tier: "ordinary", tacticalSkillId: "tac_10" }, // ???????????
-    shamalike: { generalId: "shamalike", tier: "ordinary", tacticalSkillId: "tac_10" }, // ????????
-    dukake: { generalId: "dukake", tier: "ordinary", tacticalSkillId: "tac_10" }, // ????????
 
     abulihalisi: { generalId: 'abulihalisi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 法里贡埃米尔法里亚布
     luozhentan: { generalId: 'luozhentan', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 唐护密国王法扎巴德
     haidaer: { generalId: 'haidaer', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 卡乌斯之子阿夫申吉扎克
     shamalike: { generalId: 'shamalike', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 乌古斯叶护养吉干
-    dukake: { generalId: 'dukake', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 铁弓苏巴什真珠河\n    farighun: { generalId: 'farighun', tier: 'ordinary', tacticalSkillId: 'tac_10' },
+    dukake: { generalId: 'dukake', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 铁弓苏巴什真珠河
+    farighun: { generalId: 'farighun', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     ali_asad: { generalId: 'ali_asad', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     afshin: { generalId: 'afshin', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     aral_bek: { generalId: 'aral_bek', tier: 'ordinary', tacticalSkillId: 'tac_10' },
