@@ -642,7 +642,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'mi': _zhongyuanPortraitPool,
     'qi': _zhongyuanPortraitPool,
     'qiang': _zhongyuanPortraitPool,
-    'qiguo_d': _zhongyuanPortraitPool,
+    'yuzhou': _zhongyuanPortraitPool,
     // 'qin': _zhongyuanPortraitPool,  // qin 有专属池
     'qing': _zhongyuanPortraitPool,
     'quanrong': _zhongyuanPortraitPool,

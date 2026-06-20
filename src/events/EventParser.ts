@@ -2263,7 +2263,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
     { id: 'city_huashixia', name: '花石峡', factionId: 'heyuan_d', lat: 35.196235, lng: 98.907166, type: 'pass', region: 'TIBET', troops: 10000, mirror: true, note: '青藏东线隘口；隋河源郡积石镇屯田区（刘权《隋书·刘权传》）' },
 
     // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
-    { id: 'city_wendeng', name: '文登', factionId: 'weihaiwei', lat: 37.2, lng: 122.05, type: 'small_city', region: 'NORTH', troops: 10000, note: '朝鲜环线锚点（代威海卫）；文化北方' } ];
+    { id: 'city_wendeng', name: '文登', factionId: 'weihaiwei', lat: 37.2, lng: 122.05, type: 'small_city', region: 'NORTH', troops: 10000, note: '苏定方东征神灭军' } ];
 
 // ============================================================
 // 汇总导出
@@ -2959,7 +2959,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_huangchuan', name: '弋阳', factionId: 'huang_d', lat: 32.131, lng: 115.051, type: 'small_city', region: 'JIANGNAN', troops: 10000,
         note: '弋阳；黄国小城',
     },
-    { id: 'city_yongqiu', name: '雍丘', factionId: 'qiguo_d', lat: 34.55, lng: 114.78, type: 'small_city', region: 'CENTRAL', troops: 10000,
+    { id: 'city_yongqiu', name: '雍丘', factionId: 'yuzhou', lat: 34.55, lng: 114.78, type: 'small_city', region: 'CENTRAL', troops: 10000,
         note: '雍丘；杞国小城',
     },
     { id: 'city_mengcheng', name: '蒙城', factionId: 'mengcheng_d', lat: 33.27, lng: 116.56, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '汉沛郡山桑县治地；唐天宝改蒙城县；庄子故里（有争议）' },
@@ -2985,4 +2985,5 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_saiyinshanda', name: '薛灵哥', factionId: 'wuliangha', lat: 49.437762, lng: 101.428528, type: 'pass', troops: 10000 },
     { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8, lng: 99.8, type: 'small_city', region: 'HEXI', troops: 10000, note: '汉酒泉郡表氏县；沮渠卢水胡故地' },
     { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '施琅福建水师' },
+    { id: 'city_fengtian', name: '奉天', factionId: 'qianzhou', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '李晟神策军收复长安' },
 ];

@@ -882,7 +882,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yingzhou_d', name: '颍州' },           // 颍@汝阴
     { id: 'yanchuan_d', name: '郾川' },           // 郾@郾城
     { id: 'huang_d', name: '黄国' },              // 黄@潢川
-    { id: 'qiguo_d', name: '杞国' },              // 杞@雍丘
+    { id: 'yuzhou', name: '豫州' },              // 杞@雍丘
     { id: 'yiyang_d', name: '义阳' },             // 义@武胜关
     { id: 'mengcheng_d', name: '山桑' },          // 山桑@蒙城（汉书沛郡山桑县）
     { id: 'guide_d', name: '归德府' },            // 归德@永城（归德府/州治）
@@ -1001,4 +1001,5 @@ export const FACTIONS: Faction[] = [
     { id: 'haikou', name: '海寇' },
     { id: 'shanshan', name: '鄯善' },
     { id: 'wenling', name: '温陵' },
+    { id: 'qianzhou', name: '乾州' },
 ];

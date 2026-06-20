@@ -728,7 +728,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yingzhou_d': '颍',
 'yanchuan_d': '郾',
 'huang_d': '潢',
-'qiguo_d': '杞',
+'yuzhou': '豫',
 'yiyang_d': '义阳',
 'mengcheng_d': '山桑',
     'guide_d': '归德',
@@ -835,4 +835,5 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   huluo: '呼罗',
   aba: '阿巴',
   wenling: '温陵',
+  qianzhou: '乾',
 };

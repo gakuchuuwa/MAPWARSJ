@@ -2274,7 +2274,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
     { id: 'city_huashixia', name: '花石峡', factionId: 'heyuan_d', lat: 35.196235, lng: 98.907166, type: 'pass', region: 'TIBET', troops: 10000, mirror: true, note: '青藏东线隘口；隋河源郡积石镇屯田区（刘权《隋书·刘权传》）' },
 
     // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
-    { id: 'city_wendeng', name: '文登', factionId: 'weihaiwei', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', troops: 10000, note: '朝鲜环线锚点（代威海卫）；文化北方' } ];
+    { id: 'city_wendeng', name: '文登', factionId: 'weihaiwei', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', troops: 10000, note: '苏定方东征神灭军' } ];
 
 // ============================================================
 // 汇总导出
@@ -2975,14 +2975,14 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_huangchuan', name: '弋阳', factionId: 'huang_d', lat: 32.1310, lng: 115.0510, type: 'small_city', region: 'JIANGNAN', troops: 10000,
         note: '弋阳；黄国小城',
     },
-    { id: 'city_yongqiu', name: '雍丘', factionId: 'qiguo_d', lat: 34.55, lng: 114.78, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '雍丘；杞国小城',
+    { id: 'city_yongqiu', name: '雍丘', factionId: 'yuzhou', lat: 34.55, lng: 114.78, type: 'small_city', region: 'CENTRAL', troops: 10000,
+        note: '雍丘；祖逆中流北伐军',
     },
     { id: 'city_mengcheng', name: '蒙城', factionId: 'mengcheng_d', lat: 33.27, lng: 116.56, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '汉沛郡山桑县治地；唐天宝改蒙城县；庄子故里（有争议）' },
     { id: 'city_yongcheng', name: '永城', factionId: 'guide_d', lat: 33.93, lng: 116.37, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '归德府辖；芒砀山/汉高潜居；走廊东翼' },
     { id: 'city_kunyang', name: '昆阳', factionId: 'lulin', lat: 33.22, lng: 113.22, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '昆阳故城（叶县北）；绿林—刘秀昆阳之战' },
     { id: 'city_yucheng', name: '虞城', factionId: 'dang_d', lat: 34.7758, lng: 116.0678, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '汉砀郡属/虞国故地；豫东商丘东翼' },
-    { id: 'city_bengbu', name: '蚌埠', factionId: 'hao_d', lat: 32.92, lng: 117.38, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '濠州治钟离故地；淮滨津渡（今蚌埠）' },
+    { id: 'city_bengbu', name: '钟离', factionId: 'hao_d', lat: 32.92, lng: 117.38, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '濠州治钟离故地；淮滨津渡（今蚌埠）' },
     { id: 'city_liaocheng', name: '聊城', factionId: 'bozhou_d', lat: 36.4322, lng: 115.9552, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '隋唐博州治；春秋聊城邑' },
     { id: 'city_sapi', name: '萨毗城', factionId: 'gar', lat: 37.631470, lng: 88.884888, type: 'small_city', region: 'TIBET', troops: 10000,
         note: '萨毗城；噶尔氏小城',
@@ -3004,4 +3004,5 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_fuwa', name: '不破关', factionId: 'mino', lat: 35.3577, lng: 136.4602, type: 'pass', region: 'JAPAN', troops: 10000, note: '关原所在地，畿内防御东国大军的终极险地' },
     { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', region: 'KOREA', troops: 10000, note: '引爆威化岛回军，终结高丽王朝命脉' },
     { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '施琅福建水师' },
+    { id: 'city_fengtian', name: '奉天', factionId: 'qianzhou', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '李晟神策军收复长安' },
 ];

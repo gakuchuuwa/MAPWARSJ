@@ -679,7 +679,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yingzhou_d': 'city_shunchang',
 'yanchuan_d': 'city_yancheng2',
 'huang_d': 'city_huangchuan',
-'qiguo_d': 'city_yongqiu',
+'yuzhou': 'city_yongqiu',
 'yiyang_d': 'city_wushengguan',
 'mengcheng_d': 'city_mengcheng',
     'guide_d': 'city_yongcheng',
@@ -767,4 +767,5 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'shanshan': 'city_loulan',
 
     'wenling': 'city_penghu',
+    'qianzhou': 'city_fengtian',
 };

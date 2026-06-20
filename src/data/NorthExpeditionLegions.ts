@@ -68,7 +68,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   hejian: { name: '白马义从', tier: 2 },      // 文安·公孙瓒幽州突骑河间大破黄巾（以少胜多）
   qu_d: { name: '先登死士', tier: 0 },       // 界桥·麴义破公孙瓒（192年）
   yang_aner: { name: '天顺红袄', tier: 1 },        // 蓬莱·杨安儿天顺红袄克登莱
-  weihaiwei: { name: '东征水军', tier: 3 },    // 文登·张亮东征水军
+  weihaiwei: { name: '神灭军', tier: 1 },       // 文登·苏定方征东神灭军
   jianzhou_nvzhen: { name: '建州女真卫', tier: 1 }, // 浑江·李满住建州女真卫
   pinghai: { name: '征东舟师', tier: 2 },     // 漂渝津·来护儿征东水师
   liangshidu: { name: '雕阴戍卒', tier: 2 }, // 雕阴·龙贾戍卒抗秦

@@ -684,7 +684,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yuefei: { generalId: 'yuefei', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 郾城大捷
     yuanshao: { generalId: 'yuanshao', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 四世三公
     haozhao: { generalId: 'haozhao', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 陈仓守城
-    qihuangong: { generalId: 'qihuangong', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 杞桓公
+    zuti: { generalId: 'zuti', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_03' }, // 杞桓公
     gaoqiong: { generalId: 'gaoqiong', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 澶渊主战
     zhangxun: { generalId: 'zhangxun', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 睢阳守城
     liuxiu: { generalId: 'liuxiu', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 昆阳之战
@@ -1144,6 +1144,23 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         strategicSkillId: 'str_04',
     },
 
+    lisheng: {
+        generalId: 'lisheng',
+        tier: 'famous',
+        tacticalSkillId: 'tac_01',
+        strategicSkillId: 'str_04',
+    },
+    xiaomohe: {
+        generalId: 'xiaomohe',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03',
+    },
+    sudinfang: {
+        generalId: 'sudinfang',
+        tier: 'famous',
+        tacticalSkillId: 'tac_02',
+        strategicSkillId: 'str_04',
+    },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

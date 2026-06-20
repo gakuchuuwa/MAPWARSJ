@@ -34,7 +34,7 @@ export interface FactionGeneral {
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     qin: { generalId: 'baiqi', generalName: '白起', portrait: '/assets/qin/baiqi.png' },
-    tang: { generalId: 'lisheng_tang', generalName: '李晟', portrait: '/assets/zhongyuan/lisheng.png' },
+    tang: { generalId: 'lishimin', generalName: '李世民', portrait: '/assets/zhongyuan/lisheng.png' },
     wuzhou_d: { generalId: 'liduozuo', generalName: '李多祚', portrait: '/assets/wuzhou/liduozuo.png' },
         ming_d: { generalId: 'yuqian', generalName: '于谦', portrait: '/assets/daming/yuqian.png' },
     jinling: { generalId: 'tandaoji', generalName: '檀道济', portrait: '/assets/jiangnan/tandaoji.png' },
@@ -512,9 +512,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     lingwu: { generalId: 'guoziyi', generalName: '郭子仪', portrait: '/assets/hexi/guoziyi.png' },
     ningkou: { generalId: 'lubode', generalName: '路博德', portrait: '/assets/hexi/lubode.png' },
     juqu_d: { generalId: 'juqumengxun', generalName: '沮渠蒙逊', portrait: '/assets/hexi/juqumengxun.png' },
-        zhengzhou: { generalId: 'lishimin', generalName: '李世民', portrait: '/assets/litang/lishimin.png' },
+        zhengzhou: { generalId: 'chenqingzhi', generalName: '陈庆之', portrait: '/assets/litang/lishimin.png' },
     sunqin: { generalId: 'sunchuanting', generalName: '孙传庭', portrait: '/assets/zhongyuan/sunchuanting.png' },
-    hongnong_jun: { generalId: 'chuliji', generalName: '樗里疾', portrait: '/assets/zhongyuan/chuliji.png' },
+    hongnong_jun: { generalId: 'yangsu', generalName: '杨素', portrait: '/assets/zhongyuan/yangsu.png' }, // 弘农杨氏；灭陈/破突厥名将
 
 // ── 中原区 2026-06-18 ──
     tianxiong: { generalId: 'tianchengsi', generalName: '田承嗣', portrait: '/assets/zhongyuan/tianchengsi.png' },
@@ -525,7 +525,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
             huangfu: { generalId: 'huangfusong', generalName: '皇甫嵩', portrait: '/assets/zhongyuan/huangfusong.png' },
     wang_d: { generalId: 'wangdao', generalName: '王导', portrait: '/assets/zhongyuan/wangdao.png' },
     chimei: { generalId: 'fanchong', generalName: '樊崇', portrait: '/assets/zhongyuan/fanchong.png' },
-        xiao_d: { generalId: 'chenqingzhi', generalName: '陈庆之', portrait: '/assets/jiangnan/chenqingzhi.png' },
+        xiao_d: { generalId: 'xiaomohe', generalName: '萧摩诃', portrait: '/assets/jiangnan/chenqingzhi.png' },
     wazhai: { generalId: 'limi_wz', generalName: '李密', portrait: '/assets/zhongyuan/limi.png' },
     jiaodong: { generalId: 'tiandan', generalName: '田单', portrait: '/assets/zhongyuan/tiandan.png' },
     jibei: { generalId: 'xuxuan_cm', generalName: '徐宣', portrait: '/assets/zhongyuan/xuxuan.png' },
@@ -563,7 +563,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     shangzhou: { generalId: 'shangyang', generalName: '商鞅', portrait: '/assets/zhongyuan/shangyang.png' },
     yuan_cj_d: { generalId: 'yuanshu_zn', generalName: '袁术', portrait: '/assets/zhongyuan/yuanshu.png' },
     xinping: { generalId: 'haozhao', generalName: '郝昭', portrait: '/assets/zhongyuan/haozhao.png' },
-    qiguo_d: { generalId: 'qihuangong', generalName: '杞桓公', portrait: '/assets/zhongyuan/qihuangong.png' },
+    yuzhou: { generalId: 'zuti', generalName: '祖逆', portrait: '/assets/zhongyuan/zuti.png' },
     mengcheng_d: { generalId: 'gaoqiong', generalName: '高琼', portrait: '/assets/zhongyuan/gaoqiong.png' },
     lulin: { generalId: 'liuxiu', generalName: '刘秀', portrait: '/assets/zhongyuan/liuxiu.png' },
     dang_d: { generalId: 'zhuwen', generalName: '朱温', portrait: '/assets/zhongyuan/zhuwen.png' },
@@ -596,7 +596,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     mao_wenlong: { generalId: 'maowenlong', generalName: '毛文龙', portrait: '/assets/dongbei/maowenlong.png' },
     gongsun_d: { generalId: 'gongsundu', generalName: '公孙度', portrait: '/assets/beifang/gongsundu.png' },
     jianzhou_nvzhen: { generalId: 'limanzhu', generalName: '李满住', portrait: '/assets/beifang/limanzhu.png' }, // 浑江·建州女真卫
-    weihaiwei: { generalId: 'zhangliang', generalName: '张亮', portrait: '/assets/beifang/zhangliang.png' }, // 文登·张亮东征水军
+    weihaiwei: { generalId: 'sudingfang', generalName: '苏定方', portrait: '/assets/beifang/sudingfang.png' },
     xuan: { generalId: 'mafang', generalName: '徐达', portrait: '/assets/beifang/mafang.png' },
     tuoba: { generalId: 'tuobagui', generalName: '拓跋珪', portrait: '/assets/beifang/tuobagui.png' },
     qingyuan_bd: { generalId: 'zhangrou', generalName: '张柔', portrait: '/assets/beifang/zhangrou.png' },
@@ -762,6 +762,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
   huluo: { generalId: 'abumusilin', generalName: '阿布·穆斯林', portrait: '/assets/zhongya/abumusilin.png' },
   aba: { generalId: 'shapuer', generalName: '沙普尔', portrait: '/assets/zhongya/shapuer.png' },
     wenling: { generalId: 'shilang', generalName: '施琅', portrait: '/assets/jiangnan/shilang.png' },
+    qianzhou: { generalId: 'lisheng', generalName: '李晟', portrait: '/assets/zhongyuan/lisheng.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

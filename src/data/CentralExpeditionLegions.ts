@@ -9,8 +9,7 @@
  */
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   xiezhou: { name: '河东军', tier: 2 },   // 安邑·马燧河东节度使
-  tang: { name: '神策军', tier: 2 },       // 长安·李晟神策军（唐禁军）
-  wei: { name: '魏之武卒', tier: 0 },        // 汴梁·吴起练武卒阴晋破秦（《荀子·议兵》）
+    wei: { name: '魏之武卒', tier: 0 },        // 汴梁·吴起练武卒阴晋破秦（《荀子·议兵》）
   qin: { name: '秦之锐士', tier: 1 },        // 天水·§1 #12 司马错白起
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
   han: { name: '韩之劲弩', tier: 2 },        // 新郑·暴鸢韩弩
@@ -42,9 +41,9 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
   yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师
   // ── 2026-06-16 新增：11大名关 ──
-                      hongnong_jun: { name: '函谷锐士', tier: 1 },    // 函谷关·樗里疾崤函锐士
+                      hongnong_jun: { name: '黄龙骑', tier: 1 },    // 函谷关·杨素大破突厥
   huangfu: { name: '三河骑士', tier: 1 },       // 安定·皇甫嵩三河骑士
-  zhengzhou: { name: '玄甲军', tier: 0 },  // 虎牢关·李世民玄甲骑
+  tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
   ruo: { name: '商於材官', tier: 3 },
   ruzhou: { name: '广成健卒', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 3 },
@@ -58,7 +57,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 蔡国劲卒除名（无此部队）
   shen: { name: '申伯亲卫', tier: 3 },         // 安康·西周申国
   // 汴河戍旅除名（无此编制）
-  qiguo_d: { name: '夏裔锐士', tier: 3 },      // 雍丘·杞国夏后氏苗裔
+  yuzhou: { name: '中流北伐军', tier: 1 },     // 雍丘·祖逆中流击楢
   xin: { name: '新室卫士', tier: 3 },          // 宛城·王莽新室（《汉书》）
   yingzhou_d: { name: '选锋军', tier: 2 },       // 顺昌·南宋选锋
   // 北门飞骑除名
@@ -89,4 +88,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   xinping: { name: '新平戍军', tier: 3 },
   huai: { name: '淮西子弟', tier: 3 },
   dang_d: { name: '砀山义军', tier: 3 },
+  qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
+  xiao_d: { name: '兰陵萧兵', tier: 2 },       // 兰陵·萧摩诃兰陵萧氏
+  zhengzhou: { name: '白袍军', tier: 1 },        // 虎牢关·陈庆之白袍军
 };
