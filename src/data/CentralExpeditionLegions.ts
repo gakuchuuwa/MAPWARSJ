@@ -8,8 +8,7 @@
  * - §1 他区已占：#34–35 江南、#54 西域、#70 草原、#72–79 南方/东北、#75 北方
  */
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  xiezhou: { name: '河东军', tier: 2 },   // 安邑·马燧河东节度使
-    wei: { name: '魏之武卒', tier: 0 },        // 汴梁·吴起练武卒阴晋破秦（《荀子·议兵》）
+      wei: { name: '魏之武卒', tier: 0 },        // 汴梁·吴起练武卒阴晋破秦（《荀子·议兵》）
   qin: { name: '秦之锐士', tier: 1 },        // 天水·§1 #12 司马错白起
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
   han: { name: '韩之劲弩', tier: 2 },        // 新郑·暴鸢韩弩
@@ -61,8 +60,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   xin: { name: '新室卫士', tier: 3 },          // 宛城·王莽新室（《汉书》）
   yingzhou_d: { name: '选锋军', tier: 2 },       // 顺昌·南宋选锋
   // 北门飞骑除名
-  chuzhou_d: { name: '殿前诸班', tier: 1 },      // 清流关·后周殿前军（赵匡胤曾任殿前都点检，《旧五代史》）
-  // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
+    // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
   lulin: { name: '云台突骑', tier: 1 },           // 昆阳·云台二十八将突骑
   lai: { name: '齐关弩手', tier: 1 },           // 青石关·王师范屡败朱温（正史胜仗）
   yangshao: { name: '材官骑士', tier: 1 },     // 渑池·周勃大破秦军
@@ -91,4 +89,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
   xiao_d: { name: '兰陵萧兵', tier: 2 },       // 兰陵·萧摩诃兰陵萧氏
   zhengzhou: { name: '白袍军', tier: 1 },        // 虎牢关·陈庆之白袍军
+  song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军
 };

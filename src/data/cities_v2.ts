@@ -165,8 +165,8 @@ export const T0_CAPITALS: CityDataV2[] = [
     },
     {
         id: 'city_hangzhou',
-        name: '临安',
-        factionId: 'song',
+        name: '杭州',
+        factionId: 'wuyue',
         lat: 30.2500, lng: 120.1600,
         type: 'big_city',
         region: 'JIANGNAN',
@@ -1376,7 +1376,7 @@ export const PERIPHERY: CityDataV2[] = [
     },
 
     { id: 'city_fanyang', name: '范阳', factionId: 'zhuozhou', lat: 39.48, lng: 115.98, type: 'medium_city', region: 'NORTH', troops: 10000, note: '安禄山范阳节度使根基；安史叛军' },
-    { id: 'city_hedong', name: '安邑', factionId: 'xiezhou', lat: 35.072716, lng: 111.033325, type: 'medium_city', region: 'CENTRAL', troops: 10000, note: '夏禹之都（《史记·夏本纪》）；阳城过近洛阳已删' },
+    { id: 'city_hedong', name: '安邑', factionId: 'wei', lat: 35.072716, lng: 111.033325, type: 'medium_city', region: 'CENTRAL', troops: 10000, note: '夏禹之都（《史记·夏本纪》）；阳城过近洛阳已删' },
     { id: 'city_chenjun', name: '新蔡', factionId: 'cai', lat: 32.75, lng: 114.98, type: 'small_city', region: 'CENTRAL', troops: 10000,
         note: '李愬雪夜入蔡州',
     },
@@ -2755,7 +2755,7 @@ export const CITIES_V2: CityDataV2[] = [
         note: '清流关；滁州关隘',
     },
     { id: 'city_zhongli', name: '盱眙', factionId: 'huai', lat: 33.011000, lng: 118.497000, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '淮州治盱眙' },
-    { id: 'city_bianliang', name: '汴梁', factionId: 'wei', lat: 34.8, lng: 114.31, type: 'big_city', region: 'CENTRAL', troops: 20000, tier: 0, note: '北宋京师；20城白名单' },
+    { id: 'city_bianliang', name: '开封', factionId: 'song', lat: 34.8, lng: 114.31, type: 'big_city', region: 'CENTRAL', troops: 20000, tier: 0, note: '北宋京师；20城白名单' },
     { id: 'city_shangluo', name: '商邑', factionId: 'shangzhou', lat: 33.87, lng: 109.94, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '商鞅商於封地商邑' },
     { id: 'city_shicheng', name: '郊郢', factionId: 'ying', lat: 31.16, lng: 112.58, type: 'pass', region: 'JIANGNAN', troops: 10000, note: '楚郢郊郢故址（荆门）；梁郢州曹景宗名片（治所夏口，据点取郢名沾边）' },
     { id: 'city_baling', name: '巴陵', factionId: 'yue_d', lat: 29.35, lng: 113.13, type: 'medium_city', region: 'JIANGNAN', troops: 10000, note: '岳州治所，湖广重镇，2026-06-18 升为中城' },
@@ -2944,7 +2944,7 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-06-20 新增：哈里·萨拉赫斯 ──
     { id: 'city_salahesi', name: '萨拉赫斯', factionId: 'hali', lat: 36.5449, lng: 61.1577, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '哈里河畔萨拉赫斯；1040年塞尔柱丹达纳克大破伽色尼，呼罗珊北境锁钥' },
     // ── 2026-06-20 新增：卡伦·图斯 ──
-    { id: 'city_tusi', name: '图斯', factionId: 'kalan', lat: 36.3244, lng: 59.6201, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '古图斯/马什哈德近郊；卡伦家族（Karen-Pahlav）世袭领地，萨珊东北边防元帅驻跸' },
+    { id: 'city_tusi', name: '图斯', factionId: 'kalan', lat: 36.45, lng: 59.57, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '古图斯/马什哈德近郊；卡伦家族（Karen-Pahlav）世袭领地，萨珊东北边防元帅驻跸' },
     // ── 2026-06-20 新增：锡斯坦·博斯特 ──
     { id: 'city_bosite', name: '博斯特', factionId: 'xisi', lat: 31.5833, lng: 64.3600, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '赫尔曼德河畔博斯特/拉什卡尔加；萨法尔王朝雅库布铜匠起兵之地，锡斯坦核心重镇' },
     // ── 2026-06-20 新增：德兰吉亚·法拉 ──
@@ -3005,4 +3005,5 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', region: 'KOREA', troops: 10000, note: '引爆威化岛回军，终结高丽王朝命脉' },
     { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '施琅福建水师' },
     { id: 'city_fengtian', name: '奉天', factionId: 'qianzhou', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '李晟神策军收复长安' },
+    { id: 'city_taqian', name: '它乾城', factionId: 'xiyuduhu', lat: 41.875, lng: 83.59, type: 'pass', region: 'WESTERN', troops: 10000, tier: 4, note: '班超西域都护府驻地' },
 ];

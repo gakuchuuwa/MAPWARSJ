@@ -1197,6 +1197,24 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tacticalSkillId: 'tac_03',
         strategicSkillId: 'str_05',
     },
+    yudayou: {
+        generalId: 'yudayou',
+        tier: 'famous',
+        tacticalSkillId: 'tac_02',
+        strategicSkillId: 'str_04',
+    },
+    dugao: {
+        generalId: 'dugao',
+        tier: 'famous',
+        tacticalSkillId: 'tac_05',
+        strategicSkillId: 'str_05',
+    },
+    aersilan: {
+        generalId: 'aersilan',
+        tier: 'famous',
+        tacticalSkillId: 'tac_03',
+        strategicSkillId: 'str_04',
+    },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

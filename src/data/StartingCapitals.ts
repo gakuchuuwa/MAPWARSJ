@@ -31,7 +31,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'dongshengwei': 'city_dongshengzhou',
     'dizhou': 'city_wudingzhou',
     'weihaiwei': 'city_wendeng',
-    'xiezhou': 'city_hedong',
+    'wei': 'city_hedong',
     'wuzhou_d': 'city_luoyang',
     'shang': 'city_anyang',
     'zhou': 'city_qishan',
@@ -48,7 +48,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'xinluo': 'city_jincheng_silla',
     'ashikaga': 'city_kyoto',
     'zhao': 'city_handan',
-'wei': 'city_bianliang',
+'song': 'city_bianliang',
 'han': 'city_xinzheng',
     'han_d': 'city_hanzhong',
     'shu': 'city_chengdu',
@@ -768,4 +768,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     'wenling': 'city_penghu',
     'qianzhou': 'city_fengtian',
+    'wuyue': 'city_hangzhou',
+    'xiyuduhu': 'city_taqian',
 };

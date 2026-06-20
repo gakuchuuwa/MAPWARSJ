@@ -246,7 +246,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     // 三陇沙·白龙 宁缺毋滥
 // ── 西域区 2026-06-18 ──
     shache: { generalId: 'xian_suoche_wang', generalName: '莎车贤', portrait: '/assets/xiyu/xian_suoche.png' },
-    shule: { generalId: 'banchao', generalName: '班超', portrait: '/assets/xiyu/banchao.png' },
+    shule: { generalId: 'aersilan', generalName: '阿尔斯兰', portrait: '/assets/xiyu/aersilan.png' },
     dzungar: { generalId: 'gaerdancelin', generalName: '噶尔丹策零', portrait: '/assets/xiyu/gaerdancelin.png' },
     anxi: { generalId: 'guoxin', generalName: '郭昕', portrait: '/assets/xiyu/guoxin.png' },
     yanqi: { generalId: 'longtuqizhi', generalName: '龙突骑支', portrait: '/assets/xiyu/longtuqizhi.png' },
@@ -569,10 +569,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dang_d: { generalId: 'zhuwen', generalName: '朱温', portrait: '/assets/zhongyuan/zhuwen.png' },
     hao_d: { generalId: 'changyuchun', generalName: '常遇春', portrait: '/assets/zhongyuan/changyuchun.png' },
     bozhou_d: { generalId: 'luzhonglian', generalName: '鲁仲连', portrait: '/assets/zhongyuan/luzhonglian.png' },
-    chuzhou_d: { generalId: 'zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhongyuan/zhaokuangyin.png' },
-    zhuozhou: { generalId: 'anlushan', generalName: '安禄山', portrait: '/assets/zhongyuan/anlushan.png' },
-    xiezhou: { generalId: 'masui', generalName: '马燧', portrait: '/assets/zhongyuan/masui.png' },
-    chanzhou: { generalId: 'lijilong', generalName: '李继隆', portrait: '/assets/zhongyuan/lijilong.png' }, // 濮阳·澶州弩手统领
+        zhuozhou: { generalId: 'anlushan', generalName: '安禄山', portrait: '/assets/zhongyuan/anlushan.png' },
+        chanzhou: { generalId: 'lijilong', generalName: '李继隆', portrait: '/assets/zhongyuan/lijilong.png' }, // 濮阳·澶州弩手统领
     lai: { generalId: 'wangshifan', generalName: '王师范', portrait: '/assets/beifang/wangshifan.png' }, // 青石关·平卢节帅屡败朱温
     mushi: { generalId: 'muchong', generalName: '穆崇', portrait: '/assets/beifang/muchong.png' }, // 大岴·丘穆陵氏代北勋臣
     xiongding: { generalId: 'murongyong', generalName: '慕容永', portrait: '/assets/beifang/murongyong.png' }, // 天井关·西燕末代君主
@@ -647,7 +645,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yue_d: { generalId: 'yuefei', generalName: '岳飞', portrait: '/assets/jiangnan/yuefei.png' },
     zhangshicheng: { generalId: 'zhangshicheng', generalName: '张士诚', portrait: '/assets/jiangnan/zhangshicheng.png' },
     wu: { generalId: 'sunwu', generalName: '孙武', portrait: '/assets/jiangnan/sunwu.png' },
-    qian_d: { generalId: 'qianliu', generalName: '钱镠', portrait: '/assets/jiangnan/qianliu.png' },
+    qian_d: { generalId: 'yudayou', generalName: '俞大猷', portrait: '/assets/jiangnan/yudayou.png' },
     qiufu: { generalId: 'qiufu_jn', generalName: '裘甫', portrait: '/assets/jiangnan/qiufu.png' },
     qi_d: { generalId: 'qijiguang', generalName: '戚继光', portrait: '/assets/jiangnan/qijiguang.png' },
     yiyang_d: { generalId: 'mengzongzheng', generalName: '孟宗政', portrait: '/assets/jiangnan/mengzongzheng.png' },
@@ -763,6 +761,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
   aba: { generalId: 'shapuer', generalName: '沙普尔', portrait: '/assets/zhongya/shapuer.png' },
     wenling: { generalId: 'shilang', generalName: '施琅', portrait: '/assets/jiangnan/shilang.png' },
     qianzhou: { generalId: 'lisheng', generalName: '李晟', portrait: '/assets/zhongyuan/lisheng.png' },
+    wuyue: { generalId: 'qianliu', generalName: '钱镠', portrait: '/assets/jiangnan/qianliu.png' },
+
+    song: { generalId: 'zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhongyuan/zhaokuangyin.png' },
+    chuzhou_d: { generalId: 'dugao', generalName: '杜杲', portrait: '/assets/jiangnan/dugao.png' },
+    xiyuduhu: { generalId: 'banchao', generalName: '班超', portrait: '/assets/xiyu/banchao.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

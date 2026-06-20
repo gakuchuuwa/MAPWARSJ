@@ -47,7 +47,6 @@ const _FIXED: Record<string, string> = {
     zhangshicheng: '#B89838', // 大周(张士诚)
 
     // ── 青·木德尚青 ──
-    xiezhou: '#3A8F83', // 解州·安邑（夏禹故都青）
     xiao_d: '#2E7568', // 萧(兰陵萧氏)
 
     // ── 白·金德尚白 / 蒙古尚白 ──
@@ -741,6 +740,7 @@ const _FIXED: Record<string, string> = {
     wenzhou: '#B7C8D9',
     pinghai: '#BCCDDE',
     'qianzhou': '#8B3A3A', // 乾州·神策军
+    'xiyuduhu': '#5C4033', // 西域都护·都护军
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

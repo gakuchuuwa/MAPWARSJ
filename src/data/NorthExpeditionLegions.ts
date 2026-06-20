@@ -58,8 +58,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   shanrong: { name: '山戎突骑', tier: 2 },      // 无终·齐桓公伐山戎
   pingyuan: { name: '平原义军', tier: 1 },      // 平原·颜真卿首倡义兵
   dada_ming: { name: '度辽营', tier: 2 },          // 河套·东汉度辽将军部
-  xiezhou: { name: '解县弩手', tier: 3 },       // 安邑·解县弩手
-
+  
   // ── 2026-06-18 自东北文件迁回
   jinzhou: { name: '辽东铁骑', tier: 2 },     // 徒河·李成梁辽东骑兵（§3 #6）
   zu_d: { name: '关宁铁骑', tier: 1 },       // 宁远·祖大寿（原T0降级，防御战）

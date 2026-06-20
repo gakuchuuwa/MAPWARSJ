@@ -49,7 +49,6 @@ export const FACTIONS: Faction[] = [
     { id: 'zhong', name: '寿州' },
     { id: 'xichu', name: '西楚' },
     { id: 'weihaiwei', name: '威海' },
-    { id: 'xiezhou', name: '解州' },
     { id: 'shang', name: '商国' },
     { id: 'zhou', name: '周国' },
     
@@ -117,7 +116,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xie_cj_d', name: '信州' },
     // 金黄 - 春申黄氏
     { id: 'yue_d', name: '岳氏' },
-    { id: 'qian_d', name: '钱氏' },
+    { id: 'qian_d', name: '秀州' },
     { id: 'kong_d', name: '孔氏' },
     { id: 'cao_d', name: '曹氏' },
     { id: 'jiujiang', name: '柴桑' },       // 橄榄 - 柴桑/浔阳(九江郡)
@@ -155,7 +154,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'chile', name: '敕勒' },
     { id: 'rouran', name: '柔然' },
-    { id: 'baishui', name: '白水郡' },
+    { id: 'baishui', name: '白龙江' },
     { id: 'baiji', name: '百济' },
     { id: 'tubo', name: '吐蕃' },
     { id: 'tujue', name: '突厥' },
@@ -1002,4 +1001,6 @@ export const FACTIONS: Faction[] = [
     { id: 'shanshan', name: '鄯善' },
     { id: 'wenling', name: '温陵' },
     { id: 'qianzhou', name: '乾州' },
+    { id: 'wuyue', name: '吴越' },
+    { id: 'xiyuduhu', name: '西域都护' },
 ];
