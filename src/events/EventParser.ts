@@ -2260,7 +2260,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
     // ── 2026-05-28 新增：工布(江达宗) ──
     // [2026-05-29] 原 gongbu 势力已删, 暂归叛军
     // ── 2026-05-28 新增：果洛(花石峡)、察哈尔(多伦) ──
-    { id: 'city_huashixia', name: '花石峡', factionId: 'heyuan_d', lat: 35.196235, lng: 98.907166, type: 'pass', region: 'TIBET', troops: 10000, mirror: true, note: '青藏东线隘口；隋河源郡积石镇屯田区（刘权《隋书·刘权传》）' },
+    { id: 'city_huashixia', name: '花石峡', factionId: 'heyuan_d', lat: 35.196235, lng: 98.907166, type: 'pass', region: 'TIBET', troops: 10000, mirror: true, note: '黑齿常之河源军大破吐蕃' },
 
     // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
     { id: 'city_wendeng', name: '文登', factionId: 'weihaiwei', lat: 37.2, lng: 122.05, type: 'small_city', region: 'NORTH', troops: 10000, note: '苏定方东征神灭军' } ];

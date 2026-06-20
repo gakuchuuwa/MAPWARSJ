@@ -37,7 +37,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   jinchuan_g: { name: '金川土司兵', tier: 3 },
   golog: { name: '果洛游骑', tier: 3 },
   xihai_d: { name: '威定戍卒', tier: 3 },     // 伏俟城·隋西海郡属县戍兵（郡治无专将）
-  heyuan_d: { name: '积石屯骑', tier: 1 },     // 花石峡·刘权河源积石镇屯田（《隋书·刘权传》）
+  heyuan_d: { name: '河源军', tier: 1 },        // 花石峡·黑齿常之河源军大破吐蕃
   monpa: { name: '门巴勇士', tier: 2 },  // 错那·梅惹·洛珠嘉措归附达赖
   lopi: { name: '珞巴武士', tier: 3 },
   humi: { name: '瓦罕弓骑', tier: 3 },

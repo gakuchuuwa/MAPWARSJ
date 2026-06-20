@@ -35,7 +35,7 @@ export interface FactionGeneral {
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     qin: { generalId: 'baiqi', generalName: '白起', portrait: '/assets/qin/baiqi.png' },
     tang: { generalId: 'lishimin', generalName: '李世民', portrait: '/assets/zhongyuan/lisheng.png' },
-    wuzhou_d: { generalId: 'liduozuo', generalName: '李多祚', portrait: '/assets/wuzhou/liduozuo.png' },
+    wuzhou_d: { generalId: 'wangxiaojie', generalName: '王孝杰', portrait: '/assets/wuzhou/liduozuo.png' },
         ming_d: { generalId: 'yuqian', generalName: '于谦', portrait: '/assets/daming/yuqian.png' },
     jinling: { generalId: 'tandaoji', generalName: '檀道济', portrait: '/assets/jiangnan/tandaoji.png' },
     guangzhou: { generalId: 'liuyin', generalName: '刘隐', portrait: '/assets/lingnan/liuyin.png' },
@@ -298,7 +298,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     loulan: { generalId: 'suojie', generalName: '索劼', portrait: '/assets/zhongya/CENTRAL_ASIA_garrison.png' },
         juandu: { generalId: 'peixingjian', generalName: '裴行俭', portrait: '/assets/zhongya/peixingjian.png' },
     dulan: { generalId: 'dashibatuer', generalName: '达什巴图尔', portrait: '/assets/tubo/dashibatuer.png' },
-    heyuan_d: { generalId: 'liuquan', generalName: '刘权', portrait: '/assets/liuhan/870c8498-a8c9-4925-95bf-323b7cc4f72c.png' },
+    heyuan_d: { generalId: 'heichichangzhi', generalName: '黑齿常之', portrait: '/assets/tubo/heichichangzhi.png' },
     // 克里雅/赤斤/西宁/卡伦/果洛 宁缺毋滥
 
 // ── 青藏区 2026-06-18 ──
@@ -643,7 +643,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     heng: { generalId: 'hetengjiao', generalName: '何腾蛟', portrait: '/assets/jiangnan/hetengjiao.png' },
     xushouhui: { generalId: 'zhaopusheng', generalName: '赵普胜', portrait: '/assets/jiangnan/zhaopusheng.png' },
     sui: { generalId: 'yangzhong', generalName: '杨忠', portrait: '/assets/jiangnan/yangzhong.png' },
-    changshaguo: { generalId: 'mayin', generalName: '马殷', portrait: '/assets/jiangnan/mayin.png' },
+    changshaguo: { generalId: 'xinqiji', generalName: '辛弃疾', portrait: '/assets/jiangnan/xinqiji.png' },
     yue_d: { generalId: 'yuefei', generalName: '岳飞', portrait: '/assets/jiangnan/yuefei.png' },
     zhangshicheng: { generalId: 'zhangshicheng', generalName: '张士诚', portrait: '/assets/jiangnan/zhangshicheng.png' },
     wu: { generalId: 'sunwu', generalName: '孙武', portrait: '/assets/jiangnan/sunwu.png' },
