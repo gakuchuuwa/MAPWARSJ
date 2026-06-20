@@ -84,7 +84,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jie': '羯',
     'beidi': '北地',
     'tuoba': '拓跋',
-    'yuwen': '饶',     // 饶乐水·宇文鲜卑（原武川镇）
+    'yuwen': '宇文',
 'liang_d': '梁',
     'chen': '陈',
     'sui': '随',
@@ -272,7 +272,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dongxia': '东夏',
 'chagatai': '察合',
     'ogodei': '窝阔',
-    'kereyid': '烈',   // 特尔门·克烈部王汗
+    'kereyid': '克烈',
     'naiman': '乃蛮',
     'tatar': '塔塔',
     'merkit': '蔑儿',
@@ -836,5 +836,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'nuoyan_d': '赛',   // 赛音山达·赛音诺颜部
     'wuli_d': '扎',     // 扎布汗·乌里雅苏台
     'jiluo_d': '涿',    // 涿邪山·窦宪出涿邪
+    'changli_d': '昌黎', // 饶乐水·昌黎郡
+    'heisha_d': '黑沙',  // 特尔门·漠北黑沙境
 };
     

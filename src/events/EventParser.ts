@@ -1191,7 +1191,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_almaliq', name: '弓月城', factionId: 'geluolu', lat: 43.979013, lng: 79.648132, type: 'small_city', region: 'STEPPE', troops: 10000, mirror: true },
     { id: 'city_emil', name: '也迷里', factionId: 'ogodei', lat: 46.481378, lng: 83.633423, type: 'small_city', region: 'STEPPE', troops: 10000, note: '草原环线锚点；环线所称也迷离即本据点' },
     // 第三类：蒙古草原部落
-    { id: 'city_kereyid', name: '汪吉河', factionId: 'panjun', lat: 46.600064, lng: 104.570618, type: 'small_city', region: 'STEPPE', troops: 10000, note: '克烈部汪吉河牧地；克烈旗号迁特尔门' },
+    { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'small_city', region: 'STEPPE', troops: 10000 },
     { id: 'city_naiman', name: '阿尔泰', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'pass', region: 'STEPPE', troops: 10000 },
     { id: 'city_fuhai', name: '福海', factionId: 'naiman', lat: 47.03645, lng: 87.352295, type: 'small_city', troops: 10000 },
     { id: 'city_tatar', name: '哈拉哈河', factionId: 'tatar', lat: 47.182253, lng: 117.726746, type: 'small_city', troops: 10000 },
@@ -1562,14 +1562,14 @@ export const RESTORED_CITIES: CityDataV2[] = [
     {
         id: 'city_raoleshui',
         name: '饶乐水',
-        factionId: 'yuwen',
+        factionId: 'changli_d',
         lat: 43.27, lng: 118.48,
         type: 'small_city',
         region: 'NORTHEAST',
         troops: 10000,
-        note: '西拉木伦河；宇文鲜卑核心活动区（《周书·文帝纪》）' },
+        note: '西拉木伦河（饶乐水）；昌黎郡旧境，宇文/慕容鲜卑源流（《周书·文帝纪》）' },
     // ── 武川镇 ──
-    { id: 'city_wuchuanzhen', name: '武川镇', factionId: 'panjun', lat: 41.2661, lng: 111.1322, type: 'pass', region: 'STEPPE', troops: 10000, note: '北魏六镇武川；宇文氏祖地；宇文旗号迁饶乐水' },
+    { id: 'city_wuchuanzhen', name: '武川镇', factionId: 'yuwen', lat: 41.2661, lng: 111.1322, type: 'pass', region: 'STEPPE', troops: 10000, note: '北魏六镇之武川镇；宇文氏祖地；沙苑之战（537）宇文泰以少胜多之战主将' },
 
 
     // ── 新增关隘（2026-05-26） ──
@@ -2022,7 +2022,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', region: 'KOREA', troops: 10000, note: '引爆威化岛回军，终结高丽王朝命脉' },
     { id: 'city_saiyinshanda', name: '薛灵哥', factionId: 'wuliangha', lat: 49.437762, lng: 101.428528, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '兀良哈部故地；者勒蔑' },
     { id: 'city_saiyinsanda', name: '赛音山达', factionId: 'nuoyan_d', lat: 44.8870, lng: 110.1407, type: 'pass', region: 'STEPPE', troops: 10000, note: '赛音诺颜部牧地；喀尔喀中路（《清史稿·藩部传》）' },
-    { id: 'city_temermen', name: '特尔门', factionId: 'kereyid', lat: 48.7386, lng: 97.8387, type: 'small_city', region: 'STEPPE', troops: 10000, note: '土拉河支流；克烈部王汗冬营地（《元史·太祖纪》）' },
+    { id: 'city_temermen', name: '特尔门', factionId: 'heisha_d', lat: 48.7386, lng: 97.8387, type: 'small_city', region: 'STEPPE', troops: 10000, note: '土拉河支流；漠北牧地，近后突厥黑沙道（与黑沙城同系北疆要冲）' },
     { id: 'city_yancheng2', name: '郾城', factionId: 'yanchuan_d', lat: 33.58, lng: 114.03, type: 'small_city', troops: 10000 },
     { id: 'city_xuanhu', name: '汝南', factionId: 'yuan_cj_d', lat: 33.01, lng: 114.36, type: 'medium_city', troops: 10000 },
     {

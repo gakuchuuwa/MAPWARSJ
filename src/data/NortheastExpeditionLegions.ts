@@ -26,6 +26,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   keerqin: { name: '达尔罕卫', tier: 3 },
   yehe: { name: '八面关骁骑', tier: 3 },
   xianbei: { name: '鲜卑弓骑', tier: 3 },   // 嘎仙洞·鲜卑弓骑（番号≤5字）
+  changli_d: { name: '鲜卑突骑', tier: 2 },  // 饶乐水·东汉鲜卑其至鞬部
   dongxia: { name: '东夏锐卒', tier: 3 },       // 曷苏馆·蒲鲜万奴东夏国
   haixi_nvzhen: { name: '海西重甲骑', tier: 3 },  // 辉发城·王台哈达部
   houliao: { name: '东辽骑队', tier: 2 },       // 咸平·耶律留哥东辽

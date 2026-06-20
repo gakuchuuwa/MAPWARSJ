@@ -31,7 +31,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   yada: { name: '悉万斤重甲', tier: 3 },
   jiazini: { name: '伽色尼古拉姆', tier: 1 },       // 哥疾宁·马哈茂德古拉姆
   gaofu: { name: '高附兵', tier: 3 },          // 喀布尔·喀布尔沙希兵
-  fanyanna: { name: '梵衍那僧兵', tier: 3 },      // 梵衍那城·兴都库什僧兵
+  fanyanna: { name: '梵衍那僧兵', tier: 2 },      // 巴米扬·梵衍那王率僧兵御大食
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
   maer_d: { name: '骆驼突骑', tier: 2 },        // 彭迪·萨珊东北边境骆驼骑兵
   wugu_d: { name: '乌古斯弓骑', tier: 1 },      // 毡的·乌古斯复合弓骑

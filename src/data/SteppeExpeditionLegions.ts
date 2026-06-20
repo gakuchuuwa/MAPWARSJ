@@ -33,7 +33,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   kumo: { name: '楮特奥隗部', tier: 3 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
   kelie: { name: '札合骁骑', tier: 3 },         // 都尉溷河·札合敢不克烈支系
-  kereyid: { name: '克烈护卫军', tier: 2 },     // 特尔门·王汗克烈部（原汪吉河）
+  kereyid: { name: '克烈护卫军', tier: 2 },     // 汪吉河·王汗克烈部
   dingling: { name: '丁零游骑', tier: 2 }, // 贝加尔·丁零王
   xiajiasi: { name: '黠戛斯锐卒', tier: 3 },
   donghu: { name: '东胡骑', tier: 2 },    // 巴彦乌拉·东胡王
@@ -42,7 +42,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tatar: { name: '塔塔儿死士', tier: 3 },
   merkit: { name: '蔑儿乞猎骑', tier: 3 },
   chahar: { name: '察哈尔八旗', tier: 2 },
-  yuwen: { name: '武川镇军', tier: 0 },     // 饶乐水·537沙苑宇文泰以少胜多（番号随宇文旗号迁）
+  yuwen: { name: '武川镇军', tier: 0 },     // 武川镇·537沙苑之战宇文泰以少胜多（《周书·宇文泰传》）
   da_yuan: { name: '北元怯薛', tier: 2 },
   huyan: { name: '呼衍精骑', tier: 3 },
   yujiulu: { name: '郁久闾王骑', tier: 2 },
@@ -84,4 +84,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   nuoyan_d: { name: '漠北驿骑', tier: 3 },      // 赛音山达·清代大漠驿站护军
   wuli_d: { name: '喀尔喀劲骑', tier: 2 },      // 扎布汗·乌里雅苏台喀尔喀骑兵
   jiluo_d: { name: '燕然突骑', tier: 2 },       // 涿邪山·窦宪出涿邪突击骑
+  heisha_d: { name: '黑沙射雕者', tier: 2 },    // 特尔门·匈奴射雕扈从（漠北黑沙系）
 };

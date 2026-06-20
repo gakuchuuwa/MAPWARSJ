@@ -953,6 +953,8 @@ export const FACTIONS: Faction[] = [
     { id: 'nuoyan_d', name: '诺颜' },              // 赛音山达·赛音诺颜部
     { id: 'wuli_d', name: '乌里' },                // 扎布汗·乌里雅苏台辖区
     { id: 'jiluo_d', name: '稽落' },               // 涿邪山·窦宪出稽落/涿邪
+    { id: 'changli_d', name: '昌黎' },             // 饶乐水·昌黎郡/西拉木伦河鲜卑区
+    { id: 'heisha_d', name: '黑沙' },              // 特尔门·漠北黑沙/后突厥境
   { id: 'sanada_d', name: '真田氏' },
     { id: 'wuzhou', name: '武州' },
     { id: 'bailong', name: '白龙' },

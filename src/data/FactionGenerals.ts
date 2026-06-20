@@ -169,6 +169,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     nuoyan_d: { generalId: 'sanyinnuoyan', generalName: '三音诺颜', portrait: '/assets/caoyuan/CENTRAL_ASIA_garrison.png' },
     wuli_d: { generalId: 'celeng', generalName: '策楞', portrait: '/assets/caoyuan/CENTRAL_ASIA_garrison.png' },
     jiluo_d: { generalId: 'chenxin', generalName: '陈忻', portrait: '/assets/caoyuan/CENTRAL_ASIA_garrison.png' },
+    changli_d: { generalId: 'qizhijian', generalName: '其至鞬', portrait: '/assets/dongbei/CENTRAL_ASIA_garrison.png' },
+    heisha_d: { generalId: 'houlilu', generalName: '呴犁湖', portrait: '/assets/caoyuan/CENTRAL_ASIA_garrison.png' },
     // 马盂山·奚族 宁缺毋滥
 // ── 草原区 2026-06-18 ──
     liao_d: { generalId: 'yelvabaoji', generalName: '阿保机', portrait: '/assets/caoyuan/yelvabaoji.png' },
@@ -505,7 +507,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     weiming: { generalId: 'lijiaqian', generalName: '李继迁', portrait: '/assets/hexi/lijiaqian.png' },
     helian: { generalId: 'helianbobo', generalName: '赫连勃勃', portrait: '/assets/hexi/helianbobo.png' },
     chile: { generalId: 'hulvjin', generalName: '斛律金', portrait: '/assets/hexi/hulvjin.png' },
-    chijin: { generalId: 'yuezhongqi', generalName: '岳钟琪', portrait: '/assets/bashu/yuezhongqi.png' },
+    chijin: { generalId: 'qiewangshijia', generalName: '且旺失加', portrait: '/assets/hexi/qiewangshijia.png' },
     juyan_d: { generalId: 'liling', generalName: '李陵', portrait: '/assets/hexi/9559f55f-f639-4458-aae6-efaa1501714d.png' },
     shuofang: { generalId: 'weiqing', generalName: '卫青', portrait: '/assets/hexi/weiqing.png' },
     yeli: { generalId: 'yeliwangrong', generalName: '野利旺荣', portrait: '/assets/hexi/yeliwangrong.png' },
@@ -698,7 +700,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     chen2: { generalId: 'zhaofan', generalName: '赵范', portrait: '/assets/lingnan/zhaofan.png' },
     qian: { generalId: 'songjingyang', generalName: '宋景阳', portrait: '/assets/lingnan/songjingyang.png' },
     qinghai: { generalId: 'yuezhongqi', generalName: '岳钟琪', portrait: '/assets/bashu/yuezhongqi.png' },
-    keliya: { generalId: 'yuchiyao', generalName: '尉迟曜', portrait: '/assets/tubo/yuchiyao.png' },
     jiashi: { generalId: 'lixuance', generalName: '李玄策', portrait: '/assets/tubo/lixuance.png' },
     yangtong: { generalId: 'chisongdezan', generalName: '赤松德赞', portrait: '/assets/tubo/chisongdezan.png' },
     monpa: { generalId: 'meireiluozhujiacuo', generalName: '梅惹·洛珠嘉措', portrait: '/assets/tubo/meireiluozhujiacuo.png' },

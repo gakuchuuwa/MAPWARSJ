@@ -713,6 +713,8 @@ const _FIXED: Record<string, string> = {
     nuoyan_d: '#5A6850', // 诺颜·喀尔喀青灰
     wuli_d: '#485868', // 乌里·军台靛灰
     jiluo_d: '#6A5840', // 稽落·燕然土黄
+    changli_d: '#507858', // 昌黎·辽西松漠青
+    heisha_d: '#3A3848', // 黑沙·漠北玄灰
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

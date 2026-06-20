@@ -461,6 +461,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     sanyinnuoyan: { generalId: 'sanyinnuoyan', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 赛音诺颜部
     celeng: { generalId: 'celeng', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 定边左副将军乌里雅苏台
     chenxin: { generalId: 'chenxin', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 出涿邪山破北匈奴
+    qizhijian: { generalId: 'qizhijian', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 东汉鲜卑大人寇边
+    houlilu: { generalId: 'houlilu', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 匈奴右贤王自立单于
     apakhoja: { generalId: 'apakhoja', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 白山派领袖据守休循
     fanyanna_wang: { generalId: 'fanyanna_wang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 梵衍那王率僧兵御大食
     kangju_wang: { generalId: 'kangju_wang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 康居王驻康卡结盟郅支
