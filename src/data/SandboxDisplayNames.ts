@@ -39,7 +39,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhancheng': '占城',
     'monong': '墨侬',
     'shuizhen': '水真',
-    'yueyi': '越',
+    'yueyi': '夷',
     'wala': '瓦剌',
     'wuliangha': '兀良哈',
     'dingling': '丁零',
@@ -218,7 +218,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'lu': '庐',
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
-    'zhuozhou': '范阳', // 范阳·避涿邪山旗号涿 §4.1
+    'zhuozhou': '燕', // 范阳·避涿邪山旗号涿 §4.1
     'tujia_d': '土家',
     'zhuang_d': '壮',
     'xibo_d': '锡伯',
@@ -253,7 +253,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'luodian': '罗甸',
 
     // ── 2026-05-25 北宋辽金势力 ──
-    'gusiluo': '唃厮',
     'goryeo': '高丽',
 'nongzhigao': '邕',
     'fangla': '方',
@@ -836,11 +835,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'nuoyan_d': '赛',   // 赛音山达·赛音诺颜部
     'wuli_d': '扎',     // 扎布汗·乌里雅苏台
     'jiluo_d': '涿',    // 涿邪山·窦宪出涿邪
-    'changli_d': '昌黎', // 饶乐水·昌黎郡
     'heisha_d': '黑沙',  // 特尔门·漠北黑沙境
     // ── Phase 1 Missing Flags ──
-    'zasagtu': '札',
-    'kumoxi': '奚',
+    'kumoxi': '库',
     'haikou': '寇',
     'shanshan': '鄯',
+    guiyi: '归',
 };

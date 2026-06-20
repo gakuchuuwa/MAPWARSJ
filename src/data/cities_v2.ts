@@ -1296,10 +1296,10 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 47.92, lng: 106.84, type: 'small_city', troops: 10000 },
     { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'small_city', region: 'STEPPE', troops: 10000, note: '清代锡伯营西迁戍边；伊犁将军辖区' },
     { id: 'city_yadong', name: '卓木', factionId: 'gaxa', lat: 28.243709, lng: 89.376526, type: 'small_city', troops: 10000 },
-    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', troops: 10000, mirror: true },//镜像 },
+    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', troops: 10000, mirror: true }, // 镜像
     {
         id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_x',
-        lat: 31.00, lng: 102.40, type: 'pass', troops: 10000, mirror: true },//镜像 },
+        lat: 31.00, lng: 102.40, type: 'pass', troops: 10000, mirror: true }, // 镜像
     {
         id: 'city_zhaoqing', name: '肇庆', factionId: 'duanzhou_d',
         lat: 23.05, lng: 112.45, type: 'small_city', troops: 10000, region: 'LINGNAN', note: '端州治；马暨统摧锋军抗元（1278）' },
@@ -1565,7 +1565,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
     {
         id: 'city_raoleshui',
         name: '饶乐水',
-        factionId: 'changli_d',
+        factionId: 'kumoxi',
         lat: 43.27, lng: 118.48,
         type: 'small_city',
         region: 'STEPPE',
@@ -1672,7 +1672,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
         troops: 10000 },
 
     // ── 2026-05-27 新增：烧当(玛曲) ──
-    { id: 'city_maqu', name: '玛曲', factionId: 'gusiluo', lat: 34.309295, lng: 101.513672, type: 'small_city', troops: 10000, note: '河曲玛曲；唃厮啰青唐政权南界（《宋史·吐蕃传》）' },
+    { id: 'city_maqu', name: '玛曲',
+        factionId: 'shaodang', lat: 34.309295, lng: 101.513672, type: 'small_city', troops: 10000, note: '河曲玛曲；唃厮啰青唐政权南界（《宋史·吐蕃传》）' },
 
     // ── 2026-05-27 新增：叛军(古严关)、盘瑶(贺州)、马楚(麦岭关)、排瑶(连州)、士(广信)、蒋(永州) ──
     {
@@ -1887,7 +1888,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shizhu', name: '石柱', factionId: 'tujia_d', lat: 30.000000, lng: 108.110000, type: 'small_city', region: 'BASHU', troops: 10000, note: '秦良玉土司衙门；白杆兵成军出库地（川东近乡，不取辽东浑河）' },
     { id: 'city_bijie', name: '毕节', factionId: 'shuixi', lat: 27.302000, lng: 105.285000, type: 'small_city', region: 'BASHU', troops: 10000, note: '水西安氏土司治所；罗罗兵（奢香/安邦彦）' },
     { id: 'city_tianyang', name: '田阳', factionId: 'zhuang_d', lat: 23.720000, lng: 106.650000, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地' },
-    { id: 'city_jingkou', name: '濡须口', factionId: 'wuwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', troops: 10000, mirror: true },//镜像, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
+    { id: 'city_jingkou', name: '濡须口', factionId: 'wuwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', troops: 10000, mirror: true, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.220000, lng: 115.040000, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '冉魏迁巨鹿；黎阳过密冀南' },
     { id: 'city_ningyuan', name: '宁远', factionId: 'zu_d', lat: 40.618000, lng: 120.720000, type: 'small_city', region: 'NORTH', troops: 10000, note: '关宁铁骑，祖大寿宁远卫（今兴城）' },
 
@@ -2024,7 +2025,8 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-06-18 新增：赛音山达（漠东隘口，叛军旗）──
     { id: 'city_saiyinsanda', name: '赛音山达', factionId: 'nuoyan_d', lat: 44.8870, lng: 110.1407, type: 'pass', region: 'STEPPE', troops: 10000, note: '赛音诺颜部牧地；喀尔喀中路（《清史稿·藩部传》）' },
     // ── 2026-06-19 特尔门·黑沙（草原）──
-    { id: 'city_temermen', name: '特尔门', factionId: 'zasagtu', lat: 48.7386, lng: 97.8387, type: 'small_city', region: 'STEPPE', troops: 10000, note: '土拉河支流；漠北牧地，近后突厥黑沙道（与黑沙城同系北疆要冲）' },
+    { id: 'city_temermen', name: '特尔门',
+        factionId: 'heisha_d', lat: 48.7386, lng: 97.8387, type: 'small_city', region: 'STEPPE', troops: 10000, note: '土拉河支流；漠北牧地，近后突厥黑沙道（与黑沙城同系北疆要冲）' },
     { id: 'city_yancheng2', name: '郾城', factionId: 'yanchuan_d', lat: 33.58, lng: 114.03, type: 'small_city', troops: 10000 },
     { id: 'city_xuanhu', name: '汝南', factionId: 'yuan_cj_d', lat: 33.01, lng: 114.36, type: 'medium_city', troops: 10000 },
     {

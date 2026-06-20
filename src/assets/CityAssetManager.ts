@@ -251,7 +251,6 @@ export class CityAssetManager {
         'luodian': '罗甸',
 
         'guazhou': '瓜',
-        'gusiluo': '唃厮',
         'goryeo': '高丽',
 'nongzhigao': '邕',
         'fangla': '方',

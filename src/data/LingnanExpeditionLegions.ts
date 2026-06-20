@@ -38,7 +38,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   leizhou: { name: '雷州戍兵', tier: 3 },        // 海康·李茂雷州卫
   monong: { name: '墨侬部卒', tier: 2 },       // 邦敦·阿侬率余部抗宋
   shuizhen: { name: '水真戍卒', tier: 3 },     // 三菩·区大任驻守
-  ketagalan: { name: '凯达格兰勇士', tier: 3 }, // 艋舺·台北原住民
+  ketagalan: { name: '凯达格兰兵', tier: 3 }, // 艋舺·台北原住民
   li_s: { name: '大汉伏波', tier: 1 },            // 合浦·马援征交趾（非以少胜多）
   shaozhou: { name: '大庾岭义旅', tier: 2 },   // 韶关·张镇孙抗元义军（1277–1278）
   guizhou: { name: '永历铁骑', tier: 1 },       // 古严关·李定国（原肇庆永历，2026-06-19 迁桂州）

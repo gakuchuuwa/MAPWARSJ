@@ -19,15 +19,15 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒
   zhuoshi: { name: '连弩士', tier: 3 },         // 临邛·诸葛连弩营
   tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛
-  shu: { name: '诸葛连弩', tier: 1 },           // 成都·诸葛亮连弩兵（蜀国）
-  yangzhou: { name: '无当飞军', tier: 1 },   // 兴势山·王平统率山地劲旅（洋州）
+  shu: { name: '元戎士', tier: 2 },           // 成都·诸葛亮连弩兵（蜀国）
+  yangzhou: { name: '无当飞军', tier: 0 },   // 兴势山·王平统率山地劲旅（洋州）
   shuixi: { name: '罗罗兵', tier: 3 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名
   chenghan: { name: '六夷突骑', tier: 2 },      // 鹿头关·§8 #9 成汉李特六夷铁骑
   daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
   ba: { name: '巴渝劲卒', tier: 1 },          // 重庆·巴国巴蔓子劲卒（《华阳国志·巴志》）
   hezhou: { name: '兴戎军', tier: 1 },          // 钓鱼城·王坚抗蒙毙蒙哥（防御战，降T1）
-  kui: { name: '白毦兵', tier: 1 },             // 白帝城·刘备白毦兵（夔州）
+  kui: { name: '白毦兵', tier: 0 },             // 白帝城·刘备白毦兵（夔州）
   qiuchi: { name: '武都部曲', tier: 3 },          // 仇池·杨氏世袭部曲（《宋书》杨难当拥部曲数万）
   // ── 2026-06-16 新增：4座西南名关 ──
   lizhou_d: { name: '蜀口守军', tier: 1 },        // 剑门关·吴玠移驻大散关（蜀口禁军）
@@ -52,9 +52,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
 qianzhong: { name: '乾嘉苗兵', tier: 1 },     // 芷江·吴八月攻克沅州
   dangchang: { name: '宕昌羌步', tier: 2 },   // 合川·梁弥定宕昌王
   liao: { name: '巴僚弩手', tier: 2 },        // 江阳·侯弘远僚人酋帅
-  sou: { name: '越巂叟兵', tier: 2 },         // 乐山·高定元叟族反蜀
-  huijun: { name: '回军义兵', tier: 2 },       // 偏刀水·杜文秀回民义军
-  qingqiang: { name: '青羌突骑', tier: 2 },    // 汶川·姜维青羌兵源
+  sou: { name: '越巂叟兵', tier: 2 },         // 乐山·高定元叟族反蜀  qingqiang: { name: '青羌突骑', tier: 2 },    // 汶川·姜维青羌兵源
   qingyi: { name: '青衣羌兵', tier: 2 },       // 严道·青衣羌活动区
   // ── 2026-06-18：武陵/叙永/慈利/秀山/房陵/珙县/来凤精锐 ──
   zhongxiang: { name: '钟相义军', tier: 1 },   // 武陵·钟相杨幺起义攻占州县（《宋史》）

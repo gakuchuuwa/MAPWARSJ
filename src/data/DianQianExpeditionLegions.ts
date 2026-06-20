@@ -34,11 +34,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   nanzhong: { name: '南中劲卒', tier: 1 },     // 宛温·马忠善射夷汉部曲
   yueyi: { name: '邛都戍', tier: 2 },         // 越嶲·焦璜戍守
 pingnan: { name: '平南戍军', tier: 1 },       // 腾越城·沐晟征讨麓川
-  jingdong: { name: '景东夷兵', tier: 1 },     // 银生城·陶洪屡退麓川
-  shanzu: { name: '麓川象阵', tier: 2 },       // 阿瓦·思机发退守
-  tonghai: { name: '通海节度兵', tier: 2 },     // 新兴·段俭魏通海都督
-  mengzu: { name: '孟族水师', tier: 2 },       // 直通城·摩奴哈孟族王
-  luohu: { name: '罗斛步卒', tier: 3 },        // 呵叻城·敢木丁驻守
+  jingdong: { name: '景东夷兵', tier: 1 },     // 银生城·陶洪屡退麓川  luohu: { name: '罗斛步卒', tier: 3 },        // 呵叻城·敢木丁驻守
   kunming_yi: { name: '昆明夷兵', tier: 1 },   // 会川·卤承斩哀牢王封侯
   taiyuan: { name: '兰纳锐卒', tier: 1 },      // 清坎城·芒莱王征服南奔开创兰纳
   baiman: { name: '白蛮甲士', tier: 1 },       // 威楚·高升泰平杨义贞复大理

@@ -26,7 +26,6 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   keerqin: { name: '达尔罕卫', tier: 3 },
   yehe: { name: '八面关骁骑', tier: 3 },
   xianbei: { name: '鲜卑弓骑', tier: 3 },   // 嘎仙洞·鲜卑弓骑（番号≤5字）
-  changli_d: { name: '鲜卑突骑', tier: 2 },  // 饶乐水·东汉鲜卑其至鞬部
   dongxia: { name: '东夏锐卒', tier: 3 },       // 曷苏馆·蒲鲜万奴东夏国
   haixi_nvzhen: { name: '海西重甲骑', tier: 3 },  // 辉发城·王台哈达部
   houliao: { name: '东辽骑队', tier: 2 },       // 咸平·耶律留哥东辽
@@ -36,7 +35,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   heishui: { name: '黑水锐卒', tier: 3 },        // 拉哈苏苏·黑水靺鞨
   dawoer: { name: '达斡尔骑', tier: 3 },         // 莫尔根·清代黑龙江将军辖区
   mohe: { name: '粟末劲卒', tier: 3 },
-  ewenki: { name: '石勒喀河猎兵', tier: 3 },   // 尼布楚·博木博果尔鄂温克
+  ewenki: { name: '石勒喀猎兵', tier: 3 },   // 尼布楚·博木博果尔鄂温克
   dazhen: { name: '女真拐子马', tier: 2 },   // 恤品·完颜铁哥大真国
   yeren_nvzhen: { name: '瑷珲索伦兵', tier: 2 }, // 瑷珲·博克雅克萨之战（索伦营已属suolun）
   wuji: { name: '勿吉步卒', tier: 2 },            // 伯都·乙力支朝贡北魏
@@ -47,9 +46,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   maomingan: { name: '阿穆尔猎兵', tier: 3 },       // 格尔必齐·根特木尔达斡尔
   jilimi: { name: '吉里迷水师', tier: 3 },        // 囊哈儿·奴儿干吉里迷
   eluoke: { name: '鄂罗克猎兵', tier: 3 },        // 诺托罗·库页岛北部
-  nifuhe: { name: '尼夫赫冰上兵', tier: 3 },      // 盆奴里·黑龙江口
+  nifuhe: { name: '尼夫赫冰兵', tier: 3 },      // 盆奴里·黑龙江口
   feiyaka: { name: '费雅喀猎手', tier: 3 },       // 普禄·库页岛西岸
   nanai: { name: '赫哲快桨船', tier: 3 },         // 瓦伦·黑龙江中游
-  dongping: { name: '东平戍卒', tier: 3 },        // 锡尔喀·金代东平府
-    kumoxi: { name: '奚族轻骑', tier: 3 },
-};
+  dongping: { name: '东平戍卒', tier: 3 },        // 锡尔喀·金代东平府};

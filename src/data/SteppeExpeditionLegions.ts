@@ -30,6 +30,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   wala: { name: '瓦剌铁骑', tier: 2 },         // 博尔巴任·也先瓦剌（§6 #12）
   geluolu: { name: '葛逻禄背弓', tier: 2 },    // 弓月城·三姓葛逻禄
   // 那可儿除名（与那可儿军重复）
+  kumoxi: { name: '奚人游骑', tier: 3 },  // 饶乐水·库莫奚本部
   kumo: { name: '楮特奥隗部', tier: 3 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
   kelie: { name: '札合骁骑', tier: 3 },         // 都尉溷河·札合敢不克烈支系
@@ -69,21 +70,20 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   pulei: { name: '蒲类戍卒', tier: 3 },         // 巴里坤·蒲类国故地
   chechen: { name: '车臣汗骑', tier: 3 },       // 巴彦图门·车臣汗硕垒
   zhuerqi: { name: '斡难河骑', tier: 3 },       // 斡难河·撒察别乞
-  tumengken: { name: '赛音诺颜旗骑', tier: 2 },  // 拜达里克·图蒙肯抗卫拉特
+  tumengken: { name: '赛音诺颜骑', tier: 2 },  // 拜达里克·图蒙肯抗卫拉特
   bayegu: { name: '拔野古轻骑', tier: 2 },       // 稽落山·屈利失助唐灭薛延陀
   zubu: { name: '阻卜轻骑', tier: 2 },           // 特尔浑·磨古斯叛辽
   wuzhumuqin: { name: '乌珠穆沁骑', tier: 2 },    // 乌珠穆沁·多尔济随征噶尔丹
-  xingan: { name: '呼伦贝尔索伦兵', tier: 3 },   // 哈拉盖图·卡伦驻防
+  xingan: { name: '呼伦索伦兵', tier: 3 },   // 哈拉盖图·卡伦驻防
   baidi: { name: '白狄徒兵', tier: 3 },          // 集宁·春秋白狄部落
   shiwei: { name: '室韦猎骑', tier: 3 },         // 俱轮泊·室韦都督府部众
   sunite: { name: '苏尼特骑', tier: 3 },         // 赛汉塔拉·苏尼特旗武装
-  bulat: { name: '布拉特打牲兵', tier: 3 },      // 石勒喀河·布里亚特归附清朝
+  bulat: { name: '布拉特猎兵', tier: 3 },      // 石勒喀河·布里亚特归附清朝
   tuva: { name: '唐努旗兵', tier: 3 },           // 唐努·唐努乌梁海驻防
   // ── 2026-06-19 新增：漠北/漠南要塞精锐 ──
   chenli_d: { name: '祭天戍', tier: 3 },        // 姑衍山·匈奴祭天戍卒
   nuoyan_d: { name: '漠北驿骑', tier: 3 },      // 赛音山达·清代大漠驿站护军
   wuli_d: { name: '喀尔喀劲骑', tier: 2 },      // 扎布汗·乌里雅苏台喀尔喀骑兵
+  heisha_d: { name: '黑沙精骑', tier: 3 },  // 特尔门·后突厥黑沙道
   jiluo_d: { name: '燕然突骑', tier: 2 },       // 涿邪山·窦宪出涿邪突击骑
-  heisha_d: { name: '黑沙射雕者', tier: 2 },    // 特尔门·匈奴射雕扈从（漠北黑沙系）
-    zasagtu: { name: '札萨克图骑兵', tier: 3 },
 };

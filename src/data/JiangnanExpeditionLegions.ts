@@ -27,22 +27,22 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   min: { name: '闽国亲从', tier: 3 },        // 冶城·王审知闽国亲从
   quanzhou: { name: '清源军', tier: 1 },        // 刺桐·留从效清源军
   chen: { name: '建康水军', tier: 3 },       // 清远·陈霸先水师
-  xiao_d: { name: '白袍军', tier: 0 },       // 兰陵·陈庆之七千白袍四十七战全胜（《梁书》）
+  xiao_d: { name: '白袍军', tier: 1 },       // 兰陵·陈庆之七千白袍四十七战全胜（《梁书》）
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
       xiangzhou: { name: '荆鄂都统司', tier: 1 },     // 襄阳·京湖战区
   zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
   song: { name: '殿前护圣军', tier: 1 },   // 临安·杨沂中殿前护圣军（宋国）
-  sizhou: { name: '克敌军', tier: 0 },       // 淮安·韩世忠大仪镇大捷以少胜多（泗州）
+  sizhou: { name: '克敌军', tier: 1 },       // 淮安·韩世忠大仪镇大捷以少胜多（泗州）
   qian_d: { name: '游奕军', tier: 2 },       // 嘉兴·§9 #13 踏白游奕（岳飞系）
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
-  jiujiang: { name: '九江劲卒', tier: 2 },     // 六安·英布九江王封地
+  jiujiang: { name: '九江锐卒', tier: 2 },     // 六安·英布九江王封地
   fangla: { name: '圣公兵', tier: 1 },         // 睦州·方腊圣公起义克六州
   fang_guozhen: { name: '浙东舟师', tier: 3 }, // 庆元·方国珍浙东割据水师
   ruochu: { name: '若敖六卒', tier: 1 },       // 竟陵·楚若敖氏精锐（《左传》）
   mi_chu: { name: '左广右广', tier: 2 },       // 云梦·楚庄王亲兵（《左传·宣公》）
   heng: { name: '衡州义军', tier: 3 },         // 临烝·何腾蛟南明衡州抗清
   yezongliu: { name: '矿工义军', tier: 3 },     // 丽水·叶宗留矿工起义
-  jinan: { name: '济南守城义军', tier: 1 },   // 历下·铁铉固守济南屡挫朱棣
+  jinan: { name: '济南守军', tier: 1 },   // 历下·铁铉固守济南屡挫朱棣
   wu: { name: '句吴利趾', tier: 1 },        // 阊门·孙武句吴利趾
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
   xushouhui: { name: '红巾军', tier: 2 },    // 蕲春·元末徐寿辉天完红巾主力
@@ -70,7 +70,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   liu: { name: '九江劲卒', tier: 1 },            // 六安·英布九江王封地
   chimei: { name: '赤眉军', tier: 1 },  // 莒城·樊崇起兵攻入长安灭新莽
   chunshen: { name: '申江戍卒', tier: 3 },  // 上海·春申君黄歇封地戍卒
-  wang_d: { name: '琅琊王氏部曲', tier: 2 },  // 琅琊·王导东晋开国丞相
+  wang_d: { name: '琅琊部曲', tier: 2 },  // 琅琊·王导东晋开国丞相
   jiaodong: { name: '火牛阵死士', tier: 1 },  // 即墨·田单火牛阵大破燕军（《史记》）
   guo: { name: '果州戍兵', tier: 3 },  // 南充·唐果州戍兵
   zi: { name: '资州戍兵', tier: 3 },  // 盘石·唐资州戍兵

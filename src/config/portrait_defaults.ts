@@ -391,7 +391,6 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'gongbu': _tuboPortraitPool,
     'guangwu': _tuboPortraitPool,
     'guge': _tuboPortraitPool,
-    'gusiluo': _tuboPortraitPool,
     'hor': _tuboPortraitPool,
     'humi': _tuboPortraitPool,
     'jiantang': _tuboPortraitPool,

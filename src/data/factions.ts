@@ -269,6 +269,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xueyantuo', name: '薛延陀' },
     { id: 'tujishi', name: '突骑施' },     // 巧克力色 - 突骑施汗国(碎叶川)
     { id: 'nanzhao', name: '南诏' },        // 南诏深红 - 南诏国(蒙舍城)
+    { id: 'nanzhong', name: '南中' },        // 南中(宛温·爨氏故地)
     // 西域沙金 - 高昌国(高昌壁)
     // 暗灰 - 黠戛斯(坚昆都督府)
     { id: 'xiaobolu', name: '勃律' },
@@ -282,7 +283,6 @@ export const FACTIONS: Faction[] = [
            // 紫霞紫 - 大理国(段思平 羊苴咩)
     { id: 'luodian', name: '罗甸' },        // 土褐 - 罗甸国(西南蛮 大方城)
     // ── 2026-05-26 北宋辽金势力 ──
-    { id: 'gusiluo', name: '唃厮啰' },      // 吐蕃金 - 唃厮啰政权(青唐城)
     { id: 'goryeo', name: '高丽' },            // 王氏高丽（开城）
     // 义军红 - 王则安阳政权(贝州)
     { id: 'nongzhigao', name: '大南' },
@@ -953,7 +953,6 @@ export const FACTIONS: Faction[] = [
     { id: 'nuoyan_d', name: '诺颜' },              // 赛音山达·赛音诺颜部
     { id: 'wuli_d', name: '乌里' },                // 扎布汗·乌里雅苏台辖区
     { id: 'jiluo_d', name: '稽落' },               // 涿邪山·窦宪出稽落/涿邪
-    { id: 'changli_d', name: '昌黎' },             // 饶乐水·昌黎郡/西拉木伦河鲜卑区
     { id: 'heisha_d', name: '黑沙' },              // 特尔门·漠北黑沙/后突厥境
   { id: 'sanada_d', name: '真田氏' },
     { id: 'wuzhou', name: '武州' },
@@ -971,7 +970,6 @@ export const FACTIONS: Faction[] = [
     { id: 'ssangseong', name: '双城' },
     { id: 'fu_zhou', name: '涪州' },
     // ── Phase 1 Missing Factions ──
-    { id: 'zasagtu', name: '札萨克图' },
     { id: 'kumoxi', name: '库莫奚' },
     { id: 'haikou', name: '海寇' },
     { id: 'shanshan', name: '鄯善' },

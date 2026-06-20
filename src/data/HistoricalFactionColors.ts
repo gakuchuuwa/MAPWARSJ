@@ -166,7 +166,6 @@ const _FIXED: Record<string, string> = {
 
     // ── 青藏精锐远征势力（2026-06-11；hex 全局唯一）──
     shaodang: '#8A7060', // 烧当·湟中义从羌（河湟褐）
-    gusiluo: '#6A8A78', // 唃厮啰·青唐甲骑（河湟青玉）
     tubo: '#4A2868', // 吐蕃·却杰军（雪域深紫）
     tuyu_d: '#5A9888', // 吐谷浑·青海骢（青海湖碧）
     xiangxiong: '#7A5848', // 象雄·武士（苯教铜褐）
@@ -207,7 +206,7 @@ const _FIXED: Record<string, string> = {
     zhong: '#4E7080', // 寿·北府兵（江淮青灰；寿州·谢玄）
     wuwu_d: '#6A8A7A', // 无为·濡须水畔州治
     xiangzhou: '#3E7858', // 襄·汉水哨船（襄阳治所）
-    zaoyang_d: '#4A6B3A', // 枣阳·忠顺军（孟珙）
+    zaoyang_d: '#507D40', // 枣阳·忠顺军（孟珙）
     sunwu_d: '#2878A0', // 孙吴·解烦兵（武昌蓝）
     qian_d: '#5888A8', // 钱·游奕军（吴越水蓝）
     heng: '#6A7858', // 衡州（临烝；无远征番号）
@@ -711,10 +710,48 @@ const _FIXED: Record<string, string> = {
     wuyuan_d: '#6A5A48', // 五原郡·长城土褐
     chenli_d: '#4A3848', // 撑犁·祭天玄紫
     nuoyan_d: '#5A6850', // 诺颜·喀尔喀青灰
-    wuli_d: '#485868', // 乌里·军台靛灰
-    jiluo_d: '#6A5840', // 稽落·燕然土黄
+    wuli_d: '#4D5D6D', // 乌里·军台靛灰
+    jiluo_d: '#6F5D45', // 稽落·燕然土黄
     changli_d: '#507858', // 昌黎·辽西松漠青
     heisha_d: '#3A3848', // 黑沙·漠北玄灰
+
+    zhengzhou: '#3F4F5F',
+    fengzhou: '#8A3B4C',
+    fushi: '#6E4D3A',
+    yangzhou: '#2E6B4A',
+    beidi: '#4F5A6B',
+    lanzhou: '#7C6D3A',
+    mino: '#213243',
+    haikou: '#263748',
+    ssangseong: '#2B3C4D',
+    chungju_d: '#304152',
+    naju_d: '#354657',
+    jingcheng_d: '#3A4B5C',
+    jilizhou: '#3F5061',
+    nuergan: '#445566',
+    ewenki: '#495A6B',
+    wuzhou: '#536475',
+    zasagtu: '#58697A',
+    bailong: '#5D6E7F',
+    kepantuo: '#627384',
+    xingxingxia: '#677889',
+    yangguan: '#6C7D8E',
+    wulianghai: '#718293',
+    shanshan: '#768798',
+    qinghai: '#7B8C9D',
+    xining: '#8091A2',
+    kalun: '#8596A7',
+    gar: '#8A9BAC',
+    hantawadi: '#8FA0B1',
+    nanzhong: '#94A5B6',
+    yueyi: '#99AABB',
+    guangping: '#9EAFC0',
+    wuling: '#A3B4C5',
+    yang_zhou: '#A8B9CA',
+    sizhou: '#ADBECF',
+    jinan: '#B2C3D4',
+    wenzhou: '#B7C8D9',
+    pinghai: '#BCCDDE',
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

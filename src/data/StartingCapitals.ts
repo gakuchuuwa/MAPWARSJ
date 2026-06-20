@@ -212,6 +212,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'hejian': 'city_wenan',
 'lu': 'city_hefei',
 'kumo': 'city_songmo',
+'kumoxi': 'city_raoleshui',
     'xijue': 'city_zhizhicheng',
     'xian_d': 'city_gaoliang',
     'xiqin': 'city_zhedi',
@@ -226,7 +227,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'dali': 'city_dali_city',
     'luodian': 'city_dafang',
 
-    'gusiluo': 'city_maqu',
+    
     'goryeo': 'city_kaesong',
 'nongzhigao': 'city_yongzhou',
     'fangla': 'city_qingxi',
@@ -741,7 +742,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'nuoyan_d': 'city_saiyinsanda',
     'wuli_d': 'city_zhabuhanjuntai',
     'jiluo_d': 'city_luhun',
-    'changli_d': 'city_raoleshui',
+    
     'heisha_d': 'city_temermen',
     'xining': 'city_mahaitai',
     'kalun': 'city_gasinaoer',
@@ -749,8 +750,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'guangping': 'city_donghai',
     'nanzhong': 'city_wanwen',
     'yueyi': 'city_yuegui',
-    'zasagtu': 'city_temermen',
-    'kumoxi': 'city_raoleshui',
     'haikou': 'city_diaoyudao',
     'shanshan': 'city_loulan',
+
 };

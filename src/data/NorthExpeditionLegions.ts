@@ -65,7 +65,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zu_d: { name: '关宁铁骑', tier: 1 },       // 宁远·祖大寿（原T0降级，防御战）
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
   liwang: { name: '河间突骑', tier: 1 },     // 乐成·李光弼河朔骑兵
-  hejian: { name: '白马义从', tier: 0 },      // 文安·公孙瓒幽州突骑河间大破黄巾（以少胜多）
+  hejian: { name: '白马义从', tier: 2 },      // 文安·公孙瓒幽州突骑河间大破黄巾（以少胜多）
   qu_d: { name: '先登死士', tier: 0 },       // 界桥·麴义破公孙瓒（192年）
   yang_aner: { name: '天顺红袄', tier: 1 },        // 蓬莱·杨安儿天顺红袄克登莱
   weihaiwei: { name: '东征水军', tier: 3 },    // 文登·张亮东征水军

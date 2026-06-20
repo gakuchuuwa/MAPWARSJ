@@ -43,5 +43,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   suzhou: { name: '骠骑郎卫', tier: 1 },  // 酒泉·霍去病骠骑将军麾下郎卫（河西出击）
   kang: { name: '梁国鹰扬', tier: 1 },              // 长泽·梁师都鹰扬郎将起兵建梁
   lushui: { name: '凉州义从胡', tier: 2 },          // 媪围·北宫伯玉卢水义从胡起兵凉州
-  woye: { name: '汉·朔方边军', tier: 2 },           // 临戎·皇甫规度辽将军驻朔方
+  woye: { name: '朔方边军', tier: 2 },           // 临戎·皇甫规度辽将军驻朔方
 };

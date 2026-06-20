@@ -29,7 +29,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   dayuzi: { name: '讹答剌卫队', tier: 3 },
   zhaowu: { name: '忽毡城武士', tier: 3 },
   yada: { name: '悉万斤重甲', tier: 3 },
-  jiazini: { name: '伽色尼古拉姆', tier: 1 },       // 哥疾宁·马哈茂德古拉姆
+  jiazini: { name: '伽色尼禁卫', tier: 1 },       // 哥疾宁·马哈茂德古拉姆
   gaofu: { name: '高附兵', tier: 3 },          // 喀布尔·喀布尔沙希兵
   fanyanna: { name: '梵衍那僧兵', tier: 2 },      // 巴米扬·梵衍那王率僧兵御大食
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
@@ -40,7 +40,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   shi_clan: { name: '石国胡兵', tier: 2 },       // 柘折城·莫贺咄吐屯御大食
   guzgan: { name: '古兹根卫队', tier: 3 },       // 法里亚布·古兹根戍卫
   badakhshan: { name: '达克边戍', tier: 3 },     // 法扎巴德·达克边防
-  kawusi: { name: '卡乌斯城防军', tier: 3 },     // 吉扎克·粟特要塞
+  kawusi: { name: '卡乌斯戍军', tier: 3 },     // 吉扎克·粟特要塞
   xianhai: { name: '咸海戍兵', tier: 3 },        // 养吉干·花剌子模北境
   wuhu: { name: '乌护游骑', tier: 3 },           // 真珠河·乌古斯游牧（1040丹达内克胜伽色尼）
 };

@@ -72,13 +72,13 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yaozhou: { name: '耀州牙兵', tier: 2 },       // 金锁关·李茂贞岐军
   cai: { name: '蔡国甲士', tier: 2 },          // 新蔡·蔡叔度开国君主
   wazhai: { name: '瓦岗军', tier: 1 },           // 定陶·李密破张须陀瓦岗崛起
-  huaiyang: { name: '大楚戍卒义军', tier: 2 },     // 宛丘·陈胜称王建都起义领袖
+  huaiyang: { name: '大楚义军', tier: 2 },     // 宛丘·陈胜称王建都起义领袖
   yao: { name: '匈奴五部', tier: 2 },        // 平阳·刘渊建都平阳，指挥灭晋
   kong_d: { name: '北海郡兵', tier: 3 },       // 曲阜·孔融以北海相保境，孔融本人极有名
   tongma: { name: '胶西郡国兵', tier: 3 },       // 胶西·刘卬发国兵参与七国之乱，战败
-  yanchuan_d: { name: '唐·淮西行营军', tier: 3 }, // 郾城·韩愈随裴度督师郾城，参赞军务
-  guide_d: { name: '隋·永城屯守兵', tier: 3 },   // 永城·麻叔谋镇守永城
-  tongzhou: { name: '隋·同州府兵', tier: 3 },    // 长宁·杨智积镇守同州
+  yanchuan_d: { name: '淮西行营军', tier: 3 }, // 郾城·韩愈随裴度督师郾城，参赞军务
+  guide_d: { name: '永城屯守兵', tier: 3 },   // 永城·麻叔谋镇守永城
+  tongzhou: { name: '同州府兵', tier: 3 },    // 长宁·杨智积镇守同州
   hao_d: { name: '濠州红巾军', tier: 3 },
   suzhou_d: { name: '江北团练', tier: 3 },
   sima_d: { name: '河内甲士', tier: 3 },

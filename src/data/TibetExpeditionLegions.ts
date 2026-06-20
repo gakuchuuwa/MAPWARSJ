@@ -13,7 +13,6 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dulan: { name: '和硕特精骑', tier: 1 }, // 台吉乃尔·达什巴图尔
   kalun: { name: '尕斯戍卒', tier: 3 },  // 尕斯淖尔
   shaodang: { name: '湟中义从羌', tier: 3 },  // 玛曲·河湟烧当羌义从骑（§12 #1）
-  gusiluo: { name: '青唐甲骑', tier: 2 },     // 青唐城·唃厮啰抗夏
   tubo: { name: '吐蕃大纛军', tier: 1 },       // 逻些·松赞干布吐蕃大纛军
   gar: { name: '却杰军', tier: 0 },           // 萨毗城·论钦陵却杰军（大非川破薛仁贵）
   tuyu_d: { name: '青海骢精骑', tier: 2 },    // 伏俟城·吐谷浑青海骢（§12 #4）
@@ -53,27 +52,22 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   kangba: { name: '康巴骁骑', tier: 2 },   // 理塘宗·康巴
   song2: { name: '松州边军', tier: 3 },      // 嘉诚·唐松州抗蕃戍卒
   xiadun: { name: '廷布卫队', tier: 3 },     // 廷布·夏仲不丹亲卫
-ali: { name: '阿里骑兵', tier: 1 },          // 噶大克·甘丹才旺收复阿里
+  ali: { name: '阿里骑兵', tier: 1 },          // 噶大克·甘丹才旺收复阿里
   gaoliang: { name: '高凉狼兵', tier: 1 },      // 茂名·冯盎威震岭南
   nandou: { name: '勃律山兵', tier: 2 },          // 孽多·苏失利据守抗唐
   bailan: { name: '昌都僧兵', tier: 2 },        // 察木多·帕巴拉协助守城
   jiantang: { name: '建塘马兵', tier: 2 },       // 独克宗·桑杰嘉措驻防
   kongsa: { name: '孔萨土兵', tier: 2 },         // 甘孜·孔萨益多瞻对之役
-  gandan: { name: '卫拉特骑兵', tier: 2 },       // 黑河宗·拉藏汗驻防
   gling: { name: '岭国武士', tier: 2 },          // 结古宗·岭格萨尔史诗英雄
-  longqing: { name: '隆庆骑兵', tier: 2 },       // 囊谦宗·囊谦王平叛
   khyungpo: { name: '藏北苏毗兵', tier: 1 },    // 丁青宗·琼波·邦色率苏毗兵灭象雄
   guangwu: { name: '河西边骑', tier: 1 },        // 令居·辛武贤出令居讨羌
   galangdiba: { name: '波密民兵', tier: 2 },     // 噶朗宗·旺钦顿堆波密土王
-  huoer: { name: '索宗骑兵', tier: 2 },          // 索宗·霍尔康萨波密平叛
   daca: { name: '八宿马队', tier: 3 },           // 八宿宗·达擦济咙活佛辖地
   gongtang: { name: '贡唐马队', tier: 3 },       // 吉麦·贡唐仓活佛辖地
-  juemuzong: { name: '觉木戍兵', tier: 3 },       // 觉木宗·工布宗谿驻兵
-  dalong: { name: '类乌齐僧兵', tier: 3 },        // 类乌齐·达隆活佛抵御波密
   nanjie: { name: '日土边军', tier: 3 },          // 日土宗·南杰旺秋拉达克边军
-    niang: { name: '觉木宗戍军', tier: 2 },
-    dalung: { name: '达隆寺僧兵', tier: 3 },
-    dong: { name: '囊谦千户兵', tier: 2 },
-    hor: { name: '霍尔部勇士', tier: 3 },
-    ganden: { name: '甘丹寺僧兵', tier: 3 },
+  niang: { name: '觉木宗戍军', tier: 2 },
+  dalung: { name: '达隆寺僧兵', tier: 3 },
+  dong: { name: '囊谦千户兵', tier: 2 },
+  hor: { name: '霍尔部勇士', tier: 3 },
+  ganden: { name: '甘丹寺僧兵', tier: 3 },
 };

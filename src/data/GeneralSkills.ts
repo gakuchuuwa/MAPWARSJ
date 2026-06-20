@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将技数据（格号 = 机制真理，displayName = 展示皮肤）
  * 设计文档：docs/02-design/GENERAL_SKILLS_武将技系统.md
  * AI 分配标签：src/data/GeneralSkillTags.ts（品阶 + 五种战术风格）
@@ -460,7 +460,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     shaluoben: { generalId: 'shaluoben', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 金川固守
     limixia_x: { generalId: 'limixia_x', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 象雄末王
     senggelangjie: { generalId: 'senggelangjie', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 拉达克王
-    gusiluo: { generalId: 'gusiluo', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 青唐破西夏
     gushihan: { generalId: 'gushihan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 和硕特入藏
     mojie: { generalId: 'mojie', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 女国女王
     queyingduoji: { generalId: 'queyingduoji', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 噶玛巴活佛
@@ -1062,7 +1061,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     fulianchou: { generalId: 'fulianchou', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 吐谷浑可汗伏俟城
 
     abulihalisi: { generalId: "abulihalisi", tier: "ordinary", tacticalSkillId: "tac_10" }, // ??????????
-    luozhentan: { generalId: "luozhentan", tier: "ordinary", tacticalSkillId: "tac_10" }, // ?????????
+    yaerbeige: { generalId: 'yaerbeige', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 雅尔贝格
     haidaer: { generalId: "haidaer", tier: "ordinary", tacticalSkillId: "tac_10" }, // ???????????
     shamalike: { generalId: "shamalike", tier: "ordinary", tacticalSkillId: "tac_10" }, // ????????
     dukake: { generalId: "dukake", tier: "ordinary", tacticalSkillId: "tac_10" }, // ????????
@@ -1082,6 +1081,15 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     wuli: { generalId: 'wuli', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 卢氏戎子吾离陆浑关
+
+    yuchisheng_k: { generalId: 'yuchisheng_k', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 尉迟胜克里雅山口
+    suomai: { generalId: 'suomai', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 索劢屯田楼兰三陇沙
+    gejiayun: { generalId: 'gejiayun', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 盖嘉运拔换城握瑟德
+    yusubu: { generalId: 'yusubu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 玉素布阿克苏玉尔滚
+    suonuomugunbu: { generalId: 'suonuomugunbu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 索诺木衮布理塘宣抚司
+    lujili: { generalId: 'lujili', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 庐戢黎庸将竹山
+    yuyouzhao: { generalId: 'yuyouzhao', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 鱼有沼镜城笼耳
+    tianyi: { generalId: 'tianyi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 田邑上党太守长子
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {
