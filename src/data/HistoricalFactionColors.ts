@@ -25,14 +25,12 @@ const _FIXED: Record<string, string> = {
     erzhu: '#962828', // 尔朱
     jiujiang: '#A83830', // 九江
     wazhai: '#903028', // 瓦岗
-    red_turban: '#A83028', // 红巾
     xushouhui: '#883030', // 天完·红巾军（元末徐寿辉赤旗；避 lvbu 撞色）
     chimei: '#972838', // 赤眉
     yang_aner: '#B84838', // 登(杨安儿)
     dashun: '#9A3030', // 大顺
     daxi_ming: '#943228', // 大西
     xiqin: '#AE3434', // 西秦
-    hongguang: '#B82E2E', // 弘光(南明复明)
     longwu: '#B43434', // 隆武
     duanzhou_d: '#3D7A5A', // 端州（肇庆·摧锋军）
 
@@ -316,12 +314,8 @@ const _FIXED: Record<string, string> = {
     xiongding: '#6B4A5A', // 雄定（碗子城紫褐，碗子城军）
     yaozhou: '#9A8A3A', // 耀州（金甲铜黄，金甲卫）
     mushi: '#5A5A7A', // 穆氏（丘穆陵靛紫，丘穆陵骑）
-    xiazhou: '#3A7A6B', // 峡州（峡江碧绿，峡江水军）
     zuo_d: '#7A5A3A', // 笮人（南中赭褐，南中叟兵）
     lizhou_d: '#6A8A9A', // 利州（白水青蓝，白水军）
-    hongnong: '#8B6A4B', // 弘农郡（桃林棕褐，桃林射士）
-    zheng_state: '#A55146', // 郑国（成皋赤铜，成皋部曲）
-    ruo_state: '#4B6554', // 鄀国（商於暗绿，商於材官）
     huo: '#5C6B73', // 霍国（霍邑冷铁，霍邑锐士）
     lai: '#3E7C85', // 莱国（齐莱海青，齐莱锐士）
     zangke: '#2F7A50', // 牂牁（夜郎雨林绿，夜郎锐卒）
@@ -357,7 +351,6 @@ const _FIXED: Record<string, string> = {
     taira: '#C0392B', // 平氏（平家赤，平家水军）
     wuman: '#2E4053', // 乌蛮（东爨玄，东爨乌蛮兵）
     yehe: '#7D6608', // 叶赫（叶赫褐）
-    hujie: '#283747', // 呼揭（呼揭灰）
     xiutu: '#A04000', // 休屠（赤铜）
     dongzu: '#148F77', // 侗族（翠青）
     wula: '#9A7D0A', // 乌拉（暗金）
@@ -413,8 +406,6 @@ const _FIXED: Record<string, string> = {
     'cheng': '#7D25AF', // 自动分配 (邻域相斥)
     'qiuchi': '#CA3197', // 自动分配 (邻域相斥)
     'jie': '#734786', // 自动分配 (邻域相斥)
-    'di': '#9AA948', // 自动分配 (邻域相斥)
-    'qiang': '#995ACA', // 自动分配 (邻域相斥)
     'dai_d': '#6045B9', // 自动分配 (邻域相斥)
     'wang_d': '#B2C058', // 自动分配 (邻域相斥)
     'li_lx_d': '#5E38C9', // 自动分配 (邻域相斥)
@@ -426,7 +417,6 @@ const _FIXED: Record<string, string> = {
     'zi': '#463DAB', // 自动分配 (邻域相斥)
     'long2': '#262E8D', // 自动分配 (邻域相斥)
     'song2': '#7CAD20', // 自动分配 (邻域相斥)
-    'ting': '#51419B', // 自动分配 (邻域相斥)
     'jingmen': '#3D2EA0', // 自动分配 (邻域相斥)
     'jibei': '#3A8E53', // 自动分配 (邻域相斥)
     'gouding': '#7562B3', // 自动分配 (邻域相斥)
@@ -503,7 +493,6 @@ const _FIXED: Record<string, string> = {
     'mohe': '#66A056', // 自动分配 (邻域相斥)
     'shiwei': '#9AA738', // 自动分配 (邻域相斥)
     'huimo': '#3FAC9D', // 自动分配 (邻域相斥)
-    'tunggiya': '#7F8634', // 自动分配 (邻域相斥)
     'sogdian': '#4841C0', // 自动分配 (邻域相斥)
     'kangju': '#6EC27E', // 自动分配 (邻域相斥)
     yuchi: '#6A4898', // 尉迟·于阗精兵（崇佛紫）
@@ -538,8 +527,6 @@ const _FIXED: Record<string, string> = {
     'cong': '#73BF63', // 自动分配 (邻域相斥)
     'zhe_d': '#862989', // 自动分配 (邻域相斥)
     'she_ethnic': '#5CCF6F', // 自动分配 (邻域相斥)
-    'pu': '#60D73B', // 自动分配 (邻域相斥)
-    'tu': '#944157', // 自动分配 (邻域相斥)
     'weili': '#464686', // 自动分配 (邻域相斥)
     'pishan': '#247DC1', // 自动分配 (邻域相斥)
     'tuerhute': '#CED048', // 自动分配 (邻域相斥)
@@ -680,7 +667,6 @@ const _FIXED: Record<string, string> = {
     'qiepantuo': '#67C96A', // 自动分配 (邻域相斥)
     'eluoke': '#A62867', // 自动分配 (邻域相斥)
     'kuye': '#56CE72', // 自动分配 (邻域相斥)
-    'shuidada': '#8C9B4F', // 自动分配 (邻域相斥)
     'dongping': '#7D92C1', // 自动分配 (邻域相斥)
     'maomingan': '#5F9FB8', // 自动分配 (邻域相斥)
     'bulat': '#831F9A', // 自动分配 (邻域相斥)
@@ -698,7 +684,6 @@ const _FIXED: Record<string, string> = {
     'dang_d': '#C78E7E', // 自动分配 (邻域相斥)
     'hao_d': '#756CC2', // 自动分配 (邻域相斥)
     'bozhou_d': '#9348A5', // 自动分配 (邻域相斥)
-    'zheng': '#76D2AB', // 自动分配 (邻域相斥)
     jiazini: '#6A3A2A', // 伽色尼·古拉姆
     gaofu: '#5A3A4A', // 高附·高附兵
     fanyanna: '#4A3A6A', // 梵衍那·深紫
@@ -712,8 +697,8 @@ const _FIXED: Record<string, string> = {
     nuoyan_d: '#5A6850', // 诺颜·喀尔喀青灰
     wuli_d: '#4D5D6D', // 乌里·军台靛灰
     jiluo_d: '#6F5D45', // 稽落·燕然土黄
-    changli_d: '#507858', // 昌黎·辽西松漠青
     heisha_d: '#3A3848', // 黑沙·漠北玄灰
+    kumoxi: '#587868', // 库莫奚·饶乐水松漠青
 
     zhengzhou: '#3F4F5F',
     fengzhou: '#8A3B4C',
@@ -731,7 +716,6 @@ const _FIXED: Record<string, string> = {
     nuergan: '#445566',
     ewenki: '#495A6B',
     wuzhou: '#536475',
-    zasagtu: '#58697A',
     bailong: '#5D6E7F',
     kepantuo: '#627384',
     xingxingxia: '#677889',

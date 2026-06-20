@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -138,7 +138,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'huige': '回纥',
     'dayue': '大越',
     'yamato': '大和',
-    'kamakura': '镰仓',
 'edo': '德川',
     'izumo': '出云',
     'satsuma': '萨摩',
@@ -175,15 +174,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'qiuci': '龟兹',
     'yanqi': '焉耆',
 
-    'zhonghua': '中华',
-    'tianchao': '天朝',
     'gaogouli': '高句',
     'xinluo': '新罗',
-    'huihui': '回回',
-    'menggu': '蒙元',
-    'qiangzang': '羌藏',
-    'yuenan': '越南',
-    'dianmian': '滇缅',
     'donghu': '东胡',
     'luoyue': '骆越',
     'ba': '巴',
@@ -218,7 +210,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'lu': '庐',
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
-    'zhuozhou': '燕', // 范阳·避涿邪山旗号涿 §4.1
+    'zhuozhou': '涿', // 范阳·避涿邪山旗号涿 §4.1
     'tujia_d': '土家',
     'zhuang_d': '壮',
     'xibo_d': '锡伯',
@@ -235,7 +227,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wazhai': '瓦岗',
     'liangshidu': '银',
     'linshihong': '楚南',
-'kumo': '奚',
+'kumo': '楮特',
     'xijue': '十箭',
     'xian_d': '冼',
     'xiqin': '西秦',
@@ -356,11 +348,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'huimo': '濊貊',
     'mao_wenlong': '毛',
 
-    // ── 2026-05-26 新增：满洲贵族世家 ──
-    'tunggiya': '佟佳',
-
-    
-
     // ── 2026-05-26 新增：漠北草原势力旗号 ──
 'gaoche': '高车',
     'da_yuan': '北元',
@@ -440,14 +427,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 自动补全剩余的特殊势力映射，防止显示英文 ──
 'cen_d': '岑',
-    'hongbang': '鸿庞',
-    'xiyang': '西洋',
-    'xiyu': '西域',
-    'jue': '角',
-    'zang': '藏',
-    'e': '鄂',
-    'nan': '南',
-
     // ── 2026-05-27 补充：旗号文字缺失的14个势力 ──
     'weili': '尉犁',
     'pishan': '皮山',
@@ -617,7 +596,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'you': '幽',
 'heng1': '元岳',
     'pisha': '毗沙',
-    'yutian': '伏阇',
     'yumi': '扜弥',
     'keliya': '克里',
     'xiye': '西夜',
@@ -662,7 +640,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chen3': '欢',
     'sabeol': '沙伐',
     'iga_d': '伊贺',
-    'kaga_d': '一向',
+    'kaga_d': '加贺',
     'date_d': '伊达',
     'higo_d': '肥后',
     'iyo_d': '伊予',
@@ -834,11 +812,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chenli_d': '禅',   // 姑衍山·撑犁祭天
     'nuoyan_d': '赛',   // 赛音山达·赛音诺颜部
     'wuli_d': '扎',     // 扎布汗·乌里雅苏台
-    'jiluo_d': '涿',    // 涿邪山·窦宪出涿邪
+    'jiluo_d': '涿邪',    // 涿邪山·窦宪出涿邪
     'heisha_d': '黑沙',  // 特尔门·漠北黑沙境
     // ── Phase 1 Missing Flags ──
-    'kumoxi': '库',
+    'kumoxi': '奚',
     'haikou': '寇',
-    'shanshan': '鄯',
-    guiyi: '归',
+    'shanshan': '鄯善',
+    guiyi: '归义',
 };

@@ -1089,6 +1089,41 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     lujili: { generalId: 'lujili', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 庐戢黎庸将竹山
     yuyouzhao: { generalId: 'yuyouzhao', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 鱼有沼镜城笼耳
     tianyi: { generalId: 'tianyi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 田邑上党太守长子
+
+    // ── 2026-06-20 补全：FactionGenerals 有将无档（add:check 33 条）──
+    barhudai: { generalId: 'barhudai', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 巴尔虎代·尼夫河
+    tuiyin: { generalId: 'tuiyin', tier: 'ordinary', tacticalSkillId: 'tac_02' }, // 东胡推寅
+    muronghuang: { generalId: 'muronghuang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 慕容皝范阳燕
+    gaerdan: { generalId: 'gaerdan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 噶尔丹准噶尔
+    takuna: { generalId: 'takuna', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 塔库纳·吉里密
+    baiyanhu: { generalId: 'baiyanhu', tier: 'famous', tacticalSkillId: 'tac_08', strategicSkillId: 'str_04' }, // 白彦虎回军
+    zongkaba: { generalId: 'zongkaba', tier: 'ordinary', tacticalSkillId: 'tac_01' }, // 宗喀巴·甘丹
+    monuhe: { generalId: 'monuhe', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 摩奴诃·孟族
+    fan_d: { generalId: 'fan_d', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 尉犁泛
+    daihu: { generalId: 'daihu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 代胡·皮山
+    zhahaluo: { generalId: 'zhahaluo', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 扎哈罗·那乃
+    cemutehe: { generalId: 'cemutehe', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 策穆特赫·费雅喀
+    qinggunzabu: { generalId: 'qinggunzabu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 青滚杂卜·图瓦
+    sangjiwen: { generalId: 'sangjiwen', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 桑吉温·达隆
+    chisang: { generalId: 'chisang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 赤桑·霍尔
+    nangqianjiabo: { generalId: 'nangqianjiabo', tier: 'ordinary', tacticalSkillId: 'tac_05' }, // 囊谦加波·隆庆
+    kalunshiwei: { generalId: 'kalunshiwei', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 海兰察·兴安
+    zhaowuling: { generalId: 'zhaowuling', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 赵武灵王·灵丘
+    zhouyuji_nw: { generalId: 'zhouyuji_nw', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 周遇吉·楼烦
+    anguo: { generalId: 'anguo', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 扜弥王安国
+    fuduxin: { generalId: 'fuduxin', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 伏阇信·克里雅
+    niechizanpu: { generalId: 'niechizanpu', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 聂赤·发羌
+    suonanjiabo: { generalId: 'suonanjiabo', tier: 'ordinary', tacticalSkillId: 'tac_05' }, // 索南加波·觉木宗
+    guyi: { generalId: 'guyi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 姑翼·温宿
+    anmoshenpan: { generalId: 'anmoshenpan', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 安末深盘·且末
+    douti: { generalId: 'douti', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 兜题·尉头
+    amuhar: { generalId: 'amuhar', tier: 'ordinary', tacticalSkillId: 'tac_02' }, // 阿穆哈尔·鄂罗克
+    langtan: { generalId: 'langtan', tier: 'ordinary', tacticalSkillId: 'tac_02' }, // 郎坦·东平
+    tumenjiergale: { generalId: 'tumenjiergale', tier: 'ordinary', tacticalSkillId: 'tac_02' }, // 图门吉尔嘎勒·布里亚特
+    baidibushuai: { generalId: 'baidibushuai', tier: 'ordinary', tacticalSkillId: 'tac_03' }, // 白狄子
+    ahuihui: { generalId: 'ahuihui', tier: 'ordinary', tacticalSkillId: 'tac_02' }, // 阿会毁·库莫奚
+    wangzhi_pirate: { generalId: 'wangzhi_pirate', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_06' }, // 汪直·海寇
+    weituqi: { generalId: 'weituqi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 尉屠耆·鄯善
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {
