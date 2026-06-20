@@ -205,7 +205,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         name: '南郑',
         factionId: 'han_d',
         lat: 33.07, lng: 107.02,
-        type: 'big_city',
+        type: 'medium_city',
         region: 'BASHU', troops: 20000,
         tier: 0,
         note: '汉中治；蜀汉开国都南郑',
@@ -277,7 +277,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         region: 'NORTH',
         troops: 10000,
         tier: 1,
-        note: '保定；清苑小城',
+        note: '周德威白马突骑',
     },
     {
         id: 'city_hejian',
@@ -793,7 +793,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     },
         // ── 关中盆地防御要塞群 ──
     { id: 'city_wuguan', name: '武关', factionId: 'ruo', lat: 33.600000, lng: 110.620000, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true,
-        note: '武关；鄀国关隘',
+        note: '王翦灭楚锐士武关',
     },
 
 
@@ -1378,7 +1378,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_fanyang', name: '范阳', factionId: 'zhuozhou', lat: 39.48, lng: 115.98, type: 'medium_city', region: 'NORTH', troops: 10000, note: '安禄山范阳节度使根基；安史叛军' },
     { id: 'city_hedong', name: '安邑', factionId: 'xiezhou', lat: 35.072716, lng: 111.033325, type: 'medium_city', region: 'CENTRAL', troops: 10000, note: '夏禹之都（《史记·夏本纪》）；阳城过近洛阳已删' },
     { id: 'city_chenjun', name: '新蔡', factionId: 'cai', lat: 32.75, lng: 114.98, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '新蔡；蔡国小城',
+        note: '李愬雪夜入蔡州',
     },
 
     { id: 'city_qufu', name: '曲阜', factionId: 'kong_d', lat: 35.6, lng: 116.98, type: 'small_city', region: 'CENTRAL', troops: 10000,

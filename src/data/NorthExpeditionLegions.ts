@@ -14,7 +14,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 宣毅军除名（泛称非专属，与方渠无关）
   heng1: { name: '赵边骑', tier: 1 },         // 雁门关·李牧赵边骑抗匈奴
   huan: { name: '环州戍兵', tier: 3 },      // 方渠·宋代环州边防（原步跋子，归嵬名）
-  qingyuan_bd: { name: '神臂营', tier: 2 }, // 保定·北宋强弩营
+  qingyuan_bd: { name: '白马突骑', tier: 1 }, // 保定·周德威白马突骑
 
   // ── §2 北方 12 支 ──
   zhao: { name: '赵国边骑', tier: 2 },     // 邯郸·廉颇赵国名将（无独立胜仗）
@@ -48,7 +48,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   lingqiu: { name: '宁武边军', tier: 3 },    // 平型关·周遇吉宁武边军
   huo: { name: '霍国甲士', tier: 3 },       // 灵石关·霍叔处霍国甲士
   // 飞虎军除名（李克用置，平型关时代错位）
-  loufan: { name: '楼烦兵', tier: 2 },        // 宁武关·楼烦王
+  loufan: { name: '天山飞骑', tier: 1 },      // 宁武关·薛仁贵三箭定天山
   linyu: { name: '夷丁突骑', tier: 3 },       // 山海关·临榆（明末）
   // 恒山军除名（泛称无固定番号）
   dai_d: { name: '代国锐卒', tier: 3 },         // 代县·春秋代国

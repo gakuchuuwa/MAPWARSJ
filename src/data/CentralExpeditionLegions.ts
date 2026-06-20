@@ -44,7 +44,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
                       hongnong_jun: { name: '黄龙骑', tier: 1 },    // 函谷关·杨素大破突厥
   huangfu: { name: '三河骑士', tier: 1 },       // 安定·皇甫嵩三河骑士
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
-  ruo: { name: '商於材官', tier: 3 },
+  ruo: { name: '灭楚锐士', tier: 1 },          // 武关·王翦灭楚
   ruzhou: { name: '广成健卒', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 3 },
   zhi_state: { name: '丰沛子弟', tier: 1 },
@@ -69,7 +69,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   dongxian: { name: '郯城戍卒', tier: 2 },     // 郯城·徐盛东吴宿将
   mi: { name: '朐城弩手', tier: 2 },         // 朐城·麋竺家兵
   yaozhou: { name: '耀州牙兵', tier: 2 },       // 金锁关·李茂贞岐军
-  cai: { name: '灭楚锐士', tier: 1 },          // 新蔡·王翦六十万秦军破楚
+  cai: { name: '雪夜突骑', tier: 1 },          // 新蔡·李愬雪夜入蔡州
   wazhai: { name: '瓦岗军', tier: 1 },           // 定陶·李密破张须陀瓦岗崛起
   huaiyang: { name: '细柳营', tier: 1 },     // 宛丘·周亚夫绝吴楚粮道三月平七国
   yao: { name: '匈奴五部', tier: 2 },        // 平阳·刘渊建都平阳，指挥灭晋
