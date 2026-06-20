@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将技数据（格号 = 机制真理，displayName = 展示皮肤）
  * 设计文档：docs/02-design/GENERAL_SKILLS_武将技系统.md
  * AI 分配标签：src/data/GeneralSkillTags.ts（品阶 + 五种战术风格）
@@ -394,7 +394,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     sulukehan: { generalId: 'sulukehan', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 突骑施公牛抗阿拉伯
     yelvdashi: { generalId: 'yelvdashi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 西辽西迁卡特万以少胜多
     mahamaode: { generalId: 'mahamaode', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 马哈茂德十七征印度
-    sheyeboluo: { generalId: 'sheyeboluo', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 阇耶波罗守高附抗加兹尼
     xibanni: { generalId: 'xibanni', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 昔班尼攻布哈拉建汗国
     liejiaomi: { generalId: 'liejiaomi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 乌孙昆莫西迁奇袭月氏
         ganshouchang: { generalId: 'ganshouchang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 与陈汤共灭郅支
@@ -1124,6 +1123,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     ahuihui: { generalId: 'ahuihui', tier: 'ordinary', tacticalSkillId: 'tac_02' }, // 阿会毁·库莫奚
     wangzhi_pirate: { generalId: 'wangzhi_pirate', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_06' }, // 汪直·海寇
     weituqi: { generalId: 'weituqi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 尉屠耆·鄯善
+  halixingge: { generalId: 'halixingge', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 哈里·辛格·旁遮普：攻战计侵掠如火+攻城拔寨，开伯尔山口工程
+  minande: { generalId: 'minande', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 米南德·那竭：攻战计侵掠如火+攻城拔寨，印度-希腊东进兴都库什
+  aihamaide: { generalId: 'aihamaide', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 艾哈迈德·杜兰尼：攻战计侵掠如火+攻城拔寨，九征印度建帝国
+  abumusilin: { generalId: 'abumusilin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 阿布·穆斯林·呼罗珊：敌战计避实击虚+长驱直入，黑旗席卷波斯
+  shapuer: { generalId: 'shapuer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 沙普尔·阿巴尔：攻战计侵掠如火+长驱直入，三破罗马擒瓦勒良
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

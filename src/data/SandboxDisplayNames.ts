@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -786,7 +786,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wuhu': '乌护',
   sanada_d: '真田',
   jiazini: '伽色',
-  gaofu: '高附',
+  jibin: '罽宾',
   fanyanna: '梵衍',
     'wuzhou': '武',
     'bailong': '白龙',
@@ -819,4 +819,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'haikou': '寇',
     'shanshan': '鄯善',
     guiyi: '归义',
+  // —— 2026-06-20 新增：旁遮普·阿托克 ——
+  pangzha: '旁遮',
+  // —— 2026-06-20 新增：那竭国·顶骨城 ——
+  najie: '那竭',
+  dulan_d: '杜兰',
+  huluo: '呼罗',
+  aba: '阿巴',
 };

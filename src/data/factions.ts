@@ -442,7 +442,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-17 新增：喀喇契丹（西辽·虎思/碎叶故地）──
     { id: 'xiliao', name: '西辽' },
     { id: 'jiazini', name: '伽色尼' },      // 伽色尼王朝(哥疾宁/马哈茂德), Ghaznavid
-    { id: 'gaofu', name: '高附' },          // 喀布尔沙希王朝(高附城/阇耶波罗), Kabul Shahi
+    { id: 'jibin', name: '罽宾' },          // 罽宾/迦毕试(丘就却/贵霜), Kapisa/Kushan
     { id: 'fanyanna', name: '梵衍那' },      // 梵衍那国(巴米扬/兴都库什), Bamiyan
 // 土褐 - 吐火罗(员渠城/焉耆盆地)
 { id: 'sogdian', name: '粟特' },
@@ -941,7 +941,20 @@ export const FACTIONS: Faction[] = [
     { id: 'nvguo', name: '女国' },
     { id: 'jiashi', name: '迦湿弥罗' },
     { id: 'wuhu', name: '乌护' },
-    // ── 2026-06-19 新增：马尔吉亚纳（彭迪）·乌古斯（毡的）──
+    
+    
+    
+    // ── 2026-06-20 新增：杜兰尼（坎大哈）/ 呼罗珊（赫拉特）/ 阿巴尔（尼沙布尔）──
+    { id: 'dulan_d', name: '杜兰尼' },
+    { id: 'huluo', name: '呼罗珊' },
+    { id: 'aba', name: '阿巴尔' },
+
+    // ── 2026-06-20 新增：那竭国（顶骨城）──
+    { id: 'najie', name: '那竭国' },
+
+    // ── 2026-06-20 新增：旁遮普（阿托克）──
+    { id: 'pangzha', name: '旁遮普' },
+// ── 2026-06-19 新增：马尔吉亚纳（彭迪）·乌古斯（毡的）──
     { id: 'maer_d', name: '马尔吉亚纳' },          // 彭迪·穆尔加布绿洲边镇（Margiana）
     { id: 'wugu_d', name: '乌古斯' },              // 毡的·锡尔河下游乌古斯叶护国核心
     // ── 2026-06-19 新增：阿克苏道（昆岗军台）──

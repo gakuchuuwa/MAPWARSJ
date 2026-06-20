@@ -1,4 +1,4 @@
-﻿/**
+/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -2848,10 +2848,11 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jiaseni', name: '哥疾宁', factionId: 'jiazini', lat: 33.55, lng: 68.42, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 1,
         note: '哥疾宁；伽色尼治所/重镇',
     },
-    { id: 'city_gaofu', name: '喀布尔', factionId: 'gaofu', lat: 34.4478, lng: 68.8898, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 1,
-        note: '喀布尔；高附治所/重镇',
+    // ── 2026-06-20 替换：喀布尔→迦毕试（罽宾）──
+    { id: 'city_gaofu', name: '迦毕试', factionId: 'jibin', lat: 34.5500, lng: 69.2000, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 1,
+        note: '迦毕试/喀布尔；罽宾（Kapisa）王治，丘就却统一五部贵霜后东进兴都库什重镇',
     },
-    { id: 'city_fanyanna', name: '巴米扬', factionId: 'fanyanna', lat: 34.8659, lng: 67.9807, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
+    { id: 'city_fanyanna', name: '梵衍那', factionId: 'fanyanna', lat: 34.8659, lng: 67.9807, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
         note: '巴米扬；梵衍那小城',
     },
     { id: 'city_paixiucheng', name: '排修城', factionId: 'juandu', lat: 39.48, lng: 76.72, type: 'small_city', region: 'WESTERN', troops: 10000,
@@ -2931,6 +2932,16 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'haikou', lat: 25.75, lng: 123.50, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '南方/日本环线共用锚点；南方环线所称钓鱼岛城即本据点；明清海图及《隋书·流求国传》等见载' },
     { id: 'city_gugudao', name: '宫古岛', factionId: 'gonggu', lat: 24.805, lng: 125.281, type: 'small_city', region: 'JAPAN', troops: 10000, note: '琉球宫古诸岛主岛，见《中山世谱》及明清海图' },
     { id: 'city_qihe', name: '七河', factionId: 'qincha', lat: 44.2219, lng: 64.3332, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '钦察汗国七河草原核心带' },
+    // ── 2026-06-20 新增：杜兰尼·坎大哈 ──
+    { id: 'city_kandaha', name: '坎大哈', factionId: 'dulan_d', lat: 31.6289, lng: 65.7372, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '杜兰尼帝国第一首都；艾哈迈德沙阿1747年在此加冕为阿富汗王' },
+    // ── 2026-06-20 新增：呼罗珊·赫拉特 ──
+    { id: 'city_helate', name: '赫拉特', factionId: 'huluo', lat: 34.3419, lng: 62.2031, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '呼罗珊四大名城；阿布·穆斯林阿拔斯革命策源地，帖木儿帝国沙哈鲁治下文化中心' },
+    // ── 2026-06-20 新增：阿巴尔·尼沙布尔 ──
+    { id: 'city_nishabuer', name: '尼沙布尔', factionId: 'aba', lat: 36.2133, lng: 58.7958, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '萨珊阿巴尔沙赫尔省治；沙普尔一世敕建，呼罗珊大道枢纽' },
+    // —— 2026-06-20 新增：那竭国·顶骨城 ——
+    { id: 'city_dinggucheng', name: '顶骨城', factionId: 'najie', lat: 34.4300, lng: 70.4500, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '那揭罗曷/贾拉拉巴德；法显《佛国记》那竭国，玄奘《大唐西域记》那揭罗曷，印度-希腊王米南德一世东进重镇' },
+    // —— 2026-06-20 新增：旁遮普·阿托克 ——
+    { id: 'city_atuoke', name: '阿托克', factionId: 'pangzha', lat: 33.7666, lng: 72.3608, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '印度河阿托克要塞；兰季特·辛格旁遮普帝国西北锁钥，哈里·辛格扼开伯尔隘口' },
     { id: 'city_shwebo', name: '瑞波', factionId: 'konbaung', lat: 22.5697, lng: 95.6981, type: 'small_city', region: 'DIANQIAN', troops: 10000, note: '贡榜龙兴之地；贡榜禁军' },
     { id: 'city_hengyu', name: '横屿', factionId: 'qi_d', lat: 26.77, lng: 119.7, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '嘉靖横屿大捷古战场；戚家军藤牌灭倭标志战' },
     { id: 'city_luobo', name: '罗博', factionId: 'buyi_d', lat: 25.4112, lng: 106.7377, type: 'small_city', region: 'LINGNAN', troops: 10000,

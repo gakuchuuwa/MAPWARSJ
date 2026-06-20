@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 势力将领：势力开局自带的史实将领（一势力一将领一立绘，AI 也有）。
  *
  * 设计定案（GAME_DIRECTION.md「番号随城，将领随势」2026-06-16）：
@@ -263,7 +263,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     tujishi: { generalId: 'sulukehan', generalName: '苏禄', portrait: '/assets/xiyu/sulukehan.png' },
     xiliao: { generalId: 'yelvdashi', generalName: '耶律大石', portrait: '/assets/xiyu/yelvdashi.png' },
     jiazini: { generalId: 'mahamaode', generalName: '马哈茂德', portrait: '/assets/zhongya/mahamaode.png' },
-    gaofu: { generalId: 'sheyeboluo', generalName: '阇耶波罗', portrait: '/assets/zhongya/sheyeboluo.png' },
+    jibin: { generalId: 'qiujiuque', generalName: '丘就却', portrait: '/assets/zhongya/qiujiuque.png' },
         xijue: { generalId: 'ganshouchang', generalName: '甘延寿', portrait: '/assets/zhongya/chentang.png' },
     // 养吉干·咸海 / 真珠河·乌护 宁缺毋滥
 
@@ -747,6 +747,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yong: { generalId: 'lujili', generalName: '庐戢黎', portrait: '/assets/bashu/lujili.png' },
     jingcheng_d: { generalId: 'yuyouzhao', generalName: '鱼有沼', portrait: '/assets/chaoxian/yuyouzhao.png' },
     xin: { generalId: 'tianyi', generalName: '田邑', portrait: '/assets/zhongyuan/tianyi.png' },
+  pangzha: { generalId: 'halixingge', generalName: '哈里·辛格', portrait: '/assets/zhongya/halixingge.png' },
+  najie: { generalId: 'minande', generalName: '米南德', portrait: '/assets/zhongya/minande.png' },
+  dulan_d: { generalId: 'aihamaide', generalName: '艾哈迈德', portrait: '/assets/zhongya/aihamaide.png' },
+  huluo: { generalId: 'abumusilin', generalName: '阿布·穆斯林', portrait: '/assets/zhongya/abumusilin.png' },
+  aba: { generalId: 'shapuer', generalName: '沙普尔', portrait: '/assets/zhongya/shapuer.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

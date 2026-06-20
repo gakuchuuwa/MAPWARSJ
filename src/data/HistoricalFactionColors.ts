@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 势力固定显示色：势力 id → 专属 hex（全局唯一）。
  * 有尚色/服色依据的政权、民族、起义写入此处；其余每局随机（FactionManager）。
  * 随机池避开红/黄/青色相楔及近白、近黑区。
@@ -685,7 +685,7 @@ const _FIXED: Record<string, string> = {
     'hao_d': '#756CC2', // 自动分配 (邻域相斥)
     'bozhou_d': '#9348A5', // 自动分配 (邻域相斥)
     jiazini: '#6A3A2A', // 伽色尼·古拉姆
-    gaofu: '#5A3A4A', // 高附·高附兵
+    jibin: '#5A3A4A', // 罽宾·贵霜战象
     fanyanna: '#4A3A6A', // 梵衍那·深紫
     dingxiang_d: '#3A4A5A', // 定襄·暗青
     xiayang_d: '#4A5A48', // 夏阳·禹门青褐

@@ -30,7 +30,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   zhaowu: { name: '忽毡城武士', tier: 3 },
   yada: { name: '悉万斤重甲', tier: 3 },
   jiazini: { name: '伽色尼禁卫', tier: 1 },       // 哥疾宁·马哈茂德古拉姆
-  gaofu: { name: '高附兵', tier: 3 },          // 喀布尔·喀布尔沙希兵
+  jibin: { name: '贵霜战象', tier: 1 },        // 迦毕试·丘就却统一五部贵霜后象兵破城
   fanyanna: { name: '梵衍那僧兵', tier: 2 },      // 巴米扬·梵衍那王率僧兵御大食
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
   maer_d: { name: '骆驼突骑', tier: 2 },        // 彭迪·萨珊东北边境骆驼骑兵
@@ -43,4 +43,12 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   kawusi: { name: '卡乌斯戍军', tier: 3 },     // 吉扎克·粟特要塞
   xianhai: { name: '咸海戍兵', tier: 3 },        // 养吉干·花剌子模北境
   wuhu: { name: '乌护游骑', tier: 3 },           // 真珠河·乌古斯游牧（1040丹达内克胜伽色尼）
+  // —— 2026-06-20 新增：旁遮普·阿托克 ——
+  pangzha: { name: '卡尔萨武士', tier: 1 },      // 阿托克·戈宾德辛格创立卡尔萨，兰季特辛格旁遮普帝国核心武力
+  // —— 2026-06-20 新增：那竭国·顶骨城 ——
+  najie: { name: '那竭方阵兵', tier: 1 },       // 顶骨城·印度-希腊米南德一世马其顿式重装方阵
+  // ── 2026-06-20 新增：杜兰尼·呼罗珊·阿巴尔 ──
+  dulan_d: { name: '普什图骑兵', tier: 2 },    // 坎大哈·艾哈迈德沙阿杜兰尼轻装游骑
+  huluo: { name: '呼罗珊重骑兵', tier: 1 },  // 赫拉特·阿布穆斯林黑旗军重骑
+  aba: { name: '萨珊具装铁骑', tier: 0 },    // 尼沙布尔·萨珊Grivpanvar超重装突骑
 };
