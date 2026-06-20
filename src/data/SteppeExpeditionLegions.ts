@@ -33,16 +33,16 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   kumo: { name: '楮特奥隗部', tier: 3 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
   kelie: { name: '札合骁骑', tier: 3 },         // 都尉溷河·札合敢不克烈支系
-  kereyid: { name: '克烈护卫军', tier: 2 },     // 汪吉河·王汗克烈部（原kelie迁此）
-  dingling: { name: '丁零游骑', tier: 3 },
+  kereyid: { name: '克烈护卫军', tier: 2 },     // 特尔门·王汗克烈部（原汪吉河）
+  dingling: { name: '丁零游骑', tier: 2 }, // 贝加尔·丁零王
   xiajiasi: { name: '黠戛斯锐卒', tier: 3 },
-  donghu: { name: '东胡骑', tier: 3 },
+  donghu: { name: '东胡骑', tier: 2 },    // 巴彦乌拉·东胡王
   tiele: { name: '铁勒骁骑', tier: 3 },
   xibo_d: { name: '锡伯箭手', tier: 3 },        // 固尔札·清代锡伯营（原索伦营错族）
   tatar: { name: '塔塔儿死士', tier: 3 },
   merkit: { name: '蔑儿乞猎骑', tier: 3 },
   chahar: { name: '察哈尔八旗', tier: 2 },
-  yuwen: { name: '武川镇军', tier: 0 },     // 武川镇·537沙苑之战宇文泰以少胜多大败高欢（《周书·宇文泰传》；接替探马赤T0）
+  yuwen: { name: '武川镇军', tier: 0 },     // 饶乐水·537沙苑宇文泰以少胜多（番号随宇文旗号迁）
   da_yuan: { name: '北元怯薛', tier: 2 },
   huyan: { name: '呼衍精骑', tier: 3 },
   yujiulu: { name: '郁久闾王骑', tier: 2 },
@@ -59,7 +59,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   kiyad: { name: '乞颜宿卫', tier: 3 },         // 不儿罕山·也速该乞颜部
   mengwu: { name: '忙古勒骑', tier: 3 },        // 狼居胥·合不勒汗
   zhadalan: { name: '札剌儿军', tier: 3 },      // 阔亦田·札木合
-  oirat_ming: { name: '卫拉特骑', tier: 2 },    // 科布多·也先（≠wala博尔巴任）
+  oirat_ming: { name: '卫拉特骑', tier: 1 },    // 科布多·噶尔丹东进基地
   tumed: { name: '土默特精骑', tier: 1 },         // 归化城·俺答汗土默特精骑
   tushetu: { name: '库伦铁骑', tier: 3 },       // 库伦·土谢图汗
   yaoluoge: { name: '药罗葛骑', tier: 3 },      // 娑陵·药罗葛部
@@ -69,4 +69,19 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   pulei: { name: '蒲类戍卒', tier: 3 },         // 巴里坤·蒲类国故地
   chechen: { name: '车臣汗骑', tier: 3 },       // 巴彦图门·车臣汗硕垒
   zhuerqi: { name: '斡难河骑', tier: 3 },       // 斡难河·撒察别乞
+  tumengken: { name: '赛音诺颜旗骑', tier: 2 },  // 拜达里克·图蒙肯抗卫拉特
+  bayegu: { name: '拔野古轻骑', tier: 2 },       // 稽落山·屈利失助唐灭薛延陀
+  zubu: { name: '阻卜轻骑', tier: 2 },           // 特尔浑·磨古斯叛辽
+  wuzhumuqin: { name: '乌珠穆沁骑', tier: 2 },    // 乌珠穆沁·多尔济随征噶尔丹
+  xingan: { name: '呼伦贝尔索伦兵', tier: 3 },   // 哈拉盖图·卡伦驻防
+  baidi: { name: '白狄徒兵', tier: 3 },          // 集宁·春秋白狄部落
+  shiwei: { name: '室韦猎骑', tier: 3 },         // 俱轮泊·室韦都督府部众
+  sunite: { name: '苏尼特骑', tier: 3 },         // 赛汉塔拉·苏尼特旗武装
+  bulat: { name: '布拉特打牲兵', tier: 3 },      // 石勒喀河·布里亚特归附清朝
+  tuva: { name: '唐努旗兵', tier: 3 },           // 唐努·唐努乌梁海驻防
+  // ── 2026-06-19 新增：漠北/漠南要塞精锐 ──
+  chenli_d: { name: '祭天戍', tier: 3 },        // 姑衍山·匈奴祭天戍卒
+  nuoyan_d: { name: '漠北驿骑', tier: 3 },      // 赛音山达·清代大漠驿站护军
+  wuli_d: { name: '喀尔喀劲骑', tier: 2 },      // 扎布汗·乌里雅苏台喀尔喀骑兵
+  jiluo_d: { name: '燕然突骑', tier: 2 },       // 涿邪山·窦宪出涿邪突击骑
 };

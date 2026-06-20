@@ -53,20 +53,20 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   yue: { name: '越君子军', tier: 3 },          // 会稽·勾践越军
   zhangshicheng: { name: '盐丁锐旅', tier: 3 }, // 延陵·张士诚盐丁起兵（《明史》）
   ouyue: { name: '东瓯舟师', tier: 3 },        // 临海·东瓯王国水师（《史记·东越列传》）
-  huang_d: { name: '黄国锐卒', tier: 3 },      // 潢川·周代黄国（春申君故里）
+  huang_d: { name: '黄国锐卒', tier: 2 },      // 弋阳·孙叔敖黄国故地
   // 横海校尉除名
   chizhou: { name: '池州戍兵', tier: 3 },        // 大通·池州
-  wenzhou: { name: '永嘉水师', tier: 3 },    // 永嘉·温州水师
+  wenzhou: { name: '永嘉水师', tier: 2 },    // 永嘉·张璁整顿海防抗倭
   hu_d: { name: '浙东义兵', tier: 3 },          // 白峤·胡三省浙东抗元义兵
-  wan: { name: '舒州戍兵', tier: 3 },            // 皖城·舒州
-  ying: { name: '郢州水军', tier: 1 },           // 夏口·梁郢州治；曹景宗据城退魏（《梁书·曹景宗传》）
-  kejia: { name: '客家义军', tier: 2 },          // 黄连·汀州客家区募兵（无特定名将）
+  wan: { name: '舒州戍兵', tier: 2 },            // 皖城·李典曹魏江淮防线
+  ying: { name: '郢州水军', tier: 1 },           // 郊郢·曹景宗梁郢州据城退魏（《梁书·曹景宗传》）
+  kejia: { name: '客家义军', tier: 2 },          // 黄连·客家区募兵抗元（文天祥沾边）
   fu2: { name: '临川郡兵', tier: 2 },            // 临川·周迪陈朝据守
   ouyang: { name: '庐陵蛮兵', tier: 2 },         // 庐陵·欧阳頠世居统蛮兵（《梁书》）
-  chu_d: { name: '舒州团练兵', tier: 3 },       // 潜山·唐舒州同安郡地方团练
+  chu_d: { name: '舒州团练兵', tier: 3 },       // 潜山·唐舒州团练（储光羲诗人沾边）
   shenshi: { name: '吴兴部曲', tier: 2 },       // 独松关·吴兴沈氏部曲
   wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）
-  xie_cj_d: { name: '信州弩士', tier: 3 },      // 葛溪·信州弩士
+  xie_cj_d: { name: '信州弩士', tier: 2 },      // 葛溪·谢枋得信州抗元
   chimei: { name: '赤眉军', tier: 1 },  // 莒城·樊崇起兵攻入长安灭新莽
   chunshen: { name: '申江戍卒', tier: 3 },  // 上海·春申君黄歇封地戍卒
   wang_d: { name: '琅琊王氏部曲', tier: 2 },  // 琅琊·王导东晋开国丞相

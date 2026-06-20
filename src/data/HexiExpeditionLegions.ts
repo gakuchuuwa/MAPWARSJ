@@ -24,7 +24,8 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   anding_wei: { name: '长征健儿', tier: 2 },      // 苦峪堡·唐安西征募健儿
   beidi: { name: '萧关弩手', tier: 3 },           // 萧关·孙卬守关战死
   yingli: { name: '泼喜军', tier: 2 },            // 鸣沙·西夏砲驼兵
-  chijin: { name: '赤斤蒙古卫', tier: 2 },        // 赤金堡·明关西七卫
+  chijin: { name: '赤金营', tier: 2 },        // 赤金堡·岳钟琪平准噶尔西路劲旅
+  juyan_d: { name: '荆楚步卒', tier: 1 },     // 巴音布拉格·李陵五千荆楚勇士出居延（《史记·李将军列传》）
   dongshengwei: { name: '东胜卫戍', tier: 3 },     // 东胜卫·明代卫所
   zhai_han: { name: '翟国狄骑', tier: 3 },         // 肤施·春秋赤狄翟国
   huizhou: { name: '会州边兵', tier: 3 },          // 祖厉·唐代会州
@@ -39,5 +40,8 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   wei2: { name: '静塞军', tier: 1 },
   guazhou: { name: '瓜州镇兵', tier: 3 },  // 晋昌城·唐瓜州镇兵
   shazhou: { name: '归义精骑', tier: 2 },  // 敦煌·张议潮归义军精骑（有名且复河西）
-  suzhou: { name: '酒泉戍兵', tier: 3 },  // 酒泉·汉唐酒泉戍兵
+  suzhou: { name: '骠骑郎卫', tier: 1 },  // 酒泉·霍去病骠骑将军麾下郎卫（河西出击）
+  kang: { name: '梁国鹰扬', tier: 1 },              // 长泽·梁师都鹰扬郎将起兵建梁
+  lushui: { name: '凉州义从胡', tier: 2 },          // 媪围·北宫伯玉卢水义从胡起兵凉州
+  woye: { name: '汉·朔方边军', tier: 2 },           // 临戎·皇甫规度辽将军驻朔方
 };

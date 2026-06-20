@@ -20,15 +20,28 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   luchuan: { name: '麓川夷象', tier: 2 }, // 勐卯·辞典 #96 三征麓川象兵
   dianguo: { name: '滇池兵', tier: 3 },       // 滇池·庄蹻滇国
   mu_lijiang: { name: '丽江土兵', tier: 3 },   // 大研·木氏土司兵
-  mingzheng: { name: '明正土兵', tier: 3 },   // 打箭炉·明正土司兵
+  mingzheng: { name: '明正土兵', tier: 2 },   // 打箭炉·坚赞德昌从征金川   // 打箭炉·明正土司兵
   anding_wei: { name: '安定卫戍', tier: 3 },   // 苦峪堡·明安定卫戍卒
   // 仲家兵除名（无此编制）
-  hani_d: { name: '思陀甸兵', tier: 3 },      // 思陀·哈尼族思陀甸兵
+  hani_d: { name: '思陀甸兵', tier: 2 },      // 思陀·遮比归附从征安南
   wuman: { name: '东爨乌蛮兵', tier: 3 },     // 乌蒙山·东爨乌蛮兵
   cuanshi: { name: '爨族部兵', tier: 3 },      // 曲靖·爨氏
   suke: { name: '素可泰兵', tier: 3 },     // 双河城·素可泰王国
-  ailao: { name: '哀牢戍兵', tier: 3 },        // 永昌·哀牢国
+  ailao: { name: '哀牢戍兵', tier: 1 },       // 永昌·类牢反叛连破数城        // 永昌·哀牢国
   miaomin: { name: '苗疆义军', tier: 3 },
   dongzu: { name: '侗家义军', tier: 3 },
   zuo_d: { name: '清溪关弩手', tier: 3 },
+  nanzhong: { name: '南中劲卒', tier: 1 },     // 宛温·马忠善射夷汉部曲
+  yueyi: { name: '邛都戍', tier: 2 },         // 越嶲·焦璜戍守
+pingnan: { name: '平南戍军', tier: 1 },       // 腾越城·沐晟征讨麓川
+  jingdong: { name: '景东夷兵', tier: 1 },     // 银生城·陶洪屡退麓川
+  shanzu: { name: '麓川象阵', tier: 2 },       // 阿瓦·思机发退守
+  tonghai: { name: '通海节度兵', tier: 2 },     // 新兴·段俭魏通海都督
+  mengzu: { name: '孟族水师', tier: 2 },       // 直通城·摩奴哈孟族王
+  luohu: { name: '罗斛步卒', tier: 3 },        // 呵叻城·敢木丁驻守
+  kunming_yi: { name: '昆明夷兵', tier: 1 },   // 会川·卤承斩哀牢王封侯
+  taiyuan: { name: '兰纳锐卒', tier: 1 },      // 清坎城·芒莱王征服南奔开创兰纳
+  baiman: { name: '白蛮甲士', tier: 1 },       // 威楚·高升泰平杨义贞复大理
+  dai: { name: '车里战象', tier: 2 },          // 勐泐城·刀应勐傣兵助明御缅
+  qiong: { name: '邛都夷兵', tier: 3 },        // 邛都·任贵自立邛谷王
 };

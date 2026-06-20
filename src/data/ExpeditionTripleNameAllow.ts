@@ -57,6 +57,7 @@ export const EXPEDITION_FLAG_LEGION_REPEAT_OK = new Set<string>([
   'qincha', // 钦察·康里精骑
   'kazakh', // 哈萨·哈萨克骑
   'gurkha', // 廓喀·廓尔喀弯刀
+  'wugu_d', // 乌古斯·乌古斯弓骑
   // 未列入者默认：旗号∩番号 禁止共享（含 tianxiong、北府若改军镇专名等须逐条审核）
 ]);
 

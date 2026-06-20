@@ -32,6 +32,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // ── 2026-06-16 新增：4座西南名关 ──
   lizhou_d: { name: '蜀口守军', tier: 1 },        // 剑门关·吴玠移驻大散关（蜀口禁军）
   fengzhou: { name: '驻队矢', tier: 1 },       // 大散关·吴玠和尚原大捷（凤州）
+  fu_zhou: { name: '涪陵劲卒', tier: 2 },       // 涪陵·《华阳国志》涪陵劲卒
   fushi: { name: '氐族劲卒', tier: 2 },         // 略阳·苻洪氐族劲卒（苻氏）
     yang_bozhou: { name: '播州土兵', tier: 3 },    // 海龙屯·播州杨氏
   yong: { name: '庸国戍卒', tier: 3 },           // 上庸·古庸国
@@ -48,4 +49,19 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   jinchuan_x: { name: '金川土兵', tier: 3 },
   fuguo: { name: '附国羌兵', tier: 3 },  // 芒康宗·隋附国羌人部落兵
   jie: { name: '柘羯武士', tier: 2 },  // 羯霜那·玄奘《大唐西域记》载柘羯勇士
+qianzhong: { name: '乾嘉苗兵', tier: 1 },     // 芷江·吴八月攻克沅州
+  dangchang: { name: '宕昌羌步', tier: 2 },   // 合川·梁弥定宕昌王
+  liao: { name: '巴僚弩手', tier: 2 },        // 江阳·侯弘远僚人酋帅
+  sou: { name: '越巂叟兵', tier: 2 },         // 乐山·高定元叟族反蜀
+  huijun: { name: '回军义兵', tier: 2 },       // 偏刀水·杜文秀回民义军
+  qingqiang: { name: '青羌突骑', tier: 2 },    // 汶川·姜维青羌兵源
+  qingyi: { name: '青衣羌兵', tier: 2 },       // 严道·青衣羌活动区
+  // ── 2026-06-18：武陵/叙永/慈利/秀山/房陵/珙县/来凤精锐 ──
+  zhongxiang: { name: '钟相义军', tier: 1 },   // 武陵·钟相杨幺起义攻占州县（《宋史》）
+  she: { name: '永宁彝兵', tier: 1 },          // 叙永·奢崇明起兵反明（永宁宣抚司）
+  tan_d: { name: '慈利土兵', tier: 2 },       // 慈利·覃垕率土兵起义（明正德）
+  ran_d: { name: '冉氏土兵', tier: 2 },        // 秀山·冉守忠南宋土兵从征
+  kuai: { name: '蒯氏宗兵', tier: 3 },         // 房陵·蒯越宗族私兵（汉末荆襄）
+  boren: { name: '僰人藤牌兵', tier: 3 },     // 珙县·僰人阿大（僰道故地）
+  xiang_d: { name: '向氏土兵', tier: 3 },      // 来凤·向大坤土司（向王天子）
 };

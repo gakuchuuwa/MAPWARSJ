@@ -14,7 +14,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   bohai: { name: '渤海猛贲', tier: 2 },       // 龙泉府·渤海左右猛贲卫
   dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（阿骨打@都城）
   yizhou: { name: '金源精骑', tier: 1 },      // 蒺藜山·娄室金源精骑
-  qidan: { name: '契丹铁林军', tier: 2 },     // 木叶山·辽朝铁林军
+  qidan: { name: '契丹铁林军', tier: 1 },     // 木叶山·耶律阿保机铁林军灭渤海
   manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
   aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
@@ -36,5 +36,18 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   dawoer: { name: '达斡尔骑', tier: 3 },         // 莫尔根·清代黑龙江将军辖区
   mohe: { name: '粟末劲卒', tier: 3 },
   ewenki: { name: '石勒喀河猎兵', tier: 3 },   // 尼布楚·博木博果尔鄂温克
-  dazhen: { name: '女真拐子马', tier: 2 },   // 恤品·完颜铁哥大真国           // 勃利·靺鞨故地
+  dazhen: { name: '女真拐子马', tier: 2 },   // 恤品·完颜铁哥大真国
+  yeren_nvzhen: { name: '瑷珲索伦兵', tier: 2 }, // 瑷珲·博克雅克萨之战（索伦营已属suolun）
+  wuji: { name: '勿吉步卒', tier: 2 },            // 伯都·乙力支朝贡北魏
+  jilin: { name: '吉林边军', tier: 2 },           // 宽城子·富俊编练屯田
+  kuye: { name: '库页猎兵', tier: 3 },            // 白主·费雅喀猎户
+  sushen: { name: '楛矢射手', tier: 3 },          // 东康·肃慎楛矢石砮
+  yilou: { name: '挹娄突骑', tier: 3 },           // 凤林城·恼犽助战高句丽
+  maomingan: { name: '阿穆尔猎兵', tier: 3 },       // 格尔必齐·根特木尔达斡尔
+  jilimi: { name: '吉里迷水师', tier: 3 },        // 囊哈儿·奴儿干吉里迷
+  eluoke: { name: '鄂罗克猎兵', tier: 3 },        // 诺托罗·库页岛北部
+  nifuhe: { name: '尼夫赫冰上兵', tier: 3 },      // 盆奴里·黑龙江口
+  feiyaka: { name: '费雅喀猎手', tier: 3 },       // 普禄·库页岛西岸
+  nanai: { name: '赫哲快桨船', tier: 3 },         // 瓦伦·黑龙江中游
+  dongping: { name: '东平戍卒', tier: 3 },        // 锡尔喀·金代东平府
 };

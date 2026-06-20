@@ -22,7 +22,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占
   zhancheng: { name: '占城象兵', tier: 1 },   // 阇槃·占城象兵
-  jingjiang: { name: '靖江府卫', tier: 3 },   // 桂林·明靖江王府卫
+  jingjiang: { name: '靖江府卫', tier: 1 },   // 永安·瞿式耜大破李成栋
   xinjiang: { name: '静江弩手', tier: 1 },      // 始安·马塈静江弩手（南宋）
   // 铲平军除名（非正式官军番号）
   nanyue: { name: '南越戍卒', tier: 3 },        // 龙川·赵佗南越国秦戍（《史记》）
@@ -35,9 +35,9 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   guangxin: { name: '苍梧戍卒', tier: 3 },       // 苍梧·广信
   chen: { name: '楼船锐士', tier: 3 },              // 清远·汉楼船兵种
   taiping: { name: '太平军', tier: 2 },          // 金田村·太平天国
-  leizhou: { name: '雷州戍兵', tier: 3 },        // 海康·雷州
-  monong: { name: '墨侬部卒', tier: 3 },       // 邦敦·墨侬部落
-  shuizhen: { name: '水真戍卒', tier: 3 },     // 三菩·水真腊戍
+  leizhou: { name: '雷州戍兵', tier: 3 },        // 海康·李茂雷州卫
+  monong: { name: '墨侬部卒', tier: 2 },       // 邦敦·阿侬率余部抗宋
+  shuizhen: { name: '水真戍卒', tier: 3 },     // 三菩·区大任驻守
   ketagalan: { name: '凯达格兰勇士', tier: 3 }, // 艋舺·台北原住民
   li_s: { name: '大汉伏波', tier: 1 },            // 合浦·马援征交趾（非以少胜多）
   shaozhou: { name: '大庾岭义旅', tier: 2 },   // 韶关·张镇孙抗元义军（1277–1278）
@@ -45,10 +45,32 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   paiyao: { name: '八排瑶丁', tier: 3 },      // 阳山关·明清连阳八排瑶丁
   // 湘军道营除名（无此编制）
   dayu: { name: '南赣标军', tier: 3 },        // 横浦关·明王阳明南赣标军
-  duanzhou_d: { name: '摧锋军', tier: 2 },       // 肇庆·马暨摧锋军（《宋史》）
-  basha_d: { name: '湄公象卫', tier: 3 },     // 上丁·巴沙国湄公象卫
+  duanzhou_d: { name: '摧锋军', tier: 1 },       // 肇庆·曹觐屡败侬智高
+  basha_d: { name: '湄公象卫', tier: 2 },     // 上丁·刀更孟象兵
   dengmaoqi: { name: '铲平义军', tier: 3 },
   shixing: { name: '岭南劲卒', tier: 2 },
   yingzhou: { name: '南汉禁兵', tier: 1 },
   daozhou: { name: '道州弩手', tier: 3 },
+  guangping: { name: '象兵水师', tier: 1 },     // 洞海城·阮文张象兵舟船协同
+shengmiao: { name: '古州苗兵', tier: 1 },     // 甲定·包利连破清军汛堡
+  chendiaoyan: { name: '畲汉义军', tier: 1 },   // 龙溪·陈吊眼攻破漳州
+  buyi_d: { name: '盘江布依兵', tier: 1 },       // 罗博·韦朝元布依起义
+  paiwan: { name: '牡丹社勇士', tier: 1 },      // 牡丹社·阿禄古抗击日军
+  miao_qing: { name: '杨完者苗军', tier: 1 },   // 且兰城·苗军连败红巾军
+  geng: { name: '靖南藩兵', tier: 1 },         // 延平·耿精忠三藩起兵
+  tian_sizhou: { name: '思州土兵', tier: 1 },    // 镇远·田祐恭归宋封国公
+  liren: { name: '儋耳黎兵', tier: 1 },         // 珠崖·符南蛇黎族起义
+  luodian: { name: '水西彝兵', tier: 2 },      // 大方城·奢香夫人摄政保境
+  longwu: { name: '建宁义旅', tier: 2 },       // 建宁·黄道周募兵抗清
+  luoping: { name: '厓山宋军', tier: 2 },       // 新会·张世杰厓山殉国
+  xinggu: { name: '爨氏部曲', tier: 3 },       // 罗雄·爨习南中大姓
+  nong2: { name: '广源峒兵', tier: 1 },           // 广源·侬智高广源起兵建南天国
+  cen_d: { name: '泗城狼兵', tier: 1 },          // 凌云·岑猛泗城狼兵威震广西
+  miao: { name: '水西苗兵', tier: 2 },           // 可乐城·水西土司苗兵
+  jiang_s: { name: '零陵营兵', tier: 2 },        // 零陵·蒋琬故里零陵驻军
+  muong: { name: '芒峒刀牌手', tier: 3 },         // 和平·申从岳芒族刀牌手
+  panyao: { name: '瑶人弩手', tier: 3 },          // 临贺·盘瑶山地弩手
+  chen2: { name: '桂阳戍卒', tier: 3 },           // 桂阳·赵范桂阳戍卒
+  qian: { name: '矩州戍卒', tier: 3 },            // 顺元·宋景阳入矩州戍
+  ketagalan: { name: '凯达格兰勇士', tier: 3 }, // 艋舺·黄青云汛防
 };

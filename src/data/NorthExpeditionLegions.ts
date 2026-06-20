@@ -26,7 +26,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
   gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵·高长恭禁卫
-  yingzhou_ying_d: { name: '黄龙兵', tier: 3 }, // 朝阳·营州黄龙（《北齐书·高宝宁传》）
+  yingzhou_ying_d: { name: '黄龙兵', tier: 1 }, // 朝阳·慕容皝棘城大破石赵
   chile: { name: '两池军', tier: 3 },       // 云中·§2 #11
   murong: { name: '龙城甲骑', tier: 1 },    // 棘城·慕容燕具装骑（无经典以少胜多）
   ming_d: { name: '明军三大营', tier: 2 },   // 北京·五军神机三千营
@@ -75,4 +75,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   yangshe: { name: '铜鞮私卒', tier: 2 }, // 铜鞮·羊舌职封邑
   guzhu: { name: '辽西郡兵', tier: 2 },    // 肥如·田豫辽西镇北疆
   dizhou: { name: '龙骧军', tier: 1 },     // 乐安·王彦章龙骧破晋
+  wuyuan_d: { name: '五原塞卒', tier: 3 },  // 固阳塞·五原郡长城戍卒
 };

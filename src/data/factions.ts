@@ -29,6 +29,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zhancheng', name: '占城' },
     { id: 'monong', name: '墨侬' },
     { id: 'shuizhen', name: '水真' },
+{ id: 'yueyi', name: '越夷' },       // 越嶲·焦璜邛都戍
     { id: 'wala', name: '瓦剌' },
     { id: 'wuliangha', name: '兀良哈' },
     { id: 'dingling', name: '丁零' },
@@ -59,7 +60,8 @@ export const FACTIONS: Faction[] = [
     { id: 'wu', name: '吴国' },
     { id: 'yue', name: '越国' },
     { id: 'nanyue', name: '南越' },                 // 赵佗@龙川（政权·国号）
-    { id: 'guangzhou', name: '广州' },               // 广州@番禺（州府/广南核心）
+    { id: 'guangzhou', name: '广州' },
+{ id: 'guangping', name: '广平' },     // 洞海城·阮文张象兵水师               // 广州@番禺（州府/广南核心）
     // ── 2026-06-19 新增：端州@肇庆（摧锋军；旗号端≠据点名肇庆）──
     { id: 'duanzhou_d', name: '端州' },
     { id: 'qin', name: '秦国' },
@@ -287,7 +289,7 @@ export const FACTIONS: Faction[] = [
         // 南疆橙 - 侬智高南天国(邕州)
     { id: 'fangla', name: '圣公' },            // 明教紫 - 方腊起义(清溪)
     // ── 2026-05-26 北宋辽金势力 v2 ──
-    { id: 'zhongxiang', name: '钟楚' },      // 洞庭绿 - 钟相杨幺大圣天王政权(鼎州)
+    { id: 'zhongxiang', name: '钟楚' },      // 旗号钟楚（政权国号，非单字截）；钟相@武陵
     { id: 'yang_aner', name: '天顺' },          // 红袄赤 - 杨安儿天顺政权(登州)
     { id: 'jinan', name: '济南' },
     // 草原金 - 德寿身圣政权(信州)
@@ -336,7 +338,10 @@ export const FACTIONS: Faction[] = [
     { id: 'jilimi', name: '吉里' },                // 暗苔绿 - 吉里迷/尼夫赫人(库页岛/黑龙江口)
     { id: 'hezhe', name: '赫哲' },                   // 河口青 - 赫哲/那乃人(黑龙江下游/库页岛)
     { id: 'luchuan', name: '麓川' },
-    { id: 'chijin', name: '赤斤' },
+    { id: 'chijin', name: '赤斤' },                          // 赤金堡·旗号赤（赤斤蒙古卫）
+    { id: 'juyan_d', name: '居延' },                        // 巴音布拉格·汉张掖郡居延县；旗号延
+    { id: 'xihai_d', name: '西海' },                          // 伏俟城·隋西海郡治；旗号西海
+    { id: 'heyuan_d', name: '河源' },                          // 花石峡·隋河源郡积石镇；旗号河源
     { id: 'guiyi', name: '归义' },
     { id: 'anding_wei', name: '安定' },
     // 第六类：周边国家政权
@@ -768,7 +773,7 @@ export const FACTIONS: Faction[] = [
     { id: 'cai', name: '蔡国' },
     { id: 'changshaguo', name: '长沙国' },
     { id: 'shangzhou', name: '商州' },   // 旗号上洛(商邑=商州治；避与商字重)
-    { id: 'ying', name: '郢州' },               // 夏口·梁郢州治（非楚郊郢）
+    { id: 'ying', name: '郢州' },               // 郊郢·梁郢州曹景宗（治所夏口，据点沾边）
     { id: 'heng', name: '衡州' },
     { id: 'chen2', name: '郴州' },
     { id: 'shixing', name: '石兴岭' },
@@ -936,6 +941,18 @@ export const FACTIONS: Faction[] = [
     { id: 'nvguo', name: '女国' },
     { id: 'jiashi', name: '迦湿弥罗' },
     { id: 'wuhu', name: '乌护' },
+    // ── 2026-06-19 新增：马尔吉亚纳（彭迪）·乌古斯（毡的）──
+    { id: 'maer_d', name: '马尔吉亚纳' },          // 彭迪·穆尔加布绿洲边镇（Margiana）
+    { id: 'wugu_d', name: '乌古斯' },              // 毡的·锡尔河下游乌古斯叶护国核心
+    // ── 2026-06-19 新增：阿克苏道（昆岗军台）──
+    { id: 'adao_d', name: '阿克苏道' },            // 昆岗·清代南疆驿路军台
+    // ── 2026-06-19 新增：五原郡（固阳塞）──
+    { id: 'wuyuan_d', name: '五原郡' },            // 固阳塞·秦汉北防匈奴要隘
+    // ── 2026-06-19 新增：漠北/漠南要塞势力（7点）──
+    { id: 'chenli_d', name: '撑犁' },              // 姑衍山·匈奴祭天（撑犁=天）
+    { id: 'nuoyan_d', name: '诺颜' },              // 赛音山达·赛音诺颜部
+    { id: 'wuli_d', name: '乌里' },                // 扎布汗·乌里雅苏台辖区
+    { id: 'jiluo_d', name: '稽落' },               // 涿邪山·窦宪出稽落/涿邪
   { id: 'sanada_d', name: '真田氏' },
     { id: 'wuzhou', name: '武州' },
     { id: 'bailong', name: '白龙' },
@@ -950,4 +967,5 @@ export const FACTIONS: Faction[] = [
     { id: 'sagami', name: '相模' },
     { id: 'mino', name: '美浓' },
     { id: 'ssangseong', name: '双城' },
+    { id: 'fu_zhou', name: '涪州' },
 ];

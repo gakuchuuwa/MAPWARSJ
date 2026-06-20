@@ -39,10 +39,12 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhancheng': '占城',
     'monong': '墨侬',
     'shuizhen': '水真',
+    'yueyi': '越',
     'wala': '瓦剌',
     'wuliangha': '兀良哈',
     'dingling': '丁零',
     'nifuhe': '尼夫',
+    'nanzhong': '南中',
     'guer': '古尔',
     'xiajiasi': '坚昆',
     'zhen': '甄',
@@ -59,6 +61,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yue': '越',
     'nanyue': '南越',
     'guangzhou': '广',
+    'guangping': '广平',
     'duanzhou_d': '端',
     'qin': '秦',
     'song': '宋',
@@ -81,7 +84,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jie': '羯',
     'beidi': '北地',
     'tuoba': '拓跋',
-    'yuwen': '宇文',
+    'yuwen': '饶',     // 饶乐水·宇文鲜卑（原武川镇）
 'liang_d': '梁',
     'chen': '陈',
     'sui': '随',
@@ -167,7 +170,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'ailao': '哀牢',
 'fuyu': '夫余',
 'shule': '疏勒',
-    'loulan': '楼兰',
+    'loulan': '楼',     // 精绝·东汉都护府楼兰属国屯戍（原扜泥城）
     'shache': '莎车',
 'qiuci': '龟兹',
     'yanqi': '焉耆',
@@ -215,7 +218,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'lu': '庐',
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
-    'zhuozhou': '涿',
+    'zhuozhou': '范阳', // 范阳·避涿邪山旗号涿 §4.1
     'tujia_d': '土家',
     'zhuang_d': '壮',
     'xibo_d': '锡伯',
@@ -256,7 +259,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'fangla': '方',
 
     // ── 2026-05-25 北宋辽金势力 v2 ──
-    'zhongxiang': '钟',
+    'zhongxiang': '钟楚',
     'yang_aner': '登',
     'jinan': '历',
     'dixiang': '帝乡',
@@ -269,7 +272,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dongxia': '东夏',
 'chagatai': '察合',
     'ogodei': '窝阔',
-    'kereyid': '克烈',
+    'kereyid': '烈',   // 特尔门·克烈部王汗
     'naiman': '乃蛮',
     'tatar': '塔塔',
     'merkit': '蔑儿',
@@ -294,8 +297,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-16 改：旗号「藤原」（§4.4 家族；禁「」字；势力全名仍奥）──
     'fujiwara': '藤原',
 'luchuan': '麓川',
-    'chijin': '赤斤',
-    'guiyi': '归义',
+    'chijin': '赤',
+    'juyan_d': '延',
+    'xihai_d': '西海',
+    'heyuan_d': '河源',
     'anding_wei': '安定',
     'joseon': '朝鲜',
     'siam': '暹罗',
@@ -821,5 +826,15 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'mino': '美浓',
     'ssangseong': '双城',
     'wenzhou': '温',
+    'fu_zhou': '涪',
+    // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
+    'maer_d': '马尔',   // 彭迪·Margiana；旗号「穆」已被穆氏占用
+    'wugu_d': '乌',     // 毡的·乌古斯突厥
+    'adao_d': '阿',     // 昆岗·阿克苏道军台
+    'wuyuan_d': '五',   // 固阳塞·五原郡
+    'chenli_d': '禅',   // 姑衍山·撑犁祭天
+    'nuoyan_d': '赛',   // 赛音山达·赛音诺颜部
+    'wuli_d': '扎',     // 扎布汗·乌里雅苏台
+    'jiluo_d': '涿',    // 涿邪山·窦宪出涿邪
 };
     

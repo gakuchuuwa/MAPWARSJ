@@ -9,7 +9,7 @@
  */
 export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   hepan: { name: '朅盘陀戍卒', tier: 3 }, // 石头城·裴神符
-  bailong: { name: '白龙堆戍卒', tier: 3 }, // 三陇沙·白龙堆
+  bailong: { name: '白龙堆戍卒', tier: 1 }, // 三陇沙·班勇西域长史平车师
   kepantuo: { name: '公主堡戍卒', tier: 3 }, // 公主堡·汉日天种王
   zhasaketu: { name: '札萨克图骑兵', tier: 3 }, // 扎布汗·策旺扎布
   huite: { name: '辉特部骑', tier: 1 }, // 金山·阿睦尔撒纳
@@ -33,7 +33,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   shache: { name: '莎车左右骑', tier: 2 },   // 渠莎·汉代西域强国
   anxi: { name: '大唐安西军', tier: 2 },     // 拨换城·安西都护府（无经典以少胜多）
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
-  loulan: { name: '楼兰戍', tier: 3 },      // 扜泥城·汉晋楼兰戍卒（旗=楼兰·§12.1.1）
+  loulan: { name: '精绝屯戍', tier: 3 },      // 精绝·都护府直属屯田戍卒（旗号楼·§12.1）
   zhuxie: { name: '朱邪部兵', tier: 3 },      // 大石城·沙陀朱邪部
   // 重复行已删
   juandu: { name: '捐毒戍卒', tier: 3 },     // 排修城·汉西域捐毒国
@@ -46,4 +46,15 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   tuerhute: { name: '鹰娑川铁骑', tier: 3 },
   gaochang: { name: '高昌铁骑', tier: 2 },    // 赤亭关·麴氏高昌具装骑
   yiwu: { name: '哈密卫戍', tier: 3 },       // 哈密卫·明关西七卫戍卒（都城高昌，咸通前）
+  adao_d: { name: '昆岗台兵', tier: 3 },      // 昆岗·阿克苏道军台驿卒
+  weitou: { name: '尉头城戍卒', tier: 3 },    // 阿合奇·尉头国王城
+  yumi: { name: '扜弥城戍', tier: 3 },        // 阿赫雅尔·扜弥国王都
+  qiemo: { name: '且末镇兵', tier: 3 },       // 播仙·唐安西四镇且末
+  pishan: { name: '皮山国兵', tier: 3 },      // 固玛·皮山国
+  ruoqiang: { name: '婼羌部族兵', tier: 3 },  // 卡克里克·婼羌部落
+  weili: { name: '尉犁戍卒', tier: 3 },       // 库尔勒·尉犁国王城
+  duerbote: { name: '杜尔伯特游骑', tier: 3 }, // 托克逊·杜尔伯特部
+  sai: { name: '塞种弓骑', tier: 3 },         // 握瑟德·塞种部落
+  xiye: { name: '西夜国兵', tier: 3 },        // 叶城·西夜国
+  weiwuer: { name: '回部伯克兵', tier: 3 },   // 玉尔滚·回部伯克
 };

@@ -330,7 +330,10 @@ const _FIXED: Record<string, string> = {
     liguo: '#857053', // 黎国（黎国沙土褐，黎之耆戎）
     yiyang_d: '#4F6B8A', // 义阳（义阳青蓝，申息锐师）
     anding_wei: '#614B3B', // 安定（安定卫土褐，长征健儿）
-    chijin: '#C14B3A', // 赤斤（赤斤红，赤斤蒙古卫）
+    chijin: '#C14B3A', // 赤斤·赤金营（赤金堡）
+    juyan_d: '#7A6B52', // 居延·荆楚步卒（巴音布拉格）
+    xihai_d: '#3D6B8C', // 西海·威定戍卒（伏俟城）
+    heyuan_d: '#4A7080', // 河源·积石屯骑（花石峡）
     hongzhou: '#355C4A', // 洪州·洪都戍卒（豫章墨绿）
     ningkou: '#6B5E4A', // 宁寇（居延暗棕）
     chen3: '#8F6E8F', // 月支（月支紫褐，击刹兵）
@@ -542,6 +545,7 @@ const _FIXED: Record<string, string> = {
     'pishan': '#247DC1', // 自动分配 (邻域相斥)
     'tuerhute': '#CED048', // 自动分配 (邻域相斥)
     'cen_d': '#3BB9C7', // 自动分配 (邻域相斥)
+    'fu_zhou': '#B84A3C', // 涪州·涪陵劲卒
     'wang_s': '#5FBD48', // 自动分配 (邻域相斥)
     'xiang_d': '#65CA79', // 自动分配 (邻域相斥)
     'tan_d': '#982F63', // 自动分配 (邻域相斥)
@@ -701,6 +705,14 @@ const _FIXED: Record<string, string> = {
     fanyanna: '#4A3A6A', // 梵衍那·深紫
     dingxiang_d: '#3A4A5A', // 定襄·暗青
     xiayang_d: '#4A5A48', // 夏阳·禹门青褐
+    maer_d: '#7A5C3A', // 马尔吉亚纳·沙漠绿洲褐
+    wugu_d: '#4A6B3A', // 乌古斯·草原青绿
+    adao_d: '#5A4A6A', // 阿克苏道·军台靛紫
+    wuyuan_d: '#6A5A48', // 五原郡·长城土褐
+    chenli_d: '#4A3848', // 撑犁·祭天玄紫
+    nuoyan_d: '#5A6850', // 诺颜·喀尔喀青灰
+    wuli_d: '#485868', // 乌里·军台靛灰
+    jiluo_d: '#6A5840', // 稽落·燕然土黄
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
