@@ -289,7 +289,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/xianqin/shang_fuhao.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": -10
+            "offsetY": -19
         },
         "/assets/xianqin/06494f4e-1652-4c64-a3d3-998bb6bb4975.png": {
             "scale": 1.08,
@@ -385,6 +385,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": -21
+        },
+        "/assets/zhongyuan/chuanshu (8).png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/daming/JIANGNAN_garrison.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/zhongyuan/e6fc1853-88b8-4561-b5e9-769779bbf6dc.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/zhongyuan/zhuozhou_anlushan.png": {
+            "scale": 1.12,
+            "offsetX": 1,
+            "offsetY": 12
+        },
+        "/assets/daming/JIANGNAN_field.png": {
+            "scale": 1.06,
+            "offsetX": 16,
+            "offsetY": 3
+        },
+        "/assets/lingnan/guangzhou (10).png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
         }
     },
     "folderGuides": {
