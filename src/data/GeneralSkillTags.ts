@@ -93,9 +93,9 @@ export const TAC04_QUOTA_EXEMPT = true;
 export const HARD_LOCKED_TACTICAL_ASSIGNMENTS: Readonly<
     Record<string, { archetype: SkillArchetype; evidence: string }>
 > = {
-    huangtaiji: { archetype: 'stratagem_weaken', evidence: '松锦战后洪承畴部归降' },
-    baiqi: { archetype: 'assault_break', evidence: '鄢郢水攻、长平正面歼灭' },
-    hanxin: { archetype: 'mobile_raid', evidence: '暗度陈仓定三秦（主格②，非③）' },
+    aisin_d_huangtaiji: { archetype: 'stratagem_weaken', evidence: '松锦战后洪承畴部归降' },
+    qin_baiqi: { archetype: 'assault_break', evidence: '鄢郢水攻、长平正面歼灭' },
+    han_d_hanxin: { archetype: 'mobile_raid', evidence: '暗度陈仓定三秦（主格②，非③）' },
     // 张巡等未入池；入池时：zhangxun → siege_hold / 睢阳死守
 };
 
@@ -107,15 +107,15 @@ export const SINGLE_TAG_IMMUTABLE_ASSIGNMENTS: Readonly<
     Record<string, { archetype: SkillArchetype; evidence: string }>
 > = {
     // 仅③合理
-    chengjisihan: { archetype: 'assault_break', evidence: '蒙古西征铁骑奔袭' },
-    zhentianxingcun: { archetype: 'assault_break', evidence: '大阪夏之阵赤备突击' },
-    daojinjiajiu: { archetype: 'assault_break', evidence: '冲冠编队儿岛突击' },
-    jiebai: { archetype: 'assault_break', evidence: '车昌野隘突击' },
-    wanyanaguda: { archetype: 'assault_break', evidence: '阿骨打破辽神速突击' },
+    menggu_d_chengjisihan: { archetype: 'assault_break', evidence: '蒙古西征铁骑奔袭' },
+    sanada_d_zhentianxingcun: { archetype: 'assault_break', evidence: '大阪夏之阵赤备突击' },
+    satsuma_daojinjiajiu: { archetype: 'assault_break', evidence: '冲冠编队儿岛突击' },
+    baiji_jiebai: { archetype: 'assault_break', evidence: '车昌野隘突击' },
+    dajin_wanyanaguda: { archetype: 'assault_break', evidence: '阿骨打破辽神速突击' },
     // 仅②合理
-    zhitianxinchang: { archetype: 'mobile_raid', evidence: '桶狭间奇袭破今川' },
-    maoliyuanjiu: { archetype: 'mobile_raid', evidence: '严岛夜袭少胜多' },
-    yuanyijing: { archetype: 'mobile_raid', evidence: '屋岛冲夜袭' },
+    owari_zhitianxinchang: { archetype: 'mobile_raid', evidence: '桶狭间奇袭破今川' },
+    aki_maoliyuanjiu: { archetype: 'mobile_raid', evidence: '严岛夜袭少胜多' },
+    fujiwara_yuanyijing: { archetype: 'mobile_raid', evidence: '屋岛冲夜袭' },
 };
 
 /** 不可回溯改配：硬锁 ∪ 单一标签 */

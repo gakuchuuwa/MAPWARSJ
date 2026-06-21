@@ -79,6 +79,10 @@ export class CityAssetManager {
 
 
         'min': '闽',
+        'najie': '那竭',
+        'pangzha': '旁遮',
+        'wenling': '温陵',
+        'qianzhou': '乾',
         'quanzhou': '泉',
         'shang': '商',
         'zhou': '周',
