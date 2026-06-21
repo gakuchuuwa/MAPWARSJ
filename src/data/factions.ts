@@ -217,7 +217,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zhai_han', name: '翟国' },
     { id: 'yin', name: '殷国' },
     // ── 2026-06-16 新增：河间郡治乐成（§4.3；先登死士@界桥）──
-    { id: 'hejian', name: '莫' },
+    { id: 'hejian', name: '莫州' },
     { id: 'qu_d', name: '麴氏' },                 // 麴义·先登死士@界桥
     { id: 'liu', name: '九江' },
       // 陶褐 - 英布/九江王(六县)
@@ -825,7 +825,7 @@ export const FACTIONS: Faction[] = [
     { id: 'weitou', name: '尉头' },
     { id: 'dangchang', name: '宕昌' },
 
-    { id: 'mi', name: '糜' },
+    { id: 'mi', name: '糜氏' },
     { id: 'hai2', name: '瀑池' },
     { id: 'fu2', name: '抚州' },
     { id: 'xinping', name: '新平' },

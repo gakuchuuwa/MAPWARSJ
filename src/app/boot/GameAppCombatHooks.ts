@@ -37,18 +37,22 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         );
         const dur = battleField?.targetDuration ?? 17;
         const scale = app.timeSystem.getSpeed();
-        app.combatUI.showRegional(
-            attackers,
-            defenders,
-            attackerPortrait,
-            defenderPortrait,
-            title,
-            description,
-            isNarrative,
-            dur,
-            scale,
-            battleField
-        );
+        try {
+            app.combatUI.showRegional(
+                attackers,
+                defenders,
+                attackerPortrait,
+                defenderPortrait,
+                title,
+                description,
+                isNarrative,
+                dur,
+                scale,
+                battleField
+            );
+        } catch (err) {
+            console.error('[GameApp] 战斗 UI 展示失败（战斗仍继续）:', err);
+        }
     };
 
     app.combatSystem.onRegionalBattleEnd = (endedFields) => {
@@ -77,18 +81,22 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const title = battleField.type === 'siege' ? '攻城战' : '正在交战';
         const dur = battleField.targetDuration;
         const scale = app.timeSystem.getSpeed();
-        app.combatUI.showRegional(
-            attackers,
-            defenders,
-            undefined,
-            undefined,
-            title,
-            '',
-            false,
-            dur,
-            scale,
-            battleField
-        );
+        try {
+            app.combatUI.showRegional(
+                attackers,
+                defenders,
+                undefined,
+                undefined,
+                title,
+                '',
+                false,
+                dur,
+                scale,
+                battleField
+            );
+        } catch (err) {
+            console.error('[GameApp] 援军加入战斗 UI 展示失败（战斗仍继续）:', err);
+        }
     };
 }
 

@@ -137,7 +137,7 @@ export class GameConfig {
             JAPAN: [0.9, 1.1], KOREA: [0.9, 1.1], JIANGNAN: [0.9, 1.1],
             LINGNAN: [0.8, 1.2], DIANQIAN: [0.8, 1.2], BASHU: [0.8, 1.2],
         } as Record<string, readonly [number, number]>,
-        /** 关隘据点守军额外系数（拒险而守；与 PASS_GARRISON_DEFENSE_SKILL.magnitude 须一致） */
+        /** 关隘据点守军额外系数（拒险而守；与 GeneralSkills「拒险而战」展示名对应） */
         PASS_GARRISON_MULT: 1.2,
     };
     // [2026-06-12 删除] static MORALE（士气衰减 + FLANKING 侧翼系数）——全项目零引用的死配置。

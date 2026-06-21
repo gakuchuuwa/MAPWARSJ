@@ -394,7 +394,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     nguyen_guangnan: { generalId: 'nguyen_guangnan_ruanfuying', generalName: '阮福映', portrait: '/assets/lingnan/nguyen_guangnan_ruanfuying.png' },
     zhuang_d: { generalId: 'zhuang_d_washifuren', generalName: '瓦氏夫人', portrait: '/assets/lingnan/zhuang_d_washifuren.png' },
     nanyue: { generalId: 'nanyue_zhaotuo', generalName: '赵佗', portrait: '/assets/lingnan/nanyue_zhaotuo.png' },
-    zhancheng: { generalId: 'zhancheng_zhimin', generalName: '制旻', portrait: '/assets/dianmian/zhancheng_zhimin.png' },
+    zhancheng: { generalId: 'zhancheng_zhimin', generalName: '制旻', portrait: '/assets/guangzhou/zhancheng_zhimin.png' },
     xiou: { generalId: 'xiou_yixusong', generalName: '译吁宋', portrait: '/assets/lingnan/xiou_yixusong.png' },
     xichu: { generalId: 'xichu_xiangyu', generalName: '项羽', portrait: '/assets/jiangnan/xichu_xiangyu.png' },
     gouding: { generalId: 'gouding_wubo', generalName: '毋波', portrait: '/assets/lingnan/gouding_wubo.png' },

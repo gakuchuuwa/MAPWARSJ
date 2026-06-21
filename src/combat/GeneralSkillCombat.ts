@@ -4,6 +4,7 @@
 import type { IBattleUnit, BattleType } from './CombatSystem';
 import type { Army } from '../legion/Army';
 import type { LegionManager } from '../legion/LegionManager';
+import { GameConfig } from '../config/GameConfig';
 import {
     getGeneralProfile,
     getStrategicSkillDef,
@@ -246,10 +247,10 @@ export function getPassGarrisonDefenseSkillDisplay(
     unit: IBattleUnit,
 ): { name: string; effectLabel: string } | null {
     if (!unitQualifiesForPassGarrisonDefenseSkill(unit)) return null;
-    const skill = PASS_GARRISON_DEFENSE_SKILL;
+    const mult = GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT;
     return {
-        name: skill.displayName,
-        effectLabel: `城防×${parseFloat(skill.magnitude.toFixed(2))}`,
+        name: PASS_GARRISON_DEFENSE_SKILL.displayName,
+        effectLabel: `城防×${parseFloat(mult.toFixed(2))}`,
     };
 }
 

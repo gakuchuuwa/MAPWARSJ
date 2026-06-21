@@ -8,7 +8,7 @@
  *   低防 日本/朝鲜/江南：野战 ×0.9，守军 ×1.1
  *   高防 岭南/滇缅/川蜀：野战 ×0.8，守军 ×1.2
  *
- * 关隘（type===pass 的守军）：再 × 拒险而守（`PASS_GARRISON_DEFENSE_SKILL`，默认 1.2），与文化区相乘。
+ * 关隘（type===pass 的守军）：再 × 拒险而守（`GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT`，默认 1.2），与文化区相乘。
  *   例：岭南关隘守军 = 1.2（文化）× 1.2（关隘）= 1.44，不是 1.2³。
  *
  * 一侧合算后再 × 总 luck [0.8, 1.2] 掷一次（与上述固定系数独立）。
@@ -21,7 +21,6 @@
  */
 
 import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';
-import { PASS_GARRISON_DEFENSE_SKILL } from '../data/GeneralSkills';
 import type { IBattleUnit } from '../core/CombatSystem';
 import type { Army } from '../core/Army';
 import type { City } from '../types/core';
@@ -83,7 +82,7 @@ function getPassGarrisonMultiplier(unit: IBattleUnit): number {
     if (!isGarrisonUnit(unit)) return 1;
     const city = unit.getEntity?.() as City | undefined;
     if (city?.type === 'pass') {
-        return PASS_GARRISON_DEFENSE_SKILL.magnitude;
+        return GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT;
     }
     return 1;
 }
