@@ -40,11 +40,17 @@ import {
     canUnitUseGeneralSkills,
     getBattleTerrainKind,
 } from '../combat/GeneralSkillCombat';
-import { PASS_GARRISON_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL } from '../data/GeneralSkills';
+import { PASS_GARRISON_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
+import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
+import type { Army } from '../legion/Army';
 const T = COMBAT_UI_TOKENS;
 
 /** 战报技能条/系数链：精锐或远征 ×1.2 用番号专名作标签（去「军团」等尾缀） */
 function getLegionEliteBadgeName(unit: IBattleUnit): string {
+    if (unit.unitType === 'city') {
+        const eliteName = readSiegeGarrisonEliteName(unit.getEntity?.());
+        if (eliteName) return eliteName;
+    }
     const raw = (unit.name ?? '').trim();
     if (!raw) return '精锐';
     const match = raw.match(/(军团|驻军|守军)$/);
@@ -143,8 +149,8 @@ export class CombatUI {
     /** 实时预览用：DEFAULT_PORTRAIT_ADJUST 的工作副本，仅覆盖当前编辑张 */
     private correctorData: PortraitAdjustData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
     private correctorDraft: Required<PortraitAdjustValues> = { scale: 1, offsetX: 0, offsetY: 0 };
-    /** 自动保存防抖计时器：调整停手后自动写盘，无需按 Enter */
-    private correctorSaveTimer: ReturnType<typeof setTimeout> | null = null;
+    /** 本场 F2 内改过的立绘路径；Esc 退出时一并写盘 */
+    private correctorDirtyPaths = new Set<string>();
     /** 十字准星参照线（竖中线 + 24% 眼线）开关与元素 */
     private correctorCrosshairOn = true;
     private leftCrosshair: HTMLDivElement | null = null;
@@ -171,6 +177,11 @@ export class CombatUI {
                 0% { text-shadow: 0 0 5px rgba(255,215,0,0.3); }
                 50% { text-shadow: 0 0 15px rgba(255,215,0,0.8), 0 0 30px rgba(255,100,0,0.6); }
                 100% { text-shadow: 0 0 5px rgba(255,215,0,0.3); }
+            }
+            @keyframes clash-pulse {
+                0% { opacity: 0.8; box-shadow: 0 0 12px #FFD700, 0 0 20px rgba(255, 120, 40, 0.5); }
+                50% { opacity: 1; box-shadow: 0 0 24px #FFD700, 0 0 40px rgba(255, 120, 40, 0.9), 0 0 60px rgba(255, 80, 20, 0.4); }
+                100% { opacity: 0.8; box-shadow: 0 0 12px #FFD700, 0 0 20px rgba(255, 120, 40, 0.5); }
             }
             @keyframes troop-pulse {
                 0% { transform: scale(1); }
@@ -450,6 +461,7 @@ export class CombatUI {
             margin-left: -${uiPx(T.clashBar.clashWidth / 2 + 2)};
             pointer-events: none;
             transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            animation: clash-pulse 1.2s infinite ease-in-out;
         `;
 
         this.healthBarContainer.appendChild(this.defenderBar);
@@ -730,9 +742,35 @@ export class CombatUI {
                 const followed = units.find((u) => u.id === followedId);
                 if (followed) return followed;
             }
-            return units[0] ?? null;
+            return this.pickPrimaryDisplayUnit(units);
         }
         return null;
+    }
+
+    /** 侧栏立绘/技能/系数：优先带将+精锐的军团，避免攻城时城防「驻军」盖住守城军团 */
+    private pickPrimaryDisplayUnit(units: IBattleUnit[]): IBattleUnit | null {
+        if (units.length === 0) return null;
+        let best = units[0];
+        let bestScore = Number.NEGATIVE_INFINITY;
+        for (const u of units) {
+            const score = this.scoreBattleDisplayUnit(u);
+            if (score > bestScore) {
+                bestScore = score;
+                best = u;
+            }
+        }
+        return best;
+    }
+
+    private scoreBattleDisplayUnit(u: IBattleUnit): number {
+        let score = 0;
+        if (u.unitType === 'legion' || u.unitType === 'army') score += 10_000;
+        if (u.generalId && getGeneralProfile(u.generalId)) score += 1_000;
+        const army = u.getEntity?.() as Army | undefined;
+        if (army?.isElite) score += 500;
+        if (u.unitType === 'city' && readSiegeGarrisonEliteName(u.getEntity?.())) score += 500;
+        score += Math.min(Math.max(0, u.troops) / 1000, 99);
+        return score;
     }
 
     private updateSkillBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
@@ -1147,8 +1185,8 @@ export class CombatUI {
             }
         }
 
-        const attacker = attackers[0];
-        const defender = defenders[0];
+        const attacker = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
+        const defender = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
         
         const buildWaveGroupedName = (units: IBattleUnit[], _isAttacker: boolean): string => {
             const waves = new Map<number, IBattleUnit[]>();
@@ -1258,7 +1296,7 @@ export class CombatUI {
             switch (e.key) {
                 case 'Escape': e.preventDefault(); this.closeCorrector(); break;
                 case 'Tab': e.preventDefault(); this.switchCorrectorSide(); break;
-                case 'Enter': e.preventDefault(); this.saveCorrector(); break;
+                case 'Enter': e.preventDefault(); void this.saveCorrectorSession(false); break;
                 case 'ArrowLeft': e.preventDefault(); this.nudgeCorrector(0, -fine, 0); break;
                 case 'ArrowRight': e.preventDefault(); this.nudgeCorrector(0, fine, 0); break;
                 case 'ArrowUp': e.preventDefault(); this.nudgeCorrector(0, 0, -fine); break;
@@ -1294,12 +1332,55 @@ export class CombatUI {
         this.correctorOpen = true;
         this.correctorPrevPaused = this.pauseHook?.isGamePaused() ?? false;
         this.pauseHook?.setPaused(true);
-        this.correctorData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
         if (!this.correctorPanel) this.correctorPanel = this.buildCorrectorPanel();
         this.correctorPanel.style.display = 'flex';
+        void this.bootstrapCorrector();
+    }
+
+    /** 打开 F2：拉磁盘最新 portrait_adjust → 左右立绘均套用已存调校 */
+    private async bootstrapCorrector(): Promise<void> {
+        this.correctorDirtyPaths.clear();
+        this.correctorData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
+        try {
+            const res = await fetch('/api/portrait-adjust');
+            if (res.ok) {
+                this.mergePortraitAdjustInto(this.correctorData, await res.json());
+            }
+        } catch {
+            // 无 dev API 时沿用打包进 DEFAULT 的数据
+        }
         this.loadCorrectorDraft();
+        this.applyBothCorrectorPortraits();
         this.highlightCorrectorSide();
         this.scheduleCorrectorCrosshairRefresh();
+    }
+
+    private mergePortraitAdjustInto(target: PortraitAdjustData, source: PortraitAdjustData): void {
+        if (source.folders) {
+            target.folders = { ...target.folders, ...source.folders };
+        }
+        if (source.images) {
+            target.images = { ...target.images, ...source.images };
+        }
+        if (source.folderGuides) {
+            target.folderGuides = { ...target.folderGuides, ...source.folderGuides };
+        }
+    }
+
+    private canPersistPortraitPath(path: string): boolean {
+        return path.startsWith('/assets/') && path.toLowerCase().endsWith('.png');
+    }
+
+    private applyPortraitAdjustToImg(img: HTMLImageElement, data: PortraitAdjustData = this.correctorData): void {
+        const path = this.srcToPath(img);
+        if (!this.canPersistPortraitPath(path)) return;
+        applyPortraitAdjustToElement(img, path, data);
+    }
+
+    /** 左右立绘都套用 correctorData（换边 / 打开 F2 时保证「以前保存好的状态」） */
+    private applyBothCorrectorPortraits(): void {
+        this.applyPortraitAdjustToImg(this.leftPortrait);
+        this.applyPortraitAdjustToImg(this.rightPortrait);
     }
 
     /** 立绘 img 布局盒就绪后再铺准星（避免 offset 为 0） */
@@ -1315,7 +1396,14 @@ export class CombatUI {
     }
 
     private closeCorrector(): void {
-        this.flushCorrectorAutoSave(); // 关闭前把未落盘的改动存掉
+        void this.closeCorrectorAsync();
+    }
+
+    private async closeCorrectorAsync(): Promise<void> {
+        if (this.correctorDirtyPaths.size > 0) {
+            this.setCorrectorStatus('保存中…');
+            await this.saveCorrectorSession(true);
+        }
         this.correctorOpen = false;
         if (this.correctorPanel) this.correctorPanel.style.display = 'none';
         this.leftPortraitFrame.style.outline = '';
@@ -1331,6 +1419,7 @@ export class CombatUI {
         const r = resolvePortraitAdjust(path, this.correctorData);
         this.correctorDraft = { scale: r.scale, offsetX: r.offsetX, offsetY: r.offsetY };
         this.renderCorrectorReadout();
+        this.applyPortraitAdjustToImg(this.correctorImg());
     }
 
     private applyCorrectorPreview(): void {
@@ -1338,9 +1427,24 @@ export class CombatUI {
         if (!path) return;
         this.correctorData.images = this.correctorData.images ?? {};
         this.correctorData.images[path] = { ...this.correctorDraft };
+        if (this.canPersistPortraitPath(path)) {
+            this.correctorDirtyPaths.add(path);
+            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Esc 退出时保存`);
+        }
         applyPortraitAdjustToElement(this.correctorImg(), path, this.correctorData);
         this.renderCorrectorReadout();
         this.updateCorrectorCrosshair();
+    }
+
+    /** Tab 换边前：把当前边草稿写入内存，不落盘 */
+    private syncCurrentCorrectorDraftToData(): void {
+        const path = this.correctorPath();
+        if (!this.canPersistPortraitPath(path)) return;
+        this.correctorData.images = this.correctorData.images ?? {};
+        this.correctorData.images[path] = { ...this.correctorDraft };
+        if (this.correctorDirtyPaths.size > 0) {
+            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Esc 退出时保存`);
+        }
     }
 
     private nudgeCorrector(dScale: number, dx: number, dy: number): void {
@@ -1349,26 +1453,6 @@ export class CombatUI {
         this.correctorDraft.offsetX = clamp(this.correctorDraft.offsetX + dx, -240, 240);
         this.correctorDraft.offsetY = clamp(this.correctorDraft.offsetY + dy, -240, 240);
         this.applyCorrectorPreview();
-        this.scheduleCorrectorAutoSave();
-    }
-
-    /** 调整停手 ~0.4s 后自动写盘（无需按 Enter）；期间继续调整会重新计时 */
-    private scheduleCorrectorAutoSave(): void {
-        if (this.correctorSaveTimer) clearTimeout(this.correctorSaveTimer);
-        this.setCorrectorStatus('调整中…');
-        this.correctorSaveTimer = setTimeout(() => {
-            this.correctorSaveTimer = null;
-            void this.saveCorrector();
-        }, 400);
-    }
-
-    /** 立刻落盘待保存的改动（切换左右 / 关闭前调用） */
-    private flushCorrectorAutoSave(): void {
-        if (this.correctorSaveTimer) {
-            clearTimeout(this.correctorSaveTimer);
-            this.correctorSaveTimer = null;
-            void this.saveCorrector();
-        }
     }
 
     private async centerAlignCorrectorCurrent(): Promise<void> {
@@ -1387,8 +1471,7 @@ export class CombatUI {
         if (!fit) { this.setCorrectorStatus('⚠ 读取像素失败，请手动微调'); return; }
         this.correctorDraft = { scale: fit.scale, offsetX: fit.offsetX, offsetY: fit.offsetY };
         this.applyCorrectorPreview();
-        this.scheduleCorrectorAutoSave();
-        this.setCorrectorStatus('✓ 已居中（缩放未改）');
+        this.setCorrectorStatus('✓ 已居中（Esc 退出时保存）');
     }
 
     private async resetCorrectorCurrent(): Promise<void> {
@@ -1424,6 +1507,7 @@ export class CombatUI {
                 }
             }
             const name = path.split('/').pop() ?? path;
+            this.correctorDirtyPaths.delete(path);
             this.setCorrectorStatus(`✓ 已恢复文件夹默认：${name}`);
         } catch (err) {
             this.setCorrectorStatus(`⚠ 恢复失败：${err}`);
@@ -1431,10 +1515,15 @@ export class CombatUI {
     }
 
     private switchCorrectorSide(): void {
-        this.flushCorrectorAutoSave(); // 切换前先把当前张存掉
+        void this.switchCorrectorSideAsync();
+    }
+
+    private async switchCorrectorSideAsync(): Promise<void> {
+        this.syncCurrentCorrectorDraftToData();
         this.correctorSide = this.correctorSide === 'attacker' ? 'defender' : 'attacker';
         this.loadCorrectorDraft();
         this.highlightCorrectorSide();
+        this.updateCorrectorCrosshair();
     }
 
     private highlightCorrectorSide(): void {
@@ -1446,7 +1535,7 @@ export class CombatUI {
     private buildCrosshair(): HTMLDivElement {
         const ch = document.createElement('div');
         ch.className = 'pt-crosshair';
-        ch.innerHTML = '<div class="ch-face"></div><div class="ch-eye"></div><div class="ch-chin"></div><div class="ch-mid"></div>';
+        ch.innerHTML = '<div class="ch-face"></div><div class="ch-eye"></div><div class="ch-chin"></div><div class="ch-waist"></div><div class="ch-mid"></div>';
         return ch;
     }
 
@@ -1473,9 +1562,17 @@ export class CombatUI {
                 if (mid) ch.insertBefore(chin, mid);
                 else ch.appendChild(chin);
             }
+            if (!ch.querySelector('.ch-waist')) {
+                const waist = document.createElement('div');
+                waist.className = 'ch-waist';
+                const mid = ch.querySelector('.ch-mid');
+                if (mid) ch.insertBefore(waist, mid);
+                else ch.appendChild(waist);
+            }
             const g = getPortraitCorrectorCrosshairGuide();
             const eyePct = (g.eyeLineY * 100).toFixed(1);
             const chinPct = (g.chinLineY * 100).toFixed(1);
+            const waistPct = (g.waistLineY * 100).toFixed(1);
             const chestPct = (g.chestLineX * 100).toFixed(1);
             const ovalW = g.ovalW * 100;
             const ovalH = g.ovalH * 100;
@@ -1484,6 +1581,7 @@ export class CombatUI {
             const chFace = ch.querySelector('.ch-face') as HTMLElement | null;
             const chEye = ch.querySelector('.ch-eye') as HTMLElement | null;
             const chChin = ch.querySelector('.ch-chin') as HTMLElement | null;
+            const chWaist = ch.querySelector('.ch-waist') as HTMLElement | null;
             const chMid = ch.querySelector('.ch-mid') as HTMLElement | null;
             if (chFace) {
                 chFace.style.left = `${ovalCx - ovalW / 2}%`;
@@ -1493,6 +1591,7 @@ export class CombatUI {
             }
             if (chEye) chEye.style.top = `${eyePct}%`;
             if (chChin) chChin.style.top = `${chinPct}%`;
+            if (chWaist) chWaist.style.top = `${waistPct}%`;
             if (chMid) chMid.style.left = `${chestPct}%`;
             // 贴合 img 的未变换布局盒（缩放只动 transform，不动 offset*，故准星保持固定参照）
             ch.style.left = `${img.offsetLeft}px`;
@@ -1508,16 +1607,22 @@ export class CombatUI {
         this.updateCorrectorCrosshair();
     }
 
-    private async saveCorrector(): Promise<void> {
-        const path = this.correctorPath();
-        if (!path) { this.setCorrectorStatus('⚠ 当前无立绘路径'); return; }
-        this.setCorrectorStatus('保存中…');
+    /** Esc 退出（或 Enter）时写盘：本场 F2 改过的所有立绘路径一次性合并保存 */
+    private async saveCorrectorSession(onExit = false): Promise<void> {
+        this.syncCurrentCorrectorDraftToData();
+        if (this.correctorDirtyPaths.size === 0) {
+            if (!onExit) this.setCorrectorStatus('无改动，无需保存');
+            return;
+        }
+        if (!onExit) this.setCorrectorStatus('保存中…');
         try {
-            // 先取磁盘上最新数据再合并，避免覆盖其它编辑
             const res = await fetch('/api/portrait-adjust');
             const disk: PortraitAdjustData = res.ok ? await res.json() : structuredClone(DEFAULT_PORTRAIT_ADJUST);
             disk.images = disk.images ?? {};
-            disk.images[path] = { ...this.correctorDraft };
+            for (const path of this.correctorDirtyPaths) {
+                const adj = this.correctorData.images?.[path];
+                if (adj) disk.images[path] = { ...adj };
+            }
             const save = await fetch('/api/save-portrait-adjust', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1526,11 +1631,14 @@ export class CombatUI {
             if (!save.ok) throw new Error(`HTTP ${save.status}`);
             const result = await save.json();
             if (!result.ok) throw new Error(result.error || '保存失败');
-            // 写回内存中的 DEFAULT，本场及后续战斗立即生效（无需 F5）
-            DEFAULT_PORTRAIT_ADJUST.images = DEFAULT_PORTRAIT_ADJUST.images ?? {};
-            DEFAULT_PORTRAIT_ADJUST.images[path] = { ...this.correctorDraft };
-            const name = path.split('/').pop() ?? path;
-            this.setCorrectorStatus(`✓ 已保存：${name}（已永久生效）`);
+            this.mergePortraitAdjustInto(this.correctorData, disk);
+            this.mergePortraitAdjustInto(DEFAULT_PORTRAIT_ADJUST, disk);
+            this.applyBothCorrectorPortraits();
+            const n = this.correctorDirtyPaths.size;
+            this.correctorDirtyPaths.clear();
+            if (!onExit) {
+                this.setCorrectorStatus(`✓ 已保存 ${n} 张（已永久生效）`);
+            }
         } catch (err) {
             this.setCorrectorStatus(`⚠ 保存失败：${err}`);
         }
@@ -1566,7 +1674,7 @@ export class CombatUI {
         const btn = (label: string, primary = false) =>
             `<button type="button" class="cc-btn${primary ? ' cc-btn-primary' : ''}">${label}</button>`;
         panel.innerHTML = `
-            <div style="font-size:14px;font-weight:700;color:#f5d78e;">立绘校正（已暂停 · 自动保存）</div>
+            <div style="font-size:14px;font-weight:700;color:#f5d78e;">立绘校正（已暂停 · Esc 退出保存）</div>
             <div class="cc-readout" style="font-size:13px;color:#c4b89a;"></div>
             <div class="cc-actions" style="display:flex;flex-wrap:wrap;gap:8px;">
                 ${btn('↔ 居中本张')}
@@ -1576,8 +1684,9 @@ export class CombatUI {
                 ${btn('关闭 (Esc)', true)}
             </div>
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
-                准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝线=眼线</span>，<span style="color:#88e0d0;">青线=下巴线</span>，<span style="color:#ff9a7a;">橙线=胸线</span>。眼贴蓝线、下巴贴青线，<b>[ ]</b> 缩放进椭圆<br>
-                方向键微调位置（Shift=快），↔ 居中只平移不改缩放，Tab 换左右，Esc 关闭；调完<b>自动保存</b>
+                准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝=眼线</span>，<span style="color:#88e0d0;">青=下巴</span>，<span style="color:#c8a8e8;">紫=腰</span>，<span style="color:#ff9a7a;">橙竖=胸线</span>。眼/下巴/腰贴线，<b>[ ]</b> 缩进椭圆<br>
+                方向键微调；Tab 换边（仅切换，不写盘）；<b>Esc 退出并保存</b>本场改过的全部立绘；Enter 可提前保存<br>
+                调校按<b>图片路径</b>记录，同一张图下次在左/在右均自动套用，无需再存
             </div>
             <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
         `;
@@ -1603,6 +1712,10 @@ export class CombatUI {
             .pt-crosshair .ch-chin {
                 position:absolute; left:0; right:0; height:0;
                 border-top:2px dashed #88e0d0; box-shadow:0 0 6px rgba(120,220,200,0.8);
+            }
+            .pt-crosshair .ch-waist {
+                position:absolute; left:0; right:0; height:0;
+                border-top:2px dashed #c8a8e8; box-shadow:0 0 6px rgba(200,168,232,0.75);
             }
             .pt-crosshair .ch-mid {
                 position:absolute; top:0; bottom:0; width:0;
@@ -1810,22 +1923,8 @@ export class CombatUI {
     }
 
     private renderOdds(winAtt: number): void {
-        const att = '#f0a830', def = '#5aacbe';
-        let html: string;
-        const lockSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: sub; margin-right: 4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
-        
-        if (winAtt >= 0.995) {
-            html = `<span style="color:${att}; font-weight: 900; text-shadow: 0 0 8px rgba(240,168,48,0.5);">${lockSvg} 攻方必胜</span>`;
-        } else if (winAtt <= 0.005) {
-            html = `<span style="color:${def}; font-weight: 900; text-shadow: 0 0 8px rgba(90,172,190,0.5);">${lockSvg} 守方必胜</span>`;
-        } else {
-            const a = Math.round(winAtt * 100);
-            html = `<span style="color:${att};">胜率 ${a}%</span>`
-                + `<span style="opacity:0.55; margin:0 ${uiPx(8)};">:</span>`
-                + `<span style="color:${def};">${100 - a}%</span>`;
-        }
-        this.oddsRow.innerHTML = html;
-        this.oddsRow.style.display = 'block';
+        this.oddsRow.style.display = 'none';
+        this.oddsRow.innerHTML = '';
     }
 
     private updateStats() {

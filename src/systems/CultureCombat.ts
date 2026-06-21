@@ -25,7 +25,8 @@ import type { IBattleUnit } from '../core/CombatSystem';
 import type { Army } from '../core/Army';
 import type { City } from '../types/core';
 import { getCityRegion, getRegion, RegionType } from './RegionSystem';
-import { getLegionEliteConfig } from '../data/ExpeditionLegions';
+import { getCityEliteConfig, getLegionEliteConfig } from '../data/ExpeditionLegions';
+import { readSiegeGarrisonElite } from '../combat/SiegeGarrisonTier';
 import { isCampaignLegion } from '../legion/LegionSpawnPolicy';
 
 export type CultureCombatRole = 'field' | 'garrison';
@@ -104,9 +105,20 @@ export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
     return getCultureOnlyCombatMultiplier(unit) * getPassGarrisonMultiplier(unit);
 }
 
-/** 远征军团 / 远征精锐 tier 加成；城防单位恒为 1 */
+/** 远征军团 / 远征精锐 tier 加成；城防本场掷出精锐时同样乘 tier */
 export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
-    if (isGarrisonUnit(unit)) return 1;
+    if (isGarrisonUnit(unit)) {
+        const city = unit.getEntity?.() as { id?: string } | undefined;
+        if (city?.id && readSiegeGarrisonElite(city)) {
+            const config = getCityEliteConfig(city.id);
+            if (config) {
+                const mult = GameConfig.COMBAT.ELITE_TIER_MULT[config.tier];
+                if (mult !== undefined) return mult;
+            }
+            return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT;
+        }
+        return 1;
+    }
     const army = unit.getEntity?.() as Army | undefined;
     if (!army) return 1;
     

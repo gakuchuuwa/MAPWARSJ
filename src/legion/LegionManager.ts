@@ -1,6 +1,6 @@
 import { Army } from './Army';
-import { getFactionGeneral } from '../data/FactionGenerals';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
+import { applyLegionSpawnTierToArmy, makeArmyElite } from './LegionSpawnTier';
 import { CityManager } from '../world/CityManager';
 import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
@@ -271,69 +271,7 @@ export class LegionManager {
      *   出生定档，精锐番号不降级；长到 4万 由 tickLegionTiers 补全为精锐+将领。
      */
     private applyLegionTier(army: Army): void {
-        const eliteName = getLegionEliteLegionName(army);
-        if (!eliteName) return;
-
-        const threshold = GameConfig.EXPEDITION.UNLOCK_TROOPS;
-        if (army.getTroops() >= threshold) {
-            this.makeElite(army, eliteName, true);
-            return;
-        }
-
-        switch (this.rollSpawnTierOutcome(army)) {
-            case 'plain':
-                return;
-            case 'elite':
-                this.makeElite(army, eliteName, false);
-                break;
-            case 'general':
-                this.attachFactionGeneral(army);
-                break;
-            case 'elite_general':
-                this.makeElite(army, eliteName, true);
-                break;
-        }
-    }
-
-    /** &lt;4万：四档各 25%；势力无将领档案时「仅将领/精锐+将」并入「普通/仅精锐」各 50% */
-    private rollSpawnTierOutcome(
-        army: Army,
-    ): 'plain' | 'elite' | 'general' | 'elite_general' {
-        const tier = GameConfig.LEGION_TIER;
-        const r = Math.random();
-        if (!getFactionGeneral(army.getFactionId())) {
-            return r < 0.5 ? 'plain' : 'elite';
-        }
-        if (r < tier.SPAWN_PLAIN_CHANCE) return 'plain';
-        if (r < tier.SPAWN_PLAIN_CHANCE + tier.SPAWN_ELITE_CHANCE) return 'elite';
-        if (r < tier.SPAWN_PLAIN_CHANCE + tier.SPAWN_ELITE_CHANCE + tier.SPAWN_GENERAL_ONLY_CHANCE) {
-            return 'general';
-        }
-        return 'elite_general';
-    }
-
-    /** 仅挂将领：保留「{城名}军团」，不升 isElite（无番号 ×1.2） */
-    private attachFactionGeneral(army: Army): void {
-        if (army.generalId) return;
-        const general = getFactionGeneral(army.getFactionId());
-        if (!general) return;
-        army.generalId = general.generalId;
-        army.portraitPath = general.portrait;
-    }
-
-    /** 升为精锐：番号 + isElite；withGeneral 时再挂将领 */
-    private makeElite(army: Army, eliteName: string, withGeneral: boolean): void {
-        if (!army.isElite) {
-            army.name = eliteName;
-            army.isElite = true;
-        }
-        if (withGeneral && !army.generalId) {
-            const general = getFactionGeneral(army.getFactionId());
-            if (general) {
-                army.generalId = general.generalId;
-                army.portraitPath = general.portrait;
-            }
-        }
+        applyLegionSpawnTierToArmy(army);
     }
 
     /**
@@ -349,7 +287,7 @@ export class LegionManager {
             if (army.isElite && army.generalId) continue;
             const eliteName = getLegionEliteLegionName(army);
             if (!eliteName) continue;
-            this.makeElite(army, eliteName, true);
+            makeArmyElite(army, eliteName, true);
         }
     }
 

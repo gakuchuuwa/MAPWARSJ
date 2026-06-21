@@ -27,6 +27,11 @@ import {
 } from '../legion/combat/BattleReinforcementPoll';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
 import { shouldSkipHomeRecapture } from '../legion/LegionSpawnPolicy';
+import {
+    applySiegeGarrisonBoostIfNeeded,
+    clearSiegeGarrisonBoost,
+    type SiegeGarrisonBoostFields,
+} from './SiegeGarrisonTier';
 
 export class SiegeManager {
     private static get JOIN_RADIUS(): number {
@@ -507,6 +512,32 @@ export class SiegeManager {
         return candidates;
     }
 
+    /** 守城参战军团：半径内 + 本城 homeCityId 绑定的守军（即便略在圈外也纳入） */
+    private collectDefenderLegionsForSiege(
+        targetCity: { id: string; factionId: string; latitude: number; longitude: number },
+        cityPos: { lat: number; lng: number },
+        excludeArmyIds: Set<string>,
+    ): Army[] {
+        const merged = this.collectNearbyLegionsForFaction(
+            cityPos,
+            targetCity.factionId,
+            excludeArmyIds,
+        );
+        const seen = new Set(merged.map((a) => a.id));
+        for (const legion of this.legionManager.getArmies()) {
+            if (seen.has(legion.id)) continue;
+            if (excludeArmyIds.has(legion.id)) continue;
+            if (legion.homeCityId !== targetCity.id) continue;
+            if (legion.getFactionId() !== targetCity.factionId) continue;
+            if (legion.type !== 'legion' || legion.isDestroyed || legion.getIsInCombat()) continue;
+            merged.push(legion);
+            seen.add(legion.id);
+            siegeLog(`✅ [SiegeManager] ${legion.name} 本城守军参战 (homeCityId)`);
+        }
+        merged.sort((a, b) => (b.getTroops() || 0) - (a.getTroops() || 0));
+        return merged;
+    }
+
     private onArmyArrive(
         army: Army,
         targetCity: any,
@@ -600,12 +631,17 @@ export class SiegeManager {
         const cityPos = cityToLatLng(targetCity);
         const excludedIds = new Set<string>([army.id]);
 
-        const nearbyDefenderLegions = this.collectNearbyLegionsForFaction(
+        const nearbyDefenderLegions = this.collectDefenderLegionsForSiege(
+            targetCity,
             cityPos,
-            targetCity.factionId,
             excludedIds
         );
         nearbyDefenderLegions.forEach((legion) => excludedIds.add(legion.id));
+
+        applySiegeGarrisonBoostIfNeeded(
+            targetCity as typeof targetCity & SiegeGarrisonBoostFields,
+            nearbyDefenderLegions,
+        );
 
         const nearbyAttackerLegions = this.collectNearbyLegionsForFaction(
             cityPos,
@@ -676,7 +712,7 @@ export class SiegeManager {
 
         const defenderAdapter = BattleUnitFactory.createAdapter(
             targetCity.id,
-            targetCity.name,
+            `${targetCity.name}${targetCity.type === 'pass' ? '守军' : '驻军'}`,
             targetCity.factionId,
             targetCity,
             'city', // [CHANGED] 明确指定单位类型
@@ -752,11 +788,11 @@ export class SiegeManager {
         });
 
         let finalTitle = siegeData.title;
-        if (targetCity.type === 'pass') {
-            if (finalTitle) {
-                finalTitle = finalTitle + ' (关隘)';
+        if (!finalTitle) {
+            if (targetCity.type === 'pass') {
+                finalTitle = `${targetCity.name}防守战`;
             } else {
-                finalTitle = `${targetCity.name}防守战 (关隘)`;
+                finalTitle = `${targetCity.name}攻防战`;
             }
         }
 
@@ -784,6 +820,7 @@ export class SiegeManager {
         // 战斗结束 = 事件结束（战后动作在后台运行）
         battleField.onBattleComplete = (winnerFactionId) => {
             siegeLog(`✅ [Siege] Battle complete. Winner: ${winnerFactionId}`);
+            clearSiegeGarrisonBoost(targetCity as typeof targetCity & SiegeGarrisonBoostFields);
             this.cityManager.stopSiegeEffect(targetCity.id, true);
             this.activeSieges.delete(targetCity.id);
             onSiegeComplete?.();

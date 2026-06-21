@@ -76,6 +76,9 @@ function getArmyEntity(unit: IBattleUnit): Army | null {
  */
 export function canUnitUseGeneralSkills(unit: IBattleUnit): boolean {
     void legionManagerRef;
+    if (unit.unitType === 'city') {
+        return !!unit.generalId && !!getGeneralProfile(unit.generalId);
+    }
     const army = getArmyEntity(unit);
     if (!army) return false;
     if (!getGeneralProfile(unit.generalId)) return false;

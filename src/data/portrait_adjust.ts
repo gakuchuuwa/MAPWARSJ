@@ -294,7 +294,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/xianqin/06494f4e-1652-4c64-a3d3-998bb6bb4975.png": {
             "scale": 1.08,
             "offsetX": 20,
-            "offsetY": 22
+            "offsetY": 15
         },
         "/assets/zhongyuan/a01e6363-6772-42fc-b127-26bb6a5b2c3b.png": {
             "scale": 1,
@@ -337,9 +337,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/litang/tang_lishimin.png": {
-            "scale": 1.16,
+            "scale": 1.18,
             "offsetX": 0,
-            "offsetY": 16
+            "offsetY": 10
         },
         "/assets/liuhan/hanxin.png": {
             "scale": 1.08,
@@ -367,9 +367,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/zhongya/seljuq_sangjiaer.png": {
-            "scale": 1.14,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -3
         },
         "/assets/xianqin/3f98a47c-3b4e-43d9-ab99-234c592cffe3.png": {
             "scale": 1.36,
@@ -382,9 +382,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/zhongyuan/468386ae-8837-4c77-b85b-0b786241a098.png": {
-            "scale": 1.08,
+            "scale": 1.02,
             "offsetX": 0,
-            "offsetY": -21
+            "offsetY": -14
         },
         "/assets/zhongyuan/chuanshu (8).png": {
             "scale": 1.1,
@@ -403,18 +403,88 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/zhongyuan/zhuozhou_anlushan.png": {
             "scale": 1.12,
-            "offsetX": 1,
+            "offsetX": 0,
             "offsetY": 12
         },
         "/assets/daming/JIANGNAN_field.png": {
             "scale": 1.06,
-            "offsetX": 16,
+            "offsetX": 23,
             "offsetY": 3
         },
         "/assets/lingnan/guangzhou (10).png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -14
+        },
+        "/assets/wuzhou/wuzhou (4).png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/zhongyuan/tianxiong_tianchengsi.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/zhaosong/df3ef70b-7db7-4700-89e1-b9c6025946f7.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/wuzhou/wuzhou (5).png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/zhongya/dulan_d_aihamaide.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/zhongya/5d913217-cc43-4452-80a8-e1962469e756.png": {
+            "scale": 1.04,
+            "offsetX": 18,
+            "offsetY": -2
+        },
+        "/assets/zhongya/d2b49090-81ea-4f84-82fa-5bb0a919417d.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -38
+        },
+        "/assets/zhongya/9d9a33aa-d8e7-4387-b583-4e531ee54589.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/zhongyuan/4af53442-56af-46b1-a7c1-3fd746ee922c.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -24
+        },
+        "/assets/liuhan/han_d_hanxin.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/shuguo/yangzhou_wangping.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/zhongyuan/aa5cf86c-cf24-46d1-9e00-e646972e7992.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/zhongyuan/bing_liukun.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/zhongyuan/jinan_tiexuan.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -11
         }
     },
     "folderGuides": {

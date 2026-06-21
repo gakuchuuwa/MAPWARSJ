@@ -3,6 +3,10 @@ import { IBattleUnit, UnitType } from './CombatSystem';
 import { HistoricalEventManager } from '../events/HistoricalEventManager';
 import { gameLog } from '../utils/GameLogger';
 import { getRandomFactionPortrait } from '../config/portrait_defaults';
+import {
+    readSiegeGarrisonGeneralId,
+    readSiegeGarrisonPortrait,
+} from './SiegeGarrisonTier';
 
 export class BattleUnitFactory {
     /**
@@ -47,8 +51,8 @@ export class BattleUnitFactory {
         // 可移动单位 (军团、玩家、土匪)
         const isMobile = !isCity;
 
-        // 立绘：仅军团在 Army 构造时抽签一次并固定；守军不设 portraitPath，由 UI 每次随机
-        let portraitPath: string | undefined;
+        // 立绘：军团固定 portraitPath；城防临时将/精锐随 entity 字段实时读（援军编入后可清除）
+        let legionPortraitPath: string | undefined;
         if (isLegion) {
             const army = entity as Army;
             if (!army.portraitPath) {
@@ -56,7 +60,7 @@ export class BattleUnitFactory {
                     army.getFactionId?.() ?? army.factionId ?? factionId,
                 );
             }
-            portraitPath = army.portraitPath;
+            legionPortraitPath = army.portraitPath;
         }
 
         return {
@@ -70,8 +74,18 @@ export class BattleUnitFactory {
             },
             unitType,
             legionType: entity.legionType,
-            generalId: entity.generalId,
-            portraitPath,
+            get generalId() {
+                if (isCity) {
+                    return readSiegeGarrisonGeneralId(entity) ?? entity.generalId;
+                }
+                return entity.generalId;
+            },
+            get portraitPath() {
+                if (isCity) {
+                    return readSiegeGarrisonPortrait(entity);
+                }
+                return legionPortraitPath;
+            },
             getEntity: () => entity,
 
             maxTroops,

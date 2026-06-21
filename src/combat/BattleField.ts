@@ -30,6 +30,12 @@ import {
     tryEmitOpeningTacticalOnReinforcementJoin,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
+import {
+    reconcileSiegeGarrisonBoostWithLegion,
+    reconcileSiegeGarrisonBoostWithLegions,
+    type SiegeGarrisonBoostFields,
+} from './SiegeGarrisonTier';
+import type { Army } from '../legion/Army';
 // ==================== 类型定义 ====================
 
 export interface BattleFieldUnit {
@@ -141,6 +147,7 @@ export class BattleField {
         // [NEW] Calculate Duration immediately
         this.calculateTargetDuration();
         this.pickPredictedSides();
+        this.reconcileSiegeGarrisonBoostWithDefenders();
 
         // 触发战斗开始回调
         this.notifyBattleStart();
@@ -751,6 +758,8 @@ export class BattleField {
             this.openingTacticalUiShown,
         );
 
+        this.reconcileSiegeGarrisonBoostForJoinedUnit(unit, isAttacker);
+
         gameLog(
             'battle',
             `📯 [BattleField] ${unit.name}(${joinedTroops}) 加入${isAttacker ? '攻方' : '守方'}! ` +
@@ -787,6 +796,42 @@ export class BattleField {
         const all = [...this.attackerGroup.units, ...this.defenderGroup.units];
         const found = all.find((p) => p.unit.id === unitId);
         return found?.waveIndex ?? 0;
+    }
+
+    private getSiegeGarrisonCityEntity(): SiegeGarrisonBoostFields | null {
+        if (!this.siegeCityId) return null;
+        const cityUnit = this.defenderGroup.units.find((bu) => bu.unit.unitType === 'city')?.unit;
+        return (cityUnit?.getEntity?.() as SiegeGarrisonBoostFields | undefined) ?? null;
+    }
+
+    private listDefenderLegionEntities(): Army[] {
+        const out: Army[] = [];
+        for (const bu of this.defenderGroup.units) {
+            if (bu.unit.unitType !== 'legion' && bu.unit.unitType !== 'army') continue;
+            const army = bu.unit.getEntity?.() as Army | undefined;
+            if (army) out.push(army);
+        }
+        return out;
+    }
+
+    private reconcileSiegeGarrisonBoostWithDefenders(): void {
+        const city = this.getSiegeGarrisonCityEntity();
+        if (!city) return;
+        reconcileSiegeGarrisonBoostWithLegions(city, this.listDefenderLegionEntities());
+    }
+
+    private reconcileSiegeGarrisonBoostForJoinedUnit(unit: IBattleUnit, isAttacker: boolean): void {
+        if (isAttacker || !this.siegeCityId) return;
+        if (unit.unitType !== 'legion' && unit.unitType !== 'army') return;
+        const city = this.getSiegeGarrisonCityEntity();
+        const army = unit.getEntity?.() as Army | undefined;
+        if (!city || !army) return;
+        if (!army.generalId && !army.isElite) return;
+        reconcileSiegeGarrisonBoostWithLegion(city, army);
+        gameLog(
+            'battle',
+            `🛡️ [BattleField] 守方援军 ${unit.name} 编入，城防临时将/精锐已与军团去重`,
+        );
     }
 
     /**

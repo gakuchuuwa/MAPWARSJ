@@ -19,6 +19,8 @@ export const PORTRAIT_ADJUST_NEUTRAL: Required<PortraitAdjustValues> = {
  */
 export const PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y = 0.23;
 export const PORTRAIT_GUIDE_PREVIEW_CHIN_LINE_Y = 0.34;
+/** 腰线（半身像裁切参照，顶→底归一化） */
+export const PORTRAIT_GUIDE_PREVIEW_WAIST_LINE_Y = 0.80;
 export const PORTRAIT_GUIDE_PREVIEW_CHEST_LINE_X = 0.5;
 /** 脸椭圆宽（归一化，相对 img 布局宽）— 窄 */
 export const PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_W = 0.29;
@@ -32,6 +34,7 @@ export const PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DX = 0.07;
 export interface PortraitCorrectorCrosshairGuide {
     eyeLineY: number;
     chinLineY: number;
+    waistLineY: number;
     chestLineX: number;
     ovalW: number;
     ovalH: number;
@@ -43,10 +46,12 @@ export interface PortraitCorrectorCrosshairGuide {
 export function getPortraitCorrectorCrosshairGuide(): PortraitCorrectorCrosshairGuide {
     const eyeLineY = PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y;
     const chinLineY = PORTRAIT_GUIDE_PREVIEW_CHIN_LINE_Y;
+    const waistLineY = PORTRAIT_GUIDE_PREVIEW_WAIST_LINE_Y;
     const chestLineX = PORTRAIT_GUIDE_PREVIEW_CHEST_LINE_X;
     return {
         eyeLineY,
         chinLineY,
+        waistLineY,
         chestLineX,
         ovalW: PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_W,
         ovalH: PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_H,
