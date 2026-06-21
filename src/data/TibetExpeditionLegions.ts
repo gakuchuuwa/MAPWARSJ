@@ -14,12 +14,12 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   kalun: { name: '尕斯戍卒', tier: 3 },  // 尕斯淖尔
   shaodang: { name: '湟中义从羌', tier: 3 },  // 玛曲·河湟烧当羌义从骑（§12 #1）
   tubo: { name: '吐蕃大纛军', tier: 1 },       // 逻些·松赞干布吐蕃大纛军
-  gar: { name: '却杰军', tier: 0 },           // 萨毗城·论钦陵却杰军（大非川破薛仁贵）
+  gar: { name: '却杰军', tier: 1 },           // 萨毗城·论钦陵却杰军（以众击寡，降T1）
   tuyu_d: { name: '青海骢精骑', tier: 2 },    // 伏俟城·吐谷浑青海骢（§12 #4）
   xiangxiong: { name: '象雄武士', tier: 2 },  // 穹窿银·象雄铜铁甲武士（§12 #5）
   gar_kham: { name: '德格骁骑', tier: 2 },    // 德格·康巴朵康先锋骑（§12 #7）
   guge: { name: '古格甲兵', tier: 2 },        // 札布让·阿里古格王国
-  khoshut: { name: '和硕特铁骑', tier: 3 },   // 当雄·固始汗卫拉特铁骑（§12 #9）
+  khoshut: { name: '和硕特铁骑', tier: 1 },   // 当雄·固始汗卫拉特铁骑（武力统战雪域，升T1）
   pazhu: { name: '江孜宗武士', tier: 3 },       // 江孜·江孜法王热丹衮桑帕（原帕竹甲兵，与lang_clan重复且与江孜据点及武将错位）
   gurkha: { name: '廓尔喀弯刀', tier: 1 },    // 加德满都·廓尔喀库克里勇士（§12 #11）
   tsangpa: { name: '藏巴汗卫队', tier: 3 },   // 桑珠孜·藏巴汗亲卫
@@ -34,10 +34,10 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   khon: { name: '萨迦法王军', tier: 2 },
   lang_clan: { name: '帕木竹巴军', tier: 3 },
   karmapa: { name: '噶玛巴护教', tier: 3 },
-  jinchuan_g: { name: '金川土司兵', tier: 3 },
+  jinchuan_g: { name: '金川土司兵', tier: 2 }, // 金川·大小金川之役（威名赫赫，升T2）
   golog: { name: '果洛游骑', tier: 3 },
   xihai_d: { name: '威定戍卒', tier: 3 },     // 伏俟城·隋西海郡属县戍兵（郡治无专将）
-  heyuan_d: { name: '河源军', tier: 1 },        // 花石峡·黑齿常之河源军大破吐蕃
+  heyuan_d: { name: '河源军', tier: 0 },        // 花石峡·黑齿常之夜袭破数万吐蕃（升T0）
   monpa: { name: '门巴勇士', tier: 2 },  // 错那·梅惹·洛珠嘉措归附达赖
   lopi: { name: '珞巴武士', tier: 3 },
   humi: { name: '瓦罕弓骑', tier: 3 },
@@ -53,7 +53,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   song2: { name: '松州边军', tier: 3 },      // 嘉诚·唐松州抗蕃戍卒
   xiadun: { name: '廷布卫队', tier: 3 },     // 廷布·夏仲不丹亲卫
   ali: { name: '阿里骑兵', tier: 1 },          // 噶大克·甘丹才旺收复阿里
-  gaoliang: { name: '高凉狼兵', tier: 1 },      // 茂名·冯盎威震岭南
+  gaoliang: { name: '茂州戍卒', tier: 3 },      // 茂州·唐茂州戍卒（注意：这里是川西茂州，并非广东茂名！底层据点占位借用）
   nandou: { name: '勃律山兵', tier: 2 },          // 孽多·苏失利据守抗唐
   bailan: { name: '昌都僧兵', tier: 2 },        // 察木多·帕巴拉协助守城
   jiantang: { name: '建塘马兵', tier: 2 },       // 独克宗·桑杰嘉措驻防

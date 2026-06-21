@@ -74,6 +74,15 @@ export default defineConfig({
     },
     plugins: [
         {
+            name: 'suppress-portrait-dev-hmr',
+            handleHotUpdate({ file }) {
+                const norm = file.replace(/\\/g, '/');
+                if (norm.includes('portrait_adjust.ts') || norm.includes('FactionGenerals.ts')) {
+                    return [];
+                }
+            },
+        },
+        {
             name: 'save-roads-api',
             configureServer(server) {
                 // [AutoBackup] vite 启动时立即检查 1 次, 之后每小时再检查

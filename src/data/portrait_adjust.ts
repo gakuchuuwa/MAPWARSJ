@@ -540,6 +540,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": -21
+        },
+        "/assets/liuhan/fb10c9aa-8eb8-4610-a183-8b9e881cf261.png": {
+            "scale": 1.08,
+            "offsetX": -1,
+            "offsetY": 13
+        },
+        "/assets/xianqin/5921bb26-35bf-4fa0-ad5d-426cf9706590.png": {
+            "scale": 1,
+            "offsetX": 12,
+            "offsetY": -31
         }
     },
     "folderGuides": {

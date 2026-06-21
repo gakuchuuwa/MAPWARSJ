@@ -6,6 +6,7 @@ import {
     makeArmyElite,
     markSpawnTierConsumed,
     noteCitySpawnTierFromLegion,
+    type CitySpawnTierState,
 } from './LegionSpawnTier';
 import { getFactionGeneral } from '../data/FactionGenerals';
 import { CityManager } from '../world/CityManager';
@@ -314,7 +315,7 @@ export class LegionManager {
 
             const cityId = army.homeCityId ?? army.getSourceCityId();
             const city = cityId ? this.cityManager.getCity(cityId) : undefined;
-            const state = city ?? {};
+            const state: CitySpawnTierState = city ?? {};
             const canGeneral = !state.spawnGeneralUsed && !!getFactionGeneral(army.getFactionId());
             const canElite = !state.spawnEliteUsed;
 

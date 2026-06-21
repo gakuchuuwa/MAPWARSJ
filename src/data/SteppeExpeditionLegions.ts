@@ -36,14 +36,14 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   kelie: { name: '札合骁骑', tier: 3 },         // 都尉溷河·札合敢不克烈支系
   kereyid: { name: '克烈护卫军', tier: 2 },     // 汪吉河·王汗克烈部
   dingling: { name: '丁零游骑', tier: 2 }, // 贝加尔·丁零王
-  xiajiasi: { name: '黠戛斯锐卒', tier: 3 },
+  xiajiasi: { name: '黠戛斯锐卒', tier: 2 }, // 攻灭回鹘汗国（升T2）
   donghu: { name: '东胡骑', tier: 2 },    // 巴彦乌拉·东胡王
   tiele: { name: '铁勒骁骑', tier: 3 },
   xibo_d: { name: '锡伯箭手', tier: 3 },        // 固尔札·清代锡伯营（原索伦营错族）
   tatar: { name: '塔塔儿死士', tier: 3 },
   merkit: { name: '蔑儿乞猎骑', tier: 3 },
   chahar: { name: '察哈尔八旗', tier: 2 },
-  yuwen: { name: '武川镇军', tier: 0 },     // 武川镇·537沙苑之战宇文泰以少胜多（《周书·宇文泰传》）
+  yuwen: { name: '武川镇军', tier: 1 },     // 武川镇·537沙苑之战胜；但邙山之战大溃败，丢盔弃甲，降T1
   da_yuan: { name: '北元怯薛', tier: 2 },
   huyan: { name: '呼衍精骑', tier: 3 },
   yujiulu: { name: '郁久闾王骑', tier: 2 },
@@ -60,7 +60,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   kiyad: { name: '乞颜宿卫', tier: 3 },         // 不儿罕山·也速该乞颜部
   mengwu: { name: '忙古勒骑', tier: 3 },        // 狼居胥·合不勒汗
   zhadalan: { name: '札剌儿军', tier: 3 },      // 阔亦田·札木合
-  oirat_ming: { name: '卫拉特骑', tier: 1 },    // 科布多·噶尔丹东进基地
+  oirat_ming: { name: '卫拉特骑', tier: 2 },    // 科布多·噶尔丹东进（昭莫多惨败，降T2）
   tumed: { name: '土默特精骑', tier: 1 },         // 归化城·俺答汗土默特精骑
   tushetu: { name: '库伦铁骑', tier: 3 },       // 库伦·土谢图汗
   yaoluoge: { name: '药罗葛骑', tier: 3 },      // 娑陵·药罗葛部
@@ -74,7 +74,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   bayegu: { name: '拔野古轻骑', tier: 2 },       // 稽落山·屈利失助唐灭薛延陀
   zubu: { name: '阻卜轻骑', tier: 2 },           // 特尔浑·磨古斯叛辽
   wuzhumuqin: { name: '乌珠穆沁骑', tier: 2 },    // 乌珠穆沁·多尔济随征噶尔丹
-  xingan: { name: '呼伦索伦兵', tier: 3 },   // 哈拉盖图·卡伦驻防
+  xingan: { name: '呼伦索伦兵', tier: 2 },   // 哈拉盖图·清代索伦营（升T2）
   baidi: { name: '白狄徒兵', tier: 3 },          // 集宁·春秋白狄部落
   shiwei: { name: '室韦猎骑', tier: 3 },         // 俱轮泊·室韦都督府部众
   sunite: { name: '苏尼特骑', tier: 3 },         // 赛汉塔拉·苏尼特旗武装

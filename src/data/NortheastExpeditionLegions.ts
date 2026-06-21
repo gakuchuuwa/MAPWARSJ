@@ -13,7 +13,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   huimo: { name: '濊貊长矛手', tier: 3 }, // 乌骨城·高延寿濊貊
   bohai: { name: '渤海猛贲', tier: 2 },       // 龙泉府·渤海左右猛贲卫
   dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（阿骨打@都城）
-  yizhou: { name: '金源精骑', tier: 1 },      // 蒺藜山·娄室金源精骑
+  yizhou: { name: '金源精骑', tier: 2 },      // 蒺藜山·娄室金源（番号泛指，降T2）
   qidan: { name: '契丹铁林军', tier: 1 },     // 木叶山·耶律阿保机铁林军灭渤海
   manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
@@ -21,7 +21,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）
   hezhe: { name: '索伦劲旅', tier: 3 },       // 乌云·索伦部（§3 #13）
   aola: { name: '敖拉部骑', tier: 3 },       // 雅克萨·孟烈伦敖拉氏
-  wuliangha: { name: '兀良哈猎兵', tier: 1 },  // 薛灵哥·者勒蔑兀良哈猎兵
+  wuliangha: { name: '兀良哈猎兵', tier: 2 },  // 薛灵哥·者勒蔑（番号泛指，降T2）
   fuyu: { name: '夫余步骑', tier: 3 },       // 黄龙府·夫余步骑（§1）
   keerqin: { name: '达尔罕卫', tier: 3 },
   yehe: { name: '八面关骁骑', tier: 3 },
@@ -29,7 +29,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   dongxia: { name: '东夏锐卒', tier: 3 },       // 曷苏馆·蒲鲜万奴东夏国
   haixi_nvzhen: { name: '海西重甲骑', tier: 3 },  // 辉发城·王台哈达部
   houliao: { name: '东辽骑队', tier: 2 },       // 咸平·耶律留哥东辽
-  suolun: { name: '索伦营', tier: 3 },          // 卜奎·清代黑龙江索伦营
+  suolun: { name: '索伦营', tier: 2 },          // 卜奎·清代黑龙江索伦营（大清王牌特种兵，专名升T2）
   wula: { name: '乌拉国兵', tier: 3 },          // 龙潭山城·布占泰乌拉贝勒
   wure: { name: '兀惹部卒', tier: 3 },          // 乌舍城·乌昭度兀惹部
   heishui: { name: '黑水锐卒', tier: 3 },        // 拉哈苏苏·黑水靺鞨

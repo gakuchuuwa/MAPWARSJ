@@ -14,8 +14,8 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   // === 初始/默认（1） ===
   lelang: { name: '乐浪材官', tier: 3 },    // 息城·王颀乐浪材官
   donghui: { name: '檀弓猎手', tier: 3 },  // 德源·东濊檀弓
-  gaogouli: { name: '高句丽铁骑', tier: 1 },   // 平壤·高句丽铁骑（§4 #）
-  xuantu: { name: '皂衣先人', tier: 3 },     // 国内城·玄菟辖境/高句丽早期死士（§4 #2）
+  gaogouli: { name: '高句丽铁骑', tier: 2 },   // 平壤·高句丽铁骑（番号泛指，降T2）
+  xuantu: { name: '皂衣先人', tier: 2 },     // 国内城·高句丽早期死士专名（升T2）
   xinluo: { name: '花郎道', tier: 2 },       // 金城·新罗花郎（§4 #3）
   baiji: { name: '百济五方兵', tier: 2 },        // 泗沘·百济五方兵制
   goryeo: { name: '鹰扬军', tier: 2 },   // 开城·高丽鹰扬军
@@ -33,7 +33,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   hui: { name: '濊族步卒', tier: 3 },          // 何瑟罗·不耐侯濊族
   chungju_d: { name: '忠州忠义军', tier: 2 },    // 国原城·权栗忠清道募兵
   gaya: { name: '金官伽倻兵', tier: 2 },         // 金海·金首露伽倻始祖
-  naju_d: { name: '罗州精兵', tier: 1 },         // 锦城·王建罗州根据地
+  naju_d: { name: '罗州精兵', tier: 2 },         // 锦城·王建罗州根据地（番号泛指，降T2）
   sabeol: { name: '沙伐义兵', tier: 2 },          // 三白·金时敏募义兵
   xingliao: { name: '龙湾戍军', tier: 3 },      // 龙湾·兴辽边防
   jingcheng_d: { name: '镜城边军', tier: 3 },     // 笼耳·镜城兵马使

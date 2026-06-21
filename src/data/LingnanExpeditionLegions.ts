@@ -14,7 +14,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   dayue: { name: '白藤江水师', tier: 0 },           // 昇龙·陈国峻白藤江伏击灭元（区T0锚点·奇袭以少胜多）
   jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
   trinh: { name: '府僚营', tier: 3 },          // 宣光·郑主府僚军政（无史籍固定精锐番号）
-  nguyen_guangnan: { name: '富春禁兵', tier: 1 },       // 富春·阮福映禁兵
+  nguyen_guangnan: { name: '富春禁兵', tier: 2 },       // 富春·阮福映禁兵（政治禁卫降T2）
   // guangnanguo → 洞海城归 panjun
   ryukyu: { name: '那霸水师', tier: 2 },       // 首里·§9 #21 琉球王府水师
   ming_zheng: { name: '郑氏铁人军', tier: 1 }, // 承天·郑成功攻台（以多胜少，降T1）
@@ -33,8 +33,8 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   xiou: { name: '西瓯戍兵', tier: 3 },           // 布山·西瓯
   luoyue: { name: '骆越部卒', tier: 3 },         // 花山·骆越
   guangxin: { name: '苍梧戍卒', tier: 3 },       // 苍梧·广信
-  chen: { name: '楼船锐士', tier: 3 },              // 清远·汉楼船兵种
-  taiping: { name: '太平军', tier: 2 },          // 金田村·太平天国
+  chen: { name: '南朝水师', tier: 2 },              // 清远·陈霸先（修正历史错位，改为南朝水师）
+  taiping: { name: '太平军', tier: 1 },          // 金田村·太平天国（威震天下，升T1）
   leizhou: { name: '雷州戍兵', tier: 3 },        // 海康·李茂雷州卫
   monong: { name: '墨侬部卒', tier: 2 },       // 邦敦·阿侬率余部抗宋
   shuizhen: { name: '水真戍卒', tier: 3 },     // 三菩·区大任驻守
@@ -49,13 +49,13 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   basha_d: { name: '湄公象卫', tier: 2 },     // 上丁·刀更孟象兵
   dengmaoqi: { name: '铲平义军', tier: 3 },
   shixing: { name: '岭南劲卒', tier: 2 },
-  yingzhou: { name: '南汉禁兵', tier: 1 },
+  yingzhou: { name: '南汉禁兵', tier: 2 },
   daozhou: { name: '道州弩手', tier: 3 },
   guangping: { name: '象兵水师', tier: 1 },     // 洞海城·阮文张象兵舟船协同
 shengmiao: { name: '古州苗兵', tier: 1 },     // 甲定·包利连破清军汛堡
   chendiaoyan: { name: '畲汉义军', tier: 1 },   // 龙溪·陈吊眼攻破漳州
   buyi_d: { name: '盘江布依兵', tier: 1 },       // 罗博·韦朝元布依起义
-  paiwan: { name: '牡丹社勇士', tier: 1 },      // 牡丹社·阿禄古抗击日军
+  paiwan: { name: '牡丹社勇士', tier: 2 },      // 牡丹社·阿禄古抗击日军（战役未胜，降T2）
   miao_qing: { name: '杨完者苗军', tier: 1 },   // 且兰城·苗军连败红巾军
   geng: { name: '靖南藩兵', tier: 1 },         // 延平·耿精忠三藩起兵
   tian_sizhou: { name: '思州土兵', tier: 1 },    // 镇远·田祐恭归宋封国公
