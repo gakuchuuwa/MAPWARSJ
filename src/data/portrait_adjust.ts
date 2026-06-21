@@ -334,12 +334,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/zhongyuan/e7fcf159-f365-48a8-9c8d-e344fbc93d35.png": {
             "scale": 0.98,
             "offsetX": 0,
-            "offsetY": 7
+            "offsetY": -1
         },
         "/assets/litang/tang_lishimin.png": {
-            "scale": 1.18,
+            "scale": 1.12,
             "offsetX": 0,
-            "offsetY": 10
+            "offsetY": -11
         },
         "/assets/liuhan/hanxin.png": {
             "scale": 1.08,

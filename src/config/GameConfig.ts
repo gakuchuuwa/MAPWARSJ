@@ -61,7 +61,7 @@ export class GameConfig {
         /** 募兵时优先保证每个文化区至少有 N 支现役军团（在总上限内） */
         REGION_BASELINE_LEGIONS: 1,
         /** 第二段「视野优先」单次最多塞进镜头内的军团数（防同屏一波爆出，余量让给第三段全图分散） */
-        VIEWPORT_SPAWN_QUOTA: 4,
+        VIEWPORT_SPAWN_QUOTA: 2,
         /** 首次出兵错峰：每隔 N ms 放行一批，让军团陆续登场而非同帧爆出 */
         INITIAL_SPAWN_INTERVAL_MS: 200,
         /** 首次出兵错峰：每批最多生成几支 */

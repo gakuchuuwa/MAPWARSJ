@@ -56,7 +56,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 蔡国劲卒除名（无此部队）
   shen: { name: '申伯亲卫', tier: 3 },         // 安康·西周申国
   // 汴河戍旅除名（无此编制）
-  yuzhou: { name: '雍丘锐士', tier: 1 },     // 雍丘·祖逆中流击楢
+  yuzhou: { name: '雍丘锐士', tier: 1 },     // 雍丘·祖逖中流击楢
   xin: { name: '潞川锐骑', tier: 2 },          // 长子·王猛潞川破前燕
   yingzhou_d: { name: '选锋军', tier: 2 },       // 顺昌·南宋选锋
   // 北门飞骑除名

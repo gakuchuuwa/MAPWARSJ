@@ -279,7 +279,7 @@
     "file": "src\\data\\CentralExpeditionLegions.ts",
     "name": "中流北伐军",
     "line": 59,
-    "text": "yuzhou: { name: '中流北伐军', tier: 1 },     // 雍丘·祖逆中流击楢"
+    "text": "yuzhou: { name: '中流北伐军', tier: 1 },     // 雍丘·祖逖中流击楢"
   },
   {
     "file": "src\\data\\CentralExpeditionLegions.ts",

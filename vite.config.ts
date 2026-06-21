@@ -56,6 +56,7 @@ export default defineConfig({
             ignored: [
                 '**/src/data/portrait_adjust.ts',
                 '**/src/data/FactionGenerals.ts',
+                '**/public/assets/**',
             ],
         },
         // [PERF] Warm up the most expensive modules on dev server start
@@ -77,7 +78,11 @@ export default defineConfig({
             name: 'suppress-portrait-dev-hmr',
             handleHotUpdate({ file }) {
                 const norm = file.replace(/\\/g, '/');
-                if (norm.includes('portrait_adjust.ts') || norm.includes('FactionGenerals.ts')) {
+                if (
+                    norm.includes('portrait_adjust.ts')
+                    || norm.includes('FactionGenerals.ts')
+                    || (norm.includes('/public/assets/') && norm.endsWith('.png'))
+                ) {
                     return [];
                 }
             },

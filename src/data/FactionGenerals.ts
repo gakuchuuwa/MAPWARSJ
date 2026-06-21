@@ -562,7 +562,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     shangzhou: { generalId: 'shangzhou_shangyang', generalName: '商鞅', portrait: '/assets/qin/shangzhou_shangyang.png' },
     yuan_cj_d: { generalId: 'yuan_cj_d_yuanshu_zn', generalName: '袁术', portrait: '/assets/zhongyuan/yuanshu.png' },
     xinping: { generalId: 'xinping_haozhao', generalName: '郝昭', portrait: '/assets/zhongyuan/xinping_haozhao.png' },
-    yuzhou: { generalId: 'yuzhou_zuti', generalName: '祖逆', portrait: '/assets/zhongyuan/yuzhou_zuti.png' },
+    yuzhou: { generalId: 'yuzhou_zuti', generalName: '祖逖', portrait: '/assets/zhongyuan/yuzhou_zuti.png' },
     mengcheng_d: { generalId: 'mengcheng_d_gaoqiong', generalName: '高琼', portrait: '/assets/zhongyuan/mengcheng_d_gaoqiong.png' },
     lulin: { generalId: 'lulin_liuxiu', generalName: '刘秀', portrait: '/assets/zhongyuan/lulin_liuxiu.png' },
     dang_d: { generalId: 'dang_d_zhuwen', generalName: '朱温', portrait: '/assets/zhongyuan/dang_d_zhuwen.png' },
