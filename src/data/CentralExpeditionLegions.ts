@@ -27,7 +27,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   sunqin: { name: '督标秦军', tier: 2 },   // 潼关·孙传庭督标
   // 飞熊军除名（小说番号）
   // 韩卒击刹除名（无史载）
-    liang_d: { name: '睢阳义兵', tier: 1 },     // 商丘·张巡守睢阳
+    liang_d: { name: '睢阳义兵', tier: 2 },     // 商丘·张巡守睢阳（防御战，降T2）
   // 公行锐士除名
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
   li_lx_d: { name: '陇西戍骑', tier: 3 },   // 陇西·李崇秦陇西郡守戍兵
@@ -61,7 +61,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yingzhou_d: { name: '选锋军', tier: 2 },       // 顺昌·南宋选锋
   // 北门飞骑除名
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
-  lulin: { name: '云台突骑', tier: 1 },           // 昆阳·云台二十八将突骑
+  lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
   lai: { name: '齐关弩手', tier: 1 },           // 青石关·王师范屡败朱温（正史胜仗）
   yangshao: { name: '材官骑士', tier: 1 },     // 渑池·周勃大破秦军
   dongxian: { name: '郯城戍卒', tier: 2 },     // 郯城·徐盛东吴宿将
@@ -76,7 +76,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yanchuan_d: { name: '淮西行营军', tier: 3 }, // 郾城·韩愈随裴度督师郾城，参赞军务
   guide_d: { name: '永城屯守兵', tier: 3 },   // 永城·麻叔谋镇守永城
   tongzhou: { name: '同州府兵', tier: 3 },    // 长宁·杨智积镇守同州
-  hao_d: { name: '濠州红巾军', tier: 3 },
+  hao_d: { name: '濠州红巾军', tier: 2 },
   suzhou_d: { name: '江北团练', tier: 3 },
   sima_d: { name: '河内甲士', tier: 3 },
   bozhou_d: { name: '聊城义勇', tier: 3 },
@@ -84,10 +84,10 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   shangzhou: { name: '商州锐士', tier: 3 },
   bailian: { name: '白莲教众', tier: 3 },
   xinping: { name: '新平戍军', tier: 3 },
-  huai: { name: '淮西子弟', tier: 3 },
+  huai: { name: '淮西子弟', tier: 1 },
   dang_d: { name: '砀山义军', tier: 3 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
   xiao_d: { name: '兰陵萧兵', tier: 2 },       // 兰陵·萧摩诃兰陵萧氏
-  zhengzhou: { name: '白袍军', tier: 1 },        // 虎牢关·陈庆之白袍军
+  zhengzhou: { name: '白袍军', tier: 0 },        // 虎牢关·陈庆之白袍军（名师大将莫自牢，升T0）
   song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军
 };

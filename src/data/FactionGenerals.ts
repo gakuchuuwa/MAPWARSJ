@@ -542,7 +542,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yaozhou: { generalId: 'yaozhou_limaozhen', generalName: '李茂贞', portrait: '/assets/zhongyuan/yaozhou_limaozhen.png' },
     zhi_state: { generalId: 'zhi_state_caocan', generalName: '曹参', portrait: '/assets/zhongyuan/zhi_state_caocan.png' },
     // 周泰（东吴宿卫；原 wuwu_d，吕蒙迁濡须口后改挂莱国据点）
-    yangshao: { generalId: 'yangshao_zhoubo', generalName: '周勃', portrait: '/assets/zhongyuan/yangshao_zhoubo.png' },
+    yangshao: { generalId: 'yangshao_zhoubo', generalName: '周勃', portrait: '/assets/liuhan/yangshao_zhoubo.png' },
     dixiang: { generalId: 'dixiang_zhangxiu', generalName: '张绣', portrait: '/assets/zhongyuan/dixiang_zhangxiu.png' },
     zhou: { generalId: 'zhou_jifa', generalName: '姬发', portrait: '/assets/zhongyuan/zhou_jifa.png' },
     quanrong: { generalId: 'quanrong_quanrongwang', generalName: '义渠骇', portrait: '/assets/zhongyuan/quanrong_quanrongwang.png' },

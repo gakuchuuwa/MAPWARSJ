@@ -163,11 +163,8 @@ export class CombatUI {
     private portraitPickerStatus: HTMLDivElement | null = null;
     private portraitPickerTitle: HTMLDivElement | null = null;
     private portraitPickerFolderSelect: HTMLSelectElement | null = null;
-    private portraitPickerTargetSelect: HTMLSelectElement | null = null;
-    /** 浏览：缩略图列表来源 */
-    private portraitPickerBrowseFolder = '/assets/inbox/';
-    /** 绑定：写入 {generalId}.png 的目标夹 */
-    private portraitPickerTargetFolder = '/assets/inbox/';
+    /** 浏览与绑定共用：该夹下列图，并写入 {generalId}.png */
+    private portraitPickerFolder = '/assets/inbox/';
     private portraitPickerCatalog: { folder: string; label: string; images: string[] }[] = [];
     private portraitPickerGeneralId: string | null = null;
     private portraitPickerSide: 'attacker' | 'defender' | null = null;
@@ -1740,7 +1737,7 @@ export class CombatUI {
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
                 准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝=眼线</span>，<span style="color:#88e0d0;">青=下巴</span>，<span style="color:#c8a8e8;">紫=腰</span>，<span style="color:#ff9a7a;">橙竖=胸线</span>。眼/下巴/腰贴线，<b>[ ]</b> 缩进椭圆<br>
                 方向键微调；Tab 换边；<b>Esc 退出并保存</b>本场改过的全部立绘；Enter 可提前保存<br>
-                <b>F2 开启时</b>：点击武将名牌 →「绑定到」选目标夹、「浏览」选源图 → 保存为 <code>{generalId}.png</code> 并写 <code>FactionGenerals.ts</code>
+                <b>F2 开启时</b>：点武将名选文件夹绑图 → 自动关选图窗，<b>继续 F2 微调</b>，最后 <b>Esc 保存</b> 位置/缩放
             </div>
             <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
         `;
@@ -2106,14 +2103,10 @@ export class CombatUI {
         panel.innerHTML = `
             <div class="pp-title" style="font-size:15px;font-weight:700;color:#f5d78e;"></div>
             <div class="pp-hint" style="font-size:12px;color:#9a8f7a;line-height:1.45;">
-                <b>绑定到</b>：写入该夹下的 <b>{generalId}.png</b>（改盛唐默认 <b>litang</b>）。<b>浏览</b>：从任意夹（含 inbox）选源图。绑定后更新 <b>FactionGenerals.ts</b>。
+                选文件夹 → 点图 →「绑定」后自动关闭选图窗，<b>继续 F2 微调</b>，最后 <b>Esc</b> 保存位置/缩放（与绑图分开）。
             </div>
             <label class="pp-folder-row" style="display:flex;align-items:center;gap:8px;font-size:13px;">
-                <span style="color:#c4b89a;white-space:nowrap;min-width:5.5em;">绑定到</span>
-                <select class="pp-target-select" style="flex:1;min-width:0;padding:6px 8px;background:#1a1814;color:#e8e0d0;border:1px solid #4a4238;border-radius:5px;"></select>
-            </label>
-            <label class="pp-folder-row" style="display:flex;align-items:center;gap:8px;font-size:13px;">
-                <span style="color:#c4b89a;white-space:nowrap;min-width:5.5em;">浏览</span>
+                <span style="color:#c4b89a;white-space:nowrap;min-width:3.5em;">文件夹</span>
                 <select class="pp-folder-select" style="flex:1;min-width:0;padding:6px 8px;background:#1a1814;color:#e8e0d0;border:1px solid #4a4238;border-radius:5px;"></select>
             </label>
             <div class="pp-grid" style="
@@ -2145,23 +2138,16 @@ export class CombatUI {
         document.head.appendChild(style);
 
         this.portraitPickerTitle = panel.querySelector('.pp-title');
-        this.portraitPickerTargetSelect = panel.querySelector('.pp-target-select') as HTMLSelectElement;
         this.portraitPickerFolderSelect = panel.querySelector('.pp-folder-select') as HTMLSelectElement;
         this.portraitPickerGrid = panel.querySelector('.pp-grid');
         this.portraitPickerStatus = panel.querySelector('.pp-status');
-        const onBrowseChange = () => {
-            this.portraitPickerBrowseFolder = this.portraitPickerFolderSelect?.value || '/assets/inbox/';
+        this.portraitPickerFolderSelect.addEventListener('change', () => {
+            this.portraitPickerFolder = this.portraitPickerFolderSelect?.value || '/assets/inbox/';
             this.portraitPickerSelectedPath = null;
             const bindBtn = this.portraitPickerPanel?.querySelector('.pp-btn-bind') as HTMLButtonElement | null;
             if (bindBtn) bindBtn.disabled = true;
             void this.renderPortraitPickerGrid();
-        };
-        const onTargetChange = () => {
-            this.portraitPickerTargetFolder = this.portraitPickerTargetSelect?.value || '/assets/inbox/';
-            void this.renderPortraitPickerGrid();
-        };
-        this.portraitPickerFolderSelect.addEventListener('change', onBrowseChange);
-        this.portraitPickerTargetSelect.addEventListener('change', onTargetChange);
+        });
         const bindBtn = panel.querySelector('.pp-btn-bind') as HTMLButtonElement;
         const closeBtn = panel.querySelector('.pp-btn-close') as HTMLButtonElement;
         bindBtn.addEventListener('mousedown', (e) => e.preventDefault());
@@ -2188,32 +2174,22 @@ export class CombatUI {
         }
     }
 
-    private populatePortraitPickerFolderSelects(): void {
+    private populatePortraitPickerFolderSelect(): void {
+        if (!this.portraitPickerFolderSelect) return;
+        this.portraitPickerFolderSelect.innerHTML = '';
         const folders = this.portraitPickerCatalog.length > 0
             ? this.portraitPickerCatalog
             : [{ folder: '/assets/inbox/', label: 'inbox', images: [] }];
-
-        const fill = (sel: HTMLSelectElement | null) => {
-            if (!sel) return;
-            sel.innerHTML = '';
-            for (const row of folders) {
-                const opt = document.createElement('option');
-                opt.value = row.folder;
-                const n = row.images.length;
-                opt.textContent = n > 0 ? `${row.label}（${n}）` : row.label;
-                sel.appendChild(opt);
-            }
-        };
-        fill(this.portraitPickerTargetSelect);
-        fill(this.portraitPickerFolderSelect);
-
-        const ensure = (folder: string) =>
-            folders.some((f) => f.folder === folder) ? folder : (folders[0]?.folder ?? '/assets/inbox/');
-
-        this.portraitPickerTargetFolder = ensure(this.portraitPickerTargetFolder);
-        this.portraitPickerBrowseFolder = ensure(this.portraitPickerBrowseFolder);
-        if (this.portraitPickerTargetSelect) this.portraitPickerTargetSelect.value = this.portraitPickerTargetFolder;
-        if (this.portraitPickerFolderSelect) this.portraitPickerFolderSelect.value = this.portraitPickerBrowseFolder;
+        for (const row of folders) {
+            const opt = document.createElement('option');
+            opt.value = row.folder;
+            const n = row.images.length;
+            opt.textContent = n > 0 ? `${row.label}（${n}）` : row.label;
+            this.portraitPickerFolderSelect.appendChild(opt);
+        }
+        const has = folders.some((f) => f.folder === this.portraitPickerFolder);
+        if (!has) this.portraitPickerFolder = folders[0]?.folder ?? '/assets/inbox/';
+        this.portraitPickerFolderSelect.value = this.portraitPickerFolder;
     }
 
     private async openPortraitPicker(generalId: string, side: 'attacker' | 'defender'): Promise<void> {
@@ -2227,13 +2203,11 @@ export class CombatUI {
         this.portraitPickerGeneralId = generalId;
         this.portraitPickerSide = side;
         this.portraitPickerSelectedPath = null;
-        const homeFolder = this.inferDefaultPortraitFolder(rec);
-        this.portraitPickerTargetFolder = homeFolder;
-        this.portraitPickerBrowseFolder = homeFolder;
+        this.portraitPickerFolder = this.inferDefaultPortraitFolder(rec);
         this.portraitPickerPanel.style.display = 'flex';
         if (this.portraitPickerStatus) this.portraitPickerStatus.textContent = '加载文件夹…';
         await this.loadPortraitPickerCatalog();
-        this.populatePortraitPickerFolderSelects();
+        this.populatePortraitPickerFolderSelect();
         if (this.portraitPickerTitle) {
             this.portraitPickerTitle.textContent =
                 `绑定立绘 · ${rec.generalName}（${generalId}）`;
@@ -2257,12 +2231,11 @@ export class CombatUI {
     private async renderPortraitPickerGrid(): Promise<void> {
         if (!this.portraitPickerGrid) return;
         this.portraitPickerGrid.innerHTML = '';
-        const folder = this.portraitPickerBrowseFolder;
-        const targetFolder = this.portraitPickerTargetFolder;
+        const folder = this.portraitPickerFolder;
         const generalId = this.portraitPickerGeneralId;
         const row = this.portraitPickerCatalog.find((c) => c.folder === folder);
         const images = row?.images ?? [];
-        const destHint = generalId ? `${targetFolder}${generalId}.png` : '';
+        const destHint = generalId ? `${folder}${generalId}.png` : '';
 
         if (images.length === 0) {
             this.portraitPickerGrid.innerHTML =
@@ -2304,7 +2277,7 @@ export class CombatUI {
         }
         if (this.portraitPickerStatus) {
             this.portraitPickerStatus.textContent =
-                `浏览 ${folder} · 绑定目标 ${destHint}`;
+                `${folder} 共 ${images.length} 张 · 绑定为 ${destHint}`;
         }
     }
 
@@ -2312,7 +2285,7 @@ export class CombatUI {
         const generalId = this.portraitPickerGeneralId;
         const side = this.portraitPickerSide;
         const sourcePath = this.portraitPickerSelectedPath;
-        const targetFolder = this.portraitPickerTargetFolder;
+        const targetFolder = this.portraitPickerFolder;
         if (!generalId || !side || !sourcePath || !targetFolder || this.portraitPickerBinding) return;
 
         this.portraitPickerBinding = true;
@@ -2334,18 +2307,23 @@ export class CombatUI {
             setGeneralPortraitOverride(generalId, portraitPath);
             const img = side === 'attacker' ? this.leftPortrait : this.rightPortrait;
             const bust = `${portraitPath}?v=${Date.now()}`;
-            img.src = bust;
-            applyPortraitAdjustToElement(img, portraitPath, this.correctorData);
             this.correctorSide = side;
-            this.loadCorrectorDraft();
             this.highlightCorrectorSide();
-            await this.loadPortraitPickerCatalog();
-            this.populatePortraitPickerFolderSelects();
-            await this.renderPortraitPickerGrid();
-            this.setCorrectorStatus(`✓ ${result.generalName ?? generalId} → ${portraitPath}`);
-            if (this.portraitPickerStatus) {
-                this.portraitPickerStatus.textContent = '绑定成功；可继续选下一张或关闭';
+            const onPortraitLoaded = () => {
+                this.loadCorrectorDraft();
+                applyPortraitAdjustToElement(img, portraitPath, this.correctorData);
+                this.scheduleCorrectorCrosshairRefresh();
+            };
+            if (img.complete && img.src.includes(portraitPath.split('/').pop() ?? '')) {
+                onPortraitLoaded();
+            } else {
+                img.addEventListener('load', onPortraitLoaded, { once: true });
             }
+            img.src = bust;
+            this.closePortraitPicker();
+            this.setCorrectorStatus(
+                `✓ 已绑定 ${result.generalName ?? generalId} → 继续 F2 微调，Esc 保存立绘`,
+            );
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
             this.setCorrectorStatus(`⚠ 绑定失败：${msg}`);

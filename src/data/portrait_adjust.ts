@@ -535,6 +535,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 21
+        },
+        "/assets/zhongyuan/52602539-f95b-4ef3-aeec-2bf4422fe284.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -21
         }
     },
     "folderGuides": {
