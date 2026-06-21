@@ -335,6 +335,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 7
+        },
+        "/assets/litang/tang_lishimin.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 16
         }
     },
     "folderGuides": {
