@@ -64,10 +64,14 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
     };
 
     app.combatSystem.onRegionalBattleReinforcement = (battleField, joinedUnit) => {
+        if (app.combatUI.isBoundToBattleField(battleField)) {
+            app.combatUI.syncRegionalParticipantsFromBattleField(battleField);
+            return;
+        }
+
         const followedId = app.cameraFollowUI?.getFollowedArmyId();
         if (!followedId || joinedUnit.id !== followedId) return;
         if (battleField.isOver) return;
-        if (app.combatUI.isBoundToBattleField(battleField)) return;
 
         const attackers = battleField.getAttackerUnits();
         const defenders = battleField.getDefenderUnits();

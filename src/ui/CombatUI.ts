@@ -731,20 +731,24 @@ export class CombatUI {
         if (this.currentBattle) {
             return side === 'attacker' ? this.currentBattle.attacker : this.currentBattle.defender;
         }
-        if (this.currentRegionalUnits) {
-            const units =
-                side === 'attacker'
-                    ? this.currentRegionalUnits.attackers
-                    : this.currentRegionalUnits.defenders;
-            const followedId = (window as unknown as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } })
-                .game?.cameraFollowUI?.getFollowedArmyId();
-            if (followedId) {
-                const followed = units.find((u) => u.id === followedId);
-                if (followed) return followed;
-            }
-            return this.pickPrimaryDisplayUnit(units);
+        const bf = this.boundRegionalBattleField;
+        let units: IBattleUnit[] | undefined;
+        if (bf && !bf.isOver) {
+            units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+        } else if (this.currentRegionalUnits) {
+            units = side === 'attacker'
+                ? this.currentRegionalUnits.attackers
+                : this.currentRegionalUnits.defenders;
         }
-        return null;
+        if (!units || units.length === 0) return null;
+
+        const followedId = (window as unknown as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } })
+            .game?.cameraFollowUI?.getFollowedArmyId();
+        if (followedId) {
+            const followed = units.find((u) => u.id === followedId);
+            if (followed) return followed;
+        }
+        return this.pickPrimaryDisplayUnit(units);
     }
 
     /** 侧栏立绘/技能/系数：优先带将+精锐的军团，避免攻城时城防「驻军」盖住守城军团 */
@@ -1187,36 +1191,9 @@ export class CombatUI {
 
         const attacker = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defender = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
-        
-        const buildWaveGroupedName = (units: IBattleUnit[], _isAttacker: boolean): string => {
-            const waves = new Map<number, IBattleUnit[]>();
-            for (const u of units) {
-                const wi = this.boundRegionalBattleField?.getUnitWaveIndex(u.id) ?? 0;
-                if (!waves.has(wi)) waves.set(wi, []);
-                waves.get(wi)!.push(u);
-            }
-            const sortedWaves = [...waves.entries()].sort((a, b) => b[0] - a[0]);
 
-            const maxWave = sortedWaves.length > 0 ? sortedWaves[0][0] : 0;
-            let html = '';
-            for (const [wi, waveUnits] of sortedWaves) {
-                const dim = maxWave <= 1 ? 1 : wi === 0 ? 1 : wi === 1 ? 0.82 : 0.62;
-                const size = maxWave <= 1 ? '1em' : wi === 0 ? '1em' : wi === 1 ? '0.92em' : '0.82em';
-                
-                for (const u of waveUnits) {
-                    const match = u.name.match(/(军团|驻军|守军)$/);
-                    const base = match ? u.name.substring(0, match.index) : u.name;
-                    const suffix = match ? match[0] : '';
-                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>`;
-                    if (suffix) {
-                        html += `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}</span>`;
-                    }
-                }
-            }
-            return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; row-gap: 4px; text-align: inherit;">${html}</div>`;
-        };
-        const attName = buildWaveGroupedName(attackers, true);
-        const defName = buildWaveGroupedName(defenders, false);
+        const attName = this.buildWaveGroupedSideName(attackers);
+        const defName = this.buildWaveGroupedSideName(defenders);
 
         this.attackerFactionId = attacker.factionId;
         this.defenderFactionId = defender.factionId;
@@ -1271,6 +1248,66 @@ export class CombatUI {
 
     public isBoundToBattleField(battleField: BattleField): boolean {
         return this.isRegionalVisible() && this.boundRegionalBattleField === battleField;
+    }
+
+    /** 援军编入后刷新参战列表与侧栏（不重复播入场动画） */
+    public syncRegionalParticipantsFromBattleField(battleField: BattleField): void {
+        if (!this.isBoundToBattleField(battleField) || battleField.isOver) return;
+
+        const attackers = battleField.getAttackerUnits();
+        const defenders = battleField.getDefenderUnits();
+        if (attackers.length === 0 || defenders.length === 0) return;
+
+        this.currentRegionalUnits = { attackers, defenders };
+
+        this.attackerDisplayName = this.buildWaveGroupedSideName(attackers);
+        this.defenderDisplayName = this.buildWaveGroupedSideName(defenders);
+
+        const attPrimary = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
+        const defPrimary = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
+
+        this.updateMultiplierBadges(attPrimary, defPrimary);
+        this.updateSkillBadges(attPrimary, defPrimary);
+        this.setPortrait(this.leftPortrait, attPrimary, attPrimary.generalId, attPrimary.factionId, attPrimary.portraitPath, 'attacker');
+        this.setPortrait(
+            this.rightPortrait,
+            defPrimary,
+            defPrimary.generalId,
+            defPrimary.factionId,
+            defPrimary.portraitPath,
+            'defender',
+            this.leftPortrait.src || undefined,
+        );
+        this.refreshRegionalSafetyDeadline();
+        this.updateStats();
+    }
+
+    private buildWaveGroupedSideName(units: IBattleUnit[]): string {
+        const waves = new Map<number, IBattleUnit[]>();
+        for (const u of units) {
+            const wi = this.boundRegionalBattleField?.getUnitWaveIndex(u.id) ?? 0;
+            if (!waves.has(wi)) waves.set(wi, []);
+            waves.get(wi)!.push(u);
+        }
+        const sortedWaves = [...waves.entries()].sort((a, b) => b[0] - a[0]);
+
+        const maxWave = sortedWaves.length > 0 ? sortedWaves[0][0] : 0;
+        let html = '';
+        for (const [wi, waveUnits] of sortedWaves) {
+            const dim = maxWave <= 1 ? 1 : wi === 0 ? 1 : wi === 1 ? 0.82 : 0.62;
+            const size = maxWave <= 1 ? '1em' : wi === 0 ? '1em' : wi === 1 ? '0.92em' : '0.82em';
+
+            for (const u of waveUnits) {
+                const match = u.name.match(/(军团|驻军|守军)$/);
+                const base = match ? u.name.substring(0, match.index) : u.name;
+                const suffix = match ? match[0] : '';
+                html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>`;
+                if (suffix) {
+                    html += `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}</span>`;
+                }
+            }
+        }
+        return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; row-gap: 4px; text-align: inherit;">${html}</div>`;
     }
 
     // ============================================================
@@ -1962,6 +1999,10 @@ export class CombatUI {
         this.renderSideLabel('defender', this.defenderDisplayName, defCurrent);
         this.updateFactionDisplay();
         this.updateMultiplierBadges(
+            this.getPrimaryBattler('attacker'),
+            this.getPrimaryBattler('defender'),
+        );
+        this.updateSkillBadges(
             this.getPrimaryBattler('attacker'),
             this.getPrimaryBattler('defender'),
         );

@@ -828,7 +828,7 @@ export const FACTIONS: Faction[] = [
     { id: 'mi', name: '糜氏' },
     { id: 'hai2', name: '瀑池' },
     { id: 'fu2', name: '抚州' },
-    { id: 'xinping', name: '新平' },
+    { id: 'xinping', name: '邠州' },
     { id: 'huan', name: '环州' },
     { id: 'wei2', name: '静塞' },
     { id: 'lingwu', name: '灵武' },

@@ -485,6 +485,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -11
+        },
+        "/assets/zhongyuan/92102f92-195a-4120-addd-c2ce96ff27f1.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/xianqin/8990eebc-21d7-40ab-8210-09d8ac0b34a5.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/zhongyuan/qin_baiqi.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -28
         }
     },
     "folderGuides": {
