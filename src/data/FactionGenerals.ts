@@ -17,7 +17,7 @@
  *      portrait = 专图预留路径（通常 {政权夹}/{factionId}_{generalId}.png）；无文件时
  *      自动 fallback：政权夹随机 → 文化夹随机（见 AGENTS.md §十三，禁止跨区乱抽）
  *   2. GeneralSkills.ts 的 GENERAL_PROFILES 加 generalId 的武将技档案（不加则技能不触发）
- *   3. 立绘 PNG 补进 portrait 路径；游戏内 F2 可校正位置（居中/恢复，不自动缩放）
+ *   3. 立绘 PNG → 写入对应素材夹 <code>{generalId}.png</code>（F2 绑定）；F2 可校正位置
  *
  * 红线：一势力一将领；专图文件名全局唯一；fallback 仅限本政权夹与本文化夹。
  */
@@ -769,9 +769,28 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 export function getFactionGeneral(factionId: string): FactionGeneral | null {
     const general = FACTION_GENERALS[factionId];
     if (!general) return null;
+    const portrait = _generalPortraitOverrides[general.generalId] ?? general.portrait;
     return {
         ...general,
-        portrait: resolvePortraitAssetPath(general.portrait, { factionId }),
+        portrait: resolvePortraitAssetPath(portrait, { factionId }),
     };
+}
+
+/** 按 generalId 查势力表条目（F2 绑立绘 / 名牌显示） */
+const _generalPortraitOverrides: Record<string, string> = {};
+
+/** F2 绑定后热更新（写盘完成前即时生效；HMR 后以 FactionGenerals.ts 为准） */
+export function setGeneralPortraitOverride(generalId: string, portraitPath: string): void {
+    _generalPortraitOverrides[generalId] = portraitPath;
+}
+
+export function getGeneralRecordByGeneralId(generalId: string): FactionGeneral | null {
+    for (const general of Object.values(FACTION_GENERALS)) {
+        if (general.generalId === generalId) {
+            const portrait = _generalPortraitOverrides[generalId] ?? general.portrait;
+            return { ...general, portrait };
+        }
+    }
+    return null;
 }
 

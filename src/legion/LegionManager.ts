@@ -1,6 +1,13 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
-import { applyLegionSpawnTierToArmy, makeArmyElite } from './LegionSpawnTier';
+import {
+    applyLegionSpawnTierToArmy,
+    attachFactionGeneralToArmy,
+    makeArmyElite,
+    markSpawnTierConsumed,
+    noteCitySpawnTierFromLegion,
+} from './LegionSpawnTier';
+import { getFactionGeneral } from '../data/FactionGenerals';
 import { CityManager } from '../world/CityManager';
 import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
@@ -266,17 +273,33 @@ export class LegionManager {
     /**
      * 军团分层（有 CITY_ELITE_LEGIONS 的据点）：
      *   - 无番号映射 → 保持募兵默认「{城名}军团」。
-     *   - ≥4万 → 必精锐番号 + 将领（有档案时）。
-     *   - &lt;4万 → 四档各 25%：普通 / 仅精锐 / 仅将领 / 精锐+将领。
-     *   出生定档，精锐番号不降级；长到 4万 由 tickLegionTiers 补全为精锐+将领。
+     *   - ≥4万 → 在据点配额允许时补精锐/将领。
+     *   - &lt;4万 → 四档各 25%（仅仍可用档位）：普通 / 仅精锐 / 仅将领 / 精锐+将领；据点将领/精锐各只能出一次。
+     *   出生定档，精锐番号不降级；长到 4万 由 tickLegionTiers 在配额内补全。
      */
     private applyLegionTier(army: Army): void {
-        applyLegionSpawnTierToArmy(army);
+        const cityId = army.homeCityId ?? army.getSourceCityId();
+        const city = cityId ? this.cityManager.getCity(cityId) : undefined;
+        applyLegionSpawnTierToArmy(army, city);
+    }
+
+    /** 扫描现有军团，反推各据点将/精消耗（开局与热更后） */
+    public syncCitySpawnTierConsumption(): void {
+        for (const city of this.cityManager.getCities()) {
+            city.spawnGeneralUsed = false;
+            city.spawnEliteUsed = false;
+        }
+        for (const army of this.armies) {
+            if (army.isDestroyed || army.type !== 'legion') continue;
+            const cityId = army.homeCityId ?? army.getSourceCityId();
+            if (!cityId) continue;
+            noteCitySpawnTierFromLegion(this.cityManager.getCity(cityId), army);
+        }
     }
 
     /**
-     * 每季扫描：兵力长到 ≥4万 的军团晋升为「精锐 + 将领」。
-     * 普通军团长到 4万 → 精锐+名将；已是精锐（无将）的小军长到 4万 → 补名将。
+     * 每季扫描：兵力长到 ≥4万 的军团在据点配额允许时补精锐/将领。
+     * 普通军团长到 4万 → 精锐+名将（若未消耗）；已是精锐（无将）的小军长到 4万 → 补名将。
      * 由 RecruitmentSystem 每季调用一次。
      */
     public tickLegionTiers(): void {
@@ -285,9 +308,39 @@ export class LegionManager {
             if (army.isDestroyed || army.type !== 'legion') continue;
             if (army.getTroops() < threshold) continue;
             if (army.isElite && army.generalId) continue;
+
             const eliteName = getLegionEliteLegionName(army);
             if (!eliteName) continue;
-            makeArmyElite(army, eliteName, true);
+
+            const cityId = army.homeCityId ?? army.getSourceCityId();
+            const city = cityId ? this.cityManager.getCity(cityId) : undefined;
+            const state = city ?? {};
+            const canGeneral = !state.spawnGeneralUsed && !!getFactionGeneral(army.getFactionId());
+            const canElite = !state.spawnEliteUsed;
+
+            if (army.isElite && !army.generalId) {
+                if (!canGeneral) continue;
+                if (attachFactionGeneralToArmy(army)) {
+                    markSpawnTierConsumed(state, { general: true });
+                    noteCitySpawnTierFromLegion(city, army);
+                }
+                continue;
+            }
+
+            if (!canElite && !canGeneral) continue;
+
+            if (canElite) {
+                const applied = makeArmyElite(army, eliteName, canGeneral);
+                markSpawnTierConsumed(state, {
+                    elite: applied.elite,
+                    general: applied.general && canGeneral,
+                });
+            } else if (canGeneral) {
+                if (attachFactionGeneralToArmy(army)) {
+                    markSpawnTierConsumed(state, { general: true });
+                }
+            }
+            noteCitySpawnTierFromLegion(city, army);
         }
     }
 

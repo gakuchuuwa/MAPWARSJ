@@ -1,4 +1,4 @@
-import { getFactionGeneral } from '../data/FactionGenerals';
+import { getFactionGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride } from '../data/FactionGenerals';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
 import { SPRITE_PATHS, GameConfig } from '../config/GameConfig';
@@ -157,6 +157,24 @@ export class CombatUI {
     private rightCrosshair: HTMLDivElement | null = null;
     private crosshairBtn: HTMLButtonElement | null = null;
 
+    /** F2 开启时：点击武将名 → 选文件夹 + 绑立绘 */
+    private portraitPickerPanel: HTMLDivElement | null = null;
+    private portraitPickerGrid: HTMLDivElement | null = null;
+    private portraitPickerStatus: HTMLDivElement | null = null;
+    private portraitPickerTitle: HTMLDivElement | null = null;
+    private portraitPickerFolderSelect: HTMLSelectElement | null = null;
+    private portraitPickerTargetSelect: HTMLSelectElement | null = null;
+    /** 浏览：缩略图列表来源 */
+    private portraitPickerBrowseFolder = '/assets/inbox/';
+    /** 绑定：写入 {generalId}.png 的目标夹 */
+    private portraitPickerTargetFolder = '/assets/inbox/';
+    private portraitPickerCatalog: { folder: string; label: string; images: string[] }[] = [];
+    private portraitPickerGeneralId: string | null = null;
+    private portraitPickerSide: 'attacker' | 'defender' | null = null;
+    private portraitPickerSelectedPath: string | null = null;
+    private portraitPickerOpen = false;
+    private portraitPickerBinding = false;
+
     constructor() {
         document.querySelectorAll('#combat-ui-panel').forEach((el) => el.remove());
         this.portraitConfig = new PortraitConfigManager();
@@ -280,6 +298,7 @@ export class CombatUI {
         rightFrame.appendChild(this.rightPortraitWrap);
         this.rightGeneralNameTag = this.createGeneralNameTag('right');
         rightFrame.appendChild(this.rightGeneralNameTag);
+        this.wireGeneralNameTagClicks();
 
         // --- 中栏黑底：椭圆径向 alpha 渐隐（勿 multiply + transparent），HUD 叠在上 ---
         const backdropEdge = uiPx(T.centerBackdropEdge);
@@ -1206,23 +1225,11 @@ export class CombatUI {
         this.setPortrait(this.leftPortrait, attacker, attacker.generalId, attacker.factionId, attackerPortrait, 'attacker');
         this.setPortrait(this.rightPortrait, defender, defender.generalId, defender.factionId, defenderPortrait, 'defender', this.leftPortrait.src || undefined);
 
-        const setGeneralName = (tag: HTMLDivElement, unit: IBattleUnit) => {
-            let name = '';
-            if (unit.generalId) {
-                const gen = getFactionGeneral(unit.factionId || '');
-                if (gen && gen.generalId === unit.generalId) {
-                    name = gen.generalName;
-                }
-            }
-            if (name) {
-                tag.textContent = name;
-                tag.style.display = 'block';
-            } else {
-                tag.style.display = 'none';
-            }
+        const setGeneralName = (tag: HTMLDivElement, unit: IBattleUnit, side: 'attacker' | 'defender') => {
+            this.fillGeneralNameTag(tag, unit, side);
         };
-        setGeneralName(this.leftGeneralNameTag, attacker);
-        setGeneralName(this.rightGeneralNameTag, defender);
+        setGeneralName(this.leftGeneralNameTag, attacker, 'attacker');
+        setGeneralName(this.rightGeneralNameTag, defender, 'defender');
 
         this.updateStats();
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
@@ -1278,6 +1285,7 @@ export class CombatUI {
             'defender',
             this.leftPortrait.src || undefined,
         );
+        this.updateGeneralNameTags(attPrimary, defPrimary);
         this.refreshRegionalSafetyDeadline();
         this.updateStats();
     }
@@ -1326,6 +1334,12 @@ export class CombatUI {
             }
             if (!this.correctorOpen) return;
 
+            if (this.portraitPickerOpen && e.key === 'Escape') {
+                e.preventDefault();
+                this.closePortraitPicker();
+                return;
+            }
+
             const tag = (document.activeElement?.tagName ?? '').toUpperCase();
             if (tag === 'INPUT' || tag === 'TEXTAREA') return;
 
@@ -1371,6 +1385,7 @@ export class CombatUI {
         this.pauseHook?.setPaused(true);
         if (!this.correctorPanel) this.correctorPanel = this.buildCorrectorPanel();
         this.correctorPanel.style.display = 'flex';
+        this.refreshGeneralNameTagInteract();
         void this.bootstrapCorrector();
     }
 
@@ -1442,9 +1457,11 @@ export class CombatUI {
             await this.saveCorrectorSession(true);
         }
         this.correctorOpen = false;
+        this.closePortraitPicker();
         if (this.correctorPanel) this.correctorPanel.style.display = 'none';
         this.leftPortraitFrame.style.outline = '';
         this.rightPortraitFrame.style.outline = '';
+        this.refreshGeneralNameTagInteract();
         this.updateCorrectorCrosshair(); // correctorOpen=false → 隐藏准星
         // 自动保存模式下改动即所见即所得（已写入 correctorData/DEFAULT），无需回退重绘
         // 仅当进入校正前游戏在运行时才恢复运行（尊重用户原本的暂停）
@@ -1722,8 +1739,8 @@ export class CombatUI {
             </div>
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
                 准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝=眼线</span>，<span style="color:#88e0d0;">青=下巴</span>，<span style="color:#c8a8e8;">紫=腰</span>，<span style="color:#ff9a7a;">橙竖=胸线</span>。眼/下巴/腰贴线，<b>[ ]</b> 缩进椭圆<br>
-                方向键微调；Tab 换边（仅切换，不写盘）；<b>Esc 退出并保存</b>本场改过的全部立绘；Enter 可提前保存<br>
-                调校按<b>图片路径</b>记录，同一张图下次在左/在右均自动套用，无需再存
+                方向键微调；Tab 换边；<b>Esc 退出并保存</b>本场改过的全部立绘；Enter 可提前保存<br>
+                <b>F2 开启时</b>：点击武将名牌 →「绑定到」选目标夹、「浏览」选源图 → 保存为 <code>{generalId}.png</code> 并写 <code>FactionGenerals.ts</code>
             </div>
             <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
         `;
@@ -1778,6 +1795,7 @@ export class CombatUI {
 
     public hide() {
         if (this.correctorOpen) this.closeCorrector();
+        else this.closePortraitPicker();
         this.cachedOddsAtt = null;
         if (this.oddsRow) this.oddsRow.style.display = 'none';
         this.clearRegionalTimers();
@@ -2019,8 +2037,329 @@ export class CombatUI {
         this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
     }
 
+    private wireGeneralNameTagClicks(): void {
+        for (const tag of [this.leftGeneralNameTag, this.rightGeneralNameTag]) {
+            tag.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!this.correctorOpen || this.portraitPickerBinding) return;
+                const gid = tag.dataset.generalId;
+                const side = tag.dataset.side as 'attacker' | 'defender' | undefined;
+                if (!gid || !side || !getGeneralRecordByGeneralId(gid)) return;
+                void this.openPortraitPicker(gid, side);
+            });
+        }
+    }
+
+    private fillGeneralNameTag(
+        tag: HTMLDivElement,
+        unit: IBattleUnit,
+        side: 'attacker' | 'defender',
+    ): void {
+        const rec = unit.generalId ? getGeneralRecordByGeneralId(unit.generalId) : null;
+        if (rec) {
+            tag.textContent = rec.generalName;
+            tag.style.display = 'block';
+            tag.dataset.generalId = unit.generalId!;
+        } else {
+            tag.textContent = '';
+            tag.style.display = 'none';
+            delete tag.dataset.generalId;
+        }
+        tag.dataset.side = side;
+        this.refreshGeneralNameTagInteract();
+    }
+
+    private updateGeneralNameTags(attacker: IBattleUnit, defender: IBattleUnit): void {
+        this.fillGeneralNameTag(this.leftGeneralNameTag, attacker, 'attacker');
+        this.fillGeneralNameTag(this.rightGeneralNameTag, defender, 'defender');
+    }
+
+    /** F2 关：名牌纯展示；F2 开：虚线框 + 可点 */
+    private refreshGeneralNameTagInteract(): void {
+        for (const tag of [this.leftGeneralNameTag, this.rightGeneralNameTag]) {
+            const gid = tag.dataset.generalId;
+            const interactive =
+                this.correctorOpen &&
+                !!gid &&
+                !!getGeneralRecordByGeneralId(gid) &&
+                !this.portraitPickerBinding;
+            tag.style.pointerEvents = interactive ? 'auto' : 'none';
+            tag.style.cursor = interactive ? 'pointer' : 'default';
+            tag.style.outline = interactive ? '2px dashed rgba(232,200,120,0.7)' : 'none';
+            tag.style.outlineOffset = interactive ? '3px' : '';
+            tag.title = interactive ? '点击选择文件夹并绑定立绘' : '';
+        }
+    }
+
+    private buildPortraitPickerPanel(): HTMLDivElement {
+        const panel = document.createElement('div');
+        panel.id = 'portrait-picker-panel';
+        panel.style.cssText = `
+            position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            display: none; flex-direction: column; gap: 10px;
+            width: min(720px, 92vw); max-height: 78vh;
+            background: rgba(12, 10, 8, 0.97); border: 1px solid #8a7038; border-radius: 12px;
+            padding: 14px 16px; z-index: 2147483100;
+            font-family: "Noto Serif SC","Microsoft YaHei",serif; color: #e8e0d0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.75); pointer-events: auto;
+        `;
+        panel.innerHTML = `
+            <div class="pp-title" style="font-size:15px;font-weight:700;color:#f5d78e;"></div>
+            <div class="pp-hint" style="font-size:12px;color:#9a8f7a;line-height:1.45;">
+                <b>绑定到</b>：写入该夹下的 <b>{generalId}.png</b>（改盛唐默认 <b>litang</b>）。<b>浏览</b>：从任意夹（含 inbox）选源图。绑定后更新 <b>FactionGenerals.ts</b>。
+            </div>
+            <label class="pp-folder-row" style="display:flex;align-items:center;gap:8px;font-size:13px;">
+                <span style="color:#c4b89a;white-space:nowrap;min-width:5.5em;">绑定到</span>
+                <select class="pp-target-select" style="flex:1;min-width:0;padding:6px 8px;background:#1a1814;color:#e8e0d0;border:1px solid #4a4238;border-radius:5px;"></select>
+            </label>
+            <label class="pp-folder-row" style="display:flex;align-items:center;gap:8px;font-size:13px;">
+                <span style="color:#c4b89a;white-space:nowrap;min-width:5.5em;">浏览</span>
+                <select class="pp-folder-select" style="flex:1;min-width:0;padding:6px 8px;background:#1a1814;color:#e8e0d0;border:1px solid #4a4238;border-radius:5px;"></select>
+            </label>
+            <div class="pp-grid" style="
+                display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+                gap: 10px; overflow: auto; max-height: 52vh; padding: 4px;
+            "></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;">
+                <button type="button" class="pp-btn pp-btn-bind" disabled>绑定选中图</button>
+                <button type="button" class="pp-btn pp-btn-close">关闭</button>
+            </div>
+            <div class="pp-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
+        `;
+        const style = document.createElement('style');
+        style.textContent = `
+            #portrait-picker-panel .pp-btn {
+                background:#2a2620;color:#e8e0d0;border:1px solid #4a4238;border-radius:5px;
+                padding:8px 14px;cursor:pointer;font-size:13px;
+            }
+            #portrait-picker-panel .pp-btn:hover:not(:disabled) { background:#3a342c; }
+            #portrait-picker-panel .pp-btn-bind { background:#4a3820;border-color:#8a7038;color:#fff8e8; }
+            #portrait-picker-panel .pp-btn:disabled { opacity:0.45;cursor:not-allowed; }
+            #portrait-picker-panel .pp-thumb {
+                border:2px solid transparent;border-radius:6px;cursor:pointer;overflow:hidden;
+                background:#1a1814; aspect-ratio:3/4;
+            }
+            #portrait-picker-panel .pp-thumb img { width:100%;height:100%;object-fit:cover;display:block; }
+            #portrait-picker-panel .pp-thumb.pp-selected { border-color:#e8c878; box-shadow:0 0 12px rgba(232,200,120,0.45); }
+        `;
+        document.head.appendChild(style);
+
+        this.portraitPickerTitle = panel.querySelector('.pp-title');
+        this.portraitPickerTargetSelect = panel.querySelector('.pp-target-select') as HTMLSelectElement;
+        this.portraitPickerFolderSelect = panel.querySelector('.pp-folder-select') as HTMLSelectElement;
+        this.portraitPickerGrid = panel.querySelector('.pp-grid');
+        this.portraitPickerStatus = panel.querySelector('.pp-status');
+        const onBrowseChange = () => {
+            this.portraitPickerBrowseFolder = this.portraitPickerFolderSelect?.value || '/assets/inbox/';
+            this.portraitPickerSelectedPath = null;
+            const bindBtn = this.portraitPickerPanel?.querySelector('.pp-btn-bind') as HTMLButtonElement | null;
+            if (bindBtn) bindBtn.disabled = true;
+            void this.renderPortraitPickerGrid();
+        };
+        const onTargetChange = () => {
+            this.portraitPickerTargetFolder = this.portraitPickerTargetSelect?.value || '/assets/inbox/';
+            void this.renderPortraitPickerGrid();
+        };
+        this.portraitPickerFolderSelect.addEventListener('change', onBrowseChange);
+        this.portraitPickerTargetSelect.addEventListener('change', onTargetChange);
+        const bindBtn = panel.querySelector('.pp-btn-bind') as HTMLButtonElement;
+        const closeBtn = panel.querySelector('.pp-btn-close') as HTMLButtonElement;
+        bindBtn.addEventListener('mousedown', (e) => e.preventDefault());
+        closeBtn.addEventListener('mousedown', (e) => e.preventDefault());
+        bindBtn.addEventListener('click', () => void this.bindSelectedPortrait());
+        closeBtn.addEventListener('click', () => this.closePortraitPicker());
+        document.body.appendChild(panel);
+        return panel;
+    }
+
+    private inferDefaultPortraitFolder(rec: { portrait: string }): string {
+        return extractPortraitFolder(rec.portrait) ?? '/assets/inbox/';
+    }
+
+    private async loadPortraitPickerCatalog(): Promise<void> {
+        try {
+            const res = await fetch('/api/portrait-picker-catalog');
+            const data = res.ok ? await res.json() : null;
+            if (data?.ok && Array.isArray(data.catalog)) {
+                this.portraitPickerCatalog = data.catalog;
+            }
+        } catch {
+            this.portraitPickerCatalog = [];
+        }
+    }
+
+    private populatePortraitPickerFolderSelects(): void {
+        const folders = this.portraitPickerCatalog.length > 0
+            ? this.portraitPickerCatalog
+            : [{ folder: '/assets/inbox/', label: 'inbox', images: [] }];
+
+        const fill = (sel: HTMLSelectElement | null) => {
+            if (!sel) return;
+            sel.innerHTML = '';
+            for (const row of folders) {
+                const opt = document.createElement('option');
+                opt.value = row.folder;
+                const n = row.images.length;
+                opt.textContent = n > 0 ? `${row.label}（${n}）` : row.label;
+                sel.appendChild(opt);
+            }
+        };
+        fill(this.portraitPickerTargetSelect);
+        fill(this.portraitPickerFolderSelect);
+
+        const ensure = (folder: string) =>
+            folders.some((f) => f.folder === folder) ? folder : (folders[0]?.folder ?? '/assets/inbox/');
+
+        this.portraitPickerTargetFolder = ensure(this.portraitPickerTargetFolder);
+        this.portraitPickerBrowseFolder = ensure(this.portraitPickerBrowseFolder);
+        if (this.portraitPickerTargetSelect) this.portraitPickerTargetSelect.value = this.portraitPickerTargetFolder;
+        if (this.portraitPickerFolderSelect) this.portraitPickerFolderSelect.value = this.portraitPickerBrowseFolder;
+    }
+
+    private async openPortraitPicker(generalId: string, side: 'attacker' | 'defender'): Promise<void> {
+        const rec = getGeneralRecordByGeneralId(generalId);
+        if (!rec) {
+            this.setCorrectorStatus(`⚠ ${generalId} 未入 FactionGenerals.ts，无法绑定`);
+            return;
+        }
+        if (!this.portraitPickerPanel) this.portraitPickerPanel = this.buildPortraitPickerPanel();
+        this.portraitPickerOpen = true;
+        this.portraitPickerGeneralId = generalId;
+        this.portraitPickerSide = side;
+        this.portraitPickerSelectedPath = null;
+        const homeFolder = this.inferDefaultPortraitFolder(rec);
+        this.portraitPickerTargetFolder = homeFolder;
+        this.portraitPickerBrowseFolder = homeFolder;
+        this.portraitPickerPanel.style.display = 'flex';
+        if (this.portraitPickerStatus) this.portraitPickerStatus.textContent = '加载文件夹…';
+        await this.loadPortraitPickerCatalog();
+        this.populatePortraitPickerFolderSelects();
+        if (this.portraitPickerTitle) {
+            this.portraitPickerTitle.textContent =
+                `绑定立绘 · ${rec.generalName}（${generalId}）`;
+        }
+        const bindBtn = this.portraitPickerPanel.querySelector('.pp-btn-bind') as HTMLButtonElement;
+        bindBtn.disabled = true;
+        await this.renderPortraitPickerGrid();
+        this.refreshGeneralNameTagInteract();
+    }
+
+    private closePortraitPicker(): void {
+        this.portraitPickerOpen = false;
+        this.portraitPickerGeneralId = null;
+        this.portraitPickerSide = null;
+        this.portraitPickerSelectedPath = null;
+        this.portraitPickerCatalog = [];
+        if (this.portraitPickerPanel) this.portraitPickerPanel.style.display = 'none';
+        this.refreshGeneralNameTagInteract();
+    }
+
+    private async renderPortraitPickerGrid(): Promise<void> {
+        if (!this.portraitPickerGrid) return;
+        this.portraitPickerGrid.innerHTML = '';
+        const folder = this.portraitPickerBrowseFolder;
+        const targetFolder = this.portraitPickerTargetFolder;
+        const generalId = this.portraitPickerGeneralId;
+        const row = this.portraitPickerCatalog.find((c) => c.folder === folder);
+        const images = row?.images ?? [];
+        const destHint = generalId ? `${targetFolder}${generalId}.png` : '';
+
+        if (images.length === 0) {
+            this.portraitPickerGrid.innerHTML =
+                `<div style="grid-column:1/-1;color:#b8a890;font-size:13px;padding:12px;">` +
+                `文件夹 <code>${folder}</code> 暂无 PNG。可将新图放入 <code>public${folder}</code> 后切换文件夹刷新。</div>`;
+            if (this.portraitPickerStatus) {
+                this.portraitPickerStatus.textContent = destHint
+                    ? `目标：${destHint} · 当前文件夹无图`
+                    : '当前文件夹无图';
+            }
+            return;
+        }
+        const bindBtn = this.portraitPickerPanel?.querySelector('.pp-btn-bind') as HTMLButtonElement | null;
+        for (const webPath of images) {
+            const cell = document.createElement('div');
+            cell.className = 'pp-thumb';
+            const fileName = webPath.split('/').pop() ?? webPath;
+            cell.title = fileName;
+            if (generalId && fileName === `${generalId}.png`) {
+                cell.classList.add('pp-current');
+                cell.style.borderColor = 'rgba(120,200,255,0.55)';
+            }
+            const img = document.createElement('img');
+            img.src = webPath;
+            img.alt = fileName;
+            cell.appendChild(img);
+            cell.addEventListener('click', () => {
+                this.portraitPickerGrid?.querySelectorAll('.pp-thumb.pp-selected').forEach((el) => {
+                    el.classList.remove('pp-selected');
+                });
+                cell.classList.add('pp-selected');
+                this.portraitPickerSelectedPath = webPath;
+                if (bindBtn) bindBtn.disabled = false;
+                if (this.portraitPickerStatus) {
+                    this.portraitPickerStatus.textContent = `已选：${fileName} → 绑定为 ${destHint}`;
+                }
+            });
+            this.portraitPickerGrid.appendChild(cell);
+        }
+        if (this.portraitPickerStatus) {
+            this.portraitPickerStatus.textContent =
+                `浏览 ${folder} · 绑定目标 ${destHint}`;
+        }
+    }
+
+    private async bindSelectedPortrait(): Promise<void> {
+        const generalId = this.portraitPickerGeneralId;
+        const side = this.portraitPickerSide;
+        const sourcePath = this.portraitPickerSelectedPath;
+        const targetFolder = this.portraitPickerTargetFolder;
+        if (!generalId || !side || !sourcePath || !targetFolder || this.portraitPickerBinding) return;
+
+        this.portraitPickerBinding = true;
+        const destHint = `${targetFolder}${generalId}.png`;
+        if (this.portraitPickerStatus) {
+            this.portraitPickerStatus.textContent = `绑定中：${sourcePath.split('/').pop()} → ${destHint}…`;
+        }
+        try {
+            const res = await fetch('/api/bind-general-portrait', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ generalId, sourcePath, targetFolder }),
+            });
+            const result = await res.json();
+            if (!res.ok || !result.ok) {
+                throw new Error(result.error || `HTTP ${res.status}`);
+            }
+            const portraitPath = result.portraitPath as string;
+            setGeneralPortraitOverride(generalId, portraitPath);
+            const img = side === 'attacker' ? this.leftPortrait : this.rightPortrait;
+            const bust = `${portraitPath}?v=${Date.now()}`;
+            img.src = bust;
+            applyPortraitAdjustToElement(img, portraitPath, this.correctorData);
+            this.correctorSide = side;
+            this.loadCorrectorDraft();
+            this.highlightCorrectorSide();
+            await this.loadPortraitPickerCatalog();
+            this.populatePortraitPickerFolderSelects();
+            await this.renderPortraitPickerGrid();
+            this.setCorrectorStatus(`✓ ${result.generalName ?? generalId} → ${portraitPath}`);
+            if (this.portraitPickerStatus) {
+                this.portraitPickerStatus.textContent = '绑定成功；可继续选下一张或关闭';
+            }
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            this.setCorrectorStatus(`⚠ 绑定失败：${msg}`);
+            if (this.portraitPickerStatus) this.portraitPickerStatus.textContent = msg;
+        } finally {
+            this.portraitPickerBinding = false;
+            this.refreshGeneralNameTagInteract();
+        }
+    }
+
     private createGeneralNameTag(side: 'left' | 'right'): HTMLDivElement {
         const tag = document.createElement('div');
+        tag.className = 'combat-general-name-tag';
+        tag.dataset.side = side === 'left' ? 'attacker' : 'defender';
         tag.style.cssText = `
             position: absolute;
             bottom: 52%;
@@ -2082,10 +2421,23 @@ export class CombatUI {
                 return;
             }
         }
+        const cultureRegion = unit ? resolveUnitCultureRegion(unit) : 'CENTRAL';
+        const portraitOpts = {
+            factionId: unit?.factionId ?? factionId ?? undefined,
+            region: cultureRegion,
+        };
         // ② 事件脚本指定立绘
         if (providedDefault) {
             setSrc(providedDefault);
             return;
+        }
+        // ②b 势力表专将（portraits/{generalId}.png，F2 绑定后即时 override）
+        if (generalId) {
+            const rec = getGeneralRecordByGeneralId(generalId);
+            if (rec) {
+                setSrc(resolvePortraitAssetPath(rec.portrait, portraitOpts));
+                return;
+            }
         }
         // ③ 军团创建时已固定的立绘（若与攻方相同则跳过，走下方随机逻辑）
         if (unit?.portraitPath) {
@@ -2096,11 +2448,6 @@ export class CombatUI {
             // 与攻方相同 → 跳过，走下方随机去重
         }
         const portraits = (SPRITE_PATHS.GENERAL_PORTRAITS || {}) as Record<string, string>;
-        const cultureRegion = unit ? resolveUnitCultureRegion(unit) : 'CENTRAL';
-        const portraitOpts = {
-            factionId: unit?.factionId ?? factionId ?? undefined,
-            region: cultureRegion,
-        };
         // ④ 将领 ID（如 baiqi）
         if (generalId && portraits[generalId]) {
             setSrc(resolvePortraitAssetPath(portraits[generalId], portraitOpts));

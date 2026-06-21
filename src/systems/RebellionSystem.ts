@@ -144,6 +144,13 @@ export class RebellionSystem {
         return Math.max(baseline, Math.floor(currentTroops * 0.5));
     }
 
+    /** 失陷未满 MIN_YEARS_AFTER_FALL 游戏年 → 不可起义复国 */
+    private isRestorationCooldownActive(city: City, year: number): boolean {
+        const fallenAt = city.fallenAtYear;
+        if (fallenAt == null) return false;
+        return year - fallenAt < GameConfig.REBELLION.MIN_YEARS_AFTER_FALL;
+    }
+
     /**
      * 在合格起义据点中，优先选「原主文化区当前无任何据点」的灭国复国目标。
      */
@@ -239,6 +246,7 @@ export class RebellionSystem {
 
         const validTargetCities: City[] = [];
         let blockedByLegions = 0;
+        let blockedByCooldown = 0;
 
         cities.forEach((city) => {
             if (!city.factionId || city.factionId === 'panjun') return;
@@ -253,6 +261,11 @@ export class RebellionSystem {
             if (!originalFactionId) return;
             if (city.factionId === originalFactionId) return;
 
+            if (this.isRestorationCooldownActive(city, year)) {
+                blockedByCooldown++;
+                return;
+            }
+
             if (cityBlockedByLegion(city)) {
                 blockedByLegions++;
                 return;
@@ -262,12 +275,14 @@ export class RebellionSystem {
         });
 
         if (validTargetCities.length === 0) {
-            // 为避免每个季度都刷屏，如果只是没找到目标，不强行写日志，或者仅春季写日志（可选）
-            // 这里为了让玩家感受到霸主的阻力，依然打印跳过日志。
             const skipReason =
-                blockedByLegions > 0
-                    ? `可起义据点均仍有军团驻守或正被围攻（${blockedByLegions}座），本轮跳过`
-                    : '但无无主异文化占领据点可起义，本轮跳过';
+                blockedByLegions > 0 && blockedByCooldown > 0
+                    ? `可起义据点均在失陷冷却、或有军团驻守/正被围攻（冷却${blockedByCooldown}座，驻军${blockedByLegions}座），本轮跳过`
+                    : blockedByCooldown > 0
+                      ? `可起义据点均在失陷冷却期内（${blockedByCooldown}座，须失陷满${GameConfig.REBELLION.MIN_YEARS_AFTER_FALL}游戏年），本轮跳过`
+                      : blockedByLegions > 0
+                        ? `可起义据点均仍有军团驻守或正被围攻（${blockedByLegions}座），本轮跳过`
+                        : '但无无主异文化占领据点可起义，本轮跳过';
             gameLog(
                 'world',
                 `📜 【复国】${this.formatYear(year)}：${dominantLabel}文化扩张极度强势（总计${dominantCount}城），${skipReason}。`

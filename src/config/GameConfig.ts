@@ -196,8 +196,8 @@ export class GameConfig {
 
     /**
      * 军团分层（GAME_DIRECTION 改进 B′，2026-06-16）：
-     *   有番号据点、&lt;4万：四档各 25%（普通 / 仅精锐 / 仅将领 / 精锐+将领）。
-     *   ≥4万：仍必精锐+将领（大军规则）。
+     *   有番号据点、&lt;4万：四档各 25%（在仍可用档位中等概率）；据点将领/精锐各只能出一次。
+     *   ≥4万：在据点配额允许时补精锐/将领（大军规则）。
      */
     static LEGION_TIER = {
         SPAWN_PLAIN_CHANCE: 0.25,
@@ -205,6 +205,12 @@ export class GameConfig {
         SPAWN_GENERAL_ONLY_CHANCE: 0.25,
         SPAWN_ELITE_GENERAL_CHANCE: 0.25,
     };
+
+    /** 异文化占领地起义复国（RebellionSystem） */
+    static REBELLION = {
+        /** 据点失陷后至少再经过的游戏年数，方可被选为复国目标 */
+        MIN_YEARS_AFTER_FALL: 1,
+    } as const;
 }
 
 /** 钳制到 [MIN, MAX] 游戏秒（导演时长 / 事件配置均须走此函数） */

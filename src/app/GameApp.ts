@@ -384,6 +384,7 @@ export class GameApp {
             );
             this.followResupplySystem = new FollowResupplySystem(this.cityManager);
             legionManager.setFollowResupplySystem(this.followResupplySystem);
+            legionManager.syncCitySpawnTierConsumption();
 
             this.speedOverlay = new SpeedOverlayRenderer(this.map, this.overrideManager);
 

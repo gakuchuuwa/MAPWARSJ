@@ -78,6 +78,13 @@ export interface City {
     defense?: number;     // 城防值 (0-1000)
     population?: number;  // 人口 (兵源基础)
     maxTroops?: number;   // 驻军上限
+
+    /** 据点级：历史上是否已从该城派出过带将领军团（将领档消耗，换旗号重置） */
+    spawnGeneralUsed?: boolean;
+    /** 据点级：历史上是否已从该城派出过精锐军团（精锐档消耗，换旗号重置） */
+    spawnEliteUsed?: boolean;
+    /** 失陷年份（易主时写入；复国须距此至少 1 游戏年） */
+    fallenAtYear?: number;
 }
 
 // 游戏状态

@@ -505,6 +505,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 17
+        },
+        "/assets/liuhan/2154ff89-e50d-42f1-98e1-d8ac06f096e0.png": {
+            "scale": 1,
+            "offsetX": 10,
+            "offsetY": 18
+        },
+        "/assets/shuguo/chu_xiangyu.png": {
+            "scale": 0.96,
+            "offsetX": 9,
+            "offsetY": -8
+        },
+        "/assets/shuguo/shu_zhugeliang.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/shuguo/chuanshu (4).png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/litang/9bdb090b-7d53-4505-9473-00cec58f8bfc.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/zhongyuan/fcd61d66-cdf8-4984-a132-f61c3bc919f8.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 21
         }
     },
     "folderGuides": {

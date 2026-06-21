@@ -468,6 +468,13 @@ export class CityManager {
 
             // [NEW] Trigger Capture Effect if faction changed
             if (data.factionId && data.factionId !== oldCity.factionId) {
+                updatedCity.spawnGeneralUsed = false;
+                updatedCity.spawnEliteUsed = false;
+                if (options?.skipCaptureLog) {
+                    updatedCity.fallenAtYear = undefined;
+                } else {
+                    updatedCity.fallenAtYear = this.currentYear;
+                }
                 if (!options?.skipCaptureLog) {
                     gameLog('world', `[CityManager] City ${oldCity.name} captured by ${data.factionId}! Playing effect.`);
                 }

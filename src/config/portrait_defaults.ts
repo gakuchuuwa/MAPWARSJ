@@ -870,7 +870,9 @@ export function normalizePortraitWebPath(url: string): string {
 }
 
 const KNOWN_PORTRAIT_PATHS = new Set(
-    Object.values(_allPortraitAssetGlob).map(normalizePortraitWebPath),
+    Object.values(_allPortraitAssetGlob)
+        .map(normalizePortraitWebPath)
+        .filter((p) => !/^\/assets\/inbox\//i.test(p)),
 );
 
 /** 从候选池中随机取一张磁盘上存在的立绘 */

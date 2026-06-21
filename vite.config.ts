@@ -294,6 +294,83 @@ export default defineConfig({
                         }
                     });
                 });
+
+                const publicAssetsRoot = path.resolve(__dirname, 'public/assets');
+                const factionGeneralsPath = path.resolve(__dirname, 'src/data/FactionGenerals.ts');
+
+                server.middlewares.use('/api/portrait-inbox', (req, res) => {
+                    if (req.method !== 'GET') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    try {
+                        const images = serverListPortraitInbox(publicAssetsRoot);
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: true, images }));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: false, error: err.message }));
+                    }
+                });
+
+                server.middlewares.use('/api/portrait-picker-catalog', (req, res) => {
+                    if (req.method !== 'GET') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    try {
+                        const catalog = serverBuildPortraitPickerCatalog(publicAssetsRoot);
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: true, catalog }));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: false, error: err.message }));
+                    }
+                });
+
+                server.middlewares.use('/api/bind-general-portrait', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    let body = '';
+                    req.on('data', chunk => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const payload = JSON.parse(body) as {
+                                generalId?: string;
+                                sourcePath?: string;
+                                targetFolder?: string;
+                            };
+                            const generalId = payload.generalId?.trim();
+                            const sourcePath = payload.sourcePath?.trim();
+                            const targetFolder = payload.targetFolder?.trim();
+                            if (!generalId || !sourcePath) {
+                                throw new Error('缺少 generalId 或 sourcePath');
+                            }
+                            const result = serverBindGeneralPortrait(
+                                publicAssetsRoot,
+                                factionGeneralsPath,
+                                generalId,
+                                sourcePath,
+                                targetFolder,
+                            );
+                            console.log(`✅ [BindPortrait] ${generalId} ← ${sourcePath} → ${result.portraitPath}`);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, ...result }));
+                        } catch (err: any) {
+                            console.error(`❌ [BindPortrait] Failed:`, err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
             }
         }
     ]
@@ -1053,7 +1130,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = ${body};
 
 /** 扫描 public/assets 生成立绘调校目录（开发服务器专用） */
 function serverBuildPortraitCatalog(assetsRoot: string): { folder: string; label: string; images: string[] }[] {
-    const EXCLUDED = new Set(['UI', 'avg']);
+    const EXCLUDED = new Set(['UI', 'avg', 'inbox']);
     const byFolder = new Map<string, string[]>();
 
     if (!fs.existsSync(assetsRoot)) return [];
@@ -1082,4 +1159,145 @@ function serverBuildPortraitCatalog(assetsRoot: string): { folder: string; label
             label: folder.replace('/assets/', '').replace(/\/$/, ''),
             images,
         }));
+}
+
+/** F2 选图器：含 inbox 在内的全部立绘夹（开发服；Tuner 仍用 serverBuildPortraitCatalog） */
+function serverBuildPortraitPickerCatalog(
+    assetsRoot: string,
+): { folder: string; label: string; images: string[] }[] {
+    const EXCLUDED = new Set(['UI', 'avg']);
+    const entries: { folder: string; label: string; images: string[] }[] = [];
+
+    if (!fs.existsSync(assetsRoot)) return [];
+
+    for (const entry of fs.readdirSync(assetsRoot, { withFileTypes: true })) {
+        if (!entry.isDirectory() || EXCLUDED.has(entry.name)) continue;
+        const dirPath = path.join(assetsRoot, entry.name);
+        const folderKey = `/assets/${entry.name}/`;
+        const images: string[] = [];
+
+        if (fs.existsSync(dirPath)) {
+            for (const file of fs.readdirSync(dirPath)) {
+                if (!file.toLowerCase().endsWith('.png')) continue;
+                images.push(`${folderKey}${file}`);
+            }
+            images.sort((a, b) => a.localeCompare(b, 'zh-CN'));
+        }
+
+        entries.push({
+            folder: folderKey,
+            label: entry.name,
+            images,
+        });
+    }
+
+    entries.sort((a, b) => {
+        if (a.folder === '/assets/inbox/') return -1;
+        if (b.folder === '/assets/inbox/') return 1;
+        return a.label.localeCompare(b.label, 'zh-CN');
+    });
+    return entries;
+}
+
+/** F2 收件箱：待绑定立绘（仅 dev 服，兼容旧 API） */
+function serverListPortraitInbox(assetsRoot: string): string[] {
+    const row = serverBuildPortraitPickerCatalog(assetsRoot).find((c) => c.folder === '/assets/inbox/');
+    return row?.images ?? [];
+}
+
+function serverNormalizeAssetFolderWeb(folder: string): string {
+    let f = folder.replace(/\\/g, '/').trim();
+    if (!f.startsWith('/assets/')) throw new Error(`非法文件夹：${folder}`);
+    if (!f.endsWith('/')) f += '/';
+    if (!/^\/assets\/[a-z0-9_-]+\/$/i.test(f)) throw new Error(`非法文件夹：${folder}`);
+    return f;
+}
+
+function serverWebFolderToAbs(publicAssetsRoot: string, folderWeb: string): string {
+    const rel = folderWeb.slice('/assets/'.length);
+    const abs = path.resolve(publicAssetsRoot, rel);
+    if (!abs.startsWith(publicAssetsRoot)) throw new Error('路径越界');
+    return abs;
+}
+
+function serverWebPathToAbs(publicAssetsRoot: string, webPath: string): string {
+    const normalized = webPath.replace(/\\/g, '/').trim();
+    if (!normalized.startsWith('/assets/')) {
+        throw new Error(`非法立绘路径：${webPath}`);
+    }
+    const rel = normalized.slice('/assets/'.length);
+    const abs = path.resolve(publicAssetsRoot, rel);
+    if (!abs.startsWith(publicAssetsRoot)) {
+        throw new Error('路径越界');
+    }
+    return abs;
+}
+
+function serverEscapeRegExp(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** 在 FactionGenerals.ts 中按 generalId 更新 portrait 字段 */
+function serverUpdateFactionGeneralPortraitFile(
+    filePath: string,
+    generalId: string,
+    portraitPath: string,
+): void {
+    let text = fs.readFileSync(filePath, 'utf-8');
+    const gid = serverEscapeRegExp(generalId);
+    const blockRe = new RegExp(
+        `(generalId\\s*:\\s*'${gid}'[\\s\\S]*?portrait\\s*:\\s*)'[^']*'`,
+        'm',
+    );
+    if (!blockRe.test(text)) {
+        throw new Error(`FactionGenerals.ts 中未找到 generalId: ${generalId}`);
+    }
+    text = text.replace(blockRe, `$1'${portraitPath}'`);
+    fs.writeFileSync(filePath, text, 'utf-8');
+}
+
+/** 绑定：在目标文件夹内写入 {generalId}.png，并写 FactionGenerals.ts */
+function serverBindGeneralPortrait(
+    publicAssetsRoot: string,
+    factionGeneralsPath: string,
+    generalId: string,
+    sourceWebPath: string,
+    targetFolderWeb?: string,
+): { portraitPath: string; generalName: string; targetFolder: string } {
+    if (!/^[a-z0-9_]+$/i.test(generalId)) {
+        throw new Error(`非法 generalId：${generalId}`);
+    }
+    const srcAbs = serverWebPathToAbs(publicAssetsRoot, sourceWebPath);
+    if (!fs.existsSync(srcAbs)) {
+        throw new Error(`源文件不存在：${sourceWebPath}`);
+    }
+
+    const folderWeb = serverNormalizeAssetFolderWeb(
+        targetFolderWeb || sourceWebPath.replace(/\/[^/]+$/i, '/'),
+    );
+    const folderAbs = serverWebFolderToAbs(publicAssetsRoot, folderWeb);
+    fs.mkdirSync(folderAbs, { recursive: true });
+
+    const destAbs = path.join(folderAbs, `${generalId}.png`);
+    const destWeb = `${folderWeb}${generalId}.png`;
+
+    if (path.resolve(srcAbs) !== path.resolve(destAbs)) {
+        if (fs.existsSync(destAbs)) fs.unlinkSync(destAbs);
+        try {
+            fs.renameSync(srcAbs, destAbs);
+        } catch {
+            fs.copyFileSync(srcAbs, destAbs);
+            fs.unlinkSync(srcAbs);
+        }
+    }
+
+    serverUpdateFactionGeneralPortraitFile(factionGeneralsPath, generalId, destWeb);
+
+    const generalsText = fs.readFileSync(factionGeneralsPath, 'utf-8');
+    const nameMatch = generalsText.match(
+        new RegExp(`generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'[\\s\\S]*?generalName\\s*:\\s*'([^']*)'`),
+    );
+    const generalName = nameMatch?.[1] ?? generalId;
+
+    return { portraitPath: destWeb, generalName, targetFolder: folderWeb };
 }

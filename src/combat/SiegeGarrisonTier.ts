@@ -1,6 +1,10 @@
 import { getCityEliteLegionName } from '../data/ExpeditionLegions';
 import { getFactionGeneral } from '../data/FactionGenerals';
-import { rollLegionSpawnTierOutcome } from '../legion/LegionSpawnTier';
+import {
+    markSpawnTierConsumed,
+    rollCityLegionSpawnTierOutcome,
+    type CitySpawnTierState,
+} from '../legion/LegionSpawnTier';
 import type { Army } from '../legion/Army';
 
 /** 攻城战城防临时加成（仅本场，不写盘） */
@@ -10,6 +14,9 @@ export interface SiegeGarrisonBoostFields {
     _siegeGarrisonElite?: boolean;
     _siegeGarrisonEliteName?: string;
 }
+
+export type SiegeGarrisonCity = SiegeGarrisonBoostFields &
+    CitySpawnTierState & { id: string; factionId: string };
 
 export function clearSiegeGarrisonBoost(city: SiegeGarrisonBoostFields): void {
     delete city._siegeGarrisonGeneralId;
@@ -45,11 +52,11 @@ export function reconcileSiegeGarrisonBoostWithLegions(
 }
 
 /**
- * 守城军团未覆盖的档位：对城防驻军按募兵同规则四档掷色（25%×4）。
- * 已有守城军团带将/精锐的档位不再掷城防，避免与军团重复。
+ * 守城军团未覆盖的档位：对城防驻军按据点剩余档位掷色（与募兵同规则）。
+ * 城防掷出将/精同样消耗据点配额；已有守城军团带将/精锐的档位不再掷城防。
  */
 export function applySiegeGarrisonBoostIfNeeded(
-    city: SiegeGarrisonBoostFields & { id: string; factionId: string },
+    city: SiegeGarrisonCity,
     defendingLegions: Army[],
 ): void {
     clearSiegeGarrisonBoost(city);
@@ -61,8 +68,9 @@ export function applySiegeGarrisonBoostIfNeeded(
     const eliteName = getCityEliteLegionName(city.id);
     if (!eliteName && hasLegionElite) return;
 
-    const outcome = rollLegionSpawnTierOutcome(city.factionId);
+    const outcome = rollCityLegionSpawnTierOutcome(city.factionId, city, eliteName);
     const general = getFactionGeneral(city.factionId);
+    const applied = { general: false, elite: false };
 
     switch (outcome) {
         case 'plain':
@@ -71,23 +79,29 @@ export function applySiegeGarrisonBoostIfNeeded(
             if (hasLegionElite || !eliteName) return;
             city._siegeGarrisonElite = true;
             city._siegeGarrisonEliteName = eliteName;
+            applied.elite = true;
             break;
         case 'general':
             if (hasLegionGeneral || !general) return;
             city._siegeGarrisonGeneralId = general.generalId;
             city._siegeGarrisonPortrait = general.portrait;
+            applied.general = true;
             break;
         case 'elite_general':
             if (!hasLegionElite && eliteName) {
                 city._siegeGarrisonElite = true;
                 city._siegeGarrisonEliteName = eliteName;
+                applied.elite = true;
             }
             if (!hasLegionGeneral && general) {
                 city._siegeGarrisonGeneralId = general.generalId;
                 city._siegeGarrisonPortrait = general.portrait;
+                applied.general = true;
             }
             break;
     }
+
+    markSpawnTierConsumed(city, applied);
 }
 
 export function readSiegeGarrisonGeneralId(entity: unknown): string | undefined {
