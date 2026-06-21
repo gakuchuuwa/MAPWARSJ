@@ -1,0 +1,1148 @@
+[
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "賨人勇士",
+    "line": 21,
+    "text": "bandun: { name: '賨人勇士', tier: 1 },       // 汉昌·范目率板楯七姓助刘邦定三秦（T1有名且胜仗）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "巴西劲卒",
+    "line": 22,
+    "text": "langzhou: { name: '巴西劲卒', tier: 1 },       // 隆城·张飞巴西劲卒（有名且胜仗，升T1）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "白杆兵",
+    "line": 24,
+    "text": "tujia_d: { name: '白杆兵', tier: 1 },         // 石柱·§8 #5 秦良玉土司白蜡矛（战功赫赫，特批T1）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "诸葛连弩士",
+    "line": 25,
+    "text": "shu: { name: '诸葛连弩士', tier: 1 },           // 成都·诸葛亮连弩兵（蜀国）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "无当飞军",
+    "line": 26,
+    "text": "yangzhou: { name: '无当飞军', tier: 1 },   // 兴势山·王平统率山地劲旅（防御战退曹爽，降T1）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "六夷突骑",
+    "line": 29,
+    "text": "chenghan: { name: '六夷突骑', tier: 1 },      // 鹿头关·§8 #9 成汉李特六夷铁骑（破晋建国，升T1）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "大西老营",
+    "line": 30,
+    "text": "daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "巴渝劲卒",
+    "line": 31,
+    "text": "ba: { name: '巴渝劲卒', tier: 1 },          // 重庆·巴国巴蔓子劲卒（《华阳国志·巴志》）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "兴戎军",
+    "line": 32,
+    "text": "hezhou: { name: '兴戎军', tier: 1 },          // 钓鱼城·王坚抗蒙毙蒙哥（防御战，降T1）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "白毦兵",
+    "line": 33,
+    "text": "kui: { name: '白毦兵', tier: 1 },             // 白帝城·刘备白毦兵（防御断后，降T1）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "蜀口守军",
+    "line": 36,
+    "text": "lizhou_d: { name: '蜀口守军', tier: 1 },        // 剑门关·吴玠移驻大散关（蜀口禁军）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "驻队矢",
+    "line": 37,
+    "text": "fengzhou: { name: '驻队矢', tier: 1 },       // 大散关·吴玠和尚原大捷（凤州）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "西川绿营",
+    "line": 50,
+    "text": "cheng: { name: '西川绿营', tier: 1 },          // 阳安·岳钟琪川督绿营（开疆拓土主战，升T1）"
+  },
+  {
+    "file": "src\\data\\BashuExpeditionLegions.ts",
+    "name": "乾嘉苗兵",
+    "line": 55,
+    "text": "qianzhong: { name: '乾嘉苗兵', tier: 1 },     // 芷江·吴八月攻克沅州"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "嚈哒铁骑",
+    "line": 11,
+    "text": "yanda: { name: '嚈哒铁骑', tier: 1 },          // 阿缓城·白匈奴横扫中亚（§13 #2）"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "萨曼古拉姆",
+    "line": 12,
+    "text": "saman: { name: '萨曼古拉姆', tier: 1 },     // 阿母城·伊斯梅尔萨曼古拉姆"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "钦察精骑",
+    "line": 13,
+    "text": "huarazim: { name: '钦察精骑', tier: 1 },      // 玉龙杰赤·摩诃末钦察卫（§13 #4）"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "伽色尼禁卫",
+    "line": 32,
+    "text": "jiazini: { name: '伽色尼禁卫', tier: 1 },       // 哥疾宁·马哈茂德古拉姆"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "贵霜战象",
+    "line": 33,
+    "text": "jibin: { name: '贵霜战象', tier: 1 },        // 迦毕试·丘就却统一五部贵霜后象兵破城"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "乌古斯弓骑",
+    "line": 37,
+    "text": "wugu_d: { name: '乌古斯弓骑', tier: 1 },      // 毡的·乌古斯复合弓骑"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "呼罗珊禁卫",
+    "line": 38,
+    "text": "mamon: { name: '呼罗珊禁卫', tier: 1 },       // 达尔甘·马蒙大破艾敏"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "卡尔萨武士",
+    "line": 47,
+    "text": "pangzha: { name: '卡尔萨武士', tier: 1 },      // 阿托克·戈宾德辛格创立卡尔萨，兰季特辛格旁遮普帝国核心武力"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "那竭方阵兵",
+    "line": 49,
+    "text": "najie: { name: '那竭方阵兵', tier: 1 },       // 顶骨城·印度-希腊米南德一世马其顿式重装方阵"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "普什图骑兵",
+    "line": 51,
+    "text": "dulan_d: { name: '普什图骑兵', tier: 1 },    // 坎大哈·艾哈迈德沙阿杜兰尼轻装游骑（摧毁马拉塔帝国，升T1）"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "萨珊边防铁骑",
+    "line": 55,
+    "text": "kalan: { name: '萨珊边防铁骑', tier: 1 },    // 图斯·卡伦家族世袭东北边防元帅"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "萨法尔圣战兵",
+    "line": 57,
+    "text": "xisi: { name: '萨法尔圣战兵', tier: 1 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "帕提亚铁骑",
+    "line": 58,
+    "text": "delan: { name: '帕提亚铁骑', tier: 1 },   // 法拉·卡莱大捷；但常被罗马击溃破都，降T1"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "呼罗珊重骑兵",
+    "line": 59,
+    "text": "huluo: { name: '呼罗珊重骑兵', tier: 1 },  // 赫拉特·阿布穆斯林黑旗军重骑"
+  },
+  {
+    "file": "src\\data\\CentralAsiaExpeditionLegions.ts",
+    "name": "萨珊具装铁骑",
+    "line": 60,
+    "text": "aba: { name: '萨珊具装铁骑', tier: 1 },    // 尼沙布尔·卡迪西亚惨败大溃退，降T1"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "魏之武卒",
+    "line": 11,
+    "text": "wei: { name: '魏之武卒', tier: 1 },        // 汴梁·阴晋大捷；马陵/伊阙大败溃散，降T1"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "秦之锐士",
+    "line": 12,
+    "text": "qin: { name: '秦之锐士', tier: 1 },        // 天水·§1 #12 司马错白起"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "齐之技击",
+    "line": 13,
+    "text": "qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "轻勇骑",
+    "line": 16,
+    "text": "han_d: { name: '轻勇骑', tier: 1 },      // 南郑·§1 #18 韩信背水之战的夺旗骑兵"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "陷阵营",
+    "line": 17,
+    "text": "pizhou: { name: '陷阵营', tier: 1 },        // 下邳·高顺陷阵营"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "虎豹骑",
+    "line": 18,
+    "text": "cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "羽林军",
+    "line": 20,
+    "text": "wuzhou_d: { name: '羽林军', tier: 1 },     // 洛阳·李多祚羽林军（武周）"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "虎贲多射",
+    "line": 21,
+    "text": "shang: { name: '虎贲多射', tier: 1 },       // 安阳·殷商虎贲与多射（妇好征伐）"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "岐阳虎贲",
+    "line": 22,
+    "text": "zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "澶州弩手",
+    "line": 25,
+    "text": "chanzhou: { name: '澶州弩手', tier: 1 },   // 濮阳·李继隆澶州弩手"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "晋中军",
+    "line": 32,
+    "text": "jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "老营军",
+    "line": 36,
+    "text": "dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "魏博牙兵",
+    "line": 37,
+    "text": "tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "黄龙骑",
+    "line": 43,
+    "text": "hongnong_jun: { name: '黄龙骑', tier: 1 },    // 函谷关·杨素大破突厥"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "三河骑士",
+    "line": 44,
+    "text": "huangfu: { name: '三河骑士', tier: 1 },       // 安定·皇甫嵩三河骑士"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "灭楚锐士",
+    "line": 46,
+    "text": "ruo: { name: '灭楚锐士', tier: 1 },          // 武关·王翦灭楚"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "丰沛子弟",
+    "line": 49,
+    "text": "zhi_state: { name: '丰沛子弟', tier: 1 },"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "中流北伐军",
+    "line": 59,
+    "text": "yuzhou: { name: '中流北伐军', tier: 1 },     // 雍丘·祖逆中流击楢"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "潞川锐骑",
+    "line": 60,
+    "text": "xin: { name: '潞川锐骑', tier: 1 },          // 长子·王猛潞川破前燕"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "齐关弩手",
+    "line": 65,
+    "text": "lai: { name: '齐关弩手', tier: 1 },           // 青石关·王师范屡败朱温（正史胜仗）"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "材官骑士",
+    "line": 66,
+    "text": "yangshao: { name: '材官骑士', tier: 1 },     // 渑池·周勃大破秦军"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "雪夜突骑",
+    "line": 70,
+    "text": "cai: { name: '雪夜突骑', tier: 1 },          // 新蔡·李愬雪夜入蔡州"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "瓦岗军",
+    "line": 71,
+    "text": "wazhai: { name: '瓦岗军', tier: 1 },           // 定陶·李密破张须陀瓦岗崛起"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "细柳营",
+    "line": 72,
+    "text": "huaiyang: { name: '细柳营', tier: 1 },     // 宛丘·周亚夫绝吴楚粮道三月平七国"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "淮西子弟",
+    "line": 87,
+    "text": "huai: { name: '淮西子弟', tier: 1 },"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "神策军",
+    "line": 89,
+    "text": "qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安"
+  },
+  {
+    "file": "src\\data\\CentralExpeditionLegions.ts",
+    "name": "殿前捧日",
+    "line": 92,
+    "text": "song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "罗苴子",
+    "line": 10,
+    "text": "nanzhao: { name: '罗苴子', tier: 1 },        // 蒙舍城·天宝伏击唐军（联军占优非以少胜多）"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "东吁象兵",
+    "line": 12,
+    "text": "hantawadi: { name: '东吁象兵', tier: 1 },    // 勃固城·廓沙拉战役被纳黎萱击溃大败，降T1"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "东吁铁骑",
+    "line": 13,
+    "text": "dongxu: { name: '东吁铁骑', tier: 1 },       // 东吁城·莽瑞体东吁铁骑"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "皇家象骑兵",
+    "line": 15,
+    "text": "siam: { name: '皇家象骑兵', tier: 1 },       // 阿瑜陀耶·暹罗王家象兵（纳黎萱等；泰籍战史名，升T1）"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "缅王战象",
+    "line": 16,
+    "text": "pagan: { name: '缅王战象', tier: 1 },      // 蒲甘·阿奴律陀象军"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "吴哥战象",
+    "line": 19,
+    "text": "chenla: { name: '吴哥战象', tier: 1 },     // 吴哥·高棉战象（高棉霸主，升T1）"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "哀牢戍兵",
+    "line": 30,
+    "text": "ailao: { name: '哀牢戍兵', tier: 1 },       // 永昌·类牢反叛连破数城        // 永昌·哀牢国"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "南中劲卒",
+    "line": 34,
+    "text": "nanzhong: { name: '南中劲卒', tier: 1 },     // 宛温·马忠善射夷汉部曲"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "平南戍军",
+    "line": 36,
+    "text": "pingnan: { name: '平南戍军', tier: 1 },       // 腾越城·沐晟征讨麓川"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "景东夷兵",
+    "line": 37,
+    "text": "jingdong: { name: '景东夷兵', tier: 1 },     // 银生城·陶洪屡退麓川"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "昆明夷兵",
+    "line": 39,
+    "text": "kunming_yi: { name: '昆明夷兵', tier: 1 },   // 会川·卤承斩哀牢王封侯"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "兰纳锐卒",
+    "line": 40,
+    "text": "taiyuan: { name: '兰纳锐卒', tier: 1 },      // 清坎城·芒莱王征服南奔开创兰纳"
+  },
+  {
+    "file": "src\\data\\DianQianExpeditionLegions.ts",
+    "name": "白蛮甲士",
+    "line": 41,
+    "text": "baiman: { name: '白蛮甲士', tier: 1 },       // 威楚·高升泰平杨义贞复大理"
+  },
+  {
+    "file": "src\\data\\HexiExpeditionLegions.ts",
+    "name": "金城突骑",
+    "line": 11,
+    "text": "lanzhou: { name: '金城突骑', tier: 1 },     // 金城·赵充国金城突骑"
+  },
+  {
+    "file": "src\\data\\HexiExpeditionLegions.ts",
+    "name": "铁鹞子",
+    "line": 12,
+    "text": "dangxiang: { name: '铁鹞子', tier: 1 },        // 兴庆府·1041好水川诱伏，铁鹞子冲阵，任福战死（非以少胜多，降T1）"
+  },
+  {
+    "file": "src\\data\\HexiExpeditionLegions.ts",
+    "name": "嵬名亲卫",
+    "line": 16,
+    "text": "weiming: { name: '嵬名亲卫', tier: 1 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽"
+  },
+  {
+    "file": "src\\data\\HexiExpeditionLegions.ts",
+    "name": "沙州劲旅",
+    "line": 17,
+    "text": "guiyi: { name: '沙州劲旅', tier: 1 },          // 玉门关·§7 #4 张议潮归义军（名震天下复河西，升T1）"
+  },
+  {
+    "file": "src\\data\\HexiExpeditionLegions.ts",
+    "name": "期门郎骑",
+    "line": 34,
+    "text": "shuofang: { name: '期门郎骑', tier: 1 },      // 河南地·汉武帝期门郎戍朔方"
+  },
+  {
+    "file": "src\\data\\HexiExpeditionLegions.ts",
+    "name": "大唐安西军",
+    "line": 36,
+    "text": "anxi: { name: '大唐安西军', tier: 1 },       // 拨换城·郭昕安西军（白发孤忠，升T1）"
+  },
+  {
+    "file": "src\\data\\HexiExpeditionLegions.ts",
+    "name": "静塞军",
+    "line": 40,
+    "text": "wei2: { name: '静塞军', tier: 1 },"
+  },
+  {
+    "file": "src\\data\\HexiExpeditionLegions.ts",
+    "name": "归义精骑",
+    "line": 42,
+    "text": "shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）"
+  },
+  {
+    "file": "src\\data\\HexiExpeditionLegions.ts",
+    "name": "骠骑郎卫",
+    "line": 43,
+    "text": "suzhou: { name: '骠骑郎卫', tier: 1 },  // 酒泉·霍去病骠骑将军麾下郎卫（河西出击）"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "警固番役",
+    "line": 12,
+    "text": "zhuqian: { name: '警固番役', tier: 1 },  // 太宰府·元寇海防（防御战，降T1）"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "奉公众",
+    "line": 15,
+    "text": "ashikaga: { name: '奉公众', tier: 1 },         // 京都·§5 #31 足利奉公众"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "旗本武士",
+    "line": 16,
+    "text": "edo: { name: '旗本武士', tier: 1 },          // 江户城·§5 #20 旗本（Hatamoto）"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "萨摩隼人",
+    "line": 17,
+    "text": "satsuma: { name: '萨摩隼人', tier: 1 },        // 鹿儿岛城·岛津氏冲田畷钓野伏（原隼人众 T2）"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "武田赤备",
+    "line": 20,
+    "text": "kai: { name: '武田赤备', tier: 1 },          // 躑躅崎馆·§5 #7"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "骏河弓取",
+    "line": 21,
+    "text": "jinchuan: { name: '骏河弓取', tier: 1 },      // 恢复T1：T1不看败绩，只需名气+胜仗"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "浜松众",
+    "line": 23,
+    "text": "totomi: { name: '浜松众', tier: 1 },       // 恢复T1：T1不看败绩，只需名气+胜仗"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "村上水军",
+    "line": 25,
+    "text": "aki: { name: '村上水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷（毛利氏水军主力）"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "千早众",
+    "line": 38,
+    "text": "yamato: { name: '千早众', tier: 1 },       // 千早城·楠木正成笼城（防御战，降T1）"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "真田赤备",
+    "line": 39,
+    "text": "sanada_d: { name: '真田赤备', tier: 1 },"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "一向宗门徒",
+    "line": 41,
+    "text": "kaga_d: { name: '一向宗门徒', tier: 1 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）"
+  },
+  {
+    "file": "src\\data\\JapanExpeditionLegions.ts",
+    "name": "菊池党",
+    "line": 43,
+    "text": "higo_d: { name: '菊池党', tier: 1 },       // 熊本·菊池氏筑後川大捷（原 T2）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "丹阳兵",
+    "line": 20,
+    "text": "shanyue: { name: '丹阳兵', tier: 1 },      // 宛陵城·§1 #24 丹阳郡精兵（极其有名，升T1）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "黑云长剑都",
+    "line": 25,
+    "text": "yang_zhou: { name: '黑云长剑都', tier: 1 },   // 广陵·杨行密黑云长剑都（扬州）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "合肥锐士",
+    "line": 26,
+    "text": "lu: { name: '合肥锐士', tier: 1 },       // 合肥·张辽八百破十万"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "清源军",
+    "line": 28,
+    "text": "quanzhou: { name: '清源军', tier: 1 },        // 刺桐·留从效清源军"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "荆鄂都统司",
+    "line": 32,
+    "text": "xiangzhou: { name: '荆鄂都统司', tier: 1 },     // 襄阳·京湖战区"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "忠顺军",
+    "line": 33,
+    "text": "zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "殿前护圣军",
+    "line": 34,
+    "text": "song: { name: '殿前护圣军', tier: 1 },   // 临安·杨沂中殿前护圣军（宋国）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "克敌军",
+    "line": 35,
+    "text": "sizhou: { name: '克敌军', tier: 1 },       // 淮安·韩世忠大仪镇大捷以少胜多（泗州）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "圣公兵",
+    "line": 39,
+    "text": "fangla: { name: '圣公兵', tier: 1 },         // 睦州·方腊圣公起义克六州"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "若敖六卒",
+    "line": 41,
+    "text": "ruochu: { name: '若敖六卒', tier: 1 },       // 竟陵·楚若敖氏精锐（《左传》）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "句吴利趾",
+    "line": 46,
+    "text": "wu: { name: '句吴利趾', tier: 1 },        // 阊门·孙武句吴利趾"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "飞虎军",
+    "line": 50,
+    "text": "changshaguo: { name: '飞虎军', tier: 1 },      // 临湘·辛弃疾长沙飞虎军"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "越君子军",
+    "line": 53,
+    "text": "yue: { name: '越君子军', tier: 1 },          // 会稽·勾践越军（三千越甲可吞吴，升T1）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "郢州水军",
+    "line": 62,
+    "text": "ying: { name: '郢州水军', tier: 1 },           // 郊郢·曹景宗梁郢州据城退魏（《梁书·曹景宗传》）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "楼船军",
+    "line": 68,
+    "text": "wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "九江劲卒",
+    "line": 70,
+    "text": "liu: { name: '九江劲卒', tier: 1 },            // 六安·英布九江王封地"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "赤眉军",
+    "line": 71,
+    "text": "chimei: { name: '赤眉军', tier: 1 },  // 莒城·樊崇起兵攻入长安灭新莽"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "火牛阵死士",
+    "line": 74,
+    "text": "jiaodong: { name: '火牛阵死士', tier: 1 },  // 即墨·田单火牛阵大破燕军（《史记》）"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "剡城义军",
+    "line": 81,
+    "text": "qiufu: { name: '剡城义军', tier: 1 },     // 剡城·裘甫起义大破唐军"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "天地会义军",
+    "line": 82,
+    "text": "shuntian: { name: '天地会义军', tier: 1 }, // 彰化·林爽文台湾最大民变"
+  },
+  {
+    "file": "src\\data\\JiangnanExpeditionLegions.ts",
+    "name": "福建水师",
+    "line": 88,
+    "text": "wenling: { name: '福建水师', tier: 1 },    // 澎湖·施琅平台湾"
+  },
+  {
+    "file": "src\\data\\KoreaExpeditionLegions.ts",
+    "name": "义兴亲军卫",
+    "line": 25,
+    "text": "joseon: { name: '义兴亲军卫', tier: 1 },       // 汉城·李成桂义兴亲军卫（§4 #9）"
+  },
+  {
+    "file": "src\\data\\KoreaExpeditionLegions.ts",
+    "name": "三别抄",
+    "line": 28,
+    "text": "danluo: { name: '三别抄', tier: 1 },        // 星主厅·高丽武人抗蒙"
+  },
+  {
+    "file": "src\\data\\KoreaExpeditionLegions.ts",
+    "name": "别武班",
+    "line": 31,
+    "text": "woju: { name: '别武班', tier: 1 },            // 咸兴·尹瓘别武班"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "广西俍兵",
+    "line": 12,
+    "text": "zhuang_d: { name: '广西俍兵', tier: 1 },     // 田阳·王江泾抗倭（非以少胜多）"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "郑氏铁人军",
+    "line": 20,
+    "text": "ming_zheng: { name: '郑氏铁人军', tier: 1 }, // 承天·郑成功攻台（以多胜少，降T1）"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "占城象兵",
+    "line": 24,
+    "text": "zhancheng: { name: '占城象兵', tier: 1 },   // 阇槃·占城象兵"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "靖江府卫",
+    "line": 25,
+    "text": "jingjiang: { name: '靖江府卫', tier: 1 },   // 永安·瞿式耜大破李成栋"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "静江弩手",
+    "line": 26,
+    "text": "xinjiang: { name: '静江弩手', tier: 1 },      // 始安·马塈静江弩手（南宋）"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "太平军",
+    "line": 37,
+    "text": "taiping: { name: '太平军', tier: 1 },          // 金田村·太平天国（威震天下，升T1）"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "大汉伏波",
+    "line": 42,
+    "text": "li_s: { name: '大汉伏波', tier: 1 },            // 合浦·马援征交趾（非以少胜多）"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "永历铁骑",
+    "line": 44,
+    "text": "guizhou: { name: '永历铁骑', tier: 1 },       // 古严关·李定国（原肇庆永历，2026-06-19 迁桂州）"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "摧锋军",
+    "line": 48,
+    "text": "duanzhou_d: { name: '摧锋军', tier: 1 },       // 肇庆·曹觐屡败侬智高"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "象兵水师",
+    "line": 54,
+    "text": "guangping: { name: '象兵水师', tier: 1 },     // 洞海城·阮文张象兵舟船协同"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "古州苗兵",
+    "line": 55,
+    "text": "shengmiao: { name: '古州苗兵', tier: 1 },     // 甲定·包利连破清军汛堡"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "畲汉义军",
+    "line": 56,
+    "text": "chendiaoyan: { name: '畲汉义军', tier: 1 },   // 龙溪·陈吊眼攻破漳州"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "盘江布依兵",
+    "line": 57,
+    "text": "buyi_d: { name: '盘江布依兵', tier: 1 },       // 罗博·韦朝元布依起义"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "杨完者苗军",
+    "line": 59,
+    "text": "miao_qing: { name: '杨完者苗军', tier: 1 },   // 且兰城·苗军连败红巾军"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "靖南藩兵",
+    "line": 60,
+    "text": "geng: { name: '靖南藩兵', tier: 1 },         // 延平·耿精忠三藩起兵"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "思州土兵",
+    "line": 61,
+    "text": "tian_sizhou: { name: '思州土兵', tier: 1 },    // 镇远·田祐恭归宋封国公"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "儋耳黎兵",
+    "line": 62,
+    "text": "liren: { name: '儋耳黎兵', tier: 1 },         // 珠崖·符南蛇黎族起义"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "广源峒兵",
+    "line": 67,
+    "text": "nong2: { name: '广源峒兵', tier: 1 },           // 广源·侬智高广源起兵建南天国"
+  },
+  {
+    "file": "src\\data\\LingnanExpeditionLegions.ts",
+    "name": "泗城狼兵",
+    "line": 68,
+    "text": "cen_d: { name: '泗城狼兵', tier: 1 },          // 凌云·岑猛泗城狼兵威震广西"
+  },
+  {
+    "file": "src\\data\\NortheastExpeditionLegions.ts",
+    "name": "契丹铁林军",
+    "line": 17,
+    "text": "qidan: { name: '契丹铁林军', tier: 1 },     // 木叶山·耶律阿保机铁林军灭渤海"
+  },
+  {
+    "file": "src\\data\\NortheastExpeditionLegions.ts",
+    "name": "铁浮图",
+    "line": 19,
+    "text": "jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）"
+  },
+  {
+    "file": "src\\data\\NortheastExpeditionLegions.ts",
+    "name": "巴牙喇军",
+    "line": 20,
+    "text": "aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）"
+  },
+  {
+    "file": "src\\data\\NortheastExpeditionLegions.ts",
+    "name": "满洲八旗",
+    "line": 21,
+    "text": "manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "八字军",
+    "line": 12,
+    "text": "wangyan: { name: '八字军', tier: 1 },     // 飞狐·王彦八字军（新乡大捷，降T1）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "赵边骑",
+    "line": 15,
+    "text": "heng1: { name: '赵边骑', tier: 1 },         // 雁门关·李牧赵边骑抗匈奴"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "白马突骑",
+    "line": 17,
+    "text": "qingyuan_bd: { name: '白马突骑', tier: 1 }, // 保定·周德威白马突骑"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "渔阳突骑",
+    "line": 21,
+    "text": "yan: { name: '渔阳突骑', tier: 1 },       // 古北口·§2 #2 光武幽州精骑（升T1）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "襄平铁骑",
+    "line": 22,
+    "text": "gongsun_d: { name: '襄平铁骑', tier: 1 }, // 襄平·公孙度襄平铁骑"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "拓跋虎骑",
+    "line": 25,
+    "text": "tuoba: { name: '拓跋虎骑', tier: 1 },     // 大同·拓跋鲜卑"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "百保鲜卑",
+    "line": 28,
+    "text": "gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵·高长恭禁卫"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "黄龙兵",
+    "line": 29,
+    "text": "yingzhou_ying_d: { name: '黄龙兵', tier: 1 }, // 朝阳·慕容皝棘城大破石赵"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "龙城甲骑",
+    "line": 31,
+    "text": "murong: { name: '龙城甲骑', tier: 1 },    // 棘城·慕容燕具装骑（无经典以少胜多）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "明军三大营",
+    "line": 32,
+    "text": "ming_d: { name: '明军三大营', tier: 1 },   // 北京·五军神机三千营（升T1）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "曳落河",
+    "line": 35,
+    "text": "zhuozhou: { name: '曳落河', tier: 1 },     // 范阳·§1 #48 安禄山蕃胡骑兵"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "鸦儿军",
+    "line": 36,
+    "text": "shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "朔方军",
+    "line": 37,
+    "text": "lingwu: { name: '朔方军', tier: 1 },      // 回乐·§1 #53 灵州朔方节度使精锐"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "并州狼骑",
+    "line": 42,
+    "text": "bing: { name: '并州狼骑', tier: 1 },     // 晋阳·并州骑兵（名震天下，升T1）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "上谷突骑",
+    "line": 43,
+    "text": "you: { name: '上谷突骑', tier: 1 },        // 居庸关·幽州上谷郡（升T1）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "胡服骑",
+    "line": 47,
+    "text": "linhu: { name: '胡服骑', tier: 1 },         // 偏头关·赵武灵王胡服骑射"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "天山飞骑",
+    "line": 51,
+    "text": "loufan: { name: '天山飞骑', tier: 1 },      // 宁武关·薛仁贵三箭定天山"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "夷丁突骑",
+    "line": 52,
+    "text": "linyu: { name: '夷丁突骑', tier: 1 },       // 山海关·临榆（明末战功卓著，升T1）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "大明北伐军",
+    "line": 56,
+    "text": "xuan: { name: '大明北伐军', tier: 1 },          // 宣化·明九边宣府镇"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "辽东铁骑",
+    "line": 63,
+    "text": "jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·李成梁辽东骑兵（打出极强战绩，升T1）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "关宁铁骑",
+    "line": 64,
+    "text": "zu_d: { name: '关宁铁骑', tier: 1 },       // 宁远·祖大寿（原T0降级，防御战）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "河间突骑",
+    "line": 66,
+    "text": "liwang: { name: '河间突骑', tier: 1 },     // 乐成·李光弼河朔骑兵"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "白马义从",
+    "line": 67,
+    "text": "hejian: { name: '白马义从', tier: 1 },      // 文安·公孙瓒幽州突骑河间大破黄巾（升T1，打乌合之众未满T0）"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "神灭军",
+    "line": 70,
+    "text": "weihaiwei: { name: '神灭军', tier: 1 },       // 文登·苏定方征东神灭军"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "建州女真卫",
+    "line": 71,
+    "text": "jianzhou_nvzhen: { name: '建州女真卫', tier: 1 }, // 浑江·李满住建州女真卫"
+  },
+  {
+    "file": "src\\data\\NorthExpeditionLegions.ts",
+    "name": "龙骧军",
+    "line": 76,
+    "text": "dizhou: { name: '龙骧军', tier: 1 },     // 乐安·王彦章龙骧破晋"
+  },
+  {
+    "file": "src\\data\\SteppeExpeditionLegions.ts",
+    "name": "雁门边骑",
+    "line": 11,
+    "text": "wuzhou: { name: '雁门边骑', tier: 1 },   // 善无·李广雁门"
+  },
+  {
+    "file": "src\\data\\SteppeExpeditionLegions.ts",
+    "name": "金山突厥兵",
+    "line": 12,
+    "text": "ashina: { name: '金山突厥兵', tier: 1 }, // 阿尔泰·阿史那燕都（阿史那氏突厥起源地）"
+  },
+  {
+    "file": "src\\data\\SteppeExpeditionLegions.ts",
+    "name": "皮室军",
+    "line": 13,
+    "text": "liao_d: { name: '皮室军', tier: 1 },         // 临潢府·辽太祖皮室军（§6 #1）"
+  },
+  {
+    "file": "src\\data\\SteppeExpeditionLegions.ts",
+    "name": "探马赤军",
+    "line": 17,
+    "text": "ogodei: { name: '探马赤军', tier: 1 },       // 也迷里·木华黎探马赤（原T0；降为T1，无单独少胜多招牌仗）"
+  },
+  {
+    "file": "src\\data\\SteppeExpeditionLegions.ts",
+    "name": "附离亲卫",
+    "line": 20,
+    "text": "tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）"
+  },
+  {
+    "file": "src\\data\\SteppeExpeditionLegions.ts",
+    "name": "回鹘精骑",
+    "line": 22,
+    "text": "huige: { name: '回鹘精骑', tier: 1 },       // 窝鲁朵八里·骨力裴罗回鹘精骑"
+  },
+  {
+    "file": "src\\data\\SteppeExpeditionLegions.ts",
+    "name": "武川镇军",
+    "line": 46,
+    "text": "yuwen: { name: '武川镇军', tier: 1 },     // 武川镇·537沙苑之战胜；但邙山之战大溃败，丢盔弃甲，降T1"
+  },
+  {
+    "file": "src\\data\\SteppeExpeditionLegions.ts",
+    "name": "土默特精骑",
+    "line": 64,
+    "text": "tumed: { name: '土默特精骑', tier: 1 },         // 归化城·俺答汗土默特精骑"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "青海汛兵",
+    "line": 11,
+    "text": "qinghai: { name: '青海汛兵', tier: 1 }, // 噶斯口·岳钟琪出噶斯口平罗卜藏丹津"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "和硕特精骑",
+    "line": 13,
+    "text": "dulan: { name: '和硕特精骑', tier: 1 }, // 台吉乃尔·达什巴图尔"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "吐蕃大纛军",
+    "line": 16,
+    "text": "tubo: { name: '吐蕃大纛军', tier: 1 },       // 逻些·松赞干布吐蕃大纛军"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "却杰军",
+    "line": 17,
+    "text": "gar: { name: '却杰军', tier: 1 },           // 萨毗城·论钦陵却杰军（以众击寡，降T1）"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "和硕特铁骑",
+    "line": 22,
+    "text": "khoshut: { name: '和硕特铁骑', tier: 1 },   // 当雄·固始汗卫拉特铁骑（武力统战雪域，升T1）"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "廓尔喀弯刀",
+    "line": 24,
+    "text": "gurkha: { name: '廓尔喀弯刀', tier: 1 },    // 加德满都·廓尔喀库克里勇士（§12 #11）"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "羊同勇士",
+    "line": 27,
+    "text": "yangtong: { name: '羊同勇士', tier: 1 },  // 龙木错·赤松德赞征羊同"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "发羌劲卒",
+    "line": 47,
+    "text": "faqiang: { name: '发羌劲卒', tier: 1 },  // 萨噶·论钦陵征服发羌"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "迦湿弥罗卫",
+    "line": 50,
+    "text": "jiashi: { name: '迦湿弥罗卫', tier: 1 },  // 喀吉尔·李玄策征克什米尔兵"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "阿里骑兵",
+    "line": 55,
+    "text": "ali: { name: '阿里骑兵', tier: 1 },          // 噶大克·甘丹才旺收复阿里"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "藏北苏毗兵",
+    "line": 62,
+    "text": "khyungpo: { name: '藏北苏毗兵', tier: 1 },    // 丁青宗·琼波·邦色率苏毗兵灭象雄"
+  },
+  {
+    "file": "src\\data\\TibetExpeditionLegions.ts",
+    "name": "河西边骑",
+    "line": 63,
+    "text": "guangwu: { name: '河西边骑', tier: 1 },        // 令居·辛武贤出令居讨羌"
+  },
+  {
+    "file": "src\\data\\WesternExpeditionLegions.ts",
+    "name": "白龙堆戍卒",
+    "line": 12,
+    "text": "bailong: { name: '白龙堆戍卒', tier: 1 }, // 三陇沙·班勇西域长史平车师"
+  },
+  {
+    "file": "src\\data\\WesternExpeditionLegions.ts",
+    "name": "嵩武军",
+    "line": 20,
+    "text": "xingxingxia: { name: '嵩武军', tier: 1 }, // 星星峡·张曜"
+  },
+  {
+    "file": "src\\data\\WesternExpeditionLegions.ts",
+    "name": "阿斯古拉姆",
+    "line": 25,
+    "text": "kala: { name: '阿斯古拉姆', tier: 1 },      // 奥什·喀喇汗古拉姆（灭于阗非以少胜多）"
+  },
+  {
+    "file": "src\\data\\WesternExpeditionLegions.ts",
+    "name": "西州回鹘",
+    "line": 27,
+    "text": "yiduhu: { name: '西州回鹘', tier: 1 },      // 高昌·北庭回鹘取西州"
+  },
+  {
+    "file": "src\\data\\WesternExpeditionLegions.ts",
+    "name": "阿兰斯近卫",
+    "line": 28,
+    "text": "shule: { name: '阿兰斯近卫', tier: 1 },     // 盘橐·阿尔斯兰喀喇汗近卫"
+  },
+  {
+    "file": "src\\data\\WesternExpeditionLegions.ts",
+    "name": "大唐安西军",
+    "line": 34,
+    "text": "anxi: { name: '大唐安西军', tier: 1 },     // 拨换城·安西都护府（威震西域近百年，升T1）"
+  },
+  {
+    "file": "src\\data\\WesternExpeditionLegions.ts",
+    "name": "准噶尔精骑",
+    "line": 44,
+    "text": "dzungar: { name: '准噶尔精骑', tier: 1 }, // 塔城·准噶尔帝国（清朝百年大患游牧霸权，升T1）"
+  },
+  {
+    "file": "src\\data\\WesternExpeditionLegions.ts",
+    "name": "西域都护军",
+    "line": 61,
+    "text": "xiyuduhu: { name: '西域都护军', tier: 1 },  // 它乾城·班超都护府汉军"
+  }
+]

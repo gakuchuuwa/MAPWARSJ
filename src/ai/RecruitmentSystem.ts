@@ -124,6 +124,8 @@ export class RecruitmentSystem {
         const t0 = performance.now();
         const cities = this.cityManager.getCities();
         this.recruitSeasonGarrison(cities);
+        // 季初重算据点将/精名额：上季覆灭或解散的军团所占名额在此释放（方案A）
+        this.legionManager.syncCitySpawnTierConsumption();
         this.trySpawnLegions(cities);
         this.legionManager.tickLegionTiers(); // 兵力长到 4万的军团晋升精锐（含名将）
         PerformanceMonitor.getInstance().noteAsyncWork('recruitSeason', performance.now() - t0);
