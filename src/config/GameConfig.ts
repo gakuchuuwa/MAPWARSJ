@@ -99,16 +99,17 @@ export class GameConfig {
         THRESHOLD_SMALL: 20000,
         THRESHOLD_LARGE: 100000,
         /**
-         * 分级战后恢复（2026-06-12 主人拍板，替代旧 WOUNDED_RECOVERY_RATE=0.3 一刀切）：
-         * 胜方恢复本场战损的一定比例——攻城按目标城等级，野战 50%。
-         * 守城方胜利同样按本城等级恢复（伤兵就在城中）。
+         * 战后恢复（2026-06 统一）：胜方恢复本场战损的 30%（野战/攻城/关隘同率）。
+         * 古代战损多为溃逃与伤兵，致死率相对低；守城方胜利同样适用。
          */
+        POST_BATTLE_RECOVERY_RATE: 0.3,
+        /** @deprecated 推演/旧代码兼容；一律读 POST_BATTLE_RECOVERY_RATE */
         POST_BATTLE_RECOVERY: {
-            field: 0.5,
-            pass: 0.1,
-            small_city: 0.2,
+            field: 0.3,
+            pass: 0.3,
+            small_city: 0.3,
             medium_city: 0.3,
-            big_city: 0.4,
+            big_city: 0.3,
         } as Record<string, number>,
         MIN_SURVIVAL_TROOPS: 0.1,
         /** 有效战力随机系数 [0.8, 1.2]：开战整侧掷一次；援军编入再掷一次（系统技「合兵一处」） */

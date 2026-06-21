@@ -6,8 +6,7 @@
  *   1. 据点驻军 + 大城400 / 中城300 / 小城200 / 关隘100（见 CityConfig.recruitPerSeason）
  *      【2026-06-12 主人裁定】产出**全进城防**——曾实装一日的「家城产出优先补自家军团」已删除
  *      （它关闭了"一城一军保护伞下家城囤积→军团死后爆发出大军"的通道，导致大军团绝迹）。
- *      军团兵力的恢复改为**分级战后恢复**（CombatSystem.getPostBattleRecoveryRate：
- *      关10%/小20%/中30%/大40%/野战50%）。
+ *      军团兵力的恢复改为**战后恢复 30%**（CombatSystem.getPostBattleRecoveryRate）。
  *      家城失守仍强制回师（行为树 resolveRecaptureTarget，游戏原生行为，所有文化无豁免；
  *      例外：远征军团（shouldSkipHomeRecapture）不回师）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
@@ -132,7 +131,7 @@ export class RecruitmentSystem {
 
     /**
      * 每季：按据点等级补驻军（大400 / 中300 / 小200 / 关100），产出全进城防。
-     * 【2026-06-12 主人裁定】「家城产出优先补自家军团」已删除；军团恢复改为分级战后恢复。
+     * 【2026-06-12 主人裁定】「家城产出优先补自家军团」已删除；军团恢复改为战后统一 30%。
      */
     private recruitSeasonGarrison(cities: ReturnType<CityManager['getCities']>): void {
         for (const city of cities) {

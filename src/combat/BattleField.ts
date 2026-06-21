@@ -547,13 +547,7 @@ export class BattleField {
             }
         });
 
-        // 分级战后恢复（2026-06-12）：战场含城则按该城等级（关10%/小20%/中30%/大40%），纯野战 50%
-        const cityUnit =
-            [...winnerGroup.units, ...loserGroup.units].find(u => u.unit.unitType === 'city')?.unit ?? null;
-        const cityType = (cityUnit?.getEntity?.() as { type?: string } | undefined)?.type;
-        const recoveryTable = GameConfig.COMBAT.POST_BATTLE_RECOVERY;
-        const recoveryRate =
-            cityType && recoveryTable[cityType] !== undefined ? recoveryTable[cityType] : recoveryTable.field;
+        const recoveryRate = GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE;
 
         // 处理胜利方
         winnerGroup.units.filter(u => !u.isDefeated).forEach(bu => {

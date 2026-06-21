@@ -19,25 +19,13 @@ export interface ISiegeReinforcementPollSource {
 
 export type BattleType = 'siege' | 'field';
 
-/**
- * 分级战后恢复比例（2026-06-12 主人拍板）：
- * 攻城按目标城等级（关隘 10% / 小城 20% / 中城 30% / 大城 40%），野战 50%。
- * 守城方胜利同样按本城等级恢复；npc 等无城等级的 siege 按野战计。
- */
+/** 战后恢复比例：全场统一 30%（见 GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE） */
 export function getPostBattleRecoveryRate(
-    battleType: BattleType,
-    attacker: { unitType: UnitType; getEntity?(): any },
-    defender: { unitType: UnitType; getEntity?(): any },
+    _battleType?: BattleType,
+    _attacker?: { unitType: UnitType; getEntity?(): unknown },
+    _defender?: { unitType: UnitType; getEntity?(): unknown },
 ): number {
-    const table = GameConfig.COMBAT.POST_BATTLE_RECOVERY;
-    if (battleType === 'siege') {
-        const cityUnit =
-            defender.unitType === 'city' ? defender :
-            attacker.unitType === 'city' ? attacker : null;
-        const cityType = (cityUnit?.getEntity?.() as { type?: string } | undefined)?.type;
-        if (cityType && table[cityType] !== undefined) return table[cityType];
-    }
-    return table.field;
+    return GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE;
 }
 
 export type UnitType = 'player' | 'legion' | 'city' | 'bandit' | 'army' | 'npc';
@@ -292,7 +280,7 @@ export class Battle {
         const winnerInitial = winner === this.attacker ? this.initialAttackerTroops : this.initialDefenderTroops;
         const loserInitial = loser === this.attacker ? this.initialAttackerTroops : this.initialDefenderTroops;
 
-        // 分级战后恢复（2026-06-12）：攻城按城等级（关10%/小20%/中30%/大40%），野战 50%
+        // 战后恢复：统一 30% 本场战损
         const recoveryRate = getPostBattleRecoveryRate(this.type, this.attacker, this.defender);
         const winnerLost = Math.max(0, winnerInitial - winner.troops);
         const recovery = Math.floor(winnerLost * recoveryRate);

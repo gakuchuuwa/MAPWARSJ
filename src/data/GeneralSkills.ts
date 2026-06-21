@@ -49,8 +49,8 @@ export interface GeneralProfile {
 
 /** 战术十格 */
 export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
-    tac_01: { id: 'tac_01', grid: '①', displayName: '以逸待劳', timing: 'opening', effect: 'ally_add_troops', magnitude: 0.05 },
-    tac_02: { id: 'tac_02', grid: '②', displayName: '避实击虚', timing: 'opening', effect: 'enemy_sub_troops', magnitude: 0.05 },
+    tac_01: { id: 'tac_01', grid: '①', displayName: '以逸待劳', timing: 'opening', effect: 'ally_add_troops', magnitude: 0.09 },
+    tac_02: { id: 'tac_02', grid: '②', displayName: '避实击虚', timing: 'opening', effect: 'enemy_sub_troops', magnitude: 0.09 },
     tac_03: { id: 'tac_03', grid: '③', displayName: '侵掠如火', timing: 'opening', effect: 'ally_mult_1_2', magnitude: 1.2 },
     tac_04: { id: 'tac_04', grid: '④', displayName: '不战而屈', timing: 'opening', effect: 'enemy_mult_0_8', magnitude: 0.8 },
     tac_05: { id: 'tac_05', grid: '⑤', displayName: '不动如山', timing: 'opening', effect: 'ally_invincible', magnitude: 3 },
@@ -83,7 +83,7 @@ export interface ExpeditionSystemSkillDef {
 export const EXPEDITION_FORAGE_SKILL: ExpeditionSystemSkillDef = {
     displayName: '因粮于敌',
     effect: 'post_battle_troop_pct',
-    magnitude: 0.05,
+    magnitude: 0.09,
 };
 
 /** 守军系统技 effect（非战术十格 / 战略六格） */
