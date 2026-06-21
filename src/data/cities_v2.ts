@@ -1628,7 +1628,7 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_wenan', name: '文安', factionId: 'hejian',
         lat: 38.87, lng: 116.46, type: 'small_city', troops: 10000, tier: 4,
-        region: 'NORTH', note: '河间郡文安；界桥先登死士翼境（《三国志·袁绍传》）' },
+        region: 'NORTH', note: '河间郡文安；界桥先登营翼境（《三国志·袁绍传》）' },
     // 第四类：藩王叛乱
     { id: 'city_wudingzhou', name: '乐安', factionId: 'dizhou', lat: 37.501018, lng: 117.518005, type: 'small_city', region: 'NORTH', troops: 10000,
         note: '乐安；棣州小城',
@@ -2998,7 +2998,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.8960, type: 'pass', region: 'TIBET', troops: 10000, note: '柴达木台吉乃尔' },
     { id: 'city_bayinbulage', name: '巴音布拉格', factionId: 'juyan_d', lat: 41.3775, lng: 102.9694, type: 'small_city', region: 'HEXI', troops: 10000, note: '戈壁泉地；汉居延县/居延塞防线；李陵率荆楚五千步卒由此出塞（《史记·李将军列传》）' },
     { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'pass', mirror: true, region: 'TIBET', troops: 10000, note: '德兴阿卡伦侍卫驻尕斯淖尔' },
-    { id: 'city_jieqiao', name: '界桥', factionId: 'qu_d', lat: 36.95, lng: 115.50, type: 'pass', region: 'NORTH', troops: 10000, note: '麴义先登死士破公孙瓒白马义从（192年）' },
+    { id: 'city_jieqiao', name: '界桥', factionId: 'qu_d', lat: 36.95, lng: 115.50, type: 'pass', region: 'NORTH', troops: 10000, note: '麴义先登营破公孙瓒白马义从（192年）' },
     { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8000, lng: 99.8000, type: 'small_city', region: 'HEXI', troops: 10000, note: '汉酒泉郡表氏县；沮渠卢水胡故地' },
     { id: 'city_hakone', name: '箱根关', factionId: 'sagami', lat: 35.1925, lng: 139.0261, type: 'pass', region: 'JAPAN', troops: 10000, note: '天下第一关，关东的物理大门' },
     { id: 'city_fuwa', name: '不破关', factionId: 'mino', lat: 35.3577, lng: 136.4602, type: 'pass', region: 'JAPAN', troops: 10000, note: '关原所在地，畿内防御东国大军的终极险地' },

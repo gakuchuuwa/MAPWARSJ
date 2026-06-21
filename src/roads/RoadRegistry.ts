@@ -271,15 +271,38 @@ export class RoadRegistry {
 
     // ===== 寻路 (Dijkstra) =====
 
-    /** 单源最短路缓存（AI 选目标等同起点可复用） */
-    private distanceCache: { 
-        startId: string; 
+    /** 单源最短路缓存：按起点 LRU 多条；多军团不同起点不再互相冲掉、反复重算 Dijkstra */
+    private static readonly DIJKSTRA_CACHE_MAX = 24;
+    private dijkstraCache: Map<string, {
         distances: Map<string, number>;
         prev: Map<string, { nodeId: string; edge: GraphEdge }>;
-    } | null = null;
+    }> = new Map();
 
     private clearDistanceCache(): void {
-        this.distanceCache = null;
+        this.dijkstraCache.clear();
+    }
+
+    /** 取单源 Dijkstra 结果：命中 LRU 缓存则复用，否则计算并入缓存（路网不变期间结果确定） */
+    private getDijkstraFrom(startNodeId: string): {
+        distances: Map<string, number>;
+        prev: Map<string, { nodeId: string; edge: GraphEdge }>;
+    } | null {
+        const hit = this.dijkstraCache.get(startNodeId);
+        if (hit) {
+            // LRU：命中后移到末尾标记为最近使用
+            this.dijkstraCache.delete(startNodeId);
+            this.dijkstraCache.set(startNodeId, hit);
+            return hit;
+        }
+        const result = this.runDijkstra(startNodeId);
+        if (!result) return null;
+        const entry = { distances: result.dist, prev: result.prev };
+        this.dijkstraCache.set(startNodeId, entry);
+        if (this.dijkstraCache.size > RoadRegistry.DIJKSTRA_CACHE_MAX) {
+            const oldest = this.dijkstraCache.keys().next().value;
+            if (oldest !== undefined) this.dijkstraCache.delete(oldest);
+        }
+        return entry;
     }
 
     /**
@@ -371,17 +394,7 @@ export class RoadRegistry {
      * 供 AI 目标评估等批量查询；同一起点在同帧内复用缓存。
      */
     public getRoadDistancesKmFrom(startCityId: string): ReadonlyMap<string, number> {
-        if (this.distanceCache?.startId === startCityId) {
-            return this.distanceCache.distances;
-        }
-
-        const result = this.runDijkstra(startCityId);
-        if (!result) {
-            return new Map();
-        }
-
-        this.distanceCache = { startId: startCityId, distances: result.dist, prev: result.prev };
-        return result.dist;
+        return this.getDijkstraFrom(startCityId)?.distances ?? new Map();
     }
 
     /**
@@ -397,21 +410,9 @@ export class RoadRegistry {
             return null;
         }
 
-        let dist: Map<string, number>;
-        let prev: Map<string, { nodeId: string; edge: GraphEdge }>;
-
-        if (this.distanceCache?.startId === startNodeId) {
-            dist = this.distanceCache.distances;
-            prev = this.distanceCache.prev;
-        } else {
-            const result = this.runDijkstra(startNodeId);
-            if (!result) return null;
-            this.distanceCache = { startId: startNodeId, distances: result.dist, prev: result.prev };
-            dist = result.dist;
-            prev = result.prev;
-        }
-
-        return this.buildPathResult(startNodeId, endNodeId, dist, prev);
+        const cached = this.getDijkstraFrom(startNodeId);
+        if (!cached) return null;
+        return this.buildPathResult(startNodeId, endNodeId, cached.distances, cached.prev);
     }
 
     /**

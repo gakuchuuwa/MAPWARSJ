@@ -372,9 +372,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/xianqin/3f98a47c-3b4e-43d9-ab99-234c592cffe3.png": {
-            "scale": 1.36,
+            "scale": 1.34,
             "offsetX": 13,
-            "offsetY": -55
+            "offsetY": -48
         },
         "/assets/xianqin/b735288e-bbc4-4db6-ad6e-dbb20cce25bf.png": {
             "scale": 1.18,
@@ -550,6 +550,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 12,
             "offsetY": -31
+        },
+        "/assets/zhongyuan/5644c5a9-47e1-4f15-9f99-0e89239b8174.png": {
+            "scale": 0.98,
+            "offsetX": 2,
+            "offsetY": -17
         }
     },
     "folderGuides": {

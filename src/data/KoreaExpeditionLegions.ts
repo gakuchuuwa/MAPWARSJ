@@ -15,7 +15,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   lelang: { name: '乐浪材官', tier: 3 },    // 息城·王颀乐浪材官
   donghui: { name: '檀弓猎手', tier: 3 },  // 德源·东濊檀弓
   gaogouli: { name: '高句丽铁骑', tier: 2 },   // 平壤·高句丽铁骑（番号泛指，降T2）
-  xuantu: { name: '皂衣先人', tier: 2 },     // 国内城·高句丽早期死士专名（升T2）
+  xuantu: { name: '皂衣先人', tier: 2 },     // 国内城·高句丽早期精锐（升T2）
   xinluo: { name: '花郎道', tier: 2 },       // 金城·新罗花郎（§4 #3）
   baiji: { name: '百济五方兵', tier: 2 },        // 泗沘·百济五方兵制
   goryeo: { name: '鹰扬军', tier: 2 },   // 开城·高丽鹰扬军

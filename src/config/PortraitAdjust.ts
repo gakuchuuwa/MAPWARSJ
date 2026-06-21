@@ -106,16 +106,13 @@ export function resolvePortraitTransformOrigin(
  */
 export function applyPortraitEdgeMask(img: HTMLElement): void {
     const f = T.portraitEdgeFade;
-    const top    = `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%)`;
-    const bottom = `linear-gradient(to top,    rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%)`;
-    const left   = `linear-gradient(to right,  rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%)`;
-    const right  = `linear-gradient(to left,   rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%)`;
-    const base   = 'linear-gradient(rgb(0,0,0) 0 0)';
-    const mask   = `${top}, ${bottom}, ${left}, ${right}, ${base}`;
+    const horizontal = `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%, rgba(0,0,0,1) calc(100% - ${f}%), rgba(0,0,0,0) 100%)`;
+    const vertical   = `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%, rgba(0,0,0,1) calc(100% - ${f}%), rgba(0,0,0,0) 100%)`;
+    const mask = `${horizontal}, ${vertical}`;
     img.style.webkitMaskImage = mask;
     img.style.maskImage = mask;
-    img.style.webkitMaskComposite = 'source-in, source-in, source-in, source-in';
-    img.style.maskComposite = 'intersect, intersect, intersect, intersect';
+    img.style.webkitMaskComposite = 'source-in';
+    img.style.maskComposite = 'intersect';
 }
 
 /** 将调校参数应用到立绘 img（以眼线/胸线交汇处为缩放锚点，再用 offset 微调） */

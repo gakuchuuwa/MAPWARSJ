@@ -294,7 +294,10 @@ export class LegionManager {
             if (army.isDestroyed || army.type !== 'legion') continue;
             const cityId = army.homeCityId ?? army.getSourceCityId();
             if (!cityId) continue;
-            noteCitySpawnTierFromLegion(this.cityManager.getCity(cityId), army);
+            const city = this.cityManager.getCity(cityId);
+            // 城易主后旧主军团不再占用该城名额（名额跟当前城主走）
+            if (!city || city.factionId !== army.getFactionId()) continue;
+            noteCitySpawnTierFromLegion(city, army);
         }
     }
 

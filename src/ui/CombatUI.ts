@@ -1320,6 +1320,15 @@ export class CombatUI {
     // 游戏内立绘校正：战斗中按 F2 暂停 → 居中 / 恢复默认 + 方向键微调 → 自动保存
     // ============================================================
 
+    private correctorBusy = false;
+
+    /** 串行化 F2 内的 async 操作（居中/重置/切换/写盘/绑图），避免手速过快时并发交错 */
+    private runCorrectorExclusive(fn: () => Promise<unknown>): void {
+        if (this.correctorBusy) return;
+        this.correctorBusy = true;
+        void Promise.resolve(fn()).finally(() => { this.correctorBusy = false; });
+    }
+
     private setupCorrectorHotkeys(): void {
         document.addEventListener('keydown', (e) => {
             // F2 在战斗界面可见时开关校正面板
@@ -1345,7 +1354,7 @@ export class CombatUI {
             switch (e.key) {
                 case 'Escape': e.preventDefault(); this.closeCorrector(); break;
                 case 'Tab': e.preventDefault(); this.switchCorrectorSide(); break;
-                case 'Enter': e.preventDefault(); void this.flushCorrectorPendingToDisk(false); break;
+                case 'Enter': e.preventDefault(); this.runCorrectorExclusive(() => this.flushCorrectorPendingToDisk(false)); break;
                 case 'ArrowLeft': e.preventDefault(); this.nudgeCorrector(0, -fine, 0); break;
                 case 'ArrowRight': e.preventDefault(); this.nudgeCorrector(0, fine, 0); break;
                 case 'ArrowUp': e.preventDefault(); this.nudgeCorrector(0, 0, -fine); break;
@@ -1462,7 +1471,7 @@ export class CombatUI {
     }
 
     private closeCorrector(): void {
-        void this.closeCorrectorAsync();
+        this.runCorrectorExclusive(() => this.closeCorrectorAsync());
     }
 
     private async closeCorrectorAsync(): Promise<void> {
@@ -1585,7 +1594,7 @@ export class CombatUI {
     }
 
     private switchCorrectorSide(): void {
-        void this.switchCorrectorSideAsync();
+        this.runCorrectorExclusive(() => this.switchCorrectorSideAsync());
     }
 
     private async switchCorrectorSideAsync(): Promise<void> {
@@ -1848,8 +1857,8 @@ export class CombatUI {
         for (const b of [centerBtn, resetBtn, crossBtn, switchBtn, closeBtn]) {
             b.addEventListener('mousedown', (e) => e.preventDefault());
         }
-        centerBtn.addEventListener('click', () => this.centerAlignCorrectorCurrent());
-        resetBtn.addEventListener('click', () => this.resetCorrectorCurrent());
+        centerBtn.addEventListener('click', () => this.runCorrectorExclusive(() => this.centerAlignCorrectorCurrent()));
+        resetBtn.addEventListener('click', () => this.runCorrectorExclusive(() => this.resetCorrectorCurrent()));
         crossBtn.addEventListener('click', () => this.toggleCorrectorCrosshair());
         switchBtn.addEventListener('click', () => this.switchCorrectorSide());
         closeBtn.addEventListener('click', () => this.closeCorrector());

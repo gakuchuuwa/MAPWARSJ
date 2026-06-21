@@ -438,9 +438,9 @@ export const TACTICAL_SKILL_TAGS: readonly TacticalSkillTagEntry[] = [
         archetype: 'assault_break',
         categoryLabel: '攻战计',
         tags: ['置之死地', '陷阵', '决死突击', '先锋破阵'],
-        aiKeywords: ['死士', '陷阵营', '决死', '破阵'],
+        aiKeywords: ['锐卒', '陷阵营', '突击', '破阵'],
         portrait: '猛将型/破阵型（普将）',
-        examples: ['高顺', '先登死士'],
+        examples: ['高顺', '先登营'],
     },
     {
         tacticalId: 'tac_09',

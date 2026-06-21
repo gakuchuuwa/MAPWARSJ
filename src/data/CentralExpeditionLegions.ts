@@ -13,23 +13,23 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
   han: { name: '韩之劲弩', tier: 2 },        // 新郑·暴鸢韩弩
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
-  han_d: { name: '轻勇骑', tier: 1 },      // 南郑·§1 #18 韩信背水之战的夺旗骑兵
+  han_d: { name: '轻勇骑', tier: 2 },      // 南郑·§1 #18 韩信背水之战的夺旗骑兵
   pizhou: { name: '陷阵营', tier: 1 },        // 下邳·高顺陷阵营
   cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
   ranwei_d: { name: '乞活军', tier: 2 },   // 巨鹿·§1 #41 冉闵陈午
     wuzhou_d: { name: '羽林军', tier: 1 },     // 洛阳·李多祚羽林军（武周）
-  shang: { name: '虎贲多射', tier: 1 },       // 安阳·殷商虎贲与多射（妇好征伐）
-  zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）
+  shang: { name: '虎贲多射', tier: 2 },       // 安阳·殷商虎贲与多射（妇好征伐）
+  zhou: { name: '岐阳虎贲', tier: 2 },     // 岐山·武王伐纣牧野（《史记》）
   // 夏后亲卫除名（夏代无信史）
   yuan_cj_d: { name: '大戟士', tier: 2 },    // 汝南·袁术大戟士（败多胜少，降T2）
-  chanzhou: { name: '澶州弩手', tier: 1 },   // 濮阳·李继隆澶州弩手
+  chanzhou: { name: '澶州弩手', tier: 2 },   // 濮阳·李继隆澶州弩手
   sui: { name: '骁果军', tier: 2 },        // 汉东·隋帝禁卫骁果；615雁门李世民解围（根基在中央，河套用武地）
   sunqin: { name: '督标秦军', tier: 2 },   // 潼关·孙传庭督标
   // 飞熊军除名（小说番号）
   // 韩卒击刹除名（无史载）
     liang_d: { name: '睢阳义兵', tier: 2 },     // 商丘·张巡守睢阳（防御战，降T2）
   // 公行锐士除名
-  jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
+  jin: { name: '晋中军', tier: 2 },        // 曲沃·城濮之战破楚（《左传》）
   li_lx_d: { name: '陇西戍骑', tier: 3 },   // 陇西·李崇秦陇西郡守戍兵
   xiayang_d: { name: '龙门戍卒', tier: 3 }, // 龙门·唐同州境黄河禹门戍防（《水经注》夏阳龙门）
   baibo: { name: '白波黄巾', tier: 3 },     // 白波谷·郭太白波黄巾
@@ -40,13 +40,13 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
   yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师
   // ── 2026-06-16 新增：11大名关 ──
-                      hongnong_jun: { name: '黄龙骑', tier: 1 },    // 函谷关·杨素大破突厥
+                      hongnong_jun: { name: '黄龙骑', tier: 2 },    // 函谷关·杨素大破突厥
   huangfu: { name: '三河骑士', tier: 1 },       // 安定·皇甫嵩三河骑士
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
-  ruo: { name: '灭楚锐士', tier: 1 },          // 武关·王翦灭楚
+  ruo: { name: '频阳锐士', tier: 1 },          // 武关·王翦灭楚
   ruzhou: { name: '广成健卒', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 3 },
-  zhi_state: { name: '丰沛子弟', tier: 1 },
+  zhi_state: { name: '丰沛子弟', tier: 2 },
   xiongding: { name: '鲜卑燕军', tier: 2 }, // 天井关·慕容永西燕末代君主
   // 金甲卫除名（生造）
   huo: { name: '霍邑锐士', tier: 3 },
@@ -56,14 +56,14 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 蔡国劲卒除名（无此部队）
   shen: { name: '申伯亲卫', tier: 3 },         // 安康·西周申国
   // 汴河戍旅除名（无此编制）
-  yuzhou: { name: '中流北伐军', tier: 1 },     // 雍丘·祖逆中流击楢
-  xin: { name: '潞川锐骑', tier: 1 },          // 长子·王猛潞川破前燕
+  yuzhou: { name: '雍丘锐士', tier: 1 },     // 雍丘·祖逆中流击楢
+  xin: { name: '潞川锐骑', tier: 2 },          // 长子·王猛潞川破前燕
   yingzhou_d: { name: '选锋军', tier: 2 },       // 顺昌·南宋选锋
   // 北门飞骑除名
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
   lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
-  lai: { name: '齐关弩手', tier: 1 },           // 青石关·王师范屡败朱温（正史胜仗）
-  yangshao: { name: '材官骑士', tier: 1 },     // 渑池·周勃大破秦军
+  lai: { name: '齐关弩手', tier: 2 },           // 青石关·王师范屡败朱温（正史胜仗）
+  yangshao: { name: '材官骑士', tier: 2 },     // 渑池·周勃大破秦军
   dongxian: { name: '郯城戍卒', tier: 2 },     // 郯城·徐盛东吴宿将
   mi: { name: '朐城弩手', tier: 2 },         // 朐城·麋竺家兵
   yaozhou: { name: '耀州牙兵', tier: 2 },       // 金锁关·李茂贞岐军
@@ -82,9 +82,9 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   bozhou_d: { name: '聊城义勇', tier: 3 },
   mengcheng_d: { name: '山桑弓手', tier: 3 },
   shangzhou: { name: '商州锐士', tier: 3 },
-  bailian: { name: '白莲教众', tier: 3 },
+  bailian: { name: '白莲教众', tier: 2 },
   xinping: { name: '新平戍军', tier: 3 },
-  huai: { name: '淮西子弟', tier: 1 },
+  huai: { name: '淮西子弟', tier: 2 },
   dang_d: { name: '砀山义军', tier: 3 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
   xiao_d: { name: '兰陵萧兵', tier: 2 },       // 兰陵·萧摩诃兰陵萧氏

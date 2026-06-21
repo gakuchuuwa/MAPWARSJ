@@ -8,9 +8,9 @@
  * - 耶尼切里为史籍专名精锐番号（非泛称火枪兵）；叶尔羌式「火枪兵」后缀不收
  */
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  yanda: { name: '嚈哒铁骑', tier: 1 },          // 阿缓城·白匈奴横扫中亚（§13 #2）
-  saman: { name: '萨曼古拉姆', tier: 1 },     // 阿母城·伊斯梅尔萨曼古拉姆
-  huarazim: { name: '钦察精骑', tier: 1 },      // 玉龙杰赤·摩诃末钦察卫（§13 #4）
+  yanda: { name: '嚈哒铁骑', tier: 2 },          // 阿缓城·白匈奴横扫中亚（§13 #2）
+  saman: { name: '萨曼古拉姆', tier: 2 },     // 阿母城·伊斯梅尔萨曼古拉姆
+  huarazim: { name: '钦察精骑', tier: 2 },      // 玉龙杰赤·摩诃末钦察卫（§13 #4）
   qincha: { name: '康里精骑', tier: 2 },
   qiepantuo: { name: '护密戍卒', tier: 3 },   // 护密城·瓦罕走廊戍卒
   tiemuer: { name: '察合台突骑', tier: 0 },      // 区T0锚·撒马尔罕·帖木儿察合台突骑
@@ -29,13 +29,13 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   dayuzi: { name: '讹答剌卫队', tier: 3 },
   zhaowu: { name: '忽毡城武士', tier: 3 },
   yada: { name: '悉万斤重甲', tier: 3 },
-  jiazini: { name: '伽色尼禁卫', tier: 1 },       // 哥疾宁·马哈茂德古拉姆
-  jibin: { name: '贵霜战象', tier: 1 },        // 迦毕试·丘就却统一五部贵霜后象兵破城
+  jiazini: { name: '伽色尼禁卫', tier: 2 },       // 哥疾宁·马哈茂德古拉姆
+  jibin: { name: '贵霜战象', tier: 2 },        // 迦毕试·丘就却统一五部贵霜后象兵破城
   fanyanna: { name: '梵衍那僧兵', tier: 2 },      // 巴米扬·梵衍那王率僧兵御大食
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
   maer_d: { name: '骆驼突骑', tier: 2 },        // 彭迪·萨珊东北边境骆驼骑兵
-  wugu_d: { name: '乌古斯弓骑', tier: 1 },      // 毡的·乌古斯复合弓骑
-  mamon: { name: '呼罗珊禁卫', tier: 1 },       // 达尔甘·马蒙大破艾敏
+  wugu_d: { name: '乌古斯弓骑', tier: 2 },      // 毡的·乌古斯复合弓骑
+  mamon: { name: '呼罗珊禁卫', tier: 2 },       // 达尔甘·马蒙大破艾敏
   khoja: { name: '白山派卫兵', tier: 2 },        // 休循·阿帕克和卓白山派
   shi_clan: { name: '石国胡兵', tier: 2 },       // 柘折城·莫贺咄吐屯御大食
   guzgan: { name: '古兹根卫队', tier: 3 },       // 法里亚布·古兹根戍卫
@@ -48,14 +48,14 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   // —— 2026-06-20 新增：那竭国·顶骨城 ——
   najie: { name: '那竭方阵兵', tier: 1 },       // 顶骨城·印度-希腊米南德一世马其顿式重装方阵
   // ── 2026-06-20 新增：杜兰尼·呼罗珊·阿巴尔 ──
-  dulan_d: { name: '普什图骑兵', tier: 1 },    // 坎大哈·艾哈迈德沙阿杜兰尼轻装游骑（摧毁马拉塔帝国，升T1）
+  dulan_d: { name: '普什图骑兵', tier: 2 },    // 坎大哈·艾哈迈德沙阿杜兰尼轻装游骑（摧毁马拉塔帝国，升T1）
   // ── 2026-06-20 新增：布兹詹·哈里·卡伦 ──
   baha: { name: '巴哈尔兹重甲戟兵', tier: 2 }, // 泰巴德·巴哈尔兹重装戍卫
   hali: { name: '丹达纳克弓骑', tier: 0 },    // 萨拉赫斯·1040塞尔柱丹达纳克大破伽色尼（经典以少胜多，升T0）
-  kalan: { name: '萨珊边防铁骑', tier: 1 },    // 图斯·卡伦家族世袭东北边防元帅
+  kalan: { name: '萨珊边防铁骑', tier: 2 },    // 图斯·卡伦家族世袭东北边防元帅
   // ── 2026-06-20 新增：锡斯坦·德兰吉亚 ──
-  xisi: { name: '萨法尔圣战兵', tier: 1 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊
+  xisi: { name: '萨法尔圣战兵', tier: 2 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊
   delan: { name: '帕提亚铁骑', tier: 1 },   // 法拉·卡莱大捷；但常被罗马击溃破都，降T1
-  huluo: { name: '呼罗珊重骑兵', tier: 1 },  // 赫拉特·阿布穆斯林黑旗军重骑
+  huluo: { name: '呼罗珊重骑兵', tier: 2 },  // 赫拉特·阿布穆斯林黑旗军重骑
   aba: { name: '萨珊具装铁骑', tier: 1 },    // 尼沙布尔·卡迪西亚惨败大溃退，降T1
 };

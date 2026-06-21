@@ -9,7 +9,7 @@
  */
 export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   hepan: { name: '朅盘陀戍卒', tier: 3 }, // 石头城·裴神符
-  bailong: { name: '白龙堆戍卒', tier: 1 }, // 三陇沙·班勇西域长史平车师
+  bailong: { name: '白龙堆戍卒', tier: 2 }, // 三陇沙·班勇西域长史平车师
   kepantuo: { name: '公主堡戍卒', tier: 3 }, // 公主堡·汉日天种王
   zhasaketu: { name: '札萨克图骑', tier: 3 }, // 扎布汗·策旺扎布
   huite: { name: '辉特部骑', tier: 2 }, // 金山·阿睦尔撒纳（无独立大捷且最终溃散，降T2）
@@ -22,10 +22,10 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   wulianghai: { name: '乌梁海巡骑', tier: 3 }, // 布尔根·车凌乌巴什
   qiuci: { name: '龟兹精兵', tier: 3 },   // 伊逻卢·龟兹精兵
   yuchi: { name: '于阗精兵', tier: 2 },       // 于阗·尉迟王族精兵（抗击黑汗四十载，升T2）
-  kala: { name: '阿斯古拉姆', tier: 1 },      // 奥什·喀喇汗古拉姆（灭于阗非以少胜多）
+  kala: { name: '阿斯古拉姆', tier: 2 },      // 奥什·喀喇汗古拉姆（灭于阗非以少胜多）
   an: { name: '昭武精骑', tier: 2 },        // 蒲华·昭武九姓安国（原伊列克近卫严重错代错位）
-  yiduhu: { name: '西州回鹘', tier: 1 },      // 高昌·北庭回鹘取西州
-  shule: { name: '阿兰斯近卫', tier: 1 },     // 盘橐·阿尔斯兰喀喇汗近卫
+  yiduhu: { name: '西州回鹘', tier: 2 },      // 高昌·北庭回鹘取西州
+  shule: { name: '阿兰斯近卫', tier: 2 },     // 盘橐·阿尔斯兰喀喇汗近卫
   yanqi: { name: '焉耆龙骑兵', tier: 2 },   // 员渠城·焉耆龙骑（§14 #6）
   wusun: { name: '昆莫亲卫', tier: 2 }, // 赤谷城·乌孙王帐
   chagatai: { name: '蒙兀儿铁骑', tier: 2 }, // 别失八里·东察合台（西域霸主，升T2）
@@ -41,7 +41,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
   // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
   quli: { name: '轮台戍卒', tier: 3 },
-  dzungar: { name: '准噶尔精骑', tier: 1 }, // 塔城·准噶尔帝国（清朝百年大患游牧霸权，升T1）
+  dzungar: { name: '准噶尔精骑', tier: 2 }, // 塔城·准噶尔帝国（清朝百年大患游牧霸权，升T1）
   yarkand: { name: '英吉沙骑兵', tier: 3 },
   tuerhute: { name: '鹰娑川铁骑', tier: 3 },
   gaochang: { name: '高昌铁骑', tier: 2 },    // 赤亭关·麴氏高昌具装骑
