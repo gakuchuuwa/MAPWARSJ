@@ -1,4 +1,4 @@
-﻿/**
+/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -3007,3 +3007,18 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_fengtian', name: '奉天', factionId: 'qianzhou', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '李晟神策军收复长安' },
     { id: 'city_taqian', name: '它乾城', factionId: 'xiyuduhu', lat: 41.875, lng: 83.59, type: 'pass', region: 'WESTERN', troops: 10000, tier: 4, note: '班超西域都护府驻地' },
 ];
+// ── 14 文化区（RegionType）────────────────────────────────
+// region: 'JAPAN',         // 日本
+// region: 'KOREA',         // 朝鲜
+// region: 'NORTHEAST',     // 东北
+// region: 'STEPPE',        // 草原
+// region: 'WESTERN',       // 西域
+// region: 'CENTRAL_ASIA',  // 中亚
+// region: 'TIBET',         // 青藏
+// region: 'DIANQIAN',      // 滇缅
+// region: 'LINGNAN',       // 岭南
+// region: 'BASHU',         // 川蜀
+// region: 'HEXI',          // 河西
+// region: 'NORTH',         // 北方
+// region: 'CENTRAL',       // 中原
+// region: 'JIANGNAN',      // 南方

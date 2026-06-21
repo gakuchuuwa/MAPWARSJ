@@ -4,9 +4,9 @@
  * 军团 AI 行为树节点（收复发出点 → 推进锚点近敌池抽签 → 沿路推进 → 攻城）
  *
  * 双模式（GAME_DIRECTION 2026-06-11）：
- *   基础模式：家城失守强制回师（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
+ *   据点军团：家城失守强制回师（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
  *           → 推进锚点近 3 敌城抽签
- *   远征/剧本：目标锁死、家城失守不回师（shouldSkipHomeRecapture），直至占领/兵败或全军覆没
+ *   远征军团：目标锁死、家城失守不回师（shouldSkipHomeRecapture），直至占领/兵败或全军覆没
  */
 
 import { BTNode, BTStatus, BTContext, Condition, Action, Sequence, Selector } from './BehaviorTree';
@@ -30,13 +30,7 @@ import {
     commitExpeditionEliteLegionName,
     restoreExpeditionLegionName,
 } from '../../data/ExpeditionLegions';
-import {
-    getScriptedCampaignById,
-    getScriptedSequenceTarget,
-    resolveScriptedScanStartIndex,
-    shouldSkipHomeRecapture,
-    tickScriptedCampaignExpedition,
-} from '../../legion/LegionSpawnPolicy';
+import { shouldSkipHomeRecapture } from '../../legion/LegionSpawnPolicy';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 
 // =====================
@@ -72,70 +66,11 @@ export const IsWaitingSiege = new Condition('IsWaitingSiege', (ctx) => {
 /**
  * 远征模式（GAME_DIRECTION「远征细则」2026-06-11）：
  * expeditionTargetCityId 非 null 时目标锁死、断粮不回师；
- * 目标城已属己方（无论谁打下的）→ 远征功成，回归基础模式。
- * 剧本军团：targetSequence 逐城推进，仅破末城算剧本完成。
+ * 目标城已属己方（无论谁打下的）→ 远征功成，回归据点军团模式。
  * 返回 'locked'（继续远征）| 'done'（刚结束）| null（非远征）。
  */
 function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
     const army = ctx.army;
-
-    if (army.scriptedCampaignId) {
-        const campaign = getScriptedCampaignById(army.scriptedCampaignId);
-        if (!campaign) return null;
-
-        const getCity = (id: string) => ctx.cityManager.getCity(id);
-        if (!army.expeditionTargetCityId) {
-            const restored = getScriptedSequenceTarget(
-                campaign,
-                army.getFactionId(),
-                getCity,
-                resolveScriptedScanStartIndex(army, campaign),
-            );
-            if (restored) army.expeditionTargetCityId = restored;
-        }
-
-        const scriptedTick = tickScriptedCampaignExpedition(army, getCity);
-
-        if (scriptedTick === 'campaign_complete') {
-            clearStrategicTarget(ctx);
-            army.setTargetCity(null);
-            gameLog(
-                'expedition',
-                `🎬 [剧本] ${campaign?.generalName ?? ''} 率【${army.name}】完成剧本，回归基础模式`,
-            );
-            return 'done';
-        }
-
-        if (scriptedTick === 'stage_advanced' && army.expeditionTargetCityId) {
-            const next = ctx.cityManager.getCity(army.expeditionTargetCityId);
-            clearStrategicTarget(ctx);
-            army.setTargetCity(null);
-            if (next) {
-                setStrategicTarget(ctx, army.expeditionTargetCityId, {
-                    lat: next.latitude,
-                    lng: next.longitude,
-                });
-            }
-            gameLog(
-                'expedition',
-                `🎬 [剧本] 【${army.name}】攻破前一城，下一目标【${next?.name ?? '?'}】`,
-            );
-            return 'locked';
-        }
-
-        if (scriptedTick === 'locked' && army.expeditionTargetCityId) {
-            const target = ctx.cityManager.getCity(army.expeditionTargetCityId);
-            if (target && getStrategicTargetId(ctx) !== army.expeditionTargetCityId) {
-                setStrategicTarget(ctx, army.expeditionTargetCityId, {
-                    lat: target.latitude,
-                    lng: target.longitude,
-                });
-            }
-            return 'locked';
-        }
-
-        if (!army.expeditionTargetCityId) return null;
-    }
 
     const expeditionId: string | null = army.expeditionTargetCityId ?? null;
     if (!expeditionId) return null;
@@ -150,7 +85,7 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
         army.setTargetCity(null);
         gameLog(
             'expedition',
-            `🐎 [远征] ${legionName} 远征${target ? `【${target.name}】功成` : '目标已不存在'}，回归基础模式`
+            `🐎 [远征] ${legionName} 远征${target ? `【${target.name}】功成` : '目标已不存在'}，回归据点军团模式`
         );
         if (target) {
             (window as unknown as {

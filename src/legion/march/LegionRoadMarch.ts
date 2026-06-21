@@ -66,7 +66,7 @@ function resolveMarchTarget(
     currentPos: LatLng,
 ): string {
     let marchTargetId = targetCityId;
-    // 远征/剧本：直取战略目标，不从路网起点重扫身后敌城
+    // 远征军团：直取战略目标，不从路网起点重扫身后敌城
     if (startCityId && !isCampaignLegion(army)) {
         marchTargetId = resolveMarchTargetOnPath(
             factionId,

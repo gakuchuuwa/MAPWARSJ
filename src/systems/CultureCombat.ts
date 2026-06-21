@@ -13,7 +13,7 @@
  *
  * 一侧合算后再 × 总 luck [0.8, 1.2] 掷一次（与上述固定系数独立）。
  *
- * 剧本军团 / 远征军团（LegionSpawnPolicy.isCampaignLegion）：
+ * 远征军团（LegionSpawnPolicy.isCampaignLegion，expeditionTargetCityId 非空）：
  *   野战单位再 × CAMPAIGN_LEGION_MULT（默认 1.2），与文化系数相乘。
  *
  * 精锐 tier 加成（GameConfig.COMBAT.ELITE_TIER_MULT）：
@@ -105,7 +105,7 @@ export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
     return getCultureOnlyCombatMultiplier(unit) * getPassGarrisonMultiplier(unit);
 }
 
-/** 剧本军团 / 远征精锐根据层级加成；城防单位恒为 1 */
+/** 远征军团 / 远征精锐 tier 加成；城防单位恒为 1 */
 export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
     if (isGarrisonUnit(unit)) return 1;
     const army = unit.getEntity?.() as Army | undefined;
@@ -121,18 +121,18 @@ export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
         return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT; // 兜底 1.2
     }
     
-    // 如果不是精锐，但属于纯剧本特殊编队
+    // 非精锐的远征军团（据点军团无 expeditionTargetCityId → 不加成）
     if (isCampaignLegion(army)) return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT;
     
     return 1;
 }
 
-/** 开战掷色用综合系数 = 文化（含关隘）× 剧本/远征 */
+/** 开战掷色用综合系数 = 文化（含关隘）× 远征 */
 export function getUnitBattlePowerMultiplier(unit: IBattleUnit): number {
     return getUnitCultureCombatMultiplier(unit) * getCampaignLegionCombatMultiplier(unit);
 }
 
-/** 文化 + 剧本/远征修正后兵力（固定系数相乘，未掷总 luck） */
+/** 文化 + 远征修正后兵力（固定系数相乘，未掷总 luck） */
 export function sumCultureAdjustedTroops(units: IBattleUnit[]): number {
     let sum = 0;
     for (const u of units) {

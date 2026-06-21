@@ -487,7 +487,7 @@ export class MultiLegionFieldBattle {
         };
 
         // 创建战斗单位适配器
-        // [FIX] Plot Armor: Check if this side is scripted to win
+        // [FIX] 事件链预设战果：该侧按 result 锁定胜负
         const attackerShouldSurvive = data.result === 'attacker_win';
 
         const attackerUnits: IBattleUnit[] = attackerArmies.map((army, index) =>

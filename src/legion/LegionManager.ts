@@ -27,7 +27,6 @@ import {
 } from '../types/CultureFormations';
 import { gameLog } from '../utils/GameLogger';
 import { FollowResupplySystem } from './FollowResupplySystem';
-import { getScriptedSiegeResult, isScriptedLegion } from './LegionSpawnPolicy';
 
 export class LegionManager {
     private cityManager: CityManager;
@@ -144,7 +143,7 @@ export class LegionManager {
     public trimLegionsToCap(): void {
         const max = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
         const legions = this.armies.filter(
-            (a) => a.type === 'legion' && !a.isDestroyed && !isScriptedLegion(a),
+            (a) => a.type === 'legion' && !a.isDestroyed,
         );
         if (legions.length <= max) return;
 
@@ -523,12 +522,10 @@ export class LegionManager {
         army.stopMovement(true);
         army.setCombatState(true, 'siege', { lat: targetCity.latitude, lng: targetCity.longitude });
 
-        const scriptedResult = getScriptedSiegeResult(army, targetCity.id);
         const siegeData: SiegeData = {
             ...(army.siegeMissionData ?? {}),
             defenderCityId: targetCity.id,
             attackerFactionId: army.getFactionId(),
-            ...(scriptedResult ? { result: scriptedResult } : {}),
         };
 
         this.siegeManager.startSiegeWithArmy(army, siegeData);

@@ -54,6 +54,14 @@ export class BattleField {
     public id: string;
     public isOver: boolean = false;
     public onBattleComplete?: (winnerFactionId: string) => void; // [NEW] Callback for event sequencing
+    /** 攻城战守方 cityId（构造时锁定，结算后仍可读） */
+    public readonly siegeCityId: string | null;
+    /** 由 SiegeManager 注册：区域战 resolve 时必停火焰/齐射，不依赖 onBattleComplete 赋值时机 */
+    private static siegeVisualStopHandler: ((cityId: string) => void) | null = null;
+
+    public static setSiegeVisualStopHandler(handler: ((cityId: string) => void) | null): void {
+        BattleField.siegeVisualStopHandler = handler;
+    }
     /** 援军编入本场区域战（用于跟随军团 UI） */
     public onReinforcementJoined?: (unit: IBattleUnit, isAttacker: boolean) => void;
 
@@ -126,6 +134,9 @@ export class BattleField {
         // 判断战斗类型
         const hasCity = defenderUnits.some(u => u.unitType === 'city');
         this.type = hasCity ? 'siege' : 'field';
+        this.siegeCityId = hasCity
+            ? (defenderUnits.find(u => u.unitType === 'city')?.id ?? null)
+            : null;
 
         // [NEW] Calculate Duration immediately
         this.calculateTargetDuration();
@@ -511,6 +522,9 @@ export class BattleField {
     private resolve(winnerGroup: FactionGroup, loserGroup: FactionGroup): void {
         this.isOver = true;
 
+        if (this.siegeCityId && BattleField.siegeVisualStopHandler) {
+            BattleField.siegeVisualStopHandler(this.siegeCityId);
+        }
 
         gameLog('battle', `🏆 [BattleField] 战斗结束! 胜者: ${winnerGroup.factionId}`);
 
@@ -622,6 +636,9 @@ export class BattleField {
     public abortWithoutSettlement(): void {
         if (this.isOver) return;
         this.isOver = true;
+        if (this.siegeCityId && BattleField.siegeVisualStopHandler) {
+            BattleField.siegeVisualStopHandler(this.siegeCityId);
+        }
         this.onBattleComplete = undefined;
         this.releaseAllMobileCombatStates();
     }
@@ -676,7 +693,7 @@ export class BattleField {
         };
     }
 
-    /** 剧本预设胜负（事件写死或秦军援军介入后锁定） */
+    /** 事件链预设胜负（事件写死或援军介入后锁定） */
     public getPresetResult(): 'attacker_win' | 'defender_win' | undefined {
         return this.presetResult;
     }

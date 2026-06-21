@@ -5,11 +5,9 @@ export class GameConfig {
         // [2026-05-30] 开启展示模式: 启动时生成 9 个 showcase 兵种
         DEBUG_SHOWCASE_UNITS: false,
         ENABLE_HISTORY_LOG: true,
-        /** 剧本模式：右上面板「开启剧本模式」；默认关 = 纯沙盒 */
+        /** 历史事件链（逐年 JSON 脚本）；默认关 = 纯沙盒乱斗 */
         ENABLE_HISTORICAL_EVENTS: false,
         SANDBOX_MODE: true,
-        /** 剧本军团（秦锐士等）：右上面板「开启剧本」；默认关 = 纯乱斗，直播主路径不依赖（GAME_DIRECTION 渐进原则） */
-        ENABLE_SCRIPTED_CAMPAIGNS: false,
     };
     /**
      * F12 控制台日志频道（默认关 = 少刷屏）。
@@ -60,6 +58,12 @@ export class GameConfig {
         MAX_ACTIVE_LEGIONS: 20,
         /** 募兵时优先保证每个文化区至少有 N 支现役军团（在总上限内） */
         REGION_BASELINE_LEGIONS: 1,
+        /** 第二段「视野优先」单次最多塞进镜头内的军团数（防同屏一波爆出，余量让给第三段全图分散） */
+        VIEWPORT_SPAWN_QUOTA: 4,
+        /** 首次出兵错峰：每隔 N ms 放行一批，让军团陆续登场而非同帧爆出 */
+        INITIAL_SPAWN_INTERVAL_MS: 200,
+        /** 首次出兵错峰：每批最多生成几支 */
+        INITIAL_SPAWN_PER_TICK: 1,
         /** 军团战败后尸体/阵亡动画保留时长 (ms) */
         CORPSE_DISPLAY_MS: 15000,
         /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms) */
@@ -110,7 +114,7 @@ export class GameConfig {
         LUCK_MAX: 1.2,
         /** 开战编入半径（经纬度欧氏距离，约 0.3 ≈ 30km；开战瞬间 + 每 0.2s 圈内扫描，可随时加入） */
         BATTLE_JOIN_RADIUS: 0.3,
-        /** 剧本军团 / 远征军团有效战力 ×1.2（与文化系数相乘，见 CultureCombat） */
+        /** 远征军团有效战力 ×1.2（与文化系数相乘，见 CultureCombat） */
         CAMPAIGN_LEGION_MULT: 1.2,
         /** 精锐 tier 战力乘数 T0→T3（AGENTS.md §12.3.1；CultureCombat 读取） */
         ELITE_TIER_MULT: [1.5, 1.4, 1.2, 1.1] as const,

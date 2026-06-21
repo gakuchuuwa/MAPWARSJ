@@ -187,13 +187,13 @@ export class EventEditor implements IEditor {
                             throw new Error(`Failed to load ${scriptFile}`);
                         }
                     } catch (e) {
-                        alert(`❌ 无法加载剧本 "${scriptFile}"。请确保文件存在于 public/scripts/ 目录。`);
+                        alert(`❌ 无法加载事件脚本 "${scriptFile}"。请确保文件存在于 public/scripts/ 目录。`);
                         return;
                     }
                 }
 
                 if (!script) {
-                    alert(`❌ 没有加载剧本。请先在脚本编辑器中加载 -${Math.abs(eventData.year)}.json 或手动生成军团。`);
+                    alert(`❌ 没有加载事件脚本。请先在脚本编辑器中加载 -${Math.abs(eventData.year)}.json 或手动生成军团。`);
                     return;
                 }
 
@@ -216,7 +216,7 @@ export class EventEditor implements IEditor {
                             (s.actions || []).filter((a: any) => a.type === 'SPAWN_UNIT')
                         ).map((a: any) => (a.data || a).unitId)
                     );
-                    alert(`❌ 在剧本中找不到生成 "${legionId}" 的 SPAWN_UNIT 指令。\n\n请确保剧本中有相应的 SPAWN_UNIT action，且 unitId 匹配。`);
+                    alert(`❌ 在事件脚本中找不到生成 "${legionId}" 的 SPAWN_UNIT 指令。\n\n请确保脚本中有相应的 SPAWN_UNIT action，且 unitId 匹配。`);
                     return;
                 }
 
@@ -257,13 +257,13 @@ export class EventEditor implements IEditor {
                             throw new Error(`Failed to load ${scriptFile}`);
                         }
                     } catch (e) {
-                        alert(`❌ 无法加载剧本 "${scriptFile}"。请确保文件存在于 public/scripts/ 目录。`);
+                        alert(`❌ 无法加载事件脚本 "${scriptFile}"。请确保文件存在于 public/scripts/ 目录。`);
                         return;
                     }
                 }
 
                 if (!script) {
-                    alert(`❌ 没有加载剧本。请先在脚本编辑器中加载 -${Math.abs(eventData.year)}.json 或手动生成军团。`);
+                    alert(`❌ 没有加载事件脚本。请先在脚本编辑器中加载 -${Math.abs(eventData.year)}.json 或手动生成军团。`);
                     return;
                 }
 
@@ -286,7 +286,7 @@ export class EventEditor implements IEditor {
                             (s.actions || []).filter((a: any) => a.type === 'SPAWN_UNIT')
                         ).map((a: any) => (a.data || a).unitId)
                     );
-                    alert(`❌ 在剧本中找不到生成 "${legionId}" 的 SPAWN_UNIT 指令。\n\n请确保剧本中有相应的 SPAWN_UNIT action，且 unitId 匹配。`);
+                    alert(`❌ 在事件脚本中找不到生成 "${legionId}" 的 SPAWN_UNIT 指令。\n\n请确保脚本中有相应的 SPAWN_UNIT action，且 unitId 匹配。`);
                     return;
                 }
 
@@ -2472,7 +2472,7 @@ export class EventEditor implements IEditor {
 
         // Add Script Legions (if any)
         if (scriptLegions.length > 0) {
-            opts += `<optgroup label="剧本预设 (未生成)">`;
+            opts += `<optgroup label="事件脚本预设 (未生成)">`;
             scriptLegions.forEach((l: any) => {
                 opts += `<option value="${l.id}">[${l.factionId}] ${l.name} (${l.troops})</option>`;
             });

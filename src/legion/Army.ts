@@ -25,7 +25,7 @@ export class Army implements IBattleUnit {
     private _factionId: string;
     private onArrive: (army: Army) => void;
 
-    /** 剧本攻城任务的完成回调：只在最终目标城之战结束时触发（途中 hop 战不触发） */
+    /** 事件链攻城任务的完成回调：只在最终目标城之战结束时触发（途中 hop 战不触发） */
     public siegeMissionComplete: (() => void) | null = null;
 
     /** 大乱斗军情：全军覆没播报（destroy 时触发） */
@@ -96,23 +96,14 @@ export class Army implements IBattleUnit {
 
     /**
      * 远征目标城（GAME_DIRECTION「远征细则」2026-06-11）：
-     * 非 null = 远征模式——目标锁死该城、断粮不回师，直至占领或全军覆没；
-     * null = 基础模式（近 3 敌城抽签 + 家城失守强制回师）。
+     * 非 null = 远征军团——目标锁死该城、断粮不回师，直至占领或全军覆没；
+     * null = 据点军团（近 3 敌城抽签 + 家城失守强制回师）。
      * 仅跟拍军团可被玩家下达远征指令（ExpeditionUI），AI 不会自行远征。
      */
     public expeditionTargetCityId: string | null = null;
     /** 远征前军团原名；功成保留番号后清空；仅目标异常时用于恢复 */
     public expeditionSavedName: string | null = null;
 
-    /**
-     * 剧本军团标记；语义与策略见 LegionSpawnPolicy。
-     * scriptedCampaignId 非空 = scripted 来源；禁止御驾亲征抽兵，兵力帽 = scriptedTroopsCap。
-     */
-    public scriptedCampaignId: string | null = null;
-    public scriptedTroopsCap: number | null = null;
-    /** 剧本 targetSequence 扫描起点（只进不退；后方失守不回援） */
-    public scriptedSequenceIndex: number = 0;
-    
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;
 
@@ -245,7 +236,7 @@ export class Army implements IBattleUnit {
     }
 
     public addTroops(amount: number): void {
-        const cap = this.scriptedTroopsCap ?? this.initialTroops;
+        const cap = this.initialTroops;
         const space = cap - this.troops;
         const actualAdd = Math.min(amount, space);
 
@@ -528,9 +519,6 @@ export class Army implements IBattleUnit {
         newArmy.type = this.type; // Inherit type (legion/army)
         newArmy.cultureSlots = this.cultureSlots ? [...this.cultureSlots] : null; // [NEW] Inherit culture slots
         newArmy.cultureScales = this.cultureScales ? [...this.cultureScales] : null; // [NEW] Inherit culture scales
-        newArmy.scriptedCampaignId = this.scriptedCampaignId;
-        newArmy.scriptedTroopsCap = this.scriptedTroopsCap;
-        newArmy.scriptedSequenceIndex = this.scriptedSequenceIndex;
 
         gameLog('army', `[Army] Splitting ${amount} from ${this.id}. Remaining: ${this.troops}. New Army: ${newArmy.id}`);
         return newArmy;
@@ -582,7 +570,7 @@ export class Army implements IBattleUnit {
         return this._factionId;
     }
 
-    /** 历史剧本接管军团时统一势力 id（如旧 huaxia → qin） */
+    /** 事件链接管军团时统一势力 id（如旧 huaxia → qin） */
     public setFactionId(factionId: string): void {
         if (this._factionId === factionId) return;
         this._factionId = factionId;
@@ -605,9 +593,6 @@ export class Army implements IBattleUnit {
 
     public setTroops(troops: number): void {
         let next = Math.max(0, Math.floor(troops));
-        if (this.scriptedTroopsCap != null) {
-            next = Math.min(next, this.scriptedTroopsCap);
-        }
         this.troops = next;
         if (this.label) {
             // Label update logic...

@@ -42,7 +42,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'wu': 'city_gusu',
 'yue': 'city_kuaiji',
     'qin': 'city_tianshui',
-    'song': 'city_hangzhou',
     'yan': 'city_gubeikou',
     'gaogouli': 'city_pyongyang',
     'xinluo': 'city_jincheng_silla',

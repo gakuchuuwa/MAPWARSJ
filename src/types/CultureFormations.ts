@@ -153,7 +153,6 @@ function buildTriangleCavalry(unitType1: string, unitType2: string, unitType3: s
  *
  * 适用范围（凡 factionId === 'qin' 的现役军团）：
  *   · 据点军团 — LegionManager.createArmy / createLegion
- *   · 剧本军团 — 同上（spawnScriptedCampaigns）
  *   · 远征军团 — applyExpeditionEliteRename 下令时重申
  */
 export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [

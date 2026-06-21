@@ -1,4 +1,4 @@
-// 势力数据 (Faction Data)
+﻿// 势力数据 (Faction Data)
 // 每个势力：id、name（旗号汉字见 SandboxDisplayNames）
 // 显示色：固定见 HistoricalFactionColors.ts；其余每局由 FactionManager 随机分配
 // 命名规则：政权用正式国号(部分加"大")，民族用最高知名度2字简称，军阀用人名姓氏，家族用单姓氏
@@ -839,7 +839,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 新增：阿伊努（北海道）──
     { id: 'ayinu', name: '阿伊努' },                 // 阿伊努(北海道南端/白老), Ainu；旗号「虾夷」
     // ── 2026-06-11 新增：北海（宗谷界城·库页枢纽）──
-    { id: 'beihai', name: '北海' },                  // 北海(宗谷海峡界城)
+    { id: 'beihai', name: '北海道' },                  // 北海(宗谷海峡界城)
     // ── 2026-06-11 新增：若敖（楚若敖氏/竟陵）、芈氏（楚王室/云梦）──
     { id: 'ruochu', name: '若敖' },
     { id: 'mi_chu', name: '芈氏' },

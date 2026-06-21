@@ -26,7 +26,7 @@ import {
     type ReinforcementJoinDeps,
 } from '../legion/combat/BattleReinforcementPoll';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
-import { logScriptedFinaleDefeat, shouldSkipHomeRecapture } from '../legion/LegionSpawnPolicy';
+import { shouldSkipHomeRecapture } from '../legion/LegionSpawnPolicy';
 
 export class SiegeManager {
     private static get JOIN_RADIUS(): number {
@@ -154,6 +154,10 @@ export class SiegeManager {
         this.map = map;
         this.visualizer = visualizer;
         this.onLegionUpdate = onLegionUpdate;
+
+        BattleField.setSiegeVisualStopHandler((cityId) => {
+            this.cityManager.stopSiegeEffect(cityId, true);
+        });
     }
 
     /**
@@ -326,7 +330,7 @@ export class SiegeManager {
 
         siegeLog(`[SiegeManager] Commanding existing legion: ${attackerArmy.name} (${attackerArmy.id})`);
 
-        // [FIX] 剧本事件接管：清残留战斗/驻留，统一势力 id，避免「找到了但不走」
+        // [FIX] 事件链接管已有军团：清残留战斗/驻留，统一势力 id，避免「找到了但不走」
         attackerArmy.clearPostBattleRest();
         attackerArmy.clearExternalCombatState();
         attackerArmy.clearBlocked();
@@ -664,7 +668,6 @@ export class SiegeManager {
             () => { // Defeat
                 siegeLog(`[Siege] Attacker Defeat!`);
                 this.activeSieges.delete(targetCity.id);
-                logScriptedFinaleDefeat(army, targetCity.id, targetCity.name);
                 markLegionAnnihilationFeed(army, 'attacker', targetCity.name);
                 army.expeditionTargetCityId = null;
                 army.destroy();
@@ -692,9 +695,7 @@ export class SiegeManager {
             }
         );
 
-        // [EFFECT] 守军从据点向进攻军团射箭
-        this.cityManager.playSiegeEffect(targetCity.id, () => army.getPosition());
-
+        // [EFFECT] 守军从据点向进攻军团射箭（须在 battleField 创建并挂回调之后启动，避免异常泄漏）
         // Army stays visible during siege
         army.setCombatState(true);
         // Use adapters directly - no player participation
@@ -759,29 +760,38 @@ export class SiegeManager {
             }
         }
 
-        const battleField = this.combatSystem.startRegionalBattle(
-            army.getFactionId(),
-            attackerUnits,
-            targetCity.factionId,
-            defenderUnits,
-            siegePreset,
-            siegeData.customDuration, // [NEW] 传递导演指定时长
-            siegeData.attackerPortrait, // [NEW] 传递攻击方立绘
-            siegeData.defenderPortrait, // [NEW] 传递防守方立绘
-            finalTitle, // [NEW] 传递战斗标题
-            siegeData.description // [NEW] 传递历史描述
-        );
+        let battleField: BattleField;
+        try {
+            battleField = this.combatSystem.startRegionalBattle(
+                army.getFactionId(),
+                attackerUnits,
+                targetCity.factionId,
+                defenderUnits,
+                siegePreset,
+                siegeData.customDuration, // [NEW] 传递导演指定时长
+                siegeData.attackerPortrait, // [NEW] 传递攻击方立绘
+                siegeData.defenderPortrait, // [NEW] 传递防守方立绘
+                finalTitle, // [NEW] 传递战斗标题
+                siegeData.description // [NEW] 传递历史描述
+            );
+        } catch (err) {
+            console.error('[SiegeManager] startRegionalBattle failed:', err);
+            army.setCombatState(false);
+            onSiegeComplete?.();
+            throw err;
+        }
 
         // 战斗结束 = 事件结束（战后动作在后台运行）
         battleField.onBattleComplete = (winnerFactionId) => {
             siegeLog(`✅ [Siege] Battle complete. Winner: ${winnerFactionId}`);
-            this.cityManager.stopSiegeEffect(targetCity.id);
+            this.cityManager.stopSiegeEffect(targetCity.id, true);
             this.activeSieges.delete(targetCity.id);
             onSiegeComplete?.();
             this.processSiegeThirdPartyWaiters(targetCity.id, winnerFactionId);
         };
 
         this.activeSieges.set(targetCity.id, battleField);
+        this.cityManager.playSiegeEffect(targetCity.id, () => army.getPosition());
     }
 
     private enqueueSiegeThirdPartyWaiter(
@@ -853,7 +863,7 @@ export class SiegeManager {
         army.clearBlocked();
     }
 
-    /** 取走军团身上的剧本任务完成回调（一次性），任务被放弃时也必须调用以解锁事件队列 */
+    /** 取走军团身上的事件任务完成回调（一次性），任务被放弃时也必须调用以解锁事件队列 */
     private consumeMissionComplete(army: Army): (() => void) | undefined {
         const cb = army.siegeMissionComplete;
         army.siegeMissionComplete = null;
@@ -871,7 +881,7 @@ export class SiegeManager {
             return;
         }
         // [FIX] 任务目标未达（途中敌城拦截被迫先打 hop 城）：胜利后继续向最终目标推进，
-        // 而不是在中途城就地驻守——否则剧本目标城（如 -235 太原）永远打不下来
+        // 而不是在中途城就地驻守——否则事件链目标城（如 -235 太原）永远打不下来
         const hasExplicitChain = !!(siegeData.afterBattleChain?.length || siegeData.afterBattle);
         const missionTargetId = army.siegeMissionData?.defenderCityId;
         if (!hasExplicitChain && missionTargetId && missionTargetId !== city.id) {
@@ -902,7 +912,7 @@ export class SiegeManager {
 
         if (chain.length === 0) {
             siegeLog(`[SiegeManager] ${army.name} 动态攻城结束，交还 AI 决策`);
-            this.consumeMissionComplete(army)?.(); // 安全网：剧本任务被动态攻城终结时解锁事件队列
+            this.consumeMissionComplete(army)?.(); // 安全网：事件任务被动态攻城终结时解锁事件队列
             this.releaseArmyAfterSiege(army);
             return;
         }
@@ -951,7 +961,7 @@ export class SiegeManager {
             army.setTargetCity(null); // Clear target
             army.setOnArriveCallback(() => { }); // Clear callbacks
             army.siegeMissionData = null;
-            this.consumeMissionComplete(army)?.(); // 安全网：驻扎收尾时若剧本任务回调仍未触发，解锁事件队列
+            this.consumeMissionComplete(army)?.(); // 安全网：驻扎收尾时若事件任务回调仍未触发，解锁事件队列
             army.clearBlocked();
 
             // [CRITICAL] Ensure we don't drop the chain here if there are more steps
@@ -1184,7 +1194,7 @@ export class SiegeManager {
             battle.abortWithoutSettlement();
         }
         this.activeSieges.delete(cityId);
-        this.cityManager.stopSiegeEffect(cityId);
+        this.cityManager.stopSiegeEffect(cityId, true);
 
         const queue = this.siegeThirdPartyWaiters.get(cityId);
         if (queue) {

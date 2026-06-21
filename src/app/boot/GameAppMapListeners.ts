@@ -63,11 +63,6 @@ export function setupGameAppMapListeners(app: GameApp): void {
         app.historicalEventManager?.setScriptModeEnabled(!!detail?.enabled);
     });
 
-    window.addEventListener('toggle-scripted-campaign', (e: Event) => {
-        const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
-        GameConfig.SYSTEM.ENABLE_SCRIPTED_CAMPAIGNS = !!detail?.enabled;
-    });
-
     const leaflet = app.map?.getLeafletMap?.();
     if (leaflet) {
         leaflet.on('move', () => CityAssetManager.notifyMapInteraction());

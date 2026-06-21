@@ -409,7 +409,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     jianisejia: { generalId: 'jianisejia', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 贵霜帝国极盛
     baqiman: { generalId: 'baqiman', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 钦察游击抗蒙
     wugua: { generalId: 'wugua', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 大宛王抗汉
-    aersilan: { generalId: 'aersilan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 喀喇汗灭于阗
     qiujiuque: { generalId: 'qiujiuque', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 贵霜奠基统一五部
     alimukuli: { generalId: 'alimukuli', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 浩罕抗俄
     agubai: { generalId: 'agubai', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 哲德沙尔建国
@@ -441,7 +440,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     chentang: { generalId: 'chentang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 建昭三年六校分道诛郅支于都赖水
     sushili: { generalId: 'sushili', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 小勃律王据守孽多
     genggong: { generalId: 'genggong', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 疏勒孤军苦撑
-    sudinfang: { generalId: 'sudinfang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 灭西突厥擒沙钵罗
     peixingjian: { generalId: 'peixingjian', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_02' }, // 计擒都支兵不血刃
     
 // ── 青藏区 2026-06-18 ──
@@ -1214,6 +1212,12 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tier: 'famous',
         tacticalSkillId: 'tac_03',
         strategicSkillId: 'str_04',
+    },
+    wangmeng: {
+        generalId: 'wangmeng',
+        tier: 'famous',
+        tacticalSkillId: 'tac_04',
+        strategicSkillId: 'str_01',
     },
 };
 

@@ -81,12 +81,12 @@ export class SiegeEffectRenderer {
         this.fadeIn(cityId);
     }
 
-    public stopEffect(cityId: string): void {
+    public stopEffect(cityId: string, immediate = false): void {
         const effect = this.activeEffects.get(cityId);
         if (!effect) return;
 
-        gameLog('siegeEffect', `🧯 [SiegeEffect] 停止城市 ${cityId} 的特效（开始淡出）`);
-        this.disposeEffect(cityId, false);
+        gameLog('siegeEffect', `🧯 [SiegeEffect] 停止城市 ${cityId} 的特效${immediate ? '（立即）' : '（淡出）'}`);
+        this.disposeEffect(cityId, immediate);
     }
 
     public stopAll(): void {

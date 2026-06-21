@@ -1,4 +1,3 @@
-import { getScriptedCampaignById } from '../data/ScriptedCampaigns';
 import { getFactionGeneral } from '../data/FactionGenerals';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
@@ -1185,12 +1184,7 @@ export class CombatUI {
 
         const setGeneralName = (tag: HTMLDivElement, unit: IBattleUnit) => {
             let name = '';
-            const entity = unit.getEntity?.();
-            if (entity?.scriptedCampaignId) {
-                const campaign = getScriptedCampaignById(entity.scriptedCampaignId);
-                if (campaign?.generalName) name = campaign.generalName;
-            }
-            if (!name && unit.generalId) {
+            if (unit.generalId) {
                 const gen = getFactionGeneral(unit.factionId || '');
                 if (gen && gen.generalId === unit.generalId) {
                     name = gen.generalName;
@@ -1656,7 +1650,7 @@ export class CombatUI {
     // 赔率：开战即定胜率（闭式结算，运气单侧各掷一次 [0.8,1.2]）
     // ============================================================
 
-    /** 一侧开战底力（无运气）：Σ(兵力×文化×剧本/远征×关隘) × 名将技乘区 */
+    /** 一侧开战底力（无运气）：Σ(兵力×文化×远征×关隘) × 名将技乘区 */
     private sideBasePower(units: IBattleUnit[]): number {
         let base = 0;
         for (const u of units) {

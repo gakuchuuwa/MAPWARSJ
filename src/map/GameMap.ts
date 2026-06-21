@@ -574,11 +574,6 @@ export class GameMap {
                         <input type="checkbox" id="chk-showcase"> 
                         <b>♟️ 开启兵种展示</b>
                     </label>
-
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#1565C0;margin-top:4px;">
-                        <input type="checkbox" id="chk-scripted-campaign"> 
-                        <b>⚔️ 开启剧本</b>
-                    </label>
                 `;
 
                 if (import.meta.env.DEV) {
@@ -830,15 +825,6 @@ export class GameMap {
                 });
             }
 
-            const chkScriptedCampaign = document.getElementById('chk-scripted-campaign') as HTMLInputElement;
-            if (chkScriptedCampaign) {
-                chkScriptedCampaign.checked = GameConfig.SYSTEM.ENABLE_SCRIPTED_CAMPAIGNS;
-                chkScriptedCampaign.addEventListener('change', (e: any) => {
-                    window.dispatchEvent(new CustomEvent('toggle-scripted-campaign', {
-                        detail: { enabled: e.target.checked }
-                    }));
-                });
-            }
 
             // [FIX] 编辑器复选框事件绑定 (之前缺失，导致编辑器无法打开)
             const chkEditorCity = document.getElementById('chk-editor-city') as HTMLInputElement;

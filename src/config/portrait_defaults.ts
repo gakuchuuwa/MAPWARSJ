@@ -6,10 +6,12 @@
  * CombatUI：左攻不 scaleX、右守 scaleX(-1)，二人相向中央。
  */
 import type { IBattleUnit } from '../core/CombatSystem';
+import { CITIES_V2 } from '../data/cities_v2';
 import {
     resolveUnitCultureRegion,
     type CultureCombatRole,
 } from '../systems/CultureCombat';
+import { getCityRegion, REGION_ORDER, type RegionType } from '../systems/RegionSystem';
 
 export const PORTRAIT_ASSETS_DIR = '/assets/portraits';
 
@@ -152,13 +154,19 @@ const _zhongyuanPortraitGlob = import.meta.glob<string>(
     { eager: true, query: '?url', import: 'default' },
 );
 const _zhongyuanPortraitPool: string[] = Object.values(_zhongyuanPortraitGlob);
-
-/** 殷商专属立绘池（商@安阳 + 殷@朝歌） */
-const _yinshangPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/yinshang/*.png',
+/** 满清立绘池 */
+const _manqingPortraitGlob = import.meta.glob<string>(
+    '../../public/assets/manqing/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _yinshangPortraitPool: string[] = Object.values(_yinshangPortraitGlob);
+const _manqingPortraitPool: string[] = Object.values(_manqingPortraitGlob);
+
+/** 殷商专属立绘池（商@安阳 + 殷@朝歌） */
+const _xianqinPortraitGlob = import.meta.glob<string>(
+    '../../public/assets/xianqin/*.png',
+    { eager: true, query: '?url', import: 'default' },
+);
+const _xianqinPortraitPool: string[] = Object.values(_xianqinPortraitGlob);
 
 /** 汉国专属立绘池（南郑） */
 const _liuhanPortraitGlob = import.meta.glob<string>(
@@ -202,6 +210,26 @@ const _panjunPortraitGlob = import.meta.glob<string>(
 );
 const _panjunPortraitPool: string[] = Object.values(_panjunPortraitGlob);
 
+/** 14 文化区随机池（无势力专属映射时的 fallback） */
+const REGION_PORTRAIT_POOLS: Record<RegionType, string[]> = {
+    CENTRAL: _zhongyuanPortraitPool,
+    NORTH: _zhongyuanPortraitPool,
+    JIANGNAN: [..._nanfangPortraitPool, ..._damingPortraitPool],
+    LINGNAN: [..._lingnanPortraitPool, ..._guangzhouPortraitPool],
+    BASHU: _shuguoPortraitPool,
+    DIANQIAN: _dianmianPortraitPool,
+    HEXI: _hexiPortraitPool,
+    WESTERN: _xiyuPortraitPool,
+    TIBET: _tuboPortraitPool,
+    STEPPE: _caoyuanPortraitPool,
+    NORTHEAST: _dongbeiPortraitPool,
+    KOREA: _chaoxianPortraitPool,
+    JAPAN: _ribenPortraitPool,
+    CENTRAL_ASIA: _zhongyaPortraitPool,
+};
+
+const _factionCultureRegionCache = new Map<string, RegionType | undefined>();
+
 /** 势力专属立绘池（factionId → 图片路径数组） */
 const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'qin': _qinPortraitPool,
@@ -212,7 +240,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'guangzhou': _guangzhouPortraitPool,
     // 岭南全境套用广州
     'sagami': _ribenPortraitPool,
-    'ryukyu': _guangzhouPortraitPool,
+    'ryukyu': _ribenPortraitPool,
     'leizhou': _guangzhouPortraitPool,
     'zhuang_d': _guangzhouPortraitPool,
     'nanyue': _guangzhouPortraitPool,
@@ -248,7 +276,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'quan': _shuguoPortraitPool,
     'qiuchi': _shuguoPortraitPool,
     'jinchuan_x': _shuguoPortraitPool,
-    'miaomin': _shuguoPortraitPool,
+    'miaomin': _lingnanPortraitPool,
     'qianhui': _shuguoPortraitPool,
     'yang_bozhou': _shuguoPortraitPool,
     'cong': _shuguoPortraitPool,
@@ -303,20 +331,20 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'bing': _zhongyuanPortraitPool,
     'dai_d': _zhongyuanPortraitPool,
     'dizhou': _zhongyuanPortraitPool,
-    'dongdan': _zhongyuanPortraitPool,
+    'dongdan': _dongbeiPortraitPool,
     'erzhu': _zhongyuanPortraitPool,
     'gaoqi_d': _zhongyuanPortraitPool,
     'guzhu': _zhongyuanPortraitPool,
     'hejian': _zhongyuanPortraitPool,
-    'jinzhou': _zhongyuanPortraitPool,
-    'kumo': _zhongyuanPortraitPool,
+    'jinzhou': _damingPortraitPool,
+    'kumo': _caoyuanPortraitPool,
     'liangshidu': _zhongyuanPortraitPool,
     'pingyuan': _zhongyuanPortraitPool,
     'qingyuan_bd': _zhongyuanPortraitPool,
     'ranwei_d': _zhongyuanPortraitPool,
     'shizhao_d': _zhongyuanPortraitPool,
     'tongma': _zhongyuanPortraitPool,
-    'tuoba': _zhongyuanPortraitPool,
+    'tuoba': _caoyuanPortraitPool,
     'wangyan': _zhongyuanPortraitPool,
     'weihaiwei': _zhongyuanPortraitPool,
     'xuan': _zhongyuanPortraitPool,
@@ -329,19 +357,19 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'zu_d': _zhongyuanPortraitPool,
     // 西域 22 势力
     'anxi': _xiyuPortraitPool,
-    'duerbote': _xiyuPortraitPool,
+    'duerbote': _caoyuanPortraitPool,
     'loulan': _xiyuPortraitPool,
     'pisha': _xiyuPortraitPool,
     'pishan': _xiyuPortraitPool,
     'qiemo': _xiyuPortraitPool,
     'qiuci': _xiyuPortraitPool,
     'shache': _xiyuPortraitPool,
-    'tuerhute': _xiyuPortraitPool,
+    'tuerhute': _caoyuanPortraitPool,
     'weili': _xiyuPortraitPool,
     'weitou': _xiyuPortraitPool,
     'weiwuer': _xiyuPortraitPool,
     'wensu': _xiyuPortraitPool,
-    'xibo_d': _xiyuPortraitPool,
+    'xibo_d': _dongbeiPortraitPool,
     'xiye': _xiyuPortraitPool,
     'yanqi': _xiyuPortraitPool,
     'yarkand': _xiyuPortraitPool,
@@ -351,27 +379,27 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'zhuxie': _xiyuPortraitPool,
     // 河西 22 势力
     'chijin': _hexiPortraitPool,
-    'chile': _hexiPortraitPool,
-    'dada_ming': _hexiPortraitPool,
+    'chile': _caoyuanPortraitPool,
+    'dada_ming': _caoyuanPortraitPool,
     'dangzhou': _shuguoPortraitPool,
     'dangxiang': _hexiPortraitPool,
-    'dongshengwei': _hexiPortraitPool,
+    'dongshengwei': _zhongyuanPortraitPool,
     'guiyi': _hexiPortraitPool,
     'helian': _hexiPortraitPool,
     'huan': _hexiPortraitPool,
     'huizhou': _hexiPortraitPool,
-    'hunxie': _hexiPortraitPool,
+    'hunxie': _caoyuanPortraitPool,
     'juqu_d': _hexiPortraitPool,
     'kang': _hexiPortraitPool,
     'lingwu': _hexiPortraitPool,
     'lushui': _hexiPortraitPool,
-    'shuofang': _hexiPortraitPool,
+    'shuofang': _zhongyuanPortraitPool,
     'wei2': _hexiPortraitPool,
     'weiming': _hexiPortraitPool,
     'lanzhou': _hexiPortraitPool,
     'yeli': _hexiPortraitPool,
     'yingli': _hexiPortraitPool,
-    'zhai_han': _hexiPortraitPool,
+    'zhai_han': _zhongyuanPortraitPool,
     // 吐蕃 53 势力
     'ali': _tuboPortraitPool,
     'anding_wei': _tuboPortraitPool,
@@ -390,7 +418,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'gling': _tuboPortraitPool,
     'golog': _tuboPortraitPool,
     'gongbu': _tuboPortraitPool,
-    'guangwu': _tuboPortraitPool,
+    'guangwu': _hexiPortraitPool,
     'guge': _tuboPortraitPool,
     'hor': _tuboPortraitPool,
     'humi': _tuboPortraitPool,
@@ -432,7 +460,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'chagatai': _caoyuanPortraitPool,
     'chahar': _caoyuanPortraitPool,
     'chechen': _caoyuanPortraitPool,
-    'cheshihou': _caoyuanPortraitPool,
+    'cheshihou': _xiyuPortraitPool,
     'choros': _caoyuanPortraitPool,
     'da_yuan': _caoyuanPortraitPool,
     'dingling': _caoyuanPortraitPool,
@@ -480,8 +508,8 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'xueyantuo': _caoyuanPortraitPool,
     'yaoluoge': _caoyuanPortraitPool,
     'yel': _caoyuanPortraitPool,
-    'yingzhou_ying_d': _caoyuanPortraitPool,
-    'yiwu': _caoyuanPortraitPool,
+    'yingzhou_ying_d': _dongbeiPortraitPool,
+    'yiwu': _xiyuPortraitPool,
     'yuan_d': _caoyuanPortraitPool,
     'yujiulu': _caoyuanPortraitPool,
     'yuwen': _caoyuanPortraitPool,
@@ -489,7 +517,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'zhasaketu': _caoyuanPortraitPool,
     'zhuerqi': _caoyuanPortraitPool,
     // 东北 32 势力
-    'aisin_d': _dongbeiPortraitPool,
+    'aisin_d': _manqingPortraitPool,
     'bohai': _dongbeiPortraitPool,
     'dajin': _dongbeiPortraitPool,
     'dawoer': _dongbeiPortraitPool,
@@ -506,8 +534,8 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'jurchen': _dongbeiPortraitPool,
     'keerqin': _dongbeiPortraitPool,
     'kuye': _dongbeiPortraitPool,
-    'manzhou': _dongbeiPortraitPool,
-    'manzhou_d': _dongbeiPortraitPool,
+    'manzhou': _manqingPortraitPool,
+    'manzhou_d': _manqingPortraitPool,
     'mohe': _dongbeiPortraitPool,
     'nanai': _dongbeiPortraitPool,
     'nifuhe': _dongbeiPortraitPool,
@@ -533,12 +561,12 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'hui': _chaoxianPortraitPool,
     'huimo': _chaoxianPortraitPool,
     'sheng_d': _chaoxianPortraitPool,
-    'jianzhou_nvzhen': _chaoxianPortraitPool,
+    'jianzhou_nvzhen': _manqingPortraitPool,
     'joseon': _chaoxianPortraitPool,
-    'mao_wenlong': _chaoxianPortraitPool,
+    'mao_wenlong': _damingPortraitPool,
     'sabeol': _chaoxianPortraitPool,
     'sambyeol': _chaoxianPortraitPool,
-    'tunggiya': _chaoxianPortraitPool,
+    'tunggiya': _manqingPortraitPool,
     'woju': _chaoxianPortraitPool,
     'xingliao': _chaoxianPortraitPool,
     'xinluo': _chaoxianPortraitPool,
@@ -550,12 +578,12 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'anmei': _ribenPortraitPool,
     'ashikaga': _ribenPortraitPool,
     'ayinu': _ribenPortraitPool,
-    'beihai': _dongbeiPortraitPool,
+    'beihai': _ribenPortraitPool,
     'chosokabe': _ribenPortraitPool,
-    'dayu': _ribenPortraitPool,
+    'dayu': _nanfangPortraitPool,
     'echigo': _ribenPortraitPool,
     'edo': _ribenPortraitPool,
-    'gaya': _ribenPortraitPool,
+    'gaya': _chaoxianPortraitPool,
     'hashiba': _ribenPortraitPool,
     'shimotsuke': _ribenPortraitPool,
     'iga_d': _ribenPortraitPool,
@@ -583,7 +611,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'muer': _zhongyaPortraitPool,
     'guzgan': _zhongyaPortraitPool,
     'hepan': _zhongyaPortraitPool,
-    'jie': _zhongyaPortraitPool,
+    'jie': _caoyuanPortraitPool,
     'kala': _zhongyaPortraitPool,
     'kangju': _zhongyaPortraitPool,
     'kawusi': _zhongyaPortraitPool,
@@ -645,8 +673,8 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'yuzhou': _zhongyuanPortraitPool,
     // 'qin': _zhongyuanPortraitPool,  // qin 有专属池
     'qing': _zhongyuanPortraitPool,
-    'quanrong': _zhongyuanPortraitPool,
-    'shang': _yinshangPortraitPool,
+    'quanrong': _caoyuanPortraitPool,
+    'shang': _xianqinPortraitPool,
     'shangzhou': _zhongyuanPortraitPool,
     'shen': _zhongyuanPortraitPool,
     'sima_d': _zhongyuanPortraitPool,
@@ -666,12 +694,12 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'yanchuan_d': _zhongyuanPortraitPool,
     'yangshao': _zhongyuanPortraitPool,
     'yao': _zhongyuanPortraitPool,
-    'yin': _yinshangPortraitPool,
+    'yin': _xianqinPortraitPool,
     'yingzhou_d': _zhongyuanPortraitPool,
     'yuan_cj_d': _zhongyuanPortraitPool,
     'zhao': _zhongyuanPortraitPool,
     'zhong': _zhongyuanPortraitPool,
-    'zhou': _zhongyuanPortraitPool,
+    'zhou': _xianqinPortraitPool,
     // 江南 47 势力
     'chu_d': _nanfangPortraitPool,
     'hu_d': _nanfangPortraitPool,
@@ -685,16 +713,16 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'heng': _nanfangPortraitPool,
     'huang_d': _nanfangPortraitPool,
     'jiujiang': _nanfangPortraitPool,
-    'kejia': _nanfangPortraitPool,
+    'kejia': _lingnanPortraitPool,
     'linshihong': _nanfangPortraitPool,
     'liu': _nanfangPortraitPool,
     'lu': _nanfangPortraitPool,
     'lujian': _nanfangPortraitPool,
     'changshaguo': _nanfangPortraitPool,
     'mi_chu': _nanfangPortraitPool,
-    'min': _nanfangPortraitPool,
-    'quanzhou': _nanfangPortraitPool,
-    'ming_zheng': _nanfangPortraitPool,
+    'min': _lingnanPortraitPool,
+    'quanzhou': _lingnanPortraitPool,
+    'ming_zheng': _lingnanPortraitPool,
     'hongzhou': _nanfangPortraitPool,
     'ouyang': _nanfangPortraitPool,
     'ouyue': _nanfangPortraitPool,
@@ -704,7 +732,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'qiufu': _nanfangPortraitPool,
     'ruochu': _nanfangPortraitPool,
     'shanyue': _nanfangPortraitPool,
-    'she_ethnic': _nanfangPortraitPool,
+    'she_ethnic': _lingnanPortraitPool,
     'shuntian': _nanfangPortraitPool,
     'song': _zhaosongPortraitPool,
     'sui': _nanfangPortraitPool,
@@ -780,6 +808,45 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'panjun': _panjunPortraitPool,
 };
 
+/** 据势力首都（1 势力 = 1 据点）解析文化区，供无 FACTION 映射时 fallback */
+function getFactionCultureRegion(factionId: string): RegionType | undefined {
+    if (_factionCultureRegionCache.has(factionId)) {
+        return _factionCultureRegionCache.get(factionId);
+    }
+    const city = CITIES_V2.find(c => c.factionId === factionId);
+    if (!city) {
+        _factionCultureRegionCache.set(factionId, undefined);
+        return undefined;
+    }
+    // 据点已有 region 时直接用，避免坐标多边形判定
+    const region = city.region && REGION_ORDER.includes(city.region as RegionType)
+        ? (city.region as RegionType)
+        : getCityRegion({
+            latitude: city.lat,
+            longitude: city.lng,
+            region: city.region,
+        });
+    _factionCultureRegionCache.set(factionId, region);
+    return region;
+}
+
+/** 势力专属池 → 否则文化区池 → 否则 undefined（再走单张 field 兜底） */
+function resolvePortraitPool(
+    factionId: string | null | undefined,
+    region?: RegionType,
+): string[] | undefined {
+    if (factionId === 'panjun') return _panjunPortraitPool;
+    if (factionId && FACTION_PORTRAIT_POOLS[factionId]?.length) {
+        return FACTION_PORTRAIT_POOLS[factionId];
+    }
+    const cultureRegion = region ?? (factionId ? getFactionCultureRegion(factionId) : undefined);
+    if (cultureRegion) {
+        const pool = REGION_PORTRAIT_POOLS[cultureRegion];
+        if (pool?.length) return pool;
+    }
+    return undefined;
+}
+
 // ── 立绘资源登记：构建时扫描 public/assets，缺失路径走占位 fallback（避免 404 刷屏）──
 
 const _allPortraitAssetGlob = import.meta.glob<string>(
@@ -847,7 +914,7 @@ export function resolvePortraitAssetPath(
     }
 
     const { factionId, region, role = 'field' } = options ?? {};
-    const factionPool = factionId ? FACTION_PORTRAIT_POOLS[factionId] : undefined;
+    const factionPool = resolvePortraitPool(factionId, region as RegionType | undefined);
     const fromFaction = factionPool?.find(p => portraitAssetExists(p));
     if (fromFaction) return normalizePortraitWebPath(fromFaction);
 
@@ -885,10 +952,13 @@ function pickRandom(arr: string[], exclude?: string): string {
  * 在 Army 创建时调用一次（存入 portraitPath），之后固定不变。
  */
 export function getRandomFactionPortrait(factionId: string): string | undefined {
-    const pool = FACTION_PORTRAIT_POOLS[factionId];
+    const pool = resolvePortraitPool(factionId);
     if (!pool || pool.length === 0) return undefined;
     const picked = pickRandom(pool);
-    return resolvePortraitAssetPath(picked, { factionId });
+    return resolvePortraitAssetPath(picked, {
+        factionId,
+        region: getFactionCultureRegion(factionId),
+    });
 }
 
 /** 按参战单位文化区与军队/守军选默认立绘路径 */
@@ -902,10 +972,11 @@ export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): 
     if (unit.portraitPath && !(excludePath && portraitUrlsEqual(unit.portraitPath, excludePath))) {
         return resolvePortraitAssetPath(unit.portraitPath, resolveOpts);
     }
-    // 守城方：每次从势力立绘池随机选，排除攻方立绘
+    // 守城方：势力池 → 文化区池 → 单张 field 兜底
     const factionId = unit.factionId;
-    if (factionId && FACTION_PORTRAIT_POOLS[factionId]) {
-        return resolvePortraitAssetPath(pickRandom(FACTION_PORTRAIT_POOLS[factionId], excludePath), resolveOpts);
+    const pool = resolvePortraitPool(factionId, region);
+    if (pool?.length) {
+        return resolvePortraitAssetPath(pickRandom(pool, excludePath), resolveOpts);
     }
     return resolvePortraitAssetPath(`${PORTRAIT_ASSETS_DIR}/${region}_${role}.png`, resolveOpts);
 }

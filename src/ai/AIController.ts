@@ -35,7 +35,7 @@ export class AIController {
     /** 共享的行为树根节点（所有军团使用同一棵树结构） */
     private behaviorTree: BTNode;
 
-    /** 系统是否启用 - 默认禁用，避免干扰剧本/事件控制 */
+    /** 系统是否启用 - 默认禁用，避免干扰事件链 / 手动控制 */
     private enabled: boolean = false;
 
     /** 时间分片索引 */

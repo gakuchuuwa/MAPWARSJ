@@ -276,7 +276,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/yinshang/fuhao.png": {
+        "/assets/xianqin/fuhao.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -16

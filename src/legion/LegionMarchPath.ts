@@ -63,7 +63,7 @@ export function findFirstHostileAlongPolyline(
         if (getEuclideanDistance(cpos, path[0]) <= zoc) continue;
         if (minDistanceToPolyline(cpos, path) > zoc) continue;
         const along = distanceAlongPolyline(cpos, path);
-        // 远征/剧本：忽略身后路径上的敌城，避免后方失守时折返「回援」
+        // 远征军团：忽略身后路径上的敌城，避免后方失守时折返「回援」
         if (along < minAlong) continue;
         if (along < bestAlong) {
             bestAlong = along;

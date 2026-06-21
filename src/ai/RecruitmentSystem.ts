@@ -9,7 +9,7 @@
  *      军团兵力的恢复改为**分级战后恢复**（CombatSystem.getPostBattleRecoveryRate：
  *      关10%/小20%/中30%/大40%/野战50%）。
  *      家城失守仍强制回师（行为树 resolveRecaptureTarget，游戏原生行为，所有文化无豁免；
- *      例外：远征 / 剧本军团（shouldSkipHomeRecapture）不回师）。
+ *      例外：远征军团（shouldSkipHomeRecapture）不回师）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
  *      ① 每文化区保底 1 支
  *      ② 优先：视野内、非跟随势力、驻军高的据点
@@ -24,13 +24,6 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, REGION_ORDER, RegionType } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
-import {
-    bindScriptedCampaign,
-    getScriptedCampaignsForYear,
-    getSpawnAtStartCampaigns,
-    shouldSkipFactionRecruitment,
-} from '../legion/LegionSpawnPolicy';
-import type { ScriptedCampaign } from '../data/ScriptedCampaigns';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -46,8 +39,6 @@ export class RecruitmentSystem {
     private siegeManager: SiegeManager | null;
     private seasonTimer: number = 0;
     private hasRunInitialSpawn = false;
-    /** 已登场剧本 id（防重复出兵） */
-    private spawnedScriptedCampaignIds: Set<string> = new Set();
     /** 每季募兵后分批刷新城市标签，避免一帧更新 600+ DOM 卡顿 */
     private pendingLabelCityIds: Set<string> = new Set();
     private static readonly LABEL_UPDATES_PER_FRAME = 20;
@@ -77,102 +68,44 @@ export class RecruitmentSystem {
 
         this.legionManager.trimLegionsToCap();
 
-        // 剧本军团先生成（占住出生城，普通募兵据此自动跳过该城）
-        this.spawnScriptedCampaigns();
-        // 同年 spawnYear 登场（非 spawnAtStart）的剧本
-        this.spawnScriptedCampaignsForYear(this.getCurrentYear());
-
         const cities = this.cityManager.getCities();
         gameLog('recruitment', '💂 [募兵] 播放开始 — 首次出兵（分帧异步）');
 
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
         const candidates = this.buildSpawnPlan(cities);
 
-        // 每帧最多生成 5 支，分帧完成避免 INP 卡顿
-        const BATCH = 5;
+        // 错峰生成：每隔 INITIAL_SPAWN_INTERVAL_MS 放行 INITIAL_SPAWN_PER_TICK 支，
+        // 让军团陆续登场而非同帧爆出（直播观感 + 避免 INP 卡顿）。
+        const perTick = Math.max(1, GameConfig.LEGION.INITIAL_SPAWN_PER_TICK);
+        const intervalMs = GameConfig.LEGION.INITIAL_SPAWN_INTERVAL_MS;
         let idx = 0;
 
-        const spawnBatch = () => {
-            const deadline = performance.now() + 8; // 最多占用 8ms/帧
-            while (idx < candidates.length && performance.now() < deadline) {
-                if (this.legionManager.getActiveLegionCount() >= maxLegions) break;
-
+        const spawnTick = () => {
+            let spawnedThisTick = 0;
+            while (
+                idx < candidates.length &&
+                spawnedThisTick < perTick &&
+                this.legionManager.getActiveLegionCount() < maxLegions
+            ) {
                 const { city, armySize } = candidates[idx++];
                 if (this.cityHasActiveLegion(city.id)) continue; // 再次确认
 
                 const newLegion = this.spawnCandidate(city, armySize);
                 if (!newLegion) continue;
+                spawnedThisTick++;
                 (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
             }
 
-            // 还有剩余候选且未达上限，下一帧继续
+            // 还有剩余候选且未达上限，错峰等待下一批
             if (idx < candidates.length && this.legionManager.getActiveLegionCount() < maxLegions) {
-                requestAnimationFrame(spawnBatch);
+                setTimeout(spawnTick, intervalMs);
             } else {
                 gameLog('recruitment', `💂 [募兵] 首次出兵完成，共 ${this.legionManager.getActiveLegionCount()} 支军团`);
                 (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
             }
         };
 
-        requestAnimationFrame(spawnBatch);
-    }
-
-    /**
-     * 剧本军团（2026-06-12）：开局即出征的剧本（如白起秦锐士→邯郸）。
-     * 剧本军团：数据初始设定，与据点驻军无关（不读、不扣 city.troops）。
-     */
-    private spawnScriptedCampaigns(): void {
-        if (!GameConfig.SYSTEM.ENABLE_SCRIPTED_CAMPAIGNS) return;
-        for (const campaign of getSpawnAtStartCampaigns()) {
-            this.trySpawnScriptedCampaign(campaign);
-        }
-    }
-
-    /** 指定年份登场（spawnYear，非 spawnAtStart） */
-    public onScriptedCampaignYear(year: number): void {
-        this.spawnScriptedCampaignsForYear(year);
-    }
-
-    private spawnScriptedCampaignsForYear(year: number): void {
-        if (!GameConfig.SYSTEM.ENABLE_SCRIPTED_CAMPAIGNS) return;
-        for (const campaign of getScriptedCampaignsForYear(year)) {
-            this.trySpawnScriptedCampaign(campaign);
-        }
-    }
-
-    private trySpawnScriptedCampaign(campaign: ScriptedCampaign): boolean {
-        if (this.spawnedScriptedCampaignIds.has(campaign.id)) return false;
-
-        const spawnCity = this.cityManager.getCity(campaign.spawnCityId);
-        if (!spawnCity || spawnCity.factionId !== campaign.factionId) return false;
-        if (this.cityHasActiveLegion(spawnCity.id)) return false;
-
-        const legion = this.legionManager.createArmy({
-            name: campaign.eliteName,
-            factionId: campaign.factionId,
-            position: { lat: spawnCity.latitude, lng: spawnCity.longitude },
-            troops: campaign.troops,
-            sourceCityId: campaign.spawnCityId,
-        });
-        if (!legion) return false;
-
-        bindScriptedCampaign(legion, campaign, (id) => this.cityManager.getCity(id));
-        this.spawnedScriptedCampaignIds.add(campaign.id);
-        this.queueCityLabel(campaign.spawnCityId);
-
-        const targetCity = legion.expeditionTargetCityId
-            ? this.cityManager.getCity(legion.expeditionTargetCityId)
-            : null;
-        gameLog(
-            'expedition',
-            `🎬 [剧本] ${campaign.generalName} 率【${campaign.eliteName}】（${legion.getTroops()} 兵）自 ${spawnCity.name} 出征，首目标【${targetCity?.name ?? '?'}】`,
-        );
-        return true;
-    }
-
-    private getCurrentYear(): number {
-        const game = (window as { game?: { timeSystem?: { getYear(): number } } }).game;
-        return game?.timeSystem?.getYear() ?? GameConfig.TIME.TIMELINE_START_YEAR;
+        spawnTick();
     }
 
     public update(gameDelta: number): void {
@@ -279,8 +212,6 @@ export class RecruitmentSystem {
         for (const city of cities) {
             if (!city.factionId || city.factionId === 'panjun') continue;
             if (!spawnTypes.includes(city.type)) continue;
-            // 有剧本的势力由 LegionSpawnPolicy 专管出兵，普通募兵跳过
-            if (shouldSkipFactionRecruitment(city.factionId)) continue;
             if (this.cityHasActiveLegion(city.id)) continue;
             if (this.isCityGarrisonCommitted(city.id)) continue;
 
@@ -327,9 +258,12 @@ export class RecruitmentSystem {
         }
 
         // 第二段（优先）：视野内、非跟随势力、驻军高（已按驻军排序）。
+        // 加视野配额：单次最多塞 VIEWPORT_SPAWN_QUOTA 支进镜头，避免开局一屏爆出十几支；
+        // 余量留给第三段从全图高兵据点分散补足。
         const followedFactionId = this.getFollowedFactionId();
+        let viewportQuota = GameConfig.LEGION.VIEWPORT_SPAWN_QUOTA;
         for (const candidate of candidates) {
-            if (remaining <= 0) break;
+            if (remaining <= 0 || viewportQuota <= 0) break;
             if (selectedCityIds.has(candidate.city.id)) continue;
             if (!candidate.inViewport) continue;
             if (followedFactionId && candidate.city.factionId === followedFactionId) continue;
@@ -337,6 +271,7 @@ export class RecruitmentSystem {
             selected.push(candidate);
             selectedCityIds.add(candidate.city.id);
             remaining--;
+            viewportQuota--;
         }
 
         // 第三段：余量给全图驻军最高的据点（候选已按驻军降序）。

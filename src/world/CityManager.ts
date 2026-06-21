@@ -649,8 +649,8 @@ export class CityManager {
         }
     }
 
-    public stopSiegeEffect(cityId: string): void {
-        this.siegeEffectRenderer.stopEffect(cityId);
+    public stopSiegeEffect(cityId: string, immediate = false): void {
+        this.siegeEffectRenderer.stopEffect(cityId, immediate);
     }
 
     // Road / Path Utils

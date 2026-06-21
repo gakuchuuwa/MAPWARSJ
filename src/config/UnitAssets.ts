@@ -38,7 +38,7 @@ export const SPRITE_PATHS = {
     // [NEW] General Portraits (Mapped by General ID)
     GENERAL_PORTRAITS: {
         'default': '/assets/zhongyuan/CENTRAL_field.png',  // TODO: 待替换
-        // ── 01秦朝剧本立绘 ──
+        // ── 秦势力将领立绘 ──
         'baiqi': '/assets/qin/baiqi.png',
         // ── 02 大唐将领 ──
         'lishimin': '/assets/litang/lishimin.png',
@@ -59,10 +59,10 @@ export const SPRITE_PATHS = {
         'zulijunshi': '/assets/riben/zulijunshi.png',
         'tiemuer': '/assets/zhongya/tiemuer.png',
         'nalixuan': '/assets/dianmian/nalixuan.png',
-        'fuhao': '/assets/yinshang/fuhao.png',
+        'fuhao': '/assets/xianqin/fuhao.png',
         'lvbu': '/assets/zhongyuan/lvbu.png',
         'hanxin': '/assets/liuhan/hanxin.png',
-        'wuqi': '/assets/zhou/wuqi.png',
+        'wuqi': '/assets/xianqin/wuqi.png',
         'nuerhachi': '/assets/dongbei/nuerhachi.png',
         'jinyixin': '/assets/chaoxian/jinyixin.png',
         'benduozhongsheng': '/assets/riben/benduozhongsheng.png',
