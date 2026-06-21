@@ -37,7 +37,7 @@ export interface FactionGeneral {
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     qin: { generalId: 'qin_baiqi', generalName: '白起', portrait: '/assets/qin/qin_baiqi.png' },
     tang: { generalId: 'tang_lishimin', generalName: '李世民', portrait: '/assets/litang/tang_lishimin.png' },
-    wuzhou_d: { generalId: 'wuzhou_d_wangxiaojie', generalName: '王孝杰', portrait: '/assets/wuzhou/wuzhou_d_wangxiaojie.png' },
+    wuzhou_d: { generalId: 'wuzhou_d_wuzetian', generalName: '武则天', portrait: '/assets/wuzhou/wuzhou_d_wuzetian.png' },
         ming_d: { generalId: 'ming_d_yuqian', generalName: '于谦', portrait: '/assets/daming/ming_d_yuqian.png' },
     jinling: { generalId: 'jinling_tandaoji', generalName: '檀道济', portrait: '/assets/jiangnan/jinling_tandaoji.png' },
     guangzhou: { generalId: 'guangzhou_liuyin', generalName: '刘隐', portrait: '/assets/lingnan/guangzhou_liuyin.png' },
@@ -61,7 +61,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     quanzhou: { generalId: 'quanzhou_liucongxiao', generalName: '留从效', portrait: '/assets/jiangnan/quanzhou_liucongxiao.png' },
     han_d: { generalId: 'han_d_hanxin', generalName: '韩信', portrait: '/assets/liuhan/han_d_hanxin.png' },
     wei: { generalId: 'wei_wuqi', generalName: '吴起', portrait: '/assets/xianqin/wei_wuqi.png' },
-    manzhou_d: { generalId: 'manzhou_d_duergan', generalName: '多尔衮', portrait: '/assets/dongbei/manzhou_d_duergan.png' },
+    manzhou_d: { generalId: 'manzhou_d_duergan', generalName: '多尔衮', portrait: '/assets/manqing/manzhou_d_duergan.png' },
     xinluo: { generalId: 'xinluo_jinyixin', generalName: '金庾信', portrait: '/assets/chaoxian/xinluo_jinyixin.png' },
     edo: { generalId: 'edo_dechuangjiakang', generalName: '德川家康', portrait: '/assets/riben/edo_dechuangjiakang.png' },
     seljuq: { generalId: 'seljuq_sangjiaer', generalName: '桑贾尔', portrait: '/assets/zhongya/seljuq_sangjiaer.png' },
@@ -760,7 +760,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     qianzhou: { generalId: 'qianzhou_lisheng', generalName: '李晟', portrait: '/assets/zhongyuan/qianzhou_lisheng.png' },
     wuyue: { generalId: 'wuyue_qianliu', generalName: '钱镠', portrait: '/assets/jiangnan/wuyue_qianliu.png' },
 
-    song: { generalId: 'song_zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhongyuan/song_zhaokuangyin.png' },
+    song: { generalId: 'song_zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhaosong/song_zhaokuangyin.png' },
     chuzhou_d: { generalId: 'chuzhou_d_dugao', generalName: '杜杲', portrait: '/assets/jiangnan/chuzhou_d_dugao.png' },
     xiyuduhu: { generalId: 'xiyuduhu_banchao', generalName: '班超', portrait: '/assets/xiyu/xiyuduhu_banchao.png' },
 };
