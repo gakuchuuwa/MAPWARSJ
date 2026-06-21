@@ -411,8 +411,28 @@ export const DisbandIntoHome = new Action('DisbandIntoHome', (ctx) => {
     );
 
     clearStrategicTarget(ctx);
-    army.disband();
+    army.disband(); // 解散立即消失（不留尸体）
     ctx.legionManager.removeArmy(army);
+    return BTStatus.SUCCESS;
+});
+
+/** 本城是否正被攻打（围城/在途/排队） */
+export const IsHomeUnderAttack = new Condition('IsHomeUnderAttack', (ctx) => {
+    const homeId = getArmyOriginCityId(ctx.army);
+    return !!homeId && ctx.legionManager.isCityUnderAttack(homeId);
+});
+
+/** 本城守城战进行中：加入守城；敌军尚在途/排队则原地待命，均不解散 */
+export const DefendHome = new Action('DefendHome', (ctx) => {
+    const army = ctx.army;
+    const homeId = getArmyOriginCityId(army);
+    if (!homeId) return BTStatus.FAILURE;
+    if (ctx.legionManager.tryJoinCityDefense(army, homeId)) {
+        const homeName = ctx.cityManager.getCity(homeId)?.name ?? homeId;
+        btLog(ctx, `defend_home:${homeId}`, `[AI] ${army.name}（残兵）加入【${homeName}】守城战`);
+        return BTStatus.SUCCESS;
+    }
+    army.stopMovement?.(); // 敌军在途、尚未开打 → 原地待命，不解散
     return BTStatus.SUCCESS;
 });
 
@@ -462,7 +482,14 @@ const attackSequence = new Sequence('AttackSequence', [ensureTarget, approachOrS
 const retreatWeakLegion = new Sequence('RetreatWeakLegion', [
     IsWeakLegion,
     new Selector('HomeOrMarch', [
-        new Sequence('DisbandAtHome', [IsAtHomeCity, DisbandIntoHome]),
+        // 已抵家：本城在战 → 加入守城（先战斗）；否则解散并入
+        new Sequence('AtHome', [
+            IsAtHomeCity,
+            new Selector('DefendOrDisband', [
+                new Sequence('DefendIfSieged', [IsHomeUnderAttack, DefendHome]),
+                DisbandIntoHome,
+            ]),
+        ]),
         MarchHome,
     ]),
 ]);

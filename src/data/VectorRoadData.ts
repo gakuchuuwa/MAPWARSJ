@@ -18986,31 +18986,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "伊逻卢城-轮台",
-                type: "road",
-                id: "road_city_yiluolucheng_city_luntai_1780164347467",
-                startConnection: "city_yiluolucheng",
-                endConnection: "city_luntai"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [82.93, 41.72],
-                    [83.163946, 41.72931],
-                    [83.234061, 41.725185],
-                    [83.38254, 41.745807],
-                    [83.460904, 41.749932],
-                    [83.510397, 41.766429],
-                    [83.584637, 41.782927],
-                    [83.73724, 41.799425],
-                    [83.794982, 41.811798],
-                    [84.25, 41.77],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "伊逻卢城-三重城",
                 type: "road",
                 id: "road_city_yiluolucheng_city_dawushenkate_1780164352303",
@@ -19742,37 +19717,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [116.580014, 27.05874],
                     [116.580014, 27.005122],
                     [118.26, 27.12],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "长安-邠州",
-                type: "road",
-                id: "road_city_changan_city_binzhou2_1780268741169",
-                startConnection: "city_changan",
-                endConnection: "city_binzhou2"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [108.93, 34.27],
-                    [108.764234, 34.292976],
-                    [108.694119, 34.346594],
-                    [108.702368, 34.379589],
-                    [108.727115, 34.40846],
-                    [108.780732, 34.437331],
-                    [108.793105, 34.490949],
-                    [108.627371, 34.613593],
-                    [108.618663, 34.615749],
-                    [108.566173, 34.686591],
-                    [108.515636, 34.729031],
-                    [108.482188, 34.783637],
-                    [108.264903, 34.902533],
-                    [108.224864, 34.921413],
-                    [108.20753, 34.93476],
-                    [108.08, 35.03],
                 ]
             }
         },
@@ -32761,6 +32705,91 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [60.991051765521185, 36.42117825710062],
                     [61.04054483212275, 36.44180036818461],
                     [61.1577, 36.5449],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "长安-奉天",
+                type: "road",
+                id: "road_city_changan_city_fengtian_1782039614154",
+                startConnection: "city_changan",
+                endConnection: "city_fengtian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [108.93, 34.27],
+                    [108.76423430267747, 34.29297639323352],
+                    [108.6033818362224, 34.412584637520624],
+                    [108.56213761405442, 34.4373311708214],
+                    [108.51676896966967, 34.45382885968859],
+                    [108.44252936976733, 34.47445097077257],
+                    [108.43840494755052, 34.47857539298937],
+                    [108.24, 34.53],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "奉天-新平",
+                type: "road",
+                id: "road_city_fengtian_city_binzhou2_1782039620460",
+                startConnection: "city_fengtian",
+                endConnection: "city_binzhou2"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [108.24, 34.53],
+                    [108.16619308124194, 34.67654765939562],
+                    [108.11670001464039, 34.688920926046],
+                    [108.07133137025562, 34.763160525948344],
+                    [108.06308252582203, 34.78378263703233],
+                    [108.05895810360524, 34.82915128141709],
+                    [108.08, 35.03],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "轮台-它乾城",
+                type: "road",
+                id: "road_city_luntai_city_taqian_1782039777378",
+                startConnection: "city_luntai",
+                endConnection: "city_taqian"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [84.25, 41.77],
+                    [84.05482080184838, 41.840669049971495],
+                    [83.79498220219018, 41.81179809445392],
+                    [83.59, 41.875],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "它乾城-伊逻卢",
+                type: "road",
+                id: "road_city_taqian_city_yiluolucheng_1782039780526",
+                startConnection: "city_taqian",
+                endConnection: "city_yiluolucheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [83.59, 41.875],
+                    [83.38253998051051, 41.74580733898517],
+                    [83.32479806947536, 41.73755849455158],
+                    [83.26705615844021, 41.72518522790119],
+                    [83.1639456030203, 41.72930965011798],
+                    [82.93, 41.72],
                 ]
             }
         },

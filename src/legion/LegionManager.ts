@@ -492,6 +492,16 @@ export class LegionManager {
         return this.siegeManager?.isArmyWaitingSiege?.(armyId) ?? false;
     }
 
+    /** 本城是否正被攻打（围城/在途/排队） */
+    public isCityUnderAttack(cityId: string): boolean {
+        return this.siegeManager?.isCityUnderAttack?.(cityId) ?? false;
+    }
+
+    /** 残兵撤回本城：本城守城战进行中则作为守方加入，成功返回 true */
+    public tryJoinCityDefense(army: Army, cityId: string): boolean {
+        return this.siegeManager?.tryJoinCityDefense?.(army, cityId) ?? false;
+    }
+
     public dequeueArmyFromThirdPartyWaiters(armyId: string): boolean {
         return this.siegeManager?.dequeueArmyFromThirdPartyWaiters?.(armyId) ?? false;
     }

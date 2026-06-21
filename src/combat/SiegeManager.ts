@@ -1186,6 +1186,20 @@ export class SiegeManager {
     }
 
     /**
+     * 残兵撤回本城：若本城正在守城战中，作为守方援军中途加入；成功返回 true。
+     * 无活跃战场（敌军仅在途/排队、尚未开打）时返回 false，由调用方决定待命。
+     */
+    public tryJoinCityDefense(army: Army, cityId: string): boolean {
+        const battle = this.activeSieges.get(cityId);
+        if (!battle || battle.isOver) return false;
+        const city = this.cityManager.getCity(cityId);
+        if (!city) return false;
+        if (army.getFactionId() !== battle.getDefenderFactionId()) return false;
+        const cityPos = cityToLatLng(city);
+        return tryJoinLegionToBattle(battle, army, false, cityPos, this.getReinforcementJoinDeps());
+    }
+
+    /**
      * 复国等外部占城：中止该城攻城战/排队，不触发胜负结算与自动占城。
      */
     public abortCitySiege(cityId: string): void {

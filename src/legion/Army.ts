@@ -524,7 +524,7 @@ export class Army implements IBattleUnit {
         return newArmy;
     }
 
-    /** 解散：兵力已并入出发城，军团干净消失（立即移除、无尸体、无覆没播报） */
+    /** 解散：兵力已并入出发城，军团立即消失（无尸体、无覆没播报；区别于战死的 destroy） */
     public disband(): void {
         this.isDestroyed = true;
         this.isExternalCombat = false;

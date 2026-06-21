@@ -989,7 +989,7 @@ function serverParsePortraitAdjustExport(text: string): {
     };
 }
 
-/** 将调校数据写回 portrait_adjust.ts（保留文件头注释与类型导出） */
+/** 将调校数据写回 portrait_adjust.ts（保留文件头注释与类型导出；F2 脸椭圆常量在 PortraitAdjust.ts） */
 function serverFormatPortraitAdjustFile(data: {
     folders?: Record<string, unknown>;
     images?: Record<string, unknown>;

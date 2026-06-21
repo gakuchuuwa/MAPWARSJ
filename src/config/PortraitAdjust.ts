@@ -13,6 +13,48 @@ export const PORTRAIT_ADJUST_NEUTRAL: Required<PortraitAdjustValues> = {
     offsetY: 0,
 };
 
+/**
+ * F2 准星 / 脸椭圆预览（全局统一，左右共用；不读 folderGuides，避免左右两势标尺不一致）
+ * 不在 portrait_adjust.ts，避免保存调校时被 vite 模板覆盖。
+ */
+export const PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y = 0.23;
+export const PORTRAIT_GUIDE_PREVIEW_CHIN_LINE_Y = 0.34;
+export const PORTRAIT_GUIDE_PREVIEW_CHEST_LINE_X = 0.5;
+/** 脸椭圆宽（归一化，相对 img 布局宽）— 窄 */
+export const PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_W = 0.29;
+/** 脸椭圆高 — 长（略收，圈更小） */
+export const PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_H = 0.30;
+/** 椭圆中心在眼线下方偏移（正值=往下；0=与眼线同高为基准） */
+export const PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DY = 0;
+/** 椭圆中心相对胸线向右（PNG 朝右，脸略偏右；wrap scaleX 时随层镜像） */
+export const PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DX = 0.07;
+
+export interface PortraitCorrectorCrosshairGuide {
+    eyeLineY: number;
+    chinLineY: number;
+    chestLineX: number;
+    ovalW: number;
+    ovalH: number;
+    ovalCx: number;
+    ovalCy: number;
+}
+
+/** F2 准星唯一入口：左右立绘共用同一套标线 */
+export function getPortraitCorrectorCrosshairGuide(): PortraitCorrectorCrosshairGuide {
+    const eyeLineY = PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y;
+    const chinLineY = PORTRAIT_GUIDE_PREVIEW_CHIN_LINE_Y;
+    const chestLineX = PORTRAIT_GUIDE_PREVIEW_CHEST_LINE_X;
+    return {
+        eyeLineY,
+        chinLineY,
+        chestLineX,
+        ovalW: PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_W,
+        ovalH: PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_H,
+        ovalCx: chestLineX + PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DX,
+        ovalCy: eyeLineY + PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DY,
+    };
+}
+
 /** 从立绘 URL 提取文件夹键，如 "/assets/daming/" */
 export function extractPortraitFolder(portraitPath: string): string | undefined {
     const m = portraitPath.match(/^(\/assets\/[^/]+\/)/);

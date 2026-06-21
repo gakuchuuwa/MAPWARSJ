@@ -340,6 +340,51 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": 16
+        },
+        "/assets/liuhan/hanxin.png": {
+            "scale": 1.08,
+            "offsetX": 10,
+            "offsetY": 0
+        },
+        "/assets/shuguo/73d89ec3-c8e8-4137-9c54-b42c06a5ef32.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/litang/litang.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/zhongyuan/c8c18fd5-7364-4e09-85a1-eebd5888a51a.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/zhongya/tiemuer_tiemuer.png": {
+            "scale": 1.1,
+            "offsetX": -3,
+            "offsetY": 7
+        },
+        "/assets/zhongya/seljuq_sangjiaer.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/xianqin/3f98a47c-3b4e-43d9-ab99-234c592cffe3.png": {
+            "scale": 1.36,
+            "offsetX": 13,
+            "offsetY": -55
+        },
+        "/assets/xianqin/b735288e-bbc4-4db6-ad6e-dbb20cce25bf.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/zhongyuan/468386ae-8837-4c77-b85b-0b786241a098.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -21
         }
     },
     "folderGuides": {

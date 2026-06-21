@@ -13,7 +13,12 @@ import {
 } from '../config/portrait_defaults';
 import { resolveUnitCultureRegion } from '../systems/CultureCombat';
 import { alignPortraitCenterFromUrl } from '../config/portraitAutoFit';
-import { applyPortraitAdjustToElement, extractPortraitFolder, resolvePortraitAdjust } from '../config/PortraitAdjust';
+import {
+    applyPortraitAdjustToElement,
+    extractPortraitFolder,
+    getPortraitCorrectorCrosshairGuide,
+    resolvePortraitAdjust,
+} from '../config/PortraitAdjust';
 import {
     DEFAULT_PORTRAIT_ADJUST,
     PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X,
@@ -1294,7 +1299,19 @@ export class CombatUI {
         this.correctorPanel.style.display = 'flex';
         this.loadCorrectorDraft();
         this.highlightCorrectorSide();
-        this.updateCorrectorCrosshair();
+        this.scheduleCorrectorCrosshairRefresh();
+    }
+
+    /** 立绘 img 布局盒就绪后再铺准星（避免 offset 为 0） */
+    private scheduleCorrectorCrosshairRefresh(): void {
+        const refresh = () => this.updateCorrectorCrosshair();
+        refresh();
+        requestAnimationFrame(refresh);
+        for (const img of [this.leftPortrait, this.rightPortrait]) {
+            if (!img.complete) {
+                img.addEventListener('load', refresh, { once: true });
+            }
+        }
     }
 
     private closeCorrector(): void {
@@ -1323,6 +1340,7 @@ export class CombatUI {
         this.correctorData.images[path] = { ...this.correctorDraft };
         applyPortraitAdjustToElement(this.correctorImg(), path, this.correctorData);
         this.renderCorrectorReadout();
+        this.updateCorrectorCrosshair();
     }
 
     private nudgeCorrector(dScale: number, dx: number, dy: number): void {
@@ -1428,11 +1446,11 @@ export class CombatUI {
     private buildCrosshair(): HTMLDivElement {
         const ch = document.createElement('div');
         ch.className = 'pt-crosshair';
-        ch.innerHTML = '<div class="ch-eye"></div><div class="ch-mid"></div><div class="ch-chest"></div>';
+        ch.innerHTML = '<div class="ch-face"></div><div class="ch-eye"></div><div class="ch-chin"></div><div class="ch-mid"></div>';
         return ch;
     }
 
-    /** 在两张立绘上铺十字准星：竖线=图中心(50%)，横线=眼线(24%)，作为手动对齐参照 */
+    /** 在两张立绘上铺准星：脸椭圆 + 眼线 + 胸线（手动对齐「大小差不多」） */
     private updateCorrectorCrosshair(): void {
         const pairs: Array<{ wrap: HTMLDivElement; img: HTMLImageElement; side: 'left' | 'right' }> = [
             { wrap: this.leftPortraitWrap, img: this.leftPortrait, side: 'left' },
@@ -1448,17 +1466,34 @@ export class CombatUI {
             const show = this.correctorOpen && this.correctorCrosshairOn && img.offsetWidth > 0;
             ch.style.display = show ? 'block' : 'none';
             if (!show) continue;
-            const path = this.srcToPath(img);
-            const folder = extractPortraitFolder(path) ?? '';
-            const guide = this.correctorData.folderGuides?.[folder];
-            const eyePct = ((guide?.eyeLineY ?? PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y) * 100).toFixed(1);
-            const chestPct = ((guide?.chestLineX ?? PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X) * 100).toFixed(1);
+            if (!ch.querySelector('.ch-chin')) {
+                const chin = document.createElement('div');
+                chin.className = 'ch-chin';
+                const mid = ch.querySelector('.ch-mid');
+                if (mid) ch.insertBefore(chin, mid);
+                else ch.appendChild(chin);
+            }
+            const g = getPortraitCorrectorCrosshairGuide();
+            const eyePct = (g.eyeLineY * 100).toFixed(1);
+            const chinPct = (g.chinLineY * 100).toFixed(1);
+            const chestPct = (g.chestLineX * 100).toFixed(1);
+            const ovalW = g.ovalW * 100;
+            const ovalH = g.ovalH * 100;
+            const ovalCx = g.ovalCx * 100;
+            const ovalCy = g.ovalCy * 100;
+            const chFace = ch.querySelector('.ch-face') as HTMLElement | null;
             const chEye = ch.querySelector('.ch-eye') as HTMLElement | null;
+            const chChin = ch.querySelector('.ch-chin') as HTMLElement | null;
             const chMid = ch.querySelector('.ch-mid') as HTMLElement | null;
-            const chChest = ch.querySelector('.ch-chest') as HTMLElement | null;
+            if (chFace) {
+                chFace.style.left = `${ovalCx - ovalW / 2}%`;
+                chFace.style.top = `${ovalCy - ovalH / 2}%`;
+                chFace.style.width = `${ovalW}%`;
+                chFace.style.height = `${ovalH}%`;
+            }
             if (chEye) chEye.style.top = `${eyePct}%`;
+            if (chChin) chChin.style.top = `${chinPct}%`;
             if (chMid) chMid.style.left = `${chestPct}%`;
-            if (chChest) chChest.style.top = '50%';
             // 贴合 img 的未变换布局盒（缩放只动 transform，不动 offset*，故准星保持固定参照）
             ch.style.left = `${img.offsetLeft}px`;
             ch.style.top = `${img.offsetTop}px`;
@@ -1541,8 +1576,8 @@ export class CombatUI {
                 ${btn('关闭 (Esc)', true)}
             </div>
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
-                准星：<span style="color:#ff9a7a;">橙竖线=胸线</span>，<span style="color:#6ec8ff;">蓝横线=眼线</span>，<span style="color:#9fd4a8;">绿横线=画框中线</span>。居中只平移、<b>不改缩放</b>；半身像裁切不一，勿用底缘对齐<br>
-                方向键微调位置（Shift=快），<b>[ ]</b> 手动缩放，Tab 换左右，Esc 关闭；调完<b>自动保存</b>
+                准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝线=眼线</span>，<span style="color:#88e0d0;">青线=下巴线</span>，<span style="color:#ff9a7a;">橙线=胸线</span>。眼贴蓝线、下巴贴青线，<b>[ ]</b> 缩放进椭圆<br>
+                方向键微调位置（Shift=快），↔ 居中只平移不改缩放，Tab 换左右，Esc 关闭；调完<b>自动保存</b>
             </div>
             <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
         `;
@@ -1555,17 +1590,23 @@ export class CombatUI {
             #portrait-corrector-panel .cc-btn:hover { background:#3a342c; }
             #portrait-corrector-panel .cc-btn-primary { background:#5a4a28;border-color:#8a7038;color:#fff8e8; }
             .pt-crosshair { position:absolute; pointer-events:none; z-index:6; }
+            .pt-crosshair .ch-face {
+                position:absolute; box-sizing:border-box;
+                border:2px dashed #e8c878; border-radius:50%;
+                background:rgba(232,200,120,0.07);
+                box-shadow:0 0 10px rgba(232,200,120,0.45);
+            }
             .pt-crosshair .ch-eye {
-                position:absolute; left:0; right:0; top:24%; height:0;
+                position:absolute; left:0; right:0; height:0;
                 border-top:2px dashed #6ec8ff; box-shadow:0 0 6px rgba(96,196,255,0.85);
             }
-            .pt-crosshair .ch-mid {
-                position:absolute; top:0; bottom:0; left:50%; width:0;
-                border-left:2px dashed #ff9a7a; box-shadow:0 0 6px rgba(255,120,80,0.85);
+            .pt-crosshair .ch-chin {
+                position:absolute; left:0; right:0; height:0;
+                border-top:2px dashed #88e0d0; box-shadow:0 0 6px rgba(120,220,200,0.8);
             }
-            .pt-crosshair .ch-chest {
-                position:absolute; left:0; right:0; top:50%; height:0;
-                border-top:2px dashed #9fd4a8; box-shadow:0 0 6px rgba(120,220,160,0.75);
+            .pt-crosshair .ch-mid {
+                position:absolute; top:0; bottom:0; width:0;
+                border-left:2px dashed #ff9a7a; box-shadow:0 0 6px rgba(255,120,80,0.85);
             }
         `;
         document.head.appendChild(style);
