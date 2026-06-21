@@ -524,6 +524,34 @@ export class Army implements IBattleUnit {
         return newArmy;
     }
 
+    /** 解散：兵力已并入出发城，军团干净消失（立即移除、无尸体、无覆没播报） */
+    public disband(): void {
+        this.isDestroyed = true;
+        this.isExternalCombat = false;
+        this.isAttacking = false;
+        this.currentBattleType = null;
+        this.postBattleRestRemaining = 0;
+        if (this.renderer) {
+            this.renderer.stopAttack();
+        }
+        if (this.spatialRegistry && this.lastRegisteredPos) {
+            this.spatialRegistry.unregisterArmy(this, this.lastRegisteredPos.lat, this.lastRegisteredPos.lng);
+            this.lastRegisteredPos = null;
+        }
+        if (this.marker) {
+            this.marker.remove();
+            this.marker = null;
+        }
+        if (this.label) {
+            this.label.remove();
+            this.label = null;
+        }
+        if (this.renderer) {
+            this.renderer.destroy();
+            this.renderer = null;
+        }
+    }
+
     public destroy(): void {
         this.isDestroyed = true;
         this.isExternalCombat = false;

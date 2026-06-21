@@ -9,7 +9,7 @@ import {
     hasPortraitImageOverride,
     resolvePortraitAdjust,
 } from '../config/PortraitAdjust';
-import { autoFitPortraitFromUrl } from '../config/portraitAutoFit';
+import { alignPortraitCenterFromUrl } from '../config/portraitAutoFit';
 
 import {
     DEFAULT_PORTRAIT_ADJUST,
@@ -117,8 +117,8 @@ app.innerHTML = `
         <div class="pt-save-bar-hint">滑块与标线调好后，点「保存」一并写入 portrait_adjust.ts（游戏内 F5 生效）</div>
         <div class="pt-save-bar-actions">
           <button type="button" id="pt-save-bottom" class="pt-btn pt-btn-primary pt-btn-large pt-btn-save">保存</button>
-          <button type="button" id="pt-autofit-folder" class="pt-btn pt-btn-large">🪄 本文件夹自动校正</button>
-          <button type="button" id="pt-autofit-all" class="pt-btn pt-btn-large">🪄 全库自动校正</button>
+          <button type="button" id="pt-autofit-folder" class="pt-btn pt-btn-large">↔ 本文件夹批量居中</button>
+          <button type="button" id="pt-autofit-all" class="pt-btn pt-btn-large">↔ 全库批量居中</button>
         </div>
         <div id="pt-autofit-progress" class="pt-autofit-progress"></div>
         <div id="pt-dirty-hint" class="pt-dirty-hint"></div>
@@ -577,14 +577,19 @@ async function saveEverything(): Promise<void> {
     }
 }
 
-/** 对一批图片跑自动校正，写入 adjustData.images，返回 {done, failed} */
+/** 对一批图片跑居中（不改 scale），写入 adjustData.images，返回 {done, failed} */
 async function autoFitImages(images: string[]): Promise<{ done: number; failed: string[] }> {
     const failed: string[] = [];
     let done = 0;
     for (const path of images) {
         const folder = path.match(/^(\/assets\/[^/]+\/)/)?.[1] ?? '';
-        const eyeLineY = getFolderGuide(folder).eyeLineY;
-        const fit = await autoFitPortraitFromUrl(path, eyeLineY);
+        const guide = getFolderGuide(folder);
+        const current = resolvePortraitAdjust(path, adjustData);
+        const fit = await alignPortraitCenterFromUrl(path, {
+            keepScale: current.scale,
+            eyeLineY: guide.eyeLineY,
+            chestLineX: guide.chestLineX,
+        });
         if (fit) {
             adjustData.images = adjustData.images ?? {};
             adjustData.images[path] = fit;
@@ -593,24 +598,23 @@ async function autoFitImages(images: string[]): Promise<{ done: number; failed: 
             failed.push(path);
         }
         els.autofitProgress.textContent =
-            `自动校正中… ${done + failed.length}/${images.length}（成功 ${done}，失败 ${failed.length}）`;
+            `批量居中… ${done + failed.length}/${images.length}（成功 ${done}，失败 ${failed.length}）`;
         // 让出主线程，避免长任务卡 UI
         await new Promise((r) => setTimeout(r, 0));
     }
     return { done, failed };
 }
 
-/** 自动校正一组图片 → 保存 → 刷新界面 */
+/** 批量居中一组图片 → 保存 → 刷新界面 */
 async function runAutoFit(images: string[], label: string): Promise<void> {
     if (images.length === 0) return;
     if (!confirm(
-        `将对${label}共 ${images.length} 张立绘按「轮廓」自动校正并保存。\n\n` +
-        `注意：满幅立绘轮廓占满画框，自动校正几乎不改变（仅对四周有留白的图有效），` +
-        `且会覆盖你在游戏内 F2 手动调好的这些立绘。确定继续？`,
+        `将对${label}共 ${images.length} 张立绘按「轮廓中心 → 画框中心」居中并保存。\n\n` +
+        `仅平移 offset，**不会自动改缩放**。会覆盖这些图在 portrait_adjust 里的单张 offset。确定继续？`,
     )) {
         return;
     }
-    els.autofitProgress.textContent = `自动校正中… 0/${images.length}`;
+    els.autofitProgress.textContent = `批量居中… 0/${images.length}`;
     try {
         const { done, failed } = await autoFitImages(images);
         dirty = true;
@@ -620,11 +624,11 @@ async function runAutoFit(images: string[], label: string): Promise<void> {
         refreshPreview();
         renderImageList();
         const failNote = failed.length ? `，${failed.length} 张读取失败（已跳过）` : '';
-        els.autofitProgress.textContent = `✓ ${label}完成：${done} 张已校正并保存${failNote} · 回游戏 F5 生效`;
-        showSaveToast(`自动校正已保存：${done} 张${failNote}`);
+        els.autofitProgress.textContent = `✓ ${label}完成：${done} 张已居中并保存${failNote} · 回游戏 F5 生效`;
+        showSaveToast(`批量居中已保存：${done} 张${failNote}`);
     } catch (err) {
         els.autofitProgress.textContent = `保存失败：${err}`;
-        showSaveToast(`自动校正保存失败：${err}`, true);
+        showSaveToast(`批量居中保存失败：${err}`, true);
     }
 }
 

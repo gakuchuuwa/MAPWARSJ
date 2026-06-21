@@ -1,9 +1,12 @@
 /**
- * 战斗 UI 默认立绘：按 14 文化区映射到 public/assets/{文化夹}/ 立绘池，随机抽取。
- * 势力专属池见 FACTION_PORTRAIT_POOLS；无映射时 fallback 到 REGION_PORTRAIT_POOLS。
+ * 战斗 UI 立绘 — **三级分配规则（AGENTS.md §十三，AI 必读）**
  *
- * 素材夹约定：一文件夹 = 一文化或一政权包；**同夹内禁止 MD5 相同的 PNG**（审计：npm run portrait:folder-audit）。
- * 跨夹重复不自动删，由池映射决定；同夹重复用 npm run portrait:folder-dedupe 清理。
+ * ① **文化区**：每个据点势力按 cities_v2.region → 从 REGION_PORTRAIT_POOLS 对应文化夹随机。
+ * ② **政权专属**：FACTION_PORTRAIT_POOLS 有映射的势力 → 优先从该政权夹（如 qin/、litang/）随机。
+ * ③ **专属名将**：FactionGenerals.portrait 专图路径 → 无文件则 政权夹随机 → 文化夹随机。
+ *
+ * 禁止：portraits/、avg/、REGION_FIELD_PORTRAIT。
+ * 同夹禁重复：npm run portrait:folder-audit
  *
  * 素材约定：全部 PNG 未镜像时目视**右侧**。
  * CombatUI：左攻不 scaleX、右守 scaleX(-1)，二人相向中央。
@@ -919,8 +922,9 @@ export function portraitAssetExists(path: string | undefined): boolean {
 }
 
 /**
- * 立绘路径 fallback：优先请求路径 → 同目录池 → 势力池 → 文化区 field → 全局占位。
- * 美术未补齐前避免 img 404。
+ * 立绘路径 fallback（AGENTS.md §13.1③）：
+ * 专图存在 → 专图；否则 势力池(FACTION) → 文化区池(REGION) → 中原 → 全库占位。
+ * 名将/军团调用时必须传 factionId，避免跨区乱抽。
  */
 export function resolvePortraitAssetPath(
     requested: string | undefined,

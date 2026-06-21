@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -123,7 +123,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'sushen': '肃慎',
     'chile': '敕勒',
 'rouran': '柔然',
-    'baishui': '白龙',
+    'baishui': '白江',
     'baiji': '百济',
 'tubo': '吐蕃',
     'tujue': '突厥',

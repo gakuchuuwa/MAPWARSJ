@@ -30,8 +30,9 @@ import {
     commitExpeditionEliteLegionName,
     restoreExpeditionLegionName,
 } from '../../data/ExpeditionLegions';
-import { shouldSkipHomeRecapture } from '../../legion/LegionSpawnPolicy';
+import { isCampaignLegion, shouldSkipHomeRecapture } from '../../legion/LegionSpawnPolicy';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
+import { clampCityTroops } from '../../config/CityConfig';
 
 // =====================
 // 条件检查节点
@@ -363,6 +364,83 @@ export const TriggerSiege = new Action('TriggerSiege', (ctx) => {
 export const Idle = new Action('Idle', () => BTStatus.SUCCESS);
 
 // =====================
+// 残兵撤退（据点军团兵力跌破阈值 → 回出发城解散、兵力并入驻军；远征军团不受此限）
+// =====================
+
+/** 兵力 < 阈值、非远征、出发城仍属己方 → 该撤回解散 */
+export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
+    const army = ctx.army;
+    if (army.getTroops() >= GameConfig.LEGION.DISBAND_TROOP_THRESHOLD) return false;
+    if (isCampaignLegion(army)) return false; // 远征军团不解散
+    const homeId = getArmyOriginCityId(army);
+    if (!homeId) return false;
+    const home = ctx.cityManager.getCity(homeId);
+    // 出发城失守 → false，交回 attackSequence 的收复逻辑（打回来后才解散）
+    return !!home && home.factionId === army.getFactionId();
+});
+
+/** 已抵达出发城（到达/攻城半径内） */
+export const IsAtHomeCity = new Condition('IsAtHomeCity', (ctx) => {
+    const army = ctx.army;
+    const homeId = getArmyOriginCityId(army);
+    if (!homeId) return false;
+    const home = ctx.cityManager.getCity(homeId);
+    if (!home) return false;
+    const dist = getEuclideanDistance(army.getPosition(), {
+        lat: home.latitude,
+        lng: home.longitude,
+    });
+    return dist <= SIEGE_REACH_RADIUS;
+});
+
+/** 抵达出发城：兵力并入驻军，军团解散 */
+export const DisbandIntoHome = new Action('DisbandIntoHome', (ctx) => {
+    const army = ctx.army;
+    const homeId = getArmyOriginCityId(army);
+    const home = homeId ? ctx.cityManager.getCity(homeId) : null;
+    if (!home) return BTStatus.FAILURE;
+
+    const merged = army.getTroops();
+    home.troops = clampCityTroops(home.type, (home.troops || 0) + merged);
+    ctx.cityManager.updateCityLabel?.(home.id);
+
+    btLog(
+        ctx,
+        `disband:${home.id}`,
+        `[AI] ${army.name}（残兵 ${merged}）撤回【${home.name}】解散，兵力并入驻军`,
+    );
+
+    clearStrategicTarget(ctx);
+    army.disband();
+    ctx.legionManager.removeArmy(army);
+    return BTStatus.SUCCESS;
+});
+
+/** 撤回出发城（沿路网行军；行军中直接成功，避免每帧重设路径） */
+export const MarchHome = new Action('MarchHome', (ctx) => {
+    const army = ctx.army;
+    const homeId = getArmyOriginCityId(army);
+    if (!homeId) return BTStatus.FAILURE;
+
+    // 锁定回家为战略目标；若原本奔向别处（攻击目标），先停下改道，避免继续冲向敌城
+    if (getStrategicTargetId(ctx) !== homeId) {
+        const home = ctx.cityManager.getCity(homeId);
+        if (!home) return BTStatus.FAILURE;
+        army.stopMovement?.();
+        setStrategicTarget(ctx, homeId, { lat: home.latitude, lng: home.longitude });
+    }
+
+    if (!army.isIdle()) return BTStatus.SUCCESS; // 已在回家路上
+
+    if (ctx.legionManager.moveLegionToCity(army, homeId)) {
+        const homeName = ctx.cityManager.getCity(homeId)?.name ?? homeId;
+        btLog(ctx, `march_home:${homeId}`, `[AI] ${army.name}（残兵）撤回出发城【${homeName}】`);
+        return BTStatus.SUCCESS;
+    }
+    return BTStatus.FAILURE;
+});
+
+// =====================
 // 组合行为树
 // =====================
 
@@ -380,11 +458,21 @@ const ensureTarget = new Selector('EnsureTarget', [HasTarget, FindTarget]);
 
 const attackSequence = new Sequence('AttackSequence', [ensureTarget, approachOrStrike]);
 
+// 残兵撤退：抵家则解散并入，否则撤回出发城
+const retreatWeakLegion = new Sequence('RetreatWeakLegion', [
+    IsWeakLegion,
+    new Selector('HomeOrMarch', [
+        new Sequence('DisbandAtHome', [IsAtHomeCity, DisbandIntoHome]),
+        MarchHome,
+    ]),
+]);
+
 export function createLegionBehaviorTree(): BTNode {
     return new Selector('RootSelector', [
         IsInCombat,
         IsWaitingSiege,
         IsPostBattleResting,
+        retreatWeakLegion,
         attackSequence,
         Idle,
     ]);

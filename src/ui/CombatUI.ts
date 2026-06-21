@@ -12,10 +12,11 @@ import {
     type PortraitSourceFacing,
 } from '../config/portrait_defaults';
 import { resolveUnitCultureRegion } from '../systems/CultureCombat';
+import { alignPortraitCenterFromUrl } from '../config/portraitAutoFit';
 import { applyPortraitAdjustToElement, extractPortraitFolder, resolvePortraitAdjust } from '../config/PortraitAdjust';
-import { autoFitPortraitFromUrl } from '../config/portraitAutoFit';
 import {
     DEFAULT_PORTRAIT_ADJUST,
+    PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X,
     PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y,
     type PortraitAdjustData,
     type PortraitAdjustValues,
@@ -1230,7 +1231,7 @@ export class CombatUI {
     }
 
     // ============================================================
-    // 游戏内立绘校正：战斗中按 F2 暂停 → 一键自动校正 + 方向键微调 → 保存
+    // 游戏内立绘校正：战斗中按 F2 暂停 → 居中 / 恢复默认 + 方向键微调 → 自动保存
     // ============================================================
 
     private setupCorrectorHotkeys(): void {
@@ -1352,17 +1353,63 @@ export class CombatUI {
         }
     }
 
-    private async autoFitCorrectorCurrent(): Promise<void> {
+    private async centerAlignCorrectorCurrent(): Promise<void> {
         const path = this.correctorPath();
         if (!path) return;
-        this.setCorrectorStatus('自动校正中…');
+        this.setCorrectorStatus('居中中…');
         const folder = extractPortraitFolder(path) ?? '';
-        const eyeY = this.correctorData.folderGuides?.[folder]?.eyeLineY ?? PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y;
-        const fit = await autoFitPortraitFromUrl(path, eyeY);
+        const guide = this.correctorData.folderGuides?.[folder];
+        const eyeY = guide?.eyeLineY ?? PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y;
+        const chestX = guide?.chestLineX ?? PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X;
+        const fit = await alignPortraitCenterFromUrl(path, {
+            keepScale: this.correctorDraft.scale,
+            eyeLineY: eyeY,
+            chestLineX: chestX,
+        });
         if (!fit) { this.setCorrectorStatus('⚠ 读取像素失败，请手动微调'); return; }
         this.correctorDraft = { scale: fit.scale, offsetX: fit.offsetX, offsetY: fit.offsetY };
         this.applyCorrectorPreview();
         this.scheduleCorrectorAutoSave();
+        this.setCorrectorStatus('✓ 已居中（缩放未改）');
+    }
+
+    private async resetCorrectorCurrent(): Promise<void> {
+        const path = this.correctorPath();
+        if (!path) return;
+        this.setCorrectorStatus('恢复默认…');
+        if (this.correctorData.images?.[path]) {
+            delete this.correctorData.images[path];
+            if (Object.keys(this.correctorData.images).length === 0) delete this.correctorData.images;
+        }
+        this.loadCorrectorDraft();
+        applyPortraitAdjustToElement(this.correctorImg(), path, this.correctorData);
+        this.renderCorrectorReadout();
+        try {
+            const res = await fetch('/api/portrait-adjust');
+            const disk: PortraitAdjustData = res.ok ? await res.json() : structuredClone(DEFAULT_PORTRAIT_ADJUST);
+            if (disk.images?.[path]) {
+                delete disk.images[path];
+                if (Object.keys(disk.images).length === 0) delete disk.images;
+            }
+            const save = await fetch('/api/save-portrait-adjust', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(disk),
+            });
+            if (!save.ok) throw new Error(`HTTP ${save.status}`);
+            const result = await save.json();
+            if (!result.ok) throw new Error(result.error || '保存失败');
+            if (DEFAULT_PORTRAIT_ADJUST.images?.[path]) {
+                delete DEFAULT_PORTRAIT_ADJUST.images[path];
+                if (Object.keys(DEFAULT_PORTRAIT_ADJUST.images).length === 0) {
+                    delete DEFAULT_PORTRAIT_ADJUST.images;
+                }
+            }
+            const name = path.split('/').pop() ?? path;
+            this.setCorrectorStatus(`✓ 已恢复文件夹默认：${name}`);
+        } catch (err) {
+            this.setCorrectorStatus(`⚠ 恢复失败：${err}`);
+        }
     }
 
     private switchCorrectorSide(): void {
@@ -1381,7 +1428,7 @@ export class CombatUI {
     private buildCrosshair(): HTMLDivElement {
         const ch = document.createElement('div');
         ch.className = 'pt-crosshair';
-        ch.innerHTML = '<div class="ch-eye"></div><div class="ch-mid"></div>';
+        ch.innerHTML = '<div class="ch-eye"></div><div class="ch-mid"></div><div class="ch-chest"></div>';
         return ch;
     }
 
@@ -1401,6 +1448,17 @@ export class CombatUI {
             const show = this.correctorOpen && this.correctorCrosshairOn && img.offsetWidth > 0;
             ch.style.display = show ? 'block' : 'none';
             if (!show) continue;
+            const path = this.srcToPath(img);
+            const folder = extractPortraitFolder(path) ?? '';
+            const guide = this.correctorData.folderGuides?.[folder];
+            const eyePct = ((guide?.eyeLineY ?? PORTRAIT_GUIDE_DEFAULT_EYE_LINE_Y) * 100).toFixed(1);
+            const chestPct = ((guide?.chestLineX ?? PORTRAIT_GUIDE_DEFAULT_CHEST_LINE_X) * 100).toFixed(1);
+            const chEye = ch.querySelector('.ch-eye') as HTMLElement | null;
+            const chMid = ch.querySelector('.ch-mid') as HTMLElement | null;
+            const chChest = ch.querySelector('.ch-chest') as HTMLElement | null;
+            if (chEye) chEye.style.top = `${eyePct}%`;
+            if (chMid) chMid.style.left = `${chestPct}%`;
+            if (chChest) chChest.style.top = '50%';
             // 贴合 img 的未变换布局盒（缩放只动 transform，不动 offset*，故准星保持固定参照）
             ch.style.left = `${img.offsetLeft}px`;
             ch.style.top = `${img.offsetTop}px`;
@@ -1476,14 +1534,15 @@ export class CombatUI {
             <div style="font-size:14px;font-weight:700;color:#f5d78e;">立绘校正（已暂停 · 自动保存）</div>
             <div class="cc-readout" style="font-size:13px;color:#c4b89a;"></div>
             <div class="cc-actions" style="display:flex;flex-wrap:wrap;gap:8px;">
-                ${btn('🪄 自动校正本张')}
+                ${btn('↔ 居中本张')}
+                ${btn('↩ 恢复默认')}
                 ${btn('准星：开')}
                 ${btn('切换左右 (Tab)')}
                 ${btn('关闭 (Esc)', true)}
             </div>
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
-                准星：<span style="color:#ff9a7a;">橙竖线=图中心</span>，<span style="color:#6ec8ff;">蓝横线=眼线24%</span>。把眼睛对到蓝线、脸对橙线，用 <b>[ ]</b> 把头调到差不多大<br>
-                方向键微调位置（Shift=快），Tab 换左右，Esc 关闭；调完<b>自动保存</b>，Enter 可立即保存
+                准星：<span style="color:#ff9a7a;">橙竖线=胸线</span>，<span style="color:#6ec8ff;">蓝横线=眼线</span>，<span style="color:#9fd4a8;">绿横线=画框中线</span>。居中只平移、<b>不改缩放</b>；半身像裁切不一，勿用底缘对齐<br>
+                方向键微调位置（Shift=快），<b>[ ]</b> 手动缩放，Tab 换左右，Esc 关闭；调完<b>自动保存</b>
             </div>
             <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
         `;
@@ -1497,23 +1556,28 @@ export class CombatUI {
             #portrait-corrector-panel .cc-btn-primary { background:#5a4a28;border-color:#8a7038;color:#fff8e8; }
             .pt-crosshair { position:absolute; pointer-events:none; z-index:6; }
             .pt-crosshair .ch-eye {
-                position:absolute; left:0; right:0; top:25%; height:0;
+                position:absolute; left:0; right:0; top:24%; height:0;
                 border-top:2px dashed #6ec8ff; box-shadow:0 0 6px rgba(96,196,255,0.85);
             }
             .pt-crosshair .ch-mid {
                 position:absolute; top:0; bottom:0; left:50%; width:0;
                 border-left:2px dashed #ff9a7a; box-shadow:0 0 6px rgba(255,120,80,0.85);
             }
+            .pt-crosshair .ch-chest {
+                position:absolute; left:0; right:0; top:50%; height:0;
+                border-top:2px dashed #9fd4a8; box-shadow:0 0 6px rgba(120,220,160,0.75);
+            }
         `;
         document.head.appendChild(style);
-        const [autoBtn, crossBtn, switchBtn, closeBtn] =
+        const [centerBtn, resetBtn, crossBtn, switchBtn, closeBtn] =
             Array.from(panel.querySelectorAll('.cc-btn')) as HTMLButtonElement[];
         this.crosshairBtn = crossBtn;
         // 按钮不抢焦点，避免点完按钮后按 Enter 既触发按钮又触发热键
-        for (const b of [autoBtn, crossBtn, switchBtn, closeBtn]) {
+        for (const b of [centerBtn, resetBtn, crossBtn, switchBtn, closeBtn]) {
             b.addEventListener('mousedown', (e) => e.preventDefault());
         }
-        autoBtn.addEventListener('click', () => this.autoFitCorrectorCurrent());
+        centerBtn.addEventListener('click', () => this.centerAlignCorrectorCurrent());
+        resetBtn.addEventListener('click', () => this.resetCorrectorCurrent());
         crossBtn.addEventListener('click', () => this.toggleCorrectorCrosshair());
         switchBtn.addEventListener('click', () => this.switchCorrectorSide());
         closeBtn.addEventListener('click', () => this.closeCorrector());

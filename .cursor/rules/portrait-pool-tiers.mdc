@@ -1,0 +1,31 @@
+---
+description: 战斗立绘三级分配 — 文化区随机、政权夹随机、名将专图→政权→文化 fallback
+alwaysApply: true
+---
+
+# 战斗立绘三级规则（2026-06-21 定）
+
+完整条文见 **AGENTS.md §十三**。改 `portrait_defaults.ts` / `FactionGenerals.ts` / `CombatUI` 前必读。
+
+## 三级（记住顺序）
+
+1. **文化区（默认）** — 每个势力据 `cities_v2.region` 属 14 文化区之一 → 从对应 **文化夹**（如 `zhongyuan/`、`riben/`）**随机**抽立绘。  
+2. **政权专属夹** — 有独立包的政权（秦、唐、武周…）→ 从 **`FACTION_PORTRAIT_POOLS` 指向的政权夹随机**；有映射则 **优先于** 纯文化池。  
+3. **专属名将** — `FactionGenerals.portrait` = 专图路径（可尚未存在）：  
+   - **有文件** → 用专图  
+   - **无文件** → **先** 该将所属 **政权夹随机** → **再** 该势力 **文化夹随机**  
+   - **禁止** 跨区乱抽、禁止删表项「消 404」
+
+## 废弃
+
+- `public/assets/portraits/`、`public/assets/avg/`、`REGION_FIELD_PORTRAIT` — **禁止**恢复引用。
+
+## 设计定案
+
+**2026-06-21 主人裁定：三级规则无根本缺陷，勿改优先级、勿恢复旧方案。**
+
+## 实现入口
+
+- 池与 resolve：`src/config/portrait_defaults.ts` → `resolvePortraitAssetPath`  
+- 将领：`getFactionGeneral()` 已包 resolve  
+- 勿把「专图未补齐」当逻辑 bug；补 PNG 即生效。
