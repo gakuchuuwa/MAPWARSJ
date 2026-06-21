@@ -44,7 +44,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   huangfu: { name: '三河骑士', tier: 1 },       // 安定·皇甫嵩三河骑士
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
   ruo: { name: '频阳锐士', tier: 1 },          // 武关·王翦灭楚
-  ruzhou: { name: '广成健卒', tier: 3 },
+  ruzhou: { name: '赤帻先锋', tier: 2 },
   yun: { name: '陆浑戎骑', tier: 3 },
   zhi_state: { name: '丰沛子弟', tier: 2 },
   xiongding: { name: '鲜卑燕军', tier: 2 }, // 天井关·慕容永西燕末代君主

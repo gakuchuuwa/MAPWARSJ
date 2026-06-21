@@ -3,6 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import { execFile } from 'child_process';
 
+// F2 立绘写盘后短暂拦截 Vite 整页 full-reload（Esc 保存不打断对局）
+let portraitDevSuppressReloadUntil = 0;
+function markPortraitDevWrite(): void {
+    portraitDevSuppressReloadUntil = Date.now() + 8000;
+}
+
 // ============================================================
 // [NEW 2026-05-29] 自动 git 备份: 一天 1 次
 //   策略:
@@ -76,6 +82,21 @@ export default defineConfig({
     plugins: [
         {
             name: 'suppress-portrait-dev-hmr',
+            configureServer(server) {
+                const origSend = server.ws.send.bind(server.ws);
+                server.ws.send = (payload: unknown) => {
+                    if (
+                        typeof payload === 'object'
+                        && payload !== null
+                        && (payload as { type?: string }).type === 'full-reload'
+                        && Date.now() < portraitDevSuppressReloadUntil
+                    ) {
+                        console.log('[PortraitDev] 已拦截 F2 写盘触发的整页刷新');
+                        return;
+                    }
+                    origSend(payload);
+                };
+            },
             handleHotUpdate({ file }) {
                 const norm = file.replace(/\\/g, '/');
                 if (
@@ -298,6 +319,7 @@ export default defineConfig({
                             const data = JSON.parse(body);
                             const content = serverFormatPortraitAdjustFile(data);
                             fs.writeFileSync(portraitAdjustPath, content, 'utf-8');
+                            markPortraitDevWrite();
                             console.log(`✅ [PortraitAdjust] Saved to ${portraitAdjustPath}`);
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
@@ -375,6 +397,7 @@ export default defineConfig({
                                 sourcePath,
                                 targetFolder,
                             );
+                            markPortraitDevWrite();
                             console.log(`✅ [BindPortrait] ${generalId} ← ${sourcePath} → ${result.portraitPath}`);
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true, ...result }));

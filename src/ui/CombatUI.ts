@@ -170,7 +170,8 @@ export class CombatUI {
     private portraitPickerSide: 'attacker' | 'defender' | null = null;
     private portraitPickerSelectedPath: string | null = null;
     private portraitPickerOpen = false;
-    /** 选定立绘后暂存，Esc/Enter 写盘（避免绑定时触发 Vite 整页刷新） */
+    /** 选图器 catalog 版本号（写盘/绑图后 bump，强制缩略图 cache-bust） */
+    private portraitPickerCatalogRev = 0;
     private portraitBindStaging: {
         generalId: string;
         sourcePath: string;
@@ -1364,7 +1365,7 @@ export class CombatUI {
                     else this.closeCorrector();
                     break;
                 case 'Tab': e.preventDefault(); this.switchCorrectorSide(); break;
-                case 'Enter': e.preventDefault(); this.flushCorrectorSessionMemory(); break;
+                case 'Enter': e.preventDefault(); this.runCorrectorExclusive(() => this.flushCorrectorPendingToDisk(false)); break;
                 case 'ArrowLeft': e.preventDefault(); this.nudgeCorrector(0, -fine, 0); break;
                 case 'ArrowRight': e.preventDefault(); this.nudgeCorrector(0, fine, 0); break;
                 case 'ArrowUp': e.preventDefault(); this.nudgeCorrector(0, 0, -fine); break;
@@ -1487,28 +1488,10 @@ export class CombatUI {
     private async closeCorrectorAsync(forceDiscardDisk = false): Promise<void> {
         this.flushCorrectorSessionMemory();
         if (!forceDiscardDisk && this.correctorHasPendingDiskWork()) {
-            const nAdj = this.correctorDirtyPaths.size;
-            const nBind = this.portraitBindStaging.length;
-            const parts: string[] = [];
-            if (nAdj > 0) parts.push(`${nAdj} 张位置/缩放`);
-            if (nBind > 0) parts.push(`${nBind} 张绑图`);
-            const detail = parts.join('、');
-            const saveNow = window.confirm(
-                `还有未写盘的立绘改动（${detail}）。\n\n` +
-                `【确定】= 现在写盘并关闭 F2\n` +
-                `【取消】= 继续编辑（可 Ctrl+S 写盘）\n\n` +
-                `若只想关闭不写盘：Shift+Esc`,
-            );
-            if (saveNow) {
-                if (!(await this.flushCorrectorPendingToDisk(true))) {
-                    return;
-                }
-            } else {
+            this.setCorrectorStatus('写盘中…');
+            if (!(await this.flushCorrectorPendingToDisk(true))) {
                 return;
             }
-        }
-        if (forceDiscardDisk && this.correctorHasPendingDiskWork()) {
-            this.setCorrectorStatus('⚠ 已关闭未写盘 · 本场仍有效 · 刷新页面会丢失');
         }
         this.correctorOpen = false;
         this.closePortraitPicker();
@@ -1537,7 +1520,7 @@ export class CombatUI {
         this.correctorData.images[path] = { ...this.correctorDraft };
         if (this.canPersistPortraitPath(path)) {
             this.correctorDirtyPaths.add(path);
-            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Ctrl+S 写盘`);
+            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Enter/Esc 写盘`);
         }
         applyPortraitAdjustToElement(this.correctorImg(), path, this.correctorData);
         this.renderCorrectorReadout();
@@ -1551,7 +1534,7 @@ export class CombatUI {
         this.correctorData.images = this.correctorData.images ?? {};
         this.correctorData.images[path] = { ...this.correctorDraft };
         if (this.correctorDirtyPaths.size > 0) {
-            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Ctrl+S 写盘`);
+            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Enter/Esc 写盘`);
         }
     }
 
@@ -1579,7 +1562,7 @@ export class CombatUI {
         if (!fit) { this.setCorrectorStatus('⚠ 读取像素失败，请手动微调'); return; }
         this.correctorDraft = { scale: fit.scale, offsetX: fit.offsetX, offsetY: fit.offsetY };
         this.applyCorrectorPreview();
-        this.setCorrectorStatus('✓ 已居中（Ctrl+S 写盘永久保存）');
+        this.setCorrectorStatus('✓ 已居中（Enter 写盘）');
     }
 
     private async resetCorrectorCurrent(): Promise<void> {
@@ -1601,7 +1584,7 @@ export class CombatUI {
         applyPortraitAdjustToElement(this.correctorImg(), path, this.correctorData);
         this.renderCorrectorReadout();
         const name = path.split('/').pop() ?? path;
-        this.setCorrectorStatus(`✓ 已恢复默认：${name}（Ctrl+S 写盘）`);
+        this.setCorrectorStatus(`✓ 已恢复默认：${name}（Enter 写盘）`);
     }
 
     private switchCorrectorSide(): void {
@@ -1726,11 +1709,11 @@ export class CombatUI {
         const parts: string[] = ['✓ 本场已生效（内存）'];
         if (nAdj > 0) parts.push(`${nAdj} 张位置`);
         if (nBind > 0) parts.push(`${nBind} 张待绑`);
-        parts.push('Ctrl+S 写盘');
+        parts.push('Enter 写盘');
         this.setCorrectorStatus(parts.join(' · '));
     }
 
-    /** Ctrl+S /「写盘」：移图 + FactionGenerals + portrait_adjust（可能仍触发一次 dev 刷新） */
+    /** Enter / Esc / Ctrl+S：写盘；Enter·Ctrl+S 不关 F2，Esc 写盘后关闭 */
     private async flushCorrectorPendingToDisk(onExit: boolean): Promise<boolean> {
         this.syncCurrentCorrectorDraftToData();
         const boundCount = this.portraitBindStaging.length;
@@ -1741,15 +1724,96 @@ export class CombatUI {
         }
         const hadAdjust = this.correctorDirtyPaths.size > 0;
         await this.saveCorrectorSession(onExit);
+        await this.refreshPortraitPickerAfterDiskWrite();
         if (!onExit && boundCount > 0 && !hadAdjust) {
             this.setCorrectorStatus(`✓ 已绑定 ${boundCount} 张立绘到磁盘`);
         }
         return true;
     }
 
+    /** 写盘/绑图后 bump 缩略图 cache-bust 版本 */
+    private bumpPortraitPickerCatalogRev(): void {
+        this.portraitPickerCatalogRev = Date.now();
+    }
+
+    /** 预加载立绘 URL（绑图 rename 后 Windows 上偶发首帧 404，短重试） */
+    private preloadPortraitWebPath(webPath: string, retries = 4): Promise<void> {
+        const tryLoad = (attempt: number): Promise<void> =>
+            new Promise((resolve, reject) => {
+                const probe = new Image();
+                probe.onload = () => resolve();
+                probe.onerror = () => {
+                    if (attempt >= retries) {
+                        reject(new Error(`立绘加载失败：${webPath}`));
+                        return;
+                    }
+                    window.setTimeout(() => {
+                        tryLoad(attempt + 1).then(resolve, reject);
+                    }, 80 * attempt);
+                };
+                probe.src = `${webPath}?v=${this.portraitPickerCatalogRev}&r=${attempt}`;
+            });
+        return tryLoad(0);
+    }
+
+    private createPortraitPickerThumbImg(webPath: string, alt: string): HTMLImageElement {
+        const img = document.createElement('img');
+        img.alt = alt;
+        let attempt = 0;
+        const load = () => {
+            img.src = `${webPath}?v=${this.portraitPickerCatalogRev}&r=${attempt}`;
+        };
+        img.addEventListener('error', () => {
+            if (attempt >= 3) return;
+            attempt += 1;
+            window.setTimeout(load, 60 * attempt);
+        });
+        load();
+        return img;
+    }
+
+    /** 写盘/绑图后刷新选图器（源 PNG 可能已被 rename 走） */
+    private async refreshPortraitPickerAfterDiskWrite(): Promise<void> {
+        this.bumpPortraitPickerCatalogRev();
+        if (!this.portraitPickerOpen) return;
+        this.portraitPickerSelectedPath = null;
+        const bindBtn = this.portraitPickerPanel?.querySelector('.pp-btn-bind') as HTMLButtonElement | null;
+        if (bindBtn) bindBtn.disabled = true;
+        await this.loadPortraitPickerCatalog();
+        this.populatePortraitPickerFolderSelect();
+        await this.renderPortraitPickerGrid();
+    }
+
+    private async applyBoundPortraitToCombatImg(
+        bind: { destPath: string; side: 'attacker' | 'defender'; generalId: string },
+    ): Promise<void> {
+        setGeneralPortraitOverride(bind.generalId, bind.destPath);
+        try {
+            await this.preloadPortraitWebPath(bind.destPath);
+        } catch {
+            // 磁盘已绑定成功；预览加载失败不阻断写盘
+            return;
+        }
+        const img = bind.side === 'attacker' ? this.leftPortrait : this.rightPortrait;
+        const bust = `${bind.destPath}?v=${this.portraitPickerCatalogRev}`;
+        await new Promise<void>((resolve) => {
+            const done = () => {
+                this.loadCorrectorDraft();
+                applyPortraitAdjustToElement(img, bind.destPath, this.correctorData);
+                this.scheduleCorrectorCrosshairRefresh();
+                resolve();
+            };
+            img.addEventListener('load', done, { once: true });
+            img.addEventListener('error', () => resolve(), { once: true });
+            img.src = bust;
+            if (img.complete && img.naturalWidth > 0) done();
+        });
+    }
+
     private async commitAllPendingPortraitBinds(): Promise<boolean> {
         const pending = [...this.portraitBindStaging];
         if (pending.length === 0) return true;
+        const committed: typeof pending = [];
         try {
             for (const bind of pending) {
                 const res = await fetch('/api/bind-general-portrait', {
@@ -1765,14 +1829,18 @@ export class CombatUI {
                 if (!res.ok || !result.ok) {
                     throw new Error(result.error || `HTTP ${res.status}`);
                 }
-                setGeneralPortraitOverride(bind.generalId, bind.destPath);
-                const img = bind.side === 'attacker' ? this.leftPortrait : this.rightPortrait;
-                img.src = `${bind.destPath}?v=${Date.now()}`;
+                committed.push(bind);
+                await this.applyBoundPortraitToCombatImg(bind);
             }
-            this.portraitBindStaging = [];
+            this.portraitBindStaging = this.portraitBindStaging.filter(
+                (b) => !committed.some((c) => c.generalId === b.generalId && c.side === b.side),
+            );
             return true;
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
+            this.portraitBindStaging = this.portraitBindStaging.filter(
+                (b) => !committed.some((c) => c.generalId === b.generalId && c.side === b.side),
+            );
             this.setCorrectorStatus(`⚠ 绑图写盘失败：${msg} · F2 保持开启`);
             return false;
         }
@@ -1845,20 +1913,20 @@ export class CombatUI {
         const btn = (label: string, primary = false) =>
             `<button type="button" class="cc-btn${primary ? ' cc-btn-primary' : ''}">${label}</button>`;
         panel.innerHTML = `
-            <div style="font-size:14px;font-weight:700;color:#f5d78e;">立绘校正（已暂停 · Enter 暂存 · Ctrl+S 写盘）</div>
+            <div style="font-size:14px;font-weight:700;color:#f5d78e;">立绘校正（Enter/Esc 写盘 · 不刷新）</div>
             <div class="cc-readout" style="font-size:13px;color:#c4b89a;"></div>
             <div class="cc-actions" style="display:flex;flex-wrap:wrap;gap:8px;">
                 ${btn('↔ 居中本张')}
                 ${btn('↩ 恢复默认')}
                 ${btn('准星：开')}
                 ${btn('切换左右 (Tab)')}
-                ${btn('💾 写盘 (Ctrl+S)', true)}
+                ${btn('💾 写盘 (Enter)', true)}
                 ${btn('关闭 (Esc)')}
             </div>
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
                 准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝=眼线</span>，<span style="color:#88e0d0;">青=下巴</span>，<span style="color:#c8a8e8;">紫=腰</span>，<span style="color:#ff9a7a;">橙竖=胸线</span>。眼/下巴/腰贴线，<b>[ ]</b> 缩进椭圆<br>
-                方向键微调；Tab 换边；<b>Enter 暂存本场</b>；<b>Ctrl+S 写盘</b>；Esc 关闭（有未写盘会弹窗提醒）<br>
-                <b>F2 开启时</b>：点武将名选图 → 微调 → 满意后 Ctrl+S；忘了写盘按 Esc 会询问是否补写
+                方向键微调；Tab 换边；<b>Enter 写盘并继续</b>；<b>Esc 写盘并关 F2</b>（均不刷新）；Ctrl+S 同 Enter<br>
+                Shift+Esc 关闭不写盘
             </div>
             <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
         `;
@@ -2238,7 +2306,7 @@ export class CombatUI {
         panel.innerHTML = `
             <div class="pp-title" style="font-size:15px;font-weight:700;color:#f5d78e;"></div>
             <div class="pp-hint" style="font-size:12px;color:#9a8f7a;line-height:1.45;">
-                选文件夹 → 点图 →「选定」后<b>只预览</b>，<b>继续 F2 微调</b>，满意后 <b>Ctrl+S</b> 写盘（Enter 仅暂存内存）。
+                选文件夹 → 点图 →「选定」→ 微调 → <b>Enter 写盘</b>（继续）或 <b>Esc 写盘并关</b>。
             </div>
             <label class="pp-folder-row" style="display:flex;align-items:center;gap:8px;font-size:13px;">
                 <span style="color:#c4b89a;white-space:nowrap;min-width:3.5em;">文件夹</span>
@@ -2249,7 +2317,7 @@ export class CombatUI {
                 gap: 10px; overflow: auto; max-height: 52vh; padding: 4px;
             "></div>
             <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;">
-                <button type="button" class="pp-btn pp-btn-bind" disabled>选定（Ctrl+S 写盘）</button>
+                <button type="button" class="pp-btn pp-btn-bind" disabled>选定</button>
                 <button type="button" class="pp-btn pp-btn-close">关闭</button>
             </div>
             <div class="pp-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
@@ -2339,6 +2407,7 @@ export class CombatUI {
         this.portraitPickerGeneralId = generalId;
         this.portraitPickerSide = side;
         this.portraitPickerSelectedPath = null;
+        this.bumpPortraitPickerCatalogRev();
         this.portraitPickerFolder = this.inferDefaultPortraitFolder(rec);
         this.portraitPickerPanel.style.display = 'flex';
         if (this.portraitPickerStatus) this.portraitPickerStatus.textContent = '加载文件夹…';
@@ -2385,7 +2454,25 @@ export class CombatUI {
             return;
         }
         const bindBtn = this.portraitPickerPanel?.querySelector('.pp-btn-bind') as HTMLButtonElement | null;
+        if (generalId && destHint && images.some((p) => p.endsWith(`/${generalId}.png`))) {
+            const cell = document.createElement('div');
+            cell.className = 'pp-thumb pp-current';
+            cell.style.borderColor = 'rgba(120,200,255,0.85)';
+            cell.style.cursor = 'default';
+            cell.title = `当前：${generalId}.png（写盘后的正式文件）`;
+            cell.appendChild(this.createPortraitPickerThumbImg(destHint, `${generalId}.png`));
+            const cap = document.createElement('div');
+            cap.textContent = '当前';
+            cap.style.cssText = 'position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:10px;color:#a8d8ff;background:rgba(0,0,0,0.55);';
+            cell.style.position = 'relative';
+            cell.appendChild(cap);
+            this.portraitPickerGrid.appendChild(cell);
+        }
         for (const webPath of images) {
+            // 绑图目标文件已在上方「当前」格展示，不再作为待选素材
+            if (generalId && webPath.endsWith(`/${generalId}.png`)) {
+                continue;
+            }
             const cell = document.createElement('div');
             cell.className = 'pp-thumb';
             const fileName = webPath.split('/').pop() ?? webPath;
@@ -2394,10 +2481,7 @@ export class CombatUI {
                 cell.classList.add('pp-current');
                 cell.style.borderColor = 'rgba(120,200,255,0.55)';
             }
-            const img = document.createElement('img');
-            img.src = webPath;
-            img.alt = fileName;
-            cell.appendChild(img);
+            cell.appendChild(this.createPortraitPickerThumbImg(webPath, fileName));
             cell.addEventListener('click', () => {
                 this.portraitPickerGrid?.querySelectorAll('.pp-thumb.pp-selected').forEach((el) => {
                     el.classList.remove('pp-selected');
@@ -2444,7 +2528,7 @@ export class CombatUI {
 
         this.closePortraitPicker();
         this.setCorrectorStatus(
-            `✓ 已选定 ${generalId}.png · 方向键微调 · Enter 暂存 · Ctrl+S 写盘`,
+            `✓ 已选定 ${generalId}.png · 微调后 Enter 写盘（不关 F2）`,
         );
         this.refreshGeneralNameTagInteract();
     }

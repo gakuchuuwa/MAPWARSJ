@@ -659,7 +659,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     mi_mizhu: { generalId: 'mi_mizhu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 资助刘备
     baibo_guotai_bb: { generalId: 'baibo_guotai_bb', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 白波军
     unassigned_geshuhan: { generalId: 'unassigned_geshuhan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 潼关守将
-    ruzhou_zongze: { generalId: 'ruzhou_zongze', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 东京留守
+    ruzhou_sunjian: { generalId: 'ruzhou_sunjian', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 破虏将军
     yaozhou_limaozhen: { generalId: 'yaozhou_limaozhen', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 岐国军阀
     zhi_state_caocan: { generalId: 'zhi_state_caocan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_02' }, // 曹参身被七十创攻城略地功最多
     yiyang_d_mengzongzheng: { generalId: 'yiyang_d_mengzongzheng', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 三关之捷

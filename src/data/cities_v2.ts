@@ -1,4 +1,4 @@
-﻿/**
+/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -1584,7 +1584,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 24.51, lng: 117.65, type: 'small_city', troops: 10000,
         
         note: '龙溪；陈吊小城', region: 'LINGNAN' },
-    { id: 'city_tingzhou', name: '黄连', factionId: 'kejia', lat: 26.863, lng: 116.637, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '唐黄连县故地（今宁化）；汀州客家祖地，非文天祥故里' },
+    { id: 'city_tingzhou', name: '黄连', factionId: 'kejia', lat: 26.26, lng: 116.65, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '唐黄连县故地（今宁化）；汀州客家祖地，非文天祥故里' },
 
     // ── 2026-05-25 明朝势力新增城市 ──
     // 第二类：元末群雄

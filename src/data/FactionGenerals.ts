@@ -537,7 +537,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dongxian: { generalId: 'dongxian_xusheng_wu', generalName: '徐盛', portrait: '/assets/zhongyuan/xusheng.png' },
     mi: { generalId: 'mi_mizhu', generalName: '麋竺', portrait: '/assets/zhongyuan/mi_mizhu.png' },
     baibo: { generalId: 'baibo_guotai_bb', generalName: '郭太', portrait: '/assets/zhongyuan/guotai.png' },
-    ruzhou: { generalId: 'ruzhou_zongze', generalName: '宗泽', portrait: '/assets/zhongyuan/ruzhou_zongze.png' },
+    ruzhou: { generalId: 'ruzhou_sunjian', generalName: '孙坚', portrait: '/assets/zhongyuan/ruzhou_sunjian.png' },
     ruo: { generalId: 'ruo_wangjian', generalName: '王翦', portrait: '/assets/zhongyuan/ruo_wangjian.png' },
     yaozhou: { generalId: 'yaozhou_limaozhen', generalName: '李茂贞', portrait: '/assets/zhongyuan/yaozhou_limaozhen.png' },
     zhi_state: { generalId: 'zhi_state_caocan', generalName: '曹参', portrait: '/assets/zhongyuan/zhi_state_caocan.png' },
@@ -550,7 +550,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yun: { generalId: 'yun_wuli', generalName: '吾离', portrait: '/assets/zhongyuan/yun_wuli.png' },
         suzhou_d: { generalId: 'suzhou_d_shikefa', generalName: '史可法', portrait: '/assets/jiangnan/suzhou_d_shikefa.png' },
     pizhou: { generalId: 'pizhou_lvbu', generalName: '吕布', portrait: '/assets/zhongyuan/pizhou_lvbu.png' },
-    yin: { generalId: 'yin_dixin', generalName: '帝辛', portrait: '/assets/zhongyuan/yin_dixin.png' },
+    yin: { generalId: 'yin_dixin', generalName: '帝辛', portrait: '/assets/xianqin/yin_dixin.png' },
     liwang: { generalId: 'liwang_liguangbi', generalName: '李光弼', portrait: '/assets/beifang/liwang_liguangbi.png' }, // 河间·乐成
     qing: { generalId: 'qing_wanyanchenheshang', generalName: '完颜陈和尚', portrait: '/assets/zhongyuan/qing_diqing.png' },
     han: { generalId: 'han_baoyuan_han', generalName: '暴鸢', portrait: '/assets/zhongyuan/baoyuan.png' },
