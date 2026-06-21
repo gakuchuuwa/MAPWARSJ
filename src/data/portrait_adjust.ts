@@ -555,6 +555,76 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 2,
             "offsetY": -17
+        },
+        "/assets/wuzhou/fa0e668a-55d3-48d9-b187-7c7fe7bbf9ef.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/zhongyuan/guangzhou (12).png": {
+            "scale": 1,
+            "offsetX": 12,
+            "offsetY": -33
+        },
+        "/assets/dongbei/c4f3f805-02cb-4e43-b4c5-7c46d8e6be77.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -38
+        },
+        "/assets/dongbei/NORTHEAST_field.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/zhongya/guishuang_jianisejia.png": {
+            "scale": 0.96,
+            "offsetX": 3,
+            "offsetY": -27
+        },
+        "/assets/zhongyuan/xiangzhou_lvwenhuan.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -49
+        },
+        "/assets/riben/edo_dechuangjiakang.png": {
+            "scale": 0.98,
+            "offsetX": 7,
+            "offsetY": -14
+        },
+        "/assets/riben/857f35ee-4144-4b76-af60-f059b79b7064.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/riben/higo_d_juchiwuguang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/chaoxian/gaogouli_yizhiwende.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/chaoxian/c8ff6344-a065-48f7-8c1e-a112f38a488b.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/wuzhou/bec37b4e-ab28-4f6b-a087-30c961161a64.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 34
+        },
+        "/assets/liuhan/yangshao_zhoubo.png": {
+            "scale": 1.12,
+            "offsetX": 13,
+            "offsetY": -10
+        },
+        "/assets/zhaosong/9ff5b235-5237-437a-8f96-112418dc8dc9.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -20
         }
     },
     "folderGuides": {

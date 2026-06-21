@@ -512,30 +512,17 @@ export class SiegeManager {
         return candidates;
     }
 
-    /** 守城参战军团：半径内 + 本城 homeCityId 绑定的守军（即便略在圈外也纳入） */
+    /** 守城参战军团：仅 BATTLE_JOIN_RADIUS 内同阵营军团（homeCityId 不豁免距离） */
     private collectDefenderLegionsForSiege(
         targetCity: { id: string; factionId: string; latitude: number; longitude: number },
         cityPos: { lat: number; lng: number },
         excludeArmyIds: Set<string>,
     ): Army[] {
-        const merged = this.collectNearbyLegionsForFaction(
+        return this.collectNearbyLegionsForFaction(
             cityPos,
             targetCity.factionId,
             excludeArmyIds,
         );
-        const seen = new Set(merged.map((a) => a.id));
-        for (const legion of this.legionManager.getArmies()) {
-            if (seen.has(legion.id)) continue;
-            if (excludeArmyIds.has(legion.id)) continue;
-            if (legion.homeCityId !== targetCity.id) continue;
-            if (legion.getFactionId() !== targetCity.factionId) continue;
-            if (legion.type !== 'legion' || legion.isDestroyed || legion.getIsInCombat()) continue;
-            merged.push(legion);
-            seen.add(legion.id);
-            siegeLog(`✅ [SiegeManager] ${legion.name} 本城守军参战 (homeCityId)`);
-        }
-        merged.sort((a, b) => (b.getTroops() || 0) - (a.getTroops() || 0));
-        return merged;
     }
 
     private onArmyArrive(

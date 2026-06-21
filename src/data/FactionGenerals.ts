@@ -54,7 +54,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     goryeo: { generalId: 'goryeo_jiangganzan', generalName: '姜邯赞', portrait: '/assets/chaoxian/goryeo_jiangganzan.png' },
     ashikaga: { generalId: 'ashikaga_zulijunshi', generalName: '足利尊氏', portrait: '/assets/riben/ashikaga_zulijunshi.png' },
     tiemuer: { generalId: 'tiemuer_tiemuer', generalName: '帖木儿', portrait: '/assets/zhongya/tiemuer_tiemuer.png' },
-    siam: { generalId: 'siam_nalixuan', generalName: '纳黎萱', portrait: '/assets/dianmian/siam_nalixuan.png' },
+    siam: { generalId: 'siam_nalixuan', generalName: '纳黎萱', portrait: '/assets/pugan/siam_nalixuan.png' },
     shang: { generalId: 'shang_fuhao', generalName: '妇好', portrait: '/assets/xianqin/shang_fuhao.png' },
     bing: { generalId: 'bing_liukun', generalName: '刘琨', portrait: '/assets/zhongyuan/bing_liukun.png' },
     min: { generalId: 'min_wangshenzhi', generalName: '王审知', portrait: '/assets/jiangnan/min_wangshenzhi.png' },
@@ -65,7 +65,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xinluo: { generalId: 'xinluo_jinyixin', generalName: '金庾信', portrait: '/assets/chaoxian/xinluo_jinyixin.png' },
     edo: { generalId: 'edo_dechuangjiakang', generalName: '德川家康', portrait: '/assets/riben/edo_dechuangjiakang.png' },
     seljuq: { generalId: 'seljuq_sangjiaer', generalName: '桑贾尔', portrait: '/assets/zhongya/seljuq_sangjiaer.png' },
-    chenla: { generalId: 'chenla_sheyebamoqishi', generalName: '阇耶跋摩七世', portrait: '/assets/dianmian/sheyebamo7.png' },
+    chenla: { generalId: 'chenla_sheyebamoqishi', generalName: '阇耶跋摩七世', portrait: '/assets/pugan/chenla_sheyebamoqishi.png' },
     sizhou: { generalId: 'sizhou_hanshizhong', generalName: '韩世忠', portrait: '/assets/zhaosong/sizhou_hanshizhong.png' },
     // ── 日本区 2026-06-18 ──
     kai: { generalId: 'kai_wutianxinxuan', generalName: '武田信玄', portrait: '/assets/riben/kai_wutianxinxuan.png' },
