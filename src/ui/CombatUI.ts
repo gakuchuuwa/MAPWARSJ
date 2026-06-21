@@ -4,11 +4,14 @@ import { BattleField } from '../core/BattleField';
 import { SPRITE_PATHS, GameConfig } from '../config/GameConfig';
 import {
     getCombatPortraitPath,
+    getRandomRegionPortraitPath,
     portraitUrlsEqual,
+    resolvePortraitAssetPath,
     resolvePortraitSourceFacing,
     shouldMirrorPortraitForSide,
     type PortraitSourceFacing,
 } from '../config/portrait_defaults';
+import { resolveUnitCultureRegion } from '../systems/CultureCombat';
 import { applyPortraitAdjustToElement, extractPortraitFolder, resolvePortraitAdjust } from '../config/PortraitAdjust';
 import { autoFitPortraitFromUrl } from '../config/portraitAutoFit';
 import {
@@ -1848,14 +1851,19 @@ export class CombatUI {
             // 与攻方相同 → 跳过，走下方随机去重
         }
         const portraits = (SPRITE_PATHS.GENERAL_PORTRAITS || {}) as Record<string, string>;
+        const cultureRegion = unit ? resolveUnitCultureRegion(unit) : 'CENTRAL';
+        const portraitOpts = {
+            factionId: unit?.factionId ?? factionId ?? undefined,
+            region: cultureRegion,
+        };
         // ④ 将领 ID（如 baiqi）
         if (generalId && portraits[generalId]) {
-            setSrc(portraits[generalId]);
+            setSrc(resolvePortraitAssetPath(portraits[generalId], portraitOpts));
             return;
         }
         // ⑤ 势力默认（秦国 qin → qinjiang.png）
         if (factionId && portraits[factionId]) {
-            setSrc(portraits[factionId]);
+            setSrc(resolvePortraitAssetPath(portraits[factionId], portraitOpts));
             return;
         }
         // ⑥ 文化区军队/守军 + panjun
@@ -1863,7 +1871,7 @@ export class CombatUI {
             setSrc(getCombatPortraitPath(unit, excludePath));
             return;
         }
-        setSrc(portraits['default'] || '/assets/general_default.png');
+        setSrc(getRandomRegionPortraitPath('CENTRAL', { factionId: factionId ?? undefined }));
     }
 
     /** 配置 key：展示标题 + 攻守双方，避免「区域冲突」一条污染全部区域战 */
@@ -1897,26 +1905,26 @@ export class CombatUI {
         if (input.files && input.files[0] && this.currentBattleKey) {
             const file = input.files[0];
             const side = this.tempIsLeft ? 'attacker' : 'defender';
-            const fileName = file.name; // e.g., "wangjian.png"
-            const portraitPath = `/assets/portraits/${fileName}`;
-
-            this.portraitConfig.setPortrait(this.currentBattleKey, side, portraitPath);
+            const battleKey = this.currentBattleKey;
 
             const reader = new FileReader();
             reader.onload = (e) => {
                 const base64 = e.target?.result as string;
-                if (base64) {
-                    const targetImg = this.tempIsLeft ? this.leftPortrait : this.rightPortrait;
-                    targetImg.src = base64;
-                    this.portraitSourceFacing[side] = resolvePortraitSourceFacing(undefined, portraitPath);
-                    this.applyPortraitFacing(side);
-                }
+                if (!base64) return;
+
+                // 自选立绘存 data URL，不依赖 public/assets/portraits
+                this.portraitConfig.setPortrait(battleKey, side, base64);
+
+                const targetImg = this.tempIsLeft ? this.leftPortrait : this.rightPortrait;
+                targetImg.src = base64;
+                this.portraitSourceFacing[side] = resolvePortraitSourceFacing(undefined, file.name);
+                this.applyPortraitFacing(side);
+
+                this.portraitConfig.saveToFile().then(ok => {
+                    if (ok) console.log(`🖼️ [Portrait] Config saved to file`);
+                });
             };
             reader.readAsDataURL(file);
-
-            this.portraitConfig.saveToFile().then(ok => {
-                if (ok) console.log(`🖼️ [Portrait] Config saved to file`);
-            });
         }
         input.value = '';
     }

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -206,7 +206,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         factionId: 'han_d',
         lat: 33.07, lng: 107.02,
         type: 'medium_city',
-        region: 'BASHU', troops: 20000,
+        region: 'CENTRAL', troops: 20000,
         tier: 0,
         note: '汉中治；蜀汉开国都南郑',
     },

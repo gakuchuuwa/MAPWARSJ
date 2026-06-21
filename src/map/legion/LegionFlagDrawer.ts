@@ -1,4 +1,5 @@
 import { SPRITE_PATHS } from '../../config/GameConfig';
+import { resolvePortraitAssetPath, getRandomRegionPortraitPath } from '../../config/portrait_defaults';
 import { CityAssetManager } from '../../core/CityAssetManager';
 import { gameLog } from '../../utils/GameLogger';
 
@@ -121,15 +122,24 @@ export class LegionFlagDrawer {
             // Ensure CityAssetManager flags are preloaded
             await CityAssetManager.preloadFlags();
 
-            // Load General Portraits
+            // Load General Portraits（缺省键走文化区随机池）
             if (SPRITE_PATHS.GENERAL_PORTRAITS) {
                 for (const [genId, url] of Object.entries(SPRITE_PATHS.GENERAL_PORTRAITS)) {
                     try {
-                        this.generalPortraits.set(genId, await loadImg(url));
+                        const resolved = resolvePortraitAssetPath(
+                            url,
+                        );
+                        this.generalPortraits.set(genId, await loadImg(resolved));
                     } catch (err) {
                         console.warn(`Failed to load portrait for ${genId}`, err);
                     }
                 }
+            }
+            try {
+                const defaultPath = getRandomRegionPortraitPath('CENTRAL');
+                this.generalPortraits.set('default', await loadImg(defaultPath));
+            } catch (err) {
+                console.warn('Failed to load default culture portrait pool fallback', err);
             }
 
             // Warm up cache for default fallback flags

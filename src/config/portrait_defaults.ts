@@ -1,6 +1,9 @@
 /**
- * 战斗 UI 默认立绘：14 文化区 × field/garrison + 叛军 panjun
- * 文件位于 public/assets/portraits/{REGION}_{role}.png
+ * 战斗 UI 默认立绘：按 14 文化区映射到 public/assets/{文化夹}/ 立绘池，随机抽取。
+ * 势力专属池见 FACTION_PORTRAIT_POOLS；无映射时 fallback 到 REGION_PORTRAIT_POOLS。
+ *
+ * 素材夹约定：一文件夹 = 一文化或一政权包；**同夹内禁止 MD5 相同的 PNG**（审计：npm run portrait:folder-audit）。
+ * 跨夹重复不自动删，由池映射决定；同夹重复用 npm run portrait:folder-dedupe 清理。
  *
  * 素材约定：全部 PNG 未镜像时目视**右侧**。
  * CombatUI：左攻不 scaleX、右守 scaleX(-1)，二人相向中央。
@@ -12,8 +15,6 @@ import {
     type CultureCombatRole,
 } from '../systems/CultureCombat';
 import { getCityRegion, REGION_ORDER, type RegionType } from '../systems/RegionSystem';
-
-export const PORTRAIT_ASSETS_DIR = '/assets/portraits';
 
 /** PNG 内人物默认目视方向（未做 scaleX 时） */
 export type PortraitSourceFacing = 'left' | 'right';
@@ -869,19 +870,42 @@ const KNOWN_PORTRAIT_PATHS = new Set(
     Object.values(_allPortraitAssetGlob).map(normalizePortraitWebPath),
 );
 
-/** 文化区默认 field 立绘（文件已存在于各文化素材夹） */
-const REGION_FIELD_PORTRAIT: Partial<Record<string, string>> = {
-    CENTRAL: '/assets/litang/CENTRAL_field.png',
-    JIANGNAN: '/assets/daming/JIANGNAN_field.png',
-    NORTH: '/assets/nanfang/NORTH_field.png',
-    NORTHEAST: '/assets/dongbei/NORTHEAST_field.png',
-    STEPPE: '/assets/caoyuan/STEPPE_field.png',
-    WESTERN: '/assets/xiyu/WESTERN_field.png',
-    CENTRAL_ASIA: '/assets/zhongya/CENTRAL_ASIA_field.png',
-    TIBET: '/assets/tubo/TIBET_field.png',
-    JAPAN: '/assets/riben/JAPAN_field.png',
-    KOREA: '/assets/chaoxian/KOREA_field.png',
-};
+/** 从候选池中随机取一张磁盘上存在的立绘 */
+function pickRandom(arr: string[], exclude?: string): string {
+    if (exclude && arr.length > 1) {
+        const filtered = arr.filter(p => !portraitUrlsEqual(p, exclude));
+        if (filtered.length > 0) return filtered[Math.floor(Math.random() * filtered.length)];
+    }
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function pickRandomExisting(pool: string[], exclude?: string): string | undefined {
+    const existing = pool
+        .map(normalizePortraitWebPath)
+        .filter(p => portraitAssetExists(p));
+    if (!existing.length) return undefined;
+    return pickRandom(existing, exclude);
+}
+
+/** 比较两个立绘路径是否指向同一文件（浏览器 src 可能解析为完整 URL） */
+export function portraitUrlsEqual(a: string, b: string): boolean {
+    if (a === b) return true;
+    const aName = a.split('/').pop() || a;
+    const bName = b.split('/').pop() || b;
+    return aName === bName;
+}
+
+/** 文化区 / 势力立绘池随机一张（无 unit 时的全局缺省） */
+export function getRandomRegionPortraitPath(
+    region: RegionType = 'CENTRAL',
+    options?: { factionId?: string; exclude?: string },
+): string {
+    return resolvePortraitAssetPath(undefined, {
+        factionId: options?.factionId,
+        region,
+        exclude: options?.exclude,
+    });
+}
 
 /** 目录别名：将领表常用 beifang 等路径，实际素材在 zhongyuan 等池 */
 const PORTRAIT_FOLDER_POOL: Record<string, string[]> = {
@@ -900,8 +924,15 @@ export function portraitAssetExists(path: string | undefined): boolean {
  */
 export function resolvePortraitAssetPath(
     requested: string | undefined,
-    options?: { factionId?: string; region?: string; role?: CultureCombatRole },
+    options?: {
+        factionId?: string;
+        region?: string;
+        role?: CultureCombatRole;
+        exclude?: string;
+    },
 ): string {
+    const { factionId, region, exclude } = options ?? {};
+
     if (requested && portraitAssetExists(requested)) {
         return normalizePortraitWebPath(requested);
     }
@@ -909,42 +940,28 @@ export function resolvePortraitAssetPath(
     if (requested) {
         const folder = requested.match(/^(\/assets\/[^/]+\/)/)?.[1];
         const aliasPool = folder ? PORTRAIT_FOLDER_POOL[folder] : undefined;
-        const fromFolder = aliasPool?.find(p => portraitAssetExists(p));
-        if (fromFolder) return normalizePortraitWebPath(fromFolder);
+        const fromFolder = aliasPool ? pickRandomExisting(aliasPool, exclude) : undefined;
+        if (fromFolder) return fromFolder;
     }
 
-    const { factionId, region, role = 'field' } = options ?? {};
-    const factionPool = resolvePortraitPool(factionId, region as RegionType | undefined);
-    const fromFaction = factionPool?.find(p => portraitAssetExists(p));
-    if (fromFaction) return normalizePortraitWebPath(fromFaction);
+    const cultureRegion = (region as RegionType | undefined)
+        ?? (factionId ? getFactionCultureRegion(factionId) : undefined)
+        ?? 'CENTRAL';
+    const factionPool = resolvePortraitPool(factionId, cultureRegion);
+    const fromFaction = factionPool ? pickRandomExisting(factionPool, exclude) : undefined;
+    if (fromFaction) return fromFaction;
 
-    const regional = region ? REGION_FIELD_PORTRAIT[region] : undefined;
-    if (regional && portraitAssetExists(regional)) return regional;
+    const regionPool = REGION_PORTRAIT_POOLS[cultureRegion];
+    const fromRegion = regionPool ? pickRandomExisting(regionPool, exclude) : undefined;
+    if (fromRegion) return fromRegion;
 
-    const generic = `${PORTRAIT_ASSETS_DIR}/${region ?? 'CENTRAL'}_${role}.png`;
-    if (portraitAssetExists(generic)) return generic;
+    const fromCentral = pickRandomExisting(REGION_PORTRAIT_POOLS.CENTRAL, exclude);
+    if (fromCentral) return fromCentral;
 
-    const central = REGION_FIELD_PORTRAIT.CENTRAL;
-    if (central && portraitAssetExists(central)) return central;
+    const any = pickRandomExisting([...KNOWN_PORTRAIT_PATHS], exclude);
+    if (any) return any;
 
-    return KNOWN_PORTRAIT_PATHS.values().next().value ?? '/assets/litang/CENTRAL_field.png';
-}
-
-/** 比较两个立绘路径是否指向同一文件（浏览器 src 可能解析为完整 URL） */
-export function portraitUrlsEqual(a: string, b: string): boolean {
-    if (a === b) return true;
-    // 兜底：比文件名
-    const aName = a.split('/').pop() || a;
-    const bName = b.split('/').pop() || b;
-    return aName === bName;
-}
-
-function pickRandom(arr: string[], exclude?: string): string {
-    if (exclude && arr.length > 1) {
-        const filtered = arr.filter(p => !portraitUrlsEqual(p, exclude));
-        if (filtered.length > 0) return filtered[Math.floor(Math.random() * filtered.length)];
-    }
-    return arr[Math.floor(Math.random() * arr.length)];
+    return normalizePortraitWebPath(_zhongyuanPortraitPool[0] ?? '');
 }
 
 /**
@@ -972,11 +989,11 @@ export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): 
     if (unit.portraitPath && !(excludePath && portraitUrlsEqual(unit.portraitPath, excludePath))) {
         return resolvePortraitAssetPath(unit.portraitPath, resolveOpts);
     }
-    // 守城方：势力池 → 文化区池 → 单张 field 兜底
+    // 守城方：势力池 → 文化区池随机
     const factionId = unit.factionId;
     const pool = resolvePortraitPool(factionId, region);
     if (pool?.length) {
-        return resolvePortraitAssetPath(pickRandom(pool, excludePath), resolveOpts);
+        return resolvePortraitAssetPath(pickRandom(pool, excludePath), { ...resolveOpts, exclude: excludePath });
     }
-    return resolvePortraitAssetPath(`${PORTRAIT_ASSETS_DIR}/${region}_${role}.png`, resolveOpts);
+    return getRandomRegionPortraitPath(region, { factionId, exclude: excludePath });
 }

@@ -35,9 +35,8 @@ export const SPRITE_PATHS = {
         DAMAGE: [264, 265, 266, 267, 268, 269, 270, 271].map(id => `/SUCAI/S10DB/${id}-1.png`),
         DEATH: [272, 273, 274, 275, 276, 277, 278, 279].map(id => `/SUCAI/S10DB/${id}-1.png`),
     },
-    // [NEW] General Portraits (Mapped by General ID)
+    // [NEW] General Portraits (Mapped by General ID；缺省走 portrait_defaults 文化区随机池)
     GENERAL_PORTRAITS: {
-        'default': '/assets/portraits/CENTRAL_field.png',  // TODO: 待替换
         // ── 秦势力将领立绘 ──
         'qin_baiqi': '/assets/qin/qin_baiqi.png',
         // ── 02 大唐将领 ──
@@ -668,46 +667,8 @@ export const SPRITE_PATHS = {
             DEATH: [981, 982, 983, 984, 985, 986, 987, 988].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
     },
-    BANDIT: {
-        MOVE: '/assets/NPC/daozei1.png',
-        ATTACK: [
-            '/assets/NPC/daozei2.png',
-            '/assets/NPC/daozei3.png'
-        ],
-        DAMAGE: '/assets/NPC/daozei3.png'
-    },
-    RAIDER: {
-        MOVE: '/assets/NPC/luikou1.png',
-        ATTACK: [
-            '/assets/NPC/luikou2.png',
-            '/assets/NPC/luikou3.png'
-        ],
-        DAMAGE: '/assets/NPC/luikou3.png'
-    },
-    OUTLAW: {
-        MOVE: '/assets/NPC/tufei1.png',
-        ATTACK: [
-            '/assets/NPC/tufei2.png',
-            '/assets/NPC/tufei3.png'
-        ],
-        DAMAGE: '/assets/NPC/tufei3.png'
-    },
-    REBEL: {
-        MOVE: '/assets/NPC/panjun1.png',
-        ATTACK: [
-            '/assets/NPC/panjun2.png',
-            '/assets/NPC/panjun3.png'
-        ],
-        DAMAGE: '/assets/NPC/panjun3.png'
-    },
-    BARBARIAN: {
-        MOVE: '/assets/NPC/yizu1.png',
-        ATTACK: [
-            '/assets/NPC/yizu2.png',
-            '/assets/NPC/yizu3.png'
-        ],
-        DAMAGE: '/assets/NPC/yizu3.png'
-    },
+    // 旧 public/assets/avg/NPC 与 /assets/NPC/ 三帧 PNG 已废弃（勿引用 avg/）。
+    // 沙盒/map 军团贴图统一走 LEGION + UNIT_ASSETS（S10DB 八向）。
     GENERAL: {
         IDLE: '/SUCAI/S10B/42-1.png',
         MOVE: '/SUCAI/S10B/43-1.png',
