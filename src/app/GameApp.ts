@@ -55,6 +55,7 @@ import {
     showLoadingOverlay,
     hideLoadingOverlay,
     setLoadingMessage,
+    setLoadingProgress,
     yieldToBrowser,
 } from './boot/GameAppBootUtils';
 
@@ -166,9 +167,10 @@ export class GameApp {
             LandSeaSystem.bindLeafletMap(this.map.getLeafletMap());
 
             await yieldToBrowser();
-            hideLoadingOverlay();
+            // 加载动画保持显示，直到据点/UI 全部就绪后再隐藏
 
             setLoadingMessage('正在整理旗号…');
+            setLoadingProgress(15);
             await CityAssetManager.seedBootPlaceholderFlags(activeFactions);
 
             // 军团贴图延后到首帧之后，避免与旗号 chromaKey 抢主线程
@@ -214,31 +216,39 @@ export class GameApp {
             TerrainSpeedSystem.initialize(this.overrideManager);
 
             // Roads Init - 矢量路网图引擎
+            setLoadingMessage('正在铺设道路…');
+            setLoadingProgress(30);
             gameLog('startup', '🛤️ 正在构建矢量路网图...');
             (window as any).roadRegistry = roadRegistry; // [FIX] Expose for Army.ts
             roadRegistry.initialize(CITIES);
             this.perfMonitor.markBootPhase('矢量路网');
 
+            setLoadingProgress(50);
             // [PERF] yield before heavy city load
             await yieldToBrowser();
 
             // 5. Initialize City dependent systems
+            setLoadingMessage('正在布置城池…');
+            setLoadingProgress(65);
             this.cityManager = new CityManager(this.map, this.factionManager);
             loadGameAppCityData(this);
             // 叛军：S10QZ 7–58 共 52 面，画据点前 await。见 AGENTS.md §10.3
             await CityAssetManager.preloadRebelFlagsForBoot();
             await CityAssetManager.onBootMapReady();
             this.cityManager.bindViewportCitySync();
-            // 势力色块默认关（chk-faction 未勾选）。禁止 toggleTerritoryLayer(true) / renderTerritoryOnly。§10.1
-            void this.cityManager.renderCitiesOnly().then(() => {
-                this.perfMonitor.markBootPhase('视口据点旗号');
-                this.cityManager.syncStrategicMapView();
-            });
 
+            setLoadingMessage('正在升旗入场…');
+            setLoadingProgress(80);
+            // 势力色块默认关（chk-faction 未勾选）。禁止 toggleTerritoryLayer(true) / renderTerritoryOnly。§10.1
+            await this.cityManager.renderCitiesOnly();
+            this.perfMonitor.markBootPhase('视口据点旗号');
+            this.cityManager.syncStrategicMapView();
+
+            setLoadingProgress(95);
             await yieldToBrowser();
 
-            // [PERF] 道路光栅化推迟到首屏据点渲染后：据点秒显，道路稍后补上（视觉，非寻路必需）
-            roadRegistry.rasterizeRoadsDeferred();
+            // [PERF] 道路光栅化真正异步（首帧渲染完再执行，不阻塞据点首显）
+            setTimeout(() => roadRegistry.rasterizeRoadsDeferred(), 0);
 
             // [PERF] Report city count to PerformanceMonitor
             this.perfMonitor.reportCount('cities', CITIES.length);
@@ -267,6 +277,11 @@ export class GameApp {
                 this.lastFrameTime = performance.now();
                 this.gameLoop(this.lastFrameTime);
             }
+
+            // 主循环已启动、HUD 就绪 → 此时游戏可见，隐藏加载动画
+            setLoadingProgress(100);
+            await yieldToBrowser(); // 让浏览器先绘制最后一帧进度条 100%
+            hideLoadingOverlay();
 
             wireGameAppCombatUiHooks(this);
 

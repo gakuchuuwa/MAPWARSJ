@@ -1,0 +1,66 @@
+---
+description: 多将领势力 N+1 模式 — 出征池随机 + 守城专将（编辑 FactionGeneralPools / 秦式多将时必读）
+globs: src/data/FactionGeneralPools.ts,src/data/FactionGenerals.ts,src/data/GeneralSkills.ts,src/legion/LegionSpawnTier.ts,src/combat/SiegeGarrisonTier.ts
+alwaysApply: false
+---
+
+# 多将领势力：出征池 + 守城专将（N+1）
+
+**真理源**：`AGENTS.md` §12.2.2；试点实现 `src/data/FactionGeneralPools.ts`（秦 5+1）。
+
+## 何时用
+
+| 级别 | 将领模式 |
+|------|----------|
+| **A/B** 知名政权、民族、大区中心 | 主人裁定后可上 **N+1**（出征池 N 将 + 守城专将 0–1） |
+| **C** 小城 / pass / 边陲 | **单将**（仅 `FactionGenerals.ts`）或 **无将** |
+| **panjun** | 无将 |
+
+**禁止**：为跑审计、凑名将密度，给无史料支撑的 C 级势力硬塞多将池。
+
+## 两套池（必分离）
+
+| 池 | 配置键 | 出场 | 秦例 |
+|----|--------|------|------|
+| **出征池** | `FACTION_EXPEDITION_GENERAL_POOLS[factionId]` | 募兵四档掷中「仅将 / 精锐+将」→ `pickRandomExpeditionGeneral` **等概率** | 白起、王翦、司马错、王贲、蒙恬 |
+| **守城专将** | `FACTION_SIEGE_GARRISON_GENERAL_ID[factionId]`（可选） | 锚点守城战、附近无带将军团 → **必出**，不进出征池 | 嬴稷 |
+
+守城专将 **不消耗** `City.spawnGeneralUsed`（出征配额）；与军团带将仍 **互斥**（`reconcileSiegeGarrisonBoostWithLegion`）。
+
+## 募兵概率（四档齐全时）
+
+等概率四档 → 军团 **有将 = 50%**（25% 仅将 + 25% 精锐+将），**不是 25%**。  
+无精锐映射时退化为两档；≥4 万大军另有必精锐规则（见 `GAME_DIRECTION.md`）。
+
+## 录入清单（新增一将多一步）
+
+1. `GeneralSkills.ts` → `GENERAL_PROFILES[generalId]`（**有将必写**）
+2. `FactionGeneralPools.ts`：
+   - `GENERAL_DISPLAY_NAMES`
+   - `FACTION_GENERAL_PORTRAIT_FOLDER`（若无则 fallback `/assets`）
+   - 出征池 `generalId` 列表 **或** 守城专将 id
+3. 立绘 → `public/assets/{政权夹}/{generalId}.png`
+4. `FactionGenerals.ts` 保留 **一条** `FACTION_GENERALS[factionId]` 作兼容默认将（UI/旧调用）；多将 **不必** 全写进主表
+5. 锚点仍 = `STARTING_CAPITALS[factionId]`；出场规则不变 §12.2.1
+
+## 代码入口（勿绕开）
+
+| 场景 | 函数 |
+|------|------|
+| 出征军团挂将 | `pickRandomExpeditionGeneral` @ `LegionSpawnTier.attachFactionGeneralToArmy` |
+| 守城城防专将 | `getSiegeGarrisonGeneral` @ `SiegeGarrisonTier.applySiegeGarrisonBoostIfNeeded` |
+| 按 id 查档案 | `getGeneralRecordByGeneralId` → `resolveGeneralRecordById` |
+| 是否还能掷将 | `factionHasExpeditionGeneral` |
+
+## 史料与选材
+
+- 池内每一将须与 **势力史地身份** 可容（同势力、非路人凑数）。
+- 守城专将宜取 **君王 / 守土型统帅**（秦嬴稷）；出征池取 **野战 / 灭国型名将**。
+- 无合格守城专将 → **不配** `FACTION_SIEGE_GARRISON_GENERAL_ID`，守城走旧四档掷色。
+
+## 禁止
+
+- 守城专将写进出征池（例：嬴稷不得随机跟军出征）
+- 只改 `FactionGenerals` 不写 `FactionGeneralPools`（出征仍只会出单将）
+- 多将池不写 `GENERAL_PROFILES`（技能不触发）
+- 非锚点城挂将 / 占城过户将领

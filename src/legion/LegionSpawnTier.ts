@@ -1,5 +1,8 @@
 import { GameConfig } from '../config/GameConfig';
-import { getFactionGeneral } from '../data/FactionGenerals';
+import {
+    factionHasExpeditionGeneral,
+    pickRandomExpeditionGeneral,
+} from '../data/FactionGeneralPools';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
 import type { Army } from './Army';
 
@@ -17,7 +20,7 @@ export function listAvailableLegionSpawnOutcomes(
     tierState: CitySpawnTierState,
     eliteName: string | null,
 ): LegionSpawnTierOutcome[] {
-    const hasGeneral = !!getFactionGeneral(factionId);
+    const hasGeneral = factionHasExpeditionGeneral(factionId);
     const canGeneral = hasGeneral && !tierState.spawnGeneralUsed;
     const canElite = !!eliteName && !tierState.spawnEliteUsed;
 
@@ -71,7 +74,7 @@ export function noteCitySpawnTierFromLegion(
 /** 仅挂将领：保留原名，不升 isElite */
 export function attachFactionGeneralToArmy(army: Army): boolean {
     if (army.generalId) return false;
-    const general = getFactionGeneral(army.getFactionId());
+    const general = pickRandomExpeditionGeneral(army.getFactionId());
     if (!general) return false;
     army.generalId = general.generalId;
     army.portraitPath = general.portrait;
@@ -107,7 +110,7 @@ export function applyLegionSpawnTierToArmy(
     const state = tierState ?? {};
     const threshold = GameConfig.EXPEDITION.UNLOCK_TROOPS;
     const factionId = army.getFactionId();
-    const hasGeneral = !!getFactionGeneral(factionId);
+    const hasGeneral = factionHasExpeditionGeneral(factionId);
     const canGeneral = hasGeneral && !state.spawnGeneralUsed;
     const canElite = !state.spawnEliteUsed;
 

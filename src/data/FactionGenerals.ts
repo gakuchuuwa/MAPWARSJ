@@ -2,7 +2,7 @@
  * 势力将领：势力史实将领档案（一势力一将领一立绘，AI 也有）。
  *
  * 设计定案（GAME_DIRECTION.md「番号随城，将领锚据点」2026-06-22）：
- *   **档案随势**——`FactionGenerals.ts` 绑 factionId；占城不过户（武周占汴梁不得吴起档案）。
+ *   **档案随势**——`FactionGenerals.ts` 绑 factionId（单将默认表）；**多将势力**另见 `FactionGeneralPools.ts`（§12.2.2 N+1）。
  *   **出场锚据点**——将领只出现在锚点据点的军团或该城守城城防，他处永不出现。
  *     默认锚点 = `STARTING_CAPITALS[factionId]`（例：qin → city_tianshui 天水 → 白起）。
  *   **互斥**——军团已带将则据点守城不得再掷将；城防已掷将则军团不得再带；共用 `City.spawnGeneralUsed`。
@@ -21,10 +21,11 @@
  *   2. GeneralSkills.ts 的 GENERAL_PROFILES 加 generalId 的武将技档案（不加则技能不触发）
  *   3. 立绘 PNG → 写入对应素材夹 <code>{generalId}.png</code>（F2 绑定）；F2 可校正位置
  *
- * 红线：一势力一将领；专图文件名全局唯一；fallback 仅限本政权夹与本文化夹。
+ * 红线：单将势力一势力一条默认将；多将势力池内每一将须有 GENERAL_PROFILES + 立绘；fallback 仅限本政权夹与本文化夹。
  */
 
 import { resolvePortraitAssetPath } from '../config/portrait_defaults';
+import { resolveGeneralRecordById } from './FactionGeneralPools';
 
 export interface FactionGeneral {
     /** 将领 id（须在 GENERAL_PROFILES 有档案，否则武将技不触发） */
@@ -327,7 +328,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     gandenpozhang: { generalId: 'gandenpozhang_dibasangjiejiacuo', generalName: '第巴桑结嘉措', portrait: '/assets/tubo/gandenpozhang_dibasangjiejiacuo.png' },
     khyungpo: { generalId: 'khyungpo_qiongbobangse', generalName: '琼波·邦色', portrait: '/assets/tubo/khyungpo_qiongbobangse.png' },
     gar_kham: { generalId: 'gar_kham_dengbazeren', generalName: '登巴泽仁', portrait: '/assets/tubo/gar_kham_dengbazeren.png' },
-    guangwu: { generalId: 'guangwu_xinwuxian', generalName: '辛武贤', portrait: '/assets/tubo/lanzhou_zhaochongguo.png' },
+
     supi: { generalId: 'supi_xinuoluo', generalName: '悉诺逻', portrait: '/assets/tubo/supi_xinuoluo.png' },
     tsangpa: { generalId: 'tsangpa_pengcuonanjie', generalName: '彭措南杰', portrait: '/assets/tubo/tsangpa_pengcuonanjie.png' },
     spurgyal: { generalId: 'spurgyal_dariniansai', generalName: '达日年塞', portrait: '/assets/tubo/spurgyal_dariniansai.png' },
@@ -401,7 +402,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     nanyue: { generalId: 'nanyue_zhaotuo', generalName: '赵佗', portrait: '/assets/lingnan/nanyue_zhaotuo.png' },
     zhancheng: { generalId: 'zhancheng_zhimin', generalName: '制旻', portrait: '/assets/guangzhou/zhancheng_zhimin.png' },
     xiou: { generalId: 'xiou_yixusong', generalName: '译吁宋', portrait: '/assets/lingnan/xiou_yixusong.png' },
-    xichu: { generalId: 'xichu_xiangyu', generalName: '项羽', portrait: '/assets/jiangnan/xichu_xiangyu.png' },
+    xichu: { generalId: 'xichu_xiangyu', generalName: '项羽', portrait: '/assets/xianqin/xichu_xiangyu.png' },
     gouding: { generalId: 'gouding_wubo', generalName: '毋波', portrait: '/assets/lingnan/gouding_wubo.png' },
     chen: { generalId: 'chen_chenbaxian', generalName: '陈霸先', portrait: '/assets/lingnan/chen_chenbaxian.png' },
     dayu: { generalId: 'dayu_wangshouren', generalName: '王守仁', portrait: '/assets/lingnan/dayu_wangshouren.png' },
@@ -483,7 +484,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 
   // ── 河西区 2026-06-18 ──
         liangzhou: { generalId: 'liangzhou_zhanggui', generalName: '张轨', portrait: '/assets/hexi/liangzhou_zhanggui.png' },
-    lanzhou: { generalId: 'lanzhou_zhaochongguo', generalName: '赵充国', portrait: '/assets/hexi/lanzhou_zhaochongguo.png' },
+
         wudu: { generalId: 'wudu_zhangyi', generalName: '张翼', portrait: '/assets/bashu/wudu_zhangyi.png' },
         baishui: { generalId: 'baishui_yanghuai', generalName: '杨怀', portrait: '/assets/bashu/baishui_yanghuai.png' },
         dangzhou: { generalId: 'dangzhou_dengai', generalName: '邓艾', portrait: '/assets/bashu/dangzhou_dengai.png' },
@@ -491,7 +492,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dashun: { generalId: 'dashun_lizicheng', generalName: '李自成', portrait: '/assets/hexi/dashun_lizicheng.png' },
     zhai_han: { generalId: 'zhai_han_dongyi', generalName: '董翳', portrait: '/assets/hexi/zhai_han_dongyi.png' },
     ganzhou: { generalId: 'ganzhou_dourong', generalName: '窦融', portrait: '/assets/hexi/ganzhou_dourong.png' },
-        suzhou: { generalId: 'suzhou_huoqubing', generalName: '霍去病', portrait: '/assets/hexi/suzhou_huoqubing.png' },
+
     shazhou: { generalId: 'shazhou_zhangyichao', generalName: '张议潮', portrait: '/assets/hexi/shazhou_zhangyichao.png' },
     dongshengwei: { generalId: 'dongshengwei_wangyue_ming', generalName: '王越', portrait: '/assets/hexi/wangyue.png' },
     guiyi: { generalId: 'guiyi_caoyijin', generalName: '曹议金', portrait: '/assets/hexi/guiyi_caoyijin.png' },
@@ -500,7 +501,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     chile: { generalId: 'chile_hulvjin', generalName: '斛律金', portrait: '/assets/hexi/chile_hulvjin.png' },
     chijin: { generalId: 'chijin_qiewangshijia', generalName: '且旺失加', portrait: '/assets/hexi/chijin_qiewangshijia.png' },
     juyan_d: { generalId: 'juyan_d_liling', generalName: '李陵', portrait: '/assets/hexi/9559f55f-f639-4458-aae6-efaa1501714d.png' },
-    shuofang: { generalId: 'shuofang_weiqing', generalName: '卫青', portrait: '/assets/hexi/shuofang_weiqing.png' },
+
     yeli: { generalId: 'yeli_yeliwangrong', generalName: '野利旺荣', portrait: '/assets/hexi/yeli_yeliwangrong.png' },
     hunxie: { generalId: 'hunxie_hunxiewang', generalName: '徐自为', portrait: '/assets/hexi/hunxie_hunxiewang.png' },
     guazhou: { generalId: 'guazhou_zhangshougui', generalName: '张守珪', portrait: '/assets/hexi/guazhou_zhangshougui.png' },
@@ -533,7 +534,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jibei: { generalId: 'jibei_xuxuan_cm', generalName: '徐宣', portrait: '/assets/zhongyuan/xuxuan.png' },
     jinan: { generalId: 'jinan_tiexuan', generalName: '铁铉', portrait: '/assets/zhongyuan/jinan_tiexuan.png' },
     qi: { generalId: 'qi_sunbin', generalName: '孙膑', portrait: '/assets/zhongyuan/qi_sunbin.png' },
-    huaiyang: { generalId: 'huaiyang_zhouyafu', generalName: '周亚夫', portrait: '/assets/zhongyuan/huaiyang_zhouyafu.png' },
+
     yingzhou_d: { generalId: 'yingzhou_d_liuqi', generalName: '刘锜', portrait: '/assets/zhongyuan/yingzhou_d_liuqi.png' },
     cao_d: { generalId: 'cao_d_caocao', generalName: '曹操', portrait: '/assets/zhongyuan/cao_d_caocao.png' },
     long2: { generalId: 'long2_weixiaokuan', generalName: '韦孝宽', portrait: '/assets/zhongyuan/long2_weixiaokuan.png' },
@@ -789,6 +790,11 @@ export function setGeneralPortraitOverride(generalId: string, portraitPath: stri
 }
 
 export function getGeneralRecordByGeneralId(generalId: string): FactionGeneral | null {
+    const fromPool = resolveGeneralRecordById(generalId);
+    if (fromPool) {
+        const portrait = _generalPortraitOverrides[generalId] ?? fromPool.portrait;
+        return { ...fromPool, portrait };
+    }
     for (const general of Object.values(FACTION_GENERALS)) {
         if (general.generalId === generalId) {
             const portrait = _generalPortraitOverrides[generalId] ?? general.portrait;

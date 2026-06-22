@@ -8,7 +8,7 @@ import {
     noteCitySpawnTierFromLegion,
     type CitySpawnTierState,
 } from './LegionSpawnTier';
-import { getFactionGeneral } from '../data/FactionGenerals';
+import { factionHasExpeditionGeneral } from '../data/FactionGeneralPools';
 import { CityManager } from '../world/CityManager';
 import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
@@ -319,7 +319,7 @@ export class LegionManager {
             const cityId = army.homeCityId ?? army.getSourceCityId();
             const city = cityId ? this.cityManager.getCity(cityId) : undefined;
             const state: CitySpawnTierState = city ?? {};
-            const canGeneral = !state.spawnGeneralUsed && !!getFactionGeneral(army.getFactionId());
+            const canGeneral = !state.spawnGeneralUsed && factionHasExpeditionGeneral(army.getFactionId());
             const canElite = !state.spawnEliteUsed;
 
             if (army.isElite && !army.generalId) {

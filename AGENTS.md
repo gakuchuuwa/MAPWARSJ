@@ -583,8 +583,9 @@ npm run city:spacing   # 写入后再跑全图 ≥50 km
 |------|-------------|------|
 | 1 | FactionEditor `/api/batch-import` | 势力、据点、首都、旗号×2 |
 | 2 | `EventParser.ts` | 与 cities_v2 **同 id** 城块同步（name/factionId/lat/lng/type/region） |
-| 3 | `FactionGenerals.ts` | 要武将时；一势力一将 |
-| 4 | `GeneralSkills.ts` `GENERAL_PROFILES` | **有将必写**；无档案则武将技不触发 |
+| 3 | `FactionGenerals.ts` | 要武将时；**单将势力**一势力一条；**多将势力**保留一条默认将 + 见 `FactionGeneralPools.ts` |
+| 3b | `FactionGeneralPools.ts` | **A/B 多将（N+1）**时：出征池、守城专将、显示名、立绘夹 |
+| 4 | `GeneralSkills.ts` `GENERAL_PROFILES` | **有将必写**（池内每一 `generalId`）；无档案则武将技不触发 |
 | 5 | `*ExpeditionLegions.ts` | 要精锐时；写进**正确 14 区**文件 |
 | 6 | `cities_v2` 的 `region` + `note` | 文化区显式标注 + 史地备注 |
 | 7 | 道路 | 主人 VectorRoadEditor 手画（**AI 禁止**改 VectorRoadData） |
@@ -975,13 +976,75 @@ npm run skeleton:audit
 - [ ] 守城 `SiegeGarrisonTier` 掷将是否仅对本城、且与在场军团带将互斥？
 - [ ] 是否禁止从洛阳秦军团、函谷秦守城等非锚点刷白起？
 
+### 12.2.2 多将领势力：出征池 + 守城专将（N+1，2026-06-22 秦试点）
+
+> **主人方向**：知名政权、民族逐步采用「**出征池随机 N 将 + 守城专将 0–1**」，与单将势力并存。  
+> **试点**：秦 `qin` — 出征池 5 将（白起、王翦、司马错、王贲、蒙恬）；守城专将 1（嬴稷 `qin_yingji`）。
+
+#### 是否推荐推广
+
+| 结论 | 说明 |
+|------|------|
+| ✅ **A/B 级** | 大城、区中心、史籍名将簇丰富的政权/民族 — **适合** N+1，提升重玩性与史感 |
+| ⚠️ **守城 +1 可选** | 仅当确有「君王/守土型」与「野战名将」可分时配置；无则只做出征池或维持单将 |
+| ❌ **C 级 / panjun** | 维持 **单将或无将**；禁止为凑池乱挂路人名将 |
+
+#### 两套池（硬分离）
+
+| 池 | 数据 | 触发 | 秦例 |
+|----|------|------|------|
+| **出征池** | `FACTION_EXPEDITION_GENERAL_POOLS[factionId]` | 锚点募兵四档掷中 `general` / `elite_general` → **池内等概率** | 五将（**不含**嬴稷） |
+| **守城专将** | `FACTION_SIEGE_GARRISON_GENERAL_ID[factionId]` | 锚点守城、守方军团无人带将 → **必出**；**不进**出征池、**不消耗** `spawnGeneralUsed` | 嬴稷 |
+
+**互斥**（与 §12.2.1 相同）：军团已带将 ↔ 城防不再叠将；守城专将先挂后，与军团 reconcile 剥重。
+
+#### 募兵概率（勿误解）
+
+四档齐全（有番号、将/精配额未用尽）时 **等概率** 四档：
+
+| 档位 | 概率 | 带将 |
+|------|------|------|
+| 纯兵 | 25% | 否 |
+| 仅精锐 | 25% | 否 |
+| 仅将领 | 25% | 是（出征池随机） |
+| 精锐+将 | 25% | 是（出征池随机） |
+
+→ 新军团 **有将概率 = 50%**（非 25%）。≥4 万另有必精锐+锚点将规则，见 `GAME_DIRECTION.md`。
+
+#### 录入步骤（每新增一将）
+
+1. `GeneralSkills.ts` → `GENERAL_PROFILES[generalId]`
+2. `FactionGeneralPools.ts` → `GENERAL_DISPLAY_NAMES`、必要时 `FACTION_GENERAL_PORTRAIT_FOLDER`、出征池或守城专将 id
+3. 立绘 `public/assets/{政权夹}/{generalId}.png`
+4. `FactionGenerals.ts` 保留 **一条** 默认将（兼容 `getFactionGeneral`）；池内其余将 **不必** 写入 `FACTION_GENERALS` 主表
+5. 锚点 = `STARTING_CAPITALS[factionId]`；**出场范围**仍守 §12.2.1
+
+#### 代码单一真理
+
+| 文件 | 职责 |
+|------|------|
+| `FactionGeneralPools.ts` | 出征池、守城专将、`pickRandomExpeditionGeneral`、`getSiegeGarrisonGeneral` |
+| `LegionSpawnTier.ts` | 募兵/升档挂将 → 出征池 |
+| `SiegeGarrisonTier.ts` | 守城专将必出 + 无专将势力四档掷色 |
+| `FactionGenerals.ts` | 单将默认表 + `getGeneralRecordByGeneralId`（含池内 id 解析） |
+
+细则：`.cursor/rules/faction-general-pools.mdc`。
+
+**改多将数据前自检**：
+
+- [ ] 守城专将 **不在** `FACTION_EXPEDITION_GENERAL_POOLS` 内？
+- [ ] 池内每个 `generalId` 均有 `GENERAL_PROFILES` + 立绘路径？
+- [ ] 仅 **A/B** 且主人/史料可支撑，而非 C 级凑数？
+- [ ] 锚点据点、互斥、`spawnGeneralUsed` 逻辑未破坏？
+
 ### 12.3 数据文件与审计（写入前必跑）
 
 | 文件 | 作用 |
 |------|------|
 | `src/data/*ExpeditionLegions.ts` | 14 文化区 **数据录入** `factionId → 番号` |
 | `src/data/ExpeditionLegions.ts` | `CITY_ELITE_LEGIONS`（番号随城）、`getLegionEliteLegionName`、远征改名 |
-| `src/data/FactionGenerals.ts` | **将领档案** `factionId → 将领`；**出场锚点** `STARTING_CAPITALS[factionId]` |
+| `src/data/FactionGenerals.ts` | **将领档案** 单将默认表 `factionId → 将领`；**出场锚点** `STARTING_CAPITALS[factionId]` |
+| `src/data/FactionGeneralPools.ts` | **多将势力** 出征池 + 守城专将（§12.2.2；无多将可不配） |
 | `史料/古代精锐部队.md` | 番号史料来源（§1 全局 + 分区表） |
 
 **审计命令**（缺一不可）：
