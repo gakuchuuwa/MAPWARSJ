@@ -1,6 +1,7 @@
 import { calculateBattleDurationSec, GameConfig } from '../config/GameConfig';
 import { rollSideEffectivePower, sumCultureAdjustedTroops } from '../systems/CultureCombat';
 import { gameLog, gameWarn } from '../utils/GameLogger';
+import { readSiegeGarrisonElite } from './SiegeGarrisonTier';
 
 const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
 const battleTickLog = (...args: unknown[]) => gameLog('battleTick', ...args);
@@ -19,13 +20,26 @@ export interface ISiegeReinforcementPollSource {
 
 export type BattleType = 'siege' | 'field';
 
-/** 战后恢复比例：全场统一 30%（见 GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE） */
+/** 战后恢复比例：武将+精锐 50%，其余 30%（见 GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE） */
 export function getPostBattleRecoveryRate(
     _battleType?: BattleType,
-    _attacker?: { unitType: UnitType; getEntity?(): unknown },
-    _defender?: { unitType: UnitType; getEntity?(): unknown },
+    _attacker?: IBattleUnit,
+    _defender?: IBattleUnit,
 ): number {
     return GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE;
+}
+
+/** 检测胜方是否有武将+精锐，有则恢复 50% */
+function getWinnerRecoveryRate(winner: IBattleUnit): number {
+    const hasGeneral = !!winner.generalId;
+    if (!hasGeneral) return GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE;
+
+    const entity = winner.getEntity?.();
+    const hasElite =
+        entity?.isElite ||
+        (winner.unitType === 'city' && readSiegeGarrisonElite(entity));
+
+    return hasGeneral && hasElite ? 0.5 : GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE;
 }
 
 export type UnitType = 'player' | 'legion' | 'city' | 'bandit' | 'army' | 'npc';
@@ -280,8 +294,8 @@ export class Battle {
         const winnerInitial = winner === this.attacker ? this.initialAttackerTroops : this.initialDefenderTroops;
         const loserInitial = loser === this.attacker ? this.initialAttackerTroops : this.initialDefenderTroops;
 
-        // 战后恢复：统一 30% 本场战损
-        const recoveryRate = getPostBattleRecoveryRate(this.type, this.attacker, this.defender);
+        // 战后恢复：武将+精锐 50%，其余 30%
+        const recoveryRate = getWinnerRecoveryRate(winner);
         const winnerLost = Math.max(0, winnerInitial - winner.troops);
         const recovery = Math.floor(winnerLost * recoveryRate);
         if (recovery > 0) {

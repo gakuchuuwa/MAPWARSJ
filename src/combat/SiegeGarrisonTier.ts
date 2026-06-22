@@ -8,7 +8,6 @@ import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
 import {
     markSpawnTierConsumed,
-    rollCityLegionSpawnTierOutcome,
     type CitySpawnTierState,
 } from '../legion/LegionSpawnTier';
 import type { Army } from '../legion/Army';
@@ -22,7 +21,13 @@ export interface SiegeGarrisonBoostFields {
 }
 
 export type SiegeGarrisonCity = SiegeGarrisonBoostFields &
-    CitySpawnTierState & { id: string; factionId: string };
+    CitySpawnTierState & {
+        id: string;
+        factionId: string;
+        latitude?: number;
+        longitude?: number;
+        region?: string;
+    };
 
 export function clearSiegeGarrisonBoost(city: SiegeGarrisonBoostFields): void {
     delete city._siegeGarrisonGeneralId;
@@ -58,15 +63,19 @@ export function reconcileSiegeGarrisonBoostWithLegions(
 }
 
 /**
- * 守城军团未覆盖的档位：城防驻军加成（将/精随据点，旗号随占城势力）
+ * 守城驻军加成（将/精随据点，旗号随占城势力）
  *
  * 出将前提（缺一不可）：
  *  1. 占城势力 === 锚点势力（占城不过户；他势不得用敌将）
  *  2. 守方军团尚无该武将
- *  3. 攻方军团尚无该武将（同场唯一；防攻守双方出同一将领）
+ *  3. 攻方军团尚无该武将（同场唯一；防攻守双方不重复）
  *  4. city.spawnGeneralUsed 未消耗
  *
- * 规则来源：city-anchor-first.mdc 铁律 B；主人 2026-06-23 定。
+ * 概率规则（2026-06-23 主人定）：
+ *  - 军团：维持原25%随机
+ *  - 守城驻军：条件满足则**必出**（不再掷骰）
+ *
+ * 规则来源：city-anchor-first.mdc 铁律 B。
  */
 export function applySiegeGarrisonBoostIfNeeded(
     city: SiegeGarrisonCity,
@@ -84,14 +93,9 @@ export function applySiegeGarrisonBoostIfNeeded(
     const anchorFactionId = getCityAnchorFactionId(city.id);
 
     // ① 占城不过户：占城方 ≠ 锚点方时不出武将/精锐
-    if (city.factionId !== anchorFactionId) {
-        // 精锐同理：占城不过户
-        return;
-    }
+    if (city.factionId !== anchorFactionId) return;
 
     const eliteName = getCityEliteLegionName(city.id);
-    if (!eliteName && hasLegionElite) return;
-
     const anchoredGeneral = getCityAnchoredGeneral(city.id);
 
     // ③ 同场唯一：攻方已有该武将则守城不得重复出场
@@ -100,36 +104,34 @@ export function applySiegeGarrisonBoostIfNeeded(
         attackingLegions.some((l) => l.generalId === anchoredGeneral.generalId);
 
     const needElite = !hasLegionElite && !!eliteName && !city.spawnEliteUsed;
-    const needRandomGeneral =
+    const needGeneral =
         !hasLegionGeneral &&
         !city.spawnGeneralUsed &&
         !!anchoredGeneral &&
-        !attackerHasThisGeneral;  // ③ 防重
+        !attackerHasThisGeneral;
 
-    if (!needElite && !needRandomGeneral) return;
+    if (!needElite && !needGeneral) return;
 
-    const outcome = rollCityLegionSpawnTierOutcome(anchorFactionId, city, eliteName);
+    // 防守战：未被军团占用的将/精锐必出（无随机）
     const applied = { general: false, elite: false };
 
-    if (needElite && (outcome === 'elite' || outcome === 'elite_general')) {
+    if (needElite) {
         city._siegeGarrisonElite = true;
         city._siegeGarrisonEliteName = eliteName;
         applied.elite = true;
     }
 
-    if (needRandomGeneral && (outcome === 'general' || outcome === 'elite_general')) {
-        if (anchoredGeneral) {
-            city._siegeGarrisonGeneralId = anchoredGeneral.generalId;
-            city._siegeGarrisonPortrait = resolveGeneralPortraitPath(anchoredGeneral.portrait, {
-                factionId: anchorFactionId,
-                region: getCityRegion({
-                    latitude: city.latitude,
-                    longitude: city.longitude,
-                    region: city.region,
-                }),
-            });
-            applied.general = true;
-        }
+    if (needGeneral && anchoredGeneral) {
+        city._siegeGarrisonGeneralId = anchoredGeneral.generalId;
+        city._siegeGarrisonPortrait = resolveGeneralPortraitPath(anchoredGeneral.portrait, {
+            factionId: anchorFactionId,
+            region: getCityRegion({
+                latitude: city.latitude ?? 0,
+                longitude: city.longitude ?? 0,
+                region: city.region,
+            }),
+        });
+        applied.general = true;
     }
 
     if (applied.general || applied.elite) {

@@ -454,7 +454,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
         daxi_ming: { generalId: 'daxi_ming_zhangxianzhong', generalName: '张献忠', portrait: '/assets/BASHU/daxi_ming_zhangxianzhong.png' },
     zi: { generalId: 'zi_changhong', generalName: '苌弘', portrait: '/assets/BASHU/zi_changhong.png' },
     yidou: { generalId: 'yidou_luxun', generalName: '陆逊', portrait: '/assets/BASHU/yidou_luxun.png' },
-        chu: { generalId: 'chu_guanyu', generalName: '关羽', portrait: '/assets/JIANGNAN/chu_guanyu.png' },
+        chu: { generalId: 'chu_guanyu', generalName: '关羽', portrait: '/assets/BASHU/chu_guanyu.png' },
     zhongxiang: { generalId: 'zhongxiang_zhongxiang', generalName: '钟相', portrait: '/assets/BASHU/zhongxiang_zhongxiang.png' },
     fengzhou: { generalId: 'fengzhou_wujie', generalName: '吴玠', portrait: '/assets/BASHU/fengzhou_wujie.png' },
     fushi: { generalId: 'fushi_fuhong', generalName: '苻洪', portrait: '/assets/BASHU/fushi_fuhong.png' },
@@ -472,7 +472,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     bandun: { generalId: 'bandun_fanmu', generalName: '范目', portrait: '/assets/BASHU/bandun_fanmu.png' },
     she: { generalId: 'she_shechongming', generalName: '奢崇明', portrait: '/assets/BASHU/she_shechongming.png' },
     boren: { generalId: 'boren_ada', generalName: '阿大', portrait: '/assets/BASHU/boren_ada.png' },
-    jingmen: { generalId: 'jingmen_zhaoyun', generalName: '赵云', portrait: '/assets/BASHU/jingmen_zhaoyun.png' },
+    jingmen: { generalId: 'jingmen_zhaoyun', generalName: '赵云', portrait: '/assets/NORTH/jingmen_zhaoyun.png' },
     chenzhou_d: { generalId: 'chenzhou_d_zhanggao', generalName: '张镐', portrait: '/assets/BASHU/chenzhou_d_zhanggao.png' },
       xiqin: { generalId: 'xiqin_xuerengao', generalName: '薛仁杲', portrait: '/assets/HEXI/xiqin_xuerengao.png' },
     beidi: { generalId: 'beidi_sunang', generalName: '孙卬', portrait: '/assets/HEXI/beidi_sunang.png' },
@@ -603,7 +603,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     xuan: { generalId: 'xuan_mafang', generalName: '徐达', portrait: '/assets/daming/xuan_mafang.png' },
     tuoba: { generalId: 'tuoba_tuobagui', generalName: '拓跋珪', portrait: '/assets/STEPPE/tuoba_tuobagui.png' },
     qingyuan_bd: { generalId: 'qingyuan_bd_zhoudewei', generalName: '周德威', portrait: '/assets/NORTH/qingyuan_bd_zhoudewei.png' },
-    changshan: { generalId: 'changshan_yanyangzhao', generalName: '杨延昭', portrait: '/assets/NORTH/changshan_yanyangzhao.png' },
+    changshan: { generalId: 'changshan_yanyangzhao', generalName: '杨延昭', portrait: '/assets/zhaosong/changshan_yanyangzhao.png' },
     hejian: { generalId: 'hejian_gongsunzan', generalName: '公孙瓒', portrait: '/assets/NORTH/hejian_gongsunzan.png' }, // 文安·河间郡公孙瓒白马义从
     liangshidu: { generalId: 'liangshidu_longjia', generalName: '龙贾', portrait: '/assets/NORTH/liangshidu_longjia.png' }, // 雕阴·魏将龙贾戍守抗秦
     yangshe: { generalId: 'yangshe_yangshezhi', generalName: '羊舌职', portrait: '/assets/NORTH/yangshe_yangshezhi.png' }, // 铜鞮·晋羊舌氏封邑
@@ -613,7 +613,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     gaoqi_d: { generalId: 'gaoqi_d_gaohuan', generalName: '高欢', portrait: '/assets/CENTRAL/gaoqi_d_gaohuan.png' },
     wangyan: { generalId: 'wangyan_wangyan_tx', generalName: '王彦', portrait: '/assets/NORTH/wangyan_wangyan_tx.png' },
     linyu: { generalId: 'linyu_wusangui', generalName: '吴三桂', portrait: '/assets/NORTH/linyu_wusangui.png' },
-    dai_d: { generalId: 'dai_d_tuobashiyijian', generalName: '拓跋什翼犍', portrait: '/assets/NORTH/dai_d_tuobashiyijian.png' },
+    dai_d: { generalId: 'dai_d_tuobashiyijian', generalName: '拓跋什翼犍', portrait: '/assets/HEXI/dai_d_tuobashiyijian.png' },
     erzhu: { generalId: 'erzhu_erzhurong', generalName: '尔朱荣', portrait: '/assets/NORTH/erzhu_erzhurong.png' },
     zhe_d: { generalId: 'zhe_d_zheyuqing', generalName: '折御卿', portrait: '/assets/NORTH/zhe_d_zheyuqing.png' },
     heng1: { generalId: 'heng1_limu_yanyue', generalName: '李牧', portrait: '/assets/NORTH/heng1_limu_yanyue.png' },

@@ -1240,6 +1240,46 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 19
+        },
+        "/assets/zhaosong/xiangzhou_lvwenhuan.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/HEXI/dai_d_tuobashiyijian.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/zhaosong/changshan_yanyangzhao.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/BASHU/shu_zhugeliang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/zhaosong/9c7d1733-2f44-495c-a0fb-0b6748d2582d.png": {
+            "scale": 1.18,
+            "offsetX": 16,
+            "offsetY": -23
+        },
+        "/assets/BASHU/chu_guanyu.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/BASHU/chuanshu (4).png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/NORTH/jingmen_zhaoyun.png": {
+            "scale": 1.02,
+            "offsetX": 14,
+            "offsetY": -27
         }
     },
     "folderGuides": {

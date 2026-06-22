@@ -31,7 +31,7 @@ export function loadGameAppCityData(app: GameApp): void {
             latitude: c.lat,
             longitude: c.lng,
             type: c.type,
-            troops: c.troops !== undefined ? c.troops : GameConfig.SIEGE.DEFAULT_CITY_TROOPS,
+            troops: 20000,
             region: c.region,
             image: getCityImage(c),
             mirror: hasCityExclusiveIcon(c.id) ? !!c.mirror : rollSessionCityMirror(c.type, c.mirror),

@@ -316,13 +316,24 @@ export default defineConfig({
                     req.on('data', chunk => { body += chunk; });
                     req.on('end', () => {
                         try {
-                            const data = JSON.parse(body);
+                            const payload = JSON.parse(body);
+                            // backup:true 由前端自动写盘（每 10 张）时附带
+                            const { backup: makeBackup, ...data } = payload as { backup?: boolean; [k: string]: unknown };
                             const content = serverFormatPortraitAdjustFile(data);
                             fs.writeFileSync(portraitAdjustPath, content, 'utf-8');
                             markPortraitDevWrite();
+                            let backupFile: string | undefined;
+                            if (makeBackup) {
+                                const backupDir = path.resolve(__dirname, 'src/data/portrait_adjust_backups');
+                                if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
+                                const ts = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12); // YYYYMMDDHHmm
+                                backupFile = path.join(backupDir, `portrait_adjust_${ts}.ts`);
+                                fs.copyFileSync(portraitAdjustPath, backupFile);
+                                console.log(`📦 [PortraitAdjust] Backup → ${backupFile}`);
+                            }
                             console.log(`✅ [PortraitAdjust] Saved to ${portraitAdjustPath}`);
                             res.setHeader('Content-Type', 'application/json');
-                            res.end(JSON.stringify({ ok: true }));
+                            res.end(JSON.stringify({ ok: true, backupFile }));
                         } catch (err: any) {
                             console.error(`❌ [PortraitAdjust] Failed:`, err);
                             res.statusCode = 500;

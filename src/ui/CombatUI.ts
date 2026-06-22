@@ -1955,10 +1955,11 @@ export class CombatUI {
             const save = await fetch('/api/save-portrait-adjust', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(disk),
+                // autoTrigger 时附带 backup:true，让服务端额外存一份带时间戳的备份
+                body: JSON.stringify(autoTrigger ? { ...disk, backup: true } : disk),
             });
             if (!save.ok) throw new Error(`HTTP ${save.status}`);
-            const result = await save.json();
+            const result = await save.json() as { ok: boolean; error?: string; backupFile?: string };
             if (!result.ok) throw new Error(result.error || '保存失败');
             this.mergePortraitAdjustInto(this.correctorData, disk);
             this.mergePortraitAdjustInto(DEFAULT_PORTRAIT_ADJUST, disk);
@@ -1966,7 +1967,15 @@ export class CombatUI {
             const n = this.correctorDirtyPaths.size;
             this.correctorDirtyPaths.clear();
             if (!onExit) {
-                const label = autoTrigger ? `✓ 自动写盘 ${n} 张 · 继续调整` : `✓ 已保存 ${n} 张（已永久生效）`;
+                let label: string;
+                if (autoTrigger) {
+                    const bname = result.backupFile ? result.backupFile.replace(/.*[\\/]/, '') : '';
+                    label = bname
+                        ? `✓ 自动写盘 ${n} 张 · 备份→${bname}`
+                        : `✓ 自动写盘 ${n} 张 · 继续调整`;
+                } else {
+                    label = `✓ 已保存 ${n} 张（已永久生效）`;
+                }
                 this.setCorrectorStatus(label);
             }
         } catch (err) {

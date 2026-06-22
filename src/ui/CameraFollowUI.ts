@@ -42,8 +42,11 @@ export class CameraFollowUI {
     /** 开局尚未手动选军团时，首次出现野战军团则自动跟随兵力最多的一支 */
     private autoFollowOnStartPending = true;
     private pendingFollowName: string | null = null;
-    /** 全军覆灭后等待新军团自动跟随 */
+
     private waitingForRespawn = false;
+
+    private autoFollowEnabled = true;
+    private autoFollowCheckbox: HTMLInputElement | null = null;
 
     /**
      * 注入依赖：军队列表、跟随回调、军团上限变更（写 GameConfig + 裁军）
@@ -207,6 +210,40 @@ export class CameraFollowUI {
         limitContainer.appendChild(limitSlider);
         panel.appendChild(limitContainer);
 
+        // 自动跟随配置栏
+        const autoFollowContainer = document.createElement('div');
+        autoFollowContainer.style.cssText = `
+            padding: 8px 14px;
+            font-size: 13px;
+            color: #d4a843;
+            border-bottom: 1px solid rgba(180,140,60,0.3);
+            display: flex;
+            align-items: center;
+        `;
+        const autoFollowLabel = document.createElement('label');
+        autoFollowLabel.style.cssText = `
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        `;
+        const autoFollowCheckbox = document.createElement('input');
+        autoFollowCheckbox.type = 'checkbox';
+        autoFollowCheckbox.checked = this.autoFollowEnabled;
+        autoFollowCheckbox.style.cursor = 'pointer';
+        autoFollowCheckbox.addEventListener('change', (e) => {
+            this.autoFollowEnabled = (e.target as HTMLInputElement).checked;
+            if (this.autoFollowEnabled && !this.followedArmyId) {
+                this.followLargestLegion();
+            }
+        });
+        this.autoFollowCheckbox = autoFollowCheckbox;
+
+        autoFollowLabel.appendChild(autoFollowCheckbox);
+        autoFollowLabel.appendChild(document.createTextNode('军团覆灭/无目标时自动跟随'));
+        autoFollowContainer.appendChild(autoFollowLabel);
+        panel.appendChild(autoFollowContainer);
+
         // 列表容器
         const listContainer = document.createElement('div');
         listContainer.id = 'army-list-items';
@@ -333,22 +370,43 @@ export class CameraFollowUI {
             const fName = this.factionManager?.getFactionName(fid) ?? fid;
             const fColor = this.factionManager?.getFactionColor(fid) ?? '#ffffff';
             const generalRecord = army.generalId ? getGeneralRecordByGeneralId(army.generalId) : null;
-            const generalTag = generalRecord ? `<span style="color:#d4af37; font-size:11px; margin-left:6px; border:1px solid rgba(212,175,55,0.5); border-radius:3px; padding:0 3px; background:rgba(212,175,55,0.1);">将·${generalRecord.generalName}</span>` : '';
+            const isEliteAndGeneral = army.isElite && generalRecord;
+
+            let generalTag = '';
+            if (isEliteAndGeneral) {
+                generalTag = `<span style="color:#ffe39f; font-size:11px; margin-left:6px; border:1px solid #b8860b; border-radius:2px; padding:0 4px; background:linear-gradient(to bottom, rgba(184,134,11,0.25), rgba(0,0,0,0.4)); box-shadow: 0 0 3px rgba(184,134,11,0.5); text-shadow: 1px 1px 1px #000; font-family:'SimSun', 'Songti SC', serif;">♚ ${generalRecord.generalName}</span>`;
+            } else if (generalRecord) {
+                generalTag = `<span style="color:#d4af37; font-size:11px; margin-left:6px; border:1px solid rgba(212,175,55,0.5); border-radius:3px; padding:0 3px; background:rgba(212,175,55,0.1);">将·${generalRecord.generalName}</span>`;
+            }
+
+            let itemBg = isFollowed ? 'background: rgba(180,140,60,0.25);' : '';
+            let borderStyle = 'border-bottom: 1px solid rgba(100,80,40,0.2);';
+            let nameStyle = 'color: #e8dccc;';
+
+            if (isEliteAndGeneral) {
+                if (!isFollowed) {
+                    itemBg = 'background: linear-gradient(to right, rgba(184,134,11,0.12), transparent);';
+                }
+                borderStyle = 'border-bottom: 1px solid rgba(184,134,11,0.4);';
+                nameStyle = 'color: #ffda75; font-weight: bold; text-shadow: 0px 0px 5px rgba(184,134,11,0.4);';
+            } else if (army.isElite) {
+                nameStyle = 'color: #e2cfa3;';
+            }
 
             item.style.cssText = `
                 padding: 7px 14px;
                 cursor: pointer;
-                border-bottom: 1px solid rgba(100,80,40,0.2);
+                ${borderStyle}
                 transition: background 0.15s;
                 font-size: 13px;
-                ${isFollowed ? 'background: rgba(180,140,60,0.25);' : ''}
+                ${itemBg}
             `;
 
             // 第一行：名次 + 军团名 + 军团兵力；第二行：势力色点 + 势力名 + 势力兵力 + 据点数
             item.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070;">${idx + 1}.</span> ${name}${generalTag}
+                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; ${nameStyle}">
+                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070; font-weight:normal; text-shadow:none;">${idx + 1}.</span> ${name}${generalTag}
                     </span>
                     <span style="color:#e0c878; font-size:12px; margin-left:8px; white-space:nowrap;">
                         军 ${this.formatTroops(troops)}
@@ -366,10 +424,18 @@ export class CameraFollowUI {
             `;
 
             item.addEventListener('mouseenter', () => {
-                if (!isFollowed) item.style.background = 'rgba(180,140,60,0.15)';
+                if (!isFollowed) {
+                    item.style.background = isEliteAndGeneral 
+                        ? 'linear-gradient(to right, rgba(184,134,11,0.25), transparent)' 
+                        : 'rgba(180,140,60,0.15)';
+                }
             });
             item.addEventListener('mouseleave', () => {
-                if (!isFollowed) item.style.background = 'transparent';
+                if (!isFollowed) {
+                    item.style.background = isEliteAndGeneral 
+                        ? 'linear-gradient(to right, rgba(184,134,11,0.12), transparent)' 
+                        : 'transparent';
+                }
             });
 
             item.addEventListener('click', () => {
@@ -551,6 +617,9 @@ export class CameraFollowUI {
         this.clearPendingAutoSwitch();
         this.followedArmyId = armyId;
 
+        this.autoFollowEnabled = true;
+        if (this.autoFollowCheckbox) this.autoFollowCheckbox.checked = true;
+
         const text = document.getElementById('follow-banner-text');
         if (text) text.textContent = `🎥 正在跟随：${armyName}`;
         if (this.followBanner) this.followBanner.style.display = 'flex';
@@ -564,6 +633,10 @@ export class CameraFollowUI {
         this.autoFollowOnStartPending = false;
         this.waitingForRespawn = false;
         this.followedArmyId = null;
+
+        this.autoFollowEnabled = false;
+        if (this.autoFollowCheckbox) this.autoFollowCheckbox.checked = false;
+
         if (this.followBanner) this.followBanner.style.display = 'none';
         this.syncFollowedHighlight();
         if (this.onFollowChange) this.onFollowChange(null);
