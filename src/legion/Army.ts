@@ -198,6 +198,14 @@ export class Army implements IBattleUnit {
         return this.isExternalCombat;
     }
 
+    public isMarching(): boolean {
+        return !this.isDestroyed
+            && !this.isExternalCombat
+            && !this.hasArrived
+            && !this.isBlocked()
+            && !this.isPostBattleResting();
+    }
+
     // [NEW] Blocked state management
     public setBlocked(durationMs: number = Army.BLOCKED_RETRY_INTERVAL): void {
         this.blockedUntil = Date.now() + durationMs;

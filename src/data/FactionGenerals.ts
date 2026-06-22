@@ -448,7 +448,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
 // ── 巴蜀区 2026-06-18 ──
     tujia_d: { generalId: 'tujia_d_qinliangyu', generalName: '秦良玉', portrait: '/assets/bashu/tujia_d_qinliangyu.png' },
     shuixi: { generalId: 'shuixi_anbangyan', generalName: '安邦彦', portrait: '/assets/bashu/shuixi_anbangyan.png' },
-        xiangzhou: { generalId: 'xiangzhou_lvwenhuan', generalName: '吕文焕', portrait: '/assets/jiangnan/xiangzhou_lvwenhuan.png' },
+        xiangzhou: { generalId: 'xiangzhou_lvwenhuan', generalName: '吕文焕', portrait: '/assets/zhaosong/xiangzhou_lvwenhuan.png' },
     zaoyang_d: { generalId: 'zaoyang_d_menggong', generalName: '孟珙', portrait: '/assets/zhaosong/zaoyang_d_menggong.png' },
     guo: { generalId: 'guo_jixin', generalName: '纪信', portrait: '/assets/bashu/guo_jixin.png' },
         daxi_ming: { generalId: 'daxi_ming_zhangxianzhong', generalName: '张献忠', portrait: '/assets/bashu/daxi_ming_zhangxianzhong.png' },
@@ -648,7 +648,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     xushouhui: { generalId: 'xushouhui_zhaopusheng', generalName: '赵普胜', portrait: '/assets/jiangnan/xushouhui_zhaopusheng.png' },
     sui: { generalId: 'sui_yangjian', generalName: '杨坚', portrait: '/assets/jiangnan/sui_yangjian.png' },
     changshaguo: { generalId: 'changshaguo_xinqiji', generalName: '辛弃疾', portrait: '/assets/jiangnan/changshaguo_xinqiji.png' },
-    yue_d: { generalId: 'yue_d_yuefei', generalName: '岳飞', portrait: '/assets/jiangnan/yue_d_yuefei.png' },
+    yue_d: { generalId: 'yue_d_yuefei', generalName: '岳飞', portrait: '/assets/zhaosong/yue_d_yuefei.png' },
     zhangshicheng: { generalId: 'zhangshicheng_zhangshicheng', generalName: '张士诚', portrait: '/assets/jiangnan/zhangshicheng_zhangshicheng.png' },
     wu: { generalId: 'wu_sunwu', generalName: '孙武', portrait: '/assets/xianqin/wu_sunwu.png' },
     qian_d: { generalId: 'qian_d_yudayou', generalName: '俞大猷', portrait: '/assets/jiangnan/qian_d_yudayou.png' },
@@ -792,10 +792,13 @@ export function setGeneralPortraitOverride(generalId: string, portraitPath: stri
 }
 
 export function getGeneralRecordByGeneralId(generalId: string): FactionGeneral | null {
-    for (const general of Object.values(FACTION_GENERALS)) {
+    for (const [factionId, general] of Object.entries(FACTION_GENERALS)) {
         if (general.generalId === generalId) {
             const portrait = _generalPortraitOverrides[generalId] ?? general.portrait;
-            return { ...general, portrait };
+            return {
+                ...general,
+                portrait: resolvePortraitAssetPath(portrait, { factionId }),
+            };
         }
     }
     return null;

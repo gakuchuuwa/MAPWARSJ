@@ -815,6 +815,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -17
+        },
+        "/assets/wuzhou/wuzhou_d_wuzetian.png": {
+            "scale": 1.44,
+            "offsetX": 1,
+            "offsetY": 23
+        },
+        "/assets/zhaosong/song_zhaokuangyin.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/xianqin/wei_wuqi.png": {
+            "scale": 1,
+            "offsetX": 3,
+            "offsetY": 25
         }
     },
     "folderGuides": {

@@ -43,6 +43,7 @@ import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视�
 import { FactionForceUI } from '../ui/FactionForceUI'; // [NEW] 势力兵力榜
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
+import { audioManager, type AudioManager } from '../audio/AudioManager';
 import { gameLog } from '../utils/GameLogger';
 import { tickGameAppFrame } from './GameAppLoop';
 import { exposeGameAppGlobals } from './GameAppExpose';
@@ -98,6 +99,7 @@ export class GameApp {
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
     public factionForceUI!: FactionForceUI; // [NEW] 势力兵力榜
     public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥4万解锁）
+    public audioManager: AudioManager = audioManager;
 
     // Game Loop
     public lastFrameTime: number = 0;
@@ -112,6 +114,7 @@ export class GameApp {
         // UI Initialization moved to GameUIManager
         // Expose game instance globally
         window.game = this;
+        this.audioManager.initialize();
     }
 
     /**

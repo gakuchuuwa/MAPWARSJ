@@ -5,7 +5,7 @@ import { FACTIONS } from '../data/factions';
 import { CityManager } from '../world/CityManager';
 import { IEditor } from './UnifiedEditorManager';
 import { getCityImage, getRegion, REGION_ORDER, REGION_LABELS } from '../systems/RegionSystem';
-import { STARTING_CAPITALS } from '../app/GameApp';
+import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
 import { calculateDistance } from '../map/TileMapConfig';
@@ -1474,7 +1474,7 @@ export class CityEditor implements IEditor {
         if (!factionCapital) {
             warnings.push(
                 `<span style="color:#FF5252">⚠ 无 STARTING_CAPITALS 注册</span>` +
-                `<span style="color:#999">：沙盒模式此势力所有城会被强制降为 panjun 灰旗，需要在 GameApp.ts 注册</span>`
+                `<span style="color:#999">：沙盒模式此势力所有城会被强制降为 panjun 灰旗，需在 StartingCapitals.ts 注册</span>`
             );
         } else {
             // [SANDBOX 陷阱 2] 当前编辑的城是不是此势力的首都？

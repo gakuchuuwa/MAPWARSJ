@@ -2,7 +2,7 @@ import { Army } from '../legion/Army';
 import { IBattleUnit, UnitType } from './CombatSystem';
 import { HistoricalEventManager } from '../events/HistoricalEventManager';
 import { gameLog } from '../utils/GameLogger';
-import { getRandomFactionPortrait } from '../config/portrait_defaults';
+import { ensureFactionPortraitPath, resolvePortraitAssetPath } from '../config/portrait_defaults';
 import {
     readSiegeGarrisonGeneralId,
     readSiegeGarrisonPortrait,
@@ -51,16 +51,23 @@ export class BattleUnitFactory {
         // 可移动单位 (军团、玩家、土匪)
         const isMobile = !isCity;
 
-        // 立绘：军团固定 portraitPath；城防临时将/精锐随 entity 字段实时读（援军编入后可清除）
+        // 立绘：军团固定 portraitPath；城防临时将优先，否则按占城势力从政权夹随机（如 新国→liuhan）
         let legionPortraitPath: string | undefined;
+        let cityPortraitPath: string | undefined;
         if (isLegion) {
             const army = entity as Army;
-            if (!army.portraitPath) {
-                army.portraitPath = getRandomFactionPortrait(
+            if (!army.portraitPath?.trim()) {
+                army.portraitPath = ensureFactionPortraitPath(
                     army.getFactionId?.() ?? army.factionId ?? factionId,
                 );
             }
             legionPortraitPath = army.portraitPath;
+        } else if (isCity) {
+            const siegePortrait = readSiegeGarrisonPortrait(entity);
+            const ownerFactionId = entity.factionId ?? factionId;
+            cityPortraitPath =
+                (siegePortrait?.trim() ? siegePortrait : undefined) ??
+                ensureFactionPortraitPath(ownerFactionId);
         }
 
         return {
@@ -82,7 +89,7 @@ export class BattleUnitFactory {
             },
             get portraitPath() {
                 if (isCity) {
-                    return readSiegeGarrisonPortrait(entity);
+                    return readSiegeGarrisonPortrait(entity) ?? cityPortraitPath;
                 }
                 return legionPortraitPath;
             },

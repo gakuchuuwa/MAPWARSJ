@@ -695,6 +695,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'xinping': _zhongyuanPortraitPool,
     'xiqin': _zhongyuanPortraitPool,
     'pizhou': _zhongyuanPortraitPool,
+    'qianzhou': _zhongyuanPortraitPool, // 乾州·奉天；李晟神策军（唐末中原）
     'yanchuan_d': _zhongyuanPortraitPool,
     'yangshao': _zhongyuanPortraitPool,
     'yao': _zhongyuanPortraitPool,
@@ -752,7 +753,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'ying': _nanfangPortraitPool,
     'yiyang_d': _nanfangPortraitPool,
     'yue': _xianqinPortraitPool,
-    'yue_d': _nanfangPortraitPool,
+    'yue_d': _zhaosongPortraitPool,
     'zhangshicheng': _nanfangPortraitPool,
     // 岭南补充 36 势力
     'basha_d': _lingnanPortraitPool,
@@ -984,6 +985,20 @@ export function getRandomFactionPortrait(factionId: string): string | undefined 
     });
 }
 
+/** 保证返回可加载路径（城防/军团兜底，禁止空串） */
+export function ensureFactionPortraitPath(
+    factionId: string,
+    options?: { exclude?: string; region?: RegionType },
+): string {
+    const region = options?.region ?? getFactionCultureRegion(factionId) ?? 'CENTRAL';
+    const resolveOpts = { factionId, region };
+    const fromPool = getRandomFactionPortrait(factionId);
+    if (fromPool?.trim()) return fromPool;
+    const fromResolve = resolvePortraitAssetPath(undefined, resolveOpts);
+    if (fromResolve?.trim()) return fromResolve;
+    return getRandomRegionPortraitPath(region, { factionId, exclude: options?.exclude });
+}
+
 /** 按参战单位文化区与军队/守军选默认立绘路径 */
 export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): string {
     const region = resolveUnitCultureRegion(unit);
@@ -999,7 +1014,10 @@ export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): 
     const factionId = unit.factionId;
     const pool = resolvePortraitPool(factionId, region);
     if (pool?.length) {
-        return resolvePortraitAssetPath(pickRandom(pool, excludePath), { ...resolveOpts, exclude: excludePath });
+        const picked = pickRandomExisting(pool, excludePath);
+        if (picked) {
+            return resolvePortraitAssetPath(picked, { ...resolveOpts, exclude: excludePath });
+        }
     }
     return getRandomRegionPortraitPath(region, { factionId, exclude: excludePath });
 }

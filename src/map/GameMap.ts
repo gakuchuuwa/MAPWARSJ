@@ -574,6 +574,24 @@ export class GameMap {
                         <input type="checkbox" id="chk-showcase"> 
                         <b>♟️ 开启兵种展示</b>
                     </label>
+
+                    <hr style="margin:8px 0;width:100%;border:0;border-top:1px solid #eee;">
+                    <div style="font-weight:bold;margin-bottom:4px;font-size:13px;color:#5d4037;">音效</div>
+
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#5d4037;">
+                        <input type="checkbox" id="chk-audio-enabled">
+                        <b>开启音效</b>
+                    </label>
+
+                    <div id="audio-controls" style="margin-left:20px;display:flex;flex-direction:column;gap:4px;">
+                        <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
+                            主音量 <span id="val-audio-volume">50%</span>
+                        </label>
+                        <input type="range" id="rng-audio-volume" min="0" max="100" step="5" value="50" style="width:120px;">
+                        <button id="btn-audio-test" style="padding:4px 6px;cursor:pointer;background:transparent;color:#5d4037;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-size:11px;font-family:inherit;">
+                            测试音效
+                        </button>
+                    </div>
                 `;
 
                 if (import.meta.env.DEV) {
@@ -824,6 +842,58 @@ export class GameMap {
                     }));
                 });
             }
+
+            const audioManager = (window as any).game?.audioManager;
+            const audioSettings = audioManager?.getSettings?.();
+            const chkAudioEnabled = document.getElementById('chk-audio-enabled') as HTMLInputElement;
+            const rngAudioVolume = document.getElementById('rng-audio-volume') as HTMLInputElement;
+            const valAudioVolume = document.getElementById('val-audio-volume');
+            const audioControls = document.getElementById('audio-controls');
+            const btnAudioTest = document.getElementById('btn-audio-test');
+
+            const syncAudioControls = () => {
+                if (audioControls && chkAudioEnabled) {
+                    audioControls.style.display = chkAudioEnabled.checked ? 'flex' : 'none';
+                }
+                if (rngAudioVolume && valAudioVolume) {
+                    valAudioVolume.innerText = `${rngAudioVolume.value}%`;
+                }
+            };
+
+            if (chkAudioEnabled) {
+                chkAudioEnabled.checked = audioSettings?.enabled ?? true;
+                chkAudioEnabled.addEventListener('change', (e: any) => {
+                    window.dispatchEvent(new CustomEvent('audio-settings-change', {
+                        detail: { enabled: !!e.target.checked }
+                    }));
+                    syncAudioControls();
+                });
+            }
+
+            if (rngAudioVolume) {
+                const savedVolume = Math.round((audioSettings?.masterVolume ?? 0.5) * 100);
+                rngAudioVolume.value = String(savedVolume);
+                rngAudioVolume.addEventListener('input', () => {
+                    window.dispatchEvent(new CustomEvent('audio-settings-change', {
+                        detail: { masterVolume: parseInt(rngAudioVolume.value, 10) / 100 }
+                    }));
+                    syncAudioControls();
+                });
+                rngAudioVolume.addEventListener('change', () => {
+                    window.dispatchEvent(new CustomEvent('audio-settings-change', {
+                        detail: { masterVolume: parseInt(rngAudioVolume.value, 10) / 100 }
+                    }));
+                    syncAudioControls();
+                });
+            }
+
+            if (btnAudioTest) {
+                btnAudioTest.addEventListener('click', () => {
+                    window.dispatchEvent(new CustomEvent('audio-test-sound'));
+                });
+            }
+
+            syncAudioControls();
 
 
             // [FIX] 编辑器复选框事件绑定 (之前缺失，导致编辑器无法打开)

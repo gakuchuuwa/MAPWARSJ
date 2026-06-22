@@ -9,6 +9,7 @@ export function exposeGameAppGlobals(app: GameApp): void {
     win.speedOverlay = app.speedOverlay;
     win.timeSystem = app.timeSystem;
     win.combatSystem = app.combatSystem;
+    win.audioManager = app.audioManager;
     win.eventEditor = app.eventEditor;
     win.perfMonitor = app.perfMonitor;
     win.perMonitor = app.perfMonitor;

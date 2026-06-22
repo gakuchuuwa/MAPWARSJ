@@ -84,6 +84,12 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             const followedId = app.cameraFollowUI.getFollowedArmyId();
             if (followedId && legionManager) {
                 const lMap = app.map.getLeafletMap();
+                const followedArmy = legionManager.getLegionById(followedId);
+                app.audioManager.syncFollowedLegionAudio({
+                    armyId: followedArmy && !followedArmy.isDestroyed ? followedId : null,
+                    marching: followedArmy?.isMarching?.() ?? false,
+                    inCombat: followedArmy?.getIsInCombat?.() ?? false,
+                });
                 app.cameraFollowUI.tickFollowCamera(
                     (id) => legionManager.getLegionById(id),
                     (pos) => {
@@ -111,11 +117,17 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 const now = performance.now();
                 if (now - lastFollowFlagPriorityKick >= FOLLOW_FLAG_PRIORITY_INTERVAL_MS) {
                     lastFollowFlagPriorityKick = now;
-                    const army = legionManager.getLegionById(followedId);
+                    const army = followedArmy;
                     if (army) {
                         CityAssetManager.prioritizeFollowedFaction(army.getFactionId());
                     }
                 }
+            } else {
+                app.audioManager.syncFollowedLegionAudio({
+                    armyId: null,
+                    marching: false,
+                    inCombat: false,
+                });
             }
             app.cameraFollowUI.update();
             perfMonitor.endTimer('camera');

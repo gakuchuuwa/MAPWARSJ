@@ -21,7 +21,7 @@ import { FACTIONS } from '../data/factions';
 import { CITIES } from '../data/cities';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
-import { STARTING_CAPITALS } from '../app/GameApp';
+import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { pinyin } from 'pinyin-pro';
 
 /** 中文名 → snake_case ID (例: "大韩" → "dahan") */

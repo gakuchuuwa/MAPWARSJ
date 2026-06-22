@@ -36,6 +36,17 @@ export function setupGameAppMapListeners(app: GameApp): void {
         if (app.cityManager) app.cityManager.toggleCityTextures(!!detail?.visible);
     });
 
+    window.addEventListener('audio-settings-change', (e: Event) => {
+        const detail = (e as CustomEvent<{ enabled?: boolean; masterVolume?: number }>).detail;
+        if (typeof detail?.enabled === 'boolean') app.audioManager.setEnabled(detail.enabled);
+        if (typeof detail?.masterVolume === 'number') app.audioManager.setMasterVolume(detail.masterVolume);
+    });
+
+    window.addEventListener('audio-test-sound', () => {
+        app.audioManager.unlock();
+        app.audioManager.play('ui_confirm');
+    });
+
     window.addEventListener('toggle-editor-city', (e: Event) => {
         const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
         if (app.cityEditor) {

@@ -1221,8 +1221,23 @@ export class CombatUI {
         this.updateSkillBadges(attacker, defender);
         this.updateInfoDirect(attName, defName, displayTitle, displayYear, description);
 
-        this.setPortrait(this.leftPortrait, attacker, attacker.generalId, attacker.factionId, attackerPortrait, 'attacker');
-        this.setPortrait(this.rightPortrait, defender, defender.generalId, defender.factionId, defenderPortrait, 'defender', this.leftPortrait.src || undefined);
+        this.setPortrait(
+            this.leftPortrait,
+            attacker,
+            attacker.generalId,
+            attacker.factionId,
+            attackerPortrait ?? attacker.portraitPath,
+            'attacker',
+        );
+        this.setPortrait(
+            this.rightPortrait,
+            defender,
+            defender.generalId,
+            defender.factionId,
+            defenderPortrait ?? defender.portraitPath,
+            'defender',
+            this.leftPortrait.src || undefined,
+        );
 
         const setGeneralName = (tag: HTMLDivElement, unit: IBattleUnit, side: 'attacker' | 'defender') => {
             this.fillGeneralNameTag(tag, unit, side);
@@ -2580,33 +2595,54 @@ export class CombatUI {
         const applyFacing = () => {
             if (side) this.applyPortraitFacing(side);
         };
-        const setSrc = (url: string) => {
-            rememberFacing(url);
-            img.addEventListener('load', () => {
+        const setSrc = (rawUrl: string, isRetry = false) => {
+            const url = rawUrl?.trim()
+                ? resolvePortraitAssetPath(rawUrl, portraitOpts)
+                : '';
+            const finalUrl =
+                url?.trim() ||
+                (unit ? getCombatPortraitPath(unit, excludePath) : '') ||
+                getRandomRegionPortraitPath(cultureRegion, portraitOpts);
+            if (!finalUrl?.trim()) return;
+
+            rememberFacing(finalUrl);
+            const onLoad = () => {
                 applyFacing();
-                applyPortraitAdjustToElement(img, url);
-            }, { once: true });
-            img.src = url;
+                applyPortraitAdjustToElement(img, finalUrl);
+            };
+            img.addEventListener('load', onLoad, { once: true });
+            if (!isRetry) {
+                img.onerror = () => {
+                    img.onerror = null;
+                    if (!unit) return;
+                    const fallback = getCombatPortraitPath(unit, excludePath);
+                    if (fallback?.trim() && fallback !== finalUrl) {
+                        setSrc(fallback, true);
+                    }
+                };
+            }
+            img.src = finalUrl;
             applyFacing();
-            applyPortraitAdjustToElement(img, url);
+            applyPortraitAdjustToElement(img, finalUrl);
         };
 
-        // ① 场次立绘路径（localStorage / 自选 JSON）
-        if (side && this.currentBattleKey) {
-            const configPath = this.portraitConfig.getPortrait(this.currentBattleKey, side);
-            if (configPath) {
-                setSrc(configPath);
-                return;
-            }
-        }
         const cultureRegion = unit ? resolveUnitCultureRegion(unit) : 'CENTRAL';
         const portraitOpts = {
             factionId: unit?.factionId ?? factionId ?? undefined,
             region: cultureRegion,
         };
-        // ② 事件脚本指定立绘
-        if (providedDefault) {
-            setSrc(providedDefault);
+
+        // ① 场次立绘路径（localStorage / 自选 JSON）
+        if (side && this.currentBattleKey) {
+            const configPath = this.portraitConfig.getPortrait(this.currentBattleKey, side);
+            if (configPath?.trim()) {
+                setSrc(resolvePortraitAssetPath(configPath, portraitOpts));
+                return;
+            }
+        }
+        // ② 事件脚本 / 参战单位已固定立绘
+        if (providedDefault?.trim()) {
+            setSrc(resolvePortraitAssetPath(providedDefault, portraitOpts));
             return;
         }
         // ②b 势力表专将（portraits/{generalId}.png，F2 绑定后即时 override）
@@ -2618,9 +2654,9 @@ export class CombatUI {
             }
         }
         // ③ 军团创建时已固定的立绘（若与攻方相同则跳过，走下方随机逻辑）
-        if (unit?.portraitPath) {
+        if (unit?.portraitPath?.trim()) {
             if (!excludePath || !portraitUrlsEqual(unit.portraitPath, excludePath)) {
-                setSrc(unit.portraitPath);
+                setSrc(resolvePortraitAssetPath(unit.portraitPath, portraitOpts));
                 return;
             }
             // 与攻方相同 → 跳过，走下方随机去重
