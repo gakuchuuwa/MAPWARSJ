@@ -2,7 +2,11 @@ import { Army } from '../legion/Army';
 import { IBattleUnit, UnitType } from './CombatSystem';
 import { HistoricalEventManager } from '../events/HistoricalEventManager';
 import { gameLog } from '../utils/GameLogger';
-import { ensureFactionPortraitPath, resolvePortraitAssetPath } from '../config/portrait_defaults';
+import {
+    ensureFactionPortraitPath,
+    getFactionCultureRegion,
+    resolvePortraitAssetPath,
+} from '../config/portrait_defaults';
 import {
     readSiegeGarrisonGeneralId,
     readSiegeGarrisonPortrait,
@@ -65,9 +69,13 @@ export class BattleUnitFactory {
         } else if (isCity) {
             const siegePortrait = readSiegeGarrisonPortrait(entity);
             const ownerFactionId = entity.factionId ?? factionId;
-            cityPortraitPath =
-                (siegePortrait?.trim() ? siegePortrait : undefined) ??
+            const rawPortrait =
+                siegePortrait ??
                 ensureFactionPortraitPath(ownerFactionId);
+            cityPortraitPath = resolvePortraitAssetPath(rawPortrait, {
+                factionId: ownerFactionId,
+                region: getFactionCultureRegion(ownerFactionId),
+            });
         }
 
         return {
@@ -89,9 +97,24 @@ export class BattleUnitFactory {
             },
             get portraitPath() {
                 if (isCity) {
-                    return readSiegeGarrisonPortrait(entity) ?? cityPortraitPath;
+                    const siegeRaw = readSiegeGarrisonPortrait(entity);
+                    const ownerFactionId = entity.factionId ?? factionId;
+                    const raw = siegeRaw ?? cityPortraitPath;
+                    return resolvePortraitAssetPath(raw, {
+                        factionId: ownerFactionId,
+                        region: getFactionCultureRegion(ownerFactionId),
+                    });
                 }
-                return legionPortraitPath;
+                const fid =
+                    (isMobile && entity.getFactionId?.()) ??
+                    entity.factionId ??
+                    factionId;
+                return legionPortraitPath
+                    ? resolvePortraitAssetPath(legionPortraitPath, {
+                          factionId: fid,
+                          region: getFactionCultureRegion(fid),
+                      })
+                    : ensureFactionPortraitPath(fid);
             },
             getEntity: () => entity,
 

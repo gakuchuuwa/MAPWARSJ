@@ -4,6 +4,7 @@ import {
     getCityEliteLegionName,
     isCityGeneralEliteAnchor,
 } from '../data/ExpeditionLegions';
+import { resolvePortraitAssetPath } from '../config/portrait_defaults';
 import {
     markSpawnTierConsumed,
     rollCityLegionSpawnTierOutcome,
@@ -92,7 +93,9 @@ export function applySiegeGarrisonBoostIfNeeded(
     if (needRandomGeneral && (outcome === 'general' || outcome === 'elite_general')) {
         if (anchoredGeneral) {
             city._siegeGarrisonGeneralId = anchoredGeneral.generalId;
-            city._siegeGarrisonPortrait = anchoredGeneral.portrait;
+            city._siegeGarrisonPortrait = resolvePortraitAssetPath(anchoredGeneral.portrait, {
+                factionId: anchorFactionId,
+            });
             applied.general = true;
         }
     }
@@ -107,7 +110,8 @@ export function readSiegeGarrisonGeneralId(entity: unknown): string | undefined 
 }
 
 export function readSiegeGarrisonPortrait(entity: unknown): string | undefined {
-    return (entity as SiegeGarrisonBoostFields | undefined)?._siegeGarrisonPortrait;
+    const raw = (entity as SiegeGarrisonBoostFields | undefined)?._siegeGarrisonPortrait;
+    return raw?.trim() ? raw : undefined;
 }
 
 export function readSiegeGarrisonElite(entity: unknown): boolean {

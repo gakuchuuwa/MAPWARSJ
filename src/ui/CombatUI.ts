@@ -3,6 +3,7 @@ import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
 import { SPRITE_PATHS, GameConfig } from '../config/GameConfig';
 import {
+    BATTLE_PORTRAIT_FALLBACK,
     getCombatPortraitPath,
     getRandomRegionPortraitPath,
     portraitUrlsEqual,
@@ -2596,14 +2597,22 @@ export class CombatUI {
             if (side) this.applyPortraitFacing(side);
         };
         const setSrc = (rawUrl: string, isRetry = false) => {
-            const url = rawUrl?.trim()
-                ? resolvePortraitAssetPath(rawUrl, portraitOpts)
+            const resolveOptsWithExclude = { ...portraitOpts, exclude: excludePath };
+            let finalUrl = rawUrl?.trim()
+                ? resolvePortraitAssetPath(rawUrl, resolveOptsWithExclude)
                 : '';
-            const finalUrl =
-                url?.trim() ||
-                (unit ? getCombatPortraitPath(unit, excludePath) : '') ||
-                getRandomRegionPortraitPath(cultureRegion, portraitOpts);
-            if (!finalUrl?.trim()) return;
+            if (!finalUrl?.trim() && unit) {
+                finalUrl = getCombatPortraitPath(unit, excludePath);
+            }
+            if (!finalUrl?.trim()) {
+                finalUrl = getRandomRegionPortraitPath(cultureRegion, {
+                    factionId: portraitOpts.factionId,
+                    exclude: excludePath,
+                });
+            }
+            if (!finalUrl?.trim()) {
+                finalUrl = BATTLE_PORTRAIT_FALLBACK;
+            }
 
             rememberFacing(finalUrl);
             const onLoad = () => {
@@ -2614,10 +2623,19 @@ export class CombatUI {
             if (!isRetry) {
                 img.onerror = () => {
                     img.onerror = null;
-                    if (!unit) return;
+                    if (!unit) {
+                        if (finalUrl !== BATTLE_PORTRAIT_FALLBACK) {
+                            setSrc(BATTLE_PORTRAIT_FALLBACK, true);
+                        }
+                        return;
+                    }
                     const fallback = getCombatPortraitPath(unit, excludePath);
-                    if (fallback?.trim() && fallback !== finalUrl) {
-                        setSrc(fallback, true);
+                    const alt =
+                        fallback?.trim() && !portraitUrlsEqual(fallback, finalUrl)
+                            ? fallback
+                            : BATTLE_PORTRAIT_FALLBACK;
+                    if (!portraitUrlsEqual(alt, finalUrl)) {
+                        setSrc(alt, true);
                     }
                 };
             }
@@ -2636,40 +2654,39 @@ export class CombatUI {
         if (side && this.currentBattleKey) {
             const configPath = this.portraitConfig.getPortrait(this.currentBattleKey, side);
             if (configPath?.trim()) {
-                setSrc(resolvePortraitAssetPath(configPath, portraitOpts));
+                setSrc(configPath);
                 return;
             }
         }
         // ② 事件脚本 / 参战单位已固定立绘
         if (providedDefault?.trim()) {
-            setSrc(resolvePortraitAssetPath(providedDefault, portraitOpts));
+            setSrc(providedDefault);
             return;
         }
         // ②b 势力表专将（portraits/{generalId}.png，F2 绑定后即时 override）
         if (generalId) {
             const rec = getGeneralRecordByGeneralId(generalId);
-            if (rec) {
-                setSrc(resolvePortraitAssetPath(rec.portrait, portraitOpts));
+            if (rec?.portrait?.trim()) {
+                setSrc(rec.portrait);
                 return;
             }
         }
-        // ③ 军团创建时已固定的立绘（若与攻方相同则跳过，走下方随机逻辑）
+        // ③ 军团/城防已 resolve 的 portraitPath（与攻方相同则跳过，走下方随机去重）
         if (unit?.portraitPath?.trim()) {
             if (!excludePath || !portraitUrlsEqual(unit.portraitPath, excludePath)) {
-                setSrc(resolvePortraitAssetPath(unit.portraitPath, portraitOpts));
+                setSrc(unit.portraitPath);
                 return;
             }
-            // 与攻方相同 → 跳过，走下方随机去重
         }
         const portraits = (SPRITE_PATHS.GENERAL_PORTRAITS || {}) as Record<string, string>;
         // ④ 将领 ID（如 baiqi）
         if (generalId && portraits[generalId]) {
-            setSrc(resolvePortraitAssetPath(portraits[generalId], portraitOpts));
+            setSrc(portraits[generalId]);
             return;
         }
         // ⑤ 势力默认（秦国 qin → qinjiang.png）
         if (factionId && portraits[factionId]) {
-            setSrc(resolvePortraitAssetPath(portraits[factionId], portraitOpts));
+            setSrc(portraits[factionId]);
             return;
         }
         // ⑥ 文化区军队/守军 + panjun

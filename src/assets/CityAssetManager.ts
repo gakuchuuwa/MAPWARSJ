@@ -1314,13 +1314,15 @@ export class CityAssetManager {
             return;
         }
         const mode = this.chromaScheduleMode;
+        // 占城触发的 onDemand / boot 旗帜尽快处理（不硬等，用空闲调度）；
+        // background 全图扫尾降到 120ms，避免长时间灰旗（原 450ms 导致全图刷新数分钟）
         const timeout =
-            mode === 'background' ? 450 : mode === 'onDemand' ? 120 : 80;
+            mode === 'background' ? 120 : mode === 'onDemand' ? 32 : 32;
         if (typeof requestIdleCallback !== 'undefined') {
             requestIdleCallback(cb, { timeout });
             return;
         }
-        setTimeout(cb, mode === 'background' ? 48 : 0);
+        setTimeout(cb, mode === 'background' ? 16 : 0);
     }
 
     /** 叛军 S10QZ 7–58 共 52 面；可断点续载（processedRebelFlags.length） */

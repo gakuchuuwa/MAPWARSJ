@@ -813,8 +813,8 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'panjun': _panjunPortraitPool,
 };
 
-/** 据势力首都（1 势力 = 1 据点）解析文化区，供无 FACTION 映射时 fallback */
-function getFactionCultureRegion(factionId: string): RegionType | undefined {
+/** 据势力首都解析文化区（BattleUnitFactory / 守城立绘 resolve 用） */
+export function getFactionCultureRegion(factionId: string): RegionType | undefined {
     if (_factionCultureRegionCache.has(factionId)) {
         return _factionCultureRegionCache.get(factionId);
     }
@@ -913,11 +913,15 @@ export function getRandomRegionPortraitPath(
     });
 }
 
-/** 目录别名：将领表常用 beifang 等路径，实际素材在 zhongyuan 等池 */
+/** 目录别名：将领表路径与实际素材池 */
 const PORTRAIT_FOLDER_POOL: Record<string, string[]> = {
     '/assets/beifang/': _zhongyuanPortraitPool,
+    '/assets/xianqin/': _xianqinPortraitPool,
     '/assets/jiangnan/': _lingnanPortraitPool.length ? _lingnanPortraitPool : _damingPortraitPool,
 };
+
+/** 战斗 UI 最终兜底（禁止 img.src 为空） */
+export const BATTLE_PORTRAIT_FALLBACK = '/assets/panjun/panjun.png';
 
 export function portraitAssetExists(path: string | undefined): boolean {
     if (!path) return false;
@@ -968,7 +972,7 @@ export function resolvePortraitAssetPath(
     const any = pickRandomExisting([...KNOWN_PORTRAIT_PATHS], exclude);
     if (any) return any;
 
-    return normalizePortraitWebPath(_zhongyuanPortraitPool[0] ?? '');
+    return normalizePortraitWebPath(_zhongyuanPortraitPool[0] ?? BATTLE_PORTRAIT_FALLBACK);
 }
 
 /**
@@ -1005,10 +1009,9 @@ export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): 
     const role = getCulturePortraitRole(unit);
     const resolveOpts = { factionId: unit.factionId, region, role };
 
-    // 军团创建时已固定 portraitPath（见 Army 构造、BattleUnitFactory）
-    // 若与攻方立绘相同则跳过，走下方随机逻辑
-    if (unit.portraitPath && !(excludePath && portraitUrlsEqual(unit.portraitPath, excludePath))) {
-        return resolvePortraitAssetPath(unit.portraitPath, resolveOpts);
+    // 军团/城防已固定 portraitPath；空串或专图缺失时走 resolve fallback
+    if (unit.portraitPath?.trim() && !(excludePath && portraitUrlsEqual(unit.portraitPath, excludePath))) {
+        return resolvePortraitAssetPath(unit.portraitPath, { ...resolveOpts, exclude: excludePath });
     }
     // 守城方：势力池 → 文化区池随机
     const factionId = unit.factionId;
