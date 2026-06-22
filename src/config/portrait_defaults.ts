@@ -65,10 +65,16 @@ export function normalizePortraitWebPath(url: string): string {
 }
 
 function collectRegionPortraitPool(region: RegionType): string[] {
-    const prefix = cultureCircleFolderPrefix(region);
-    return Object.values(_allPortraitAssetGlob)
+    // Windows 文件系统不区分大小写，Vite glob 返回的路径大小写不确定
+    // 例：HEXI 文件夹可能返回 /assets/hexi/ 或 /assets/HEXI/，用小写比较兜底
+    const prefix = cultureCircleFolderPrefix(region).toLowerCase();
+    const pool = Object.values(_allPortraitAssetGlob)
         .map(normalizePortraitWebPath)
-        .filter((p) => p.startsWith(prefix));
+        .filter((p) => p.toLowerCase().startsWith(prefix));
+    if (pool.length === 0) {
+        console.warn(`[Portrait] ⚠️ 文化区 ${region} 立绘池为空！检查 public/assets/${region}/ 文件夹及 Vite glob 大小写`);
+    }
+    return pool;
 }
 
 /** 14 文化区 ↔ 唯一物理夹（与 RegionType 同名，禁止多夹并池） */
@@ -84,11 +90,26 @@ export const REGION_PORTRAIT_POOLS: Record<RegionType, string[]> = Object.fromEn
     REGION_ORDER.map((r) => [r, collectRegionPortraitPool(r)]),
 ) as Record<RegionType, string[]>;
 
+// Windows 大小写不敏感：统一转小写存储，查找时也转小写
 const KNOWN_PORTRAIT_PATHS = new Set(
     Object.values(_allPortraitAssetGlob)
         .map(normalizePortraitWebPath)
+        .map((p) => p.toLowerCase())
         .filter((p) => !/^\/assets\/inbox\//i.test(p)),
 );
+
+// 启动诊断：检测 glob 共扫描多少文件，以及各文化区池大小
+{
+    const total = Object.keys(_allPortraitAssetGlob).length;
+    const hexiSize = REGION_PORTRAIT_POOLS.HEXI?.length ?? 0;
+    const centralSize = REGION_PORTRAIT_POOLS.CENTRAL?.length ?? 0;
+    console.log(`[Portrait] 全局 glob 扫描: ${total} 张 | HEXI池: ${hexiSize} | CENTRAL池: ${centralSize}`);
+    if (hexiSize === 0) {
+        // 打印前5个 glob 键值帮助诊断 Vite 返回的路径格式
+        const sample = Object.entries(_allPortraitAssetGlob).slice(0, 5);
+        console.warn(`[Portrait] HEXI池为空！Vite glob 样本:`, sample);
+    }
+}
 
 /** 旧拼音夹名 → 文化区池（政权 FACTION 映射仍引用这些变量，物理文件已迁入区名夹） */
 const _zhongyuanPortraitPool = REGION_PORTRAIT_POOLS.CENTRAL;
@@ -936,7 +957,13 @@ export const BATTLE_PORTRAIT_FALLBACK = '/assets/panjun/panjun.png';
 
 export function portraitAssetExists(path: string | undefined): boolean {
     if (!path) return false;
-    return KNOWN_PORTRAIT_PATHS.has(normalizePortraitWebPath(path));
+    return KNOWN_PORTRAIT_PATHS.has(normalizePortraitWebPath(path).toLowerCase());
+}
+
+/** F2 绑定新立绘后调用：把运行时复制的文件路径注入内存缓存，无需重启 dev server */
+export function registerPortraitPathRuntime(path: string): void {
+    const normalized = normalizePortraitWebPath(path).toLowerCase();
+    if (normalized) KNOWN_PORTRAIT_PATHS.add(normalized);
 }
 
 /**

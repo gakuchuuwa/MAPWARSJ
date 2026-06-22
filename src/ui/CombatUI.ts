@@ -1,4 +1,5 @@
 import { getFactionGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride } from '../data/FactionGenerals';
+import { registerPortraitPathRuntime } from '../config/portrait_defaults';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
 import { SPRITE_PATHS, GameConfig } from '../config/GameConfig';
@@ -1786,8 +1787,13 @@ export class CombatUI {
         if (DEFAULT_PORTRAIT_ADJUST.images && Object.keys(DEFAULT_PORTRAIT_ADJUST.images).length === 0) {
             delete DEFAULT_PORTRAIT_ADJUST.images;
         }
+        // 写盘前：仅用 sourcePath（源图）做本场视觉预览，不污染将领档案路径
+        // 写盘成功后，commitAllPendingPortraitBinds 会用服务端返回的最终路径覆盖
         for (const bind of this.portraitBindStaging) {
-            setGeneralPortraitOverride(bind.generalId, bind.sourcePath);
+            if (!bind.destPath || bind.destPath === bind.sourcePath) {
+                setGeneralPortraitOverride(bind.generalId, bind.sourcePath);
+            }
+            // 已有最终路径（写盘完成）则 override 已在 commit 里设好，无需重设
         }
         this.applyBothCorrectorPortraits();
         const nAdj = this.correctorDirtyPaths.size;
@@ -1913,10 +1919,15 @@ export class CombatUI {
                         targetFolder: bind.targetFolder,
                     }),
                 });
-                const result = await res.json();
+                const result = await res.json() as { ok: boolean; error?: string; portraitPath?: string };
                 if (!res.ok || !result.ok) {
                     throw new Error(result.error || `HTTP ${res.status}`);
                 }
+                // 绑定成功：用服务端返回的最终路径（而非源图路径）更新内存
+                const finalPath = result.portraitPath ?? bind.destPath;
+                registerPortraitPathRuntime(finalPath);           // 注入 KNOWN_PORTRAIT_PATHS
+                setGeneralPortraitOverride(bind.generalId, finalPath); // 更新将领立绘缓存
+                bind.destPath = finalPath;                        // 同步 staging 的 destPath
                 committed.push(bind);
                 await this.applyBoundPortraitToCombatImg(bind);
             }

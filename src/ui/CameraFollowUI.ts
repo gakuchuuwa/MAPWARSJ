@@ -157,6 +157,7 @@ export class CameraFollowUI {
         // 标题栏
         const header = document.createElement('div');
         header.style.cssText = `
+            position: relative;
             padding: 10px 14px;
             font-size: 14px;
             font-weight: bold;
@@ -165,9 +166,58 @@ export class CameraFollowUI {
             letter-spacing: 3px;
             text-align: center;
         `;
-        header.textContent = '⚔ 军团·势力榜 (0) ⚔';
+        const headerTitle = document.createElement('span');
+        headerTitle.textContent = '⚔ 军团·势力榜 (0) ⚔';
+        header.appendChild(headerTitle);
+        this.listHeader = headerTitle as unknown as HTMLDivElement;
+
+        const autoFollowLabel = document.createElement('label');
+        autoFollowLabel.title = '无目标时自动跟随最强军团';
+        autoFollowLabel.style.cssText = `
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        `;
+        const autoFollowCheckbox = document.createElement('input');
+        autoFollowCheckbox.type = 'checkbox';
+        autoFollowCheckbox.checked = this.autoFollowEnabled;
+        autoFollowCheckbox.style.cursor = 'pointer';
+        autoFollowCheckbox.style.accentColor = '#b48c3c';
+        autoFollowCheckbox.addEventListener('change', (e) => {
+            this.autoFollowEnabled = (e.target as HTMLInputElement).checked;
+            if (this.autoFollowEnabled && !this.followedArmyId) {
+                this.followLargestLegion();
+            }
+        });
+        this.autoFollowCheckbox = autoFollowCheckbox;
+        autoFollowLabel.appendChild(autoFollowCheckbox);
+        header.appendChild(autoFollowLabel);
+
         panel.appendChild(header);
-        this.listHeader = header;
+
+        // 滚动条美化
+        const scrollStyle = document.createElement('style');
+        scrollStyle.textContent = `
+            #army-list-panel::-webkit-scrollbar {
+                width: 6px;
+            }
+            #army-list-panel::-webkit-scrollbar-track {
+                background: rgba(20, 15, 8, 0.5);
+                border-radius: 3px;
+            }
+            #army-list-panel::-webkit-scrollbar-thumb {
+                background: rgba(180, 140, 60, 0.4);
+                border-radius: 3px;
+            }
+            #army-list-panel::-webkit-scrollbar-thumb:hover {
+                background: rgba(220, 180, 80, 0.6);
+            }
+        `;
+        panel.appendChild(scrollStyle);
 
         // 军团上限配置栏
         const limitContainer = document.createElement('div');
@@ -188,16 +238,16 @@ export class CameraFollowUI {
         const limitSlider = document.createElement('input');
         limitSlider.type = 'range';
         limitSlider.min = '10';
-        limitSlider.max = '100';
+        limitSlider.max = '99';
         limitSlider.step = '1';
         limitSlider.value = String(
-            Math.min(100, Math.max(10, GameConfig.LEGION.MAX_ACTIVE_LEGIONS))
+            Math.min(99, Math.max(10, GameConfig.LEGION.MAX_ACTIVE_LEGIONS))
         );
         limitSlider.style.width = '120px';
 
         limitSlider.addEventListener('input', (e) => {
             const raw = parseInt((e.target as HTMLInputElement).value, 10);
-            const val = Math.min(100, Math.max(10, Number.isFinite(raw) ? raw : 10));
+            const val = Math.min(99, Math.max(10, Number.isFinite(raw) ? raw : 10));
             GameConfig.LEGION.MAX_ACTIVE_LEGIONS = val;
             this.syncLimitLabel();
             this.onLegionCapChange?.(val);
@@ -210,39 +260,6 @@ export class CameraFollowUI {
         limitContainer.appendChild(limitSlider);
         panel.appendChild(limitContainer);
 
-        // 自动跟随配置栏
-        const autoFollowContainer = document.createElement('div');
-        autoFollowContainer.style.cssText = `
-            padding: 8px 14px;
-            font-size: 13px;
-            color: #d4a843;
-            border-bottom: 1px solid rgba(180,140,60,0.3);
-            display: flex;
-            align-items: center;
-        `;
-        const autoFollowLabel = document.createElement('label');
-        autoFollowLabel.style.cssText = `
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        `;
-        const autoFollowCheckbox = document.createElement('input');
-        autoFollowCheckbox.type = 'checkbox';
-        autoFollowCheckbox.checked = this.autoFollowEnabled;
-        autoFollowCheckbox.style.cursor = 'pointer';
-        autoFollowCheckbox.addEventListener('change', (e) => {
-            this.autoFollowEnabled = (e.target as HTMLInputElement).checked;
-            if (this.autoFollowEnabled && !this.followedArmyId) {
-                this.followLargestLegion();
-            }
-        });
-        this.autoFollowCheckbox = autoFollowCheckbox;
-
-        autoFollowLabel.appendChild(autoFollowCheckbox);
-        autoFollowLabel.appendChild(document.createTextNode('军团覆灭/无目标时自动跟随'));
-        autoFollowContainer.appendChild(autoFollowLabel);
-        panel.appendChild(autoFollowContainer);
 
         // 列表容器
         const listContainer = document.createElement('div');

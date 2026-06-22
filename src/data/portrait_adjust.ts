@@ -1280,6 +1280,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 14,
             "offsetY": -27
+        },
+        "/assets/xianqin/jin_xianzhen.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -49
+        },
+        "/assets/liuhan/guangwu_xinwuxian.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -29
+        },
+        "/assets/DIANQIAN/luoyue_zhengce.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL/long2_weixiaokuan.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/yingqin/qin_yingji.png": {
+            "scale": 1.2,
+            "offsetX": 14,
+            "offsetY": -2
+        },
+        "/assets/xianqin/zhou_jifa.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": -2
         }
     },
     "folderGuides": {
