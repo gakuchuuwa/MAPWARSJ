@@ -20,6 +20,7 @@
     "city:spacing": "npx tsx scratch/audit_city_spacing.mjs",
     "portrait:folder-audit": "node scratch/dedupe_portraits_within_folder.mjs --audit",
     "portrait:folder-dedupe": "node scratch/dedupe_portraits_within_folder.mjs",
+    "portrait:culture-folders": "node scratch/audit_region_portrait_folders.mjs",
     "city:dossier": "npx tsx scratch/export_city_dossier.mjs",
     "city:lookup": "npx tsx scratch/export_city_dossier.mjs --",
     "add:check": "npx tsx scratch/audit_add_completeness.mjs --",

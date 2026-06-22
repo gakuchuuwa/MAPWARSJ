@@ -152,8 +152,12 @@ export class CombatUI {
     private correctorDraft: Required<PortraitAdjustValues> = { scale: 1, offsetX: 0, offsetY: 0 };
     /** 本场 F2 内改过的立绘路径；Esc 退出时一并写盘 */
     private correctorDirtyPaths = new Set<string>();
+    /** 每累积 N 张不同立绘自动触发一次写盘（防页面崩溃丢失调校） */
+    private static readonly AUTO_SAVE_EVERY = 10;
     /** 十字准星参照线（竖中线 + 24% 眼线）开关与元素 */
     private correctorCrosshairOn = true;
+    /** F2 打开前 Leaflet 键盘缩放是否启用（关闭 F2 时恢复） */
+    private correctorMapKeyboardWasEnabled = true;
     private leftCrosshair: HTMLDivElement | null = null;
     private rightCrosshair: HTMLDivElement | null = null;
     private crosshairBtn: HTMLButtonElement | null = null;
@@ -1227,7 +1231,7 @@ export class CombatUI {
             attacker,
             attacker.generalId,
             attacker.factionId,
-            attackerPortrait ?? attacker.portraitPath,
+            attacker.generalId ? attackerPortrait : (attackerPortrait ?? attacker.portraitPath),
             'attacker',
         );
         this.setPortrait(
@@ -1235,7 +1239,7 @@ export class CombatUI {
             defender,
             defender.generalId,
             defender.factionId,
-            defenderPortrait ?? defender.portraitPath,
+            defender.generalId ? defenderPortrait : (defenderPortrait ?? defender.portraitPath),
             'defender',
             this.leftPortrait.src || undefined,
         );
@@ -1347,6 +1351,19 @@ export class CombatUI {
     }
 
     private setupCorrectorHotkeys(): void {
+        // 捕获阶段拦截 +/-：避免与小键盘缩放立绘时触发 Leaflet 地图 zoom
+        document.addEventListener('keydown', (e) => {
+            if (!this.correctorOpen || this.portraitPickerOpen) return;
+            if (!this.isPortraitScaleKey(e)) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (this.isPortraitScaleOutKey(e)) {
+                this.nudgeCorrector(-0.02, 0, 0);
+            } else {
+                this.nudgeCorrector(0.02, 0, 0);
+            }
+        }, true);
+
         document.addEventListener('keydown', (e) => {
             // F2 在战斗界面可见时开关校正面板
             if (e.key === 'F2') {
@@ -1386,10 +1403,15 @@ export class CombatUI {
                 case 'ArrowRight': e.preventDefault(); this.nudgeCorrector(0, fine, 0); break;
                 case 'ArrowUp': e.preventDefault(); this.nudgeCorrector(0, 0, -fine); break;
                 case 'ArrowDown': e.preventDefault(); this.nudgeCorrector(0, 0, fine); break;
-                case '[': case '-': e.preventDefault(); this.nudgeCorrector(-0.02, 0, 0); break;
-                case ']': case '=': case '+': e.preventDefault(); this.nudgeCorrector(0.02, 0, 0); break;
-                // 自动校正只放在按钮上，不绑 A 键（A 与地图 WASD 平移冲突）
-                default: break;
+                default:
+                    if (this.isPortraitScaleOutKey(e)) {
+                        e.preventDefault();
+                        this.nudgeCorrector(-0.02, 0, 0);
+                    } else if (this.isPortraitScaleInKey(e)) {
+                        e.preventDefault();
+                        this.nudgeCorrector(0.02, 0, 0);
+                    }
+                    break;
             }
         });
     }
@@ -1430,6 +1452,7 @@ export class CombatUI {
 
     private openCorrector(): void {
         this.correctorOpen = true;
+        this.setCorrectorMapKeyboardSuppressed(true);
         this.correctorPrevPaused = this.pauseHook?.isGamePaused() ?? false;
         this.pauseHook?.setPaused(true);
         if (!this.correctorPanel) this.correctorPanel = this.buildCorrectorPanel();
@@ -1472,6 +1495,46 @@ export class CombatUI {
         return path.startsWith('/assets/') && path.toLowerCase().endsWith('.png');
     }
 
+    /** 主键盘 -/=、小键盘 +/-、[ ] 均用于立绘缩放 */
+    private isPortraitScaleOutKey(e: KeyboardEvent): boolean {
+        return e.key === '['
+            || e.key === '-'
+            || e.key === '_'
+            || e.code === 'Minus'
+            || e.code === 'NumpadSubtract'
+            || e.code === 'BracketLeft';
+    }
+
+    private isPortraitScaleInKey(e: KeyboardEvent): boolean {
+        return e.key === ']'
+            || e.key === '+'
+            || e.key === '='
+            || e.code === 'Equal'
+            || e.code === 'NumpadAdd'
+            || e.code === 'BracketRight';
+    }
+
+    private isPortraitScaleKey(e: KeyboardEvent): boolean {
+        return this.isPortraitScaleOutKey(e) || this.isPortraitScaleInKey(e);
+    }
+
+    /** F2 期间关闭 Leaflet 键盘 +/- 缩放，避免与立绘调校冲突 */
+    private setCorrectorMapKeyboardSuppressed(suppress: boolean): void {
+        const map = (window as any).game?.map?.getLeafletMap?.() as { keyboard?: { enabled(): boolean; disable(): void; enable(): void } } | undefined;
+        const kb = map?.keyboard;
+        if (!kb) return;
+        if (suppress) {
+            this.correctorMapKeyboardWasEnabled = kb.enabled();
+            kb.disable();
+            return;
+        }
+        if (this.correctorMapKeyboardWasEnabled) {
+            kb.enable();
+        } else {
+            kb.disable();
+        }
+    }
+
     private applyPortraitAdjustToImg(img: HTMLImageElement, data: PortraitAdjustData = this.correctorData): void {
         const side: 'attacker' | 'defender' = img === this.leftPortrait ? 'attacker' : 'defender';
         const path = this.correctorPathForSide(side);
@@ -1510,6 +1573,7 @@ export class CombatUI {
             }
         }
         this.correctorOpen = false;
+        this.setCorrectorMapKeyboardSuppressed(false);
         this.closePortraitPicker();
         if (this.correctorPanel) this.correctorPanel.style.display = 'none';
         this.leftPortraitFrame.style.outline = '';
@@ -1535,8 +1599,15 @@ export class CombatUI {
         this.correctorData.images = this.correctorData.images ?? {};
         this.correctorData.images[path] = { ...this.correctorDraft };
         if (this.canPersistPortraitPath(path)) {
+            const prevSize = this.correctorDirtyPaths.size;
             this.correctorDirtyPaths.add(path);
-            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Enter/Esc 写盘`);
+            const n = this.correctorDirtyPaths.size;
+            // 每新增第 AUTO_SAVE_EVERY 张不同立绘时自动写盘（防崩溃丢失）
+            if (n > prevSize && n % CombatUI.AUTO_SAVE_EVERY === 0) {
+                this.runCorrectorExclusive(() => this.flushCorrectorPendingToDisk(false, true));
+            } else {
+                this.setCorrectorStatus(`已改 ${n} 张 · Enter/Esc 写盘`);
+            }
         }
         applyPortraitAdjustToElement(this.correctorImg(), path, this.correctorData);
         this.renderCorrectorReadout();
@@ -1729,8 +1800,9 @@ export class CombatUI {
         this.setCorrectorStatus(parts.join(' · '));
     }
 
-    /** Enter / Esc / Ctrl+S：写盘；Enter·Ctrl+S 不关 F2，Esc 写盘后关闭 */
-    private async flushCorrectorPendingToDisk(onExit: boolean): Promise<boolean> {
+    /** Enter / Esc / Ctrl+S：写盘；Enter·Ctrl+S 不关 F2，Esc 写盘后关闭
+     *  @param autoTrigger  true = 由 AUTO_SAVE_EVERY 触发的自动写盘 */
+    private async flushCorrectorPendingToDisk(onExit: boolean, autoTrigger = false): Promise<boolean> {
         this.syncCurrentCorrectorDraftToData();
         const boundCount = this.portraitBindStaging.length;
         if (boundCount > 0) {
@@ -1739,7 +1811,7 @@ export class CombatUI {
             }
         }
         const hadAdjust = this.correctorDirtyPaths.size > 0;
-        await this.saveCorrectorSession(onExit);
+        await this.saveCorrectorSession(onExit, autoTrigger);
         await this.refreshPortraitPickerAfterDiskWrite();
         if (!onExit && boundCount > 0 && !hadAdjust) {
             this.setCorrectorStatus(`✓ 已绑定 ${boundCount} 张立绘到磁盘`);
@@ -1862,14 +1934,16 @@ export class CombatUI {
         }
     }
 
-    /** Esc 退出（或 Enter）时写盘：本场 F2 改过的所有立绘路径一次性合并保存 */
-    private async saveCorrectorSession(onExit = false): Promise<void> {
+    /** Esc 退出（或 Enter）时写盘：本场 F2 改过的所有立绘路径一次性合并保存
+     *  @param onExit  true = 退出时后台写盘（不改状态栏）
+     *  @param autoTrigger  true = 自动触发（每 AUTO_SAVE_EVERY 张），状态栏显示"自动写盘" */
+    private async saveCorrectorSession(onExit = false, autoTrigger = false): Promise<void> {
         this.syncCurrentCorrectorDraftToData();
         if (this.correctorDirtyPaths.size === 0) {
             if (!onExit) this.setCorrectorStatus('无改动，无需保存');
             return;
         }
-        if (!onExit) this.setCorrectorStatus('保存中…');
+        if (!onExit) this.setCorrectorStatus(autoTrigger ? '自动写盘中…' : '保存中…');
         try {
             const res = await fetch('/api/portrait-adjust');
             const disk: PortraitAdjustData = res.ok ? await res.json() : structuredClone(DEFAULT_PORTRAIT_ADJUST);
@@ -1892,7 +1966,8 @@ export class CombatUI {
             const n = this.correctorDirtyPaths.size;
             this.correctorDirtyPaths.clear();
             if (!onExit) {
-                this.setCorrectorStatus(`✓ 已保存 ${n} 张（已永久生效）`);
+                const label = autoTrigger ? `✓ 自动写盘 ${n} 张 · 继续调整` : `✓ 已保存 ${n} 张（已永久生效）`;
+                this.setCorrectorStatus(label);
             }
         } catch (err) {
             this.setCorrectorStatus(`⚠ 保存失败：${err}`);
@@ -1940,8 +2015,8 @@ export class CombatUI {
                 ${btn('关闭 (Esc)')}
             </div>
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
-                准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝=眼线</span>，<span style="color:#88e0d0;">青=下巴</span>，<span style="color:#c8a8e8;">紫=腰</span>，<span style="color:#ff9a7a;">橙竖=胸线</span>。眼/下巴/腰贴线，<b>[ ]</b> 缩进椭圆<br>
-                方向键微调；Tab 换边；<b>Enter 写盘并继续</b>；<b>Esc 写盘并关 F2</b>（均不刷新）；Ctrl+S 同 Enter<br>
+                准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝=眼线</span>，<span style="color:#88e0d0;">青=下巴</span>，<span style="color:#c8a8e8;">紫=腰</span>，<span style="color:#ff9a7a;">橙竖=胸线</span>。眼/下巴/腰贴线，<b>[ ] / ± / 小键盘±</b> 缩放<br>
+                方向键微调；Tab 换边；<b>Enter 写盘并继续</b>；<b>Esc 写盘并关 F2</b>（均不刷新）；Ctrl+S 同 Enter；F2 期间地图键盘缩放已关闭<br>
                 Shift+Esc 关闭不写盘
             </div>
             <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
@@ -2579,7 +2654,7 @@ export class CombatUI {
 
     // --- SHARED UTILS ---
 
-    // Priority: ① portrait_config → ② providedDefault → ③ portraitPath（军团/守军已固定）→ ④⑤ GENERAL_PORTRAITS → ⑥ 文化区 → ⑦ default
+    // Priority: ① portrait_config → ②b 将领专图 → ② 脚本/军团随机 → ③ portraitPath → …
     private setPortrait(
         img: HTMLImageElement,
         unit: IBattleUnit | undefined,
@@ -2658,20 +2733,22 @@ export class CombatUI {
                 return;
             }
         }
-        // ② 事件脚本 / 参战单位已固定立绘
-        if (providedDefault?.trim()) {
-            setSrc(providedDefault);
-            return;
-        }
-        // ②b 势力表专将（portraits/{generalId}.png，F2 绑定后即时 override）
+        // ②b 武将：专属立绘 → 政权专夹 → 文化区夹
         if (generalId) {
-            const rec = getGeneralRecordByGeneralId(generalId);
+            const rec = getGeneralRecordByGeneralId(generalId, { region: cultureRegion });
             if (rec?.portrait?.trim()) {
                 setSrc(rec.portrait);
                 return;
             }
         }
-        // ③ 军团/城防已 resolve 的 portraitPath（与攻方相同则跳过，走下方随机去重）
+        // ② 事件脚本立绘（无武将专图时；不与对侧相同）
+        if (providedDefault?.trim()) {
+            if (!excludePath || !portraitUrlsEqual(providedDefault, excludePath)) {
+                setSrc(providedDefault);
+                return;
+            }
+        }
+        // ③ 军团/城防已 resolve 的 portraitPath
         if (unit?.portraitPath?.trim()) {
             if (!excludePath || !portraitUrlsEqual(unit.portraitPath, excludePath)) {
                 setSrc(unit.portraitPath);

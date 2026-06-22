@@ -8,6 +8,7 @@
  */
 
 import { GameConfig } from '../config/GameConfig';
+import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 
 export class CameraFollowUI {
     // DOM Elements
@@ -41,6 +42,8 @@ export class CameraFollowUI {
     /** 开局尚未手动选军团时，首次出现野战军团则自动跟随兵力最多的一支 */
     private autoFollowOnStartPending = true;
     private pendingFollowName: string | null = null;
+    /** 全军覆灭后等待新军团自动跟随 */
+    private waitingForRespawn = false;
 
     /**
      * 注入依赖：军队列表、跟随回调、军团上限变更（写 GameConfig + 裁军）
@@ -223,6 +226,11 @@ export class CameraFollowUI {
             if (this.isListOpen) {
                 this.refreshList();
             }
+            // 全军覆灭后在等待，现在新军团出现了 → 自动跟随
+            if (this.waitingForRespawn && count > 0) {
+                this.waitingForRespawn = false;
+                this.followLargestLegion();
+            }
         }
         this.tryPendingFollowByName();
     }
@@ -324,6 +332,8 @@ export class CameraFollowUI {
             const fTotal = factionTotals.get(fid) ?? { troops: 0, cities: 0 };
             const fName = this.factionManager?.getFactionName(fid) ?? fid;
             const fColor = this.factionManager?.getFactionColor(fid) ?? '#ffffff';
+            const generalRecord = army.generalId ? getGeneralRecordByGeneralId(army.generalId) : null;
+            const generalTag = generalRecord ? `<span style="color:#d4af37; font-size:11px; margin-left:6px; border:1px solid rgba(212,175,55,0.5); border-radius:3px; padding:0 3px; background:rgba(212,175,55,0.1);">将·${generalRecord.generalName}</span>` : '';
 
             item.style.cssText = `
                 padding: 7px 14px;
@@ -338,7 +348,7 @@ export class CameraFollowUI {
             item.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070;">${idx + 1}.</span> ${name}
+                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070;">${idx + 1}.</span> ${name}${generalTag}
                     </span>
                     <span style="color:#e0c878; font-size:12px; margin-left:8px; white-space:nowrap;">
                         军 ${this.formatTroops(troops)}
@@ -552,6 +562,7 @@ export class CameraFollowUI {
     public cancelFollow(): void {
         this.clearPendingAutoSwitch();
         this.autoFollowOnStartPending = false;
+        this.waitingForRespawn = false;
         this.followedArmyId = null;
         if (this.followBanner) this.followBanner.style.display = 'none';
         this.syncFollowedHighlight();
@@ -567,7 +578,7 @@ export class CameraFollowUI {
         }
     }
 
-    /** 跟随的军团已灭：切到全图兵力最多的军团 */
+    /** 跟随的军团已灭：切到全图兵力最多的军团；若无存活军团则等待新军团 */
     public followLargestLegion(): void {
         this.clearPendingAutoSwitch();
         if (!this.getArmiesFn) {
@@ -577,7 +588,11 @@ export class CameraFollowUI {
 
         const armies = this.getActiveLegions();
         if (armies.length === 0) {
-            this.cancelFollow();
+            // 全军覆灭，保持跟随状态等待新军团
+            this.waitingForRespawn = true;
+            const text = document.getElementById('follow-banner-text');
+            if (text) text.textContent = '🎥 军团全部阵亡，等待新军团…';
+            if (this.followBanner) this.followBanner.style.display = 'flex';
             return;
         }
 

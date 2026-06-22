@@ -7,6 +7,8 @@ import {
     getFactionCultureRegion,
     resolvePortraitAssetPath,
 } from '../config/portrait_defaults';
+import { getCityRegion } from '../systems/RegionSystem';
+import type { RegionType } from '../systems/RegionSystem';
 import {
     readSiegeGarrisonGeneralId,
     readSiegeGarrisonPortrait,
@@ -69,12 +71,17 @@ export class BattleUnitFactory {
         } else if (isCity) {
             const siegePortrait = readSiegeGarrisonPortrait(entity);
             const ownerFactionId = entity.factionId ?? factionId;
+            const cityRegion = getCityRegion({
+                latitude: entity.latitude,
+                longitude: entity.longitude,
+                region: entity.region,
+            }) as RegionType;
             const rawPortrait =
                 siegePortrait ??
-                ensureFactionPortraitPath(ownerFactionId);
+                ensureFactionPortraitPath(ownerFactionId, { region: cityRegion });
             cityPortraitPath = resolvePortraitAssetPath(rawPortrait, {
                 factionId: ownerFactionId,
-                region: getFactionCultureRegion(ownerFactionId),
+                region: cityRegion,
             });
         }
 
@@ -99,10 +106,15 @@ export class BattleUnitFactory {
                 if (isCity) {
                     const siegeRaw = readSiegeGarrisonPortrait(entity);
                     const ownerFactionId = entity.factionId ?? factionId;
+                    const cityRegion = getCityRegion({
+                        latitude: entity.latitude,
+                        longitude: entity.longitude,
+                        region: entity.region,
+                    }) as RegionType;
                     const raw = siegeRaw ?? cityPortraitPath;
                     return resolvePortraitAssetPath(raw, {
                         factionId: ownerFactionId,
-                        region: getFactionCultureRegion(ownerFactionId),
+                        region: cityRegion,
                     });
                 }
                 const fid =

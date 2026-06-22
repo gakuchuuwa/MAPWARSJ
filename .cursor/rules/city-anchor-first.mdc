@@ -1,14 +1,18 @@
 ---
 description: 据点本位录入 — 势力/武将/精锐均以据点为唯一入口（禁止以人物或势力反推）
-globs: src/data/cities_v2.ts,src/data/factions.ts,src/data/FactionGenerals.ts,src/data/*ExpeditionLegions.ts,src/data/StartingCapitals.ts,src/data/GeneralSkills.ts
+globs: src/data/cities_v2.ts,src/data/factions.ts,src/data/FactionGenerals.ts,src/data/*ExpeditionLegions.ts,src/data/StartingCapitals.ts,src/data/GeneralSkills.ts,src/combat/SiegeGarrisonTier.ts,src/legion/LegionSpawnTier.ts
 alwaysApply: false
 ---
 
-# 据点本位录入（主人 2026-06-22 定）
+# 据点本位录入 + 武将/精锐唯一出场（2026-06-23 增补）
 
 **真理源**：`AGENTS.md` §2.2.0（录入）、§12.2.1（运行时）。
 
-## 铁律
+## 设计四原则（主人定）
+
+> **真实（尊重历史）、合理（能说明白）、简单（少 Bug）、随机（可玩性）**
+
+## 铁律 A：录入本位（据点→势力→武将→精锐，不可倒推）
 
 **一切以据点为基准。** 录入顺序：
 
@@ -17,16 +21,38 @@ alwaysApply: false
 3. **武将** — 在此战斗/驻守过、与据点相关
 4. **精锐** — 在此战斗/驻守过、与武将相关；T0–T3 见 §12.3.1
 
+## 铁律 B：武将/精锐 — 全局唯一出场（2026-06-23 主人定，禁止再犯）
+
+> 一个据点，一个势力，一个武将，一个精锐。
+> **据点出了武将，其他地方和其他情况就不能再出这个武将了。**
+> **据点出了精锐，其他地方和其他情况就不能再出这个精锐了。**
+
+| 规则 | 说明 |
+|------|------|
+| **将随城锚点，不随占城旗** | 武将锚定`录入时的 anchorFactionId`，**不跟着占城旗走** |
+| **占城不过户** | 他势力占领据点后，该城的武将/精锐**不转让**给占城势力 |
+| **守城不得重复** | 守城城防掷将时，若占城势力 ≠ 锚点势力 → **禁止出该武将** |
+| **同一战场唯一** | 同一场攻防战，攻守双方的武将/精锐 ID **不得重复** |
+
+### 运行时检查顺序（`SiegeGarrisonTier.applySiegeGarrisonBoostIfNeeded`）
+
+```
+① city.factionId === getCityAnchorFactionId(city.id)？
+   → 否 → 不出武将/精锐（占城不过户）
+② 守方军团已有该武将？→ 不出（互斥）
+③ 攻方军团已有该武将？→ 不出（同场唯一）
+④ city.spawnGeneralUsed？→ 不出（消耗制）
+```
+
+### 禁止（代码层）
+
+- ❌ 守城城防只检查 `defendingLegions`，不检查 `attackingLegions` 是否已有同 generalId
+- ❌ 守城城防不检查 `city.factionId !== anchorFactionId` 就直接掷将
+- ❌ 攻方军团与守城城防在同一场战斗里出现相同 `generalId` / 精锐番号
+
 ## 势力优先级（无则向下）
 
 民族 → 政权首都 → 州郡治所 → 家族 → 地名（战场/要塞/驿站等）
-
-## 禁止
-
-- ❌ 武将是白起 → 势力/据点该是秦国
-- ❌ 秦在天水 → 白起必须迁天水（长子/上党与天水各一套）
-- ❌ 势力全名与据点名严格相等
-- ❌ 名将路过、无据关隘、为他城名将挪点
 
 ## 反例 vs 正例
 
@@ -35,9 +61,8 @@ alwaysApply: false
 | 长子 | **上党** | 白起（上党战事） | 上党轻骑 |
 | 天水 | **秦** | 嬴稷 | 秦之锐士 |
 
-## 运行时
-
-将/精查 `cityId`（`getCityAnchoredGeneral` / `getCityEliteLegionName`）；旗号查占城 `factionId`。
+> **反例（禁止再犯）**：唐国攻长安，攻方出李世民；汉国守长安，守方城防又出李世民。  
+> 原因：守城代码未检查占城方 ≠ 锚点方，导致同一武将同场重复出现。
 
 ## 录入后
 

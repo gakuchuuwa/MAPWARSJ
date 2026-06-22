@@ -55,6 +55,10 @@ export class StreamModeToggle {
         this.button = btn;
     }
 
+    public static isActive(): boolean {
+        return document.body.classList.contains('stream-mode');
+    }
+
     private static apply(on: boolean): void {
         document.body.classList.toggle('stream-mode', on);
         localStorage.setItem(STORAGE_KEY, on ? '1' : '0');
@@ -62,5 +66,7 @@ export class StreamModeToggle {
             this.button.textContent = on ? '📺 直播中' : '直播';
             this.button.style.color = on ? '#e8b25a' : '';
         }
+        // 通知其他 UI：直播模式已变更
+        window.dispatchEvent(new CustomEvent('stream-mode-change', { detail: { on } }));
     }
 }

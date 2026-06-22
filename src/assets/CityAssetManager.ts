@@ -1058,16 +1058,12 @@ export class CityAssetManager {
                 this.backgroundDrainActive = false;
                 return;
             }
-            // 地图/跟拍移动期间，除当前跟随军团所属势力外，不做 chromaKey，避免旗号抢主线程。
-            const isFollowPriority = !!this.followPriorityFactionId && next.id === this.followPriorityFactionId;
-            if (!isFollowPriority && (next.mode === 'background' || next.mode === 'onDemand')) {
+            // 地图移动期间只暂停全图扫尾（background），视口 onDemand 不暂停——
+            // 镜头跟随军团时持续触发 move → pauseMs 永远 > 0，若也暂停 onDemand 则视口陌生势力旗帜永远刷不到。
+            if (next.mode === 'background') {
                 const pauseMs = this.mapInteractionPauseRemainingMs();
                 if (pauseMs > 0) {
-                    if (next.mode === 'onDemand') {
-                        this.onDemandFactionQueue.unshift(next.id);
-                    } else {
-                        this.deferredFactionQueue.unshift(next.id);
-                    }
+                    this.deferredFactionQueue.unshift(next.id);
                     setTimeout(step, Math.min(pauseMs + 50, this.MAP_INTERACTION_PAUSE_MS));
                     return;
                 }

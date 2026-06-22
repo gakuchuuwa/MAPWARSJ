@@ -5,6 +5,7 @@ import { getFactionGeneral } from '../data/FactionGenerals';
 import { REGION_LABELS } from '../systems/RegionSystem';
 import { RegionType } from '../types/core';
 import { escapeHtml } from '../utils/HtmlUtils';
+import { StreamModeToggle } from './StreamModeToggle';
 
 const SEASON_NAMES = ['春', '夏', '秋', '冬'] as const;
 
@@ -140,6 +141,16 @@ export class BrawlFeedPanel {
         private cityManager: CityManager
     ) {}
 
+    /** 设置展开/收起状态（由直播模式或手动点击调用） */
+    setExpanded(expanded: boolean): void {
+        this.expanded = expanded;
+        this.root?.classList.toggle('collapsed', !expanded);
+        if (this.toggleBtn) {
+            this.toggleBtn.innerHTML = expanded ? '▲ 收起' : '▼ 展开';
+            this.toggleBtn.title = expanded ? '收起面板' : '展开面板';
+        }
+    }
+
     init(): void {
         this.root = document.getElementById('event-display');
         this.contentEl = document.getElementById('event-content');
@@ -158,18 +169,19 @@ export class BrawlFeedPanel {
 
         this.toggleBtn = document.getElementById('toggle-event-list-btn');
         if (this.toggleBtn) {
-            this.toggleBtn.innerHTML = this.expanded ? '▲ 收起' : '▼ 展开';
-            this.toggleBtn.title = this.expanded ? '收起面板' : '展开面板';
-
             this.toggleBtn.addEventListener('click', () => {
-                this.expanded = !this.expanded;
-                this.root?.classList.toggle('collapsed', !this.expanded);
-                if (this.toggleBtn) {
-                    this.toggleBtn.innerHTML = this.expanded ? '▲ 收起' : '▼ 展开';
-                    this.toggleBtn.title = this.expanded ? '收起面板' : '展开面板';
-                }
+                this.setExpanded(!this.expanded);
             });
         }
+
+        // 初始状态：直播时展开，非直播时收起
+        this.setExpanded(StreamModeToggle.isActive());
+
+        // 监听直播模式切换
+        window.addEventListener('stream-mode-change', (e: Event) => {
+            const { on } = (e as CustomEvent<{ on: boolean }>).detail;
+            this.setExpanded(on);
+        });
 
         this.root.style.display = 'block';
         this.renderEmpty();

@@ -45,7 +45,7 @@ export const SPRITE_PATHS = {
         'unassigned_direnjie': '/assets/wuzhou/unassigned_direnjie.png',
         // ── 04 大明将领 ──
         'unassigned_zhudi': '/assets/daming/unassigned_zhudi.png',
-        'jinling_tandaoji': '/assets/jiangnan/jinling_tandaoji.png',
+        'jinling_tandaoji': '/assets/JIANGNAN/jinling_tandaoji.png',
         'liulong': '/assets/lingnan/liulong.png',
         'yangzhou_wangping': '/assets/shuguo/yangzhou_wangping.png',
         'pagan_anuluvtuo': '/assets/dianmian/pagan_anuluvtuo.png',

@@ -626,15 +626,18 @@ export class SiegeManager {
         );
         nearbyDefenderLegions.forEach((legion) => excludedIds.add(legion.id));
 
-        applySiegeGarrisonBoostIfNeeded(
-            targetCity as typeof targetCity & SiegeGarrisonBoostFields,
-            nearbyDefenderLegions,
-        );
-
+        // 攻方：主攻军团 + 附近援军（守城前先算，用于"同场唯一"武将检查）
         const nearbyAttackerLegions = this.collectNearbyLegionsForFaction(
             cityPos,
             army.getFactionId(),
             excludedIds
+        );
+
+        // 守城城防加成：传入攻方军团列表，防止攻守双方出现同一武将
+        applySiegeGarrisonBoostIfNeeded(
+            targetCity as typeof targetCity & SiegeGarrisonBoostFields,
+            nearbyDefenderLegions,
+            [army, ...nearbyAttackerLegions],  // 攻方全体，含主攻军团
         );
 
         const siegePreset = siegeData.result;

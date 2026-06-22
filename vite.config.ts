@@ -1320,13 +1320,16 @@ function serverBindGeneralPortrait(
     const destWeb = `${folderWeb}${generalId}.png`;
 
     if (path.resolve(srcAbs) !== path.resolve(destAbs)) {
-        if (fs.existsSync(destAbs)) fs.unlinkSync(destAbs);
-        try {
-            fs.renameSync(srcAbs, destAbs);
-        } catch {
-            fs.copyFileSync(srcAbs, destAbs);
-            fs.unlinkSync(srcAbs);
+        // ① 旧专属立绘存在 → 改名备份（不删除），格式：{generalId}_prev_YYYYMMDDHHMMSS.png
+        if (fs.existsSync(destAbs)) {
+            const ts = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
+            const backupName = `${generalId}_prev_${ts}.png`;
+            const backupAbs = path.join(folderAbs, backupName);
+            fs.renameSync(destAbs, backupAbs);
+            console.log(`  🗂️  [BindPortrait] 旧立绘备份 → ${backupName}`);
         }
+        // ② 源图复制到目标（copyFileSync = 不移动、不删除源文件；源图留在原文件夹）
+        fs.copyFileSync(srcAbs, destAbs);
     }
 
     serverUpdateFactionGeneralPortraitFile(factionGeneralsPath, generalId, destWeb);
