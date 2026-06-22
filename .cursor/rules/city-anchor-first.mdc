@@ -1,0 +1,57 @@
+---
+description: 据点本位录入 — 势力/武将/精锐均以据点为唯一入口（禁止以人物或势力反推）
+globs: src/data/cities_v2.ts,src/data/factions.ts,src/data/FactionGenerals.ts,src/data/*ExpeditionLegions.ts,src/data/StartingCapitals.ts,src/data/GeneralSkills.ts
+alwaysApply: false
+---
+
+# 据点本位录入（主人 2026-06-22 定）
+
+**真理源**：`AGENTS.md` §2.2.0（录入）、§12.2.1（运行时）。
+
+## 铁律
+
+**一切以据点为基准。** 录入顺序：
+
+1. **据点** — 坐标 + 1900 前旧称（此地有哪些称呼？取知名度大者）
+2. **势力** — 按优先级定名；**势力名 ≠ 据点名**
+3. **武将** — 在此战斗/驻守过、与据点相关
+4. **精锐** — 在此战斗/驻守过、与武将相关；T0–T3 见 §12.3.1
+
+## 势力优先级（无则向下）
+
+民族 → 政权首都 → 州郡治所 → 家族 → 地名（战场/要塞/驿站等）
+
+## 禁止
+
+- ❌ 武将是白起 → 势力/据点该是秦国
+- ❌ 秦在天水 → 白起必须迁天水（长子/上党与天水各一套）
+- ❌ 势力全名与据点名严格相等
+- ❌ 名将路过、无据关隘、为他城名将挪点
+
+## 反例 vs 正例
+
+| 据点 | 势力 | 武将 | 精锐 |
+|------|------|------|------|
+| 长子 | **上党** | 白起（上党战事） | 上党轻骑 |
+| 天水 | **秦** | 嬴稷 | 秦之锐士 |
+
+## 运行时
+
+将/精查 `cityId`（`getCityAnchoredGeneral` / `getCityEliteLegionName`）；旗号查占城 `factionId`。
+
+## 录入后
+
+`npm run city:lookup -- <据点名>`（**必跑**，一行看清文化区·势力·旗号·武将·精锐）  
+`npm run add:check -- <据点名>` · `faction:sync-audit` · `expedition:triple-check` · `city:dossier`
+
+## 查据点全档（禁止分文件拼凑）
+
+回答或修改某据点前，**先**执行：
+
+```bash
+npm run city:lookup -- 长子
+npm run city:lookup -- --one 天水    # 仅一行，适合粘贴进对话
+```
+
+或读 `scratch/city_dossier.json` 的 `byCityName` / `oneLine` 字段。  
+**不要**分别 grep factions、FactionGenerals、ExpeditionLegions 后手工拼表。

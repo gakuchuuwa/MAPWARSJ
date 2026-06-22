@@ -15,10 +15,9 @@
  *   · 军镇专名作旗号时番号不得同字（例：❌ 天雄+天雄军 → ✅ 魏博+大名+天雄军）
  *   · §4.1：据点 XX关/城/邑/州 且旗号=XX → 改据点名
  *
- * **运行时定案：一据点一将一精 + 旗号随占城**（见 AGENTS §12.2.1）
- *   · 将/精：**数据绑定**在录入首都据点 `cityId`（`CITY_ANCHOR_FACTION` ← `STARTING_CAPITALS` 反查）
- *   · 武将 = `FactionGenerals[锚定势力]`；精锐 = `CITY_ELITE_LEGIONS[cityId]`（非写死历史人物）
- *   · 旗号 = 当下 `city.factionId`；占城易主后仍出该据点的将/精
+ * **运行时定案：据点本位**（录入 AGENTS §2.2.0；占城 §12.2.1）
+ *   · 将/精：按 `cityId` 查录入表；与占城旗号无关
+ *   · 录入：据点→势力→武将→精锐；禁止以人物/势力反推据点
  * 数据录入仍用 factionId→番号 + STARTING_CAPITALS 推导 cityId 映射；禁止为番号迁点。
  *
  * 审计：npm run expedition:triple-check  +  npm run expedition:audit

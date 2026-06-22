@@ -1,9 +1,10 @@
 /**
  * 势力将领：势力史实将领档案（一势力一将领一立绘，AI 也有）。
  *
- * 设计定案（GAME_DIRECTION.md「番号随城，将领锚据点」2026-06-22）：
- *   **档案随势**——`FactionGenerals.ts` 绑 factionId；占城不过户（武周占汴梁不得吴起档案）。
- *   **出场锚据点**——将/精随 **录入首都据点** `cityId` 查表；旗号随占城。迁移武将只改数据，不改代码。
+ * 设计定案（GAME_DIRECTION.md；录入 AGENTS §2.2.0）：
+ *   **一切以据点为基准**录入势力/武将；档案绑 factionId 仅为实现索引。
+ *   **出场**：将/精随 **据点 cityId**（`getCityAnchoredGeneral`）；旗号随占城。
+ *   例：长子→上党→白起；天水→秦→嬴稷（各城独立，禁止因白起反推秦@长子）。
  *   **互斥**——军团已带将则据点守城不得再掷将；城防已掷将则军团不得再带；共用 `City.spawnGeneralUsed`。
  *   番号随城见 ExpeditionLegions.CITY_ELITE_LEGIONS / getLegionEliteLegionName。
  *

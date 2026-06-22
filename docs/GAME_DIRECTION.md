@@ -267,35 +267,25 @@
 
 ---
 
-## 一据点一将一精 + 旗号随占城（2026-06-22 主人定）
+## 一据点一将一精 + 占城旗号（2026-06-22 主人定）
 
-> **原则**：将/精跟 **据点录入**（非写死历史人物）；旗号跟 **占城势力**。改数据即改出场，代码只查表。
+> **录入**：`AGENTS.md` §2.2.0 — **一切以据点为基准**；不以人物、不以势力表反推。  
+> **运行时**：将/精跟据点录入；旗号跟占城势力。
 
-### 数据链
+### 录入四步（摘要）
 
-`cityId` → `CITY_ANCHOR_FACTION` → `FactionGenerals` + `CITY_ELITE_LEGIONS`；旗号 = `city.factionId`。
+据点旧称 → 势力（≠据点名）→ 此地武将 → 此地精锐（T0–T3）。
 
-### 准则
+**反例**：白起是秦将 → 长子挂秦。**正例**：长子 → 上党 → 白起；天水 → 秦 → 嬴稷（各城独立）。
 
-| 层 | 绑什么 | 查什么 |
-|---|---|---|
-| 精锐 | 录入首都 `cityId` | `getCityEliteLegionName(cityId)` |
-| 武将 | 据点锚定势力档案 | `getCityAnchoredGeneral(cityId)` |
-| 旗号 | 占城势力 | `city.factionId` |
+### 运行时
 
-**现盘示例**（可随录入变）：长子（上党）→白起+上党轻骑；天水（秦）→嬴稷+秦之锐士；汉中（汉）→刘邦+赤帝亲兵。
+| 层 | 查什么 |
+|---|---|
+| 精锐/武将 | `cityId` → `getCityEliteLegionName` / `getCityAnchoredGeneral` |
+| 旗号 | `city.factionId` |
 
-他势占城：旗号变，**仍将/精跟据点**（例：他势占长子 → 仍白起+上党轻骑，旗为他势）。
-
-### 出场与互斥
-
-募兵军团 + 守城驻军；`spawnGeneralUsed` / `spawnEliteUsed`；易主重置配额。
-
-### 代码
-
-`getCityAnchoredGeneral`、`getCityEliteLegionName`、`CITY_ANCHOR_FACTION` @ `ExpeditionLegions.ts`
-
-**禁止**：`getFactionGeneral(city.factionId)` 决定守城/募兵将；代码或文档写死固定人名配对。
+**代码**：`ExpeditionLegions.ts` · `SiegeGarrisonTier` · `LegionSpawnTier`
 
 ---
 
