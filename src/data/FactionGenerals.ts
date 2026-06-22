@@ -1,13 +1,15 @@
 /**
- * 势力将领：势力开局自带的史实将领（一势力一将领一立绘，AI 也有）。
+ * 势力将领：势力史实将领档案（一势力一将领一立绘，AI 也有）。
  *
- * 设计定案（GAME_DIRECTION.md「番号随城，将领随势」2026-06-16）：
- *   **将领随势**——将领绑 factionId，占城不过户（武周占汴梁不得吴起）。
+ * 设计定案（GAME_DIRECTION.md「番号随城，将领锚据点」2026-06-22）：
+ *   **档案随势**——`FactionGenerals.ts` 绑 factionId；占城不过户（武周占汴梁不得吴起档案）。
+ *   **出场锚据点**——将领只出现在锚点据点的军团或该城守城城防，他处永不出现。
+ *     默认锚点 = `STARTING_CAPITALS[factionId]`（例：qin → city_tianshui 天水 → 白起）。
+ *   **互斥**——军团已带将则据点守城不得再掷将；城防已掷将则军团不得再带；共用 `City.spawnGeneralUsed`。
  *   番号随城见 ExpeditionLegions.CITY_ELITE_LEGIONS / getLegionEliteLegionName。
  *
  * 载体规则（LegionManager 维护）：
- *   一个势力同一时刻只有**一支军团**扛将领（单载体不变式）；该军团覆没后，
- *   下一支新建的同势力军团接过将领。避免「白起×3」。
+ *   锚点据点范围内，**同一将领**不能同时挂在军团与城防；全局仍守「一势力同时仅一支军团扛将」。
  *
  * 武将技生效：GeneralSkillCombat 门禁只看「军团是否带 generalId 且该 id 有档案」，
  *   不再要求跟随/远征——故 AI 将领同样触发，攻守双方各自结算。
@@ -621,7 +623,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ouyang: { generalId: 'ouyang_ouyangyi', generalName: '欧阳頠', portrait: '/assets/nanfang/5b5f8f4c-fae8-4f8e-a9d5-795a0f8601ae.png' },
     chu_d: { generalId: 'chu_d_chuguangyi', generalName: '储光羲', portrait: '/assets/zhaosong/605ec3ae-1447-43bc-a07f-cd8aa64e90cb.png' },
     yan: { generalId: 'yan_leyi', generalName: '乐毅', portrait: '/assets/beifang/yan_leyi.png' },
-    zhao: { generalId: 'zhao_lianpo', generalName: '廉颇', portrait: '/assets/zhongyuan/zhao_lianpo.png' },
+    zhao: { generalId: 'zhao_lianpo', generalName: '廉颇', portrait: '/assets/xianqin/zhao_lianpo.png' },
     yunzhong: { generalId: 'yunzhong_tuobaliwei', generalName: '拓跋力微', portrait: '/assets/beifang/yunzhong_tuobaliwei.png' },
     yang_aner: { generalId: 'yang_aner_yanganer', generalName: '杨安儿', portrait: '/assets/beifang/yang_aner_yanganer.png' },
         xie_cj_d: { generalId: 'xie_cj_d_xingfangde', generalName: '谢枋得', portrait: '/assets/jiangnan/xie_cj_d_xingfangde.png' }, // 葛溪·信州抗元殉国

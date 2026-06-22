@@ -265,8 +265,8 @@ export class RoadRegistry {
             // 如需调试单条道路，请在浏览器控制台直接查询 roadRegistry。
         }
 
-        // [RENDERER SUPPORT] Rasterize vectors to hexes for RoadLayer
-        this.rasterizeVectorRoads();
+        // [PERF] 道路光栅化（视觉，仅 RoadLayer 用，非寻路必需）推迟到首屏后执行，
+        // 避免阻塞首屏。由 GameApp 在首屏渲染后调 rasterizeRoadsDeferred()。
     }
 
     // ===== 寻路 (Dijkstra) =====

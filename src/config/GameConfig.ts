@@ -66,6 +66,8 @@ export class GameConfig {
         INITIAL_SPAWN_INTERVAL_MS: 200,
         /** 首次出兵错峰：每批最多生成几支 */
         INITIAL_SPAWN_PER_TICK: 1,
+        /** 每季（季度）最多新组建军团数（季末 trySpawnLegions） */
+        MAX_LEGIONS_SPAWN_PER_SEASON: 1,
         /** 军团战败后尸体/阵亡动画保留时长 (ms) */
         CORPSE_DISPLAY_MS: 15000,
         /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms) */

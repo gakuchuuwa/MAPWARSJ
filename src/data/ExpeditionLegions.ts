@@ -15,7 +15,7 @@
  *   · 军镇专名作旗号时番号不得同字（例：❌ 天雄+天雄军 → ✅ 魏博+大名+天雄军）
  *   · §4.1：据点 XX关/城/邑/州 且旗号=XX → 改据点名
  *
- * **运行时定案（2026-06-16）：番号随城、将领随势**（见 GAME_DIRECTION.md）
+ * **运行时定案：番号随城、将领锚据点**（见 GAME_DIRECTION.md）
  *   · 精锐番号：按军团 **出兵据点** cityId 查 CITY_ELITE_LEGIONS（占城后可募当地番号）
  *   · 将领：仍绑 factionId（FactionGenerals.ts），占城 **不** 过户将领
  * 数据录入仍用 factionId→番号 + STARTING_CAPITALS 推导 cityId 映射；禁止为番号迁点。
@@ -159,7 +159,7 @@ export function applyExpeditionEliteRename(
     }
     army.name = elite;
   }
-  // 将领不在此处绑定：将领随势（FactionGenerals.ts），远征只改番号
+  // 将领不在此处绑定：档案在 FactionGenerals.ts，出场限 STARTING_CAPITALS 锚点据点
   applyLegionCultureComposition(army as LegionCompositionTarget);
   return true;
 }

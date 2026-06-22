@@ -928,17 +928,18 @@ npm run skeleton:audit
 | **旗号（势力）** | 该点按 §4.1 定旗（1 点 1 旗） | 与番号是否同族、同代、同战役无关 |
 | **远征番号（精锐）** | 该点标志战 / 成军地（史料具名） | 与旗号是否同族、同代、同战役无关 |
 
-**代码实现（2026-06-16）**：
+**代码实现（2026-06-16；将领锚点 2026-06-22 修订）**：
 
 - **数据录入**：`*ExpeditionLegions.ts` 仍写 `factionId → 番号`；经 `STARTING_CAPITALS` 推导为 `cityId → 番号`（`CITY_ELITE_LEGIONS`）。
 - **运行时募兵**：番号查 **`homeCityId` / `sourceCityId`**（番号随城），见 `getLegionEliteLegionName`。
-- **将领**：仍绑 `factionId`（`FactionGenerals.ts`，将领随势），占城不过户。
+- **将领档案**：`FactionGenerals.ts` 绑 `factionId`（占城不过户）。
+- **将领出场**：仅 **锚点据点**（默认 `STARTING_CAPITALS[factionId]`）的军团或该城守城城防；**军团与城防互斥**，共用 `spawnGeneralUsed`。
 
 ```
 ① 据点（主）→ 史地地名 + 可考坐标（cities_v2 已存在）
 ② 旗号     → 该据点 §4.1 定旗（与③④无关）
 ③ 远征番号 → 该据点标志战/成军地专名 → 运行时按 **出兵 cityId** 查（与②④无关）
-④ 将领     → 势力 factionId 配将（与③无关，占城不转移）
+④ 将领     → 档案随势 factionId；**出场仅锚点据点**（军团 home/source 或守城城防，互斥）
 ```
 
 | 步骤 | 说明 |
@@ -956,13 +957,31 @@ npm run skeleton:audit
 - ❌ 「旗号是北齐 → 番号必须北齐 / 不能挂东汉先登」
 - ❌ 「势力与精锐要配套、同时代、同一家族」
 
+### 12.2.1 将领锚据点与互斥（2026-06-22 主人定，必读）
+
+> 修订「将领随势」：**档案**仍记在势力；**出场**只限一座锚点据点。与番号「随出兵城」不同，将领**不**随任意出兵城扩散。
+
+| 项 | 规则 |
+|---|---|
+| **锚点** | 默认 = `STARTING_CAPITALS[factionId]`（例：秦 `qin` → **天水** `city_tianshui` → **白起**） |
+| **可出现处** | ① 锚点据点 `homeCityId`/`sourceCityId` 的军团；② 锚点据点守城战的城防掷将 |
+| **禁止出现** | 非锚点城募兵军团、非锚点守城战 |
+| **互斥** | `City.spawnGeneralUsed`：军团已带将 ↔ 城防不得再掷将；反之亦然；**不可同时** |
+| **占城** | 易主换旗号 → 重置该城 `spawnGeneralUsed`；**不得**过户 `generalId` |
+
+**AI 写数据 / 改代码前自检**：
+
+- [ ] 挂将逻辑是否校验 `cityId === STARTING_CAPITALS[factionId]`（或主人指定的锚点）？
+- [ ] 守城 `SiegeGarrisonTier` 掷将是否仅对本城、且与在场军团带将互斥？
+- [ ] 是否禁止从洛阳秦军团、函谷秦守城等非锚点刷白起？
+
 ### 12.3 数据文件与审计（写入前必跑）
 
 | 文件 | 作用 |
 |------|------|
 | `src/data/*ExpeditionLegions.ts` | 14 文化区 **数据录入** `factionId → 番号` |
 | `src/data/ExpeditionLegions.ts` | `CITY_ELITE_LEGIONS`（番号随城）、`getLegionEliteLegionName`、远征改名 |
-| `src/data/FactionGenerals.ts` | **将领随势** `factionId → 将领` |
+| `src/data/FactionGenerals.ts` | **将领档案** `factionId → 将领`；**出场锚点** `STARTING_CAPITALS[factionId]` |
 | `史料/古代精锐部队.md` | 番号史料来源（§1 全局 + 分区表） |
 
 **审计命令**（缺一不可）：

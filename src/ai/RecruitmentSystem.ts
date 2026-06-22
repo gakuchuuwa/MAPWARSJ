@@ -10,6 +10,7 @@
  *      家城失守仍强制回师（行为树 resolveRecaptureTarget，游戏原生行为，所有文化无豁免；
  *      例外：远征军团（shouldSkipHomeRecapture）不回师）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
+ *      **每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）**；候选优先级：
  *      ① 每文化区保底 1 支
  *      ② 优先：视野内、非跟随势力、驻军高的据点
  *      ③ 余量：全图驻军最高的据点
@@ -311,17 +312,20 @@ export class RecruitmentSystem {
         });
     }
 
-    /** 大城/中城/小城/关隘、无现役军、兵够则出征；文化区保底 → 视野优先 → 全图高兵力 */
+    /** 大城/中城/小城/关隘、无现役军、兵够则出征；每季最多 1 支（见 MAX_LEGIONS_SPAWN_PER_SEASON） */
     private trySpawnLegions(cities: ReturnType<CityManager['getCities']>): void {
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
+        const perSeasonCap = Math.max(1, GameConfig.LEGION.MAX_LEGIONS_SPAWN_PER_SEASON);
 
         if (this.legionManager.getActiveLegionCount() >= maxLegions) {
             return;
         }
 
         const candidates = this.buildSpawnPlan(cities);
+        let spawnedThisSeason = 0;
 
         for (const { city, armySize } of candidates) {
+            if (spawnedThisSeason >= perSeasonCap) break;
             if (this.legionManager.getActiveLegionCount() >= maxLegions) {
                 break;
             }
@@ -329,10 +333,11 @@ export class RecruitmentSystem {
             const newLegion = this.spawnCandidate(city, armySize);
             if (!newLegion) continue;
 
+            spawnedThisSeason++;
             const n = this.legionManager.getActiveLegionCount();
             gameLog(
                 'recruitment',
-                `💂 [募兵] 据点【${city.name}】组建【${newLegion.name}】(${newLegion.getTroops()} 兵，保底/视野/高兵，场上 ${n}/${maxLegions})`
+                `💂 [募兵] 据点【${city.name}】组建【${newLegion.name}】(${newLegion.getTroops()} 兵，本季 ${spawnedThisSeason}/${perSeasonCap}，场上 ${n}/${maxLegions})`
             );
         }
     }
