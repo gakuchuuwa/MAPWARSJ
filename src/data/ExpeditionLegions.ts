@@ -15,9 +15,10 @@
  *   · 军镇专名作旗号时番号不得同字（例：❌ 天雄+天雄军 → ✅ 魏博+大名+天雄军）
  *   · §4.1：据点 XX关/城/邑/州 且旗号=XX → 改据点名
  *
- * **运行时定案：番号随城、将领锚据点**（见 GAME_DIRECTION.md）
- *   · 精锐番号：按军团 **出兵据点** cityId 查 CITY_ELITE_LEGIONS（占城后可募当地番号）
- *   · 将领：仍绑 factionId（FactionGenerals.ts），占城 **不** 过户将领
+ * **运行时定案：一据点一将一精 + 旗号随占城**（见 AGENTS §12.2.1）
+ *   · 将/精：**数据绑定**在录入首都据点 `cityId`（`CITY_ANCHOR_FACTION` ← `STARTING_CAPITALS` 反查）
+ *   · 武将 = `FactionGenerals[锚定势力]`；精锐 = `CITY_ELITE_LEGIONS[cityId]`（非写死历史人物）
+ *   · 旗号 = 当下 `city.factionId`；占城易主后仍出该据点的将/精
  * 数据录入仍用 factionId→番号 + STARTING_CAPITALS 推导 cityId 映射；禁止为番号迁点。
  *
  * 审计：npm run expedition:triple-check  +  npm run expedition:audit
@@ -41,6 +42,7 @@ import { CENTRAL_EXPEDITION_ELITE_LEGIONS } from './CentralExpeditionLegions';
 import { BASHU_EXPEDITION_ELITE_LEGIONS } from './BashuExpeditionLegions';
 import { HEXI_EXPEDITION_ELITE_LEGIONS } from './HexiExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
+import { getFactionGeneral } from './FactionGenerals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
 export type EliteTier = 0 | 1 | 2 | 3;
@@ -79,6 +81,29 @@ function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> 
 /** 运行时：出兵据点 cityId → 精锐番号（番号随城） */
 export const CITY_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = buildCityEliteLegionMap();
 
+function buildCityAnchorFactionMap(): Readonly<Record<string, string>> {
+  const map: Record<string, string> = {};
+  for (const [factionId, cityId] of Object.entries(STARTING_CAPITALS)) {
+    if (cityId) map[cityId] = factionId;
+  }
+  return map;
+}
+
+/** 据点 → 史料锚定势力（录入时 STARTING_CAPITALS 反查；旗号易主不改变） */
+export const CITY_ANCHOR_FACTION: Readonly<Record<string, string>> = buildCityAnchorFactionMap();
+
+/** 据点在史料录入中锚定的势力 id（无则该城不出将/精） */
+export function getCityAnchorFactionId(cityId: string | null | undefined): string | null {
+  if (!cityId) return null;
+  return CITY_ANCHOR_FACTION[cityId] ?? null;
+}
+
+/** 是否为有将/精录入的据点首都（募兵与守城共用） */
+export function isCityGeneralEliteAnchor(cityId: string | null | undefined): boolean {
+  if (!getCityAnchorFactionId(cityId)) return false;
+  return getCityEliteConfig(cityId) != null;
+}
+
 /** 查番号/远征解锁时的军团最小接口 */
 export type LegionEliteLookup = {
   getFactionId(): string;
@@ -112,18 +137,51 @@ export function getExpeditionEliteConfig(factionId: string): EliteLegionConfig |
   return ALL_FACTION_ELITE_LEGIONS[factionId] ?? null;
 }
 
-/** 番号随城：据出兵 cityId 查精锐配置 */
+/** 据点锚定武将（读录入表；与军团旗号/占城势力可不同） */
+export function getCityAnchoredGeneral(cityId: string | null | undefined) {
+  const anchorFactionId = getCityAnchorFactionId(cityId);
+  if (!anchorFactionId) return null;
+  return getFactionGeneral(anchorFactionId);
+}
+
+/** @deprecated 旧「旗号=将精势力」校验；运行时改用 isCityGeneralEliteAnchor */
+export function isFactionGeneralEliteAnchor(
+  factionId: string,
+  cityId: string | null | undefined,
+): boolean {
+  if (!cityId || factionId === 'panjun') return false;
+  return STARTING_CAPITALS[factionId] === cityId;
+}
+
+/** 番号随城：据 cityId 查精锐配置 */
 export function getCityEliteConfig(cityId: string | null | undefined): EliteLegionConfig | null {
   if (!cityId) return null;
   return CITY_ELITE_LEGIONS[cityId] ?? null;
 }
 
-/** 番号随城：据出兵 cityId 查精锐番号 */
+/** 番号随城：据 cityId 查精锐番号 */
 export function getCityEliteLegionName(cityId: string | null | undefined): string | null {
   return getCityEliteConfig(cityId)?.name ?? null;
 }
 
-/** 番号随城：按军团 homeCityId / sourceCityId 查精锐配置 */
+/** @deprecated 运行时改用 getCityEliteConfig(cityId) */
+export function getFactionCityEliteConfig(
+  factionId: string,
+  cityId: string | null | undefined,
+): EliteLegionConfig | null {
+  if (!isFactionGeneralEliteAnchor(factionId, cityId)) return null;
+  return getCityEliteConfig(cityId);
+}
+
+/** @deprecated 运行时改用 getCityEliteLegionName(cityId) */
+export function getFactionCityEliteLegionName(
+  factionId: string,
+  cityId: string | null | undefined,
+): string | null {
+  return getFactionCityEliteConfig(factionId, cityId)?.name ?? null;
+}
+
+/** 按军团出兵据点查精锐（番号随城，不看军团旗号） */
 export function getLegionEliteConfig(army: LegionEliteLookup): EliteLegionConfig | null {
   const cityId = army.homeCityId ?? army.getSourceCityId();
   return getCityEliteConfig(cityId);

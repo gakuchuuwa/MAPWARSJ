@@ -583,9 +583,11 @@ npm run city:spacing   # 写入后再跑全图 ≥50 km
 |------|-------------|------|
 | 1 | FactionEditor `/api/batch-import` | 势力、据点、首都、旗号×2 |
 | 2 | `EventParser.ts` | 与 cities_v2 **同 id** 城块同步（name/factionId/lat/lng/type/region） |
-| 3 | `FactionGenerals.ts` | 要武将时；**单将势力**一势力一条；**多将势力**保留一条默认将 + 见 `FactionGeneralPools.ts` |
+| 3 | `FactionGenerals.ts` | 要武将时；一势力一将 |
+| 4 | `GeneralSkills.ts` `GENERAL_PROFILES` | **有将必写**；无档案则武将技不触发 |
+<!-- 搁置 N+1：
 | 3b | `FactionGeneralPools.ts` | **A/B 多将（N+1）**时：出征池、守城专将、显示名、立绘夹 |
-| 4 | `GeneralSkills.ts` `GENERAL_PROFILES` | **有将必写**（池内每一 `generalId`）；无档案则武将技不触发 |
+-->
 | 5 | `*ExpeditionLegions.ts` | 要精锐时；写进**正确 14 区**文件 |
 | 6 | `cities_v2` 的 `region` + `note` | 文化区显式标注 + 史地备注 |
 | 7 | 道路 | 主人 VectorRoadEditor 手画（**AI 禁止**改 VectorRoadData） |
@@ -958,25 +960,48 @@ npm run skeleton:audit
 - ❌ 「旗号是北齐 → 番号必须北齐 / 不能挂东汉先登」
 - ❌ 「势力与精锐要配套、同时代、同一家族」
 
-### 12.2.1 将领锚据点与互斥（2026-06-22 主人定，必读）
+### 12.2.1 据点锚定将/精 + 旗号随占城（2026-06-22 主人定）
 
-> 修订「将领随势」：**档案**仍记在势力；**出场**只限一座锚点据点。与番号「随出兵城」不同，将领**不**随任意出兵城扩散。
+> **原则（非写死人物）**：每个录入首都据点固定 **一武将 + 一精锐**；**旗号**随占城势力。谁在哪座城，由 **数据** 决定，代码只查表。  
+> 迁移武将/改首都 → 改 `STARTING_CAPITALS` + `FactionGenerals` + `*ExpeditionLegions`，运行时自动跟随。
+
+**数据链（AI 改将/精时按此走，勿硬编码人名）**：
+
+```
+cityId（录入首都）
+  → CITY_ANCHOR_FACTION[cityId]     // STARTING_CAPITALS 反查：锚定势力
+  → 武将 FactionGenerals[锚定势力]
+  → 精锐 CITY_ELITE_LEGIONS[cityId] // 由锚定势力番号推导
+旗号 city.factionId                  // 占城者，可与锚定势力不同
+```
+
+**当前录入示例**（随主人改盘会变，不作真理）：
+
+| 据点 | 锚定势力 | 武将（现盘） | 精锐（现盘） |
+|------|----------|--------------|--------------|
+| 长子 `city_shangdang` | 上党 `xin` | 白起 | 上党轻骑 |
+| 天水 `city_tianshui` | 秦 `qin` | 嬴稷 | 秦之锐士 |
+| 汉中 `city_hanzhong` | 汉 `han_d` | 刘邦 | 赤帝亲兵 |
 
 | 项 | 规则 |
 |---|---|
-| **锚点** | 默认 = `STARTING_CAPITALS[factionId]`（例：秦 `qin` → **天水** `city_tianshui` → **白起**） |
-| **可出现处** | ① 锚点据点 `homeCityId`/`sourceCityId` 的军团；② 锚点据点守城战的城防掷将 |
-| **禁止出现** | 非锚点城募兵军团、非锚点守城战 |
-| **互斥** | `City.spawnGeneralUsed`：军团已带将 ↔ 城防不得再掷将；反之亦然；**不可同时** |
-| **占城** | 易主换旗号 → 重置该城 `spawnGeneralUsed`；**不得**过户 `generalId` |
+| **将/精** | 仅 `STARTING_CAPITALS` 中的首都据点；募兵军团 + 守城驻军同规则 |
+| **旗号** | `city.factionId`；他势占城 → 其旗，**仍将/精跟据点录入** |
+| **禁止** | 非首都据点掷将/精；代码里写死人名 |
+| **互斥** | `spawnGeneralUsed` / `spawnEliteUsed` |
 
-**AI 写数据 / 改代码前自检**：
+**代码**：`getCityAnchoredGeneral` / `getCityEliteLegionName` / `CITY_ANCHOR_FACTION` @ `ExpeditionLegions.ts`
 
-- [ ] 挂将逻辑是否校验 `cityId === STARTING_CAPITALS[factionId]`（或主人指定的锚点）？
-- [ ] 守城 `SiegeGarrisonTier` 掷将是否仅对本城、且与在场军团带将互斥？
-- [ ] 是否禁止从洛阳秦军团、函谷秦守城等非锚点刷白起？
+**AI 自检**：
 
-### 12.2.2 多将领势力：出征池 + 守城专将（N+1，2026-06-22 秦试点）
+- [ ] 是否用 `getCityAnchoredGeneral(cityId)`，而非 `getFactionGeneral(city.factionId)`？
+- [ ] 改将是否同步 `FactionGenerals` + `GeneralSkills` +（若迁首都）`STARTING_CAPITALS` + 精锐区表？
+- [ ] 文档/注释是否避免写死「白起@天水」等已过时的固定配对？
+
+<!--
+### 12.2.2 多将领势力：出征池 + 守城专将（N+1，2026-06-22 秦试点）【搁置】
+
+> **主人 2026-06-22 裁定搁置**：维持一据点、一势力、一武将、一精锐。下文保留供日后恢复参考。
 
 > **主人方向**：知名政权、民族逐步采用「**出征池随机 N 将 + 守城专将 0–1**」，与单将势力并存。  
 > **试点**：秦 `qin` — 出征池 5 将（白起、王翦、司马错、王贲、蒙恬）；守城专将 1（嬴稷 `qin_yingji`）。
@@ -1036,6 +1061,7 @@ npm run skeleton:audit
 - [ ] 池内每个 `generalId` 均有 `GENERAL_PROFILES` + 立绘路径？
 - [ ] 仅 **A/B** 且主人/史料可支撑，而非 C 级凑数？
 - [ ] 锚点据点、互斥、`spawnGeneralUsed` 逻辑未破坏？
+-->
 
 ### 12.3 数据文件与审计（写入前必跑）
 
@@ -1043,8 +1069,8 @@ npm run skeleton:audit
 |------|------|
 | `src/data/*ExpeditionLegions.ts` | 14 文化区 **数据录入** `factionId → 番号` |
 | `src/data/ExpeditionLegions.ts` | `CITY_ELITE_LEGIONS`（番号随城）、`getLegionEliteLegionName`、远征改名 |
-| `src/data/FactionGenerals.ts` | **将领档案** 单将默认表 `factionId → 将领`；**出场锚点** `STARTING_CAPITALS[factionId]` |
-| `src/data/FactionGeneralPools.ts` | **多将势力** 出征池 + 守城专将（§12.2.2；无多将可不配） |
+| `src/data/FactionGenerals.ts` | **将领档案** `factionId → 将领`；**出场锚点** `STARTING_CAPITALS[factionId]` |
+<!-- | `src/data/FactionGeneralPools.ts` | **多将势力** 出征池 + 守城专将（§12.2.2 搁置） | -->
 | `史料/古代精锐部队.md` | 番号史料来源（§1 全局 + 分区表） |
 
 **审计命令**（缺一不可）：

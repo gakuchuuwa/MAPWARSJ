@@ -1,9 +1,11 @@
 import { GameConfig } from '../config/GameConfig';
 import {
-    factionHasExpeditionGeneral,
-    pickRandomExpeditionGeneral,
-} from '../data/FactionGeneralPools';
-import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
+    getCityAnchorFactionId,
+    getCityAnchoredGeneral,
+    getLegionEliteLegionName,
+    isCityGeneralEliteAnchor,
+} from '../data/ExpeditionLegions';
+import { getFactionGeneral } from '../data/FactionGenerals';
 import type { Army } from './Army';
 
 export type LegionSpawnTierOutcome = 'plain' | 'elite' | 'general' | 'elite_general';
@@ -14,13 +16,13 @@ export interface CitySpawnTierState {
     spawnEliteUsed?: boolean;
 }
 
-/** 仍可用的四档结果（等概率掷色） */
+/** 仍可用的四档结果（等概率掷色）；generalFactionId = 据点锚定史料势力 */
 export function listAvailableLegionSpawnOutcomes(
-    factionId: string,
+    generalFactionId: string | null,
     tierState: CitySpawnTierState,
     eliteName: string | null,
 ): LegionSpawnTierOutcome[] {
-    const hasGeneral = factionHasExpeditionGeneral(factionId);
+    const hasGeneral = !!generalFactionId && !!getFactionGeneral(generalFactionId);
     const canGeneral = hasGeneral && !tierState.spawnGeneralUsed;
     const canElite = !!eliteName && !tierState.spawnEliteUsed;
 
@@ -35,22 +37,22 @@ export function listAvailableLegionSpawnOutcomes(
 
 /** 在仍可用档位中等概率掷色（据点锚点，将领/精锐各只能消耗一次） */
 export function rollCityLegionSpawnTierOutcome(
-    factionId: string,
+    generalFactionId: string | null,
     tierState: CitySpawnTierState,
     eliteName: string | null,
 ): LegionSpawnTierOutcome {
-    const available = listAvailableLegionSpawnOutcomes(factionId, tierState, eliteName);
+    const available = listAvailableLegionSpawnOutcomes(generalFactionId, tierState, eliteName);
     const idx = Math.floor(Math.random() * available.length);
     return available[idx] ?? 'plain';
 }
 
 /** @deprecated 仅兼容旧调用；新逻辑须传据点 tierState */
 export function rollLegionSpawnTierOutcome(
-    factionId: string,
+    generalFactionId: string | null,
     tierState: CitySpawnTierState = {},
     eliteName: string | null = null,
 ): LegionSpawnTierOutcome {
-    return rollCityLegionSpawnTierOutcome(factionId, tierState, eliteName);
+    return rollCityLegionSpawnTierOutcome(generalFactionId, tierState, eliteName);
 }
 
 export function markSpawnTierConsumed(
@@ -71,10 +73,12 @@ export function noteCitySpawnTierFromLegion(
     if (army.isElite) tierState.spawnEliteUsed = true;
 }
 
-/** 仅挂将领：保留原名，不升 isElite */
+/** 挂据点锚定将领（旗号≠档案势力时仍挂该城录入将） */
 export function attachFactionGeneralToArmy(army: Army): boolean {
     if (army.generalId) return false;
-    const general = pickRandomExpeditionGeneral(army.getFactionId());
+    const cityId = army.homeCityId ?? army.getSourceCityId();
+    if (!isCityGeneralEliteAnchor(cityId)) return false;
+    const general = getCityAnchoredGeneral(cityId);
     if (!general) return false;
     army.generalId = general.generalId;
     army.portraitPath = general.portrait;
@@ -109,8 +113,9 @@ export function applyLegionSpawnTierToArmy(
 
     const state = tierState ?? {};
     const threshold = GameConfig.EXPEDITION.UNLOCK_TROOPS;
-    const factionId = army.getFactionId();
-    const hasGeneral = factionHasExpeditionGeneral(factionId);
+    const cityId = army.homeCityId ?? army.getSourceCityId();
+    const anchorFactionId = getCityAnchorFactionId(cityId);
+    const hasGeneral = !!getCityAnchoredGeneral(cityId);
     const canGeneral = hasGeneral && !state.spawnGeneralUsed;
     const canElite = !state.spawnEliteUsed;
 
@@ -130,7 +135,7 @@ export function applyLegionSpawnTierToArmy(
         return;
     }
 
-    const outcome = rollCityLegionSpawnTierOutcome(factionId, state, eliteName);
+    const outcome = rollCityLegionSpawnTierOutcome(anchorFactionId, state, eliteName);
 
     switch (outcome) {
         case 'plain':

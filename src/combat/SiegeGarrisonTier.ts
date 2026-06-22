@@ -1,10 +1,9 @@
-import { getCityEliteLegionName } from '../data/ExpeditionLegions';
 import {
-    factionHasExpeditionGeneral,
-    getSiegeGarrisonGeneral,
-    hasDedicatedSiegeGarrisonGeneral,
-    pickRandomExpeditionGeneral,
-} from '../data/FactionGeneralPools';
+    getCityAnchorFactionId,
+    getCityAnchoredGeneral,
+    getCityEliteLegionName,
+    isCityGeneralEliteAnchor,
+} from '../data/ExpeditionLegions';
 import {
     markSpawnTierConsumed,
     rollCityLegionSpawnTierOutcome,
@@ -56,12 +55,7 @@ export function reconcileSiegeGarrisonBoostWithLegions(
     }
 }
 
-/**
- * 守城军团未覆盖的档位：城防驻军加成。
- * · 有守城专将（秦嬴稷）→ 无附近带将军团时**必出**专将，不占出征将配额
- * · 精锐仍按据点四档掷色
- * · 其余势力：将/精同募兵四档掷色
- */
+/** 守城军团未覆盖的档位：城防驻军加成（将/精随据点，旗号随占城势力） */
 export function applySiegeGarrisonBoostIfNeeded(
     city: SiegeGarrisonCity,
     defendingLegions: Army[],
@@ -72,32 +66,22 @@ export function applySiegeGarrisonBoostIfNeeded(
     const hasLegionElite = defendingLegions.some((l) => l.isElite);
     if (hasLegionGeneral && hasLegionElite) return;
 
+    if (!isCityGeneralEliteAnchor(city.id)) return;
+
     const eliteName = getCityEliteLegionName(city.id);
     if (!eliteName && hasLegionElite) return;
 
-    const applied = { general: false, elite: false };
-    const dedicatedSiege = hasDedicatedSiegeGarrisonGeneral(city.factionId);
-
-    // 守城专将（秦 qin_yingji）：必出，不消耗 spawnGeneralUsed
-    if (!hasLegionGeneral && dedicatedSiege) {
-        const garrisonGeneral = getSiegeGarrisonGeneral(city.factionId);
-        if (garrisonGeneral) {
-            city._siegeGarrisonGeneralId = garrisonGeneral.generalId;
-            city._siegeGarrisonPortrait = garrisonGeneral.portrait;
-        }
-    }
+    const anchorFactionId = getCityAnchorFactionId(city.id);
+    const anchoredGeneral = getCityAnchoredGeneral(city.id);
 
     const needElite = !hasLegionElite && !!eliteName && !city.spawnEliteUsed;
     const needRandomGeneral =
-        !hasLegionGeneral &&
-        !city._siegeGarrisonGeneralId &&
-        !dedicatedSiege &&
-        !city.spawnGeneralUsed &&
-        factionHasExpeditionGeneral(city.factionId);
+        !hasLegionGeneral && !city.spawnGeneralUsed && !!anchoredGeneral;
 
     if (!needElite && !needRandomGeneral) return;
 
-    const outcome = rollCityLegionSpawnTierOutcome(city.factionId, city, eliteName);
+    const outcome = rollCityLegionSpawnTierOutcome(anchorFactionId, city, eliteName);
+    const applied = { general: false, elite: false };
 
     if (needElite && (outcome === 'elite' || outcome === 'elite_general')) {
         city._siegeGarrisonElite = true;
@@ -106,10 +90,9 @@ export function applySiegeGarrisonBoostIfNeeded(
     }
 
     if (needRandomGeneral && (outcome === 'general' || outcome === 'elite_general')) {
-        const picked = pickRandomExpeditionGeneral(city.factionId);
-        if (picked) {
-            city._siegeGarrisonGeneralId = picked.generalId;
-            city._siegeGarrisonPortrait = picked.portrait;
+        if (anchoredGeneral) {
+            city._siegeGarrisonGeneralId = anchoredGeneral.generalId;
+            city._siegeGarrisonPortrait = anchoredGeneral.portrait;
             applied.general = true;
         }
     }

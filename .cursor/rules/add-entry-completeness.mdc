@@ -31,8 +31,8 @@ npx tsx scratch/audit_city_spacing.mjs --probe <lat> <lng> <据点名>
 |------|----------|
 | `EventParser.ts` | **每次**改 cities_v2 同名城块（军情/事件） |
 | `FactionGenerals.ts` | 要武将时 |
-| `FactionGeneralPools.ts` | **多将（N+1）**势力：出征池 + 守城专将 |
-| `GeneralSkills.ts` | 有武将时（**池内每一将**都要档案） |
+| `GeneralSkills.ts` | 有武将时（无档案 = 技能不触发） |
+<!-- | `FactionGeneralPools.ts` | **多将（N+1）**势力：出征池 + 守城专将 【搁置】 | -->
 | `*ExpeditionLegions.ts` | 要精锐时（写进**正确文化区**文件） |
 | `HistoricalFactionColors.ts` | 仅固定色势力（可选） |
 

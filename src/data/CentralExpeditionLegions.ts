@@ -9,11 +9,11 @@
  */
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
       wei: { name: '魏之武卒', tier: 1 },        // 汴梁·阴晋大捷；马陵/伊阙大败溃散，降T1
-  qin: { name: '秦之锐士', tier: 1 },        // 天水·§1 #12 司马错白起
+  qin: { name: '秦之锐士', tier: 1 },        // 秦首都·精锐番号（将随 FactionGenerals 录入）
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
   han: { name: '韩之劲弩', tier: 2 },        // 新郑·暴鸢韩弩
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
-  han_d: { name: '轻勇骑', tier: 2 },      // 南郑·§1 #18 韩信背水之战的夺旗骑兵
+  han_d: { name: '赤帝亲兵', tier: 2 },      // 南郑·刘邦专属
   pizhou: { name: '陷阵营', tier: 1 },        // 下邳·高顺陷阵营
   cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
   ranwei_d: { name: '乞活军', tier: 2 },   // 巨鹿·§1 #41 冉闵陈午
@@ -35,9 +35,9 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   baibo: { name: '白波黄巾', tier: 3 },     // 白波谷·郭太白波黄巾
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
   tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
-  dixiang: { name: '南阳材官', tier: 3 },   // 宛城·张绣南阳材官
+  dixiang: { name: '猪突豨勇', tier: 2 },   // 宛城·张绣南阳材官
   // 朱龙骑除名（无此番号）
-  liguo: { name: '黎之耆戎', tier: 3 },       // 阏与·黎国耆戎
+  liguo: { name: '潞川锐骑', tier: 2 },       // 阏与·潞州王猛
   yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师
   // ── 2026-06-16 新增：11大名关 ──
                       hongnong_jun: { name: '黄龙骑', tier: 2 },    // 函谷关·杨素大破突厥
@@ -57,7 +57,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   shen: { name: '申伯亲卫', tier: 3 },         // 安康·西周申国
   // 汴河戍旅除名（无此编制）
   yuzhou: { name: '雍丘锐士', tier: 1 },     // 雍丘·祖逖中流击楢
-  xin: { name: '潞川锐骑', tier: 2 },          // 长子·王猛潞川破前燕
+  xin: { name: '上党轻骑', tier: 2 },          // 长子·王猛潞川破前燕
   yingzhou_d: { name: '选锋军', tier: 2 },       // 顺昌·南宋选锋
   // 北门飞骑除名
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）

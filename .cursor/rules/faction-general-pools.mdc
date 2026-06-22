@@ -1,12 +1,14 @@
 ---
-description: 多将领势力 N+1 模式 — 出征池随机 + 守城专将（编辑 FactionGeneralPools / 秦式多将时必读）
-globs: src/data/FactionGeneralPools.ts,src/data/FactionGenerals.ts,src/data/GeneralSkills.ts,src/legion/LegionSpawnTier.ts,src/combat/SiegeGarrisonTier.ts
+description: 【搁置】多将领 N+1 — 出征池+守城专将；现行一势力一将见 FactionGenerals.ts
+globs: src/data/FactionGeneralPools.ts
 alwaysApply: false
 ---
 
+<!-- 本规则已搁置（主人 2026-06-22）。勿按 N+1 改运行时逻辑。恢复时取消下方 HTML 注释并启用 FactionGeneralPools.ts。
+
 # 多将领势力：出征池 + 守城专将（N+1）
 
-**真理源**：`AGENTS.md` §12.2.2；试点实现 `src/data/FactionGeneralPools.ts`（秦 5+1）。
+**真理源**：`AGENTS.md` §12.2.2（HTML 注释内）；试点实现 `src/data/FactionGeneralPools.ts`（已停用）。
 
 ## 何时用
 
@@ -64,3 +66,7 @@ alwaysApply: false
 - 只改 `FactionGenerals` 不写 `FactionGeneralPools`（出征仍只会出单将）
 - 多将池不写 `GENERAL_PROFILES`（技能不触发）
 - 非锚点城挂将 / 占城过户将领
+
+-->
+
+**现行**：一据点、一势力、一武将（`FactionGenerals.ts`）、一精锐（`ExpeditionLegions`）。AI 勿启用 N+1 除非主人明确恢复。
