@@ -322,9 +322,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/zhongyuan/liang_d_zhangxun.png": {
-            "scale": 1,
+            "scale": 1.1,
             "offsetX": 0,
-            "offsetY": -27
+            "offsetY": -45
         },
         "/assets/zhongyuan/e7747431-e1e1-4e0f-9e1f-d876d3fedd6e.png": {
             "scale": 1,
@@ -785,6 +785,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/daming/daming (1).png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/lingnan/guangzhou (1).png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -9
         }
     },
     "folderGuides": {
