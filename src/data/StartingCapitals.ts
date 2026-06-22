@@ -569,6 +569,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'guangxin': 'city_cangwu',
     'kejia': 'city_tingzhou',
     'ouyang': 'city_luling',
+    'tingzhou_d': 'city_ruijin',
+    'chaozhou_d': 'city_haiyang',
 'ningkou': 'city_juyansai',
     'hongzhou': 'city_hongzhou',
 'danyang': 'city_jiuzi',

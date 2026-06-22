@@ -1585,6 +1585,7 @@ export const PERIPHERY: CityDataV2[] = [
         
         note: '龙溪；陈吊小城', region: 'LINGNAN' },
     { id: 'city_tingzhou', name: '黄连', factionId: 'kejia', lat: 26.26, lng: 116.65, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '唐黄连县故地（今宁化）；汀州客家祖地，非文天祥故里' },
+    { id: 'city_ruijin', name: '瑞金', factionId: 'tingzhou_d', lat: 25.9262, lng: 116.0458, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '宋瑞金监，客家大本营' },
 
     // ── 2026-05-25 明朝势力新增城市 ──
     // 第二类：元末群雄
@@ -1691,6 +1692,9 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_zhaoqing', name: '肇庆', factionId: 'duanzhou_d',
         lat: 23.05, lng: 112.45, type: 'small_city', troops: 10000, region: 'LINGNAN', note: '端州治；马暨统摧锋军抗元（1278）' },
+    {
+        id: 'city_haiyang', name: '海阳', factionId: 'chaozhou_d',
+        lat: 23.6697, lng: 116.6394, type: 'small_city', troops: 10000, region: 'LINGNAN', note: '潮州治；张世杰统摧锋军' },
     {
         id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian',
         lat: 24.08, lng: 120.56, type: 'small_city', region: 'JIANGNAN', troops: 10000,

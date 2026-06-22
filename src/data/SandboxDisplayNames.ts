@@ -617,6 +617,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xinggu': '兴古',
     'guangxin': '广信',
     'kejia': '客',
+    'tingzhou_d': '汀',
+    'chaozhou_d': '潮',
     'ouyang': '欧阳',
     'ningkou': '宁寇',
     'hongzhou': '洪',

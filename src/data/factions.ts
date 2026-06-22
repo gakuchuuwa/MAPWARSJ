@@ -765,6 +765,8 @@ export const FACTIONS: Faction[] = [
     { id: 'zangke', name: '牂牁' },
     { id: 'guangxin', name: '广信' },
     { id: 'kejia', name: '客家' },                          // 黄连·旗号客（客家民族）
+    { id: 'tingzhou_d', name: '汀州' },                       // 瑞金·旗号汀
+    { id: 'chaozhou_d', name: '潮州' },                       // 海阳·旗号潮
     { id: 'ouyang', name: '欧阳' },
     { id: 'ningkou', name: '宁寇' },
     { id: 'hongzhou', name: '洪州' },

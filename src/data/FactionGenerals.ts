@@ -385,6 +385,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
   // ── 岭南/越南/台湾区 2026-06-18 ──
     ryukyu: { generalId: 'ryukyu_shangbazhi', generalName: '尚巴志', portrait: '/assets/lingnan/ryukyu_shangbazhi.png' },
     luoping: { generalId: 'luoping_zhangshijie', generalName: '张世杰', portrait: '/assets/lingnan/luoping_zhangshijie.png' },
+    chaozhou_d: { generalId: 'chaozhou_d_zhangshijie', generalName: '张世杰', portrait: '/assets/lingnan/luoping_zhangshijie.png' },
     chendiaoyan: { generalId: 'chendiaoyan_chendiaoyan', generalName: '陈吊眼', portrait: '/assets/lingnan/chendiaoyan_chendiaoyan.png' },
     dengmaoqi: { generalId: 'dengmaoqi_dengmaoqi', generalName: '邓茂七', portrait: '/assets/lingnan/dengmaoqi_dengmaoqi.png' },
     geng: { generalId: 'geng_gengjingzhong', generalName: '耿精忠', portrait: '/assets/lingnan/geng_gengjingzhong.png' },
@@ -615,6 +616,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xiayang_d: { generalId: 'xiayang_d_liji', generalName: '李勣', portrait: '/assets/litang/litang (9).png' },
     ying: { generalId: 'ying_caojingzong', generalName: '曹景宗', portrait: '/assets/nanfang/858810de-3a42-478d-97bf-747137f9f1e5.png' },
     kejia: { generalId: 'kejia_wentianxiang', generalName: '文天祥', portrait: '/assets/zhaosong/f4995d69-5f23-4dc0-952c-c291c1b577d7.png' },
+    tingzhou_d: { generalId: 'tingzhou_d_chenmin', generalName: '陈敏', portrait: '/assets/zhaosong/f4995d69-5f23-4dc0-952c-c291c1b577d7.png' },
     fu2: { generalId: 'fu2_zhoudi', generalName: '周迪', portrait: '/assets/nanfang/06737282-3748-4beb-84f6-9a60bfc7ef95.png' },
     ouyang: { generalId: 'ouyang_ouyangyi', generalName: '欧阳頠', portrait: '/assets/nanfang/5b5f8f4c-fae8-4f8e-a9d5-795a0f8601ae.png' },
     chu_d: { generalId: 'chu_d_chuguangyi', generalName: '储光羲', portrait: '/assets/zhaosong/605ec3ae-1447-43bc-a07f-cd8aa64e90cb.png' },

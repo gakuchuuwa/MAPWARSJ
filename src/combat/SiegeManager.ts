@@ -19,6 +19,7 @@ import {
     getEuclideanDistance,
     isWithinReinforcementRange,
     cityToLatLng,
+    DISTANCE_THRESHOLDS,
 } from '../core/DistanceUtils';
 import {
     pollSiegeReinforcements,
@@ -1143,7 +1144,7 @@ export class SiegeManager {
         });
 
         if (nearbyLegions.length === 0) {
-            siegeLog(`[Reinforcement] 增援半径内没有可用军团 (增援范围: 12格六边形)`);
+            siegeLog(`[Reinforcement] 增援半径内没有可用军团 (增援范围: ${DISTANCE_THRESHOLDS.REINFORCEMENT_RANGE} 圈六边形)`);
             return;
         }
 

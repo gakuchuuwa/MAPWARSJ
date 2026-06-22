@@ -508,6 +508,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
   // ── 岭南/越南/台湾区 2026-06-18 ──
     guangzhou_liuyin: { generalId: 'guangzhou_liuyin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 清海军节度岭南
     luoping_zhangshijie: { generalId: 'luoping_zhangshijie', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_06' }, // 崖山海战
+    chaozhou_d_zhangshijie: { generalId: 'chaozhou_d_zhangshijie', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_06' }, // 潮州摧锋军
     chendiaoyan_chendiaoyan: { generalId: 'chendiaoyan_chendiaoyan', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 漳州抗元
     dengmaoqi_dengmaoqi: { generalId: 'dengmaoqi_dengmaoqi', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 铲平王起义
     geng_gengjingzhong: { generalId: 'geng_gengjingzhong', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 靖南王叛清
@@ -763,6 +764,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_pushougeng: { generalId: 'unassigned_pushougeng', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 泉州蒲氏
     wang_s_wanghua: { generalId: 'wang_s_wanghua', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 汪华保境
     kejia_wentianxiang: { generalId: 'kejia_wentianxiang', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 勤王抗元·闽粤赣募兵沾边客家
+    tingzhou_d_chenmin: { generalId: 'tingzhou_d_chenmin', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 瑞金·陈敏破敌军抗元
     chu_d_chuguangyi: { generalId: 'chu_d_chuguangyi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 储氏望族诗人；舒州团练沾边
     ying_caojingzong: { generalId: 'ying_caojingzong', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 梁郢州刺史据城退魏（《梁书·曹景宗传》）
     fu2_zhoudi: { generalId: 'fu2_zhoudi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 陈周迪据临川拒讨
