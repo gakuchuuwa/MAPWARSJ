@@ -40,7 +40,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   taiyuan: { name: '兰纳锐卒', tier: 2 },      // 清坎城·芒莱王征服南奔开创兰纳
   baiman: { name: '白蛮甲士', tier: 2 },       // 威楚·高升泰平杨义贞复大理
   dai: { name: '车里战象', tier: 2 },          // 勐泐城·刀应勐傣兵助明御缅
-  qiong: { name: '邛都夷兵', tier: 3 },        // 邛都·任贵自立邛谷王
+  qiong: { name: '邛谷锐骑', tier: 2 },        // 邛都·任贵自立邛谷王
   ava: { name: '掸族象卫', tier: 3 },
     mon: { name: '孟族战象', tier: 3 },
     dian: { name: '通海城兵', tier: 2 },

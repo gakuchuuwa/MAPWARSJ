@@ -17,7 +17,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   chuyue: { name: '处月骑兵', tier: 3 }, // 独山城·沙陀那速
   keerkezi: { name: '柯尔克孜骑', tier: 3 }, // 斯姆哈纳·玛纳斯
   pisha: { name: '毗沙戍卒', tier: 3 }, // 麻扎塔格·毗沙
-  xingxingxia: { name: '嵩武军', tier: 1 }, // 星星峡·张曜
+  xingxingxia: { name: '交河锐骑', tier: 2 }, // 星星峡·郭孝恪
   yangguan: { name: '阳关戍卒', tier: 3 }, // 阳关·班超
   wulianghai: { name: '乌梁海巡骑', tier: 3 }, // 布尔根·车凌乌巴什
   qiuci: { name: '龟兹精兵', tier: 3 },   // 伊逻卢·龟兹精兵

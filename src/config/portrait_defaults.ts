@@ -649,7 +649,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'fu': _zhongyuanPortraitPool,
     'guide_d': _zhongyuanPortraitPool,
     'han': _zhongyuanPortraitPool,
-    'han_d': _liuhanPortraitPool,
+    'han_d': _liuhanPortraitPool, // 汉国·刘邦；与绿林/新国共用 liuhan 随机池
     'han_dadian': _zhongyuanPortraitPool,
     'hao_d': _zhongyuanPortraitPool,
     'jinan': _zhongyuanPortraitPool,
@@ -665,10 +665,10 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'kong_d': _zhongyuanPortraitPool,
     'liang_d': _zhongyuanPortraitPool,
     'liguo': _zhongyuanPortraitPool,
-    'dixiang': _zhongyuanPortraitPool,
+    'dixiang': _liuhanPortraitPool, // 新国·王莽；与汉/绿林共用 liuhan 随机池
     'liwang': _zhongyuanPortraitPool,
     'long2': _zhongyuanPortraitPool,
-    'lulin': _zhongyuanPortraitPool,
+    'lulin': _liuhanPortraitPool, // 绿林·刘秀；与汉/新国共用 liuhan 随机池
     'suzhou_d': _zhongyuanPortraitPool,
     'mengcheng_d': _zhongyuanPortraitPool,
     'mi': _zhongyuanPortraitPool,

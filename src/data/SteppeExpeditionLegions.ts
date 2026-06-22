@@ -73,7 +73,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tumengken: { name: '赛音诺颜骑', tier: 2 },  // 拜达里克·图蒙肯抗卫拉特
   bayegu: { name: '拔野古轻骑', tier: 2 },       // 稽落山·屈利失助唐灭薛延陀
   zubu: { name: '阻卜轻骑', tier: 2 },           // 特尔浑·磨古斯叛辽
-  wuzhumuqin: { name: '乌珠穆沁骑', tier: 2 },    // 乌珠穆沁·多尔济随征噶尔丹
+  wuzhumuqin: { name: '赛堪轻骑', tier: 2 },    // 乌珠穆沁·多尔济随征噶尔丹
   xingan: { name: '呼伦索伦兵', tier: 2 },   // 哈拉盖图·清代索伦营（升T2）
   baidi: { name: '白狄徒兵', tier: 3 },          // 集宁·春秋白狄部落
   shiwei: { name: '室韦猎骑', tier: 3 },         // 俱轮泊·室韦都督府部众

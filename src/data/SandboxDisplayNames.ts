@@ -412,7 +412,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'cong': '賨',
     'langzhou': '阆',
     'zhe_d': '折',
-    'shanyue': '山越',
+    'shanyue': '丹阳',
     'she_ethnic': '畲',
 
     
@@ -797,7 +797,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jilizhou': '积',
     'nuergan': '都卫', // 奴儿干都司；据点名奴儿干城，旗面避 §4.1 防重
     'kepantuo': '渴盘陀',
-    'xingxingxia': '星',
+    xingxingxia: '伊',
     'yangguan': '敦煌',
     'wulianghai': '乌梁海',
     'qinghai': '青海',

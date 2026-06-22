@@ -769,7 +769,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_wangchao: { generalId: 'unassigned_wangchao', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 光州入闽
     shuntian_linshuangwen: { generalId: 'shuntian_linshuangwen', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 顺天起义
     chunshen_huangxie: { generalId: 'chunshen_huangxie', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 春申君
-    shanyue_zulang: { generalId: 'shanyue_zulang', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 山越大帅
+    shanyue_sunce: { generalId: 'shanyue_sunce', tier: 'epic', tacticalSkillId: 'tac_01' }, // 江东小霸王
     she_ethnic_leiwanxing: { generalId: 'she_ethnic_leiwanxing', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 畲民起义
     unassigned_pushougeng: { generalId: 'unassigned_pushougeng', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 泉州蒲氏
     wang_s_wanghua: { generalId: 'wang_s_wanghua', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 汪华保境

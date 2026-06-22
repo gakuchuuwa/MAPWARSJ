@@ -35,7 +35,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   sizhou: { name: '克敌军', tier: 1 },       // 淮安·韩世忠大仪镇大捷以少胜多（泗州）
   qian_d: { name: '嘉兴水师', tier: 2 },      // 嘉兴·俞大猷嘉兴水师
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
-  jiujiang: { name: '九江锐卒', tier: 2 },     // 六安·周瑜九江戍守
+  jiujiang: { name: '蒙冲斗舰', tier: 1 },     // 六安·周瑜九江戍守
   fangla: { name: '圣公兵', tier: 1 },         // 睦州·方腊圣公起义克六州
   fang_guozhen: { name: '浙东舟师', tier: 3 }, // 庆元·方国珍浙东割据水师
   ruochu: { name: '若敖六卒', tier: 1 },       // 竟陵·楚若敖氏精锐（《左传》）

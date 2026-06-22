@@ -65,7 +65,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   daca: { name: '八宿马队', tier: 3 },           // 八宿宗·达擦济咙活佛辖地
   gongtang: { name: '贡唐马队', tier: 3 },       // 吉麦·贡唐仓活佛辖地
   nanjie: { name: '日土边军', tier: 3 },          // 日土宗·南杰旺秋拉达克边军
-  niang: { name: '觉木宗戍军', tier: 2 },
+  niang: { name: '琼结卫', tier: 2 },
   dalung: { name: '达隆寺僧兵', tier: 3 },
   dong: { name: '囊谦千户兵', tier: 2 },
   hor: { name: '霍尔部勇士', tier: 3 },

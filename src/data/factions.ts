@@ -119,7 +119,7 @@ export const FACTIONS: Faction[] = [
     { id: 'qian_d', name: '秀州' },
     { id: 'kong_d', name: '孔氏' },
     { id: 'cao_d', name: '曹氏' },
-    { id: 'jiujiang', name: '柴桑' },       // 橄榄 - 柴桑/浔阳(九江郡)
+    { id: 'jiujiang', name: '江州' },       // 橄榄 - 柴桑/浔阳(九江郡)
     { id: 'jiaodong', name: '胶东' },
     { id: 'huangfu', name: '皇甫' },
 { id: 'guo', name: '果州' },
@@ -227,7 +227,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-19 改：襄阳·襄州州名旗号（§4.1-5）──
     { id: 'xiangzhou', name: '襄州' },
     // ── 2026-06-19 新增：枣阳@枣阳（孟珙·忠顺军；《宋史·孟珙传》；旗号舂陵≠枣阳）──
-    { id: 'zaoyang_d', name: '枣阳' },
+    { id: 'zaoyang_d', name: '唐州' },
     // ── 2026-06-16 改：符离·宿州治（§4.7；旗号「徐」让位下邳徐国）──
     { id: 'suzhou_d', name: '宿州' },
     // ── 2026-06-11：狄道（古临洮/陇西；旗号狄，据点临洮）──
@@ -538,7 +538,7 @@ export const FACTIONS: Faction[] = [
     // 瘗棺苔绿 - 僰人(僰王山/珙县悬棺)
     { id: 'langzhou', name: '阆州' },                  // 阆州(隆城)；巴西劲卒张飞
     { id: 'zhe_d', name: '折氏' },
-    { id: 'shanyue', name: '山越' },
+    { id: 'shanyue', name: '丹阳' },
     { id: 'she_ethnic', name: '畲族' },                 // 敕木暗紫 - 畲族(敕木山/闽浙交界)
 
     // ── 2026-05-26 Phase 3i：新罗门阀/巴人后裔 ──
@@ -713,7 +713,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yangshe', name: '羊舌' },
     { id: 'sima_d', name: '司马氏' },   // 河内郡望@获嘉
     { id: 'liguo', name: '潞州' },
-    { id: 'kang', name: '长泽' },
+    { id: 'kang', name: '夏州' },
     { id: 'wudu', name: '武都' },
     { id: 'woye', name: '沃野' },
     { id: 'shuofang', name: '朔方' },
@@ -750,12 +750,12 @@ export const FACTIONS: Faction[] = [
     { id: 'faqiang', name: '发羌' },
     { id: 'jiantang', name: '建塘' },
     { id: 'gongbu', name: '工布' },
-    { id: 'niang', name: '觉木宗' },
+    { id: 'niang', name: '琼结' },
     { id: 'ganzhou', name: '甘州' },
     { id: 'galangdiba', name: '波密' },
     { id: 'ali', name: '阿里' },
     { id: 'pazhu', name: '帕竹' },
-    { id: 'qiong', name: '邛都' },
+    { id: 'qiong', name: '邛人' },
     { id: 'zhuoshi', name: '卓氏' },
     { id: 'chenzhou_d', name: '辰州' },
     { id: 'qianzhong', name: '沅州' },
@@ -832,7 +832,7 @@ export const FACTIONS: Faction[] = [
     { id: 'fu2', name: '抚州' },
     { id: 'xinping', name: '邠州' },
     { id: 'huan', name: '环州' },
-    { id: 'wei2', name: '静塞' },
+    { id: 'wei2', name: '韦州' },
     { id: 'lingwu', name: '灵武' },
     { id: 'qiepantuo', name: '护密' },
     // ── 2026-06-11 新增：库页岛民族（鄂罗克/库页）──
@@ -986,7 +986,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wuzhou', name: '武州' },
     { id: 'bailong', name: '白龙' },
     { id: 'jilizhou', name: '积利州' },
-    { id: 'xingxingxia', name: '星星峡' },
+    { id: 'xingxingxia', name: '伊州' },
     { id: 'yangguan', name: '敦煌' },
     { id: 'wulianghai', name: '乌梁海' },
     { id: 'kepantuo', name: '渴盘陀' },
