@@ -111,12 +111,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -8
         },
-        "/assets/qin/baiqi.png": {
+        "/assets/yingqin/baiqi.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/qin/qinjiang.png": {
+        "/assets/yingqin/qinjiang.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 10
@@ -795,6 +795,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": -9
+        },
+        "/assets/liuhan/b2c33227-22a2-4533-b6ef-46a82b9e13a0.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -31
+        },
+        "/assets/shuguo/089ad521-126c-4013-8613-b5f52b8b674e.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/shuguo/13703444-519f-4a6e-8828-1c4c8cc58fac.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/shuguo/1a5aafd3-7684-4eba-9219-dda6c12cd3f8.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -17
         }
     },
     "folderGuides": {
@@ -813,8 +833,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "eyeLineY": 0.24,
             "chestLineX": 0.5
         },
-        "/assets/qin/": {
-            "samplePath": "/assets/qin/xirong.png",
+        "/assets/yingqin/": {
+            "samplePath": "/assets/yingqin/xirong.png",
             "eyeLineY": 0.24,
             "chestLineX": 0.5
         }

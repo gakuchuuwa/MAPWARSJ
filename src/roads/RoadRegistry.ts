@@ -901,6 +901,12 @@ export class RoadRegistry {
      * 将所有矢量道路光栅化为六边形格子
      * Simple line interpolation
      */
+    /** 首屏后延迟调用：光栅化道路 hex 供 RoadLayer 渲染，完成后通知重绘 */
+    public rasterizeRoadsDeferred(): void {
+        this.rasterizeVectorRoads();
+        this.notifyRoadsUpdated();
+    }
+
     private rasterizeVectorRoads(): void {
         this.cachedVectorHexes.clear();
         this.vectorHexMetadata.clear(); // Clear old metadata maps

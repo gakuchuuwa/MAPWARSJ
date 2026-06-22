@@ -38,7 +38,7 @@ export const SPRITE_PATHS = {
     // [NEW] General Portraits (Mapped by General ID；缺省走 portrait_defaults 文化区随机池)
     GENERAL_PORTRAITS: {
         // ── 秦势力将领立绘 ──
-        'qin_baiqi': '/assets/qin/qin_baiqi.png',
+        'qin_baiqi': '/assets/yingqin/qin_baiqi.png',
         // ── 02 大唐将领 ──
         'tang_lishimin': '/assets/litang/tang_lishimin.png',
         // ── 03 武周将领 ──

@@ -202,7 +202,7 @@ const _lingnanPortraitPool: string[] = Object.values(_lingnanPortraitGlob);
 
 /** 秦国立绘池 */
 const _qinPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/qin/*.png',
+    '../../public/assets/yingqin/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
 const _qinPortraitPool: string[] = Object.values(_qinPortraitGlob);

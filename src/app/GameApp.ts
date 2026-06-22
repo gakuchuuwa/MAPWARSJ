@@ -237,6 +237,9 @@ export class GameApp {
 
             await yieldToBrowser();
 
+            // [PERF] 道路光栅化推迟到首屏据点渲染后：据点秒显，道路稍后补上（视觉，非寻路必需）
+            roadRegistry.rasterizeRoadsDeferred();
+
             // [PERF] Report city count to PerformanceMonitor
             this.perfMonitor.reportCount('cities', CITIES.length);
             this.perfMonitor.reportCount('factions', FACTIONS.length);
