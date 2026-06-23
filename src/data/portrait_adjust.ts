@@ -872,9 +872,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -26
         },
         "/assets/xianqin/chunshen_huangxie.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
-            "offsetY": 5
+            "offsetY": 8
         },
         "/assets/lingnan/guangzhou (17).png": {
             "scale": 1,
@@ -1405,6 +1405,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/yingqin/qin_baiqi.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/CENTRAL/yuan_cj_d_yuanshu_zn.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/zhaosong/fengzhou_wujie.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -34
+        },
+        "/assets/daming/linyu_wusangui.png": {
+            "scale": 1,
+            "offsetX": 1,
+            "offsetY": -3
+        },
+        "/assets/daming/jinzhou_lichengliang.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -56
+        },
+        "/assets/STEPPE/dada_ming_dayanhan.png": {
+            "scale": 1,
+            "offsetX": 13,
+            "offsetY": 44
+        },
+        "/assets/xianqin/heng1_limu_yanyue.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/zhaosong/changshaguo_xinqiji.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -36
+        },
+        "/assets/LINGNAN/chen2_zhaofan.png": {
+            "scale": 1.02,
+            "offsetX": 18,
+            "offsetY": -33
+        },
+        "/assets/zhaosong/282b05c2-3ce0-4742-bffa-155896cd8c0b.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -38
+        },
+        "/assets/daming/yi_yuqian.png": {
+            "scale": 0.98,
+            "offsetX": 9,
+            "offsetY": 5
         }
     },
     "folderGuides": {
