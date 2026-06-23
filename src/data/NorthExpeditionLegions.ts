@@ -34,7 +34,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // ── §1 中原表·地理偏北（用户指定）──
   zhuozhou: { name: '曳落河', tier: 1 },     // 范阳·§1 #48 安禄山蕃胡骑兵
   shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
-  lingwu: { name: '朔方军', tier: 2 },      // 回乐·§1 #53 灵州朔方节度使精锐
+  lingzhou: { name: '朔方突骑', tier: 1 },  // 回乐·仆固怀恩朔方突骑
   dingxiang_d: { name: '定襄骁骑', tier: 0 }, // 恶阳岭·贞观四年李靖三千骁骑出恶阳岭夜袭定襄（神级进攻大捷，升T0）
   zhongshan: { name: '常山兵', tier: 2 },   // 真定·常山兵（名气不足，降T2）
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑

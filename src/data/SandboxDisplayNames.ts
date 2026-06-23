@@ -696,7 +696,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xinping': '邠',
     'huan': '环',
     'wei2': '韦',
-    'lingwu': '灵',
+    'lingzhou': '灵',
     'qiepantuo': '朅盘',
     // ── 2026-06-11 新增：库页岛民族 ──
     'eluoke': '鄂罗',

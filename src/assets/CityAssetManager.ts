@@ -637,7 +637,7 @@ export class CityAssetManager {
         'wenzhou': '温',
         'wudu': '武都',
         'woye': '沃野',
-        'lingwu': '灵',
+        'lingzhou': '灵',
         'bailian': '白莲',
         'chimei': '赤眉',
         'yunzhong': '云中',

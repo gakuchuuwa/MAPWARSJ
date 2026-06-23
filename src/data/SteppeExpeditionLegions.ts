@@ -66,7 +66,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   yaoluoge: { name: '药罗葛骑', tier: 3 },      // 娑陵·药罗葛部
   huihu: { name: '回鹘牙帐骑', tier: 3 },      // 窝鲁朵·回鹘汗庭
   ashide: { name: '阿史德骑', tier: 3 },        // 黑沙城·阿史德氏
-  pugu: { name: '仆固部兵', tier: 3 },          // 燕然山·仆固氏铁勒
+  pugu: { name: '蓝突厥骑', tier: 2 },          // 燕然山·仆固氏铁勒
   pulei: { name: '蒲类戍卒', tier: 3 },         // 巴里坤·蒲类国故地
   chechen: { name: '车臣汗骑', tier: 3 },       // 巴彦图门·车臣汗硕垒
   zhuerqi: { name: '斡难河骑', tier: 3 },       // 斡难河·撒察别乞

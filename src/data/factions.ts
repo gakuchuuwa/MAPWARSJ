@@ -833,7 +833,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xinping', name: '邠州' },
     { id: 'huan', name: '环州' },
     { id: 'wei2', name: '韦州' },
-    { id: 'lingwu', name: '灵武' },
+    { id: 'lingzhou', name: '灵州' },
     { id: 'qiepantuo', name: '护密' },
     // ── 2026-06-11 新增：库页岛民族（鄂罗克/库页）──
     { id: 'eluoke', name: '鄂罗克' },                // 鄂罗克(库页岛东岸/诺托罗), Oroch

@@ -436,9 +436,9 @@ export class CombatUI {
             z-index: ${T.zIndex.portrait + 2};
         `;
         this.leftSkillsBox = document.createElement('div');
-        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(6)}; flex-wrap: wrap; justify-content: flex-start;`;
+        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: wrap; justify-content: flex-start; max-width: 49.5%;`;
         this.rightSkillsBox = document.createElement('div');
-        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(6)}; flex-wrap: wrap; justify-content: flex-end;`;
+        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: wrap; justify-content: flex-end; max-width: 49.5%;`;
         this.skillsRow.appendChild(this.leftSkillsBox);
         this.skillsRow.appendChild(this.rightSkillsBox);
 
@@ -813,18 +813,28 @@ export class CombatUI {
         this.leftSkillsBox.innerHTML = '';
         this.rightSkillsBox.innerHTML = '';
 
-        const createSkillTag = (name: string, effect: string, isFamous: boolean) => {
+        const createSkillTag = (name: string, effect: string, isFamous: boolean, isAttacker: boolean) => {
             const tag = document.createElement('div');
             const borderColor = isFamous ? 'rgba(255, 215, 0, 0.7)' : 'rgba(200, 200, 200, 0.6)';
-            const bgColor = isFamous ? 'rgba(80, 20, 0, 0.8)' : 'rgba(20, 40, 60, 0.8)';
+            
+            // 加入攻守阵营颜色区分：攻方带红色调，守方带蓝色调
+            let bgColor = '';
+            if (isAttacker) {
+                bgColor = isFamous ? 'rgba(80, 20, 0, 0.85)' : 'rgba(50, 15, 0, 0.8)';
+            } else {
+                bgColor = isFamous ? 'rgba(10, 40, 70, 0.85)' : 'rgba(10, 25, 45, 0.8)';
+            }
+            const sideColor = isAttacker ? '#ff8800' : '#00aabb'; // 攻橙 守蓝
+
             tag.style.cssText = `
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 background: ${bgColor};
                 border: 1px solid ${borderColor};
+                border-bottom: 2px solid ${sideColor};
                 border-radius: 4px;
-                padding: ${uiPx(4)} ${uiPx(10)};
+                padding: ${uiPx(4)} ${uiPx(6)};
                 box-shadow: 0 2px 6px rgba(0,0,0,0.85);
             `;
             
@@ -834,7 +844,7 @@ export class CombatUI {
                 font-size: ${uiPx(16)};
                 font-weight: 900;
                 color: #fff8e0;
-                letter-spacing: 2px;
+                letter-spacing: 1px;
                 margin-bottom: ${uiPx(2)};
             `;
             nameEl.textContent = name;
@@ -854,39 +864,39 @@ export class CombatUI {
             return tag;
         };
 
-        const renderSide = (box: HTMLDivElement, unit: IBattleUnit | null) => {
+        const renderSide = (box: HTMLDivElement, unit: IBattleUnit | null, isAttacker: boolean) => {
             if (!unit) return;
 
             const passSkill = getPassGarrisonDefenseSkillDisplay(unit);
             if (passSkill) {
-                box.appendChild(createSkillTag(passSkill.name, passSkill.effectLabel, false));
+                box.appendChild(createSkillTag(passSkill.name, passSkill.effectLabel, false, isAttacker));
             }
 
             const joinLuck = this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
             const reinfSkill = getReinforcementJoinSkillDisplay(joinLuck);
             if (reinfSkill) {
-                box.appendChild(createSkillTag(reinfSkill.name, reinfSkill.effectLabel, false));
+                box.appendChild(createSkillTag(reinfSkill.name, reinfSkill.effectLabel, false, isAttacker));
             }
 
             const forageSkill = getExpeditionForageSkillDisplay(unit); // 远征军：因粮于敌
             if (forageSkill) {
-                box.appendChild(createSkillTag(forageSkill.name, forageSkill.effectLabel, true));
+                box.appendChild(createSkillTag(forageSkill.name, forageSkill.effectLabel, true, isAttacker));
             }
 
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {
-                    box.appendChild(createSkillTag(tag.name, tag.effectLabel, tag.isFamous));
+                    box.appendChild(createSkillTag(tag.name, tag.effectLabel, tag.isFamous, isAttacker));
                 }
             }
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
                 const effectLabel = `×${parseFloat(legionMult.toFixed(2))}`;
-                box.appendChild(createSkillTag(getLegionEliteBadgeName(unit), effectLabel, true));
+                box.appendChild(createSkillTag(getLegionEliteBadgeName(unit), effectLabel, true, isAttacker));
             }
         };
-        renderSide(this.leftSkillsBox, attacker);
-        renderSide(this.rightSkillsBox, defender);
+        renderSide(this.leftSkillsBox, attacker, true);
+        renderSide(this.rightSkillsBox, defender, false);
     }
 
     private getReinforcementJoinLuckForUnit(unit: IBattleUnit): number | null {

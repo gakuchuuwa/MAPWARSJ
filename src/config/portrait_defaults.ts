@@ -405,7 +405,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'hunxie': _caoyuanPortraitPool,
     'juqu_d': _hexiPortraitPool,
     'kang': _hexiPortraitPool,
-    'lingwu': _hexiPortraitPool,
+    'lingzhou': _hexiPortraitPool,
     'lushui': _hexiPortraitPool,
     'shuofang': _zhongyuanPortraitPool,
     'wei2': _hexiPortraitPool,

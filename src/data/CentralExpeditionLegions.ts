@@ -83,7 +83,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   mengcheng_d: { name: '山桑弓手', tier: 3 },
   shangzhou: { name: '商州锐士', tier: 3 },
   bailian: { name: '白莲教众', tier: 2 },
-  xinping: { name: '新平戍军', tier: 3 },
+  xinping: { name: '邠宁戍骑', tier: 2 },
   huai: { name: '淮西子弟', tier: 2 },
   dang_d: { name: '砀山义军', tier: 3 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安

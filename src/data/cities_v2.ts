@@ -2883,7 +2883,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jingsai', name: '静塞', factionId: 'wei2', lat: 37.448637, lng: 106.674500, type: 'pass', region: 'HEXI', troops: 10000, mirror: true,
         note: '静塞；静塞关隘',
     },//镜像
-    { id: 'city_lingzhou', name: '回乐', factionId: 'lingwu', lat: 37.998341, lng: 106.295471, type: 'small_city', region: 'HEXI', troops: 10000,
+    { id: 'city_lingzhou', name: '回乐', factionId: 'lingzhou', lat: 37.998341, lng: 106.295471, type: 'small_city', region: 'HEXI', troops: 10000,
         note: '回乐；灵武小城',
     },
     { id: 'city_nuergan', name: '特林', factionId: 'nuergan', lat: 52.92, lng: 139.77, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '明奴儿干都司；康旺；旗面「都卫」避与据点名 §4.1 防重' },

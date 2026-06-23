@@ -137,6 +137,14 @@ export function applyLegionSpawnTierToArmy(
 
     const outcome = rollCityLegionSpawnTierOutcome(anchorFactionId, state, eliteName);
 
+    // 有将/精必出（不再随机）：两者可用则全给，仅一项可用则给一项
+    if (canElite && canGeneral) {
+        const applied = makeArmyElite(army, eliteName, true);
+        markSpawnTierConsumed(state, { elite: applied.elite, general: applied.general });
+        noteCitySpawnTierFromLegion(state, army);
+        return;
+    }
+
     switch (outcome) {
         case 'plain':
             return;
