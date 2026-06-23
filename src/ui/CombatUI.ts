@@ -2616,8 +2616,15 @@ export class CombatUI {
         const generalId = this.portraitPickerGeneralId;
         const side = this.portraitPickerSide;
         const sourcePath = this.portraitPickerSelectedPath;
-        const targetFolder = this.portraitPickerFolder;
-        if (!generalId || !side || !sourcePath || !targetFolder) return;
+        if (!generalId || !side || !sourcePath) return;
+
+        // 目标文件夹 = 武将当前所属文件夹，非选图器停靠位置
+        const rec = getGeneralRecordByGeneralId(generalId);
+        const fallbackFolder = this.portraitPickerFolder ?? '/assets/';
+        const targetFolder = rec?.portrait
+            ? rec.portrait.replace(/\/[^/]+$/, '/')
+            : fallbackFolder;
+        if (!targetFolder) return;
 
         const destPath = `${targetFolder}${generalId}.png`;
         this.portraitBindStaging = this.portraitBindStaging.filter(
