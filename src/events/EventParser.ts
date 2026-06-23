@@ -986,8 +986,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
     // 沙图阿满 — 叛军 (清军哨卡)
 
     // 星星峡 — 叛军 (丝路关隘)
-    { id: 'city_xingxingxia', name: '星星峡', factionId: 'xingxingxia', lat: 41.611382, lng: 95.267944, type: 'pass', region: 'HEXI', troops: 10000,
-        note: '星星峡；星星峡关隘',
+    { id: 'city_xingxingxia', name: '五峰燧', factionId: 'xingxingxia', lat: 41.611382, lng: 95.267944, type: 'pass', region: 'HEXI', troops: 10000,
+        note: '五峰燧；星星峡关隘',
     },
     // 赤亭 — 叛军 (吐鲁番绿洲)
     { id: 'city_chiting', name: '赤亭关', factionId: 'gaochang', lat: 42.85, lng: 91.5, type: 'pass', region: 'WESTERN', troops: 10000,
@@ -2815,8 +2815,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_kuanchengzi', name: '宽城子', factionId: 'jilin', lat: 43.8725, lng: 125.3595, type: 'small_city', region: 'NORTHEAST', troops: 10000,
         note: '宽城子；吉林小城',
     },
-    { id: 'city_wuliyasitai', name: '乌珠穆沁', factionId: 'wuzhumuqin', lat: 45.519, lng: 116.9604, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '乌珠穆沁；乌珠穆沁小城',
+    { id: 'city_wuliyasitai', name: '古尔班赛堪', factionId: 'wuzhumuqin', lat: 45.519, lng: 116.9604, type: 'small_city', region: 'STEPPE', troops: 10000,
+        note: '古尔班赛堪；乌珠穆沁小城',
     },
     { id: 'city_saihantala', name: '赛汉塔拉', factionId: 'sunite', lat: 42.7701, lng: 112.6099, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '赛汉塔拉；苏尼特小城',
@@ -2863,8 +2863,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_gaofu', name: '迦毕试', factionId: 'jibin', lat: 34.5500, lng: 69.2000, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 1,
         note: '迦毕试/喀布尔；罽宾（Kapisa）王治，丘就却统一五部贵霜后东进兴都库什重镇',
     },
-    { id: 'city_fanyanna', name: '梵衍那', factionId: 'fanyanna', lat: 34.8659, lng: 67.9807, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
-        note: '梵衍那；大唐西域记',
+    { id: 'city_fanyanna', name: '巴米扬', factionId: 'fanyanna', lat: 34.8659, lng: 67.9807, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
+        note: '巴米扬；大唐西域记',
     },
     { id: 'city_paixiucheng', name: '排修城', factionId: 'juandu', lat: 39.48, lng: 76.72, type: 'small_city', region: 'WESTERN', troops: 10000,
         note: '排修城；捐毒国小城',
