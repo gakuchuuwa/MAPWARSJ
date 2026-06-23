@@ -6,6 +6,12 @@ import {
     type PortraitAdjustData,
     type PortraitAdjustValues,
 } from '../data/portrait_adjust';
+import { PORTRAIT_CANONICAL_MAP } from './portrait_canonical';
+
+/** 内容相同的图统一使用代表路径的调校记录（重复图只需调一次） */
+export function toCanonicalPortraitPath(portraitPath: string): string {
+    return PORTRAIT_CANONICAL_MAP[portraitPath] ?? portraitPath;
+}
 
 export const PORTRAIT_ADJUST_NEUTRAL: Required<PortraitAdjustValues> = {
     scale: 1,
@@ -66,14 +72,15 @@ export function extractPortraitFolder(portraitPath: string): string | undefined 
     return m?.[1];
 }
 
-/** 文件夹默认 → 单张覆盖；未配置项回落到 1 / 0 */
+/** 文件夹默认 → 单张覆盖；未配置项回落到 1 / 0。内容相同的图自动共享代表路径的调校。 */
 export function resolvePortraitAdjust(
     portraitPath: string,
     data: PortraitAdjustData = DEFAULT_PORTRAIT_ADJUST,
 ): Required<PortraitAdjustValues> {
-    const folder = extractPortraitFolder(portraitPath);
+    const canonical = toCanonicalPortraitPath(portraitPath);
+    const folder = extractPortraitFolder(canonical);
     const folderAdj = folder ? data.folders?.[folder] : undefined;
-    const imageAdj = data.images?.[portraitPath];
+    const imageAdj = data.images?.[canonical];
 
     return {
         scale: imageAdj?.scale ?? folderAdj?.scale ?? PORTRAIT_ADJUST_NEUTRAL.scale,
@@ -86,7 +93,7 @@ export function hasPortraitImageOverride(
     portraitPath: string,
     data: PortraitAdjustData = DEFAULT_PORTRAIT_ADJUST,
 ): boolean {
-    return portraitPath in (data.images ?? {});
+    return toCanonicalPortraitPath(portraitPath) in (data.images ?? {});
 }
 
 /** 缩放锚点：眼线 × 胸线交汇处（与调校尺一致；无 folderGuides 时用全局默认 24% / 50%） */

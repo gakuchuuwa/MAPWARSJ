@@ -10,10 +10,8 @@
  *      家城失守仍强制回师（行为树 resolveRecaptureTarget，游戏原生行为，所有文化无豁免；
  *      例外：远征军团（shouldSkipHomeRecapture）不回师）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
- *      **每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）**；候选优先级：
- *      ① 每文化区保底 1 支
- *      ② 优先：视野内、非跟随势力、驻军高的据点
- *      ③ 余量：全图驻军最高的据点
+ *      每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）；14 文化区轮流出兵，
+ *      从上一季停下的区开始逐个尝试，找到该区驻军最高的合格据点即出兵。
  */
 import { CityManager } from '../core/CityManager';
 import { LegionManager } from '../core/LegionManager';
@@ -42,6 +40,8 @@ export class RecruitmentSystem {
     /** 每季募兵后分批刷新城市标签，避免一帧更新 600+ DOM 卡顿 */
     private pendingLabelCityIds: Set<string> = new Set();
     private static readonly LABEL_UPDATES_PER_FRAME = 20;
+    /** 14 文化区轮流出兵：记录下一季从哪个区开始找 */
+    private nextSpawnRegionIndex = 0;
 
     constructor(
         cityManager: CityManager,
@@ -234,20 +234,20 @@ export class RecruitmentSystem {
 
     private buildSpawnPlan(cities: RecruitmentCity[]): SpawnCandidate[] {
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
-        let remaining = maxLegions - this.legionManager.getActiveLegionCount();
+        const remaining = maxLegions - this.legionManager.getActiveLegionCount();
         if (remaining <= 0) return [];
 
         const candidates = this.collectSpawnCandidates(cities);
-        const activeRegionCounts = this.getActiveLegionRegions();
+        if (candidates.length === 0) return [];
+
+        // 14 文化区轮流出兵：从上次停下的区开始，逐区找候选直到用完配额
         const selected: SpawnCandidate[] = [];
         const selectedCityIds = new Set<string>();
-        const baseline = GameConfig.LEGION.REGION_BASELINE_LEGIONS;
+        const nRegions = REGION_ORDER.length;
 
-        // 第一段：每个文化区先保底 1 支（或配置值），只选该区当前最强候选城。
-        for (const region of REGION_ORDER) {
-            if (remaining <= 0) break;
-            if ((activeRegionCounts.get(region) ?? 0) >= baseline) continue;
-
+        for (let attempt = 0; attempt < nRegions * remaining; attempt++) {
+            if (selected.length >= remaining) break;
+            const region = REGION_ORDER[(this.nextSpawnRegionIndex + attempt) % nRegions];
             const candidate = candidates.find(
                 (c) => c.region === region && !selectedCityIds.has(c.city.id)
             );
@@ -255,35 +255,12 @@ export class RecruitmentSystem {
 
             selected.push(candidate);
             selectedCityIds.add(candidate.city.id);
-            activeRegionCounts.set(region, (activeRegionCounts.get(region) ?? 0) + 1);
-            remaining--;
         }
-
-        // 第二段（优先）：视野内、非跟随势力、驻军高（已按驻军排序）。
-        // 加视野配额：单次最多塞 VIEWPORT_SPAWN_QUOTA 支进镜头，避免开局一屏爆出十几支；
-        // 余量留给第三段从全图高兵据点分散补足。
-        const followedFactionId = this.getFollowedFactionId();
-        let viewportQuota = GameConfig.LEGION.VIEWPORT_SPAWN_QUOTA;
-        for (const candidate of candidates) {
-            if (remaining <= 0 || viewportQuota <= 0) break;
-            if (selectedCityIds.has(candidate.city.id)) continue;
-            if (!candidate.inViewport) continue;
-            if (followedFactionId && candidate.city.factionId === followedFactionId) continue;
-
-            selected.push(candidate);
-            selectedCityIds.add(candidate.city.id);
-            remaining--;
-            viewportQuota--;
-        }
-
-        // 第三段：余量给全图驻军最高的据点（候选已按驻军降序）。
-        for (const candidate of candidates) {
-            if (remaining <= 0) break;
-            if (selectedCityIds.has(candidate.city.id)) continue;
-
-            selected.push(candidate);
-            selectedCityIds.add(candidate.city.id);
-            remaining--;
+        // 轮转到下一个区（从命中的下一个开始）
+        if (selected.length > 0) {
+            const lastRegion = selected[selected.length - 1].region;
+            const lastIdx = REGION_ORDER.indexOf(lastRegion);
+            this.nextSpawnRegionIndex = (lastIdx + 1) % nRegions;
         }
 
         return selected;

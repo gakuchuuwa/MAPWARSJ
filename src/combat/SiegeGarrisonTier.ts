@@ -92,9 +92,6 @@ export function applySiegeGarrisonBoostIfNeeded(
 
     const anchorFactionId = getCityAnchorFactionId(city.id);
 
-    // ① 占城不过户：占城方 ≠ 锚点方时不出武将/精锐
-    if (city.factionId !== anchorFactionId) return;
-
     const eliteName = getCityEliteLegionName(city.id);
     const anchoredGeneral = getCityAnchoredGeneral(city.id);
 

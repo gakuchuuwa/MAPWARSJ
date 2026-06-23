@@ -20,6 +20,7 @@ import {
     extractPortraitFolder,
     getPortraitCorrectorCrosshairGuide,
     resolvePortraitAdjust,
+    toCanonicalPortraitPath,
 } from '../config/PortraitAdjust';
 import {
     DEFAULT_PORTRAIT_ADJUST,
@@ -1432,6 +1433,7 @@ export class CombatUI {
         }
     }
 
+    /** 当前显示路径（用于像素读取、文件夹标尺、状态栏显示） */
     private correctorPath(): string {
         return this.correctorPathForSide(this.correctorSide);
     }
@@ -1442,6 +1444,22 @@ export class CombatUI {
         if (staged) return staged.destPath;
         const img = side === 'attacker' ? this.leftPortrait : this.rightPortrait;
         return this.srcToPath(img);
+    }
+
+    /**
+     * 存盘 key：相同内容的图统一存在代表路径下，所有副本自动共享调校。
+     * 待绑定图用 destPath（新文件，无代表路径）。
+     */
+    private correctorSaveKey(): string {
+        const staged = this.portraitBindStaging.find((b) => b.side === this.correctorSide);
+        if (staged) return staged.destPath;
+        return toCanonicalPortraitPath(this.correctorPath());
+    }
+
+    private correctorSaveKeyForSide(side: 'attacker' | 'defender'): string {
+        const staged = this.portraitBindStaging.find((b) => b.side === side);
+        if (staged) return staged.destPath;
+        return toCanonicalPortraitPath(this.correctorPathForSide(side));
     }
 
     /** 读像素/居中时用实际显示的 URL（待绑定图仍在源路径） */
@@ -1595,13 +1613,13 @@ export class CombatUI {
     }
 
     private applyCorrectorPreview(): void {
-        const path = this.correctorPath();
-        if (!path) return;
+        const saveKey = this.correctorSaveKey();
+        if (!saveKey) return;
         this.correctorData.images = this.correctorData.images ?? {};
-        this.correctorData.images[path] = { ...this.correctorDraft };
-        if (this.canPersistPortraitPath(path)) {
+        this.correctorData.images[saveKey] = { ...this.correctorDraft };
+        if (this.canPersistPortraitPath(saveKey)) {
             const prevSize = this.correctorDirtyPaths.size;
-            this.correctorDirtyPaths.add(path);
+            this.correctorDirtyPaths.add(saveKey);
             const n = this.correctorDirtyPaths.size;
             // 每新增第 AUTO_SAVE_EVERY 张不同立绘时自动写盘（防崩溃丢失）
             if (n > prevSize && n % CombatUI.AUTO_SAVE_EVERY === 0) {
@@ -1610,17 +1628,17 @@ export class CombatUI {
                 this.setCorrectorStatus(`已改 ${n} 张 · Enter/Esc 写盘`);
             }
         }
-        applyPortraitAdjustToElement(this.correctorImg(), path, this.correctorData);
+        applyPortraitAdjustToElement(this.correctorImg(), this.correctorPath(), this.correctorData);
         this.renderCorrectorReadout();
         this.updateCorrectorCrosshair();
     }
 
     /** Tab 换边前：把当前边草稿写入内存，不落盘 */
     private syncCurrentCorrectorDraftToData(): void {
-        const path = this.correctorPath();
-        if (!this.canPersistPortraitPath(path)) return;
+        const saveKey = this.correctorSaveKey();
+        if (!this.canPersistPortraitPath(saveKey)) return;
         this.correctorData.images = this.correctorData.images ?? {};
-        this.correctorData.images[path] = { ...this.correctorDraft };
+        this.correctorData.images[saveKey] = { ...this.correctorDraft };
         if (this.correctorDirtyPaths.size > 0) {
             this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Enter/Esc 写盘`);
         }
@@ -1654,24 +1672,24 @@ export class CombatUI {
     }
 
     private async resetCorrectorCurrent(): Promise<void> {
-        const path = this.correctorPath();
-        if (!path) return;
+        const saveKey = this.correctorSaveKey();
+        if (!saveKey) return;
         this.setCorrectorStatus('恢复默认…');
-        if (this.correctorData.images?.[path]) {
-            delete this.correctorData.images[path];
+        if (this.correctorData.images?.[saveKey]) {
+            delete this.correctorData.images[saveKey];
             if (Object.keys(this.correctorData.images).length === 0) delete this.correctorData.images;
         }
-        if (DEFAULT_PORTRAIT_ADJUST.images?.[path]) {
-            delete DEFAULT_PORTRAIT_ADJUST.images[path];
+        if (DEFAULT_PORTRAIT_ADJUST.images?.[saveKey]) {
+            delete DEFAULT_PORTRAIT_ADJUST.images[saveKey];
             if (Object.keys(DEFAULT_PORTRAIT_ADJUST.images).length === 0) {
                 delete DEFAULT_PORTRAIT_ADJUST.images;
             }
         }
-        this.correctorDirtyPaths.add(path);
+        this.correctorDirtyPaths.add(saveKey);
         this.loadCorrectorDraft();
-        applyPortraitAdjustToElement(this.correctorImg(), path, this.correctorData);
+        applyPortraitAdjustToElement(this.correctorImg(), this.correctorPath(), this.correctorData);
         this.renderCorrectorReadout();
-        const name = path.split('/').pop() ?? path;
+        const name = (this.correctorPath().split('/').pop() ?? saveKey);
         this.setCorrectorStatus(`✓ 已恢复默认：${name}（Enter 写盘）`);
     }
 

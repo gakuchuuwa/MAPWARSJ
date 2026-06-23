@@ -170,7 +170,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'ailao': '哀牢',
 'fuyu': '夫余',
 'shule': '疏勒',
-    'loulan': '楼',     // 精绝·东汉都护府楼兰属国屯戍（原扜泥城）
+    'loulan': '楼兰',     // 精绝·东汉都护府楼兰属国屯戍（原扜泥城）
     'shache': '莎车',
 'qiuci': '龟兹',
     'yanqi': '焉耆',
@@ -289,8 +289,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-16 改：旗号「藤原」（§4.4 家族；禁「」字；势力全名仍奥）──
     'fujiwara': '藤原',
 'luchuan': '麓川',
-    'chijin': '赤',
-    'juyan_d': '延',
+    'chijin': '赤斤',
+    'juyan_d': '居延',
     'xihai_d': '西海',
     'heyuan_d': '河源',
     'anding_wei': '安定',
@@ -810,12 +810,12 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'fu_zhou': '涪',
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
     'maer_d': '马尔',   // 彭迪·Margiana；旗号「穆」已被穆氏占用
-    'wugu_d': '乌',     // 毡的·乌古斯突厥
-    'adao_d': '阿',     // 昆岗·阿克苏道军台
-    'wuyuan_d': '五',   // 固阳塞·五原郡
+    'wugu_d': '乌古',     // 毡的·乌古斯突厥
+    'adao_d': '阿克',     // 昆岗·阿克苏道军台
+    'wuyuan_d': '五原',   // 固阳塞·五原郡
     'chenli_d': '禅',   // 姑衍山·撑犁祭天
     'nuoyan_d': '赛',   // 赛音山达·赛音诺颜部
-    'wuli_d': '扎',     // 扎布汗·乌里雅苏台
+    'wuli_d': '扎布',     // 扎布汗·乌里雅苏台
     'jiluo_d': '涿邪',    // 涿邪山·窦宪出涿邪
     'heisha_d': '黑沙',  // 特尔门·漠北黑沙境
     // ── Phase 1 Missing Flags ──

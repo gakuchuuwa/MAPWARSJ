@@ -17,6 +17,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         app.combatUI.show(battle);
     };
 
+
     app.combatSystem.onRegionalBattleStart = (
         attackers,
         defenders,

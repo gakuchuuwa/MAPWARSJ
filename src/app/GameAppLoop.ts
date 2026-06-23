@@ -102,6 +102,37 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             perfMonitor.startTimer('combatUI');
             app.combatUI.update(app.timeSystem.getSpeed());
             perfMonitor.endTimer('combatUI');
+
+            // 每帧检查：跟随军团在战斗中但 UI 未显示 → 补弹
+            if (!app.combatUI.isRegionalVisible()) {
+                const followedId = app.cameraFollowUI?.getFollowedArmyId();
+                if (followedId && app.combatSystem) {
+                    // 查区域战
+                    for (const bf of app.combatSystem.getActiveBattleFields()) {
+                        if (bf.isOver || !bf.hasParticipant(followedId)) continue;
+                        const attackers = bf.getAttackerUnits();
+                        const defenders = bf.getDefenderUnits();
+                        if (attackers.length === 0 || defenders.length === 0) continue;
+                        try {
+                            app.combatUI.showRegional(
+                                attackers, defenders, undefined, undefined,
+                                bf.type === 'siege' ? '攻城战' : '正在交战',
+                                '', false, bf.targetDuration, app.timeSystem.getSpeed(), bf,
+                            );
+                        } catch (e) { /* ignore */ }
+                        break;
+                    }
+                    // 查 1v1 战斗
+                    if (!app.combatUI.isRegionalVisible()) {
+                        for (const battle of app.combatSystem.getActiveBattles()) {
+                            if (battle.isOver) continue;
+                            if (battle.attacker.id !== followedId && battle.defender.id !== followedId) continue;
+                            try { app.combatUI.show(battle); } catch (e) { /* ignore */ }
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         if (app.cameraFollowUI) {

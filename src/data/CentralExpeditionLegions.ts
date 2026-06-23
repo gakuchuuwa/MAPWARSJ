@@ -78,7 +78,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   tongzhou: { name: '同州府兵', tier: 3 },    // 长宁·杨智积镇守同州
   hao_d: { name: '濠州红巾军', tier: 2 },
   suzhou_d: { name: '江北团练', tier: 3 },
-  sima_d: { name: '河内甲士', tier: 3 },
+  sima_d: { name: '宣王中军', tier: 3 },   // 获嘉·司马懿都督中外诸军事
   bozhou_d: { name: '聊城义勇', tier: 3 },
   mengcheng_d: { name: '山桑弓手', tier: 3 },
   shangzhou: { name: '商州锐士', tier: 3 },

@@ -13112,64 +13112,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "杭州-庆元",
-                type: "road",
-                id: "road_city_hangzhou_city_qingyuan_zj_1780155289612",
-                startConnection: "city_hangzhou",
-                endConnection: "city_qingyuan_zj"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [120.16, 30.25],
-                    [120.230128, 30.399522],
-                    [120.352329, 30.288405],
-                    [120.360135, 30.22908],
-                    [120.372625, 30.218152],
-                    [120.442878, 30.199417],
-                    [120.505325, 30.174438],
-                    [120.528743, 30.143215],
-                    [120.725452, 30.072961],
-                    [120.794145, 30.069839],
-                    [120.926845, 30.046421],
-                    [120.987731, 30.063594],
-                    [121.076719, 30.033932],
-                    [121.195243, 29.974706],
-                    [121.236487, 29.958209],
-                    [121.298353, 29.94996],
-                    [121.335473, 29.929338],
-                    [121.335473, 29.91284],
-                    [121.54, 29.87],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "庆元-宁海",
-                type: "road",
-                id: "road_city_qingyuan_zj_city_ninghai_1780155297211",
-                startConnection: "city_qingyuan_zj",
-                endConnection: "city_ninghai"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [121.54, 29.87],
-                    [121.389091, 29.73549],
-                    [121.393215, 29.710743],
-                    [121.384966, 29.665375],
-                    [121.39734, 29.62413],
-                    [121.405588, 29.529269],
-                    [121.409713, 29.52102],
-                    [121.401464, 29.442656],
-                    [121.4182, 29.2757],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "宁海-台州",
                 type: "road",
                 id: "road_city_ninghai_city_taizhou_zj_1780155300256",
@@ -32956,6 +32898,52 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [116.69549822557754, 26.09774944845846],
                     [116.68724938114394, 26.126620403976037],
                     [116.65, 26.26],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "庆元-白峤",
+                type: "road",
+                id: "road_city_qingyuan_zj_city_ninghai_1782229081291",
+                startConnection: "city_qingyuan_zj",
+                endConnection: "city_ninghai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [121.54, 29.87],
+                    [121.49043279722015, 29.70920540639798],
+                    [121.42954660271916, 29.60460604661423],
+                    [121.41237357350093, 29.487517211035403],
+                    [121.4182, 29.2757],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "会稽-庆元",
+                type: "road",
+                id: "road_city_kuaiji_city_qingyuan_zj_1782229088847",
+                startConnection: "city_kuaiji",
+                endConnection: "city_qingyuan_zj"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [120.582, 29.987],
+                    [120.78321623032404, 30.063594282083226],
+                    [120.92684520196741, 30.046421252865],
+                    [120.98773139646839, 30.063594282083226],
+                    [121.07671891150831, 30.033931777069924],
+                    [121.19524286410275, 29.974706332247365],
+                    [121.23648708627071, 29.95820864338018],
+                    [121.29835341952267, 29.949959798946587],
+                    [121.33547321947384, 29.929337687862603],
+                    [121.33547321947384, 29.912839998995416],
+                    [121.54, 29.87],
                 ]
             }
         },

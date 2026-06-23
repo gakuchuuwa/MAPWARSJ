@@ -443,6 +443,41 @@ export class GameApp {
                     } else {
                         const army = legionManager.getLegionById(armyId);
                         CityAssetManager.prioritizeFollowedFaction(army?.getFactionId() ?? null);
+                        // 切换跟随目标时，若新目标已在战斗中则立即弹出战斗 UI
+                        // 先查区域战 (BattleField)
+                        let found = false;
+                        const activeFields = this.combatSystem.getActiveBattleFields();
+                        for (const bf of activeFields) {
+                            if (bf.isOver || !bf.hasParticipant(armyId)) continue;
+                            const attackers = bf.getAttackerUnits();
+                            const defenders = bf.getDefenderUnits();
+                            if (attackers.length === 0 || defenders.length === 0) continue;
+                            try {
+                                this.combatUI.showRegional(
+                                    attackers, defenders, undefined, undefined,
+                                    bf.type === 'siege' ? '攻城战' : '正在交战',
+                                    '', false, bf.targetDuration, this.timeSystem.getSpeed(), bf,
+                                );
+                                found = true;
+                            } catch (err) {
+                                console.error('[GameApp] 切换跟随弹出战斗 UI 失败：', err);
+                            }
+                            break;
+                        }
+                        // 再查老式 1v1 战斗 (Battle)
+                        if (!found) {
+                            const activeBattles = this.combatSystem.getActiveBattles();
+                            for (const battle of activeBattles) {
+                                if (battle.isOver) continue;
+                                if (battle.attacker.id !== armyId && battle.defender.id !== armyId) continue;
+                                try {
+                                    this.combatUI.show(battle);
+                                } catch (err) {
+                                    console.error('[GameApp] 切换跟随弹出 1v1 战斗 UI 失败：', err);
+                                }
+                                break;
+                            }
+                        }
                     }
                 },
                 () => legionManager.trimLegionsToCap(),

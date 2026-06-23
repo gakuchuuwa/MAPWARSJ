@@ -1110,14 +1110,9 @@ export class TerritorySystem {
         this.renderCityLabel(city, displayLat, displayLng, targetLayerGroup, labelsMap);
     }
 
-    /** 兵力标签文案（2026-06-12 降噪）：≥1 万显示「X.X万」，串更短、全图更静 */
+    /** 兵力标签文案：纯数字显示（与军团一致） */
     private static formatTroopsLabel(troops: number): string {
-        const t = Math.floor(troops);
-        if (t >= 10000) {
-            const wan = t / 10000;
-            return `${wan >= 10 ? Math.round(wan) : wan.toFixed(1)}万`;
-        }
-        return String(t);
+        return Math.floor(troops).toString();
     }
 
     /** 据点标签 HTML（城名 + 城防）。renderCityLabel / updateCityLabel 共用，勿再复制粘贴 */
