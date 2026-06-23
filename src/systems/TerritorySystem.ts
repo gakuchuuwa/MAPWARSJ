@@ -1004,22 +1004,10 @@ export class TerritorySystem {
         const visualScale = 1.2; // [USER REQUEST] Enlarge flag for better visibility
         const poleHeight = flagFrameHeight * flagScale * 1.2 * visualScale;
 
-        // [USER REQUEST] Hide text for Huihui faction after -227
-        // [USER REQUEST] Hide text for Qin faction after -206
-        const currentYear = (window as any).game?.timeSystem?.getYear() ?? -999;
-        const shouldHideText = (city.factionId === 'huihui' && currentYear >= -227) ||
-            (city.factionId === 'qin' && currentYear >= -206);
-
-        let effectiveFlagText = flagText;
-        // [USER REQUEST] Zhonghua text swap after -206
-        if (city.factionId === 'zhonghua' && currentYear >= -206) {
-            effectiveFlagText = CityAssetManager.getSpecialFlagText('zhonghua_variant');
-        }
-
-        const flagTextOverlay = (effectiveFlagText && !shouldHideText) ? `
+        const flagTextOverlay = (flagText) ? `
                  <div class="city-flag-body city-flag-text-overlay" style="
                      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-                     background-image: url('${effectiveFlagText}');
+                     background-image: url('${flagText}');
                      background-size: ${128 * flagScale}px ${240 * flagScale}px;
                      background-position-x: 0;
                      background-position-y: ${-160 * flagScale}px;
@@ -1194,17 +1182,7 @@ export class TerritorySystem {
     }
 
     private getEffectiveFlagTextUrl(city: City): string | null {
-        const currentYear = (window as any).game?.timeSystem?.getYear() ?? -999;
-        const shouldHideText =
-            (city.factionId === 'huihui' && currentYear >= -227) ||
-            (city.factionId === 'qin' && currentYear >= -206);
-        if (shouldHideText) return null;
-
-        let effectiveFlagText = CityAssetManager.getProcessedFlagText(city.factionId);
-        if (city.factionId === 'zhonghua' && currentYear >= -206) {
-            effectiveFlagText = CityAssetManager.getSpecialFlagText('zhonghua_variant');
-        }
-        return effectiveFlagText;
+        return CityAssetManager.getProcessedFlagText(city.factionId);
     }
 
     private patchFlagTextOverlay(flagBody: HTMLElement, city: City): void {
