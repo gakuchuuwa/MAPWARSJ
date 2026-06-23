@@ -527,9 +527,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/litang/9bdb090b-7d53-4505-9473-00cec58f8bfc.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -17
+            "scale": 0.98,
+            "offsetX": 12,
+            "offsetY": -15
         },
         "/assets/zhongyuan/fcd61d66-cdf8-4984-a132-f61c3bc919f8.png": {
             "scale": 0.96,
@@ -1460,6 +1460,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 9,
             "offsetY": 5
+        },
+        "/assets/litang/liang_d_zhangxun.png": {
+            "scale": 0.98,
+            "offsetX": 14,
+            "offsetY": -16
+        },
+        "/assets/CENTRAL/wuwu_d_lvmeng.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/CENTRAL/lu_zhangliao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/JIANGNAN/wuwu_d_lvmeng.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/zhaosong/danyang_yuyunwen.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -18
         }
     },
     "folderGuides": {

@@ -295,9 +295,10 @@ export class GameApp {
                 }
             });
 
-            setupGameAppVisibilityHandler(() => {
-                this.lastFrameTime = performance.now();
-            });
+            setupGameAppVisibilityHandler(
+                () => { this.lastFrameTime = performance.now(); },
+                (timestamp) => { tickGameAppFrame(this, timestamp); },
+            );
 
             void this.completeLateBoot();
         } catch (error) {

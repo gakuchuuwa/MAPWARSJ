@@ -14,12 +14,41 @@ export function yieldToBrowser(): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-export function setupGameAppVisibilityHandler(resetFrameTime: () => void): void {
+/** 后台 tick 间隔（毫秒）。切到 Claude 等应用时浏览器节流 rAF，改用 setInterval 维持推演。 */
+const BACKGROUND_TICK_INTERVAL_MS = 200;
+
+let backgroundTickTimer: ReturnType<typeof setInterval> | null = null;
+
+/**
+ * 启动后台 setInterval tick。
+ * tickFn 由调用方传入，负责推进游戏逻辑（不含渲染）。
+ */
+function startBackgroundTick(tickFn: (timestamp: number) => void): void {
+    if (backgroundTickTimer !== null) return;
+    backgroundTickTimer = setInterval(() => {
+        tickFn(performance.now());
+    }, BACKGROUND_TICK_INTERVAL_MS);
+    gameLog('startup', `🌙 [GameApp] Tab hidden — background tick started (${BACKGROUND_TICK_INTERVAL_MS}ms)`);
+}
+
+function stopBackgroundTick(): void {
+    if (backgroundTickTimer === null) return;
+    clearInterval(backgroundTickTimer);
+    backgroundTickTimer = null;
+    gameLog('startup', '☀️ [GameApp] Tab visible — background tick stopped');
+}
+
+export function setupGameAppVisibilityHandler(
+    resetFrameTime: () => void,
+    backgroundTickFn?: (timestamp: number) => void,
+): void {
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
+            stopBackgroundTick();
             resetFrameTime();
             gameLog('startup', '👁️ [GameApp] Tab visible — resetting frame time');
         } else {
+            if (backgroundTickFn) startBackgroundTick(backgroundTickFn);
             gameLog('startup', '🙈 [GameApp] Tab hidden — gameLoop will pause until restored');
         }
     });
