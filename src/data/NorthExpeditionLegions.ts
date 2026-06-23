@@ -41,7 +41,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   helian: { name: '铁弗卫队', tier: 2 },     // 统万城·赫连勃勃铁弗亲卫
   bing: { name: '并州狼骑', tier: 2 },     // 晋阳·并州骑兵（名震天下，升T1）
   you: { name: '上谷突骑', tier: 2 },        // 居庸关·幽州上谷郡（升T1）
-  yi: { name: '易州戍兵', tier: 3 },           // 紫荆关·杨洪明代易州戍守
+  yi: { name: '易州戍兵', tier: 3 },           // 紫荆关·于谦明代易州戍守
   changshan: { name: '倒马关卒', tier: 3 },   // 倒马关·常山
   xianyu: { name: '轻勇骑', tier: 2 },      // 井陉关·韩信轻勇骑
   linhu: { name: '胡服骑', tier: 2 },         // 偏头关·赵武灵王胡服骑射

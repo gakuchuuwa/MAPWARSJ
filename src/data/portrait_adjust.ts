@@ -1162,9 +1162,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 40
         },
         "/assets/CENTRAL/yaozhou_limaozhen.png": {
-            "scale": 1.06,
+            "scale": 1.04,
             "offsetX": 0,
-            "offsetY": -37
+            "offsetY": 3
         },
         "/assets/daming/xuan_mafang.png": {
             "scale": 1.12,
@@ -1370,6 +1370,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": -27
+        },
+        "/assets/yingqin/ruo_wangjian.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/xianqin/5e76a0e8-511e-4986-8fc9-7cb393b4c278.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 10
         }
     },
     "folderGuides": {

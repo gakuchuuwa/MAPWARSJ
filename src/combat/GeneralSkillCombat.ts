@@ -24,18 +24,6 @@ export const COMEBACK_TROOP_THRESHOLD = 0.5;
 /** 名将开局战术 UI 延迟（秒）：对峙立绘就绪后再闪字 */
 export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
 
-/** ⑥–⑩ 逆局技：每场每侧仅触发一次（含 ⑧⑨，避免每帧重复乘区） */
-const ONCE_PER_BATTLE_TACTICAL_IDS = new Set([
-    'tac_01',
-    'tac_02',
-    'tac_05',
-    'tac_06',
-    'tac_07',
-    'tac_08',
-    'tac_09',
-    'tac_10',
-]);
-
 export type TacticalSkillTrigger = {
     displayName: string;
     generalId: string;
@@ -107,8 +95,8 @@ function getTacticalSkillForTiming(
     return skill;
 }
 
-function isOncePerBattleTactical(skillId: string): boolean {
-    return ONCE_PER_BATTLE_TACTICAL_IDS.has(skillId);
+function isOncePerBattleTactical(skill: TacticalSkillDef): boolean {
+    return skill.isOncePerBattle === true;
 }
 
 function emitTacticalUi(
@@ -143,13 +131,18 @@ function sideMeetsComebackThreshold(currentTroops: number, initialTroops: number
     return currentTroops <= initialTroops * COMEBACK_TROOP_THRESHOLD;
 }
 
-function applyTroopAddToUnits(units: IBattleUnit[], ratio: number): number {
+function applyTroopAddToUnits(
+    units: IBattleUnit[],
+    ratio: number,
+    opts?: { useMaxTroops?: boolean },
+): number {
     let added = 0;
     for (const u of units) {
         if (u.troops <= 0) continue;
-        const bonus = Math.floor(u.troops * ratio);
+        const base = opts?.useMaxTroops ? (u.maxTroops ?? u.troops) : u.troops;
+        const bonus = Math.floor(base * ratio);
         if (bonus <= 0) continue;
-        u.setTroops(u.troops + bonus);
+        u.setTroops(Math.min(u.troops + bonus, u.maxTroops));
         added += bonus;
     }
     return added;
@@ -174,7 +167,7 @@ function canTriggerTactical(
 ): boolean {
     if (skill.timing === 'opening' && tier !== 'famous') return false;
     if (skill.timing === 'comeback' && tier !== 'ordinary') return false;
-    if (isOncePerBattleTactical(skill.id) && triggeredSkillIds.has(skill.id)) return false;
+    if (isOncePerBattleTactical(skill) && triggeredSkillIds.has(skill.id)) return false;
     return true;
 }
 
@@ -225,6 +218,8 @@ export function getStrategicBattlePowerMultiplier(
             return terrain === 'mountain' ? skill.magnitude : 1;
         case 'water_power_mult':
             return terrain === 'sea' ? skill.magnitude : 1;
+        case 'garrison_defense_mult':
+            return battleType === 'siege' ? skill.magnitude : 1;
         default:
             return 1;
     }
@@ -350,6 +345,8 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
             return `山地×${skill.magnitude}`;
         case 'water_power_mult':
             return `水域×${skill.magnitude}`;
+        case 'garrison_defense_mult':
+            return `守城×${skill.magnitude}`;
         default:
             return '';
     }
@@ -386,53 +383,37 @@ export function applyOpeningTacticalPreRoll(
         if (!profile || !skill || profile.tier !== 'famous') return;
         if (!canTriggerTactical(skill, profile.tier, triggered)) return;
 
+        let logMsg: string;
         switch (skill.effect) {
             case 'ally_add_troops': {
                 const added = applyTroopAddToUnits(units, skill.magnitude);
                 if (added <= 0) return;
-                triggered.add(skill.id);
-                gameLog(
-                    'battle',
-                    `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} +${added} 兵`,
-                );
-                if (emitUi) {
-                    markOpeningUiShown(sideLabel);
-                    emitTacticalUi(unit, skill, sideLabel, {
-                        uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
-                    });
-                }
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} +${added} 兵`;
                 break;
             }
             case 'enemy_sub_troops': {
                 const removed = applyTroopSubToUnits(opponents, skill.magnitude);
                 if (removed <= 0) return;
-                triggered.add(skill.id);
-                gameLog(
-                    'battle',
-                    `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 削敌 ${removed} 兵`,
-                );
-                if (emitUi) {
-                    markOpeningUiShown(sideLabel);
-                    emitTacticalUi(unit, skill, sideLabel, {
-                        uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
-                    });
-                }
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 削敌 ${removed} 兵`;
                 break;
             }
             case 'ally_invincible': {
-                triggered.add(skill.id);
                 const startAt = battleElapsed + (emitUi ? OPENING_TACTICAL_UI_DELAY_SEC : 0);
                 scheduleInvincible(unit, startAt, skill.magnitude);
-                if (emitUi) {
-                    markOpeningUiShown(sideLabel);
-                    emitTacticalUi(unit, skill, sideLabel, {
-                        uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
-                    });
-                }
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 免伤 ${skill.magnitude} 秒`;
                 break;
             }
             default:
-                break;
+                return;
+        }
+
+        triggered.add(skill.id);
+        gameLog('battle', logMsg);
+        if (emitUi) {
+            markOpeningUiShown(sideLabel);
+            emitTacticalUi(unit, skill, sideLabel, {
+                uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+            });
         }
     };
 
@@ -651,7 +632,7 @@ export function tryApplyComebackTacticalForSide(
 
     switch (skill.effect) {
         case 'ally_add_troops': {
-            const added = applyTroopAddToUnits(sideUnits, skill.magnitude);
+            const added = applyTroopAddToUnits(sideUnits, skill.magnitude, { useMaxTroops: true });
             if (added <= 0) return false;
             ctx.triggeredSkillIds.add(skill.id);
             applied = true;

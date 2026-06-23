@@ -544,7 +544,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     mi: { generalId: 'mi_mizhu', generalName: '麋竺', portrait: '/assets/CENTRAL/mi_mizhu.png' },
     baibo: { generalId: 'baibo_guotai_bb', generalName: '郭太', portrait: '/assets/panjun/baibo_guotai_bb.png' },
     ruzhou: { generalId: 'ruzhou_sunjian', generalName: '孙坚', portrait: '/assets/CENTRAL/ruzhou_sunjian.png' },
-    ruo: { generalId: 'ruo_wangjian', generalName: '王翦', portrait: '/assets/CENTRAL/ruo_wangjian.png' },
+    ruo: { generalId: 'ruo_wangjian', generalName: '王翦', portrait: '/assets/yingqin/ruo_wangjian.png' },
     yaozhou: { generalId: 'yaozhou_limaozhen', generalName: '李茂贞', portrait: '/assets/CENTRAL/yaozhou_limaozhen.png' },
     zhi_state: { generalId: 'zhi_state_caocan', generalName: '曹参', portrait: '/assets/CENTRAL/zhi_state_caocan.png' },
     // 周泰（东吴宿卫；原 wuwu_d，吕蒙迁濡须口后改挂莱国据点）
@@ -591,7 +591,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     // ── 北方关隘 2026-06-19 ──
     you: { generalId: 'you_wangba', generalName: '王霸', portrait: '/assets/NORTH/you_wangba.png' },
     lingqiu: { generalId: 'lingqiu_zhaowuling', generalName: '赵武灵王', portrait: '/assets/xianqin/lingqiu_zhaowuling.png' },
-    yi: { generalId: 'yi_yanghong', generalName: '杨洪', portrait: '/assets/NORTH/yi_yanghong.png' },
+    yi: { generalId: 'yi_yuqian', generalName: '于谦', portrait: '/assets/NORTH/yi_yuqian.png' },
     huo: { generalId: 'huo_huoshuchu', generalName: '霍叔处', portrait: '/assets/NORTH/huo_huoshuchu.png' },
     // ── 北方区 2026-06-18 ──
     jinzhou: { generalId: 'jinzhou_lichengliang', generalName: '李成梁', portrait: '/assets/NORTHEAST/jinzhou_lichengliang.png' },
