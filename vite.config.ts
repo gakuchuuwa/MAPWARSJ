@@ -57,11 +57,17 @@ export default defineConfig({
         include: ['leaflet', 'pinyin-pro'],
     },
     server: {
-        // portrait_adjust.ts / FactionGenerals.ts：F2 写盘时不触发整页 HMR，避免打断对局与 Esc 保存流程
+        // F2 写盘数据文件 + 城市/势力数据：不触发 HMR 整页刷新，改完后手动 F5
         watch: {
             ignored: [
                 '**/src/data/portrait_adjust.ts',
                 '**/src/data/FactionGenerals.ts',
+                '**/src/data/cities_v2.ts',
+                '**/src/data/cities.ts',
+                '**/src/data/factions.ts',
+                '**/src/data/SandboxDisplayNames.ts',
+                '**/src/app/GameApp.ts',
+                '**/src/assets/CityAssetManager.ts',
                 '**/public/assets/**',
             ],
         },
@@ -1305,6 +1311,18 @@ function serverUpdateFactionGeneralPortraitFile(
     fs.writeFileSync(filePath, text, 'utf-8');
 }
 
+/** 读取 FactionGenerals.ts 中当前绑定的 portrait 路径 */
+function serverGetCurrentPortraitPath(filePath: string, generalId: string): string | null {
+    const text = fs.readFileSync(filePath, 'utf-8');
+    const gid = serverEscapeRegExp(generalId);
+    const re = new RegExp(
+        `generalId\\s*:\\s*'${gid}'[\\s\\S]*?portrait\\s*:\\s*'([^']*)'`,
+        'm',
+    );
+    const m = text.match(re);
+    return m?.[1] ?? null;
+}
+
 /** 绑定：在目标文件夹内写入 {generalId}.png，并写 FactionGenerals.ts */
 function serverBindGeneralPortrait(
     publicAssetsRoot: string,
@@ -1331,15 +1349,33 @@ function serverBindGeneralPortrait(
     const destWeb = `${folderWeb}${generalId}.png`;
 
     if (path.resolve(srcAbs) !== path.resolve(destAbs)) {
-        // ① 旧专属立绘存在 → 改名备份（不删除），格式：{generalId}_prev_YYYYMMDDHHMMSS.png
+        // ① 旧绑定文件（可能在其他文件夹）→ 改名备份
+        const ts = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
+        const oldPortraitWeb = serverGetCurrentPortraitPath(factionGeneralsPath, generalId);
+        if (oldPortraitWeb && oldPortraitWeb.startsWith('/assets/')) {
+            const oldAbs = serverWebPathToAbs(publicAssetsRoot, oldPortraitWeb);
+            if (
+                fs.existsSync(oldAbs) &&
+                path.resolve(oldAbs) !== path.resolve(destAbs) &&
+                path.resolve(oldAbs) !== path.resolve(srcAbs)
+            ) {
+                const oldDir = path.dirname(oldAbs);
+                const oldName = path.basename(oldAbs, '.png');
+                const backupName = `${oldName}_prev_${ts}.png`;
+                const backupAbs = path.join(oldDir, backupName);
+                fs.renameSync(oldAbs, backupAbs);
+                console.log(`  🗂️  [BindPortrait] 旧绑定备份 → ${backupName}`);
+            }
+        }
+        // ② 目标位置已有文件（同文件夹覆盖场景）→ 改名备份
         if (fs.existsSync(destAbs)) {
-            const ts = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
-            const backupName = `${generalId}_prev_${ts}.png`;
+            const destName = path.basename(destAbs, '.png');
+            const backupName = `${destName}_prev_${ts}.png`;
             const backupAbs = path.join(folderAbs, backupName);
             fs.renameSync(destAbs, backupAbs);
-            console.log(`  🗂️  [BindPortrait] 旧立绘备份 → ${backupName}`);
+            console.log(`  🗂️  [BindPortrait] 目标位置旧文件备份 → ${backupName}`);
         }
-        // ② 源图复制到目标（copyFileSync = 不移动、不删除源文件；源图留在原文件夹）
+        // ③ 源图复制到目标（copyFileSync = 不移动、不删除源文件；源图留在原文件夹）
         fs.copyFileSync(srcAbs, destAbs);
     }
 

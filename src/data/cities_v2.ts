@@ -2367,7 +2367,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_moergen', name: '莫尔根', factionId: 'dawoer', lat: 49.1760, lng: 125.2280, type: 'small_city', region: 'NORTHEAST', troops: 10000, tier: 4,
         note: '莫尔根；达斡尔小城',
     },
-    { id: 'city_donghai', name: '洞海城', factionId: 'guangping', lat: 17.620424, lng: 106.495972, type: 'pass', troops: 10000, region: 'LINGNAN', note: '占城北境·阮文张抗西山' },
+    { id: 'city_donghai', name: '洞海城', factionId: 'guangping', lat: 17.620424, lng: 106.495972, type: 'pass', troops: 10000, region: 'LINGNAN', mirror: true, note: '占城北境·阮文张抗西山' },
 
     // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐) ──
     { id: 'city_baidalik', name: '拜达里克', factionId: 'tumengken', lat: 46.189304, lng: 99.159851, type: 'small_city', region: 'STEPPE', troops: 10000,
