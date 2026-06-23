@@ -275,13 +275,15 @@ export class CameraFollowUI {
     public update(): void {
         const count = this.getActiveLegionCount();
         if (count !== this.lastLegionCount) {
+            const oldCount = this.lastLegionCount;
             this.updateCountDisplay(count);
             this.lastLegionCount = count;
             if (this.isListOpen) {
                 this.refreshList();
             }
             // 全军覆灭后在等待，现在新军团出现了 → 自动跟随
-            if (this.waitingForRespawn && count > 0) {
+            // [2026-06-23 Fix] 或者用户勾选了“自动跟随”，当前处于无目标状态，且刚刚从 0 个军团变成了有军团，也触发跟随
+            if ((this.waitingForRespawn || (this.autoFollowEnabled && !this.followedArmyId && oldCount === 0)) && count > 0) {
                 this.waitingForRespawn = false;
                 this.followLargestLegion();
             }
@@ -634,13 +636,18 @@ export class CameraFollowUI {
         this.clearPendingAutoSwitch();
         this.followedArmyId = armyId;
 
-        this.autoFollowEnabled = true;
-        if (this.autoFollowCheckbox) this.autoFollowCheckbox.checked = true;
+        // [2026-06-23 Fix] 不要在玩家手动点选军团时，强行开启“无目标时自动跟随”的偏好。
+        // this.autoFollowEnabled = true;
+        // if (this.autoFollowCheckbox) this.autoFollowCheckbox.checked = true;
 
         const text = document.getElementById('follow-banner-text');
         if (text) text.textContent = `🎥 正在跟随：${armyName}`;
         if (this.followBanner) this.followBanner.style.display = 'flex';
         this.syncFollowedHighlight();
+
+        if (this.isListOpen) {
+            this.refreshList();
+        }
 
         if (this.onFollowChange) this.onFollowChange(armyId);
     }
@@ -651,11 +658,18 @@ export class CameraFollowUI {
         this.waitingForRespawn = false;
         this.followedArmyId = null;
 
-        this.autoFollowEnabled = false;
-        if (this.autoFollowCheckbox) this.autoFollowCheckbox.checked = false;
+        // [2026-06-23 Fix] 不要在取消跟随（如点击✖或拖拽地图）时强行把用户的“自动跟随”设置给关掉。
+        // 既然这个 checkbox 代表用户的偏好，就应该一直保持用户自己勾选的状态。
+        // this.autoFollowEnabled = false;
+        // if (this.autoFollowCheckbox) this.autoFollowCheckbox.checked = false;
 
         if (this.followBanner) this.followBanner.style.display = 'none';
         this.syncFollowedHighlight();
+
+        if (this.isListOpen) {
+            this.refreshList();
+        }
+
         if (this.onFollowChange) this.onFollowChange(null);
     }
 

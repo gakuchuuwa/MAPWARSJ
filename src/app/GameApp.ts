@@ -462,9 +462,10 @@ export class GameApp {
             StreamModeToggle.init();
 
             this.map.getLeafletMap().on('dragstart', () => {
-                if (this.cameraFollowUI?.isFollowing()) {
-                    this.cameraFollowUI.cancelFollow();
-                }
+                // [2026-06-23 Fix] 不要自动取消，允许玩家拥有弹性拖拽体验
+                // if (this.cameraFollowUI?.isFollowing()) {
+                //     this.cameraFollowUI.cancelFollow();
+                // }
             });
 
             this.exposeGlobals();

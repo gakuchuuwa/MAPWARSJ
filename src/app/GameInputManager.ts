@@ -142,10 +142,10 @@ export class GameInputManager {
 
             // [NEW] WASD 移动时取消军团跟随
             if (['w', 'a', 's', 'd'].includes(e.key.toLowerCase())) {
-                const game = (window as any).game;
-                if (game?.cameraFollowUI?.isFollowing()) {
-                    game.cameraFollowUI.cancelFollow();
-                }
+                // const game = (window as any).game;
+                // if (game?.cameraFollowUI?.isFollowing()) {
+                //     game.cameraFollowUI.cancelFollow();
+                // }
             }
 
             if (e.ctrlKey && e.key.toLowerCase() === 'z') {
