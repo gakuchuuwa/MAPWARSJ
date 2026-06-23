@@ -19,7 +19,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   xiliao: { name: '斡耳朵亲卫', tier: 0 },     // 区T0锚·虎思·耶律大石斡耳朵亲卫
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
   guishuang: { name: '大月氏兵', tier: 2 },    // 贵霜帝国主力（升T2）
-  muer: { name: '花剌子模重甲枪兵', tier: 2 }, // 马尔夫鲁德·穆尔加布河畔花剌子模戍卫
+  muer: { name: '花剌子模骑', tier: 2 }, // 马尔夫鲁德·穆尔加布河畔花剌子模戍卫
   xijue: { name: '郅支城坚兵', tier: 2 },
   tujishi: { name: '怛罗斯突骑', tier: 2 },
   kokand: { name: '浩罕轻骑', tier: 3 },
@@ -50,12 +50,12 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   // ── 2026-06-20 新增：杜兰尼·呼罗珊·阿巴尔 ──
   dulan_d: { name: '普什图骑兵', tier: 2 },    // 坎大哈·艾哈迈德沙阿杜兰尼轻装游骑（摧毁马拉塔帝国，升T1）
   // ── 2026-06-20 新增：布兹詹·哈里·卡伦 ──
-  baha: { name: '巴哈尔兹重甲戟兵', tier: 2 }, // 泰巴德·巴哈尔兹重装戍卫
-  hali: { name: '丹达纳克弓骑', tier: 0 },    // 萨拉赫斯·1040塞尔柱丹达纳克大破伽色尼（经典以少胜多，升T0）
-  kalan: { name: '萨珊边防铁骑', tier: 2 },    // 图斯·卡伦家族世袭东北边防元帅
+  baha: { name: '巴哈尔兹兵', tier: 2 }, // 泰巴德·巴哈尔兹重装戍卫
+  hali: { name: '丹达纳克骑', tier: 0 },    // 萨拉赫斯·1040塞尔柱丹达纳克大破伽色尼（经典以少胜多，升T0）
+  kalan: { name: '萨珊边骑', tier: 2 },    // 图斯·卡伦家族世袭东北边防元帅
   // ── 2026-06-20 新增：锡斯坦·德兰吉亚 ──
-  xisi: { name: '萨法尔圣战兵', tier: 2 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊
+  xisi: { name: '萨法尔圣兵', tier: 2 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊
   delan: { name: '帕提亚铁骑', tier: 1 },   // 法拉·卡莱大捷；但常被罗马击溃破都，降T1
-  huluo: { name: '呼罗珊重骑兵', tier: 2 },  // 赫拉特·阿布穆斯林黑旗军重骑
-  aba: { name: '萨珊具装铁骑', tier: 1 },    // 尼沙布尔·卡迪西亚惨败大溃退，降T1
+  huluo: { name: '呼罗珊重骑', tier: 2 },  // 赫拉特·阿布穆斯林黑旗军重骑
+  aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·卡迪西亚惨败大溃退，降T1
 };

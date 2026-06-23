@@ -957,9 +957,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/STEPPE/choros_tuohuan.png": {
-            "scale": 1.04,
+            "scale": 0.94,
             "offsetX": 0,
-            "offsetY": 14
+            "offsetY": 27
         },
         "/assets/daming/suzhou_d_shikefa.png": {
             "scale": 0.92,
@@ -982,7 +982,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/CENTRAL/52602539-f95b-4ef3-aeec-2bf4422fe284.png": {
-            "scale": 0.92,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": -22
         },
@@ -1052,7 +1052,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/litang/lingwu_guoziyi.png": {
-            "scale": 1,
+            "scale": 1.06,
             "offsetX": 11,
             "offsetY": -1
         },
@@ -1062,7 +1062,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/HEXI/bc4ded43-19e9-4a40-a66a-2c885eaec13f.png": {
-            "scale": 0.9,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": -32
         },
@@ -1179,7 +1179,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/HEXI/liangzhou_zhanggui.png": {
             "scale": 1.06,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": 5
         },
         "/assets/WESTERN/7031c3d2-86e4-4b75-b80d-362d4244360a.png": {
             "scale": 1,
@@ -1240,6 +1240,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": -11
+        },
+        "/assets/HEXI/yingli_jilasiyi.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/STEPPE/yuan_d_hubilie.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/STEPPE/liao_d_yelvabaoji.png": {
+            "scale": 1.08,
+            "offsetX": 12,
+            "offsetY": -8
+        },
+        "/assets/BASHU/ba_bamanzi.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/LINGNAN/a5ac03b7-537e-4b61-ac6c-d72802fd4c45.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -34
+        },
+        "/assets/KOREA/baiji_jiebai.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 15
         }
     },
     "folderGuides": {
