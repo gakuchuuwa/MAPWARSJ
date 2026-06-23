@@ -47,6 +47,9 @@ export class CameraFollowUI {
 
     private autoFollowEnabled = true;
     private autoFollowCheckbox: HTMLInputElement | null = null;
+    /** 自动跟随计时：无目标时开始计时，10秒后触发 */
+    private autoFollowNoTargetSince = 0;
+    private static readonly AUTO_FOLLOW_DELAY_MS = 10000;
 
     /**
      * 注入依赖：军队列表、跟随回调、军团上限变更（写 GameConfig + 裁军）
@@ -189,9 +192,7 @@ export class CameraFollowUI {
         autoFollowCheckbox.style.accentColor = '#b48c3c';
         autoFollowCheckbox.addEventListener('change', (e) => {
             this.autoFollowEnabled = (e.target as HTMLInputElement).checked;
-            if (this.autoFollowEnabled && !this.followedArmyId) {
-                this.followLargestLegion();
-            }
+            this.autoFollowNoTargetSince = 0;
         });
         this.autoFollowCheckbox = autoFollowCheckbox;
         autoFollowLabel.appendChild(autoFollowCheckbox);
@@ -282,8 +283,19 @@ export class CameraFollowUI {
                 this.refreshList();
             }
             // 全军覆灭后在等待，现在新军团出现了 → 自动跟随
-            // [2026-06-23 Fix] 或者用户勾选了“自动跟随”，当前处于无目标状态，且刚刚从 0 个军团变成了有军团，也触发跟随
-            if ((this.waitingForRespawn || (this.autoFollowEnabled && !this.followedArmyId && oldCount === 0)) && count > 0) {
+            // 勾选自动跟随时，无目标10秒后自动跟随最强军团
+            if (this.autoFollowEnabled && !this.followedArmyId && count > 0) {
+                const now = performance.now();
+                if (this.autoFollowNoTargetSince === 0) {
+                    this.autoFollowNoTargetSince = now;
+                } else if (now - this.autoFollowNoTargetSince >= CameraFollowUI.AUTO_FOLLOW_DELAY_MS) {
+                    this.autoFollowNoTargetSince = 0;
+                    this.followLargestLegion();
+                }
+            } else if (this.autoFollowEnabled && this.followedArmyId) {
+                this.autoFollowNoTargetSince = 0;
+            }
+            if (this.waitingForRespawn && count > 0) {
                 this.waitingForRespawn = false;
                 this.followLargestLegion();
             }
@@ -635,6 +647,7 @@ export class CameraFollowUI {
     public setFollow(armyId: string, armyName: string): void {
         this.clearPendingAutoSwitch();
         this.followedArmyId = armyId;
+        this.autoFollowNoTargetSince = 0;
 
         // [2026-06-23 Fix] 不要在玩家手动点选军团时，强行开启“无目标时自动跟随”的偏好。
         // this.autoFollowEnabled = true;
