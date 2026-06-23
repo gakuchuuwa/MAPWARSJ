@@ -847,7 +847,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_wushengguan', name: '武胜关', factionId: 'yiyang_d', lat: 31.83, lng: 114.01, type: 'pass', region: 'JIANGNAN', mirror: true, 
         note: '武胜关；义阳关隘', troops: 10000 },
     // ── 齐鲁关隘 ──
-    { id: 'city_mulingguan', name: '大岴', factionId: 'mushi', lat: 36.275259, lng: 118.660583, type: 'pass', region: 'CENTRAL', troops: 10000, note: '穆陵关齐长城要隘旧称大岴；旗号穆避§4.1防重' },
+    { id: 'city_mulingguan', name: '大岴', factionId: 'mushi', lat: 36.275259, lng: 118.660583, type: 'pass', region: 'CENTRAL', mirror: true, troops: 10000, note: '穆陵关齐长城要隘旧称大岴；旗号穆避§4.1防重' },
     { id: 'city_qingshiguan', name: '青石关', factionId: 'lai', lat: 36.246502, lng: 117.715759, type: 'pass', region: 'CENTRAL', troops: 10000,
         note: '青石关；莱州关隘',
     },

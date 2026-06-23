@@ -1380,6 +1380,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 10
+        },
+        "/assets/LINGNAN/luoping_zhangshijie.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/CENTRAL/tongma_liuang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/NORTH/mushi_muchong.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/STEPPE/wuzhou_liguang.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/NORTH/linyu_wusangui.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

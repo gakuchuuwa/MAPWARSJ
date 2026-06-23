@@ -389,7 +389,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     shuizhen: { generalId: 'shuizhen_oudaren', generalName: '区大任', portrait: '/assets/LINGNAN/shuizhen_oudaren.png' }, // 三菩·水真戍
   // ── 岭南/越南/台湾区 2026-06-18 ──
     ryukyu: { generalId: 'ryukyu_shangbazhi', generalName: '尚巴志', portrait: '/assets/LINGNAN/ryukyu_shangbazhi.png' },
-    luoping: { generalId: 'luoping_zhangshijie', generalName: '张世杰', portrait: '/assets/LINGNAN/chaozhou_d_zhangshijie.png' },
+    luoping: { generalId: 'luoping_zhangshijie', generalName: '张世杰', portrait: '/assets/LINGNAN/luoping_zhangshijie.png' },
     chaozhou_d: { generalId: 'chaozhou_d_zhangshijie', generalName: '张世杰', portrait: '/assets/LINGNAN/chaozhou_d_zhangshijie.png' },
     chendiaoyan: { generalId: 'chendiaoyan_chendiaoyan', generalName: '陈吊眼', portrait: '/assets/LINGNAN/chendiaoyan_chendiaoyan.png' },
     dengmaoqi: { generalId: 'dengmaoqi_dengmaoqi', generalName: '邓茂七', portrait: '/assets/LINGNAN/dengmaoqi_dengmaoqi.png' },
@@ -584,7 +584,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     pingyuan: { generalId: 'pingyuan_yanzhenqing', generalName: '颜真卿', portrait: '/assets/litang/pingyuan_yanzhenqing.png' }, // 平原·首倡义兵抗安史
     linhu: { generalId: 'linhu_zhaowulingwang', generalName: '赵雍', portrait: '/assets/xianqin/linhu_zhaowulingwang.png' }, // 偏头关·胡服骑射
     xianyu: { generalId: 'xianyu_hanxin', generalName: '韩信', portrait: '/assets/liuhan/xianyu_hanxin.png' }, // 井陉关·韩信
-    shizhao_d: { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/NORTH/shizhao_d_shihu.png' }, // 邢台·后赵武帝
+    shizhao_d: { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/HEXI/shizhao_d_shihu.png' }, // 邢台·后赵武帝
     loufan: { generalId: 'loufan_xuerengui', generalName: '薛仁贵', portrait: '/assets/NORTH/loufan_xuerengui.png' },
     shanrong: { generalId: 'shanrong_qihuangong_qi', generalName: '齐桓公', portrait: '/assets/NORTH/shanrong_qihuangong_qi.png' }, // 无终·伐山戎救燕
 
