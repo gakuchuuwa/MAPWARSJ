@@ -64,7 +64,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
   lai: { name: '齐关弩手', tier: 2 },           // 青石关·王师范屡败朱温（正史胜仗）
   yangshao: { name: '材官骑士', tier: 2 },     // 渑池·周勃大破秦军
-  dongxian: { name: '郯城戍卒', tier: 2 },     // 郯城·徐盛东吴宿将
+  dongxian: { name: '郯城戍卒', tier: 2 },     // 郯城·孙膑
   mi: { name: '朐城弩手', tier: 2 },         // 朐城·麋竺家兵
   yaozhou: { name: '耀州牙兵', tier: 2 },       // 金锁关·李茂贞岐军
   cai: { name: '雪夜突骑', tier: 1 },          // 新蔡·李愬雪夜入蔡州

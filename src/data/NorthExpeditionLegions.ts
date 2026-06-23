@@ -55,7 +55,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dongdan: { name: '东丹卫兵', tier: 2 },       // 敖东城·耶律倍东丹国
   xuan: { name: '大明北伐军', tier: 2 },          // 宣化·明九边宣府镇
   zhe_d: { name: '折家将兵', tier: 2 },         // 府谷·宋府州折氏十世将门
-  shanrong: { name: '山戎突骑', tier: 2 },      // 无终·齐桓公伐山戎
+  shanrong: { name: '山戎突骑', tier: 2 },      // 无终·田畴导曹操伐乌桓
   pingyuan: { name: '平原义军', tier: 2 },      // 平原·颜真卿首倡义兵（缺乏进攻胜仗，降T2）
   dada_ming: { name: '度辽营', tier: 2 },          // 河套·东汉度辽将军部
   

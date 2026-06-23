@@ -45,13 +45,14 @@ import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECT
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { audioManager, type AudioManager } from '../audio/AudioManager';
 import { gameLog } from '../utils/GameLogger';
-import { tickGameAppFrame } from './GameAppLoop';
+import { tickGameAppFrame, tickGameLogicOnly } from './GameAppLoop';
 import { exposeGameAppGlobals } from './GameAppExpose';
 import { wireGameAppCombatUiHooks, wireGeneralSkillCombat } from './boot/GameAppCombatHooks';
 import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameAppCityLoader';
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import {
     setupGameAppVisibilityHandler,
+    setupGameAppBackgroundHeartbeat,
     showGameAppErrorOverlay,
     showLoadingOverlay,
     hideLoadingOverlay,
@@ -295,9 +296,14 @@ export class GameApp {
                 }
             });
 
-            setupGameAppVisibilityHandler(
-                () => { this.lastFrameTime = performance.now(); },
-                (timestamp) => { tickGameAppFrame(this, timestamp); },
+            setupGameAppVisibilityHandler(() => {
+                this.lastFrameTime = performance.now();
+            });
+
+            // 心跳：rAF 被节流/停止时（切 tab、最小化、被其他窗口遮挡）持续推进游戏逻辑
+            setupGameAppBackgroundHeartbeat(
+                () => performance.now() - this.lastFrameTime,
+                (timestamp) => tickGameLogicOnly(this, timestamp),
             );
 
             void this.completeLateBoot();

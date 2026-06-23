@@ -1485,6 +1485,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": -18
+        },
+        "/assets/CENTRAL/jinan_tiexuan.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -52
+        },
+        "/assets/CENTRAL/kong_d_kongrong.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/CENTRAL/wang_d_wangdao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/CENTRAL/ruzhou_sunjian.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/NORTH/dizhou_wangyanzhang.png": {
+            "scale": 1,
+            "offsetX": 6,
+            "offsetY": 3
         }
     },
     "folderGuides": {

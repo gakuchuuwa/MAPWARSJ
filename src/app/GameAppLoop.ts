@@ -20,6 +20,32 @@ let lastFollowFlagPriorityKick = 0;
  * 单帧主循环（日历 / 事件 / 战斗 / AI / 招募 / 战斗 UI / 跟随镜头）。
  * 从 GameApp 抽出以便第二期继续拆分启动与编辑器绑定。
  */
+/**
+ * 仅推进游戏逻辑，不排队下一帧 rAF。
+ * 供后台心跳调用：rAF 被节流/停止时（切 tab、最小化、窗口被遮挡）持续推进推演。
+ * 不在此处调 requestAnimationFrame，避免 tab 恢复时积压回调爆发。
+ */
+export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
+    const rawDelta = (timestamp - app.lastFrameTime) / 1000;
+    const deltaTime = Math.min(rawDelta, 0.1);
+    app.lastFrameTime = timestamp;
+    try {
+        if (app.timeSystem.isGamePaused() || !app.cityManager) return;
+        const gameDelta = GameTime.toGameDelta(deltaTime, app.timeSystem.getSpeed());
+        app.timeSystem.update(gameDelta);
+        app.cityManager.updateYear(app.timeSystem.getYear());
+        if (app.historicalEventManager) {
+            app.historicalEventManager.updateLegions(gameDelta);
+            app.historicalEventManager.updateEvents(gameDelta);
+        }
+        if (app.combatSystem) app.combatSystem.update(gameDelta);
+        if (app.aiController) app.aiController.update();
+        if (app.recruitmentSystem) app.recruitmentSystem.update(gameDelta);
+    } catch (error) {
+        console.error('❌ Background Tick Error:', error);
+    }
+}
+
 export function tickGameAppFrame(app: GameApp, timestamp: number): void {
     const rawDelta = (timestamp - app.lastFrameTime) / 1000;
     const deltaTime = Math.min(rawDelta, 0.1);

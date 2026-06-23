@@ -14,42 +14,41 @@ export function yieldToBrowser(): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-/** 后台 tick 间隔（毫秒）。切到 Claude 等应用时浏览器节流 rAF，改用 setInterval 维持推演。 */
+/** 心跳间隔（毫秒）。rAF 被节流/停止时，setInterval 补刀推进游戏逻辑。 */
 const BACKGROUND_TICK_INTERVAL_MS = 200;
-
-let backgroundTickTimer: ReturnType<typeof setInterval> | null = null;
+/**
+ * rAF 超过此时长未更新 lastFrameTime，判定为被浏览器节流/停止。
+ * 60fps 下 lastFrameTime 约每 16ms 更新一次，100ms 阈值留有充足余量。
+ */
+const BACKGROUND_TICK_THRESHOLD_MS = 100;
 
 /**
- * 启动后台 setInterval tick。
- * tickFn 由调用方传入，负责推进游戏逻辑（不含渲染）。
+ * 启动全程运行的后台心跳：
+ *   - rAF 正常时（tab 可见、窗口在前）：lastFrameTime 每帧刷新，心跳跳过。
+ *   - rAF 被节流时（切 tab、最小化、被其他窗口遮挡）：心跳接管推进游戏逻辑。
+ *
+ * 注意：tickLogicFn 内部**不得**调用 requestAnimationFrame，
+ * 否则 tab 恢复时积压的回调会同帧爆发，导致双重推进。
  */
-function startBackgroundTick(tickFn: (timestamp: number) => void): void {
-    if (backgroundTickTimer !== null) return;
-    backgroundTickTimer = setInterval(() => {
-        tickFn(performance.now());
-    }, BACKGROUND_TICK_INTERVAL_MS);
-    gameLog('startup', `🌙 [GameApp] Tab hidden — background tick started (${BACKGROUND_TICK_INTERVAL_MS}ms)`);
-}
-
-function stopBackgroundTick(): void {
-    if (backgroundTickTimer === null) return;
-    clearInterval(backgroundTickTimer);
-    backgroundTickTimer = null;
-    gameLog('startup', '☀️ [GameApp] Tab visible — background tick stopped');
-}
-
-export function setupGameAppVisibilityHandler(
-    resetFrameTime: () => void,
-    backgroundTickFn?: (timestamp: number) => void,
+export function setupGameAppBackgroundHeartbeat(
+    getLastFrameAge: () => number,
+    tickLogicFn: (timestamp: number) => void,
 ): void {
+    setInterval(() => {
+        if (getLastFrameAge() > BACKGROUND_TICK_THRESHOLD_MS) {
+            tickLogicFn(performance.now());
+        }
+    }, BACKGROUND_TICK_INTERVAL_MS);
+}
+
+export function setupGameAppVisibilityHandler(resetFrameTime: () => void): void {
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
-            stopBackgroundTick();
+            // tab 恢复：重置帧时间，防止 rAF 重启时算出过大的 delta
             resetFrameTime();
             gameLog('startup', '👁️ [GameApp] Tab visible — resetting frame time');
         } else {
-            if (backgroundTickFn) startBackgroundTick(backgroundTickFn);
-            gameLog('startup', '🙈 [GameApp] Tab hidden — gameLoop will pause until restored');
+            gameLog('startup', '🙈 [GameApp] Tab hidden — heartbeat will keep logic running');
         }
     });
 }

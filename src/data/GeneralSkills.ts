@@ -145,7 +145,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     xianyu_hanxin: { generalId: 'xianyu_hanxin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 韩信背水一战
     shizhao_d_shihu: { generalId: 'shizhao_d_shihu', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 邺都：暴虐突袭
     unassigned_loufanwang: { generalId: 'unassigned_loufanwang', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 楼烦：亡部哀兵复起
-    shanrong_qihuangong_qi: { generalId: 'shanrong_qihuangong_qi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' }, // 尊王攘夷：伐山戎救燕远征
+    shanrong_tianchou: { generalId: 'shanrong_tianchou', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 无终·田畴导曹操奇袭乌桓
     xie_cj_d_xingfangde: { generalId: 'xie_cj_d_xingfangde', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 信州：垒山筑寨据守抗元
     wan_lidian: { generalId: 'wan_lidian', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 合肥：据城固守拒孙权
     huang_d_sunshuao: { generalId: 'huang_d_sunshuao', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 期思：筑芍陂兴水利
@@ -664,12 +664,12 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     wazhai_limi_wz: { generalId: 'wazhai_limi_wz', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 瓦岗夺兴洛仓
     jiaodong_tiandan: { generalId: 'jiaodong_tiandan', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_08' }, // 即墨守城五年·火牛破燕
     jibei_xuxuan_cm: { generalId: 'jibei_xuxuan_cm', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 赤眉丞相
-    qi_sunbin: { generalId: 'qi_sunbin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 围魏救赵·长驱直入（陆战奇谋，非水战）
+    qi_qihuangong: { generalId: 'qi_qihuangong', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' }, // 尊王攘夷·九合诸侯
     huaiyang_zhouyafu: { generalId: 'huaiyang_zhouyafu', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' }, // 坚壁不出平七国
     yingzhou_d_liuqi: { generalId: 'yingzhou_d_liuqi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 顺昌破金
     cao_d_caocao: { generalId: 'cao_d_caocao', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 官渡之战
     long2_weixiaokuan: { generalId: 'long2_weixiaokuan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' }, // 玉壁之战·气死高欢
-    dongxian_xusheng_wu: { generalId: 'dongxian_xusheng_wu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 吴将疑城
+    dongxian_sunbin: { generalId: 'dongxian_sunbin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 围魏救赵·马陵伏击
     mi_mizhu: { generalId: 'mi_mizhu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 资助刘备
     baibo_guotai_bb: { generalId: 'baibo_guotai_bb', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 白波军
     unassigned_geshuhan: { generalId: 'unassigned_geshuhan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 潼关守将

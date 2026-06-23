@@ -535,12 +535,12 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     jiaodong: { generalId: 'jiaodong_tiandan', generalName: '田单', portrait: '/assets/xianqin/jiaodong_tiandan.png' },
     jibei: { generalId: 'jibei_xuxuan_cm', generalName: '徐宣', portrait: '/assets/CENTRAL/jibei_xuxuan_cm.png' },
     jinan: { generalId: 'jinan_tiexuan', generalName: '铁铉', portrait: '/assets/CENTRAL/jinan_tiexuan.png' },
-    qi: { generalId: 'qi_sunbin', generalName: '孙膑', portrait: '/assets/xianqin/qi_sunbin.png' },
+    qi: { generalId: 'qi_qihuangong', generalName: '齐桓公', portrait: '/assets/xianqin/qi_qihuangong.png' },
     huaiyang: { generalId: 'huaiyang_zhouyafu', generalName: '周亚夫', portrait: '/assets/liuhan/huaiyang_zhouyafu.png' },
     yingzhou_d: { generalId: 'yingzhou_d_liuqi', generalName: '刘锜', portrait: '/assets/CENTRAL/yingzhou_d_liuqi.png' },
     cao_d: { generalId: 'cao_d_caocao', generalName: '曹操', portrait: '/assets/CENTRAL/cao_d_caocao.png' },
     long2: { generalId: 'long2_weixiaokuan', generalName: '韦孝宽', portrait: '/assets/CENTRAL/long2_weixiaokuan.png' },
-    dongxian: { generalId: 'dongxian_xusheng_wu', generalName: '徐盛', portrait: '/assets/CENTRAL/dongxian_xusheng_wu.png' },
+    dongxian: { generalId: 'dongxian_sunbin', generalName: '孙膑', portrait: '/assets/xianqin/dongxian_sunbin.png' },
     mi: { generalId: 'mi_mizhu', generalName: '麋竺', portrait: '/assets/CENTRAL/mi_mizhu.png' },
     baibo: { generalId: 'baibo_guotai_bb', generalName: '郭太', portrait: '/assets/panjun/baibo_guotai_bb.png' },
     ruzhou: { generalId: 'ruzhou_sunjian', generalName: '孙坚', portrait: '/assets/CENTRAL/ruzhou_sunjian.png' },
@@ -586,7 +586,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     xianyu: { generalId: 'xianyu_hanxin', generalName: '韩信', portrait: '/assets/liuhan/xianyu_hanxin.png' }, // 井陉关·韩信
     shizhao_d: { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/HEXI/shizhao_d_shihu.png' }, // 邢台·后赵武帝
     loufan: { generalId: 'loufan_xuerengui', generalName: '薛仁贵', portrait: '/assets/NORTH/loufan_xuerengui.png' },
-    shanrong: { generalId: 'shanrong_qihuangong_qi', generalName: '齐桓公', portrait: '/assets/NORTH/shanrong_qihuangong_qi.png' }, // 无终·伐山戎救燕
+    shanrong: { generalId: 'shanrong_tianchou', generalName: '田畴', portrait: '/assets/NORTH/shanrong_tianchou.png' }, // 无终·田畴导曹操伐乌桓
 
     // ── 北方关隘 2026-06-19 ──
     you: { generalId: 'you_wangba', generalName: '王霸', portrait: '/assets/NORTH/you_wangba.png' },
