@@ -1355,6 +1355,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 1,
             "offsetY": -39
+        },
+        "/assets/JAPAN/higo_d_juchiwuguang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/KOREA/gaogouli_yizhiwende.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

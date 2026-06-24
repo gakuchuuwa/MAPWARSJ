@@ -9,6 +9,7 @@
 
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { CITIES_V2 } from '../data/cities_v2';
 
 export class CameraFollowUI {
     // DOM Elements
@@ -636,12 +637,38 @@ export class CameraFollowUI {
         if (text) text.textContent = `🎥 军团阵亡，${sec} 秒后切换视角…`;
     }
 
+    private formatFollowBannerText(army: any, fallbackName: string): string {
+        let label = army.name || fallbackName;
+        
+        let generalName = '';
+        if (army.generalId) {
+            const generalRecord = getGeneralRecordByGeneralId(army.generalId);
+            if (generalRecord) generalName = generalRecord.generalName;
+        }
+        
+        let targetCityName = '';
+        if (army.expeditionTargetCityId) {
+            const targetCity = CITIES_V2.find((c: any) => c.id === army.expeditionTargetCityId);
+            if (targetCity) targetCityName = targetCity.name;
+        }
+
+        if (targetCityName) {
+            if (generalName) {
+                return `${generalName}率领${label}远征${targetCityName}`;
+            } else {
+                return `${label}远征${targetCityName}`;
+            }
+        }
+        
+        return label;
+    }
+
     private restoreFollowBannerName(): void {
         if (!this.followedArmyId || !this.getArmiesFn) return;
         const army = this.getArmiesFn().find((a) => a.id === this.followedArmyId);
         if (!army) return;
         const text = document.getElementById('follow-banner-text');
-        if (text) text.textContent = `🎥 正在跟随：${army.name || army.id}`;
+        if (text) text.textContent = `🎥 正在跟随：${this.formatFollowBannerText(army, army.id)}`;
     }
 
     public setFollow(armyId: string, armyName: string): void {
@@ -653,8 +680,16 @@ export class CameraFollowUI {
         // this.autoFollowEnabled = true;
         // if (this.autoFollowCheckbox) this.autoFollowCheckbox.checked = true;
 
+        let label = armyName;
+        if (this.getArmiesFn) {
+            const army = this.getArmiesFn().find((a) => a.id === armyId);
+            if (army) {
+                label = this.formatFollowBannerText(army, armyName);
+            }
+        }
+
         const text = document.getElementById('follow-banner-text');
-        if (text) text.textContent = `🎥 正在跟随：${armyName}`;
+        if (text) text.textContent = `🎥 正在跟随：${label}`;
         if (this.followBanner) this.followBanner.style.display = 'flex';
         this.syncFollowedHighlight();
 
