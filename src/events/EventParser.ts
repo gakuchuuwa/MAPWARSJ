@@ -1904,7 +1904,7 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_wumeng', name: '乌蒙山', factionId: 'wuman', lat: 26.49764, lng: 103.897705, type: 'pass', region: 'DIANQIAN', troops: 10000,
         note: '乌蒙山；乌蛮关隘',
     },
-    { id: 'city_leigong', name: '雷公山', factionId: 'dongzu', lat: 26.573781, lng: 108.091736, type: 'pass', region: 'LINGNAN', troops: 10000,
+    { id: 'city_leigong', name: '雷公山', factionId: 'dongzu', lat: 26.573781, lng: 108.091736, type: 'pass', region: 'DIANQIAN', troops: 10000,
         note: '雷公山；侗族关隘',
     },
     {
@@ -2861,7 +2861,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_helate', name: '赫拉特', factionId: 'huluo', lat: 34.3419, lng: 62.2031, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, note: '呼罗珊四大名城；阿布·穆斯林阿拔斯革命策源地' },
     { id: 'city_nishabuer', name: '尼沙布尔', factionId: 'aba', lat: 36.2133, lng: 58.7958, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, note: '萨珊阿巴尔沙赫尔省治；沙普尔一世敕建' },
     { id: 'city_gaofu', name: '迦毕试', factionId: 'jibin', lat: 34.5500, lng: 69.2000, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 1,
-        note: '迦毕试/喀布尔；罽宾（Kapisa）王治，丘就却统一五部贵霜后东进兴都库什重镇',
+        note: '迦毕试/喀布尔；罽宾（Kapisa）王治，迦腻色迦夏都迦毕试，贵霜帝国极盛',
     },
     { id: 'city_fanyanna', name: '巴米扬', factionId: 'fanyanna', lat: 34.8659, lng: 67.9807, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
         note: '巴米扬；大唐西域记',

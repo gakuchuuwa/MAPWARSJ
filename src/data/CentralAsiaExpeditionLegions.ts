@@ -18,7 +18,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   seljuq: { name: '古拉姆禁卫', tier: 2 },     // 木鹿·桑贾尔苏丹古拉姆近卫（卡特万惨败，降T2）
   xiliao: { name: '斡耳朵亲卫', tier: 0 },     // 区T0锚·虎思·耶律大石斡耳朵亲卫
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
-  guishuang: { name: '大月氏兵', tier: 2 },    // 贵霜帝国主力（升T2）
+  guishuang: { name: '贵霜铁骑', tier: 1 },    // 蓝氏城·贵霜帝国铁骑
   muer: { name: '花剌子模骑', tier: 2 }, // 马尔夫鲁德·穆尔加布河畔花剌子模戍卫
   xijue: { name: '郅支城坚兵', tier: 2 },
   tujishi: { name: '怛罗斯突骑', tier: 2 },
@@ -30,7 +30,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   zhaowu: { name: '忽毡城武士', tier: 3 },
   yada: { name: '悉万斤重甲', tier: 3 },
   jiazini: { name: '伽色尼禁卫', tier: 2 },       // 哥疾宁·马哈茂德古拉姆
-  jibin: { name: '贵霜战象', tier: 2 },        // 迦毕试·丘就却统一五部贵霜后象兵破城
+  jibin: { name: '犍陀罗骑', tier: 2 },        // 迦毕试·迦腻色迦犍陀罗骑兵
   fanyanna: { name: '梵衍那僧兵', tier: 2 },      // 巴米扬·梵衍那王率僧兵御大食
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
   maer_d: { name: '骆驼突骑', tier: 2 },        // 彭迪·萨珊东北边境骆驼骑兵

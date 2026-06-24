@@ -211,7 +211,7 @@ export class GameConfig {
     /** 异文化占领地起义复国（RebellionSystem） */
     static REBELLION = {
         /** 据点失陷后至少再经过的游戏年数，方可被选为复国目标 */
-        MIN_YEARS_AFTER_FALL: 1,
+        MIN_YEARS_AFTER_FALL: 3,
     } as const;
 }
 

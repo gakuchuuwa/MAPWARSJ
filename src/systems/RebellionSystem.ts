@@ -1,6 +1,6 @@
 import { CityManager } from '../world/CityManager';
 import { TimeSystem, Season } from '../app/TimeSystem';
-import { getCityRegion, REGION_LABELS, RegionType } from './RegionSystem';
+import { getCityRegion, REGION_LABELS, REGION_ORDER, RegionType, isRegionCenter } from './RegionSystem';
 import { gameLog } from '../utils/GameLogger';
 import { City } from '../types/core';
 import { Army } from '../legion/Army';
@@ -21,6 +21,9 @@ export class RebellionSystem {
     private legionManager: LegionManager | null;
     private siegeManager: SiegeManager | null;
     private restorationReporter: ((report: RestorationReport) => void) | null = null;
+
+    /** 14文化轮流复国的当前下标（指向 REGION_ORDER） */
+    private cultureRotationIndex: number = 0;
 
     /** 城市ID → 开局原生势力 */
     private initialFactionMap: Map<string, string> = new Map();
@@ -73,21 +76,23 @@ export class RebellionSystem {
         return this.factionNativeRegionMap.get(factionId) ?? null;
     }
 
-    /** 并列最强文化时随机抽一个 */
-    private pickDominantCulture(cultureCityCount: Map<RegionType, number>): RegionType | null {
-        if (cultureCityCount.size === 0) return null;
+    /** 找单一最大势力（并列时随机选一个） */
+    private pickLargestFaction(cities: City[]): { factionId: string; count: number } | null {
+        const factionCityCount = new Map<string, number>();
+        cities.forEach((city) => {
+            if (!city.factionId || city.factionId === 'panjun') return;
+            factionCityCount.set(city.factionId, (factionCityCount.get(city.factionId) ?? 0) + 1);
+        });
+        if (factionCityCount.size === 0) return null;
 
         let maxCount = 0;
-        cultureCityCount.forEach((count) => {
-            if (count > maxCount) maxCount = count;
-        });
+        factionCityCount.forEach((c) => { if (c > maxCount) maxCount = c; });
 
-        const tied: RegionType[] = [];
-        cultureCityCount.forEach((count, region) => {
-            if (count === maxCount) tied.push(region);
-        });
+        const tied: string[] = [];
+        factionCityCount.forEach((c, id) => { if (c === maxCount) tied.push(id); });
 
-        return tied[Math.floor(Math.random() * tied.length)] ?? null;
+        const factionId = tied[Math.floor(Math.random() * tied.length)]!;
+        return { factionId, count: maxCount };
     }
 
     private getCityPos(cityId: string): { lat: number; lng: number } | null {
@@ -152,76 +157,88 @@ export class RebellionSystem {
     }
 
     /**
-     * 在合格起义据点中，优先选「原主文化区当前无任何据点」的灭国复国目标。
+     * 从合格起义据点中按「14文化轮流 + 兵力/城级优先」选出复国目标。
+     *
+     * 流程：
+     *   1. 将候选城按地理文化区分组
+     *   2. 从当前轮次文化（cultureRotationIndex）开始顺序查找第一个有候选的文化区
+     *   3. 在该文化区内按优先级选最优城：兵力↓ → 大城 → 文化中心 → 中城
+     *   4. 旋转下标前进到下一个文化，留给下次复国使用
      */
-    private pickRebellionTarget(
-        validTargetCities: City[],
-        cultureCityCount: Map<RegionType, number>
-    ): { city: City; priorityExtinctCulture: RegionType | null } {
-        const extinctCultureTargets: City[] = [];
-
+    private pickRebellionTarget(validTargetCities: City[]): City {
+        // 按地理区分组
+        const byRegion = new Map<RegionType, City[]>();
         for (const city of validTargetCities) {
-            const originalFactionId = this.initialFactionMap.get(city.id);
-            if (!originalFactionId) continue;
-            const originalCulture = this.getFactionNativeRegion(originalFactionId);
-            if (!originalCulture) continue;
-            if ((cultureCityCount.get(originalCulture) ?? 0) === 0) {
-                extinctCultureTargets.push(city);
-            }
+            const region = getCityRegion(city);
+            if (!byRegion.has(region)) byRegion.set(region, []);
+            byRegion.get(region)!.push(city);
         }
 
-        const pool = extinctCultureTargets.length > 0 ? extinctCultureTargets : validTargetCities;
-        const city = pool[Math.floor(Math.random() * pool.length)]!;
-        const originalCulture = this.getFactionNativeRegion(
-            this.initialFactionMap.get(city.id)!
-        );
+        // 从当前轮次开始找第一个有候选的文化区
+        for (let i = 0; i < REGION_ORDER.length; i++) {
+            const idx = (this.cultureRotationIndex + i) % REGION_ORDER.length;
+            const region = REGION_ORDER[idx]!;
+            const candidates = byRegion.get(region);
+            if (!candidates || candidates.length === 0) continue;
 
-        const priorityExtinctCulture =
-            extinctCultureTargets.length > 0 && originalCulture ? originalCulture : null;
+            // 推进下标，下次从这个文化的下一个开始
+            this.cultureRotationIndex = (idx + 1) % REGION_ORDER.length;
 
-        return { city, priorityExtinctCulture };
+            return this.bestCityInPool(candidates);
+        }
+
+        // 兜底（理论上 validTargetCities 非空时不会到达）
+        return this.bestCityInPool(validTargetCities);
+    }
+
+    /** 在池内按「兵力↓ → 大城 → 文化中心 → 中城」选最优城 */
+    private bestCityInPool(cities: City[]): City {
+        const typeScore = (city: City): number => {
+            if (city.type === 'big_city') return 3;
+            if (isRegionCenter(city.id)) return 2;
+            if (city.type === 'medium_city') return 1;
+            return 0;
+        };
+        return [...cities].sort((a, b) => {
+            const troopsDiff = (b.troops ?? 0) - (a.troops ?? 0);
+            if (troopsDiff !== 0) return troopsDiff;
+            return typeScore(b) - typeScore(a);
+        })[0]!;
     }
 
     private executeSeasonalRebellion(season: Season, year: number): void {
         const cities = this.cityManager.getCities();
         if (cities.length === 0) return;
 
-        const cultureCityCount = new Map<RegionType, number>();
+        // ── 1. 找单一最大势力 ──
+        const largest = this.pickLargestFaction(cities);
+        if (!largest) return;
+        const { factionId: largestFactionId, count: largestCount } = largest;
+        const largestFactionName = this.cityManager.getFactionName(largestFactionId);
 
-        cities.forEach((city) => {
-            if (!city.factionId || city.factionId === 'panjun') return;
-            const ownerNativeRegion = this.getFactionNativeRegion(city.factionId);
-            if (!ownerNativeRegion) return;
-            cultureCityCount.set(
-                ownerNativeRegion,
-                (cultureCityCount.get(ownerNativeRegion) ?? 0) + 1
-            );
-        });
-
-        const dominantCulture = this.pickDominantCulture(cultureCityCount);
-        if (!dominantCulture) return;
-
-        const dominantCount = cultureCityCount.get(dominantCulture) ?? 0;
-        const dominantLabel = REGION_LABELS[dominantCulture] ?? dominantCulture;
-
-        // ── 2026-06-12 阶梯式季度复国 ──
+        // ── 2. 阶梯式季度触发（以最大势力城数为准）──
+        // ≥400：春夏秋冬（4次/年）
+        // ≥300：春夏秋（3次/年）
+        // ≥200：春秋（2次/年）
+        // ≥100：仅春（1次/年）
+        // <100：不触发
         let shouldRebel = false;
-        if (dominantCount >= 160) {
-            shouldRebel = true; // 春、夏、秋、冬皆触发（4次/年）
-        } else if (dominantCount >= 120) {
-            shouldRebel = (season !== Season.冬); // 春、夏、秋触发（3次/年）
-        } else if (dominantCount >= 80) {
-            shouldRebel = (season === Season.春 || season === Season.秋); // 春、秋触发（2次/年）
-        } else if (dominantCount >= 40) {
-            shouldRebel = (season === Season.春); // 仅春季触发（1次/年）
+        if (largestCount >= 400) {
+            shouldRebel = true;
+        } else if (largestCount >= 300) {
+            shouldRebel = (season !== Season.冬);
+        } else if (largestCount >= 200) {
+            shouldRebel = (season === Season.春 || season === Season.秋);
+        } else if (largestCount >= 100) {
+            shouldRebel = (season === Season.春);
         }
 
-        if (!shouldRebel) {
-            return;
-        }
+        if (!shouldRebel) return;
 
-        // [2026-06-12 性能优化] 军团数据预计算一次（替代每城重扫全部军团的 O(候选×军团)）：
-        //   home/target → Set（O(1) 查），位置 → 数组（紧凑数值距离循环）。结果与 hasLegionsAtCity 一致。
+        // ── 3. 最大势力的原生文化区（用于排除本文化据点）──
+        const largestNativeRegion = this.getFactionNativeRegion(largestFactionId);
+
+        // ── 4. 军团数据预计算（O(1) 城市查询）──
         const tiedCityIds = new Set<string>();
         const legionPositions: Array<{ lat: number; lng: number }> = [];
         if (this.legionManager) {
@@ -244,33 +261,31 @@ export class RebellionSystem {
             return false;
         };
 
+        // ── 5. 筛选候选据点 ──
+        // 条件：由最大势力占领 + 非本文化地理区 + 已易主 + 冷却到期 + 无军团驻守
         const validTargetCities: City[] = [];
         let blockedByLegions = 0;
         let blockedByCooldown = 0;
 
         cities.forEach((city) => {
-            if (!city.factionId || city.factionId === 'panjun') return;
+            if (city.factionId !== largestFactionId) return;
 
-            const ownerNativeRegion = this.getFactionNativeRegion(city.factionId);
-            if (ownerNativeRegion !== dominantCulture) return;
-
+            // 本文化据点不复国
             const cityGeoRegion = getCityRegion(city);
-            if (cityGeoRegion === dominantCulture) return;
+            if (largestNativeRegion && cityGeoRegion === largestNativeRegion) return;
 
+            // 必须已易主（非原归属势力）
             const originalFactionId = this.initialFactionMap.get(city.id);
-            if (!originalFactionId) return;
-            if (city.factionId === originalFactionId) return;
+            if (!originalFactionId || city.factionId === originalFactionId) return;
 
             if (this.isRestorationCooldownActive(city, year)) {
                 blockedByCooldown++;
                 return;
             }
-
             if (cityBlockedByLegion(city)) {
                 blockedByLegions++;
                 return;
             }
-
             validTargetCities.push(city);
         });
 
@@ -282,27 +297,21 @@ export class RebellionSystem {
                       ? `可起义据点均在失陷冷却期内（${blockedByCooldown}座，须失陷满${GameConfig.REBELLION.MIN_YEARS_AFTER_FALL}游戏年），本轮跳过`
                       : blockedByLegions > 0
                         ? `可起义据点均仍有军团驻守或正被围攻（${blockedByLegions}座），本轮跳过`
-                        : '但无无主异文化占领据点可起义，本轮跳过';
+                        : '但无异文化占领据点可起义，本轮跳过';
             gameLog(
                 'world',
-                `📜 【复国】${this.formatYear(year)}：${dominantLabel}文化扩张极度强势（总计${dominantCount}城），${skipReason}。`
+                `📜 【复国】${this.formatYear(year)}：${largestFactionName}（${largestCount}城）扩张强势，${skipReason}。`
             );
             return;
         }
 
-        const { city: targetCity, priorityExtinctCulture } = this.pickRebellionTarget(
-            validTargetCities,
-            cultureCityCount
-        );
+        // ── 6. 按优先级选出最优复国目标（兵力→大城→文化中心→中城）──
+        const targetCity = this.pickRebellionTarget(validTargetCities);
         const originalFactionId = this.initialFactionMap.get(targetCity.id)!;
         const previousFactionId = targetCity.factionId;
         const cityGeoLabel = REGION_LABELS[getCityRegion(targetCity)] ?? getCityRegion(targetCity);
-        const extinctLabel = priorityExtinctCulture
-            ? REGION_LABELS[priorityExtinctCulture] ?? priorityExtinctCulture
-            : null;
 
         this.evictOccupierForces(targetCity.id, previousFactionId);
-
         this.cityManager.updateCity(
             targetCity.id,
             {
@@ -312,11 +321,10 @@ export class RebellionSystem {
             { skipCaptureLog: true }
         );
 
-        const priorityNote = extinctLabel ? `灭国文化【${extinctLabel}】优先，` : '';
         gameLog(
             'world',
-            `⚔️ 【复国】${this.formatYear(year)}：${dominantLabel}文化扩张过快，${priorityNote}` +
-                `${cityGeoLabel}【${targetCity.name}】起义，` +
+            `⚔️ 【复国】${this.formatYear(year)}：${largestFactionName}（${largestCount}城）扩张过快，` +
+                `${cityGeoLabel}【${targetCity.name}】（${targetCity.troops ?? 0}兵）起义，` +
                 `${this.cityManager.getFactionName(previousFactionId)} 被驱逐，` +
                 `${this.cityManager.getFactionName(originalFactionId)} 复国！`
         );

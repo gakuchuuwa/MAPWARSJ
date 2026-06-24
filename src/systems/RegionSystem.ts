@@ -153,10 +153,10 @@ type Polygon = Point[];
 // 14 区环线标准（主人 2026-06-11 定稿，zoom=6 绘线唯一来源）:
 //   1 中原  汉中→襄阳→广陵→威海卫→肤施→皋兰
 //   2 北方  威海卫→肤施→归化→襄平
-//   3 东北  襄平→饶乐水→宗谷→白主→诺托罗→囊哈儿→奴儿干→雅克萨→格尔必齐→尼布楚
+//   3 东北  襄平→宗谷→白主→诺托罗→囊哈儿→奴儿干→雅克萨→格尔必齐→尼布楚
 //   4 朝鲜  襄平→威海卫→广陵→星主厅→宗谷
-//   5 日本  钓鱼岛→宫古岛→江户→根城→宗谷→星主厅
-//   6 草原  襄平→归化→哈密→弓月→也迷离→特尔门→乌布萨泊→贝加尔湖畔→赤塔→尼布楚
+//   5 日本  钓鱼岛→宫古岛→首里→江户→根城→宗谷→星主厅
+//   6 草原  襄平→归化→哈密卫→弓月城→塔城→乌布萨泊→贝加尔→赤塔→尼布楚
 //   7 河西  皋兰→姑臧→卡克里克→哈密→归化→肤施
 //   8 川蜀  襄阳→临烝→石门关→打箭炉→皋兰→汉中
 //   9 南方  广陵→襄阳→临烝→牡丹社→钓鱼岛城→星主厅
@@ -164,17 +164,17 @@ type Polygon = Point[];
 //  11 滇缅  打箭炉→大研→加德满都→勃固→直通→阿瑜陀耶→吴哥→石门关
 //  12 青藏  加德满都→护密城→塔什库尔干→龙木错→卡克里克→姑臧→皋兰→打箭炉→大研
 //  13 中亚  塔什库尔干→护密城→马鲁鲁德→彭迪→梅尔夫→玉龙杰赤→养吉干→弓月
-//  14 西域  哈密→扜泥城→卡克里克→龙木错→塔什库尔干→弓月（文化西域）
+//  14 西域  哈密→楼兰→卡克里克→龙木错→石头城→弓月
 //
 // 绘线: RegionBoundaryLayer @ zoom=6（REGION_BOUNDARY_ZOOM），共 14 区
 // ============================================================
 export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] = [
     { region: 'CENTRAL', cityIds: ['city_hanzhong', 'city_xiangyang', 'city_yangzhou', 'city_wendeng', 'city_fushi', 'city_lanzhou'] },
     { region: 'NORTH', cityIds: ['city_wendeng', 'city_fushi', 'city_guihua', 'city_liaoyang'] },
-    { region: 'NORTHEAST', cityIds: ['city_liaoyang', 'city_raoleshui', 'city_zonggu', 'city_baizhu', 'city_nuotuoluo', 'city_nanghar', 'city_nuergan', 'city_yakesa', 'city_geerbiqi', 'city_nibuchu'] },
+    { region: 'NORTHEAST', cityIds: ['city_liaoyang', 'city_zonggu', 'city_baizhu', 'city_nuotuoluo', 'city_nanghar', 'city_nuergan', 'city_yakesa', 'city_geerbiqi', 'city_nibuchu'] },
     { region: 'KOREA', cityIds: ['city_liaoyang', 'city_wendeng', 'city_yangzhou', 'city_xingzhuting', 'city_zonggu'] },
-    { region: 'JAPAN', cityIds: ['city_diaoyudao', 'city_gugudao', 'city_edo', 'city_genjo', 'city_zonggu', 'city_xingzhuting'] },
-    { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_emil', 'city_temermen', 'city_wubusabo', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu'] },
+    { region: 'JAPAN', cityIds: ['city_diaoyudao', 'city_gugudao', 'city_shuri', 'city_edo', 'city_genjo', 'city_zonggu', 'city_xingzhuting'] },
+    { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_tacheng', 'city_wubusabo', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu'] },
     { region: 'HEXI', cityIds: ['city_lanzhou', 'city_wuwei', 'city_ruoqiang', 'city_hamiwei', 'city_guihua', 'city_fushi'] },
     { region: 'BASHU', cityIds: ['city_xiangyang', 'city_linzheng', 'city_shimenguan', 'city_dajianlu', 'city_lanzhou', 'city_hanzhong'] },
     { region: 'JIANGNAN', cityIds: ['city_yangzhou', 'city_xiangyang', 'city_linzheng', 'city_mudan', 'city_diaoyudao', 'city_xingzhuting'] },

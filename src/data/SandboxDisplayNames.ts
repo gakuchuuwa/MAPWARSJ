@@ -39,7 +39,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhancheng': '占城',
     'monong': '墨侬',
     'shuizhen': '水真',
-    'yueyi': '夷',
+    'yueyi': '越嶲',
     'wala': '瓦剌',
     'wuliangha': '兀良哈',
     'dingling': '丁零',

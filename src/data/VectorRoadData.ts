@@ -9248,31 +9248,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "临邛-成都",
-                type: "road",
-                id: "road_city_linqiong_city_chengdu_1780153053668",
-                startConnection: "city_linqiong",
-                endConnection: "city_chengdu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [103.4619, 30.4149],
-                    [103.625204, 30.395397],
-                    [103.76131, 30.395397],
-                    [103.831425, 30.403646],
-                    [103.860296, 30.428393],
-                    [103.880918, 30.457264],
-                    [103.880918, 30.48201],
-                    [103.918038, 30.539752],
-                    [103.93866, 30.585121],
-                    [104.07, 30.57],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "西都城-华闾",
                 type: "road",
                 id: "road_city_xidu_city_hoalu_1780153279843",
@@ -32944,6 +32919,29 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [121.33547321947384, 29.929337687862603],
                     [121.33547321947384, 29.912839998995416],
                     [121.54, 29.87],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "临邛-成都",
+                type: "road",
+                id: "road_city_linqiong_city_chengdu_1782284323710",
+                startConnection: "city_linqiong",
+                endConnection: "city_chengdu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [103.4619, 30.4149],
+                    [103.51384482069525, 30.576871975899685],
+                    [103.61283095389838, 30.60986735363406],
+                    [103.68294613158392, 30.64286273136843],
+                    [103.78605668700384, 30.679982531319602],
+                    [103.84379859803899, 30.69648022018679],
+                    [103.88916724242375, 30.655235998018824],
+                    [104.07, 30.57],
                 ]
             }
         },

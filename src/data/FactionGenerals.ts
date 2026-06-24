@@ -269,7 +269,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     tujishi: { generalId: 'tujishi_sulukehan', generalName: '苏禄', portrait: '/assets/WESTERN/tujishi_sulukehan.png' },
     xiliao: { generalId: 'xiliao_yelvdashi', generalName: '耶律大石', portrait: '/assets/WESTERN/xiliao_yelvdashi.png' },
     jiazini: { generalId: 'jiazini_mahamaode', generalName: '马哈茂德', portrait: '/assets/CENTRAL_ASIA/jiazini_mahamaode.png' },
-    jibin: { generalId: 'jibin_qiujiuque', generalName: '丘就却', portrait: '/assets/CENTRAL_ASIA/jibin_qiujiuque.png' },
+    jibin: { generalId: 'jibin_jianisejia', generalName: '迦腻色迦', portrait: '/assets/CENTRAL_ASIA/jibin_jianisejia.png' },
         xijue: { generalId: 'xijue_ganshouchang', generalName: '甘延寿', portrait: '/assets/CENTRAL_ASIA/xijue_ganshouchang.png' },
     // 养吉干·咸海 / 真珠河·乌护 宁缺毋滥
 
@@ -664,7 +664,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     // ting 已迁 wenzhou，王潮（闽国）归福建系
     shuntian: { generalId: 'shuntian_linshuangwen', generalName: '林爽文', portrait: '/assets/JIANGNAN/shuntian_linshuangwen.png' },
     chunshen: { generalId: 'chunshen_huangxie', generalName: '黄歇', portrait: '/assets/xianqin/chunshen_huangxie.png' },
-    mi_chu: { generalId: 'mi_chu_chuzhuangwang', generalName: '熊旅', portrait: '/assets/JIANGNAN/mi_chu_chuzhuangwang.png' },
+    mi_chu: { generalId: 'mi_chu_chuzhuangwang', generalName: '熊旅', portrait: '/assets/xianqin/mi_chu_chuzhuangwang.png' },
     shanyue: { generalId: 'shanyue_sunce', generalName: '孙策', portrait: '/assets/JIANGNAN/shanyue_sunce.png' },
     she_ethnic: { generalId: 'she_ethnic_leiwanxing', generalName: '雷万兴', portrait: '/assets/JIANGNAN/she_ethnic_leiwanxing.png' },
     wang_s: { generalId: 'wang_s_wanghua', generalName: '汪华', portrait: '/assets/JIANGNAN/wang_s_wanghua.png' },
