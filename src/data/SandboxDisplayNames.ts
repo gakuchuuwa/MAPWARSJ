@@ -81,7 +81,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xiongnu': '匈奴',
 'xianbei': '鲜卑',
     'jie': '羯',
-    'beidi': '北地',
+    'beidi': '羌',
     'tuoba': '拓跋',
     'yuwen': '宇文',
 'liang_d': '梁',

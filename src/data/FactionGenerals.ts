@@ -475,7 +475,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     jingmen: { generalId: 'jingmen_zhaoyun', generalName: '赵云', portrait: '/assets/NORTH/jingmen_zhaoyun.png' },
     chenzhou_d: { generalId: 'chenzhou_d_zhanggao', generalName: '张镐', portrait: '/assets/BASHU/chenzhou_d_zhanggao.png' },
       xiqin: { generalId: 'xiqin_xuerengao', generalName: '薛仁杲', portrait: '/assets/HEXI/xiqin_xuerengao.png' },
-    beidi: { generalId: 'beidi_sunang', generalName: '孙卬', portrait: '/assets/HEXI/beidi_sunang.png' },
+    beidi: { generalId: 'beidi_yaochang', generalName: '姚苌', portrait: '/assets/CENTRAL/beidi_yaochang.png' },
     baiyang: { generalId: 'baiyang_mengtian', generalName: '蒙恬', portrait: '/assets/HEXI/baiyang_mengtian.png' },
     qianzhong: { generalId: 'qianzhong_wubayue', generalName: '吴八月', portrait: '/assets/BASHU/qianzhong_wubayue.png' }, // 芷江·乾嘉苗民起义
     dangchang: { generalId: 'dangchang_liangmiding', generalName: '梁弥定', portrait: '/assets/BASHU/dangchang_liangmiding.png' }, // 合川·宕昌末代王

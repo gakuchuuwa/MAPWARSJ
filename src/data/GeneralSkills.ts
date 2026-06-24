@@ -132,6 +132,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     qin_wangben: { generalId: 'qin_wangben', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_01' }, // S①兵贵神速 + ③侵掠如火（闪击燕齐，水淹大梁）
     qin_mengtian: { generalId: 'qin_mengtian', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // S④长驱直入 + ①以逸待劳（北击匈奴，驻守长城）
     qin_yingji: { generalId: 'qin_yingji', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_07' }, // S⑦因粮于敌 + ④不战而屈（君主全能调度）
+    beidi_yaochang: { generalId: 'beidi_yaochang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_02' }, // S②攻城拔寨 + ②避实击虚（擒杀苻坚，攻克长安）
     unassigned_simacuo: { generalId: 'unassigned_simacuo', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 前316年灭蜀苴巴
     tang_lishimin: { generalId: 'tang_lishimin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 虎牢关轻骑冲阵
     unassigned_direnjie: { generalId: 'unassigned_direnjie', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 退突厥：间谍离间后反击

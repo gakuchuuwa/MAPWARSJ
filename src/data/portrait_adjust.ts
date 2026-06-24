@@ -599,7 +599,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/HEXI/chijin_qiewangshijia.png": {
             "scale": 0.92,
             "offsetX": 0,
-            "offsetY": 2
+            "offsetY": -31
         },
         "/assets/xianqin/9649709f-e69e-4204-9504-8062a0dfe916.png": {
             "scale": 1.1,
@@ -1427,7 +1427,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/WESTERN/anduo.png": {
-            "scale": 0.96,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -9
         },
@@ -1540,6 +1540,71 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 15,
             "offsetY": 17
+        },
+        "/assets/DIANQIAN/dali_duansiping.png": {
+            "scale": 0.94,
+            "offsetX": 3,
+            "offsetY": 13
+        },
+        "/assets/TIBET/206f97da-3d4f-4007-a2b9-b32f1a1a92e9.png": {
+            "scale": 1.2,
+            "offsetX": 11,
+            "offsetY": -31
+        },
+        "/assets/WESTERN/367fc820-6671-4afe-80d1-46043d3ac57e.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -36
+        },
+        "/assets/CENTRAL_ASIA/b3ae318a-bdaf-49f7-8bc0-e088e15ad87c.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -27
+        },
+        "/assets/CENTRAL_ASIA/d99729ae-3b62-4336-8a80-450022490d6e.png": {
+            "scale": 1.06,
+            "offsetX": 16,
+            "offsetY": -17
+        },
+        "/assets/CENTRAL_ASIA/aba_shapuer.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": -27
+        },
+        "/assets/NORTHEAST/aola_menglielun.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/NORTHEAST/fuyu_weichoutai.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/NORTHEAST/dajin_wanyanaguda.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/NORTHEAST/72a3371c-29e6-4319-bbd7-1ed93aedb2b3.png": {
+            "scale": 0.94,
+            "offsetX": 6,
+            "offsetY": -23
+        },
+        "/assets/TIBET/ced868fb-1d60-44d4-8d8e-a5b67a8a1109.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -32
+        },
+        "/assets/CENTRAL/37f49d28-6658-49eb-b2aa-ec1d3f27df89.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/xianqin/dongxian_sunbin.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -22
         }
     },
     "folderGuides": {

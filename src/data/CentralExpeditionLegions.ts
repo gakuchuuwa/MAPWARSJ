@@ -58,6 +58,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 汴河戍旅除名（无此编制）
   yuzhou: { name: '雍丘锐士', tier: 1 },     // 雍丘·祖逖中流击楢
   xin: { name: '上党轻骑', tier: 2 },          // 长子·王猛潞川破前燕
+  beidi: { name: '北地羌骑', tier: 1 },        // 萧关·姚苌岭北占据
   yingzhou_d: { name: '选锋军', tier: 2 },       // 顺昌·南宋选锋
   // 北门飞骑除名
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）

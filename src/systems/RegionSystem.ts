@@ -35,9 +35,10 @@ export type RegionType =
 
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
-    'CENTRAL', 'NORTH', 'JIANGNAN', 'LINGNAN',
-    'BASHU', 'DIANQIAN', 'HEXI', 'WESTERN', 'TIBET',
-    'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA'
+    'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
+    'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN',
+    'CENTRAL_ASIA', 'NORTHEAST', 'TIBET', 'WESTERN',
+    'KOREA', 'DIANQIAN'
 ];
 
 // [UI] Display labels (Chinese + English code)

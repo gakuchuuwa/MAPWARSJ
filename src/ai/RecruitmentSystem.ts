@@ -240,6 +240,13 @@ export class RecruitmentSystem {
         const candidates = this.collectSpawnCandidates(cities);
         if (candidates.length === 0) return [];
 
+        // 各区已有活跃军团数
+        const regionLegionCounts = this.getActiveLegionRegions();
+        // 14 区是否全有至少 1 支（全有则允许第二轮）
+        const allRegionsHaveLegion = REGION_ORDER.every(
+            (r) => (regionLegionCounts.get(r) ?? 0) >= 1
+        );
+
         // 14 文化区轮流出兵：从上次停下的区开始，逐区找候选直到用完配额
         const selected: SpawnCandidate[] = [];
         const selectedCityIds = new Set<string>();
@@ -248,6 +255,10 @@ export class RecruitmentSystem {
         for (let attempt = 0; attempt < nRegions * remaining; attempt++) {
             if (selected.length >= remaining) break;
             const region = REGION_ORDER[(this.nextSpawnRegionIndex + attempt) % nRegions];
+
+            // 该区已有军团且非全有 → 跳过
+            if (!allRegionsHaveLegion && (regionLegionCounts.get(region) ?? 0) >= 1) continue;
+
             const candidate = candidates.find(
                 (c) => c.region === region && !selectedCityIds.has(c.city.id)
             );

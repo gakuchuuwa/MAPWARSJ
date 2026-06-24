@@ -14,7 +14,7 @@ export const FACTIONS: Faction[] = [
   { id: 'gonggu', name: '宫古' },
   { id: 'fuguo', name: '附国' },
   { id: 'fengzhou', name: '凤州' },
-  { id: 'fushi', name: '苻氏' },
+  { id: 'fushi', name: '苻氏' }, // 代表前秦，避免旗号重名
   { id: 'gongtang', name: '贡唐' },
   { id: 'chizhou', name: '池州' },
 
@@ -84,9 +84,9 @@ export const FACTIONS: Faction[] = [
     { id: 'helian', name: '赫连' },
     { id: 'xiongnu', name: '匈奴' },
     { id: 'xianbei', name: '鲜卑' },
-    { id: 'jie', name: '羯族' },
+    { id: 'jie', name: '羯族' }, // 代表后赵/前赵，避免旗号重名
     { id: 'beidi', name: '北地' },
-    { id: 'tuoba', name: '拓跋' },
+    { id: 'tuoba', name: '拓跋' }, // 代表北魏，避免旗号重名
     { id: 'yuwen', name: '宇文' },
     { id: 'liang_d', name: '梁国' },
     { id: 'chen', name: '陈国' },
@@ -117,7 +117,7 @@ export const FACTIONS: Faction[] = [
     // 金黄 - 春申黄氏
     { id: 'yue_d', name: '岳氏' },
     { id: 'qian_d', name: '秀州' },
-    { id: 'kong_d', name: '孔氏' },
+    { id: 'kong_d', name: '孔氏' }, // 代表鲁国，避免旗号重名
     { id: 'cao_d', name: '曹氏' },
     { id: 'jiujiang', name: '江州' },       // 橄榄 - 柴桑/浔阳(九江郡)
     { id: 'jiaodong', name: '胶东' },
@@ -199,12 +199,12 @@ export const FACTIONS: Faction[] = [
     { id: 'yao', name: '尧帝' },         // 尧都平阳
 
     // ── 2026-05-26 新增：两晋核对追加势力 ──
-    { id: 'murong', name: '慕容' },
+    { id: 'murong', name: '慕容' }, // 代表前燕，避免旗号重名
     { id: 'yingzhou_ying_d', name: '营州' }, // ── 2026-06-20：朝阳（柳城）；北齐黄龙兵 ──
     { id: 'erzhu', name: '尔朱' },      // 铁锈红 - 契胡尔朱氏(秀容川/北魏权臣)
 
 
-    { id: 'chanzhou', name: '澶州' },       // 澶州(濮阳)；澶州弩手
+    { id: 'chanzhou', name: '澶州' },       // 澶州(濮阳)；代表卫国，避免旗号重名；澶州弩手
     { id: 'pizhou', name: '邳州' },       // 邳州(下邳)；陷阵营高顺
     // ── 2026-05-26 新增：汉朝补全半成品势力 ──
     { id: 'tongma', name: '铜马' },
@@ -235,7 +235,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 新增：西凉（马腾/韩遂军阀/金城皋兰）──
     { id: 'lanzhou', name: '兰州' },
     // ── 2026-06-11 精锐部队缺口批次 ──
-    { id: 'gaoqi_d', name: '北齐' },           // 旗号高齐@渤海蓨城（高欢故里）
+    { id: 'gaoqi_d', name: '北齐' },           // 旗号高齐@渤海蓨城（高欢故里）；代表北齐，避免旗号重名
     // ── 2026-06-11 新增：营州@朝阳（和龙/黄龙）──
     { id: 'wuzhou_d', name: '武周' },
     { id: 'zhuozhou', name: '涿州' },

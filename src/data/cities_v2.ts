@@ -801,7 +801,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     },
 
 
-    { id: 'city_xiaoguan', name: '萧关', factionId: 'beidi', lat: 35.657289, lng: 106.320190, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true, note: '萧关道，北地郡萧关·孙卬戍守' },
+    { id: 'city_xiaoguan', name: '萧关', factionId: 'beidi', lat: 35.657289, lng: 106.320190, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true, note: '萧关道，北地郡萧关·姚苌羌骑' },
 
     {
         id: 'city_jinsuoguan',
