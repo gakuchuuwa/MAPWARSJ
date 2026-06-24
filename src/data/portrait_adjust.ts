@@ -957,9 +957,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/STEPPE/choros_tuohuan.png": {
-            "scale": 0.94,
+            "scale": 1.04,
             "offsetX": 0,
-            "offsetY": 27
+            "offsetY": 16
         },
         "/assets/daming/suzhou_d_shikefa.png": {
             "scale": 0.92,
@@ -1187,9 +1187,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/STEPPE/5d837752-9095-4a31-b2df-39a00ebda8d0.png": {
-            "scale": 0.98,
+            "scale": 0.88,
             "offsetX": 1,
-            "offsetY": 24
+            "offsetY": 26
         },
         "/assets/TIBET/gar_lunqinling.png": {
             "scale": 1,
@@ -1300,6 +1300,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -10
+        },
+        "/assets/CENTRAL/dang_d_zhuwen.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/CENTRAL/limi.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/litang/cai_lisu.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/zhaosong/yingzhou_d_liuqi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -24
+        },
+        "/assets/zhaosong/6690f9ed-2bf2-4f83-a67b-7daf83414053.png": {
+            "scale": 1.14,
+            "offsetX": 15,
+            "offsetY": -36
+        },
+        "/assets/STEPPE/menggu_d_chengjisihan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -43
+        },
+        "/assets/WESTERN/shule_aersilan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/WESTERN/_fallback_.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/litang/juandu_peixingjian.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/CENTRAL_ASIA/guishuang_jianisejia.png": {
+            "scale": 0.96,
+            "offsetX": 1,
+            "offsetY": -39
         }
     },
     "folderGuides": {

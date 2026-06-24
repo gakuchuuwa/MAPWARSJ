@@ -300,7 +300,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     // ── 中国将·西域 2026-06-18 ──
     quli: { generalId: 'quli_chentang', generalName: '陈汤', portrait: '/assets/CENTRAL_ASIA/xijue_ganshouchang.png' },
     loulan: { generalId: 'loulan_suojie', generalName: '索劼', portrait: '/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png' },
-        juandu: { generalId: 'juandu_peixingjian', generalName: '裴行俭', portrait: '/assets/CENTRAL_ASIA/juandu_peixingjian.png' },
+        juandu: { generalId: 'juandu_peixingjian', generalName: '裴行俭', portrait: '/assets/litang/juandu_peixingjian.png' },
     dulan: { generalId: 'dulan_dashibatuer', generalName: '达什巴图尔', portrait: '/assets/TIBET/dulan_dashibatuer.png' },
     heyuan_d: { generalId: 'heyuan_d_heichichangzhi', generalName: '黑齿常之', portrait: '/assets/litang/heyuan_d_heichichangzhi.png' },
     // 克里雅/赤斤/西宁/卡伦/果洛 宁缺毋滥
@@ -552,7 +552,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     dixiang: { generalId: 'dixiang_wangmang', generalName: '王莽', portrait: '/assets/liuhan/dixiang_wangmang.png' },
     zhou: { generalId: 'zhou_jifa', generalName: '姬发', portrait: '/assets/xianqin/zhou_jifa.png' },
     quanrong: { generalId: 'quanrong_quanrongwang', generalName: '义渠骇', portrait: '/assets/HEXI/quanrong_quanrongwang.png' },
-    cai: { generalId: 'cai_lisu', generalName: '李愬', portrait: '/assets/CENTRAL/cai_lisu.png' },
+    cai: { generalId: 'cai_lisu', generalName: '李愬', portrait: '/assets/litang/cai_lisu.png' },
     yun: { generalId: 'yun_wuli', generalName: '吾离', portrait: '/assets/CENTRAL/yun_wuli.png' },
         suzhou_d: { generalId: 'suzhou_d_shikefa', generalName: '史可法', portrait: '/assets/daming/suzhou_d_shikefa.png' },
     pizhou: { generalId: 'pizhou_lvbu', generalName: '吕布', portrait: '/assets/CENTRAL/pizhou_lvbu.png' },

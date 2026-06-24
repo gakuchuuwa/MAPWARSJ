@@ -9,7 +9,7 @@
  * - 权重: 道路长度 (km)
  */
 import { GameConfig } from '../config/GameConfig';
-import { CITIES } from '../data/cities';
+import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
 import { smoothRoad } from '../utils/GeometryUtils';
 import { GridSystem } from '../systems/GridSystem';

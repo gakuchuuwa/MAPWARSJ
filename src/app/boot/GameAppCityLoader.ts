@@ -1,4 +1,4 @@
-import { CITIES } from '../../data/cities';
+import { CITIES_V2 as CITIES } from '../../data/cities_v2';
 import { STARTING_CAPITALS } from '../../data/StartingCapitals';
 import { GameConfig } from '../../config/GameConfig';
 import { getCityImage } from '../../systems/RegionSystem';

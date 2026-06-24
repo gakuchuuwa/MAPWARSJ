@@ -24,7 +24,7 @@ import { SimpleVectorRoadRenderer } from '../roads/SimpleVectorRoadRenderer';
 import { FACTIONS } from '../data/factions';
 import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { FactionTintSystem } from '../systems/tinting/FactionTintSystem';
-import { CITIES } from '../data/cities';
+import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { GAME_CONSTANTS, GameConfig } from '../config/GameConfig';
 import { AIController, RecruitmentSystem } from '../ai';
 import { FollowResupplySystem } from '../legion/FollowResupplySystem';
@@ -546,8 +546,8 @@ export class GameApp {
 // @ts-ignore
 if (import.meta.hot) {
     // @ts-ignore
-    import.meta.hot.accept(['../data/cities.ts', '../data/cities_v2.ts'], () => {
-        console.log('[HMR] cities.ts 发生改变，拦截自动刷新 (页面状态已保留)');
+    import.meta.hot.accept(['../data/cities_v2.ts'], () => {
+        console.log('[HMR] cities_v2.ts 发生改变，拦截自动刷新 (页面状态已保留)');
     });
     // @ts-ignore
     import.meta.hot.accept(['../types/CultureFormations.ts'], () => {

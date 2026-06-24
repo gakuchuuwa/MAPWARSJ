@@ -62,8 +62,6 @@ export default defineConfig({
             ignored: [
                 '**/src/data/portrait_adjust.ts',
                 '**/src/data/FactionGenerals.ts',
-                '**/src/data/cities_v2.ts',
-                '**/src/data/cities.ts',
                 '**/src/data/factions.ts',
                 '**/src/data/SandboxDisplayNames.ts',
                 '**/src/app/GameApp.ts',
@@ -80,7 +78,7 @@ export default defineConfig({
                 './src/world/CityManager.ts',
                 './src/roads/RoadRegistry.ts',
                 './src/data/VectorRoadData.ts',
-                './src/data/cities.ts',
+                './src/data/cities_v2.ts',
                 './src/data/factions.ts',
             ],
         },
@@ -108,6 +106,7 @@ export default defineConfig({
                 if (
                     norm.includes('portrait_adjust.ts')
                     || norm.includes('FactionGenerals.ts')
+                    || norm.includes('cities_v2.ts')
                     || (norm.includes('/public/assets/') && norm.endsWith('.png'))
                 ) {
                     return [];

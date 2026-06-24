@@ -1,5 +1,5 @@
 import { City, CityType } from '../types/core';
-import { CITIES } from '../data/cities';
+import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { CITY_CONFIG } from '../config/CityConfig';
 import { FACTIONS } from '../data/factions';
 import { CityManager } from '../world/CityManager';

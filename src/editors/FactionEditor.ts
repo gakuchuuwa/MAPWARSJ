@@ -18,7 +18,7 @@
  *     原因: 单条按钮易误点, 且批量 1 条也能完整替代
  */
 import { FACTIONS } from '../data/factions';
-import { CITIES } from '../data/cities';
+import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
 import { STARTING_CAPITALS } from '../data/StartingCapitals';

@@ -425,7 +425,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yada_ahexiong: { generalId: 'yada_ahexiong', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 嚈哒王破萨珊，杀卑路斯一世
     anushidgin_yile: { generalId: 'anushidgin_yile', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 花剌子模沙抗西辽
     unassigned_muhanmodeguli: { generalId: 'unassigned_muhanmodeguli', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' }, // 第二次塔兰战役佯败破印军
-    jibin_jianisejia: { generalId: 'jibin_jianisejia', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 迦腻色迦夏都迦毕试，贵霜帝国极盛
+    jibin_jianisejia: { generalId: 'jibin_jianisejia', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 迦腻色迦夏都迦毕试，贵霜极盛野战征服
     qincha_baqiman: { generalId: 'qincha_baqiman', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 钦察游击抗蒙
     dayuan_wugua: { generalId: 'dayuan_wugua', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 大宛王抗汉
     kokand_alimukuli: { generalId: 'kokand_alimukuli', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 浩罕抗俄

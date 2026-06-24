@@ -44,6 +44,10 @@ export interface CityDataV2 {
     region?: string;
     /** 关隘/港口朝向镜像 */
     mirror?: boolean;
+    /** 据点出现的游戏起始年（含）*/
+    startYear?: number;
+    /** 据点消失的游戏终止年（含）*/
+    endYear?: number;
     /** 史地备注（人工录入据点时的可考性说明，运行时不使用） */
     note?: string;
 }
