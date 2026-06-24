@@ -33,7 +33,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   kui: { name: '白毦兵', tier: 1 },             // 白帝城·刘备白毦兵（防御断后，降T1）
   qiuchi: { name: '武都部曲', tier: 3 },          // 仇池·杨氏世袭部曲（《宋书》杨难当拥部曲数万）
   // ── 2026-06-16 新增：4座西南名关 ──
-  lizhou_d: { name: '蜀口守军', tier: 2 },        // 剑门关·吴玠移驻大散关（蜀口禁军）
+  lizhou_d: { name: '护蜀驻队矢', tier: 2 },        // 剑门关·吴玠移驻大散关（蜀口禁军）
   fengzhou: { name: '和尚原锐卒', tier: 1 },       // 大散关·吴玠和尚原大捷（凤州）
   fu_zhou: { name: '涪陵劲卒', tier: 2 },       // 涪陵·《华阳国志》涪陵劲卒
   fushi: { name: '氐族劲卒', tier: 2 },         // 略阳·苻洪氐族劲卒（苻氏）
@@ -42,7 +42,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   cong: { name: '賨族勇士', tier: 3 },           // 宕渠·賨族
   wuxi: { name: '五溪蛮兵', tier: 3 },           // 八面山·五溪蛮
   song2: { name: '松州戍卒', tier: 3 },          // 嘉诚·唐蕃古道松州
-  yidou: { name: '夷陵守军', tier: 3 },          // 夷陵·三国夷陵之战
+  yidou: { name: '夷陵奇兵', tier: 3 },          // 夷陵·三国夷陵之战
   // 权州戍兵除名（生造）
   zuo_d: { name: '南中叟兵', tier: 3 },         // 清溪关·西南夷王牌
   zangke: { name: '牂牁戍卒', tier: 3 },        // 胜境关·古牂牁国地（原夜郎锐卒，避岭南同名）

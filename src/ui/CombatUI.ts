@@ -1595,8 +1595,8 @@ export class CombatUI {
 
     private async closeCorrectorAsync(forceDiscardDisk = false): Promise<void> {
         this.flushCorrectorSessionMemory();
-        if (!forceDiscardDisk && this.correctorHasPendingDiskWork()) {
-            this.setCorrectorStatus('写盘中…');
+        if (!forceDiscardDisk) {
+            if (this.correctorHasPendingDiskWork()) this.setCorrectorStatus('写盘中…');
             if (!(await this.flushCorrectorPendingToDisk(true))) {
                 return;
             }
@@ -1635,7 +1635,7 @@ export class CombatUI {
             if (n > prevSize && n % CombatUI.AUTO_SAVE_EVERY === 0) {
                 this.runCorrectorExclusive(() => this.flushCorrectorPendingToDisk(false, true));
             } else {
-                this.setCorrectorStatus(`已改 ${n} 张 · Enter/Esc 写盘`);
+                this.setCorrectorStatus(`已改 ${n} 张 · Enter/F2/Esc 写盘`);
             }
         }
         applyPortraitAdjustToElement(this.correctorImg(), this.correctorPath(), this.correctorData);
@@ -1650,7 +1650,7 @@ export class CombatUI {
         this.correctorData.images = this.correctorData.images ?? {};
         this.correctorData.images[saveKey] = { ...this.correctorDraft };
         if (this.correctorDirtyPaths.size > 0) {
-            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Enter/Esc 写盘`);
+            this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Enter/F2/Esc 写盘`);
         }
     }
 
@@ -1830,7 +1830,7 @@ export class CombatUI {
         const parts: string[] = ['✓ 本场已生效（内存）'];
         if (nAdj > 0) parts.push(`${nAdj} 张位置`);
         if (nBind > 0) parts.push(`${nBind} 张待绑`);
-        parts.push('Enter 写盘');
+        parts.push('Enter/F2/Esc 写盘');
         this.setCorrectorStatus(parts.join(' · '));
     }
 
@@ -2064,7 +2064,7 @@ export class CombatUI {
             </div>
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
                 准星（<b>左右统一</b>）：<span style="color:#e8c878;">金椭圆</span>，<span style="color:#6ec8ff;">蓝=眼线</span>，<span style="color:#88e0d0;">青=下巴</span>，<span style="color:#c8a8e8;">紫=腰</span>，<span style="color:#ff9a7a;">橙竖=胸线</span>。眼/下巴/腰贴线，<b>[ ] / ± / 小键盘±</b> 缩放<br>
-                方向键微调；Tab 换边；<b>Enter 写盘并继续</b>；<b>Esc 写盘并关 F2</b>（均不刷新）；Ctrl+S 同 Enter；F2 期间地图键盘缩放已关闭<br>
+                方向键微调；Tab 换边；<b>Enter 写盘并继续</b>；<b>Esc / F2 写盘并关闭</b>（均不刷新）；Ctrl+S 同 Enter；F2 期间地图键盘缩放已关闭<br>
                 Shift+Esc 关闭不写盘
             </div>
             <div class="cc-status" style="font-size:12px;color:#9fd4a8;min-height:1.2em;"></div>
