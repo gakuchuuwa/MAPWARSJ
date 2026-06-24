@@ -455,7 +455,7 @@ export class GameApp {
                             try {
                                 this.combatUI.showRegional(
                                     attackers, defenders, undefined, undefined,
-                                    bf.type === 'siege' ? '攻城战' : '正在交战',
+                                    bf.type === 'siege' ? (bf.siegeCityId ? `${this.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${this.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${this.cityManager.getFactionName(bf.getDefenderFactionId())}`,
                                     '', false, bf.targetDuration, this.timeSystem.getSpeed(), bf,
                                 );
                                 found = true;

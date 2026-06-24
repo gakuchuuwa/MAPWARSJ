@@ -241,11 +241,17 @@ function startFieldBattleBetween(
         gameLog('legionMarch', `⚔️ ${army.name} 野战遭遇 ${otherArmy.name}`);
     }
 
+    const attName = deps.getCityManager().getFactionName(attFaction);
+    const defName = deps.getCityManager().getFactionName(defFaction);
     combatSystem.startRegionalBattle(
         attFaction,
         attUnits,
         defFaction,
         defUnits,
-        undefined
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        `${attName} 大战 ${defName}`
     );
 }

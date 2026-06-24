@@ -693,7 +693,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yin_dixin: { generalId: 'yin_dixin', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 纣王征东夷
     liwang_liguangbi: { generalId: 'liwang_liguangbi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 太原守城·河间突骑
     han_baoyuan_han: { generalId: 'han_baoyuan_han', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 韩将暴鸢
-    bailian_liufutong: { generalId: 'bailian_liufutong', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 红巾白莲
+    bailian_wangconger: { generalId: 'bailian_wangconger', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 白莲教起义
     shen_shenbo: { generalId: 'shen_shenbo', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 申国受封
     sima_d_simayi: { generalId: 'sima_d_simayi', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 冢虎
     unassigned_zhaoshe: { generalId: 'unassigned_zhaoshe', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 阏与之战

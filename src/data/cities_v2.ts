@@ -2192,7 +2192,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
     { id: 'city_shangyong', name: '竹山', factionId: 'yong', lat: 32.349768, lng: 109.885254, type: 'small_city', region: 'BASHU', troops: 10000,
         note: '竹山；庸国小城',
     },
-    { id: 'city_junzhou', name: '武当', factionId: 'bailian', lat: 32.541700, lng: 111.513300, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '刘福通白莲教红巾军' },
+    { id: 'city_junzhou', name: '武当', factionId: 'bailian', lat: 32.541700, lng: 111.513300, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '王聪儿白莲教起义' },
 
     // ── 2026-05-27 新增：申(金州) ──
     {

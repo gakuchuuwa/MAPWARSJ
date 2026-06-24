@@ -778,14 +778,7 @@ export class SiegeManager {
             attackerUnits.push(legionAdapter);
         });
 
-        let finalTitle = siegeData.title;
-        if (!finalTitle) {
-            if (targetCity.type === 'pass') {
-                finalTitle = `${targetCity.name}防守战`;
-            } else {
-                finalTitle = `${targetCity.name}攻防战`;
-            }
-        }
+        const finalTitle = siegeData.title || `${targetCity.name} 攻防战`;
 
         let battleField: BattleField;
         try {

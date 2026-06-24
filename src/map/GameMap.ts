@@ -134,7 +134,7 @@ export class GameMap {
     /** 线上部署：无右侧 Leaflet 面板，仍启用与开发版相同的默认图层 */
     private applyProductionMapDefaults(): void {
         this.applyDefaultMapVisuals(false);
-        window.dispatchEvent(new CustomEvent('toggle-road-layer', { detail: { visible: true } }));
+        window.dispatchEvent(new CustomEvent('toggle-road-layer', { detail: { visible: false } }));
         window.dispatchEvent(new CustomEvent('toggle-city-texture', { detail: { visible: true } }));
     }
 
@@ -546,7 +546,7 @@ export class GameMap {
                     </label>
 
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#FFD700;margin-top:4px;">
-                        <input type="checkbox" id="chk-road" checked> 
+                        <input type="checkbox" id="chk-road">
                         <b>🛣️ 开启道路网络</b>
                     </label>
 
@@ -797,7 +797,8 @@ export class GameMap {
 
             const chkRoad = document.getElementById('chk-road') as HTMLInputElement;
             if (chkRoad) {
-                chkRoad.checked = true; // [FIX] Force true to bypass browser cache and sync with renderer
+                chkRoad.checked = false;
+                window.dispatchEvent(new CustomEvent('toggle-road-layer', { detail: { visible: false } }));
                 chkRoad.addEventListener('change', (e: any) => {
                     window.dispatchEvent(new CustomEvent('toggle-road-layer', {
                         detail: { visible: e.target.checked }

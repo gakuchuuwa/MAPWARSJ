@@ -116,7 +116,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                         try {
                             app.combatUI.showRegional(
                                 attackers, defenders, undefined, undefined,
-                                bf.type === 'siege' ? '攻城战' : '正在交战',
+                                bf.type === 'siege' ? (bf.siegeCityId ? `${app.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(bf.getDefenderFactionId())}`,
                                 '', false, bf.targetDuration, app.timeSystem.getSpeed(), bf,
                             );
                         } catch (e) { /* ignore */ }

@@ -28,14 +28,14 @@ const CHAIKIN_ITERATIONS = 2;
 export class SimpleVectorRoadRenderer {
     private map: L.Map;
     private layerGroup: L.LayerGroup;
-    private visible: boolean = true;
+    private visible: boolean = false;
     private currentYear: number = -236; // 默认值，由外部 setYear 同步
     /** 上次重绘时的「可见路网签名」：年份变了但可见路网没变 → 跳过全量重绘（2026-06-12 性能） */
     private lastRenderedYearSignature: string | null = null;
 
     constructor(map: L.Map) {
         this.map = map;
-        this.layerGroup = L.layerGroup().addTo(this.map);
+        this.layerGroup = L.layerGroup();
         this.render();
 
         // [FIX] 监听道路更新事件，确保编辑器切换路线/删除路线时，底层的旧道路能立即消失
