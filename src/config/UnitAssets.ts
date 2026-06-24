@@ -57,7 +57,7 @@ export const SPRITE_PATHS = {
         'goryeo_jiangganzan': '/assets/KOREA/goryeo_jiangganzan.png',
         'ashikaga_zulijunshi': '/assets/JAPAN/ashikaga_zulijunshi.png',
         'tiemuer_tiemuer': '/assets/CENTRAL_ASIA/tiemuer_tiemuer.png',
-        'siam_nalixuan': '/assets/DIANQIAN/siam_nalixuan.png',
+        'siam_nalixuan': '/assets/DIANQIAN/siam_nalixuan_DIANQIAN.png',
         'shang_fuhao': '/assets/xianqin/shang_fuhao.png',
         'pizhou_lvbu': '/assets/CENTRAL/pizhou_lvbu.png',
         'han_d_hanxin': '/assets/liuhan/han_d_hanxin.png',

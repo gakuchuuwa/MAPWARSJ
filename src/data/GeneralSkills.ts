@@ -123,7 +123,7 @@ export const REINFORCEMENT_JOIN_SKILL: ReinforcementJoinSkillDef = {
 export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     wuzhou_d_wuzetian: { generalId: 'wuzhou_d_wuzetian', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_07' },
     guishuang_qiuqiujiu: { generalId: 'guishuang_qiuqiujiu', tier: 'ordinary', tacticalSkillId: 'tac_10' },
-    qidan_yelueabaoji: { generalId: 'qidan_yelueabaoji', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
+    qidan_shulvping: { generalId: 'qidan_shulvping', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 辽太祖皇后，政治手腕削弱对手
     hui_gulipeiluo: { generalId: 'hui_gulipeiluo', tier: 'ordinary', tacticalSkillId: 'tac_08' },
     // ── 中国及外围 ──
     xin_baiqi: { generalId: 'xin_baiqi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // S③所向披靡 + ③侵掠如火（歼灭战神）
@@ -326,7 +326,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_mangka: { generalId: 'unassigned_mangka', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 费雅喀族长莽喀普禄
     unassigned_xiyangha: { generalId: 'unassigned_xiyangha', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 女真大酋长西阳哈瓦伦
     hezhe_sharhuda: { generalId: 'hezhe_sharhuda', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_02' }, // 宁古塔章京击退俄军斯捷潘诺夫
-    liao_d_yelvabaoji: { generalId: 'liao_d_yelvabaoji', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 燕京游击断粮
+    liao_d_yelvabaoji: { generalId: 'liao_d_yelvabaoji', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 统一契丹灭渤海
     yel_yelvxiuge: { generalId: 'yel_yelvxiuge', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 满城大败宋师以逸待劳
     yizhou_wanyanloushi: { generalId: 'yizhou_wanyanloushi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 富平之战大破张浚五路宋军
     unassigned_shilu: { generalId: 'unassigned_shilu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 完颜始祖据黑水故地
@@ -611,7 +611,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     jingmen_zhaoyun: { generalId: 'jingmen_zhaoyun', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 长坂坡救主
     unassigned_pengshichou: { generalId: 'unassigned_pengshichou', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 溪州铜柱
     miaomin_shiliudeng: { generalId: 'miaomin_shiliudeng', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 苗民起义
-      xiqin_xuerengao: { generalId: 'xiqin_xuerengao', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 薛仁杲据折墌抗唐
+      xiqin_xuerengao: { generalId: 'xiqin_xuerengao', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 薛举据折墌抗唐
     beidi_sunang: { generalId: 'beidi_sunang', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     baiyang_mengtian: { generalId: 'baiyang_mengtian', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 高阙塞长城戍守
   // ── 河西区 2026-06-18 ──

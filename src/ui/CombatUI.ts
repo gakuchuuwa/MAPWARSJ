@@ -1913,8 +1913,7 @@ export class CombatUI {
         try {
             await this.preloadPortraitWebPath(bind.destPath);
         } catch {
-            // 磁盘已绑定成功；预览加载失败不阻断写盘
-            return;
+            // 磁盘已绑定成功；预加载失败不阻断视觉更新，继续设 img.src（由 load/error 兜底）
         }
         const img = bind.side === 'attacker' ? this.leftPortrait : this.rightPortrait;
         const bust = `${bind.destPath}?v=${this.portraitPickerCatalogRev}`;

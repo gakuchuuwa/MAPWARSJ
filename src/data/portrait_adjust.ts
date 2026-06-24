@@ -216,7 +216,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/pugan/siam_nalixuan.png": {
+        "/assets/pugan/siam_nalixuan_pugan.png": {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": -42
@@ -317,9 +317,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/JIANGNAN/jinling_tandaoji.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -39
+            "scale": 1.16,
+            "offsetX": 19,
+            "offsetY": -2
         },
         "/assets/pugan/basha_d_daogengmeng.png": {
             "scale": 1.06,
@@ -781,7 +781,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -9
         },
-        "/assets/yingqin/qin_baiqi.png": {
+        "/assets/yingqin/qin_baiqi_yingqin.png": {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": 10
@@ -852,9 +852,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/zhaosong/danyang_yuyunwen.png": {
-            "scale": 1.04,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": -18
+            "offsetY": -21
         },
         "/assets/CENTRAL/jinan_tiexuan.png": {
             "scale": 1.02,
@@ -1177,7 +1177,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/HEXI/liangzhou_zhanggui.png": {
-            "scale": 1.06,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -1257,9 +1257,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/BASHU/ba_bamanzi.png": {
-            "scale": 1.06,
+            "scale": 1.02,
             "offsetX": 0,
-            "offsetY": 20
+            "offsetY": -10
         },
         "/assets/LINGNAN/a5ac03b7-537e-4b61-ac6c-d72802fd4c45.png": {
             "scale": 1,
@@ -1336,7 +1336,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -1
         },
-        "/assets/WESTERN/_fallback_.png": {
+        "/assets/WESTERN/_fallback__WESTERN.png": {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": -16
@@ -1457,7 +1457,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 14
         },
         "/assets/NORTHEAST/8ee22c66-e8b5-4afb-b485-cce206a7294e.png": {
-            "scale": 1.12,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -1477,9 +1477,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/BASHU/chu_xiangyu.png": {
-            "scale": 0.98,
+            "scale": 0.96,
             "offsetX": 0,
-            "offsetY": -31
+            "offsetY": -9
         },
         "/assets/STEPPE/d20060f4-1180-44b4-a1f1-47025dc34e22.png": {
             "scale": 0.96,
@@ -1536,7 +1536,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -8
         },
-        "/assets/TIBET/_fallback_.png": {
+        "/assets/TIBET/_fallback__TIBET.png": {
             "scale": 1,
             "offsetX": 15,
             "offsetY": 17
@@ -1627,9 +1627,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/JIANGNAN/gumie_liuyu.png": {
-            "scale": 1,
+            "scale": 0.96,
             "offsetX": 0,
-            "offsetY": -4
+            "offsetY": -8
         },
         "/assets/LINGNAN/ada8c754-f07f-4f75-91e8-8145c10aaa58.png": {
             "scale": 1,
@@ -1655,6 +1655,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -14
+        },
+        "/assets/NORTHEAST/4111cad4-9b63-4316-933a-dd2b3915259f.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/KOREA/6cdd4646-c2b8-43d4-898b-cb954e0e7dfd.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/zhaosong/605ec3ae-1447-43bc-a07f-cd8aa64e90cb.png": {
+            "scale": 1.12,
+            "offsetX": 7,
+            "offsetY": 10
+        },
+        "/assets/JIANGNAN/e77548d8-eaf3-4324-807b-023a328e7711.png": {
+            "scale": 0.92,
+            "offsetX": 3,
+            "offsetY": -6
+        },
+        "/assets/JIANGNAN/qian_d_yudayou.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -4
         }
     },
     "folderGuides": {

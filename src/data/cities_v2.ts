@@ -2577,8 +2577,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_zuli', name: '祖厉', factionId: 'huizhou', lat: 36.56, lng: 104.68, type: 'small_city', region: 'HEXI', troops: 10000,
         note: '祖厉；会州小城',
     },
-    // ── 2026-06-11 新增：折墌（薛举西秦/薛仁杲据城）──
-    { id: 'city_zhedi', name: '折墌', factionId: 'xiqin', lat: 35.500000, lng: 107.940000, type: 'pass', region: 'HEXI', troops: 10000, note: '薛仁杲据折墌城；薛举西秦第二据点' },
+    // ── 2026-06-11 新增：折墌（薛举西秦/薛举据城）──
+    { id: 'city_zhedi', name: '折墌', factionId: 'xiqin', lat: 35.500000, lng: 107.940000, type: 'pass', region: 'HEXI', troops: 10000, note: '薛举据折墌城；薛举西秦第二据点' },
 
     // ── 2026-06-11 精锐部队缺口：新建据点 ──
     { id: 'city_jingling', name: '竟陵', factionId: 'ruochu', lat: 30.662000, lng: 113.166000, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '楚若敖氏旧地；若敖六卒（《左传》）' },

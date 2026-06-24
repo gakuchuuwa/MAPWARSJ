@@ -14,7 +14,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   bohai: { name: '渤海猛贲', tier: 2 },       // 龙泉府·渤海左右猛贲卫
   dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（阿骨打@都城）
   yizhou: { name: '金源精骑', tier: 2 },      // 蒺藜山·娄室金源（番号泛指，降T2）
-  qidan: { name: '契丹铁林军', tier: 1 },     // 木叶山·耶律阿保机铁林军灭渤海
+  qidan: { name: '属珊锐骑', tier: 1 },     // 木叶山·述律平属珊锐骑
   manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
   aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
@@ -49,4 +49,5 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   nifuhe: { name: '尼夫赫冰兵', tier: 3 },      // 盆奴里·黑龙江口
   feiyaka: { name: '费雅喀猎手', tier: 3 },       // 普禄·库页岛西岸
   nanai: { name: '赫哲快桨船', tier: 3 },         // 瓦伦·黑龙江中游
-  dongping: { name: '东平戍卒', tier: 3 },        // 锡尔喀·金代东平府};
+  dongping: { name: '东平戍卒', tier: 3 },        // 锡尔喀·金代东平府
+};
