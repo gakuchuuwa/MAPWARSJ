@@ -436,9 +436,9 @@ export class CombatUI {
             z-index: ${T.zIndex.portrait + 2};
         `;
         this.leftSkillsBox = document.createElement('div');
-        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; overflow: hidden; justify-content: flex-start; max-width: 49.5%;`;
+        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; overflow: hidden; width: 49%; min-width: 0;`;
         this.rightSkillsBox = document.createElement('div');
-        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; overflow: hidden; justify-content: flex-end; max-width: 49.5%;`;
+        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; overflow: hidden; width: 49%; min-width: 0; justify-content: flex-end;`;
         this.skillsRow.appendChild(this.leftSkillsBox);
         this.skillsRow.appendChild(this.rightSkillsBox);
 
@@ -830,8 +830,8 @@ export class CombatUI {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                width: ${uiPx(112)};
-                flex-shrink: 0;
+                flex: 1 0 0;
+                min-width: 0;
                 box-sizing: border-box;
                 background: ${bgColor};
                 border: 1px solid ${borderColor};
@@ -839,6 +839,7 @@ export class CombatUI {
                 border-radius: 4px;
                 padding: ${uiPx(4)} ${uiPx(6)};
                 box-shadow: 0 2px 6px rgba(0,0,0,0.85);
+                overflow: hidden;
             `;
             
             const nameEl = document.createElement('div');
@@ -849,9 +850,14 @@ export class CombatUI {
                 color: #fff8e0;
                 letter-spacing: 1px;
                 margin-bottom: ${uiPx(2)};
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+                text-align: center;
             `;
             nameEl.textContent = name;
-            
+
             const effectEl = document.createElement('div');
             effectEl.style.cssText = `
                 font-family: 'Noto Sans SC', sans-serif;
@@ -859,6 +865,11 @@ export class CombatUI {
                 font-weight: 400;
                 color: rgba(255, 255, 255, 0.7);
                 letter-spacing: 1px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
+                text-align: center;
             `;
             effectEl.textContent = effect;
             
