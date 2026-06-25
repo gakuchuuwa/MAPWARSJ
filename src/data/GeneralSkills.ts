@@ -382,7 +382,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     xibo_d_zakulan: { generalId: 'xibo_d_zakulan', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 锡伯神箭手传说
     pugu_puguhuaien: { generalId: 'pugu_puguhuaien', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_02' }, // 平乱后叛唐据守
 
-    pugu_ashinagudulu: { generalId: 'pugu_ashinagudulu', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_02' }, // 后突厥汗国重建者    kelie_zhaheganbu: { generalId: 'kelie_zhaheganbu', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 克烈部游击混战
+    pugu_ashinagudulu: { generalId: 'pugu_ashinagudulu', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_02' }, // 后突厥汗国重建者
+    kelie_zhaheganbu: { generalId: 'kelie_zhaheganbu', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 克烈部游击混战
     borjigin_tuolei: { generalId: 'borjigin_tuolei', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 三峰山奇袭灭金主力
     zhadalan_zhamuhe: { generalId: 'zhadalan_zhamuhe', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 十三翼之战正面击溃铁木真
     zhuerqi_sachabieqi: { generalId: 'zhuerqi_sachabieqi', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 主儿乞部决战
