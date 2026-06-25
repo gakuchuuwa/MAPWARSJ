@@ -63,7 +63,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     expedition: sound('feed', 'expedition', 0.75, 1400),
     pass_siege: sound('feed', 'pass_siege', 0.45, 4000),
     general_skill: sound('battle', 'general_skill', 0.7, 1800),
-    bgm_main: { category: 'bgm', sources: ['/assets/CENTRAL/CENTRAL_bgm.ogg'], volume: 0.25, cooldownMs: 0 },
+    bgm_main: { category: 'bgm', sources: ['/assets/CENTRAL/CENTRAL_bgm.aud'], volume: 0.25, cooldownMs: 0 },
 };
 
 function sound(
@@ -74,7 +74,8 @@ function sound(
 ): SoundDefinition {
     return {
         category,
-        sources: [`/sfx/${fileName}.ogg`, `/sfx/${fileName}.mp3`],
+        // 用 .aud 扩展名（非媒体扩展）规避 IDM/迅雷 等下载器按 .ogg 抓取
+        sources: [`/sfx/${fileName}.aud`],
         volume,
         cooldownMs,
     };
@@ -170,14 +171,19 @@ export class AudioManager {
         // BGM 不在解锁时自动启动，由 syncRegionBgm 在跟随军团后触发
     }
 
-    /** fetch 源文件为 blob，返回 blob: 对象 URL（无扩展名，下载器无法按 .ogg 抓取）*/
+    /**
+     * fetch 源文件（.aud，实为 ogg 字节）→ 重标为 audio/ogg 的 blob → blob: 对象 URL。
+     * .aud 不在下载器监控扩展名内，fetch 不被 IDM/迅雷 抓取；
+     * blob: URL 无扩展名，<audio> 也不被抓取；重标 type 确保浏览器按 ogg 解码。
+     */
     private async fetchObjectUrl(src: string): Promise<string | null> {
         const cached = this.objectUrlCache.get(src);
         if (cached) return cached;
         try {
             const res = await fetch(src, { cache: 'force-cache' });
             if (!res.ok) return null;
-            const blob = await res.blob();
+            const buf = await res.arrayBuffer();
+            const blob = new Blob([buf], { type: 'audio/ogg' });
             const url = URL.createObjectURL(blob);
             this.objectUrlCache.set(src, url);
             return url;
@@ -391,7 +397,7 @@ export class AudioManager {
         if (folder === this.currentBgmFolder) return;
 
         this.currentBgmFolder = folder;
-        const src = `/assets/${folder}/${folder}_bgm.ogg`;
+        const src = `/assets/${folder}/${folder}_bgm.aud`;
         this.playBgmSrc(src);
     }
 
@@ -408,7 +414,7 @@ export class AudioManager {
                 // 区域 BGM 缺失 → 回落 CENTRAL
                 if (this.currentBgmFolder !== 'CENTRAL') {
                     this.currentBgmFolder = 'CENTRAL';
-                    this.playBgmSrc('/assets/CENTRAL/CENTRAL_bgm.ogg');
+                    this.playBgmSrc('/assets/CENTRAL/CENTRAL_bgm.aud');
                 }
                 return;
             }
