@@ -4,96 +4,117 @@ globs: src/data/cities_v2.ts,src/data/factions.ts,src/data/FactionGenerals.ts,sr
 alwaysApply: false
 ---
 
-# 据点本位录入 + 武将/精锐唯一出场（2026-06-23 增补）
+# 据点本位：武将/精锐唯一出场规则
 
 **真理源**：`AGENTS.md` §2.2.0（录入）、§12.2.1（运行时）。
 
-## 设计四原则（主人定）
+---
 
-> **真实（尊重历史）、合理（能说明白）、简单（少 Bug）、随机（可玩性）**
+## 最核心的一句话（重中之重，反复犯错）
 
-## 铁律 A：录入本位（据点→势力→武将→精锐，不可倒推）
+> **以据点为基准，绝对不以势力为基准。**
 
-**一切以据点为基准。** 录入顺序：
+武将和精锐锚定在**据点**上，和哪个势力占着这座城无关。
+不管是蒙古、室町还是任何势力占着不破关，攻打不破关时守军都能出大谷吉继和大谷部众。
 
-1. **据点** — 坐标 + 1900 前旧称（此地有哪些称呼？取知名度大者）
-2. **势力** — 按优先级定名；**势力名 ≠ 据点名**
-3. **武将** — 在此战斗/驻守过、与据点相关
-4. **精锐** — 在此战斗/驻守过、与武将相关；T0–T3 见 §12.3.1
+---
 
-## 铁律 B：武将/精锐 — 全局唯一出场（2026-06-23 主人定，禁止再犯）
+## 铁律 A：录入本位
 
-> 一个据点，一个势力，一个武将，一个精锐。
-> **据点出了武将，其他地方和其他情况就不能再出这个武将了。**
-> **据点出了精锐，其他地方和其他情况就不能再出这个精锐了。**
+录入顺序只能是：**据点 → 势力 → 武将 → 精锐**，不可倒推。
 
-| 规则 | 说明 |
+---
+
+## 铁律 B：武将/精锐只能同时出现在一个地方
+
+每座据点有且只有一个武将、一个精锐。它们在任意时刻只能出现在以下两个地方之一：
+
+| 场景 | 说明 |
 |------|------|
-| **将随城锚点，不随占城旗** | 武将锚定`录入时的 anchorFactionId`，**不跟着占城旗走** |
-| **占城不过户** | 他势力占领据点后，该城的武将/精锐**不转让**给占城势力 |
-| **守城不得重复** | 守城城防掷将时，若占城势力 ≠ 锚点势力 → **禁止出该武将** |
-| **同一战场唯一** | 同一场攻防战，攻守双方的武将/精锐 ID **不得重复** |
+| **军团**（出征中的军队） | 据点出兵时随军带走，此时据点驻军没有将/精 |
+| **驻军**（守城时） | 军团不存在或已被消灭，据点驻军出将/精 |
 
-### 运行时检查顺序（`SiegeGarrisonTier.applySiegeGarrisonBoostIfNeeded`）
+**这两个场景互斥，绝不同时出现。**
 
-将领和精锐的检查是**对称的**，必须同时执行：
+---
 
-#### 将领出场检查
+## 将/精的生命周期（`spawnGeneralUsed` / `spawnEliteUsed`）
+
 ```
-① city.factionId === getCityAnchorFactionId(city.id)？
-   → 否 → 不出武将（占城不过户）
-② 守方军团已有该武将（defendingLegions.some(l => l.generalId)）？→ 不出（互斥）
-③ 攻方军团已有同 generalId（attackingLegions.some(l => l.generalId === anchoredGeneral.generalId)）？→ 不出（同场唯一）
-④ city.spawnGeneralUsed？→ 不出（消耗制）
-```
+据点出兵（makeArmyElite / attachFactionGeneralToArmy）
+    ↓
+spawnUsed = true  →  驻军不再出将/精
 
-#### 精锐出场检查（与将领对称，2026-06-25 补全）
-```
-① city.factionId === getCityAnchorFactionId(city.id)？
-   → 否 → 不出精锐（占城不过户）— 与将领共享同一检查
-② 守方军团已有精锐（defendingLegions.some(l => l.isElite)）？→ 不出（互斥）
-③ 攻方军团已有同名精锐（attackingLegions.some(l => l.isElite && l.name === eliteName)）？→ 不出（同场唯一）
-   ※ 精锐番号存在 army.name（由 makeArmyElite 写入），按名字比对比按势力更精准
-④ city.spawnEliteUsed？→ 不出（消耗制）
+军团被消灭 or 城市易主
+    ↓
+spawnUsed 重置 = false  →  驻军恢复可出将/精
 ```
 
-> **关键实现细节**：`city.spawnEliteUsed` 在城市易主时会被 `CityManager` 重置为 `false`，
-> 因此"占城不过户"（检查①）是阻止他势力驻军冒用精锐的**第一道防线**，不可省略。
+重置时机（两者均会重置）：
+1. **城市易主**：`CityManager.updateCity` 在 `factionId` 变更时重置
+2. **军团消灭**：`LegionManager.syncCitySpawnTierConsumption` 周期性扫描，重置所有城市后仅对存活军团重新标记
 
-### 禁止（代码层）
+---
 
-- ❌ 守城城防只检查 `defendingLegions`，不检查 `attackingLegions` 是否已有同 `generalId`
-- ❌ 守城城防不检查 `city.factionId !== anchorFactionId` 就直接掷将/精
-- ❌ 攻方军团与守城城防在同一场战斗里出现相同 `generalId` / 精锐番号
-- ❌ 精锐唯一性检查按势力而非按番号名（一势力理论上只有一支精锐，但按名字更严谨）
+## 运行时检查顺序（`applySiegeGarrisonBoostIfNeeded`）
 
-## 势力优先级（无则向下）
+守城驻军能否出将/精，按以下顺序检查，任一为真则不出：
 
-民族 → 政权首都 → 州郡治所 → 家族 → 地名（战场/要塞/驿站等）
+### 将领检查
+```
+① 守方军团已有该武将？（defendingLegions.some(l => l.generalId)）→ 不出
+② 攻方军团已有同 generalId？（attackingLegions.some(l => l.generalId === anchoredGeneral.generalId)）→ 不出
+③ city.spawnGeneralUsed === true？→ 不出
+```
 
-## 反例 vs 正例
+### 精锐检查（与将领完全对称）
+```
+① 守方军团已有精锐？（defendingLegions.some(l => l.isElite)）→ 不出
+② 攻方军团已有同名精锐？（attackingLegions.some(l => l.isElite && l.name === eliteName)）→ 不出
+   ※ army.name 由 makeArmyElite 写入精锐番号，按名字比对
+③ city.spawnEliteUsed === true？→ 不出
+```
 
-| 据点 | 势力 | 武将 | 精锐 |
-|------|------|------|------|
-| 长子 | **上党** | 白起（上党战事） | 上党轻骑 |
-| 天水 | **秦** | 嬴稷 | 秦之锐士 |
+**注意**：`spawnEliteUsed` 在城市易主时会被重置为 false。
+如果军团带走精锐后城市被占，再被攻打时 `spawnEliteUsed` 已经是 false，
+此时依靠②号检查（攻方已有同名精锐）来保证同场唯一性。
 
-> **反例（禁止再犯）**：唐国攻长安，攻方出李世民；汉国守长安，守方城防又出李世民。  
-> 原因：守城代码未检查占城方 ≠ 锚点方，导致同一武将同场重复出现。
+---
 
-## 录入后
+## 禁止事项（曾犯过的错）
 
-`npm run city:lookup -- <据点名>`（**必跑**，一行看清文化区·势力·旗号·武将·精锐）  
-`npm run add:check -- <据点名>` · `faction:sync-audit` · `expedition:triple-check` · `city:dossier`
+| 禁止 | 原因 |
+|------|------|
+| ❌ 用 `city.factionId !== anchorFactionId` 来阻止守将出场 | 直接违反"以据点为基准"铁律 |
+| ❌ 只检查 `defendingLegions`，不检查 `attackingLegions` 是否已有同名将/精 | 会导致同一战场两侧出现相同武将/精锐 |
+| ❌ 精锐唯一性按势力判断而非按番号名 | 番号名存在 `army.name`，按名字更精准 |
 
-## 查据点全档（禁止分文件拼凑）
+---
 
-回答或修改某据点前，**先**执行：
+## 战报 UI 显示规则（CombatUI）
+
+| 单位类型 | 有无精锐 | 底部名称 | 技能徽章 |
+|----------|---------|---------|---------|
+| 军团（`unitType !== 'city'`）| 无精锐 | `城名` 军团 | — |
+| 军团（`unitType !== 'city'`）| 有精锐（`isElite=true`）| 精锐番号（如`怯薛宿卫`）| `怯薛宿卫 ×1.2` |
+| 驻军（`unitType === 'city'`）| 无精锐 | `城名` 驻军 | — |
+| 驻军（`unitType === 'city'`）| 有精锐（`_siegeGarrisonEliteName`）| 精锐番号（如`大西老营`）| `大西老营 ×1.4` |
+
+实现位置：`CombatUI.updateInfo → mapName()` / `buildWaveGroupedSideName` / `getLegionEliteBadgeName`
+
+---
+
+## 反例（真正的原因）
+
+> 唐国攻长安（攻方带李世民），汉国守长安（守城城防又出李世民）。
+>
+> **真正的原因**：守城代码没有检查攻方是否已有该武将（缺少②号检查）。
+> **不是**"没检查占城方是否等于锚点方"——那个检查是错误方向，会让据点永远无法出守将。
+
+---
+
+## 录入后必跑
 
 ```bash
-npm run city:lookup -- 长子
-npm run city:lookup -- --one 天水    # 仅一行，适合粘贴进对话
+npm run city:lookup -- <据点名>
 ```
-
-或读 `scratch/city_dossier.json` 的 `byCityName` / `oneLine` 字段。  
-**不要**分别 grep factions、FactionGenerals、ExpeditionLegions 后手工拼表。

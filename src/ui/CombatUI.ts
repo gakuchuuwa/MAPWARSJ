@@ -436,9 +436,9 @@ export class CombatUI {
             z-index: ${T.zIndex.portrait + 2};
         `;
         this.leftSkillsBox = document.createElement('div');
-        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: wrap; justify-content: flex-start; max-width: 49.5%;`;
+        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; overflow: hidden; justify-content: flex-start; max-width: 49.5%;`;
         this.rightSkillsBox = document.createElement('div');
-        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: wrap; justify-content: flex-end; max-width: 49.5%;`;
+        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; overflow: hidden; justify-content: flex-end; max-width: 49.5%;`;
         this.skillsRow.appendChild(this.leftSkillsBox);
         this.skillsRow.appendChild(this.rightSkillsBox);
 
@@ -830,6 +830,9 @@ export class CombatUI {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                width: ${uiPx(112)};
+                flex-shrink: 0;
+                box-sizing: border-box;
                 background: ${bgColor};
                 border: 1px solid ${borderColor};
                 border-bottom: 2px solid ${sideColor};
@@ -866,34 +869,33 @@ export class CombatUI {
 
         const renderSide = (box: HTMLDivElement, unit: IBattleUnit | null, isAttacker: boolean) => {
             if (!unit) return;
+            const pending: HTMLDivElement[] = [];
+            const add = (name: string, effect: string, famous: boolean) => {
+                if (pending.length < 4) pending.push(createSkillTag(name, effect, famous, isAttacker));
+            };
 
             const passSkill = getPassGarrisonDefenseSkillDisplay(unit);
-            if (passSkill) {
-                box.appendChild(createSkillTag(passSkill.name, passSkill.effectLabel, false, isAttacker));
-            }
+            if (passSkill) add(passSkill.name, passSkill.effectLabel, false);
 
             const joinLuck = this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
             const reinfSkill = getReinforcementJoinSkillDisplay(joinLuck);
-            if (reinfSkill) {
-                box.appendChild(createSkillTag(reinfSkill.name, reinfSkill.effectLabel, false, isAttacker));
-            }
+            if (reinfSkill) add(reinfSkill.name, reinfSkill.effectLabel, false);
 
-            const forageSkill = getExpeditionForageSkillDisplay(unit); // 远征军：因粮于敌
-            if (forageSkill) {
-                box.appendChild(createSkillTag(forageSkill.name, forageSkill.effectLabel, true, isAttacker));
-            }
+            const forageSkill = getExpeditionForageSkillDisplay(unit);
+            if (forageSkill) add(forageSkill.name, forageSkill.effectLabel, true);
 
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {
-                    box.appendChild(createSkillTag(tag.name, tag.effectLabel, tag.isFamous, isAttacker));
+                    add(tag.name, tag.effectLabel, tag.isFamous);
                 }
             }
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
-                const effectLabel = `×${parseFloat(legionMult.toFixed(2))}`;
-                box.appendChild(createSkillTag(getLegionEliteBadgeName(unit), effectLabel, true, isAttacker));
+                add(getLegionEliteBadgeName(unit), `×${parseFloat(legionMult.toFixed(2))}`, true);
             }
+
+            for (const tag of pending) box.appendChild(tag);
         };
         renderSide(this.leftSkillsBox, attacker, true);
         renderSide(this.rightSkillsBox, defender, false);
