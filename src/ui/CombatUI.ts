@@ -1337,6 +1337,11 @@ export class CombatUI {
             const size = maxWave <= 1 ? '1em' : wi === 0 ? '1em' : wi === 1 ? '0.92em' : '0.82em';
 
             for (const u of waveUnits) {
+                const garrisonElite = u.unitType === 'city' ? readSiegeGarrisonEliteName(u.getEntity?.()) : undefined;
+                if (garrisonElite) {
+                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${garrisonElite}</span>`;
+                    continue;
+                }
                 const match = u.name.match(/(军团|驻军|守军)$/);
                 const base = match ? u.name.substring(0, match.index) : u.name;
                 const suffix = match ? match[0] : '';
@@ -2217,6 +2222,12 @@ export class CombatUI {
 
     private updateInfo(att: IBattleUnit, def: IBattleUnit, title: string, year: string) {
         const mapName = (u: IBattleUnit) => {
+            if (u.unitType === 'city') {
+                const eliteName = readSiegeGarrisonEliteName(u.getEntity?.());
+                if (eliteName) {
+                    return `<div style="text-align: inherit;"><span style="white-space: nowrap;">${eliteName}</span></div>`;
+                }
+            }
             const match = u.name.match(/(军团|驻军|守军)$/);
             const base = match ? u.name.substring(0, match.index) : u.name;
             const suffix = match ? match[0] : '';

@@ -36,19 +36,36 @@ alwaysApply: false
 
 ### 运行时检查顺序（`SiegeGarrisonTier.applySiegeGarrisonBoostIfNeeded`）
 
+将领和精锐的检查是**对称的**，必须同时执行：
+
+#### 将领出场检查
 ```
 ① city.factionId === getCityAnchorFactionId(city.id)？
-   → 否 → 不出武将/精锐（占城不过户）
-② 守方军团已有该武将？→ 不出（互斥）
-③ 攻方军团已有该武将？→ 不出（同场唯一）
+   → 否 → 不出武将（占城不过户）
+② 守方军团已有该武将（defendingLegions.some(l => l.generalId)）？→ 不出（互斥）
+③ 攻方军团已有同 generalId（attackingLegions.some(l => l.generalId === anchoredGeneral.generalId)）？→ 不出（同场唯一）
 ④ city.spawnGeneralUsed？→ 不出（消耗制）
 ```
 
+#### 精锐出场检查（与将领对称，2026-06-25 补全）
+```
+① city.factionId === getCityAnchorFactionId(city.id)？
+   → 否 → 不出精锐（占城不过户）— 与将领共享同一检查
+② 守方军团已有精锐（defendingLegions.some(l => l.isElite)）？→ 不出（互斥）
+③ 攻方军团已有同名精锐（attackingLegions.some(l => l.isElite && l.name === eliteName)）？→ 不出（同场唯一）
+   ※ 精锐番号存在 army.name（由 makeArmyElite 写入），按名字比对比按势力更精准
+④ city.spawnEliteUsed？→ 不出（消耗制）
+```
+
+> **关键实现细节**：`city.spawnEliteUsed` 在城市易主时会被 `CityManager` 重置为 `false`，
+> 因此"占城不过户"（检查①）是阻止他势力驻军冒用精锐的**第一道防线**，不可省略。
+
 ### 禁止（代码层）
 
-- ❌ 守城城防只检查 `defendingLegions`，不检查 `attackingLegions` 是否已有同 generalId
-- ❌ 守城城防不检查 `city.factionId !== anchorFactionId` 就直接掷将
+- ❌ 守城城防只检查 `defendingLegions`，不检查 `attackingLegions` 是否已有同 `generalId`
+- ❌ 守城城防不检查 `city.factionId !== anchorFactionId` 就直接掷将/精
 - ❌ 攻方军团与守城城防在同一场战斗里出现相同 `generalId` / 精锐番号
+- ❌ 精锐唯一性检查按势力而非按番号名（一势力理论上只有一支精锐，但按名字更严谨）
 
 ## 势力优先级（无则向下）
 

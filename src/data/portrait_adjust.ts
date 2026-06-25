@@ -84,7 +84,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/xianqin/shang_fuhao.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": -21
+            "offsetY": -23
         },
         "/assets/xianqin/06494f4e-1652-4c64-a3d3-998bb6bb4975.png": {
             "scale": 1.08,
@@ -1760,6 +1760,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": -23
+        },
+        "/assets/CENTRAL/chanzhou_chairong.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/CENTRAL/qi_sachabieqi.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/zhaosong/112b2473-f1c7-4092-89b4-307fa0e5e832.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/CENTRAL_ASIA/76fff827-8a4e-486c-bde6-8315f6a535a6.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

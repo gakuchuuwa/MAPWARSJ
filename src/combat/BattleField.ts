@@ -158,11 +158,6 @@ export class BattleField {
         this.pickPredictedSides();
         this.reconcileSiegeGarrisonBoostWithDefenders();
         
-        const followedId = getFollowedArmyId();
-        const isFollowed = followedId && this.hasParticipant(followedId);
-        if (isFollowed) {
-            audioManager.play('battle_start');
-        }
         this.notifyBattleStart();
 
         gameLog('battle', `🏟️ [BattleField] 区域战斗开始!${presetResult ? ` [预设结果: ${presetResult}]` : ''}`);
