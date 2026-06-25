@@ -17,6 +17,15 @@ import {
 } from '../data/GeneralSkills';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
 import { gameLog } from '../utils/GameLogger';
+import { audioManager } from '../audio/AudioManager';
+
+function getFollowedArmyId(): string | null {
+    try {
+        return (window as any).game?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
+    } catch {
+        return null;
+    }
+}
 
 /** 普将逆局：侧总兵力 ≤ 开战该侧总兵力 × 此比例时触发 */
 export const COMEBACK_TROOP_THRESHOLD = 0.5;
@@ -120,9 +129,20 @@ function emitTacticalUi(
         `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}`,
     );
     if (delay > 0) {
-        window.setTimeout(() => onTacticalSkillTriggered?.(trigger), delay * 1000);
+        window.setTimeout(() => {
+            onTacticalSkillTriggered?.(trigger);
+            playGeneralSkillAudio(unit);
+        }, delay * 1000);
     } else {
         onTacticalSkillTriggered?.(trigger);
+        playGeneralSkillAudio(unit);
+    }
+}
+
+function playGeneralSkillAudio(unit: IBattleUnit): void {
+    const followedId = getFollowedArmyId();
+    if (followedId && unit.id === followedId) {
+        audioManager.play('general_skill');
     }
 }
 

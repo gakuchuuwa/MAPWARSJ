@@ -92,6 +92,9 @@ export function applySiegeGarrisonBoostIfNeeded(
 
     const anchorFactionId = getCityAnchorFactionId(city.id);
 
+    // ① 占城不过户：占城势力 ≠ 锚点势力时，不出该城将/精（铁律 B）
+    if (city.factionId !== anchorFactionId) return;
+
     const eliteName = getCityEliteLegionName(city.id);
     const anchoredGeneral = getCityAnchoredGeneral(city.id);
 
@@ -100,7 +103,12 @@ export function applySiegeGarrisonBoostIfNeeded(
         !!anchoredGeneral &&
         attackingLegions.some((l) => l.generalId === anchoredGeneral.generalId);
 
-    const needElite = !hasLegionElite && !!eliteName && !city.spawnEliteUsed;
+    // ④ 同场唯一：攻方已有同名精锐军团，说明精锐已随军离城，守城不得重复出场
+    const attackerHasThisElite =
+        !!eliteName &&
+        attackingLegions.some((l) => l.isElite && l.name === eliteName);
+
+    const needElite = !hasLegionElite && !attackerHasThisElite && !!eliteName && !city.spawnEliteUsed;
     const needGeneral =
         !hasLegionGeneral &&
         !city.spawnGeneralUsed &&

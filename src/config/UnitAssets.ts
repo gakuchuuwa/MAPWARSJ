@@ -38,18 +38,16 @@ export const SPRITE_PATHS = {
     // [NEW] General Portraits (Mapped by General ID；缺省走 portrait_defaults 文化区随机池)
     GENERAL_PORTRAITS: {
         // ── 秦势力将领立绘 ──
-        'qin_baiqi': '/assets/yingqin/qin_baiqi.png',
+        'xin_baiqi': '/assets/yingqin/xin_baiqi.png',           // 白起（generalId 已更新）
         // ── 02 大唐将领 ──
         'tang_lishimin': '/assets/litang/tang_lishimin.png',
-        // ── 03 武周将领 ──
-        'unassigned_direnjie': '/assets/wuzhou/unassigned_direnjie.png',
+        // ── 03 武周将领（狄仁杰立绘/档案已移除，跳过）──
         // ── 04 大明将领 ──
-        'unassigned_zhudi': '/assets/daming/unassigned_zhudi.png',
+        'ming_d_zhudi': '/assets/daming/ming_d_zhudi.png',       // 朱棣（generalId 已更新）
         'jinling_tandaoji': '/assets/JIANGNAN/jinling_tandaoji.png',
-        'liulong': '/assets/LINGNAN/liulong.png',
+        'yingzhou_liulong_ying': '/assets/LINGNAN/yingzhou_liulong_ying.png', // 刘龑（generalId 已更新）
         'yangzhou_wangping': '/assets/BASHU/yangzhou_wangping.png',
         'pagan_anuluvtuo': '/assets/DIANQIAN/pagan_anuluvtuo.png',
-        'unassigned_machao': '/assets/HEXI/unassigned_machao.png',
         'qiuci_baiba': '/assets/WESTERN/qiuci_baiba.png',
         'gar_lunqinling': '/assets/TIBET/gar_lunqinling.png',
         'menggu_d_chengjisihan': '/assets/STEPPE/menggu_d_chengjisihan.png',
@@ -60,13 +58,11 @@ export const SPRITE_PATHS = {
         'siam_nalixuan': '/assets/DIANQIAN/siam_nalixuan_DIANQIAN.png',
         'shang_fuhao': '/assets/xianqin/shang_fuhao.png',
         'pizhou_lvbu': '/assets/CENTRAL/pizhou_lvbu.png',
-        'han_d_hanxin': '/assets/liuhan/han_d_hanxin.png',
+        'xianyu_hanxin': '/assets/liuhan/xianyu_hanxin.png',    // 韩信（generalId 已更新）
         'wei_wuqi': '/assets/xianqin/wei_wuqi.png',
         'manzhou_nuerhachi': '/assets/NORTHEAST/manzhou_nuerhachi.png',
         'xinluo_jinyixin': '/assets/KOREA/xinluo_jinyixin.png',
-        'benduozhongsheng': '/assets/JAPAN/benduozhongsheng.png',
         'seljuq_sangjiaer': '/assets/CENTRAL_ASIA/seljuq_sangjiaer.png',
-        'suyebamo': '/assets/DIANQIAN/suyebamo.png',
         'zaoyang_d_menggong': '/assets/zhaosong/zaoyang_d_menggong.png',
     },
     PLAYER_DEFAULT: {

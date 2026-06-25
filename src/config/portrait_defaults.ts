@@ -891,7 +891,7 @@ export function resolveGeneralPortraitPath(
     dedicatedPath: string | undefined,
     options?: { factionId?: string; region?: RegionType; exclude?: string },
 ): string {
-    if (dedicatedPath?.trim() && portraitAssetExists(dedicatedPath)) {
+    if (dedicatedPath?.trim()) {
         return normalizePortraitWebPath(dedicatedPath);
     }
     const cultureRegion = (options?.region
@@ -981,7 +981,7 @@ export function resolvePortraitAssetPath(
 ): string {
     const { factionId, region, exclude } = options ?? {};
 
-    if (requested?.trim() && portraitAssetExists(requested)) {
+    if (requested?.trim()) {
         return normalizePortraitWebPath(requested);
     }
 

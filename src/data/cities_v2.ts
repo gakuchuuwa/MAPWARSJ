@@ -2521,7 +2521,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_junfucheng', name: '骏府', factionId: 'jinchuan', lat: 34.97, lng: 138.38, type: 'medium_city', region: 'JAPAN', troops: 10000,
         note: '骏府；骏河治所/重镇',
     },
-    { id: 'city_hamamatsu', name: '浜松城', factionId: 'totomi', lat: 34.71, lng: 137.73, type: 'medium_city', region: 'JAPAN', troops: 10000,
+    { id: 'city_hamamatsu', name: '浜松城', factionId: 'totomi', lat: 34.71, lng: 137.73, type: 'small_city', region: 'JAPAN', troops: 10000,
         note: '浜松城；远江治所/重镇',
     },
     { id: 'city_atsuta', name: '热田城', factionId: 'owari', lat: 35.12, lng: 136.95, type: 'small_city', region: 'JAPAN', troops: 10000,

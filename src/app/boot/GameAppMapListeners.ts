@@ -79,4 +79,17 @@ export function setupGameAppMapListeners(app: GameApp): void {
         leaflet.on('move', () => CityAssetManager.notifyMapInteraction());
         leaflet.on('zoom', () => CityAssetManager.notifyMapInteraction());
     }
+
+    // [NEW] Global UI Click Audio Hook
+    window.addEventListener('click', (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        if (!target || !target.closest) return;
+        
+        // Match common UI interactive elements
+        const isInteractive = target.closest('button, a, input[type="button"], input[type="submit"], .interactive, .ui-btn, .leaflet-marker-icon, .leaflet-control-zoom-in, .leaflet-control-zoom-out');
+        if (isInteractive) {
+            app.audioManager.unlock();
+            app.audioManager.play('ui_click');
+        }
+    }, { capture: true });
 }

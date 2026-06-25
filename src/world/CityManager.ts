@@ -13,6 +13,7 @@ import { CityAssetManager } from '../assets/CityAssetManager';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { isMacroMapZoom, isRegionBoundaryZoom } from '../config/StrategicView';
+import { audioManager } from '../audio/AudioManager';
 
 export interface CityUpdateOptions {
     skipCaptureLog?: boolean;
@@ -477,6 +478,11 @@ export class CityManager {
                 }
                 if (!options?.skipCaptureLog) {
                     gameLog('world', `[CityManager] City ${oldCity.name} captured by ${data.factionId}! Playing effect.`);
+                    if (updatedCity.type === 'pass') {
+                        audioManager.play('pass_siege');
+                    } else {
+                        audioManager.play('city_capture');
+                    }
                 }
                 const color = this.factionManager.getFactionColor(data.factionId);
 

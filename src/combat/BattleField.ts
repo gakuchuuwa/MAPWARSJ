@@ -13,6 +13,15 @@
 
 import { IBattleUnit, BattleType, UnitType } from './CombatSystem';
 import { gameLog } from '../utils/GameLogger';
+import { audioManager } from '../audio/AudioManager';
+
+function getFollowedArmyId(): string | null {
+    try {
+        return (window as any).game?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
+    } catch {
+        return null;
+    }
+}
 import {
     calculateBattleDurationSec,
     clampBattleDurationSec,
@@ -148,8 +157,12 @@ export class BattleField {
         this.calculateTargetDuration();
         this.pickPredictedSides();
         this.reconcileSiegeGarrisonBoostWithDefenders();
-
-        // 触发战斗开始回调
+        
+        const followedId = getFollowedArmyId();
+        const isFollowed = followedId && this.hasParticipant(followedId);
+        if (isFollowed) {
+            audioManager.play('battle_start');
+        }
         this.notifyBattleStart();
 
         gameLog('battle', `🏟️ [BattleField] 区域战斗开始!${presetResult ? ` [预设结果: ${presetResult}]` : ''}`);
@@ -528,6 +541,18 @@ export class BattleField {
      */
     private resolve(winnerGroup: FactionGroup, loserGroup: FactionGroup): void {
         this.isOver = true;
+
+        // 跟拍军团胜负音效
+        const followedId = getFollowedArmyId();
+        if (followedId) {
+            const isWinner = winnerGroup.units.some(u => u.unit.id === followedId);
+            const isLoser = loserGroup.units.some(u => u.unit.id === followedId);
+            if (isWinner) {
+                audioManager.play('battle_victory');
+            } else if (isLoser) {
+                audioManager.play('battle_defeat');
+            }
+        }
 
         if (this.siegeCityId && BattleField.siegeVisualStopHandler) {
             BattleField.siegeVisualStopHandler(this.siegeCityId);

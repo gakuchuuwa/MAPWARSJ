@@ -1312,7 +1312,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 20
         },
         "/assets/litang/cai_lisu.png": {
-            "scale": 1.24,
+            "scale": 1.22,
             "offsetX": 0,
             "offsetY": 6
         },
@@ -1572,9 +1572,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -27
         },
         "/assets/NORTHEAST/aola_menglielun.png": {
-            "scale": 1.12,
+            "scale": 1.18,
             "offsetX": 0,
-            "offsetY": -16
+            "offsetY": -18
         },
         "/assets/NORTHEAST/fuyu_weichoutai.png": {
             "scale": 1.1,
@@ -1680,6 +1680,86 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -4
+        },
+        "/assets/CENTRAL/9868e5c5-c87d-4ecf-9001-0cbb23950165.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/NORTHEAST/eluoke_amuhar.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/NORTHEAST/jilimi_takuna.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/zhaosong/huan_zhongshidao.png": {
+            "scale": 1.1,
+            "offsetX": 14,
+            "offsetY": -9
+        },
+        "/assets/CENTRAL_ASIA/seljuq_sangjiaer.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -40
+        },
+        "/assets/xianqin/yue_goujian.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/JIANGNAN/202606220310.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/JAPAN/7240bef9-e904-41d3-a8e5-58f324a3755d.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -33
+        },
+        "/assets/LINGNAN/415f26e1-3c4c-4485-b02c-d0f0de1cabf1.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/pugan/chenla_sheyebamoqishi_202606250402.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -50
+        },
+        "/assets/DIANQIAN/mon_monuhe.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/JAPAN/cb21e44c-7857-4cea-b20d-0fb0f26768c7.png": {
+            "scale": 0.98,
+            "offsetX": 6,
+            "offsetY": -10
+        },
+        "/assets/JAPAN/726010d3-3b61-4928-8d2c-89ea4d9990f4.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/LINGNAN/guangzhou (20).png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/JAPAN/jinchuan_jinchuanyiyuan_prev_20260624115718.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/JAPAN/benduozhongsheng.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -23
         }
     },
     "folderGuides": {

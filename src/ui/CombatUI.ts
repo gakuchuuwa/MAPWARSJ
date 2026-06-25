@@ -1846,7 +1846,9 @@ export class CombatUI {
         }
         const hadAdjust = this.correctorDirtyPaths.size > 0;
         await this.saveCorrectorSession(onExit, autoTrigger);
-        await this.refreshPortraitPickerAfterDiskWrite();
+        try {
+            await this.refreshPortraitPickerAfterDiskWrite();
+        } catch { /* 刷新选图器失败不阻断写盘结果 */ }
         if (!onExit && boundCount > 0 && !hadAdjust) {
             this.setCorrectorStatus(`✓ 已绑定 ${boundCount} 张立绘到磁盘`);
         }
@@ -1907,14 +1909,19 @@ export class CombatUI {
     }
 
     private async applyBoundPortraitToCombatImg(
-        bind: { destPath: string; side: 'attacker' | 'defender'; generalId: string },
+        bind: { destPath: string; sourcePath: string; side: 'attacker' | 'defender'; generalId: string },
     ): Promise<void> {
-        setGeneralPortraitOverride(bind.generalId, bind.destPath);
+        // 先用 sourcePath 做临时 override（源图保证可访问），避免 destPath 尚未就绪时显示空白
+        setGeneralPortraitOverride(bind.generalId, bind.sourcePath);
         try {
             await this.preloadPortraitWebPath(bind.destPath);
         } catch {
-            // 磁盘已绑定成功；预加载失败不阻断视觉更新，继续设 img.src（由 load/error 兜底）
+            // Windows 文件系统延迟，destPath 暂 404；源图已在战斗 UI 显示，不额外操作
+            // 刷新页面后 FactionGenerals.ts 的 destPath 生效
+            return;
         }
+        // destPath 确认可访问，升级 override 并更新 img.src
+        setGeneralPortraitOverride(bind.generalId, bind.destPath);
         const img = bind.side === 'attacker' ? this.leftPortrait : this.rightPortrait;
         const bust = `${bind.destPath}?v=${this.portraitPickerCatalogRev}`;
         await new Promise<void>((resolve) => {

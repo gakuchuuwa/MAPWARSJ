@@ -360,7 +360,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     mingzheng: { generalId: 'mingzheng_jianzandechang', generalName: '坚赞德昌', portrait: '/assets/DIANQIAN/mingzheng_jianzandechang.png' }, // 打箭炉·明正土司
     hani_d: { generalId: 'hani_d_zhebi', generalName: '遮比', portrait: '/assets/DIANQIAN/hani_d_zhebi.png' }, // 思陀·哈尼首领
   // ── 滇缅区 2026-06-18 ──
-    dali: { generalId: 'dali_duansiping', generalName: '段思平', portrait: '/assets/DIANQIAN/dali_duansiping.png' },
+    dali: { generalId: 'dali_duansiping', generalName: '段思平', portrait: '/assets/LINGNAN/dali_duansiping.png' },
     dongxu: { generalId: 'dongxu_mangruiti', generalName: '莽瑞体', portrait: '/assets/DIANQIAN/dongxu_mangruiti.png' },
     mu_lijiang: { generalId: 'mu_lijiang_muzeng', generalName: '木增', portrait: '/assets/DIANQIAN/mu_lijiang_muzeng.png' },
     dianguo: { generalId: 'dianguo_zhuangqiao', generalName: '庄蹻', portrait: '/assets/DIANQIAN/dianguo_zhuangqiao.png' },
@@ -512,7 +512,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     yingli: { generalId: 'yingli_jilasiyi', generalName: '籍辣思义', portrait: '/assets/HEXI/yingli_jilasiyi.png' },
     dangxiang: { generalId: 'dangxiang_liyuanhao', generalName: '李元昊', portrait: '/assets/HEXI/dangxiang_liyuanhao.png' },
     huizhou: { generalId: 'huizhou_yaodui', generalName: '姚兕', portrait: '/assets/HEXI/huizhou_yaodui.png' },
-    huan: { generalId: 'huan_zhongshidao', generalName: '种师道', portrait: '/assets/NORTH/huan_zhongshidao.png' },
+    huan: { generalId: 'huan_zhongshidao', generalName: '种师道', portrait: '/assets/zhaosong/huan_zhongshidao.png' },
     wei2: { generalId: 'wei2_hunjian', generalName: '浑瑊', portrait: '/assets/HEXI/wei2_hunjian.png' },
     lingzhou: { generalId: 'pugu_puguhuaien', generalName: '仆固怀恩', portrait: '/assets/STEPPE/pugu_puguhuaien.png' },
     ningkou: { generalId: 'ningkou_lubode', generalName: '路博德', portrait: '/assets/HEXI/ningkou_lubode.png' },

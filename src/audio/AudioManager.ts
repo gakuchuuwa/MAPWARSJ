@@ -7,6 +7,8 @@ export type SoundKey =
     | 'battle_loop'
     | 'battle_start'
     | 'battle_end'
+    | 'battle_victory'
+    | 'battle_defeat'
     | 'battle_reinforcement'
     | 'city_capture'
     | 'faction_fall'
@@ -47,6 +49,8 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     battle_loop: sound('battle', 'battle_loop', 0.5, 0),
     battle_start: sound('battle', 'battle_start', 0.65, 1600),
     battle_end: sound('battle', 'battle_end', 0.55, 1600),
+    battle_victory: sound('battle', 'battle_victory', 0.7, 1800),
+    battle_defeat: sound('battle', 'battle_defeat', 0.6, 1800),
     battle_reinforcement: sound('battle', 'battle_reinforcement', 0.5, 2200),
     city_capture: sound('feed', 'city_capture', 0.7, 1200),
     faction_fall: sound('feed', 'faction_fall', 0.85, 1800),
@@ -65,7 +69,7 @@ function sound(
 ): SoundDefinition {
     return {
         category,
-        sources: [`/assets/sfx/${fileName}.ogg`, `/assets/sfx/${fileName}.mp3`],
+        sources: [`/sfx/${fileName}.ogg`, `/sfx/${fileName}.mp3`],
         volume,
         cooldownMs,
     };
