@@ -156,7 +156,7 @@ export class AudioManager {
         if (this.unlocked) return;
         this.unlocked = true;
         this.reapplyFollowedLegionAudio();
-        this.startBgm();
+        // BGM 不在解锁时自动启动，由 syncRegionBgm 在跟随军团后触发
     }
 
     public play(key: SoundKey): boolean {
