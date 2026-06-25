@@ -85,6 +85,19 @@ export default defineConfig({
     },
     plugins: [
         {
+            // 给音频/OGG 文件设置正确 MIME，防止 IDM 等下载器拦截
+            name: 'audio-mime-fix',
+            configureServer(server) {
+                server.middlewares.use((req, res, next) => {
+                    if (req.url && (req.url.endsWith('.ogg') || req.url.includes('.ogg?'))) {
+                        res.setHeader('Content-Type', 'audio/ogg');
+                        res.setHeader('X-Content-Type-Options', 'nosniff');
+                    }
+                    next();
+                });
+            },
+        },
+        {
             name: 'suppress-portrait-dev-hmr',
             configureServer(server) {
                 const origSend = server.ws.send.bind(server.ws);
