@@ -131,6 +131,11 @@ export class AudioManager {
     } = { armyId: null, marching: false, inCombat: false };
     private bgmAudio: HTMLAudioElement | null = null;
     private currentBgmFolder: string = '';
+    private currentBgmSrc: string = '';
+    /** 源路径 → blob 对象 URL（用 fetch 取 blob 绕开 IDM 等下载器按扩展名抓取）*/
+    private objectUrlCache = new Map<string, string>();
+    /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
+    private wantedLoops = new Set<SoundKey>();
 
     public static getInstance(): AudioManager {
         if (!AudioManager.instance) AudioManager.instance = new AudioManager();
@@ -155,8 +160,30 @@ export class AudioManager {
     public unlock(): void {
         if (this.unlocked) return;
         this.unlocked = true;
+        // 预取所有 SFX 为 blob（非 bgm），让首次 play 同步命中缓存
+        for (const key of Object.keys(SOUND_DEFINITIONS) as SoundKey[]) {
+            const def = SOUND_DEFINITIONS[key];
+            if (def.category === 'bgm') continue;
+            void this.ensureAudioElement(key, def);
+        }
         this.reapplyFollowedLegionAudio();
         // BGM 不在解锁时自动启动，由 syncRegionBgm 在跟随军团后触发
+    }
+
+    /** fetch 源文件为 blob，返回 blob: 对象 URL（无扩展名，下载器无法按 .ogg 抓取）*/
+    private async fetchObjectUrl(src: string): Promise<string | null> {
+        const cached = this.objectUrlCache.get(src);
+        if (cached) return cached;
+        try {
+            const res = await fetch(src, { cache: 'force-cache' });
+            if (!res.ok) return null;
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            this.objectUrlCache.set(src, url);
+            return url;
+        } catch {
+            return null;
+        }
     }
 
     public play(key: SoundKey): boolean {
@@ -223,7 +250,7 @@ export class AudioManager {
             this.stopBgm();
         } else {
             this.reapplyFollowedLegionAudio();
-            this.startBgm();
+            // BGM 由 syncRegionBgm 在跟随军团时按区域恢复，不在此强开
         }
         this.saveSettings();
     }
@@ -283,16 +310,33 @@ export class AudioManager {
         return cooldownMs > 0 && Date.now() - lastPlayedAt < cooldownMs;
     }
 
+    /** 同步取缓存；未就绪则异步加载并返回 null（首播跳过，预取后即命中）*/
     private getAudioElement(key: SoundKey, definition: SoundDefinition): HTMLAudioElement | null {
+        const cached = this.audioCache.get(key);
+        if (cached) return cached;
+        void this.ensureAudioElement(key, definition);
+        return null;
+    }
+
+    /** 异步：fetch blob → 对象 URL → 缓存 Audio 元素 */
+    private async ensureAudioElement(
+        key: SoundKey,
+        definition: SoundDefinition,
+    ): Promise<HTMLAudioElement | null> {
         const cached = this.audioCache.get(key);
         if (cached) return cached;
 
         const source = definition.sources[0];
         if (!source) return null;
 
-        const audio = new Audio(source);
+        const url = await this.fetchObjectUrl(source);
+        if (!url) {
+            this.warnMissingOnce(key, `fetch 失败: ${source}`);
+            return null;
+        }
+        const audio = new Audio();
+        audio.src = url;
         audio.preload = 'auto';
-        audio.addEventListener('error', () => this.warnMissingOnce(key, audio.error));
         this.audioCache.set(key, audio);
         return audio;
     }
@@ -303,17 +347,20 @@ export class AudioManager {
         const definition = SOUND_DEFINITIONS[key];
         if (!definition) return;
 
-        const audio = this.getLoopElement(key, definition);
-        if (!audio || !audio.paused) return;
-
-        audio.volume = this.resolveVolume(definition);
-        audio.currentTime = 0;
-        void audio.play().catch((error) => {
-            this.warnMissingOnce(key, error);
+        this.wantedLoops.add(key);
+        void this.ensureLoopElement(key, definition).then((audio) => {
+            // 异步加载期间状态可能已变（停止跟拍/转入战斗），仅当仍被期望时才播
+            if (!audio || !this.wantedLoops.has(key) || !audio.paused) return;
+            audio.volume = this.resolveVolume(definition);
+            audio.currentTime = 0;
+            void audio.play().catch((error) => {
+                this.warnMissingOnce(key, error);
+            });
         });
     }
 
     private stopLoop(key: SoundKey): void {
+        this.wantedLoops.delete(key);
         const audio = this.loopCache.get(key);
         if (!audio) return;
         audio.pause();
@@ -326,18 +373,13 @@ export class AudioManager {
         }
     }
 
-    private startBgm(): void {
-        if (!this.settings.enabled || !this.unlocked) return;
-        // 默认从 CENTRAL 开始；syncRegionBgm 会在首帧切换到正确区域
-        this.playBgmSrc('/assets/CENTRAL/CENTRAL_bgm.ogg');
-    }
-
     public stopBgm(): void {
+        this.currentBgmFolder = '';
+        this.currentBgmSrc = '';
         if (!this.bgmAudio) return;
         this.bgmAudio.pause();
         this.bgmAudio.currentTime = 0;
         this.bgmAudio = null;
-        this.currentBgmFolder = '';
     }
 
     /** 每帧调用：根据镜头坐标切换对应文化区的 BGM */
@@ -354,32 +396,33 @@ export class AudioManager {
     }
 
     private playBgmSrc(src: string): void {
-        if (this.bgmAudio) {
-            const sameSrc = this.bgmAudio.src.endsWith(src) ||
-                this.bgmAudio.src.includes(src);
-            if (sameSrc && !this.bgmAudio.paused) return;
-            this.bgmAudio.pause();
-        }
+        // 同一首已在播 → 跳过（dedup 用逻辑路径，blob URL 无法比对）
+        if (this.currentBgmSrc === src && this.bgmAudio && !this.bgmAudio.paused) return;
+        this.currentBgmSrc = src;
 
-        const audio = new Audio(src);
-        audio.loop = true;
-        audio.preload = 'auto';
-        const def = SOUND_DEFINITIONS['bgm_main'];
-        audio.volume = def ? this.resolveVolume(def) : 0.125;
-        audio.addEventListener('error', () => {
-            this.warnMissingOnce('bgm_main', audio.error);
-            // 如果区域 BGM 加载失败，回落 CENTRAL
-            if (this.currentBgmFolder !== 'CENTRAL') {
-                this.currentBgmFolder = 'CENTRAL';
-                const fallback = '/assets/CENTRAL/CENTRAL_bgm.ogg';
-                if (!audio.src.endsWith(fallback)) {
-                    this.playBgmSrc(fallback);
+        void this.fetchObjectUrl(src).then((url) => {
+            // 异步期间可能又切了区域 / 停了 BGM
+            if (this.currentBgmSrc !== src || !this.settings.enabled || !this.unlocked) return;
+            if (!url) {
+                this.warnMissingOnce('bgm_main', `fetch 失败: ${src}`);
+                // 区域 BGM 缺失 → 回落 CENTRAL
+                if (this.currentBgmFolder !== 'CENTRAL') {
+                    this.currentBgmFolder = 'CENTRAL';
+                    this.playBgmSrc('/assets/CENTRAL/CENTRAL_bgm.ogg');
                 }
+                return;
             }
-        });
-        this.bgmAudio = audio;
-        void audio.play().catch((error) => {
-            this.warnMissingOnce('bgm_main', error);
+            if (this.bgmAudio) this.bgmAudio.pause();
+            const audio = new Audio();
+            audio.src = url;
+            audio.loop = true;
+            audio.preload = 'auto';
+            const def = SOUND_DEFINITIONS['bgm_main'];
+            audio.volume = def ? this.resolveVolume(def) : 0.125;
+            this.bgmAudio = audio;
+            void audio.play().catch((error) => {
+                this.warnMissingOnce('bgm_main', error);
+            });
         });
     }
 
@@ -400,17 +443,25 @@ export class AudioManager {
         }
     }
 
-    private getLoopElement(key: SoundKey, definition: SoundDefinition): HTMLAudioElement | null {
+    private async ensureLoopElement(
+        key: SoundKey,
+        definition: SoundDefinition,
+    ): Promise<HTMLAudioElement | null> {
         const cached = this.loopCache.get(key);
         if (cached) return cached;
 
         const source = definition.sources[0];
         if (!source) return null;
 
-        const audio = new Audio(source);
+        const url = await this.fetchObjectUrl(source);
+        if (!url) {
+            this.warnMissingOnce(key, `fetch 失败: ${source}`);
+            return null;
+        }
+        const audio = new Audio();
+        audio.src = url;
         audio.loop = true;
         audio.preload = 'auto';
-        audio.addEventListener('error', () => this.warnMissingOnce(key, audio.error));
         this.loopCache.set(key, audio);
         return audio;
     }

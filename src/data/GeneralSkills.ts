@@ -142,7 +142,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     mushi_muchong: { generalId: 'mushi_muchong', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 代北：北魏开国翼戴
     lai_wangshifan: { generalId: 'lai_wangshifan', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 平卢：反朱温决死突击
     xiongding_murongyong: { generalId: 'xiongding_murongyong', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 西燕：亡国哀兵复起
-    chanzhou_chairong: { generalId: 'chanzhou_chairong', tier: 'epic', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 澶州：周世宗亲征
+    chanzhou_chairong: { generalId: 'chanzhou_chairong', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 澶州：周世宗亲征
     linhu_zhaowulingwang: { generalId: 'linhu_zhaowulingwang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 胡服骑射：破林胡灭楼烦
     xianyu_hanxin: { generalId: 'xianyu_hanxin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 韩信背水一战
     shizhao_d_shihu: { generalId: 'shizhao_d_shihu', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 邺都：暴虐突袭
@@ -720,7 +720,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     bing_liukun: { generalId: 'bing_liukun', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 晋阳孤守抗刘渊
     unassigned_zhangrou: { generalId: 'unassigned_zhangrou', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 保定重建
     qu_d_quyi: { generalId: 'qu_d_quyi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 界桥先登破白马
-    gaoqi_d_gaohuan: { generalId: 'gaoqi_d_gaohuan', tier: 'epic', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 神武帝
+    gaoqi_d_gaohuan: { generalId: 'gaoqi_d_gaohuan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 神武帝
     pingyuan_yanzhenqing: { generalId: 'pingyuan_yanzhenqing', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 平原抗安史
     hejian_gongsunzan: { generalId: 'hejian_gongsunzan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 白马义从
     linyu_wusangui: { generalId: 'linyu_wusangui', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 山海关
@@ -756,7 +756,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yue_goujian: { generalId: 'yue_goujian', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 卧薪尝胆
     heng_hetengjiao: { generalId: 'heng_hetengjiao', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 衡州抗清
     xushouhui_zhaopusheng: { generalId: 'xushouhui_zhaopusheng', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 双刀赵
-    sui_yangjian: { generalId: 'sui_yangjian', tier: 'epic', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 隋文帝
+    sui_yangjian: { generalId: 'sui_yangjian', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 隋文帝
     yang_aner_yanganer: { generalId: 'yang_aner_yanganer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 杨安儿红袄军克登莱
     unassigned_mayin: { generalId: 'unassigned_mayin', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 马楚开国
     qi_d_qijiguang: { generalId: 'qi_d_qijiguang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 戚继光横屿灭倭
@@ -775,7 +775,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_wangchao: { generalId: 'unassigned_wangchao', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 光州入闽
     shuntian_linshuangwen: { generalId: 'shuntian_linshuangwen', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 顺天起义
     chunshen_huangxie: { generalId: 'chunshen_huangxie', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 春申君
-    shanyue_sunce: { generalId: 'shanyue_sunce', tier: 'epic', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' }, // 江东小霸王·席卷六郡
+    shanyue_sunce: { generalId: 'shanyue_sunce', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' }, // 江东小霸王·席卷六郡
     she_ethnic_leiwanxing: { generalId: 'she_ethnic_leiwanxing', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 畲民起义
     unassigned_pushougeng: { generalId: 'unassigned_pushougeng', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 泉州蒲氏
     wang_s_wanghua: { generalId: 'wang_s_wanghua', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 汪华保境
