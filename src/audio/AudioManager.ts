@@ -62,7 +62,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     restoration: sound('feed', 'restoration', 0.65, 1200),
     expedition: sound('feed', 'expedition', 0.75, 1400),
     pass_siege: sound('feed', 'pass_siege', 0.45, 4000),
-    general_skill: sound('battle', 'general_skill', 0.7, 1800),
+    general_skill: sound('battle', 'general_skill', 0.45, 1800),
     bgm_main: { category: 'bgm', sources: ['/assets/CENTRAL/CENTRAL_bgm.aud'], volume: 0.25, cooldownMs: 0 },
 };
 
@@ -393,8 +393,9 @@ export class AudioManager {
         if (!this.settings.enabled || !this.unlocked) return;
 
         const region: RegionType = getRegion(lat, lng);
-        const folder = region; // RegionType 字符串即文件夹名（CENTRAL/NORTH/...）
-        if (folder === this.currentBgmFolder) return;
+        const folder = region;
+        // 同区域且音频正在播 → 跳过；若音频未播（加载失败/暂停），允许重试
+        if (folder === this.currentBgmFolder && this.bgmAudio && !this.bgmAudio.paused) return;
 
         this.currentBgmFolder = folder;
         const src = `/assets/${folder}/${folder}_bgm.aud`;
