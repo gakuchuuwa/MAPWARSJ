@@ -912,7 +912,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/panjun/chimei_fanchong.png": {
-            "scale": 1,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": -30
         },
@@ -1292,7 +1292,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/CENTRAL_ASIA/5d913217-cc43-4452-80a8-e1962469e756.png": {
-            "scale": 1.1,
+            "scale": 1.12,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -1327,7 +1327,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -36
         },
         "/assets/STEPPE/menggu_d_chengjisihan.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": -43
         },
@@ -1347,9 +1347,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
-            "scale": 0.88,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": -8
+            "offsetY": 1
         },
         "/assets/CENTRAL_ASIA/guishuang_jianisejia.png": {
             "scale": 0.96,
@@ -1577,7 +1577,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/NORTHEAST/fuyu_weichoutai.png": {
-            "scale": 1.1,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": 11
         },
@@ -1780,6 +1780,66 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/manqing/manzhou_nuerhachi.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -53
+        },
+        "/assets/manqing/aisin_d_huangtaiji.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/CENTRAL_ASIA/202606220324.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/yingqin/qin_mengtian.png": {
+            "scale": 1.08,
+            "offsetX": 5,
+            "offsetY": 5
+        },
+        "/assets/HEXI/5175fe4a-89ae-425d-887d-d2cbc8020eb0.png": {
+            "scale": 0.92,
+            "offsetX": 7,
+            "offsetY": 31
+        },
+        "/assets/STEPPE/0ffaf7ae-df77-4f4a-87df-2809ccbf6d2b.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/CENTRAL_ASIA/bc9cf911-a04c-49aa-aed9-bb6541ec3a47.png": {
+            "scale": 0.92,
+            "offsetX": -1,
+            "offsetY": -61
+        },
+        "/assets/xianqin/aee63f48-fd2d-4330-8102-8542f0919e4a.png": {
+            "scale": 1.12,
+            "offsetX": 14,
+            "offsetY": 11
+        },
+        "/assets/TIBET/8bad9151-8fb5-463d-a429-57bd5bed52ce.png": {
+            "scale": 1,
+            "offsetX": 10,
+            "offsetY": -36
+        },
+        "/assets/JAPAN/so_zongyizhi.png": {
+            "scale": 1.12,
+            "offsetX": 22,
+            "offsetY": -8
+        },
+        "/assets/STEPPE/pugu_ashinagudulu.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/STEPPE/e0387158-f4cf-4ef6-abb2-91addd2bb6de.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -8
         }
     },
     "folderGuides": {

@@ -130,13 +130,13 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
 // ── 东北区 2026-06-18 ──
     jilizhou: { generalId: 'jilizhou_chengmingzhen', generalName: '程名振', portrait: '/assets/NORTHEAST/jilizhou_chengmingzhen.png' },
     nuergan: { generalId: 'nuergan_kangwang', generalName: '康旺', portrait: '/assets/NORTHEAST/nuergan_kangwang.png' },
-    manzhou: { generalId: 'manzhou_nuerhachi', generalName: '努尔哈赤', portrait: '/assets/NORTHEAST/manzhou_nuerhachi.png' },
+    manzhou: { generalId: 'manzhou_nuerhachi', generalName: '努尔哈赤', portrait: '/assets/manqing/manzhou_nuerhachi.png' },
 
     wuliangha: { generalId: 'wuliangha_zhelemei', generalName: '者勒蔑', portrait: '/assets/NORTHEAST/wuliangha_zhelemei.png' },
     fuyu: { generalId: 'fuyu_weichoutai', generalName: '尉仇台', portrait: '/assets/NORTHEAST/fuyu_weichoutai.png' },
     dajin: { generalId: 'dajin_wanyanaguda', generalName: '阿骨打', portrait: '/assets/NORTHEAST/dajin_wanyanaguda.png' },
     yizhou: { generalId: 'yizhou_wanyanloushi', generalName: '完颜娄室', portrait: '/assets/NORTHEAST/yizhou_wanyanloushi.png' },
-    aisin_d: { generalId: 'aisin_d_huangtaiji', generalName: '皇太极', portrait: '/assets/NORTHEAST/aisin_d_huangtaiji.png' },
+    aisin_d: { generalId: 'aisin_d_huangtaiji', generalName: '皇太极', portrait: '/assets/manqing/aisin_d_huangtaiji.png' },
     xianbei: { generalId: 'xianbei_tuobamao', generalName: '拓跋毛', portrait: '/assets/NORTHEAST/xianbei_tuobamao.png' },
     suolun: { generalId: 'suolun_bomuboguoer', generalName: '博穆博果尔', portrait: '/assets/NORTHEAST/suolun_bomuboguoer.png' },
     dongxia: { generalId: 'dongxia_puxianwannu', generalName: '蒲鲜万奴', portrait: '/assets/NORTHEAST/dongxia_puxianwannu.png' },
@@ -476,7 +476,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     chenzhou_d: { generalId: 'chenzhou_d_zhanggao', generalName: '张镐', portrait: '/assets/BASHU/chenzhou_d_zhanggao.png' },
       xiqin: { generalId: 'xiqin_xuerengao', generalName: '薛举', portrait: '/assets/HEXI/xiqin_xuerengao.png' },
     beidi: { generalId: 'beidi_yaochang', generalName: '姚苌', portrait: '/assets/TIBET/beidi_yaochang.png' },
-    baiyang: { generalId: 'baiyang_mengtian', generalName: '蒙恬', portrait: '/assets/HEXI/baiyang_mengtian.png' },
+    baiyang: { generalId: 'baiyang_mengtian', generalName: '蒙恬', portrait: '/assets/yingqin/baiyang_mengtian.png' },
     qianzhong: { generalId: 'qianzhong_wubayue', generalName: '吴八月', portrait: '/assets/BASHU/qianzhong_wubayue.png' }, // 芷江·乾嘉苗民起义
     dangchang: { generalId: 'dangchang_liangmiding', generalName: '梁弥定', portrait: '/assets/BASHU/dangchang_liangmiding.png' }, // 合川·宕昌末代王
     liao: { generalId: 'liao_houhongyuan', generalName: '侯弘远', portrait: '/assets/BASHU/liao_houhongyuan.png' }, // 江阳·僚人酋帅
