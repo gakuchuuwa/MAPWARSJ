@@ -187,6 +187,13 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 });
             }
             app.cameraFollowUI.update();
+            // BGM 跟随军团：有跟拍军团则用军团坐标切换文化区音乐，无跟拍则静音
+            if (followedId && legionManager) {
+                const pos = legionManager.getLegionById(followedId)?.getPosition();
+                if (pos) app.audioManager.syncRegionBgm(pos.lat, pos.lng);
+            } else {
+                app.audioManager.stopBgm();
+            }
             perfMonitor.endTimer('camera');
         }
     } catch (error) {

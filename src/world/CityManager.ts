@@ -477,12 +477,7 @@ export class CityManager {
                     updatedCity.fallenAtYear = this.currentYear;
                 }
                 if (!options?.skipCaptureLog) {
-                    gameLog('world', `[CityManager] City ${oldCity.name} captured by ${data.factionId}! Playing effect.`);
-                    if (updatedCity.type === 'pass') {
-                        audioManager.play('pass_siege');
-                    } else {
-                        audioManager.play('city_capture');
-                    }
+                    gameLog('world', `[CityManager] City ${oldCity.name} captured by ${data.factionId}!`);
                 }
                 const color = this.factionManager.getFactionColor(data.factionId);
 

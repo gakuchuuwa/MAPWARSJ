@@ -1,4 +1,6 @@
-export type AudioCategory = 'ui' | 'battle' | 'feed';
+export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
+
+import { getRegion, type RegionType } from '../systems/RegionSystem';
 
 export type SoundKey =
     | 'ui_click'
@@ -16,7 +18,8 @@ export type SoundKey =
     | 'restoration'
     | 'expedition'
     | 'pass_siege'
-    | 'general_skill';
+    | 'general_skill'
+    | 'bgm_main';
 
 interface SoundDefinition {
     category: AudioCategory;
@@ -39,6 +42,7 @@ const DEFAULT_SETTINGS: AudioSettings = {
         ui: 0.45,
         battle: 0.55,
         feed: 0.65,
+        bgm: 0.5,
     },
 };
 
@@ -59,6 +63,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     expedition: sound('feed', 'expedition', 0.75, 1400),
     pass_siege: sound('feed', 'pass_siege', 0.45, 4000),
     general_skill: sound('battle', 'general_skill', 0.7, 1800),
+    bgm_main: { category: 'bgm', sources: ['/assets/CENTRAL/CENTRAL_bgm.ogg'], volume: 0.25, cooldownMs: 0 },
 };
 
 function sound(
@@ -81,7 +86,7 @@ function clamp01(value: number): number {
 }
 
 function isAudioCategory(value: string): value is AudioCategory {
-    return value === 'ui' || value === 'battle' || value === 'feed';
+    return value === 'ui' || value === 'battle' || value === 'feed' || value === 'bgm';
 }
 
 function mergeSettings(raw: unknown): AudioSettings {
@@ -124,6 +129,8 @@ export class AudioManager {
         marching: boolean;
         inCombat: boolean;
     } = { armyId: null, marching: false, inCombat: false };
+    private bgmAudio: HTMLAudioElement | null = null;
+    private currentBgmFolder: string = '';
 
     public static getInstance(): AudioManager {
         if (!AudioManager.instance) AudioManager.instance = new AudioManager();
@@ -149,6 +156,7 @@ export class AudioManager {
         if (this.unlocked) return;
         this.unlocked = true;
         this.reapplyFollowedLegionAudio();
+        this.startBgm();
     }
 
     public play(key: SoundKey): boolean {
@@ -212,8 +220,10 @@ export class AudioManager {
         this.settings.enabled = enabled;
         if (!enabled) {
             this.stopAllLoops();
+            this.stopBgm();
         } else {
             this.reapplyFollowedLegionAudio();
+            this.startBgm();
         }
         this.saveSettings();
     }
@@ -316,6 +326,63 @@ export class AudioManager {
         }
     }
 
+    private startBgm(): void {
+        if (!this.settings.enabled || !this.unlocked) return;
+        // 默认从 CENTRAL 开始；syncRegionBgm 会在首帧切换到正确区域
+        this.playBgmSrc('/assets/CENTRAL/CENTRAL_bgm.ogg');
+    }
+
+    public stopBgm(): void {
+        if (!this.bgmAudio) return;
+        this.bgmAudio.pause();
+        this.bgmAudio.currentTime = 0;
+        this.bgmAudio = null;
+        this.currentBgmFolder = '';
+    }
+
+    /** 每帧调用：根据镜头坐标切换对应文化区的 BGM */
+    public syncRegionBgm(lat: number, lng: number): void {
+        if (!this.settings.enabled || !this.unlocked) return;
+
+        const region: RegionType = getRegion(lat, lng);
+        const folder = region; // RegionType 字符串即文件夹名（CENTRAL/NORTH/...）
+        if (folder === this.currentBgmFolder) return;
+
+        this.currentBgmFolder = folder;
+        const src = `/assets/${folder}/${folder}_bgm.ogg`;
+        this.playBgmSrc(src);
+    }
+
+    private playBgmSrc(src: string): void {
+        if (this.bgmAudio) {
+            const sameSrc = this.bgmAudio.src.endsWith(src) ||
+                this.bgmAudio.src.includes(src);
+            if (sameSrc && !this.bgmAudio.paused) return;
+            this.bgmAudio.pause();
+        }
+
+        const audio = new Audio(src);
+        audio.loop = true;
+        audio.preload = 'auto';
+        const def = SOUND_DEFINITIONS['bgm_main'];
+        audio.volume = def ? this.resolveVolume(def) : 0.125;
+        audio.addEventListener('error', () => {
+            this.warnMissingOnce('bgm_main', audio.error);
+            // 如果区域 BGM 加载失败，回落 CENTRAL
+            if (this.currentBgmFolder !== 'CENTRAL') {
+                this.currentBgmFolder = 'CENTRAL';
+                const fallback = '/assets/CENTRAL/CENTRAL_bgm.ogg';
+                if (!audio.src.endsWith(fallback)) {
+                    this.playBgmSrc(fallback);
+                }
+            }
+        });
+        this.bgmAudio = audio;
+        void audio.play().catch((error) => {
+            this.warnMissingOnce('bgm_main', error);
+        });
+    }
+
     private reapplyFollowedLegionAudio(): void {
         const state = { ...this.followedAudioState };
         this.followedAudioState = { armyId: null, marching: false, inCombat: false };
@@ -326,6 +393,10 @@ export class AudioManager {
         for (const [key, audio] of this.loopCache.entries()) {
             const definition = SOUND_DEFINITIONS[key];
             if (definition) audio.volume = this.resolveVolume(definition);
+        }
+        if (this.bgmAudio) {
+            const def = SOUND_DEFINITIONS['bgm_main'];
+            if (def) this.bgmAudio.volume = this.resolveVolume(def);
         }
     }
 

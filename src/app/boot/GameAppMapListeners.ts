@@ -44,7 +44,6 @@ export function setupGameAppMapListeners(app: GameApp): void {
 
     window.addEventListener('audio-test-sound', () => {
         app.audioManager.unlock();
-        app.audioManager.play('ui_confirm');
     });
 
     window.addEventListener('toggle-editor-city', (e: Event) => {
@@ -80,16 +79,8 @@ export function setupGameAppMapListeners(app: GameApp): void {
         leaflet.on('zoom', () => CityAssetManager.notifyMapInteraction());
     }
 
-    // [NEW] Global UI Click Audio Hook
-    window.addEventListener('click', (e: MouseEvent) => {
-        const target = e.target as HTMLElement;
-        if (!target || !target.closest) return;
-        
-        // Match common UI interactive elements
-        const isInteractive = target.closest('button, a, input[type="button"], input[type="submit"], .interactive, .ui-btn, .leaflet-marker-icon, .leaflet-control-zoom-in, .leaflet-control-zoom-out');
-        if (isInteractive) {
-            app.audioManager.unlock();
-            app.audioManager.play('ui_click');
-        }
-    }, { capture: true });
+    // UI 点击仅用于解锁音频上下文，不播放音效
+    window.addEventListener('click', () => {
+        app.audioManager.unlock();
+    }, { capture: true, passive: true });
 }
