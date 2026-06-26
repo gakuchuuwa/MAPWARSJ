@@ -85,6 +85,33 @@ export default defineConfig({
     },
     plugins: [
         {
+            // 立绘清单虚拟模块：扫描 public/assets 生成「纯路径数组」供 portrait_defaults 用。
+            // 取代旧的 import.meta.glob('?url')——后者会把每张图字节也打包一遍（dist 多出 700 张
+            // hash 重复图 / +718MB 废重量），而代码只需文件名列表，运行时仍走 /assets/.. 原图。
+            name: 'portrait-manifest',
+            resolveId(id) {
+                if (id === 'virtual:portrait-manifest') return '\0virtual:portrait-manifest';
+                return null;
+            },
+            load(id) {
+                if (id !== '\0virtual:portrait-manifest') return null;
+                const root = path.resolve(__dirname, 'public/assets');
+                const walk = (dir: string): string[] => {
+                    const out: string[] = [];
+                    for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+                        const fp = path.join(dir, ent.name);
+                        if (ent.isDirectory()) out.push(...walk(fp));
+                        else if (ent.isFile() && ent.name.toLowerCase().endsWith('.png')) {
+                            out.push('/assets/' + path.relative(root, fp).split(path.sep).join('/'));
+                        }
+                    }
+                    return out;
+                };
+                const paths = fs.existsSync(root) ? walk(root) : [];
+                return `export default ${JSON.stringify(paths)};`;
+            },
+        },
+        {
             // 给音频/OGG 文件设置正确 MIME，防止 IDM 等下载器拦截
             name: 'audio-mime-fix',
             configureServer(server) {

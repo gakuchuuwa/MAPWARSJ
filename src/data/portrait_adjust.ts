@@ -1118,12 +1118,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/KOREA/chen3_chenwang.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -14
         },
         "/assets/KOREA/joseon_lichenggui.png": {
-            "scale": 1.16,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -1268,7 +1268,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -34
         },
         "/assets/KOREA/baiji_jiebai.png": {
-            "scale": 1.1,
+            "scale": 1.08,
             "offsetX": 11,
             "offsetY": -7
         },
@@ -2106,6 +2106,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": 0,
             "offsetY": -26
+        },
+        "/assets/LINGNAN/dali_duansiping.png": {
+            "scale": 0.88,
+            "offsetX": 3,
+            "offsetY": -25
+        },
+        "/assets/DIANQIAN/pingnan_musheng.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -37
+        },
+        "/assets/daming/pingnan_musheng.png": {
+            "scale": 1,
+            "offsetX": 9,
+            "offsetY": -6
+        },
+        "/assets/KOREA/naju_d_wangjian_kr.png": {
+            "scale": 1.16,
+            "offsetX": 13,
+            "offsetY": 16
         }
     },
     "folderGuides": {

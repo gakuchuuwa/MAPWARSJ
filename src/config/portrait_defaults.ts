@@ -19,6 +19,7 @@ import {
     type CultureCombatRole,
 } from '../systems/CultureCombat';
 import { getCityRegion, REGION_ORDER, type RegionType } from '../systems/RegionSystem';
+import _allPortraitPaths from 'virtual:portrait-manifest';
 
 /** PNG 内人物默认目视方向（未做 scaleX 时） */
 export type PortraitSourceFacing = 'left' | 'right';
@@ -47,11 +48,9 @@ export function getCulturePortraitRole(unit: IBattleUnit): CultureCombatRole {
 }
 
 // ── 全库扫描 + 14 文化区打底池（夹名 = RegionType，与 cities_v2.region 一一对应）──
-
-const _allPortraitAssetGlob = import.meta.glob<string>(
-    '../../public/assets/**/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
+// 立绘路径清单来自 virtual:portrait-manifest（vite 插件 fs 扫描 public/assets，纯字符串数组）。
+// 旧实现用 import.meta.glob('?url') 会把每张图字节也打包进 dist（700 张 hash 重复图 / +718MB）；
+// 这里只需文件名列表，运行时仍走 /assets/.. 原图，故改纯清单，零字节打包。
 
 /** 将 Vite ?url 结果规范为 `/assets/...`  web 路径 */
 export function normalizePortraitWebPath(url: string): string {
@@ -68,8 +67,7 @@ function collectRegionPortraitPool(region: RegionType): string[] {
     // Windows 文件系统不区分大小写，Vite glob 返回的路径大小写不确定
     // 例：HEXI 文件夹可能返回 /assets/hexi/ 或 /assets/HEXI/，用小写比较兜底
     const prefix = cultureCircleFolderPrefix(region).toLowerCase();
-    const pool = Object.keys(_allPortraitAssetGlob)
-        .map(normalizePortraitWebPath)
+    const pool = _allPortraitPaths
         .filter((p) => p.toLowerCase().startsWith(prefix));
     if (pool.length === 0) {
         console.warn(`[Portrait] ⚠️ 文化区 ${region} 立绘池为空！检查 public/assets/${region}/ 文件夹及 Vite glob 大小写`);
@@ -92,22 +90,21 @@ export const REGION_PORTRAIT_POOLS: Record<RegionType, string[]> = Object.fromEn
 
 // Windows 大小写不敏感：统一转小写存储，查找时也转小写
 const KNOWN_PORTRAIT_PATHS = new Set(
-    Object.keys(_allPortraitAssetGlob)
-        .map(normalizePortraitWebPath)
+    _allPortraitPaths
         .map((p) => p.toLowerCase())
         .filter((p) => !/^\/assets\/inbox\//i.test(p)),
 );
 
 // 启动诊断：检测 glob 共扫描多少文件，以及各文化区池大小
 {
-    const total = Object.keys(_allPortraitAssetGlob).length;
+    const total = _allPortraitPaths.length;
     const hexiSize = REGION_PORTRAIT_POOLS.HEXI?.length ?? 0;
     const centralSize = REGION_PORTRAIT_POOLS.CENTRAL?.length ?? 0;
-    console.log(`[Portrait] 全局 glob 扫描: ${total} 张 | HEXI池: ${hexiSize} | CENTRAL池: ${centralSize}`);
+    console.log(`[Portrait] 清单扫描: ${total} 张 | HEXI池: ${hexiSize} | CENTRAL池: ${centralSize}`);
     if (hexiSize === 0) {
-        // 打印前5个 glob 键值帮助诊断 Vite 返回的路径格式
-        const sample = Object.entries(_allPortraitAssetGlob).slice(0, 5);
-        console.warn(`[Portrait] HEXI池为空！Vite glob 样本:`, sample);
+        // 打印前5个清单路径帮助诊断格式
+        const sample = _allPortraitPaths.slice(0, 5);
+        console.warn(`[Portrait] HEXI池为空！清单样本:`, sample);
     }
 }
 
@@ -129,78 +126,25 @@ const _guangzhouPortraitPool = REGION_PORTRAIT_POOLS.LINGNAN;
 const _beifangPortraitPool = REGION_PORTRAIT_POOLS.NORTH;
 
 // ── 政权专属立绘（夹名保持政权/史料专夹，不走 14 区重命名）──
+// 均从全量清单按夹名前缀过滤（旧实现是各开一个 import.meta.glob('?url')，会重复打包字节）。
 
-/** 武周立绘池：构建时扫描 public/assets/wuzhou/ 下所有 PNG */
-const _wuzhouPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/wuzhou/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _wuzhouPortraitPool: string[] = Object.keys(_wuzhouPortraitGlob).map(normalizePortraitWebPath);
+/** 政权专夹池：从全量清单筛 `/assets/{folder}/` 下的 PNG */
+function _folderPool(folder: string): string[] {
+    const prefix = `/assets/${folder}/`.toLowerCase();
+    return _allPortraitPaths.filter((p) => p.toLowerCase().startsWith(prefix));
+}
 
-/** 李唐立绘池 */
-const _litangPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/litang/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _litangPortraitPool: string[] = Object.keys(_litangPortraitGlob).map(normalizePortraitWebPath);
-
-/** 大明立绘池 */
-const _damingPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/daming/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _damingPortraitPool: string[] = Object.keys(_damingPortraitGlob).map(normalizePortraitWebPath);
-
+const _wuzhouPortraitPool = _folderPool('wuzhou');     // 武周
+const _litangPortraitPool = _folderPool('litang');     // 李唐
+const _damingPortraitPool = _folderPool('daming');     // 大明
+const _puganPortraitPool = _folderPool('pugan');       // 蒲甘（滇缅区）
+const _manqingPortraitPool = _folderPool('manqing');   // 满清
+const _xianqinPortraitPool = _folderPool('xianqin');   // 殷商
+const _liuhanPortraitPool = _folderPool('liuhan');     // 汉国（南郑）
+const _zhaosongPortraitPool = _folderPool('zhaosong'); // 赵宋（临安）
+const _qinPortraitPool = _folderPool('yingqin');       // 秦国
+const _panjunPortraitPool = _folderPool('panjun');     // 叛军
 /** 广州政权专夹已并入 LINGNAN 区夹；政权映射仍用 _guangzhouPortraitPool 别名 */
-
-/** 蒲甘政权专夹（滇缅区蒲甘势力，与 DIANQIAN 区夹并存） */
-const _puganPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/pugan/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _puganPortraitPool: string[] = Object.keys(_puganPortraitGlob).map(normalizePortraitWebPath);
-
-/** 满清政权专夹 */
-const _manqingPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/manqing/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _manqingPortraitPool: string[] = Object.keys(_manqingPortraitGlob).map(normalizePortraitWebPath);
-
-/** 殷商专属立绘池（商@安阳 + 殷@朝歌） */
-const _xianqinPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/xianqin/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _xianqinPortraitPool: string[] = Object.keys(_xianqinPortraitGlob).map(normalizePortraitWebPath);
-
-/** 汉国专属立绘池（南郑） */
-const _liuhanPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/liuhan/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _liuhanPortraitPool: string[] = Object.keys(_liuhanPortraitGlob).map(normalizePortraitWebPath);
-
-/** 赵宋专属立绘池（临安） */
-const _zhaosongPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/zhaosong/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _zhaosongPortraitPool: string[] = Object.keys(_zhaosongPortraitGlob).map(normalizePortraitWebPath);
-
-/** 秦国立绘池 */
-const _qinPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/yingqin/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _qinPortraitPool: string[] = Object.keys(_qinPortraitGlob).map(normalizePortraitWebPath);
-
-/** 叛军立绘池 */
-const _panjunPortraitGlob = import.meta.glob<string>(
-    '../../public/assets/panjun/*.png',
-    { eager: true, query: '?url', import: 'default' },
-);
-const _panjunPortraitPool: string[] = Object.keys(_panjunPortraitGlob).map(normalizePortraitWebPath);
 
 /** 14 区 + panjun 的 web 路径前缀清单（审计/文档用） */
 export const CULTURE_CIRCLE_FOLDERS: readonly string[] = [
@@ -484,7 +428,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'hongirad': _caoyuanPortraitPool,
 
     'huige': _caoyuanPortraitPool,
-    'huizhou': _shuguoPortraitPool,
+    'huizhou_d': _shuguoPortraitPool, // 徽州·诸葛亮（BASHU）；huizhou=会州在上方 HEXI 簇
     'huihu': _caoyuanPortraitPool,
     'huyan': _caoyuanPortraitPool,
     'jalair': _caoyuanPortraitPool,
