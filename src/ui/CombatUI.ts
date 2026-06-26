@@ -1645,6 +1645,12 @@ export class CombatUI {
         if (!saveKey) return;
         this.correctorData.images = this.correctorData.images ?? {};
         this.correctorData.images[saveKey] = { ...this.correctorDraft };
+        
+        const directPath = this.correctorPath();
+        if (directPath && directPath !== saveKey && this.correctorData.images[directPath]) {
+            delete this.correctorData.images[directPath];
+            this.correctorDirtyPaths.add(directPath);
+        }
         if (this.canPersistPortraitPath(saveKey)) {
             const prevSize = this.correctorDirtyPaths.size;
             this.correctorDirtyPaths.add(saveKey);
@@ -1667,6 +1673,12 @@ export class CombatUI {
         if (!this.canPersistPortraitPath(saveKey)) return;
         this.correctorData.images = this.correctorData.images ?? {};
         this.correctorData.images[saveKey] = { ...this.correctorDraft };
+        
+        const directPath = this.correctorPath();
+        if (directPath && directPath !== saveKey && this.correctorData.images[directPath]) {
+            delete this.correctorData.images[directPath];
+            this.correctorDirtyPaths.add(directPath);
+        }
         if (this.correctorDirtyPaths.size > 0) {
             this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Enter/F2/Esc 写盘`);
         }
@@ -2085,12 +2097,12 @@ export class CombatUI {
             <div style="font-size:14px;font-weight:700;color:#f5d78e;">立绘校正（Enter/Esc 写盘 · 不刷新）</div>
             <div class="cc-readout" style="font-size:13px;color:#c4b89a;"></div>
             <div class="cc-actions" style="display:flex;flex-wrap:wrap;gap:8px;">
+                ${btn('🗑️ 清除缓存')}
                 ${btn('↔ 居中本张')}
                 ${btn('↩ 恢复默认')}
                 ${btn('准星：开')}
                 ${btn('切换左右 (Tab)')}
                 ${btn('💾 写盘 (Enter)', true)}
-                ${btn('🗑️ 清除缓存')}
                 ${btn('关闭 (Esc)')}
             </div>
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
@@ -2133,7 +2145,7 @@ export class CombatUI {
             }
         `;
         document.head.appendChild(style);
-        const [centerBtn, resetBtn, crossBtn, switchBtn, saveBtn, clearCacheBtn, closeBtn] =
+        const [clearCacheBtn, centerBtn, resetBtn, crossBtn, switchBtn, saveBtn, closeBtn] =
             Array.from(panel.querySelectorAll('.cc-btn')) as HTMLButtonElement[];
         this.crosshairBtn = crossBtn;
         // 按钮不抢焦点，避免点完按钮后按 Enter 既触发按钮又触发热键
@@ -2791,7 +2803,7 @@ export class CombatUI {
             rememberFacing(finalUrl);
             const onLoad = () => {
                 applyFacing();
-                applyPortraitAdjustToElement(img, finalUrl);
+                applyPortraitAdjustToElement(img, finalUrl, this.correctorData);
             };
             img.addEventListener('load', onLoad, { once: true });
             if (!isRetry) {
@@ -2817,7 +2829,7 @@ export class CombatUI {
                 ? `${finalUrl}?v=${this.portraitPickerCatalogRev}`
                 : finalUrl;
             applyFacing();
-            applyPortraitAdjustToElement(img, finalUrl);
+            applyPortraitAdjustToElement(img, finalUrl, this.correctorData);
         };
 
         const cultureRegion = unit ? resolveUnitCultureRegion(unit) : 'CENTRAL';

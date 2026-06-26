@@ -46,11 +46,16 @@ export class PortraitConfigManager {
         try {
             this.config = JSON.parse(JSON.stringify(DEFAULT_PORTRAIT_CONFIG));
 
-            const saved = localStorage.getItem('PORTRAIT_CONFIG_DATA');
-            if (saved) {
-                const localConfig = JSON.parse(saved) as PortraitConfig;
-                this.config = { ...this.config, ...localConfig };
-                gameLog('startup', `🖼️ [PortraitConfig] Merged ${Object.keys(localConfig).length} overrides from localStorage`);
+            if (import.meta.env.DEV) {
+                localStorage.removeItem('PORTRAIT_CONFIG_DATA');
+                gameLog('startup', `🖼️ [PortraitConfig] Cleared localStorage cache in DEV mode`);
+            } else {
+                const saved = localStorage.getItem('PORTRAIT_CONFIG_DATA');
+                if (saved) {
+                    const localConfig = JSON.parse(saved) as PortraitConfig;
+                    this.config = { ...this.config, ...localConfig };
+                    gameLog('startup', `🖼️ [PortraitConfig] Merged ${Object.keys(localConfig).length} overrides from localStorage`);
+                }
             }
             stripLegacyMirrorOverrides(this.config);
             gameLog('startup', `🖼️ [PortraitConfig] Ready (${Object.keys(this.config).length} entries)`);

@@ -526,7 +526,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     ranwei_d: { generalId: 'ranwei_d_ranmin', generalName: '冉闵', portrait: '/assets/CENTRAL/ranwei_d_ranmin.png' },
     jin: { generalId: 'jin_xianzhen', generalName: '先轸', portrait: '/assets/xianqin/jin_xianzhen.png' },
     zhong: { generalId: 'zhong_xiexuan', generalName: '谢玄', portrait: '/assets/JIANGNAN/zhong_xiexuan.png' },
-    zhongshan: { generalId: 'zhongshan_yangaoging', generalName: '颜杲卿', portrait: '/assets/CENTRAL/zhongshan_yangaoging.png' },
+    zhongshan: { generalId: 'zhongshan_yangaoging', generalName: '颜杲卿', portrait: '/assets/litang/zhongshan_yangaoging.png' },
             huangfu: { generalId: 'huangfu_huangfusong', generalName: '皇甫嵩', portrait: '/assets/CENTRAL/huangfu_huangfusong.png' },
     wang_d: { generalId: 'wang_d_wangdao', generalName: '王导', portrait: '/assets/CENTRAL/wang_d_wangdao.png' },
     chimei: { generalId: 'chimei_fanchong', generalName: '樊崇', portrait: '/assets/panjun/chimei_fanchong.png' },
