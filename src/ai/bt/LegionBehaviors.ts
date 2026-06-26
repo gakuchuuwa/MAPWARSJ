@@ -44,24 +44,9 @@ export const IsPostBattleResting = new Condition('IsPostBattleResting', (ctx) =>
     return ctx.army.isPostBattleResting?.() ?? false;
 });
 
-/** 第三方攻城排队中：原地待命；出发点已失守则打断排队改走收复 */
+/** 第三方攻城排队中：原地待命，不打断（等战斗结束后再重新评估目标） */
 export const IsWaitingSiege = new Condition('IsWaitingSiege', (ctx) => {
-    if (!ctx.legionManager.isArmyWaitingSiege(ctx.army.id)) {
-        return false;
-    }
-    if (!shouldSkipHomeRecapture(ctx.army)) {
-        const originCityId = getArmyOriginCityId(ctx.army) ?? '';
-        const recaptureId = resolveRecaptureTarget(
-            ctx.army.getFactionId(),
-            originCityId,
-            ctx.cityManager,
-        );
-        if (recaptureId) {
-            ctx.legionManager.dequeueArmyFromThirdPartyWaiters?.(ctx.army.id);
-            return false;
-        }
-    }
-    return true;
+    return ctx.legionManager.isArmyWaitingSiege(ctx.army.id);
 });
 
 /**
@@ -231,12 +216,10 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         }
     }
 
-    const anchorId = resolveForwardAnchor(
-        ctx.army.getPosition(),
-        myFaction,
-        originCityId,
-        ctx.cityManager
-    );
+    const useHomeAnchor = ctx.army.getTroops() < GameConfig.LEGION.HOME_ANCHOR_TROOP_THRESHOLD;
+    const anchorId = useHomeAnchor
+        ? originCityId
+        : resolveForwardAnchor(ctx.army.getPosition(), myFaction, originCityId, ctx.cityManager);
 
     const picked = TargetEvaluator.pickTarget(
         myFaction,

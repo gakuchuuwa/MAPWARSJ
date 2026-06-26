@@ -806,7 +806,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 徒河·锦州卫·辽东铁骑（旗号锦≠据点名徒河）──
     { id: 'jinzhou', name: '锦州' },
     { id: 'wure', name: '兀惹' },
-    { id: 'houliao', name: '后辽' },
+    { id: 'houliao', name: '东辽' },
     { id: 'dazhen', name: '大真' },
     { id: 'jilin', name: '吉林' },
     { id: 'sunite', name: '苏尼特' },

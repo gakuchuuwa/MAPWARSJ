@@ -436,9 +436,9 @@ export class CombatUI {
             z-index: ${T.zIndex.portrait + 2};
         `;
         this.leftSkillsBox = document.createElement('div');
-        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; overflow: hidden; width: 49%; min-width: 0;`;
+        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap;`;
         this.rightSkillsBox = document.createElement('div');
-        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; overflow: hidden; width: 49%; min-width: 0; justify-content: flex-end;`;
+        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap;`;
         this.skillsRow.appendChild(this.leftSkillsBox);
         this.skillsRow.appendChild(this.rightSkillsBox);
 
@@ -830,8 +830,8 @@ export class CombatUI {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                flex: 1 0 0;
-                min-width: 0;
+                flex: 0 0 ${uiPx(90)};
+                width: ${uiPx(90)};
                 box-sizing: border-box;
                 background: ${bgColor};
                 border: 1px solid ${borderColor};
@@ -2792,7 +2792,9 @@ export class CombatUI {
                     }
                 };
             }
-            img.src = finalUrl;
+            img.src = this.portraitPickerCatalogRev
+                ? `${finalUrl}?v=${this.portraitPickerCatalogRev}`
+                : finalUrl;
             applyFacing();
             applyPortraitAdjustToElement(img, finalUrl);
         };

@@ -625,7 +625,7 @@ export class CityAssetManager {
         'sheng_d': '升',
         'jinzhou': '锦',
         'wure': '兀惹',
-        'houliao': '后辽',
+        'houliao': '东辽',
         'dazhen': '大真',
         'jilin': '吉林',
         'sunite': '苏尼',

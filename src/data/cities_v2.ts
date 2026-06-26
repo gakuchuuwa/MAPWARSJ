@@ -2807,7 +2807,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_wushecheng', name: '乌舍城', factionId: 'wula', lat: 45.821125, lng: 128.161011, type: 'small_city', region: 'NORTHEAST', troops: 10000, note: '乌拉部乌舍城故地（布占泰）' },
 
     { id: 'city_xianping', name: '咸平', factionId: 'houliao', lat: 42.579367, lng: 124.079590, type: 'small_city', region: 'NORTHEAST', troops: 10000,
-        note: '咸平；后辽小城',
+        note: '咸平；东辽小城',
     },
     { id: 'city_xupin', name: '恤品', factionId: 'dazhen', lat: 42.994587, lng: 129.828186, type: 'pass', region: 'NORTHEAST', troops: 10000,
         note: '恤品；大真关隘',

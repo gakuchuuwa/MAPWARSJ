@@ -797,8 +797,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -34
         },
         "/assets/daming/linyu_wusangui.png": {
-            "scale": 1.06,
-            "offsetX": 1,
+            "scale": 1.08,
+            "offsetX": 17,
             "offsetY": -3
         },
         "/assets/daming/jinzhou_lichengliang.png": {
@@ -957,7 +957,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/STEPPE/choros_tuohuan.png": {
-            "scale": 1.04,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -1252,9 +1252,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 14
         },
         "/assets/STEPPE/liao_d_yelvabaoji.png": {
-            "scale": 1.08,
+            "scale": 1.1,
             "offsetX": 12,
-            "offsetY": -8
+            "offsetY": -10
         },
         "/assets/BASHU/ba_bamanzi.png": {
             "scale": 1.02,
@@ -1327,7 +1327,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -36
         },
         "/assets/STEPPE/menggu_d_chengjisihan.png": {
-            "scale": 1.02,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": -43
         },
@@ -1387,9 +1387,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 14
         },
         "/assets/STEPPE/borjigin_tuolei.png": {
-            "scale": 1.02,
-            "offsetX": 4,
-            "offsetY": 1
+            "scale": 0.96,
+            "offsetX": 11,
+            "offsetY": 29
         },
         "/assets/WESTERN/wulianghai_chelingwubashi.png": {
             "scale": 1.04,
@@ -1652,8 +1652,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/panjun/a19a176d-0e0e-474e-8432-9885166629b3.png": {
-            "scale": 0.94,
-            "offsetX": 0,
+            "scale": 0.9,
+            "offsetX": 9,
             "offsetY": -14
         },
         "/assets/NORTHEAST/4111cad4-9b63-4316-933a-dd2b3915259f.png": {
@@ -1782,8 +1782,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/manqing/manzhou_nuerhachi.png": {
-            "scale": 1.08,
-            "offsetX": 0,
+            "scale": 1.1,
+            "offsetX": 9,
             "offsetY": -53
         },
         "/assets/manqing/aisin_d_huangtaiji.png": {
@@ -1840,6 +1840,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -8
+        },
+        "/assets/BASHU/fu_zhou_yanyan.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": 27
+        },
+        "/assets/manqing/manzhou_d_duergan.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/LINGNAN/chaozhou_d_zhangshijie.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/TIBET/ladakh_senggelangjie.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": 29
+        },
+        "/assets/liuhan/lanzhou_zhaochongguo.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/CENTRAL_ASIA/d2b49090-81ea-4f84-82fa-5bb0a919417d.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -35
+        },
+        "/assets/panjun/bailian_wangconger.png": {
+            "scale": 1.34,
+            "offsetX": 0,
+            "offsetY": 4
         }
     },
     "folderGuides": {
