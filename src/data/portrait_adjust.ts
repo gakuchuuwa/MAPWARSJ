@@ -232,9 +232,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/daming/daming (1).png": {
-            "scale": 0.96,
+            "scale": 1.18,
             "offsetX": 0,
-            "offsetY": -28
+            "offsetY": -32
         },
         "/assets/lingnan/guangzhou (1).png": {
             "scale": 1.04,
