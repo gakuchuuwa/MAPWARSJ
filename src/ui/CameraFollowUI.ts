@@ -361,6 +361,16 @@ export class CameraFollowUI {
         }
     }
 
+    public openList(): void {
+        if (this.isListOpen) return;
+        this.isListOpen = true;
+        const count = this.getActiveLegionCount();
+        this.updateCountDisplay(count);
+        this.lastLegionCount = count;
+        this.refreshList();
+        if (this.listPanel) this.listPanel.style.display = 'block';
+    }
+
     public closeList(): void {
         this.isListOpen = false;
         if (this.listPanel) this.listPanel.style.display = 'none';

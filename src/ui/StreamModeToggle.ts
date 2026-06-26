@@ -66,6 +66,11 @@ export class StreamModeToggle {
             this.button.textContent = on ? '📺 直播中' : '直播';
             this.button.style.color = on ? '#e8b25a' : '';
         }
+        if (on) {
+            const game = (window as any).game;
+            game?.map?.getLeafletMap?.()?.setZoom(10);
+            game?.cameraFollowUI?.openList?.();
+        }
         // 通知其他 UI：直播模式已变更
         window.dispatchEvent(new CustomEvent('stream-mode-change', { detail: { on } }));
     }

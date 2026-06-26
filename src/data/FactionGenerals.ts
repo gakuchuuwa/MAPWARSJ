@@ -507,7 +507,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     yeli: { generalId: 'yeli_yeliwangrong', generalName: '野利旺荣', portrait: '/assets/HEXI/yeli_yeliwangrong.png' },
     hunxie: { generalId: 'hunxie_hunxiewang', generalName: '徐自为', portrait: '/assets/HEXI/hunxie_hunxiewang.png' },
     guazhou: { generalId: 'guazhou_zhangshougui', generalName: '张守珪', portrait: '/assets/HEXI/guazhou_zhangshougui.png' },
-    kang: { generalId: 'kang_liangshidu', generalName: '梁师都', portrait: '/assets/HEXI/kang_liangshidu.png' },
+    kang: { generalId: 'kang_liangshidu', generalName: '梁师都', portrait: '/assets/zhaosong/kang_liangshidu.png' },
         woye: { generalId: 'woye_huangfugui', generalName: '皇甫规', portrait: '/assets/HEXI/woye_huangfugui.png' },
     yingli: { generalId: 'yingli_jilasiyi', generalName: '籍辣思义', portrait: '/assets/HEXI/yingli_jilasiyi.png' },
     dangxiang: { generalId: 'dangxiang_liyuanhao', generalName: '李元昊', portrait: '/assets/HEXI/dangxiang_liyuanhao.png' },
@@ -631,7 +631,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     yang_aner: { generalId: 'yang_aner_yanganer', generalName: '杨安儿', portrait: '/assets/LINGNAN/yang_aner_yanganer.png' },
         xie_cj_d: { generalId: 'xie_cj_d_xingfangde', generalName: '谢枋得', portrait: '/assets/JIANGNAN/xie_cj_d_xingfangde.png' }, // 葛溪·信州抗元殉国
     wan: { generalId: 'wan_lidian', generalName: '李典', portrait: '/assets/JIANGNAN/wan_lidian.png' }, // 皖城·曹魏守合肥
-    huang_d: { generalId: 'huang_d_sunshuao', generalName: '孙叔敖', portrait: '/assets/JIANGNAN/huang_d_sunshuao.png' }, // 弋阳·楚国名相
+    huang_d: { generalId: 'huang_d_sunshuao', generalName: '孙叔敖', portrait: '/assets/xianqin/huang_d_sunshuao.png' }, // 弋阳·楚国名相
     wenzhou: { generalId: 'wenzhou_zhangcong', generalName: '张璁', portrait: '/assets/JIANGNAN/wenzhou_zhangcong.png' }, // 永嘉·明首辅抗倭
     wuling: { generalId: 'wuling_xiangdancheng', generalName: '相单程', portrait: '/assets/JIANGNAN/wuling_xiangdancheng.png' },
 

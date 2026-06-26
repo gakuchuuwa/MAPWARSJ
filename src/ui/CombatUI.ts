@@ -1960,8 +1960,10 @@ export class CombatUI {
         const pending = [...this.portraitBindStaging];
         if (pending.length === 0) return true;
         const committed: typeof pending = [];
+        let failedBind: typeof pending[number] | null = null;
         try {
             for (const bind of pending) {
+                failedBind = bind; // 本张未成功前先记为失败张，成功后清空
                 const res = await fetch('/api/bind-general-portrait', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1981,6 +1983,7 @@ export class CombatUI {
                 setGeneralPortraitOverride(bind.generalId, finalPath); // 更新将领立绘缓存
                 bind.destPath = finalPath;                        // 同步 staging 的 destPath
                 committed.push(bind);
+                failedBind = null;
                 await this.applyBoundPortraitToCombatImg(bind);
             }
             this.portraitBindStaging = this.portraitBindStaging.filter(
@@ -1989,10 +1992,13 @@ export class CombatUI {
             return true;
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
+            // 丢弃已成功的 + 当前失败的这一张：失败张若留在 staging，每次关闭 F2 都会重试并失败，
+            // 导致只能 Shift+Esc 才能退出的死循环。未尝试的其余张保留，下次关闭再试。
+            const drop = failedBind ? [...committed, failedBind] : committed;
             this.portraitBindStaging = this.portraitBindStaging.filter(
-                (b) => !committed.some((c) => c.generalId === b.generalId && c.side === b.side),
+                (b) => !drop.some((c) => c.generalId === b.generalId && c.side === b.side),
             );
-            this.setCorrectorStatus(`⚠ 绑图写盘失败：${msg} · F2 保持开启`);
+            this.setCorrectorStatus(`⚠ 绑图写盘失败：${msg} · 已跳过该图，可重新选择`);
             return false;
         }
     }
@@ -2687,8 +2693,11 @@ export class CombatUI {
         this.highlightCorrectorSide();
         const img = side === 'attacker' ? this.leftPortrait : this.rightPortrait;
         const onPortraitLoaded = () => {
-            this.loadCorrectorDraft();
-            applyPortraitAdjustToElement(img, destPath, this.correctorData);
+            // 用源图已有的调校初始化草稿，让预览立即以调好的状态显示
+            const sourceAdj = resolvePortraitAdjust(toCanonicalPortraitPath(sourcePath), this.correctorData);
+            this.correctorDraft = { scale: sourceAdj.scale, offsetX: sourceAdj.offsetX, offsetY: sourceAdj.offsetY };
+            this.renderCorrectorReadout();
+            applyPortraitAdjustToElement(img, sourcePath, this.correctorData);
             this.scheduleCorrectorCrosshairRefresh();
         };
         img.addEventListener('load', onPortraitLoaded, { once: true });

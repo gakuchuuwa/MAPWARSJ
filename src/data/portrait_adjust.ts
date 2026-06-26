@@ -687,9 +687,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -2
         },
         "/assets/xianqin/zhou_jifa.png": {
-            "scale": 1.16,
+            "scale": 1.2,
             "offsetX": 0,
-            "offsetY": -2
+            "offsetY": -5
         },
         "/assets/CENTRAL/tianxiong_tianchengsi.png": {
             "scale": 0.9,
@@ -992,8 +992,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/zhaosong/yue_d_yuefei.png": {
-            "scale": 1.14,
-            "offsetX": 3,
+            "scale": 1.16,
+            "offsetX": 4,
             "offsetY": -28
         },
         "/assets/LINGNAN/guangzhou (13).png": {
@@ -1152,9 +1152,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/CENTRAL_ASIA/an_anuluvtuo.png": {
-            "scale": 1,
+            "scale": 0.98,
             "offsetX": 0,
-            "offsetY": -27
+            "offsetY": -26
         },
         "/assets/CENTRAL_ASIA/tiemuer_tiemuer.png": {
             "scale": 0.94,
@@ -1292,9 +1292,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/CENTRAL_ASIA/5d913217-cc43-4452-80a8-e1962469e756.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 0
+            "scale": 1.16,
+            "offsetX": 17,
+            "offsetY": -6
         },
         "/assets/WESTERN/31ba4e35-8e16-4d51-96a9-d28a849ef250.png": {
             "scale": 0.94,
@@ -1777,9 +1777,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/CENTRAL_ASIA/76fff827-8a4e-486c-bde6-8315f6a535a6.png": {
-            "scale": 1.08,
+            "scale": 1.18,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": 4
         },
         "/assets/manqing/manzhou_nuerhachi.png": {
             "scale": 1.1,
@@ -1910,6 +1910,66 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -27
+        },
+        "/assets/zhaosong/72213c30-820c-40ef-976e-46d54afc8752.png": {
+            "scale": 0.92,
+            "offsetX": 6,
+            "offsetY": -25
+        },
+        "/assets/CENTRAL_ASIA/de6da219-2566-4aa3-8397-079a56635d73.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/WESTERN/keerkezi_manasi.png": {
+            "scale": 1.06,
+            "offsetX": 17,
+            "offsetY": -17
+        },
+        "/assets/HEXI/112a53e1-97c4-4d9f-ae1e-dc0bb44216f4.png": {
+            "scale": 1.02,
+            "offsetX": -9,
+            "offsetY": -16
+        },
+        "/assets/zhaosong/kang_liangshidu.png": {
+            "scale": 1,
+            "offsetX": 10,
+            "offsetY": -6
+        },
+        "/assets/STEPPE/62534e31-f1d2-4493-b6e8-c3e33f9a90b1.png": {
+            "scale": 1.02,
+            "offsetX": 1,
+            "offsetY": -24
+        },
+        "/assets/STEPPE/naiman_taiyanghan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/STEPPE/11536a0c-a188-4ebe-aefb-db72c10e91a1.png": {
+            "scale": 0.96,
+            "offsetX": 9,
+            "offsetY": 26
+        },
+        "/assets/xianqin/huang_d_sunshuao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -40
+        },
+        "/assets/xianqin/44287ce1-8d69-4277-a3d7-b605766352c5.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -36
+        },
+        "/assets/JIANGNAN/7ce228af-981d-465e-90dd-06cb4391216f.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/DIANQIAN/dai_daoyingmeng.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -38
         }
     },
     "folderGuides": {
