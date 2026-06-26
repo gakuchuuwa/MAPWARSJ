@@ -270,7 +270,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     xiliao: { generalId: 'xiliao_yelvdashi', generalName: '耶律大石', portrait: '/assets/WESTERN/xiliao_yelvdashi.png' },
     jiazini: { generalId: 'jiazini_mahamaode', generalName: '马哈茂德', portrait: '/assets/CENTRAL_ASIA/jiazini_mahamaode.png' },
     jibin: { generalId: 'jibin_jianisejia', generalName: '迦腻色迦', portrait: '/assets/CENTRAL_ASIA/jibin_jianisejia.png' },
-        xijue: { generalId: 'xijue_ganshouchang', generalName: '甘延寿', portrait: '/assets/CENTRAL_ASIA/xijue_ganshouchang.png' },
+        xijue: { generalId: 'xijue_ganshouchang', generalName: '甘延寿', portrait: '/assets/liuhan/xijue_ganshouchang.png' },
     // 养吉干·咸海 / 真珠河·乌护 宁缺毋滥
 
 // ── 中亚区 2026-06-18 ──
@@ -630,7 +630,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     yunzhong: { generalId: 'yunzhong_tuobaliwei', generalName: '拓跋力微', portrait: '/assets/STEPPE/yunzhong_tuobaliwei.png' },
     yang_aner: { generalId: 'yang_aner_yanganer', generalName: '杨安儿', portrait: '/assets/LINGNAN/yang_aner_yanganer.png' },
         xie_cj_d: { generalId: 'xie_cj_d_xingfangde', generalName: '谢枋得', portrait: '/assets/JIANGNAN/xie_cj_d_xingfangde.png' }, // 葛溪·信州抗元殉国
-    wan: { generalId: 'wan_lidian', generalName: '李典', portrait: '/assets/JIANGNAN/wan_lidian.png' }, // 皖城·曹魏守合肥
+    wan: { generalId: 'wan_liuyuan', generalName: '刘源', portrait: '/assets/JIANGNAN/wan_liuyuan.png' },
     huang_d: { generalId: 'huang_d_sunshuao', generalName: '孙叔敖', portrait: '/assets/xianqin/huang_d_sunshuao.png' }, // 弋阳·楚国名相
     wenzhou: { generalId: 'wenzhou_zhangcong', generalName: '张璁', portrait: '/assets/JIANGNAN/wenzhou_zhangcong.png' }, // 永嘉·明首辅抗倭
     wuling: { generalId: 'wuling_xiangdancheng', generalName: '相单程', portrait: '/assets/JIANGNAN/wuling_xiangdancheng.png' },
@@ -768,7 +768,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     wuyue: { generalId: 'wuyue_qianliu', generalName: '钱镠', portrait: '/assets/JIANGNAN/wuyue_qianliu.png' },
 
     song: { generalId: 'song_zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhaosong/song_zhaokuangyin.png' },
-    chuzhou_d: { generalId: 'chuzhou_d_dugao', generalName: '杜杲', portrait: '/assets/JIANGNAN/chuzhou_d_dugao.png' },
+    chuzhou_d: { generalId: 'chuzhou_d_dugao', generalName: '皇甫晖', portrait: '/assets/JIANGNAN/chuzhou_d_dugao.png' },
     xiyuduhu: { generalId: 'xiyuduhu_banchao', generalName: '班超', portrait: '/assets/liuhan/xiyuduhu_banchao.png' },
 };
 

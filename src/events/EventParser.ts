@@ -2765,8 +2765,8 @@ export const CITIES_V2: CityDataV2[] = [
     },
     { id: 'city_baidicheng2', name: '白帝城', factionId: 'kui', lat: 31.043, lng: 109.57, type: 'pass', region: 'BASHU', troops: 10000, note: '夔门·白帝城；刘备白毦兵永安托孤' },
     { id: 'city_qichun', name: '蕲春', factionId: 'xushouhui', lat: 30.23, lng: 115.45, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '元末徐寿辉天完政权龙兴地（蕲水/蕲春）' },
-    { id: 'city_wancheng', name: '皖城', factionId: 'wan', lat: 30.51, lng: 117.04, type: 'small_city', region: 'JIANGNAN', troops: 10000,
-        note: '皖城；舒州小城',
+    { id: 'city_wancheng', name: '皖口', factionId: 'wan', lat: 30.51, lng: 117.04, type: 'small_city', region: 'JIANGNAN', troops: 10000,
+        note: '皖口；刘源安庆',
     },
 
     { id: 'city_jiuzi', name: '鸠兹', factionId: 'danyang', lat: 31.33, lng: 118.38, type: 'small_city', region: 'JIANGNAN', troops: 10000,

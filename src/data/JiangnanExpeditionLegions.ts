@@ -14,7 +14,7 @@
 export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
 name: string; tier: 0 | 1 | 2 | 3 }>> = {
   wuling: { name: '武陵蛮兵', tier: 3 },
-  chuzhou_d: { name: '滁州弩手', tier: 2 },        // 清流关·杜杲守滁州抗蒙
+  chuzhou_d: { name: '清淮劲卒', tier: 2 },        // 清流关·皇甫晖守滁州抗蒙
   yiyang_d: { name: '义阳戍卒', tier: 3 },    // 武胜关·孟宗政三关之捷
   she_ethnic: { name: '畲族山兵', tier: 3 },  // 敕木山·畲族祖山 // 清流关·滁州戍卒     // 武陵山·相单程武陵蛮
   shanyue: { name: '丹阳兵', tier: 1 },      // 宛陵城·§1 #24 丹阳郡精兵（极其有名，升T1）
@@ -58,7 +58,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   chizhou: { name: '池州戍兵', tier: 3 },        // 大通·池州
   wenzhou: { name: '永嘉水师', tier: 2 },    // 永嘉·张璁整顿海防抗倭
   hu_d: { name: '浙东义兵', tier: 3 },          // 白峤·胡三省浙东抗元义兵
-  wan: { name: '舒州戍兵', tier: 2 },            // 皖城·李典曹魏江淮防线
+  wan: { name: '野人原义兵', tier: 2 },            // 皖口·刘源
   ying: { name: '郢州水军', tier: 2 },           // 郊郢·曹景宗梁郢州据城退魏（《梁书·曹景宗传》）
   kejia: { name: '客家义军', tier: 2 },          // 黄连·客家区募兵抗元（文天祥沾边）
   tingzhou_d: { name: '破敌军', tier: 2 },          // 瑞金·陈敏破敌军T2

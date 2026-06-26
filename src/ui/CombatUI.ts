@@ -2090,6 +2090,7 @@ export class CombatUI {
                 ${btn('准星：开')}
                 ${btn('切换左右 (Tab)')}
                 ${btn('💾 写盘 (Enter)', true)}
+                ${btn('🗑️ 清除缓存')}
                 ${btn('关闭 (Esc)')}
             </div>
             <div style="font-size:11px;color:#9a8f7a;line-height:1.5;">
@@ -2132,11 +2133,11 @@ export class CombatUI {
             }
         `;
         document.head.appendChild(style);
-        const [centerBtn, resetBtn, crossBtn, switchBtn, saveBtn, closeBtn] =
+        const [centerBtn, resetBtn, crossBtn, switchBtn, saveBtn, clearCacheBtn, closeBtn] =
             Array.from(panel.querySelectorAll('.cc-btn')) as HTMLButtonElement[];
         this.crosshairBtn = crossBtn;
         // 按钮不抢焦点，避免点完按钮后按 Enter 既触发按钮又触发热键
-        for (const b of [centerBtn, resetBtn, crossBtn, switchBtn, saveBtn, closeBtn]) {
+        for (const b of [centerBtn, resetBtn, crossBtn, switchBtn, saveBtn, clearCacheBtn, closeBtn]) {
             b.addEventListener('mousedown', (e) => e.preventDefault());
         }
         centerBtn.addEventListener('click', () => this.runCorrectorExclusive(() => this.centerAlignCorrectorCurrent()));
@@ -2144,6 +2145,10 @@ export class CombatUI {
         crossBtn.addEventListener('click', () => this.toggleCorrectorCrosshair());
         switchBtn.addEventListener('click', () => this.switchCorrectorSide());
         saveBtn.addEventListener('click', () => this.runCorrectorExclusive(() => this.flushCorrectorPendingToDisk(false)));
+        clearCacheBtn.addEventListener('click', () => {
+            localStorage.removeItem('PORTRAIT_CONFIG_DATA');
+            window.location.reload();
+        });
         closeBtn.addEventListener('click', () => this.closeCorrector());
         document.body.appendChild(panel);
         return panel;

@@ -44,7 +44,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yunzhong', name: '云中' },
     { id: 'qian', name: '黔中' },
     { id: 'chunshen', name: '春申' },
-    { id: 'wan', name: '舒州' },          // 舒州(皖城/安庆)；旗号取舒州避与据点皖城重
+    { id: 'wan', name: '安庆' },          // 舒州(皖城/安庆)；旗号取舒州避与据点皖城重
     { id: 'qingyuan_bd', name: '清苑' },
     { id: 'zhong', name: '寿州' },
     { id: 'xichu', name: '西楚' },

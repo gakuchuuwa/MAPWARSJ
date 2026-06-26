@@ -644,7 +644,7 @@ export class CityAssetManager {
         'yunzhong': '云中',
         'qian': '矩',
         'chunshen': '春申',
-        'wan': '舒',
+        'wan': '安庆',
         'qingyuan_bd': '清苑',
 'zhong': '寿',
 'xichu': '楚',

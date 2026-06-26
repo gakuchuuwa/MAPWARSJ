@@ -689,7 +689,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yunzhong': '云中',
     'chunshen': '春申',
     'qian': '矩',
-    'wan': '舒',
+    'wan': '安庆',
     'mi': '糜',
     'hai2': '海',
     'fu2': '抚',

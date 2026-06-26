@@ -954,7 +954,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/CENTRAL/aff99320-ad86-4f44-88aa-0831cd9a184a.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": 13
+            "offsetY": 19
         },
         "/assets/STEPPE/choros_tuohuan.png": {
             "scale": 1.08,
@@ -1512,9 +1512,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/CENTRAL/cao_d_caocao.png": {
-            "scale": 0.96,
+            "scale": 1.04,
             "offsetX": 0,
-            "offsetY": -25
+            "offsetY": -6
         },
         "/assets/LINGNAN/guangzhou (17).png": {
             "scale": 1.04,
@@ -1669,7 +1669,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/zhaosong/605ec3ae-1447-43bc-a07f-cd8aa64e90cb.png": {
             "scale": 1.12,
             "offsetX": 7,
-            "offsetY": 10
+            "offsetY": -24
         },
         "/assets/JIANGNAN/e77548d8-eaf3-4324-807b-023a328e7711.png": {
             "scale": 0.92,
@@ -2000,6 +2000,51 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": -1
+        },
+        "/assets/WESTERN/xiliao_yelvdashi.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/liuhan/xijue_ganshouchang.png": {
+            "scale": 1.08,
+            "offsetX": 12,
+            "offsetY": 20
+        },
+        "/assets/BASHU/yangzhou_wangping.png": {
+            "scale": 1.12,
+            "offsetX": -1,
+            "offsetY": -18
+        },
+        "/assets/JIANGNAN/chu_guanyu_202606250402.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/JAPAN/786f74f8-246b-4e03-9d3c-ccd958d8b1fd.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/JIANGNAN/hongzhou_zhuwenzheng.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/JIANGNAN/linshihong_linshihong.png": {
+            "scale": 1.06,
+            "offsetX": 7,
+            "offsetY": 17
+        },
+        "/assets/BASHU/chenghan_lite.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/JAPAN/date_d_yidazhengzong.png": {
+            "scale": 1.02,
+            "offsetX": 7,
+            "offsetY": -15
         }
     },
     "folderGuides": {

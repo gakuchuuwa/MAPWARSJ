@@ -149,7 +149,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_loufanwang: { generalId: 'unassigned_loufanwang', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 楼烦：亡部哀兵复起
     shanrong_tianchou: { generalId: 'shanrong_tianchou', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 无终·田畴导曹操奇袭乌桓
     xie_cj_d_xingfangde: { generalId: 'xie_cj_d_xingfangde', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 信州：垒山筑寨据守抗元
-    wan_lidian: { generalId: 'wan_lidian', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 合肥：据城固守拒孙权
+    wan_liuyuan: { generalId: 'wan_liuyuan', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 刘源皖口
     huang_d_sunshuao: { generalId: 'huang_d_sunshuao', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 期思：筑芍陂兴水利
     wenzhou_zhangcong: { generalId: 'wenzhou_zhangcong', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 永嘉：整顿海防编练水师
     qianzhong_wubayue: { generalId: 'qianzhong_wubayue', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 乾嘉：苗民决死破清军
