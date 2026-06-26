@@ -4,8 +4,7 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import type { GameApp } from './GameApp';
 
-/** 与 VectorRoadEditor.LOCKED_ZOOM / AGENTS.md 地图缩放锁定一致 */
-const LOCKED_MAP_ZOOM = 9;
+
 /** 跟随镜头：小于此距离视为已对准，不再 setView（避免静止时微抖） */
 const FOLLOW_RECENTER_DEADZONE_M = 120;
 /** 距离过大（切换跟随目标等）时直接吸附，不做插值 */
@@ -151,15 +150,12 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                     (id) => legionManager.getLegionById(id),
                     (pos) => {
                         const target = L.latLng(pos.lat, pos.lng);
-                        if (lMap.getZoom() !== LOCKED_MAP_ZOOM) {
-                            lMap.setView(target, LOCKED_MAP_ZOOM, { animate: false });
-                            return;
-                        }
+                        const currentZoom = lMap.getZoom();
                         const center = lMap.getCenter();
                         const dist = center.distanceTo(target);
                         if (dist <= FOLLOW_RECENTER_DEADZONE_M) return;
                         if (dist >= FOLLOW_SNAP_DISTANCE_M) {
-                            lMap.setView(target, LOCKED_MAP_ZOOM, { animate: false });
+                            lMap.setView(target, currentZoom, { animate: false });
                             return;
                         }
                         // 每帧向目标插值一小段（指数平滑追踪）：
@@ -168,7 +164,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                             center.lat + (target.lat - center.lat) * FOLLOW_LERP_FACTOR,
                             center.lng + (target.lng - center.lng) * FOLLOW_LERP_FACTOR,
                         );
-                        lMap.setView(next, LOCKED_MAP_ZOOM, { animate: false });
+                        lMap.setView(next, currentZoom, { animate: false });
                     }
                 );
                 const now = performance.now();

@@ -830,14 +830,14 @@ export class CombatUI {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                flex: 0 0 ${uiPx(90)};
-                width: ${uiPx(90)};
+                flex: 0 0 ${uiPx(98)};
+                width: ${uiPx(98)};
                 box-sizing: border-box;
                 background: ${bgColor};
                 border: 1px solid ${borderColor};
                 border-bottom: 2px solid ${sideColor};
                 border-radius: 4px;
-                padding: ${uiPx(4)} ${uiPx(6)};
+                padding: ${uiPx(4)} ${uiPx(3)};
                 box-shadow: 0 2px 6px rgba(0,0,0,0.85);
                 overflow: hidden;
             `;

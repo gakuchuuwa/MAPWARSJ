@@ -1346,6 +1346,11 @@ function serverBindGeneralPortrait(
     if (!/^[a-z0-9_]+$/i.test(generalId)) {
         throw new Error(`非法 generalId：${generalId}`);
     }
+    // 写文件前先验证 generalId 存在于 FactionGenerals.ts，防止 generalId 截断时写出错误文件名
+    const generalsTextPre = fs.readFileSync(factionGeneralsPath, 'utf-8');
+    if (!new RegExp(`generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'`).test(generalsTextPre)) {
+        throw new Error(`FactionGenerals.ts 中未找到 generalId: "${generalId}"，拒绝写盘`);
+    }
     const srcAbs = serverWebPathToAbs(publicAssetsRoot, sourceWebPath);
     if (!fs.existsSync(srcAbs)) {
         throw new Error(`源文件不存在：${sourceWebPath}`);

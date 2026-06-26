@@ -1197,9 +1197,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/TIBET/9b95efa5-c83c-4fe1-8acf-33b7ddf9da8a.png": {
-            "scale": 0.96,
+            "scale": 1.16,
             "offsetX": 4,
-            "offsetY": -9
+            "offsetY": -70
         },
         "/assets/TIBET/7434c051-066c-4241-9a8d-4ff860b8ac54.png": {
             "scale": 0.96,
@@ -1452,9 +1452,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/NORTHEAST/NORTHEAST_field.png": {
-            "scale": 0.94,
+            "scale": 1.1,
             "offsetX": 0,
-            "offsetY": 14
+            "offsetY": 7
         },
         "/assets/NORTHEAST/8ee22c66-e8b5-4afb-b485-cce206a7294e.png": {
             "scale": 1.14,
@@ -1875,6 +1875,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.34,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/liuhan/48e9f1ec-e92d-4366-ae24-5996ab67e993.png": {
+            "scale": 1.2,
+            "offsetX": 17,
+            "offsetY": -29
+        },
+        "/assets/WESTERN/_fallback_WESTERN.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/STEPPE/66bc193b-5996-48a3-8bf0-5bc0d5c4199b.png": {
+            "scale": 1.06,
+            "offsetX": 12,
+            "offsetY": -31
+        },
+        "/assets/STEPPE/tiele_qibiheli.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/STEPPE/476adb25_202606250402s.png": {
+            "scale": 0.94,
+            "offsetX": 2,
+            "offsetY": -30
+        },
+        "/assets/NORTHEAST/bohai_dazuorong.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/KOREA/ce8ecbe9-eea1-496c-9361-d0d61180181b.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -27
         }
     },
     "folderGuides": {

@@ -298,7 +298,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     jie: { generalId: 'jie_sijinti', generalName: '斯谨提', portrait: '/assets/CENTRAL_ASIA/jie_sijinti.png' },
     lu: { generalId: 'lu_zhangliao', generalName: '张辽', portrait: '/assets/CENTRAL/lu_zhangliao.png' },
     // ── 中国将·西域 2026-06-18 ──
-    quli: { generalId: 'quli_chentang', generalName: '陈汤', portrait: '/assets/CENTRAL_ASIA/quli_chentang.png' },
+    quli: { generalId: 'quli_chentang', generalName: '陈汤', portrait: '/assets/liuhan/quli_chentang.png' },
     loulan: { generalId: 'loulan_suojie', generalName: '索劼', portrait: '/assets/CENTRAL_ASIA/loulan_suojie.png' },
         juandu: { generalId: 'juandu_peixingjian', generalName: '裴行俭', portrait: '/assets/litang/juandu_peixingjian.png' },
     dulan: { generalId: 'dulan_dashibatuer', generalName: '达什巴图尔', portrait: '/assets/TIBET/dulan_dashibatuer.png' },
