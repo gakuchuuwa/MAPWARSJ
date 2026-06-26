@@ -43,7 +43,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
         ming_d: { generalId: 'ming_d_zhudi', generalName: '朱棣', portrait: '/assets/daming/ming_d_zhudi.png' },
     jinling: { generalId: 'jinling_tandaoji', generalName: '檀道济', portrait: '/assets/JIANGNAN/jinling_tandaoji.png' },
     guangzhou: { generalId: 'guangzhou_liuyin', generalName: '刘隐', portrait: '/assets/LINGNAN/guangzhou_liuyin.png' },
-    shu: { generalId: 'shu_zhugeliang', generalName: '诸葛亮', portrait: '/assets/BASHU/shu_zhugeliang.png' },
+    shu: { generalId: 'shu_liubei', generalName: '刘备', portrait: '/assets/BASHU/shu_liubei.png' },
     yangzhou: { generalId: 'yangzhou_wangping', generalName: '王平', portrait: '/assets/BASHU/yangzhou_wangping.png' },
     yang_zhou: { generalId: 'yang_zhou_yangxingmi', generalName: '杨行密', portrait: '/assets/JIANGNAN/yang_zhou_yangxingmi.png' },
     // cheng 阳安：岳钟琪已迁赤斤@赤金堡
@@ -196,6 +196,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     xueyantuo: { generalId: 'xueyantuo_yinan', generalName: '夷男', portrait: '/assets/STEPPE/xueyantuo_yinan.png' },
 
     huige: { generalId: 'huige_gulipeiluo', generalName: '骨力裴罗', portrait: '/assets/STEPPE/huige_gulipeiluo.png' },
+    huizhou: { generalId: 'huizhou_zhugeliang', generalName: '诸葛亮', portrait: '/assets/BASHU/huizhou_zhugeliang.png' },
     kereyid: { generalId: 'kereyid_wanghan', generalName: '王汗', portrait: '/assets/STEPPE/kereyid_wanghan.png' },
     naiman: { generalId: 'naiman_taiyanghan', generalName: '太阳汗', portrait: '/assets/STEPPE/naiman_taiyanghan.png' },
     tatar: { generalId: 'tatar_mieguzhen', generalName: '蔑古真薛兀勒', portrait: '/assets/STEPPE/tatar_mieguzhen.png' },
@@ -437,7 +438,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     buyi_d: { generalId: 'buyi_d_weichaoyuan', generalName: '韦朝元', portrait: '/assets/LINGNAN/buyi_d_weichaoyuan.png' },
       lizhou_d: { generalId: 'lizhou_d_liaohua', generalName: '廖化', portrait: '/assets/BASHU/lizhou_d_liaohua.png' },
       // ── 巴蜀关隘 2026-06-19 ──
-    kui: { generalId: 'kui_liubei', generalName: '刘备', portrait: '/assets/BASHU/kui_liubei.png' },
+    kui: { generalId: 'kui_gongsunshu', generalName: '公孙述', portrait: '/assets/BASHU/kui_gongsunshu.png' },
     yang_bozhou: { generalId: 'yang_bozhou_yangyinglong', generalName: '杨应龙', portrait: '/assets/BASHU/yang_bozhou_yangyinglong.png' },
     chenghan: { generalId: 'chenghan_lite', generalName: '李特', portrait: '/assets/BASHU/chenghan_lite.png' },
     jinchuan_x: { generalId: 'jinchuan_x_suonuomu', generalName: '索诺木', portrait: '/assets/BASHU/jinchuan_x_suonuomu.png' },

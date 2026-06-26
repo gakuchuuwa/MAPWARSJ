@@ -8,7 +8,11 @@ import {
 } from '../data/portrait_adjust';
 import { PORTRAIT_CANONICAL_MAP } from './portrait_canonical';
 
-/** 内容相同的图统一使用代表路径的调校记录（重复图只需调一次） */
+/**
+ * 内容相同的图 → 代表路径。仅用于 resolvePortraitAdjust 的「读取兜底」：
+ * 自身路径无调校时回退到代表路径，让历史上按代表路径存的旧数据仍生效。
+ * 注意：存盘不再走这里（按自身路径存），故此函数已非存储主键，仅兜底用。
+ */
 export function toCanonicalPortraitPath(portraitPath: string): string {
     return PORTRAIT_CANONICAL_MAP[portraitPath] ?? portraitPath;
 }
@@ -72,15 +76,24 @@ export function extractPortraitFolder(portraitPath: string): string | undefined 
     return m?.[1];
 }
 
-/** 文件夹默认 → 单张覆盖；未配置项回落到 1 / 0。内容相同的图自动共享代表路径的调校。 */
+/**
+ * 调校读取优先级：① 立绘自身路径 → ② canonical 代表路径（旧数据兜底）→ ③ 文件夹默认 → ④ 中性值。
+ *
+ * 为什么自身路径优先（2026-06-27 重构，见 claudedocs/立绘调校问题解决方案.md）：
+ * 旧逻辑只读 canonical，导致「内容相同被去重表合并的不同将领」共用一个存储格子、互相覆盖，
+ * 表现为「调好又恢复」。改为按自身路径存取后每个将领独立；canonical 仅作旧数据兜底，不丢历史调校。
+ * 注：真正共用同一文件路径的将领仍然天然共享同一格（同 key），符合预期。
+ */
 export function resolvePortraitAdjust(
     portraitPath: string,
     data: PortraitAdjustData = DEFAULT_PORTRAIT_ADJUST,
 ): Required<PortraitAdjustValues> {
     const canonical = toCanonicalPortraitPath(portraitPath);
-    const folder = extractPortraitFolder(canonical);
+    const folder = extractPortraitFolder(portraitPath) ?? extractPortraitFolder(canonical);
     const folderAdj = folder ? data.folders?.[folder] : undefined;
-    const imageAdj = data.images?.[canonical];
+    // 自身路径优先，再回退 canonical（旧数据共享调校仍生效）
+    const imageAdj = data.images?.[portraitPath]
+        ?? (canonical !== portraitPath ? data.images?.[canonical] : undefined);
 
     return {
         scale: imageAdj?.scale ?? folderAdj?.scale ?? PORTRAIT_ADJUST_NEUTRAL.scale,
@@ -89,11 +102,13 @@ export function resolvePortraitAdjust(
     };
 }
 
+/** 是否有单张覆盖：与 resolvePortraitAdjust 一致，自身路径优先、canonical 兜底 */
 export function hasPortraitImageOverride(
     portraitPath: string,
     data: PortraitAdjustData = DEFAULT_PORTRAIT_ADJUST,
 ): boolean {
-    return toCanonicalPortraitPath(portraitPath) in (data.images ?? {});
+    const images = data.images ?? {};
+    return portraitPath in images || toCanonicalPortraitPath(portraitPath) in images;
 }
 
 /** 缩放锚点：眼线 × 胸线交汇处（与调校尺一致；无 folderGuides 时用全局默认 24% / 50%） */

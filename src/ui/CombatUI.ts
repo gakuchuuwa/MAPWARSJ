@@ -20,7 +20,6 @@ import {
     extractPortraitFolder,
     getPortraitCorrectorCrosshairGuide,
     resolvePortraitAdjust,
-    toCanonicalPortraitPath,
 } from '../config/PortraitAdjust';
 import {
     DEFAULT_PORTRAIT_ADJUST,
@@ -1466,7 +1465,7 @@ export class CombatUI {
         return this.correctorPathForSide(this.correctorSide);
     }
 
-    /** 调校/保存用的 canonical 路径（待绑定时用目标 {generalId}.png，而非源图路径） */
+    /** 调校/保存用的立绘自身路径（待绑定时用目标 {generalId}.png，而非源图路径） */
     private correctorPathForSide(side: 'attacker' | 'defender'): string {
         const staged = this.portraitBindStaging.find((b) => b.side === side);
         if (staged) return staged.destPath;
@@ -1475,19 +1474,17 @@ export class CombatUI {
     }
 
     /**
-     * 存盘 key：相同内容的图统一存在代表路径下，所有副本自动共享调校。
-     * 待绑定图用 destPath（新文件，无代表路径）。
+     * 存盘 key：按立绘「自身路径」存（每个将领独立一格），不再归并到 canonical 代表路径。
+     * 归并代表路径会让内容相同的不同将领共用一格、互相覆盖（「调好又恢复」），见
+     * claudedocs/立绘调校问题解决方案.md。读取侧 resolvePortraitAdjust 自身路径优先、canonical 兜底。
+     * 待绑定图用 destPath（最终落盘路径）。
      */
     private correctorSaveKey(): string {
-        const staged = this.portraitBindStaging.find((b) => b.side === this.correctorSide);
-        if (staged) return staged.destPath;
-        return toCanonicalPortraitPath(this.correctorPath());
+        return this.correctorPath();
     }
 
     private correctorSaveKeyForSide(side: 'attacker' | 'defender'): string {
-        const staged = this.portraitBindStaging.find((b) => b.side === side);
-        if (staged) return staged.destPath;
-        return toCanonicalPortraitPath(this.correctorPathForSide(side));
+        return this.correctorPathForSide(side);
     }
 
     /** 读像素/居中时用实际显示的 URL（待绑定图仍在源路径） */
@@ -1645,12 +1642,7 @@ export class CombatUI {
         if (!saveKey) return;
         this.correctorData.images = this.correctorData.images ?? {};
         this.correctorData.images[saveKey] = { ...this.correctorDraft };
-        
-        const directPath = this.correctorPath();
-        if (directPath && directPath !== saveKey && this.correctorData.images[directPath]) {
-            delete this.correctorData.images[directPath];
-            this.correctorDirtyPaths.add(directPath);
-        }
+
         if (this.canPersistPortraitPath(saveKey)) {
             const prevSize = this.correctorDirtyPaths.size;
             this.correctorDirtyPaths.add(saveKey);
@@ -1673,12 +1665,7 @@ export class CombatUI {
         if (!this.canPersistPortraitPath(saveKey)) return;
         this.correctorData.images = this.correctorData.images ?? {};
         this.correctorData.images[saveKey] = { ...this.correctorDraft };
-        
-        const directPath = this.correctorPath();
-        if (directPath && directPath !== saveKey && this.correctorData.images[directPath]) {
-            delete this.correctorData.images[directPath];
-            this.correctorDirtyPaths.add(directPath);
-        }
+
         if (this.correctorDirtyPaths.size > 0) {
             this.setCorrectorStatus(`已改 ${this.correctorDirtyPaths.size} 张 · Enter/F2/Esc 写盘`);
         }
@@ -2711,7 +2698,8 @@ export class CombatUI {
         const img = side === 'attacker' ? this.leftPortrait : this.rightPortrait;
         const onPortraitLoaded = () => {
             // 用源图已有的调校初始化草稿，让预览立即以调好的状态显示
-            const sourceAdj = resolvePortraitAdjust(toCanonicalPortraitPath(sourcePath), this.correctorData);
+            // 按自身路径优先解析（resolvePortraitAdjust 内部会自身→canonical→文件夹兜底）
+            const sourceAdj = resolvePortraitAdjust(sourcePath, this.correctorData);
             this.correctorDraft = { scale: sourceAdj.scale, offsetX: sourceAdj.offsetX, offsetY: sourceAdj.offsetY };
             // 同时把调校值写入 destPath，并标记 dirty
             // 这样即使用户不动滑块直接关 F2，下场战斗也会用正确的位置

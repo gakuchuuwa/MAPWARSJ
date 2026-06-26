@@ -160,6 +160,7 @@ export const FACTIONS: Faction[] = [
     { id: 'tujue', name: '突厥' },
     { id: 'tiele', name: '铁勒' },
     { id: 'huige', name: '回纥' },
+    { id: 'huizhou', name: '徽州' },
     { id: 'dayue', name: '大越' },
 
     { id: 'yamato', name: '大和' },

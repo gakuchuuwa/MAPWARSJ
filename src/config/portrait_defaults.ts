@@ -484,6 +484,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'hongirad': _caoyuanPortraitPool,
 
     'huige': _caoyuanPortraitPool,
+    'huizhou': _shuguoPortraitPool,
     'huihu': _caoyuanPortraitPool,
     'huyan': _caoyuanPortraitPool,
     'jalair': _caoyuanPortraitPool,

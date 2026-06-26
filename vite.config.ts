@@ -1149,7 +1149,8 @@ function serverFormatPortraitAdjustFile(data: {
 
     return `/**
  * 立绘显示调校：文件夹默认 + 单张覆盖 + 调校尺（样片/标线）
- * 由 PortraitTuner（/portrait-tuner.html）维护；CombatUI 仅读取 folders / images。
+ * 由 PortraitTuner（/portrait-tuner.html）与游戏内 F2 校正器共同维护（均按立绘自身路径存单张覆盖）。
+ * 读取见 PortraitAdjust.ts#resolvePortraitAdjust：自身路径 → canonical 兜底 → 文件夹默认。
  *
  * folders 键示例："/assets/daming/"
  * images 键示例："/assets/daming/daming (1).png"

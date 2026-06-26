@@ -137,6 +137,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     'jingmen': '荆门',
     'huige': '回纥',
+    'huizhou': '徽',
     'dayue': '大越',
     'yamato': '大和',
 'edo': '德川',

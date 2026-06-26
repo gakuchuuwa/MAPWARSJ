@@ -126,6 +126,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'tiele': 'city_hanhai',
 
     'huige': 'city_woluduobali',
+    'huizhou': 'city_huixian',
     'dayue': 'city_shenglong',
     'yamato': 'city_asuka',
 'edo': 'city_edo',
