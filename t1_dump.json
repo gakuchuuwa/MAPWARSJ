@@ -847,9 +847,9 @@
   },
   {
     "file": "src\\data\\NorthExpeditionLegions.ts",
-    "name": "襄平铁骑",
+    "name": "襄平狟骑",
     "line": 22,
-    "text": "gongsun_d: { name: '襄平铁骑', tier: 1 }, // 襄平·公孙度襄平铁骑"
+    "text": "gongsun_d: { name: '襄平狟骑', tier: 1 }, // 襄平·公孙度襄平狟骑"
   },
   {
     "file": "src\\data\\NorthExpeditionLegions.ts",

@@ -1990,6 +1990,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -13
+        },
+        "/assets/BASHU/qingyi_qingyiwang.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -16
         }
     },
     "folderGuides": {
