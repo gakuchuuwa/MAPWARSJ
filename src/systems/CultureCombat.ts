@@ -24,53 +24,20 @@ import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';
 import type { IBattleUnit } from '../core/CombatSystem';
 import type { Army } from '../core/Army';
 import type { City } from '../types/core';
-import { getCityRegion, getRegion, RegionType } from './RegionSystem';
+import { RegionType } from './RegionSystem';
+import {
+    type CultureCombatRole,
+    isGarrisonUnit,
+    resolveUnitCultureRegion,
+} from './CultureRegion';
 import { getCityEliteConfig, getLegionEliteConfig } from '../data/ExpeditionLegions';
 import { readSiegeGarrisonElite } from '../combat/SiegeGarrisonTier';
 import { isCampaignLegion } from '../legion/LegionSpawnPolicy';
 
-export type CultureCombatRole = 'field' | 'garrison';
+/** 文化区判定已抽至 CultureRegion（叶子模块，破循环依赖）；此处重新导出兼容旧引用 */
+export { type CultureCombatRole, resolveUnitCultureRegion } from './CultureRegion';
 
 const TIER_TABLE = GameConfig.CULTURE_COMBAT.TIER_TABLE;
-
-function isGarrisonUnit(unit: IBattleUnit): boolean {
-    return unit.unitType === 'city';
-}
-
-function getCityFromManager(cityId: string | null | undefined): City | null {
-    if (!cityId) return null;
-    const mgr = (window as unknown as { game?: { cityManager?: { getCity(id: string): City | null } } })
-        .game?.cityManager;
-    return mgr?.getCity(cityId) ?? null;
-}
-
-/** 与 LegionManager.resolveCultureRegion 同源：据点 region 优先，否则坐标多边形 */
-export function resolveUnitCultureRegion(unit: IBattleUnit): RegionType {
-    const entity = unit.getEntity?.();
-
-    if (isGarrisonUnit(unit) && entity) {
-        const city = entity as City;
-        return getCityRegion({
-            latitude: city.latitude,
-            longitude: city.longitude,
-            region: city.region,
-        });
-    }
-
-    const army = entity as Army | undefined;
-    const cityId = army?.homeCityId ?? army?.getSourceCityId?.() ?? null;
-    const home = getCityFromManager(cityId);
-    if (home) {
-        return getCityRegion({
-            latitude: home.latitude,
-            longitude: home.longitude,
-            region: home.region,
-        });
-    }
-
-    const pos = unit.getPosition();
-    return getRegion(pos.lat, pos.lng);
-}
 
 /** 文化区固定攻防系数（非随机，不含关隘类型加成）——五级表，未列出区 ×1.0 */
 export function getCultureCombatMultiplier(region: RegionType, role: CultureCombatRole): number {

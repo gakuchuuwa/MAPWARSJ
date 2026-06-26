@@ -68,7 +68,7 @@ function collectRegionPortraitPool(region: RegionType): string[] {
     // Windows 文件系统不区分大小写，Vite glob 返回的路径大小写不确定
     // 例：HEXI 文件夹可能返回 /assets/hexi/ 或 /assets/HEXI/，用小写比较兜底
     const prefix = cultureCircleFolderPrefix(region).toLowerCase();
-    const pool = Object.keys(_allPortraitAssetGlob)
+    const pool = Object.values(_allPortraitAssetGlob)
         .map(normalizePortraitWebPath)
         .filter((p) => p.toLowerCase().startsWith(prefix));
     if (pool.length === 0) {
@@ -92,7 +92,7 @@ export const REGION_PORTRAIT_POOLS: Record<RegionType, string[]> = Object.fromEn
 
 // Windows 大小写不敏感：统一转小写存储，查找时也转小写
 const KNOWN_PORTRAIT_PATHS = new Set(
-    Object.keys(_allPortraitAssetGlob)
+    Object.values(_allPortraitAssetGlob)
         .map(normalizePortraitWebPath)
         .map((p) => p.toLowerCase())
         .filter((p) => !/^\/assets\/inbox\//i.test(p)),
@@ -135,21 +135,21 @@ const _wuzhouPortraitGlob = import.meta.glob<string>(
     '../../public/assets/wuzhou/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _wuzhouPortraitPool: string[] = Object.keys(_wuzhouPortraitGlob).map(normalizePortraitWebPath);
+const _wuzhouPortraitPool: string[] = Object.values(_wuzhouPortraitGlob);
 
 /** 李唐立绘池 */
 const _litangPortraitGlob = import.meta.glob<string>(
     '../../public/assets/litang/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _litangPortraitPool: string[] = Object.keys(_litangPortraitGlob).map(normalizePortraitWebPath);
+const _litangPortraitPool: string[] = Object.values(_litangPortraitGlob);
 
 /** 大明立绘池 */
 const _damingPortraitGlob = import.meta.glob<string>(
     '../../public/assets/daming/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _damingPortraitPool: string[] = Object.keys(_damingPortraitGlob).map(normalizePortraitWebPath);
+const _damingPortraitPool: string[] = Object.values(_damingPortraitGlob);
 
 /** 广州政权专夹已并入 LINGNAN 区夹；政权映射仍用 _guangzhouPortraitPool 别名 */
 
@@ -158,49 +158,49 @@ const _puganPortraitGlob = import.meta.glob<string>(
     '../../public/assets/pugan/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _puganPortraitPool: string[] = Object.keys(_puganPortraitGlob).map(normalizePortraitWebPath);
+const _puganPortraitPool: string[] = Object.values(_puganPortraitGlob);
 
 /** 满清政权专夹 */
 const _manqingPortraitGlob = import.meta.glob<string>(
     '../../public/assets/manqing/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _manqingPortraitPool: string[] = Object.keys(_manqingPortraitGlob).map(normalizePortraitWebPath);
+const _manqingPortraitPool: string[] = Object.values(_manqingPortraitGlob);
 
 /** 殷商专属立绘池（商@安阳 + 殷@朝歌） */
 const _xianqinPortraitGlob = import.meta.glob<string>(
     '../../public/assets/xianqin/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _xianqinPortraitPool: string[] = Object.keys(_xianqinPortraitGlob).map(normalizePortraitWebPath);
+const _xianqinPortraitPool: string[] = Object.values(_xianqinPortraitGlob);
 
 /** 汉国专属立绘池（南郑） */
 const _liuhanPortraitGlob = import.meta.glob<string>(
     '../../public/assets/liuhan/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _liuhanPortraitPool: string[] = Object.keys(_liuhanPortraitGlob).map(normalizePortraitWebPath);
+const _liuhanPortraitPool: string[] = Object.values(_liuhanPortraitGlob);
 
 /** 赵宋专属立绘池（临安） */
 const _zhaosongPortraitGlob = import.meta.glob<string>(
     '../../public/assets/zhaosong/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _zhaosongPortraitPool: string[] = Object.keys(_zhaosongPortraitGlob).map(normalizePortraitWebPath);
+const _zhaosongPortraitPool: string[] = Object.values(_zhaosongPortraitGlob);
 
 /** 秦国立绘池 */
 const _qinPortraitGlob = import.meta.glob<string>(
     '../../public/assets/yingqin/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _qinPortraitPool: string[] = Object.keys(_qinPortraitGlob).map(normalizePortraitWebPath);
+const _qinPortraitPool: string[] = Object.values(_qinPortraitGlob);
 
 /** 叛军立绘池 */
 const _panjunPortraitGlob = import.meta.glob<string>(
     '../../public/assets/panjun/*.png',
     { eager: true, query: '?url', import: 'default' },
 );
-const _panjunPortraitPool: string[] = Object.keys(_panjunPortraitGlob).map(normalizePortraitWebPath);
+const _panjunPortraitPool: string[] = Object.values(_panjunPortraitGlob);
 
 /** 14 区 + panjun 的 web 路径前缀清单（审计/文档用） */
 export const CULTURE_CIRCLE_FOLDERS: readonly string[] = [

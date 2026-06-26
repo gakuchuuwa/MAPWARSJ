@@ -2528,7 +2528,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_tongdi', name: '铜鞮', factionId: 'yangshe', lat: 36.824653, lng: 112.826843, type: 'small_city', region: 'NORTH', troops: 10000,
         note: '铜鞮；羊舌小城',
     },
-    { id: 'city_huixian', name: '河池', factionId: 'huizhou', lat: 33.80, lng: 106.06, type: 'small_city', region: 'BASHU', troops: 10000, note: '河池；诸葛亮元戎' },
+    { id: 'city_huixian', name: '河池', factionId: 'huizhou_d', lat: 33.80, lng: 106.06, type: 'small_city', region: 'BASHU', troops: 10000, note: '河池；诸葛亮元戎' },
     { id: 'city_huojia', name: '获嘉', factionId: 'sima_d', lat: 35.26, lng: 113.66, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '河内郡；司马氏郡望' },
     { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'pass', region: 'CENTRAL', troops: 10000,
         note: '阏与；黎国关隘',

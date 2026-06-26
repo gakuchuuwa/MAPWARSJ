@@ -196,7 +196,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     xueyantuo: { generalId: 'xueyantuo_yinan', generalName: '夷男', portrait: '/assets/STEPPE/xueyantuo_yinan.png' },
 
     huige: { generalId: 'huige_gulipeiluo', generalName: '骨力裴罗', portrait: '/assets/STEPPE/huige_gulipeiluo.png' },
-    huizhou: { generalId: 'huizhou_zhugeliang', generalName: '诸葛亮', portrait: '/assets/BASHU/huizhou_zhugeliang.png' },
+    huizhou_d: { generalId: 'huizhou_zhugeliang', generalName: '诸葛亮', portrait: '/assets/BASHU/huizhou_zhugeliang.png' },
     kereyid: { generalId: 'kereyid_wanghan', generalName: '王汗', portrait: '/assets/STEPPE/kereyid_wanghan.png' },
     naiman: { generalId: 'naiman_taiyanghan', generalName: '太阳汗', portrait: '/assets/STEPPE/naiman_taiyanghan.png' },
     tatar: { generalId: 'tatar_mieguzhen', generalName: '蔑古真薛兀勒', portrait: '/assets/STEPPE/tatar_mieguzhen.png' },
@@ -547,7 +547,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     ruzhou: { generalId: 'ruzhou_sunjian', generalName: '孙坚', portrait: '/assets/CENTRAL/ruzhou_sunjian.png' },
     ruo: { generalId: 'ruo_wangjian', generalName: '王翦', portrait: '/assets/yingqin/ruo_wangjian.png' },
     yaozhou: { generalId: 'yaozhou_limaozhen', generalName: '李茂贞', portrait: '/assets/CENTRAL/yaozhou_limaozhen.png' },
-    zhi_state: { generalId: 'zhi_state_caocan', generalName: '曹参', portrait: '/assets/CENTRAL/zhi_state_caocan.png' },
+    zhi_state: { generalId: 'zhi_state_caocan', generalName: '曹参', portrait: '/assets/liuhan/zhi_state_caocan.png' },
     // 周泰（东吴宿卫；原 wuwu_d，吕蒙迁濡须口后改挂莱国据点）
     yangshao: { generalId: 'yangshao_zhoubo', generalName: '周勃', portrait: '/assets/liuhan/yangshao_zhoubo.png' },
     dixiang: { generalId: 'dixiang_wangmang', generalName: '王莽', portrait: '/assets/liuhan/dixiang_wangmang.png' },
@@ -722,7 +722,6 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     dalung: { generalId: 'dalung_sangjiwen', generalName: '桑吉温', portrait: '/assets/TIBET/dalung_sangjiwen.png' },
     dong: { generalId: 'dong_nangqianjiabo', generalName: '囊谦加波', portrait: '/assets/TIBET/dong_nangqianjiabo.png' },
     hor: { generalId: 'hor_chisang', generalName: '赤桑', portrait: '/assets/TIBET/hor_chisang.png' },
-    cheng: { generalId: 'cheng_gongsunshu', generalName: '公孙述', portrait: '/assets/BASHU/cheng_gongsunshu.png' },
     pyu: { generalId: 'pyu_molingtuo', generalName: '摩罗', portrait: '/assets/DIANQIAN/pyu_molingtuo.png' },
     nongzhigao: { generalId: 'nongzhigao_huangshimi', generalName: '黄师宓', portrait: '/assets/LINGNAN/nongzhigao_huangshimi.png' },
     weitou: { generalId: 'weitou_douti', generalName: '兜题', portrait: '/assets/WESTERN/weitou_douti.png' },

@@ -801,7 +801,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tier: 'ordinary',
         tacticalSkillId: 'tac_06',
     },
-    huizhou_zhugeliang: { generalId: 'huizhou_zhugeliang', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 诸葛亮元戎弩
     min_wangshenzhi: {
         generalId: 'min_wangshenzhi',
         tier: 'famous',
@@ -1011,9 +1010,10 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     },
     jiang_s_huanggai: {
         generalId: 'jiang_s_huanggai',
-        tier: 'ordinary',
+        tier: 'famous',
         tacticalSkillId: 'tac_03',
-    },
+        strategicSkillId: 'str_06',
+    }, // 赤壁苦肉计·火烧曹船·乘风破浪
     muong_shencongyue: {
         generalId: 'muong_shencongyue',
         tier: 'ordinary',
@@ -1108,11 +1108,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         generalId: 'sheng_d_liyiqi',
         tier: 'ordinary',
         tacticalSkillId: 'tac_07',
-    },
-    cheng_gongsunshu: {
-        generalId: 'cheng_gongsunshu',
-        tier: 'ordinary',
-        tacticalSkillId: 'tac_10',
     },
     pyu_molingtuo: {
         generalId: 'pyu_molingtuo',

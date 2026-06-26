@@ -1,5 +1,6 @@
 import { Army } from './Army';
-import { getLegionEliteLegionName, getCityAnchoredGeneral, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
+import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
+import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,

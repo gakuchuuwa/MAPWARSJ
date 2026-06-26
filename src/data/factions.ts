@@ -76,7 +76,6 @@ export const FACTIONS: Faction[] = [
     { id: 'xiayang_d', name: '夏阳' },   // ── 2026-06-18：李勣@龙门（冯翊夏阳故地·禹门险隘；旗号夏阳）──
     { id: 'dian', name: '通海' },       // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '上党' },
-    { id: 'cheng', name: '成国' },
     { id: 'liangzhou', name: '凉州' },
     { id: 'juqu_d', name: '沮渠' },
     { id: 'tufa_d', name: '秃发' },
@@ -160,7 +159,6 @@ export const FACTIONS: Faction[] = [
     { id: 'tujue', name: '突厥' },
     { id: 'tiele', name: '铁勒' },
     { id: 'huige', name: '回纥' },
-    { id: 'huizhou', name: '徽州' },
     { id: 'dayue', name: '大越' },
 
     { id: 'yamato', name: '大和' },
@@ -722,6 +720,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yingli', name: '应理' },
     { id: 'guangwu', name: '广武' },
     { id: 'huizhou', name: '会州' },
+    { id: 'huizhou_d', name: '徽州' },
     { id: 'yiwu', name: '伊吾' },
     { id: 'pulei', name: '蒲类' },
     { id: 'duerbote', name: '杜尔伯特' },

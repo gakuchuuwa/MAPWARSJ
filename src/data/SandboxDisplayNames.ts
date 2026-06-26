@@ -72,7 +72,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shu': '蜀',
     'dian': '通海',
     'xin': '上党',
-    'cheng': '简',
     'liangzhou': '凉',
     'juqu_d': '沮渠',
     'tufa_d': '秃发',
@@ -137,7 +136,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     'jingmen': '荆门',
     'huige': '回纥',
-    'huizhou': '徽',
     'dayue': '大越',
     'yamato': '大和',
 'edo': '德川',
@@ -577,6 +575,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yingli': '应理',
     'guangwu': '广武',
     'huizhou': '会',
+    'huizhou_d': '徽',
     'yiwu': '伊吾',
     'pulei': '蒲类',
     'duerbote': '杜尔',

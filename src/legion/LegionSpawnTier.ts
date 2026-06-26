@@ -1,10 +1,10 @@
 import { GameConfig } from '../config/GameConfig';
 import {
     getCityAnchorFactionId,
-    getCityAnchoredGeneral,
     getLegionEliteLegionName,
     isCityGeneralEliteAnchor,
 } from '../data/ExpeditionLegions';
+import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getFactionGeneral } from '../data/FactionGenerals';
 import type { Army } from './Army';
 

@@ -1,9 +1,9 @@
 import {
     getCityAnchorFactionId,
-    getCityAnchoredGeneral,
     getCityEliteLegionName,
     isCityGeneralEliteAnchor,
 } from '../data/ExpeditionLegions';
+import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
 import {

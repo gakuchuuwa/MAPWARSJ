@@ -288,9 +288,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/JIANGNAN/wuyue_qianliu.png": {
-            "scale": 0.94,
+            "scale": 0.88,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -8
         },
         "/assets/xianqin/qi_sunbin.png": {
             "scale": 1,
@@ -1318,9 +1318,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/zhaosong/yingzhou_d_liuqi.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -24
+            "scale": 1.08,
+            "offsetX": -1,
+            "offsetY": -30
         },
         "/assets/zhaosong/6690f9ed-2bf2-4f83-a67b-7daf83414053.png": {
             "scale": 1.14,
@@ -1645,7 +1645,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/STEPPE/kelie_zhaheganbu.png": {
             "scale": 0.94,
             "offsetX": 4,
-            "offsetY": 28
+            "offsetY": 0
         },
         "/assets/panjun/bailian_liufutong.png": {
             "scale": 0.92,
@@ -2081,6 +2081,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/BASHU/shu_liubei.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/NORTHEAST/dongdan_yelvbei.png": {
+            "scale": 1.08,
+            "offsetX": -10,
+            "offsetY": -44
+        },
+        "/assets/KOREA/zhen_zhenxuan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/STEPPE/kumoxi_ahuihui.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/liuhan/zhi_state_caocan.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": -26
         }
     },
     "folderGuides": {

@@ -54,7 +54,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'yangzhou': 'city_yangxian',
     'dian': 'city_tonghai',
     'xin': 'city_shangdang',
-    'cheng': 'city_jianzhou',
 'liangzhou': 'city_wuwei',
     'juqu_d': 'city_biaoshi',
     'tufa_d': 'city_qingtang',
@@ -126,7 +125,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'tiele': 'city_hanhai',
 
     'huige': 'city_woluduobali',
-    'huizhou': 'city_huixian',
+    'huizhou_d': 'city_huixian',
     'dayue': 'city_shenglong',
     'yamato': 'city_asuka',
 'edo': 'city_edo',

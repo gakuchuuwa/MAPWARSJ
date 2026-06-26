@@ -129,7 +129,7 @@ const _FIXED: Record<string, string> = {
     xiongnu: '#5A2838', // 匈奴·控弦之士（玄赤，史料尚色）
     tujue: '#4878A0', // 突厥·狼卫（狼青）
     huige: '#9A8048', // 回纥·铁骑（金黄）
-    huizhou: '#D4A574', // 徽州·诸葛亮
+    huizhou_d: '#D4A574', // 徽州·诸葛亮
     shatuo: '#585868', // 沙陀·铁骑（铁灰）
     shazhou: '#7B5A3E', // 沙州（敦煌赭）
     xianbei: '#6A8878', // 鲜卑·王庭（弹汗青）
@@ -405,7 +405,6 @@ const _FIXED: Record<string, string> = {
     'yue': '#624FA7', // 自动分配 (邻域相斥)
     'han': '#B57ECB', // 自动分配 (邻域相斥)
     'dian': '#B8BC79', // 自动分配 (邻域相斥)
-    'cheng': '#7D25AF', // 自动分配 (邻域相斥)
     'qiuchi': '#CA3197', // 自动分配 (邻域相斥)
     'jie': '#734786', // 自动分配 (邻域相斥)
     'dai_d': '#6045B9', // 自动分配 (邻域相斥)

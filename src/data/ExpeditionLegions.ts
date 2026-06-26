@@ -41,7 +41,6 @@ import { CENTRAL_EXPEDITION_ELITE_LEGIONS } from './CentralExpeditionLegions';
 import { BASHU_EXPEDITION_ELITE_LEGIONS } from './BashuExpeditionLegions';
 import { HEXI_EXPEDITION_ELITE_LEGIONS } from './HexiExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
-import { getFactionGeneral } from './FactionGenerals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
 export type EliteTier = 0 | 1 | 2 | 3;
@@ -134,13 +133,6 @@ export function getExpeditionEliteLegionName(factionId: string): string | null {
 
 export function getExpeditionEliteConfig(factionId: string): EliteLegionConfig | null {
   return ALL_FACTION_ELITE_LEGIONS[factionId] ?? null;
-}
-
-/** 据点锚定武将（读录入表；与军团旗号/占城势力可不同） */
-export function getCityAnchoredGeneral(cityId: string | null | undefined) {
-  const anchorFactionId = getCityAnchorFactionId(cityId);
-  if (!anchorFactionId) return null;
-  return getFactionGeneral(anchorFactionId);
 }
 
 /** @deprecated 旧「旗号=将精势力」校验；运行时改用 isCityGeneralEliteAnchor */
