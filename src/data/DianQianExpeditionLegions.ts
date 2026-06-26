@@ -32,7 +32,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   dongzu: { name: '侗家义军', tier: 3 },
   zuo_d: { name: '清溪关弩手', tier: 3 },
   nanzhong: { name: '南中劲卒', tier: 2 },     // 宛温·马忠善射夷汉部曲
-  yueyi: { name: '邛都戍', tier: 2 },         // 越嶲·焦璜戍守
+  yueyi: { name: '旌牛锐士', tier: 1 },         // 越嶲·张嶷
   pingnan: { name: '平南戍军', tier: 2 },       // 腾越城·沐晟征讨麓川
   jingdong: { name: '景东夷兵', tier: 2 },     // 银生城·陶洪屡退麓川
   luohu: { name: '罗斛步卒', tier: 3 },        // 呵叻城·敢木丁驻守

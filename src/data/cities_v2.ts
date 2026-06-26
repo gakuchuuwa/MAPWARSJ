@@ -1570,10 +1570,10 @@ export const PERIPHERY: CityDataV2[] = [
     // 第五类：元末起义政权
     
     {
-        id: 'city_xinhui', name: '新会', factionId: 'luoping',
+        id: 'city_xinhui', name: '厓山', factionId: 'luoping',
         lat: 22.53, lng: 113.04, type: 'small_city', troops: 10000, tier: 4,
         
-        note: '新会；罗平小城', region: 'LINGNAN' },
+        note: '厓山；新会小城', region: 'LINGNAN' },
     {
         id: 'city_ninghai', name: '白峤', factionId: 'hu_d',
         lat: 29.2757, lng: 121.4182, type: 'small_city', troops: 10000, tier: 4,
@@ -1698,7 +1698,7 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 23.05, lng: 112.45, type: 'small_city', troops: 10000, region: 'LINGNAN', note: '端州治；马暨统摧锋军抗元（1278）' },
     {
         id: 'city_haiyang', name: '海阳', factionId: 'chaozhou_d',
-        lat: 23.6697, lng: 116.6394, type: 'small_city', troops: 10000, region: 'LINGNAN', note: '潮州治；张世杰统摧锋军' },
+        lat: 23.6697, lng: 116.6394, type: 'small_city', troops: 10000, region: 'LINGNAN', note: '海阳；马发潮州义勇' },
     {
         id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian',
         lat: 24.08, lng: 120.56, type: 'small_city', region: 'JIANGNAN', troops: 10000,
@@ -2708,12 +2708,12 @@ export const CITIES_V2: CityDataV2[] = [
         note: '临邛；卓氏小城',
     },
     { id: 'city_yandao', name: '严道', factionId: 'qingyi', lat: 30.000133, lng: 102.972107, type: 'small_city', region: 'BASHU', troops: 10000,
-        note: '严道；青衣小城',
+        note: '严道；范长生天师道',
     },
     { id: 'city_qingxiguan', name: '清溪关', factionId: 'zuo_d', lat: 29.3667, lng: 102.6333, type: 'pass', region: 'DIANQIAN', troops: 10000, tier: 2,
         note: '清溪关；笮人关隘',
     },
-    { id: 'city_yuegui', name: '越嶲', factionId: 'yueyi', region: 'DIANQIAN', note: '焦璜邛都戍守', lat: 28.422864, lng: 102.680969, type: 'small_city', troops: 10000 },
+    { id: 'city_yuegui', name: '越嶲', factionId: 'yueyi', region: 'DIANQIAN', note: '嶲州；张嶷越嶲', lat: 28.422864, lng: 102.680969, type: 'small_city', troops: 10000 },
     { id: 'city_huichuan', name: '会川', factionId: 'kunming_yi', lat: 26.6545, lng: 102.2454, type: 'small_city', region: 'DIANQIAN', troops: 10000, note: '卤承率昆明夷斩哀牢王封侯' },
 
     { id: 'city_chenzhou2', name: '沅陵', factionId: 'chenzhou_d', lat: 28.227028, lng: 110.291748, type: 'small_city', region: 'BASHU', troops: 10000,

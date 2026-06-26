@@ -39,7 +39,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhancheng': '占城',
     'monong': '墨侬',
     'shuizhen': '水真',
-    'yueyi': '越嶲',
+    'yueyi': '嶲',
     'wala': '瓦剌',
     'wuliangha': '兀良哈',
     'dingling': '丁零',
@@ -271,7 +271,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'ongut': '汪古',
     'xushouhui': '天完',
     'zhangshicheng': '大周',
-    'luoping': '罗平',
+    'luoping': '新会',
     'chendiaoyan': '漳',
 
     // ── 2026-05-25 明朝势力 ──

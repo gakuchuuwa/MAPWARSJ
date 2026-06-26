@@ -29,7 +29,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zhancheng', name: '占城' },
     { id: 'monong', name: '墨侬' },
     { id: 'shuizhen', name: '水真' },
-{ id: 'yueyi', name: '越夷' },       // 越嶲·焦璜邛都戍
+{ id: 'yueyi', name: '嶲州' },       // 越嶲·焦璜邛都戍
     { id: 'wala', name: '瓦剌' },
     { id: 'wuliangha', name: '兀良哈' },
     { id: 'dingling', name: '丁零' },
@@ -315,7 +315,7 @@ export const FACTIONS: Faction[] = [
     // 大同上褐 - 孛罗帖木儿集团(大同)
     { id: 'xushouhui', name: '天完' },              // 徐寿辉@蕲春·红巾军（元末）
     { id: 'zhangshicheng', name: '大周' },
-    { id: 'luoping', name: '罗平' },
+    { id: 'luoping', name: '新会' },
     { id: 'wenzhou', name: '温州' },
     { id: 'chendiaoyan', name: '陈吊' },
 

@@ -126,7 +126,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 
 guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrait: '/assets/WESTERN/guishuang_qiuqiujiu.png' },
     qidan: { generalId: 'qidan_shulvping', generalName: '述律平', portrait: '/assets/STEPPE/qidan_shulvping.png' },
-    hui: { generalId: 'hui_gulipeiluo', generalName: '骨力裴罗', portrait: '/assets/NORTH/hui_gulipeiluo.png' },
+    hui: { generalId: 'hui_bunaihou', generalName: '不耐侯', portrait: '/assets/KOREA/hui_bunaihou.png' },
 // ── 东北区 2026-06-18 ──
     jilizhou: { generalId: 'jilizhou_chengmingzhen', generalName: '程名振', portrait: '/assets/NORTHEAST/jilizhou_chengmingzhen.png' },
     nuergan: { generalId: 'nuergan_kangwang', generalName: '康旺', portrait: '/assets/NORTHEAST/nuergan_kangwang.png' },
@@ -352,7 +352,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     gongtang: { generalId: 'gongtang_gongtangang', generalName: '贡唐仓', portrait: '/assets/TIBET/gongtang_gongtangang.png' }, // 吉麦
     nanjie: { generalId: 'nanjie_nanjiewangqiu', generalName: '南杰旺秋', portrait: '/assets/TIBET/nanjie_nanjiewangqiu.png' }, // 日土宗
     nanzhong: { generalId: 'nanzhong_mazhong', generalName: '马忠', portrait: '/assets/DIANQIAN/nanzhong_mazhong.png' }, // 宛温·庲降都督镇南中
-    yueyi: { generalId: 'yueyi_jiaohuang', generalName: '焦璜', portrait: '/assets/DIANQIAN/yueyi_jiaohuang.png' }, // 越嶲·邛都戍守
+    yueyi: { generalId: 'yueyi_zhangyi', generalName: '张嶷', portrait: '/assets/DIANQIAN/yueyi_zhangyi.png' },
     pingnan: { generalId: 'pingnan_musheng', generalName: '沐晟', portrait: '/assets/DIANQIAN/pingnan_musheng.png' }, // 腾越城·镇守云南
     jingdong: { generalId: 'jingdong_taohong', generalName: '陶洪', portrait: '/assets/DIANQIAN/jingdong_taohong.png' }, // 银生城·景东土官
     luohu: { generalId: 'luohu_ganmuding', generalName: '敢木丁', portrait: '/assets/DIANQIAN/luohu_ganmuding.png' }, // 呵叻城·罗斛国王
@@ -390,7 +390,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
   // ── 岭南/越南/台湾区 2026-06-18 ──
     ryukyu: { generalId: 'ryukyu_shangbazhi', generalName: '尚巴志', portrait: '/assets/LINGNAN/ryukyu_shangbazhi.png' },
     luoping: { generalId: 'luoping_zhangshijie', generalName: '张世杰', portrait: '/assets/LINGNAN/luoping_zhangshijie.png' },
-    chaozhou_d: { generalId: 'chaozhou_d_zhangshijie', generalName: '张世杰', portrait: '/assets/LINGNAN/chaozhou_d_zhangshijie.png' },
+    chaozhou_d: { generalId: 'chaozhou_d_mafa', generalName: '马发', portrait: '/assets/LINGNAN/chaozhou_d_mafa.png' },
     chendiaoyan: { generalId: 'chendiaoyan_chendiaoyan', generalName: '陈吊眼', portrait: '/assets/LINGNAN/chendiaoyan_chendiaoyan.png' },
     dengmaoqi: { generalId: 'dengmaoqi_dengmaoqi', generalName: '邓茂七', portrait: '/assets/LINGNAN/dengmaoqi_dengmaoqi.png' },
     geng: { generalId: 'geng_gengjingzhong', generalName: '耿精忠', portrait: '/assets/LINGNAN/geng_gengjingzhong.png' },
@@ -482,7 +482,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     liao: { generalId: 'liao_houhongyuan', generalName: '侯弘远', portrait: '/assets/BASHU/liao_houhongyuan.png' }, // 江阳·僚人酋帅
     sou: { generalId: 'sou_gaodingyuan', generalName: '高定元', portrait: '/assets/BASHU/sou_gaodingyuan.png' }, // 乐山·越巂叟族首领
     qingqiang: { generalId: 'qingqiang_jiangwei', generalName: '姜维', portrait: '/assets/BASHU/qingqiang_jiangwei.png' }, // 汶川·蜀汉大将军
-    qingyi: { generalId: 'qingyi_qingyiwang', generalName: '张嶷', portrait: '/assets/BASHU/qingyi_qingyiwang.png' }, // 严道·青衣羌首领
+    qingyi: { generalId: 'qingyi_fanchangsheng', generalName: '范长生', portrait: '/assets/BASHU/qingyi_fanchangsheng.png' },
 
   // ── 河西区 2026-06-18 ──
         liangzhou: { generalId: 'liangzhou_zhanggui', generalName: '张轨', portrait: '/assets/HEXI/liangzhou_zhanggui.png' },

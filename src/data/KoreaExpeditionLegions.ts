@@ -30,7 +30,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   zhen: { name: '后百济锐卒', tier: 3 },          // 完山·后百济甄萱
   woju: { name: '别武班', tier: 1 },            // 咸兴·尹瓘别武班
   ssangseong: { name: '和宁戍骑', tier: 2 }, // 铁岭关·李子春
-  hui: { name: '濊族步卒', tier: 3 },          // 何瑟罗·不耐侯濊族
+  hui: { name: '濊族步卒', tier: 2 },          // 何瑟罗·不耐侯
   chungju_d: { name: '忠州忠义军', tier: 2 },    // 国原城·权栗忠清道募兵
   gaya: { name: '金官伽倻兵', tier: 2 },         // 金海·金首露伽倻始祖
   naju_d: { name: '罗州精兵', tier: 2 },         // 锦城·王建罗州根据地（番号泛指，降T2）
