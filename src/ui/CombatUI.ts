@@ -193,7 +193,11 @@ export class CombatUI {
         this.container = this.createContainer();
         this.createElements();
         document.body.appendChild(this.container);
-        this.setupCorrectorHotkeys();
+        // F2 立绘校正/绑定是开发期专用工具（依赖 dev-only 写盘 API），与右侧调试面板一样
+        // 仅在 DEV 启用；生产构建 import.meta.env.DEV 恒为 false，此调用被 dead-code 剥离。
+        if (import.meta.env.DEV) {
+            this.setupCorrectorHotkeys();
+        }
     }
 
     // [NEW] Inject Keyframes for high-end animations
