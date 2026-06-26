@@ -5,14 +5,14 @@
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {
-      "source": "/(.*)\.ogg",
+      "source": "/(.*)\\.ogg",
       "headers": [
         { "key": "Content-Type", "value": "audio/ogg" },
         { "key": "X-Content-Type-Options", "value": "nosniff" }
       ]
     },
     {
-      "source": "/(.*)\.mp3",
+      "source": "/(.*)\\.mp3",
       "headers": [
         { "key": "Content-Type", "value": "audio/mpeg" },
         { "key": "X-Content-Type-Options", "value": "nosniff" }
