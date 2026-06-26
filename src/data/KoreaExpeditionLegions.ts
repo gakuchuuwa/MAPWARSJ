@@ -21,7 +21,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   goryeo: { name: '鹰扬军', tier: 2 },   // 开城·高丽鹰扬军
   luzhou: { name: '鸭绿水师', tier: 2 },       // 鸭绿府·渌州水师（§4 #）
   sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣12破330（区T0锚点）
-  hai2: { name: '朝鲜甲士', tier: 3 },       // 朐山/海州·李朝早期重装（§4 #8，边镇分流）
+  hai2: { name: '海州石弓', tier: 3 },       // 瀑池/海州·崔莹
   joseon: { name: '义兴亲军卫', tier: 1 },       // 汉城·李成桂义兴亲军卫（§4 #9）
   sheng_d: { name: '全罗左水军', tier: 2 },   // 顺天·朝鲜全罗左道水军
   chen3: { name: '马韩部族', tier: 3 },         // 欢州·辰王马韩
@@ -29,7 +29,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   jianzhou_nvzhen: { name: '建州劲卒', tier: 3 },  // 浑江·建州女真
   zhen: { name: '后百济锐卒', tier: 3 },          // 完山·后百济甄萱
   woju: { name: '别武班', tier: 1 },            // 咸兴·尹瓘别武班
-  ssangseong: { name: '双城重甲骑', tier: 2 }, // 铁岭关·崔莹
+  ssangseong: { name: '和宁戍骑', tier: 2 }, // 铁岭关·李子春
   hui: { name: '濊族步卒', tier: 3 },          // 何瑟罗·不耐侯濊族
   chungju_d: { name: '忠州忠义军', tier: 2 },    // 国原城·权栗忠清道募兵
   gaya: { name: '金官伽倻兵', tier: 2 },         // 金海·金首露伽倻始祖

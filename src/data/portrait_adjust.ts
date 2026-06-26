@@ -482,7 +482,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -33
         },
         "/assets/CENTRAL/weihaiwei_sudingfang.png": {
-            "scale": 1,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": -27
         },
@@ -637,9 +637,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -20
         },
         "/assets/BASHU/shu_zhugeliang.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
-            "offsetY": 14
+            "offsetY": 20
         },
         "/assets/zhaosong/9c7d1733-2f44-495c-a0fb-0b6748d2582d.png": {
             "scale": 1.2,
@@ -1362,8 +1362,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/KOREA/gaogouli_yizhiwende.png": {
-            "scale": 1.04,
-            "offsetX": 0,
+            "scale": 1.32,
+            "offsetX": -5,
             "offsetY": 0
         },
         "/assets/WESTERN/0a595c38-ee4c-421e-9dd4-abbfa94bee13.png": {
@@ -1967,9 +1967,19 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/DIANQIAN/dai_daoyingmeng.png": {
+            "scale": 1.02,
+            "offsetX": 8,
+            "offsetY": -38
+        },
+        "/assets/BASHU/chuanshu (2).png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": -38
+            "offsetY": -30
+        },
+        "/assets/NORTH/5bb1ec5e-77cd-4653-a46d-0e2656215b84.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -21
         }
     },
     "folderGuides": {

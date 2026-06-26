@@ -19,9 +19,6 @@ export class StreamModeToggle {
     public static init(): void {
         this.injectStyle();
         this.createButton();
-        if (localStorage.getItem(STORAGE_KEY) === '1') {
-            this.apply(true);
-        }
     }
 
     private static injectStyle(): void {
@@ -70,6 +67,10 @@ export class StreamModeToggle {
             const game = (window as any).game;
             game?.map?.getLeafletMap?.()?.setZoom(10);
             game?.cameraFollowUI?.openList?.();
+            if (game?.historicalEventManager) {
+                const isPlaying = game.historicalEventManager.togglePlayback();
+                if (isPlaying) game.recruitmentSystem?.runInitialSpawn();
+            }
         }
         // 通知其他 UI：直播模式已变更
         window.dispatchEvent(new CustomEvent('stream-mode-change', { detail: { on } }));

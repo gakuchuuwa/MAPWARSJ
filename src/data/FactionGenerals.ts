@@ -110,7 +110,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     zhen: { generalId: 'zhen_zhenxuan', generalName: '甄萱', portrait: '/assets/KOREA/zhen_zhenxuan.png' },
     danluo: { generalId: 'danluo_jintongjing', generalName: '金通精', portrait: '/assets/KOREA/danluo_jintongjing.png' },
     sambyeol: { generalId: 'sambyeol_lishunchen', generalName: '李舜臣', portrait: '/assets/KOREA/sambyeol_lishunchen.png' },
-    hai2: { generalId: 'hai2_zhengdi', generalName: '郑地', portrait: '/assets/KOREA/hai2_zhengdi.png' },
+    hai2: { generalId: 'ssangseong_cuiying', generalName: '崔莹', portrait: '/assets/KOREA/ssangseong_cuiying.png' },
     gaya: { generalId: 'gaya_jinshoulu', generalName: '金首露', portrait: '/assets/KOREA/gaya_jinshoulu.png' },
 
     xuantu: { generalId: 'xuantu_yuangaisuwen', generalName: '渊盖苏文', portrait: '/assets/KOREA/xuantu_yuangaisuwen.png' },
@@ -435,7 +435,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     shaozhou: { generalId: 'shaozhou_zhangzhensun', generalName: '张镇孙', portrait: '/assets/LINGNAN/shaozhou_zhangzhensun.png' },
     shixing: { generalId: 'shixing_houandou', generalName: '侯安都', portrait: '/assets/LINGNAN/shixing_houandou.png' },
     buyi_d: { generalId: 'buyi_d_weichaoyuan', generalName: '韦朝元', portrait: '/assets/LINGNAN/buyi_d_weichaoyuan.png' },
-      lizhou_d: { generalId: 'lizhou_d_wulin', generalName: '吴璘', portrait: '/assets/zhaosong/lizhou_d_wulin.png' },
+      lizhou_d: { generalId: 'lizhou_d_liaohua', generalName: '廖化', portrait: '/assets/BASHU/lizhou_d_liaohua.png' },
       // ── 巴蜀关隘 2026-06-19 ──
     kui: { generalId: 'kui_liubei', generalName: '刘备', portrait: '/assets/BASHU/kui_liubei.png' },
     yang_bozhou: { generalId: 'yang_bozhou_yangyinglong', generalName: '杨应龙', portrait: '/assets/BASHU/yang_bozhou_yangyinglong.png' },
@@ -589,7 +589,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     shanrong: { generalId: 'shanrong_tianchou', generalName: '田畴', portrait: '/assets/NORTH/shanrong_tianchou.png' }, // 无终·田畴导曹操伐乌桓
 
     // ── 北方关隘 2026-06-19 ──
-    you: { generalId: 'you_wangba', generalName: '王霸', portrait: '/assets/NORTH/you_wangba.png' },
+    you: { generalId: 'you_wangba', generalName: '耿况', portrait: '/assets/NORTH/you_wangba.png' },
     lingqiu: { generalId: 'lingqiu_zhaowuling', generalName: '赵武灵王', portrait: '/assets/xianqin/lingqiu_zhaowuling.png' },
     yi: { generalId: 'yi_yuqian', generalName: '于谦', portrait: '/assets/daming/yi_yuqian.png' },
     huo: { generalId: 'huo_huoshuchu', generalName: '霍叔处', portrait: '/assets/NORTH/huo_huoshuchu.png' },
@@ -676,18 +676,18 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     sagami: { generalId: 'sagami_hojoujiyasu', generalName: '北条氏康', portrait: '/assets/JAPAN/sagami_hojoujiyasu.png' },
     mino: { generalId: 'mino_otaniyoshitsugu', generalName: '大谷吉继', portrait: '/assets/JAPAN/mino_otaniyoshitsugu.png' },
     zhuqian: { generalId: 'zhuqian_shaozizheng', generalName: '少贰资能', portrait: '/assets/JAPAN/zhuqian_shaozizheng.png' },
-    ssangseong: { generalId: 'ssangseong_cuiying', generalName: '崔莹', portrait: '/assets/KOREA/ssangseong_cuiying.png' },
+    ssangseong: { generalId: 'ssangseong_lizichun', generalName: '李子春', portrait: '/assets/KOREA/ssangseong_lizichun.png' },
     yao: { generalId: 'yao_liuyuan', generalName: '刘渊', portrait: '/assets/CENTRAL/yao_liuyuan.png' },
     kong_d: { generalId: 'kong_d_kongrong', generalName: '孔融', portrait: '/assets/CENTRAL/kong_d_kongrong.png' },
     tongma: { generalId: 'tongma_liuang', generalName: '刘卬', portrait: '/assets/CENTRAL/tongma_liuang.png' },
     yanchuan_d: { generalId: 'yanchuan_d_hanyu', generalName: '韩愈', portrait: '/assets/CENTRAL/yanchuan_d_hanyu.png' },
-    guide_d: { generalId: 'guide_d_mashumou', generalName: '麻叔谋', portrait: '/assets/CENTRAL/guide_d_mashumou.png' },
+    guide_d: { generalId: 'guide_d_xiaohe', generalName: '萧何', portrait: '/assets/liuhan/guide_d_xiaohe.png' },
     tongzhou: { generalId: 'tongzhou_yangzhiji', generalName: '杨智积', portrait: '/assets/CENTRAL/tongzhou_yangzhiji.png' },
     fu_zhou: { generalId: 'fu_zhou_yanyan', generalName: '严颜', portrait: '/assets/BASHU/fu_zhou_yanyan.png' },
     lushui: { generalId: 'lushui_beigongboyu', generalName: '北宫伯玉', portrait: '/assets/HEXI/lushui_beigongboyu.png' },
     cen_d: { generalId: 'cen_d_cenmeng', generalName: '岑猛', portrait: '/assets/LINGNAN/cen_d_cenmeng.png' },
     miao: { generalId: 'miao_amishi', generalName: '阿迷氏', portrait: '/assets/LINGNAN/miao_amishi.png' },
-    jiang_s: { generalId: 'jiang_s_jiangwan', generalName: '蒋琬', portrait: '/assets/LINGNAN/jiang_s_jiangwan.png' },
+    jiang_s: { generalId: 'jiang_s_huanggai', generalName: '黄盖', portrait: '/assets/JIANGNAN/jiang_s_huanggai.png' },
     muong: { generalId: 'muong_shencongyue', generalName: '申从岳', portrait: '/assets/LINGNAN/muong_shencongyue.png' },
     panyao: { generalId: 'panyao_panhu', generalName: '盘瓠', portrait: '/assets/LINGNAN/panyao_panhu.png' },
     chen2: { generalId: 'chen2_zhaofan', generalName: '赵范', portrait: '/assets/LINGNAN/chen2_zhaofan.png' },

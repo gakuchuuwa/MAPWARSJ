@@ -120,6 +120,7 @@ export class AudioManager {
 
     private initialized = false;
     private unlocked = false;
+    private gamePaused = false;
     private settings: AudioSettings = mergeSettings(null);
     private audioCache = new Map<SoundKey, HTMLAudioElement>();
     private loopCache = new Map<SoundKey, HTMLAudioElement>();
@@ -137,6 +138,8 @@ export class AudioManager {
     private objectUrlCache = new Map<string, string>();
     /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
     private wantedLoops = new Set<SoundKey>();
+    /** 正在播放的一次性音效克隆元素（暂停时一并停掉）*/
+    private activeOneShots = new Set<HTMLAudioElement>();
 
     public static getInstance(): AudioManager {
         if (!AudioManager.instance) AudioManager.instance = new AudioManager();
@@ -198,6 +201,9 @@ export class AudioManager {
         const definition = SOUND_DEFINITIONS[key];
         if (!definition || this.isCoolingDown(key, definition.cooldownMs ?? 0)) return false;
 
+        // 游戏暂停时屏蔽所有非 bgm 音效
+        if (this.gamePaused && definition.category !== 'bgm') return false;
+
         const baseAudio = this.getAudioElement(key, definition);
         if (!baseAudio) return false;
 
@@ -207,7 +213,12 @@ export class AudioManager {
 
         this.lastPlayedAt.set(key, Date.now());
 
+        // 追踪在播克隆，暂停时一并停掉；播完自动移除
+        this.activeOneShots.add(audio);
+        audio.addEventListener('ended', () => this.activeOneShots.delete(audio), { once: true });
+
         void audio.play().catch((error) => {
+            this.activeOneShots.delete(audio);
             this.warnMissingOnce(key, error);
         });
 
@@ -353,10 +364,15 @@ export class AudioManager {
         const definition = SOUND_DEFINITIONS[key];
         if (!definition) return;
 
+        // 先记录「期望开启」意图（恢复时据此重启），即使暂停期间切换跟随军团也不丢失
         this.wantedLoops.add(key);
+        // 暂停时只记意图、不实际播放（bgm 不受暂停影响）
+        if (this.gamePaused && definition.category !== 'bgm') return;
+
         void this.ensureLoopElement(key, definition).then((audio) => {
-            // 异步加载期间状态可能已变（停止跟拍/转入战斗），仅当仍被期望时才播
+            // 异步加载期间状态可能已变（停止跟拍/转入战斗/暂停），仅当仍被期望且未暂停时才播
             if (!audio || !this.wantedLoops.has(key) || !audio.paused) return;
+            if (this.gamePaused && definition.category !== 'bgm') return;
             audio.volume = this.resolveVolume(definition);
             audio.currentTime = 0;
             void audio.play().catch((error) => {
@@ -376,6 +392,33 @@ export class AudioManager {
     private stopAllLoops(): void {
         for (const key of this.loopCache.keys()) {
             this.stopLoop(key);
+        }
+    }
+
+    /** 游戏暂停/恢复：暂停时停掉所有非 bgm 音效和循环音，恢复时重启循环音 */
+    public setGamePaused(paused: boolean): void {
+        this.gamePaused = paused;
+        if (paused) {
+            // 停掉所有非 bgm 循环音（保留 wantedLoops，恢复时据此重启）
+            for (const [key, audio] of this.loopCache.entries()) {
+                if (SOUND_DEFINITIONS[key]?.category !== 'bgm' && !audio.paused) {
+                    audio.pause();
+                }
+            }
+            // 停掉所有在播的一次性音效（一次性事件不恢复，直接丢弃）
+            for (const audio of this.activeOneShots) {
+                audio.pause();
+            }
+            this.activeOneShots.clear();
+        } else {
+            // 恢复所有本应在播的非 bgm 循环音
+            for (const key of this.wantedLoops) {
+                if (SOUND_DEFINITIONS[key]?.category === 'bgm') continue;
+                const audio = this.loopCache.get(key);
+                if (audio && audio.paused) {
+                    void audio.play().catch(() => {});
+                }
+            }
         }
     }
 

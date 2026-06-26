@@ -596,7 +596,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xinjiang', name: '静江' },                      // 靖江王(桂林/明藩王)
     { id: 'panyao', name: '盘瑶' },                         // 盘瑶(贺州/岭南瑶族)
     // 士氏(广信/交趾士燮)
-    { id: 'jiang_s', name: '蒋氏' },                          // 蒋氏(永州/湘南),
+    { id: 'jiang_s', name: '零陵' },                          // 蒋氏(永州/湘南),
 
     { id: 'li_s', name: '里族' },                              // 里(合浦/北部湾); 古籍里、俚、悝通，与 liren(俚)异字
     { id: 'leizhou', name: '雷州' },                           // 雷州(海康/湛江)
@@ -828,7 +828,7 @@ export const FACTIONS: Faction[] = [
     { id: 'dangchang', name: '宕昌' },
 
     { id: 'mi', name: '糜氏' },
-    { id: 'hai2', name: '瀑池' },
+    { id: 'hai2', name: '海州' },
     { id: 'fu2', name: '抚州' },
     { id: 'xinping', name: '邠州' },
     { id: 'huan', name: '环州' },
@@ -995,7 +995,7 @@ export const FACTIONS: Faction[] = [
     { id: 'kalun', name: '卡伦' },
     { id: 'sagami', name: '相模' },
     { id: 'mino', name: '美浓' },
-    { id: 'ssangseong', name: '双城' },
+    { id: 'ssangseong', name: '和州' },
     { id: 'fu_zhou', name: '涪州' },
     // ── Phase 1 Missing Factions ──
     { id: 'kumoxi', name: '库莫奚' },

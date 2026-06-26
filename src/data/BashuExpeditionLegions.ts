@@ -33,7 +33,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   kui: { name: '白毦兵', tier: 1 },             // 白帝城·刘备白毦兵（防御断后，降T1）
   qiuchi: { name: '武都部曲', tier: 3 },          // 仇池·杨氏世袭部曲（《宋书》杨难当拥部曲数万）
   // ── 2026-06-16 新增：4座西南名关 ──
-  lizhou_d: { name: '护蜀驻队矢', tier: 2 },        // 剑门关·吴玠移驻大散关（蜀口禁军）
+  lizhou_d: { name: '剑阁戍卒', tier: 2 },        // 剑门关·廖化
   fengzhou: { name: '和尚原锐卒', tier: 1 },       // 大散关·吴玠和尚原大捷（凤州）
   fu_zhou: { name: '涪陵劲卒', tier: 2 },       // 涪陵·《华阳国志》涪陵劲卒
   fushi: { name: '氐族劲卒', tier: 2 },         // 略阳·苻洪氐族劲卒（苻氏）

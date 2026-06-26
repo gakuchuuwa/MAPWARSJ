@@ -1212,14 +1212,14 @@ export const PERIPHERY: CityDataV2[] = [
     }, // [2026-05-30] 升 big_city: 新罗 57BC-935AD = 992 年首都
         {
         id: 'city_haeju',
-        name: '朐山',
+        name: '瀑池',
         factionId: 'hai2',
         lat: 38.03, lng: 125.71,
         type: 'small_city',
         troops: 10000,
         tier: 4,
         
-        note: '朐山；瀑池小城', region: 'KOREA' },
+        note: '瀑池；海州小城', region: 'KOREA' },
     {
         id: 'city_longwan',
         name: '龙湾',
@@ -2266,7 +2266,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
         tier: 4,
         note: '麦岭关；道州关隘',
     },
-    { id: 'city_yongzhou_hn', name: '零陵', factionId: 'jiang_s', lat: 26.231835, lng: 111.588135, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '蒋琬故里零陵驻军' },
+    { id: 'city_yongzhou_hn', name: '泉陵', factionId: 'jiang_s', lat: 26.231835, lng: 111.588135, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '泉陵；黄盖故里' },
     // ── 2026-05-28 新增：黎(崖州) ──
     { id: 'city_yazhou', name: '珠崖', factionId: 'liren', lat: 18.432692, lng: 108.989868, type: 'small_city', region: 'LINGNAN', troops: 10000,
         note: '珠崖；俚族小城',
@@ -3009,7 +3009,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8000, lng: 99.8000, type: 'small_city', region: 'HEXI', troops: 10000, note: '汉酒泉郡表氏县；沮渠卢水胡故地' },
     { id: 'city_hakone', name: '箱根关', factionId: 'sagami', lat: 35.1925, lng: 139.0261, type: 'pass', region: 'JAPAN', troops: 10000, note: '天下第一关，关东的物理大门' },
     { id: 'city_fuwa', name: '不破关', factionId: 'mino', lat: 35.3577, lng: 136.4602, type: 'pass', region: 'JAPAN', troops: 10000, note: '关原所在地，畿内防御东国大军的终极险地' },
-    { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', region: 'KOREA', troops: 10000, note: '引爆威化岛回军，终结高丽王朝命脉' },
+    { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', region: 'KOREA', troops: 10000, note: '和州铁岭关' },
     { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '施琅福建水师' },
     { id: 'city_fengtian', name: '奉天', factionId: 'qianzhou', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '李晟神策军收复长安' },
     { id: 'city_taqian', name: '它乾城', factionId: 'xiyuduhu', lat: 41.875, lng: 83.59, type: 'pass', region: 'WESTERN', troops: 10000, tier: 4, note: '班超西域都护府驻地' },

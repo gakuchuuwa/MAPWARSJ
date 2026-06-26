@@ -289,11 +289,11 @@ export class GameApp {
 
             wireGameAppCombatUiHooks(this);
 
-            // [FIX] Unlock camera when game is paused
             this.timeSystem.onPauseChange((paused) => {
                 if (paused) {
                     gameLog('startup', '⏸️ [GameApp] Pause detected.');
                 }
+                this.audioManager.setGamePaused(paused);
             });
 
             setupGameAppVisibilityHandler(() => {
