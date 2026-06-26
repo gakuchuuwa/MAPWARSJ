@@ -72,7 +72,9 @@ export function extractPortraitFolder(portraitPath: string): string | undefined 
     return m?.[1];
 }
 
-/** 文件夹默认 → 单张覆盖；未配置项回落到 1 / 0。内容相同的图自动共享代表路径的调校。 */
+/** 文件夹默认 → 单张覆盖；未配置项回落到 1 / 0。
+ *  优先级：命名路径 > canonical 路径 > 文件夹默认 > 中性值。
+ *  命名路径优先解决：换图后 canonical 映射过期、staged bind 存盘走命名路径等场景。 */
 export function resolvePortraitAdjust(
     portraitPath: string,
     data: PortraitAdjustData = DEFAULT_PORTRAIT_ADJUST,
@@ -80,7 +82,9 @@ export function resolvePortraitAdjust(
     const canonical = toCanonicalPortraitPath(portraitPath);
     const folder = extractPortraitFolder(canonical);
     const folderAdj = folder ? data.folders?.[folder] : undefined;
-    const imageAdj = data.images?.[canonical];
+    // 命名路径优先（换图/staged bind 后存盘走命名路径）；再查 canonical（共享调校）
+    const imageAdj = data.images?.[portraitPath]
+        ?? (canonical !== portraitPath ? data.images?.[canonical] : undefined);
 
     return {
         scale: imageAdj?.scale ?? folderAdj?.scale ?? PORTRAIT_ADJUST_NEUTRAL.scale,

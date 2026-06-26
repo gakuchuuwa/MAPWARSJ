@@ -989,7 +989,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/HEXI/ffe5bdee-035f-40bd-bcd1-3443fb18abcf.png": {
             "scale": 0.98,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -1
         },
         "/assets/zhaosong/yue_d_yuefei.png": {
             "scale": 1.16,
@@ -1454,7 +1454,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/NORTHEAST/NORTHEAST_field.png": {
             "scale": 1.06,
             "offsetX": 0,
-            "offsetY": -41
+            "offsetY": -42
         },
         "/assets/NORTHEAST/8ee22c66-e8b5-4afb-b485-cce206a7294e.png": {
             "scale": 1.14,
@@ -1928,8 +1928,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/HEXI/112a53e1-97c4-4d9f-ae1e-dc0bb44216f4.png": {
             "scale": 1.02,
-            "offsetX": -9,
-            "offsetY": -16
+            "offsetX": 0,
+            "offsetY": 0
         },
         "/assets/zhaosong/kang_liangshidu.png": {
             "scale": 1,
@@ -1995,6 +1995,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -16
+        },
+        "/assets/STEPPE/baidi_baidibushuai.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -1
         }
     },
     "folderGuides": {
