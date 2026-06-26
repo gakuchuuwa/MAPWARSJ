@@ -872,7 +872,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/CENTRAL/ruzhou_sunjian.png": {
-            "scale": 1.02,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 12
         },
@@ -1452,9 +1452,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/NORTHEAST/NORTHEAST_field.png": {
-            "scale": 1.1,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": 7
+            "offsetY": -41
         },
         "/assets/NORTHEAST/8ee22c66-e8b5-4afb-b485-cce206a7294e.png": {
             "scale": 1.14,
@@ -1627,7 +1627,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/JIANGNAN/gumie_liuyu.png": {
-            "scale": 0.96,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": -8
         },
@@ -1903,8 +1903,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/NORTHEAST/bohai_dazuorong.png": {
             "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 10
+            "offsetX": 8,
+            "offsetY": -21
         },
         "/assets/KOREA/ce8ecbe9-eea1-496c-9361-d0d61180181b.png": {
             "scale": 1,
@@ -1980,6 +1980,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": -21
+        },
+        "/assets/panjun/3112895c-8953-4834-bd6f-808bf18f51cd.png": {
+            "scale": 1.02,
+            "offsetX": 5,
+            "offsetY": 16
+        },
+        "/assets/STEPPE/d4645bb0-64db-4f7d-84d8-e4d664fa6cbe.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -13
         }
     },
     "folderGuides": {

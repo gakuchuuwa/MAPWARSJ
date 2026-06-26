@@ -777,7 +777,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
         note: '平型关；灵丘关隘',
     },
     { id: 'city_lingshiguan', name: '灵石关', factionId: 'huo', lat: 36.844462, lng: 111.796875, type: 'pass', region: 'NORTH', troops: 10000,
-        note: '灵石关；霍国关隘',
+        note: '灵石关；宋老生霍邑',
     },
         // ── 关中盆地防御要塞群 ──
     { id: 'city_wuguan', name: '武关', factionId: 'ruo', lat: 33.6, lng: 110.62, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true,

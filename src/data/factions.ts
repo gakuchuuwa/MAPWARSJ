@@ -903,7 +903,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zhi_state', name: '轵国' },
     { id: 'xiongding', name: '雄定' },
     { id: 'yaozhou', name: '耀州' },
-    { id: 'huo', name: '霍国' },
+    { id: 'huo', name: '霍州' },
     { id: 'mushi', name: '穆氏' },
     { id: 'lai', name: '莱州' },
     // ── 2026-06-16 新增：4座巴蜀西南名关 ──

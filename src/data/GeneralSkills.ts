@@ -742,7 +742,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     you_wangba: { generalId: 'you_wangba', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 耿况上谷突骑
     unassigned_zhouyuji: { generalId: 'unassigned_zhouyuji', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 宁武殉国
     yi_yuqian: { generalId: 'yi_yuqian', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' }, // 京师保卫战·固若金汤
-    huo_huoshuchu: { generalId: 'huo_huoshuchu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 霍国始封君
+    huo_songlaosheng: { generalId: 'huo_songlaosheng', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 宋老生霍邑
         wuling_xiangdancheng: { generalId: 'wuling_xiangdancheng', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 武陵蛮反马援
 
 // ── 江南区 2026-06-18 ──

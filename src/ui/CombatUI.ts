@@ -2696,6 +2696,13 @@ export class CombatUI {
             // 用源图已有的调校初始化草稿，让预览立即以调好的状态显示
             const sourceAdj = resolvePortraitAdjust(toCanonicalPortraitPath(sourcePath), this.correctorData);
             this.correctorDraft = { scale: sourceAdj.scale, offsetX: sourceAdj.offsetX, offsetY: sourceAdj.offsetY };
+            // 同时把调校值写入 destPath，并标记 dirty
+            // 这样即使用户不动滑块直接关 F2，下场战斗也会用正确的位置
+            if (this.canPersistPortraitPath(destPath)) {
+                this.correctorData.images = this.correctorData.images ?? {};
+                this.correctorData.images[destPath] = { ...this.correctorDraft };
+                this.correctorDirtyPaths.add(destPath);
+            }
             this.renderCorrectorReadout();
             applyPortraitAdjustToElement(img, sourcePath, this.correctorData);
             this.scheduleCorrectorCrosshairRefresh();

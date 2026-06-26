@@ -49,7 +49,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   zhi_state: { name: '丰沛子弟', tier: 2 },
   xiongding: { name: '鲜卑燕军', tier: 2 }, // 天井关·慕容永西燕末代君主
   // 金甲卫除名（生造）
-  huo: { name: '霍邑锐士', tier: 3 },
+  huo: { name: '霍邑骁锐', tier: 1 },
   mushi: { name: '丘穆陵骑', tier: 3 },
   // 齐莱锐士除名（无典）
   yin: { name: '殷商多射', tier: 2 },          // 朝歌·甲骨文"多射"
