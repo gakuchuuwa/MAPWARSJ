@@ -27,6 +27,7 @@ export const PORTRAIT_ADJUST_NEUTRAL: Required<PortraitAdjustValues> = {
  * F2 准星 / 脸椭圆预览（全局统一，左右共用；不读 folderGuides，避免左右两势标尺不一致）
  * 不在 portrait_adjust.ts，避免保存调校时被 vite 模板覆盖。
  */
+export const PORTRAIT_GUIDE_PREVIEW_TOP_LINE_Y = 0.10;
 export const PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y = 0.23;
 export const PORTRAIT_GUIDE_PREVIEW_CHIN_LINE_Y = 0.34;
 /** 腰线（半身像裁切参照，顶→底归一化） */
@@ -42,6 +43,7 @@ export const PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DY = 0;
 export const PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DX = 0.07;
 
 export interface PortraitCorrectorCrosshairGuide {
+    topLineY: number;
     eyeLineY: number;
     chinLineY: number;
     waistLineY: number;
@@ -54,11 +56,13 @@ export interface PortraitCorrectorCrosshairGuide {
 
 /** F2 准星唯一入口：左右立绘共用同一套标线 */
 export function getPortraitCorrectorCrosshairGuide(): PortraitCorrectorCrosshairGuide {
+    const topLineY = PORTRAIT_GUIDE_PREVIEW_TOP_LINE_Y;
     const eyeLineY = PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y;
     const chinLineY = PORTRAIT_GUIDE_PREVIEW_CHIN_LINE_Y;
     const waistLineY = PORTRAIT_GUIDE_PREVIEW_WAIST_LINE_Y;
     const chestLineX = PORTRAIT_GUIDE_PREVIEW_CHEST_LINE_X;
     return {
+        topLineY,
         eyeLineY,
         chinLineY,
         waistLineY,

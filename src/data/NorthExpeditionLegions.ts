@@ -17,7 +17,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   qingyuan_bd: { name: '白马突骑', tier: 2 }, // 保定·周德威白马突骑
 
   // ── §2 北方 12 支 ──
-  zhao: { name: '赵国边骑', tier: 2 },     // 邯郸·廉颇赵国名将（无独立胜仗）
+  zhao: { name: '赵边骑', tier: 2 },     // 邯郸·廉颇赵国名将（无独立胜仗）
   yan: { name: '渔阳突骑', tier: 2 },       // 古北口·§2 #2 光武幽州精骑（升T1）
   gongsun_d: { name: '襄平狟骑', tier: 2 }, // 襄平·公孙度襄平狟骑
   shizhao_d: { name: '黑槊龙骧', tier: 2 }, // 邢台·石虎后赵禁军

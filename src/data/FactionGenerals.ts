@@ -619,7 +619,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     zhe_d: { generalId: 'zhe_d_zheyuqing', generalName: '折御卿', portrait: '/assets/NORTH/zhe_d_zheyuqing.png' },
     heng1: { generalId: 'heng1_limu_yanyue', generalName: '李牧', portrait: '/assets/xianqin/heng1_limu_yanyue.png' },
     dingxiang_d: { generalId: 'dingxiang_d_lijing', generalName: '李靖', portrait: '/assets/litang/dingxiang_d_lijing.png' },
-    xiayang_d: { generalId: 'xiayang_d_liji', generalName: '李勣', portrait: '/assets/litang/xiayang_d_liji.png' },
+    xiayang_d: { generalId: 'xiayang_d_dengyu', generalName: '邓禹', portrait: '/assets/liuhan/xiayang_d_dengyu.png' },
     ying: { generalId: 'ying_caojingzong', generalName: '曹景宗', portrait: '/assets/JIANGNAN/ying_caojingzong.png' },
     kejia: { generalId: 'kejia_wentianxiang', generalName: '文天祥', portrait: '/assets/zhaosong/kejia_wentianxiang.png' },
     tingzhou_d: { generalId: 'tingzhou_d_chenmin', generalName: '陈敏', portrait: '/assets/zhaosong/tingzhou_d_chenmin.png' },

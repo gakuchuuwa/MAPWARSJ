@@ -31,7 +31,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 公行锐士除名
   jin: { name: '晋中军', tier: 2 },        // 曲沃·城濮之战破楚（《左传》）
   li_lx_d: { name: '陇西戍骑', tier: 3 },   // 陇西·李崇秦陇西郡守戍兵
-  xiayang_d: { name: '龙门戍卒', tier: 3 }, // 龙门·唐同州境黄河禹门戍防（《水经注》夏阳龙门）
+  xiayang_d: { name: '西河突骑', tier: 1 }, // 龙门·唐同州境黄河禹门戍防（《水经注》夏阳龙门）
   baibo: { name: '白波黄巾', tier: 3 },     // 白波谷·郭太白波黄巾
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
   tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
@@ -86,7 +86,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   bailian: { name: '白莲教众', tier: 2 },
   xinping: { name: '邠宁戍骑', tier: 2 },
   huai: { name: '淮西子弟', tier: 2 },
-  dang_d: { name: '砀山义军', tier: 3 },
+  dang_d: { name: '厅子都', tier: 3 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
   xiao_d: { name: '兰陵萧兵', tier: 2 },       // 兰陵·萧摩诃兰陵萧氏
   zhengzhou: { name: '白袍军', tier: 0 },        // 虎牢关·陈庆之白袍军（名师大将莫自牢，升T0）

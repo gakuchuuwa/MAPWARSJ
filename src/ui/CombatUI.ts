@@ -1,4 +1,4 @@
-﻿import { getFactionGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride } from '../data/FactionGenerals';
+import { getFactionGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride } from '../data/FactionGenerals';
 import { registerPortraitPathRuntime } from '../config/portrait_defaults';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
@@ -1639,7 +1639,9 @@ export class CombatUI {
         this.closePortraitPicker();
         if (this.correctorPanel) this.correctorPanel.style.display = 'none';
         this.leftPortraitFrame.style.outline = '';
+        this.leftPortraitFrame.style.boxShadow = 'none';
         this.rightPortraitFrame.style.outline = '';
+        this.rightPortraitFrame.style.boxShadow = 'none';
         this.refreshGeneralNameTagInteract();
         this.updateCorrectorCrosshair(); // correctorOpen=false → 隐藏准星
         // 自动保存模式下改动即所见即所得（已写入 correctorData/DEFAULT），无需回退重绘
@@ -1751,15 +1753,26 @@ export class CombatUI {
     }
 
     private highlightCorrectorSide(): void {
-        const on = '3px solid #f5d78e';
-        this.leftPortraitFrame.style.outline = this.correctorSide === 'attacker' ? on : '';
-        this.rightPortraitFrame.style.outline = this.correctorSide === 'defender' ? on : '';
+        const outlineStyle = '6px dashed #ff3333';
+        const shadowStyle = '0 0 30px #ff3333';
+
+        if (this.correctorSide === 'attacker') {
+            this.leftPortraitFrame.style.outline = outlineStyle;
+            this.leftPortraitFrame.style.boxShadow = shadowStyle;
+            this.rightPortraitFrame.style.outline = '';
+            this.rightPortraitFrame.style.boxShadow = 'none';
+        } else {
+            this.rightPortraitFrame.style.outline = outlineStyle;
+            this.rightPortraitFrame.style.boxShadow = shadowStyle;
+            this.leftPortraitFrame.style.outline = '';
+            this.leftPortraitFrame.style.boxShadow = 'none';
+        }
     }
 
     private buildCrosshair(): HTMLDivElement {
         const ch = document.createElement('div');
         ch.className = 'pt-crosshair';
-        ch.innerHTML = '<div class="ch-face"></div><div class="ch-eye"></div><div class="ch-chin"></div><div class="ch-waist"></div><div class="ch-mid"></div>';
+        ch.innerHTML = '<div class="ch-face"></div><div class="ch-top"></div><div class="ch-eye"></div><div class="ch-chin"></div><div class="ch-waist"></div><div class="ch-mid"></div>';
         return ch;
     }
 
@@ -1779,6 +1792,13 @@ export class CombatUI {
             const show = this.correctorOpen && this.correctorCrosshairOn && img.offsetWidth > 0;
             ch.style.display = show ? 'block' : 'none';
             if (!show) continue;
+            if (!ch.querySelector('.ch-top')) {
+                const top = document.createElement('div');
+                top.className = 'ch-top';
+                const mid = ch.querySelector('.ch-mid');
+                if (mid) ch.insertBefore(top, mid);
+                else ch.appendChild(top);
+            }
             if (!ch.querySelector('.ch-chin')) {
                 const chin = document.createElement('div');
                 chin.className = 'ch-chin';
@@ -1794,6 +1814,7 @@ export class CombatUI {
                 else ch.appendChild(waist);
             }
             const g = getPortraitCorrectorCrosshairGuide();
+            const topPct = (g.topLineY * 100).toFixed(1);
             const eyePct = (g.eyeLineY * 100).toFixed(1);
             const chinPct = (g.chinLineY * 100).toFixed(1);
             const waistPct = (g.waistLineY * 100).toFixed(1);
@@ -1803,6 +1824,7 @@ export class CombatUI {
             const ovalCx = g.ovalCx * 100;
             const ovalCy = g.ovalCy * 100;
             const chFace = ch.querySelector('.ch-face') as HTMLElement | null;
+            const chTop = ch.querySelector('.ch-top') as HTMLElement | null;
             const chEye = ch.querySelector('.ch-eye') as HTMLElement | null;
             const chChin = ch.querySelector('.ch-chin') as HTMLElement | null;
             const chWaist = ch.querySelector('.ch-waist') as HTMLElement | null;
@@ -1813,6 +1835,7 @@ export class CombatUI {
                 chFace.style.width = `${ovalW}%`;
                 chFace.style.height = `${ovalH}%`;
             }
+            if (chTop) chTop.style.top = `${topPct}%`;
             if (chEye) chEye.style.top = `${eyePct}%`;
             if (chChin) chChin.style.top = `${chinPct}%`;
             if (chWaist) chWaist.style.top = `${waistPct}%`;
@@ -2131,6 +2154,10 @@ export class CombatUI {
                 border:2px dashed #e8c878; border-radius:50%;
                 background:rgba(232,200,120,0.07);
                 box-shadow:0 0 10px rgba(232,200,120,0.45);
+            }
+            .pt-crosshair .ch-top {
+                position:absolute; left:0; right:0; height:0;
+                border-top:2px dashed #ffa8ec; box-shadow:0 0 6px rgba(255,168,236,0.85);
             }
             .pt-crosshair .ch-eye {
                 position:absolute; left:0; right:0; height:0;

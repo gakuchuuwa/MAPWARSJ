@@ -424,7 +424,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     jiazini_mahamaode: { generalId: 'jiazini_mahamaode', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 马哈茂德十七征印度
     an_xibanni: { generalId: 'an_xibanni', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 昔班尼攻布哈拉建汗国
     wusun_liejiaomi: { generalId: 'wusun_liejiaomi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 乌孙昆莫西迁奇袭月氏
-        xijue_ganshouchang: { generalId: 'xijue_ganshouchang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 与陈汤共灭郅支
+        xijue_ganshouchang: { generalId: 'xijue_ganshouchang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 与陈汤六校分道共灭郅支
 
 // ── 中亚区 2026-06-18 ──
     huarazim_mohemo: { generalId: 'huarazim_mohemo', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 花剌子模鼎盛
@@ -654,7 +654,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     wei2_hunjian: { generalId: 'wei2_hunjian', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 朔方破吐蕃
     lingwu_guoziyi: { generalId: 'lingwu_guoziyi', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 中兴名将
     dingxiang_d_lijing: { generalId: 'dingxiang_d_lijing', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 贞观四年李靖率三千骑出恶阳岭夜袭定襄城
-    xiayang_d_liji: { generalId: 'xiayang_d_liji', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 李勣（徐世勣）唐开国名将
+    xiayang_d_dengyu: { generalId: 'xiayang_d_dengyu', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_07' }, // 邓禹·云台二十八将之首·延揽英雄不战而屈
     ningkou_lubode: { generalId: 'ningkou_lubode', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' }, // 筑居延塞
     juyan_d_liling: { generalId: 'juyan_d_liling', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 荆楚五千步卒出居延战匈奴（《史记·李将军列传》）
     unassigned_liuquan: { generalId: 'unassigned_liuquan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 隋破吐谷浑、河源积石屯田（《隋书·刘权传》）
@@ -689,7 +689,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yiyang_d_mengzongzheng: { generalId: 'yiyang_d_mengzongzheng', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 三关之捷
 
     wuwu_d_lvmeng: { generalId: 'wuwu_d_lvmeng', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_06' }, // 白衣渡江
-    yangshao_zhoubo: { generalId: 'yangshao_zhoubo', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 安刘氏
+    yangshao_zhoubo: { generalId: 'yangshao_zhoubo', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_08' }, // 诛诸吕安刘氏固若金汤
     unassigned_liuyan_ly: { generalId: 'unassigned_liuyan_ly', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 舂陵起兵
     zhou_jifa: { generalId: 'zhou_jifa', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 武王伐纣
     quanrong_quanrongwang: { generalId: 'quanrong_quanrongwang', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 犬戎弑幽王
@@ -952,7 +952,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     dixiang_wangmang: {
         generalId: 'dixiang_wangmang',
         tier: 'ordinary',
-        tacticalSkillId: 'tac_08', // ⑧骁勇突击（符合“猪突豨勇”的莽夫冲锋设定，无战略技）
+        tacticalSkillId: 'tac_09', // ⑨釜底抽薪（昆阳大败之主）
     },
     qing_wanyanchenheshang: {
         generalId: 'qing_wanyanchenheshang',
