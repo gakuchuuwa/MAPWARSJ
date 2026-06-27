@@ -14215,36 +14215,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "柴桑-潜山",
-                type: "road",
-                id: "road_city_chaisang_city_qianshan_1780155856984",
-                startConnection: "city_chaisang",
-                endConnection: "city_qianshan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [115.9964, 29.6802],
-                    [115.962279, 29.863763],
-                    [115.948228, 29.944944],
-                    [115.912321, 30.001147],
-                    [115.912321, 30.032371],
-                    [115.961351, 30.09019],
-                    [116.014969, 30.106688],
-                    [116.064462, 30.135559],
-                    [116.076835, 30.156181],
-                    [116.089208, 30.193301],
-                    [116.196456, 30.285282],
-                    [116.221435, 30.328996],
-                    [116.250061, 30.41602],
-                    [116.28718, 30.453139],
-                    [116.485291, 30.616642],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "房陵-襄阳",
                 type: "road",
                 id: "road_city_fangling_city_xiangyang_1780155857135",
@@ -33046,6 +33016,25 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [106.76388952753106, 32.0699128183801],
                     [106.76388952753106, 31.99979764069455],
                     [106.75, 31.86],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "潜山-皖口",
+                type: "road",
+                id: "road_city_qianshan_city_wancheng_1782550466304",
+                startConnection: "city_qianshan",
+                endConnection: "city_wancheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [116.485291, 30.616642],
+                    [116.59240722656251, 30.522452434486326],
+                    [116.66931152343751, 30.399375506818885],
+                    [117.04, 30.51],
                 ]
             }
         },

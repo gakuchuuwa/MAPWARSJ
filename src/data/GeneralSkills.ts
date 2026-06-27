@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将技数据（格号 = 机制真理，displayName = 展示皮肤）
  * 设计文档：docs/02-design/GENERAL_SKILLS_武将技系统.md
  * AI 分配标签：src/data/GeneralSkillTags.ts（品阶 + 五种战术风格）
@@ -788,7 +788,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     wang_s_wanghua: { generalId: 'wang_s_wanghua', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 汪华保境
     kejia_wentianxiang: { generalId: 'kejia_wentianxiang', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 勤王抗元·闽粤赣募兵沾边客家
     tingzhou_d_chenmin: { generalId: 'tingzhou_d_chenmin', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 瑞金·陈敏破敌军抗元
-    chu_d_chuguangyi: { generalId: 'chu_d_chuguangyi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 储氏望族诗人；舒州团练沾边
+    chu_d_lukang: { generalId: 'chu_d_lukang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 庐江太守守城抗孙策
     ying_caojingzong: { generalId: 'ying_caojingzong', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 梁郢州刺史据城退魏（《梁书·曹景宗传》）
     fu2_zhoudi: { generalId: 'fu2_zhoudi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 陈周迪据临川拒讨
     ouyang_ouyangyi: { generalId: 'ouyang_ouyangyi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 梁欧阳頠庐陵蛮兵

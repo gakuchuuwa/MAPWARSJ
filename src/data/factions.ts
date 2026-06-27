@@ -1,4 +1,4 @@
-// 势力数据 (Faction Data)
+﻿// 势力数据 (Faction Data)
 // 每个势力：id、name（旗号汉字见 SandboxDisplayNames）
 // 显示色：固定见 HistoricalFactionColors.ts；其余每局由 FactionManager 随机分配
 // 命名规则：政权用正式国号(部分加"大")，民族用最高知名度2字简称，军阀用人名姓氏，家族用单姓氏
@@ -565,7 +565,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xiang_d', name: '向氏' },                        // 向氏(来凤/武陵山区)
     { id: 'tan_d', name: '覃氏' },                          // 覃氏(慈利/澧水流域)
     { id: 'ran_d', name: '冉氏' },                          // 冉氏(秀山/酉水流域)
-    { id: 'chu_d', name: '储氏' },                          // 储氏(潜山/皖西南)
+    { id: 'chu_d', name: '舒州' },                          // 舒州(潜山/同安郡)
     { id: 'hu_d', name: '胡氏' },                            // 胡氏(宁海/浙东/胡三省)
 
     // ── 2026-05-27 新增：青衣(雅州)、五溪(八面山)、姑蔑(衢州) ──

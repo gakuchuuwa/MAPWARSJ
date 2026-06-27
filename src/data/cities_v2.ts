@@ -1,4 +1,4 @@
-/**
+﻿/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -2139,7 +2139,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
         troops: 10000,
         note: '慈利土司；覃垕率土兵起义（明）' },
     { id: 'city_xiushan', name: '秀山', factionId: 'ran_d', lat: 28.379316, lng: 109.061279, type: 'small_city', region: 'BASHU', troops: 10000, note: '酉阳冉氏土官；冉守忠南宋从征' },
-    { id: 'city_qianshan', name: '潜山', factionId: 'chu_d', lat: 30.616642, lng: 116.485291, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '唐舒州同安郡；储氏地方望族，唐团练（非储光羲里居）' },
+    { id: 'city_qianshan', name: '潜山', factionId: 'chu_d', lat: 30.616642, lng: 116.485291, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '唐舒州同安郡；陆康庐江太守守城' },
 
     // ── 2026-05-27 新增：青衣(雅州) ──
     // ── 2026-05-27 新增：五溪(八面山) ──

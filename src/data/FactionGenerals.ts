@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 势力将领：势力史实将领档案（一势力一将领一立绘，AI 也有）。
  *
  * 设计定案（GAME_DIRECTION.md；录入 AGENTS §2.2.0）：
@@ -625,7 +625,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     tingzhou_d: { generalId: 'tingzhou_d_chenmin', generalName: '陈敏', portrait: '/assets/zhaosong/tingzhou_d_chenmin.png' },
     fu2: { generalId: 'fu2_zhoudi', generalName: '周迪', portrait: '/assets/JIANGNAN/fu2_zhoudi.png' },
     ouyang: { generalId: 'ouyang_ouyangyi', generalName: '欧阳頠', portrait: '/assets/JIANGNAN/ouyang_ouyangyi.png' },
-    chu_d: { generalId: 'chu_d_chuguangyi', generalName: '储光羲', portrait: '/assets/zhaosong/chu_d_chuguangyi.png' },
+    chu_d: { generalId: 'chu_d_lukang', generalName: '陆康', portrait: '/assets/JIANGNAN/wan_lukang.png' },
     yan: { generalId: 'yan_leyi', generalName: '乐毅', portrait: '/assets/xianqin/yan_leyi.png' },
     zhao: { generalId: 'zhao_lianpo', generalName: '廉颇', portrait: '/assets/xianqin/zhao_lianpo.png' },
     yunzhong: { generalId: 'yunzhong_tuobaliwei', generalName: '拓跋力微', portrait: '/assets/STEPPE/yunzhong_tuobaliwei.png' },
@@ -640,7 +640,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     jiujiang: { generalId: 'jiujiang_zhouyu', generalName: '周瑜', portrait: '/assets/JIANGNAN/jiujiang_zhouyu.png' },
     fangla: { generalId: 'fangla_fangla_jn', generalName: '方腊', portrait: '/assets/JIANGNAN/fangla_fangla_jn.png' },
     fang_guozhen: { generalId: 'fang_guozhen_fangguozhen', generalName: '方国珍', portrait: '/assets/JIANGNAN/fang_guozhen_fangguozhen.png' },
-    ouyue: { generalId: 'ouyue_zouyao', generalName: '驺摇', portrait: '/assets/JIANGNAN/ouyue_zouyao.png' },
+    ouyue: { generalId: 'ouyue_zouyao', generalName: '驺摇', portrait: '/assets/xianqin/ouyue_zouyao.png' },
     ruochu: { generalId: 'ruochu_doulian', generalName: '鬬廉', portrait: '/assets/JIANGNAN/ruochu_doulian.png' },
     wuwu_d: { generalId: 'wuwu_d_lvmeng', generalName: '吕蒙', portrait: '/assets/JIANGNAN/wuwu_d_lvmeng.png' },
         sunwu_d: { generalId: 'sunwu_d_sunquan', generalName: '孙权', portrait: '/assets/JIANGNAN/sunwu_d_sunquan.png' },

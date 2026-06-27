@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 南方文化区远征精锐军团名（JIANGNAN / RegionSystem「南方」）
  *
  * 【三者防重】旗号 / 据点名 / 番号 — 见 AGENTS.md §12.1、ExpeditionLegions.ts 文件头
@@ -64,7 +64,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   tingzhou_d: { name: '破敌军', tier: 2 },          // 瑞金·陈敏破敌军T2
   fu2: { name: '临川郡兵', tier: 2 },            // 临川·周迪陈朝据守
   ouyang: { name: '庐陵蛮兵', tier: 2 },         // 庐陵·欧阳頠世居统蛮兵（《梁书》）
-  chu_d: { name: '舒州团练兵', tier: 3 },       // 潜山·唐舒州团练（储光羲诗人沾边）
+  chu_d: { name: '庐江义旅', tier: 3 },       // 潜山·陆康庐江守城
   shenshi: { name: '吴兴部曲', tier: 2 },       // 独松关·吴兴沈氏部曲
   wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）
   xie_cj_d: { name: '信州弩士', tier: 2 },      // 葛溪·谢枋得信州抗元
