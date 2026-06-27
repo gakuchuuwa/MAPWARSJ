@@ -7,6 +7,7 @@ import {
     BATTLE_PORTRAIT_FALLBACK,
     getCombatPortraitPath,
     getRandomRegionPortraitPath,
+    normalizePortraitWebPath,
     portraitUrlsEqual,
     resolvePortraitAssetPath,
     resolvePortraitSourceFacing,
@@ -1453,12 +1454,14 @@ export class CombatUI {
         return this.correctorSide === 'attacker' ? this.leftPortrait : this.rightPortrait;
     }
 
-    /** 从 img.src 取出 "/assets/.../x.png" 形式路径（解码空格等） */
+    /** 从 img.src 取出 "/assets/.../x.png" 形式路径（解码空格等）。
+     *  统一经 normalizePortraitWebPath 去掉可能混入的 /public 前缀——保证调校的
+     *  「存 key」与「读 key」永远一致，杜绝 /public 前缀导致的「调了又丢」。 */
     private srcToPath(img: HTMLImageElement): string {
         const src = img.currentSrc || img.src;
         if (!src) return '';
         try {
-            return decodeURIComponent(new URL(src, location.href).pathname);
+            return normalizePortraitWebPath(decodeURIComponent(new URL(src, location.href).pathname));
         } catch {
             return '';
         }
