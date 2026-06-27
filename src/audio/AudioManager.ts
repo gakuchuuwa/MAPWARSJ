@@ -6,6 +6,7 @@ export type SoundKey =
     | 'ui_click'
     | 'ui_confirm'
     | 'march_loop'
+    | 'cavalry_march_loop'
     | 'battle_loop'
     | 'battle_start'
     | 'battle_end'
@@ -50,6 +51,8 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     ui_click: sound('ui', 'ui_click', 0.35, 120),
     ui_confirm: sound('ui', 'ui_confirm', 0.45, 160),
     march_loop: sound('battle', 'march_loop', 0.32, 0),
+    // 纯骑部队（草原/青藏/西域）专用行军音效，与步骑 march_loop 分开
+    cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.32, 0),
     battle_loop: sound('battle', 'battle_loop', 0.5, 0),
     battle_start: sound('battle', 'battle_start', 0.65, 1600),
     battle_end: sound('battle', 'battle_end', 0.55, 1600),
@@ -130,7 +133,8 @@ export class AudioManager {
         armyId: string | null;
         marching: boolean;
         inCombat: boolean;
-    } = { armyId: null, marching: false, inCombat: false };
+        isCavalry: boolean;
+    } = { armyId: null, marching: false, inCombat: false, isCavalry: false };
     private bgmAudio: HTMLAudioElement | null = null;
     private currentBgmFolder: string = '';
     private currentBgmSrc: string = '';
@@ -229,34 +233,45 @@ export class AudioManager {
         armyId: string | null;
         marching: boolean;
         inCombat: boolean;
+        isCavalry?: boolean;
     }): void {
+        const isCavalry = state.isCavalry ?? false;
         if (
             this.followedAudioState.armyId === state.armyId &&
             this.followedAudioState.marching === state.marching &&
-            this.followedAudioState.inCombat === state.inCombat
+            this.followedAudioState.inCombat === state.inCombat &&
+            this.followedAudioState.isCavalry === isCavalry
         ) {
             return;
         }
 
-        this.followedAudioState = { ...state };
+        this.followedAudioState = { ...state, isCavalry };
+
+        // 纯骑（草原/青藏/西域）走专用行军音，步骑/纯步走 march_loop
+        const marchKey: SoundKey = isCavalry ? 'cavalry_march_loop' : 'march_loop';
+        const otherMarchKey: SoundKey = isCavalry ? 'march_loop' : 'cavalry_march_loop';
 
         if (!state.armyId || !this.settings.enabled) {
             this.stopLoop('march_loop');
+            this.stopLoop('cavalry_march_loop');
             this.stopLoop('battle_loop');
             return;
         }
 
         if (state.inCombat) {
             this.stopLoop('march_loop');
+            this.stopLoop('cavalry_march_loop');
             this.startLoop('battle_loop');
             return;
         }
 
         this.stopLoop('battle_loop');
+        // 切换军团或下马/上马时，先停掉另一种行军音，避免两条同时循环
+        this.stopLoop(otherMarchKey);
         if (state.marching) {
-            this.startLoop('march_loop');
+            this.startLoop(marchKey);
         } else {
-            this.stopLoop('march_loop');
+            this.stopLoop(marchKey);
         }
     }
 
@@ -478,7 +493,7 @@ export class AudioManager {
 
     private reapplyFollowedLegionAudio(): void {
         const state = { ...this.followedAudioState };
-        this.followedAudioState = { armyId: null, marching: false, inCombat: false };
+        this.followedAudioState = { armyId: null, marching: false, inCombat: false, isCavalry: false };
         this.syncFollowedLegionAudio(state);
     }
 

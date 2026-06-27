@@ -145,6 +145,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                     armyId: followedArmy && !followedArmy.isDestroyed ? followedId : null,
                     marching: followedArmy?.isMarching?.() ?? false,
                     inCombat: followedArmy?.getIsInCombat?.() ?? false,
+                    isCavalry: followedArmy?.isCavalryArmy?.() ?? false,
                 });
                 app.cameraFollowUI.tickFollowCamera(
                     (id) => legionManager.getLegionById(id),

@@ -730,14 +730,18 @@ export class CombatUI {
 
     /** 战力系数链：写在势力名前方，多一层非 1 系数就多叠一个（例 1.2×1.2×1.2） */
     private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
-        const applyChain = (multSpan: HTMLSpanElement, unit: IBattleUnit | null) => {
+        const applyChain = (
+            multSpan: HTMLSpanElement,
+            unit: IBattleUnit | null,
+            side: 'attacker' | 'defender',
+        ) => {
             if (!unit) {
                 multSpan.style.display = 'none';
                 multSpan.removeAttribute('title');
                 multSpan.textContent = '';
                 return;
             }
-            const { chain, title } = this.formatBattlePowerFactorChain(unit);
+            const { chain, title } = this.formatBattlePowerFactorChain(unit, side);
             if (!chain) {
                 multSpan.style.display = 'none';
                 multSpan.removeAttribute('title');
@@ -748,20 +752,24 @@ export class CombatUI {
             multSpan.title = title;
             multSpan.style.display = 'inline';
         };
-        applyChain(this.leftFactionMultSpan, attacker);
-        applyChain(this.rightFactionMultSpan, defender);
+        applyChain(this.leftFactionMultSpan, attacker, 'attacker');
+        applyChain(this.rightFactionMultSpan, defender, 'defender');
 
-        const applyTotal = (badge: HTMLSpanElement | null, unit: IBattleUnit | null) => {
+        const applyTotal = (
+            badge: HTMLSpanElement | null,
+            unit: IBattleUnit | null,
+            side: 'attacker' | 'defender',
+        ) => {
             if (!badge) return;
             if (!unit) {
                 badge.style.display = 'none';
                 return;
             }
-            badge.textContent = this.formatBattlePowerBadge(unit);
+            badge.textContent = this.formatBattlePowerBadge(unit, side);
             badge.style.display = 'inline-block';
         };
-        applyTotal(this.leftMultBadge, attacker);
-        applyTotal(this.rightMultBadge, defender);
+        applyTotal(this.leftMultBadge, attacker, 'attacker');
+        applyTotal(this.rightMultBadge, defender, 'defender');
     }
 
     private getPrimaryBattler(side: 'attacker' | 'defender'): IBattleUnit | null {
@@ -930,17 +938,17 @@ export class CombatUI {
         return getBattleTerrainKind(units, this.boundRegionalBattleField.type);
     }
 
-    private formatBattlePowerBadge(unit: IBattleUnit): string {
+    private formatBattlePowerBadge(unit: IBattleUnit, side: 'attacker' | 'defender'): string {
         const isGarrison = unit.unitType === 'city';
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
         const role = isGarrison ? '城防' : battleType === 'siege' ? '攻城' : '野战';
-        
+
         let product = 1;
         product *= getUnitCultureCombatMultiplier(unit);
         product *= getCampaignLegionCombatMultiplier(unit);
         product *= getOpeningTacticalPowerMultiplier(unit);
-        product *= getStrategicBattlePowerMultiplier(unit, battleType, terrain);
+        product *= getStrategicBattlePowerMultiplier(unit, battleType, terrain, side);
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
         if (joinLuck !== null) product *= joinLuck;
         
@@ -948,7 +956,10 @@ export class CombatUI {
         return `${role}×${parseFloat(product.toFixed(2))}`;
     }
 
-    private formatBattlePowerFactorChain(unit: IBattleUnit): { chain: string; title: string } {
+    private formatBattlePowerFactorChain(
+        unit: IBattleUnit,
+        side: 'attacker' | 'defender',
+    ): { chain: string; title: string } {
         const isGarrison = unit.unitType === 'city';
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
@@ -963,7 +974,7 @@ export class CombatUI {
         pushIfNotOne(PASS_GARRISON_DEFENSE_SKILL.displayName, getPassGarrisonCombatMultiplier(unit));
         pushIfNotOne(getLegionEliteBadgeName(unit), getCampaignLegionCombatMultiplier(unit));
         pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(unit));
-        pushIfNotOne('战略', getStrategicBattlePowerMultiplier(unit, battleType, terrain));
+        pushIfNotOne('战略', getStrategicBattlePowerMultiplier(unit, battleType, terrain, side));
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
         if (joinLuck !== null) {
             pushIfNotOne(REINFORCEMENT_JOIN_SKILL.displayName, joinLuck);
@@ -2300,7 +2311,7 @@ export class CombatUI {
     // ============================================================
 
     /** 一侧开战底力（无运气）：Σ(兵力×文化×远征×关隘) × 名将技乘区 */
-    private sideBasePower(units: IBattleUnit[]): number {
+    private sideBasePower(units: IBattleUnit[], side: 'attacker' | 'defender'): number {
         let base = 0;
         for (const u of units) {
             const t = Math.max(0, u.troops ?? 0);
@@ -2315,7 +2326,7 @@ export class CombatUI {
         for (const u of units) {
             if (canUnitUseGeneralSkills(u)) {
                 base *= getOpeningTacticalPowerMultiplier(u)
-                    * getStrategicBattlePowerMultiplier(u, this.currentBattleType, terrain);
+                    * getStrategicBattlePowerMultiplier(u, this.currentBattleType, terrain, side);
                 break;
             }
         }
@@ -2344,8 +2355,8 @@ export class CombatUI {
 
     /** 开战算一次胜率并渲染（之后兵力变动不重算，结果开战已定） */
     private computeAndRenderOdds(attUnits: IBattleUnit[], defUnits: IBattleUnit[]): void {
-        const attBase = this.sideBasePower(attUnits);
-        const defBase = this.sideBasePower(defUnits);
+        const attBase = this.sideBasePower(attUnits, 'attacker');
+        const defBase = this.sideBasePower(defUnits, 'defender');
         this.cachedOddsAtt = this.computeWinProbability(attBase, defBase);
         this.renderOdds(this.cachedOddsAtt);
     }

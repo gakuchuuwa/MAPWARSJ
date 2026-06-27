@@ -443,8 +443,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/CENTRAL/weihaiwei_sudingfang.png": {
-            "scale": 0.98,
-            "offsetX": 0,
+            "scale": 0.96,
+            "offsetX": 12,
             "offsetY": -27
         },
         "/assets/NORTH/yang_aner_yanganer.png": {
@@ -848,7 +848,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/HEXI/dangxiang_liyuanhao.png": {
-            "scale": 1.04,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": -23
         },
@@ -1263,7 +1263,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/NORTHEAST/dajin_wanyanaguda.png": {
-            "scale": 0.98,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -1671,6 +1671,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/KOREA/69646183-1c94-411b-8fb4-e2b288fe8e0e.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/BASHU/qingyi_fanchangsheng.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -17
         }
     },
     "folderGuides": {

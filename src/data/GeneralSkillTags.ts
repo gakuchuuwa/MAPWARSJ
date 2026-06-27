@@ -485,8 +485,8 @@ export const ARCHETYPE_TO_TACTICAL: Record<
 /** 战略六格简要标签（名将专用；与地形/行军匹配） */
 export const STRATEGIC_SKILL_TAGS = [
     { id: 'str_01', grid: 'S①', name: '兵贵神速', tags: ['急行军', '闪击', '远征机动'], terrain: '行军' },
-    { id: 'str_02', grid: 'S②', name: '攻城拔寨', tags: ['攻城', '破城', '围城'], terrain: '攻城战' },
-    { id: 'str_03', grid: 'S③', name: '所向披靡', tags: ['野战', '会战', '正面决战'], terrain: '野战' },
+    // S②攻城拔寨已并入 S③所向披靡（2026-06-27）：进攻方专精，攻城/野战通吃
+    { id: 'str_03', grid: 'S③', name: '所向披靡', tags: ['攻城', '破城', '野战', '会战', '正面决战'], terrain: '进攻方' },
     { id: 'str_04', grid: 'S④', name: '长驱直入', tags: ['平原', '骑兵', '长驱'], terrain: '平原' },
     { id: 'str_05', grid: 'S⑤', name: '居高临下', tags: ['山地', '山城', '据险'], terrain: '山地' },
     { id: 'str_06', grid: 'S⑥', name: '乘风破浪', tags: ['水战', '渡海', '江面'], terrain: '水域' },

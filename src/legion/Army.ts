@@ -206,6 +206,13 @@ export class Army implements IBattleUnit {
             && !this.isPostBattleResting();
     }
 
+    /** 纯骑部队（草原/青藏/西域三角阵）——与行军提速判定同口径，用于区分行军音效 */
+    public isCavalryArmy(): boolean {
+        return this.cultureRegion === 'STEPPE'
+            || this.cultureRegion === 'TIBET'
+            || this.cultureRegion === 'WESTERN';
+    }
+
     // [NEW] Blocked state management
     public setBlocked(durationMs: number = Army.BLOCKED_RETRY_INTERVAL): void {
         this.blockedUntil = Date.now() + durationMs;

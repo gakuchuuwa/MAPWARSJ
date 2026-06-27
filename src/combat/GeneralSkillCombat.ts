@@ -221,6 +221,7 @@ export function getStrategicBattlePowerMultiplier(
     unit: IBattleUnit,
     battleType?: BattleType,
     terrain?: LandTerrainKind | null,
+    side?: 'attacker' | 'defender',
 ): number {
     if (!canUnitUseGeneralSkills(unit) || !battleType) return 1;
     const profile = getGeneralProfile(unit.generalId);
@@ -228,18 +229,18 @@ export function getStrategicBattlePowerMultiplier(
     const skill = getStrategicSkillDef(profile.strategicSkillId);
     if (!skill) return 1;
     switch (skill.effect) {
-        case 'siege_power_mult':
-            return battleType === 'siege' ? skill.magnitude : 1;
-        case 'field_power_mult':
-            return battleType === 'field' ? skill.magnitude : 1;
+        // S③所向披靡（原含 S②攻城拔寨）：进攻方专用，攻城/野战通吃
+        case 'attacker_power_mult':
+            return side === 'attacker' ? skill.magnitude : 1;
+        // S⑧固若金汤：防守方专用
+        case 'defender_power_mult':
+            return side === 'defender' ? skill.magnitude : 1;
         case 'plain_power_mult':
             return terrain === 'plain' ? skill.magnitude : 1;
         case 'mountain_power_mult':
             return terrain === 'mountain' ? skill.magnitude : 1;
         case 'water_power_mult':
             return terrain === 'sea' ? skill.magnitude : 1;
-        case 'garrison_defense_mult':
-            return battleType === 'siege' ? skill.magnitude : 1;
         default:
             return 1;
     }
@@ -352,21 +353,19 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
     if (!skill) return '';
     switch (skill.effect) {
         case 'march_speed_mult':
-            return `行军×${skill.magnitude}`;
+            return `速度×${skill.magnitude}`;
         case 'post_battle_troop_pct':
             return `胜后+${Math.round(skill.magnitude * 100)}%`;
-        case 'siege_power_mult':
-            return `攻城×${skill.magnitude}`;
-        case 'field_power_mult':
+        case 'attacker_power_mult':
             return `野战×${skill.magnitude}`;
+        case 'defender_power_mult':
+            return `守城×${skill.magnitude}`;
         case 'plain_power_mult':
             return `平原×${skill.magnitude}`;
         case 'mountain_power_mult':
             return `山地×${skill.magnitude}`;
         case 'water_power_mult':
             return `水域×${skill.magnitude}`;
-        case 'garrison_defense_mult':
-            return `守城×${skill.magnitude}`;
         default:
             return '';
     }
@@ -738,10 +737,15 @@ export function applyStrategicBattleToRolls(
     const terrainKind =
         terrain ?? getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
 
-    const applySide = (units: IBattleUnit[], roll: number, sideLabel: string): number => {
+    const applySide = (
+        units: IBattleUnit[],
+        roll: number,
+        sideLabel: string,
+        side: 'attacker' | 'defender',
+    ): number => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return roll;
-        const mult = getStrategicBattlePowerMultiplier(unit, battleType, terrainKind);
+        const mult = getStrategicBattlePowerMultiplier(unit, battleType, terrainKind, side);
         if (Math.abs(mult - 1) < 0.001) return roll;
         const profile = getGeneralProfile(unit.generalId);
         const skill = profile?.strategicSkillId
@@ -756,8 +760,8 @@ export function applyStrategicBattleToRolls(
         return next;
     };
 
-    const outAtt = applySide(attackerUnits, attRoll, '攻方');
-    const outDef = applySide(defenderUnits, defRoll, '守方');
+    const outAtt = applySide(attackerUnits, attRoll, '攻方', 'attacker');
+    const outDef = applySide(defenderUnits, defRoll, '守方', 'defender');
     return { attRoll: outAtt, defRoll: outDef };
 }
 

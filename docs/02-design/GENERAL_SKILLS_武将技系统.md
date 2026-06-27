@@ -146,8 +146,8 @@
 |:---|:---|:---|
 | `march_speed_mult` | 行军速度 | 倍数（1.2） |
 | `post_battle_troop_pct` | 胜后加兵 | 比例（magnitude；例 0.12 = 12% 当前兵） |
-| `siege_power_mult` | 攻城战掷色 | 倍数（1.2） |
-| `field_power_mult` | 野战掷色 | 倍数（1.2） |
+| `attacker_power_mult` | 进攻方掷色（S③所向披靡，原 S②攻城拔寨已并入；攻城/野战通吃） | 倍数（1.2） |
+| `defender_power_mult` | 防守方掷色（S⑧固若金汤） | 倍数（1.2） |
 | `plain_power_mult` | 平原掷色 | 倍数（1.2） |
 | `mountain_power_mult` | 山地掷色 | 倍数（1.2） |
 | `water_power_mult` | 水域掷色 | 倍数（1.2） |
