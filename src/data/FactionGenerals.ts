@@ -390,7 +390,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     shuizhen: { generalId: 'shuizhen_oudaren', generalName: '区大任', portrait: '/assets/DIANQIAN/shuizhen_oudaren.png' }, // 三菩·水真戍
   // ── 岭南/越南/台湾区 2026-06-18 ──
     ryukyu: { generalId: 'ryukyu_shangbazhi', generalName: '尚巴志', portrait: '/assets/LINGNAN/ryukyu_shangbazhi.png' },
-    luoping: { generalId: 'luoping_zhangshijie', generalName: '张世杰', portrait: '/assets/LINGNAN/luoping_zhangshijie.png' },
+    luoping: { generalId: 'luoping_zhangshijie', generalName: '张世杰', portrait: '/assets/zhaosong/chaozhou_d_zhangshijie.png' },
     chaozhou_d: { generalId: 'chaozhou_d_mafa', generalName: '马发', portrait: '/assets/LINGNAN/chaozhou_d_mafa.png' },
     chendiaoyan: { generalId: 'chendiaoyan_chendiaoyan', generalName: '陈吊眼', portrait: '/assets/LINGNAN/chendiaoyan_chendiaoyan.png' },
     dengmaoqi: { generalId: 'dengmaoqi_dengmaoqi', generalName: '邓茂七', portrait: '/assets/LINGNAN/dengmaoqi_dengmaoqi.png' },

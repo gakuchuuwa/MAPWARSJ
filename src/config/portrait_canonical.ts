@@ -333,9 +333,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/xinjiang_maji.png": "/assets/LINGNAN/baoli.png",
     "/assets/LINGNAN/xiou_yixusong.png": "/assets/LINGNAN/baoli.png",
     "/assets/LINGNAN/zhuang_d_washifuren.png": "/assets/LINGNAN/baoli.png",
-    "/assets/LINGNAN/luoping_zhangshijie.png": "/assets/LINGNAN/chaozhou_d_zhangshijie.png",
-    "/assets/zhaosong/0184a5c3-ea67-4d73-a9d9-20a8105922d9.png": "/assets/LINGNAN/chaozhou_d_zhangshijie.png",
-    "/assets/LINGNAN/daozhou_yangzaixing.png": "/assets/LINGNAN/chendiaoyan_chendiaoyan.png",
+            "/assets/LINGNAN/daozhou_yangzaixing.png": "/assets/LINGNAN/chendiaoyan_chendiaoyan.png",
     "/assets/LINGNAN/dongzu_wumian.png": "/assets/LINGNAN/chendiaoyan_chendiaoyan.png",
     "/assets/LINGNAN/guangzhou (19).png": "/assets/LINGNAN/chendiaoyan_chendiaoyan.png",
     "/assets/LINGNAN/jingjiang_qushisi.png": "/assets/LINGNAN/chendiaoyan_chendiaoyan.png",
@@ -628,16 +626,4 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/yingqin/qin_baiqi_yingqin.png": "/assets/yingqin/qin_baiqi_CENTRAL.png",
     "/assets/yingqin/xin_baiqi.png": "/assets/yingqin/qin_baiqi_CENTRAL.png",
     "/assets/yingqin/ruo_wangjian.png": "/assets/yingqin/qin_wangjian.png",
-    "/assets/zhaosong/lizhou_d_wulin.png": "/assets/zhaosong/112b2473-f1c7-4092-89b4-307fa0e5e832.png",
-    "/assets/zhaosong/danyang_yuyunwen.png": "/assets/zhaosong/1f7184cf-7064-4839-8577-9412a7cbd417.png",
-    "/assets/zhaosong/changshaguo_xinqiji.png": "/assets/zhaosong/282b05c2-3ce0-4742-bffa-155896cd8c0b.png",
-    "/assets/zhaosong/chu_d_chuguangyi.png": "/assets/zhaosong/605ec3ae-1447-43bc-a07f-cd8aa64e90cb.png",
-    "/assets/zhaosong/changshan_yanyangzhao.png": "/assets/zhaosong/72213c30-820c-40ef-976e-46d54afc8752.png",
-    "/assets/zhaosong/zaoyang_d_menggong.png": "/assets/zhaosong/9212e38f-b043-4391-abab-ab410dfe5180.png",
-    "/assets/zhaosong/sizhou_hanshizhong.png": "/assets/zhaosong/9c7d1733-2f44-495c-a0fb-0b6748d2582d.png",
-    "/assets/zhaosong/e01505c0-f1a4-478f-8bd6-611b4a3b014f.png": "/assets/zhaosong/chanzhou_chairong_202606250402z.png",
-    "/assets/zhaosong/tingzhou_d_chenmin.png": "/assets/zhaosong/d541070f-65a4-4f3b-b0ce-e06c45ef6ce8.png",
-    "/assets/zhaosong/yingzhou_d_liuqi.png": "/assets/zhaosong/df1ce03d-c34f-48d1-a9d7-d19d8473fce9.png",
-    "/assets/zhaosong/kejia_wentianxiang.png": "/assets/zhaosong/f4995d69-5f23-4dc0-952c-c291c1b577d7.png",
-    "/assets/zhaosong/xiangzhou_lvwenhuan.png": "/assets/zhaosong/fa0bacfd-fd3e-47e5-90a3-4c9fe455dc8c.png"
-};
+                                            };

@@ -390,6 +390,7 @@ export default defineConfig({
 
                 const publicAssetsRoot = path.resolve(__dirname, 'public/assets');
                 const factionGeneralsPath = path.resolve(__dirname, 'src/data/FactionGenerals.ts');
+                const portraitCanonicalPath = path.resolve(__dirname, 'src/config/portrait_canonical.ts');
 
                 server.middlewares.use('/api/portrait-inbox', (req, res) => {
                     if (req.method !== 'GET') {
@@ -449,6 +450,7 @@ export default defineConfig({
                             const result = serverBindGeneralPortrait(
                                 publicAssetsRoot,
                                 factionGeneralsPath,
+                                portraitCanonicalPath,
                                 generalId,
                                 sourcePath,
                                 targetFolder,
@@ -1367,6 +1369,7 @@ function serverGetCurrentPortraitPath(filePath: string, generalId: string): stri
 function serverBindGeneralPortrait(
     publicAssetsRoot: string,
     factionGeneralsPath: string,
+    portraitCanonicalPath: string,
     generalId: string,
     sourceWebPath: string,
     targetFolderWeb?: string,
@@ -1426,6 +1429,9 @@ function serverBindGeneralPortrait(
 
     serverUpdateFactionGeneralPortraitFile(factionGeneralsPath, generalId, destWeb);
 
+    // 绑定后清理 canonical 中指向目标文件的旧映射（防旧映射覆盖新绑定）
+    serverCleanCanonicalForPortrait(portraitCanonicalPath, destWeb);
+
     const generalsText = fs.readFileSync(factionGeneralsPath, 'utf-8');
     const nameMatch = generalsText.match(
         new RegExp(`generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'[\\s\\S]*?generalName\\s*:\\s*'([^']*)'`),
@@ -1433,4 +1439,19 @@ function serverBindGeneralPortrait(
     const generalName = nameMatch?.[1] ?? generalId;
 
     return { portraitPath: destWeb, generalName, targetFolder: folderWeb };
+}
+
+/** 清理 portrait_canonical.ts 中 destWeb 作为源键的条目（新绑定后旧映射应失效） */
+function serverCleanCanonicalForPortrait(canonicalPath: string, destWeb: string): void {
+    if (!fs.existsSync(canonicalPath)) return;
+    let text = fs.readFileSync(canonicalPath, 'utf-8');
+    const escaped = serverEscapeRegExp(destWeb);
+    // 匹配以 destWeb 为源键的 canonical 行并移除
+    const re = new RegExp(`\\s*"${escaped}":\\s*"[^"]*",?\\r?\\n`, 'g');
+    const before = text.length;
+    text = text.replace(re, '');
+    if (text.length !== before) {
+        fs.writeFileSync(canonicalPath, text, 'utf-8');
+        console.log(`  🧹 [BindPortrait] canonical 已清理旧映射: ${destWeb}`);
+    }
 }

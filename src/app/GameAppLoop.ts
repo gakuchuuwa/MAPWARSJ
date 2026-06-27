@@ -190,7 +190,10 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 const pos = legion?.getPosition();
                 if (pos) app.audioManager.syncPortraitBgm(legion?.portraitPath, pos.lat, pos.lng);
             } else {
-                app.audioManager.stopBgm();
+                // 未跟随军团时，按地图视野中心播放地理区域 BGM
+                const bgmMap = app.map.getLeafletMap();
+                const center = bgmMap.getCenter();
+                if (center) app.audioManager.syncPortraitBgm(undefined, center.lat, center.lng);
             }
             perfMonitor.endTimer('camera');
         }
