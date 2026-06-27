@@ -1,4 +1,4 @@
-import { getFactionGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride } from '../data/FactionGenerals';
+﻿import { getFactionGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride } from '../data/FactionGenerals';
 import { registerPortraitPathRuntime } from '../config/portrait_defaults';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
@@ -595,7 +595,7 @@ export class CombatUI {
         `;
 
         const img = document.createElement('img');
-        img.src = '/assets/UI/battlefield_icon.png';
+        img.src = '/ui-assets/battlefield_icon.png';
         img.alt = '';
         img.draggable = false;
         img.style.cssText = `

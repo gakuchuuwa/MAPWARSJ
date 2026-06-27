@@ -1736,6 +1736,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.26,
             "offsetX": 4,
             "offsetY": 27
+        },
+        "/assets/NORTH/gongsun_d_gongsundu.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -16
         }
     },
     "folderGuides": {

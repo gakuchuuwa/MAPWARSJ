@@ -250,7 +250,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/JAPAN/yizhi_yizhiwang.png": "/assets/JAPAN/44aad26a-be07-4cce-b0d0-849c25f628a7.png",
     "/assets/JAPAN/aizu_pushengshixiang.png": "/assets/JAPAN/601980d6-67ec-4176-a0f6-ec35dfdbc776.png",
     "/assets/JAPAN/fujiwara_yuanyijing.png": "/assets/JAPAN/601980d6-67ec-4176-a0f6-ec35dfdbc776.png",
-    "/assets/JAPAN/izumo_shanzhonglujie.png": "/assets/JAPAN/6c83cb90-c74f-40a4-bb38-2769c60cfa02.png",
     "/assets/JAPAN/osumi_ganfujianxu.png": "/assets/JAPAN/6c83cb90-c74f-40a4-bb38-2769c60cfa02.png",
     "/assets/JAPAN/kai_wutianxinxuan.png": "/assets/JAPAN/7240bef9-e904-41d3-a8e5-58f324a3755d.png",
     "/assets/JAPAN/zhuqian_shaozizheng.png": "/assets/JAPAN/726010d3-3b61-4928-8d2c-89ea4d9990f4.png",

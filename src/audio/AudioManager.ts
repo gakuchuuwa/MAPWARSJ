@@ -1,4 +1,4 @@
-﻿export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
+export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';
@@ -96,7 +96,6 @@ function isAudioCategory(value: string): value is AudioCategory {
 
 const BGM_FALLBACK_MAP: Record<string, string> = {
     panjun: 'CENTRAL',
-    UI: 'CENTRAL',
     avg: 'CENTRAL',
     inbox: 'CENTRAL',
     portraits: 'CENTRAL',
