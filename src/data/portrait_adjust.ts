@@ -178,9 +178,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -37
         },
         "/assets/xianqin/yin_dixin.png": {
-            "scale": 1.02,
+            "scale": 1.06,
             "offsetX": 20,
-            "offsetY": -28
+            "offsetY": -35
         },
         "/assets/wuzhou/202606220249.png": {
             "scale": 1,
@@ -1826,6 +1826,46 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -23
+        },
+        "/assets/STEPPE/tujue_ashinatumen.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/STEPPE/kaerka_abadaikehan.png": {
+            "scale": 1.08,
+            "offsetX": 1,
+            "offsetY": -23
+        },
+        "/assets/CENTRAL/sima_d_simayi.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/JIANGNAN/min_wangshenzhi.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/JIANGNAN/quanzhou_liucongxiao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/daming/ming_zheng_zhengchenggong.png": {
+            "scale": 1.16,
+            "offsetX": 6,
+            "offsetY": -5
+        },
+        "/assets/BASHU/wudu_zhangyi.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/LINGNAN/ketagalan_huangqingyun.png": {
+            "scale": 1.18,
+            "offsetX": 14,
+            "offsetY": 24
         }
     },
     "folderGuides": {
