@@ -1,6 +1,7 @@
-export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
+﻿export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
 import { getRegion, type RegionType } from '../systems/RegionSystem';
+import { extractPortraitFolder } from '../config/PortraitAdjust';
 
 export type SoundKey =
     | 'ui_click'
@@ -93,6 +94,14 @@ function isAudioCategory(value: string): value is AudioCategory {
     return value === 'ui' || value === 'battle' || value === 'feed' || value === 'bgm';
 }
 
+const BGM_FALLBACK_MAP: Record<string, string> = {
+    panjun: 'CENTRAL',
+    UI: 'CENTRAL',
+    avg: 'CENTRAL',
+    inbox: 'CENTRAL',
+    portraits: 'CENTRAL',
+};
+
 function mergeSettings(raw: unknown): AudioSettings {
     const settings: AudioSettings = {
         enabled: DEFAULT_SETTINGS.enabled,
@@ -138,6 +147,7 @@ export class AudioManager {
     private bgmAudio: HTMLAudioElement | null = null;
     private currentBgmFolder: string = '';
     private currentBgmSrc: string = '';
+    private failedBgmFolders = new Set<string>();
     /** 源路径 → blob 对象 URL（用 fetch 取 blob 绕开 IDM 等下载器按扩展名抓取）*/
     private objectUrlCache = new Map<string, string>();
     /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
@@ -446,6 +456,31 @@ export class AudioManager {
         this.bgmAudio = null;
     }
 
+    /** 每帧调用：以地理区域 BGM 为基础，有专属 BGM 的势力文件夹才覆盖 */
+    public syncPortraitBgm(portraitPath?: string, lat?: number, lng?: number): void {
+        if (!this.settings.enabled || !this.unlocked) return;
+        if (lat === undefined || lng === undefined) return;
+
+        // 先按地理区域确定基础 BGM
+        const region: RegionType = getRegion(lat, lng);
+        let folderName: string = region;
+
+        // 检查立绘文件夹是否有专属 BGM（如 manqing/daming/litang 等势力夹）
+        const portraitFolder = portraitPath ? extractPortraitFolder(portraitPath) : undefined;
+        const portraitDir = portraitFolder ? portraitFolder.replace(/^\/assets\/([^/]+)\/$/, '$1') : undefined;
+        if (portraitDir && !BGM_FALLBACK_MAP[portraitDir]) {
+            folderName = portraitDir;
+        }
+
+        if (folderName === this.currentBgmFolder && this.bgmAudio && !this.bgmAudio.paused) return;
+        if (this.failedBgmFolders.has(folderName)) return;
+
+        this.currentBgmFolder = folderName;
+        const src = `/assets/${folderName}/${folderName}_bgm.aud`;
+        this.playBgmSrc(src);
+    }
+
+
     /** 每帧调用：根据镜头坐标切换对应文化区的 BGM */
     public syncRegionBgm(lat: number, lng: number): void {
         if (!this.settings.enabled || !this.unlocked) return;
@@ -470,6 +505,8 @@ export class AudioManager {
             if (this.currentBgmSrc !== src || !this.settings.enabled || !this.unlocked) return;
             if (!url) {
                 this.warnMissingOnce('bgm_main', `fetch 失败: ${src}`);
+                // 记录失败文件夹，避免每帧重试
+                if (this.currentBgmFolder) this.failedBgmFolders.add(this.currentBgmFolder);
                 // 区域 BGM 缺失 → 回落 CENTRAL
                 if (this.currentBgmFolder !== 'CENTRAL') {
                     this.currentBgmFolder = 'CENTRAL';

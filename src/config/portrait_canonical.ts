@@ -192,7 +192,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/cen_d_cenmeng.png": "/assets/LINGNAN/a5ac03b7-537e-4b61-ac6c-d72802fd4c45.png",
     "/assets/LINGNAN/guizhou_lidingguo.png": "/assets/LINGNAN/a5ac03b7-537e-4b61-ac6c-d72802fd4c45.png",
     "/assets/LINGNAN/longwu_huangdaozhou.png": "/assets/LINGNAN/a5ac03b7-537e-4b61-ac6c-d72802fd4c45.png",
-    "/assets/guangzhou/zhancheng_zhimin.png": "/assets/LINGNAN/a5ac03b7-537e-4b61-ac6c-d72802fd4c45.png",
     "/assets/HEXI/yingli_jilasiyi.png": "/assets/HEXI/00a13536-5672-425b-b000-8540256a6813.png",
     "/assets/HEXI/dai_d_tuobashiyijian.png": "/assets/HEXI/112a53e1-97c4-4d9f-ae1e-dc0bb44216f4.png",
     "/assets/HEXI/guazhou_zhangshougui.png": "/assets/HEXI/112a53e1-97c4-4d9f-ae1e-dc0bb44216f4.png",

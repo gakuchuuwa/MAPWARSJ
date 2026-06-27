@@ -403,7 +403,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     nguyen_guangnan: { generalId: 'nguyen_guangnan_ruanfuying', generalName: '阮福映', portrait: '/assets/LINGNAN/nguyen_guangnan_ruanfuying.png' },
     zhuang_d: { generalId: 'zhuang_d_washifuren', generalName: '瓦氏夫人', portrait: '/assets/LINGNAN/zhuang_d_washifuren.png' },
     nanyue: { generalId: 'nanyue_zhaotuo', generalName: '赵佗', portrait: '/assets/LINGNAN/nanyue_zhaotuo.png' },
-    zhancheng: { generalId: 'zhancheng_zhimin', generalName: '制旻', portrait: '/assets/guangzhou/zhancheng_zhimin.png' },
+    zhancheng: { generalId: 'zhancheng_zhimin', generalName: '制旻', portrait: '/assets/LINGNAN/a5ac03b7-537e-4b61-ac6c-d72802fd4c45.png' },
     xiou: { generalId: 'xiou_yixusong', generalName: '译吁宋', portrait: '/assets/LINGNAN/xiou_yixusong.png' },
     xichu: { generalId: 'xichu_xiangyu', generalName: '项羽', portrait: '/assets/xianqin/xichu_xiangyu.png' },
     gouding: { generalId: 'gouding_wubo', generalName: '毋波', portrait: '/assets/LINGNAN/gouding_wubo.png' },

@@ -58,7 +58,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/panjun/chimei_fanchong.png": {
-            "scale": 0.96,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -30
         },
@@ -373,7 +373,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -22
         },
         "/assets/litang/qianzhou_lisheng.png": {
-            "scale": 1.02,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 1
         },
@@ -963,7 +963,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/HEXI/liangzhou_zhanggui.png": {
-            "scale": 1.1,
+            "scale": 1.12,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -1338,9 +1338,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/NORTHEAST/jilimi_takuna.png": {
-            "scale": 1.18,
-            "offsetX": 0,
-            "offsetY": 6
+            "scale": 1.02,
+            "offsetX": 8,
+            "offsetY": -39
         },
         "/assets/zhaosong/huan_zhongshidao.png": {
             "scale": 1.1,
@@ -1430,7 +1430,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/STEPPE/0ffaf7ae-df77-4f4a-87df-2809ccbf6d2b.png": {
             "scale": 0.98,
             "offsetX": 0,
-            "offsetY": 26
+            "offsetY": -6
         },
         "/assets/CENTRAL_ASIA/bc9cf911-a04c-49aa-aed9-bb6541ec3a47.png": {
             "scale": 0.92,
@@ -1731,6 +1731,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 4,
             "offsetY": -8
+        },
+        "/assets/NORTHEAST/256a5652-9887-461e-8245-1d41c2bb4e0e.png": {
+            "scale": 1.26,
+            "offsetX": 4,
+            "offsetY": 27
         }
     },
     "folderGuides": {

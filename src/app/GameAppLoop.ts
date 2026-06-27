@@ -184,10 +184,11 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 });
             }
             app.cameraFollowUI.update();
-            // BGM 跟随军团：有跟拍军团则用军团坐标切换文化区音乐，无跟拍则静音
+            // BGM 跟随军团：优先用军团武将立绘文件夹，无立绘则回落地理区域
             if (followedId && legionManager) {
-                const pos = legionManager.getLegionById(followedId)?.getPosition();
-                if (pos) app.audioManager.syncRegionBgm(pos.lat, pos.lng);
+                const legion = legionManager.getLegionById(followedId);
+                const pos = legion?.getPosition();
+                if (pos) app.audioManager.syncPortraitBgm(legion?.portraitPath, pos.lat, pos.lng);
             } else {
                 app.audioManager.stopBgm();
             }
