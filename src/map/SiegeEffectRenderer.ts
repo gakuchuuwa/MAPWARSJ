@@ -9,6 +9,7 @@ interface ActiveSiegeEffect {
     overlay: L.ImageOverlay;
     cityLocation: { lat: number; lng: number };
     cityType: string;
+    isFlipped: boolean;
     getTarget?: TargetResolver;
     volleyIntervalId?: ReturnType<typeof setInterval>;
     fadeTimerId?: ReturnType<typeof setInterval>;
@@ -40,7 +41,7 @@ export class SiegeEffectRenderer {
         if (!leafletMap.getPane('effectsPane')) {
             leafletMap.createPane('effectsPane');
             const pane = leafletMap.getPane('effectsPane')!;
-            pane.style.zIndex = '610';
+            pane.style.zIndex = '630';
         }
     }
 
@@ -56,9 +57,7 @@ export class SiegeEffectRenderer {
         gameLog('siegeEffect', `🔥 [SiegeEffect] 在城市 ${cityId} (类型: ${cityType}) 启动火焰特效`);
 
         const bounds = this.getBounds(location, cityType);
-        
         const isFlipped = Math.random() > 0.5;
-        const className = isFlipped ? 'mirrored-city' : '';
 
         const overlay = L.imageOverlay(SiegeEffectRenderer.APNG_PATH, bounds, {
             pane: 'effectsPane',
@@ -66,18 +65,16 @@ export class SiegeEffectRenderer {
             opacity: 0,
         }).addTo(this.map.getLeafletMap());
 
-        // Leaflet ImageOverlay ignores className option — apply directly to the <img>
-        if (isFlipped) {
-            const img = (overlay as any)._image as HTMLImageElement;
-            if (img) img.classList.add('mirrored-city');
-        }
-
         const effect: ActiveSiegeEffect = {
             overlay,
             cityLocation: location,
             cityType,
+            isFlipped,
             getTarget,
         };
+
+        // 镜像：往 Leaflet 自己的 transform 后面追加翻转，不改 transform-origin
+        this.applyFlip(effect);
 
         if (getTarget) {
             gameLog('siegeEffect', `🏹 [SiegeEffect] ${cityId} 守军向进攻方齐射`);
@@ -220,7 +217,23 @@ export class SiegeEffectRenderer {
         this.activeEffects.forEach((effect) => {
             const newBounds = this.getBounds(effect.cityLocation, effect.cityType);
             effect.overlay.setBounds(newBounds);
+            // setBounds 会重置 transform，需要重新追加翻转
+            this.applyFlip(effect);
         });
+    }
+
+    /**
+     * 在 Leaflet 的 translate3d 后追加 translateX(100%) scaleX(-1)，
+     * 实现原地水平镜像（不改 transform-origin，不偏移）。
+     */
+    private applyFlip(effect: ActiveSiegeEffect): void {
+        if (!effect.isFlipped) return;
+        const img = (effect.overlay as any)._image as HTMLElement;
+        if (!img) return;
+        const t = img.style.transform;
+        if (t && !t.includes('scaleX')) {
+            img.style.transform = t + ' translateX(100%) scaleX(-1)';
+        }
     }
 
     private getBounds(center: { lat: number; lng: number }, cityType: string = 'small_city'): L.LatLngBounds {

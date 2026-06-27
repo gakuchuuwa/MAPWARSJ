@@ -398,12 +398,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/LINGNAN/guangzhou (13).png": {
-            "scale": 1.08,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": 21
+            "offsetY": -3
         },
         "/assets/STEPPE/STEPPE_field.png": {
-            "scale": 1,
+            "scale": 1.06,
             "offsetX": 1,
             "offsetY": -16
         },
@@ -778,7 +778,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -27
         },
         "/assets/CENTRAL/37f49d28-6658-49eb-b2aa-ec1d3f27df89.png": {
-            "scale": 1.06,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 14
         },
@@ -788,9 +788,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 19
         },
         "/assets/STEPPE/choros_tuohuan.png": {
-            "scale": 1.08,
+            "scale": 1.1,
             "offsetX": 0,
-            "offsetY": 16
+            "offsetY": -1
         },
         "/assets/liuhan/lulin_liuxiu.png": {
             "scale": 1.02,
@@ -858,9 +858,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -32
         },
         "/assets/WESTERN/anxi_guoxin.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": 3
+            "scale": 0.92,
+            "offsetX": 11,
+            "offsetY": -15
         },
         "/assets/WESTERN/352cfbef-fdfc-48b5-95db-5d153aecf86c.png": {
             "scale": 1,
@@ -1078,9 +1078,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -43
         },
         "/assets/WESTERN/chuyue_shatuonasu.png": {
-            "scale": 1.02,
+            "scale": 1.16,
             "offsetX": 0,
-            "offsetY": -16
+            "offsetY": -9
         },
         "/assets/WESTERN/_fallback__WESTERN.png": {
             "scale": 1.02,
@@ -1153,9 +1153,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/WESTERN/anduo.png": {
-            "scale": 0.92,
+            "scale": 0.96,
             "offsetX": 0,
-            "offsetY": -9
+            "offsetY": -12
         },
         "/assets/STEPPE/huige_gulipeiluo.png": {
             "scale": 0.98,
@@ -1353,8 +1353,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -40
         },
         "/assets/xianqin/yue_goujian.png": {
-            "scale": 1.14,
-            "offsetX": 0,
+            "scale": 1.16,
+            "offsetX": 14,
             "offsetY": 0
         },
         "/assets/JIANGNAN/202606220310.png": {
@@ -1483,7 +1483,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -35
         },
         "/assets/panjun/bailian_wangconger.png": {
-            "scale": 1.34,
+            "scale": 1.4,
             "offsetX": 0,
             "offsetY": 4
         },
@@ -1518,9 +1518,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/WESTERN/keerkezi_manasi.png": {
-            "scale": 1.06,
+            "scale": 1,
             "offsetX": 17,
-            "offsetY": -17
+            "offsetY": 6
         },
         "/assets/zhaosong/kang_liangshidu.png": {
             "scale": 1,
@@ -1746,6 +1746,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 18
+        },
+        "/assets/zhaosong/xiangzhou_lvwenhuan.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/JIANGNAN/wuyue_qianliu.png": {
+            "scale": 0.96,
+            "offsetX": 5,
+            "offsetY": -4
+        },
+        "/assets/WESTERN/gaochang_quwentai.png": {
+            "scale": 0.92,
+            "offsetX": 11,
+            "offsetY": -25
+        },
+        "/assets/CENTRAL_ASIA/67d48b35-5131-4d59-9304-1a5f46693219.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {
