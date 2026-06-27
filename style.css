@@ -654,8 +654,8 @@ body.mapwar-deploy .leaflet-top.leaflet-right .leaflet-control.result-tooltip {
     image-rendering: pixelated;
 }
 
-/* Mirrored City Image - Use scale property to avoid transform conflict */
-.mirrored-city {
+/* Mirrored City Image — use CSS scale (not transform) to avoid conflict with Leaflet translate3d */
+img.mirrored-city {
     scale: -1 1;
 }
 

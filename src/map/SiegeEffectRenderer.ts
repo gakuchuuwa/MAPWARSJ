@@ -56,11 +56,21 @@ export class SiegeEffectRenderer {
         gameLog('siegeEffect', `🔥 [SiegeEffect] 在城市 ${cityId} (类型: ${cityType}) 启动火焰特效`);
 
         const bounds = this.getBounds(location, cityType);
+        
+        const isFlipped = Math.random() > 0.5;
+        const className = isFlipped ? 'mirrored-city' : '';
+
         const overlay = L.imageOverlay(SiegeEffectRenderer.APNG_PATH, bounds, {
             pane: 'effectsPane',
             interactive: false,
             opacity: 0,
         }).addTo(this.map.getLeafletMap());
+
+        // Leaflet ImageOverlay ignores className option — apply directly to the <img>
+        if (isFlipped) {
+            const img = (overlay as any)._image as HTMLImageElement;
+            if (img) img.classList.add('mirrored-city');
+        }
 
         const effect: ActiveSiegeEffect = {
             overlay,

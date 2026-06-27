@@ -193,9 +193,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -34
         },
         "/assets/LINGNAN/guangzhou (17).png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -36
+            "scale": 1.04,
+            "offsetX": -3,
+            "offsetY": -17
         },
         "/assets/zhaosong/c371dc47-6b0a-4e7e-9f43-9243275f4695.png": {
             "scale": 1.04,
@@ -368,7 +368,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/CENTRAL/52602539-f95b-4ef3-aeec-2bf4422fe284.png": {
-            "scale": 0.88,
+            "scale": 0.86,
             "offsetX": 0,
             "offsetY": -22
         },
@@ -1093,9 +1093,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/CENTRAL_ASIA/guishuang_jianisejia.png": {
-            "scale": 0.96,
+            "scale": 1.1,
             "offsetX": 1,
-            "offsetY": -33
+            "offsetY": 4
         },
         "/assets/JAPAN/cb21e44c-7857-4cea-b20d-0fb0f26768c7.png": {
             "scale": 0.94,
@@ -1198,9 +1198,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/CENTRAL_ASIA/30c9780d-5598-4f67-a7c5-28b4e9ce84aa.png": {
-            "scale": 1.04,
+            "scale": 0.82,
             "offsetX": 15,
-            "offsetY": 15
+            "offsetY": -5
         },
         "/assets/CENTRAL_ASIA/badakhshan_luozhentan.png": {
             "scale": 1.42,
@@ -1741,6 +1741,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -16
+        },
+        "/assets/BASHU/huizhou_zhugeliang.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 18
         }
     },
     "folderGuides": {
