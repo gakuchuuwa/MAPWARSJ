@@ -21,7 +21,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   dianguo: { name: '滇池兵', tier: 3 },       // 滇池·庄蹻滇国
   mu_lijiang: { name: '丽江土兵', tier: 3 },   // 大研·木氏土司兵
   mingzheng: { name: '明正土兵', tier: 2 },   // 打箭炉·坚赞德昌从征金川   // 打箭炉·明正土司兵
-  anding_wei: { name: '安定卫戍', tier: 3 },   // 苦峪堡·明安定卫戍卒
+
   // 仲家兵除名（无此编制）
   hani_d: { name: '思陀甸兵', tier: 2 },      // 思陀·遮比归附从征安南
   wuman: { name: '东爨乌蛮兵', tier: 3 },     // 乌蒙山·东爨乌蛮兵

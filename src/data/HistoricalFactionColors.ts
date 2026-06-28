@@ -324,7 +324,7 @@ const _FIXED: Record<string, string> = {
     chanzhou: '#6D323A', // 澶州·弩手（澶州暗红）
     liguo: '#857053', // 黎国（黎国沙土褐，黎之耆戎）
     yiyang_d: '#4F6B8A', // 义阳（义阳青蓝，申息锐师）
-    anding_wei: '#614B3B', // 安定（安定卫土褐，长征健儿）
+    dafeichuan: '#614B3B', // 大非川（大非川土褐，退浑骑）
     chijin: '#C14B3A', // 赤斤·赤金营（赤金堡）
     juyan_d: '#7A6B52', // 居延·荆楚步卒（巴音布拉格）
     xihai_d: '#3D6B8C', // 西海·威定戍卒（伏俟城）
@@ -413,7 +413,7 @@ const _FIXED: Record<string, string> = {
     'xie_cj_d': '#B1BD5F', // 自动分配 (邻域相斥)
     'kong_d': '#CA55C4', // 自动分配 (邻域相斥)
     'jiaodong': '#25C825', // 自动分配 (邻域相斥)
-    'huangfu': '#BB265C', // 自动分配 (邻域相斥)
+    'jingzhou_gs': '#BB265C', // 自动分配 (邻域相斥)
     'guo': '#BC82BD', // 自动分配 (邻域相斥)
     'zi': '#463DAB', // 自动分配 (邻域相斥)
     'long2': '#262E8D', // 自动分配 (邻域相斥)
@@ -803,3 +803,9 @@ export const FLAG_TEXT_WHITE_STYLE_FACTIONS: ReadonlySet<string> = new Set(['yue
 
 /** 强制黑字（无视 lum；史料可考）— 汉赤旗黑字等 */
 export const FLAG_TEXT_BLACK_STYLE_FACTIONS: ReadonlySet<string> = new Set(['han_d']);
+
+// @ts-ignore
+if (import.meta.hot) {
+    // @ts-ignore
+    import.meta.hot.accept();
+}

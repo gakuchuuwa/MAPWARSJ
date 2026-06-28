@@ -317,7 +317,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     qifu_d: { generalId: 'qifu_d_qifuchipan', generalName: '乞伏炽磐', portrait: '/assets/TIBET/qifu_d_qifuchipan.png' },
     tuyu_d: { generalId: 'tuyu_d_kualv', generalName: '夸吕', portrait: '/assets/TIBET/tuyu_d_kualv.png' },
     duomi: { generalId: 'duomi_lunkongre', generalName: '论恐热', portrait: '/assets/TIBET/duomi_lunkongre.png' },
-    anding_wei: { generalId: 'anding_wei_buyantiemuer', generalName: '卜烟帖木儿', portrait: '/assets/TIBET/anding_wei_buyantiemuer.png' },
+    dafeichuan: { generalId: 'dafeichuan_nuohebo', generalName: '慕容诺曷钵', portrait: '/assets/TIBET/dafeichuan_nuohebo.png' },
     gaxa: { generalId: 'gaxa_zhashiduanzhubu', generalName: '扎什端珠布', portrait: '/assets/TIBET/gaxa_zhashiduanzhubu.png' },
     jinchuan_g: { generalId: 'jinchuan_g_shaluoben', generalName: '莎罗奔', portrait: '/assets/TIBET/jinchuan_g_shaluoben.png' },
     xiangxiong: { generalId: 'xiangxiong_limixia_x', generalName: '李迷夏', portrait: '/assets/TIBET/xiangxiong_limixia_x.png' },
@@ -528,7 +528,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     jin: { generalId: 'jin_xianzhen', generalName: '先轸', portrait: '/assets/xianqin/jin_xianzhen.png' },
     zhong: { generalId: 'zhong_xiexuan', generalName: '谢玄', portrait: '/assets/JIANGNAN/zhong_xiexuan.png' },
     zhongshan: { generalId: 'zhongshan_yangaoging', generalName: '颜杲卿', portrait: '/assets/litang/zhongshan_yangaoging.png' },
-            huangfu: { generalId: 'huangfu_huangfusong', generalName: '皇甫嵩', portrait: '/assets/CENTRAL/huangfu_huangfusong.png' },
+            jingzhou_gs: { generalId: 'jingzhou_gs_huangfusong', generalName: '皇甫嵩', portrait: '/assets/CENTRAL/jingzhou_gs_huangfusong.png' },
     wang_d: { generalId: 'wang_d_wangdao', generalName: '王导', portrait: '/assets/CENTRAL/wang_d_wangdao.png' },
     chimei: { generalId: 'chimei_fanchong', generalName: '樊崇', portrait: '/assets/panjun/chimei_fanchong.png' },
         xiao_d: { generalId: 'xiao_d_xiaomohe', generalName: '萧摩诃', portrait: '/assets/JIANGNAN/xiao_d_xiaomohe.png' },
@@ -808,5 +808,17 @@ export function getGeneralRecordByGeneralId(
         }
     }
     return null;
+}
+
+// @ts-ignore
+if (import.meta.hot) {
+    // @ts-ignore
+    import.meta.hot.accept((newModule: any) => {
+        if (!newModule?.FACTION_GENERALS) return;
+        const target = FACTION_GENERALS as Record<string, FactionGeneral>;
+        for (const key of Object.keys(target)) delete (target as any)[key];
+        Object.assign(target, newModule.FACTION_GENERALS);
+        console.log(`[HMR] FactionGenerals → ${Object.keys(newModule.FACTION_GENERALS).length} 条武将已热更新`);
+    });
 }
 

@@ -1,0 +1,602 @@
+{
+  "multiCityFactions": [],
+  "nameConflicts": [],
+  "invalidFlags": [
+    {
+      "factionId": "fuguo",
+      "flag": "附国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "fengzhou",
+      "flag": "凤州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chizhou",
+      "flag": "池州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "guazhou",
+      "flag": "瓜州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yueyi",
+      "flag": "嶲州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "dizhou",
+      "flag": "棣州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "shang",
+      "flag": "商国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "zhou",
+      "flag": "周国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "qi",
+      "flag": "齐国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "jin",
+      "flag": "晋国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "wu",
+      "flag": "吴国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "guangzhou",
+      "flag": "广州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "duanzhou_d",
+      "flag": "端州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "qin",
+      "flag": "秦国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "song",
+      "flag": "宋国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yan",
+      "flag": "燕国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "zhao",
+      "flag": "赵国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "han_d",
+      "flag": "汉国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "shu",
+      "flag": "蜀国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yangzhou",
+      "flag": "洋州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "liangzhou",
+      "flag": "凉州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chen",
+      "flag": "陈国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "sui",
+      "flag": "隋国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "tang",
+      "flag": "唐国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "min",
+      "flag": "闽国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "quanzhou",
+      "flag": "泉州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "shazhou",
+      "flag": "沙州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "bing",
+      "flag": "并州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "dangzhou",
+      "flag": "宕州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "dai_d",
+      "flag": "代国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "zhongshan",
+      "flag": "恒州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "xie_cj_d",
+      "flag": "信州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "qian_d",
+      "flag": "秀州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "jiujiang",
+      "flag": "江州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "jingzhou_gs",
+      "flag": "泾州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "guo",
+      "flag": "果州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "zi",
+      "flag": "资州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "long2",
+      "flag": "陇州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "song2",
+      "flag": "松州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "suzhou",
+      "flag": "肃州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "fujiwara",
+      "flag": "奥州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "ba",
+      "flag": "巴国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "hezhou",
+      "flag": "合州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yingzhou_ying_d",
+      "flag": "营州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chanzhou",
+      "flag": "澶州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "tongzhou",
+      "flag": "同州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yin",
+      "flag": "殷国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "hejian",
+      "flag": "莫州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "xiangzhou",
+      "flag": "襄州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "zaoyang_d",
+      "flag": "唐州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "suzhou_d",
+      "flag": "宿州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "lanzhou",
+      "flag": "兰州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "zhuozhou",
+      "flag": "涿州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "jinling",
+      "flag": "南国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "lu",
+      "flag": "庐州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "pagan",
+      "flag": "缅国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "wenzhou",
+      "flag": "温州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "dixiang",
+      "flag": "新国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "jianzhou_nvzhen",
+      "flag": "建州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yang_zhou",
+      "flag": "扬州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yizhou",
+      "flag": "懿州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yang_bozhou",
+      "flag": "播州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "sizhou",
+      "flag": "泗州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "langzhou",
+      "flag": "阆州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chu_d",
+      "flag": "舒州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yong",
+      "flag": "庸国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "leizhou",
+      "flag": "雷州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "liguo",
+      "flag": "潞州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "kang",
+      "flag": "夏州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "huizhou",
+      "flag": "会州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "huizhou_d",
+      "flag": "徽州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "ganzhou",
+      "flag": "甘州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chenzhou_d",
+      "flag": "辰州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "qianzhong",
+      "flag": "沅州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "dianguo",
+      "flag": "滇国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "tingzhou_d",
+      "flag": "汀州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chaozhou_d",
+      "flag": "潮州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "hongzhou",
+      "flag": "洪州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "huai",
+      "flag": "淮州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "shangzhou",
+      "flag": "商州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "ying",
+      "flag": "郢州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "heng",
+      "flag": "衡州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chen2",
+      "flag": "郴州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "shaozhou",
+      "flag": "韶州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "kui",
+      "flag": "夔州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chen3",
+      "flag": "欢州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chungju_d",
+      "flag": "忠州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "naju_d",
+      "flag": "罗州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "luzhou",
+      "flag": "渌州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "sambyeol",
+      "flag": "沃州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "sheng_d",
+      "flag": "升州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "jinzhou",
+      "flag": "锦州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "hai2",
+      "flag": "海州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "fu2",
+      "flag": "抚州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "xinping",
+      "flag": "邠州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "huan",
+      "flag": "环州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "wei2",
+      "flag": "韦州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "lingzhou",
+      "flag": "灵州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "dang_d",
+      "flag": "虞国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "hao_d",
+      "flag": "濠州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "bozhou_d",
+      "flag": "博州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "zhengzhou",
+      "flag": "郑州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "ruo",
+      "flag": "鄀国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "ruzhou",
+      "flag": "汝州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yaozhou",
+      "flag": "耀州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "huo",
+      "flag": "霍州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "lai",
+      "flag": "莱州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "lizhou_d",
+      "flag": "剑州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "chuzhou_d",
+      "flag": "滁州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "guizhou",
+      "flag": "桂州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "daozhou",
+      "flag": "道州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "yingzhou",
+      "flag": "英州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "wumeng",
+      "flag": "溪州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "nvguo",
+      "flag": "女国",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "wuzhou",
+      "flag": "武州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "xingxingxia",
+      "flag": "伊州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "ssangseong",
+      "flag": "和州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "fu_zhou",
+      "flag": "涪州",
+      "reason": "包含禁字 '州/国'"
+    },
+    {
+      "factionId": "qianzhou",
+      "flag": "乾州",
+      "reason": "包含禁字 '州/国'"
+    }
+  ],
+  "missingFlags": []
+}

@@ -1732,7 +1732,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 12,
             "offsetY": -14
         },
-        "/assets/CENTRAL/huangfu_huangfusong.png": {
+        "/assets/CENTRAL/jingzhou_gs_huangfusong.png": {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": -21

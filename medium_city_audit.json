@@ -1,0 +1,311 @@
+{
+  "totalMediumCities": 57,
+  "nameConflicts": [],
+  "invalidFlags": [
+    {
+      "factionId": "tang",
+      "flag": "唐国",
+      "factionName": "唐国",
+      "cityName": "长安"
+    },
+    {
+      "factionId": "xiangzhou",
+      "flag": "襄州",
+      "factionName": "襄州",
+      "cityName": "襄阳"
+    },
+    {
+      "factionId": "jingzhou_gs",
+      "flag": "泾州",
+      "factionName": "泾州",
+      "cityName": "安定"
+    },
+    {
+      "factionId": "zhongshan",
+      "flag": "恒州",
+      "factionName": "恒州",
+      "cityName": "真定"
+    },
+    {
+      "factionId": "lu",
+      "flag": "庐州",
+      "factionName": "庐州",
+      "cityName": "合肥"
+    },
+    {
+      "factionId": "dixiang",
+      "flag": "新国",
+      "factionName": "新国",
+      "cityName": "宛城"
+    },
+    {
+      "factionId": "lanzhou",
+      "flag": "兰州",
+      "factionName": "兰州",
+      "cityName": "皋兰"
+    },
+    {
+      "factionId": "dai_d",
+      "flag": "代国",
+      "factionName": "代国",
+      "cityName": "广武"
+    },
+    {
+      "factionId": "zhuozhou",
+      "flag": "涿州",
+      "factionName": "涿州",
+      "cityName": "范阳"
+    },
+    {
+      "factionId": "pagan",
+      "flag": "缅国",
+      "factionName": "缅国",
+      "cityName": "蒲甘"
+    },
+    {
+      "factionId": "langzhou",
+      "flag": "阆州",
+      "factionName": "阆州",
+      "cityName": "隆城"
+    },
+    {
+      "factionId": "hongzhou",
+      "flag": "洪州",
+      "factionName": "洪州",
+      "cityName": "豫章"
+    }
+  ],
+  "missingFlags": [
+    {
+      "factionId": "tang",
+      "fallback": "唐国"
+    },
+    {
+      "factionId": "xiangzhou",
+      "fallback": "襄州"
+    },
+    {
+      "factionId": "jingzhou_gs",
+      "fallback": "泾州"
+    },
+    {
+      "factionId": "daxi_ming",
+      "fallback": "大西"
+    },
+    {
+      "factionId": "zhongshan",
+      "fallback": "恒州"
+    },
+    {
+      "factionId": "jiaodong",
+      "fallback": "胶东"
+    },
+    {
+      "factionId": "lu",
+      "fallback": "庐州"
+    },
+    {
+      "factionId": "dixiang",
+      "fallback": "新国"
+    },
+    {
+      "factionId": "yidou",
+      "fallback": "宜都"
+    },
+    {
+      "factionId": "qiufu",
+      "fallback": "裘甫"
+    },
+    {
+      "factionId": "lanzhou",
+      "fallback": "兰州"
+    },
+    {
+      "factionId": "xiongding",
+      "fallback": "雄定"
+    },
+    {
+      "factionId": "nanzhao",
+      "fallback": "南诏"
+    },
+    {
+      "factionId": "gaogouli",
+      "fallback": "高句"
+    },
+    {
+      "factionId": "dai_d",
+      "fallback": "代国"
+    },
+    {
+      "factionId": "dajin",
+      "fallback": "大金"
+    },
+    {
+      "factionId": "yuan_d",
+      "fallback": "大元"
+    },
+    {
+      "factionId": "guishuang",
+      "fallback": "贵霜"
+    },
+    {
+      "factionId": "baiji",
+      "fallback": "百济"
+    },
+    {
+      "factionId": "ming_zheng",
+      "fallback": "明郑"
+    },
+    {
+      "factionId": "higo_d",
+      "fallback": "肥后"
+    },
+    {
+      "factionId": "zhuozhou",
+      "fallback": "涿州"
+    },
+    {
+      "factionId": "jilizhou",
+      "fallback": "积利"
+    },
+    {
+      "factionId": "huige",
+      "fallback": "回纥"
+    },
+    {
+      "factionId": "huarazim",
+      "fallback": "花剌"
+    },
+    {
+      "factionId": "pagan",
+      "fallback": "缅国"
+    },
+    {
+      "factionId": "manzhou_d",
+      "fallback": "大清"
+    },
+    {
+      "factionId": "tujishi",
+      "fallback": "突骑"
+    },
+    {
+      "factionId": "karmapa",
+      "fallback": "噶玛"
+    },
+    {
+      "factionId": "jiantang",
+      "fallback": "建塘"
+    },
+    {
+      "factionId": "langzhou",
+      "fallback": "阆州"
+    },
+    {
+      "factionId": "yamato",
+      "fallback": "大和"
+    },
+    {
+      "factionId": "jinchuan",
+      "fallback": "骏河"
+    },
+    {
+      "factionId": "tianxiong",
+      "fallback": "魏博"
+    },
+    {
+      "factionId": "sunwu_d",
+      "fallback": "孙吴"
+    },
+    {
+      "factionId": "yuchi",
+      "fallback": "尉迟"
+    },
+    {
+      "factionId": "hongzhou",
+      "fallback": "洪州"
+    },
+    {
+      "factionId": "jiazini",
+      "fallback": "伽色"
+    },
+    {
+      "factionId": "jibin",
+      "fallback": "罽宾"
+    },
+    {
+      "factionId": "zhancheng",
+      "fallback": "占城"
+    },
+    {
+      "factionId": "dulan_d",
+      "fallback": "杜兰"
+    },
+    {
+      "factionId": "huluo",
+      "fallback": "呼罗"
+    },
+    {
+      "factionId": "aba",
+      "fallback": "阿巴"
+    }
+  ],
+  "allData": [
+    "长安 (tang) - 势力: 唐国 | 旗号: 唐国",
+    "襄阳 (xiangzhou) - 势力: 襄州 | 旗号: 襄州",
+    "寿春 (zhong) - 势力: 寿州 | 旗号: 寿",
+    "安定 (jingzhou_gs) - 势力: 泾州 | 旗号: 泾州",
+    "涪城 (daxi_ming) - 势力: 大西 | 旗号: 大西",
+    "真定 (zhongshan) - 势力: 恒州 | 旗号: 恒州",
+    "商丘 (liang_d) - 势力: 梁国 | 旗号: 梁",
+    "彭城 (xichu) - 势力: 西楚 | 旗号: 楚",
+    "即墨 (jiaodong) - 势力: 胶东 | 旗号: 胶东",
+    "合肥 (lu) - 势力: 庐州 | 旗号: 庐州",
+    "宛城 (dixiang) - 势力: 新国 | 旗号: 新国",
+    "夷陵 (yidou) - 势力: 宜都 | 旗号: 宜都",
+    "临湘 (changshaguo) - 势力: 长沙国 | 旗号: 长沙",
+    "剡城 (qiufu) - 势力: 裘甫 | 旗号: 裘甫",
+    "盘橐 (shule) - 势力: 疏勒 | 旗号: 疏勒",
+    "皋兰 (lanzhou) - 势力: 兰州 | 旗号: 兰州",
+    "木叶山 (qidan) - 势力: 契丹 | 旗号: 契丹",
+    "永昌 (ailao) - 势力: 哀牢 | 旗号: 哀牢",
+    "天井关 (xiongding) - 势力: 雄定 | 旗号: 雄定",
+    "蒙舍城 (nanzhao) - 势力: 南诏 | 旗号: 南诏",
+    "平壤 (gaogouli) - 势力: 高句丽 | 旗号: 高句",
+    "广武 (dai_d) - 势力: 代国 | 旗号: 代国",
+    "会宁府 (dajin) - 势力: 大金 | 旗号: 大金",
+    "上都 (yuan_d) - 势力: 大元 | 旗号: 大元",
+    "蓝氏城 (guishuang) - 势力: 贵霜帝国 | 旗号: 贵霜",
+    "泗沘 (baiji) - 势力: 百济 | 旗号: 百济",
+    "江户城 (edo) - 势力: 德川 | 旗号: 德川",
+    "承天 (ming_zheng) - 势力: 明郑 | 旗号: 明郑",
+    "熊本 (higo_d) - 势力: 肥后 | 旗号: 肥后",
+    "范阳 (zhuozhou) - 势力: 涿州 | 旗号: 涿州",
+    "安邑 (wei) - 势力: 魏国 | 旗号: 魏",
+    "六安 (liu) - 势力: 九江 | 旗号: 九江",
+    "卑沙城 (jilizhou) - 势力: 积利州 | 旗号: 积利",
+    "窝鲁朵八里 (huige) - 势力: 回纥 | 旗号: 回纥",
+    "玉龙杰赤 (huarazim) - 势力: 花剌子模 | 旗号: 花剌",
+    "蒲甘 (pagan) - 势力: 缅国 | 旗号: 缅国",
+    "沈阳 (manzhou_d) - 势力: 大清 | 旗号: 大清",
+    "怛罗斯 (tujishi) - 势力: 突骑施 | 旗号: 突骑",
+    "楚布寺 (karmapa) - 势力: 噶玛 | 旗号: 噶玛",
+    "独克宗 (jiantang) - 势力: 建塘 | 旗号: 建塘",
+    "凌云 (cen_d) - 势力: 岑家 | 旗号: 岑",
+    "隆城 (langzhou) - 势力: 阆州 | 旗号: 阆州",
+    "千早城 (yamato) - 势力: 大和 | 旗号: 大和",
+    "骏府 (jinchuan) - 势力: 骏河 | 旗号: 骏河",
+    "兴庆府 (dangxiang) - 势力: 大夏 | 旗号: 大夏",
+    "大名 (tianxiong) - 势力: 魏博 | 旗号: 魏博",
+    "武昌 (sunwu_d) - 势力: 孙吴 | 旗号: 孙吴",
+    "于阗 (yuchi) - 势力: 尉迟 | 旗号: 尉迟",
+    "豫章 (hongzhou) - 势力: 洪州 | 旗号: 洪州",
+    "巴陵 (yue_d) - 势力: 岳家 | 旗号: 岳",
+    "汝南 (yuan_cj_d) - 势力: 袁家 | 旗号: 袁",
+    "哥疾宁 (jiazini) - 势力: 伽色尼 | 旗号: 伽色",
+    "迦毕试 (jibin) - 势力: 罽宾 | 旗号: 罽宾",
+    "阇槃 (zhancheng) - 势力: 占城 | 旗号: 占城",
+    "坎大哈 (dulan_d) - 势力: 杜兰尼 | 旗号: 杜兰",
+    "赫拉特 (huluo) - 势力: 呼罗珊 | 旗号: 呼罗",
+    "尼沙布尔 (aba) - 势力: 阿巴尔 | 旗号: 阿巴"
+  ]
+}

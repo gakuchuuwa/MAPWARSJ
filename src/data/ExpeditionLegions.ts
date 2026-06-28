@@ -231,3 +231,28 @@ export function restoreExpeditionLegionName(army: {
     army.expeditionSavedName = null;
   }
 }
+
+// @ts-ignore
+if (import.meta.hot) {
+    // @ts-ignore
+    import.meta.hot.accept([
+        './JapanExpeditionLegions',
+        './KoreaExpeditionLegions',
+        './NortheastExpeditionLegions',
+        './SteppeExpeditionLegions',
+        './WesternExpeditionLegions',
+        './CentralAsiaExpeditionLegions',
+        './TibetExpeditionLegions',
+        './DianQianExpeditionLegions',
+        './LingnanExpeditionLegions',
+        './JiangnanExpeditionLegions',
+        './NorthExpeditionLegions',
+        './CentralExpeditionLegions',
+        './BashuExpeditionLegions',
+        './HexiExpeditionLegions',
+    ], () => {
+        console.log('[HMR] 精锐番号数据已更新（F5 生效）');
+    });
+    // @ts-ignore
+    import.meta.hot.accept();
+}

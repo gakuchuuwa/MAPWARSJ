@@ -57,7 +57,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zhe_d: { name: '折家将兵', tier: 2 },         // 府谷·宋府州折氏十世将门
   shanrong: { name: '山戎突骑', tier: 2 },      // 无终·田畴导曹操伐乌桓
   pingyuan: { name: '平原义军', tier: 2 },      // 平原·颜真卿首倡义兵（缺乏进攻胜仗，降T2）
-  dada_ming: { name: '度辽营', tier: 2 },          // 河套·东汉度辽将军部
+  dada_ming: { name: '鞑靼铁骑', tier: 2 },          // 河套·明代蒙古鞑靼部
   
   // ── 2026-06-18 自东北文件迁回
   jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·李成梁辽东骑兵（打出极强战绩，升T1）

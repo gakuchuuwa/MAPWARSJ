@@ -16,6 +16,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tubo: { name: '吐蕃大纛军', tier: 2 },       // 逻些·松赞干布吐蕃大纛军
   gar: { name: '却杰军', tier: 1 },           // 萨毗城·论钦陵却杰军（以众击寡，降T1）
   tuyu_d: { name: '青海骢精骑', tier: 2 },    // 伏俟城·吐谷浑青海骢（§12 #4）
+  dafeichuan: { name: '退浑骑', tier: 2 },    // 大非川·《旧唐书》载“退浑之众”
   xiangxiong: { name: '象雄武士', tier: 2 },  // 穹窿银·象雄铜铁甲武士（§12 #5）
   gar_kham: { name: '德格骁骑', tier: 2 },    // 德格·康巴朵康先锋骑（§12 #7）
   guge: { name: '古格甲兵', tier: 2 },        // 札布让·阿里古格王国

@@ -201,8 +201,8 @@ export const T0_CAPITALS: CityDataV2[] = [
 export const T1_MEDIUM_CITIES: CityDataV2[] = [
     // ── 蜀道沿线 (长安→成都 的中城) ──
         // ── 关中平原历史名城 ──
-        { id: 'city_anding', name: '安定', factionId: 'huangfu', lat: 35.327451, lng: 107.358398, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '安定；皇甫嵩三河骑士',
+        { id: 'city_anding', name: '安定', factionId: 'jingzhou_gs', lat: 35.327451, lng: 107.358398, type: 'small_city', region: 'CENTRAL', troops: 10000,
+        note: '安定；皇甫嵩安定突骑',
     },
     {
         id: 'city_hanzhong',
@@ -583,7 +583,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     },
     { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.0500, lng: 103.8333, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1, note: '金城郡·兰州治所；赵充国屯田金城' },
 
-    { id: 'city_ledu', name: '浇河', factionId: 'tuyu_d', lat: 35.837926, lng: 101.071472, type: 'small_city', region: 'TIBET', troops: 10000, note: '浇河故地；吐谷浑南界据地（王都伏俟城为隋西海郡）' },
+    { id: 'city_ledu', name: '浇河', factionId: 'tuyu_d', lat: 35.7264, lng: 101.2061, type: 'small_city', region: 'TIBET', troops: 10000, note: '浇河故地；吐谷浑南界据地（王都伏俟城为隋西海郡）' },
     {
         id: 'city_lintao',
         name: '临洮',
@@ -1643,8 +1643,8 @@ export const PERIPHERY: CityDataV2[] = [
         
         note: '瑷珲；东海小城', region: 'NORTHEAST' },
     { id: 'city_chijin', name: '赤金堡', factionId: 'chijin', lat: 40.000221, lng: 97.437744, type: 'pass', region: 'HEXI', troops: 10000, note: '明赤斤蒙古卫驻牧；岳钟琪平准噶尔赤金营（旗号赤避「赤金」全称）' },
-    { id: 'city_anding_qh', name: '苦峪堡', factionId: 'anding_wei', lat: 36.230961, lng: 100.599060, type: 'pass', region: 'TIBET', troops: 10000,
-        note: '苦峪堡；安定关隘',
+    { id: 'city_dafeichuan', name: '大非川', factionId: 'dafeichuan', lat: 36.1379, lng: 100.7611, type: 'pass', region: 'TIBET', troops: 10000,
+        note: '大非川之战（薛仁贵大败）；唐蕃古道核心',
     },
 
     // 第六类：周边国家

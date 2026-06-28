@@ -570,18 +570,56 @@ export class GameApp {
 
 }
 
-// 防止编辑器保存 cities.ts 时触发 Vite 全局刷新
 // @ts-ignore
 if (import.meta.hot) {
-    // @ts-ignore
-    import.meta.hot.accept(['../data/cities_v2.ts'], () => {
-        console.log('[HMR] cities_v2.ts 发生改变，拦截自动刷新 (页面状态已保留)');
-    });
     // @ts-ignore
     import.meta.hot.accept(['../types/CultureFormations.ts'], () => {
         console.log('[HMR] CultureFormations.ts 改变，自动应用到大地图现有军队');
         if ((window as any).game?.legionManager) {
             (window as any).game.legionManager.refreshCultureFormations();
         }
+    });
+
+    // @ts-ignore
+    import.meta.hot.accept(['../data/cities_v2.ts'], ([mod]: any[]) => {
+        const game = (window as any).game as GameApp | undefined;
+        if (!game?.cityManager || !mod?.CITIES_V2) return;
+        const fresh: Array<{ id: string; name: string; factionId: string; lat: number; lng: number; type: string; troops?: number; region?: string; mirror?: boolean; startYear?: number; endYear?: number }> = mod.CITIES_V2;
+        const existing = game.cityManager.getCities();
+        const existingMap = new Map(existing.map(c => [c.id, c]));
+        let updated = 0, added = 0;
+        for (const c of fresh) {
+            const old = existingMap.get(c.id);
+            if (old) {
+                if (old.name !== c.name || old.factionId !== c.factionId) {
+                    game.cityManager.updateCity(c.id, { name: c.name, factionId: c.factionId }, { skipCaptureLog: true });
+                    updated++;
+                }
+            } else {
+                game.cityManager.addCity({
+                    id: c.id, name: c.name, factionId: c.factionId,
+                    latitude: c.lat, longitude: c.lng, type: c.type as any,
+                    troops: c.troops ?? 5000,
+                });
+                added++;
+            }
+        }
+        console.log(`[HMR] cities_v2.ts → 更新 ${updated} 座, 新增 ${added} 座`);
+    });
+
+    // @ts-ignore
+    import.meta.hot.accept(['../data/SandboxDisplayNames.ts', '../data/factions.ts', '../assets/CityAssetManager.ts'], () => {
+        const game = (window as any).game as GameApp | undefined;
+        if (!game?.cityManager) return;
+        const cities = game.cityManager.getCities();
+        const refreshed = new Set<string>();
+        for (const city of cities) {
+            if (city.factionId && city.factionId !== 'panjun' && !refreshed.has(city.factionId)) {
+                CityAssetManager.invalidateFlagTextCache(city.factionId);
+                refreshed.add(city.factionId);
+            }
+        }
+        game.cityManager.refreshAll();
+        console.log(`[HMR] 旗号数据改变 → 已刷新 ${refreshed.size} 个势力的旗号文字`);
     });
 }

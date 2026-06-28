@@ -482,7 +482,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tufa_d_tufanutan: { generalId: 'tufa_d_tufanutan', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 南凉君主
     qifu_d_qifuchipan: { generalId: 'qifu_d_qifuchipan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 西秦灭南凉
     tuyu_d_kualv: { generalId: 'tuyu_d_kualv', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 吐谷浑可汗
-    anding_wei_buyantiemuer: { generalId: 'anding_wei_buyantiemuer', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 安定王
+    dafeichuan_nuohebo: { generalId: 'dafeichuan_nuohebo', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 吐谷浑末代可汗
     gaxa_zhashiduanzhubu: { generalId: 'gaxa_zhashiduanzhubu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 噶厦代本
     jinchuan_g_shaluoben: { generalId: 'jinchuan_g_shaluoben', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 金川固守
     xiangxiong_limixia_x: { generalId: 'xiangxiong_limixia_x', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 象雄末王
@@ -665,7 +665,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tianxiong_tianchengsi: { generalId: 'tianxiong_tianchengsi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 魏博藩镇
     ranwei_d_ranmin: { generalId: 'ranwei_d_ranmin', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 杀胡令
     jin_xianzhen: { generalId: 'jin_xianzhen', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 城濮崤山
-    huangfu_huangfusong: { generalId: 'huangfu_huangfusong', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 平黄巾
+    jingzhou_gs_huangfusong: { generalId: 'jingzhou_gs_huangfusong', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 平黄巾
     unassigned_masui: { generalId: 'unassigned_masui', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 洹水破田悦
     wang_d_wangdao: { generalId: 'wang_d_wangdao', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 王与马共天下
     chimei_fanchong: { generalId: 'chimei_fanchong', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 赤眉入长安
@@ -1332,4 +1332,16 @@ export function getTacticalSkillDef(skillId: string): TacticalSkillDef | null {
 
 export function getStrategicSkillDef(skillId: string): StrategicSkillDef | null {
     return STRATEGIC_SKILL_CATALOG[skillId] ?? null;
+}
+
+// @ts-ignore
+if (import.meta.hot) {
+    // @ts-ignore
+    import.meta.hot.accept((newModule: any) => {
+        if (!newModule?.GENERAL_PROFILES) return;
+        const target = GENERAL_PROFILES as Record<string, any>;
+        for (const key of Object.keys(target)) delete target[key];
+        Object.assign(target, newModule.GENERAL_PROFILES);
+        console.log(`[HMR] GeneralSkills → ${Object.keys(newModule.GENERAL_PROFILES).length} 条武将技已热更新`);
+    });
 }

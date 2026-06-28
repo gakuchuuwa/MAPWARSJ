@@ -270,7 +270,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'jilimi': 'city_nanghar',
 'luchuan': 'city_mengmao',
     'guiyi': 'city_yumenguan',
-    'anding_wei': 'city_anding_qh',
+    'dafeichuan': 'city_dafeichuan',
     'joseon': 'city_hanseong',
     'siam': 'city_ayutthaya',
     'chenla': 'city_angkor',
@@ -632,7 +632,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'qian': 'city_juzhou',
     'yao': 'city_linfen',
     'ashide': 'city_heishacheng',
-    'huangfu': 'city_anding',
+    'jingzhou_gs': 'city_anding',
     'guo': 'city_guozhou',
     'zi': 'city_zizhou',
     'long2': 'city_longzhou',
@@ -772,3 +772,15 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'wuyue': 'city_hangzhou',
     'xiyuduhu': 'city_taqian',
 };
+
+// @ts-ignore
+if (import.meta.hot) {
+    // @ts-ignore
+    import.meta.hot.accept((newModule: any) => {
+        if (!newModule?.STARTING_CAPITALS) return;
+        const target = STARTING_CAPITALS as Record<string, string>;
+        for (const key of Object.keys(target)) delete target[key];
+        Object.assign(target, newModule.STARTING_CAPITALS);
+        console.log(`[HMR] StartingCapitals → ${Object.keys(newModule.STARTING_CAPITALS).length} 条首都映射已热更新`);
+    });
+}

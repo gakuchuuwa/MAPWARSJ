@@ -20,7 +20,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   kai: { name: '武田赤备', tier: 1 },          // 躑躅崎馆·§5 #7
   jinchuan: { name: '骏河弓取', tier: 1 },      // 恢复T1：T1不看败绩，只需名气+胜仗
   owari: { name: '织田马廻众', tier: 0 },     // 热田城·桶狭间3000破25000
-  totomi: { name: '浜松众', tier: 1 },       // 恢复T1：T1不看败绩，只需名气+胜仗
+  totomi: { name: '三河武士', tier: 1 },       // 远江/三河·德川家核心死忠精锐
   echigo: { name: '毘沙門衆', tier: 2 },         // 春日山·上杉谦信亲卫队（原轩猿众 T3）
   aki: { name: '村上水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷（毛利氏水军主力）
   chosokabe: { name: '一领具足', tier: 2 },     // 冈丰城·长宗我部半农半兵精锐
@@ -46,7 +46,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   suwa_d: { name: '诹访神党', tier: 2 },     // 高岛·诹访氏最强武装（家族旗号可含「诹访」）
   jibei2: { name: '备中众', tier: 3 },         // 鬼之城·宇喜多氏
   taira: { name: '平家水军', tier: 2 },         // 赤间关·坛之浦
-  sagami: { name: '箱根守备', tier: 3 },       // 箱根关·北条氏康
+  sagami: { name: '风魔党', tier: 2 },         // 箱根关·北条氏专属特种风魔忍者
   mino: { name: '大谷部众', tier: 2 },         // 不破关·大谷吉继
   yizhi: { name: '原之辻戍卒', tier: 3 },       // 原之辻·壹岐国元寇戍卒（《元史》《高丽史》壹岐守备）
   gonggu: { name: '宫古岛卒', tier: 3 },       // 宫古岛·琉球宫古守卒（《中山世谱》见载）

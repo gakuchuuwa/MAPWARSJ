@@ -120,7 +120,7 @@ export const FACTIONS: Faction[] = [
     { id: 'cao_d', name: '曹家' },
     { id: 'jiujiang', name: '江州' },       // 橄榄 - 柴桑/浔阳(九江郡)
     { id: 'jiaodong', name: '胶东' },
-    { id: 'huangfu', name: '皇甫' },
+    { id: 'jingzhou_gs', name: '泾州' },
 { id: 'guo', name: '果州' },
     { id: 'zi', name: '资州' },
     { id: 'long2', name: '陇州' },
@@ -244,7 +244,7 @@ export const FACTIONS: Faction[] = [
     { id: 'hani_d', name: '哈尼' },
     { id: 'basha_d', name: '巴沙' },
     { id: 'xibo_d', name: '锡伯' },
-    { id: 'jinling', name: '南京' },
+    { id: 'jinling', name: '南国' },
     // ── 2026-06-12 新增：无为（濡须水畔无为州）；北府兵改挂仲@寿春 ──
     { id: 'wuwu_d', name: '无为' },
     { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
@@ -343,7 +343,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xihai_d', name: '西海' },                          // 伏俟城·隋西海郡治；旗号西海
     { id: 'heyuan_d', name: '河源' },                          // 花石峡·隋河源郡积石镇；旗号河源
     { id: 'guiyi', name: '归义' },
-    { id: 'anding_wei', name: '安定' },
+    { id: 'dafeichuan', name: '退浑' },
     // 第六类：周边国家政权
     // 交阯深紫 - 安南胡朝/黎氏
     { id: 'joseon', name: '朝鲜' },                  // 朝鲜王朝李朝都城汉城；尚白见 HistoricalFactionColors

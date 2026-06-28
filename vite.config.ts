@@ -58,18 +58,7 @@ export default defineConfig({
         include: ['leaflet', 'pinyin-pro'],
     },
     server: {
-        // F2 写盘数据文件 + 城市/势力数据：不触发 HMR 整页刷新，改完后手动 F5
-        watch: {
-            ignored: [
-                '**/src/data/portrait_adjust.ts',
-                '**/src/data/FactionGenerals.ts',
-                '**/src/data/factions.ts',
-                '**/src/data/SandboxDisplayNames.ts',
-                '**/src/app/GameApp.ts',
-                '**/src/assets/CityAssetManager.ts',
-                '**/public/assets/**',
-            ],
-        },
+        // 所有文件均由 Vite 监听；F2 写盘期间由 suppress-portrait-dev-hmr 插件短暂拦截全页刷新
         // [PERF] Warm up the most expensive modules on dev server start
         // so the browser's first request hits a ready cache.
         warmup: {
@@ -143,15 +132,8 @@ export default defineConfig({
                 };
             },
             handleHotUpdate({ file }) {
-                const norm = file.replace(/\\/g, '/');
-                if (
-                    norm.includes('portrait_adjust.ts')
-                    || norm.includes('FactionGenerals.ts')
-                    || norm.includes('cities_v2.ts')
-                    || (norm.includes('/public/assets/') && norm.endsWith('.png'))
-                ) {
-                    return [];
-                }
+                // F2 写盘期间（8 秒窗口）由 configureServer 的 ws.send 拦截器处理
+                // 其余时刻所有文件变更正常触发 HMR / 全页刷新
             },
         },
         {

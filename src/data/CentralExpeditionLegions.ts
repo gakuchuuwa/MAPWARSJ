@@ -41,7 +41,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yiyang_d: { name: '申息锐师', tier: 2 },    // 武胜关·楚国申息之师
   // ── 2026-06-16 新增：11大名关 ──
                       hongnong_jun: { name: '黄龙骑', tier: 2 },    // 函谷关·杨素大破突厥
-  huangfu: { name: '三河骑士', tier: 1 },       // 安定·皇甫嵩三河骑士
+  jingzhou_gs: { name: '安定突骑', tier: 2 },       // 安定·天水安定出精骑（皇甫嵩所部）
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
   ruo: { name: '频阳锐士', tier: 1 },          // 武关·王翦灭楚
   ruzhou: { name: '赤帻先锋', tier: 2 },

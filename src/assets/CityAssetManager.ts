@@ -306,7 +306,7 @@ export class CityAssetManager {
         'xihai_d': '西海',
         'heyuan_d': '河源',
         'guiyi': '归义',
-        'anding_wei': '安定',
+        'dafeichuan': '大非',
         'joseon': '朝鲜',
         'siam': '暹罗',
         'chenla': '真腊',
@@ -649,7 +649,7 @@ export class CityAssetManager {
         'qingyuan_bd': '清苑',
 'zhong': '寿',
 'xichu': '楚',
-        'huangfu': '泾',
+        'jingzhou_gs': '泾',
         'guo': '果',
         'zi': '资',
         'long2': '陇',
@@ -851,7 +851,7 @@ export class CityAssetManager {
         return this.resolveFlagLum(factionId) < FLAG_TEXT_LUM_THRESHOLD;
     }
 
-    private static invalidateFlagTextCache(factionId: string): void {
+    public static invalidateFlagTextCache(factionId: string): void {
         this.processedFlagCache.delete(`dynamic_text_${factionId}`);
         this.processedFlagCache.delete(`dynamic_text_${factionId}_w`);
         this.processedFlagCache.delete(`dynamic_text_${factionId}_b`);
