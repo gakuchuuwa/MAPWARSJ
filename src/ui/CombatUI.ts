@@ -834,12 +834,12 @@ export class CombatUI {
             effect: string,
             isFamous: boolean,
             isAttacker: boolean,
-            skillType: 'tactical' | 'strategic' | 'pass' | 'other' = 'other'
+            skillType: 'tactical' | 'strategic' | 'pass' | 'elite' | 'other' = 'other'
         ) => {
             const tag = document.createElement('div');
             const borderColor = isFamous ? 'rgba(255, 215, 0, 0.7)' : 'rgba(200, 200, 200, 0.6)';
             
-            // 加入攻守与战术/战略/地形颜色区分
+            // 加入攻守与战术/战略/地形/精锐颜色区分
             let bgColor = '';
             let sideColor = isAttacker ? '#ff8800' : '#00aabb'; // 默认战术/其他：攻橙 守蓝
 
@@ -859,6 +859,15 @@ export class CombatUI {
                 } else {
                     bgColor = isFamous ? 'rgba(40, 50, 30, 0.85)' : 'rgba(30, 40, 25, 0.8)';
                     sideColor = '#94ad6e'; // 关隘守：青灰/草石色
+                }
+            } else if (skillType === 'elite') {
+                // 精锐部队：金属深色系
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(50, 30, 15, 0.85)' : 'rgba(40, 20, 10, 0.8)';
+                    sideColor = '#ffbb00'; // 精锐攻：暗金
+                } else {
+                    bgColor = isFamous ? 'rgba(15, 30, 40, 0.85)' : 'rgba(10, 20, 30, 0.8)';
+                    sideColor = '#88ccff'; // 精锐守：亮银/冰蓝
                 }
             } else {
                 // 战术或其他技能保持原色调（攻红 守蓝）
@@ -928,7 +937,7 @@ export class CombatUI {
                 name: string,
                 effect: string,
                 famous: boolean,
-                skillType: 'tactical' | 'strategic' | 'pass' | 'other' = 'other'
+                skillType: 'tactical' | 'strategic' | 'pass' | 'elite' | 'other' = 'other'
             ) => {
                 if (pending.length < 4) pending.push(createSkillTag(name, effect, famous, isAttacker, skillType));
             };
@@ -941,8 +950,9 @@ export class CombatUI {
             // const reinfSkill = getReinforcementJoinSkillDisplay(joinLuck);
             // if (reinfSkill) add(reinfSkill.name, reinfSkill.effectLabel, false, 'other');
 
-            const forageSkill = getExpeditionForageSkillDisplay(unit);
-            if (forageSkill) add(forageSkill.name, forageSkill.effectLabel, true, 'other');
+            // 远征/因粮于敌（不再显示为独立技能框，节约空间，但乘区仍生效）
+            // const forageSkill = getExpeditionForageSkillDisplay(unit);
+            // if (forageSkill) add(forageSkill.name, forageSkill.effectLabel, true, 'other');
 
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {
@@ -952,7 +962,7 @@ export class CombatUI {
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
-                add(getLegionEliteBadgeName(unit), `×${parseFloat(legionMult.toFixed(2))}`, true, 'other');
+                add(getLegionEliteBadgeName(unit), `×${parseFloat(legionMult.toFixed(1))}`, true, 'elite');
             }
 
             for (const tag of pending) box.appendChild(tag);
@@ -997,8 +1007,8 @@ export class CombatUI {
             product *= opponentDebuff.value;
         }
 
-        if (Math.abs(product - 1) <= 0.001) return `${role}×1`;
-        return `${role}×${parseFloat(product.toFixed(2))}`;
+        if (Math.abs(product - 1) <= 0.001) return `×1`;
+        return `×${parseFloat(product.toFixed(1))}`;
     }
 
     private formatBattlePowerFactorChain(
@@ -1010,7 +1020,7 @@ export class CombatUI {
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
         const role = isGarrison ? '城防' : battleType === 'siege' ? '攻城' : '野战';
-        const fmt = (n: number) => String(parseFloat(n.toFixed(2)));
+        const fmt = (n: number) => String(parseFloat(n.toFixed(1)));
 
         const labeled: { label: string; value: number }[] = [];
         const pushIfNotOne = (label: string, n: number) => {

@@ -15,7 +15,7 @@
  * - 任意两据点距离 >= 50km (经纬度差 >= 0.4°)
  * - 已校验所有 T0 之间满足
  *
- * 14 区文化中心 (15 城, 见 RegionSystem.REGION_CENTERS):
+ * 14 区文化中心 (14 城, 见 RegionSystem.REGION_CENTERS):
  * - 开局兵力统一 troops: 20000（大城/中城均有）
  *
  * 界城 region 标准（环线锚点 vs 实际文化，详见 RegionSystem.ts REGION_BOUNDARY_LOOPS 注释）:

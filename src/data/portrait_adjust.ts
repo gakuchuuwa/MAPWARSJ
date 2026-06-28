@@ -1753,8 +1753,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/JIANGNAN/wuyue_qianliu.png": {
-            "scale": 0.96,
-            "offsetX": 5,
+            "scale": 0.94,
+            "offsetX": 9,
             "offsetY": -4
         },
         "/assets/WESTERN/gaochang_quwentai.png": {
@@ -1941,6 +1941,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 12,
             "offsetY": -6
+        },
+        "/assets/BASHU/miaomin_shiliudeng.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -42
+        },
+        "/assets/STEPPE/tuoba_tuobagui.png": {
+            "scale": 1.1,
+            "offsetX": -18,
+            "offsetY": -28
+        },
+        "/assets/JIANGNAN/shenshi_shenqingzhi.png": {
+            "scale": 0.98,
+            "offsetX": 5,
+            "offsetY": 0
         }
     },
     "folderGuides": {

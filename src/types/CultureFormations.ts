@@ -289,7 +289,7 @@ export const BASHU_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 9. 南方 纯步 1轻步+2弓 (前1排步, 后2排弓) */
+/** 9. 江南 纯步 1轻步+2弓 (前1排步, 后2排弓) */
 export const JIANGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,

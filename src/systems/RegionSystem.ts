@@ -46,7 +46,7 @@ export const REGION_ORDER: RegionType[] = [
 export const REGION_LABELS: Record<RegionType, string> = {
     CENTRAL: '中原',
     NORTH: '北方',
-    JIANGNAN: '南方',
+    JIANGNAN: '江南',
     LINGNAN: '岭南',  // 含福建
     BASHU: '川蜀',
     DIANQIAN: '滇缅',
@@ -100,6 +100,10 @@ type Polygon = Point[];
 //   - TIBET lat 上限 38→37 (让出武威 37.93 给 HEXI)
 //   - HEXI 大扩: lng 93-111 (西吃玉门关/敦煌, 东吃陕北延安/统万/河套)
 //   - WESTERN lng 收到 75-93 (让 HEXI 优先)
+//   视觉设计（立绘）：
+//   - HEXI 视觉风格 = 黄土高原建筑（窑洞、夯土城墙、塬上堡寨）
+//   - 皋兰（兰州）和肤施（延安）虽在环线上被中原/北方/河西/川蜀/青藏共用，
+//     但建筑立绘和人物立绘均与 HEXI（河西）一致——因其同属黄土高原地貌
 // v3 (2026-05-28):
 //   - 福建 → LINGNAN (取消独立 MIN, 14 区)
 //   - 东南亚: 越南柬+粤桂海 → LINGNAN, 泰缅 → DIANQIAN
@@ -115,7 +119,7 @@ type Polygon = Point[];
 //   - 松州 → TIBET (川西藏羌)
 //   - 特尔门 → STEPPE (库苏古尔/土拉河，草原)
 //   - 饶乐水 → NORTHEAST (西拉木伦河/昌黎郡旧境)
-//   - 钓鱼岛 → JAPAN (南方/日本环线锚)
+//   - 钓鱼岛 → JAPAN (江南/日本环线锚)
 //   - 扜泥城 → WESTERN (罗布泊西楼兰故地)
 // ============================================================
 // ── 2026-06-11 文化区界城环线（zoom=6 绘线 + 多边形锚点）──
@@ -129,18 +133,18 @@ type Polygon = Point[];
 // 界城 region 标准（环线锚点 vs 实际文化，主人 2026-06-11 拍板）:
 //   据点          cityId              region      说明
 //   石门关        city_shimenguan     BASHU       岭南环线西北锚，文化川蜀门户
-//   临烝          city_linzheng       JIANGNAN    岭南/南方共用
+//   临烝          city_linzheng       JIANGNAN    岭南/江南共用
 //   牡丹社        city_mudan          LINGNAN
 //   邦敦/三菩     city_bangdun/sanpu  LINGNAN
 //   吴哥          city_angkor         LINGNAN     岭南环线西南锚（非滇缅）
 //   广陵/襄阳     city_yangzhou/xiangyang JIANGNAN
-//   钓鱼岛        city_diaoyudao      JAPAN       南方/日本环线共用
+//   钓鱼岛        city_diaoyudao      JAPAN       江南/日本环线共用
 //   宫古岛        city_gugudao        JAPAN
 //   江户城        city_edo            JAPAN
 //   根城/宗谷     city_genjo/zonggu   JAPAN       宗谷界城兼东北/朝鲜/日本锚
-//   星主厅        city_xingzhuting    KOREA       南方/日本/朝鲜共用（济州）
+//   星主厅        city_xingzhuting    KOREA       江南/日本/朝鲜共用（济州）
 //   文登          city_wendeng        NORTH       代威海卫，朝鲜环线锚
-//   襄平          city_liaoyang       NORTHEAST   东北/朝鲜/草原三圈共用
+//   襄平          city_liaoyang       NORTH       东北/朝鲜/草原三圈共用
 //   白主~尼布楚   city_baizhu…nibuchu NORTHEAST   东北环线
 //   尼布楚        city_nibuchu        NORTHEAST   兼草原环线锚（文化东北）
 //   归化城        city_guihua         STEPPE
@@ -158,13 +162,13 @@ type Polygon = Point[];
 //   4 朝鲜  襄平→威海卫→广陵→星主厅→宗谷
 //   5 日本  钓鱼岛→宫古岛→首里→江户→根城→宗谷→星主厅
 //   6 草原  襄平→归化→哈密卫→弓月城→塔城→乌布萨泊→贝加尔→赤塔→尼布楚
-//   7 河西  皋兰→姑臧→卡克里克→哈密→归化→肤施
+//   7 河西  皋兰→姑臧→卡克里克→楼兰→哈密→归化→肤施
 //   8 川蜀  襄阳→临烝→石门关→打箭炉→皋兰→汉中
-//   9 南方  广陵→襄阳→临烝→牡丹社→钓鱼岛城→星主厅
+//   9 江南  广陵→襄阳→临烝→牡丹社→钓鱼岛城→星主厅
 //  10 岭南  石门关→临烝→牡丹社→邦敦→三菩→吴哥
 //  11 滇缅  打箭炉→大研→加德满都→勃固→直通→阿瑜陀耶→吴哥→石门关
-//  12 青藏  加德满都→护密城→塔什库尔干→龙木错→卡克里克→姑臧→皋兰→打箭炉→大研
-//  13 中亚  塔什库尔干→护密城→马鲁鲁德→彭迪→梅尔夫→玉龙杰赤→养吉干→弓月
+//  12 青藏  加德满都→阿托克→塔什库尔干→龙木错→卡克里克→姑臧→兰州→打箭炉→大研
+//  13 中亚  塔什库尔干→阿托克→坎大哈→博斯特→法拉→尼沙布尔→玉龙杰赤→养吉干→弓月
 //  14 西域  哈密→楼兰→卡克里克→龙木错→石头城→弓月
 //
 // 绘线: RegionBoundaryLayer @ zoom=6（REGION_BOUNDARY_ZOOM），共 14 区
@@ -176,12 +180,12 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'KOREA', cityIds: ['city_liaoyang', 'city_wendeng', 'city_yangzhou', 'city_xingzhuting', 'city_zonggu'] },
     { region: 'JAPAN', cityIds: ['city_diaoyudao', 'city_gugudao', 'city_shuri', 'city_edo', 'city_genjo', 'city_zonggu', 'city_xingzhuting'] },
     { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_tacheng', 'city_wubusabo', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu'] },
-    { region: 'HEXI', cityIds: ['city_lanzhou', 'city_wuwei', 'city_ruoqiang', 'city_hamiwei', 'city_guihua', 'city_fushi'] },
+    { region: 'HEXI', cityIds: ['city_lanzhou', 'city_wuwei', 'city_ruoqiang', 'city_loulan', 'city_hamiwei', 'city_guihua', 'city_fushi'] },
     { region: 'BASHU', cityIds: ['city_xiangyang', 'city_linzheng', 'city_shimenguan', 'city_dajianlu', 'city_lanzhou', 'city_hanzhong'] },
     { region: 'JIANGNAN', cityIds: ['city_yangzhou', 'city_xiangyang', 'city_linzheng', 'city_mudan', 'city_diaoyudao', 'city_xingzhuting'] },
     { region: 'LINGNAN', cityIds: ['city_shimenguan', 'city_linzheng', 'city_mudan', 'city_bangdun', 'city_sanpu', 'city_angkor'] },
     { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_bago', 'city_thaton', 'city_ayutthaya', 'city_angkor', 'city_shimenguan'] },
-    { region: 'TIBET', cityIds: ['city_kathmandu', 'city_humicheng', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan'] },
+    { region: 'TIBET', cityIds: ['city_kathmandu', 'city_atuoke', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan'] },
     { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_atuoke', 'city_kandaha', 'city_bosite', 'city_fala', 'city_nishabuer', 'city_urgench', 'city_yangjigan', 'city_almaliq'] },
     { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_almaliq'] },
 ];
@@ -204,24 +208,33 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     CENTRAL_ASIA: '#455a64',
 };
 
-const REGIONS: { id: RegionType; polygon: {lat:number,lng:number}[] }[] = [
-    { id: 'CENTRAL', polygon: [{lat:33.07,lng:107.02},{lat:32.01,lng:112.12},{lat:32.45,lng:119.40},{lat:37.20,lng:122.12},{lat:36.59,lng:109.48},{lat:36.04,lng:103.82}] },
-    { id: 'NORTH', polygon: [{lat:37.20,lng:122.12},{lat:36.59,lng:109.48},{lat:40.84,lng:111.68},{lat:41.27,lng:123.17}] },
-    { id: 'NORTHEAST', polygon: [{lat:41.27,lng:123.17},{lat:45.50,lng:141.93},{lat:46.71,lng:142.52},{lat:49.20,lng:143.10},{lat:52.21,lng:141.95},{lat:52.92,lng:139.77},{lat:53.39,lng:124.08},{lat:53.33,lng:121.45},{lat:51.99,lng:116.58}] },
-    { id: 'KOREA', polygon: [{lat:41.27,lng:123.17},{lat:37.20,lng:122.05},{lat:32.45,lng:119.40},{lat:33.51,lng:126.52},{lat:45.50,lng:141.93}] },
-    { id: 'JAPAN', polygon: [{lat:25.75,lng:123.50},{lat:24.81,lng:125.28},{lat:26.22,lng:127.72},{lat:35.68,lng:139.76},{lat:38.99,lng:141.12},{lat:40.50,lng:141.46},{lat:45.50,lng:141.93},{lat:33.51,lng:126.52}] },
-    { id: 'WESTERN', polygon: [{lat:42.83,lng:93.51},{lat:38.99,lng:88.95},{lat:34.57,lng:80.35},{lat:37.77,lng:75.23},{lat:44.10,lng:79.81}] },
-    { id: 'HEXI', polygon: [{lat:36.04,lng:103.82},{lat:37.93,lng:102.64},{lat:38.99,lng:88.95},{lat:42.83,lng:93.51},{lat:40.84,lng:111.68},{lat:36.59,lng:109.48}] },
-    { id: 'STEPPE', polygon: [{lat:41.27,lng:123.17},{lat:40.84,lng:111.68},{lat:42.83,lng:93.51},{lat:43.98,lng:79.65},{lat:46.75,lng:82.98},{lat:49.98,lng:92.09},{lat:51.84,lng:107.61},{lat:52.03,lng:113.50},{lat:51.99,lng:116.58}] },
-    { id: 'BASHU', polygon: [{lat:32.01,lng:112.12},{lat:26.89,lng:112.60},{lat:28.08,lng:104.25},{lat:30.05,lng:101.96},{lat:36.04,lng:103.82},{lat:33.07,lng:107.02}] },
-    { id: 'JIANGNAN', polygon: [{lat:32.45,lng:119.40},{lat:32.01,lng:112.12},{lat:26.89,lng:112.60},{lat:22.20,lng:120.83},{lat:25.75,lng:123.50},{lat:33.51,lng:126.52}] },
-    { id: 'LINGNAN', polygon: [{lat:28.08,lng:104.25},{lat:26.89,lng:112.60},{lat:22.20,lng:120.83},{lat:12.87,lng:107.80},{lat:12.77,lng:105.97},{lat:13.41,lng:103.87}] },
-    { id: 'DIANQIAN', polygon: [{lat:30.05,lng:101.96},{lat:26.87,lng:100.22},{lat:27.72,lng:85.19},{lat:17.33,lng:96.47},{lat:16.53,lng:97.63},{lat:14.35,lng:100.58},{lat:13.41,lng:103.87},{lat:28.08,lng:104.25}] },
-    { id: 'TIBET', polygon: [{lat:27.72,lng:85.19},{lat:36.73,lng:71.61},{lat:37.77,lng:75.23},{lat:34.57,lng:80.35},{lat:38.99,lng:88.95},{lat:37.93,lng:102.64},{lat:36.04,lng:103.82},{lat:30.05,lng:101.96},{lat:26.87,lng:100.22}] },
-    { id: 'CENTRAL_ASIA', polygon: [{lat:37.77,lng:75.23},{lat:33.77,lng:72.36},{lat:31.63,lng:65.74},{lat:31.58,lng:64.36},{lat:32.37,lng:62.11},{lat:36.21,lng:58.80},{lat:42.24,lng:59.63},{lat:45.60,lng:62.00},{lat:43.98,lng:79.65}] },
-];
+let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
+
+function getDynamicRegions() {
+    if (REGIONS_CACHE) return REGIONS_CACHE;
+    const CITIES_V2_DATA = require('../data/cities_v2').CITIES_V2;
+    if (!CITIES_V2_DATA) return [];
+    const cityMap = new Map<string, { lat: number, lng: number }>();
+    for (const city of CITIES_V2_DATA) {
+        cityMap.set(city.id, { lat: city.lat, lng: city.lng });
+    }
+    REGIONS_CACHE = REGION_BOUNDARY_LOOPS.map(loop => {
+        const polygon: {lat:number,lng:number}[] = [];
+        for (const id of loop.cityIds) {
+            const city = cityMap.get(id);
+            if (city) {
+                polygon.push({ lat: city.lat, lng: city.lng });
+            } else {
+                console.warn(`[RegionSystem] City ${id} not found for region boundary ${loop.region}`);
+            }
+        }
+        return { id: loop.region, polygon };
+    });
+    return REGIONS_CACHE || [];
+}
 
 export function getRegion(lat: number, lng: number): RegionType {
+    const REGIONS = getDynamicRegions();
     for (const region of REGIONS) {
         const poly = region.polygon;
         let inside = false;
@@ -283,7 +296,7 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/lingnan_pass.png')
     },
 
-    // === 中国南方/西南 ===
+    // === 中国江南/西南 ===
     BASHU: { // ✅ 继承原 CHU_SHU 全部 PNG (chushu_*.png) - 川渝盆地素材
         small: resolvePath('/cities/chushu_small.png'),
         medium: resolvePath('/cities/chushu_medium.png'),
@@ -408,9 +421,9 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
 
 
 // ═══════════════════════════════════════════════════════════════
-// 【15 区中心 — 2026-05-30 立】
+// 【14 区中心 — 2026-05-30 立（2026-06-28 中原改单核洛阳）】
 //
-// 14 文化区, 但 CENTRAL (中原) 双核 = 长安 + 洛阳, 故 15 个中心。
+// 14 文化区 = 14 个中心。
 //
 // 用途:
 //   1. 道路骨架: 同区据点向中心连接 (build_region_skeleton.mjs 待写)
@@ -428,7 +441,7 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
 // ═══════════════════════════════════════════════════════════════
 
 export const REGION_CENTERS: Record<RegionType, string[]> = {
-    CENTRAL:      ['city_changan', 'city_luoyang'], // 长安 + 洛阳 (双核)
+    CENTRAL:      ['city_luoyang'],                // 洛阳
     NORTH:        ['city_beijing'],                  // 北京
     JIANGNAN:     ['city_nanjing'],                  // 南京
     LINGNAN:      ['city_panyu'],                    // 番禺 (古名, 即广州)
@@ -449,7 +462,7 @@ export function isRegionCenter(cityId: string): boolean {
     return Object.values(REGION_CENTERS).some(arr => arr.includes(cityId));
 }
 
-/** 辅助: 取某区的中心 cityId 列表 (CENTRAL 返回 2 个, 其他返回 1 个) */
+/** 辅助: 取某区的中心 cityId 列表 (所有区返回 1 个) */
 export function getRegionCenters(region: RegionType): string[] {
     return REGION_CENTERS[region] || [];
 }

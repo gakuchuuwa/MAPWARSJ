@@ -379,9 +379,9 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
         case 'post_battle_troop_pct':
             return `胜后+${Math.round(skill.magnitude * 100)}%`;
         case 'attacker_power_mult':
-            return `野战×${skill.magnitude}`;
+            return `攻方×${skill.magnitude}`;
         case 'defender_power_mult':
-            return `守城×${skill.magnitude}`;
+            return `守方×${skill.magnitude}`;
         case 'plain_power_mult':
             return `平原×${skill.magnitude}`;
         case 'mountain_power_mult':
