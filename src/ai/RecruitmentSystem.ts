@@ -309,7 +309,13 @@ export class RecruitmentSystem {
             return;
         }
 
-        const candidates = this.buildSpawnPlan(cities);
+        // 同屏优先：屏内有合格候选直接出，不经过 14 区轮转；屏内无才回落轮转
+        const allCandidates = this.collectSpawnCandidates(cities);
+        const viewportCandidates = allCandidates.filter((c) => c.inViewport);
+        const candidates = viewportCandidates.length > 0
+            ? viewportCandidates
+            : this.buildSpawnPlan(cities);
+
         let spawnedThisSeason = 0;
 
         for (const { city, armySize } of candidates) {

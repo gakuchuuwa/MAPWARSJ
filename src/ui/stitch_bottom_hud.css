@@ -300,10 +300,14 @@
 
 /* ── 青灰砚台 / 绿竹按键 ── */
 #game-time-hud .hud-controls {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 6px;
     width: var(--hud-w);
+}
+
+#game-time-hud .hud-controls > .game-time-btn {
+    flex: 1 1 calc(25% - 6px); /* 默认约四分之一宽，超出换行 */
 }
 
 #game-time-hud .game-time-btn {

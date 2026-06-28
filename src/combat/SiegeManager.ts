@@ -1,4 +1,4 @@
-import { CityManager } from '../world/CityManager';
+﻿import { CityManager } from '../world/CityManager';
 import { LegionManager } from '../legion/LegionManager';
 import { CombatSystem, IBattleUnit } from './CombatSystem';
 import { GameMap } from '../map/GameMap';
@@ -27,6 +27,7 @@ import {
     type ReinforcementJoinDeps,
 } from '../legion/combat/BattleReinforcementPoll';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 import { shouldSkipHomeRecapture } from '../legion/LegionSpawnPolicy';
 import {
     applySiegeGarrisonBoostIfNeeded,
@@ -613,6 +614,16 @@ export class SiegeManager {
             });
         }
 
+        // [语音播报] 跟随军团攻城时自动朗读
+        const followedId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+        if (followedId === army.id) {
+            speechAnnouncer.announceSiegeStart(
+                army.getFactionId(),
+                army.name,
+                targetCity.name
+            );
+        }
+
         // 沙盒：在哪接触就在哪打，不沿 lastPath 回溯 setPosition（易瞬移到错误路段/远端）
         siegeLog(`🛤️ [Sandbox Siege] ${army.name} 原地开战，不校正坐标`);
 
@@ -667,6 +678,7 @@ export class SiegeManager {
                         troops: 1000,
                     }, {
                         captorLegionName: army.name || '军团',
+                        captorLegionId: army.id,
                     });
 
                     // [FIX] CityManager 的 updateCity 内部会触发 onCityUpdated 回调，自动调用 legionManager.refreshCityRegistry()

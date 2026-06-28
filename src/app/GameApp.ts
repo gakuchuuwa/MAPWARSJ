@@ -44,6 +44,8 @@ import { FactionForceUI } from '../ui/FactionForceUI'; // [NEW] 势力兵力榜
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { audioManager, type AudioManager } from '../audio/AudioManager';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { SpeechVoiceToggle } from '../ui/SpeechVoiceToggle';
 import { gameLog } from '../utils/GameLogger';
 import { tickGameAppFrame, tickGameLogicOnly } from './GameAppLoop';
 import { exposeGameAppGlobals } from './GameAppExpose';
@@ -329,6 +331,18 @@ export class GameApp {
                 this.brawlFeedPanel = new BrawlFeedPanel(this.timeSystem, this.cityManager);
                 this.brawlFeedPanel.init();
                 this.cityManager.setOnCityCaptured((event) => {
+                    // [语音播报] 跟随军团攻占城池 (移至最前，防止被后续 return 截断)
+                    if (event.captorLegionId) {
+                        const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
+                        if (followedId === event.captorLegionId) {
+                            speechAnnouncer.announceCityCapture(
+                                event.newFactionId,
+                                event.captorLegionName || '军团',
+                                event.cityName
+                            );
+                        }
+                    }
+
                     if (!event.captorLegionName) return;
                     if (!BrawlFeedPanel.isEliminableFaction(event.previousFactionId)) return;
 
@@ -354,7 +368,18 @@ export class GameApp {
                         });
                     }
                 });
+
                 Army.setAnnihilationReporter((army, info) => {
+                    // [语音播报] 跟随军团全军覆没 (移至最前，防止 panjun 被 return)
+                    const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
+                    if (followedId === army.id) {
+                        speechAnnouncer.announceAnnihilation(
+                            army.getFactionId(),
+                            army.name || '军团',
+                            info.cityName
+                        );
+                    }
+
                     if (!BrawlFeedPanel.isEliminableFaction(army.getFactionId())) return;
                     this.brawlFeedPanel.pushLegionAnnihilated({
                         factionId: army.getFactionId(),
@@ -502,7 +527,7 @@ export class GameApp {
             );
 
             StreamModeToggle.init();
-
+            SpeechVoiceToggle.init();
             this.map.getLeafletMap().on('dragstart', () => {
                 // [2026-06-23 Fix] 不要自动取消，允许玩家拥有弹性拖拽体验
                 // if (this.cameraFollowUI?.isFollowing()) {

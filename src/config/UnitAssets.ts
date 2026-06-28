@@ -1,4 +1,4 @@
-// ==================== ç²¾çµå›¾è·¯å¾„ (Sprite Paths) ====================
+﻿// ==================== ç²¾çµå›¾è·¯å¾„ (Sprite Paths) ====================
 export const SPRITE_PATHS = {
     PLAYER_ZHONGHUA: {
         // [NEW 8-DIRECTION SYSTEM] S10DB Assets
@@ -55,12 +55,12 @@ export const SPRITE_PATHS = {
         'goryeo_jiangganzan': '/assets/KOREA/goryeo_jiangganzan.png',
         'ashikaga_zulijunshi': '/assets/JAPAN/ashikaga_zulijunshi.png',
         'tiemuer_tiemuer': '/assets/CENTRAL_ASIA/tiemuer_tiemuer.png',
-        'siam_nalixuan': '/assets/DIANQIAN/siam_nalixuan_DIANQIAN.png',
+        'siam_nalixuan': '/assets/pugan/siam_nalixuan_pugan.png',
         'shang_fuhao': '/assets/xianqin/shang_fuhao.png',
         'pizhou_lvbu': '/assets/CENTRAL/pizhou_lvbu.png',
         'xianyu_hanxin': '/assets/liuhan/xianyu_hanxin.png',    // 韩信（generalId 已更新）
         'wei_wuqi': '/assets/xianqin/wei_wuqi.png',
-        'manzhou_nuerhachi': '/assets/NORTHEAST/manzhou_nuerhachi.png',
+        'manzhou_nuerhachi': '/assets/manqing/manzhou_nuerhachi.png',
         'xinluo_jinyixin': '/assets/KOREA/xinluo_jinyixin.png',
         'seljuq_sangjiaer': '/assets/CENTRAL_ASIA/seljuq_sangjiaer.png',
         'zaoyang_d_menggong': '/assets/zhaosong/zaoyang_d_menggong.png',

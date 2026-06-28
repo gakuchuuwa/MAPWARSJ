@@ -418,7 +418,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/yingqin/shangzhou_shangyang.png": {
-            "scale": 1.06,
+            "scale": 1.12,
             "offsetX": 4,
             "offsetY": -8
         },
@@ -1866,6 +1866,56 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 14,
             "offsetY": 24
+        },
+        "/assets/BASHU/lizhou_d_liaohua.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/DIANQIAN/chenla_sheyebamoqishi.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -52
+        },
+        "/assets/CENTRAL/yun_wuli.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/HEXI/quanrong_quanrongwang.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/HEXI/huizhou_yaodui.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/liuhan/xiayang_d_dengyu.png": {
+            "scale": 1.12,
+            "offsetX": -1,
+            "offsetY": 17
+        },
+        "/assets/CENTRAL/pizhou_lvbu.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/xianqin/xichu_xiangyu.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/BASHU/wuxi_shamoke.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/BASHU/wumeng_azi_wm.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -20
         }
     },
     "folderGuides": {

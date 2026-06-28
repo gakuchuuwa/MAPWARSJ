@@ -1,4 +1,4 @@
-import * as L from 'leaflet';
+﻿import * as L from 'leaflet';
 import { City } from '../types/core';
 import { GameMap } from '../map/GameMap';
 import { GridSystem } from '../systems/GridSystem';
@@ -19,6 +19,7 @@ export interface CityUpdateOptions {
     skipCaptureLog?: boolean;
     /** 占城军团名（大乱斗军情用） */
     captorLegionName?: string;
+    captorLegionId?: string;
 }
 
 export interface CityCapturedEvent {
@@ -27,6 +28,7 @@ export interface CityCapturedEvent {
     previousFactionId: string;
     newFactionId: string;
     captorLegionName?: string;
+    captorLegionId?: string;
 }
 
 export class CityManager {
@@ -493,6 +495,7 @@ export class CityManager {
                         previousFactionId: oldCity.factionId,
                         newFactionId: data.factionId,
                         captorLegionName: options?.captorLegionName,
+                        captorLegionId: options?.captorLegionId,
                     });
                 }
             } else if (needsFullRender) {

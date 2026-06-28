@@ -1,4 +1,4 @@
-export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
+﻿export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';

@@ -59,7 +59,7 @@ export class GameConfig {
         /** 兵力低于此值时进攻锚点改用本城（弱兵收缩防线，回程补兵） */
         HOME_ANCHOR_TROOP_THRESHOLD: 20000,
         /** 沙盒地图上同时存在的军团硬上限（大城/中城数据不变，仅限制出征数量） */
-        MAX_ACTIVE_LEGIONS: 20,
+        MAX_ACTIVE_LEGIONS: 30,
         /** 募兵时优先保证每个文化区至少有 N 支现役军团（在总上限内） */
         REGION_BASELINE_LEGIONS: 1,
         /** 第二段「视野优先」单次最多塞进镜头内的军团数（防同屏一波爆出，余量让给第三段全图分散） */
