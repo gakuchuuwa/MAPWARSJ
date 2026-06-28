@@ -1,4 +1,4 @@
-﻿import { CityManager } from '../world/CityManager';
+import { CityManager } from '../world/CityManager';
 import { LegionManager } from '../legion/LegionManager';
 import { CombatSystem, IBattleUnit } from './CombatSystem';
 import { GameMap } from '../map/GameMap';
@@ -620,7 +620,8 @@ export class SiegeManager {
             speechAnnouncer.announceSiegeStart(
                 army.getFactionId(),
                 army.name,
-                targetCity.name
+                targetCity.name,
+                army.generalId
             );
         }
 

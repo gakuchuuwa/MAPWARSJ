@@ -2,15 +2,15 @@
  * SpeechAnnouncer.ts - 跟随军团语音播报
  */
 
-import { getFactionGeneral } from "../data/FactionGenerals";
+import { getFactionGeneral, getGeneralRecordByGeneralId } from "../data/FactionGenerals";
 import {
   GENERAL_PROFILES,
   TACTICAL_SKILL_CATALOG,
   type GeneralProfile,
 } from "../data/GeneralSkills";
 
-function getTacticalSkillName(factionId: string): string {
-  const general = getFactionGeneral(factionId);
+function getTacticalSkillName(factionId: string, generalId?: string): string {
+  const general = generalId ? getGeneralRecordByGeneralId(generalId) : getFactionGeneral(factionId);
   if (!general) return "";
   const profile: GeneralProfile | undefined = GENERAL_PROFILES[general.generalId];
   if (!profile) return "";
@@ -98,9 +98,9 @@ export class SpeechAnnouncer {
   }
 
   /** 攻城开始 */
-  public announceSiegeStart(factionId: string, _legionName: string, cityName: string): void {
+  public announceSiegeStart(factionId: string, _legionName: string, cityName: string, generalId?: string): void {
     if (!this.enabled) return;
-    const general = getFactionGeneral(factionId);
+    const general = generalId ? getGeneralRecordByGeneralId(generalId) : getFactionGeneral(factionId);
     let text: string;
     if (general) {
       text = `${general.generalName}率领${getFactionNameForSpeech(factionId)}军，攻打${cityName}`;
@@ -112,9 +112,9 @@ export class SpeechAnnouncer {
   }
 
   /** 攻占城池 */
-  public announceCityCapture(factionId: string, legionName: string, cityName: string): void {
+  public announceCityCapture(factionId: string, legionName: string, cityName: string, generalId?: string): void {
     if (!this.enabled) return;
-    const skill = getTacticalSkillName(factionId);
+    const skill = getTacticalSkillName(factionId, generalId);
     const elite = hasEliteName(legionName) ? legionName : null;
     let text: string;
     if (elite && skill) {
@@ -127,7 +127,7 @@ export class SpeechAnnouncer {
   }
 
   /** 全军覆没 */
-  public announceAnnihilation(factionId: string, _legionName: string, cityName: string): void {
+  public announceAnnihilation(factionId: string, _legionName: string, cityName: string, _generalId?: string): void {
     if (!this.enabled) return;
     const text = `${getFactionNameForSpeech(factionId)}军于${cityName}，全军覆没`;
     console.log("[Speech] 覆没:", text);

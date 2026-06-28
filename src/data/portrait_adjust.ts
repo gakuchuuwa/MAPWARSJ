@@ -729,7 +729,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/NORTH/dizhou_wangyanzhang.png": {
             "scale": 1,
-            "offsetX": 6,
+            "offsetX": 15,
             "offsetY": 3
         },
         "/assets/JIANGNAN/chizhou_wumingche.png": {
@@ -1961,6 +1961,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 11,
             "offsetY": -35
+        },
+        "/assets/CENTRAL/lu_zhangliao.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/LINGNAN/zhuang_d_washifuren.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/xianqin/qi_qihuangong.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -14
         }
     },
     "folderGuides": {

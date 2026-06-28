@@ -515,7 +515,7 @@ export class CombatUI {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             column-gap: ${uiPx(8)};
-            align-items: center;
+            align-items: end;
             margin-top: ${uiPx(10)};
             padding: 0 ${portraitPad};
             box-sizing: border-box;
@@ -1450,15 +1450,18 @@ export class CombatUI {
             for (const u of waveUnits) {
                 const garrisonElite = u.unitType === 'city' ? readSiegeGarrisonEliteName(u.getEntity?.()) : undefined;
                 if (garrisonElite) {
-                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${garrisonElite}</span>`;
+                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap; grid-column: span 2;">${garrisonElite}</span>`;
                     continue;
                 }
                 const match = u.name.match(/(军团|驻军|守军)$/);
                 const base = match ? u.name.substring(0, match.index) : u.name;
                 const suffix = match ? match[0] : '';
-                html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>`;
+                
                 if (suffix) {
+                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>`;
                     html += `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}</span>`;
+                } else {
+                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap; grid-column: span 2;">${base}</span>`;
                 }
             }
         }

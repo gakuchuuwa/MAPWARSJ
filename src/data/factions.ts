@@ -695,7 +695,7 @@ export const FACTIONS: Faction[] = [
     { id: 'duolu', name: '咄陆' },
     { id: 'zhuxie', name: '朱邪' },
     { id: 'hunxie', name: '浑邪' },
-    { id: 'tiemuer', name: '帖木儿' },
+    { id: 'tiemuer', name: '帖木儿帝国' },
     { id: 'kawusi', name: '卡乌斯' },
     { id: 'keerkezi', name: '柯尔克孜' },
     { id: 'yiduhu', name: '亦都护' },

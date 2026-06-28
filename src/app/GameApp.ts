@@ -335,10 +335,12 @@ export class GameApp {
                     if (event.captorLegionId) {
                         const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
                         if (followedId === event.captorLegionId) {
+                            const army = this.legionManager.getLegionById(event.captorLegionId);
                             speechAnnouncer.announceCityCapture(
                                 event.newFactionId,
                                 event.captorLegionName || '军团',
-                                event.cityName
+                                event.cityName,
+                                army?.generalId
                             );
                         }
                     }
@@ -376,7 +378,8 @@ export class GameApp {
                         speechAnnouncer.announceAnnihilation(
                             army.getFactionId(),
                             army.name || '军团',
-                            info.cityName
+                            info.cityName,
+                            army.generalId
                         );
                     }
 
