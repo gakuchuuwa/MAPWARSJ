@@ -55,7 +55,7 @@ app.innerHTML = `
 <header class="pt-header">
   <div class="pt-title">MAPWAR 立绘调校</div>
   <div class="pt-header-actions">
-    <span class="pt-hint">快捷键：方向键平移，W/S 缩放（按住 Shift 加速）。修改会自动应用到相同图片。</span>
+    <span class="pt-hint">快捷键：[ ] 上/下一张，方向键平移，W/S 缩放（Shift 加速）</span>
     <a href="/" class="pt-link">← 返回游戏</a>
     <button type="button" id="pt-reload" class="pt-btn pt-btn-ghost">重新加载</button>
     <button type="button" id="pt-save-file" class="pt-btn pt-btn-primary">保存 (Ctrl+S)</button>
@@ -123,8 +123,15 @@ function injectStyles(): void {
         border-color: #f5d78e; box-shadow: 0 0 0 2px #f5d78e;
       }
       .pt-grid-canvas-wrap {
-        width: 100%; aspect-ratio: 768/1024; position: relative; overflow: hidden;
+        /* 立绘逻辑高严格 = 游戏战斗立绘高 uiPx(550)=385px，保证 offset 像素位移与游戏一致；
+           显示用 --pt-zoom 整体放大看清脸，不改变内部相对关系（所见即游戏所得）。
+           若游戏 COMBAT_UI_SCALE(0.7) 或 max-height(550) 变了，--pt-stage-h 需同步。 */
+        --pt-stage-h: 385px;
+        --pt-zoom: 2.4;
+        width: 100%; height: calc(var(--pt-stage-h) * var(--pt-zoom));
+        position: relative; overflow: hidden;
         border-radius: 4px 4px 0 0;
+        display: flex; align-items: flex-end; justify-content: center;
         background-color: #2e2e34;
         background-image:
           linear-gradient(45deg, #3a3a42 25%, transparent 25%),
@@ -134,11 +141,10 @@ function injectStyles(): void {
         background-size: 12px 12px;
         background-position: 0 0, 0 6px, 6px -6px, -6px 0;
       }
-      .pt-grid-img-slot {
-        position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center;
-      }
+      .pt-grid-img-slot { display: contents; }
       .img-wrapper {
-        position: relative; height: 100%; display: inline-block;
+        position: relative; height: var(--pt-stage-h); display: inline-block;
+        transform: scale(var(--pt-zoom)); transform-origin: center bottom;
       }
       .img-wrapper img {
         height: 100%; width: auto; max-width: none; display: block;
@@ -459,6 +465,19 @@ function bindEvents(): void {
                 changed = true;
                 e.preventDefault();
                 break;
+            case '[':
+            case ']': {
+                e.preventDefault();
+                const imgs = getFilteredImages();
+                const idx = imgs.indexOf(selectedImage);
+                if (idx < 0 || imgs.length < 2) break;
+                const next = e.key === '[' ? (idx - 1 + imgs.length) % imgs.length : (idx + 1) % imgs.length;
+                selectImageAndAutoSave(imgs[next]).then(() => {
+                    const el = document.getElementById(`card-${safeCardId(imgs[next])}`);
+                    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+                break;
+            }
         }
 
         if (changed) {
