@@ -368,8 +368,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -32
         },
         "/assets/xianqin/jin_xianzhen.png": {
-            "scale": 0.88,
-            "offsetX": 0,
+            "scale": 0.92,
+            "offsetX": 1,
             "offsetY": -47
         },
         "/assets/liuhan/guangwu_xinwuxian.png": {
@@ -548,7 +548,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -14
         },
         "/assets/STEPPE/liao_d_yelvabaoji.png": {
-            "scale": 0.95,
+            "scale": 1.01,
             "offsetX": 12,
             "offsetY": -6
         },
@@ -983,9 +983,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/HEXI/huizhou_yaodui.png": {
-            "scale": 1.2,
+            "scale": 1.14,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -27
         },
         "/assets/liuhan/xiayang_d_dengyu.png": {
             "scale": 1.14,
@@ -2308,9 +2308,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/JAPAN/jinchuan_jinchuanyiyuan.png": {
-            "scale": 1.04,
-            "offsetX": 0,
-            "offsetY": -12
+            "scale": 1.1,
+            "offsetX": 21,
+            "offsetY": -14
         },
         "/assets/JAPAN/kaga_d_xiajianlaizheng.png": {
             "scale": 0.85,
@@ -3498,7 +3498,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/STEPPE/pugu_puguhuaien.png": {
-            "scale": 1.2,
+            "scale": 1.22,
             "offsetX": 0,
             "offsetY": 18
         },
