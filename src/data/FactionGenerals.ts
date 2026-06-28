@@ -547,7 +547,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     ruzhou: { generalId: 'ruzhou_sunjian', generalName: '孙坚', portrait: '/assets/CENTRAL/ruzhou_sunjian.png' },
     ruo: { generalId: 'ruo_wangjian', generalName: '王翦', portrait: '/assets/yingqin/ruo_wangjian.png' },
     yaozhou: { generalId: 'yaozhou_limaozhen', generalName: '李茂贞', portrait: '/assets/CENTRAL/yaozhou_limaozhen.png' },
-    zhi_state: { generalId: 'zhi_state_caocan', generalName: '曹参', portrait: '/assets/liuhan/zhi_state_caocan.png' },
+    jiyuan: { generalId: 'jiyuan_huluguang', generalName: '斛律光', portrait: '/assets/STEPPE/jiyuan_huluguang.png' },
     // 周泰（东吴宿卫；原 wuwu_d，吕蒙迁濡须口后改挂莱国据点）
     yangshao: { generalId: 'yangshao_zhoubo', generalName: '周勃', portrait: '/assets/liuhan/yangshao_zhoubo.png' },
     dixiang: { generalId: 'dixiang_wangmang', generalName: '王莽', portrait: '/assets/liuhan/dixiang_wangmang.png' },

@@ -312,7 +312,7 @@ const _FIXED: Record<string, string> = {
     ruo: '#7A6A4A', // 鄀国（商於赭石，商於材官）
     ruzhou: '#6B6B5A', // 汝州（广成灰褐，赤帻先锋）
     yun: '#8A6A3A', // 允戎（陆浑赭黄，陆浑戎骑）
-    zhi_state: '#5A6B7A', // 轵国（太行钢蓝，太行飞军）
+    jiyuan: '#5A6B7A', // 济源（太行钢蓝，落雕卫）
     xiongding: '#6B4A5A', // 雄定（碗子城紫褐，碗子城军）
     yaozhou: '#9A8A3A', // 耀州（金甲铜黄，金甲卫）
     mushi: '#5A5A7A', // 穆氏（丘穆陵靛紫，丘穆陵骑）

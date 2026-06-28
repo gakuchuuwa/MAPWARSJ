@@ -1221,6 +1221,15 @@ npm run portrait:folder-audit   # 同夹重复 PNG
 npm run portrait:folder-dedupe  # 同夹去重（主人确认后）
 ```
 
+### 13.6 立绘夹跟人物文化走（2026-06-29 定，AI 必读）
+
+| 原则 | 说明 |
+|---|---|
+| **立绘夹 = 人物族群文化** | `FactionGenerals.portrait` 路径中的文件夹须匹配 **将领本人的民族/文化归属**，**不跟据点所在 RegionType** |
+| 例 | 斛律光（敕勒人）据点轵关在 CENTRAL，立绘仍放 `STEPPE/` 夹 → 保证草原画风 |
+| 反例 | ❌ 因据点 region='CENTRAL' 而把敕勒将领立绘挪到 CENTRAL 夹 → 会用汉人画风 |
+| **FactionGenerals.portrait 是显式路径** | 直接命中，不经过三级分配的文化区兜底，不存在「夹不对就找不到」的问题 |
+
 专图校正：游戏内 **F2**（居中/恢复，不自动缩放底对齐）；批量 `portrait-tuner`。
 
 ### 13.6 可选优化（非缺陷，主人需要时再改代码）

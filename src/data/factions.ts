@@ -1,4 +1,4 @@
-﻿// 势力数据 (Faction Data)
+// 势力数据 (Faction Data)
 // 每个势力：id、name（旗号汉字见 SandboxDisplayNames）
 // 显示色：固定见 HistoricalFactionColors.ts；其余每局由 FactionManager 随机分配
 // 命名规则：政权用正式国号(部分加"大")，民族用最高知名度2字简称，军阀用人名姓氏，家族用单姓氏
@@ -230,7 +230,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-16 改：符离·宿州治（§4.7；旗号「徐」让位下邳徐国）──
     { id: 'suzhou_d', name: '宿州' },
     // ── 2026-06-11：狄道（古临洮/陇西；旗号狄，据点临洮）──
-    { id: 'didao', name: '狄道' },
+    { id: 'didao', name: '陇西' },
     // ── 2026-06-11 新增：西凉（马腾/韩遂军阀/金城皋兰）──
     { id: 'lanzhou', name: '兰州' },
     // ── 2026-06-11 精锐部队缺口批次 ──
@@ -900,7 +900,7 @@ export const FACTIONS: Faction[] = [
     { id: 'gar', name: '噶尔' },
     { id: 'ruzhou', name: '汝州' },
     { id: 'yun', name: '允戎' },
-    { id: 'zhi_state', name: '轵国' },
+    { id: 'jiyuan', name: '济源' },
     { id: 'xiongding', name: '雄定' },
     { id: 'yaozhou', name: '耀州' },
     { id: 'huo', name: '霍州' },

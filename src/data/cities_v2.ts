@@ -805,7 +805,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
         note: '金锁关；耀州关隘',
     },
     // ── 太行八陉防御要塞关隘群 ──
-    { id: 'city_zhiguan', name: '野王', factionId: 'zhi_state', lat: 35.150000, lng: 112.300000, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true, note: '轵关/太行陉要隘；汉野王县治轵；旗号轵避§4.1防重' },
+    { id: 'city_zhiguan', name: '轵关', factionId: 'jiyuan', lat: 35.150000, lng: 112.300000, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true, note: '太行陉要隘；北齐斛律光筑勋掌城于此' },
             {
         id: 'city_jingxingguan',
         name: '井陉关',

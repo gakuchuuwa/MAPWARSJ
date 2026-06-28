@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -41,7 +41,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shuizhen': '水真',
     'yueyi': '嶲',
     'wala': '瓦剌',
-    'wuliangha': '兀良哈',
+    'wuliangha': '兀良',
     'dingling': '丁零',
     'nifuhe': '尼夫',
     'nanzhong': '南中',
@@ -472,7 +472,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-28 新增：果洛、土谢图、土默特 ──
     'golog': '果洛',
     'tushetu': '土谢',
-    'tumed': '土默特',
+    'tumed': '土默',
 
     
     'she': '奢',
@@ -550,7 +550,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dulan': '都兰',
 'zhuxie': '朱邪',
 'hunxie': '浑邪',
-    'tiemuer': '帖木儿',
+    'tiemuer': '帖木',
     'kawusi': '卡乌',
     'keerkezi': '柯尔',
     'yiduhu': '亦都',
@@ -743,7 +743,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'gar': '噶尔',
     'ruzhou': '汝',
     'yun': '允',
-    'zhi_state': '轵',
+    'jiyuan': '济源',
     'xiongding': '雄',
     'yaozhou': '耀',
     'huo': '霍',
@@ -796,10 +796,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'bailong': '白龙',
     'jilizhou': '积',
     'nuergan': '都卫', // 奴儿干都司；据点名奴儿干城，旗面避 §4.1 防重
-    'kepantuo': '渴盘陀',
+    'kepantuo': '渴盘',
     xingxingxia: '伊',
     'yangguan': '敦煌',
-    'wulianghai': '乌梁海',
+    'wulianghai': '乌梁',
     'qinghai': '青海',
     'xining': '西宁',
     'kalun': '卡伦',

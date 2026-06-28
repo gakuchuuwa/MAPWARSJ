@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将技数据（格号 = 机制真理，displayName = 展示皮肤）
  * 设计文档：docs/02-design/GENERAL_SKILLS_武将技系统.md
  * AI 分配标签：src/data/GeneralSkillTags.ts（品阶 + 五种战术风格）
@@ -685,7 +685,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_geshuhan: { generalId: 'unassigned_geshuhan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 潼关守将
     ruzhou_sunjian: { generalId: 'ruzhou_sunjian', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 江东猛虎·破虏将军
     yaozhou_limaozhen: { generalId: 'yaozhou_limaozhen', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 岐国军阀
-    zhi_state_caocan: { generalId: 'zhi_state_caocan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 曹参身被七十创攻城略地功最多
+    jiyuan_huluguang: { generalId: 'jiyuan_huluguang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 斛律光 落雕都督
     yiyang_d_mengzongzheng: { generalId: 'yiyang_d_mengzongzheng', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 三关之捷
 
     wuwu_d_lvmeng: { generalId: 'wuwu_d_lvmeng', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_06' }, // 白衣渡江

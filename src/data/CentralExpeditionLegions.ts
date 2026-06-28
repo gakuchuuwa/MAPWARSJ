@@ -46,7 +46,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   ruo: { name: '频阳锐士', tier: 1 },          // 武关·王翦灭楚
   ruzhou: { name: '赤帻先锋', tier: 2 },
   yun: { name: '陆浑戎骑', tier: 3 },
-  zhi_state: { name: '丰沛子弟', tier: 2 },
+  jiyuan: { name: '落雕卫', tier: 1 },
   xiongding: { name: '鲜卑燕军', tier: 2 }, // 天井关·慕容永西燕末代君主
   // 金甲卫除名（生造）
   huo: { name: '霍邑骁锐', tier: 1 },
