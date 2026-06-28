@@ -207,15 +207,15 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/pugan/siam_nalixuan_pugan.png": {
+        "/assets/DIANQIAN/siam_nalixuan_pugan.png": {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": -42
         },
-        "/assets/pugan/chenla_sheyebamoqishi.png": {
+        "/assets/DIANQIAN/chenla_sheyebamoqishi.png": {
             "scale": 0.98,
             "offsetX": 0,
-            "offsetY": -47
+            "offsetY": -52
         },
         "/assets/zhaosong/f53bb928-4883-449a-a3f8-0561299db673.png": {
             "scale": 0.98,
@@ -1367,7 +1367,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -23
         },
-        "/assets/pugan/chenla_sheyebamoqishi_202606250402.png": {
+        "/assets/DIANQIAN/chenla_sheyebamoqishi_202606250402.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -50
@@ -1872,11 +1872,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/DIANQIAN/chenla_sheyebamoqishi.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": -52
-        },
         "/assets/CENTRAL/yun_wuli.png": {
             "scale": 1.1,
             "offsetX": 0,
@@ -1893,8 +1888,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/liuhan/xiayang_d_dengyu.png": {
-            "scale": 1.12,
-            "offsetX": -1,
+            "scale": 1.14,
+            "offsetX": 5,
             "offsetY": 17
         },
         "/assets/CENTRAL/pizhou_lvbu.png": {

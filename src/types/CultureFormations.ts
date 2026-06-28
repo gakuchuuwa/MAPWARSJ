@@ -44,8 +44,8 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     LINGNAN:      'square',
     DIANQIAN:     'square',
     TIBET:        'triangle',
-    CENTRAL_ASIA: 'square',
-    WESTERN:      'triangle',
+    CENTRAL_ASIA: 'triangle',
+    WESTERN:      'square',
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -347,8 +347,21 @@ export const TIBET_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 13. 中亚 步骑 轻+轻骑+弓 */
+/** 13. 中亚 纯骑 轻骑+弓骑 123 */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'general_cavalry', count: 1, scale: 1.2 },
+            { type: 'horse_archer', count: 2 },
+            { type: 'lancer', count: 3 }
+        ]
+    }
+];
+/** 14. 西域 步骑 轻+轻骑+弓 */
+export const WESTERN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
@@ -359,19 +372,6 @@ export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
             { type: 'general_cavalry', count: 1 },
             { type: 'lancer', count: 1 },
             { type: 'archer', count: 3 }
-        ]
-    }
-];
-/** 14. 西域 纯骑 轻骑+弓骑 123 */
-export const WESTERN_TIERS: CompositionTier[] = [
-    {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: 'general_cavalry', count: 1, scale: 1.2 },
-            { type: 'horse_archer', count: 2 },
-            { type: 'lancer', count: 3 }
         ]
     }
 ];

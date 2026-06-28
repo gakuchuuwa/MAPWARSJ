@@ -56,7 +56,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     goryeo: { generalId: 'goryeo_jiangganzan', generalName: '姜邯赞', portrait: '/assets/KOREA/goryeo_jiangganzan.png' },
     ashikaga: { generalId: 'ashikaga_zulijunshi', generalName: '足利尊氏', portrait: '/assets/JAPAN/ashikaga_zulijunshi.png' },
     tiemuer: { generalId: 'tiemuer_tiemuer', generalName: '帖木儿', portrait: '/assets/CENTRAL_ASIA/tiemuer_tiemuer.png' },
-    siam: { generalId: 'siam_nalixuan', generalName: '纳黎萱', portrait: '/assets/pugan/siam_nalixuan_pugan.png' },
+    siam: { generalId: 'siam_nalixuan', generalName: '纳黎萱', portrait: '/assets/DIANQIAN/siam_nalixuan_pugan.png' },
     shang: { generalId: 'shang_fuhao', generalName: '妇好', portrait: '/assets/xianqin/shang_fuhao.png' },
     bing: { generalId: 'bing_liukun', generalName: '刘琨', portrait: '/assets/CENTRAL/bing_liukun.png' },
     min: { generalId: 'min_wangshenzhi', generalName: '王审知', portrait: '/assets/JIANGNAN/min_wangshenzhi.png' },
@@ -384,7 +384,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     jingjiang: { generalId: 'jingjiang_qushisi', generalName: '瞿式耜', portrait: '/assets/LINGNAN/jingjiang_qushisi.png' }, // 永安·收复广西
     duanzhou_d: { generalId: 'duanzhou_d_caojin', generalName: '曹觐', portrait: '/assets/LINGNAN/duanzhou_d_caojin.png' }, // 肇庆·屡败侬智高
     monong: { generalId: 'monong_anong', generalName: '阿侬', portrait: '/assets/LINGNAN/monong_anong.png' }, // 邦敦·侬智高母
-    basha_d: { generalId: 'basha_d_daogengmeng', generalName: '刀更孟', portrait: '/assets/pugan/basha_d_daogengmeng.png' }, // 上丁·巴沙象兵
+    basha_d: { generalId: 'basha_d_daogengmeng', generalName: '刀更孟', portrait: '/assets/DIANQIAN/basha_d_daogengmeng.png' }, // 上丁·巴沙象兵
     leizhou: { generalId: 'leizhou_limao_leizhou', generalName: '李茂', portrait: '/assets/LINGNAN/leizhou_limao_leizhou.png' }, // 海康·雷州卫指挥
     ketagalan: { generalId: 'ketagalan_huangqingyun', generalName: '黄青云', portrait: '/assets/LINGNAN/ketagalan_huangqingyun.png' }, // 艋舺·凯达格兰
     shuizhen: { generalId: 'shuizhen_oudaren', generalName: '区大任', portrait: '/assets/DIANQIAN/shuizhen_oudaren.png' }, // 三菩·水真戍

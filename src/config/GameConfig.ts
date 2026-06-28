@@ -78,7 +78,7 @@ export class GameConfig {
         SPAWN_CITY_TYPES: ['big_city', 'medium_city', 'small_city', 'pass'] as const,
         /** 方阵文化军团兵力上限（出征 / 跟随补兵） */
         ARMY_MAX_TROOPS: 100_000,
-        /** 纯骑三角文化（草原/青藏/西域）军团兵力上限 */
+        /** 纯骑三角文化（草原/青藏/中亚）军团兵力上限 */
         TRIANGLE_CAVALRY_ARMY_MAX_TROOPS: 70_000,
     };
     /** 乱斗游戏时间：现实 1 分钟 = 游戏 1 年（1x 倍速） */
@@ -130,8 +130,8 @@ export class GameConfig {
      * 五级文化攻防固定系数（只影响掷色，不改显示兵力）
      * 主人 2026-06-11 拍板（GAME_DIRECTION.md「五级文化攻防」，100 局推演验证：日本胜率 65%→43%）：
      *   高攻 草原/青藏/东北：野战 ×1.2，守城 ×0.8（蒙古铁骑、吐蕃武士、女真八旗）
-     *   低攻 西域/河西/北方：野战 ×1.1，守城 ×0.9（凉州大马、幽并铁骑）
-     *   中性 中原/中亚：×1.0（四战之地，攻防兼备）
+     *   低攻 中亚/河西/北方：野战 ×1.1，守城 ×0.9（凉州大马、幽并铁骑）
+     *   中性 中原/西域：×1.0（四战之地，攻防兼备）
      *   低防 日本/朝鲜/江南：野战 ×0.9，守城 ×1.1（岛国/江河之险，善守不善攻）
      *   高防 岭南/滇缅/川蜀：野战 ×0.8，守城 ×1.2（瘴疠山城、蜀道之难）
      */
@@ -139,8 +139,8 @@ export class GameConfig {
         /** region → [野战系数, 守城系数]；未列出的区按 1.0 */
         TIER_TABLE: {
             STEPPE: [1.2, 0.8], TIBET: [1.2, 0.8], NORTHEAST: [1.2, 0.8],
-            WESTERN: [1.1, 0.9], HEXI: [1.1, 0.9], NORTH: [1.1, 0.9],
-            CENTRAL: [1.0, 1.0], CENTRAL_ASIA: [1.0, 1.0],
+            CENTRAL_ASIA: [1.1, 0.9], HEXI: [1.1, 0.9], NORTH: [1.1, 0.9],
+            CENTRAL: [1.0, 1.0], WESTERN: [1.0, 1.0],
             JAPAN: [0.9, 1.1], KOREA: [0.9, 1.1], JIANGNAN: [0.9, 1.1],
             LINGNAN: [0.8, 1.2], DIANQIAN: [0.8, 1.2], BASHU: [0.8, 1.2],
         } as Record<string, readonly [number, number]>,
@@ -258,7 +258,7 @@ export const MARCH_SPEED_MULTIPLIERS = {
         plain: 1.5,
         sea: 1.2,     // 帆船纯速度快但贴岸绕/等风/昼行夜泊，有效推进不如平原行军
     },
-    /** 三角纯骑文化（STEPPE/TIBET/WESTERN）仅在陆地生效 */
+    /** 三角纯骑文化（STEPPE/TIBET/CENTRAL_ASIA）仅在陆地生效 */
     CAVALRY_LAND: {
         current: { mountain: 1.5, plain: 2.0 },
         conservative: { mountain: 1.2, plain: 1.5 },

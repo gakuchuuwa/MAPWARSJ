@@ -15,6 +15,7 @@ import { gameLog } from '../utils/GameLogger';
 import { getRandomFactionPortrait } from '../config/portrait_defaults';
 import { getGeneralMarchSpeedMultiplier } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
+import { isCultureCavalryOnly } from '../types/CultureFormations';
 
 export class Army implements IBattleUnit {
     private map: GameMap;
@@ -206,11 +207,9 @@ export class Army implements IBattleUnit {
             && !this.isPostBattleResting();
     }
 
-    /** 纯骑部队（草原/青藏/西域三角阵）——与行军提速判定同口径，用于区分行军音效 */
+    /** 纯骑部队（三角阵文化）——与行军提速判定同口径，用于区分行军音效 */
     public isCavalryArmy(): boolean {
-        return this.cultureRegion === 'STEPPE'
-            || this.cultureRegion === 'TIBET'
-            || this.cultureRegion === 'WESTERN';
+        return this.cultureRegion ? isCultureCavalryOnly(this.cultureRegion) : false;
     }
 
     // [NEW] Blocked state management
@@ -266,7 +265,7 @@ export class Army implements IBattleUnit {
     public legionType: LegionType = 'infantry';
     public cultureSlots: string[] | null = null; // [NEW] 14 文化阵型 slot 类型列表
     public cultureScales: number[] | null = null; // [NEW] 自定义单位缩放列表
-    /** 军团文化区：用于三角纯骑行军加成（STEPPE/TIBET/WESTERN） */
+    /** 军团文化区：用于三角纯骑行军加成（STEPPE/TIBET/CENTRAL_ASIA） */
     public cultureRegion: RegionType | null = null;
     public name: string; // [IBattleUnit]
     public generalId?: string; // [NEW] UI Avatar ID
@@ -458,8 +457,7 @@ export class Army implements IBattleUnit {
                     : MARCH_SPEED_MULTIPLIERS.TERRAIN.mountain;
 
         let cavalryMult = 1.0;
-        const isTriangleCavalryCulture =
-            this.cultureRegion === 'STEPPE' || this.cultureRegion === 'TIBET' || this.cultureRegion === 'WESTERN';
+        const isTriangleCavalryCulture = this.cultureRegion ? isCultureCavalryOnly(this.cultureRegion) : false;
         if (!this.isOnSea && isTriangleCavalryCulture) {
             const preset = MARCH_SPEED_MULTIPLIERS.USE_CONSERVATIVE_CAVALRY_PRESET
                 ? MARCH_SPEED_MULTIPLIERS.CAVALRY_LAND.conservative

@@ -1,4 +1,4 @@
-﻿// ==================== ç²¾çµå›¾è·¯å¾„ (Sprite Paths) ====================
+// ==================== ç²¾çµå›¾è·¯å¾„ (Sprite Paths) ====================
 export const SPRITE_PATHS = {
     PLAYER_ZHONGHUA: {
         // [NEW 8-DIRECTION SYSTEM] S10DB Assets
@@ -55,7 +55,7 @@ export const SPRITE_PATHS = {
         'goryeo_jiangganzan': '/assets/KOREA/goryeo_jiangganzan.png',
         'ashikaga_zulijunshi': '/assets/JAPAN/ashikaga_zulijunshi.png',
         'tiemuer_tiemuer': '/assets/CENTRAL_ASIA/tiemuer_tiemuer.png',
-        'siam_nalixuan': '/assets/pugan/siam_nalixuan_pugan.png',
+        'siam_nalixuan': '/assets/DIANQIAN/siam_nalixuan_pugan.png',
         'shang_fuhao': '/assets/xianqin/shang_fuhao.png',
         'pizhou_lvbu': '/assets/CENTRAL/pizhou_lvbu.png',
         'xianyu_hanxin': '/assets/liuhan/xianyu_hanxin.png',    // 韩信（generalId 已更新）

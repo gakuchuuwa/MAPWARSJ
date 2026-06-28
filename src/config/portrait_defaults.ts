@@ -137,7 +137,6 @@ function _folderPool(folder: string): string[] {
 const _wuzhouPortraitPool = _folderPool('wuzhou');     // 武周
 const _litangPortraitPool = _folderPool('litang');     // 李唐
 const _damingPortraitPool = _folderPool('daming');     // 大明
-const _puganPortraitPool = _folderPool('pugan');       // 蒲甘（滇缅区）
 const _manqingPortraitPool = _folderPool('manqing');   // 满清
 const _xianqinPortraitPool = _folderPool('xianqin');   // 殷商
 const _liuhanPortraitPool = _folderPool('liuhan');     // 汉国（南郑）
@@ -263,9 +262,9 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'ailao': _dianmianPortraitPool,
     'dali': _dianmianPortraitPool,
     'nanzhao': _dianmianPortraitPool,
-    'pagan': _puganPortraitPool,
-    'siam': _puganPortraitPool,
-    'chenla': _puganPortraitPool,
+    'pagan': _dianmianPortraitPool,
+    'siam': _dianmianPortraitPool,
+    'chenla': _dianmianPortraitPool,
     'ava': _dianmianPortraitPool,
     'dongxu': _dianmianPortraitPool,
     'pyu': _dianmianPortraitPool,

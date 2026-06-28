@@ -1,4 +1,4 @@
-﻿export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
+export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';
@@ -52,7 +52,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     ui_click: sound('ui', 'ui_click', 0.35, 120),
     ui_confirm: sound('ui', 'ui_confirm', 0.45, 160),
     march_loop: sound('battle', 'march_loop', 0.32, 0),
-    // 纯骑部队（草原/青藏/西域）专用行军音效，与步骑 march_loop 分开
+    // 纯骑部队（草原/青藏/中亚）专用行军音效，与步骑 march_loop 分开
     cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.32, 0),
     battle_loop: sound('battle', 'battle_loop', 0.5, 0),
     battle_start: sound('battle', 'battle_start', 0.65, 1600),
@@ -256,7 +256,7 @@ export class AudioManager {
 
         this.followedAudioState = { ...state, isCavalry };
 
-        // 纯骑（草原/青藏/西域）走专用行军音，步骑/纯步走 march_loop
+        // 纯骑（草原/青藏/中亚）走专用行军音，步骑/纯步走 march_loop
         const marchKey: SoundKey = isCavalry ? 'cavalry_march_loop' : 'march_loop';
         const otherMarchKey: SoundKey = isCavalry ? 'march_loop' : 'cavalry_march_loop';
 
