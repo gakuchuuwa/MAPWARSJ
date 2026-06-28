@@ -1237,7 +1237,7 @@ export const PERIPHERY: CityDataV2[] = [
     },
     { id: 'city_tongwancheng', name: '统万城', factionId: 'helian', lat: 38.024286, lng: 109.149170, type: 'small_city', region: 'HEXI', troops: 10000, note: '大夏都城遗址；峰值人口未达中城门槛，2026-06-12 降级' },
 
-    { id: 'city_qiuchi', name: '仇池', factionId: 'qiuchi', lat: 33.86, lng: 105.3, type: 'small_city', region: 'BASHU', troops: 10000,
+    { id: 'city_qiuchi', name: '上禄', factionId: 'qiuchi', lat: 33.86, lng: 105.3, type: 'small_city', region: 'BASHU', troops: 10000,
         note: '仇池；杨氏小城',
     },
     { id: 'city_ganquanyi', name: '甘泉驿', factionId: 'wudu', lat: 33.4293, lng: 105.1419, type: 'small_city', region: 'BASHU', troops: 10000,

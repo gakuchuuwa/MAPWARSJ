@@ -75,7 +75,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'liangzhou': '凉',
     'juqu_d': '沮渠',
     'tufa_d': '秃发',
-    'qiuchi': '杨',
+    'qiuchi': '仇池',
 'helian': '赫连',
     'xiongnu': '匈奴',
 'xianbei': '鲜卑',

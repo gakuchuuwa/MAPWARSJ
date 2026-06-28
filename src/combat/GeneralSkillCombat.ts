@@ -215,6 +215,26 @@ export function getOpeningTacticalPowerMultiplier(unit: IBattleUnit): number {
 }
 
 /**
+ * 开局战术战力压制乘区（仅名将敌方减益技能）。
+ * 接受单个 IBattleUnit 或整支部队数组（与底层 applyEnemyDebuff 逻辑一致，
+ * 多单位时用 findEligibleGeneralUnit 找第一个有资格的将领）。
+ */
+export function getOpeningTacticalEnemyPowerDebuffMultiplier(
+    opponentUnits: IBattleUnit | IBattleUnit[] | null
+): { value: number; label: string } | null {
+    if (!opponentUnits) return null;
+    const unit = Array.isArray(opponentUnits)
+        ? findEligibleGeneralUnit(opponentUnits)
+        : opponentUnits;
+    if (!unit || !canUnitUseGeneralSkills(unit)) return null;
+    const profile = getGeneralProfile(unit.generalId);
+    if (profile?.tier !== 'famous') return null;
+    const skill = getTacticalSkillForTiming(unit, 'opening');
+    if (!skill || skill.effect !== 'enemy_mult_0_8') return null;
+    return { value: skill.magnitude, label: skill.displayName };
+}
+
+/**
  * 战略开战战力乘区（须匹配战场类型 / 地形）
  */
 export function getStrategicBattlePowerMultiplier(
@@ -284,7 +304,7 @@ export function getReinforcementJoinSkillDisplay(
 }
 
 function appendStrategicDisplayTag(
-    tags: { name: string; effectLabel: string; isFamous: boolean }[],
+    tags: { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' | 'strategic' }[],
     skillId: string,
 ): void {
     const str = getStrategicSkillDef(skillId);
@@ -294,15 +314,16 @@ function appendStrategicDisplayTag(
         name: str.displayName,
         effectLabel: formatStrategicEffectLabel(str),
         isFamous: true,
+        skillType: 'strategic',
     });
 }
 
 export function getGeneralSkillDisplayTags(
     unit: IBattleUnit,
-): { name: string; effectLabel: string; isFamous: boolean }[] {
+): { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' | 'strategic' }[] {
     const profile = getGeneralProfile(unit.generalId);
     if (!profile) return [];
-    const tags: { name: string; effectLabel: string; isFamous: boolean }[] = [];
+    const tags: { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' | 'strategic' }[] = [];
     const famous = profile.tier === 'famous';
 
     const tac = getTacticalSkillDef(profile.tacticalSkillId);
@@ -311,6 +332,7 @@ export function getGeneralSkillDisplayTags(
             name: tac.displayName,
             effectLabel: formatTacticalEffectLabel(tac),
             isFamous: famous,
+            skillType: 'tactical',
         });
     }
 

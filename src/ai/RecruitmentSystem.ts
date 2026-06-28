@@ -300,7 +300,15 @@ export class RecruitmentSystem {
         });
     }
 
-    /** 大城/中城/小城/关隘、无现役军、兵够则出征；每季最多 1 支（见 MAX_LEGIONS_SPAWN_PER_SEASON） */
+    /**
+     * 季度出兵逻辑（每季最多 1 支，见 MAX_LEGIONS_SPAWN_PER_SEASON）
+     *
+     * 优先级：
+     *   1. 同屏保底：跟随镜头内活跃军团 < 2 支时，优先在同屏城池刷兵
+     *      （保持跟随军团 + 至少 1 支其他军团的观赏性）
+     *   2. 文化轮转：同屏已 ≥ 2 支军团 → 14 区轮转扶贫（buildSpawnPlan）
+     *   3. 兵力排序：同组内按驻军从高到低（sortSpawnCandidates 已保证）
+     */
     private trySpawnLegions(cities: ReturnType<CityManager['getCities']>): void {
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
         const perSeasonCap = Math.max(1, GameConfig.LEGION.MAX_LEGIONS_SPAWN_PER_SEASON);
@@ -309,12 +317,33 @@ export class RecruitmentSystem {
             return;
         }
 
-        // 同屏优先：屏内有合格候选直接出，不经过 14 区轮转；屏内无才回落轮转
-        const allCandidates = this.collectSpawnCandidates(cities);
-        const viewportCandidates = allCandidates.filter((c) => c.inViewport);
-        const candidates = viewportCandidates.length > 0
-            ? viewportCandidates
-            : this.buildSpawnPlan(cities);
+        // ── 统计同屏活跃军团数（含跟随军团自身） ──
+        const bounds = this.getCurrentViewportBounds();
+        let visibleLegionCount = 0;
+        if (bounds) {
+            for (const army of this.legionManager.getArmies()) {
+                if (army.isDestroyed || army.type !== 'legion') continue;
+                const pos = army.getPosition();
+                if (bounds.contains([pos.lat, pos.lng])) {
+                    visibleLegionCount++;
+                }
+            }
+        }
+
+        // ── 决定候选来源 ──
+        let candidates: SpawnCandidate[];
+
+        if (visibleLegionCount < 2) {
+            // 同屏不足 2 支 → 优先在屏内刷兵；屏内无合格城池才回落轮转
+            const allCandidates = this.collectSpawnCandidates(cities);
+            const viewportCandidates = allCandidates.filter((c) => c.inViewport);
+            candidates = viewportCandidates.length > 0
+                ? viewportCandidates
+                : this.buildSpawnPlan(cities);
+        } else {
+            // 同屏已 ≥ 2 支 → 14 区文化轮转（兵力从高到低）
+            candidates = this.buildSpawnPlan(cities);
+        }
 
         let spawnedThisSeason = 0;
 

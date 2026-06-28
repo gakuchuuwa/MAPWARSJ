@@ -1916,6 +1916,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -20
+        },
+        "/assets/BASHU/tan_d_tanhou.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -46
+        },
+        "/assets/BASHU/she_shechongming.png": {
+            "scale": 1.06,
+            "offsetX": 20,
+            "offsetY": -36
+        },
+        "/assets/CENTRAL/mengcheng_d_gaoqiong.png": {
+            "scale": 1.02,
+            "offsetX": 20,
+            "offsetY": -16
+        },
+        "/assets/JIANGNAN/xiao_d_xiaomohe.png": {
+            "scale": 1.16,
+            "offsetX": 12,
+            "offsetY": 0
+        },
+        "/assets/TIBET/beidi_yaochang.png": {
+            "scale": 1,
+            "offsetX": 12,
+            "offsetY": -6
         }
     },
     "folderGuides": {

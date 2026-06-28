@@ -36,6 +36,7 @@ import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getC
 import type { LandTerrainKind } from '../world/land-sea';
 import {
     getOpeningTacticalPowerMultiplier,
+    getOpeningTacticalEnemyPowerDebuffMultiplier,
     getStrategicBattlePowerMultiplier,
     getGeneralSkillDisplayTags,
     getPassGarrisonDefenseSkillDisplay,
@@ -733,6 +734,7 @@ export class CombatUI {
         const applyChain = (
             multSpan: HTMLSpanElement,
             unit: IBattleUnit | null,
+            opponent: IBattleUnit | null,
             side: 'attacker' | 'defender',
         ) => {
             if (!unit) {
@@ -741,7 +743,7 @@ export class CombatUI {
                 multSpan.textContent = '';
                 return;
             }
-            const { chain, title } = this.formatBattlePowerFactorChain(unit, side);
+            const { chain, title } = this.formatBattlePowerFactorChain(unit, opponent, side);
             if (!chain) {
                 multSpan.style.display = 'none';
                 multSpan.removeAttribute('title');
@@ -752,12 +754,13 @@ export class CombatUI {
             multSpan.title = title;
             multSpan.style.display = 'inline';
         };
-        applyChain(this.leftFactionMultSpan, attacker, 'attacker');
-        applyChain(this.rightFactionMultSpan, defender, 'defender');
+        applyChain(this.leftFactionMultSpan, attacker, defender, 'attacker');
+        applyChain(this.rightFactionMultSpan, defender, attacker, 'defender');
 
         const applyTotal = (
             badge: HTMLSpanElement | null,
             unit: IBattleUnit | null,
+            opponent: IBattleUnit | null,
             side: 'attacker' | 'defender',
         ) => {
             if (!badge) return;
@@ -765,11 +768,11 @@ export class CombatUI {
                 badge.style.display = 'none';
                 return;
             }
-            badge.textContent = this.formatBattlePowerBadge(unit, side);
+            badge.textContent = this.formatBattlePowerBadge(unit, opponent, side);
             badge.style.display = 'inline-block';
         };
-        applyTotal(this.leftMultBadge, attacker, 'attacker');
-        applyTotal(this.rightMultBadge, defender, 'defender');
+        applyTotal(this.leftMultBadge, attacker, defender, 'attacker');
+        applyTotal(this.rightMultBadge, defender, attacker, 'defender');
     }
 
     private getPrimaryBattler(side: 'attacker' | 'defender'): IBattleUnit | null {
@@ -826,18 +829,45 @@ export class CombatUI {
         this.leftSkillsBox.innerHTML = '';
         this.rightSkillsBox.innerHTML = '';
 
-        const createSkillTag = (name: string, effect: string, isFamous: boolean, isAttacker: boolean) => {
+        const createSkillTag = (
+            name: string,
+            effect: string,
+            isFamous: boolean,
+            isAttacker: boolean,
+            skillType: 'tactical' | 'strategic' | 'pass' | 'other' = 'other'
+        ) => {
             const tag = document.createElement('div');
             const borderColor = isFamous ? 'rgba(255, 215, 0, 0.7)' : 'rgba(200, 200, 200, 0.6)';
             
-            // 加入攻守阵营颜色区分：攻方带红色调，守方带蓝色调
+            // 加入攻守与战术/战略/地形颜色区分
             let bgColor = '';
-            if (isAttacker) {
-                bgColor = isFamous ? 'rgba(80, 20, 0, 0.85)' : 'rgba(50, 15, 0, 0.8)';
+            let sideColor = isAttacker ? '#ff8800' : '#00aabb'; // 默认战术/其他：攻橙 守蓝
+
+            if (skillType === 'strategic') {
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(80, 10, 60, 0.85)' : 'rgba(50, 10, 40, 0.8)';
+                    sideColor = '#e033ff'; // 战略攻：紫
+                } else {
+                    bgColor = isFamous ? 'rgba(10, 60, 60, 0.85)' : 'rgba(10, 40, 40, 0.8)';
+                    sideColor = '#00e5ff'; // 战略守：青
+                }
+            } else if (skillType === 'pass') {
+                // 关隘/据险而守：使用岩石/大地色系
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(70, 50, 20, 0.85)' : 'rgba(50, 40, 20, 0.8)';
+                    sideColor = '#c4a45a'; // 关隘攻：土黄（理论上关隘不攻击，仅为防错）
+                } else {
+                    bgColor = isFamous ? 'rgba(40, 50, 30, 0.85)' : 'rgba(30, 40, 25, 0.8)';
+                    sideColor = '#94ad6e'; // 关隘守：青灰/草石色
+                }
             } else {
-                bgColor = isFamous ? 'rgba(10, 40, 70, 0.85)' : 'rgba(10, 25, 45, 0.8)';
+                // 战术或其他技能保持原色调（攻红 守蓝）
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(80, 20, 0, 0.85)' : 'rgba(50, 15, 0, 0.8)';
+                } else {
+                    bgColor = isFamous ? 'rgba(10, 40, 70, 0.85)' : 'rgba(10, 25, 45, 0.8)';
+                }
             }
-            const sideColor = isAttacker ? '#ff8800' : '#00aabb'; // 攻橙 守蓝
 
             tag.style.cssText = `
                 display: flex;
@@ -894,29 +924,35 @@ export class CombatUI {
         const renderSide = (box: HTMLDivElement, unit: IBattleUnit | null, isAttacker: boolean) => {
             if (!unit) return;
             const pending: HTMLDivElement[] = [];
-            const add = (name: string, effect: string, famous: boolean) => {
-                if (pending.length < 4) pending.push(createSkillTag(name, effect, famous, isAttacker));
+            const add = (
+                name: string,
+                effect: string,
+                famous: boolean,
+                skillType: 'tactical' | 'strategic' | 'pass' | 'other' = 'other'
+            ) => {
+                if (pending.length < 4) pending.push(createSkillTag(name, effect, famous, isAttacker, skillType));
             };
 
             const passSkill = getPassGarrisonDefenseSkillDisplay(unit);
-            if (passSkill) add(passSkill.name, passSkill.effectLabel, false);
+            if (passSkill) add(passSkill.name, passSkill.effectLabel, false, 'pass');
 
-            const joinLuck = this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
-            const reinfSkill = getReinforcementJoinSkillDisplay(joinLuck);
-            if (reinfSkill) add(reinfSkill.name, reinfSkill.effectLabel, false);
+            // 兵合一处（不再显示为独立技能框，但下方乘区链条依然会有）
+            // const joinLuck = this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
+            // const reinfSkill = getReinforcementJoinSkillDisplay(joinLuck);
+            // if (reinfSkill) add(reinfSkill.name, reinfSkill.effectLabel, false, 'other');
 
             const forageSkill = getExpeditionForageSkillDisplay(unit);
-            if (forageSkill) add(forageSkill.name, forageSkill.effectLabel, true);
+            if (forageSkill) add(forageSkill.name, forageSkill.effectLabel, true, 'other');
 
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {
-                    add(tag.name, tag.effectLabel, tag.isFamous);
+                    add(tag.name, tag.effectLabel, tag.isFamous, tag.skillType);
                 }
             }
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
-                add(getLegionEliteBadgeName(unit), `×${parseFloat(legionMult.toFixed(2))}`, true);
+                add(getLegionEliteBadgeName(unit), `×${parseFloat(legionMult.toFixed(2))}`, true, 'other');
             }
 
             for (const tag of pending) box.appendChild(tag);
@@ -938,7 +974,7 @@ export class CombatUI {
         return getBattleTerrainKind(units, this.boundRegionalBattleField.type);
     }
 
-    private formatBattlePowerBadge(unit: IBattleUnit, side: 'attacker' | 'defender'): string {
+    private formatBattlePowerBadge(unit: IBattleUnit, opponent: IBattleUnit | null, side: 'attacker' | 'defender'): string {
         const isGarrison = unit.unitType === 'city';
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
@@ -951,13 +987,23 @@ export class CombatUI {
         product *= getStrategicBattlePowerMultiplier(unit, battleType, terrain, side);
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
         if (joinLuck !== null) product *= joinLuck;
-        
+
+        // 应用对手的减益（与底层 applyEnemyDebuff 完全对齐：多单位合战取 findEligibleGeneralUnit）
+        const opponentUnits = this.getOpponentUnitsFor(side);
+        const opponentDebuff = getOpeningTacticalEnemyPowerDebuffMultiplier(
+            opponentUnits.length > 0 ? opponentUnits : opponent
+        );
+        if (opponentDebuff !== null) {
+            product *= opponentDebuff.value;
+        }
+
         if (Math.abs(product - 1) <= 0.001) return `${role}×1`;
         return `${role}×${parseFloat(product.toFixed(2))}`;
     }
 
     private formatBattlePowerFactorChain(
         unit: IBattleUnit,
+        opponent: IBattleUnit | null,
         side: 'attacker' | 'defender',
     ): { chain: string; title: string } {
         const isGarrison = unit.unitType === 'city';
@@ -974,6 +1020,16 @@ export class CombatUI {
         pushIfNotOne(PASS_GARRISON_DEFENSE_SKILL.displayName, getPassGarrisonCombatMultiplier(unit));
         pushIfNotOne(getLegionEliteBadgeName(unit), getCampaignLegionCombatMultiplier(unit));
         pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(unit));
+
+        // 压制减益（来自对手，与底层 applyEnemyDebuff 完全对齐：多单位合战取 findEligibleGeneralUnit）
+        const opponentUnits = this.getOpponentUnitsFor(side);
+        const opponentDebuff = getOpeningTacticalEnemyPowerDebuffMultiplier(
+            opponentUnits.length > 0 ? opponentUnits : opponent
+        );
+        if (opponentDebuff !== null) {
+            pushIfNotOne(`压制(${opponentDebuff.label})`, opponentDebuff.value);
+        }
+
         pushIfNotOne('战略', getStrategicBattlePowerMultiplier(unit, battleType, terrain, side));
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
         if (joinLuck !== null) {
@@ -987,6 +1043,22 @@ export class CombatUI {
         const chain = labeled.map((l) => fmt(l.value)).join('×');
         const title = `${role}：${labeled.map((l) => `${l.label}×${fmt(l.value)}`).join(' ')}`;
         return { chain, title };
+    }
+
+    /** 返回当前战场中指定 side 的对手单位数组（用于压制减益读取） */
+    private getOpponentUnitsFor(side: 'attacker' | 'defender'): IBattleUnit[] {
+        const opponentSide = side === 'attacker' ? 'defender' : 'attacker';
+        if (this.boundRegionalBattleField && !this.boundRegionalBattleField.isOver) {
+            return opponentSide === 'attacker'
+                ? this.boundRegionalBattleField.getAttackerUnits()
+                : this.boundRegionalBattleField.getDefenderUnits();
+        }
+        if (this.currentRegionalUnits) {
+            return opponentSide === 'attacker'
+                ? this.currentRegionalUnits.attackers
+                : this.currentRegionalUnits.defenders;
+        }
+        return [];
     }
 
     /** 侧栏小血条 + 攻剑 / 守盾图标（撑满各自半宽） */
