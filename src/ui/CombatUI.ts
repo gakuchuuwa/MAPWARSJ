@@ -514,6 +514,7 @@ export class CombatUI {
             width: 100%;
             display: grid;
             grid-template-columns: 1fr auto 1fr;
+            grid-template-rows: auto auto auto;
             column-gap: ${uiPx(8)};
             align-items: end;
             margin-top: ${uiPx(10)};
@@ -569,9 +570,10 @@ export class CombatUI {
         strip.style.cssText = `
             width: 100%;
             min-width: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: ${isAtt ? 'flex-end' : 'flex-start'};
+            display: grid;
+            grid-template-rows: subgrid;
+            grid-row: 1 / -1;
+            justify-items: ${isAtt ? 'end' : 'start'};
             padding: 0;
             text-align: ${isAtt ? 'right' : 'left'};
             pointer-events: none;
@@ -592,6 +594,7 @@ export class CombatUI {
             height: ${size};
             pointer-events: none;
             flex-shrink: 0;
+            grid-row: 1 / -1;
             align-self: center;
         `;
 
@@ -619,6 +622,7 @@ export class CombatUI {
             display: flex;
             flex-direction: ${isAtt ? 'row' : 'row-reverse'};
             align-items: baseline;
+            align-self: end;
             pointer-events: none;
         `;
         const multSpan = document.createElement('span');
@@ -1083,6 +1087,7 @@ export class CombatUI {
             width: 100%;
             min-width: 0;
             flex-direction: row;
+            align-self: end;
         `;
 
         const track = document.createElement('div');

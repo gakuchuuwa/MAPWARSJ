@@ -129,7 +129,7 @@ export class SpeechAnnouncer {
   /** 全军覆没 */
   public announceAnnihilation(factionId: string, _legionName: string, cityName: string, _generalId?: string): void {
     if (!this.enabled) return;
-    const text = `${getFactionNameForSpeech(factionId)}军于${cityName}，全军覆没`;
+    const text = `${getFactionNameForSpeech(factionId)}军于${cityName}外，全军覆没`;
     console.log("[Speech] 覆没:", text);
     this.speak(text);
   }

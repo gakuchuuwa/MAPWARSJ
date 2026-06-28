@@ -62,6 +62,7 @@ function formatLegionAnnihilatedLine(
            `<span class="feed-legion">${escapeHtml(legionName)}</span>` +
            `<span class="feed-action">于</span>` +
            `<span class="feed-city">${escapeHtml(cityName)}</span>` +
+           `<span class="feed-action">外</span>` +
            `<span class="feed-wipe">全军覆没</span>`;
 }
 
