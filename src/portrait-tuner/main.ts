@@ -456,7 +456,7 @@ function bindEvents(): void {
             case 'W':
             case '=':
             case '+':
-                draft.scale = Math.min(SLIDER.scale.max, draft.scale + scaleSpeed);
+                draft.scale = Math.min(SLIDER.scale.max, +(draft.scale + scaleSpeed).toFixed(2));
                 changed = true;
                 e.preventDefault();
                 break;
@@ -464,7 +464,7 @@ function bindEvents(): void {
             case 'S':
             case '-':
             case '_':
-                draft.scale = Math.max(SLIDER.scale.min, draft.scale - scaleSpeed);
+                draft.scale = Math.max(SLIDER.scale.min, +(draft.scale - scaleSpeed).toFixed(2));
                 changed = true;
                 e.preventDefault();
                 break;
