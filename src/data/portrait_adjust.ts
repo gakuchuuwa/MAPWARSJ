@@ -1956,6 +1956,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 5,
             "offsetY": 0
+        },
+        "/assets/zhaosong/yingzhou_d_liuqi.png": {
+            "scale": 1.16,
+            "offsetX": 11,
+            "offsetY": -35
         }
     },
     "folderGuides": {

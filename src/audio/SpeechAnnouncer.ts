@@ -103,9 +103,9 @@ export class SpeechAnnouncer {
     const general = getFactionGeneral(factionId);
     let text: string;
     if (general) {
-      text = `${general.generalName}率领${getFactionNameForSpeech(factionId)}军攻打${cityName}`;
+      text = `${general.generalName}率领${getFactionNameForSpeech(factionId)}军，攻打${cityName}`;
     } else {
-      text = `${getFactionNameForSpeech(factionId)}将军攻打${cityName}`;
+      text = `${getFactionNameForSpeech(factionId)}将军，攻打${cityName}`;
     }
     console.log("[Speech] 攻打:", text);
     this.speak(text);
@@ -118,9 +118,9 @@ export class SpeechAnnouncer {
     const elite = hasEliteName(legionName) ? legionName : null;
     let text: string;
     if (elite && skill) {
-      text = `${elite}${skill}攻占${cityName}`;
+      text = `${elite}，${skill}，攻占${cityName}`;
     } else {
-      text = `${getFactionNameForSpeech(factionId)}军一举攻占${cityName}`;
+      text = `${getFactionNameForSpeech(factionId)}军，一举攻占${cityName}`;
     }
     console.log("[Speech] 攻占:", text);
     this.speak(text);
@@ -129,7 +129,7 @@ export class SpeechAnnouncer {
   /** 全军覆没 */
   public announceAnnihilation(factionId: string, _legionName: string, cityName: string): void {
     if (!this.enabled) return;
-    const text = `${getFactionNameForSpeech(factionId)}军于${cityName}全军覆没`;
+    const text = `${getFactionNameForSpeech(factionId)}军于${cityName}，全军覆没`;
     console.log("[Speech] 覆没:", text);
     this.speak(text);
   }
