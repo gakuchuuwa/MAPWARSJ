@@ -17,6 +17,7 @@ import {
     applyPortraitEdgeMask,
     hasPortraitImageOverride,
     resolvePortraitAdjust,
+    toCanonicalPortraitPath,
 } from '../config/PortraitAdjust';
 
 import {
@@ -293,11 +294,14 @@ function updateSingleGridTransform(path: string): void {
 }
 
 function getPreviewAdjustData(): PortraitAdjustData {
+    const canonical = toCanonicalPortraitPath(selectedImage);
+    const draftCopy = { ...draft };
     return {
         ...adjustData,
         images: {
             ...adjustData.images,
-            [selectedImage]: { ...draft },
+            [selectedImage]: draftCopy,
+            [canonical]: draftCopy,
         },
     };
 }
@@ -321,13 +325,12 @@ function commitDraftToAdjustData(): void {
     adjustData.images = adjustData.images ?? {};
     const hash = pathToHash.get(selectedImage);
     const identicalPaths = hash ? (hashToPaths.get(hash) ?? [selectedImage]) : [selectedImage];
-    
+
+    const value = { scale: draft.scale, offsetX: draft.offsetX, offsetY: draft.offsetY };
     for (const p of identicalPaths) {
-        adjustData.images[p] = {
-            scale: draft.scale,
-            offsetX: draft.offsetX,
-            offsetY: draft.offsetY,
-        };
+        adjustData.images[p] = { ...value };
+        const c = toCanonicalPortraitPath(p);
+        if (c !== p) adjustData.images[c] = { ...value };
     }
 }
 
