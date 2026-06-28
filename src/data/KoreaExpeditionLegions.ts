@@ -23,7 +23,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣12破330（区T0锚点）
   hai2: { name: '海州石弓', tier: 3 },       // 瀑池/海州·崔莹
   joseon: { name: '义兴亲军卫', tier: 1 },       // 汉城·李成桂义兴亲军卫（§4 #9）
-  sheng_d: { name: '全罗左水军', tier: 2 },   // 顺天·朝鲜全罗左道水军
+  sheng_d: { name: '全罗水军', tier: 2 },   // 顺天·朝鲜全罗道水军
   chen3: { name: '马韩部族', tier: 3 },         // 欢州·辰王马韩
   danluo: { name: '三别抄', tier: 1 },        // 星主厅·高丽武人抗蒙
   jianzhou_nvzhen: { name: '建州劲卒', tier: 3 },  // 浑江·建州女真

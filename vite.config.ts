@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { execFile } from 'child_process';
 
 // F2 立绘写盘后短暂拦截 Vite 整页 full-reload（Esc 保存不打断对局）
@@ -1226,9 +1227,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = ${body};
 }
 
 /** 扫描 public/assets 生成立绘调校目录（开发服务器专用） */
-function serverBuildPortraitCatalog(assetsRoot: string): { folder: string; label: string; images: string[] }[] {
+function serverBuildPortraitCatalog(assetsRoot: string): { folder: string; label: string; images: { path: string; hash: string }[] }[] {
     const EXCLUDED = new Set(['UI', 'avg', 'inbox']);
-    const byFolder = new Map<string, string[]>();
+    const byFolder = new Map<string, { path: string; hash: string }[]>();
 
     if (!fs.existsSync(assetsRoot)) return [];
 
@@ -1236,15 +1237,21 @@ function serverBuildPortraitCatalog(assetsRoot: string): { folder: string; label
         if (!entry.isDirectory() || EXCLUDED.has(entry.name)) continue;
         const dirPath = path.join(assetsRoot, entry.name);
         const folderKey = `/assets/${entry.name}/`;
-        const images: string[] = [];
+        const images: { path: string; hash: string }[] = [];
 
         for (const file of fs.readdirSync(dirPath)) {
             if (!file.toLowerCase().endsWith('.png')) continue;
-            images.push(`${folderKey}${file}`);
+            const fullPath = path.join(dirPath, file);
+            let hash = '';
+            try {
+                hash = require('crypto').createHash('md5').update(fs.readFileSync(fullPath)).digest('hex');
+            } catch (e) {
+            }
+            images.push({ path: `${folderKey}${file}`, hash });
         }
 
         if (images.length > 0) {
-            images.sort((a, b) => a.localeCompare(b, 'zh-CN'));
+            images.sort((a, b) => a.path.localeCompare(b.path, 'zh-CN'));
             byFolder.set(folderKey, images);
         }
     }

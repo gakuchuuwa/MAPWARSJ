@@ -598,7 +598,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/yingqin/qin_yingji.png": {
-            "scale": 1.22,
+            "scale": 1.24,
             "offsetX": 14,
             "offsetY": -2
         },
@@ -1443,7 +1443,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -36
         },
         "/assets/JAPAN/so_zongyizhi.png": {
-            "scale": 1.12,
+            "scale": 1.14,
             "offsetX": 22,
             "offsetY": -8
         },
@@ -1971,6 +1971,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -14
+        },
+        "/assets/pugan/basha_d_daogengmeng.png": {
+            "scale": 1.02,
+            "offsetX": 9,
+            "offsetY": -37
+        },
+        "/assets/KOREA/xinluo_jinyixin.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/KOREA/sheng_d_liyiqi.png": {
+            "scale": 1.06,
+            "offsetX": -2,
+            "offsetY": -3
+        },
+        "/assets/KOREA/zhen_zhenxuan.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/yingqin/xin_baiqi.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/CENTRAL/long2_weixiaokuan.png": {
+            "scale": 1.14,
+            "offsetX": 3,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL_ASIA/kawusi_haidaer.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -9
         }
     },
     "folderGuides": {
