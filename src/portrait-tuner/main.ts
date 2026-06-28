@@ -4,6 +4,15 @@
  */
 import {
     PORTRAIT_ADJUST_NEUTRAL,
+    PORTRAIT_GUIDE_PREVIEW_CHIN_LINE_Y,
+    PORTRAIT_GUIDE_PREVIEW_CHEST_LINE_X,
+    PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y,
+    PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DX,
+    PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DY,
+    PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_H,
+    PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_W,
+    PORTRAIT_GUIDE_PREVIEW_TOP_LINE_Y,
+    PORTRAIT_GUIDE_PREVIEW_WAIST_LINE_Y,
     applyPortraitAdjustToElement,
     applyPortraitEdgeMask,
     hasPortraitImageOverride,
@@ -20,6 +29,10 @@ import {
 
 type ImageEntry = { path: string; hash: string };
 type CatalogEntry = { folder: string; label: string; images: ImageEntry[] };
+
+function safeCardId(path: string): string {
+    return encodeURIComponent(path).replace(/[^a-z0-9]/gi, '');
+}
 
 const SLIDER = {
     scale: { min: 0.4, max: 2.2, step: 0.01 },
@@ -99,12 +112,11 @@ function injectStyles(): void {
       .pt-grid {
         flex: 1; padding: 16px; overflow-y: auto;
         display: grid; grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-        gap: 20px; background: #1a1816; align-content: start;
+        gap: 20px; background: #1a1816;
       }
       .pt-grid-card {
-        background: #1a1815; border: 2px solid transparent; border-radius: 6px; overflow: hidden;
+        background: #1a1815; border: 2px solid transparent; border-radius: 6px;
         cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
-        display: flex; flex-direction: column;
       }
       .pt-grid-card:hover { border-color: #3a342c; }
       .pt-grid-card.is-active {
@@ -112,6 +124,7 @@ function injectStyles(): void {
       }
       .pt-grid-canvas-wrap {
         width: 100%; aspect-ratio: 768/1024; position: relative; overflow: hidden;
+        border-radius: 4px 4px 0 0;
         background-color: #2e2e34;
         background-image:
           linear-gradient(45deg, #3a3a42 25%, transparent 25%),
@@ -197,15 +210,15 @@ function renderGrid(): void {
     }
 
     const folderG = getFolderGuide(selectedFolder);
-    const topPct = (0.12 * 100).toFixed(1);
-    const eyePct = (folderG.eyeLineY * 100).toFixed(1);
-    const chinPct = (0.35 * 100).toFixed(1);
-    const waistPct = (0.70 * 100).toFixed(1);
-    const chestPct = (folderG.chestLineX * 100).toFixed(1);
-    const ovalW = 32;
-    const ovalH = 32;
-    const ovalCx = folderG.chestLineX * 100;
-    const ovalCy = 23;
+    const topPct = (PORTRAIT_GUIDE_PREVIEW_TOP_LINE_Y * 100).toFixed(1);
+    const eyePct = (PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y * 100).toFixed(1);
+    const chinPct = (PORTRAIT_GUIDE_PREVIEW_CHIN_LINE_Y * 100).toFixed(1);
+    const waistPct = (PORTRAIT_GUIDE_PREVIEW_WAIST_LINE_Y * 100).toFixed(1);
+    const chestPct = (PORTRAIT_GUIDE_PREVIEW_CHEST_LINE_X * 100).toFixed(1);
+    const ovalW = PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_W * 100;
+    const ovalH = PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_H * 100;
+    const ovalCx = (PORTRAIT_GUIDE_PREVIEW_CHEST_LINE_X + PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DX) * 100;
+    const ovalCy = (PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y + PORTRAIT_GUIDE_PREVIEW_FACE_OVAL_CENTER_DY) * 100;
 
     els.grid.innerHTML = images.map((path) => {
         const name = path.split('/').pop() ?? path;
@@ -213,7 +226,7 @@ function renderGrid(): void {
         const mark = hasPortraitImageOverride(path, adjustData) ? ' is-tuned' : '';
         
         return `
-          <div class="pt-grid-card${active}${mark}" data-path="${path}" id="card-${btoa(path).replace(/[^a-z0-9]/gi, '')}">
+          <div class="pt-grid-card${active}${mark}" data-path="${path}" id="card-${safeCardId(path)}">
             <div class="pt-grid-canvas-wrap">
               <div class="pt-grid-img-slot">
                 <div class="img-wrapper">
@@ -263,7 +276,7 @@ function updateAllGridTransforms(): void {
 }
 
 function updateSingleGridTransform(path: string): void {
-    const cardId = `card-${btoa(path).replace(/[^a-z0-9]/gi, '')}`;
+    const cardId = `card-${safeCardId(path)}`;
     const card = document.getElementById(cardId);
     if (!card) return;
     const img = card.querySelector('img') as HTMLImageElement;
@@ -324,7 +337,7 @@ async function selectImageAndAutoSave(newImagePath: string): Promise<void> {
     loadDraftForSelected();
     
     els.grid.querySelectorAll('.pt-grid-card').forEach(c => c.classList.remove('is-active'));
-    const targetId = `card-${btoa(newImagePath).replace(/[^a-z0-9]/gi, '')}`;
+    const targetId = `card-${safeCardId(newImagePath)}`;
     const targetCard = document.getElementById(targetId);
     if (targetCard) {
         targetCard.classList.add('is-active');
@@ -354,7 +367,7 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
     const hash = pathToHash.get(selectedImage);
     const identicalPaths = hash ? (hashToPaths.get(hash) ?? [selectedImage]) : [selectedImage];
     for (const p of identicalPaths) {
-        const targetId = `card-${btoa(p).replace(/[^a-z0-9]/gi, '')}`;
+        const targetId = `card-${safeCardId(p)}`;
         const targetCard = document.getElementById(targetId);
         if (targetCard) targetCard.classList.add('is-tuned');
     }

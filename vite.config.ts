@@ -1244,9 +1244,8 @@ function serverBuildPortraitCatalog(assetsRoot: string): { folder: string; label
             const fullPath = path.join(dirPath, file);
             let hash = '';
             try {
-                hash = require('crypto').createHash('md5').update(fs.readFileSync(fullPath)).digest('hex');
-            } catch (e) {
-            }
+                hash = crypto.createHash('md5').update(fs.readFileSync(fullPath)).digest('hex');
+            } catch (_) { /* ignore */ }
             images.push({ path: `${folderKey}${file}`, hash });
         }
 
