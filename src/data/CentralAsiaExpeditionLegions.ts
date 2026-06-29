@@ -8,7 +8,7 @@
  * - 耶尼切里为史籍专名精锐番号（非泛称火枪兵）；叶尔羌式「火枪兵」后缀不收
  */
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  yanda: { name: '嚈哒铁骑', tier: 2 },          // 阿缓城·白匈奴横扫中亚（§13 #2）
+    yanda: { name: '阿尔洪铁骑', tier: 3 },
   saman: { name: '萨曼古拉姆', tier: 2 },     // 阿母城·伊斯梅尔萨曼古拉姆
   huarazim: { name: '钦察精骑', tier: 2 },      // 玉龙杰赤·摩诃末钦察卫（§13 #4）
   qincha: { name: '康里精骑', tier: 2 },
@@ -28,7 +28,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   anushidgin: { name: '希瓦铁骑', tier: 3 },
   dayuzi: { name: '讹答剌卫队', tier: 3 },
   zhaowu: { name: '忽毡城武士', tier: 3 },
-  yada: { name: '悉万斤重甲', tier: 3 },
+    yada: { name: '悉万斤重甲', tier: 3 },
   jiazini: { name: '伽色尼禁卫', tier: 2 },       // 哥疾宁·马哈茂德古拉姆
   jibin: { name: '犍陀罗骑', tier: 2 },        // 迦毕试·迦腻色迦犍陀罗骑兵
   fanyanna: { name: '梵衍那僧兵', tier: 2 },      // 巴米扬·梵衍那王率僧兵御大食

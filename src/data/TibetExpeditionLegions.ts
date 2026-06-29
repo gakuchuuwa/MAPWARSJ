@@ -11,7 +11,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   qinghai: { name: '青海汛兵', tier: 2 }, // 噶斯口·岳钟琪出噶斯口平罗卜藏丹津
   xining: { name: '西宁边军', tier: 2 }, // 马海台·杨应琚整顿边军
   dulan: { name: '和硕特精骑', tier: 2 }, // 台吉乃尔·达什巴图尔
-  kalun: { name: '尕斯戍卒', tier: 3 },  // 尕斯淖尔
+    kalun: { name: '尕斯戍卒', tier: 3 },
   shaodang: { name: '湟中义从羌', tier: 3 },  // 玛曲·河湟烧当羌义从骑（§12 #1）
   tubo: { name: '吐蕃大纛军', tier: 2 },       // 逻些·松赞干布吐蕃大纛军
   gar: { name: '却杰军', tier: 1 },           // 萨毗城·论钦陵却杰军（以众击寡，降T1）
@@ -21,14 +21,14 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   gar_kham: { name: '德格骁骑', tier: 2 },    // 德格·康巴朵康先锋骑（§12 #7）
   guge: { name: '古格甲兵', tier: 2 },        // 札布让·阿里古格王国
   khoshut: { name: '和硕特铁骑', tier: 2 },   // 当雄·固始汗卫拉特铁骑（武力统战雪域，升T1）
-  pazhu: { name: '江孜宗武士', tier: 3 },       // 江孜·江孜法王热丹衮桑帕（原帕竹甲兵，与lang_clan重复且与江孜据点及武将错位）
+    pazhu: { name: '江孜宗武士', tier: 3 },
   gurkha: { name: '廓尔喀弯刀', tier: 1 },    // 加德满都·廓尔喀库克里勇士（§12 #11）
   tsangpa: { name: '藏巴汗卫队', tier: 3 },   // 桑珠孜·藏巴汗亲卫
   // ── 2026-06-16 新增：青藏大区平衡补全（23支） ──
   yangtong: { name: '羊同勇士', tier: 2 },  // 龙木错·赤松德赞征羊同
   supi: { name: '苏毗女卫', tier: 3 },
   xiaobolu: { name: '勃律轻骑', tier: 3 },
-  gandenpozhang: { name: '甘丹颇章军', tier: 3 },
+    gandenpozhang: { name: '扎敦卫藏兵', tier: 3 },
   gaxa: { name: '噶厦代本', tier: 3 },
   ladakh: { name: '拉达克卫队', tier: 3 },
   spurgyal: { name: '悉补野王军', tier: 3 },
@@ -70,5 +70,5 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dalung: { name: '达隆寺僧兵', tier: 3 },
   dong: { name: '囊谦千户兵', tier: 2 },
   hor: { name: '霍尔部勇士', tier: 3 },
-  ganden: { name: '甘丹寺僧兵', tier: 3 },
+    ganden: { name: '格鲁僧兵', tier: 3 },
 };

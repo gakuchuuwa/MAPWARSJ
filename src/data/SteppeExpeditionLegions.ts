@@ -33,7 +33,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   kumoxi: { name: '奚人游骑', tier: 3 },  // 饶乐水·库莫奚本部
   kumo: { name: '楮特奥隗部', tier: 3 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
-  kelie: { name: '札合骁骑', tier: 3 },         // 都尉溷河·札合敢不克烈支系
+    kelie: { name: '札合骁骑', tier: 3 },
   kereyid: { name: '克烈护卫军', tier: 2 },     // 汪吉河·王汗克烈部
   dingling: { name: '丁零游骑', tier: 2 }, // 贝加尔·丁零王
   xiajiasi: { name: '黠戛斯锐卒', tier: 2 }, // 攻灭回鹘汗国（升T2）
@@ -49,7 +49,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   yujiulu: { name: '郁久闾王骑', tier: 2 },
   jalair: { name: '札剌亦儿军', tier: 3 },
   hongirad: { name: '弘吉剌护卫', tier: 2 },
-  choros: { name: '绰罗斯骁骑', tier: 3 },
+    choros: { name: '萨吾尔骁骑', tier: 2 },
   dada_ming: { name: '鞑靼铁骑', tier: 2 },  // 河套·达延汗鞑靼部（明蒙古中兴）
   duolu: { name: '咄陆部铁骑', tier: 2 },
   kaerka: { name: '喀尔喀重骑', tier: 3 },
@@ -60,7 +60,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   kiyad: { name: '乞颜宿卫', tier: 3 },         // 不儿罕山·也速该乞颜部
   mengwu: { name: '忙古勒骑', tier: 3 },        // 狼居胥·合不勒汗
   zhadalan: { name: '札剌儿军', tier: 3 },      // 阔亦田·札木合
-  oirat_ming: { name: '卫拉特骑', tier: 2 },    // 科布多·噶尔丹东进（昭莫多惨败，降T2）
+    oirat_ming: { name: '卫拉特重骑', tier: 2 },
   tumed: { name: '土默特精骑', tier: 2 },         // 归化城·俺答汗土默特精骑
   tushetu: { name: '库伦铁骑', tier: 3 },       // 库伦·土谢图汗
   yaoluoge: { name: '药罗葛骑', tier: 3 },      // 娑陵·药罗葛部
@@ -74,7 +74,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   bayegu: { name: '拔野古轻骑', tier: 2 },       // 稽落山·屈利失助唐灭薛延陀
   zubu: { name: '阻卜轻骑', tier: 2 },           // 特尔浑·磨古斯叛辽
   wuzhumuqin: { name: '赛堪轻骑', tier: 2 },    // 乌珠穆沁·多尔济随征噶尔丹
-  xingan: { name: '呼伦索伦兵', tier: 2 },   // 哈拉盖图·清代索伦营（升T2）
+    xingan: { name: '索伦营', tier: 1 },
   baidi: { name: '白狄徒兵', tier: 3 },          // 集宁·春秋白狄部落
   shiwei: { name: '室韦猎骑', tier: 3 },         // 俱轮泊·室韦都督府部众
   sunite: { name: '苏尼特骑', tier: 3 },         // 赛汉塔拉·苏尼特旗武装

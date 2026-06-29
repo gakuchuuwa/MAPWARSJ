@@ -47,7 +47,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'nanzhong': '南中',
     'muer': '穆尔',
     'xiajiasi': '坚昆',
-    'zhen': '甄',
+'zhen': '武珍',
     'dongshengwei': '胜',
     'dizhou': '棣',
     'weihaiwei': '威海',
@@ -108,7 +108,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhongshan': '恒',
     'wang_d': '王',
     'xiao_d': '萧',
-    'li_lx_d': '李',
+'li_lx_d': '陇西',
 'yuan_cj_d': '袁',
     'xie_cj_d': '信',
 'yue_d': '岳',
@@ -122,7 +122,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'sushen': '肃慎',
     'chile': '敕勒',
 'rouran': '柔然',
-    'baishui': '白江',
+'baishui': '景谷',
     'baiji': '百济',
 'tubo': '吐蕃',
     'tujue': '突厥',
@@ -158,7 +158,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wusun': '乌孙',
 'dayuan': '大宛',
     'gouding': '句町',
-    'dongxian': '郯',
+'dongxian': '东海',
     'tongma': '铜马',
     'tongzhou': '同',
     'baibo': '黄巾',
@@ -205,7 +205,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zaoyang_d': '舂陵',
     // ── 2026-06-16 改：符离·宿（§4.7；旗号「徐」让位下邳徐国）──
     'suzhou_d': '宿',
-    'didao': '陇西',
+'didao': '熙',
     'lanzhou': '兰',
     'lu': '庐',
     'gaoqi_d': '高齐',
@@ -277,14 +277,14 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-25 明朝势力 ──
     'fang_guozhen': '浙方',
     'dengmaoqi': '铲平',
-    'yezongliu': '处',
+'yezongliu': '处',
     'dada_ming': '鞑靼',
-    'oirat_ming': '卫拉',
+'oirat_ming': '卫拉',
     'jianzhou_nvzhen': '建',
 'haixi_nvzhen': '海西',
-    'yeren_nvzhen': '东海',
+'yeren_nvzhen': '萨哈',
     'jilimi': '吉里',
-    'hezhe': '赫哲',
+'hezhe': '赫哲',
     'kakizaki': '松前',
     // ── 2026-06-16 改：旗号「藤原」（§4.4 家族；禁「」字；势力全名仍奥）──
     'fujiwara': '藤原',
@@ -306,15 +306,15 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'longwu': '隆武',
     'lujian': '婺',
     'chahar': '察哈',
-    'dzungar': '准噶',
+'dzungar': '绰罗',
     'khoshut': '和硕',
     'yarkand': '叶尔',
     'khoja': '和卓',
     'gaxa': '噶厦',
     'jinchuan_g': '金川',
-    'jinchuan_x': '小川',
+'jinchuan_x': '赞拉',
     'geng': '靖南',
-    'shuntian': '顺天',
+'shuntian': '天地',
     'bailian': '白莲',
     'chimei': '赤眉',
     'miaomin': '苗民',
@@ -340,7 +340,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-26 新增：肃慎系势力（挹娄、勿吉、靺鞨）──
     'yilou': '挹娄',
     'wuji': '勿吉',
-'mohe': '靺鞨',
+'mohe': '完颜',
 
     // ── 2026-05-26 新增：室韦（隋唐时期东北亚部落联盟）──
 'shiwei': '室韦',
@@ -374,12 +374,12 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'borjigin': '孛儿',
     'jalair': '札剌',
     'hongirad': '弘吉',
-    'choros': '绰罗',
+'choros': '萨吾',
     // ── 2026-05-26 新增：青藏高原势力旗号（18个）──
 'guge': '古格',
     'ladakh': '玛域',
 'tsangpa': '藏巴',
-    'ganden': '甘丹',
+'ganden': '格鲁',
     'bailan': '白兰',
 'supi': '苏毗',
     'monpa': '门巴',
@@ -406,7 +406,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'muong': '芒',
     'paiwan': '排湾',
     'trinh': '郑主',
-    'nguyen_guangnan': '广南',
+'nguyen_guangnan': '阮',
 
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
     'cong': '賨',
@@ -436,7 +436,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-27 新增：青衣、五溪、姑蔑 ──
 'qingyi': '青衣',
-    'wuxi': '五溪',
+'wuxi': '武陵',
     'gumie': '衢',
 
     // ── 2026-05-27 新增：生苗 ──
@@ -505,10 +505,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     'anushidgin': '阿努',
     'nanjie': '南杰',
-    'gandenpozhang': '颇章',
+'gandenpozhang': '冈底',
 
     
-    'dawoer': '达斡',
+'dawoer': '嫩江',
 
     'tumengken': '图蒙',
     'liren': '俚',
@@ -516,7 +516,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-28 新增：岭、琼波、索伦、图瓦 ──
     'gling': '岭',
     'khyungpo': '琼波',
-    'suolun': '索伦',
+'suolun': '达斡',
     'tuva': '图瓦',
 
     // ── 2026-05-28 新增：大隅(赤尾木城)、奄美(赤木名城) ──
@@ -584,7 +584,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kaerka': '喀尔',
 'huihu': '回鹘',
 'wuzhumuqin': '乌珠',
-    'xingan': '兴',
+'xingan': '布特',
     'zhadalan': '扎答',
     'zhuerqi': '主儿',
     'chechen': '车臣',
@@ -608,7 +608,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'niang': '娘',
     'galangdiba': '波密',
     'ali': '阿里',
-    'pazhu': '帕竹',
+'pazhu': '年楚',
     'qiong': '邛',
     'zhuoshi': '卓',
     'chenzhou_d': '辰',
@@ -687,7 +687,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'pingyuan': '高唐',
     'yao': '尧',
 'xichu': '楚',
-    'yunzhong': '云中',
+'yunzhong': '索头',
     'chunshen': '春申',
     'qian': '矩',
     'wan': '安庆',
@@ -719,7 +719,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-11 新增：锡尔河下游（毡的/养吉干）──
     'xianhai': '咸海',
 'nandou': '难兜',
-    'yanda': '嚈哒',
+'yanda': '阿洪',
     'qincha': '钦察',
     'anxi': '安西',
     'konbaung': '贡榜',
@@ -740,7 +740,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'bozhou_d': '博',
     'hongnong_jun': '弘农',
     'zhengzhou': '郑',
-    'ruo': '鄀',
+'ruo': '鄀',
     'gar': '噶尔',
     'ruzhou': '汝',
     'yun': '允',
@@ -803,7 +803,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wulianghai': '乌梁',
     'qinghai': '青海',
     'xining': '西宁',
-    'kalun': '卡伦',
+'kalun': '柴达',
     'sagami': '相模',
     'mino': '美浓',
     'ssangseong': '和',
@@ -841,6 +841,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   'wuyue': '吴越',
   xiyuduhu: '都护',
   shaozhou_d: '邵',
+'heishui': '靺鞨',
+    'kelie': '杭爱',
+    'yada': '嚈哒',
 };
 
 // @ts-ignore

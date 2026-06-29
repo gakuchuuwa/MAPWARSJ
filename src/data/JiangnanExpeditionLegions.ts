@@ -41,7 +41,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   ruochu: { name: '若敖六卒', tier: 1 },       // 竟陵·楚若敖氏精锐（《左传》）
   mi_chu: { name: '左广右广', tier: 2 },       // 云梦·楚庄王亲兵（《左传·宣公》）
   heng: { name: '衡州义军', tier: 3 },         // 临烝·何腾蛟南明衡州抗清
-  yezongliu: { name: '矿工义军', tier: 3 },     // 丽水·叶宗留矿工起义
+    yezongliu: { name: '处州矿徒', tier: 3 },
   jinan: { name: '神牌弩手', tier: 2 },   // 历下·铁铉固守济南（纯防御战，降T2）
   wu: { name: '句吴利趾', tier: 1 },        // 阊门·孙武句吴利趾
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
@@ -81,7 +81,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   gouding: { name: '句町部兵', tier: 3 },  // 广南·西南夷句町国部兵
   quanrong: { name: '西戎骑兵', tier: 3 },  // 威戎·犬戎部落武装
 qiufu: { name: '剡城义军', tier: 2 },     // 剡城·裘甫起义大破唐军
-  shuntian: { name: '天地会义军', tier: 1 }, // 彰化·林爽文台湾最大民变
+    shuntian: { name: '天地会义军', tier: 1 },
   lujian: { name: '义乌营', tier: 2 },       // 金华·张煌言募兵抗清
   danyang: { name: '采石水军', tier: 2 },     // 鸠兹·虞允文督师采石矶
   linshihong: { name: '大楚水军', tier: 2 },  // 鄱阳·林士弘称帝建楚

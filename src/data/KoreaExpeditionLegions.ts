@@ -27,7 +27,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   chen3: { name: '马韩部族', tier: 3 },         // 欢州·辰王马韩
   danluo: { name: '三别抄', tier: 1 },        // 星主厅·高丽武人抗蒙
   jianzhou_nvzhen: { name: '建州劲卒', tier: 3 },  // 浑江·建州女真
-  zhen: { name: '后百济锐卒', tier: 3 },          // 完山·后百济甄萱
+    zhen: { name: '武珍锐卒', tier: 3 },
   woju: { name: '别武班', tier: 1 },            // 咸兴·尹瓘别武班
   ssangseong: { name: '和宁戍骑', tier: 2 }, // 铁岭关·李子春
   hui: { name: '濊族步卒', tier: 2 },          // 何瑟罗·不耐侯

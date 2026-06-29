@@ -891,6 +891,30 @@ function findObjectKeyIdx(text: string, fromIdx: number, targetKey: string): num
     }
 }
 
+/** 给定 key 起始下标, 返回该条目（含值, 可能是多行 { ... } 对象, 含尾随逗号与换行）末尾的下标。
+ *  [BUGFIX 2026-06-29] 旧逻辑只取 key 所在那一行, 替换/删除多行对象条目时会留下孤儿 } 导致语法崩溃。 */
+function findObjectEntryEnd(text: string, keyIdx: number): number {
+    // 跳到 key 后的冒号
+    let i = keyIdx;
+    while (i < text.length && text[i] !== ':') i++;
+    i++; // 越过冒号
+    // 跳过冒号后的空白（值与 key 同行）
+    while (i < text.length && (text[i] === ' ' || text[i] === '\t')) i++;
+    // 若值是对象 { ... }, 做花括号配对跳到匹配的 }
+    if (text[i] === '{') {
+        let balance = 0;
+        for (; i < text.length; i++) {
+            if (text[i] === '{') balance++;
+            else if (text[i] === '}') { balance--; if (balance === 0) { i++; break; } }
+        }
+    }
+    // 走到当前行尾（覆盖尾随逗号、注释; 单行原始值也走到这里）
+    while (i < text.length && text[i] !== '\n' && text[i] !== '\r') i++;
+    if (text[i] === '\r') i++;
+    if (text[i] === '\n') i++;
+    return i;
+}
+
 function serverReplaceObjectLine(text: string, keyword: string, targetKey: string, newLine: string): string {
     const kwIdx = text.indexOf(keyword);
     if (kwIdx === -1) throw new Error(`文件中找不到关键字 "${keyword}"`);
@@ -902,11 +926,8 @@ function serverReplaceObjectLine(text: string, keyword: string, targetKey: strin
     let lineStart = keyIdx;
     while (lineStart > 0 && text[lineStart - 1] !== '\n') lineStart--;
 
-    // 找到行尾（包含换行符）
-    let lineEnd = keyIdx;
-    while (lineEnd < text.length && text[lineEnd] !== '\n' && text[lineEnd] !== '\r') lineEnd++;
-    if (text[lineEnd] === '\r') lineEnd++;
-    if (text[lineEnd] === '\n') lineEnd++;
+    // 找到条目末尾（正确跨越多行对象）
+    const lineEnd = findObjectEntryEnd(text, keyIdx);
 
     const lineEnding = text.includes('\r\n') ? '\r\n' : '\n';
     return text.slice(0, lineStart) + newLine + lineEnding + text.slice(lineEnd);
@@ -949,10 +970,8 @@ function serverDeleteObjectLine(text: string, keyword: string, targetKey: string
     if (keyIdx === -1) throw new Error(`在 ${keyword} 中找不到 key '${targetKey}':`);
     let lineStart = keyIdx;
     while (lineStart > 0 && text[lineStart - 1] !== '\n') lineStart--;
-    let lineEnd = keyIdx;
-    while (lineEnd < text.length && text[lineEnd] !== '\n' && text[lineEnd] !== '\r') lineEnd++;
-    if (text[lineEnd] === '\r') lineEnd++;
-    if (text[lineEnd] === '\n') lineEnd++;
+    // 正确跨越多行对象条目
+    const lineEnd = findObjectEntryEnd(text, keyIdx);
     return text.slice(0, lineStart) + text.slice(lineEnd);
 }
 
@@ -1746,6 +1765,7 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
 
     const cityById = new Map(data.cities.map(c => [c.id, c]));
     const factionSet = new Set(data.factions.map(f => f.id));
+    const skipFactions = new Set(['panjun']);
 
     // 1. 据点间距 < 50km
     for (let i = 0; i < data.cities.length; i++) {
@@ -1774,11 +1794,13 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
 
     // 4. 势力缺旗号
     for (const f of data.factions) {
+        if (skipFactions.has(f.id)) continue;
         if (!data.flags[f.id]) issues.push({ level: 'warn', msg: `势力 "${f.name}" (${f.id}) 缺旗号`, factionId: f.id });
     }
 
     // 5. 势力缺 StartingCapitals
     for (const f of data.factions) {
+        if (skipFactions.has(f.id)) continue;
         if (!data.capitals[f.id]) issues.push({ level: 'warn', msg: `势力 "${f.name}" (${f.id}) 缺 StartingCapitals`, factionId: f.id });
     }
 
@@ -1794,6 +1816,7 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
 
     // 8. 缺武将
     for (const f of data.factions) {
+        if (skipFactions.has(f.id)) continue;
         if (!data.generals[f.id]) issues.push({ level: 'info', msg: `势力 "${f.name}" (${f.id}) 无武将`, factionId: f.id });
     }
 
@@ -1804,6 +1827,7 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
 
     // 10. 缺精锐
     for (const f of data.factions) {
+        if (skipFactions.has(f.id)) continue;
         if (!data.elites[f.id]) issues.push({ level: 'info', msg: `势力 "${f.name}" (${f.id}) 无精锐番号`, factionId: f.id });
     }
 
@@ -1839,6 +1863,29 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
             } else if (eA.name.includes(eB.name) || eB.name.includes(eA.name)) {
                 issues.push({ level: 'warn', msg: `精锐 "${eA.name}"(${idA}) 与 "${eB.name}"(${idB}) 名字包含关系` });
             }
+        }
+    }
+
+    // 14. 势力名重复（势力名之间互相比较）
+    for (let i = 0; i < data.factions.length; i++) {
+        for (let j = i + 1; j < data.factions.length; j++) {
+            const fi = data.factions[i], fj = data.factions[j];
+            if (fi.name.length < 2 || fj.name.length < 2) continue;
+            if (fi.name === fj.name) {
+                issues.push({ level: 'error', msg: `势力 "${fi.name}"(${fi.id}) 与 "${fj.name}"(${fj.id}) 势力名完全相同`, factionId: fi.id });
+            } else if (fi.name.includes(fj.name) || fj.name.includes(fi.name)) {
+                issues.push({ level: 'warn', msg: `势力 "${fi.name}"(${fi.id}) 与 "${fj.name}"(${fj.id}) 势力名包含关系`, factionId: fi.id });
+            }
+        }
+    }
+
+    // 15. 势力名 vs 据点名（跨类型撞名）
+    const cityNameMap = new Map(data.cities.map(c => [c.name, c]));
+    for (const f of data.factions) {
+        if (f.name.length < 2) continue;
+        const clash = cityNameMap.get(f.name);
+        if (clash && clash.factionId !== f.id) {
+            issues.push({ level: 'warn', msg: `势力 "${f.name}"(${f.id}) 与据点 "${clash.name}"(${clash.id}/${clash.factionId}) 同名`, factionId: f.id });
         }
     }
 

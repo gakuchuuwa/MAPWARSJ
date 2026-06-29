@@ -19,7 +19,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
   aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
   manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）
-  hezhe: { name: '索伦劲旅', tier: 3 },       // 乌云·索伦部（§3 #13）
+    hezhe: { name: '宁古塔水军', tier: 3 },
   aola: { name: '敖拉部骑', tier: 3 },       // 雅克萨·孟烈伦敖拉氏
   wuliangha: { name: '兀良哈猎兵', tier: 2 },  // 薛灵哥·者勒蔑（番号泛指，降T2）
   fuyu: { name: '夫余步骑', tier: 3 },       // 黄龙府·夫余步骑（§1）
@@ -27,17 +27,17 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   yehe: { name: '八面关骁骑', tier: 3 },
   xianbei: { name: '鲜卑弓骑', tier: 3 },   // 嘎仙洞·鲜卑弓骑（番号≤5字）
   dongxia: { name: '东夏锐卒', tier: 3 },       // 曷苏馆·蒲鲜万奴东夏国
-  haixi_nvzhen: { name: '海西重甲骑', tier: 3 },  // 辉发城·王台哈达部
+    haixi_nvzhen: { name: '海西甲骑', tier: 3 },
   houliao: { name: '东辽骑队', tier: 2 },       // 咸平·耶律留哥东辽
-  suolun: { name: '索伦营', tier: 2 },          // 卜奎·清代黑龙江索伦营（大清王牌特种兵，专名升T2）
+    suolun: { name: '卜奎猎骑', tier: 2 },
   wula: { name: '乌拉国兵', tier: 3 },          // 龙潭山城·布占泰乌拉贝勒
   wure: { name: '兀惹部卒', tier: 3 },          // 乌舍城·乌昭度兀惹部
-  heishui: { name: '黑水锐卒', tier: 3 },        // 拉哈苏苏·黑水靺鞨
-  dawoer: { name: '达斡尔骑', tier: 3 },         // 莫尔根·清代黑龙江将军辖区
-  mohe: { name: '粟末劲卒', tier: 3 },
+    heishui: { name: '靺鞨锐卒', tier: 3 },
+    dawoer: { name: '莫尔根戍骑', tier: 3 },
+    mohe: { name: '勃利甲骑', tier: 2 },
   ewenki: { name: '石勒喀猎兵', tier: 3 },   // 尼布楚·博木博果尔鄂温克
   dazhen: { name: '女真拐子马', tier: 2 },   // 恤品·完颜铁哥大真国
-  yeren_nvzhen: { name: '瑷珲索伦兵', tier: 2 }, // 瑷珲·博克雅克萨之战（索伦营已属suolun）
+    yeren_nvzhen: { name: '瑷珲马甲', tier: 2 },
   wuji: { name: '勿吉步卒', tier: 2 },            // 伯都·乙力支朝贡北魏
   jilin: { name: '吉林边军', tier: 2 },           // 宽城子·富俊编练屯田
   kuye: { name: '库页猎兵', tier: 3 },            // 白主·费雅喀猎户

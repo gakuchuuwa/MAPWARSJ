@@ -14,7 +14,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   dayue: { name: '白藤江水师', tier: 0 },           // 昇龙·陈国峻白藤江伏击灭元（区T0锚点·奇袭以少胜多）
   jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
   trinh: { name: '府僚营', tier: 3 },          // 宣光·郑主府僚军政（无史籍固定精锐番号）
-  nguyen_guangnan: { name: '富春禁兵', tier: 2 },       // 富春·阮福映禁兵（政治禁卫降T2）
+    nguyen_guangnan: { name: '富春禁兵', tier: 2 },
   // guangnanguo → 洞海城归 panjun
   ryukyu: { name: '那霸水师', tier: 2 },       // 首里·§9 #21 琉球王府水师
   ming_zheng: { name: '郑氏铁人军', tier: 1 }, // 承天·郑成功攻台（以多胜少，降T1）

@@ -41,7 +41,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
   // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
   quli: { name: '轮台戍卒', tier: 3 },
-  dzungar: { name: '准噶尔精骑', tier: 2 }, // 塔城·准噶尔帝国（清朝百年大患游牧霸权，升T1）
+    dzungar: { name: '绰罗斯精骑', tier: 2 },
   yarkand: { name: '英吉沙骑兵', tier: 3 },
   tuerhute: { name: '鹰娑川铁骑', tier: 3 },
   gaochang: { name: '高昌铁骑', tier: 2 },    // 赤亭关·麴氏高昌具装骑

@@ -30,7 +30,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     liang_d: { name: '睢阳义兵', tier: 2 },     // 商丘·张巡守睢阳（防御战，降T2）
   // 公行锐士除名
   jin: { name: '晋中军', tier: 2 },        // 曲沃·城濮之战破楚（《左传》）
-  li_lx_d: { name: '陇西戍骑', tier: 3 },   // 陇西·李崇秦陇西郡守戍兵
+    li_lx_d: { name: '陇右突骑', tier: 1 },
   xiayang_d: { name: '西河突骑', tier: 1 }, // 龙门·唐同州境黄河禹门戍防（《水经注》夏阳龙门）
   baibo: { name: '白波黄巾', tier: 3 },     // 白波谷·郭太白波黄巾
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
@@ -43,7 +43,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
                       hongnong_jun: { name: '黄龙骑', tier: 2 },    // 函谷关·杨素大破突厥
   jingzhou_gs: { name: '安定突骑', tier: 2 },       // 安定·天水安定出精骑（皇甫嵩所部）
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
-  ruo: { name: '频阳锐士', tier: 1 },          // 武关·王翦灭楚
+    ruo: { name: '频阳锐士', tier: 1 },
   ruzhou: { name: '赤帻先锋', tier: 2 },
   yun: { name: '陆浑戎骑', tier: 3 },
   jiyuan: { name: '落雕卫', tier: 1 },
@@ -65,7 +65,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
   lai: { name: '齐关弩手', tier: 2 },           // 青石关·王师范屡败朱温（正史胜仗）
   yangshao: { name: '材官骑士', tier: 2 },     // 渑池·周勃大破秦军
-  dongxian: { name: '郯城戍卒', tier: 2 },     // 郯城·孙膑
+    dongxian: { name: '马陵伏弩', tier: 1 },
   mi: { name: '朐城弩手', tier: 2 },         // 朐城·麋竺家兵
   yaozhou: { name: '耀州牙兵', tier: 2 },       // 金锁关·李茂贞岐军
   cai: { name: '雪夜突骑', tier: 1 },          // 新蔡·李愬雪夜入蔡州

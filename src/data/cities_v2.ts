@@ -493,9 +493,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_longzhou', name: '汧源', factionId: 'long2', lat: 34.89, lng: 106.86, type: 'small_city', region: 'CENTRAL', troops: 10000,
         note: '汧源；陇州小城',
     },
-    { id: 'city_longxi', name: '陇西', factionId: 'li_lx_d', lat: 35.032229, lng: 104.587097, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '陇西；李氏小城',
-    },
+    { id: 'city_longxi', name: '襄武', factionId: 'li_lx_d', lat: 35.032229, lng: 104.587097, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
     {
         id: 'city_wuwei',
         name: '姑臧',
@@ -575,15 +574,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.0500, lng: 103.8333, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1, note: '金城郡·兰州治所；赵充国屯田金城' },
 
     { id: 'city_ledu', name: '浇河', factionId: 'tuyu_d', lat: 35.7264, lng: 101.2061, type: 'small_city', region: 'TIBET', troops: 10000, note: '浇河故地；吐谷浑南界据地（王都伏俟城为隋西海郡）' },
-    {
-        id: 'city_lintao',
-        name: '临洮',
-        factionId: 'didao',
-        lat: 35.37, lng: 103.86,
-        type: 'small_city',
-        region: 'HEXI',
-        troops: 10000,
-        note: '陇西临洮，汉置狄道县；古名狄道，今临洮' },
+    { id: 'city_lintao', name: '狄道', factionId: 'didao', lat: 35.37, lng: 103.86, type: 'small_city', troops: 5000, region: 'HEXI' },
+
     { id: 'city_songzhou', name: '嘉诚', factionId: 'song2', lat: 32.787239, lng: 103.625793, type: 'small_city', troops: 10000, 
         note: '嘉诚；松州小城', region: 'TIBET' /* [override] 川西藏羌区, 松潘县 */ },
     { id: 'city_jianchang', name: '邛都', factionId: 'qiong', lat: 27.870652, lng: 102.310181, type: 'small_city', region: 'DIANQIAN', troops: 10000, note: '任贵自立邛谷王' },
@@ -648,9 +640,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         region: 'STEPPE',
         note: '辽上京临潢府（今巴林左旗）；皮室军辽太祖直属精锐' },
     { id: 'city_hezhang', name: '可乐城', factionId: 'miao', lat: 27.095807, lng: 104.718933, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '水西土司苗兵据点' },
-    { id: 'city_tancheng', name: '郯城', factionId: 'dongxian', lat: 34.549568, lng: 118.317261, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '郯城；海西小城',
-    },
+    { id: 'city_tancheng', name: '郯城', factionId: 'dongxian', lat: 34.549568, lng: 118.317261, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
     { id: 'city_qucheng', name: '朐城', factionId: 'mi', lat: 34.529200, lng: 119.132996, type: 'small_city', region: 'CENTRAL', troops: 10000,
         note: '朐城；糜小城',
     },
@@ -735,7 +726,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
         tier: 2,
         note: '剑门关；剑州关隘',
     },
-    { id: 'city_baishuiguan', name: '白水关', factionId: 'baishui', lat: 32.74, lng: 105.50, type: 'pass', region: 'BASHU', troops: 10000, mirror: true,       note: '白水关；杨怀白水戍卒',    },
+    { id: 'city_baishuiguan', name: '白水关', factionId: 'baishui', lat: 32.74, lng: 105.5, type: 'pass', troops: 10000, region: 'BASHU' },
+
     //── 子午道秦岭关隘 ──
     { id: 'city_ziwu', name: '子午谷', factionId: 'dashun', lat: 33.312230, lng: 108.124695, type: 'pass', region: 'CENTRAL', troops: 10000, note: '崇祯九年高迎祥出子午谷被伏，李自成接掌闯营；大顺老营驻地' },
     { id: 'city_mianzhuguan', name: '鹿头关', factionId: 'chenghan', lat: 31.325490, lng: 104.172363, type: 'pass', region: 'BASHU', troops: 10000, tier: 2, note: '梓潼鹿头关；成汉李特入蜀要道' },
@@ -770,9 +762,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
         note: '灵石关；宋老生霍邑',
     },
         // ── 关中盆地防御要塞群 ──
-    { id: 'city_wuguan', name: '武关', factionId: 'ruo', lat: 33.600000, lng: 110.620000, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true,
-        note: '王翦灭楚锐士武关',
-    },
+    { id: 'city_wuguan', name: '少习关', factionId: 'ruo', lat: 33.6, lng: 110.62, type: 'pass', troops: 10000, region: 'CENTRAL' },
+
 
 
     { id: 'city_xiaoguan', name: '萧关', factionId: 'beidi', lat: 35.657289, lng: 106.320190, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true, note: '萧关道，北地郡萧关·姚苌羌骑' },
@@ -1141,16 +1132,8 @@ export const PERIPHERY: CityDataV2[] = [
         troops: 10000,
         region: 'KOREA',
         note: '罗州牧治所（全罗南道）；古称发罗郡、通义县；无政权定都' },
-    {
-        id: 'city_jeonju',
-        name: '完山',
-        factionId: 'zhen',
-        lat: 35.75, lng: 127.14,
-        type: 'small_city',
-        troops: 10000,
-        tier: 4,
-        
-        note: '完山；后百济小城', region: 'KOREA' },
+    { id: 'city_jeonju', name: '完山', factionId: 'zhen', lat: 35.75, lng: 127.14, type: 'small_city', troops: 5000, region: 'KOREA' },
+
     {
         id: 'city_jindo',
         name: '鸣梁',
@@ -1318,7 +1301,8 @@ export const PERIPHERY: CityDataV2[] = [
         note: '威戎；犬戎小城',
     },
     { id: 'city_xingtai', name: '邢台', factionId: 'shizhao_d', lat: 37.08, lng: 114.48, type: 'small_city', region: 'NORTH', troops: 10000, note: '襄国，后赵石勒都城' },
-    { id: 'city_shengle', name: '盛乐', factionId: 'yunzhong', lat: 40.38, lng: 111.82, type: 'small_city', region: 'NORTH', troops: 10000, note: '北魏前期都城；峰值人口未达中城门槛，2026-06-12 降级' },
+    { id: 'city_shengle', name: '盛乐', factionId: 'yunzhong', lat: 40.38, lng: 111.82, type: 'small_city', troops: 5000, region: 'NORTH' },
+
     
     { id: 'city_izumo', name: '月山富田', factionId: 'izumo', lat: 35.377853, lng: 133.148804, type: 'pass', troops: 10000, region: 'JAPAN', note: '出云国月山富田城；尼子氏（新宫党）' },
     { id: 'city_satsuma', name: '鹿儿岛城', factionId: 'satsuma', lat: 31.6003, lng: 130.5583, type: 'small_city', region: 'JAPAN', troops: 10000, note: '萨摩国鹿儿岛城；岛津氏（隼人众）' },
@@ -1591,11 +1575,8 @@ export const PERIPHERY: CityDataV2[] = [
         id: 'city_jianning', name: '建宁', factionId: 'longwu',
         lat: 27.12, lng: 118.26, type: 'small_city', troops: 10000, tier: 4,
         region: 'LINGNAN', note: '建宁府治建瓯（今福建建瓯）；非闽西宁化一带' },
-    {
-        id: 'city_chuzhou_zj', name: '丽水', factionId: 'yezongliu',
-        lat: 28.46, lng: 119.91, type: 'small_city', troops: 10000, tier: 4,
-        
-        note: '丽水；太平小城', region: 'JIANGNAN' },
+    { id: 'city_chuzhou_zj', name: '丽水', factionId: 'yezongliu', lat: 28.46, lng: 119.91, type: 'small_city', troops: 5000, region: 'JIANGNAN' },
+
     {
         id: 'city_wenan', name: '文安', factionId: 'hejian',
         lat: 38.87, lng: 116.46, type: 'small_city', troops: 10000, tier: 4,
@@ -1609,15 +1590,12 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_hetao', name: '河套', factionId: 'dada_ming', lat: 40.442769, lng: 109.333191, type: 'small_city', region: 'HEXI', troops: 10000,
         note: '河套；鞑靼小城',
     },
-    {
-        id: 'city_kobdo', name: '科布多', factionId: 'oirat_ming',
-        lat: 48.01, lng: 91.64, type: 'small_city', troops: 10000,
-        region: 'STEPPE', note: '噶尔丹以科布多为东进基地' },
-    {
-        id: 'city_yeren_base', name: '瑷珲', factionId: 'yeren_nvzhen',
-        lat: 50.25, lng: 127.50, type: 'small_city', troops: 10000, tier: 4,
-        
-        note: '瑷珲；东海小城', region: 'NORTHEAST' },
+    { id: 'city_kobdo', name: '科布多', factionId: 'oirat_ming', lat: 48.01, lng: 91.64, type: 'small_city', troops: 5000, region: 'STEPPE' },
+
+    { id: 'city_yeren_base', name: '瑷珲', factionId: 'yeren_nvzhen', lat: 50.25, lng: 127.5, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+
+
+
     { id: 'city_chijin', name: '赤金堡', factionId: 'chijin', lat: 40.000221, lng: 97.437744, type: 'pass', region: 'HEXI', troops: 10000, note: '明赤斤蒙古卫驻牧；岳钟琪平准噶尔赤金营（旗号赤避「赤金」全称）' },
     { id: 'city_dafeichuan', name: '大非川', factionId: 'dafeichuan', lat: 36.1379, lng: 100.7611, type: 'pass', region: 'TIBET', troops: 10000,
         note: '大非川之战（薛仁贵大败）；唐蕃古道核心',
@@ -1654,22 +1632,16 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', region: 'TIBET', troops: 10000, mirror: true,
         note: '勒乌围；金川关隘',
     }, // 镜像
-    {
-        id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_x',
-        lat: 31.00, lng: 102.40, type: 'pass', region: 'BASHU', troops: 10000, mirror: true,
-        note: '美诺寨；小金川关隘',
-    }, // 镜像
+    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_x', lat: 31, lng: 102.4, type: 'small_city', troops: 5000, region: 'BASHU' },
+ // 镜像
     { id: 'city_zhaoqing', name: '肇庆', factionId: 'duanzhou_d', lat: 23.05, lng: 112.45, type: 'small_city', troops: 5000, region: 'LINGNAN' },
 
 
     {
         id: 'city_haiyang', name: '海阳', factionId: 'chaozhou_d',
         lat: 23.6697, lng: 116.6394, type: 'small_city', troops: 10000, region: 'LINGNAN', note: '海阳；马发潮州义勇' },
-    {
-        id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian',
-        lat: 24.08, lng: 120.56, type: 'small_city', region: 'JIANGNAN', troops: 10000,
-        note: '彰化；顺天小城',
-    },
+    { id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian', lat: 24.08, lng: 120.56, type: 'small_city', troops: 5000, region: 'JIANGNAN' },
+
     { id: 'city_pinglong', name: '平陇', factionId: 'miaomin', lat: 28.304379, lng: 109.671021, type: 'pass', region: 'BASHU', troops: 10000,
         note: '平陇；苗民关隘',
     },
@@ -1813,9 +1785,9 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.787170, type: 'pass', region: 'STEPPE', troops: 10000,
         note: '捕鱼儿海；弘吉剌关隘',
     },
-    { id: 'city_dzungar_basin', name: '和博克', factionId: 'choros', lat: 46.713523, lng: 85.685120, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '和博克；绰罗斯小城',
-    },
+    { id: 'city_dzungar_basin', name: '和博克', factionId: 'choros', lat: 46.713523, lng: 85.68512, type: 'small_city', troops: 5000, region: 'STEPPE' },
+
+
     { id: 'city_hanhai', name: '瀚海', factionId: 'tiele', lat: 44.144832, lng: 103.697205, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '瀚海；铁勒小城',
     },
@@ -1862,9 +1834,8 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 31.1333, lng: 97.1667, type: 'small_city', region: 'TIBET', troops: 10000, tier: 4,
         note: '察木多；白兰小城',
     },
-    { id: 'city_heizong', name: '黑河宗', factionId: 'ganden', lat: 31.456786, lng: 92.040710, type: 'small_city', region: 'TIBET', troops: 10000,
-        note: '黑河宗；甘丹小城',
-    },
+    { id: 'city_heizong', name: '黑河宗', factionId: 'ganden', lat: 31.456786, lng: 92.04071, type: 'small_city', troops: 5000, region: 'TIBET' },
+
     { id: 'city_cuona', name: '错那', factionId: 'monpa', lat: 27.979850, lng: 91.928101, type: 'small_city', region: 'TIBET', troops: 10000, note: '梅惹·洛珠嘉措门巴归附达赖' },
     { id: 'city_metuo', name: '墨脱', factionId: 'lopi', lat: 29.250477, lng: 95.213013, type: 'small_city', region: 'TIBET', troops: 10000, note: '阿波珞巴义都部据守墨脱' },
     // === 第三类：世袭门阀与政教寡头 ===
@@ -1970,9 +1941,8 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 19.80, lng: 105.7833, type: 'small_city', region: 'LINGNAN', troops: 10000, tier: 4,
         note: '西都城；郑主小城',
     },
-    {
-        id: 'city_fuchun', name: '富春', factionId: 'nguyen_guangnan',
-        lat: 16.4667, lng: 107.5833, type: 'medium_city', troops: 10000, tier: 1, region: 'LINGNAN', note: '阮主/西山朝都城；西山军' },
+    { id: 'city_fuchun', name: '富春', factionId: 'nguyen_guangnan', lat: 16.4667, lng: 107.5833, type: 'small_city', troops: 5000, region: 'LINGNAN' },
+
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
     {
         id: 'city_dangqu', name: '宕渠', factionId: 'cong',
@@ -2116,16 +2086,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
     // ── 2026-05-27 新增：青衣(雅州) ──
     // ── 2026-05-27 新增：五溪(八面山) ──
-    {
-        id: 'city_bamian',
-        name: '八面山',
-        factionId: 'wuxi',
-        lat: 28.83, lng: 109.280000,
-        type: 'pass',
-        region: 'BASHU',
-        troops: 10000,
-        note: '八面山；五溪关隘',
-    },
+    { id: 'city_bamian', name: '八面山', factionId: 'wuxi', lat: 28.83, lng: 109.28, type: 'small_city', troops: 5000, region: 'BASHU' },
+
 
     // ── 2026-05-27 新增：生苗(甲定) ──
     { id: 'city_jiading', name: '甲定', factionId: 'shengmiao', lat: 26.485279, lng: 107.523193, type: 'small_city', region: 'LINGNAN', troops: 10000,
@@ -2274,9 +2236,8 @@ export const CITIES_V2: CityDataV2[] = [
         note: '石头城；朅盘陀关隘',
     },
     { id: 'city_humicheng', name: '护密城', factionId: 'qiepantuo', lat: 36.7266, lng: 71.6133, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 4, note: '青藏/中亚环线共用锚点' },
-    { id: 'city_huoguocheng', name: '阿缓城', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
-        note: '阿缓城；嚈哒小城',
-    },
+    { id: 'city_huoguocheng', name: '阿缓城', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'small_city', troops: 5000, region: 'CENTRAL_ASIA' },
+
 
     // ── 2026-05-28 新增：马蒙(达尔甘)、古兹根(法里亚布)、傣(勐泐城)、泰沅(清坎城)、帕銮(双河城)、罗斛(呵叻城) ──
     { id: 'city_dargan', name: '达尔甘', factionId: 'mamon', lat: 40.5333, lng: 62.2667, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 4,
@@ -2295,9 +2256,9 @@ export const CITIES_V2: CityDataV2[] = [
     },
 
     // ── 2026-05-28 新增：黑龙江流域民族/家族据点 ──
-    { id: 'city_lahasusu', name: '拉哈苏苏', factionId: 'heishui', lat: 47.654208, lng: 132.497864, type: 'pass', region: 'NORTHEAST', troops: 10000,
-        note: '拉哈苏苏；黑水靺鞨关隘',
-    },
+    { id: 'city_lahasusu', name: '拉哈苏苏', factionId: 'heishui', lat: 47.654208, lng: 132.497864, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+
+
     { id: 'city_valen', name: '瓦伦', factionId: 'nanai', lat: 50.5500, lng: 137.0000, type: 'small_city', region: 'NORTHEAST', troops: 10000, tier: 4,
         note: '瓦伦；那乃小城',
     },
@@ -2317,9 +2278,8 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、叛军(三陇沙/肩水金关) ──
-    { id: 'city_zhadunzong', name: '扎敦宗', factionId: 'gandenpozhang', lat: 29.645092, lng: 84.171753, type: 'small_city', region: 'TIBET', troops: 10000,
-        note: '扎敦宗；甘丹颇章小城',
-    },
+    { id: 'city_zhadunzong', name: '扎敦宗', factionId: 'gandenpozhang', lat: 29.645092, lng: 84.171753, type: 'small_city', troops: 5000, region: 'TIBET' },
+
     { id: 'city_sanlongsha', name: '三陇沙', factionId: 'bailong', lat: 40.4000, lng: 92.5000, type: 'pass', region: 'WESTERN', troops: 10000, note: '班勇西域长史出三陇沙平车师' },
     { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'hunxie', lat: 40.413414, lng: 99.434509, type: 'pass', region: 'HEXI', troops: 10000, mirror: true,
         note: '肩水金关；浑邪关隘',
@@ -2330,9 +2290,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_porbazhyn', name: '博尔巴任', factionId: 'wala', lat: 49.664324, lng: 95.767822, type: 'pass', region: 'STEPPE', troops: 10000,
         note: '博尔巴任；瓦剌关隘',
     },
-    { id: 'city_moergen', name: '莫尔根', factionId: 'dawoer', lat: 49.1760, lng: 125.2280, type: 'small_city', region: 'NORTHEAST', troops: 10000, tier: 4,
-        note: '莫尔根；达斡尔小城',
-    },
+    { id: 'city_moergen', name: '莫尔根', factionId: 'dawoer', lat: 49.176, lng: 125.228, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+
     { id: 'city_donghai', name: '洞海城', factionId: 'guangping', lat: 17.620424, lng: 106.495972, type: 'pass', troops: 10000, region: 'LINGNAN', mirror: true, note: '占城北境·阮文张抗西山' },
 
     // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐) ──
@@ -2347,9 +2306,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_qiongbu', name: '丁青宗', factionId: 'khyungpo', lat: 31.4100, lng: 95.5900, type: 'small_city', region: 'TIBET', troops: 10000, tier: 4,
         note: '丁青宗；琼波小城',
     },
-    { id: 'city_bukui', name: '卜奎', factionId: 'suolun', lat: 47.305322, lng: 123.752747, type: 'small_city', region: 'NORTHEAST', troops: 10000,
-        note: '卜奎；索伦小城',
-    },
+    { id: 'city_bukui', name: '卜奎', factionId: 'suolun', lat: 47.305322, lng: 123.752747, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+
     { id: 'city_teshuolankalun', name: '唐努', factionId: 'tuva', lat: 49.419915, lng: 98.432007, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '唐努；图瓦小城',
     },
@@ -2559,7 +2517,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_salhu', name: '萨尔浒', factionId: 'manzhou', lat: 41.841000, lng: 124.046000, type: 'pass', region: 'NORTHEAST', troops: 10000, note: '满洲@萨尔浒；1619 白摆牙喇破明四路（≠后金国号@沈阳系）' },
     { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.530000, lng: 114.320000, type: 'medium_city', region: 'JIANGNAN', troops: 10000, tier: 1, note: '孙吴武昌督治，与春秋吴姑苏区分' },
     { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '晋国曲沃，太原让位柴周' },
-    { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746000, lng: 82.983000, type: 'small_city', region: 'WESTERN', troops: 10000, note: '准噶尔汗国西北翼；伊犁让位锡伯营' },
+    { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746, lng: 82.983, type: 'small_city', troops: 5000, region: 'WESTERN' },
+
     { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.83, lng: 93.51, type: 'small_city', region: 'WESTERN', troops: 10000, note: '草原环线西南锚点；文化西域' },
     { id: 'city_bieshibali', name: '别失八里', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '别失八里；察合台小城',
@@ -2576,9 +2535,8 @@ export const CITIES_V2: CityDataV2[] = [
     },
     { id: 'city_woluduocheng', name: '青岭牙帐', factionId: 'huihu', lat: 47.698601, lng: 102.631531, type: 'small_city', troops: 5000, region: 'STEPPE' },
 
-    { id: 'city_douweihunhe', name: '都尉溷河', factionId: 'kelie', lat: 47.859243, lng: 103.966370, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '都尉溷河；克烈部小城',
-    },
+    { id: 'city_douweihunhe', name: '都尉溷河', factionId: 'kelie', lat: 47.859243, lng: 103.96637, type: 'small_city', troops: 5000, region: 'STEPPE' },
+
     { id: 'city_xicheng', name: '息城', factionId: 'lelang', lat: 39.62, lng: 125.66, type: 'pass', region: 'KOREA', troops: 10000,
         note: '息城；乐浪关隘',
     },
@@ -2587,7 +2545,8 @@ export const CITIES_V2: CityDataV2[] = [
     },
 
     { id: 'city_bayanwula', name: '巴彦乌拉', factionId: 'donghu', lat: 44.53, lng: 117.6, type: 'small_city', region: 'STEPPE', troops: 10000, note: '东胡王恃强凌冒顿终为所灭' },
-    { id: 'city_halagaitu2', name: '哈拉盖图', factionId: 'xingan', lat: 45.780925, lng: 119.245605, type: 'small_city', region: 'STEPPE', troops: 10000, note: '海兰察呼伦贝尔索伦兵' },
+    { id: 'city_halagaitu2', name: '哈拉盖图', factionId: 'xingan', lat: 45.780925, lng: 119.245605, type: 'small_city', troops: 5000, region: 'STEPPE' },
+
     { id: 'city_kuoyitian', name: '阔亦田', factionId: 'zhadalan', lat: 47.135705, lng: 115.290527, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '阔亦田；扎答兰小城',
     },
@@ -2652,9 +2611,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mengmao', name: '勐卯', factionId: 'luchuan', lat: 24.01, lng: 97.85, type: 'small_city', region: 'DIANQIAN', troops: 10000,
         note: '勐卯；麓川小城',
     },
-    { id: 'city_xiwanjin', name: '悉万斤', factionId: 'yada', lat: 36.66, lng: 65.75, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
-        note: '悉万斤；嚈哒帝国小城',
-    },
+    { id: 'city_xiwanjin', name: '悉万斤', factionId: 'yada', lat: 36.66, lng: 65.75, type: 'small_city', troops: 5000, region: 'CENTRAL_ASIA' },
+
     { id: 'city_hunduduo', name: '昏度多', factionId: 'humi', lat: 37.022272, lng: 72.627869, type: 'small_city', region: 'TIBET', troops: 10000,
         note: '昏度多；瓦罕小城',
     },
@@ -2665,9 +2623,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_zhaburang2', name: '札布让', factionId: 'guge', lat: 31.496599, lng: 79.799194, type: 'small_city', region: 'TIBET', troops: 10000,
         note: '札布让；古格小城',
     },
-    { id: 'city_jiangzi', name: '江孜', factionId: 'pazhu', lat: 28.92, lng: 89.59, type: 'small_city', region: 'TIBET', troops: 10000,
-        note: '江孜；帕竹小城',
-    },
+    { id: 'city_jiangzi', name: '江孜', factionId: 'pazhu', lat: 28.92, lng: 89.59, type: 'small_city', troops: 5000, region: 'TIBET' },
+
     { id: 'city_linqiong', name: '临邛', factionId: 'zhuoshi', lat: 30.4149, lng: 103.4619, type: 'small_city', region: 'BASHU', troops: 10000,
         note: '临邛；卓氏小城',
     },
@@ -2777,16 +2734,14 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_xupin', name: '恤品', factionId: 'dazhen', lat: 42.994587, lng: 129.828186, type: 'pass', region: 'NORTHEAST', troops: 10000,
         note: '恤品；大真关隘',
     },
-    { id: 'city_huifa', name: '辉发', factionId: 'haixi_nvzhen', lat: 42.704630, lng: 125.922546, type: 'pass', region: 'NORTHEAST', troops: 10000,
-        note: '辉发；海西关隘',
-    },
+    { id: 'city_huifa', name: '辉发', factionId: 'haixi_nvzhen', lat: 42.70463, lng: 125.922546, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+
 
     { id: 'city_julunbo', name: '俱轮泊', factionId: 'shiwei', lat: 49.251593, lng: 118.262329, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '俱轮泊；室韦小城',
     },
-    { id: 'city_boli2', name: '勃利', factionId: 'mohe', lat: 48.48, lng: 135.07, type: 'small_city', region: 'NORTHEAST', troops: 10000,
-        note: '勃利；靺鞨小城',
-    },
+    { id: 'city_boli2', name: '勃利', factionId: 'mohe', lat: 48.48, lng: 135.07, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+
     { id: 'city_kuanchengzi', name: '宽城子', factionId: 'jilin', lat: 43.8725, lng: 125.3595, type: 'small_city', region: 'NORTHEAST', troops: 10000,
         note: '宽城子；吉林小城',
     },
@@ -2871,9 +2826,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'wuhu', lat: 41.2773, lng: 67.9312, type: 'pass', region: 'CENTRAL_ASIA', troops: 10000, mirror: true,
         note: '真珠河；乌护关隘',
     },//镜像
-    { id: 'city_wuyun', name: '乌云', factionId: 'hezhe', lat: 49.018048, lng: 129.915390, type: 'small_city', region: 'NORTHEAST', troops: 10000,
-        note: '乌云；赫哲小城',
-    },
+    { id: 'city_wuyun', name: '乌云', factionId: 'hezhe', lat: 49.018048, lng: 129.91539, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+
     // 占城国（林邑/环王国）佛临城阇槃；与占婆国（美山）分立，各 1 势力 1 据点
     { id: 'city_dupan', name: '阇槃', factionId: 'zhancheng', lat: 13.93, lng: 109.11, type: 'medium_city', troops: 10000, 
         note: '阇槃；占城治所/重镇', region: 'LINGNAN' },
@@ -2970,7 +2924,8 @@ export const CITIES_V2: CityDataV2[] = [
     },
     { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.8960, type: 'pass', region: 'TIBET', troops: 10000, note: '柴达木台吉乃尔' },
     { id: 'city_bayinbulage', name: '巴音布拉格', factionId: 'juyan_d', lat: 41.3775, lng: 102.9694, type: 'small_city', region: 'HEXI', troops: 10000, note: '戈壁泉地；汉居延县/居延塞防线；李陵率荆楚五千步卒由此出塞（《史记·李将军列传》）' },
-    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'pass', mirror: true, region: 'TIBET', troops: 10000, note: '德兴阿卡伦侍卫驻尕斯淖尔' },
+    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'small_city', troops: 5000, region: 'TIBET' },
+
     { id: 'city_jieqiao', name: '界桥', factionId: 'qu_d', lat: 36.95, lng: 115.50, type: 'pass', region: 'NORTH', troops: 10000, note: '麴义先登营破公孙瓒白马义从（192年）' },
     { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8000, lng: 99.8000, type: 'small_city', region: 'HEXI', troops: 10000, note: '汉酒泉郡表氏县；沮渠卢水胡故地' },
     { id: 'city_hakone', name: '箱根关', factionId: 'sagami', lat: 35.1925, lng: 139.0261, type: 'pass', region: 'JAPAN', troops: 10000, note: '天下第一关，关东的物理大门' },

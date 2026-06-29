@@ -21,7 +21,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   yan: { name: '渔阳突骑', tier: 2 },       // 古北口·§2 #2 光武幽州精骑（升T1）
   gongsun_d: { name: '襄平狟骑', tier: 2 }, // 襄平·公孙度襄平狟骑
   shizhao_d: { name: '黑槊龙骧', tier: 2 }, // 邢台·石虎后赵禁军
-  yunzhong: { name: '苍头军', tier: 2 },    // 盛乐·拓跋代北
+    yunzhong: { name: '苍头军', tier: 2 },
   tuoba: { name: '拓跋虎骑', tier: 2 },     // 大同·拓跋鲜卑
   // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人

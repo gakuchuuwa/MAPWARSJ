@@ -9,7 +9,7 @@
  */
 export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   wudu: { name: '甘泉驿骑', tier: 3 },         // 甘泉驿·张翼甘泉驿骑
-  baishui: { name: '白水戍卒', tier: 3 },       // 白水关·杨怀守关
+    baishui: { name: '白水戍卒', tier: 3 },
   dangzhou: { name: '阴平奇兵', tier: 0 },     // 宕昌·邓艾偷渡阴平（经典进攻性以少胜多，升T0）
   jinchuan_g: { name: '金川番兵', tier: 3 },    // 勒乌围·金川土兵
   //  miaomin: { name: '苗疆义军', tier: 3 },      // 平陇·石柳邓苗民 — 已迁 DianQianExpeditionLegions
@@ -40,7 +40,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     yang_bozhou: { name: '播州土兵', tier: 3 },    // 海龙屯·播州杨氏
   yong: { name: '庸国戍卒', tier: 3 },           // 上庸·古庸国
   cong: { name: '賨族勇士', tier: 3 },           // 宕渠·賨族
-  wuxi: { name: '五溪蛮兵', tier: 3 },           // 八面山·五溪蛮
+    wuxi: { name: '武陵弓蛮', tier: 3 },
   song2: { name: '松州戍卒', tier: 3 },          // 嘉诚·唐蕃古道松州
   yidou: { name: '夷陵奇兵', tier: 3 },          // 夷陵·三国夷陵之战
   // 权州戍兵除名（生造）
@@ -48,7 +48,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zangke: { name: '牂牁戍卒', tier: 3 },        // 胜境关·古牂牁国地（原夜郎锐卒，避岭南同名）
   wanzhou: { name: '天生城军', tier: 3 },       // 南浦·上官夔天生城
   wumeng: { name: '溪州土兵', tier: 3 },
-  jinchuan_x: { name: '金川土兵', tier: 3 },
+    jinchuan_x: { name: '赞拉勇土', tier: 2 },
   fuguo: { name: '附国羌兵', tier: 3 },  // 芒康宗·隋附国羌人部落兵
   jie: { name: '柘羯武士', tier: 2 },  // 羯霜那·玄奘《大唐西域记》载柘羯勇士
 qianzhong: { name: '乾嘉苗兵', tier: 2 },     // 芷江·吴八月攻克沅州
