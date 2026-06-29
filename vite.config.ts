@@ -338,6 +338,30 @@ export default defineConfig({
                 });
 
                 // ========================================================
+                // /api/check-proximity
+                //   检查坐标与所有已有据点的50km间距
+                // ========================================================
+                server.middlewares.use('/api/check-proximity', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    let body = '';
+                    req.on('data', (chunk: string) => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const { lat, lng, excludeCityId } = JSON.parse(body);
+                            const citiesPath = path.resolve(__dirname, 'src/data/cities_v2.ts');
+                            const citiesText = fs.readFileSync(citiesPath, 'utf-8');
+                            const issues = serverCheckProximity(citiesText, lat, lng, excludeCityId || '');
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: issues.length === 0, issues }));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // ========================================================
                 // [NEW 2026-06-01] /api/save-culture-formations
                 //   保存某个文化的兵种阵型配置
                 //   body: { culture: string, slots: any[] }
@@ -588,6 +612,7 @@ interface BatchEntry {
     lng: number;
     factionId: string;
     cityId: string;
+    region?: string;
     /** 若需先删冲突据点再新建，传其 city_id */
     deleteExistingCityId?: string;
     /** 若为 true，强制添加（跳过50km邻近检查，新旧城都保留） */
@@ -708,7 +733,8 @@ function batchImportFiles(entries: BatchEntry[]): BatchFileResult[] {
 
         // cities_v2.ts
         const { type: cityType, troops } = detectCityType(entry.cityName);
-        const cityLine = `{ id: '${cId}', name: '${entry.cityName}', factionId: '${fId}', lat: ${entry.lat}, lng: ${entry.lng}, type: '${cityType}', troops: ${troops} },`;
+        const regionPart = entry.region ? `, region: '${entry.region}'` : '';
+        const cityLine = `{ id: '${cId}', name: '${entry.cityName}', factionId: '${fId}', lat: ${entry.lat}, lng: ${entry.lng}, type: '${cityType}', troops: ${troops}${regionPart} },`;
         if (isNewCity) {
             if (entry.deleteExistingCityId) {
                 try {
@@ -1656,6 +1682,12 @@ function serverSaveGeneral(data: {
         results.push('GeneralSkills.ts: inserted');
     }
 
+    // 检查立绘文件是否存在
+    const portraitAbsPath = path.resolve(__dirname, 'public', data.portrait.replace(/^\//, ''));
+    if (!fs.existsSync(portraitAbsPath)) {
+        results.push(`⚠ 立绘文件不存在: ${data.portrait}`);
+    }
+
     fs.writeFileSync(fgPath, fgText, 'utf-8');
     fs.writeFileSync(gsPath, gsText, 'utf-8');
     return results;
@@ -1748,6 +1780,14 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
     // 10. 缺精锐
     for (const f of data.factions) {
         if (!data.elites[f.id]) issues.push({ level: 'info', msg: `势力 "${f.name}" (${f.id}) 无精锐番号`, factionId: f.id });
+    }
+
+    // 11. 立绘文件不存在
+    for (const [fId, g] of Object.entries(data.generals)) {
+        const absPath = path.resolve(__dirname, 'public', g.portrait.replace(/^\//, ''));
+        if (!fs.existsSync(absPath)) {
+            issues.push({ level: 'error', msg: `武将 "${g.generalName}" 立绘不存在: ${g.portrait}`, factionId: fId });
+        }
     }
 
     return issues;

@@ -1453,9 +1453,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -4
         },
         "/assets/CENTRAL_ASIA/wuhu_dukake.png": {
-            "scale": 1.01,
+            "scale": 1.13,
             "offsetX": 0,
-            "offsetY": 3
+            "offsetY": -11
         },
         "/assets/WESTERN/wensu_guyi.png": {
             "scale": 1.01,

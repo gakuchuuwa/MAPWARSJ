@@ -1007,7 +1007,8 @@ export const FACTIONS: Faction[] = [
     { id: 'wuyue', name: '吴越' },
     { id: 'xiyuduhu', name: '西域都护' },
     { id: 'shaozhou_d', name: '邵州' },
-];
+
+    ];
 
 // @ts-ignore
 if (import.meta.hot) {
