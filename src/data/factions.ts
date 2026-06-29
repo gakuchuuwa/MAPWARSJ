@@ -38,7 +38,8 @@ export const FACTIONS: Faction[] = [
     { id: 'wuliangha', name: '兀良哈' },
     { id: 'dingling', name: '丁零' },
     { id: 'nifuhe', name: '尼夫' },     // 旗号二字（全称尼夫赫）
-    { id: 'muer', name: '穆尔加布' },   // 穆尔加布/马尔夫鲁德（Murghab）
+    { id: 'muer', name: '呼罗珊' },
+   // 穆尔加布/马尔夫鲁德（Murghab）
     { id: 'xiajiasi', name: '坚昆' },   // 旗号二字；唐称黠戛斯，同族
     { id: 'zhen', name: '武珍' },
 
@@ -925,6 +926,7 @@ export const FACTIONS: Faction[] = [
     { id: 'qincha', name: '钦察' },
     { id: 'anxi', name: '安西' },
     { id: 'konbaung', name: '贡榜' },
+
     { id: 'qi_d', name: '戚家' },
     { id: 'wangyan', name: '太行' }, // 王彦八字军@飞狐；旗号取地名太行（禁人名「彦」）
     // ── 2026-06-11 新增：明末精锐（天雄/潼津）──
@@ -1015,7 +1017,9 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-06-20 新增：杜兰尼（坎大哈）/ 呼罗珊（赫拉特）/ 阿巴尔（尼沙布尔）──
     { id: 'dulan_d', name: '杜兰尼' },
-    { id: 'huluo', name: '呼罗珊' },
+    { id: 'huluo', name: '古尔' },
+
+
     { id: 'aba', name: '阿巴尔' },
 
     // ── 2026-06-20 新增：那竭国（顶骨城）──
@@ -1068,12 +1072,15 @@ export const FACTIONS: Faction[] = [
     { id: 'minyue', name: '闽越' },
     { id: 'funan', name: '扶南' },
     { id: 'lancang', name: '澜沧' },
-    { id: 'mowoer', name: '莫卧儿' },
+
     { id: 'ahaomu', name: '阿豪姆' },
+
     { id: 'elunchunzu', name: '鄂伦春族' },
     { id: 'wazu', name: '佤族' },
+
     { id: 'tajikezu', name: '塔吉克族' },
     { id: 'jingpozu', name: '景颇族' },
+    { id: 'shuizu', name: '水族' },
 
 
 

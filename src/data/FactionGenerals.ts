@@ -365,7 +365,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     dongxu: { generalId: 'dongxu_mangruiti', generalName: '莽瑞体', portrait: '/assets/DIANQIAN/dongxu_mangruiti.png' },
     mu_lijiang: { generalId: 'mu_lijiang_muzeng', generalName: '木增', portrait: '/assets/DIANQIAN/mu_lijiang_muzeng.png' },
     dianguo: { generalId: 'dianguo_zhuangqiao', generalName: '庄蹻', portrait: '/assets/DIANQIAN/dianguo_zhuangqiao.png' },
-    konbaung: { generalId: 'konbaung_yongjiya', generalName: '雍籍牙', portrait: '/assets/DIANQIAN/konbaung_yongjiya.png' },
+    konbaung: { generalId: 'konbaung_yongjiya', generalName: '雍笈牙', portrait: '/assets/DIANQIAN/konbaung_yongjiya.png' },
     hantawadi: { generalId: 'hantawadi_mangyinglong', generalName: '莽应龙', portrait: '/assets/DIANQIAN/hantawadi_mangyinglong.png' },
     nanzhao: { generalId: 'nanzhao_geluofeng', generalName: '阁罗凤', portrait: '/assets/DIANQIAN/nanzhao_geluofeng.png' },
     wuman: { generalId: 'wuman_cuanguiwang', generalName: '爨归王', portrait: '/assets/DIANQIAN/wuman_cuanguiwang.png' },
@@ -756,13 +756,13 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
   pangzha: { generalId: 'pangzha_halixingge', generalName: '哈里辛格', portrait: '/assets/CENTRAL_ASIA/pangzha_halixingge.png' },
   najie: { generalId: 'najie_minande', generalName: '米南德', portrait: '/assets/CENTRAL_ASIA/najie_minande.png' },
   dulan_d: { generalId: 'dulan_d_aihamaide', generalName: '艾哈迈德', portrait: '/assets/CENTRAL_ASIA/dulan_d_aihamaide.png' },
-  muer: { generalId: 'muer_mujier', generalName: '穆吉尔', portrait: '/assets/CENTRAL_ASIA/muer_mujier.png' },
+    muer: { generalId: 'muer_mujier', generalName: '穆吉尔', portrait: '/assets/CENTRAL_ASIA/muer_mujier.png' },
   baha: { generalId: 'baha_gaiwamu', generalName: '盖瓦姆', portrait: '/assets/CENTRAL_ASIA/baha_gaiwamu.png' },
   hali: { generalId: 'hali_subashi', generalName: '苏巴什', portrait: '/assets/CENTRAL_ASIA/hali_subashi.png' },
   kalan: { generalId: 'kalan_suhela', generalName: '苏赫拉', portrait: '/assets/CENTRAL_ASIA/kalan_suhela.png' },
   xisi: { generalId: 'xisi_yakubusafaer', generalName: '雅库布萨法尔', portrait: '/assets/CENTRAL_ASIA/xisi_yakubusafaer.png' },
   delan: { generalId: 'delan_sulun', generalName: '苏伦', portrait: '/assets/CENTRAL_ASIA/delan_sulun.png' },
-  huluo: { generalId: 'huluo_abumusilin', generalName: '阿布穆斯林', portrait: '/assets/CENTRAL_ASIA/jibin_qiujiuque.png' },
+    huluo: { generalId: 'huluo_abumusilin', generalName: '吉亚斯丁', portrait: '/assets/CENTRAL_ASIA/jibin_qiujiuque.png' },
   aba: { generalId: 'aba_shapuer', generalName: '沙普尔', portrait: '/assets/CENTRAL_ASIA/aba_shapuer.png' },
     wenling: { generalId: 'wenling_shilang', generalName: '施琅', portrait: '/assets/JIANGNAN/wenling_shilang.png' },
     qianzhou: { generalId: 'qianzhou_lisheng', generalName: '李晟', portrait: '/assets/litang/qianzhou_lisheng.png' },
@@ -784,6 +784,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     wazu: { generalId: 'wazu_banhongwang', generalName: '班洪王', portrait: '/assets/DIANQIAN/wazu_banhongwang.png' },
     tajikezu: { generalId: 'tajikezu_kuerban', generalName: '库尔班', portrait: '/assets/WESTERN/tajikezu_kuerban.png' },
     jingpozu: { generalId: 'jingpozu_zaodan', generalName: '早丹', portrait: '/assets/DIANQIAN/jingpozu_zaodan.png' },
+    shuizu: { generalId: 'shuizu_panxinjian', generalName: '潘新简', portrait: '/assets/DIANQIAN/shuizu_panxinjian.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

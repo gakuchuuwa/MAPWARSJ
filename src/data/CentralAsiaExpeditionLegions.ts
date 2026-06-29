@@ -19,7 +19,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   xiliao: { name: '斡耳朵亲卫', tier: 0 },     // 区T0锚·虎思·耶律大石斡耳朵亲卫
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
   guishuang: { name: '贵霜铁骑', tier: 1 },    // 蓝氏城·贵霜帝国铁骑
-  muer: { name: '花剌子模骑', tier: 2 }, // 马尔夫鲁德·穆尔加布河畔花剌子模戍卫
+    muer: { name: '呼罗珊义从', tier: 2 },
   xijue: { name: '郅支城坚兵', tier: 2 },
   tujishi: { name: '怛罗斯突骑', tier: 2 },
   kokand: { name: '浩罕轻骑', tier: 3 },
@@ -56,7 +56,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   // ── 2026-06-20 新增：锡斯坦·德兰吉亚 ──
   xisi: { name: '萨法尔圣兵', tier: 2 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊
   delan: { name: '帕提亚铁骑', tier: 1 },   // 法拉·卡莱大捷；但常被罗马击溃破都，降T1
-  huluo: { name: '呼罗珊重骑', tier: 2 },  // 赫拉特·阿布穆斯林黑旗军重骑
+    huluo: { name: '古尔重骑', tier: 1 },
   aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·卡迪西亚惨败大溃退，降T1,
     mowoer: { name: '莫卧儿突骑', tier: 1 },
 };

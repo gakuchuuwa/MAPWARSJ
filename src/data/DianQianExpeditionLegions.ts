@@ -11,7 +11,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   dali: { name: '大理白军', tier: 2 },         // 羊苴咩·§11 #2
   hantawadi: { name: '东吁象兵', tier: 1 },    // 勃固城·廓沙拉战役被纳黎萱击溃大败，降T1
   dongxu: { name: '东吁铁骑', tier: 2 },       // 东吁城·莽瑞体东吁铁骑
-  konbaung: { name: '贡榜禁军', tier: 2 },   // 瑞波·贡榜禁军（无显赫野战大捷的禁卫降T2）
+    konbaung: { name: '莫罕猎兵', tier: 1 },
   siam: { name: '皇家象骑兵', tier: 2 },       // 阿瑜陀耶·暹罗王家象兵（纳黎萱等；泰籍战史名，升T1）
   pagan: { name: '缅王战象', tier: 2 },      // 蒲甘·阿奴律陀象军
   pyu: { name: '骠国戍卒', tier: 3 },        // 室利差罗·骠国
@@ -47,4 +47,5 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     ahaomu: { name: '阿豪姆舟师', tier: 1 },
     wazu: { name: '阿佤猎兵', tier: 2 },
     jingpozu: { name: '景颇长刀兵', tier: 2 },
+    shuizu: { name: '水族藤甲兵', tier: 2 },
 };

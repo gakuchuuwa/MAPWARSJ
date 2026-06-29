@@ -514,7 +514,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     dongxu_mangruiti: { generalId: 'dongxu_mangruiti', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 统一缅甸中南部
     mu_lijiang_muzeng: { generalId: 'mu_lijiang_muzeng', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 木天王拓土
     dianguo_zhuangqiao: { generalId: 'dianguo_zhuangqiao', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 威定滇池王滇
-    konbaung_yongjiya: { generalId: 'konbaung_yongjiya', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 贡榜复国
+    konbaung_yongjiya: { generalId: 'konbaung_yongjiya', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
     nanzhao_geluofeng: { generalId: 'nanzhao_geluofeng', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 天宝战争击唐
     wuman_cuanguiwang: { generalId: 'wuman_cuanguiwang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 东爨乌蛮首领
     dai_daoyingmeng: { generalId: 'dai_daoyingmeng', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 车里宣慰征缅
@@ -1197,13 +1197,13 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
   pangzha_halixingge: { generalId: 'pangzha_halixingge', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 哈里·辛格·旁遮普：攻战计侵掠如火+攻城拔寨，开伯尔山口工程
   najie_minande: { generalId: 'najie_minande', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 米南德·那竭：攻战计侵掠如火+攻城拔寨，印度-希腊东进兴都库什
   dulan_d_aihamaide: { generalId: 'dulan_d_aihamaide', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 艾哈迈德·杜兰尼：攻战计侵掠如火+攻城拔寨，九征印度建帝国
-  muer_mujier: { generalId: 'muer_mujier', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 穆吉尔·穆尔加布：哀兵必胜守小木鹿
+    muer_mujier: { generalId: 'muer_mujier', tier: 'ordinary', tacticalSkillId: 'tac_10' },
   baha_gaiwamu: { generalId: 'baha_gaiwamu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 盖瓦姆·巴哈尔兹：深沟高垒守泰巴德
   hali_subashi: { generalId: 'hali_subashi', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 苏巴什·哈里：置之死地丹达纳克破阵
   kalan_suhela: { generalId: 'kalan_suhela', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' }, // 苏赫拉·卡伦：敌战计避实击虚+攻城拔寨，萨珊东北铁壁
   xisi_yakubusafaer: { generalId: 'xisi_yakubusafaer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 雅库布·萨法尔·锡斯坦：攻战计侵掠如火+攻城拔寨，铜匠起兵席卷呼罗珊
   delan_sulun: { generalId: 'delan_sulun', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 苏伦·德兰吉亚：敌战计避实击虚+长驱直入，帕提亚回马箭灭克拉苏
-  huluo_abumusilin: { generalId: 'huluo_abumusilin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 阿布·穆斯林·呼罗珊：敌战计避实击虚+长驱直入，黑旗席卷波斯
+    huluo_abumusilin: { generalId: 'huluo_abumusilin', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' },
   aba_shapuer: { generalId: 'aba_shapuer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 沙普尔·阿巴尔：攻战计侵掠如火+长驱直入，三破罗马擒瓦勒良
     wenling_shilang: {
         generalId: 'wenling_shilang',
@@ -1311,6 +1311,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     wazu_banhongwang: { generalId: 'wazu_banhongwang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' },
     tajikezu_kuerban: { generalId: 'tajikezu_kuerban', tier: 'ordinary', tacticalSkillId: 'tac_08' },
     jingpozu_zaodan: { generalId: 'jingpozu_zaodan', tier: 'ordinary', tacticalSkillId: 'tac_08' },
+    shuizu_panxinjian: { generalId: 'shuizu_panxinjian', tier: 'ordinary', tacticalSkillId: 'tac_10' },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

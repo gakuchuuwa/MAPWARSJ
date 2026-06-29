@@ -25,7 +25,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'wuliangha': 'city_saiyinshanda',
     'dingling': 'city_xiaoyenisei',
     'nifuhe': 'city_pennuli',
-    'muer': 'city_malulude',
+'muer': 'city_malulude',
     'xiajiasi': 'city_wubusabo',
 'zhen': 'city_jeonju',
     'dongshengwei': 'city_dongshengzhou',
@@ -672,7 +672,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yanda': 'city_huoguocheng',
     'qincha': 'city_qihe',
     'anxi': 'city_bohuancheng',
-    'konbaung': 'city_shwebo',
+'konbaung': 'city_shwebo',
 'qi_d': 'city_hengyu',
     'wangyan': 'city_feihu',
     'tianxiong': 'city_daming',
@@ -763,7 +763,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'kalan': 'city_tusi',
   'xisi': 'city_bosite',
   'delan': 'city_fala',
-  'huluo': 'city_helate',
+'huluo': 'city_helate',
   'aba': 'city_nishabuer',
     'shanshan': 'city_loulan',
 
@@ -779,13 +779,13 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yuezhi': 'city_shandan',
     'minyue': 'city_chongan',
 'funan': 'city_piyetuo',
-    'lancang': 'city_langbolabang',
-    'mowoer': 'city_deli',
+'lancang': 'city_langbolabang',
 'ahaomu': 'city_geergang',
     'elunchunzu': 'city_huma',
-    'wazu': 'city_cangyuan',
+'wazu': 'city_cangyuan',
     'tajikezu': 'city_huoluoge',
     'jingpozu': 'city_mizhina',
+    'shuizu': 'city_sandou',
 };
 
 // @ts-ignore
