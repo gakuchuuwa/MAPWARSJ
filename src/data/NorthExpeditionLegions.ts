@@ -74,5 +74,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   yangshe: { name: '铜鞮私卒', tier: 2 }, // 铜鞮·羊舌职封邑
   guzhu: { name: '辽西郡兵', tier: 2 },    // 肥如·田豫辽西镇北疆
   dizhou: { name: '龙骧军', tier: 1 },     // 乐安·王彦章龙骧破晋
-  wuyuan_d: { name: '五原塞卒', tier: 3 },  // 固阳塞·五原郡长城戍卒
+  wuyuan_d: { name: '五原塞卒', tier: 3 },  // 固阳塞·五原郡长城戍卒,
+    cangzhou: { name: '定霸都', tier: 2 },
 };

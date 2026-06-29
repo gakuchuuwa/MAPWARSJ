@@ -505,6 +505,10 @@ function checkNameDuplicates(cityName: string, factionName: string, generalName:
     check(factionName, '势力', 'name', '势力');
     check(generalName, '武将', 'generalName', '武将');
     check(eliteName, '精锐', 'eliteName', '精锐');
+    // 跨类型：势力名 vs 已有据点名
+    check(factionName, '势力', 'cityName', '据点');
+    // 跨类型：据点名 vs 已有势力名
+    check(cityName, '据点', 'name', '势力');
     return warnings;
 }
 
@@ -609,6 +613,14 @@ function openEditPanel(factionId: string | null): void {
         els.panelContent.innerHTML = `
         <form class="bm-form" id="bm-edit-form">
           <h3>编辑: ${row!.name}</h3>
+          <div style="margin-bottom:12px;padding:8px;border:1px dashed #5a5040;border-radius:6px;background:#1a1710">
+            <label style="font-size:12px;color:#aa9970;margin-bottom:4px;display:block">粘贴快速格式，自动填入下方表单：</label>
+            <div style="display:flex;gap:6px">
+              <input id="bm-edit-quick-fill" type="text" style="flex:1;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:5px 8px;font-size:12px"
+                placeholder="据点：宕昌（坐标：33.70, 104.52），势力：阴平，旗号：阴平，武将：邓艾，精锐：阴平奇兵，T0" />
+              <button type="button" id="bm-edit-quick-apply" class="bm-btn" style="padding:4px 10px;font-size:12px;white-space:nowrap">识别填入</button>
+            </div>
+          </div>
           <input type="hidden" name="factionId" value="${row!.id}" />
           <div class="form-row">
             <label><span>势力 ID</span><input value="${row!.id}" readonly /></label>
@@ -684,6 +696,33 @@ function openEditPanel(factionId: string | null): void {
 
     document.getElementById('bm-panel-close')!.addEventListener('click', closePanel);
     document.getElementById('bm-edit-form')!.addEventListener('submit', handleFormSubmit);
+
+    // 快速填入：解析粘贴文本并填入表单
+    const quickFillInput = document.getElementById('bm-edit-quick-fill') as HTMLInputElement;
+    const quickFillBtn = document.getElementById('bm-edit-quick-apply') as HTMLButtonElement;
+    if (quickFillInput && quickFillBtn) {
+        const applyQuickFill = () => {
+            const parsed = parseQuickInput(quickFillInput.value);
+            if (!parsed) { showToast('无法解析，请检查格式', true); return; }
+            const form = document.getElementById('bm-edit-form') as HTMLFormElement;
+            const set = (name: string, val: string) => {
+                const el = form.querySelector(`[name="${name}"]`) as HTMLInputElement | HTMLSelectElement | null;
+                if (el && val) el.value = val;
+            };
+            set('factionName', parsed.factionName);
+            set('flagText', parsed.flagText);
+            set('cityName', parsed.cityName);
+            if (!isNaN(parsed.lat)) set('lat', String(parsed.lat));
+            if (!isNaN(parsed.lng)) set('lng', String(parsed.lng));
+            set('generalName', parsed.generalName);
+            set('eliteName', parsed.eliteName);
+            set('eliteTier', String(parsed.eliteTier));
+            set('tier', parsed.tier);
+            showToast('✓ 已填入，可手动微调后保存');
+        };
+        quickFillBtn.addEventListener('click', applyQuickFill);
+        quickFillInput.addEventListener('paste', () => setTimeout(applyQuickFill, 50));
+    }
 }
 
 // ── Quick-input parsing ──
@@ -712,7 +751,9 @@ function parseQuickInput(text: string): ParsedEntity | null {
         return '';
     };
 
-    const cityName = extract([/据点[：:]\s*([^，,。\s]+)/]);
+    // 据点：宕昌（坐标：33.70, 104.52） 或 据点：宕昌
+    const cityWithCoord = t.match(/据点[：:]\s*([^（(，,。\s]+)[（(]坐标[：:]\s*(-?[\d.]+)[,，]\s*(-?[\d.]+)[)）]/);
+    const cityName = cityWithCoord ? cityWithCoord[1].trim() : extract([/据点[：:]\s*([^，,。\s（(]+)/]);
     const factionName = extract([/势力[：:]\s*([^，,。\s]+)/]);
     const flagText = extract([/旗号[：:]\s*([^，,。\s]+)/]);
     const generalName = extract([/武将[：:]\s*([^，,。\s]+)/]);
@@ -722,11 +763,17 @@ function parseQuickInput(text: string): ParsedEntity | null {
     const tierMatch = t.match(/[,，。\s]T(\d)/i);
     const eliteTier = tierMatch ? parseInt(tierMatch[1]) : 2;
 
-    // lat/lng
-    const latMatch = t.match(/lat[：:\s]*(-?[\d.]+)/i);
-    const lngMatch = t.match(/lng[：:\s]*(-?[\d.]+)/i);
-    const lat = latMatch ? parseFloat(latMatch[1]) : NaN;
-    const lng = lngMatch ? parseFloat(lngMatch[1]) : NaN;
+    // lat/lng: 优先从括号坐标提取，否则从 lat:/lng: 格式提取
+    let lat: number, lng: number;
+    if (cityWithCoord) {
+        lat = parseFloat(cityWithCoord[2]);
+        lng = parseFloat(cityWithCoord[3]);
+    } else {
+        const latMatch = t.match(/lat[：:\s]*(-?[\d.]+)/i);
+        const lngMatch = t.match(/lng[：:\s]*(-?[\d.]+)/i);
+        lat = latMatch ? parseFloat(latMatch[1]) : NaN;
+        lng = lngMatch ? parseFloat(lngMatch[1]) : NaN;
+    }
 
     // 名将/普将 (default ordinary)
     const isFamous = /名将/.test(t);

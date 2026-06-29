@@ -44,7 +44,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     dzungar: { name: '绰罗斯精骑', tier: 2 },
   yarkand: { name: '英吉沙骑兵', tier: 3 },
   tuerhute: { name: '鹰娑川铁骑', tier: 3 },
-  gaochang: { name: '高昌铁骑', tier: 2 },    // 赤亭关·麴氏高昌具装骑
+    gaochang: { name: '高昌铁骑', tier: 2 },
   yiwu: { name: '哈密卫戍', tier: 3 },       // 哈密卫·明关西七卫戍卒（都城高昌，咸通前）
   adao_d: { name: '昆岗台兵', tier: 3 },      // 昆岗·阿克苏道军台驿卒
   weitou: { name: '尉头城戍卒', tier: 3 },    // 阿合奇·尉头国王城

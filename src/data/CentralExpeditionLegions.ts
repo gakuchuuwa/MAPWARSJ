@@ -88,7 +88,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   huai: { name: '淮西子弟', tier: 2 },
   dang_d: { name: '厅子都', tier: 3 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
-  xiao_d: { name: '兰陵萧兵', tier: 2 },       // 兰陵·萧摩诃兰陵萧氏
+    xiao_d: { name: '雍州骁锐', tier: 1 },
   zhengzhou: { name: '白袍军', tier: 0 },        // 虎牢关·陈庆之白袍军（名师大将莫自牢，升T0）
   song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军,
     zhao: { name: '邯郸甲士', tier: 2 },

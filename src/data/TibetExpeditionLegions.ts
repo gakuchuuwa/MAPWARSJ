@@ -54,7 +54,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   song2: { name: '松州边军', tier: 3 },      // 嘉诚·唐松州抗蕃戍卒
   xiadun: { name: '廷布卫队', tier: 3 },     // 廷布·夏仲不丹亲卫
   ali: { name: '阿里骑兵', tier: 2 },          // 噶大克·甘丹才旺收复阿里
-  gaoliang: { name: '茂州戍卒', tier: 3 },      // 茂州·唐茂州戍卒（注意：这里是川西茂州，并非广东茂名！底层据点占位借用）
+    gaoliang: { name: '茂州戍卒', tier: 3 },
   nandou: { name: '勃律山兵', tier: 2 },          // 孽多·苏失利据守抗唐
   bailan: { name: '昌都僧兵', tier: 2 },        // 察木多·帕巴拉协助守城
   jiantang: { name: '建塘马兵', tier: 2 },       // 独克宗·桑杰嘉措驻防

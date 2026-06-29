@@ -114,11 +114,14 @@ export const FACTIONS: Faction[] = [
     { id: 'manzhou_d', name: '大清' },
     { id: 'ming_d', name: '大明' },
     { id: 'liao_d', name: '大辽' },
-    { id: 'dangzhou', name: '宕州' },
+    { id: 'dangzhou', name: '氐族' },
+
+
     { id: 'dai_d', name: '代国' },
     { id: 'zhongshan', name: '恒州' },
     { id: 'wang_d', name: '王家' },
-    { id: 'xiao_d', name: '萧家' },
+    { id: 'xiao_d', name: '兰陵' },
+
     { id: 'li_lx_d', name: '陇西' },
 
     { id: 'yuan_cj_d', name: '袁家' },
@@ -838,6 +841,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jingcheng_d', name: '镜城' },
     { id: 'chungju_d', name: '忠州' },
     { id: 'naju_d', name: '罗州' },
+
     { id: 'hui', name: '濊族' },
     { id: 'luzhou', name: '渌州' },
     // ── 2026-06-11 国内城改挂玄菟郡（汉代辖境·高句县渊源）──
@@ -862,13 +866,15 @@ export const FACTIONS: Faction[] = [
     { id: 'xiangxiong', name: '象雄' },
     { id: 'qingqiang', name: '青羌' },
     { id: 'zhaowu', name: '昭武' },
-    { id: 'gaoliang', name: '高凉' },
+    { id: 'gaoliang', name: '耿国' },
+
     { id: 'ruoqiang', name: '婼羌' },
 
 
     { id: 'qiemo', name: '且末' },
     { id: 'weitou', name: '尉头' },
-    { id: 'dangchang', name: '宕昌' },
+    { id: 'dangchang', name: '叠州' },
+
 
     { id: 'mi', name: '糜家' },
     { id: 'hai2', name: '海州' },
@@ -977,7 +983,8 @@ export const FACTIONS: Faction[] = [
     { id: 'ketagalan', name: '凯达格兰' },
     { id: 'shanrong', name: '山戎' },
     { id: 'suke', name: '素可泰' },
-    { id: 'gaochang', name: '高昌' },
+    { id: 'gaochang', name: '麴氏' },
+
     { id: 'chuyue', name: '处月部' },
     { id: 'baiyang', name: '白羊' },
     { id: 'baidi', name: '白狄' },
@@ -1033,7 +1040,8 @@ export const FACTIONS: Faction[] = [
     { id: 'bailong', name: '白龙' },
     { id: 'jilizhou', name: '积利州' },
     { id: 'xingxingxia', name: '伊州' },
-    { id: 'yangguan', name: '敦煌' },
+    { id: 'yangguan', name: '西凉' },
+
     { id: 'wulianghai', name: '乌梁海' },
     { id: 'kepantuo', name: '渴盘陀' },
     { id: 'qinghai', name: '青海' },
@@ -1053,6 +1061,9 @@ export const FACTIONS: Faction[] = [
     { id: 'wuyue', name: '吴越' },
     { id: 'xiyuduhu', name: '西域都护' },
     { id: 'shaozhou_d', name: '邵州' },
+    { id: 'zizhou', name: '昌城' },
+    { id: 'cangzhou', name: '沧州' },
+
 
     ];
 

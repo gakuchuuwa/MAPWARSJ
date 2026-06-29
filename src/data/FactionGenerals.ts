@@ -114,7 +114,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     gaya: { generalId: 'gaya_jinshoulu', generalName: '金首露', portrait: '/assets/KOREA/gaya_jinshoulu.png' },
 
     xuantu: { generalId: 'xuantu_yuangaisuwen', generalName: '渊盖苏文', portrait: '/assets/KOREA/xuantu_yuangaisuwen.png' },
-    naju_d: { generalId: 'naju_d_wangjian_kr', generalName: '王建', portrait: '/assets/KOREA/naju_d_wangjian_kr.png' },
+    naju_d: { generalId: 'naju_d_wangjian_kr', generalName: '王礏', portrait: '/assets/KOREA/naju_d_wangjian_kr.png' },
     chungju_d: { generalId: 'chungju_d_quanli', generalName: '权栗', portrait: '/assets/KOREA/chungju_d_quanli.png' },
     sabeol: { generalId: 'sabeol_jinshimin', generalName: '金时敏', portrait: '/assets/KOREA/sabeol_jinshimin.png' },
         huimo: { generalId: 'huimo_gaoyanshou', generalName: '高延寿', portrait: '/assets/NORTHEAST/huimo_gaoyanshou.png' },
@@ -248,7 +248,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     keerkezi: { generalId: 'keerkezi_manasi', generalName: '玛纳斯', portrait: '/assets/WESTERN/keerkezi_manasi.png' },
     pisha: { generalId: 'pisha_yuchisheng', generalName: '尉迟胜', portrait: '/assets/WESTERN/pisha_yuchisheng.png' },
     xingxingxia: { generalId: 'xingxingxia_guoxiaoke', generalName: '郭孝恪', portrait: '/assets/HEXI/xingxingxia_guoxiaoke.png' },
-    yangguan: { generalId: 'yangguan_banyong', generalName: '班勇', portrait: '/assets/WESTERN/yangguan_banyong.png' },
+    yangguan: { generalId: 'yangguan_banyong', generalName: '李暠', portrait: '/assets/WESTERN/yangguan_banyong.png' },
     wulianghai: { generalId: 'wulianghai_chelingwubashi', generalName: '车凌乌巴什', portrait: '/assets/WESTERN/wulianghai_chelingwubashi.png' },
     // 三陇沙·白龙 宁缺毋滥
 // ── 西域区 2026-06-18 ──
@@ -343,7 +343,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     guge: { generalId: 'guge_chizhaxichabade', generalName: '赤扎西查巴德', portrait: '/assets/TIBET/guge_chizhaxichabade.png' },
     pazhu: { generalId: 'pazhu_redangunsangpa', generalName: '热丹衮桑帕', portrait: '/assets/TIBET/pazhu_redangunsangpa.png' },
     ali: { generalId: 'ali_gandancaiwang', generalName: '甘丹才旺', portrait: '/assets/TIBET/ali_gandancaiwang.png' }, // 噶大克
-    gaoliang: { generalId: 'gaoliang_fengang', generalName: '冯盎', portrait: '/assets/TIBET/gaoliang_fengang.png' }, // 茂名
+    gaoliang: { generalId: 'gaoliang_fengang', generalName: '冯盎', portrait: '/assets/TIBET/gaoliang_fengang.png' },
     nandou: { generalId: 'nandou_sushili', generalName: '苏失利', portrait: '/assets/TIBET/nandou_sushili.png' }, // 孽多
     bailan: { generalId: 'bailan_pabala', generalName: '帕巴拉', portrait: '/assets/TIBET/bailan_pabala.png' }, // 察木多
     jiantang: { generalId: 'jiantang_sangjiejia', generalName: '桑杰嘉措', portrait: '/assets/TIBET/jiantang_sangjiejia.png' }, // 独克宗
@@ -479,7 +479,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     beidi: { generalId: 'beidi_yaochang', generalName: '姚苌', portrait: '/assets/TIBET/beidi_yaochang.png' },
     baiyang: { generalId: 'baiyang_mengtian', generalName: '蒙恬', portrait: '/assets/yingqin/baiyang_mengtian.png' },
     qianzhong: { generalId: 'qianzhong_wubayue', generalName: '吴八月', portrait: '/assets/BASHU/qianzhong_wubayue.png' }, // 芷江·乾嘉苗民起义
-    dangchang: { generalId: 'dangchang_liangmiding', generalName: '梁弥定', portrait: '/assets/BASHU/dangchang_liangmiding.png' }, // 合川·宕昌末代王
+    dangchang: { generalId: 'dangchang_liangmiding', generalName: '高仙芝', portrait: '/assets/BASHU/dangchang_liangmiding.png' },
     liao: { generalId: 'liao_houhongyuan', generalName: '侯弘远', portrait: '/assets/BASHU/liao_houhongyuan.png' }, // 江阳·僚人酋帅
     sou: { generalId: 'sou_gaodingyuan', generalName: '高定元', portrait: '/assets/BASHU/sou_gaodingyuan.png' }, // 乐山·越巂叟族首领
     qingqiang: { generalId: 'qingqiang_jiangwei', generalName: '姜维', portrait: '/assets/BASHU/qingqiang_jiangwei.png' }, // 汶川·蜀汉大将军
@@ -490,7 +490,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     lanzhou: { generalId: 'lanzhou_zhaochongguo', generalName: '赵充国', portrait: '/assets/liuhan/lanzhou_zhaochongguo.png' },
         wudu: { generalId: 'wudu_zhangyi', generalName: '张翼', portrait: '/assets/BASHU/wudu_zhangyi.png' },
     baishui: { generalId: 'baishui_yanghuai', generalName: '杨怀', portrait: '/assets/BASHU/baishui_yanghuai.png' },
-        dangzhou: { generalId: 'dangzhou_dengai', generalName: '邓艾', portrait: '/assets/NORTH/dangzhou_dengai.png' },
+    dangzhou: { generalId: 'dangzhou_dengai', generalName: '强端', portrait: '/assets/NORTH/dangzhou_dengai.png' },
     didao: { generalId: 'didao_duanjiong', generalName: '王韶', portrait: '/assets/HEXI/didao_duanjiong.png' },
     dashun: { generalId: 'dashun_lizicheng', generalName: '李自成', portrait: '/assets/panjun/dashun_lizicheng.png' },
     zhai_han: { generalId: 'zhai_han_dongyi', generalName: '董翳', portrait: '/assets/HEXI/zhai_han_dongyi.png' },
@@ -531,7 +531,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
             jingzhou_gs: { generalId: 'jingzhou_gs_huangfusong', generalName: '皇甫嵩', portrait: '/assets/CENTRAL/jingzhou_gs_huangfusong.png' },
     wang_d: { generalId: 'wang_d_wangdao', generalName: '王导', portrait: '/assets/CENTRAL/wang_d_wangdao.png' },
     chimei: { generalId: 'chimei_fanchong', generalName: '樊崇', portrait: '/assets/panjun/chimei_fanchong.png' },
-        xiao_d: { generalId: 'xiao_d_xiaomohe', generalName: '萧摩诃', portrait: '/assets/JIANGNAN/xiao_d_xiaomohe.png' },
+    xiao_d: { generalId: 'xiao_d_xiaomohe', generalName: '萧衍', portrait: '/assets/JIANGNAN/xiao_d_xiaomohe.png' },
     wazhai: { generalId: 'wazhai_limi_wz', generalName: '李密', portrait: '/assets/CENTRAL/wazhai_limi_wz.png' },
     jiaodong: { generalId: 'jiaodong_tiandan', generalName: '田单', portrait: '/assets/xianqin/jiaodong_tiandan.png' },
     jibei: { generalId: 'jibei_xuxuan_cm', generalName: '徐宣', portrait: '/assets/panjun/jibei_xuxuan_cm.png' },
@@ -772,6 +772,8 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     song: { generalId: 'song_zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhaosong/song_zhaokuangyin.png' },
     chuzhou_d: { generalId: 'chuzhou_d_dugao', generalName: '皇甫晖', portrait: '/assets/JIANGNAN/chuzhou_d_dugao.png' },
     xiyuduhu: { generalId: 'xiyuduhu_banchao', generalName: '班超', portrait: '/assets/liuhan/xiyuduhu_banchao.png' },
+    zizhou: { generalId: 'zizhou_wangjian', generalName: '王建', portrait: '/assets/BASHU/zizhou_wangjian.png' },
+    cangzhou: { generalId: 'cangzhou_liurengong', generalName: '刘仁恭', portrait: '/assets/NORTH/cangzhou_liurengong.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

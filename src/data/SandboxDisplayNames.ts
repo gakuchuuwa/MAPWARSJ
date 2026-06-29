@@ -101,13 +101,13 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'manzhou_d': '大清',
 'ming_d': '大明',
     'liao_d': '大辽',
-    'dangzhou': '宕',
+'dangzhou': '氐',
     'dai_d': '代',
     'dingxiang_d': '定襄',
     'xiayang_d': '夏阳',
     'zhongshan': '恒',
     'wang_d': '王',
-    'xiao_d': '萧',
+'xiao_d': '兰陵',
 'li_lx_d': '陇西',
 'yuan_cj_d': '袁',
     'xie_cj_d': '信',
@@ -641,7 +641,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'woju': '沃沮',
     'jingcheng_d': '镜',
     'chungju_d': '忠',
-    'naju_d': '罗',
+'naju_d': '罗',
     'chen3': '欢',
     'sabeol': '沙伐',
     'iga_d': '伊贺',
@@ -673,13 +673,13 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qingqiang': '茂',
     'zhaowu': '昭武',
     'ganzhou': '甘',
-    'gaoliang': '潘',
+'gaoliang': '耿',
     'ruoqiang': '婼羌',
 
     // ── 2026-05-31 新增：原生小政权都城4势力 ──
     'qiemo': '且末',
     'weitou': '尉头',
-    'dangchang': '迭',
+'dangchang': '叠',
 
     // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
 'zhong': '寿',
@@ -776,7 +776,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'ketagalan': '凯达',
     'shanrong': '山戎',
     'suke': '素',
-    'gaochang': '高昌',
+'gaochang': '麴',
     'chuyue': '处月',
     'baiyang': '白羊',
     'baidi': '白狄',
@@ -799,7 +799,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'nuergan': '都卫', // 奴儿干都司；据点名奴儿干城，旗面避 §4.1 防重
     'kepantuo': '渴盘',
     xingxingxia: '伊',
-    'yangguan': '敦煌',
+'yangguan': '西凉',
     'wulianghai': '乌梁',
     'qinghai': '青海',
     'xining': '西宁',
@@ -844,6 +844,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'heishui': '靺鞨',
     'kelie': '杭爱',
     'yada': '嚈哒',
+'zizhou': '梓',
+    'cangzhou': '沧',
 };
 
 // @ts-ignore

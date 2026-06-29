@@ -88,7 +88,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'jinling': 'city_nanjing',
     'liao_d': 'city_linhuang',
     'gongsun_d': 'city_liaoyang',
-    'dangzhou': 'city_dangchang',
+'dangzhou': 'city_dangchang',
     'dai_d': 'city_daixian',
     'dingxiang_d': 'city_eyangling',
     'xiayang_d': 'city_xiayangdu',
@@ -96,7 +96,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'murong': 'city_jicheng',
     'zhongshan': 'city_zhending',
     'wang_d': 'city_langya',
-    'xiao_d': 'city_lanling',
+'xiao_d': 'city_lanling',
     'zhuozhou': 'city_fanyang',
 'li_lx_d': 'city_longxi',
 'yuan_cj_d': 'city_xuanhu',
@@ -591,7 +591,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'woju': 'city_hamhung',
     'jingcheng_d': 'city_longer',
     'chungju_d': 'city_guoyuancheng',
-    'naju_d': 'city_geumseong',
+'naju_d': 'city_geumseong',
     'chen3': 'city_yuezhi',
     'hui': 'city_heseluo',
     'luzhou': 'city_yalu',
@@ -612,13 +612,13 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'qingqiang': 'city_maozhou',
     'zhaowu': 'city_huzhan',
 'ganzhou': 'city_zhangye',
-    'gaoliang': 'city_panzhou',
+'gaoliang': 'city_panzhou',
     'ruoqiang': 'city_ruoqiang',
 
     // -- 2026-05-31 原生小政权都城4势力 --
     'qiemo': 'city_qiemo',
     'weitou': 'city_weitoucheng',
-    'dangchang': 'city_diezhou',
+'dangchang': 'city_diezhou',
 
     // -- 2026-05-31 补齐遗漏势力 --
 'zhong': 'city_shouxian',
@@ -709,7 +709,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'ketagalan': 'city_mengjia',
     'shanrong': 'city_wuzhong',
     'suke': 'city_shuanghe',
-    'gaochang': 'city_chiting',
+'gaochang': 'city_chiting',
     'chuyue': 'city_dushancheng',
     'baiyang': 'city_gaoque',
     'baidi': 'city_jining',
@@ -731,7 +731,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'nuergan': 'city_nuergan',
     'kepantuo': 'city_gongzhubao',
     'xingxingxia': 'city_xingxingxia',
-    'yangguan': 'city_yangguan',
+'yangguan': 'city_yangguan',
     'wulianghai': 'city_buergenjuntai',
     'qinghai': 'city_gasikou',
     'chijin': 'city_chijin',
@@ -774,6 +774,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'taizhou': 'city_hailing',
     // ── 2026-06-29 新增：邵州 ──
     'shaozhou_d': 'city_shaozhou',
+'zizhou': 'city_zizhou_d',
+    'cangzhou': 'city_qingchi',
 };
 
 // @ts-ignore
