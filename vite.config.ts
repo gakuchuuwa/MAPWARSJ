@@ -260,6 +260,84 @@ export default defineConfig({
                 });
 
                 // ========================================================
+                // [NEW 2026-06-29] /api/entity-data
+                //   读取所有实体数据 (势力/据点/旗号/武将/精锐) 并合并返回
+                // ========================================================
+                server.middlewares.use('/api/entity-data', (req, res) => {
+                    if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
+                    try {
+                        const data = serverReadAllEntityData();
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify(data));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ error: err.message }));
+                    }
+                });
+
+                // ========================================================
+                // [NEW 2026-06-29] /api/save-general
+                //   写 FactionGenerals.ts + GeneralSkills.ts
+                // ========================================================
+                server.middlewares.use('/api/save-general', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    let body = '';
+                    req.on('data', (chunk: string) => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(body);
+                            const results = serverSaveGeneral(data);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, results }));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // ========================================================
+                // [NEW 2026-06-29] /api/save-elite
+                //   写入精锐番号到对应区域的 ExpeditionLegions 文件
+                // ========================================================
+                server.middlewares.use('/api/save-elite', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    let body = '';
+                    req.on('data', (chunk: string) => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(body);
+                            const result = serverSaveEliteLegion(data);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, ...result }));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // ========================================================
+                // [NEW 2026-06-29] /api/validate-entities
+                //   运行所有校验规则并返回问题列表
+                // ========================================================
+                server.middlewares.use('/api/validate-entities', (req, res) => {
+                    if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
+                    try {
+                        const issues = serverValidateEntities();
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: true, issues }));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: false, error: err.message }));
+                    }
+                });
+
+                // ========================================================
                 // [NEW 2026-06-01] /api/save-culture-formations
                 //   保存某个文化的兵种阵型配置
                 //   body: { culture: string, slots: any[] }
@@ -1442,4 +1520,235 @@ function serverCleanCanonicalForPortrait(canonicalPath: string, destWeb: string)
         fs.writeFileSync(canonicalPath, text, 'utf-8');
         console.log(`  🧹 [BindPortrait] canonical 已清理旧映射: ${destWeb}`);
     }
+}
+
+// ============================================================
+// [NEW 2026-06-29] 实体批量管理 — 读/写/校验
+// ============================================================
+
+const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = {
+    JAPAN: { file: 'JapanExpeditionLegions.ts', varName: 'JAPAN_EXPEDITION_ELITE_LEGIONS' },
+    KOREA: { file: 'KoreaExpeditionLegions.ts', varName: 'KOREA_EXPEDITION_ELITE_LEGIONS' },
+    NORTHEAST: { file: 'NortheastExpeditionLegions.ts', varName: 'NORTHEAST_EXPEDITION_ELITE_LEGIONS' },
+    STEPPE: { file: 'SteppeExpeditionLegions.ts', varName: 'STEPPE_EXPEDITION_ELITE_LEGIONS' },
+    WESTERN: { file: 'WesternExpeditionLegions.ts', varName: 'WESTERN_EXPEDITION_ELITE_LEGIONS' },
+    CENTRAL_ASIA: { file: 'CentralAsiaExpeditionLegions.ts', varName: 'CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS' },
+    TIBET: { file: 'TibetExpeditionLegions.ts', varName: 'TIBET_EXPEDITION_ELITE_LEGIONS' },
+    DIANQIAN: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },
+    LINGNAN: { file: 'LingnanExpeditionLegions.ts', varName: 'LINGNAN_EXPEDITION_ELITE_LEGIONS' },
+    JIANGNAN: { file: 'JiangnanExpeditionLegions.ts', varName: 'JIANGNAN_EXPEDITION_ELITE_LEGIONS' },
+    NORTH: { file: 'NorthExpeditionLegions.ts', varName: 'NORTH_EXPEDITION_ELITE_LEGIONS' },
+    CENTRAL: { file: 'CentralExpeditionLegions.ts', varName: 'CENTRAL_EXPEDITION_ELITE_LEGIONS' },
+    BASHU: { file: 'BashuExpeditionLegions.ts', varName: 'BASHU_EXPEDITION_ELITE_LEGIONS' },
+    HEXI: { file: 'HexiExpeditionLegions.ts', varName: 'HEXI_EXPEDITION_ELITE_LEGIONS' },
+};
+
+function serverReadAllEntityData() {
+    const factionText = fs.readFileSync(path.resolve(__dirname, 'src/data/factions.ts'), 'utf-8');
+    const citiesText = fs.readFileSync(path.resolve(__dirname, 'src/data/cities_v2.ts'), 'utf-8');
+    const sdnText = fs.readFileSync(path.resolve(__dirname, 'src/data/SandboxDisplayNames.ts'), 'utf-8');
+    const scText = fs.readFileSync(path.resolve(__dirname, 'src/data/StartingCapitals.ts'), 'utf-8');
+    const fgText = fs.readFileSync(path.resolve(__dirname, 'src/data/FactionGenerals.ts'), 'utf-8');
+    const gsText = fs.readFileSync(path.resolve(__dirname, 'src/data/GeneralSkills.ts'), 'utf-8');
+
+    // factions: { id, name }[]
+    const factions = [...factionText.matchAll(/\{\s*id:\s*'([^']+)',\s*name:\s*'([^']+)'/g)]
+        .map(m => ({ id: m[1], name: m[2] }));
+
+    // cities: parse block by block
+    const cities: Array<{ id: string; name: string; factionId: string; lat: number; lng: number; type: string; troops: number; region?: string }> = [];
+    for (const m of citiesText.matchAll(/\{[^{}]*id:\s*'([^']+)'[^{}]*\}/g)) {
+        const block = m[0];
+        const id = m[1];
+        const name = block.match(/name:\s*'([^']+)'/)?.[1] ?? '';
+        const fId = block.match(/factionId:\s*'([^']+)'/)?.[1] ?? '';
+        const lat = parseFloat(block.match(/lat:\s*([-\d.]+)/)?.[1] ?? '0');
+        const lng = parseFloat(block.match(/lng:\s*([-\d.]+)/)?.[1] ?? '0');
+        const type = block.match(/type:\s*'([^']+)'/)?.[1] ?? 'small_city';
+        const troops = parseInt(block.match(/troops:\s*(\d+)/)?.[1] ?? '5000');
+        const region = block.match(/region:\s*'([^']+)'/)?.[1];
+        if (name && fId) cities.push({ id, name, factionId: fId, lat, lng, type, troops, region });
+    }
+
+    // flags: { [factionId]: flagText } — keys may or may not be quoted
+    const flags: Record<string, string> = {};
+    for (const m of sdnText.matchAll(/(?:'([^']+)'|(\w+)):\s*'([^']*)'/g)) {
+        const key = m[1] || m[2];
+        if (key) flags[key] = m[3];
+    }
+
+    // startingCapitals: { [factionId]: cityId } — keys may or may not be quoted
+    const capitals: Record<string, string> = {};
+    for (const m of scText.matchAll(/(?:'([^']+)'|(\w+)):\s*'([^']+)'/g)) {
+        const key = m[1] || m[2];
+        if (key) capitals[key] = m[3];
+    }
+
+    // generals: { [factionId]: { generalId, generalName, portrait } }
+    const generals: Record<string, { generalId: string; generalName: string; portrait: string }> = {};
+    for (const m of fgText.matchAll(/(\w+):\s*\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']+)'/g)) {
+        generals[m[1]] = { generalId: m[2], generalName: m[3], portrait: m[4] };
+    }
+
+    // generalProfiles: { [generalId]: { tier, tacticalSkillId, strategicSkillId? } }
+    const profiles: Record<string, { tier: string; tacticalSkillId: string; strategicSkillId?: string }> = {};
+    for (const m of gsText.matchAll(/(\w+):\s*\{\s*generalId:\s*'[^']+',\s*tier:\s*'([^']+)',\s*tacticalSkillId:\s*'([^']+)'(?:,\s*strategicSkillId:\s*'([^']+)')?/g)) {
+        profiles[m[1]] = { tier: m[2], tacticalSkillId: m[3], strategicSkillId: m[4] || undefined };
+    }
+
+    // elites: merged from 14 files
+    const elites: Record<string, { name: string; tier: number; region: string }> = {};
+    for (const [region, info] of Object.entries(REGION_TO_ELITE_FILE)) {
+        const fp = path.resolve(__dirname, 'src/data', info.file);
+        if (!fs.existsSync(fp)) continue;
+        const txt = fs.readFileSync(fp, 'utf-8');
+        for (const m of txt.matchAll(/(\w+):\s*\{\s*name:\s*'([^']+)',\s*tier:\s*(\d)/g)) {
+            elites[m[1]] = { name: m[2], tier: parseInt(m[3]), region };
+        }
+    }
+
+    // tactical/strategic skill catalogs for UI dropdowns
+    const tacticalSkills: Array<{ id: string; grid: string; displayName: string }> = [];
+    for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)'/g)) {
+        if (m[2].startsWith('tac_')) tacticalSkills.push({ id: m[2], grid: m[3], displayName: m[4] });
+    }
+    const strategicSkills: Array<{ id: string; grid: string; displayName: string }> = [];
+    for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)'/g)) {
+        if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4] });
+    }
+
+    return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, regions: Object.keys(REGION_TO_ELITE_FILE) };
+}
+
+function serverSaveGeneral(data: {
+    factionId: string;
+    generalId: string;
+    generalName: string;
+    portrait: string;
+    tier: string;
+    tacticalSkillId: string;
+    strategicSkillId?: string;
+}) {
+    const fgPath = path.resolve(__dirname, 'src/data/FactionGenerals.ts');
+    const gsPath = path.resolve(__dirname, 'src/data/GeneralSkills.ts');
+    let fgText = fs.readFileSync(fgPath, 'utf-8');
+    let gsText = fs.readFileSync(gsPath, 'utf-8');
+    const results: string[] = [];
+
+    // FactionGenerals.ts
+    const fgLine = `${data.factionId}: { generalId: '${data.generalId}', generalName: '${data.generalName}', portrait: '${data.portrait}' },`;
+    if (fgText.includes(`${data.factionId}:`)) {
+        fgText = serverReplaceObjectLine(fgText, 'FACTION_GENERALS', data.factionId, `    ${fgLine}`);
+        results.push('FactionGenerals.ts: replaced');
+    } else {
+        fgText = serverInsertIntoStructure(fgText, 'FACTION_GENERALS', fgLine, '    ');
+        results.push('FactionGenerals.ts: inserted');
+    }
+
+    // GeneralSkills.ts
+    const stratPart = data.strategicSkillId ? `, strategicSkillId: '${data.strategicSkillId}'` : '';
+    const gsLine = `${data.generalId}: { generalId: '${data.generalId}', tier: '${data.tier}', tacticalSkillId: '${data.tacticalSkillId}'${stratPart} },`;
+    if (gsText.includes(`${data.generalId}:`)) {
+        gsText = serverReplaceObjectLine(gsText, 'GENERAL_PROFILES', data.generalId, `    ${gsLine}`);
+        results.push('GeneralSkills.ts: replaced');
+    } else {
+        gsText = serverInsertIntoStructure(gsText, 'GENERAL_PROFILES', gsLine, '    ');
+        results.push('GeneralSkills.ts: inserted');
+    }
+
+    fs.writeFileSync(fgPath, fgText, 'utf-8');
+    fs.writeFileSync(gsPath, gsText, 'utf-8');
+    return results;
+}
+
+function serverSaveEliteLegion(data: {
+    factionId: string;
+    eliteName: string;
+    eliteTier: number;
+    region: string;
+}) {
+    const info = REGION_TO_ELITE_FILE[data.region];
+    if (!info) throw new Error(`未知区域: ${data.region}`);
+    const fp = path.resolve(__dirname, 'src/data', info.file);
+    let text = fs.readFileSync(fp, 'utf-8');
+
+    const line = `${data.factionId}: { name: '${data.eliteName}', tier: ${data.eliteTier} },`;
+    if (text.includes(`${data.factionId}:`)) {
+        text = serverReplaceObjectLine(text, info.varName, data.factionId, `    ${line}`);
+    } else {
+        text = serverInsertIntoStructure(text, info.varName, line, '    ');
+    }
+
+    fs.writeFileSync(fp, text, 'utf-8');
+    return { file: info.file, operation: text.includes(`${data.factionId}:`) ? 'replace' : 'insert' };
+}
+
+function serverValidateEntities(): Array<{ level: string; msg: string; factionId?: string }> {
+    const data = serverReadAllEntityData();
+    const issues: Array<{ level: string; msg: string; factionId?: string }> = [];
+
+    const cityById = new Map(data.cities.map(c => [c.id, c]));
+    const factionSet = new Set(data.factions.map(f => f.id));
+
+    // 1. 据点间距 < 50km
+    for (let i = 0; i < data.cities.length; i++) {
+        for (let j = i + 1; j < data.cities.length; j++) {
+            const a = data.cities[i], b = data.cities[j];
+            const km = haversineKm(a.lat, a.lng, b.lat, b.lng);
+            if (km < 50) {
+                issues.push({ level: 'error', msg: `据点 "${a.name}" 与 "${b.name}" 间距仅 ${km.toFixed(1)}km (< 50km)` });
+            }
+        }
+    }
+
+    // 2. 重复据点 ID
+    const cityIdCount = new Map<string, number>();
+    for (const c of data.cities) cityIdCount.set(c.id, (cityIdCount.get(c.id) ?? 0) + 1);
+    for (const [id, count] of cityIdCount) {
+        if (count > 1) issues.push({ level: 'error', msg: `据点 ID "${id}" 重复 ${count} 次` });
+    }
+
+    // 3. 重复势力 ID
+    const fIdCount = new Map<string, number>();
+    for (const f of data.factions) fIdCount.set(f.id, (fIdCount.get(f.id) ?? 0) + 1);
+    for (const [id, count] of fIdCount) {
+        if (count > 1) issues.push({ level: 'error', msg: `势力 ID "${id}" 重复 ${count} 次` });
+    }
+
+    // 4. 势力缺旗号
+    for (const f of data.factions) {
+        if (!data.flags[f.id]) issues.push({ level: 'warn', msg: `势力 "${f.name}" (${f.id}) 缺旗号`, factionId: f.id });
+    }
+
+    // 5. 势力缺 StartingCapitals
+    for (const f of data.factions) {
+        if (!data.capitals[f.id]) issues.push({ level: 'warn', msg: `势力 "${f.name}" (${f.id}) 缺 StartingCapitals`, factionId: f.id });
+    }
+
+    // 6. StartingCapitals 引用不存在的据点
+    for (const [fId, cId] of Object.entries(data.capitals)) {
+        if (!cityById.has(cId)) issues.push({ level: 'error', msg: `StartingCapitals: ${fId} → ${cId} (据点不存在)`, factionId: fId });
+    }
+
+    // 7. StartingCapitals 引用不存在的势力
+    for (const fId of Object.keys(data.capitals)) {
+        if (!factionSet.has(fId)) issues.push({ level: 'error', msg: `StartingCapitals 中势力 "${fId}" 不在 factions.ts`, factionId: fId });
+    }
+
+    // 8. 缺武将
+    for (const f of data.factions) {
+        if (!data.generals[f.id]) issues.push({ level: 'info', msg: `势力 "${f.name}" (${f.id}) 无武将`, factionId: f.id });
+    }
+
+    // 9. 武将缺技能档案
+    for (const [fId, g] of Object.entries(data.generals)) {
+        if (!data.profiles[g.generalId]) issues.push({ level: 'warn', msg: `武将 "${g.generalName}" (${g.generalId}) 缺技能档案`, factionId: fId });
+    }
+
+    // 10. 缺精锐
+    for (const f of data.factions) {
+        if (!data.elites[f.id]) issues.push({ level: 'info', msg: `势力 "${f.name}" (${f.id}) 无精锐番号`, factionId: f.id });
+    }
+
+    return issues;
 }

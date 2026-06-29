@@ -2982,4 +2982,5 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '施琅福建水师' },
     { id: 'city_fengtian', name: '奉天', factionId: 'qianzhou', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '李晟神策军收复长安' },
     { id: 'city_taqian', name: '它乾城', factionId: 'xiyuduhu', lat: 41.875, lng: 83.59, type: 'pass', region: 'WESTERN', troops: 10000, tier: 4, note: '班超西域都护府驻地' },
+    { id: 'city_shaozhou', name: '邵州', factionId: 'shaozhou_d', lat: 27.24, lng: 111.47, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '马楚政权龙兴之地；马殷为邵州刺史' },
 ];

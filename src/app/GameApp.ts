@@ -607,8 +607,8 @@ if (import.meta.hot) {
         console.log(`[HMR] cities_v2.ts → 更新 ${updated} 座, 新增 ${added} 座`);
     });
 
-    // @ts-ignore
-    import.meta.hot.accept(['../data/SandboxDisplayNames.ts', '../data/factions.ts', '../assets/CityAssetManager.ts'], () => {
+    // SandboxDisplayNames / factions 自己处理数据原地更新，完成后 dispatch 'hmr:flag-data'
+    window.addEventListener('hmr:flag-data', () => {
         const game = (window as any).game as GameApp | undefined;
         if (!game?.cityManager) return;
         const cities = game.cityManager.getCities();

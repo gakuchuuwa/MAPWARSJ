@@ -249,6 +249,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wuwu_d', name: '无为' },
     { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
     { id: 'ranwei_d', name: '冉魏' },
+    { id: 'taizhou', name: '泰州' },
     { id: 'zu_d', name: '祖家' },
 
     { id: 'aisin_d', name: '爱新觉罗' },        // 旗号爱新；≠大清(manzhou_d)
@@ -1005,4 +1006,17 @@ export const FACTIONS: Faction[] = [
     { id: 'qianzhou', name: '乾州' },
     { id: 'wuyue', name: '吴越' },
     { id: 'xiyuduhu', name: '西域都护' },
+    { id: 'shaozhou_d', name: '邵州' },
 ];
+
+// @ts-ignore
+if (import.meta.hot) {
+    // @ts-ignore
+    import.meta.hot.accept((newModule: any) => {
+        if (!newModule?.FACTIONS) return;
+        FACTIONS.length = 0;
+        FACTIONS.push(...newModule.FACTIONS);
+        console.log(`[HMR] factions → ${FACTIONS.length} 势力已热更新`);
+        window.dispatchEvent(new Event('hmr:flag-data'));
+    });
+}

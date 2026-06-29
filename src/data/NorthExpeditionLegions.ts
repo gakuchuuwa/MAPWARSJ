@@ -51,7 +51,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   loufan: { name: '天山飞骑', tier: 2 },      // 宁武关·薛仁贵三箭定天山
   linyu: { name: '夷丁突骑', tier: 1 },       // 山海关·临榆（明末战功卓著，升T1）
   // 恒山军除名（泛称无固定番号）
-  dai_d: { name: '代国锐卒', tier: 3 },         // 代县·春秋代国
+  dai_d: { name: '左射军', tier: 2 },         // 灵仙·石敬瑭嫡系
   dongdan: { name: '东丹卫兵', tier: 2 },       // 敖东城·耶律倍东丹国
   xuan: { name: '大明北伐军', tier: 2 },          // 宣化·明九边宣府镇
   zhe_d: { name: '折家将兵', tier: 2 },         // 府谷·宋府州折氏十世将门

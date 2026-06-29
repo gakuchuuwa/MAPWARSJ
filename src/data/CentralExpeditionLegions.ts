@@ -76,7 +76,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   tongma: { name: '胶西郡国兵', tier: 3 },       // 胶西·刘卬发国兵参与七国之乱，战败
   yanchuan_d: { name: '淮西行营军', tier: 3 }, // 郾城·韩愈随裴度督师郾城，参赞军务
   guide_d: { name: '酂侯亲卫', tier: 1 },   // 永城·萧何酂侯
-  tongzhou: { name: '同州府兵', tier: 3 },    // 长宁·杨智积镇守同州
+  tongzhou: { name: '匡国牙兵', tier: 2 },    // 长宁·后汉高祖镇守同州
   hao_d: { name: '濠州红巾军', tier: 2 },
   suzhou_d: { name: '江北团练', tier: 3 },
   sima_d: { name: '宣王中军', tier: 3 },   // 获嘉·司马懿都督中外诸军事

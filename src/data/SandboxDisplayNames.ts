@@ -216,6 +216,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xibo_d': '锡伯',
     'jinling': '南',
     'wuwu_d': '无为',
+    'taizhou': '泰',
     'shizhao_d': '石赵',
     'ranwei_d': '冉魏',
     'zu_d': '祖',
@@ -839,4 +840,18 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   qianzhou: '乾',
   'wuyue': '吴越',
   xiyuduhu: '都护',
+  shaozhou_d: '邵',
 };
+
+// @ts-ignore
+if (import.meta.hot) {
+    // @ts-ignore
+    import.meta.hot.accept((newModule: any) => {
+        if (!newModule?.SANDBOX_DISPLAY_NAMES) return;
+        const target = SANDBOX_DISPLAY_NAMES as Record<string, string>;
+        for (const key of Object.keys(target)) delete target[key];
+        Object.assign(target, newModule.SANDBOX_DISPLAY_NAMES);
+        console.log(`[HMR] SandboxDisplayNames → ${Object.keys(target).length} 条旗号已热更新`);
+        window.dispatchEvent(new Event('hmr:flag-data'));
+    });
+}

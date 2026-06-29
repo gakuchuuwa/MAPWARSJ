@@ -56,6 +56,7 @@ export class CityAssetManager {
         'manzhou': '满洲',
         'weihaiwei': '威海',
         'tingzhou_d': '汀',
+        'shaozhou_d': '邵',
 
         'shu': '蜀',
         'yangzhou': '洋',

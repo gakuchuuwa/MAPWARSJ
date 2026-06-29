@@ -614,10 +614,16 @@ npm run city:spacing   # 写入后再跑全图 ≥50 km
 ```
 1. src/data/factions.ts                  → FACTIONS 数组
 2. src/data/cities_v2.ts                 → CITIES_V2 数组
-3. src/app/GameApp.ts                    → STARTING_CAPITALS（`src/core/GameApp.ts` 为兼容 shim）
+3. src/data/StartingCapitals.ts          → STARTING_CAPITALS 映射
 4. src/assets/CityAssetManager.ts        → factionFlagMap（`src/core/CityAssetManager.ts` 为兼容 shim）
 5. src/data/SandboxDisplayNames.ts       → SANDBOX_DISPLAY_NAMES
 ```
+
+> **⚠️ 首都映射铁律（2026-06-29 补充，防 AI 踩坑）：**
+> **凡是新建势力，必须在 `src/data/StartingCapitals.ts` 中写入首都映射（例如 `'taizhou': 'city_hailing',`）。**
+> **核心原因：** 沙盒模式下，游戏引擎（`loadGameAppCityData`）强依赖 `STARTING_CAPITALS` 判断据点归属。如果新建势力没有在此登记，引擎找不到其立足之地，就会把该据点强制降格分配给 `'panjun'`（叛军）。叛军没有旗号文字，会导致该势力在地图上只显示空旗（背景板如 7-1.png）。
+> **AI 犯错记录：** 曾漏写海陵城（taizhou）的首都映射，导致「泰」字大旗不显示，误判为 HMR 缓存问题。**此条红线绝对禁止再犯！手动改文件或用 FactionEditor 时，必须查验首都映射是否到位！**
+
 
 **不要手动写 5 处。** 用 FactionEditor 批量模式：
 - 新增 / 修改 → `/api/batch-import`

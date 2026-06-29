@@ -1246,8 +1246,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_dangchang', name: '宕昌', factionId: 'dangzhou', lat: 33.6997, lng: 104.5239, type: 'small_city', region: 'BASHU', troops: 10000,
         note: '宕昌；邓艾平蜀先锋军',
     },
-    { id: 'city_daixian', name: '广武', factionId: 'dai_d', lat: 39.842285, lng: 114.408875, type: 'small_city', region: 'NORTH', troops: 10000,
-        note: '广武；代国小城',
+    { id: 'city_daixian', name: '灵仙', factionId: 'dai_d', lat: 39.842285, lng: 114.408875, type: 'small_city', region: 'NORTH', troops: 10000,
+        note: '灵仙；代国小城',
     },
     {
         id: 'city_ningan',
@@ -2578,6 +2578,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shizhu', name: '石柱', factionId: 'tujia_d', lat: 30.000000, lng: 108.110000, type: 'small_city', region: 'BASHU', troops: 10000, note: '秦良玉土司衙门；白杆兵成军出库地（川东近乡，不取辽东浑河）' },
     { id: 'city_bijie', name: '毕节', factionId: 'shuixi', lat: 27.302000, lng: 105.285000, type: 'small_city', region: 'BASHU', troops: 10000, note: '水西安氏土司治所；罗罗兵（奢香/安邦彦）' },
     { id: 'city_tianyang', name: '田阳', factionId: 'zhuang_d', lat: 23.720000, lng: 106.650000, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地' },
+    { id: 'city_hailing', name: '海陵', factionId: 'taizhou', lat: 32.550000, lng: 120.000000, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '唐/杨吴海陵镇，后升泰州；李昪为制置使时所治发迹之地' },
     { id: 'city_jingkou', name: '濡须口', factionId: 'wuwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', troops: 10000, mirror: true, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.220000, lng: 115.040000, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '冉魏迁巨鹿；黎阳过密冀南' },
     { id: 'city_ningyuan', name: '宁远', factionId: 'zu_d', lat: 40.618000, lng: 120.720000, type: 'small_city', region: 'NORTH', troops: 10000, note: '关宁铁骑，祖大寿宁远卫（今兴城）' },
@@ -3004,6 +3005,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_penghu', name: '澎湖', factionId: 'wenling', lat: 23.5, lng: 119.5, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '施琅福建水师' },
     { id: 'city_fengtian', name: '奉天', factionId: 'qianzhou', lat: 34.53, lng: 108.24, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '李晟神策军收复长安' },
     { id: 'city_taqian', name: '它乾城', factionId: 'xiyuduhu', lat: 41.875, lng: 83.59, type: 'pass', region: 'WESTERN', troops: 10000, tier: 4, note: '班超西域都护府驻地' },
+    { id: 'city_shaozhou', name: '邵州', factionId: 'shaozhou_d', lat: 27.24, lng: 111.47, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '马楚政权龙兴之地；马殷为邵州刺史' },
 ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本
