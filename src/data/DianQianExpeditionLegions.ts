@@ -44,4 +44,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   ava: { name: '掸族象卫', tier: 3 },
     mon: { name: '孟族战象', tier: 3 },
     dian: { name: '通海城兵', tier: 2 },
+    ahaomu: { name: '阿豪姆舟师', tier: 1 },
+    wazu: { name: '阿佤猎兵', tier: 2 },
+    jingpozu: { name: '景颇长刀兵', tier: 2 },
 };

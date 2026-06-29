@@ -258,7 +258,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'liwang': '河间',
 
     // ── 2026-05-25 元朝蒙古势力 ──
-    'huarazim': '花剌',
+'huarazim': '花剌',
     'pagan': '缅',
     'champa': '占婆',
 'dongxia': '东夏',
@@ -846,6 +846,16 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yada': '嚈哒',
 'zizhou': '梓',
     'cangzhou': '沧',
+'yuezhi': '月氏',
+    'minyue': '闽越',
+'funan': '扶南',
+    'lancang': '澜沧',
+    'mowoer': '莫卧',
+'ahaomu': '阿萨',
+    'elunchunzu': '鄂伦',
+    'wazu': '佤',
+    'tajikezu': '塔吉',
+    'jingpozu': '景颇',
 };
 
 // @ts-ignore

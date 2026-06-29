@@ -268,7 +268,7 @@ export class CityAssetManager {
         'dixiang': '帝乡',
         'liwang': '河间',
 
-        'huarazim': '花剌',
+'huarazim': '花剌',
         'pagan': '缅',
         'champa': '占婆',
         'zhancheng': '占城',
@@ -808,6 +808,16 @@ export class CityAssetManager {
         'xiyuduhu': '都护',
 'zizhou': '梓',
         'cangzhou': '沧',
+'yuezhi': '月氏',
+        'minyue': '闽越',
+'funan': '扶南',
+        'lancang': '澜沧',
+        'mowoer': '莫卧',
+'ahaomu': '阿萨',
+        'elunchunzu': '鄂伦',
+        'wazu': '佤',
+        'tajikezu': '塔吉',
+        'jingpozu': '景颇',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

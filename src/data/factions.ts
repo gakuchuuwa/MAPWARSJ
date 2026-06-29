@@ -317,7 +317,8 @@ export const FACTIONS: Faction[] = [
     { id: 'liwang', name: '河间' },
 
     // ── 2026-05-26 元朝蒙古势力 ──
-    { id: 'huarazim', name: '花剌子模' },        // 中亚金 - 花剌子模帝国(撒马尔干)
+    { id: 'huarazim', name: '花剌子模' },
+        // 中亚金 - 花剌子模帝国(撒马尔干)
     // 暗影黑 - 木剌夷暗杀教团(阿剌模忒堡)
     { id: 'pagan', name: '缅国' },
     { id: 'champa', name: '占婆' },
@@ -1063,6 +1064,19 @@ export const FACTIONS: Faction[] = [
     { id: 'shaozhou_d', name: '邵州' },
     { id: 'zizhou', name: '昌城' },
     { id: 'cangzhou', name: '沧州' },
+    { id: 'yuezhi', name: '月氏' },
+    { id: 'minyue', name: '闽越' },
+    { id: 'funan', name: '扶南' },
+    { id: 'lancang', name: '澜沧' },
+    { id: 'mowoer', name: '莫卧儿' },
+    { id: 'ahaomu', name: '阿豪姆' },
+    { id: 'elunchunzu', name: '鄂伦春族' },
+    { id: 'wazu', name: '佤族' },
+    { id: 'tajikezu', name: '塔吉克族' },
+    { id: 'jingpozu', name: '景颇族' },
+
+
+
 
 
     ];

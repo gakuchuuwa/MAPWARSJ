@@ -49,5 +49,6 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   nifuhe: { name: '尼夫赫冰兵', tier: 3 },      // 盆奴里·黑龙江口
   feiyaka: { name: '费雅喀猎手', tier: 3 },       // 普禄·库页岛西岸
   nanai: { name: '赫哲快桨船', tier: 3 },         // 瓦伦·黑龙江中游
-  dongping: { name: '东平戍卒', tier: 3 },        // 锡尔喀·金代东平府
+  dongping: { name: '东平戍卒', tier: 3 },        // 锡尔喀·金代东平府,
+    elunchunzu: { name: '鄂伦春猎骑', tier: 2 },
 };

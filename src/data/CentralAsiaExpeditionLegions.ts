@@ -10,7 +10,7 @@
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
     yanda: { name: '阿尔洪铁骑', tier: 3 },
   saman: { name: '萨曼古拉姆', tier: 2 },     // 阿母城·伊斯梅尔萨曼古拉姆
-  huarazim: { name: '钦察精骑', tier: 2 },      // 玉龙杰赤·摩诃末钦察卫（§13 #4）
+    huarazim: { name: '钦察精骑', tier: 2 },
   qincha: { name: '康里精骑', tier: 2 },
   qiepantuo: { name: '护密戍卒', tier: 3 },   // 护密城·瓦罕走廊戍卒
   tiemuer: { name: '察合台突骑', tier: 0 },      // 区T0锚·撒马尔罕·帖木儿察合台突骑
@@ -57,5 +57,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   xisi: { name: '萨法尔圣兵', tier: 2 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊
   delan: { name: '帕提亚铁骑', tier: 1 },   // 法拉·卡莱大捷；但常被罗马击溃破都，降T1
   huluo: { name: '呼罗珊重骑', tier: 2 },  // 赫拉特·阿布穆斯林黑旗军重骑
-  aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·卡迪西亚惨败大溃退，降T1
+  aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·卡迪西亚惨败大溃退，降T1,
+    mowoer: { name: '莫卧儿突骑', tier: 1 },
 };

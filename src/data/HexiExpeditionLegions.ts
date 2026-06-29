@@ -44,4 +44,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   lushui: { name: '凉州义从胡', tier: 2 },          // 媪围·北宫伯玉卢水义从胡起兵凉州
   woye: { name: '度辽营', tier: 2 },           // 临戎·皇甫规度辽将军驻朔方,
     yangguan: { name: '西凉铁骑', tier: 1 },
+    yuezhi: { name: '折兰骑', tier: 2 },
 };

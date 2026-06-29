@@ -1472,9 +1472,8 @@ export const PERIPHERY: CityDataV2[] = [
 
     // ── 2026-05-25 元朝蒙古势力新增城市 ──
     // 第一类：西征摧毁政权
-    { id: 'city_urgench', name: '玉龙杰赤', factionId: 'huarazim', lat: 42.244805, lng: 59.631042, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, tier: 1,
-        note: '玉龙杰赤；花剌子模治所/重镇',
-    },
+    { id: 'city_urgench', name: '玉龙杰赤', factionId: 'huarazim', lat: 42.24, lng: 59.63, type: 'small_city', troops: 5000, region: 'CENTRAL_ASIA' },
+
     { id: 'city_merv', name: '木鹿', factionId: 'seljuq', lat: 37.616410, lng: 62.234802, type: 'big_city', region: 'CENTRAL_ASIA', troops: 20000, note: '大塞尔柱都城马鲁/梅尔夫；史籍常称木鹿' },
     { id: 'city_pagan', name: '蒲甘', factionId: 'pagan', lat: 21.207449, lng: 94.894409, type: 'medium_city', troops: 20000, tier: 1, region: 'DIANQIAN', note: '蒲甘王朝都城；缅王战象' },
         // 第二类：四大汗国
@@ -2918,6 +2917,19 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_shaozhou', name: '邵州', factionId: 'shaozhou_d', lat: 27.24, lng: 111.47, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '马楚政权龙兴之地；马殷为邵州刺史' },
     { id: 'city_zizhou_d', name: '梓州', factionId: 'zizhou', lat: 31.0788, lng: 105.0925, type: 'small_city', troops: 5000, region: 'BASHU' },
     { id: 'city_qingchi', name: '清池', factionId: 'cangzhou', lat: 38.3, lng: 116.83, type: 'small_city', troops: 5000, region: 'NORTH' },
+    { id: 'city_shandan', name: '删丹', factionId: 'yuezhi', lat: 38.78, lng: 101.08, type: 'small_city', troops: 5000, region: 'HEXI' },
+    { id: 'city_chongan', name: '崇安', factionId: 'minyue', lat: 27.76, lng: 118.02, type: 'small_city', troops: 5000, region: 'LINGNAN' },
+    { id: 'city_piyetuo', name: '毗耶陀', factionId: 'funan', lat: 11.66, lng: 104.93, type: 'small_city', troops: 5000, region: 'LINGNAN' },
+    { id: 'city_langbolabang', name: '琅勃拉邦', factionId: 'lancang', lat: 19.89, lng: 102.13, type: 'small_city', troops: 5000, region: 'LINGNAN' },
+    { id: 'city_deli', name: '德里', factionId: 'mowoer', lat: 28.61, lng: 77.2, type: 'small_city', troops: 5000, region: 'CENTRAL_ASIA' },
+    { id: 'city_geergang', name: '戈尔冈', factionId: 'ahaomu', lat: 26.93, lng: 94.75, type: 'small_city', troops: 5000, region: 'DIANQIAN' },
+    { id: 'city_huma', name: '呼玛', factionId: 'elunchunzu', lat: 51.72, lng: 126.65, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+    { id: 'city_cangyuan', name: '沧源', factionId: 'wazu', lat: 23.14, lng: 99.24, type: 'small_city', troops: 5000, region: 'DIANQIAN' },
+    { id: 'city_huoluoge', name: '霍罗格', factionId: 'tajikezu', lat: 37.49, lng: 71.55, type: 'small_city', troops: 5000, region: 'WESTERN' },
+    { id: 'city_mizhina', name: '密支那', factionId: 'jingpozu', lat: 25.38, lng: 97.4, type: 'small_city', troops: 5000, region: 'DIANQIAN' },
+
+
+
 
 
     ];

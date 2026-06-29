@@ -774,6 +774,16 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     xiyuduhu: { generalId: 'xiyuduhu_banchao', generalName: '班超', portrait: '/assets/liuhan/xiyuduhu_banchao.png' },
     zizhou: { generalId: 'zizhou_wangjian', generalName: '王建', portrait: '/assets/BASHU/zizhou_wangjian.png' },
     cangzhou: { generalId: 'cangzhou_liurengong', generalName: '刘仁恭', portrait: '/assets/NORTH/cangzhou_liurengong.png' },
+    yuezhi: { generalId: 'yuezhi_xihou', generalName: '翕侯', portrait: '/assets/HEXI/yuezhi_xihou.png' },
+    minyue: { generalId: 'minyue_wuzhu', generalName: '无诸', portrait: '/assets/LINGNAN/minyue_wuzhu.png' },
+    funan: { generalId: 'funan_fanman', generalName: '范蔓', portrait: '/assets/LINGNAN/funan_fanman.png' },
+    lancang: { generalId: 'lancang_faang', generalName: '法昂', portrait: '/assets/LINGNAN/lancang_faang.png' },
+    mowoer: { generalId: 'mowoer_babuer', generalName: '巴布尔', portrait: '/assets/CENTRAL_ASIA/mowoer_babuer.png' },
+    ahaomu: { generalId: 'ahaomu_laqite', generalName: '拉其特', portrait: '/assets/DIANQIAN/ahaomu_laqite.png' },
+    elunchunzu: { generalId: 'elunchunzu_gaishan', generalName: '盖山', portrait: '/assets/NORTHEAST/elunchunzu_gaishan.png' },
+    wazu: { generalId: 'wazu_banhongwang', generalName: '班洪王', portrait: '/assets/DIANQIAN/wazu_banhongwang.png' },
+    tajikezu: { generalId: 'tajikezu_kuerban', generalName: '库尔班', portrait: '/assets/WESTERN/tajikezu_kuerban.png' },
+    jingpozu: { generalId: 'jingpozu_zaodan', generalName: '早丹', portrait: '/assets/DIANQIAN/jingpozu_zaodan.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

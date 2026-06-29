@@ -633,8 +633,8 @@ function openEditPanel(factionId: string | null): void {
           </div>
           <input type="hidden" name="cityId" value="${row!.cityId ?? ''}" />
           <div class="form-row">
-            <label><span>纬度 (lat)</span><input name="lat" type="number" step="0.0001" value="${row!.lat ?? ''}" required /></label>
-            <label><span>经度 (lng)</span><input name="lng" type="number" step="0.0001" value="${row!.lng ?? ''}" required /></label>
+            <label><span>纬度 (lat)</span><input name="lat" type="number" step="any" value="${row!.lat ?? ''}" required /></label>
+            <label><span>经度 (lng)</span><input name="lng" type="number" step="any" value="${row!.lng ?? ''}" required /></label>
           </div>
           <label><span>文化区</span>
             <select name="region">
@@ -718,6 +718,7 @@ function openEditPanel(factionId: string | null): void {
             set('eliteName', parsed.eliteName);
             set('eliteTier', String(parsed.eliteTier));
             set('tier', parsed.tier);
+            if (parsed.region) set('region', parsed.region);
             showToast('✓ 已填入，可手动微调后保存');
         };
         quickFillBtn.addEventListener('click', applyQuickFill);
@@ -737,7 +738,25 @@ interface ParsedEntity {
     lat: number;
     lng: number;
     tier: 'famous' | 'ordinary';
+    region: string;
 }
+
+const REGION_ALIAS: Record<string, string> = {
+    '日本': 'JAPAN',
+    '朝鲜': 'KOREA', '韩国': 'KOREA',
+    '东北': 'NORTHEAST',
+    '草原': 'STEPPE', '蒙古': 'STEPPE',
+    '西域': 'WESTERN',
+    '中亚': 'CENTRAL_ASIA',
+    '吐蕃': 'TIBET', '青藏': 'TIBET', '羌藏': 'TIBET',
+    '滇黔': 'DIANQIAN', '滇缅': 'DIANQIAN',
+    '岭南': 'LINGNAN',
+    '巴蜀': 'BASHU', '川蜀': 'BASHU',
+    '河西': 'HEXI',
+    '北方': 'NORTH',
+    '中原': 'CENTRAL',
+    '江南': 'JIANGNAN',
+};
 
 function parseQuickInput(text: string): ParsedEntity | null {
     const t = text.trim();
@@ -779,13 +798,17 @@ function parseQuickInput(text: string): ParsedEntity | null {
     const isFamous = /名将/.test(t);
     const tier = isFamous ? 'famous' as const : 'ordinary' as const;
 
+    // 文化区：文化：青藏 → TIBET
+    const cultureText = extract([/文化[：:]\s*([^，,。\s]+)/]);
+    const region = REGION_ALIAS[cultureText] ?? '';
+
     if (!factionName || !cityName) return null;
 
     return {
         cityName, factionName,
         flagText: flagText || factionName.slice(0, 1),
         generalName, eliteName, eliteTier,
-        lat, lng, tier,
+        lat, lng, tier, region,
     };
 }
 
@@ -802,6 +825,9 @@ function updateQuickPreview(): void {
     }
 
     const ids = computeIds(parsed.factionName, parsed.cityName, parsed.generalName);
+    if (parsed.region && regionSelect) {
+        regionSelect.value = parsed.region;
+    }
     const region = regionSelect?.value || '';
     const lines: string[] = [
         `<span class="id-label">势力:</span> ${parsed.factionName} → <span class="id-value">${ids.factionId}</span>${ids.factionDup ? ' <span class="id-dup">(+后缀)</span>' : ''}`,

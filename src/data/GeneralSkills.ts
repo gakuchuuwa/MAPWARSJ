@@ -427,7 +427,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         xijue_ganshouchang: { generalId: 'xijue_ganshouchang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 与陈汤六校分道共灭郅支
 
 // ── 中亚区 2026-06-18 ──
-    huarazim_mohemo: { generalId: 'huarazim_mohemo', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 花剌子模鼎盛
+    huarazim_mohemo: { generalId: 'huarazim_mohemo', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' },
     kazakh_hasimu: { generalId: 'kazakh_hasimu', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 哈萨克汗国统一
     sogdian_dewasitiqi: { generalId: 'sogdian_dewasitiqi', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 粟特抗阿拉伯
     yanda_touluoman: { generalId: 'yanda_touluoman', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
@@ -1301,6 +1301,16 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     shaozhou_d_mayin: { generalId: 'shaozhou_d_mayin', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     zizhou_wangjian: { generalId: 'zizhou_wangjian', tier: 'ordinary', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' },
     cangzhou_liurengong: { generalId: 'cangzhou_liurengong', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_08' },
+    yuezhi_xihou: { generalId: 'yuezhi_xihou', tier: 'ordinary', tacticalSkillId: 'tac_07' },
+    minyue_wuzhu: { generalId: 'minyue_wuzhu', tier: 'ordinary', tacticalSkillId: 'tac_03' },
+    funan_fanman: { generalId: 'funan_fanman', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' },
+    lancang_faang: { generalId: 'lancang_faang', tier: 'ordinary', tacticalSkillId: 'tac_03' },
+    mowoer_babuer: { generalId: 'mowoer_babuer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
+    ahaomu_laqite: { generalId: 'ahaomu_laqite', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_06' },
+    elunchunzu_gaishan: { generalId: 'elunchunzu_gaishan', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' },
+    wazu_banhongwang: { generalId: 'wazu_banhongwang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' },
+    tajikezu_kuerban: { generalId: 'tajikezu_kuerban', tier: 'ordinary', tacticalSkillId: 'tac_08' },
+    jingpozu_zaodan: { generalId: 'jingpozu_zaodan', tier: 'ordinary', tacticalSkillId: 'tac_08' },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {
