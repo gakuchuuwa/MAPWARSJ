@@ -870,12 +870,32 @@ function serverReplaceArrayBlock(text: string, keyword: string, keyName: string,
  *  字符串出现在 STARTING_CAPITALS 之后的代码里 (如 fallback 等), 会被误命中,
  *  导致改错位置. 案例: GameApp.ts 把 activeFactions.push('panjun') 改成了
  *  'panjun': 'city_xxx', 整文件语法崩. 加冒号能严格限定为对象 key. */
+/** 定位对象 key 在文本中的起始下标, 支持两种写法:
+ *   带引号 'key':  (StartingCapitals / SandboxDisplayNames)
+ *   不带引号 key:  (FactionGenerals / GeneralSkills / *ExpeditionLegions)
+ *  返回 key 字符本身的下标; 找不到返回 -1。 */
+function findObjectKeyIdx(text: string, fromIdx: number, targetKey: string): number {
+    const quoted = text.indexOf(`'${targetKey}':`, fromIdx);
+    if (quoted !== -1) return quoted;
+    // 不带引号: 必须是真正的 key (前面是换行/空白/{/逗号, 后面是可选空白+冒号)
+    let from = fromIdx;
+    while (true) {
+        const idx = text.indexOf(targetKey, from);
+        if (idx === -1) return -1;
+        const before = text[idx - 1];
+        const after = text.slice(idx + targetKey.length).match(/^\s*:/);
+        if ((before === '\n' || before === '\r' || before === ' ' || before === '\t' || before === '{' || before === ',') && after) {
+            return idx;
+        }
+        from = idx + targetKey.length;
+    }
+}
+
 function serverReplaceObjectLine(text: string, keyword: string, targetKey: string, newLine: string): string {
     const kwIdx = text.indexOf(keyword);
     if (kwIdx === -1) throw new Error(`文件中找不到关键字 "${keyword}"`);
 
-    const searchStr = `'${targetKey}':`;
-    const keyIdx = text.indexOf(searchStr, kwIdx);
+    const keyIdx = findObjectKeyIdx(text, kwIdx, targetKey);
     if (keyIdx === -1) throw new Error(`在 ${keyword} 中找不到 key '${targetKey}':`);
 
     // 找到行首
@@ -925,8 +945,7 @@ function serverDeleteCityBlock(text: string, targetId: string): string {
 function serverDeleteObjectLine(text: string, keyword: string, targetKey: string): string {
     const kwIdx = text.indexOf(keyword);
     if (kwIdx === -1) throw new Error(`找不到关键字 "${keyword}"`);
-    const searchStr = `'${targetKey}':`;
-    const keyIdx = text.indexOf(searchStr, kwIdx);
+    const keyIdx = findObjectKeyIdx(text, kwIdx, targetKey);
     if (keyIdx === -1) throw new Error(`在 ${keyword} 中找不到 key '${targetKey}':`);
     let lineStart = keyIdx;
     while (lineStart > 0 && text[lineStart - 1] !== '\n') lineStart--;
@@ -1158,6 +1177,12 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
         Math.sin(dLng / 2) ** 2;
     return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function getBigrams(s: string): string[] {
+    const result: string[] = [];
+    for (let i = 0; i < s.length - 1; i++) result.push(s[i] + s[i + 1]);
+    return result;
 }
 
 /** 
@@ -1787,6 +1812,33 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         const absPath = path.resolve(__dirname, 'public', g.portrait.replace(/^\//, ''));
         if (!fs.existsSync(absPath)) {
             issues.push({ level: 'error', msg: `武将 "${g.generalName}" 立绘不存在: ${g.portrait}`, factionId: fId });
+        }
+    }
+
+    // 12. 据点名重复（完全同名 或 一方完整包含另一方）
+    for (let i = 0; i < data.cities.length; i++) {
+        for (let j = i + 1; j < data.cities.length; j++) {
+            const ci = data.cities[i], cj = data.cities[j];
+            if (ci.name.length < 2 || cj.name.length < 2) continue;
+            if (ci.name === cj.name) {
+                issues.push({ level: 'error', msg: `据点 "${ci.name}"(${ci.id}) 与 "${cj.name}"(${cj.id}) 完全同名`, factionId: ci.factionId });
+            } else if (ci.name.includes(cj.name) || cj.name.includes(ci.name)) {
+                issues.push({ level: 'warn', msg: `据点 "${ci.name}"(${ci.factionId}) 与 "${cj.name}"(${cj.factionId}) 名字包含关系`, factionId: ci.factionId });
+            }
+        }
+    }
+
+    // 13. 精锐名重复（完全同名 或 一方完整包含另一方）
+    const eliteEntries = Object.entries(data.elites) as [string, { name: string }][];
+    for (let i = 0; i < eliteEntries.length; i++) {
+        for (let j = i + 1; j < eliteEntries.length; j++) {
+            const [idA, eA] = eliteEntries[i], [idB, eB] = eliteEntries[j];
+            if (eA.name.length < 2 || eB.name.length < 2) continue;
+            if (eA.name === eB.name) {
+                issues.push({ level: 'error', msg: `精锐 "${eA.name}"(${idA}) 与 "${eB.name}"(${idB}) 完全同名` });
+            } else if (eA.name.includes(eB.name) || eB.name.includes(eA.name)) {
+                issues.push({ level: 'warn', msg: `精锐 "${eA.name}"(${idA}) 与 "${eB.name}"(${idB}) 名字包含关系` });
+            }
         }
     }
 

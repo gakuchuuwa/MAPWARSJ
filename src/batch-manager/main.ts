@@ -233,7 +233,10 @@ function injectStyles(): void {
         display:flex; justify-content:space-between; align-items:center;
         margin-bottom:8px; font-weight:bold; color:#f5e6c8;
       }
+      .bm-copy-btn { background:none; border:1px solid #555; border-radius:3px; cursor:pointer; padding:1px 4px; font-size:12px; opacity:0.5; }
+      .bm-copy-btn:hover { opacity:1; border-color:#c89b3c; }
       .bm-validation .issue { padding:3px 0; font-size:12px; }
+      .bm-validation .issue[data-fid]:hover { text-decoration:underline; background:#ffffff10; }
       .bm-validation .issue-error { color:#ff9a8a; }
       .bm-validation .issue-warn { color:#f5d78e; }
       .bm-validation .issue-info { color:#8ab4c4; }
@@ -363,6 +366,7 @@ const COLUMNS: Array<{ key: string; label: string; width?: string }> = [
     { key: 'eliteName', label: '精锐' },
     { key: 'eliteTier', label: 'T', width: '30px' },
     { key: 'completeness', label: '完整度', width: '80px' },
+    { key: '_actions', label: '', width: '36px' },
 ];
 
 function renderTable(): void {
@@ -389,6 +393,7 @@ function renderTable(): void {
             <td>${r.eliteName ? `<span class="cell-ok">${r.eliteName}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${r.eliteTier != null ? `T${r.eliteTier}` : ''}</td>
             <td>${renderBar(r.completeness)}</td>
+            <td><button class="bm-copy-btn" data-copy-fid="${r.id}" title="复制为快速录入格式">📋</button></td>
         </tr>`;
     }).join('');
 
@@ -404,10 +409,35 @@ function renderTable(): void {
         });
     });
     els.tableWrap.querySelectorAll('tr[data-fid]').forEach(tr => {
-        tr.addEventListener('click', () => {
+        tr.addEventListener('click', (e) => {
+            if ((e.target as HTMLElement).closest('.bm-copy-btn')) return;
             editingFactionId = (tr as HTMLElement).dataset.fid!;
             openEditPanel(editingFactionId);
             renderTable();
+        });
+    });
+    els.tableWrap.querySelectorAll('.bm-copy-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const fid = (btn as HTMLElement).dataset.copyFid!;
+            const r = rows.find(row => row.id === fid);
+            if (!r) return;
+            const parts: string[] = [];
+            if (r.cityName) parts.push(`据点：${r.cityName}（坐标：${r.lat?.toFixed(2) ?? '?'}, ${r.lng?.toFixed(2) ?? '?'}）`);
+            if (r.name) parts.push(`势力：${r.name}`);
+            if (r.flagText) parts.push(`旗号：${r.flagText}`);
+            if (r.generalName) parts.push(`武将：${r.generalName}`);
+            if (r.eliteName) parts.push(`精锐：${r.eliteName}，T${r.eliteTier ?? '?'}`);
+            const text = parts.join('，') + '。';
+            const copyFallback = (s: string) => {
+                const ta = document.createElement('textarea');
+                ta.value = s; ta.style.cssText = 'position:fixed;opacity:0';
+                document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+                document.body.removeChild(ta);
+            };
+            try {
+                navigator.clipboard.writeText(text).then(() => showToast('已复制')).catch(() => { copyFallback(text); showToast('已复制'); });
+            } catch { copyFallback(text); showToast('已复制'); }
         });
     });
 }
@@ -455,6 +485,27 @@ function computeIds(factionName: string, cityName: string, generalName: string):
         cityDup: cityBase !== 'city_' && cityBase !== cityId,
         generalDup: generalName !== '' && generalBase !== generalId,
     };
+}
+
+function checkNameDuplicates(cityName: string, factionName: string, generalName: string, eliteName: string): string[] {
+    const warnings: string[] = [];
+    const check = (newName: string, label: string, field: keyof FactionRow, existLabel: string) => {
+        if (!newName || newName.length < 2) return;
+        for (const row of rows) {
+            const exist = row[field] as string | undefined;
+            if (!exist || exist.length < 2) continue;
+            if (newName === exist) {
+                warnings.push(`${label}"${newName}" 与已有${existLabel}"${exist}"(${row.name}) 完全同名`);
+            } else if (newName.includes(exist) || exist.includes(newName)) {
+                warnings.push(`${label}"${newName}" 与已有${existLabel}"${exist}"(${row.name}) 名字包含关系`);
+            }
+        }
+    };
+    check(cityName, '据点', 'cityName', '据点');
+    check(factionName, '势力', 'name', '势力');
+    check(generalName, '武将', 'generalName', '武将');
+    check(eliteName, '精锐', 'eliteName', '精锐');
+    return warnings;
 }
 
 function updateIdPreview(): void {
@@ -726,6 +777,10 @@ function updateQuickPreview(): void {
     if (parsed.eliteName) {
         lines.push(`<span class="id-label">精锐:</span> ${parsed.eliteName} T${parsed.eliteTier}`);
     }
+    const dupWarnings = checkNameDuplicates(parsed.cityName, parsed.factionName, parsed.generalName || '', parsed.eliteName || '');
+    for (const w of dupWarnings) {
+        lines.push(`<span class="id-dup">⚠ ${w}</span>`);
+    }
     preview.innerHTML = lines.join('<br>');
 }
 
@@ -753,6 +808,12 @@ async function handleQuickSubmit(): Promise<void> {
     const ids = computeIds(parsed.factionName, parsed.cityName, parsed.generalName);
     if (!ids.factionId || !ids.cityId) {
         showToast('无法生成 ID，请检查名称', true);
+        return;
+    }
+
+    const dupWarnings = checkNameDuplicates(parsed.cityName, parsed.factionName, parsed.generalName || '', parsed.eliteName || '');
+    if (dupWarnings.length > 0) {
+        showToast(`重名检测: ${dupWarnings[0]}`, true);
         return;
     }
 
@@ -1003,13 +1064,32 @@ function renderValidation(): void {
     const warns = issues.filter(i => i.level === 'warn');
     const infos = issues.filter(i => i.level === 'info');
 
+    const issueHtml = (i: typeof issues[0], icon: string) => {
+        if (i.factionId) {
+            return `<div class="issue issue-${i.level}" data-fid="${i.factionId}" style="cursor:pointer">${icon} ${i.msg} → 点击编辑</div>`;
+        }
+        const idMatch = i.msg.match(/\((\w+)\)/);
+        if (idMatch) {
+            return `<div class="issue issue-${i.level}" data-fid="${idMatch[1]}" style="cursor:pointer">${icon} ${i.msg} → 点击编辑</div>`;
+        }
+        return `<div class="issue issue-${i.level}">${icon} ${i.msg}</div>`;
+    };
+
     els.validationList.innerHTML = [
         `<div style="margin-bottom:6px;color:#a89f8f">错误 ${errors.length} | 警告 ${warns.length} | 信息 ${infos.length}</div>`,
-        ...errors.map(i => `<div class="issue issue-error">✗ ${i.msg}</div>`),
-        ...warns.map(i => `<div class="issue issue-warn">⚠ ${i.msg}</div>`),
-        ...infos.slice(0, 50).map(i => `<div class="issue issue-info">ℹ ${i.msg}</div>`),
+        ...errors.map(i => issueHtml(i, '✗')),
+        ...warns.map(i => issueHtml(i, '⚠')),
+        ...infos.slice(0, 50).map(i => issueHtml(i, 'ℹ')),
         infos.length > 50 ? `<div class="issue issue-info">… 还有 ${infos.length - 50} 条信息</div>` : '',
     ].join('');
+
+    els.validationList.querySelectorAll('[data-fid]').forEach(el => {
+        el.addEventListener('click', () => {
+            const fid = (el as HTMLElement).dataset.fid!;
+            editingFactionId = fid;
+            openEditPanel(fid);
+        });
+    });
 }
 
 // ── Toast ──
@@ -1025,12 +1105,14 @@ function showToast(msg: string, isError = false): void {
 function bindEvents(): void {
     els.search.addEventListener('input', () => {
         searchQuery = els.search.value.trim();
+        localStorage.setItem('bm-search', searchQuery);
         applyFilter();
         renderTable();
         updateStats();
     });
     els.filter.addEventListener('change', () => {
         filterMode = els.filter.value as typeof filterMode;
+        localStorage.setItem('bm-filter', filterMode);
         applyFilter();
         renderTable();
         updateStats();
@@ -1054,6 +1136,10 @@ function bindEvents(): void {
 
 async function boot(): Promise<void> {
     bindEvents();
+    searchQuery = localStorage.getItem('bm-search') ?? '';
+    filterMode = (localStorage.getItem('bm-filter') ?? 'all') as typeof filterMode;
+    els.search.value = searchQuery;
+    els.filter.value = filterMode;
     await loadData();
 }
 

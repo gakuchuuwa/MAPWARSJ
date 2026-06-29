@@ -61,11 +61,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'nanyue': '南越',
     'guangzhou': '广',
     'guangping': '广平',
-    'duanzhou_d': '端',
+'duanzhou_d': '端',
     'qin': '秦',
     'song': '宋',
     'yan': '燕',
-    'zhao': '赵',
+'zhao': '赵',
 'wei': '魏',
 'han': '韩',
     'han_d': '汉',
@@ -135,7 +135,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'qing': '庆',
 
     'jingmen': '荆门',
-    'huige': '回纥',
+'huige': '回纥',
     'dayue': '大越',
     'yamato': '大和',
 'edo': '德川',
@@ -248,10 +248,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-25 北宋辽金势力 ──
     'goryeo': '高丽',
 'nongzhigao': '邕',
-    'fangla': '方',
+'fangla': '方',
 
     // ── 2026-05-25 北宋辽金势力 v2 ──
-    'zhongxiang': '钟楚',
+'zhongxiang': '鼎',
     'yang_aner': '登',
     'jinan': '历',
     'dixiang': '新',
@@ -269,7 +269,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tatar': '塔塔',
     'merkit': '蔑儿',
 'ongut': '汪古',
-    'xushouhui': '天完',
+'xushouhui': '天完',
     'zhangshicheng': '大周',
     'luoping': '新会',
     'chendiaoyan': '漳',
@@ -416,7 +416,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'she_ethnic': '畲',
 
     
-    'wuling': '武陵',
+'wuling': '五溪',
 
     // ── 2026-05-27 新增：汪、向、覃、冉、储 ──
     'wang_s': '汪',
@@ -582,7 +582,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'duerbote': '杜尔',
     'zhasaketu': '扎萨',
     'kaerka': '喀尔',
-    'huihu': '回鹘',
+'huihu': '回鹘',
 'wuzhumuqin': '乌珠',
     'xingan': '兴',
     'zhadalan': '扎答',
@@ -736,7 +736,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'guide_d': '芒砀',
     'lulin': '绿林',
     'dang_d': '虞',
-    'hao_d': '濠',
+'hao_d': '濠',
     'bozhou_d': '博',
     'hongnong_jun': '弘农',
     'zhengzhou': '郑',

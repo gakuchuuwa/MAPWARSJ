@@ -4206,6 +4206,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.25,
             "offsetX": 0,
             "offsetY": 25
+        },
+        "/assets/CENTRAL/tongzhou_liuzhiyuan.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -4
         }
     },
     "folderGuides": {

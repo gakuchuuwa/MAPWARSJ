@@ -45,7 +45,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   paiyao: { name: '八排瑶丁', tier: 3 },      // 阳山关·明清连阳八排瑶丁
   // 湘军道营除名（无此编制）
   dayu: { name: '南赣标军', tier: 1 },        // 横浦关·明王阳明南赣标军（明代巡抚标营编制，升T1）
-  duanzhou_d: { name: '摧锋军', tier: 1 },       // 肇庆·曹觐屡败侬智高
+    duanzhou_d: { name: '端州义勇', tier: 2 },
   chaozhou_d: { name: '潮州义勇', tier: 2 },       // 海阳·马发
   basha_d: { name: '湄公象卫', tier: 2 },     // 上丁·刀更孟象兵
   dengmaoqi: { name: '铲平义军', tier: 3 },

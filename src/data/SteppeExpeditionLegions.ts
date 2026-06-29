@@ -19,7 +19,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   xiongnu: { name: '控弦之士', tier: 2 },      // 头曼城·匈奴骑兵
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
 
-  huige: { name: '回鹘精骑', tier: 2 },       // 窝鲁朵八里·骨力裴罗回鹘精骑
+    huige: { name: '回纥精骑', tier: 2 },
   // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
   // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
   gaoche: { name: '高车战车', tier: 3 },       // 浚稽山·高车战车兵（§6 #16）
@@ -64,7 +64,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tumed: { name: '土默特精骑', tier: 2 },         // 归化城·俺答汗土默特精骑
   tushetu: { name: '库伦铁骑', tier: 3 },       // 库伦·土谢图汗
   yaoluoge: { name: '药罗葛骑', tier: 3 },      // 娑陵·药罗葛部
-  huihu: { name: '回鹘牙帐骑', tier: 3 },      // 窝鲁朵·回鹘汗庭
+    huihu: { name: '回鹘精骑', tier: 2 },
   ashide: { name: '阿史德骑', tier: 3 },        // 黑沙城·阿史德氏
   pugu: { name: '蓝突厥骑', tier: 2 },          // 燕然山·仆固氏铁勒
   pulei: { name: '蒲类戍卒', tier: 3 },         // 巴里坤·蒲类国故地

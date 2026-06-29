@@ -36,7 +36,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   qian_d: { name: '嘉兴水师', tier: 2 },      // 嘉兴·俞大猷嘉兴水师
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）
   jiujiang: { name: '蒙冲斗舰', tier: 1 },     // 六安·周瑜九江戍守
-  fangla: { name: '圣公兵', tier: 1 },         // 睦州·方腊圣公起义克六州
+    fangla: { name: '圣公兵', tier: 1 },
   fang_guozhen: { name: '浙东舟师', tier: 3 }, // 庆元·方国珍浙东割据水师
   ruochu: { name: '若敖六卒', tier: 1 },       // 竟陵·楚若敖氏精锐（《左传》）
   mi_chu: { name: '左广右广', tier: 2 },       // 云梦·楚庄王亲兵（《左传·宣公》）
@@ -45,7 +45,7 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   jinan: { name: '神牌弩手', tier: 2 },   // 历下·铁铉固守济南（纯防御战，降T2）
   wu: { name: '句吴利趾', tier: 1 },        // 阊门·孙武句吴利趾
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
-  xushouhui: { name: '红巾军', tier: 2 },    // 蕲春·元末徐寿辉天完红巾主力
+    xushouhui: { name: '双刀水师', tier: 2 },
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）
   changshaguo: { name: '飞虎军', tier: 1 },      // 临湘·辛弃疾长沙飞虎军
   hongzhou: { name: '洪都戍卒', tier: 2 },    // 豫章·朱文正洪都保卫战（纯防御战，降T2）

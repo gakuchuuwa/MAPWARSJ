@@ -12,7 +12,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wangyan: { name: '八字军', tier: 1 },     // 飞狐·王彦八字军（新乡大捷，降T1）
   // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
-  heng1: { name: '赵边骑', tier: 2 },         // 雁门关·李牧赵边骑抗匈奴
+    heng1: { name: '赵边骑', tier: 1 },
   huan: { name: '环州戍兵', tier: 3 },      // 方渠·宋代环州边防（原步跋子，归嵬名）
   qingyuan_bd: { name: '白马突骑', tier: 2 }, // 保定·周德威白马突骑
 
