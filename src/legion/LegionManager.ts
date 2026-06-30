@@ -9,6 +9,11 @@ import {
     noteCitySpawnTierFromLegion,
     type CitySpawnTierState,
 } from './LegionSpawnTier';
+import {
+    lockGeneralAfterDefeat,
+    lockEliteAfterDefeat,
+    tickAndApplyDefeatCooldowns,
+} from './DefeatCooldown';
 import { CityManager } from '../world/CityManager';
 import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
@@ -286,7 +291,8 @@ export class LegionManager {
 
     /** 扫描现有军团，反推各据点将/精消耗（开局与热更后） */
     public syncCitySpawnTierConsumption(): void {
-        for (const city of this.cityManager.getCities()) {
+        const cities = this.cityManager.getCities();
+        for (const city of cities) {
             city.spawnGeneralUsed = false;
             city.spawnEliteUsed = false;
         }
@@ -295,10 +301,10 @@ export class LegionManager {
             const cityId = army.homeCityId ?? army.getSourceCityId();
             if (!cityId) continue;
             const city = this.cityManager.getCity(cityId);
-            // 城易主后旧主军团不再占用该城名额（名额跟当前城主走）
             if (!city || city.factionId !== army.getFactionId()) continue;
             noteCitySpawnTierFromLegion(city, army);
         }
+        tickAndApplyDefeatCooldowns(cities);
     }
 
     /**
@@ -364,6 +370,14 @@ export class LegionManager {
     }
 
     public removeArmy(army: Army): void {
+        if (army.isDestroyed && !army.wasDisbanded) {
+            const cityId = army.homeCityId ?? army.getSourceCityId();
+            if (cityId) {
+                if (army.generalId) lockGeneralAfterDefeat(cityId);
+                if (army.isElite) lockEliteAfterDefeat(cityId);
+            }
+        }
+
         this.followResupplySystem?.clearForArmy(army.id);
         this.armies = this.armies.filter(a => a !== army);
 

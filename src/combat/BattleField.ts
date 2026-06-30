@@ -28,7 +28,8 @@ import {
     GameConfig,
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
-import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitBattlePowerMultiplier } from '../systems/CultureCombat';
+import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitBattlePowerMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
+import { getGeneralProfile } from '../data/GeneralSkills';
 import {
     applyGeneralSkillSideRollMultipliers,
     applyOpeningTacticalPreRoll,
@@ -101,6 +102,13 @@ export class BattleField {
     private readonly openingTacticalUiShown = { attacker: false, defender: false };
     /** unitId → 免伤窗口（游戏内 elapsed） */
     private readonly invincibleWindowByUnitId = new Map<string, { start: number; until: number }>();
+    /** 战局动量（-1~+1），正=强方冲击，负=弱方反击；纯视觉，不改胜负 */
+    private momentumValue: number = 0;
+    private momentumTarget: number = 0;
+    private momentumTimer: number = 0;
+    /** 威慑系统：强方战损减免 0~0.8（保命），与战斗节奏时长系数（碾压短/巅峰长） */
+    private fearLossReduction: number = 0;
+    private fearDurationMult: number = 1;
 
     // 伤害系数现在从 GameConfig 读取
 
@@ -156,6 +164,9 @@ export class BattleField {
         // [NEW] Calculate Duration immediately
         this.calculateTargetDuration();
         this.pickPredictedSides();
+        // 威慑系统：定强弱后算战损减免 + 节奏时长系数
+        this.applyIntimidationModifiers();
+        this.targetDuration = clampBattleDurationSec(this.targetDuration * this.fearDurationMult);
         this.reconcileSiegeGarrisonBoostWithDefenders();
         
         this.notifyBattleStart();
@@ -177,6 +188,78 @@ export class BattleField {
         const totalTroops =
             this.attackerGroup.initialTotalTroops + this.defenderGroup.initialTotalTroops;
         this.targetDuration = calculateBattleDurationSec(totalTroops);
+    }
+
+    /**
+     * 三阶段包络：开局渐入(0→1) → 中段满幅(1) → 末段衰减(1→0)
+     * 按 elapsed/targetDuration 比例，短战和长战都自适应
+     */
+    private getPhaseEnvelope(): number {
+        const p = Math.min(1, this.elapsed / Math.max(1, this.targetDuration));
+        if (p < 0.33) return p / 0.33;
+        if (p < 0.67) return 1;
+        return Math.max(0, (1 - p) / 0.33);
+    }
+
+    /**
+     * OU 过程更新动量：每 ~targetDuration×10% 秒掷新随机目标，帧间 lerp 平滑
+     */
+    private updateMomentum(deltaTime: number): void {
+        this.momentumTimer -= deltaTime;
+        if (this.momentumTimer <= 0) {
+            this.momentumTarget = Math.random() * 2 - 1;
+            const interval = Math.max(1.5, this.targetDuration * 0.1);
+            this.momentumTimer = interval * (0.7 + Math.random() * 0.6);
+        }
+        const lerpSpeed = 2.5;
+        this.momentumValue += (this.momentumTarget - this.momentumValue)
+            * Math.min(1, lerpSpeed * deltaTime);
+    }
+
+    /** 单位威慑值（0~4）= 将领分(名将2/普将1/无0) + 精锐分(T0~T3 = 2/1.5/1/0.5，无0) */
+    private unitIntimidation(unit: IBattleUnit): number {
+        const genTier = getGeneralProfile(unit.generalId)?.tier;
+        const gen = genTier === 'famous' ? 2 : genTier === 'ordinary' ? 1 : 0;
+        const eliteTier = getUnitEliteTier(unit);
+        const elite = eliteTier === null ? 0 : [2, 1.5, 1, 0.5][eliteTier];
+        return gen + elite;
+    }
+
+    /** 一侧威慑 = 存活单位最强威慑（最猛的将/精锐定调） */
+    private sideIntimidation(group: FactionGroup): number {
+        let max = 0;
+        for (const bu of group.units) {
+            if (bu.isDefeated || bu.unit.troops <= 0) continue;
+            const v = this.unitIntimidation(bu.unit);
+            if (v > max) max = v;
+        }
+        return max;
+    }
+
+    /**
+     * 威慑系统：按双方将领+精锐质量差，
+     *  ① 减免强方战损（保命核心）；② 调节战斗节奏（碾压压短、巅峰拉长）。
+     * 不改胜负判定。事件战斗（presetResult）整套跳过。
+     */
+    private applyIntimidationModifiers(): void {
+        if (this.presetResult) {
+            this.fearLossReduction = 0;
+            this.fearDurationMult = 1;
+            return;
+        }
+        const MAX = 4;
+        const strongerIntim = this.sideIntimidation(this.predictedStrongerGroup);
+        const weakerIntim = this.sideIntimidation(this.predictedWeakerGroup);
+
+        // 保命：强方威慑越压制弱方，战损减免越多（最高 80%）
+        const adv = Math.max(0, Math.min(1, (strongerIntim - weakerIntim) / MAX));
+        this.fearLossReduction = 0.8 * adv;
+
+        // 节奏：两边都强且接近 → 精彩 → 拉长；碾压或菜鸡互啄 → 压短
+        const minIntim = Math.min(strongerIntim, weakerIntim);
+        const gap = Math.abs(strongerIntim - weakerIntim);
+        const excitement = (minIntim / MAX) * (1 - gap / MAX);
+        this.fearDurationMult = 0.5 + (1.6 - 0.5) * excitement;
     }
 
     /** 预设结果或「初始兵力 × 随机系数」一次定胜负走向 */
@@ -307,6 +390,8 @@ export class BattleField {
 
         const prevStronger = this.predictedStrongerGroup.factionId;
         this.applyPredictedSidesFromRoll(withSkills.attRoll, withSkills.defRoll);
+        // 强弱可能翻转，威慑减免/节奏需跟随重算
+        this.applyIntimidationModifiers();
 
         if (this.predictedStrongerGroup.factionId !== prevStronger) {
             gameLog(
@@ -367,37 +452,48 @@ export class BattleField {
         }
 
 
-        // 时间驱动 DPS：开战掷定的强/弱方，弱方在 targetDuration 内被磨光
+        // ── 实时收敛 DPS + 动量拉锯 ──
+        // 每帧按「(当前兵力 − 目标存活) / 剩余时间」算掉血：数学上保证时限内平滑收敛，
+        // 无 60% 断崖；弱方目标=0，强方目标=存活地板，胜者仍锁定在 t=0。
         const strongerGroup = this.predictedStrongerGroup;
         const weakerGroup = this.predictedWeakerGroup;
         const strongerInitial = strongerGroup.initialTotalTroops;
         const weakerInitial = weakerGroup.initialTotalTroops;
         const ratio = Math.max(1, strongerInitial / Math.max(1, weakerInitial));
 
-        // [MOD] Use pre-calculated targetDuration
         const targetDuration = this.targetDuration;
+        const timeLeft = Math.max(0.05, targetDuration - this.elapsed);
 
-        // [FIX] DPS is constant based on initial troops
-        const weakerDPS = weakerInitial / targetDuration;
+        // 强方存活地板：1:1 留 50%，10:1 留 95%；威慑优势再减免战损（保命核心）
+        const strongerLossPercent = Math.max(0.05, 0.5 / ratio) * (1 - this.fearLossReduction);
+        const strongerFloor = strongerInitial * (1 - strongerLossPercent);
 
-        // Stronger side loses fixed percentage (50% at 1:1, 5% at 10:1)
-        const strongerLossPercent = Math.max(0.05, 0.5 / ratio);
-        const strongerTotalLoss = strongerInitial * strongerLossPercent;
-        const strongerDPS = strongerTotalLoss / targetDuration;
+        // 实时收敛速率：弱方→0，强方→存活地板
+        const weakerBaseDPS = weakerGroup.totalTroops / timeLeft;
+        const strongerBaseDPS = Math.max(0, strongerGroup.totalTroops - strongerFloor) / timeLeft;
 
-        // [FIX] Assign damage based on strongerGroup/weakerGroup (respects presetResult)
+        // 动量拉锯：三阶段包络 × 随机动量 → 对峙条来回晃（事件战斗跳过）
+        if (!this.presetResult) {
+            this.updateMomentum(deltaTime);
+        }
+        const envelope = this.presetResult ? 0 : this.getPhaseEnvelope();
+        const swing = this.presetResult ? 0 : this.momentumValue * envelope * 0.55;
+        // swing>0 强方冲击（弱方多掉、强方少掉）；swing<0 弱方反击。
+        // 末段 envelope→0，swing 自然归零，与收敛加速不冲突。
+        const weakerDamageBase = Math.max(0, weakerBaseDPS * deltaTime * (1 + swing));
+        const strongerDamageBase = Math.max(0, strongerBaseDPS * deltaTime * (1 - swing * 0.4));
+
+        const progress = this.elapsed / Math.max(1, targetDuration);
+
         let damageToAttackers: number;
         let damageToDefenders: number;
 
-        const timeLeft = Math.max(0.05, targetDuration - this.elapsed);
-        const minWeakerDamage = (weakerGroup.totalTroops / timeLeft) * deltaTime;
-
         if (strongerGroup === this.attackerGroup) {
-            damageToDefenders = Math.max(weakerDPS * deltaTime, minWeakerDamage);
-            damageToAttackers = strongerDPS * deltaTime;
+            damageToDefenders = weakerDamageBase;
+            damageToAttackers = strongerDamageBase;
         } else {
-            damageToAttackers = Math.max(weakerDPS * deltaTime, minWeakerDamage);
-            damageToDefenders = strongerDPS * deltaTime;
+            damageToAttackers = weakerDamageBase;
+            damageToDefenders = strongerDamageBase;
         }
 
         this.distributeDamage(this.defenderGroup, damageToDefenders);
@@ -406,9 +502,11 @@ export class BattleField {
         this.tickInvincibleStates();
         this.tryComebackTacticalSkills();
 
-        // 采样日志（BATTLE_TICK 频道，默认关）
         if (Math.random() < 0.03) {
-            gameLog('battleTick', `[BattleField] 攻方: ${this.attackerGroup.totalTroops.toFixed(0)} | 守方: ${this.defenderGroup.totalTroops.toFixed(0)} | 目标时长: ${targetDuration.toFixed(1)}s`);
+            gameLog('battleTick',
+                `[BattleField] 攻方: ${this.attackerGroup.totalTroops.toFixed(0)} | ` +
+                `守方: ${this.defenderGroup.totalTroops.toFixed(0)} | ` +
+                `动量: ${swing.toFixed(2)} | 阶段: ${(progress * 100).toFixed(0)}%`);
         }
     }
 
@@ -719,15 +817,6 @@ export class BattleField {
         return this.presetResult;
     }
 
-    /** 中途改预设（如秦军作为援军加入）并重算强弱 */
-    public applyPresetResult(result: 'attacker_win' | 'defender_win'): void {
-        if (this.isOver) return;
-        if (this.presetResult === result) return;
-        this.presetResult = result;
-        this.pickPredictedSides();
-        gameLog('battle', `📜 [BattleField] 预设结果更新为: ${result}`);
-    }
-
     /** 添加援军到战场 */
     public addReinforcement(unit: IBattleUnit, isAttacker: boolean): void {
         const group = isAttacker ? this.attackerGroup : this.defenderGroup;
@@ -763,6 +852,10 @@ export class BattleField {
             this.calculateTargetDuration();
         }
         this.refreshPredictedSidesFromTotals();
+        // refreshPredictedSidesFromTotals 已重算 fearDurationMult，重新套用节奏系数
+        if (!this.customDuration) {
+            this.targetDuration = clampBattleDurationSec(this.targetDuration * this.fearDurationMult);
+        }
 
         tryEmitOpeningTacticalOnReinforcementJoin(
             unit,

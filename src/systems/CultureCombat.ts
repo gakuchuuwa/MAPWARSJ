@@ -30,7 +30,7 @@ import {
     isGarrisonUnit,
     resolveUnitCultureRegion,
 } from './CultureRegion';
-import { getCityEliteConfig, getLegionEliteConfig } from '../data/ExpeditionLegions';
+import { type EliteTier, getCityEliteConfig, getLegionEliteConfig } from '../data/ExpeditionLegions';
 import { readSiegeGarrisonElite } from '../combat/SiegeGarrisonTier';
 import { isCampaignLegion } from '../legion/LegionSpawnPolicy';
 
@@ -103,6 +103,22 @@ export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
     if (isCampaignLegion(army)) return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT;
     
     return 1;
+}
+
+/** 单位精锐档（T0=0 … T3=3）；无精锐返回 null。守军本场掷出精锐时同样计。 */
+export function getUnitEliteTier(unit: IBattleUnit): EliteTier | null {
+    if (isGarrisonUnit(unit)) {
+        const city = unit.getEntity?.() as { id?: string } | undefined;
+        if (city?.id && readSiegeGarrisonElite(city)) {
+            return getCityEliteConfig(city.id)?.tier ?? null;
+        }
+        return null;
+    }
+    const army = unit.getEntity?.() as Army | undefined;
+    if (army?.isElite) {
+        return getLegionEliteConfig(army)?.tier ?? null;
+    }
+    return null;
 }
 
 /** 开战掷色用综合系数 = 文化（含关隘）× 远征 */

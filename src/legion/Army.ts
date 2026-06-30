@@ -272,6 +272,8 @@ export class Army implements IBattleUnit {
     public portraitPath?: string; // [NEW] 军队创建时随机固定立绘
     /** 精锐军团（精锐番号 + 名将 + 战力加成）；≥4万必精锐，<4万 50% 概率。出生定，不降级 */
     public isElite: boolean = false;
+    /** 解散标记（区别于战死 destroy）：disband() 设 true，removeArmy 据此判定是否触发战败冷却 */
+    public wasDisbanded: boolean = false;
 
     // [IBattleUnit Implementation]
     public get factionId(): string {
@@ -539,6 +541,7 @@ export class Army implements IBattleUnit {
 
     /** 解散：兵力已并入出发城，军团立即消失（无尸体、无覆没播报；区别于战死的 destroy） */
     public disband(): void {
+        this.wasDisbanded = true;
         this.isDestroyed = true;
         this.isExternalCombat = false;
         this.isAttacking = false;

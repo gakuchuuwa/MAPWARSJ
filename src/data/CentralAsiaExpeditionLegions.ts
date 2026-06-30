@@ -59,4 +59,5 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     huluo: { name: '古尔重骑', tier: 1 },
   aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·卡迪西亚惨败大溃退，降T1,
     mowoer: { name: '莫卧儿突骑', tier: 1 },
+    kala: { name: '阿斯古拉姆', tier: 2 },
 };

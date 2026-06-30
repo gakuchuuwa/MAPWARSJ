@@ -567,8 +567,8 @@ export class CityAssetManager {
         'faqiang': '发羌',
 'panjun': 'RANDOM',
        'changshan': '常山',
-       'linhu': '林胡',
-       'lingqiu': '灵丘',
+'linhu': '林胡',
+'lingqiu': '灵丘',
        'linyu': '临榆',
        'loufan': '楼烦',
        'xianyu': '鲜虞',
@@ -819,6 +819,7 @@ export class CityAssetManager {
         'tajikezu': '塔吉',
         'jingpozu': '景颇',
         'shuizu': '水',
+        'liuzhou': '柳',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

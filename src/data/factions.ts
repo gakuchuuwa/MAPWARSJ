@@ -1,4 +1,4 @@
-// 势力数据 (Faction Data)
+﻿// 势力数据 (Faction Data)
 // 每个势力：id、name（旗号汉字见 SandboxDisplayNames）
 // 显示色：固定见 HistoricalFactionColors.ts；其余每局由 FactionManager 随机分配
 // 命名规则：政权用正式国号(部分加"大")，民族用最高知名度2字简称，军阀用人名姓氏，家族用单姓氏
@@ -473,7 +473,9 @@ export const FACTIONS: Faction[] = [
     // 赤红 - 瓜尔佳氏(苏完部/鳌拜/双阳)
 
 // ── 2026-05-26 新增：西域/中亚势力（25个）──
-{ id: 'kala', name: '喀喇汗王朝' },
+{ id: 'kala', name: '喀喇汗国' },
+
+
     // ── 2026-06-17 新增：喀喇契丹（西辽·虎思/碎叶故地）──
     { id: 'xiliao', name: '西辽' },
     { id: 'jiazini', name: '伽色尼' },      // 伽色尼王朝(哥疾宁/马哈茂德), Ghaznavid
@@ -780,8 +782,10 @@ export const FACTIONS: Faction[] = [
     { id: 'chechen', name: '车臣' },
     { id: 'panjun', name: '叛军' },
     { id: 'changshan', name: '常山' },          // 倒马关·常山郡
-    { id: 'linhu', name: '林胡' },              // 偏头关·林胡族
-    { id: 'lingqiu', name: '灵丘' },            // 平型关·灵丘县
+    { id: 'linhu', name: '林胡' },
+              // 偏头关·林胡族
+    { id: 'lingqiu', name: '灵丘' },
+            // 平型关·灵丘县
     { id: 'linyu', name: '临榆' },              // 山海关·临榆
     { id: 'loufan', name: '楼烦' },             // 宁武关·楼烦族
     { id: 'xianyu', name: '中山' },             // 井陉关·中山国（原鲜虞）
@@ -1081,6 +1085,7 @@ export const FACTIONS: Faction[] = [
     { id: 'tajikezu', name: '塔吉克族' },
     { id: 'jingpozu', name: '景颇族' },
     { id: 'shuizu', name: '水族' },
+    { id: 'liuzhou', name: '柳州' },
 
 
 

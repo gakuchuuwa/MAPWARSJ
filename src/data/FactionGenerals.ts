@@ -583,7 +583,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
 
     pinghai: { generalId: 'pinghai_laihuer', generalName: '来护儿', portrait: '/assets/NORTH/pinghai_laihuer.png' }, // 漂渝津·隋征东舟师
     pingyuan: { generalId: 'pingyuan_yanzhenqing', generalName: '颜真卿', portrait: '/assets/litang/pingyuan_yanzhenqing.png' }, // 平原·首倡义兵抗安史
-    linhu: { generalId: 'linhu_zhaowulingwang', generalName: '赵雍', portrait: '/assets/xianqin/linhu_zhaowulingwang.png' }, // 偏头关·胡服骑射
+    linhu: { generalId: 'linhu_zhaowulingwang', generalName: '赵雍', portrait: '/assets/xianqin/linhu_zhaowulingwang.png' },
     xianyu: { generalId: 'xianyu_hanxin', generalName: '韩信', portrait: '/assets/liuhan/xianyu_hanxin.png' }, // 井陉关·韩信
     shizhao_d: { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/HEXI/shizhao_d_shihu.png' }, // 邢台·后赵武帝
     loufan: { generalId: 'loufan_xuerengui', generalName: '薛仁贵', portrait: '/assets/NORTH/loufan_xuerengui.png' },
@@ -785,6 +785,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     tajikezu: { generalId: 'tajikezu_kuerban', generalName: '库尔班', portrait: '/assets/WESTERN/tajikezu_kuerban.png' },
     jingpozu: { generalId: 'jingpozu_zaodan', generalName: '早丹', portrait: '/assets/DIANQIAN/jingpozu_zaodan.png' },
     shuizu: { generalId: 'shuizu_panxinjian', generalName: '潘新简', portrait: '/assets/DIANQIAN/shuizu_panxinjian.png' },
+    liuzhou: { generalId: 'liuzhou_shenxiyi', generalName: '沈希仪', portrait: '/assets/LINGNAN/liuzhou_shenxiyi.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

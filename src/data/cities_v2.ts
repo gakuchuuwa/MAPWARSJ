@@ -751,12 +751,10 @@ export const T2_STRATEGIC: CityDataV2[] = [
     },
 
     // ── 晋西北外三关及晋东北内长城关隘 ──
-    { id: 'city_piantouguan', name: '偏头关', factionId: 'linhu', lat: 39.430000, lng: 111.500000, type: 'pass', region: 'NORTH', troops: 10000, mirror: true,
-        note: '偏头关；林胡关隘',
-    },
-    { id: 'city_pingxingguan', name: '平型关', factionId: 'lingqiu', lat: 39.281169, lng: 113.744202, type: 'pass', region: 'NORTH', troops: 10000, mirror: true,
-        note: '平型关；灵丘关隘',
-    },
+    { id: 'city_piantouguan', name: '偏头关', factionId: 'linhu', lat: 39.43, lng: 111.5, type: 'pass', troops: 10000, region: 'NORTH' },
+
+    { id: 'city_pingxingguan', name: '平型关', factionId: 'lingqiu', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 10000, region: 'NORTH' },
+
     { id: 'city_lingshiguan', name: '灵石关', factionId: 'huo', lat: 36.844462, lng: 111.796875, type: 'pass', region: 'NORTH', troops: 10000,
         note: '灵石关；宋老生霍邑',
     },
@@ -2539,9 +2537,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_huzhan', name: '忽毡', factionId: 'zhaowu', lat: 40.248096, lng: 69.658813, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
         note: '忽毡；昭武小城',
     },
-    { id: 'city_aoshen', name: '奥什', factionId: 'kala', lat: 40.53, lng: 72.79, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000,
-        note: '奥什；喀喇汗王朝小城',
-    },
+    { id: 'city_aoshen', name: '奥什', factionId: 'kala', lat: 40.53, lng: 72.79, type: 'small_city', troops: 5000, region: 'CENTRAL_ASIA' },
+
+
     { id: 'city_dawushenkate', name: '三重城', factionId: 'wensu', lat: 41.13, lng: 82.78, type: 'small_city', region: 'WESTERN', troops: 10000, note: '温宿国王城常备武装' },
     { id: 'city_kungang', name: '昆岗', factionId: 'adao_d', lat: 40.54, lng: 81.26, type: 'pass', region: 'WESTERN', troops: 10000, note: '清代阿克苏道昆岗军台；南疆驿路要冲' },
     { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'pisha', lat: 38.58, lng: 80.8, type: 'pass', region: 'WESTERN', troops: 10000,
@@ -2932,6 +2930,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_huoluoge', name: '霍罗格', factionId: 'tajikezu', lat: 37.49, lng: 71.55, type: 'small_city', troops: 5000, region: 'WESTERN' },
     { id: 'city_mizhina', name: '密支那', factionId: 'jingpozu', lat: 25.38, lng: 97.4, type: 'small_city', troops: 5000, region: 'DIANQIAN' },
     { id: 'city_sandou', name: '三都', factionId: 'shuizu', lat: 25.98, lng: 107.87, type: 'small_city', troops: 10000, region: 'LINGNAN' },
+    { id: 'city_tanzhong', name: '潭中', factionId: 'liuzhou', lat: 24.28, lng: 109.41, type: 'small_city', troops: 5000, region: 'LINGNAN' },
 
 
 

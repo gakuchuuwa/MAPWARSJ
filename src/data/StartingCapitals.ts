@@ -786,6 +786,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'tajikezu': 'city_huoluoge',
     'jingpozu': 'city_mizhina',
     'shuizu': 'city_sandou',
+    'liuzhou': 'city_tanzhong',
 };
 
 // @ts-ignore

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -841,22 +841,19 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   'wuyue': '吴越',
   xiyuduhu: '都护',
   shaozhou_d: '邵',
-'heishui': '靺鞨',
-    'kelie': '杭爱',
-    'yada': '嚈哒',
-'zizhou': '梓',
-    'cangzhou': '沧',
-'yuezhi': '月氏',
-    'minyue': '闽越',
-'funan': '扶南',
-'lancang': '澜沧',
-'ahaomu': '阿萨',
-    'elunchunzu': '鄂伦',
-'wazu': '佤',
-    'tajikezu': '塔吉',
-    'jingpozu': '景颇',
-'huluo': '古尔',
-    'shuizu': '水',
+  'zizhou': '梓',
+  'cangzhou': '沧',
+  'yuezhi': '月氏',
+  'minyue': '闽越',
+  'funan': '扶南',
+  'lancang': '澜沧',
+  'ahaomu': '阿萨',
+  'elunchunzu': '鄂伦',
+  'wazu': '佤',
+  'tajikezu': '塔吉',
+  'jingpozu': '景颇',
+  'shuizu': '水',
+  'liuzhou': '柳',
 };
 
 // @ts-ignore

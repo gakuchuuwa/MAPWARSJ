@@ -44,8 +44,8 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   yi: { name: '易州戍兵', tier: 3 },           // 紫荆关·于谦明代易州戍守
   changshan: { name: '倒马关卒', tier: 3 },   // 倒马关·常山
   xianyu: { name: '轻勇骑', tier: 2 },      // 井陉关·韩信轻勇骑
-  linhu: { name: '胡服骑', tier: 2 },         // 偏头关·赵武灵王胡服骑射
-  lingqiu: { name: '宁武边军', tier: 3 },    // 平型关·周遇吉宁武边军
+    linhu: { name: '林胡骑', tier: 2 },
+    lingqiu: { name: '胡服骑射', tier: 1 },
   huo: { name: '霍国甲士', tier: 3 },       // 灵石关·霍叔处霍国甲士
   // 飞虎军除名（李克用置，平型关时代错位）
   loufan: { name: '天山飞骑', tier: 2 },      // 宁武关·薛仁贵三箭定天山
