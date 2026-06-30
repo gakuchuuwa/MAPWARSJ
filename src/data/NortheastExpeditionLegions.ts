@@ -8,12 +8,12 @@
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  jilizhou: { name: '卑沙戍卒', tier: 3 },   // 卑沙城·程名振
+  jilizhou: { name: '卑沙山城卫', tier: 3 },   // 卑沙城·程名振
   nuergan: { name: '奴儿干卫军', tier: 3 }, // 奴儿干城·康旺
   huimo: { name: '濊貊长矛手', tier: 3 }, // 乌骨城·高延寿濊貊
   bohai: { name: '渤海猛贲', tier: 2 },       // 龙泉府·渤海左右猛贲卫
   dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（阿骨打@都城）
-  yizhou: { name: '金源精骑', tier: 2 },      // 蒺藜山·娄室金源（番号泛指，降T2）
+  yizhou: { name: '七水部铁骑', tier: 1 },      // 蒺藜山·完颜娄室统率的七水部嫡系主力
   qidan: { name: '属珊锐骑', tier: 1 },     // 木叶山·述律平属珊锐骑
   manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
@@ -21,7 +21,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）
     hezhe: { name: '宁古塔水军', tier: 3 },
   aola: { name: '敖拉部骑', tier: 3 },       // 雅克萨·孟烈伦敖拉氏
-  wuliangha: { name: '兀良哈猎兵', tier: 2 },  // 薛灵哥·者勒蔑（番号泛指，降T2）
+  wuliangha: { name: '兀良哈猎兵', tier: 2 },  // 薛灵哥·者勒蔑率领的兀良哈部精锐
   fuyu: { name: '夫余步骑', tier: 3 },       // 黄龙府·夫余步骑（§1）
   keerqin: { name: '达尔罕卫', tier: 3 },
   yehe: { name: '八面关骁骑', tier: 3 },
@@ -33,13 +33,13 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   wula: { name: '乌拉国兵', tier: 3 },          // 龙潭山城·布占泰乌拉贝勒
   wure: { name: '兀惹部卒', tier: 3 },          // 乌舍城·乌昭度兀惹部
     heishui: { name: '靺鞨锐卒', tier: 3 },
-    dawoer: { name: '莫尔根戍骑', tier: 3 },
+    dawoer: { name: '莫尔根飞骑', tier: 3 },
     mohe: { name: '勃利甲骑', tier: 2 },
   ewenki: { name: '石勒喀猎兵', tier: 3 },   // 尼布楚·博木博果尔鄂温克
   dazhen: { name: '女真拐子马', tier: 2 },   // 恤品·完颜铁哥大真国
     yeren_nvzhen: { name: '瑷珲马甲', tier: 2 },
   wuji: { name: '勿吉步卒', tier: 2 },            // 伯都·乙力支朝贡北魏
-  jilin: { name: '吉林边军', tier: 2 },           // 宽城子·富俊编练屯田
+  jilin: { name: '吉林屯营', tier: 2 },           // 宽城子·富俊编练屯田
   kuye: { name: '库页猎兵', tier: 3 },            // 白主·费雅喀猎户
   sushen: { name: '楛矢射手', tier: 3 },          // 东康·肃慎楛矢石砮
   yilou: { name: '挹娄突骑', tier: 3 },           // 凤林城·恼犽助战高句丽
@@ -49,6 +49,6 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   nifuhe: { name: '尼夫赫冰兵', tier: 3 },      // 盆奴里·黑龙江口
   feiyaka: { name: '费雅喀猎手', tier: 3 },       // 普禄·库页岛西岸
   nanai: { name: '赫哲快桨船', tier: 3 },         // 瓦伦·黑龙江中游
-  dongping: { name: '东平戍卒', tier: 3 },        // 锡尔喀·金代东平府,
+  dongping: { name: '东平镇营', tier: 3 },        // 锡尔喀·金代东平府,
     elunchunzu: { name: '鄂伦春猎骑', tier: 2 },
 };

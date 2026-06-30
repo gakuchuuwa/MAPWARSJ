@@ -17,7 +17,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wuman: { name: '乌蛮山兵', tier: 3 },        // 乌蒙山·乌蛮部
 
   chenzhou_d: { name: '辰州戍兵', tier: 3 },     // 沅陵·辰州戍兵
-  jingmen: { name: '长坂兵', tier: 3 },          // 当阳·赵云长坂坡
+  jingmen: { name: '长坂血骑', tier: 3 },        // 当阳·致敬赵云长坂坡七进七出的特色骑兵
   bandun: { name: '賨人勇士', tier: 2 },       // 汉昌·范目率板楯七姓助刘邦定三秦（特色兵种）
   langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒（名将突击队）
   zhuoshi: { name: '井阑劲卒', tier: 2 },         // 临邛·诸葛连弩营
@@ -57,7 +57,7 @@ qianzhong: { name: '乾嘉苗兵', tier: 2 },     // 芷江·吴八月攻克沅�
   qingqiang: { name: '青羌突骑', tier: 2 },    // 汶川·姜维青羌兵源
   qingyi: { name: '天师道众', tier: 3 },       // 严道·范长生
   // ── 2026-06-18：武陵/叙永/慈利/秀山/房陵/珙县/来凤精锐 ──
-    zhongxiang: { name: '洞庭水师', tier: 2 },
+    zhongxiang: { name: '锦帆贼', tier: 2 },        // 洞庭湖·甘宁锦帆贼（水上游侠武装）
   she: { name: '永宁彝兵', tier: 2 },          // 叙永·奢崇明起兵反明（名气不足，降T2）
   tan_d: { name: '慈利土兵', tier: 2 },       // 慈利·覃垕率土兵起义（明正德）
   ran_d: { name: '冉氏土兵', tier: 2 },        // 秀山·冉守忠南宋土兵从征

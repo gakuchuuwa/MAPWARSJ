@@ -13,10 +13,10 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   liao_d: { name: '皮室军', tier: 1 },         // 临潢府·辽太祖皮室军（§6 #1）
   yel: { name: '斡鲁朵军', tier: 2 },         // 降圣·契丹宫帐制
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 区T0锚·怯薛参与西征诸役；蒙古西征整体史家论以少胜多（§6 #2）
-  borjigin: { name: '那可儿伴当', tier: 1 },     // 曲雕阿兰·铁木真那可儿（§6 #10，升T1）
-  ogodei: { name: '探马赤军', tier: 1 },       // 也迷里·木华黎探马赤（原T0；降为T1，无单独少胜多招牌仗）
+  borjigin: { name: '那可儿伴当', tier: 1 },     // 曲雕阿兰·铁木真那可儿亲卫
+  ogodei: { name: '探马赤军', tier: 1 },       // 也迷里·木华黎统帅的探马赤军
   yuan_d: { name: '秃鲁花军', tier: 2 },       // 上都·元质子军
-  xiongnu: { name: '控弦之士', tier: 2 },      // 头曼城·匈奴骑兵
+  xiongnu: { name: '鸣镝精骑', tier: 1 },      // 头曼城·冒顿单于称霸大漠的鸣镝主力
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
 
     huige: { name: '回纥精骑', tier: 2 },
@@ -36,14 +36,14 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     kelie: { name: '札合骁骑', tier: 3 },
   kereyid: { name: '克烈护卫军', tier: 2 },     // 汪吉河·王汗克烈部
   dingling: { name: '丁零游骑', tier: 2 }, // 贝加尔·丁零王
-  xiajiasi: { name: '黠戛斯锐卒', tier: 2 }, // 攻灭回鹘汗国（升T2）
+  xiajiasi: { name: '黠戛斯锐卒', tier: 2 }, // 攻灭回鹘汗国的黠戛斯精锐
   donghu: { name: '东胡骑', tier: 2 },    // 巴彦乌拉·东胡王
   tiele: { name: '铁勒骁骑', tier: 3 },
   xibo_d: { name: '锡伯箭手', tier: 3 },        // 固尔札·清代锡伯营（原索伦营错族）
   tatar: { name: '塔塔儿勇士', tier: 3 },
   merkit: { name: '蔑儿乞猎骑', tier: 3 },
   chahar: { name: '察哈尔八旗', tier: 2 },
-  yuwen: { name: '武川镇军', tier: 2 },     // 武川镇·537沙苑之战胜；但邙山之战大溃败，丢盔弃甲，降T1
+  yuwen: { name: '武川镇军', tier: 1 },     // 武川镇·沙苑之战大破东魏的关陇王牌
   da_yuan: { name: '北元怯薛', tier: 2 },
   huyan: { name: '呼衍精骑', tier: 3 },
   yujiulu: { name: '郁久闾王骑', tier: 2 },
@@ -65,7 +65,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     huihu: { name: '回鹘精骑', tier: 2 },
   ashide: { name: '阿史德骑', tier: 3 },        // 黑沙城·阿史德氏
   pugu: { name: '蓝突厥骑', tier: 2 },          // 燕然山·仆固氏铁勒
-  pulei: { name: '蒲类戍卒', tier: 3 },         // 巴里坤·蒲类国故地
+  pulei: { name: '蒲类飞骑', tier: 3 },         // 巴里坤·蒲类国故地
   chechen: { name: '车臣汗骑', tier: 3 },       // 巴彦图门·车臣汗硕垒
   zhuerqi: { name: '斡难河骑', tier: 3 },       // 斡难河·撒察别乞
   tumengken: { name: '赛音诺颜骑', tier: 2 },  // 拜达里克·图蒙肯抗卫拉特
@@ -79,7 +79,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   bulat: { name: '布拉特猎兵', tier: 3 },      // 石勒喀河·布里亚特归附清朝
   tuva: { name: '唐努旗兵', tier: 3 },           // 唐努·唐努乌梁海驻防
   // ── 2026-06-19 新增：漠北/漠南要塞精锐 ──
-  chenli_d: { name: '祭天戍', tier: 3 },        // 姑衍山·匈奴祭天戍卒
+  chenli_d: { name: '祭天铁卫', tier: 3 },        // 姑衍山·匈奴祭天王庭护军
   nuoyan_d: { name: '漠北驿骑', tier: 3 },      // 赛音山达·清代大漠驿站护军
   wuli_d: { name: '喀尔喀劲骑', tier: 2 },      // 扎布汗·乌里雅苏台喀尔喀骑兵
   heisha_d: { name: '黑沙精骑', tier: 3 },  // 特尔门·后突厥黑沙道

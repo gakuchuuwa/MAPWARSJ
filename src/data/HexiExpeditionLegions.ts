@@ -8,12 +8,12 @@
  * - 三者防重：见 ExpeditionLegions.ts、ExpeditionTripleNameAllow.ts
  */
 export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  lanzhou: { name: '金城突骑', tier: 1 },     // 金城·赵充国金城突骑
+  lanzhou: { name: '金城突骑', tier: 2 },     // 金城·赵充国金城突骑
   dangxiang: { name: '铁鹞子', tier: 1 },        // 兴庆府·西夏重装冲锋骑兵，百年立国主力
   // 步跋子已迁环洲（huan@方渠）
   yeli: { name: '擒生军', tier: 2 },             // 克夷门·西夏监军司
-    weiming: { name: '嵬名亲卫', tier: 1 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽
-  guiyi: { name: '沙州劲旅', tier: 1 },          // 玉门关·§7 #4 张议潮归义军（名震天下复河西，升T1）
+    weiming: { name: '嵬名亲卫', tier: 2 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽
+  guiyi: { name: '沙州劲旅', tier: 2 },          // 玉门关·张议潮归义军（名震天下复河西，降T2让给敦煌T1）
   xianlingqiang: { name: '凉州大马', tier: 2 },  // 允吾·凉州骑兵泛称
   tufa_d: { name: '南凉铁骑', tier: 2 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）
   juqu_d: { name: '卢水胡兵', tier: 3 },         // 表氏·沮渠卢水胡兵
@@ -29,12 +29,12 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   huizhou: { name: '会州边兵', tier: 3 },          // 祖厉·唐代会州
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang
   ningkou: { name: '居延戍卒', tier: 3 },            // 居延塞·汉居延戍卒（居延汉简）
-  shuofang: { name: '期门郎骑', tier: 1 },      // 河南地·汉武帝期门郎戍朔方
+  shuofang: { name: '期门郎骑', tier: 2 },      // 河南地·汉武帝期门郎戍朔方
     ganzhou: { name: '甘州铁骑', tier: 2 },       // 张掖·窦融河西骑兵（T2有名史载专名）
     xiqin: { name: '忠孝军', tier: 1 },
     didao: { name: '熙河蕃兵', tier: 1 },
-  baiyang: { name: '长城戍卒', tier: 3 },
-  wei2: { name: '静塞军', tier: 1 },
+  baiyang: { name: '长城烽火卫', tier: 3 }, // 塞外长城守军
+  wei2: { name: '静塞军', tier: 2 },
   guazhou: { name: '瓜州镇兵', tier: 3 },  // 晋昌城·唐瓜州镇兵
   shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）
   suzhou: { name: '骠骑郎卫', tier: 1 },  // 酒泉·霍去病骠骑将军麾下郎卫（河西出击）

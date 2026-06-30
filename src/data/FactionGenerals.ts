@@ -456,7 +456,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     zi: { generalId: 'zi_changhong', generalName: '苌弘', portrait: '/assets/BASHU/zi_changhong.png' },
     yidou: { generalId: 'yidou_luxun', generalName: '陆逊', portrait: '/assets/BASHU/yidou_luxun.png' },
         chu: { generalId: 'chu_guanyu', generalName: '关羽', portrait: '/assets/BASHU/chu_guanyu.png' },
-    zhongxiang: { generalId: 'zhongxiang_zhongxiang', generalName: '钟相', portrait: '/assets/BASHU/zhongxiang_zhongxiang.png' },
+    zhongxiang: { generalId: 'zhongxiang_ganning', generalName: '甘宁', portrait: '/assets/BASHU/zhongxiang_ganning.png' },
     fengzhou: { generalId: 'fengzhou_wujie', generalName: '吴玠', portrait: '/assets/zhaosong/fengzhou_wujie.png' },
     fushi: { generalId: 'fushi_fuhong', generalName: '苻洪', portrait: '/assets/HEXI/fushi_fuhong.png' },
     wanzhou: { generalId: 'wanzhou_shangguankui', generalName: '上官夔', portrait: '/assets/BASHU/wanzhou_shangguankui.png' },

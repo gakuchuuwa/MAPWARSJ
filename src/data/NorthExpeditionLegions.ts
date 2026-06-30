@@ -9,7 +9,7 @@
  */
 export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   // ── 太行/河北（§1 交叉 + 明末）──
-  wangyan: { name: '八字军', tier: 1 },     // 飞狐·王彦八字军（新乡大捷，降T1）
+  wangyan: { name: '八字军', tier: 2 },     // 飞狐·王彦八字军（民间抗金义军，降T2）
   // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
     heng1: { name: '赵边骑', tier: 1 },
@@ -24,7 +24,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tuoba: { name: '拓跋虎骑', tier: 2 },     // 大同·拓跋鲜卑
   // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
-  gaoqi_d: { name: '百保鲜卑', tier: 1 },   // 蓨城·北齐百保精兵·高长恭禁卫
+  gaoqi_d: { name: '百保鲜卑', tier: 2 },   // 蓨城·北齐百保精兵·高长恭禁卫（顶级近卫，降T2）
   yingzhou_ying_d: { name: '黄龙兵', tier: 1 }, // 朝阳·慕容皝棘城大破石赵
   chile: { name: '两池军', tier: 3 },       // 云中·§2 #11
   murong: { name: '龙城甲骑', tier: 2 },    // 棘城·慕容燕具装骑（无经典以少胜多）
@@ -35,10 +35,10 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
   lingzhou: { name: '朔方突骑', tier: 1 },  // 回乐·仆固怀恩朔方突骑
   dingxiang_d: { name: '定襄骁骑', tier: 0 }, // 恶阳岭·贞观四年李靖三千骁骑出恶阳岭夜袭定襄（神级进攻大捷，升T0）
-  zhongshan: { name: '常山兵', tier: 2 },   // 真定·常山兵（名气不足，降T2）
+  zhongshan: { name: '常山龙骑', tier: 2 }, // 真定·常山特色骑兵（致敬常山赵子龙）
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
   helian: { name: '铁弗卫队', tier: 2 },     // 统万城·赫连勃勃铁弗亲卫
-  bing: { name: '并州狼骑', tier: 1 },     // 晋阳·并州骑兵（名震天下，升T1）
+  bing: { name: '并州狼骑', tier: 2 },     // 晋阳·吕布张辽并州骑兵（战术尖刀，缺乏大局战略胜利，降T2）
   you: { name: '上谷突骑', tier: 1 },        // 居庸关·幽州上谷郡（升T1）
   yi: { name: '易州戍兵', tier: 3 },           // 紫荆关·于谦明代易州戍守
   changshan: { name: '倒马关卒', tier: 3 },   // 倒马关·常山
@@ -62,7 +62,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zu_d: { name: '关宁铁骑', tier: 1 },       // 宁远·祖大寿（原T0降级，防御战）
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
   liwang: { name: '河间突骑', tier: 2 },     // 乐成·李光弼河朔骑兵
-  hejian: { name: '白马义从', tier: 1 },      // 文安·公孙瓒幽州突骑河间大破黄巾（升T1，打乌合之众未满T0）
+  hejian: { name: '白马义从', tier: 2 },      // 文安·公孙瓒幽州突骑（界桥全军覆没，特色之兵降T2）
   qu_d: { name: '先登营', tier: 2 },       // 界桥·麴义破公孙瓒（192年）
   yang_aner: { name: '天顺红袄', tier: 2 },        // 蓬莱·杨安儿天顺红袄克登莱（名气不足，降T2）
   weihaiwei: { name: '大唐神灭军', tier: 1 },       // 文登·苏定方征东神灭军
