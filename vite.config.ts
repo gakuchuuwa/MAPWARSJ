@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as crypto from 'crypto';
 import { execFile } from 'child_process';
 
 // F2 立绘写盘后短暂拦截 Vite 整页 full-reload（Esc 保存不打断对局）
@@ -143,6 +143,15 @@ export default defineConfig({
                 // 实际只在距离上次 commit >= 23 小时时才真正 commit
                 dailyBackupCheck();
                 setInterval(dailyBackupCheck, 60 * 60 * 1000); // 每小时
+
+                // 每次启动 dev server 自动重建 canonical 映射，防止改名/换图后旧映射残留
+                try {
+                    require('child_process').execSync('node scratch/build_portrait_canonical.mjs', {
+                        cwd: __dirname,
+                        stdio: 'pipe',
+                        timeout: 30000,
+                    });
+                } catch (_) { /* 静默：png 未变时可能无输出，不影响启动 */ }
 
                 server.middlewares.use('/api/save-roads', (req, res) => {
                     if (req.method !== 'POST') {
@@ -1385,7 +1394,7 @@ function serverBuildPortraitCatalog(assetsRoot: string): { folder: string; label
         }
     }
 
-    return [...byFolder.entries()]
+    return Array.from(byFolder.entries())
         .sort(([a], [b]) => a.localeCompare(b, 'zh-CN'))
         .map(([folder, images]) => ({
             folder,
@@ -1781,16 +1790,16 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
     // 2. 重复据点 ID
     const cityIdCount = new Map<string, number>();
     for (const c of data.cities) cityIdCount.set(c.id, (cityIdCount.get(c.id) ?? 0) + 1);
-    for (const [id, count] of cityIdCount) {
+    cityIdCount.forEach((count, id) => {
         if (count > 1) issues.push({ level: 'error', msg: `据点 ID "${id}" 重复 ${count} 次` });
-    }
+    });
 
     // 3. 重复势力 ID
     const fIdCount = new Map<string, number>();
     for (const f of data.factions) fIdCount.set(f.id, (fIdCount.get(f.id) ?? 0) + 1);
-    for (const [id, count] of fIdCount) {
+    fIdCount.forEach((count, id) => {
         if (count > 1) issues.push({ level: 'error', msg: `势力 ID "${id}" 重复 ${count} 次` });
-    }
+    });
 
     // 4. 势力缺旗号
     for (const f of data.factions) {
