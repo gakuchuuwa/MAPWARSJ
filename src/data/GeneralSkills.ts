@@ -138,7 +138,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     qin_simacuo: { generalId: 'qin_simacuo', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // S⑤居高临下 + ②避实击虚（越岭平蜀，奇袭楚国）
     qin_wangben: { generalId: 'qin_wangben', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_01' }, // S①兵贵神速 + ③侵掠如火（闪击燕齐，水淹大梁）
     qin_mengtian: { generalId: 'qin_mengtian', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // S④长驱直入 + ①以逸待劳（北击匈奴，驻守长城）
-    qin_yingji: { generalId: 'qin_yingji', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_07' }, // S⑦因粮于敌 + ④不战而屈（君主全能调度）
+    qin_yingji: { generalId: 'qin_yingji', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_07' },
     beidi_yaochang: { generalId: 'beidi_yaochang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' }, // S②攻城拔寨 + ②避实击虚（擒杀苻坚，攻克长安）
     unassigned_simacuo: { generalId: 'unassigned_simacuo', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 前316年灭蜀苴巴
     tang_lishimin: { generalId: 'tang_lishimin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 虎牢关轻骑冲阵
@@ -411,7 +411,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tongzhou_liuzhiyuan: { generalId: 'tongzhou_liuzhiyuan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' },
     unassigned_chenpan: { generalId: 'unassigned_chenpan', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 疏勒王联汉奇袭
     dzungar_gaerdancelin: { generalId: 'dzungar_gaerdancelin', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' },
-    anxi_guoxin: { generalId: 'anxi_guoxin', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' }, // 安西孤城坚守半世纪
+    anxi_guoxin: { generalId: 'anxi_guoxin', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' },
     yanqi_longtuqizhi: { generalId: 'yanqi_longtuqizhi', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 焉耆王劫掠商道游击
     tuerhute_wobaxi: { generalId: 'tuerhute_wobaxi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 土尔扈特万里东归
     gaochang_quwentai: { generalId: 'gaochang_quwentai', tier: 'ordinary', tacticalSkillId: 'tac_10' },
@@ -982,10 +982,10 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tier: 'ordinary',
         tacticalSkillId: 'tac_10',
     },
-    lushui_beigongboyu: {
-        generalId: 'lushui_beigongboyu',
-        tier: 'ordinary',
-        tacticalSkillId: 'tac_09',
+    lushui_dongzhuo: {
+        generalId: 'lushui_dongzhuo',
+        tier: 'famous',
+        tacticalSkillId: 'tac_02',
     },
     cen_d_cenmeng: {
         generalId: 'cen_d_cenmeng',

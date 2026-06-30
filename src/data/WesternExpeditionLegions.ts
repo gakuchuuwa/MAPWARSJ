@@ -57,4 +57,5 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     shanshan: { name: '楼兰弓手', tier: 3 },
   xiyuduhu: { name: '西域都护军', tier: 1 },  // 它乾城·班超都护府汉军,
     tajikezu: { name: '帕米尔山民', tier: 3 },
+    anxi: { name: '安西陌刀军', tier: 1 },
 };

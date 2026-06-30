@@ -9,7 +9,7 @@
  */
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
       wei: { name: '魏之武卒', tier: 1 },        // 汴梁·阴晋大捷；马陵/伊阙大败溃散，降T1
-  qin: { name: '秦之锐士', tier: 1 },        // 秦首都·精锐番号（将随 FactionGenerals 录入）
+    qin: { name: '铁鹰锐士', tier: 1 },
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
   han: { name: '韩之劲弩', tier: 2 },        // 新郑·暴鸢韩弩
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
@@ -43,7 +43,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
                       hongnong_jun: { name: '黄龙骑', tier: 2 },    // 函谷关·杨素大破突厥
   jingzhou_gs: { name: '安定突骑', tier: 2 },       // 安定·天水安定出精骑（皇甫嵩所部）
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
-    ruo: { name: '频阳锐士', tier: 1 },
+    ruo: { name: '秦之锐士', tier: 1 },
   ruzhou: { name: '赤帻先锋', tier: 2 },
   yun: { name: '陆浑戎骑', tier: 3 },
   jiyuan: { name: '落雕卫', tier: 1 },

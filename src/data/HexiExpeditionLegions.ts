@@ -31,7 +31,6 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   ningkou: { name: '居延戍卒', tier: 3 },            // 居延塞·汉居延戍卒（居延汉简）
   shuofang: { name: '期门郎骑', tier: 1 },      // 河南地·汉武帝期门郎戍朔方
     ganzhou: { name: '甘州铁骑', tier: 2 },       // 张掖·窦融河西骑兵（T2有名史载专名）
-    anxi: { name: '大唐安西军', tier: 1 },       // 拨换城·郭昕安西军（白发孤忠，升T1）
     xiqin: { name: '忠孝军', tier: 0 },
     didao: { name: '熙河蕃兵', tier: 1 },
   baiyang: { name: '长城戍卒', tier: 3 },
@@ -40,7 +39,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）
   suzhou: { name: '骠骑郎卫', tier: 1 },  // 酒泉·霍去病骠骑将军麾下郎卫（河西出击）
   kang: { name: '鹰扬骁骑', tier: 2 },              // 长泽·梁师都鹰扬郎将起兵建梁（名气不足，降T2）
-  lushui: { name: '凉州义从胡', tier: 2 },          // 媪围·北宫伯玉卢水义从胡起兵凉州
+  lushui: { name: '飞熊军', tier: 2 },          // 媪围·董卓飞熊军
   woye: { name: '度辽营', tier: 2 },           // 临戎·皇甫规度辽将军驻朔方,
     yangguan: { name: '西凉铁骑', tier: 1 },
     yuezhi: { name: '折兰骑', tier: 2 },

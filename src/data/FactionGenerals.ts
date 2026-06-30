@@ -686,7 +686,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     guide_d: { generalId: 'guide_d_xiaohe', generalName: '萧何', portrait: '/assets/liuhan/guide_d_xiaohe.png' },
     tongzhou: { generalId: 'tongzhou_liuzhiyuan', generalName: '刘知远', portrait: '/assets/CENTRAL/tongzhou_liuzhiyuan.png' },
     fu_zhou: { generalId: 'fu_zhou_yanyan', generalName: '严颜', portrait: '/assets/BASHU/fu_zhou_yanyan.png' },
-    lushui: { generalId: 'lushui_beigongboyu', generalName: '北宫伯玉', portrait: '/assets/HEXI/lushui_beigongboyu.png' },
+    lushui: { generalId: 'lushui_dongzhuo', generalName: '董卓', portrait: '/assets/HEXI/lushui_dongzhuo.png' },
     cen_d: { generalId: 'cen_d_cenmeng', generalName: '岑猛', portrait: '/assets/LINGNAN/cen_d_cenmeng.png' },
     miao: { generalId: 'miao_amishi', generalName: '阿迷氏', portrait: '/assets/LINGNAN/miao_amishi.png' },
     jiang_s: { generalId: 'jiang_s_huanggai', generalName: '黄盖', portrait: '/assets/JIANGNAN/jiang_s_huanggai.png' },

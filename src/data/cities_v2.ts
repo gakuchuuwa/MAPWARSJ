@@ -478,17 +478,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     },
 
     // ── 陇右与河西走廊中城 ──
-    {
-        id: 'city_tianshui',
-        name: '天水',
-        factionId: 'qin',
-        lat: 34.58, lng: 105.73,
-        type: 'medium_city',
-        region: 'CENTRAL',
-        troops: 10000,
-        tier: 1,
-        note: '天水；秦国治所/重镇',
-    },
+    { id: 'city_tianshui', name: '天水', factionId: 'qin', lat: 34.58, lng: 105.73, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
     { id: 'city_longzhou', name: '汧源', factionId: 'long2', lat: 34.89, lng: 106.86, type: 'small_city', region: 'CENTRAL', troops: 10000,
         note: '汧源；陇州小城',
     },
@@ -760,6 +751,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     },
         // ── 关中盆地防御要塞群 ──
     { id: 'city_wuguan', name: '少习关', factionId: 'ruo', lat: 33.6, lng: 110.62, type: 'pass', troops: 10000, region: 'CENTRAL' },
+
 
 
 
@@ -2756,7 +2748,8 @@ export const CITIES_V2: CityDataV2[] = [
         lat: 41.720000, lng: 82.930000, type: 'medium_city', troops: 10000, tier: 1, 
         note: '伊逻卢；龟兹治所/重镇', region: 'WESTERN' },
     { id: 'city_yuergun', name: '玉尔滚', factionId: 'weiwuer', lat: 41.35, lng: 81.3, type: 'small_city', region: 'WESTERN', troops: 10000, note: '伯克统领回部治安武装' },
-    { id: 'city_bohuancheng', name: '拨换城', factionId: 'anxi', lat: 41.17, lng: 80.25, type: 'small_city', region: 'WESTERN', troops: 10000, note: '唐安西都护府四镇要冲；怛罗斯道拨换城' },
+    { id: 'city_bohuancheng', name: '拨换城', factionId: 'anxi', lat: 41.17, lng: 80.25, type: 'small_city', troops: 5000, region: 'WESTERN' },
+
     { id: 'city_dashicheng', name: '大石城', factionId: 'zhuxie', lat: 41.28, lng: 79.22, type: 'pass', region: 'WESTERN', troops: 10000,
         note: '大石城；朱邪关隘',
     },

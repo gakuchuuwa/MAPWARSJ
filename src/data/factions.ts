@@ -73,6 +73,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'qin', name: '秦国' },
+
     { id: 'song', name: '宋国' },
     { id: 'yan', name: '燕国' },
     { id: 'zhao', name: '赵国' },
@@ -936,6 +937,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'qincha', name: '钦察' },
     { id: 'anxi', name: '安西' },
+
     { id: 'konbaung', name: '贡榜' },
 
     { id: 'qi_d', name: '戚家' },
@@ -962,6 +964,7 @@ export const FACTIONS: Faction[] = [
     { id: 'hongnong_jun', name: '弘农' },
     { id: 'zhengzhou', name: '郑州' },
     { id: 'ruo', name: '武关' },
+
 
     { id: 'gar', name: '噶尔' },
     { id: 'ruzhou', name: '汝州' },
