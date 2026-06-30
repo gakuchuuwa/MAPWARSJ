@@ -43,6 +43,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   kawusi: { name: '卡乌斯戍军', tier: 3 },     // 吉扎克·粟特要塞
   xianhai: { name: '咸海戍兵', tier: 3 },        // 养吉干·花剌子模北境
   wuhu: { name: '乌护游骑', tier: 3 },           // 真珠河·乌古斯游牧（1040丹达内克胜伽色尼）
+  jie: { name: '柘羯武士', tier: 2 },            // 羯霜那·玄奘《大唐西域记》载柘羯勇士
   // —— 2026-06-20 新增：旁遮普·阿托克 ——
   pangzha: { name: '卡尔萨武士', tier: 1 },      // 阿托克·戈宾德辛格创立卡尔萨，兰季特辛格旁遮普帝国核心武力
   // —— 2026-06-20 新增：那竭国·顶骨城 ——

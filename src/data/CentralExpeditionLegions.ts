@@ -8,7 +8,7 @@
  * - §1 他区已占：#34–35 江南、#54 西域、#70 草原、#72–79 南方/东北、#75 北方
  */
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-      wei: { name: '魏之武卒', tier: 0 },        // 汴梁·阴晋大捷；马陵/伊阙大败溃散，降T1
+      wei: { name: '魏之武卒', tier: 0 },        // 汴梁·战国首支职业重步兵（吴起阴晋大捷）
     qin: { name: '铁鹰锐士', tier: 1 },
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
   han: { name: '韩之劲弩', tier: 2 },        // 新郑·暴鸢韩弩
@@ -75,7 +75,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   kong_d: { name: '北海郡兵', tier: 3 },       // 曲阜·孔融以北海相保境，孔融本人极有名
   tongma: { name: '胶西郡国兵', tier: 3 },       // 胶西·刘卬发国兵参与七国之乱，战败
   yanchuan_d: { name: '淮西行营军', tier: 3 }, // 郾城·韩愈随裴度督师郾城，参赞军务
-  guide_d: { name: '酂侯亲卫', tier: 1 },   // 永城·萧何酂侯
+  guide_d: { name: '酂侯亲卫', tier: 3 },   // 永城·萧何酂侯
   tongzhou: { name: '匡国牙兵', tier: 2 },    // 长宁·后汉高祖镇守同州
     hao_d: { name: '淮西突骑', tier: 2 },
   suzhou_d: { name: '江北团练', tier: 3 },

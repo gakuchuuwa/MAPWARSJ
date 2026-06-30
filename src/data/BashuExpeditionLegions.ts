@@ -18,12 +18,12 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
 
   chenzhou_d: { name: '辰州戍兵', tier: 3 },     // 沅陵·辰州戍兵
   jingmen: { name: '长坂兵', tier: 3 },          // 当阳·赵云长坂坡
-  bandun: { name: '賨人勇士', tier: 2 },       // 汉昌·范目率板楯七姓助刘邦定三秦（T1有名且胜仗）
-  langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒（有名且胜仗，升T1）
+  bandun: { name: '賨人勇士', tier: 2 },       // 汉昌·范目率板楯七姓助刘邦定三秦（特色兵种）
+  langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒（名将突击队）
   zhuoshi: { name: '井阑劲卒', tier: 2 },         // 临邛·诸葛连弩营
-  tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛（战功赫赫，特批T1）
+  tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛（战功赫赫的特色尖刀）
   shu: { name: '白毦精兵', tier: 2 },           // 成都·诸葛亮连弩兵（蜀国）
-  yangzhou: { name: '无当飞军', tier: 2 },   // 兴势山·王平统率山地劲旅（防御战退曹爽，降T1）
+  yangzhou: { name: '无当飞军', tier: 2 },   // 兴势山·王平统率山地劲旅（山地特种防御）
   shuixi: { name: '罗罗兵', tier: 3 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名
   chenghan: { name: '流民帅突骑', tier: 1 },      // 鹿头关·§8 #9 成汉李特六夷铁骑（破晋建国，升T1）
@@ -50,7 +50,6 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wumeng: { name: '溪州土兵', tier: 3 },
     agui: { name: '健锐营', tier: 2 },
   fuguo: { name: '附国羌兵', tier: 3 },  // 芒康宗·隋附国羌人部落兵
-  jie: { name: '柘羯武士', tier: 2 },  // 羯霜那·玄奘《大唐西域记》载柘羯勇士
 qianzhong: { name: '乾嘉苗兵', tier: 2 },     // 芷江·吴八月攻克沅州
     dangchang: { name: '陇右铁骑', tier: 1 },
   liao: { name: '巴僚弩手', tier: 2 },        // 江阳·侯弘远僚人酋帅

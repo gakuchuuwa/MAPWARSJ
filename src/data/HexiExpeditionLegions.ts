@@ -9,7 +9,7 @@
  */
 export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   lanzhou: { name: '金城突骑', tier: 1 },     // 金城·赵充国金城突骑
-  dangxiang: { name: '铁鹞子', tier: 0 },        // 兴庆府·1041好水川诱伏，铁鹞子冲阵，任福战死（非以少胜多，降T1）
+  dangxiang: { name: '铁鹞子', tier: 1 },        // 兴庆府·西夏重装冲锋骑兵，百年立国主力
   // 步跋子已迁环洲（huan@方渠）
   yeli: { name: '擒生军', tier: 2 },             // 克夷门·西夏监军司
     weiming: { name: '嵬名亲卫', tier: 1 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽
@@ -39,7 +39,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）
   suzhou: { name: '骠骑郎卫', tier: 1 },  // 酒泉·霍去病骠骑将军麾下郎卫（河西出击）
   kang: { name: '鹰扬骁骑', tier: 2 },              // 长泽·梁师都鹰扬郎将起兵建梁（名气不足，降T2）
-  lushui: { name: '飞熊军', tier: 2 },          // 媪围·董卓飞熊军
+  lushui: { name: '飞熊军', tier: 2 },          // 媪围·董卓飞熊军（小说番号更好听，T2符合其实力）
   woye: { name: '度辽营', tier: 2 },           // 临戎·皇甫规度辽将军驻朔方,
     yangguan: { name: '西凉铁骑', tier: 1 },
     yuezhi: { name: '折兰骑', tier: 2 },

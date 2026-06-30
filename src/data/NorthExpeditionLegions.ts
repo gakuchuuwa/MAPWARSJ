@@ -17,7 +17,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   qingyuan_bd: { name: '白马突骑', tier: 2 }, // 保定·周德威白马突骑
 
   // ── §2 北方 12 支 ──
-  yan: { name: '渔阳突骑', tier: 2 },       // 古北口·§2 #2 光武幽州精骑（升T1）
+  yan: { name: '渔阳突骑', tier: 1 },       // 古北口·§2 #2 光武幽州精骑（升T1）
   gongsun_d: { name: '襄平狟骑', tier: 2 }, // 襄平·公孙度襄平狟骑
   shizhao_d: { name: '黑槊龙骧', tier: 2 }, // 邢台·石虎后赵禁军
     yunzhong: { name: '苍头军', tier: 2 },
@@ -38,8 +38,8 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zhongshan: { name: '常山兵', tier: 2 },   // 真定·常山兵（名气不足，降T2）
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
   helian: { name: '铁弗卫队', tier: 2 },     // 统万城·赫连勃勃铁弗亲卫
-  bing: { name: '并州狼骑', tier: 2 },     // 晋阳·并州骑兵（名震天下，升T1）
-  you: { name: '上谷突骑', tier: 2 },        // 居庸关·幽州上谷郡（升T1）
+  bing: { name: '并州狼骑', tier: 1 },     // 晋阳·并州骑兵（名震天下，升T1）
+  you: { name: '上谷突骑', tier: 1 },        // 居庸关·幽州上谷郡（升T1）
   yi: { name: '易州戍兵', tier: 3 },           // 紫荆关·于谦明代易州戍守
   changshan: { name: '倒马关卒', tier: 3 },   // 倒马关·常山
   xianyu: { name: '轻勇骑', tier: 2 },      // 井陉关·韩信轻勇骑
@@ -51,7 +51,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 恒山军除名（泛称无固定番号）
   dai_d: { name: '左射军', tier: 2 },         // 灵仙·石敬瑭嫡系
   dongdan: { name: '东丹卫兵', tier: 2 },       // 敖东城·耶律倍东丹国
-  xuan: { name: '大明北伐军', tier: 2 },          // 宣化·明九边宣府镇
+  xuan: { name: '宣大劲骑', tier: 2 },          // 宣化·明九边宣大精骑
   zhe_d: { name: '折家将兵', tier: 2 },         // 府谷·宋府州折氏十世将门
   shanrong: { name: '山戎突骑', tier: 2 },      // 无终·田畴导曹操伐乌桓
   pingyuan: { name: '平原义军', tier: 2 },      // 平原·颜真卿首倡义兵（缺乏进攻胜仗，降T2）
