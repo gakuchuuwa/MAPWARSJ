@@ -35,7 +35,6 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   khon: { name: '萨迦法王军', tier: 2 },
   lang_clan: { name: '帕木竹巴军', tier: 3 },
   karmapa: { name: '噶玛巴护教', tier: 3 },
-  jinchuan_g: { name: '金川土司兵', tier: 2 }, // 金川·大小金川之役（威名赫赫，升T2）
   golog: { name: '果洛游骑', tier: 3 },
   xihai_d: { name: '威定戍卒', tier: 3 },     // 伏俟城·隋西海郡属县戍兵（郡治无专将）
   heyuan_d: { name: '河源军', tier: 0 },        // 花石峡·黑齿常之夜袭破数万吐蕃（升T0）
@@ -51,7 +50,6 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   jiashi: { name: '迦湿弥罗卫', tier: 1 },  // 喀吉尔·李玄策征克什米尔兵
   gongbu: { name: '工布长弓手', tier: 3 },
   kangba: { name: '康巴骁骑', tier: 2 },   // 理塘宗·康巴
-  song2: { name: '松州边军', tier: 3 },      // 嘉诚·唐松州抗蕃戍卒
   xiadun: { name: '廷布卫队', tier: 3 },     // 廷布·夏仲不丹亲卫
   ali: { name: '阿里骑兵', tier: 2 },          // 噶大克·甘丹才旺收复阿里
     gaoliang: { name: '茂州戍卒', tier: 3 },

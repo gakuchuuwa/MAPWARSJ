@@ -282,7 +282,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     taira_pingzhisheng: { generalId: 'taira_pingzhisheng', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_06' }, // 坛浦决战水师覆没前死战（非④）
     // ── 朝鲜 ──
     joseon_lichenggui: { generalId: 'joseon_lichenggui', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 威化岛斩首奇袭
-    gaogouli_yizhiwende: { generalId: 'gaogouli_yizhiwende', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_06' }, // 萨水之战以逸待劳破隋
+    gaogouli_yizhiwende: { generalId: 'gaogouli_yizhiwende', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_06' },
     baiji_jiebai: { generalId: 'baiji_jiebai', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 车昌野隘突击
     zhen_zhenxuan: { generalId: 'zhen_zhenxuan', tier: 'ordinary', tacticalSkillId: 'tac_09' },
     danluo_jintongjing: { generalId: 'danluo_jintongjing', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 金通精守城逆袭
@@ -1196,7 +1196,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
   dulan_d_aihamaide: { generalId: 'dulan_d_aihamaide', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 艾哈迈德·杜兰尼：攻战计侵掠如火+攻城拔寨，九征印度建帝国
     muer_mujier: { generalId: 'muer_mujier', tier: 'ordinary', tacticalSkillId: 'tac_10' },
   baha_gaiwamu: { generalId: 'baha_gaiwamu', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 盖瓦姆·巴哈尔兹：深沟高垒守泰巴德
-  hali_subashi: { generalId: 'hali_subashi', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 苏巴什·哈里：置之死地丹达纳克破阵
+    hali_subashi: { generalId: 'hali_subashi', tier: 'ordinary', tacticalSkillId: 'tac_08' },
   kalan_suhela: { generalId: 'kalan_suhela', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' }, // 苏赫拉·卡伦：敌战计避实击虚+攻城拔寨，萨珊东北铁壁
   xisi_yakubusafaer: { generalId: 'xisi_yakubusafaer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 雅库布·萨法尔·锡斯坦：攻战计侵掠如火+攻城拔寨，铜匠起兵席卷呼罗珊
   delan_sulun: { generalId: 'delan_sulun', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 苏伦·德兰吉亚：敌战计避实击虚+长驱直入，帕提亚回马箭灭克拉苏
@@ -1296,13 +1296,12 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     }, // 苏定方：灭西突厥、平百济，长驱万里
     // ── 2026-06-29 新增：马殷 ──
     shaozhou_d_mayin: { generalId: 'shaozhou_d_mayin', tier: 'ordinary', tacticalSkillId: 'tac_10' },
-    zizhou_wangjian: { generalId: 'zizhou_wangjian', tier: 'ordinary', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' },
+    zizhou_wangjian: { generalId: 'zizhou_wangjian', tier: 'ordinary', tacticalSkillId: 'tac_07', strategicSkillId: 'str_05' },
     cangzhou_liurengong: { generalId: 'cangzhou_liurengong', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_08' },
     yuezhi_xihou: { generalId: 'yuezhi_xihou', tier: 'ordinary', tacticalSkillId: 'tac_07' },
-    minyue_wuzhu: { generalId: 'minyue_wuzhu', tier: 'ordinary', tacticalSkillId: 'tac_03' },
+    minyue_wuzhu: { generalId: 'minyue_wuzhu', tier: 'ordinary', tacticalSkillId: 'tac_08' },
     funan_fanman: { generalId: 'funan_fanman', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' },
-    lancang_faang: { generalId: 'lancang_faang', tier: 'ordinary', tacticalSkillId: 'tac_03' },
-    mowoer_babuer: { generalId: 'mowoer_babuer', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
+    lancang_faang: { generalId: 'lancang_faang', tier: 'ordinary', tacticalSkillId: 'tac_08' },
     ahaomu_laqite: { generalId: 'ahaomu_laqite', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_06' },
     elunchunzu_gaishan: { generalId: 'elunchunzu_gaishan', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' },
     wazu_banhongwang: { generalId: 'wazu_banhongwang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' },

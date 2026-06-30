@@ -86,6 +86,7 @@ app.innerHTML = `
     <a href="/" class="bm-link">← 返回游戏</a>
     <a href="/portrait-tuner.html" class="bm-link">立绘调校</a>
     <button type="button" id="bm-reload" class="bm-btn">刷新数据</button>
+    <button type="button" id="bm-export" class="bm-btn">导出名册</button>
     <button type="button" id="bm-validate" class="bm-btn bm-btn-warn">运行校验</button>
   </div>
 </header>
@@ -1089,7 +1090,15 @@ async function handleFormSubmit(e: Event): Promise<void> {
         const eliteName = get('eliteName');
         const eliteTier = get('eliteTier');
 
-        if (eliteName && eliteTier !== '' && region) {
+        if (eliteName) {
+            if (!region) {
+                showToast(`精锐保存失败: 请先选择文化区`, true);
+                return;
+            }
+            if (eliteTier === '') {
+                showToast(`精锐保存失败: 请选择精锐级别`, true);
+                return;
+            }
             const eliteRes = await fetch('/api/save-elite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1173,6 +1182,100 @@ function showToast(msg: string, isError = false): void {
     setTimeout(() => { if (els.toast.textContent === msg) els.toast.textContent = ''; }, 4000);
 }
 
+// ── Export 名册 (Markdown) ──
+
+/** 把战术/战略技 id 解析成「格 显示名」纯文本，如「③ 侵掠如火」 */
+function skillLabelPlain(id?: string): string {
+    if (!id || !entityData) return id ?? '';
+    const tac = entityData.tacticalSkills.find(s => s.id === id);
+    if (tac) return `${tac.grid} ${tac.displayName}`;
+    const str = entityData.strategicSkills.find(s => s.id === id);
+    if (str) return `${str.grid} ${str.displayName}`;
+    return id;
+}
+
+/** Markdown 表格单元格转义：竖线、换行 */
+function mdCell(v: string | number | null | undefined): string {
+    if (v == null || v === '') return '—';
+    return String(v).replace(/\|/g, '\\|').replace(/\n/g, ' ');
+}
+
+function exportCatalog(): void {
+    if (!rows.length) { showToast('暂无数据可导出', true); return; }
+
+    const now = new Date();
+    const pad2 = (n: number) => String(n).padStart(2, '0');
+    const stamp = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+    const stampFull = `${stamp} ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+
+    const total = rows.length;
+    const complete = rows.filter(r => r.completeness === 100).length;
+    const noGen = rows.filter(r => !r.generalId).length;
+    const noElite = rows.filter(r => !r.eliteName).length;
+
+    // 按文化区分组（无区归「未分区」）
+    const groups = new Map<string, FactionRow[]>();
+    for (const r of rows) {
+        const key = r.cityRegion || '未分区';
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(r);
+    }
+    const regionOrder = (entityData?.regions ?? []).slice();
+    const sortedKeys = [...groups.keys()].sort((a, b) => {
+        const ia = regionOrder.indexOf(a), ib = regionOrder.indexOf(b);
+        if (ia !== -1 && ib !== -1) return ia - ib;
+        if (ia !== -1) return -1;
+        if (ib !== -1) return 1;
+        return a.localeCompare(b);
+    });
+
+    const tierCn = (t?: string) => t === 'famous' ? '名将' : t === 'ordinary' ? '普将' : '';
+    const header = '| 势力 | 据点 | 坐标(lat, lng) | 旗号 | 武将 | 品阶 | 战术技 | 战略技 | 精锐 | 级别 | 完整度 |';
+    const divider = '|---|---|---|---|---|---|---|---|---|---|---|';
+
+    const lines: string[] = [
+        '# MAPWAR 实体名册',
+        '',
+        `> 导出时间：${stampFull}　`,
+        `> 共 ${total} 势力 ｜ 完整 ${complete} ｜ 缺武将 ${noGen} ｜ 缺精锐 ${noElite}`,
+        '',
+    ];
+
+    for (const key of sortedKeys) {
+        const list = groups.get(key)!.slice().sort((a, b) => a.id.localeCompare(b.id));
+        lines.push(`## ${key}（${list.length}）`, '', header, divider);
+        for (const r of list) {
+            const coord = (r.lat != null && r.lng != null) ? `${r.lat.toFixed(2)}, ${r.lng.toFixed(2)}` : '';
+            lines.push('| ' + [
+                mdCell(r.name),
+                mdCell(r.cityName),
+                mdCell(coord),
+                mdCell(r.flagText),
+                mdCell(r.generalName),
+                mdCell(tierCn(r.tier)),
+                mdCell(skillLabelPlain(r.tacticalSkillId)),
+                mdCell(skillLabelPlain(r.strategicSkillId)),
+                mdCell(r.eliteName),
+                mdCell(r.eliteTier != null ? `T${r.eliteTier}` : ''),
+                mdCell(`${r.completeness}%`),
+            ].join(' | ') + ' |');
+        }
+        lines.push('');
+    }
+
+    const md = lines.join('\n');
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `MAPWAR名册_${stamp}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast(`✓ 已导出 ${total} 势力 → MAPWAR名册_${stamp}.md`);
+}
+
 // ── Events ──
 
 function bindEvents(): void {
@@ -1192,6 +1295,9 @@ function bindEvents(): void {
     });
     document.getElementById('bm-reload')!.addEventListener('click', () => {
         loadData().then(() => showToast('✓ 数据已刷新')).catch(e => showToast(String(e), true));
+    });
+    document.getElementById('bm-export')!.addEventListener('click', () => {
+        exportCatalog();
     });
     document.getElementById('bm-validate')!.addEventListener('click', () => {
         runValidation();

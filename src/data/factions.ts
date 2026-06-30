@@ -143,6 +143,9 @@ export const FACTIONS: Faction[] = [
 
 
 
+
+
+
     { id: 'jingmen', name: '荆门' },
     { id: 'jibei', name: '济北' },
     { id: 'wusun', name: '乌孙' },
@@ -158,7 +161,8 @@ export const FACTIONS: Faction[] = [
     { id: 'shache', name: '莎车' },
     { id: 'qiuci', name: '龟兹' },
     { id: 'yanqi', name: '焉耆' },
-    { id: 'gaogouli', name: '高句丽' },   // 高句丽国都平壤（427 起）；「高丽」留给 goryeo
+    { id: 'gaogouli', name: '高句丽' },
+   // 高句丽国都平壤（427 起）；「高丽」留给 goryeo
     { id: 'xinluo', name: '新罗' },
  
     // ── 2026-06-11 日本重置：京都改挂室町（足利旗）──
@@ -1019,7 +1023,10 @@ export const FACTIONS: Faction[] = [
     
     // ── 2026-06-20 新增：布兹詹（扎姆）/ 哈里（萨拉赫斯）/ 卡伦（图斯）──
     { id: 'baha', name: '巴哈尔兹' },
-    { id: 'hali', name: '哈里' },
+    { id: 'hali', name: '萨洛尔' },
+
+
+
     { id: 'kalan', name: '卡伦' },
 
     // ── 2026-06-20 新增：杜兰尼（坎大哈）/ 呼罗珊（赫拉特）/ 阿巴尔（尼沙布尔）──

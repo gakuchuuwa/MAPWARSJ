@@ -10,7 +10,6 @@
 export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
   lanzhou: { name: '金城突骑', tier: 1 },     // 金城·赵充国金城突骑
   dangxiang: { name: '铁鹞子', tier: 1 },        // 兴庆府·1041好水川诱伏，铁鹞子冲阵，任福战死（非以少胜多，降T1）
-  qing: { name: '忠孝军', tier: 0 },         // 安化·完颜陈和尚大昌原四百破八千（《金史》）
   // 步跋子已迁环洲（huan@方渠）
   yeli: { name: '擒生军', tier: 2 },             // 克夷门·西夏监军司
     weiming: { name: '嵬名亲卫', tier: 1 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽

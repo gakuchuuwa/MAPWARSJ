@@ -18,11 +18,9 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   keerkezi: { name: '柯尔克孜骑', tier: 3 }, // 斯姆哈纳·玛纳斯
   pisha: { name: '毗沙戍卒', tier: 3 }, // 麻扎塔格·毗沙
   xingxingxia: { name: '交河锐骑', tier: 2 }, // 星星峡·郭孝恪
-  yangguan: { name: '阳关戍卒', tier: 3 }, // 阳关·班超
   wulianghai: { name: '乌梁海巡骑', tier: 3 }, // 布尔根·车凌乌巴什
   qiuci: { name: '龟兹精兵', tier: 3 },   // 伊逻卢·龟兹精兵
   yuchi: { name: '于阗精兵', tier: 2 },       // 于阗·尉迟王族精兵（抗击黑汗四十载，升T2）
-  kala: { name: '阿斯古拉姆', tier: 2 },      // 奥什·喀喇汗古拉姆（灭于阗非以少胜多）
   an: { name: '昭武精骑', tier: 2 },        // 蒲华·昭武九姓安国（原伊列克近卫严重错代错位）
   yiduhu: { name: '西州回鹘', tier: 2 },      // 高昌·北庭回鹘取西州
   shule: { name: '阿兰斯近卫', tier: 2 },     // 盘橐·阿尔斯兰喀喇汗近卫
@@ -31,7 +29,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   chagatai: { name: '蒙兀儿铁骑', tier: 2 }, // 别失八里·东察合台（西域霸主，升T2）
   dayuan: { name: '汗血天马骑', tier: 2 },   // 贵山城·大宛（守城非以少胜多）
   shache: { name: '莎车左右骑', tier: 2 },   // 渠莎·汉代西域强国
-  anxi: { name: '大唐安西军', tier: 1 },     // 拨换城·安西都护府（威震西域近百年，升T1）
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收
   loulan: { name: '精绝屯戍', tier: 3 },      // 精绝·都护府直属屯田戍卒（旗号楼·§12.1）
   zhuxie: { name: '朱邪部兵', tier: 3 },      // 大石城·沙陀朱邪部

@@ -17,7 +17,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   qingyuan_bd: { name: '白马突骑', tier: 2 }, // 保定·周德威白马突骑
 
   // ── §2 北方 12 支 ──
-  zhao: { name: '赵边骑', tier: 2 },     // 邯郸·廉颇赵国名将（无独立胜仗）
   yan: { name: '渔阳突骑', tier: 2 },       // 古北口·§2 #2 光武幽州精骑（升T1）
   gongsun_d: { name: '襄平狟骑', tier: 2 }, // 襄平·公孙度襄平狟骑
   shizhao_d: { name: '黑槊龙骧', tier: 2 }, // 邢台·石虎后赵禁军
@@ -46,7 +45,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   xianyu: { name: '轻勇骑', tier: 2 },      // 井陉关·韩信轻勇骑
     linhu: { name: '林胡骑', tier: 2 },
     lingqiu: { name: '胡服骑射', tier: 1 },
-  huo: { name: '霍国甲士', tier: 3 },       // 灵石关·霍叔处霍国甲士
   // 飞虎军除名（李克用置，平型关时代错位）
   loufan: { name: '天山飞骑', tier: 2 },      // 宁武关·薛仁贵三箭定天山
   linyu: { name: '夷丁突骑', tier: 1 },       // 山海关·临榆（明末战功卓著，升T1）

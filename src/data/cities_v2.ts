@@ -1077,7 +1077,8 @@ export const PERIPHERY: CityDataV2[] = [
         tier: 1,
         region: 'KOREA',
         note: '朝鲜王朝（李朝）都城汉阳/汉城' },
-    { id: 'city_pyongyang', name: '平壤', factionId: 'gaogouli', lat: 39.020000, lng: 125.760000, type: 'medium_city', region: 'KOREA', troops: 10000, tier: 1, note: '高句丽中后期国都（427 年迁平壤城）' },
+    { id: 'city_pyongyang', name: '平壤', factionId: 'gaogouli', lat: 39.02, lng: 125.76, type: 'small_city', troops: 5000, region: 'KOREA' },
+
 
     {
         id: 'city_kaesong',
@@ -1977,6 +1978,9 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
 
 
+
+
+
 // ── 大夏(西夏)都城：兴庆府 ──
 { id: 'city_yongan', name: '永安', factionId: 'jingjiang', lat: 24.066563, lng: 110.626831, type: 'small_city', troops: 10000, 
         note: '永安；靖江小城', region: 'LINGNAN' },
@@ -2846,7 +2850,10 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-06-20 替换：巴哈尔兹·泰巴德（原扎姆）──
     { id: 'city_taibade', name: '泰巴德', factionId: 'baha', lat: 34.7763, lng: 60.7764, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '巴哈尔兹区泰巴德；呼罗珊东南边境重镇，巴哈尔兹重甲戟兵驻防' },
     // ── 2026-06-20 新增：哈里·萨拉赫斯 ──
-    { id: 'city_salahesi', name: '萨拉赫斯', factionId: 'hali', lat: 36.5449, lng: 61.1577, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '哈里河畔萨拉赫斯；1040年塞尔柱丹达纳克大破伽色尼，呼罗珊北境锁钥' },
+    { id: 'city_salahesi', name: '萨拉赫斯', factionId: 'hali', lat: 36.5449, lng: 61.1577, type: 'small_city', troops: 5000, region: 'CENTRAL_ASIA' },
+
+
+
     // ── 2026-06-20 新增：卡伦·图斯 ──
     { id: 'city_tusi', name: '图斯', factionId: 'kalan', lat: 36.45, lng: 59.57, type: 'small_city', region: 'CENTRAL_ASIA', troops: 10000, note: '古图斯/马什哈德近郊；卡伦家族（Karen-Pahlav）世袭领地，萨珊东北边防元帅驻跸' },
     // ── 2026-06-20 新增：锡斯坦·博斯特 ──

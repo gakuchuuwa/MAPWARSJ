@@ -10,6 +10,13 @@ function markPortraitDevWrite(): void {
     portraitDevSuppressReloadUntil = Date.now() + 8000;
 }
 
+// batch-manager 连续写盘（batch-import → save-general → save-elite）
+// 期间抑制 Vite full-reload，防止后续 API 调用被页面刷新打断
+let batchSaveSuppressReloadUntil = 0;
+function markBatchSaveWrite(): void {
+    batchSaveSuppressReloadUntil = Date.now() + 5000;
+}
+
 // ============================================================
 // [NEW 2026-05-29] 自动 git 备份: 一天 1 次
 //   策略:
@@ -123,9 +130,9 @@ export default defineConfig({
                         typeof payload === 'object'
                         && payload !== null
                         && (payload as { type?: string }).type === 'full-reload'
-                        && Date.now() < portraitDevSuppressReloadUntil
+                        && (Date.now() < portraitDevSuppressReloadUntil || Date.now() < batchSaveSuppressReloadUntil)
                     ) {
-                        console.log('[PortraitDev] 已拦截 F2 写盘触发的整页刷新');
+                        console.log('[HMR-Suppress] 已拦截写盘触发的整页刷新');
                         return;
                     }
                     origSend(payload);
@@ -801,6 +808,7 @@ function batchImportFiles(entries: BatchEntry[]): BatchFileResult[] {
     console.log(`[BatchImport] anyFailure=${anyFailure}, results:`, JSON.stringify(results));
     if (!anyFailure) {
         try {
+            markBatchSaveWrite();
             console.log(`[BatchImport] ✍️ Writing 5 files...`);
             fs.writeFileSync(factionPath, factionText, 'utf-8');
             console.log(`[BatchImport] ✅ factions.ts written`);
@@ -942,6 +950,18 @@ function serverReplaceObjectLine(text: string, keyword: string, targetKey: strin
     return text.slice(0, lineStart) + newLine + lineEnding + text.slice(lineEnd);
 }
 
+/** 从对象结构中删除指定 key 的整条记录（含缩进与换行）；key 不存在则原样返回。 */
+function serverRemoveObjectKey(text: string, keyword: string, targetKey: string): string {
+    const kwIdx = text.indexOf(keyword);
+    if (kwIdx === -1) throw new Error(`文件中找不到关键字 "${keyword}"`);
+    const keyIdx = findObjectKeyIdx(text, kwIdx, targetKey);
+    if (keyIdx === -1) return text;
+    let lineStart = keyIdx;
+    while (lineStart > 0 && text[lineStart - 1] !== '\n') lineStart--;
+    const lineEnd = findObjectEntryEnd(text, keyIdx);
+    return text.slice(0, lineStart) + text.slice(lineEnd);
+}
+
 /** 从 cities_v2.ts 中删除指定 city_id 的数据块 */
 function serverDeleteCityBlock(text: string, targetId: string): string {
     const searchStr = `id: '${targetId}'`;
@@ -1018,6 +1038,9 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
     const sdnPath = path.resolve(__dirname, 'src/data/SandboxDisplayNames.ts');
     // [2026-05-30 用户公理] 删城同时删引用该城的道路
     const roadsPath = path.resolve(__dirname, 'src/data/VectorRoadData.ts');
+    // [FIX 2026-07-01] 删势力须同步删武将记录/档案/精锐, 否则成孤儿, 校验仍报错
+    const factionGeneralsPath = path.resolve(__dirname, 'src/data/FactionGenerals.ts');
+    const generalSkillsPath = path.resolve(__dirname, 'src/data/GeneralSkills.ts');
 
     let factionText = fs.readFileSync(factionPath, 'utf-8');
     let citiesText = fs.readFileSync(citiesPath, 'utf-8');
@@ -1025,6 +1048,10 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
     let camText = fs.readFileSync(camPath, 'utf-8');
     let sdnText = fs.readFileSync(sdnPath, 'utf-8');
     let roadsText = fs.readFileSync(roadsPath, 'utf-8');
+    let factionGeneralsText = fs.readFileSync(factionGeneralsPath, 'utf-8');
+    let generalSkillsText = fs.readFileSync(generalSkillsPath, 'utf-8');
+    // 精锐区文件按需读取/累积修改: file 绝对路径 → 最新文本
+    const eliteEdits = new Map<string, string>();
 
     const results: DeleteResult[] = [];
 
@@ -1034,9 +1061,12 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
         const tag = fId || cId || '?';
 
         if (fId) {
-            // factions.ts (数组块)
-            try { factionText = serverDeleteArrayBlock(factionText, 'FACTIONS', 'id', fId); results.push({ target: tag, file: 'factions.ts', ok: true }); }
-            catch (e: any) { results.push({ target: tag, file: 'factions.ts', ok: false, error: e.message }); }
+            // factions.ts (数组块) — [FIX 2026-07-01] 势力已不在则跳过(视为已删), 不算错,
+            //   以便对「已删势力但残留孤儿」的情况补清武将/档案/精锐
+            if (factionText.includes(`id: '${fId}'`)) {
+                try { factionText = serverDeleteArrayBlock(factionText, 'FACTIONS', 'id', fId); results.push({ target: tag, file: 'factions.ts', ok: true }); }
+                catch (e: any) { results.push({ target: tag, file: 'factions.ts', ok: false, error: e.message }); }
+            }
             // StartingCapitals.ts (可能 factionId 没在 SC 注册, 不算错)
             if (startingCapitalsText.includes(`'${fId}':`)) {
                 try { startingCapitalsText = serverDeleteObjectLine(startingCapitalsText, 'STARTING_CAPITALS', fId); results.push({ target: tag, file: 'StartingCapitals.ts', ok: true }); }
@@ -1051,6 +1081,40 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
             if (sdnText.includes(`'${fId}':`)) {
                 try { sdnText = serverDeleteObjectLine(sdnText, 'SANDBOX_DISPLAY_NAMES', fId); results.push({ target: tag, file: 'SandboxDisplayNames.ts', ok: true }); }
                 catch (e: any) { results.push({ target: tag, file: 'SandboxDisplayNames.ts', ok: false, error: e.message }); }
+            }
+
+            // [FIX 2026-07-01] FactionGenerals.ts (武将记录, key=factionId)
+            //   先取出 generalId, 再删本记录 + GeneralSkills 档案 (档案 key=generalId, 非 factionId)
+            const fgKwIdx = factionGeneralsText.indexOf('FACTION_GENERALS');
+            if (fgKwIdx !== -1 && findObjectKeyIdx(factionGeneralsText, fgKwIdx, fId) !== -1) {
+                const gMatch = factionGeneralsText.match(new RegExp(`${fId}:\\s*\\{[^}]*generalId:\\s*'([^']+)'`));
+                const generalId = gMatch ? gMatch[1] : null;
+                try {
+                    factionGeneralsText = serverDeleteObjectLine(factionGeneralsText, 'FACTION_GENERALS', fId);
+                    results.push({ target: tag, file: 'FactionGenerals.ts', ok: true });
+                } catch (e: any) { results.push({ target: tag, file: 'FactionGenerals.ts', ok: false, error: e.message }); }
+                // GeneralSkills.ts (GENERAL_PROFILES, key=generalId)
+                const gsKwIdx = generalSkillsText.indexOf('GENERAL_PROFILES');
+                if (generalId && gsKwIdx !== -1 && findObjectKeyIdx(generalSkillsText, gsKwIdx, generalId) !== -1) {
+                    try {
+                        generalSkillsText = serverDeleteObjectLine(generalSkillsText, 'GENERAL_PROFILES', generalId);
+                        results.push({ target: tag, file: 'GeneralSkills.ts', ok: true });
+                    } catch (e: any) { results.push({ target: tag, file: 'GeneralSkills.ts', ok: false, error: e.message }); }
+                }
+            }
+
+            // [FIX 2026-07-01] 精锐区文件 (key=factionId), 14 区逐个查删, 累积到 eliteEdits
+            for (const [, rinfo] of Object.entries(REGION_TO_ELITE_FILE)) {
+                const efp = path.resolve(__dirname, 'src/data', rinfo.file);
+                let etext = eliteEdits.get(efp) ?? (fs.existsSync(efp) ? fs.readFileSync(efp, 'utf-8') : null);
+                if (etext == null) continue;
+                const ekw = etext.indexOf(rinfo.varName);
+                if (ekw === -1 || findObjectKeyIdx(etext, ekw, fId) === -1) continue; // 未命中: 不缓存(只写改过的)
+                try {
+                    etext = serverRemoveObjectKey(etext, rinfo.varName, fId);
+                    eliteEdits.set(efp, etext);
+                    results.push({ target: tag, file: rinfo.file, ok: true });
+                } catch (e: any) { results.push({ target: tag, file: rinfo.file, ok: false, error: e.message }); }
             }
         }
 
@@ -1076,13 +1140,18 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
     console.log(`[BatchDelete] anyFailure=${anyFailure}, ${results.length} ops`);
     if (!anyFailure) {
         try {
+            markBatchSaveWrite();
             fs.writeFileSync(factionPath, factionText, 'utf-8');
             fs.writeFileSync(citiesPath, citiesText, 'utf-8');
             fs.writeFileSync(startingCapitalsPath, startingCapitalsText, 'utf-8');
             fs.writeFileSync(camPath, camText, 'utf-8');
             fs.writeFileSync(sdnPath, sdnText, 'utf-8');
             fs.writeFileSync(roadsPath, roadsText, 'utf-8'); // [2026-05-30]
-            console.log('[BatchDelete] ✅ 6 文件已写入 (含 VectorRoadData.ts)');
+            // [FIX 2026-07-01] 武将记录 / 档案 / 精锐 同步落盘
+            fs.writeFileSync(factionGeneralsPath, factionGeneralsText, 'utf-8');
+            fs.writeFileSync(generalSkillsPath, generalSkillsText, 'utf-8');
+            for (const [efp, etext] of eliteEdits) fs.writeFileSync(efp, etext, 'utf-8');
+            console.log(`[BatchDelete] ✅ 写入完成 (含 FactionGenerals/GeneralSkills + ${eliteEdits.size} 精锐文件)`);
         } catch (err: any) {
             console.log(`[BatchDelete] ❌ 写入失败: ${err.message}`);
             for (const r of results) r.ok = false;
@@ -1687,9 +1756,9 @@ function serverReadAllEntityData() {
     }
 
     // tactical/strategic skill catalogs for UI dropdowns
-    const tacticalSkills: Array<{ id: string; grid: string; displayName: string }> = [];
-    for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)'/g)) {
-        if (m[2].startsWith('tac_')) tacticalSkills.push({ id: m[2], grid: m[3], displayName: m[4] });
+    const tacticalSkills: Array<{ id: string; grid: string; displayName: string; timing: string }> = [];
+    for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)',\s*timing:\s*'([^']+)'/g)) {
+        if (m[2].startsWith('tac_')) tacticalSkills.push({ id: m[2], grid: m[3], displayName: m[4], timing: m[5] });
     }
     const strategicSkills: Array<{ id: string; grid: string; displayName: string }> = [];
     for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)'/g)) {
@@ -1741,6 +1810,7 @@ function serverSaveGeneral(data: {
         results.push(`⚠ 立绘文件不存在: ${data.portrait}`);
     }
 
+    markBatchSaveWrite();
     fs.writeFileSync(fgPath, fgText, 'utf-8');
     fs.writeFileSync(gsPath, gsText, 'utf-8');
     return results;
@@ -1754,18 +1824,42 @@ function serverSaveEliteLegion(data: {
 }) {
     const info = REGION_TO_ELITE_FILE[data.region];
     if (!info) throw new Error(`未知区域: ${data.region}`);
+
+    // [FIX 2026-07-01] 精锐唯一性：先把该番号从「所有其它区文件」清掉。
+    //   根因——elites 在 entity-data 里按 14 区文件固定顺序合并、相同 factionId「后者覆盖前者」。
+    //   若一个番号同时存在于多个区文件（如 chen 同在 LINGNAN+JIANGNAN），保存到 cityRegion 后，
+    //   排在更后面的旧区文件仍会覆盖新值 → 表现为「保存成功却回退」。清掉其它区即可根治。
+    const cleanedFrom: string[] = [];
+    for (const [region, rinfo] of Object.entries(REGION_TO_ELITE_FILE)) {
+        if (region === data.region) continue;
+        const ofp = path.resolve(__dirname, 'src/data', rinfo.file);
+        if (!fs.existsSync(ofp)) continue;
+        let otext = fs.readFileSync(ofp, 'utf-8');
+        const okwIdx = otext.indexOf(rinfo.varName);
+        if (okwIdx === -1) continue;
+        if (findObjectKeyIdx(otext, okwIdx, data.factionId) === -1) continue;
+        otext = serverRemoveObjectKey(otext, rinfo.varName, data.factionId);
+        markBatchSaveWrite();
+        fs.writeFileSync(ofp, otext, 'utf-8');
+        cleanedFrom.push(rinfo.file);
+    }
+
     const fp = path.resolve(__dirname, 'src/data', info.file);
     let text = fs.readFileSync(fp, 'utf-8');
 
+    // 存在性判断用 findObjectKeyIdx（带词边界），避免 text.includes 把 `monong:` 误判成 `nong:` 等子串。
+    const kwIdx = text.indexOf(info.varName);
+    const exists = kwIdx !== -1 && findObjectKeyIdx(text, kwIdx, data.factionId) !== -1;
     const line = `${data.factionId}: { name: '${data.eliteName}', tier: ${data.eliteTier} },`;
-    if (text.includes(`${data.factionId}:`)) {
+    if (exists) {
         text = serverReplaceObjectLine(text, info.varName, data.factionId, `    ${line}`);
     } else {
         text = serverInsertIntoStructure(text, info.varName, line, '    ');
     }
 
+    markBatchSaveWrite();
     fs.writeFileSync(fp, text, 'utf-8');
-    return { file: info.file, operation: text.includes(`${data.factionId}:`) ? 'replace' : 'insert' };
+    return { file: info.file, operation: exists ? 'replace' : 'insert', cleanedFrom };
 }
 
 function serverValidateEntities(): Array<{ level: string; msg: string; factionId?: string }> {
@@ -1845,6 +1939,23 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         const absPath = path.resolve(__dirname, 'public', g.portrait.replace(/^\//, ''));
         if (!fs.existsSync(absPath)) {
             issues.push({ level: 'error', msg: `武将 "${g.generalName}" 立绘不存在: ${g.portrait}`, factionId: fId });
+        }
+    }
+
+    // 11.5. 武将技时机与品阶不符校验
+    const tacticalMap = new Map(data.tacticalSkills.map(s => [s.id, s]));
+    for (const [fId, g] of Object.entries(data.generals)) {
+        const prof = data.profiles[g.generalId];
+        if (prof && prof.tacticalSkillId) {
+            const skill = tacticalMap.get(prof.tacticalSkillId);
+            if (skill) {
+                if (prof.tier === 'famous' && skill.timing !== 'opening') {
+                    issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 绑定了非开局战术技 "${skill.displayName}"`, factionId: fId });
+                }
+                if (prof.tier === 'ordinary' && skill.timing !== 'comeback') {
+                    issues.push({ level: 'error', msg: `普将 "${g.generalName}"(${g.generalId}) 绑定了非逆局战术技 "${skill.displayName}"`, factionId: fId });
+                }
+            }
         }
     }
 

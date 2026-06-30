@@ -14,7 +14,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   // === 初始/默认（1） ===
   lelang: { name: '乐浪材官', tier: 3 },    // 息城·王颀乐浪材官
   donghui: { name: '檀弓猎手', tier: 3 },  // 德源·东濊檀弓
-  gaogouli: { name: '高句丽铁骑', tier: 2 },   // 平壤·高句丽铁骑（番号泛指，降T2）
+    gaogouli: { name: '萨水精兵', tier: 1 },
   xuantu: { name: '皂衣先人', tier: 2 },     // 国内城·高句丽早期精锐（升T2）
   xinluo: { name: '花郎道', tier: 2 },       // 金城·新罗花郎（§4 #3）
   baiji: { name: '百济五方兵', tier: 2 },        // 泗沘·百济五方兵制
@@ -26,7 +26,6 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   sheng_d: { name: '全罗水军', tier: 2 },   // 顺天·朝鲜全罗道水军
   chen3: { name: '马韩部族', tier: 3 },         // 欢州·辰王马韩
   danluo: { name: '三别抄', tier: 1 },        // 星主厅·高丽武人抗蒙
-  jianzhou_nvzhen: { name: '建州劲卒', tier: 3 },  // 浑江·建州女真
     zhen: { name: '武珍锐卒', tier: 3 },
   woju: { name: '别武班', tier: 1 },            // 咸兴·尹瓘别武班
   ssangseong: { name: '和宁戍骑', tier: 2 }, // 铁岭关·李子春

@@ -51,13 +51,12 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   dulan_d: { name: '普什图骑兵', tier: 2 },    // 坎大哈·艾哈迈德沙阿杜兰尼轻装游骑（摧毁马拉塔帝国，升T1）
   // ── 2026-06-20 新增：布兹詹·哈里·卡伦 ──
   baha: { name: '巴哈尔兹兵', tier: 2 }, // 泰巴德·巴哈尔兹重装戍卫
-  hali: { name: '丹达纳克骑', tier: 0 },    // 萨拉赫斯·1040塞尔柱丹达纳克大破伽色尼（经典以少胜多，升T0）
+    hali: { name: '萨洛尔弓骑', tier: 3 },
   kalan: { name: '萨珊边骑', tier: 2 },    // 图斯·卡伦家族世袭东北边防元帅
   // ── 2026-06-20 新增：锡斯坦·德兰吉亚 ──
   xisi: { name: '萨法尔圣兵', tier: 2 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊
   delan: { name: '帕提亚铁骑', tier: 1 },   // 法拉·卡莱大捷；但常被罗马击溃破都，降T1
     huluo: { name: '古尔重骑', tier: 1 },
   aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·卡迪西亚惨败大溃退，降T1,
-    mowoer: { name: '莫卧儿突骑', tier: 1 },
     kala: { name: '阿斯古拉姆', tier: 2 },
 };

@@ -13,9 +13,7 @@
  */
 export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
 name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  wuling: { name: '武陵蛮兵', tier: 3 },
   chuzhou_d: { name: '清淮劲卒', tier: 2 },        // 清流关·皇甫晖守滁州抗蒙
-  yiyang_d: { name: '义阳戍卒', tier: 3 },    // 武胜关·孟宗政三关之捷
   she_ethnic: { name: '畲族山兵', tier: 3 },  // 敕木山·畲族祖山 // 清流关·滁州戍卒     // 武陵山·相单程武陵蛮
   shanyue: { name: '丹阳兵', tier: 1 },      // 宛陵城·§1 #24 丹阳郡精兵（极其有名，升T1）
     chu: { name: '荆州锐士', tier: 2 },       // 金鳞·关羽水淹七军
@@ -31,7 +29,6 @@ name: string; tier: 0 | 1 | 2 | 3 }>> = {
   yue_d: { name: '背嵬军', tier: 0 },        // 巴陵·§9 #8 岳飞岳云
       xiangzhou: { name: '荆鄂都统司', tier: 1 },     // 襄阳·京湖战区
   zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
-  song: { name: '殿前护圣军', tier: 1 },   // 临安·杨沂中殿前护圣军（宋国）
   sizhou: { name: '克敌军', tier: 1 },       // 淮安·韩世忠大仪镇大捷以少胜多（泗州）
   qian_d: { name: '嘉兴水师', tier: 2 },      // 嘉兴·俞大猷嘉兴水师
   qi_d: { name: '戚家军', tier: 0 },         // 横屿·§9 #17 横屿大捷战场（成军义乌，据点取标志战）

@@ -24,13 +24,9 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
 
   // 仲家兵除名（无此编制）
   hani_d: { name: '思陀甸兵', tier: 2 },      // 思陀·遮比归附从征安南
-  wuman: { name: '东爨乌蛮兵', tier: 3 },     // 乌蒙山·东爨乌蛮兵
   cuanshi: { name: '爨族部兵', tier: 3 },      // 曲靖·爨氏
   suke: { name: '素可泰兵', tier: 3 },     // 双河城·素可泰王国
   ailao: { name: '哀牢戍兵', tier: 2 },       // 永昌·类牢反叛连破数城        // 永昌·哀牢国
-  miaomin: { name: '苗疆义军', tier: 3 },
-  dongzu: { name: '侗家义军', tier: 3 },
-  zuo_d: { name: '清溪关弩手', tier: 3 },
   nanzhong: { name: '南中劲卒', tier: 2 },     // 宛温·马忠善射夷汉部曲
   yueyi: { name: '旌牛锐士', tier: 1 },         // 越嶲·张嶷
   pingnan: { name: '平南戍军', tier: 2 },       // 腾越城·沐晟征讨麓川

@@ -174,7 +174,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'qiuci': '龟兹',
     'yanqi': '焉耆',
 
-    'gaogouli': '高句',
+'gaogouli': '高句',
     'xinluo': '新罗',
     'donghu': '东胡',
     'luoyue': '骆越',
@@ -854,6 +854,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   'jingpozu': '景颇',
   'shuizu': '水',
   'liuzhou': '柳',
+'hali': '萨洛',
 };
 
 // @ts-ignore
