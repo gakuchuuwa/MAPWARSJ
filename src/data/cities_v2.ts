@@ -1976,6 +1976,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
 { id: 'city_xingqing', name: '合水', factionId: 'qing', lat: 36.01, lng: 107.87, type: 'small_city', troops: 5000, region: 'CENTRAL' },
 
 
+
 // ── 大夏(西夏)都城：兴庆府 ──
 { id: 'city_yongan', name: '永安', factionId: 'jingjiang', lat: 24.066563, lng: 110.626831, type: 'small_city', troops: 10000, 
         note: '永安；靖江小城', region: 'LINGNAN' },

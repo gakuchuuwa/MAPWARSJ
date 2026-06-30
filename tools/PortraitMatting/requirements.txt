@@ -1,0 +1,5 @@
+rembg
+gradio
+Pillow
+opencv-python
+numpy

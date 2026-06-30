@@ -33,6 +33,7 @@ import { getGeneralProfile } from '../data/GeneralSkills';
 import {
     applyGeneralSkillSideRollMultipliers,
     applyOpeningTacticalPreRoll,
+    applyOpeningTacticalToRolls,
     applyPostBattleStrategicBonus,
     applyStrategicRollMultipliersOnly,
     applyComebackRollMultipliersForSide,
@@ -358,11 +359,20 @@ export class BattleField {
 
         const attAdj = this.adjustedPowerWithReinforcement(this.attackerGroup);
         const defAdj = this.adjustedPowerWithReinforcement(this.defenderGroup);
-        let withSkills = applyStrategicRollMultipliersOnly(
+        // [修复] 名将开局掷点 ③④⑤ 在 refresh 时也要保留（emitUi=false 不重发徽章）。
+        // 否则普将逆局触发后重判强弱时，名将的掷点优势被抹掉，③④⑤ 对 ⑥ 沦为五五开。
+        const reopened = applyOpeningTacticalToRolls(
             attUnits,
             defUnits,
             attAdj,
             defAdj,
+            false,
+        );
+        let withSkills = applyStrategicRollMultipliersOnly(
+            attUnits,
+            defUnits,
+            reopened.attRoll,
+            reopened.defRoll,
             this.type,
         );
         const attComeback = applyComebackRollMultipliersForSide(
