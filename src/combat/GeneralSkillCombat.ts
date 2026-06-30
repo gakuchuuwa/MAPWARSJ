@@ -28,7 +28,7 @@ function getFollowedArmyId(): string | null {
 }
 
 /** 普将逆局：侧总兵力 ≤ 开战该侧总兵力 × 此比例时触发 */
-export const COMEBACK_TROOP_THRESHOLD = 0.5;
+export const COMEBACK_TROOP_THRESHOLD = 0.6;
 
 /** 名将开局战术 UI 延迟（秒）：对峙立绘就绪后再闪字 */
 export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
