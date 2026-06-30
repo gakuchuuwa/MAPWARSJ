@@ -231,7 +231,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'kumo': '楮特',
     'xijue': '十箭',
     'xian_d': '冼',
-    'xiqin': '西秦',
+'xiqin': '宁',
 
     // ── 2026-05-25 新增：唐朝核对追加势力 ──
 'xueyantuo': '薛延',

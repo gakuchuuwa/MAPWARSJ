@@ -141,6 +141,7 @@ export const FACTIONS: Faction[] = [
     { id: 'song2', name: '松州' },
     { id: 'qing', name: '庆州' },
 
+
     { id: 'jingmen', name: '荆门' },
     { id: 'jibei', name: '济北' },
     { id: 'wusun', name: '乌孙' },
@@ -285,7 +286,8 @@ export const FACTIONS: Faction[] = [
     { id: 'kumo', name: '奚族' },
     { id: 'xijue', name: '十箭' },
     { id: 'xian_d', name: '冼家' },          // 绯红 - 冼夫人高凉冼氏(高凉)
-    { id: 'xiqin', name: '西秦' },         // 胡萝卜橙 - 薛举西秦政权(折墌)
+    { id: 'xiqin', name: '宁州' },
+         // 胡萝卜橙 - 薛举西秦政权(折墌)
     { id: 'xueyantuo', name: '薛延陀' },
     { id: 'tujishi', name: '突骑施' },     // 巧克力色 - 突骑施汗国(碎叶川)
     { id: 'nanzhao', name: '南诏' },        // 南诏深红 - 南诏国(蒙舍城)

@@ -621,7 +621,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     jingmen_zhaoyun: { generalId: 'jingmen_zhaoyun', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 长坂坡救主
     unassigned_pengshichou: { generalId: 'unassigned_pengshichou', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 溪州铜柱
     miaomin_shiliudeng: { generalId: 'miaomin_shiliudeng', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 苗民起义
-      xiqin_xuerengao: { generalId: 'xiqin_xuerengao', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 薛举据折墌抗唐
+    xiqin_xuerengao: { generalId: 'xiqin_xuerengao', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' },
     beidi_sunang: { generalId: 'beidi_sunang', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     baiyang_mengtian: { generalId: 'baiyang_mengtian', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 高阙塞长城戍守
   // ── 河西区 2026-06-18 ──
@@ -943,12 +943,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tier: 'ordinary',
         tacticalSkillId: 'tac_09', // ⑨釜底抽薪（昆阳大败之主）
     },
-    qing_wanyanchenheshang: {
-        generalId: 'qing_wanyanchenheshang',
-        tier: 'famous',
-        tacticalSkillId: 'tac_03',
-        strategicSkillId: 'str_03',
-    },
+    qing_wanyanchenheshang: { generalId: 'qing_wanyanchenheshang', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_05' },
     zhuozhou_anlushan: {
         generalId: 'zhuozhou_anlushan',
         tier: 'famous',

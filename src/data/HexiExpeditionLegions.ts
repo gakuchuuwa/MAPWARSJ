@@ -33,7 +33,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   shuofang: { name: '期门郎骑', tier: 1 },      // 河南地·汉武帝期门郎戍朔方
     ganzhou: { name: '甘州铁骑', tier: 2 },       // 张掖·窦融河西骑兵（T2有名史载专名）
     anxi: { name: '大唐安西军', tier: 1 },       // 拨换城·郭昕安西军（白发孤忠，升T1）
-  xiqin: { name: '西秦锐卒', tier: 3 },
+    xiqin: { name: '忠孝军', tier: 0 },
     didao: { name: '熙河蕃兵', tier: 1 },
   baiyang: { name: '长城戍卒', tier: 3 },
   wei2: { name: '静塞军', tier: 1 },

@@ -92,4 +92,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   zhengzhou: { name: '白袍军', tier: 0 },        // 虎牢关·陈庆之白袍军（名师大将莫自牢，升T0）
   song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军,
     zhao: { name: '邯郸甲士', tier: 2 },
+    qing: { name: '环庆军', tier: 1 },
 };

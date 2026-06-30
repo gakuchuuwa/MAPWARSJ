@@ -1973,9 +1973,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
 
 
-{ id: 'city_xingqing', name: '安化', factionId: 'qing', lat: 36.01, lng: 107.87, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '安化；庆州小城',
-    },
+{ id: 'city_xingqing', name: '合水', factionId: 'qing', lat: 36.01, lng: 107.87, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
 
 // ── 大夏(西夏)都城：兴庆府 ──
 { id: 'city_yongan', name: '永安', factionId: 'jingjiang', lat: 24.066563, lng: 110.626831, type: 'small_city', troops: 10000, 
@@ -2478,7 +2477,8 @@ export const CITIES_V2: CityDataV2[] = [
         note: '祖厉；会州小城',
     },
     // ── 2026-06-11 新增：折墌（薛举西秦/薛举据城）──
-    { id: 'city_zhedi', name: '折墌', factionId: 'xiqin', lat: 35.500000, lng: 107.940000, type: 'pass', region: 'HEXI', troops: 10000, note: '薛举据折墌城；薛举西秦第二据点' },
+    { id: 'city_zhedi', name: '真宁', factionId: 'xiqin', lat: 35.5, lng: 107.94, type: 'small_city', troops: 5000, region: 'HEXI' },
+
 
     // ── 2026-06-11 精锐部队缺口：新建据点 ──
     { id: 'city_jingling', name: '竟陵', factionId: 'ruochu', lat: 30.662000, lng: 113.166000, type: 'small_city', region: 'JIANGNAN', troops: 10000, note: '楚若敖氏旧地；若敖六卒（《左传》）' },

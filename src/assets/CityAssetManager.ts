@@ -244,7 +244,7 @@ export class CityAssetManager {
 'kumo': '楮特',
         'xijue': '十箭',
         'xian_d': '冼',
-        'xiqin': '西秦',
+'xiqin': '宁',
 
 'xueyantuo': '薛延',
         'xiajiasi': '坚昆',
@@ -655,7 +655,7 @@ export class CityAssetManager {
         'zi': '资',
         'long2': '陇',
         'song2': '松',
-        'qing': '庆',
+'qing': '庆',
         'jingmen': '荆门',
         'pingyuan': '高唐',
         'xuan': '宣府',
