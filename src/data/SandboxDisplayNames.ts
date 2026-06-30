@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SandboxDisplayNames.ts
  *
  * 沙盒模式下势力旗帜上要渲染的"短名"字典 (factionId → 1-2 字)。
@@ -312,7 +312,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'khoja': '和卓',
     'gaxa': '噶厦',
     'jinchuan_g': '金川',
-'jinchuan_x': '赞拉',
+'agui': '儹拉',
     'geng': '靖南',
 'shuntian': '天地',
     'bailian': '白莲',
@@ -355,7 +355,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
 'kala': '喀汗',
-    'xiliao': '辽',
+'xiliao': '辽',
 'sogdian': '粟特',
     'kangju': '康居',
     'geluolu': '葛逻',
@@ -405,7 +405,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jing': '京',
     'muong': '芒',
     'paiwan': '排湾',
-    'trinh': '郑主',
+    'leloi': '黎',
 'nguyen_guangnan': '阮',
 
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
@@ -737,7 +737,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'lulin': '绿林',
     'dang_d': '虞',
 'hao_d': '濠',
-    'bozhou_d': '博',
+'bozhou_d': '博',
     'hongnong_jun': '弘农',
     'zhengzhou': '郑',
 'ruo': '鄀',

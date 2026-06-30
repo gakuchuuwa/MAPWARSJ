@@ -13,10 +13,10 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     huarazim: { name: '钦察精骑', tier: 2 },
   qincha: { name: '康里精骑', tier: 2 },
   qiepantuo: { name: '护密戍卒', tier: 3 },   // 护密城·瓦罕走廊戍卒
-  tiemuer: { name: '察合台突骑', tier: 0 },      // 区T0锚·撒马尔罕·帖木儿察合台突骑
+  tiemuer: { name: '察合台突骑', tier: 1 },      // 区T0锚·撒马尔罕·帖木儿察合台突骑
   kazakh: { name: '哈萨克骑', tier: 3 },     // 亚西·哈斯木汗游击（§13 #7）
   seljuq: { name: '古拉姆禁卫', tier: 2 },     // 木鹿·桑贾尔苏丹古拉姆近卫（卡特万惨败，降T2）
-  xiliao: { name: '斡耳朵亲卫', tier: 0 },     // 区T0锚·虎思·耶律大石斡耳朵亲卫
+    xiliao: { name: '斡耳朵亲卫', tier: 0 },
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
   guishuang: { name: '贵霜铁骑', tier: 1 },    // 蓝氏城·贵霜帝国铁骑
     muer: { name: '呼罗珊义从', tier: 2 },

@@ -1127,11 +1127,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/LINGNAN/trinh_zhengsong.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": 5
-        },
+
         "/assets/BASHU/boren_ada.png": {
             "scale": 1.09,
             "offsetX": 0,
@@ -1216,11 +1212,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 5
-        },
-        "/assets/BASHU/jinchuan_x_suonuomu.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": -32
         },
         "/assets/BASHU/kuai_kuaiyue.png": {
             "scale": 1.03,

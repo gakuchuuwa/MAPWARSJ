@@ -13,7 +13,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dulan: { name: '和硕特精骑', tier: 2 }, // 台吉乃尔·达什巴图尔
     kalun: { name: '尕斯戍卒', tier: 3 },
   shaodang: { name: '湟中义从羌', tier: 3 },  // 玛曲·河湟烧当羌义从骑（§12 #1）
-  tubo: { name: '吐蕃大纛军', tier: 2 },       // 逻些·松赞干布吐蕃大纛军
+  tubo: { name: '吐蕃大纛军', tier: 1 },       // 逻些·松赞干布吐蕃大纛军
   gar: { name: '却杰军', tier: 1 },           // 萨毗城·论钦陵却杰军（以众击寡，降T1）
   tuyu_d: { name: '青海骢精骑', tier: 2 },    // 伏俟城·吐谷浑青海骢（§12 #4）
   dafeichuan: { name: '退浑骑', tier: 2 },    // 大非川·《旧唐书》载“退浑之众”
@@ -37,7 +37,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   karmapa: { name: '噶玛巴护教', tier: 3 },
   golog: { name: '果洛游骑', tier: 3 },
   xihai_d: { name: '威定戍卒', tier: 3 },     // 伏俟城·隋西海郡属县戍兵（郡治无专将）
-  heyuan_d: { name: '河源军', tier: 0 },        // 花石峡·黑齿常之夜袭破数万吐蕃（升T0）
+  heyuan_d: { name: '河源军', tier: 1 },        // 花石峡·黑齿常之夜袭破数万吐蕃（升T0）
   monpa: { name: '门巴勇士', tier: 2 },  // 错那·梅惹·洛珠嘉措归附达赖
   lopi: { name: '珞巴武士', tier: 3 },
   humi: { name: '瓦罕弓骑', tier: 3 },

@@ -13,7 +13,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
     heng1: { name: '赵边骑', tier: 1 },
-  huan: { name: '环州戍兵', tier: 3 },      // 方渠·宋代环州边防（原步跋子，归嵬名）
+  huan: { name: '神臂弓手', tier: 2 },      // 方渠·宋代西军种师道神臂弓手
   qingyuan_bd: { name: '白马突骑', tier: 2 }, // 保定·周德威白马突骑
 
   // ── §2 北方 12 支 ──
@@ -63,7 +63,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
   liwang: { name: '河间突骑', tier: 2 },     // 乐成·李光弼河朔骑兵
   hejian: { name: '白马义从', tier: 1 },      // 文安·公孙瓒幽州突骑河间大破黄巾（升T1，打乌合之众未满T0）
-  qu_d: { name: '先登营', tier: 0 },       // 界桥·麴义破公孙瓒（192年）
+  qu_d: { name: '先登营', tier: 2 },       // 界桥·麴义破公孙瓒（192年）
   yang_aner: { name: '天顺红袄', tier: 2 },        // 蓬莱·杨安儿天顺红袄克登莱（名气不足，降T2）
   weihaiwei: { name: '大唐神灭军', tier: 1 },       // 文登·苏定方征东神灭军
   jianzhou_nvzhen: { name: '建州女真卫', tier: 2 }, // 浑江·李满住建州女真卫

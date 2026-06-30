@@ -422,7 +422,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     saman_yisimayi: { generalId: 'saman_yisimayi', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 萨曼埃米尔巴尔赫以逸待劳
     kala_satuke: { generalId: 'kala_satuke', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
     tujishi_sulukehan: { generalId: 'tujishi_sulukehan', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 突骑施公牛抗阿拉伯
-    xiliao_yelvdashi: { generalId: 'xiliao_yelvdashi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 西辽西迁卡特万以少胜多
+    xiliao_yelvdashi: { generalId: 'xiliao_yelvdashi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' },
     jiazini_mahamaode: { generalId: 'jiazini_mahamaode', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 马哈茂德十七征印度
     an_xibanni: { generalId: 'an_xibanni', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 昔班尼攻布哈拉建汗国
     wusun_liejiaomi: { generalId: 'wusun_liejiaomi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 乌孙昆莫西迁奇袭月氏
@@ -561,7 +561,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tian_sizhou_tianyougong: { generalId: 'tian_sizhou_tianyougong', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 思州土官
     luoyue_zhengce: { generalId: 'luoyue_zhengce', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 骆越反汉
     li_s_mayuan: { generalId: 'li_s_mayuan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' }, // 伏波平交趾
-    trinh_zhengsong: { generalId: 'trinh_zhengsong', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' }, // 郑主破莫
+    leloi: { generalId: 'leloi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 黎利抗明
     dacheng_chenkai: { generalId: 'dacheng_chenkai', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 大成国起义
     dayue_chenguojun: { generalId: 'dayue_chenguojun', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_06' }, // 抗蒙三捷
     shengmiao_baoli_miao: { generalId: 'shengmiao_baoli_miao', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 苗民起义
@@ -582,7 +582,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
       kui_gongsunshu: { generalId: 'kui_gongsunshu', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' }, // 公孙述白帝
     yang_bozhou_yangyinglong: { generalId: 'yang_bozhou_yangyinglong', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 播州末代
     chenghan_lite: { generalId: 'chenghan_lite', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 成汉开国
-    jinchuan_x_suonuomu: { generalId: 'jinchuan_x_suonuomu', tier: 'ordinary', tacticalSkillId: 'tac_10' },
+    agui: { generalId: 'agui', tier: 'famous', tacticalSkillId: 'tac_6' },
     zuo_d_wufu_zd: { generalId: 'zuo_d_wufu_zd', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 明代平南中
     wumeng_azi_wm: { generalId: 'wumeng_azi_wm', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 乌蒙土司
 // ── 巴蜀区 2026-06-18 ──
@@ -631,7 +631,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_lihao_dunhuang: { generalId: 'unassigned_lihao_dunhuang', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 西凉开国
     unassigned_xinqingji: { generalId: 'unassigned_xinqingji', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 破羌将军
     dashun_lizicheng: { generalId: 'dashun_lizicheng', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 大顺灭明
-    zhai_han_dongyi: { generalId: 'zhai_han_dongyi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 翟王守上郡
+    zhai_han_diqing: { generalId: 'zhai_han_diqing', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 狄青面涅将军
     ganzhou_dourong: { generalId: 'ganzhou_dourong', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 河西五郡
     unassigned_zhaoponu: { generalId: 'unassigned_zhaoponu', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 破楼兰
     shazhou_zhangyichao: { generalId: 'shazhou_zhangyichao', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 归义收复河西
@@ -700,7 +700,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     ruo_wangjian: { generalId: 'ruo_wangjian', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' },
     unassigned_luhunrongwang: { generalId: 'unassigned_luhunrongwang', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 陆浑戎
     sizhou_hanshizhong: { generalId: 'sizhou_hanshizhong', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 黄天荡
-    unassigned_diqing: { generalId: 'unassigned_diqing', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 面涅将军
+
     yin_dixin: { generalId: 'yin_dixin', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 纣王征东夷
     liwang_liguangbi: { generalId: 'liwang_liguangbi', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 太原守城·河间突骑
     han_baoyuan_han: { generalId: 'han_baoyuan_han', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 韩将暴鸢
@@ -719,7 +719,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     lulin_liuxiu: { generalId: 'lulin_liuxiu', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 昆阳之战三千破百万
     unassigned_fankuai: { generalId: 'unassigned_fankuai', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 鸿门宴
     hao_d_changyuchun: { generalId: 'hao_d_changyuchun', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
-    bozhou_d_luzhonglian: { generalId: 'bozhou_d_luzhonglian', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 义不帝秦
+    bozhou_d_yujin: { generalId: 'bozhou_d_yujin', tier: 'ordinary', tacticalSkillId: 'tac_06' },
     song_zhaokuangyin: { generalId: 'song_zhaokuangyin', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 陈桥兵变
     dang_d_zhuwen: { generalId: 'dang_d_zhuwen', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 后梁太祖
     // ── 北方区 2026-06-18 ──

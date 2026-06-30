@@ -21,9 +21,9 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   bandun: { name: '賨人勇士', tier: 2 },       // 汉昌·范目率板楯七姓助刘邦定三秦（T1有名且胜仗）
   langzhou: { name: '巴西劲卒', tier: 2 },       // 隆城·张飞巴西劲卒（有名且胜仗，升T1）
   zhuoshi: { name: '井阑劲卒', tier: 2 },         // 临邛·诸葛连弩营
-  tujia_d: { name: '白杆兵', tier: 1 },         // 石柱·§8 #5 秦良玉土司白蜡矛（战功赫赫，特批T1）
-  shu: { name: '白毦精兵', tier: 1 },           // 成都·诸葛亮连弩兵（蜀国）
-  yangzhou: { name: '无当飞军', tier: 1 },   // 兴势山·王平统率山地劲旅（防御战退曹爽，降T1）
+  tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛（战功赫赫，特批T1）
+  shu: { name: '白毦精兵', tier: 2 },           // 成都·诸葛亮连弩兵（蜀国）
+  yangzhou: { name: '无当飞军', tier: 2 },   // 兴势山·王平统率山地劲旅（防御战退曹爽，降T1）
   shuixi: { name: '罗罗兵', tier: 3 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名
   chenghan: { name: '流民帅突骑', tier: 1 },      // 鹿头关·§8 #9 成汉李特六夷铁骑（破晋建国，升T1）
@@ -48,7 +48,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zangke: { name: '牂牁戍卒', tier: 3 },        // 胜境关·古牂牁国地（原夜郎锐卒，避岭南同名）
   wanzhou: { name: '天生城军', tier: 3 },       // 南浦·上官夔天生城
   wumeng: { name: '溪州土兵', tier: 3 },
-    jinchuan_x: { name: '赞拉勇土', tier: 2 },
+    agui: { name: '健锐营', tier: 2 },
   fuguo: { name: '附国羌兵', tier: 3 },  // 芒康宗·隋附国羌人部落兵
   jie: { name: '柘羯武士', tier: 2 },  // 羯霜那·玄奘《大唐西域记》载柘羯勇士
 qianzhong: { name: '乾嘉苗兵', tier: 2 },     // 芷江·吴八月攻克沅州
@@ -66,7 +66,7 @@ qianzhong: { name: '乾嘉苗兵', tier: 2 },     // 芷江·吴八月攻克沅�
   boren: { name: '僰人藤牌兵', tier: 3 },     // 珙县·僰人阿大（僰道故地）
   xiang_d: { name: '向氏土兵', tier: 3 },      // 来凤·向大坤土司（向王天子）
     qianhui: { name: '回民义军', tier: 2 },
-  huizhou_d: { name: '元戎弩兵', tier: 1 }, // 河池·诸葛亮,
+  huizhou_d: { name: '元戎弩兵', tier: 2 }, // 河池·诸葛亮,
     wuling: { name: '五溪藤甲', tier: 3 },
     zizhou: { name: '忠武八都', tier: 2 },
 };

@@ -17,7 +17,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   satsuma: { name: '萨摩隼人', tier: 1 },        // 鹿儿岛城·岛津氏冲田畷钓野伏（原隼人众 T2）
   iga_d: { name: '伊贺众', tier: 2 },          // 名张·§5 #16
   hashiba: { name: '黄母衣众', tier: 2 },        // 姬路城·秀吉亲卫母衣黄组（原七手组 T3）
-  kai: { name: '武田赤备', tier: 1 },          // 躑躅崎馆·§5 #7
+  kai: { name: '武田赤备', tier: 2 },          // 躑躅崎馆·§5 #7
   jinchuan: { name: '骏河弓取', tier: 1 },      // 恢复T1：T1不看败绩，只需名气+胜仗
   owari: { name: '织田马廻众', tier: 0 },     // 热田城·桶狭间3000破25000
   totomi: { name: '三河武士', tier: 1 },       // 远江/三河·德川家核心死忠精锐
@@ -36,9 +36,9 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   ayinu: { name: '阿伊努猎兵', tier: 3 },       // 白老·虾夷特有猛毒箭射手
   beihai: { name: '雪国斥候', tier: 3 },       // 宗谷界城·（原雪国斥候，避开越后地域错位）
   yamato: { name: '千早众', tier: 1 },       // 千早城·楠木正成笼城（防御战，降T1）
-  sanada_d: { name: '真田赤备', tier: 1 },
+  sanada_d: { name: '真田赤备', tier: 2 },
   // ── 2026-06-17 令制国补点（古代据点名 + 精锐）──
-  kaga_d: { name: '一向宗门徒', tier: 1 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）
+  kaga_d: { name: '一向宗门徒', tier: 2 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）
   date_d: { name: '伊达铁骑', tier: 2 },     // 仙台·伊达氏（家族旗号可含「伊达」）
   higo_d: { name: '菊池党', tier: 1 },       // 熊本·菊池氏筑後川大捷（原 T2）
   iyo_d: { name: '河野水军', tier: 2 },     // 松山·河野氏（伊予水军）

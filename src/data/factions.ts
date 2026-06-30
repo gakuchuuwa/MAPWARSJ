@@ -1,4 +1,4 @@
-﻿// 势力数据 (Faction Data)
+// 势力数据 (Faction Data)
 // 每个势力：id、name（旗号汉字见 SandboxDisplayNames）
 // 显示色：固定见 HistoricalFactionColors.ts；其余每局由 FactionManager 随机分配
 // 命名规则：政权用正式国号(部分加"大")，民族用最高知名度2字简称，军阀用人名姓氏，家族用单姓氏
@@ -417,7 +417,8 @@ export const FACTIONS: Faction[] = [
 
     // 第五类：西南土司
     { id: 'jinchuan_g', name: '金川' },
-    { id: 'jinchuan_x', name: '赞拉' },
+    { id: 'agui', name: '儹拉' },
+
 
     // 沙褐 - 班禅系统(日喀则)
 
@@ -486,6 +487,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-06-17 新增：喀喇契丹（西辽·虎思/碎叶故地）──
     { id: 'xiliao', name: '西辽' },
+
     { id: 'jiazini', name: '伽色尼' },      // 伽色尼王朝(哥疾宁/马哈茂德), Ghaznavid
     { id: 'jibin', name: '罽宾' },          // 罽宾/迦毕试(丘就却/贵霜), Kapisa/Kushan
     { id: 'fanyanna', name: '梵衍那' },      // 梵衍那国(巴米扬/兴都库什), Bamiyan
@@ -576,7 +578,7 @@ export const FACTIONS: Faction[] = [
     { id: 'muong', name: '芒族' },
     { id: 'paiwan', name: '排湾' },
     // ── 第六类：岭南土司、安南权臣与海商门阀 ──
-    { id: 'trinh', name: '郑主' },                  // 清化靛蓝 - 郑主(西都城/越南北方)
+    { id: 'leloi', name: '后黎' },                  // 黎利蓝山起义
     { id: 'nguyen_guangnan', name: '阮家' },
 
     // 高平暗灰 - 莫氏/莫朝(高平)
@@ -959,7 +961,8 @@ export const FACTIONS: Faction[] = [
     { id: 'hao_d', name: '濠州' },
                 // 濠@蚌埠（隋唐濠州治钟离故地）
     // ── 2026-06-11 新增：博州 ──
-    { id: 'bozhou_d', name: '博州' },             // 博@聊城（隋唐博州治）
+    { id: 'bozhou_d', name: '博州' },
+             // 博@聊城（隋唐博州治）
     // ── 2026-06-16 新增：11大名关势力 ──
     { id: 'hongnong_jun', name: '弘农' },
     { id: 'zhengzhou', name: '郑州' },

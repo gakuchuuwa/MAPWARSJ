@@ -8,7 +8,7 @@
  * - §1 他区已占：#34–35 江南、#54 西域、#70 草原、#72–79 南方/东北、#75 北方
  */
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-      wei: { name: '魏之武卒', tier: 1 },        // 汴梁·阴晋大捷；马陵/伊阙大败溃散，降T1
+      wei: { name: '魏之武卒', tier: 0 },        // 汴梁·阴晋大捷；马陵/伊阙大败溃散，降T1
     qin: { name: '铁鹰锐士', tier: 1 },
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
   han: { name: '韩之劲弩', tier: 2 },        // 新郑·暴鸢韩弩
@@ -17,7 +17,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   pizhou: { name: '陷阵营', tier: 1 },        // 下邳·高顺陷阵营
   cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
   ranwei_d: { name: '乞活军', tier: 2 },   // 巨鹿·§1 #41 冉闵陈午
-    wuzhou_d: { name: '羽林军', tier: 1 },     // 洛阳·李多祚羽林军（武周）
+    wuzhou_d: { name: '羽林军', tier: 2 },     // 洛阳·李多祚羽林军（武周）
   shang: { name: '虎贲多射', tier: 2 },       // 安阳·殷商虎贲与多射（妇好征伐）
   zhou: { name: '岐阳虎贲', tier: 2 },     // 岐山·武王伐纣牧野（《史记》）
   // 夏后亲卫除名（夏代无信史）
@@ -80,7 +80,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     hao_d: { name: '淮西突骑', tier: 2 },
   suzhou_d: { name: '江北团练', tier: 3 },
   sima_d: { name: '宣王中军', tier: 3 },   // 获嘉·司马懿都督中外诸军事
-  bozhou_d: { name: '聊城义勇', tier: 3 },
+    bozhou_d: { name: '青州兵', tier: 2 },
   mengcheng_d: { name: '山桑弓手', tier: 3 },
   shangzhou: { name: '商州锐士', tier: 3 },
   bailian: { name: '白莲教众', tier: 2 },
@@ -92,5 +92,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   zhengzhou: { name: '白袍军', tier: 0 },        // 虎牢关·陈庆之白袍军（名师大将莫自牢，升T0）
   song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军,
     zhao: { name: '邯郸甲士', tier: 2 },
-    qing: { name: '泾原锐骑', tier: 0 },
+    qing: { name: '泾原锐骑', tier: 1 },
 };

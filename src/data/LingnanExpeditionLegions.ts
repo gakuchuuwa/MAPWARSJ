@@ -9,11 +9,11 @@
  * - 据点优先标志战场；王江泾距嘉兴<50km时取成军地
  */
 export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  zhuang_d: { name: '广西俍兵', tier: 1 },     // 田阳·王江泾抗倭（非以少胜多）
+  zhuang_d: { name: '广西俍兵', tier: 2 },     // 田阳·王江泾抗倭（非以少胜多）
   xian_d: { name: '俚人武士', tier: 2 },       // 高凉·§10 #9 冼夫人卫队
   dayue: { name: '白藤江水师', tier: 0 },           // 昇龙·陈国峻白藤江伏击灭元（区T0锚点·奇袭以少胜多）
   jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
-  trinh: { name: '府僚营', tier: 3 },          // 宣光·郑主府僚军政（无史籍固定精锐番号）
+  leloi: { name: '蓝山义军', tier: 1 },        // 蓝山·黎利抗明复国主力
     nguyen_guangnan: { name: '富春禁兵', tier: 2 },
   // guangnanguo → 洞海城归 panjun
   ryukyu: { name: '那霸水师', tier: 2 },       // 首里·§9 #21 琉球王府水师
@@ -65,7 +65,7 @@ shengmiao: { name: '古州苗兵', tier: 2 },     // 甲定·包利连破清军�
   luoping: { name: '摧锋军', tier: 1 },       // 厓山·张世杰
   xinggu: { name: '爨氏部曲', tier: 3 },       // 罗雄·爨习南中大姓
   nong2: { name: '广源峒兵', tier: 2 },           // 广源·侬智高广源起兵建南天国
-  cen_d: { name: '泗城狼兵', tier: 1 },          // 凌云·岑猛泗城狼兵威震广西
+  cen_d: { name: '泗城狼兵', tier: 2 },          // 凌云·岑猛泗城狼兵威震广西
   miao: { name: '水西苗兵', tier: 2 },           // 可乐城·水西土司苗兵
   jiang_s: { name: '零陵锐卒', tier: 2 },        // 泉陵·黄盖
   muong: { name: '芒峒刀牌手', tier: 3 },         // 和平·申从岳芒族刀牌手
@@ -75,5 +75,5 @@ shengmiao: { name: '古州苗兵', tier: 2 },     // 甲定·包利连破清军�
     minyue: { name: '闽越甲卒', tier: 2 },
     funan: { name: '扶南大舶', tier: 2 },
     lancang: { name: '澜沧象兵', tier: 2 },
-    liuzhou: { name: '柳州狼兵', tier: 1 },
+    liuzhou: { name: '柳州狼兵', tier: 2 },
 };

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * cities_v2.ts — 重构版城市数据
  *
  * 架构原则:
@@ -1418,16 +1418,8 @@ export const PERIPHERY: CityDataV2[] = [
     },
     { id: 'city_beishacheng', name: '卑沙城', factionId: 'jilizhou', lat: 39.444692, lng: 121.959229, type: 'pass', region: 'NORTHEAST', troops: 10000, note: '辽东卑沙城；公孙氏辽东翼境' },
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
-    {
-        id: 'city_suiye',
-        name: '屈耽',
-        factionId: 'xiliao',
-        lat: 42.80, lng: 75.2667,
-        type: 'medium_city',
-        troops: 10000,
-        tier: 1,
-        region: 'CENTRAL_ASIA',
-        note: '碎叶/八剌沙衮故地（唐屈耽；喀喇契丹虎思斡耳朵）' },
+    { id: 'city_suiye', name: '屈耽', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 5000, region: 'CENTRAL_ASIA' },
+
     { id: 'city_nieduo', name: '孽多', factionId: 'nandou', lat: 35.92, lng: 74.3, type: 'small_city', region: 'TIBET', troops: 10000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处' },
 
     // ── 2026-05-26 更新：窝鲁朵八里→富贵城/拜巴里（色楞格河畔漠北回鹘陪都）──
@@ -1603,7 +1595,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', region: 'TIBET', troops: 10000, mirror: true,
         note: '勒乌围；金川关隘',
     }, // 镜像
-    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'jinchuan_x', lat: 31, lng: 102.4, type: 'small_city', troops: 5000, region: 'BASHU' },
+    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'agui', lat: 31, lng: 102.4, type: 'small_city', troops: 5000, region: 'BASHU' },
+
  // 镜像
     { id: 'city_zhaoqing', name: '肇庆', factionId: 'duanzhou_d', lat: 23.05, lng: 112.45, type: 'small_city', troops: 5000, region: 'LINGNAN' },
 
@@ -1908,7 +1901,7 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     {
-        id: 'city_xidu', name: '西都城', factionId: 'trinh',
+        id: 'city_xidu', name: '蓝山', factionId: 'leloi',
         lat: 19.80, lng: 105.7833, type: 'small_city', region: 'LINGNAN', troops: 10000, tier: 4,
         note: '西都城；郑主小城',
     },
@@ -2891,7 +2884,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yucheng', name: '虞城', factionId: 'dang_d', lat: 34.7758, lng: 116.0678, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '汉砀郡属/虞国故地；豫东商丘东翼' },
     { id: 'city_bengbu', name: '钟离', factionId: 'hao_d', lat: 32.92, lng: 117.38, type: 'small_city', troops: 5000, region: 'CENTRAL' },
 
-    { id: 'city_liaocheng', name: '聊城', factionId: 'bozhou_d', lat: 36.4322, lng: 115.9552, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '隋唐博州治；春秋聊城邑' },
+    { id: 'city_liaocheng', name: '聊城', factionId: 'bozhou_d', lat: 36.4322, lng: 115.9552, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
     { id: 'city_sapi', name: '萨毗城', factionId: 'gar', lat: 37.631470, lng: 88.884888, type: 'small_city', region: 'TIBET', troops: 10000,
         note: '萨毗城；噶尔氏小城',
     },

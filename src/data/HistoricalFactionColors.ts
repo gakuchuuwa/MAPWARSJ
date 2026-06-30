@@ -192,7 +192,7 @@ const _FIXED: Record<string, string> = {
     xian_d: '#C84868', // 冼·俚人武士（高凉绯）
     dayue: '#D4B830', // 大越·白藤江水师（安南黄）
     jing: '#4878A8', // 京·铁突军（华闾青）
-    trinh: '#384878', // 郑主·圣翊军（清化靛）
+    leloi: '#D4AF37', // 后黎金
     nguyen_guangnan: '#C85030', // 广南·禁兵（顺化橙）
 
     ming_zheng: '#284868', // 明郑·铁人军（东宁深蓝）
@@ -476,7 +476,7 @@ const _FIXED: Record<string, string> = {
     'khoja': '#5B56BC', // 自动分配 (邻域相斥)
     'gaxa': '#BB4096', // 自动分配 (邻域相斥)
     'jinchuan_g': '#D32A65', // 自动分配 (邻域相斥)
-    'jinchuan_x': '#23399F', // 自动分配 (邻域相斥)
+    'agui': '#8A1A22', // 大清红
     'geng': '#2984A8', // 自动分配 (邻域相斥)
     'shuntian': '#A0D546', // 自动分配 (邻域相斥)
     'miaomin': '#36B9C7', // 自动分配 (邻域相斥)
