@@ -359,11 +359,11 @@ function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
         case 'ally_mult_1_2':
             return `己战×${skill.magnitude}`;
         case 'enemy_mult_0_8':
-            return `敌战×${skill.magnitude}`;
+            return '敌战×0.8';
         case 'ally_add_troops':
-            return `己兵+${Math.round(skill.magnitude * 100)}%`;
+            return '增兵两成';
         case 'enemy_sub_troops':
-            return `敌兵-${Math.round(skill.magnitude * 100)}%`;
+            return '减兵两成';
         case 'ally_invincible':
             return `免伤${skill.magnitude}秒`;
         default:
@@ -641,10 +641,32 @@ export function applyOpeningTacticalToRolls(
         return opponentRoll;
     };
 
+    const applyInvRollEdge = (
+        units: IBattleUnit[],
+        roll: number,
+        sideLabel: string,
+    ): number => {
+        const unit = findEligibleGeneralUnit(units);
+        if (!unit?.generalId) return roll;
+        const profile = getGeneralProfile(unit.generalId);
+        const skill = getTacticalSkillForTiming(unit, 'opening');
+        if (!profile || profile.tier !== 'famous' || !skill) return roll;
+        if (skill.effect !== 'ally_invincible' || !skill.rollEdge) return roll;
+
+        const next = roll * skill.rollEdge;
+        gameLog(
+            'battle',
+            `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}掷点 ×${skill.rollEdge} (${roll.toFixed(0)}→${next.toFixed(0)})`,
+        );
+        return next;
+    };
+
     let outAtt = applyAllyMult(attackerUnits, attRoll, '攻方', true);
     let outDef = applyAllyMult(defenderUnits, defRoll, '守方', false);
     outDef = applyEnemyDebuff(attackerUnits, outDef, '攻方', true);
     outAtt = applyEnemyDebuff(defenderUnits, outAtt, '守方', false);
+    outAtt = applyInvRollEdge(attackerUnits, outAtt, '攻方');
+    outDef = applyInvRollEdge(defenderUnits, outDef, '守方');
 
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }
@@ -726,7 +748,7 @@ export function tryApplyComebackTacticalForSide(
     return applied;
 }
 
-/** 逆局 ⑧⑨：对已触发的乘区技能做掷色修正（在 onSidesChanged 内调用） */
+/** 逆局 ⑧⑨⑩：对已触发的乘区/免伤技能做掷色修正（在 onSidesChanged 内调用） */
 export function applyComebackRollMultipliersForSide(
     sideUnits: IBattleUnit[],
     opponentUnits: IBattleUnit[],
@@ -744,6 +766,9 @@ export function applyComebackRollMultipliersForSide(
     }
     if (skill.effect === 'enemy_mult_0_8') {
         return { sideRoll, opponentRoll: opponentRoll * skill.magnitude };
+    }
+    if (skill.effect === 'ally_invincible' && skill.rollEdge) {
+        return { sideRoll: sideRoll * skill.rollEdge, opponentRoll };
     }
     return { sideRoll, opponentRoll };
 }
