@@ -7,7 +7,7 @@
  * - 不收热兵器/近代/错区条目（§3 #7–24、#28–29）
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
-export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   jilizhou: { name: '卑沙山城卫', tier: 4 },   // 卑沙城·程名振
   nuergan: { name: '奴儿干卫军', tier: 4 }, // 奴儿干城·康旺
   huimo: { name: '濊貊长矛手', tier: 4 }, // 乌骨城·高延寿濊貊

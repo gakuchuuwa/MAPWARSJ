@@ -6,7 +6,7 @@
  *
  * 不收：#11–12/#22 热兵器；#23–30 幕末—明治近代；那霸水师→岭南。
  */
-export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   // ── 元寇 ──
   so: { name: '弘安御敌', tier: 2 },           // 对马·金石城·宗氏抗元（1281 弘安役首当锋；≠太宰府警固）
   zhuqian: { name: '警固番役', tier: 1 },  // 太宰府·元寇海防（防御战，降T1）
@@ -24,28 +24,28 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   echigo: { name: '毘沙門衆', tier: 3 },         // 上杉谦信亲卫队，属于“顶级近卫”，降回T2
   aki: { name: '村上水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷（毛利氏水军主力）
   chosokabe: { name: '一领具足', tier: 3 },     // 冈丰城·长宗我部半农半兵精锐
-  aizu: { name: '会津藩士', tier: 4 },         // 鹤之城·会津藩（原大番众）
+  aizu: { name: '会津藩士', tier: 3 },         // 戊辰战争中旧幕府武士最悲壮顽强的抵抗力量代表，升入T3知名
   izumo: { name: '新宫党', tier: 4 },          // 月山富田·尼子氏最强武装（原 T3）（缺乏极其著名的战术高光，降T3）
   shimotsuke: { name: '宇都宫弓取', tier: 4 },        // 宇都宫·下野宇都宫氏武士团（原纪清两党）
   fujiwara: { name: '奥州武士', tier: 4 },     // 柳之御所·奥州藤原氏
   kakizaki: { name: '安藤氏兵', tier: 4 },     // 胜山馆·安藤氏虾夷管领（原虾夷探题）
   nanbu: { name: '南部铁骑', tier: 4 },        // 根城·南部氏骑兵（原 T3）（缺乏极其著名的战术高光，降T3）
-  osumi: { name: '九州防人', tier: 4 },         // 赤尾木城·§5 #1 防人
+  osumi: { name: '九州防人', tier: 3 },         // 《万叶集》防人歌的载体，日本古代防备唐朝与新罗的极其著名的文化戍边符号，升入T3知名
   // 奄美岛勇除名（名称现代，无史载）
   anmei: { name: '奄美岛兵', tier: 4 }, // 赤木名城·与湾大亲奄美
-  ayinu: { name: '阿伊努猎兵', tier: 4 },       // 白老·虾夷特有猛毒箭射手
+  ayinu: { name: '阿伊努猎兵', tier: 3 },       // 虾夷/阿伊努人独特的狩猎与战斗文化代表，极具民族辨识度，升入T3知名
   beihai: { name: '雪国斥候', tier: 4 },       // 宗谷界城·（原雪国斥候，避开越后地域错位）
   yamato: { name: '千早众', tier: 2 },       // 千早城·楠木正成笼城（特定战役防御高光，T2）
-  sanada_d: { name: '真田赤备', tier: 4 },            // 缺乏知名度支撑，降T3
+  sanada_d: { name: '真田赤备', tier: 2 },            // “日本一之兵”，大坂夏之阵中战术冲锋的传奇代表，战术辨识度爆表，升入T2战术
   // ── 2026-06-17 令制国补点（古代据点名 + 精锐）──
   kaga_d: { name: '一向宗门徒', tier: 3 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）
   date_d: { name: '伊达铁骑', tier: 3 },     // 缺乏重大战略级野战大捷，实为地方特色铁骑，降回T2
   higo_d: { name: '菊池党', tier: 3 },       // 九州豪强武士代名词，文化知名度高，但非战略主力，降为T3知名。
   iyo_d: { name: '河野水军', tier: 4 },     // 松山·河野氏（伊予水军）（常规番号，降T3）
   otomo_d: { name: '大友水军', tier: 3 },   // 无极高战术高光（逊于村上水军），属于常规地方水军，降回T3
-  suwa_d: { name: '诹访神党', tier: 4 },     // 高岛·诹访氏最强武装（家族旗号可含「诹访」）（缺乏极其著名的战术高光，降T3）
+  suwa_d: { name: '诹访神党', tier: 3 },     // 信浓国诹访大社的信仰武士集团，极具宗教与地域特色，升入T3知名
   jibei2: { name: '备中众', tier: 4 },         // 鬼之城·宇喜多氏
-  taira: { name: '平家水军', tier: 4 },         // 赤间关·坛之浦（常规番号，降T3）
+  taira: { name: '平家水军', tier: 3 },         // 源平合战绝对主力，坛之浦海战的悲剧主角，日本古典时代极其著名的水军代名词，升入T3知名
   sagami: { name: '风魔党', tier: 3 },         // 箱根关·北条氏专属特种风魔忍者
   mino: { name: '大谷部众', tier: 4 },         // 不破关·大谷吉继（缺乏极其著名的战术高光，降T3）
   yizhi: { name: '原之辻戍卒', tier: 4 },       // 原之辻·壹岐国元寇戍卒（《元史》《高丽史》壹岐守备）

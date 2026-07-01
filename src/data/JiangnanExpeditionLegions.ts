@@ -12,7 +12,7 @@
  * - 据点优先标志战场（戚家军@横屿等）；§1 #24 丹阳兵@宛陵城·山越（复用 shanyue）
  */
 export const JIANGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
-name: string; tier: 0 | 1 | 2 | 3 }>> = {
+name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   chuzhou_d: { name: '清淮劲卒', tier: 4 },        // 清流关·皇甫晖守滁州抗蒙（缺乏极其著名的战术高光，降T3）
   she_ethnic: { name: '畲族山兵', tier: 4 },  // 敕木山·畲族祖山 // 清流关·滁州戍卒     // 武陵山·相单程武陵蛮
   shanyue: { name: '丹阳兵', tier: 1 },      // 宛陵城·§1 #24 丹阳郡精兵（极其有名，升T1）

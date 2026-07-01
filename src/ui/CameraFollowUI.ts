@@ -435,10 +435,7 @@ export class CameraFollowUI {
             const generalRecord = army.generalId ? getGeneralRecordByGeneralId(army.generalId) : null;
             const isEliteAndGeneral = army.isElite && generalRecord;
 
-            // 标题：武将名率军团名（武将在前），精锐标记在后
-            const eliteBadge = isEliteAndGeneral
-                ? `<span style="color:#ffe39f; font-size:10px; margin-left:5px; border:1px solid #b8860b; border-radius:2px; padding:0 4px; background:linear-gradient(to bottom, rgba(184,134,11,0.3), rgba(0,0,0,0.4)); box-shadow:0 0 3px rgba(184,134,11,0.5); text-shadow:1px 1px 1px #000;">精锐</span>`
-                : '';
+            // 标题：武将名率军团名（武将在前）；精锐仅以金色高亮区分，不再显示徽章
             let titleHtml: string;
             if (generalRecord) {
                 const gColor = isEliteAndGeneral ? '#ffe39f' : '#d4af37';
@@ -476,7 +473,7 @@ export class CameraFollowUI {
             item.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; ${nameStyle}">
-                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070; font-weight:normal; text-shadow:none;">${idx + 1}.</span> ${titleHtml}${eliteBadge}
+                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070; font-weight:normal; text-shadow:none;">${idx + 1}.</span> ${titleHtml}
                     </span>
                     <span style="color:#e0c878; font-size:12px; margin-left:8px; white-space:nowrap;">
                         ${this.formatTroops(troops)}

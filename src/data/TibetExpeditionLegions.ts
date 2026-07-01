@@ -6,7 +6,7 @@
  * - 同势力只挂一个番号（吐蕃合挂「却杰」赞普亲卫）
  * - 番号去「重装」泛称；依据 史料/古代精锐部队.md §12 共 11 支
  */
-export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   keliya: { name: '疏勒镇军', tier: 4 },   // 阿什库尔·尉迟曜于阗王助唐（常规番号，降T3）
   qinghai: { name: '青海汛兵', tier: 4 }, // 噶斯口·岳钟琪出噶斯口平罗卜藏丹津（常规番号，降T3）
   xining: { name: '西宁边军', tier: 4 }, // 马海台·杨应琚整顿边军（常规番号，降T3）

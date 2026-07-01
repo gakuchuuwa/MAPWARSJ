@@ -7,7 +7,7 @@
  * - 不收热兵器/近代/汉军混编专名（§6 #4 大汉军、#13 准噶尔驼城火枪军等）
  * - 依据 史料/古代精锐部队.md §6 #1–3、#5–12、#14–19
  */
-export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   wuzhou: { name: '雁门边骑', tier: 4 },   // 善无·李广雁门（常规番号，降T3）
   ashina: { name: '金山突厥兵', tier: 4 }, // 阿尔泰·阿史那燕都（阿史那氏突厥起源地）（缺乏极其著名的战术高光，降T3）
   liao_d: { name: '皮室军', tier: 1 },         // 临潢府·辽太祖皮室军（§6 #1）

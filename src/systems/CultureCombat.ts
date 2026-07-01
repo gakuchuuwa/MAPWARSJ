@@ -105,7 +105,7 @@ export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
     return 1;
 }
 
-/** 单位精锐档（T0=0 … T3=3）；无精锐返回 null。守军本场掷出精锐时同样计。 */
+/** 单位精锐档（T0=0 … T4=4）；无精锐返回 null。守军本场掷出精锐时同样计。 */
 export function getUnitEliteTier(unit: IBattleUnit): EliteTier | null {
     if (isGarrisonUnit(unit)) {
         const city = unit.getEntity?.() as { id?: string } | undefined;

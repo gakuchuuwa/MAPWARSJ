@@ -7,24 +7,24 @@
  * - 依据 史料/古代精锐部队.md §1 中原；#83–96 非中原地理不收
  * - §1 他区已占：#34–35 江南、#54 西域、#70 草原、#72–79 南方/东北、#75 北方
  */
-export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
       wei: { name: '魏之武卒', tier: 0 },        // 汴梁·战国首支职业重步兵（吴起阴晋大捷）
     qin: { name: '铁鹰锐士', tier: 1 },
   qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
-  han: { name: '韩之劲弩', tier: 4 },        // 新郑·暴鸢韩弩（缺乏极其著名的战术高光，降T3）
+  han: { name: '韩之劲弩', tier: 3 },        // “天下之强弓劲弩皆从韩出”，战国时代极具特色的兵种符号，升入T3知名
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
   han_d: { name: '赤帝亲兵', tier: 4 },      // 南郑·刘邦专属（缺乏极其著名的战术高光，降T3）
   pizhou: { name: '陷阵营', tier: 2 },        // 下邳·高顺陷阵营
   cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
   ranwei_d: { name: '乞活军', tier: 2 },   // 五胡乱华时期的流民武装，虽悲壮且在特定战役有高光，但缺乏战略主导地位，降为T2战术。
     wuzhou_d: { name: '羽林军', tier: 2 },     // 洛阳·李多祚羽林军（武周）
-  shang: { name: '虎贲多射', tier: 4 },       // 安阳·殷商虎贲与多射（妇好征伐）（缺乏极其著名的战术高光，降T3）
+  shang: { name: '虎贲多射', tier: 3 },       // 妇好征伐的王家精锐，极具历史文化地位，提拔至T3知名。
   zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）
   // 夏后亲卫除名（夏代无信史）
   yuan_cj_d: { name: '大戟士', tier: 2 },    // 汝南·袁术大戟士（败多胜少，降T2）
   chanzhou: { name: '殿前诸班', tier: 1 },   // 濮阳·柴荣
-  sui: { name: '骁果军', tier: 4 },        // 汉东·隋帝禁卫骁果；615雁门李世民解围（根基在中央，河套用武地）（缺乏极其著名的战术高光，降T3）
-  sunqin: { name: '督标秦军', tier: 4 },   // 潼关·孙传庭督标（缺乏极其著名的战术高光，降T3）
+  sui: { name: '骁果军', tier: 1 },        // 隋炀帝绝对禁军核心，江都兵变终结隋朝，深刻影响天下格局的绝对主力，升入T1战略
+  sunqin: { name: '督标秦军', tier: 3 },   // 孙传庭最后的家底，自带极强的历史悲剧色彩和知名度，升入T3知名
   // 飞熊军除名（小说番号）
   // 韩卒击刹除名（无史载）
     liang_d: { name: '睢阳义兵', tier: 2 },     // 死守睢阳战略牵制极大，但无建制延续性，升T2（不符合T1野战军标准）
@@ -35,10 +35,10 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   baibo: { name: '白波黄巾', tier: 4 },     // 白波谷·郭太白波黄巾
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
   tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
-  dixiang: { name: '猪突豨勇', tier: 4 },   // 宛城·王莽新朝敢死队（缺乏极其著名的战术高光，降T3）
+  dixiang: { name: '猪突豨勇', tier: 3 },   // 王莽新朝特种部队，极度奇葩、辨识度极高的历史番号，升入T3知名
   // 朱龙骑除名（无此番号）
   liguo: { name: '潞川锐骑', tier: 4 },       // 阏与·潞州王猛（缺乏极其著名的战术高光，降T3）
-  yiyang_d: { name: '申息锐师', tier: 4 },    // 武胜关·楚国申息之师（缺乏极其著名的战术高光，降T3）
+  yiyang_d: { name: '申息锐师', tier: 3 },    // 春秋楚国最强底牌，老牌历史劲旅，升入T3知名
   // ── 2026-06-16 新增：11大名关 ──
                       hongnong_jun: { name: '黄龙骑', tier: 4 },    // 函谷关·杨素大破突厥（缺乏极其著名的战术高光，降T3）
   jingzhou_gs: { name: '安定突骑', tier: 4 },       // 安定·天水安定出精骑（皇甫嵩所部）（缺乏极其著名的战术高光，降T3）
@@ -52,7 +52,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   huo: { name: '霍邑骁锐', tier: 4 },                 // 缺乏知名度支撑，降T3
   mushi: { name: '丘穆陵骑', tier: 4 },
   // 齐莱锐士除名（无典）
-  yin: { name: '殷商多射', tier: 4 },          // 朝歌·甲骨文"多射"（缺乏极其著名的战术高光，降T3）
+  yin: { name: '殷商多射', tier: 3 },          // 甲骨文实锤的最古老精锐，中华武力活化石，文化地位极高，不应沦为常规T4，提拔至T3知名。
   // 蔡国劲卒除名（无此部队）
   shen: { name: '申伯亲卫', tier: 4 },         // 安康·西周申国
   // 汴河戍旅除名（无此编制）
@@ -65,13 +65,13 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
   lai: { name: '齐关弩手', tier: 4 },           // 青石关·王师范屡败朱温（正史胜仗）（缺乏极其著名的战术高光，降T3）
   yangshao: { name: '材官骑士', tier: 4 },     // 渑池·周勃大破秦军（缺乏极其著名的战术高光，降T3）
-    dongxian: { name: '马陵伏弩', tier: 4 },          // 缺乏知名度支撑，降T3
+    dongxian: { name: '马陵伏弩', tier: 2 },          // 齐国孙膑伏击庞涓的战术核心，古代“设伏聚歼”的战术巅峰，升入T2战术
   mi: { name: '朐城弩手', tier: 4 },         // 朐城·麋竺家兵（缺乏极其著名的战术高光，降T3）
   yaozhou: { name: '耀州牙兵', tier: 4 },       // 金锁关·李茂贞岐军（缺乏极其著名的战术高光，降T3）
   cai: { name: '雪夜突骑', tier: 2 },          // 新蔡·李愬雪夜入蔡州
   wazhai: { name: '瓦岗军', tier: 1 },           // 定陶·李密破张须陀瓦岗崛起
-  huaiyang: { name: '细柳营', tier: 4 },     // 宛丘·周亚夫细柳营防备（戍卫模范，降T3）
-  yao: { name: '匈奴五部', tier: 4 },        // 平阳·刘渊建都平阳，指挥灭晋（缺乏极其著名的战术高光，降T3）
+  huaiyang: { name: '细柳营', tier: 3 },     // 周亚夫细柳营，军纪严明之文化符号，提拔至T3知名
+  yao: { name: '匈奴五部', tier: 3 },        // 南匈奴内附建制，孕育汉赵政权开启五胡十六国，历史辨识度极高，升入T3知名
   kong_d: { name: '北海郡兵', tier: 4 },       // 曲阜·孔融以北海相保境，孔融本人极有名
   tongma: { name: '胶西郡国兵', tier: 4 },       // 胶西·刘卬发国兵参与七国之乱，战败
   yanchuan_d: { name: '淮西行营军', tier: 4 }, // 郾城·韩愈随裴度督师郾城，参赞军务
@@ -80,12 +80,12 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     hao_d: { name: '淮西突骑', tier: 4 },             // 缺乏知名度支撑，降T3
   suzhou_d: { name: '江北团练', tier: 4 },
   sima_d: { name: '宣王中军', tier: 4 },   // 获嘉·司马懿都督中外诸军事
-    bozhou_d: { name: '青州兵', tier: 4 },           // 常规番号，降T3
+    bozhou_d: { name: '青州兵', tier: 1 },           // 曹操收编黄巾军建立的绝对嫡系核心，曹魏霸业基石，贯穿三国前半叶，升入T1战略
   mengcheng_d: { name: '山桑弓手', tier: 4 },
   shangzhou: { name: '商州锐士', tier: 4 },
-  bailian: { name: '白莲教众', tier: 4 },             // 缺乏知名度支撑，降T3
+  bailian: { name: '白莲教众', tier: 3 },             // 跨越数百年的民间宗教武装，极度典型的叛军文化符号，升入T3知名
   xinping: { name: '邠宁戍骑', tier: 4 },             // 缺乏知名度支撑，降T3
-  huai: { name: '淮西子弟', tier: 4 },                // 缺乏知名度支撑，降T3
+  huai: { name: '淮西子弟', tier: 3 },                // 朱元璋开国初期的核心将帅班底，极具政治与军事符号意义，升入T3知名
   dang_d: { name: '厅子都', tier: 2 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
     xiao_d: { name: '雍州骁锐', tier: 4 },            // 缺乏知名度支撑，降T3

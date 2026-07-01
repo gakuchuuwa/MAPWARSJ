@@ -123,8 +123,8 @@ export class GameConfig {
         BATTLE_JOIN_RADIUS: 0.3,
         /** 远征军团有效战力 ×1.2（与文化系数相乘，见 CultureCombat） */
         CAMPAIGN_LEGION_MULT: 1.2,
-        /** 精锐 tier 战力乘数 T0→T3（AGENTS.md §12.3.1；CultureCombat 读取） */
-        ELITE_TIER_MULT: [1.5, 1.4, 1.2, 1.1] as const,
+        /** 精锐 tier 战力乘数 T0→T4（AGENTS.md §12.3.1；CultureCombat 读取） */
+        ELITE_TIER_MULT: [1.5, 1.4, 1.3, 1.2, 1.1] as const,
     };
     /**
      * 五级文化攻防固定系数（只影响掷色，不改显示兵力）

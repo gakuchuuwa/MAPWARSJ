@@ -217,12 +217,12 @@ export class BattleField {
             * Math.min(1, lerpSpeed * deltaTime);
     }
 
-    /** 单位威慑值（0~4）= 将领分(名将2/普将1/无0) + 精锐分(T0~T3 = 2/1.5/1/0.5，无0) */
+    /** 单位威慑值（0~4）= 将领分(名将2/普将1/无0) + 精锐分(T0~T4 = 2/1.5/1/0.5/0.25，无0) */
     private unitIntimidation(unit: IBattleUnit): number {
         const genTier = getGeneralProfile(unit.generalId)?.tier;
         const gen = genTier === 'famous' ? 2 : genTier === 'ordinary' ? 1 : 0;
         const eliteTier = getUnitEliteTier(unit);
-        const elite = eliteTier === null ? 0 : [2, 1.5, 1, 0.5][eliteTier];
+        const elite = eliteTier === null ? 0 : [2, 1.5, 1, 0.5, 0.25][eliteTier];
         return gen + elite;
     }
 

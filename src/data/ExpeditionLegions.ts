@@ -43,7 +43,7 @@ import { HEXI_EXPEDITION_ELITE_LEGIONS } from './HexiExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
-export type EliteTier = 0 | 1 | 2 | 3;
+export type EliteTier = 0 | 1 | 2 | 3 | 4;
 export interface EliteLegionConfig {
   name: string;
   tier: EliteTier;

@@ -9,7 +9,7 @@
  */
 export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   name: string;
-  tier: 0 | 1 | 2 | 3;
+  tier: 0 | 1 | 2 | 3 | 4;
 }>> = {
   // === 初始/默认（1） ===
   lelang: { name: '乐浪材官', tier: 4 },    // 息城·王颀乐浪材官

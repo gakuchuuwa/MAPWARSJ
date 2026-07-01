@@ -7,21 +7,21 @@
  * - §7 #5 泼喜军（骆驼抛石）→ 不收；#12 嘉峪关戍卒（火器）→ 不收
  * - 三者防重：见 ExpeditionLegions.ts、ExpeditionTripleNameAllow.ts
  */
-export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   lanzhou: { name: '金城突骑', tier: 4 },     // 金城·赵充国金城突骑（缺乏极其著名的战术高光，降T3）
   dangxiang: { name: '铁鹞子', tier: 1 },        // 兴庆府·西夏重装冲锋骑兵，百年立国主力
   // 步跋子已迁环洲（huan@方渠）
-  yeli: { name: '擒生军', tier: 4 },             // 克夷门·西夏监军司（缺乏极其著名的战术高光，降T3）
+  yeli: { name: '擒生军', tier: 3 },             // 西夏主力野战部队之一，特色极其鲜明，升入T3知名
     weiming: { name: '嵬名亲卫', tier: 4 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽（缺乏极其著名的战术高光，降T3）
   guiyi: { name: '沙州劲旅', tier: 1 },          // 玉门关·§7 #4 张议潮归义军（名震天下复河西）
-  xianlingqiang: { name: '凉州大马', tier: 4 },  // 允吾·凉州骑兵泛称（缺乏进攻高光，降T3）
+  xianlingqiang: { name: '凉州大马', tier: 3 },  // “凉州大马，横行天下”，汉末西北最顶级重骑兵的绝对文化符号，升入T3知名
   tufa_d: { name: '南凉铁骑', tier: 4 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）（缺乏极其著名的战术高光，降T3）
-  juqu_d: { name: '卢水胡兵', tier: 4 },         // 表氏·沮渠卢水胡兵
+  juqu_d: { name: '卢水胡兵', tier: 3 },         // 五胡十六国时期河西走廊极其著名的部族武装（北凉基础），历史辨识度高，升入T3知名
   liangzhou: { name: '凉州突骑', tier: 4 },     // 姑臧·窦融河西骑兵美称（史书泛称，非固定番号；突骑＝突击骑）（缺乏进攻高光，降T3）
   hunxie: { name: '肩水胡骑', tier: 4 },          // 肩水金关·匈奴浑邪部（原甘州铁骑，归甘）（缺乏极其著名的战术高光，降T3）
   qifu_d: { name: '苑川突骑', tier: 4 },         // 枹罕·西秦乞伏鲜卑突骑（苑川故地）（缺乏极其著名的战术高光，降T3）
 
-  yingli: { name: '泼喜军', tier: 4 },            // 鸣沙·西夏砲驼兵（缺乏极其著名的战术高光，降T3）
+  yingli: { name: '泼喜军', tier: 3 },            // 西夏旋风炮（骆驼炮兵），世界古代军事史上极具战术辨识度的黑科技，升入T3知名
   chijin: { name: '赤金营', tier: 4 },        // 赤金堡·岳钟琪平准噶尔西路劲旅（缺乏极其著名的战术高光，降T3）
   juyan_d: { name: '荆楚步卒', tier: 2 },     // 巴音布拉格·李陵五千荆楚勇士出居延（虽勇但战败投降，降T2）
   dongshengwei: { name: '九边夜不收', tier: 3 },     // 榆林·明代九边特种侦察兵（夜不收）

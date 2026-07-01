@@ -7,7 +7,7 @@
  * - §2 北方 12 支全收录；§1 地理偏北者（曳落河/鸦儿军/朔方/静塞/殿前诸班）同列
  * - 朔方军：旗=灵@回乐（灵州/灵武治所），番=朔方军（≠旗号朔方@临戎）
  */
-export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   // ── 太行/河北（§1 交叉 + 明末）──
   wangyan: { name: '八字军', tier: 2 },     // 飞狐·王彦八字军（民间抗金义军，降T2）
   // tianxiong 已迁 CentralExpeditionLegions

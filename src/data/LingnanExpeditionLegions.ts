@@ -8,7 +8,7 @@
  * - 琉球那霸水师改挂岭南（首里城 region=LINGNAN；日本区不收）
  * - 据点优先标志战场；王江泾距嘉兴<50km时取成军地
  */
-export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
+export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   zhuang_d: { name: '广西俍兵', tier: 4 },     // 田阳·王江泾抗倭（非以少胜多）（缺乏极其著名的战术高光，降T3）
   xian_d: { name: '俚人武士', tier: 4 },       // 高凉·§10 #9 冼夫人卫队（缺乏极其著名的战术高光，降T3）
   dayue: { name: '白藤江水师', tier: 0 },           // 昇龙·陈国峻白藤江伏击灭元（区T0锚点·奇袭以少胜多）
