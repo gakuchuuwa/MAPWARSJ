@@ -1181,12 +1181,18 @@ function renderValidation(): void {
         el.addEventListener('click', async (ev) => {
             ev.stopPropagation();
             const fid = (el as HTMLElement).dataset.orphanFid!;
-            if (!confirm(`确认清扫孤儿势力 "${fid}"？\n将从 StartingCapitals / CityAssetManager / SandboxDisplayNames / FactionGenerals / GeneralSkills / 14 区精锐 中删除所有残留。`)) return;
+            const cityId = entityData?.capitals?.[fid];
+            const city = cityId ? entityData?.cities.find(c => c.id === cityId) : undefined;
+            const targets: Array<{ factionId?: string; cityId?: string }> = [{ factionId: fid }];
+            if (cityId) targets.push({ cityId });
+            const cityHint = city ? `\n以及关联据点 "${city.name}" (${cityId})` : cityId ? `\n以及关联据点 "${cityId}"（cities_v2 中未找到，仅清 SC 引用）` : '';
+            const filesTip = `StartingCapitals / CityAssetManager / SandboxDisplayNames / FactionGenerals / GeneralSkills / 14 区精锐${cityId ? ' / cities_v2 / VectorRoadData' : ''}`;
+            if (!confirm(`确认清扫孤儿势力 "${fid}"${cityHint}？\n将从 ${filesTip} 中删除所有残留。`)) return;
             try {
                 const res = await fetch('/api/batch-delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ targets: [{ factionId: fid }] }),
+                    body: JSON.stringify({ targets }),
                 });
                 const data = await res.json();
                 if (!data.ok) {
@@ -1194,7 +1200,8 @@ function renderValidation(): void {
                     return;
                 }
                 const files = (data.results ?? []).filter((r: any) => r.ok).map((r: any) => r.file).join(', ');
-                showToast(`✅ 已清扫 ${fid}（${files || '无残留'}）`);
+                showToast(`✅ 已清扫 ${fid}${cityId ? ` + ${cityId}` : ''}（${files || '无残留'}）`);
+                await loadData();
                 runValidation();
             } catch (err: any) {
                 showToast(`清扫失败: ${err.message}`, true);
