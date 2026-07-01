@@ -52,13 +52,13 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dongdan: { name: '东丹卫兵', tier: 4 },       // 敖东城·耶律倍东丹国（缺乏极其著名的战术高光，降T3）
   xuan: { name: '宣大劲骑', tier: 1 },          // 宣大（宣府大同）是明代九边最核心防线，抵御蒙古的最核心野战/戍卫主力，升入T1战略
   zhe_d: { name: '折家将兵', tier: 3 },         // 北宋著名“折家将”，与杨家将齐名的世代镇守边关的将门军事符号，升入T3知名
-  shanrong: { name: '山戎突骑', tier: 4 },      // 无终·田畴导曹操伐乌桓（缺乏极其著名的战术高光，降T3）
+    shanrong: { name: '蓟镇标营', tier: 3 },
   pingyuan: { name: '平原义军', tier: 3 },      // 颜真卿首倡义兵，无战术突击高光，属于常规义军，降回T3
   dada_ming: { name: '鞑靼铁骑', tier: 1 },          // 明代蒙古主力，土木堡之变全歼三大营，长达两百年压制在明朝北疆的绝对战略死敌，升入T1战略
   
   // ── 2026-06-18 自东北文件迁回
   jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·李成梁辽东骑兵（打出极强战绩，升T1）
-  zu_d: { name: '关宁铁骑', tier: 1 },       // 宁远·祖大寿（原T0降级，防御战）
+    zu_d: { name: '关宁铁骑', tier: 1 },
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 毛文龙在皮岛建立的敌后抗金武装，牵制后金大量兵力，悲剧色彩和知名度极高，升入T3知名
   liwang: { name: '河间突骑', tier: 4 },     // 乐成·李光弼河朔骑兵（缺乏极其著名的战术高光，降T3）
   hejian: { name: '白马义从', tier: 2 },      // 文安·公孙瓒幽州突骑（界桥全军覆没，特色之兵降T2）

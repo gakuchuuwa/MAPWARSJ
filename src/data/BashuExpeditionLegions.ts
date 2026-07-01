@@ -41,7 +41,6 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   yong: { name: '庸国戍卒', tier: 4 },           // 上庸·古庸国
   cong: { name: '賨族勇士', tier: 3 },           // 古巴人（板楯蛮），以巴渝舞战法协助刘邦平定三秦，极具历史辨识度，升入T3知名
     wuxi: { name: '武陵弓蛮', tier: 3 }, // 盘瓠神话起源，自汉至唐一直是西南地区极具代表性的蛮族武装，升入T3知名
-  song2: { name: '松州戍卒', tier: 4 },          // 嘉诚·唐蕃古道松州
   yidou: { name: '夷陵奇兵', tier: 2 },          // 三国夷陵之战火烧连营，显著文化知名度，升T2
   // 权州戍兵除名（生造）
   zuo_d: { name: '南中叟兵', tier: 3 },         // 诸葛亮七擒孟获南征核心，显著文化知名度，升T2

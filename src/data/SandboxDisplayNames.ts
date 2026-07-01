@@ -131,7 +131,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'guo': '果',
     'zi': '资',
     'long2': '陇',
-    'song2': '松',
+'song2': '松',
 'qing': '庆',
 
     'jingmen': '荆门',
@@ -219,7 +219,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'taizhou': '泰',
     'shizhao_d': '石赵',
     'ranwei_d': '冉魏',
-    'zu_d': '祖',
+'zu_d': '严',
 
     'aisin_d': '爱新', // 建女真皇族；≠大清(manzhou_d)
     'sunwu_d': '孙吴',
@@ -672,7 +672,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xiangxiong': '象雄',
     'qingqiang': '茂',
     'zhaowu': '昭武',
-    'ganzhou': '甘',
+'ganzhou': '甘',
 'gaoliang': '耿',
     'ruoqiang': '婼羌',
 
@@ -774,7 +774,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'pugu': '仆骨',
     'bayegu': '拔野',
     'ketagalan': '凯达',
-    'shanrong': '山戎',
+'shanrong': '蓟',
     'suke': '素',
 'gaochang': '麴',
     'chuyue': '处月',
@@ -864,6 +864,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'weizhou': '维',
 'xidong': '溪峒',
 'yingzhou_d2': '应',
+'dongsheng': '胜',
+'weiyuan': '亹源',
 };
 
 // @ts-ignore

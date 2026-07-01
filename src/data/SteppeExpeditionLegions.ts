@@ -85,4 +85,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   heisha_d: { name: '黑沙精骑', tier: 3 },  // 后突厥黑沙道，突厥复兴运动核心，专属名号特色鲜明，升T2
   jiluo_d: { name: '北征突骑', tier: 1 },       // 燕然勒石彻底击灭北匈奴，独立战略主力，升T1,
     chagatai: { name: '戊己屯军', tier: 1 },
+    dongsheng: { name: '云中彀骑', tier: 3 },
 };

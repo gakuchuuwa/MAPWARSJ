@@ -154,7 +154,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     xianyu_hanxin: { generalId: 'xianyu_hanxin', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' },
     shizhao_d_shihu: { generalId: 'shizhao_d_shihu', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 邺都：暴虐突袭
     unassigned_loufanwang: { generalId: 'unassigned_loufanwang', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 楼烦：亡部哀兵复起
-    shanrong_tianchou: { generalId: 'shanrong_tianchou', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 无终·田畴导曹操奇袭乌桓
+    shanrong_tianchou: { generalId: 'shanrong_tianchou', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
     xie_cj_d_xingfangde: { generalId: 'xie_cj_d_xingfangde', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 信州：垒山筑寨据守抗元
     wan_liuyuan: { generalId: 'wan_liuyuan', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 刘源皖口
     huang_d_sunshuao: { generalId: 'huang_d_sunshuao', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 期思：筑芍陂兴水利
@@ -313,7 +313,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     houliao_yelvliuge: { generalId: 'houliao_yelvliuge', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 涿州筑垒固守
     unassigned_wangtai: { generalId: 'unassigned_wangtai', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 王台部寨固守
     jinzhou_lichengliang: { generalId: 'jinzhou_lichengliang', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 擒王杲、破阿台奇袭
-    zu_d_zudashou: { generalId: 'zu_d_zudashou', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' }, // 宁远锦州·红夷炮坚壁守城
+    zu_d_zudashou: { generalId: 'zu_d_zudashou', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' },
     wanzhou_shangguankui: { generalId: 'wanzhou_shangguankui', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 万州天生城抗元
     chenzhou_d_zhanggao: { generalId: 'chenzhou_d_zhanggao', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 辰州戍守
     mao_wenlong_maowenlong: { generalId: 'mao_wenlong_maowenlong', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 皮岛东江据岛固守
@@ -473,7 +473,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     
 // ── 青藏区 2026-06-18 ──
     tubo_songzanganbu: { generalId: 'tubo_songzanganbu', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 统一青藏
-    song2_houjunji: { generalId: 'song2_houjunji', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' }, // 松州破吐蕃
+    song2_houjunji: { generalId: 'song2_houjunji', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' },
     gurkha_baduersaye: { generalId: 'gurkha_baduersaye', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 廓尔喀侵藏
     gongbu_gongbumangbuzhi: { generalId: 'gongbu_gongbumangbuzhi', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 工布小王
     khon_basiba: { generalId: 'khon_basiba', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 萨迦帝师
@@ -632,7 +632,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_xinqingji: { generalId: 'unassigned_xinqingji', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 破羌将军
     dashun_lizicheng: { generalId: 'dashun_lizicheng', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_05' }, // 大顺灭明
     zhai_han_diqing: { generalId: 'zhai_han_diqing', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
-    ganzhou_dourong: { generalId: 'ganzhou_dourong', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 河西五郡
+    ganzhou_dourong: { generalId: 'ganzhou_dourong', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' },
     unassigned_zhaoponu: { generalId: 'unassigned_zhaoponu', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 破楼兰
     shazhou_zhangyichao: { generalId: 'shazhou_zhangyichao', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 归义收复河西
     dongshengwei_wangyue_ming: { generalId: 'dongshengwei_wangyue_ming', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' },
@@ -1310,6 +1310,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     weizhou_weigao: { generalId: 'weizhou_weigao', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' },
     xidong_mayuan: { generalId: 'xidong_mayuan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' },
     yingzhou_d2_licunxu: { generalId: 'yingzhou_d2_licunxu', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
+    dongsheng_weishang: { generalId: 'dongsheng_weishang', tier: 'ordinary', tacticalSkillId: 'tac_08' },
+    weiyuan_d_niangengyao: { generalId: 'weiyuan_d_niangengyao', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_08' },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

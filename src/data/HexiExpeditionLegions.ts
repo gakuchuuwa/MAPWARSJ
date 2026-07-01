@@ -29,7 +29,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang
   ningkou: { name: '居延戍卒', tier: 4 },            // 居延塞·汉居延戍卒（居延汉简）
   shuofang: { name: '期门郎骑', tier: 3 },      // 汉武帝期门军（近卫），知名度高，降为T3知名。
-    ganzhou: { name: '甘州铁骑', tier: 2 },       // 张掖·窦融河西骑兵（T2有名史载专名）
+    ganzhou: { name: '觻得精骑', tier: 2 },
     xiqin: { name: '忠孝军', tier: 2 }, // 仅有四百至数千人，于大昌原等战役打出短期战术高光，随后于三峰山覆灭，缺乏长久延续性，符合T2战术
     didao: { name: '熙河蕃兵', tier: 1 },
   baiyang: { name: '长城烽火卫', tier: 3 }, // 塞外长城守军
@@ -44,4 +44,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
         yuezhi: { name: '折兰骑', tier: 3 },             // 霍去病河西之战斩杀的匈奴最强王牌，战役背景极具符号价值，升入T3知名,
     shanzhou: { name: '陇右健儿', tier: 1 },
     chile: { name: '两池军', tier: 3 },
+    weiyuan: { name: '永安营兵', tier: 4 },
 };

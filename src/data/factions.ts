@@ -149,6 +149,7 @@ export const FACTIONS: Faction[] = [
     { id: 'zi', name: '资州' },
     { id: 'long2', name: '陇州' },
     { id: 'song2', name: '松州' },
+
     { id: 'qing', name: '庆州' },
 
 
@@ -291,7 +292,8 @@ export const FACTIONS: Faction[] = [
     { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
     { id: 'ranwei_d', name: '冉魏' },
     { id: 'taizhou', name: '泰州' },
-    { id: 'zu_d', name: '祖家' },
+    { id: 'zu_d', name: '严州' },
+
 
     { id: 'aisin_d', name: '爱新觉罗' },        // 旗号爱新；≠大清(manzhou_d)
     { id: 'sunwu_d', name: '孙吴' },
@@ -848,6 +850,7 @@ export const FACTIONS: Faction[] = [
     { id: 'gongbu', name: '工布' },
     { id: 'niang', name: '琼结' },
     { id: 'ganzhou', name: '甘州' },
+
     { id: 'galangdiba', name: '波密' },
     { id: 'ali', name: '阿里' },
     { id: 'pazhu', name: '年楚' },
@@ -1038,7 +1041,10 @@ export const FACTIONS: Faction[] = [
     { id: 'pugu', name: '仆骨' },
     { id: 'bayegu', name: '拔野古' },
     { id: 'ketagalan', name: '凯达格兰' },
-    { id: 'shanrong', name: '山戎' },
+    { id: 'shanrong', name: '蓟州' },
+
+
+
     { id: 'suke', name: '素可泰' },
     { id: 'gaochang', name: '麴氏' },
 
@@ -1147,6 +1153,11 @@ export const FACTIONS: Faction[] = [
     { id: 'weizhou', name: '维州' },
     { id: 'xidong', name: '溪峒' },
     { id: 'yingzhou_d2', name: '应州' },
+    { id: 'dongsheng', name: '东胜' },
+    { id: 'weiyuan', name: '亹源' },
+
+
+
 
 
 

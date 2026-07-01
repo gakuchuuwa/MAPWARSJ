@@ -587,7 +587,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     xianyu: { generalId: 'xianyu_hanxin', generalName: '韩信', portrait: '/assets/liuhan/xianyu_hanxin.png' },
     shizhao_d: { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/HEXI/shizhao_d_shihu.png' }, // 邢台·后赵武帝
     loufan: { generalId: 'loufan_xuerengui', generalName: '薛仁贵', portrait: '/assets/NORTH/loufan_xuerengui.png' },
-    shanrong: { generalId: 'shanrong_tianchou', generalName: '田畴', portrait: '/assets/NORTH/shanrong_tianchou.png' }, // 无终·田畴导曹操伐乌桓
+    shanrong: { generalId: 'shanrong_tianchou', generalName: '蓝玉', portrait: '/assets/daming/shanrong_tianchou.png' },
 
     // ── 北方关隘 2026-06-19 ──
     you: { generalId: 'you_wangba', generalName: '耿况', portrait: '/assets/liuhan/you_gengkuang.png' },
@@ -596,7 +596,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     huo: { generalId: 'huo_songlaosheng', generalName: '宋老生', portrait: '/assets/NORTH/huo_songlaosheng.png' },
     // ── 北方区 2026-06-18 ──
     jinzhou: { generalId: 'jinzhou_lichengliang', generalName: '李成梁', portrait: '/assets/daming/jinzhou_lichengliang.png' },
-    zu_d: { generalId: 'zu_d_zudashou', generalName: '祖大寿', portrait: '/assets/daming/zu_d_zudashou.png' },
+    zu_d: { generalId: 'zu_d_zudashou', generalName: '袁崇焕', portrait: '/assets/daming/zu_d_zudashou.png' },
     mao_wenlong: { generalId: 'mao_wenlong_maowenlong', generalName: '毛文龙', portrait: '/assets/NORTHEAST/mao_wenlong_maowenlong.png' },
     gongsun_d: { generalId: 'gongsun_d_gongsundu', generalName: '公孙度', portrait: '/assets/NORTH/gongsun_d_gongsundu.png' },
     jianzhou_nvzhen: { generalId: 'jianzhou_nvzhen_limanzhu', generalName: '李满住', portrait: '/assets/NORTH/jianzhou_nvzhen_limanzhu.png' }, // 浑江·建州女真卫
@@ -791,6 +791,8 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     weizhou: { generalId: 'weizhou_weigao', generalName: '韦皋', portrait: '/assets/litang/weizhou_weigao.png' },
     xidong: { generalId: 'xidong_mayuan', generalName: '马援', portrait: '/assets/liuhan/xidong_mayuan.png' },
     yingzhou_d2: { generalId: 'yingzhou_d2_licunxu', generalName: '李存勖', portrait: '/assets/NORTH/yingzhou_d2_licunxu.png' },
+    dongsheng: { generalId: 'dongsheng_weishang', generalName: '魏尚', portrait: '/assets/liuhan/dongsheng_weishang.png' },
+    weiyuan: { generalId: 'weiyuan_d_niangengyao', generalName: '年羹尧', portrait: '/assets/manqing/weiyuan_d_niangengyao.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

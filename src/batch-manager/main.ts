@@ -58,6 +58,18 @@ function toPinyinId(chinese: string): string {
         .replace(/[^a-z0-9]/g, '');
 }
 
+/** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → /assets/.../x.png。
+ *  兼容直接粘贴 Windows 路径（C:\...\public\assets\X\y.png、assets\X\y.png 等）。 */
+function normalizePortraitPath(p: string): string {
+    if (!p) return p;
+    const s = p.replace(/\\/g, '/');
+    const i = s.toLowerCase().indexOf('/assets/');
+    if (i >= 0) return s.slice(i);
+    const j = s.toLowerCase().indexOf('assets/');
+    if (j >= 0) return '/' + s.slice(j);
+    return s;
+}
+
 function makeUniqueId(base: string, existingIds: Set<string>): string {
     if (!existingIds.has(base)) return base;
     if (!existingIds.has(base + '_d')) return base + '_d';
@@ -1072,7 +1084,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
 
         // Step 2: save general (if provided)
         const generalName = get('generalName');
-        const portrait = get('portrait');
+        const portrait = normalizePortraitPath(get('portrait'));
         if (portrait && !portrait.toLowerCase().endsWith('.png')) {
             showToast('立绘路径必须以 .png 结尾！不支持 .jpg 等格式', true);
             return;
