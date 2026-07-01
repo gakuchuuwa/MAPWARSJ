@@ -2160,7 +2160,7 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         }
     }
 
-    // 16. 武将名重复（完全同名 或 一方完整包含另一方）
+    // 16. 武将名重复（仅完全同名；子串包含如「帖木儿」⊂「扩廓帖木儿」不算重复）
     const generalEntries = Object.entries(data.generals) as [string, { generalId: string; generalName: string }][];
     for (let i = 0; i < generalEntries.length; i++) {
         for (let j = i + 1; j < generalEntries.length; j++) {
@@ -2171,12 +2171,6 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
                 issues.push({
                     level: 'error',
                     msg: `武将 "${gA.generalName}" 重复: 势力 ${idA}(${gA.generalId}) 与 ${idB}(${gB.generalId})`,
-                    factionId: idA,
-                });
-            } else if (gA.generalName.includes(gB.generalName) || gB.generalName.includes(gA.generalName)) {
-                issues.push({
-                    level: 'warn',
-                    msg: `武将名 "${gA.generalName}"(${idA}) 与 "${gB.generalName}"(${idB}) 名字包含关系`,
                     factionId: idA,
                 });
             }

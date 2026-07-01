@@ -863,9 +863,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_yinzhou', name: '雕阴', factionId: 'liangshidu', lat: 37.796785, lng: 110.206604, type: 'small_city', region: 'NORTH', troops: 10000,
         note: '雕阴；梁朔小城',
     },
-    { id: 'city_dongshengzhou', name: '榆林', factionId: 'dongshengwei', lat: 39.810643, lng: 109.959412, type: 'small_city', region: 'HEXI', troops: 10000,
-        note: '榆林；东胜卫小城',
-    },
+    { id: 'city_dongshengzhou', name: '榆林', factionId: 'dongshengwei', lat: 39.810643, lng: 109.959412, type: 'small_city', troops: 20000, region: 'HEXI' },
+
     // ── 战略要塞/县级城镇 (移入的小城) ──
     {
         id: 'city_lueyang',
@@ -972,9 +971,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
     { id: 'city_yangguan', name: '阳关', factionId: 'yangguan', lat: 39.92, lng: 94.06, type: 'pass', troops: 10000, region: 'HEXI' },
 
-    { id: 'city_wuzhousai', name: '善无', factionId: 'wuzhou', lat: 39.998214, lng: 112.420349, type: 'pass', region: 'STEPPE', troops: 10000, mirror: true,
-        note: '善无；武州关隘',
-    },
+    { id: 'city_wuzhousai', name: '善无', factionId: 'wuzhou', lat: 39.998214, lng: 112.420349, type: 'pass', troops: 20000, region: 'STEPPE' },
+
     // ── 2026-06-18 新增：李靖@恶阳岭（贞观四年定襄夜袭）──
     { id: 'city_eyangling', name: '恶阳岭', factionId: 'dingxiang_d', lat: 39.910000, lng: 111.650000, type: 'pass', troops: 10000, region: 'NORTH', mirror: true, note: '贞观四年李靖三千骑出恶阳岭夜袭定襄城（《旧唐书·李靖传》）；清水河南缘，距盛乐≥50km' },
     { id: 'city_jilusai', name: '鸡鹿塞', factionId: 'weiming', lat: 40.807568, lng: 106.630554, type: 'pass', region: 'HEXI', troops: 10000, mirror: true, tier: 2,
@@ -1220,9 +1218,8 @@ export const PERIPHERY: CityDataV2[] = [
         note: '燕然勒石；薛延陀小城',
     },
     { id: 'city_luhun', name: '涿邪山', factionId: 'jiluo_d', lat: 43.588290, lng: 104.661255, type: 'pass', region: 'STEPPE', troops: 10000, note: '窦宪燕然勒石，北征突骑' },
-    { id: 'city_chilechuan', name: '云中', factionId: 'chile', lat: 40.591029, lng: 110.044556, type: 'small_city', region: 'HEXI', troops: 10000,
-        note: '云中；敕勒小城',
-    },
+    { id: 'city_chilechuan', name: '九原', factionId: 'chile', lat: 40.591029, lng: 110.044556, type: 'small_city', troops: 20000, region: 'HEXI' },
+
     { id: 'city_lanshi', name: '蓝氏城', factionId: 'guishuang', lat: 36.712480, lng: 67.082520, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 10000, note: '大夏故都，城市之母，鼎盛人口20万，2026-06-18 升为中城' },
 
     { id: 'city_sabi', name: '泗沘', factionId: 'baiji', lat: 36.255354, lng: 126.949768, type: 'medium_city', region: 'KOREA', troops: 10000,
@@ -1452,9 +1449,8 @@ export const PERIPHERY: CityDataV2[] = [
         note: '哈拉哈河；塔塔尔小城',
     },
 
-    { id: 'city_merkit', name: '色楞格河', factionId: 'merkit', lat: 50.264779, lng: 106.152649, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '色楞格河；蔑儿乞小城',
-    },
+    { id: 'city_merkit', name: '色楞格河', factionId: 'merkit', lat: 50.264779, lng: 106.152649, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
     // 第四类：汉军世侯及元末军阀
     // 第五类：元末起义政权
     
@@ -1564,7 +1560,8 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 47.92, lng: 106.84, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '库伦；土谢图小城',
     },
-    { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'small_city', region: 'STEPPE', troops: 10000, note: '清代锡伯营西迁戍边；伊犁将军辖区' },
+    { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
     { id: 'city_yadong', name: '卓木', factionId: 'gaxa', lat: 28.243709, lng: 89.376526, type: 'small_city', region: 'TIBET', troops: 10000,
         note: '卓木；噶厦小城',
     },
@@ -1720,9 +1717,8 @@ export const PERIPHERY: CityDataV2[] = [
         
         note: '不儿罕山；乞颜关隘', region: 'STEPPE' },
     
-    { id: 'city_kerulen', name: '克鲁伦河', factionId: 'jalair', lat: 47.969654, lng: 113.005371, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '克鲁伦河；札剌亦儿小城',
-    },
+    { id: 'city_kerulen', name: '克鲁伦河', factionId: 'jalair', lat: 47.969654, lng: 113.005371, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
     { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.787170, type: 'pass', region: 'STEPPE', troops: 10000,
         note: '捕鱼儿海；弘吉剌关隘',
     },
@@ -1930,7 +1926,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
         note: '宁武关；楼烦关隘',
     },
 
-{ id: 'city_yanmenguan', name: '雁门关', factionId: 'heng1', lat: 39.19, lng: 112.87, type: 'pass', troops: 10000, region: 'NORTH' },
+{ id: 'city_yanmenguan', name: '雁门关', factionId: 'heng1', lat: 39.19, lng: 112.87, type: 'pass', troops: 20000, region: 'NORTH' },
+
 
 
 
@@ -2391,9 +2388,10 @@ export const CITIES_V2: CityDataV2[] = [
         troops: 10000,
         
         note: '徐达宣府筑城防守', region: 'NORTH' },
-    { id: 'city_xinghe', name: '兴和', factionId: 'chahar', lat: 41.15, lng: 114.7, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '兴和；察哈小城',
-    },
+    { id: 'city_xinghe', name: '高原城', factionId: 'chahar', lat: 41.15, lng: 114.7, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
+
+
     { id: 'city_jining', name: '集宁', factionId: 'baidi', lat: 41.03, lng: 113.1, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '集宁；白狄小城',
     },

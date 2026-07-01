@@ -44,7 +44,8 @@ export const FACTIONS: Faction[] = [
     { id: 'xiajiasi', name: '坚昆' },   // 旗号二字；唐称黠戛斯，同族
     { id: 'zhen', name: '武珍' },
 
-    { id: 'dongshengwei', name: '东胜卫' },
+    { id: 'dongshengwei', name: '延绥' },
+
     { id: 'dizhou', name: '棣州' },
     { id: 'bailian', name: '白莲' },
     { id: 'chimei', name: '赤眉' },
@@ -182,6 +183,7 @@ export const FACTIONS: Faction[] = [
     { id: 'sushen', name: '肃慎' },
 
     { id: 'chile', name: '敕勒' },
+
     { id: 'rouran', name: '柔然' },
     { id: 'baishui', name: '景谷' },
 
@@ -282,6 +284,7 @@ export const FACTIONS: Faction[] = [
     { id: 'hani_d', name: '哈尼' },
     { id: 'basha_d', name: '巴沙' },
     { id: 'xibo_d', name: '锡伯' },
+
     { id: 'jinling', name: '南国' },
     // ── 2026-06-12 新增：无为（濡须水畔无为州）；北府兵改挂仲@寿春 ──
     { id: 'wuwu_d', name: '无为' },
@@ -356,7 +359,8 @@ export const FACTIONS: Faction[] = [
     { id: 'kereyid', name: '克烈' },             // 草原赭褐 - 克烈部(土兀剌河黑林)
     { id: 'naiman', name: '乃蛮' },              // 文明深紫 - 乃蛮部(科布多)
     { id: 'tatar', name: '塔塔尔' },
-    { id: 'merkit', name: '蔑儿乞' },
+    { id: 'merkit', name: '岭北' },
+
     { id: 'ongut', name: '汪古' },
     // 暗板岩灰 - 斡亦剌部(谦河之源/叶尼塞河上游)
     // 大同上褐 - 孛罗帖木儿集团(大同)
@@ -422,7 +426,10 @@ export const FACTIONS: Faction[] = [
     { id: 'lujian', name: '鲁监' },
 
     // 第三类：蒙古诸部
-    { id: 'chahar', name: '察哈' },
+    { id: 'chahar', name: '兴和' },
+
+
+
     // 土褐 - 喀尔喀蒙古(额尔德尼昭)
     { id: 'dzungar', name: '绰罗斯' },
             // 暗灰 - 准噶尔汗国(伊犁)
@@ -538,7 +545,8 @@ export const FACTIONS: Faction[] = [
     { id: 'borjigin', name: '孛儿只斤' },
           // 黄金家族褐 - 孛儿只斤氏(蒙古黄金家族/斡难河源)
     // 部族棕 - 泰赤乌部(蒙古部族/斡难河中游)
-    { id: 'jalair', name: '札剌亦儿' },            // 克鲁伦绿 - 札剌亦儿部(蒙古部族/克鲁伦河)
+    { id: 'jalair', name: '札剌亦儿' },
+            // 克鲁伦绿 - 札剌亦儿部(蒙古部族/克鲁伦河)
     { id: 'hongirad', name: '弘吉剌' },            // 额尔古纳紫 - 弘吉剌部(蒙古部族/额尔古纳河)
     { id: 'choros', name: '萨吾尔' },
 
@@ -828,6 +836,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yi', name: '易州' },                 // 紫荆关·易州
     { id: 'you', name: '幽州' },                // 居庸关·幽州
     { id: 'heng1', name: '元岳' },
+
               // 雁门关·元岳（旗=元岳，避恒州「恒」撞旗）
     { id: 'pisha', name: '毗沙' },
    
@@ -1090,6 +1099,7 @@ export const FACTIONS: Faction[] = [
     { id: 'heisha_d', name: '黑沙' },              // 特尔门·漠北黑沙/后突厥境
   { id: 'sanada_d', name: '真田' },
     { id: 'wuzhou', name: '武州' },
+
     { id: 'bailong', name: '白龙' },
     { id: 'jilizhou', name: '积利州' },
     { id: 'xingxingxia', name: '伊州' },

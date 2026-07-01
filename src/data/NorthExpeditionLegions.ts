@@ -12,7 +12,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wangyan: { name: '八字军', tier: 2 },     // 飞狐·王彦八字军（民间抗金义军，降T2）
   // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
-    heng1: { name: '赵边骑', tier: 1 },
+    heng1: { name: '杨无敌军', tier: 1 },
   huan: { name: '神臂弓手', tier: 2 },      // 宋军最倚仗的跨时代战术兵种，屡次在野战击退重骑兵，升入T2战术
   qingyuan_bd: { name: '白马突骑', tier: 4 }, // 保定·周德威白马突骑（缺乏极其著名的战术高光，降T3）
 
@@ -26,7 +26,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   erzhu: { name: '六镇戍兵', tier: 1 },     // 北魏六镇，横扫天下的基石，六镇之乱孕育了北齐、北周及隋唐开国集团，影响极其深远，升入T1战略
   gaoqi_d: { name: '百保鲜卑', tier: 2 },   // 蓨城·北齐百保精兵·高长恭禁卫（顶级近卫，降T2）
   yingzhou_ying_d: { name: '黄龙兵', tier: 1 }, // 朝阳·慕容皝棘城大破石赵
-  chile: { name: '两池军', tier: 4 },       // 云中·§2 #11
   murong: { name: '龙城甲骑', tier: 4 },    // 棘城·慕容燕具装骑（无经典以少胜多）（缺乏极其著名的战术高光，降T3）
   ming_d: { name: '明军三大营', tier: 1 },   // 北京·五军神机三千营（升T1）
 

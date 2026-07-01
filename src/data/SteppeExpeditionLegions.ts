@@ -8,7 +8,7 @@
  * - 依据 史料/古代精锐部队.md §6 #1–3、#5–12、#14–19
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-  wuzhou: { name: '雁门边骑', tier: 4 },   // 善无·李广雁门（常规番号，降T3）
+    wuzhou: { name: '百金之士', tier: 2 },
   ashina: { name: '金山突厥兵', tier: 3 }, // 突厥阿史那氏的龙兴之地，极具突厥汗国起源的图腾色彩，升入T3知名
   liao_d: { name: '皮室军', tier: 1 },         // 临潢府·辽太祖皮室军（§6 #1）
   yel: { name: '斡鲁朵军', tier: 1 },         // 大辽帝国压制北宋两百年的最核心禁卫常备军制度，升入T1战略
@@ -39,15 +39,15 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   xiajiasi: { name: '黠戛斯锐卒', tier: 1 }, // 彻底摧毁回鹘汗国的“终结者”，改变漠北与西域历史格局的战略力量，升入T1战略
   donghu: { name: '东胡骑', tier: 4 },    // 巴彦乌拉·东胡王（缺乏极其著名的战术高光，降T3）
   tiele: { name: '铁勒骁骑', tier: 4 },
-  xibo_d: { name: '锡伯箭手', tier: 3 },        // 清代西迁新疆戍边，中国边防史与民族史的极高知名度符号，升入T3知名
+    xibo_d: { name: '锡伯箭手', tier: 3 },
   tatar: { name: '塔塔儿勇士', tier: 4 },
-  merkit: { name: '蔑儿乞猎骑', tier: 4 },
-  chahar: { name: '察哈尔八旗', tier: 4 },             // 缺乏知名度支撑，降T3
+    merkit: { name: '岭北屯骑', tier: 3 },
+    chahar: { name: '哈剌赤军', tier: 2 },
   yuwen: { name: '武川镇军', tier: 1 },     // 武川镇·沙苑之战大破东魏的关陇王牌
   da_yuan: { name: '北元怯薛', tier: 1 },             // 元朝退回草原后维持北元政权的战略武力核心，符合T1战略主力
   huyan: { name: '呼衍精骑', tier: 4 },
   yujiulu: { name: '郁久闾王骑', tier: 4 },            // 缺乏知名度支撑，降T3
-  jalair: { name: '札剌亦儿军', tier: 4 },
+    jalair: { name: '札剌亦儿军', tier: 3 },
   hongirad: { name: '弘吉剌护卫', tier: 4 },           // 常规番号，降T3
     choros: { name: '萨吾尔骁骑', tier: 4 },           // 缺乏知名度支撑，降T3
   duolu: { name: '咄陆部铁骑', tier: 4 },              // 缺乏知名度支撑，降T3

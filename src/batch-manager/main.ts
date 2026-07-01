@@ -490,21 +490,21 @@ function computeIds(factionName: string, cityName: string, generalName: string):
 
 function checkNameDuplicates(cityName: string, factionName: string, generalName: string, eliteName: string): string[] {
     const warnings: string[] = [];
-    const check = (newName: string, label: string, field: keyof FactionRow, existLabel: string) => {
+    const check = (newName: string, label: string, field: keyof FactionRow, existLabel: string, exactOnly = false) => {
         if (!newName || newName.length < 2) return;
         for (const row of rows) {
             const exist = row[field] as string | undefined;
             if (!exist || exist.length < 2) continue;
             if (newName === exist) {
                 warnings.push(`${label}"${newName}" 与已有${existLabel}"${exist}"(${row.name}) 完全同名`);
-            } else if (newName.includes(exist) || exist.includes(newName)) {
+            } else if (!exactOnly && (newName.includes(exist) || exist.includes(newName))) {
                 warnings.push(`${label}"${newName}" 与已有${existLabel}"${exist}"(${row.name}) 名字包含关系`);
             }
         }
     };
     check(cityName, '据点', 'cityName', '据点');
     check(factionName, '势力', 'name', '势力');
-    check(generalName, '武将', 'generalName', '武将');
+    check(generalName, '武将', 'generalName', '武将', true);
     check(eliteName, '精锐', 'eliteName', '精锐');
     // 跨类型：势力名 vs 已有据点名
     check(factionName, '势力', 'cityName', '据点');

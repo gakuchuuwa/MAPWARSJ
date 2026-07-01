@@ -23,7 +23,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   yingli: { name: '泼喜军', tier: 2 },            // 西夏骆驼旋风炮特种部队，古代军事史上罕见的战术创新，升入T2战术
   chijin: { name: '赤金营', tier: 4 },        // 赤金堡·岳钟琪平准噶尔西路劲旅（缺乏极其著名的战术高光，降T3）
   juyan_d: { name: '荆楚步卒', tier: 2 },     // 巴音布拉格·李陵五千荆楚勇士出居延（虽勇但战败投降，降T2）
-  dongshengwei: { name: '九边夜不收', tier: 2 },     // 明代极其专业的特种侦察与暗杀战术部队，古代特种战术典型，升入T2战术
+    dongshengwei: { name: '九边夜不收', tier: 2 },
     zhai_han: { name: '蕃落骑', tier: 1 },
   huizhou: { name: '会州边兵', tier: 4 },          // 祖厉·唐代会州
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang
@@ -43,4 +43,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     yangguan: { name: '西凉铁骑', tier: 1 },
         yuezhi: { name: '折兰骑', tier: 3 },             // 霍去病河西之战斩杀的匈奴最强王牌，战役背景极具符号价值，升入T3知名,
     shanzhou: { name: '陇右健儿', tier: 1 },
+    chile: { name: '两池军', tier: 3 },
 };
