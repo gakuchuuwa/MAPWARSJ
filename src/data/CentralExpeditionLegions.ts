@@ -93,4 +93,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军,
     zhao: { name: '邯郸甲士', tier: 4 },              // 缺乏知名度支撑，降T3
     qing: { name: '泾原锐骑', tier: 1 },
+    luming: { name: '天雄军', tier: 2 },
 };

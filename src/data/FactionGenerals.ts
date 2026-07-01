@@ -785,6 +785,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     jingpozu: { generalId: 'jingpozu_zaodan', generalName: '早丹', portrait: '/assets/DIANQIAN/jingpozu_zaodan.png' },
     shuizu: { generalId: 'shuizu_panxinjian', generalName: '潘新简', portrait: '/assets/DIANQIAN/shuizu_panxinjian.png' },
     liuzhou: { generalId: 'liuzhou_shenxiyi', generalName: '沈希仪', portrait: '/assets/LINGNAN/liuzhou_shenxiyi.png' },
+    luming: { generalId: 'luming_luxiangsheng', generalName: '卢象升', portrait: '/assets/CENTRAL/luming_luxiangsheng.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

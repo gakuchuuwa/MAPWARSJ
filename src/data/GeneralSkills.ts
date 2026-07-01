@@ -1309,6 +1309,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     jingpozu_zaodan: { generalId: 'jingpozu_zaodan', tier: 'ordinary', tacticalSkillId: 'tac_08' },
     shuizu_panxinjian: { generalId: 'shuizu_panxinjian', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     liuzhou_shenxiyi: { generalId: 'liuzhou_shenxiyi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' },
+    luming_luxiangsheng: { generalId: 'luming_luxiangsheng', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

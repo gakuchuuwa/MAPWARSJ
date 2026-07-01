@@ -1102,6 +1102,8 @@ export const FACTIONS: Faction[] = [
     { id: 'jingpozu', name: '景颇族' },
     { id: 'shuizu', name: '水族' },
     { id: 'liuzhou', name: '柳州' },
+    { id: 'luming', name: '天雄（或卢明）' },
+
 
 
 

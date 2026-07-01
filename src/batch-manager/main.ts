@@ -1146,13 +1146,17 @@ function renderValidation(): void {
     const warns = issues.filter(i => i.level === 'warn');
     const infos = issues.filter(i => i.level === 'info');
 
+    const isOrphanFaction = (i: typeof issues[0]) => i.msg.includes('不在 factions.ts');
+
     const issueHtml = (i: typeof issues[0], icon: string) => {
-        if (i.factionId) {
-            return `<div class="issue issue-${i.level}" data-fid="${i.factionId}" style="cursor:pointer">${icon} ${i.msg} → 点击编辑</div>`;
+        const fid = i.factionId ?? i.msg.match(/\((\w+)\)/)?.[1] ?? null;
+        if (fid && isOrphanFaction(i)) {
+            return `<div class="issue issue-${i.level}">${icon} ${i.msg} `
+                + `<button class="bm-btn bm-btn-warn" data-orphan-fid="${fid}" style="margin-left:6px;padding:2px 8px;font-size:11px">🔧 一键清扫</button>`
+                + `</div>`;
         }
-        const idMatch = i.msg.match(/\((\w+)\)/);
-        if (idMatch) {
-            return `<div class="issue issue-${i.level}" data-fid="${idMatch[1]}" style="cursor:pointer">${icon} ${i.msg} → 点击编辑</div>`;
+        if (fid) {
+            return `<div class="issue issue-${i.level}" data-fid="${fid}" style="cursor:pointer">${icon} ${i.msg} → 点击编辑</div>`;
         }
         return `<div class="issue issue-${i.level}">${icon} ${i.msg}</div>`;
     };
@@ -1170,6 +1174,31 @@ function renderValidation(): void {
             const fid = (el as HTMLElement).dataset.fid!;
             editingFactionId = fid;
             openEditPanel(fid);
+        });
+    });
+
+    els.validationList.querySelectorAll('[data-orphan-fid]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+            ev.stopPropagation();
+            const fid = (el as HTMLElement).dataset.orphanFid!;
+            if (!confirm(`确认清扫孤儿势力 "${fid}"？\n将从 StartingCapitals / CityAssetManager / SandboxDisplayNames / FactionGenerals / GeneralSkills / 14 区精锐 中删除所有残留。`)) return;
+            try {
+                const res = await fetch('/api/batch-delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targets: [{ factionId: fid }] }),
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                    showToast(`清扫失败: ${JSON.stringify(data.results ?? data.error)}`, true);
+                    return;
+                }
+                const files = (data.results ?? []).filter((r: any) => r.ok).map((r: any) => r.file).join(', ');
+                showToast(`✅ 已清扫 ${fid}（${files || '无残留'}）`);
+                runValidation();
+            } catch (err: any) {
+                showToast(`清扫失败: ${err.message}`, true);
+            }
         });
     });
 }

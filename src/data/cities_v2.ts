@@ -2926,6 +2926,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mizhina', name: '密支那', factionId: 'jingpozu', lat: 25.38, lng: 97.4, type: 'small_city', troops: 5000, region: 'DIANQIAN' },
     { id: 'city_sandou', name: '三都', factionId: 'shuizu', lat: 25.98, lng: 107.87, type: 'small_city', troops: 10000, region: 'LINGNAN' },
     { id: 'city_tanzhong', name: '潭中', factionId: 'liuzhou', lat: 24.28, lng: 109.41, type: 'small_city', troops: 5000, region: 'LINGNAN' },
+    { id: 'city_yunyang', name: '郧阳', factionId: 'luming', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
 
 
 
