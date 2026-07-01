@@ -13,9 +13,9 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   dongxu: { name: '东吁铁骑', tier: 4 },       // 东吁城·莽瑞体东吁铁骑（缺乏极其著名的战术高光，降T3）
     konbaung: { name: '莫罕猎兵', tier: 1 },
   siam: { name: '皇家象骑兵', tier: 1 },       // 阿瑜陀耶·暹罗复国与争霸中南半岛的战略主力
-  pagan: { name: '缅王战象', tier: 3 },      // 缅甸封建王朝王权军事象征，极具东南亚霸主特色，升入T3知名
+  pagan: { name: '缅王战象', tier: 3 },      // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   pyu: { name: '骠国战象', tier: 4 },        // 室利差罗·骠国象卫
-  champa: { name: '占婆国水师', tier: 3 },             // 占城（占婆）立国之本，南中国海水战的绝对代表，升入T3知名
+  champa: { name: '占婆国水师', tier: 3 },             // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   chenla: { name: '吴哥战象', tier: 1 },     // 吴哥·缔造高棉帝国中南半岛霸权的战略主力
   luchuan: { name: '麓川夷象', tier: 3 }, // 明朝三征麓川时思氏仰仗的核心象阵，极具历史话题度和风土特色，升入T3知名
   dianguo: { name: '滇池兵', tier: 4 },       // 滇池·庄蹻滇国
@@ -40,7 +40,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   ava: { name: '掸族象卫', tier: 4 },
     mon: { name: '孟族战象', tier: 4 },
     dian: { name: '通海城兵', tier: 4 },              // 缺乏知名度支撑，降T3
-    ahaomu: { name: '阿豪姆舟师', tier: 3 },           // 阿萨姆无敌水军，曾在雅鲁藏布江击溃莫卧儿帝国大军，创造水战奇迹，升入T3知名
+    ahaomu: { name: '阿豪姆舟师', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     wazu: { name: '阿佤猎兵', tier: 3 },              // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
     jingpozu: { name: '景颇长刀兵', tier: 3 },         // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
     shuizu: { name: '水族藤甲兵', tier: 3 },           // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名

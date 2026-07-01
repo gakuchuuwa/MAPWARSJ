@@ -18,7 +18,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
   ranwei_d: { name: '乞活军', tier: 2 },   // 五胡乱华时期的流民武装，虽悲壮且在特定战役有高光，但缺乏战略主导地位，降为T2战术。
     wuzhou_d: { name: '羽林军', tier: 2 },     // 洛阳·李多祚羽林军（武周）
-  shang: { name: '虎贲多射', tier: 3 },       // 妇好征伐的王家精锐，极具历史文化地位，提拔至T3知名。
+  shang: { name: '虎贲多射', tier: 2 },       // 周武王牧野之战的核心三千虎贲突击队，打出改朝换代的史诗级战役高光，升入T2战术
   zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）
   // 夏后亲卫除名（夏代无信史）
   yuan_cj_d: { name: '大戟士', tier: 2 },    // 汝南·袁术大戟士（败多胜少，降T2）

@@ -11,7 +11,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   jilizhou: { name: '卑沙山城卫', tier: 4 },   // 卑沙城·程名振
   nuergan: { name: '奴儿干卫军', tier: 3 }, // 大明王朝设立的奴儿干都司卫军，中国古代经略远东的极致地标与文化符号，升入T3知名
   huimo: { name: '濊貊长矛手', tier: 4 }, // 乌骨城·高延寿濊貊
-  bohai: { name: '渤海猛贲', tier: 3 },       // “海东盛国”渤海国曾经雄踞东北二百多年的文明代表，升入T3知名
+  bohai: { name: '渤海猛贲', tier: 1 },       // 建立并维持“海东盛国”渤海国两百余年的核心主力，符合T1战略主力
   dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（阿骨打@都城）
   yizhou: { name: '七水部铁骑', tier: 1 },      // 蒺藜山·完颜娄室统率的七水部嫡系主力
   qidan: { name: '属珊锐骑', tier: 3 },     // 辽国述律平太后亲卫，名号独特，但非战略野战军，降为T3知名。

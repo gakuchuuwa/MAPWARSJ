@@ -22,7 +22,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   qiuci: { name: '龟兹精兵', tier: 3 },   // 丝路第一大国龟兹，鸠摩罗什故国，显著文化知名度，升T2
   yuchi: { name: '于阗精兵', tier: 2 },       // 尉迟王族抗击黑汗四十载，独立坚守的特色王牌，升T2
   an: { name: '昭武精骑', tier: 3 },        // “昭武九姓”粟特人，垄断丝路贸易，安禄山叛军核心精锐，极其著名的历史与文化符号，升入T3知名
-  yiduhu: { name: '西州回鹘', tier: 3 },      // 高昌·北庭回鹘取西州（缺乏极其著名的战术高光，降T3）
+  yiduhu: { name: '西州回鹘', tier: 3 },      // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   shule: { name: '阿兰斯近卫', tier: 3 },     // 元代著名的“阿速回军”（阿兰人近卫军），深度介入元廷斗争的异族卫队，知名度极高，升入T3知名
   yanqi: { name: '焉耆龙骑兵', tier: 4 },   // 员渠城·焉耆龙骑（§14 #6）（缺乏极其著名的战术高光，降T3）
   wusun: { name: '昆莫亲卫', tier: 3 }, // 汉代西域最强霸主乌孙国国王（昆莫）亲卫，汉朝联姻抗匈的绝对盟友，升入T3知名
@@ -41,7 +41,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     dzungar: { name: '绰罗斯精骑', tier: 1 },          // 准噶尔汗国核心，与清朝对峙数十年的独立战略主力，升T1
   yarkand: { name: '英吉沙骑兵', tier: 4 },
   tuerhute: { name: '鹰娑川铁骑', tier: 3 },
-    gaochang: { name: '高昌铁骑', tier: 3 },          // 缺乏知名度支撑，降T3
+    gaochang: { name: '高昌铁骑', tier: 3 },          // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   yiwu: { name: '哈密卫镇军', tier: 4 },       // 哈密卫·明关西七卫（都城高昌，咸通前）
   adao_d: { name: '昆岗军台营', tier: 4 },      // 昆岗·阿克苏道军台驿卒
   weitou: { name: '尉头国飞军', tier: 4 },    // 阿合奇·尉头国王城

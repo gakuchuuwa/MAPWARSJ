@@ -31,7 +31,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   ssangseong: { name: '和宁戍骑', tier: 4 }, // 铁岭关·李子春（缺乏极其著名的战术高光，降T3）
   hui: { name: '濊族步卒', tier: 4 },          // 何瑟罗·不耐侯（缺乏极其著名的战术高光，降T3）
   chungju_d: { name: '忠州忠义军', tier: 4 },    // 国原城·权栗忠清道募兵（常规番号，降T3）
-  gaya: { name: '金官伽倻兵', tier: 3 },         // 朝鲜半岛早期以“冶铁”文明著称的独立古国伽倻的代表，历史文化属性强，升入T3知名
+  gaya: { name: '金官伽倻兵', tier: 3 },         // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     naju_d: { name: '罗州精兵', tier: 4 },            // 缺乏知名度支撑，降T3
   sabeol: { name: '沙伐义兵', tier: 4 },          // 三白·金时敏募义兵（缺乏极其著名的战术高光，降T3）
   xingliao: { name: '龙湾戍军', tier: 4 },      // 龙湾·兴辽边防

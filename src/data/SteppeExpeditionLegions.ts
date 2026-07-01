@@ -22,7 +22,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     huige: { name: '回纥精骑', tier: 1 },             // 安史之乱挽救大唐，雄踞漠北百年的回纥汗国绝对主力，升入T1战略
   // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
   // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
-  gaoche: { name: '高车战车', tier: 3 },       // 古代高车人（丁零）标志性的高大车轮，早期草原极其典型的兵种文化，升入T3知名
+  gaoche: { name: '高车战车', tier: 3 },       // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   rouran: { name: '柔然铁骑', tier: 1 },       // 花木兰抗击的庞大游牧汗国，突厥崛起前漠北霸主，升入T1战略
   xueyantuo: { name: '燕然铁骑', tier: 4 },    // 燕然勒石·窦宪破北匈奴刻石（缺乏极其著名的战术高光，降T3）
   naiman: { name: '乃蛮重骑', tier: 4 },       // 福海·乃蛮重装骑兵（§6 #19）（缺乏极其著名的战术高光，降T3）
@@ -44,7 +44,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   merkit: { name: '蔑儿乞猎骑', tier: 4 },
   chahar: { name: '察哈尔八旗', tier: 4 },             // 缺乏知名度支撑，降T3
   yuwen: { name: '武川镇军', tier: 1 },     // 武川镇·沙苑之战大破东魏的关陇王牌
-  da_yuan: { name: '北元怯薛', tier: 3 },             // 大名鼎鼎的“怯薛军”（蒙古大汗禁卫），番号本身的文化重量足以跻身T3知名
+  da_yuan: { name: '北元怯薛', tier: 1 },             // 元朝退回草原后维持北元政权的战略武力核心，符合T1战略主力
   huyan: { name: '呼衍精骑', tier: 4 },
   yujiulu: { name: '郁久闾王骑', tier: 4 },            // 缺乏知名度支撑，降T3
   jalair: { name: '札剌亦儿军', tier: 4 },
@@ -59,7 +59,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   mengwu: { name: '忙古勒骑', tier: 4 },        // 狼居胥·合不勒汗
   zhadalan: { name: '札剌儿军', tier: 4 },      // 阔亦田·札木合
     oirat_ming: { name: '卫拉特重骑', tier: 4 },       // 缺乏知名度支撑，降T3
-  tumed: { name: '土默特精骑', tier: 3 },         // 俺答汗迫使明朝开启隆庆和议的代表武装，长城内外由战转和的标志，升入T3知名
+  tumed: { name: '土默特精骑', tier: 1 },         // 俺答汗建立土默特汗国、逼迫明朝封贡的绝对战略主力，符合T1战略主力
   tushetu: { name: '库伦铁骑', tier: 4 },       // 库伦·土谢图汗
   yaoluoge: { name: '药罗葛骑', tier: 4 },      // 娑陵·药罗葛部
     huihu: { name: '回鹘精骑', tier: 1 },             // 安史之乱挽救大唐，雄踞漠北百年的回鹘汗国绝对主力，升入T1战略
