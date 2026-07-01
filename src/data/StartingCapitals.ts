@@ -178,7 +178,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'pizhou': 'city_xiapi',
     'suzhou_d': 'city_xucheng',
 
-    'zhai_han': 'city_fushi',
+'zhai_han': 'city_fushi',
     'fushi': 'city_lueyang',
     'fengzhou': 'city_dasanguan',
     'sizhou': 'city_huaiyin',
@@ -787,6 +787,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'jingpozu': 'city_mizhina',
     'shuizu': 'city_sandou',
     'liuzhou': 'city_tanzhong',
+'luming': 'city_yunyang',
 };
 
 // @ts-ignore

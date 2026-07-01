@@ -544,7 +544,11 @@ function updateIdPreview(): void {
 
 // ── Edit / Add Panel ──
 
-function openEditPanel(factionId: string | null): void {
+async function openEditPanel(factionId: string | null): Promise<void> {
+    // 每次打开前强制刷一次数据, 防止缓存 rows 与磁盘不同步 (SC 补齐等)
+    if (factionId) {
+        try { await loadData(); } catch { /* ignore, fall back to cached rows */ }
+    }
     els.panel.style.display = 'block';
     const row = factionId ? rows.find(r => r.id === factionId) : null;
     const isNew = !row;
@@ -1147,6 +1151,8 @@ function renderValidation(): void {
     const infos = issues.filter(i => i.level === 'info');
 
     const isOrphanFaction = (i: typeof issues[0]) => i.msg.includes('不在 factions.ts');
+    const isMissingSC = (i: typeof issues[0]) => i.msg.includes('缺 StartingCapitals');
+    const findCityByFactionId = (fid: string) => entityData?.cities.find(c => c.factionId === fid);
 
     const issueHtml = (i: typeof issues[0], icon: string) => {
         const fid = i.factionId ?? i.msg.match(/\((\w+)\)/)?.[1] ?? null;
@@ -1154,6 +1160,14 @@ function renderValidation(): void {
             return `<div class="issue issue-${i.level}">${icon} ${i.msg} `
                 + `<button class="bm-btn bm-btn-warn" data-orphan-fid="${fid}" style="margin-left:6px;padding:2px 8px;font-size:11px">🔧 一键清扫</button>`
                 + `</div>`;
+        }
+        if (fid && isMissingSC(i)) {
+            const city = findCityByFactionId(fid);
+            if (city) {
+                return `<div class="issue issue-${i.level}">${icon} ${i.msg} `
+                    + `<button class="bm-btn bm-btn-primary" data-repair-fid="${fid}" data-repair-cid="${city.id}" style="margin-left:6px;padding:2px 8px;font-size:11px">🔧 用现有据点 "${city.name}" 补 SC</button>`
+                    + `</div>`;
+            }
         }
         if (fid) {
             return `<div class="issue issue-${i.level}" data-fid="${fid}" style="cursor:pointer">${icon} ${i.msg} → 点击编辑</div>`;
@@ -1174,6 +1188,31 @@ function renderValidation(): void {
             const fid = (el as HTMLElement).dataset.fid!;
             editingFactionId = fid;
             openEditPanel(fid);
+        });
+    });
+
+    els.validationList.querySelectorAll('[data-repair-fid]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+            ev.stopPropagation();
+            const fid = (el as HTMLElement).dataset.repairFid!;
+            const cid = (el as HTMLElement).dataset.repairCid!;
+            try {
+                const res = await fetch('/api/repair-missing-sc', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ factionId: fid, cityId: cid }),
+                });
+                const data = await res.json();
+                if (!data.ok) {
+                    showToast(`修复失败: ${data.error ?? '未知错误'}`, true);
+                    return;
+                }
+                showToast(`✅ 已补 SC: ${fid} → ${cid}`);
+                await loadData();
+                runValidation();
+            } catch (err: any) {
+                showToast(`修复失败: ${err.message}`, true);
+            }
         });
     });
 

@@ -819,7 +819,8 @@ export class CityAssetManager {
         'jingpozu': '景颇',
         'shuizu': '水',
         'liuzhou': '柳',
-        'agui': '儹拉',
+'agui': '儹拉',
+        'luming': '郧',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

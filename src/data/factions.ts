@@ -239,6 +239,8 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 新增：汉朝核对追加势力 ──
     { id: 'zhai_han', name: '翟国' },
+
+
     { id: 'yin', name: '殷国' },
     // ── 2026-06-16 新增：河间郡治乐成（§4.3；先登营@界桥）──
     { id: 'hejian', name: '莫州' },
@@ -319,6 +321,9 @@ export const FACTIONS: Faction[] = [
             // 明教紫 - 方腊起义(清溪)
     // ── 2026-05-26 北宋辽金势力 v2 ──
     { id: 'zhongxiang', name: '鼎州' },
+
+
+
       // 旗号钟楚（政权国号，非单字截）；钟相@武陵
     { id: 'yang_aner', name: '天顺' },          // 红袄赤 - 杨安儿天顺政权(登州)
     { id: 'jinan', name: '济南' },
@@ -418,6 +423,7 @@ export const FACTIONS: Faction[] = [
     // 第五类：西南土司
     { id: 'jinchuan_g', name: '金川' },
     { id: 'agui', name: '儹拉' },
+
 
 
     // 沙褐 - 班禅系统(日喀则)
@@ -1102,7 +1108,8 @@ export const FACTIONS: Faction[] = [
     { id: 'jingpozu', name: '景颇族' },
     { id: 'shuizu', name: '水族' },
     { id: 'liuzhou', name: '柳州' },
-    { id: 'luming', name: '天雄（或卢明）' },
+    { id: 'luming', name: '郧州' },
+
 
 
 

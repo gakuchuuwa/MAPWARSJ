@@ -664,6 +664,9 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     
     { id: 'city_wuling', name: '常德', factionId: 'zhongxiang', lat: 29.03, lng: 111.69, type: 'small_city', troops: 5000, region: 'BASHU' },
 
+
+
+
     // ── 2026-05-25 唐朝势力新增据点 ──
 
 ];
@@ -1597,6 +1600,7 @@ export const PERIPHERY: CityDataV2[] = [
     }, // 镜像
     { id: 'city_meinuozhai', name: '美诺寨', factionId: 'agui', lat: 31, lng: 102.4, type: 'small_city', troops: 5000, region: 'BASHU' },
 
+
  // 镜像
     { id: 'city_zhaoqing', name: '肇庆', factionId: 'duanzhou_d', lat: 23.05, lng: 112.45, type: 'small_city', troops: 5000, region: 'LINGNAN' },
 
@@ -2445,9 +2449,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'pass', region: 'CENTRAL', troops: 10000,
         note: '阏与；黎国关隘',
     },    
-    { id: 'city_fushi', name: '肤施', factionId: 'zhai_han', lat: 36.59, lng: 109.48, type: 'small_city', region: 'HEXI', troops: 10000,
-        note: '肤施；翟国小城',
-    },
+    { id: 'city_fushi', name: '肤施', factionId: 'zhai_han', lat: 36.59, lng: 109.48, type: 'small_city', troops: 5000, region: 'HEXI' },
+
+
     { id: 'city_changze', name: '长泽', factionId: 'kang', lat: 39.1, lng: 107.98, type: 'small_city', region: 'HEXI', troops: 10000, note: '梁师都鹰扬郎将起兵建梁' },
     { id: 'city_linrong', name: '临戎', factionId: 'woye', lat: 40.3, lng: 107, type: 'small_city', region: 'HEXI', troops: 10000, note: '皇甫规度辽将军驻朔方' },
     { id: 'city_aowei', name: '媪围', factionId: 'lushui', lat: 37.396289, lng: 104.111938, type: 'small_city', region: 'HEXI', troops: 10000, note: '北宫伯玉卢水义从胡起兵凉州' },
@@ -2927,6 +2931,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_sandou', name: '三都', factionId: 'shuizu', lat: 25.98, lng: 107.87, type: 'small_city', troops: 10000, region: 'LINGNAN' },
     { id: 'city_tanzhong', name: '潭中', factionId: 'liuzhou', lat: 24.28, lng: 109.41, type: 'small_city', troops: 5000, region: 'LINGNAN' },
     { id: 'city_yunyang', name: '郧阳', factionId: 'luming', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
 
 
 

@@ -276,6 +276,53 @@ export default defineConfig({
                 });
 
                 // ========================================================
+                // [NEW 2026-07-01] /api/repair-missing-sc
+                //   势力已有 city (cities_v2.factionId==factionId) 但 SC 里没映射,
+                //   一键把这条 SC 补上
+                //   body: { factionId: string, cityId: string }
+                // ========================================================
+                server.middlewares.use('/api/repair-missing-sc', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    let body = '';
+                    req.on('data', chunk => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(body);
+                            const fId = data.factionId;
+                            const cId = data.cityId;
+                            if (!fId || !cId) {
+                                res.statusCode = 400;
+                                res.end(JSON.stringify({ ok: false, error: 'factionId and cityId required' }));
+                                return;
+                            }
+                            const scPath = path.resolve(__dirname, 'src/data/StartingCapitals.ts');
+                            let scText = fs.readFileSync(scPath, 'utf-8');
+                            if (scText.includes(`'${fId}':`)) {
+                                res.setHeader('Content-Type', 'application/json');
+                                res.end(JSON.stringify({ ok: true, operation: 'skip', reason: 'already present' }));
+                                return;
+                            }
+                            const line = `'${fId}': '${cId}',`;
+                            scText = serverInsertIntoStructure(scText, 'STARTING_CAPITALS', line, '    ');
+                            markBatchSaveWrite();
+                            fs.writeFileSync(scPath, scText, 'utf-8');
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, operation: 'insert', line }));
+                            console.log(`[RepairSC] ${fId} → ${cId} inserted`);
+                        } catch (err: any) {
+                            console.error(`❌ [RepairSC] Failed:`, err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // ========================================================
                 // [NEW 2026-06-29] /api/entity-data
                 //   读取所有实体数据 (势力/据点/旗号/武将/精锐) 并合并返回
                 // ========================================================

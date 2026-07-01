@@ -48,7 +48,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zangke: { name: '牂牁戍卒', tier: 4 },        // 胜境关·古牂牁国地（原夜郎锐卒，避岭南同名）
   wanzhou: { name: '天生城军', tier: 4 },       // 南浦·上官夔天生城
   wumeng: { name: '溪州土兵', tier: 4 },
-    agui: { name: '健锐营', tier: 2 },               // 清代专门平定金川的云梯特种突击队，战功卓著，升入T2战术
+    agui: { name: '健锐营', tier: 2 },
   fuguo: { name: '附国羌兵', tier: 4 },  // 芒康宗·隋附国羌人部落兵
 qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅州（缺乏极其著名的战术高光，降T3）
     dangchang: { name: '陇右铁骑', tier: 1 },         // 唐代抗击吐蕃、威震西域的绝对战略主力野战军，升入T1战略
@@ -57,7 +57,7 @@ qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅�
   qingqiang: { name: '青羌突骑', tier: 3 },    // 姜维北伐核心兵源，三国文化特色异族骑兵，升T2
   qingyi: { name: '天师道众', tier: 3 },       // 汉末张鲁政教合一的道教武装（鬼卒/祭酒），文化辨识度极高，升入T3知名
   // ── 2026-06-18：武陵/叙永/慈利/秀山/房陵/珙县/来凤精锐 ──
-    zhongxiang: { name: '锦帆贼', tier: 2 },        // 洞庭湖·甘宁锦帆贼（百骑劫营，战术尖刀）
+    zhongxiang: { name: '锦帆贼', tier: 2 },
   she: { name: '永宁彝兵', tier: 3 },          // 叙永·奢崇明起兵反明（名气不足，降T2）（缺乏进攻高光，降T3）
   tan_d: { name: '慈利土兵', tier: 4 },       // 慈利·覃垕率土兵起义（明正德）（常规番号，降T3）
   ran_d: { name: '冉氏土兵', tier: 4 },        // 秀山·冉守忠南宋土兵从征（常规番号，降T3）
