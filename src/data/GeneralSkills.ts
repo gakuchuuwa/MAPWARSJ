@@ -492,7 +492,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     khoshut_gushihan: { generalId: 'khoshut_gushihan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 和硕特入藏
     nvguo_mojie: { generalId: 'nvguo_mojie', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 女国女王
     karmapa_queyingduoji: { generalId: 'karmapa_queyingduoji', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 噶玛巴活佛
-    xianlingqiang_dianling: { generalId: 'xianlingqiang_dianling', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 先零羌
+    xianlingqiang_dianling: { generalId: 'xianlingqiang_dianling', tier: 'ordinary', tacticalSkillId: 'tac_08' },
     shaodang_mitang: { generalId: 'shaodang_mitang', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 烧当羌
     lang_clan_jiangqujianzan: { generalId: 'lang_clan_jiangqujianzan', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 帕竹立国
     xiutu_xiutuwang: { generalId: 'xiutu_xiutuwang', tier: 'ordinary', tacticalSkillId: 'tac_06' }, // 休屠王
@@ -727,7 +727,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_yanganer2: { generalId: 'unassigned_yanganer2', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 红袄天顺
     xuan_mafang: { generalId: 'xuan_mafang', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 开国第一功臣
     tuoba_tuobagui: { generalId: 'tuoba_tuobagui', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 参合陂
-    bing_liukun: { generalId: 'bing_liukun', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 晋阳孤守抗刘渊
+    bing_liukun: { generalId: 'bing_liukun', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
     unassigned_zhangrou: { generalId: 'unassigned_zhangrou', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 保定重建
     qu_d_quyi: { generalId: 'qu_d_quyi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 界桥先登破白马
     gaoqi_d_gaohuan: { generalId: 'gaoqi_d_gaohuan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 神武帝
@@ -1306,6 +1306,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     liuzhou_shenxiyi: { generalId: 'liuzhou_shenxiyi', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' },
     luming_luxiangsheng: { generalId: 'luming_luxiangsheng', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' },
     dingzhou_d_murongchui: { generalId: 'dingzhou_d_murongchui', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_01' },
+    shanzhou_wangzhongsi: { generalId: 'shanzhou_wangzhongsi', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_03' },
+    weizhou_weigao: { generalId: 'weizhou_weigao', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

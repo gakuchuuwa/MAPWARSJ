@@ -179,16 +179,8 @@ export const T0_CAPITALS: CityDataV2[] = [
         note: '南宋行在临安',
     },
     
-    {
-        id: 'city_taiyuan',
-        name: '晋阳',
-        factionId: 'bing',
-        lat: 37.87, lng: 112.55,
-        type: 'big_city',
-        region: 'NORTH',
-        troops: 20000,
-        tier: 0,
-        note: '并州治所晋阳' },
+    { id: 'city_taiyuan', name: '晋阳', factionId: 'bing', lat: 37.87, lng: 112.55, type: 'big_city', troops: 20000, region: 'NORTH' },
+
     { id: 'city_xiangyang', name: '襄阳', factionId: 'xiangzhou', lat: 32.01, lng: 112.12, type: 'medium_city', region: 'JIANGNAN', troops: 10000, tier: 1, note: '襄州治所；三国至宋荆襄枢纽' },
 
     { id: 'city_shouxian', name: '寿春', factionId: 'zhong', lat: 32.59, lng: 116.8, type: 'medium_city', region: 'CENTRAL', troops: 10000, tier: 1, note: '楚后期都、淮南/寿州治；淮西重镇' },
@@ -563,7 +555,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         tier: 1,
         note: '敦煌；沙州小城',
     },
-    { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.0500, lng: 103.8333, type: 'medium_city', region: 'HEXI', troops: 10000, tier: 1, note: '金城郡·兰州治所；赵充国屯田金城' },
+    { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.062422, lng: 103.765869, type: 'medium_city', region: 'HEXI', troops: 20000, mirror: true },
 
     { id: 'city_ledu', name: '浇河', factionId: 'tuyu_d', lat: 35.7264, lng: 101.2061, type: 'small_city', region: 'TIBET', troops: 10000, note: '浇河故地；吐谷浑南界据地（王都伏俟城为隋西海郡）' },
     { id: 'city_lintao', name: '狄道', factionId: 'didao', lat: 35.37, lng: 103.86, type: 'small_city', troops: 5000, region: 'HEXI' },
@@ -1763,9 +1755,7 @@ export const PERIPHERY: CityDataV2[] = [
         note: '列城；玛域小城',
     },
 
-    {
-        id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d',
-        lat: 36.625, lng: 101.775, type: 'small_city', region: 'TIBET', troops: 10000, note: '青唐城故址；南凉秃发南徙后据青唐（《晋书·秃发乌孤传》）' },
+    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'small_city', region: 'TIBET', troops: 20000, mirror: true },
     { id: 'city_dangxiong', name: '当雄', factionId: 'khoshut', lat: 30.48, lng: 91.1, type: 'small_city', region: 'TIBET', troops: 10000,
         note: '当雄；和硕特小城',
     },
@@ -2052,15 +2042,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
     },
 
     // ── 2026-05-27 新增：先零(允吾) ──
-    {
-        id: 'city_yunwu',
-        name: '允吾',
-        factionId: 'xianlingqiang',
-        lat: 36.32, lng: 102.82,
-        type: 'small_city',
-        region: 'TIBET',
-        troops: 10000,
-        note: '金城郡允吾县；先零羌故地（《后汉书·西羌传》）' },
+    { id: 'city_yunwu', name: '允吾', factionId: 'xianlingqiang', lat: 36.301845, lng: 102.897949, type: 'small_city', region: 'TIBET', troops: 20000 },
+
 
     // ── 2026-05-27 新增：蒯(房陵) ──
     { id: 'city_fangling', name: '房陵', factionId: 'kuai', lat: 32.043007, lng: 110.692749, type: 'small_city', region: 'BASHU', troops: 10000, note: '房陵郡；蒯越蒯氏宗族部曲（汉末荆襄）' },
@@ -2911,6 +2894,14 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_tanzhong', name: '潭中', factionId: 'liuzhou', lat: 24.28, lng: 109.41, type: 'small_city', troops: 5000, region: 'LINGNAN' },
     { id: 'city_yunyang', name: '郧阳', factionId: 'luming', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 5000, region: 'CENTRAL' },
     { id: 'city_zhongshan', name: '中山', factionId: 'dingzhou', lat: 38.4708, lng: 115.0626, type: 'small_city', troops: 5000, region: 'NORTH' },
+    { id: 'city_ledou', name: '乐都', factionId: 'shanzhou', lat: 36.49, lng: 102.37, type: 'small_city', troops: 20000, region: 'HEXI' },
+    { id: 'city_xuecheng', name: '薛城', factionId: 'weizhou', lat: 31.43, lng: 103.16, type: 'small_city', troops: 20000, region: 'BASHU' },
+
+
+
+
+
+
 
 
 

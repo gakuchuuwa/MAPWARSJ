@@ -115,6 +115,7 @@ export const FACTIONS: Faction[] = [
     { id: 'shatuo', name: '沙陀' },
     { id: 'qidan', name: '契丹' },
     { id: 'bing', name: '并州' },
+
     { id: 'bohai', name: '渤海' },
     { id: 'jurchen', name: '女真' },
     { id: 'dangxiang', name: '大夏' },
@@ -161,6 +162,7 @@ export const FACTIONS: Faction[] = [
     { id: 'gouding', name: '句町' },
     { id: 'wuhuan', name: '乌桓' },
     { id: 'xianlingqiang', name: '先零' },
+
     { id: 'yelang', name: '夜郎' },
     { id: 'ailao', name: '哀牢' },
     { id: 'fuyu', name: '夫余' },
@@ -1129,6 +1131,14 @@ export const FACTIONS: Faction[] = [
     { id: 'liuzhou', name: '柳州' },
     { id: 'luming', name: '郧州' },
     { id: 'dingzhou', name: '定州' },
+    { id: 'shanzhou', name: '鄯州' },
+    { id: 'weizhou', name: '维州' },
+
+
+
+
+
+
 
 
 

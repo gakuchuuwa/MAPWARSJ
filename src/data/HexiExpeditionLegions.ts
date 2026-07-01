@@ -14,7 +14,6 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   yeli: { name: '擒生军', tier: 3 },             // 西夏主力野战部队之一，特色极其鲜明，升入T3知名
     weiming: { name: '嵬名亲卫', tier: 4 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽（缺乏极其著名的战术高光，降T3）
     guiyi: { name: '归义射雕手', tier: 1 },
-  xianlingqiang: { name: '凉州大马', tier: 3 },  // “凉州大马，横行天下”，汉末西北最顶级重骑兵的绝对文化符号，升入T3知名
   tufa_d: { name: '南凉铁骑', tier: 4 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）（缺乏极其著名的战术高光，降T3）
   juqu_d: { name: '卢水胡兵', tier: 3 },         // 五胡十六国时期河西走廊极其著名的部族武装（北凉基础），历史辨识度高，升入T3知名
   liangzhou: { name: '凉州突骑', tier: 4 },     // 姑臧·窦融河西骑兵美称（史书泛称，非固定番号；突骑＝突击骑）（缺乏进攻高光，降T3）
@@ -42,5 +41,6 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   lushui: { name: '飞熊军', tier: 2 },          // 凉州军阀核心奇兵，实战中击败过孙坚与吕布，战绩极度硬核，符合T2战术
   woye: { name: '度辽营', tier: 2 },           // 东汉经典边防番号度辽将军，专属名号特色鲜明，升T2
     yangguan: { name: '西凉铁骑', tier: 1 },
-        yuezhi: { name: '折兰骑', tier: 3 },             // 霍去病河西之战斩杀的匈奴最强王牌，战役背景极具符号价值，升入T3知名
+        yuezhi: { name: '折兰骑', tier: 3 },             // 霍去病河西之战斩杀的匈奴最强王牌，战役背景极具符号价值，升入T3知名,
+    shanzhou: { name: '陇右健儿', tier: 1 },
 };

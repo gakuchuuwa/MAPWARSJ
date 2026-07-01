@@ -38,7 +38,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   zhongshan: { name: '常山龙骑', tier: 4 }, // 真定·常山特色骑兵（致敬常山赵子龙）（缺乏极其著名的战术高光，降T3）
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
   helian: { name: '铁弗卫队', tier: 4 },     // 统万城·赫连勃勃铁弗亲卫（常规番号，降T3）
-  bing: { name: '并州狼骑', tier: 2 },     // 吕布麾下冲阵铁骑，以冲破敌阵的高超战术机动性闻名，升入T2战术
+    bing: { name: '并州狼骑', tier: 2 },
   you: { name: '上谷突骑', tier: 1 },        // 居庸关·幽州上谷郡（升T1）
   yi: { name: '易州戍兵', tier: 2 },           // 于谦北京保卫战临危受命，绝境逆转，升T2
   changshan: { name: '倒马关卒', tier: 4 },   // 倒马关·常山

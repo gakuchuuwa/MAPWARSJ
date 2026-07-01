@@ -67,5 +67,6 @@ qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅�
     qianhui: { name: '回民义军', tier: 4 },           // 常规番号，降T3
   huizhou_d: { name: '元戎弩兵', tier: 2 }, // 诸葛亮损益连弩部队，战术辨识度极高的特种精锐，升入T2战术
     wuling: { name: '五溪藤甲', tier: 3 },            // 三国藤甲兵文化符号（火烧藤甲），显著文化知名度，升T2
-    zizhou: { name: '忠武八都', tier: 1 },            // 唐末平定黄巢、维持中原局势的绝对王牌主力军，升入T1战略
+    zizhou: { name: '忠武八都', tier: 1 },            // 唐末平定黄巢、维持中原局势的绝对王牌主力军，升入T1战略,
+    weizhou: { name: '奉义军', tier: 1 },
 };

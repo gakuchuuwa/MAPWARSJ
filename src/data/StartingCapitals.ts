@@ -37,7 +37,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'zhou': 'city_qishan',
     'qi': 'city_linzi',
     'jin': 'city_quwo',
-    'bing': 'city_taiyuan',
+'bing': 'city_taiyuan',
     'chu': 'city_ying',
     'wu': 'city_gusu',
 'yue': 'city_kuaiji',
@@ -394,7 +394,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'shengmiao': 'city_jiading',
 
 
-    'xianlingqiang': 'city_yunwu',
+'xianlingqiang': 'city_yunwu',
 
     'kuai': 'city_fangling',
     'yong': 'city_shangyong',
@@ -789,6 +789,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'liuzhou': 'city_tanzhong',
 'luming': 'city_yunyang',
 'dingzhou': 'city_zhongshan',
+'shanzhou': 'city_ledou',
+'weizhou': 'city_xuecheng',
 };
 
 // @ts-ignore

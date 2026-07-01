@@ -92,7 +92,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shazhou': '沙',
 'shatuo': '沙陀',
 'qidan': '契丹',
-    'bing': '并',
+'bing': '并',
 'bohai': '渤海',
     'jurchen': '女真',
 'dangxiang': '大夏',
@@ -163,7 +163,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tongzhou': '同',
     'baibo': '黄巾',
     'wuhuan': '乌桓',
-    'xianlingqiang': '先零',
+'xianlingqiang': '先零',
 'cheshihou': '乌垒',
 'yelang': '夜郎',
 'ailao': '哀牢',
@@ -860,6 +860,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chizhou': '池',
 'dingzhou': '定',
     'guiyi': '归义',
+'shanzhou': '鄯',
+'weizhou': '维',
 };
 
 // @ts-ignore

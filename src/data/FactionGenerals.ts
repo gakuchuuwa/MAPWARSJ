@@ -58,7 +58,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     tiemuer: { generalId: 'tiemuer_tiemuer', generalName: '帖木儿', portrait: '/assets/CENTRAL_ASIA/tiemuer_tiemuer.png' },
     siam: { generalId: 'siam_nalixuan', generalName: '纳黎萱', portrait: '/assets/DIANQIAN/siam_nalixuan_pugan.png' },
     shang: { generalId: 'shang_fuhao', generalName: '妇好', portrait: '/assets/xianqin/shang_fuhao.png' },
-    bing: { generalId: 'bing_liukun', generalName: '刘琨', portrait: '/assets/CENTRAL/bing_liukun.png' },
+    bing: { generalId: 'bing_liukun', generalName: '李勣', portrait: '/assets/CENTRAL/bing_liukun.png' },
     min: { generalId: 'min_wangshenzhi', generalName: '王审知', portrait: '/assets/JIANGNAN/min_wangshenzhi.png' },
     quanzhou: { generalId: 'quanzhou_liucongxiao', generalName: '留从效', portrait: '/assets/JIANGNAN/quanzhou_liucongxiao.png' },
     han_d: { generalId: 'han_d_liubang', generalName: '刘邦', portrait: '/assets/liuhan/han_d_liubang.png' },
@@ -786,7 +786,9 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     shuizu: { generalId: 'shuizu_panxinjian', generalName: '潘新简', portrait: '/assets/DIANQIAN/shuizu_panxinjian.png' },
     liuzhou: { generalId: 'liuzhou_shenxiyi', generalName: '沈希仪', portrait: '/assets/LINGNAN/liuzhou_shenxiyi.png' },
     luming: { generalId: 'luming_luxiangsheng', generalName: '卢象升', portrait: 'assets\daming\luming_luxiangsheng.png' },
-    dingzhou: { generalId: 'dingzhou_d_murongchui', generalName: '慕容垂', portrait: '/assets/CENTRAL/dingzhou_d_murongchui.png' },
+    dingzhou: { generalId: 'dingzhou_d_murongchui', generalName: '慕容垂', portrait: 'assets\NORTH\dingzhou_d_murongchui.png' },
+    shanzhou: { generalId: 'shanzhou_wangzhongsi', generalName: '王忠嗣', portrait: 'assets\litang\shanzhou_wangzhongsi.png' },
+    weizhou: { generalId: 'weizhou_weigao', generalName: '韦皋', portrait: 'assets\litang\weizhou_weigao.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

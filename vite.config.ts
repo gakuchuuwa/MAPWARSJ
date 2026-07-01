@@ -806,13 +806,11 @@ function batchImportFiles(entries: BatchEntry[]): BatchFileResult[] {
             results.push({ file: 'src/data/factions.ts', ok: true, operation: 'replace' });
         }
 
-        // cities_v2.ts — 类型优先用表单选择(entry.cityType)，未传则按名字自动判；兵力按类型映射
+        // cities_v2.ts — 类型优先用表单选择(entry.cityType)，未传则按名字自动判(默认小城)。
+        //   兵力统一 20000：所有据点开局默认兵力都是 20000（用户定，不按类型区分）。
         const detected = detectCityType(entry.cityName);
-        const TROOPS_BY_TYPE: Record<string, number> = {
-            small_city: 5000, medium_city: 10000, big_city: 20000, pass: 10000,
-        };
         const cityType = entry.cityType || detected.type;
-        const troops = entry.cityType ? (TROOPS_BY_TYPE[entry.cityType] ?? detected.troops) : detected.troops;
+        const troops = 20000;
         const regionPart = entry.region ? `, region: '${entry.region}'` : '';
         const cityLine = `{ id: '${cId}', name: '${entry.cityName}', factionId: '${fId}', lat: ${entry.lat}, lng: ${entry.lng}, type: '${cityType}', troops: ${troops}${regionPart} },`;
         if (isNewCity) {
