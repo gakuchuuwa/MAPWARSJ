@@ -13,17 +13,17 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
     heng1: { name: '赵边骑', tier: 1 },
-  huan: { name: '神臂弓手', tier: 3 },      // 方渠·宋代西军种师道神臂弓手
+  huan: { name: '神臂弓手', tier: 2 },      // 宋军最倚仗的跨时代战术兵种，屡次在野战击退重骑兵，升入T2战术
   qingyuan_bd: { name: '白马突骑', tier: 4 }, // 保定·周德威白马突骑（缺乏极其著名的战术高光，降T3）
 
   // ── §2 北方 12 支 ──
   yan: { name: '渔阳突骑', tier: 1 },       // 古北口·§2 #2 光武幽州精骑（升T1）
   gongsun_d: { name: '襄平狟骑', tier: 4 }, // 襄平·公孙度襄平狟骑（缺乏极其著名的战术高光，降T3）
   shizhao_d: { name: '黑槊龙骧', tier: 2 }, // 邢台·石虎后赵禁军
-    yunzhong: { name: '苍头军', tier: 4 },           // 缺乏知名度支撑，降T3
+    yunzhong: { name: '苍头军', tier: 3 },           // 中国古代（秦汉等）特指奴仆组成的军队，极具军制与阶级特色的文化名词，升入T3知名
   tuoba: { name: '拓跋虎骑', tier: 4 },     // 大同·拓跋鲜卑（缺乏极其著名的战术高光，降T3）
   // 武川镇军已迁草原（yuwen@武川镇）
-  erzhu: { name: '六镇戍兵', tier: 4 },     // 秀容川·北魏六镇武人（常规番号，降T3）
+  erzhu: { name: '六镇戍兵', tier: 1 },     // 北魏六镇，横扫天下的基石，六镇之乱孕育了北齐、北周及隋唐开国集团，影响极其深远，升入T1战略
   gaoqi_d: { name: '百保鲜卑', tier: 2 },   // 蓨城·北齐百保精兵·高长恭禁卫（顶级近卫，降T2）
   yingzhou_ying_d: { name: '黄龙兵', tier: 1 }, // 朝阳·慕容皝棘城大破石赵
   chile: { name: '两池军', tier: 4 },       // 云中·§2 #11
@@ -31,14 +31,14 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   ming_d: { name: '明军三大营', tier: 1 },   // 北京·五军神机三千营（升T1）
 
   // ── §1 中原表·地理偏北（用户指定）──
-  zhuozhou: { name: '曳落河', tier: 1 },     // 范阳·§1 #48 安禄山蕃胡骑兵
+  zhuozhou: { name: '曳落河', tier: 2 },     // 安禄山麾下八千胡人死士，属于安史叛军这支战略主力中的特种战术尖刀，符合T2战术
   shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
   lingzhou: { name: '朔方突骑', tier: 1 },  // 回乐·仆固怀恩朔方突骑
   dingxiang_d: { name: '定襄骁骑', tier: 0 }, // 恶阳岭·贞观四年李靖三千骁骑出恶阳岭夜袭定襄（神级进攻大捷，升T0）
   zhongshan: { name: '常山龙骑', tier: 4 }, // 真定·常山特色骑兵（致敬常山赵子龙）（缺乏极其著名的战术高光，降T3）
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
   helian: { name: '铁弗卫队', tier: 4 },     // 统万城·赫连勃勃铁弗亲卫（常规番号，降T3）
-  bing: { name: '并州狼骑', tier: 3 },     // 晋阳·吕布张辽并州骑兵（战术尖刀，缺乏大局战略胜利，降T2）
+  bing: { name: '并州狼骑', tier: 2 },     // 吕布麾下冲阵铁骑，以冲破敌阵的高超战术机动性闻名，升入T2战术
   you: { name: '上谷突骑', tier: 1 },        // 居庸关·幽州上谷郡（升T1）
   yi: { name: '易州戍兵', tier: 2 },           // 于谦北京保卫战临危受命，绝境逆转，升T2
   changshan: { name: '倒马关卒', tier: 4 },   // 倒马关·常山
@@ -51,16 +51,16 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 恒山军除名（泛称无固定番号）
   dai_d: { name: '左射军', tier: 4 },         // 灵仙·石敬瑭嫡系（缺乏极其著名的战术高光，降T3）
   dongdan: { name: '东丹卫兵', tier: 4 },       // 敖东城·耶律倍东丹国（缺乏极其著名的战术高光，降T3）
-  xuan: { name: '宣大劲骑', tier: 4 },          // 宣化·明九边宣大精骑（缺乏极其著名的战术高光，降T3）
-  zhe_d: { name: '折家将兵', tier: 4 },         // 府谷·宋府州折氏十世将门（缺乏极其著名的战术高光，降T3）
+  xuan: { name: '宣大劲骑', tier: 1 },          // 宣大（宣府大同）是明代九边最核心防线，抵御蒙古的最核心野战/戍卫主力，升入T1战略
+  zhe_d: { name: '折家将兵', tier: 3 },         // 北宋著名“折家将”，与杨家将齐名的世代镇守边关的将门军事符号，升入T3知名
   shanrong: { name: '山戎突骑', tier: 4 },      // 无终·田畴导曹操伐乌桓（缺乏极其著名的战术高光，降T3）
   pingyuan: { name: '平原义军', tier: 3 },      // 颜真卿首倡义兵，无战术突击高光，属于常规义军，降回T3
-  dada_ming: { name: '鞑靼铁骑', tier: 4 },          // 河套·明代蒙古鞑靼部（缺乏极其著名的战术高光，降T3）
+  dada_ming: { name: '鞑靼铁骑', tier: 1 },          // 明代蒙古主力，土木堡之变全歼三大营，长达两百年压制在明朝北疆的绝对战略死敌，升入T1战略
   
   // ── 2026-06-18 自东北文件迁回
   jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·李成梁辽东骑兵（打出极强战绩，升T1）
   zu_d: { name: '关宁铁骑', tier: 1 },       // 宁远·祖大寿（原T0降级，防御战）
-  mao_wenlong: { name: '东江劲旅', tier: 4 }, // 皮岛·毛文龙（§1 #86）
+  mao_wenlong: { name: '东江劲旅', tier: 3 }, // 毛文龙在皮岛建立的敌后抗金武装，牵制后金大量兵力，悲剧色彩和知名度极高，升入T3知名
   liwang: { name: '河间突骑', tier: 4 },     // 乐成·李光弼河朔骑兵（缺乏极其著名的战术高光，降T3）
   hejian: { name: '白马义从', tier: 2 },      // 文安·公孙瓒幽州突骑（界桥全军覆没，特色之兵降T2）
   qu_d: { name: '先登营', tier: 2 },       // 界桥·麴义破公孙瓒（192年）

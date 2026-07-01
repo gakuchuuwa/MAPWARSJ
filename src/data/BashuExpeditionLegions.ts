@@ -10,7 +10,7 @@
 export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   wudu: { name: '甘泉驿骑', tier: 4 },         // 甘泉驿·张翼甘泉驿骑
     baishui: { name: '白水戍卒', tier: 4 },
-    dangzhou: { name: '阴平氐兵', tier: 1 },
+    dangzhou: { name: '阴平氐兵', tier: 2 }, // 邓艾偷渡阴平时临时征用的特种奇兵，单次战术奇迹的教科书代表，下调至T2战术
   jinchuan_g: { name: '金川番兵', tier: 4 },    // 勒乌围·金川土兵
   //  miaomin: { name: '苗疆义军', tier: 4 },      // 平陇·石柳邓苗民 — 已迁 DianQianExpeditionLegions
   //  dongzu: { name: '侗家义军', tier: 4 },       // 雷公山·吴勉侗族 — 已迁 DianQianExpeditionLegions
@@ -22,7 +22,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   langzhou: { name: '巴西劲卒', tier: 4 },       // 隆城·张飞巴西劲卒（名将突击队）（缺乏极其著名的战术高光，降T3）
   zhuoshi: { name: '井阑劲卒', tier: 4 },         // 临邛·诸葛连弩营（缺乏极其著名的战术高光，降T3）
   tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛（战功赫赫的特色尖刀）
-  shu: { name: '白毦精兵', tier: 3 },           // 成都·诸葛亮连弩兵（蜀国）
+  shu: { name: '白毦精兵', tier: 2 },           // 刘备的亲卫特种兵，在夷陵之战打出极其强悍的战术掩护保卫刘备，升入T2战术
   yangzhou: { name: '无当飞军', tier: 2 },   // 兴势山·王平统率山地劲旅（山地特种防御）
   shuixi: { name: '罗罗兵', tier: 4 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名
@@ -39,7 +39,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   fushi: { name: '氐族劲卒', tier: 4 },         // 略阳·苻洪氐族劲卒（苻氏）（缺乏极其著名的战术高光，降T3）
     yang_bozhou: { name: '播州土兵', tier: 4 },    // 海龙屯·播州杨氏
   yong: { name: '庸国戍卒', tier: 4 },           // 上庸·古庸国
-  cong: { name: '賨族勇士', tier: 4 },           // 宕渠·賨族
+  cong: { name: '賨族勇士', tier: 3 },           // 古巴人（板楯蛮），以巴渝舞战法协助刘邦平定三秦，极具历史辨识度，升入T3知名
     wuxi: { name: '武陵弓蛮', tier: 3 }, // 盘瓠神话起源，自汉至唐一直是西南地区极具代表性的蛮族武装，升入T3知名
   song2: { name: '松州戍卒', tier: 4 },          // 嘉诚·唐蕃古道松州
   yidou: { name: '夷陵奇兵', tier: 2 },          // 三国夷陵之战火烧连营，显著文化知名度，升T2

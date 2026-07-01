@@ -456,7 +456,7 @@ export class BattleField {
         const attackerFactionId = this.attackerGroup.factionId;
         const mainDefender = this.defenderGroup.units.find(u => u.unit.unitType === 'city');
         if (mainDefender && mainDefender.unit.factionId === attackerFactionId) {
-            gameLog('battle', `🏰 [BattleField] Siege target ${mainDefender.unit.name} is now friendly to attackers. Ending battle.`);
+            gameLog('battle', `🏯 [BattleField] Siege target ${mainDefender.unit.name} is now friendly to attackers. Ending battle.`);
             this.resolve(this.attackerGroup, this.defenderGroup); // Attacker wins (city already flipped)
             return;
         }

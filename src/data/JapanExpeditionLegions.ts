@@ -23,11 +23,11 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   totomi: { name: '三河武士', tier: 1 },       // 远江/三河·德川家核心死忠精锐
   echigo: { name: '毘沙門衆', tier: 3 },         // 上杉谦信亲卫队，属于“顶级近卫”，降回T2
   aki: { name: '村上水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷（毛利氏水军主力）
-  chosokabe: { name: '一领具足', tier: 3 },     // 冈丰城·长宗我部半农半兵精锐
+  chosokabe: { name: '一领具足', tier: 2 },     // 日本战国长宗我部氏著名的半农半兵战术体制，极高集结速度，升入T2战术
   aizu: { name: '会津藩士', tier: 3 },         // 戊辰战争中旧幕府武士最悲壮顽强的抵抗力量代表，升入T3知名
   izumo: { name: '新宫党', tier: 4 },          // 月山富田·尼子氏最强武装（原 T3）（缺乏极其著名的战术高光，降T3）
   shimotsuke: { name: '宇都宫弓取', tier: 4 },        // 宇都宫·下野宇都宫氏武士团（原纪清两党）
-  fujiwara: { name: '奥州武士', tier: 4 },     // 柳之御所·奥州藤原氏
+  fujiwara: { name: '奥州武士', tier: 3 },     // 日本历史上极为著名的剽悍代名词与地区武装符号，升入T3知名
   kakizaki: { name: '安藤氏兵', tier: 4 },     // 胜山馆·安藤氏虾夷管领（原虾夷探题）
   nanbu: { name: '南部铁骑', tier: 4 },        // 根城·南部氏骑兵（原 T3）（缺乏极其著名的战术高光，降T3）
   osumi: { name: '九州防人', tier: 3 },         // 《万叶集》防人歌的载体，日本古代防备唐朝与新罗的极其著名的文化戍边符号，升入T3知名

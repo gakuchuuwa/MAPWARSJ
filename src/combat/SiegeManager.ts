@@ -432,7 +432,7 @@ export class SiegeManager {
 
         if (distToCity <= SIEGE_TRIGGER_DISTANCE) {
             // 已在攻击范围内 — 直接开始战斗
-            siegeLog(`🏰 [SiegeManager] ${attackerArmy.name} within siege range of ${targetCity.name}, starting combat.`);
+            siegeLog(`🏯 [SiegeManager] ${attackerArmy.name} within siege range of ${targetCity.name}, starting combat.`);
             this.onArmyArrive(attackerArmy, targetCity, siegeData.attackerFactionId, siegeData, this.consumeMissionComplete(attackerArmy));
         } else {
             // 需要行军 — 标记为 pending
@@ -545,7 +545,7 @@ export class SiegeManager {
         }
         // [新增] 移除 pending 追踪（军团已抵达）
         this.pendingSieges.delete(army.id);
-        siegeLog(`🏰 [SiegeManager] 军团 ${army.name} 抵达，pending sieges 剩余: ${this.pendingSieges.size}`);
+        siegeLog(`🏯 [SiegeManager] 军团 ${army.name} 抵达，pending sieges 剩余: ${this.pendingSieges.size}`);
 
         // [FIX] Always use the latest city data from CityManager to avoid stale closure objects
         targetCity = this.cityManager.getCity(targetCity.id);
@@ -673,7 +673,7 @@ export class SiegeManager {
                 // [FIX] 统一 capture 逻辑：检查是否需要更新城市
                 const latestCity = this.cityManager.getCity(targetCity.id);
                 if (latestCity && latestCity.factionId !== army.getFactionId()) {
-                    siegeLog(`🏰 [Siege] City Conquered by ${army.name}: ${targetCity.name}`);
+                    siegeLog(`🏯 [Siege] City Conquered by ${army.name}: ${targetCity.name}`);
                     this.cityManager.updateCity(targetCity.id, {
                         factionId: army.getFactionId(),
                         troops: 1000,

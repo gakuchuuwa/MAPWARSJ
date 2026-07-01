@@ -10,8 +10,8 @@
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
       wei: { name: '魏之武卒', tier: 0 },        // 汴梁·战国首支职业重步兵（吴起阴晋大捷）
     qin: { name: '铁鹰锐士', tier: 1 },
-  qi: { name: '齐之技击', tier: 1 },       // 临淄·§1 #13 田忌孙膑
-  han: { name: '韩之劲弩', tier: 3 },        // “天下之强弓劲弩皆从韩出”，战国时代极具特色的兵种符号，升入T3知名
+  qi: { name: '齐之技击', tier: 2 },       // 战国齐国雇佣游侠体制，擅打顺风仗但缺乏战略韧性与军团纪律，下调至T2战术
+  han: { name: '韩之劲弩', tier: 2 },        // 战国时期韩国凭精良弩机在阵地防御与远程打击独步天下的战术兵种，升入T2战术
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
   han_d: { name: '赤帝亲兵', tier: 4 },      // 南郑·刘邦专属（缺乏极其著名的战术高光，降T3）
   pizhou: { name: '陷阵营', tier: 2 },        // 下邳·高顺陷阵营
@@ -32,7 +32,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
     li_lx_d: { name: '陇右突骑', tier: 1 },
   xiayang_d: { name: '西河突骑', tier: 4 }, // 龙门·唐同州境黄河禹门戍防（《水经注》夏阳龙门）（缺乏极其著名的战术高光，降T3）
-  baibo: { name: '白波黄巾', tier: 4 },     // 白波谷·郭太白波黄巾
+  baibo: { name: '白波黄巾', tier: 3 },     // 东汉末年最著名的黄巾军余部，护驾汉献帝东归，历史知名度极高，升入T3知名
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
   tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
   dixiang: { name: '猪突豨勇', tier: 3 },   // 王莽新朝特种部队，极度奇葩、辨识度极高的历史番号，升入T3知名
@@ -59,7 +59,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yuzhou: { name: '雍丘锐士', tier: 4 },     // 雍丘·祖逖中流击楢（缺乏极其著名的战术高光，降T3）
   xin: { name: '上党轻骑', tier: 4 },          // 长子·王猛潞川破前燕（缺乏极其著名的战术高光，降T3）
   beidi: { name: '北地羌骑', tier: 1 },        // 萧关·姚苌岭北占据
-  yingzhou_d: { name: '选锋军', tier: 1 },       // 顺昌之战大破金军主力，具备建制延续性的王牌野战军，升T1
+  yingzhou_d: { name: '选锋军', tier: 2 },       // 南宋及多朝极常见的临战前锋突击队编制，缺乏主宰大局的战略唯一性，下调至T2战术
   // 北门飞骑除名
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
   lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
@@ -89,7 +89,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   dang_d: { name: '厅子都', tier: 2 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
     xiao_d: { name: '雍州骁锐', tier: 4 },            // 缺乏知名度支撑，降T3
-  zhengzhou: { name: '白袍军', tier: 1 },        // 陈庆之七千白袍军虽然战绩逆天，但最终未能灭亡北魏（孤军深入后败退），不符合"灭国"硬标准，降为T1战略王牌。
+  zhengzhou: { name: '白袍军', tier: 2 },        // 仅存在于北伐战役，随后覆灭，极度缺乏建制延续性，属于特定战役的巅峰高光，符合T2战术
   song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军,
     zhao: { name: '邯郸甲士', tier: 4 },              // 缺乏知名度支撑，降T3
     qing: { name: '泾原锐骑', tier: 1 },

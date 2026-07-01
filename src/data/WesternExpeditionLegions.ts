@@ -17,15 +17,15 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   chuyue: { name: '处月骑兵', tier: 3 }, // 沙陀族前身处月部，唐末五代改写中原历史的源头，升T2
   keerkezi: { name: '柯尔克孜骑', tier: 3 }, // 柯尔克孜族英雄玛纳斯史诗，显著文化知名度，升T2
   pisha: { name: '毗沙都督卫', tier: 4 }, // 麻扎塔格·毗沙
-  xingxingxia: { name: '交河锐骑', tier: 4 }, // 星星峡·郭孝恪（缺乏极其著名的战术高光，降T3）
+  xingxingxia: { name: '交河锐骑', tier: 3 }, // 交河故城是西域最为著名、最具沧桑感的历史文化名城符号，升入T3知名
   wulianghai: { name: '乌梁海巡骑', tier: 4 }, // 布尔根·车凌乌巴什
   qiuci: { name: '龟兹精兵', tier: 3 },   // 丝路第一大国龟兹，鸠摩罗什故国，显著文化知名度，升T2
   yuchi: { name: '于阗精兵', tier: 2 },       // 尉迟王族抗击黑汗四十载，独立坚守的特色王牌，升T2
-  an: { name: '昭武精骑', tier: 4 },        // 蒲华·昭武九姓安国（原伊列克近卫严重错代错位）（缺乏极其著名的战术高光，降T3）
+  an: { name: '昭武精骑', tier: 3 },        // “昭武九姓”粟特人，垄断丝路贸易，安禄山叛军核心精锐，极其著名的历史与文化符号，升入T3知名
   yiduhu: { name: '西州回鹘', tier: 3 },      // 高昌·北庭回鹘取西州（缺乏极其著名的战术高光，降T3）
-  shule: { name: '阿兰斯近卫', tier: 4 },     // 盘橐·阿尔斯兰喀喇汗近卫（常规番号，降T3）
+  shule: { name: '阿兰斯近卫', tier: 3 },     // 元代著名的“阿速回军”（阿兰人近卫军），深度介入元廷斗争的异族卫队，知名度极高，升入T3知名
   yanqi: { name: '焉耆龙骑兵', tier: 4 },   // 员渠城·焉耆龙骑（§14 #6）（缺乏极其著名的战术高光，降T3）
-  wusun: { name: '昆莫亲卫', tier: 4 }, // 赤谷城·乌孙王帐（缺乏极其著名的战术高光，降T3）
+  wusun: { name: '昆莫亲卫', tier: 3 }, // 汉代西域最强霸主乌孙国国王（昆莫）亲卫，汉朝联姻抗匈的绝对盟友，升入T3知名
   chagatai: { name: '蒙兀儿铁骑', tier: 1 }, // 东察合台汗国主力，称霸西域，建制延续性强，升T1
   dayuan: { name: '汗血天马骑', tier: 3 },   // 大宛汗血宝马+李广利万里远征，极高文化知名度，升T2
   shache: { name: '莎车左右骑', tier: 4 },   // 渠莎·汉代西域强国（缺乏极其著名的战术高光，降T3）
@@ -37,7 +37,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   wensu: { name: '温宿锐卒', tier: 4 },      // 三重城·温宿国
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
   // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
-  quli: { name: '轮台屯骑', tier: 4 },
+  quli: { name: '轮台屯骑', tier: 3 }, // 汉朝经营西域的标志性起点（轮台罪己诏），中国边塞诗中最出名的地标词汇，升入T3知名
     dzungar: { name: '绰罗斯精骑', tier: 1 },          // 准噶尔汗国核心，与清朝对峙数十年的独立战略主力，升T1
   yarkand: { name: '英吉沙骑兵', tier: 4 },
   tuerhute: { name: '鹰娑川铁骑', tier: 3 },
@@ -51,11 +51,11 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   ruoqiang: { name: '婼羌部族兵', tier: 4 },  // 卡克里克·婼羌部落
   weili: { name: '尉犁飞骑', tier: 4 },       // 库尔勒·尉犁国王城
   duerbote: { name: '杜尔伯特骑', tier: 4 }, // 托克逊·杜尔伯特部
-  sai: { name: '塞种弓骑', tier: 4 },         // 握瑟德·塞种部落
+  sai: { name: '塞种弓骑', tier: 3 },         // 斯基泰人（塞种），横扫中亚及西域的古老印欧游牧霸主，文化及考古名气极大，升入T3知名
   xiye: { name: '西夜国兵', tier: 4 },        // 叶城·西夜国
   weiwuer: { name: '回部伯克卫', tier: 4 },   // 玉尔滚·回部伯克
     shanshan: { name: '楼兰弓手', tier: 3 },
   xiyuduhu: { name: '西域都护军', tier: 1 },  // 它乾城·班超都护府汉军,
     tajikezu: { name: '帕米尔山民', tier: 4 },
-    anxi: { name: '安西陌刀军', tier: 1 },
+    anxi: { name: '安西陌刀军', tier: 2 }, // 依靠陌刀武器组建的特种反骑兵阵列，属于战术突击分队而非宏大野战主力，符合T2战术
 };

@@ -444,7 +444,7 @@ export class LegionManager {
                         // Arrival threshold
                         if (dist <= 0.2) {
                             // 已有攻城战时仍走 triggerSiege → onArmyArrive（同旗加入 / 第三方排队 / 新开战）
-                            gameLog('legionSiege', `🏰 [LegionManager] ${army.name} arrived at hostile city ${latestTargetCity.name} (${dist.toFixed(4)}). Triggering Siege!`);
+                            gameLog('legionSiege', `🏯 [LegionManager] ${army.name} arrived at hostile city ${latestTargetCity.name} (${dist.toFixed(4)}). Triggering Siege!`);
                             this.triggerSiege(army, latestTargetCity);
                             return; // Stop processing this army
                         }
@@ -538,7 +538,7 @@ export class LegionManager {
             return;
         }
 
-        gameLog('legionSiege', `🏰 ${army.name} 攻城【${targetCity.name}】`);
+        gameLog('legionSiege', `🏯 ${army.name} 攻城【${targetCity.name}】`);
 
         army.stopMovement(true);
         army.setCombatState(true, 'siege', { lat: targetCity.latitude, lng: targetCity.longitude });

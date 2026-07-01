@@ -567,7 +567,7 @@ export class GameMap {
 
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#795548;margin-top:4px;">
                         <input type="checkbox" id="chk-city-texture" checked> 
-                        <b>🏰 开启城市贴图</b>
+                        <b>🏯 开启城市贴图</b>
                     </label>
 
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#9c27b0;margin-top:4px;">

@@ -164,7 +164,7 @@ export function tryEngageFieldBattle(
         if (otherIsGarrison) {
             gameLog(
                 'legionSiege',
-                `🏰 ${army.name} 撞驻军 ${otherArmy.name} @${nearestCity!.name}，转攻城`
+                `🏯 ${army.name} 撞驻军 ${otherArmy.name} @${nearestCity!.name}，转攻城`
             );
             deps.triggerSiege(army, nearestCity!);
             return true;

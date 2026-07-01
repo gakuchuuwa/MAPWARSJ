@@ -486,7 +486,7 @@ export class CameraFollowUI {
                     </span>
                     <span style="margin-left:8px; white-space:nowrap; display:flex; align-items:center; gap:6px;">
                         势力 ${this.formatTroops(fTotal.troops)}
-                        <span style="color:#ffcf5a; font-size:13px; font-weight:bold; border:1px solid rgba(255,180,60,0.55); border-radius:3px; padding:0 6px; background:rgba(255,180,60,0.14); text-shadow:1px 1px 1px #000;">🏰 ${fTotal.cities} 城</span>
+                        <span style="color:#ffcf5a; font-size:13px; font-weight:bold; border:1px solid rgba(255,180,60,0.55); border-radius:3px; padding:0 6px; background:rgba(255,180,60,0.14); text-shadow:1px 1px 1px #000;">🏯 ${fTotal.cities} 城</span>
                     </span>
                 </div>
                 <div style="height:3px; background:rgba(255,255,255,0.06); border-radius:2px; margin-top:4px; overflow:hidden;">

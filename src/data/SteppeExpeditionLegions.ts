@@ -9,9 +9,9 @@
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   wuzhou: { name: '雁门边骑', tier: 4 },   // 善无·李广雁门（常规番号，降T3）
-  ashina: { name: '金山突厥兵', tier: 4 }, // 阿尔泰·阿史那燕都（阿史那氏突厥起源地）（缺乏极其著名的战术高光，降T3）
+  ashina: { name: '金山突厥兵', tier: 3 }, // 突厥阿史那氏的龙兴之地，极具突厥汗国起源的图腾色彩，升入T3知名
   liao_d: { name: '皮室军', tier: 1 },         // 临潢府·辽太祖皮室军（§6 #1）
-  yel: { name: '斡鲁朵军', tier: 4 },         // 降圣·契丹宫帐制（缺乏极其著名的战术高光，降T3）
+  yel: { name: '斡鲁朵军', tier: 1 },         // 大辽帝国压制北宋两百年的最核心禁卫常备军制度，升入T1战略
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 区T0锚·怯薛参与西征诸役；蒙古西征整体史家论以少胜多（§6 #2）
   borjigin: { name: '那可儿伴当', tier: 1 },     // 曲雕阿兰·铁木真那可儿亲卫
   ogodei: { name: '探马赤军', tier: 1 },       // 也迷里·木华黎统帅的探马赤军
@@ -19,16 +19,16 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   xiongnu: { name: '鸣镝精骑', tier: 1 },      // 头曼城·冒顿单于称霸大漠的鸣镝主力
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
 
-    huige: { name: '回纥精骑', tier: 4 },             // 缺乏知名度支撑，降T3
+    huige: { name: '回纥精骑', tier: 1 },             // 安史之乱挽救大唐，雄踞漠北百年的回纥汗国绝对主力，升入T1战略
   // shatuo → 北方 shatuo:鸦儿军（§1 #50；§6 #8 沙陀铁骑与鸦儿军同系，改挂北方）
   // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
-  gaoche: { name: '高车战车', tier: 4 },       // 浚稽山·高车战车兵（§6 #16）
-  rouran: { name: '柔然铁骑', tier: 4 },       // 赛尔乌苏·柔然骑兵（缺乏极其著名的战术高光，降T3）
+  gaoche: { name: '高车战车', tier: 3 },       // 古代高车人（丁零）标志性的高大车轮，早期草原极其典型的兵种文化，升入T3知名
+  rouran: { name: '柔然铁骑', tier: 1 },       // 花木兰抗击的庞大游牧汗国，突厥崛起前漠北霸主，升入T1战略
   xueyantuo: { name: '燕然铁骑', tier: 4 },    // 燕然勒石·窦宪破北匈奴刻石（缺乏极其著名的战术高光，降T3）
   naiman: { name: '乃蛮重骑', tier: 4 },       // 福海·乃蛮重装骑兵（§6 #19）（缺乏极其著名的战术高光，降T3）
   ongut: { name: '汪古骑', tier: 4 },        // 净州塞·汪古部阿剌兀思
-  wala: { name: '瓦剌铁骑', tier: 4 },         // 博尔巴任·也先瓦剌（§6 #12）（缺乏极其著名的战术高光，降T3）
-  geluolu: { name: '葛逻禄背弓', tier: 4 },    // 弓月城·三姓葛逻禄（缺乏极其著名的战术高光，降T3）
+  wala: { name: '瓦剌铁骑', tier: 1 },         // 土木堡之变生擒明英宗的元凶，与鞑靼并列的大明两百年草原死敌，升入T1战略
+  geluolu: { name: '葛逻禄背弓', tier: 3 },    // 怛罗斯之战导致大唐惨败的关键背叛者，极其著名的历史刺客，升入T3知名
   // 那可儿除名（与那可儿军重复）
   kumoxi: { name: '奚人游骑', tier: 4 },  // 饶乐水·库莫奚本部
   kumo: { name: '楮特奥隗部', tier: 4 },     // 马盂山·奚族楮特奥隗部
@@ -36,15 +36,15 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     kelie: { name: '札合骁骑', tier: 4 },
   kereyid: { name: '克烈护卫军', tier: 4 },     // 汪吉河·王汗克烈部（缺乏极其著名的战术高光，降T3）
   dingling: { name: '丁零游骑', tier: 4 }, // 贝加尔·丁零王（缺乏极其著名的战术高光，降T3）
-  xiajiasi: { name: '黠戛斯锐卒', tier: 4 }, // 攻灭回鹘汗国的黠戛斯精锐（缺乏极其著名的战术高光，降T3）
+  xiajiasi: { name: '黠戛斯锐卒', tier: 1 }, // 彻底摧毁回鹘汗国的“终结者”，改变漠北与西域历史格局的战略力量，升入T1战略
   donghu: { name: '东胡骑', tier: 4 },    // 巴彦乌拉·东胡王（缺乏极其著名的战术高光，降T3）
   tiele: { name: '铁勒骁骑', tier: 4 },
-  xibo_d: { name: '锡伯箭手', tier: 4 },        // 固尔札·清代锡伯营（原索伦营错族）
+  xibo_d: { name: '锡伯箭手', tier: 3 },        // 清代西迁新疆戍边，中国边防史与民族史的极高知名度符号，升入T3知名
   tatar: { name: '塔塔儿勇士', tier: 4 },
   merkit: { name: '蔑儿乞猎骑', tier: 4 },
   chahar: { name: '察哈尔八旗', tier: 4 },             // 缺乏知名度支撑，降T3
   yuwen: { name: '武川镇军', tier: 1 },     // 武川镇·沙苑之战大破东魏的关陇王牌
-  da_yuan: { name: '北元怯薛', tier: 4 },             // 缺乏知名度支撑，降T3
+  da_yuan: { name: '北元怯薛', tier: 3 },             // 大名鼎鼎的“怯薛军”（蒙古大汗禁卫），番号本身的文化重量足以跻身T3知名
   huyan: { name: '呼衍精骑', tier: 4 },
   yujiulu: { name: '郁久闾王骑', tier: 4 },            // 缺乏知名度支撑，降T3
   jalair: { name: '札剌亦儿军', tier: 4 },
@@ -59,10 +59,10 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   mengwu: { name: '忙古勒骑', tier: 4 },        // 狼居胥·合不勒汗
   zhadalan: { name: '札剌儿军', tier: 4 },      // 阔亦田·札木合
     oirat_ming: { name: '卫拉特重骑', tier: 4 },       // 缺乏知名度支撑，降T3
-  tumed: { name: '土默特精骑', tier: 4 },         // 归化城·俺答汗土默特精骑（缺乏极其著名的战术高光，降T3）
+  tumed: { name: '土默特精骑', tier: 3 },         // 俺答汗迫使明朝开启隆庆和议的代表武装，长城内外由战转和的标志，升入T3知名
   tushetu: { name: '库伦铁骑', tier: 4 },       // 库伦·土谢图汗
   yaoluoge: { name: '药罗葛骑', tier: 4 },      // 娑陵·药罗葛部
-    huihu: { name: '回鹘精骑', tier: 4 },             // 缺乏知名度支撑，降T3
+    huihu: { name: '回鹘精骑', tier: 1 },             // 安史之乱挽救大唐，雄踞漠北百年的回鹘汗国绝对主力，升入T1战略
   ashide: { name: '阿史德骑', tier: 4 },        // 黑沙城·阿史德氏
   pugu: { name: '蓝突厥骑', tier: 4 },          // 燕然山·仆固氏铁勒（缺乏极其著名的战术高光，降T3）
   pulei: { name: '蒲类飞骑', tier: 4 },         // 巴里坤·蒲类国故地
@@ -76,7 +76,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   baidi: { name: '白狄徒兵', tier: 3 },          // 春秋白狄徒兵，北方游牧中步兵独树一帜，兵种特色鲜明，升T2
   shiwei: { name: '室韦猎骑', tier: 4 },         // 俱轮泊·室韦都督府部众
   sunite: { name: '苏尼特骑', tier: 4 },         // 赛汉塔拉·苏尼特旗武装
-  bulat: { name: '布拉特猎兵', tier: 4 },      // 石勒喀河·布里亚特归附清朝
+  bulat: { name: '布拉特猎兵', tier: 3 },      // 布里亚特（布拉特）人，西伯利亚极具辨识度的民族武装符号，升入T3知名
   tuva: { name: '唐努旗兵', tier: 4 },           // 唐努·唐努乌梁海驻防
   // ── 2026-06-19 新增：漠北/漠南要塞精锐 ──
   chenli_d: { name: '祭天铁卫', tier: 3 },        // 匈奴祭天王庭护军，名号特色极鲜明，升T2

@@ -802,7 +802,7 @@ export function applyStrategicBattleToRolls(
         const next = roll * mult;
         gameLog(
             'battle',
-            `🏰 [武将技] ${unit.generalId} 【${label}】 ${sideLabel}有效战力 ×${mult} (${roll.toFixed(0)}→${next.toFixed(0)})`,
+            `🏯 [武将技] ${unit.generalId} 【${label}】 ${sideLabel}有效战力 ×${mult} (${roll.toFixed(0)}→${next.toFixed(0)})`,
         );
         return next;
     };

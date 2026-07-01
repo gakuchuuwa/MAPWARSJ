@@ -13,9 +13,9 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
 }>> = {
   // === 初始/默认（1） ===
   lelang: { name: '乐浪材官', tier: 4 },    // 息城·王颀乐浪材官
-  donghui: { name: '檀弓猎手', tier: 4 },  // 德源·东濊檀弓
-    gaogouli: { name: '萨水精兵', tier: 1 },
-  xuantu: { name: '皂衣先人', tier: 3 },     // 国内城·高句丽早期精锐（升T2）
+  donghui: { name: '檀弓猎手', tier: 3 },  // “楛矢石砮，檀弓角弓”，先秦古籍中极其出名的东夷/东北夷标志性兵种，升入T3知名
+    gaogouli: { name: '萨水精兵', tier: 2 }, // 因萨水之战水淹三十万隋军这一特定战役而名留青史，缺乏长久野战军建制，符合T2战术
+  xuantu: { name: '皂衣先人', tier: 2 },     // 前燕慕容恪廉台之战克制冉闵的连环马战术鼻祖，极其明确的战术阵法，升入T2战术
   xinluo: { name: '花郎道', tier: 3 },       // 金城·新罗花郎（§4 #3）
   baiji: { name: '百济五方兵', tier: 4 },        // 泗沘·百济五方兵制（缺乏极其著名的战术高光，降T3）
   goryeo: { name: '鹰扬军', tier: 4 },   // 开城·高丽鹰扬军（缺乏极其著名的战术高光，降T3）
@@ -23,7 +23,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣12破330（区T0锚点）
   hai2: { name: '海州石弓', tier: 4 },       // 瀑池/海州·崔莹
   joseon: { name: '义兴亲军卫', tier: 1 },       // 汉城·李成桂义兴亲军卫（§4 #9）
-  sheng_d: { name: '全罗水军', tier: 4 },   // 顺天·朝鲜全罗道水军（常规番号，降T3）
+  sheng_d: { name: '全罗水军', tier: 2 },   // 鸣梁海战以十三船击退百艘日军，打出不可思议的战术大捷实绩，符合T2战术
   chen3: { name: '马韩部族', tier: 4 },         // 欢州·辰王马韩
   danluo: { name: '三别抄', tier: 2 },        // 星主厅·高丽武人抗蒙（最终战败，T2）
     zhen: { name: '武珍锐卒', tier: 4 },
@@ -31,7 +31,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   ssangseong: { name: '和宁戍骑', tier: 4 }, // 铁岭关·李子春（缺乏极其著名的战术高光，降T3）
   hui: { name: '濊族步卒', tier: 4 },          // 何瑟罗·不耐侯（缺乏极其著名的战术高光，降T3）
   chungju_d: { name: '忠州忠义军', tier: 4 },    // 国原城·权栗忠清道募兵（常规番号，降T3）
-  gaya: { name: '金官伽倻兵', tier: 4 },         // 金海·金首露伽倻始祖（缺乏极其著名的战术高光，降T3）
+  gaya: { name: '金官伽倻兵', tier: 3 },         // 朝鲜半岛早期以“冶铁”文明著称的独立古国伽倻的代表，历史文化属性强，升入T3知名
     naju_d: { name: '罗州精兵', tier: 4 },            // 缺乏知名度支撑，降T3
   sabeol: { name: '沙伐义兵', tier: 4 },          // 三白·金时敏募义兵（缺乏极其著名的战术高光，降T3）
   xingliao: { name: '龙湾戍军', tier: 4 },      // 龙湾·兴辽边防

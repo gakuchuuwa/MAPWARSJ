@@ -17,7 +17,7 @@
  *   野战单位再 × CAMPAIGN_LEGION_MULT（默认 1.2），与文化系数相乘。
  *
  * 精锐 tier 加成（GameConfig.COMBAT.ELITE_TIER_MULT）：
- *   T0 ×1.5 | T1 ×1.4 | T2 ×1.2 | T3 ×1.1
+ *   T0 ×1.5 | T1 ×1.4 | T2 ×1.3 | T3 ×1.2 | T4 ×1.1
  */
 
 import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';
