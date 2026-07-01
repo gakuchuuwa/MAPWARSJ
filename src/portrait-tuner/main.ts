@@ -51,6 +51,10 @@ let selectedImage = '';
 let draft: Required<PortraitAdjustValues> = { ...PORTRAIT_ADJUST_NEUTRAL };
 let dirty = false;
 
+type GeneralEntry = { generalId: string; generalName: string; factionId: string; portrait: string };
+let generals: GeneralEntry[] = [];
+let selectedGeneralId = '';
+
 const app = document.getElementById('app')!;
 app.innerHTML = `
 <header class="pt-header">
@@ -70,6 +74,15 @@ app.innerHTML = `
     <input id="pt-search" class="pt-input" type="search" placeholder="搜索文件名…" />
     <div id="pt-stats" class="pt-stats"></div>
     <div id="pt-save-toast" class="pt-save-toast"></div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid #2a2620;">
+      <div style="font-weight:600;margin-bottom:6px;">给武将绑定立绘</div>
+      <div style="font-size:12px;color:#9a8f7d;margin-bottom:8px;">先在右侧点选一张图，再搜索选中武将，点绑定。只把武将「指向」该图，不移动/复制任何立绘文件。建议选与武将同文化区的图。</div>
+      <input id="pt-gen-search" class="pt-input" type="search" placeholder="搜索武将名 / ID…" style="width:100%;margin-bottom:6px;" />
+      <select id="pt-gen-select" class="pt-select" size="8" style="width:100%;"></select>
+      <div id="pt-gen-current" style="font-size:12px;color:#c8bda8;margin:6px 0;word-break:break-all;"></div>
+      <button type="button" id="pt-bind-btn" class="pt-btn pt-btn-primary" style="width:100%;" disabled>绑定选中图给该武将</button>
+      <div id="pt-bind-status" style="font-size:12px;margin-top:6px;min-height:16px;"></div>
+    </div>
   </aside>
   <main class="pt-main">
     <div class="pt-grid" id="pt-grid"></div>
@@ -85,6 +98,11 @@ const els = {
     stats: document.getElementById('pt-stats')!,
     grid: document.getElementById('pt-grid')!,
     saveToast: document.getElementById('pt-save-toast')!,
+    genSearch: document.getElementById('pt-gen-search') as HTMLInputElement,
+    genSelect: document.getElementById('pt-gen-select') as HTMLSelectElement,
+    genCurrent: document.getElementById('pt-gen-current')!,
+    bindBtn: document.getElementById('pt-bind-btn') as HTMLButtonElement,
+    bindStatus: document.getElementById('pt-bind-status')!,
 };
 
 function injectStyles(): void {
@@ -351,8 +369,9 @@ async function selectImageAndAutoSave(newImagePath: string): Promise<void> {
     if (targetCard) {
         targetCard.classList.add('is-active');
     }
-    
+
     updateSingleGridTransform(selectedImage);
+    updateBindPanel();
 }
 
 async function saveAdjustToServer(showToast = true): Promise<void> {
@@ -396,6 +415,13 @@ function bindEvents(): void {
     });
 
     els.search.addEventListener('input', () => renderGrid());
+
+    els.genSearch.addEventListener('input', () => renderGeneralOptions());
+    els.genSelect.addEventListener('change', () => {
+        selectedGeneralId = els.genSelect.value;
+        updateBindPanel();
+    });
+    els.bindBtn.addEventListener('click', () => { void bindSelectedImageToGeneral(); });
 
     document.getElementById('pt-save-file')!.addEventListener('click', async () => {
         commitDraftToAdjustData();
@@ -534,11 +560,104 @@ function populateFolders(): void {
     if (selectedFolder) els.folder.value = selectedFolder;
 }
 
+// ── 给指定武将绑定立绘（无需进战斗；旧立绘自动转闲置，由服务端 bind 处理）──
+async function loadGenerals(): Promise<void> {
+    try {
+        const res = await fetch('/api/entity-data');
+        if (!res.ok) return;
+        const data = await res.json();
+        generals = Object.entries((data.generals ?? {}) as Record<string, { generalId: string; generalName: string; portrait: string }>)
+            .map(([factionId, g]) => ({
+                generalId: g.generalId,
+                generalName: g.generalName,
+                factionId,
+                portrait: g.portrait,
+            }))
+            .sort((a, b) => a.generalName.localeCompare(b.generalName, 'zh-CN'));
+        renderGeneralOptions();
+    } catch (e) {
+        console.warn('[PortraitTuner] 加载武将列表失败', e);
+    }
+}
+
+function renderGeneralOptions(): void {
+    const q = els.genSearch.value.trim().toLowerCase();
+    const list = q
+        ? generals.filter((g) => g.generalName.toLowerCase().includes(q) || g.generalId.toLowerCase().includes(q))
+        : generals;
+    els.genSelect.innerHTML = list
+        .slice(0, 500)
+        .map((g) => `<option value="${g.generalId}">${g.generalName}（${g.generalId}）</option>`)
+        .join('');
+    if (list.some((g) => g.generalId === selectedGeneralId)) {
+        els.genSelect.value = selectedGeneralId;
+    } else {
+        selectedGeneralId = '';
+    }
+    updateBindPanel();
+}
+
+function updateBindPanel(): void {
+    const gen = generals.find((g) => g.generalId === selectedGeneralId);
+    els.genCurrent.innerHTML = gen
+        ? `当前立绘：<code>${gen.portrait || '(无)'}</code>`
+        : '';
+    const imgHint = selectedImage ? '' : '（请先在右侧点选一张图）';
+    els.bindBtn.textContent = `把选中图指给该武将${imgHint}`;
+    els.bindBtn.disabled = !(gen && selectedImage);
+}
+
+async function bindSelectedImageToGeneral(): Promise<void> {
+    const gen = generals.find((g) => g.generalId === selectedGeneralId);
+    if (!gen || !selectedImage) return;
+    if (!selectedImage.toLowerCase().endsWith('.png')) {
+        els.bindStatus.textContent = '⚠ 立绘必须是 .png';
+        els.bindStatus.style.color = '#e08a7a';
+        return;
+    }
+    // 跨文化区提醒：选中图与武将当前文化区夹不同时先确认（仍就地引用、不移动文件）
+    const genFolder = ((gen.portrait || '').match(/^\/assets\/([^/]+)\//) || [])[1];
+    const imgFolder = (selectedImage.match(/^\/assets\/([^/]+)\//) || [])[1];
+    if (genFolder && imgFolder && genFolder.toLowerCase() !== imgFolder.toLowerCase()) {
+        const ok = window.confirm(
+            `注意：所选图在【${imgFolder}】夹，而 ${gen.generalName} 属于【${genFolder}】文化区。\n` +
+            `绑定不会跨夹搬运（新立绘留在【${imgFolder}】夹内改名），但该武将会使用跨文化区的样貌，可能不搭。\n是否继续？`,
+        );
+        if (!ok) return;
+    }
+    els.bindBtn.disabled = true;
+    els.bindStatus.textContent = '绑定中…';
+    els.bindStatus.style.color = '#c8bda8';
+    try {
+        // 绑定：源图在「自己的夹」内改名为 {generalId}.png（认领闲置图不留重复），旧立绘转闲置。
+        // 不传 targetFolder → 服务端用源图所在夹，绝不把图搬进别的文化区。
+        const res = await fetch('/api/bind-general-portrait', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ generalId: gen.generalId, sourcePath: selectedImage }),
+        });
+        const result = await res.json();
+        if (!res.ok || !result.ok) throw new Error(result.error || `HTTP ${res.status}`);
+        els.bindStatus.textContent = `✓ ${gen.generalName} 新立绘已就位：${result.portraitPath || ''}（旧立绘已转闲置）`;
+        els.bindStatus.style.color = '#8bbf7a';
+        await loadGenerals();
+        await loadCatalogFromServer();
+        populateFolders();
+        renderGrid();
+    } catch (e) {
+        els.bindStatus.textContent = `✗ 绑定失败：${e instanceof Error ? e.message : String(e)}`;
+        els.bindStatus.style.color = '#e08a7a';
+    } finally {
+        els.bindBtn.disabled = !(selectedGeneralId && selectedImage);
+    }
+}
+
 async function boot(): Promise<void> {
     bindEvents();
 
     await loadCatalogFromServer();
     populateFolders();
+    await loadGenerals();
 
     try {
         await loadAdjustFromServer();

@@ -74,6 +74,9 @@ export const FACTIONS: Faction[] = [
 
     { id: 'qin', name: '秦国' },
 
+
+
+
     { id: 'song', name: '宋国' },
     { id: 'yan', name: '燕国' },
     { id: 'zhao', name: '赵国' },
@@ -87,6 +90,8 @@ export const FACTIONS: Faction[] = [
     { id: 'xiayang_d', name: '夏阳' },   // ── 2026-06-18：李勣@龙门（冯翊夏阳故地·禹门险隘；旗号夏阳）──
     { id: 'dian', name: '通海' },       // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '上党' },
+
+
     { id: 'liangzhou', name: '凉州' },
     { id: 'juqu_d', name: '沮渠' },
     { id: 'tufa_d', name: '秃发' },
@@ -774,6 +779,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yangshe', name: '羊舌' },
     { id: 'sima_d', name: '司马' },   // 河内郡望@获嘉
     { id: 'liguo', name: '潞州' },
+
     { id: 'kang', name: '夏州' },
     { id: 'wudu', name: '武都' },
     { id: 'woye', name: '沃野' },
@@ -804,7 +810,9 @@ export const FACTIONS: Faction[] = [
             // 平型关·灵丘县
     { id: 'linyu', name: '临榆' },              // 山海关·临榆
     { id: 'loufan', name: '楼烦' },             // 宁武关·楼烦族
-    { id: 'xianyu', name: '中山' },             // 井陉关·中山国（原鲜虞）
+    { id: 'xianyu', name: '井陉' },
+
+             // 井陉关·中山国（原鲜虞）
     { id: 'yi', name: '易州' },                 // 紫荆关·易州
     { id: 'you', name: '幽州' },                // 居庸关·幽州
     { id: 'heng1', name: '元岳' },

@@ -687,6 +687,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
                 <option value="1" ${row!.eliteTier === 1 ? 'selected' : ''}>T1</option>
                 <option value="2" ${row!.eliteTier === 2 ? 'selected' : ''}>T2</option>
                 <option value="3" ${row!.eliteTier === 3 ? 'selected' : ''}>T3</option>
+                <option value="4" ${row!.eliteTier === 4 ? 'selected' : ''}>T4</option>
               </select>
             </label>
           </div>
@@ -783,7 +784,7 @@ function parseQuickInput(text: string): ParsedEntity | null {
     const generalName = extract([/武将[：:]\s*([^，,。\s]+)/]);
     const eliteName = extract([/精锐[：:]\s*([^，,。T\d\s]+)/]);
 
-    // T0-T3
+    // T0-T4
     const tierMatch = t.match(/[,，。\s]T(\d)/i);
     const eliteTier = tierMatch ? parseInt(tierMatch[1]) : 2;
 

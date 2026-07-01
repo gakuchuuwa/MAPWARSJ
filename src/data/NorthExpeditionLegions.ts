@@ -42,7 +42,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   you: { name: '上谷突骑', tier: 1 },        // 居庸关·幽州上谷郡（升T1）
   yi: { name: '易州戍兵', tier: 2 },           // 于谦北京保卫战临危受命，绝境逆转，升T2
   changshan: { name: '倒马关卒', tier: 4 },   // 倒马关·常山
-  xianyu: { name: '轻勇骑', tier: 4 },      // 井陉关·韩信轻勇骑（缺乏极其著名的战术高光，降T3）
+    xianyu: { name: '轻勇骑', tier: 2 },
     linhu: { name: '林胡骑', tier: 4 },              // 缺乏知名度支撑，降T3
     lingqiu: { name: '胡服骑射', tier: 1 },
   // 飞虎军除名（李克用置，平型关时代错位）

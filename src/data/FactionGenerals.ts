@@ -37,7 +37,7 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
-    qin: { generalId: 'qin_yingji', generalName: '嬴稷', portrait: '/assets/yingqin/qin_yingji.png' },
+    qin: { generalId: 'qin_yingji', generalName: '司马错', portrait: '/assets/yingqin/qin_yingji.png' },
     tang: { generalId: 'tang_lishimin', generalName: '李世民', portrait: '/assets/litang/tang_lishimin.png' },
     wuzhou_d: { generalId: 'wuzhou_d_wuzetian', generalName: '武则天', portrait: '/assets/wuzhou/wuzhou_d_wuzetian.png' },
         ming_d: { generalId: 'ming_d_zhudi', generalName: '朱棣', portrait: '/assets/daming/ming_d_zhudi.png' },
@@ -564,7 +564,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     bailian: { generalId: 'bailian_wangconger', generalName: '王聪儿', portrait: '/assets/panjun/bailian_wangconger.png' },
     shen: { generalId: 'shen_shenbo', generalName: '申伯', portrait: '/assets/xianqin/shen_shenbo.png' },
     sima_d: { generalId: 'sima_d_simayi', generalName: '司马懿', portrait: '/assets/CENTRAL/sima_d_simayi.png' },
-            liguo: { generalId: 'liguo_wangmeng', generalName: '王猛', portrait: '/assets/CENTRAL/liguo_wangmeng.png' },
+    liguo: { generalId: 'liguo_wangmeng', generalName: '赵奢', portrait: '/assets/CENTRAL/liguo_wangmeng.png' },
     huai: { generalId: 'huai_zhuyuanzhang', generalName: '朱元璋', portrait: '/assets/daming/huai_zhuyuanzhang.png' },
     shangzhou: { generalId: 'shangzhou_shangyang', generalName: '商鞅', portrait: '/assets/yingqin/shangzhou_shangyang.png' },
     yuan_cj_d: { generalId: 'yuan_cj_d_yuanshu_zn', generalName: '袁术', portrait: '/assets/CENTRAL/yuan_cj_d_yuanshu_zn.png' },
@@ -584,13 +584,13 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     pinghai: { generalId: 'pinghai_laihuer', generalName: '来护儿', portrait: '/assets/NORTH/pinghai_laihuer.png' }, // 漂渝津·隋征东舟师
     pingyuan: { generalId: 'pingyuan_yanzhenqing', generalName: '颜真卿', portrait: '/assets/litang/pingyuan_yanzhenqing.png' }, // 平原·首倡义兵抗安史
     linhu: { generalId: 'linhu_zhaowulingwang', generalName: '赵雍', portrait: '/assets/xianqin/linhu_zhaowulingwang.png' },
-    xianyu: { generalId: 'xianyu_hanxin', generalName: '韩信', portrait: '/assets/liuhan/xianyu_hanxin.png' }, // 井陉关·韩信
+    xianyu: { generalId: 'xianyu_hanxin', generalName: '韩信', portrait: '/assets/liuhan/xianyu_hanxin.png' },
     shizhao_d: { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/HEXI/shizhao_d_shihu.png' }, // 邢台·后赵武帝
     loufan: { generalId: 'loufan_xuerengui', generalName: '薛仁贵', portrait: '/assets/NORTH/loufan_xuerengui.png' },
     shanrong: { generalId: 'shanrong_tianchou', generalName: '田畴', portrait: '/assets/NORTH/shanrong_tianchou.png' }, // 无终·田畴导曹操伐乌桓
 
     // ── 北方关隘 2026-06-19 ──
-    you: { generalId: 'you_wangba', generalName: '耿况', portrait: '/assets/NORTH/you_wangba.png' },
+    you: { generalId: 'you_wangba', generalName: '耿况', portrait: '/assets/liuhan/you_gengkuang.png' },
     lingqiu: { generalId: 'lingqiu_zhaowuling', generalName: '赵武灵王', portrait: '/assets/xianqin/lingqiu_zhaowuling.png' },
     yi: { generalId: 'yi_yuqian', generalName: '于谦', portrait: '/assets/daming/yi_yuqian.png' },
     huo: { generalId: 'huo_songlaosheng', generalName: '宋老生', portrait: '/assets/NORTH/huo_songlaosheng.png' },

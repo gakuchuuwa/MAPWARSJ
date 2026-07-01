@@ -480,6 +480,9 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     // ── 陇右与河西走廊中城 ──
     { id: 'city_tianshui', name: '天水', factionId: 'qin', lat: 34.58, lng: 105.73, type: 'small_city', troops: 5000, region: 'CENTRAL' },
 
+
+
+
     { id: 'city_longzhou', name: '汧源', factionId: 'long2', lat: 34.89, lng: 106.86, type: 'small_city', region: 'CENTRAL', troops: 10000,
         note: '汧源；陇州小城',
     },
@@ -773,17 +776,9 @@ export const T2_STRATEGIC: CityDataV2[] = [
     },
     // ── 太行八陉防御要塞关隘群 ──
     { id: 'city_zhiguan', name: '轵关', factionId: 'jiyuan', lat: 35.150000, lng: 112.300000, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true, note: '太行陉要隘；北齐斛律光筑勋掌城于此' },
-            {
-        id: 'city_jingxingguan',
-        name: '井陉关',
-        factionId: 'xianyu',
-        lat: 38.02, lng: 114.00,
-        type: 'pass',
-        region: 'NORTH',
-        troops: 10000,
-        tier: 2,
-        note: '井陉关；鲜虞关隘',
-    },
+            { id: 'city_jingxingguan', name: '土门关', factionId: 'xianyu', lat: 38.02, lng: 114, type: 'pass', troops: 10000, region: 'NORTH' },
+
+
     { id: 'city_daomaguan', name: '倒马关', factionId: 'changshan', lat: 38.841851, lng: 114.807129, type: 'pass', region: 'NORTH', troops: 10000, mirror: true,
         note: '倒马关；常山关隘',
     },
@@ -1308,9 +1303,9 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_songshan', name: '松山', factionId: 'iyo_d', lat: 33.84, lng: 132.77, type: 'small_city', region: 'JAPAN', troops: 10000, note: '伊予国松山；河野氏水军根据地（古代地名）' },
     { id: 'city_funei', name: '府内', factionId: 'otomo_d', lat: 33.24, lng: 131.61, type: 'small_city', region: 'JAPAN', troops: 10000, note: '丰后国府内；大友氏九州据地（府内为大友氏居城旧称）' },
     { id: 'city_gaodao', name: '高岛', factionId: 'suwa_d', lat: 36.0138, lng: 137.9662, type: 'small_city', region: 'JAPAN', troops: 10000, note: '信浓国诹访郡高岛；诹访氏中世本据（考据138.0515°E；与躑躅崎馆<50km，经度西移约7.7km）' },
-    { id: 'city_shangdang', name: '长子', factionId: 'xin', lat: 36.148974, lng: 113.008118, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '长子；上党郡治故地（势力上党@此）',
-    },
+    { id: 'city_shangdang', name: '长子', factionId: 'xin', lat: 36.148974, lng: 113.008118, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
+
 
     { id: 'city_fanyang', name: '范阳', factionId: 'zhuozhou', lat: 39.48, lng: 115.98, type: 'medium_city', region: 'NORTH', troops: 10000, note: '安禄山范阳节度使根基；安史叛军' },
     { id: 'city_hedong', name: '安邑', factionId: 'wei', lat: 35.072716, lng: 111.033325, type: 'medium_city', region: 'CENTRAL', troops: 10000, note: '夏禹之都（《史记·夏本纪》）；阳城过近洛阳已删' },
@@ -2446,9 +2441,8 @@ export const CITIES_V2: CityDataV2[] = [
     },
     { id: 'city_huixian', name: '河池', factionId: 'huizhou_d', lat: 33.80, lng: 106.06, type: 'small_city', region: 'BASHU', troops: 10000, note: '河池；诸葛亮元戎' },
 { id: 'city_huojia', name: '获嘉', factionId: 'sima_d', lat: 35.26, lng: 113.66, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '河内郡；司马氏郡望' },
-    { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'pass', region: 'CENTRAL', troops: 10000,
-        note: '阏与；黎国关隘',
-    },    
+    { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+    
     { id: 'city_fushi', name: '肤施', factionId: 'zhai_han', lat: 36.59, lng: 109.48, type: 'small_city', troops: 5000, region: 'HEXI' },
 
 

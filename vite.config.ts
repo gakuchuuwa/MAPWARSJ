@@ -3,6 +3,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import { execFile } from 'child_process';
+import { pinyin } from 'pinyin-pro';
+
+/** 中文名 → 立绘ID用拼音（与 batch-manager 的 toPinyinId 完全一致） */
+function serverToPinyinId(chinese: string): string {
+    return pinyin(chinese, { toneType: 'none', type: 'array' })
+        .map((s) => s.replace(/\s+/g, ''))
+        .join('')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+}
 
 // F2 立绘写盘后短暂拦截 Vite 整页 full-reload（Esc 保存不打断对局）
 let portraitDevSuppressReloadUntil = 0;
@@ -1626,6 +1636,28 @@ function serverGetCurrentPortraitPath(filePath: string, generalId: string): stri
     return m?.[1] ?? null;
 }
 
+/** 取某夹下一个空闲的 __闲置__{token}_{NN}.png 名（token 沿用夹内已有闲置图，否则用夹名） */
+function serverNextIdleName(dirAbs: string): string {
+    let maxNum = 0;
+    let token = path.basename(dirAbs);
+    let tokenFromMax = '';
+    for (const f of fs.readdirSync(dirAbs)) {
+        const m = f.match(/^__闲置__(.+)_(\d+)\.png$/i);
+        if (m) {
+            const n = parseInt(m[2], 10);
+            if (n > maxNum) { maxNum = n; tokenFromMax = m[1]; }
+        }
+    }
+    if (tokenFromMax) token = tokenFromMax;
+    let n = maxNum;
+    let name: string;
+    do {
+        n++;
+        name = `__闲置__${token}_${String(n).padStart(2, '0')}.png`;
+    } while (fs.existsSync(path.join(dirAbs, name)));
+    return name;
+}
+
 /** 绑定：在目标文件夹内写入 {generalId}.png，并写 FactionGenerals.ts */
 function serverBindGeneralPortrait(
     publicAssetsRoot: string,
@@ -1654,12 +1686,20 @@ function serverBindGeneralPortrait(
     const folderAbs = serverWebFolderToAbs(publicAssetsRoot, folderWeb);
     fs.mkdirSync(folderAbs, { recursive: true });
 
-    const destAbs = path.join(folderAbs, `${generalId}.png`);
-    const destWeb = `${folderWeb}${generalId}.png`;
+    // 文件名 = 「势力key_名字拼音」：正常武将等同 generalId；耿况这类 ID 错位者自动得到正确名。
+    const keyNameMatch = generalsTextPre.match(
+        new RegExp(`(\\w+)\\s*:\\s*\\{\\s*generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'\\s*,\\s*generalName\\s*:\\s*'([^']*)'`),
+    );
+    const factionKey = keyNameMatch?.[1] ?? generalId.split('_')[0];
+    const generalNameForFile = keyNameMatch?.[2] ?? '';
+    const baseName = generalNameForFile
+        ? `${factionKey}_${serverToPinyinId(generalNameForFile)}`
+        : generalId;
+    const destAbs = path.join(folderAbs, `${baseName}.png`);
+    const destWeb = `${folderWeb}${baseName}.png`;
 
     if (path.resolve(srcAbs) !== path.resolve(destAbs)) {
-        // ① 旧绑定文件（可能在其他文件夹）→ 改名备份
-        const ts = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
+        // ① 旧绑定文件（可能在其他文件夹）→ 转为闲置命名 __闲置__，并入随机池（不删不丢）
         const oldPortraitWeb = serverGetCurrentPortraitPath(factionGeneralsPath, generalId);
         if (oldPortraitWeb && oldPortraitWeb.startsWith('/assets/')) {
             const oldAbs = serverWebPathToAbs(publicAssetsRoot, oldPortraitWeb);
@@ -1669,23 +1709,24 @@ function serverBindGeneralPortrait(
                 path.resolve(oldAbs) !== path.resolve(srcAbs)
             ) {
                 const oldDir = path.dirname(oldAbs);
-                const oldName = path.basename(oldAbs, '.png');
-                const backupName = `${oldName}_prev_${ts}.png`;
-                const backupAbs = path.join(oldDir, backupName);
-                fs.renameSync(oldAbs, backupAbs);
-                console.log(`  🗂️  [BindPortrait] 旧绑定备份 → ${backupName}`);
+                const backupName = serverNextIdleName(oldDir);
+                fs.renameSync(oldAbs, path.join(oldDir, backupName));
+                console.log(`  🗂️  [BindPortrait] 旧立绘转闲置 → ${backupName}`);
             }
         }
-        // ② 目标位置已有文件（同文件夹覆盖场景）→ 改名备份
+        // ② 目标位置已有文件（同文件夹覆盖场景）→ 转为闲置命名（旧图不丢，进随机池）
         if (fs.existsSync(destAbs)) {
-            const destName = path.basename(destAbs, '.png');
-            const backupName = `${destName}_prev_${ts}.png`;
-            const backupAbs = path.join(folderAbs, backupName);
-            fs.renameSync(destAbs, backupAbs);
-            console.log(`  🗂️  [BindPortrait] 目标位置旧文件备份 → ${backupName}`);
+            const backupName = serverNextIdleName(folderAbs);
+            fs.renameSync(destAbs, path.join(folderAbs, backupName));
+            console.log(`  🗂️  [BindPortrait] 目标位置旧立绘转闲置 → ${backupName}`);
         }
-        // ③ 源图复制到目标（copyFileSync = 不移动、不删除源文件；源图留在原文件夹）
-        fs.copyFileSync(srcAbs, destAbs);
+        // ③ 源图 → 目标（始终在源图自己的文件夹内，不跨文化区）：
+        //    闲置图(__闲置__) 直接改名「认领」，不留重复；其它图复制（可能被他人共用，不夺走源图）。
+        if (path.basename(srcAbs).startsWith('__闲置__')) {
+            fs.renameSync(srcAbs, destAbs);
+        } else {
+            fs.copyFileSync(srcAbs, destAbs);
+        }
     }
 
     serverUpdateFactionGeneralPortraitFile(factionGeneralsPath, generalId, destWeb);
@@ -1824,6 +1865,11 @@ function serverSaveGeneral(data: {
     tacticalSkillId: string;
     strategicSkillId?: string;
 }) {
+    // 立绘只允许 PNG（服务端强制，防客户端校验被绕过）；非 PNG 直接拒绝，不写任何盘
+    if (data.portrait && !data.portrait.toLowerCase().endsWith('.png')) {
+        throw new Error(`立绘路径必须是 .png，不支持 .jpg 等格式：${data.portrait}`);
+    }
+
     const fgPath = path.resolve(__dirname, 'src/data/FactionGenerals.ts');
     const gsPath = path.resolve(__dirname, 'src/data/GeneralSkills.ts');
     let fgText = fs.readFileSync(fgPath, 'utf-8');

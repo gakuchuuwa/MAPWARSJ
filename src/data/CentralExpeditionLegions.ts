@@ -37,7 +37,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
   dixiang: { name: '猪突豨勇', tier: 3 },   // 王莽新朝特种部队，极度奇葩、辨识度极高的历史番号，升入T3知名
   // 朱龙骑除名（无此番号）
-  liguo: { name: '潞川锐骑', tier: 4 },       // 阏与·潞州王猛（缺乏极其著名的战术高光，降T3）
+    liguo: { name: '阏与锐骑', tier: 2 },
   yiyang_d: { name: '申息锐师', tier: 3 },    // 春秋楚国最强底牌，老牌历史劲旅，升入T3知名
   // ── 2026-06-16 新增：11大名关 ──
                       hongnong_jun: { name: '黄龙骑', tier: 4 },    // 函谷关·杨素大破突厥（缺乏极其著名的战术高光，降T3）
@@ -57,7 +57,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   shen: { name: '申伯亲卫', tier: 4 },         // 安康·西周申国
   // 汴河戍旅除名（无此编制）
   yuzhou: { name: '雍丘锐士', tier: 4 },     // 雍丘·祖逖中流击楢（缺乏极其著名的战术高光，降T3）
-  xin: { name: '上党轻骑', tier: 4 },          // 长子·王猛潞川破前燕（缺乏极其著名的战术高光，降T3）
+    xin: { name: '上党锐骑', tier: 2 },
   beidi: { name: '北地羌骑', tier: 1 },        // 萧关·姚苌岭北占据
   yingzhou_d: { name: '选锋军', tier: 2 },       // 南宋及多朝极常见的临战前锋突击队编制，缺乏主宰大局的战略唯一性，下调至T2战术
   // 北门飞骑除名
