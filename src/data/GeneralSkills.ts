@@ -560,7 +560,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     dongzu_wumian: { generalId: 'dongzu_wumian', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 侗族起义
     tian_sizhou_tianyougong: { generalId: 'tian_sizhou_tianyougong', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 思州土官
     luoyue_zhengce: { generalId: 'luoyue_zhengce', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 骆越反汉
-    li_s_mayuan: { generalId: 'li_s_mayuan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' }, // 伏波平交趾
+    li_s_mayuan: { generalId: 'li_s_mayuan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' },
     leloi: { generalId: 'leloi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 黎利抗明
     dacheng_chenkai: { generalId: 'dacheng_chenkai', tier: 'ordinary', tacticalSkillId: 'tac_08' }, // 大成国起义
     dayue_chenguojun: { generalId: 'dayue_chenguojun', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_06' }, // 抗蒙三捷
@@ -1308,6 +1308,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     dingzhou_d_murongchui: { generalId: 'dingzhou_d_murongchui', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_01' },
     shanzhou_wangzhongsi: { generalId: 'shanzhou_wangzhongsi', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_03' },
     weizhou_weigao: { generalId: 'weizhou_weigao', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' },
+    xidong_mayuan: { generalId: 'xidong_mayuan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_06' },
+    yingzhou_d2_licunxu: { generalId: 'yingzhou_d2_licunxu', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

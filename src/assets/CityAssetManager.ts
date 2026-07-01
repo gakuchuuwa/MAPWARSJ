@@ -454,7 +454,7 @@ export class CityAssetManager {
         'xinjiang': '静江',
         'panyao': '贺',
         'jiang_s': '零陵',
-        'li_s': '里',
+'li_s': '静海',
         'leizhou': '雷',
 
         'nong2': '侬',
@@ -824,6 +824,8 @@ export class CityAssetManager {
 'dingzhou': '定',
 'shanzhou': '鄯',
 'weizhou': '维',
+'xidong': '溪峒',
+'yingzhou_d2': '应',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

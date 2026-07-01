@@ -1842,9 +1842,9 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_huashan', name: '花山', factionId: 'luoyue', lat: 22.159442, lng: 107.418823, type: 'small_city', region: 'LINGNAN', troops: 10000,
         note: '花山；骆越小城',
     },
-    { id: 'city_hepu', name: '合浦', factionId: 'li_s', lat: 21.663000, lng: 109.207000, type: 'small_city', region: 'LINGNAN', troops: 10000,
-        note: '合浦；里族小城',
-    },
+    { id: 'city_hepu', name: '海门', factionId: 'li_s', lat: 21.663, lng: 109.207, type: 'small_city', troops: 20000, region: 'LINGNAN' },
+
+
     { id: 'city_haikang', name: '海康', factionId: 'leizhou', lat: 20.9100, lng: 110.0800, type: 'small_city', troops: 10000, 
         note: '海康；雷州小城', region: 'LINGNAN' },
     {
@@ -2896,6 +2896,10 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_zhongshan', name: '中山', factionId: 'dingzhou', lat: 38.4708, lng: 115.0626, type: 'small_city', troops: 5000, region: 'NORTH' },
     { id: 'city_ledou', name: '乐都', factionId: 'shanzhou', lat: 36.49, lng: 102.37, type: 'small_city', troops: 20000, region: 'HEXI' },
     { id: 'city_xuecheng', name: '薛城', factionId: 'weizhou', lat: 31.43, lng: 103.16, type: 'small_city', troops: 20000, region: 'BASHU' },
+    { id: 'city_huixicheng', name: '会溪城', factionId: 'xidong', lat: 28.7267, lng: 110.0006, type: 'small_city', troops: 20000, region: 'BASHU' },
+    { id: 'city_zhangguojuncheng', name: '彰国军城', factionId: 'yingzhou_d2', lat: 39.5761, lng: 113.1894, type: 'small_city', troops: 20000, region: 'NORTH' },
+
+
 
 
 

@@ -464,7 +464,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'paiyao': '排瑶',
     'jiang_s': '零陵',
 
-    'li_s': '里',
+'li_s': '静海',
     'leizhou': '雷',
 
     // ── 2026-05-28 新增：黎(崖) ──
@@ -862,6 +862,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'guiyi': '归义',
 'shanzhou': '鄯',
 'weizhou': '维',
+'xidong': '溪峒',
+'yingzhou_d2': '应',
 };
 
 // @ts-ignore

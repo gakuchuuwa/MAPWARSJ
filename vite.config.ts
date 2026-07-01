@@ -1684,6 +1684,8 @@ function serverBindGeneralPortrait(
     sourceWebPath: string,
     targetFolderWeb?: string,
 ): { portraitPath: string; generalName: string; targetFolder: string } {
+    // 源路径归一化：反斜杠/Windows 路径 → /assets/...（防其它入口传入非法路径）
+    sourceWebPath = serverNormalizePortraitPath(sourceWebPath);
     if (!/^[a-z0-9_]+$/i.test(generalId)) {
         throw new Error(`非法 generalId：${generalId}`);
     }
@@ -1894,6 +1896,18 @@ function serverReadAllEntityData() {
     return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, regions: Object.keys(REGION_TO_ELITE_FILE) };
 }
 
+/** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → 统一 /assets/.../x.png。
+ *  兼容直接粘贴 Windows 路径（C:\...\public\assets\X\y.png、assets\X\y.png 等），防写坏 TS 文件。 */
+function serverNormalizePortraitPath(p: string): string {
+    if (!p) return p;
+    const s = p.replace(/\\/g, '/');
+    const i = s.toLowerCase().indexOf('/assets/');
+    if (i >= 0) return s.slice(i);
+    const j = s.toLowerCase().indexOf('assets/');
+    if (j >= 0) return '/' + s.slice(j);
+    return s;
+}
+
 function serverSaveGeneral(data: {
     factionId: string;
     generalId: string;
@@ -1903,6 +1917,8 @@ function serverSaveGeneral(data: {
     tacticalSkillId: string;
     strategicSkillId?: string;
 }) {
+    // 立绘路径先归一化：反斜杠/Windows 路径 → /assets/.../x.png（根治粘贴 Windows 路径写坏 TS 文件）
+    if (data.portrait) data.portrait = serverNormalizePortraitPath(data.portrait);
     // 立绘只允许 PNG（服务端强制，防客户端校验被绕过）；非 PNG 直接拒绝，不写任何盘
     if (data.portrait && !data.portrait.toLowerCase().endsWith('.png')) {
         throw new Error(`立绘路径必须是 .png，不支持 .jpg 等格式：${data.portrait}`);
@@ -2143,6 +2159,42 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
             issues.push({ level: 'warn', msg: `势力 "${f.name}"(${f.id}) 与据点 "${clash.name}"(${clash.id}/${clash.factionId}) 同名`, factionId: f.id });
         }
     }
+
+    // 16. 武将名重复（完全同名 或 一方完整包含另一方）
+    const generalEntries = Object.entries(data.generals) as [string, { generalId: string; generalName: string }][];
+    for (let i = 0; i < generalEntries.length; i++) {
+        for (let j = i + 1; j < generalEntries.length; j++) {
+            const [idA, gA] = generalEntries[i], [idB, gB] = generalEntries[j];
+            if (skipFactions.has(idA) || skipFactions.has(idB)) continue;
+            if (gA.generalName.length < 2 || gB.generalName.length < 2) continue;
+            if (gA.generalName === gB.generalName) {
+                issues.push({
+                    level: 'error',
+                    msg: `武将 "${gA.generalName}" 重复: 势力 ${idA}(${gA.generalId}) 与 ${idB}(${gB.generalId})`,
+                    factionId: idA,
+                });
+            } else if (gA.generalName.includes(gB.generalName) || gB.generalName.includes(gA.generalName)) {
+                issues.push({
+                    level: 'warn',
+                    msg: `武将名 "${gA.generalName}"(${idA}) 与 "${gB.generalName}"(${idB}) 名字包含关系`,
+                    factionId: idA,
+                });
+            }
+        }
+    }
+
+    // 17. 武将 generalId 被多势力共用
+    const generalIdOwners = new Map<string, string[]>();
+    for (const [fId, g] of Object.entries(data.generals)) {
+        if (skipFactions.has(fId)) continue;
+        if (!generalIdOwners.has(g.generalId)) generalIdOwners.set(g.generalId, []);
+        generalIdOwners.get(g.generalId)!.push(fId);
+    }
+    generalIdOwners.forEach((fIds, genId) => {
+        if (fIds.length > 1) {
+            issues.push({ level: 'error', msg: `武将 ID "${genId}" 被多势力共用: ${fIds.join(', ')}`, factionId: fIds[0] });
+        }
+    });
 
     return issues;
 }

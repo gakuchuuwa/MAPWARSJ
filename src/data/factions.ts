@@ -669,7 +669,9 @@ export const FACTIONS: Faction[] = [
     // 士氏(广信/交趾士燮)
     { id: 'jiang_s', name: '零陵' },                          // 蒋氏(永州/湘南),
 
-    { id: 'li_s', name: '里族' },                              // 里(合浦/北部湾); 古籍里、俚、悝通，与 liren(俚)异字
+    { id: 'li_s', name: '静海' },
+
+                              // 里(合浦/北部湾); 古籍里、俚、悝通，与 liren(俚)异字
     { id: 'leizhou', name: '雷州' },                           // 雷州(海康/湛江)
 
     // ── 2026-05-28 新增：工布(工布/西藏工布藏族) ──
@@ -1133,6 +1135,10 @@ export const FACTIONS: Faction[] = [
     { id: 'dingzhou', name: '定州' },
     { id: 'shanzhou', name: '鄯州' },
     { id: 'weizhou', name: '维州' },
+    { id: 'xidong', name: '溪峒' },
+    { id: 'yingzhou_d2', name: '应州' },
+
+
 
 
 

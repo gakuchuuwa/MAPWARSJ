@@ -408,7 +408,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'panyao': 'city_hezhou',
     'jiang_s': 'city_yongzhou_hn',
 
-    'li_s': 'city_hepu',
+'li_s': 'city_hepu',
     'leizhou': 'city_haikang',
 
 
@@ -791,6 +791,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'dingzhou': 'city_zhongshan',
 'shanzhou': 'city_ledou',
 'weizhou': 'city_xuecheng',
+'xidong': 'city_huixicheng',
+'yingzhou_d2': 'city_zhangguojuncheng',
 };
 
 // @ts-ignore
