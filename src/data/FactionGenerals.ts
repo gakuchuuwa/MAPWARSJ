@@ -767,7 +767,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     wenling: { generalId: 'wenling_shilang', generalName: '施琅', portrait: '/assets/JIANGNAN/wenling_shilang.png' },
     qianzhou: { generalId: 'qianzhou_lisheng', generalName: '李晟', portrait: '/assets/litang/qianzhou_lisheng.png' },
     wuyue: { generalId: 'wuyue_qianliu', generalName: '钱镠', portrait: '/assets/JIANGNAN/wuyue_qianliu.png' },
-    shaozhou_d: { generalId: 'shaozhou_d_mayin', generalName: '马殷', portrait: '/assets/JIANGNAN/shaozhou_d_mayin.jpg' },
+    shaozhou_d: { generalId: 'shaozhou_d_mayin', generalName: '马殷', portrait: 'assets\JIANGNAN\shaozhou_d_mayin.png' },
 
     song: { generalId: 'song_zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhaosong/song_zhaokuangyin.png' },
     chuzhou_d: { generalId: 'chuzhou_d_dugao', generalName: '皇甫晖', portrait: '/assets/JIANGNAN/chuzhou_d_dugao.png' },
@@ -785,7 +785,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     jingpozu: { generalId: 'jingpozu_zaodan', generalName: '早丹', portrait: '/assets/DIANQIAN/jingpozu_zaodan.png' },
     shuizu: { generalId: 'shuizu_panxinjian', generalName: '潘新简', portrait: '/assets/DIANQIAN/shuizu_panxinjian.png' },
     liuzhou: { generalId: 'liuzhou_shenxiyi', generalName: '沈希仪', portrait: '/assets/LINGNAN/liuzhou_shenxiyi.png' },
-    luming: { generalId: 'luming_luxiangsheng', generalName: '卢象升', portrait: '/assets/CENTRAL/luming_luxiangsheng.png' },
+    luming: { generalId: 'luming_luxiangsheng', generalName: '卢象升', portrait: 'assets\daming\luming_luxiangsheng.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

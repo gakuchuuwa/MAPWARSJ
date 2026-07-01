@@ -1063,6 +1063,10 @@ async function handleFormSubmit(e: Event): Promise<void> {
         // Step 2: save general (if provided)
         const generalName = get('generalName');
         const portrait = get('portrait');
+        if (portrait && !portrait.toLowerCase().endsWith('.png')) {
+            showToast('立绘路径必须以 .png 结尾！不支持 .jpg 等格式', true);
+            return;
+        }
         const tier = get('tier');
         const tacticalSkillId = get('tacticalSkillId');
         const strategicSkillId = get('strategicSkillId');

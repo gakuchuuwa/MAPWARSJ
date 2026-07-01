@@ -856,6 +856,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   'liuzhou': '柳',
 
 'luming': '郧',
+    'shaozhou_d': '邵',
 };
 
 // @ts-ignore

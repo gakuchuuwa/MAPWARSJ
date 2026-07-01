@@ -1987,6 +1987,10 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         if (!fs.existsSync(absPath)) {
             issues.push({ level: 'error', msg: `武将 "${g.generalName}" 立绘不存在: ${g.portrait}`, factionId: fId });
         }
+        // 立绘路径必须以 .png 结尾
+        if (g.portrait && !g.portrait.toLowerCase().endsWith('.png')) {
+            issues.push({ level: 'error', msg: `武将 "${g.generalName}" 立绘路径不是 PNG: ${g.portrait}`, factionId: fId });
+        }
     }
 
     // 11.5. 武将技时机与品阶不符校验

@@ -773,7 +773,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'xiyuduhu': 'city_taqian',
     'taizhou': 'city_hailing',
     // ── 2026-06-29 新增：邵州 ──
-    'shaozhou_d': 'city_shaozhou',
+'shaozhou_d': 'city_shaozhou',
 'zizhou': 'city_zizhou_d',
     'cangzhou': 'city_qingchi',
 'yuezhi': 'city_shandan',
