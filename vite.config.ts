@@ -686,6 +686,8 @@ interface BatchEntry {
     factionId: string;
     cityId: string;
     region?: string;
+    /** 据点类型（表单选择）：small_city/medium_city/big_city/pass；未传则按名字自动判 */
+    cityType?: string;
     /** 若需先删冲突据点再新建，传其 city_id */
     deleteExistingCityId?: string;
     /** 若为 true，强制添加（跳过50km邻近检查，新旧城都保留） */
@@ -804,8 +806,13 @@ function batchImportFiles(entries: BatchEntry[]): BatchFileResult[] {
             results.push({ file: 'src/data/factions.ts', ok: true, operation: 'replace' });
         }
 
-        // cities_v2.ts
-        const { type: cityType, troops } = detectCityType(entry.cityName);
+        // cities_v2.ts — 类型优先用表单选择(entry.cityType)，未传则按名字自动判；兵力按类型映射
+        const detected = detectCityType(entry.cityName);
+        const TROOPS_BY_TYPE: Record<string, number> = {
+            small_city: 5000, medium_city: 10000, big_city: 20000, pass: 10000,
+        };
+        const cityType = entry.cityType || detected.type;
+        const troops = entry.cityType ? (TROOPS_BY_TYPE[entry.cityType] ?? detected.troops) : detected.troops;
         const regionPart = entry.region ? `, region: '${entry.region}'` : '';
         const cityLine = `{ id: '${cId}', name: '${entry.cityName}', factionId: '${fId}', lat: ${entry.lat}, lng: ${entry.lng}, type: '${cityType}', troops: ${troops}${regionPart} },`;
         if (isNewCity) {
@@ -1658,6 +1665,18 @@ function serverNextIdleName(dirAbs: string): string {
     return name;
 }
 
+/** 读 portrait_canonical.ts，把某路径解析成它的内容代表键（无映射则返回自身） */
+function serverResolveCanonicalPath(canonicalPath: string, webPath: string): string {
+    try {
+        if (!fs.existsSync(canonicalPath)) return webPath;
+        const text = fs.readFileSync(canonicalPath, 'utf-8');
+        const m = text.match(new RegExp(`"${serverEscapeRegExp(webPath)}"\\s*:\\s*"([^"]+)"`));
+        return m?.[1] ?? webPath;
+    } catch {
+        return webPath;
+    }
+}
+
 /** 绑定：在目标文件夹内写入 {generalId}.png，并写 FactionGenerals.ts */
 function serverBindGeneralPortrait(
     publicAssetsRoot: string,
@@ -1727,6 +1746,27 @@ function serverBindGeneralPortrait(
         } else {
             fs.copyFileSync(srcAbs, destAbs);
         }
+    }
+
+    // 绑定后同步 portrait_adjust 调校数据：源图调校 → 目标路径（防位置/缩放丢失）
+    try {
+        const portraitAdjustPath = path.resolve(__dirname, 'src/data/portrait_adjust.ts');
+        if (fs.existsSync(portraitAdjustPath)) {
+            const adjText = fs.readFileSync(portraitAdjustPath, 'utf-8');
+            const adjData = serverParsePortraitAdjustExport(adjText);
+            // 源图自身路径优先；没有则回退到内容代表键 canonical（兼容仅 F2 调过、源非代表的情况）
+            const srcCanonical = serverResolveCanonicalPath(portraitCanonicalPath, sourceWebPath);
+            const srcAdj = adjData.images?.[sourceWebPath] ?? adjData.images?.[srcCanonical];
+            if (srcAdj !== undefined) {
+                adjData.images = adjData.images ?? {};
+                adjData.images[destWeb] = { ...(srcAdj as object) };
+                const content = serverFormatPortraitAdjustFile(adjData);
+                fs.writeFileSync(portraitAdjustPath, content, 'utf-8');
+                console.log(`  📐 [BindPortrait] 已同步调校数据: ${sourceWebPath} → ${destWeb}`);
+            }
+        }
+    } catch (e) {
+        console.warn(`  ⚠ [BindPortrait] 无法同步调校数据:`, e);
     }
 
     serverUpdateFactionGeneralPortraitFile(factionGeneralsPath, generalId, destWeb);

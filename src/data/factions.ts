@@ -21,6 +21,7 @@ export const FACTIONS: Faction[] = [
   { id: 'gongtang', name: '贡唐' },
   { id: 'chizhou', name: '池州' },
 
+
   { id: 'yada', name: '嚈哒' },
 
   { id: 'quli', name: '渠犁国' },
@@ -96,6 +97,7 @@ export const FACTIONS: Faction[] = [
     { id: 'juqu_d', name: '沮渠' },
     { id: 'tufa_d', name: '秃发' },
     { id: 'qiuchi', name: '仇池' },
+
     { id: 'helian', name: '赫连' },
     { id: 'xiongnu', name: '匈奴' },
     { id: 'xianbei', name: '鲜卑' },
@@ -395,6 +397,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xihai_d', name: '西海' },                          // 伏俟城·隋西海郡治；旗号西海
     { id: 'heyuan_d', name: '河源' },                          // 花石峡·隋河源郡积石镇；旗号河源
     { id: 'guiyi', name: '归义' },
+
     { id: 'dafeichuan', name: '退浑' },
     // 第六类：周边国家政权
     // 交阯深紫 - 安南胡朝/黎氏
@@ -785,7 +788,8 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'kang', name: '夏州' },
-    { id: 'wudu', name: '武都' },
+    { id: 'wudu', name: '阶州' },
+
     { id: 'woye', name: '沃野' },
     { id: 'shuofang', name: '朔方' },
     { id: 'lushui', name: '卢水' },
@@ -850,7 +854,8 @@ export const FACTIONS: Faction[] = [
     { id: 'ouyang', name: '欧阳' },
     { id: 'ningkou', name: '宁寇' },
     { id: 'hongzhou', name: '洪州' },
-    { id: 'danyang', name: '宣州' },       // 宣州(芜湖/鸠兹)
+    { id: 'danyang', name: '当涂' },
+       // 宣州(芜湖/鸠兹)
     { id: 'huai', name: '淮州' },
     { id: 'huaiyang', name: '淮阳' },
    // 淮阳郡治宛丘(陈州)
@@ -977,6 +982,7 @@ export const FACTIONS: Faction[] = [
     { id: 'dang_d', name: '虞国' },               // 砀@虞城（汉砀郡；豫东梁国属县）
     // ── 2026-06-11 新增：濠州（原凤阳朱氏改挂）──
     { id: 'hao_d', name: '濠州' },
+
                 // 濠@蚌埠（隋唐濠州治钟离故地）
     // ── 2026-06-11 新增：博州 ──
     { id: 'bozhou_d', name: '博州' },
@@ -1122,6 +1128,9 @@ export const FACTIONS: Faction[] = [
     { id: 'shuizu', name: '水族' },
     { id: 'liuzhou', name: '柳州' },
     { id: 'luming', name: '郧州' },
+    { id: 'dingzhou', name: '定州' },
+
+
 
 
 

@@ -8,7 +8,7 @@
  * - 据点取川东近乡或史载成军/战场地
  */
 export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-  wudu: { name: '甘泉驿骑', tier: 4 },         // 甘泉驿·张翼甘泉驿骑
+    wudu: { name: '阴平先锋', tier: 2 },
     baishui: { name: '白水戍卒', tier: 4 },
     dangzhou: { name: '阴平氐兵', tier: 2 }, // 邓艾偷渡阴平时临时征用的特种奇兵，单次战术奇迹的教科书代表，下调至T2战术
   jinchuan_g: { name: '金川番兵', tier: 4 },    // 勒乌围·金川土兵
@@ -31,7 +31,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   ba: { name: '巴渝劲卒', tier: 3 },          // 巴渝舞武士的另一称谓，极其著名的西南精锐，升入T3知名
   hezhou: { name: '兴戎军', tier: 1 },          // 钓鱼城·王坚抗蒙毙蒙哥（防御战，降T1）
   kui: { name: '白帝戍卫', tier: 3 },             // 白帝城·刘备白毻兵（顶级近卫，T2）
-  qiuchi: { name: '武都部曲', tier: 4 },          // 仇池·杨氏世袭部曲（《宋书》杨难当拥部曲数万）
+    qiuchi: { name: '仇池氐兵', tier: 4 },
   // ── 2026-06-16 新增：4座西南名关 ──
   lizhou_d: { name: '剑阁戍卒', tier: 4 },        // 剑门关·廖化（常规番号，降T3）
   fengzhou: { name: '和尚原锐卒', tier: 2 },       // 吴玠和尚原大捷，属于经典的战术/战役防守反击，降为T2战术。

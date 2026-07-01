@@ -12133,58 +12133,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "大通-鸠兹",
-                type: "road",
-                id: "road_city_datong2_city_jiuzi_1780154575257",
-                startConnection: "city_datong2",
-                endConnection: "city_jiuzi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [117.7762, 30.8188],
-                    [117.944983, 30.916001],
-                    [118.031811, 30.981065],
-                    [118.166671, 31.03309],
-                    [118.172041, 31.084176],
-                    [118.172041, 31.141918],
-                    [118.188539, 31.19966],
-                    [118.258654, 31.232655],
-                    [118.38, 31.33],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "鸠兹-南京",
-                type: "road",
-                id: "road_city_jiuzi_city_nanjing_1780154577847",
-                startConnection: "city_jiuzi",
-                endConnection: "city_nanjing"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [118.38, 31.33],
-                    [118.374138, 31.467747],
-                    [118.407133, 31.51724],
-                    [118.440129, 31.546111],
-                    [118.464875, 31.59148],
-                    [118.464875, 31.632724],
-                    [118.456627, 31.69459],
-                    [118.473124, 31.727586],
-                    [118.498627, 31.851264],
-                    [118.53476, 31.884467],
-                    [118.586355, 31.949571],
-                    [118.629852, 31.942056],
-                    [118.77, 32.05],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "南京-扬州",
                 type: "road",
                 id: "road_city_nanjing_city_yangzhou_1780154580525",
@@ -12352,28 +12300,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [120.337363, 30.461388],
                     [120.28787, 30.420144],
                     [120.16, 30.25],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "鸠兹-宛陵城",
-                type: "road",
-                id: "road_city_jiuzi_city_wanling_1780154598698",
-                startConnection: "city_jiuzi",
-                endConnection: "city_wanling"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [118.38, 31.33],
-                    [118.530866, 31.240904],
-                    [118.555613, 31.195535],
-                    [118.551488, 31.146042],
-                    [118.588608, 31.075927],
-                    [118.613355, 31.051181],
-                    [118.75, 30.9333],
                 ]
             }
         },
@@ -15846,7 +15772,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [114.807129, 38.841851],
+                    [114.768677, 38.861098],
                     [114.950868, 38.743228],
                     [114.996236, 38.767974],
                     [115.091098, 38.809219],
@@ -16340,33 +16266,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "真定-保定",
-                type: "road",
-                id: "road_city_zhending_city_baoding_1780158230796",
-                startConnection: "city_zhending",
-                endConnection: "city_baoding"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [114.590149, 38.130241],
-                    [114.662158, 38.306039],
-                    [114.678656, 38.326661],
-                    [114.781766, 38.380279],
-                    [114.876628, 38.462767],
-                    [114.954992, 38.504011],
-                    [114.975614, 38.524634],
-                    [115.004485, 38.578251],
-                    [115.0746, 38.652491],
-                    [115.124093, 38.681362],
-                    [115.313817, 38.776223],
-                    [115.48, 38.87],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "肥如-无终",
                 type: "road",
                 id: "road_city_feiru_city_wuzhong_1780158230857",
@@ -16639,7 +16538,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [114.686905, 39.060808],
                     [114.728149, 39.007191],
                     [114.724024, 38.986569],
-                    [114.807129, 38.841851],
+                    [114.768677, 38.861098],
                 ]
             }
         },
@@ -23397,27 +23296,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "濡须口-鸠兹",
-                type: "road",
-                id: "road_city_jingkou_city_jiuzi_1781182638823",
-                startConnection: "city_jingkou",
-                endConnection: "city_jiuzi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [117.92, 31.58],
-                    [118.140131, 31.487395],
-                    [118.202578, 31.467099],
-                    [118.227557, 31.429631],
-                    [118.275152, 31.438876],
-                    [118.38, 31.33],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "伯都-黄龙府",
                 type: "road",
                 id: "road_city_boduo_city_fuyu_1781183250468",
@@ -27587,7 +27465,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "鹤之城-仙台",
+                name: "鹤之��-仙台",
                 type: "road",
                 id: "road_city_tsuruga_city_xiantai_1781711782379",
                 startConnection: "city_tsuruga",
@@ -34056,6 +33934,147 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [92.86743164062501, 42.894076403348976],
                     [93.17500000000001, 42.83333333333333],
                     [93.51, 42.83],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "濡须口-姑孰",
+                type: "road",
+                id: "road_city_jingkou_city_jiuzi_1782929088821",
+                startConnection: "city_jingkou",
+                endConnection: "city_jiuzi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [117.92, 31.58],
+                    [118.14013091519136, 31.487394522721743],
+                    [118.20257829416673, 31.46709912455475],
+                    [118.22755724575688, 31.429630697169525],
+                    [118.27515193461068, 31.438876219210197],
+                    [118.47, 31.55],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "大通-姑孰",
+                type: "road",
+                id: "road_city_datong2_city_jiuzi_1782929099898",
+                startConnection: "city_datong2",
+                endConnection: "city_jiuzi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [117.7762, 30.8188],
+                    [117.768077, 31.006659],
+                    [117.763276, 31.076483],
+                    [117.781505, 31.113959],
+                    [117.807546, 31.134385],
+                    [117.839366, 31.143663],
+                    [117.937266, 31.088935],
+                    [117.980398, 31.109971],
+                    [117.992931, 31.138983],
+                    [117.993582, 31.19127],
+                    [118.014171, 31.237616],
+                    [118.027843, 31.243679],
+                    [118.155935, 31.259141],
+                    [118.210053, 31.287787],
+                    [118.296641, 31.29739],
+                    [118.324474, 31.338324],
+                    [118.322358, 31.383165],
+                    [118.301768, 31.427802],
+                    [118.47, 31.55],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "姑孰-金陵",
+                type: "road",
+                id: "road_city_jiuzi_city_nanjing_1782929113366",
+                startConnection: "city_jiuzi",
+                endConnection: "city_nanjing"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [118.47, 31.55],
+                    [118.448009, 31.756415],
+                    [118.498627, 31.851264],
+                    [118.53476, 31.884467],
+                    [118.586355, 31.949571],
+                    [118.6298522452552, 31.942055729659398],
+                    [118.77, 32.05],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "宛陵城-姑孰",
+                type: "road",
+                id: "road_city_wanling_city_jiuzi_1782929125680",
+                startConnection: "city_wanling",
+                endConnection: "city_jiuzi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [118.75, 30.9333],
+                    [118.62253691777612, 31.098659588600043],
+                    [118.55148822313606, 31.146042241817632],
+                    [118.55561264535285, 31.195535308419192],
+                    [118.54323937870247, 31.232655108370363],
+                    [118.46641847033769, 31.340643182129618],
+                    [118.48359149955591, 31.41401885242568],
+                    [118.47, 31.55],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "真定-中山",
+                type: "road",
+                id: "road_city_zhending_city_zhongshan_1782930016239",
+                startConnection: "city_zhending",
+                endConnection: "city_zhongshan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [114.590149, 38.130241],
+                    [114.66215807269676, 38.30603921017672],
+                    [114.67865576156395, 38.3266613212607],
+                    [114.78176631698386, 38.38027881007906],
+                    [114.84363265023582, 38.433896298897416],
+                    [115.0626, 38.4708],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "中山-保定",
+                type: "road",
+                id: "road_city_zhongshan_city_baoding_1782930019014",
+                startConnection: "city_zhongshan",
+                endConnection: "city_baoding"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [115.0626, 38.4708],
+                    [115.07460029437644, 38.65249067638764],
+                    [115.124093360978, 38.68136163190522],
+                    [115.31381678295064, 38.77622334289154],
+                    [115.48, 38.87],
                 ]
             }
         },

@@ -219,7 +219,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     chahar: { generalId: 'chahar_lindanhan', generalName: '林丹汗', portrait: '/assets/STEPPE/chahar_lindanhan.png' },
     ongut: { generalId: 'ongut_alagusi', generalName: '阿剌兀思', portrait: '/assets/STEPPE/ongut_alagusi.png' },
     rouran: { generalId: 'rouran_shelun', generalName: '社仑', portrait: '/assets/STEPPE/rouran_shelun.png' },
-    chagatai: { generalId: 'chagatai_tuhulutiemuer', generalName: '耿恭', portrait: '/assets/WESTERN/chagatai_tuhulutiemuer.png' },
+    chagatai: { generalId: 'chagatai_tuhulutiemuer', generalName: '耿恭', portrait: '/assets/liuhan/chagatai_genggong.png' },
     huihu: { generalId: 'huihu_dongmohedagan', generalName: '顿莫贺达干', portrait: '/assets/STEPPE/huihu_dongmohedagan.png' },
     kelie: { generalId: 'kelie_zhaheganbu', generalName: '札合敢不', portrait: '/assets/STEPPE/kelie_zhaheganbu.png' },
     pugu: { generalId: 'pugu_ashinagudulu', generalName: '阿史那骨咄禄', portrait: '/assets/STEPPE/pugu_ashinagudulu.png' },
@@ -488,7 +488,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
   // ── 河西区 2026-06-18 ──
         liangzhou: { generalId: 'liangzhou_zhanggui', generalName: '张轨', portrait: '/assets/HEXI/liangzhou_zhanggui.png' },
     lanzhou: { generalId: 'lanzhou_zhaochongguo', generalName: '赵充国', portrait: '/assets/liuhan/lanzhou_zhaochongguo.png' },
-        wudu: { generalId: 'wudu_zhangyi', generalName: '张翼', portrait: '/assets/BASHU/wudu_zhangyi.png' },
+    wudu: { generalId: 'wudu_zhangyi', generalName: '邓艾', portrait: '/assets/BASHU/wudu_zhangyi.png' },
     baishui: { generalId: 'baishui_yanghuai', generalName: '杨怀', portrait: '/assets/BASHU/baishui_yanghuai.png' },
     dangzhou: { generalId: 'dangzhou_dengai', generalName: '强端', portrait: '/assets/NORTH/dangzhou_dengai.png' },
     didao: { generalId: 'didao_duanjiong', generalName: '王韶', portrait: '/assets/HEXI/didao_duanjiong.png' },
@@ -573,7 +573,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     mengcheng_d: { generalId: 'mengcheng_d_gaoqiong', generalName: '高琼', portrait: '/assets/CENTRAL/mengcheng_d_gaoqiong.png' },
     lulin: { generalId: 'lulin_liuxiu', generalName: '刘秀', portrait: '/assets/liuhan/lulin_liuxiu.png' },
     dang_d: { generalId: 'dang_d_zhuwen', generalName: '朱温', portrait: '/assets/CENTRAL/dang_d_zhuwen.png' },
-    hao_d: { generalId: 'hao_d_changyuchun', generalName: '常遇春', portrait: '/assets/daming/hao_d_changyuchun.png' },
+    hao_d: { generalId: 'hao_d_changyuchun', generalName: '韦睿', portrait: '/assets/daming/hao_d_changyuchun.png' },
     bozhou_d: { generalId: 'bozhou_d_yujin', generalName: '于禁', portrait: '/assets/CENTRAL/bozhou_d_yujin.png' },
         zhuozhou: { generalId: 'zhuozhou_anlushan', generalName: '安禄山', portrait: '/assets/CENTRAL/zhuozhou_anlushan.png' },
         chanzhou: { generalId: 'chanzhou_chairong', generalName: '柴荣', portrait: '/assets/CENTRAL/chanzhou_chairong.png' },
@@ -671,8 +671,8 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     she_ethnic: { generalId: 'she_ethnic_leiwanxing', generalName: '雷万兴', portrait: '/assets/JIANGNAN/she_ethnic_leiwanxing.png' },
     wang_s: { generalId: 'wang_s_wanghua', generalName: '汪华', portrait: '/assets/JIANGNAN/wang_s_wanghua.png' },
     hongzhou: { generalId: 'hongzhou_zhuwenzheng', generalName: '朱文正', portrait: '/assets/JIANGNAN/hongzhou_zhuwenzheng.png' },
-    danyang: { generalId: 'danyang_yuyunwen', generalName: '虞允文', portrait: '/assets/zhaosong/danyang_yuyunwen.png' },
-    chizhou: { generalId: 'chizhou_wumingche', generalName: '吴明彻', portrait: '/assets/JIANGNAN/chizhou_wumingche.png' },
+    danyang: { generalId: 'danyang_yuyunwen', generalName: '桓温', portrait: '/assets/zhaosong/danyang_yuyunwen.png' },
+    chizhou: { generalId: 'chizhou_wumingche', generalName: '常遇春', portrait: '/assets/JIANGNAN/chizhou_wumingche.png' },
     gumie: { generalId: 'gumie_liuyu', generalName: '刘裕', portrait: '/assets/JIANGNAN/gumie_liuyu.png' },
     hu_d: { generalId: 'hu_d_husansheng', generalName: '胡三省', portrait: '/assets/JIANGNAN/hu_d_husansheng.png' },
     sagami: { generalId: 'sagami_hojoujiyasu', generalName: '北条氏康', portrait: '/assets/JAPAN/sagami_hojoujiyasu.png' },
@@ -786,6 +786,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     shuizu: { generalId: 'shuizu_panxinjian', generalName: '潘新简', portrait: '/assets/DIANQIAN/shuizu_panxinjian.png' },
     liuzhou: { generalId: 'liuzhou_shenxiyi', generalName: '沈希仪', portrait: '/assets/LINGNAN/liuzhou_shenxiyi.png' },
     luming: { generalId: 'luming_luxiangsheng', generalName: '卢象升', portrait: 'assets\daming\luming_luxiangsheng.png' },
+    dingzhou: { generalId: 'dingzhou_d_murongchui', generalName: '慕容垂', portrait: '/assets/CENTRAL/dingzhou_d_murongchui.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

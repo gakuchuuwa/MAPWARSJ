@@ -77,7 +77,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yanchuan_d: { name: '淮西行营军', tier: 4 }, // 郾城·韩愈随裴度督师郾城，参赞军务
   guide_d: { name: '酂侯亲卫', tier: 4 },   // 永城·萧何酂侯
   tongzhou: { name: '匡国牙兵', tier: 4 },    // 长宁·后汉高祖镇守同州（缺乏进攻高光，降T3）
-    hao_d: { name: '淮西突骑', tier: 4 },             // 缺乏知名度支撑，降T3
+    hao_d: { name: '钟离劲卒', tier: 4 },
   suzhou_d: { name: '江北团练', tier: 4 },
   sima_d: { name: '宣王中军', tier: 4 },   // 获嘉·司马懿都督中外诸军事
     bozhou_d: { name: '青州兵', tier: 1 },           // 曹操收编黄巾军建立的绝对嫡系核心，曹魏霸业基石，贯穿三国前半叶，升入T1战略

@@ -615,6 +615,15 @@ async function bindSelectedImageToGeneral(): Promise<void> {
         els.bindStatus.style.color = '#e08a7a';
         return;
     }
+    // 绑定前先提交未保存的调校，防止丢失
+    if (dirty) {
+        commitDraftToAdjustData();
+        try {
+            await saveAdjustToServer(false);
+        } catch (e) {
+            console.warn('[BindPortrait] 保存调校失败（继续绑定）:', e);
+        }
+    }
     // 跨文化区提醒：选中图与武将当前文化区夹不同时先确认（仍就地引用、不移动文件）
     const genFolder = ((gen.portrait || '').match(/^\/assets\/([^/]+)\//) || [])[1];
     const imgFolder = (selectedImage.match(/^\/assets\/([^/]+)\//) || [])[1];

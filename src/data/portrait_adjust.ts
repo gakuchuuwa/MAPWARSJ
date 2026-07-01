@@ -373,9 +373,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -47
         },
         "/assets/liuhan/guangwu_xinwuxian.png": {
-            "scale": 0.9,
-            "offsetX": 22,
-            "offsetY": 15
+            "scale": 0.98,
+            "offsetX": 4,
+            "offsetY": -41
         },
         "/assets/DIANQIAN/luoyue_zhengce.png": {
             "scale": 0.97,
@@ -2823,19 +2823,19 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/liuhan/__闲置__liuhan_02.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
-            "offsetY": -31
+            "offsetY": -30
         },
         "/assets/liuhan/__闲置__liuhan_03.png": {
-            "scale": 1,
+            "scale": 1.01,
             "offsetX": 0,
-            "offsetY": -24
+            "offsetY": -22
         },
         "/assets/liuhan/__闲置__liuhan_04.png": {
-            "scale": 1.3,
+            "scale": 1.37,
             "offsetX": 0,
-            "offsetY": -74
+            "offsetY": -73
         },
         "/assets/liuhan/__闲置__liuhan_05.png": {
             "scale": 1,
@@ -4211,6 +4211,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 1,
             "offsetY": -55
+        },
+        "/assets/liuhan/chagatai_genggong.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/liuhan/__闲置__liuhan_07.png": {
+            "scale": 1.21,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/liuhan/__闲置__liuhan_08.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/liuhan/you_gengkuang.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 16
         }
     },
     "folderGuides": {

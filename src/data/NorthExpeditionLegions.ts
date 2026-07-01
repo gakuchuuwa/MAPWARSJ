@@ -73,5 +73,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   guzhu: { name: '辽西郡兵', tier: 4 },    // 肥如·田豫辽西镇北疆（常规番号，降T3）
   dizhou: { name: '龙骧军', tier: 1 },     // 乐安·王彦章龙骧破晋
   wuyuan_d: { name: '五原塞卒', tier: 4 },  // 固阳塞·五原郡长城戍卒,
-    cangzhou: { name: '定霸都', tier: 4 },           // 缺乏知名度支撑，降T3
+    cangzhou: { name: '定霸都', tier: 4 },           // 缺乏知名度支撑，降T3,
+    dingzhou: { name: '鲜卑甲骑', tier: 2 },
 };

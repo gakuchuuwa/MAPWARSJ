@@ -13,7 +13,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   // 步跋子已迁环洲（huan@方渠）
   yeli: { name: '擒生军', tier: 3 },             // 西夏主力野战部队之一，特色极其鲜明，升入T3知名
     weiming: { name: '嵬名亲卫', tier: 4 },       // 鸡鹿塞·李继迁嵬名部亲卫起兵地斤泽（缺乏极其著名的战术高光，降T3）
-  guiyi: { name: '沙州劲旅', tier: 1 },          // 玉门关·§7 #4 张议潮归义军（名震天下复河西）
+    guiyi: { name: '归义射雕手', tier: 1 },
   xianlingqiang: { name: '凉州大马', tier: 3 },  // “凉州大马，横行天下”，汉末西北最顶级重骑兵的绝对文化符号，升入T3知名
   tufa_d: { name: '南凉铁骑', tier: 4 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）（缺乏极其著名的战术高光，降T3）
   juqu_d: { name: '卢水胡兵', tier: 3 },         // 五胡十六国时期河西走廊极其著名的部族武装（北凉基础），历史辨识度高，升入T3知名

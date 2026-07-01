@@ -647,6 +647,14 @@ async function openEditPanel(factionId: string | null): Promise<void> {
               ${regionOptions}
             </select>
           </label>
+          <label><span>据点类型</span>
+            <select name="cityType">
+              <option value="small_city" ${(row!.cityType ?? 'small_city') === 'small_city' ? 'selected' : ''}>小城 (small_city)</option>
+              <option value="medium_city" ${row!.cityType === 'medium_city' ? 'selected' : ''}>中城 (medium_city)</option>
+              <option value="big_city" ${row!.cityType === 'big_city' ? 'selected' : ''}>大城 (big_city)</option>
+              <option value="pass" ${row!.cityType === 'pass' ? 'selected' : ''}>关隘 (pass)</option>
+            </select>
+          </label>
 
           <h3>② 武将</h3>
           <div class="form-row">
@@ -1051,6 +1059,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
                     factionId, factionName, flagText,
                     cityId, cityName, lat, lng,
                     region: region || undefined,
+                    cityType: get('cityType') || 'small_city',
                 }]
             }),
         });
