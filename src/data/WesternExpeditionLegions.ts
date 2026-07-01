@@ -26,7 +26,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   shule: { name: '阿兰斯近卫', tier: 3 },     // 元代著名的“阿速回军”（阿兰人近卫军），深度介入元廷斗争的异族卫队，知名度极高，升入T3知名
   yanqi: { name: '焉耆龙骑兵', tier: 4 },   // 员渠城·焉耆龙骑（§14 #6）（缺乏极其著名的战术高光，降T3）
   wusun: { name: '昆莫亲卫', tier: 3 }, // 汉代西域最强霸主乌孙国国王（昆莫）亲卫，汉朝联姻抗匈的绝对盟友，升入T3知名
-  chagatai: { name: '蒙兀儿铁骑', tier: 1 }, // 东察合台汗国主力，称霸西域，建制延续性强，升T1
   dayuan: { name: '汗血天马骑', tier: 3 },   // 大宛汗血宝马+李广利万里远征，极高文化知名度，升T2
   shache: { name: '莎车左右骑', tier: 4 },   // 渠莎·汉代西域强国（缺乏极其著名的战术高光，降T3）
   // §14 #9 叶尔羌火枪兵（火绳枪）→ 不收

@@ -308,9 +308,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_lanling', name: '氶城', factionId: 'xiao_d', lat: 34.798005, lng: 117.647095, type: 'small_city', troops: 5000, region: 'CENTRAL' },
 
     // ── 齐鲁古国与半岛走廊中城 ──
-    { id: 'city_dingtao', name: '定陶', factionId: 'wazhai', lat: 35.200716, lng: 115.471802, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '定陶；瓦岗小城',
-    },
+    { id: 'city_dingtao', name: '定陶', factionId: 'wazhai', lat: 35.200716, lng: 115.471802, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
     { id: 'city_jimo', name: '即墨', factionId: 'jiaodong', lat: 36.403591, lng: 120.445862, type: 'small_city', region: 'CENTRAL', troops: 10000,
         note: '即墨；胶东小城',
     },
@@ -2339,9 +2338,8 @@ export const CITIES_V2: CityDataV2[] = [
         note: '独山城；处月部关隘',
     },
 
-    { id: 'city_wutucheng', name: '务涂城', factionId: 'cheshihou', lat: 43.735353, lng: 87.574768, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '务涂城；车师小城',
-    },
+    { id: 'city_wutucheng', name: '迪化城', factionId: 'cheshihou', lat: 43.735353, lng: 87.574768, type: 'small_city', troops: 5000, region: 'STEPPE' },
+
 
     { id: 'city_gaochangcheng', name: '高昌', factionId: 'yiduhu', lat: 42.8533, lng: 89.53, type: 'small_city', region: 'WESTERN', troops: 10000, mirror: true, tier: 1,
         note: '高昌；亦都护小城',
@@ -2442,6 +2440,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_huixian', name: '河池', factionId: 'huizhou_d', lat: 33.80, lng: 106.06, type: 'small_city', region: 'BASHU', troops: 10000, note: '河池；诸葛亮元戎' },
 { id: 'city_huojia', name: '获嘉', factionId: 'sima_d', lat: 35.26, lng: 113.66, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '河内郡；司马氏郡望' },
     { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+
     
     { id: 'city_fushi', name: '肤施', factionId: 'zhai_han', lat: 36.59, lng: 109.48, type: 'small_city', troops: 5000, region: 'HEXI' },
 
@@ -2486,9 +2485,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746, lng: 82.983, type: 'small_city', troops: 5000, region: 'WESTERN' },
 
     { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.83, lng: 93.51, type: 'small_city', region: 'WESTERN', troops: 10000, note: '草原环线西南锚点；文化西域' },
-    { id: 'city_bieshibali', name: '别失八里', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '别失八里；察合台小城',
-    },
+    { id: 'city_bieshibali', name: '务涂城', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'small_city', troops: 5000, region: 'STEPPE' },
+
     { id: 'city_balikun', name: '巴里坤', factionId: 'pulei', lat: 43.6, lng: 93, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '巴里坤；蒲类小城',
     },

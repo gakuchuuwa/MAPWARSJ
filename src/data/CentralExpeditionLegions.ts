@@ -37,7 +37,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
   dixiang: { name: '猪突豨勇', tier: 3 },   // 王莽新朝特种部队，极度奇葩、辨识度极高的历史番号，升入T3知名
   // 朱龙骑除名（无此番号）
-    liguo: { name: '阏与锐骑', tier: 2 },
+    liguo: { name: '阏与突骑', tier: 2 },
   yiyang_d: { name: '申息锐师', tier: 3 },    // 春秋楚国最强底牌，老牌历史劲旅，升入T3知名
   // ── 2026-06-16 新增：11大名关 ──
                       hongnong_jun: { name: '黄龙骑', tier: 4 },    // 函谷关·杨素大破突厥（缺乏极其著名的战术高光，降T3）
@@ -69,7 +69,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   mi: { name: '朐城弩手', tier: 4 },         // 朐城·麋竺家兵（缺乏极其著名的战术高光，降T3）
   yaozhou: { name: '耀州牙兵', tier: 4 },       // 金锁关·李茂贞岐军（缺乏极其著名的战术高光，降T3）
   cai: { name: '雪夜突骑', tier: 2 },          // 新蔡·李愬雪夜入蔡州
-  wazhai: { name: '瓦岗军', tier: 1 },           // 定陶·李密破张须陀瓦岗崛起
+    wazhai: { name: '骊山刑徒', tier: 3 },
   huaiyang: { name: '细柳营', tier: 3 },     // 周亚夫细柳营，军纪严明之文化符号，提拔至T3知名
   yao: { name: '匈奴五部', tier: 3 },        // 南匈奴内附建制，孕育汉赵政权开启五胡十六国，历史辨识度极高，升入T3知名
   kong_d: { name: '北海郡兵', tier: 4 },       // 曲阜·孔融以北海相保境，孔融本人极有名

@@ -53,7 +53,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   duolu: { name: '咄陆部铁骑', tier: 4 },              // 缺乏知名度支撑，降T3
   kaerka: { name: '喀尔喀重骑', tier: 4 },
   buriat: { name: '林中射手', tier: 4 },
-  cheshihou: { name: '车师后王卫', tier: 4 },
+    cheshihou: { name: '车师后王卫', tier: 4 },
   // ── 2026-06-19 有将无番号补全 ──
   kiyad: { name: '乞颜宿卫', tier: 3 },         // 不儿罕山·也速该乞颜部
   mengwu: { name: '忙古勒骑', tier: 4 },        // 狼居胥·合不勒汗
@@ -83,5 +83,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   nuoyan_d: { name: '漠北驿骑', tier: 4 },      // 赛音山达·清代大漠驿站护军
   wuli_d: { name: '喀尔喀劲骑', tier: 3 },      // 扎布汗·乌里雅苏台喀尔喀骑兵（缺乏极其著名的战术高光，降T3）
   heisha_d: { name: '黑沙精骑', tier: 3 },  // 后突厥黑沙道，突厥复兴运动核心，专属名号特色鲜明，升T2
-  jiluo_d: { name: '北征突骑', tier: 1 },       // 燕然勒石彻底击灭北匈奴，独立战略主力，升T1
+  jiluo_d: { name: '北征突骑', tier: 1 },       // 燕然勒石彻底击灭北匈奴，独立战略主力，升T1,
+    chagatai: { name: '戊己屯军', tier: 1 },
 };

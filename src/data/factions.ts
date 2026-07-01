@@ -240,7 +240,8 @@ export const FACTIONS: Faction[] = [
     { id: 'dongxian', name: '东海' },
 
     { id: 'baibo', name: '黄巾' },
-    { id: 'cheshihou', name: '车师' },
+    { id: 'cheshihou', name: '乌垒' },
+
 
     // ── 2026-05-26 新增：汉朝核对追加势力 ──
     { id: 'zhai_han', name: '翟国' },
@@ -289,7 +290,8 @@ export const FACTIONS: Faction[] = [
     { id: 'sunwu_d', name: '孙吴' },
 
     // ── 2026-05-26 新增：隋朝核对追加势力 ──
-    { id: 'wazhai', name: '瓦岗' },        // 深红 - 瓦岗军/李密魏政权(洛口仓)
+    { id: 'wazhai', name: '济阴' },
+        // 深红 - 瓦岗军/李密魏政权(洛口仓)
     // 番茄红 - 窦建德夏政权(乐寿)     // 铁灰 - 刘武周定杨政权(马邑)
     { id: 'liangshidu', name: '梁朔' },
     // 深紫 - 宇文化及许政权(魏县/江都)           // 道奇蓝 - 罗艺燕政权(渔阳)
@@ -342,7 +344,8 @@ export const FACTIONS: Faction[] = [
     { id: 'pagan', name: '缅国' },
     { id: 'champa', name: '占婆' },
     { id: 'dongxia', name: '东夏' },
-    { id: 'chagatai', name: '察合台' },
+    { id: 'chagatai', name: '车师' },
+
            // 汗国深绿 - 察合台汗国(阿力麻里)
     { id: 'ogodei', name: '窝阔台' },
     // 波斯靛紫 - 伊儿汗国(玛拉固阿)
@@ -779,6 +782,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yangshe', name: '羊舌' },
     { id: 'sima_d', name: '司马' },   // 河内郡望@获嘉
     { id: 'liguo', name: '潞州' },
+
 
     { id: 'kang', name: '夏州' },
     { id: 'wudu', name: '武都' },

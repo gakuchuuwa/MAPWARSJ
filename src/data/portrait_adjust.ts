@@ -278,9 +278,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -47
         },
         "/assets/LINGNAN/dacheng_chenkai.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -52
+            "scale": 1,
+            "offsetX": 1,
+            "offsetY": -55
         },
         "/assets/liuhan/han_d_liubang.png": {
             "scale": 0.98,
@@ -4209,8 +4209,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/BASHU/__闲置__BASHU_01.png": {
             "scale": 1,
-            "offsetX": 0,
-            "offsetY": -26
+            "offsetX": 1,
+            "offsetY": -55
         }
     },
     "folderGuides": {

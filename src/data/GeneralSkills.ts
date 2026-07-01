@@ -376,13 +376,13 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tiele_qibiheli: { generalId: 'tiele_qibiheli', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_06' }, // 征高句丽水陆并进
     ashide_ashidejieli: { generalId: 'ashide_ashidejieli', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 颉利南下奇袭渭水
     duolu_ashinahelu: { generalId: 'duolu_ashinahelu', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 西突厥十姓外交整合
-    cheshihou_cheshihouwang: { generalId: 'cheshihou_cheshihouwang', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 车师后王固守
+    cheshihou_cheshihouwang: { generalId: 'cheshihou_cheshihouwang', tier: 'ordinary', tacticalSkillId: 'tac_10' },
     kaerka_abadaikehan: { generalId: 'kaerka_abadaikehan', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 喀尔喀统一待变
     huyan_huyanwang: { generalId: 'huyan_huyanwang', tier: 'ordinary', tacticalSkillId: 'tac_07' }, // 呼衍王西域游击
     chahar_lindanhan: { generalId: 'chahar_lindanhan', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_01' }, // 整合右翼蒙古诸部
     ongut_alagusi: { generalId: 'ongut_alagusi', tier: 'ordinary', tacticalSkillId: 'tac_09' }, // 汪古部外交附蒙
     rouran_shelun: { generalId: 'rouran_shelun', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_01' }, // 柔然脱鲜卑神速立国
-    chagatai_tuhulutiemuer: { generalId: 'chagatai_tuhulutiemuer', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' }, // 东察合台统一蒙兀儿斯坦
+    chagatai_tuhulutiemuer: { generalId: 'chagatai_tuhulutiemuer', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_05' },
     huihu_dongmohedagan: { generalId: 'huihu_dongmohedagan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' },
     huige_gulipeiluo: { generalId: 'huige_gulipeiluo', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' },
     huizhou_zhugeliang: { generalId: 'huizhou_zhugeliang', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_05' }, // 诸葛亮元戎弩
@@ -673,7 +673,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     chimei_fanchong: { generalId: 'chimei_fanchong', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 赤眉入长安
     zhengzhou_chenqingzhi: { generalId: 'zhengzhou_chenqingzhi', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 七千白袍入洛阳
     xichu_xiangyu: { generalId: 'xichu_xiangyu', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_03' }, // 巨鹿彭城
-    wazhai_limi_wz: { generalId: 'wazhai_limi_wz', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_05' }, // 瓦岗夺兴洛仓
+    wazhai_limi_wz: { generalId: 'wazhai_limi_wz', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' },
     jiaodong_tiandan: { generalId: 'jiaodong_tiandan', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_08' }, // 即墨守城五年·火牛破燕
     jibei_xuxuan_cm: { generalId: 'jibei_xuxuan_cm', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 赤眉丞相
     qi_qihuangong: { generalId: 'qi_qihuangong', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_03' }, // 尊王攘夷·九合诸侯

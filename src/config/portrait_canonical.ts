@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/1 20:01:34（共 165 条）
+ * 生成时间：2026/7/1 21:51:14（共 165 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huanggua4.png": "/assets/BASHU/baishui_yanghuai.png",
@@ -47,16 +47,15 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/shixing_houandou.png": "/assets/BASHU/yong_lujili.png",
     "/assets/xianqin/wu_sunwu.png": "/assets/BASHU/yong_lujili.png",
     "/assets/NORTH/dangzhou_dengai.png": "/assets/BASHU/yueyi_zhangyi.png",
-    "/assets/LINGNAN/dacheng_chenkai.png": "/assets/BASHU/zhongxiang_zhongxiang.png",
     "/assets/LINGNAN/shengmiao_baoli_miao.png": "/assets/BASHU/zhuoshi_zhuowangsun.png",
     "/assets/BASHU/zizhou_wangjian.png": "/assets/BASHU/zi_changhong.png",
     "/assets/LINGNAN/xian_d_xianfuren.png": "/assets/BASHU/zuo_d_wufu_zd.png",
-    "/assets/NORTH/jingmen_zhaoyun.png": "/assets/BASHU/__闲置__BASHU_01.png",
-    "/assets/litang/zhongshan_yangaoging.png": "/assets/CENTRAL/202606280349.png",
+    "/assets/LINGNAN/dacheng_chenkai.png": "/assets/BASHU/__闲置__BASHU_01.png",
     "/assets/JIANGNAN/fangla_fangla_jn.png": "/assets/CENTRAL/ruzhou_sunjian.png",
     "/assets/CENTRAL/tongzhou_liuzhiyuan.png": "/assets/CENTRAL/__闲置__CENTRAL_01.png",
     "/assets/HEXI/ningkou_lubode.png": "/assets/CENTRAL/yao_liuyuan.png",
     "/assets/NORTHEAST/xiongding_murongyong.png": "/assets/CENTRAL/__闲置__CENTRAL_09.png",
+    "/assets/litang/zhongshan_yangaoging.png": "/assets/CENTRAL/__闲置__CENTRAL_10.png",
     "/assets/WESTERN/weitou_douti.png": "/assets/CENTRAL_ASIA/baha_gaiwamu.png",
     "/assets/WESTERN/dzungar_gaerdancelin.png": "/assets/CENTRAL_ASIA/dulan_d_aihamaide.png",
     "/assets/WESTERN/chuyue_shatuonasu.png": "/assets/CENTRAL_ASIA/guzgan_abulihalisi.png",
@@ -94,7 +93,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiwan_alugu.png": "/assets/DIANQIAN/__闲置__DIANQIAN_01.png",
     "/assets/LINGNAN/zhongxiang_ganning.png": "/assets/DIANQIAN/__闲置__DIANQIAN_02.png",
     "/assets/STEPPE/kereyid_wanghan.png": "/assets/HEXI/dai_d_shijingtang.png",
-    "/assets/STEPPE/yuwen_yuwentai.png": "/assets/HEXI/dai_d_tuobashiyijian.png",
     "/assets/STEPPE/chahar_lindanhan.png": "/assets/HEXI/guiyi_caoyijin.png",
     "/assets/STEPPE/cheshihou_cheshihouwang.png": "/assets/HEXI/shizhao_d_shihu.png",
     "/assets/TIBET/song2_houjunji.png": "/assets/HEXI/shizhao_d_shihu.png",
@@ -103,6 +101,8 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/TIBET/xiaobolu_meijinmang.png": "/assets/HEXI/yuezhi_xihou.png",
     "/assets/TIBET/humi_humiwang.png": "/assets/HEXI/__闲置__HEXI_01.png",
     "/assets/WESTERN/xiliao_yelvdashi.png": "/assets/HEXI/__闲置__HEXI_01.png",
+    "/assets/STEPPE/yuwen_yuwentai.png": "/assets/HEXI/__闲置__HEXI_03.png",
+    "/assets/JIANGNAN/jiujiang_zhouyu.png": "/assets/JIANGNAN/chuzhou_d_dugao.png",
     "/assets/xianqin/mi_chu_chuzhuangwang.png": "/assets/LINGNAN/cen_d_cenmeng.png",
     "/assets/xianqin/__闲置__xianqin_02.png": "/assets/LINGNAN/daozhou_yangzaixing.png",
     "/assets/panjun/__闲置__PANJUN_05.png": "/assets/LINGNAN/dongzu_wumian.png",

@@ -164,7 +164,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'baibo': '黄巾',
     'wuhuan': '乌桓',
     'xianlingqiang': '先零',
-'cheshihou': '车师',
+'cheshihou': '乌垒',
 'yelang': '夜郎',
 'ailao': '哀牢',
 'fuyu': '夫余',
@@ -225,7 +225,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'sunwu_d': '孙吴',
 
     // ── 2026-05-25 新增：隋朝核对追加势力 ──
-    'wazhai': '瓦岗',
+'wazhai': '济阴',
     'liangshidu': '银',
     'linshihong': '楚南',
 'kumo': '楮特',
@@ -262,7 +262,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'pagan': '缅',
     'champa': '占婆',
 'dongxia': '东夏',
-'chagatai': '察合',
+'chagatai': '车师',
     'ogodei': '窝阔',
     'kereyid': '克烈',
     'naiman': '乃蛮',
