@@ -8,47 +8,47 @@
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  jilizhou: { name: '卑沙山城卫', tier: 3 },   // 卑沙城·程名振
-  nuergan: { name: '奴儿干卫军', tier: 3 }, // 奴儿干城·康旺
-  huimo: { name: '濊貊长矛手', tier: 3 }, // 乌骨城·高延寿濊貊
-  bohai: { name: '渤海猛贲', tier: 2 },       // 龙泉府·渤海左右猛贲卫
+  jilizhou: { name: '卑沙山城卫', tier: 4 },   // 卑沙城·程名振
+  nuergan: { name: '奴儿干卫军', tier: 4 }, // 奴儿干城·康旺
+  huimo: { name: '濊貊长矛手', tier: 4 }, // 乌骨城·高延寿濊貊
+  bohai: { name: '渤海猛贲', tier: 4 },       // 龙泉府·渤海左右猛贲卫（缺乏极其著名的战术高光，降T3）
   dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（阿骨打@都城）
   yizhou: { name: '七水部铁骑', tier: 1 },      // 蒺藜山·完颜娄室统率的七水部嫡系主力
-  qidan: { name: '属珊锐骑', tier: 1 },     // 木叶山·述律平属珊锐骑
+  qidan: { name: '属珊锐骑', tier: 3 },     // 辽国述律平太后亲卫，名号独特，但非战略野战军，降为T3知名。
   manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
   aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
   manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）
-    hezhe: { name: '宁古塔水军', tier: 3 },
-  aola: { name: '敖拉部骑', tier: 3 },       // 雅克萨·孟烈伦敖拉氏
-  wuliangha: { name: '兀良哈猎兵', tier: 2 },  // 薛灵哥·者勒蔑率领的兀良哈部精锐
-  fuyu: { name: '夫余步骑', tier: 3 },       // 黄龙府·夫余步骑（§1）
-  keerqin: { name: '达尔罕卫', tier: 3 },
-  yehe: { name: '八面关骁骑', tier: 3 },
-  xianbei: { name: '鲜卑弓骑', tier: 3 },   // 嘎仙洞·鲜卑弓骑（番号≤5字）
-  dongxia: { name: '东夏锐卒', tier: 3 },       // 曷苏馆·蒲鲜万奴东夏国
-    haixi_nvzhen: { name: '海西甲骑', tier: 3 },
-  houliao: { name: '东辽骑队', tier: 2 },       // 咸平·耶律留哥东辽
-    suolun: { name: '卜奎猎骑', tier: 2 },
-  wula: { name: '乌拉国兵', tier: 3 },          // 龙潭山城·布占泰乌拉贝勒
-  wure: { name: '兀惹部卒', tier: 3 },          // 乌舍城·乌昭度兀惹部
-    heishui: { name: '靺鞨锐卒', tier: 3 },
-    dawoer: { name: '莫尔根飞骑', tier: 3 },
-    mohe: { name: '勃利甲骑', tier: 2 },
-  ewenki: { name: '石勒喀猎兵', tier: 3 },   // 尼布楚·博木博果尔鄂温克
-  dazhen: { name: '女真拐子马', tier: 2 },   // 恤品·完颜铁哥大真国
-    yeren_nvzhen: { name: '瑷珲马甲', tier: 2 },
-  wuji: { name: '勿吉步卒', tier: 2 },            // 伯都·乙力支朝贡北魏
-  jilin: { name: '吉林屯营', tier: 2 },           // 宽城子·富俊编练屯田
-  kuye: { name: '库页猎兵', tier: 3 },            // 白主·费雅喀猎户
-  sushen: { name: '楛矢射手', tier: 3 },          // 东康·肃慎楛矢石砮
-  yilou: { name: '挹娄突骑', tier: 3 },           // 凤林城·恼犽助战高句丽
-  maomingan: { name: '阿穆尔猎兵', tier: 3 },       // 格尔必齐·根特木尔达斡尔
-  jilimi: { name: '吉里迷水师', tier: 3 },        // 囊哈儿·奴儿干吉里迷
-  eluoke: { name: '鄂罗克猎兵', tier: 3 },        // 诺托罗·库页岛北部
-  nifuhe: { name: '尼夫赫冰兵', tier: 3 },      // 盆奴里·黑龙江口
-  feiyaka: { name: '费雅喀猎手', tier: 3 },       // 普禄·库页岛西岸
-  nanai: { name: '赫哲快桨船', tier: 3 },         // 瓦伦·黑龙江中游
-  dongping: { name: '东平镇营', tier: 3 },        // 锡尔喀·金代东平府,
-    elunchunzu: { name: '鄂伦春猎骑', tier: 2 },
+    hezhe: { name: '宁古塔水军', tier: 4 },
+  aola: { name: '敖拉部骑', tier: 4 },       // 雅克萨·孟烈伦敖拉氏
+  wuliangha: { name: '兀良哈猎兵', tier: 4 },  // 薛灵哥·者勒蔑率领的兀良哈部精锐（缺乏极其著名的战术高光，降T3）
+  fuyu: { name: '夫余步骑', tier: 4 },       // 黄龙府·夫余步骑（§1）
+  keerqin: { name: '达尔罕卫', tier: 4 },
+  yehe: { name: '八面关骁骑', tier: 4 },
+  xianbei: { name: '鲜卑弓骑', tier: 4 },   // 嘎仙洞·鲜卑弓骑（番号≤5字）
+  dongxia: { name: '东夏锐卒', tier: 4 },       // 曷苏馆·蒲鲜万奴东夏国
+    haixi_nvzhen: { name: '海西甲骑', tier: 4 },
+  houliao: { name: '东辽骑队', tier: 4 },       // 咸平·耶律留哥东辽（缺乏极其著名的战术高光，降T3）
+    suolun: { name: '卜奎猎骑', tier: 4 },            // 缺乏知名度支撑，降T3
+  wula: { name: '乌拉国兵', tier: 4 },          // 龙潭山城·布占泰乌拉贝勒
+  wure: { name: '兀惹部卒', tier: 4 },          // 乌舍城·乌昭度兀惹部
+    heishui: { name: '靺鞨锐卒', tier: 4 },
+    dawoer: { name: '莫尔根飞骑', tier: 4 },
+    mohe: { name: '勃利甲骑', tier: 4 },              // 缺乏知名度支撑，降T3
+  ewenki: { name: '石勒喀猎兵', tier: 4 },   // 尼布楚·博木博果尔鄂温克
+  dazhen: { name: '女真拐子马', tier: 3 },   // 恤品·完颜铁哥大真国
+    yeren_nvzhen: { name: '瑷珲马甲', tier: 4 },      // 缺乏知名度支撑，降T3
+  wuji: { name: '勿吉步卒', tier: 4 },            // 伯都·乙力支朝贡北魏（缺乏极其著名的战术高光，降T3）
+  jilin: { name: '吉林屯营', tier: 4 },           // 宽城子·富俊编练屯田（常规番号，降T3）
+  kuye: { name: '库页猎兵', tier: 4 },            // 白主·费雅喀猎户
+  sushen: { name: '楛矢射手', tier: 4 },          // 东康·肃慎楛矢石砮
+  yilou: { name: '挹娄突骑', tier: 4 },           // 凤林城·恼犽助战高句丽
+  maomingan: { name: '阿穆尔猎兵', tier: 4 },       // 格尔必齐·根特木尔达斡尔
+  jilimi: { name: '吉里迷水师', tier: 4 },        // 囊哈儿·奴儿干吉里迷
+  eluoke: { name: '鄂罗克猎兵', tier: 4 },        // 诺托罗·库页岛北部
+  nifuhe: { name: '尼夫赫冰兵', tier: 4 },      // 盆奴里·黑龙江口
+  feiyaka: { name: '费雅喀猎手', tier: 4 },       // 普禄·库页岛西岸
+  nanai: { name: '赫哲快桨船', tier: 4 },         // 瓦伦·黑龙江中游
+  dongping: { name: '东平镇营', tier: 4 },        // 锡尔喀·金代东平府,
+    elunchunzu: { name: '鄂伦春猎骑', tier: 4 },       // 缺乏知名度支撑，降T3
 };

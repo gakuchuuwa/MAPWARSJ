@@ -13,21 +13,21 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
     heng1: { name: '赵边骑', tier: 1 },
-  huan: { name: '神臂弓手', tier: 2 },      // 方渠·宋代西军种师道神臂弓手
-  qingyuan_bd: { name: '白马突骑', tier: 2 }, // 保定·周德威白马突骑
+  huan: { name: '神臂弓手', tier: 3 },      // 方渠·宋代西军种师道神臂弓手
+  qingyuan_bd: { name: '白马突骑', tier: 4 }, // 保定·周德威白马突骑（缺乏极其著名的战术高光，降T3）
 
   // ── §2 北方 12 支 ──
   yan: { name: '渔阳突骑', tier: 1 },       // 古北口·§2 #2 光武幽州精骑（升T1）
-  gongsun_d: { name: '襄平狟骑', tier: 2 }, // 襄平·公孙度襄平狟骑
+  gongsun_d: { name: '襄平狟骑', tier: 4 }, // 襄平·公孙度襄平狟骑（缺乏极其著名的战术高光，降T3）
   shizhao_d: { name: '黑槊龙骧', tier: 2 }, // 邢台·石虎后赵禁军
-    yunzhong: { name: '苍头军', tier: 2 },
-  tuoba: { name: '拓跋虎骑', tier: 2 },     // 大同·拓跋鲜卑
+    yunzhong: { name: '苍头军', tier: 4 },           // 缺乏知名度支撑，降T3
+  tuoba: { name: '拓跋虎骑', tier: 4 },     // 大同·拓跋鲜卑（缺乏极其著名的战术高光，降T3）
   // 武川镇军已迁草原（yuwen@武川镇）
-  erzhu: { name: '六镇戍兵', tier: 2 },     // 秀容川·北魏六镇武人
+  erzhu: { name: '六镇戍兵', tier: 4 },     // 秀容川·北魏六镇武人（常规番号，降T3）
   gaoqi_d: { name: '百保鲜卑', tier: 2 },   // 蓨城·北齐百保精兵·高长恭禁卫（顶级近卫，降T2）
   yingzhou_ying_d: { name: '黄龙兵', tier: 1 }, // 朝阳·慕容皝棘城大破石赵
-  chile: { name: '两池军', tier: 3 },       // 云中·§2 #11
-  murong: { name: '龙城甲骑', tier: 2 },    // 棘城·慕容燕具装骑（无经典以少胜多）
+  chile: { name: '两池军', tier: 4 },       // 云中·§2 #11
+  murong: { name: '龙城甲骑', tier: 4 },    // 棘城·慕容燕具装骑（无经典以少胜多）（缺乏极其著名的战术高光，降T3）
   ming_d: { name: '明军三大营', tier: 1 },   // 北京·五军神机三千营（升T1）
 
   // ── §1 中原表·地理偏北（用户指定）──
@@ -35,43 +35,43 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
   lingzhou: { name: '朔方突骑', tier: 1 },  // 回乐·仆固怀恩朔方突骑
   dingxiang_d: { name: '定襄骁骑', tier: 0 }, // 恶阳岭·贞观四年李靖三千骁骑出恶阳岭夜袭定襄（神级进攻大捷，升T0）
-  zhongshan: { name: '常山龙骑', tier: 2 }, // 真定·常山特色骑兵（致敬常山赵子龙）
+  zhongshan: { name: '常山龙骑', tier: 4 }, // 真定·常山特色骑兵（致敬常山赵子龙）（缺乏极其著名的战术高光，降T3）
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
-  helian: { name: '铁弗卫队', tier: 2 },     // 统万城·赫连勃勃铁弗亲卫
-  bing: { name: '并州狼骑', tier: 2 },     // 晋阳·吕布张辽并州骑兵（战术尖刀，缺乏大局战略胜利，降T2）
+  helian: { name: '铁弗卫队', tier: 4 },     // 统万城·赫连勃勃铁弗亲卫（常规番号，降T3）
+  bing: { name: '并州狼骑', tier: 3 },     // 晋阳·吕布张辽并州骑兵（战术尖刀，缺乏大局战略胜利，降T2）
   you: { name: '上谷突骑', tier: 1 },        // 居庸关·幽州上谷郡（升T1）
-  yi: { name: '易州戍兵', tier: 3 },           // 紫荆关·于谦明代易州戍守
-  changshan: { name: '倒马关卒', tier: 3 },   // 倒马关·常山
-  xianyu: { name: '轻勇骑', tier: 2 },      // 井陉关·韩信轻勇骑
-    linhu: { name: '林胡骑', tier: 2 },
+  yi: { name: '易州戍兵', tier: 2 },           // 于谦北京保卫战临危受命，绝境逆转，升T2
+  changshan: { name: '倒马关卒', tier: 4 },   // 倒马关·常山
+  xianyu: { name: '轻勇骑', tier: 4 },      // 井陉关·韩信轻勇骑（缺乏极其著名的战术高光，降T3）
+    linhu: { name: '林胡骑', tier: 4 },              // 缺乏知名度支撑，降T3
     lingqiu: { name: '胡服骑射', tier: 1 },
   // 飞虎军除名（李克用置，平型关时代错位）
-  loufan: { name: '天山飞骑', tier: 2 },      // 宁武关·薛仁贵三箭定天山
+  loufan: { name: '天山飞骑', tier: 4 },      // 宁武关·薛仁贵三箭定天山（缺乏极其著名的战术高光，降T3）
   linyu: { name: '夷丁突骑', tier: 1 },       // 山海关·临榆（明末战功卓著，升T1）
   // 恒山军除名（泛称无固定番号）
-  dai_d: { name: '左射军', tier: 2 },         // 灵仙·石敬瑭嫡系
-  dongdan: { name: '东丹卫兵', tier: 2 },       // 敖东城·耶律倍东丹国
-  xuan: { name: '宣大劲骑', tier: 2 },          // 宣化·明九边宣大精骑
-  zhe_d: { name: '折家将兵', tier: 2 },         // 府谷·宋府州折氏十世将门
-  shanrong: { name: '山戎突骑', tier: 2 },      // 无终·田畴导曹操伐乌桓
-  pingyuan: { name: '平原义军', tier: 2 },      // 平原·颜真卿首倡义兵（缺乏进攻胜仗，降T2）
-  dada_ming: { name: '鞑靼铁骑', tier: 2 },          // 河套·明代蒙古鞑靼部
+  dai_d: { name: '左射军', tier: 4 },         // 灵仙·石敬瑭嫡系（缺乏极其著名的战术高光，降T3）
+  dongdan: { name: '东丹卫兵', tier: 4 },       // 敖东城·耶律倍东丹国（缺乏极其著名的战术高光，降T3）
+  xuan: { name: '宣大劲骑', tier: 4 },          // 宣化·明九边宣大精骑（缺乏极其著名的战术高光，降T3）
+  zhe_d: { name: '折家将兵', tier: 4 },         // 府谷·宋府州折氏十世将门（缺乏极其著名的战术高光，降T3）
+  shanrong: { name: '山戎突骑', tier: 4 },      // 无终·田畴导曹操伐乌桓（缺乏极其著名的战术高光，降T3）
+  pingyuan: { name: '平原义军', tier: 3 },      // 颜真卿首倡义兵，无战术突击高光，属于常规义军，降回T3
+  dada_ming: { name: '鞑靼铁骑', tier: 4 },          // 河套·明代蒙古鞑靼部（缺乏极其著名的战术高光，降T3）
   
   // ── 2026-06-18 自东北文件迁回
   jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·李成梁辽东骑兵（打出极强战绩，升T1）
   zu_d: { name: '关宁铁骑', tier: 1 },       // 宁远·祖大寿（原T0降级，防御战）
-  mao_wenlong: { name: '东江劲旅', tier: 3 }, // 皮岛·毛文龙（§1 #86）
-  liwang: { name: '河间突骑', tier: 2 },     // 乐成·李光弼河朔骑兵
+  mao_wenlong: { name: '东江劲旅', tier: 4 }, // 皮岛·毛文龙（§1 #86）
+  liwang: { name: '河间突骑', tier: 4 },     // 乐成·李光弼河朔骑兵（缺乏极其著名的战术高光，降T3）
   hejian: { name: '白马义从', tier: 2 },      // 文安·公孙瓒幽州突骑（界桥全军覆没，特色之兵降T2）
   qu_d: { name: '先登营', tier: 2 },       // 界桥·麴义破公孙瓒（192年）
-  yang_aner: { name: '天顺红袄', tier: 2 },        // 蓬莱·杨安儿天顺红袄克登莱（名气不足，降T2）
-  weihaiwei: { name: '大唐神灭军', tier: 1 },       // 文登·苏定方征东神灭军
-  jianzhou_nvzhen: { name: '建州女真卫', tier: 2 }, // 浑江·李满住建州女真卫
-  pinghai: { name: '征东舟师', tier: 2 },     // 漂渝津·来护儿征东水师
-  liangshidu: { name: '雕阴戍卒', tier: 2 }, // 雕阴·龙贾戍卒抗秦
-  yangshe: { name: '铜鞮私卒', tier: 2 }, // 铜鞮·羊舌职封邑
-  guzhu: { name: '辽西郡兵', tier: 2 },    // 肥如·田豫辽西镇北疆
+  yang_aner: { name: '天顺红袄', tier: 2 },        // 金末红袄军，专属名号红袄极其鲜明，升T2
+  weihaiwei: { name: '大唐神灭军', tier: 1 },        // 李晟收复长安，平定朱泚之乱，属于重大战略胜利，但不属于"灭国/重塑地缘格局"的T0级别，降为T1。
+  jianzhou_nvzhen: { name: '建州女真卫', tier: 3 }, // 后金清朝前身，建州女真是中国历史最重要转折点之一，升T2
+  pinghai: { name: '征东舟师', tier: 2 },     // 来护儿征东水师，隋征高句丽核心，显著文化知名度，升T2
+  liangshidu: { name: '雕阴戍卒', tier: 2 }, // 龙贾戍卒抗秦，战国经典防御战，升T2
+  yangshe: { name: '铜鞮私卒', tier: 4 }, // 铜鞮·羊舌职封邑（缺乏极其著名的战术高光，降T3）
+  guzhu: { name: '辽西郡兵', tier: 4 },    // 肥如·田豫辽西镇北疆（常规番号，降T3）
   dizhou: { name: '龙骧军', tier: 1 },     // 乐安·王彦章龙骧破晋
-  wuyuan_d: { name: '五原塞卒', tier: 3 },  // 固阳塞·五原郡长城戍卒,
-    cangzhou: { name: '定霸都', tier: 2 },
+  wuyuan_d: { name: '五原塞卒', tier: 4 },  // 固阳塞·五原郡长城戍卒,
+    cangzhou: { name: '定霸都', tier: 4 },           // 缺乏知名度支撑，降T3
 };

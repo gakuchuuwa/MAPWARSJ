@@ -835,16 +835,19 @@ export function applyPostBattleStrategicBonus(
 ): number {
     let total = 0;
 
+    let appliedForage = false;
+
     const army = getArmyEntity(unit);
     if (army?.expeditionTargetCityId) {
         total += applyPostBattleTroopPct(unit, EXPEDITION_FORAGE_SKILL, '[远征] ');
+        appliedForage = true;
     }
 
     if (canUnitUseGeneralSkills(unit)) {
         const profile = getGeneralProfile(unit.generalId);
         if (profile?.strategicSkillId) {
             const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
-            if (profileSkill && profileSkill.effect === 'post_battle_troop_pct') {
+            if (profileSkill && profileSkill.effect === 'post_battle_troop_pct' && !appliedForage) {
                 total += applyPostBattleTroopPct(unit, profileSkill, '');
             }
         }

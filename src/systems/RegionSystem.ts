@@ -1,6 +1,7 @@
 import { CityType } from '../types/core';
 import { CITY_CONFIG } from '../config/CityConfig';
 import { getCityExclusiveIconPath } from './city-marker/CityExclusiveIcons';
+import { CITIES_V2 } from '../data/cities_v2';
 // import { resolvePath } from '../utils/PathUtils';
 
 function resolvePath(path: string): string {
@@ -212,7 +213,7 @@ let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | nu
 
 function getDynamicRegions() {
     if (REGIONS_CACHE) return REGIONS_CACHE;
-    const CITIES_V2_DATA = require('../data/cities_v2').CITIES_V2;
+    const CITIES_V2_DATA = CITIES_V2;
     if (!CITIES_V2_DATA) return [];
     const cityMap = new Map<string, { lat: number, lng: number }>();
     for (const city of CITIES_V2_DATA) {

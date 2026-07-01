@@ -9,71 +9,71 @@
  * - 据点优先标志战场；王江泾距嘉兴<50km时取成军地
  */
 export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-  zhuang_d: { name: '广西俍兵', tier: 2 },     // 田阳·王江泾抗倭（非以少胜多）
-  xian_d: { name: '俚人武士', tier: 2 },       // 高凉·§10 #9 冼夫人卫队
+  zhuang_d: { name: '广西俍兵', tier: 4 },     // 田阳·王江泾抗倭（非以少胜多）（缺乏极其著名的战术高光，降T3）
+  xian_d: { name: '俚人武士', tier: 4 },       // 高凉·§10 #9 冼夫人卫队（缺乏极其著名的战术高光，降T3）
   dayue: { name: '白藤江水师', tier: 0 },           // 昇龙·陈国峻白藤江伏击灭元（区T0锚点·奇袭以少胜多）
-  jing: { name: '丁朝禁卫', tier: 3 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
+  jing: { name: '丁朝禁卫', tier: 4 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
   leloi: { name: '蓝山义军', tier: 1 },        // 蓝山·黎利抗明复国主力
-    nguyen_guangnan: { name: '富春禁兵', tier: 2 },
+    nguyen_guangnan: { name: '富春禁兵', tier: 4 },   // 常规番号，降T3
   // guangnanguo → 洞海城归 panjun
-  ryukyu: { name: '那霸水师', tier: 2 },       // 首里·§9 #21 琉球王府水师
+  ryukyu: { name: '那霸水师', tier: 4 },       // 首里·§9 #21 琉球王府水师（常规番号，降T3）
   ming_zheng: { name: '郑氏铁人军', tier: 1 }, // 承天·郑成功攻台（以多胜少，降T1）
-  guangzhou: { name: '清海军', tier: 2 },      // 番禺·刘隐清海军节度（《旧唐书·刘隐传》）
+  guangzhou: { name: '清海军', tier: 4 },      // 番禺·刘隐清海军节度（《旧唐书·刘隐传》）（缺乏极其著名的战术高光，降T3）
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占
-  zhancheng: { name: '占城象兵', tier: 2 },   // 阇槃·占城象兵
-  jingjiang: { name: '靖江府卫', tier: 2 },   // 永安·瞿式耜大破李成栋
-  xinjiang: { name: '静江弩手', tier: 2 },      // 始安·马塈静江弩手（南宋）
+  zhancheng: { name: '占城象兵', tier: 4 },   // 阇槃·占城象兵（缺乏极其著名的战术高光，降T3）
+  jingjiang: { name: '靖江府卫', tier: 4 },   // 永安·瞿式耜大破李成栋（缺乏极其著名的战术高光，降T3）
+  xinjiang: { name: '静江弩手', tier: 4 },      // 始安·马塈静江弩手（南宋）（缺乏极其著名的战术高光，降T3）
   // 铲平军除名（非正式官军番号）
-  nanyue: { name: '南越戍卒', tier: 3 },        // 龙川·赵佗南越国秦戍（《史记》）
-  nongzhigao: { name: '侬峒劲卒', tier: 2 },    // 晋兴·侬智高侬峒兵（《宋史·蛮夷传》）
-  yelang: { name: '夜郎锐卒', tier: 3 },        // 普定·夜郎国西南夷（《史记》）
-  dacheng: { name: '永安戍卒', tier: 3 },       // 永安·明永安千户所戍卒（原大成水师）
-  linyi: { name: '林邑象兵', tier: 3 },          // 象林·林邑国
-  xiou: { name: '西瓯戍兵', tier: 3 },           // 布山·西瓯
-  luoyue: { name: '骆越部卒', tier: 3 },         // 花山·骆越
-  guangxin: { name: '苍梧越甲', tier: 3 },       // 苍梧·百越特色重甲步兵
+  nanyue: { name: '南越戍卒', tier: 4 },        // 龙川·赵佗南越国秦戍（《史记》）
+  nongzhigao: { name: '侬峒劲卒', tier: 4 },    // 晋兴·侬智高侬峒兵（《宋史·蛮夷传》）（缺乏极其著名的战术高光，降T3）
+  yelang: { name: '夜郎锐卒', tier: 4 },        // 普定·夜郎国西南夷（《史记》）
+  dacheng: { name: '永安戍卒', tier: 4 },       // 永安·明永安千户所戍卒（原大成水师）
+  linyi: { name: '林邑象兵', tier: 4 },          // 象林·林邑国
+  xiou: { name: '西瓯戍兵', tier: 4 },           // 布山·西瓯
+  luoyue: { name: '骆越部卒', tier: 4 },         // 花山·骆越
+  guangxin: { name: '苍梧越甲', tier: 4 },       // 苍梧·百越特色重甲步兵
   taiping: { name: '太平军', tier: 1 },          // 金田村·太平天国（威震天下的战略绝对主力）
-  leizhou: { name: '雷州戍兵', tier: 3 },        // 海康·李茂雷州卫
-  monong: { name: '墨侬部卒', tier: 2 },       // 邦敦·阿侬率余部抗宋
-  shuizhen: { name: '水真戍卒', tier: 3 },     // 三菩·区大任驻守
-  ketagalan: { name: '凯达格兰兵', tier: 3 }, // 艋舺·台北原住民
-  li_s: { name: '大汉伏波', tier: 2 },            // 合浦·马援征交趾（非以少胜多）
-  shaozhou: { name: '大庾岭义旅', tier: 2 },   // 韶关·张镇孙抗元义军（1277–1278）
+  leizhou: { name: '雷州戍兵', tier: 4 },        // 海康·李茂雷州卫
+  monong: { name: '墨侬部卒', tier: 4 },       // 邦敦·阿侬率余部抗宋（缺乏极其著名的战术高光，降T3）
+  shuizhen: { name: '水真戍卒', tier: 4 },     // 三菩·区大任驻守
+  ketagalan: { name: '凯达格兰兵', tier: 4 }, // 艋舺·台北原住民
+  li_s: { name: '大汉伏波', tier: 4 },            // 合浦·马援征交趾（非以少胜多）（缺乏极其著名的战术高光，降T3）
+  shaozhou: { name: '大庾岭义旅', tier: 4 },   // 韶关·张镇孙抗元义军（1277–1278）（常规番号，降T3）
   guizhou: { name: '永历铁骑', tier: 1 },       // 古严关·李定国（原肇庆永历，2026-06-19 迁桂州）
-  paiyao: { name: '八排瑶丁', tier: 3 },      // 阳山关·明清连阳八排瑶丁
+  paiyao: { name: '八排瑶丁', tier: 4 },      // 阳山关·明清连阳八排瑶丁
   // 湘军道营除名（无此编制）
-  dayu: { name: '南赣标军', tier: 2 },        // 横浦关·明王阳明南赣标军（明代巡抚地方平叛主力）
-    duanzhou_d: { name: '端州义勇', tier: 2 },
-  chaozhou_d: { name: '潮州义勇', tier: 2 },       // 海阳·马发
-  basha_d: { name: '湄公象卫', tier: 2 },     // 上丁·刀更孟象兵
-  dengmaoqi: { name: '铲平义军', tier: 3 },
-  shixing: { name: '岭南劲卒', tier: 2 },
-  yingzhou: { name: '南汉禁兵', tier: 2 },
-  daozhou: { name: '道州弩手', tier: 3 },
-  guangping: { name: '象兵水师', tier: 2 },     // 洞海城·阮文张象兵舟船协同
-shengmiao: { name: '古州苗兵', tier: 2 },     // 甲定·包利连破清军汛堡
-  chendiaoyan: { name: '畲汉义军', tier: 2 },   // 龙溪·陈吊眼攻破漳州
-  buyi_d: { name: '盘江布依兵', tier: 2 },       // 罗博·韦朝元布依起义
-  paiwan: { name: '牡丹社勇士', tier: 2 },      // 牡丹社·阿禄古抗击日军（极具民族气节的高光特色武装）
-  miao_qing: { name: '黑旗苗獠', tier: 2 },   // 且兰城·地方苗军特色武装（曾破红巾军）
-  geng: { name: '靖南藩兵', tier: 2 },         // 延平·耿精忠三藩起兵
-  tian_sizhou: { name: '思州土兵', tier: 2 },    // 镇远·田祐恭归宋封国公
-  liren: { name: '儋耳黎兵', tier: 2 },         // 珠崖·符南蛇黎族起义
-  luodian: { name: '水西彝兵', tier: 2 },      // 大方城·奢香夫人摄政保境
-  longwu: { name: '建宁义旅', tier: 2 },       // 建宁·黄道周募兵抗清
-  luoping: { name: '摧锋军', tier: 2 },       // 厓山·张世杰厓山战败，全军覆没
-  xinggu: { name: '爨氏部曲', tier: 3 },       // 罗雄·爨习南中大姓
-  nong2: { name: '广源峒兵', tier: 2 },           // 广源·侬智高广源起兵建南天国
-  cen_d: { name: '泗城狼兵', tier: 2 },          // 凌云·岑猛泗城狼兵威震广西
-  miao: { name: '水西苗兵', tier: 2 },           // 可乐城·水西土司苗兵
-  jiang_s: { name: '零陵锐卒', tier: 2 },        // 泉陵·黄盖
-  muong: { name: '芒峒刀牌手', tier: 3 },         // 和平·申从岳芒族刀牌手
-  panyao: { name: '瑶人弩手', tier: 3 },          // 临贺·盘瑶山地弩手
-  chen2: { name: '桂阳戍卒', tier: 3 },           // 桂阳·赵范桂阳戍卒
-  qian: { name: '矩州戍卒', tier: 3 },            // 顺元·宋景阳入矩州戍,
-    minyue: { name: '闽越甲卒', tier: 2 },
-    funan: { name: '扶南大舶', tier: 2 },
-    lancang: { name: '澜沧象兵', tier: 2 },
-    liuzhou: { name: '柳州狼兵', tier: 2 },
+  dayu: { name: '南赣标军', tier: 4 },        // 横浦关·明王阳明南赣标军（明代巡抚地方平叛主力）（缺乏极其著名的战术高光，降T3）
+    duanzhou_d: { name: '端州义勇', tier: 4 },        // 常规番号，降T3
+  chaozhou_d: { name: '潮州义勇', tier: 4 },       // 海阳·马发（常规番号，降T3）
+  basha_d: { name: '湄公象卫', tier: 4 },     // 上丁·刀更孟象兵（缺乏极其著名的战术高光，降T3）
+  dengmaoqi: { name: '铲平义军', tier: 4 },
+  shixing: { name: '岭南劲卒', tier: 4 },             // 缺乏知名度支撑，降T3
+  yingzhou: { name: '南汉禁兵', tier: 4 },            // 常规番号，降T3
+  daozhou: { name: '道州弩手', tier: 4 },
+  guangping: { name: '象兵水师', tier: 4 },     // 洞海城·阮文张象兵舟船协同（常规番号，降T3）
+shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军汛堡（缺乏极其著名的战术高光，降T3）
+  chendiaoyan: { name: '畲汉义军', tier: 4 },   // 龙溪·陈吊眼攻破漳州（常规番号，降T3）
+  buyi_d: { name: '盘江布依兵', tier: 4 },       // 罗博·韦朝元布依起义（缺乏极其著名的战术高光，降T3）
+  paiwan: { name: '牡丹社勇士', tier: 3 },      // 牡丹社事件中的原住民武装，属于地方抗击，缺乏正规的战术大捷，属于风土特色，降为T3知名。
+  miao_qing: { name: '黑旗苗獠', tier: 4 },   // 且兰城·地方苗军特色武装（曾破红巾军）（缺乏极其著名的战术高光，降T3）
+  geng: { name: '靖南藩兵', tier: 4 },         // 延平·耿精忠三藩起兵（缺乏极其著名的战术高光，降T3）
+  tian_sizhou: { name: '思州土兵', tier: 4 },    // 镇远·田祐恭归宋封国公（常规番号，降T3）
+  liren: { name: '儋耳黎兵', tier: 4 },         // 珠崖·符南蛇黎族起义（缺乏极其著名的战术高光，降T3）
+  luodian: { name: '水西彝兵', tier: 4 },      // 大方城·奢香夫人摄政保境（缺乏极其著名的战术高光，降T3）
+  longwu: { name: '建宁义旅', tier: 4 },       // 建宁·黄道周募兵抗清（常规番号，降T3）
+  luoping: { name: '摧锋军', tier: 4 },       // 厓山·张世杰厓山战败，全军覆没（缺乏极其著名的战术高光，降T3）
+  xinggu: { name: '爨氏部曲', tier: 4 },       // 罗雄·爨习南中大姓
+  nong2: { name: '广源峒兵', tier: 4 },           // 广源·侬智高广源起兵建南天国（缺乏极其著名的战术高光，降T3）
+  cen_d: { name: '泗城狼兵', tier: 4 },          // 凌云·岑猛泗城狼兵威震广西（缺乏极其著名的战术高光，降T3）
+  miao: { name: '水西苗兵', tier: 4 },           // 可乐城·水西土司苗兵（缺乏极其著名的战术高光，降T3）
+  jiang_s: { name: '零陵锐卒', tier: 4 },        // 泉陵·黄盖（缺乏极其著名的战术高光，降T3）
+  muong: { name: '芒峒刀牌手', tier: 4 },         // 和平·申从岳芒族刀牌手
+  panyao: { name: '瑶人弩手', tier: 4 },          // 临贺·盘瑶山地弩手
+  chen2: { name: '桂阳戍卒', tier: 4 },           // 桂阳·赵范桂阳戍卒
+  qian: { name: '矩州戍卒', tier: 4 },            // 顺元·宋景阳入矩州戍,
+    minyue: { name: '闽越甲卒', tier: 4 },            // 缺乏知名度支撑，降T3
+    funan: { name: '扶南大舶', tier: 4 },             // 缺乏知名度支撑，降T3
+    lancang: { name: '澜沧象兵', tier: 4 },           // 缺乏知名度支撑，降T3
+    liuzhou: { name: '柳州狼兵', tier: 4 },           // 缺乏知名度支撑，降T3
 };

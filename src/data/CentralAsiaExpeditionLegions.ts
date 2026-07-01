@@ -8,56 +8,56 @@
  * - 耶尼切里为史籍专名精锐番号（非泛称火枪兵）；叶尔羌式「火枪兵」后缀不收
  */
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 }>> = {
-    yanda: { name: '阿尔洪铁骑', tier: 3 },
-  saman: { name: '萨曼古拉姆', tier: 2 },     // 阿母城·伊斯梅尔萨曼古拉姆
-    huarazim: { name: '钦察精骑', tier: 2 },
-  qincha: { name: '康里精骑', tier: 2 },
-  qiepantuo: { name: '护密镇军', tier: 3 },   // 护密城·瓦罕走廊戍卫
-  tiemuer: { name: '察合台突骑', tier: 0 },      // 撒马尔罕·帖木儿重塑亚欧版图的战略主力
-  kazakh: { name: '哈萨克骑', tier: 3 },     // 亚西·哈斯木汗游击（§13 #7）
+    yanda: { name: '阿尔洪铁骑', tier: 4 },
+  saman: { name: '萨曼古拉姆', tier: 4 },     // 阿母城·伊斯梅尔萨曼古拉姆（缺乏极其著名的战术高光，降T3）
+    huarazim: { name: '钦察精骑', tier: 4 },          // 缺乏知名度支撑，降T3
+  qincha: { name: '康里精骑', tier: 4 },              // 缺乏知名度支撑，降T3
+  qiepantuo: { name: '护密镇军', tier: 4 },   // 护密城·瓦罕走廊戍卫
+  tiemuer: { name: '察合台突骑', tier: 1 },      // 察合台汗国主力，维持了中亚霸权，但缺乏单独的灭国级标志性大捷，降为T1。
+  kazakh: { name: '哈萨克骑', tier: 4 },     // 亚西·哈斯木汗游击（§13 #7）
   seljuq: { name: '塞尔柱突骑', tier: 1 },     // 木鹿·生擒拜占庭皇帝的塞尔柱帝国主力
-    xiliao: { name: '斡耳朵亲卫', tier: 0 },
+    xiliao: { name: '斡耳朵亲卫', tier: 1 },
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
   guishuang: { name: '贵霜铁骑', tier: 1 },    // 蓝氏城·贵霜帝国铁骑
-    muer: { name: '呼罗珊义从', tier: 2 },
-  xijue: { name: '郅支城坚兵', tier: 2 },
-  tujishi: { name: '怛罗斯突骑', tier: 2 },
-  kokand: { name: '浩罕轻骑', tier: 3 },
-  sogdian: { name: '瓦拉赫沙卫', tier: 3 },
-  kangju: { name: '康卡控弦', tier: 2 },
-  anushidgin: { name: '希瓦铁骑', tier: 3 },
-  dayuzi: { name: '讹答剌卫队', tier: 3 },
-  zhaowu: { name: '忽毡勇士', tier: 3 },
+    muer: { name: '呼罗珊义从', tier: 4 },             // 缺乏知名度支撑，降T3
+  xijue: { name: '郅支城坚兵', tier: 4 },              // 缺乏知名度支撑，降T3
+  tujishi: { name: '怛罗斯突骑', tier: 4 },            // 缺乏知名度支撑，降T3
+  kokand: { name: '浩罕轻骑', tier: 4 },
+  sogdian: { name: '瓦拉赫沙卫', tier: 4 },
+  kangju: { name: '康卡控弦', tier: 4 },              // 缺乏知名度支撑，降T3
+  anushidgin: { name: '希瓦铁骑', tier: 4 },
+  dayuzi: { name: '讹答剌卫队', tier: 4 },
+  zhaowu: { name: '忽毡勇士', tier: 4 },
     yada: { name: '嚈哒重骑', tier: 1 },          // 悉万斤·全歼波斯主力的嚈哒帝国重装铁骑
-  jiazini: { name: '伽色尼禁卫', tier: 2 },       // 哥疾宁·马哈茂德古拉姆
-  jibin: { name: '犍陀罗骑', tier: 2 },        // 迦毕试·迦腻色迦犍陀罗骑兵
-  fanyanna: { name: '梵衍那僧兵', tier: 2 },      // 巴米扬·梵衍那王率僧兵御大食
+  jiazini: { name: '伽色尼禁卫', tier: 4 },       // 哥疾宁·马哈茂德古拉姆（缺乏极其著名的战术高光，降T3）
+  jibin: { name: '犍陀罗骑', tier: 4 },        // 迦毕试·迦腻色迦犍陀罗骑兵（缺乏极其著名的战术高光，降T3）
+  fanyanna: { name: '梵衍那僧兵', tier: 4 },      // 巴米扬·梵衍那王率僧兵御大食（缺乏极其著名的战术高光，降T3）
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
-  maer_d: { name: '骆驼突骑', tier: 2 },        // 彭迪·萨珊东北边境骆驼骑兵
-  wugu_d: { name: '乌古斯弓骑', tier: 2 },      // 毡的·乌古斯复合弓骑
-  mamon: { name: '呼罗珊禁卫', tier: 2 },       // 达尔甘·马蒙大破艾敏
-  khoja: { name: '白山派卫兵', tier: 2 },        // 休循·阿帕克和卓白山派
-  shi_clan: { name: '石国胡兵', tier: 2 },       // 柘折城·莫贺咄吐屯御大食
-  guzgan: { name: '古兹根卫队', tier: 3 },       // 法里亚布·古兹根戍卫
-  badakhshan: { name: '达克游骑', tier: 3 },     // 法扎巴德·达克边防
-  kawusi: { name: '卡乌斯铁卫', tier: 3 },     // 吉扎克·粟特要塞
-  xianhai: { name: '咸海骁锐', tier: 3 },        // 养吉干·花剌子模北境
-  wuhu: { name: '乌护游骑', tier: 3 },           // 真珠河·乌古斯游牧（1040丹达内克胜伽色尼）
-  jie: { name: '柘羯勇士', tier: 2 },            // 羯霜那·玄奘《大唐西域记》载柘羯勇士
+  maer_d: { name: '骆驼突骑', tier: 4 },        // 彭迪·萨珊东北边境骆驼骑兵（缺乏极其著名的战术高光，降T3）
+  wugu_d: { name: '乌古斯弓骑', tier: 4 },      // 毡的·乌古斯复合弓骑（缺乏极其著名的战术高光，降T3）
+  mamon: { name: '呼罗珊禁卫', tier: 4 },       // 达尔甘·马蒙大破艾敏（缺乏极其著名的战术高光，降T3）
+  khoja: { name: '白山派卫兵', tier: 4 },        // 休循·阿帕克和卓白山派（缺乏极其著名的战术高光，降T3）
+  shi_clan: { name: '石国胡兵', tier: 4 },       // 柘折城·莫贺咄吐屯御大食（缺乏极其著名的战术高光，降T3）
+  guzgan: { name: '古兹根卫队', tier: 4 },       // 法里亚布·古兹根戍卫
+  badakhshan: { name: '达克游骑', tier: 4 },     // 法扎巴德·达克边防
+  kawusi: { name: '卡乌斯铁卫', tier: 4 },     // 吉扎克·粟特要塞
+  xianhai: { name: '咸海骁锐', tier: 4 },        // 养吉干·花剌子模北境
+  wuhu: { name: '乌护游骑', tier: 4 },           // 真珠河·乌古斯游牧（1040丹达内克胜伽色尼）
+  jie: { name: '柘羯勇士', tier: 4 },            // 羯霜那·玄奘《大唐西域记》载柘羯勇士（缺乏极其著名的战术高光，降T3）
   // —— 2026-06-20 新增：旁遮普·阿托克 ——
   pangzha: { name: '卡尔萨武士', tier: 1 },      // 阿托克·戈宾德辛格创立卡尔萨，兰季特辛格旁遮普帝国核心武力
   // —— 2026-06-20 新增：那竭国·顶骨城 ——
-  najie: { name: '那竭方阵兵', tier: 1 },       // 顶骨城·印度-希腊米南德一世马其顿式重装方阵
+  najie: { name: '那竭方阵兵', tier: 4 },       // 顶骨城·印度-希腊米南德一世马其顿式重装方阵（缺乏极其著名的战术高光，降T3）
   // ── 2026-06-20 新增：杜兰尼·呼罗珊·阿巴尔 ──
   dulan_d: { name: '普什图骑兵', tier: 1 },    // 坎大哈·摧毁马拉塔帝国的战略主力
   // ── 2026-06-20 新增：布兹詹·哈里·卡伦 ──
-  baha: { name: '巴哈尔兹铁卫', tier: 2 }, // 泰巴德·巴哈尔兹重装戍卫
-    hali: { name: '萨洛尔弓骑', tier: 3 },
-  kalan: { name: '萨珊边骑', tier: 2 },    // 图斯·卡伦家族世袭东北边防元帅
+  baha: { name: '巴哈尔兹铁卫', tier: 4 }, // 泰巴德·巴哈尔兹重装戍卫（缺乏极其著名的战术高光，降T3）
+    hali: { name: '萨洛尔弓骑', tier: 4 },
+  kalan: { name: '萨珊边骑', tier: 4 },    // 图斯·卡伦家族世袭东北边防元帅（常规番号，降T3）
   // ── 2026-06-20 新增：锡斯坦·德兰吉亚 ──
-  xisi: { name: '萨法尔圣兵', tier: 2 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊
+  xisi: { name: '萨法尔圣兵', tier: 4 },  // 博斯特·雅库布铜匠加齐步兵席卷呼罗珊（缺乏极其著名的战术高光，降T3）
   delan: { name: '帕提亚铁骑', tier: 1 },   // 法拉·卡莱战役大破罗马军团的战略主力
     huluo: { name: '古尔重骑', tier: 1 },
   aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·萨珊波斯抗击罗马帝国的战略主力
-    kala: { name: '阿斯古拉姆', tier: 2 },
+    kala: { name: '阿斯古拉姆', tier: 4 },             // 缺乏知名度支撑，降T3
 };

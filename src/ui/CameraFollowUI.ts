@@ -30,6 +30,9 @@ export class CameraFollowUI {
     private limitLabel: HTMLSpanElement | null = null;
     private listHeader: HTMLDivElement | null = null;
     private lastLegionCount: number = -1;
+    /** 面板展开时列表节流刷新（势力兵力/据点/色条实时） */
+    private lastListRefreshAt = 0;
+    private static readonly LIST_REFRESH_INTERVAL_MS = 500;
     /** 势力统计数据源（合并势力榜后，每行附带势力兵力/据点数） */
     private cityManager: { getCities(): any[] } | null = null;
     private factionManager: { getFactionName(id: string): string | undefined; getFactionColor(id: string): string | undefined } | null = null;
@@ -104,8 +107,8 @@ export class CameraFollowUI {
         btn.innerHTML = '🎖️ 军团';
         btn.style.cssText = `
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            top: 16px;
+            left: 16px;
             z-index: 10000;
             padding: 10px 18px;
             font-size: 15px;
@@ -143,8 +146,8 @@ export class CameraFollowUI {
         panel.id = 'army-list-panel';
         panel.style.cssText = `
             position: fixed;
-            bottom: 70px;
-            right: 20px;
+            top: 62px;
+            left: 16px;
             width: 280px;
             max-height: 400px;
             overflow-y: auto;
@@ -301,6 +304,14 @@ export class CameraFollowUI {
                 this.followLargestLegion();
             }
         }
+        // 面板展开时，即使军团数不变也节流刷新，保持势力兵力/据点/色条实时
+        if (this.isListOpen) {
+            const now = performance.now();
+            if (now - this.lastListRefreshAt >= CameraFollowUI.LIST_REFRESH_INTERVAL_MS) {
+                this.lastListRefreshAt = now;
+                this.refreshList();
+            }
+        }
         this.tryPendingFollowByName();
     }
 
@@ -396,10 +407,19 @@ export class CameraFollowUI {
             return;
         }
 
-        // 按军团兵力降序排列（合并后仍以军团为主）
-        armies.sort((a: any, b: any) => (b.getTroops?.() || 0) - (a.getTroops?.() || 0));
-
         const factionTotals = this.computeFactionTotals();
+        let maxFactionTroops = 1;
+        for (const v of factionTotals.values()) {
+            if (v.troops > maxFactionTroops) maxFactionTroops = v.troops;
+        }
+
+        // 按所属势力据点数降序（据点相同再按军团兵力）
+        armies.sort((a: any, b: any) => {
+            const fa = factionTotals.get(a.getFactionId?.() ?? '') ?? { troops: 0, cities: 0 };
+            const fb = factionTotals.get(b.getFactionId?.() ?? '') ?? { troops: 0, cities: 0 };
+            if (fb.cities !== fa.cities) return fb.cities - fa.cities;
+            return (b.getTroops?.() || 0) - (a.getTroops?.() || 0);
+        });
 
         for (let idx = 0; idx < armies.length; idx++) {
             const army = armies[idx];
@@ -411,14 +431,22 @@ export class CameraFollowUI {
             const fTotal = factionTotals.get(fid) ?? { troops: 0, cities: 0 };
             const fName = this.factionManager?.getFactionName(fid) ?? fid;
             const fColor = this.factionManager?.getFactionColor(fid) ?? '#ffffff';
+            const fPct = maxFactionTroops > 0 ? Math.min(100, (fTotal.troops / maxFactionTroops) * 100) : 0;
             const generalRecord = army.generalId ? getGeneralRecordByGeneralId(army.generalId) : null;
             const isEliteAndGeneral = army.isElite && generalRecord;
 
-            let generalTag = '';
-            if (isEliteAndGeneral) {
-                generalTag = `<span style="color:#ffe39f; font-size:11px; margin-left:6px; border:1px solid #b8860b; border-radius:2px; padding:0 4px; background:linear-gradient(to bottom, rgba(184,134,11,0.25), rgba(0,0,0,0.4)); box-shadow: 0 0 3px rgba(184,134,11,0.5); text-shadow: 1px 1px 1px #000; font-family:'SimSun', 'Songti SC', serif;">♚ ${generalRecord.generalName}</span>`;
-            } else if (generalRecord) {
-                generalTag = `<span style="color:#d4af37; font-size:11px; margin-left:6px; border:1px solid rgba(212,175,55,0.5); border-radius:3px; padding:0 3px; background:rgba(212,175,55,0.1);">将·${generalRecord.generalName}</span>`;
+            // 标题：武将名率军团名（武将在前），精锐标记在后
+            const eliteBadge = isEliteAndGeneral
+                ? `<span style="color:#ffe39f; font-size:10px; margin-left:5px; border:1px solid #b8860b; border-radius:2px; padding:0 4px; background:linear-gradient(to bottom, rgba(184,134,11,0.3), rgba(0,0,0,0.4)); box-shadow:0 0 3px rgba(184,134,11,0.5); text-shadow:1px 1px 1px #000;">精锐</span>`
+                : '';
+            let titleHtml: string;
+            if (generalRecord) {
+                const gColor = isEliteAndGeneral ? '#ffe39f' : '#d4af37';
+                titleHtml =
+                    `<span style="color:${gColor}; font-weight:bold; text-shadow:1px 1px 1px #000;">${generalRecord.generalName}</span>` +
+                    `<span style="opacity:0.6;">率</span>${name}`;
+            } else {
+                titleHtml = name;
             }
 
             let itemBg = isFollowed ? 'background: rgba(180,140,60,0.25);' : '';
@@ -448,10 +476,10 @@ export class CameraFollowUI {
             item.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; ${nameStyle}">
-                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070; font-weight:normal; text-shadow:none;">${idx + 1}.</span> ${name}${generalTag}
+                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070; font-weight:normal; text-shadow:none;">${idx + 1}.</span> ${titleHtml}${eliteBadge}
                     </span>
                     <span style="color:#e0c878; font-size:12px; margin-left:8px; white-space:nowrap;">
-                        军 ${this.formatTroops(troops)}
+                        ${this.formatTroops(troops)}
                     </span>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px; color:#9a8f7a;">
@@ -459,9 +487,13 @@ export class CameraFollowUI {
                         <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(255,255,255,0.3);"></span>
                         ${fName}
                     </span>
-                    <span style="margin-left:8px; white-space:nowrap;">
-                        势力 ${this.formatTroops(fTotal.troops)} · ${fTotal.cities}城
+                    <span style="margin-left:8px; white-space:nowrap; display:flex; align-items:center; gap:6px;">
+                        势力 ${this.formatTroops(fTotal.troops)}
+                        <span style="color:#ffcf5a; font-size:13px; font-weight:bold; border:1px solid rgba(255,180,60,0.55); border-radius:3px; padding:0 6px; background:rgba(255,180,60,0.14); text-shadow:1px 1px 1px #000;">🏰 ${fTotal.cities} 城</span>
                     </span>
+                </div>
+                <div style="height:3px; background:rgba(255,255,255,0.06); border-radius:2px; margin-top:4px; overflow:hidden;">
+                    <div style="height:100%; width:${fPct.toFixed(1)}%; background:${fColor}; opacity:0.75; border-radius:2px; transition:width 0.4s ease;"></div>
                 </div>
             `;
 
