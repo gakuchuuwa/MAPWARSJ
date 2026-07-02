@@ -809,6 +809,7 @@ export const FACTIONS: Faction[] = [
     { id: 'woye', name: '沃野' },
     { id: 'shuofang', name: '朔方' },
     { id: 'lushui', name: '卢水' },
+
     { id: 'yingli', name: '应理' },
     { id: 'guangwu', name: '广武' },
     { id: 'huizhou', name: '会州' },

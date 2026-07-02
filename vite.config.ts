@@ -2117,20 +2117,17 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         }
     }
 
-    // 11.5. 武将技时机与品阶不符校验
-    const tacticalMap = new Map(data.tacticalSkills.map(s => [s.id, s]));
+    // 11.5. 武将品阶与战略技匹配校验
+    //   【2026-07-03 改】战术技不再限品阶：名将/普将均可用全部 10 个战术技（时机由 skill.timing 决定）。
+    //   仅校验：名将 = 战略技 + 战术技；普将 = 仅战术技。
     for (const [fId, g] of Object.entries(data.generals)) {
         const prof = data.profiles[g.generalId];
-        if (prof && prof.tacticalSkillId) {
-            const skill = tacticalMap.get(prof.tacticalSkillId);
-            if (skill) {
-                if (prof.tier === 'famous' && skill.timing !== 'opening') {
-                    issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 绑定了非开局战术技 "${skill.displayName}"`, factionId: fId });
-                }
-                if (prof.tier === 'ordinary' && skill.timing !== 'comeback') {
-                    issues.push({ level: 'error', msg: `普将 "${g.generalName}"(${g.generalId}) 绑定了非逆局战术技 "${skill.displayName}"`, factionId: fId });
-                }
-            }
+        if (!prof) continue;
+        if (prof.tier === 'famous' && !prof.strategicSkillId) {
+            issues.push({ level: 'warn', msg: `名将 "${g.generalName}"(${g.generalId}) 缺战略技（名将应为战略技+战术技）`, factionId: fId });
+        }
+        if (prof.tier === 'ordinary' && prof.strategicSkillId) {
+            issues.push({ level: 'warn', msg: `普将 "${g.generalName}"(${g.generalId}) 不应有战略技（普将仅战术技）`, factionId: fId });
         }
     }
 

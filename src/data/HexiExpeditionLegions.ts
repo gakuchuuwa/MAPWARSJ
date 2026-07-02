@@ -37,7 +37,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）
   suzhou: { name: '骠骑郎卫', tier: 0 },  // 霍去病封狼居胥，彻底解除百年威胁，完全踩中T0“灭国级大捷”，升T0
   kang: { name: '鹰扬骁骑', tier: 4 },              // 长泽·梁师都鹰扬郎将起兵建梁（名气不足，降T2）（缺乏进攻高光，降T3）
-  lushui: { name: '飞熊军', tier: 2 },          // 凉州军阀核心奇兵，实战中击败过孙坚与吕布，战绩极度硬核，符合T2战术
+    lushui: { name: '飞熊军', tier: 2 },
   woye: { name: '度辽营', tier: 2 },           // 东汉经典边防番号度辽将军，专属名号特色鲜明，升T2
     yangguan: { name: '西凉铁骑', tier: 1 },
         yuezhi: { name: '折兰骑', tier: 3 },             // 霍去病河西之战斩杀的匈奴最强王牌，战役背景极具符号价值，升入T3知名,

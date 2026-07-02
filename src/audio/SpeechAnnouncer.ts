@@ -166,14 +166,15 @@ export class SpeechAnnouncer {
 
   // ---- S 级大事播报（灭国 / 复国 / 文化中心易主）：全程播报，不限跟拍镜头 ----
 
-  /** S 级 · 势力灭亡：最后据点陷落 */
+  /**
+   * S 级 · 势力灭亡：最后据点陷落。
+   * 【2026-07-03 主人裁定】亡国不再播报、不再弹底部字幕——700+ 势力灭国太频繁会很吵；
+   * 亡国信息只在右侧事件栏 pushFactionFall 中体现。此方法保留仅作日志。
+   */
   public announceFactionFall(attackerFactionId: string, defenderFactionId: string, cityName: string): void {
-    if (!this.enabled) return;
     const att = getFactionNameForSpeech(attackerFactionId);
     const def = getFactionNameForSpeech(defenderFactionId);
-    const text = `${def}，亡国。最后据点${cityName}，陷于${att}军`;
-    console.log("[Speech] 灭国:", text);
-    this.speak(text, { sTier: true, rate: 0.92, banner: `${def}亡 · ${cityName}陷于${att}` });
+    console.log("[Speech] 灭国(不播报):", `${def}亡 · ${cityName}陷于${att}`);
   }
 
   /** S 级 · 复国：异文化占领地起义 */

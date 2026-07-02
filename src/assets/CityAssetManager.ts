@@ -544,7 +544,7 @@ export class CityAssetManager {
 'liguo': '潞',
         'kang': '康',
         'shuofang': '朔方',
-        'lushui': '卢水',
+'lushui': '卢水',
         'yingli': '应理',
         'guangwu': '广武',
         'huizhou': '会',

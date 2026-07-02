@@ -70,6 +70,8 @@ export interface FactionGroup {
 export class BattleField {
     public id: string;
     public isOver: boolean = false;
+    /** 结算后的胜方势力（CombatUI 战报定格卡读取；未结算时为 null） */
+    public winnerFactionId: string | null = null;
     public onBattleComplete?: (winnerFactionId: string) => void; // [NEW] Callback for event sequencing
     /** 攻城战守方 cityId（构造时锁定，结算后仍可读） */
     public readonly siegeCityId: string | null;
@@ -644,6 +646,7 @@ export class BattleField {
      */
     private resolve(winnerGroup: FactionGroup, loserGroup: FactionGroup): void {
         this.isOver = true;
+        this.winnerFactionId = winnerGroup.factionId;
 
         // 跟拍军团胜负音效
         const followedId = getFollowedArmyId();

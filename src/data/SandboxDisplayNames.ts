@@ -571,7 +571,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'wudu': '阶',
     'woye': '沃野',
     'shuofang': '朔方',
-    'lushui': '卢水',
+'lushui': '卢水',
     'yingli': '应理',
     'guangwu': '广武',
     'huizhou': '会',

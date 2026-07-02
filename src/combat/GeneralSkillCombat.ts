@@ -13,7 +13,6 @@ import {
     PASS_GARRISON_DEFENSE_SKILL,
     REINFORCEMENT_JOIN_SKILL,
     type TacticalSkillDef,
-    type GeneralTier,
 } from '../data/GeneralSkills';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
 import { gameLog } from '../utils/GameLogger';
@@ -182,11 +181,10 @@ function applyTroopSubToUnits(units: IBattleUnit[], ratio: number): number {
 
 function canTriggerTactical(
     skill: TacticalSkillDef,
-    tier: GeneralTier,
     triggeredSkillIds: Set<string>,
 ): boolean {
-    if (skill.timing === 'opening' && tier !== 'famous') return false;
-    if (skill.timing === 'comeback' && tier !== 'ordinary') return false;
+    // 【2026-07-03】战术技不再限品阶：名将/普将均可用全部 10 个战术技。
+    //   触发时机由 skill.timing 决定（①–⑤开局放、⑥–⑩降至 60% 兵力放），品阶只决定是否额外带战略技。
     if (isOncePerBattleTactical(skill) && triggeredSkillIds.has(skill.id)) return false;
     return true;
 }
@@ -204,18 +202,16 @@ export function getBattleTerrainKind(
     return LandTerrainSystem.classifyAt(anchor) ?? 'plain';
 }
 
-/** 开局战术战力乘区（UI 徽章；仅名将开局 ③④ 类） */
+/** 开局战术战力乘区（UI 徽章；开局 ③ 侵掠如火类，名将/普将通用） */
 export function getOpeningTacticalPowerMultiplier(unit: IBattleUnit): number {
     if (!canUnitUseGeneralSkills(unit)) return 1;
-    const profile = getGeneralProfile(unit.generalId);
-    if (profile?.tier !== 'famous') return 1;
     const skill = getTacticalSkillForTiming(unit, 'opening');
     if (!skill || skill.effect !== 'ally_mult_1_2') return 1;
     return skill.magnitude;
 }
 
 /**
- * 开局战术战力压制乘区（仅名将敌方减益技能）。
+ * 开局战术战力压制乘区（④ 不战而屈类敌方减益，名将/普将通用）。
  * 接受单个 IBattleUnit 或整支部队数组（与底层 applyEnemyDebuff 逻辑一致，
  * 多单位时用 findEligibleGeneralUnit 找第一个有资格的将领）。
  */
@@ -227,8 +223,6 @@ export function getOpeningTacticalEnemyPowerDebuffMultiplier(
         ? findEligibleGeneralUnit(opponentUnits)
         : opponentUnits;
     if (!unit || !canUnitUseGeneralSkills(unit)) return null;
-    const profile = getGeneralProfile(unit.generalId);
-    if (profile?.tier !== 'famous') return null;
     const skill = getTacticalSkillForTiming(unit, 'opening');
     if (!skill || skill.effect !== 'enemy_mult_0_8') return null;
     return { value: skill.magnitude, label: skill.displayName };
@@ -419,10 +413,9 @@ export function applyOpeningTacticalPreRoll(
     ) => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return;
-        const profile = getGeneralProfile(unit.generalId);
         const skill = getTacticalSkillForTiming(unit, 'opening');
-        if (!profile || !skill || profile.tier !== 'famous') return;
-        if (!canTriggerTactical(skill, profile.tier, triggered)) return;
+        if (!skill) return;
+        if (!canTriggerTactical(skill, triggered)) return;
 
         let logMsg: string;
         switch (skill.effect) {
@@ -533,9 +526,8 @@ export function tryEmitOpeningTacticalOnReinforcementJoin(
     const eligible = findEligibleGeneralUnit(sideUnits);
     if (eligible?.id !== joinedUnit.id) return;
 
-    const profile = getGeneralProfile(joinedUnit.generalId);
     const skill = getTacticalSkillForTiming(joinedUnit, 'opening');
-    if (!profile || profile.tier !== 'famous' || !skill) return;
+    if (!skill) return;
 
     const shown = isAttacker ? openingUiShown.attacker : openingUiShown.defender;
     if (shown) return;
@@ -575,9 +567,8 @@ export function applyOpeningTacticalToRolls(
     ): number => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return roll;
-        const profile = getGeneralProfile(unit.generalId);
         const skill = getTacticalSkillForTiming(unit, 'opening');
-        if (!profile || profile.tier !== 'famous' || !skill) return roll;
+        if (!skill) return roll;
 
         if (skill.effect === 'ally_mult_1_2') {
             const next = roll * skill.magnitude;
@@ -612,9 +603,8 @@ export function applyOpeningTacticalToRolls(
     ): number => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return opponentRoll;
-        const profile = getGeneralProfile(unit.generalId);
         const skill = getTacticalSkillForTiming(unit, 'opening');
-        if (!profile || profile.tier !== 'famous' || !skill) return opponentRoll;
+        if (!skill) return opponentRoll;
 
         if (skill.effect === 'enemy_mult_0_8') {
             const next = opponentRoll * skill.magnitude;
@@ -648,9 +638,8 @@ export function applyOpeningTacticalToRolls(
     ): number => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return roll;
-        const profile = getGeneralProfile(unit.generalId);
         const skill = getTacticalSkillForTiming(unit, 'opening');
-        if (!profile || profile.tier !== 'famous' || !skill) return roll;
+        if (!skill) return roll;
         if (skill.effect !== 'ally_invincible' || !skill.rollEdge) return roll;
 
         const next = roll * skill.rollEdge;
@@ -686,10 +675,9 @@ export function tryApplyComebackTacticalForSide(
 
     const unit = findEligibleGeneralUnit(sideUnits);
     if (!unit?.generalId) return false;
-    const profile = getGeneralProfile(unit.generalId);
     const skill = getTacticalSkillForTiming(unit, 'comeback');
-    if (!profile || profile.tier !== 'ordinary' || !skill) return false;
-    if (!canTriggerTactical(skill, profile.tier, ctx.triggeredSkillIds)) return false;
+    if (!skill) return false;
+    if (!canTriggerTactical(skill, ctx.triggeredSkillIds)) return false;
 
     let applied = false;
 

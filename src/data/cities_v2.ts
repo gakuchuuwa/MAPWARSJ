@@ -2409,7 +2409,8 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_changze', name: '长泽', factionId: 'kang', lat: 39.1, lng: 107.98, type: 'small_city', region: 'HEXI', troops: 10000, note: '梁师都鹰扬郎将起兵建梁' },
     { id: 'city_linrong', name: '临戎', factionId: 'woye', lat: 40.3, lng: 107, type: 'small_city', region: 'HEXI', troops: 10000, note: '皇甫规度辽将军驻朔方' },
-    { id: 'city_aowei', name: '媪围', factionId: 'lushui', lat: 37.396289, lng: 104.111938, type: 'small_city', region: 'HEXI', troops: 10000, note: '北宫伯玉卢水义从胡起兵凉州' },
+    { id: 'city_aowei', name: '媪围', factionId: 'lushui', lat: 37.396289, lng: 104.111938, type: 'small_city', troops: 20000, region: 'HEXI' },
+
     { id: 'city_mingsha', name: '鸣沙', factionId: 'yingli', lat: 37.51, lng: 105.18, type: 'small_city', region: 'HEXI', troops: 10000,
         note: '鸣沙；应理小城',
     },

@@ -74,6 +74,9 @@ export class CombatUI {
     private rightPortraitFrame!: HTMLDivElement;
     private leftGeneralNameTag!: HTMLDivElement;
     private rightGeneralNameTag!: HTMLDivElement;
+    /** 名将对决横幅 / 战报定格卡（每场重建，收场清除） */
+    private duelBannerEl: HTMLDivElement | null = null;
+    private battleReportEl: HTMLDivElement | null = null;
 
     // UI Elements
     private centerBackdrop!: HTMLDivElement;
@@ -120,7 +123,7 @@ export class CombatUI {
     private currentBattle: Battle | null = null;
     private currentRegionalUnits: { attackers: IBattleUnit[], defenders: IBattleUnit[] } | null = null;
     private isVisible: boolean = false;
-    private static readonly REGIONAL_TAIL_MS = 2000;
+    private static readonly REGIONAL_TAIL_MS = 3000; // 短尾 3 秒：容纳战报定格卡 + 败方褪灰
     /** 无战场绑定时兜底（现实毫秒） */
     private static readonly REGIONAL_FALLBACK_MS = 65_000;
     private regionalHideTimer: ReturnType<typeof setTimeout> | null = null;
@@ -238,14 +241,42 @@ export class CombatUI {
                 80% { transform: translate(-50%, 3px); }
                 100% { transform: translate(-50%, 0); }
             }
-            /* 立绘外框进场：左从左→右，右从右→左 */
+            /* 立绘外框进场：左从左→右，右从右→左（进场时略放大，交给 kenburns-settle 缓慢沉降） */
             @keyframes portrait-frame-enter-left {
-                0% { opacity: 0; transform: translateX(-72px); }
-                100% { opacity: 1; transform: translateX(0); }
+                0% { opacity: 0; transform: translateX(-72px) scale(1.045); }
+                100% { opacity: 1; transform: translateX(0) scale(1.045); }
             }
             @keyframes portrait-frame-enter-right {
-                0% { opacity: 0; transform: translateX(72px); }
+                0% { opacity: 0; transform: translateX(72px) scale(1.045); }
+                100% { opacity: 1; transform: translateX(0) scale(1.045); }
+            }
+            /* 入场后极缓沉降回原尺寸（Ken Burns 质感，接在外框进场之后） */
+            @keyframes portrait-kenburns-settle {
+                0% { transform: scale(1.045); }
+                100% { transform: scale(1); }
+            }
+            /* 名将对阵横幅：整条淡入，两侧将名向中间靠拢，「對」印最后盖下 */
+            @keyframes duel-banner-in {
+                0% { opacity: 0; }
+                100% { opacity: 1; }
+            }
+            @keyframes duel-name-left {
+                0% { opacity: 0; transform: translateX(-46px); }
                 100% { opacity: 1; transform: translateX(0); }
+            }
+            @keyframes duel-name-right {
+                0% { opacity: 0; transform: translateX(46px); }
+                100% { opacity: 1; transform: translateX(0); }
+            }
+            @keyframes duel-seal-stamp {
+                0% { opacity: 0; transform: scale(1.7) rotate(-8deg); }
+                55% { opacity: 1; transform: scale(0.95) rotate(2deg); }
+                100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            }
+            /* 战报定格卡：胜负揭晓时居中浮现 */
+            @keyframes battle-report-in {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(1.08); }
+                100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             }
         `;
         document.head.appendChild(style);
@@ -1264,8 +1295,147 @@ export class CombatUI {
     }
 
     private playPortraitEntrance(): void {
-        this.leftPortraitFrame.style.animation = 'portrait-frame-enter-left 0.55s ease-out 0.12s both';
-        this.rightPortraitFrame.style.animation = 'portrait-frame-enter-right 0.55s ease-out 0.18s both';
+        // 滑入（结束时略大 1.045）→ 5 秒极缓沉降回原尺寸：低调的 Ken Burns 呼吸感。
+        // 缩放只动外框 transform，绝不碰 img 的调校 transform（F2 位置/缩放数据）。
+        this.leftPortraitFrame.style.animation =
+            'portrait-frame-enter-left 0.55s ease-out 0.12s both, portrait-kenburns-settle 5s cubic-bezier(0.22, 1, 0.36, 1) 0.67s forwards';
+        this.rightPortraitFrame.style.animation =
+            'portrait-frame-enter-right 0.55s ease-out 0.18s both, portrait-kenburns-settle 5s cubic-bezier(0.22, 1, 0.36, 1) 0.73s forwards';
+    }
+
+    /** 清掉上一场的对阵横幅 / 战报卡 / 败方褪灰（每场开战与关窗时调用） */
+    private resetBattleOverlays(): void {
+        this.removeDuelBanner();
+        this.removeBattleReport();
+        for (const img of [this.leftPortrait, this.rightPortrait]) {
+            img.style.transition = '';
+            img.style.filter = '';
+        }
+    }
+
+    /** 名将对决横幅：两军主将均有档案时，面板上方浮现「将名 對 将名」，4 秒后缓缓淡出 */
+    private maybeShowDuelBanner(attacker: IBattleUnit, defender: IBattleUnit): void {
+        const attRec = attacker.generalId ? getGeneralRecordByGeneralId(attacker.generalId) : null;
+        const defRec = defender.generalId ? getGeneralRecordByGeneralId(defender.generalId) : null;
+        if (!attRec || !defRec) return;
+        this.removeDuelBanner();
+
+        const el = document.createElement('div');
+        el.className = 'combat-duel-banner';
+        el.style.cssText = `
+            position: absolute;
+            top: ${uiPx(-56)};
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: ${uiPx(18)};
+            padding: ${uiPx(6)} ${uiPx(30)};
+            background: linear-gradient(90deg, transparent, rgba(16, 10, 6, 0.82) 18%, rgba(16, 10, 6, 0.82) 82%, transparent);
+            border-top: 1px solid rgba(200, 160, 80, 0.35);
+            border-bottom: 1px solid rgba(200, 160, 80, 0.35);
+            font-family: 'Noto Serif SC', serif;
+            color: #f0e6d2;
+            white-space: nowrap;
+            z-index: ${T.zIndex.portrait + 6};
+            pointer-events: none;
+            animation: duel-banner-in 0.5s ease-out both;
+        `;
+        const mkName = (txt: string, side: 'left' | 'right') => {
+            const s = document.createElement('span');
+            s.textContent = txt;
+            s.style.cssText = `
+                font-size: ${uiPx(22)};
+                font-weight: 900;
+                letter-spacing: ${uiPx(6)};
+                text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+                animation: duel-name-${side} 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+            `;
+            return s;
+        };
+        const seal = document.createElement('span');
+        seal.textContent = '對';
+        seal.style.cssText = `
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: ${uiPx(34)};
+            height: ${uiPx(34)};
+            background: #8a2a24;
+            border: 1px solid rgba(240, 220, 168, 0.55);
+            border-radius: 4px;
+            font-size: ${uiPx(20)};
+            font-weight: 900;
+            color: #f0dca8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+            animation: duel-seal-stamp 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) 0.55s both;
+        `;
+        el.append(mkName(attRec.generalName, 'left'), seal, mkName(defRec.generalName, 'right'));
+        this.container.appendChild(el);
+        this.duelBannerEl = el;
+
+        window.setTimeout(() => {
+            if (this.duelBannerEl !== el) return;
+            el.style.transition = 'opacity 0.9s ease';
+            el.style.opacity = '0';
+            window.setTimeout(() => {
+                if (this.duelBannerEl === el) this.removeDuelBanner();
+            }, 950);
+        }, 4200);
+    }
+
+    private removeDuelBanner(): void {
+        this.duelBannerEl?.remove();
+        this.duelBannerEl = null;
+    }
+
+    /** 战报定格卡：胜负揭晓时居中浮现「XX 勝」，败方立绘缓缓褪灰，随短尾一同收场 */
+    private showBattleReport(winnerFactionId: string | null): void {
+        if (!winnerFactionId) return;
+        this.removeBattleReport();
+        const name = (window as any).game?.cityManager?.getFactionName?.(winnerFactionId) ?? '';
+        if (!name || name === '未知势力') return;
+
+        const el = document.createElement('div');
+        el.className = 'combat-battle-report';
+        el.style.cssText = `
+            position: absolute;
+            left: 50%;
+            top: 40%;
+            transform: translate(-50%, -50%);
+            padding: ${uiPx(12)} ${uiPx(36)};
+            background: linear-gradient(to bottom, rgba(18, 12, 8, 0.85), rgba(10, 6, 4, 0.88));
+            border: 1px solid rgba(200, 160, 80, 0.45);
+            border-radius: 4px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(32)};
+            font-weight: 900;
+            letter-spacing: ${uiPx(10)};
+            color: #f0dca8;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+            white-space: nowrap;
+            z-index: ${T.zIndex.portrait + 7};
+            pointer-events: none;
+            animation: battle-report-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        `;
+        el.textContent = `${name} 勝`;
+        this.container.appendChild(el);
+        this.battleReportEl = el;
+
+        // 败方立绘缓缓褪灰（只动 filter，不碰调校 transform；下场开战时复位）
+        let loserImg: HTMLImageElement | null = null;
+        if (winnerFactionId === this.attackerFactionId) loserImg = this.rightPortrait;
+        else if (winnerFactionId === this.defenderFactionId) loserImg = this.leftPortrait;
+        if (loserImg) {
+            loserImg.style.transition = 'filter 1.6s ease';
+            loserImg.style.filter = 'grayscale(0.9) brightness(0.8)';
+        }
+    }
+
+    private removeBattleReport(): void {
+        this.battleReportEl?.remove();
+        this.battleReportEl = null;
     }
 
     // --- LOGIC ---
@@ -1277,6 +1447,7 @@ export class CombatUI {
         this.currentBattleType = battle.type;
         this.isVisible = true;
         this.refreshCorrectorDataOnBattleOpen();
+        this.resetBattleOverlays();
         this.attackerFactionId = battle.attacker.factionId;
         this.defenderFactionId = battle.defender.factionId;
         this.computeAndRenderOdds([battle.attacker], [battle.defender]);
@@ -1285,6 +1456,7 @@ export class CombatUI {
         this.updateInfo(battle.attacker, battle.defender, '正在交战', '');
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
+        this.maybeShowDuelBanner(battle.attacker, battle.defender);
     }
 
     public showRegional(
@@ -1302,6 +1474,7 @@ export class CombatUI {
         if (attackers.length === 0 || defenders.length === 0) return;
 
         this.clearRegionalTimers();
+        this.resetBattleOverlays();
 
         this.currentBattle = null;
         this.currentRegionalUnits = { attackers, defenders };
@@ -1385,6 +1558,7 @@ export class CombatUI {
         this.updateStats();
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
+        this.maybeShowDuelBanner(attacker, defender);
     }
 
     public isRegionalVisible(): boolean {
@@ -2330,6 +2504,7 @@ export class CombatUI {
         this.regionalSafetyDeadline = 0;
         this.attackerFactionId = null;
         this.defenderFactionId = null;
+        this.resetBattleOverlays();
         this.container.style.animation = 'none';
         this.container.style.transform = 'translate(-50%, 250%)';
         this.leftPortraitFrame.style.animation = 'none';
@@ -2344,6 +2519,7 @@ export class CombatUI {
         if (!bound || !this.isRegionalVisible()) return;
         if (!endedFields.includes(bound)) return;
         this.boundRegionalBattleField = null;
+        this.showBattleReport(bound.winnerFactionId);
         this.finishRegionalBattle();
     }
 
@@ -2378,8 +2554,12 @@ export class CombatUI {
         if (this.boundRegionalBattleField) {
             if (this.boundRegionalBattleField.isOver) {
                 if (!this.regionalHideTimer) {
+                    const ended = this.boundRegionalBattleField;
                     this.boundRegionalBattleField = null;
-                    if (this.isRegionalVisible()) this.finishRegionalBattle();
+                    if (this.isRegionalVisible()) {
+                        this.showBattleReport(ended.winnerFactionId);
+                        this.finishRegionalBattle();
+                    }
                 }
             } else {
                 this.refreshRegionalSafetyDeadline();
