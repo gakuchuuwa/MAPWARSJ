@@ -557,7 +557,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
         suzhou_d: { generalId: 'suzhou_d_shikefa', generalName: '史可法', portrait: '/assets/daming/suzhou_d_shikefa.png' },
     pizhou: { generalId: 'pizhou_lvbu', generalName: '吕布', portrait: '/assets/CENTRAL/pizhou_lvbu.png' },
     yin: { generalId: 'yin_dixin', generalName: '帝辛', portrait: '/assets/xianqin/yin_dixin.png' },
-    liwang: { generalId: 'liwang_liguangbi', generalName: '李光弼', portrait: '/assets/NORTH/liwang_liguangbi.png' }, // 河间·乐成
+    liwang: { generalId: 'liwang_liguangbi', generalName: '李光弼', portrait: '/assets/litang/liwang_liguangbi.png' }, // 河间·乐成
     qing: { generalId: 'qing_wanyanchenheshang', generalName: '曲端', portrait: '/assets/NORTHEAST/qing_wanyanchenheshang.png' },
     han: { generalId: 'han_baoyuan_han', generalName: '暴鸢', portrait: '/assets/xianqin/han_baoyuan_han.png' },
     bailian: { generalId: 'bailian_wangconger', generalName: '王聪儿', portrait: '/assets/panjun/bailian_wangconger.png' },

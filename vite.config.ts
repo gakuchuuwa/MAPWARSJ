@@ -1717,6 +1717,8 @@ function serverBindGeneralPortrait(
     const destAbs = path.join(folderAbs, `${baseName}.png`);
     const destWeb = `${folderWeb}${baseName}.png`;
 
+    // 文件改名清单：调校记录（portrait_adjust images 键）随文件新名字迁移，不留孤儿
+    const adjustMoves: Array<{ from: string; to: string }> = [];
     if (path.resolve(srcAbs) !== path.resolve(destAbs)) {
         // ① 旧绑定文件（可能在其他文件夹）→ 转为闲置命名 __闲置__，并入随机池（不删不丢）
         const oldPortraitWeb = serverGetCurrentPortraitPath(factionGeneralsPath, generalId);
@@ -1730,6 +1732,7 @@ function serverBindGeneralPortrait(
                 const oldDir = path.dirname(oldAbs);
                 const backupName = serverNextIdleName(oldDir);
                 fs.renameSync(oldAbs, path.join(oldDir, backupName));
+                adjustMoves.push({ from: oldPortraitWeb, to: oldPortraitWeb.replace(/\/[^/]+$/, '/') + backupName });
                 console.log(`  🗂️  [BindPortrait] 旧立绘转闲置 → ${backupName}`);
             }
         }
@@ -1737,32 +1740,53 @@ function serverBindGeneralPortrait(
         if (fs.existsSync(destAbs)) {
             const backupName = serverNextIdleName(folderAbs);
             fs.renameSync(destAbs, path.join(folderAbs, backupName));
+            adjustMoves.push({ from: destWeb, to: `${folderWeb}${backupName}` });
             console.log(`  🗂️  [BindPortrait] 目标位置旧立绘转闲置 → ${backupName}`);
         }
         // ③ 源图 → 目标（始终在源图自己的文件夹内，不跨文化区）：
         //    闲置图(__闲置__) 直接改名「认领」，不留重复；其它图复制（可能被他人共用，不夺走源图）。
         if (path.basename(srcAbs).startsWith('__闲置__')) {
             fs.renameSync(srcAbs, destAbs);
+            adjustMoves.push({ from: sourceWebPath, to: destWeb });
         } else {
             fs.copyFileSync(srcAbs, destAbs);
         }
     }
 
-    // 绑定后同步 portrait_adjust 调校数据：源图调校 → 目标路径（防位置/缩放丢失）
+    // 绑定后同步 portrait_adjust 调校数据：改名跟随迁移 + 源图调校 → 目标路径（防位置/缩放丢失）
     try {
         const portraitAdjustPath = path.resolve(__dirname, 'src/data/portrait_adjust.ts');
         if (fs.existsSync(portraitAdjustPath)) {
             const adjText = fs.readFileSync(portraitAdjustPath, 'utf-8');
             const adjData = serverParsePortraitAdjustExport(adjText);
-            // 源图自身路径优先；没有则回退到内容代表键 canonical（兼容仅 F2 调过、源非代表的情况）
-            const srcCanonical = serverResolveCanonicalPath(portraitCanonicalPath, sourceWebPath);
-            const srcAdj = adjData.images?.[sourceWebPath] ?? adjData.images?.[srcCanonical];
-            if (srcAdj !== undefined) {
-                adjData.images = adjData.images ?? {};
-                adjData.images[destWeb] = { ...(srcAdj as object) };
+            adjData.images = adjData.images ?? {};
+            let changed = false;
+            // 文件改名（旧图转闲置 / 闲置图认领改名）→ 调校记录跟着新名字走：
+            // 以前只复制源图调校，被顶掉的旧图调校留在死路径下成孤儿，下次选用该闲置图时位置丢失
+            const migrated = new Set<string>();
+            for (const mv of adjustMoves) {
+                const v = adjData.images[mv.from];
+                if (v === undefined) continue;
+                adjData.images[mv.to] = v;
+                delete adjData.images[mv.from];
+                migrated.add(mv.from);
+                changed = true;
+                console.log(`  📐 [BindPortrait] 调校随改名迁移: ${mv.from} → ${mv.to}`);
+            }
+            // 源图自身路径优先；没有则回退到内容代表键 canonical（兼容仅 F2 调过、源非代表的情况）。
+            // 源图若已随改名迁移到 destWeb（闲置认领场景），自身值即最优，不再用 canonical 覆盖。
+            if (!migrated.has(sourceWebPath)) {
+                const srcCanonical = serverResolveCanonicalPath(portraitCanonicalPath, sourceWebPath);
+                const srcAdj = adjData.images[sourceWebPath] ?? adjData.images[srcCanonical];
+                if (srcAdj !== undefined) {
+                    adjData.images[destWeb] = { ...(srcAdj as object) };
+                    changed = true;
+                    console.log(`  📐 [BindPortrait] 已同步调校数据: ${sourceWebPath} → ${destWeb}`);
+                }
+            }
+            if (changed) {
                 const content = serverFormatPortraitAdjustFile(adjData);
                 fs.writeFileSync(portraitAdjustPath, content, 'utf-8');
-                console.log(`  📐 [BindPortrait] 已同步调校数据: ${sourceWebPath} → ${destWeb}`);
             }
         }
     } catch (e) {

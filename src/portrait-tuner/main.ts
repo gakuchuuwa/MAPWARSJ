@@ -43,6 +43,8 @@ const SLIDER = {
 const DEFAULT_GUIDE: PortraitFolderGuide = { ...PORTRAIT_GUIDE_DEFAULT };
 
 let adjustData: PortraitAdjustData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
+/** 本页改过的 images 键；保存时先取磁盘最新，只覆盖这些键——防止用本页旧快照整份覆盖掉 F2/其它标签页刚存的调校 */
+const dirtyKeys = new Set<string>();
 let portraitCatalog: CatalogEntry[] = [];
 let hashToPaths = new Map<string, string[]>();
 let pathToHash = new Map<string, string>();
@@ -347,8 +349,12 @@ function commitDraftToAdjustData(): void {
     const value = { scale: draft.scale, offsetX: draft.offsetX, offsetY: draft.offsetY };
     for (const p of identicalPaths) {
         adjustData.images[p] = { ...value };
+        dirtyKeys.add(p);
         const c = toCanonicalPortraitPath(p);
-        if (c !== p) adjustData.images[c] = { ...value };
+        if (c !== p) {
+            adjustData.images[c] = { ...value };
+            dirtyKeys.add(c);
+        }
     }
 }
 
@@ -375,10 +381,26 @@ async function selectImageAndAutoSave(newImagePath: string): Promise<void> {
 }
 
 async function saveAdjustToServer(showToast = true): Promise<void> {
+    // 先取磁盘最新数据，只覆盖本页改过的键（与游戏内 F2 的保存策略一致）；
+    // 直接整份写回会把 F2 / 其它 tuner 标签页在本页打开后保存的调校覆盖掉。
+    let payload: PortraitAdjustData = adjustData;
+    try {
+        const fresh = await fetch('/api/portrait-adjust');
+        if (fresh.ok) {
+            const disk: PortraitAdjustData = await fresh.json();
+            disk.images = disk.images ?? {};
+            for (const k of dirtyKeys) {
+                const v = adjustData.images?.[k];
+                if (v) disk.images[k] = { ...v };
+            }
+            if (!disk.folderGuides) disk.folderGuides = {};
+            payload = disk;
+        }
+    } catch { /* 取盘失败时退回整份保存（旧行为兜底） */ }
     const res = await fetch('/api/save-portrait-adjust', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(adjustData),
+        body: JSON.stringify(payload),
     });
     if (!res.ok) {
         const text = await res.text();
@@ -386,6 +408,8 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
     }
     const result = await res.json();
     if (!result.ok) throw new Error(result.error || '保存失败');
+    adjustData = payload;
+    dirtyKeys.clear();
     dirty = false;
     
     if (showToast) {
@@ -550,6 +574,7 @@ async function loadAdjustFromServer(): Promise<void> {
     if (!res.ok) throw new Error(await res.text());
     adjustData = await res.json();
     if (!adjustData.folderGuides) adjustData.folderGuides = {};
+    dirtyKeys.clear();
     dirty = false;
 }
 
@@ -651,6 +676,9 @@ async function bindSelectedImageToGeneral(): Promise<void> {
         els.bindStatus.style.color = '#8bbf7a';
         await loadGenerals();
         await loadCatalogFromServer();
+        // 服务端绑定时已把源图调校迁移/同步到新路径——取回最新数据，防止本页后续保存把它覆盖掉
+        await loadAdjustFromServer();
+        loadDraftForSelected();
         populateFolders();
         renderGrid();
     } catch (e) {

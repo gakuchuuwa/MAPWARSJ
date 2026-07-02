@@ -968,9 +968,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 24
         },
         "/assets/BASHU/lizhou_d_liaohua.png": {
-            "scale": 1.3,
+            "scale": 1.2,
             "offsetX": 0,
-            "offsetY": -21
+            "offsetY": -19
         },
         "/assets/CENTRAL/yun_wuli.png": {
             "scale": 1.04,
@@ -998,7 +998,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -30
         },
         "/assets/xianqin/xichu_xiangyu.png": {
-            "scale": 0.99,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -1288,9 +1288,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/BASHU/ran_d_ranshouzhong.png": {
-            "scale": 1.02,
+            "scale": 1.05,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": 23
         },
         "/assets/LINGNAN/zhangshicheng_zhangshicheng.png": {
             "scale": 0.99,
@@ -1728,9 +1728,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -21
         },
         "/assets/CENTRAL/kong_d_kongrong.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": 13
+            "scale": 1.02,
+            "offsetX": 3,
+            "offsetY": 7
         },
         "/assets/CENTRAL/shatuo_likeyong.png": {
             "scale": 1.02,
@@ -2926,11 +2926,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": -16
-        },
-        "/assets/NORTH/liwang_liguangbi.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": -44
         },
         "/assets/NORTH/loufan_xuerengui.png": {
             "scale": 1,
@@ -4306,6 +4301,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -12
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_05.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_04.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/CENTRAL/bozhou_d_yujin.png": {
+            "scale": 1.21,
+            "offsetX": 7,
+            "offsetY": 30
+        },
+        "/assets/litang/933b26bc-2039-4370-a3d9-52ac5074f9da.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/NORTH/__闲置__NORTH_03.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": -44
+        },
+        "/assets/litang/liwang_liguangbi.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -19
         }
     },
     "folderGuides": {

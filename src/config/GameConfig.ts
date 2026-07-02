@@ -72,6 +72,8 @@ export class GameConfig {
         MAX_LEGIONS_SPAWN_PER_SEASON: 1,
         /** 军团战败后尸体/阵亡动画保留时长 (ms) */
         CORPSE_DISPLAY_MS: 15000,
+        /** 尸体消失前最后 N ms 逐渐淡出（0 = 不淡出，直接消失） */
+        CORPSE_FADE_OUT_MS: 3000,
         /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms) */
         FOLLOW_SWITCH_DELAY_MS: 5000,
         /** 可出兵据点：大城、中城、小城、关隘（关隘守城仍有 PASS_GARRISON_MULT 加成） */

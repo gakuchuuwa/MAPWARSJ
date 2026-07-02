@@ -584,18 +584,32 @@ export class GlobalUnitRenderer {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
 
+        const corpseFadeMs = GameConfig.LEGION.CORPSE_FADE_OUT_MS;
         for (let i = 0; i < drawList.length; i++) {
             const unit = drawList[i];
 
+            let corpseAlpha = 1;
             if (unit.isDestroyed) {
                 const t0 = unit.destroyTime ?? Date.now();
                 if (!unit.destroyTime) unit.destroyTime = t0;
-                if (Date.now() - t0 > corpseMs) {
+                const age = Date.now() - t0;
+                if (age > corpseMs) {
                     continue;
+                }
+                // 最后 corpseFadeMs 内线性淡出
+                if (corpseFadeMs > 0 && age > corpseMs - corpseFadeMs) {
+                    corpseAlpha = Math.max(0, (corpseMs - age) / corpseFadeMs);
                 }
             }
 
-            this.renderUnit(unit, this.ctx);
+            if (corpseAlpha < 1) {
+                const prevAlpha = this.ctx.globalAlpha;
+                this.ctx.globalAlpha = prevAlpha * corpseAlpha;
+                this.renderUnit(unit, this.ctx);
+                this.ctx.globalAlpha = prevAlpha;
+            } else {
+                this.renderUnit(unit, this.ctx);
+            }
         }
 
         // [NEW] Draw Projectiles AFTER units

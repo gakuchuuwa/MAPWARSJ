@@ -153,6 +153,8 @@ export class CombatUI {
     private correctorPrevPaused = false;
     /** 实时预览用：DEFAULT_PORTRAIT_ADJUST 的工作副本，仅覆盖当前编辑张 */
     private correctorData: PortraitAdjustData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
+    /** 上次开战时从磁盘刷新调校的时间（节流用，混战时开战频繁） */
+    private correctorLastDiskFetchMs = 0;
     private correctorDraft: Required<PortraitAdjustValues> = { scale: 1, offsetX: 0, offsetY: 0 };
     /** 本场 F2 内改过的立绘路径；Esc 退出时一并写盘 */
     private correctorDirtyPaths = new Set<string>();
@@ -1274,6 +1276,7 @@ export class CombatUI {
         this.boundRegionalBattleField = null;
         this.currentBattleType = battle.type;
         this.isVisible = true;
+        this.refreshCorrectorDataOnBattleOpen();
         this.attackerFactionId = battle.attacker.factionId;
         this.defenderFactionId = battle.defender.factionId;
         this.computeAndRenderOdds([battle.attacker], [battle.defender]);
@@ -1306,6 +1309,7 @@ export class CombatUI {
         this.currentBattleType = battleField?.type;
         this.lastTimeScale = Math.max(0.1, timeScale);
         this.isVisible = true;
+        this.refreshCorrectorDataOnBattleOpen();
         this.computeAndRenderOdds(attackers, defenders);
 
         if (this.boundRegionalBattleField) {
@@ -1641,6 +1645,30 @@ export class CombatUI {
         if (source.folderGuides) {
             target.folderGuides = { ...target.folderGuides, ...source.folderGuides };
         }
+    }
+
+    /**
+     * 开战时后台拉一次磁盘最新调校。portrait-tuner 等其它页面写盘后，本页的整页刷新
+     * 被 suppress-portrait-dev-hmr 拦截（防打断对局），内存数据会变旧——以前只有打开 F2
+     * 才会重新同步（bootstrapCorrector），表现为「换完立绘开战显示不对，重开 F2 才恢复」。
+     * 这里让战斗打开时就同步，立绘直接按最新调校显示。
+     */
+    private refreshCorrectorDataOnBattleOpen(): void {
+        if (!import.meta.env.DEV) return;
+        // F2 使用中 / 有未写盘的改动或待绑图时不碰内存数据，避免覆盖手上的调整
+        if (this.correctorOpen || this.correctorDirtyPaths.size > 0 || this.portraitBindStaging.length > 0) return;
+        const now = Date.now();
+        if (now - this.correctorLastDiskFetchMs < 5000) return;
+        this.correctorLastDiskFetchMs = now;
+        void fetch('/api/portrait-adjust')
+            .then((res) => (res.ok ? (res.json() as Promise<PortraitAdjustData>) : null))
+            .then((disk) => {
+                if (!disk) return;
+                this.mergePortraitAdjustInto(this.correctorData, disk);
+                this.mergePortraitAdjustInto(DEFAULT_PORTRAIT_ADJUST, disk);
+                this.applyBothCorrectorPortraits();
+            })
+            .catch(() => { /* 无 dev API / 请求失败时静默，沿用内存数据 */ });
     }
 
     private canPersistPortraitPath(path: string): boolean {

@@ -335,8 +335,13 @@ export class RecruitmentSystem {
 
         if (visibleLegionCount < 2) {
             // 同屏不足 2 支 → 优先在屏内刷兵；屏内无合格城池才回落轮转
+            // 【2026-07-02 主人裁定】同屏优先出的军团不能是跟随军团（自己方）的势力，
+            //   保证镜头内刷出的是敌方军团，避免自己人扎堆、缺乏对抗观赏性。
+            const followedFactionId = this.getFollowedFactionId();
             const allCandidates = this.collectSpawnCandidates(cities);
-            const viewportCandidates = allCandidates.filter((c) => c.inViewport);
+            const viewportCandidates = allCandidates.filter(
+                (c) => c.inViewport && (!followedFactionId || c.city.factionId !== followedFactionId)
+            );
             candidates = viewportCandidates.length > 0
                 ? viewportCandidates
                 : this.buildSpawnPlan(cities);
