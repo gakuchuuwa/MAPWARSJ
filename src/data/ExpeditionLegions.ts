@@ -209,7 +209,7 @@ export function applyExpeditionEliteRename(
     army.name = elite;
   }
   // 将领不在此处绑定：档案在 FactionGenerals.ts，出场限 STARTING_CAPITALS 锚点据点
-  applyLegionCultureComposition(army as LegionCompositionTarget);
+  applyLegionCultureComposition(army as unknown as LegionCompositionTarget);
   return true;
 }
 

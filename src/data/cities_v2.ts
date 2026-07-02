@@ -2399,7 +2399,8 @@ export const CITIES_V2: CityDataV2[] = [
     },
     { id: 'city_huixian', name: '河池', factionId: 'huizhou_d', lat: 33.80, lng: 106.06, type: 'small_city', region: 'BASHU', troops: 10000, note: '河池；诸葛亮元戎' },
 { id: 'city_huojia', name: '获嘉', factionId: 'sima_d', lat: 35.26, lng: 113.66, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '河内郡；司马氏郡望' },
-    { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'small_city', troops: 5000, region: 'CENTRAL' },
+    { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'pass', troops: 20000, region: 'CENTRAL' },
+
 
     
     { id: 'city_fushi', name: '肤施', factionId: 'zhai_han', lat: 36.59, lng: 109.48, type: 'small_city', troops: 5000, region: 'HEXI' },
@@ -2760,9 +2761,8 @@ export const CITIES_V2: CityDataV2[] = [
     // 水真腊南境部族
     { id: 'city_sanpu', name: '三菩', factionId: 'shuizhen', lat: 12.77, lng: 105.97, type: 'small_city', troops: 10000,
         note: '三菩；水真小城', region: 'LINGNAN' },
-    { id: 'city_juyansai', name: '居延塞', factionId: 'ningkou', lat: 41.8942, lng: 101.044, type: 'pass', region: 'HEXI', troops: 10000,
-        note: '居延塞；宁寇关隘',
-    },
+    { id: 'city_juyansai', name: '遮虏障', factionId: 'ningkou', lat: 41.8942, lng: 101.044, type: 'pass', troops: 20000, region: 'HEXI' },
+
     { id: 'city_gongzhubao', name: '公主堡', factionId: 'kepantuo', lat: 37.2008, lng: 75.3745, type: 'pass', troops: 10000, 
         note: '公主堡；渴盘陀关隘', region: 'WESTERN' },
     { id: 'city_jimai', name: '吉麦', factionId: 'gongtang', lat: 29.3012, lng: 90.6812, type: 'small_city', region: 'TIBET', troops: 10000,
@@ -2854,7 +2854,6 @@ export const CITIES_V2: CityDataV2[] = [
         note: '马海台；西宁关隘',
     },
     { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.8960, type: 'pass', region: 'TIBET', troops: 10000, note: '柴达木台吉乃尔' },
-    { id: 'city_bayinbulage', name: '巴音布拉格', factionId: 'juyan_d', lat: 41.3775, lng: 102.9694, type: 'small_city', region: 'HEXI', troops: 10000, note: '戈壁泉地；汉居延县/居延塞防线；李陵率荆楚五千步卒由此出塞（《史记·李将军列传》）' },
     { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'small_city', troops: 5000, region: 'TIBET' },
 
     { id: 'city_jieqiao', name: '界桥', factionId: 'qu_d', lat: 36.95, lng: 115.50, type: 'pass', region: 'NORTH', troops: 10000, note: '麴义先登营破公孙瓒白马义从（192年）' },

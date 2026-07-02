@@ -856,7 +856,7 @@ function batchImportFiles(entries: BatchEntry[]): BatchFileResult[] {
 
         // SandboxDisplayNames.ts
         const sdnLine = `'${fId}': '${entry.flagText}',`;
-        if (!sdnText.includes(`'${fId}':`)) {
+        if (findObjectKeyIdx(sdnText, 0, fId) === -1) {
             sdnText = serverInsertIntoStructure(sdnText, 'SANDBOX_DISPLAY_NAMES', sdnLine, '    ');
             results.push({ file: 'src/data/SandboxDisplayNames.ts', ok: true, operation: 'insert' });
         } else {

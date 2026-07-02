@@ -1353,9 +1353,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/NORTH/yuzhou_zuti.png": {
-            "scale": 0.94,
+            "scale": 0.96,
             "offsetX": 0,
-            "offsetY": -19
+            "offsetY": 4
         },
         "/assets/litang/liang_d_zhangxun.png": {
             "scale": 1,
@@ -4231,6 +4231,46 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 16
+        },
+        "/assets/yingqin/wazhai_zhanghan.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/yingqin/wazhai_limi_wz.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/litang/bing_liji.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/litang/bing_liukun.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/xianqin/liguo_zhaoshe.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/xianqin/liguo_wangmeng.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/xianqin/image (3).png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/CENTRAL_ASIA/dayuan_wugua.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {

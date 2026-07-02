@@ -657,8 +657,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     lingwu_guoziyi: { generalId: 'lingwu_guoziyi', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' }, // 中兴名将
     dingxiang_d_lijing: { generalId: 'dingxiang_d_lijing', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 贞观四年李靖率三千骑出恶阳岭夜袭定襄城
     xiayang_d_dengyu: { generalId: 'xiayang_d_dengyu', tier: 'famous', tacticalSkillId: 'tac_04', strategicSkillId: 'str_07' }, // 邓禹·云台二十八将之首·延揽英雄不战而屈
-    ningkou_lubode: { generalId: 'ningkou_lubode', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' }, // 筑居延塞
-    juyan_d_liling: { generalId: 'juyan_d_liling', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 荆楚五千步卒出居延战匈奴（《史记·李将军列传》）
+    ningkou_lubode: { generalId: 'ningkou_lubode', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' },
     unassigned_liuquan: { generalId: 'unassigned_liuquan', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_04' }, // 隋破吐谷浑、河源积石屯田（《隋书·刘权传》）
     juqu_d_juqumengxun: { generalId: 'juqu_d_juqumengxun', tier: 'famous', tacticalSkillId: 'tac_02', strategicSkillId: 'str_04' }, // 北凉灭西凉
     // ── 中原区 2026-06-18 ──

@@ -126,7 +126,7 @@ export function applySiegeGarrisonBoostIfNeeded(
     if (needGeneral && anchoredGeneral) {
         city._siegeGarrisonGeneralId = anchoredGeneral.generalId;
         city._siegeGarrisonPortrait = resolveGeneralPortraitPath(anchoredGeneral.portrait, {
-            factionId: anchorFactionId,
+            factionId: anchorFactionId ?? undefined,
             region: getCityRegion({
                 latitude: city.latitude ?? 0,
                 longitude: city.longitude ?? 0,

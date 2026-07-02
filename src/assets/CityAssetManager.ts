@@ -303,7 +303,6 @@ export class CityAssetManager {
 'hezhe': '赫哲',
 'luchuan': '麓川',
         'chijin': '赤',
-        'juyan_d': '延',
         'xihai_d': '西海',
         'heyuan_d': '河源',
 'guiyi': '归义',
@@ -661,7 +660,7 @@ export class CityAssetManager {
         'xuan': '宣府',
         'yiwu': '伊吾',
 
-        'ningkou': '宁寇',
+'ningkou': '居延',
         'hongzhou': '洪',
         'changshaguo': '长沙',
         'weiwuer': '维吾',

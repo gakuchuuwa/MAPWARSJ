@@ -959,7 +959,7 @@ export function ensureFactionPortraitPath(
 /** 按参战单位选立绘：有固定 portraitPath 则先校验；否则 政权 → 文化（文化区取据点/出兵地） */
 export function getCombatPortraitPath(unit: IBattleUnit, excludePath?: string): string {
     const region = resolveUnitCultureRegion(unit);
-    const resolveOpts = { factionId: unit.factionId, region, exclude: excludePath };
+    const resolveOpts = { factionId: unit.factionId ?? undefined, region, exclude: excludePath };
 
     if (unit.portraitPath?.trim() && !(excludePath && portraitUrlsEqual(unit.portraitPath, excludePath))) {
         return resolvePortraitAssetPath(unit.portraitPath, resolveOpts);

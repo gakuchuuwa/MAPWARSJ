@@ -26,6 +26,8 @@
     ],
     "exclude": [
         "scripts",
-        "node_modules"
+        "node_modules",
+        "src/editors/EventEditor.ts",
+        "src/core/EventEditor.ts"
     ]
 }

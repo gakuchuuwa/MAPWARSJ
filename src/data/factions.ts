@@ -401,7 +401,7 @@ export const FACTIONS: Faction[] = [
                    // 河口青 - 赫哲/那乃人(黑龙江下游/库页岛)
     { id: 'luchuan', name: '麓川' },
     { id: 'chijin', name: '赤斤' },                          // 赤金堡·旗号赤（赤斤蒙古卫）
-    { id: 'juyan_d', name: '居延' },                        // 巴音布拉格·汉张掖郡居延县；旗号延
+    // 巴音布拉格·汉张掖郡居延县；旗号延
     { id: 'xihai_d', name: '西海' },                          // 伏俟城·隋西海郡治；旗号西海
     { id: 'heyuan_d', name: '河源' },                          // 花石峡·隋河源郡积石镇；旗号河源
     { id: 'guiyi', name: '归义' },
@@ -801,6 +801,7 @@ export const FACTIONS: Faction[] = [
     { id: 'liguo', name: '潞州' },
 
 
+
     { id: 'kang', name: '夏州' },
     { id: 'wudu', name: '阶州' },
 
@@ -868,7 +869,8 @@ export const FACTIONS: Faction[] = [
     { id: 'tingzhou_d', name: '汀州' },                       // 瑞金·旗号汀
     { id: 'chaozhou_d', name: '潮州' },                       // 海阳·旗号潮
     { id: 'ouyang', name: '欧阳' },
-    { id: 'ningkou', name: '宁寇' },
+    { id: 'ningkou', name: '居延' },
+
     { id: 'hongzhou', name: '洪州' },
     { id: 'danyang', name: '当涂' },
        // 宣州(芜湖/鸠兹)

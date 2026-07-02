@@ -2,9 +2,7 @@ import { TimeSystem } from '../app/TimeSystem';
 import { formatBcYearChinese } from '../data/QinRegnalCalendar';
 import { CityManager } from '../world/CityManager';
 import { getFactionGeneral } from '../data/FactionGenerals';
-import { REGION_LABELS } from '../systems/RegionSystem';
-import { RegionType } from '../types/core';
-import { escapeHtml } from '../utils/HtmlUtils';
+import { REGION_LABELS, type RegionType } from '../systems/RegionSystem';
 import { StreamModeToggle } from './StreamModeToggle';
 
 const SEASON_NAMES = ['春', '夏', '秋', '冬'] as const;
@@ -16,9 +14,9 @@ function formatFeedTime(year: number, season: number): string {
     return `${formatBcYearChinese(year)} ${seasonLabel}`;
 }
 
-/** 行首汉字徽章（2026-06-12 排版分级）：灭=朱砂 / 歼=暗红 / 复=青绿 / 征=鎏金 / 隘=常灰 */
-function feedBadge(kind: 'fall' | 'wipe' | 'restore' | 'expedition' | 'pass'): string {
-    const char = { fall: '灭', wipe: '歼', restore: '复', expedition: '征', pass: '隘' }[kind];
+/** 行首汉字徽章（2026-06-12 排版分级）：灭=朱砂 / 歼=暗红 / 复=青绿 / 征=鎏金 / 隘=常灰 / 占=藏青 */
+function feedBadge(kind: 'fall' | 'wipe' | 'restore' | 'expedition' | 'pass' | 'occupy'): string {
+    const char = { fall: '灭', wipe: '歼', restore: '复', expedition: '征', pass: '隘', occupy: '占' }[kind];
     return `<span class="feed-badge feed-badge--${kind}">${char}</span>`;
 }
 
@@ -197,12 +195,12 @@ export class BrawlFeedPanel {
     pushCityCapture(params: {
         attackerFactionId: string;
         legionName: string;
-        regionKey: RegionType;
+        regionKey?: string;
         cityName: string;
     }): void {
         const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
         const displayLegion = formatLegionWithGeneral(params.attackerFactionId, params.legionName);
-        const regionName = REGION_LABELS[params.regionKey] || '未知区域';
+        const regionName = REGION_LABELS[params.regionKey as RegionType] || '未知区域';
         
         const line = formatCityCaptureLine(
             time,

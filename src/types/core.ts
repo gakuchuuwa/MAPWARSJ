@@ -68,6 +68,7 @@ export interface City {
     troops: number;
 
     mirror?: boolean;
+    tier?: 0 | 1 | 2 | 4; // 据点分级（与 cities_v2 对齐，0/1 为核心大城级）
     region?: string; // [NEW] Region ID
     startYear?: number; // [NEW] Start Year (Visible from this year)
     endYear?: number;   // [NEW] End Year (Visible until this year)

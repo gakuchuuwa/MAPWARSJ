@@ -715,6 +715,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           <div class="form-actions">
             <button type="submit" class="bm-btn bm-btn-primary">保存修改</button>
             <button type="button" class="bm-btn" id="bm-panel-close">关闭</button>
+            ${!isNew ? `<button type="button" class="bm-btn bm-btn-warn" id="bm-panel-delete">删除该势力</button>` : ''}
           </div>
         </form>
         `;
@@ -722,6 +723,9 @@ async function openEditPanel(factionId: string | null): Promise<void> {
 
     document.getElementById('bm-panel-close')!.addEventListener('click', closePanel);
     document.getElementById('bm-edit-form')!.addEventListener('submit', handleFormSubmit);
+    if (!isNew && row) {
+        document.getElementById('bm-panel-delete')?.addEventListener('click', () => void handleDeleteFaction(row!));
+    }
 
     // 快速填入：解析粘贴文本并填入表单
     const quickFillInput = document.getElementById('bm-edit-quick-fill') as HTMLInputElement;
@@ -1023,6 +1027,39 @@ function closePanel(): void {
     els.panel.style.display = 'none';
     editingFactionId = null;
     renderTable();
+}
+
+/** 删除整套势力数据：势力+据点+旗号+武将+技能+精锐+道路（走事务式 /api/batch-delete，全成才落盘） */
+async function handleDeleteFaction(row: FactionRow): Promise<void> {
+    const fid = row.id;
+    const cid = row.cityId;
+    const parts = [`势力「${row.name}」(${fid})`];
+    if (row.cityName || cid) parts.push(`据点「${row.cityName ?? cid}」`);
+    if (row.generalName) parts.push(`武将「${row.generalName}」`);
+    if (row.eliteName) parts.push(`精锐「${row.eliteName}」`);
+    parts.push('旗号、技能档案、关联道路等全部数据');
+    if (!confirm(`确认删除以下全部数据？此操作不可撤销：\n\n${parts.join('\n')}`)) return;
+
+    const targets: Array<{ factionId?: string; cityId?: string }> = [{ factionId: fid }];
+    if (cid) targets.push({ cityId: cid });
+    try {
+        const res = await fetch('/api/batch-delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ targets }),
+        });
+        const data = await res.json();
+        if (!data.ok) {
+            showToast(`删除失败: ${JSON.stringify(data.results ?? data.error)}`, true);
+            return;
+        }
+        const files = (data.results ?? []).filter((r: any) => r.ok).map((r: any) => r.file).join(', ');
+        showToast(`✅ 已删除「${row.name}」（${files || '无残留'}）`);
+        closePanel();
+        await loadData();
+    } catch (err: any) {
+        showToast(`删除失败: ${err.message}`, true);
+    }
 }
 
 async function handleFormSubmit(e: Event): Promise<void> {

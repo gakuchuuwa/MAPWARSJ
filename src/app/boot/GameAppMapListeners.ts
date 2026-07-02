@@ -54,13 +54,6 @@ export function setupGameAppMapListeners(app: GameApp): void {
         if (app.cityManager) app.cityManager.setEditorMode(!!detail?.enabled);
     });
 
-    window.addEventListener('toggle-editor-event', (e: Event) => {
-        const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
-        if (app.eventEditor) {
-            detail?.enabled ? app.eventEditor.show() : app.eventEditor.hide();
-        }
-    });
-
     window.addEventListener('toggle-editor-road', (e: Event) => {
         const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
         if (app.roadEditor) {

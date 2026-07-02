@@ -22,12 +22,11 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
 
   yingli: { name: '泼喜军', tier: 2 },            // 西夏骆驼旋风炮特种部队，古代军事史上罕见的战术创新，升入T2战术
   chijin: { name: '赤金营', tier: 4 },        // 赤金堡·岳钟琪平准噶尔西路劲旅（缺乏极其著名的战术高光，降T3）
-  juyan_d: { name: '荆楚步卒', tier: 2 },     // 巴音布拉格·李陵五千荆楚勇士出居延（虽勇但战败投降，降T2）
     dongshengwei: { name: '九边夜不收', tier: 2 },
     zhai_han: { name: '蕃落骑', tier: 1 },
   huizhou: { name: '会州边兵', tier: 4 },          // 祖厉·唐代会州
   // 赤亭关 @ gaochang（西域）已有「高昌铁骑」；后秦姚氏羌骑无合格 1势力=1据点，不收 yao_qiang
-  ningkou: { name: '居延戍卒', tier: 4 },            // 居延塞·汉居延戍卒（居延汉简）
+    ningkou: { name: '居延戍卒', tier: 4 },
   shuofang: { name: '期门郎骑', tier: 3 },      // 汉武帝期门军（近卫），知名度高，降为T3知名。
     ganzhou: { name: '觻得精骑', tier: 2 },
     xiqin: { name: '忠孝军', tier: 2 }, // 仅有四百至数千人，于大昌原等战役打出短期战术高光，随后于三峰山覆灭，缺乏长久延续性，符合T2战术

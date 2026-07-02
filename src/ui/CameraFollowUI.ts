@@ -413,12 +413,14 @@ export class CameraFollowUI {
             if (v.troops > maxFactionTroops) maxFactionTroops = v.troops;
         }
 
-        // 按所属势力据点数降序（据点相同再按军团兵力）
+        // 按所属势力据点数降序（据点相同按 factionId 字典序，避免兵力波动导致频繁跳动）
         armies.sort((a: any, b: any) => {
-            const fa = factionTotals.get(a.getFactionId?.() ?? '') ?? { troops: 0, cities: 0 };
-            const fb = factionTotals.get(b.getFactionId?.() ?? '') ?? { troops: 0, cities: 0 };
+            const fidA = a.getFactionId?.() ?? '';
+            const fidB = b.getFactionId?.() ?? '';
+            const fa = factionTotals.get(fidA) ?? { troops: 0, cities: 0 };
+            const fb = factionTotals.get(fidB) ?? { troops: 0, cities: 0 };
             if (fb.cities !== fa.cities) return fb.cities - fa.cities;
-            return (b.getTroops?.() || 0) - (a.getTroops?.() || 0);
+            return fidA.localeCompare(fidB);
         });
 
         for (let idx = 0; idx < armies.length; idx++) {

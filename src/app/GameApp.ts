@@ -359,7 +359,7 @@ export class GameApp {
 
                     // 攻占大城（或同级核心据点）
                     const city = this.cityManager.getCity(event.cityId);
-                    if (city && (city.type === 'big_city' || city.tier <= 1)) {
+                    if (city && (city.type === 'big_city' || (city.tier ?? 99) <= 1)) {
                         this.brawlFeedPanel.pushCityCapture({
                             attackerFactionId: event.newFactionId,
                             legionName: event.captorLegionName,
@@ -419,7 +419,6 @@ export class GameApp {
 
                 this.unifiedEditorManager = new UnifiedEditorManager();
                 this.unifiedEditorManager.register(this.cityEditor);
-                this.unifiedEditorManager.register(this.eventEditor);
                 this.unifiedEditorManager.register(this.roadEditor);
             }
 

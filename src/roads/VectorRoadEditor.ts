@@ -4041,7 +4041,7 @@ export class VectorRoadEditor implements IEditor {
                 roadId = f.properties.id || '';
                 roadName = f.properties.name || roadName;
                 const peerId = start === city.id ? end : start;
-                peerName = cityById.get(peerId)?.name ?? peerId ?? '?';
+                peerName = (peerId ? cityById.get(peerId)?.name : undefined) ?? peerId ?? '?';
                 break;
             }
             result.push({
