@@ -74,9 +74,11 @@ export class CombatUI {
     private rightPortraitFrame!: HTMLDivElement;
     private leftGeneralNameTag!: HTMLDivElement;
     private rightGeneralNameTag!: HTMLDivElement;
-    /** 名将对决横幅 / 战报定格卡（每场重建，收场清除） */
-    private duelBannerEl: HTMLDivElement | null = null;
-    private battleReportEl: HTMLDivElement | null = null;
+    /** 技能脉冲状态：每侧一局只放一次；双方撞车时后到方延后错开 */
+    private skillPulseShownSides = new Set<'attacker' | 'defender'>();
+    private skillPulseLastAt = 0;
+    private skillPulseTimers: number[] = [];
+    private static readonly SKILL_PULSE_STAGGER_MS = 1800;
 
     // UI Elements
     private centerBackdrop!: HTMLDivElement;
@@ -235,6 +237,18 @@ export class CombatUI {
                 85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
                 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); }
             }
+            /* 武将技释放：立绘快速放大 → 缓缓复原（动外框，不碰 img 调校） */
+            @keyframes portrait-skill-surge {
+                0% { transform: scale(1); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+                15% { transform: scale(1.08); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
+                100% { transform: scale(1); }
+            }
+            /* 武将技释放：对应技能标签放大提亮 → 缓缓复原（标明放的是哪个技能） */
+            @keyframes skill-badge-surge {
+                0% { transform: scale(1); filter: brightness(1); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+                15% { transform: scale(1.32); filter: brightness(1.4); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
+                100% { transform: scale(1); filter: brightness(1); }
+            }
             @keyframes panel-entrance {
                 0% { transform: translate(-50%, 250%); }
                 60% { transform: translate(-50%, -6px); }
@@ -254,29 +268,6 @@ export class CombatUI {
             @keyframes portrait-kenburns-settle {
                 0% { transform: scale(1.045); }
                 100% { transform: scale(1); }
-            }
-            /* 名将对阵横幅：整条淡入，两侧将名向中间靠拢，「對」印最后盖下 */
-            @keyframes duel-banner-in {
-                0% { opacity: 0; }
-                100% { opacity: 1; }
-            }
-            @keyframes duel-name-left {
-                0% { opacity: 0; transform: translateX(-46px); }
-                100% { opacity: 1; transform: translateX(0); }
-            }
-            @keyframes duel-name-right {
-                0% { opacity: 0; transform: translateX(46px); }
-                100% { opacity: 1; transform: translateX(0); }
-            }
-            @keyframes duel-seal-stamp {
-                0% { opacity: 0; transform: scale(1.7) rotate(-8deg); }
-                55% { opacity: 1; transform: scale(0.95) rotate(2deg); }
-                100% { opacity: 1; transform: scale(1) rotate(0deg); }
-            }
-            /* 战报定格卡：胜负揭晓时居中浮现 */
-            @keyframes battle-report-in {
-                0% { opacity: 0; transform: translate(-50%, -50%) scale(1.08); }
-                100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             }
         `;
         document.head.appendChild(style);
@@ -1303,126 +1294,25 @@ export class CombatUI {
             'portrait-frame-enter-right 0.55s ease-out 0.18s both, portrait-kenburns-settle 5s cubic-bezier(0.22, 1, 0.36, 1) 0.73s forwards';
     }
 
-    /** 清掉上一场的对阵横幅 / 战报卡 / 败方褪灰（每场开战与关窗时调用） */
+    /** 复位上一场的败方褪灰与技能脉冲状态（每场开战与关窗时调用） */
     private resetBattleOverlays(): void {
-        this.removeDuelBanner();
-        this.removeBattleReport();
         for (const img of [this.leftPortrait, this.rightPortrait]) {
             img.style.transition = '';
             img.style.filter = '';
         }
+        this.skillPulseShownSides.clear();
+        this.skillPulseLastAt = 0;
+        for (const t of this.skillPulseTimers) window.clearTimeout(t);
+        this.skillPulseTimers.length = 0;
     }
 
-    /** 名将对决横幅：两军主将均有档案时，面板上方浮现「将名 對 将名」，4 秒后缓缓淡出 */
-    private maybeShowDuelBanner(attacker: IBattleUnit, defender: IBattleUnit): void {
-        const attRec = attacker.generalId ? getGeneralRecordByGeneralId(attacker.generalId) : null;
-        const defRec = defender.generalId ? getGeneralRecordByGeneralId(defender.generalId) : null;
-        if (!attRec || !defRec) return;
-        this.removeDuelBanner();
-
-        const el = document.createElement('div');
-        el.className = 'combat-duel-banner';
-        el.style.cssText = `
-            position: absolute;
-            top: ${uiPx(-56)};
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: ${uiPx(18)};
-            padding: ${uiPx(6)} ${uiPx(30)};
-            background: linear-gradient(90deg, transparent, rgba(16, 10, 6, 0.82) 18%, rgba(16, 10, 6, 0.82) 82%, transparent);
-            border-top: 1px solid rgba(200, 160, 80, 0.35);
-            border-bottom: 1px solid rgba(200, 160, 80, 0.35);
-            font-family: 'Noto Serif SC', serif;
-            color: #f0e6d2;
-            white-space: nowrap;
-            z-index: ${T.zIndex.portrait + 6};
-            pointer-events: none;
-            animation: duel-banner-in 0.5s ease-out both;
-        `;
-        const mkName = (txt: string, side: 'left' | 'right') => {
-            const s = document.createElement('span');
-            s.textContent = txt;
-            s.style.cssText = `
-                font-size: ${uiPx(22)};
-                font-weight: 900;
-                letter-spacing: ${uiPx(6)};
-                text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
-                animation: duel-name-${side} 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
-            `;
-            return s;
-        };
-        const seal = document.createElement('span');
-        seal.textContent = '對';
-        seal.style.cssText = `
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: ${uiPx(34)};
-            height: ${uiPx(34)};
-            background: #8a2a24;
-            border: 1px solid rgba(240, 220, 168, 0.55);
-            border-radius: 4px;
-            font-size: ${uiPx(20)};
-            font-weight: 900;
-            color: #f0dca8;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-            animation: duel-seal-stamp 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) 0.55s both;
-        `;
-        el.append(mkName(attRec.generalName, 'left'), seal, mkName(defRec.generalName, 'right'));
-        this.container.appendChild(el);
-        this.duelBannerEl = el;
-
-        window.setTimeout(() => {
-            if (this.duelBannerEl !== el) return;
-            el.style.transition = 'opacity 0.9s ease';
-            el.style.opacity = '0';
-            window.setTimeout(() => {
-                if (this.duelBannerEl === el) this.removeDuelBanner();
-            }, 950);
-        }, 4200);
-    }
-
-    private removeDuelBanner(): void {
-        this.duelBannerEl?.remove();
-        this.duelBannerEl = null;
-    }
-
-    /** 战报定格卡：胜负揭晓时居中浮现「XX 勝」，败方立绘缓缓褪灰，随短尾一同收场 */
-    private showBattleReport(winnerFactionId: string | null): void {
+    /** 胜负揭晓：标题栏改写为「XX 勝」（复用现有槽位，不遮挡面板），败方立绘缓缓褪灰 */
+    private showBattleOutcome(winnerFactionId: string | null): void {
         if (!winnerFactionId) return;
-        this.removeBattleReport();
         const name = (window as any).game?.cityManager?.getFactionName?.(winnerFactionId) ?? '';
-        if (!name || name === '未知势力') return;
-
-        const el = document.createElement('div');
-        el.className = 'combat-battle-report';
-        el.style.cssText = `
-            position: absolute;
-            left: 50%;
-            top: 40%;
-            transform: translate(-50%, -50%);
-            padding: ${uiPx(12)} ${uiPx(36)};
-            background: linear-gradient(to bottom, rgba(18, 12, 8, 0.85), rgba(10, 6, 4, 0.88));
-            border: 1px solid rgba(200, 160, 80, 0.45);
-            border-radius: 4px;
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
-            font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(32)};
-            font-weight: 900;
-            letter-spacing: ${uiPx(10)};
-            color: #f0dca8;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
-            white-space: nowrap;
-            z-index: ${T.zIndex.portrait + 7};
-            pointer-events: none;
-            animation: battle-report-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-        `;
-        el.textContent = `${name} 勝`;
-        this.container.appendChild(el);
-        this.battleReportEl = el;
-
+        if (name && name !== '未知势力') {
+            this.battleTitle.textContent = `${name} 勝`;
+        }
         // 败方立绘缓缓褪灰（只动 filter，不碰调校 transform；下场开战时复位）
         let loserImg: HTMLImageElement | null = null;
         if (winnerFactionId === this.attackerFactionId) loserImg = this.rightPortrait;
@@ -1431,11 +1321,6 @@ export class CombatUI {
             loserImg.style.transition = 'filter 1.6s ease';
             loserImg.style.filter = 'grayscale(0.9) brightness(0.8)';
         }
-    }
-
-    private removeBattleReport(): void {
-        this.battleReportEl?.remove();
-        this.battleReportEl = null;
     }
 
     // --- LOGIC ---
@@ -1456,7 +1341,6 @@ export class CombatUI {
         this.updateInfo(battle.attacker, battle.defender, '正在交战', '');
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
-        this.maybeShowDuelBanner(battle.attacker, battle.defender);
     }
 
     public showRegional(
@@ -1558,7 +1442,6 @@ export class CombatUI {
         this.updateStats();
         this.container.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
         this.playPortraitEntrance();
-        this.maybeShowDuelBanner(attacker, defender);
     }
 
     public isRegionalVisible(): boolean {
@@ -1566,7 +1449,7 @@ export class CombatUI {
     }
 
     /** 战术武将技触发效果（侧边徽章闪烁，不再弹大字） */
-    public flashTacticalSkill(displayName: string): void {
+    public flashTacticalSkill(displayName: string, generalId?: string): void {
         if (!displayName) return;
         const addFlash = (badge: HTMLSpanElement | null) => {
             if (!badge || !badge.textContent?.includes(displayName)) return;
@@ -1576,6 +1459,57 @@ export class CombatUI {
         };
         addFlash(this.leftMultBadge);
         addFlash(this.rightMultBadge);
+
+        // —— 立绘/标签脉冲 ——
+        // 武将技一局只放一次：UI 事件可能被重复广播（援军编入补发等），每侧一局只脉冲一次。
+        // 侧别按 generalId 与名牌精确对应；generalId 对不上当前立绘（如援军将领）不脉冲，防张冠李戴。
+        let side: 'attacker' | 'defender' | null = null;
+        if (generalId) {
+            if (this.leftGeneralNameTag.dataset.generalId === generalId) side = 'attacker';
+            else if (this.rightGeneralNameTag.dataset.generalId === generalId) side = 'defender';
+        } else {
+            // 无 generalId 的旧调用：仅当技名只出现在一侧时才可归属（两边同名技时跳过）
+            const inLeft = !!this.findSkillTag(this.leftSkillsBox, displayName);
+            const inRight = !!this.findSkillTag(this.rightSkillsBox, displayName);
+            if (inLeft !== inRight) side = inLeft ? 'attacker' : 'defender';
+        }
+        if (!side || this.skillPulseShownSides.has(side)) return;
+        this.skillPulseShownSides.add(side);
+        const pulseSide = side;
+
+        const run = () => {
+            const box = pulseSide === 'attacker' ? this.leftSkillsBox : this.rightSkillsBox;
+            const tag = this.findSkillTag(box, displayName);
+            if (tag) {
+                tag.style.animation = 'none';
+                void tag.offsetWidth;
+                tag.style.animation = 'skill-badge-surge 2s cubic-bezier(0.22, 1, 0.36, 1) both';
+            }
+            this.pulsePortraitForSkill(pulseSide);
+        };
+        // 双方触发撞在同一时刻时自动错开：后到的一方延后 1.8 秒再放
+        const now = Date.now();
+        const startAt = Math.max(now, this.skillPulseLastAt + CombatUI.SKILL_PULSE_STAGGER_MS);
+        this.skillPulseLastAt = startAt;
+        if (startAt <= now) {
+            run();
+        } else {
+            this.skillPulseTimers.push(window.setTimeout(run, startAt - now));
+        }
+    }
+
+    private findSkillTag(box: HTMLDivElement, displayName: string): HTMLElement | null {
+        return (Array.from(box.children).find(
+            (el) => el.textContent?.includes(displayName),
+        ) as HTMLElement | undefined) ?? null;
+    }
+
+    /** 武将技释放的立绘脉冲：快起慢落（0.15s 放大到 1.09 → 缓缓落回），只动外框 transform */
+    private pulsePortraitForSkill(side: 'attacker' | 'defender'): void {
+        const frame = side === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
+        frame.style.animation = 'none';
+        void frame.offsetWidth;
+        frame.style.animation = 'portrait-skill-surge 1.6s cubic-bezier(0.22, 1, 0.36, 1) both';
     }
 
     public isBoundToBattleField(battleField: BattleField): boolean {
@@ -2519,7 +2453,7 @@ export class CombatUI {
         if (!bound || !this.isRegionalVisible()) return;
         if (!endedFields.includes(bound)) return;
         this.boundRegionalBattleField = null;
-        this.showBattleReport(bound.winnerFactionId);
+        this.showBattleOutcome(bound.winnerFactionId);
         this.finishRegionalBattle();
     }
 
@@ -2557,7 +2491,7 @@ export class CombatUI {
                     const ended = this.boundRegionalBattleField;
                     this.boundRegionalBattleField = null;
                     if (this.isRegionalVisible()) {
-                        this.showBattleReport(ended.winnerFactionId);
+                        this.showBattleOutcome(ended.winnerFactionId);
                         this.finishRegionalBattle();
                     }
                 }

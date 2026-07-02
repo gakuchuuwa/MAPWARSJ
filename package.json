@@ -33,6 +33,7 @@
     "tier:pending": "node scratch/export_faction_tier_pending.mjs",
     "audit": "node scripts/audit-game-integrity.mjs",
     "sim": "tsx scripts/sim/headless.ts",
+    "sim:skill": "tsx scripts/skill-balance-sim.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",

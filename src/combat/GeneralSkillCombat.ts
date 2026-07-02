@@ -26,8 +26,10 @@ function getFollowedArmyId(): string | null {
     }
 }
 
-/** 普将逆局：侧总兵力 ≤ 开战该侧总兵力 × 此比例时触发 */
-export const COMEBACK_TROOP_THRESHOLD = 0.6;
+/** 普将逆局：侧总兵力 ≤ 开战该侧总兵力 × 此比例时触发
+ *  【2026-07-03】0.6→0.80：0.6 触发太晚（敌已 ~80%），逆局技几乎无法翻盘；
+ *  提到 0.80 并配合「逆局重算掷 luck」(BattleField)，逆局技胜率 ≈ 开局技 ~85%，武将技间平衡。 */
+export const COMEBACK_TROOP_THRESHOLD = 0.80;
 
 /** 名将开局战术 UI 延迟（秒）：对峙立绘就绪后再闪字 */
 export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
@@ -161,7 +163,11 @@ function applyTroopAddToUnits(
         const base = opts?.useMaxTroops ? (u.maxTroops ?? u.troops) : u.troops;
         const bonus = Math.floor(base * ratio);
         if (bonus <= 0) continue;
-        u.setTroops(Math.min(u.troops + bonus, u.maxTroops));
+        // 【2026-07-03】开局①以逸待劳(useMaxTroops=false)：生力军，加兵突破 maxTroops 上限
+        //   （满编军团开战 troops==maxTroops，若封顶则 +20% 被吃掉=无效）。
+        //   逆局⑥哀兵必胜(useMaxTroops=true)：恢复型，仍封顶到 maxTroops。
+        const cap = opts?.useMaxTroops ? u.maxTroops : Number.POSITIVE_INFINITY;
+        u.setTroops(Math.min(u.troops + bonus, cap));
         added += bonus;
     }
     return added;

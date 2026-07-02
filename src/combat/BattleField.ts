@@ -8,7 +8,9 @@
  * 1. 一侧 = 一 factionId；同旗援军经 BattleReinforcementPoll 在 30km 圈内实时编入
  * 2. 独立兵力：每个单位独立受损，「谁带的兵死谁的」
  * 3. 伤害分配：一侧总伤害按各单位兵力比例分摊（兵多的扛更多）
- * 4. 援军编入后重算强弱（refreshPredictedSidesFromTotals：文化修正兵力 + 援军编入 luck + 武将技侧乘区，不重掷侧 luck）
+ * 4. 援军编入后重算强弱（refreshPredictedSidesFromTotals：文化修正兵力 + 援军编入 luck + 武将技侧乘区）
+ *    - 援军编入触发：不重掷侧 luck（确定性）
+ *    - 逆局技触发（rollLuckOnRecompute=true）：每侧重掷一次 luck，使逆局翻盘概率化、与开局技平衡
  */
 
 import { IBattleUnit, BattleType, UnitType } from './CombatSystem';
@@ -349,7 +351,7 @@ export class BattleField {
      * 开战时的 pickPredictedSides 不会随 initialTotalTroops 更新，会导致
      * 「兵力已逆转却仍按旧强弱承伤」的 NvN 异常。
      */
-    private refreshPredictedSidesFromTotals(): void {
+    private refreshPredictedSidesFromTotals(rollLuckOnRecompute = false): void {
         if (this.presetResult) return;
 
         const attUnits = this.attackerGroup.units
@@ -399,6 +401,15 @@ export class BattleField {
             attRoll: defComeback.opponentRoll,
             defRoll: defComeback.sideRoll,
         };
+
+        // 【2026-07-03】逆局触发时的翻盘重算掷一次 luck（每侧），使逆局技概率化、可与开局技平衡；
+        //   援军编入的重算不掷（rollLuckOnRecompute=false），保留原有确定性行为。
+        if (rollLuckOnRecompute) {
+            withSkills = {
+                attRoll: withSkills.attRoll * rollCombatLuckMultiplier(),
+                defRoll: withSkills.defRoll * rollCombatLuckMultiplier(),
+            };
+        }
 
         const prevStronger = this.predictedStrongerGroup.factionId;
         this.applyPredictedSidesFromRoll(withSkills.attRoll, withSkills.defRoll);
@@ -563,7 +574,7 @@ export class BattleField {
             battleElapsed: this.elapsed,
             scheduleInvincible: (unit: IBattleUnit, start: number, dur: number) =>
                 this.scheduleInvincible(unit, start, dur),
-            onSidesChanged: () => this.refreshPredictedSidesFromTotals(),
+            onSidesChanged: () => this.refreshPredictedSidesFromTotals(true),
             emitUi: true,
         };
 
