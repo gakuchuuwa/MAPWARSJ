@@ -249,6 +249,12 @@ export class CombatUI {
                 15% { transform: scale(1.32); filter: brightness(1.4); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
                 100% { transform: scale(1); filter: brightness(1); }
             }
+            @keyframes skill-cut-in {
+                0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+                15% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; text-shadow: 0 0 10px rgba(255,160,0,0.8), 0 0 30px rgba(255,0,0,0.6); }
+                80% { transform: translate(-50%, -50%) scale(1.6); opacity: 1; text-shadow: 0 0 5px rgba(255,160,0,0.5); }
+                100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+            }
             @keyframes panel-entrance {
                 0% { transform: translate(-50%, 250%); }
                 60% { transform: translate(-50%, -6px); }
@@ -1486,6 +1492,27 @@ export class CombatUI {
                 tag.style.animation = 'skill-badge-surge 2s cubic-bezier(0.22, 1, 0.36, 1) both';
             }
             this.pulsePortraitForSkill(pulseSide);
+            
+            // 联动：在立绘正中央弹出巨大化技能文字 Cut-in
+            const frame = pulseSide === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
+            const cutIn = document.createElement('div');
+            cutIn.textContent = displayName;
+            cutIn.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0.5);
+                color: #fff;
+                font-size: ${uiPx(42)};
+                font-weight: 900;
+                font-family: 'Noto Serif SC', serif;
+                pointer-events: none;
+                z-index: 100;
+                animation: skill-cut-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                white-space: nowrap;
+            `;
+            frame.appendChild(cutIn);
+            window.setTimeout(() => cutIn.remove(), 1600);
         };
         // 双方触发撞在同一时刻时自动错开：后到的一方延后 1.8 秒再放
         const now = Date.now();

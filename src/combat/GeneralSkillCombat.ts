@@ -163,11 +163,9 @@ function applyTroopAddToUnits(
         const base = opts?.useMaxTroops ? (u.maxTroops ?? u.troops) : u.troops;
         const bonus = Math.floor(base * ratio);
         if (bonus <= 0) continue;
-        // 【2026-07-03】开局①以逸待劳(useMaxTroops=false)：生力军，加兵突破 maxTroops 上限
-        //   （满编军团开战 troops==maxTroops，若封顶则 +20% 被吃掉=无效）。
-        //   逆局⑥哀兵必胜(useMaxTroops=true)：恢复型，仍封顶到 maxTroops。
-        const cap = opts?.useMaxTroops ? u.maxTroops : Number.POSITIVE_INFINITY;
-        u.setTroops(Math.min(u.troops + bonus, cap));
+        // ⑥哀兵必胜(useMaxTroops=true)：恢复型加兵，封顶到 maxTroops（不超编，故不会滚雪球）。
+        //   注：①以逸待劳已于 2026-07-03 改为战力乘区(ally_mult_1_2)，不再走本加兵路径。
+        u.setTroops(Math.min(u.troops + bonus, u.maxTroops));
         added += bonus;
     }
     return added;
