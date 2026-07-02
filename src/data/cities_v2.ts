@@ -1559,7 +1559,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', region: 'TIBET', troops: 10000, mirror: true,
         note: '勒乌围；金川关隘',
     }, // 镜像
-    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'agui', lat: 31, lng: 102.4, type: 'small_city', troops: 5000, region: 'BASHU' },
+    { id: 'city_meinuozhai', name: '美诺寨', factionId: 'agui', lat: 31, lng: 102.4, type: 'small_city', troops: 20000, region: 'BASHU' },
+
 
 
  // 镜像

@@ -582,7 +582,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
       kui_gongsunshu: { generalId: 'kui_gongsunshu', tier: 'famous', tacticalSkillId: 'tac_05', strategicSkillId: 'str_08' }, // 公孙述白帝
     yang_bozhou_yangyinglong: { generalId: 'yang_bozhou_yangyinglong', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 播州末代
     chenghan_lite: { generalId: 'chenghan_lite', tier: 'famous', tacticalSkillId: 'tac_03', strategicSkillId: 'str_04' }, // 成汉开国
-    agui: { generalId: 'agui', tier: 'famous', tacticalSkillId: 'tac_6' },
+    agui: { generalId: 'agui', tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_03' },
     zuo_d_wufu_zd: { generalId: 'zuo_d_wufu_zd', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 明代平南中
     wumeng_azi_wm: { generalId: 'wumeng_azi_wm', tier: 'ordinary', tacticalSkillId: 'tac_10' }, // 乌蒙土司
 // ── 巴蜀区 2026-06-18 ──
