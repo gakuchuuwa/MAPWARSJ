@@ -37,6 +37,7 @@ import { GameInputManager } from './GameInputManager';
 import { CombatUI } from '../ui/CombatUI'; // [NEW]
 import { GameTimeHUD } from '../ui/GameTimeHUD';
 import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
+import { isRegionCenter, REGION_LABELS, type RegionType } from '../systems/RegionSystem';
 import { Army } from '../legion/Army';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
@@ -329,8 +330,28 @@ export class GameApp {
                 this.brawlFeedPanel = new BrawlFeedPanel(this.timeSystem, this.cityManager);
                 this.brawlFeedPanel.init();
                 this.cityManager.setOnCityCaptured((event) => {
-                    // [语音播报] 跟随军团攻占城池 (移至最前，防止被后续 return 截断)
-                    if (event.captorLegionId) {
+                    const prevEliminable = BrawlFeedPanel.isEliminableFaction(event.previousFactionId);
+                    const isFall = prevEliminable
+                        && this.cityManager.getCitiesByFaction(event.previousFactionId).length === 0;
+                    const isCenter = isRegionCenter(event.cityId);
+
+                    // [语音播报] S 级大事（灭国 / 文化中心易主）全程播报，不限跟拍镜头；
+                    // 常规攻占仍只播跟拍军团（原行为），且 S 级已播时不重复
+                    if (isFall) {
+                        speechAnnouncer.announceFactionFall(
+                            event.newFactionId,
+                            event.previousFactionId,
+                            event.cityName
+                        );
+                    } else if (isCenter) {
+                        const regionKey = this.cityManager.getCity(event.cityId)?.region;
+                        const regionLabel = regionKey ? (REGION_LABELS[regionKey as RegionType] ?? '') : '';
+                        speechAnnouncer.announceRegionCenterCapture(
+                            event.newFactionId,
+                            event.cityName,
+                            regionLabel
+                        );
+                    } else if (event.captorLegionId) {
                         const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
                         if (followedId === event.captorLegionId) {
                             const army = this.legionManager.getLegionById(event.captorLegionId);
@@ -344,10 +365,9 @@ export class GameApp {
                     }
 
                     if (!event.captorLegionName) return;
-                    if (!BrawlFeedPanel.isEliminableFaction(event.previousFactionId)) return;
+                    if (!prevEliminable) return;
 
-                    const citiesLeft = this.cityManager.getCitiesByFaction(event.previousFactionId).length;
-                    if (citiesLeft === 0) {
+                    if (isFall) {
                         this.brawlFeedPanel.pushFactionFall({
                             attackerFactionId: event.newFactionId,
                             legionName: event.captorLegionName,
@@ -399,6 +419,10 @@ export class GameApp {
             if (this.brawlFeedPanel) {
                 this.rebellionSystem.setRestorationReporter((report) => {
                     this.brawlFeedPanel.pushRestoration(report);
+                    // [语音播报] S 级 · 复国（与军情面板同样过滤 panjun 等不可灭势力）
+                    if (BrawlFeedPanel.isEliminableFaction(report.factionId)) {
+                        speechAnnouncer.announceRestoration(report.factionId, report.cityName);
+                    }
                 });
             }
             this.perfMonitor.markBootPhase('事件/军团/叛乱管理器');

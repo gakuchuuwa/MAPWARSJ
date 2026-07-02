@@ -8,6 +8,15 @@ import {
   TACTICAL_SKILL_CATALOG,
   type GeneralProfile,
 } from "../data/GeneralSkills";
+import { SubtitleBanner } from "../ui/SubtitleBanner";
+
+interface SpeakOptions {
+  /** S 级大事：略慢语速、同步字幕条、播报期间丢弃常规播报（不被打断） */
+  sTier?: boolean;
+  /** 同步显示的字幕条文案（不传则不显示字幕） */
+  banner?: string;
+  rate?: number;
+}
 
 function getTacticalSkillName(factionId: string, generalId?: string): string {
   const general = generalId ? getGeneralRecordByGeneralId(generalId) : getFactionGeneral(factionId);
@@ -32,6 +41,8 @@ export class SpeechAnnouncer {
   private enabled = true;
   // 当前偏好的声音
   private preferredVoice: "Yunxi" | "Yunjian" = "Yunjian";
+  /** S 级播报占用截止时间戳：期间常规播报直接丢弃（S 级大事不被小事打断） */
+  private sTierBusyUntilMs = 0;
 
   constructor() {}
 
@@ -153,21 +164,79 @@ export class SpeechAnnouncer {
     this.speak(text);
   }
 
-  private speak(text: string): void {
+  // ---- S 级大事播报（灭国 / 复国 / 文化中心易主）：全程播报，不限跟拍镜头 ----
+
+  /** S 级 · 势力灭亡：最后据点陷落 */
+  public announceFactionFall(attackerFactionId: string, defenderFactionId: string, cityName: string): void {
+    if (!this.enabled) return;
+    const att = getFactionNameForSpeech(attackerFactionId);
+    const def = getFactionNameForSpeech(defenderFactionId);
+    const text = `${def}，亡国。最后据点${cityName}，陷于${att}军`;
+    console.log("[Speech] 灭国:", text);
+    this.speak(text, { sTier: true, rate: 0.92, banner: `${def}亡 · ${cityName}陷于${att}` });
+  }
+
+  /** S 级 · 复国：异文化占领地起义 */
+  public announceRestoration(factionId: string, cityName: string): void {
+    if (!this.enabled) return;
+    const name = getFactionNameForSpeech(factionId);
+    const text = `${name}遗民起事，于${cityName}复国`;
+    console.log("[Speech] 复国:", text);
+    this.speak(text, { sTier: true, rate: 0.92, banner: `${name}复国 · 于${cityName}` });
+  }
+
+  /** S 级 · 文化中心易主（14 区中心城被攻占） */
+  public announceRegionCenterCapture(attackerFactionId: string, cityName: string, regionLabel: string): void {
+    if (!this.enabled) return;
+    const att = getFactionNameForSpeech(attackerFactionId);
+    const text = regionLabel
+      ? `${att}军攻占${regionLabel}中心，${cityName}`
+      : `${att}军攻占重镇${cityName}`;
+    const banner = regionLabel
+      ? `${regionLabel}易主 · ${cityName}归${att}`
+      : `${cityName}易主 · 归${att}`;
+    console.log("[Speech] 文化中心易主:", text);
+    this.speak(text, { sTier: true, rate: 0.92, banner });
+  }
+
+  private speak(text: string, opts?: SpeakOptions): void {
+    const now = Date.now();
+    // S 级播报期间，常规播报直接丢弃（不 cancel，不排队——慢直播宁缺毋滥）
+    if (!opts?.sTier && now < this.sTierBusyUntilMs) return;
+
+    // 字幕条不依赖语音引擎是否可用（无声环境下画面仍完整）
+    if (opts?.banner) SubtitleBanner.show(opts.banner);
+
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     const synth = window.speechSynthesis;
+
+    if (opts?.sTier) {
+      // 兜底占用窗口：按文本长度估读完时间，onend 会提前释放
+      this.sTierBusyUntilMs = now + Math.min(12000, 2500 + text.length * 350);
+    }
 
     synth.cancel();
 
     setTimeout(() => {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "zh-CN";
+      if (opts?.rate !== undefined) utterance.rate = opts.rate;
 
       const voice = this.pickBestVoice(synth.getVoices());
       if (voice) {
         utterance.voice = voice;
         console.log("[Speech] 使用:", voice.name);
       }
+
+      const settle = () => {
+        if (opts?.sTier) this.sTierBusyUntilMs = 0;
+        if (opts?.banner) {
+          // 念完后字幕再停留片刻，缓缓淡出
+          window.setTimeout(() => SubtitleBanner.hide(), 1200);
+        }
+      };
+      utterance.onend = settle;
+      utterance.onerror = settle;
 
       synth.speak(utterance);
     }, 50);
