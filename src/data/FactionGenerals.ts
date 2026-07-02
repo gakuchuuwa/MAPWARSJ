@@ -578,7 +578,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
         chanzhou: { generalId: 'chanzhou_chairong', generalName: '柴荣', portrait: '/assets/CENTRAL/chanzhou_chairong.png' },
     lai: { generalId: 'lai_wangshifan', generalName: '王师范', portrait: '/assets/NORTH/lai_wangshifan.png' }, // 青石关·平卢节帅屡败朱温
     mushi: { generalId: 'mushi_muchong', generalName: '穆崇', portrait: '/assets/NORTH/mushi_muchong.png' }, // 大岴·丘穆陵氏代北勋臣
-    xiongding: { generalId: 'xiongding_murongyong', generalName: '慕容永', portrait: '/assets/NORTHEAST/xiongding_murongyong.png' }, // 天井关·西燕末代君主
+    xiongding: { generalId: 'xiongding_murongyong', generalName: '慕容永', portrait: '/assets/STEPPE/xiongding_murongyong.png' }, // 天井关·西燕末代君主
 
     pinghai: { generalId: 'pinghai_laihuer', generalName: '来护儿', portrait: '/assets/NORTH/pinghai_laihuer.png' }, // 漂渝津·隋征东舟师
     pingyuan: { generalId: 'pingyuan_yanzhenqing', generalName: '颜真卿', portrait: '/assets/litang/pingyuan_yanzhenqing.png' }, // 平原·首倡义兵抗安史
@@ -606,7 +606,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     changshan: { generalId: 'changshan_yanyangzhao', generalName: '杨延昭', portrait: '/assets/zhaosong/changshan_yanyangzhao.png' },
     hejian: { generalId: 'hejian_gongsunzan', generalName: '公孙瓒', portrait: '/assets/NORTH/hejian_gongsunzan.png' }, // 文安·河间郡公孙瓒白马义从
     liangshidu: { generalId: 'liangshidu_longjia', generalName: '龙贾', portrait: '/assets/NORTH/liangshidu_longjia.png' }, // 雕阴·魏将龙贾戍守抗秦
-    yangshe: { generalId: 'yangshe_yangshezhi', generalName: '羊舌职', portrait: '/assets/NORTH/yangshe_yangshezhi.png' }, // 铜鞮·晋羊舌氏封邑
+    yangshe: { generalId: 'yangshe_yangshezhi', generalName: '羊舌职', portrait: '/assets/xianqin/yangshe_yangshezhi.png' }, // 铜鞮·晋羊舌氏封邑
     guzhu: { generalId: 'guzhu_tianyu', generalName: '田豫', portrait: '/assets/NORTH/guzhu_tianyu.png' }, // 肥如·魏征北将军田豫镇北疆
     dizhou: { generalId: 'dizhou_wangyanzhang', generalName: '王彦章', portrait: '/assets/NORTH/dizhou_wangyanzhang.png' }, // 乐安·后梁铁枪王彦章
     qu_d: { generalId: 'qu_d_quyi', generalName: '麴义', portrait: '/assets/NORTH/qu_d_quyi.png' },
@@ -616,7 +616,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     dai_d: { generalId: 'dai_d_shijingtang', generalName: '石敬瑭', portrait: '/assets/HEXI/dai_d_shijingtang.png' },
     erzhu: { generalId: 'erzhu_erzhurong', generalName: '尔朱荣', portrait: '/assets/HEXI/erzhu_erzhurong.png' },
     zhe_d: { generalId: 'zhe_d_zheyuqing', generalName: '折御卿', portrait: '/assets/NORTH/zhe_d_zheyuqing.png' },
-    heng1: { generalId: 'heng1_limu_yanyue', generalName: '杨业', portrait: '/assets/xianqin/heng1_limu_yanyue.png' },
+    heng1: { generalId: 'heng1_limu_yanyue', generalName: '杨业', portrait: '/assets/zhaosong/heng1_yangye.png' },
     dingxiang_d: { generalId: 'dingxiang_d_lijing', generalName: '李靖', portrait: '/assets/litang/dingxiang_d_lijing.png' },
     xiayang_d: { generalId: 'xiayang_d_dengyu', generalName: '邓禹', portrait: '/assets/liuhan/xiayang_d_dengyu.png' },
     ying: { generalId: 'ying_caojingzong', generalName: '曹景宗', portrait: '/assets/JIANGNAN/ying_caojingzong.png' },

@@ -167,7 +167,34 @@ export class ExpeditionUI {
 
         this.statusBanner.style.display = 'none';
         const army = this.eligibleArmy();
-        this.button.style.display = army && !this.panel ? 'block' : 'none';
+        if (army && !this.panel) {
+            // 预览：显示最近的异文化中心（超时自动代选目标 = 默认主攻方向）
+            const preview = this.nearestCandidate(army);
+            this.button.innerHTML = preview
+                ? `🐎 远征 → ${REGION_LABELS[preview.region]}·${preview.city.name}`
+                : '🐎 远征';
+            this.button.style.display = 'block';
+        } else {
+            this.button.style.display = 'none';
+        }
+    }
+
+    /** 距军团最近的可远征异文化中心（用于按钮预览与超时代选一致） */
+    private nearestCandidate(army: ExpeditionArmy): { city: ExpeditionCity; region: RegionType } | null {
+        const candidates = this.listCandidates(army);
+        if (candidates.length === 0) return null;
+        const pos = army.getPosition();
+        let best = candidates[0];
+        let bestDist = getEuclideanDistance(pos, { lat: best.city.latitude, lng: best.city.longitude });
+        for (let i = 1; i < candidates.length; i++) {
+            const c = candidates[i];
+            const d = getEuclideanDistance(pos, { lat: c.city.latitude, lng: c.city.longitude });
+            if (d < bestDist) {
+                bestDist = d;
+                best = c;
+            }
+        }
+        return best;
     }
 
     private eligibleArmy(): ExpeditionArmy | null {
