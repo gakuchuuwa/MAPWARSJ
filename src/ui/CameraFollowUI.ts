@@ -149,7 +149,7 @@ export class CameraFollowUI {
             top: 62px;
             left: 16px;
             width: 280px;
-            max-height: 400px;
+            max-height: 70vh;
             overflow-y: auto;
             z-index: 10001;
             background: linear-gradient(180deg, rgba(30,22,12,0.96), rgba(20,15,8,0.98));

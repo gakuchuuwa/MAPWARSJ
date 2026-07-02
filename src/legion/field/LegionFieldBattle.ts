@@ -13,6 +13,7 @@ import { GameConfig } from '../../config/GameConfig';
 import { City, LatLng } from '../../types/core';
 import { gameLog } from '../../utils/GameLogger';
 import { Army } from '../Army';
+import { speechAnnouncer } from '../../audio/SpeechAnnouncer';
 import {
     markLegionAnnihilationFeed,
     resolveAnnihilationCityName,
@@ -243,6 +244,15 @@ function startFieldBattleBetween(
 
     const attName = deps.getCityManager().getFactionName(attFaction);
     const defName = deps.getCityManager().getFactionName(defFaction);
+
+    // [语音播报] 野战开始：进攻方势力+武将，大战，防守方势力+武将
+    speechAnnouncer.announceFieldBattle(
+        attFaction,
+        defFaction,
+        army.generalId,
+        otherArmy.generalId,
+    );
+
     combatSystem.startRegionalBattle(
         attFaction,
         attUnits,

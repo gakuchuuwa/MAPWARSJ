@@ -126,6 +126,25 @@ export class SpeechAnnouncer {
     this.speak(text);
   }
 
+  /** 野战开始：进攻方势力+武将，大战，防守方势力+武将 */
+  public announceFieldBattle(
+    attackerFactionId: string,
+    defenderFactionId: string,
+    attackerGeneralId?: string,
+    defenderGeneralId?: string,
+  ): void {
+    if (!this.enabled) return;
+    const attFaction = getFactionNameForSpeech(attackerFactionId);
+    const defFaction = getFactionNameForSpeech(defenderFactionId);
+    const attGeneral = attackerGeneralId ? getGeneralRecordByGeneralId(attackerGeneralId) : null;
+    const defGeneral = defenderGeneralId ? getGeneralRecordByGeneralId(defenderGeneralId) : null;
+    const attPart = attGeneral ? `${attFaction}，${attGeneral.generalName}` : `${attFaction}，将军`;
+    const defPart = defGeneral ? `${defFaction}，${defGeneral.generalName}` : `${defFaction}，将军`;
+    const text = `${attPart}，大战，${defPart}`;
+    console.log("[Speech] 野战:", text);
+    this.speak(text);
+  }
+
   /** 全军覆没 */
   public announceAnnihilation(factionId: string, _legionName: string, cityName: string, _generalId?: string): void {
     if (!this.enabled) return;
