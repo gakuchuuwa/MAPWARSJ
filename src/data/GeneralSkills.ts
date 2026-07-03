@@ -1,5 +1,7 @@
 /**
  * 武将技数据（格号 = 机制真理，displayName = 展示皮肤）
+ * 战术技 v1 全表：src/data/TacticalSkillCatalog.ts（49 条定稿）
+ * 条件解析：src/combat/TacticalSkillResolver.ts
  * 设计文档：docs/02-design/GENERAL_SKILLS_武将技系统.md
  * AI 分配标签：src/data/GeneralSkillTags.ts（品阶 + 五种战术风格）
  *
@@ -1184,6 +1186,16 @@ export function getGeneralProfile(generalId: string | undefined): GeneralProfile
 export function getTacticalSkillDef(skillId: string): TacticalSkillDef | null {
     return TACTICAL_SKILL_CATALOG[skillId] ?? null;
 }
+
+export {
+    getTacticalSkillEntry,
+    getTacticalSkillEntryForGeneral,
+    TACTICAL_SKILL_ENTRIES_V1,
+    TACTICAL_SKILL_BY_ID,
+    type TacticalSkillEntry,
+    type TacticalSeries,
+    type TacticalBaseEffect,
+} from './TacticalSkillCatalog';
 
 export function getStrategicSkillDef(skillId: string): StrategicSkillDef | null {
     return STRATEGIC_SKILL_CATALOG[skillId] ?? null;

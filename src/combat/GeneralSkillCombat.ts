@@ -14,7 +14,16 @@ import {
     REINFORCEMENT_JOIN_SKILL,
     type TacticalSkillDef,
 } from '../data/GeneralSkills';
+import {
+    buildTacticalConditionContext,
+    resolveGeneralTacticalEntry,
+    resolveOpeningFateEntry,
+    resolveOpeningLuckMultiplier,
+    type TacticalSkillEntry,
+} from './TacticalSkillResolver';
+import { sumCultureAdjustedTroops } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
+import { COMEBACK_TROOP_THRESHOLD } from './TacticalConstants';
 import { gameLog } from '../utils/GameLogger';
 import { audioManager } from '../audio/AudioManager';
 
@@ -26,10 +35,8 @@ function getFollowedArmyId(): string | null {
     }
 }
 
-/** 普将逆局：侧总兵力 ≤ 开战该侧总兵力 × 此比例时触发
- *  【2026-07-03】0.6→0.80：0.6 触发太晚（敌已 ~80%），逆局技几乎无法翻盘；
- *  提到 0.80 并配合「逆局重算掷 luck」(BattleField)，逆局技胜率 ≈ 开局技 ~85%，武将技间平衡。 */
-export const COMEBACK_TROOP_THRESHOLD = 0.80;
+/** 普将逆局阈值：单一真理源 TacticalConstants（纯常量，供审计侧解耦引用），此处再导出保持兼容 */
+export { COMEBACK_TROOP_THRESHOLD };
 
 /** 名将开局战术 UI 延迟（秒）：对峙立绘就绪后再闪字 */
 export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
@@ -88,6 +95,140 @@ function findEligibleGeneralUnit(units: IBattleUnit[]): IBattleUnit | null {
         if (canUnitUseGeneralSkills(u)) return u;
     }
     return null;
+}
+
+function sideHasFamousGeneral(units: IBattleUnit[]): boolean {
+    const unit = findEligibleGeneralUnit(units);
+    if (!unit?.generalId) return false;
+    return getGeneralProfile(unit.generalId)?.tier === 'famous';
+}
+
+function emitTacticalUiV1(
+    unit: IBattleUnit,
+    entry: TacticalSkillEntry,
+    sideLabel: string,
+    options?: { uiDelaySec?: number; immediate?: boolean },
+): void {
+    const delay =
+        options?.immediate === true
+            ? 0
+            : (options?.uiDelaySec ?? OPENING_TACTICAL_UI_DELAY_SEC);
+    const trigger: TacticalSkillTrigger = {
+        displayName: entry.displayName,
+        generalId: unit.generalId ?? '',
+        skillId: entry.id,
+        uiDelaySec: delay,
+    };
+    if (delay <= 0) {
+        onTacticalSkillTriggered?.(trigger);
+    } else {
+        window.setTimeout(() => onTacticalSkillTriggered?.(trigger), delay * 1000);
+    }
+    gameLog(
+        'battle',
+        `⚔️ [战术技] ${unit.generalId} 【${entry.displayName}】 ${sideLabel}`,
+    );
+    const followedId = getFollowedArmyId();
+    if (followedId && unit.id === followedId) {
+        audioManager.play('general_skill');
+    }
+}
+
+/**
+ * 一侧开战命运 luck 解析（不含 base）：返回乘数并按需触发飘字。
+ * 供 BattleField 缓存 luck 后在 refresh 时回放（P0：避免援军/逆局重算抹掉命运技掷点）。
+ */
+export function resolveSideOpeningFateLuck(
+    sideUnits: IBattleUnit[],
+    opponentUnits: IBattleUnit[],
+    battleType: BattleType,
+    terrain: LandTerrainKind | null,
+    sideIsAttacker: boolean,
+    options?: {
+        emitUi?: boolean;
+        openingUiShown?: { attacker: boolean; defender: boolean };
+    },
+): { luck: number } {
+    const selfTroops = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const enemyTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const ctx = buildTacticalConditionContext({
+        battleType,
+        terrain,
+        selfTroops,
+        enemyTroops,
+        selfInitialTroops: selfTroops,
+        enemyInitialTroops: enemyTroops,
+        selfIsAttacker: sideIsAttacker,
+        enemyHasFamousGeneral: sideHasFamousGeneral(opponentUnits),
+    });
+
+    const selfUnit = findEligibleGeneralUnit(sideUnits);
+    const oppUnit = findEligibleGeneralUnit(opponentUnits);
+    const selfProfile = selfUnit?.generalId ? getGeneralProfile(selfUnit.generalId) : null;
+    const oppProfile = oppUnit?.generalId ? getGeneralProfile(oppUnit.generalId) : null;
+    const selfFate = resolveOpeningFateEntry(selfProfile?.tacticalSkillId);
+    const oppFate = resolveOpeningFateEntry(oppProfile?.tacticalSkillId);
+
+    const luck = resolveOpeningLuckMultiplier(ctx, selfFate, oppFate);
+    const sideLabel = sideIsAttacker ? '攻方' : '守方';
+
+    if (options?.emitUi !== false) {
+        const shown = options?.openingUiShown;
+        const markShown = () => {
+            if (!shown) return;
+            if (sideIsAttacker) shown.attacker = true;
+            else shown.defender = true;
+        };
+        if (luck.appliedSelfEntry && selfUnit) {
+            markShown();
+            emitTacticalUiV1(selfUnit, luck.appliedSelfEntry, sideLabel, {
+                uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+            });
+        } else if (luck.appliedEnemyPressureEntry && oppUnit) {
+            markShown();
+            const oppLabel = sideIsAttacker ? '守方' : '攻方';
+            emitTacticalUiV1(oppUnit, luck.appliedEnemyPressureEntry, oppLabel, {
+                uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+            });
+        }
+    }
+
+    const rangeLabel = luck.appliedSelfEntry
+        ? `命运技 ${luck.appliedSelfEntry.displayName}`
+        : luck.appliedEnemyPressureEntry
+            ? `扰敌 ${luck.appliedEnemyPressureEntry.displayName}`
+            : `[${GameConfig.COMBAT.LUCK_MIN},${GameConfig.COMBAT.LUCK_MAX}]`;
+    gameLog('battle', `⚔️ [luck] ${sideLabel} ×${luck.multiplier.toFixed(3)} (${rangeLabel})`);
+
+    return { luck: luck.multiplier };
+}
+
+/** 一侧 base（文化修正兵力；全 0 时退回原兵力） */
+export function sideBasePower(units: IBattleUnit[]): number {
+    const adjusted = sumCultureAdjustedTroops(units);
+    if (adjusted > 0) return adjusted;
+    return units.reduce((s, u) => s + Math.max(0, u.troops), 0);
+}
+
+/**
+ * 一侧有效战力：文化修正兵力 × 命运系 luck（#12–#20；默认 [0.8,1.2]）
+ */
+export function rollSideEffectivePowerWithOpeningFate(
+    sideUnits: IBattleUnit[],
+    opponentUnits: IBattleUnit[],
+    battleType: BattleType,
+    terrain: LandTerrainKind | null,
+    sideIsAttacker: boolean,
+    options?: {
+        emitUi?: boolean;
+        openingUiShown?: { attacker: boolean; defender: boolean };
+    },
+): number {
+    const base = sideBasePower(sideUnits);
+    const { luck } = resolveSideOpeningFateLuck(
+        sideUnits, opponentUnits, battleType, terrain, sideIsAttacker, options,
+    );
+    return base * luck;
 }
 
 function getTacticalSkill(unit: IBattleUnit): TacticalSkillDef | null {
@@ -675,10 +816,30 @@ export function tryApplyComebackTacticalForSide(
     sideLabel: string,
     ctx: ComebackTacticalContext,
 ): boolean {
-    if (!sideMeetsComebackThreshold(sideTotalTroops, sideInitialTroops)) return false;
-
     const unit = findEligibleGeneralUnit(sideUnits);
     if (!unit?.generalId) return false;
+
+    const profile = getGeneralProfile(unit.generalId);
+    const v1 = profile ? resolveGeneralTacticalEntry(profile.tacticalSkillId) : null;
+    if (v1?.phase === 'mid_battle_comeback' && v1.baseEffect === 'recompute_comeback') {
+        const threshold = v1.comebackThreshold ?? COMEBACK_TROOP_THRESHOLD;
+        if (sideInitialTroops <= 0 || sideTotalTroops > sideInitialTroops * threshold) {
+            return false;
+        }
+        if (ctx.triggeredSkillIds.has(v1.id)) return false;
+        ctx.triggeredSkillIds.add(v1.id);
+        gameLog(
+            'battle',
+            `⚔️ [战术技·逆局] ${unit.generalId} 【${v1.displayName}】 ${sideLabel} 重算强弱（兵力≤${(threshold * 100).toFixed(0)}%）`,
+        );
+        ctx.onSidesChanged();
+        if (ctx.emitUi) {
+            emitTacticalUiV1(unit, v1, sideLabel, { immediate: true });
+        }
+        return true;
+    }
+
+    if (!sideMeetsComebackThreshold(sideTotalTroops, sideInitialTroops)) return false;
     const skill = getTacticalSkillForTiming(unit, 'comeback');
     if (!skill) return false;
     if (!canTriggerTactical(skill, ctx.triggeredSkillIds)) return false;

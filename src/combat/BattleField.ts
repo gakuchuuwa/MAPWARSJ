@@ -30,7 +30,7 @@ import {
     GameConfig,
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
-import { rollSideEffectivePower, sumCultureAdjustedTroops, getUnitBattlePowerMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
+import { sumCultureAdjustedTroops, getUnitBattlePowerMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import { getGeneralProfile } from '../data/GeneralSkills';
 import {
     applyGeneralSkillSideRollMultipliers,
@@ -41,6 +41,9 @@ import {
     applyComebackRollMultipliersForSide,
     tryApplyComebackTacticalForSide,
     tryEmitOpeningTacticalOnReinforcementJoin,
+    resolveSideOpeningFateLuck,
+    sideBasePower,
+    getBattleTerrainKind,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 import {
@@ -100,6 +103,9 @@ export class BattleField {
     private nextReinforcementWave = 1; // 下一波援军编号，从 1 开始
     /** 援军编入时掷定的有效战力系数（waveIndex≥1），不重掷 */
     private readonly reinforcementLuckByUnitId = new Map<string, number>();
+    /** 开战命运系 luck（#12–#20 或默认），refresh 时回放以免被抹掉（P0 修复） */
+    private attackerOpeningFateLuck = 1;
+    private defenderOpeningFateLuck = 1;
     /** 每侧已触发的战术技 id（①–⑩ 每场一次类） */
     private readonly attackerTacticalTriggered = new Set<string>();
     private readonly defenderTacticalTriggered = new Set<string>();
@@ -300,8 +306,20 @@ export class BattleField {
         this.attackerGroup.initialTotalTroops = this.attackerGroup.totalTroops;
         this.defenderGroup.initialTotalTroops = this.defenderGroup.totalTroops;
 
-        const attRoll = rollSideEffectivePower(attUnits);
-        const defRoll = rollSideEffectivePower(defUnits);
+        const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
+        const attFate = resolveSideOpeningFateLuck(
+            attUnits, defUnits, this.type, terrain, true,
+            { emitUi: true, openingUiShown: this.openingTacticalUiShown },
+        );
+        const defFate = resolveSideOpeningFateLuck(
+            defUnits, attUnits, this.type, terrain, false,
+            { emitUi: true, openingUiShown: this.openingTacticalUiShown },
+        );
+        // 缓存开战命运 luck，供 refresh（援军编入 / 逆局）确定性回放，避免 #12–#20 掷点被抹掉
+        this.attackerOpeningFateLuck = attFate.luck;
+        this.defenderOpeningFateLuck = defFate.luck;
+        const attRoll = sideBasePower(attUnits) * attFate.luck;
+        const defRoll = sideBasePower(defUnits) * defFate.luck;
         const strategic = applyGeneralSkillSideRollMultipliers(
             attUnits,
             defUnits,
@@ -314,7 +332,7 @@ export class BattleField {
             'battle',
             `[BattleField] 掷色: 攻有效 ${strategic.attRoll.toFixed(0)} vs 守有效 ${strategic.defRoll.toFixed(0)} ` +
             `(文化修正后 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)}，` +
-            `原兵力 ${this.attackerGroup.initialTotalTroops} vs ${this.defenderGroup.initialTotalTroops}，再 ×[0.8,1.2])`
+            `原兵力 ${this.attackerGroup.initialTotalTroops} vs ${this.defenderGroup.initialTotalTroops}，含命运系 luck)`
         );
         this.applyPredictedSidesFromRoll(strategic.attRoll, strategic.defRoll);
     }
@@ -361,8 +379,20 @@ export class BattleField {
             .filter((bu) => !bu.isDefeated && bu.unit.troops > 0)
             .map((bu) => bu.unit);
 
-        const attAdj = this.adjustedPowerWithReinforcement(this.attackerGroup);
-        const defAdj = this.adjustedPowerWithReinforcement(this.defenderGroup);
+        const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
+        // 命运系 luck（#12–#20）在 refresh 时的处理（P0 修复）：
+        //  · 援军编入（rollLuckOnRecompute=false）：确定性回放开战掷定的命运 luck，绝不抹掉；
+        //  · 逆局翻盘（rollLuckOnRecompute=true）：按命运技区间重掷一次（破釜沉舟仍 [0.5,1.5]，
+        //    无命运技者退回默认 [0.8,1.2]，与旧逆局重掷行为一致）。
+        const attFateLuck = rollLuckOnRecompute
+            ? resolveSideOpeningFateLuck(attUnits, defUnits, this.type, terrain, true, { emitUi: false }).luck
+            : this.attackerOpeningFateLuck;
+        const defFateLuck = rollLuckOnRecompute
+            ? resolveSideOpeningFateLuck(defUnits, attUnits, this.type, terrain, false, { emitUi: false }).luck
+            : this.defenderOpeningFateLuck;
+
+        const attAdj = this.adjustedPowerWithReinforcement(this.attackerGroup) * attFateLuck;
+        const defAdj = this.adjustedPowerWithReinforcement(this.defenderGroup) * defFateLuck;
         // [修复] 名将开局掷点 ③④⑤ 在 refresh 时也要保留（emitUi=false 不重发徽章）。
         // 否则普将逆局触发后重判强弱时，名将的掷点优势被抹掉，③④⑤ 对 ⑥ 沦为五五开。
         const reopened = applyOpeningTacticalToRolls(
@@ -402,14 +432,8 @@ export class BattleField {
             defRoll: defComeback.sideRoll,
         };
 
-        // 【2026-07-03】逆局触发时的翻盘重算掷一次 luck（每侧），使逆局技概率化、可与开局技平衡；
-        //   援军编入的重算不掷（rollLuckOnRecompute=false），保留原有确定性行为。
-        if (rollLuckOnRecompute) {
-            withSkills = {
-                attRoll: withSkills.attRoll * rollCombatLuckMultiplier(),
-                defRoll: withSkills.defRoll * rollCombatLuckMultiplier(),
-            };
-        }
+        // 【2026-07-03】逆局翻盘的重掷 luck 已上移到 base（attAdj/defAdj 已乘 attFateLuck/defFateLuck）：
+        //   rollLuckOnRecompute=true 时按命运技区间重掷、否则回放开战值，此处不再二次掷 luck。
 
         const prevStronger = this.predictedStrongerGroup.factionId;
         this.applyPredictedSidesFromRoll(withSkills.attRoll, withSkills.defRoll);

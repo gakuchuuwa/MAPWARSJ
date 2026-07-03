@@ -775,7 +775,10 @@ export class LegionPhalanxDrawer {
         const frameW = tintedSprite.width / spriteTotalFrames;
         const frameH = tintedSprite.height;
         const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
-        const baseHeight = 110;
+        let baseHeight = 110;
+        if (shipId === 'ship_small') baseHeight = 50;
+        else if (shipId === 'ship_medium') baseHeight = 65;
+        else if (shipId === 'ship_large') baseHeight = 80;
         const targetH = baseHeight * scale * frameHeightNorm;
         const targetW = targetH * (frameW / frameH);
 

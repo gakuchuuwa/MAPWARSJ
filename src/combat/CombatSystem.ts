@@ -1,5 +1,9 @@
 import { calculateBattleDurationSec, GameConfig } from '../config/GameConfig';
-import { rollSideEffectivePower, sumCultureAdjustedTroops } from '../systems/CultureCombat';
+import { sumCultureAdjustedTroops } from '../systems/CultureCombat';
+import {
+    rollSideEffectivePowerWithOpeningFate,
+    getBattleTerrainKind,
+} from './GeneralSkillCombat';
 import { gameLog, gameWarn } from '../utils/GameLogger';
 import { readSiegeGarrisonElite } from './SiegeGarrisonTier';
 
@@ -128,8 +132,23 @@ export class Battle {
         predictedLoser: IBattleUnit;
         predictedWinner: IBattleUnit;
     } {
-        const attPower = rollSideEffectivePower([this.attacker]);
-        const defPower = rollSideEffectivePower([this.defender]);
+        const terrain = getBattleTerrainKind([this.attacker, this.defender], this.type);
+        const attPower = rollSideEffectivePowerWithOpeningFate(
+            [this.attacker],
+            [this.defender],
+            this.type,
+            terrain,
+            true,
+            { emitUi: false },
+        );
+        const defPower = rollSideEffectivePowerWithOpeningFate(
+            [this.defender],
+            [this.attacker],
+            this.type,
+            terrain,
+            false,
+            { emitUi: false },
+        );
         const attAdj = sumCultureAdjustedTroops([this.attacker]);
         const defAdj = sumCultureAdjustedTroops([this.defender]);
 

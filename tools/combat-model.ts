@@ -13,6 +13,12 @@
 
 import { GameConfig } from '../src/config/GameConfig';
 import {
+    buildTacticalConditionContext,
+    resolveOpeningFateEntry,
+    resolveOpeningLuckMultiplier,
+} from '../src/combat/TacticalSkillResolver';
+import type { BattleType } from '../src/combat/CombatSystem';
+import {
     TACTICAL_SKILL_CATALOG,
     STRATEGIC_SKILL_CATALOG,
     GENERAL_PROFILES,
@@ -129,6 +135,31 @@ function strategicOf(u: Unit | null) {
 export function rollLuck(): number {
     return LUCK_MIN + Math.random() * (LUCK_MAX - LUCK_MIN);
 }
+
+/** 一侧开战 luck（命运系 #12–#20；与 GeneralSkillCombat.rollSideEffectivePowerWithOpeningFate 对齐） */
+export function rollLuckForSide(
+    own: Unit[],
+    opp: Unit[],
+    battleType: BattleType,
+    terrain: Terrain,
+    sideIsAttacker: boolean,
+): number {
+    const selfTroops = own.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const enemyTroops = opp.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const ctx = buildTacticalConditionContext({
+        battleType,
+        terrain,
+        selfTroops,
+        enemyTroops,
+        selfInitialTroops: selfTroops,
+        enemyInitialTroops: enemyTroops,
+        selfIsAttacker: sideIsAttacker,
+        enemyHasFamousGeneral: eligible(opp)?.profile?.tier === 'famous',
+    });
+    const selfFate = resolveOpeningFateEntry(eligible(own)?.profile?.tacticalSkillId);
+    const oppFate = resolveOpeningFateEntry(eligible(opp)?.profile?.tacticalSkillId);
+    return resolveOpeningLuckMultiplier(ctx, selfFate, oppFate).multiplier;
+}
 function sumAdjusted(units: Unit[]): number {
     let s = 0;
     for (const u of units) if (u.troops > 0) s += u.troops * u.mult;
@@ -227,8 +258,8 @@ export function simulateOnce(
     const attInit = att.reduce((s, u) => s + u.troops, 0);
     const defInit = def.reduce((s, u) => s + u.troops, 0);
 
-    let attRoll = sumAdjusted(att) * rollLuck();
-    let defRoll = sumAdjusted(def) * rollLuck();
+    let attRoll = sumAdjusted(att) * rollLuckForSide(att, def, 'field', terrain, true);
+    let defRoll = sumAdjusted(def) * rollLuckForSide(def, att, 'field', terrain, false);
     ({ attRoll, defRoll } = applyOpeningRollMults(att, def, attRoll, defRoll));
     ({ attRoll, defRoll } = applyStrategicRollMults(att, def, attRoll, defRoll, terrain));
 

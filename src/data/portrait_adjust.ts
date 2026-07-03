@@ -4611,6 +4611,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": -26
+        },
+        "/assets/xianqin/mi_chu_xiongl.png": {
+            "scale": 0.96,
+            "offsetX": 15,
+            "offsetY": -8
         }
     },
     "folderGuides": {

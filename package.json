@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "concurrently \"vite\" \"node auto_backup.cjs\"",
+    "dev": "concurrently \"vite\" \"node auto_backup.cjs\" \"cd tools/PortraitMatting && py app.py\"",
     "build": "vite build",
     "preview": "vite preview",
     "assets:case-check": "node scratch/audit_assets_case.mjs",
@@ -35,6 +35,10 @@
     "sim": "tsx scripts/sim/headless.ts",
     "sim:skill": "tsx tools/skill-balance-sim.ts",
     "sim:follow": "tsx tools/follow-legion-test.ts",
+    "tactical:audit": "tsx tools/tactical-skill-audit.ts",
+    "tactical:weights": "tsx tools/tactical-condition-weights.ts",
+    "tactical:fate-mc": "tsx tools/tactical-fate-mc.ts",
+    "tactical:balance": "tsx tools/tactical-balance-mc.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
