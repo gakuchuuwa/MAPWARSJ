@@ -1499,7 +1499,7 @@ export class CombatUI {
             cutIn.textContent = displayName;
             cutIn.style.cssText = `
                 position: absolute;
-                top: 50%;
+                top: 70%;
                 left: 50%;
                 transform: translate(-50%, -50%) scale(0.5);
                 color: #fff;

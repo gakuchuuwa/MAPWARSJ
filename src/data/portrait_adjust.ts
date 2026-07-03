@@ -1717,11 +1717,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/BASHU/langzhou_zhangfei.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": -3
-        },
         "/assets/NORTH/zhe_d_zheyuqing.png": {
             "scale": 1.02,
             "offsetX": 0,
@@ -4616,6 +4611,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 15,
             "offsetY": -8
+        },
+        "/assets/BASHU/__闲置__BASHU_05.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/BASHU/langzhou_zhangfei.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {

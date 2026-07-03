@@ -470,6 +470,164 @@ const MORALE: TacticalSkillEntry[] = [
     },
 ];
 
+// ── 七、T0专属战术技 ───────────────────────────────────────────
+const UNIQUE_T0: TacticalSkillEntry[] = [
+    {
+        id: 'ts_051', layer: 'tactical', series: 'enhance', index: 51,
+        displayName: '所向无前', sourceQuote: '《旧唐书·太宗本纪》：“义旗跃马，所向无前。”',
+        baseEffect: 'ally_power_mult', condition: 'enemy_famous_general', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_052', layer: 'tactical', series: 'enhance', index: 52,
+        displayName: '封狼居胥', sourceQuote: '《汉书·霍去病传》：“封狼居胥山，禅于姑衍。”',
+        baseEffect: 'first_sortie_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_053', layer: 'tactical', series: 'fate', index: 53,
+        displayName: '无坚不摧', sourceQuote: '《吴子兵法·图国》：“击之必破，无坚不摧。”',
+        baseEffect: 'luck_lock_self', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.15, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_054', layer: 'tactical', series: 'fate', index: 54,
+        displayName: '流星坠营', sourceQuote: '《后汉书·光武帝纪》：“夜有流星坠营中，昼有云如坏山。”',
+        baseEffect: 'luck_variance_enemy', condition: 'ratio_underdog', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_056', layer: 'tactical', series: 'troop', index: 56,
+        displayName: '乘夜掩至', sourceQuote: '《旧唐书·李靖传》：“靖乃率骁骑三千...乘夜掩至定襄。”',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_siege_attacker', phase: 'pre_opening_troops',
+        magnitude: 0.2, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_057', layer: 'tactical', series: 'enhance', index: 57,
+        displayName: '满万无敌', sourceQuote: '《三朝北盟会编》载金国初年俗语：“女真兵若满万则不可敌。”',
+        baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
+        magnitude: 1.45, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_058', layer: 'tactical', series: 'enhance', index: 58,
+        displayName: '并力一向', sourceQuote: '《孙子兵法·九地》：“并敌一向，千里杀将。”',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.25, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_059', layer: 'tactical', series: 'counter', index: 59,
+        displayName: '长生天佑', sourceQuote: '大蒙古国圣旨固定起首：“长生天气力里，大福荫护助里”。',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'pre_opening_troops',
+        magnitude: 1.0, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_060', layer: 'tactical', series: 'fate', index: 60,
+        displayName: '必死则生', sourceQuote: '《乱中日记》载鸣梁海战前军令：“必死则生，必生则死。”',
+        baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
+        magnitude: 1, comebackThreshold: 0.9, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_061', layer: 'tactical', series: 'troop', index: 61,
+        displayName: '以短制长', sourceQuote: '陈国峻兵法名言：“以短制长，我国之兵法也。”',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_siege_defender', phase: 'pre_opening_troops',
+        magnitude: 0.25, engineStatus: 'ready',
+    },
+];
+
+// ── 八、T1专属战术技（15人） ───────────────────────────────────────────
+const UNIQUE_T1: TacticalSkillEntry[] = [
+    {
+        id: 'ts_062', layer: 'tactical', series: 'enhance', index: 62,
+        displayName: '奉天靖难', sourceQuote: '《明史·成祖本纪》：“奉天靖难，推毂群帅。”',
+        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_063', layer: 'tactical', series: 'troop', index: 63,
+        displayName: '所向摧陷', sourceQuote: '《魏书·尔朱荣传》：“荣亲乘马，大呼陷阵，所向摧陷。”',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'none', phase: 'pre_opening_troops',
+        magnitude: 0.15, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_064', layer: 'tactical', series: 'fate', index: 64,
+        displayName: '虎穴奇袭', sourceQuote: '《后汉书·班超传》：“不入虎穴，不得虎子。当今之计，独有因夜以火攻虏。”',
+        baseEffect: 'luck_variance_self', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.6, luckMax: 2.0, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_065', layer: 'tactical', series: 'fate', index: 65,
+        displayName: '凭坚摧锋', sourceQuote: '《明史·袁崇焕传》：“凭坚城用大炮，是以所向无前。”',
+        baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_066', layer: 'tactical', series: 'enhance', index: 66,
+        displayName: '鸣镝所向', sourceQuote: '《史记·匈奴列传》：“鸣镝所射而不悉射者，斩之。”',
+        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        magnitude: 1.3, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_067', layer: 'tactical', series: 'enhance', index: 67,
+        displayName: '长驱入关', sourceQuote: '《清史稿·睿忠亲王多尔衮传》：“长驱入关，定鼎燕京。”',
+        baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_068', layer: 'tactical', series: 'troop', index: 68,
+        displayName: '乘虚直捣', sourceQuote: '《明史纪事本末》：“也先乘虚直捣，势如破竹。”',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'none', phase: 'pre_opening_troops',
+        magnitude: 0.15, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_069', layer: 'tactical', series: 'fate', index: 69,
+        displayName: '出奇捣虚', sourceQuote: '《明史·扩廓帖木儿传》：“扩廓忽出奇兵捣之，大败明军。”',
+        baseEffect: 'luck_variance_self', condition: 'none', phase: 'opening_roll',
+        magnitude: 0.8, luckMin: 0.5, luckMax: 1.5, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_070', layer: 'tactical', series: 'enhance', index: 70,
+        displayName: '兼并诸羌', sourceQuote: '《新唐书·吐蕃传》：“遂并诸羌，雄霸西域。”',
+        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        magnitude: 1.3, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_071', layer: 'tactical', series: 'enhance', index: 71,
+        displayName: '锐不可当', sourceQuote: '《清史稿·藩部传》：“固始汗纠兵西指，锐不可当。”',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_072', layer: 'tactical', series: 'enhance', index: 72,
+        displayName: '回军靖难', sourceQuote: '《朝鲜王朝实录》：“大王回军靖难，定鼎立国。”',
+        baseEffect: 'ally_power_mult', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_073', layer: 'tactical', series: 'fate', index: 73,
+        displayName: '以弱敌强', sourceQuote: '《平吴大诰》：“以弱敌强，以寡敌众。”',
+        baseEffect: 'luck_variance_self', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.5, luckMax: 1.8, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_074', layer: 'tactical', series: 'enhance', index: 74,
+        displayName: '前无坚阵', sourceQuote: '《后汉书·刘盆子传》：“拥众百万，前无坚阵。”',
+        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        magnitude: 1.3, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_075', layer: 'tactical', series: 'fate', index: 75,
+        displayName: '出没如神', sourceQuote: '《清史稿·洪秀全传》：“达开尤狡捷，出没如神。”',
+        baseEffect: 'luck_variance_enemy', condition: 'none', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.2, luckMax: 0.8, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_076', layer: 'tactical', series: 'enhance', index: 76,
+        displayName: '如墙而进', sourceQuote: '《宋史·岳飞传》：“其将帅有破阵同死之心，故其军如墙而进。”',
+        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        magnitude: 1.3, engineStatus: 'ready',
+    },
+];
+
 export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
     ...ENHANCE,
     ...FATE,
@@ -477,6 +635,8 @@ export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
     ...CASUALTY,
     ...COUNTER,
     ...MORALE,
+    ...UNIQUE_T0,
+    ...UNIQUE_T1,
 ];
 
 export const TACTICAL_SKILL_BY_ID: Readonly<Record<string, TacticalSkillEntry>> = Object.fromEntries(
@@ -569,6 +729,14 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_046: 'common', ts_047: 'common', ts_048: 'ai_defensive',
     // 士气系
     ts_049: 'common',
+    // 专属系（不进随机池，只走写死分配，标 limited 以防万一）
+    ts_051: 'limited', ts_052: 'limited', ts_053: 'limited',
+    ts_054: 'limited', ts_056: 'limited', ts_057: 'limited',
+    ts_058: 'limited', ts_059: 'limited', ts_060: 'limited', ts_061: 'limited',
+    ts_062: 'limited', ts_063: 'limited', ts_064: 'limited', ts_065: 'limited',
+    ts_066: 'limited', ts_067: 'limited', ts_068: 'limited', ts_069: 'limited',
+    ts_070: 'limited', ts_071: 'limited', ts_072: 'limited', ts_073: 'limited',
+    ts_074: 'limited', ts_075: 'limited', ts_076: 'limited',
 };
 
 export function getTacticalAssignTier(skillId: string): TacticalAssignTier | null {
