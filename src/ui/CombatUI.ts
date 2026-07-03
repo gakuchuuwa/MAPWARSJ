@@ -1027,7 +1027,12 @@ export class CombatUI {
         let product = 1;
         product *= getUnitCultureCombatMultiplier(unit);
         product *= getCampaignLegionCombatMultiplier(unit);
-        product *= getOpeningTacticalPowerMultiplier(unit);
+        product *= getOpeningTacticalPowerMultiplier(
+            this.getUnitsForSide(side),
+            this.getOpponentUnitsFor(side),
+            side === 'attacker',
+            { battleType, terrain },
+        );
         product *= getStrategicBattlePowerMultiplier(unit, battleType, terrain, side);
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
         if (joinLuck !== null) product *= joinLuck;
@@ -1063,7 +1068,12 @@ export class CombatUI {
         pushIfNotOne('文化', getCultureOnlyCombatMultiplier(unit));
         pushIfNotOne(PASS_GARRISON_DEFENSE_SKILL.displayName, getPassGarrisonCombatMultiplier(unit));
         pushIfNotOne(getLegionEliteBadgeName(unit), getCampaignLegionCombatMultiplier(unit));
-        pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(unit));
+        pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(
+            this.getUnitsForSide(side),
+            this.getOpponentUnitsFor(side),
+            side === 'attacker',
+            { battleType, terrain },
+        ));
 
         // 压制减益（来自对手，与底层 applyEnemyDebuff 完全对齐：多单位合战取 findEligibleGeneralUnit）
         const opponentUnits = this.getOpponentUnitsFor(side);
@@ -1087,6 +1097,11 @@ export class CombatUI {
         const chain = labeled.map((l) => fmt(l.value)).join('×');
         const title = `${role}：${labeled.map((l) => `${l.label}×${fmt(l.value)}`).join(' ')}`;
         return { chain, title };
+    }
+
+    /** 返回当前战场中指定 side 自己的单位数组（= 对手的对手；与 getOpponentUnitsFor 同源） */
+    private getUnitsForSide(side: 'attacker' | 'defender'): IBattleUnit[] {
+        return this.getOpponentUnitsFor(side === 'attacker' ? 'defender' : 'attacker');
     }
 
     /** 返回当前战场中指定 side 的对手单位数组（用于压制减益读取） */
@@ -2611,7 +2626,12 @@ export class CombatUI {
         const terrain = this.getBattleTerrainForUi();
         for (const u of units) {
             if (canUnitUseGeneralSkills(u)) {
-                base *= getOpeningTacticalPowerMultiplier(u)
+                base *= getOpeningTacticalPowerMultiplier(
+                        units,
+                        this.getOpponentUnitsFor(side),
+                        side === 'attacker',
+                        { battleType: this.currentBattleType, terrain },
+                    )
                     * getStrategicBattlePowerMultiplier(u, this.currentBattleType, terrain, side);
                 break;
             }

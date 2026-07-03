@@ -504,11 +504,25 @@ export function getBattleTerrainKind(
     return LandTerrainSystem.classifyAt(anchor) ?? 'plain';
 }
 
-/** 开局战术战力乘区（UI 徽章；开局 ③ 侵掠如火类，名将/普将通用） */
-export function getOpeningTacticalPowerMultiplier(unit: IBattleUnit): number {
-    if (!canUnitUseGeneralSkills(unit)) return 1;
+/**
+ * 开局战术战力乘区（UI 徽章 / 赔率显示；开局 ③ 侵掠如火类，名将/普将通用）。
+ * 【条件门控】与真实掷色 applyAllyMult / bridgedOpeningEnhanceActive 完全对齐：
+ *   条件技（敌有名将 ts_051 / 以少 ts_057 / 首次出击 ts_052 / 地形等）在条件不满足时返回 1，
+ *   避免屏幕胜率把加成无条件计入而与真实结算不符。
+ * 侧级判定：取该侧 findEligibleGeneralUnit 的开局强化技，与引擎「每侧一将一技」一致。
+ * （bridgedOpeningEnhanceActive 为同文件 function 声明，已提升，前向引用安全。）
+ */
+export function getOpeningTacticalPowerMultiplier(
+    sideUnits: IBattleUnit[],
+    opponentUnits: IBattleUnit[],
+    isAttacker: boolean,
+    opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
+): number {
+    const unit = findEligibleGeneralUnit(sideUnits);
+    if (!unit || !canUnitUseGeneralSkills(unit)) return 1;
     const skill = getTacticalSkillForTiming(unit, 'opening');
     if (!skill || skill.effect !== 'ally_mult_1_2') return 1;
+    if (!bridgedOpeningEnhanceActive(sideUnits, opponentUnits, isAttacker, opts)) return 1;
     return skill.magnitude;
 }
 

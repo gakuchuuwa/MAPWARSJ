@@ -539,13 +539,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_062', layer: 'tactical', series: 'enhance', index: 62,
         displayName: '奉天靖难', sourceQuote: '《明史·成祖本纪》：“奉天靖难，推毂群帅。”',
-        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
     },
     {
         id: 'ts_063', layer: 'tactical', series: 'troop', index: 63,
         displayName: '所向摧陷', sourceQuote: '《魏书·尔朱荣传》：“荣亲乘马，大呼陷阵，所向摧陷。”',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'none', phase: 'pre_opening_troops',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
     },
     {
@@ -563,7 +563,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_066', layer: 'tactical', series: 'enhance', index: 66,
         displayName: '鸣镝所向', sourceQuote: '《史记·匈奴列传》：“鸣镝所射而不悉射者，斩之。”',
-        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.3, engineStatus: 'ready',
     },
     {
@@ -575,19 +575,19 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_068', layer: 'tactical', series: 'troop', index: 68,
         displayName: '乘虚直捣', sourceQuote: '《明史纪事本末》：“也先乘虚直捣，势如破竹。”',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'none', phase: 'pre_opening_troops',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
     },
     {
         id: 'ts_069', layer: 'tactical', series: 'fate', index: 69,
         displayName: '出奇捣虚', sourceQuote: '《明史·扩廓帖木儿传》：“扩廓忽出奇兵捣之，大败明军。”',
-        baseEffect: 'luck_variance_self', condition: 'none', phase: 'opening_roll',
+        baseEffect: 'luck_variance_self', condition: 'always', phase: 'opening_roll',
         magnitude: 0.8, luckMin: 0.5, luckMax: 1.5, engineStatus: 'ready',
     },
     {
         id: 'ts_070', layer: 'tactical', series: 'enhance', index: 70,
         displayName: '兼并诸羌', sourceQuote: '《新唐书·吐蕃传》：“遂并诸羌，雄霸西域。”',
-        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.3, engineStatus: 'ready',
     },
     {
@@ -599,7 +599,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_072', layer: 'tactical', series: 'enhance', index: 72,
         displayName: '回军靖难', sourceQuote: '《朝鲜王朝实录》：“大王回军靖难，定鼎立国。”',
-        baseEffect: 'ally_power_mult', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
+        baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
@@ -611,20 +611,110 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_074', layer: 'tactical', series: 'enhance', index: 74,
         displayName: '前无坚阵', sourceQuote: '《后汉书·刘盆子传》：“拥众百万，前无坚阵。”',
-        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.3, engineStatus: 'ready',
     },
     {
         id: 'ts_075', layer: 'tactical', series: 'fate', index: 75,
         displayName: '出没如神', sourceQuote: '《清史稿·洪秀全传》：“达开尤狡捷，出没如神。”',
-        baseEffect: 'luck_variance_enemy', condition: 'none', phase: 'opening_roll',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.2, luckMax: 0.8, engineStatus: 'ready',
     },
     {
         id: 'ts_076', layer: 'tactical', series: 'enhance', index: 76,
         displayName: '如墙而进', sourceQuote: '《宋史·岳飞传》：“其将帅有破阵同死之心，故其军如墙而进。”',
-        baseEffect: 'ally_power_mult', condition: 'none', phase: 'opening_roll',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.3, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_077', layer: 'tactical', series: 'fate', index: 77,
+        displayName: '长围久困', sourceQuote: '《清史稿·太宗本纪》：“长围久困，城中食尽。”',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.7, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_078', layer: 'tactical', series: 'counter', index: 78,
+        displayName: '白衣渡江', sourceQuote: '《三国志·吕蒙传》：“蒙乃密收兵，白衣渡江。”',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.0, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_079', layer: 'tactical', series: 'enhance', index: 79,
+        displayName: '两蹶名王', sourceQuote: '《永历实录》：“定国两蹶名王，天下震动。”',
+        baseEffect: 'ally_power_mult', condition: 'enemy_famous_general', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_080', layer: 'tactical', series: 'troop', index: 80,
+        displayName: '踏雪破阵', sourceQuote: '《元史·睿宗传》：“会大雪，睿宗乘雪击之。”',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        magnitude: 0.25, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_081', layer: 'tactical', series: 'troop', index: 81,
+        displayName: '苇泽奋击', sourceQuote: '《周书·文帝纪》：“于渭曲苇泽中奋击，大破之。”',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'self_troops_below_enemy_pct', phase: 'pre_opening_troops',
+        magnitude: 0.35, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_082', layer: 'tactical', series: 'enhance', index: 82,
+        displayName: '飞虎突阵', sourceQuote: '《旧五代史·武皇纪》：“军中号为飞虎子。”',
+        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_083', layer: 'tactical', series: 'enhance', index: 83,
+        displayName: '铁枪拔阵', sourceQuote: '《新五代史·王彦章传》：“持一铁枪，乘马大呼。”',
+        baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
+        magnitude: 1.3, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_084', layer: 'tactical', series: 'fate', index: 84,
+        displayName: '铁骑蹙敌', sourceQuote: '《明史·李成梁传》：“多选健卒，铁骑蹙敌。”',
+        baseEffect: 'luck_variance_self', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.3, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_085', layer: 'tactical', series: 'enhance', index: 85,
+        displayName: '铁甲冲突', sourceQuote: '《台湾外纪》：“铁人冲突，所向披靡。”',
+        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_086', layer: 'tactical', series: 'fate', index: 86,
+        displayName: '以逸待劳', sourceQuote: '《新唐书·吐蕃传》：“钦陵悉众拒战，以逸待劳。”',
+        baseEffect: 'luck_variance_enemy', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
+        magnitude: 0.6, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_087', layer: 'tactical', series: 'casualty', index: 87,
+        displayName: '鼓行而西', sourceQuote: '《辽史·太祖本纪》：“鼓行而西，迭克诸部。”',
+        baseEffect: 'lose_zero_enemy_recovery', condition: 'always', phase: 'post_battle',
+        magnitude: 1.0, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_088', layer: 'tactical', series: 'enhance', index: 88,
+        displayName: '勒兵大破', sourceQuote: '《周书·突厥传》：“土门勒兵击之，大破茹茹。”',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_089', layer: 'tactical', series: 'enhance', index: 89,
+        displayName: '风卷残云', sourceQuote: '《元史》：“统兵西讨，威震西域。”',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.3, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_090', layer: 'tactical', series: 'counter', index: 90,
+        displayName: '合围聚歼', sourceQuote: '《清史稿》：“贼设疑诱战，我军中伏。”',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.0, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_091', layer: 'tactical', series: 'fate', index: 91,
+        displayName: '阻险御敌', sourceQuote: '《新唐书·渤海传》：“祚荣引众阻险以御之。”',
+        baseEffect: 'luck_variance_enemy', condition: 'terrain_mountain', phase: 'opening_roll',
+        magnitude: 0.65, engineStatus: 'ready',
     },
 ];
 
