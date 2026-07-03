@@ -11,6 +11,11 @@
  */
 
 import { GENERAL_PROFILES, type GeneralTier } from './GeneralSkills';
+import {
+    TACTICAL_SKILL_BY_ID,
+    getTacticalAssignTier,
+    getTacticalSkillEntryForGeneral,
+} from './TacticalSkillCatalog';
 
 /** 五种战术风格（名将①–⑤ 与 普将⑥–⑩ 一一对应） */
 export type SkillArchetype =
@@ -94,8 +99,8 @@ export const HARD_LOCKED_TACTICAL_ASSIGNMENTS: Readonly<
     Record<string, { archetype: SkillArchetype; evidence: string }>
 > = {
     aisin_d_huangtaiji: { archetype: 'stratagem_weaken', evidence: '松锦战后洪承畴部归降' },
-    qin_baiqi: { archetype: 'assault_break', evidence: '鄢郢水攻、长平正面歼灭' },
-    han_d_hanxin: { archetype: 'mobile_raid', evidence: '暗度陈仓定三秦（主格②，非③）' },
+    xin_baiqi: { archetype: 'assault_break', evidence: '伊阙破魏韩联军、长平破赵括，专破名将统帅（ts_010 擒贼擒王）' },
+    xianyu_hanxin: { archetype: 'assault_break', evidence: '井陉背水一战，置之死地而后生（ts_013 背水一战，技名即典故）' },
     // 张巡等未入池；入池时：zhangxun → siege_hold / 睢阳死守
 };
 
@@ -281,6 +286,66 @@ export function auditTacticalDistribution(
         }
     }
     return { ok: violations.length === 0, violations };
+}
+
+// ── 分配层（tier）约束闸门（2026-07-03 加固）──────────────────────
+// 背景：auditTacticalDistribution 只查 25% 占比，查不出「limited 技挂 123 人」
+// 这类违反 TACTICAL_ASSIGN_TIER 限量策略的分配。本闸门补上，批量提交前必跑。
+// ⚠️ 已知缺口：countTacticalByArchetype 仍按旧 tac_01–10 标签映射，档案迁 ts_ 后
+//    统计恒为零；补 49 技 archetype 表前，archetype 配额流程不可信（TODO(v1-tags)）。
+
+/** limited 层单技持有人数上限（「个位数」的硬化） */
+export const LIMITED_TIER_MAX_HOLDERS = 9;
+/** gamble 层名将持有上限（豪赌不入跟拍常客名将池；韩信等典故锁定占额） */
+export const GAMBLE_FAMOUS_MAX = 5;
+
+export interface AssignTierAuditResult {
+    ok: boolean;
+    limitedViolations: { skillId: string; displayName: string; count: number; max: number }[];
+    gambleFamousViolations: { skillId: string; displayName: string; famousCount: number; max: number }[];
+    /** ready 且 0 人持有（多样性警告，不算硬违规；hook/new 不列） */
+    emptyReadySkills: { skillId: string; displayName: string }[];
+}
+
+export function auditAssignTierConstraints(
+    profiles: Record<string, { tier: GeneralTier; tacticalSkillId: string }> = GENERAL_PROFILES,
+): AssignTierAuditResult {
+    const holders: Record<string, number> = {};
+    const famousHolders: Record<string, number> = {};
+    for (const p of Object.values(profiles)) {
+        const entry = getTacticalSkillEntryForGeneral(p.tacticalSkillId);
+        if (!entry) continue;
+        holders[entry.id] = (holders[entry.id] ?? 0) + 1;
+        if (p.tier === 'famous') famousHolders[entry.id] = (famousHolders[entry.id] ?? 0) + 1;
+    }
+    const limitedViolations: AssignTierAuditResult['limitedViolations'] = [];
+    const gambleFamousViolations: AssignTierAuditResult['gambleFamousViolations'] = [];
+    const emptyReadySkills: AssignTierAuditResult['emptyReadySkills'] = [];
+    for (const entry of Object.values(TACTICAL_SKILL_BY_ID)) {
+        const tier = getTacticalAssignTier(entry.id);
+        const n = holders[entry.id] ?? 0;
+        if (tier === 'limited' && n > LIMITED_TIER_MAX_HOLDERS) {
+            limitedViolations.push({
+                skillId: entry.id, displayName: entry.displayName,
+                count: n, max: LIMITED_TIER_MAX_HOLDERS,
+            });
+        }
+        if (tier === 'gamble' && (famousHolders[entry.id] ?? 0) > GAMBLE_FAMOUS_MAX) {
+            gambleFamousViolations.push({
+                skillId: entry.id, displayName: entry.displayName,
+                famousCount: famousHolders[entry.id] ?? 0, max: GAMBLE_FAMOUS_MAX,
+            });
+        }
+        if (entry.engineStatus === 'ready' && n === 0) {
+            emptyReadySkills.push({ skillId: entry.id, displayName: entry.displayName });
+        }
+    }
+    return {
+        ok: limitedViolations.length === 0 && gambleFamousViolations.length === 0,
+        limitedViolations,
+        gambleFamousViolations,
+        emptyReadySkills,
+    };
 }
 
 /** 首选证据：理由必须引用正史具体战役，禁止空泛套话 */
@@ -622,7 +687,7 @@ export const SKILL_ASSIGNMENT_PROMPT = `【角色设定】
 
 【分配顺序 — 配额优先，禁止先配再均化】
 1. 统计池子：名将 N、普将 M → computeDistributionTargets(N,M)，各 archetype 目标 ±3
-2. 硬锁定：HARD_LOCKED_TACTICAL_ASSIGNMENTS 先写入（如皇太极④、白起③、韩信②）
+2. 硬锁定：HARD_LOCKED_TACTICAL_ASSIGNMENTS 先写入（如皇太极④谋略、白起③突击·擒王、韩信③突击·背水）
 3. 柔性将：史料允许 2–3 个 archetype 时 → pickFlexibleArchetype（同池计数最低）
 4. 战略格：名将另对 S①–S⑥ 独立跑低位优先
 5. 提交前：auditTacticalDistribution，任一技能占比 >25% 则回溯（④除外）

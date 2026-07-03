@@ -24,7 +24,7 @@ import {
     resolveLoserBiteWinnerLossMult,
     resolveWinnerRecoveryBlockedByLoser,
     resolveOpeningTroopEffect,
-    resolveOpeningTroopCutCounter,
+    resolveOpeningTroopCutCounter, resolveEnemyTerrainBuffCounter,
     isTacticalSkillActive,
     resolveSkillCountersForSide,
     type TacticalSkillEntry,
@@ -1226,14 +1226,41 @@ export function applyStrategicBattleToRolls(
 
     const applySide = (
         units: IBattleUnit[],
+        opponents: IBattleUnit[],
         roll: number,
         sideLabel: string,
         side: 'attacker' | 'defender',
     ): number => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return roll;
-        const mult = getStrategicBattlePowerMultiplier(unit, battleType, terrainKind, side);
+        let mult = getStrategicBattlePowerMultiplier(unit, battleType, terrainKind, side);
         if (Math.abs(mult - 1) < 0.001) return roll;
+
+        const oppUnit = findEligibleGeneralUnit(opponents);
+        const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
+        if (oppActiveId) {
+            const oppTroops = opponents.reduce((s, u) => s + Math.max(0, u.troops), 0);
+            const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
+            const oppCtx = buildTacticalConditionContext({
+                battleType,
+                terrain: terrainKind,
+                selfTroops: oppTroops,
+                enemyTroops: selfTroops,
+                selfInitialTroops: oppTroops,
+                enemyInitialTroops: selfTroops,
+                selfIsAttacker: side !== 'attacker',
+                enemyHasFamousGeneral: sideHasFamousGeneral(units),
+                isFirstSortieSinceDepart: sideIsFirstSortie(opponents),
+            });
+            const counter = resolveEnemyTerrainBuffCounter(oppActiveId, mult, oppCtx);
+            if (counter.adjustedMult < mult) {
+                mult = counter.adjustedMult;
+                if (counter.entry && oppUnit) {
+                    gameLog('battle', `⛰️ [对抗系] ${oppUnit.generalId} 触发【${counter.entry.displayName}】，压制了${sideLabel}地形优势！`);
+                }
+            }
+        }
+
         const profile = getGeneralProfile(unit.generalId);
         const skill = profile?.strategicSkillId
             ? getStrategicSkillDef(profile.strategicSkillId)
@@ -1242,13 +1269,13 @@ export function applyStrategicBattleToRolls(
         const next = roll * mult;
         gameLog(
             'battle',
-            `🏯 [武将技] ${unit.generalId} 【${label}】 ${sideLabel}有效战力 ×${mult} (${roll.toFixed(0)}→${next.toFixed(0)})`,
+            `🏯 [武将技] ${unit.generalId} 【${label}】 ${sideLabel}有效战力 ×${parseFloat(mult.toFixed(2))} (${roll.toFixed(0)}→${next.toFixed(0)})`,
         );
         return next;
     };
 
-    const outAtt = applySide(attackerUnits, attRoll, '攻方', 'attacker');
-    const outDef = applySide(defenderUnits, defRoll, '守方', 'defender');
+    const outAtt = applySide(attackerUnits, defenderUnits, attRoll, '攻方', 'attacker');
+    const outDef = applySide(defenderUnits, attackerUnits, defRoll, '守方', 'defender');
     return { attRoll: outAtt, defRoll: outDef };
 }
 

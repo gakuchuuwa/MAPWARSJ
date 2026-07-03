@@ -164,6 +164,9 @@ const ENHANCE: TacticalSkillEntry[] = [
         displayName: '原野交锋', sourceQuote: '《史记·项羽本纪》：“与汉王原野争锋。”',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.25, engineStatus: 'ready',
+        // 【2026-07-03 主人定】描述写「野战加成」，但游戏中野战少、攻城多，故 battle_field
+        // 引擎语义 = 进攻方加成：攻城/野战只要我方进攻即 ×1.25，仅守城方不吃（见 TacticalSkillResolver）。
+        note: '原野争锋 ×1.25：描述为野战加成，实战按【进攻方】结算（攻城/野战通吃，守城不吃），避免野战稀少辜负名将',
     },
     {
         id: 'ts_008', layer: 'tactical', series: 'enhance', index: 8,
@@ -175,7 +178,7 @@ const ENHANCE: TacticalSkillEntry[] = [
         id: 'ts_009', layer: 'tactical', series: 'enhance', index: 9,
         displayName: '扫穴犁庭', sourceQuote: '《明史》：“犁其庭，扫其闾，绝其本根。”',
         baseEffect: 'ally_power_mult', condition: 'enemy_different_culture', phase: 'opening_roll',
-        magnitude: 1.25, engineStatus: 'hook',
+        magnitude: 1.25, engineStatus: 'ready',
         note: '需将势力文化区传入战斗层；【2026-07-03】×1.3→×1.25：跨文化交战率~92%=准无条件，×1.3 长期压过基准锚点',
     },
     {
@@ -268,7 +271,9 @@ const TROOP: TacticalSkillEntry[] = [
         id: 'ts_022', layer: 'tactical', series: 'troop', index: 22,
         displayName: '攻其不备', sourceQuote: '《孙子兵法·计》：“攻其无备，出其不意。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.2, engineStatus: 'ready',
+        magnitude: 0.15, engineStatus: 'ready',
+        // 【2026-07-03】削20%→15%：always 高频 + 103 将持有，削20%→触发时~90% 超高频上限88%。
+        // 降至15%→×1.176→~82%，回归「广发型温和削兵」；削敌阶梯 先声夺人10% < 本技15% < 夜半劫营25%(稀有个位数名将)。
     },
     {
         id: 'ts_023', layer: 'tactical', series: 'troop', index: 23,
@@ -435,14 +440,14 @@ const COUNTER: TacticalSkillEntry[] = [
         id: 'ts_046', layer: 'tactical', series: 'counter', index: 46,
         displayName: '暗度陈仓', sourceQuote: '《史记·淮阴侯列传》：“明修栈道，暗度陈仓。”',
         baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, engineStatus: 'hook',
+        magnitude: 1, engineStatus: 'ready',
         note: '地形对抗：引擎侧待接线（仅 combat-model 工具支持）',
     },
     {
         id: 'ts_047', layer: 'tactical', series: 'counter', index: 47,
         displayName: '声东击西', sourceQuote: '《通典·兵典》：“声言击东，其实击西。”',
         baseEffect: 'halve_enemy_terrain_buff', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.5, engineStatus: 'hook',
+        magnitude: 0.5, engineStatus: 'ready',
         note: '地形对抗：引擎侧待接线（仅 combat-model 工具支持）',
     },
     {

@@ -94,6 +94,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xin', name: '上党' },
 
 
+
     { id: 'liangzhou', name: '凉州' },
     { id: 'juqu_d', name: '沮渠' },
     { id: 'tufa_d', name: '秃发' },

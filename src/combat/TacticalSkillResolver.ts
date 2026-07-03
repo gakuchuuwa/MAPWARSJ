@@ -73,7 +73,11 @@ export function evaluateTacticalCondition(
         case 'battle_siege_defender':
             return ctx.battleType === 'siege' && !ctx.selfIsAttacker;
         case 'battle_field':
-            return ctx.battleType === 'field';
+            // 【2026-07-03 主人定】游戏中野战稀少，绝大多数战斗是军团攻打据点（攻城）。
+            // 若「野战加成」技只在野战触发，攻城时全废 → 辜负名将（如原野交锋@成吉思汗/努尔哈赤）。
+            // 故引擎语义统一：野战技一律按【进攻方加成】结算——攻城/野战只要我方是进攻方即触发，
+            // 仅守城方不吃。技能描述仍保留「野战」历史意象（原野争锋），实际战斗按进攻加成生效。
+            return ctx.selfIsAttacker;
         case 'ratio_underdog':
             return ctx.selfTroops < ctx.enemyTroops;
         case 'enemy_different_culture':
