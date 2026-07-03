@@ -299,8 +299,8 @@ const TROOP: TacticalSkillEntry[] = [
         id: 'ts_026', layer: 'tactical', series: 'troop', index: 26,
         displayName: '百折不挠', sourceQuote: '《汉书·蔡邕传》：“百折不挠者，期报国也。”',
         baseEffect: 'ally_add_troops_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
-        magnitude: 0.2, engineStatus: 'ready', legacyTacId: 'tac_06',
-        note: '逆局归队，封顶开战上限',
+        magnitude: 0.12, engineStatus: 'ready', legacyTacId: 'tac_06',
+        note: '逆局归队，按开战兵力×0.12补员，封顶开战上限（2026-07-04 由0.2下调）',
     },
     {
         id: 'ts_027', layer: 'tactical', series: 'troop', index: 27,

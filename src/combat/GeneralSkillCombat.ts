@@ -433,16 +433,36 @@ function sideMeetsComebackThreshold(currentTroops: number, initialTroops: number
 function applyTroopAddToUnits(
     units: IBattleUnit[],
     ratio: number,
-    opts?: { useMaxTroops?: boolean },
+    opts?: { openingCap?: number },
 ): number {
     let added = 0;
+    // ⑥哀兵必胜/百折不挠(openingCap>0)：逆局归队，补员基数与封顶均为【开战总兵力】，非 maxTroops 满编。
+    //   （2026-07-04 修复：原以 maxTroops 为基数→大编制军团每次触发补员过量、续航滚雪球、带任何战略技都霸榜；
+    //    与本技 note「封顶开战上限」不符。改为按开战兵力 × ratio 补员，且全侧不超过开战上限。）
+    //   注：①以逸待劳已于 2026-07-03 改为战力乘区(ally_mult_1_2)，不再走本加兵路径。
+    const openingCap = opts?.openingCap;
+    if (openingCap && openingCap > 0) {
+        const sideNow = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
+        const budget = Math.min(
+            Math.floor(openingCap * ratio),        // 本次补员额度（按开战兵力）
+            Math.max(0, openingCap - sideNow),     // 封顶开战上限：全侧不超过开战兵力
+        );
+        if (budget <= 0) return 0;
+        const alive = units.filter((u) => u.troops > 0);
+        const denom = alive.reduce((s, u) => s + u.troops, 0) || 1;
+        for (const u of alive) {
+            const share = Math.floor(budget * (u.troops / denom));
+            if (share <= 0) continue;
+            const before = u.troops;
+            u.setTroops(Math.min(u.troops + share, u.maxTroops));
+            added += u.troops - before;
+        }
+        return added;
+    }
     for (const u of units) {
         if (u.troops <= 0) continue;
-        const base = opts?.useMaxTroops ? (u.maxTroops ?? u.troops) : u.troops;
-        const bonus = Math.floor(base * ratio);
+        const bonus = Math.floor(u.troops * ratio);
         if (bonus <= 0) continue;
-        // ⑥哀兵必胜(useMaxTroops=true)：恢复型加兵，封顶到 maxTroops（不超编，故不会滚雪球）。
-        //   注：①以逸待劳已于 2026-07-03 改为战力乘区(ally_mult_1_2)，不再走本加兵路径。
         u.setTroops(Math.min(u.troops + bonus, u.maxTroops));
         added += bonus;
     }
@@ -1194,7 +1214,7 @@ export function tryApplyComebackTacticalForSide(
 
     switch (skill.effect) {
         case 'ally_add_troops': {
-            const added = applyTroopAddToUnits(sideUnits, skill.magnitude, { useMaxTroops: true });
+            const added = applyTroopAddToUnits(sideUnits, skill.magnitude, { openingCap: sideInitialTroops });
             if (added <= 0) return false;
             ctx.triggeredSkillIds.add(skill.id);
             applied = true;
@@ -1375,6 +1395,13 @@ export function applyPostBattleStrategicBonus(
             const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
             if (profileSkill && profileSkill.effect === 'post_battle_troop_pct' && !appliedForage) {
                 total += applyPostBattleTroopPct(unit, profileSkill, '');
+            } else if (profileSkill?.hiddenPostBattlePct && profileSkill.hiddenPostBattlePct > 0) {
+                // 地图系战略技隐藏胜后续航：静默补血，不写日志、不显示 UI（见 StrategicSkillDef.hiddenPostBattlePct）
+                const bonus = Math.floor(unit.troops * profileSkill.hiddenPostBattlePct);
+                if (bonus > 0) {
+                    unit.setTroops(unit.troops + bonus);
+                    total += bonus;
+                }
             }
         }
     }

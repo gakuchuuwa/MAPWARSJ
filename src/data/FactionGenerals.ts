@@ -132,7 +132,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     nuergan: { generalId: 'nuergan_kangwang', generalName: '康旺', portrait: '/assets/NORTHEAST/nuergan_kangwang.png' },
     manzhou: { generalId: 'manzhou_nuerhachi', generalName: '努尔哈赤', portrait: '/assets/manqing/manzhou_nuerhachi.png' },
 
-    wuliangha: { generalId: 'wuliangha_zhelemei', generalName: '者勒蔑', portrait: '/assets/NORTHEAST/wuliangha_zhelemei.png' },
+    wuliangha: { generalId: 'wuliangha_subutai', generalName: '速不台', portrait: '/assets/NORTHEAST/wuliangha_subutai.png' },
     fuyu: { generalId: 'fuyu_weichoutai', generalName: '尉仇台', portrait: '/assets/NORTHEAST/fuyu_weichoutai.png' },
     dajin: { generalId: 'dajin_wanyanaguda', generalName: '阿骨打', portrait: '/assets/NORTHEAST/dajin_wanyanaguda.png' },
     yizhou: { generalId: 'yizhou_wanyanloushi', generalName: '完颜娄室', portrait: '/assets/NORTHEAST/yizhou_wanyanloushi.png' },

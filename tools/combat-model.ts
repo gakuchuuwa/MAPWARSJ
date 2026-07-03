@@ -506,7 +506,7 @@ function simulateTicks(
             const cb = comebackTacticalOf(attU());
             if (cb && att[0].troops <= attInit * simConfig.comebackThreshold && att[0].troops >= 1) {
                 attTriggered = true;
-                applyComebackEffect(cb, att, def, () => { attInvUntil = elapsed + cb.magnitude; });
+                applyComebackEffect(cb, att, def, () => { attInvUntil = elapsed + cb.magnitude; }, attInit);
                 recompute();
             }
         }
@@ -514,7 +514,7 @@ function simulateTicks(
             const cb = comebackTacticalOf(defU());
             if (cb && def[0].troops <= defInit * simConfig.comebackThreshold && def[0].troops >= 1) {
                 defTriggered = true;
-                applyComebackEffect(cb, def, att, () => { defInvUntil = elapsed + cb.magnitude; });
+                applyComebackEffect(cb, def, att, () => { defInvUntil = elapsed + cb.magnitude; }, defInit);
                 recompute();
             }
         }
@@ -562,12 +562,24 @@ function simulateTicks(
 
 function applyComebackEffect(
     skill: (typeof TACTICAL_SKILL_CATALOG)[string],
-    own: Unit[], opp: Unit[], scheduleInv: () => void,
+    own: Unit[], opp: Unit[], scheduleInv: () => void, ownInit?: number,
 ): void {
     if (skill.effect === 'ally_add_troops') {
+        // 对齐游戏 applyTroopAddToUnits(openingCap)：按开战兵力×ratio 补员，全侧封顶开战上限（非 maxTroops 满编）。
+        const openingCap = ownInit && ownInit > 0
+            ? ownInit : own.reduce((s, u) => s + Math.max(0, u.troops), 0);
+        const sideNow = own.reduce((s, u) => s + Math.max(0, u.troops), 0);
+        const budget = Math.min(
+            Math.floor(openingCap * skill.magnitude),
+            Math.max(0, openingCap - sideNow),
+        );
+        if (budget <= 0) return;
+        const denom = own.filter((u) => u.troops > 0).reduce((s, u) => s + u.troops, 0) || 1;
         for (const u of own) {
             if (u.troops <= 0) continue;
-            u.troops = Math.min(u.troops + Math.floor(u.maxTroops * skill.magnitude), u.maxTroops);
+            const share = Math.floor(budget * (u.troops / denom));
+            if (share <= 0) continue;
+            u.troops = Math.min(u.troops + share, u.maxTroops);
         }
     } else if (skill.effect === 'enemy_sub_troops') {
         for (const u of opp) {

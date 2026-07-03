@@ -9,7 +9,7 @@
  * 续航规则（贴合游戏）：
  *   · 每胜一场：combat-model 已含【基础战后恢复 30% + 战术恢复技】结算（attSurvivors）
  *   · 战略续航（组合带才生效）：
- *       - 因粮于敌 str_07 (post_battle_troop_pct)：胜后当前兵 +11%
+ *       - 因粮于敌 str_07 (post_battle_troop_pct)：胜后 += 自身当前兵 × magnitude（对齐游戏源码）
  *       - 以战养战 str_13 (field_resupply)：胜后额外补回本场战损的一部分（远征在外缓回血）
  *   · 兵力上限 = MAX_TROOPS（默认 10 万）
  *   · 乘胜追击/兵贵神速/履险如夷/直捣黄龙/足食足兵/募兵有道：行军/爆兵类，
@@ -81,11 +81,15 @@ const tsNameById = new Map<string, string>();
 for (const e of TACTICAL_SKILL_ENTRIES_V1) tsNameById.set(e.id, e.displayName);
 
 // ────────── 续航：战略技胜后补员 ──────────
-function applyStrategicSustain(survivors: number, lostThisBattle: number, strId: string | undefined, enemyInitialTroops: number): number {
+function applyStrategicSustain(survivors: number, lostThisBattle: number, strId: string | undefined): number {
     let t = survivors;
     const str = strId ? getStrategicSkillDef(strId) : null;
     if (str?.effect === 'post_battle_troop_pct') {
-        t += Math.floor(enemyInitialTroops * str.magnitude); // 因粮于敌（拔上限）：按击败敌军数量吸血
+        // 对齐游戏源码 GeneralSkillCombat.applyPostBattleTroopPct：胜后 += 自身当前兵 × magnitude
+        t += Math.floor(t * str.magnitude);
+    } else if (str?.hiddenPostBattlePct && str.hiddenPostBattlePct > 0) {
+        // 地图系战略技隐藏胜后续航（静默 1%）：对齐 applyPostBattleStrategicBonus
+        t += Math.floor(t * str.hiddenPostBattlePct);
     }
     if (str?.effect === 'field_resupply') {
         t += Math.floor(Math.max(0, lostThisBattle) * FIELD_RESUPPLY_RATIO); // 以战养战（保下限）：按自身战损补回
@@ -111,7 +115,7 @@ function runOneExpedition(tsId: string | undefined, strId: string | undefined): 
         if (!r.attackerWon || r.attSurvivors < 1) break;
         battles++;
         const lost = before - r.attSurvivors;
-        troops = applyStrategicSustain(r.attSurvivors, lost, strId, ENEMY_TROOPS);
+        troops = applyStrategicSustain(r.attSurvivors, lost, strId);
     }
     return battles;
 }

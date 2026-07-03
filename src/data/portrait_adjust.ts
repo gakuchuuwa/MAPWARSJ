@@ -2902,7 +2902,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 28
         },
-        "/assets/NORTHEAST/wuliangha_zhelemei.png": {
+        "/assets/NORTHEAST/wuliangha_subutai.png": {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 8
