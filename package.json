@@ -39,6 +39,7 @@
     "tactical:weights": "tsx tools/tactical-condition-weights.ts",
     "tactical:fate-mc": "tsx tools/tactical-fate-mc.ts",
     "tactical:casualty-mc": "tsx tools/tactical-casualty-mc.ts",
+    "tactical:counter-mc": "tsx tools/tactical-counter-mc.ts",
     "tactical:balance": "tsx tools/tactical-balance-mc.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

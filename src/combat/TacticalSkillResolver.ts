@@ -281,6 +281,71 @@ export function resolveWinnerRecoveryBlockedByLoser(
     return { blocked: false };
 }
 
+// ─────────────────────────────────────────────────────────────
+// 对抗系解析（A/B 层：作用对象具体、量纲单一，先接开局阶段）
+//   A 开局减兵对抗：#45 诱敌深入(reflect) / #48 空城退敌(nullify)
+//   B 地形对抗：    #46 暗度陈仓(cancel) / #47 声东击西(halve)
+//   C 通用否决/夺取(#42/43/44) 未纳入本组（多量纲，另行定案）。
+// 全部纯函数，供 combat-model 与引擎共用，保证模型/引擎逻辑单一真理。
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * 开局减兵对抗：我方（被减方）持 nullify(空城) / reflect(诱敌) 时，
+ * 修正敌方开局减兵技（先声夺人等 enemy_sub_troops_opening）对我方的实际效果。
+ * @param selfSkillId       我方（被减方）战术技 id
+ * @param enemyCutMagnitude 敌方开局减兵 magnitude（作用于我方，>0）
+ * @param selfCtx           我方视角 ctx（判 self_troops_below_enemy_pct / battle_siege_defender）
+ * @returns selfCutMagnitude 我方实际被减比例；reflectBackMagnitude 反弹给敌方的减兵比例
+ */
+export function resolveOpeningTroopCutCounter(
+    selfSkillId: string | undefined | null,
+    enemyCutMagnitude: number,
+    selfCtx: TacticalConditionContext,
+): { selfCutMagnitude: number; reflectBackMagnitude: number; entry?: TacticalSkillEntry } {
+    if (enemyCutMagnitude <= 0) return { selfCutMagnitude: 0, reflectBackMagnitude: 0 };
+    const e = selfSkillId ? resolveGeneralTacticalEntry(selfSkillId) : null;
+    if (!e || !isTacticalSkillActive(e, selfCtx)) {
+        return { selfCutMagnitude: enemyCutMagnitude, reflectBackMagnitude: 0 };
+    }
+    if (e.baseEffect === 'nullify_enemy_opening_cut') {
+        return { selfCutMagnitude: 0, reflectBackMagnitude: 0, entry: e };
+    }
+    if (e.baseEffect === 'reflect_enemy_opening_cut') {
+        return { selfCutMagnitude: 0, reflectBackMagnitude: enemyCutMagnitude, entry: e };
+    }
+    return { selfCutMagnitude: enemyCutMagnitude, reflectBackMagnitude: 0 };
+}
+
+/**
+ * 地形对抗：我方持 cancel(暗度陈仓) / halve(声东击西) 时，
+ * 修正敌方战略技地形增益 g(>1)。cancel→1（取消增益）；halve→增益减半。
+ * @param selfSkillId       我方战术技 id
+ * @param enemyTerrainMult  敌方地形增益乘数（来自战略技 plain/mountain/water_power_mult，>1 才有意义）
+ * @param selfCtx           我方视角 ctx（当前 A/B 层条件为 always）
+ *
+ * TODO(v1-migration)：当前靶子 = 旧战略技 str_04/05/06（×1.5 地形增益），今天成立
+ *   （700+ 武将全挂旧技）。若日后 v1 战术地形技（ts_002~004，ally_power_mult+terrain_*）
+ *   接入引擎 roll 链，须把本函数靶子扩为「敌方一切地形条件增益」，含 v1 战术层，
+ *   否则迁移后暗度陈仓/声东击西无靶可打变死技。此扩展的前提是 v1 地形技 roll 路径
+ *   先存在——现在不存在，故本步不扩，仅标记依赖，避免对抗系反成 v1 增强系重构的导火索。
+ */
+export function resolveEnemyTerrainBuffCounter(
+    selfSkillId: string | undefined | null,
+    enemyTerrainMult: number,
+    selfCtx: TacticalConditionContext,
+): { adjustedMult: number; entry?: TacticalSkillEntry } {
+    if (enemyTerrainMult <= 1) return { adjustedMult: enemyTerrainMult };
+    const e = selfSkillId ? resolveGeneralTacticalEntry(selfSkillId) : null;
+    if (!e || !isTacticalSkillActive(e, selfCtx)) return { adjustedMult: enemyTerrainMult };
+    if (e.baseEffect === 'cancel_enemy_terrain_buff') {
+        return { adjustedMult: 1, entry: e };
+    }
+    if (e.baseEffect === 'halve_enemy_terrain_buff') {
+        return { adjustedMult: 1 + (enemyTerrainMult - 1) * 0.5, entry: e };
+    }
+    return { adjustedMult: enemyTerrainMult };
+}
+
 /** 对手视角翻转（评估扰敌技条件用） */
 export function invertTacticalConditionContext(
     ctx: TacticalConditionContext,

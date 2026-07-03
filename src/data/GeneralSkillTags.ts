@@ -482,6 +482,55 @@ export const ARCHETYPE_TO_TACTICAL: Record<
     siege_hold: { famous: 'tac_05', ordinary: 'tac_10' },
 };
 
+/**
+ * 【v1 迁移蓝图 · 2026-07-03】5 风格 × 2 品阶 → 目标 v1 战术技（ts_xxx）
+ *
+ * 旧 10 格（tac_xx）→ 新 49 技（ts_xxx）的分配总图。武将风格已由现挂的 tac 编号
+ * 决定（见 ARCHETYPE_TO_TACTICAL），迁移时按本表把每个风格槽整体换成对应 v1 技。
+ *
+ * engineReady = 该 v1 技当前是否已在 BattleField 引擎生效：
+ *   · true  → 命运系(ts_012~020)/战损系(ts_031~041)/逆局重算：施加点已接，可直接迁移
+ *   · false → 强化系(ts_001~011)/兵力系(ts_021~030)/对抗系(ts_042~048)/士气系(ts_049)：
+ *             引擎尚无 v1 施加点，须先接引擎再迁，否则效果凭空消失（削弱）
+ *
+ * 迁移顺序：先迁 engineReady=true 的 7 槽（稳健/突击/死守 + 谋略普将），
+ *          再接强化/兵力/对抗引擎，解锁机动系与谋略名将。
+ * 选型依据：风格语义 + 引擎就绪优先；名将槽取更主动/上限更高的技，普将槽取保底/情境技。
+ */
+export const ARCHETYPE_TO_V1_TACTICAL: Record<
+    SkillArchetype,
+    {
+        famous: { id: string; displayName: string; engineReady: boolean; reason: string };
+        ordinary: { id: string; displayName: string; engineReady: boolean; reason: string };
+    }
+> = {
+    // 稳健防反：稳字当头，消方差 / 战后恢复
+    steadfast_counter: {
+        famous: { id: 'ts_014', displayName: '步步为营', engineReady: true, reason: 'luck 锁 1.0，稳扎稳打不浪' },
+        ordinary: { id: 'ts_035', displayName: '休养生息', engineReady: true, reason: '战后恢复 50%，防反续航' },
+    },
+    // 机动奇袭：先手削敌真实兵（兵力系，待接引擎）
+    mobile_raid: {
+        famous: { id: 'ts_022', displayName: '攻其不备', engineReady: false, reason: '开局削敌 20%（兵力系待接引擎）' },
+        ordinary: { id: 'ts_021', displayName: '先声夺人', engineReady: false, reason: '开局削敌 10%（兵力系待接引擎）' },
+    },
+    // 突击破阵：决死博命方差（命运系）
+    assault_break: {
+        famous: { id: 'ts_013', displayName: '背水一战', engineReady: true, reason: '无条件 luck[0.65,1.35]，主动博命' },
+        ordinary: { id: 'ts_018', displayName: '死地后生', engineReady: true, reason: '劣势时 luck[0.5,1.5]，绝境搏杀' },
+    },
+    // 智将谋略：否决敌技（对抗系待接）/ 断敌恢复（战损系已接）
+    stratagem_weaken: {
+        famous: { id: 'ts_042', displayName: '料敌机先', engineReady: false, reason: '完全否决敌战术技（对抗系待接引擎）' },
+        ordinary: { id: 'ts_039', displayName: '斩草除根', engineReady: true, reason: '我败令胜方战后不恢复，削敌根本' },
+    },
+    // 死守殿后：胜则省兵 / 败则咬人（战损系）
+    siege_hold: {
+        famous: { id: 'ts_031', displayName: '游刃有余', engineReady: true, reason: '胜方战损 -30%，守城名将省兵存活' },
+        ordinary: { id: 'ts_033', displayName: '困兽犹斗', engineReady: true, reason: '败时胜方战损 ×1.5，边陲死守让敌肉疼' },
+    },
+};
+
 /** 战略六格简要标签（名将专用；与地形/行军匹配） */
 export const STRATEGIC_SKILL_TAGS = [
     { id: 'str_01', grid: 'S①', name: '兵贵神速', tags: ['急行军', '闪击', '远征机动'], terrain: '行军' },

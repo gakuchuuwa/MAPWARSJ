@@ -21,6 +21,8 @@ import {
     resolvePostBattleRecoveryRate,
     resolveLoserBiteWinnerLossMult,
     resolveWinnerRecoveryBlockedByLoser,
+    resolveOpeningTroopCutCounter,
+    resolveEnemyTerrainBuffCounter,
 } from '../src/combat/TacticalSkillResolver';
 
 /** 战损系 baseEffect 集合（v1 catalog；判定是否需逐帧存活模拟） */
@@ -189,14 +191,41 @@ function sumAdjusted(units: Unit[]): number {
 }
 
 // ────────────────────────── 开局技能应用 ──────────────────────────
-/** ②：掷色前减敌兵（①现为乘区不改兵；⑤免伤不改兵，掷点乘区在 roll 阶段） */
-function applyOpeningPreRollTroops(own: Unit[], opp: Unit[]): void {
+/**
+ * ②：掷色前减敌兵（①现为乘区不改兵；⑤免伤不改兵，掷点乘区在 roll 阶段）。
+ * own 的开局减兵技作用于 opp（被减方）；opp 若持对抗系 nullify(空城)/reflect(诱敌)，
+ * 经 resolveOpeningTroopCutCounter 修正实际减兵，并把 reflect 的反弹伤害施加回 own。
+ */
+function applyOpeningPreRollTroops(
+    own: Unit[], opp: Unit[], ownIsAttacker: boolean, battleType: BattleType, terrain: Terrain,
+): void {
     const skill = openingTacticalOf(eligible(own));
-    if (!skill) return;
-    if (skill.effect === 'enemy_sub_troops') {
+    if (!skill || skill.effect !== 'enemy_sub_troops') return;
+    const cutMag = skill.magnitude;
+    if (cutMag <= 0) return;
+
+    const oppTroops = opp.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const ownTroops = own.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const oppCtx = buildTacticalConditionContext({
+        battleType, terrain,
+        selfTroops: oppTroops, enemyTroops: ownTroops,
+        selfInitialTroops: oppTroops, enemyInitialTroops: ownTroops,
+        selfIsAttacker: !ownIsAttacker,
+    });
+    const counter = resolveOpeningTroopCutCounter(
+        eligible(opp)?.profile?.tacticalSkillId, cutMag, oppCtx,
+    );
+
+    if (counter.selfCutMagnitude > 0) {
         for (const u of opp) {
             if (u.troops <= 0) continue;
-            u.troops = Math.max(0, u.troops - Math.floor(u.troops * skill.magnitude));
+            u.troops = Math.max(0, u.troops - Math.floor(u.troops * counter.selfCutMagnitude));
+        }
+    }
+    if (counter.reflectBackMagnitude > 0) {
+        for (const u of own) {
+            if (u.troops <= 0) continue;
+            u.troops = Math.max(0, u.troops - Math.floor(u.troops * counter.reflectBackMagnitude));
         }
     }
 }
@@ -232,11 +261,25 @@ function strategicMult(u: Unit | null, side: Side, terrain: Terrain): number {
 }
 function applyStrategicRollMults(
     attU: Unit[], defU: Unit[], attRoll: number, defRoll: number, terrain: Terrain,
+    battleType: BattleType = 'field',
 ): { attRoll: number; defRoll: number } {
-    return {
-        attRoll: attRoll * strategicMult(eligible(attU), 'attacker', terrain),
-        defRoll: defRoll * strategicMult(eligible(defU), 'defender', terrain),
-    };
+    let attG = strategicMult(eligible(attU), 'attacker', terrain);
+    let defG = strategicMult(eligible(defU), 'defender', terrain);
+    // 地形对抗（#46 暗度陈仓 cancel / #47 声东击西 halve）：一方持对抗技 → 削弱对手地形增益。
+    const attTroops = attU.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const defTroops = defU.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const mkCtx = (selfT: number, enemyT: number, isAtt: boolean) =>
+        buildTacticalConditionContext({
+            battleType, terrain,
+            selfTroops: selfT, enemyTroops: enemyT,
+            selfInitialTroops: selfT, enemyInitialTroops: enemyT,
+            selfIsAttacker: isAtt,
+        });
+    const attId = eligible(attU)?.profile?.tacticalSkillId;
+    const defId = eligible(defU)?.profile?.tacticalSkillId;
+    defG = resolveEnemyTerrainBuffCounter(attId, defG, mkCtx(attTroops, defTroops, true)).adjustedMult;
+    attG = resolveEnemyTerrainBuffCounter(defId, attG, mkCtx(defTroops, attTroops, false)).adjustedMult;
+    return { attRoll: attRoll * attG, defRoll: defRoll * defG };
 }
 
 /** ⑧⑨⑩ 逆局掷色乘区（refresh 时对已触发侧生效） */
@@ -275,8 +318,8 @@ export function simulateOnce(
     const att = attSpecs.map(makeUnit);
     const def = defSpecs.map(makeUnit);
 
-    applyOpeningPreRollTroops(att, def);
-    applyOpeningPreRollTroops(def, att);
+    applyOpeningPreRollTroops(att, def, true, battleType, terrain);
+    applyOpeningPreRollTroops(def, att, false, battleType, terrain);
 
     const attInit = att.reduce((s, u) => s + u.troops, 0);
     const defInit = def.reduce((s, u) => s + u.troops, 0);
@@ -284,7 +327,7 @@ export function simulateOnce(
     let attRoll = sumAdjusted(att) * rollLuckForSide(att, def, battleType, terrain, true);
     let defRoll = sumAdjusted(def) * rollLuckForSide(def, att, battleType, terrain, false);
     ({ attRoll, defRoll } = applyOpeningRollMults(att, def, attRoll, defRoll));
-    ({ attRoll, defRoll } = applyStrategicRollMults(att, def, attRoll, defRoll, terrain));
+    ({ attRoll, defRoll } = applyStrategicRollMults(att, def, attRoll, defRoll, terrain, battleType));
 
     const attackerStronger = attRoll >= defRoll;
 
@@ -330,7 +373,7 @@ function simulateTicks(
         let a = att[0].troops * att[0].mult;
         let d = def[0].troops * def[0].mult;
         ({ attRoll: a, defRoll: d } = applyOpeningRollMults(att, def, a, d));
-        ({ attRoll: a, defRoll: d } = applyStrategicRollMults(att, def, a, d, terrain));
+        ({ attRoll: a, defRoll: d } = applyStrategicRollMults(att, def, a, d, terrain, battleType));
         let r1 = applyComebackRollMult(attU(), a, d, attTriggered); a = r1.sideRoll; d = r1.oppRoll;
         let r2 = applyComebackRollMult(defU(), d, a, defTriggered); d = r2.sideRoll; a = r2.oppRoll;
         if (simConfig.comebackRollLuck) { a *= rollLuck(); d *= rollLuck(); }
