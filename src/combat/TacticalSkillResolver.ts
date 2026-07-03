@@ -381,16 +381,8 @@ export function resolveOpeningTroopCutCounter(
 
 /**
  * 地形对抗：我方持 cancel(暗度陈仓) / halve(声东击西) 时，
- * 修正敌方战略技地形增益 g(>1)。cancel→1（取消增益）；halve→增益减半。
- * @param selfSkillId       我方战术技 id
- * @param enemyTerrainMult  敌方地形增益乘数（来自战略技 plain/mountain/water_power_mult，>1 才有意义）
- * @param selfCtx           我方视角 ctx（当前 A/B 层条件为 always）
- *
- * TODO(v1-migration)：当前靶子 = 旧战略技 str_04/05/06（×1.5 地形增益），今天成立
- *   （700+ 武将全挂旧技）。若日后 v1 战术地形技（ts_002~004，ally_power_mult+terrain_*）
- *   接入引擎 roll 链，须把本函数靶子扩为「敌方一切地形条件增益」，含 v1 战术层，
- *   否则迁移后暗度陈仓/声东击西无靶可打变死技。此扩展的前提是 v1 地形技 roll 路径
- *   先存在——现在不存在，故本步不扩，仅标记依赖，避免对抗系反成 v1 增强系重构的导火索。
+ * 修正敌方地形增益 g(>1)。cancel→1（取消增益）；halve→增益减半。
+ * 靶子含：退役战略地形乘区 + v1 战术地形技（ts_002~004 等 ally_mult_1_2+terrain_*，见 applyOpeningTacticalToRolls）。
  */
 export function resolveEnemyTerrainBuffCounter(
     selfSkillId: string | undefined | null,

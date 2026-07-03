@@ -10,7 +10,7 @@
  * 批量 Prompt：见 SKILL_ASSIGNMENT_PROMPT
  */
 
-import { GENERAL_PROFILES, type GeneralTier } from './GeneralSkills';
+import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG, type GeneralTier } from './GeneralSkills';
 import {
     TACTICAL_SKILL_BY_ID,
     getTacticalAssignTier,
@@ -345,6 +345,55 @@ export function auditAssignTierConstraints(
         limitedViolations,
         gambleFamousViolations,
         emptyReadySkills,
+    };
+}
+
+// ── 战略技分配闸门（2026-07-03 v1 重设计随行）────────────────────
+/** 战略限量技上限（所向披靡=战略层唯一战斗乘区，防重蹈攻其不备 123 人覆辙） */
+export const STRATEGIC_LIMITED_CAPS: Readonly<Record<string, number>> = { str_03: 30 };
+/** 退役战略技（S④⑤⑥⑧ 地形/守方战斗乘区，2026-07-03 删）——档案中出现即违规 */
+export const RETIRED_STRATEGIC_IDS: readonly string[] = ['str_04', 'str_05', 'str_06', 'str_08'];
+
+export interface StrategicAssignAuditResult {
+    ok: boolean;
+    capViolations: { skillId: string; displayName: string; count: number; max: number }[];
+    retiredHolders: { skillId: string; count: number }[];
+    unknownIds: string[];
+    emptySkills: { skillId: string; displayName: string }[];
+}
+
+export function auditStrategicAssignment(
+    profiles: Record<string, { tier: GeneralTier; strategicSkillId?: string }> = GENERAL_PROFILES,
+): StrategicAssignAuditResult {
+    const holders: Record<string, number> = {};
+    const unknown = new Set<string>();
+    for (const p of Object.values(profiles)) {
+        const id = p.strategicSkillId;
+        if (!id) continue;
+        holders[id] = (holders[id] ?? 0) + 1;
+        if (!STRATEGIC_SKILL_CATALOG[id] && !RETIRED_STRATEGIC_IDS.includes(id)) unknown.add(id);
+    }
+    const capViolations: StrategicAssignAuditResult['capViolations'] = [];
+    for (const [skillId, max] of Object.entries(STRATEGIC_LIMITED_CAPS)) {
+        const n = holders[skillId] ?? 0;
+        if (n > max) {
+            capViolations.push({
+                skillId, displayName: STRATEGIC_SKILL_CATALOG[skillId]?.displayName ?? skillId, count: n, max,
+            });
+        }
+    }
+    const retiredHolders = RETIRED_STRATEGIC_IDS
+        .filter((id) => (holders[id] ?? 0) > 0)
+        .map((id) => ({ skillId: id, count: holders[id] }));
+    const emptySkills = Object.values(STRATEGIC_SKILL_CATALOG)
+        .filter((s) => (holders[s.id] ?? 0) === 0)
+        .map((s) => ({ skillId: s.id, displayName: s.displayName }));
+    return {
+        ok: capViolations.length === 0 && retiredHolders.length === 0 && unknown.size === 0,
+        capViolations,
+        retiredHolders,
+        unknownIds: [...unknown],
+        emptySkills,
     };
 }
 

@@ -13,12 +13,15 @@ import { GameConfig } from '../config/GameConfig';
 import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
+import { generalHasStrategicEffect } from '../combat/GeneralSkillCombat';
 
 export class FollowResupplySystem {
     private cityManager: CityManager;
     /** armyId -> 当前在半径内且本段停留已补过的 cityId */
     private suppliedThisVisit = new Map<string, Set<string>>();
     private lastScanAt = 0;
+    /** 以战养战：军团累积待补兵力（小数部分保留） */
+    private fieldResupplyAccum = new Map<string, number>();
 
     constructor(cityManager: CityManager) {
         this.cityManager = cityManager;
@@ -26,6 +29,44 @@ export class FollowResupplySystem {
 
     public clearForArmy(armyId: string): void {
         this.suppliedThisVisit.delete(armyId);
+        this.fieldResupplyAccum.delete(armyId);
+    }
+
+    /**
+     * S⑬以战养战：远离己方据点时缓慢回血（全军团，不限跟拍）
+     * 速率约满编 0.015%/游戏秒（远离 PASS_RADIUS 外生效）
+     */
+    public tickStrategicFieldResupply(army: Army, deltaTimeSec: number): void {
+        if (!GameConfig.SYSTEM.SANDBOX_MODE) return;
+        if (army.isDestroyed || army.getTroops() <= 0) return;
+        if (!generalHasStrategicEffect(army, 'field_resupply')) return;
+
+        const armyMax = getLegionTroopCap(army);
+        if (army.getTroops() >= armyMax) return;
+
+        const factionId = army.getFactionId();
+        if (!factionId || factionId === 'neutral' || factionId === 'panjun') return;
+
+        const pos = army.getPosition();
+        const radius = GameConfig.FOLLOW_RESUPPLY.PASS_RADIUS;
+        const nearFriendly = this.cityManager.getCitiesByFaction(factionId).some((city) => {
+            const dist = getEuclideanDistance(pos, {
+                lat: city.latitude,
+                lng: city.longitude,
+            });
+            return dist <= radius;
+        });
+        if (nearFriendly) return;
+
+        const ratePerSec = armyMax * 0.00015;
+        const accum = (this.fieldResupplyAccum.get(army.id) ?? 0) + ratePerSec * deltaTimeSec;
+        if (accum < 1) {
+            this.fieldResupplyAccum.set(army.id, accum);
+            return;
+        }
+        const add = Math.floor(accum);
+        this.fieldResupplyAccum.set(army.id, accum - add);
+        army.setTroops(Math.min(armyMax, army.getTroops() + add));
     }
 
     public update(army: Army): void {

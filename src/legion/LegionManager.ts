@@ -1,6 +1,7 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { generalHasStrategicEffect } from '../combat/GeneralSkillCombat';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
@@ -408,6 +409,14 @@ export class LegionManager {
                 this.followResupplySystem.update(army);
             }
 
+            if (
+                this.followResupplySystem &&
+                army.type === 'legion' &&
+                !army.getIsInCombat()
+            ) {
+                this.followResupplySystem.tickStrategicFieldResupply(army, deltaTime);
+            }
+
             // 行军 ZOC：进入非己方据点（含叛军 panjun）控制范围必须先停攻，不可绕路穿过
             if (
                 !army.getIsInCombat() &&
@@ -575,17 +584,21 @@ export class LegionManager {
 
     /** 当前位置是否已进入敌方/叛军据点攻城圈 */
     private findHostileCityInZOC(army: Army): City | null {
-        return this.findHostileCityNear(army.getPosition(), army.getFactionId());
+        return this.findHostileCityNear(army.getPosition(), army.getFactionId(), army);
     }
 
     /** 供 AI：军团站在敌对据点 ZOC 内时必须先处理该城 */
-    public findHostileCityNear(pos: LatLng, factionId: string): City | null {
+    public findHostileCityNear(pos: LatLng, factionId: string, army?: Army | null): City | null {
+        const ignoreSmallCityZoc = army
+            ? generalHasStrategicEffect(army, 'ignore_small_city_zoc')
+            : false;
         const zoc = GameConfig.SIEGE.COMBAT_RADIUS;
         let nearest: City | null = null;
         let minDist = Infinity;
 
         for (const city of this.cityManager.getCities()) {
             if (!city.factionId || city.factionId === factionId) continue;
+            if (ignoreSmallCityZoc && city.type === 'small_city') continue;
             const dist = getEuclideanDistance(pos, {
                 lat: city.latitude,
                 lng: city.longitude,

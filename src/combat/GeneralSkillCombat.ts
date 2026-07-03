@@ -12,8 +12,10 @@ import {
     EXPEDITION_FORAGE_SKILL,
     PASS_GARRISON_DEFENSE_SKILL,
     REINFORCEMENT_JOIN_SKILL,
+    type StrategicEffect,
     type TacticalSkillDef,
 } from '../data/GeneralSkills';
+import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import {
     buildTacticalConditionContext,
     resolveGeneralTacticalEntry,
@@ -523,29 +525,45 @@ export function getStrategicBattlePowerMultiplier(
     const skill = getStrategicSkillDef(profile.strategicSkillId);
     if (!skill) return 1;
     switch (skill.effect) {
-        // S③所向披靡（原含 S②攻城拔寨）：进攻方专用，攻城/野战通吃
+        // S③所向披靡：进攻方专用，攻城/野战通吃
         case 'attacker_power_mult':
             return side === 'attacker' ? skill.magnitude : 1;
-        // S⑧固若金汤：防守方专用
-        case 'defender_power_mult':
-            return side === 'defender' ? skill.magnitude : 1;
-        case 'plain_power_mult':
-            return terrain === 'plain' ? skill.magnitude : 1;
-        case 'mountain_power_mult':
-            return terrain === 'mountain' ? skill.magnitude : 1;
-        case 'water_power_mult':
-            return terrain === 'sea' ? skill.magnitude : 1;
         default:
             return 1;
     }
 }
 
-/** 名将 S① 兵贵神速：行军速度乘区 */
-export function getGeneralMarchSpeedMultiplier(unit: IBattleUnit): number {
-    if (!canUnitUseGeneralSkills(unit)) return 1;
+/** 军团/城防单位当前战略技定义（无则 null） */
+export function getGeneralStrategicSkillDef(unit: IBattleUnit) {
+    if (!canUnitUseGeneralSkills(unit)) return null;
     const profile = getGeneralProfile(unit.generalId);
+    if (!profile?.strategicSkillId) return null;
+    return getStrategicSkillDef(profile.strategicSkillId) ?? null;
+}
+
+/** 是否持有指定战略效果 */
+export function generalHasStrategicEffect(unit: IBattleUnit, effect: StrategicEffect): boolean {
+    const skill = getGeneralStrategicSkillDef(unit);
+    return skill?.effect === effect;
+}
+
+/** 据点锚定将领的战略效果乘数（无匹配则 1） */
+export function getCityAnchoredStrategicMagnitude(
+    cityId: string,
+    effect: StrategicEffect,
+): number {
+    const anchored = getCityAnchoredGeneral(cityId);
+    if (!anchored?.generalId) return 1;
+    const profile = getGeneralProfile(anchored.generalId);
     if (!profile?.strategicSkillId) return 1;
     const skill = getStrategicSkillDef(profile.strategicSkillId);
+    if (!skill || skill.effect !== effect) return 1;
+    return skill.magnitude;
+}
+
+/** 名将 S① 兵贵神速：行军速度乘区 */
+export function getGeneralMarchSpeedMultiplier(unit: IBattleUnit): number {
+    const skill = getGeneralStrategicSkillDef(unit);
     if (!skill || skill.effect !== 'march_speed_mult') return 1;
     return skill.magnitude;
 }
@@ -662,6 +680,19 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
             return `山地×${skill.magnitude}`;
         case 'water_power_mult':
             return `水域×${skill.magnitude}`;
+        // ── 战略 v1 新系（Step2 接引擎前仅展示用）──
+        case 'mountain_march_immunity':
+            return '山地不减速';
+        case 'ignore_small_city_zoc':
+            return '无视小城拦截';
+        case 'skip_post_battle_rest':
+            return '胜后即开拔';
+        case 'field_resupply':
+            return '野外缓补';
+        case 'city_growth_mult':
+            return `坐镇增长×${skill.magnitude}`;
+        case 'recruit_cooldown_mult':
+            return `募兵冷却×${skill.magnitude}`;
         default:
             return '';
     }
@@ -1004,10 +1035,38 @@ export function applyOpeningTacticalToRolls(
 
         if (skill.effect === 'ally_mult_1_2') {
             if (!bridgedOpeningEnhanceActive(units, opponentUnits, isAttacker, opts)) return roll;
-            const next = roll * skill.magnitude;
+            let mult = skill.magnitude;
+            const oppUnit = findEligibleGeneralUnit(opponentUnits);
+            const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
+            if (oppActiveId && mult > 1) {
+                const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
+                const oppTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+                const oppCtx = buildTacticalConditionContext({
+                    battleType: opts?.battleType ?? 'field',
+                    terrain: opts?.terrain ?? null,
+                    selfTroops: oppTroops,
+                    enemyTroops: selfTroops,
+                    selfInitialTroops: oppTroops,
+                    enemyInitialTroops: selfTroops,
+                    selfIsAttacker: !isAttacker,
+                    enemyHasFamousGeneral: sideHasFamousGeneral(units),
+                    isFirstSortieSinceDepart: sideIsFirstSortie(opponentUnits),
+                });
+                const counter = resolveEnemyTerrainBuffCounter(oppActiveId, mult, oppCtx);
+                if (counter.adjustedMult < mult) {
+                    mult = counter.adjustedMult;
+                    if (counter.entry && oppUnit) {
+                        gameLog(
+                            'battle',
+                            `⛰️ [对抗系] ${oppUnit.generalId} 触发【${counter.entry.displayName}】，压制了${sideLabel}地形优势！`,
+                        );
+                    }
+                }
+            }
+            const next = roll * mult;
             gameLog(
                 'battle',
-                `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}有效战力 ×${skill.magnitude} (${roll.toFixed(0)}→${next.toFixed(0)})`,
+                `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}有效战力 ×${parseFloat(mult.toFixed(2))} (${roll.toFixed(0)}→${next.toFixed(0)})`,
             );
             if (emitUi) {
                 markShown(isAttacker);

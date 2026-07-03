@@ -22,6 +22,9 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, REGION_ORDER, RegionType } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
+import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getGeneralProfile, getStrategicSkillDef } from '../data/GeneralSkills';
+import { getEuclideanDistance } from '../core/DistanceUtils';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -294,10 +297,30 @@ export class RecruitmentSystem {
     }
 
     private cityHasActiveLegion(cityId: string): boolean {
-        return this.legionManager.getArmies().some((a) => {
+        const activeFromCity = this.legionManager.getArmies().filter((a) => {
             if (a.isDestroyed || a.type !== 'legion') return false;
             return a.homeCityId === cityId || a.getSourceCityId() === cityId;
         });
+        if (activeFromCity.length === 0) return false;
+
+        const anchored = getCityAnchoredGeneral(cityId);
+        const profile = anchored?.generalId ? getGeneralProfile(anchored.generalId) : null;
+        const skill = profile?.strategicSkillId
+            ? getStrategicSkillDef(profile.strategicSkillId)
+            : null;
+        if (skill?.effect !== 'recruit_cooldown_mult') return true;
+
+        const city = this.cityManager.getCity(cityId);
+        if (!city) return true;
+        const cityPos = { lat: city.latitude, lng: city.longitude };
+        const departRadius = GameConfig.FOLLOW_RESUPPLY.PASS_RADIUS;
+
+        // 募兵有道：绑定该城的军团均已离城 → 视为出征在外，可再募
+        const allDeparted = activeFromCity.every((a) => {
+            const dist = getEuclideanDistance(a.getPosition(), cityPos);
+            return dist > departRadius;
+        });
+        return !allDeparted;
     }
 
     /**

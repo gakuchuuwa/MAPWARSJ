@@ -14,6 +14,7 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { isMacroMapZoom, isRegionBoundaryZoom } from '../config/StrategicView';
 import { audioManager } from '../audio/AudioManager';
+import { getCityAnchoredStrategicMagnitude } from '../combat/GeneralSkillCombat';
 
 export interface CityUpdateOptions {
     skipCaptureLog?: boolean;
@@ -443,7 +444,8 @@ export class CityManager {
             const config = CITY_CONFIG[city.type];
             if (!config || city.factionId === 'panjun') return;
 
-            const growth = Math.floor(config.maxTroops * config.growthRate);
+            const growthMult = getCityAnchoredStrategicMagnitude(city.id, 'city_growth_mult');
+            const growth = Math.floor(config.maxTroops * config.growthRate * growthMult);
             if (city.troops < config.maxTroops) {
                 city.troops = clampCityTroops(city.type, city.troops + growth);
                 this.territorySystem.updateCityLabel(city);

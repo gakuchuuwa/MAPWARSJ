@@ -8,6 +8,7 @@
 import {
     auditTacticalDistribution,
     auditAssignTierConstraints,
+    auditStrategicAssignment,
     LIMITED_TIER_MAX_HOLDERS,
     GAMBLE_FAMOUS_MAX,
 } from '../src/data/GeneralSkillTags';
@@ -43,6 +44,19 @@ for (const s of tier.emptyReadySkills) {
     console.log(`  ⚠️ ${s.skillId} ${s.displayName}`);
 }
 
-const ok = dist.ok && tier.ok;
+const strat = auditStrategicAssignment();
+console.log('\n【战略技闸门】限量上限 / 退役技清零 / 未知ID');
+if (strat.ok) {
+    console.log('  ✅ 无违规');
+} else {
+    for (const v of strat.capViolations) console.log(`  ❌ ${v.skillId} ${v.displayName}: ${v.count} > 上限 ${v.max}`);
+    for (const v of strat.retiredHolders) console.log(`  ❌ 退役技 ${v.skillId} 仍有 ${v.count} 人`);
+    for (const id of strat.unknownIds) console.log(`  ❌ 未知战略技 ID: ${id}`);
+}
+if (strat.emptySkills.length > 0) {
+    console.log(`  ⚠️ 空置战略技: ${strat.emptySkills.map((s) => `${s.skillId}${s.displayName}`).join(', ')}`);
+}
+
+const ok = dist.ok && tier.ok && strat.ok;
 console.log(ok ? '\n✅ 分配审计通过' : '\n❌ 分配审计不通过');
 process.exit(ok ? 0 : 1);

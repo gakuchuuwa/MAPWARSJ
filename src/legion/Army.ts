@@ -13,7 +13,7 @@ import type { RegionType } from '../systems/RegionSystem';
 import { IBattleUnit } from '../combat/CombatSystem';
 import { gameLog } from '../utils/GameLogger';
 import { getRandomFactionPortrait } from '../config/portrait_defaults';
-import { getGeneralMarchSpeedMultiplier } from '../combat/GeneralSkillCombat';
+import { getGeneralMarchSpeedMultiplier, generalHasStrategicEffect } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 import { isCultureCavalryOnly } from '../types/CultureFormations';
 
@@ -239,6 +239,10 @@ export class Army implements IBattleUnit {
     public startPostBattleRest(durationSec: number = GameTime.POST_BATTLE_REST): void {
         if (this.isDestroyed || this.troops < 1) return;
         if (this.postBattleRestRemaining > 0) return;
+        if (generalHasStrategicEffect(this, 'skip_post_battle_rest')) {
+            gameLog('army', `🏃 [Army] ${this.name} 【乘胜追击】胜后免休整，立即开拔`);
+            return;
+        }
         this.postBattleRestRemaining = durationSec;
         gameLog('army', `⏸️ [Army] ${this.name} 战胜驻留 ${durationSec}s 游戏时间`);
     }
@@ -457,10 +461,16 @@ export class Army implements IBattleUnit {
         this.isOnSea = LandSeaSystem.isSeaAt(pos);
 
         const terrainKind = this.isOnSea ? 'sea' : (LandTerrainSystem.classifyAt(pos) ?? 'mountain');
+        const marchTerrainKind =
+            terrainKind === 'mountain'
+            && !this.isOnSea
+            && generalHasStrategicEffect(this, 'mountain_march_immunity')
+                ? 'plain'
+                : terrainKind;
         const terrainMult =
-            terrainKind === 'sea'
+            marchTerrainKind === 'sea'
                 ? MARCH_SPEED_MULTIPLIERS.TERRAIN.sea
-                : terrainKind === 'plain'
+                : marchTerrainKind === 'plain'
                     ? MARCH_SPEED_MULTIPLIERS.TERRAIN.plain
                     : MARCH_SPEED_MULTIPLIERS.TERRAIN.mountain;
 
@@ -470,7 +480,7 @@ export class Army implements IBattleUnit {
             const preset = MARCH_SPEED_MULTIPLIERS.USE_CONSERVATIVE_CAVALRY_PRESET
                 ? MARCH_SPEED_MULTIPLIERS.CAVALRY_LAND.conservative
                 : MARCH_SPEED_MULTIPLIERS.CAVALRY_LAND.current;
-            cavalryMult = terrainKind === 'plain' ? preset.plain : preset.mountain;
+            cavalryMult = marchTerrainKind === 'plain' ? preset.plain : preset.mountain;
         }
 
         this.currentTerrainMultiplier = terrainMult * cavalryMult;

@@ -412,7 +412,8 @@ export class SiegeManager {
         // 先就地夺取脚下城，打完再重新执行本事件，否则行军被 ZOC 卡死、事件队列永久阻塞
         const standingHostile = this.legionManager.findHostileCityNear(
             armyPos,
-            siegeData.attackerFactionId
+            siegeData.attackerFactionId,
+            attackerArmy,
         );
         if (standingHostile && standingHostile.id !== targetCity.id) {
             console.warn(
