@@ -291,9 +291,9 @@ const TROOP: TacticalSkillEntry[] = [
     {
         id: 'ts_025', layer: 'tactical', series: 'troop', index: 25,
         displayName: '重整旗鼓', sourceQuote: '《左传·成公二年》：“师乃复整旗鼓。”',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        baseEffect: 'ally_add_troops_opening', condition: 'ratio_underdog', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
-        note: '补兵封顶开战上限',
+        note: '补兵封顶开战上限；仅兵力少于敌军时触发（逆风局战前重整）',
     },
     {
         id: 'ts_026', layer: 'tactical', series: 'troop', index: 26,

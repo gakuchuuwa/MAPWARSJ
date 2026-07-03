@@ -690,7 +690,7 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
         case 'field_resupply':
             return '野外缓补';
         case 'city_growth_mult':
-            return `坐镇增长×${skill.magnitude}`;
+            return `出身城增长×${skill.magnitude}`;
         case 'recruit_cooldown_mult':
             return `募兵冷却×${skill.magnitude}`;
         default:

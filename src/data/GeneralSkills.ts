@@ -29,7 +29,7 @@ export type StrategicEffect =
     | 'skip_post_battle_rest'     // 补给：胜后免休整立即开拔（Step2 接 startPostBattleRest）
     | 'field_resupply'            // 补给：远离本土缓慢回血（Step2 接 FollowResupplySystem）
     | 'post_battle_troop_pct'     // 补给：胜后就食补员（✅现役）
-    | 'city_growth_mult'          // 爆兵：坐镇城增长翻倍（Step2 接 CityManager.updateTroops）
+    | 'city_growth_mult'          // 爆兵：出身城增长×2（Step2 接 CityManager.updateTroops；无须坐城）
     | 'recruit_cooldown_mult'     // 爆兵：出征时出身城募兵冷却减半（Step2 接 RecruitmentSystem）
     | 'attacker_power_mult'       // 战斗：攻方乘区（✅现役；唯一保留的战斗层战略技，限量 ≤30）
     // ── 退役 effect（S④⑤⑥⑧ 条目已删；类型保留至 Step2 清理引擎 switch 后移除）──
@@ -92,7 +92,7 @@ export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
  * 战略技 v1（2026-07-03 重设计）：五系 9 技，战略技 = 大地图效果
  *   行军：str_01 兵贵神速 / str_10 履险如夷 / str_11 直捣黄龙
  *   补给：str_12 乘胜追击 / str_13 以战养战 / str_07 因粮于敌
- *   爆兵：str_14 星火燎原 / str_15 募兵有道
+ *   爆兵：str_14 足食足兵 / str_15 募兵有道
  *   战斗：str_03 所向披靡（唯一保留的战斗乘区，限量 ≤30）
  *   二期：传檄而定（攻兵力悬殊敌小城概率不战而下，必须走城池易主管线）——引擎就绪前不入表
  * 退役（2026-07-03）：str_04 长驱直入 / str_05 居高临下 / str_06 乘风破浪 / str_08 固若金汤
@@ -109,9 +109,9 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     // ── 补给系 ──
     str_12: { id: 'str_12', grid: 'S⑫', displayName: '乘胜追击', effect: 'skip_post_battle_rest', magnitude: 0, engineStatus: 'ready', note: '胜后休整时长置 0' },
     str_13: { id: 'str_13', grid: 'S⑬', displayName: '以战养战', effect: 'field_resupply', magnitude: 1, engineStatus: 'ready', note: '远离本土缓回血；FollowResupplySystem.tickStrategicFieldResupply' },
-    str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.11, engineStatus: 'ready' },
+    str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.15, engineStatus: 'ready' },
     // ── 爆兵系 ──
-    str_14: { id: 'str_14', grid: 'S⑭', displayName: '星火燎原', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', note: '坐镇城（getCityAnchoredGeneral）增长率×2' },
+    str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', note: '出征期间出身城增长率×2（getCityAnchoredStrategicMagnitude，无须坐城）' },
     str_15: { id: 'str_15', grid: 'S⑮', displayName: '募兵有道', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', note: '出征离城后可再募（RecruitmentSystem.cityHasActiveLegion）' },
     // ── 战斗系（唯一保留，限量 ≤30，与战术攻城技跨层叠加=名将牌面）──
     str_03: { id: 'str_03', grid: 'S③', displayName: '所向披靡', effect: 'attacker_power_mult', magnitude: 1.5, engineStatus: 'ready' },
@@ -129,7 +129,7 @@ export interface ExpeditionSystemSkillDef {
 export const EXPEDITION_FORAGE_SKILL: ExpeditionSystemSkillDef = {
     displayName: '因粮于敌',
     effect: 'post_battle_troop_pct',
-    magnitude: 0.09,
+    magnitude: 0.15,
 };
 
 /** 守军系统技 effect（非战术十格 / 战略六格） */

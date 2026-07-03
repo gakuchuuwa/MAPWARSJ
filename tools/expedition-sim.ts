@@ -12,7 +12,7 @@
  *       - 因粮于敌 str_07 (post_battle_troop_pct)：胜后当前兵 +11%
  *       - 以战养战 str_13 (field_resupply)：胜后额外补回本场战损的一部分（远征在外缓回血）
  *   · 兵力上限 = MAX_TROOPS（默认 10 万）
- *   · 乘胜追击/兵贵神速/履险如夷/直捣黄龙/星火燎原/募兵有道：行军/爆兵类，
+ *   · 乘胜追击/兵贵神速/履险如夷/直捣黄龙/足食足兵/募兵有道：行军/爆兵类，
  *     对"连续战斗存活"无直接影响，本模拟不计（会体现为这些组合场数相近）。
  *
  * 运行：
@@ -30,6 +30,7 @@ import {
     TACTICAL_SKILL_ENTRIES_V1,
 } from '../src/data/GeneralSkills';
 import { FACTION_GENERALS } from '../src/data/FactionGenerals';
+import { writeFileSync } from 'node:fs';
 
 // ────────── 参数 ──────────
 function argNum(flag: string, def: number): number {
@@ -44,7 +45,7 @@ function argStr(flag: string, def: string): string {
 const LEGION_TROOPS = argNum('--legion', 50000);
 const ENEMY_TROOPS = argNum('--enemy', 10000);
 const MAX_TROOPS = argNum('--cap', 100000);
-const TRIALS = Math.max(100, argNum('--trials', 1000));
+const TRIALS = argNum('--trials', 100);
 const MODE = argStr('--mode', 'general'); // general | combos | both
 const REGION = argStr('--region', 'CENTRAL'); // 统一文化区，专注比技能
 const HARD_CAP_BATTLES = argNum('--maxbattles', 60); // 防无敌组合无限循环
@@ -80,14 +81,14 @@ const tsNameById = new Map<string, string>();
 for (const e of TACTICAL_SKILL_ENTRIES_V1) tsNameById.set(e.id, e.displayName);
 
 // ────────── 续航：战略技胜后补员 ──────────
-function applyStrategicSustain(survivors: number, lostThisBattle: number, strId?: string): number {
+function applyStrategicSustain(survivors: number, lostThisBattle: number, strId: string | undefined, enemyInitialTroops: number): number {
     let t = survivors;
     const str = strId ? getStrategicSkillDef(strId) : null;
     if (str?.effect === 'post_battle_troop_pct') {
-        t += Math.floor(t * str.magnitude); // 因粮于敌 +11%
+        t += Math.floor(enemyInitialTroops * str.magnitude); // 因粮于敌（拔上限）：按击败敌军数量吸血
     }
     if (str?.effect === 'field_resupply') {
-        t += Math.floor(Math.max(0, lostThisBattle) * FIELD_RESUPPLY_RATIO); // 以战养战
+        t += Math.floor(Math.max(0, lostThisBattle) * FIELD_RESUPPLY_RATIO); // 以战养战（保下限）：按自身战损补回
     }
     return Math.min(t, MAX_TROOPS);
 }
@@ -110,7 +111,7 @@ function runOneExpedition(tsId: string | undefined, strId: string | undefined): 
         if (!r.attackerWon || r.attSurvivors < 1) break;
         battles++;
         const lost = before - r.attSurvivors;
-        troops = applyStrategicSustain(r.attSurvivors, lost, strId);
+        troops = applyStrategicSustain(r.attSurvivors, lost, strId, ENEMY_TROOPS);
     }
     return battles;
 }
@@ -179,6 +180,18 @@ if (MODE === 'general' || MODE === 'both') {
     }
     rows.sort((a, b) => b.stat.avg - a.stat.avg);
 
+    const outPath = process.argv.includes('--full')
+        ? (process.argv[process.argv.indexOf('--full') + 1] || 'scratch/expedition_general_full.csv')
+        : null;
+    if (outPath) {
+        const lines = ['rank,name,gid,tactical,strategic,avg,median,min,max,capped'];
+        rows.forEach((r, i) => lines.push(
+            `${i + 1},${JSON.stringify(r.name)},${r.gid},${JSON.stringify(r.ts)},${JSON.stringify(r.str)},${r.stat.avg.toFixed(4)},${r.stat.median},${r.stat.min},${r.stat.max},${r.stat.capped}`,
+        ));
+        writeFileSync(outPath, lines.join('\n'), 'utf8');
+        console.log(`\n[全量导出] ${rows.length} 名 → ${outPath}`);
+    }
+
     console.log(`\n══════════════ 名将排行榜（按平均连胜场数） ══════════════  共 ${rows.length} 名`);
     console.log(`${pad('#', 4)}${pad('名将', 10)}${pad('战术技', 12)}${pad('战略技', 12)}${pad('均场', 7)}${pad('中位', 6)}${pad('最少', 6)}${pad('最多', 6)}`);
     console.log('─'.repeat(70));
@@ -193,7 +206,7 @@ if (MODE === 'general' || MODE === 'both') {
 
 // ────────── 视角2：技能组合排行 ──────────
 if (MODE === 'combos' || MODE === 'both') {
-    const comboTrials = MODE === 'both' ? Math.min(TRIALS, 500) : TRIALS;
+    const comboTrials = Math.max(5, Math.floor(TRIALS / 2));
     type Row = { ts: string; str: string; tsId: string; strId: string; stat: Stat };
     const rows: Row[] = [];
     for (const tsId of ALL_TS) {
