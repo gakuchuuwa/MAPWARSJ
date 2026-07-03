@@ -988,6 +988,7 @@ export const FACTIONS: Faction[] = [
     { id: 'konbaung', name: '贡榜' },
 
     { id: 'qi_d', name: '戚家' },
+
     { id: 'wangyan', name: '太行' }, // 王彦八字军@飞狐；旗号取地名太行（禁人名「彦」）
     // ── 2026-06-11 新增：明末精锐（天雄/潼津）──
     { id: 'tianxiong', name: '魏博' },           // 卢象升天雄军@大名（贾庄标志战；旗号魏博≠番号天雄军）

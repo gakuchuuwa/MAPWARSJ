@@ -630,7 +630,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_077', layer: 'tactical', series: 'fate', index: 77,
         displayName: '长围久困', sourceQuote: '《清史稿·太宗本纪》：“长围久困，城中食尽。”',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.7, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.55, luckMax: 0.95, engineStatus: 'ready',
     },
     {
         id: 'ts_078', layer: 'tactical', series: 'counter', index: 78,
@@ -672,7 +672,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_084', layer: 'tactical', series: 'fate', index: 84,
         displayName: '铁骑蹙敌', sourceQuote: '《明史·李成梁传》：“多选健卒，铁骑蹙敌。”',
         baseEffect: 'luck_variance_self', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.3, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.9, luckMax: 1.45, engineStatus: 'ready',
     },
     {
         id: 'ts_085', layer: 'tactical', series: 'enhance', index: 85,
@@ -684,7 +684,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_086', layer: 'tactical', series: 'fate', index: 86,
         displayName: '以逸待劳', sourceQuote: '《新唐书·吐蕃传》：“钦陵悉众拒战，以逸待劳。”',
         baseEffect: 'luck_variance_enemy', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
-        magnitude: 0.6, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.2, luckMax: 0.85, engineStatus: 'ready',
     },
     {
         id: 'ts_087', layer: 'tactical', series: 'casualty', index: 87,
@@ -714,7 +714,86 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_091', layer: 'tactical', series: 'fate', index: 91,
         displayName: '阻险御敌', sourceQuote: '《新唐书·渤海传》：“祚荣引众阻险以御之。”',
         baseEffect: 'luck_variance_enemy', condition: 'terrain_mountain', phase: 'opening_roll',
-        magnitude: 0.65, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.25, luckMax: 0.85, engineStatus: 'ready',
+    },
+    // ── 第三批 T1（13人；ID 避开迁移中的 095-106 区段）──
+    {
+        id: 'ts_092', layer: 'tactical', series: 'enhance', index: 92,
+        displayName: '痛饮黄龙', sourceQuote: '《宋史·岳飞传》：“直抵黄龙府，与诸君痛饮尔。”',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_093', layer: 'tactical', series: 'casualty', index: 93,
+        displayName: '鸳鸯阵法', sourceQuote: '《纪效新书·鸳鸯阵》；戚继光台州九战九捷。',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.5, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_094', layer: 'tactical', series: 'enhance', index: 94,
+        displayName: '克复燕京', sourceQuote: '《明史·徐达传》：“元帝北遁，遂克大都。”',
+        baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_107', layer: 'tactical', series: 'troop', index: 107,
+        displayName: '倍道奔袭', sourceQuote: '《三国志·武帝纪》：“太祖乃留辎重，轻兵兼道以出……斩蹋顿。”',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        magnitude: 0.2, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_108', layer: 'tactical', series: 'enhance', index: 108,
+        displayName: '倾国灭楚', sourceQuote: '《史记·白起王翦列传》：“王翦将兵六十万……大破楚军。”',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_109', layer: 'tactical', series: 'enhance', index: 109,
+        displayName: '高平陷阵', sourceQuote: '《宋史·太祖本纪》：“高平之战……士皆奋命，北汉兵大败。”',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_110', layer: 'tactical', series: 'fate', index: 110,
+        displayName: '望旗遁去', sourceQuote: '《宋史·杨业传》：“契丹望见业旌旗即引去。”',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.15, luckMax: 0.85, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_111', layer: 'tactical', series: 'fate', index: 111,
+        displayName: '屡蹶复振', sourceQuote: '《明史·李自成传》：“独与刘宗敏等十八骑溃围出……后复大炽。”',
+        baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
+        magnitude: 1, comebackThreshold: 0.85, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_112', layer: 'tactical', series: 'troop', index: 112,
+        displayName: '夜度昆仑', sourceQuote: '《宋史·狄青传》：“青出敌不意……一夕绝昆仑关。”',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_siege_attacker', phase: 'pre_opening_troops',
+        magnitude: 0.25, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_113', layer: 'tactical', series: 'enhance', index: 113,
+        displayName: '收复河湟', sourceQuote: '《资治通鉴》：“张议潮以瓜、沙等十一州归于唐。”',
+        baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_114', layer: 'tactical', series: 'enhance', index: 114,
+        displayName: '桶狭突袭', sourceQuote: '《信长公记》：“桶狭间山……今川义元讨死。”',
+        baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
+        magnitude: 1.5, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_115', layer: 'tactical', series: 'enhance', index: 115,
+        displayName: '横扫西陲', sourceQuote: '《明史·帖木儿传》：“拓地数千里，西域诸国咸畏服。”',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_116', layer: 'tactical', series: 'enhance', index: 116,
+        displayName: '灭国擒主', sourceQuote: '《旧唐书·苏定方传》：“前后灭三国，皆生擒其主。”',
+        baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
     },
 ];
 
@@ -827,6 +906,10 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_066: 'limited', ts_067: 'limited', ts_068: 'limited', ts_069: 'limited',
     ts_070: 'limited', ts_071: 'limited', ts_072: 'limited', ts_073: 'limited',
     ts_074: 'limited', ts_075: 'limited', ts_076: 'limited',
+    ts_092: 'limited', ts_093: 'limited', ts_094: 'limited',
+    ts_107: 'limited', ts_108: 'limited', ts_109: 'limited', ts_110: 'limited',
+    ts_111: 'limited', ts_112: 'limited', ts_113: 'limited', ts_114: 'limited',
+    ts_115: 'limited', ts_116: 'limited',
 };
 
 export function getTacticalAssignTier(skillId: string): TacticalAssignTier | null {
