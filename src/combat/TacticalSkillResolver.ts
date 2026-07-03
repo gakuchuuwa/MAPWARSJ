@@ -89,8 +89,9 @@ export function evaluateTacticalCondition(
             return ctx.enemyTroops > 0
                 && ctx.selfTroops / ctx.enemyTroops < (entry?.magnitude ?? 0.3);
         case 'lose_as_underdog':
-            // 结算时由调用方在已判败且以少打多时传入
-            return ctx.selfTroops < ctx.enemyTroops;
+            // 以少打多而败：判据为【开战初始兵力比】，绝不用战后残兵。
+            // 战后败方已清零 → selfTroops≈0 恒 <enemyTroops，会把条件技退化成无条件。
+            return ctx.selfInitialTroops < ctx.enemyInitialTroops;
         case 'has_elite_legion':
             return ctx.selfHasEliteLegion;
         case 'first_sortie':
@@ -142,10 +143,142 @@ export function isTacticalEffectImplemented(effect: TacticalBaseEffect): boolean
         case 'luck_variance_self':
         case 'luck_variance_enemy':
         case 'luck_lock_self':
+        // ── 战损系（Step2 已接 BattleField update/resolve）──
+        case 'win_casualty_reduction':
+        case 'elite_casualty_reduction':
+        case 'post_recovery_rate':
+        case 'lose_enemy_casualty_boost':
+        case 'lose_zero_enemy_recovery':
             return true;
         default:
             return false;
     }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 战损系解析（纯逻辑；由 BattleField.update / resolve 调用施加）
+//
+// 统一货币口径：战损系不改胜率，只改「打完还剩多少兵」= 跟随军团存活率。
+// 语义单一真理源集中在此，避免 BattleField 里散落魔法数。
+//
+// ── Step 2 引擎接线契约（三条定死规则，接 BattleField 时必须遵守）──
+//  【规则1·每侧一将一技】NvN 一侧可能多个带将军团，但沿用引擎既有
+//     findEligibleGeneralUnit：每侧只取第一个合格将的技。下列数组接口
+//     只作「宽容入参」，不授权把整侧技全塞进来叠乘（否则 0.6×0.5×0.2=84% 减免）。
+//  【规则2·减损跟随强弱重算链】减损值本身开战锁死（不逐帧重算，穷寇勿迫等
+//     条件在开战判定一次），但「哪侧是强方」会在 refreshPredictedSidesFromTotals
+//     翻转 → 应像 fearLossReduction 一样：两侧各缓存一个减损值，强方取自己那侧，
+//     翻盘换边时跟着换，绝不张冠李戴。
+//  【规则3·战后结算顺序】BattleField.resolve 必须按此序，顺序错会静默削弱咬人：
+//     ① 斩草除根：败方持技 → 胜方恢复率归零
+//     ② 恢复：基于本场战损 × 恢复率（取最大值规则）
+//     ③ 咬人：胜方本场战损 × mult 追加扣兵
+//     ④ 胜方保底：硬断言胜方存活 ≥ 10% 初始兵（防败方咬穿）
+// ─────────────────────────────────────────────────────────────
+
+const clamp01 = (v: number, hi = 1): number => Math.max(0, Math.min(hi, v));
+
+/** 战中被动减损结果（施加于该侧作为胜方/强方时的战损） */
+export interface MidBattleCasualtyReduction {
+    /** 战损减免比例 0..0.9（1 - keep）；BattleField 用它抬高强方存活地板 */
+    lossReduction: number;
+    /** 生效技（UI / 日志 / 播报） */
+    entries: TacticalSkillEntry[];
+}
+
+/**
+ * 战中减损：`win_casualty_reduction`（游刃有余/兵不血刃/众志成城/穷寇勿迫）
+ *   + `elite_casualty_reduction`（如臂使指）。
+ * 只在该侧为（预判）胜方/强方时，由 BattleField 抬高其存活地板。
+ * 多技相乘合并（引擎实际一侧仅 1 名合格将，通常单元素）。
+ */
+export function resolveMidBattleCasualtyReduction(
+    skillIds: (string | undefined | null)[],
+    ctx: TacticalConditionContext,
+): MidBattleCasualtyReduction {
+    let keep = 1;
+    const entries: TacticalSkillEntry[] = [];
+    for (const id of skillIds) {
+        if (!id) continue;
+        const entry = resolveGeneralTacticalEntry(id);
+        if (!entry) continue;
+        if (
+            entry.baseEffect !== 'win_casualty_reduction'
+            && entry.baseEffect !== 'elite_casualty_reduction'
+        ) continue;
+        if (!isTacticalSkillActive(entry, ctx)) continue;
+        keep *= (1 - clamp01(entry.magnitude, 0.9));
+        entries.push(entry);
+    }
+    return { lossReduction: 1 - keep, entries };
+}
+
+/**
+ * 战后恢复率：`post_recovery_rate`（休养生息 0.5 / 爱兵如子 0.7）。
+ * 胜方持有则用技的 magnitude 覆盖基础恢复率；多技取最大；无则返回 baseRate。
+ */
+export function resolvePostBattleRecoveryRate(
+    winnerSkillIds: (string | undefined | null)[],
+    ctx: TacticalConditionContext,
+    baseRate: number,
+): { rate: number; entry?: TacticalSkillEntry } {
+    let rate = baseRate;
+    let entry: TacticalSkillEntry | undefined;
+    for (const id of winnerSkillIds) {
+        if (!id) continue;
+        const e = resolveGeneralTacticalEntry(id);
+        if (!e || e.baseEffect !== 'post_recovery_rate') continue;
+        if (!isTacticalSkillActive(e, ctx)) continue;
+        if (e.magnitude > rate) {
+            rate = e.magnitude;
+            entry = e;
+        }
+    }
+    return { rate: clamp01(rate), entry };
+}
+
+/**
+ * 败方咬人：`lose_enemy_casualty_boost`（困兽犹斗 / 宁为玉碎 / 虽败犹荣）。
+ * 语义统一 = 「胜方本场战损的最终倍率」（>1 才有意义）。
+ *   困兽犹斗 1.5（胜方战损×1.5）、宁为玉碎 2.0、虽败犹荣 2.0（以少败）。
+ * 由 BattleField.resolve 在败方持技且条件满足时，对胜方追加扣兵。
+ * ctx 应为「败方视角」（selfTroops = 败方兵）。多技取最大倍率。
+ */
+export function resolveLoserBiteWinnerLossMult(
+    loserSkillIds: (string | undefined | null)[],
+    loserCtx: TacticalConditionContext,
+): { mult: number; entry?: TacticalSkillEntry } {
+    let mult = 1;
+    let entry: TacticalSkillEntry | undefined;
+    for (const id of loserSkillIds) {
+        if (!id) continue;
+        const e = resolveGeneralTacticalEntry(id);
+        if (!e || e.baseEffect !== 'lose_enemy_casualty_boost') continue;
+        if (!isTacticalSkillActive(e, loserCtx)) continue;
+        if (e.magnitude > mult) {
+            mult = e.magnitude;
+            entry = e;
+        }
+    }
+    return { mult, entry };
+}
+
+/**
+ * 斩草除根：`lose_zero_enemy_recovery`（斩草除根）。
+ * 败方持有 → 胜方战后恢复率归零。ctx 为败方视角。
+ */
+export function resolveWinnerRecoveryBlockedByLoser(
+    loserSkillIds: (string | undefined | null)[],
+    loserCtx: TacticalConditionContext,
+): { blocked: boolean; entry?: TacticalSkillEntry } {
+    for (const id of loserSkillIds) {
+        if (!id) continue;
+        const e = resolveGeneralTacticalEntry(id);
+        if (!e || e.baseEffect !== 'lose_zero_enemy_recovery') continue;
+        if (!isTacticalSkillActive(e, loserCtx)) continue;
+        return { blocked: true, entry: e };
+    }
+    return { blocked: false };
 }
 
 /** 对手视角翻转（评估扰敌技条件用） */

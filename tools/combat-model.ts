@@ -14,9 +14,23 @@
 import { GameConfig } from '../src/config/GameConfig';
 import {
     buildTacticalConditionContext,
+    resolveGeneralTacticalEntry,
     resolveOpeningFateEntry,
     resolveOpeningLuckMultiplier,
+    resolveMidBattleCasualtyReduction,
+    resolvePostBattleRecoveryRate,
+    resolveLoserBiteWinnerLossMult,
+    resolveWinnerRecoveryBlockedByLoser,
 } from '../src/combat/TacticalSkillResolver';
+
+/** 战损系 baseEffect 集合（v1 catalog；判定是否需逐帧存活模拟） */
+const CASUALTY_EFFECTS = new Set<string>([
+    'win_casualty_reduction',
+    'elite_casualty_reduction',
+    'post_recovery_rate',
+    'lose_enemy_casualty_boost',
+    'lose_zero_enemy_recovery',
+]);
 import type { BattleType } from '../src/combat/CombatSystem';
 import {
     TACTICAL_SKILL_CATALOG,
@@ -68,6 +82,8 @@ export interface Unit {
     maxTroops: number;
     mult: number;
     profile: GeneralProfile | null;
+    /** 精锐档 0..4；null=非精锐（战损系 has_elite_legion 判定用） */
+    eliteTier: number | null;
 }
 
 // ────────────────────────── 单位构建 ──────────────────────────
@@ -107,12 +123,18 @@ export function makeUnit(spec: UnitSpec): Unit {
         maxTroops: spec.maxTroops ?? spec.troops,
         mult,
         profile: resolveProfile(spec.general),
+        eliteTier: spec.eliteTier ?? null,
     };
 }
 
 // ────────────────────────── 技能查询 ──────────────────────────
 function eligible(units: Unit[]): Unit | null {
     for (const u of units) if (u.profile && u.troops > 0) return u;
+    return null;
+}
+/** 只看 profile、不看兵力：战后结算取败方技（败方兵力已归零，不能用 eligible） */
+function eligibleProfile(units: Unit[]): Unit | null {
+    for (const u of units) if (u.profile) return u;
     return null;
 }
 function openingTacticalOf(u: Unit | null) {
@@ -248,6 +270,7 @@ export interface SimResult {
  */
 export function simulateOnce(
     attSpecs: UnitSpec[], defSpecs: UnitSpec[], terrain: Terrain, forceTicks = false,
+    battleType: BattleType = 'field',
 ): SimResult {
     const att = attSpecs.map(makeUnit);
     const def = defSpecs.map(makeUnit);
@@ -258,8 +281,8 @@ export function simulateOnce(
     const attInit = att.reduce((s, u) => s + u.troops, 0);
     const defInit = def.reduce((s, u) => s + u.troops, 0);
 
-    let attRoll = sumAdjusted(att) * rollLuckForSide(att, def, 'field', terrain, true);
-    let defRoll = sumAdjusted(def) * rollLuckForSide(def, att, 'field', terrain, false);
+    let attRoll = sumAdjusted(att) * rollLuckForSide(att, def, battleType, terrain, true);
+    let defRoll = sumAdjusted(def) * rollLuckForSide(def, att, battleType, terrain, false);
     ({ attRoll, defRoll } = applyOpeningRollMults(att, def, attRoll, defRoll));
     ({ attRoll, defRoll } = applyStrategicRollMults(att, def, attRoll, defRoll, terrain));
 
@@ -267,20 +290,30 @@ export function simulateOnce(
 
     const attCb = comebackTacticalOf(eligible(att));
     const defCb = comebackTacticalOf(eligible(def));
-    if (!attCb && !defCb && !forceTicks) {
-        // 快速判定：强方全须、弱方归零（存活兵力用开战值近似）
+    const hasCasualtySkill =
+        casualtySkillOf(eligible(att)) || casualtySkillOf(eligible(def));
+    // 快速判定仅在「无逆局技、无战损技、非强制逐帧」时走：战损系需逐帧才能体现存活。
+    if (!attCb && !defCb && !hasCasualtySkill && !forceTicks) {
         return {
             attackerWon: attackerStronger,
             attSurvivors: attackerStronger ? attInit : 0,
             defSurvivors: attackerStronger ? 0 : defInit,
         };
     }
-    return simulateTicks(att, def, attInit, defInit, attackerStronger, terrain);
+    return simulateTicks(att, def, attInit, defInit, attackerStronger, terrain, battleType);
+}
+
+/** 该单位是否持战损系技（v1 baseEffect；用于决定是否走逐帧存活模拟） */
+function casualtySkillOf(u: Unit | null): boolean {
+    const id = u?.profile?.tacticalSkillId;
+    if (!id) return false;
+    const entry = resolveGeneralTacticalEntry(id);
+    return entry ? CASUALTY_EFFECTS.has(entry.baseEffect) : false;
 }
 
 function simulateTicks(
     att: Unit[], def: Unit[], attInit: number, defInit: number,
-    attackerStronger: boolean, terrain: Terrain,
+    attackerStronger: boolean, terrain: Terrain, battleType: BattleType = 'field',
 ): SimResult {
     const dt = 0.1;
     const targetDuration = calcDuration(attInit + defInit);
@@ -312,6 +345,27 @@ function simulateTicks(
         return 0.8 * Math.max(0, Math.min(1, (strongIntim - weakIntim) / 4));
     };
 
+    // 战损系战中减损（强方 win_casualty_reduction / elite_casualty_reduction）：与引擎一致，
+    // 与 fearLoss 叠乘抬高强方存活地板；穷寇勿迫用实时兵力，逐帧自然反映「敌残才触发」。
+    const casualtyRed = (): number => {
+        const strongerUnit = attackerStronger ? attU() : defU();
+        const id = strongerUnit?.profile?.tacticalSkillId;
+        if (!id) return 0;
+        const sInit = attackerStronger ? attInit : defInit;
+        const wInit = attackerStronger ? defInit : attInit;
+        const sNow = attackerStronger ? att[0].troops : def[0].troops;
+        const wNow = attackerStronger ? def[0].troops : att[0].troops;
+        const sHasElite = (attackerStronger ? att : def).some(u => u.eliteTier != null);
+        const ctx = buildTacticalConditionContext({
+            battleType, terrain,
+            selfTroops: sNow, enemyTroops: wNow,
+            selfInitialTroops: sInit, enemyInitialTroops: wInit,
+            selfIsAttacker: attackerStronger,
+            selfHasEliteLegion: sHasElite,
+        });
+        return resolveMidBattleCasualtyReduction([id], ctx).lossReduction;
+    };
+
     while (att[0].troops >= 1 && def[0].troops >= 1 && elapsed < targetDuration) {
         elapsed += dt;
         const timeLeft = Math.max(0.05, targetDuration - elapsed);
@@ -322,7 +376,8 @@ function simulateTicks(
         const weakerTroops = attackerStronger ? def[0].troops : att[0].troops;
 
         const ratio = Math.max(1, strongerInit / Math.max(1, weakerInit));
-        const strongerFloor = strongerInit * (1 - Math.max(0.05, 0.5 / ratio) * (1 - fearLoss()));
+        const strongerFloor =
+            strongerInit * (1 - Math.max(0.05, 0.5 / ratio) * (1 - fearLoss()) * (1 - casualtyRed()));
 
         const weakerDmg = (weakerTroops / timeLeft) * dt;
         const strongerDmg = (Math.max(0, strongerTroops - strongerFloor) / timeLeft) * dt;
@@ -356,11 +411,43 @@ function simulateTicks(
         }
     }
 
-    const attS = att[0].troops, defS = def[0].troops;
+    const attS0 = att[0].troops, defS0 = def[0].troops;
     let attackerWon: boolean;
-    if (attS < 1 && defS >= 1) attackerWon = false;
-    else if (defS < 1 && attS >= 1) attackerWon = true;
+    if (attS0 < 1 && defS0 >= 1) attackerWon = false;
+    else if (defS0 < 1 && attS0 >= 1) attackerWon = true;
     else attackerWon = attackerStronger;
+
+    // ── 战后战损结算（契约顺序 ①斩根→②恢复→③咬人→④保底，与 BattleField.resolve 一致）──
+    const winnerUnits = attackerWon ? att : def;
+    const loserUnits = attackerWon ? def : att;
+    const winnerInit = attackerWon ? attInit : defInit;
+    const loserInit = attackerWon ? defInit : attInit;
+    const base = GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE;
+    // 用 eligibleProfile（忽略兵力）：败方战斗结束时兵力已归零，eligible 会漏取其技
+    const winnerId = eligibleProfile(winnerUnits)?.profile?.tacticalSkillId ?? null;
+    const loserId = eligibleProfile(loserUnits)?.profile?.tacticalSkillId ?? null;
+    const mkCtx = (selfInit: number, enemyInit: number, selfIsAtt: boolean) =>
+        buildTacticalConditionContext({
+            battleType, terrain,
+            selfTroops: selfInit, enemyTroops: enemyInit,
+            selfInitialTroops: selfInit, enemyInitialTroops: enemyInit,
+            selfIsAttacker: selfIsAtt,
+        });
+    const winnerCtx = mkCtx(winnerInit, loserInit, attackerWon);
+    const loserCtx = mkCtx(loserInit, winnerInit, !attackerWon);
+    const blocked = resolveWinnerRecoveryBlockedByLoser([loserId], loserCtx).blocked;
+    const recRate = blocked ? 0 : resolvePostBattleRecoveryRate([winnerId], winnerCtx, base).rate;
+    const biteMult = resolveLoserBiteWinnerLossMult([loserId], loserCtx).mult;
+    const wUnit = winnerUnits[0];
+    const lost = Math.max(0, winnerInit - wUnit.troops);
+    const recovery = Math.floor(lost * recRate);
+    const extraBite = biteMult > 1 ? Math.floor(lost * (biteMult - 1)) : 0;
+    const floor10 = Math.floor(winnerInit * 0.10);
+    let finalW = wUnit.troops + recovery - extraBite;
+    if (extraBite > 0 && finalW < floor10) finalW = floor10;
+
+    const attS = attackerWon ? finalW : 0;
+    const defS = attackerWon ? 0 : finalW;
     return { attackerWon, attSurvivors: Math.round(attS), defSurvivors: Math.round(defS) };
 }
 
@@ -401,10 +488,11 @@ function clone(specs: UnitSpec[]): UnitSpec[] {
 /** 攻方胜率 */
 export function winRate(
     attSpecs: UnitSpec[], defSpecs: UnitSpec[], trials: number, terrain: Terrain = 'plain',
+    battleType: BattleType = 'field',
 ): number {
     let wins = 0;
     for (let i = 0; i < trials; i++) {
-        if (simulateOnce(clone(attSpecs), clone(defSpecs), terrain).attackerWon) wins++;
+        if (simulateOnce(clone(attSpecs), clone(defSpecs), terrain, false, battleType).attackerWon) wins++;
     }
     return wins / trials;
 }
@@ -421,11 +509,12 @@ export interface AggResult {
 /** 聚合：胜率 + 攻方胜局平均存活兵力（forceTicks 逐帧，用于跟随军团续航评估） */
 export function aggregate(
     attSpecs: UnitSpec[], defSpecs: UnitSpec[], trials: number, terrain: Terrain = 'plain',
+    battleType: BattleType = 'field',
 ): AggResult {
     let wins = 0, survSum = 0;
     const initTroops = attSpecs.reduce((s, u) => s + u.troops, 0);
     for (let i = 0; i < trials; i++) {
-        const r = simulateOnce(clone(attSpecs), clone(defSpecs), terrain, true);
+        const r = simulateOnce(clone(attSpecs), clone(defSpecs), terrain, true, battleType);
         if (r.attackerWon) { wins++; survSum += r.attSurvivors; }
     }
     return {

@@ -44,6 +44,8 @@ import {
     resolveSideOpeningFateLuck,
     sideBasePower,
     getBattleTerrainKind,
+    resolveSideMidBattleCasualtyReduction,
+    resolvePostBattleCasualtyOutcome,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 import {
@@ -120,6 +122,13 @@ export class BattleField {
     /** 威慑系统：强方战损减免 0~0.8（保命），与战斗节奏时长系数（碾压短/巅峰长） */
     private fearLossReduction: number = 0;
     private fearDurationMult: number = 1;
+
+    // ── 战损系（Step2）：强方战损减免，开战锁死 + 跟随强弱翻转重算 ──
+    //  值随「谁是强方」在 recomputeStrongerCasualtyReduction 里更新（挂在威慑重算链，
+    //  与 fearLossReduction 同步），穷寇勿迫另在 update 里按弱方跌破 20% 锁存触发。
+    private strongerCasualtyReduction: number = 0;
+    /** 穷寇勿迫：弱方已跌破 20% 初始并触发过一次减损重算（锁存防抖，翻转时清） */
+    private poorBanditLatched: boolean = false;
 
     // 伤害系数现在从 GameConfig 读取
 
@@ -256,6 +265,7 @@ export class BattleField {
         if (this.presetResult) {
             this.fearLossReduction = 0;
             this.fearDurationMult = 1;
+            this.strongerCasualtyReduction = 0;
             return;
         }
         const MAX = 4;
@@ -271,6 +281,38 @@ export class BattleField {
         const gap = Math.abs(strongerIntim - weakerIntim);
         const excitement = (minIntim / MAX) * (1 - gap / MAX);
         this.fearDurationMult = 0.5 + (1.6 - 0.5) * excitement;
+
+        // 战损系（Step2）：强方减损跟随强弱重算；穷寇锁存清零，交 update 重新监控
+        this.poorBanditLatched = false;
+        this.recomputeStrongerCasualtyReduction();
+    }
+
+    /**
+     * 重算强方战损减免（战损系 win_casualty_reduction / elite_casualty_reduction）。
+     * 用实时兵力求值以支持穷寇勿迫（弱方跌破 20% 初始）；由威慑重算链 + update 锁存触发，
+     * 与 fearLossReduction 叠乘作用于 update 的 strongerLossPercent。
+     */
+    private recomputeStrongerCasualtyReduction(): void {
+        if (this.presetResult) { this.strongerCasualtyReduction = 0; return; }
+        const stronger = this.predictedStrongerGroup;
+        const weaker = this.predictedWeakerGroup;
+        const strongerUnits = stronger.units
+            .filter(bu => !bu.isDefeated && bu.unit.troops > 0)
+            .map(bu => bu.unit);
+        const weakerUnits = weaker.units
+            .filter(bu => !bu.isDefeated && bu.unit.troops > 0)
+            .map(bu => bu.unit);
+        if (strongerUnits.length === 0) { this.strongerCasualtyReduction = 0; return; }
+        const terrain = getBattleTerrainKind([...strongerUnits, ...weakerUnits], this.type);
+        const res = resolveSideMidBattleCasualtyReduction(
+            strongerUnits,
+            weakerUnits,
+            this.type,
+            terrain,
+            stronger === this.attackerGroup,
+            { enemyTroops: weaker.totalTroops, enemyInitialTroops: Math.max(1, weaker.initialTotalTroops) },
+        );
+        this.strongerCasualtyReduction = res.lossReduction;
     }
 
     /** 预设结果或「初始兵力 × 随机系数」一次定胜负走向 */
@@ -511,8 +553,15 @@ export class BattleField {
         const targetDuration = this.targetDuration;
         const timeLeft = Math.max(0.05, targetDuration - this.elapsed);
 
-        // 强方存活地板：1:1 留 50%，10:1 留 95%；威慑优势再减免战损（保命核心）
-        const strongerLossPercent = Math.max(0.05, 0.5 / ratio) * (1 - this.fearLossReduction);
+        // 穷寇勿迫（战损系）：弱方跌破 20% 初始 → 触发一次强方减损重算并锁存（防每帧重算）
+        if (!this.poorBanditLatched && weakerInitial > 0 && weakerGroup.totalTroops < 0.2 * weakerInitial) {
+            this.poorBanditLatched = true;
+            this.recomputeStrongerCasualtyReduction();
+        }
+
+        // 强方存活地板：1:1 留 50%，10:1 留 95%；威慑 + 战损系减损再抬高存活（保命核心）
+        const strongerLossPercent =
+            Math.max(0.05, 0.5 / ratio) * (1 - this.fearLossReduction) * (1 - this.strongerCasualtyReduction);
         const strongerFloor = strongerInitial * (1 - strongerLossPercent);
 
         // 实时收敛速率：弱方→0，强方→存活地板
@@ -701,6 +750,37 @@ export class BattleField {
 
         gameLog('battle', `🏆 [BattleField] 战斗结束! 胜者: ${winnerGroup.factionId}`);
 
+        // ── 战损系（Step2）：清零败方【之前】捕获战损结算（败方 destroy 后残兵归零，判据用开战兵）──
+        //   契约顺序：①斩根(恢复归零) → ②恢复 → ③咬人 → ④胜方保底 10% 初始兵。
+        //   事件战斗（presetResult）与开局/逆局/威慑一致：整套战损技跳过，走默认恢复率。
+        let casualtyOutcome: ReturnType<typeof resolvePostBattleCasualtyOutcome> = {
+            recoveryRate: GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE,
+            biteWinnerLossMult: 1,
+            recoveryBlocked: false,
+        };
+        if (!this.presetResult) {
+            const casualtyTerrain = getBattleTerrainKind(
+                [...winnerGroup.units, ...loserGroup.units].map(bu => bu.unit),
+                this.type,
+            );
+            casualtyOutcome = resolvePostBattleCasualtyOutcome(
+                winnerGroup.units.map(bu => bu.unit),
+                loserGroup.units.map(bu => bu.unit),
+                this.type,
+                casualtyTerrain,
+                winnerGroup === this.attackerGroup,
+                GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE,
+                Math.max(1, winnerGroup.initialTotalTroops),
+                Math.max(1, loserGroup.initialTotalTroops),
+            );
+        }
+        if (casualtyOutcome.recoveryBlocked) {
+            gameLog('battle', `🥀 [战损] ${casualtyOutcome.blockEntry?.displayName ?? '斩草除根'}：${winnerGroup.factionId} 胜方战后恢复归零`);
+        }
+        if (casualtyOutcome.biteWinnerLossMult > 1) {
+            gameLog('battle', `🦂 [战损] ${casualtyOutcome.biteEntry?.displayName ?? '咬人'}：胜方本场战损 ×${casualtyOutcome.biteWinnerLossMult}`);
+        }
+
         // 处理失败方（先 onBattleEnd 再 destroy，避免败军误触发战胜驻留）
         loserGroup.units.forEach(bu => {
             bu.unit.setTroops(0);
@@ -713,15 +793,26 @@ export class BattleField {
             }
         });
 
-        const recoveryRate = GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE;
+        const recoveryRate = casualtyOutcome.recoveryRate;
+        const biteMult = casualtyOutcome.biteWinnerLossMult;
 
         // 处理胜利方
         winnerGroup.units.filter(u => !u.isDefeated).forEach(bu => {
-            const lost = bu.initialTroops - bu.unit.troops;
-            const recovery = Math.floor(lost * recoveryRate);
+            const lost = Math.max(0, bu.initialTroops - bu.unit.troops); // 本场战损（恢复/咬人前）
+            const recovery = Math.floor(lost * recoveryRate);           // ②恢复（斩根时 rate=0）
+            const extraBite = biteMult > 1 ? Math.floor(lost * (biteMult - 1)) : 0; // ③咬人追加扣兵
+            const survivalFloor = Math.floor(bu.initialTroops * 0.10);  // ④胜方保底 10% 初始兵
+            let finalTroops = bu.unit.troops + recovery - extraBite;
+            // 保底只防「被咬穿」；无咬人时不得白送兵（自然战损低于 10% 是收敛模型的事）
+            if (extraBite > 0 && finalTroops < survivalFloor) finalTroops = survivalFloor;
+            if (finalTroops !== bu.unit.troops) {
+                bu.unit.setTroops(finalTroops);
+            }
             if (recovery > 0) {
-                bu.unit.setTroops(bu.unit.troops + recovery);
                 gameLog('battle', `🩹 [BattleField] ${bu.unit.name} 恢复 ${recovery} 伤兵（恢复率 ${recoveryRate}）`);
+            }
+            if (extraBite > 0) {
+                gameLog('battle', `🦂 [BattleField] ${bu.unit.name} 被咬 -${extraBite}（保底存活 ${survivalFloor}）`);
             }
 
             const strategicBonus = applyPostBattleStrategicBonus(bu.unit, this.type);

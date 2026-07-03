@@ -19,10 +19,11 @@ const FATE_SKILLS: FateSkill[] = [
     { id: 'ts_013', name: '背水一战 [0.65,1.35] 无条件' },
     { id: 'ts_014', name: '步步为营 锁1.0 无条件' },
     { id: 'ts_015', name: '进退有度 [0.9,1.1] 无条件' },
-    { id: 'ts_018', name: '死地后生 [0.5,1.5] 以少打多' },
-    { id: 'ts_019', name: '风声鹤唳 扰敌[0.5,1.5] 无条件' },
-    { id: 'ts_020', name: '济河焚舟 [0.9,1.5] 以少打多' },
+    { id: 'ts_018', name: '死地后生 [0.5,1.5] 以少打多<100%' },
+    { id: 'ts_020', name: '济河焚舟 [0.9,1.5] 深劣势<70%' },
 ];
+// 风声鹤唳 ts_019 = 守城守方扰敌技（battle_siege_defender），攻方挂无效，
+// 单独在守城场景测（见 main 末尾 siegeDefWinRate）。
 
 type Scenario = { name: string; att: number; def: number };
 
@@ -59,6 +60,23 @@ function winRate(attTroops: number, defTroops: number, skillId: string): number 
     return wins / N;
 }
 
+/** 守城守方胜率（攻方无技，守方挂技，battleType=siege）—— 测风声鹤唳等守方技 */
+function siegeDefWinRate(attTroops: number, defTroops: number, defSkillId: string): number {
+    let defWins = 0;
+    const terrain: Terrain = null;
+    for (let i = 0; i < N; i++) {
+        const r = simulateOnce(
+            [makeSpec(attTroops, '')],
+            [makeSpec(defTroops, defSkillId)],
+            terrain,
+            false,
+            'siege',
+        );
+        if (!r.attackerWon) defWins++;
+    }
+    return defWins / N;
+}
+
 function main(): void {
     console.log(`══ 命运系单技 MC 胜率表（N=${N}/格，att 挂技 vs def 无技）══\n`);
     for (const sc of SCENARIOS) {
@@ -75,6 +93,24 @@ function main(): void {
         }
         console.log('');
     }
+
+    // ── 风声鹤唳（守城守方扰敌）单独测：守方挂技，攻方无技，battleType=siege ──
+    console.log('【守城·风声鹤唳 ts_019（守方挂技，扰攻方开战掷点）—— 报守方胜率】');
+    const siegeScenarios = [
+        { name: '守城对称 2万vs2万', att: 20000, def: 20000 },
+        { name: '守城 攻2.4万vs守2万', att: 24000, def: 20000 },
+        { name: '守城 攻3万vs守2万', att: 30000, def: 20000 },
+    ];
+    for (const sc of siegeScenarios) {
+        const base = siegeDefWinRate(sc.att, sc.def, '');
+        const skill = siegeDefWinRate(sc.att, sc.def, 'ts_019');
+        const lift = (skill - base) * 100;
+        const sign = lift >= 0 ? '+' : '';
+        console.log(
+            `   ${sc.name.padEnd(20)} 守方基线 ${(base * 100).toFixed(1)}% → 挂技 ${(skill * 100).toFixed(1)}%  (${sign}${lift.toFixed(1)}pt)`,
+        );
+    }
+    console.log('');
 }
 
 main();

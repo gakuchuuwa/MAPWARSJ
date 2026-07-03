@@ -19,9 +19,13 @@ import {
     resolveGeneralTacticalEntry,
     resolveOpeningFateEntry,
     resolveOpeningLuckMultiplier,
+    resolveMidBattleCasualtyReduction,
+    resolvePostBattleRecoveryRate,
+    resolveLoserBiteWinnerLossMult,
+    resolveWinnerRecoveryBlockedByLoser,
     type TacticalSkillEntry,
 } from './TacticalSkillResolver';
-import { sumCultureAdjustedTroops } from '../systems/CultureCombat';
+import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
 import { COMEBACK_TROOP_THRESHOLD } from './TacticalConstants';
 import { gameLog } from '../utils/GameLogger';
@@ -208,6 +212,116 @@ export function sideBasePower(units: IBattleUnit[]): number {
     const adjusted = sumCultureAdjustedTroops(units);
     if (adjusted > 0) return adjusted;
     return units.reduce((s, u) => s + Math.max(0, u.troops), 0);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 战损系战斗挂载（Step2）：沿用 findEligibleGeneralUnit「一侧一将一技」，
+// 数组接口只作宽容入参，不授权整侧叠乘（见 Resolver 契约规则1）。
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * 战中被动减损：该侧作为（预判）强方/胜方时的战损减免比例。
+ * win_casualty_reduction（游刃有余/兵不血刃/众志成城/穷寇勿迫）+ elite_casualty_reduction（如臂使指）。
+ *
+ * ctx 兵力用「实时」值以支持穷寇勿迫（enemy_troops_below_pct 需当前敌兵/敌开战兵）：
+ *   overrides.enemyTroops = 当前敌方兵、overrides.enemyInitialTroops = 敌开战兵。
+ * 其余条件（always/守城/精锐）与实时兵力无关，开战/翻转时求值即可。
+ */
+export function resolveSideMidBattleCasualtyReduction(
+    sideUnits: IBattleUnit[],
+    opponentUnits: IBattleUnit[],
+    battleType: BattleType,
+    terrain: LandTerrainKind | null,
+    sideIsAttacker: boolean,
+    overrides?: { enemyTroops?: number; enemyInitialTroops?: number },
+): { lossReduction: number; entry?: TacticalSkillEntry } {
+    const selfUnit = findEligibleGeneralUnit(sideUnits);
+    const profile = selfUnit?.generalId ? getGeneralProfile(selfUnit.generalId) : null;
+    if (!profile?.tacticalSkillId) return { lossReduction: 0 };
+
+    const selfTroops = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const enemyTroopsNow = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const selfHasElite = sideUnits.some(u => getUnitEliteTier(u) !== null);
+    const ctx = buildTacticalConditionContext({
+        battleType,
+        terrain,
+        selfTroops,
+        enemyTroops: overrides?.enemyTroops ?? enemyTroopsNow,
+        selfInitialTroops: selfTroops,
+        enemyInitialTroops: overrides?.enemyInitialTroops ?? enemyTroopsNow,
+        selfIsAttacker: sideIsAttacker,
+        selfHasEliteLegion: selfHasElite,
+    });
+    const res = resolveMidBattleCasualtyReduction([profile.tacticalSkillId], ctx);
+    return { lossReduction: res.lossReduction, entry: res.entries[0] };
+}
+
+/**
+ * 战后战损结算：一次求出恢复率 / 咬人倍率 / 斩根，供 BattleField.resolve 按契约顺序施加。
+ * 判据用【开战初始兵力】（战后败方已清零，绝不用残兵）。
+ * 契约顺序（调用方遵守）：①斩根(恢复归零) → ②恢复 → ③咬人 → ④胜方保底10%。
+ */
+export function resolvePostBattleCasualtyOutcome(
+    winnerUnits: IBattleUnit[],
+    loserUnits: IBattleUnit[],
+    battleType: BattleType,
+    terrain: LandTerrainKind | null,
+    winnerIsAttacker: boolean,
+    baseRecoveryRate: number,
+    winnerInitialTroops: number,
+    loserInitialTroops: number,
+): {
+    recoveryRate: number;
+    biteWinnerLossMult: number;
+    recoveryBlocked: boolean;
+    recoveryEntry?: TacticalSkillEntry;
+    biteEntry?: TacticalSkillEntry;
+    blockEntry?: TacticalSkillEntry;
+} {
+    const winnerUnit = findEligibleGeneralUnit(winnerUnits);
+    const winnerProfile = winnerUnit?.generalId ? getGeneralProfile(winnerUnit.generalId) : null;
+    const loserUnit = findEligibleGeneralUnit(loserUnits);
+    const loserProfile = loserUnit?.generalId ? getGeneralProfile(loserUnit.generalId) : null;
+
+    const winnerCtx = buildTacticalConditionContext({
+        battleType, terrain,
+        selfTroops: winnerInitialTroops,
+        enemyTroops: loserInitialTroops,
+        selfInitialTroops: winnerInitialTroops,
+        enemyInitialTroops: loserInitialTroops,
+        selfIsAttacker: winnerIsAttacker,
+    });
+    const loserCtx = buildTacticalConditionContext({
+        battleType, terrain,
+        selfTroops: loserInitialTroops,
+        enemyTroops: winnerInitialTroops,
+        selfInitialTroops: loserInitialTroops,
+        enemyInitialTroops: winnerInitialTroops,
+        selfIsAttacker: !winnerIsAttacker,
+    });
+
+    // ① 斩草除根优先：败方持技 → 胜方恢复归零（压过胜方休养生息）
+    const block = resolveWinnerRecoveryBlockedByLoser([loserProfile?.tacticalSkillId], loserCtx);
+    let recoveryRate = baseRecoveryRate;
+    let recoveryEntry: TacticalSkillEntry | undefined;
+    if (block.blocked) {
+        recoveryRate = 0;
+    } else {
+        const rr = resolvePostBattleRecoveryRate([winnerProfile?.tacticalSkillId], winnerCtx, baseRecoveryRate);
+        recoveryRate = rr.rate;
+        recoveryEntry = rr.entry;
+    }
+    // ③ 咬人倍率（败方视角）
+    const bite = resolveLoserBiteWinnerLossMult([loserProfile?.tacticalSkillId], loserCtx);
+
+    return {
+        recoveryRate,
+        biteWinnerLossMult: bite.mult,
+        recoveryBlocked: block.blocked,
+        recoveryEntry,
+        biteEntry: bite.entry,
+        blockEntry: block.entry,
+    };
 }
 
 /**
