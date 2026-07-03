@@ -2753,7 +2753,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_zhenzhuhe', name: '真珠河', factionId: 'wuhu', lat: 41.2773, lng: 67.9312, type: 'pass', region: 'CENTRAL_ASIA', troops: 10000, mirror: true,
         note: '真珠河；乌护关隘',
     },//镜像
-    { id: 'city_wuyun', name: '乌云', factionId: 'hezhe', lat: 49.018048, lng: 129.91539, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+    { id: 'city_wuyun', name: '乌云', factionId: 'hezhe', lat: 49.018048, lng: 129.91539, type: 'small_city', troops: 20000, region: 'NORTHEAST' },
+
 
     // 占城国（林邑/环王国）佛临城阇槃；与占婆国（美山）分立，各 1 势力 1 据点
     { id: 'city_dupan', name: '阇槃', factionId: 'zhancheng', lat: 13.93, lng: 109.11, type: 'medium_city', troops: 10000, 

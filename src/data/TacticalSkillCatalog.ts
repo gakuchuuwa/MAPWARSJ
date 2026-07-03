@@ -131,7 +131,7 @@ const ENHANCE: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_002', layer: 'tactical', series: 'enhance', index: 2,
-        displayName: '如履平地', sourceQuote: '《后汉书·马援传》：“据高临下，势如劈竹。”',
+        displayName: '居高临下', sourceQuote: '《后汉书·马援传》：“据高临下，势如劈竹。”',
         baseEffect: 'ally_power_mult', condition: 'terrain_mountain', phase: 'opening_roll',
         magnitude: 1.3, engineStatus: 'ready',
     },

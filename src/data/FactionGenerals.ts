@@ -694,7 +694,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     chen2: { generalId: 'chen2_zhaofan', generalName: '赵范', portrait: '/assets/LINGNAN/chen2_zhaofan.png' },
     qian: { generalId: 'qian_songjingyang', generalName: '宋景阳', portrait: '/assets/LINGNAN/qian_songjingyang.png' },
     qinghai: { generalId: 'qinghai_yuezhongqi', generalName: '岳钟琪', portrait: '/assets/manqing/qinghai_yuezhongqi.png' },
-    jiashi: { generalId: 'jiashi_lixuance', generalName: '李玄策', portrait: '/assets/TIBET/jiashi_lixuance.png' },
+    jiashi: { generalId: 'jiashi_lixuance', generalName: '王玄策', portrait: '/assets/TIBET/jiashi_lixuance.png' },
     yangtong: { generalId: 'yangtong_chisongdezan', generalName: '赤松德赞', portrait: '/assets/TIBET/yangtong_chisongdezan.png' },
     monpa: { generalId: 'monpa_meireiluozhujiacuo', generalName: '梅惹洛珠嘉措', portrait: '/assets/TIBET/monpa_meireiluozhujiacuo.png' },
     xining: { generalId: 'xining_yangyingju', generalName: '杨应琚', portrait: '/assets/manqing/xining_yangyingju.png' },

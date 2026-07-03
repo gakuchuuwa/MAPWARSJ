@@ -1850,6 +1850,7 @@ function serverReadAllEntityData() {
     const scText = fs.readFileSync(path.resolve(__dirname, 'src/data/StartingCapitals.ts'), 'utf-8');
     const fgText = fs.readFileSync(path.resolve(__dirname, 'src/data/FactionGenerals.ts'), 'utf-8');
     const gsText = fs.readFileSync(path.resolve(__dirname, 'src/data/GeneralSkills.ts'), 'utf-8');
+    const tscText = fs.readFileSync(path.resolve(__dirname, 'src/data/TacticalSkillCatalog.ts'), 'utf-8');
 
     // factions: { id, name }[]
     const factions = [...factionText.matchAll(/\{\s*id:\s*'([^']+)',\s*name:\s*'([^']+)'/g)]
@@ -1908,9 +1909,18 @@ function serverReadAllEntityData() {
     }
 
     // tactical/strategic skill catalogs for UI dropdowns
-    const tacticalSkills: Array<{ id: string; grid: string; displayName: string; timing: string }> = [];
-    for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)',\s*timing:\s*'([^']+)'/g)) {
-        if (m[2].startsWith('tac_')) tacticalSkills.push({ id: m[2], grid: m[3], displayName: m[4], timing: m[5] });
+    // 战术技：现行 49 技 ts_xxx 定义在 TacticalSkillCatalog.ts（非 GeneralSkills.ts）。
+    // 名将 profile.tacticalSkillId 已全迁移为 ts_xxx；旧 tac_01–10 仅作兼容映射，不再展示。
+    // grid 用 index 生成圈码字（①..㊿），与十格战术格视觉一致。
+    const circledNum = (n: number): string => {
+        if (n >= 1 && n <= 20) return String.fromCodePoint(0x2460 + n - 1);
+        if (n >= 21 && n <= 35) return String.fromCodePoint(0x3251 + n - 21);
+        if (n >= 36 && n <= 50) return String.fromCodePoint(0x32B1 + n - 36);
+        return String(n);
+    };
+    const tacticalSkills: Array<{ id: string; grid: string; displayName: string }> = [];
+    for (const m of tscText.matchAll(/id:\s*'(ts_\d+)',\s*layer:\s*'[^']*',\s*series:\s*'[^']*',\s*index:\s*(\d+),\s*displayName:\s*'([^']+)'/g)) {
+        tacticalSkills.push({ id: m[1], grid: circledNum(parseInt(m[2])), displayName: m[3] });
     }
     const strategicSkills: Array<{ id: string; grid: string; displayName: string }> = [];
     for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)'/g)) {

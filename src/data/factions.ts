@@ -399,6 +399,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'jilimi', name: '吉里' },                // 暗苔绿 - 吉里迷/尼夫赫人(库页岛/黑龙江口)
     { id: 'hezhe', name: '赫哲' },
+
                    // 河口青 - 赫哲/那乃人(黑龙江下游/库页岛)
     { id: 'luchuan', name: '麓川' },
     { id: 'chijin', name: '赤斤' },                          // 赤金堡·旗号赤（赤斤蒙古卫）
