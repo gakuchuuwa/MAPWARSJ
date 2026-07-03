@@ -33,6 +33,8 @@
     "tier:pending": "node scratch/export_faction_tier_pending.mjs",
     "audit": "node scripts/audit-game-integrity.mjs",
     "sim": "tsx scripts/sim/headless.ts",
+    "sim:roster": "tsx --import ./tools/sim-preload.mjs tools/simulator-roster.ts",
+    "sim:expedition": "tsx --import ./tools/sim-preload.mjs tools/expedition-sim.ts",
     "sim:skill": "tsx tools/skill-balance-sim.ts",
     "sim:follow": "tsx tools/follow-legion-test.ts",
     "tactical:audit": "tsx tools/tactical-skill-audit.ts",

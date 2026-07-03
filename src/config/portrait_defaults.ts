@@ -167,7 +167,8 @@ function poolIsFactionOnly(pool: string[]): boolean {
 }
 
 function assertCultureCirclePoolsSingleFolder(): void {
-    if (!import.meta.env.DEV) return;
+    // import.meta.env 在命令行 tsx（模拟器/审计脚本）下不存在 → 可选链兜底，非 DEV 直接跳过自检
+    if (!import.meta.env?.DEV) return;
     for (const region of REGION_ORDER) {
         const prefix = cultureCircleFolderPrefix(region);
         for (const p of REGION_PORTRAIT_POOLS[region]) {

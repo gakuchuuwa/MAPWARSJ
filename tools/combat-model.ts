@@ -24,6 +24,7 @@ import {
     resolveOpeningTroopCutCounter,
     resolveEnemyTerrainBuffCounter,
     resolveOpeningTroopEffect,
+    isTacticalSkillActive,
 } from '../src/combat/TacticalSkillResolver';
 
 /** 战损系 baseEffect 集合（v1 catalog；判定是否需逐帧存活模拟） */
@@ -39,6 +40,7 @@ import {
     TACTICAL_SKILL_CATALOG,
     STRATEGIC_SKILL_CATALOG,
     GENERAL_PROFILES,
+    getTacticalSkillDef,
     type GeneralProfile,
     type GeneralTier,
 } from '../src/data/GeneralSkills';
@@ -140,17 +142,48 @@ function eligibleProfile(units: Unit[]): Unit | null {
     for (const u of units) if (u.profile) return u;
     return null;
 }
+// getTacticalSkillDef 带 ts_xxx→旧格式桥接（10 格直命中；ts_xxx 经 V1_EFFECT_BRIDGE 合成）。
 function openingTacticalOf(u: Unit | null) {
     const id = u?.profile?.tacticalSkillId;
     if (!id) return null;
-    const s = TACTICAL_SKILL_CATALOG[id];
+    const s = getTacticalSkillDef(id);
     return s && s.timing === 'opening' ? s : null;
 }
 function comebackTacticalOf(u: Unit | null) {
     const id = u?.profile?.tacticalSkillId;
     if (!id) return null;
-    const s = TACTICAL_SKILL_CATALOG[id];
+    const s = getTacticalSkillDef(id);
     return s && s.timing === 'comeback' ? s : null;
+}
+
+/** 构建单侧条件 ctx（对齐 GeneralSkillCombat 的开局门控输入） */
+function ctxForSide(
+    ownU: Unit[], oppU: Unit[], isAtt: boolean, battleType: BattleType, terrain: Terrain,
+) {
+    const selfT = ownU.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const enemyT = oppU.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    return buildTacticalConditionContext({
+        battleType, terrain,
+        selfTroops: selfT, enemyTroops: enemyT,
+        selfInitialTroops: selfT, enemyInitialTroops: enemyT,
+        selfIsAttacker: isAtt,
+        enemyHasFamousGeneral: eligible(oppU)?.profile?.tier === 'famous',
+    });
+}
+
+/**
+ * 开局战术技的条件是否满足（真实 ts_xxx 带 terrain/攻守/文化等条件；10 格无 entry 视为无条件）。
+ * 不满足 → 该技本场不施加乘区，避免夸大。
+ */
+function openingTacticalActive(
+    u: Unit | null, ownU: Unit[], oppU: Unit[], isAtt: boolean,
+    battleType: BattleType, terrain: Terrain,
+): boolean {
+    const id = u?.profile?.tacticalSkillId;
+    if (!id) return false;
+    const entry = resolveGeneralTacticalEntry(id);
+    if (!entry) return true; // 10 格 tac_xx：无 v1 条件，保持原无条件行为
+    return isTacticalSkillActive(entry, ctxForSide(ownU, oppU, isAtt, battleType, terrain));
 }
 function strategicOf(u: Unit | null) {
     const id = u?.profile?.strategicSkillId;
@@ -258,12 +291,17 @@ function applyOpeningPreRollTroops(
     }
 }
 
-/** ①③④⑤：开局战术掷色乘区（顺序同 applyOpeningTacticalToRolls） */
+/** ①③④⑤：开局战术掷色乘区（顺序同 applyOpeningTacticalToRolls），带 v1 条件门控 */
 function applyOpeningRollMults(
     attU: Unit[], defU: Unit[], attRoll: number, defRoll: number,
+    terrain: Terrain = null, battleType: BattleType = 'field',
 ): { attRoll: number; defRoll: number } {
-    const a = openingTacticalOf(eligible(attU));
-    const d = openingTacticalOf(eligible(defU));
+    const attUnit = eligible(attU);
+    const defUnit = eligible(defU);
+    const a = openingTacticalActive(attUnit, attU, defU, true, battleType, terrain)
+        ? openingTacticalOf(attUnit) : null;
+    const d = openingTacticalActive(defUnit, defU, attU, false, battleType, terrain)
+        ? openingTacticalOf(defUnit) : null;
     let oa = attRoll, od = defRoll;
     if (a?.effect === 'ally_mult_1_2') oa *= a.magnitude;
     if (d?.effect === 'ally_mult_1_2') od *= d.magnitude;
@@ -354,7 +392,7 @@ export function simulateOnce(
 
     let attRoll = sumAdjusted(att) * rollLuckForSide(att, def, battleType, terrain, true);
     let defRoll = sumAdjusted(def) * rollLuckForSide(def, att, battleType, terrain, false);
-    ({ attRoll, defRoll } = applyOpeningRollMults(att, def, attRoll, defRoll));
+    ({ attRoll, defRoll } = applyOpeningRollMults(att, def, attRoll, defRoll, terrain, battleType));
     ({ attRoll, defRoll } = applyStrategicRollMults(att, def, attRoll, defRoll, terrain, battleType));
 
     const attackerStronger = attRoll >= defRoll;
@@ -400,7 +438,7 @@ function simulateTicks(
     const recompute = () => {
         let a = att[0].troops * att[0].mult;
         let d = def[0].troops * def[0].mult;
-        ({ attRoll: a, defRoll: d } = applyOpeningRollMults(att, def, a, d));
+        ({ attRoll: a, defRoll: d } = applyOpeningRollMults(att, def, a, d, terrain, battleType));
         ({ attRoll: a, defRoll: d } = applyStrategicRollMults(att, def, a, d, terrain, battleType));
         let r1 = applyComebackRollMult(attU(), a, d, attTriggered); a = r1.sideRoll; d = r1.oppRoll;
         let r2 = applyComebackRollMult(defU(), d, a, defTriggered); d = r2.sideRoll; a = r2.oppRoll;
