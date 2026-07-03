@@ -76,6 +76,9 @@ export interface IBattleUnit {
     generalId?: string;
     /** 军队创建时随机固定；守城方留空则每次随机 */
     portraitPath?: string;
+    // [NEW] V1 Tactical
+    battleOverriddenSkillId?: string | null;
+    isFirstSortieSinceDepart?: boolean;
 }
 
 export class Battle {

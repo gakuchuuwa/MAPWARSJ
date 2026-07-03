@@ -23,6 +23,7 @@ import {
     resolveWinnerRecoveryBlockedByLoser,
     resolveOpeningTroopCutCounter,
     resolveEnemyTerrainBuffCounter,
+    resolveOpeningTroopEffect,
 } from '../src/combat/TacticalSkillResolver';
 
 /** 战损系 baseEffect 集合（v1 catalog；判定是否需逐帧存活模拟） */
@@ -199,33 +200,60 @@ function sumAdjusted(units: Unit[]): number {
 function applyOpeningPreRollTroops(
     own: Unit[], opp: Unit[], ownIsAttacker: boolean, battleType: BattleType, terrain: Terrain,
 ): void {
-    const skill = openingTacticalOf(eligible(own));
-    if (!skill || skill.effect !== 'enemy_sub_troops') return;
-    const cutMag = skill.magnitude;
-    if (cutMag <= 0) return;
+    const ownUnit = eligible(own);
+    const skillId = ownUnit?.profile?.tacticalSkillId;
+    if (!skillId) return;
 
     const oppTroops = opp.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const ownTroops = own.reduce((s, u) => s + Math.max(0, u.troops), 0);
-    const oppCtx = buildTacticalConditionContext({
+    const ownCtx = buildTacticalConditionContext({
         battleType, terrain,
-        selfTroops: oppTroops, enemyTroops: ownTroops,
-        selfInitialTroops: oppTroops, enemyInitialTroops: ownTroops,
-        selfIsAttacker: !ownIsAttacker,
+        selfTroops: ownTroops, enemyTroops: oppTroops,
+        selfInitialTroops: ownTroops, enemyInitialTroops: oppTroops,
+        selfIsAttacker: ownIsAttacker,
+        enemyHasFamousGeneral: eligible(opp)?.profile?.tier === 'famous',
     });
-    const counter = resolveOpeningTroopCutCounter(
-        eligible(opp)?.profile?.tacticalSkillId, cutMag, oppCtx,
-    );
+    const effect = resolveOpeningTroopEffect(skillId, ownCtx);
+    if (!effect.entry) return;
 
-    if (counter.selfCutMagnitude > 0) {
-        for (const u of opp) {
-            if (u.troops <= 0) continue;
-            u.troops = Math.max(0, u.troops - Math.floor(u.troops * counter.selfCutMagnitude));
-        }
-    }
-    if (counter.reflectBackMagnitude > 0) {
+    if (effect.selfCutMagnitude > 0) {
         for (const u of own) {
             if (u.troops <= 0) continue;
-            u.troops = Math.max(0, u.troops - Math.floor(u.troops * counter.reflectBackMagnitude));
+            u.troops = Math.max(0, u.troops - Math.floor(u.troops * effect.selfCutMagnitude));
+        }
+    }
+
+    if (effect.enemyCutMagnitude > 0) {
+        const oppCtx = buildTacticalConditionContext({
+            battleType, terrain,
+            selfTroops: oppTroops, enemyTroops: ownTroops,
+            selfInitialTroops: oppTroops, enemyInitialTroops: ownTroops,
+            selfIsAttacker: !ownIsAttacker,
+            enemyHasFamousGeneral: ownUnit?.profile?.tier === 'famous',
+        });
+        const counter = resolveOpeningTroopCutCounter(
+            eligible(opp)?.profile?.tacticalSkillId, effect.enemyCutMagnitude, oppCtx,
+        );
+        if (counter.selfCutMagnitude > 0) {
+            for (const u of opp) {
+                if (u.troops <= 0) continue;
+                u.troops = Math.max(0, u.troops - Math.floor(u.troops * counter.selfCutMagnitude));
+            }
+        }
+        if (counter.reflectBackMagnitude > 0) {
+            for (const u of own) {
+                if (u.troops <= 0) continue;
+                u.troops = Math.max(0, u.troops - Math.floor(u.troops * counter.reflectBackMagnitude));
+            }
+        }
+    }
+
+    if (effect.allyAddMagnitude > 0) {
+        for (const u of own) {
+            if (u.troops <= 0) continue;
+            const bonus = Math.floor(u.troops * effect.allyAddMagnitude);
+            if (bonus <= 0) continue;
+            u.troops = Math.min(u.troops + bonus, u.maxTroops);
         }
     }
 }

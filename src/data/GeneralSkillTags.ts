@@ -531,6 +531,68 @@ export const ARCHETYPE_TO_V1_TACTICAL: Record<
     },
 };
 
+/**
+ * 【v1 战术技 → 风格映射 · 2026-07-03】49 技各归 5 风格（唯一主 archetype）
+ *
+ * 用途：武将已从 tac_01~10 迁移到 ts_xxx，旧 TACTICAL_SKILL_TAGS 只认 tac，
+ * 导致 countTacticalByArchetype / auditTacticalDistribution 对 ts 全部失效。
+ * 本表补全断层，供审计与分配脚本反推每将风格。
+ *
+ * 归类依据 = 技能语义（非机械按 series）：
+ *   稳健防反：无条件强化/luck 锁/恢复/逆局续航
+ *   机动奇袭：开局削敌真实兵 / 平原长驱
+ *   突击破阵：正面强攻/博命方差/自损突击/首战爆发
+ *   智将谋略：否决夺技/断敌恢复/以寡智取/扰敌
+ *   死守殿后：战损减免/守城/败时咬人/逆局重算
+ * hook 技（ts_009 扫穴犁庭 / ts_046 暗度陈仓 / ts_047 声东击西）引擎未接，不参与武将分配。
+ */
+export const TS_V1_ARCHETYPE: Readonly<Record<string, SkillArchetype>> = {
+    // 稳健防反
+    ts_001: 'steadfast_counter', ts_011: 'steadfast_counter',
+    ts_014: 'steadfast_counter', ts_015: 'steadfast_counter',
+    ts_025: 'steadfast_counter', ts_026: 'steadfast_counter',
+    ts_035: 'steadfast_counter', ts_036: 'steadfast_counter',
+    // 机动奇袭
+    ts_003: 'mobile_raid', ts_021: 'mobile_raid', ts_022: 'mobile_raid',
+    ts_023: 'mobile_raid', ts_024: 'mobile_raid', ts_028: 'mobile_raid',
+    ts_030: 'mobile_raid',
+    // 突击破阵
+    ts_005: 'assault_break', ts_007: 'assault_break', ts_010: 'assault_break',
+    ts_012: 'assault_break', ts_013: 'assault_break', ts_018: 'assault_break',
+    ts_027: 'assault_break', ts_029: 'assault_break', ts_049: 'assault_break',
+    // 智将谋略
+    ts_002: 'stratagem_weaken', ts_004: 'stratagem_weaken', ts_008: 'stratagem_weaken',
+    ts_019: 'stratagem_weaken', ts_039: 'stratagem_weaken',
+    ts_042: 'stratagem_weaken', ts_043: 'stratagem_weaken', ts_044: 'stratagem_weaken',
+    // 死守殿后
+    ts_006: 'siege_hold', ts_016: 'siege_hold', ts_017: 'siege_hold',
+    ts_020: 'siege_hold', ts_031: 'siege_hold', ts_032: 'siege_hold',
+    ts_033: 'siege_hold', ts_034: 'siege_hold', ts_037: 'siege_hold',
+    ts_038: 'siege_hold', ts_040: 'siege_hold', ts_041: 'siege_hold',
+    ts_045: 'siege_hold', ts_048: 'siege_hold',
+};
+
+/**
+ * 普将分散池（每风格 3–5 个「无条件/宽条件」ready 技，温和档）
+ *
+ * 用于把 506 普将在【保持现有风格】前提下分散到同风格多技，破除「10 种技占 70%」单调。
+ * 选池原则：① 仅 ready（不挂 hook/new）② 避开纯地形/攻守限定（防普将「从不放技」）
+ *          ③ 强档（兵不血刃-60%/宁为玉碎咬×2/破釜沉舟）留名将，普将用温和档。
+ * 名将不走本池（保留已精调的 21 种技分配）。
+ */
+export const ORDINARY_ARCHETYPE_POOL: Readonly<Record<SkillArchetype, readonly string[]>> = {
+    // 稳健：luck 锁 / 微方差 / 逆局续航 / 战后恢复
+    steadfast_counter: ['ts_014', 'ts_015', 'ts_011', 'ts_026', 'ts_035'],
+    // 机动：开局削敌真实兵（10~20%）
+    mobile_raid: ['ts_021', 'ts_022', 'ts_024'],
+    // 突击：野战强化 / 劣势博命 / 自损突击
+    assault_break: ['ts_007', 'ts_018', 'ts_029'],
+    // 死守：战损减免 / 败时咬人（温和档）
+    siege_hold: ['ts_031', 'ts_033', 'ts_041'],
+    // 谋略：断敌恢复 / 劣势智取（普将现无此风格，备用）
+    stratagem_weaken: ['ts_039', 'ts_008'],
+};
+
 /** 战略六格简要标签（名将专用；与地形/行军匹配） */
 export const STRATEGIC_SKILL_TAGS = [
     { id: 'str_01', grid: 'S①', name: '兵贵神速', tags: ['急行军', '闪击', '远征机动'], terrain: '行军' },

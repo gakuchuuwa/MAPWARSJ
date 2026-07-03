@@ -107,6 +107,12 @@ export class Army implements IBattleUnit {
 
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;
+    
+    // [NEW] Morale System: First Sortie
+    public hasFoughtSinceDepart: boolean = false;
+    public get isFirstSortieSinceDepart(): boolean {
+        return !this.hasFoughtSinceDepart;
+    }
 
     public setSourceCityId(cityId: string): void {
         this.sourceCityId = cityId;
@@ -796,6 +802,8 @@ export class Army implements IBattleUnit {
     };
 
     public onBattleEnd = (result: 'victory' | 'defeat', _opponent: IBattleUnit, _enemyKilled: number): void => {
+        // [Morale] First Sortie ends after the first battle
+        this.hasFoughtSinceDepart = true;
         if (this.isDestroyed) return;
         if (result === 'victory') {
             this.setCombatState(false);

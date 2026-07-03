@@ -314,14 +314,14 @@ const TROOP: TacticalSkillEntry[] = [
         id: 'ts_029', layer: 'tactical', series: 'troop', index: 29,
         displayName: '肉薄骨并', sourceQuote: '《汉书·陈汤传》：“肉薄骨并，血流成阵。”',
         baseEffect: 'dual_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'new',
+        magnitude: 0.1, engineStatus: 'ready',
         note: '火牛陷阵大档=15% 皮肤，同机制',
     },
     {
         id: 'ts_030', layer: 'tactical', series: 'troop', index: 30,
         displayName: '赤壁东风', sourceQuote: '《三国志·吴书·周瑜传》：“时风盛猛，悉延烧岸上营落。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'siege_attacker_on_water', phase: 'pre_opening_troops',
-        magnitude: 0.4, engineStatus: 'new',
+        magnitude: 0.4, engineStatus: 'ready',
         mutexGroup: 'water_opening_cut',
     },
 ];
@@ -408,46 +408,48 @@ const COUNTER: TacticalSkillEntry[] = [
         id: 'ts_042', layer: 'tactical', series: 'counter', index: 42,
         displayName: '料敌机先', sourceQuote: '《孙膑兵法·威王问》：“料敌将者，以机先之。”',
         baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, engineStatus: 'new',
+        magnitude: 1, engineStatus: 'ready',
         note: '完全否决敌方战术技（视为无技）；敌无将/无技时不触发。magnitude=1 占位',
     },
     {
         id: 'ts_043', layer: 'tactical', series: 'counter', index: 43,
         displayName: '将计就计', sourceQuote: '《三国志·郭嘉传》注引：“因其计而用之。”',
         baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.7, engineStatus: 'new',
+        magnitude: 0.7, engineStatus: 'ready',
         note: 'magnitude=0.7 是【70%概率完全否决敌技】，非按比例缩放；字段名 partial_negate 易误读，实现走概率门（跨量纲通用+直播悬念）',
     },
     {
         id: 'ts_044', layer: 'tactical', series: 'counter', index: 44,
         displayName: '以子之矛', sourceQuote: '《韩非子·难一》：“以子之矛，陷子之盾，何如？”',
         baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.5, engineStatus: 'new',
+        magnitude: 0.5, engineStatus: 'ready',
         note: '绝品：magnitude=0.5 → 50%概率夺取敌技为己用（按敌技五家族 switch 自用），失败则仅否决。【2026-07-03 定】不设100%夺取（否决+复制双收益过强，破坏49技内部平衡）；直播牌面「夺【破釜沉舟】为己用」',
     },
     {
         id: 'ts_045', layer: 'tactical', series: 'counter', index: 45,
         displayName: '诱敌深入', sourceQuote: '《孙子兵法·计》：“利而诱之，乱而取之。”',
         baseEffect: 'reflect_enemy_opening_cut', condition: 'battle_siege_defender', phase: 'pre_opening_troops',
-        magnitude: 1, engineStatus: 'new',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_046', layer: 'tactical', series: 'counter', index: 46,
         displayName: '暗度陈仓', sourceQuote: '《史记·淮阴侯列传》：“明修栈道，暗度陈仓。”',
         baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, engineStatus: 'new',
+        magnitude: 1, engineStatus: 'hook',
+        note: '地形对抗：引擎侧待接线（仅 combat-model 工具支持）',
     },
     {
         id: 'ts_047', layer: 'tactical', series: 'counter', index: 47,
         displayName: '声东击西', sourceQuote: '《通典·兵典》：“声言击东，其实击西。”',
         baseEffect: 'halve_enemy_terrain_buff', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.5, engineStatus: 'new',
+        magnitude: 0.5, engineStatus: 'hook',
+        note: '地形对抗：引擎侧待接线（仅 combat-model 工具支持）',
     },
     {
         id: 'ts_048', layer: 'tactical', series: 'counter', index: 48,
         displayName: '空城退敌', sourceQuote: '《三国志·蜀书·赵云传》注引《云别传》：“更大开门，偃旗息鼓。”',
         baseEffect: 'nullify_enemy_opening_cut', condition: 'self_troops_below_enemy_pct', phase: 'pre_opening_troops',
-        magnitude: 0.3, engineStatus: 'new',
+        magnitude: 0.3, engineStatus: 'ready',
         note: '己兵<敌30% 时，敌先声类技失效',
     },
 ];
@@ -458,8 +460,8 @@ const MORALE: TacticalSkillEntry[] = [
         id: 'ts_049', layer: 'tactical', series: 'morale', index: 49,
         displayName: '一鼓作气', sourceQuote: '《左传·庄公十年》：“夫战，勇气也。一鼓作气，再而衰，三而竭。”',
         baseEffect: 'first_sortie_power_mult', condition: 'first_sortie', phase: 'opening_roll',
-        magnitude: 1.25, engineStatus: 'new',
-        note: '出征首战×1.25；Army 出城标记即可',
+        magnitude: 1.25, engineStatus: 'ready',
+        note: '出征首战×1.25（桥接 ally_mult_1_2 + first_sortie 门控）；契合名将远征首战爆发看点',
     },
 ];
 
@@ -486,6 +488,23 @@ export const LEGACY_TAC_TO_V1: Readonly<Record<string, string>> = (() => {
     }
     return map;
 })();
+
+/**
+ * 【批量迁移地基】旧 10 技到 V1 战术技的完整映射表（2026-07-03 定稿）
+ * 不动现有 legacyTacId 避免影响运行时，此表专用于将 GeneralSkills.ts 中的旧 tac_xxx 批量替换为 ts_xxx。
+ */
+export const LEGACY_ARCHETYPE_TO_V1: Readonly<Record<string, string>> = {
+    'tac_01': 'ts_001', // 以逸待劳 -> 百战不殆
+    'tac_02': 'ts_022', // 避实击虚 -> 攻其不备 (20% 更接近旧版 16.7%)
+    'tac_03': 'ts_007', // 侵掠如火 -> 原野交锋
+    'tac_04': 'ts_022', // 不战而屈 -> 攻其不备 (无敌战力乘区，近似削敌)
+    'tac_05': 'ts_031', // 不动如山 -> 游刃有余
+    'tac_06': 'ts_026', // 哀兵必胜 -> 百折不挠
+    'tac_07': 'ts_024', // 攻其不备 -> 反戈一击
+    'tac_08': 'ts_011', // 置之死地 -> 绝地反击
+    'tac_09': 'ts_024', // 釜底抽薪 -> 反戈一击
+    'tac_10': 'ts_014', // 深沟高垒 -> 步步为营
+};
 
 export function getTacticalSkillEntry(skillId: string): TacticalSkillEntry | null {
     return TACTICAL_SKILL_BY_ID[skillId] ?? null;

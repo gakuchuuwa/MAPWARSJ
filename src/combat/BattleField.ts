@@ -46,6 +46,7 @@ import {
     getBattleTerrainKind,
     resolveSideMidBattleCasualtyReduction,
     resolvePostBattleCasualtyOutcome,
+    applySkillCountersToUnits,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 import {
@@ -331,6 +332,10 @@ export class BattleField {
         const defUnits = this.defenderGroup.units.map((bu) => bu.unit);
         const attAdj = sumCultureAdjustedTroops(attUnits);
         const defAdj = sumCultureAdjustedTroops(defUnits);
+        const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
+
+        // [对抗系] 战前拦截：否决或夺取敌方战术技
+        applySkillCountersToUnits(attUnits, defUnits, this.type, terrain);
 
         applyOpeningTacticalPreRoll(
             attUnits,
@@ -343,12 +348,12 @@ export class BattleField {
             },
             true,
             this.openingTacticalUiShown,
+            { battleType: this.type, terrain },
         );
         this.updateGroupStats();
         this.attackerGroup.initialTotalTroops = this.attackerGroup.totalTroops;
         this.defenderGroup.initialTotalTroops = this.defenderGroup.totalTroops;
 
-        const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
         const attFate = resolveSideOpeningFateLuck(
             attUnits, defUnits, this.type, terrain, true,
             { emitUi: true, openingUiShown: this.openingTacticalUiShown },
@@ -443,6 +448,8 @@ export class BattleField {
             attAdj,
             defAdj,
             false,
+            undefined,
+            { battleType: this.type, terrain },
         );
         let withSkills = applyStrategicRollMultipliersOnly(
             attUnits,

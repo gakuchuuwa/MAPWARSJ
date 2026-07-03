@@ -23,6 +23,10 @@ import {
     resolvePostBattleRecoveryRate,
     resolveLoserBiteWinnerLossMult,
     resolveWinnerRecoveryBlockedByLoser,
+    resolveOpeningTroopEffect,
+    resolveOpeningTroopCutCounter,
+    isTacticalSkillActive,
+    resolveSkillCountersForSide,
     type TacticalSkillEntry,
 } from './TacticalSkillResolver';
 import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
@@ -41,6 +45,20 @@ function getFollowedArmyId(): string | null {
 
 /** 普将逆局阈值：单一真理源 TacticalConstants（纯常量，供审计侧解耦引用），此处再导出保持兼容 */
 export { COMEBACK_TROOP_THRESHOLD };
+
+export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
+    if (unit.battleOverriddenSkillId !== undefined) {
+        return unit.battleOverriddenSkillId;
+    }
+    if (!unit.generalId) return null;
+    const profile = getGeneralProfile(unit.generalId);
+    return profile?.tacticalSkillId ?? null;
+}
+
+function sideIsFirstSortie(units: IBattleUnit[]): boolean {
+    return units.some(u => u.isFirstSortieSinceDepart === true);
+}
+
 
 /** 名将开局战术 UI 延迟（秒）：对峙立绘就绪后再闪字 */
 export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
@@ -155,7 +173,7 @@ export function resolveSideOpeningFateLuck(
 ): { luck: number } {
     const selfTroops = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const enemyTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
-    const ctx = buildTacticalConditionContext({
+    const ctx = buildTacticalConditionContext({ isFirstSortieSinceDepart: sideIsFirstSortie(sideUnits),
         battleType,
         terrain,
         selfTroops,
@@ -170,8 +188,8 @@ export function resolveSideOpeningFateLuck(
     const oppUnit = findEligibleGeneralUnit(opponentUnits);
     const selfProfile = selfUnit?.generalId ? getGeneralProfile(selfUnit.generalId) : null;
     const oppProfile = oppUnit?.generalId ? getGeneralProfile(oppUnit.generalId) : null;
-    const selfFate = resolveOpeningFateEntry(selfProfile?.tacticalSkillId);
-    const oppFate = resolveOpeningFateEntry(oppProfile?.tacticalSkillId);
+    const selfFate = resolveOpeningFateEntry(selfUnit ? (getActiveTacticalSkillId(selfUnit) ?? undefined) : undefined);
+    const oppFate = resolveOpeningFateEntry(oppUnit ? (getActiveTacticalSkillId(oppUnit) ?? undefined) : undefined);
 
     const luck = resolveOpeningLuckMultiplier(ctx, selfFate, oppFate);
     const sideLabel = sideIsAttacker ? '攻方' : '守方';
@@ -242,7 +260,7 @@ export function resolveSideMidBattleCasualtyReduction(
     const selfTroops = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const enemyTroopsNow = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const selfHasElite = sideUnits.some(u => getUnitEliteTier(u) !== null);
-    const ctx = buildTacticalConditionContext({
+    const ctx = buildTacticalConditionContext({ isFirstSortieSinceDepart: sideIsFirstSortie(sideUnits),
         battleType,
         terrain,
         selfTroops,
@@ -252,7 +270,10 @@ export function resolveSideMidBattleCasualtyReduction(
         selfIsAttacker: sideIsAttacker,
         selfHasEliteLegion: selfHasElite,
     });
-    const res = resolveMidBattleCasualtyReduction([profile.tacticalSkillId], ctx);
+    const res = resolveMidBattleCasualtyReduction(
+        [selfUnit ? getActiveTacticalSkillId(selfUnit) : null],
+        ctx,
+    );
     return { lossReduction: res.lossReduction, entry: res.entries[0] };
 }
 
@@ -283,7 +304,7 @@ export function resolvePostBattleCasualtyOutcome(
     const loserUnit = findEligibleGeneralUnit(loserUnits);
     const loserProfile = loserUnit?.generalId ? getGeneralProfile(loserUnit.generalId) : null;
 
-    const winnerCtx = buildTacticalConditionContext({
+    const winnerCtx = buildTacticalConditionContext({ isFirstSortieSinceDepart: sideIsFirstSortie(winnerUnits),
         battleType, terrain,
         selfTroops: winnerInitialTroops,
         enemyTroops: loserInitialTroops,
@@ -291,7 +312,7 @@ export function resolvePostBattleCasualtyOutcome(
         enemyInitialTroops: loserInitialTroops,
         selfIsAttacker: winnerIsAttacker,
     });
-    const loserCtx = buildTacticalConditionContext({
+    const loserCtx = buildTacticalConditionContext({ isFirstSortieSinceDepart: sideIsFirstSortie(loserUnits),
         battleType, terrain,
         selfTroops: loserInitialTroops,
         enemyTroops: winnerInitialTroops,
@@ -301,18 +322,18 @@ export function resolvePostBattleCasualtyOutcome(
     });
 
     // ① 斩草除根优先：败方持技 → 胜方恢复归零（压过胜方休养生息）
-    const block = resolveWinnerRecoveryBlockedByLoser([loserProfile?.tacticalSkillId], loserCtx);
+    const block = resolveWinnerRecoveryBlockedByLoser([loserUnit ? getActiveTacticalSkillId(loserUnit) : null], loserCtx);
     let recoveryRate = baseRecoveryRate;
     let recoveryEntry: TacticalSkillEntry | undefined;
     if (block.blocked) {
         recoveryRate = 0;
     } else {
-        const rr = resolvePostBattleRecoveryRate([winnerProfile?.tacticalSkillId], winnerCtx, baseRecoveryRate);
+        const rr = resolvePostBattleRecoveryRate([winnerUnit ? getActiveTacticalSkillId(winnerUnit) : null], winnerCtx, baseRecoveryRate);
         recoveryRate = rr.rate;
         recoveryEntry = rr.entry;
     }
     // ③ 咬人倍率（败方视角）
-    const bite = resolveLoserBiteWinnerLossMult([loserProfile?.tacticalSkillId], loserCtx);
+    const bite = resolveLoserBiteWinnerLossMult([loserUnit ? getActiveTacticalSkillId(loserUnit) : null], loserCtx);
 
     return {
         recoveryRate,
@@ -348,7 +369,7 @@ export function rollSideEffectivePowerWithOpeningFate(
 function getTacticalSkill(unit: IBattleUnit): TacticalSkillDef | null {
     const profile = getGeneralProfile(unit.generalId);
     if (!profile) return null;
-    return getTacticalSkillDef(profile.tacticalSkillId) ?? null;
+    return getTacticalSkillDef((unit ? getActiveTacticalSkillId(unit) : null)!) ?? null;
 }
 
 function getTacticalSkillForTiming(
@@ -579,7 +600,7 @@ export function getGeneralSkillDisplayTags(
     const tags: { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' | 'strategic' }[] = [];
     const famous = profile.tier === 'famous';
 
-    const tac = getTacticalSkillDef(profile.tacticalSkillId);
+    const tac = getTacticalSkillDef((unit ? getActiveTacticalSkillId(unit) : null)!);
     if (tac) {
         tags.push({
             name: tac.displayName,
@@ -648,6 +669,7 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
 
 /**
  * 名将开局：①②⑤ 改兵力 / 免伤（在掷色前调用一次）
+ * v1 兵力系走 resolveOpeningTroopEffect（含条件门控）；旧免伤等未迁移技仍走桥接路径。
  */
 export function applyOpeningTacticalPreRoll(
     attackerUnits: IBattleUnit[],
@@ -657,11 +679,120 @@ export function applyOpeningTacticalPreRoll(
     triggeredSkillIds: { attacker: Set<string>; defender: Set<string> },
     emitUi: boolean,
     openingUiShown?: { attacker: boolean; defender: boolean },
+    opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
 ): void {
+    const battleType = opts?.battleType ?? 'field';
+    const terrain =
+        opts?.terrain ??
+        getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
+
     const markOpeningUiShown = (sideLabel: string) => {
         if (!openingUiShown) return;
         if (sideLabel === '攻方') openingUiShown.attacker = true;
         else openingUiShown.defender = true;
+    };
+
+    const buildSideCtx = (
+        units: IBattleUnit[],
+        opponents: IBattleUnit[],
+        isAttacker: boolean,
+    ) => {
+        const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
+        const enemyTroops = opponents.reduce((s, u) => s + Math.max(0, u.troops), 0);
+        return buildTacticalConditionContext({
+            isFirstSortieSinceDepart: sideIsFirstSortie(units),
+            battleType,
+            terrain,
+            selfTroops,
+            enemyTroops,
+            selfInitialTroops: selfTroops,
+            enemyInitialTroops: enemyTroops,
+            selfIsAttacker: isAttacker,
+            enemyHasFamousGeneral: sideHasFamousGeneral(opponents),
+        });
+    };
+
+    const tryApplyV1OpeningTroop = (
+        unit: IBattleUnit,
+        units: IBattleUnit[],
+        opponents: IBattleUnit[],
+        sideLabel: string,
+        isAttacker: boolean,
+        triggered: Set<string>,
+    ): boolean => {
+        // 用 getActiveTacticalSkillId 而非 profile：尊重对抗系否决(置 null)/夺取(替换)结果
+        const activeId = getActiveTacticalSkillId(unit);
+        if (!activeId) return false;
+        const ctx = buildSideCtx(units, opponents, isAttacker);
+        const effect = resolveOpeningTroopEffect(activeId, ctx);
+        if (!effect.entry) return false;
+        if (triggered.has(effect.entry.id)) return false;
+
+        let logMsg = '';
+        let applied = false;
+        let selfLossTotal = 0;
+        let enemyLossTotal = 0;
+
+        // 双向削兵：先削己再削敌（肉薄骨并）
+        if (effect.selfCutMagnitude > 0) {
+            selfLossTotal = applyTroopSubToUnits(units, effect.selfCutMagnitude);
+            if (selfLossTotal > 0) applied = true;
+        }
+
+        if (effect.enemyCutMagnitude > 0) {
+            const oppUnit = findEligibleGeneralUnit(opponents);
+            const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
+            const oppCtx = buildSideCtx(opponents, units, !isAttacker);
+            const counter = resolveOpeningTroopCutCounter(
+                oppActiveId,
+                effect.enemyCutMagnitude,
+                oppCtx,
+            );
+            if (counter.selfCutMagnitude > 0) {
+                enemyLossTotal = applyTroopSubToUnits(opponents, counter.selfCutMagnitude);
+            }
+            if (counter.reflectBackMagnitude > 0) {
+                const reflectLoss = applyTroopSubToUnits(units, counter.reflectBackMagnitude);
+                if (reflectLoss > 0) {
+                    selfLossTotal += reflectLoss;
+                    applied = true;
+                }
+            }
+            if (enemyLossTotal > 0) applied = true;
+            else if (counter.entry && counter.selfCutMagnitude === 0) applied = true;
+        }
+
+        if (effect.allyAddMagnitude > 0) {
+            const added = applyTroopAddToUnits(units, effect.allyAddMagnitude);
+            if (added > 0) {
+                applied = true;
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${effect.entry.displayName}】 ${sideLabel} +${added} 兵`;
+            }
+        }
+
+        if (!logMsg && applied) {
+            if (selfLossTotal > 0 && enemyLossTotal > 0) {
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${effect.entry.displayName}】 ${sideLabel} 自损 ${selfLossTotal} / 削敌 ${enemyLossTotal} 兵`;
+            } else if (enemyLossTotal > 0) {
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${effect.entry.displayName}】 ${sideLabel} 削敌 ${enemyLossTotal} 兵`;
+            } else if (selfLossTotal > 0) {
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${effect.entry.displayName}】 ${sideLabel} 自损 ${selfLossTotal} 兵`;
+            } else {
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${effect.entry.displayName}】 ${sideLabel} 削敌被抵消`;
+            }
+        }
+
+        if (!applied) return false;
+
+        triggered.add(effect.entry.id);
+        gameLog('battle', logMsg);
+        if (emitUi) {
+            markOpeningUiShown(sideLabel);
+            emitTacticalUiV1(unit, effect.entry, sideLabel, {
+                uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+            });
+        }
+        return true;
     };
 
     const applySide = (
@@ -669,9 +800,15 @@ export function applyOpeningTacticalPreRoll(
         opponents: IBattleUnit[],
         sideLabel: string,
         triggered: Set<string>,
+        isAttacker: boolean,
     ) => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return;
+
+        if (tryApplyV1OpeningTroop(unit, units, opponents, sideLabel, isAttacker, triggered)) {
+            return;
+        }
+
         const skill = getTacticalSkillForTiming(unit, 'opening');
         if (!skill) return;
         if (!canTriggerTactical(skill, triggered)) return;
@@ -710,8 +847,8 @@ export function applyOpeningTacticalPreRoll(
         }
     };
 
-    applySide(attackerUnits, defenderUnits, '攻方', triggeredSkillIds.attacker);
-    applySide(defenderUnits, attackerUnits, '守方', triggeredSkillIds.defender);
+    applySide(attackerUnits, defenderUnits, '攻方', triggeredSkillIds.attacker, true);
+    applySide(defenderUnits, attackerUnits, '守方', triggeredSkillIds.defender, false);
 }
 
 /**
@@ -740,6 +877,7 @@ export function applyGeneralSkillSideRollMultipliers(
         defRoll,
         emitUi,
         options?.openingUiShown,
+        { battleType, terrain },
     );
     return applyStrategicBattleToRolls(
         attackerUnits,
@@ -800,6 +938,39 @@ export function tryEmitOpeningTacticalOnReinforcementJoin(
 }
 
 /**
+ * 桥接的 v1 opening 强化技（ally_power_mult→ally_mult_1_2）可能带环境条件
+ * （battle_field / terrain_* / battle_siege_* 等），旧 def 无法表达。此处按 v1 condition 门控：
+ * 条件不满足 → 该桥接技本次不生效。旧 tac 技（无 v1 entry）或 always 一律放行；
+ * comeback 类已由 bridgeV1PhaseToTiming 分流到 comeback timing，不进本 opening 路径。
+ */
+function bridgedOpeningEnhanceActive(
+    sideUnits: IBattleUnit[],
+    opponentUnits: IBattleUnit[],
+    isAttacker: boolean,
+    opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
+): boolean {
+    const unit = findEligibleGeneralUnit(sideUnits);
+    if (!unit?.generalId) return true;
+    const tacId = (unit ? getActiveTacticalSkillId(unit) : null);
+    if (!tacId) return true;
+    const entry = resolveGeneralTacticalEntry(tacId);
+    if (!entry || entry.condition === 'always') return true;
+    const selfTroops = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const enemyTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const ctx = buildTacticalConditionContext({ isFirstSortieSinceDepart: sideIsFirstSortie(sideUnits),
+        battleType: opts?.battleType ?? 'field',
+        terrain: opts?.terrain ?? null,
+        selfTroops,
+        enemyTroops,
+        selfInitialTroops: selfTroops,
+        enemyInitialTroops: enemyTroops,
+        selfIsAttacker: isAttacker,
+        enemyHasFamousGeneral: sideHasFamousGeneral(opponentUnits),
+    });
+    return isTacticalSkillActive(entry, ctx);
+}
+
+/**
  * 名将开局战术掷色乘区（③ 己×1.2、④ 敌×0.8）
  */
 export function applyOpeningTacticalToRolls(
@@ -809,6 +980,7 @@ export function applyOpeningTacticalToRolls(
     defRoll: number,
     emitUi = true,
     openingUiShown?: { attacker: boolean; defender: boolean },
+    opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
 ): { attRoll: number; defRoll: number; trigger?: TacticalSkillTrigger } {
     let lastTrigger: TacticalSkillTrigger | undefined;
 
@@ -820,6 +992,7 @@ export function applyOpeningTacticalToRolls(
 
     const applyAllyMult = (
         units: IBattleUnit[],
+        opponentUnits: IBattleUnit[],
         roll: number,
         sideLabel: string,
         isAttacker: boolean,
@@ -830,6 +1003,7 @@ export function applyOpeningTacticalToRolls(
         if (!skill) return roll;
 
         if (skill.effect === 'ally_mult_1_2') {
+            if (!bridgedOpeningEnhanceActive(units, opponentUnits, isAttacker, opts)) return roll;
             const next = roll * skill.magnitude;
             gameLog(
                 'battle',
@@ -909,8 +1083,8 @@ export function applyOpeningTacticalToRolls(
         return next;
     };
 
-    let outAtt = applyAllyMult(attackerUnits, attRoll, '攻方', true);
-    let outDef = applyAllyMult(defenderUnits, defRoll, '守方', false);
+    let outAtt = applyAllyMult(attackerUnits, defenderUnits, attRoll, '攻方', true);
+    let outDef = applyAllyMult(defenderUnits, attackerUnits, defRoll, '守方', false);
     outDef = applyEnemyDebuff(attackerUnits, outDef, '攻方', true);
     outAtt = applyEnemyDebuff(defenderUnits, outAtt, '守方', false);
     outAtt = applyInvRollEdge(attackerUnits, outAtt, '攻方');
@@ -933,8 +1107,7 @@ export function tryApplyComebackTacticalForSide(
     const unit = findEligibleGeneralUnit(sideUnits);
     if (!unit?.generalId) return false;
 
-    const profile = getGeneralProfile(unit.generalId);
-    const v1 = profile ? resolveGeneralTacticalEntry(profile.tacticalSkillId) : null;
+    const v1 = resolveGeneralTacticalEntry((unit ? getActiveTacticalSkillId(unit) : null) ?? '');
     if (v1?.phase === 'mid_battle_comeback' && v1.baseEffect === 'recompute_comeback') {
         const threshold = v1.comebackThreshold ?? COMEBACK_TROOP_THRESHOLD;
         if (sideInitialTroops <= 0 || sideTotalTroops > sideInitialTroops * threshold) {
@@ -1121,4 +1294,66 @@ export function applyPostBattleStrategicBonus(
     }
 
     return total;
+}
+
+/**
+ * 开战判定：对抗系否决/夺取技能
+ */
+export function applySkillCountersToUnits(
+    attackerUnits: IBattleUnit[],
+    defenderUnits: IBattleUnit[],
+    battleType: BattleType,
+    terrain: LandTerrainKind | null,
+): void {
+    const attUnit = findEligibleGeneralUnit(attackerUnits);
+    const defUnit = findEligibleGeneralUnit(defenderUnits);
+
+    const attSkillId = attUnit ? getActiveTacticalSkillId(attUnit) : null;
+    const defSkillId = defUnit ? getActiveTacticalSkillId(defUnit) : null;
+
+    if (!attSkillId && !defSkillId) return;
+
+    const attTroops = attackerUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const defTroops = defenderUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+
+    const attCtx = buildTacticalConditionContext({
+        battleType, terrain,
+        selfTroops: attTroops, enemyTroops: defTroops,
+        selfInitialTroops: attTroops, enemyInitialTroops: defTroops,
+        selfIsAttacker: true,
+        enemyHasFamousGeneral: sideHasFamousGeneral(defenderUnits),
+        isFirstSortieSinceDepart: sideIsFirstSortie(attackerUnits),
+    });
+
+    const defCtx = buildTacticalConditionContext({
+        battleType, terrain,
+        selfTroops: defTroops, enemyTroops: attTroops,
+        selfInitialTroops: defTroops, enemyInitialTroops: attTroops,
+        selfIsAttacker: false,
+        enemyHasFamousGeneral: sideHasFamousGeneral(attackerUnits),
+        isFirstSortieSinceDepart: sideIsFirstSortie(defenderUnits),
+    });
+
+    const attCounter = resolveSkillCountersForSide(attSkillId, attCtx);
+    const defCounter = resolveSkillCountersForSide(defSkillId, defCtx);
+
+    // Defender counters attacker
+    if (defCounter.isNegated && attUnit) {
+        attUnit.battleOverriddenSkillId = null;
+        if (defCounter.isStolen && defUnit) {
+            defUnit.battleOverriddenSkillId = attSkillId;
+        }
+        gameLog('battle', `⚔️ [对抗系] ${defUnit?.generalId} 触发【${defCounter.entry?.displayName}】，看破了攻方战术技！`);
+        if (defUnit && defCounter.entry) emitTacticalUiV1(defUnit, defCounter.entry, '守方', { immediate: true });
+    }
+
+    // Attacker counters defender
+    if (attCounter.isNegated && defUnit) {
+        defUnit.battleOverriddenSkillId = null;
+        if (attCounter.isStolen && attUnit) {
+            attUnit.battleOverriddenSkillId = defSkillId;
+        }
+        gameLog('battle', `⚔️ [对抗系] ${attUnit?.generalId} 触发【${attCounter.entry?.displayName}】，看破了守方战术技！`);
+        if (attUnit && attCounter.entry) emitTacticalUiV1(attUnit, attCounter.entry, '攻方', { immediate: true });
+    }
 }

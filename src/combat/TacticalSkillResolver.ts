@@ -139,6 +139,7 @@ export function isTacticalEffectImplemented(effect: TacticalBaseEffect): boolean
         case 'recompute_comeback':
         case 'enemy_sub_troops_opening':
         case 'ally_add_troops_opening':
+        case 'dual_sub_troops_opening':
         case 'ally_add_troops_comeback':
         case 'luck_variance_self':
         case 'luck_variance_enemy':
@@ -149,7 +150,16 @@ export function isTacticalEffectImplemented(effect: TacticalBaseEffect): boolean
         case 'post_recovery_rate':
         case 'lose_enemy_casualty_boost':
         case 'lose_zero_enemy_recovery':
+        // ── 对抗系（已接 applySkillCountersToUnits + 开局削兵对抗）──
+        case 'negate_enemy_skill':
+        case 'partial_negate_enemy_skill':
+        case 'steal_enemy_skill':
+        case 'reflect_enemy_opening_cut':
+        case 'nullify_enemy_opening_cut':
+        // ── 士气系（已接 first_sortie 桥接 + 门控）──
+        case 'first_sortie_power_mult':
             return true;
+        // 地形对抗（cancel/halve_enemy_terrain_buff）引擎侧尚未接线，仅 combat-model 工具支持 → 归 default(new)
         default:
             return false;
     }
@@ -279,6 +289,55 @@ export function resolveWinnerRecoveryBlockedByLoser(
         return { blocked: true, entry: e };
     }
     return { blocked: false };
+}
+
+// ─────────────────────────────────────────────────────────────
+// 兵力系解析（开局 pre_opening_troops；由 GeneralSkillCombat / combat-model 调用）
+// ─────────────────────────────────────────────────────────────
+
+/** 开局兵力技解析结果（一侧一将一技；条件不满足时各 magnitude 为 0） */
+export interface OpeningTroopEffect {
+    /** 削敌比例（作用于敌方） */
+    enemyCutMagnitude: number;
+    /** 削己比例（肉薄骨并等双向削兵） */
+    selfCutMagnitude: number;
+    /** 增己比例（重整旗鼓等） */
+    allyAddMagnitude: number;
+    entry?: TacticalSkillEntry;
+}
+
+/**
+ * 开局兵力技：enemy_sub / ally_add / dual_sub（phase=pre_opening_troops）。
+ * 对抗系修正（空城/诱敌）由调用方在 enemyCut 施加前经 resolveOpeningTroopCutCounter 处理。
+ */
+export function resolveOpeningTroopEffect(
+    skillId: string | undefined | null,
+    ctx: TacticalConditionContext,
+): OpeningTroopEffect {
+    const empty: OpeningTroopEffect = {
+        enemyCutMagnitude: 0,
+        selfCutMagnitude: 0,
+        allyAddMagnitude: 0,
+    };
+    if (!skillId) return empty;
+    const entry = resolveGeneralTacticalEntry(skillId);
+    if (!entry || entry.phase !== 'pre_opening_troops') return empty;
+    if (!isTacticalSkillActive(entry, ctx)) return empty;
+    switch (entry.baseEffect) {
+        case 'enemy_sub_troops_opening':
+            return { ...empty, enemyCutMagnitude: entry.magnitude, entry };
+        case 'ally_add_troops_opening':
+            return { ...empty, allyAddMagnitude: entry.magnitude, entry };
+        case 'dual_sub_troops_opening':
+            return {
+                enemyCutMagnitude: entry.magnitude,
+                selfCutMagnitude: entry.magnitude,
+                allyAddMagnitude: 0,
+                entry,
+            };
+        default:
+            return empty;
+    }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -473,4 +532,33 @@ export function auditTacticalSkillEngineReadiness(): {
         newEffect,
         bySeries,
     };
+}
+
+
+/**
+ * 战前判定：料敌机先(100%否决)、将计就计(70%否决)、以子之矛(50%夺取，50%仅否决)
+ */
+export function resolveSkillCountersForSide(
+    selfSkillId: string | undefined | null,
+    selfCtx: TacticalConditionContext
+): { isNegated: boolean; isStolen: boolean; entry?: TacticalSkillEntry } {
+    const e = selfSkillId ? resolveGeneralTacticalEntry(selfSkillId) : null;
+    if (!e || !isTacticalSkillActive(e, selfCtx)) return { isNegated: false, isStolen: false };
+    
+    if (e.baseEffect === 'negate_enemy_skill') {
+        return { isNegated: true, isStolen: false, entry: e };
+    }
+    if (e.baseEffect === 'partial_negate_enemy_skill') {
+        if (Math.random() <= e.magnitude) {
+            return { isNegated: true, isStolen: false, entry: e };
+        }
+    }
+    if (e.baseEffect === 'steal_enemy_skill') {
+        if (Math.random() <= e.magnitude) {
+            return { isNegated: true, isStolen: true, entry: e };
+        } else {
+            return { isNegated: true, isStolen: false, entry: e };
+        }
+    }
+    return { isNegated: false, isStolen: false };
 }
