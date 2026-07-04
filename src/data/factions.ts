@@ -85,6 +85,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'song', name: '宋国' },
+
     { id: 'yan', name: '燕国' },
     { id: 'zhao', name: '赵国' },
 
@@ -107,6 +108,7 @@ export const FACTIONS: Faction[] = [
     { id: 'juqu_d', name: '沮渠' },
     { id: 'tufa_d', name: '秃发' },
     { id: 'qiuchi', name: '仇池' },
+
 
     { id: 'helian', name: '赫连' },
     { id: 'xiongnu', name: '匈奴' },
@@ -577,7 +579,8 @@ export const FACTIONS: Faction[] = [
     // 贝加尔湖绿 - 丁零(贝加尔湖以南/高车前身)
     { id: 'huyan', name: '呼衍' },
                 // 草原灰褐 - 呼衍氏(匈奴四大氏族/河南地)
-    { id: 'yujiulu', name: '郁久闾' },            // 柔然紫 - 郁久闾氏(柔然王族/弱水畔)
+    { id: 'yujiulu', name: '郁久闾' },
+            // 柔然紫 - 郁久闾氏(柔然王族/弱水畔)
     { id: 'ashina', name: '阿史那' },
               // 草原绿灰 - 阿史那氏
     { id: 'ashide', name: '阿史德' },              // 草原绿 - 阿史德氏(突厥别部)
@@ -907,7 +910,8 @@ export const FACTIONS: Faction[] = [
     { id: 'chenzhou_d', name: '辰州' },
     { id: 'qianzhong', name: '沅州' },
     { id: 'cuanshi', name: '爨族' },
-    { id: 'dianguo', name: '滇国' },       // 滇国（拓东城）；旗号「滇」
+    { id: 'dianguo', name: '滇国' },
+       // 滇国（拓东城）；旗号「滇」
     { id: 'xinggu', name: '兴古' },
     { id: 'zangke', name: '牂牁' },
     { id: 'guangxin', name: '广信' },
@@ -1198,7 +1202,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'ahaomu', name: '阿豪姆' },
 
-    { id: 'elunchunzu', name: '鄂伦春族' },
+    { id: 'elunchunzu', name: '鄂伦春' },
+
     { id: 'wazu', name: '佤族' },
 
     { id: 'tajikezu', name: '塔吉克族' },

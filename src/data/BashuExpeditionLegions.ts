@@ -31,7 +31,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   ba: { name: '巴渝劲卒', tier: 3 },          // 巴渝舞武士的另一称谓，极其著名的西南精锐，升入T3知名
   hezhou: { name: '兴戎军', tier: 1 },          // 钓鱼城·王坚抗蒙毙蒙哥（防御战，降T1）
   kui: { name: '白帝戍卫', tier: 3 },             // 白帝城·刘备白毻兵（顶级近卫，T2）
-    qiuchi: { name: '仇池氐兵', tier: 4 },
+    qiuchi: { name: '百顷氐兵', tier: 3 },
   // ── 2026-06-16 新增：4座西南名关 ──
   lizhou_d: { name: '剑阁戍卒', tier: 4 },        // 剑门关·廖化（常规番号，降T3）
   fengzhou: { name: '和尚原锐卒', tier: 2 },       // 吴玠和尚原大捷，属于经典的战术/战役防守反击，降为T2战术。

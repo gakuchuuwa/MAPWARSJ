@@ -46,7 +46,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     yuwen: { name: '武川镇军', tier: 0 },
   da_yuan: { name: '北元怯薛', tier: 1 },             // 元朝退回草原后维持北元政权的战略武力核心，符合T1战略主力
   huyan: { name: '呼衍精骑', tier: 4 },
-  yujiulu: { name: '郁久闾王骑', tier: 4 },            // 缺乏知名度支撑，降T3
+    yujiulu: { name: '柔然汗骑', tier: 4 },
     jalair: { name: '札剌亦儿军', tier: 3 },
   hongirad: { name: '弘吉剌护卫', tier: 4 },           // 常规番号，降T3
     choros: { name: '萨吾尔骁骑', tier: 4 },           // 缺乏知名度支撑，降T3

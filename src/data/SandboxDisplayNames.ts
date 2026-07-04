@@ -63,7 +63,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'guangping': '广平',
 'duanzhou_d': '端',
 'qin': '秦',
-    'song': '宋',
+'song': '宋',
     'yan': '燕',
 'zhao': '赵',
 'wei': '魏',
@@ -364,7 +364,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     
 'huyan': '呼衍',
-    'yujiulu': '郁久',
+'yujiulu': '郁久',
     'ashina': '史那',
     'ashide': '史德',
 'weiming': '嵬名',
@@ -613,7 +613,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chenzhou_d': '辰',
     'qianzhong': '沅',
     'cuanshi': '爨',
-    'dianguo': '滇',   // 滇国（拓东城）；旗作「滇」
+'dianguo': '滇',
     'xinggu': '兴古',
     'guangxin': '广信',
     'kejia': '客',
@@ -847,7 +847,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   'funan': '扶南',
   'lancang': '澜沧',
   'ahaomu': '阿萨',
-  'elunchunzu': '鄂伦',
+'elunchunzu': '鄂伦',
   'wazu': '佤',
   'tajikezu': '塔吉',
   'jingpozu': '景颇',

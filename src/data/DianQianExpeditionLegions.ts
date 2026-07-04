@@ -18,7 +18,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   champa: { name: '占婆国水师', tier: 3 },             // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   chenla: { name: '吴哥战象', tier: 1 },     // 吴哥·缔造高棉帝国中南半岛霸权的战略主力
   luchuan: { name: '麓川夷象', tier: 3 }, // 明朝三征麓川时思氏仰仗的核心象阵，极具历史话题度和风土特色，升入T3知名
-  dianguo: { name: '滇池兵', tier: 4 },       // 滇池·庄蹻滇国
+    dianguo: { name: '滇池青铜甲', tier: 4 },
   mu_lijiang: { name: '丽江土兵', tier: 3 },   // 丽江木氏土司武装（木家军），明代西南极具历史知名度的土兵精锐，升入T3知名
   mingzheng: { name: '明正土兵', tier: 4 },           // 打箭炉·坚赞德昌从征金川   // 打箭炉·明正土司兵（常规番号，降T3）
 

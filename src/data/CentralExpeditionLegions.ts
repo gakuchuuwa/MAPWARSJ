@@ -90,7 +90,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
     xiao_d: { name: '兰陵健儿', tier: 4 },
   zhengzhou: { name: '白袍军', tier: 2 },        // 仅存在于北伐战役，随后覆灭，极度缺乏建制延续性，属于特定战役的巅峰高光，符合T2战术
-  song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军,
+    song: { name: '殿前捧日', tier: 1 },
     zhao: { name: '邯郸甲士', tier: 4 },              // 缺乏知名度支撑，降T3
     qing: { name: '泾原锐骑', tier: 1 },
     luming: { name: '天雄军', tier: 2 },

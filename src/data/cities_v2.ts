@@ -1049,7 +1049,8 @@ export const PERIPHERY: CityDataV2[] = [
     },
     { id: 'city_tongwancheng', name: '统万城', factionId: 'helian', lat: 38.024286, lng: 109.149170, type: 'small_city', region: 'HEXI', troops: 10000, note: '大夏都城遗址；峰值人口未达中城门槛，2026-06-12 降级' },
 
-    { id: 'city_qiuchi', name: '上禄', factionId: 'qiuchi', lat: 33.86, lng: 105.3, type: 'small_city', troops: 5000, region: 'BASHU' },
+    { id: 'city_qiuchi', name: '上禄', factionId: 'qiuchi', lat: 33.86, lng: 105.3, type: 'small_city', troops: 20000, region: 'BASHU' },
+
 
     { id: 'city_ganquanyi', name: '武都', factionId: 'wudu', lat: 33.4293, lng: 105.1419, type: 'medium_city', troops: 10000, region: 'BASHU' },
 
@@ -1607,9 +1608,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_ordos', name: '延恩', factionId: 'shuofang', lat: 39.620517, lng: 108.852539, type: 'small_city', region: 'HEXI', troops: 10000,
         note: '延恩；朔方小城',
     },
-    { id: 'city_ruoshui', name: '弱水畔', factionId: 'yujiulu', lat: 42.457925, lng: 101.186829, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '弱水畔；郁久闾小城',
-    },
+    { id: 'city_ruoshui', name: '弱水畔', factionId: 'yujiulu', lat: 42.457925, lng: 101.186829, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
     
     { id: 'city_suoling', name: '娑陵', factionId: 'yaoluoge', lat: 49.364493, lng: 102.840271, type: 'small_city', region: 'STEPPE', troops: 10000,
         note: '娑陵；药罗葛小城',
@@ -2496,7 +2496,8 @@ export const CITIES_V2: CityDataV2[] = [
         note: '曲靖；爨族小城',
     },
     { id: 'city_weichu', name: '威楚', factionId: 'baiman', lat: 25.045791, lng: 101.574097, type: 'small_city', region: 'DIANQIAN', troops: 10000, note: '高升泰平杨义贞复大理' },
-    { id: 'city_tuodongcheng', name: '滇池', factionId: 'dianguo', lat: 25.0500, lng: 102.7000, type: 'small_city', troops: 10000, tier: 1, region: 'DIANQIAN', note: '滇国都城；滇池兵' },
+    { id: 'city_tuodongcheng', name: '滇池', factionId: 'dianguo', lat: 25.05, lng: 102.7, type: 'small_city', troops: 20000, region: 'DIANQIAN' },
+
     { id: 'city_luoxiong', name: '罗雄', factionId: 'xinggu', lat: 24.769307, lng: 104.224548, type: 'small_city', region: 'LINGNAN', troops: 10000,
         note: '罗雄；兴古小城',
     },
@@ -2527,7 +2528,8 @@ export const CITIES_V2: CityDataV2[] = [
         note: '清流关；滁州关隘',
     },
     { id: 'city_zhongli', name: '盱眙', factionId: 'huai', lat: 33.011000, lng: 118.497000, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '淮州治盱眙' },
-    { id: 'city_bianliang', name: '开封', factionId: 'song', lat: 34.8, lng: 114.31, type: 'big_city', region: 'CENTRAL', troops: 20000, tier: 0, note: '北宋京师；20城白名单' },
+    { id: 'city_bianliang', name: '开封', factionId: 'song', lat: 34.8, lng: 114.31, type: 'big_city', troops: 20000, region: 'CENTRAL' },
+
     { id: 'city_shangluo', name: '商邑', factionId: 'shangzhou', lat: 33.87, lng: 109.94, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '商鞅商於封地商邑' },
     { id: 'city_shicheng', name: '郊郢', factionId: 'ying', lat: 31.16, lng: 112.58, type: 'pass', region: 'JIANGNAN', troops: 10000, note: '楚郢郊郢故址（荆门）；梁郢州曹景宗名片（治所夏口，据点取郢名沾边）' },
     { id: 'city_baling', name: '巴陵', factionId: 'yue_d', lat: 29.35, lng: 113.13, type: 'medium_city', troops: 20000, region: 'JIANGNAN' },
@@ -2799,7 +2801,8 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_geergang', name: '戈尔冈', factionId: 'ahaomu', lat: 27.479, lng: 94.8889, type: 'small_city', troops: 5000, region: 'DIANQIAN' },
 
-    { id: 'city_huma', name: '呼玛', factionId: 'elunchunzu', lat: 51.72, lng: 126.65, type: 'small_city', troops: 5000, region: 'NORTHEAST' },
+    { id: 'city_huma', name: '呼玛', factionId: 'elunchunzu', lat: 51.72, lng: 126.65, type: 'small_city', troops: 20000, region: 'NORTHEAST' },
+
     { id: 'city_cangyuan', name: '沧源', factionId: 'wazu', lat: 23.3725, lng: 99.4263, type: 'small_city', troops: 5000, region: 'DIANQIAN' },
 
     { id: 'city_huoluoge', name: '霍罗格', factionId: 'tajikezu', lat: 37.49, lng: 71.55, type: 'small_city', troops: 5000, region: 'WESTERN' },
