@@ -292,17 +292,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         tier: 1,
         note: '历下；济南治所/重镇',
     },
-    {
-        id: 'city_linzi',
-        name: '临淄',
-        factionId: 'qi',
-        lat: 36.88, lng: 118.43,
-        type: 'medium_city',
-        region: 'CENTRAL',
-        troops: 10000,
-        tier: 1,
-        note: '临淄；齐国治所/重镇',
-    },
+    { id: 'city_linzi', name: '临淄', factionId: 'qi', lat: 36.88, lng: 118.43, type: 'medium_city', troops: 20000, region: 'CENTRAL' },
+
     // ── 岭南、东南与西南地区中城 ──
     {
         id: 'city_bushan',
@@ -732,9 +723,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
     },
     { id: 'city_qingyuan', name: '清远', factionId: 'chen', lat: 23.68, lng: 113.06, type: 'small_city', troops: 20000, region: 'LINGNAN' },
 
-    { id: 'city_gaoque', name: '高阙塞', factionId: 'baiyang', lat: 41.195202, lng: 107.166138, type: 'pass', region: 'HEXI', mirror: true, troops: 10000, tier: 2,
-        note: '高阙塞；白羊关隘',
-    },
+    { id: 'city_gaoque', name: '高阙塞', factionId: 'baiyang', lat: 41.195202, lng: 107.166138, type: 'pass', troops: 20000, region: 'HEXI' },
+
     {
         id: 'city_hengpuguan',
         name: '横浦关',
@@ -2234,6 +2224,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
 
+
     { id: 'city_wugucheng', name: '乌骨城', factionId: 'huimo', lat: 40.7685, lng: 123.9395, type: 'pass', region: 'NORTHEAST', troops: 10000,
         note: '乌骨城；濊貊关隘',
     },
@@ -2519,7 +2510,8 @@ export const CITIES_V2: CityDataV2[] = [
         note: '皖口；刘源安庆',
     },
 
-    { id: 'city_jiuzi', name: '姑孰', factionId: 'danyang', lat: 31.55, lng: 118.47, type: 'small_city', troops: 5000, region: 'JIANGNAN' },
+    { id: 'city_jiuzi', name: '姑孰', factionId: 'danyang', lat: 31.55, lng: 118.47, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
 
     { id: 'city_datong2', name: '大通', factionId: 'chizhou', lat: 30.8188, lng: 117.7762, type: 'small_city', troops: 5000, region: 'JIANGNAN' },
 

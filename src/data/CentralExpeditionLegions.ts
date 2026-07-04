@@ -10,7 +10,7 @@
 export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
       wei: { name: '魏之武卒', tier: 0 },        // 汴梁·战国首支职业重步兵（吴起阴晋大捷）
     qin: { name: '铁鹰锐士', tier: 1 },
-  qi: { name: '齐之技击', tier: 2 },       // 战国齐国雇佣游侠体制，擅打顺风仗但缺乏战略韧性与军团纪律，下调至T2战术
+    qi: { name: '齐之技击', tier: 2 },
   han: { name: '韩之劲弩', tier: 2 },        // 战国时期韩国凭精良弩机在阵地防御与远程打击独步天下的战术兵种，升入T2战术
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
     han_d: { name: '大汉材官', tier: 2 },

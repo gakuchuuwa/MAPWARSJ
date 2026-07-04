@@ -535,7 +535,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jiaodong: { generalId: 'jiaodong_tiandan', generalName: '田单', portrait: '/assets/xianqin/jiaodong_tiandan.png' },
     jibei: { generalId: 'jibei_xuxuan_cm', generalName: '徐宣', portrait: '/assets/panjun/jibei_xuxuan_cm.png' },
     jinan: { generalId: 'jinan_tiexuan', generalName: '铁铉', portrait: '/assets/daming/jinan_tiexuan.png' },
-    qi: { generalId: 'qi_qihuangong', generalName: '齐桓公', portrait: '/assets/xianqin/qi_qihuangong.png' },
+    qi: { generalId: 'qi_qihuangong', generalName: '管仲', portrait: '/assets/xianqin/qi_qihuangong.png' },
     huaiyang: { generalId: 'huaiyang_zhouyafu', generalName: '周亚夫', portrait: '/assets/liuhan/huaiyang_zhouyafu.png' },
     yingzhou_d: { generalId: 'yingzhou_d_liuqi', generalName: '刘锜', portrait: '/assets/zhaosong/yingzhou_d_liuqi.png' },
     cao_d: { generalId: 'cao_d_caocao', generalName: '曹操', portrait: '/assets/CENTRAL/cao_d_caocao.png' },

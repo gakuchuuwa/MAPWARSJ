@@ -30,7 +30,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     ganzhou: { name: '觻得精骑', tier: 2 },
     xiqin: { name: '忠孝军', tier: 2 }, // 仅有四百至数千人，于大昌原等战役打出短期战术高光，随后于三峰山覆灭，缺乏长久延续性，符合T2战术
     didao: { name: '熙河蕃兵', tier: 1 },
-  baiyang: { name: '长城烽火卫', tier: 3 }, // 塞外长城守军
+    baiyang: { name: '长城烽火卫', tier: 3 },
   wei2: { name: '静塞军', tier: 2 },                 // 易州·北宋第一精骑（战术尖刀）
   guazhou: { name: '瓜州镇兵', tier: 4 },  // 晋昌城·唐瓜州镇兵
   shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）

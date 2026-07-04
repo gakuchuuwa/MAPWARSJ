@@ -69,6 +69,7 @@ export const FACTIONS: Faction[] = [
     
     // 春秋战国列国
     { id: 'qi', name: '齐国' },
+
     { id: 'jin', name: '晋国' },
     { id: 'chu', name: '江陵' },
 
@@ -957,6 +958,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'hongzhou', name: '洪州' },
     { id: 'danyang', name: '当涂' },
+
        // 宣州(芜湖/鸠兹)
     { id: 'huai', name: '淮州' },
     { id: 'huaiyang', name: '淮阳' },
@@ -1148,12 +1150,14 @@ export const FACTIONS: Faction[] = [
 
 
 
+
     { id: 'suke', name: '素可泰' },
 
     { id: 'gaochang', name: '麴氏' },
 
     { id: 'chuyue', name: '处月部' },
     { id: 'baiyang', name: '白羊' },
+
     { id: 'baidi', name: '白狄' },
     { id: 'dulan', name: '都兰' },
 
