@@ -488,7 +488,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-28 新增：南部(根城/日本)、萨曼(阿母城/中亚)、西域四政权 ──
     'nanbu': '陆奥',
     'saman': '萨曼',
-    'hepan': '喝槃',
+'hepan': '喝槃',
 'humi': '瓦罕',
 
     // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──

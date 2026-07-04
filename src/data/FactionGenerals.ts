@@ -239,7 +239,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     bulat: { generalId: 'bulat_boduanchaer', generalName: '孛端察儿', portrait: '/assets/STEPPE/bulat_boduanchaer.png' },
     tuva: { generalId: 'tuva_qinggunzabu', generalName: '青滚杂卜', portrait: '/assets/STEPPE/tuva_qinggunzabu.png' },
         // ── 西域关隘 ──
-    hepan: { generalId: 'hepan_peishenfu', generalName: '裴神符', portrait: '/assets/WESTERN/hepan_peishenfu.png' },
+    hepan: { generalId: 'hepan_peishenfu', generalName: '高仙芝', portrait: '/assets/WESTERN/hepan_peishenfu.png' },
     yiwu: { generalId: 'yiwu_hanshen', generalName: '罕慎', portrait: '/assets/WESTERN/yiwu_hanshen.png' },
     kepantuo: { generalId: 'kepantuo_hanritianzhong', generalName: '阇梨密', portrait: '/assets/WESTERN/kepantuo_hanritianzhong.png' },
     huite: { generalId: 'huite_amuersana', generalName: '阿睦尔撒纳', portrait: '/assets/WESTERN/huite_amuersana.png' },
@@ -255,7 +255,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     shache: { generalId: 'shache_xian_suoche_wang', generalName: '莎车贤', portrait: '/assets/WESTERN/shache_xian_suoche_wang.png' },
     shule: { generalId: 'shule_aersilan', generalName: '阿尔斯兰', portrait: '/assets/WESTERN/shule_aersilan.png' },
     dzungar: { generalId: 'dzungar_gaerdancelin', generalName: '噶勒丹策凌', portrait: '/assets/WESTERN/dzungar_gaerdancelin.png' },
-    anxi: { generalId: 'anxi_gaoxianzhi', generalName: '高仙芝', portrait: '/assets/litang/anxi_gaoxianzhi.png' },
+    anxi: { generalId: 'anxi_gaoxianzhi', generalName: '郭昕', portrait: '/assets/litang/anxi_gaoxianzhi.png' },
     yanqi: { generalId: 'yanqi_longtuqizhi', generalName: '龙突骑支', portrait: '/assets/WESTERN/yanqi_longtuqizhi.png' },
     tuerhute: { generalId: 'tuerhute_wobaxi', generalName: '渥巴锡', portrait: '/assets/WESTERN/tuerhute_wobaxi.png' },
     gaochang: { generalId: 'gaochang_quwentai', generalName: '麴文泰', portrait: '/assets/WESTERN/gaochang_quwentai.png' },

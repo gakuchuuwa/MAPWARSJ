@@ -424,7 +424,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'nanbu': 'city_genjo',
     'an': 'city_bukhara',
     'saman': 'city_amucheng',
-    'hepan': 'city_hepancheng',
+'hepan': 'city_hepancheng',
 'humi': 'city_hunduduo',
 
     // ── 2026-05-28 新增：马蒙(达尔甘城)、古兹根(法里亚布城)、傣(勐泐城)、泰沅(清坎城)、帕銮(双河城)、罗斛(呵叻城) ──

@@ -776,7 +776,9 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-28 新增：南部(根城/日本陆奥)、萨曼(阿母城/中亚)、西域四政权 ──
     { id: 'nanbu', name: '陆奥' },                         // 陆奥国(南部氏/根城), Mutsu
     { id: 'saman', name: '萨曼' },                         // 萨曼王朝(中亚/阿母城), Samanid Empire
-    { id: 'hepan', name: '朅盘陀' },                       // 喝槃陀(西域/喝槃陀城), Khevand/Koband
+    { id: 'hepan', name: '朅盘陀' },
+
+                       // 喝槃陀(西域/喝槃陀城), Khevand/Koband
     { id: 'humi', name: '瓦罕' },
                           // 护密(西域/护密城), Wakhan
     // 特勤(西域/活国城), Tegin
@@ -1077,6 +1079,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'qincha', name: '钦察' },
     { id: 'anxi', name: '安西' },
+
 
 
     { id: 'konbaung', name: '贡榜' },
