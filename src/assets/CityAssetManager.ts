@@ -670,7 +670,7 @@ export class CityAssetManager {
         'qingqiang': '茂',
 'zhaowu': '昭武',
 'ganzhou': '甘',
-'gaoliang': '耿',
+'gaoliang': '冉駹',
         'ruoqiang': '婼羌',
         'qiemo': '且末',
         'weitou': '尉头',

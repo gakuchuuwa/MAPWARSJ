@@ -695,7 +695,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     jingzhou_gs_huangfusong: { generalId: 'jingzhou_gs_huangfusong', tier: 'famous', tacticalSkillId: 'ts_021', strategicSkillId: 'str_12' },
     unassigned_masui: { generalId: 'unassigned_masui', tier: 'ordinary', tacticalSkillId: 'ts_021' }, // 洹水破田悦
     wang_d_wangdao: { generalId: 'wang_d_wangdao', tier: 'ordinary', tacticalSkillId: 'ts_011' }, // 王与马共天下
-    chimei_fanchong: { generalId: 'chimei_fanchong', tier: 'famous', tacticalSkillId: 'ts_074', strategicSkillId: 'str_13' }, // 前无坚阵（赤眉入长安）
+    chimei_fanchong: { generalId: 'chimei_fanchong', tier: 'ordinary', tacticalSkillId: 'ts_074' },
     zhengzhou_chenqingzhi: { generalId: 'zhengzhou_chenqingzhi', tier: 'famous', tacticalSkillId: 'ts_163', strategicSkillId: 'str_15' }, // 七千白袍入洛阳
     xichu_xiangyu: { generalId: 'xichu_xiangyu', tier: 'famous', tacticalSkillId: 'ts_012', strategicSkillId: 'str_03' }, // 破釜沉舟（巨鹿之战）
     wazhai_limi_wz: { generalId: 'wazhai_limi_wz', tier: 'famous', tacticalSkillId: 'ts_021', strategicSkillId: 'str_07' },
@@ -719,7 +719,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tajikezu_kuerban: { generalId: 'tajikezu_kuerban', tier: 'ordinary', tacticalSkillId: 'ts_009' },
     wazu_banhongwang: { generalId: 'wazu_banhongwang', tier: 'ordinary', tacticalSkillId: 'ts_010' },
     long2_weixiaokuan: { generalId: 'long2_weixiaokuan', tier: 'famous', tacticalSkillId: 'ts_031', strategicSkillId: 'str_14' },
-    dongxian_sunbin: { generalId: 'dongxian_sunbin', tier: 'ordinary', tacticalSkillId: 'ts_165' },
+    dongxian_sunbin: { generalId: 'dongxian_sunbin', tier: 'famous', tacticalSkillId: 'ts_165', strategicSkillId: 'str_11' },
     mi_mizhu: { generalId: 'mi_mizhu', tier: 'ordinary', tacticalSkillId: 'ts_015' }, // 资助刘备
     baibo_guotai_bb: { generalId: 'baibo_guotai_bb', tier: 'ordinary', tacticalSkillId: 'ts_035' }, // 白波军
     unassigned_geshuhan: { generalId: 'unassigned_geshuhan', tier: 'famous', tacticalSkillId: 'ts_031', strategicSkillId: 'str_14' }, // 潼关守将
@@ -949,11 +949,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tier: 'ordinary',
         tacticalSkillId: 'ts_026',
     },
-    jinan_tiexuan: {
-        generalId: 'jinan_tiexuan',
-        tier: 'ordinary',
-        tacticalSkillId: 'ts_021',
-    },
+    jinan_tiexuan: { generalId: 'jinan_tiexuan', tier: 'famous', tacticalSkillId: 'ts_021', strategicSkillId: 'str_14' },
     unassigned_guandingfu: {
         generalId: 'unassigned_guandingfu',
         tier: 'ordinary',

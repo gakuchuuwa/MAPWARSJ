@@ -1019,7 +1019,10 @@ export const FACTIONS: Faction[] = [
     { id: 'qingqiang', name: '青羌' },
     { id: 'zhaowu', name: '昭武' },
 
-    { id: 'gaoliang', name: '耿国' },
+    { id: 'gaoliang', name: '冉駹羌' },
+
+
+
 
     { id: 'ruoqiang', name: '婼羌' },
 

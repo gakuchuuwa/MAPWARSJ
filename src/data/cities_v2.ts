@@ -720,7 +720,10 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_diezhou', name: '迭部', factionId: 'dangchang', lat: 33.975273, lng: 103.482971, type: 'small_city', troops: 20000, region: 'BASHU' },
 
 
-    { id: 'city_panzhou', name: '茂名', factionId: 'gaoliang', lat: 33.578015, lng: 103.029785, type: 'small_city', troops: 5000, region: 'TIBET' },
+    { id: 'city_panzhou', name: '茂名', factionId: 'gaoliang', lat: 33.578015, lng: 103.029785, type: 'small_city', troops: 20000, region: 'TIBET' },
+
+
+
 
     { id: 'city_maozhou', name: '汶川', factionId: 'qingqiang', lat: 31.693115, lng: 103.867493, type: 'small_city', region: 'BASHU', troops: 10000,
         note: '汶川；青羌小城',
