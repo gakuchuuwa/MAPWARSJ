@@ -43,7 +43,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tatar: { name: '塔塔儿勇士', tier: 4 },
     merkit: { name: '岭北屯骑', tier: 3 },
     chahar: { name: '哈剌赤军', tier: 2 },
-  yuwen: { name: '武川镇军', tier: 1 },     // 武川镇·沙苑之战大破东魏的关陇王牌
+    yuwen: { name: '武川镇军', tier: 0 },
   da_yuan: { name: '北元怯薛', tier: 1 },             // 元朝退回草原后维持北元政权的战略武力核心，符合T1战略主力
   huyan: { name: '呼衍精骑', tier: 4 },
   yujiulu: { name: '郁久闾王骑', tier: 4 },            // 缺乏知名度支撑，降T3
@@ -84,6 +84,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   wuli_d: { name: '喀尔喀劲骑', tier: 3 },      // 扎布汗·乌里雅苏台喀尔喀骑兵（缺乏极其著名的战术高光，降T3）
   heisha_d: { name: '黑沙精骑', tier: 3 },  // 后突厥黑沙道，突厥复兴运动核心，专属名号特色鲜明，升T2
   jiluo_d: { name: '北征突骑', tier: 1 },       // 燕然勒石彻底击灭北匈奴，独立战略主力，升T1,
-    chagatai: { name: '戊己屯军', tier: 1 },
+    chagatai: { name: '戊己屯军', tier: 2 },
     dongsheng: { name: '云中彀骑', tier: 3 },
 };

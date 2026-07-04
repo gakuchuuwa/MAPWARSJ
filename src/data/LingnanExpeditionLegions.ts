@@ -17,7 +17,6 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     nguyen_guangnan: { name: '富春禁兵', tier: 4 },   // 常规番号，降T3
   // guangnanguo → 洞海城归 panjun
   ryukyu: { name: '那霸水师', tier: 3 },       // 琉球王国武装代表，东亚海上贸易网络重要文化符号，升入T3知名
-  ming_zheng: { name: '郑氏铁人军', tier: 1 }, // 承天·郑成功攻台（以多胜少，降T1）
   guangzhou: { name: '清海军', tier: 4 },      // 番禺·刘隐清海军节度（《旧唐书·刘隐传》）（缺乏极其著名的战术高光，降T3）
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占

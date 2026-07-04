@@ -46,7 +46,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     lingqiu: { name: '胡服骑射', tier: 1 },
   // 飞虎军除名（李克用置，平型关时代错位）
   loufan: { name: '天山飞骑', tier: 4 },      // 宁武关·薛仁贵三箭定天山（缺乏极其著名的战术高光，降T3）
-  linyu: { name: '夷丁突骑', tier: 1 },       // 山海关·临榆（明末战功卓著，升T1）
+    linyu: { name: '夷丁突骑', tier: 2 },
   // 恒山军除名（泛称无固定番号）
   dai_d: { name: '左射军', tier: 4 },         // 灵仙·石敬瑭嫡系（缺乏极其著名的战术高光，降T3）
   dongdan: { name: '东丹卫兵', tier: 4 },       // 敖东城·耶律倍东丹国（缺乏极其著名的战术高光，降T3）
@@ -74,5 +74,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wuyuan_d: { name: '五原塞卒', tier: 4 },  // 固阳塞·五原郡长城戍卒,
     cangzhou: { name: '定霸都', tier: 4 },           // 缺乏知名度支撑，降T3,
     dingzhou: { name: '鲜卑甲骑', tier: 2 },
-    yingzhou_d2: { name: '从马直', tier: 1 },
+    yingzhou_d2: { name: '从马直', tier: 2 },
 };

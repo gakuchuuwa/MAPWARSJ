@@ -26,7 +26,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   quanzhou: { name: '清源军', tier: 4 },        // 刺桐·留从效清源军
   chen: { name: '建康水军', tier: 4 },       // 清远·陈霸先水师
 
-  yue_d: { name: '背嵬军', tier: 1 },        // 岳飞背嵬军虽在郾城、颖昌取得重大战略胜利，但未能灭亡金国，不符合"灭国"硬标准，降为T1战略王牌。
+    yue_d: { name: '背嵬军', tier: 0 },
       xiangzhou: { name: '襄阳镇军', tier: 4 },     // 襄阳·坚守六年的重镇防卫力量（常规番号，降T3）
   zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
   sizhou: { name: '克敌军', tier: 2 },       // 南宋因装备战术兵器克敌弓而建立的特种部队，属于战术兵器部队，下调至T2战术
@@ -87,4 +87,5 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
   wenling: { name: '福建水师', tier: 3 },    // 明清东南沿海最重要的水上王牌，享有极高的历史知名度，升入T3知名
   wuyue: { name: '游奕军', tier: 4 },          // 杭州·钱镠吴越游奕军（缺乏极其著名的战术高光，降T3）
     shaozhou_d: { name: '银枪效节军', tier: 2 },
+    ming_zheng: { name: '郑氏铁人军', tier: 2 },
 };

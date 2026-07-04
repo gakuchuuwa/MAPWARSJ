@@ -254,7 +254,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
 // ── 西域区 2026-06-18 ──
     shache: { generalId: 'shache_xian_suoche_wang', generalName: '莎车贤', portrait: '/assets/WESTERN/shache_xian_suoche_wang.png' },
     shule: { generalId: 'shule_aersilan', generalName: '阿尔斯兰', portrait: '/assets/WESTERN/shule_aersilan.png' },
-    dzungar: { generalId: 'dzungar_gaerdancelin', generalName: '噶尔丹策零', portrait: '/assets/WESTERN/dzungar_gaerdancelin.png' },
+    dzungar: { generalId: 'dzungar_gaerdancelin', generalName: '噶勒丹策凌', portrait: '/assets/WESTERN/dzungar_gaerdancelin.png' },
     anxi: { generalId: 'anxi_guoxin', generalName: '郭昕', portrait: '/assets/WESTERN/anxi_guoxin.png' },
     yanqi: { generalId: 'yanqi_longtuqizhi', generalName: '龙突骑支', portrait: '/assets/WESTERN/yanqi_longtuqizhi.png' },
     tuerhute: { generalId: 'tuerhute_wobaxi', generalName: '渥巴锡', portrait: '/assets/WESTERN/tuerhute_wobaxi.png' },

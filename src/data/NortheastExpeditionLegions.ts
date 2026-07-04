@@ -15,10 +15,10 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   dajin: { name: '合扎猛安', tier: 0 },         // 会宁府·大金猛安谋克军制（阿骨打@都城）
   yizhou: { name: '七水部铁骑', tier: 1 },      // 蒺藜山·完颜娄室统率的七水部嫡系主力
   qidan: { name: '属珊锐骑', tier: 3 },     // 辽国述律平太后亲卫，名号独特，但非战略野战军，降为T3知名。
-  manzhou: { name: '白甲兵', tier: 0 },     // 萨尔浒·1619 努尔哈赤白摆牙喇破明四路
+    manzhou: { name: '白甲兵', tier: 1 },
   jurchen: { name: '铁浮图', tier: 1 },         // 五国城·宗弼铁浮屠重装（§3 #1）
   aisin_d: { name: '巴牙喇军', tier: 1 },     // 赫图阿拉·爱新觉罗白甲近卫（§3 #27）
-  manzhou_d: { name: '满洲八旗', tier: 1 },   // 沈阳·八旗劲旅（军制非精兵番号）
+    manzhou_d: { name: '满洲八旗', tier: 0 },
     hezhe: { name: '宁古塔水军', tier: 4 },
   aola: { name: '敖拉部骑', tier: 4 },       // 雅克萨·孟烈伦敖拉氏
   wuliangha: { name: '兀良哈猎兵', tier: 3 },  // 明清历史上大名鼎鼎的“朵颜三卫”（兀良哈三卫），明代辽东绕不开的话题，升入T3知名

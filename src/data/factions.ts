@@ -107,6 +107,7 @@ export const FACTIONS: Faction[] = [
     { id: 'beidi', name: '北地' },
     { id: 'tuoba', name: '拓跋' }, // 代表北魏，避免旗号重名
     { id: 'yuwen', name: '宇文' },
+
     { id: 'liang_d', name: '梁国' },
     { id: 'chen', name: '陈国' },
     { id: 'sui', name: '隋国' },
@@ -123,7 +124,9 @@ export const FACTIONS: Faction[] = [
     { id: 'dangxiang', name: '大夏' },
     { id: 'menggu_d', name: '蒙古' },
     { id: 'manzhou', name: '满洲' },
+
     { id: 'manzhou_d', name: '大清' },
+
     { id: 'ming_d', name: '大明' },
     { id: 'liao_d', name: '大辽' },
     { id: 'dangzhou', name: '氐族' },
@@ -140,6 +143,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xie_cj_d', name: '信州' },
     // 金黄 - 春申黄氏
     { id: 'yue_d', name: '岳家' },
+
     { id: 'qian_d', name: '秀州' },
     { id: 'kong_d', name: '孔家' }, // 代表鲁国，避免旗号重名
     { id: 'cao_d', name: '曹家' },
@@ -356,6 +360,7 @@ export const FACTIONS: Faction[] = [
     { id: 'dongxia', name: '东夏' },
     { id: 'chagatai', name: '车师' },
 
+
            // 汗国深绿 - 察合台汗国(阿力麻里)
     { id: 'ogodei', name: '窝阔台' },
     // 波斯靛紫 - 伊儿汗国(玛拉固阿)
@@ -408,6 +413,7 @@ export const FACTIONS: Faction[] = [
     { id: 'heyuan_d', name: '河源' },                          // 花石峡·隋河源郡积石镇；旗号河源
     { id: 'guiyi', name: '归义' },
 
+
     { id: 'dafeichuan', name: '退浑' },
     // 第六类：周边国家政权
     // 交阯深紫 - 安南胡朝/黎氏
@@ -436,6 +442,7 @@ export const FACTIONS: Faction[] = [
 
     // 土褐 - 喀尔喀蒙古(额尔德尼昭)
     { id: 'dzungar', name: '绰罗斯' },
+
             // 暗灰 - 准噶尔汗国(伊犁)
 
     // 第四类：西北/青藏
@@ -602,7 +609,8 @@ export const FACTIONS: Faction[] = [
     { id: 'mu_lijiang', name: '木家' },
                // 丽江明黄 - 丽江木氏(木府)
     // 大肚秘鲁黄 - 大肚王国(台湾原住民联盟)
-    { id: 'ming_zheng', name: '明郑' },             // 东宁深蓝 - 明郑/东宁王国(安平/热兰遮城)
+    { id: 'ming_zheng', name: '明郑' },
+             // 东宁深蓝 - 明郑/东宁王国(安平/热兰遮城)
     // ── 第五类：百越余脉与南岛语系 ──
     { id: 'xiou', name: '西瓯' },
     // 大瑶山林越绿 - 瑶族(大瑶山)
@@ -835,7 +843,8 @@ export const FACTIONS: Faction[] = [
               // 偏头关·林胡族
     { id: 'lingqiu', name: '灵丘' },
             // 平型关·灵丘县
-    { id: 'linyu', name: '临榆' },              // 山海关·临榆
+    { id: 'linyu', name: '临榆' },
+              // 山海关·临榆
     { id: 'loufan', name: '楼烦' },             // 宁武关·楼烦族
     { id: 'xianyu', name: '井陉' },
 
@@ -1160,6 +1169,7 @@ export const FACTIONS: Faction[] = [
     { id: 'weizhou', name: '维州' },
     { id: 'xidong', name: '溪峒' },
     { id: 'yingzhou_d2', name: '应州' },
+
     { id: 'dongsheng', name: '东胜' },
     { id: 'weiyuan', name: '亹源' },
 
