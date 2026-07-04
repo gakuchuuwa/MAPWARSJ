@@ -69,7 +69,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   liangshidu: { name: '雕阴戍卒', tier: 2 }, // 龙贾戍卒抗秦，战国经典防御战，升T2
   yangshe: { name: '铜鞮私卒', tier: 4 }, // 铜鞮·羊舌职封邑（缺乏极其著名的战术高光，降T3）
   guzhu: { name: '辽西郡兵', tier: 4 },    // 肥如·田豫辽西镇北疆（常规番号，降T3）
-  dizhou: { name: '龙骧军', tier: 1 },     // 乐安·王彦章龙骧破晋
+    dizhou: { name: '龙骧军', tier: 2 },
   wuyuan_d: { name: '五原塞卒', tier: 4 },  // 固阳塞·五原郡长城戍卒,
     cangzhou: { name: '定霸都', tier: 4 },           // 缺乏知名度支撑，降T3,
     dingzhou: { name: '鲜卑甲骑', tier: 2 },

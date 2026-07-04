@@ -14,13 +14,13 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // ── 室町—战国—江户（辞典映射表）──
   ashikaga: { name: '奉公众', tier: 3 },         // 室町幕府直辖军，更多是身份象征和常规卫队，缺乏战略级大捷，降为T3知名。
   edo: { name: '旗本武士', tier: 1 },          // 江户城·§5 #20 旗本（Hatamoto）
-  satsuma: { name: '萨摩隼人', tier: 1 },        // 鹿儿岛城·岛津氏冲田畷钓野伏（原隼人众 T2）
+    satsuma: { name: '萨摩隼人', tier: 2 },
   iga_d: { name: '伊贺众', tier: 3 },          // 名张·§5 #16
   hashiba: { name: '黄母衣众', tier: 3 },        // 姬路城·秀吉亲卫母衣黄组（原七手组 T3）
   kai: { name: '武田赤备', tier: 2 },          // 标准明确列为T2代表（地方特色兵种/战术尖刀），降回T2
   jinchuan: { name: '骏河弓取', tier: 3 },      // 骏河·今川义元（无重大战略级胜利，T2）
   owari: { name: '织田马廻众', tier: 1 },     // 织田信长亲卫，虽参与众多大战，但"马廻众"本身作为建制未能独立达成灭国，更偏向T1战略主力或T2战术尖刀。归入T1。
-  totomi: { name: '三河武士', tier: 1 },       // 远江/三河·德川家核心死忠精锐
+    totomi: { name: '三河武士', tier: 2 },
   echigo: { name: '毘沙門衆', tier: 3 },         // 上杉谦信亲卫队，属于“顶级近卫”，降回T2
   aki: { name: '村上水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷（毛利氏水军主力）
   chosokabe: { name: '一领具足', tier: 2 },     // 日本战国长宗我部氏著名的半农半兵战术体制，极高集结速度，升入T2战术

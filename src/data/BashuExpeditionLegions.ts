@@ -26,7 +26,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   yangzhou: { name: '无当飞军', tier: 2 },   // 兴势山·王平统率山地劲旅（山地特种防御）
   shuixi: { name: '罗罗兵', tier: 4 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名
-  chenghan: { name: '流民帅突骑', tier: 1 },      // 鹿头关·§8 #9 成汉李特六夷铁骑（破晋建国，升T1）
+    chenghan: { name: '流民帅突骑', tier: 2 },
   daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
   ba: { name: '巴渝劲卒', tier: 3 },          // 巴渝舞武士的另一称谓，极其著名的西南精锐，升入T3知名
   hezhou: { name: '兴戎军', tier: 1 },          // 钓鱼城·王坚抗蒙毙蒙哥（防御战，降T1）
@@ -66,7 +66,7 @@ qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅�
     qianhui: { name: '回民义军', tier: 4 },           // 常规番号，降T3
   huizhou_d: { name: '元戎弩兵', tier: 2 }, // 诸葛亮损益连弩部队，战术辨识度极高的特种精锐，升入T2战术
     wuling: { name: '五溪藤甲', tier: 3 },            // 三国藤甲兵文化符号（火烧藤甲），显著文化知名度，升T2
-    zizhou: { name: '忠武八都', tier: 1 },            // 唐末平定黄巢、维持中原局势的绝对王牌主力军，升入T1战略,
+    zizhou: { name: '忠武八都', tier: 2 },
     weizhou: { name: '奉义军', tier: 1 },
     xidong: { name: '大汉伏波', tier: 2 },
 };

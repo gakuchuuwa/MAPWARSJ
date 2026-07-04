@@ -45,15 +45,15 @@ export const SPRITE_PATHS = {
         // ── 04 大明将领 ──
         'ming_d_zhudi': '/assets/daming/ming_d_zhudi.png',       // 朱棣（generalId 已更新）
         'jinling_tandaoji': '/assets/JIANGNAN/jinling_tandaoji.png',
-        'yingzhou_liulong_ying': '/assets/LINGNAN/yingzhou_liulong_ying.png', // 刘龑（generalId 已更新）
+        'yingzhou_liuyan': '/assets/LINGNAN/yingzhou_liuyan.png', // 刘龑（generalId 已更新）
         'yangzhou_wangping': '/assets/BASHU/yangzhou_wangping.png',
-        'pagan_anuluvtuo': '/assets/DIANQIAN/pagan_anuluvtuo.png',
+        'pagan_anulvtuo': '/assets/DIANQIAN/pagan_anulvtuo.png',
         'qiuci_baiba': '/assets/WESTERN/qiuci_baiba.png',
         'gar_lunqinling': '/assets/TIBET/gar_lunqinling.png',
         'menggu_d_chengjisihan': '/assets/STEPPE/menggu_d_chengjisihan.png',
         'bohai_dazuorong': '/assets/NORTHEAST/bohai_dazuorong.png',
-        'goryeo_jiangganzan': '/assets/KOREA/goryeo_jiangganzan.png',
-        'ashikaga_zulijunshi': '/assets/JAPAN/ashikaga_zulijunshi.png',
+        'goryeo_jianghanzan': '/assets/KOREA/goryeo_jianghanzan.png',
+        'ashikaga_zulizunshi': '/assets/JAPAN/ashikaga_zulizunshi.png',
         'tiemuer_tiemuer': '/assets/CENTRAL_ASIA/tiemuer_tiemuer.png',
         'siam_nalixuan': '/assets/DIANQIAN/siam_nalixuan_pugan.png',
         'shang_fuhao': '/assets/xianqin/shang_fuhao.png',
@@ -61,7 +61,7 @@ export const SPRITE_PATHS = {
         'xianyu_hanxin': '/assets/liuhan/xianyu_hanxin.png',    // 韩信（generalId 已更新）
         'wei_wuqi': '/assets/xianqin/wei_wuqi.png',
         'manzhou_nuerhachi': '/assets/manqing/manzhou_nuerhachi.png',
-        'xinluo_jinyixin': '/assets/KOREA/xinluo_jinyixin.png',
+        'xinluo_jinyuxin': '/assets/KOREA/xinluo_jinyuxin.png',
         'seljuq_sangjiaer': '/assets/CENTRAL_ASIA/seljuq_sangjiaer.png',
         'zaoyang_d_menggong': '/assets/zhaosong/zaoyang_d_menggong.png',
     },

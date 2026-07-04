@@ -115,7 +115,7 @@ export const SINGLE_TAG_IMMUTABLE_ASSIGNMENTS: Readonly<
     menggu_d_chengjisihan: { archetype: 'assault_break', evidence: '蒙古西征铁骑奔袭' },
     sanada_d_zhentianxingcun: { archetype: 'assault_break', evidence: '大阪夏之阵赤备突击' },
     satsuma_daojinjiajiu: { archetype: 'assault_break', evidence: '冲冠编队儿岛突击' },
-    baiji_jiebai: { archetype: 'assault_break', evidence: '车昌野隘突击' },
+    baiji_jiebo: { archetype: 'assault_break', evidence: '车昌野隘突击' },
     dajin_wanyanaguda: { archetype: 'assault_break', evidence: '阿骨打破辽神速突击' },
     // 仅②合理
     owari_zhitianxinchang: { archetype: 'mobile_raid', evidence: '桶狭间奇袭破今川' },

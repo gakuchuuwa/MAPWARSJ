@@ -23,14 +23,13 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 夏后亲卫除名（夏代无信史）
   yuan_cj_d: { name: '大戟士', tier: 2 },    // 汝南·袁术大戟士（败多胜少，降T2）
   chanzhou: { name: '殿前诸班', tier: 1 },   // 濮阳·柴荣
-  sui: { name: '骁果军', tier: 1 },        // 隋炀帝绝对禁军核心，江都兵变终结隋朝，深刻影响天下格局的绝对主力，升入T1战略
   sunqin: { name: '督标秦军', tier: 3 },   // 孙传庭最后的家底，自带极强的历史悲剧色彩和知名度，升入T3知名
   // 飞熊军除名（小说番号）
   // 韩卒击刹除名（无史载）
     liang_d: { name: '睢阳义兵', tier: 2 },     // 死守睢阳战略牵制极大，但无建制延续性，升T2（不符合T1野战军标准）
   // 公行锐士除名
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
-    li_lx_d: { name: '陇右突骑', tier: 1 },
+    li_lx_d: { name: '陇右突骑', tier: 2 },
     xiayang_d: { name: '西河突骑', tier: 3 },
   baibo: { name: '白波黄巾', tier: 3 },     // 东汉末年最著名的黄巾军余部，护驾汉献帝东归，历史知名度极高，升入T3知名
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
@@ -80,7 +79,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     hao_d: { name: '钟离健儿', tier: 3 },
     suzhou_d: { name: '江北四镇', tier: 3 },
     sima_d: { name: '宣王中军', tier: 3 },
-    bozhou_d: { name: '青州兵', tier: 1 },           // 曹操收编黄巾军建立的绝对嫡系核心，曹魏霸业基石，贯穿三国前半叶，升入T1战略
+    bozhou_d: { name: '青州兵', tier: 2 },
   mengcheng_d: { name: '山桑弓手', tier: 4 },
   shangzhou: { name: '商州锐士', tier: 4 },
   bailian: { name: '白莲教众', tier: 3 },             // 跨越数百年的民间宗教武装，极度典型的叛军文化符号，升入T3知名
@@ -95,4 +94,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     qing: { name: '泾原锐骑', tier: 1 },
     luming: { name: '天雄军', tier: 2 },
     long2: { name: '陇上暗桩', tier: 3 },
+    chimei: { name: '赤眉军', tier: 2 },
 };

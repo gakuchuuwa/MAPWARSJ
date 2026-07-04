@@ -18,7 +18,7 @@ const GENERAL_DISPLAY_NAMES: Record<string, string> = {
     qin_simacuo: '司马错',
     qin_wangben: '王贲',
     qin_mengtian: '蒙恬',
-    qin_yingji: '嬴稷',
+    qin_simacuo: '嬴稷',
 };
 
 const FACTION_GENERAL_PORTRAIT_FOLDER: Record<string, string> = {
@@ -30,7 +30,7 @@ export const FACTION_EXPEDITION_GENERAL_POOLS: Readonly<Record<string, readonly 
 };
 
 export const FACTION_SIEGE_GARRISON_GENERAL_ID: Readonly<Record<string, string>> = {
-    qin: 'qin_yingji',
+    qin: 'qin_simacuo',
 };
 
 export function buildGeneralRecord(factionId: string, generalId: string): FactionGeneral | null { ... }

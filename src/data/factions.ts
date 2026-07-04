@@ -52,8 +52,10 @@ export const FACTIONS: Faction[] = [
     { id: 'dongshengwei', name: '延绥' },
 
     { id: 'dizhou', name: '棣州' },
+
     { id: 'bailian', name: '白莲' },
     { id: 'chimei', name: '赤眉' },
+
     { id: 'yunzhong', name: '索头' },
 
     { id: 'qian', name: '黔中' },
@@ -135,6 +137,7 @@ export const FACTIONS: Faction[] = [
     { id: 'chen', name: '陈国' },
 
     { id: 'sui', name: '隋国' },
+
     { id: 'tang', name: '唐国' },
     { id: 'min', name: '闽国' },
     { id: 'quanzhou', name: '泉州' },
@@ -163,6 +166,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'li_lx_d', name: '陇西' },
+
 
     { id: 'yuan_cj_d', name: '袁家' },
     { id: 'xie_cj_d', name: '信州' },
@@ -239,6 +243,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'izumo', name: '出云' },
     { id: 'satsuma', name: '萨摩' },
+
     { id: 'ryukyu', name: '琉球' },
     { id: 'so', name: '对马' },
     { id: 'kakizaki', name: '松前' },
@@ -473,6 +478,7 @@ export const FACTIONS: Faction[] = [
     { id: 'daxi_ming', name: '大西' },                 // 深紫 - 张献忠大西政权(成都)(与北宋daxi区分)
     // ── 2026-06-11 新增：成汉（李特/鹿头关）、水西（安氏土司/毕节）──
     { id: 'chenghan', name: '成汉' },
+
     { id: 'shuixi', name: '水西' },
 
     // 第二类：南明五政权
@@ -870,6 +876,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jibei2', name: '备中' },
     { id: 'jinchuan', name: '骏河' },
     { id: 'totomi', name: '远江' },
+
     { id: 'owari', name: '尾张' },
     { id: 'xuan', name: '宣府' },
     { id: 'yangshe', name: '羊舌' },
@@ -1114,6 +1121,7 @@ export const FACTIONS: Faction[] = [
                 // 濠@蚌埠（隋唐濠州治钟离故地）
     // ── 2026-06-11 新增：博州 ──
     { id: 'bozhou_d', name: '博州' },
+
              // 博@聊城（隋唐博州治）
     // ── 2026-06-16 新增：11大名关势力 ──
     { id: 'hongnong_jun', name: '弘农' },
@@ -1235,6 +1243,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xingxingxia', name: '伊州' },
     { id: 'yangguan', name: '西凉' },
 
+
     { id: 'wulianghai', name: '乌梁海' },
     { id: 'kepantuo', name: '渴盘陀' },
     { id: 'qinghai', name: '青海' },
@@ -1258,6 +1267,7 @@ export const FACTIONS: Faction[] = [
     { id: 'shaozhou_d', name: '邵州' },
 
     { id: 'zizhou', name: '昌城' },
+
     { id: 'cangzhou', name: '沧州' },
     { id: 'yuezhi', name: '月氏' },
     { id: 'minyue', name: '闽越' },
