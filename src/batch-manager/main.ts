@@ -38,7 +38,7 @@ interface EntityData {
     profiles: Record<string, { tier: string; tacticalSkillId: string; strategicSkillId?: string }>;
     elites: Record<string, { name: string; tier: number; region: string }>;
     tacticalSkills: Array<{ id: string; grid: string; displayName: string }>;
-    strategicSkills: Array<{ id: string; grid: string; displayName: string }>;
+    strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }>;
     regions: string[];
 }
 
@@ -360,7 +360,14 @@ function updateStats(): void {
     const complete = rows.filter(r => r.completeness === 100).length;
     const noGen = rows.filter(r => !r.generalId).length;
     const noElite = rows.filter(r => !r.eliteName).length;
-    els.stats.textContent = `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺精锐 ${noElite} | 显示 ${filteredRows.length}`;
+    const famous = rows.filter(r => r.tier === 'famous').length;
+    const ordinary = rows.filter(r => r.tier === 'ordinary').length;
+    const t = [0, 0, 0, 0, 0];
+    for (const r of rows) if (r.eliteTier != null && r.eliteTier >= 0 && r.eliteTier <= 4) t[r.eliteTier]++;
+    els.stats.innerHTML =
+        `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺精锐 ${noElite} | 显示 ${filteredRows.length}`
+        + `<br><span style="color:#c8a868">名将 ${famous} | 普将 ${ordinary}</span>`
+        + `<span style="margin-left:12px;color:#8ab4c4">T0:<b>${t[0]}</b> T1:<b>${t[1]}</b> T2:<b>${t[2]}</b> T3:<b>${t[3]}</b> T4:<b>${t[4]}</b></span>`;
 }
 
 // ── Table Rendering ──
@@ -375,7 +382,7 @@ const COLUMNS: Array<{ key: string; label: string; width?: string }> = [
     { key: 'lng', label: '经度', width: '60px' },
     { key: 'generalName', label: '武将' },
     { key: 'tacticalSkillId', label: '战术技', width: '70px' },
-    { key: 'strategicSkillId', label: '战略技', width: '70px' },
+    { key: 'strategicSkillId', label: '战略技', width: '120px' },
     { key: 'eliteName', label: '精锐' },
     { key: 'eliteTier', label: 'T', width: '30px' },
     { key: 'completeness', label: '完整度', width: '80px' },
@@ -455,13 +462,30 @@ function renderTable(): void {
     });
 }
 
-function formatSkill(id?: string): string {
+const EFFECT_CN: Record<string, string> = {
+    march_speed_mult: '行军加速',
+    mountain_march_immunity: '山地不减速',
+    ignore_small_city_zoc: '无视小城',
+    skip_post_battle_rest: '免休整',
+    field_resupply: '野外回血',
+    post_battle_troop_pct: '胜后补兵',
+    city_growth_mult: '城市增长',
+    recruit_cooldown_mult: '募兵加速',
+    attacker_power_mult: '攻方加成',
+};
+
+function formatSkill(id?: string, isStrategic = false): string {
     if (!id) return '';
     if (!entityData) return id;
     const tac = entityData.tacticalSkills.find(s => s.id === id);
     if (tac) return `<span title="${tac.displayName}">${tac.grid}</span>`;
     const str = entityData.strategicSkills.find(s => s.id === id);
-    if (str) return `<span title="${str.displayName}">${str.grid}</span>`;
+    if (str) {
+        const cn = EFFECT_CN[str.effect] ?? str.effect;
+        const mag = str.magnitude !== 1 && str.magnitude !== 0 ? (str.magnitude > 1 ? `×${str.magnitude}` : `${(str.magnitude * 100).toFixed(0)}%`) : '';
+        const tip = `${str.displayName}｜${cn}${mag ? ' ' + mag : ''}`;
+        return `<span title="${tip}">${str.grid}${str.displayName}</span>`;
+    }
     return id;
 }
 

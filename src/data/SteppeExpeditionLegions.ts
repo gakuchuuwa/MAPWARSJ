@@ -62,10 +62,10 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tumed: { name: '土默特精骑', tier: 1 },         // 俺答汗建立土默特汗国、逼迫明朝封贡的绝对战略主力，符合T1战略主力
   tushetu: { name: '库伦铁骑', tier: 4 },       // 库伦·土谢图汗
   yaoluoge: { name: '药罗葛骑', tier: 4 },      // 娑陵·药罗葛部
-    huihu: { name: '回鹘精骑', tier: 1 },             // 安史之乱挽救大唐，雄踞漠北百年的回鹘汗国绝对主力，升入T1战略
+    huihu: { name: '回鹘骑兵', tier: 3 },
   ashide: { name: '阿史德骑', tier: 4 },        // 黑沙城·阿史德氏
-  pugu: { name: '蓝突厥骑', tier: 4 },          // 燕然山·仆固氏铁勒（缺乏极其著名的战术高光，降T3）
-  pulei: { name: '蒲类飞骑', tier: 4 },         // 巴里坤·蒲类国故地
+    pugu: { name: '燕然黑砂', tier: 2 },
+    pulei: { name: '蒲类落雕骑', tier: 3 },
   chechen: { name: '车臣汗骑', tier: 4 },       // 巴彦图门·车臣汗硕垒
   zhuerqi: { name: '斡难河骑', tier: 4 },       // 斡难河·撒察别乞
   tumengken: { name: '赛音诺颜骑', tier: 4 },  // 拜达里克·图蒙肯抗卫拉特（缺乏极其著名的战术高光，降T3）

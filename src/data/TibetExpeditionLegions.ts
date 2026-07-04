@@ -10,7 +10,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   keliya: { name: '疏勒镇军', tier: 4 },   // 阿什库尔·尉迟曜于阗王助唐（常规番号，降T3）
     qinghai: { name: '川陕绿营', tier: 3 },
   xining: { name: '西宁边军', tier: 4 }, // 马海台·杨应琚整顿边军（常规番号，降T3）
-  dulan: { name: '和硕特精骑', tier: 1 }, // 固始汗攻入西藏建立和硕特汗国，深刻重塑数百年来青藏高原格局的战略主力，升入T1战略
+    dulan: { name: '青海归锋', tier: 3 },
     kalun: { name: '尕斯铁卫', tier: 4 },
   shaodang: { name: '湟中义从羌', tier: 3 },  // 东汉经典羌族从军制度，兵种名号极具特色，升T2
   tubo: { name: '吐蕃大纛军', tier: 1 },       // 逻些·松赞干布吐蕃大纛军
@@ -31,7 +31,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     gandenpozhang: { name: '扎敦卫藏兵', tier: 4 },
   gaxa: { name: '噶厦代本', tier: 4 },
   ladakh: { name: '拉达克卫队', tier: 4 },
-  spurgyal: { name: '悉补野王军', tier: 1 }, // 吐蕃帝国真正的缔造者与建国核心武力，符合T1战略主力
+    spurgyal: { name: '甲玛赤锋', tier: 2 },
   khon: { name: '萨迦法王军', tier: 3 },               // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   lang_clan: { name: '帕木竹巴军', tier: 3 }, // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   karmapa: { name: '噶玛巴护教', tier: 4 },

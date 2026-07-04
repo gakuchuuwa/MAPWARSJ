@@ -18,8 +18,8 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   seljuq: { name: '塞尔柱突骑', tier: 1 },     // 木鹿·生擒拜占庭皇帝的塞尔柱帝国主力
     xiliao: { name: '斡耳朵亲卫', tier: 1 },
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
-  guishuang: { name: '贵霜铁骑', tier: 1 },    // 蓝氏城·贵霜帝国铁骑
-    muer: { name: '呼罗珊义从', tier: 1 },             // 推翻倭马亚王朝、建立阿拔斯王朝的核心战略武装，重塑了伊斯兰世界版图，升入T1战略
+    guishuang: { name: '贵霜铁骑', tier: 2 },
+    muer: { name: '呼罗珊义从', tier: 3 },
   xijue: { name: '郅支城坚兵', tier: 3 },              // 陈汤灭郅支单于时著名的夹门鱼鳞阵（罗马遗脉传说），极具文化话题度，升入T3知名
     tujishi: { name: '怛罗斯突骑', tier: 3 },
   kokand: { name: '浩罕轻骑', tier: 4 },
@@ -27,15 +27,15 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   kangju: { name: '康卡控弦', tier: 4 },              // 缺乏知名度支撑，降T3
   anushidgin: { name: '希瓦铁骑', tier: 4 },
   dayuzi: { name: '讹答剌卫队', tier: 4 },
-  zhaowu: { name: '忽毡勇士', tier: 4 },
-    yada: { name: '嚈哒重骑', tier: 1 },          // 悉万斤·全歼波斯主力的嚈哒帝国重装铁骑
+    zhaowu: { name: '忽毡勇士', tier: 4 },
+    yada: { name: '嚈哒重骑', tier: 2 },
   jiazini: { name: '伽色尼禁卫', tier: 2 },       // 马哈茂德的古拉姆近卫军，十七次远征印度战无不胜，升入T2战术
     jibin: { name: '迦毕试梵骑', tier: 2 },
   fanyanna: { name: '梵衍那僧兵', tier: 4 },      // 巴米扬·梵衍那王率僧兵御大食（缺乏极其著名的战术高光，降T3）
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
     maer_d: { name: '骆驼突骑', tier: 4 },
     wugu_d: { name: '乌古斯弓骑', tier: 3 },
-  mamon: { name: '呼罗珊禁卫', tier: 4 },       // 达尔甘·马蒙大破艾敏（缺乏极其著名的战术高光，降T3）
+    mamon: { name: '呼罗珊之剑', tier: 2 },
   khoja: { name: '白山派卫兵', tier: 4 },        // 休循·阿帕克和卓白山派（缺乏极其著名的战术高光，降T3）
   shi_clan: { name: '石国胡兵', tier: 4 },       // 柘折城·莫贺咄吐屯御大食（缺乏极其著名的战术高光，降T3）
   guzgan: { name: '古兹根卫队', tier: 4 },       // 法里亚布·古兹根戍卫

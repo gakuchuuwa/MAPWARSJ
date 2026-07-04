@@ -48,7 +48,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   dengmaoqi: { name: '铲平义军', tier: 4 },
   shixing: { name: '岭南劲卒', tier: 4 },             // 缺乏知名度支撑，降T3
   yingzhou: { name: '南汉禁兵', tier: 4 },            // 常规番号，降T3
-  daozhou: { name: '道州弩手', tier: 4 },
+    daozhou: { name: '道州弩手', tier: 4 },
   guangping: { name: '象兵水师', tier: 4 },     // 洞海城·阮文张象兵舟船协同（常规番号，降T3）
 shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军汛堡（缺乏极其著名的战术高光，降T3）
   chendiaoyan: { name: '畲汉义军', tier: 4 },   // 龙溪·陈吊眼攻破漳州（常规番号，降T3）

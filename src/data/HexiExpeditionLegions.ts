@@ -42,5 +42,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
         yuezhi: { name: '折兰骑', tier: 3 },             // 霍去病河西之战斩杀的匈奴最强王牌，战役背景极具符号价值，升入T3知名,
     shanzhou: { name: '陇右健儿', tier: 1 },
     chile: { name: '两池军', tier: 3 },
-    weiyuan: { name: '永安营兵', tier: 4 },
+    weiyuan: { name: '永安营兵', tier: 3 },
 };

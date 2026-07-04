@@ -9,7 +9,7 @@
 export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   // ── 元寇 ──
   so: { name: '弘安御敌', tier: 2 },           // 对马·金石城·宗氏抗元（1281 弘安役首当锋；≠太宰府警固）
-  zhuqian: { name: '警固番役', tier: 1 },  // 太宰府·元寇海防（防御战，降T1）
+    zhuqian: { name: '警固番役', tier: 3 },
 
   // ── 室町—战国—江户（辞典映射表）──
   ashikaga: { name: '奉公众', tier: 3 },         // 室町幕府直辖军，更多是身份象征和常规卫队，缺乏战略级大捷，降为T3知名。

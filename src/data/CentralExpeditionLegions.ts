@@ -44,7 +44,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     jingzhou_gs: { name: '安定突骑', tier: 3 },
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
     ruo: { name: '秦之锐士', tier: 1 },
-  ruzhou: { name: '赤帻先锋', tier: 4 },              // 缺乏知名度支撑，降T3
+    ruzhou: { name: '赤帻先锋', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 4 },
     jiyuan: { name: '落雕卫', tier: 3 },
   xiongding: { name: '鲜卑燕军', tier: 4 }, // 天井关·慕容永西燕末代君主（缺乏极其著名的战术高光，降T3）
@@ -58,13 +58,13 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 汴河戍旅除名（无此编制）
     yuzhou: { name: '中流击楫军', tier: 3 },
     xin: { name: '上党锐骑', tier: 2 },
-  beidi: { name: '北地羌骑', tier: 1 },        // 萧关·姚苌岭北占据
+    beidi: { name: '北地羌骑', tier: 2 },
   yingzhou_d: { name: '选锋军', tier: 2 },       // 南宋及多朝极常见的临战前锋突击队编制，缺乏主宰大局的战略唯一性，下调至T2战术
   // 北门飞骑除名
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
   lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
   lai: { name: '齐关弩手', tier: 4 },           // 青石关·王师范屡败朱温（正史胜仗）（缺乏极其著名的战术高光，降T3）
-  yangshao: { name: '材官骑士', tier: 4 },     // 渑池·周勃大破秦军（缺乏极其著名的战术高光，降T3）
+    yangshao: { name: '北军安刘', tier: 3 },
     dongxian: { name: '马陵伏弩', tier: 2 },          // 齐国孙膑伏击庞涓的战术核心，古代“设伏聚歼”的战术巅峰，升入T2战术
   mi: { name: '朐城弩手', tier: 4 },         // 朐城·麋竺家兵（缺乏极其著名的战术高光，降T3）
   yaozhou: { name: '耀州牙兵', tier: 4 },       // 金锁关·李茂贞岐军（缺乏极其著名的战术高光，降T3）

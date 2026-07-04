@@ -1922,9 +1922,9 @@ function serverReadAllEntityData() {
     for (const m of tscText.matchAll(/id:\s*'(ts_\d+)',\s*layer:\s*'[^']*',\s*series:\s*'[^']*',\s*index:\s*(\d+),\s*displayName:\s*'([^']+)'/g)) {
         tacticalSkills.push({ id: m[1], grid: circledNum(parseInt(m[2])), displayName: m[3] });
     }
-    const strategicSkills: Array<{ id: string; grid: string; displayName: string }> = [];
-    for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)'/g)) {
-        if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4] });
+    const strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }> = [];
+    for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)',\s*effect:\s*'([^']+)',\s*magnitude:\s*([\d.]+)/g)) {
+        if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4], effect: m[5], magnitude: parseFloat(m[6]) });
     }
 
     return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, regions: Object.keys(REGION_TO_ELITE_FILE) };

@@ -124,7 +124,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dazhen: { generalId: 'dazhen_wanyantiege', generalName: '完颜铁哥', portrait: '/assets/NORTHEAST/dazhen_wanyantiege.png' },
     yehe: { generalId: 'yehe_jintaiji', generalName: '金台吉', portrait: '/assets/NORTHEAST/yehe_jintaiji.png' },
 
-guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrait: '/assets/WESTERN/guishuang_qiuqiujiu.png' },
+    guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrait: '/assets/WESTERN/guishuang_qiuqiujiu.png' },
     qidan: { generalId: 'qidan_shulvping', generalName: '述律平', portrait: '/assets/STEPPE/qidan_shulvping.png' },
     hui: { generalId: 'hui_bunaihou', generalName: '不耐侯', portrait: '/assets/KOREA/hui_bunaihou.png' },
 // ── 东北区 2026-06-18 ──
@@ -379,7 +379,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     champa: { generalId: 'champa_zhipenge', generalName: '制蓬峨', portrait: '/assets/DIANQIAN/champa_zhipenge.png' },
     qiong: { generalId: 'qiong_rengui', generalName: '任贵', portrait: '/assets/DIANQIAN/qiong_rengui.png' },
     // 莽应龙已移给 dongxu
-      daozhou: { generalId: 'daozhou_yangzaixing', generalName: '杨再兴', portrait: '/assets/LINGNAN/daozhou_yangzaixing.png' },
+    daozhou: { generalId: 'daozhou_yangzaixing', generalName: '杨再兴', portrait: '/assets/LINGNAN/daozhou_yangzaixing.png' },
     guangping: { generalId: 'guangping_ruanwenzhang', generalName: '阮文张', portrait: '/assets/LINGNAN/guangping_ruanwenzhang.png' }, // 洞海城·阮朝水师名将
     jingjiang: { generalId: 'jingjiang_qushisi', generalName: '瞿式耜', portrait: '/assets/LINGNAN/jingjiang_qushisi.png' }, // 永安·收复广西
     duanzhou_d: { generalId: 'duanzhou_d_caojin', generalName: '曹觐', portrait: '/assets/LINGNAN/duanzhou_d_caojin.png' }, // 肇庆·屡败侬智高
@@ -589,7 +589,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     shanrong: { generalId: 'shanrong_tianchou', generalName: '蓝玉', portrait: '/assets/daming/shanrong_tianchou.png' },
 
     // ── 北方关隘 2026-06-19 ──
-    you: { generalId: 'you_wangba', generalName: '耿况', portrait: '/assets/liuhan/you_gengkuang.png' },
+    you: { generalId: 'you_wangba', generalName: '耿弇', portrait: '/assets/liuhan/you_gengkuang.png' },
     lingqiu: { generalId: 'lingqiu_zhaowuling', generalName: '赵武灵王', portrait: '/assets/xianqin/lingqiu_zhaowuling.png' },
     yi: { generalId: 'yi_yuqian', generalName: '于谦', portrait: '/assets/daming/yi_yuqian.png' },
     huo: { generalId: 'huo_songlaosheng', generalName: '宋老生', portrait: '/assets/NORTH/huo_songlaosheng.png' },

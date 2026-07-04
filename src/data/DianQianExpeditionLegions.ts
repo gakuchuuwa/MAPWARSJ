@@ -25,7 +25,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   // 仲家兵除名（无此编制）
   hani_d: { name: '思陀甸兵', tier: 4 },      // 思陀·遮比归附从征安南（缺乏极其著名的战术高光，降T3）
   cuanshi: { name: '爨族部兵', tier: 3 },      // 统治云南四百年的爨氏文化象征，西南历史的丰碑，升入T3知名
-  suke: { name: '素可泰兵', tier: 4 },     // 双河城·素可泰王国
+    suke: { name: '素可泰兵', tier: 3 },
   ailao: { name: '哀牢山营', tier: 4 },       // 永昌·类牢反叛连破数城（缺乏极其著名的战术高光，降T3）
   nanzhong: { name: '南中劲卒', tier: 4 },     // 宛温·马忠善射夷汉部曲（缺乏极其著名的战术高光，降T3）
   yueyi: { name: '旌牛锐士', tier: 4 },         // 越嶲·地方平叛王牌突击队（缺乏极其著名的战术高光，降T3）
@@ -33,7 +33,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   jingdong: { name: '景东象卫', tier: 4 },     // 银生城·陶洪屡退麓川（缺乏极其著名的战术高光，降T3）
   luohu: { name: '罗斛步卒', tier: 4 },        // 呵叻城·敢木丁驻守
   kunming_yi: { name: '会川藤甲兵', tier: 3 },   // 会川·极具西南夷特色的战术兵种
-  taiyuan: { name: '兰纳锐卒', tier: 4 },      // 清坎城·芒莱王征服南奔开创兰纳（缺乏极其著名的战术高光，降T3）
+    taiyuan: { name: '清坎陷象', tier: 2 },
   baiman: { name: '白蛮甲士', tier: 4 },       // 威楚·高升泰平杨义贞复大理（缺乏极其著名的战术高光，降T3）
   dai: { name: '车里战象', tier: 4 },          // 勐泐城·刀应勐傣兵助明御缅（缺乏极其著名的战术高光，降T3）
   qiong: { name: '邛谷锐骑', tier: 4 },        // 邛都·任贵自立邛谷王（缺乏极其著名的战术高光，降T3）

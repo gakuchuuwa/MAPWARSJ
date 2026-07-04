@@ -50,7 +50,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     agui: { name: '健锐营', tier: 2 },
   fuguo: { name: '附国羌兵', tier: 4 },  // 芒康宗·隋附国羌人部落兵
 qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅州（缺乏极其著名的战术高光，降T3）
-    dangchang: { name: '陇右铁骑', tier: 1 },         // 唐代抗击吐蕃、威震西域的绝对战略主力野战军，升入T1战略
+    dangchang: { name: '陇右铁骑', tier: 2 },
   liao: { name: '巴僚弩手', tier: 4 },        // 江阳·侯弘远僚人酋帅（缺乏极其著名的战术高光，降T3）
   sou: { name: '越巂叟兵', tier: 4 },         // 乐山·高定元叟族反蜀（缺乏极其著名的战术高光，降T3）
   qingqiang: { name: '青羌突骑', tier: 3 },    // 姜维北伐核心兵源，三国文化特色异族骑兵，升T2
