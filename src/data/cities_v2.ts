@@ -294,6 +294,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     },
     { id: 'city_linzi', name: '临淄', factionId: 'qi', lat: 36.88, lng: 118.43, type: 'medium_city', troops: 20000, region: 'CENTRAL' },
 
+
     // ── 岭南、东南与西南地区中城 ──
     {
         id: 'city_bushan',

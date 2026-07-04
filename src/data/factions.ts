@@ -70,6 +70,7 @@ export const FACTIONS: Faction[] = [
     // 春秋战国列国
     { id: 'qi', name: '齐国' },
 
+
     { id: 'jin', name: '晋国' },
     { id: 'chu', name: '江陵' },
 
