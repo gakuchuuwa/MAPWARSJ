@@ -19,7 +19,7 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   chenzhou_d: { name: '辰州戍兵', tier: 4 },     // 沅陵·辰州戍兵
   jingmen: { name: '长坂血骑', tier: 3 },        // 赵云长坂坡，全民级文化IP，极高文化知名度，升T2
   bandun: { name: '賨人勇士', tier: 3 },       // 还定三秦的巴渝舞武士，中华武术发源级代表，升入T3知名
-  langzhou: { name: '巴西劲卒', tier: 4 },       // 隆城·张飞巴西劲卒（名将突击队）（缺乏极其著名的战术高光，降T3）
+    langzhou: { name: '巴西板楯蛮', tier: 3 },
   zhuoshi: { name: '井阑劲卒', tier: 4 },         // 临邛·诸葛连弩营（缺乏极其著名的战术高光，降T3）
   tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛（战功赫赫的特色尖刀）
   shu: { name: '白毦精兵', tier: 2 },           // 刘备的亲卫特种兵，在夷陵之战打出极其强悍的战术掩护保卫刘备，升入T2战术

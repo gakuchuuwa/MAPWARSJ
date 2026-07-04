@@ -24,7 +24,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   an: { name: '昭武精骑', tier: 3 },        // “昭武九姓”粟特人，垄断丝路贸易，安禄山叛军核心精锐，极其著名的历史与文化符号，升入T3知名
   yiduhu: { name: '西州回鹘', tier: 3 },      // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   shule: { name: '阿兰斯近卫', tier: 3 },     // 元代著名的“阿速回军”（阿兰人近卫军），深度介入元廷斗争的异族卫队，知名度极高，升入T3知名
-  yanqi: { name: '焉耆龙骑兵', tier: 4 },   // 员渠城·焉耆龙骑（§14 #6）（缺乏极其著名的战术高光，降T3）
+    yanqi: { name: '焉耆龙骑兵', tier: 4 },
   wusun: { name: '昆莫亲卫', tier: 3 }, // 汉代西域最强霸主乌孙国国王（昆莫）亲卫，汉朝联姻抗匈的绝对盟友，升入T3知名
   dayuan: { name: '汗血天马骑', tier: 3 },   // 大宛汗血宝马+李广利万里远征，极高文化知名度，升T2
   shache: { name: '莎车左右骑', tier: 4 },   // 渠莎·汉代西域强国（缺乏极其著名的战术高光，降T3）
@@ -32,7 +32,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   loulan: { name: '精绝都护营', tier: 3 },      // 精绝古国尼雅遗址，神秘古国文化IP显著，升T2
   zhuxie: { name: '朱邪部兵', tier: 3 },      // 沙陀朱邪部，后唐后晋后汉三朝开国根基，升T2
   // 重复行已删
-  juandu: { name: '捐毒锐卒', tier: 4 },     // 排修城·汉西域捐毒国
+    juandu: { name: '安西都护军', tier: 3 },
   wensu: { name: '温宿锐卒', tier: 4 },      // 三重城·温宿国
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
   // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
@@ -56,5 +56,5 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     shanshan: { name: '楼兰弓手', tier: 3 },
   xiyuduhu: { name: '西域都护军', tier: 1 },  // 它乾城·班超都护府汉军,
     tajikezu: { name: '帕米尔山民', tier: 4 },
-    anxi: { name: '安西陌刀军', tier: 2 }, // 依靠陌刀武器组建的特种反骑兵阵列，属于战术突击分队而非宏大野战主力，符合T2战术
+    anxi: { name: '安西陌刀军', tier: 2 },
 };

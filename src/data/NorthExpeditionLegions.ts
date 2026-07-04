@@ -14,19 +14,18 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 宣毅军除名（泛称非专属，与方渠无关）
     heng1: { name: '杨无敌军', tier: 1 },
   huan: { name: '神臂弓手', tier: 2 },      // 宋军最倚仗的跨时代战术兵种，屡次在野战击退重骑兵，升入T2战术
-  qingyuan_bd: { name: '白马突骑', tier: 4 }, // 保定·周德威白马突骑（缺乏极其著名的战术高光，降T3）
+    qingyuan_bd: { name: '白马突骑', tier: 3 },
 
   // ── §2 北方 12 支 ──
   yan: { name: '渔阳突骑', tier: 1 },       // 古北口·§2 #2 光武幽州精骑（升T1）
   gongsun_d: { name: '襄平狟骑', tier: 4 }, // 襄平·公孙度襄平狟骑（缺乏极其著名的战术高光，降T3）
   shizhao_d: { name: '黑槊龙骧', tier: 2 }, // 邢台·石虎后赵禁军
     yunzhong: { name: '苍头军', tier: 3 },           // 中国古代（秦汉等）特指奴仆组成的军队，极具军制与阶级特色的文化名词，升入T3知名
-  tuoba: { name: '拓跋虎骑', tier: 4 },     // 大同·拓跋鲜卑（缺乏极其著名的战术高光，降T3）
+    tuoba: { name: '拓跋虎骑', tier: 3 },
   // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 1 },     // 北魏六镇，横扫天下的基石，六镇之乱孕育了北齐、北周及隋唐开国集团，影响极其深远，升入T1战略
   gaoqi_d: { name: '百保鲜卑', tier: 2 },   // 蓨城·北齐百保精兵·高长恭禁卫（顶级近卫，降T2）
   yingzhou_ying_d: { name: '黄龙兵', tier: 1 }, // 朝阳·慕容皝棘城大破石赵
-  murong: { name: '龙城甲骑', tier: 4 },    // 棘城·慕容燕具装骑（无经典以少胜多）（缺乏极其著名的战术高光，降T3）
   ming_d: { name: '明军三大营', tier: 1 },   // 北京·五军神机三千营（升T1）
 
   // ── §1 中原表·地理偏北（用户指定）──
@@ -60,7 +59,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·李成梁辽东骑兵（打出极强战绩，升T1）
     zu_d: { name: '关宁铁骑', tier: 1 },
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 毛文龙在皮岛建立的敌后抗金武装，牵制后金大量兵力，悲剧色彩和知名度极高，升入T3知名
-  liwang: { name: '河间突骑', tier: 4 },     // 乐成·李光弼河朔骑兵（缺乏极其著名的战术高光，降T3）
+    liwang: { name: '河间突骑', tier: 3 },
   hejian: { name: '白马义从', tier: 2 },      // 文安·公孙瓒幽州突骑（界桥全军覆没，特色之兵降T2）
   qu_d: { name: '先登营', tier: 2 },       // 界桥·麴义破公孙瓒（192年）
   yang_aner: { name: '天顺红袄', tier: 2 },        // 金末红袄军，专属名号红袄极其鲜明，升T2

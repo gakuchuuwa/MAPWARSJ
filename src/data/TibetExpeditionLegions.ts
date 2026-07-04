@@ -8,7 +8,7 @@
  */
 export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   keliya: { name: '疏勒镇军', tier: 4 },   // 阿什库尔·尉迟曜于阗王助唐（常规番号，降T3）
-  qinghai: { name: '青海汛兵', tier: 4 }, // 噶斯口·岳钟琪出噶斯口平罗卜藏丹津（常规番号，降T3）
+    qinghai: { name: '川陕绿营', tier: 3 },
   xining: { name: '西宁边军', tier: 4 }, // 马海台·杨应琚整顿边军（常规番号，降T3）
   dulan: { name: '和硕特精骑', tier: 1 }, // 固始汗攻入西藏建立和硕特汗国，深刻重塑数百年来青藏高原格局的战略主力，升入T1战略
     kalun: { name: '尕斯铁卫', tier: 4 },
@@ -69,6 +69,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dong: { name: '囊谦千户兵', tier: 4 },               // 缺乏知名度支撑，降T3
   hor: { name: '霍尔部勇士', tier: 4 },
     ganden: { name: '格鲁僧兵', tier: 3 }, // 格鲁派（黄教）的武装僧兵，近现代西藏绝对政教核心力量，升入T3知名,
-    xianlingqiang: { name: '凉州大马', tier: 3 },
-    song2: { name: '松州突骑', tier: 4 },
+    xianlingqiang: { name: '羌戎突骑', tier: 4 },
+    song2: { name: '松州突骑', tier: 3 },
+    qifu_d: { name: '苑川突骑', tier: 3 },
 };

@@ -16,7 +16,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   chuzhou_d: { name: '清淮劲卒', tier: 4 },        // 清流关·皇甫晖守滁州抗蒙（缺乏极其著名的战术高光，降T3）
   she_ethnic: { name: '畲族山兵', tier: 3 },  // 具有极强东南丘陵风土特色与民族凝聚力的武装力量，升入T3知名
   shanyue: { name: '丹阳兵', tier: 2 },      // 三国精锐步兵兵源，战术素养极高，但未像虎豹骑主导大势，下调至T2战术
-    chu: { name: '荆州锐士', tier: 4 },       // 金鳞·关羽水淹七军（缺乏极其著名的战术高光，降T3）
+    chu: { name: '荆州校刀手', tier: 3 },
   sunwu_d: { name: '解烦兵', tier: 2 },      // 武昌·孙吴禁卫
   jinling: { name: '量沙军', tier: 2 },     // 南朝宋檀道济唱筹量沙，中国古代心理战与战术欺骗的极致代表，升入T2战术
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=寿·寿州）
@@ -24,13 +24,12 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   lu: { name: '逍遥津突将', tier: 2 },       // 合肥·张辽八百破十万（一次性战术突击队）
   min: { name: '闽国亲从', tier: 4 },        // 冶城·王审知闽国亲从
   quanzhou: { name: '清源军', tier: 4 },        // 刺桐·留从效清源军
-  chen: { name: '建康水军', tier: 4 },       // 清远·陈霸先水师
 
     yue_d: { name: '背嵬军', tier: 0 },
-      xiangzhou: { name: '襄阳镇军', tier: 4 },     // 襄阳·坚守六年的重镇防卫力量（常规番号，降T3）
+    xiangzhou: { name: '襄樊孤军', tier: 3 },
   zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
   sizhou: { name: '克敌军', tier: 2 },       // 南宋因装备战术兵器克敌弓而建立的特种部队，属于战术兵器部队，下调至T2战术
-  qian_d: { name: '嘉兴水师', tier: 4 },      // 嘉兴·俞大猷嘉兴水师（常规番号，降T3）
+    qian_d: { name: '嘉兴水师', tier: 3 },
     qi_d: { name: '鸳鸯阵兵', tier: 1 },
   jiujiang: { name: '蒙冲斗舰', tier: 2 },     // 东吴专门用于撞击的战术舰船，属于战术兵器兵种，而非宏大战略舰队，下调至T2战术
     fangla: { name: '圣公兵', tier: 3 },             // 方腊起义军的代表，震动东南半壁的著名农民起义符号，升入T3知名
@@ -85,7 +84,7 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
   gumie: { name: '却月阵兵', tier: 2 },       // 信安·刘裕却月阵破魏（特定战术阵法）
   wang_s: { name: '新安兵', tier: 4 },       // 黟城·汪华保据新安六州（缺乏极其著名的战术高光，降T3）
   wenling: { name: '福建水师', tier: 3 },    // 明清东南沿海最重要的水上王牌，享有极高的历史知名度，升入T3知名
-  wuyue: { name: '游奕军', tier: 4 },          // 杭州·钱镠吴越游奕军（缺乏极其著名的战术高光，降T3）
+    wuyue: { name: '八都兵', tier: 3 },
     shaozhou_d: { name: '银枪效节军', tier: 2 },
     ming_zheng: { name: '郑氏铁人军', tier: 2 },
 };

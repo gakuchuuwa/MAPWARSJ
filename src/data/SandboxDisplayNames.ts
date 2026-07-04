@@ -32,7 +32,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   quli: '渠犁',
   'guazhou': '瓜',
   'guishuang': '贵霜',
-  juandu: '捐毒',
+'juandu': '捐毒',
   sai: '塞',
   yangtong: '羊同',
 
@@ -55,10 +55,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'zhou': '周',
     'qi': '齐',
     'jin': '晋',
-    'chu': '江陵',
+'chu': '江陵',
     'wu': '吴',
 'yue': '越',
-    'nanyue': '南越',
+'nanyue': '南越',
     'guangzhou': '广',
     'guangping': '广平',
 'duanzhou_d': '端',
@@ -72,7 +72,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shu': '蜀',
     'dian': '通海',
 'xin': '上党',
-    'liangzhou': '凉',
+'liangzhou': '凉',
     'juqu_d': '沮渠',
     'tufa_d': '秃发',
 'qiuchi': '仇池',
@@ -81,10 +81,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'xianbei': '鲜卑',
     'jie': '羯',
     'beidi': '羌',
-    'tuoba': '拓跋',
+'tuoba': '拓跋',
 'yuwen': '宇文',
 'liang_d': '梁',
-    'chen': '陈',
+'chen': '陈',
     'sui': '随',
     'tang': '唐',
     'min': '闽',
@@ -104,7 +104,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dangzhou': '氐',
     'dai_d': '代',
     'dingxiang_d': '定襄',
-    'xiayang_d': '夏阳',
+'xiayang_d': '夏阳',
     'zhongshan': '恒',
     'wang_d': '王',
 'xiao_d': '兰陵',
@@ -112,7 +112,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yuan_cj_d': '袁',
     'xie_cj_d': '信',
 'yue_d': '岳',
-    'qian_d': '秀',
+'qian_d': '秀',
     'kong_d': '孔',
 'cao_d': '曹',
     'jiujiang': '浔',
@@ -127,7 +127,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'tubo': '吐蕃',
     'tujue': '突厥',
 'tiele': '铁勒',
-    'jingzhou_gs': '泾',
+'jingzhou_gs': '泾',
     'guo': '果',
     'zi': '资',
     'long2': '陇',
@@ -172,7 +172,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'loulan': '楼兰',     // 精绝·东汉都护府楼兰属国屯戍（原扜泥城）
     'shache': '莎车',
 'qiuci': '龟兹',
-    'yanqi': '焉耆',
+'yanqi': '焉耆',
 
 'gaogouli': '高句',
     'xinluo': '新罗',
@@ -186,7 +186,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'linyi': '林邑',
 
     // 2026-05-25 两晋核对追加势力
-    'murong': '慕容',
+'murong': '慕容',
     'yingzhou_ying_d': '营',
     'erzhu': '尔朱',
 
@@ -201,12 +201,12 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'ouyue': '台',
 
     // 2026-05-25 三国核对追加势力
-    'xiangzhou': '襄',
+'xiangzhou': '襄',
     'zaoyang_d': '舂陵',
     // ── 2026-06-16 改：符离·宿（§4.7；旗号「徐」让位下邳徐国）──
-    'suzhou_d': '宿',
+'suzhou_d': '宿',
 'didao': '熙',
-    'lanzhou': '兰',
+'lanzhou': '兰',
     'lu': '庐',
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
@@ -235,7 +235,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-25 新增：唐朝核对追加势力 ──
 'xueyantuo': '薛延',
-    'tujishi': '突骑',
+'tujishi': '突骑',
     'nanzhao': '南诏',
 'xiaobolu': '勃律',
     'qiufu': '裘甫',
@@ -255,7 +255,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yang_aner': '登',
     'jinan': '历',
     'dixiang': '新',
-    'liwang': '河间',
+'liwang': '河间',
 
     // ── 2026-05-25 元朝蒙古势力 ──
 'huarazim': '花剌',
@@ -367,7 +367,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yujiulu': '郁久',
     'ashina': '史那',
     'ashide': '史德',
-    'weiming': '嵬名',
+'weiming': '嵬名',
     'yeli': '野利',
     'kiyad': '乞颜',
 'borjigin': '孛儿',
@@ -409,7 +409,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
     'cong': '賨',
-    'langzhou': '阆',
+'langzhou': '阆',
     'zhe_d': '折',
     'shanyue': '丹阳',
     'she_ethnic': '畲',
@@ -565,7 +565,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'owari': '尾张',
     'xuan': '宣府',
     'yangshe': '羊舌',
-    'sima_d': '司马',
+'sima_d': '司马',
 'liguo': '潞',
     'kang': '康',
 'wudu': '阶',
@@ -584,7 +584,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'huihu': '回鹘',
 'wuzhumuqin': '乌珠',
 'xingan': '布特',
-    'zhadalan': '扎答',
+'zhadalan': '扎答',
     'zhuerqi': '主儿',
     'chechen': '车臣',
 'panjun': '叛军',
@@ -659,7 +659,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jinzhou': '锦',
     'wure': '兀惹',
     'houliao': '东辽',
-    'dazhen': '大真',
+'dazhen': '大真',
     'jilin': '吉林',
     'sunite': '苏尼',
     'dayuzi': '大玉',
@@ -682,7 +682,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-31 修复：补齐之前遗漏的10个势力 ──
 'zhong': '寿',
-    'qingyuan_bd': '清苑',
+'qingyuan_bd': '清苑',
     'pingyuan': '高唐',
     'yao': '尧',
 'xichu': '楚',
@@ -693,7 +693,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'mi': '糜',
     'hai2': '海',
     'fu2': '抚',
-    'xinping': '邠',
+'xinping': '邠',
     'huan': '环',
     'wei2': '韦',
     'lingzhou': '灵',
@@ -737,7 +737,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'dang_d': '虞',
 'hao_d': '濠',
 'bozhou_d': '博',
-    'hongnong_jun': '弘农',
+'hongnong_jun': '弘农',
     'zhengzhou': '郑',
 'ruo': '鄀',
     'gar': '噶尔',
@@ -800,7 +800,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     xingxingxia: '伊',
 'yangguan': '西凉',
     'wulianghai': '乌梁',
-    'qinghai': '青海',
+'qinghai': '青海',
     'xining': '西宁',
 'kalun': '柴达',
     'sagami': '相模',
@@ -809,7 +809,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wenzhou': '温',
     'fu_zhou': '涪',
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
-    'maer_d': '马尔',   // 彭迪·Margiana；旗号「穆」已被穆氏占用
+'maer_d': '马尔',
     'wugu_d': '乌古',     // 毡的·乌古斯突厥
     'adao_d': '阿克',     // 昆岗·阿克苏道军台
     'wuyuan_d': '五原',   // 固阳塞·五原郡
@@ -837,7 +837,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   aba: '阿巴',
   wenling: '温陵',
   qianzhou: '乾',
-  'wuyue': '吴越',
+'wuyue': '吴越',
   xiyuduhu: '都护',
   shaozhou_d: '邵',
   'zizhou': '梓',

@@ -28,6 +28,7 @@ export const FACTIONS: Faction[] = [
   { id: 'guazhou', name: '瓜州' },
   { id: 'guishuang', name: '贵霜帝国' },
   { id: 'juandu', name: '捐毒国' },
+
   { id: 'sai', name: '塞种' },
   { id: 'yangtong', name: '羊同' },
 
@@ -55,6 +56,7 @@ export const FACTIONS: Faction[] = [
     { id: 'chunshen', name: '春申' },
     { id: 'wan', name: '安庆' },          // 舒州(皖城/安庆)；旗号取舒州避与据点皖城重
     { id: 'qingyuan_bd', name: '清苑' },
+
     { id: 'zhong', name: '寿州' },
     { id: 'xichu', name: '西楚' },
     { id: 'weihaiwei', name: '威海' },
@@ -65,9 +67,12 @@ export const FACTIONS: Faction[] = [
     { id: 'qi', name: '齐国' },
     { id: 'jin', name: '晋国' },
     { id: 'chu', name: '江陵' },
+
+
     { id: 'wu', name: '吴国' },
     { id: 'yue', name: '越国' },
-    { id: 'nanyue', name: '南越' },                 // 赵佗@龙川（政权·国号）
+    { id: 'nanyue', name: '南越' },
+                 // 赵佗@龙川（政权·国号）
     { id: 'guangzhou', name: '广州' },
 { id: 'guangping', name: '广平' },     // 洞海城·阮文张象兵水师               // 广州@番禺（州府/广南核心）
     // ── 2026-06-19 新增：端州@肇庆（摧锋军；旗号端≠据点名肇庆）──
@@ -89,13 +94,16 @@ export const FACTIONS: Faction[] = [
     { id: 'shu', name: '蜀国' },
     { id: 'yangzhou', name: '洋州' }, // ── 兴势山（王平·无当飞军T1）──
     { id: 'dingxiang_d', name: '定襄' }, // ── 2026-06-18：李靖@恶阳岭（贞观四年定襄夜袭；旗号定襄）──
-    { id: 'xiayang_d', name: '夏阳' },   // ── 2026-06-18：李勣@龙门（冯翊夏阳故地·禹门险隘；旗号夏阳）──
+    { id: 'xiayang_d', name: '夏阳' },
+   // ── 2026-06-18：李勣@龙门（冯翊夏阳故地·禹门险隘；旗号夏阳）──
     { id: 'dian', name: '通海' },       // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '上党' },
 
 
 
     { id: 'liangzhou', name: '凉州' },
+
+
     { id: 'juqu_d', name: '沮渠' },
     { id: 'tufa_d', name: '秃发' },
     { id: 'qiuchi', name: '仇池' },
@@ -105,11 +113,13 @@ export const FACTIONS: Faction[] = [
     { id: 'xianbei', name: '鲜卑' },
     { id: 'jie', name: '羯族' }, // 代表后赵/前赵，避免旗号重名
     { id: 'beidi', name: '北地' },
-    { id: 'tuoba', name: '拓跋' }, // 代表北魏，避免旗号重名
+    { id: 'tuoba', name: '拓跋' },
+ // 代表北魏，避免旗号重名
     { id: 'yuwen', name: '宇文' },
 
     { id: 'liang_d', name: '梁国' },
     { id: 'chen', name: '陈国' },
+
     { id: 'sui', name: '隋国' },
     { id: 'tang', name: '唐国' },
     { id: 'min', name: '闽国' },
@@ -137,6 +147,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wang_d', name: '王家' },
     { id: 'xiao_d', name: '兰陵' },
 
+
     { id: 'li_lx_d', name: '陇西' },
 
     { id: 'yuan_cj_d', name: '袁家' },
@@ -145,15 +156,18 @@ export const FACTIONS: Faction[] = [
     { id: 'yue_d', name: '岳家' },
 
     { id: 'qian_d', name: '秀州' },
+
     { id: 'kong_d', name: '孔家' }, // 代表鲁国，避免旗号重名
     { id: 'cao_d', name: '曹家' },
     { id: 'jiujiang', name: '江州' },       // 橄榄 - 柴桑/浔阳(九江郡)
     { id: 'jiaodong', name: '胶东' },
     { id: 'jingzhou_gs', name: '泾州' },
+
 { id: 'guo', name: '果州' },
     { id: 'zi', name: '资州' },
     { id: 'long2', name: '陇州' },
     { id: 'song2', name: '松州' },
+
 
     { id: 'qing', name: '庆州' },
 
@@ -170,6 +184,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wuhuan', name: '乌桓' },
     { id: 'xianlingqiang', name: '先零' },
 
+
     { id: 'yelang', name: '夜郎' },
     { id: 'ailao', name: '哀牢' },
     { id: 'fuyu', name: '夫余' },
@@ -178,6 +193,7 @@ export const FACTIONS: Faction[] = [
     { id: 'shache', name: '莎车' },
     { id: 'qiuci', name: '龟兹' },
     { id: 'yanqi', name: '焉耆' },
+
     { id: 'gaogouli', name: '高句丽' },
    // 高句丽国都平壤（427 起）；「高丽」留给 goryeo
     { id: 'xinluo', name: '新罗' },
@@ -230,6 +246,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 新增：用户核对追加势力 ──
     { id: 'qifu_d', name: '乞伏' },
+
      // 高原栗 - 西秦(乞伏氏/陇西鲜卑)
     { id: 'tuyu_d', name: '吐谷浑' },   // 青海碧 - 吐谷浑
     { id: 'linyi', name: '林邑' },
@@ -239,7 +256,9 @@ export const FACTIONS: Faction[] = [
     { id: 'yao', name: '尧帝' },         // 尧都平阳
 
     // ── 2026-05-26 新增：两晋核对追加势力 ──
-    { id: 'murong', name: '慕容' }, // 代表前燕，避免旗号重名
+    { id: 'murong', name: '慕容' },
+
+ // 代表前燕，避免旗号重名
     { id: 'yingzhou_ying_d', name: '营州' }, // ── 2026-06-20：朝阳（柳城）；北齐黄龙兵 ──
     { id: 'erzhu', name: '尔朱' },      // 铁锈红 - 契胡尔朱氏(秀容川/北魏权臣)
 
@@ -270,15 +289,18 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 新增：三国核对追加势力 ──
     // ── 2026-06-19 改：襄阳·襄州州名旗号（§4.1-5）──
     { id: 'xiangzhou', name: '襄州' },
+
     // ── 2026-06-19 新增：枣阳@枣阳（孟珙·忠顺军；《宋史·孟珙传》；旗号舂陵≠枣阳）──
     { id: 'zaoyang_d', name: '唐州' },
     // ── 2026-06-16 改：符离·宿州治（§4.7；旗号「徐」让位下邳徐国）──
     { id: 'suzhou_d', name: '宿州' },
+
     // ── 2026-06-11：狄道（古临洮/陇西；旗号狄，据点临洮）──
     { id: 'didao', name: '熙州' },
 
     // ── 2026-06-11 新增：西凉（马腾/韩遂军阀/金城皋兰）──
     { id: 'lanzhou', name: '兰州' },
+
     // ── 2026-06-11 精锐部队缺口批次 ──
     { id: 'gaoqi_d', name: '北齐' },           // 旗号高齐@渤海蓨城（高欢故里）；代表北齐，避免旗号重名
     // ── 2026-06-11 新增：营州@朝阳（和龙/黄龙）──
@@ -318,7 +340,8 @@ export const FACTIONS: Faction[] = [
     { id: 'xiqin', name: '宁州' },
          // 胡萝卜橙 - 薛举西秦政权(折墌)
     { id: 'xueyantuo', name: '薛延陀' },
-    { id: 'tujishi', name: '突骑施' },     // 巧克力色 - 突骑施汗国(碎叶川)
+    { id: 'tujishi', name: '突骑施' },
+     // 巧克力色 - 突骑施汗国(碎叶川)
     { id: 'nanzhao', name: '南诏' },        // 南诏深红 - 南诏国(蒙舍城)
     { id: 'nanzhong', name: '南中' },        // 南中(宛温·爨氏故地)
     // 西域沙金 - 高昌国(高昌壁)
@@ -350,6 +373,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jinan', name: '济南' },
     // 草原金 - 德寿身圣政权(信州)
     { id: 'liwang', name: '河间' },
+
 
     // ── 2026-05-26 元朝蒙古势力 ──
     { id: 'huarazim', name: '花剌子模' },
@@ -392,6 +416,7 @@ export const FACTIONS: Faction[] = [
     // 第五类：边疆民族政权
     { id: 'dada_ming', name: '鞑靼' },              // 草原暗灰 - 明代蒙古鞑靼部(河套)
     { id: 'oirat_ming', name: '卫拉特' },
+
              // 西蒙古碳灰 - 明代瓦剌部(科布多)，旗号与草原 wala 区分
     // 塞外土褐 - 乌梁海(唐努山)
     { id: 'jianzhou_nvzhen', name: '建州' },         // 建州深绿 - 建州女真(苏子河)
@@ -508,6 +533,9 @@ export const FACTIONS: Faction[] = [
     { id: 'mohe', name: '完颜' },
 
 
+
+
+
     // ── 2026-05-26 新增：室韦（隋唐时期东北亚部落联盟）──
     { id: 'shiwei', name: '室韦' },
               // 草原青 - 室韦(隋唐/蒙兀室韦/额尔古纳)
@@ -564,6 +592,7 @@ export const FACTIONS: Faction[] = [
 
               // 瓦剌蓝 - 绰罗斯氏(瓦剌王族/准噶尔盆地)
     { id: 'weiming', name: '嵬名' },
+
     // ── 2026-06-11 新增：野利（西夏权臣/克夷门）──
     { id: 'yeli', name: '野利' },
 
@@ -626,7 +655,8 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 Phase 3h：西南夷/蛮族/家族门阀/海商 ──
     { id: 'cong', name: '賨族' },
     // 瘗棺苔绿 - 僰人(僰王山/珙县悬棺)
-    { id: 'langzhou', name: '阆州' },                  // 阆州(隆城)；巴西劲卒张飞
+    { id: 'langzhou', name: '阆州' },
+                  // 阆州(隆城)；巴西劲卒张飞
     { id: 'zhe_d', name: '折家' },
     { id: 'shanyue', name: '丹阳' },
     { id: 'she_ethnic', name: '畲族' },                 // 敕木暗紫 - 畲族(敕木山/闽浙交界)
@@ -756,6 +786,7 @@ export const FACTIONS: Faction[] = [
     { id: 'gling', name: '岭家' },                              // 岭(结古宗/玉树/家族), Gling
     { id: 'khyungpo', name: '琼波' },                         // 琼波(丁青宗/康区/家族), Khyungpo
     { id: 'suolun', name: '达斡尔' },
+
                            // 索伦(卜奎), Solon
     { id: 'tuva', name: '图瓦' },                             // 图瓦(唐努), Tuvan/Tuva
 
@@ -808,7 +839,8 @@ export const FACTIONS: Faction[] = [
     { id: 'owari', name: '尾张' },
     { id: 'xuan', name: '宣府' },
     { id: 'yangshe', name: '羊舌' },
-    { id: 'sima_d', name: '司马' },   // 河内郡望@获嘉
+    { id: 'sima_d', name: '司马' },
+   // 河内郡望@获嘉
     { id: 'liguo', name: '潞州' },
 
 
@@ -835,6 +867,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xingan', name: '布特哈' },
 
     { id: 'zhadalan', name: '扎答兰' },
+
     { id: 'zhuerqi', name: '主儿乞' },
     { id: 'chechen', name: '车臣' },
     { id: 'panjun', name: '叛军' },
@@ -925,6 +958,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wure', name: '兀惹' },
     { id: 'houliao', name: '东辽' },
     { id: 'dazhen', name: '大真' },
+
     { id: 'jilin', name: '吉林' },
     { id: 'sunite', name: '苏尼特' },
     { id: 'dayuzi', name: '大玉兹' },
@@ -950,6 +984,7 @@ export const FACTIONS: Faction[] = [
     { id: 'hai2', name: '海州' },
     { id: 'fu2', name: '抚州' },
     { id: 'xinping', name: '邠州' },
+
     { id: 'huan', name: '环州' },
     { id: 'wei2', name: '韦州' },
     { id: 'lingzhou', name: '灵州' },
@@ -994,6 +1029,7 @@ export const FACTIONS: Faction[] = [
     { id: 'qincha', name: '钦察' },
     { id: 'anxi', name: '安西' },
 
+
     { id: 'konbaung', name: '贡榜' },
 
     { id: 'qi_d', name: '戚家' },
@@ -1006,7 +1042,8 @@ export const FACTIONS: Faction[] = [
     { id: 'yingzhou_d', name: '颍州' },           // 颍@汝阴
     { id: 'yanchuan_d', name: '郾川' },           // 郾@郾城
     { id: 'huang_d', name: '黄国' },              // 黄@潢川
-    { id: 'yuzhou', name: '豫州' },              // 杞@雍丘
+    { id: 'yuzhou', name: '豫州' },
+              // 杞@雍丘
     { id: 'yiyang_d', name: '义阳' },             // 义@武胜关
     { id: 'mengcheng_d', name: '山桑' },          // 山桑@蒙城（汉书沛郡山桑县）
     { id: 'guide_d', name: '芒砀' },            // 归德@永城（归德府/州治）
@@ -1015,12 +1052,14 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 新增：濠州（原凤阳朱氏改挂）──
     { id: 'hao_d', name: '濠州' },
 
+
                 // 濠@蚌埠（隋唐濠州治钟离故地）
     // ── 2026-06-11 新增：博州 ──
     { id: 'bozhou_d', name: '博州' },
              // 博@聊城（隋唐博州治）
     // ── 2026-06-16 新增：11大名关势力 ──
     { id: 'hongnong_jun', name: '弘农' },
+
     { id: 'zhengzhou', name: '郑州' },
     { id: 'ruo', name: '武关' },
 
@@ -1107,7 +1146,8 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-20 新增：旁遮普（阿托克）──
     { id: 'pangzha', name: '旁遮普' },
 // ── 2026-06-19 新增：马尔吉亚纳（彭迪）·乌古斯（毡的）──
-    { id: 'maer_d', name: '马尔吉亚纳' },          // 彭迪·穆尔加布绿洲边镇（Margiana）
+    { id: 'maer_d', name: '马尔吉亚纳' },
+          // 彭迪·穆尔加布绿洲边镇（Margiana）
     { id: 'wugu_d', name: '乌古斯' },              // 毡的·锡尔河下游乌古斯叶护国核心
     // ── 2026-06-19 新增：阿克苏道（昆岗军台）──
     { id: 'adao_d', name: '阿克苏道' },            // 昆岗·清代南疆驿路军台
@@ -1130,6 +1170,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wulianghai', name: '乌梁海' },
     { id: 'kepantuo', name: '渴盘陀' },
     { id: 'qinghai', name: '青海' },
+
     { id: 'xining', name: '西宁' },
     { id: 'kalun', name: '柴达木' },
 
@@ -1144,6 +1185,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wenling', name: '温陵' },
     { id: 'qianzhou', name: '乾州' },
     { id: 'wuyue', name: '吴越' },
+
     { id: 'xiyuduhu', name: '西域都护' },
     { id: 'shaozhou_d', name: '邵州' },
 

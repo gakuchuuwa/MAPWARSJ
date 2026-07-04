@@ -57,8 +57,8 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   // ── 2026-06-19 有将无番号补全 ──
   kiyad: { name: '乞颜宿卫', tier: 3 },         // 不儿罕山·也速该乞颜部
   mengwu: { name: '忙古勒骑', tier: 4 },        // 狼居胥·合不勒汗
-  zhadalan: { name: '札剌儿军', tier: 4 },      // 阔亦田·札木合
-    oirat_ming: { name: '卫拉特重骑', tier: 4 },       // 缺乏知名度支撑，降T3
+    zhadalan: { name: '十三翼', tier: 3 },
+    oirat_ming: { name: '准噶尔驼城', tier: 3 },
   tumed: { name: '土默特精骑', tier: 1 },         // 俺答汗建立土默特汗国、逼迫明朝封贡的绝对战略主力，符合T1战略主力
   tushetu: { name: '库伦铁骑', tier: 4 },       // 库伦·土谢图汗
   yaoluoge: { name: '药罗葛骑', tier: 4 },      // 娑陵·药罗葛部
@@ -86,4 +86,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   jiluo_d: { name: '北征突骑', tier: 1 },       // 燕然勒石彻底击灭北匈奴，独立战略主力，升T1,
     chagatai: { name: '戊己屯军', tier: 2 },
     dongsheng: { name: '云中彀骑', tier: 3 },
+    murong: { name: '龙城甲骑', tier: 2 },
 };

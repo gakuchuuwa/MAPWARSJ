@@ -29,14 +29,14 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   dongxia: { name: '东夏锐卒', tier: 4 },       // 曷苏馆·蒲鲜万奴东夏国
     haixi_nvzhen: { name: '海西甲骑', tier: 3 }, // 与建州死磕的“海西女真”主力，代表了满洲统一前长达百年的激烈内战，升入T3知名
   houliao: { name: '东辽骑队', tier: 4 },       // 咸平·耶律留哥东辽（缺乏极其著名的战术高光，降T3）
-    suolun: { name: '卜奎猎骑', tier: 4 },            // 缺乏知名度支撑，降T3
+    suolun: { name: '索伦骑', tier: 3 },
   wula: { name: '乌拉国兵', tier: 4 },          // 龙潭山城·布占泰乌拉贝勒
   wure: { name: '兀惹部卒', tier: 4 },          // 乌舍城·乌昭度兀惹部
     heishui: { name: '靺鞨锐卒', tier: 3 }, // 东北历史上极其著名的庞大民族（女真直系祖先），建立渤海国，文化辨识度极高，升入T3知名
     dawoer: { name: '莫尔根飞骑', tier: 4 },
-    mohe: { name: '勃利甲骑', tier: 4 },              // 缺乏知名度支撑，降T3
+    mohe: { name: '女真拐子马', tier: 3 },
   ewenki: { name: '石勒喀猎兵', tier: 4 },   // 尼布楚·博木博果尔鄂温克
-  dazhen: { name: '女真拐子马', tier: 2 },   // 与铁浮图配合的两翼轻骑兵包抄战术的代名词，升入T2战术
+    dazhen: { name: '女真甲骑', tier: 3 },
     yeren_nvzhen: { name: '瑷珲马甲', tier: 4 },      // 缺乏知名度支撑，降T3
   wuji: { name: '勿吉步卒', tier: 4 },            // 伯都·乙力支朝贡北魏（缺乏极其著名的战术高光，降T3）
   jilin: { name: '吉林屯营', tier: 4 },           // 宽城子·富俊编练屯田（常规番号，降T3）

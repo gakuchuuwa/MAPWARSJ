@@ -21,7 +21,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   guishuang: { name: '贵霜铁骑', tier: 1 },    // 蓝氏城·贵霜帝国铁骑
     muer: { name: '呼罗珊义从', tier: 1 },             // 推翻倭马亚王朝、建立阿拔斯王朝的核心战略武装，重塑了伊斯兰世界版图，升入T1战略
   xijue: { name: '郅支城坚兵', tier: 3 },              // 陈汤灭郅支单于时著名的夹门鱼鳞阵（罗马遗脉传说），极具文化话题度，升入T3知名
-  tujishi: { name: '怛罗斯突骑', tier: 4 },            // 缺乏知名度支撑，降T3
+    tujishi: { name: '怛罗斯突骑', tier: 3 },
   kokand: { name: '浩罕轻骑', tier: 4 },
   sogdian: { name: '瓦拉赫沙卫', tier: 4 },
   kangju: { name: '康卡控弦', tier: 4 },              // 缺乏知名度支撑，降T3
@@ -33,7 +33,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   jibin: { name: '犍陀罗骑', tier: 4 },        // 迦毕试·迦腻色迦犍陀罗骑兵（缺乏极其著名的战术高光，降T3）
   fanyanna: { name: '梵衍那僧兵', tier: 4 },      // 巴米扬·梵衍那王率僧兵御大食（缺乏极其著名的战术高光，降T3）
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
-  maer_d: { name: '骆驼突骑', tier: 4 },        // 彭迪·萨珊东北边境骆驼骑兵（缺乏极其著名的战术高光，降T3）
+    maer_d: { name: '骆驼突骑', tier: 4 },
   wugu_d: { name: '乌古斯弓骑', tier: 4 },      // 毡的·乌古斯复合弓骑（缺乏极其著名的战术高光，降T3）
   mamon: { name: '呼罗珊禁卫', tier: 4 },       // 达尔甘·马蒙大破艾敏（缺乏极其著名的战术高光，降T3）
   khoja: { name: '白山派卫兵', tier: 4 },        // 休循·阿帕克和卓白山派（缺乏极其著名的战术高光，降T3）

@@ -31,7 +31,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 公行锐士除名
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
     li_lx_d: { name: '陇右突骑', tier: 1 },
-  xiayang_d: { name: '西河突骑', tier: 4 }, // 龙门·唐同州境黄河禹门戍防（《水经注》夏阳龙门）（缺乏极其著名的战术高光，降T3）
+    xiayang_d: { name: '西河突骑', tier: 3 },
   baibo: { name: '白波黄巾', tier: 3 },     // 东汉末年最著名的黄巾军余部，护驾汉献帝东归，历史知名度极高，升入T3知名
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
   tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
@@ -40,8 +40,8 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     liguo: { name: '阏与突骑', tier: 2 },
   yiyang_d: { name: '申息锐师', tier: 3 },    // 春秋楚国最强底牌，老牌历史劲旅，升入T3知名
   // ── 2026-06-16 新增：11大名关 ──
-                      hongnong_jun: { name: '黄龙骑', tier: 4 },    // 函谷关·杨素大破突厥（缺乏极其著名的战术高光，降T3）
-  jingzhou_gs: { name: '安定突骑', tier: 4 },       // 安定·天水安定出精骑（皇甫嵩所部）（缺乏极其著名的战术高光，降T3）
+    hongnong_jun: { name: '黄龙水师', tier: 3 },
+    jingzhou_gs: { name: '安定突骑', tier: 3 },
   tang: { name: '玄甲军', tier: 0 },            // 长安·李世民玄甲骑
     ruo: { name: '秦之锐士', tier: 1 },
   ruzhou: { name: '赤帻先锋', tier: 4 },              // 缺乏知名度支撑，降T3
@@ -56,7 +56,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 蔡国劲卒除名（无此部队）
   shen: { name: '申伯亲卫', tier: 4 },         // 安康·西周申国
   // 汴河戍旅除名（无此编制）
-  yuzhou: { name: '雍丘锐士', tier: 4 },     // 雍丘·祖逖中流击楢（缺乏极其著名的战术高光，降T3）
+    yuzhou: { name: '中流击楫军', tier: 3 },
     xin: { name: '上党锐骑', tier: 2 },
   beidi: { name: '北地羌骑', tier: 1 },        // 萧关·姚苌岭北占据
   yingzhou_d: { name: '选锋军', tier: 2 },       // 南宋及多朝极常见的临战前锋突击队编制，缺乏主宰大局的战略唯一性，下调至T2战术
@@ -77,18 +77,18 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   yanchuan_d: { name: '淮西行营军', tier: 4 }, // 郾城·韩愈随裴度督师郾城，参赞军务
   guide_d: { name: '酂侯亲卫', tier: 4 },   // 永城·萧何酂侯
   tongzhou: { name: '匡国牙兵', tier: 4 },    // 长宁·后汉高祖镇守同州（缺乏进攻高光，降T3）
-    hao_d: { name: '钟离劲卒', tier: 4 },
-  suzhou_d: { name: '江北团练', tier: 4 },
-  sima_d: { name: '宣王中军', tier: 4 },   // 获嘉·司马懿都督中外诸军事
+    hao_d: { name: '钟离健儿', tier: 3 },
+    suzhou_d: { name: '江北四镇', tier: 3 },
+    sima_d: { name: '宣王中军', tier: 3 },
     bozhou_d: { name: '青州兵', tier: 1 },           // 曹操收编黄巾军建立的绝对嫡系核心，曹魏霸业基石，贯穿三国前半叶，升入T1战略
   mengcheng_d: { name: '山桑弓手', tier: 4 },
   shangzhou: { name: '商州锐士', tier: 4 },
   bailian: { name: '白莲教众', tier: 3 },             // 跨越数百年的民间宗教武装，极度典型的叛军文化符号，升入T3知名
-  xinping: { name: '邠宁戍骑', tier: 4 },             // 缺乏知名度支撑，降T3
+    xinping: { name: '朔方健儿', tier: 3 },
   huai: { name: '淮西子弟', tier: 3 },                // 朱元璋开国初期的核心将帅班底，极具政治与军事符号意义，升入T3知名
   dang_d: { name: '厅子都', tier: 2 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
-    xiao_d: { name: '雍州骁锐', tier: 4 },            // 缺乏知名度支撑，降T3
+    xiao_d: { name: '兰陵健儿', tier: 4 },
   zhengzhou: { name: '白袍军', tier: 2 },        // 仅存在于北伐战役，随后覆灭，极度缺乏建制延续性，属于特定战役的巅峰高光，符合T2战术
   song: { name: '殿前捧日', tier: 1 },           // 开封·赵匡胤殿前捧日军,
     zhao: { name: '邯郸甲士', tier: 4 },              // 缺乏知名度支撑，降T3

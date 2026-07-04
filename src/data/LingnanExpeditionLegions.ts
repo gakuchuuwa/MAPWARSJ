@@ -24,7 +24,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   jingjiang: { name: '靖江府卫', tier: 4 },   // 永安·瞿式耜大破李成栋（缺乏极其著名的战术高光，降T3）
   xinjiang: { name: '静江弩手', tier: 4 },      // 始安·马塈静江弩手（南宋）（缺乏极其著名的战术高光，降T3）
   // 铲平军除名（非正式官军番号）
-  nanyue: { name: '南越戍卒', tier: 4 },        // 龙川·赵佗南越国秦戍（《史记》）
+    nanyue: { name: '南越象军', tier: 3 },
   nongzhigao: { name: '侬峒劲卒', tier: 4 },    // 晋兴·侬智高侬峒兵（《宋史·蛮夷传》）（缺乏极其著名的战术高光，降T3）
   yelang: { name: '夜郎锐卒', tier: 3 },        // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   dacheng: { name: '永安戍卒', tier: 4 },       // 永安·明永安千户所戍卒（原大成水师）
@@ -74,5 +74,6 @@ shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军�
     minyue: { name: '闽越甲卒', tier: 4 },            // 缺乏知名度支撑，降T3
     funan: { name: '扶南大舶', tier: 3 },             // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     lancang: { name: '澜沧象兵', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
-    liuzhou: { name: '柳州狼兵', tier: 3 },           // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名
+    liuzhou: { name: '柳州狼兵', tier: 3 },           // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名,
+    chen: { name: '百越甲兵', tier: 3 },
 };
