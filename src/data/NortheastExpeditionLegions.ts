@@ -35,7 +35,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
     heishui: { name: '靺鞨锐卒', tier: 3 }, // 东北历史上极其著名的庞大民族（女真直系祖先），建立渤海国，文化辨识度极高，升入T3知名
     dawoer: { name: '莫尔根飞骑', tier: 4 },
     mohe: { name: '女真拐子马', tier: 3 },
-  ewenki: { name: '石勒喀猎兵', tier: 4 },   // 尼布楚·博木博果尔鄂温克
+    ewenki: { name: '石勒喀猎兵', tier: 4 },
     dazhen: { name: '女真甲骑', tier: 3 },
     yeren_nvzhen: { name: '瑷珲马甲', tier: 4 },      // 缺乏知名度支撑，降T3
   wuji: { name: '勿吉步卒', tier: 4 },            // 伯都·乙力支朝贡北魏（缺乏极其著名的战术高光，降T3）
@@ -43,7 +43,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   kuye: { name: '库页猎兵', tier: 4 },            // 白主·费雅喀猎户
   sushen: { name: '楛矢射手', tier: 3 },          // 中国先秦史籍记载的东北夷神兵图腾“楛矢石砮”，极具历史文化辨识度，升入T3知名
   yilou: { name: '挹娄突骑', tier: 4 },           // 凤林城·恼犽助战高句丽
-  maomingan: { name: '阿穆尔猎兵', tier: 4 },       // 格尔必齐·根特木尔达斡尔
+    maomingan: { name: '额尔古纳骑', tier: 4 },
   jilimi: { name: '吉里迷水师', tier: 4 },        // 囊哈儿·奴儿干吉里迷
   eluoke: { name: '鄂罗克猎兵', tier: 4 },        // 诺托罗·库页岛北部
   nifuhe: { name: '尼夫赫冰兵', tier: 3 },      // 远东极寒冰原上的特种战斗形态，风土属性极其独特，升入T3知名

@@ -707,11 +707,11 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'mi_chu': '芈',
     // ── 2026-06-11 新增：北海（北海道北端）──
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
-    'ewenki': '鄂温',
+'ewenki': '鄂温',
     // ── 2026-06-11 新增：东平（郡·黑龙江下游）──
     'dongping': '东',
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
-    'maomingan': '茂明',
+'maomingan': '额尔',
     'aola': '敖拉',
     'bulat': '布拉',
     'buriat': '布里',

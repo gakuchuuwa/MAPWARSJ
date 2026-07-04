@@ -364,7 +364,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     kuye_kuye_qiuzhang: { generalId: 'kuye_kuye_qiuzhang', tier: 'ordinary', tacticalSkillId: 'ts_028' }, // 库页岛费雅喀
     sushen_tudiji: { generalId: 'sushen_tudiji', tier: 'ordinary', tacticalSkillId: 'ts_021' }, // 靺鞨首领突地稽归唐
     yilou_naoya: { generalId: 'yilou_naoya', tier: 'ordinary', tacticalSkillId: 'ts_011' }, // 挹娄首领助战高句丽
-    maomingan_gentemuer: { generalId: 'maomingan_gentemuer', tier: 'ordinary', tacticalSkillId: 'ts_015' }, // 达斡尔酋长格尔必齐
+    maomingan_gentemuer: { generalId: 'maomingan_gentemuer', tier: 'ordinary', tacticalSkillId: 'ts_015' },
     unassigned_kaolangwu: { generalId: 'unassigned_kaolangwu', tier: 'ordinary', tacticalSkillId: 'ts_021' }, // 囊哈儿卫指挥考郎兀
     unassigned_hazheng: { generalId: 'unassigned_hazheng', tier: 'ordinary', tacticalSkillId: 'ts_026' }, // 兀列河卫哈正诺托罗
     unassigned_hudamu: { generalId: 'unassigned_hudamu', tier: 'ordinary', tacticalSkillId: 'ts_026' }, // 野人女真忽答木盆奴里
@@ -537,7 +537,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     // ── 滇缅区 2026-06-18 ──
     pazhu_redangunsangpa: { generalId: 'pazhu_redangunsangpa', tier: 'ordinary', tacticalSkillId: 'ts_014' },
     chenla_sheyebamoqishi: { generalId: 'chenla_sheyebamoqishi', tier: 'famous', tacticalSkillId: 'ts_129', strategicSkillId: 'str_10' }, // 驱逐占婆收复吴哥
-    dali_duansiping: { generalId: 'dali_duansiping', tier: 'ordinary', tacticalSkillId: 'ts_008' }, // 灭大义宁建大理
+    dali_duansiping: { generalId: 'dali_duansiping', tier: 'ordinary', tacticalSkillId: 'ts_008' },
     dongxu_mangruiti: { generalId: 'dongxu_mangruiti', tier: 'famous', tacticalSkillId: 'ts_007', strategicSkillId: 'str_13' },
     mu_lijiang_muzeng: { generalId: 'mu_lijiang_muzeng', tier: 'ordinary', tacticalSkillId: 'ts_021' }, // 木天王拓土
     dianguo_zhuangqiao: { generalId: 'dianguo_zhuangqiao', tier: 'ordinary', tacticalSkillId: 'ts_009' },
@@ -888,11 +888,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         tier: 'ordinary',
         tacticalSkillId: 'ts_014',
     },
-    ewenki_bombogor: {
-        generalId: 'ewenki_bombogor',
-        tier: 'ordinary',
-        tacticalSkillId: 'ts_035',
-    },
+    ewenki_bombogor: { generalId: 'ewenki_bombogor', tier: 'ordinary', tacticalSkillId: 'ts_035' },
     haixi_nvzhen_baiyindali: { generalId: 'haixi_nvzhen_baiyindali', tier: 'ordinary', tacticalSkillId: 'ts_024' },
     dazhen_wanyantiege: { generalId: 'dazhen_wanyantiege', tier: 'ordinary', tacticalSkillId: 'ts_014' },
     xianbei_tuobamao: {

@@ -371,6 +371,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 五代十国势力 ──
     { id: 'dongdan', name: '东丹' },
     { id: 'dali', name: '大理' },
+
            // 紫霞紫 - 大理国(段思平 羊苴咩)
     { id: 'luodian', name: '罗甸' },        // 土褐 - 罗甸国(西南蛮 大方城)
     // ── 2026-05-26 北宋辽金势力 ──
@@ -1053,11 +1054,13 @@ export const FACTIONS: Faction[] = [
     { id: 'ruochu', name: '若敖' },
     { id: 'mi_chu', name: '芈家' },
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
-    { id: 'ewenki', name: '鄂温克' },  // 鄂温克(尼布楚/石勒喀河上游), Ewenki
+    { id: 'ewenki', name: '鄂温克' },
+  // 鄂温克(尼布楚/石勒喀河上游), Ewenki
     // ── 2026-06-11 新增：东平（州郡·黑龙江下游）──
     { id: 'dongping', name: '东平' },                // 东平(乌苏里江下游/尼满), 州名旗号
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
-    { id: 'maomingan', name: '茂明安' },             // 茂明安(尼布楚), 蒙古部族
+    { id: 'maomingan', name: '额尔古纳' },
+             // 茂明安(尼布楚), 蒙古部族
     { id: 'aola', name: '敖拉' },                    // 敖拉(雅克萨), 达斡尔敖拉氏
     { id: 'bulat', name: '布拉特' },                 // 布拉特(石勒喀河), Buryat/布拉特部
     { id: 'buriat', name: '布里亚特' },              // 布里亚特(赤塔), Buryat
