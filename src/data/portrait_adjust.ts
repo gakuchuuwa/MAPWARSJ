@@ -4597,16 +4597,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -20
         },
-        "/assets/BASHU/chenzhou_d_zhanggao.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 3
-        },
-        "/assets/BASHU/hezhou_wangjian_dy.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 6
-        }
     },
     "folderGuides": {
         "/assets/hexi/": {
