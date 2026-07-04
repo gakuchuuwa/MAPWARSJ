@@ -42,7 +42,6 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   guizhou: { name: '永历铁骑', tier: 1 },       // 古严关·李定国（原肇庆永历，2026-06-19 迁桂州）
   paiyao: { name: '八排瑶丁', tier: 4 },      // 阳山关·明清连阳八排瑶丁
   // 湘军道营除名（无此编制）
-  dayu: { name: '南赣标军', tier: 4 },        // 横浦关·明王阳明南赣标军（明代巡抚地方平叛主力）（缺乏极其著名的战术高光，降T3）
     duanzhou_d: { name: '端州义勇', tier: 4 },        // 常规番号，降T3
   chaozhou_d: { name: '潮州义勇', tier: 4 },       // 海阳·马发（常规番号，降T3）
   basha_d: { name: '湄公象卫', tier: 4 },     // 上丁·刀更孟象兵（缺乏极其著名的战术高光，降T3）
@@ -66,7 +65,7 @@ shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军�
   nong2: { name: '广源峒兵', tier: 4 },           // 广源·侬智高广源起兵建南天国（缺乏极其著名的战术高光，降T3）
   cen_d: { name: '泗城狼兵', tier: 3 },          // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名
   miao: { name: '水西苗兵', tier: 4 },           // 可乐城·水西土司苗兵（缺乏极其著名的战术高光，降T3）
-  jiang_s: { name: '零陵锐卒', tier: 4 },        // 泉陵·黄盖（缺乏极其著名的战术高光，降T3）
+    jiang_s: { name: '零陵蒙冲', tier: 3 },
   muong: { name: '芒峒刀牌手', tier: 4 },         // 和平·申从岳芒族刀牌手
   panyao: { name: '瑶人弩手', tier: 4 },          // 临贺·盘瑶山地弩手
   chen2: { name: '桂阳戍卒', tier: 4 },           // 桂阳·赵范桂阳戍卒

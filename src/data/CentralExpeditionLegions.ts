@@ -13,7 +13,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   qi: { name: '齐之技击', tier: 2 },       // 战国齐国雇佣游侠体制，擅打顺风仗但缺乏战略韧性与军团纪律，下调至T2战术
   han: { name: '韩之劲弩', tier: 2 },        // 战国时期韩国凭精良弩机在阵地防御与远程打击独步天下的战术兵种，升入T2战术
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
-  han_d: { name: '赤帝亲兵', tier: 4 },      // 南郑·刘邦专属（缺乏极其著名的战术高光，降T3）
+    han_d: { name: '大汉材官', tier: 2 },
   pizhou: { name: '陷阵营', tier: 2 },        // 下邳·高顺陷阵营
   cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
   ranwei_d: { name: '乞活军', tier: 2 },   // 五胡乱华时期的流民武装，虽悲壮且在特定战役有高光，但缺乏战略主导地位，降为T2战术。
@@ -46,7 +46,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     ruo: { name: '秦之锐士', tier: 1 },
   ruzhou: { name: '赤帻先锋', tier: 4 },              // 缺乏知名度支撑，降T3
   yun: { name: '陆浑戎骑', tier: 4 },
-  jiyuan: { name: '落雕卫', tier: 4 },               // 缺乏知名度支撑，降T3
+    jiyuan: { name: '落雕卫', tier: 3 },
   xiongding: { name: '鲜卑燕军', tier: 4 }, // 天井关·慕容永西燕末代君主（缺乏极其著名的战术高光，降T3）
   // 金甲卫除名（生造）
   huo: { name: '霍邑骁锐', tier: 4 },                 // 缺乏知名度支撑，降T3
@@ -91,7 +91,8 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     xiao_d: { name: '兰陵健儿', tier: 4 },
   zhengzhou: { name: '白袍军', tier: 2 },        // 仅存在于北伐战役，随后覆灭，极度缺乏建制延续性，属于特定战役的巅峰高光，符合T2战术
     song: { name: '殿前捧日', tier: 1 },
-    zhao: { name: '邯郸甲士', tier: 4 },              // 缺乏知名度支撑，降T3
+    zhao: { name: '丛台绝剑', tier: 2 },
     qing: { name: '泾原锐骑', tier: 1 },
     luming: { name: '天雄军', tier: 2 },
+    long2: { name: '陇上暗桩', tier: 3 },
 };

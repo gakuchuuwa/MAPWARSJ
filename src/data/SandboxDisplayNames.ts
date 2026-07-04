@@ -68,7 +68,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'zhao': '赵',
 'wei': '魏',
 'han': '韩',
-    'han_d': '汉',
+'han_d': '汉',
     'shu': '蜀',
     'dian': '通海',
 'xin': '上党',
@@ -130,7 +130,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'jingzhou_gs': '泾',
     'guo': '果',
     'zi': '资',
-    'long2': '陇',
+'long2': '陇',
 'song2': '松',
 'qing': '庆',
 
@@ -246,7 +246,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'luodian': '罗甸',
 
     // ── 2026-05-25 北宋辽金势力 ──
-    'goryeo': '高丽',
+'goryeo': '高丽',
 'nongzhigao': '邕',
 'fangla': '方',
 
@@ -389,7 +389,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'karmapa': '噶玛',
     // ── 2026-05-26 Phase 3g：云贵高原/岭南/中南半岛/台湾势力旗号 ──
     'ava': '掸',
-    'dongxu': '东吁',
+'dongxu': '东吁',
     'hantawadi': '汉达',
 'baiman': '白蛮',
     'kunming_yi': '昆明',
@@ -461,7 +461,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'panyao': '贺',
 'changshaguo': '长沙',
     'paiyao': '排瑶',
-    'jiang_s': '零陵',
+'jiang_s': '零陵',
 
 'li_s': '静海',
     'leizhou': '雷',
@@ -743,7 +743,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'gar': '噶尔',
     'ruzhou': '汝',
     'yun': '允',
-    'jiyuan': '济源',
+'jiyuan': '济源',
     'xiongding': '雄',
     'yaozhou': '耀',
     'huo': '霍',
@@ -756,7 +756,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'shenshi': '沈',
     'guizhou': '桂',
     'daozhou': '道',
-    'dayu': '庾',
+'dayu': '庾',
     'yingzhou': '英',
     'buyi_d': '布依',
     'hani_d': '哈尼',
@@ -790,7 +790,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wuhu': '乌护',
   sanada_d: '真田',
   jiazini: '伽色',
-  jibin: '罽宾',
+'jibin': '罽宾',
   fanyanna: '梵衍',
 'wuzhou': '武',
     'bailong': '白龙',
@@ -810,7 +810,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'fu_zhou': '涪',
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
 'maer_d': '马尔',
-    'wugu_d': '乌古',     // 毡的·乌古斯突厥
+'wugu_d': '乌古',
     'adao_d': '阿克',     // 昆岗·阿克苏道军台
     'wuyuan_d': '五原',   // 固阳塞·五原郡
     'chenli_d': '禅',   // 姑衍山·撑犁祭天

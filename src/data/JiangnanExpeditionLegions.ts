@@ -65,14 +65,13 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）
   taizhou: { name: '海陵镇兵', tier: 4 },       // 海陵·李昪发迹之地（常规番号，降T3）
   xie_cj_d: { name: '信州弩士', tier: 4 },      // 葛溪·谢枋得信州抗元（缺乏极其著名的战术高光，降T3）
-  liu: { name: '九江劲卒', tier: 4 },            // 六安·英布九江王封地（缺乏极其著名的战术高光，降T3）
+    liu: { name: '九江裂阵', tier: 3 },
   chimei: { name: '赤眉军', tier: 1 },  // 莒城·樊崇起兵攻入长安灭新莽
   chunshen: { name: '春申门客', tier: 3 },  // 上海·战国春申君黄歇的精锐私兵
   wang_d: { name: '琅琊部曲', tier: 3 },  // 魏晋门阀士族私兵的典型代表，极具时代与阶级辨识度，升入T3知名
   jiaodong: { name: '即墨火牛阵', tier: 2 },  // 即墨·田单火牛阵大破燕军（一次性战术奇谋）
   guo: { name: '果州戍兵', tier: 4 },  // 南充·唐果州戍兵
   zi: { name: '资州戍兵', tier: 4 },  // 盘石·唐资州戍兵
-  long2: { name: '陇州府兵', tier: 4 },  // 汧源·韦孝宽北周陇州总管（缺乏极其著名的战术高光，降T3）
   jibei: { name: '赤眉余部', tier: 3 },  // 摧毁王莽新朝的绝对主力赤眉军，名震天下的农民起义符号，升入T3知名
   gouding: { name: '句町部兵', tier: 4 },  // 广南·西南夷句町国部兵
   quanrong: { name: '西戎骑兵', tier: 4 },  // 威戎·犬戎部落武装
@@ -87,4 +86,5 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
     wuyue: { name: '八都兵', tier: 3 },
     shaozhou_d: { name: '银枪效节军', tier: 2 },
     ming_zheng: { name: '郑氏铁人军', tier: 2 },
+    dayu: { name: '南赣标军', tier: 3 },
 };

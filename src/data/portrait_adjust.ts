@@ -2642,11 +2642,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -3
         },
-        "/assets/litang/__闲置__litang_03.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -10
-        },
         "/assets/litang/__闲置__litang_05.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -4594,8 +4589,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/liuhan/li_lx_d_liguang.png": {
             "scale": 1.03,
-            "offsetX": 1,
-            "offsetY": 4
+            "offsetX": 0,
+            "offsetY": 3
         },
         "/assets/HEXI/__闲置__HEXI_09.png": {
             "scale": 1.05,
@@ -4621,6 +4616,51 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -15
+        },
+        "/assets/litang/anxi_gaoxianzhi.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/liuhan/5d263c36-ae08-49a9-91c4-aeb9ff112d0d.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/liuhan/2ba01e9a-2f66-42ae-aad5-05fd10277c80.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/liuhan/ae7ceac2-35d9-4622-840f-925adb4672a6.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/liuhan/e4a392ed-0c67-4c60-bb74-36d971cb0de5.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/liuhan/image (3).png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/liuhan/ningkou_liling.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/CENTRAL/fe065421-8138-421d-8529-65c11b533366.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/CENTRAL/fushi_wangmeng.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -20
         }
     },
     "folderGuides": {

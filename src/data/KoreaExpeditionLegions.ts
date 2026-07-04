@@ -18,7 +18,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   xuantu: { name: '皂衣先人', tier: 2 },     // 前燕慕容恪廉台之战克制冉闵的连环马战术鼻祖，极其明确的战术阵法，升入T2战术
   xinluo: { name: '花郎道', tier: 3 },       // 金城·新罗花郎（§4 #3）
   baiji: { name: '百济五方兵', tier: 4 },        // 泗沘·百济五方兵制（缺乏极其著名的战术高光，降T3）
-  goryeo: { name: '鹰扬军', tier: 4 },   // 开城·高丽鹰扬军（缺乏极其著名的战术高光，降T3）
+    goryeo: { name: '鹰扬军', tier: 3 },
   luzhou: { name: '鸭绿水师', tier: 4 },       // 鸭绿府·渌州水师（§4 #）（常规番号，降T3）
   sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣12破330（区T0锚点）
   hai2: { name: '海州石弓', tier: 4 },       // 瀑池/海州·崔莹

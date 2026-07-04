@@ -39,12 +39,12 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     bing: { name: '并州狼骑', tier: 2 },
   you: { name: '上谷突骑', tier: 1 },        // 居庸关·幽州上谷郡（升T1）
   yi: { name: '易州戍兵', tier: 2 },           // 于谦北京保卫战临危受命，绝境逆转，升T2
-  changshan: { name: '倒马关卒', tier: 4 },   // 倒马关·常山
+    changshan: { name: '倒马寒锋', tier: 3 },
     xianyu: { name: '轻勇骑', tier: 2 },
     linhu: { name: '林胡骑', tier: 4 },              // 缺乏知名度支撑，降T3
     lingqiu: { name: '胡服骑射', tier: 1 },
   // 飞虎军除名（李克用置，平型关时代错位）
-  loufan: { name: '天山飞骑', tier: 4 },      // 宁武关·薛仁贵三箭定天山（缺乏极其著名的战术高光，降T3）
+    loufan: { name: '天山飞骑', tier: 2 },
     linyu: { name: '夷丁突骑', tier: 2 },
   // 恒山军除名（泛称无固定番号）
   dai_d: { name: '左射军', tier: 4 },         // 灵仙·石敬瑭嫡系（缺乏极其著名的战术高光，降T3）

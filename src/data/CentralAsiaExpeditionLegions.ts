@@ -30,11 +30,11 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   zhaowu: { name: '忽毡勇士', tier: 4 },
     yada: { name: '嚈哒重骑', tier: 1 },          // 悉万斤·全歼波斯主力的嚈哒帝国重装铁骑
   jiazini: { name: '伽色尼禁卫', tier: 2 },       // 马哈茂德的古拉姆近卫军，十七次远征印度战无不胜，升入T2战术
-  jibin: { name: '犍陀罗骑', tier: 4 },        // 迦毕试·迦腻色迦犍陀罗骑兵（缺乏极其著名的战术高光，降T3）
+    jibin: { name: '迦毕试梵骑', tier: 2 },
   fanyanna: { name: '梵衍那僧兵', tier: 4 },      // 巴米扬·梵衍那王率僧兵御大食（缺乏极其著名的战术高光，降T3）
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
     maer_d: { name: '骆驼突骑', tier: 4 },
-  wugu_d: { name: '乌古斯弓骑', tier: 4 },      // 毡的·乌古斯复合弓骑（缺乏极其著名的战术高光，降T3）
+    wugu_d: { name: '乌古斯弓骑', tier: 3 },
   mamon: { name: '呼罗珊禁卫', tier: 4 },       // 达尔甘·马蒙大破艾敏（缺乏极其著名的战术高光，降T3）
   khoja: { name: '白山派卫兵', tier: 4 },        // 休循·阿帕克和卓白山派（缺乏极其著名的战术高光，降T3）
   shi_clan: { name: '石国胡兵', tier: 4 },       // 柘折城·莫贺咄吐屯御大食（缺乏极其著名的战术高光，降T3）
@@ -59,5 +59,5 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   delan: { name: '帕提亚铁骑', tier: 1 },   // 法拉·卡莱战役大破罗马军团的战略主力
     huluo: { name: '古尔重骑', tier: 1 },
   aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·萨珊波斯抗击罗马帝国的战略主力
-    kala: { name: '阿斯古拉姆', tier: 4 },             // 缺乏知名度支撑，降T3
+    kala: { name: '古拉姆近卫', tier: 3 },
 };

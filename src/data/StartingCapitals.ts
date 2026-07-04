@@ -49,7 +49,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'zhao': 'city_handan',
 'song': 'city_bianliang',
 'han': 'city_xinzheng',
-    'han_d': 'city_hanzhong',
+'han_d': 'city_hanzhong',
     'shu': 'city_chengdu',
     'yangzhou': 'city_yangxian',
     'dian': 'city_tonghai',
@@ -122,7 +122,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'baiji': 'city_sabi',
 'tubo': 'city_luoxie',
     'tujue': 'city_otuken',
-    'tiele': 'city_hanhai',
+'tiele': 'city_hanhai',
 
 'huige': 'city_woluduobali',
     'huizhou_d': 'city_huixian',
@@ -229,7 +229,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'luodian': 'city_dafang',
 
     
-    'goryeo': 'city_kaesong',
+'goryeo': 'city_kaesong',
 'nongzhigao': 'city_yongzhou',
 'fangla': 'city_qingxi',
 
@@ -350,7 +350,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'karmapa': 'city_chubusi',
 
     'ava': 'city_ava',
-    'dongxu': 'city_dongxu_old',
+'dongxu': 'city_dongxu_old',
 'baiman': 'city_weichu',
     'kunming_yi': 'city_huichuan',
     'miao': 'city_hezhang',
@@ -406,7 +406,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     'jingjiang': 'city_yongan',
     'panyao': 'city_hezhou',
-    'jiang_s': 'city_yongzhou_hn',
+'jiang_s': 'city_yongzhou_hn',
 
 'li_s': 'city_hepu',
     'leizhou': 'city_haikang',
@@ -635,7 +635,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'jingzhou_gs': 'city_anding',
     'guo': 'city_guozhou',
     'zi': 'city_zizhou',
-    'long2': 'city_longzhou',
+'long2': 'city_longzhou',
 'yanqi': 'city_yanqi',
 'song2': 'city_songzhou',
     'jingmen': 'city_dangyang',
@@ -693,7 +693,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'guizhou': 'city_guyanguan',
     'paiyao': 'city_yangshanguan',
     'daozhou': 'city_mailingguan',
-    'dayu': 'city_qianzhou',
+'dayu': 'city_qianzhou',
     'yingzhou': 'city_huangxiguan',
     'chuzhou_d': 'city_qingliuguan',
     'taira': 'city_chijianguan',
@@ -721,7 +721,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kangba': 'city_litangzong',
     'nvguo': 'city_mapangyongcuo',
     'jiashi': 'city_kajier',
-    'jibin': 'city_gaofu',
+'jibin': 'city_gaofu',
     'fanyanna': 'city_fanyanna',
     'jiazini': 'city_jiaseni',
     'qu_d': 'city_jieqiao',
@@ -738,7 +738,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'xihai_d': 'city_fusicheng',
     'heyuan_d': 'city_huashixia',
 'maer_d': 'city_pengdi',
-    'wugu_d': 'city_zhande',
+'wugu_d': 'city_zhande',
     'adao_d': 'city_kungang',
     'wuyuan_d': 'city_guyangsai',
     'chenli_d': 'city_guyanshan',

@@ -38,7 +38,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   dingling: { name: '丁零游骑', tier: 4 }, // 贝加尔·丁零王（缺乏极其著名的战术高光，降T3）
   xiajiasi: { name: '黠戛斯锐卒', tier: 1 }, // 彻底摧毁回鹘汗国的“终结者”，改变漠北与西域历史格局的战略力量，升入T1战略
   donghu: { name: '东胡骑', tier: 4 },    // 巴彦乌拉·东胡王（缺乏极其著名的战术高光，降T3）
-  tiele: { name: '铁勒骁骑', tier: 4 },
+    tiele: { name: '铁勒九姓骑', tier: 3 },
     xibo_d: { name: '锡伯箭手', tier: 3 },
   tatar: { name: '塔塔儿勇士', tier: 4 },
     merkit: { name: '岭北屯骑', tier: 3 },
@@ -49,7 +49,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     yujiulu: { name: '柔然汗骑', tier: 4 },
     jalair: { name: '札剌亦儿军', tier: 3 },
   hongirad: { name: '弘吉剌护卫', tier: 4 },           // 常规番号，降T3
-    choros: { name: '萨吾尔骁骑', tier: 4 },           // 缺乏知名度支撑，降T3
+    choros: { name: '萨吾尔骁骑', tier: 4 },
   duolu: { name: '咄陆部铁骑', tier: 4 },              // 缺乏知名度支撑，降T3
   kaerka: { name: '喀尔喀重骑', tier: 4 },
   buriat: { name: '林中射手', tier: 4 },

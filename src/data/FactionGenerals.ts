@@ -255,7 +255,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     shache: { generalId: 'shache_xian_suoche_wang', generalName: '莎车贤', portrait: '/assets/WESTERN/shache_xian_suoche_wang.png' },
     shule: { generalId: 'shule_aersilan', generalName: '阿尔斯兰', portrait: '/assets/WESTERN/shule_aersilan.png' },
     dzungar: { generalId: 'dzungar_gaerdancelin', generalName: '噶勒丹策凌', portrait: '/assets/WESTERN/dzungar_gaerdancelin.png' },
-    anxi: { generalId: 'anxi_guoxin', generalName: '郭昕', portrait: '/assets/WESTERN/anxi_guoxin.png' },
+    anxi: { generalId: 'anxi_gaoxianzhi', generalName: '高仙芝', portrait: '/assets/litang/anxi_gaoxianzhi.png' },
     yanqi: { generalId: 'yanqi_longtuqizhi', generalName: '龙突骑支', portrait: '/assets/WESTERN/yanqi_longtuqizhi.png' },
     tuerhute: { generalId: 'tuerhute_wobaxi', generalName: '渥巴锡', portrait: '/assets/WESTERN/tuerhute_wobaxi.png' },
     gaochang: { generalId: 'gaochang_quwentai', generalName: '麴文泰', portrait: '/assets/WESTERN/gaochang_quwentai.png' },
@@ -458,7 +458,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     chu: { generalId: 'chu_guanyu', generalName: '关羽', portrait: '/assets/BASHU/chu_guanyu.png' },
     zhongxiang: { generalId: 'zhongxiang_ganning', generalName: '甘宁', portrait: '/assets/LINGNAN/zhongxiang_ganning.png' },
     fengzhou: { generalId: 'fengzhou_wujie', generalName: '吴玠', portrait: '/assets/zhaosong/fengzhou_wujie.png' },
-    fushi: { generalId: 'fushi_fuhong', generalName: '苻洪', portrait: '/assets/HEXI/fushi_fuhong.png' },
+    fushi: { generalId: 'fushi_wangmeng', generalName: '王猛', portrait: '/assets/CENTRAL/fushi_wangmeng.png' },
     wanzhou: { generalId: 'wanzhou_shangguankui', generalName: '上官夔', portrait: '/assets/BASHU/wanzhou_shangguankui.png' },
     ba: { generalId: 'ba_bamanzi', generalName: '巴蔓子', portrait: '/assets/BASHU/ba_bamanzi.png' },
     hezhou: { generalId: 'hezhou_wangjian_dy', generalName: '王坚', portrait: '/assets/BASHU/hezhou_wangjian_dy.png' },
@@ -479,7 +479,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     beidi: { generalId: 'beidi_yaochang', generalName: '姚苌', portrait: '/assets/TIBET/beidi_yaochang.png' },
     baiyang: { generalId: 'baiyang_mengtian', generalName: '蒙恬', portrait: '/assets/yingqin/baiyang_mengtian.png' },
     qianzhong: { generalId: 'qianzhong_wubayue', generalName: '吴八月', portrait: '/assets/BASHU/qianzhong_wubayue.png' }, // 芷江·乾嘉苗民起义
-    dangchang: { generalId: 'dangchang_liangmiding', generalName: '高仙芝', portrait: '/assets/BASHU/dangchang_liangmiding.png' },
+    dangchang: { generalId: 'dangchang_liangmiding', generalName: '梁弥定', portrait: '/assets/BASHU/dangchang_liangmiding.png' },
     liao: { generalId: 'liao_houhongyuan', generalName: '侯弘远', portrait: '/assets/BASHU/liao_houhongyuan.png' }, // 江阳·僚人酋帅
     sou: { generalId: 'sou_gaodingyuan', generalName: '高定元', portrait: '/assets/BASHU/sou_gaodingyuan.png' }, // 乐山·越巂叟族首领
     qingqiang: { generalId: 'qingqiang_jiangwei', generalName: '姜维', portrait: '/assets/BASHU/qingqiang_jiangwei.png' }, // 汶川·蜀汉大将军
@@ -515,7 +515,7 @@ guishuang: { generalId: 'guishuang_qiuqiujiu', generalName: '丘就却', portrai
     huan: { generalId: 'huan_zhongshidao', generalName: '种师道', portrait: '/assets/zhaosong/huan_zhongshidao.png' },
     wei2: { generalId: 'wei2_hunjian', generalName: '浑瑊', portrait: '/assets/zhaosong/wei2_hunjian.png' },
     lingzhou: { generalId: 'pugu_puguhuaien', generalName: '仆固怀恩', portrait: '/assets/STEPPE/pugu_puguhuaien.png' },
-    ningkou: { generalId: 'ningkou_lubode', generalName: '路博德', portrait: '/assets/liuhan/ningkou_lubode.png' },
+    ningkou: { generalId: 'ningkou_liling', generalName: '李陵', portrait: '/assets/liuhan/ningkou_liling.png' },
     juqu_d: { generalId: 'juqu_d_juqumengxun', generalName: '沮渠蒙逊', portrait: '/assets/HEXI/juqu_d_juqumengxun.png' },
         zhengzhou: { generalId: 'zhengzhou_chenqingzhi', generalName: '陈庆之', portrait: '/assets/CENTRAL/zhengzhou_chenqingzhi.png' },
     sunqin: { generalId: 'sunqin_sunchuanting', generalName: '孙传庭', portrait: '/assets/CENTRAL/sunqin_sunchuanting.png' },
