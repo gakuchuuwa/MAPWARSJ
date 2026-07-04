@@ -582,7 +582,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 
     pinghai: { generalId: 'pinghai_laihuer', generalName: '来护儿', portrait: '/assets/NORTH/pinghai_laihuer.png' }, // 漂渝津·隋征东舟师
     pingyuan: { generalId: 'pingyuan_yanzhenqing', generalName: '颜真卿', portrait: '/assets/litang/pingyuan_yanzhenqing.png' }, // 平原·首倡义兵抗安史
-    linhu: { generalId: 'linhu_zhaowulingwang', generalName: '赵雍', portrait: '/assets/xianqin/linhu_zhaowulingwang.png' },
+    linhu: { generalId: 'linhu_zhaowulingwang', generalName: '马芳', portrait: '/assets/xianqin/linhu_zhaowulingwang.png' },
     xianyu: { generalId: 'xianyu_hanxin', generalName: '韩信', portrait: '/assets/liuhan/xianyu_hanxin.png' },
     shizhao_d: { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/HEXI/shizhao_d_shihu.png' }, // 邢台·后赵武帝
     loufan: { generalId: 'loufan_xuerengui', generalName: '薛仁贵', portrait: '/assets/NORTH/loufan_xuerengui.png' },

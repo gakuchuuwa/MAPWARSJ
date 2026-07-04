@@ -566,7 +566,7 @@ export class CityAssetManager {
         'faqiang': '发羌',
 'panjun': 'RANDOM',
 'changshan': '常山',
-'linhu': '林胡',
+'linhu': '山西',
 'lingqiu': '灵丘',
 'linyu': '临榆',
 'loufan': '楼烦',

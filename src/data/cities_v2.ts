@@ -653,7 +653,10 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
 
     // ── 晋西北外三关及晋东北内长城关隘 ──
-    { id: 'city_piantouguan', name: '偏头关', factionId: 'linhu', lat: 39.43, lng: 111.5, type: 'pass', troops: 10000, region: 'NORTH' },
+    { id: 'city_piantouguan', name: '偏头关', factionId: 'linhu', lat: 39.43, lng: 111.5, type: 'pass', troops: 20000, region: 'NORTH' },
+
+
+
 
     { id: 'city_pingxingguan', name: '平型关', factionId: 'lingqiu', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 10000, region: 'NORTH' },
 

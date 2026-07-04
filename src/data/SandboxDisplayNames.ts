@@ -589,7 +589,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chechen': '车臣',
 'panjun': '叛军',
 'changshan': '常山',
-'linhu': '林胡',
+'linhu': '山西',
 'lingqiu': '灵丘',
 'linyu': '临榆',
 'loufan': '楼烦',

@@ -906,7 +906,10 @@ export const FACTIONS: Faction[] = [
     { id: 'panjun', name: '叛军' },
     { id: 'changshan', name: '常山' },
           // 倒马关·常山郡
-    { id: 'linhu', name: '林胡' },
+    { id: 'linhu', name: '山西' },
+
+
+
               // 偏头关·林胡族
     { id: 'lingqiu', name: '灵丘' },
             // 平型关·灵丘县
