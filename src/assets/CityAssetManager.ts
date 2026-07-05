@@ -423,7 +423,7 @@ export class CityAssetManager {
         'tan_d': '覃',
         'ran_d': '冉',
         'chu_d': '舒',
-'hu_d': '胡',
+'hu_d': '三门',
 
         'dajin': '大金',
         'yizhou': '懿',

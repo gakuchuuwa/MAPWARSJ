@@ -66,6 +66,7 @@ export type TacticalSkillCondition =
     | 'battle_siege_defender'
     | 'battle_field'
     | 'ratio_underdog'
+    | 'self_troops_reach_ten_thousand'
     | 'enemy_different_culture'
     | 'enemy_famous_general'
     | 'side_comeback'
@@ -470,7 +471,7 @@ const MORALE: TacticalSkillEntry[] = [
     },
 ];
 
-// ── 七、T0专属战术技 ───────────────────────────────────────────
+// ── 七、T0 贴合战术技 ───────────────────────────────────────────
 const UNIQUE_T0: TacticalSkillEntry[] = [
     {
         id: 'ts_051', layer: 'tactical', series: 'enhance', index: 51,
@@ -505,8 +506,8 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
     {
         id: 'ts_057', layer: 'tactical', series: 'enhance', index: 57,
         displayName: '满万无敌', sourceQuote: '《三朝北盟会编》载金国初年俗语：“女真兵若满万则不可敌。”',
-        baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
-        magnitude: 1.55, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'self_troops_reach_ten_thousand', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_058', layer: 'tactical', series: 'enhance', index: 58,
@@ -534,7 +535,7 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
     },
 ];
 
-// ── 八、T1专属战术技（15人） ───────────────────────────────────────────
+// ── 八、T1 贴合战术技（15人） ───────────────────────────────────────────
 const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_062', layer: 'tactical', series: 'enhance', index: 62,
@@ -850,7 +851,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.3, luckMax: 0.9, engineStatus: 'ready',
     },
-    // ── 第五批 T1（10 位名将补专属；ID ts_117-126 顺延）──
+    // ── 第五批 T1（10 位名将补贴合技；ID ts_117-126 顺延）──
     {
         id: 'ts_117', layer: 'tactical', series: 'enhance', index: 117,
         displayName: '牧野鹰扬', sourceQuote: '《诗经·大雅·大明》：“维师尚父，时维鹰扬。”',
@@ -911,7 +912,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.5, engineStatus: 'ready',
     },
-    // ── 第六批 T1（29 位名将补专属；ID ts_127-155）──
+    // ── 第六批 T1（29 位名将补贴合技；ID ts_127-155）──
     {
         id: 'ts_127', layer: 'tactical', series: 'enhance', index: 127,
         displayName: '后发制人', sourceQuote: '《日本外史》：“家康隐忍持重，后发而制人。”',
@@ -2450,6 +2451,18 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
     },
+    {
+        id: 'ts_383', layer: 'tactical', series: 'enhance', index: 383,
+        displayName: '闻鸡起舞', sourceQuote: '《晋书·祖逖传》："中夜闻鸡鸣，蹴琨觉曰：此非恶声也，因起舞。"',
+        baseEffect: 'first_sortie_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_384', layer: 'tactical', series: 'fate', index: 384,
+        displayName: '精达事机', sourceQuote: '《三国志·贾逵传》评："精达事机，威恩兼著。"',
+        baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
+        magnitude: 1, comebackThreshold: 0.8, engineStatus: 'ready',
+    },
 ];
 
 export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
@@ -2521,7 +2534,7 @@ export type TacticalAssignTier =
     | 'common'        // 大众可发：无条件温和(≤锚点85%) 或 真条件技(靠地形/敌情自然摊薄)
     | 'limited'       // 限量：无条件/准无条件强技(触发时>88%)，优先 AI 或个位数名将，禁大众过图 buff
     | 'ai_defensive'  // AI 守将：守城/咬人/拦截（玩家 92% 为攻方，被动遭遇才是高光）
-    | 'underdog'      // 绝境/AI 专属：以少打多族，明星军团近乎不触发
+    | 'underdog'      // 绝境/AI 限定：以少打多族，明星军团近乎不触发
     | 'gamble'        // 慎发明星：无条件加方差，跟随军团抽到易爆冷砸场
     | 'star_survival';// 跟随名将首选：稳健/存活（明星军团必胜→靠这个活久、少换镜头）
 
@@ -2553,7 +2566,7 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_046: 'common', ts_047: 'common', ts_048: 'ai_defensive',
     // 士气系
     ts_049: 'common',
-    // 专属系（不进随机池，只走写死分配，标 limited 以防万一）
+    // 贴合系（不进随机池，只走写死分配，标 limited 以防万一）
     ts_051: 'limited', ts_052: 'limited', ts_053: 'limited',
     ts_054: 'limited', ts_056: 'limited', ts_057: 'limited',
     ts_058: 'limited', ts_059: 'limited', ts_060: 'limited', ts_061: 'limited',
@@ -2568,16 +2581,16 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_107: 'limited', ts_108: 'limited', ts_109: 'limited', ts_110: 'limited',
     ts_111: 'limited', ts_112: 'limited', ts_113: 'limited', ts_114: 'limited',
     ts_115: 'limited', ts_116: 'limited',
-    // 第二批 T1 补登记（ts_077-091：此前定义了专属技却漏登 limited）
+    // 第二批 T1 补登记（ts_077-091：此前定义了贴合技却漏登 limited）
     ts_077: 'limited', ts_078: 'limited', ts_079: 'limited', ts_080: 'limited',
     ts_081: 'limited', ts_082: 'limited', ts_083: 'limited', ts_084: 'limited',
     ts_085: 'limited', ts_086: 'limited', ts_087: 'limited', ts_088: 'limited',
     ts_089: 'limited', ts_090: 'limited', ts_091: 'limited',
-    // 第五批 T1 补专属（ts_117-126）
+    // 第五批 T1 补贴合（ts_117-126）
     ts_117: 'limited', ts_118: 'limited', ts_119: 'limited', ts_120: 'limited',
     ts_121: 'limited', ts_122: 'limited', ts_123: 'limited', ts_124: 'limited',
     ts_125: 'limited', ts_126: 'limited',
-    // 第六批 T1 补专属（ts_127-155）
+    // 第六批 T1 补贴合（ts_127-155）
     ts_127: 'limited', ts_128: 'limited', ts_129: 'limited', ts_130: 'limited',
     ts_131: 'limited', ts_132: 'limited', ts_133: 'limited', ts_134: 'limited',
     ts_135: 'limited', ts_136: 'limited', ts_137: 'limited', ts_138: 'limited',
@@ -2608,6 +2621,7 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_344: 'common', ts_345: 'common', ts_346: 'common', ts_347: 'common', ts_348: 'common', ts_349: 'common', ts_350: 'common', ts_351: 'common', ts_352: 'common', ts_353: 'common', ts_354: 'common', ts_355: 'common', ts_356: 'common', ts_357: 'common', ts_358: 'common', ts_359: 'common', ts_360: 'common',
     ts_361: 'common', ts_362: 'common', ts_363: 'common', ts_364: 'common', ts_365: 'common', ts_366: 'common', ts_367: 'common', ts_368: 'common', ts_369: 'common', ts_370: 'common', ts_371: 'common', ts_372: 'common', ts_373: 'common', ts_374: 'common', ts_375: 'common', ts_376: 'common', ts_377: 'common', ts_378: 'common',
     ts_379: 'common', ts_380: 'common', ts_381: 'common', ts_382: 'common',
+    ts_383: 'limited', ts_384: 'limited',
 
 };
 

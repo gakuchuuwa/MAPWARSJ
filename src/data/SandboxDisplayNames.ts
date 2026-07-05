@@ -423,7 +423,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tan_d': '覃',
     'ran_d': '冉',
     'chu_d': '舒',
-'hu_d': '胡',
+'hu_d': '三门',
 
     // ── 自动补全剩余的特殊势力映射，防止显示英文 ──
 'cen_d': '岑',

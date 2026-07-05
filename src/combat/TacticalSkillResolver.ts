@@ -80,6 +80,10 @@ export function evaluateTacticalCondition(
             return ctx.selfIsAttacker;
         case 'ratio_underdog':
             return ctx.selfTroops < ctx.enemyTroops;
+        case 'self_troops_reach_ten_thousand':
+            // 满万无敌（女真兵若满万则不可敌）：己方兵力达到满万（≥10000）即触发。
+            // 阈值硬编码 10000，绝不读 entry.magnitude —— 避免 magnitude 既作战力又作阈值的耦合坑。
+            return ctx.selfTroops >= 10000;
         case 'enemy_different_culture':
             return ctx.selfDifferentCultureFromEnemy;
         case 'enemy_famous_general':

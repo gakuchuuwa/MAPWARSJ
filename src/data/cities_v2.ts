@@ -1307,6 +1307,7 @@ export const PERIPHERY: CityDataV2[] = [
         note: '厓山；新会小城', region: 'LINGNAN' },
     { id: 'city_ninghai', name: '白峤', factionId: 'hu_d', lat: 29.2757, lng: 121.4182, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
 
+
     {
         id: 'city_zhenghe', name: '政和', factionId: 'dacheng',
         lat: 27.37, lng: 118.86, type: 'small_city', troops: 10000, tier: 4,

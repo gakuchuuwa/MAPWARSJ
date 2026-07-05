@@ -53,7 +53,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   // 横海校尉除名
     chizhou: { name: '九华伏兵', tier: 3 },
     wenzhou: { name: '永嘉水师', tier: 4 },
-    hu_d: { name: '白峤海卫', tier: 4 },
+    hu_d: { name: '白峤汛卫', tier: 4 },
   wan: { name: '野人原义兵', tier: 4 },            // 皖口·刘源（缺乏极其著名的战术高光，降T3）
     ying: { name: '汉沔水锋', tier: 3 },
     kejia: { name: '黄连峒兵', tier: 4 },
