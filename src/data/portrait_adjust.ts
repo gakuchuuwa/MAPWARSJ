@@ -983,7 +983,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/yingqin/xin_baiqi.png": {
-            "scale": 1.13,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -5116,6 +5116,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/STEPPE/yao_liuyuan.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -7
         }
     },
     "folderGuides": {
