@@ -82,6 +82,7 @@ app.innerHTML = `
       <input id="pt-gen-search" class="pt-input" type="search" placeholder="搜索武将名 / ID…" style="width:100%;margin-bottom:6px;" />
       <select id="pt-gen-select" class="pt-select" size="8" style="width:100%;"></select>
       <div id="pt-gen-current" style="font-size:12px;color:#c8bda8;margin:6px 0;word-break:break-all;"></div>
+      <div id="pt-gen-portrait" class="pt-gen-portrait"></div>
       <button type="button" id="pt-bind-btn" class="pt-btn pt-btn-primary" style="width:100%;" disabled>绑定选中图给该武将</button>
       <div id="pt-bind-status" style="font-size:12px;margin-top:6px;min-height:16px;"></div>
     </div>
@@ -103,6 +104,7 @@ const els = {
     genSearch: document.getElementById('pt-gen-search') as HTMLInputElement,
     genSelect: document.getElementById('pt-gen-select') as HTMLSelectElement,
     genCurrent: document.getElementById('pt-gen-current')!,
+    genPortrait: document.getElementById('pt-gen-portrait')!,
     bindBtn: document.getElementById('pt-bind-btn') as HTMLButtonElement,
     bindStatus: document.getElementById('pt-bind-status')!,
 };
@@ -205,6 +207,15 @@ function injectStyles(): void {
       }
       .pt-save-toast:empty { display: none; }
       .pt-save-toast.is-error { background: #301a1a; color: #ffb4a8; border-color: #6a3a3a; }
+      .pt-gen-portrait {
+        width: 100%; aspect-ratio: 3/4; background: #1c1916; border: 1px solid #3a342c;
+        border-radius: 4px; overflow: hidden; position: relative; display: none;
+        margin-bottom: 8px;
+      }
+      .pt-gen-portrait.has-img { display: block; }
+      .pt-gen-portrait img {
+        width: 100%; height: 100%; object-fit: cover; object-position: center top;
+      }
       #app { height: 100vh; }
     `;
     document.head.appendChild(style);
@@ -627,6 +638,13 @@ function updateBindPanel(): void {
     els.genCurrent.innerHTML = gen
         ? `当前立绘：<code>${gen.portrait || '(无)'}</code>`
         : '';
+    if (gen?.portrait) {
+        els.genPortrait.innerHTML = `<img src="${gen.portrait}" alt="${gen.generalName}" />`;
+        els.genPortrait.classList.add('has-img');
+    } else {
+        els.genPortrait.innerHTML = '';
+        els.genPortrait.classList.remove('has-img');
+    }
     const imgHint = selectedImage ? '' : '（请先在右侧点选一张图）';
     els.bindBtn.textContent = `把选中图指给该武将${imgHint}`;
     els.bindBtn.disabled = !(gen && selectedImage);

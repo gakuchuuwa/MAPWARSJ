@@ -236,6 +236,21 @@ function injectStyles(): void {
       .bm-id-preview .id-label { color:#a89f8f; }
       .bm-id-preview .id-value { color:#f5d78e; }
       .bm-id-preview .id-dup { color:#ff9a8a; font-size:10px; }
+      .bm-portrait-preview {
+        margin:6px 0 10px; padding:8px; background:#1a1816; border:1px solid #2a2620;
+        border-radius:4px; display:flex; gap:10px; align-items:flex-start;
+      }
+      .bm-portrait-preview img {
+        width:96px; height:128px; object-fit:cover; object-position:center top;
+        background:#0e0d0c; border-radius:3px; border:1px solid #3a342c;
+      }
+      .bm-portrait-preview .portrait-empty {
+        width:96px; height:128px; background:#0e0d0c; border:1px dashed #3a342c;
+        border-radius:3px; display:flex; align-items:center; justify-content:center;
+        color:#5a5040; font-size:11px;
+      }
+      .bm-portrait-preview .portrait-info { flex:1; font-size:11px; color:#8a7f6f; }
+      .bm-portrait-preview .portrait-info b { color:#c8bda8; }
 
       .bm-validation {
         position:fixed; bottom:0; left:0; right:0; max-height:40vh;
@@ -698,7 +713,15 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>武将名</span><input name="generalName" value="${row!.generalName ?? ''}" /></label>
           </div>
           <input type="hidden" name="generalId" value="${row!.generalId ?? ''}" />
-          <label><span>立绘路径</span><input name="portrait" value="${row!.portrait ?? ''}" /></label>
+          <label><span>立绘路径</span><input name="portrait" id="bm-edit-portrait" value="${row!.portrait ?? ''}" /></label>
+          <div class="bm-portrait-preview" id="bm-portrait-preview">
+            <img id="bm-portrait-img" src="${row!.portrait ?? ''}" alt="立绘" style="${row!.portrait ? '' : 'display:none'}" />
+            <div class="portrait-empty" id="bm-portrait-empty" style="${row!.portrait ? 'display:none' : ''}">无立绘</div>
+            <div class="portrait-info">
+              <div><b>预览</b></div>
+              <div style="margin-top:4px">修改上面路径后自动刷新</div>
+            </div>
+          </div>
           <div class="form-row">
             <label><span>品阶</span>
               <select name="tier">
@@ -749,6 +772,33 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     document.getElementById('bm-edit-form')!.addEventListener('submit', handleFormSubmit);
     if (!isNew && row) {
         document.getElementById('bm-panel-delete')?.addEventListener('click', () => void handleDeleteFaction(row!));
+    }
+
+    // 立绘路径改动 → 实时刷新预览图
+    const portraitInput = document.getElementById('bm-edit-portrait') as HTMLInputElement | null;
+    const portraitImg = document.getElementById('bm-portrait-img') as HTMLImageElement | null;
+    const portraitEmpty = document.getElementById('bm-portrait-empty') as HTMLElement | null;
+    if (portraitInput && portraitImg && portraitEmpty) {
+        const refresh = () => {
+            const path = portraitInput.value.trim();
+            if (path) {
+                portraitImg.src = path;
+                portraitImg.style.display = '';
+                portraitEmpty.style.display = 'none';
+            } else {
+                portraitImg.style.display = 'none';
+                portraitEmpty.style.display = '';
+            }
+        };
+        portraitInput.addEventListener('input', refresh);
+        portraitImg.addEventListener('error', () => {
+            portraitImg.style.display = 'none';
+            portraitEmpty.textContent = '加载失败';
+            portraitEmpty.style.display = '';
+        });
+        portraitImg.addEventListener('load', () => {
+            portraitEmpty.textContent = '无立绘';
+        });
     }
 
     // 快速填入：解析粘贴文本并填入表单

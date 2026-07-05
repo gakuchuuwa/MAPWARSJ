@@ -1157,8 +1157,9 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_167', layer: 'tactical', series: 'casualty', index: 167,
         displayName: '守死遏敌', sourceQuote: '《旧唐书·张巡传》：“守睢阳……蔽遮江淮，屏障江南。”',
-        baseEffect: 'win_casualty_reduction', condition: 'battle_siege_defender', phase: 'mid_battle_passive',
-        magnitude: 0.55, engineStatus: 'ready',
+        baseEffect: 'lose_enemy_casualty_boost', condition: 'battle_siege_defender', phase: 'post_battle',
+        magnitude: 2.0, engineStatus: 'ready',
+        note: '守城城破身死，咬人：胜方本场战损×2（睢阳死守，杀敌十二万，蔽遮江淮）；胜方保底存活 10% 初始兵',
     },
     // ── 第八批：T2 名将（ts_168-181）──
     {
@@ -1897,7 +1898,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_290', layer: 'tactical', series: 'casualty', index: 290,
         displayName: '保境安边', sourceQuote: '《隋书·谯国夫人传》：怀集百越，数州晏然，历梁陈隋而境内安。',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        magnitude: 0.5, engineStatus: 'ready',
     },
     {
         id: 'ts_291', layer: 'tactical', series: 'enhance', index: 291,
@@ -1930,10 +1931,10 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
-        id: 'ts_296', layer: 'tactical', series: 'casualty', index: 296,
+        id: 'ts_296', layer: 'tactical', series: 'enhance', index: 296,
         displayName: '孤守绝域', sourceQuote: '《资治通鉴》：郭昕守安西，与中国隔绝，坚持四十余年不下。',
-        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'battle_siege_defender', phase: 'opening_roll',
+        magnitude: 1.45, engineStatus: 'ready',
     },
     {
         id: 'ts_297', layer: 'tactical', series: 'enhance', index: 297,
@@ -1945,13 +1946,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_298', layer: 'tactical', series: 'casualty', index: 298,
         displayName: '据河自固', sourceQuote: '《晋书·张轨传》：轨保据河右，破鲜卑若罗拔能，奠前凉之基。',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        magnitude: 0.5, engineStatus: 'ready',
     },
     {
-        id: 'ts_299', layer: 'tactical', series: 'casualty', index: 299,
+        id: 'ts_299', layer: 'tactical', series: 'enhance', index: 299,
         displayName: '孤城却众', sourceQuote: '《元史》：士诚据高邮，脱脱百万之众围之不下，卒溃去。',
-        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'battle_siege_defender', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_300', layer: 'tactical', series: 'troop', index: 300,
@@ -2065,7 +2066,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_318', layer: 'tactical', series: 'casualty', index: 318,
         displayName: '恩威服众', sourceQuote: '《三国志·张嶷传》：嶷恩威并著，越巂诸夷率服，南中晏然。',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        magnitude: 0.5, engineStatus: 'ready',
     },
     {
         id: 'ts_319', layer: 'tactical', series: 'enhance', index: 319,
@@ -2074,16 +2075,16 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
-        id: 'ts_320', layer: 'tactical', series: 'casualty', index: 320,
+        id: 'ts_320', layer: 'tactical', series: 'enhance', index: 320,
         displayName: '婴城拒逆', sourceQuote: '《旧唐书·浑瑊传》：瑊守奉天，昼夜拒朱泚，城赖以全。',
-        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'battle_siege_defender', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
     },
     {
-        id: 'ts_321', layer: 'tactical', series: 'casualty', index: 321,
+        id: 'ts_321', layer: 'tactical', series: 'enhance', index: 321,
         displayName: '坚垒挫锋', sourceQuote: '《宋史·孟宗政传》：宗政守枣阳，屡挫金人，号孟虎，镇襄汉。',
-        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'battle_siege_defender', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_322', layer: 'tactical', series: 'enhance', index: 322,
@@ -2161,7 +2162,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_334', layer: 'tactical', series: 'casualty', index: 334,
         displayName: '镇抚遐荒', sourceQuote: '《三国志·马忠传》：忠平南中叛乱，恩信著于殊俗，镇庲降十余年。',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        magnitude: 0.5, engineStatus: 'ready',
     },
     {
         id: 'ts_335', layer: 'tactical', series: 'enhance', index: 335,
@@ -2182,10 +2183,10 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
-        id: 'ts_338', layer: 'tactical', series: 'casualty', index: 338,
+        id: 'ts_338', layer: 'tactical', series: 'enhance', index: 338,
         displayName: '恃险困敌', sourceQuote: '《后汉书·马援传》：五溪蛮相单程据险，汉军刘尚全没，援亦困于壶头。',
-        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'terrain_mountain', phase: 'opening_roll',
+        magnitude: 1.55, engineStatus: 'ready',
     },
     {
         id: 'ts_339', layer: 'tactical', series: 'troop', index: 339,
@@ -2362,10 +2363,10 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
-        id: 'ts_368', layer: 'tactical', series: 'casualty', index: 368,
+        id: 'ts_368', layer: 'tactical', series: 'enhance', index: 368,
         displayName: '据隘御侵', sourceQuote: '《不丹史》：夏仲阿旺朗杰据险筑宗，屡退西藏入侵，统一不丹。',
-        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.3, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'battle_siege_defender', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_369', layer: 'tactical', series: 'casualty', index: 369,
@@ -2462,6 +2463,25 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         displayName: '精达事机', sourceQuote: '《三国志·贾逵传》评："精达事机，威恩兼著。"',
         baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
         magnitude: 1, comebackThreshold: 0.8, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_385', layer: 'tactical', series: 'casualty', index: 385,
+        displayName: '嚼齿吞贼', sourceQuote: '《旧唐书·张巡传》："大呼辄眦裂血面，嚼齿皆碎……气吞逆贼。"',
+        baseEffect: 'lose_enemy_casualty_boost', condition: 'battle_siege_defender', phase: 'post_battle',
+        magnitude: 2.0, engineStatus: 'ready',
+        note: '守城败时咬人：胜方(攻方)本场战损×2；契合张巡守睢阳虽陷、蔽遮江淮拖垮叛军的定位',
+    },
+    {
+        id: 'ts_386', layer: 'tactical', series: 'enhance', index: 386,
+        displayName: '刺山飞泉', sourceQuote: '《后汉书·耿恭传》："仰天叹曰：闻昔贰师将军拔佩刀刺山，飞泉涌出。"',
+        baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
+        magnitude: 1.55, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_387', layer: 'tactical', series: 'enhance', index: 387,
+        displayName: '保境安民', sourceQuote: '《钱氏家训》："民为社稷之本，务须保民、保国、保天下。"（吴越三世相承，境内晏然。）',
+        baseEffect: 'ally_power_mult', condition: 'battle_siege_defender', phase: 'opening_roll',
+        magnitude: 1.4, engineStatus: 'ready',
     },
 ];
 
@@ -2621,7 +2641,8 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_344: 'common', ts_345: 'common', ts_346: 'common', ts_347: 'common', ts_348: 'common', ts_349: 'common', ts_350: 'common', ts_351: 'common', ts_352: 'common', ts_353: 'common', ts_354: 'common', ts_355: 'common', ts_356: 'common', ts_357: 'common', ts_358: 'common', ts_359: 'common', ts_360: 'common',
     ts_361: 'common', ts_362: 'common', ts_363: 'common', ts_364: 'common', ts_365: 'common', ts_366: 'common', ts_367: 'common', ts_368: 'common', ts_369: 'common', ts_370: 'common', ts_371: 'common', ts_372: 'common', ts_373: 'common', ts_374: 'common', ts_375: 'common', ts_376: 'common', ts_377: 'common', ts_378: 'common',
     ts_379: 'common', ts_380: 'common', ts_381: 'common', ts_382: 'common',
-    ts_383: 'limited', ts_384: 'limited',
+    ts_383: 'limited', ts_384: 'limited', ts_385: 'ai_defensive', ts_386: 'underdog',
+    ts_387: 'ai_defensive',
 
 };
 

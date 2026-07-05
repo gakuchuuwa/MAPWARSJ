@@ -26,7 +26,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   sunqin: { name: '督标秦军', tier: 3 },   // 孙传庭最后的家底，自带极强的历史悲剧色彩和知名度，升入T3知名
   // 飞熊军除名（小说番号）
   // 韩卒击刹除名（无史载）
-    liang_d: { name: '睢阳义兵', tier: 2 },     // 死守睢阳战略牵制极大，但无建制延续性，升T2（不符合T1野战军标准）
+    liang_d: { name: '睢阳卫士', tier: 2 },
   // 公行锐士除名
   jin: { name: '晋中军', tier: 1 },        // 曲沃·城濮之战破楚（《左传》）
     li_lx_d: { name: '陇右突骑', tier: 2 },

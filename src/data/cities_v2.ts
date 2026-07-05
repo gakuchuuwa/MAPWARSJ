@@ -253,7 +253,9 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_linfen', name: '平阳', factionId: 'yao', lat: 36.088000, lng: 111.516724, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '尧都平阳（临汾）；距曲沃≥50km' },
     // ── 太行山脉走廊/八陉周边中城 ──
                 // ── 淮海与齐鲁中原走廊中城 ──
-    { id: 'city_shangqiu', name: '商丘', factionId: 'liang_d', lat: 34.41, lng: 115.66, type: 'medium_city', region: 'CENTRAL', troops: 10000, tier: 1, note: '宋/梁国都、归德府治；豫东府城' },
+    { id: 'city_shangqiu', name: '商丘', factionId: 'liang_d', lat: 34.41, lng: 115.66, type: 'medium_city', troops: 20000, region: 'CENTRAL' },
+
+
     { id: 'city_pengcheng', name: '彭城', factionId: 'xichu', lat: 34.27, lng: 117.18, type: 'medium_city', region: 'CENTRAL', troops: 10000, tier: 1, note: '西楚都、徐州治；淮海枢纽' },
     { id: 'city_langya', name: '琅琊', factionId: 'wang_d', lat: 35.077231, lng: 118.363953, type: 'small_city', region: 'CENTRAL', troops: 10000,
         note: '琅琊；王氏小城',
