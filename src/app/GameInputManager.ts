@@ -165,3 +165,36 @@ export class GameInputManager {
     }
 
     public handleBattleEnd(result: string, opponent: any) {
+        // Logic moved from GameApp
+        console.log(`Battle Ended: ${result}`);
+        // Maybe show modal via UI Manager?
+        // uiManager.showBattleResult(result);
+    }
+
+    /**
+     * [DEV ONLY] 按 X：让当前跟随的军团一键发起远征（补到 8 万 + 直取最近异文化中心）。
+     * 仅在开发模式生效；生产构建时 import.meta.env.DEV 为 false，此调用被 Rollup 剔除。
+     */
+    private devBoostFollowedArmyForExpedition(): void {
+        const game = (window as any).game;
+        const msg: string = game?.expeditionUI?.devForceLaunch?.() ?? '远征系统未就绪';
+        this.showDevToast(msg);
+        console.log('[DEV] X键一键远征:', msg);
+    }
+
+    /** [DEV ONLY] 屏幕中上方短暂提示条 */
+    private showDevToast(msg: string): void {
+        let el = document.getElementById('dev-expedition-toast') as HTMLDivElement | null;
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'dev-expedition-toast';
+            el.style.cssText = 'position:fixed;top:130px;left:50%;transform:translateX(-50%);z-index:99999;background:rgba(20,20,20,0.92);color:#ffd27a;padding:10px 18px;border:1px solid rgba(220,140,70,0.6);border-radius:8px;font-family:SimSun,serif;font-size:15px;pointer-events:none;white-space:nowrap;';
+            document.body.appendChild(el);
+        }
+        el.textContent = msg;
+        el.style.display = 'block';
+        const prev = (el as any)._t;
+        if (prev) clearTimeout(prev);
+        (el as any)._t = setTimeout(() => { if (el) el.style.display = 'none'; }, 3500);
+    }
+}

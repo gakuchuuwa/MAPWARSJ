@@ -387,11 +387,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/NORTH/mushi_muchong.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 4
-        },
         "/assets/STEPPE/tiele_qibiheli.png": {
             "scale": 0.84,
             "offsetX": 0,
@@ -936,11 +931,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 20,
             "offsetY": -18
-        },
-        "/assets/JIANGNAN/xiao_d_xiaoyan.png": {
-            "scale": 1.2,
-            "offsetX": 12,
-            "offsetY": -1
         },
         "/assets/TIBET/beidi_yaochang.png": {
             "scale": 1,
@@ -3872,11 +3862,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -19
         },
-        "/assets/NORTH/__闲置__NORTH_03.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": -44
-        },
         "/assets/litang/liwang_liguangbi.png": {
             "scale": 1.05,
             "offsetX": 0,
@@ -4567,11 +4552,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -2
         },
-        "/assets/JIANGNAN/__闲置__STEPPE_11 (5).png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": -26
-        },
         "/assets/JIANGNAN/1eb41bd5-28e6-421d-9882-5e670e8cad91.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -5056,6 +5036,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 10,
             "offsetY": 0
+        },
+        "/assets/NORTH/__闲置__NORTH_07.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/NORTH/mushi_muchong.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": -52
+        },
+        "/assets/JIANGNAN/__闲置__JIANGNAN_07.png": {
+            "scale": 1.2,
+            "offsetX": 12,
+            "offsetY": -1
+        },
+        "/assets/JIANGNAN/xiao_d_xiaoyan.png": {
+            "scale": 1.13,
+            "offsetX": 4,
+            "offsetY": -30
         }
     },
     "folderGuides": {

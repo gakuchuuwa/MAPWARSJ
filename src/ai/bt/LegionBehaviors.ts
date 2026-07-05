@@ -66,16 +66,6 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
 
     if (!target || target.factionId === myFaction) {
         const legionName = army.name;
-        // [诊断 2026-07-05] 记录清除远征目标的确切上下文：兵力 / 目标归属 / 我方旗号
-        // 用于排查「未打下目标、军团却掉头」——功成应满足 target.factionId === 我方
-        const troopsWan = (army.getTroops() / 10000).toFixed(2);
-        const clearReason = !target
-            ? '目标城已从地图消失'
-            : `目标城【${target.name}】factionId=${target.factionId} === 我方(${myFaction})`;
-        gameLog(
-            'expedition',
-            `🐎 [远征·诊断] 清除远征目标｜军团=${legionName}｜兵力=${troopsWan}万｜原因=${clearReason}`
-        );
         army.expeditionTargetCityId = null;
         clearStrategicTarget(ctx);
         army.setTargetCity(null);

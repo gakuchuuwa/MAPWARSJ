@@ -207,6 +207,28 @@ export class ExpeditionUI {
         return army;
     }
 
+    /**
+     * [DEV ONLY] 一键强制发起远征：把当前跟随军团补到 8 万 + 直取最近的异文化中心。
+     * 用于避开"军团边打边掉血、远征按钮一闪就没、点不到"的问题（供 X 快捷键调用）。
+     * 返回给玩家看的结果字符串。生产构建不会调用（X 键被 import.meta.env.DEV 包裹）。
+     */
+    public devForceLaunch(): string {
+        const army = this.getFollowedArmy?.() ?? null;
+        if (!army || army.isDestroyed) return '⚠ 先在「🎖️ 军团」列表点一支军团跟随，再按 X';
+        if (army.expeditionTargetCityId) return `${army.name} 已在远征中（目标未变）`;
+        // 只补到 4.2 万（刚过 4 万解锁线）：打一仗就会掉到 4 万以下，
+        // 方便验证"跌破 4 万后远征是否还在"——这正是玩家要观察的关键。
+        (army as unknown as { setTroops?: (n: number) => void }).setTroops?.(42000);
+        if (!canLegionLaunchExpedition(army)) return `${army.name}：该势力无史籍精锐番号，不能远征`;
+        const cand = this.nearestCandidate(army);
+        if (!cand) return `${army.name}：附近文化中心都已是己方，无可远征目标`;
+        if (!applyExpeditionEliteRename(army)) return `${army.name}：改番号失败`;
+        army.expeditionTargetCityId = cand.city.id;
+        gameLog('expedition', `🐎 [远征] ${army.name}（DEV一键·4.2万兵）远征【${cand.city.name}】——断粮不回`);
+        this.pushFeed(army.getFactionId(), army.name, cand.city.name, 'depart');
+        return `✅ ${army.name} → 远征 ${REGION_LABELS[cand.region]}·${cand.city.name}（补至4.2万，打一仗就掉破4万，盯着远征图标看）`;
+    }
+
     /** 可选目标：15 文化中心里**异文化**且非己方的（本文化中心不可远征——主人 2026-06-11 补） */
     private listCandidates(army: ExpeditionArmy): { city: ExpeditionCity; region: RegionType }[] {
         if (!this.cityManager) return [];
