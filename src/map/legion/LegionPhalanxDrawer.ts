@@ -776,7 +776,7 @@ export class LegionPhalanxDrawer {
 
         for (let i = 0; i < 3; i++) {
             const pos = this.NAVAL_TRIANGLE[i] ?? this.NAVAL_TRIANGLE[0];
-            const ox = (pos.r - 0.5) * spacingY;
+            const ox = pos.r * spacingY;
             const oy = pos.c * spacingX * 0.7;
             const dx = center.x + (ox * cos - oy * sin);
             const dy = center.y + (ox * sin + oy * cos);

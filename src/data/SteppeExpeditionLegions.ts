@@ -15,7 +15,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 区T0锚·怯薛参与西征诸役；蒙古西征整体史家论以少胜多（§6 #2）
   borjigin: { name: '那可儿伴当', tier: 1 },     // 曲雕阿兰·铁木真那可儿亲卫
   ogodei: { name: '探马赤军', tier: 1 },       // 也迷里·木华黎统帅的探马赤军
-  yuan_d: { name: '秃鲁花军', tier: 3 },       // 上都·元质子军
+    yuan_d: { name: '秃鲁花军', tier: 3 },
   xiongnu: { name: '鸣镝精骑', tier: 1 },      // 头曼城·冒顿单于称霸大漠的鸣镝主力
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
 
@@ -44,7 +44,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     merkit: { name: '岭北屯骑', tier: 3 },
     chahar: { name: '哈剌赤军', tier: 2 },
     yuwen: { name: '武川镇军', tier: 0 },
-  da_yuan: { name: '北元怯薛', tier: 1 },             // 元朝退回草原后维持北元政权的战略武力核心，符合T1战略主力
+    da_yuan: { name: '北元怯薛', tier: 1 },
     huyan: { name: '呼衍精骑', tier: 4 },
     yujiulu: { name: '柔然汗骑', tier: 4 },
     jalair: { name: '札剌亦儿军', tier: 3 },

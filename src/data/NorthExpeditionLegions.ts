@@ -26,7 +26,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   erzhu: { name: '六镇戍兵', tier: 1 },     // 北魏六镇，横扫天下的基石，六镇之乱孕育了北齐、北周及隋唐开国集团，影响极其深远，升入T1战略
   gaoqi_d: { name: '百保鲜卑', tier: 2 },   // 蓨城·北齐百保精兵·高长恭禁卫（顶级近卫，降T2）
   yingzhou_ying_d: { name: '黄龙兵', tier: 1 }, // 朝阳·慕容皝棘城大破石赵
-  ming_d: { name: '明军三大营', tier: 1 },   // 北京·五军神机三千营（升T1）
+    ming_d: { name: '明军三大营', tier: 1 },
 
   // ── §1 中原表·地理偏北（用户指定）──
   zhuozhou: { name: '曳落河', tier: 2 },     // 安禄山麾下八千胡人死士，属于安史叛军这支战略主力中的特种战术尖刀，符合T2战术

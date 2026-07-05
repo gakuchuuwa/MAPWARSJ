@@ -32,7 +32,7 @@ import {
 } from '../data/portrait_adjust';
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
-import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier } from '../systems/CultureCombat';
+import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
 import {
     getOpeningTacticalPowerMultiplier,
@@ -40,12 +40,13 @@ import {
     getStrategicBattlePowerMultiplier,
     getGeneralSkillDisplayTags,
     getPassGarrisonDefenseSkillDisplay,
+    getRegionCenterDefenseSkillDisplay,
     getReinforcementJoinSkillDisplay,
     getExpeditionForageSkillDisplay,
     canUnitUseGeneralSkills,
     getBattleTerrainKind,
 } from '../combat/GeneralSkillCombat';
-import { PASS_GARRISON_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
+import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
 import type { Army } from '../legion/Army';
 const T = COMBAT_UI_TOKENS;
@@ -979,6 +980,9 @@ export class CombatUI {
             const passSkill = getPassGarrisonDefenseSkillDisplay(unit);
             if (passSkill) add(passSkill.name, passSkill.effectLabel, false, 'pass');
 
+            const regionCenterSkill = getRegionCenterDefenseSkillDisplay(unit);
+            if (regionCenterSkill) add(regionCenterSkill.name, regionCenterSkill.effectLabel, false, 'pass');
+
             // 兵合一处（不再显示为独立技能框，但下方乘区链条依然会有）
             // const joinLuck = this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
             // const reinfSkill = getReinforcementJoinSkillDisplay(joinLuck);
@@ -1067,6 +1071,7 @@ export class CombatUI {
         };
         pushIfNotOne('文化', getCultureOnlyCombatMultiplier(unit));
         pushIfNotOne(PASS_GARRISON_DEFENSE_SKILL.displayName, getPassGarrisonCombatMultiplier(unit));
+        pushIfNotOne(REGION_CENTER_DEFENSE_SKILL.displayName, getRegionCenterCombatMultiplier(unit));
         pushIfNotOne(getLegionEliteBadgeName(unit), getCampaignLegionCombatMultiplier(unit));
         pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(
             this.getUnitsForSide(side),

@@ -124,8 +124,8 @@ export class CityAssetManager {
         'jurchen': '女真',
 'dangxiang': '大夏',
 'menggu_d': '蒙古',
-'manzhou_d': '大清',
-'ming_d': '大明',
+'manzhou_d': '清',
+'ming_d': '明',
         'liao_d': '大辽',
 'dangzhou': '氐',
         'dai_d': '代',
@@ -355,7 +355,7 @@ export class CityAssetManager {
 
 
 'gaoche': '高车',
-        'da_yuan': '北元',
+'da_yuan': '大元',
 
 'kala': '喀汗',
 'xiliao': '辽',
@@ -425,9 +425,9 @@ export class CityAssetManager {
         'chu_d': '舒',
 'hu_d': '三门',
 
-        'dajin': '大金',
+'dajin': '大金',
         'yizhou': '懿',
-        'yuan_d': '大元',
+'yuan_d': '元',
         'weili': '尉犁',
         'pishan': '皮山',
         'bandun': '板楯',

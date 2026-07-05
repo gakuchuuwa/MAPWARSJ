@@ -24,7 +24,7 @@ import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';
 import type { IBattleUnit } from '../core/CombatSystem';
 import type { Army } from '../core/Army';
 import type { City } from '../types/core';
-import { RegionType } from './RegionSystem';
+import { RegionType, isRegionCenter } from './RegionSystem';
 import {
     type CultureCombatRole,
     isGarrisonUnit,
@@ -55,6 +55,16 @@ function getPassGarrisonMultiplier(unit: IBattleUnit): number {
     return 1;
 }
 
+/** 14 文化中心据点守军「据险而守」系数（非中心或非城防恒为 1） */
+function getRegionCenterGarrisonMultiplier(unit: IBattleUnit): number {
+    if (!isGarrisonUnit(unit)) return 1;
+    const city = unit.getEntity?.() as { id?: string } | undefined;
+    if (city?.id && isRegionCenter(city.id)) {
+        return GameConfig.CULTURE_COMBAT.REGION_CENTER_GARRISON_MULT;
+    }
+    return 1;
+}
+
 /** 文化区固定系数（不含关隘拒险而守） */
 export function getCultureOnlyCombatMultiplier(unit: IBattleUnit): number {
     const region = resolveUnitCultureRegion(unit);
@@ -67,9 +77,18 @@ export function getPassGarrisonCombatMultiplier(unit: IBattleUnit): number {
     return getPassGarrisonMultiplier(unit);
 }
 
-/** 单单位固定战力系数 = 文化区 ×（关隘守军时拒险而守 ×1.2） */
+/** 14 文化中心守军据险而守系数（非中心或非城防恒为 1） */
+export function getRegionCenterCombatMultiplier(unit: IBattleUnit): number {
+    return getRegionCenterGarrisonMultiplier(unit);
+}
+
+/** 单单位固定战力系数 = 文化区 ×（关隘守军拒险而守 ×1.2）×（文化中心守军据险而守 ×1.2） */
 export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
-    return getCultureOnlyCombatMultiplier(unit) * getPassGarrisonMultiplier(unit);
+    return (
+        getCultureOnlyCombatMultiplier(unit) *
+        getPassGarrisonMultiplier(unit) *
+        getRegionCenterGarrisonMultiplier(unit)
+    );
 }
 
 /** 远征军团 / 远征精锐 tier 加成；城防本场掷出精锐时同样乘 tier */

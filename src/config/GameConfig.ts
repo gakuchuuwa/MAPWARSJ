@@ -156,6 +156,8 @@ export class GameConfig {
         } as Record<string, readonly [number, number]>,
         /** 关隘据点守军额外系数（拒险而守；与 GeneralSkills「拒险而战」展示名对应） */
         PASS_GARRISON_MULT: 1.2,
+        /** 14 文化中心据点守军额外系数（据险而守；与 GeneralSkills「据险而守」展示名对应）*/
+        REGION_CENTER_GARRISON_MULT: 1.2,
     };
     // [2026-06-12 删除] static MORALE（士气衰减 + FLANKING 侧翼系数）——全项目零引用的死配置。
     //   主人裁定：点线移动的大战略图无战术战斗界面，士气/侧翼加进来仍是「看数字掉」，

@@ -133,16 +133,8 @@ export const T0_CAPITALS: CityDataV2[] = [
     },
 
     // ── 北方 ──
-    {
-        id: 'city_beijing',
-        name: '北京',
-        factionId: 'ming_d',
-        lat: 39.90, lng: 116.41,
-        type: 'big_city',
-        region: 'NORTH',
-        troops: 20000,
-        tier: 0,
-        note: '元大都/明永乐后京师；大明国都' },
+    { id: 'city_beijing', name: '北京', factionId: 'ming_d', lat: 39.9, lng: 116.41, type: 'big_city', troops: 20000, region: 'NORTH' },
+
     { id: 'city_datong', name: '大同', factionId: 'tuoba', lat: 40.08, lng: 113.3, type: 'medium_city', troops: 20000, region: 'NORTH' },
 
 
@@ -997,7 +989,8 @@ export const PERIPHERY: CityDataV2[] = [
 
 
 
-    { id: 'city_ganquanyi', name: '武都', factionId: 'wudu', lat: 33.4293, lng: 105.1419, type: 'medium_city', troops: 10000, region: 'BASHU' },
+    { id: 'city_ganquanyi', name: '武都', factionId: 'wudu', lat: 33.4293, lng: 105.1419, type: 'small_city', troops: 20000, region: 'BASHU' },
+
 
     { id: 'city_dangchang', name: '阴平', factionId: 'dangzhou', lat: 33.6997, lng: 104.5239, type: 'small_city', troops: 5000, region: 'BASHU' },
 
@@ -1024,8 +1017,10 @@ export const PERIPHERY: CityDataV2[] = [
         note: '蒺藜山；懿州关隘', region: 'NORTHEAST' },
 
     // ── 2026-05-26 新建势力：大金(会宁府)、大元(上都) ──
-    { id: 'city_huining', name: '会宁府', factionId: 'dajin', lat: 45.519798, lng: 126.971741, type: 'medium_city', region: 'NORTHEAST', troops: 10000, tier: 1, note: '大金政权都城；合扎猛安' },
-    { id: 'city_shangdu', name: '上都', factionId: 'yuan_d', lat: 42.275283, lng: 115.760193, type: 'medium_city', region: 'STEPPE', troops: 10000, tier: 1, note: '大元夏都；秃鲁花军' },
+    { id: 'city_huining', name: '会宁府', factionId: 'dajin', lat: 45.519798, lng: 126.971741, type: 'medium_city', troops: 20000, region: 'NORTHEAST' },
+
+    { id: 'city_shangdu', name: '上都', factionId: 'yuan_d', lat: 42.275283, lng: 115.760193, type: 'medium_city', troops: 20000, region: 'STEPPE' },
+
 
 
     // 额尔古纳已删：室韦都城为俱轮泊 city_julunbo
@@ -1393,6 +1388,7 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 2026-05-25 明清之际新城市 ──
     { id: 'city_shenyang', name: '沈阳', factionId: 'manzhou_d', lat: 41.80203, lng: 123.43689, type: 'big_city', troops: 20000, region: 'NORTHEAST' },
 
+
     {
         id: 'city_guihua', name: '归化城', factionId: 'tumed',
         lat: 40.84, lng: 111.68, type: 'medium_city', troops: 10000,
@@ -1538,9 +1534,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_otuken', name: '于都斤山', factionId: 'tujue', lat: 47.602542, lng: 101.230774, type: 'pass', region: 'STEPPE', troops: 10000,
         note: '于都斤山；突厥关隘',
     },
-    { id: 'city_yingchang', name: '应昌', factionId: 'da_yuan', lat: 43.385052, lng: 116.823120, type: 'small_city', region: 'STEPPE', troops: 10000,
-        note: '应昌；北元小城',
-    },
+    { id: 'city_yingchang', name: '应昌', factionId: 'da_yuan', lat: 43.385052, lng: 116.82312, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
 
 
     // ── 2026-05-26 新增：漠北草原部落/氏族势力据点 ──

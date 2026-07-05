@@ -98,8 +98,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dangxiang': '大夏',
 'menggu_d': '蒙古',
 'manzhou': '满洲',
-'manzhou_d': '大清',
-'ming_d': '大明',
+'manzhou_d': '清',
+'ming_d': '明',
     'liao_d': '大辽',
 'dangzhou': '氐',
     'dai_d': '代',
@@ -332,9 +332,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tuoming': '清真',
     'ashikaga': '室町',
     // ── 2026-05-26 新增：大金、大元 ──
-    'dajin': '大金',
+'dajin': '大金',
     'yizhou': '懿',
-    'yuan_d': '大元',
+'yuan_d': '元',
 
     // ── 2026-05-26 新增：肃慎系势力（挹娄、勿吉、靺鞨）──
     'yilou': '挹娄',
@@ -350,7 +350,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-26 新增：漠北草原势力旗号 ──
 'gaoche': '高车',
-    'da_yuan': '北元',
+'da_yuan': '大元',
 
     // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
 'kala': '喀汗',

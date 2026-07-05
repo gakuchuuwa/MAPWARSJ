@@ -307,9 +307,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'qianhui': 'city_piandaoshui',
 'miao_qing': 'city_qielancheng',
     'tuoming': 'city_dabancheng',
-    'dajin': 'city_huining',
+'dajin': 'city_huining',
     'yizhou': 'city_jilishan',
-    'yuan_d': 'city_shangdu',
+'yuan_d': 'city_shangdu',
 
     'yilou': 'city_fenglin',
     'wuji': 'city_boduo',
@@ -319,7 +319,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'mao_wenlong': 'city_pidao',
 
     'gaoche': 'city_junjishan',
-    'da_yuan': 'city_yingchang',
+'da_yuan': 'city_yingchang',
 
 'huyan': 'city_naomaohu',
 'yujiulu': 'city_ruoshui',

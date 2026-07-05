@@ -1,6 +1,6 @@
 export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
-import { getRegion, type RegionType } from '../systems/RegionSystem';
+import { getRegion, REGION_ORDER, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';
 
 export type SoundKey =
@@ -116,6 +116,14 @@ const BGM_FALLBACK_MAP: Record<string, string> = {
     portraits: 'CENTRAL',
 };
 
+/**
+ * 随机轮播池：14 文化区 BGM（folder 名 = region）。
+ * 主人 2026-07-06 定：第一首按镜头文化区放；放完后不循环单曲，
+ * 在这 14 首里洗牌随机轮播（不立刻重复同一首）；镜头进入新文化区则区域优先立刻切歌。
+ * 势力专属夹（daming/manqing 等）只作区域优先覆盖，不进随机池。
+ */
+const BGM_ROTATION_FOLDERS: readonly string[] = REGION_ORDER;
+
 function mergeSettings(raw: unknown): AudioSettings {
     const settings: AudioSettings = {
         enabled: DEFAULT_SETTINGS.enabled,
@@ -164,6 +172,12 @@ export class AudioManager {
     private currentBgmFolder: string = '';
     private currentBgmSrc: string = '';
     private failedBgmFolders = new Set<string>();
+    /** 镜头当前所在文化区对应的 BGM folder（区域优先：此值变化 = 立刻切歌）*/
+    private cameraRegionFolder: string = '';
+    /** 14 文化区随机轮播队列（洗牌袋，空了重洗）*/
+    private bgmShuffleQueue: string[] = [];
+    /** BGM 异步加载令牌：切歌 / 停歌时自增，作废旧的 fetch 回调 */
+    private bgmLoadToken = 0;
     /** 源路径 → blob 对象 URL（用 fetch 取 blob 绕开 IDM 等下载器按扩展名抓取）*/
     private objectUrlCache = new Map<string, string>();
     /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
@@ -484,6 +498,8 @@ export class AudioManager {
     public stopBgm(): void {
         this.currentBgmFolder = '';
         this.currentBgmSrc = '';
+        this.cameraRegionFolder = '';
+        this.bgmLoadToken++; // 作废任何在途加载
         if (!this.bgmAudio) return;
         this.bgmAudio.pause();
         this.bgmAudio.currentTime = 0;
@@ -506,60 +522,99 @@ export class AudioManager {
             folderName = portraitDir;
         }
 
-        if (folderName === this.currentBgmFolder && this.bgmAudio && !this.bgmAudio.paused) return;
-        if (this.failedBgmFolders.has(folderName)) return;
-
-        this.currentBgmFolder = folderName;
-        const src = `/assets/${folderName}/${folderName}_bgm.aud`;
-        this.playBgmSrc(src);
+        this.applyCameraFolder(folderName);
     }
 
 
     /** 每帧调用：根据镜头坐标切换对应文化区的 BGM */
     public syncRegionBgm(lat: number, lng: number): void {
         if (!this.settings.enabled || !this.unlocked) return;
-
-        const region: RegionType = getRegion(lat, lng);
-        const folder = region;
-        // 同区域且音频正在播 → 跳过；若音频未播（加载失败/暂停），允许重试
-        if (folder === this.currentBgmFolder && this.bgmAudio && !this.bgmAudio.paused) return;
-
-        this.currentBgmFolder = folder;
-        const src = `/assets/${folder}/${folder}_bgm.aud`;
-        this.playBgmSrc(src);
+        this.applyCameraFolder(getRegion(lat, lng));
     }
 
-    private playBgmSrc(src: string): void {
+    /**
+     * 区域优先切歌：镜头文化区（folderName）变化 → 立刻切该区 BGM；
+     * 未变化 → 维持当前曲（含随机轮播曲），仅当整条 BGM 被 stopBgm 清空后才补播该区曲。
+     * 随机轮播曲放完由 ended 回调自然接力，此处不打断。
+     */
+    private applyCameraFolder(folderName: string): void {
+        if (folderName !== this.cameraRegionFolder) {
+            // 镜头进入新文化区：区域优先，立刻切歌
+            this.cameraRegionFolder = folderName;
+            if (this.failedBgmFolders.has(folderName)) return;
+            this.playBgmFolder(folderName);
+            return;
+        }
+        // 镜头文化区未变：仅当 BGM 被彻底停掉（currentBgmSrc 为空）才补播该区曲
+        if (this.currentBgmSrc === '' && !this.failedBgmFolders.has(folderName)) {
+            this.playBgmFolder(folderName);
+        }
+    }
+
+    /** 播放某文化区/势力夹 BGM；单曲不循环，放完随机轮播下一文化（14 洗牌循环） */
+    private playBgmFolder(folder: string): void {
+        const src = `/assets/${folder}/${folder}_bgm.aud`;
         // 同一首已在播 → 跳过（dedup 用逻辑路径，blob URL 无法比对）
         if (this.currentBgmSrc === src && this.bgmAudio && !this.bgmAudio.paused) return;
+        this.currentBgmFolder = folder;
         this.currentBgmSrc = src;
+        const token = ++this.bgmLoadToken;
 
         void this.fetchObjectUrl(src).then((url) => {
-            // 异步期间可能又切了区域 / 停了 BGM
-            if (this.currentBgmSrc !== src || !this.settings.enabled || !this.unlocked) return;
+            // 异步期间又切了歌 / 停了 BGM → 作废本次回调
+            if (token !== this.bgmLoadToken || !this.settings.enabled || !this.unlocked) return;
             if (!url) {
                 this.warnMissingOnce('bgm_main', `fetch 失败: ${src}`);
                 // 记录失败文件夹，避免每帧重试
-                if (this.currentBgmFolder) this.failedBgmFolders.add(this.currentBgmFolder);
-                // 区域 BGM 缺失 → 回落 CENTRAL
-                if (this.currentBgmFolder !== 'CENTRAL') {
-                    this.currentBgmFolder = 'CENTRAL';
-                    this.playBgmSrc('/assets/CENTRAL/CENTRAL_bgm.aud');
-                }
+                this.failedBgmFolders.add(folder);
+                // 区域 BGM 缺失 → 回落 CENTRAL（必定存在）
+                if (folder !== 'CENTRAL') this.playBgmFolder('CENTRAL');
                 return;
             }
             if (this.bgmAudio) this.bgmAudio.pause();
             const audio = new Audio();
             audio.src = url;
-            audio.loop = true;
+            audio.loop = false; // 单曲不循环：放完随机轮播下一文化
             audio.preload = 'auto';
             const def = SOUND_DEFINITIONS['bgm_main'];
             audio.volume = def ? this.resolveVolume(def) : 0.125;
+            audio.addEventListener(
+                'ended',
+                () => {
+                    // 已被区域切歌 / 停歌替换 → 不接力
+                    if (this.bgmAudio !== audio || !this.settings.enabled || !this.unlocked) return;
+                    this.playBgmFolder(this.nextRotationFolder(folder));
+                },
+                { once: true },
+            );
             this.bgmAudio = audio;
             void audio.play().catch((error) => {
                 this.warnMissingOnce('bgm_main', error);
             });
         });
+    }
+
+    /** 洗牌袋取下一首文化 BGM folder；避免与刚放完的紧挨重复 */
+    private nextRotationFolder(exclude: string): string {
+        if (this.bgmShuffleQueue.length === 0) {
+            this.bgmShuffleQueue = this.shuffledRegionFolders();
+        }
+        let next = this.bgmShuffleQueue.shift()!;
+        if (next === exclude && this.bgmShuffleQueue.length > 0) {
+            this.bgmShuffleQueue.push(next);
+            next = this.bgmShuffleQueue.shift()!;
+        }
+        return next;
+    }
+
+    /** Fisher–Yates 洗牌 14 文化区 folder */
+    private shuffledRegionFolders(): string[] {
+        const arr = [...BGM_ROTATION_FOLDERS];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
     }
 
     private reapplyFollowedLegionAudio(): void {

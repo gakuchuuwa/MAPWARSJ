@@ -11,11 +11,13 @@ import {
     getTacticalSkillDef,
     EXPEDITION_FORAGE_SKILL,
     PASS_GARRISON_DEFENSE_SKILL,
+    REGION_CENTER_DEFENSE_SKILL,
     REINFORCEMENT_JOIN_SKILL,
     type StrategicEffect,
     type TacticalSkillDef,
 } from '../data/GeneralSkills';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { isRegionCenter } from '../systems/RegionSystem';
 import {
     buildTacticalConditionContext,
     resolveGeneralTacticalEntry,
@@ -629,6 +631,23 @@ export function getPassGarrisonDefenseSkillDisplay(
     const mult = GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT;
     return {
         name: PASS_GARRISON_DEFENSE_SKILL.displayName,
+        effectLabel: `城防×${parseFloat(mult.toFixed(2))}`,
+    };
+}
+
+export function unitQualifiesForRegionCenterDefenseSkill(unit: IBattleUnit): boolean {
+    if (unit.unitType !== 'city') return false;
+    const city = unit.getEntity?.() as { id?: string } | undefined;
+    return !!city?.id && isRegionCenter(city.id);
+}
+
+export function getRegionCenterDefenseSkillDisplay(
+    unit: IBattleUnit,
+): { name: string; effectLabel: string } | null {
+    if (!unitQualifiesForRegionCenterDefenseSkill(unit)) return null;
+    const mult = GameConfig.CULTURE_COMBAT.REGION_CENTER_GARRISON_MULT;
+    return {
+        name: REGION_CENTER_DEFENSE_SKILL.displayName,
         effectLabel: `城防×${parseFloat(mult.toFixed(2))}`,
     };
 }

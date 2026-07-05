@@ -168,7 +168,9 @@ export const FACTIONS: Faction[] = [
 
     { id: 'manzhou_d', name: '大清' },
 
+
     { id: 'ming_d', name: '大明' },
+
     { id: 'liao_d', name: '大辽' },
     { id: 'dangzhou', name: '氐族' },
 
@@ -580,8 +582,10 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 新增：大金、大元 ──
     { id: 'dajin', name: '大金' },
+
     { id: 'yizhou', name: '懿州' },
     { id: 'yuan_d', name: '大元' },
+
 
     // ── 2026-05-26 新增：肃慎系势力（挹娄、勿吉、靺鞨）──
     { id: 'yilou', name: '挹娄' },
@@ -630,6 +634,7 @@ export const FACTIONS: Faction[] = [
     { id: 'gaoche', name: '高车' },
                // 驼褐 - 高车(敕勒/丁零/浚稽山)
     { id: 'da_yuan', name: '北元' },
+
 
     // ── 2026-05-26 新增：漠北草原部落/氏族势力 ──
     // 贝加尔湖绿 - 丁零(贝加尔湖以南/高车前身)
@@ -928,6 +933,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'kang', name: '夏州' },
     { id: 'wudu', name: '阶州' },
+
 
     { id: 'woye', name: '沃野' },
     { id: 'shuofang', name: '朔方' },

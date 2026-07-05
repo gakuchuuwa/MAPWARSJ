@@ -909,7 +909,7 @@ export class GlobalUnitRenderer {
                 ctx,
                 { x: centerPoint.x, y: centerPoint.y },
                 directionIndex,
-                scale,
+                useNavalVisual ? scale * 0.85 : scale,
                 Date.now(),
                 unit.factionId || 'panjun',
                 currentYear // [NEW] Pass year
@@ -939,7 +939,8 @@ export class GlobalUnitRenderer {
         }
 
         // [MATCH CITY STYLE] Position label BELOW the unit
-        let currentY = center.y + 45 * scale;
+        const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
+        let currentY = center.y + (useNavalVisual ? 75 : 45) * scale;
 
         ctx.textAlign = 'center'; 
         ctx.textBaseline = 'top';
