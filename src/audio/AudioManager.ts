@@ -42,10 +42,10 @@ const DEFAULT_SETTINGS: AudioSettings = {
     masterVolume: 0.5,
     // 三层基准统一（播报/音效/音乐感知齐平），优先级靠 ducking 实现，不靠调高某层
     categoryVolume: {
-        ui: 0.55,
-        battle: 0.55,
-        feed: 0.55,
-        bgm: 0.55,
+        ui: 1.0,
+        battle: 1.0,
+        feed: 1.0,
+        bgm: 1.0,
     },
 };
 
@@ -82,7 +82,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     expedition: sound('feed', 'expedition', 0.75, 1400),
     pass_siege: sound('feed', 'pass_siege', 0.45, 4000),
     general_skill: sound('battle', 'general_skill', 0.45, 1800),
-    bgm_main: { category: 'bgm', sources: ['/assets/CENTRAL/CENTRAL_bgm.aud'], volume: 0.32, cooldownMs: 0 },
+    bgm_main: { category: 'bgm', sources: ['/assets/CENTRAL/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 
 function sound(

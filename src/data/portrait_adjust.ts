@@ -1978,9 +1978,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/STEPPE/da_yuan_kuokuotiemuer.png": {
-            "scale": 1.22,
-            "offsetX": 0,
-            "offsetY": -1
+            "scale": 1.17,
+            "offsetX": 1,
+            "offsetY": -5
         },
         "/assets/HEXI/yingli_jilasiyi.png": {
             "scale": 1.1,
@@ -2992,11 +2992,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/TIBET/xianlingqiang_dianling.png": {
-            "scale": 1.2,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/STEPPE/baidi_baidizi.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -3376,11 +3371,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -25
-        },
-        "/assets/STEPPE/yel_yelvxiuge.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 0
         },
         "/assets/STEPPE/yuan_d_hubilie.png": {
             "scale": 1.13,
@@ -4811,6 +4801,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": -9
+        },
+        "/assets/STEPPE/__闲置__STEPPE_20.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/STEPPE/yel_yelxiuge.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/STEPPE/yel_yelvxiuge.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/TIBET/dafeichuan_nuohebo.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 34
+        },
+        "/assets/TIBET/__闲置__TIBET_08.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/TIBET/xianlingqiang_dianling.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {

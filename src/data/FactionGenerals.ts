@@ -177,7 +177,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jiluo_d: { generalId: 'jiluo_d_douxian', generalName: '窦宪', portrait: '/assets/STEPPE/jiluo_d_douxian.png' },
 // ── 草原区 2026-06-18 ──
     liao_d: { generalId: 'liao_d_yelvabaoji', generalName: '耶律阿保机', portrait: '/assets/STEPPE/liao_d_yelvabaoji.png' },
-    yel: { generalId: 'yel_yelvxiuge', generalName: '耶律休哥', portrait: '/assets/STEPPE/yel_yelvxiuge.png' },
+    yel: { generalId: 'yel_yelvxiuge', generalName: '耶律休哥', portrait: '/assets/STEPPE/yel_yelxiuge.png' },
     kumoxi: { generalId: 'kumoxi_ahuihui', generalName: '阿会毁', portrait: '/assets/STEPPE/kumoxi_ahuihui.png' },
     kumo: { generalId: 'kumo_xiwanghuilibao', generalName: '回离保', portrait: '/assets/STEPPE/kumo_xiwanghuilibao.png' },
     geluolu: { generalId: 'geluolu_chisipijia', generalName: '炽俟毗伽', portrait: '/assets/STEPPE/geluolu_chisipijia.png' },
