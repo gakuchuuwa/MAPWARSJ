@@ -14,13 +14,13 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   dayue: { name: '白藤江水师', tier: 0 },           // 昇龙·陈国峻白藤江伏击灭元（区T0锚点·奇袭以少胜多）
   jing: { name: '丁朝禁卫', tier: 4 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
   leloi: { name: '蓝山义军', tier: 1 },        // 蓝山·黎利抗明复国主力
-    nguyen_guangnan: { name: '富春禁兵', tier: 4 },   // 常规番号，降T3
+    nguyen_guangnan: { name: '富春禁卫', tier: 3 },
   // guangnanguo → 洞海城归 panjun
   ryukyu: { name: '那霸水师', tier: 3 },       // 琉球王国武装代表，东亚海上贸易网络重要文化符号，升入T3知名
   guangzhou: { name: '清海军', tier: 4 },      // 番禺·刘隐清海军节度（《旧唐书·刘隐传》）（缺乏极其著名的战术高光，降T3）
   // §10 #1 战象部队（泛称）→ 不收
   // §10 #5 满者伯夷水师、#7 占婆水师（champa 已挂滇缅）、#10 红旗帮 → 无合格势力/他区已占
-  zhancheng: { name: '占城象兵', tier: 3 },   // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
+    zhancheng: { name: '占城象兵', tier: 4 },
   jingjiang: { name: '靖江府卫', tier: 4 },   // 永安·瞿式耜大破李成栋（缺乏极其著名的战术高光，降T3）
   xinjiang: { name: '静江弩手', tier: 4 },      // 始安·马塈静江弩手（南宋）（缺乏极其著名的战术高光，降T3）
   // 铲平军除名（非正式官军番号）
@@ -46,7 +46,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   chaozhou_d: { name: '潮州义勇', tier: 4 },       // 海阳·马发（常规番号，降T3）
   basha_d: { name: '湄公象卫', tier: 4 },     // 上丁·刀更孟象兵（缺乏极其著名的战术高光，降T3）
   dengmaoqi: { name: '铲平义军', tier: 4 },
-  shixing: { name: '岭南劲卒', tier: 4 },             // 缺乏知名度支撑，降T3
+    shixing: { name: '大庾岭突锋', tier: 3 },
   yingzhou: { name: '南汉禁兵', tier: 4 },            // 常规番号，降T3
     daozhou: { name: '道州弩手', tier: 4 },
   guangping: { name: '象兵水师', tier: 4 },     // 洞海城·阮文张象兵舟船协同（常规番号，降T3）
@@ -54,7 +54,7 @@ shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军�
   chendiaoyan: { name: '畲汉义军', tier: 4 },   // 龙溪·陈吊眼攻破漳州（常规番号，降T3）
   buyi_d: { name: '盘江布依兵', tier: 4 },       // 罗博·韦朝元布依起义（缺乏极其著名的战术高光，降T3）
   paiwan: { name: '牡丹社勇士', tier: 3 },      // 牡丹社事件中的原住民武装，属于地方抗击，缺乏正规的战术大捷，属于风土特色，降为T3知名。
-  miao_qing: { name: '黑旗苗獠', tier: 4 },   // 且兰城·地方苗军特色武装（曾破红巾军）（缺乏极其著名的战术高光，降T3）
+    miao_qing: { name: '黑旗苗獠', tier: 3 },
   geng: { name: '靖南藩兵', tier: 4 },         // 延平·耿精忠三藩起兵（缺乏极其著名的战术高光，降T3）
   tian_sizhou: { name: '思州土兵', tier: 4 },    // 镇远·田祐恭归宋封国公（常规番号，降T3）
   liren: { name: '儋耳黎兵', tier: 3 },         // 海南岛黎族武装代表，极具风土民族辨识度，升入T3知名
@@ -62,7 +62,7 @@ shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军�
   longwu: { name: '建宁义旅', tier: 4 },       // 建宁·黄道周募兵抗清（常规番号，降T3）
   luoping: { name: '摧锋军', tier: 2 },       // 南宋最精锐水陆两栖部队（李宝唐岛之战主力），维持半壁江山的战术尖刀，升入T2战术
   xinggu: { name: '爨氏部曲', tier: 3 },       // 统治云南数百年爨氏家族的文化象征，西南历史丰碑，升入T3知名
-  nong2: { name: '广源峒兵', tier: 4 },           // 广源·侬智高广源起兵建南天国（缺乏极其著名的战术高光，降T3）
+    nong2: { name: '侬峒狼兵', tier: 3 },
   cen_d: { name: '泗城狼兵', tier: 3 },          // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名
   miao: { name: '水西苗兵', tier: 4 },           // 可乐城·水西土司苗兵（缺乏极其著名的战术高光，降T3）
     jiang_s: { name: '零陵蒙冲', tier: 3 },

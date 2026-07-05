@@ -18,7 +18,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   champa: { name: '占婆国水师', tier: 3 },             // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   chenla: { name: '吴哥战象', tier: 1 },     // 吴哥·缔造高棉帝国中南半岛霸权的战略主力
   luchuan: { name: '麓川夷象', tier: 3 }, // 明朝三征麓川时思氏仰仗的核心象阵，极具历史话题度和风土特色，升入T3知名
-    dianguo: { name: '滇池青铜甲', tier: 4 },
+    dianguo: { name: '青铜殳', tier: 3 },
   mu_lijiang: { name: '丽江土兵', tier: 3 },   // 丽江木氏土司武装（木家军），明代西南极具历史知名度的土兵精锐，升入T3知名
   mingzheng: { name: '明正土兵', tier: 4 },           // 打箭炉·坚赞德昌从征金川   // 打箭炉·明正土司兵（常规番号，降T3）
 
@@ -27,9 +27,9 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   cuanshi: { name: '爨族部兵', tier: 3 },      // 统治云南四百年的爨氏文化象征，西南历史的丰碑，升入T3知名
     suke: { name: '素可泰兵', tier: 3 },
   ailao: { name: '哀牢山营', tier: 4 },       // 永昌·类牢反叛连破数城（缺乏极其著名的战术高光，降T3）
-  nanzhong: { name: '南中劲卒', tier: 4 },     // 宛温·马忠善射夷汉部曲（缺乏极其著名的战术高光，降T3）
-  yueyi: { name: '旌牛锐士', tier: 4 },         // 越嶲·地方平叛王牌突击队（缺乏极其著名的战术高光，降T3）
-  pingnan: { name: '平南镇营', tier: 4 },       // 腾越城·沐晟征讨麓川（缺乏极其著名的战术高光，降T3）
+    nanzhong: { name: '兴古戍锋', tier: 3 },
+    yueyi: { name: '牦牛戍锋', tier: 3 },
+    pingnan: { name: '平南镇营', tier: 3 },
   jingdong: { name: '景东象卫', tier: 4 },     // 银生城·陶洪屡退麓川（缺乏极其著名的战术高光，降T3）
   luohu: { name: '罗斛步卒', tier: 4 },        // 呵叻城·敢木丁驻守
   kunming_yi: { name: '会川藤甲兵', tier: 3 },   // 会川·极具西南夷特色的战术兵种
@@ -39,7 +39,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   qiong: { name: '邛谷锐骑', tier: 4 },        // 邛都·任贵自立邛谷王（缺乏极其著名的战术高光，降T3）
   ava: { name: '掸族象卫', tier: 4 },
     mon: { name: '孟族战象', tier: 4 },
-    dian: { name: '通海城兵', tier: 4 },              // 缺乏知名度支撑，降T3
+    dian: { name: '秀山白义从', tier: 3 },
     ahaomu: { name: '阿豪姆舟师', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     wazu: { name: '阿佤猎兵', tier: 3 },              // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
     jingpozu: { name: '景颇长刀兵', tier: 3 },         // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名

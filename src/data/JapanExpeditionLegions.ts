@@ -41,7 +41,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   kaga_d: { name: '一向宗门徒', tier: 3 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）
   date_d: { name: '伊达铁骑', tier: 3 },     // 缺乏重大战略级野战大捷，实为地方特色铁骑，降回T2
   higo_d: { name: '菊池党', tier: 3 },       // 九州豪强武士代名词，文化知名度高，但非战略主力，降为T3知名。
-  iyo_d: { name: '河野水军', tier: 4 },     // 松山·河野氏（伊予水军）（常规番号，降T3）
+    iyo_d: { name: '伊予滩水军', tier: 4 },
   otomo_d: { name: '大友水军', tier: 3 },   // 无极高战术高光（逊于村上水军），属于常规地方水军，降回T3
   suwa_d: { name: '诹访神党', tier: 3 },     // 信浓国诹访大社的信仰武士集团，极具宗教与地域特色，升入T3知名
   jibei2: { name: '备中众', tier: 4 },         // 鬼之城·宇喜多氏

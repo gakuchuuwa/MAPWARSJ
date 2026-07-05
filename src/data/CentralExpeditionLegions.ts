@@ -33,7 +33,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     xiayang_d: { name: '西河突骑', tier: 3 },
   baibo: { name: '白波黄巾', tier: 3 },     // 东汉末年最著名的黄巾军余部，护驾汉献帝东归，历史知名度极高，升入T3知名
   dashun: { name: '老营军', tier: 1 },      // 子午谷·李自成老营精锐
-  tianxiong: { name: '魏博牙兵', tier: 1 },  // 大名·田承嗣魏博牙兵
+    tianxiong: { name: '魏博牙兵', tier: 2 },
   dixiang: { name: '猪突豨勇', tier: 3 },   // 王莽新朝特种部队，极度奇葩、辨识度极高的历史番号，升入T3知名
   // 朱龙骑除名（无此番号）
     liguo: { name: '阏与突骑', tier: 2 },
@@ -82,12 +82,12 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     bozhou_d: { name: '青州兵', tier: 2 },
   mengcheng_d: { name: '山桑弓手', tier: 4 },
   shangzhou: { name: '商州锐士', tier: 4 },
-  bailian: { name: '白莲教众', tier: 3 },             // 跨越数百年的民间宗教武装，极度典型的叛军文化符号，升入T3知名
+    bailian: { name: '白莲教众', tier: 4 },
     xinping: { name: '朔方健儿', tier: 3 },
   huai: { name: '淮西子弟', tier: 3 },                // 朱元璋开国初期的核心将帅班底，极具政治与军事符号意义，升入T3知名
   dang_d: { name: '厅子都', tier: 2 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
-    xiao_d: { name: '兰陵健儿', tier: 4 },
+    xiao_d: { name: '兰陵健儿', tier: 3 },
   zhengzhou: { name: '白袍军', tier: 2 },        // 仅存在于北伐战役，随后覆灭，极度缺乏建制延续性，属于特定战役的巅峰高光，符合T2战术
     song: { name: '殿前捧日', tier: 1 },
     zhao: { name: '丛台绝剑', tier: 2 },

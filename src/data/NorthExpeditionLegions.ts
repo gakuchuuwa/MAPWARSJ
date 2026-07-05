@@ -35,7 +35,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dingxiang_d: { name: '定襄骁骑', tier: 0 }, // 恶阳岭·贞观四年李靖三千骁骑出恶阳岭夜袭定襄（神级进攻大捷，升T0）
   zhongshan: { name: '常山龙骑', tier: 4 }, // 真定·常山特色骑兵（致敬常山赵子龙）（缺乏极其著名的战术高光，降T3）
   wuhuan: { name: '乌桓突骑', tier: 2 },    // 白狼山·§1 #84 曹操收编名骑
-  helian: { name: '铁弗卫队', tier: 4 },     // 统万城·赫连勃勃铁弗亲卫（常规番号，降T3）
     bing: { name: '并州狼骑', tier: 2 },
     you: { name: '上谷突骑', tier: 1 },
   yi: { name: '易州戍兵', tier: 2 },           // 于谦北京保卫战临危受命，绝境逆转，升T2
@@ -68,7 +67,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   pinghai: { name: '征东舟师', tier: 2 },     // 来护儿征东水师，隋征高句丽核心，显著文化知名度，升T2
   liangshidu: { name: '雕阴戍卒', tier: 2 }, // 龙贾戍卒抗秦，战国经典防御战，升T2
   yangshe: { name: '铜鞮私卒', tier: 4 }, // 铜鞮·羊舌职封邑（缺乏极其著名的战术高光，降T3）
-  guzhu: { name: '辽西郡兵', tier: 4 },    // 肥如·田豫辽西镇北疆（常规番号，降T3）
+    guzhu: { name: '辽西威锋', tier: 3 },
     dizhou: { name: '龙骧军', tier: 2 },
   wuyuan_d: { name: '五原塞卒', tier: 4 },  // 固阳塞·五原郡长城戍卒,
     cangzhou: { name: '定霸都', tier: 4 },           // 缺乏知名度支撑，降T3,

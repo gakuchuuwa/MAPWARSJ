@@ -1,7 +1,7 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
-import { generalHasStrategicEffect } from '../combat/GeneralSkillCombat';
+import { generalHasStrategicEffect, getGeneralStrategicMagnitude } from '../combat/GeneralSkillCombat';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
@@ -592,13 +592,27 @@ export class LegionManager {
         const ignoreSmallCityZoc = army
             ? generalHasStrategicEffect(army, 'ignore_small_city_zoc')
             : false;
+        // 长驱深入(str_11)：无视 small_city ZOC 的概率 = 该技 magnitude（默认 0.5 = 50%）。
+        // 仅 small_city 适用；big_city / medium_city / pass 一律拦截，永不绕过。
+        const smallCityBypassChance = ignoreSmallCityZoc && army
+            ? getGeneralStrategicMagnitude(army, 'ignore_small_city_zoc', 0.5)
+            : 0;
         const zoc = GameConfig.SIEGE.COMBAT_RADIUS;
         let nearest: City | null = null;
         let minDist = Infinity;
 
         for (const city of this.cityManager.getCities()) {
             if (!city.factionId || city.factionId === factionId) continue;
-            if (ignoreSmallCityZoc && city.type === 'small_city') continue;
+            // 长驱深入：仅 small_city 可被绕过，按 (军团id+据点id) 稳定掷点（同一军团对同一小城结果固定，
+            // 不逐帧闪烁），命中概率 = magnitude。big_city / medium_city / pass 不进此分支，恒拦截。
+            if (
+                city.type === 'small_city' &&
+                smallCityBypassChance > 0 &&
+                army &&
+                this.rollSmallCityZocBypass(army.id, city.id, smallCityBypassChance)
+            ) {
+                continue;
+            }
             const dist = getEuclideanDistance(pos, {
                 lat: city.latitude,
                 lng: city.longitude,
@@ -609,6 +623,23 @@ export class LegionManager {
             }
         }
         return nearest;
+    }
+
+    /**
+     * 长驱深入：判定某军团是否绕过某小城的 ZOC。
+     * 用 (armyId + cityId) 做 FNV-1a 稳定哈希 → [0,1)，与 chance 比较。
+     * 同一军团对同一小城结果恒定（不逐帧随机 → 不会「这帧过、下帧被拦」），整体命中率≈chance。
+     */
+    private rollSmallCityZocBypass(armyId: string, cityId: string, chance: number): boolean {
+        if (chance <= 0) return false;
+        if (chance >= 1) return true;
+        const key = `${armyId}:${cityId}`;
+        let h = 2166136261; // FNV offset basis
+        for (let i = 0; i < key.length; i++) {
+            h ^= key.charCodeAt(i);
+            h = Math.imul(h, 16777619); // FNV prime
+        }
+        return (h >>> 0) / 4294967296 < chance;
     }
 
     public getCityManager(): CityManager {

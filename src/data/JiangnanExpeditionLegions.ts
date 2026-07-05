@@ -44,7 +44,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     xushouhui: { name: '双刀水师', tier: 4 },         // 常规番号，降T3
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）
   changshaguo: { name: '飞虎军', tier: 2 },      // 辛弃疾亲创精锐，以极高战术机动性闻名，屡次深入敌后进行战术袭扰，升入T2战术
-  hongzhou: { name: '洪都戍卒', tier: 4 },    // 豫章·朱文正洪都保卫战（防御战术铁壁）（常规番号，降T3）
+    hongzhou: { name: '洪都火卫', tier: 3 },
   huangwang: { name: '冲天军', tier: 2 },       // 黄巢大齐政权极为短命，缺乏长久建制延续性，属于灭国级的短期战役高光，降入T2战术
   yue: { name: '越君子军', tier: 2 },        // 越王勾践麾下仅数千人的敢死先锋突击队，极端战术奇兵，下调至T2战术
   zhangshicheng: { name: '盐丁锐旅', tier: 3 }, // 江南造反武装中极度核心且能打的群体（如黄巢、张士诚），升入T3知名
@@ -55,18 +55,18 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   wenzhou: { name: '永嘉水师', tier: 4 },    // 永嘉·张璁整顿海防抗倭（常规番号，降T3）
   hu_d: { name: '浙东义兵', tier: 4 },          // 白峤·胡三省浙东抗元义兵
   wan: { name: '野人原义兵', tier: 4 },            // 皖口·刘源（缺乏极其著名的战术高光，降T3）
-  ying: { name: '郢州水军', tier: 4 },           // 郊郢·曹景宗梁郢州据城退魏（《梁书·曹景宗传》）（常规番号，降T3）
-  kejia: { name: '客家义军', tier: 3 },          // 具有极强东南丘陵风土特色与民系凝聚力的武装力量，升入T3知名
+    ying: { name: '汉沔水锋', tier: 3 },
+    kejia: { name: '黄连峒兵', tier: 4 },
   tingzhou_d: { name: '破敌军', tier: 2 },          // 瑞金·陈敏破敌军T2
   fu2: { name: '临川郡兵', tier: 4 },            // 临川·周迪陈朝据守（常规番号，降T3）
   ouyang: { name: '庐陵蛮兵', tier: 4 },         // 庐陵·欧阳頠世居统蛮兵（《梁书》）（缺乏极其著名的战术高光，降T3）
   chu_d: { name: '庐江义旅', tier: 4 },       // 潜山·陆康庐江守城
-  shenshi: { name: '吴兴部曲', tier: 4 },       // 独松关·吴兴沈氏部曲（缺乏极其著名的战术高光，降T3）
+    shenshi: { name: '勤王义军', tier: 4 },
   wuwu_d: { name: '楼船军', tier: 1 },        // 濡须口·王濬楼船灭吴（《晋书》）
   taizhou: { name: '海陵镇兵', tier: 4 },       // 海陵·李昪发迹之地（常规番号，降T3）
   xie_cj_d: { name: '信州弩士', tier: 4 },      // 葛溪·谢枋得信州抗元（缺乏极其著名的战术高光，降T3）
     liu: { name: '九江裂阵', tier: 3 },
-  chunshen: { name: '春申门客', tier: 3 },  // 上海·战国春申君黄歇的精锐私兵
+    chunshen: { name: '春申门客', tier: 4 },
   wang_d: { name: '琅琊部曲', tier: 3 },  // 魏晋门阀士族私兵的典型代表，极具时代与阶级辨识度，升入T3知名
   jiaodong: { name: '即墨火牛阵', tier: 2 },  // 即墨·田单火牛阵大破燕军（一次性战术奇谋）
   guo: { name: '果州戍兵', tier: 4 },  // 南充·唐果州戍兵

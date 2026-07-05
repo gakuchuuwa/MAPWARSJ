@@ -24,7 +24,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
   gaoche: { name: '高车战车', tier: 3 },       // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   rouran: { name: '柔然铁骑', tier: 1 },       // 花木兰抗击的庞大游牧汗国，突厥崛起前漠北霸主，升入T1战略
-  xueyantuo: { name: '燕然铁骑', tier: 4 },    // 燕然勒石·窦宪破北匈奴刻石（缺乏极其著名的战术高光，降T3）
+    xueyantuo: { name: '薛延陀鹰师', tier: 3 },
   naiman: { name: '乃蛮重骑', tier: 4 },       // 福海·乃蛮重装骑兵（§6 #19）（缺乏极其著名的战术高光，降T3）
   ongut: { name: '汪古骑', tier: 4 },        // 净州塞·汪古部阿剌兀思
   wala: { name: '瓦剌铁骑', tier: 1 },         // 土木堡之变生擒明英宗的元凶，与鞑靼并列的大明两百年草原死敌，升入T1战略
@@ -34,7 +34,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   kumo: { name: '楮特奥隗部', tier: 4 },     // 马盂山·奚族楮特奥隗部
   // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
     kelie: { name: '札合骁骑', tier: 4 },
-  kereyid: { name: '克烈护卫军', tier: 4 },     // 汪吉河·王汗克烈部（缺乏极其著名的战术高光，降T3）
+    kereyid: { name: '克烈护卫军', tier: 4 },
   dingling: { name: '丁零游骑', tier: 4 }, // 贝加尔·丁零王（缺乏极其著名的战术高光，降T3）
   xiajiasi: { name: '黠戛斯锐卒', tier: 1 }, // 彻底摧毁回鹘汗国的“终结者”，改变漠北与西域历史格局的战略力量，升入T1战略
   donghu: { name: '东胡骑', tier: 4 },    // 巴彦乌拉·东胡王（缺乏极其著名的战术高光，降T3）
@@ -45,23 +45,23 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     chahar: { name: '哈剌赤军', tier: 2 },
     yuwen: { name: '武川镇军', tier: 0 },
   da_yuan: { name: '北元怯薛', tier: 1 },             // 元朝退回草原后维持北元政权的战略武力核心，符合T1战略主力
-  huyan: { name: '呼衍精骑', tier: 4 },
+    huyan: { name: '呼衍精骑', tier: 4 },
     yujiulu: { name: '柔然汗骑', tier: 4 },
     jalair: { name: '札剌亦儿军', tier: 3 },
   hongirad: { name: '弘吉剌护卫', tier: 4 },           // 常规番号，降T3
-    choros: { name: '萨吾尔骁骑', tier: 4 },
+    choros: { name: '萨吾尔鹘骑', tier: 3 },
   duolu: { name: '咄陆部铁骑', tier: 4 },              // 缺乏知名度支撑，降T3
   kaerka: { name: '喀尔喀重骑', tier: 4 },
   buriat: { name: '林中射手', tier: 4 },
     cheshihou: { name: '车师后王卫', tier: 4 },
   // ── 2026-06-19 有将无番号补全 ──
   kiyad: { name: '乞颜宿卫', tier: 3 },         // 不儿罕山·也速该乞颜部
-  mengwu: { name: '忙古勒骑', tier: 4 },        // 狼居胥·合不勒汗
+    mengwu: { name: '忙古勒骑', tier: 4 },
     zhadalan: { name: '十三翼', tier: 3 },
     oirat_ming: { name: '准噶尔驼城', tier: 3 },
   tumed: { name: '土默特精骑', tier: 1 },         // 俺答汗建立土默特汗国、逼迫明朝封贡的绝对战略主力，符合T1战略主力
   tushetu: { name: '库伦铁骑', tier: 4 },       // 库伦·土谢图汗
-  yaoluoge: { name: '药罗葛骑', tier: 4 },      // 娑陵·药罗葛部
+    yaoluoge: { name: '娑陵鹰骑', tier: 4 },
     huihu: { name: '回鹘骑兵', tier: 3 },
   ashide: { name: '阿史德骑', tier: 4 },        // 黑沙城·阿史德氏
     pugu: { name: '燕然黑砂', tier: 2 },
@@ -70,7 +70,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   zhuerqi: { name: '斡难河骑', tier: 4 },       // 斡难河·撒察别乞
   tumengken: { name: '赛音诺颜骑', tier: 4 },  // 拜达里克·图蒙肯抗卫拉特（缺乏极其著名的战术高光，降T3）
   bayegu: { name: '拔野古轻骑', tier: 4 },       // 稽落山·屈利失助唐灭薛延陀（缺乏极其著名的战术高光，降T3）
-  zubu: { name: '阻卜轻骑', tier: 4 },           // 特尔浑·磨古斯叛辽（缺乏极其著名的战术高光，降T3）
+    zubu: { name: '特尔浑游骑', tier: 4 },
   wuzhumuqin: { name: '赛堪轻骑', tier: 4 },    // 乌珠穆沁·多尔济随征噶尔丹（缺乏极其著名的战术高光，降T3）
     xingan: { name: '索伦营', tier: 2 },             // 索伦鄂温克达斡尔精锐，清朝极具特色的边疆建制，升T2
   baidi: { name: '白狄徒兵', tier: 3 },          // 春秋白狄徒兵，北方游牧中步兵独树一帜，兵种特色鲜明，升T2

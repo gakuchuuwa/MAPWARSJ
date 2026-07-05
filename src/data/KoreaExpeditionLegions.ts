@@ -21,12 +21,12 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
     goryeo: { name: '鹰扬军', tier: 3 },
   luzhou: { name: '鸭绿水师', tier: 4 },       // 鸭绿府·渌州水师（§4 #）（常规番号，降T3）
   sambyeol: { name: '龟甲板屋船', tier: 0 },     // 鸣梁·李舜臣12破330（区T0锚点）
-  hai2: { name: '海州石弓', tier: 4 },       // 瀑池/海州·崔莹
+    hai2: { name: '瀑池弩手', tier: 3 },
   joseon: { name: '义兴亲军卫', tier: 1 },       // 汉城·李成桂义兴亲军卫（§4 #9）
   sheng_d: { name: '全罗水军', tier: 2 },   // 鸣梁海战以十三船击退百艘日军，打出不可思议的战术大捷实绩，符合T2战术
   chen3: { name: '马韩部族', tier: 4 },         // 欢州·辰王马韩
   danluo: { name: '三别抄', tier: 2 },        // 星主厅·高丽武人抗蒙（最终战败，T2）
-    zhen: { name: '武珍锐卒', tier: 4 },
+    zhen: { name: '完山虎贲', tier: 3 },
   woju: { name: '别武班', tier: 2 },            // 咸兴·尹瓘别武班（征女真九城即退还，T2）
   ssangseong: { name: '和宁戍骑', tier: 4 }, // 铁岭关·李子春（缺乏极其著名的战术高光，降T3）
   hui: { name: '濊族步卒', tier: 4 },          // 何瑟罗·不耐侯（缺乏极其著名的战术高光，降T3）
@@ -35,6 +35,6 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
     naju_d: { name: '罗州精兵', tier: 4 },
     sabeol: { name: '沙伐义兵', tier: 3 },
   xingliao: { name: '龙湾戍军', tier: 4 },      // 龙湾·兴辽边防
-  jingcheng_d: { name: '镜城边军', tier: 4 },     // 笼耳·镜城兵马使
+    jingcheng_d: { name: '镜城突骑', tier: 3 },
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
 };

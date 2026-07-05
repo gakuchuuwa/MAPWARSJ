@@ -602,6 +602,17 @@ export function getGeneralMarchSpeedMultiplier(unit: IBattleUnit): number {
     return skill.magnitude;
 }
 
+/** 取名将战略技指定效果的 magnitude（无匹配则返回 fallback）。用于数据驱动概率/乘数，如 str_11 长驱深入 magnitude=0.5 即无视小城 ZOC 的概率。 */
+export function getGeneralStrategicMagnitude(
+    unit: IBattleUnit,
+    effect: StrategicEffect,
+    fallback = 1,
+): number {
+    const skill = getGeneralStrategicSkillDef(unit);
+    if (!skill || skill.effect !== effect) return fallback;
+    return skill.magnitude;
+}
+
 export function unitQualifiesForPassGarrisonDefenseSkill(unit: IBattleUnit): boolean {
     if (unit.unitType !== 'city') return false;
     const city = unit.getEntity?.() as { type?: string } | undefined;

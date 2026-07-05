@@ -8,7 +8,7 @@
  * - 依据 史料/古代精锐部队.md §3 #1–6、#8–9、#13、#25–27；§1 #85–86 交叉收录
  */
 export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-  jilizhou: { name: '卑沙山城卫', tier: 4 },   // 卑沙城·程名振
+    jilizhou: { name: '卑沙山城卫', tier: 4 },
   nuergan: { name: '奴儿干卫军', tier: 3 }, // 大明王朝设立的奴儿干都司卫军，中国古代经略远东的极致地标与文化符号，升入T3知名
   huimo: { name: '濊貊长矛手', tier: 4 }, // 乌骨城·高延寿濊貊
   bohai: { name: '渤海猛贲', tier: 1 },       // 建立并维持“海东盛国”渤海国两百余年的核心主力，符合T1战略主力
@@ -28,7 +28,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   xianbei: { name: '鲜卑弓骑', tier: 4 },   // 嘎仙洞·鲜卑弓骑（番号≤5字）
   dongxia: { name: '东夏锐卒', tier: 4 },       // 曷苏馆·蒲鲜万奴东夏国
     haixi_nvzhen: { name: '海西甲骑', tier: 3 }, // 与建州死磕的“海西女真”主力，代表了满洲统一前长达百年的激烈内战，升入T3知名
-  houliao: { name: '东辽骑队', tier: 4 },       // 咸平·耶律留哥东辽（缺乏极其著名的战术高光，降T3）
+    houliao: { name: '咸平契骑', tier: 3 },
     suolun: { name: '索伦骑', tier: 3 },
   wula: { name: '乌拉国兵', tier: 4 },          // 龙潭山城·布占泰乌拉贝勒
   wure: { name: '兀惹部卒', tier: 4 },          // 乌舍城·乌昭度兀惹部
@@ -46,7 +46,7 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
     maomingan: { name: '额尔古纳骑', tier: 4 },
   jilimi: { name: '吉里迷水师', tier: 4 },        // 囊哈儿·奴儿干吉里迷
   eluoke: { name: '鄂罗克猎兵', tier: 4 },        // 诺托罗·库页岛北部
-  nifuhe: { name: '尼夫赫冰兵', tier: 3 },      // 远东极寒冰原上的特种战斗形态，风土属性极其独特，升入T3知名
+    nifuhe: { name: '尼夫赫冰兵', tier: 4 },
   feiyaka: { name: '费雅喀猎手', tier: 4 },       // 普禄·库页岛西岸
   nanai: { name: '赫哲快桨船', tier: 3 },         // 著名的“鱼皮部落”赫哲族，极具民族特色，升入T3知名
   dongping: { name: '东平镇营', tier: 4 },        // 锡尔喀·金代东平府,
