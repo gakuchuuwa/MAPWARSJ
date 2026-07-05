@@ -15,12 +15,14 @@ import { LegionType } from '../types/UnitTypes';
 import { GameConfig, SPRITE_PATHS } from '../config/GameConfig';
 import { FACTIONS } from '../data/factions';
 import { gameLog } from '../utils/GameLogger';
+import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG } from '../data/GeneralSkills';
 
 export interface IRenderable {
     getPosition(): { lat: number; lng: number };
     getTroops(): number;
     isDestroyed: boolean;
     name?: string;
+    generalId?: string;
 }
 
 export interface IAnimatedUnit extends IRenderable {
@@ -925,43 +927,64 @@ export class GlobalUnitRenderer {
         if (!this.showLabels) return;
         if (!unit.name) return;
 
+        let skillName = '';
+        if (unit.generalId) {
+            const profile = GENERAL_PROFILES[unit.generalId];
+            if (profile?.strategicSkillId) {
+                const skill = STRATEGIC_SKILL_CATALOG[profile.strategicSkillId];
+                if (skill) {
+                    skillName = `[${skill.displayName}]`;
+                }
+            }
+        }
+
         // [MATCH CITY STYLE] Position label BELOW the unit
-        // Fixed offset + scale factor to avoid overlap
-        const y = center.y + 45 * scale;
+        let currentY = center.y + 45 * scale;
 
-        // Fixed Font Size (13px) to match City Labels
-        const fontSize = 13;
-
-        // Standard Text (No Portrait)
-        // Name (white with black outline)
-        ctx.font = `bold ${fontSize}px Arial`;
-        ctx.textAlign = 'center'; // Center align
+        ctx.textAlign = 'center'; 
         ctx.textBaseline = 'top';
 
-        // Draw black outline
+        // 1. Draw Unit Name
+        const nameFontSize = 13;
+        ctx.font = `bold ${nameFontSize}px Arial`;
+        
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
         ctx.lineJoin = 'round';
-        ctx.strokeText(unit.name, center.x, y);
+        ctx.strokeText(unit.name, center.x, currentY);
 
-        // Draw white text
         ctx.fillStyle = '#ffffff';
-        ctx.fillText(unit.name, center.x, y);
+        ctx.shadowBlur = 0; // Reset shadow
+        ctx.fillText(unit.name, center.x, currentY);
+        
+        currentY += nameFontSize + 4;
 
-        // Troops (Below Name)
-        // Gold like city
-        const troopsFontSize = 12; // Match City Troop Size
+        // 2. Draw Skill Name (if exists)
+        if (skillName) {
+            const skillFontSize = 12;
+            ctx.font = `bold ${skillFontSize}px Arial`;
+            
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 3;
+            ctx.strokeText(skillName, center.x, currentY);
+
+            ctx.fillStyle = '#FFAA00'; // Legendary Orange-Gold
+            ctx.fillText(skillName, center.x, currentY);
+            
+            currentY += skillFontSize + 4;
+        }
+
+        // 3. Draw Troops
+        const troopsFontSize = 12;
         const troopsText = `${Math.floor(unit.getTroops())}`;
         ctx.font = `bold ${troopsFontSize}px Arial`;
-
-        const troopsY = y + fontSize + 4; // Line gap
-
+        
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
-        ctx.strokeText(troopsText, center.x, troopsY);
+        ctx.strokeText(troopsText, center.x, currentY);
 
         ctx.fillStyle = '#ffd700'; // Gold
-        ctx.fillText(troopsText, center.x, troopsY);
+        ctx.fillText(troopsText, center.x, currentY);
     }
 
     public destroy(): void {

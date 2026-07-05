@@ -10,6 +10,7 @@
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { CITIES_V2 } from '../data/cities_v2';
+import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG } from '../data/GeneralSkills';
 
 export class CameraFollowUI {
     // DOM Elements
@@ -693,15 +694,26 @@ export class CameraFollowUI {
             if (targetCity) targetCityName = targetCity.name;
         }
 
+        let baseStr = label;
         if (targetCityName) {
             if (generalName) {
-                return `${generalName}率领${label}远征${targetCityName}`;
+                baseStr = `${generalName}率领${label}远征${targetCityName}`;
             } else {
-                return `${label}远征${targetCityName}`;
+                baseStr = `${label}远征${targetCityName}`;
             }
         }
         
-        return label;
+        if (army.generalId) {
+            const profile = GENERAL_PROFILES[army.generalId];
+            if (profile?.strategicSkillId) {
+                const skill = STRATEGIC_SKILL_CATALOG[profile.strategicSkillId];
+                if (skill) {
+                    return `${baseStr} | 🌟大战略：【${skill.displayName}】`;
+                }
+            }
+        }
+        
+        return baseStr;
     }
 
     private restoreFollowBannerName(): void {

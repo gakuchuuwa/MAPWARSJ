@@ -99,6 +99,10 @@ export class UnitRenderer implements IAnimatedUnit {
         return this.unit.name;
     }
 
+    public get generalId(): string | undefined {
+        return (this.unit as any).generalId;
+    }
+
     public get cultureSlots(): string[] | null {
         return (this.unit as any).cultureSlots || null;
     }

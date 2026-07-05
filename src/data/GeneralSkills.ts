@@ -19,7 +19,18 @@ export type TacticalEffect =
     | 'enemy_sub_troops'
     | 'ally_mult_1_2'
     | 'enemy_mult_0_8'
-    | 'ally_invincible';
+    | 'ally_invincible'
+    | 'ally_casualty_reduce'
+    | 'ally_luck_up'
+    | 'enemy_luck_down'
+    | 'ally_luck_lock'
+    | 'ally_recovery'
+    | 'lose_effect'
+    | 'ally_elite_casualty'
+    | 'enemy_counter'
+    | 'opening_counter'
+    | 'terrain_counter'
+    | 'ally_recompute';
 
 export type StrategicEffect =
     // ── v1 五系（2026-07-03 重设计：战略技 = 大地图效果）──
@@ -765,7 +776,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tuoba_tuobagui: { generalId: 'tuoba_tuobagui', tier: 'famous', tacticalSkillId: 'ts_222', strategicSkillId: 'str_11' },
     bing_liji: { generalId: 'bing_liji', tier: 'famous', tacticalSkillId: 'ts_208', strategicSkillId: 'str_14' }, // 晋阳坚守（百折不挠）
     unassigned_zhangrou: { generalId: 'unassigned_zhangrou', tier: 'ordinary', tacticalSkillId: 'ts_011' }, // 保定重建
-    qu_d_quyi: { generalId: 'qu_d_quyi', tier: 'famous', tacticalSkillId: 'ts_219', strategicSkillId: 'str_07' }, // 界桥先登破白马
+    qu_d_quyi: { generalId: 'qu_d_quyi', tier: 'famous', tacticalSkillId: 'ts_219', strategicSkillId: 'str_12' }, // 界桥先登破白马
     gaoqi_d_gaohuan: { generalId: 'gaoqi_d_gaohuan', tier: 'famous', tacticalSkillId: 'ts_211', strategicSkillId: 'str_15' }, // 神武帝
     pingyuan_yanzhenqing: { generalId: 'pingyuan_yanzhenqing', tier: 'ordinary', tacticalSkillId: 'ts_204' }, // 平原抗安史
     hejian_gongsunzan: { generalId: 'hejian_gongsunzan', tier: 'famous', tacticalSkillId: 'ts_213', strategicSkillId: 'str_01' }, // 白马义从
@@ -1271,10 +1282,31 @@ export function getGeneralProfile(generalId: string | undefined): GeneralProfile
 
 /** v1 baseEffect → 旧 effect 桥接（ts_xxx 武将挂载后引擎兼容） */
 const V1_EFFECT_BRIDGE: Record<string, { effect: TacticalEffect; timing: TacticalTiming }> = {
-    ally_power_mult:           { effect: 'ally_mult_1_2',  timing: 'opening' },
-    first_sortie_power_mult:   { effect: 'ally_mult_1_2',  timing: 'opening' },
-    enemy_sub_troops_opening:  { effect: 'enemy_sub_troops', timing: 'opening' },
-    ally_add_troops_comeback:  { effect: 'ally_add_troops', timing: 'comeback' },
+    ally_power_mult:            { effect: 'ally_mult_1_2',      timing: 'opening' },
+    first_sortie_power_mult:    { effect: 'ally_mult_1_2',      timing: 'opening' },
+    enemy_sub_troops_opening:   { effect: 'enemy_sub_troops',   timing: 'opening' },
+    ally_add_troops_comeback:   { effect: 'ally_add_troops',    timing: 'comeback' },
+    win_casualty_reduction:     { effect: 'ally_casualty_reduce', timing: 'opening' },
+    // ── 命运系 ──
+    luck_variance_self:         { effect: 'ally_luck_up',       timing: 'opening' },
+    luck_variance_enemy:        { effect: 'enemy_luck_down',    timing: 'opening' },
+    luck_lock_self:             { effect: 'ally_luck_lock',     timing: 'opening' },
+    recompute_comeback:         { effect: 'ally_recompute',     timing: 'comeback' },
+    // ── 兵力系 ──
+    ally_add_troops_opening:    { effect: 'ally_add_troops',    timing: 'opening' },
+    // ── 战损系 ──
+    elite_casualty_reduction:   { effect: 'ally_elite_casualty', timing: 'opening' },
+    lose_enemy_casualty_boost:  { effect: 'lose_effect',        timing: 'comeback' },
+    lose_zero_enemy_recovery:   { effect: 'lose_effect',        timing: 'comeback' },
+    post_recovery_rate:         { effect: 'ally_recovery',      timing: 'comeback' },
+    // ── 对抗系 ──
+    negate_enemy_skill:         { effect: 'enemy_counter',      timing: 'opening' },
+    partial_negate_enemy_skill: { effect: 'enemy_counter',      timing: 'opening' },
+    steal_enemy_skill:          { effect: 'enemy_counter',      timing: 'opening' },
+    reflect_enemy_opening_cut:  { effect: 'opening_counter',    timing: 'opening' },
+    nullify_enemy_opening_cut:  { effect: 'opening_counter',    timing: 'opening' },
+    cancel_enemy_terrain_buff:  { effect: 'terrain_counter',    timing: 'opening' },
+    halve_enemy_terrain_buff:   { effect: 'terrain_counter',    timing: 'opening' },
     // ts_029 肉薄骨并（dual_sub_troops_opening）已由 v1 原生路径实现双向削兵（GeneralSkillCombat + combat-model）。
 };
 

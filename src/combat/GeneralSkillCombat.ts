@@ -673,9 +673,7 @@ export function getGeneralSkillDisplayTags(
         });
     }
 
-    if (profile.strategicSkillId) {
-        appendStrategicDisplayTag(tags, profile.strategicSkillId);
-    }
+    // [2026-07-05 Fix] 战略技作为大地图效果，已剥离战斗面板，转至战略地图 CameraFollowUI 展示。
 
     return tags;
 }
@@ -698,11 +696,33 @@ function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
         case 'enemy_mult_0_8':
             return '敌战×0.8';
         case 'ally_add_troops':
-            return '增兵两成';
+            return `增兵${Math.round(skill.magnitude * 100)}%`;
         case 'enemy_sub_troops':
-            return '减兵两成';
+            return `减兵${Math.round(skill.magnitude * 100)}%`;
         case 'ally_invincible':
             return `免伤${skill.magnitude}秒`;
+        case 'ally_casualty_reduce':
+            return `减损${Math.round(skill.magnitude * 100)}%`;
+        case 'ally_luck_up':
+            return `己运+${Math.round(skill.magnitude * 100)}%`;
+        case 'enemy_luck_down':
+            return `敌运-${Math.round(skill.magnitude * 100)}%`;
+        case 'ally_luck_lock':
+            return '运锁';
+        case 'ally_recovery':
+            return `恢复${Math.round(skill.magnitude * 100)}%`;
+        case 'lose_effect':
+            return '败方惩罚';
+        case 'ally_elite_casualty':
+            return `精锐减损${Math.round(skill.magnitude * 100)}%`;
+        case 'enemy_counter':
+            return '对抗敌技';
+        case 'opening_counter':
+            return '对抗削兵';
+        case 'terrain_counter':
+            return '对抗地形';
+        case 'ally_recompute':
+            return '重算强弱';
         default:
             return '';
     }
@@ -907,6 +927,10 @@ export function applyOpeningTacticalPreRoll(
                 const startAt = battleElapsed + (emitUi ? OPENING_TACTICAL_UI_DELAY_SEC : 0);
                 scheduleInvincible(unit, startAt, skill.magnitude);
                 logMsg = `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 免伤 ${skill.magnitude} 秒`;
+                break;
+            }
+            case 'ally_casualty_reduce': {
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 战中减损生效`;
                 break;
             }
             default:
