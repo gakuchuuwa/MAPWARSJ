@@ -968,7 +968,7 @@ export class GlobalUnitRenderer {
             ctx.lineWidth = 3;
             ctx.strokeText(skillName, center.x, currentY);
 
-            ctx.fillStyle = '#FFAA00'; // Legendary Orange-Gold
+            ctx.fillStyle = '#00FFFF'; // Bright Cyan for Strategy
             ctx.fillText(skillName, center.x, currentY);
             
             currentY += skillFontSize + 4;

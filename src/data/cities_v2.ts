@@ -768,6 +768,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_mianchi', name: '渑池', factionId: 'yangshao', lat: 34.76, lng: 111.76, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
 
+
         {
         id: 'city_huaiyin',
         name: '淮安',

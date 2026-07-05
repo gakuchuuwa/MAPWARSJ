@@ -63,7 +63,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
   lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
   lai: { name: '齐关弩手', tier: 4 },           // 青石关·王师范屡败朱温（正史胜仗）（缺乏极其著名的战术高光，降T3）
-    yangshao: { name: '北军安刘', tier: 3 },
+    yangshao: { name: '安刘北军', tier: 3 },
     dongxian: { name: '马陵伏弩', tier: 2 },          // 齐国孙膑伏击庞涓的战术核心，古代“设伏聚歼”的战术巅峰，升入T2战术
   mi: { name: '朐城弩手', tier: 4 },         // 朐城·麋竺家兵（缺乏极其著名的战术高光，降T3）
   yaozhou: { name: '耀州牙兵', tier: 4 },       // 金锁关·李茂贞岐军（缺乏极其著名的战术高光，降T3）
