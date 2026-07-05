@@ -386,7 +386,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_mangka: { generalId: 'unassigned_mangka', tier: 'ordinary', tacticalSkillId: 'ts_015' }, // 费雅喀族长莽喀普禄
     unassigned_xiyangha: { generalId: 'unassigned_xiyangha', tier: 'ordinary', tacticalSkillId: 'ts_014' }, // 女真大酋长西阳哈瓦伦
     hezhe_shaerhuda: { generalId: 'hezhe_shaerhuda', tier: 'famous', tacticalSkillId: 'ts_365', strategicSkillId: 'str_13' },
-    liao_d_yelvabaoji: { generalId: 'liao_d_yelvabaoji', tier: 'famous', tacticalSkillId: 'ts_087', strategicSkillId: 'str_03' }, // 鼓行而西
+    liao_d_yelvabaoji: { generalId: 'liao_d_yelvabaoji', tier: 'famous', tacticalSkillId: 'ts_087', strategicSkillId: 'str_03' },
     yel_yelvxiuge: { generalId: 'yel_yelvxiuge', tier: 'famous', tacticalSkillId: 'ts_119', strategicSkillId: 'str_12' }, // 满城大败宋师以逸待劳
     yizhou_wanyanloushi: { generalId: 'yizhou_wanyanloushi', tier: 'famous', tacticalSkillId: 'ts_131', strategicSkillId: 'str_12' }, // 富平之战大破张浚五路宋军
     unassigned_shilu: { generalId: 'unassigned_shilu', tier: 'ordinary', tacticalSkillId: 'ts_015' }, // 完颜始祖据黑水故地
@@ -661,7 +661,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     boren_ada: { generalId: 'boren_ada', tier: 'ordinary', tacticalSkillId: 'ts_095' }, // 僰人末代
     unassigned_chendao: { generalId: 'unassigned_chendao', tier: 'ordinary', tacticalSkillId: 'ts_031' }, // 白毦兵断后
     unassigned_luoshao: { generalId: 'unassigned_luoshao', tier: 'ordinary', tacticalSkillId: 'ts_021' }, // 乌蒙土官
-    jingmen_zhaoyun: { generalId: 'jingmen_zhaoyun', tier: 'ordinary', tacticalSkillId: 'ts_011' }, // 长坂坡救主（绝地反击）
+    jingmen_zhaoyun: { generalId: 'jingmen_zhaoyun', tier: 'ordinary', tacticalSkillId: 'ts_388' }, // 长坂坡救主·孤胆陷阵（以少打多 ×1.55，赵云专属）
     unassigned_pengshichou: { generalId: 'unassigned_pengshichou', tier: 'ordinary', tacticalSkillId: 'ts_021' }, // 溪州铜柱
     xidong_mayuan: { generalId: 'xidong_mayuan', tier: 'famous', tacticalSkillId: 'ts_178', strategicSkillId: 'str_13' }, // 马援·聚米为山谷指画形势（后汉书本人典故）；伏波将军远征交趾五溪以战养战
     miaomin_shiliudeng: { generalId: 'miaomin_shiliudeng', tier: 'ordinary', tacticalSkillId: 'ts_031' }, // 苗民起义
@@ -692,7 +692,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     guazhou_zhangshougui: { generalId: 'guazhou_zhangshougui', tier: 'famous', tacticalSkillId: 'ts_253', strategicSkillId: 'str_14' },
     kang_liangshidou: { generalId: 'kang_liangshidou', tier: 'ordinary', tacticalSkillId: 'ts_037' }, // 梁帝割据
     yingli_jilasiyi: { generalId: 'yingli_jilasiyi', tier: 'ordinary', tacticalSkillId: 'ts_016' }, // 守应理抗蒙
-    dangxiang_liyuanhao: { generalId: 'dangxiang_liyuanhao', tier: 'famous', tacticalSkillId: 'ts_250', strategicSkillId: 'str_01' }, // 好水川大捷
+    dangxiang_liyuanhao: { generalId: 'dangxiang_liyuanhao', tier: 'famous', tacticalSkillId: 'ts_250', strategicSkillId: 'str_01' },
     huizhou_yaosi: { generalId: 'huizhou_yaosi', tier: 'ordinary', tacticalSkillId: 'ts_017' }, // 会州箭贯耳
     huan_zhongshidao: { generalId: 'huan_zhongshidao', tier: 'famous', tacticalSkillId: 'ts_255', strategicSkillId: 'str_14' }, // 种家将守边
     wei2_hunjian: { generalId: 'wei2_hunjian', tier: 'famous', tacticalSkillId: 'ts_320', strategicSkillId: 'str_10' }, // 朔方破吐蕃

@@ -692,6 +692,8 @@ interface BatchEntry {
     deleteExistingCityId?: string;
     /** 若为 true，强制添加（跳过50km邻近检查，新旧城都保留） */
     forceProximity?: boolean;
+    /** 据点立绘镜像翻转 */
+    mirror?: boolean;
 }
 
 /** [2026-05-29] 据点名后缀 → type + troops 自动检测 (3 大类)
@@ -812,7 +814,8 @@ function batchImportFiles(entries: BatchEntry[]): BatchFileResult[] {
         const cityType = entry.cityType || detected.type;
         const troops = 20000;
         const regionPart = entry.region ? `, region: '${entry.region}'` : '';
-        const cityLine = `{ id: '${cId}', name: '${entry.cityName}', factionId: '${fId}', lat: ${entry.lat}, lng: ${entry.lng}, type: '${cityType}', troops: ${troops}${regionPart} },`;
+        const mirrorPart = entry.mirror ? `, mirror: true` : '';
+        const cityLine = `{ id: '${cId}', name: '${entry.cityName}', factionId: '${fId}', lat: ${entry.lat}, lng: ${entry.lng}, type: '${cityType}', troops: ${troops}${regionPart}${mirrorPart} },`;
         if (isNewCity) {
             if (entry.deleteExistingCityId) {
                 try {
@@ -1857,7 +1860,7 @@ function serverReadAllEntityData() {
         .map(m => ({ id: m[1], name: m[2] }));
 
     // cities: parse block by block
-    const cities: Array<{ id: string; name: string; factionId: string; lat: number; lng: number; type: string; troops: number; region?: string }> = [];
+    const cities: Array<{ id: string; name: string; factionId: string; lat: number; lng: number; type: string; troops: number; region?: string; mirror?: boolean }> = [];
     for (const m of citiesText.matchAll(/\{[^{}]*id:\s*'([^']+)'[^{}]*\}/g)) {
         const block = m[0];
         const id = m[1];
@@ -1868,7 +1871,8 @@ function serverReadAllEntityData() {
         const type = block.match(/type:\s*'([^']+)'/)?.[1] ?? 'small_city';
         const troops = parseInt(block.match(/troops:\s*(\d+)/)?.[1] ?? '5000');
         const region = block.match(/region:\s*'([^']+)'/)?.[1];
-        if (name && fId) cities.push({ id, name, factionId: fId, lat, lng, type, troops, region });
+        const mirror = /mirror:\s*true/.test(block) || undefined;
+        if (name && fId) cities.push({ id, name, factionId: fId, lat, lng, type, troops, region, mirror });
     }
 
     // flags: { [factionId]: flagText } — keys may or may not be quoted

@@ -518,16 +518,10 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         troops: 10000,
         note: '降圣；耶律小城',
     },
-    {
-        id: 'city_linhuang',
-        name: '临潢府',
-        factionId: 'liao_d',
-        lat: 43.96, lng: 119.38,
-        type: 'medium_city',
-        troops: 10000,
-        tier: 1,
-        region: 'STEPPE',
-        note: '辽上京临潢府（今巴林左旗）；皮室军辽太祖直属精锐' },
+    { id: 'city_linhuang', name: '临潢府', factionId: 'liao_d', lat: 43.96, lng: 119.38, type: 'medium_city', troops: 20000, region: 'STEPPE' },
+
+
+
     { id: 'city_hezhang', name: '可乐城', factionId: 'miao', lat: 27.095807, lng: 104.718933, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '水西土司苗兵据点' },
     { id: 'city_tancheng', name: '郯城', factionId: 'dongxian', lat: 34.549568, lng: 118.317261, type: 'small_city', troops: 5000, region: 'CENTRAL' },
 
@@ -1019,6 +1013,7 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 2026-05-26 新建势力：大金(会宁府)、大元(上都) ──
     { id: 'city_huining', name: '会宁府', factionId: 'dajin', lat: 45.519798, lng: 126.971741, type: 'medium_city', troops: 20000, region: 'NORTHEAST' },
 
+
     { id: 'city_shangdu', name: '上都', factionId: 'yuan_d', lat: 42.275283, lng: 115.760193, type: 'medium_city', troops: 20000, region: 'STEPPE' },
 
 
@@ -1235,7 +1230,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_beishacheng', name: '卑沙城', factionId: 'jilizhou', lat: 39.444692, lng: 121.959229, type: 'pass', troops: 20000, region: 'NORTHEAST' },
 
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
-    { id: 'city_suiye', name: '屈耽', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 5000, region: 'CENTRAL_ASIA' },
+    { id: 'city_suiye', name: '屈耽', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 20000, region: 'CENTRAL_ASIA' },
+
 
     { id: 'city_nieduo', name: '孽多', factionId: 'nandou', lat: 35.92, lng: 74.3, type: 'small_city', region: 'TIBET', troops: 10000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处' },
 
@@ -2248,9 +2244,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mingsha', name: '鸣沙', factionId: 'yingli', lat: 37.51, lng: 105.18, type: 'small_city', region: 'HEXI', troops: 10000,
         note: '鸣沙；应理小城',
     },
-    { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', region: 'HEXI', troops: 10000,
-        note: '兴庆府；大夏治所/重镇',
-    },
+    { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 20000, region: 'HEXI' },
+
     { id: 'city_lingju', name: '令居', factionId: 'guangwu', lat: 36.73, lng: 103.26, type: 'small_city', troops: 20000, region: 'TIBET' },
 
 

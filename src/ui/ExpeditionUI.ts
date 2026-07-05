@@ -26,6 +26,8 @@ interface ExpeditionArmy {
     isDestroyed: boolean;
     expeditionTargetCityId: string | null;
     expeditionSavedName: string | null;
+    /** 远征资格滞回锁：达到过 UNLOCK_TROOPS 即 true，掉破 4 万仍保留资格 */
+    expeditionUnlocked: boolean;
     /** 军团出身文化区（远征不可选本文化中心） */
     cultureRegion: RegionType | null;
     homeCityId?: string | null;
@@ -200,9 +202,21 @@ export class ExpeditionUI {
     private eligibleArmy(): ExpeditionArmy | null {
         const army = this.getFollowedArmy?.() ?? null;
         if (!army || army.isDestroyed) return null;
-        if (army.getTroops() < GameConfig.EXPEDITION.UNLOCK_TROOPS) return null;
-        if (!canLegionLaunchExpedition(army)) return null;
         if (army.expeditionTargetCityId) return null; // 已在远征中
+
+        // 滞回资格锁（修复"按钮一闪就没"）：
+        //   兵力达到过 UNLOCK_TROOPS → 置锁；此后即便战斗掉破 4 万仍保留可远征资格，
+        //   直至被打到低于半数（RELOCK 线）才解除——避免军团在 4 万线抖动导致按钮反复闪现、点不到。
+        const troops = army.getTroops();
+        const unlock = GameConfig.EXPEDITION.UNLOCK_TROOPS;
+        if (troops >= unlock) {
+            army.expeditionUnlocked = true;
+        } else if (troops < unlock / 2) {
+            army.expeditionUnlocked = false; // 已被打残，重新回到需满 4 万才解锁
+        }
+        if (!army.expeditionUnlocked) return null;
+
+        if (!canLegionLaunchExpedition(army)) return null;
         if (this.listCandidates(army).length === 0) return null; // 全部文化中心已属己方
         return army;
     }

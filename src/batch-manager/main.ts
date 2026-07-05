@@ -16,6 +16,7 @@ interface FactionRow {
     lat?: number;
     lng?: number;
     cityType?: string;
+    mirror?: boolean;
     generalId?: string;
     generalName?: string;
     portrait?: string;
@@ -31,7 +32,7 @@ interface FactionRow {
 
 interface EntityData {
     factions: Array<{ id: string; name: string }>;
-    cities: Array<{ id: string; name: string; factionId: string; lat: number; lng: number; type: string; troops: number; region?: string; tier?: number }>;
+    cities: Array<{ id: string; name: string; factionId: string; lat: number; lng: number; type: string; troops: number; region?: string; tier?: number; mirror?: boolean }>;
     flags: Record<string, string>;
     capitals: Record<string, string>;
     generals: Record<string, { generalId: string; generalName: string; portrait: string }>;
@@ -251,6 +252,9 @@ function injectStyles(): void {
       }
       .bm-portrait-preview .portrait-info { flex:1; font-size:11px; color:#8a7f6f; }
       .bm-portrait-preview .portrait-info b { color:#c8bda8; }
+      .bm-checkbox-label { display:flex; align-items:center; gap:8px; cursor:pointer; margin:6px 0; }
+      .bm-checkbox-label input[type="checkbox"] { width:15px; height:15px; accent-color:#c8a84b; cursor:pointer; }
+      .bm-checkbox-label span { font-size:13px; color:#c8bda8; }
 
       .bm-validation {
         position:fixed; bottom:0; left:0; right:0; max-height:40vh;
@@ -326,6 +330,7 @@ function buildRows(): void {
             lat: city?.lat,
             lng: city?.lng,
             cityType: city?.type,
+            mirror: city?.mirror,
             generalId: gen?.generalId,
             generalName: gen?.generalName,
             portrait: gen?.portrait,
@@ -705,6 +710,10 @@ async function openEditPanel(factionId: string | null): Promise<void> {
               <option value="big_city" ${row!.cityType === 'big_city' ? 'selected' : ''}>大城 (big_city)</option>
               <option value="pass" ${row!.cityType === 'pass' ? 'selected' : ''}>关隘 (pass)</option>
             </select>
+          </label>
+          <label class="bm-checkbox-label">
+            <input type="checkbox" name="mirror" ${row!.mirror ? 'checked' : ''} />
+            <span>镜像立绘 (mirror)</span>
           </label>
 
           <h3>② 武将</h3>
@@ -1183,6 +1192,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
                     cityId, cityName, lat, lng,
                     region: region || undefined,
                     cityType: get('cityType') || 'small_city',
+                    mirror: (form.querySelector('input[name="mirror"]') as HTMLInputElement | null)?.checked || undefined,
                 }]
             }),
         });

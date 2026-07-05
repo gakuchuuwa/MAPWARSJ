@@ -104,6 +104,13 @@ export class Army implements IBattleUnit {
     public expeditionTargetCityId: string | null = null;
     /** 远征前军团原名；功成保留番号后清空；仅目标异常时用于恢复 */
     public expeditionSavedName: string | null = null;
+    /**
+     * 远征资格滞回锁（2026-07-06 修复"按钮一闪就没"）：
+     * 跟拍军团兵力达到过 UNLOCK_TROOPS 即置 true，此后即便战斗掉破 4 万仍保留可远征资格，
+     * 直至真正发起远征 / 全军覆没 / 被打到低于半数（见 ExpeditionUI.eligibleArmy）才重置。
+     * 解决"军团边打边掉血、瞬时判定让远征按钮反复闪现、点不到"的问题。
+     */
+    public expeditionUnlocked: boolean = false;
 
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;

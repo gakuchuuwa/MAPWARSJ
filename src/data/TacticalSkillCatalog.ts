@@ -2483,6 +2483,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         baseEffect: 'ally_power_mult', condition: 'battle_siege_defender', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
+    {
+        id: 'ts_388', layer: 'tactical', series: 'enhance', index: 388,
+        displayName: '孤胆陷阵', sourceQuote: '《三国志·蜀书·赵云传》注引《云别传》："云将数十骑轻行出围……先主曰：子龙一身都是胆也。"',
+        baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
+        magnitude: 1.55, engineStatus: 'ready',
+        note: '赵云长坂坡冲阵救主、汉水以数十骑出围破众；以少打多时爆发。绝地反击(ts_011)的赵云专属签名版',
+    },
 ];
 
 export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
@@ -2643,6 +2650,7 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_379: 'common', ts_380: 'common', ts_381: 'common', ts_382: 'common',
     ts_383: 'limited', ts_384: 'limited', ts_385: 'ai_defensive', ts_386: 'underdog',
     ts_387: 'ai_defensive',
+    ts_388: 'underdog',
 
 };
 

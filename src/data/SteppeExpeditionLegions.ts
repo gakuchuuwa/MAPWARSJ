@@ -10,7 +10,7 @@
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     wuzhou: { name: '百金之士', tier: 2 },
   ashina: { name: '金山突厥兵', tier: 3 }, // 突厥阿史那氏的龙兴之地，极具突厥汗国起源的图腾色彩，升入T3知名
-  liao_d: { name: '皮室军', tier: 1 },         // 临潢府·辽太祖皮室军（§6 #1）
+    liao_d: { name: '皮室军', tier: 1 },
   yel: { name: '斡鲁朵军', tier: 1 },         // 大辽帝国压制北宋两百年的最核心禁卫常备军制度，升入T1战略
   menggu_d: { name: '怯薛宿卫', tier: 0 },     // 区T0锚·怯薛参与西征诸役；蒙古西征整体史家论以少胜多（§6 #2）
   borjigin: { name: '那可儿伴当', tier: 1 },     // 曲雕阿兰·铁木真那可儿亲卫

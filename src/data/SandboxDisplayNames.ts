@@ -95,12 +95,12 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'bing': '并',
 'bohai': '渤海',
     'jurchen': '女真',
-'dangxiang': '大夏',
+'dangxiang': '夏',
 'menggu_d': '蒙古',
 'manzhou': '满洲',
 'manzhou_d': '清',
 'ming_d': '明',
-    'liao_d': '大辽',
+'liao_d': '辽',
 'dangzhou': '氐',
     'dai_d': '代',
     'dingxiang_d': '定襄',
@@ -332,7 +332,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tuoming': '清真',
     'ashikaga': '室町',
     // ── 2026-05-26 新增：大金、大元 ──
-'dajin': '大金',
+'dajin': '金',
     'yizhou': '懿',
 'yuan_d': '元',
 
@@ -354,7 +354,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-26 新增：西域/中亚势力旗号（14个）──
 'kala': '喀汗',
-'xiliao': '辽',
+'xiliao': '大辽',
 'sogdian': '粟特',
     'kangju': '康居',
     'geluolu': '葛逻',

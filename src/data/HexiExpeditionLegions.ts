@@ -9,7 +9,7 @@
  */
 export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     lanzhou: { name: '湟中胡骑', tier: 3 },
-  dangxiang: { name: '铁鹞子', tier: 2 },        // 西夏仅三千人的重甲冲阵死士，规模与定位均属纯粹的战术突击分队，符合T2战术
+    dangxiang: { name: '铁鹞子', tier: 2 },
   // 步跋子已迁环洲（huan@方渠）
   yeli: { name: '擒生军', tier: 3 },             // 西夏主力野战部队之一，特色极其鲜明，升入T3知名
     weiming: { name: '平夏部骑', tier: 3 },

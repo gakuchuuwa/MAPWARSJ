@@ -163,6 +163,7 @@ export const FACTIONS: Faction[] = [
     { id: 'bohai', name: '渤海' },
     { id: 'jurchen', name: '女真' },
     { id: 'dangxiang', name: '大夏' },
+
     { id: 'menggu_d', name: '蒙古' },
     { id: 'manzhou', name: '满洲' },
 
@@ -172,6 +173,9 @@ export const FACTIONS: Faction[] = [
     { id: 'ming_d', name: '大明' },
 
     { id: 'liao_d', name: '大辽' },
+
+
+
     { id: 'dangzhou', name: '氐族' },
 
 
@@ -583,6 +587,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 新增：大金、大元 ──
     { id: 'dajin', name: '大金' },
 
+
     { id: 'yizhou', name: '懿州' },
     { id: 'yuan_d', name: '大元' },
 
@@ -614,6 +619,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-06-17 新增：喀喇契丹（西辽·虎思/碎叶故地）──
     { id: 'xiliao', name: '西辽' },
+
 
     { id: 'jiazini', name: '伽色尼' },      // 伽色尼王朝(哥疾宁/马哈茂德), Ghaznavid
     { id: 'jibin', name: '罽宾' },
