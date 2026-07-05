@@ -172,12 +172,12 @@ export class GameInputManager {
     }
 
     /**
-     * [DEV ONLY] 按 X：让当前跟随的军团一键发起远征（补到 8 万 + 直取最近异文化中心）。
+     * [DEV ONLY] 按 X：把当前跟随的军团补到 4.5 万（只增兵、不代设目标），用于观察是否自动远征。
      * 仅在开发模式生效；生产构建时 import.meta.env.DEV 为 false，此调用被 Rollup 剔除。
      */
     private devBoostFollowedArmyForExpedition(): void {
         const game = (window as any).game;
-        const msg: string = game?.expeditionUI?.devForceLaunch?.() ?? '远征系统未就绪';
+        const msg: string = game?.expeditionUI?.devBoostTroops?.() ?? '远征系统未就绪';
         this.showDevToast(msg);
         console.log('[DEV] X键一键远征:', msg);
     }

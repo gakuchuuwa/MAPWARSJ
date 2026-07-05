@@ -19,6 +19,7 @@ import {
 import { REGION_CENTERS, REGION_LABELS, RegionType } from '../systems/RegionSystem';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
+import { getGeneralFirstTarget } from '../data/GeneralFirstExpeditionTargets';
 
 interface ExpeditionArmy {
     id: string;
@@ -31,6 +32,8 @@ interface ExpeditionArmy {
     /** 军团出身文化区（远征不可选本文化中心） */
     cultureRegion: RegionType | null;
     homeCityId?: string | null;
+    /** 军团主将 id（带将时）——查名将历史首征目标 */
+    generalId?: string;
     getTroops(): number;
     getFactionId(): string;
     getSourceCityId(): string | null;
@@ -168,17 +171,46 @@ export class ExpeditionUI {
         }
 
         this.statusBanner.style.display = 'none';
+        this.button.style.display = 'none'; // 达标即自动远征后，手动按钮不再出现
+
+        // 达标即自动远征（用户 2026-07-06 定，取代手动点按钮）：
+        //   跟拍军团一够 4 万且可远征，立即锁定目标出征——避免军团先跑去乱打把自己耗残、解锁又被撤销。
+        if (this.panel) return; // 面板开着时不打断（自动模式下理论上不会开）
         const army = this.eligibleArmy();
-        if (army && !this.panel) {
-            // 预览：显示最近的异文化中心（超时自动代选目标 = 默认主攻方向）
-            const preview = this.nearestCandidate(army);
-            this.button.innerHTML = preview
-                ? `🐎 远征 → ${REGION_LABELS[preview.region]}·${preview.city.name}`
-                : '🐎 远征';
-            this.button.style.display = 'block';
+        if (army) this.autoLaunch(army);
+    }
+
+    /**
+     * 达标即自动远征（用户 2026-07-06 定）：eligibleArmy 通过即自动锁定目标出征。
+     * 目标优先级：名将未竟历史目标（⭐）＞ 最近异文化中心。改番号、断粮不回。
+     * 仅跟拍军团走此路（eligibleArmy 只认跟拍军团；AI 军团不自动远征）。
+     */
+    private autoLaunch(army: ExpeditionArmy): void {
+        let targetId: string | null = null;
+        let targetName = '';
+        let label = '';
+        const historic = this.resolveHistoricTarget(army);
+        if (historic) {
+            targetId = historic.city.id;
+            targetName = historic.city.name;
+            label = `⭐${historic.label}`;
         } else {
-            this.button.style.display = 'none';
+            const cand = this.nearestCandidate(army);
+            if (cand) {
+                targetId = cand.city.id;
+                targetName = cand.city.name;
+                label = REGION_LABELS[cand.region];
+            }
         }
+        if (!targetId) return; // 无可远征目标（eligibleArmy 通常已挡掉）
+        if (!applyExpeditionEliteRename(army)) return;
+
+        army.expeditionTargetCityId = targetId;
+        gameLog(
+            'expedition',
+            `🐎 [远征] ${army.name}（${Math.floor(army.getTroops() / 10000)} 万兵·自动）远征【${targetName}·${label}】——断粮不回，直至占领或全军覆没`
+        );
+        this.pushFeed(army.getFactionId(), army.name, targetName, 'depart');
     }
 
     /** 距军团最近的可远征异文化中心（用于按钮预览与超时代选一致） */
@@ -199,6 +231,20 @@ export class ExpeditionUI {
         return best;
     }
 
+    /**
+     * 名将历史首征目标（generalId → cities_v2 城）：
+     *   军团带的名将配了历史目标、且该城尚不属己方 → 返回它（默认锁定，优先夺取）。
+     *   已属己方 / 无名将 / 未配置 → null（回落选文化中心）。历史目标不受「异文化」限制。
+     */
+    private resolveHistoricTarget(army: ExpeditionArmy): { city: ExpeditionCity; label: string } | null {
+        const t = getGeneralFirstTarget(army.generalId);
+        if (!t) return null;
+        const city = this.cityManager?.getCity(t.cityId);
+        if (!city) return null;
+        if (city.factionId === army.getFactionId()) return null; // 已攥稳 → 走文化中心
+        return { city, label: t.label };
+    }
+
     private eligibleArmy(): ExpeditionArmy | null {
         const army = this.getFollowedArmy?.() ?? null;
         if (!army || army.isDestroyed) return null;
@@ -217,30 +263,28 @@ export class ExpeditionUI {
         if (!army.expeditionUnlocked) return null;
 
         if (!canLegionLaunchExpedition(army)) return null;
-        if (this.listCandidates(army).length === 0) return null; // 全部文化中心已属己方
+        // 历史目标未拿下时，即便文化中心都已属己方，仍可远征去打历史目标
+        if (this.listCandidates(army).length === 0 && !this.resolveHistoricTarget(army)) return null;
         return army;
     }
 
     /**
-     * [DEV ONLY] 一键强制发起远征：把当前跟随军团补到 8 万 + 直取最近的异文化中心。
-     * 用于避开"军团边打边掉血、远征按钮一闪就没、点不到"的问题（供 X 快捷键调用）。
+     * [DEV ONLY] 一键把当前跟随军团补到 4.5 万（刚过 4 万解锁线），**不**代设远征目标。
+     * 用于观察：军团解锁后系统是否会自行发起远征、还是仅冒出「🐎 远征」按钮等玩家点。
      * 返回给玩家看的结果字符串。生产构建不会调用（X 键被 import.meta.env.DEV 包裹）。
      */
-    public devForceLaunch(): string {
+    public devBoostTroops(): string {
         const army = this.getFollowedArmy?.() ?? null;
         if (!army || army.isDestroyed) return '⚠ 先在「🎖️ 军团」列表点一支军团跟随，再按 X';
         if (army.expeditionTargetCityId) return `${army.name} 已在远征中（目标未变）`;
-        // 只补到 4.2 万（刚过 4 万解锁线）：打一仗就会掉到 4 万以下，
-        // 方便验证"跌破 4 万后远征是否还在"——这正是玩家要观察的关键。
-        (army as unknown as { setTroops?: (n: number) => void }).setTroops?.(42000);
-        if (!canLegionLaunchExpedition(army)) return `${army.name}：该势力无史籍精锐番号，不能远征`;
-        const cand = this.nearestCandidate(army);
-        if (!cand) return `${army.name}：附近文化中心都已是己方，无可远征目标`;
-        if (!applyExpeditionEliteRename(army)) return `${army.name}：改番号失败`;
-        army.expeditionTargetCityId = cand.city.id;
-        gameLog('expedition', `🐎 [远征] ${army.name}（DEV一键·4.2万兵）远征【${cand.city.name}】——断粮不回`);
-        this.pushFeed(army.getFactionId(), army.name, cand.city.name, 'depart');
-        return `✅ ${army.name} → 远征 ${REGION_LABELS[cand.region]}·${cand.city.name}（补至4.2万，打一仗就掉破4万，盯着远征图标看）`;
+        const setter = (army as unknown as { setTroops?: (n: number) => void }).setTroops;
+        if (!setter) return `${army.name}：无法设置兵力（setTroops 缺失）`;
+        setter.call(army, 45000);
+        const canLaunch = canLegionLaunchExpedition(army);
+        gameLog('expedition', `⚔ [DEV] ${army.name} 兵力补至 4.5 万${canLaunch ? '（已解锁，半秒内自动远征）' : '（无精锐番号，不能远征）'}`);
+        return canLaunch
+            ? `⚔ ${army.name} 已补至 4.5 万·已解锁——半秒内将自动锁定目标出征，盯着远征图标看`
+            : `⚔ ${army.name} 已补至 4.5 万，但该势力无史籍精锐番号，不能远征`;
     }
 
     /** 可选目标：15 文化中心里**异文化**且非己方的（本文化中心不可远征——主人 2026-06-11 补） */
@@ -267,6 +311,9 @@ export class ExpeditionUI {
         const army = this.eligibleArmy();
         if (!army) return;
         this.panelArmyId = army.id;
+
+        // 名将未竟的历史目标（默认锁定；仍可在下方改选文化中心）
+        const historic = this.resolveHistoricTarget(army);
 
         const candidates = this.listCandidates(army);
         const pos = army.getPosition();
@@ -322,6 +369,37 @@ export class ExpeditionUI {
         panel.appendChild(countdown);
         this.countdownLabel = countdown;
 
+        if (historic) {
+            const HBG = 'linear-gradient(90deg, rgba(200,140,40,0.28), rgba(160,90,30,0.16))';
+            const HBG_HOVER = 'linear-gradient(90deg, rgba(220,160,55,0.45), rgba(180,105,38,0.32))';
+            const hkm = Math.round(
+                getEuclideanDistance(pos, { lat: historic.city.latitude, lng: historic.city.longitude }) * 111
+            );
+            const hitem = document.createElement('div');
+            hitem.style.cssText = `
+                padding: 10px 14px;
+                cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid rgba(220,140,70,0.4);
+                background: ${HBG};
+                font-size: 14px;
+                font-weight: bold;
+                color: #ffdc8a;
+                transition: background 0.15s;
+            `;
+            hitem.innerHTML = `
+                <span>⭐ 历史使命 · ${historic.label} · ${historic.city.name}</span>
+                <span style="color:#cfa860; font-size:12px;">约 ${hkm} km</span>
+            `;
+            hitem.addEventListener('mouseenter', () => (hitem.style.background = HBG_HOVER));
+            hitem.addEventListener('mouseleave', () => (hitem.style.background = HBG));
+            const hid = historic.city.id;
+            hitem.addEventListener('click', () => this.confirmTarget(hid));
+            panel.appendChild(hitem);
+        }
+
         for (const { city, region } of candidates) {
             const item = document.createElement('div');
             const km = Math.round(
@@ -367,16 +445,18 @@ export class ExpeditionUI {
         const tick = () => {
             const left = this.deadlineAt - performance.now();
             if (left <= 0) {
-                const auto = candidates[0];
-                if (auto) {
-                    this.confirmTarget(auto.city.id, true);
+                const autoId = historic ? historic.city.id : candidates[0]?.city.id;
+                if (autoId) {
+                    this.confirmTarget(autoId, true);
                 } else {
                     this.closePanel();
                 }
                 return;
             }
             if (this.countdownLabel) {
-                this.countdownLabel.textContent = `⏳ ${Math.ceil(left / 1000)} 秒后自动代选最近的文化中心`;
+                this.countdownLabel.textContent = historic
+                    ? `⏳ ${Math.ceil(left / 1000)} 秒后自动出征 ⭐${historic.city.name}`
+                    : `⏳ ${Math.ceil(left / 1000)} 秒后自动代选最近的文化中心`;
             }
         };
         tick();

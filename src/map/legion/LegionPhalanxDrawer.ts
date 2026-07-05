@@ -763,8 +763,8 @@ export class LegionPhalanxDrawer {
         const baseHeight = 80;
         const targetH = baseHeight * scale * frameHeightNorm;
         const targetW = targetH * (frameW / frameH);
-        const spacingX = targetW * 0.70;
-        const spacingY = targetH * 0.50;
+        const spacingX = targetW * 0.50;
+        const spacingY = targetH * 0.30;
 
         // 旋转角（与陆军一致）
         const angle = (direction + 1) * Math.PI / 4;
