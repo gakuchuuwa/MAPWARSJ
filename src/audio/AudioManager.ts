@@ -36,17 +36,32 @@ export interface AudioSettings {
     categoryVolume: Record<AudioCategory, number>;
 }
 
-const STORAGE_KEY = 'mapwar_audio_settings_v1';
+const STORAGE_KEY = 'mapwar_audio_settings_v2';
 const DEFAULT_SETTINGS: AudioSettings = {
     enabled: true,
     masterVolume: 0.5,
+    // 三层基准统一（播报/音效/音乐感知齐平），优先级靠 ducking 实现，不靠调高某层
     categoryVolume: {
-        ui: 0.45,
+        ui: 0.55,
         battle: 0.55,
-        feed: 0.65,
-        bgm: 0.5,
+        feed: 0.55,
+        bgm: 0.55,
     },
 };
+
+// ---- 混音闪避（ducking）：播报/音效同层互斥，音乐打底 ----
+// 播报和音效是同一层级、同音量，但互斥：播报响时音效静音，播报不响时音效正常。
+// BGM 始终播放，只是在播报或音效活跃时压低音量。
+const DUCK = {
+    /** 播报时音乐压到 25% */
+    bgmUnderSpeech: 0.25,
+    /** 仅音效循环(行军/战斗)时音乐压到 45% */
+    bgmUnderSfx: 0.45,
+    /** 播报时音效静音（同层互斥：要么响播报，要么响音效） */
+    sfxUnderSpeech: 0.0,
+} as const;
+/** 播报有效音量 = master × SPEECH_GAIN（TTS 感知偏轻，补偿至与音效/音乐齐平） */
+const SPEECH_GAIN = 0.9;
 
 const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     ui_click: sound('ui', 'ui_click', 0.35, 120),
@@ -67,7 +82,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     expedition: sound('feed', 'expedition', 0.75, 1400),
     pass_siege: sound('feed', 'pass_siege', 0.45, 4000),
     general_skill: sound('battle', 'general_skill', 0.45, 1800),
-    bgm_main: { category: 'bgm', sources: ['/assets/CENTRAL/CENTRAL_bgm.aud'], volume: 0.25, cooldownMs: 0 },
+    bgm_main: { category: 'bgm', sources: ['/assets/CENTRAL/CENTRAL_bgm.aud'], volume: 0.32, cooldownMs: 0 },
 };
 
 function sound(
@@ -143,6 +158,8 @@ export class AudioManager {
         inCombat: boolean;
         isCavalry: boolean;
     } = { armyId: null, marching: false, inCombat: false, isCavalry: false };
+    /** 播报进行中：音效 + 音乐压低（优先级闪避） */
+    private speechDucking = false;
     private bgmAudio: HTMLAudioElement | null = null;
     private currentBgmFolder: string = '';
     private currentBgmSrc: string = '';
@@ -320,6 +337,18 @@ export class AudioManager {
         this.saveSettings();
     }
 
+    /** 播报开始/结束：开始时压低音效 + 音乐，结束恢复（优先级闪避） */
+    public setSpeechDucking(active: boolean): void {
+        if (this.speechDucking === active) return;
+        this.speechDucking = active;
+        this.refreshLoopVolumes();
+    }
+
+    /** 播报有效音量（跟随主音量；TTS 感知偏轻，SPEECH_GAIN 补偿至与音效/音乐感知齐平） */
+    public getSpeechVolume(): number {
+        return clamp01(this.settings.masterVolume * SPEECH_GAIN);
+    }
+
     public getSettings(): AudioSettings {
         return {
             enabled: this.settings.enabled,
@@ -390,6 +419,8 @@ export class AudioManager {
 
         // 先记录「期望开启」意图（恢复时据此重启），即使暂停期间切换跟随军团也不丢失
         this.wantedLoops.add(key);
+        // 音效循环启动 → 音乐随之压低（打底）
+        if (definition.category !== 'bgm') this.updateBgmDuckVolume();
         // 暂停时只记意图、不实际播放（bgm 不受暂停影响）
         if (this.gamePaused && definition.category !== 'bgm') return;
 
@@ -407,6 +438,8 @@ export class AudioManager {
 
     private stopLoop(key: SoundKey): void {
         this.wantedLoops.delete(key);
+        // 音效循环停止 → 音乐恢复（若已无其他音效循环）
+        if (SOUND_DEFINITIONS[key]?.category !== 'bgm') this.updateBgmDuckVolume();
         const audio = this.loopCache.get(key);
         if (!audio) return;
         audio.pause();
@@ -444,6 +477,8 @@ export class AudioManager {
                 }
             }
         }
+        // 暂停/恢复后音效循环有效性变化 → 同步音乐闪避
+        this.updateBgmDuckVolume();
     }
 
     public stopBgm(): void {
@@ -569,7 +604,41 @@ export class AudioManager {
 
     private resolveVolume(definition: SoundDefinition): number {
         const categoryVolume = this.settings.categoryVolume[definition.category] ?? 1;
-        return clamp01(this.settings.masterVolume * categoryVolume * (definition.volume ?? 1));
+        const base = this.settings.masterVolume * categoryVolume * (definition.volume ?? 1);
+        return clamp01(base * this.duckFactor(definition.category));
+    }
+
+    /**
+     * 优先级闪避（ducking）：播报/音效同层互斥，音乐打底。
+     * - 音乐(bgm)：播报中压到 bgmUnderSpeech；仅音效循环(行军/战斗)时压到 bgmUnderSfx。
+     * - 音效(ui/battle/feed)：播报中静音（同层互斥：要么响播报，要么响音效）。
+     * - 播报本身走 SpeechAnnouncer(TTS)，不在此压低。
+     */
+    private duckFactor(category: AudioCategory): number {
+        if (category === 'bgm') {
+            if (this.speechDucking) return DUCK.bgmUnderSpeech;
+            if (this.isSfxLoopActive()) return DUCK.bgmUnderSfx;
+            return 1;
+        }
+        // 音效层：ui / battle / feed——播报时静音，播报结束后恢复
+        return this.speechDucking ? DUCK.sfxUnderSpeech : 1;
+    }
+
+    /** 是否有音效循环(行军/战斗)正在播放（暂停时视为无声，不压低音乐） */
+    private isSfxLoopActive(): boolean {
+        if (this.gamePaused) return false;
+        return (
+            this.wantedLoops.has('march_loop') ||
+            this.wantedLoops.has('cavalry_march_loop') ||
+            this.wantedLoops.has('battle_loop')
+        );
+    }
+
+    /** 仅刷新 BGM 音量（音效循环起停时用，无需全量刷新） */
+    private updateBgmDuckVolume(): void {
+        if (!this.bgmAudio) return;
+        const def = SOUND_DEFINITIONS['bgm_main'];
+        if (def) this.bgmAudio.volume = this.resolveVolume(def);
     }
 
     private warnMissingOnce(key: SoundKey, error: unknown): void {

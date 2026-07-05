@@ -681,6 +681,7 @@ export class SiegeManager {
                     }, {
                         captorLegionName: army.name || '军团',
                         captorLegionId: army.id,
+                        captorGeneralId: army.generalId,
                     });
 
                     // [FIX] CityManager 的 updateCity 内部会触发 onCityUpdated 回调，自动调用 legionManager.refreshCityRegistry()

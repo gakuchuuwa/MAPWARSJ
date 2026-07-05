@@ -894,8 +894,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
         note: '隋来护儿征东舟师出海口' },
 
     // ── 太行陉关隘 ──
-    { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.270000, lng: 112.930000, type: 'pass', region: 'CENTRAL', troops: 10000, mirror: true,
-        note: '天井关；雄定关隘', } ];
+    { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.27, lng: 112.93, type: 'pass', troops: 20000, region: 'CENTRAL' },
+];
 
 // ============================================================
 // 周边 — 待添加 (日本七道、朝鲜八道、各古政权首都)

@@ -930,6 +930,13 @@ export function applyOpeningTacticalPreRoll(
                 break;
             }
             case 'ally_casualty_reduce': {
+                // 检查 v1 条件：仅条件匹配时才发射脉冲
+                const activeId = getActiveTacticalSkillId(unit);
+                const v1Entry = activeId ? resolveGeneralTacticalEntry(activeId) : null;
+                if (v1Entry) {
+                    const condCtx = buildSideCtx(units, opponents, isAttacker);
+                    if (!isTacticalSkillActive(v1Entry, condCtx)) return;
+                }
                 logMsg = `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 战中减损生效`;
                 break;
             }

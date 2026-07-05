@@ -21,6 +21,8 @@ export interface CityUpdateOptions {
     /** 占城军团名（大乱斗军情用） */
     captorLegionName?: string;
     captorLegionId?: string;
+    /** 占城军团武将 ID（语音播报取战术技用；军团活着时携带，避免事后查丢失） */
+    captorGeneralId?: string;
 }
 
 export interface CityCapturedEvent {
@@ -30,6 +32,8 @@ export interface CityCapturedEvent {
     newFactionId: string;
     captorLegionName?: string;
     captorLegionId?: string;
+    /** 占城军团武将 ID（语音播报取战术技用） */
+    captorGeneralId?: string;
 }
 
 export class CityManager {
@@ -498,6 +502,7 @@ export class CityManager {
                         newFactionId: data.factionId,
                         captorLegionName: options?.captorLegionName,
                         captorLegionId: options?.captorLegionId,
+                        captorGeneralId: options?.captorGeneralId,
                     });
                 }
             } else if (needsFullRender) {

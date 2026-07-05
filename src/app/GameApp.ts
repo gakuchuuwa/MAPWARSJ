@@ -336,18 +336,12 @@ export class GameApp {
                     const isCenter = isRegionCenter(event.cityId);
 
                     // [语音播报] 直播主角 = 跟拍军团：所有语音只围绕它（700 国全局播报太吵）。
-                    // 跟拍军团亲手灭国 / 攻占文化中心 → S 级仪式播报（带字幕条）；
+                    // 跟拍军团攻占文化中心 → S 级仪式播报（带字幕条）；
                     // 普通攻占 → 常规播报（原行为）；别人干的一律不出声（军情面板留字）。
                     const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
                     const byFollowed = !!event.captorLegionId && followedId === event.captorLegionId;
                     if (byFollowed) {
-                        if (isFall) {
-                            speechAnnouncer.announceFactionFall(
-                                event.newFactionId,
-                                event.previousFactionId,
-                                event.cityName
-                            );
-                        } else if (isCenter) {
+                        if (isCenter) {
                             const regionKey = this.cityManager.getCity(event.cityId)?.region;
                             const regionLabel = regionKey ? (REGION_LABELS[regionKey as RegionType] ?? '') : '';
                             speechAnnouncer.announceRegionCenterCapture(
@@ -356,12 +350,11 @@ export class GameApp {
                                 regionLabel
                             );
                         } else {
-                            const army = this.legionManager.getLegionById(event.captorLegionId!);
                             speechAnnouncer.announceCityCapture(
                                 event.newFactionId,
                                 event.captorLegionName || '军团',
                                 event.cityName,
-                                army?.generalId
+                                event.captorGeneralId
                             );
                         }
                     }

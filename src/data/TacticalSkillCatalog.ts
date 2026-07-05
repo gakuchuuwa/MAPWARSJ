@@ -324,7 +324,7 @@ const TROOP: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_030', layer: 'tactical', series: 'troop', index: 30,
-        displayName: '赤壁东风', sourceQuote: '《三国志·吴书·周瑜传》：“时风盛猛，悉延烧岸上营落。”',
+        displayName: '借风纵火', sourceQuote: '《三国志·吴书·周瑜传》：“时风盛猛，悉延烧岸上营落。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'siege_attacker_on_water', phase: 'pre_opening_troops',
         magnitude: 0.4, engineStatus: 'ready',
         mutexGroup: 'water_opening_cut',
@@ -586,7 +586,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_070', layer: 'tactical', series: 'enhance', index: 70,
-        displayName: '兼并诸羌', sourceQuote: '《新唐书·吐蕃传》：“遂并诸羌，雄霸西域。”',
+        displayName: '席卷摧羌', sourceQuote: '《新唐书·吐蕃传》：“遂并诸羌，雄霸西域。”',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.3, engineStatus: 'ready',
     },
@@ -694,7 +694,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_088', layer: 'tactical', series: 'enhance', index: 88,
-        displayName: '勒兵大破', sourceQuote: '《周书·突厥传》：“土门勒兵击之，大破茹茹。”',
+        displayName: '勒兵摧阵', sourceQuote: '《周书·突厥传》：“土门勒兵击之，大破茹茹。”',
         baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
     },
@@ -791,7 +791,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_116', layer: 'tactical', series: 'enhance', index: 116,
-        displayName: '灭国擒主', sourceQuote: '《旧唐书·苏定方传》：“前后灭三国，皆生擒其主。”',
+        displayName: '摧军擒王', sourceQuote: '《旧唐书·苏定方传》：“前后灭三国，皆生擒其主。”',
         baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -950,7 +950,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_133', layer: 'tactical', series: 'enhance', index: 133,
-        displayName: '破军拓土', sourceQuote: '《旧唐书·回纥传》：“骨力裴罗击破突厥，遂建牙拓地。”',
+        displayName: '建牙破敌', sourceQuote: '《旧唐书·回纥传》：“骨力裴罗击破突厥，遂建牙拓地。”',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1052,7 +1052,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_150', layer: 'tactical', series: 'enhance', index: 150,
-        displayName: '东征西讨', sourceQuote: '《晋书·慕容皝载记》：“皝东征西讨，拓地辽碣。”',
+        displayName: '驰突破阵', sourceQuote: '《晋书·慕容皝载记》：“皝东征西讨，拓地辽碣。”',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1082,7 +1082,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_155', layer: 'tactical', series: 'enhance', index: 155,
-        displayName: '戡乱定倾', sourceQuote: '《旧唐书·李晟传》：“晟率师收复京城，戡定朱泚之乱。”',
+        displayName: '摧锋定倾', sourceQuote: '《旧唐书·李晟传》：“晟率师收复京城，戡定朱泚之乱。”',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
     },
@@ -1300,7 +1300,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_191', layer: 'tactical', series: 'enhance', index: 191,
-        displayName: '蚕食鲸吞', sourceQuote: '《旧五代史·梁太祖纪》：温兼并四邻，蚕食唐祚。',
+        displayName: '蚕食摧坚', sourceQuote: '《旧五代史·梁太祖纪》：温兼并四邻，蚕食唐祚。',
         baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1456,7 +1456,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_217', layer: 'tactical', series: 'troop', index: 217,
-        displayName: '楼船焚寨', sourceQuote: '《隋书·来护儿传》：护儿率楼船，泛海入平壤。',
+        displayName: '楼船焚垒', sourceQuote: '《隋书·来护儿传》：护儿率楼船，泛海入平壤。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
     },
@@ -1516,19 +1516,19 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_227', layer: 'tactical', series: 'enhance', index: 227,
-        displayName: '拥立定鼎', sourceQuote: '《元史·燕铁木儿传》：两都之战，拥立文宗定鼎。',
+        displayName: '破军立鼎', sourceQuote: '《元史·燕铁木儿传》：两都之战，拥立文宗定鼎。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
     },
     {
         id: 'ts_228', layer: 'tactical', series: 'enhance', index: 228,
-        displayName: '并部雄漠', sourceQuote: '《明史·瓦剌传》：脱欢并诸部，破阿鲁台。',
+        displayName: '并骑破阵', sourceQuote: '《明史·瓦剌传》：脱欢并诸部，破阿鲁台。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
     },
     {
         id: 'ts_229', layer: 'tactical', series: 'enhance', index: 229,
-        displayName: '叛柔立国', sourceQuote: '《魏书·高车传》：阿伏至罗率部自立，屡破柔然。',
+        displayName: '率部破柔', sourceQuote: '《魏书·高车传》：阿伏至罗率部自立，屡破柔然。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1540,7 +1540,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_231', layer: 'tactical', series: 'enhance', index: 231,
-        displayName: '专征略地', sourceQuote: '《元史·木华黎传》：封太师国王，专征经略中原。',
+        displayName: '专征破垒', sourceQuote: '《元史·木华黎传》：封太师国王，专征经略中原。',
         baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1606,7 +1606,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_242', layer: 'tactical', series: 'enhance', index: 242,
-        displayName: '踏营灭汗', sourceQuote: '《新唐书·回鹘传》：黠戛斯破回鹘牙帐，杀其可汗。',
+        displayName: '袭帐破汗', sourceQuote: '《新唐书·回鹘传》：黠戛斯破回鹘牙帐，杀其可汗。',
         baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1618,7 +1618,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_244', layer: 'tactical', series: 'enhance', index: 244,
-        displayName: '叛突立汗', sourceQuote: '《旧唐书·薛延陀传》：夷男叛突厥，自立为可汗。',
+        displayName: '收众破突', sourceQuote: '《旧唐书·薛延陀传》：夷男叛突厥，自立为可汗。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1630,7 +1630,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_246', layer: 'tactical', series: 'enhance', index: 246,
-        displayName: '混一区宇', sourceQuote: '《元史·世祖纪》：世祖混一海宇。',
+        displayName: '席卷海宇', sourceQuote: '《元史·世祖纪》：世祖混一海宇。',
         baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1708,7 +1708,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_259', layer: 'tactical', series: 'enhance', index: 259,
-        displayName: '亲征灭国', sourceQuote: '《晋书·桓温传》：温亲帅灭成汉。',
+        displayName: '亲帅摧城', sourceQuote: '《晋书·桓温传》：温亲帅灭成汉。',
         baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1720,7 +1720,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_261', layer: 'tactical', series: 'troop', index: 261,
-        displayName: '赤壁火攻', sourceQuote: '《三国志·周瑜传》：瑜烧其船舰，大破曹公。',
+        displayName: '火攻破舰', sourceQuote: '《三国志·周瑜传》：瑜烧其船舰，大破曹公。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
     },
@@ -1768,13 +1768,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_269', layer: 'tactical', series: 'enhance', index: 269,
-        displayName: '收复两京', sourceQuote: '《旧唐书·仆固怀恩传》：怀恩与子仪收复两京。',
+        displayName: '合兵复京', sourceQuote: '《旧唐书·仆固怀恩传》：怀恩与子仪收复两京。',
         baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_270', layer: 'tactical', series: 'enhance', index: 270,
-        displayName: '逞锐伐远', sourceQuote: '《三国志·姜维传》：维锐志进取，九伐中原，破王经于洮西。',
+        displayName: '锐志摧远', sourceQuote: '《三国志·姜维传》：维锐志进取，九伐中原，破王经于洮西。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1798,7 +1798,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_274', layer: 'tactical', series: 'enhance', index: 274,
-        displayName: '杀儒破敌', sourceQuote: '《新五代史·吴世家》：行密杀儒，众溃不敢犯。',
+        displayName: '奋击摧敌', sourceQuote: '《新五代史·吴世家》：行密杀儒，众溃不敢犯。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1864,7 +1864,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_285', layer: 'tactical', series: 'enhance', index: 285,
-        displayName: '越碛灭国', sourceQuote: '《旧唐书·侯君集传》：行碛数千里，克高昌，虏其王以归。',
+        displayName: '越沙摧垒', sourceQuote: '《旧唐书·侯君集传》：行碛数千里，克高昌，虏其王以归。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1888,7 +1888,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_289', layer: 'tactical', series: 'enhance', index: 289,
-        displayName: '戈船略地', sourceQuote: '《史记·南越列传》：佗击并桂林、象郡，以兵威役属瓯骆。',
+        displayName: '戈船破阵', sourceQuote: '《史记·南越列传》：佗击并桂林、象郡，以兵威役属瓯骆。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1936,7 +1936,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_297', layer: 'tactical', series: 'enhance', index: 297,
-        displayName: '长驱复镇', sourceQuote: '《旧唐书·王孝杰传》：大破吐蕃，复取安西四镇，置安西都护府。',
+        displayName: '长驱摧垒', sourceQuote: '《旧唐书·王孝杰传》：大破吐蕃，复取安西四镇，置安西都护府。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1960,13 +1960,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_301', layer: 'tactical', series: 'enhance', index: 301,
-        displayName: '并部称汗', sourceQuote: '《北史·吐谷浑传》：夸吕始自号可汗，居伏俟城，拓地称雄青海。',
+        displayName: '建牙摧敌', sourceQuote: '《北史·吐谷浑传》：夸吕始自号可汗，居伏俟城，拓地称雄青海。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_302', layer: 'tactical', series: 'enhance', index: 302,
-        displayName: '戡乱开基', sourceQuote: '《多桑蒙古史》：伊斯玛仪擒萨法尔王阿慕尔，奠萨曼王朝之业。',
+        displayName: '破敌奠基', sourceQuote: '《多桑蒙古史》：伊斯玛仪擒萨法尔王阿慕尔，奠萨曼王朝之业。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1978,31 +1978,31 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_304', layer: 'tactical', series: 'enhance', index: 304,
-        displayName: '吞并诸邦', sourceQuote: '《缅甸史》：莽瑞体统一下缅诸邦，奠东吁王朝之基。',
+        displayName: '摧锋破垒', sourceQuote: '《缅甸史》：莽瑞体统一下缅诸邦，奠东吁王朝之基。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_305', layer: 'tactical', series: 'enhance', index: 305,
-        displayName: '破军复疆', sourceQuote: '《新唐书·高骈传》：骈大破南诏，复交趾，筑大罗城以镇之。',
+        displayName: '破阵复疆', sourceQuote: '《新唐书·高骈传》：骈大破南诏，复交趾，筑大罗城以镇之。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_306', layer: 'tactical', series: 'enhance', index: 306,
-        displayName: '吞邻拓疆', sourceQuote: '《晋书·乞伏炽磐载记》：炽磐乘丧灭南凉，拓地扩西秦之疆。',
+        displayName: '乘丧摧垒', sourceQuote: '《晋书·乞伏炽磐载记》：炽磐乘丧灭南凉，拓地扩西秦之疆。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_307', layer: 'tactical', series: 'enhance', index: 307,
-        displayName: '混一诸邦', sourceQuote: '《琉璃宫史》：阿奴律陀统一缅甸，灭直通取三藏，建蒲甘帝国。',
+        displayName: '摧坚破阵', sourceQuote: '《琉璃宫史》：阿奴律陀统一缅甸，灭直通取三藏，建蒲甘帝国。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_308', layer: 'tactical', series: 'enhance', index: 308,
-        displayName: '并部立汗', sourceQuote: '《中亚史》：昔班尼征服河中，逐帖木儿后裔，立昔班尼汗国。',
+        displayName: '收部摧庭', sourceQuote: '《中亚史》：昔班尼征服河中，逐帖木儿后裔，立昔班尼汗国。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2014,7 +2014,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_310', layer: 'tactical', series: 'enhance', index: 310,
-        displayName: '借兵灭国', sourceQuote: '《旧唐书·天竺传》：王玄策发吐蕃、泥婆罗兵，破中天竺，擒阿罗那顺以归。',
+        displayName: '合兵摧城', sourceQuote: '《旧唐书·天竺传》：王玄策发吐蕃、泥婆罗兵，破中天竺，擒阿罗那顺以归。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2032,13 +2032,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_313', layer: 'tactical', series: 'enhance', index: 313,
-        displayName: '徙帐立国', sourceQuote: '《汉书·西域传》：昆莫猎骄靡西攻破大月氏，徙居其地，遂雄西域。',
+        displayName: '西迁破月', sourceQuote: '《汉书·西域传》：昆莫猎骄靡西攻破大月氏，徙居其地，遂雄西域。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_314', layer: 'tactical', series: 'enhance', index: 314,
-        displayName: '开邦拓土', sourceQuote: '《泰北编年史》：孟莱王并诸勐，灭哈里奔猜，建兰纳王朝。',
+        displayName: '连破摧城', sourceQuote: '《泰北编年史》：孟莱王并诸勐，灭哈里奔猜，建兰纳王朝。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2056,7 +2056,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_317', layer: 'tactical', series: 'enhance', index: 317,
-        displayName: '戡乱代兴', sourceQuote: '《西藏王臣记》：绛曲坚赞灭萨迦，统一卫藏，建帕竹政权。',
+        displayName: '摧垒代兴', sourceQuote: '《西藏王臣记》：绛曲坚赞灭萨迦，统一卫藏，建帕竹政权。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2068,7 +2068,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_319', layer: 'tactical', series: 'enhance', index: 319,
-        displayName: '破强立国', sourceQuote: '《中亚史》：图格里勒丹丹坎大破伽色尼军，建塞尔柱帝国。',
+        displayName: '破阵摧军', sourceQuote: '《中亚史》：图格里勒丹丹坎大破伽色尼军，建塞尔柱帝国。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2086,7 +2086,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_322', layer: 'tactical', series: 'enhance', index: 322,
-        displayName: '削平列镇', sourceQuote: '《新五代史·前蜀世家》：王建削平东西两川诸镇，遂王于蜀。',
+        displayName: '连破坚垒', sourceQuote: '《新五代史·前蜀世家》：王建削平东西两川诸镇，遂王于蜀。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2098,13 +2098,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_324', layer: 'tactical', series: 'enhance', index: 324,
-        displayName: '削平诸勐', sourceQuote: '《琅勃拉邦纪年》：法昂统一老挝诸勐，建澜沧王国。',
+        displayName: '并力摧城', sourceQuote: '《琅勃拉邦纪年》：法昂统一老挝诸勐，建澜沧王国。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_325', layer: 'tactical', series: 'enhance', index: 325,
-        displayName: '逾山拓疆', sourceQuote: '《廓尔喀纪略》：巴都尔萨野越山攻战，征服尼泊尔诸部，屡侵后藏。',
+        displayName: '越岭摧城', sourceQuote: '《廓尔喀纪略》：巴都尔萨野越山攻战，征服尼泊尔诸部，屡侵后藏。',
         baseEffect: 'ally_power_mult', condition: 'terrain_mountain', phase: 'opening_roll',
         magnitude: 1.65, engineStatus: 'ready',
     },
@@ -2116,13 +2116,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_327', layer: 'tactical', series: 'enhance', index: 327,
-        displayName: '削平祸乱', sourceQuote: '《陈书·高祖纪》：霸先平侯景、破北齐，扫荡祸乱，遂受禅建陈。',
+        displayName: '扫荡摧坚', sourceQuote: '《陈书·高祖纪》：霸先平侯景、破北齐，扫荡祸乱，遂受禅建陈。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_328', layer: 'tactical', series: 'enhance', index: 328,
-        displayName: '骁锐平叛', sourceQuote: '《陈书·侯安都传》：安都骁勇，破王琳、平留异，为陈室名将。',
+        displayName: '骁锋摧叛', sourceQuote: '《陈书·侯安都传》：安都骁勇，破王琳、平留异，为陈室名将。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2134,7 +2134,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_330', layer: 'tactical', series: 'enhance', index: 330,
-        displayName: '戮力并疆', sourceQuote: '《三国史记》：金庾信黄山破百济，协唐灭丽，成三韩一统之业。',
+        displayName: '并力摧城', sourceQuote: '《三国史记》：金庾信黄山破百济，协唐灭丽，成三韩一统之业。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2146,7 +2146,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_332', layer: 'tactical', series: 'enhance', index: 332,
-        displayName: '中兴一统', sourceQuote: '《大南实录》：阮福映灭西山朝，混一南北，建阮朝，称嘉隆帝。',
+        displayName: '摧坚一统', sourceQuote: '《大南实录》：阮福映灭西山朝，混一南北，建阮朝，称嘉隆帝。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2164,19 +2164,19 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_335', layer: 'tactical', series: 'enhance', index: 335,
-        displayName: '世镇拓土', sourceQuote: '《明史·沐晟传》：晟世镇云南，征麓川、定安南，拓西南之土。',
+        displayName: '世镇摧锋', sourceQuote: '《明史·沐晟传》：晟世镇云南，征麓川、定安南，拓西南之土。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_336', layer: 'tactical', series: 'enhance', index: 336,
-        displayName: '啸聚破军', sourceQuote: '《后汉书·西羌传》：滇零称天子于北地，聚众屡破汉军，震动三辅。',
+        displayName: '聚众摧军', sourceQuote: '《后汉书·西羌传》：滇零称天子于北地，聚众屡破汉军，震动三辅。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_337', layer: 'tactical', series: 'enhance', index: 337,
-        displayName: '长驱陷城', sourceQuote: '《宋史·广源州蛮传》：侬智高破邕州，连陷岭南诸城，进围广州。',
+        displayName: '长驱夺城', sourceQuote: '《宋史·广源州蛮传》：侬智高破邕州，连陷岭南诸城，进围广州。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2194,19 +2194,19 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_340', layer: 'tactical', series: 'enhance', index: 340,
-        displayName: '陷都立国', sourceQuote: '《三国史记》：甄萱起兵，陷庆州弑王，建后百济，争雄后三国。',
+        displayName: '陷城夺都', sourceQuote: '《三国史记》：甄萱起兵，陷庆州弑王，建后百济，争雄后三国。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_341', layer: 'tactical', series: 'enhance', index: 341,
-        displayName: '远略开疆', sourceQuote: '《史记·西南夷列传》：庄蹻将楚军循江略地，至滇池，因王其地。',
+        displayName: '远驱破国', sourceQuote: '《史记·西南夷列传》：庄蹻将楚军循江略地，至滇池，因王其地。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_342', layer: 'tactical', series: 'enhance', index: 342,
-        displayName: '楼船略邦', sourceQuote: '《梁书·扶南传》：范蔓造大船，泛海攻屈都昆等国，拓地五六千里。',
+        displayName: '楼船摧岸', sourceQuote: '《梁书·扶南传》：范蔓造大船，泛海攻屈都昆等国，拓地五六千里。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2224,7 +2224,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_345', layer: 'tactical', series: 'enhance', index: 345,
-        displayName: '举义开府', sourceQuote: '《太平记》：足利尊氏凑川破楠木正成，遂开幕府于室町。',
+        displayName: '破敌开幕', sourceQuote: '《太平记》：足利尊氏凑川破楠木正成，遂开幕府于室町。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2236,19 +2236,19 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_347', layer: 'tactical', series: 'enhance', index: 347,
-        displayName: '泛海陷都', sourceQuote: '《大越史记全书》：制蓬峨屡浮海入寇，破大越，攻陷升龙。',
+        displayName: '泛海夺城', sourceQuote: '《大越史记全书》：制蓬峨屡浮海入寇，破大越，攻陷升龙。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_348', layer: 'tactical', series: 'enhance', index: 348,
-        displayName: '驱象破阵', sourceQuote: '《暹罗史》：纳黎萱乘象决战，破缅军象阵，复国拓疆。',
+        displayName: '驱象摧阵', sourceQuote: '《暹罗史》：纳黎萱乘象决战，破缅军象阵，复国拓疆。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_349', layer: 'tactical', series: 'enhance', index: 349,
-        displayName: '并部建政', sourceQuote: '《西藏通史》：彭措南杰统一卫藏，建藏巴汗政权。',
+        displayName: '收众摧锋', sourceQuote: '《西藏通史》：彭措南杰统一卫藏，建藏巴汗政权。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2272,13 +2272,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_353', layer: 'tactical', series: 'enhance', index: 353,
-        displayName: '崛起并疆', sourceQuote: '《波斯史》：雅库布起于寒微，聚众建萨法尔，征服波斯东部。',
+        displayName: '聚众摧坚', sourceQuote: '《波斯史》：雅库布起于寒微，聚众建萨法尔，征服波斯东部。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_354', layer: 'tactical', series: 'enhance', index: 354,
-        displayName: '连岁远伐', sourceQuote: '《伽色尼史》：马哈茂德十七次远征印度，掠地无算，伽色尼极盛。',
+        displayName: '连征摧远', sourceQuote: '《伽色尼史》：马哈茂德十七次远征印度，掠地无算，伽色尼极盛。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2290,7 +2290,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_356', layer: 'tactical', series: 'enhance', index: 356,
-        displayName: '苗锋破逆', sourceQuote: '《元史》：杨完者统苗军，屡破红巾，号飞军，为元室倚重。',
+        displayName: '飞军摧逆', sourceQuote: '《元史》：杨完者统苗军，屡破红巾，号飞军，为元室倚重。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2320,13 +2320,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_361', layer: 'tactical', series: 'enhance', index: 361,
-        displayName: '兼并五部', sourceQuote: '《后汉书·西域传》：丘就却攻灭五翕侯，自立为王，国号贵霜。',
+        displayName: '攻心摧部', sourceQuote: '《后汉书·西域传》：丘就却攻灭五翕侯，自立为王，国号贵霜。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_362', layer: 'tactical', series: 'enhance', index: 362,
-        displayName: '逾碛拓边', sourceQuote: '《西藏通史》：甘丹才旺率和硕特军越碛征拉达克，拓阿里之地。',
+        displayName: '越沙破垒', sourceQuote: '《西藏通史》：甘丹才旺率和硕特军越碛征拉达克，拓阿里之地。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2338,7 +2338,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_364', layer: 'tactical', series: 'enhance', index: 364,
-        displayName: '鲸吞邻国', sourceQuote: '《土佐物语》：长宗我部元亲以一领具足并阿波、赞岐，统一四国。',
+        displayName: '席卷摧邻', sourceQuote: '《土佐物语》：长宗我部元亲以一领具足并阿波、赞岐，统一四国。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2356,7 +2356,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_367', layer: 'tactical', series: 'enhance', index: 367,
-        displayName: '破国拓边', sourceQuote: '《印度史》：头罗曼率阿尔洪嚈哒南侵，破诸国，据西北印度。',
+        displayName: '摧锋拓边', sourceQuote: '《印度史》：头罗曼率阿尔洪嚈哒南侵，破诸国，据西北印度。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2374,7 +2374,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_370', layer: 'tactical', series: 'enhance', index: 370,
-        displayName: '逾岭并邦', sourceQuote: '《拉达克王统记》：僧格朗杰越山扩张，征古格、象雄，拉达克极盛。',
+        displayName: '逾岭破阵', sourceQuote: '《拉达克王统记》：僧格朗杰越山扩张，征古格、象雄，拉达克极盛。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2392,7 +2392,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_373', layer: 'tactical', series: 'enhance', index: 373,
-        displayName: '中兴复国', sourceQuote: '《琉璃宫史》：雍笈牙起于寒微，破孟族，复缅甸，建贡榜王朝。',
+        displayName: '复土摧坚', sourceQuote: '《琉璃宫史》：雍笈牙起于寒微，破孟族，复缅甸，建贡榜王朝。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2416,7 +2416,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_377', layer: 'tactical', series: 'enhance', index: 377,
-        displayName: '破虏靖边', sourceQuote: '《汉书·辛武贤传》：武贤击西羌于河湟，斩获甚众，威震边陲。',
+        displayName: '摧锋靖边', sourceQuote: '《汉书·辛武贤传》：武贤击西羌于河湟，斩获甚众，威震边陲。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },

@@ -5,10 +5,11 @@
 import { getFactionGeneral, getGeneralRecordByGeneralId } from "../data/FactionGenerals";
 import {
   GENERAL_PROFILES,
-  TACTICAL_SKILL_CATALOG,
+  getTacticalSkillDef,
   type GeneralProfile,
 } from "../data/GeneralSkills";
 import { SubtitleBanner } from "../ui/SubtitleBanner";
+import { audioManager } from "./AudioManager";
 
 interface SpeakOptions {
   /** S 级大事：略慢语速、同步字幕条、播报期间丢弃常规播报（不被打断） */
@@ -23,7 +24,7 @@ function getTacticalSkillName(factionId: string, generalId?: string): string {
   if (!general) return "";
   const profile: GeneralProfile | undefined = GENERAL_PROFILES[general.generalId];
   if (!profile) return "";
-  const skill = TACTICAL_SKILL_CATALOG[profile.tacticalSkillId];
+  const skill = getTacticalSkillDef(profile.tacticalSkillId);
   return skill?.displayName ?? "";
 }
 
@@ -164,18 +165,7 @@ export class SpeechAnnouncer {
     this.speak(text);
   }
 
-  // ---- S 级大事播报（灭国 / 复国 / 文化中心易主）：全程播报，不限跟拍镜头 ----
-
-  /**
-   * S 级 · 势力灭亡：最后据点陷落。
-   * 【2026-07-03 主人裁定】亡国不再播报、不再弹底部字幕——700+ 势力灭国太频繁会很吵；
-   * 亡国信息只在右侧事件栏 pushFactionFall 中体现。此方法保留仅作日志。
-   */
-  public announceFactionFall(attackerFactionId: string, defenderFactionId: string, cityName: string): void {
-    const att = getFactionNameForSpeech(attackerFactionId);
-    const def = getFactionNameForSpeech(defenderFactionId);
-    console.log("[Speech] 灭国(不播报):", `${def}亡 · ${cityName}陷于${att}`);
-  }
+  // ---- S 级大事播报（复国 / 文化中心易主）：全程播报，不限跟拍镜头 ----
 
   /** S 级 · 复国：异文化占领地起义 */
   public announceRestoration(factionId: string, cityName: string): void {
@@ -222,6 +212,8 @@ export class SpeechAnnouncer {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "zh-CN";
       if (opts?.rate !== undefined) utterance.rate = opts.rate;
+      // 播报音量跟随主音量（与音效/音乐感知齐平，不再固定满音量盖过一切）
+      utterance.volume = audioManager.getSpeechVolume();
 
       const voice = this.pickBestVoice(synth.getVoices());
       if (voice) {
@@ -229,7 +221,26 @@ export class SpeechAnnouncer {
         console.log("[Speech] 使用:", voice.name);
       }
 
+      // 优先级闪避：播报期间压低音效 + 音乐，念完恢复
+      audioManager.setSpeechDucking(true);
+      // 兜底：语音事件偶发不触发时，按估读时长强制恢复，避免音效/音乐一直被压
+      const duckSafetyMs = Math.min(15000, 1500 + text.length * 400);
+      let released = false;
+      const safety = window.setTimeout(() => {
+        released = true;
+        audioManager.setSpeechDucking(false);
+      }, duckSafetyMs);
+      const releaseDuck = () => {
+        if (released) return;
+        released = true;
+        window.clearTimeout(safety);
+        audioManager.setSpeechDucking(false);
+      };
+
+      utterance.onstart = () => audioManager.setSpeechDucking(true);
+
       const settle = () => {
+        releaseDuck();
         if (opts?.sTier) this.sTierBusyUntilMs = 0;
         if (opts?.banner) {
           // 念完后字幕再停留片刻，缓缓淡出

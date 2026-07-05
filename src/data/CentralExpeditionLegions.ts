@@ -46,7 +46,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     ruzhou: { name: '赤帻先锋', tier: 3 },
   yun: { name: '陆浑戎骑', tier: 4 },
     jiyuan: { name: '落雕卫', tier: 3 },
-  xiongding: { name: '鲜卑燕军', tier: 4 }, // 天井关·慕容永西燕末代君主（缺乏极其著名的战术高光，降T3）
+    xiongding: { name: '鲜卑燕骑', tier: 4 },
   // 金甲卫除名（生造）
   huo: { name: '霍邑骁锐', tier: 4 },                 // 缺乏知名度支撑，降T3
   mushi: { name: '丘穆陵骑', tier: 4 },

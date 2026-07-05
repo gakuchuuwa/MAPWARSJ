@@ -176,8 +176,8 @@ with gr.Blocks(title="立绘智能抠图工具", theme=gr.themes.Soft()) as demo
             
         with gr.TabItem("批量处理文件夹"):
             with gr.Row():
-                in_dir = gr.Textbox(label="输入文件夹路径", value="./input_imgs")
-                out_dir = gr.Textbox(label="输出文件夹路径", value="./output_imgs")
+                in_dir = gr.Textbox(label="输入文件夹路径", value=r"C:\Users\GAKU\Downloads\koutu")
+                out_dir = gr.Textbox(label="输出文件夹路径", value=r"C:\Users\GAKU\Downloads\koutu")
             
             batch_btn = gr.Button("⚡ 开始批量抠图", variant="primary")
             batch_result = gr.Textbox(label="处理结果", interactive=False, lines=3)

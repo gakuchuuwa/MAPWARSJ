@@ -722,7 +722,7 @@ export class CityAssetManager {
 'ruzhou': '汝',
         'yun': '允',
 'jiyuan': '济源',
-        'xiongding': '雄',
+'xiongding': '雄',
         'yaozhou': '耀',
         'huo': '霍',
         'mushi': '穆',

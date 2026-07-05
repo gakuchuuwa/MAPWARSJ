@@ -20,7 +20,7 @@ import { CITY_CONFIG, clampCityTroops } from '../config/CityConfig';
 import { GameTime } from '../core/GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
-import { getCityRegion, REGION_ORDER, RegionType } from '../systems/RegionSystem';
+import { getCityRegion, REGION_ORDER, RegionType, isRegionCenter } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile, getStrategicSkillDef } from '../data/GeneralSkills';
@@ -208,8 +208,16 @@ export class RecruitmentSystem {
         return this.legionManager.getFollowedLegion()?.getFactionId?.() ?? null;
     }
 
+    /** 按据点类型 + 是否文化中心，返回最低出兵阈值（armySize 须 ≥ 此值） */
+    private getCityMinSpawnTroops(city: RecruitmentCity): number {
+        if (isRegionCenter(city.id)) {
+            return GameConfig.LEGION.CITY_MIN_SPAWN_TROOPS.region_center;
+        }
+        const map = GameConfig.LEGION.CITY_MIN_SPAWN_TROOPS as Record<string, number>;
+        return map[city.type] ?? 10000;
+    }
+
     private collectSpawnCandidates(cities: RecruitmentCity[]): SpawnCandidate[] {
-        const minArmySize = GameConfig.LEGION.MIN_ARMY_SIZE;
         const spawnTypes = GameConfig.LEGION.SPAWN_CITY_TYPES as readonly string[];
         const bounds = this.getCurrentViewportBounds();
         const candidates: SpawnCandidate[] = [];
@@ -221,7 +229,8 @@ export class RecruitmentSystem {
             if (this.isCityGarrisonCommitted(city.id)) continue;
 
             const armySize = Math.floor((city.troops || 0) * 0.9);
-            if (armySize < minArmySize) continue;
+            const minTroops = this.getCityMinSpawnTroops(city);
+            if (armySize < minTroops) continue;
 
             candidates.push({
                 city,

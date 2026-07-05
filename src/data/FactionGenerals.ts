@@ -475,7 +475,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     boren: { generalId: 'boren_ada', generalName: '阿大', portrait: '/assets/BASHU/boren_ada.png' },
     jingmen: { generalId: 'jingmen_zhaoyun', generalName: '赵云', portrait: '/assets/NORTH/jingmen_zhaoyun.png' },
     chenzhou_d: { generalId: 'chenzhou_d_zhanghao', generalName: '张镐', portrait: '/assets/BASHU/chenzhou_d_zhanghao.png' },
-    xiqin: { generalId: 'xiqin_wanyanchenheshang', generalName: '完颜陈和尚', portrait: '/assets/HEXI/xiqin_wanyanchenheshang.png' },
+    xiqin: { generalId: 'xiqin_wanyanchenheshang', generalName: '完颜陈和尚', portrait: '/assets/NORTHEAST/xiqin_wanyanchenheshang.png' },
     beidi: { generalId: 'beidi_yaochang', generalName: '姚苌', portrait: '/assets/TIBET/beidi_yaochang.png' },
     baiyang: { generalId: 'baiyang_mengtian', generalName: '蒙恬', portrait: '/assets/yingqin/baiyang_mengtian.png' },
     qianzhong: { generalId: 'qianzhong_wubayue', generalName: '吴八月', portrait: '/assets/BASHU/qianzhong_wubayue.png' }, // 芷江·乾嘉苗民起义
@@ -558,7 +558,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     pizhou: { generalId: 'pizhou_lvbu', generalName: '吕布', portrait: '/assets/CENTRAL/pizhou_lvbu.png' },
     yin: { generalId: 'yin_dixin', generalName: '帝辛', portrait: '/assets/xianqin/yin_dixin.png' },
     liwang: { generalId: 'liwang_liguangbi', generalName: '李光弼', portrait: '/assets/litang/liwang_liguangbi.png' },
-    qing: { generalId: 'qing_quduan', generalName: '曲端', portrait: '/assets/NORTHEAST/qing_quduan.png' },
+    qing: { generalId: 'qing_quduan', generalName: '曲端', portrait: '/assets/zhaosong/qing_quduan.png' },
     han: { generalId: 'han_baoyuan', generalName: '暴鸢', portrait: '/assets/xianqin/han_baoyuan.png' },
     bailian: { generalId: 'bailian_wangconger', generalName: '王聪儿', portrait: '/assets/panjun/bailian_wangconger.png' },
     shen: { generalId: 'shen_shenbo', generalName: '申伯', portrait: '/assets/xianqin/shen_shenbo.png' },
@@ -578,7 +578,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
         chanzhou: { generalId: 'chanzhou_chairong', generalName: '柴荣', portrait: '/assets/CENTRAL/chanzhou_chairong.png' },
     lai: { generalId: 'lai_wangshifan', generalName: '王师范', portrait: '/assets/NORTH/lai_wangshifan.png' }, // 青石关·平卢节帅屡败朱温
     mushi: { generalId: 'mushi_muchong', generalName: '穆崇', portrait: '/assets/NORTH/mushi_muchong.png' }, // 大岴·丘穆陵氏代北勋臣
-    xiongding: { generalId: 'xiongding_murongyong', generalName: '慕容永', portrait: '/assets/STEPPE/xiongding_murongyong.png' }, // 天井关·西燕末代君主
+    xiongding: { generalId: 'xiongding_murongyong', generalName: '慕容永', portrait: '/assets/STEPPE/xiongding_murongyong.png' },
 
     pinghai: { generalId: 'pinghai_laihuer', generalName: '来护儿', portrait: '/assets/NORTH/pinghai_laihuer.png' }, // 漂渝津·隋征东舟师
     pingyuan: { generalId: 'pingyuan_yanzhenqing', generalName: '颜真卿', portrait: '/assets/litang/pingyuan_yanzhenqing.png' }, // 平原·首倡义兵抗安史

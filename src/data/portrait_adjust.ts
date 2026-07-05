@@ -387,11 +387,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/daming/huai_zhuyuanzhang.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": -43
-        },
         "/assets/NORTH/mushi_muchong.png": {
             "scale": 0.96,
             "offsetX": 0,
@@ -1003,7 +998,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -35
         },
         "/assets/CENTRAL/lu_zhangliao.png": {
-            "scale": 1.11,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -1997,11 +1992,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/HEXI/xiqin_wanyanchenheshang.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": -28
-        },
         "/assets/HEXI/yeli_yeliwangrong.png": {
             "scale": 1,
             "offsetX": 0,
@@ -2846,11 +2836,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": 9
-        },
-        "/assets/NORTHEAST/qing_quduan.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": -9
         },
         "/assets/NORTHEAST/suolun_bomuboguoer.png": {
             "scale": 1,
@@ -3872,11 +3857,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/zhaosong/__闲置__zhaosong_04.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -5
-        },
         "/assets/zhaosong/__闲置__zhaosong_05.png": {
             "scale": 1,
             "offsetX": 0,
@@ -4611,6 +4591,76 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -7
+        },
+        "/assets/HEXI/__闲置__HEXI_10.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/NORTHEAST/xiqin_wanyanchenheshang.png": {
+            "scale": 1.11,
+            "offsetX": 4,
+            "offsetY": 13
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_04.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/zhaosong/qing_quduan.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/CENTRAL/cd898a76-c2bd-4e43-865a-7955b80a131a.png": {
+            "scale": 1.27,
+            "offsetX": 0,
+            "offsetY": 39
+        },
+        "/assets/daming/__闲置__daming_04.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/daming/__闲置__daming_05.png": {
+            "scale": 1.25,
+            "offsetX": 0,
+            "offsetY": -78
+        },
+        "/assets/daming/luming_luxiangsheng.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/daming/shanrong_lanyu.png": {
+            "scale": 1.29,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/daming/86286716-10b4-4fe2-81f7-c13a19de923f.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/daming/863017b5-b221-4c39-9740-c41c1be2bc99.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/daming/e8efd876-6d2c-4361-96a3-8ac51d086b9d.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/daming/__闲置__daming_07.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -43
+        },
+        "/assets/daming/huai_zhuyuanzhang.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -18
         }
     },
     "folderGuides": {

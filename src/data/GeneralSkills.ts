@@ -199,7 +199,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_zhangliang: { generalId: 'unassigned_zhangliang', tier: 'ordinary', tacticalSkillId: 'ts_028' }, // 征东：唐水军渡海攻坚
     mushi_muchong: { generalId: 'mushi_muchong', tier: 'ordinary', tacticalSkillId: 'ts_021' }, // 代北：北魏开国翼戴
     lai_wangshifan: { generalId: 'lai_wangshifan', tier: 'ordinary', tacticalSkillId: 'ts_034' }, // 平卢：反朱温决死突击
-    xiongding_murongyong: { generalId: 'xiongding_murongyong', tier: 'ordinary', tacticalSkillId: 'ts_033' }, // 西燕：亡国哀兵复起
+    xiongding_murongyong: { generalId: 'xiongding_murongyong', tier: 'ordinary', tacticalSkillId: 'ts_033' },
     chanzhou_chairong: { generalId: 'chanzhou_chairong', tier: 'famous', tacticalSkillId: 'ts_147', strategicSkillId: 'str_11' }, // 澶州：周世宗亲征
     linhu_mafang: { generalId: 'linhu_mafang', tier: 'ordinary', tacticalSkillId: 'ts_021' },
     xianyu_hanxin: { generalId: 'xianyu_hanxin', tier: 'famous', tacticalSkillId: 'ts_013', strategicSkillId: 'str_12' },
@@ -802,7 +802,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     // ── 江南区 2026-06-18 ──
     wuling_xiangdancheng: { generalId: 'wuling_xiangdancheng', tier: 'famous', tacticalSkillId: 'ts_338', strategicSkillId: 'str_10' },
     suzhou_d_shikefa: { generalId: 'suzhou_d_shikefa', tier: 'ordinary', tacticalSkillId: 'ts_039' },
-    jiujiang_zhouyu: { generalId: 'jiujiang_zhouyu', tier: 'famous', tacticalSkillId: 'ts_261', strategicSkillId: 'str_13' }, // 赤壁火攻
+    jiujiang_zhouyu: { generalId: 'jiujiang_zhouyu', tier: 'famous', tacticalSkillId: 'ts_261', strategicSkillId: 'str_13' }, // 火攻破舰
     fangla_fangla: { generalId: 'fangla_fangla', tier: 'ordinary', tacticalSkillId: 'ts_051' },
     fang_guozhen_fangguozhen: { generalId: 'fang_guozhen_fangguozhen', tier: 'ordinary', tacticalSkillId: 'ts_104' }, // 方国珍割据浙东
     ouyue_zouyao: { generalId: 'ouyue_zouyao', tier: 'ordinary', tacticalSkillId: 'ts_016' }, // 东瓯王
