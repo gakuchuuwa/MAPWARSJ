@@ -44,6 +44,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wala', name: '瓦剌' },
     { id: 'wuliangha', name: '兀良哈' },
 
+
     { id: 'dingling', name: '丁零' },
     { id: 'nifuhe', name: '尼夫' },
      // 旗号二字（全称尼夫赫）

@@ -2533,6 +2533,7 @@ export const CITIES_V2: CityDataV2[] = [
     },
     { id: 'city_saiyinshanda', name: '薛灵哥', factionId: 'wuliangha', lat: 49.437762, lng: 101.428528, type: 'small_city', troops: 20000, region: 'NORTHEAST' },
 
+
     // ── 2026-06-18 新增：赛音山达（漠东隘口，叛军旗）──
     { id: 'city_saiyinsanda', name: '赛音山达', factionId: 'nuoyan_d', lat: 44.8870, lng: 110.1407, type: 'pass', region: 'STEPPE', troops: 10000, note: '赛音诺颜部牧地；喀尔喀中路（《清史稿·藩部传》）' },
     // ── 2026-06-19 特尔门·黑沙（草原）──

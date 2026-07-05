@@ -409,7 +409,7 @@ export class LegionPhalanxDrawer {
         if (!refSprite) return;
 
         const refTotalFrames = this.getFrameCount(refSprite);
-        const baseHeight = 100; // Standard size for all units
+        const baseHeight = 75; // Standard size for all units
 
         // [DYNAMIC RATIO]
         // Do NOT force unitRatio here. We calculate it per-sprite in the loop.
@@ -684,7 +684,7 @@ export class LegionPhalanxDrawer {
             // appear at consistent visual heights regardless of aspect ratio.
             const currentRatio = frameW / frameH;
             
-            const baseHeight = 80;
+            const baseHeight = 60;
 
             // Height is the primary constraint, width follows from aspect ratio.
             // Normalize by source strip row height so spear (84px) matches crossbow (64px) at scale 1.
@@ -728,8 +728,13 @@ export class LegionPhalanxDrawer {
     }
 
     /**
-     * 海上单船渲染（海域 hex 或编辑器模拟）
+     * 海上三角编队渲染（3艘：前1后2）
      */
+    private static readonly NAVAL_TRIANGLE = [
+        { r: 0, c: 0 },
+        { r: 1, c: -1 }, { r: 1, c: 1 },
+    ] as const;
+
     public static drawNaval(
         ctx: CanvasRenderingContext2D,
         center: { x: number; y: number },
@@ -743,53 +748,77 @@ export class LegionPhalanxDrawer {
         const shipId = getNavalShipAssetId(troops);
         const currentSet = this.unitSpriteCache.get(shipId);
         if (!currentSet) {
-            this.ensureNavalAssetsLoading(); // 首次海上渲染触发后台加载，加载完成前先不画
+            this.ensureNavalAssetsLoading();
             return;
         }
 
-        let rawSprite: HTMLImageElement | undefined;
-        if (state === 'DEATH') {
-            rawSprite = currentSet.DEATH[direction] || currentSet.DEATH[0];
-        } else if (state === 'DAMAGE') {
-            rawSprite = currentSet.DAMAGE[direction] || currentSet.DAMAGE[0];
-        } else if (state === 'ATTACK') {
-            rawSprite = currentSet.ATTACK[direction] || currentSet.ATTACK[0];
-        } else if (state === 'MOVE') {
-            rawSprite = currentSet.MOVE[direction] || currentSet.MOVE[0];
-        } else {
-            rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
-        }
-        if (!rawSprite?.complete || rawSprite.naturalWidth === 0) return;
+        // 选一帧 sprite 来计算尺寸（所有船同型号）
+        const sampleSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
+        if (!sampleSprite?.complete || sampleSprite.naturalWidth === 0) return;
 
-        const tintedSprite = SpriteTinter.getTintedSprite(rawSprite, factionId);
-        if (!tintedSprite) return;
-
-        const spriteTotalFrames = this.getFrameCount(tintedSprite);
-        let currentFrameIndex = 0;
-        if (state === 'DEATH') {
-            currentFrameIndex = Math.min(Math.floor(tick / 150), spriteTotalFrames - 1);
-        } else if (state === 'MOVE' || state === 'ATTACK' || state === 'DAMAGE') {
-            currentFrameIndex = Math.floor(tick / 150) % spriteTotalFrames;
-        }
-
-        const frameW = tintedSprite.width / spriteTotalFrames;
-        const frameH = tintedSprite.height;
+        const spriteTotalFrames = this.getFrameCount(sampleSprite);
+        const frameW = sampleSprite.width / spriteTotalFrames;
+        const frameH = sampleSprite.height;
         const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
-        let baseHeight = 110;
-        if (shipId === 'ship_small') baseHeight = 50;
-        else if (shipId === 'ship_medium') baseHeight = 65;
-        else if (shipId === 'ship_large') baseHeight = 80;
+        const baseHeight = 80;
         const targetH = baseHeight * scale * frameHeightNorm;
         const targetW = targetH * (frameW / frameH);
+        const spacingX = targetW * 0.70;
+        const spacingY = targetH * 0.50;
 
-        ctx.drawImage(
-            tintedSprite,
-            currentFrameIndex * frameW, 0, frameW, frameH,
-            center.x - targetW / 2,
-            center.y - targetH / 2,
-            targetW,
-            targetH,
-        );
+        // 旋转角（与陆军一致）
+        const angle = (direction + 1) * Math.PI / 4;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+
+        // 收集 3 艘船的位置
+        const ships: { x: number; y: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number }[] = [];
+
+        for (let i = 0; i < 3; i++) {
+            const pos = this.NAVAL_TRIANGLE[i] ?? this.NAVAL_TRIANGLE[0];
+            const ox = (pos.r - 0.5) * spacingY;
+            const oy = pos.c * spacingX * 0.7;
+            const dx = center.x + (ox * cos - oy * sin);
+            const dy = center.y + (ox * sin + oy * cos);
+
+            let rawSprite: HTMLImageElement | undefined;
+            if (state === 'DEATH') {
+                rawSprite = currentSet.DEATH[direction] || currentSet.DEATH[0];
+            } else if (state === 'DAMAGE') {
+                rawSprite = currentSet.DAMAGE[direction] || currentSet.DAMAGE[0];
+            } else if (state === 'ATTACK') {
+                rawSprite = currentSet.ATTACK[direction] || currentSet.ATTACK[0];
+            } else if (state === 'MOVE') {
+                rawSprite = currentSet.MOVE[direction] || currentSet.MOVE[0];
+            } else {
+                rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
+            }
+            if (!rawSprite?.complete || rawSprite.naturalWidth === 0) continue;
+
+            const tintedSprite = SpriteTinter.getTintedSprite(rawSprite, factionId);
+            if (!tintedSprite) continue;
+
+            let currentFrameIndex = 0;
+            if (state === 'DEATH') {
+                currentFrameIndex = Math.min(Math.floor((tick + i * 80) / 150), spriteTotalFrames - 1);
+            } else if (state === 'MOVE' || state === 'ATTACK' || state === 'DAMAGE') {
+                currentFrameIndex = Math.floor((tick + i * 80) / 150) % spriteTotalFrames;
+            }
+
+            const tfw = tintedSprite.width / spriteTotalFrames;
+            ships.push({
+                x: dx, y: dy,
+                img: tintedSprite,
+                sx: currentFrameIndex * tfw, sy: 0, sw: tfw, sh: tintedSprite.height,
+            });
+        }
+
+        // 后先画（Y 排序）
+        ships.sort((a, b) => a.y - b.y);
+        for (const s of ships) {
+            ctx.drawImage(s.img, s.sx, s.sy, s.sw, s.sh,
+                s.x - targetW / 2, s.y - targetH / 2, targetW, targetH);
+        }
     }
 
     // [NEW] Custom Formation Offset Calculation
