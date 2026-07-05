@@ -6,6 +6,7 @@ import { MAP_LAYER_ZINDEX, MAP_PANES } from '../config/MapLayers';
 import { isMacroMapZoom } from '../config/StrategicView';
 import { PlayerPhalanxDrawer } from './player/PlayerPhalanxDrawer'; // [NEW] Preload only
 import { LegionPhalanxDrawer, PhalanxAnimState } from './legion/LegionPhalanxDrawer'; // [AI SYSTEM]
+import type { NavalShipAssetId } from '../types/NavalShipTiers';
 import { LegionPhalanxStateManager } from './legion/LegionPhalanxState';
 import { LegionFlagDrawer } from './legion/LegionFlagDrawer'; // [AI FLAG SYSTEM]
 import { ProjectileRenderer } from './ProjectileRenderer'; // [NEW] Arrow System
@@ -56,6 +57,8 @@ export interface IAnimatedUnit extends IRenderable {
     cultureScales?: number[] | null; // [NEW] Scales for each slot
     /** 海域 hex：渲染船贴图而非陆地方阵 */
     isOnSea?: boolean;
+    /** 登船时锁定的船型（小/中/大）；null/缺省=按实时兵力算 */
+    navalShipTierLock?: NavalShipAssetId | null;
     /** ArmyEditor：强制模拟海上 */
     forceNavalVisual?: boolean;
 }
@@ -864,6 +867,7 @@ export class GlobalUnitRenderer {
                     troops,
                     Date.now(),
                     unit.factionId || 'zhonghua',
+                    unit.navalShipTierLock ?? null,
                 );
             } else {
                 // [AI SYSTEM] Use Dedicated Legion Drawer

@@ -687,11 +687,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 17,
             "offsetY": -20
         },
-        "/assets/xianqin/huang_d_sunshuao.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -40
-        },
         "/assets/liuhan/xijue_ganyanshou.png": {
             "scale": 0.86,
             "offsetX": 12,
@@ -3702,11 +3697,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/CENTRAL/__闲置__CENTRAL_11.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 1
-        },
         "/assets/CENTRAL/__闲置__CENTRAL_12.png": {
             "scale": 1.03,
             "offsetX": 0,
@@ -5306,6 +5296,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -1
+        },
+        "/assets/xianqin/__闲置__xianqin_22.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -40
+        },
+        "/assets/CENTRAL/huang_d_jiakui.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 1
         }
     },
     "folderGuides": {

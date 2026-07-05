@@ -631,7 +631,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yang_aner: { generalId: 'yang_aner_yanganer', generalName: '杨安儿', portrait: '/assets/LINGNAN/yang_aner_yanganer.png' },
         xie_cj_d: { generalId: 'xie_xiefangde', generalName: '谢枋得', portrait: '/assets/JIANGNAN/xie_xiefangde.png' }, // 葛溪·信州抗元殉国
     wan: { generalId: 'wan_liuyuan', generalName: '刘源', portrait: '/assets/JIANGNAN/wan_liuyuan.png' },
-    huang_d: { generalId: 'huang_d_sunshuao', generalName: '贾逵', portrait: '/assets/xianqin/huang_d_sunshuao.png' },
+    huang_d: { generalId: 'huang_d_sunshuao', generalName: '贾逵', portrait: '/assets/CENTRAL/huang_d_jiakui.png' },
     wenzhou: { generalId: 'wenzhou_zhangcong', generalName: '方国珍', portrait: '/assets/JIANGNAN/wenzhou_zhangcong.png' },
     wuling: { generalId: 'wuling_xiangdancheng', generalName: '相单程', portrait: '/assets/JIANGNAN/wuling_xiangdancheng.png' },
 

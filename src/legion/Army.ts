@@ -16,6 +16,7 @@ import { getRandomFactionPortrait } from '../config/portrait_defaults';
 import { getGeneralMarchSpeedMultiplier, generalHasStrategicEffect } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 import { isCultureCavalryOnly } from '../types/CultureFormations';
+import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 
 export class Army implements IBattleUnit {
     private map: GameMap;
@@ -91,6 +92,11 @@ export class Army implements IBattleUnit {
     public lastPath: { lat: number; lng: number }[] = []; // [Siege Fix] Path history
     /** 当前位置是否在海域 hex（WATER/OCEAN），用于海上船贴图 */
     public isOnSea: boolean = false;
+    /**
+     * 海上船型锁（2026-07-06）：登船那一刻按兵力定好小/中/大船，锁定整个航程；
+     * 上岸清空，下次登船再按当时兵力重定。避免航行中折损跨过兵力档位、船贴图当场缩水的怪象。
+     */
+    public navalShipTierLock: NavalShipAssetId | null = null;
 
     // [NEW] Home City ID (One Legion Per City Rule)
     public homeCityId: string | null = null;
@@ -465,7 +471,18 @@ export class Army implements IBattleUnit {
 
     private updateTerrainSpeed(): void {
         const pos = { lat: this.position.lat, lng: this.position.lng };
+        const wasOnSea = this.isOnSea;
         this.isOnSea = LandSeaSystem.isSeaAt(pos);
+
+        // 船型锁：登船（上岸→海）当刻按兵力定船，锁定整航程；上岸清空。
+        //   （已在海上却无锁，如中途注册的情形，也补一次锁，防回退到实时算法闪图。）
+        if (this.isOnSea) {
+            if (!wasOnSea || this.navalShipTierLock === null) {
+                this.navalShipTierLock = getNavalShipAssetId(this.getTroops());
+            }
+        } else if (this.navalShipTierLock !== null) {
+            this.navalShipTierLock = null;
+        }
 
         const terrainKind = this.isOnSea ? 'sea' : (LandTerrainSystem.classifyAt(pos) ?? 'mountain');
         const marchTerrainKind =
@@ -494,6 +511,7 @@ export class Army implements IBattleUnit {
 
         if (this.renderer) {
             this.renderer.isOnSea = this.isOnSea;
+            this.renderer.navalShipTierLock = this.navalShipTierLock;
         }
     }
 

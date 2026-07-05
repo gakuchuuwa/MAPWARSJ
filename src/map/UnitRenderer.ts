@@ -3,6 +3,7 @@ import { GameMap } from './GameMap';
 import { GlobalUnitRenderer, IAnimatedUnit } from './GlobalUnitRenderer';
 import { LegionType } from '../types/UnitTypes';
 import { GameConfig } from '../config/GameConfig';
+import type { NavalShipAssetId } from '../types/NavalShipTiers';
 
 export interface IRenderable {
     getPosition(): { lat: number; lng: number };
@@ -38,6 +39,8 @@ export class UnitRenderer implements IAnimatedUnit {
     public isMoving: boolean = false;
     /** 海域 hex 上显示船贴图（由 Army.updateTerrainSpeed 同步） */
     public isOnSea: boolean = false;
+    /** 登船时锁定的船型（小/中/大），由 Army.updateTerrainSpeed 同步；null=按实时兵力算 */
+    public navalShipTierLock: NavalShipAssetId | null = null;
 
     // Battle Info
     public currentBattleType: 'siege' | 'field' | null = null;

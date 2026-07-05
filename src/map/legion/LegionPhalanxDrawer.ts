@@ -8,7 +8,7 @@ import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import { FactionTintSystem } from '../../systems/tinting/FactionTintSystem';
 import { getCompositionTier, CompositionTier, expandCompositionSlots } from '../../types/LegionComposition';
-import { getNavalShipAssetId } from '../../types/NavalShipTiers';
+import { getNavalShipAssetId, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
@@ -744,8 +744,10 @@ export class LegionPhalanxDrawer {
         troops: number,
         tick: number,
         factionId: string,
+        lockedShipId: NavalShipAssetId | null = null,
     ): void {
-        const shipId = getNavalShipAssetId(troops);
+        // 登船时锁定的船型优先；无锁才按实时兵力算（如编辑器预览）
+        const shipId = lockedShipId ?? getNavalShipAssetId(troops);
         const currentSet = this.unitSpriteCache.get(shipId);
         if (!currentSet) {
             this.ensureNavalAssetsLoading();
