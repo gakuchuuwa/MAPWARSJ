@@ -585,7 +585,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     linhu: { generalId: 'linhu_mafang', generalName: '马芳', portrait: '/assets/xianqin/linhu_mafang.png' },
     xianyu: { generalId: 'xianyu_hanxin', generalName: '韩信', portrait: '/assets/liuhan/xianyu_hanxin.png' },
     shizhao_d: { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/HEXI/shizhao_d_shihu.png' }, // 邢台·后赵武帝
-    loufan: { generalId: 'loufan_xuerengui', generalName: '薛仁贵', portrait: '/assets/NORTH/loufan_xuerengui.png' },
+    loufan: { generalId: 'loufan_xuerengui', generalName: '薛仁贵', portrait: '/assets/litang/loufan_xuerengui.png' },
     shanrong: { generalId: 'shanrong_lanyu', generalName: '蓝玉', portrait: '/assets/daming/shanrong_lanyu.png' },
 
     // ── 北方关隘 2026-06-19 ──
@@ -741,7 +741,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     kawusi: { generalId: 'kawusi_haidaer', generalName: '海达尔', portrait: '/assets/CENTRAL_ASIA/kawusi_haidaer.png' },
     xianhai: { generalId: 'xianhai_shamalike', generalName: '沙马利克', portrait: '/assets/CENTRAL_ASIA/xianhai_shamalike.png' },
     wuhu: { generalId: 'wuhu_dukake', generalName: '都卡克', portrait: '/assets/CENTRAL_ASIA/wuhu_dukake.png' },
-    xingan: { generalId: 'xingan_hailancha', generalName: '海兰察', portrait: '/assets/STEPPE/xingan_hailancha.png' },
+    xingan: { generalId: 'xingan_hailancha', generalName: '海兰察', portrait: '/assets/NORTHEAST/xingan_hailancha.png' },
     dongping: { generalId: 'dongping_langtan', generalName: '郎坦', portrait: '/assets/NORTHEAST/dongping_langtan.png' },
     badakhshan: { generalId: 'badakhshan_yaerbeige', generalName: '雅尔贝格', portrait: '/assets/CENTRAL_ASIA/badakhshan_yaerbeige.png' },
     keliya: { generalId: 'keliya_fuduxin', generalName: '伏阇信', portrait: '/assets/TIBET/keliya_fuduxin.png' },

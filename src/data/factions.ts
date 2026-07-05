@@ -318,6 +318,7 @@ export const FACTIONS: Faction[] = [
     { id: 'qu_d', name: '麴家' },                 // 麴义·先登营@界桥
     { id: 'liu', name: '九江' },
 
+
       // 陶褐 - 英布/九江王(六县)
     { id: 'ouyue', name: '瓯越' },
 

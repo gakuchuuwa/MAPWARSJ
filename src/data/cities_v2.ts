@@ -1189,6 +1189,7 @@ export const PERIPHERY: CityDataV2[] = [
     },
     { id: 'city_liuxian', name: '六安', factionId: 'liu', lat: 31.74, lng: 116.5, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
 
+
     
 
     // ── 2026-05-25 新增：三国核对追加势力都城 ──

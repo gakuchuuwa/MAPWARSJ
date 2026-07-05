@@ -538,7 +538,7 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
 const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_062', layer: 'tactical', series: 'enhance', index: 62,
-        displayName: '奉天靖难', sourceQuote: '《明史·成祖本纪》：“奉天靖难，推毂群帅。”',
+        displayName: '长驱摧阵', sourceQuote: '《明史·成祖本纪》：“奉天靖难，推毂群帅。”',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
     },
@@ -598,7 +598,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_072', layer: 'tactical', series: 'enhance', index: 72,
-        displayName: '回军靖难', sourceQuote: '《朝鲜王朝实录》：“大王回军靖难，定鼎立国。”',
+        displayName: '回军突袭', sourceQuote: '《朝鲜王朝实录》：“大王回军靖难，定鼎立国。”',
         baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
         magnitude: 1.55, engineStatus: 'ready',
     },
@@ -1582,7 +1582,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_238', layer: 'tactical', series: 'enhance', index: 238,
-        displayName: '收部复兴', sourceQuote: '《旧唐书·突厥传》：骨咄禄收集余众，复兴突厥。',
+        displayName: '收众奋击', sourceQuote: '《旧唐书·突厥传》：骨咄禄收集余众，复兴突厥。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
     },
@@ -1768,7 +1768,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_269', layer: 'tactical', series: 'enhance', index: 269,
-        displayName: '合兵复京', sourceQuote: '《旧唐书·仆固怀恩传》：怀恩与子仪收复两京。',
+        displayName: '合兵摧城', sourceQuote: '《旧唐书·仆固怀恩传》：怀恩与子仪收复两京。',
         baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1984,7 +1984,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_305', layer: 'tactical', series: 'enhance', index: 305,
-        displayName: '破阵复疆', sourceQuote: '《新唐书·高骈传》：骈大破南诏，复交趾，筑大罗城以镇之。',
+        displayName: '破阵摧坚', sourceQuote: '《新唐书·高骈传》：骈大破南诏，复交趾，筑大罗城以镇之。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
