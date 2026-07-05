@@ -444,11 +444,14 @@ export const FACTIONS: Faction[] = [
     { id: 'zhangshicheng', name: '大周' },
     { id: 'luoping', name: '新会' },
     { id: 'wenzhou', name: '温州' },
+
     { id: 'chendiaoyan', name: '陈吊' },
 
     // ── 2026-05-26 明朝势力 ──
     // 第二类：元末群雄割据政权
-    { id: 'fang_guozhen', name: '浙方' },
+    { id: 'fang_guozhen', name: '庆元' },
+
+
     // 第三类：明代中后期农民起义与割据政权
     { id: 'dixiang', name: '新国' },
     { id: 'dengmaoqi', name: '铲平' },
@@ -749,7 +752,8 @@ export const FACTIONS: Faction[] = [
     { id: 'tan_d', name: '覃家' },                          // 覃氏(慈利/澧水流域)
     { id: 'ran_d', name: '冉家' },                          // 冉氏(秀山/酉水流域)
     { id: 'chu_d', name: '舒州' },                          // 舒州(潜山/同安郡)
-    { id: 'hu_d', name: '胡家' },                            // 胡氏(宁海/浙东/胡三省)
+    { id: 'hu_d', name: '胡家' },
+                            // 胡氏(宁海/浙东/胡三省)
 
     // ── 2026-05-27 新增：青衣(雅州)、五溪(八面山)、姑蔑(衢州) ──
     { id: 'qingyi', name: '青衣' },
@@ -1151,7 +1155,8 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 中原走廊21座（淮西—豫东—江淮西翼）──
     { id: 'yingzhou_d', name: '颍州' },           // 颍@汝阴
     { id: 'yanchuan_d', name: '郾川' },           // 郾@郾城
-    { id: 'huang_d', name: '黄国' },              // 黄@潢川
+    { id: 'huang_d', name: '黄国' },
+              // 黄@潢川
     { id: 'yuzhou', name: '豫州' },
               // 杞@雍丘
     { id: 'yiyang_d', name: '义阳' },             // 义@武胜关

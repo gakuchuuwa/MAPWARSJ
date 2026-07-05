@@ -208,8 +208,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     shanrong_lanyu: { generalId: 'shanrong_lanyu', tier: 'famous', tacticalSkillId: 'ts_220', strategicSkillId: 'str_01' },
     xie_xiefangde: { generalId: 'xie_xiefangde', tier: 'ordinary', tacticalSkillId: 'ts_143' }, // 信州：垒山筑寨据守抗元
     wan_liuyuan: { generalId: 'wan_liuyuan', tier: 'ordinary', tacticalSkillId: 'ts_336' }, // 刘源皖口
-    huang_d_sunshuao: { generalId: 'huang_d_sunshuao', tier: 'ordinary', tacticalSkillId: 'ts_035' }, // 期思：筑芍陂兴水利
-    wenzhou_zhangcong: { generalId: 'wenzhou_zhangcong', tier: 'ordinary', tacticalSkillId: 'ts_036' }, // 永嘉：整顿海防编练水师
+    huang_d_sunshuao: { generalId: 'huang_d_sunshuao', tier: 'famous', tacticalSkillId: 'ts_035', strategicSkillId: 'str_14' },
+    wenzhou_zhangcong: { generalId: 'wenzhou_zhangcong', tier: 'ordinary', tacticalSkillId: 'ts_036' },
     qianzhong_wubayue: { generalId: 'qianzhong_wubayue', tier: 'ordinary', tacticalSkillId: 'ts_104' }, // 乾嘉：苗民决死破清军
     dangchang_liangmiding: { generalId: 'dangchang_liangmiding', tier: 'ordinary', tacticalSkillId: 'ts_099' },
     liao_houhongyuan: { generalId: 'liao_houhongyuan', tier: 'ordinary', tacticalSkillId: 'ts_006' },
@@ -804,7 +804,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     suzhou_d_shikefa: { generalId: 'suzhou_d_shikefa', tier: 'ordinary', tacticalSkillId: 'ts_039' },
     jiujiang_zhouyu: { generalId: 'jiujiang_zhouyu', tier: 'famous', tacticalSkillId: 'ts_261', strategicSkillId: 'str_13' }, // 火攻破舰
     fangla_fangla: { generalId: 'fangla_fangla', tier: 'ordinary', tacticalSkillId: 'ts_051' },
-    fang_guozhen_fangguozhen: { generalId: 'fang_guozhen_fangguozhen', tier: 'ordinary', tacticalSkillId: 'ts_104' }, // 方国珍割据浙东
+    fang_guozhen_fangguozhen: { generalId: 'fang_guozhen_fangguozhen', tier: 'ordinary', tacticalSkillId: 'ts_104' },
     ouyue_zouyao: { generalId: 'ouyue_zouyao', tier: 'ordinary', tacticalSkillId: 'ts_016' }, // 东瓯王
     ruochu_doulian: { generalId: 'ruochu_doulian', tier: 'famous', tacticalSkillId: 'ts_316', strategicSkillId: 'str_01' }, // 若敖夜袭
     mi_chu_xionglv: { generalId: 'mi_chu_xionglv', tier: 'famous', tacticalSkillId: 'ts_267', strategicSkillId: 'str_03' }, // 邲之战
@@ -820,7 +820,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yezongliu_yezongliu: { generalId: 'yezongliu_yezongliu', tier: 'ordinary', tacticalSkillId: 'ts_032' },
     zhangshicheng_zhangshicheng: { generalId: 'zhangshicheng_zhangshicheng', tier: 'famous', tacticalSkillId: 'ts_299', strategicSkillId: 'str_15' }, // 大周盐丁
     gumie_liuyu: { generalId: 'gumie_liuyu', tier: 'famous', tacticalSkillId: 'ts_174', strategicSkillId: 'str_01' }, // 却月阵水陆协同灭南燕
-    hu_d_husansheng: { generalId: 'hu_d_husansheng', tier: 'ordinary', tacticalSkillId: 'ts_015' }, // 胡三省浙东义兵抗元
+    hu_d_husansheng: { generalId: 'hu_d_husansheng', tier: 'ordinary', tacticalSkillId: 'ts_015' },
     unassigned_ganning: { generalId: 'unassigned_ganning', tier: 'famous', tacticalSkillId: 'ts_026', strategicSkillId: 'str_01' }, // 锦帆百骑
     wuyue_qianliu: { generalId: 'wuyue_qianliu', tier: 'famous', tacticalSkillId: 'ts_374', strategicSkillId: 'str_14' },
     qiufu_qiufu: { generalId: 'qiufu_qiufu', tier: 'ordinary', tacticalSkillId: 'ts_026' }, // 裘甫起义
@@ -1317,7 +1317,8 @@ function bridgeV1PhaseToTiming(entry: { phase: string; condition: string }): Tac
     return 'opening';
 }
 
-export function getTacticalSkillDef(skillId: string): TacticalSkillDef | null {
+export function getTacticalSkillDef(skillId: string | null | undefined): TacticalSkillDef | null {
+    if (!skillId) return null; // 防御：无战术技（null/空）直接返回，避免下方 startsWith 崩溃
     const direct = TACTICAL_SKILL_CATALOG[skillId];
     if (direct) return direct;
     // v1 桥接：武将已迁移到 ts_xxx，用 v1 catalog 合成旧格式 def

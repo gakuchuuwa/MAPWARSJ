@@ -134,6 +134,10 @@ export class GameInputManager {
                 case 'a': map.panBy([-step, 0]); break;
                 case 'd': map.panBy([step, 0]); break;
                 case 'p': PerformanceMonitor.getInstance().logSnapshot(); break;
+                case 'x':
+                    // [DEV] 快速测试远征：把当前跟随军团补到 4.5 万（生产构建自动剔除）
+                    if (import.meta.env.DEV) this.devBoostFollowedArmyForExpedition();
+                    break;
                 case 'h':
                     // Reset Camera / Help
                     this.map.flyTo({ lat: 34.5, lng: 112.5 }, 2, { zoom: 6 });
@@ -161,9 +165,3 @@ export class GameInputManager {
     }
 
     public handleBattleEnd(result: string, opponent: any) {
-        // Logic moved from GameApp
-        console.log(`Battle Ended: ${result}`);
-        // Maybe show modal via UI Manager?
-        // uiManager.showBattleResult(result);
-    }
-}

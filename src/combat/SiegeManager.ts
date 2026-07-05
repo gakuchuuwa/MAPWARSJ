@@ -711,6 +711,12 @@ export class SiegeManager {
                 siegeLog(`[Siege] Attacker Defeat!`);
                 this.activeSieges.delete(targetCity.id);
                 markLegionAnnihilationFeed(army, 'attacker', targetCity.name);
+                if (army.expeditionTargetCityId) {
+                    gameLog(
+                        'expedition',
+                        `🐎 [远征·诊断] 攻城战败清除远征目标｜军团=${army.name}｜兵力=${(army.getTroops() / 10000).toFixed(2)}万｜攻打【${targetCity.name}】失败被歼`
+                    );
+                }
                 army.expeditionTargetCityId = null;
                 army.destroy();
             }

@@ -275,7 +275,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'chendiaoyan': '漳',
 
     // ── 2026-05-25 明朝势力 ──
-    'fang_guozhen': '浙方',
+'fang_guozhen': '庆元',
     'dengmaoqi': '铲平',
 'yezongliu': '处',
     'dada_ming': '鞑靼',
@@ -423,7 +423,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tan_d': '覃',
     'ran_d': '冉',
     'chu_d': '舒',
-    'hu_d': '胡',
+'hu_d': '胡',
 
     // ── 自动补全剩余的特殊势力映射，防止显示英文 ──
 'cen_d': '岑',
@@ -806,7 +806,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'sagami': '相模',
     'mino': '美浓',
     'ssangseong': '和',
-    'wenzhou': '温',
+'wenzhou': '温',
     'fu_zhou': '涪',
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
 'maer_d': '马尔',

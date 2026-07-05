@@ -457,11 +457,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 19
         },
-        "/assets/liuhan/lulin_liuxiu.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/zhaosong/yue_d_yuefei.png": {
             "scale": 1.18,
             "offsetX": 4,
@@ -3798,9 +3793,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/liuhan/__闲置__liuhan_08.png": {
-            "scale": 0.92,
+            "scale": 1.1,
             "offsetX": 0,
-            "offsetY": 18
+            "offsetY": -7
         },
         "/assets/liuhan/you_gengkuang.png": {
             "scale": 1.05,
@@ -5056,6 +5051,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -28
+        },
+        "/assets/liuhan/lulin_liuxiu.png": {
+            "scale": 1.07,
+            "offsetX": 10,
+            "offsetY": 0
         }
     },
     "folderGuides": {

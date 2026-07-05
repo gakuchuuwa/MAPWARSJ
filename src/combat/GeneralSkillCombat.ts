@@ -371,7 +371,10 @@ export function rollSideEffectivePowerWithOpeningFate(
 function getTacticalSkill(unit: IBattleUnit): TacticalSkillDef | null {
     const profile = getGeneralProfile(unit.generalId);
     if (!profile) return null;
-    return getTacticalSkillDef((unit ? getActiveTacticalSkillId(unit) : null)!) ?? null;
+    // 有档案但无战术技（只有战略技 / 战术技未分配）时 getActiveTacticalSkillId 返回 null，
+    // 不可用 ! 强断言传入——否则 getTacticalSkillDef 对 null 调 startsWith 会崩（每帧攻城战崩溃）。
+    const skillId = getActiveTacticalSkillId(unit);
+    return skillId ? (getTacticalSkillDef(skillId) ?? null) : null;
 }
 
 function getTacticalSkillForTiming(
@@ -663,7 +666,8 @@ export function getGeneralSkillDisplayTags(
     const tags: { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' | 'strategic' }[] = [];
     const famous = profile.tier === 'famous';
 
-    const tac = getTacticalSkillDef((unit ? getActiveTacticalSkillId(unit) : null)!);
+    const tacId = getActiveTacticalSkillId(unit);
+    const tac = tacId ? getTacticalSkillDef(tacId) : null;
     if (tac) {
         tags.push({
             name: tac.displayName,

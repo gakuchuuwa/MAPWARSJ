@@ -631,14 +631,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yang_aner: { generalId: 'yang_aner_yanganer', generalName: '杨安儿', portrait: '/assets/LINGNAN/yang_aner_yanganer.png' },
         xie_cj_d: { generalId: 'xie_xiefangde', generalName: '谢枋得', portrait: '/assets/JIANGNAN/xie_xiefangde.png' }, // 葛溪·信州抗元殉国
     wan: { generalId: 'wan_liuyuan', generalName: '刘源', portrait: '/assets/JIANGNAN/wan_liuyuan.png' },
-    huang_d: { generalId: 'huang_d_sunshuao', generalName: '孙叔敖', portrait: '/assets/xianqin/huang_d_sunshuao.png' }, // 弋阳·楚国名相
-    wenzhou: { generalId: 'wenzhou_zhangcong', generalName: '张璁', portrait: '/assets/JIANGNAN/wenzhou_zhangcong.png' }, // 永嘉·明首辅抗倭
+    huang_d: { generalId: 'huang_d_sunshuao', generalName: '贾逵', portrait: '/assets/xianqin/huang_d_sunshuao.png' },
+    wenzhou: { generalId: 'wenzhou_zhangcong', generalName: '方国珍', portrait: '/assets/JIANGNAN/wenzhou_zhangcong.png' },
     wuling: { generalId: 'wuling_xiangdancheng', generalName: '相单程', portrait: '/assets/JIANGNAN/wuling_xiangdancheng.png' },
 
 // ── 江南区 2026-06-18 ──
     jiujiang: { generalId: 'jiujiang_zhouyu', generalName: '周瑜', portrait: '/assets/JIANGNAN/jiujiang_zhouyu.png' },
     fangla: { generalId: 'fangla_fangla', generalName: '方腊', portrait: '/assets/JIANGNAN/fangla_fangla.png' },
-    fang_guozhen: { generalId: 'fang_guozhen_fangguozhen', generalName: '方国珍', portrait: '/assets/JIANGNAN/fang_guozhen_fangguozhen.png' },
+    fang_guozhen: { generalId: 'fang_guozhen_fangguozhen', generalName: '卢镗', portrait: '/assets/JIANGNAN/fang_guozhen_fangguozhen.png' },
     ouyue: { generalId: 'ouyue_zouyao', generalName: '驺摇', portrait: '/assets/xianqin/ouyue_zouyao.png' },
     ruochu: { generalId: 'ruochu_doulian', generalName: '鬬廉', portrait: '/assets/JIANGNAN/ruochu_doulian.png' },
     wuwu_d: { generalId: 'wuwu_d_lvmeng', generalName: '吕蒙', portrait: '/assets/JIANGNAN/wuwu_d_lvmeng.png' },
@@ -673,7 +673,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     danyang: { generalId: 'danyang_huanwen', generalName: '桓温', portrait: '/assets/JIANGNAN/danyang_huanwen.png' },
     chizhou: { generalId: 'chizhou_changyuchun', generalName: '常遇春', portrait: '/assets/JIANGNAN/chizhou_changyuchun.png' },
     gumie: { generalId: 'gumie_liuyu', generalName: '刘裕', portrait: '/assets/JIANGNAN/gumie_liuyu.png' },
-    hu_d: { generalId: 'hu_d_husansheng', generalName: '胡三省', portrait: '/assets/JIANGNAN/hu_d_husansheng.png' },
+    hu_d: { generalId: 'hu_d_husansheng', generalName: '唐尧臣', portrait: '/assets/JIANGNAN/hu_d_husansheng.png' },
     sagami: { generalId: 'sagami_beitiaoshikang', generalName: '北条氏康', portrait: '/assets/JAPAN/sagami_beitiaoshikang.png' },
     mino: { generalId: 'mino_dagujiji', generalName: '大谷吉继', portrait: '/assets/JAPAN/mino_dagujiji.png' },
     zhuqian: { generalId: 'zhuqian_shaoerzineng', generalName: '少贰资能', portrait: '/assets/JAPAN/zhuqian_shaoerzineng.png' },

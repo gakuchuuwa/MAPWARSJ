@@ -289,7 +289,7 @@ export class CityAssetManager {
         'luoping': '新会',
         'chendiaoyan': '漳',
 
-        'fang_guozhen': '浙方',
+'fang_guozhen': '庆元',
         'dengmaoqi': '铲平',
 'yezongliu': '处',
         'dada_ming': '鞑靼',
@@ -423,7 +423,7 @@ export class CityAssetManager {
         'tan_d': '覃',
         'ran_d': '冉',
         'chu_d': '舒',
-        'hu_d': '胡',
+'hu_d': '胡',
 
         'dajin': '大金',
         'yizhou': '懿',
@@ -636,7 +636,7 @@ export class CityAssetManager {
 'xinping': '邠',
         'huan': '环',
         'wei2': '韦',
-        'wenzhou': '温',
+'wenzhou': '温',
 'wudu': '阶',
         'woye': '沃野',
         'lingzhou': '灵',

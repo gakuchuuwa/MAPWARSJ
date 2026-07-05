@@ -1305,10 +1305,8 @@ export const PERIPHERY: CityDataV2[] = [
         lat: 22.53, lng: 113.04, type: 'small_city', troops: 10000, tier: 4,
         
         note: '厓山；新会小城', region: 'LINGNAN' },
-    {
-        id: 'city_ninghai', name: '白峤', factionId: 'hu_d',
-        lat: 29.2757, lng: 121.4182, type: 'small_city', troops: 10000, tier: 4,
-        region: 'JIANGNAN', note: '东晋宁海县治所白峤；胡三省故里抗元义兵' },
+    { id: 'city_ninghai', name: '白峤', factionId: 'hu_d', lat: 29.2757, lng: 121.4182, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
     {
         id: 'city_zhenghe', name: '政和', factionId: 'dacheng',
         lat: 27.37, lng: 118.86, type: 'small_city', troops: 10000, tier: 4,
@@ -1325,21 +1323,16 @@ export const PERIPHERY: CityDataV2[] = [
 
     // ── 2026-05-25 明朝势力新增城市 ──
     // 第二类：元末群雄
-    {
-        id: 'city_qingyuan_zj', name: '庆元', factionId: 'fang_guozhen',
-        lat: 29.87, lng: 121.54, type: 'small_city', troops: 10000, tier: 4,
-        
-        note: '庆元；浙方小城', region: 'JIANGNAN' },
+    { id: 'city_qingyuan_zj', name: '宁波', factionId: 'fang_guozhen', lat: 29.87, lng: 121.54, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
+
     {
         id: 'city_taizhou_zj', name: '临海', factionId: 'ouyue',
         lat: 28.66, lng: 121.42, type: 'small_city', troops: 10000, tier: 4,
         
         note: '临海；瓯越小城', region: 'JIANGNAN' },
-    {
-        id: 'city_wenzhou', name: '永嘉', factionId: 'wenzhou',
-        lat: 28.00, lng: 120.70, type: 'small_city', troops: 10000, tier: 4,
-        
-        note: '永嘉；温州小城', region: 'JIANGNAN' },
+    { id: 'city_wenzhou', name: '永嘉', factionId: 'wenzhou', lat: 28, lng: 120.7, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
 
     // 第三类：农民起义
 
@@ -2696,9 +2689,8 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-06-12 新增：夏顿@廷布 ──
     { id: 'city_tingbu', name: '廷布', factionId: 'xiadun', lat: 27.472, lng: 89.639, type: 'small_city', troops: 20000, region: 'TIBET' },
 
-    { id: 'city_huangchuan', name: '弋阳', factionId: 'huang_d', lat: 32.1310, lng: 115.0510, type: 'small_city', region: 'JIANGNAN', troops: 10000,
-        note: '弋阳；黄国小城',
-    },
+    { id: 'city_huangchuan', name: '弋阳', factionId: 'huang_d', lat: 32.131, lng: 115.051, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
     { id: 'city_yongqiu', name: '雍丘', factionId: 'yuzhou', lat: 34.55, lng: 114.78, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
     { id: 'city_mengcheng', name: '蒙城', factionId: 'mengcheng_d', lat: 33.27, lng: 116.56, type: 'small_city', region: 'CENTRAL', troops: 10000, note: '汉沛郡山桑县治地；唐天宝改蒙城县；庄子故里（有争议）' },

@@ -33,7 +33,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     qi_d: { name: '鸳鸯阵兵', tier: 1 },
   jiujiang: { name: '蒙冲斗舰', tier: 2 },     // 东吴专门用于撞击的战术舰船，属于战术兵器兵种，而非宏大战略舰队，下调至T2战术
     fangla: { name: '圣公兵', tier: 3 },             // 方腊起义军的代表，震动东南半壁的著名农民起义符号，升入T3知名
-  fang_guozhen: { name: '浙东舟师', tier: 4 }, // 庆元·方国珍浙东割据水师
+    fang_guozhen: { name: '甬江水营', tier: 4 },
   ruochu: { name: '若敖六卒', tier: 2 },       // 楚国早期精锐，在楚庄王时期有战术高光，但非贯穿时代的战略主力，降为T2战术。
   mi_chu: { name: '左广右广', tier: 2 },       // 楚庄王核心王牌，于邲之战正面击溃晋军，打出称霸中原的战术大捷，符合T2战术
   heng: { name: '衡州义军', tier: 4 },         // 临烝·何腾蛟南明衡州抗清
@@ -49,11 +49,11 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   yue: { name: '越君子军', tier: 2 },        // 越王勾践麾下仅数千人的敢死先锋突击队，极端战术奇兵，下调至T2战术
   zhangshicheng: { name: '盐丁锐旅', tier: 3 }, // 江南造反武装中极度核心且能打的群体（如黄巢、张士诚），升入T3知名
   ouyue: { name: '东瓯舟师', tier: 4 },        // 临海·东瓯王国水师（《史记·东越列传》）
-  huang_d: { name: '黄国锐卒', tier: 4 },      // 弋阳·孙叔敖黄国故地（缺乏极其著名的战术高光，降T3）
+    huang_d: { name: '弋阳弩手', tier: 3 },
   // 横海校尉除名
     chizhou: { name: '九华伏兵', tier: 3 },
-  wenzhou: { name: '永嘉水师', tier: 4 },    // 永嘉·张璁整顿海防抗倭（常规番号，降T3）
-  hu_d: { name: '浙东义兵', tier: 4 },          // 白峤·胡三省浙东抗元义兵
+    wenzhou: { name: '永嘉水师', tier: 4 },
+    hu_d: { name: '白峤海卫', tier: 4 },
   wan: { name: '野人原义兵', tier: 4 },            // 皖口·刘源（缺乏极其著名的战术高光，降T3）
     ying: { name: '汉沔水锋', tier: 3 },
     kejia: { name: '黄连峒兵', tier: 4 },
