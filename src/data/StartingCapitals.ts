@@ -753,7 +753,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'guangping': 'city_donghai',
 'nanzhong': 'city_wanwen',
 'yueyi': 'city_yuegui',
-    'haikou': 'city_diaoyudao',
+'haikou': 'city_diaoyudao',
   'pangzha': 'city_atuoke',
 'najie': 'city_dinggucheng',
   'dulan_d': 'city_kandaha',

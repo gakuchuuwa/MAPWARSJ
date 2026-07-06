@@ -600,6 +600,14 @@ function updateIdPreview(): void {
 
 // ── Edit / Add Panel ──
 
+/** 文化区代码 → 中文名（下拉显示用；option value 仍存代码，与 cities_v2 的 region 字段一致，不影响保存/解析） */
+const REGION_LABELS: Record<string, string> = {
+    CENTRAL: '中原', NORTH: '北方', JIANGNAN: '江南', LINGNAN: '岭南',
+    BASHU: '川蜀', DIANQIAN: '滇缅', HEXI: '河西', WESTERN: '西域',
+    TIBET: '青藏', STEPPE: '草原', NORTHEAST: '东北', KOREA: '朝鲜',
+    JAPAN: '日本', CENTRAL_ASIA: '中亚',
+};
+
 async function openEditPanel(factionId: string | null): Promise<void> {
     // 每次打开前强制刷一次数据, 防止缓存 rows 与磁盘不同步 (SC 补齐等)
     if (factionId) {
@@ -618,7 +626,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     ).join('');
     const currentRegion = row?.cityRegion ?? row?.eliteRegion ?? '';
     const regionOptions = (entityData?.regions ?? []).map(r =>
-        `<option value="${r}" ${r === currentRegion ? 'selected' : ''}>${r}</option>`
+        `<option value="${r}" ${r === currentRegion ? 'selected' : ''}>${REGION_LABELS[r] ?? r}</option>`
     ).join('');
 
     if (isNew) {

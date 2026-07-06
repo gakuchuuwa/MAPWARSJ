@@ -801,7 +801,7 @@ export class CityAssetManager {
         'jiluo_d': '涿邪',
         'heisha_d': '黑沙',
         'kumoxi': '奚',
-        'haikou': '寇',
+'haikou': '寇',
         'shanshan': '鄯善',
 'wuyue': '吴越',
         'xiyuduhu': '都护',

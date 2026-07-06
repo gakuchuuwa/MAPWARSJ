@@ -1345,6 +1345,8 @@ export const FACTIONS: Faction[] = [
     // ── Phase 1 Missing Factions ──
     { id: 'kumoxi', name: '库莫奚' },
     { id: 'haikou', name: '海寇' },
+
+
     { id: 'shanshan', name: '鄯善' },
     { id: 'wenling', name: '温陵' },
     { id: 'qianzhou', name: '乾州' },

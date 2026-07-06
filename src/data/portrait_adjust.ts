@@ -1047,11 +1047,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -52
         },
-        "/assets/LINGNAN/haikou_wangzhi.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": 6
-        },
         "/assets/BASHU/kui_gongsunshu.png": {
             "scale": 0.94,
             "offsetX": 0,
@@ -1066,11 +1061,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -9
-        },
-        "/assets/NORTH/wangyan_wangyan.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": -45
         },
         "/assets/BASHU/qianhui_baiyanhu.png": {
             "scale": 0.98,
@@ -2348,7 +2338,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/LINGNAN/ryukyu_shangbazhi.png": {
-            "scale": 1,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": -16
         },
@@ -4873,7 +4863,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -30
         },
         "/assets/STEPPE/chahar_yantiemuer.png": {
-            "scale": 1.09,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -5311,6 +5301,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 2
+        },
+        "/assets/NORTH/__闲置__NORTH_03.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -45
+        },
+        "/assets/NORTH/wangyan_wangyan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_19.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/LINGNAN/haikou_wangzhi.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -16
         }
     },
     "folderGuides": {

@@ -765,11 +765,10 @@ export class LegionPhalanxDrawer {
         const baseHeight = 80;
         const targetH = baseHeight * scale * frameHeightNorm;
         const targetW = targetH * (frameW / frameH);
-        // 船是扁宽长方形（targetW > targetH），间距须按船身实际尺寸取，否则三船相互压盖：
-        //   纵深(前→后) = 1.05 个船高：前船与后排竖直不重叠（后排在前船正后方，靠船高拉开）。
-        //   横向后排各偏 0.62 个船宽：两后船中心距 = 1.24 船宽，横向留出 ~0.24 船宽间隙不重叠。
-        const shipDepth = targetH * 1.05;
-        const shipSpread = targetW * 0.62;
+        // 纵向(前后)：0.45 船高。让后排船头刚好能挡住前船的船尾水波，显得紧凑。
+        // 横向(左右偏移)：0.40 船宽。两船总距 0.8 船宽，会有 20% 的轻微并排重叠，形成雁阵感。
+        const shipDepth = targetH * 0.45;
+        const shipSpread = targetW * 0.40;
 
         // 旋转角（与陆军一致）
         const angle = (direction + 1) * Math.PI / 4;

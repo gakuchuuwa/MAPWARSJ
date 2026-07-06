@@ -68,4 +68,5 @@ qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅�
     zizhou: { name: '忠武八都', tier: 2 },
     weizhou: { name: '奉义军', tier: 1 },
     xidong: { name: '大汉伏波', tier: 2 },
+    haikou: { name: '五岛水军', tier: 4 },
 };

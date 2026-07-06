@@ -820,7 +820,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'heisha_d': '黑沙',  // 特尔门·漠北黑沙境
     // ── Phase 1 Missing Flags ──
     'kumoxi': '奚',
-    'haikou': '寇',
+'haikou': '寇',
     'shanshan': '鄯善',
 'guiyi': '归义',
   // —— 2026-06-20 新增：旁遮普·阿托克 ——

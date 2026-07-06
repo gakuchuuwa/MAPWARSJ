@@ -1183,7 +1183,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     buriat_tumenjiergale: { generalId: 'buriat_tumenjiergale', tier: 'ordinary', tacticalSkillId: 'ts_024' }, // 图门吉尔嘎勒·布里亚特
     baidi_baidizi: { generalId: 'baidi_baidizi', tier: 'ordinary', tacticalSkillId: 'ts_011' }, // 白狄子
     kumoxi_ahuihui: { generalId: 'kumoxi_ahuihui', tier: 'ordinary', tacticalSkillId: 'ts_006' }, // 阿会毁·库莫奚
-    haikou_wangzhi: { generalId: 'haikou_wangzhi', tier: 'ordinary', tacticalSkillId: 'ts_037' }, // 汪直·海寇
+    haikou_wangzhi: { generalId: 'haikou_wangzhi', tier: 'ordinary', tacticalSkillId: 'ts_037' },
     shanshan_weituqi: { generalId: 'shanshan_weituqi', tier: 'ordinary', tacticalSkillId: 'ts_010' }, // 尉屠耆·鄯善
     pangzha_halixinge: { generalId: 'pangzha_halixinge', tier: 'famous', tacticalSkillId: 'ts_151', strategicSkillId: 'str_11' }, // 哈里·辛格·旁遮普：攻战计侵掠如火+攻城拔寨，开伯尔山口工程
     najie_minande: { generalId: 'najie_minande', tier: 'famous', tacticalSkillId: 'ts_352', strategicSkillId: 'str_11' },
