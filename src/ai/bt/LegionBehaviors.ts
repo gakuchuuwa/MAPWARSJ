@@ -46,9 +46,31 @@ export const IsPostBattleResting = new Condition('IsPostBattleResting', (ctx) =>
     return ctx.army.isPostBattleResting?.() ?? false;
 });
 
-/** 第三方攻城排队中：原地待命，不打断（等战斗结束后再重新评估目标） */
+/**
+ * 本城告急：正被攻打（仍我方，需回援）或已失守（需收复）。远征军团豁免（目标锁死不回家）。
+ * 用于让「排队攻城干等」的军团在老家有事时立刻退出排队，回援/收复不受距离限制。
+ */
+function homeNeedsHelp(ctx: BTContext): boolean {
+    if (shouldSkipHomeRecapture(ctx.army)) return false; // 远征军团不回
+    const homeId = getArmyOriginCityId(ctx.army);
+    if (!homeId) return false;
+    const home = ctx.cityManager.getCity(homeId);
+    if (!home || home.factionId !== ctx.army.getFactionId()) return true; // 已失守 → 收复
+    return ctx.legionManager.isCityUnderAttack(homeId);                    // 仍我方但被攻打 → 回援
+}
+
+/**
+ * 第三方攻城排队中：原地待命，不打断（等战斗结束后再重新评估目标）。
+ * 例外：本城告急（被攻打/已失守）→ 立即退出排队让位给回援/收复（铁律：多远都得回来）。
+ * 退出排队走 dequeueArmyFromThirdPartyWaiters（重置战斗态、清碰撞、触发 onSiegeComplete 防卡队列）。
+ */
 export const IsWaitingSiege = new Condition('IsWaitingSiege', (ctx) => {
-    return ctx.legionManager.isArmyWaitingSiege(ctx.army.id);
+    if (!ctx.legionManager.isArmyWaitingSiege(ctx.army.id)) return false;
+    if (homeNeedsHelp(ctx)) {
+        ctx.legionManager.dequeueArmyFromThirdPartyWaiters(ctx.army.id);
+        return false; // 退出排队，交由 reinforceHome（回援）或 attackSequence（收复）接手
+    }
+    return true;
 });
 
 /**

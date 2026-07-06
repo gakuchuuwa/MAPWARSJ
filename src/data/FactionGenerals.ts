@@ -239,7 +239,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     bulat: { generalId: 'bulat_beiduanchaer', generalName: '孛端察儿', portrait: '/assets/STEPPE/bulat_beiduanchaer.png' },
     tuva: { generalId: 'tuva_qinggunzabu', generalName: '青滚杂卜', portrait: '/assets/STEPPE/tuva_qinggunzabu.png' },
         // ── 西域关隘 ──
-    hepan: { generalId: 'hepan_gaoxianzhi', generalName: '高仙芝', portrait: '/assets/WESTERN/hepan_gaoxianzhi.png' },
+    hepan: { generalId: 'hepan_gaoxianzhi', generalName: '高仙芝', portrait: '/assets/litang/hepan_gaoxianzhi.png' },
     yiwu: { generalId: 'yiwu_hanshen', generalName: '罕慎', portrait: '/assets/WESTERN/yiwu_hanshen.png' },
     kepantuo: { generalId: 'kepantuo_dulimi', generalName: '阇梨密', portrait: '/assets/WESTERN/kepantuo_dulimi.png' },
     huite: { generalId: 'huite_amuersana', generalName: '阿睦尔撒纳', portrait: '/assets/WESTERN/huite_amuersana.png' },
@@ -671,7 +671,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     wang_s: { generalId: 'wang_s_wanghua', generalName: '汪华', portrait: '/assets/JIANGNAN/wang_s_wanghua.png' },
     hongzhou: { generalId: 'hongzhou_zhuwenzheng', generalName: '朱文正', portrait: '/assets/JIANGNAN/hongzhou_zhuwenzheng.png' },
     danyang: { generalId: 'danyang_huanwen', generalName: '桓温', portrait: '/assets/JIANGNAN/danyang_huanwen.png' },
-    chizhou: { generalId: 'chizhou_changyuchun', generalName: '常遇春', portrait: '/assets/JIANGNAN/chizhou_changyuchun.png' },
+    chizhou: { generalId: 'chizhou_changyuchun', generalName: '常遇春', portrait: '/assets/daming/chizhou_changyuchun.png' },
     gumie: { generalId: 'gumie_liuyu', generalName: '李之芳', portrait: '/assets/manqing/gumie_lizhifang.png' },
     hu_d: { generalId: 'hu_d_husansheng', generalName: '吴允诚', portrait: '/assets/JIANGNAN/hu_d_husansheng.png' },
     sagami: { generalId: 'sagami_beitiaoshikang', generalName: '北条氏康', portrait: '/assets/JAPAN/sagami_beitiaoshikang.png' },

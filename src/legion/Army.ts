@@ -90,8 +90,12 @@ export class Army implements IBattleUnit {
     public lastPosition: { lat: number; lng: number } = { lat: 0, lng: 0 };
     public lastDirection: number = 0; // Cache direction
     public lastPath: { lat: number; lng: number }[] = []; // [Siege Fix] Path history
-    /** 当前位置是否在海域 hex（WATER/OCEAN），用于海上船贴图 */
+    /** 当前位置是否在海域 hex（WATER/OCEAN），用于海上船贴图（已去抖，见 updateTerrainSpeed） */
     public isOnSea: boolean = false;
+    /** 与当前 isOnSea 相反的判定已连续出现几帧；攒满 SEA_FLIP_CONFIRM_FRAMES 才真正翻转 */
+    private seaFlipFrames: number = 0;
+    /** 海陆贴图翻转确认帧数：军团骑在海岸线上时判定会逐帧抖动，需连续确认这么多帧才切换，压掉闪烁 */
+    private static readonly SEA_FLIP_CONFIRM_FRAMES = 8;
     /**
      * 海上船型锁（2026-07-06）：登船那一刻按兵力定好小/中/大船，锁定整个航程；
      * 上岸清空，下次登船再按当时兵力重定。避免航行中折损跨过兵力档位、船贴图当场缩水的怪象。
@@ -472,7 +476,18 @@ export class Army implements IBattleUnit {
     private updateTerrainSpeed(): void {
         const pos = { lat: this.position.lat, lng: this.position.lng };
         const wasOnSea = this.isOnSea;
-        this.isOnSea = LandSeaSystem.isSeaAt(pos);
+
+        // 海陆贴图去抖：军团沿海岸线行军时 isSeaAt 会在海/陆 hex 边界逐帧抖动，
+        // 直接赋值会让贴图在陆军方阵↔三船阵之间闪烁。改为「翻转判定需连续确认 N 帧」才切换：
+        // 与当前状态一致 → 计数清零（稳定态不累积、无延迟）；只有持续 N 帧的反向判定才真正翻转。
+        // 骑在海岸线上（海陆交替）时永远攒不满 N 帧 → 锁定先到的状态不闪；真正下海/上岸才切。
+        const rawSea = LandSeaSystem.isSeaAt(pos);
+        if (rawSea === this.isOnSea) {
+            this.seaFlipFrames = 0;
+        } else if (++this.seaFlipFrames >= Army.SEA_FLIP_CONFIRM_FRAMES) {
+            this.isOnSea = rawSea;
+            this.seaFlipFrames = 0;
+        }
 
         // 船型锁：登船（上岸→海）当刻按兵力定船，锁定整航程；上岸清空。
         //   （已在海上却无锁，如中途注册的情形，也补一次锁，防回退到实时算法闪图。）
