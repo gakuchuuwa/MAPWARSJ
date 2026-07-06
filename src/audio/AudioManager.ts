@@ -63,6 +63,16 @@ const DUCK = {
 /** 播报有效音量 = master × SPEECH_GAIN（TTS 感知偏轻，补偿至与音效/音乐齐平） */
 const SPEECH_GAIN = 0.9;
 
+// ---- 音量渐变时长（ms）：消除各路声音硬切的不适感 ----
+const FADE = {
+    /** 播报/音效闪避（duck）的音量渐变——够快跟得上事件，又不生切 */
+    duck: 220,
+    /** 行军/战斗循环音的淡入淡出 */
+    loop: 300,
+    /** BGM 换曲（切文化区/随机轮播）交叉淡入淡出 */
+    bgmCrossfade: 900,
+} as const;
+
 const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     ui_click: sound('ui', 'ui_click', 0.35, 120),
     ui_confirm: sound('ui', 'ui_confirm', 0.45, 160),
@@ -184,6 +194,8 @@ export class AudioManager {
     private wantedLoops = new Set<SoundKey>();
     /** 正在播放的一次性音效克隆元素（暂停时一并停掉）*/
     private activeOneShots = new Set<HTMLAudioElement>();
+    /** 每个音频元素正在进行的音量渐变（setInterval id）；再次调整时先撤销旧渐变 */
+    private volumeRamps = new Map<HTMLAudioElement, ReturnType<typeof setInterval>>();
 
     public static getInstance(): AudioManager {
         if (!AudioManager.instance) AudioManager.instance = new AudioManager();
@@ -355,7 +367,8 @@ export class AudioManager {
     public setSpeechDucking(active: boolean): void {
         if (this.speechDucking === active) return;
         this.speechDucking = active;
-        this.refreshLoopVolumes();
+        // 平滑闪避：音效/音乐音量渐变到闪避目标，不生切
+        this.refreshLoopVolumes(FADE.duck);
     }
 
     /** 播报有效音量（跟随主音量；TTS 感知偏轻，SPEECH_GAIN 补偿至与音效/音乐感知齐平） */
@@ -433,31 +446,39 @@ export class AudioManager {
 
         // 先记录「期望开启」意图（恢复时据此重启），即使暂停期间切换跟随军团也不丢失
         this.wantedLoops.add(key);
-        // 音效循环启动 → 音乐随之压低（打底）
-        if (definition.category !== 'bgm') this.updateBgmDuckVolume();
+        // 音效循环启动 → 音乐随之平滑压低（打底）
+        if (definition.category !== 'bgm') this.updateBgmDuckVolume(FADE.duck);
         // 暂停时只记意图、不实际播放（bgm 不受暂停影响）
         if (this.gamePaused && definition.category !== 'bgm') return;
 
         void this.ensureLoopElement(key, definition).then((audio) => {
             // 异步加载期间状态可能已变（停止跟拍/转入战斗/暂停），仅当仍被期望且未暂停时才播
-            if (!audio || !this.wantedLoops.has(key) || !audio.paused) return;
+            if (!audio || !this.wantedLoops.has(key)) return;
             if (this.gamePaused && definition.category !== 'bgm') return;
-            audio.volume = this.resolveVolume(definition);
-            audio.currentTime = 0;
-            void audio.play().catch((error) => {
-                this.warnMissingOnce(key, error);
-            });
+            // 新起：从 0 淡入；已在播（可能正处于停音淡出中）：撤销淡出、淡回目标
+            if (audio.paused) {
+                audio.currentTime = 0;
+                audio.volume = 0;
+                void audio.play().catch((error) => {
+                    this.warnMissingOnce(key, error);
+                });
+            }
+            this.setVolume(audio, this.resolveVolume(definition), FADE.loop);
         });
     }
 
     private stopLoop(key: SoundKey): void {
         this.wantedLoops.delete(key);
-        // 音效循环停止 → 音乐恢复（若已无其他音效循环）
-        if (SOUND_DEFINITIONS[key]?.category !== 'bgm') this.updateBgmDuckVolume();
+        // 音效循环停止 → 音乐平滑恢复（若已无其他音效循环）
+        if (SOUND_DEFINITIONS[key]?.category !== 'bgm') this.updateBgmDuckVolume(FADE.duck);
         const audio = this.loopCache.get(key);
         if (!audio) return;
-        audio.pause();
-        audio.currentTime = 0;
+        // 平滑淡出后再暂停；淡出途中若被 startLoop 重新期望，其 setVolume 会撤销本渐变、onDone 不触发
+        this.setVolume(audio, 0, FADE.loop, () => {
+            if (this.wantedLoops.has(key)) return; // 淡出未完又被重新启动 → 不停
+            audio.pause();
+            audio.currentTime = 0;
+        });
     }
 
     private stopAllLoops(): void {
@@ -482,17 +503,20 @@ export class AudioManager {
             }
             this.activeOneShots.clear();
         } else {
-            // 恢复所有本应在播的非 bgm 循环音
+            // 恢复所有本应在播的非 bgm 循环音（可能暂停在半途音量，恢复时淡回正确音量）
             for (const key of this.wantedLoops) {
-                if (SOUND_DEFINITIONS[key]?.category === 'bgm') continue;
+                const def = SOUND_DEFINITIONS[key];
+                if (!def || def.category === 'bgm') continue;
                 const audio = this.loopCache.get(key);
                 if (audio && audio.paused) {
+                    audio.volume = 0;
                     void audio.play().catch(() => {});
+                    this.setVolume(audio, this.resolveVolume(def), FADE.loop);
                 }
             }
         }
-        // 暂停/恢复后音效循环有效性变化 → 同步音乐闪避
-        this.updateBgmDuckVolume();
+        // 暂停/恢复后音效循环有效性变化 → 平滑同步音乐闪避
+        this.updateBgmDuckVolume(FADE.duck);
     }
 
     public stopBgm(): void {
@@ -501,6 +525,7 @@ export class AudioManager {
         this.cameraRegionFolder = '';
         this.bgmLoadToken++; // 作废任何在途加载
         if (!this.bgmAudio) return;
+        this.cancelVolumeRamp(this.bgmAudio); // 撤销可能在进行的交叉淡化
         this.bgmAudio.pause();
         this.bgmAudio.currentTime = 0;
         this.bgmAudio = null;
@@ -571,13 +596,14 @@ export class AudioManager {
                 if (folder !== 'CENTRAL') this.playBgmFolder('CENTRAL');
                 return;
             }
-            if (this.bgmAudio) this.bgmAudio.pause();
+            const oldAudio = this.bgmAudio;
             const audio = new Audio();
             audio.src = url;
             audio.loop = false; // 单曲不循环：放完随机轮播下一文化
             audio.preload = 'auto';
             const def = SOUND_DEFINITIONS['bgm_main'];
-            audio.volume = def ? this.resolveVolume(def) : 0.125;
+            const targetVol = def ? this.resolveVolume(def) : 0.125;
+            audio.volume = 0; // 从 0 交叉淡入
             audio.addEventListener(
                 'ended',
                 () => {
@@ -591,6 +617,14 @@ export class AudioManager {
             void audio.play().catch((error) => {
                 this.warnMissingOnce('bgm_main', error);
             });
+            // 新曲淡入 + 旧曲交叉淡出后停掉（换文化区/轮播不再生切）
+            this.setVolume(audio, targetVol, FADE.bgmCrossfade);
+            if (oldAudio) {
+                this.setVolume(oldAudio, 0, FADE.bgmCrossfade, () => {
+                    oldAudio.pause();
+                    oldAudio.currentTime = 0;
+                });
+            }
         });
     }
 
@@ -623,14 +657,17 @@ export class AudioManager {
         this.syncFollowedLegionAudio(state);
     }
 
-    private refreshLoopVolumes(): void {
+    /** 刷新所有循环音 + BGM 到各自解析音量；durationMs>0 时平滑渐变（默认瞬时，供滑杆用） */
+    private refreshLoopVolumes(durationMs = 0): void {
         for (const [key, audio] of this.loopCache.entries()) {
             const definition = SOUND_DEFINITIONS[key];
-            if (definition) audio.volume = this.resolveVolume(definition);
+            // 已停(未在期望中)的循环音不要被 duck 渐变重新拉响；停音自己的淡出各管各的
+            if (!definition || !this.wantedLoops.has(key)) continue;
+            this.setVolume(audio, this.resolveVolume(definition), durationMs);
         }
         if (this.bgmAudio) {
             const def = SOUND_DEFINITIONS['bgm_main'];
-            if (def) this.bgmAudio.volume = this.resolveVolume(def);
+            if (def) this.setVolume(this.bgmAudio, this.resolveVolume(def), durationMs);
         }
     }
 
@@ -655,6 +692,54 @@ export class AudioManager {
         audio.preload = 'auto';
         this.loopCache.set(key, audio);
         return audio;
+    }
+
+    /**
+     * 把某音频元素的音量平滑过渡到 target（durationMs 内，smoothstep 缓动）。
+     * durationMs<=0 或差异极小 → 立即赋值。会先撤销该元素正在进行的渐变（新意图覆盖旧）。
+     * 用 setInterval 而非 requestAnimationFrame：后台标签页 rAF 被冻结会让音量卡在半路，
+     * setInterval 即便被节流也能按真实经过时间收敛到目标。
+     */
+    private setVolume(
+        audio: HTMLAudioElement,
+        target: number,
+        durationMs: number,
+        onDone?: () => void,
+    ): void {
+        const existing = this.volumeRamps.get(audio);
+        if (existing !== undefined) {
+            clearInterval(existing);
+            this.volumeRamps.delete(audio);
+        }
+        const clamped = clamp01(target);
+        const start = clamp01(audio.volume);
+        if (durationMs <= 0 || Math.abs(clamped - start) < 0.005) {
+            audio.volume = clamped;
+            onDone?.();
+            return;
+        }
+        const t0 = performance.now();
+        const id = setInterval(() => {
+            const p = Math.min(1, (performance.now() - t0) / durationMs);
+            const eased = p * p * (3 - 2 * p); // smoothstep
+            audio.volume = clamp01(start + (clamped - start) * eased);
+            if (p >= 1) {
+                clearInterval(id);
+                this.volumeRamps.delete(audio);
+                audio.volume = clamped;
+                onDone?.();
+            }
+        }, 25);
+        this.volumeRamps.set(audio, id);
+    }
+
+    /** 撤销某元素正在进行的音量渐变（不改当前音量），供硬停时清理 */
+    private cancelVolumeRamp(audio: HTMLAudioElement): void {
+        const existing = this.volumeRamps.get(audio);
+        if (existing !== undefined) {
+            clearInterval(existing);
+            this.volumeRamps.delete(audio);
+        }
     }
 
     private resolveVolume(definition: SoundDefinition): number {
@@ -689,11 +774,11 @@ export class AudioManager {
         );
     }
 
-    /** 仅刷新 BGM 音量（音效循环起停时用，无需全量刷新） */
-    private updateBgmDuckVolume(): void {
+    /** 仅刷新 BGM 音量（音效循环起停时用，无需全量刷新）；durationMs>0 平滑渐变 */
+    private updateBgmDuckVolume(durationMs = 0): void {
         if (!this.bgmAudio) return;
         const def = SOUND_DEFINITIONS['bgm_main'];
-        if (def) this.bgmAudio.volume = this.resolveVolume(def);
+        if (def) this.setVolume(this.bgmAudio, this.resolveVolume(def), durationMs);
     }
 
     private warnMissingOnce(key: SoundKey, error: unknown): void {

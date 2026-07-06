@@ -81,11 +81,12 @@ export function extractPortraitFolder(portraitPath: string): string | undefined 
 }
 
 /**
- * 调校读取优先级：① canonical 代表键 → ② 立绘自身路径（兜底）→ ③ 文件夹默认 → ④ 中性值。
+ * 调校读取优先级：① 立绘自身路径 → ② canonical 代表键（兜底）→ ③ 文件夹默认 → ④ 中性值。
  *
- * 内容共享（2026-06-27 定案）：去重表 portrait_canonical 把「内容相同」的立绘映射到同一代表键，
- * 读取/保存均以代表键为准，故同一张图被多个武将共用时**只需调一次、全体共享**，
- * 也不会出现「真名记录与代表键记录互相打架→调了又丢」。非去重的独立图 canonical===自身，行为不变。
+ * 自身路径优先（2026-07-06 恢复 2026-06-27 定案）：每张立绘按自己的真实路径独立存一格，
+ * 换图 / F2 绑图后调校永远落在该将领自己的槽位，绝不会因「内容去重」串到别人格子里
+ * （旧的 canonical 优先会让内容相同的不同文件抢同一格 → 调好又变、变成别人的值）。
+ * canonical 仅作兜底：自身路径无记录时才回退到代表键，让历史上按代表键存的旧数据仍生效。
  */
 export function resolvePortraitAdjust(
     portraitPath: string,
@@ -94,9 +95,9 @@ export function resolvePortraitAdjust(
     const canonical = toCanonicalPortraitPath(portraitPath);
     const folder = extractPortraitFolder(portraitPath) ?? extractPortraitFolder(canonical);
     const folderAdj = folder ? data.folders?.[folder] : undefined;
-    // canonical 代表键优先（同图共享），自身路径兜底（未迁移/运行时新增）
-    const imageAdj = data.images?.[canonical]
-        ?? (canonical !== portraitPath ? data.images?.[portraitPath] : undefined);
+    // 自身路径优先（每张立绘独立），canonical 仅兜底历史按代表键存的旧数据
+    const imageAdj = data.images?.[portraitPath]
+        ?? (canonical !== portraitPath ? data.images?.[canonical] : undefined);
 
     return {
         scale: imageAdj?.scale ?? folderAdj?.scale ?? PORTRAIT_ADJUST_NEUTRAL.scale,

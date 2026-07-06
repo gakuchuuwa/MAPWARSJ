@@ -461,7 +461,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     fushi: { generalId: 'fushi_wangmeng', generalName: '王猛', portrait: '/assets/CENTRAL/fushi_wangmeng.png' },
     wanzhou: { generalId: 'wanzhou_shangguankui', generalName: '上官夔', portrait: '/assets/BASHU/wanzhou_shangguankui.png' },
     ba: { generalId: 'ba_bamanzi', generalName: '巴蔓子', portrait: '/assets/BASHU/ba_bamanzi.png' },
-    hezhou: { generalId: 'hezhou_wangjian', generalName: '王坚', portrait: '/assets/BASHU/hezhou_wangjian.png' },
+    hezhou: { generalId: 'hezhou_wangjian', generalName: '王坚', portrait: '/assets/zhaosong/hezhou_wangjian.png' },
     qiuchi: { generalId: 'qiuchi_yangnandang', generalName: '杨难当', portrait: '/assets/BASHU/qiuchi_yangnandang.png' },
     cong: { generalId: 'cong_puhu', generalName: '朴胡', portrait: '/assets/BASHU/cong_puhu.png' },
     langzhou: { generalId: 'langzhou_zhangfei', generalName: '张飞', portrait: '/assets/BASHU/langzhou_zhangfei.png' },

@@ -21,7 +21,6 @@ import {
     extractPortraitFolder,
     getPortraitCorrectorCrosshairGuide,
     resolvePortraitAdjust,
-    toCanonicalPortraitPath,
 } from '../config/PortraitAdjust';
 import {
     DEFAULT_PORTRAIT_ADJUST,
@@ -1742,16 +1741,16 @@ export class CombatUI {
     }
 
     /**
-     * 存盘 key：归并到 canonical 代表键（内容相同的立绘共用一条调校）。
-     * 与读取侧 resolvePortraitAdjust 的 canonical 优先一致 → 同一张图调一次、全体武将共享，
-     * 且存/读同 key，杜绝「调了又丢」。待绑定图用 destPath（其 canonical 即自身）。
+     * 存盘 key：立绘自身路径（每张图独立存一格）。与读取侧 resolvePortraitAdjust 的
+     * 「自身路径优先」一致 → 换图 / 绑图后调校永远落在该将领自己的槽位，绝不串到别人格子里；
+     * canonical 仅作读取兜底。待绑定图用 destPath（{generalId}.png，即该将领自身槽位）。
      */
     private correctorSaveKey(): string {
-        return toCanonicalPortraitPath(this.correctorPath());
+        return this.correctorPath();
     }
 
     private correctorSaveKeyForSide(side: 'attacker' | 'defender'): string {
-        return toCanonicalPortraitPath(this.correctorPathForSide(side));
+        return this.correctorPathForSide(side);
     }
 
     /** 读像素/居中时用实际显示的 URL（待绑定图仍在源路径） */

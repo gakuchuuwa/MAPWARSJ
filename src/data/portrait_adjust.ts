@@ -655,7 +655,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/BASHU/fu_zhou_yanyan.png": {
             "scale": 1.26,
             "offsetX": 0,
-            "offsetY": -31
+            "offsetY": 25
         },
         "/assets/manqing/manzhou_d_duoergun.png": {
             "scale": 0.96,
@@ -1046,11 +1046,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 2
-        },
-        "/assets/BASHU/hezhou_wangjian.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 6
         },
         "/assets/LINGNAN/yang_aner_yanganer.png": {
             "scale": 1,
@@ -3522,11 +3517,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/zhaosong/__闲置__zhaosong_05.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 7
-        },
         "/assets/zhaosong/__闲置__zhaosong_07.png": {
             "scale": 1.05,
             "offsetX": 0,
@@ -4085,7 +4075,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/BASHU/__闲置__BASHU_04.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": -7
+            "offsetY": 6
         },
         "/assets/liuhan/li_lx_d_liguang.png": {
             "scale": 1.03,
@@ -4908,7 +4898,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/STEPPE/yao_liuyuan.png": {
-            "scale": 1.06,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -5306,6 +5296,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -49
+        },
+        "/assets/zhaosong/hezhou_wangjian.png": {
+            "scale": 1,
+            "offsetX": 14,
+            "offsetY": 7
         }
     },
     "folderGuides": {

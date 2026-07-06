@@ -17,7 +17,6 @@ import {
     applyPortraitEdgeMask,
     hasPortraitImageOverride,
     resolvePortraitAdjust,
-    toCanonicalPortraitPath,
 } from '../config/PortraitAdjust';
 
 import {
@@ -46,8 +45,6 @@ let adjustData: PortraitAdjustData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
 /** 本页改过的 images 键；保存时先取磁盘最新，只覆盖这些键——防止用本页旧快照整份覆盖掉 F2/其它标签页刚存的调校 */
 const dirtyKeys = new Set<string>();
 let portraitCatalog: CatalogEntry[] = [];
-let hashToPaths = new Map<string, string[]>();
-let pathToHash = new Map<string, string>();
 let selectedFolder = '';
 let selectedImage = '';
 let draft: Required<PortraitAdjustValues> = { ...PORTRAIT_ADJUST_NEUTRAL };
@@ -325,14 +322,12 @@ function updateSingleGridTransform(path: string): void {
 }
 
 function getPreviewAdjustData(): PortraitAdjustData {
-    const canonical = toCanonicalPortraitPath(selectedImage);
     const draftCopy = { ...draft };
     return {
         ...adjustData,
         images: {
             ...adjustData.images,
             [selectedImage]: draftCopy,
-            [canonical]: draftCopy,
         },
     };
 }
@@ -354,19 +349,11 @@ function showSaveToast(message: string, isError = false): void {
 
 function commitDraftToAdjustData(): void {
     adjustData.images = adjustData.images ?? {};
-    const hash = pathToHash.get(selectedImage);
-    const identicalPaths = hash ? (hashToPaths.get(hash) ?? [selectedImage]) : [selectedImage];
-
-    const value = { scale: draft.scale, offsetX: draft.offsetX, offsetY: draft.offsetY };
-    for (const p of identicalPaths) {
-        adjustData.images[p] = { ...value };
-        dirtyKeys.add(p);
-        const c = toCanonicalPortraitPath(p);
-        if (c !== p) {
-            adjustData.images[c] = { ...value };
-            dirtyKeys.add(c);
-        }
-    }
+    // 每张立绘按自身路径各存各的（与 F2、resolvePortraitAdjust 完全一致）。
+    // 不再按「内容相同」自动扩写到其他文件——那会把独立立绘互相覆盖（调了又丢）。
+    // 想让多个武将共享调校：让他们指向同一个文件（同一路径），自然共享。
+    adjustData.images[selectedImage] = { scale: draft.scale, offsetX: draft.offsetX, offsetY: draft.offsetY };
+    dirtyKeys.add(selectedImage);
 }
 
 async function selectImageAndAutoSave(newImagePath: string): Promise<void> {
@@ -424,16 +411,11 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
     dirty = false;
     
     if (showToast) {
-        showSaveToast('✓ 保存成功，且自动应用到了相同内容的重复文件');
+        showSaveToast('✓ 保存成功');
     }
-    
-    const hash = pathToHash.get(selectedImage);
-    const identicalPaths = hash ? (hashToPaths.get(hash) ?? [selectedImage]) : [selectedImage];
-    for (const p of identicalPaths) {
-        const targetId = `card-${safeCardId(p)}`;
-        const targetCard = document.getElementById(targetId);
-        if (targetCard) targetCard.classList.add('is-tuned');
-    }
+
+    const targetCard = document.getElementById(`card-${safeCardId(selectedImage)}`);
+    if (targetCard) targetCard.classList.add('is-tuned');
 }
 
 function bindEvents(): void {
@@ -563,19 +545,7 @@ async function loadCatalogFromServer(): Promise<void> {
     if (!res.ok) throw new Error(await res.text());
     portraitCatalog = await res.json();
     if (portraitCatalog.length === 0) throw new Error('未扫描到任何立绘 PNG');
-    
-    hashToPaths.clear();
-    pathToHash.clear();
-    for (const cat of portraitCatalog) {
-        for (const img of cat.images) {
-            pathToHash.set(img.path, img.hash);
-            if (!hashToPaths.has(img.hash)) {
-                hashToPaths.set(img.hash, []);
-            }
-            hashToPaths.get(img.hash)!.push(img.path);
-        }
-    }
-    
+
     selectedFolder = portraitCatalog[0].folder;
     selectedImage = portraitCatalog[0].images[0]?.path ?? '';
 }
