@@ -19,6 +19,7 @@ import { REGION_CENTERS, REGION_LABELS, RegionType } from '../systems/RegionSyst
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { getGeneralFirstTarget } from '../data/GeneralFirstExpeditionTargets';
+import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 
 interface ExpeditionArmy {
     id: string;
@@ -110,11 +111,21 @@ export class ExpeditionUI {
 
         const followed = this.getFollowedArmy?.() ?? null;
         const targetId = followed && !followed.isDestroyed ? followed.expeditionTargetCityId : null;
-        if (targetId) {
-            const city = this.cityManager?.getCity(targetId);
-            const region = REGION_BY_CENTER.get(targetId);
-            this.statusBanner.textContent =
-                `🐎 远征中 → ${region ? `${REGION_LABELS[region]}·` : ''}${city?.name ?? targetId}`;
+        if (followed && targetId) {
+            const cityName = this.cityManager?.getCity(targetId)?.name ?? targetId;
+            // 历史使命远征（名将执念目标）：横幅打出「将名·⭐依据」高潮字幕；否则普通远征只报区·城名
+            const historic = getGeneralFirstTarget(followed.generalId);
+            if (historic && historic.cityId === targetId) {
+                const genName = followed.generalId
+                    ? getGeneralRecordByGeneralId(followed.generalId)?.generalName
+                    : null;
+                this.statusBanner.textContent =
+                    `🐎 ${genName ? `${genName} · ` : ''}⭐${historic.label} → ${cityName}`;
+            } else {
+                const region = REGION_BY_CENTER.get(targetId);
+                this.statusBanner.textContent =
+                    `🐎 远征中 → ${region ? `${REGION_LABELS[region]}·` : ''}${cityName}`;
+            }
             this.statusBanner.style.display = 'block';
             return;
         }
