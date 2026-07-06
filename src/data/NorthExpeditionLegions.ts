@@ -49,7 +49,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   dai_d: { name: '左射军', tier: 4 },         // 灵仙·石敬瑭嫡系（缺乏极其著名的战术高光，降T3）
   dongdan: { name: '东丹卫兵', tier: 4 },       // 敖东城·耶律倍东丹国（缺乏极其著名的战术高光，降T3）
   xuan: { name: '宣大劲骑', tier: 1 },          // 宣大（宣府大同）是明代九边最核心防线，抵御蒙古的最核心野战/戍卫主力，升入T1战略
-  zhe_d: { name: '折家将兵', tier: 3 },         // 北宋著名“折家将”，与杨家将齐名的世代镇守边关的将门军事符号，升入T3知名
+    zhe_d: { name: '折家将兵', tier: 3 },
     shanrong: { name: '蓟镇标营', tier: 3 },
   pingyuan: { name: '平原义军', tier: 3 },      // 颜真卿首倡义兵，无战术突击高光，属于常规义军，降回T3
   dada_ming: { name: '鞑靼铁骑', tier: 1 },          // 明代蒙古主力，土木堡之变全歼三大营，长达两百年压制在明朝北疆的绝对战略死敌，升入T1战略

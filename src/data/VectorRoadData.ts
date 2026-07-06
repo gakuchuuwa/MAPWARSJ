@@ -33527,49 +33527,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "壶头山-会溪城",
-                type: "road",
-                id: "road_city_wulingshan_city_huixicheng_1782936284454",
-                startConnection: "city_wulingshan",
-                endConnection: "city_huixicheng"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [110.4667, 29.1167],
-                    [110.29851936732584, 29.06733344455209],
-                    [110.23252861185709, 29.009591533516936],
-                    [110.20778207855632, 28.935351933614594],
-                    [110.15004016752115, 28.873485600362645],
-                    [110.0006, 28.7267],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "会溪城-平陇",
-                type: "road",
-                id: "road_city_huixicheng_city_pinglong_1782936288112",
-                startConnection: "city_huixicheng",
-                endConnection: "city_pinglong"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [110.0006, 28.7267],
-                    [109.88607714564617, 28.560029511886096],
-                    [109.86545503456219, 28.535282978585315],
-                    [109.8572061901286, 28.51466086750133],
-                    [109.82008639017742, 28.456918956466176],
-                    [109.82008639017742, 28.411550312081413],
-                    [109.671021, 28.304379],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "平陇-芷江",
                 type: "road",
                 id: "road_city_pinglong_city_yuanzhou_1782936363811",

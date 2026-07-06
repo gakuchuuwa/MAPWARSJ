@@ -25,7 +25,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   min: { name: '闽国亲从', tier: 4 },        // 冶城·王审知闽国亲从
   quanzhou: { name: '清源军', tier: 4 },        // 刺桐·留从效清源军
 
-    yue_d: { name: '背嵬军', tier: 0 },
+    yue_d: { name: '巴陵楼船', tier: 2 },
     xiangzhou: { name: '襄樊孤军', tier: 3 },
   zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
   sizhou: { name: '克敌军', tier: 2 },       // 南宋因装备战术兵器克敌弓而建立的特种部队，属于战术兵器部队，下调至T2战术
@@ -67,7 +67,6 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   xie_cj_d: { name: '信州弩士', tier: 4 },      // 葛溪·谢枋得信州抗元（缺乏极其著名的战术高光，降T3）
     liu: { name: '九江裂骑', tier: 3 },
     chunshen: { name: '春申门客', tier: 4 },
-  wang_d: { name: '琅琊部曲', tier: 3 },  // 魏晋门阀士族私兵的典型代表，极具时代与阶级辨识度，升入T3知名
   jiaodong: { name: '即墨火牛阵', tier: 2 },  // 即墨·田单火牛阵大破燕军（一次性战术奇谋）
   guo: { name: '果州戍兵', tier: 4 },  // 南充·唐果州戍兵
   zi: { name: '资州戍兵', tier: 4 },  // 盘石·唐资州戍兵
@@ -79,8 +78,8 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
   lujian: { name: '义乌营', tier: 2 },       // 戚继光戚家军绝对步战核心，执行了无数次完美的鸳鸯阵战术，升入T2战术
     danyang: { name: '姑孰宿卫', tier: 2 },
   linshihong: { name: '大楚水军', tier: 4 },  // 鄱阳·林士弘称帝建楚（常规番号，降T3）
-  gumie: { name: '却月阵兵', tier: 2 },       // 信安·刘裕却月阵破魏（特定战术阵法）
-  wang_s: { name: '新安兵', tier: 4 },       // 黟城·汪华保据新安六州（缺乏极其著名的战术高光，降T3）
+    gumie: { name: '衢州镇标', tier: 4 },
+    wang_s: { name: '新安兵', tier: 4 },
   wenling: { name: '福建水师', tier: 3 },    // 明清东南沿海最重要的水上王牌，享有极高的历史知名度，升入T3知名
     wuyue: { name: '八都兵', tier: 3 },
     shaozhou_d: { name: '银枪效节军', tier: 2 },

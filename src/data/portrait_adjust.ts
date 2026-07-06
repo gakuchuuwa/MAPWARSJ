@@ -1507,11 +1507,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/CENTRAL/yanchuan_d_hanyu.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -27
-        },
         "/assets/CENTRAL/zhengzhou_chenqingzhi.png": {
             "scale": 0.93,
             "offsetX": 0,
@@ -2038,9 +2033,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -29
         },
         "/assets/JIANGNAN/jiujiang_zhouyu.png": {
-            "scale": 0.93,
+            "scale": 1.07,
             "offsetX": 0,
-            "offsetY": -33
+            "offsetY": 7
         },
         "/assets/JIANGNAN/lujian_zhanghuangyan.png": {
             "scale": 0.96,
@@ -3128,7 +3123,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/TIBET/dong_nangqianjiabo.png": {
-            "scale": 0.91,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": 30
         },
@@ -5336,6 +5331,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -19
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_32.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -27
+        },
+        "/assets/zhaosong/yanchuan_d_yuefei.png": {
+            "scale": 1.18,
+            "offsetX": 4,
+            "offsetY": -28
         }
     },
     "folderGuides": {

@@ -184,7 +184,10 @@ export const FACTIONS: Faction[] = [
 
     { id: 'dai_d', name: '代国' },
     { id: 'zhongshan', name: '恒州' },
-    { id: 'wang_d', name: '王家' },
+    { id: 'wang_d', name: '沂州' },
+
+
+
     { id: 'xiao_d', name: '兰陵' },
 
 
@@ -192,10 +195,15 @@ export const FACTIONS: Faction[] = [
     { id: 'li_lx_d', name: '陇西' },
 
 
-    { id: 'yuan_cj_d', name: '袁家' },
+    { id: 'yuan_cj_d', name: '汝南' },
+
+
     { id: 'xie_cj_d', name: '信州' },
     // 金黄 - 春申黄氏
-    { id: 'yue_d', name: '岳家' },
+    { id: 'yue_d', name: '岳州' },
+
+
+
 
     { id: 'qian_d', name: '秀州' },
 
@@ -356,7 +364,8 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 新增：营州@朝阳（和龙/黄龙）──
     { id: 'wuzhou_d', name: '武周' },
     { id: 'zhuozhou', name: '涿州' },
-    { id: 'tujia_d', name: '土家族' },          // 旗号土家@石柱
+    { id: 'tujia_d', name: '土家' },
+          // 旗号土家@石柱
     { id: 'zhuang_d', name: '壮族' },           // 旗号壮@田阳
     { id: 'buyi_d', name: '布依' },
 
@@ -388,7 +397,8 @@ export const FACTIONS: Faction[] = [
     { id: 'kumo', name: '奚族' },
     { id: 'xijue', name: '十箭' },
 
-    { id: 'xian_d', name: '冼家' },          // 绯红 - 冼夫人高凉冼氏(高凉)
+    { id: 'xian_d', name: '高州' },
+          // 绯红 - 冼夫人高凉冼氏(高凉)
     { id: 'xiqin', name: '宁州' },
          // 胡萝卜橙 - 薛举西秦政权(折墌)
     { id: 'xueyantuo', name: '薛延陀' },
@@ -743,7 +753,8 @@ export const FACTIONS: Faction[] = [
     // 瘗棺苔绿 - 僰人(僰王山/珙县悬棺)
     { id: 'langzhou', name: '阆州' },
                   // 阆州(隆城)；巴西劲卒张飞
-    { id: 'zhe_d', name: '折家' },
+    { id: 'zhe_d', name: '府州' },
+
     { id: 'shanyue', name: '丹阳' },
     { id: 'she_ethnic', name: '畲族' },                 // 敕木暗紫 - 畲族(敕木山/闽浙交界)
 
@@ -767,10 +778,13 @@ export const FACTIONS: Faction[] = [
                         // 岑氏(桂西土司/岑城/镇安)
 
     // ── 2026-05-27 新增：汪(黟县) ──
-    { id: 'wang_s', name: '汪家' },                        // 汪氏(黟县/新安汪氏/徽州望族)
+    { id: 'wang_s', name: '黟川' },
+                        // 汪氏(黟县/新安汪氏/徽州望族)
 
     // ── 2026-05-27 新增：向(来凤)、覃(慈利)、冉(秀山)、储(潜山) ──
-    { id: 'xiang_d', name: '向家' },                        // 向氏(来凤/武陵山区)
+    { id: 'xiang_d', name: '来凤' },
+
+                        // 向氏(来凤/武陵山区)
     { id: 'tan_d', name: '覃家' },                          // 覃氏(慈利/澧水流域)
     { id: 'ran_d', name: '冉家' },                          // 冉氏(秀山/酉水流域)
     { id: 'chu_d', name: '舒州' },                          // 舒州(潜山/同安郡)
@@ -783,7 +797,8 @@ export const FACTIONS: Faction[] = [
                        // 青衣羌(青衣江流域/雅州/川西古羌)
     { id: 'wuxi', name: '武陵' },
                          // 五溪蛮(武陵五溪/八面山/湘西)
-    { id: 'gumie', name: '姑蔑' },                        // 姑蔑(古越方国/衢州/浙西)
+    { id: 'gumie', name: '衢州' },
+                        // 姑蔑(古越方国/衢州/浙西)
 
     // ── 2026-05-27 新增：生苗(甲定) ──
     { id: 'shengmiao', name: '生苗' },                    // 生苗(黔东南/甲定/苗岭)
@@ -811,6 +826,9 @@ export const FACTIONS: Faction[] = [
                           // 蒋氏(永州/湘南),
 
     { id: 'li_s', name: '静海' },
+
+
+
 
                               // 里(合浦/北部湾); 古籍里、俚、悝通，与 liren(俚)异字
     { id: 'leizhou', name: '雷州' },                           // 雷州(海康/湛江)
@@ -1017,7 +1035,10 @@ export const FACTIONS: Faction[] = [
     { id: 'pazhu', name: '年楚' },
 
     { id: 'qiong', name: '邛人' },
-    { id: 'zhuoshi', name: '卓家' },
+    { id: 'zhuoshi', name: '邛州' },
+
+
+
     { id: 'chenzhou_d', name: '辰州' },
     { id: 'qianzhong', name: '沅州' },
     { id: 'cuanshi', name: '爨族' },
@@ -1045,7 +1066,8 @@ export const FACTIONS: Faction[] = [
     { id: 'huai', name: '淮州' },
     { id: 'huaiyang', name: '淮阳' },
    // 淮阳郡治宛丘(陈州)
-    { id: 'cai', name: '蔡国' },
+    { id: 'cai', name: '蔡州' },
+
     { id: 'changshaguo', name: '长沙' },
 
     { id: 'shangzhou', name: '商州' },   // 旗号上洛(商邑=商州治；避与商字重)
@@ -1184,7 +1206,9 @@ export const FACTIONS: Faction[] = [
     { id: 'sunqin', name: '潼津' },
     // ── 2026-06-11 中原走廊21座（淮西—豫东—江淮西翼）──
     { id: 'yingzhou_d', name: '颍州' },           // 颍@汝阴
-    { id: 'yanchuan_d', name: '郾川' },           // 郾@郾城
+    { id: 'yanchuan_d', name: '郾川' },
+
+           // 郾@郾城
     { id: 'huang_d', name: '黄国' },
               // 黄@潢川
     { id: 'yuzhou', name: '豫州' },
@@ -1388,7 +1412,6 @@ export const FACTIONS: Faction[] = [
     { id: 'dingzhou', name: '定州' },
     { id: 'shanzhou', name: '鄯州' },
     { id: 'weizhou', name: '维州' },
-    { id: 'xidong', name: '溪峒' },
     { id: 'yingzhou_d2', name: '应州' },
 
     { id: 'dongsheng', name: '东胜' },

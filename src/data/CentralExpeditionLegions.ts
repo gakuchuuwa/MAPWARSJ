@@ -21,7 +21,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   shang: { name: '虎贲多射', tier: 2 },       // 周武王牧野之战的核心三千虎贲突击队，打出改朝换代的史诗级战役高光，升入T2战术
   zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）
   // 夏后亲卫除名（夏代无信史）
-  yuan_cj_d: { name: '大戟士', tier: 2 },    // 汝南·袁术大戟士（败多胜少，降T2）
+    yuan_cj_d: { name: '悬瓠义守', tier: 2 },
   chanzhou: { name: '殿前诸班', tier: 1 },   // 濮阳·柴荣
   sunqin: { name: '督标秦军', tier: 3 },   // 孙传庭最后的家底，自带极强的历史悲剧色彩和知名度，升入T3知名
   // 飞熊军除名（小说番号）
@@ -67,13 +67,13 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     dongxian: { name: '马陵伏弩', tier: 2 },          // 齐国孙膑伏击庞涓的战术核心，古代“设伏聚歼”的战术巅峰，升入T2战术
     mi: { name: '朐山弩手', tier: 4 },
   yaozhou: { name: '耀州牙兵', tier: 4 },       // 金锁关·李茂贞岐军（缺乏极其著名的战术高光，降T3）
-  cai: { name: '雪夜突骑', tier: 2 },          // 新蔡·李愬雪夜入蔡州
+    cai: { name: '汲桑所与', tier: 2 },
     wazhai: { name: '骊山刑徒', tier: 3 },
   huaiyang: { name: '细柳营', tier: 3 },     // 周亚夫细柳营，军纪严明之文化符号，提拔至T3知名
   yao: { name: '匈奴五部', tier: 3 },        // 南匈奴内附建制，孕育汉赵政权开启五胡十六国，历史辨识度极高，升入T3知名
   kong_d: { name: '北海郡兵', tier: 4 },       // 曲阜·孔融以北海相保境，孔融本人极有名
   tongma: { name: '胶西郡国兵', tier: 4 },       // 胶西·刘卬发国兵参与七国之乱，战败
-  yanchuan_d: { name: '淮西行营军', tier: 4 }, // 郾城·韩愈随裴度督师郾城，参赞军务
+    yanchuan_d: { name: '背嵬军', tier: 0 },
   guide_d: { name: '酂侯亲卫', tier: 4 },   // 永城·萧何酂侯
   tongzhou: { name: '匡国牙兵', tier: 4 },    // 长宁·后汉高祖镇守同州（缺乏进攻高光，降T3）
     hao_d: { name: '钟离健儿', tier: 3 },
@@ -95,4 +95,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     luming: { name: '天雄军', tier: 2 },
     long2: { name: '陇上暗桩', tier: 3 },
     chimei: { name: '赤眉军', tier: 2 },
+    wang_d: { name: '却月阵兵', tier: 2 },
 };

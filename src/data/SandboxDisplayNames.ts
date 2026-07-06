@@ -106,10 +106,10 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'dingxiang_d': '定襄',
 'xiayang_d': '夏阳',
     'zhongshan': '恒',
-    'wang_d': '王',
+'wang_d': '沂',
 'xiao_d': '兰陵',
 'li_lx_d': '陇西',
-'yuan_cj_d': '袁',
+'yuan_cj_d': '汝南',
     'xie_cj_d': '信',
 'yue_d': '岳',
 'qian_d': '秀',
@@ -211,7 +211,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
     'zhuozhou': '涿', // 范阳·避涿邪山旗号涿 §4.1
-    'tujia_d': '土家',
+'tujia_d': '土家',
     'zhuang_d': '壮',
 'xibo_d': '锡伯',
     'jinling': '南',
@@ -230,7 +230,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'linshihong': '楚南',
 'kumo': '楮特',
 'xijue': '十箭',
-    'xian_d': '冼',
+'xian_d': '高',
 'xiqin': '宁',
 
     // ── 2026-05-25 新增：唐朝核对追加势力 ──
@@ -410,7 +410,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──
     'cong': '賨',
 'langzhou': '阆',
-    'zhe_d': '折',
+'zhe_d': '府',
     'shanyue': '丹阳',
     'she_ethnic': '畲',
 
@@ -418,8 +418,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'wuling': '五溪',
 
     // ── 2026-05-27 新增：汪、向、覃、冉、储 ──
-    'wang_s': '汪',
-    'xiang_d': '向',
+'wang_s': '黟',
+'xiang_d': '来凤',
     'tan_d': '覃',
     'ran_d': '冉',
     'chu_d': '舒',
@@ -436,7 +436,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-27 新增：青衣、五溪、姑蔑 ──
 'qingyi': '青衣',
 'wuxi': '武陵',
-    'gumie': '衢',
+'gumie': '衢',
 
     // ── 2026-05-27 新增：生苗 ──
     'shengmiao': '生苗',
@@ -609,7 +609,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'ali': '阿里',
 'pazhu': '年楚',
     'qiong': '邛',
-    'zhuoshi': '卓',
+'zhuoshi': '邛',
     'chenzhou_d': '辰',
     'qianzhong': '沅',
     'cuanshi': '爨',
@@ -858,7 +858,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dingzhou': '定',
 'shanzhou': '鄯',
 'weizhou': '维',
-'xidong': '溪峒',
 'yingzhou_d2': '应',
 'dongsheng': '胜',
 'weiyuan': '亹源',

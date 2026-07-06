@@ -10,7 +10,7 @@
  */
 export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   zhuang_d: { name: '广西俍兵', tier: 3 },     // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名
-  xian_d: { name: '俚人武士', tier: 3 },       // 冼夫人统领的俚人武装，维系岭南一统的绝对民族力量，升入T3知名
+    xian_d: { name: '高凉犀甲', tier: 3 },
   dayue: { name: '白藤江水师', tier: 0 },           // 昇龙·陈国峻白藤江伏击灭元（区T0锚点·奇袭以少胜多）
   jing: { name: '丁朝禁卫', tier: 4 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
   leloi: { name: '蓝山义军', tier: 1 },        // 蓝山·黎利抗明复国主力
@@ -37,7 +37,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   monong: { name: '墨侬部卒', tier: 4 },       // 邦敦·阿侬率余部抗宋（缺乏极其著名的战术高光，降T3）
   shuizhen: { name: '水真戍卒', tier: 4 },     // 三菩·区大任驻守
   ketagalan: { name: '凯达格兰兵', tier: 3 }, // 台湾平埔族原住民代表，极具海岛南岛语族历史文化辨识度，升入T3知名
-    li_s: { name: '天威劈浪军', tier: 2 },
+    li_s: { name: '大汉伏波', tier: 2 },
   shaozhou: { name: '大庾岭义旅', tier: 4 },   // 韶关·张镇孙抗元义军（1277–1278）（常规番号，降T3）
   guizhou: { name: '永历铁骑', tier: 1 },       // 古严关·李定国（原肇庆永历，2026-06-19 迁桂州）
   paiyao: { name: '八排瑶丁', tier: 4 },      // 阳山关·明清连阳八排瑶丁

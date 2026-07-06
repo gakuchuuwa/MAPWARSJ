@@ -19,8 +19,8 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   jingmen: { name: '长坂血骑', tier: 3 },        // 赵云长坂坡，全民级文化IP，极高文化知名度，升T2
   bandun: { name: '賨人勇士', tier: 3 },       // 还定三秦的巴渝舞武士，中华武术发源级代表，升入T3知名
     langzhou: { name: '巴西板楯蛮', tier: 3 },
-  zhuoshi: { name: '井阑劲卒', tier: 4 },         // 临邛·诸葛连弩营（缺乏极其著名的战术高光，降T3）
-  tujia_d: { name: '白杆兵', tier: 2 },         // 石柱·§8 #5 秦良玉土司白蜡矛（战功赫赫的特色尖刀）
+    zhuoshi: { name: '井阑劲卒', tier: 3 },
+    tujia_d: { name: '白杆兵', tier: 2 },
   shu: { name: '白毦精兵', tier: 2 },           // 刘备的亲卫特种兵，在夷陵之战打出极其强悍的战术掩护保卫刘备，升入T2战术
   yangzhou: { name: '无当飞军', tier: 2 },   // 兴势山·王平统率山地劲旅（山地特种防御）
   shuixi: { name: '罗罗兵', tier: 4 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
@@ -61,12 +61,11 @@ qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅�
   ran_d: { name: '冉氏土兵', tier: 4 },        // 秀山·冉守忠南宋土兵从征（常规番号，降T3）
     kuai: { name: '蒯氏宗兵', tier: 4 },
   boren: { name: '僰人藤牌兵', tier: 3 },     // 悬棺僰人特色武装，西南藤牌兵代表，升入T3知名
-  xiang_d: { name: '向氏土兵', tier: 4 },      // 来凤·向大坤土司（向王天子）
+    xiang_d: { name: '散毛土兵', tier: 4 },
     qianhui: { name: '回民义军', tier: 4 },           // 常规番号，降T3
   huizhou_d: { name: '元戎弩兵', tier: 2 }, // 诸葛亮损益连弩部队，战术辨识度极高的特种精锐，升入T2战术
     wuling: { name: '五溪藤甲', tier: 3 },            // 三国藤甲兵文化符号（火烧藤甲），显著文化知名度，升T2
     zizhou: { name: '忠武八都', tier: 2 },
     weizhou: { name: '奉义军', tier: 1 },
-    xidong: { name: '大汉伏波', tier: 2 },
     haikou: { name: '五岛水军', tier: 4 },
 };
