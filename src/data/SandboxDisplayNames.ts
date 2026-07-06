@@ -17,7 +17,7 @@
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   heishui: '黑水',
-  yangzhou: '洋',
+'yangzhou': '洋',
   sizhou: '泗',
   fengzhou: '凤',
   fushi: '苻',

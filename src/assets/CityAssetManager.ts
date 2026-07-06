@@ -59,7 +59,7 @@ export class CityAssetManager {
 'shaozhou_d': '邵',
 
         'shu': '蜀',
-        'yangzhou': '洋',
+'yangzhou': '洋',
         'sizhou': '泗',
         'fengzhou': '凤',
         'fushi': '苻',

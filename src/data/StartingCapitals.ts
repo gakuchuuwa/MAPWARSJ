@@ -51,7 +51,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'han': 'city_xinzheng',
 'han_d': 'city_hanzhong',
     'shu': 'city_chengdu',
-    'yangzhou': 'city_yangxian',
+'yangzhou': 'city_yangxian',
 'dian': 'city_tonghai',
 'xin': 'city_shangdang',
 'liangzhou': 'city_wuwei',

@@ -43,5 +43,6 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     ahaomu: { name: '阿豪姆舟师', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     wazu: { name: '阿佤猎兵', tier: 3 },              // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
     jingpozu: { name: '景颇长刀兵', tier: 3 },
-    shuizu: { name: '水族藤甲兵', tier: 3 },           // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
+    shuizu: { name: '水族藤甲兵', tier: 3 },           // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名,
+    yangzhou: { name: '无当飞军', tier: 2 },
 };

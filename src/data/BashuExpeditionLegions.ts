@@ -22,7 +22,6 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     zhuoshi: { name: '井阑劲卒', tier: 3 },
     tujia_d: { name: '白杆兵', tier: 2 },
   shu: { name: '白毦精兵', tier: 2 },           // 刘备的亲卫特种兵，在夷陵之战打出极其强悍的战术掩护保卫刘备，升入T2战术
-  yangzhou: { name: '无当飞军', tier: 2 },   // 兴势山·王平统率山地劲旅（山地特种防御）
   shuixi: { name: '罗罗兵', tier: 4 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名
     chenghan: { name: '流民帅突骑', tier: 2 },

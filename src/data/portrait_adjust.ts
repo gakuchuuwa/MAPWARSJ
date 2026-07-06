@@ -1068,7 +1068,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/LINGNAN/zhangshicheng_zhangshicheng.png": {
-            "scale": 0.99,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": -3
         },

@@ -118,7 +118,8 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'shu', name: '蜀国' },
-    { id: 'yangzhou', name: '洋州' }, // ── 兴势山（王平·无当飞军T1）──
+    { id: 'yangzhou', name: '洋州' },
+ // ── 兴势山（王平·无当飞军T1）──
     { id: 'dingxiang_d', name: '定襄' }, // ── 2026-06-18：李靖@恶阳岭（贞观四年定襄夜袭；旗号定襄）──
     { id: 'xiayang_d', name: '夏阳' },
    // ── 2026-06-18：李勣@龙门（冯翊夏阳故地·禹门险隘；旗号夏阳）──
@@ -1392,6 +1393,7 @@ export const FACTIONS: Faction[] = [
     // ── Phase 1 Missing Factions ──
     { id: 'kumoxi', name: '库莫奚' },
     { id: 'haikou', name: '海寇' },
+
 
 
     { id: 'shanshan', name: '鄯善' },

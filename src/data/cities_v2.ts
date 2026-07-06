@@ -1444,10 +1444,8 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     // ── 洋州@兴势山（王平·兴势之战/无当飞军T1）──
-    {
-        id: 'city_yangxian', name: '兴势山', factionId: 'yangzhou',
-        lat: 33.3520, lng: 107.5820, type: 'pass', region: 'BASHU', troops: 10000,
-        note: '244年王平兴势之战大破曹爽；洋县北傥谷口要塞；洋州·无当飞军T1' },
+    { id: 'city_yangxian', name: '兴势山', factionId: 'yangzhou', lat: 33.352, lng: 107.582, type: 'pass', troops: 20000, region: 'DIANQIAN' },
+
 
     // 第六类：平南国（杜文秀）
     // 大理已存在 (city_dali_city), 不再新建
@@ -2611,7 +2609,8 @@ export const CITIES_V2: CityDataV2[] = [
 
     // ── 2026-06-11 新增：琉球/台湾据点（叛军旗）──
     { id: 'city_mengjia', name: '艋舺', factionId: 'ketagalan', lat: 25.03, lng: 121.50, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '清代台北府淡水厅南境要地，万华故称艋舺' },
-    { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'haikou', lat: 25.75, lng: 123.5, type: 'pass', troops: 20000, region: 'BASHU' },
+    { id: 'city_diaoyudao', name: '钓鱼岛', factionId: 'haikou', lat: 25.75, lng: 123.5, type: 'small_city', troops: 20000, region: 'BASHU' },
+
 
 
     { id: 'city_gugudao', name: '宫古岛', factionId: 'gonggu', lat: 24.805, lng: 125.281, type: 'small_city', region: 'JAPAN', troops: 10000, note: '琉球宫古诸岛主岛，见《中山世谱》及明清海图' },
