@@ -71,7 +71,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     wazhai: { name: '骊山刑徒', tier: 3 },
   huaiyang: { name: '细柳营', tier: 3 },     // 周亚夫细柳营，军纪严明之文化符号，提拔至T3知名
   yao: { name: '匈奴五部', tier: 3 },        // 南匈奴内附建制，孕育汉赵政权开启五胡十六国，历史辨识度极高，升入T3知名
-  kong_d: { name: '北海郡兵', tier: 4 },       // 曲阜·孔融以北海相保境，孔融本人极有名
+    kong_d: { name: '曲阜甲士', tier: 3 },
   tongma: { name: '胶西郡国兵', tier: 4 },       // 胶西·刘卬发国兵参与七国之乱，战败
     yanchuan_d: { name: '背嵬军', tier: 0 },
   guide_d: { name: '酂侯亲卫', tier: 4 },   // 永城·萧何酂侯

@@ -45,7 +45,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   otomo_d: { name: '大友水军', tier: 3 },   // 无极高战术高光（逊于村上水军），属于常规地方水军，降回T3
   suwa_d: { name: '诹访神党', tier: 3 },     // 信浓国诹访大社的信仰武士集团，极具宗教与地域特色，升入T3知名
   jibei2: { name: '备中众', tier: 4 },         // 鬼之城·宇喜多氏
-  taira: { name: '平家水军', tier: 3 },         // 源平合战绝对主力，坛之浦海战的悲剧主角，日本古典时代极其著名的水军代名词，升入T3知名
+    taira: { name: '平家水军', tier: 3 },
   sagami: { name: '风魔党', tier: 3 },         // 箱根关·北条氏专属特种风魔忍者
   mino: { name: '大谷部众', tier: 4 },         // 不破关·大谷吉继（缺乏极其著名的战术高光，降T3）
   yizhi: { name: '原之辻戍卒', tier: 4 },       // 原之辻·壹岐国元寇戍卒（《元史》《高丽史》壹岐守备）

@@ -32,7 +32,7 @@ export interface GeneralFirstTarget {
 export const GENERAL_FIRST_EXPEDITION_TARGETS: Readonly<Record<string, GeneralFirstTarget>> = {
     // ── T0 传奇名将（14）──────────────────────────────
     suzhou_huoqubing:            { cityId: 'city_langjuxu', label: '封狼居胥' },  // 霍去病·suzhou
-    yue_d_yuefei:                { cityId: 'city_fuyu', label: '直捣黄龙' },  // 岳飞·yue_d
+    yanchuan_d_yuefei:                { cityId: 'city_fuyu', label: '直捣黄龙' },  // 岳飞·yue_d
     xichu_xiangyu:               { cityId: 'city_changan', label: '入关灭秦' },  // 项羽·xichu
     tang_lishimin:               { cityId: 'city_hulaoguan', label: '虎牢破郑夏' },  // 李世民·tang
     sambyeol_lishunchen:         { cityId: 'city_himeji', label: '反攻丰臣' },  // 李舜臣·sambyeol
@@ -98,9 +98,9 @@ export const GENERAL_FIRST_EXPEDITION_TARGETS: Readonly<Record<string, GeneralFi
     // ── 知名远征名将扩充(2026-07,T0/T1精锐之外的名将)──────
     quli_chentang:                 { cityId: 'city_zhizhicheng', label: '虽远必诛' },  // 陈汤·quli (951km)
     wudu_dengai:                   { cityId: 'city_chengdu', label: '偷渡阴平' },  // 邓艾·wudu (333km)
-    xidong_mayuan:                 { cityId: 'city_shenglong', label: '伏波平交趾' },  // 马援·xidong (951km)
+    li_s_mayuan:                 { cityId: 'city_shenglong', label: '伏波平交趾' },  // 马援·xidong (951km)
     shanrong_lanyu:                { cityId: 'city_erguna', label: '灭北元' },  // 蓝玉·shanrong (901km)
-    gumie_liuyu:                   { cityId: 'city_changan', label: '气吞万里' },  // 刘裕·gumie (1109km)
+    wang_d_liuyu:                   { cityId: 'city_changan', label: '气吞万里' },  // 刘裕·gumie (1109km)
     danyang_huanwen:               { cityId: 'city_changan', label: '北伐入关' },  // 桓温·danyang (939km)
     chizhou_changyuchun:           { cityId: 'city_beijing', label: '北伐克大都' },  // 常遇春·chizhou (1016km)
     jinling_tandaoji:              { cityId: 'city_luoyang', label: '唱筹量沙' },  // 檀道济·jinling (652km)

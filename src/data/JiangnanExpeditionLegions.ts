@@ -35,7 +35,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     fangla: { name: '圣公兵', tier: 3 },             // 方腊起义军的代表，震动东南半壁的著名农民起义符号，升入T3知名
     fang_guozhen: { name: '甬江水营', tier: 4 },
   ruochu: { name: '若敖六卒', tier: 2 },       // 楚国早期精锐，在楚庄王时期有战术高光，但非贯穿时代的战略主力，降为T2战术。
-  mi_chu: { name: '左广右广', tier: 2 },       // 楚庄王核心王牌，于邲之战正面击溃晋军，打出称霸中原的战术大捷，符合T2战术
+    mi_chu: { name: '左广右广', tier: 2 },
   heng: { name: '衡州义军', tier: 4 },         // 临烝·何腾蛟南明衡州抗清
     yezongliu: { name: '处州矿徒', tier: 4 },
   jinan: { name: '神牌弩手', tier: 2 },   // 历下·铁铉固守济南（防御战术铁壁）

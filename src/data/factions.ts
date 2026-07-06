@@ -207,7 +207,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'qian_d', name: '秀州' },
 
-    { id: 'kong_d', name: '孔家' }, // 代表鲁国，避免旗号重名
+    { id: 'kong_d', name: '鲁国' },
+ // 代表鲁国，避免旗号重名
     { id: 'cao_d', name: '亳州' },
 
     { id: 'jiujiang', name: '江州' },       // 橄榄 - 柴桑/浔阳(九江郡)
@@ -729,8 +730,10 @@ export const FACTIONS: Faction[] = [
     // ── 第三类：世袭土司与门阀 ──
     { id: 'yang_bozhou', name: '播州' },             // 海龙棕 - 播州杨氏(海龙屯/贵州第一土司)
     { id: 'sizhou', name: '泗州' },
-    { id: 'tian_sizhou', name: '田家' },
-    { id: 'mu_lijiang', name: '木家' },
+    { id: 'tian_sizhou', name: '㵲阳' },
+
+    { id: 'mu_lijiang', name: '丽江' },
+
                // 丽江明黄 - 丽江木氏(木府)
     // 大肚秘鲁黄 - 大肚王国(台湾原住民联盟)
     { id: 'ming_zheng', name: '明郑' },
@@ -743,7 +746,8 @@ export const FACTIONS: Faction[] = [
     { id: 'paiwan', name: '排湾' },
     // ── 第六类：岭南土司、安南权臣与海商门阀 ──
     { id: 'leloi', name: '后黎' },                  // 黎利蓝山起义
-    { id: 'nguyen_guangnan', name: '阮家' },
+    { id: 'nguyen_guangnan', name: '顺化' },
+
 
 
     // 高平暗灰 - 莫氏/莫朝(高平)
@@ -774,7 +778,8 @@ export const FACTIONS: Faction[] = [
     // 阮氏(安南权阀/占城/广南)
     // 党项部族(拓跋氏/玛曲/黄河第一弯)
     // 雅隆部落(吐蕃前身/雅砻河谷/悉补野氏)
-    { id: 'cen_d', name: '岑家' },
+    { id: 'cen_d', name: '泗城' },
+
                         // 岑氏(桂西土司/岑城/镇安)
 
     // ── 2026-05-27 新增：汪(黟县) ──
@@ -785,8 +790,10 @@ export const FACTIONS: Faction[] = [
     { id: 'xiang_d', name: '来凤' },
 
                         // 向氏(来凤/武陵山区)
-    { id: 'tan_d', name: '覃家' },                          // 覃氏(慈利/澧水流域)
-    { id: 'ran_d', name: '冉家' },                          // 冉氏(秀山/酉水流域)
+    { id: 'tan_d', name: '澧州' },
+                          // 覃氏(慈利/澧水流域)
+    { id: 'ran_d', name: '酉阳' },
+                          // 冉氏(秀山/酉水流域)
     { id: 'chu_d', name: '舒州' },                          // 舒州(潜山/同安郡)
     { id: 'hu_d', name: '三门湾' },
 
@@ -842,7 +849,8 @@ export const FACTIONS: Faction[] = [
     { id: 'tumed', name: '土默特' },                           // 土默特部(归化城/呼和浩特/蒙古右翼),
 
     // ── 2026-05-28 新增：奢氏(永宁/四川叙永彝族土司) ──
-    { id: 'she', name: '奢家' },                                  // 奢氏(永宁宣抚司/今四川叙永/彝族土司),
+    { id: 'she', name: '永宁' },
+                                  // 奢氏(永宁宣抚司/今四川叙永/彝族土司),
 
     // ── 2026-05-28 新增：僚(江阳/四川泸州僚人) ──
     { id: 'liao', name: '僚族' },                                  // 僚(江阳郡/今四川泸州/西南僚人),
@@ -898,7 +906,10 @@ export const FACTIONS: Faction[] = [
     { id: 'liren', name: '俚族' },                          // 俚(珠崖/海南岛),
 
     // ── 2026-05-28 新增：岭(结古宗)、琼波(丁青宗)、索伦(卜奎)、图瓦(唐努) ──
-    { id: 'gling', name: '岭家' },                              // 岭(结古宗/玉树/家族), Gling
+    { id: 'gling', name: '玉树' },
+
+
+                              // 岭(结古宗/玉树/家族), Gling
     { id: 'khyungpo', name: '琼波' },                         // 琼波(丁青宗/康区/家族), Khyungpo
     { id: 'suolun', name: '达斡尔' },
 
@@ -1048,7 +1059,8 @@ export const FACTIONS: Faction[] = [
     { id: 'xinggu', name: '兴古' },
     { id: 'zangke', name: '牂牁' },
     { id: 'guangxin', name: '广信' },
-    { id: 'kejia', name: '客家' },
+    { id: 'kejia', name: '宁化' },
+
                           // 黄连·旗号客（客家民族）
     { id: 'tingzhou_d', name: '汀州' },                       // 瑞金·旗号汀
     { id: 'chaozhou_d', name: '潮州' },                       // 海阳·旗号潮
@@ -1157,7 +1169,8 @@ export const FACTIONS: Faction[] = [
     { id: 'beihai', name: '北海道' },                  // 北海(宗谷海峡界城)
     // ── 2026-06-11 新增：若敖（楚若敖氏/竟陵）、芈氏（楚王室/云梦）──
     { id: 'ruochu', name: '若敖' },
-    { id: 'mi_chu', name: '芈家' },
+    { id: 'mi_chu', name: '安陆' },
+
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
     { id: 'ewenki', name: '鄂温克' },
   // 鄂温克(尼布楚/石勒喀河上游), Ewenki
@@ -1264,7 +1277,8 @@ export const FACTIONS: Faction[] = [
     { id: 'dayu', name: '大庾' },
 
     { id: 'yingzhou', name: '英州' },
-    { id: 'taira', name: '平家' },
+    { id: 'taira', name: '长门' },
+
     { id: 'wuman', name: '乌蛮' },
     { id: 'yehe', name: '叶赫' },
 

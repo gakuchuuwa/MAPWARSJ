@@ -726,10 +726,12 @@ async function openEditPanel(factionId: string | null): Promise<void> {
 
           <h3>② 武将</h3>
           <div class="form-row">
-            <label><span>武将 ID</span><input value="${row!.generalId ?? ''}" readonly /></label>
-            <label><span>武将名</span><input name="generalName" value="${row!.generalName ?? ''}" /></label>
+            <label><span>武将 ID</span><input id="bm-edit-genid-view" value="${row!.generalId ?? ''}" readonly /></label>
+            <label><span>武将名</span><input name="generalName" id="bm-edit-genname" value="${row!.generalName ?? ''}" /></label>
           </div>
-          <input type="hidden" name="generalId" value="${row!.generalId ?? ''}" />
+          <input type="hidden" name="generalId" id="bm-edit-genid" value="${row!.generalId ?? ''}" />
+          <input type="hidden" name="oldGeneralId" value="${row!.generalId ?? ''}" />
+          <div id="bm-edit-general-hint" style="display:none;font-size:12px;color:#e0a030;margin:2px 0 6px;line-height:1.5"></div>
           <label><span>立绘路径</span><input name="portrait" id="bm-edit-portrait" value="${row!.portrait ?? ''}" /></label>
           <div class="bm-portrait-preview" id="bm-portrait-preview">
             <img id="bm-portrait-img" src="${row!.portrait ?? ''}" alt="立绘" style="${row!.portrait ? '' : 'display:none'}" />
@@ -787,6 +789,31 @@ async function openEditPanel(factionId: string | null): Promise<void> {
 
     document.getElementById('bm-panel-close')!.addEventListener('click', closePanel);
     document.getElementById('bm-edit-form')!.addEventListener('submit', handleFormSubmit);
+    // 换将：改武将名 → 自动重算 generalId + 清空旧立绘（旧图=前一位的脸），防 id/技能/立绘错位
+    if (!isNew && row) {
+        const gName = document.getElementById('bm-edit-genname') as HTMLInputElement | null;
+        const gIdHidden = document.getElementById('bm-edit-genid') as HTMLInputElement | null;
+        const gIdView = document.getElementById('bm-edit-genid-view') as HTMLInputElement | null;
+        const gHint = document.getElementById('bm-edit-general-hint');
+        const pInput = document.getElementById('bm-edit-portrait') as HTMLInputElement | null;
+        const origName = row.generalName ?? '';
+        const origPortrait = row.portrait ?? '';
+        gName?.addEventListener('input', () => {
+            const nm = gName.value.trim();
+            const newId = nm ? `${row!.id}_${toPinyinId(nm)}` : '';
+            if (gIdHidden) gIdHidden.value = newId;
+            if (gIdView) gIdView.value = newId;
+            const changed = !!nm && nm !== origName;
+            if (changed && pInput && pInput.value === origPortrait && origPortrait) {
+                pInput.value = '';
+                pInput.dispatchEvent(new Event('input'));
+            }
+            if (gHint) {
+                gHint.style.display = changed ? 'block' : 'none';
+                if (changed) gHint.textContent = `换将 → 新 ID：${newId}。请为「${nm}」重设战术技/战略技；立绘已清空（留空=文化夹随机脸，或另选/F2绑图）。旧武将「${origName}」的技能档会被清理。`;
+            }
+        });
+    }
     if (!isNew && row) {
         document.getElementById('bm-panel-delete')?.addEventListener('click', () => void handleDeleteFaction(row!));
     }
@@ -1176,6 +1203,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
     let factionId = get('factionId');
     let cityId = get('cityId');
     let generalId = get('generalId');
+    const oldGeneralId = get('oldGeneralId');
     const isNew = !factionId;
 
     if (isNew) {
@@ -1187,6 +1215,10 @@ async function handleFormSubmit(e: Event): Promise<void> {
             showToast('无法生成 ID，请检查名称是否包含汉字', true);
             return;
         }
+    } else {
+        // 换将：编辑态武将名可能被改 → 按新名重算 generalId（{factionId}_拼音）
+        const gn = get('generalName');
+        if (gn) generalId = `${factionId}_${toPinyinId(gn)}`;
     }
 
     try {
@@ -1227,15 +1259,15 @@ async function handleFormSubmit(e: Event): Promise<void> {
                 const ids = computeIds(factionName, cityName, generalName);
                 generalId = ids.generalId;
             }
-            const portraitRegion = region || 'CENTRAL';
             const genRes = await fetch('/api/save-general', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     factionId, generalId, generalName,
-                    portrait: portrait || `/assets/${portraitRegion}/${generalId}.png`,
+                    portrait,
                     tier, tacticalSkillId,
                     strategicSkillId: strategicSkillId || undefined,
+                    oldGeneralId: oldGeneralId || undefined,
                 }),
             });
             const genData = await genRes.json();

@@ -708,7 +708,7 @@ const FACTION_PORTRAIT_POOLS: Record<string, string[]> = {
     'ying': _jiangnanPortraitPool,
     'yiyang_d': _jiangnanPortraitPool,
     'yue': _xianqinPortraitPool,
-    'yue_d': _zhaosongPortraitPool,
+    'yue_d': _jiangnanPortraitPool,  // 鲁肃·东吴/江南（原岳飞南宋 zhaosong；2026-07-06 换将）
     'zhangshicheng': _jiangnanPortraitPool,
     // 岭南补充 36 势力
     'basha_d': _lingnanPortraitPool,

@@ -57,7 +57,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   bailan: { name: '昌都僧兵', tier: 4 },        // 察木多·帕巴拉协助守城（缺乏极其著名的战术高光，降T3）
   jiantang: { name: '建塘马兵', tier: 4 },       // 独克宗·桑杰嘉措驻防（缺乏极其著名的战术高光，降T3）
   kongsa: { name: '孔萨土兵', tier: 4 },         // 甘孜·孔萨益多瞻对之役（常规番号，降T3）
-  gling: { name: '岭国武士', tier: 3 },          // 格萨尔史诗英雄，藏族最伟大英雄IP，极高文化知名度，升T2
+    gling: { name: '玉树藏兵', tier: 4 },
   khyungpo: { name: '藏北苏毗兵', tier: 2 },    // 琼波邦色率苏毗兵灭象雄，吐蕃统一史关键，升T2
     guangwu: { name: '河西突骑', tier: 3 },
   galangdiba: { name: '波密民兵', tier: 4 },     // 噶朗宗·旺钦顿堆波密土王（常规番号，降T3）

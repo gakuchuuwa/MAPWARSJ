@@ -113,7 +113,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xie_cj_d': '信',
 'yue_d': '岳',
 'qian_d': '秀',
-    'kong_d': '孔',
+'kong_d': '鲁',
 'cao_d': '亳',
     'jiujiang': '浔',
 
@@ -397,8 +397,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'pyu': '骠',
     'mon': '孟',
     'yang_bozhou': '播',
-    'tian_sizhou': '田',
-'mu_lijiang': '木',
+'tian_sizhou': '㵲',
+'mu_lijiang': '丽江',
 'ming_zheng': '明郑',
     'xiou': '西瓯',
     'jing': '京',
@@ -420,13 +420,13 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-27 新增：汪、向、覃、冉、储 ──
 'wang_s': '黟',
 'xiang_d': '来凤',
-    'tan_d': '覃',
-    'ran_d': '冉',
+'tan_d': '澧',
+'ran_d': '酉阳',
     'chu_d': '舒',
 'hu_d': '三门',
 
     // ── 自动补全剩余的特殊势力映射，防止显示英文 ──
-'cen_d': '岑',
+'cen_d': '泗',
     // ── 2026-05-27 补充：旗号文字缺失的14个势力 ──
     'weili': '尉犁',
     'pishan': '皮山',
@@ -475,7 +475,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tumed': '土默',
 
     
-    'she': '奢',
+'she': '永宁',
 
     
     'liao': '僚',
@@ -513,7 +513,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'liren': '俚',
 
     // ── 2026-05-28 新增：岭、琼波、索伦、图瓦 ──
-    'gling': '岭',
+'gling': '玉树',
     'khyungpo': '琼波',
 'suolun': '达斡',
     'tuva': '图瓦',
@@ -616,7 +616,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dianguo': '滇',
     'xinggu': '兴古',
     'guangxin': '广信',
-'kejia': '客',
+'kejia': '宁化',
     'tingzhou_d': '汀',
     'chaozhou_d': '潮',
     'ouyang': '欧阳',
@@ -704,7 +704,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-11 新增：阿伊努（北海道）──
     'ayinu': '虾夷',
     'ruochu': '若敖',
-    'mi_chu': '芈',
+'mi_chu': '安陆',
     // ── 2026-06-11 新增：北海（北海道北端）──
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
 'ewenki': '鄂温',
@@ -762,7 +762,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'hani_d': '哈尼',
     'basha_d': '巴沙',
     'chuzhou_d': '滁',
-    'taira': '平',
+'taira': '长门',
     'wuman': '乌蛮',
 'yehe': '叶赫',
     

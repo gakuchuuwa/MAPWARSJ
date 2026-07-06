@@ -1891,7 +1891,7 @@ function serverReadAllEntityData() {
 
     // generals: { [factionId]: { generalId, generalName, portrait } }
     const generals: Record<string, { generalId: string; generalName: string; portrait: string }> = {};
-    for (const m of fgText.matchAll(/(\w+):\s*\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']+)'/g)) {
+    for (const m of fgText.matchAll(/(\w+):\s*\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']*)'/g)) {
         generals[m[1]] = { generalId: m[2], generalName: m[3], portrait: m[4] };
     }
 
@@ -1947,6 +1947,7 @@ function serverNormalizePortraitPath(p: string): string {
 }
 
 function serverSaveGeneral(data: {
+    oldGeneralId?: string;
     factionId: string;
     generalId: string;
     generalName: string;
@@ -1987,6 +1988,14 @@ function serverSaveGeneral(data: {
     } else {
         gsText = serverInsertIntoStructure(gsText, 'GENERAL_PROFILES', gsLine, '    ');
         results.push('GeneralSkills.ts: inserted');
+    }
+
+    // [换将清理] generalId 变了 → 删旧 generalId 的孤儿技能档，防 profile 残留
+    if (data.oldGeneralId && data.oldGeneralId !== data.generalId) {
+        try {
+            gsText = serverDeleteObjectLine(gsText, 'GENERAL_PROFILES', data.oldGeneralId);
+            results.push(`GeneralSkills.ts: 清理旧档 ${data.oldGeneralId}`);
+        } catch { /* 旧档不存在，忽略 */ }
     }
 
     // 检查立绘文件是否存在
