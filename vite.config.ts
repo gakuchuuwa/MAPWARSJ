@@ -520,20 +520,32 @@ export default defineConfig({
                     req.on('end', () => {
                         try {
                             const payload = JSON.parse(body);
-                            // backup:true 由前端自动写盘（每 10 张）时附带
-                            const { backup: makeBackup, ...data } = payload as { backup?: boolean; [k: string]: unknown };
+                            // backup 标志已废弃（兼容旧客户端仍剥离）：现在每次保存都滚动备份
+                            const { backup: _legacyBackupFlag, ...data } = payload as { backup?: boolean; [k: string]: unknown };
                             const content = serverFormatPortraitAdjustFile(data);
-                            fs.writeFileSync(portraitAdjustPath, content, 'utf-8');
-                            markPortraitDevWrite();
+
+                            // [2026-07-06 全量滚动备份] 写盘前先备份旧文件（防坏 payload 整份覆盖后无可回滚）；
+                            // 同一分钟只存首份（保留该分钟起点状态）；只保留最近 30 份，旧的自动清理。
                             let backupFile: string | undefined;
-                            if (makeBackup) {
-                                const backupDir = path.resolve(__dirname, 'src/data/portrait_adjust_backups');
+                            const backupDir = path.resolve(__dirname, 'src/data/portrait_adjust_backups');
+                            if (fs.existsSync(portraitAdjustPath)) {
                                 if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
                                 const ts = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12); // YYYYMMDDHHmm
                                 backupFile = path.join(backupDir, `portrait_adjust_${ts}.ts`);
-                                fs.copyFileSync(portraitAdjustPath, backupFile);
-                                console.log(`📦 [PortraitAdjust] Backup → ${backupFile}`);
+                                if (!fs.existsSync(backupFile)) {
+                                    fs.copyFileSync(portraitAdjustPath, backupFile);
+                                    console.log(`📦 [PortraitAdjust] Backup → ${backupFile}`);
+                                    const stale = fs.readdirSync(backupDir)
+                                        .filter((f: string) => /^portrait_adjust_\d{12}\.ts$/.test(f))
+                                        .sort()
+                                        .reverse()
+                                        .slice(30);
+                                    for (const f of stale) fs.unlinkSync(path.join(backupDir, f));
+                                }
                             }
+
+                            fs.writeFileSync(portraitAdjustPath, content, 'utf-8');
+                            markPortraitDevWrite();
                             console.log(`✅ [PortraitAdjust] Saved to ${portraitAdjustPath}`);
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true, backupFile }));

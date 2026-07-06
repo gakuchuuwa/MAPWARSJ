@@ -21,6 +21,9 @@ dist/
 *.bak
 *_backup.*
 
+# 立绘调校滚动备份（本地保险，数据文件本身已随小时提交入库，备份不必进 git）
+src/data/portrait_adjust_backups/
+
 # OS
 .DS_Store
 Thumbs.db

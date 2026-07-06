@@ -731,6 +731,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           </div>
           <input type="hidden" name="generalId" id="bm-edit-genid" value="${row!.generalId ?? ''}" />
           <input type="hidden" name="oldGeneralId" value="${row!.generalId ?? ''}" />
+          <input type="hidden" name="oldGeneralName" value="${row!.generalName ?? ''}" />
           <div id="bm-edit-general-hint" style="display:none;font-size:12px;color:#e0a030;margin:2px 0 6px;line-height:1.5"></div>
           <label><span>立绘路径</span><input name="portrait" id="bm-edit-portrait" value="${row!.portrait ?? ''}" /></label>
           <div class="bm-portrait-preview" id="bm-portrait-preview">
@@ -797,13 +798,16 @@ async function openEditPanel(factionId: string | null): Promise<void> {
         const gHint = document.getElementById('bm-edit-general-hint');
         const pInput = document.getElementById('bm-edit-portrait') as HTMLInputElement | null;
         const origName = row.generalName ?? '';
+        const origId = row.generalId ?? '';
         const origPortrait = row.portrait ?? '';
         gName?.addEventListener('input', () => {
             const nm = gName.value.trim();
-            const newId = nm ? `${row!.id}_${toPinyinId(nm)}` : '';
+            const changed = !!nm && nm !== origName;
+            // 名字没变（或改了又删回原名）→ 保持原 ID。历史手工 ID（如 leloi/agui）不符合
+            // {势力}_{拼音} 规则，若无条件重算会把没换将的保存也当成换将，断掉远征目标/技能档。
+            const newId = changed ? `${row!.id}_${toPinyinId(nm)}` : origId;
             if (gIdHidden) gIdHidden.value = newId;
             if (gIdView) gIdView.value = newId;
-            const changed = !!nm && nm !== origName;
             if (changed && pInput && pInput.value === origPortrait && origPortrait) {
                 pInput.value = '';
                 pInput.dispatchEvent(new Event('input'));
@@ -1216,9 +1220,16 @@ async function handleFormSubmit(e: Event): Promise<void> {
             return;
         }
     } else {
-        // 换将：编辑态武将名可能被改 → 按新名重算 generalId（{factionId}_拼音）
+        // 换将：仅当武将名真的改了才按新名重算 generalId（{factionId}_拼音）。
+        // 名字没变必须保持原 ID——历史手工 ID（leloi/agui/pugu_puguhuaien 等 9 条）不符合
+        // 新规则，无条件重算会把普通保存（改坐标/换技能）当成换将，删旧档 + 断远征目标表。
         const gn = get('generalName');
-        if (gn) generalId = `${factionId}_${toPinyinId(gn)}`;
+        const oldGn = get('oldGeneralName');
+        if (gn && gn !== oldGn) {
+            generalId = `${factionId}_${toPinyinId(gn)}`;
+        } else if (gn && oldGeneralId) {
+            generalId = oldGeneralId; // 名字没变：无视隐藏字段可能被中途改写过的值，锁回原 ID
+        }
     }
 
     try {
