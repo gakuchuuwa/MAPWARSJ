@@ -354,7 +354,8 @@ export class GameApp {
                                 event.newFactionId,
                                 event.captorLegionName || '军团',
                                 event.cityName,
-                                event.captorGeneralId
+                                event.captorGeneralId,
+                                event.defenderHadNamedForce ?? false
                             );
                         }
                     }

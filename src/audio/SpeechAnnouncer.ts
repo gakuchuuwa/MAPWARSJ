@@ -124,12 +124,16 @@ export class SpeechAnnouncer {
   }
 
   /** 攻占城池 */
-  public announceCityCapture(factionId: string, legionName: string, cityName: string, generalId?: string): void {
+  public announceCityCapture(factionId: string, legionName: string, cityName: string, generalId?: string, defenderHadNamedForce?: boolean): void {
     if (!this.enabled) return;
+    // defenderHadNamedForce：守方这一仗有没有出将/出精（由攻城结算传入）。
+    // 无（无名据点，守军无将无精）→ 只报「势力攻占据点」（例：秦国攻占邯郸），不吹攻方精锐+技能。
     const skill = getTacticalSkillName(factionId, generalId);
     const elite = hasEliteName(legionName) ? legionName : null;
     let text: string;
-    if (elite && skill) {
+    if (!defenderHadNamedForce) {
+      text = `${getFactionNameForSpeech(factionId)}攻占${cityName}`;
+    } else if (elite && skill) {
       text = `${elite}，${skill}，攻占${cityName}`;
     } else {
       text = `${getFactionNameForSpeech(factionId)}军，一举攻占${cityName}`;

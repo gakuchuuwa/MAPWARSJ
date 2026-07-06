@@ -15,7 +15,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
     han_d: { name: '大汉材官', tier: 2 },
   pizhou: { name: '陷阵营', tier: 2 },        // 下邳·高顺陷阵营
-  cao_d: { name: '虎豹骑', tier: 1 },      // 谯都·曹纯曹真（无独立以少胜多经典）
+    cao_d: { name: '虎豹骑', tier: 1 },
   ranwei_d: { name: '乞活军', tier: 2 },   // 五胡乱华时期的流民武装，虽悲壮且在特定战役有高光，但缺乏战略主导地位，降为T2战术。
     wuzhou_d: { name: '羽林军', tier: 2 },     // 洛阳·李多祚羽林军（武周）
   shang: { name: '虎贲多射', tier: 2 },       // 周武王牧野之战的核心三千虎贲突击队，打出改朝换代的史诗级战役高光，升入T2战术
@@ -49,7 +49,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     xiongding: { name: '鲜卑燕骑', tier: 4 },
   // 金甲卫除名（生造）
   huo: { name: '霍邑骁锐', tier: 4 },                 // 缺乏知名度支撑，降T3
-  mushi: { name: '丘穆陵骑', tier: 4 },
+    mushi: { name: '大岘戟士', tier: 4 },
   // 齐莱锐士除名（无典）
   yin: { name: '殷商多射', tier: 3 },          // 甲骨文实锤的最古老精锐，中华武力活化石，文化地位极高，不应沦为常规T4，提拔至T3知名。
   // 蔡国劲卒除名（无此部队）
@@ -65,7 +65,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   lai: { name: '齐关弩手', tier: 4 },           // 青石关·王师范屡败朱温（正史胜仗）（缺乏极其著名的战术高光，降T3）
     yangshao: { name: '安刘北军', tier: 3 },
     dongxian: { name: '马陵伏弩', tier: 2 },          // 齐国孙膑伏击庞涓的战术核心，古代“设伏聚歼”的战术巅峰，升入T2战术
-  mi: { name: '朐城弩手', tier: 4 },         // 朐城·麋竺家兵（缺乏极其著名的战术高光，降T3）
+    mi: { name: '朐山弩手', tier: 4 },
   yaozhou: { name: '耀州牙兵', tier: 4 },       // 金锁关·李茂贞岐军（缺乏极其著名的战术高光，降T3）
   cai: { name: '雪夜突骑', tier: 2 },          // 新蔡·李愬雪夜入蔡州
     wazhai: { name: '骊山刑徒', tier: 3 },

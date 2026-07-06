@@ -717,11 +717,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -20
         },
-        "/assets/LINGNAN/guangping_ruanwenzhang.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 7
-        },
         "/assets/BASHU/shu_liubei.png": {
             "scale": 1,
             "offsetX": 0,
@@ -921,11 +916,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 16
-        },
-        "/assets/LINGNAN/zhuang_d_washifuren.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 7
         },
         "/assets/xianqin/qi_simarangju.png": {
             "scale": 1.15,
@@ -1209,7 +1199,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/BASHU/zuo_d_wufu.png": {
             "scale": 1.21,
-            "offsetX": 0,
+            "offsetX": 19,
             "offsetY": 43
         },
         "/assets/LINGNAN/xian_d_xianfuren.png": {
@@ -1543,11 +1533,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/BASHU/wanzhou_shangguankui.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -5
-        },
-        "/assets/LINGNAN/nguyen_guangnan_ruanfuying.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -5
@@ -2328,12 +2313,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/LINGNAN/panyao_panhu.png": {
-            "scale": 1.23,
+            "scale": 1.06,
             "offsetX": 22,
-            "offsetY": 18
+            "offsetY": 26
         },
         "/assets/LINGNAN/qian_songjingyang.png": {
-            "scale": 1.01,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 1
         },
@@ -3088,7 +3073,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/TIBET/tuyu_d_kualv.png": {
-            "scale": 0.78,
+            "scale": 0.82,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -3813,7 +3798,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -32
         },
         "/assets/LINGNAN/leloi.png": {
-            "scale": 0.87,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": -19
         },
@@ -4303,7 +4288,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -2
         },
         "/assets/litang/bing_liji.png": {
-            "scale": 1.01,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -43
         },
@@ -5172,11 +5157,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 13,
             "offsetY": -12
         },
-        "/assets/LINGNAN/__闲置__LINGNAN_17.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 24
-        },
         "/assets/STEPPE/__闲置__STEPPE_36.png": {
             "scale": 1.41,
             "offsetX": 0,
@@ -5317,10 +5297,45 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 6
         },
+        "/assets/LINGNAN/__闲置__LINGNAN_20.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -16
+        },
         "/assets/LINGNAN/haikou_wangzhi.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -16
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_21.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/LINGNAN/guangping_ruanwenzhang.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_22.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/LINGNAN/nguyen_guangnan_ruanfuying.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_23.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/LINGNAN/zhuang_d_washifuren.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -19
         }
     },
     "folderGuides": {

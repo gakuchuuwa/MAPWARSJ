@@ -11,6 +11,7 @@ import { BattleField } from './BattleField';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
 import { getFactionGeneral } from '../data/FactionGenerals';
+import { getUnitEliteTier } from '../systems/CultureCombat';
 
 const siegeLog = (...args: unknown[]) => gameLog('siege', ...args);
 import { LegionType, getDefaultLegionTypeForFaction } from '../types/UnitTypes';
@@ -675,6 +676,11 @@ export class SiegeManager {
                 const latestCity = this.cityManager.getCity(targetCity.id);
                 if (latestCity && latestCity.factionId !== army.getFactionId()) {
                     siegeLog(`🏯 [Siege] City Conquered by ${army.name}: ${targetCity.name}`);
+                    // 守方这一仗是否出了将/精：看实际参战守方单位（城驻军 + 参战守军军团）。
+                    // 全空 = 无名据点（守将/精锐或随军出征、或本就未出场）→ 播报简化为「势力攻占据点」。
+                    const defenderHadNamedForce = defenderUnits.some(
+                        (u) => !!u.generalId || getUnitEliteTier(u) !== null
+                    );
                     this.cityManager.updateCity(targetCity.id, {
                         factionId: army.getFactionId(),
                         troops: 1000,
@@ -682,6 +688,7 @@ export class SiegeManager {
                         captorLegionName: army.name || '军团',
                         captorLegionId: army.id,
                         captorGeneralId: army.generalId,
+                        defenderHadNamedForce,
                     });
 
                     // [FIX] CityManager 的 updateCity 内部会触发 onCityUpdated 回调，自动调用 legionManager.refreshCityRegistry()

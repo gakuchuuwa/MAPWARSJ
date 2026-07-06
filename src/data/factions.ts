@@ -200,7 +200,8 @@ export const FACTIONS: Faction[] = [
     { id: 'qian_d', name: '秀州' },
 
     { id: 'kong_d', name: '孔家' }, // 代表鲁国，避免旗号重名
-    { id: 'cao_d', name: '曹家' },
+    { id: 'cao_d', name: '亳州' },
+
     { id: 'jiujiang', name: '江州' },       // 橄榄 - 柴桑/浔阳(九江郡)
     { id: 'jiaodong', name: '胶东' },
     { id: 'jingzhou_gs', name: '泾州' },
@@ -327,7 +328,8 @@ export const FACTIONS: Faction[] = [
     { id: 'yin', name: '殷国' },
     // ── 2026-06-16 新增：河间郡治乐成（§4.3；先登营@界桥）──
     { id: 'hejian', name: '莫州' },
-    { id: 'qu_d', name: '麴家' },                 // 麴义·先登营@界桥
+    { id: 'qu_d', name: '界津' },
+                 // 麴义·先登营@界桥
     { id: 'liu', name: '九江' },
 
 
@@ -790,7 +792,8 @@ export const FACTIONS: Faction[] = [
     // 且兰(牂牁古国/黔中/西南夷)
 
     // ── 2026-05-27 新增：白马、蒯、庸、申、叟 ──
-    { id: 'kuai', name: '蒯家' },                            // 蒯氏(房陵/荆襄名族)
+    { id: 'kuai', name: '房州' },
+                            // 蒯氏(房陵/荆襄名族)
     { id: 'yong', name: '庸国' },                            // 庸国(上庸/鄂西北古国)
     { id: 'shen', name: '申国' },
                             // 申国(金州/南阳申国)
@@ -1112,7 +1115,8 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'mi', name: '糜家' },
+    { id: 'mi', name: '朐山' },
+
     { id: 'hai2', name: '海州' },
 
     { id: 'fu2', name: '抚州' },
@@ -1170,7 +1174,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'konbaung', name: '贡榜' },
 
-    { id: 'qi_d', name: '戚家' },
+    { id: 'qi_d', name: '横水' },
+
 
     { id: 'wangyan', name: '太行' }, // 王彦八字军@飞狐；旗号取地名太行（禁人名「彦」）
     // ── 2026-06-11 新增：明末精锐（天雄/潼津）──
@@ -1215,7 +1220,11 @@ export const FACTIONS: Faction[] = [
 
     { id: 'yaozhou', name: '耀州' },
     { id: 'huo', name: '霍州' },
-    { id: 'mushi', name: '穆家' },
+    { id: 'mushi', name: '穆陵' },
+
+
+
+
     { id: 'lai', name: '莱州' },
     // ── 2026-06-16 新增：4座巴蜀西南名关 ──
     { id: 'lizhou_d', name: '剑州' },

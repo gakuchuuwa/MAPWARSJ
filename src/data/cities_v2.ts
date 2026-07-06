@@ -318,9 +318,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_shunchang', name: '顺昌', factionId: 'yingzhou_d', lat: 32.9, lng: 115.81, type: 'small_city', region: 'CENTRAL', troops: 10000,
         note: '顺昌；颍州小城',
     },
-    { id: 'city_qiaojun', name: '谯县', factionId: 'cao_d', lat: 33.88, lng: 115.77, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '谯县；曹氏小城',
-    },
+    { id: 'city_qiaojun', name: '谯县', factionId: 'cao_d', lat: 33.88, lng: 115.77, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
 
 
 
@@ -525,9 +524,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_hezhang', name: '可乐城', factionId: 'miao', lat: 27.095807, lng: 104.718933, type: 'small_city', region: 'LINGNAN', troops: 10000, note: '水西土司苗兵据点' },
     { id: 'city_tancheng', name: '郯城', factionId: 'dongxian', lat: 34.549568, lng: 118.317261, type: 'small_city', troops: 5000, region: 'CENTRAL' },
 
-    { id: 'city_qucheng', name: '朐城', factionId: 'mi', lat: 34.529200, lng: 119.132996, type: 'small_city', region: 'CENTRAL', troops: 10000,
-        note: '朐城；糜小城',
-    },
+    { id: 'city_qucheng', name: '朐城', factionId: 'mi', lat: 34.5292, lng: 119.132996, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
         { id: 'city_baibogu', name: '白波谷', factionId: 'baibo', lat: 36.135621, lng: 112.206116, type: 'pass', region: 'CENTRAL', troops: 10000,
         note: '白波谷；黄巾关隘',
     },
@@ -684,7 +682,11 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_wushengguan', name: '武胜关', factionId: 'yiyang_d', lat: 31.83, lng: 114.01, type: 'pass', region: 'JIANGNAN', mirror: true, 
         note: '武胜关；义阳关隘', troops: 10000 },
     // ── 齐鲁关隘 ──
-    { id: 'city_mulingguan', name: '大岴', factionId: 'mushi', lat: 36.275259, lng: 118.660583, type: 'pass', region: 'CENTRAL', mirror: true, troops: 10000, note: '穆陵关齐长城要隘旧称大岴；旗号穆避§4.1防重' },
+    { id: 'city_mulingguan', name: '大岘关', factionId: 'mushi', lat: 36.275259, lng: 118.660583, type: 'pass', troops: 20000, region: 'CENTRAL', mirror: true },
+
+
+
+
     { id: 'city_qingshiguan', name: '青石关', factionId: 'lai', lat: 36.246502, lng: 117.715759, type: 'pass', region: 'CENTRAL', troops: 10000,
         note: '青石关；莱州关隘',
     },
@@ -1871,7 +1873,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
 
     // ── 2026-05-27 新增：蒯(房陵) ──
-    { id: 'city_fangling', name: '房陵', factionId: 'kuai', lat: 32.043007, lng: 110.692749, type: 'small_city', region: 'BASHU', troops: 10000, note: '房陵郡；蒯越蒯氏宗族部曲（汉末荆襄）' },
+    { id: 'city_fangling', name: '房陵', factionId: 'kuai', lat: 32.043007, lng: 110.692749, type: 'small_city', troops: 20000, region: 'BASHU' },
+
 
     // ── 2026-05-27 新增：庸(上庸) ──
     { id: 'city_shangyong', name: '竹山', factionId: 'yong', lat: 32.349768, lng: 109.885254, type: 'small_city', region: 'BASHU', troops: 10000,
@@ -2665,6 +2668,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_hengyu', name: '横屿', factionId: 'qi_d', lat: 26.77, lng: 119.7, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
 
+
     { id: 'city_luobo', name: '罗博', factionId: 'buyi_d', lat: 25.4112, lng: 106.7377, type: 'small_city', troops: 20000, region: 'LINGNAN' },
 
     { id: 'city_situo', name: '思陀', factionId: 'hani_d', lat: 23.2243, lng: 102.8485, type: 'small_city', region: 'DIANQIAN', troops: 10000,
@@ -2705,7 +2709,8 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'small_city', troops: 5000, region: 'TIBET' },
 
-    { id: 'city_jieqiao', name: '界桥', factionId: 'qu_d', lat: 36.95, lng: 115.50, type: 'pass', region: 'NORTH', troops: 10000, note: '麴义先登营破公孙瓒白马义从（192年）' },
+    { id: 'city_jieqiao', name: '界桥', factionId: 'qu_d', lat: 36.95, lng: 115.5, type: 'pass', troops: 20000, region: 'NORTH' },
+
     { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8000, lng: 99.8000, type: 'small_city', region: 'HEXI', troops: 10000, note: '汉酒泉郡表氏县；沮渠卢水胡故地' },
     { id: 'city_hakone', name: '箱根关', factionId: 'sagami', lat: 35.1925, lng: 139.0261, type: 'pass', region: 'JAPAN', troops: 10000, note: '天下第一关，关东的物理大门' },
     { id: 'city_fuwa', name: '不破关', factionId: 'mino', lat: 35.3577, lng: 136.4602, type: 'pass', region: 'JAPAN', troops: 10000, note: '关原所在地，畿内防御东国大军的终极险地' },

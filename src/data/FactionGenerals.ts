@@ -577,7 +577,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
         zhuozhou: { generalId: 'zhuozhou_anlushan', generalName: '安禄山', portrait: '/assets/CENTRAL/zhuozhou_anlushan.png' },
         chanzhou: { generalId: 'chanzhou_chairong', generalName: '柴荣', portrait: '/assets/CENTRAL/chanzhou_chairong.png' },
     lai: { generalId: 'lai_wangshifan', generalName: '王师范', portrait: '/assets/NORTH/lai_wangshifan.png' }, // 青石关·平卢节帅屡败朱温
-    mushi: { generalId: 'mushi_muchong', generalName: '穆崇', portrait: '/assets/NORTH/mushi_muchong.png' }, // 大岴·丘穆陵氏代北勋臣
+    mushi: { generalId: 'mushi_muchong', generalName: '公孙五楼', portrait: '/assets/NORTH/mushi_muchong.png' },
     xiongding: { generalId: 'xiongding_murongyong', generalName: '慕容永', portrait: '/assets/STEPPE/xiongding_murongyong.png' },
 
     pinghai: { generalId: 'pinghai_laihuer', generalName: '来护儿', portrait: '/assets/NORTH/pinghai_laihuer.png' }, // 漂渝津·隋征东舟师

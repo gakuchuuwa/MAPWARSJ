@@ -40,12 +40,14 @@ const STORAGE_KEY = 'mapwar_audio_settings_v2';
 const DEFAULT_SETTINGS: AudioSettings = {
     enabled: true,
     masterVolume: 0.5,
-    // 三层基准统一（播报/音效/音乐感知齐平），优先级靠 ducking 实现，不靠调高某层
+    // 三层基准（播报/音效/音乐）原为齐平 1.0，优先级靠 ducking。
+    // 2026-07-06 主人反馈音效+背景音乐略大 → 音效层(ui/battle/feed)与音乐层(bgm)小幅下调至 0.85（约 -15%），
+    // 播报层(走 master×SPEECH_GAIN，不受此表)不动。仅小调，勿再改回 1.0。
     categoryVolume: {
-        ui: 1.0,
-        battle: 1.0,
-        feed: 1.0,
-        bgm: 1.0,
+        ui: 0.85,
+        battle: 0.85,
+        feed: 0.85,
+        bgm: 0.85,
     },
 };
 
@@ -115,10 +117,6 @@ function clamp01(value: number): number {
     return Math.max(0, Math.min(1, value));
 }
 
-function isAudioCategory(value: string): value is AudioCategory {
-    return value === 'ui' || value === 'battle' || value === 'feed' || value === 'bgm';
-}
-
 const BGM_FALLBACK_MAP: Record<string, string> = {
     panjun: 'CENTRAL',
     avg: 'CENTRAL',
@@ -147,14 +145,9 @@ function mergeSettings(raw: unknown): AudioSettings {
     if (typeof data.enabled === 'boolean') settings.enabled = data.enabled;
     if (typeof data.masterVolume === 'number') settings.masterVolume = clamp01(data.masterVolume);
 
-    const categoryVolume = data.categoryVolume;
-    if (categoryVolume && typeof categoryVolume === 'object') {
-        for (const [category, volume] of Object.entries(categoryVolume)) {
-            if (isAudioCategory(category) && typeof volume === 'number') {
-                settings.categoryVolume[category] = clamp01(volume);
-            }
-        }
-    }
+    // categoryVolume（音效/音乐分层基准）无用户 UI，属代码固定配置，不从存档读取——
+    // 恒用 DEFAULT_SETTINGS.categoryVolume，避免旧存档里的 1.0 覆盖新基准（主人调音必生效）。
+    // 用户可调的只有 enabled 与 masterVolume，上面已从存档恢复。
 
     return settings;
 }

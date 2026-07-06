@@ -114,7 +114,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yue_d': '岳',
 'qian_d': '秀',
     'kong_d': '孔',
-'cao_d': '曹',
+'cao_d': '亳',
     'jiujiang': '浔',
 
     'quanrong': '犬戎',
@@ -196,7 +196,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'zhai_han': '翟',
     'yin': '殷',
     'hejian': '莫',
-    'qu_d': '麴',
+'qu_d': '界津',
 'liu': '九江',
     'ouyue': '台',
 
@@ -447,7 +447,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'tuerhute': '土尔',
 
     // ── 2026-05-27 新增：白马、蒯、庸、申、叟 ──
-    'kuai': '蒯',
+'kuai': '房',
     'yong': '庸',
 'shen': '申',
     'sou': '叟',
@@ -690,7 +690,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'chunshen': '春申',
     'qian': '矩',
     'wan': '安庆',
-    'mi': '糜',
+'mi': '朐',
 'hai2': '海',
     'fu2': '抚',
 'xinping': '邠',
@@ -722,7 +722,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'qincha': '钦察',
 'anxi': '安西',
 'konbaung': '贡榜',
-'qi_d': '戚',
+'qi_d': '横水',
     'wangyan': '太行',
 'tianxiong': '魏博',
     'sunqin': '潼津',
@@ -747,7 +747,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'xiongding': '雄',
     'yaozhou': '耀',
     'huo': '霍',
-    'mushi': '穆',
+'mushi': '穆',
     'lai': '莱',
     'lizhou_d': '剑',
     'zuo_d': '笮',

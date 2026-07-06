@@ -23,6 +23,8 @@ export interface CityUpdateOptions {
     captorLegionId?: string;
     /** 占城军团武将 ID（语音播报取战术技用；军团活着时携带，避免事后查丢失） */
     captorGeneralId?: string;
+    /** 守方这一仗是否有出将或出精（守军实际参战单位含武将/精锐）；无=无名据点，播报简化为「势力攻占据点」 */
+    defenderHadNamedForce?: boolean;
 }
 
 export interface CityCapturedEvent {
@@ -34,6 +36,8 @@ export interface CityCapturedEvent {
     captorLegionId?: string;
     /** 占城军团武将 ID（语音播报取战术技用） */
     captorGeneralId?: string;
+    /** 守方这一仗是否有出将/出精（见 CityUpdateOptions） */
+    defenderHadNamedForce?: boolean;
 }
 
 export class CityManager {
@@ -503,6 +507,7 @@ export class CityManager {
                         captorLegionName: options?.captorLegionName,
                         captorLegionId: options?.captorLegionId,
                         captorGeneralId: options?.captorGeneralId,
+                        defenderHadNamedForce: options?.defenderHadNamedForce,
                     });
                 }
             } else if (needsFullRender) {
