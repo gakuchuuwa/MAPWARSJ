@@ -46,7 +46,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   bailang: { name: '白狼锐卒', tier: 3 }, // 汉代著名西南夷部落，因一首《白狼歌》文化名气极大，升入T3知名
   faqiang: { name: '发羌劲卒', tier: 4 },  // 萨噶·论钦陵征服发羌（缺乏极其著名的战术高光，降T3）
   duomi: { name: '多弥山兵', tier: 4 },
-  xiutu: { name: '休屠王骑', tier: 3 }, // 盘踞河西/青海的匈奴休屠王，因被霍去病击败且留下祭天金人而名留青史，升入T3知名
+    xiutu: { name: '休屠王骑', tier: 3 },
   jiashi: { name: '迦湿弥罗卫', tier: 3 },  // 喀吉尔·王玄策借兵平乱（借兵辅助，T2）
   gongbu: { name: '工布长弓手', tier: 3 },
   kangba: { name: '康巴骁骑', tier: 3 },   // 康巴汉子尚武精神代名词，显著文化知名度，升T2

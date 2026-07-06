@@ -694,6 +694,19 @@ export function getGeneralSkillDisplayTags(
             isFamous: famous,
             skillType: 'tactical',
         });
+    } else if (tacId) {
+        // v1 原生路径战术技（如 ts_029 肉薄骨并 dual_sub_troops_opening）无 V1_EFFECT_BRIDGE 映射，
+        // getTacticalSkillDef 返回 null，但其削兵机制照常由原生路径生效——仍需显示常驻卡片。
+        // 用 v1 entry 直接合成显示标签，纯显示、不碰任何战斗机制。
+        const v1 = resolveGeneralTacticalEntry(tacId);
+        if (v1) {
+            tags.push({
+                name: v1.displayName,
+                effectLabel: formatV1NativeTacticalDisplayLabel(v1),
+                isFamous: famous,
+                skillType: 'tactical',
+            });
+        }
     }
 
     // [2026-07-05 Fix] 战略技作为大地图效果，已剥离战斗面板，转至战略地图 CameraFollowUI 展示。
@@ -746,6 +759,20 @@ function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
             return '对抗地形';
         case 'ally_recompute':
             return '重算强弱';
+        default:
+            return '';
+    }
+}
+
+/**
+ * v1 原生路径战术技（无 V1_EFFECT_BRIDGE 映射，getTacticalSkillDef 返回 null）的常驻卡片标签。
+ * 纯显示用，不参与任何战斗机制——机制仍由原生路径（tryApplyV1OpeningTroop 等）实现。
+ */
+function formatV1NativeTacticalDisplayLabel(entry: { baseEffect: string; magnitude: number }): string {
+    const pct = Math.round(entry.magnitude * 100);
+    switch (entry.baseEffect) {
+        case 'dual_sub_troops_opening':
+            return `双损${pct}%`;
         default:
             return '';
     }

@@ -352,7 +352,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     daca: { generalId: 'daca_dacajilong', generalName: '达擦济咙', portrait: '/assets/TIBET/daca_dacajilong.png' }, // 八宿宗
     gongtang: { generalId: 'gongtang_gongtangcang', generalName: '贡唐仓', portrait: '/assets/TIBET/gongtang_gongtangcang.png' }, // 吉麦
     nanjie: { generalId: 'nanjie_nanjiewangqiu', generalName: '南杰旺秋', portrait: '/assets/TIBET/nanjie_nanjiewangqiu.png' }, // 日土宗
-    nanzhong: { generalId: 'nanzhong_mazhong', generalName: '马忠', portrait: '/assets/DIANQIAN/nanzhong_mazhong.png' },
+    nanzhong: { generalId: 'nanzhong_mazhong', generalName: '马忠', portrait: '/assets/BASHU/nanzhong_mazhong.png' },
     yueyi: { generalId: 'yueyi_zhangyi', generalName: '张嶷', portrait: '/assets/BASHU/yueyi_zhangyi.png' },
     pingnan: { generalId: 'pingnan_musheng', generalName: '沐晟', portrait: '/assets/daming/pingnan_musheng.png' },
     jingdong: { generalId: 'jingdong_taohong', generalName: '陶洪', portrait: '/assets/DIANQIAN/jingdong_taohong.png' }, // 银生城·景东土官
@@ -374,7 +374,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     suke: { generalId: 'suke_langanheng', generalName: '兰甘亨', portrait: '/assets/DIANQIAN/suke_langanheng.png' },
     luchuan: { generalId: 'luchuan_sirenfa', generalName: '思任发', portrait: '/assets/DIANQIAN/luchuan_sirenfa.png' },
     kunming_yi: { generalId: 'kunming_yi_lucheng', generalName: '卤承', portrait: '/assets/DIANQIAN/kunming_yi_lucheng.png' },
-    cuanshi: { generalId: 'cuanshi_cuanlongyan', generalName: '爨龙颜', portrait: '/assets/DIANQIAN/cuanshi_cuanlongyan.png' },
+    cuanshi: { generalId: 'cuanshi_cuanlongyan', generalName: '爨龙颜', portrait: '/assets/BASHU/cuanshi_cuanlongyan.png' },
     baiman: { generalId: 'baiman_gaoshengtai', generalName: '高升泰', portrait: '/assets/DIANQIAN/baiman_gaoshengtai.png' },
     champa: { generalId: 'champa_zhipenge', generalName: '制蓬峨', portrait: '/assets/DIANQIAN/champa_zhipenge.png' },
     qiong: { generalId: 'qiong_rengui', generalName: '任贵', portrait: '/assets/DIANQIAN/qiong_rengui.png' },
@@ -753,7 +753,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jingcheng_d: { generalId: 'jingcheng_d_yuyouzhao', generalName: '鱼有沼', portrait: '/assets/KOREA/jingcheng_d_yuyouzhao.png' },
     xin: { generalId: 'xin_baiqi', generalName: '白起', portrait: '/assets/yingqin/xin_baiqi.png' },
   pangzha: { generalId: 'pangzha_halixinge', generalName: '哈里辛格', portrait: '/assets/CENTRAL_ASIA/pangzha_halixinge.png' },
-  najie: { generalId: 'najie_minande', generalName: '米南德', portrait: '/assets/CENTRAL_ASIA/najie_minande.png' },
+    najie: { generalId: 'najie_minande', generalName: '米南德', portrait: '/assets/CENTRAL_ASIA/najie_minande.png' },
   dulan_d: { generalId: 'dulan_d_aihamaide', generalName: '艾哈迈德', portrait: '/assets/CENTRAL_ASIA/dulan_d_aihamaide.png' },
     muer: { generalId: 'muer_mujier', generalName: '穆吉尔', portrait: '/assets/CENTRAL_ASIA/muer_mujier.png' },
   baha: { generalId: 'baha_gaiwamu', generalName: '盖瓦姆', portrait: '/assets/CENTRAL_ASIA/baha_gaiwamu.png' },

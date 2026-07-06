@@ -13,7 +13,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     huarazim: { name: '钦察精骑', tier: 1 },          // 库曼/钦察草原的绝对霸主，后来马穆鲁克的核心兵源，战略地位极高，升入T1战略
   qincha: { name: '康里精骑', tier: 3 },              // 花剌子模和早期蒙古帝国中极其出名的突击力量，文化辨识度高，升入T3知名
   qiepantuo: { name: '护密镇军', tier: 4 },   // 护密城·瓦罕走廊戍卫
-  tiemuer: { name: '察合台突骑', tier: 1 },      // 察合台汗国主力，维持了中亚霸权，但缺乏单独的灭国级标志性大捷，降为T1。
+    tiemuer: { name: '察合台突骑', tier: 1 },
   kazakh: { name: '哈萨克骑', tier: 1 },     // 哈萨克汗国的绝对主力，长达几个世纪维持中亚草原霸权，升入T1战略
   seljuq: { name: '塞尔柱突骑', tier: 1 },     // 木鹿·生擒拜占庭皇帝的塞尔柱帝国主力
     xiliao: { name: '斡耳朵亲卫', tier: 1 },
@@ -26,7 +26,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   sogdian: { name: '瓦拉赫沙卫', tier: 4 },
   kangju: { name: '康卡控弦', tier: 4 },              // 缺乏知名度支撑，降T3
   anushidgin: { name: '希瓦铁骑', tier: 4 },
-  dayuzi: { name: '讹答剌卫队', tier: 4 },
+    dayuzi: { name: '讹答剌卫队', tier: 4 },
     zhaowu: { name: '忽毡勇士', tier: 4 },
     yada: { name: '嚈哒重骑', tier: 2 },
   jiazini: { name: '伽色尼禁卫', tier: 2 },       // 马哈茂德的古拉姆近卫军，十七次远征印度战无不胜，升入T2战术
@@ -47,7 +47,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   // —— 2026-06-20 新增：旁遮普·阿托克 ——
   pangzha: { name: '卡尔萨武士', tier: 1 },      // 阿托克·戈宾德辛格创立卡尔萨，兰季特辛格旁遮普帝国核心武力
   // —— 2026-06-20 新增：那竭国·顶骨城 ——
-  najie: { name: '那竭方阵兵', tier: 3 },       // 带有古希腊-巴克特里亚遗留方阵色彩的特色部队，升入T3知名
+    najie: { name: '那竭方阵兵', tier: 3 },
   // ── 2026-06-20 新增：杜兰尼·呼罗珊·阿巴尔 ──
   dulan_d: { name: '普什图骑兵', tier: 1 },    // 坎大哈·摧毁马拉塔帝国的战略主力
   // ── 2026-06-20 新增：布兹詹·哈里·卡伦 ──

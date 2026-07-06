@@ -25,12 +25,15 @@ export const FACTIONS: Faction[] = [
   { id: 'yada', name: '嚈哒' },
 
 
-  { id: 'quli', name: '渠犁国' },
+  { id: 'quli', name: '渠犁' },
+
   { id: 'guazhou', name: '瓜州' },
 
-  { id: 'guishuang', name: '贵霜帝国' },
+  { id: 'guishuang', name: '贵霜' },
 
-  { id: 'juandu', name: '捐毒国' },
+
+  { id: 'juandu', name: '捐毒' },
+
 
   { id: 'sai', name: '塞种' },
   { id: 'yangtong', name: '羊同' },
@@ -353,7 +356,8 @@ export const FACTIONS: Faction[] = [
     { id: 'zhuozhou', name: '涿州' },
     { id: 'tujia_d', name: '土家族' },          // 旗号土家@石柱
     { id: 'zhuang_d', name: '壮族' },           // 旗号壮@田阳
-    { id: 'buyi_d', name: '布依族' },
+    { id: 'buyi_d', name: '布依' },
+
     { id: 'hani_d', name: '哈尼' },
     { id: 'basha_d', name: '巴沙' },
     { id: 'xibo_d', name: '锡伯' },
@@ -614,7 +618,8 @@ export const FACTIONS: Faction[] = [
     // 赤红 - 瓜尔佳氏(苏完部/鳌拜/双阳)
 
 // ── 2026-05-26 新增：西域/中亚势力（25个）──
-{ id: 'kala', name: '喀喇汗国' },
+{ id: 'kala', name: '喀喇' },
+
 
 
 
@@ -704,7 +709,8 @@ export const FACTIONS: Faction[] = [
     { id: 'baiman', name: '白蛮' },
                  // 苍山米白 - 白蛮/白族先民(苍山洱海)
                   // 乌蒙碳黑 - 乌蛮/彝族先民(乌蒙山)
-    { id: 'kunming_yi', name: '昆明夷' },           // 高原栗 - 昆明夷(滇池以西/楚雄)
+    { id: 'kunming_yi', name: '昆明' },
+           // 高原栗 - 昆明夷(滇池以西/楚雄)
     { id: 'miao', name: '苗族' },
     { id: 'pyu', name: '骠族' },                      // 骠国暗灰 - 骠人(室利差罗/缅甸先民)
     { id: 'mon', name: '孟族' },                      // 孟族暗紫 - 孟族(直通城/中南半岛最早佛国)
@@ -912,7 +918,8 @@ export const FACTIONS: Faction[] = [
     { id: 'duolu', name: '咄陆' },
     { id: 'zhuxie', name: '朱邪' },
     { id: 'hunxie', name: '浑邪' },
-    { id: 'tiemuer', name: '帖木儿帝国' },
+    { id: 'tiemuer', name: '图兰' },
+
     { id: 'kawusi', name: '卡乌斯' },
     { id: 'keerkezi', name: '柯尔克孜' },
     { id: 'yiduhu', name: '亦都护' },
@@ -1036,7 +1043,8 @@ export const FACTIONS: Faction[] = [
     { id: 'huaiyang', name: '淮阳' },
    // 淮阳郡治宛丘(陈州)
     { id: 'cai', name: '蔡国' },
-    { id: 'changshaguo', name: '长沙国' },
+    { id: 'changshaguo', name: '长沙' },
+
     { id: 'shangzhou', name: '商州' },   // 旗号上洛(商邑=商州治；避与商字重)
     { id: 'ying', name: '郢州' },
                // 郊郢·梁郢州曹景宗（治所夏口，据点沾边）
@@ -1079,7 +1087,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'jilin', name: '吉林' },
     { id: 'sunite', name: '苏尼特' },
-    { id: 'dayuzi', name: '大玉兹' },
+    { id: 'dayuzi', name: '玉兹' },
+
     // 漯河/郾城
     { id: 'weiwuer', name: '维吾尔' },
     { id: 'wensu', name: '温宿' },
@@ -1224,12 +1233,15 @@ export const FACTIONS: Faction[] = [
     { id: 'yingzhou', name: '英州' },
     { id: 'taira', name: '平家' },
     { id: 'wuman', name: '乌蛮' },
-    { id: 'yehe', name: '叶赫部' },
+    { id: 'yehe', name: '叶赫' },
+
     
-    { id: 'xiutu', name: '休屠王部' },
+    { id: 'xiutu', name: '休屠' },
+
     { id: 'dongzu', name: '侗族' },
     { id: 'nuergan', name: '奴儿干' }, // ── 2026-06-19：奴儿干城·康旺；旗面都卫 ──
-    { id: 'wula', name: '乌拉部' },
+    { id: 'wula', name: '乌拉' },
+
     { id: 'mengwu', name: '蒙兀' },
 
     { id: 'pugu', name: '仆骨' },
@@ -1245,7 +1257,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'gaochang', name: '麴氏' },
 
-    { id: 'chuyue', name: '处月部' },
+    { id: 'chuyue', name: '处月' },
+
     { id: 'baiyang', name: '白羊' },
 
     { id: 'baidi', name: '白狄' },
@@ -1286,7 +1299,8 @@ export const FACTIONS: Faction[] = [
     { id: 'aba', name: '阿巴尔' },
 
     // ── 2026-06-20 新增：那竭国（顶骨城）──
-    { id: 'najie', name: '那竭国' },
+    { id: 'najie', name: '那竭' },
+
 
     // ── 2026-06-20 新增：旁遮普（阿托克）──
     { id: 'pangzha', name: '旁遮普' },
@@ -1310,7 +1324,8 @@ export const FACTIONS: Faction[] = [
     { id: 'wuzhou', name: '武州' },
 
     { id: 'bailong', name: '白龙' },
-    { id: 'jilizhou', name: '积利州' },
+    { id: 'jilizhou', name: '积利' },
+
 
     { id: 'xingxingxia', name: '伊州' },
     { id: 'yangguan', name: '西凉' },
@@ -1352,8 +1367,10 @@ export const FACTIONS: Faction[] = [
 
     { id: 'wazu', name: '佤族' },
 
-    { id: 'tajikezu', name: '塔吉克族' },
-    { id: 'jingpozu', name: '景颇族' },
+    { id: 'tajikezu', name: '塔吉克' },
+
+    { id: 'jingpozu', name: '景颇' },
+
     { id: 'shuizu', name: '水族' },
     { id: 'liuzhou', name: '柳州' },
     { id: 'luming', name: '郧州' },

@@ -52,7 +52,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   guangping: { name: '象兵水师', tier: 4 },     // 洞海城·阮文张象兵舟船协同（常规番号，降T3）
 shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军汛堡（缺乏极其著名的战术高光，降T3）
   chendiaoyan: { name: '畲汉义军', tier: 4 },   // 龙溪·陈吊眼攻破漳州（常规番号，降T3）
-  buyi_d: { name: '盘江布依兵', tier: 4 },       // 罗博·韦朝元布依起义（缺乏极其著名的战术高光，降T3）
+    buyi_d: { name: '盘江布依兵', tier: 4 },
   paiwan: { name: '牡丹社勇士', tier: 3 },      // 牡丹社事件中的原住民武装，属于地方抗击，缺乏正规的战术大捷，属于风土特色，降为T3知名。
     miao_qing: { name: '黑旗苗獠', tier: 3 },
   geng: { name: '靖南藩兵', tier: 4 },         // 延平·耿精忠三藩起兵（缺乏极其著名的战术高光，降T3）

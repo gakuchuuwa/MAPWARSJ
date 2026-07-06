@@ -32,7 +32,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     pingnan: { name: '平南镇营', tier: 3 },
   jingdong: { name: '景东象卫', tier: 4 },     // 银生城·陶洪屡退麓川（缺乏极其著名的战术高光，降T3）
   luohu: { name: '罗斛步卒', tier: 4 },        // 呵叻城·敢木丁驻守
-  kunming_yi: { name: '会川藤甲兵', tier: 3 },   // 会川·极具西南夷特色的战术兵种
+    kunming_yi: { name: '会川藤甲兵', tier: 3 },
     taiyuan: { name: '清坎陷象', tier: 2 },
   baiman: { name: '白蛮甲士', tier: 4 },       // 威楚·高升泰平杨义贞复大理（缺乏极其著名的战术高光，降T3）
   dai: { name: '车里战象', tier: 4 },          // 勐泐城·刀应勐傣兵助明御缅（缺乏极其著名的战术高光，降T3）
@@ -42,6 +42,6 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     dian: { name: '秀山白义从', tier: 3 },
     ahaomu: { name: '阿豪姆舟师', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     wazu: { name: '阿佤猎兵', tier: 3 },              // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
-    jingpozu: { name: '景颇长刀兵', tier: 3 },         // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
+    jingpozu: { name: '景颇长刀兵', tier: 3 },
     shuizu: { name: '水族藤甲兵', tier: 3 },           // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
 };

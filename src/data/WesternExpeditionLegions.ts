@@ -14,7 +14,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   zhasaketu: { name: '札萨克图骑', tier: 4 }, // 扎布汗·策旺扎布
   huite: { name: '辉特部骑', tier: 4 }, // 金山·阿睦尔撒纳叛清大军（缺乏极其著名的战术高光，降T3）
   tuoming: { name: '回民团练', tier: 4 },  // 达坂城·妥明清真王
-  chuyue: { name: '处月骑兵', tier: 3 }, // 沙陀族前身处月部，唐末五代改写中原历史的源头，升T2
   keerkezi: { name: '柯尔克孜骑', tier: 3 }, // 柯尔克孜族英雄玛纳斯史诗，显著文化知名度，升T2
   pisha: { name: '毗沙都督卫', tier: 4 }, // 麻扎塔格·毗沙
   xingxingxia: { name: '交河锐骑', tier: 3 }, // 交河故城是西域最为著名、最具沧桑感的历史文化名城符号，升入T3知名
@@ -36,7 +35,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   wensu: { name: '温宿锐卒', tier: 4 },      // 三重城·温宿国
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
   // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
-  quli: { name: '轮台屯骑', tier: 3 }, // 汉朝经营西域的标志性起点（轮台罪己诏），中国边塞诗中最出名的地标词汇，升入T3知名
+    quli: { name: '轮台屯骑', tier: 3 },
     dzungar: { name: '绰罗斯精骑', tier: 1 },
   yarkand: { name: '英吉沙骑兵', tier: 4 },
   tuerhute: { name: '鹰娑川铁骑', tier: 3 },

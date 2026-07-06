@@ -608,9 +608,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/JIANGNAN/heng_hetengjiao.png": {
-            "scale": 1,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": 36
+            "offsetY": 28
         },
         "/assets/NORTHEAST/eluoke_amuhaer.png": {
             "scale": 1,
@@ -731,11 +731,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": 0,
             "offsetY": -26
-        },
-        "/assets/DIANQIAN/cuanshi_cuanlongyan.png": {
-            "scale": 0.83,
-            "offsetX": 0,
-            "offsetY": -34
         },
         "/assets/daming/pingnan_musheng.png": {
             "scale": 0.99,
@@ -1038,11 +1033,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/BASHU/guo_jixin.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 2
-        },
-        "/assets/LINGNAN/xinggu_cuanxi.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 2
@@ -1702,11 +1692,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -1
         },
-        "/assets/DIANQIAN/nanzhong_mazhong.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -18
-        },
         "/assets/DIANQIAN/pyu_moluo.png": {
             "scale": 0.96,
             "offsetX": 0,
@@ -2168,7 +2153,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -22
         },
         "/assets/KOREA/chungju_d_quanli.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 19
         },
@@ -3543,8 +3528,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/zhaosong/changshaguo_xinqiji.png": {
-            "scale": 0.86,
-            "offsetX": 0,
+            "scale": 0.9,
+            "offsetX": 3,
             "offsetY": -39
         },
         "/assets/zhaosong/changshan_yangyanzhao.png": {
@@ -4071,11 +4056,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 12
-        },
-        "/assets/BASHU/__闲置__BASHU_04.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 6
         },
         "/assets/liuhan/li_lx_d_liguang.png": {
             "scale": 1.03,
@@ -5301,6 +5281,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 14,
             "offsetY": 7
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_08.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": -34
+        },
+        "/assets/BASHU/cuanshi_cuanlongyan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_18.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/LINGNAN/xinggu_cuanxi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -33
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_09.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/BASHU/nanzhong_mazhong.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 2
         }
     },
     "folderGuides": {
