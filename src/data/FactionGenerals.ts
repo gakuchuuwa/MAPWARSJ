@@ -413,7 +413,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yingzhou: { generalId: 'yingzhou_liuyan', generalName: '刘龑', portrait: '/assets/LINGNAN/yingzhou_liuyan.png' },
     linyi: { generalId: 'linyi_fanyangmai', generalName: '范阳迈', portrait: '/assets/LINGNAN/linyi_fanyangmai.png' },
     xian_d: { generalId: 'xian_d_xianfuren', generalName: '冼夫人', portrait: '/assets/LINGNAN/xian_d_xianfuren.png' },
-    luodian: { generalId: 'luodian_shexiang', generalName: '奢香夫人', portrait: '/assets/LINGNAN/luodian_shexiang.png' },
+    luodian: { generalId: 'luodian_shexiang', generalName: '奢香夫人', portrait: '/assets/LINGNAN/luodian_shexiangfuren.png' },
     nong2: { generalId: 'nong2_nongzhigao', generalName: '侬智高', portrait: '/assets/LINGNAN/nong2_nongzhigao.png' },
     taiping: { generalId: 'taiping_shidakai', generalName: '石达开', portrait: '/assets/panjun/taiping_shidakai.png' },
     dongzu: { generalId: 'dongzu_wumian', generalName: '吴勉', portrait: '/assets/LINGNAN/dongzu_wumian.png' },
@@ -637,7 +637,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 
 // ── 江南区 2026-06-18 ──
     jiujiang: { generalId: 'jiujiang_zhouyu', generalName: '周瑜', portrait: '/assets/JIANGNAN/jiujiang_zhouyu.png' },
-    fangla: { generalId: 'fangla_fangla', generalName: '方腊', portrait: '/assets/JIANGNAN/fangla_fangla.png' },
+    fangla: { generalId: 'fangla_fangla', generalName: '方腊', portrait: '/assets/panjun/fangla_fangla.png' },
     fang_guozhen: { generalId: 'fang_guozhen_fangguozhen', generalName: '卢镗', portrait: '/assets/JIANGNAN/fang_guozhen_fangguozhen.png' },
     ouyue: { generalId: 'ouyue_zouyao', generalName: '驺摇', portrait: '/assets/xianqin/ouyue_zouyao.png' },
     ruochu: { generalId: 'ruochu_doulian', generalName: '鬬廉', portrait: '/assets/JIANGNAN/ruochu_doulian.png' },
@@ -715,7 +715,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     shanshan: { generalId: 'shanshan_weituqi', generalName: '尉屠耆', portrait: '/assets/WESTERN/shanshan_weituqi.png' },
     qianhui: { generalId: 'qianhui_baiyanhu', generalName: '白彦虎', portrait: '/assets/BASHU/qianhui_baiyanhu.png' },
     ava: { generalId: 'ava_sijifa', generalName: '思机法', portrait: '/assets/DIANQIAN/ava_sijifa.png' },
-    dian: { generalId: 'dian_duanjianwei', generalName: '段思平', portrait: '/assets/DIANQIAN/dian_duanjianwei.png' },
+    dian: { generalId: 'dian_duanjianwei', generalName: '段思平', portrait: '/assets/DIANQIAN/dian_duansiping.png' },
     mon: { generalId: 'mon_monuhe', generalName: '摩奴诃', portrait: '/assets/DIANQIAN/mon_monuhe.png' },
     ganden: { generalId: 'ganden_zongkaba', generalName: '宗喀巴', portrait: '/assets/TIBET/ganden_zongkaba.png' },
     niang: { generalId: 'niang_suonanjiabo', generalName: '索南加波', portrait: '/assets/TIBET/niang_suonanjiabo.png' },

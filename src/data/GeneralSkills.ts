@@ -737,7 +737,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     mi_mizhu: { generalId: 'mi_mizhu', tier: 'ordinary', tacticalSkillId: 'ts_134' },
     baibo_guotai: { generalId: 'baibo_guotai', tier: 'ordinary', tacticalSkillId: 'ts_159' }, // 白波军
     unassigned_geshuhan: { generalId: 'unassigned_geshuhan', tier: 'famous', tacticalSkillId: 'ts_031', strategicSkillId: 'str_14' }, // 潼关守将
-    shanzhou_wangzhongsi: { generalId: 'shanzhou_wangzhongsi', tier: 'famous', tacticalSkillId: 'ts_123', strategicSkillId: 'str_14' }, // 王忠嗣·青海湖大破吐蕃；四镇节度使养强边军
+    shanzhou_wangzhongsi: { generalId: 'shanzhou_wangzhongsi', tier: 'famous', tacticalSkillId: 'ts_123', strategicSkillId: 'str_14' },
     weizhou_weigao: { generalId: 'weizhou_weigao', tier: 'famous', tacticalSkillId: 'ts_286', strategicSkillId: 'str_14' }, // 韦皋·神川擒论莽热·经营剑南
     ruzhou_sunjian: { generalId: 'ruzhou_sunjian', tier: 'famous', tacticalSkillId: 'ts_199', strategicSkillId: 'str_11' },
     yaozhou_limaozhen: { generalId: 'yaozhou_limaozhen', tier: 'ordinary', tacticalSkillId: 'ts_095' }, // 岐国军阀

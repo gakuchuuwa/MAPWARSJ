@@ -1813,7 +1813,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
 
     // ── 2026-05-27 新增：向(来凤)、覃(慈利)、冉(秀山)、储(潜山) ──
-    { id: 'city_laifeng', name: '散毛关', factionId: 'xiang_d', lat: 29.49, lng: 109.41, type: 'pass', troops: 20000, region: 'BASHU' },
+    { id: 'city_laifeng', name: '散毛关', factionId: 'xiang_d', lat: 29.49, lng: 109.41, type: 'pass', troops: 20000, region: 'BASHU', mirror: true },
+
 
 
     { id: 'city_cili', name: '慈利', factionId: 'tan_d', lat: 29.43, lng: 111.12, type: 'small_city', troops: 20000, region: 'BASHU' },
@@ -2719,7 +2720,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_tanzhong', name: '潭中', factionId: 'liuzhou', lat: 24.28, lng: 109.41, type: 'small_city', troops: 5000, region: 'LINGNAN' },
     { id: 'city_yunyang', name: '郧阳', factionId: 'luming', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 5000, region: 'CENTRAL' },
     { id: 'city_zhongshan', name: '中山', factionId: 'dingzhou', lat: 38.4708, lng: 115.0626, type: 'small_city', troops: 5000, region: 'NORTH' },
-    { id: 'city_ledou', name: '乐都', factionId: 'shanzhou', lat: 36.49, lng: 102.37, type: 'small_city', troops: 20000, region: 'HEXI' },
+    { id: 'city_ledou', name: '乐都', factionId: 'shanzhou', lat: 36.49, lng: 102.37, type: 'pass', troops: 20000, region: 'TIBET' },
+
     { id: 'city_xuecheng', name: '薛城', factionId: 'weizhou', lat: 31.43, lng: 103.16, type: 'small_city', troops: 20000, region: 'BASHU' },
     { id: 'city_zhangguojuncheng', name: '彰国军城', factionId: 'yingzhou_d2', lat: 39.5761, lng: 113.1894, type: 'small_city', troops: 20000, region: 'NORTH' },
 

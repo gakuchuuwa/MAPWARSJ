@@ -40,7 +40,6 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   woye: { name: '度辽营', tier: 2 },           // 东汉经典边防番号度辽将军，专属名号特色鲜明，升T2
     yangguan: { name: '西凉铁骑', tier: 2 },
         yuezhi: { name: '折兰骑', tier: 3 },             // 霍去病河西之战斩杀的匈奴最强王牌，战役背景极具符号价值，升入T3知名,
-    shanzhou: { name: '陇右健儿', tier: 1 },
     chile: { name: '两池军', tier: 3 },
     weiyuan: { name: '永安营兵', tier: 3 },
     helian: { name: '铁弗宿卫', tier: 3 },

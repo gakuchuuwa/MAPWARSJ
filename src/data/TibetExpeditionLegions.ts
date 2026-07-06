@@ -73,4 +73,5 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     song2: { name: '松州突骑', tier: 3 },
     qifu_d: { name: '苑川突骑', tier: 3 },
     jinchuan_g: { name: '嘉绒碉锋', tier: 3 },
+    shanzhou: { name: '陇右健儿', tier: 1 },
 };

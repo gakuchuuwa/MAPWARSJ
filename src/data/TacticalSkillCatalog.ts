@@ -587,7 +587,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_070', layer: 'tactical', series: 'enhance', index: 70,
-        displayName: '席卷摧羌', sourceQuote: '《新唐书·吐蕃传》：“遂并诸羌，雄霸西域。”',
+        displayName: '席卷驰突', sourceQuote: '《新唐书·吐蕃传》：“遂并诸羌，雄霸西域。”',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.3, engineStatus: 'ready',
     },
@@ -744,7 +744,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_108', layer: 'tactical', series: 'enhance', index: 108,
-        displayName: '倾国灭楚', sourceQuote: '《史记·白起王翦列传》：“王翦将兵六十万……大破楚军。”',
+        displayName: '倾国压境', sourceQuote: '《史记·白起王翦列传》：“王翦将兵六十万……大破楚军。”',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -1560,7 +1560,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_234', layer: 'tactical', series: 'fate', index: 234,
-        displayName: '却金全师', sourceQuote: '《金史》：金伐蒙古，合不勒败其追兵而还。',
+        displayName: '却敌全师', sourceQuote: '《金史》：金伐蒙古，合不勒败其追兵而还。',
         baseEffect: 'luck_variance_self', condition: 'always', phase: 'opening_roll',
         magnitude: 0.8, luckMin: 0.5, luckMax: 1.5, engineStatus: 'ready',
     },
@@ -1740,7 +1740,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_264', layer: 'tactical', series: 'enhance', index: 264,
-        displayName: '屯田破羌', sourceQuote: '《汉书·赵充国传》：充国屯田，不战而屈羌。',
+        displayName: '屯田制敌', sourceQuote: '《汉书·赵充国传》：充国屯田，不战而屈羌。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
     },
@@ -1794,7 +1794,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_273', layer: 'tactical', series: 'fate', index: 273,
-        displayName: '铁壁六年', sourceQuote: '《宋史·吕文焕传》：守襄阳，蒙古围之六载不下。',
+        displayName: '铁壁挫锋', sourceQuote: '《宋史·吕文焕传》：守襄阳，蒙古围之六载不下。铁壁挫锋——守城挫敌锐气。',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
     },
@@ -2148,7 +2148,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_332', layer: 'tactical', series: 'enhance', index: 332,
-        displayName: '摧坚一统', sourceQuote: '《大南实录》：阮福映灭西山朝，混一南北，建阮朝，称嘉隆帝。',
+        displayName: '鏖兵破垒', sourceQuote: '《大南实录》：阮福映灭西山朝，混一南北，建阮朝，称嘉隆帝。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2298,7 +2298,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_357', layer: 'tactical', series: 'enhance', index: 357,
-        displayName: '盛世拓疆', sourceQuote: '《后汉书·西域传》：迦腻色迦盛时，兼并印度、中亚，贵霜为大国。',
+        displayName: '威震绝域', sourceQuote: '《后汉书·西域传》：迦腻色迦盛时，兼并印度、中亚，贵霜为大国。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
