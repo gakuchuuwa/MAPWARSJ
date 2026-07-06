@@ -94,6 +94,24 @@ export const GENERAL_FIRST_EXPEDITION_TARGETS: Readonly<Record<string, GeneralFi
     qi_d_qijiguang:            { cityId: 'city_xiongben', label: '跨海讨倭' },  // 戚继光·qi_d（九州熊本，倭寇老巢）
     wuwu_d_lvmeng:             { cityId: 'city_ying', label: '白衣渡江' },  // 吕蒙·wuwu_d（关羽荆州@金鳞）
     guizhou_lidingguo:         { cityId: 'city_shenyang', label: '北伐直捣清廷' },  // 李定国·guizhou（南明北伐清朝发祥地）
+
+    // ── 知名远征名将扩充(2026-07,T0/T1精锐之外的名将)──────
+    quli_chentang:                 { cityId: 'city_zhizhicheng', label: '虽远必诛' },  // 陈汤·quli (951km)
+    wudu_dengai:                   { cityId: 'city_chengdu', label: '偷渡阴平' },  // 邓艾·wudu (333km)
+    xidong_mayuan:                 { cityId: 'city_shenglong', label: '伏波平交趾' },  // 马援·xidong (951km)
+    shanrong_lanyu:                { cityId: 'city_erguna', label: '灭北元' },  // 蓝玉·shanrong (901km)
+    gumie_liuyu:                   { cityId: 'city_changan', label: '气吞万里' },  // 刘裕·gumie (1109km)
+    danyang_huanwen:               { cityId: 'city_changan', label: '北伐入关' },  // 桓温·danyang (939km)
+    chizhou_changyuchun:           { cityId: 'city_beijing', label: '北伐克大都' },  // 常遇春·chizhou (1016km)
+    jinling_tandaoji:              { cityId: 'city_luoyang', label: '唱筹量沙' },  // 檀道济·jinling (652km)
+    bing_liji:                     { cityId: 'city_pyongyang', label: '灭高句丽' },  // 李勣·bing (1155km)
+    ming_zheng_zhengchenggong:     { cityId: 'city_nanjing', label: '跨海北伐' },  // 郑成功·ming_zheng (1015km)
+    song2_houjunji:                { cityId: 'city_gaochangcheng', label: '灭高昌' },  // 侯君集·song2 (1666km)
+    hepan_gaoxianzhi:              { cityId: 'city_talas', label: '怛罗斯之战' },  // 高仙芝·hepan (656km)
+    murong_murongke:               { cityId: 'city_zhongshan', label: '廉台之战' },  // 慕容恪·murong (615km)
+    shuofang_weiqing:              { cityId: 'city_yanran', label: '漠北破单于' },  // 卫青·shuofang (887km)
+    loufan_xuerengui:              { cityId: 'city_otuken', label: '三箭定天山' },  // 薛仁贵·loufan (1301km)
+    huizhou_zhugeliang:            { cityId: 'city_changan', label: '兴复汉室' },  // 诸葛亮·huizhou_d (269km)
 };
 
 /** 查名将的历史首征目标；无则返回 null。 */

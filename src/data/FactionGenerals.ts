@@ -271,7 +271,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xiliao: { generalId: 'xiliao_yelvdashi', generalName: '耶律大石', portrait: '/assets/STEPPE/xiliao_yeldashi.png' },
     jiazini: { generalId: 'jiazini_mahamaode', generalName: '马哈茂德', portrait: '/assets/CENTRAL_ASIA/jiazini_mahamaode.png' },
     jibin: { generalId: 'jibin_jianisejia', generalName: '迦腻色迦', portrait: '/assets/CENTRAL_ASIA/jibin_jianisejia.png' },
-        xijue: { generalId: 'xijue_ganyanshou', generalName: '甘延寿', portrait: '/assets/liuhan/xijue_ganyanshou.png' },
+    xijue: { generalId: 'xijue_ganyanshou', generalName: '郅支单于', portrait: '/assets/STEPPE/xijue_zhizhichanyu.png' },
     // 养吉干·咸海 / 真珠河·乌护 宁缺毋滥
 
 // ── 中亚区 2026-06-18 ──

@@ -229,7 +229,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'liangshidu': '银',
     'linshihong': '楚南',
 'kumo': '楮特',
-    'xijue': '十箭',
+'xijue': '十箭',
     'xian_d': '冼',
 'xiqin': '宁',
 

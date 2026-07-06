@@ -381,6 +381,7 @@ export const FACTIONS: Faction[] = [
        // 秘鲁黄 - 杜伏威楚政权(历阳)
     { id: 'kumo', name: '奚族' },
     { id: 'xijue', name: '十箭' },
+
     { id: 'xian_d', name: '冼家' },          // 绯红 - 冼夫人高凉冼氏(高凉)
     { id: 'xiqin', name: '宁州' },
          // 胡萝卜橙 - 薛举西秦政权(折墌)

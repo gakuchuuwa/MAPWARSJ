@@ -471,7 +471,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     jiazini_mahamaode: { generalId: 'jiazini_mahamaode', tier: 'famous', tacticalSkillId: 'ts_354', strategicSkillId: 'str_11' }, // 马哈茂德十七征印度
     an_xibanni: { generalId: 'an_xibanni', tier: 'famous', tacticalSkillId: 'ts_308', strategicSkillId: 'str_15' }, // 昔班尼攻布哈拉建汗国
     wusun_liejiaomi: { generalId: 'wusun_liejiaomi', tier: 'famous', tacticalSkillId: 'ts_313', strategicSkillId: 'str_11' }, // 乌孙昆莫西迁奇袭月氏
-    xijue_ganyanshou: { generalId: 'xijue_ganyanshou', tier: 'famous', tacticalSkillId: 'ts_311', strategicSkillId: 'str_13' }, // 与陈汤六校分道共灭郅支
+    xijue_ganyanshou: { generalId: 'xijue_ganyanshou', tier: 'ordinary', tacticalSkillId: 'ts_311' },
 
 // ── 中亚区 2026-06-18 ──
     huarazim_mohemo: { generalId: 'huarazim_mohemo', tier: 'famous', tacticalSkillId: 'ts_139', strategicSkillId: 'str_11' },

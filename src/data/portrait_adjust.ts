@@ -172,11 +172,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -30
         },
-        "/assets/litang/dingxiang_d_lijing.png": {
-            "scale": 1.07,
-            "offsetX": 3,
-            "offsetY": -21
-        },
         "/assets/litang/lingwu_guoziyi.png": {
             "scale": 1.09,
             "offsetX": 11,
@@ -686,11 +681,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 17,
             "offsetY": -20
-        },
-        "/assets/liuhan/xijue_ganyanshou.png": {
-            "scale": 0.86,
-            "offsetX": 12,
-            "offsetY": -79
         },
         "/assets/BASHU/yangzhou_wangping.png": {
             "scale": 0.99,
@@ -2406,11 +2396,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.88,
             "offsetX": 0,
             "offsetY": -21
-        },
-        "/assets/litang/__闲置__litang_02.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": -10
         },
         "/assets/litang/__闲置__litang_05.png": {
             "scale": 1.01,
@@ -4358,7 +4343,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -2
         },
         "/assets/litang/bing_liji.png": {
-            "scale": 1,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": -43
         },
@@ -4546,11 +4531,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 21
-        },
-        "/assets/STEPPE/__闲置__STEPPE_08.png": {
-            "scale": 1.22,
-            "offsetX": 0,
-            "offsetY": 17
         },
         "/assets/STEPPE/__闲置__STEPPE_09.png": {
             "scale": 1.15,
@@ -5306,6 +5286,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 1
+        },
+        "/assets/liuhan/__闲置__liuhan_15.png": {
+            "scale": 0.86,
+            "offsetX": 12,
+            "offsetY": -79
+        },
+        "/assets/STEPPE/xijue_zhizhichanyu.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/litang/__闲置__litang_04.png": {
+            "scale": 1.07,
+            "offsetX": 3,
+            "offsetY": -21
+        },
+        "/assets/litang/dingxiang_d_lijing.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -49
         }
     },
     "folderGuides": {
