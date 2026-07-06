@@ -426,7 +426,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dayue: { generalId: 'dayue_chenguojun', generalName: '陈国峻', portrait: '/assets/LINGNAN/dayue_chenguojun.png' },
     shengmiao: { generalId: 'shengmiao_baoli', generalName: '包利', portrait: '/assets/LINGNAN/shengmiao_baoli.png' },
     miao_qing: { generalId: 'miao_qing_yangwanzhe', generalName: '杨完者', portrait: '/assets/LINGNAN/miao_qing_yangwanzhe.png' },
-    guizhou: { generalId: 'guizhou_lidingguo', generalName: '李定国', portrait: '/assets/LINGNAN/guizhou_lidingguo.png' },
+    guizhou: { generalId: 'guizhou_lidingguo', generalName: '李定国', portrait: '/assets/daming/guizhou_lidingguo.png' },
     liren: { generalId: 'liren_funanshe', generalName: '符南蛇', portrait: '/assets/LINGNAN/liren_funanshe.png' },
     // guangnanguo → 洞海城改为 panjun
     yelang: { generalId: 'yelang_duotong', generalName: '多同', portrait: '/assets/LINGNAN/yelang_duotong.png' },
@@ -599,7 +599,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     mao_wenlong: { generalId: 'mao_wenlong_maowenlong', generalName: '毛文龙', portrait: '/assets/NORTHEAST/mao_wenlong_maowenlong.png' },
     gongsun_d: { generalId: 'gongsun_d_gongsundu', generalName: '公孙度', portrait: '/assets/NORTH/gongsun_d_gongsundu.png' },
     jianzhou_nvzhen: { generalId: 'jianzhou_nvzhen_limanzhu', generalName: '李满住', portrait: '/assets/NORTH/jianzhou_nvzhen_limanzhu.png' }, // 浑江·建州女真卫
-    weihaiwei: { generalId: 'weihaiwei_sudingfang', generalName: '苏定方', portrait: '/assets/CENTRAL/weihaiwei_sudingfang.png' },
+    weihaiwei: { generalId: 'weihaiwei_sudingfang', generalName: '苏定方', portrait: '/assets/litang/weihaiwei_sudingfang.png' },
     xuan: { generalId: 'xuan_xuda', generalName: '徐达', portrait: '/assets/daming/xuan_xuda.png' },
     tuoba: { generalId: 'tuoba_tuobagui', generalName: '拓跋珪', portrait: '/assets/STEPPE/tuoba_tuobagui.png' },
     qingyuan_bd: { generalId: 'qingyuan_bd_zhoudewei', generalName: '周德威', portrait: '/assets/NORTH/qingyuan_bd_zhoudewei.png' },

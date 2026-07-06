@@ -4,9 +4,11 @@
  * 军团 AI 行为树节点（收复发出点 → 推进锚点近敌池抽签 → 沿路推进 → 攻城）
  *
  * 双模式（GAME_DIRECTION 2026-06-11）：
- *   据点军团：家城失守强制回师（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
- *           → 推进锚点近 3 敌城抽签
- *   远征军团：目标锁死、家城失守不回师（shouldSkipHomeRecapture），直至占领/兵败或全军覆没
+ *   据点军团：
+ *     · 本城正被攻打且仍属己方 → 回援守城（reinforceHome，以守方援军身份中途加入，早于城破）
+ *     · 本城已失守（易主）→ 强制回师收复（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
+ *     · 否则 → 推进锚点近 3 敌城抽签
+ *   远征军团：目标锁死、家城被攻打/失守均不回师（shouldSkipHomeRecapture），直至占领/兵败或全军覆没
  */
 
 import { BTNode, BTStatus, BTContext, Condition, Action, Sequence, Selector } from './BehaviorTree';
@@ -405,6 +407,20 @@ export const IsHomeUnderAttack = new Condition('IsHomeUnderAttack', (ctx) => {
     return !!homeId && ctx.legionManager.isCityUnderAttack(homeId);
 });
 
+/** 本城仍属己方（尚未沦陷）——区分「回援守城」与「回攻收复」 */
+export const IsHomeStillMine = new Condition('IsHomeStillMine', (ctx) => {
+    const homeId = getArmyOriginCityId(ctx.army);
+    if (!homeId) return false;
+    const home = ctx.cityManager.getCity(homeId);
+    return !!home && home.factionId === ctx.army.getFactionId();
+});
+
+/** 非远征军团（远征目标锁死，本城被攻打也不回援） */
+export const IsNotExpeditionLegion = new Condition(
+    'IsNotExpeditionLegion',
+    (ctx) => !shouldSkipHomeRecapture(ctx.army),
+);
+
 /** 本城守城战进行中：加入守城；敌军尚在途/排队则原地待命，均不解散 */
 export const DefendHome = new Action('DefendHome', (ctx) => {
     const army = ctx.army;
@@ -412,7 +428,7 @@ export const DefendHome = new Action('DefendHome', (ctx) => {
     if (!homeId) return BTStatus.FAILURE;
     if (ctx.legionManager.tryJoinCityDefense(army, homeId)) {
         const homeName = ctx.cityManager.getCity(homeId)?.name ?? homeId;
-        btLog(ctx, `defend_home:${homeId}`, `[AI] ${army.name}（残兵）加入【${homeName}】守城战`);
+        btLog(ctx, `defend_home:${homeId}`, `[AI] ${army.name} 回援【${homeName}】守城战`);
         return BTStatus.SUCCESS;
     }
     army.stopMovement?.(); // 敌军在途、尚未开打 → 原地待命，不解散
@@ -437,7 +453,7 @@ export const MarchHome = new Action('MarchHome', (ctx) => {
 
     if (ctx.legionManager.moveLegionToCity(army, homeId)) {
         const homeName = ctx.cityManager.getCity(homeId)?.name ?? homeId;
-        btLog(ctx, `march_home:${homeId}`, `[AI] ${army.name}（残兵）撤回出发城【${homeName}】`);
+        btLog(ctx, `march_home:${homeId}`, `[AI] ${army.name} 回援本城【${homeName}】`);
         return BTStatus.SUCCESS;
     }
     return BTStatus.FAILURE;
@@ -477,11 +493,25 @@ const retreatWeakLegion = new Sequence('RetreatWeakLegion', [
     ]),
 ]);
 
+// 回援本城（不限兵力）：本城正被攻打且仍属己方（未沦陷）、非远征 →
+// 抵家则以援军身份中途加入守城，未抵家则星夜回援。
+// 比「等城破再回攻」更早救援；城一旦失守则由 attackSequence 内的收复逻辑接手。
+const reinforceHome = new Sequence('ReinforceHome', [
+    IsNotExpeditionLegion,
+    IsHomeUnderAttack,
+    IsHomeStillMine,
+    new Selector('ReinforceOrMarchHome', [
+        new Sequence('AtHomeDefend', [IsAtHomeCity, DefendHome]),
+        MarchHome,
+    ]),
+]);
+
 export function createLegionBehaviorTree(): BTNode {
     return new Selector('RootSelector', [
         IsInCombat,
         IsWaitingSiege,
         IsPostBattleResting,
+        reinforceHome,
         retreatWeakLegion,
         attackSequence,
         Idle,

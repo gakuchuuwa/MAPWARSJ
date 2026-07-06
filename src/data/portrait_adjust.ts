@@ -297,11 +297,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -26
         },
-        "/assets/CENTRAL/weihaiwei_sudingfang.png": {
-            "scale": 1,
-            "offsetX": 12,
-            "offsetY": -14
-        },
         "/assets/CENTRAL/zhuozhou_anlushan.png": {
             "scale": 1.12,
             "offsetX": 0,
@@ -933,11 +928,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/BASHU/ba_bamanzi.png": {
-            "scale": 1,
-            "offsetX": -19,
-            "offsetY": -16
-        },
-        "/assets/LINGNAN/guizhou_lidingguo.png": {
             "scale": 1,
             "offsetX": -19,
             "offsetY": -16
@@ -4117,11 +4107,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 39
         },
-        "/assets/daming/__闲置__daming_04.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": -1
-        },
         "/assets/daming/__闲置__daming_05.png": {
             "scale": 1.25,
             "offsetX": 0,
@@ -5213,9 +5198,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/litang/dingxiang_d_lijing.png": {
-            "scale": 1.06,
+            "scale": 0.98,
             "offsetX": 0,
-            "offsetY": -49
+            "offsetY": -43
         },
         "/assets/zhaosong/hezhou_wangjian.png": {
             "scale": 1,
@@ -5441,6 +5426,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 10
+        },
+        "/assets/litang/image (3).png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_34.png": {
+            "scale": 1,
+            "offsetX": 12,
+            "offsetY": -14
+        },
+        "/assets/litang/weihaiwei_sudingfang.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_24.png": {
+            "scale": 1,
+            "offsetX": -19,
+            "offsetY": -16
+        },
+        "/assets/daming/guizhou_lidingguo.png": {
+            "scale": 0.95,
+            "offsetX": 4,
+            "offsetY": -1
         }
     },
     "folderGuides": {
