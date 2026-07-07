@@ -27,7 +27,7 @@ export interface ReinforcementJoinDeps {
     removeArmy: (army: Army) => void;
     isArmyWaitingSiege?: (armyId: string) => boolean;
     resolveBattleCityName?: (center: LatLng) => string;
-    /** 编入攻城战前吸附邻格（仅攻城轮询注入，野战不传） */
+    /** 编入攻城战前城周错开（仅攻城注入，野战不传） */
     beforeJoinLegion?: (legion: Army, center: LatLng) => void;
 }
 
@@ -138,12 +138,17 @@ export function pollBattleFieldReinforcements(
     return joined;
 }
 
-function buildJoinDeps(legionManager: LegionManager, siegeWaiter?: (id: string) => boolean): ReinforcementJoinDeps {
+function buildJoinDeps(
+    legionManager: LegionManager,
+    siegeWaiter?: (id: string) => boolean,
+    beforeJoinLegion?: (legion: Army, center: LatLng) => void,
+): ReinforcementJoinDeps {
     const cityManager = legionManager.getCityManager();
     return {
         spatialRegistry: legionManager.getSpatialRegistry(),
         removeArmy: (army) => legionManager.removeArmy(army),
         isArmyWaitingSiege: siegeWaiter,
+        beforeJoinLegion,
         resolveBattleCityName: (center) => {
             const nearest = cityManager.getNearestCity(null, {
                 latitude: center.lat,
@@ -159,9 +164,10 @@ export function pollSiegeReinforcements(
     activeSieges: Map<string, BattleField>,
     getCityPosition: (cityId: string) => LatLng | null,
     legionManager: LegionManager,
-    isArmyWaitingSiege?: (armyId: string) => boolean
+    isArmyWaitingSiege?: (armyId: string) => boolean,
+    beforeJoinLegion?: (legion: Army, center: LatLng) => void,
 ): number {
-    const deps = buildJoinDeps(legionManager, isArmyWaitingSiege);
+    const deps = buildJoinDeps(legionManager, isArmyWaitingSiege, beforeJoinLegion);
     let joined = 0;
 
     for (const [cityId, battleField] of activeSieges) {

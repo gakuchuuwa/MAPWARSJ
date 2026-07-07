@@ -152,6 +152,7 @@ export const T0_CAPITALS: CityDataV2[] = [
     },
     { id: 'city_hangzhou', name: '杭州', factionId: 'wuyue', lat: 30.25, lng: 120.16, type: 'big_city', troops: 20000, region: 'JIANGNAN' },
 
+
     
     { id: 'city_taiyuan', name: '晋阳', factionId: 'bing', lat: 37.87, lng: 112.55, type: 'big_city', troops: 20000, region: 'NORTH' },
 

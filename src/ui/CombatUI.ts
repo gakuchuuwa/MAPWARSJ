@@ -449,13 +449,14 @@ export class CombatUI {
             font-size: ${uiPx(T.typography.titleSize + 4)};
             font-weight: 900;
             color: transparent;
-            background: linear-gradient(180deg, #fff4c8 0%, #f0c040 45%, #c88620 100%);
+            background: linear-gradient(180deg, #fffcd5 0%, #ffdf73 35%, #d4951a 60%, #8f5a0a 100%);
             -webkit-background-clip: text;
             background-clip: text;
             letter-spacing: ${uiPx(10)};
             margin-bottom: ${uiPx(12)};
             white-space: nowrap;
             text-align: center;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.8)) drop-shadow(0 6px 12px rgba(0,0,0,0.6));
         `;
 
         // 赔率行：开战即亮胜率（🔒 必胜 / 胜率 XX% : YY%），制造悬念
@@ -798,13 +799,18 @@ export class CombatUI {
             margin-${isAtt ? 'left' : 'right'}: ${uiPx(8)};
             padding: 0 ${uiPx(6)};
             font-size: ${uiPx(12)};
-            font-weight: 700;
+            font-weight: 900;
             line-height: 1.5;
             border-radius: 3px;
-            border: 1px solid ${isAtt ? 'rgba(253, 185, 49, 0.45)' : 'rgba(90, 170, 190, 0.45)'};
-            color: ${isAtt ? 'rgba(255, 218, 130, 0.95)' : 'rgba(150, 210, 225, 0.95)'};
-            background: rgba(0, 0, 0, 0.35);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+            border: 1px solid ${isAtt ? 'rgba(253, 185, 49, 0.6)' : 'rgba(90, 170, 190, 0.6)'};
+            color: ${isAtt ? 'rgba(255, 225, 150, 1)' : 'rgba(180, 230, 255, 1)'};
+            background: ${isAtt ? 'linear-gradient(180deg, rgba(60, 25, 5, 0.85) 0%, rgba(20, 5, 0, 0.7) 100%)' : 'linear-gradient(180deg, rgba(10, 35, 55, 0.85) 0%, rgba(0, 10, 20, 0.7) 100%)'};
+            box-shadow: 
+                inset 0 1px 1px rgba(255,255,255,0.25), 
+                inset 0 -3px 6px ${isAtt ? 'rgba(253, 185, 49, 0.35)' : 'rgba(90, 170, 190, 0.35)'},
+                0 2px 4px rgba(0,0,0,0.8);
+            text-shadow: 0 1px 3px rgba(0,0,0,1), 0 0 6px ${isAtt ? 'rgba(253, 185, 49, 0.5)' : 'rgba(90, 170, 190, 0.5)'};
+            backdrop-filter: blur(2px);
             white-space: nowrap;
             display: none;
         `;

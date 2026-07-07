@@ -4038,7 +4038,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -43
         },
         "/assets/daming/huai_zhuyuanzhang.png": {
-            "scale": 1.02,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": -18
         },

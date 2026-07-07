@@ -35,7 +35,7 @@ import {
     clearSiegeGarrisonBoost,
     type SiegeGarrisonBoostFields,
 } from './SiegeGarrisonTier';
-import { snapArmyToSiegeHexNearCity } from './SiegeHexPlacement';
+import { snapArmyToSiegeStandoff } from './SiegeArmyPlacement';
 
 export class SiegeManager {
     private static get JOIN_RADIUS(): number {
@@ -80,9 +80,9 @@ export class SiegeManager {
         };
     }
 
-    /** 攻城/排队：吸附到城周邻格，异势不共格 */
+    /** 城周待命圈错开占位（异势不重叠） */
     private positionArmyForSiege(army: Army, cityPos: { lat: number; lng: number }): void {
-        snapArmyToSiegeHexNearCity(army, cityPos, this.legionManager.getArmies());
+        snapArmyToSiegeStandoff(army, cityPos, this.legionManager.getArmies());
     }
 
     /** 由 CombatSystem 节流调用：扫描圈内同旗军团并加入进行中的攻城战 */
@@ -94,7 +94,8 @@ export class SiegeManager {
                 return city ? cityToLatLng(city) : null;
             },
             this.legionManager,
-            (armyId) => this.isArmyWaitingSiege(armyId)
+            (armyId) => this.isArmyWaitingSiege(armyId),
+            (legion, center) => this.positionArmyForSiege(legion, center),
         );
     }
 
@@ -639,7 +640,8 @@ export class SiegeManager {
 
         const cityPos = cityToLatLng(targetCity);
         this.positionArmyForSiege(army, cityPos);
-        siegeLog(`🛤️ [Sandbox Siege] ${army.name} 邻格就位后开战`);
+        siegeLog(`🛤️ [Sandbox Siege] ${army.name} 城周就位后开战`);
+
         const excludedIds = new Set<string>([army.id]);
 
         const nearbyDefenderLegions = this.collectDefenderLegionsForSiege(

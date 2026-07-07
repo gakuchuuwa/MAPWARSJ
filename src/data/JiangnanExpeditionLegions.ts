@@ -80,7 +80,7 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
   linshihong: { name: '大楚水军', tier: 4 },  // 鄱阳·林士弘称帝建楚（常规番号，降T3）
     gumie: { name: '衢州镇标', tier: 4 },
     wang_s: { name: '新安兵', tier: 4 },
-    wuyue: { name: '八都兵', tier: 3 },
+    wuyue: { name: '安国衣锦军', tier: 3 },
     shaozhou_d: { name: '银枪效节军', tier: 2 },
     ming_zheng: { name: '郑氏铁人军', tier: 2 },
     dayu: { name: '南赣标军', tier: 3 },
