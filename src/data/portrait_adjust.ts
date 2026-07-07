@@ -1408,7 +1408,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -14
         },
         "/assets/CENTRAL/jingzhou_gs_huangfusong.png": {
-            "scale": 0.86,
+            "scale": 0.78,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -5561,6 +5561,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.15,
             "offsetX": 14,
             "offsetY": 24
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_28.png": {
+            "scale": 1.19,
+            "offsetX": 0,
+            "offsetY": 37
         }
     },
     "folderGuides": {

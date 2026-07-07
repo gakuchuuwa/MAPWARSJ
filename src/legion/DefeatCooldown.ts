@@ -1,19 +1,25 @@
 /**
- * 战败冷却：武将/精锐战败后锁定一季，防止据点外野战击败后攻城时同一将/精锐立即再现。
+ * 战败冷却：武将/精锐战败后锁定 DEFEAT_COOLDOWN_SEASONS 季，防止据点外野战击败后
+ * 攻城时同一将/精锐立即再现，也避免名将折了转眼复活。
  *
- * 计数器制：战死时 set(cityId, 1)，每季 syncCitySpawnTierConsumption 末尾
+ * 计数器制：战死时 set(cityId, N)，每季 syncCitySpawnTierConsumption 末尾
  * 调 tickAndApply → 仍 >0 则 override spawnXxxUsed=true 并递减。
+ * 实际墙钟 ≈ (锁定季数 + 战死点到下一换季点的余量) × 15 游戏秒。
  */
+
+/** 战败锁定季数（用户 2026-07 定：1 季 → 再出场约 15~30 游戏秒，最少跨一整个换季周期，绝不立马复活）。
+ *  想更慢/更快只改这一个数：0=无冷却(可能立马)、1=15~30s、2=30~45s。 */
+const DEFEAT_COOLDOWN_SEASONS = 1;
 
 const generalCooldowns = new Map<string, number>();
 const eliteCooldowns = new Map<string, number>();
 
 export function lockGeneralAfterDefeat(cityId: string): void {
-    generalCooldowns.set(cityId, 1);
+    generalCooldowns.set(cityId, DEFEAT_COOLDOWN_SEASONS);
 }
 
 export function lockEliteAfterDefeat(cityId: string): void {
-    eliteCooldowns.set(cityId, 1);
+    eliteCooldowns.set(cityId, DEFEAT_COOLDOWN_SEASONS);
 }
 
 export function isGeneralOnCooldown(cityId: string): boolean {
