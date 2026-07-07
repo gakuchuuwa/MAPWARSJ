@@ -3582,11 +3582,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/JIANGNAN/li_bian.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -32
-        },
         "/assets/JIANGNAN/image (3).png": {
             "scale": 1.15,
             "offsetX": 0,
@@ -3776,11 +3771,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -4
-        },
-        "/assets/JIANGNAN/__闲置__JIANGNAN_03.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -11
         },
         "/assets/panjun/xushouhui_zhaopusheng.png": {
             "scale": 1.08,
@@ -4638,7 +4628,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/STEPPE/yuwen_yuwentai.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -5566,6 +5556,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.19,
             "offsetX": 0,
             "offsetY": 37
+        },
+        "/assets/JIANGNAN/__闲置__JIANGNAN_18.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -32
+        },
+        "/assets/JIANGNAN/taizhou_libian.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/JIANGNAN/li_bian.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -11
         }
     },
     "folderGuides": {

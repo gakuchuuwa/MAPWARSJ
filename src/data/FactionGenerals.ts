@@ -642,7 +642,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ouyue: { generalId: 'ouyue_zouyao', generalName: '驺摇', portrait: '/assets/xianqin/ouyue_zouyao.png' },
     ruochu: { generalId: 'ruochu_doulian', generalName: '鬬廉', portrait: '/assets/JIANGNAN/ruochu_doulian.png' },
     wuwu_d: { generalId: 'wuwu_d_lvmeng', generalName: '吕蒙', portrait: '/assets/JIANGNAN/wuwu_d_lvmeng.png' },
-    taizhou: { generalId: 'li_bian', generalName: '李昪', portrait: '/assets/JIANGNAN/li_bian.png' },
+    taizhou: { generalId: 'li_bian', generalName: '李昪', portrait: '/assets/JIANGNAN/taizhou_libian.png' },
         sunwu_d: { generalId: 'sunwu_d_sunquan', generalName: '孙权', portrait: '/assets/JIANGNAN/sunwu_d_sunquan.png' },
     yue: { generalId: 'yue_goujian', generalName: '勾践', portrait: '/assets/xianqin/yue_goujian.png' },
     heng: { generalId: 'heng_hetengjiao', generalName: '何腾蛟', portrait: '/assets/JIANGNAN/heng_hetengjiao.png' },
