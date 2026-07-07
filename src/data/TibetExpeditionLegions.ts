@@ -16,7 +16,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   tubo: { name: '吐蕃大纛军', tier: 1 },       // 逻些·松赞干布吐蕃大纛军
   gar: { name: '却杰军', tier: 1 },           // 萨毗城·论钦陵大破唐军的野战主力
   tuyu_d: { name: '青海骢精骑', tier: 3 },    // 吐谷浑青海骢名马文化符号（李白杜甫诗咏），升T2
-  dafeichuan: { name: '退浑骑', tier: 3 },    // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
+    dafeichuan: { name: '退浑骑', tier: 3 },
   xiangxiong: { name: '象雄武士', tier: 3 },  // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   gar_kham: { name: '德格骁骑', tier: 4 },    // 德格·康巴朵康先锋骑（§12 #7）（缺乏极其著名的战术高光，降T3）
   guge: { name: '古格甲兵', tier: 3 },        // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
@@ -36,7 +36,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   lang_clan: { name: '帕木竹巴军', tier: 3 }, // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   karmapa: { name: '噶玛巴护教', tier: 4 },
   golog: { name: '果洛游骑', tier: 3 }, // 青海果洛极其著名的彪悍游牧部落，以不受羁绊闻名于近代西北史，升入T3知名
-  xihai_d: { name: '西海骁锐', tier: 4 },     // 伏俟城·隋西海郡属县戍兵（郡治无专将）
+    xihai_d: { name: '伏俟王骑', tier: 3 },
   heyuan_d: { name: '河源军', tier: 2 },        // 花石峡·黑齿常之夜袭吐蕃大营（战术突袭，T2）
   monpa: { name: '门巴勇士', tier: 4 },  // 错那·梅惹·洛珠嘉措归附达赖（缺乏极其著名的战术高光，降T3）
   lopi: { name: '珞巴武士', tier: 4 },

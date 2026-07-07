@@ -47,6 +47,7 @@ import {
     resolveSideMidBattleCasualtyReduction,
     resolvePostBattleCasualtyOutcome,
     applySkillCountersToUnits,
+    setBattleTargetDurationForSkillUi,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 import {
@@ -184,6 +185,13 @@ export class BattleField {
 
         // [NEW] Calculate Duration immediately
         this.calculateTargetDuration();
+        // 开局脉冲按本场时长比例后移：须在 pickPredictedSides（内部同步 emit 开局技能 UI）之前注入。
+        // 注入「估算最终时长」= 基础 × 节奏系数（computeFearDurationMult 与强弱判定无关，此刻即可算；
+        // 与真值仅差开局加兵技的微小兵力漂移）——脉冲延迟(30%)与战损引爆点(30%)按同一把尺对齐。
+        // 注入与发射同 tick 同步完成，多场战斗并发也不会互相污染。
+        setBattleTargetDurationForSkillUi(
+            clampBattleDurationSec(this.targetDuration * this.computeFearDurationMult())
+        );
         this.pickPredictedSides();
         // 威慑系统：定强弱后算战损减免 + 节奏时长系数
         this.applyIntimidationModifiers();
@@ -258,8 +266,34 @@ export class BattleField {
     }
 
     /**
+     * 节奏系数（用户 2026-07 定）：兵力悬殊度为主闸门，威慑精彩度在「接近」前提下决定拉多长。
+     *   troopParity = 弱侧兵力 / 强侧兵力（0=悬殊、1=兵力相当）。
+     *   · 兵力悬殊（parity 小）→ excitement 被压低 → 压短：碾压就是碾压，不管有无名将。
+     *   · 兵力接近（parity≈1）→ 至少中等拉锯；双方越强且越接近（skillExcitement 高）→ 越长。
+     *   规模由基础时长（∝总兵力）负责，此系数只管「悬殊度 + 精彩度」，分工不重叠。
+     * 刻意做成与强弱判定无关（min/|gap| 对称）——构造期在 pickPredictedSides 之前
+     * 就能算出估算最终时长，供开局技能脉冲按「最终时长」对齐第二幕（而非基础时长）。
+     */
+    private computeFearDurationMult(): number {
+        const MAX = 4;
+        const attIntim = this.sideIntimidation(this.attackerGroup);
+        const defIntim = this.sideIntimidation(this.defenderGroup);
+
+        const hiTroops = Math.max(this.attackerGroup.initialTotalTroops, this.defenderGroup.initialTotalTroops);
+        const loTroops = Math.min(this.attackerGroup.initialTotalTroops, this.defenderGroup.initialTotalTroops);
+        const troopParity = hiTroops > 0 ? loTroops / hiTroops : 1;
+
+        const minIntim = Math.min(attIntim, defIntim);
+        const gap = Math.abs(attIntim - defIntim);
+        const skillExcitement = (minIntim / MAX) * (1 - gap / MAX); // 威慑精彩度 [0,1]
+
+        const excitement = troopParity * (0.5 + 0.5 * skillExcitement);
+        return 0.5 + (1.6 - 0.5) * excitement;
+    }
+
+    /**
      * 威慑系统：按双方将领+精锐质量差，
-     *  ① 减免强方战损（保命核心）；② 调节战斗节奏（碾压压短、巅峰拉长）。
+     *  ① 减免强方战损（保命核心）；② 调节战斗节奏（兵力悬殊/质量碾压→压短，势均力敌→拉长）。
      * 不改胜负判定。事件战斗（presetResult）整套跳过。
      */
     private applyIntimidationModifiers(): void {
@@ -277,11 +311,7 @@ export class BattleField {
         const adv = Math.max(0, Math.min(1, (strongerIntim - weakerIntim) / MAX));
         this.fearLossReduction = 0.8 * adv;
 
-        // 节奏：两边都强且接近 → 精彩 → 拉长；碾压或菜鸡互啄 → 压短
-        const minIntim = Math.min(strongerIntim, weakerIntim);
-        const gap = Math.abs(strongerIntim - weakerIntim);
-        const excitement = (minIntim / MAX) * (1 - gap / MAX);
-        this.fearDurationMult = 0.5 + (1.6 - 0.5) * excitement;
+        this.fearDurationMult = this.computeFearDurationMult();
 
         // 战损系（Step2）：强方减损跟随强弱重算；穷寇锁存清零，交 update 重新监控
         this.poorBanditLatched = false;
@@ -581,12 +611,26 @@ export class BattleField {
         }
         const envelope = this.presetResult ? 0 : this.getPhaseEnvelope();
         const swing = this.presetResult ? 0 : this.momentumValue * envelope * 0.55;
+
+        // 三阶段战损节奏（用户 2026-07 定，势均/悬殊同构）：
+        //   第一阶段(<30%)：双方战损恒压到 45% → 对峙条几乎不动 = 相持/顽强抵抗；
+        //   第二阶段(30%~40% 快速放开到全速)：恰逢技能脉冲亮相（延迟≈时长30%）→
+        //     战损在技能亮相瞬间引爆，悬殊「看起来」由技能拉开；
+        //   第三阶段：无需显式加速——收敛模型 troops/timeLeft 自我修正，前期少掉的兵
+        //   在末段 timeLeft 变小时自动补回 → 覆灭自然加快。总时长与胜负不受影响。
+        const progress = this.elapsed / Math.max(1, targetDuration);
+        const pacing = this.presetResult
+            ? 1
+            : progress < 0.3
+                ? 0.45
+                : progress < 0.4
+                    ? 0.45 + 0.55 * ((progress - 0.3) / 0.1)
+                    : 1;
+
         // swing>0 强方冲击（弱方多掉、强方少掉）；swing<0 弱方反击。
         // 末段 envelope→0，swing 自然归零，与收敛加速不冲突。
-        const weakerDamageBase = Math.max(0, weakerBaseDPS * deltaTime * (1 + swing));
-        const strongerDamageBase = Math.max(0, strongerBaseDPS * deltaTime * (1 - swing * 0.4));
-
-        const progress = this.elapsed / Math.max(1, targetDuration);
+        const weakerDamageBase = Math.max(0, weakerBaseDPS * deltaTime * pacing * (1 + swing));
+        const strongerDamageBase = Math.max(0, strongerBaseDPS * deltaTime * pacing * (1 - swing * 0.4));
 
         let damageToAttackers: number;
         let damageToDefenders: number;

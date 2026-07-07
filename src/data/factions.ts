@@ -508,17 +508,21 @@ export const FACTIONS: Faction[] = [
     { id: 'luchuan', name: '麓川' },
     { id: 'chijin', name: '赤斤' },                          // 赤金堡·旗号赤（赤斤蒙古卫）
     // 巴音布拉格·汉张掖郡居延县；旗号延
-    { id: 'xihai_d', name: '西海' },                          // 伏俟城·隋西海郡治；旗号西海
+    { id: 'xihai_d', name: '吐谷浑' },
+                          // 伏俟城·隋西海郡治；旗号西海
     { id: 'heyuan_d', name: '河源' },                          // 花石峡·隋河源郡积石镇；旗号河源
     { id: 'guiyi', name: '归义' },
 
 
     { id: 'dafeichuan', name: '退浑' },
+
+
     // 第六类：周边国家政权
     // 交阯深紫 - 安南胡朝/黎氏
     { id: 'joseon', name: '朝鲜' },                  // 朝鲜王朝李朝都城汉城；尚白见 HistoricalFactionColors
     { id: 'siam', name: '暹罗' },                    // 暹罗橙 - 阿瑜陀耶王朝
-    { id: 'chenla', name: '真腊' },                  // 吴哥暗紫 - 真腊吴哥王朝
+    { id: 'chenla', name: '真腊' },
+                  // 吴哥暗紫 - 真腊吴哥王朝
     // 巨港靛紫 - 三佛齐/室利佛逝
 
     // ── 2026-05-26 明清之际势力（28个）──
@@ -805,6 +809,7 @@ export const FACTIONS: Faction[] = [
     { id: 'qingyi', name: '青衣' },
                        // 青衣羌(青衣江流域/雅州/川西古羌)
     { id: 'wuxi', name: '武陵' },
+
                          // 五溪蛮(武陵五溪/八面山/湘西)
     { id: 'gumie', name: '衢州' },
                         // 姑蔑(古越方国/衢州/浙西)
@@ -1276,6 +1281,7 @@ export const FACTIONS: Faction[] = [
     { id: 'paiyao', name: '排瑶' },
     { id: 'daozhou', name: '道州' },
 
+
     { id: 'dayu', name: '大庾' },
 
     { id: 'yingzhou', name: '英州' },
@@ -1399,6 +1405,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'shanshan', name: '鄯善' },
     { id: 'wenling', name: '温陵' },
+
     { id: 'qianzhou', name: '乾州' },
     { id: 'wuyue', name: '吴越' },
 

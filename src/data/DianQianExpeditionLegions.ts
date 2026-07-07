@@ -16,7 +16,7 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   pagan: { name: '缅王战象', tier: 3 },      // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   pyu: { name: '骠国战象', tier: 4 },        // 室利差罗·骠国象卫
   champa: { name: '占婆国水师', tier: 3 },             // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
-  chenla: { name: '吴哥战象', tier: 1 },     // 吴哥·缔造高棉帝国中南半岛霸权的战略主力
+    chenla: { name: '吴哥战象', tier: 1 },
   luchuan: { name: '麓川夷象', tier: 3 }, // 明朝三征麓川时思氏仰仗的核心象阵，极具历史话题度和风土特色，升入T3知名
     dianguo: { name: '青铜殳', tier: 3 },
     mu_lijiang: { name: '丽江土兵', tier: 3 },
@@ -45,4 +45,5 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     jingpozu: { name: '景颇长刀兵', tier: 3 },
     shuizu: { name: '水族藤甲兵', tier: 3 },           // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名,
     yangzhou: { name: '无当飞军', tier: 2 },
+    wuxi: { name: '武陵弓蛮', tier: 3 },
 };

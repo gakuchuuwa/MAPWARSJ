@@ -502,11 +502,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -15
         },
-        "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": -9
-        },
         "/assets/KOREA/gaogouli_yizhiwende.png": {
             "scale": 1.17,
             "offsetX": -5,
@@ -741,11 +736,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": -13
-        },
-        "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png": {
-            "scale": 1.18,
-            "offsetX": 0,
-            "offsetY": -7
         },
         "/assets/CENTRAL/tianxiong_tianchengsi.png": {
             "scale": 0.86,
@@ -1357,11 +1347,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/CENTRAL_ASIA/guzgan_abuhalisi.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -15
-        },
         "/assets/WESTERN/pishan_daihu.png": {
             "scale": 0.99,
             "offsetX": 13,
@@ -1586,11 +1571,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -66
-        },
-        "/assets/LINGNAN/nongzhigao_huangshimi.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": -44
         },
         "/assets/DIANQIAN/mingzheng_jianzandechang.png": {
             "scale": 1,
@@ -3018,7 +2998,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/STEPPE/zubu_mogusi.png": {
-            "scale": 0.76,
+            "scale": 0.78,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -3851,11 +3831,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 0
-        },
-        "/assets/LINGNAN/__闲置__LINGNAN_10.png": {
-            "scale": 1.15,
-            "offsetX": 14,
-            "offsetY": 24
         },
         "/assets/panjun/ketagalan_huangqingyun.png": {
             "scale": 1,
@@ -5531,6 +5506,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": 7,
             "offsetY": 3
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_07.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/CENTRAL_ASIA/guzgan_abuhalisi.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/CENTRAL_ASIA/9ef0f16d-448b-4e10-873e-4e5027693e11.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/CENTRAL_ASIA/80a96ee1-15f1-42cd-b88d-afb2dda3c6b8.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/CENTRAL_ASIA/ad4adc41-8c01-45e5-8585-f0fbd013e135.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": -47
+        },
+        "/assets/CENTRAL_ASIA/be23071b-7d43-482c-ac93-57a4956eb02f.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_08.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_26.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -44
+        },
+        "/assets/LINGNAN/nongzhigao_huangshimi.png": {
+            "scale": 1.15,
+            "offsetX": 14,
+            "offsetY": 24
         }
     },
     "folderGuides": {

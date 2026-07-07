@@ -14,8 +14,7 @@ export type TacticalSeries =
     | 'fate'      // 命运系
     | 'troop'     // 兵力系
     | 'casualty'  // 战损系
-    | 'counter'   // 对抗系
-    | 'morale';   // 士气系
+    | 'counter';  // 对抗系
 
 /** 结算时点（按战斗流程排序） */
 export type TacticalSkillPhase =
@@ -193,6 +192,13 @@ const ENHANCE: TacticalSkillEntry[] = [
         displayName: '绝地反击', sourceQuote: '《孙子兵法·九地》：“投之亡地然后存，陷之死地然后生。”',
         baseEffect: 'ally_power_mult', condition: 'side_comeback', phase: 'opening_roll',
         magnitude: 1.3, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_049', layer: 'tactical', series: 'enhance', index: 49,
+        displayName: '一鼓作气', sourceQuote: '《左传·庄公十年》：“夫战，勇气也。一鼓作气，再而衰，三而竭。”',
+        baseEffect: 'first_sortie_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.25, engineStatus: 'ready',
+        note: '出征首战×1.25（桥接 ally_mult_1_2 + first_sortie 门控）；契合名将远征首战爆发看点；原士气系并入强化系',
     },
 ];
 
@@ -457,17 +463,6 @@ const COUNTER: TacticalSkillEntry[] = [
         baseEffect: 'nullify_enemy_opening_cut', condition: 'self_troops_below_enemy_pct', phase: 'pre_opening_troops',
         magnitude: 0.3, engineStatus: 'ready',
         note: '己兵<敌30% 时，敌先声类技失效',
-    },
-];
-
-// ── 六、士气系 ─────────────────────────────────────────────
-const MORALE: TacticalSkillEntry[] = [
-    {
-        id: 'ts_049', layer: 'tactical', series: 'morale', index: 49,
-        displayName: '一鼓作气', sourceQuote: '《左传·庄公十年》：“夫战，勇气也。一鼓作气，再而衰，三而竭。”',
-        baseEffect: 'first_sortie_power_mult', condition: 'first_sortie', phase: 'opening_roll',
-        magnitude: 1.25, engineStatus: 'ready',
-        note: '出征首战×1.25（桥接 ally_mult_1_2 + first_sortie 门控）；契合名将远征首战爆发看点',
     },
 ];
 
@@ -2498,7 +2493,6 @@ export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
     ...TROOP,
     ...CASUALTY,
     ...COUNTER,
-    ...MORALE,
     ...UNIQUE_T0,
     ...UNIQUE_T1,
 ];

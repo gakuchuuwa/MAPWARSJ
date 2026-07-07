@@ -152,5 +152,5 @@ export function applyPortraitAdjustToElement(
     const oy = Math.round(adj.offsetY * COMBAT_UI_SCALE);
     img.style.transformOrigin = resolvePortraitTransformOrigin(portraitPath, data);
     img.style.transform = `translate(${ox}px, ${oy}px) scale(${adj.scale})`;
-    applyPortraitEdgeMask(img);
+    // 四缘渐隐改由 CombatUI 立绘裁剪框(clip)承担；作用在 img 上会随 F2 缩放被裁出框
 }

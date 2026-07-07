@@ -330,7 +330,9 @@ export class CombatUI {
         this.leftPortraitWrap = this.createPortraitFacingWrap('left');
         this.leftPortrait = this.createPortraitImage();
         this.setupPortraitInteraction(this.leftPortrait, true);
-        this.leftPortraitWrap.appendChild(this.leftPortrait);
+        const leftClip = this.createPortraitClip();
+        leftClip.appendChild(this.leftPortrait);
+        this.leftPortraitWrap.appendChild(leftClip);
         leftFrame.appendChild(this.leftPortraitWrap);
         this.leftGeneralNameTag = this.createGeneralNameTag('left');
         leftFrame.appendChild(this.leftGeneralNameTag);
@@ -342,7 +344,9 @@ export class CombatUI {
         this.rightPortraitWrap = this.createPortraitFacingWrap('right');
         this.rightPortrait = this.createPortraitImage();
         this.setupPortraitInteraction(this.rightPortrait, false);
-        this.rightPortraitWrap.appendChild(this.rightPortrait);
+        const rightClip = this.createPortraitClip();
+        rightClip.appendChild(this.rightPortrait);
+        this.rightPortraitWrap.appendChild(rightClip);
         rightFrame.appendChild(this.rightPortraitWrap);
         this.rightGeneralNameTag = this.createGeneralNameTag('right');
         rightFrame.appendChild(this.rightGeneralNameTag);
@@ -1261,9 +1265,6 @@ export class CombatUI {
     private createPortraitFacingWrap(side: 'left' | 'right'): HTMLDivElement {
         const wrap = document.createElement('div');
         const edge = side === 'left' ? 'left' : 'right';
-        const fadeDir = side === 'left' ? 'right' : 'left';
-        
-        const maskCSS = `linear-gradient(to ${fadeDir}, transparent 0px, black 12px, black 100%)`;
 
         wrap.style.cssText = `
             position: absolute;
@@ -1275,8 +1276,7 @@ export class CombatUI {
             ${side === 'left' ? 'justify-content: flex-end;' : 'justify-content: flex-start;'}
             transform-origin: center bottom;
             pointer-events: none;
-            -webkit-mask-image: ${maskCSS};
-            mask-image: ${maskCSS};
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
         `;
         return wrap;
     }
@@ -1286,12 +1286,32 @@ export class CombatUI {
         img.style.cssText = `
             width: auto;
             height: 100%;
-            max-height: ${uiPx(550)};
             display: block;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
             pointer-events: auto;
         `;
         return img;
+    }
+
+    /** 立绘裁剪框：固定尺寸 + 四缘渐隐 + overflow 裁切。
+     *  渐隐做在此框上（不随 F2 缩放），img 在框内缩放/平移，超框部分被柔化裁掉。 */
+    private createPortraitClip(): HTMLDivElement {
+        const f = T.portraitEdgeFade;
+        const horizontal = `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%, rgba(0,0,0,1) calc(100% - ${f}%), rgba(0,0,0,0) 100%)`;
+        const vertical = `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${f}%, rgba(0,0,0,1) calc(100% - ${f}%), rgba(0,0,0,0) 100%)`;
+        const mask = `${horizontal}, ${vertical}`;
+        const clip = document.createElement('div');
+        clip.style.cssText = `
+            height: ${uiPx(550)};
+            display: inline-block;
+            overflow: hidden;
+            -webkit-mask-image: ${mask};
+            mask-image: ${mask};
+            -webkit-mask-composite: source-in;
+            mask-composite: intersect;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+        `;
+        return clip;
     }
 
     /** 椭圆径向渐变：中心深、四边 rgba(...,0) 透出地图 */

@@ -525,7 +525,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     tufa_d_tufanutan: { generalId: 'tufa_d_tufanutan', tier: 'ordinary', tacticalSkillId: 'ts_007' }, // 南凉君主
     qifu_d_qifuchipan: { generalId: 'qifu_d_qifuchipan', tier: 'famous', tacticalSkillId: 'ts_306', strategicSkillId: 'str_01' },
     tuyu_d_kualv: { generalId: 'tuyu_d_kualv', tier: 'famous', tacticalSkillId: 'ts_301', strategicSkillId: 'str_10' }, // 吐谷浑可汗
-    dafeichuan_nuohebo: { generalId: 'dafeichuan_nuohebo', tier: 'ordinary', tacticalSkillId: 'ts_021' }, // 吐谷浑末代可汗
+    dafeichuan_nuohebo: { generalId: 'dafeichuan_nuohebo', tier: 'ordinary', tacticalSkillId: 'ts_021' },
     gaxa_zhashi: { generalId: 'gaxa_zhashi', tier: 'ordinary', tacticalSkillId: 'ts_021' }, // 噶厦代本
     jinchuan_g_shaluoben: { generalId: 'jinchuan_g_shaluoben', tier: 'ordinary', tacticalSkillId: 'ts_369' },
     xiangxiong_limixia_x: { generalId: 'xiangxiong_limixia_x', tier: 'ordinary', tacticalSkillId: 'ts_011' }, // 象雄末王
@@ -551,7 +551,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     guge_chizhaxichabade: { generalId: 'guge_chizhaxichabade', tier: 'ordinary', tacticalSkillId: 'ts_086' }, // 古格末王
     // ── 滇缅区 2026-06-18 ──
     pazhu_redangunsangpa: { generalId: 'pazhu_redangunsangpa', tier: 'ordinary', tacticalSkillId: 'ts_152' },
-    chenla_duyebamoqishi: { generalId: 'chenla_duyebamoqishi', tier: 'famous', tacticalSkillId: 'ts_129', strategicSkillId: 'str_03' }, // 驱逐占婆收复吴哥
     dali_duansiping: { generalId: 'dali_duansiping', tier: 'famous', tacticalSkillId: 'ts_144', strategicSkillId: 'str_10' },
     dongxu_mangruiti: { generalId: 'dongxu_mangruiti', tier: 'famous', tacticalSkillId: 'ts_304', strategicSkillId: 'str_13' },
     mu_lijiang_muzeng: { generalId: 'mu_lijiang_muzeng', tier: 'ordinary', tacticalSkillId: 'ts_099' },
@@ -1122,7 +1121,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     xingliao_dayanlin: { generalId: 'xingliao_dayanlin', tier: 'ordinary', tacticalSkillId: 'ts_204' }, // ??????
     unassigned_jingcheng_fushi: { generalId: 'unassigned_jingcheng_fushi', tier: 'ordinary', tacticalSkillId: 'ts_026' }, // ????
     unassigned_wangmang: { generalId: 'unassigned_wangmang', tier: 'ordinary', tacticalSkillId: 'ts_024' }, // ????
-    xihai_d_fulianchou: { generalId: 'xihai_d_fulianchou', tier: 'ordinary', tacticalSkillId: 'ts_018' }, // 吐谷浑可汗伏俟城
+    xihai_d_fulianchou: { generalId: 'xihai_d_fulianchou', tier: 'ordinary', tacticalSkillId: 'ts_018' },
     unassigned_yaerbeige: { generalId: 'unassigned_yaerbeige', tier: 'ordinary', tacticalSkillId: 'ts_014' }, // 雅尔贝格
     guzgan_abuhalisi: { generalId: 'guzgan_abuhalisi', tier: 'ordinary', tacticalSkillId: 'ts_167' }, // 法里贡埃米尔法里亚布
     badakhshan_yaerbeige: { generalId: 'badakhshan_yaerbeige', tier: 'ordinary', tacticalSkillId: 'ts_374' }, // 唐护密国王法扎巴德
@@ -1191,12 +1190,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     delan_sulun: { generalId: 'delan_sulun', tier: 'famous', tacticalSkillId: 'ts_153', strategicSkillId: 'str_11' }, // 苏伦·德兰吉亚：敌战计避实击虚+长驱直入，帕提亚回马箭灭克拉苏
     huluo_jiyasiding: { generalId: 'huluo_jiyasiding', tier: 'famous', tacticalSkillId: 'ts_154', strategicSkillId: 'str_01' },
     aba_shapuer: { generalId: 'aba_shapuer', tier: 'famous', tacticalSkillId: 'ts_329', strategicSkillId: 'str_11' }, // 沙普尔·阿巴尔：攻战计侵掠如火+长驱直入，三破罗马擒瓦勒良
-    wenling_shilang: {
-        generalId: 'wenling_shilang',
-        tier: 'famous',
-        tacticalSkillId: 'ts_287',
-        strategicSkillId: 'str_12',
-    },
+    wenling_shilang: { generalId: 'wenling_shilang', tier: 'famous', tacticalSkillId: 'ts_287', strategicSkillId: 'str_12' },
 
     qianzhou_lisheng: {
         generalId: 'qianzhou_lisheng',
@@ -1266,6 +1260,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yuezhi_xihou: { generalId: 'yuezhi_xihou', tier: 'ordinary', tacticalSkillId: 'ts_096' },
     zizhou_wangjian: { generalId: 'zizhou_wangjian', tier: 'famous', tacticalSkillId: 'ts_322', strategicSkillId: 'str_14' },
     choros_tuohuan: { generalId: 'choros_tuohuan', tier: 'famous', tacticalSkillId: 'ts_228', strategicSkillId: 'str_01' },
+    chenla_duyebamo: { generalId: 'chenla_duyebamo', tier: 'famous', tacticalSkillId: 'ts_129', strategicSkillId: 'str_03' },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

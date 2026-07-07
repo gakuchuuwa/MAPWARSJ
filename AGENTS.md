@@ -766,7 +766,7 @@ npm run skeleton:audit
 | 西域 | 伊逻卢城 | `city_yiluolucheng` | medium | 龟兹国都 (延城) |
 | 青藏 | 逻些 | `city_luoxie` | medium | 吐蕃国都 (即拉萨) |
 | 滇缅 | 蒲甘 | `city_pagan` | medium | 蒲甘王朝都城；远征中心（`RegionSystem` 2026-06-14 定；`city_ayutthaya` 仍为大城但非区中心） |
-| 中亚 | 撒马尔罕 | `city_samaerhan` | medium | 帖木儿都, 粟特心 |
+| 中亚 | 玉龙杰赤 | `city_urgench` | small | 花剌子模都城 (主人 2026-07-05 改, 原撒马尔罕) |
 
 ### 规则
 

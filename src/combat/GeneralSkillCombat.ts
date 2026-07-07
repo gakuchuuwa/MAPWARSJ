@@ -64,8 +64,38 @@ function sideIsFirstSortie(units: IBattleUnit[]): boolean {
 }
 
 
-/** 名将开局战术 UI 延迟（秒）：对峙立绘就绪后再闪字 */
+/** 名将开局战术 UI 延迟（秒）：对峙立绘就绪后再闪字（短战下限 / 无时长信息时兜底） */
 export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
+
+// 开局脉冲按本场目标时长比例后移：长战不至于「开打就放完、后段空一大截」；短战仍早放。
+// 只影响 UI 演出显示时机，不改技能效果生效时机（效果仍走原调度）。
+const OPENING_UI_DELAY_RATIO = 0.3;      // 第一次脉冲 ≈ 目标时长的 30%——对齐三阶段第二幕开场（前1/3=相持，技能亮相引爆悬殊）
+const OPENING_UI_DELAY_MAX_SEC = 20;     // 上限放宽到 20s：60s 长战的脉冲(18s)也能落在第二幕边界
+/** 本场战斗基础目标时长（秒），由 BattleField 开战时注入；用于按比例后移开局脉冲 */
+let currentBattleTargetDurationSec = 0;
+export function setBattleTargetDurationForSkillUi(sec: number): void {
+    currentBattleTargetDurationSec = Number.isFinite(sec) && sec > 0 ? sec : 0;
+}
+/** 开局脉冲显示延迟：按本场目标时长比例，钳在 [默认下限, 上限]；无时长信息则回退默认 */
+function resolveOpeningUiDelaySec(): number {
+    if (currentBattleTargetDurationSec <= 0) return OPENING_TACTICAL_UI_DELAY_SEC;
+    const scaled = currentBattleTargetDurationSec * OPENING_UI_DELAY_RATIO;
+    return Math.max(OPENING_TACTICAL_UI_DELAY_SEC, Math.min(OPENING_UI_DELAY_MAX_SEC, scaled));
+}
+
+/**
+ * 统一调度开局技能 UI 脉冲：按本场时长比例延迟（对齐三阶段第二幕开场），音效与脉冲同刻。
+ * 所有「开局」路径（V1/乘区/压敌/命运）都必须走比例延迟——散落的裸 setTimeout 固定 3s
+ * 会让不同技能类的脉冲时刻不一致（2026-07 全面检查里揪出的坑）。
+ */
+function scheduleOpeningTacticalUi(unit: IBattleUnit, trigger: TacticalSkillTrigger): void {
+    const delay = resolveOpeningUiDelaySec();
+    trigger.uiDelaySec = delay;
+    window.setTimeout(() => {
+        onTacticalSkillTriggered?.(trigger);
+        playGeneralSkillAudio(unit);
+    }, delay * 1000);
+}
 
 export type TacticalSkillTrigger = {
     displayName: string;
@@ -135,29 +165,38 @@ function emitTacticalUiV1(
     sideLabel: string,
     options?: { uiDelaySec?: number; immediate?: boolean },
 ): void {
-    const delay =
-        options?.immediate === true
-            ? 0
-            : (options?.uiDelaySec ?? OPENING_TACTICAL_UI_DELAY_SEC);
+    let delay: number;
+    if (options?.immediate === true) {
+        delay = 0;
+    } else if (options?.uiDelaySec != null && options.uiDelaySec !== OPENING_TACTICAL_UI_DELAY_SEC) {
+        delay = options.uiDelaySec; // 显式指定的非默认延迟（特殊调用）→ 尊重之
+    } else {
+        delay = resolveOpeningUiDelaySec(); // 开局默认延迟 → 按本场目标时长比例后移
+    }
     const trigger: TacticalSkillTrigger = {
         displayName: entry.displayName,
         generalId: unit.generalId ?? '',
         skillId: entry.id,
         uiDelaySec: delay,
     };
-    if (delay <= 0) {
+    // 脉冲 + 音效同一时刻触发（都延迟到 delay 后），避免音效开战即响、演出却延后显示而对不上。
+    // getFollowedArmyId 在触发时刻读取：延迟期间玩家若已切走跟拍对象，则不为它响（正确）。
+    const fire = () => {
         onTacticalSkillTriggered?.(trigger);
+        const followedId = getFollowedArmyId();
+        if (followedId && unit.id === followedId) {
+            audioManager.play('general_skill');
+        }
+    };
+    if (delay <= 0) {
+        fire();
     } else {
-        window.setTimeout(() => onTacticalSkillTriggered?.(trigger), delay * 1000);
+        window.setTimeout(fire, delay * 1000);
     }
     gameLog(
         'battle',
         `⚔️ [战术技] ${unit.generalId} 【${entry.displayName}】 ${sideLabel}`,
     );
-    const followedId = getFollowedArmyId();
-    if (followedId && unit.id === followedId) {
-        audioManager.play('general_skill');
-    }
 }
 
 /**
@@ -396,12 +435,18 @@ function emitTacticalUi(
     unit: IBattleUnit,
     skill: TacticalSkillDef,
     sideLabel: string,
-    options?: { uiDelaySec?: number; immediate?: boolean },
+    options?: { uiDelaySec?: number; immediate?: boolean; fixedDelay?: boolean },
 ): void {
+    // 与 emitTacticalUiV1 同约定：传默认常量 = 开局语义 → 按本场时长比例延迟；
+    // fixedDelay=true（援军入场亮相）例外——入场后尽快亮相，不等全场 30%。
     const delay =
         options?.immediate === true
             ? 0
-            : (options?.uiDelaySec ?? 0);
+            : options?.fixedDelay === true
+                ? (options?.uiDelaySec ?? 0)
+                : options?.uiDelaySec === OPENING_TACTICAL_UI_DELAY_SEC
+                    ? resolveOpeningUiDelaySec()
+                    : (options?.uiDelaySec ?? 0);
     const trigger: TacticalSkillTrigger = {
         displayName: skill.displayName,
         generalId: unit.generalId!,
@@ -974,7 +1019,8 @@ export function applyOpeningTacticalPreRoll(
                 break;
             }
             case 'ally_invincible': {
-                const startAt = battleElapsed + (emitUi ? OPENING_TACTICAL_UI_DELAY_SEC : 0);
+                // 免伤窗口与脉冲亮相同刻开始（比例延迟），字亮=免伤起，视觉因果一致
+                const startAt = battleElapsed + (emitUi ? resolveOpeningUiDelaySec() : 0);
                 scheduleInvincible(unit, startAt, skill.magnitude);
                 logMsg = `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 免伤 ${skill.magnitude} 秒`;
                 break;
@@ -1091,6 +1137,7 @@ export function tryEmitOpeningTacticalOnReinforcementJoin(
 
     emitTacticalUi(joinedUnit, skill, isAttacker ? '攻方' : '守方', {
         uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+        fixedDelay: true, // 援军将领入场后 3s 内亮相，不等全场时长比例
     });
 }
 
@@ -1202,10 +1249,7 @@ export function applyOpeningTacticalToRolls(
                     skillId: skill.id,
                     uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
                 };
-                window.setTimeout(
-                    () => onTacticalSkillTriggered?.(trigger),
-                    OPENING_TACTICAL_UI_DELAY_SEC * 1000,
-                );
+                scheduleOpeningTacticalUi(unit, trigger);
                 lastTrigger = trigger;
             }
             return next;
@@ -1238,10 +1282,7 @@ export function applyOpeningTacticalToRolls(
                     skillId: skill.id,
                     uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
                 };
-                window.setTimeout(
-                    () => onTacticalSkillTriggered?.(trigger),
-                    OPENING_TACTICAL_UI_DELAY_SEC * 1000,
-                );
+                scheduleOpeningTacticalUi(unit, trigger);
                 lastTrigger = trigger;
             }
             return next;

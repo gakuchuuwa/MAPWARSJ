@@ -455,7 +455,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     NORTHEAST:    ['city_ningan'],                   // 龙泉府 (渤海上京)
     KOREA:        ['city_kaesong'],                  // 开城 (高丽都)
     JAPAN:        ['city_kyoto'],                    // 京都 (平安京)
-    CENTRAL_ASIA: ['city_samaerhan'],                // 撒马尔罕
+    CENTRAL_ASIA: ['city_urgench'],                  // 玉龙杰赤 (花剌子模都城; 主人 2026-07-05 改, 原撒马尔罕)
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */
