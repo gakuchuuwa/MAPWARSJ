@@ -2745,7 +2745,34 @@ export class CombatUI {
         this.rightSideBarFill.style.width = `${defSidePct}%`;
 
         const total = attCurrent + defCurrent;
-        let attPct = total > 0 ? (attCurrent / total) * 100 : 50;
+        const baseAttPct = total > 0 ? (attCurrent / total) * 100 : 50;
+
+        // 视觉微摆：配合 BattleField 三阶段节奏（30%/70%/100%）
+        let progress = 0;
+        if (this.currentBattle) {
+            const b: any = this.currentBattle;
+            progress = Math.min(1, (b.elapsed || 0) / Math.max(1, b.targetDuration || 17));
+        } else if (this.boundRegionalBattleField && !this.boundRegionalBattleField.isOver) {
+            progress = Math.min(1, this.boundRegionalBattleField.elapsed / Math.max(1, this.boundRegionalBattleField.targetDuration));
+        } else {
+            progress = 1;
+        }
+
+        let swingAmp = 0;
+        if (progress < 0.3) {
+            // 互攻阶段：小幅摇摆，营造角力感
+            swingAmp = 4;
+        } else if (progress < 0.7) {
+            // 相持阶段：摇摆渐收
+            swingAmp = 4 - 3 * ((progress - 0.3) / 0.4); // 4 → 1
+        } else {
+            // 溃败阶段：几乎不摆，真实比例主导
+            swingAmp = 1 * (1 - (progress - 0.7) / 0.3); // 1 → 0
+        }
+
+        const t = performance.now() / 400;
+        const swing = (Math.sin(t) * 0.7 + Math.sin(t * 1.7) * 0.3) * swingAmp;
+        let attPct = Math.max(2, Math.min(98, baseAttPct + swing));
 
         this.attackerBar.style.width = `${attPct}%`;
         this.clashEffect.style.left = `calc(${attPct}% - 8px)`;

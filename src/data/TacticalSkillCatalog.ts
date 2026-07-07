@@ -215,7 +215,7 @@ const FATE: TacticalSkillEntry[] = [
     {
         id: 'ts_013', layer: 'tactical', series: 'fate', index: 13,
         displayName: '背水一战', sourceQuote: '《史记·淮阴侯列传》：“信乃使万人先行，出，背水阵。”',
-        baseEffect: 'luck_variance_self', condition: 'always', phase: 'opening_roll',
+        baseEffect: 'luck_variance_self', condition: 'ratio_underdog', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.65, luckMax: 1.35, engineStatus: 'ready',
     },
     {
@@ -1190,7 +1190,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_173', layer: 'tactical', series: 'enhance', index: 173,
         displayName: '诱敌疲歼', sourceQuote: '《三国史记·乙支文德传》：“伪降诱敌，半渡萨水而击，隋军大溃。”',
-        baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
+        baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {

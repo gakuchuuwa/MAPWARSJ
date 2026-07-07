@@ -223,17 +223,6 @@ export class BattleField {
     }
 
     /**
-     * 三阶段包络：开局渐入(0→1) → 中段满幅(1) → 末段衰减(1→0)
-     * 按 elapsed/targetDuration 比例，短战和长战都自适应
-     */
-    private getPhaseEnvelope(): number {
-        const p = Math.min(1, this.elapsed / Math.max(1, this.targetDuration));
-        if (p < 0.33) return p / 0.33;
-        if (p < 0.67) return 1;
-        return Math.max(0, (1 - p) / 0.33);
-    }
-
-    /**
      * OU 过程更新动量：每 ~targetDuration×10% 秒掷新随机目标，帧间 lerp 平滑
      */
     private updateMomentum(deltaTime: number): void {
@@ -358,7 +347,7 @@ export class BattleField {
         const s = this.predictedStrongerGroup, w = this.predictedWeakerGroup;
         if (!s || !w) return;
         const ratio = s.initialTotalTroops / Math.max(1, w.initialTotalTroops);
-        const balanced = ratio < 1.3;
+        const balanced = ratio < 1.5;
         for (const g of [this.attackerGroup, this.defenderGroup]) {
             const sit = balanced ? 'balance' : (g === s ? 'advantage' : 'disadvantage');
             for (const bu of g.units) {
@@ -629,26 +618,30 @@ export class BattleField {
         const weakerBaseDPS = weakerGroup.totalTroops / timeLeft;
         const strongerBaseDPS = Math.max(0, strongerGroup.totalTroops - strongerFloor) / timeLeft;
 
-        // 动量拉锯：三阶段包络 × 随机动量 → 对峙条来回晃（事件战斗跳过）
+        const progress = this.elapsed / Math.max(1, targetDuration);
+
+        // 动量拉锯（用户 2026-07-08 定，对峙条来回晃，纯视觉不改胜负；事件战斗跳过）：
+        //   摆动包络「前期最大 → 末期收窄」——一开打就大幅拉锯、胜负难料（= 相持）；
+        //   随进度天平定向、摆动收窄（= 胜负渐明）。与 getPhaseEnvelope 的「开局渐入」相反：
+        //   观众要开局就摇摆，不要慢慢起。末期 (1-progress)^0.7 → 0，与收敛加速不冲突。
         if (!this.presetResult) {
             this.updateMomentum(deltaTime);
         }
-        const envelope = this.presetResult ? 0 : this.getPhaseEnvelope();
-        const swing = this.presetResult ? 0 : this.momentumValue * envelope * 0.55;
+        const clampedProgress = Math.min(1, Math.max(0, progress));
+        const swingEnvelope = this.presetResult ? 0 : Math.pow(1 - clampedProgress, 0.7);
+        const swing = this.presetResult ? 0 : this.momentumValue * swingEnvelope * 0.85;
 
         // 三阶段战损节奏（用户 2026-07 定，势均/悬殊同构）：
-        //   第一阶段(<30%)：双方战损恒压到 45% → 对峙条几乎不动 = 相持/顽强抵抗；
-        //   第二阶段(30%~40% 快速放开到全速)：恰逢技能脉冲亮相（延迟≈时长30%）→
-        //     战损在技能亮相瞬间引爆，悬殊「看起来」由技能拉开；
-        //   第三阶段：无需显式加速——收敛模型 troops/timeLeft 自我修正，前期少掉的兵
-        //   在末段 timeLeft 变小时自动补回 → 覆灭自然加快。总时长与胜负不受影响。
-        const progress = this.elapsed / Math.max(1, targetDuration);
+        //   第一阶段(<30%)：双方净战损压到 45%（打得慢、胶着）→ 配合上面的大摆动 = 大幅拉锯难料；
+        //   第二阶段(30%~70% 放开到全速)：恰逢技能脉冲亮相（延迟≈时长30%）→ 悬殊「看起来」由技能引爆；
+        //   第三阶段(最后30%)：收敛模型 troops/timeLeft 自我修正，前期少掉的兵在末段自动补回 → 覆灭自然加快。
+        //   总时长与胜负不受影响。
         const pacing = this.presetResult
             ? 1
             : progress < 0.3
                 ? 0.45
-                : progress < 0.4
-                    ? 0.45 + 0.55 * ((progress - 0.3) / 0.1)
+                : progress < 0.7
+                    ? 0.45 + 0.55 * ((progress - 0.3) / 0.4)
                     : 1;
 
         // swing>0 强方冲击（弱方多掉、强方少掉）；swing<0 弱方反击。
@@ -1069,6 +1062,17 @@ export class BattleField {
         // refreshPredictedSidesFromTotals 已重算 fearDurationMult，重新套用节奏系数
         if (!this.customDuration) {
             this.targetDuration = clampBattleDurationSec(this.targetDuration * this.fearDurationMult);
+        }
+
+        // 三势适性：援军新将补指派局技（仅未被开局/counter设过的新单位，避免覆盖counter、不重复施加）
+        if (unit.generalId && unit.battleOverriddenSkillId === undefined) {
+            const rs = this.predictedStrongerGroup, rw = this.predictedWeakerGroup;
+            if (rs && rw) {
+                const rr = rs.initialTotalTroops / Math.max(1, rw.initialTotalTroops);
+                const rsit = rr < 1.5 ? 'balance' : ((isAttacker ? this.attackerGroup : this.defenderGroup) === rs ? 'advantage' : 'disadvantage');
+                const rsid = resolveSituationalSkillId(unit, rsit as any);
+                if (rsid) unit.battleOverriddenSkillId = rsid;
+            }
         }
 
         tryEmitOpeningTacticalOnReinforcementJoin(
