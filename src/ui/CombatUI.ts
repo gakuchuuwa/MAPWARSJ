@@ -74,8 +74,8 @@ export class CombatUI {
     private rightPortraitFrame!: HTMLDivElement;
     private leftGeneralNameTag!: HTMLDivElement;
     private rightGeneralNameTag!: HTMLDivElement;
-    /** 技能脉冲状态：每侧一局只放一次；双方撞车时后到方延后错开 */
-    private skillPulseShownSides = new Set<'attacker' | 'defender'>();
+    /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
+    private skillPulseShownKeys = new Set<string>();
     private skillPulseLastAt = 0;
     private skillPulseTimers: number[] = [];
     private static readonly SKILL_PULSE_STAGGER_MS = 3000;
@@ -254,17 +254,11 @@ export class CombatUI {
                 10% { 
                     transform: translate(-50%, -50%) scale(1.1); 
                     opacity: 1; 
-                    text-shadow: 
-                        0 0 10px rgba(255,215,0,0.9), 
-                        0 5px 15px rgba(0,0,0,0.9); 
                 }
                 15% { transform: translate(-50%, -50%) scale(1.0); }
                 85% { 
                     transform: translate(-50%, -50%) scale(1.05); 
                     opacity: 1; 
-                    text-shadow: 
-                        0 0 8px rgba(255,215,0,0.5), 
-                        0 5px 15px rgba(0,0,0,0.9); 
                 }
                 100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0; }
             }
@@ -1413,7 +1407,7 @@ export class CombatUI {
             img.style.transition = '';
             img.style.filter = '';
         }
-        this.skillPulseShownSides.clear();
+        this.skillPulseShownKeys.clear();
         this.skillPulseLastAt = 0;
         for (const t of this.skillPulseTimers) window.clearTimeout(t);
         this.skillPulseTimers.length = 0;
@@ -1434,6 +1428,10 @@ export class CombatUI {
             loserImg.style.transition = 'filter 1.6s ease';
             loserImg.style.filter = 'grayscale(0.9) brightness(0.8)';
         }
+        
+        // 战斗结束，清空所有还在排队的武将技脉冲（防止“金蝉脱壳”在胜利结算后弹出）
+        for (const t of this.skillPulseTimers) window.clearTimeout(t);
+        this.skillPulseTimers.length = 0;
     }
 
     // --- LOGIC ---
@@ -1564,6 +1562,8 @@ export class CombatUI {
     /** 战术武将技触发效果（侧边徽章闪烁，不再弹大字） */
     public flashTacticalSkill(displayName: string, generalId?: string): void {
         if (!displayName) return;
+        // 如果战斗已经结束（胜负已分），不再响应任何新的脉冲（例如致死一击触发的逆局技）
+        if (this.boundRegionalBattleField?.isOver) return;
         const addFlash = (badge: HTMLSpanElement | null) => {
             if (!badge || !badge.textContent?.includes(displayName)) return;
             badge.style.animation = 'none';
@@ -1586,9 +1586,11 @@ export class CombatUI {
             const inRight = !!this.findSkillTag(this.rightSkillsBox, displayName);
             if (inLeft !== inRight) side = inLeft ? 'attacker' : 'defender';
         }
-        if (!side || this.skillPulseShownSides.has(side)) return;
-        this.skillPulseShownSides.add(side);
+        if (!side) return;
         const pulseSide = side;
+        const key = `${pulseSide}-${displayName}`;
+        if (this.skillPulseShownKeys.has(key)) return;
+        this.skillPulseShownKeys.add(key);
 
         const run = () => {
             const box = pulseSide === 'attacker' ? this.leftSkillsBox : this.rightSkillsBox;
@@ -1604,6 +1606,8 @@ export class CombatUI {
             const frame = pulseSide === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
             const cutIn = document.createElement('div');
             cutIn.textContent = displayName;
+            const isAtt = pulseSide === 'attacker';
+            const glowColor = isAtt ? 'rgba(255, 140, 0, 0.8)' : 'rgba(0, 200, 255, 0.8)';
             cutIn.style.cssText = `
                 position: absolute;
                 top: 70%;
@@ -1615,7 +1619,8 @@ export class CombatUI {
                 font-family: 'Noto Serif SC', serif;
                 pointer-events: none;
                 z-index: 100;
-                -webkit-text-stroke: 1px rgba(255, 215, 0, 0.4);
+                -webkit-text-stroke: 1px ${isAtt ? 'rgba(255, 100, 0, 0.6)' : 'rgba(0, 150, 255, 0.6)'};
+                text-shadow: 0 0 10px ${glowColor}, 0 5px 15px rgba(0,0,0,0.9);
                 animation: skill-cut-in 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
                 white-space: nowrap;
             `;

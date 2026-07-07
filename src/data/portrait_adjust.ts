@@ -382,11 +382,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -59
         },
-        "/assets/daming/yi_yuqian.png": {
-            "scale": 0.98,
-            "offsetX": 9,
-            "offsetY": 5
-        },
         "/assets/JIANGNAN/wuwu_d_lvmeng.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -5571,6 +5566,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.09,
             "offsetX": 0,
             "offsetY": 3
+        },
+        "/assets/daming/image (3).png": {
+            "scale": 1.07,
+            "offsetX": 10,
+            "offsetY": 6
+        },
+        "/assets/daming/__闲置__daming_13.png": {
+            "scale": 0.98,
+            "offsetX": 9,
+            "offsetY": 5
+        },
+        "/assets/daming/yi_yuqian.png": {
+            "scale": 1.07,
+            "offsetX": 10,
+            "offsetY": 6
         }
     },
     "folderGuides": {

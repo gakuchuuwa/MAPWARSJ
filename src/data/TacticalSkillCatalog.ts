@@ -4012,6 +4012,66 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     },
 ];
 
+// ── 精锐名将收口(宇文泰/帖木儿/石达开) ──────────────
+const UNIQUE_T1_TAIL: TacticalSkillEntry[] = [
+    {
+        id: 'ts_678', layer: 'tactical', series: 'enhance', index: 678,
+        displayName: '府兵摧锋', sourceQuote: '宇文泰创府兵制，练关陇精兵，正面摧敌锋锐。《周书·文帝纪》',
+        baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+        note: '【宇文泰】T0/T1精锐·三势精修·势create·优',
+    },
+    {
+        id: 'ts_679', layer: 'tactical', series: 'fate', index: 679,
+        displayName: '分军迭进', sourceQuote: '邙山之战分军迭进，轮番冲击东魏军阵。《周书·文帝纪》',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        note: '【宇文泰】T0/T1精锐·三势精修·势create·均',
+    },
+    {
+        id: 'ts_680', layer: 'tactical', series: 'enhance', index: 680,
+        displayName: '铁骑横扫', sourceQuote: '西征波斯，铁骑横扫敌阵，数日连破数城。《帖木儿武功记》',
+        baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+        note: '【帖木儿】T0/T1精锐·三势精修·势create·优',
+    },
+    {
+        id: 'ts_681', layer: 'tactical', series: 'fate', index: 681,
+        displayName: '佯退伏截', sourceQuote: '与脱脱迷失战，佯退诱追，伏兵截其归路。《帖木儿武功记》',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        note: '【帖木儿】T0/T1精锐·三势精修·势create·均',
+    },
+    {
+        id: 'ts_682', layer: 'tactical', series: 'casualty', index: 682,
+        displayName: '严阵挫锐', sourceQuote: '与巴耶济德对峙，严阵消耗奥斯曼军锐气待其疲。《帖木儿武功记》',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.25, engineStatus: 'ready',
+        note: '【帖木儿】T0/T1精锐·三势精修·势create·劣',
+    },
+    {
+        id: 'ts_683', layer: 'tactical', series: 'enhance', index: 683,
+        displayName: '出奇袭虚', sourceQuote: '西征以奇兵绕道敌后，攻其不备连克数城。《太平天国野史》',
+        baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+        note: '【石达开】T0/T1精锐·三势精修·势create·优',
+    },
+    {
+        id: 'ts_684', layer: 'tactical', series: 'counter', index: 684,
+        displayName: '谷伏截道', sourceQuote: '山谷设伏，待湘军入圈截断首尾，分割歼之。《太平天国野史》',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
+        note: '【石达开】T0/T1精锐·三势精修·势create·均',
+    },
+    {
+        id: 'ts_685', layer: 'tactical', series: 'casualty', index: 685,
+        displayName: '流军游扰', sourceQuote: '天京变后远征，流动游走各省，使清军疲于奔命。《太平天国野史》',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.25, engineStatus: 'ready',
+        note: '【石达开】T0/T1精锐·三势精修·势create·劣',
+    },
+];
+
 // ── 三十六计补充（36 计 · 六套 × 效果，共享池） ──────────────
 const SANSHILIU: TacticalSkillEntry[] = [
     {
@@ -4551,6 +4611,7 @@ export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
     ...UNIQUE_T1_GENERAL,
     ...UNIQUE_T1_GENERAL2,
     ...UNIQUE_T1_GENERAL3,
+    ...UNIQUE_T1_TAIL,
 ];
 
 export const TACTICAL_SKILL_BY_ID: Readonly<Record<string, TacticalSkillEntry>> = Object.fromEntries(
@@ -4988,6 +5049,14 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_675: 'limited',
     ts_676: 'limited',
     ts_677: 'limited',
+    ts_678: 'limited',
+    ts_679: 'limited',
+    ts_680: 'limited',
+    ts_681: 'limited',
+    ts_682: 'limited',
+    ts_683: 'limited',
+    ts_684: 'limited',
+    ts_685: 'limited',
     ts_387: 'ai_defensive',
     ts_388: 'underdog',
 
