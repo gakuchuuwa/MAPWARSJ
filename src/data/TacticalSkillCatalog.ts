@@ -4296,10 +4296,10 @@ const SANSHILIU: TacticalSkillEntry[] = [
 // ── T0 精锐·名将专属技（三势精修） ──────────────
 const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
     {
-        id: 'ts_420', layer: 'tactical', series: 'enhance', index: 420,
+        id: 'ts_420', layer: 'tactical', series: 'fate', index: 420,
         displayName: '散阵遏骑', sourceQuote: '《宋史·岳飞传》：步卒麻扎刀入阵，砍拐子马足，金军大乱。',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'opening_roll',
-        magnitude: 0.15, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【岳飞】T0精锐·岳飞·势create·均局专属（三势精修）',
     },
     {
@@ -4310,10 +4310,10 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         note: '【岳飞】T0精锐·岳飞·势create·劣局专属（三势精修）',
     },
     {
-        id: 'ts_422', layer: 'tactical', series: 'enhance', index: 422,
+        id: 'ts_422', layer: 'tactical', series: 'fate', index: 422,
         displayName: '弃辎突袭', sourceQuote: '《汉书·卫青霍去病传》：取食于敌，轻骑驰突数千里。',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'opening_roll',
-        magnitude: 0.15, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【霍去病】T0精锐·霍去病·势create·均局专属（三势精修）',
     },
     {
@@ -4331,10 +4331,10 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         note: '【韩信】T0精锐·韩信·势reverse·均局专属（三势精修）',
     },
     {
-        id: 'ts_425', layer: 'tactical', series: 'casualty', index: 425,
+        id: 'ts_425', layer: 'tactical', series: 'fate', index: 425,
         displayName: '拔帜易帜', sourceQuote: '《史记·淮阴侯列传》：遣二千骑入赵壁，拔赵帜立汉赤帜，赵军溃。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
-        magnitude: 2.0, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【韩信】T0精锐·韩信·势reverse·劣局专属（三势精修）',
     },
     {
@@ -4345,17 +4345,17 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         note: '【项羽】T0精锐·项羽·势reverse·均局专属（三势精修）',
     },
     {
-        id: 'ts_427', layer: 'tactical', series: 'casualty', index: 427,
+        id: 'ts_427', layer: 'tactical', series: 'fate', index: 427,
         displayName: '溃围断后', sourceQuote: '《史记·项羽本纪》：垓下突围自断后，斩汉军数百，二十八骑犹列阵。',
-        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'post_battle',
-        magnitude: 0.25, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【项羽】T0精锐·项羽·势reverse·劣局专属（三势精修）',
     },
     {
-        id: 'ts_428', layer: 'tactical', series: 'enhance', index: 428,
+        id: 'ts_428', layer: 'tactical', series: 'fate', index: 428,
         displayName: '诱锋夹截', sourceQuote: '《吴子·图国》：示弱诱秦前锋深入，两翼截断，秦军溃乱。',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'opening_roll',
-        magnitude: 0.15, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【吴起】T0精锐·吴起·势create·均局专属（三势精修）',
     },
     {
@@ -4374,10 +4374,10 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         note: '【谢玄】T0精锐·reverse·势均局专属（三势精修）',
     },
     {
-        id: 'ts_431', layer: 'tactical', series: 'casualty', index: 431,
+        id: 'ts_431', layer: 'tactical', series: 'fate', index: 431,
         displayName: '溃军反扼', sourceQuote: '《晋书·谢玄传》：以少兵扼险要水道，阻遏秦军长驱。',
-        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.25, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【谢玄】T0精锐·reverse·势劣局专属（三势精修）',
     },
     {
@@ -4395,10 +4395,10 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         note: '【刘秀】T0精锐·reverse·势劣局专属（三势精修）',
     },
     {
-        id: 'ts_434', layer: 'tactical', series: 'enhance', index: 434,
+        id: 'ts_434', layer: 'tactical', series: 'fate', index: 434,
         displayName: '贯阵摧坚', sourceQuote: '《旧唐书·太宗本纪》：三千五百玄甲贯夏军十万大阵，阵后张唐帜，夏军溃乱。',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.15, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【李世民】T0精锐·create·势均局专属（三势精修）',
     },
     {
@@ -4409,10 +4409,10 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         note: '【李世民】T0精锐·create·势劣局专属（三势精修）',
     },
     {
-        id: 'ts_436', layer: 'tactical', series: 'enhance', index: 436,
+        id: 'ts_436', layer: 'tactical', series: 'fate', index: 436,
         displayName: '纵舟乱阵', sourceQuote: '《旧唐书·李靖传》：火舟纵流入敌水寨焚其战船，乘烟掩杀破寨。',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.15, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【李靖】T0精锐·create·势均局专属（三势精修）',
     },
     {
@@ -4465,10 +4465,10 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         note: '【成吉思汗】T0精锐·create·势劣局专属（三势精修）',
     },
     {
-        id: 'ts_444', layer: 'tactical', series: 'enhance', index: 444,
+        id: 'ts_444', layer: 'tactical', series: 'fate', index: 444,
         displayName: '中军截阵', sourceQuote: '《金史·太祖本纪》：护步答冈精兵直突辽中军，斩首指挥，辽军全溃。',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.15, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【完颜阿骨打】T0精锐·create·势均局专属（三势精修）',
     },
     {
@@ -4519,10 +4519,10 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
         note: '【王坚】T1精锐·赵宋区·势reverse·均局专属（三势精修）',
     },
     {
-        id: 'ts_451', layer: 'tactical', series: 'casualty', index: 451,
+        id: 'ts_451', layer: 'tactical', series: 'fate', index: 451,
         displayName: '死士逆摧', sourceQuote: '《宋史·王坚传》相关记载：外城将陷，募死士逆冲蒙军先锋推出寨外，蒙哥督战受伤。《宋史·王坚传》',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
-        magnitude: 2.0, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【王坚】T1精锐·赵宋区·势reverse·劣局专属（三势精修）',
     },
     {
@@ -4582,10 +4582,10 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
         note: '【曲端】T1精锐·赵宋区·势create·劣局专属（三势精修）',
     },
     {
-        id: 'ts_460', layer: 'tactical', series: 'enhance', index: 460,
+        id: 'ts_460', layer: 'tactical', series: 'fate', index: 460,
         displayName: '鼓噪乱阵', sourceQuote: '《宋史·狄青传》相关记载：戴铜面具冲入敌阵，令士兵四面擂鼓鸣金，夏军不辨虚实自乱。《宋史·狄青传》',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.15, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
         note: '【狄青】T1精锐·赵宋区·势create·均局专属（三势精修）',
     },
     {

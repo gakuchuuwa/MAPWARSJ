@@ -594,7 +594,15 @@ export class BattleField implements IOpeningPulseSink {
         );
         setActiveOpeningPulseSink(null);
 
-        for (const item of this.openingPulseQueue) {
+        const attGeneralIds = new Set(
+            this.getAttackerUnits().map((u) => u.generalId).filter((id): id is string => !!id),
+        );
+        const ordered = [...this.openingPulseQueue].sort((a, b) => {
+            const aAtt = attGeneralIds.has(a.trigger.generalId) ? 0 : 1;
+            const bAtt = attGeneralIds.has(b.trigger.generalId) ? 0 : 1;
+            return aAtt - bAtt;
+        });
+        for (const item of ordered) {
             dispatchOpeningSkillPulse(item.trigger, item.audioUnitId);
         }
         this.openingPulseQueue.length = 0;

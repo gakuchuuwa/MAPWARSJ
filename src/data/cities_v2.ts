@@ -629,7 +629,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
     
     // ── 京同山川走廊关隘 ──
-    { id: 'city_juyongguan', name: '居庸关', factionId: 'you', lat: 40.28, lng: 116.06, type: 'pass', troops: 20000, region: 'NORTH' },
+    { id: 'city_juyongguan', name: '居庸关', factionId: 'you', lat: 40.28, lng: 116.06, type: 'pass', troops: 20000, region: 'NORTH', mirror: true },
+
 
 
     // ── 晋西北外三关及晋东北内长城关隘 ──

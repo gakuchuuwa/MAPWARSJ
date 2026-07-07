@@ -1032,6 +1032,7 @@ export const FACTIONS: Faction[] = [
              // 井陉关·中山国（原鲜虞）
     { id: 'yi', name: '易州' },                 // 紫荆关·易州
     { id: 'you', name: '幽州' },
+
                 // 居庸关·幽州
     { id: 'heng1', name: '元岳' },
 

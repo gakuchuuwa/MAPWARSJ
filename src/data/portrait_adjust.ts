@@ -1237,11 +1237,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -34
         },
-        "/assets/DIANQIAN/nanzhao_geluofeng.png": {
-            "scale": 1.04,
-            "offsetX": 0,
-            "offsetY": -34
-        },
         "/assets/WESTERN/sai_gaijiayun.png": {
             "scale": 1.04,
             "offsetX": 0,
@@ -2007,11 +2002,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -21
         },
-        "/assets/JIANGNAN/yang_zhou_yangxingmi.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": 15
-        },
         "/assets/JIANGNAN/yezongliu_yezongliu.png": {
             "scale": 1.09,
             "offsetX": 0,
@@ -2171,11 +2161,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 8
-        },
-        "/assets/yingqin/baiyang_mengtian.png": {
-            "scale": 1.14,
-            "offsetX": 0,
-            "offsetY": 7
         },
         "/assets/LINGNAN/linyi_fanyangmai.png": {
             "scale": 1.04,
@@ -2701,11 +2686,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": -28
-        },
-        "/assets/STEPPE/jalair_muhuali.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": -21
         },
         "/assets/TIBET/ali_gandancaiwang.png": {
             "scale": 0.97,
@@ -3272,11 +3252,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -11
         },
-        "/assets/yingqin/__闲置__yingqin_03.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": 15
-        },
         "/assets/yingqin/__闲置__yingqin_04.png": {
             "scale": 1,
             "offsetX": 0,
@@ -3313,9 +3288,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/yingqin/__闲置__yingqin_11.png": {
-            "scale": 1.06,
+            "scale": 1.14,
             "offsetX": 0,
-            "offsetY": 13
+            "offsetY": 7
         },
         "/assets/yingqin/ruo_wangjian.png": {
             "scale": 1.03,
@@ -3558,7 +3533,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/JIANGNAN/image (3).png": {
-            "scale": 1.15,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": -12
         },
@@ -4107,14 +4082,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -21
         },
-        "/assets/JIANGNAN/__闲置__JIANGNAN_06.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -22
-        },
         "/assets/JIANGNAN/liu_yingbu.png": {
             "scale": 1.12,
-            "offsetX": 0,
+            "offsetX": 9,
             "offsetY": -21
         },
         "/assets/LINGNAN/__闲置__LINGNAN_13.png": {
@@ -4327,11 +4297,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 32
         },
-        "/assets/STEPPE/__闲置__STEPPE_16.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/STEPPE/__闲置__STEPPE_18.png": {
             "scale": 1,
             "offsetX": 0,
@@ -4456,11 +4421,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": -26
-        },
-        "/assets/STEPPE/__闲置__STEPPE_23.png": {
-            "scale": 1,
-            "offsetX": 2,
-            "offsetY": 42
         },
         "/assets/NORTH/__闲置__NORTH_06.png": {
             "scale": 0.99,
@@ -5581,6 +5541,46 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 1,
             "offsetY": -47
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_11.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -34
+        },
+        "/assets/DIANQIAN/nanzhao_geluofeng.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/STEPPE/__闲置__STEPPE_38.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -21
+        },
+        "/assets/STEPPE/__闲置__STEPPE_39.png": {
+            "scale": 1,
+            "offsetX": 2,
+            "offsetY": 42
+        },
+        "/assets/STEPPE/jalair_muhuali.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/yingqin/baiyang_mengtian.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/JIANGNAN/__闲置__JIANGNAN_19.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/JIANGNAN/yang_zhou_yangxingmi.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -22
         }
     },
     "folderGuides": {

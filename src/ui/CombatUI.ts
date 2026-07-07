@@ -44,6 +44,8 @@ import {
     getExpeditionForageSkillDisplay,
     canUnitUseGeneralSkills,
     getBattleTerrainKind,
+    resolveSkillPulseStaggerSec,
+    SKILL_PULSE_STAGGER_IDEAL_SEC,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -78,8 +80,8 @@ export class CombatUI {
     private skillPulseShownKeys = new Set<string>();
     private skillPulseLastAt = 0;
     private skillPulseTimers: number[] = [];
-    /** 双方同刻触发时错开间隔：与 skill-cut-in 展示时长一致（3s），避免两技叠在一起 */
-    private static readonly SKILL_PULSE_STAGGER_MS = 3000;
+    /** 慢直播：双方技能 Cut-in 理想错开（与 GeneralSkillCombat 同步） */
+    private static readonly SKILL_PULSE_STAGGER_MS = SKILL_PULSE_STAGGER_IDEAL_SEC * 1000;
 
     // UI Elements
     private centerBackdrop!: HTMLDivElement;
@@ -1634,18 +1636,15 @@ export class CombatUI {
             frame.appendChild(cutIn);
             window.setTimeout(() => cutIn.remove(), 3000);
         };
-        // 双方同刻触发时错开 3s（与 Cut-in 展示时长一致）；若会超出相持段末尾则压缩为立即播放
+        // 长战错开念名；短战（≤10s）或相持窗不足时允许叠字，但攻先守后、双方都必须 Cut-in
         const now = Date.now();
-        let startAt = Math.max(now, this.skillPulseLastAt + CombatUI.SKILL_PULSE_STAGGER_MS);
         const bf = this.boundRegionalBattleField;
-        if (bf && !bf.isOver && bf.targetDuration > 0) {
-            const phase2EndMs = bf.targetDuration * 0.7 * 1000;
-            const elapsedMs = bf.elapsed * 1000;
-            const roomMs = phase2EndMs - elapsedMs;
-            if (roomMs > 0 && startAt - now > roomMs) {
-                startAt = now;
-            }
-        }
+        const staggerMs = bf && !bf.isOver && bf.targetDuration > 0
+            ? resolveSkillPulseStaggerSec(bf.targetDuration, bf.elapsed) * 1000
+            : CombatUI.SKILL_PULSE_STAGGER_MS;
+        const startAt = staggerMs <= 0
+            ? now
+            : Math.max(now, this.skillPulseLastAt + staggerMs);
         this.skillPulseLastAt = startAt;
         if (startAt <= now) {
             run();

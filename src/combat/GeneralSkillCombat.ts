@@ -81,23 +81,68 @@ function sideIsFirstSortie(units: IBattleUnit[]): boolean {
 }
 
 
-/** 名将开局战术 UI 延迟（秒）：对峙立绘就绪后再闪字（短战下限 / 无时长信息时兜底） */
+/** 名将开局战术 UI 延迟（秒）：无时长信息时的兜底 */
 export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
 
-// 开局脉冲按本场目标时长比例后移：长战不至于「开打就放完、后段空一大截」；短战仍早放。
-// 只影响 UI 演出显示时机，不改技能效果生效时机（效果仍走原调度）。
-const OPENING_UI_DELAY_RATIO = 0.3;      // 第一次脉冲 ≈ 目标时长的 30%——对齐三阶段第二幕开场（前1/3=相持，技能亮相引爆悬殊）
-const OPENING_UI_DELAY_MAX_SEC = 20;     // 上限放宽到 20s：60s 长战的脉冲(18s)也能落在第二幕边界
-/** 本场战斗基础目标时长（秒），由 BattleField 开战时注入；用于按比例后移开局脉冲 */
+// 开局脉冲按本场目标时长比例后移；慢直播：短战提早亮相留错开窗，长战多给第一幕胶着。
+const OPENING_UI_DELAY_RATIO = 0.3;
+const OPENING_UI_DELAY_MAX_SEC = 20;
+/** 慢直播：双方技能 Cut-in 理想错开（秒），与 skill-cut-in 动画同长 */
+export const SKILL_PULSE_STAGGER_IDEAL_SEC = 3;
+/** 慢直播：最短错开（秒）；相持段够长时才用，短战可叠字 */
+export const SKILL_PULSE_STAGGER_MIN_SEC = 1.25;
+/** 低于此目标时长（秒）视为短战：双方脉冲可叠放，但必须都播 */
+export const SKILL_PULSE_SHORT_BATTLE_SEC = 10;
+
+/** 本场战斗基础目标时长（秒），由 BattleField 开战时注入 */
 let currentBattleTargetDurationSec = 0;
 export function setBattleTargetDurationForSkillUi(sec: number): void {
     currentBattleTargetDurationSec = Number.isFinite(sec) && sec > 0 ? sec : 0;
 }
-/** 开局脉冲显示延迟（秒）：与 BattleField 相持段阈值同一公式 */
+
+/** 相持第二幕结束时刻（游戏内秒）= 目标时长 × 70% */
+export function resolvePhase2EndSec(targetDurationSec: number): number {
+    return targetDurationSec * 0.7;
+}
+
+/** 自当前时刻起，相持段还剩多少秒（供直播错开/是否播守方脉冲） */
+export function resolvePhase2RemainingSec(targetDurationSec: number, elapsedSec: number): number {
+    return Math.max(0, resolvePhase2EndSec(targetDurationSec) - elapsedSec);
+}
+
+/**
+ * 相持段武将技亮相时刻（游戏内秒）。
+ * 慢直播：短战提早进第二幕留叙述窗；长战多给第一幕胶着，再亮技能。
+ */
 export function resolveStalemateUiThresholdSec(targetDurationSec: number): number {
-    if (targetDurationSec <= 0) return OPENING_TACTICAL_UI_DELAY_SEC;
-    const scaled = targetDurationSec * OPENING_UI_DELAY_RATIO;
-    return Math.max(OPENING_TACTICAL_UI_DELAY_SEC, Math.min(OPENING_UI_DELAY_MAX_SEC, scaled));
+    if (targetDurationSec <= 0) return 2.5;
+    const T = targetDurationSec;
+    const cap = (v: number) => Math.min(OPENING_UI_DELAY_MAX_SEC, v);
+
+    if (T <= 7) {
+        return cap(Math.max(1.4, T * 0.24));
+    }
+    if (T <= 12) {
+        return cap(Math.max(2.2, T * 0.27));
+    }
+    if (T <= 22) {
+        return cap(Math.max(3.2, T * 0.29));
+    }
+    return cap(Math.max(3.5, T * OPENING_UI_DELAY_RATIO));
+}
+
+/**
+ * 双方脉冲错开间隔（秒）：长战理想 3s；短战或相持窗不足则返回 0（可叠字，双方都必须亮相）。
+ */
+export function resolveSkillPulseStaggerSec(targetDurationSec: number, elapsedSec: number): number {
+    const room = resolvePhase2RemainingSec(targetDurationSec, elapsedSec);
+    if (targetDurationSec <= SKILL_PULSE_SHORT_BATTLE_SEC || room < SKILL_PULSE_STAGGER_MIN_SEC * 1.5) {
+        return 0;
+    }
+    return Math.min(
+        SKILL_PULSE_STAGGER_IDEAL_SEC,
+        Math.max(SKILL_PULSE_STAGGER_MIN_SEC, room * 0.48),
+    );
 }
 
 /** @deprecated 仅兼容旧调用；新逻辑以 BattleField.elapsed 与 resolveStalemateUiThresholdSec 为准 */
