@@ -27,6 +27,8 @@ export interface ReinforcementJoinDeps {
     removeArmy: (army: Army) => void;
     isArmyWaitingSiege?: (armyId: string) => boolean;
     resolveBattleCityName?: (center: LatLng) => string;
+    /** 编入攻城战前吸附邻格（仅攻城轮询注入，野战不传） */
+    beforeJoinLegion?: (legion: Army, center: LatLng) => void;
 }
 
 export function isEligibleReinforcement(
@@ -88,6 +90,8 @@ export function tryJoinLegionToBattle(
     if (!isEligibleReinforcement(legion, factionId, battleField, center, deps)) {
         return false;
     }
+
+    deps.beforeJoinLegion?.(legion, center);
 
     legion.stopMovement(true);
     legion.setCombatState(true, battleField.type, center);

@@ -78,7 +78,7 @@ export class CombatUI {
     private skillPulseShownSides = new Set<'attacker' | 'defender'>();
     private skillPulseLastAt = 0;
     private skillPulseTimers: number[] = [];
-    private static readonly SKILL_PULSE_STAGGER_MS = 1800;
+    private static readonly SKILL_PULSE_STAGGER_MS = 3000;
 
     // UI Elements
     private centerBackdrop!: HTMLDivElement;
@@ -981,12 +981,16 @@ export class CombatUI {
                 flex: 0 0 ${uiPx(98)};
                 width: ${uiPx(98)};
                 box-sizing: border-box;
-                background: ${bgColor};
+                background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, ${bgColor} 100%);
+                backdrop-filter: blur(4px);
                 border: 1px solid ${borderColor};
                 border-bottom: 2px solid ${sideColor};
                 border-radius: 4px;
                 padding: ${uiPx(4)} ${uiPx(3)};
-                box-shadow: 0 2px 6px rgba(0,0,0,0.85);
+                box-shadow: 
+                    inset 0 1px 2px rgba(255,255,255,0.15), 
+                    inset 0 -8px 16px ${sideColor}30, 
+                    0 2px 6px rgba(0,0,0,0.85);
                 overflow: hidden;
             `;
             
@@ -1606,11 +1610,11 @@ export class CombatUI {
                 pointer-events: none;
                 z-index: 100;
                 -webkit-text-stroke: 1px rgba(255, 215, 0, 0.4);
-                animation: skill-cut-in 4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                animation: skill-cut-in 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
                 white-space: nowrap;
             `;
             frame.appendChild(cutIn);
-            window.setTimeout(() => cutIn.remove(), 4000);
+            window.setTimeout(() => cutIn.remove(), 3000);
         };
         // 双方触发撞在同一时刻时自动错开：后到的一方延后 1.8 秒再放
         const now = Date.now();
@@ -3172,12 +3176,18 @@ export class CombatUI {
             font-size: ${uiPx(18)};
             font-weight: 900;
             color: #fff8e0;
-            background: linear-gradient(to bottom, rgba(20, 5, 0, 0.85), rgba(40, 10, 5, 0.85));
-            border: 1px solid rgba(220, 160, 60, 0.5);
-            border-radius: 4px;
+            background: linear-gradient(135deg, rgba(55, 30, 15, 0.95) 0%, rgba(20, 5, 0, 0.95) 100%);
+            border-top: 1px solid rgba(255, 215, 0, 0.6);
+            border-left: 1px solid rgba(255, 215, 0, 0.4);
+            border-right: 1px solid rgba(150, 100, 20, 0.6);
+            border-bottom: 1px solid rgba(100, 50, 10, 0.8);
+            border-radius: 3px;
             padding: ${uiPx(14)} ${uiPx(8)};
-            box-shadow: 0 4px 15px rgba(0,0,0,0.9);
-            text-shadow: 0 2px 4px rgba(0,0,0,1);
+            box-shadow: 
+                inset 0 1px 2px rgba(255,255,255,0.15), 
+                inset 0 -4px 8px rgba(0,0,0,0.6), 
+                0 6px 16px rgba(0,0,0,0.9);
+            text-shadow: 0 1px 2px rgba(0,0,0,1), 0 0 8px rgba(255, 200, 50, 0.3);
             z-index: ${T.zIndex.portrait + 5};
             display: none;
             pointer-events: none;

@@ -193,9 +193,9 @@ export class BattleField {
         setBattleTargetDurationForSkillUi(
             clampBattleDurationSec(this.targetDuration * this.computeFearDurationMult())
         );
-        this.pickPredictedSides();
-        // 三势适性：开局定强弱后，给带将单位按局势(优/均/劣)选对应局技（未配3技者回退招牌，现役零影响）
+        // 三势适性：须在 pickPredictedSides 之前——先按兵力比给带将单位选局技，让开局脉冲/战力/卡片都用局技(否则局技未设,三处不一致且战力用招牌)
         this.assignSituationalSkills();
+        this.pickPredictedSides();
         // 威慑系统：定强弱后算战损减免 + 节奏时长系数
         this.applyIntimidationModifiers();
         this.targetDuration = clampBattleDurationSec(this.targetDuration * this.fearDurationMult);
@@ -344,12 +344,13 @@ export class BattleField {
      * 兵力比 <1.3 视为均势；否则强方=优势、弱方=劣势。counter 系战斗中会再覆盖，顺序不冲突。
      */
     private assignSituationalSkills(): void {
-        const s = this.predictedStrongerGroup, w = this.predictedWeakerGroup;
-        if (!s || !w) return;
-        const ratio = s.initialTotalTroops / Math.max(1, w.initialTotalTroops);
-        const balanced = ratio < 1.5;
+        const at = this.attackerGroup.initialTotalTroops;
+        const dt = this.defenderGroup.initialTotalTroops;
         for (const g of [this.attackerGroup, this.defenderGroup]) {
-            const sit = balanced ? 'balance' : (g === s ? 'advantage' : 'disadvantage');
+            const my = g === this.attackerGroup ? at : dt;
+            const opp = g === this.attackerGroup ? dt : at;
+            const r = my / Math.max(1, opp);
+            const sit: 'advantage'|'balance'|'disadvantage' = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
             for (const bu of g.units) {
                 const u = bu.unit;
                 if (!u.generalId) continue;

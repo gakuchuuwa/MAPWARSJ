@@ -35,6 +35,7 @@ import {
     clearSiegeGarrisonBoost,
     type SiegeGarrisonBoostFields,
 } from './SiegeGarrisonTier';
+import { snapArmyToSiegeHexNearCity } from './SiegeHexPlacement';
 
 export class SiegeManager {
     private static get JOIN_RADIUS(): number {
@@ -73,7 +74,15 @@ export class SiegeManager {
                 });
                 return nearest?.name ?? '未知';
             },
+            beforeJoinLegion: (legion, center) => {
+                this.positionArmyForSiege(legion, center);
+            },
         };
+    }
+
+    /** 攻城/排队：吸附到城周邻格，异势不共格 */
+    private positionArmyForSiege(army: Army, cityPos: { lat: number; lng: number }): void {
+        snapArmyToSiegeHexNearCity(army, cityPos, this.legionManager.getArmies());
     }
 
     /** 由 CombatSystem 节流调用：扫描圈内同旗军团并加入进行中的攻城战 */
@@ -600,6 +609,7 @@ export class SiegeManager {
             army.stopMovement(true);
             army.setTargetCity(null);
             army.setCombatState(false);
+            this.positionArmyForSiege(army, cityToLatLng(targetCity));
             this.enqueueSiegeThirdPartyWaiter(targetCity.id, army, siegeData, onSiegeComplete);
             return;
         }
@@ -627,10 +637,9 @@ export class SiegeManager {
             );
         }
 
-        // 沙盒：在哪接触就在哪打，不沿 lastPath 回溯 setPosition（易瞬移到错误路段/远端）
-        siegeLog(`🛤️ [Sandbox Siege] ${army.name} 原地开战，不校正坐标`);
-
         const cityPos = cityToLatLng(targetCity);
+        this.positionArmyForSiege(army, cityPos);
+        siegeLog(`🛤️ [Sandbox Siege] ${army.name} 邻格就位后开战`);
         const excludedIds = new Set<string>([army.id]);
 
         const nearbyDefenderLegions = this.collectDefenderLegionsForSiege(
@@ -761,6 +770,7 @@ export class SiegeManager {
         }
 
         nearbyDefenderLegions.forEach((legion) => {
+            this.positionArmyForSiege(legion, cityPos);
             legion.stopMovement(true);
             legion.setCombatState(true, 'siege', cityPos);
             const legionAdapter = BattleUnitFactory.createAdapter(
@@ -781,6 +791,7 @@ export class SiegeManager {
         });
 
         nearbyAttackerLegions.forEach((legion) => {
+            this.positionArmyForSiege(legion, cityPos);
             legion.stopMovement(true);
             legion.setCombatState(true, 'siege', cityPos);
             const legionAdapter = BattleUnitFactory.createAdapter(
