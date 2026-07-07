@@ -796,6 +796,13 @@ export function getGeneralSkillDisplayTags(
                 skillType: 'tactical',
             });
         }
+    } else if (unit.battleOverriddenSkillId === null && unit.negatedSkillId) {
+        // 战术技被对抗系(混战计)看破/夺走 → 显示原技名+「被看破」,不留空白(战术博弈可见)
+        const neg = getTacticalSkillDef(unit.negatedSkillId);
+        const negName = neg ? neg.displayName : resolveGeneralTacticalEntry(unit.negatedSkillId)?.displayName;
+        if (negName) {
+            tags.push({ name: negName, effectLabel: '被看破', isFamous: famous, skillType: 'tactical' });
+        }
     }
 
     // [2026-07-05 Fix] 战略技作为大地图效果，已剥离战斗面板，转至战略地图 CameraFollowUI 展示。
@@ -1647,6 +1654,7 @@ export function applySkillCountersToUnits(
 
     // Defender counters attacker
     if (defCounter.isNegated && attUnit) {
+        attUnit.negatedSkillId = attSkillId;
         attUnit.battleOverriddenSkillId = null;
         if (defCounter.isStolen && defUnit) {
             defUnit.battleOverriddenSkillId = attSkillId;
@@ -1657,6 +1665,7 @@ export function applySkillCountersToUnits(
 
     // Attacker counters defender
     if (attCounter.isNegated && defUnit) {
+        defUnit.negatedSkillId = defSkillId;
         defUnit.battleOverriddenSkillId = null;
         if (attCounter.isStolen && attUnit) {
             attUnit.battleOverriddenSkillId = defSkillId;

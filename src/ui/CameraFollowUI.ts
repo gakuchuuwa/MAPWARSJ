@@ -44,7 +44,7 @@ export class CameraFollowUI {
         this.createFollowBanner();
     }
 
-    /** 开局尚未手动选军团时，首次出现野战军团则自动跟随兵力最多的一支 */
+    /** 开局尚未手动选军团时，首次出现野战军团则自动跟随（名将优先，否则兵力最多） */
     private autoFollowOnStartPending = true;
     private pendingFollowName: string | null = null;
 
@@ -180,7 +180,7 @@ export class CameraFollowUI {
         this.listHeader = headerTitle as unknown as HTMLDivElement;
 
         const autoFollowLabel = document.createElement('label');
-        autoFollowLabel.title = '无目标时自动跟随最强军团';
+        autoFollowLabel.title = '无目标时自动跟随：名将优先，同档比兵力';
         autoFollowLabel.style.cssText = `
             position: absolute;
             right: 14px;
@@ -521,6 +521,25 @@ export class CameraFollowUI {
         }
     }
 
+    private isFamousGeneralLegion(army: any): boolean {
+        const gid = army.generalId as string | undefined;
+        if (!gid) return false;
+        return GENERAL_PROFILES[gid]?.tier === 'famous';
+    }
+
+    /** 跟随优先级：① 名将 ② 兵力（高者优先） */
+    private compareLegionsForFollowPriority(a: any, b: any): number {
+        const famousA = this.isFamousGeneralLegion(a) ? 1 : 0;
+        const famousB = this.isFamousGeneralLegion(b) ? 1 : 0;
+        if (famousB !== famousA) return famousB - famousA;
+        return (b.getTroops?.() || 0) - (a.getTroops?.() || 0);
+    }
+
+    private pickBestAutoFollowLegion(armies: any[]): any | null {
+        if (armies.length === 0) return null;
+        return [...armies].sort((a, b) => this.compareLegionsForFollowPriority(a, b))[0];
+    }
+
     private formatTroops(n: number): string {
         const t = Math.floor(n);
         if (t >= 10000) return `${(t / 10000).toFixed(1)}万`;
@@ -635,7 +654,7 @@ export class CameraFollowUI {
     }
 
     /**
-     * 每帧：跟随存活军团；阵亡后停留 FOLLOW_SWITCH_DELAY_MS 再切到兵力最多的一支。
+     * 每帧：跟随存活军团；阵亡后停留 FOLLOW_SWITCH_DELAY_MS 再切到下一支（名将优先）。
      */
     public tickFollowCamera(
         getLegionById: (id: string) => { getPosition(): { lat: number; lng: number }; isDestroyed: boolean; getTroops(): number } | undefined,
@@ -783,7 +802,7 @@ export class CameraFollowUI {
         }
     }
 
-    /** 跟随的军团已灭：切到全图兵力最多的军团；若无存活军团则等待新军团 */
+    /** 跟随军团阵亡/无目标时：优先切到名将军团，否则兵力最多 */
     public followLargestLegion(): void {
         this.clearPendingAutoSwitch();
         if (!this.getArmiesFn) {
@@ -801,14 +820,12 @@ export class CameraFollowUI {
             return;
         }
 
-        armies.sort(
-            (a, b) => (b.getTroops?.() || 0) - (a.getTroops?.() || 0)
-        );
-        const best = armies[0];
+        const best = this.pickBestAutoFollowLegion(armies);
+        if (!best) return;
         this.setFollow(best.id, best.name || best.id);
     }
 
-    /** 游戏开始后自动跟随：尚无选中军团且场上已有野战军团时，跟随兵力最多的一支（仅触发一次） */
+    /** 游戏开始后自动跟随：尚无选中军团且场上已有野战军团时（名将优先，仅触发一次） */
     public tryAutoFollowOnStart(): void {
         if (!this.autoFollowOnStartPending || this.followedArmyId) return;
         if (!this.getArmiesFn || this.getActiveLegions().length === 0) return;

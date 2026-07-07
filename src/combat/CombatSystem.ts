@@ -78,6 +78,8 @@ export interface IBattleUnit {
     portraitPath?: string;
     // [NEW] V1 Tactical
     battleOverriddenSkillId?: string | null;
+    /** 被对抗系(混战计)看破/夺走的原战术技id — 仅供卡片显示"技名·被看破",不参与战斗机制 */
+    negatedSkillId?: string | null;
     isFirstSortieSinceDepart?: boolean;
 }
 

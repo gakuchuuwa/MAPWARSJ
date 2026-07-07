@@ -2011,7 +2011,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_310', layer: 'tactical', series: 'enhance', index: 310,
-        displayName: '合兵摧城', sourceQuote: '《旧唐书·天竺传》：王玄策发吐蕃、泥婆罗兵，破中天竺，擒阿罗那顺以归。',
+        displayName: '借兵破竺', sourceQuote: '《旧唐书·天竺传》：王玄策发吐蕃、泥婆罗兵，破中天竺，擒阿罗那顺以归。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2131,7 +2131,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_330', layer: 'tactical', series: 'enhance', index: 330,
-        displayName: '并力摧城', sourceQuote: '《三国史记》：金庾信黄山破百济，协唐灭丽，成三韩一统之业。',
+        displayName: '黄山破敌', sourceQuote: '《三国史记》：金庾信黄山破百济，协唐灭丽，成三韩一统之业。',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -2468,7 +2468,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_386', layer: 'tactical', series: 'enhance', index: 386,
-        displayName: '刺山飞泉', sourceQuote: '《后汉书·耿恭传》："仰天叹曰：闻昔贰师将军拔佩刀刺山，飞泉涌出。"',
+        displayName: '拔刀刺山', sourceQuote: '《后汉书·耿恭传》："仰天叹曰：闻昔贰师将军拔佩刀刺山，飞泉涌出。"',
         baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
         magnitude: 1.55, engineStatus: 'ready',
     },
@@ -3490,7 +3490,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_604', layer: 'tactical', series: 'fate', index: 604,
-        displayName: '持重伺隙2', sourceQuote: '王忠嗣专题记载',
+        displayName: '持重俟机', sourceQuote: '王忠嗣专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
         note: '【王忠嗣】T1精锐·三势精修·势leverage',
@@ -3508,21 +3508,21 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
 const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     {
         id: 'ts_606', layer: 'tactical', series: 'enhance', index: 606,
-        displayName: '飞虎突阵2', sourceQuote: '《史传》李克用：鸦儿军冲锋陷阵突入黄巢军核心',
+        displayName: '鸦军突陷', sourceQuote: '《史传》李克用：鸦儿军冲锋陷阵突入黄巢军核心',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
         note: '【李克用】T1精锐·三势精修·势create·优',
     },
     {
         id: 'ts_607', layer: 'tactical', series: 'counter', index: 607,
-        displayName: '诱敌夹击2', sourceQuote: '《史传》李克用：诱朱温孤军冒进伏兵夹击',
+        displayName: '诱锋合击', sourceQuote: '《史传》李克用：诱朱温孤军冒进伏兵夹击',
         baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1, engineStatus: 'ready',
         note: '【李克用】T1精锐·三势精修·势create·均',
     },
     {
         id: 'ts_608', layer: 'tactical', series: 'casualty', index: 608,
-        displayName: '溃围整众2', sourceQuote: '《史传》李克用：沙陀军被围聚拢溃兵断后保全主力',
+        displayName: '聚溃断后', sourceQuote: '《史传》李克用：沙陀军被围聚拢溃兵断后保全主力',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.25, engineStatus: 'ready',
         note: '【李克用】T1精锐·三势精修·势create·劣',
@@ -3543,7 +3543,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_611', layer: 'tactical', series: 'casualty', index: 611,
-        displayName: '笼城挫锐2', sourceQuote: '《史传》张议潮：据城固守滚木礌石杀伤吐蕃迫其撤围',
+        displayName: '婴城挫锐', sourceQuote: '《史传》张议潮：据城固守滚木礌石杀伤吐蕃迫其撤围',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
         magnitude: 2.0, engineStatus: 'ready',
         note: '【张议潮】T1精锐·三势精修·势create·劣',
@@ -3725,7 +3725,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_637', layer: 'tactical', series: 'counter', index: 637,
-        displayName: '假道迂袭2', sourceQuote: '《史传》速不台：假道西夏迂回金国后方突袭',
+        displayName: '假道潜袭', sourceQuote: '《史传》速不台：假道西夏迂回金国后方突袭',
         baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1, engineStatus: 'ready',
         note: '【速不台】T1精锐·三势精修·势create·均',
@@ -3795,7 +3795,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_647', layer: 'tactical', series: 'casualty', index: 647,
-        displayName: '溃围整旅2', sourceQuote: '《史传》耶律大石：辽亡率残部北走收拢散兵重建西辽',
+        displayName: '收残再起', sourceQuote: '《史传》耶律大石：辽亡率残部北走收拢散兵重建西辽',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.25, engineStatus: 'ready',
         note: '【耶律大石】T1精锐·三势精修·势create·劣',
@@ -3900,14 +3900,14 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_662', layer: 'tactical', series: 'casualty', index: 662,
-        displayName: '据垒耗敌2', sourceQuote: '《史传》耶律休哥：宋军北伐坚守营垒待粮尽退兵',
+        displayName: '深垒耗锐', sourceQuote: '《史传》耶律休哥：宋军北伐坚守营垒待粮尽退兵',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.25, engineStatus: 'ready',
         note: '【耶律休哥】T1精锐·三势精修·势create·劣',
     },
     {
         id: 'ts_663', layer: 'tactical', series: 'enhance', index: 663,
-        displayName: '驰突破阵2', sourceQuote: '《史传》慕容皝：前燕铁骑驰突破阵大败宇文部',
+        displayName: '铁骑陷阵', sourceQuote: '《史传》慕容皝：前燕铁骑驰突破阵大败宇文部',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
         note: '【慕容皝】T1精锐·三势精修·势create·优',
@@ -3949,7 +3949,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_669', layer: 'tactical', series: 'enhance', index: 669,
-        displayName: '有志竟成2', sourceQuote: '《史传》耿弇：攻齐连破数城下临淄事竟成',
+        displayName: '励志克城', sourceQuote: '《史传》耿弇：攻齐连破数城下临淄事竟成',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
         note: '【耿弇】T1精锐·三势精修·势create·优',
