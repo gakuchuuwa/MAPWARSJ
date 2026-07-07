@@ -251,9 +251,22 @@ export class CombatUI {
             }
             @keyframes skill-cut-in {
                 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-                15% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; text-shadow: 0 0 10px rgba(255,160,0,0.8), 0 0 30px rgba(255,0,0,0.6); }
-                80% { transform: translate(-50%, -50%) scale(1.6); opacity: 1; text-shadow: 0 0 5px rgba(255,160,0,0.5); }
-                100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+                10% { 
+                    transform: translate(-50%, -50%) scale(1.1); 
+                    opacity: 1; 
+                    text-shadow: 
+                        0 0 10px rgba(255,215,0,0.9), 
+                        0 5px 15px rgba(0,0,0,0.9); 
+                }
+                15% { transform: translate(-50%, -50%) scale(1.0); }
+                85% { 
+                    transform: translate(-50%, -50%) scale(1.05); 
+                    opacity: 1; 
+                    text-shadow: 
+                        0 0 8px rgba(255,215,0,0.5), 
+                        0 5px 15px rgba(0,0,0,0.9); 
+                }
+                100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0; }
             }
             @keyframes panel-entrance {
                 0% { transform: translate(-50%, 250%); }
@@ -488,22 +501,30 @@ export class CombatUI {
             max-width: ${uiPx(T.clashBarTrackWidth)};
             height: ${uiPx(T.clashBar.height + 4)};
             background: rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255, 215, 0, 0.18);
-            border-radius: 4px;
+            backdrop-filter: blur(6px);
             box-shadow:
+                inset 0 0 0 1px rgba(255, 215, 0, 0.18),
                 inset 0 2px 10px rgba(0,0,0,0.75),
                 0 0 24px rgba(255, 140, 40, 0.15),
                 0 0 18px rgba(70, 150, 180, 0.12);
             position: relative;
             margin-bottom: ${uiPx(8)};
             overflow: hidden;
+            clip-path: polygon(
+                8px 0, calc(100% - 8px) 0, 
+                100% 8px, 100% calc(100% - 8px), 
+                calc(100% - 8px) 100%, 8px 100%, 
+                0 calc(100% - 8px), 0 8px
+            );
         `;
 
         this.defenderBar = document.createElement('div');
         this.defenderBar.style.cssText = `
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, #162530 0%, #2a5565 35%, #3d7a8f 65%, #5aacbe 100%);
+            background: 
+                repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.12) 4px, rgba(0,0,0,0.12) 8px),
+                linear-gradient(90deg, #162530 0%, #2a5565 35%, #3d7a8f 65%, #5aacbe 100%);
             z-index: 1;
         `;
 
@@ -512,7 +533,9 @@ export class CombatUI {
             position: absolute;
             top: 0; left: 0; bottom: 0;
             width: 50%;
-            background: linear-gradient(90deg, #7a1528 0%, #b04818 30%, #d47020 60%, #f0a830 100%);
+            background: 
+                repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px),
+                linear-gradient(90deg, #7a1528 0%, #b04818 30%, #d47020 60%, #f0a830 100%);
             z-index: 2;
             transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
             clip-path: polygon(0 0, 100% 0, calc(100% - ${uiPx(T.clashBar.clipPx)}) 100%, 0% 100%);
@@ -534,7 +557,42 @@ export class CombatUI {
             pointer-events: none;
             transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1);
             animation: clash-pulse 1.2s infinite ease-in-out;
+            mix-blend-mode: screen; /* 滤色模式，使其在底层上爆亮 */
         `;
+
+        // 横向能量耀斑 (Flare)
+        const clashFlare = document.createElement('div');
+        clashFlare.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: ${uiPx(80)};
+            height: ${uiPx(2)};
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 12px #FFD700, 0 0 20px #FF6000;
+            /* 抵消父级的倾斜，让耀斑保持水平横向切割 */
+            transform: translate(-50%, -50%) skewX(18deg);
+            border-radius: 50%;
+            filter: blur(0.5px);
+        `;
+        
+        // 高亮能量核心 (Core)
+        const clashCore = document.createElement('div');
+        clashCore.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: ${uiPx(14)};
+            height: ${uiPx(14)};
+            background: #FFF;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #FFF, 0 0 24px #FFD700;
+            transform: translate(-50%, -50%);
+            filter: blur(1px);
+        `;
+
+        this.clashEffect.appendChild(clashFlare);
+        this.clashEffect.appendChild(clashCore);
 
         this.healthBarContainer.appendChild(this.defenderBar);
         this.healthBarContainer.appendChild(this.attackerBar);
@@ -1547,11 +1605,12 @@ export class CombatUI {
                 font-family: 'Noto Serif SC', serif;
                 pointer-events: none;
                 z-index: 100;
-                animation: skill-cut-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                -webkit-text-stroke: 1px rgba(255, 215, 0, 0.4);
+                animation: skill-cut-in 4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
                 white-space: nowrap;
             `;
             frame.appendChild(cutIn);
-            window.setTimeout(() => cutIn.remove(), 1600);
+            window.setTimeout(() => cutIn.remove(), 4000);
         };
         // 双方触发撞在同一时刻时自动错开：后到的一方延后 1.8 秒再放
         const now = Date.now();

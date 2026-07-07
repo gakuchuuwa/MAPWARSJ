@@ -393,10 +393,15 @@ export function resolvePostBattleCasualtyOutcome(
     }
     // ③ 咬人倍率（败方视角）
     const bite = resolveLoserBiteWinnerLossMult([loserUnit ? getActiveTacticalSkillId(loserUnit) : null], loserCtx);
+    // ③b 三势适性·败不垒保底：逆势将在劣势(兵不到敌67%)战败 → 放大对方战损(让它惨胜)，即使未持败不垒技
+    let biteMult = bite.mult;
+    if (loserProfile?.aptitude === 'reverse' && loserInitialTroops < winnerInitialTroops * 0.67) {
+        biteMult = Math.max(biteMult, APTITUDE_LOSER_BITE_FLOOR);
+    }
 
     return {
         recoveryRate,
-        biteWinnerLossMult: bite.mult,
+        biteWinnerLossMult: biteMult,
         recoveryBlocked: block.blocked,
         recoveryEntry,
         biteEntry: bite.entry,
@@ -590,6 +595,29 @@ export function getOpeningTacticalPowerMultiplier(
     if (!skill || skill.effect !== 'ally_mult_1_2') return 1;
     if (!bridgedOpeningEnhanceActive(sideUnits, opponentUnits, isAttacker, opts)) return 1;
     return skill.magnitude;
+}
+
+// ── 三势适性：势×局 开战战力系数（③整合。初值，最终以 mapwar-skill-balance 模拟器验证后调）──
+// 势与局匹配放大战力：造势顺风碾压 / 借势均势破局 / 逆势逆风爆发(提翻盘机会,不稳赢)。
+// 单一真理表，调数值只改这里，不动逻辑。
+export const APTITUDE_POWER_MULT: Record<string, Record<'advantage'|'balance'|'disadvantage', number>> = {
+    create:   { advantage: 1.35, balance: 1.15, disadvantage: 1.0  },
+    leverage: { advantage: 1.1,  balance: 1.35, disadvantage: 1.15 },
+    reverse:  { advantage: 1.0,  balance: 1.15, disadvantage: 1.3  },
+};
+/** ③b 逆势将在劣势(兵不到敌67%)战败 → 对方战损保底倍率(让它惨胜)；初值,模拟器调 */
+export const APTITUDE_LOSER_BITE_FLOOR = 1.5;
+/** 按该侧带将单位的势 × 当前兵力局(我方/敌方 >1.5优 / <0.67劣 / 中间均)返回开战战力系数 */
+function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[]): number {
+    const unit = findEligibleGeneralUnit(sideUnits);
+    if (!unit?.generalId) return 1;
+    const apt = getGeneralProfile(unit.generalId)?.aptitude;
+    if (!apt) return 1;
+    const st = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const ot = oppUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const r = st / Math.max(1, ot);
+    const sit: 'advantage'|'balance'|'disadvantage' = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
+    return APTITUDE_POWER_MULT[apt]?.[sit] ?? 1;
 }
 
 /**
@@ -1331,6 +1359,10 @@ export function applyOpeningTacticalToRolls(
     outAtt = applyEnemyDebuff(defenderUnits, outAtt, '守方', false);
     outAtt = applyInvRollEdge(attackerUnits, outAtt, '攻方');
     outDef = applyInvRollEdge(defenderUnits, outDef, '守方');
+
+    // 三势适性：势×局 开战战力系数（造势顺风↑ / 逆势逆风↑提翻盘机会；初值待模拟器调 APTITUDE_POWER_MULT）
+    outAtt *= getAptitudePowerMult(attackerUnits, defenderUnits);
+    outDef *= getAptitudePowerMult(defenderUnits, attackerUnits);
 
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }
