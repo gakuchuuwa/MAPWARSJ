@@ -87,6 +87,12 @@ export interface GeneralProfile {
     tacticalSkillId: string;
     /** 仅名将；普将省略 */
     strategicSkillId?: string;
+    /** 三势适性·优势局技（我强敌弱时放）；未配则开局回退 tacticalSkillId */
+    advantageSkillId?: string;
+    /** 三势适性·均势局技（旗鼓相当时放）；未配则回退 tacticalSkillId */
+    balanceSkillId?: string;
+    /** 三势适性·劣势局技（敌强我弱时放）；未配则回退 tacticalSkillId */
+    disadvantageSkillId?: string;
 }
 
 /** 战术十格 */

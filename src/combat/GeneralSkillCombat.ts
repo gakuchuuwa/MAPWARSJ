@@ -59,6 +59,22 @@ export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
     return profile?.tacticalSkillId ?? null;
 }
 
+/** 战斗局势（开局按兵力比判定） */
+export type BattleSituation = 'advantage' | 'balance' | 'disadvantage';
+
+/**
+ * 三势适性：按开局局势(优/均/劣)返回该武将对应局的战术技。
+ * 未配对应局技 → 返回 null（调用方不设 battleOverriddenSkillId，回退招牌单技，现役零影响）。
+ */
+export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation): string | null {
+    if (!unit.generalId) return null;
+    const p = getGeneralProfile(unit.generalId);
+    if (!p) return null;
+    if (situation === 'advantage') return p.advantageSkillId ?? null;
+    if (situation === 'disadvantage') return p.disadvantageSkillId ?? null;
+    return p.balanceSkillId ?? null;
+}
+
 function sideIsFirstSortie(units: IBattleUnit[]): boolean {
     return units.some(u => u.isFirstSortieSinceDepart === true);
 }

@@ -48,6 +48,7 @@ import {
     resolvePostBattleCasualtyOutcome,
     applySkillCountersToUnits,
     setBattleTargetDurationForSkillUi,
+    resolveSituationalSkillId,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 import {
@@ -193,6 +194,8 @@ export class BattleField {
             clampBattleDurationSec(this.targetDuration * this.computeFearDurationMult())
         );
         this.pickPredictedSides();
+        // 三势适性：开局定强弱后，给带将单位按局势(优/均/劣)选对应局技（未配3技者回退招牌，现役零影响）
+        this.assignSituationalSkills();
         // 威慑系统：定强弱后算战损减免 + 节奏时长系数
         this.applyIntimidationModifiers();
         this.targetDuration = clampBattleDurationSec(this.targetDuration * this.fearDurationMult);
@@ -344,6 +347,27 @@ export class BattleField {
             { enemyTroops: weaker.totalTroops, enemyInitialTroops: Math.max(1, weaker.initialTotalTroops) },
         );
         this.strongerCasualtyReduction = res.lossReduction;
+    }
+
+    /**
+     * 三势适性：开局定强弱后，给每个带将单位按局势(优/均/劣)选对应局技，写入 battleOverriddenSkillId。
+     * 未配3技的武将 resolveSituationalSkillId 返回 null → 不写 → 回退招牌单技（现役零影响）。
+     * 兵力比 <1.3 视为均势；否则强方=优势、弱方=劣势。counter 系战斗中会再覆盖，顺序不冲突。
+     */
+    private assignSituationalSkills(): void {
+        const s = this.predictedStrongerGroup, w = this.predictedWeakerGroup;
+        if (!s || !w) return;
+        const ratio = s.initialTotalTroops / Math.max(1, w.initialTotalTroops);
+        const balanced = ratio < 1.3;
+        for (const g of [this.attackerGroup, this.defenderGroup]) {
+            const sit = balanced ? 'balance' : (g === s ? 'advantage' : 'disadvantage');
+            for (const bu of g.units) {
+                const u = bu.unit;
+                if (!u.generalId) continue;
+                const sid = resolveSituationalSkillId(u, sit as any);
+                if (sid) u.battleOverriddenSkillId = sid;
+            }
+        }
     }
 
     /** 预设结果或「初始兵力 × 随机系数」一次定胜负走向 */
