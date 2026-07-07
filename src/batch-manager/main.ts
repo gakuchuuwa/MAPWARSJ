@@ -1474,33 +1474,23 @@ function mdCell(v: string | number | null | undefined): string {
 }
 
 function exportCatalog(): void {
-    if (!rows.length) { showToast('暂无数据可导出', true); return; }
+    if (!filteredRows.length) { showToast('暂无数据可导出', true); return; }
 
     const now = new Date();
     const pad2 = (n: number) => String(n).padStart(2, '0');
     const stamp = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
     const stampFull = `${stamp} ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
 
-    const total = rows.length;
-    const complete = rows.filter(r => r.completeness === 100).length;
-    const noGen = rows.filter(r => !r.generalId).length;
-    const noElite = rows.filter(r => !r.eliteName).length;
-
-    // 按文化区分组（无区归「未分区」）
-    const groups = new Map<string, FactionRow[]>();
-    for (const r of rows) {
-        const key = r.cityRegion || '未分区';
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key)!.push(r);
-    }
-    const regionOrder = (entityData?.regions ?? []).slice();
-    const sortedKeys = [...groups.keys()].sort((a, b) => {
-        const ia = regionOrder.indexOf(a), ib = regionOrder.indexOf(b);
-        if (ia !== -1 && ib !== -1) return ia - ib;
-        if (ia !== -1) return -1;
-        if (ib !== -1) return 1;
-        return a.localeCompare(b);
-    });
+    const exportRows = filteredRows.slice();
+    const totalAll = rows.length;
+    const complete = exportRows.filter(r => r.completeness === 100).length;
+    const noGen = exportRows.filter(r => !r.generalId).length;
+    const noElite = exportRows.filter(r => !r.eliteName).length;
+    const sortLabel = COLUMNS.find(c => c.key === sortCol)?.label ?? sortCol;
+    const sortInfo = `${sortLabel} ${sortAsc ? '升序' : '降序'}`;
+    const filteredNote = exportRows.length < totalAll
+        ? `｜ 已筛选 ${exportRows.length} / ${totalAll}`
+        : '';
 
     const tierCn = (t?: string) => t === 'famous' ? '名将' : t === 'ordinary' ? '普将' : '';
     const header = '| 势力 | 据点 | 坐标(lat, lng) | 旗号 | 武将 | 品阶 | 战术技 | 战略技 | 精锐 | 级别 | 完整度 |';
@@ -1510,31 +1500,30 @@ function exportCatalog(): void {
         '# MAPWAR 实体名册',
         '',
         `> 导出时间：${stampFull}　`,
-        `> 共 ${total} 势力 ｜ 完整 ${complete} ｜ 缺武将 ${noGen} ｜ 缺精锐 ${noElite}`,
+        `> 共 ${exportRows.length} 势力 ｜ 完整 ${complete} ｜ 缺武将 ${noGen} ｜ 缺精锐 ${noElite}${filteredNote}`,
+        `> 排序：${sortInfo}（与当前表格一致）`,
         '',
+        header,
+        divider,
     ];
 
-    for (const key of sortedKeys) {
-        const list = groups.get(key)!.slice().sort((a, b) => a.id.localeCompare(b.id));
-        lines.push(`## ${key}（${list.length}）`, '', header, divider);
-        for (const r of list) {
-            const coord = (r.lat != null && r.lng != null) ? `${r.lat.toFixed(2)}, ${r.lng.toFixed(2)}` : '';
-            lines.push('| ' + [
-                mdCell(r.name),
-                mdCell(r.cityName),
-                mdCell(coord),
-                mdCell(r.flagText),
-                mdCell(r.generalName),
-                mdCell(tierCn(r.tier)),
-                mdCell(skillLabelPlain(r.tacticalSkillId)),
-                mdCell(skillLabelPlain(r.strategicSkillId)),
-                mdCell(r.eliteName),
-                mdCell(r.eliteTier != null ? `T${r.eliteTier}` : ''),
-                mdCell(`${r.completeness}%`),
-            ].join(' | ') + ' |');
-        }
-        lines.push('');
+    for (const r of exportRows) {
+        const coord = (r.lat != null && r.lng != null) ? `${r.lat.toFixed(2)}, ${r.lng.toFixed(2)}` : '';
+        lines.push('| ' + [
+            mdCell(r.name),
+            mdCell(r.cityName),
+            mdCell(coord),
+            mdCell(r.flagText),
+            mdCell(r.generalName),
+            mdCell(tierCn(r.tier)),
+            mdCell(skillLabelPlain(r.tacticalSkillId)),
+            mdCell(skillLabelPlain(r.strategicSkillId)),
+            mdCell(r.eliteName),
+            mdCell(r.eliteTier != null ? `T${r.eliteTier}` : ''),
+            mdCell(`${r.completeness}%`),
+        ].join(' | ') + ' |');
     }
+    lines.push('');
 
     const md = lines.join('\n');
     const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
@@ -1546,7 +1535,7 @@ function exportCatalog(): void {
     a.click();
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showToast(`✓ 已导出 ${total} 势力 → MAPWAR名册_${stamp}.md`);
+    showToast(`✓ 已导出 ${exportRows.length} 势力 → MAPWAR名册_${stamp}.md`);
 }
 
 // ── Events ──

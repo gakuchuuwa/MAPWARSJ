@@ -1737,11 +1737,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -46
         },
-        "/assets/JAPAN/__闲置__JAPAN_02.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/JAPAN/__闲置__JAPAN_03.png": {
             "scale": 1,
             "offsetX": 0,
@@ -1826,11 +1821,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.89,
             "offsetX": 0,
             "offsetY": -38
-        },
-        "/assets/JAPAN/gonggu_gonggudaozhu.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 19
         },
         "/assets/JAPAN/higo_d_juchiwuguang.png": {
             "scale": 0.96,
@@ -5571,6 +5561,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 19,
             "offsetY": 42
+        },
+        "/assets/JAPAN/__闲置__JAPAN_23.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/JAPAN/gonggu_gonggudaozhu.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 3
         }
     },
     "folderGuides": {

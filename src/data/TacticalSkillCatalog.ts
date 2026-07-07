@@ -2485,6 +2485,108 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.55, engineStatus: 'ready',
         note: '赵云长坂坡冲阵救主、汉水以数十骑出围破众；以少打多时爆发。绝地反击(ts_011)的赵云专属签名版',
     },
+// ── T1 精锐·赵宋区·名将专属技 ──────────────
+const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
+    {
+        id: 'ts_448', layer: 'tactical', series: 'enhance', index: 448,
+        displayName: '诱营掩袭', sourceQuote: '《宋史·赵匡胤传》相关记载：清流关夜遣军绕营后，正面佯攻，伏兵掩杀，皇甫晖败走。《宋史·太祖本纪》',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        magnitude: 0.15, engineStatus: 'ready',
+        note: '【赵匡胤】T1精锐·赵宋区·势create·均局专属（三势精修）',
+    },
+    {
+        id: 'ts_449', layer: 'tactical', series: 'casualty', index: 449,
+        displayName: '溃流断遏', sourceQuote: '《宋史·赵匡胤传》相关记载：寿州友军溃退，率殿后精骑扼守隘口横击追兵，溃兵收拢整编。《宋史·太祖本纪》',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.25, engineStatus: 'ready',
+        note: '【赵匡胤】T1精锐·赵宋区·势create·劣局专属（三势精修）',
+    },
+    {
+        id: 'ts_450', layer: 'tactical', series: 'enhance', index: 450,
+        displayName: '塞道遏冲', sourceQuote: '《宋史·王坚传》相关记载：钓鱼山设多重塞垒，箭石交替遏阻蒙军冲锋，久攻不克。《宋史·王坚传》',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        magnitude: 0.15, engineStatus: 'ready',
+        note: '【王坚】T1精锐·赵宋区·势reverse·均局专属（三势精修）',
+    },
+    {
+        id: 'ts_451', layer: 'tactical', series: 'casualty', index: 451,
+        displayName: '死士逆摧', sourceQuote: '《宋史·王坚传》相关记载：外城将陷，募死士逆冲蒙军先锋推出寨外，蒙哥督战受伤。《宋史·王坚传》',
+        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
+        magnitude: 2.0, engineStatus: 'ready',
+        note: '【王坚】T1精锐·赵宋区·势reverse·劣局专属（三势精修）',
+    },
+    {
+        id: 'ts_452', layer: 'tactical', series: 'enhance', index: 452,
+        displayName: '叠砦疲敌', sourceQuote: '《宋史·孟珙传》相关记载：黄州城外设层砦互为掎角，金军屡犯屡耗，力竭自退。《宋史·孟珙传》',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        magnitude: 0.15, engineStatus: 'ready',
+        note: '【孟珙】T1精锐·赵宋区·势reverse·均局专属（三势精修）',
+    },
+    {
+        id: 'ts_453', layer: 'tactical', series: 'casualty', index: 453,
+        displayName: '间道夺粮', sourceQuote: '《宋史·孟珙传》相关记载：蔡州遣轻兵出间道夺金军城外存粮，金军食尽城破。《宋史·孟珙传》',
+        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
+        magnitude: 2.0, engineStatus: 'ready',
+        note: '【孟珙】T1精锐·赵宋区·势reverse·劣局专属（三势精修）',
+    },
+    {
+        id: 'ts_454', layer: 'tactical', series: 'enhance', index: 454,
+        displayName: '伏隘截锋', sourceQuote: '《宋史·杨业传》相关记载：雁门出数百骑诱敌入山隘，伏兵断其首尾，大破辽军。《宋史·杨业传》',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        magnitude: 0.15, engineStatus: 'ready',
+        note: '【杨业】T1精锐·赵宋区·势reverse·均局专属（三势精修）',
+    },
+    {
+        id: 'ts_455', layer: 'tactical', series: 'casualty', index: 455,
+        displayName: '断后摧追', sourceQuote: '《宋史·杨业传》相关记载：雍熙败退，掩护百姓内迁，残兵断后力战，重伤被擒绝食死。《宋史·杨业传》',
+        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
+        magnitude: 2.0, engineStatus: 'ready',
+        note: '【杨业】T1精锐·赵宋区·势reverse·劣局专属（三势精修）',
+    },
+    {
+        id: 'ts_456', layer: 'tactical', series: 'enhance', index: 456,
+        displayName: '散骑扰牧', sourceQuote: '《宋史·王韶传》相关记载：熙河派轻骑深入蕃区袭扰畜群，吐蕃各部疲于救援，联盟自裂。《宋史·王韶传》',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        magnitude: 0.15, engineStatus: 'ready',
+        note: '【王韶】T1精锐·赵宋区·势create·均局专属（三势精修）',
+    },
+    {
+        id: 'ts_457', layer: 'tactical', series: 'casualty', index: 457,
+        displayName: '断道遏援', sourceQuote: '《宋史·王韶传》相关记载：河州遭蕃部前后夹击，精兵扼险隘断其援道，急攻破城。《宋史·王韶传》',
+        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
+        magnitude: 2.0, engineStatus: 'ready',
+        note: '【王韶】T1精锐·赵宋区·势create·劣局专属（三势精修）',
+    },
+    {
+        id: 'ts_458', layer: 'tactical', series: 'enhance', index: 458,
+        displayName: '叠伏遏骑', sourceQuote: '《宋史·曲端传》相关记载：延安阵前设数道绊马索陷坑，金骑冲锋人马交绊，阵型自乱。《宋史·曲端传》',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        magnitude: 0.15, engineStatus: 'ready',
+        note: '【曲端】T1精锐·赵宋区·势create·均局专属（三势精修）',
+    },
+    {
+        id: 'ts_459', layer: 'tactical', series: 'casualty', index: 459,
+        displayName: '严垒止溃', sourceQuote: '《宋史·曲端传》相关记载：陕西诸路溃败，收拢散卒退守泾州，严令不得出战，军势复振。《宋史·曲端传》',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.25, engineStatus: 'ready',
+        note: '【曲端】T1精锐·赵宋区·势create·劣局专属（三势精修）',
+    },
+    {
+        id: 'ts_460', layer: 'tactical', series: 'enhance', index: 460,
+        displayName: '鼓噪乱阵', sourceQuote: '《宋史·狄青传》相关记载：戴铜面具冲入敌阵，令士兵四面擂鼓鸣金，夏军不辨虚实自乱。《宋史·狄青传》',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        magnitude: 0.15, engineStatus: 'ready',
+        note: '【狄青】T1精锐·赵宋区·势create·均局专属（三势精修）',
+    },
+    {
+        id: 'ts_461', layer: 'tactical', series: 'casualty', index: 461,
+        displayName: '溃旅扼门', sourceQuote: '《宋史·狄青传》相关记载：溃兵争涌入营门，持刀立门勒令返身列阵拒敌，夏军见复整遂退。《宋史·狄青传》',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.25, engineStatus: 'ready',
+        note: '【狄青】T1精锐·赵宋区·势create·劣局专属（三势精修）',
+    },
+];
+
 ];
 
 // ── 三十六计补充（36 计 · 六套 × 效果，共享池） ──────────────
@@ -2919,6 +3021,7 @@ export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
     ...UNIQUE_T1,
     ...SANSHILIU,
     ...UNIQUE_T0_REVISE,
+    ...UNIQUE_T1_ZHAO,
 ];
 
 export const TACTICAL_SKILL_BY_ID: Readonly<Record<string, TacticalSkillEntry>> = Object.fromEntries(
@@ -3126,6 +3229,20 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_445: 'limited',
     ts_446: 'limited',
     ts_447: 'limited',
+    ts_448: 'limited',
+    ts_449: 'limited',
+    ts_450: 'limited',
+    ts_451: 'limited',
+    ts_452: 'limited',
+    ts_453: 'limited',
+    ts_454: 'limited',
+    ts_455: 'limited',
+    ts_456: 'limited',
+    ts_457: 'limited',
+    ts_458: 'limited',
+    ts_459: 'limited',
+    ts_460: 'limited',
+    ts_461: 'limited',
     ts_387: 'ai_defensive',
     ts_388: 'underdog',
 
