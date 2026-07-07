@@ -49,6 +49,12 @@ import {
     applySkillCountersToUnits,
     setBattleTargetDurationForSkillUi,
     resolveSituationalSkillId,
+    scheduleStalemateSkillShowcasePulses,
+    setActiveOpeningPulseSink,
+    resolveStalemateUiThresholdSec,
+    dispatchOpeningSkillPulse,
+    type IOpeningPulseSink,
+    type TacticalSkillTrigger,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 import {
@@ -77,7 +83,7 @@ export interface FactionGroup {
 
 // ==================== 战场类 ====================
 
-export class BattleField {
+export class BattleField implements IOpeningPulseSink {
     public id: string;
     public isOver: boolean = false;
     /** 结算后的胜方势力（CombatUI 战报定格卡读取；未结算时为 null） */
@@ -132,6 +138,9 @@ export class BattleField {
     private strongerCasualtyReduction: number = 0;
     /** 穷寇勿迫：弱方已跌破 20% 初始并触发过一次减损重算（锁存防抖，翻转时清） */
     private poorBanditLatched: boolean = false;
+    /** 相持段（≈30% 时长）前排队、之后统一释放的开局战术脉冲 */
+    private readonly openingPulseQueue: Array<{ trigger: TacticalSkillTrigger; audioUnitId?: string }> = [];
+    private stalemateSkillUiReleased = false;
 
     // 伤害系数现在从 GameConfig 读取
 
@@ -374,58 +383,63 @@ export class BattleField {
         }
         const attUnits = this.attackerGroup.units.map((bu) => bu.unit);
         const defUnits = this.defenderGroup.units.map((bu) => bu.unit);
-        const attAdj = sumCultureAdjustedTroops(attUnits);
-        const defAdj = sumCultureAdjustedTroops(defUnits);
-        const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
+        setActiveOpeningPulseSink(this);
+        try {
+            const attAdj = sumCultureAdjustedTroops(attUnits);
+            const defAdj = sumCultureAdjustedTroops(defUnits);
+            const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
 
-        // [对抗系] 战前拦截：否决或夺取敌方战术技
-        applySkillCountersToUnits(attUnits, defUnits, this.type, terrain);
+            // [对抗系] 战前拦截：否决或夺取敌方战术技
+            applySkillCountersToUnits(attUnits, defUnits, this.type, terrain);
 
-        applyOpeningTacticalPreRoll(
-            attUnits,
-            defUnits,
-            this.elapsed,
-            (unit, startElapsed, durationSec) => this.scheduleInvincible(unit, startElapsed, durationSec),
-            {
-                attacker: this.attackerTacticalTriggered,
-                defender: this.defenderTacticalTriggered,
-            },
-            true,
-            this.openingTacticalUiShown,
-            { battleType: this.type, terrain },
-        );
-        this.updateGroupStats();
-        this.attackerGroup.initialTotalTroops = this.attackerGroup.totalTroops;
-        this.defenderGroup.initialTotalTroops = this.defenderGroup.totalTroops;
+            applyOpeningTacticalPreRoll(
+                attUnits,
+                defUnits,
+                this.elapsed,
+                (unit, startElapsed, durationSec) => this.scheduleInvincible(unit, startElapsed, durationSec),
+                {
+                    attacker: this.attackerTacticalTriggered,
+                    defender: this.defenderTacticalTriggered,
+                },
+                true,
+                this.openingTacticalUiShown,
+                { battleType: this.type, terrain },
+            );
+            this.updateGroupStats();
+            this.attackerGroup.initialTotalTroops = this.attackerGroup.totalTroops;
+            this.defenderGroup.initialTotalTroops = this.defenderGroup.totalTroops;
 
-        const attFate = resolveSideOpeningFateLuck(
-            attUnits, defUnits, this.type, terrain, true,
-            { emitUi: true, openingUiShown: this.openingTacticalUiShown },
-        );
-        const defFate = resolveSideOpeningFateLuck(
-            defUnits, attUnits, this.type, terrain, false,
-            { emitUi: true, openingUiShown: this.openingTacticalUiShown },
-        );
-        // 缓存开战命运 luck，供 refresh（援军编入 / 逆局）确定性回放，避免 #12–#20 掷点被抹掉
-        this.attackerOpeningFateLuck = attFate.luck;
-        this.defenderOpeningFateLuck = defFate.luck;
-        const attRoll = sideBasePower(attUnits) * attFate.luck;
-        const defRoll = sideBasePower(defUnits) * defFate.luck;
-        const strategic = applyGeneralSkillSideRollMultipliers(
-            attUnits,
-            defUnits,
-            attRoll,
-            defRoll,
-            this.type,
-            { openingUiShown: this.openingTacticalUiShown },
-        );
-        gameLog(
-            'battle',
-            `[BattleField] 掷色: 攻有效 ${strategic.attRoll.toFixed(0)} vs 守有效 ${strategic.defRoll.toFixed(0)} ` +
-            `(文化修正后 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)}，` +
-            `原兵力 ${this.attackerGroup.initialTotalTroops} vs ${this.defenderGroup.initialTotalTroops}，含命运系 luck)`
-        );
-        this.applyPredictedSidesFromRoll(strategic.attRoll, strategic.defRoll);
+            const attFate = resolveSideOpeningFateLuck(
+                attUnits, defUnits, this.type, terrain, true,
+                { emitUi: true, openingUiShown: this.openingTacticalUiShown },
+            );
+            const defFate = resolveSideOpeningFateLuck(
+                defUnits, attUnits, this.type, terrain, false,
+                { emitUi: true, openingUiShown: this.openingTacticalUiShown },
+            );
+            // 缓存开战命运 luck，供 refresh（援军编入 / 逆局）确定性回放，避免 #12–#20 掷点被抹掉
+            this.attackerOpeningFateLuck = attFate.luck;
+            this.defenderOpeningFateLuck = defFate.luck;
+            const attRoll = sideBasePower(attUnits) * attFate.luck;
+            const defRoll = sideBasePower(defUnits) * defFate.luck;
+            const strategic = applyGeneralSkillSideRollMultipliers(
+                attUnits,
+                defUnits,
+                attRoll,
+                defRoll,
+                this.type,
+                { openingUiShown: this.openingTacticalUiShown },
+            );
+            gameLog(
+                'battle',
+                `[BattleField] 掷色: 攻有效 ${strategic.attRoll.toFixed(0)} vs 守有效 ${strategic.defRoll.toFixed(0)} ` +
+                `(文化修正后 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)}，` +
+                `原兵力 ${this.attackerGroup.initialTotalTroops} vs ${this.defenderGroup.initialTotalTroops}，含命运系 luck)`
+            );
+            this.applyPredictedSidesFromRoll(strategic.attRoll, strategic.defRoll);
+        } finally {
+            setActiveOpeningPulseSink(null);
+        }
     }
 
     private applyPredictedSidesFromRoll(attRoll: number, defRoll: number): void {
@@ -559,6 +573,33 @@ export class BattleField {
         });
     }
 
+    /** 开战战术脉冲入队：等游戏内 elapsed 达相持段阈值再统一释放 */
+    public queueOpeningSkillPulse(trigger: TacticalSkillTrigger, audioUnitId?: string): void {
+        this.openingPulseQueue.push({ trigger, audioUnitId });
+    }
+
+    /**
+     * 相持第二幕（≈ targetDuration×30%）释放已排队脉冲；战斗 UI 晚开时由 showRegional 补调。
+     */
+    public tryReleaseStalemateSkillUi(): void {
+        if (this.stalemateSkillUiReleased || this.isOver) return;
+        const threshold = resolveStalemateUiThresholdSec(this.targetDuration);
+        if (this.elapsed < threshold) return;
+
+        this.stalemateSkillUiReleased = true;
+        setActiveOpeningPulseSink(this);
+        scheduleStalemateSkillShowcasePulses(
+            this.getAttackerUnits(),
+            this.getDefenderUnits(),
+        );
+        setActiveOpeningPulseSink(null);
+
+        for (const item of this.openingPulseQueue) {
+            dispatchOpeningSkillPulse(item.trigger, item.audioUnitId);
+        }
+        this.openingPulseQueue.length = 0;
+    }
+
     /**
      * 每帧更新战斗
      */
@@ -567,6 +608,7 @@ export class BattleField {
 
         // deltaTime = gameDelta（GameApp 已乘 timeScale）
         this.elapsed += deltaTime;
+        this.tryReleaseStalemateSkillUi();
 
         // 更新各组总兵力
         this.updateGroupStats();
@@ -1082,6 +1124,8 @@ export class BattleField {
             this.getAttackerUnits(),
             this.getDefenderUnits(),
             this.openingTacticalUiShown,
+            this,
+            this.stalemateSkillUiReleased,
         );
 
         this.reconcileSiegeGarrisonBoostForJoinedUnit(unit, isAttacker);

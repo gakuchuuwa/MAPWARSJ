@@ -78,6 +78,7 @@ export class CombatUI {
     private skillPulseShownKeys = new Set<string>();
     private skillPulseLastAt = 0;
     private skillPulseTimers: number[] = [];
+    /** 双方同刻触发时错开间隔：与 skill-cut-in 展示时长一致（3s），避免两技叠在一起 */
     private static readonly SKILL_PULSE_STAGGER_MS = 3000;
 
     // UI Elements
@@ -1428,10 +1429,7 @@ export class CombatUI {
             loserImg.style.transition = 'filter 1.6s ease';
             loserImg.style.filter = 'grayscale(0.9) brightness(0.8)';
         }
-        
-        // 战斗结束，清空所有还在排队的武将技脉冲（防止“金蝉脱壳”在胜利结算后弹出）
-        for (const t of this.skillPulseTimers) window.clearTimeout(t);
-        this.skillPulseTimers.length = 0;
+        // 不在此清空 skillPulseTimers：相持段错开中的后手脉冲须播完；run() 内 isOver 挡逆局/致死技即可
     }
 
     // --- LOGIC ---
@@ -1482,6 +1480,7 @@ export class CombatUI {
 
         if (this.boundRegionalBattleField) {
             this.refreshRegionalSafetyDeadline();
+            this.boundRegionalBattleField.tryReleaseStalemateSkillUi();
         } else {
             const wallMs = Math.max(3500, (battleDurationGameSec / this.lastTimeScale) * 1000);
             this.regionalSafetyDeadline = performance.now() + wallMs + CombatUI.REGIONAL_TAIL_MS;
@@ -1575,16 +1574,16 @@ export class CombatUI {
 
         // —— 立绘/标签脉冲 ——
         // 武将技一局只放一次：UI 事件可能被重复广播（援军编入补发等），每侧一局只脉冲一次。
-        // 侧别按 generalId 与名牌精确对应；generalId 对不上当前立绘（如援军将领）不脉冲，防张冠李戴。
+        // 侧别优先 generalId 与名牌对应；对不上时回退技能标签（与侧栏卡片一致，防攻城多单位张冠李戴）。
         let side: 'attacker' | 'defender' | null = null;
+        const inLeft = !!this.findSkillTag(this.leftSkillsBox, displayName);
+        const inRight = !!this.findSkillTag(this.rightSkillsBox, displayName);
         if (generalId) {
             if (this.leftGeneralNameTag.dataset.generalId === generalId) side = 'attacker';
             else if (this.rightGeneralNameTag.dataset.generalId === generalId) side = 'defender';
-        } else {
-            // 无 generalId 的旧调用：仅当技名只出现在一侧时才可归属（两边同名技时跳过）
-            const inLeft = !!this.findSkillTag(this.leftSkillsBox, displayName);
-            const inRight = !!this.findSkillTag(this.rightSkillsBox, displayName);
-            if (inLeft !== inRight) side = inLeft ? 'attacker' : 'defender';
+        }
+        if (!side && inLeft !== inRight) {
+            side = inLeft ? 'attacker' : 'defender';
         }
         if (!side) return;
         const pulseSide = side;
@@ -1593,6 +1592,7 @@ export class CombatUI {
         this.skillPulseShownKeys.add(key);
 
         const run = () => {
+            if (this.boundRegionalBattleField?.isOver) return;
             const box = pulseSide === 'attacker' ? this.leftSkillsBox : this.rightSkillsBox;
             const tag = this.findSkillTag(box, displayName);
             if (tag) {
@@ -1607,29 +1607,45 @@ export class CombatUI {
             const cutIn = document.createElement('div');
             cutIn.textContent = displayName;
             const isAtt = pulseSide === 'attacker';
-            const glowColor = isAtt ? 'rgba(255, 140, 0, 0.8)' : 'rgba(0, 200, 255, 0.8)';
+            const coreGlow = isAtt ? 'rgba(255, 100, 0, 1)' : 'rgba(0, 150, 255, 1)';
+            const wideGlow = isAtt ? 'rgba(255, 50, 0, 0.8)' : 'rgba(0, 100, 255, 0.8)';
             cutIn.style.cssText = `
                 position: absolute;
                 top: 70%;
                 left: 50%;
                 transform: translate(-50%, -50%) scale(0.5);
-                color: #fff;
-                font-size: ${uiPx(42)};
+                color: #ffffff;
+                font-size: ${uiPx(46)};
                 font-weight: 900;
                 font-family: 'Noto Serif SC', serif;
+                font-style: italic;
+                letter-spacing: ${uiPx(4)};
                 pointer-events: none;
                 z-index: 100;
-                -webkit-text-stroke: 1px ${isAtt ? 'rgba(255, 100, 0, 0.6)' : 'rgba(0, 150, 255, 0.6)'};
-                text-shadow: 0 0 10px ${glowColor}, 0 5px 15px rgba(0,0,0,0.9);
+                text-shadow: 
+                    0 2px 2px rgba(0,0,0,0.9),
+                    0 0 10px ${coreGlow},
+                    0 0 20px ${coreGlow},
+                    0 0 40px ${wideGlow},
+                    0 10px 20px rgba(0,0,0,0.9);
                 animation: skill-cut-in 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
                 white-space: nowrap;
             `;
             frame.appendChild(cutIn);
             window.setTimeout(() => cutIn.remove(), 3000);
         };
-        // 双方触发撞在同一时刻时自动错开：后到的一方延后 1.8 秒再放
+        // 双方同刻触发时错开 3s（与 Cut-in 展示时长一致）；若会超出相持段末尾则压缩为立即播放
         const now = Date.now();
-        const startAt = Math.max(now, this.skillPulseLastAt + CombatUI.SKILL_PULSE_STAGGER_MS);
+        let startAt = Math.max(now, this.skillPulseLastAt + CombatUI.SKILL_PULSE_STAGGER_MS);
+        const bf = this.boundRegionalBattleField;
+        if (bf && !bf.isOver && bf.targetDuration > 0) {
+            const phase2EndMs = bf.targetDuration * 0.7 * 1000;
+            const elapsedMs = bf.elapsed * 1000;
+            const roomMs = phase2EndMs - elapsedMs;
+            if (roomMs > 0 && startAt - now > roomMs) {
+                startAt = now;
+            }
+        }
         this.skillPulseLastAt = startAt;
         if (startAt <= now) {
             run();
@@ -2834,13 +2850,13 @@ export class CombatUI {
 
         let swingAmp = 0;
         if (progress < 0.3) {
-            // 互攻阶段：小幅摇摆，营造角力感
-            swingAmp = 4;
+            // 第一幕胶着：小幅角力，不与相持段技能脉冲抢戏
+            swingAmp = 1;
         } else if (progress < 0.7) {
-            // 相持阶段：摇摆渐收
+            // 第二幕相持（≈30% 武将技脉冲）：摆幅拉满后渐收，与亮相同刻起大幅拉锯
             swingAmp = 4 - 3 * ((progress - 0.3) / 0.4); // 4 → 1
         } else {
-            // 溃败阶段：几乎不摆，真实比例主导
+            // 第三幕溃败：几乎不摆，真实兵力比主导
             swingAmp = 1 * (1 - (progress - 0.7) / 0.3); // 1 → 0
         }
 

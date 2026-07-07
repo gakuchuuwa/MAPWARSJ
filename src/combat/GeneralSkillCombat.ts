@@ -36,6 +36,7 @@ import {
 import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
 import { COMEBACK_TROOP_THRESHOLD } from './TacticalConstants';
+import { readSiegeGarrisonEliteName } from './SiegeGarrisonTier';
 import { gameLog } from '../utils/GameLogger';
 import { audioManager } from '../audio/AudioManager';
 
@@ -92,25 +93,52 @@ let currentBattleTargetDurationSec = 0;
 export function setBattleTargetDurationForSkillUi(sec: number): void {
     currentBattleTargetDurationSec = Number.isFinite(sec) && sec > 0 ? sec : 0;
 }
-/** 开局脉冲显示延迟：按本场目标时长比例，钳在 [默认下限, 上限]；无时长信息则回退默认 */
-function resolveOpeningUiDelaySec(): number {
-    if (currentBattleTargetDurationSec <= 0) return OPENING_TACTICAL_UI_DELAY_SEC;
-    const scaled = currentBattleTargetDurationSec * OPENING_UI_DELAY_RATIO;
+/** 开局脉冲显示延迟（秒）：与 BattleField 相持段阈值同一公式 */
+export function resolveStalemateUiThresholdSec(targetDurationSec: number): number {
+    if (targetDurationSec <= 0) return OPENING_TACTICAL_UI_DELAY_SEC;
+    const scaled = targetDurationSec * OPENING_UI_DELAY_RATIO;
     return Math.max(OPENING_TACTICAL_UI_DELAY_SEC, Math.min(OPENING_UI_DELAY_MAX_SEC, scaled));
 }
 
-/**
- * 统一调度开局技能 UI 脉冲：按本场时长比例延迟（对齐三阶段第二幕开场），音效与脉冲同刻。
- * 所有「开局」路径（V1/乘区/压敌/命运）都必须走比例延迟——散落的裸 setTimeout 固定 3s
- * 会让不同技能类的脉冲时刻不一致（2026-07 全面检查里揪出的坑）。
- */
+/** @deprecated 仅兼容旧调用；新逻辑以 BattleField.elapsed 与 resolveStalemateUiThresholdSec 为准 */
+function resolveOpeningUiDelaySec(): number {
+    return resolveStalemateUiThresholdSec(currentBattleTargetDurationSec);
+}
+
+/** 开战战术脉冲入队目标（由 BattleField 在相持段统一释放） */
+export interface IOpeningPulseSink {
+    queueOpeningSkillPulse(trigger: TacticalSkillTrigger, audioUnitId?: string): void;
+}
+
+let activeOpeningPulseSink: IOpeningPulseSink | null = null;
+
+export function setActiveOpeningPulseSink(sink: IOpeningPulseSink | null): void {
+    activeOpeningPulseSink = sink;
+}
+
+function fireOpeningPulse(trigger: TacticalSkillTrigger, audioUnitId?: string): void {
+    onTacticalSkillTriggered?.(trigger);
+    if (!audioUnitId) return;
+    const followedId = getFollowedArmyId();
+    if (followedId && followedId === audioUnitId) {
+        audioManager.play('general_skill');
+    }
+}
+
+/** BattleField 在相持段阈值到达时统一释放已排队脉冲 */
+export function dispatchOpeningSkillPulse(trigger: TacticalSkillTrigger, audioUnitId?: string): void {
+    fireOpeningPulse(trigger, audioUnitId);
+}
+
+/** 开局/相持亮相：入队等 BattleField.elapsed 达阈值再播，禁止 setTimeout 抢跑第一幕 */
 function scheduleOpeningTacticalUi(unit: IBattleUnit, trigger: TacticalSkillTrigger): void {
-    const delay = resolveOpeningUiDelaySec();
+    const delay = resolveStalemateUiThresholdSec(currentBattleTargetDurationSec);
     trigger.uiDelaySec = delay;
-    window.setTimeout(() => {
-        onTacticalSkillTriggered?.(trigger);
-        playGeneralSkillAudio(unit);
-    }, delay * 1000);
+    if (activeOpeningPulseSink) {
+        activeOpeningPulseSink.queueOpeningSkillPulse(trigger, unit.id);
+        return;
+    }
+    window.setTimeout(() => fireOpeningPulse(trigger, unit.id), delay * 1000);
 }
 
 export type TacticalSkillTrigger = {
@@ -162,11 +190,75 @@ export function canUnitUseGeneralSkills(unit: IBattleUnit): boolean {
     return true;
 }
 
+/** 与 CombatUI.pickPrimaryDisplayUnit 同权：战斗机制与侧栏立绘/脉冲须同一将领 */
+function scoreSideGeneralPickPriority(u: IBattleUnit): number {
+    let score = 0;
+    if (u.unitType === 'legion' || u.unitType === 'army') score += 10_000;
+    if (u.generalId && getGeneralProfile(u.generalId)) score += 1_000;
+    const army = getArmyEntity(u);
+    if (army?.isElite) score += 500;
+    if (u.unitType === 'city' && readSiegeGarrisonEliteName(u.getEntity?.())) score += 500;
+    score += Math.min(Math.max(0, u.troops) / 1000, 99);
+    return score;
+}
+
 function findEligibleGeneralUnit(units: IBattleUnit[]): IBattleUnit | null {
+    let best: IBattleUnit | null = null;
+    let bestScore = Number.NEGATIVE_INFINITY;
     for (const u of units) {
-        if (canUnitUseGeneralSkills(u)) return u;
+        if (!canUnitUseGeneralSkills(u)) continue;
+        const score = scoreSideGeneralPickPriority(u);
+        if (score > bestScore) {
+            bestScore = score;
+            best = u;
+        }
+    }
+    return best;
+}
+
+/** 侧栏技能卡展示名（与 getGeneralSkillDisplayTags 战术条一致） */
+function getActiveTacticalSkillDisplayName(unit: IBattleUnit): { displayName: string; skillId: string } | null {
+    const tacId = getActiveTacticalSkillId(unit);
+    if (tacId) {
+        const tac = getTacticalSkillDef(tacId);
+        if (tac) return { displayName: tac.displayName, skillId: tac.id };
+        const v1 = resolveGeneralTacticalEntry(tacId);
+        if (v1) return { displayName: v1.displayName, skillId: v1.id };
+    }
+    if (unit.battleOverriddenSkillId === null && unit.negatedSkillId) {
+        const neg = getTacticalSkillDef(unit.negatedSkillId);
+        const negName = neg?.displayName ?? resolveGeneralTacticalEntry(unit.negatedSkillId)?.displayName;
+        if (negName) return { displayName: negName, skillId: unit.negatedSkillId };
     }
     return null;
+}
+
+/**
+ * 相持阶段保底脉冲：机制未触发 UI 时，仍按侧栏当前战术技亮相（与开局比例延迟对齐）。
+ * 与效果路径重复时由 CombatUI 按「侧+技名」去重。
+ */
+export function scheduleStalemateSkillShowcasePulses(
+    attackerUnits: IBattleUnit[],
+    defenderUnits: IBattleUnit[],
+): void {
+    const delay = resolveStalemateUiThresholdSec(currentBattleTargetDurationSec);
+    for (const units of [attackerUnits, defenderUnits]) {
+        const unit = findEligibleGeneralUnit(units);
+        if (!unit?.generalId) continue;
+        const info = getActiveTacticalSkillDisplayName(unit);
+        if (!info) continue;
+        const trigger: TacticalSkillTrigger = {
+            displayName: info.displayName,
+            generalId: unit.generalId,
+            skillId: info.skillId,
+            uiDelaySec: delay,
+        };
+        if (activeOpeningPulseSink) {
+            activeOpeningPulseSink.queueOpeningSkillPulse(trigger, unit.id);
+            continue;
+        }
+        window.setTimeout(() => fireOpeningPulse(trigger, unit.id), delay * 1000);
+    }
 }
 
 function sideHasFamousGeneral(units: IBattleUnit[]): boolean {
@@ -195,19 +287,26 @@ function emitTacticalUiV1(
         skillId: entry.id,
         uiDelaySec: delay,
     };
-    // 脉冲 + 音效同一时刻触发（都延迟到 delay 后），避免音效开战即响、演出却延后显示而对不上。
-    // getFollowedArmyId 在触发时刻读取：延迟期间玩家若已切走跟拍对象，则不为它响（正确）。
-    const fire = () => {
-        onTacticalSkillTriggered?.(trigger);
-        const followedId = getFollowedArmyId();
-        if (followedId && unit.id === followedId) {
-            audioManager.play('general_skill');
-        }
-    };
+    if (options?.immediate === true) {
+        fireOpeningPulse(trigger, unit.id);
+        gameLog(
+            'battle',
+            `⚔️ [战术技] ${unit.generalId} 【${entry.displayName}】 ${sideLabel}`,
+        );
+        return;
+    }
+    if (activeOpeningPulseSink && delay > 0) {
+        activeOpeningPulseSink.queueOpeningSkillPulse(trigger, unit.id);
+        gameLog(
+            'battle',
+            `⚔️ [战术技] ${unit.generalId} 【${entry.displayName}】 ${sideLabel}`,
+        );
+        return;
+    }
     if (delay <= 0) {
-        fire();
+        fireOpeningPulse(trigger, unit.id);
     } else {
-        window.setTimeout(fire, delay * 1000);
+        window.setTimeout(() => fireOpeningPulse(trigger, unit.id), delay * 1000);
     }
     gameLog(
         'battle',
@@ -478,14 +577,18 @@ function emitTacticalUi(
         'battle',
         `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}`,
     );
+    if (options?.immediate === true) {
+        fireOpeningPulse(trigger, unit.id);
+        return;
+    }
+    if (activeOpeningPulseSink && delay > 0 && !options?.fixedDelay) {
+        activeOpeningPulseSink.queueOpeningSkillPulse(trigger, unit.id);
+        return;
+    }
     if (delay > 0) {
-        window.setTimeout(() => {
-            onTacticalSkillTriggered?.(trigger);
-            playGeneralSkillAudio(unit);
-        }, delay * 1000);
+        window.setTimeout(() => fireOpeningPulse(trigger, unit.id), delay * 1000);
     } else {
-        onTacticalSkillTriggered?.(trigger);
-        playGeneralSkillAudio(unit);
+        fireOpeningPulse(trigger, unit.id);
     }
 }
 
@@ -1171,6 +1274,8 @@ export function tryEmitOpeningTacticalOnReinforcementJoin(
     attackerUnits: IBattleUnit[],
     defenderUnits: IBattleUnit[],
     openingUiShown: { attacker: boolean; defender: boolean },
+    pulseSink?: IOpeningPulseSink | null,
+    stalemateSkillUiReleased?: boolean,
 ): void {
     if (!canUnitUseGeneralSkills(joinedUnit)) return;
     const sideUnits = isAttacker ? attackerUnits : defenderUnits;
@@ -1186,7 +1291,23 @@ export function tryEmitOpeningTacticalOnReinforcementJoin(
     if (isAttacker) openingUiShown.attacker = true;
     else openingUiShown.defender = true;
 
-    emitTacticalUi(joinedUnit, skill, isAttacker ? '攻方' : '守方', {
+    const sideLabel = isAttacker ? '攻方' : '守方';
+    if (pulseSink && !stalemateSkillUiReleased) {
+        const trigger: TacticalSkillTrigger = {
+            displayName: skill.displayName,
+            generalId: joinedUnit.generalId!,
+            skillId: skill.id,
+            uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+        };
+        pulseSink.queueOpeningSkillPulse(trigger, joinedUnit.id);
+        gameLog(
+            'battle',
+            `⚔️ [武将技] ${joinedUnit.generalId} 【${skill.displayName}】 ${sideLabel}（援军入队，相持段亮相）`,
+        );
+        return;
+    }
+
+    emitTacticalUi(joinedUnit, skill, sideLabel, {
         uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
         fixedDelay: true, // 援军将领入场后 3s 内亮相，不等全场时长比例
     });
@@ -1660,7 +1781,9 @@ export function applySkillCountersToUnits(
             defUnit.battleOverriddenSkillId = attSkillId;
         }
         gameLog('battle', `⚔️ [对抗系] ${defUnit?.generalId} 触发【${defCounter.entry?.displayName}】，看破了攻方战术技！`);
-        if (defUnit && defCounter.entry) emitTacticalUiV1(defUnit, defCounter.entry, '守方', { immediate: true });
+        if (defUnit && defCounter.entry) {
+            emitTacticalUiV1(defUnit, defCounter.entry, '守方');
+        }
     }
 
     // Attacker counters defender
@@ -1671,6 +1794,8 @@ export function applySkillCountersToUnits(
             attUnit.battleOverriddenSkillId = defSkillId;
         }
         gameLog('battle', `⚔️ [对抗系] ${attUnit?.generalId} 触发【${attCounter.entry?.displayName}】，看破了守方战术技！`);
-        if (attUnit && attCounter.entry) emitTacticalUiV1(attUnit, attCounter.entry, '攻方', { immediate: true });
+        if (attUnit && attCounter.entry) {
+            emitTacticalUiV1(attUnit, attCounter.entry, '攻方');
+        }
     }
 }

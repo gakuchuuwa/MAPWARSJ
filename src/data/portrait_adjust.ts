@@ -3262,11 +3262,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/xianqin/jiaodong_tiandan.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 13
-        },
         "/assets/yingqin/__闲置__yingqin_01.png": {
             "scale": 1.04,
             "offsetX": 0,
@@ -5372,11 +5367,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -47
         },
-        "/assets/xianqin/__闲置__xianqin_23.png": {
-            "scale": 0.92,
-            "offsetX": 1,
-            "offsetY": -47
-        },
         "/assets/xianqin/jin_xianzhen.png": {
             "scale": 1.1,
             "offsetX": 27,
@@ -5581,6 +5571,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 10,
             "offsetY": 6
+        },
+        "/assets/xianqin/__闲置__xianqin_24.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/xianqin/jiaodong_tiandan.png": {
+            "scale": 0.92,
+            "offsetX": 1,
+            "offsetY": -47
         }
     },
     "folderGuides": {
