@@ -1657,11 +1657,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/HEXI/dongshengwei_wangyue.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -37
-        },
         "/assets/HEXI/erzhu_erzhurong.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -4852,11 +4847,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -11
         },
-        "/assets/daming/__闲置__daming_11.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 42
-        },
         "/assets/daming/xuan_xuda.png": {
             "scale": 1.33,
             "offsetX": 0,
@@ -5571,6 +5561,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -11
+        },
+        "/assets/HEXI/__闲置__CENTRAL_19.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -37
+        },
+        "/assets/daming/dongshengwei_wangyue.png": {
+            "scale": 0.97,
+            "offsetX": 19,
+            "offsetY": 42
         }
     },
     "folderGuides": {

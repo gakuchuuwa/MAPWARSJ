@@ -2770,8 +2770,9 @@ export class CombatUI {
             swingAmp = 1 * (1 - (progress - 0.7) / 0.3); // 1 → 0
         }
 
-        const t = performance.now() / 400;
-        const swing = (Math.sin(t) * 0.7 + Math.sin(t * 1.7) * 0.3) * swingAmp;
+        // 摇摆周期放慢 3 倍，使得拉锯显得厚重沉稳
+        const t = performance.now() / 1200;
+        const swing = (Math.sin(t) * 0.8 + Math.sin(t * 1.4) * 0.2) * swingAmp;
         let attPct = Math.max(2, Math.min(98, baseAttPct + swing));
 
         this.attackerBar.style.width = `${attPct}%`;
