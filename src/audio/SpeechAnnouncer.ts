@@ -118,6 +118,23 @@ const CAPTURE_DEFEAT_YIELD: Record<CaptureJu, string> = { // 守方降服
   advantage: "甘拜下风", balance: "解甲归降", disadvantage: "俯首称臣",
 };
 
+/** 攻城播报·三势词（主人 2026-07 定稿，原文照录；城池 city / 关隘 pass 各一套） */
+const SIEGE_ATK_PREFIX: Record<CaptureJu, { city: string; pass: string }> = { // 攻方势前缀
+  advantage: { city: "大军压境", pass: "旌旗蔽谷" },
+  balance: { city: "阵列而进", pass: "陈兵险隘" },
+  disadvantage: { city: "师老军疲", pass: "强弩之末" },
+};
+const SIEGE_DEF_PHRASE: Record<CaptureJu, { city: string; pass: string }> = { // 守方八字
+  advantage: { city: "深沟高垒，披甲督战", pass: "整顿军备，严阵以待" },
+  balance: { city: "凭城据守，稳如泰山", pass: "据险而守，不动如山" },
+  disadvantage: { city: "洞若观火，见机行事", pass: "一夫当关，万夫莫开" },
+};
+
+/** 野战开战·三势词（主人 2026-07 定稿，原文照录；跟随军团的势） */
+const FIELD_SHISHU: Record<CaptureJu, string> = {
+  advantage: "势不可挡", balance: "势均力敌", disadvantage: "孤军奋勇",
+};
+
 export class SpeechAnnouncer {
   private enabled = true;
   // 当前偏好的声音
@@ -194,17 +211,17 @@ export class SpeechAnnouncer {
   }
 
   /**
-   * 攻城/攻关开始（仅跟随军团触发）。守方分三档：
-   *   无将 → 「白起率领秦国军，兵临邯郸」（一句带过，不描写守御）
-   *   普将 → 「白起率领秦国军，攻打邯郸。赵国廉颇凭城据守」（关隘：据险而守）
-   *   名将 → 「白起率领秦国军，攻打邯郸。赵国名将廉颇凭城据守」（关隘：据险而守）
-   * 守将由 SiegeManager 从实际参战守方单位取（与攻占 defenderHadNamedForce 同源）。
+   * 攻城/攻关开始（仅跟随军团触发）。城池「兵临」、关隘「攻打」；势=攻方这一仗的势（与攻占/技能同源）。
+   *   无将 → 「白起率领秦国军，兵临邯郸」（一句带过）
+   *   有将 → 「白起率领秦国军，{势前缀}，兵临邯郸。赵国[名将]廉颇，{守方八字}」
+   *          普将/名将同结构，仅名将多「名将」二字。
    */
   public announceSiegeStart(opts: {
     attackerFactionId: string;
     cityName: string;
     isPass: boolean;
     attackerGeneralId?: string | null;
+    attackerSkillId?: string | null;   // 攻方将领这一仗的势技 → 判优/均/劣（与攻占同源）
     defenderFactionId?: string | null;
     defenderGeneralId?: string | null;
   }): void {
@@ -214,9 +231,10 @@ export class SpeechAnnouncer {
       ? getGeneralRecordByGeneralId(opts.attackerGeneralId)
       : getFactionGeneral(opts.attackerFactionId);
     const attFaction = getFactionNameForSpeech(opts.attackerFactionId);
-    const attackerPart = attGeneral
+    const attackerLead = attGeneral
       ? `${attGeneral.generalName}率领${attFaction}军`
       : `${attFaction}军`;
+    const verb = opts.isPass ? "攻打" : "兵临"; // 关隘攻打、城池兵临
 
     const defGeneral = opts.defenderGeneralId
       ? getGeneralRecordByGeneralId(opts.defenderGeneralId)
@@ -224,13 +242,16 @@ export class SpeechAnnouncer {
 
     let text: string;
     if (!defGeneral) {
-      // 无将：守将已随军出征、只剩纯守军 → 一句「兵临」带过
-      text = `${attackerPart}，兵临${opts.cityName}`;
+      // 无将：一句带过
+      text = `${attackerLead}，${verb}${opts.cityName}`;
     } else {
+      const terrain: "city" | "pass" = opts.isPass ? "pass" : "city";
+      const j: CaptureJu = (opts.attackerSkillId ? classifyJu(opts.attackerSkillId) : null) ?? "balance";
+      const atkPrefix = SIEGE_ATK_PREFIX[j][terrain];
+      const defPhrase = SIEGE_DEF_PHRASE[j][terrain];
       const defFaction = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
-      const holdVerb = opts.isPass ? "据险而守" : "凭城据守";
       const mingjiang = isFamousGeneral(defGeneral.generalId) ? "名将" : "";
-      text = `${attackerPart}，攻打${opts.cityName}。${defFaction}${mingjiang}${defGeneral.generalName}${holdVerb}`;
+      text = `${attackerLead}，${atkPrefix}，${verb}${opts.cityName}。${defFaction}${mingjiang}${defGeneral.generalName}，${defPhrase}`;
     }
     console.log("[Speech] 攻城:", text);
     this.speak(text);
@@ -272,22 +293,33 @@ export class SpeechAnnouncer {
     }
   }
 
-  /** 野战开始：进攻方势力+武将，大战，防守方势力+武将 */
-  public announceFieldBattle(
-    attackerFactionId: string,
-    defenderFactionId: string,
-    attackerGeneralId?: string,
-    defenderGeneralId?: string,
-  ): void {
+  /**
+   * 野战开战（仅跟随军团那场）。跟随军团念在前 + 它这一仗的势词；敌方无将 → 不播报。
+   * 「张国，[名将，]张三，{势词}，大战，李国，[名将，]李四」；名将两边各判各的。
+   */
+  public announceFieldBattle(opts: {
+    followerFactionId: string;
+    followerGeneralId?: string | null;
+    followerSkillId?: string | null;   // 跟随军团这一仗的势技 → 判优/均/劣（与攻打/攻占同源）
+    enemyFactionId: string;
+    enemyGeneralId?: string | null;    // 无 → 不播报
+  }): void {
     if (!this.enabled) return;
     this.clearSkillQueue();
-    const attFaction = getFactionNameForSpeech(attackerFactionId);
-    const defFaction = getFactionNameForSpeech(defenderFactionId);
-    const attGeneral = attackerGeneralId ? getGeneralRecordByGeneralId(attackerGeneralId) : null;
-    const defGeneral = defenderGeneralId ? getGeneralRecordByGeneralId(defenderGeneralId) : null;
-    const attPart = attGeneral ? `${attFaction}，${attGeneral.generalName}` : `${attFaction}，将军`;
-    const defPart = defGeneral ? `${defFaction}，${defGeneral.generalName}` : `${defFaction}，将军`;
-    const text = `${attPart}，大战，${defPart}`;
+    if (!opts.enemyGeneralId) return; // 敌方无将 → 不播报
+    const follower = opts.followerGeneralId ? getGeneralRecordByGeneralId(opts.followerGeneralId) : null;
+    const enemy = getGeneralRecordByGeneralId(opts.enemyGeneralId);
+    if (!follower || !enemy) return; // 跟随必有将；缺任一不播
+    const fFaction = getFactionNameForSpeech(opts.followerFactionId);
+    const eFaction = getFactionNameForSpeech(opts.enemyFactionId);
+    const ju: CaptureJu = (opts.followerSkillId ? classifyJu(opts.followerSkillId) : null) ?? "balance";
+    const fPart = isFamousGeneral(follower.generalId)
+      ? `${fFaction}，名将，${follower.generalName}`
+      : `${fFaction}，${follower.generalName}`;
+    const ePart = isFamousGeneral(enemy.generalId)
+      ? `${eFaction}，名将，${enemy.generalName}`
+      : `${eFaction}，${enemy.generalName}`;
+    const text = `${fPart}，${FIELD_SHISHU[ju]}，大战，${ePart}`;
     console.log("[Speech] 野战:", text);
     this.speak(text);
   }

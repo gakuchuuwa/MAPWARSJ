@@ -828,21 +828,6 @@ export class SiegeManager {
             attackerUnits.push(legionAdapter);
         });
 
-        // [语音播报] 跟随军团攻城：守方分 无将/普将/名将；城「凭城据守」、关隘「据险而守」。
-        // 守将取实际参战守方单位（城驻军优先，其次守军军团），与攻占 defenderHadNamedForce 同源。
-        const followedIdForSpeech = window.game?.cameraFollowUI?.getFollowedArmyId?.();
-        if (followedIdForSpeech === army.id) {
-            const defenderGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
-            speechAnnouncer.announceSiegeStart({
-                attackerFactionId: army.getFactionId(),
-                attackerGeneralId: army.generalId,
-                cityName: targetCity.name,
-                isPass: targetCity.type === 'pass',
-                defenderFactionId: targetCity.factionId,
-                defenderGeneralId,
-            });
-        }
-
         const finalTitle = siegeData.title || `${targetCity.name} 攻防战`;
 
         let battleField: BattleField;
@@ -864,6 +849,24 @@ export class SiegeManager {
             army.setCombatState(false);
             onSiegeComplete?.();
             throw err;
+        }
+
+        // [语音播报] 跟随军团攻城：开战后一刻触发，读攻方将领这一仗的势（battleOverriddenSkillId，与攻占/技能同源）。
+        // 城池「兵临」、关隘「攻打」；守方有将续「势前缀…赵国[名将]武将，守方八字」，无将只一句。
+        const followedIdForSpeech = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+        if (followedIdForSpeech === army.id) {
+            const siegeAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
+                ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
+            const siegeDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
+            speechAnnouncer.announceSiegeStart({
+                attackerFactionId: army.getFactionId(),
+                attackerGeneralId: army.generalId,
+                attackerSkillId: siegeAtkUnit?.battleOverriddenSkillId ?? null,
+                cityName: targetCity.name,
+                isPass: targetCity.type === 'pass',
+                defenderFactionId: targetCity.factionId,
+                defenderGeneralId: siegeDefGeneralId,
+            });
         }
 
         // 战斗结束 = 事件结束（战后动作在后台运行）

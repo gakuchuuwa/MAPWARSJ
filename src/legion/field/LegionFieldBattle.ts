@@ -245,14 +245,6 @@ function startFieldBattleBetween(
     const attName = deps.getCityManager().getFactionName(attFaction);
     const defName = deps.getCityManager().getFactionName(defFaction);
 
-    // [语音播报] 野战开始：进攻方势力+武将，大战，防守方势力+武将
-    speechAnnouncer.announceFieldBattle(
-        attFaction,
-        defFaction,
-        army.generalId,
-        otherArmy.generalId,
-    );
-
     combatSystem.startRegionalBattle(
         attFaction,
         attUnits,
@@ -264,4 +256,25 @@ function startFieldBattleBetween(
         undefined,
         `${attName} 大战 ${defName}`
     );
+
+    // [语音播报] 野战开战（仅跟随军团那场）：跟随军团念在前 + 它这一仗的势；敌方无将不播。
+    // 势读跟随军团 battleOverriddenSkillId（startRegionalBattle 已写；与攻打/技能/攻占同源）。
+    const followedFieldId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+    if (followedFieldId) {
+        const onAtt = attLegions.some((l) => l.id === followedFieldId);
+        const onDef = defLegions.some((l) => l.id === followedFieldId);
+        if (onAtt || onDef) {
+            const fLegions = onAtt ? attLegions : defLegions;
+            const fUnits = onAtt ? attUnits : defUnits;
+            const idx = fLegions.findIndex((l) => l.id === followedFieldId);
+            const enemyPrimary = onAtt ? otherArmy : army;
+            speechAnnouncer.announceFieldBattle({
+                followerFactionId: onAtt ? attFaction : defFaction,
+                followerGeneralId: fLegions[idx]?.generalId ?? null,
+                followerSkillId: fUnits[idx]?.battleOverriddenSkillId ?? null,
+                enemyFactionId: onAtt ? defFaction : attFaction,
+                enemyGeneralId: enemyPrimary?.generalId ?? null,
+            });
+        }
+    }
 }
