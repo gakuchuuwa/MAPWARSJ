@@ -1908,9 +1908,48 @@ function serverReadAllEntityData() {
     }
 
     // generalProfiles: { [generalId]: { tier, tacticalSkillId, strategicSkillId? } }
-    const profiles: Record<string, { tier: string; tacticalSkillId: string; strategicSkillId?: string }> = {};
-    for (const m of gsText.matchAll(/(\w+):\s*\{\s*generalId:\s*'[^']+',\s*tier:\s*'([^']+)',\s*tacticalSkillId:\s*'([^']+)'(?:,\s*strategicSkillId:\s*'([^']+)')?/g)) {
-        profiles[m[1]] = { tier: m[2], tacticalSkillId: m[3], strategicSkillId: m[4] || undefined };
+    // [FIX 2026-07-08] 档案解析不再依赖字段顺序/单行格式：
+    //   旧正则要求 strategicSkillId 紧跟 tacticalSkillId，三格(advantage/balance/disadvantage)插在中间
+    //   或多行写法都会把战略技读丢 → 10 个名将被误报"缺战略技"。现按条目块逐字段提取。
+    //   且只认 GENERAL_PROFILES 块内的条目——粘贴到别的对象里的档案运行时不生效，单独收集报错。
+    const profileEntryField = (body: string, name: string): string | undefined =>
+        body.match(new RegExp(`(?:^|[,{\\s])${name}:\\s*'([^']*)'`))?.[1] || undefined;
+    const profilesBlockRange = (() => {
+        const kwIdx = gsText.indexOf('GENERAL_PROFILES');
+        if (kwIdx === -1) return null;
+        const openIdx = gsText.indexOf('= {', kwIdx);
+        if (openIdx === -1) return null;
+        let depth = 0;
+        for (let i = openIdx + 2; i < gsText.length; i++) {
+            if (gsText[i] === '{') depth++;
+            else if (gsText[i] === '}') { depth--; if (depth === 0) return { start: openIdx + 2, end: i }; }
+        }
+        return null;
+    })();
+    const profiles: Record<string, {
+        tier: string; tacticalSkillId: string; strategicSkillId?: string;
+        advantageSkillId?: string; balanceSkillId?: string; disadvantageSkillId?: string; aptitude?: string;
+    }> = {};
+    const misplacedProfiles: string[] = [];
+    for (const m of gsText.matchAll(/(\w+):\s*\{([^{}]*)\}/g)) {
+        const body = m[2];
+        if (!body.includes('generalId:')) continue;
+        const tier = profileEntryField(body, 'tier');
+        const tacticalSkillId = profileEntryField(body, 'tacticalSkillId');
+        if (!tier || !tacticalSkillId) continue;
+        const inBlock = profilesBlockRange && m.index! >= profilesBlockRange.start && m.index! < profilesBlockRange.end;
+        if (!inBlock) {
+            misplacedProfiles.push(m[1]);
+            continue;
+        }
+        profiles[m[1]] = {
+            tier, tacticalSkillId,
+            strategicSkillId: profileEntryField(body, 'strategicSkillId'),
+            advantageSkillId: profileEntryField(body, 'advantageSkillId'),
+            balanceSkillId: profileEntryField(body, 'balanceSkillId'),
+            disadvantageSkillId: profileEntryField(body, 'disadvantageSkillId'),
+            aptitude: profileEntryField(body, 'aptitude'),
+        };
     }
 
     // elites: merged from 14 files
@@ -1939,16 +1978,39 @@ function serverReadAllEntityData() {
     for (const m of tscText.matchAll(/(ts_\d+):\s*'(common|limited|ai_defensive|underdog|gamble|star_survival)'/g)) {
         assignTierById.set(m[1], m[2]);
     }
-    const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string }> = [];
+    // 三类（优势/均势/劣势）：判据与 TacticalSkillCatalog.getTacticalTriClass 完全一致。
+    //   此处用正则+内联映射而不 import 目录模块：vite 会 watch 配置文件的依赖，
+    //   一旦 import 目录，每次改技能数据都会整个重启 dev server。两处若改必须同步改。
+    const EFFECT_TO_TRI: Record<string, string> = {
+        ally_power_mult: 'advantage', first_sortie_power_mult: 'advantage', ally_add_troops_opening: 'advantage',
+        enemy_sub_troops_opening: 'advantage', dual_sub_troops_opening: 'advantage',
+        luck_variance_self: 'balance', luck_variance_enemy: 'balance', luck_lock_self: 'balance',
+        steal_enemy_skill: 'balance', negate_enemy_skill: 'balance', partial_negate_enemy_skill: 'balance',
+        reflect_enemy_opening_cut: 'balance', nullify_enemy_opening_cut: 'balance',
+        cancel_enemy_terrain_buff: 'balance', halve_enemy_terrain_buff: 'balance',
+        win_casualty_reduction: 'disadvantage', elite_casualty_reduction: 'disadvantage', post_recovery_rate: 'disadvantage',
+        lose_enemy_casualty_boost: 'disadvantage', recompute_comeback: 'disadvantage',
+        lose_zero_enemy_recovery: 'disadvantage', ally_add_troops_comeback: 'disadvantage',
+    };
+    const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog', 'battle_siege_defender']);
+    const triClassById = new Map<string, string>();
+    for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'[\s\S]*?baseEffect:\s*'(\w+)',\s*condition:\s*'(\w+)'/g)) {
+        const tri = UNDERDOG_CONDS.has(m[3]) ? 'disadvantage' : EFFECT_TO_TRI[m[2]];
+        if (tri && !triClassById.has(m[1])) triClassById.set(m[1], tri);
+    }
+    const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string }> = [];
     for (const m of tscText.matchAll(/id:\s*'(ts_\d+)',\s*layer:\s*'[^']*',\s*series:\s*'[^']*',\s*index:\s*(\d+),\s*displayName:\s*'([^']+)'/g)) {
-        tacticalSkills.push({ id: m[1], grid: circledNum(parseInt(m[2])), displayName: m[3], assignTier: assignTierById.get(m[1]) });
+        tacticalSkills.push({
+            id: m[1], grid: circledNum(parseInt(m[2])), displayName: m[3],
+            assignTier: assignTierById.get(m[1]), triClass: triClassById.get(m[1]),
+        });
     }
     const strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }> = [];
     for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)',\s*effect:\s*'([^']+)',\s*magnitude:\s*([\d.]+)/g)) {
         if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4], effect: m[5], magnitude: parseFloat(m[6]) });
     }
 
-    return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, regions: Object.keys(REGION_TO_ELITE_FILE) };
+    return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, regions: Object.keys(REGION_TO_ELITE_FILE) };
 }
 
 /** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → 统一 /assets/.../x.png。
@@ -1972,6 +2034,10 @@ function serverSaveGeneral(data: {
     tier: string;
     tacticalSkillId: string;
     strategicSkillId?: string;
+    advantageSkillId?: string;
+    balanceSkillId?: string;
+    disadvantageSkillId?: string;
+    aptitude?: string;
 }) {
     // 立绘路径先归一化：反斜杠/Windows 路径 → /assets/.../x.png（根治粘贴 Windows 路径写坏 TS 文件）
     if (data.portrait) data.portrait = serverNormalizePortraitPath(data.portrait);
@@ -1997,8 +2063,45 @@ function serverSaveGeneral(data: {
     }
 
     // GeneralSkills.ts
-    const stratPart = data.strategicSkillId ? `, strategicSkillId: '${data.strategicSkillId}'` : '';
-    const gsLine = `${data.generalId}: { generalId: '${data.generalId}', tier: '${data.tier}', tacticalSkillId: '${data.tacticalSkillId}'${stratPart} },`;
+    // [FIX 2026-07-08] 重写档案前先读出原条目里的三格/aptitude/行尾注释：
+    //   旧实现整行重写只留 4 个字段，编辑面板保存一次就会把 advantage/balance/disadvantage/aptitude 静默抹掉。
+    //   合并规则：编辑器传了新值用新值，没传保留旧值。
+    const existingEntry = (() => {
+        const mm = gsText.match(new RegExp(`(?:^|\\n)\\s*${data.generalId}:\\s*\\{([^{}]*)\\}(\\s*,?[ \\t]*(//[^\\n]*)?)`));
+        if (!mm) return { comment: '' };
+        const body = mm[1];
+        const field = (name: string): string | undefined =>
+            body.match(new RegExp(`(?:^|[,{\\s])${name}:\\s*'([^']*)'`))?.[1] || undefined;
+        return {
+            strategicSkillId: field('strategicSkillId'),
+            advantageSkillId: field('advantageSkillId'),
+            balanceSkillId: field('balanceSkillId'),
+            disadvantageSkillId: field('disadvantageSkillId'),
+            aptitude: field('aptitude'),
+            comment: mm[3] ?? '',
+        };
+    })();
+    // 合并语义：字段未传(undefined)=保留旧值；传空串=显式清除；传值=覆盖
+    const mergeField = (incoming: string | undefined, old: string | undefined): string | undefined =>
+        incoming === undefined ? old : (incoming || undefined);
+    const merged = {
+        strategicSkillId: mergeField(data.strategicSkillId, existingEntry.strategicSkillId),
+        advantageSkillId: mergeField(data.advantageSkillId, existingEntry.advantageSkillId),
+        balanceSkillId: mergeField(data.balanceSkillId, existingEntry.balanceSkillId),
+        disadvantageSkillId: mergeField(data.disadvantageSkillId, existingEntry.disadvantageSkillId),
+        aptitude: mergeField(data.aptitude, existingEntry.aptitude),
+    };
+    const parts = [
+        `generalId: '${data.generalId}'`,
+        `tier: '${data.tier}'`,
+        `tacticalSkillId: '${data.tacticalSkillId}'`,
+    ];
+    if (merged.advantageSkillId) parts.push(`advantageSkillId: '${merged.advantageSkillId}'`);
+    if (merged.balanceSkillId) parts.push(`balanceSkillId: '${merged.balanceSkillId}'`);
+    if (merged.disadvantageSkillId) parts.push(`disadvantageSkillId: '${merged.disadvantageSkillId}'`);
+    if (merged.strategicSkillId) parts.push(`strategicSkillId: '${merged.strategicSkillId}'`);
+    if (merged.aptitude) parts.push(`aptitude: '${merged.aptitude}'`);
+    const gsLine = `${data.generalId}: { ${parts.join(', ')} },${existingEntry.comment ? ' ' + existingEntry.comment.trim().replace(/^,\s*/, '') : ''}`;
     if (gsText.includes(`${data.generalId}:`)) {
         gsText = serverReplaceObjectLine(gsText, 'GENERAL_PROFILES', data.generalId, `    ${gsLine}`);
         results.push('GeneralSkills.ts: replaced');
@@ -2173,6 +2276,62 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         }
         if (prof.tier === 'ordinary' && prof.strategicSkillId) {
             issues.push({ level: 'warn', msg: `普将 "${g.generalName}"(${g.generalId}) 不应有战略技（普将仅战术技）`, factionId: fId });
+        }
+    }
+
+    // 11.55. [NEW 2026-07-08] 武将档案粘贴错对象：条目在 GENERAL_PROFILES 块之外，运行时不生效
+    for (const key of data.misplacedProfiles) {
+        issues.push({
+            level: 'error',
+            msg: `武将档案 "${key}" 写在了 GENERAL_PROFILES 之外（疑似粘贴进 TACTICAL_SKILL_CATALOG 等其他对象），运行时不生效，请移入 GENERAL_PROFILES`,
+        });
+    }
+
+    // 11.6. [NEW 2026-07-08] 武将技配置深检：悬空引用 / 三格完整性 / 三格类别错配
+    //   三格类别判据 = 三类六种（docs/02-design/武将技-分类逻辑说明.md），与 npm run tactical:triclass 一致
+    {
+        const tacIdSet = new Set(data.tacticalSkills.map(s => s.id));
+        const strIdSet = new Set(data.strategicSkills.map(s => s.id));
+        const triById = new Map(data.tacticalSkills.map(s => [s.id, s.triClass]));
+        const TRI_LABEL: Record<string, string> = { advantage: '优势技', balance: '均势技', disadvantage: '劣势技' };
+        for (const [fId, g] of Object.entries(data.generals)) {
+            const prof = data.profiles[g.generalId];
+            if (!prof) continue;
+            // 引用了技能目录中不存在的 ID（会导致战斗时查不到技）
+            const refs: Array<[string, string | undefined, Set<string>]> = [
+                ['战术技', prof.tacticalSkillId, tacIdSet],
+                ['优势格', prof.advantageSkillId, tacIdSet],
+                ['均势格', prof.balanceSkillId, tacIdSet],
+                ['劣势格', prof.disadvantageSkillId, tacIdSet],
+                ['战略技', prof.strategicSkillId, strIdSet],
+            ];
+            for (const [label, id, set] of refs) {
+                if (id && !set.has(id)) {
+                    issues.push({ level: 'error', msg: `武将 "${g.generalName}"(${g.generalId}) ${label} ${id} 在技能目录中不存在`, factionId: fId });
+                }
+            }
+            // 三格/三势不全（运行时回退单技不报错，但按三势系统应配全）
+            const missing: string[] = [];
+            if (!prof.advantageSkillId) missing.push('优势格');
+            if (!prof.balanceSkillId) missing.push('均势格');
+            if (!prof.disadvantageSkillId) missing.push('劣势格');
+            if (!prof.aptitude) missing.push('aptitude三势');
+            if (missing.length > 0) {
+                issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) 缺 ${missing.join('/')}`, factionId: fId });
+            }
+            // 格子里配的技类别不符（如均势技放进劣势格）
+            const slotChecks: Array<[string, string | undefined, string]> = [
+                ['优势格', prof.advantageSkillId, 'advantage'],
+                ['均势格', prof.balanceSkillId, 'balance'],
+                ['劣势格', prof.disadvantageSkillId, 'disadvantage'],
+            ];
+            for (const [label, id, expect] of slotChecks) {
+                if (!id) continue;
+                const tri = triById.get(id);
+                if (tri && tri !== expect) {
+                    issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) ${label}=${id} 实为${TRI_LABEL[tri] ?? tri}，类别不符`, factionId: fId });
+                }
+            }
         }
     }
 

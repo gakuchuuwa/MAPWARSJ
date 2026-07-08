@@ -23,6 +23,10 @@ interface FactionRow {
     tier?: string;
     tacticalSkillId?: string;
     strategicSkillId?: string;
+    advantageSkillId?: string;
+    balanceSkillId?: string;
+    disadvantageSkillId?: string;
+    aptitude?: string;
     eliteName?: string;
     eliteTier?: number;
     eliteRegion?: string;
@@ -36,9 +40,12 @@ interface EntityData {
     flags: Record<string, string>;
     capitals: Record<string, string>;
     generals: Record<string, { generalId: string; generalName: string; portrait: string }>;
-    profiles: Record<string, { tier: string; tacticalSkillId: string; strategicSkillId?: string }>;
+    profiles: Record<string, {
+        tier: string; tacticalSkillId: string; strategicSkillId?: string;
+        advantageSkillId?: string; balanceSkillId?: string; disadvantageSkillId?: string; aptitude?: string;
+    }>;
     elites: Record<string, { name: string; tier: number; region: string }>;
-    tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string }>;
+    tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string }>;
     strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }>;
     regions: string[];
 }
@@ -428,6 +435,10 @@ function buildRows(): void {
             tier: profile?.tier,
             tacticalSkillId: profile?.tacticalSkillId,
             strategicSkillId: profile?.strategicSkillId,
+            advantageSkillId: profile?.advantageSkillId,
+            balanceSkillId: profile?.balanceSkillId,
+            disadvantageSkillId: profile?.disadvantageSkillId,
+            aptitude: profile?.aptitude,
             eliteName: elite?.name,
             eliteTier: elite?.tier,
             eliteRegion: elite?.region,
@@ -714,6 +725,18 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     const tacOptions = (entityData?.tacticalSkills ?? []).map(s =>
         `<option value="${s.id}" ${s.id === (row?.tacticalSkillId ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
     ).join('');
+    // 三格下拉：只列对应三类的技；当前值类别不符时保留在顶部并标注（防止保存时被静默清掉）
+    const slotOptions = (tri: 'advantage' | 'balance' | 'disadvantage', selected?: string) => {
+        const pool = (entityData?.tacticalSkills ?? []).filter(s => s.triClass === tri);
+        let html = pool.map(s =>
+            `<option value="${s.id}" ${s.id === (selected ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
+        ).join('');
+        if (selected && !pool.some(s => s.id === selected)) {
+            const cur = entityData?.tacticalSkills.find(s => s.id === selected);
+            html = `<option value="${selected}" selected>⚠ ${cur ? `${cur.grid} ${cur.displayName}` : selected}（类别不符）</option>` + html;
+        }
+        return html;
+    };
     const strOptions = (entityData?.strategicSkills ?? []).map(s =>
         `<option value="${s.id}" ${s.id === (row?.strategicSkillId ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
     ).join('');
@@ -931,6 +954,36 @@ async function openEditPanel(factionId: string | null): Promise<void> {
               ${strOptions}
             </select>
           </label>
+          <div class="form-row">
+            <label><span>优势格（碾压计）</span>
+              <select name="advantageSkillId">
+                <option value="">不设</option>
+                ${slotOptions('advantage', row!.advantageSkillId)}
+              </select>
+            </label>
+            <label><span>均势格（破局计）</span>
+              <select name="balanceSkillId">
+                <option value="">不设</option>
+                ${slotOptions('balance', row!.balanceSkillId)}
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label><span>劣势格（翻盘计）</span>
+              <select name="disadvantageSkillId">
+                <option value="">不设</option>
+                ${slotOptions('disadvantage', row!.disadvantageSkillId)}
+              </select>
+            </label>
+            <label><span>三势 aptitude</span>
+              <select name="aptitude">
+                <option value="">不设</option>
+                <option value="create" ${row!.aptitude === 'create' ? 'selected' : ''}>造势 create</option>
+                <option value="leverage" ${row!.aptitude === 'leverage' ? 'selected' : ''}>借势 leverage</option>
+                <option value="reverse" ${row!.aptitude === 'reverse' ? 'selected' : ''}>逆势 reverse</option>
+              </select>
+            </label>
+          </div>
 
           <h3>③ 精锐番号</h3>
           <div class="form-row">
@@ -1235,8 +1288,8 @@ function updateQuickPreview(): void {
             : `<span class="id-label">立绘:</span> 未选 → <span class="id-value">提交时从未占用立绘中随机</span>`);
         const tacName = entityData?.tacticalSkills.find(s => s.id === f.tacticalSkillId)?.displayName;
         lines.push(f.tacticalSkillId
-            ? `<span class="id-label">战术技:</span> <span class="id-value">${tacName ?? f.tacticalSkillId}</span>`
-            : `<span class="id-label">战术技:</span> 未选 → <span class="id-value">提交时从 common 档随机</span>`);
+            ? `<span class="id-label">战术技:</span> <span class="id-value">${tacName ?? f.tacticalSkillId}</span>（优/均/劣三格自动按三类补齐）`
+            : `<span class="id-label">战术技:</span> 未选 → <span class="id-value">提交时从 common 档随机，三格+三势一并配齐</span>`);
         if (f.genTier === 'famous') {
             const strName = entityData?.strategicSkills.find(s => s.id === f.strategicSkillId)?.displayName;
             lines.push(f.strategicSkillId
@@ -1294,6 +1347,8 @@ async function handleQuickSubmit(): Promise<void> {
     let tacticalSkillId = f.tacticalSkillId;
     let strategicSkillId = f.strategicSkillId;
     const randomNotes: string[] = [];
+    const slots: { advantage?: string; balance?: string; disadvantage?: string } = {};
+    let aptitude = '';
     if (f.genName) {
         if (!tacticalSkillId) {
             const t = pickRandomTacticalSkill();
@@ -1301,6 +1356,22 @@ async function handleQuickSubmit(): Promise<void> {
             tacticalSkillId = t.id;
             randomNotes.push(`战术技=${t.displayName}`);
         }
+        // 三格按三类配齐：所选战术技放进它自己类别的格，其余格从 common∩类别随机（不留空）
+        const triOf = (id: string) => entityData?.tacticalSkills.find(s => s.id === id)?.triClass;
+        const chosenTri = triOf(tacticalSkillId);
+        if (chosenTri === 'advantage' || chosenTri === 'balance' || chosenTri === 'disadvantage') {
+            slots[chosenTri] = tacticalSkillId;
+        }
+        const SLOT_LABEL = { advantage: '优势格', balance: '均势格', disadvantage: '劣势格' } as const;
+        for (const tri of ['advantage', 'balance', 'disadvantage'] as const) {
+            if (slots[tri]) continue;
+            const p = pickRandom((entityData?.tacticalSkills ?? []).filter(s => s.assignTier === 'common' && s.triClass === tri));
+            if (!p) { showToast(`随机${SLOT_LABEL[tri]}失败：common∩${SLOT_LABEL[tri]}池为空`, true); return; }
+            slots[tri] = p.id;
+            randomNotes.push(`${SLOT_LABEL[tri]}=${p.displayName}`);
+        }
+        aptitude = pickRandom(['create', 'leverage', 'reverse'] as const) ?? 'leverage';
+        randomNotes.push(`三势=${aptitude}`);
         if (f.genTier === 'famous' && !strategicSkillId) {
             const s = pickRandomStrategicSkill();
             if (!s) { showToast('随机战略技失败：清单为空，请手动选择', true); return; }
@@ -1378,6 +1449,10 @@ async function handleQuickSubmit(): Promise<void> {
                     tier: f.genTier,
                     tacticalSkillId,
                     strategicSkillId: strategicSkillId || undefined,
+                    advantageSkillId: slots.advantage,
+                    balanceSkillId: slots.balance,
+                    disadvantageSkillId: slots.disadvantage,
+                    aptitude: aptitude || undefined,
                 }),
             });
             const genData = await genRes.json();
@@ -1551,7 +1626,12 @@ async function handleFormSubmit(e: Event): Promise<void> {
                     factionId, generalId, generalName,
                     portrait,
                     tier, tacticalSkillId,
-                    strategicSkillId: strategicSkillId || undefined,
+                    // 编辑面板字段全量提交：空串=显式清除（服务端合并语义），undefined 才是保留
+                    strategicSkillId,
+                    advantageSkillId: get('advantageSkillId'),
+                    balanceSkillId: get('balanceSkillId'),
+                    disadvantageSkillId: get('disadvantageSkillId'),
+                    aptitude: get('aptitude'),
                     oldGeneralId: oldGeneralId || undefined,
                 }),
             });

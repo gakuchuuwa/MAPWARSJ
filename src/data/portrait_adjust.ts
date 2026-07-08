@@ -572,11 +572,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 8,
             "offsetY": -14
         },
-        "/assets/zhaosong/huan_zhongshidao.png": {
-            "scale": 0.97,
-            "offsetX": 14,
-            "offsetY": -13
-        },
         "/assets/xianqin/yue_goujian.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -1258,11 +1253,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/CENTRAL_ASIA/loulan_suojie.png": {
-            "scale": 1.15,
-            "offsetX": 0,
-            "offsetY": 33
-        },
-        "/assets/DIANQIAN/ava_sijifa.png": {
             "scale": 1.15,
             "offsetX": 0,
             "offsetY": 33
@@ -2267,11 +2257,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 23
         },
-        "/assets/NORTHEAST/huimo_gaoyanshou.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": 23
-        },
         "/assets/manqing/__闲置__manqing_04.png": {
             "scale": 1,
             "offsetX": 0,
@@ -3272,11 +3257,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/zhaosong/__闲置__zhaosong_07.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 13
-        },
         "/assets/zhaosong/__闲置__zhaosong_08.png": {
             "scale": 0.92,
             "offsetX": 0,
@@ -4227,11 +4207,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/STEPPE/__闲置__STEPPE_15.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": 32
-        },
         "/assets/STEPPE/__闲置__STEPPE_18.png": {
             "scale": 1,
             "offsetX": 0,
@@ -4521,11 +4496,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.23,
             "offsetX": 0,
             "offsetY": 36
-        },
-        "/assets/STEPPE/__闲置__STEPPE_27.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 17
         },
         "/assets/STEPPE/murong_murongke.png": {
             "scale": 0.87,
@@ -5582,11 +5552,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -43
         },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_15.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -17
-        },
         "/assets/DIANQIAN/mingzheng_jianzandechang.png": {
             "scale": 0.83,
             "offsetX": 6,
@@ -5626,6 +5591,86 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.29,
             "offsetX": 0,
             "offsetY": -16
+        },
+        "/assets/STEPPE/shizhou_liucong.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/STEPPE/weiming_huhanxie.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 32
+        },
+        "/assets/zhaosong/__闲置__zhaosong_18.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/zhaosong/yanzhou_zhongshiheng.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/zhaosong/__闲置__litang_03.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/zhaosong/__闲置__zhaosong_16.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/zhaosong/18eaf042-a6c4-41ce-96f2-c9b9fc832c33.png": {
+            "scale": 1.32,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/zhaosong/2def5641-f003-4d6a-83ba-103fd2852af5.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/zhaosong/cc34312f-2973-450a-ac98-6df292382241.png": {
+            "scale": 1.34,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/zhaosong/d9e9abd1-e534-4b2d-b246-885e73a28366.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/zhaosong/__闲置__zhaosong_19.png": {
+            "scale": 0.97,
+            "offsetX": 14,
+            "offsetY": -13
+        },
+        "/assets/zhaosong/huan_zhongshidao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_17.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/DIANQIAN/ava_sijifa.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_25.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/NORTHEAST/huimo_gaoyanshou.png": {
+            "scale": 1.12,
+            "offsetX": 3,
+            "offsetY": -7
         }
     },
     "folderGuides": {
