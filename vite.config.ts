@@ -1934,9 +1934,14 @@ function serverReadAllEntityData() {
         if (n >= 36 && n <= 50) return String.fromCodePoint(0x32B1 + n - 36);
         return String(n);
     };
-    const tacticalSkills: Array<{ id: string; grid: string; displayName: string }> = [];
+    // 分配层（TACTICAL_ASSIGN_TIER）：随机分配技能时只允许 common 档，避免撞限量/专属技
+    const assignTierById = new Map<string, string>();
+    for (const m of tscText.matchAll(/(ts_\d+):\s*'(common|limited|ai_defensive|underdog|gamble|star_survival)'/g)) {
+        assignTierById.set(m[1], m[2]);
+    }
+    const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string }> = [];
     for (const m of tscText.matchAll(/id:\s*'(ts_\d+)',\s*layer:\s*'[^']*',\s*series:\s*'[^']*',\s*index:\s*(\d+),\s*displayName:\s*'([^']+)'/g)) {
-        tacticalSkills.push({ id: m[1], grid: circledNum(parseInt(m[2])), displayName: m[3] });
+        tacticalSkills.push({ id: m[1], grid: circledNum(parseInt(m[2])), displayName: m[3], assignTier: assignTierById.get(m[1]) });
     }
     const strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }> = [];
     for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)',\s*effect:\s*'([^']+)',\s*magnitude:\s*([\d.]+)/g)) {
@@ -2140,14 +2145,19 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         if (!data.elites[f.id]) issues.push({ level: 'info', msg: `势力 "${f.name}" (${f.id}) 无精锐番号`, factionId: f.id });
     }
 
-    // 11. 立绘文件不存在
+    // 11. 立绘缺失/文件不存在
+    //   注意空路径必须单判：path.resolve('public', '') = public 目录本身，existsSync 恒 true 会漏检
     for (const [fId, g] of Object.entries(data.generals)) {
+        if (!g.portrait || !g.portrait.trim()) {
+            issues.push({ level: 'error', msg: `武将 "${g.generalName}" (${g.generalId}) 立绘路径为空`, factionId: fId });
+            continue;
+        }
         const absPath = path.resolve(__dirname, 'public', g.portrait.replace(/^\//, ''));
-        if (!fs.existsSync(absPath)) {
+        if (!fs.existsSync(absPath) || !fs.statSync(absPath).isFile()) {
             issues.push({ level: 'error', msg: `武将 "${g.generalName}" 立绘不存在: ${g.portrait}`, factionId: fId });
         }
         // 立绘路径必须以 .png 结尾
-        if (g.portrait && !g.portrait.toLowerCase().endsWith('.png')) {
+        if (!g.portrait.toLowerCase().endsWith('.png')) {
             issues.push({ level: 'error', msg: `武将 "${g.generalName}" 立绘路径不是 PNG: ${g.portrait}`, factionId: fId });
         }
     }

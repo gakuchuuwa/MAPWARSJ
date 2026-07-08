@@ -12,7 +12,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     dangxiang: { name: '铁鹞子', tier: 2 },
   // 步跋子已迁环洲（huan@方渠）
   yeli: { name: '擒生军', tier: 3 },             // 西夏主力野战部队之一，特色极其鲜明，升入T3知名
-    weiming: { name: '平夏部骑', tier: 3 },
+    weiming: { name: '匈奴游骑', tier: 4 },
     guiyi: { name: '归义射雕手', tier: 2 },
   tufa_d: { name: '南凉铁骑', tier: 4 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）（缺乏极其著名的战术高光，降T3）
   juqu_d: { name: '卢水胡兵', tier: 3 },         // 五胡十六国时期河西走廊极其著名的部族武装（北凉基础），历史辨识度高，升入T3知名
@@ -34,12 +34,14 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     guazhou: { name: '墨离疑锋', tier: 3 },
   shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）
   suzhou: { name: '骠骑郎卫', tier: 0 },  // 霍去病封狼居胥，彻底解除百年威胁，完全踩中T0“灭国级大捷”，升T0
-  kang: { name: '鹰扬骁骑', tier: 4 },              // 长泽·梁师都鹰扬郎将起兵建梁（名气不足，降T2）（缺乏进攻高光，降T3）
+    kang: { name: '鹰扬骁骑', tier: 4 },
     lushui: { name: '飞熊军', tier: 2 },
-  woye: { name: '度辽营', tier: 2 },           // 东汉经典边防番号度辽将军，专属名号特色鲜明，升T2
+    woye: { name: '沃野镇兵', tier: 4 },
     yangguan: { name: '西凉铁骑', tier: 2 },
         yuezhi: { name: '折兰骑', tier: 3 },             // 霍去病河西之战斩杀的匈奴最强王牌，战役背景极具符号价值，升入T3知名,
     chile: { name: '两池军', tier: 3 },
     weiyuan: { name: '永安营兵', tier: 3 },
     helian: { name: '铁弗宿卫', tier: 3 },
+    xiazhou: { name: '平夏部骑', tier: 3 },
+    yanzhou: { name: '步跋子', tier: 3 },
 };

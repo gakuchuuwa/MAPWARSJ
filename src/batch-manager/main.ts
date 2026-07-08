@@ -38,7 +38,7 @@ interface EntityData {
     generals: Record<string, { generalId: string; generalName: string; portrait: string }>;
     profiles: Record<string, { tier: string; tacticalSkillId: string; strategicSkillId?: string }>;
     elites: Record<string, { name: string; tier: number; region: string }>;
-    tacticalSkills: Array<{ id: string; grid: string; displayName: string }>;
+    tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string }>;
     strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }>;
     regions: string[];
 }
@@ -86,7 +86,7 @@ let rows: FactionRow[] = [];
 let filteredRows: FactionRow[] = [];
 let issues: ValidationIssue[] = [];
 let searchQuery = '';
-let filterMode: 'all' | 'incomplete' | 'no-general' | 'no-elite' | 'errors' = 'all';
+let filterMode: 'all' | 'incomplete' | 'no-general' | 'no-portrait' | 'no-elite' | 'errors' = 'all';
 let sortCol = 'id';
 let sortAsc = true;
 let editingFactionId: string | null = null;
@@ -109,6 +109,7 @@ app.innerHTML = `
     <option value="all">全部</option>
     <option value="incomplete">不完整</option>
     <option value="no-general">缺武将</option>
+    <option value="no-portrait">缺立绘</option>
     <option value="no-elite">缺精锐</option>
     <option value="errors">有错误</option>
   </select>
@@ -252,6 +253,26 @@ function injectStyles(): void {
       }
       .bm-portrait-preview .portrait-info { flex:1; font-size:11px; color:#8a7f6f; }
       .bm-portrait-preview .portrait-info b { color:#c8bda8; }
+      .bm-portrait-search-wrap { position:relative; }
+      .bm-portrait-suggest {
+        position:absolute; left:0; right:0; top:100%; z-index:30;
+        max-height:260px; overflow-y:auto; background:#1c1916;
+        border:1px solid #5a5040; border-radius:0 0 4px 4px;
+        box-shadow:0 6px 16px #000a;
+      }
+      .bm-portrait-suggest:empty { display:none; }
+      .bm-portrait-suggest .suggest-item {
+        display:flex; align-items:center; gap:8px; padding:4px 8px;
+        font-size:12px; color:#c8bda8; cursor:pointer; white-space:nowrap;
+        overflow:hidden; text-overflow:ellipsis;
+      }
+      .bm-portrait-suggest .suggest-item:hover { background:#2e2a22; color:#f5d78e; }
+      .bm-portrait-suggest .suggest-item img {
+        width:28px; height:36px; object-fit:cover; object-position:center top;
+        background:#0e0d0c; border-radius:2px; flex:none;
+      }
+      .bm-portrait-suggest .suggest-item .hl { color:#f5d78e; font-weight:bold; }
+      .bm-portrait-suggest .suggest-more { padding:4px 8px; font-size:11px; color:#8a7f6f; }
       .bm-checkbox-label { display:flex; align-items:center; gap:8px; cursor:pointer; margin:6px 0; }
       .bm-checkbox-label input[type="checkbox"] { width:15px; height:15px; accent-color:#c8a84b; cursor:pointer; }
       .bm-checkbox-label span { font-size:13px; color:#c8bda8; }
@@ -283,6 +304,76 @@ function injectStyles(): void {
       .bm-toast.is-error { background:#301a1a; color:#ffb4a8; border-color:#6a3a3a; }
     `;
     document.head.appendChild(s);
+}
+
+// ── 立绘搜索（/api/portrait-catalog 全清单 + 输入即时筛选，大小写不敏感） ──
+
+let portraitCatalogPaths: string[] | null = null;
+let portraitCatalogLoading: Promise<string[]> | null = null;
+
+async function loadPortraitCatalog(): Promise<string[]> {
+    if (portraitCatalogPaths) return portraitCatalogPaths;
+    if (!portraitCatalogLoading) {
+        portraitCatalogLoading = fetch('/api/portrait-catalog')
+            .then(r => r.json())
+            .then((folders: Array<{ folder: string; images: Array<{ path: string }> }>) => {
+                portraitCatalogPaths = (folders ?? []).flatMap(f => f.images.map(img => img.path));
+                return portraitCatalogPaths;
+            })
+            .catch(() => {
+                portraitCatalogLoading = null; // 失败允许下次重试
+                return [];
+            });
+    }
+    return portraitCatalogLoading;
+}
+
+/** 给立绘路径输入框挂即时筛选下拉：输入 ≥2 字符按子串匹配（忽略大小写），点选后回填并触发 input 事件刷新预览 */
+function attachPortraitSearch(input: HTMLInputElement): void {
+    const wrap = input.parentElement;
+    if (!wrap) return;
+    wrap.classList.add('bm-portrait-search-wrap');
+    const dropdown = document.createElement('div');
+    dropdown.className = 'bm-portrait-suggest';
+    wrap.appendChild(dropdown);
+
+    const MAX_SHOWN = 30;
+    let suppressOnce = false; // 点选回填触发的 input 事件不再弹下拉
+
+    const render = (paths: string[], query: string) => {
+        if (paths.length === 0) { dropdown.innerHTML = ''; return; }
+        const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+        const q = query.toLowerCase();
+        const hl = (p: string) => {
+            const i = p.toLowerCase().indexOf(q);
+            if (i < 0) return esc(p);
+            return `${esc(p.slice(0, i))}<span class="hl">${esc(p.slice(i, i + q.length))}</span>${esc(p.slice(i + q.length))}`;
+        };
+        dropdown.innerHTML = paths.slice(0, MAX_SHOWN).map(p =>
+            `<div class="suggest-item" data-path="${esc(p)}"><img src="${esc(p)}" loading="lazy" alt="" />${hl(p)}</div>`
+        ).join('') + (paths.length > MAX_SHOWN ? `<div class="suggest-more">… 共 ${paths.length} 个匹配，继续输入缩小范围</div>` : '');
+        dropdown.querySelectorAll('.suggest-item').forEach(el => {
+            // mousedown 先于 input 的 blur，保证点选生效
+            el.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                input.value = (el as HTMLElement).dataset.path!;
+                dropdown.innerHTML = '';
+                suppressOnce = true;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+        });
+    };
+
+    input.addEventListener('input', async () => {
+        if (suppressOnce) { suppressOnce = false; return; }
+        const q = input.value.trim().toLowerCase();
+        if (q.length < 2) { dropdown.innerHTML = ''; return; }
+        const all = await loadPortraitCatalog();
+        if (input.value.trim().toLowerCase() !== q) return; // 已过期的异步结果
+        render(all.filter(p => p.toLowerCase().includes(q)), q);
+    });
+    input.addEventListener('blur', () => { setTimeout(() => { dropdown.innerHTML = ''; }, 150); });
+    input.addEventListener('keydown', (e) => { if (e.key === 'Escape') dropdown.innerHTML = ''; });
 }
 
 // ── Data Loading ──
@@ -357,6 +448,7 @@ function applyFilter(): void {
         switch (filterMode) {
             case 'incomplete': return r.completeness < 100;
             case 'no-general': return !r.generalId;
+            case 'no-portrait': return !!r.generalId && !(r.portrait ?? '').trim();
             case 'no-elite': return !r.eliteName;
             case 'errors': return errorFactionIds.has(r.id);
         }
@@ -379,13 +471,14 @@ function updateStats(): void {
     const total = rows.length;
     const complete = rows.filter(r => r.completeness === 100).length;
     const noGen = rows.filter(r => !r.generalId).length;
+    const noPortrait = rows.filter(r => !!r.generalId && !(r.portrait ?? '').trim()).length;
     const noElite = rows.filter(r => !r.eliteName).length;
     const famous = rows.filter(r => r.tier === 'famous').length;
     const ordinary = rows.filter(r => r.tier === 'ordinary').length;
     const t = [0, 0, 0, 0, 0];
     for (const r of rows) if (r.eliteTier != null && r.eliteTier >= 0 && r.eliteTier <= 4) t[r.eliteTier]++;
     els.stats.innerHTML =
-        `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺精锐 ${noElite} | 显示 ${filteredRows.length}`
+        `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺立绘 ${noPortrait} | 缺精锐 ${noElite} | 显示 ${filteredRows.length}`
         + `<br><span style="color:#c8a868">名将 ${famous} | 普将 ${ordinary}</span>`
         + `<span style="margin-left:12px;color:#8ab4c4">T0:<b>${t[0]}</b> T1:<b>${t[1]}</b> T2:<b>${t[2]}</b> T3:<b>${t[3]}</b> T4:<b>${t[4]}</b></span>`;
 }
@@ -631,50 +724,125 @@ async function openEditPanel(factionId: string | null): Promise<void> {
 
     if (isNew) {
         // ── New entity: quick-input mode ──
+        const qInput = (id: string, placeholder = '') =>
+            `<input id="${id}" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px" placeholder="${placeholder}" />`;
         els.panelContent.innerHTML = `
         <div class="bm-form">
-          <h3>快速录入</h3>
-          <label><span>粘贴一行文字，自动解析所有字段</span>
+          <h3>快速录入（识别自动填 → 手动修改 → 提交）</h3>
+          <label><span>粘贴一行文字，自动识别填入下方字段（不覆盖已手填内容）</span>
             <textarea id="bm-quick-input" rows="3" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:8px;font-size:13px;resize:vertical;font-family:inherit"
               placeholder="据点：梓州，势力：梓州，旗号：梓，武将：王建，精锐：西川牙兵，T2。lat: 31.1141, lng: 105.0623"></textarea>
           </label>
-          <label><span>文化区 *</span>
-            <select id="bm-quick-region" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
-              <option value="">请选择</option>
-              ${regionOptions}
-            </select>
+          <h3 style="margin-top:12px">① 势力与据点</h3>
+          <div class="form-row">
+            <label><span>势力名 *</span>${qInput('bm-quick-fname')}</label>
+            <label><span>旗号（留空取势力名首字）</span>${qInput('bm-quick-flag')}</label>
+          </div>
+          <div class="form-row">
+            <label><span>据点名 *</span>${qInput('bm-quick-cname')}</label>
+            <label><span>文化区 *</span>
+              <select id="bm-quick-region" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
+                <option value="">请选择</option>
+                ${regionOptions}
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label><span>纬度 lat *</span>${qInput('bm-quick-lat')}</label>
+            <label><span>经度 lng *</span>${qInput('bm-quick-lng')}</label>
+          </div>
+          <h3 style="margin-top:14px">② 武将（可选 · 立绘/武将技不选则随机，不留空）</h3>
+          <div class="form-row">
+            <label><span>武将名（留空则不建武将）</span>${qInput('bm-quick-genname', '从文本识别自动填入，可手改')}</label>
+            <label><span>品阶</span>
+              <select id="bm-quick-tier" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
+                <option value="ordinary">普将</option>
+                <option value="famous">名将</option>
+              </select>
+            </label>
+          </div>
+          <label><span>立绘（输入拼音/势力key 即时筛选，如 liguang）</span>
+            ${qInput('bm-quick-portrait', '留空 → 从未被占用的立绘中随机')}
           </label>
+          <div class="bm-portrait-preview">
+            <img id="bm-quick-portrait-img" style="display:none" alt="立绘" />
+            <div class="portrait-empty" id="bm-quick-portrait-empty">未选立绘</div>
+            <div class="portrait-info"><div><b>立绘预览</b></div><div style="margin-top:4px">从筛选下拉点选后显示；留空提交时随机</div></div>
+          </div>
           <div class="form-row" style="margin-top:8px">
-            <label><span>战术技 (可选)</span>
+            <label><span>战术技（留空 → 从 common 档随机）</span>
               <select id="bm-quick-tac" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
-                <option value="">不设</option>
+                <option value="">随机 (common 档)</option>
                 ${tacOptions}
               </select>
             </label>
-            <label><span>战略技 (可选)</span>
+            <label><span>战略技（仅名将，留空 → 随机）</span>
               <select id="bm-quick-str" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
-                <option value="">无</option>
+                <option value="">随机 (名将) / 无 (普将)</option>
                 ${strOptions}
+              </select>
+            </label>
+          </div>
+          <h3 style="margin-top:14px">③ 精锐（可选）</h3>
+          <div class="form-row">
+            <label><span>番号名（留空则不建精锐）</span>${qInput('bm-quick-elite')}</label>
+            <label><span>级别</span>
+              <select id="bm-quick-elitetier" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
+                <option value="0">T0</option><option value="1">T1</option>
+                <option value="2" selected>T2</option><option value="3">T3</option><option value="4">T4</option>
               </select>
             </label>
           </div>
 
           <div id="bm-quick-preview" class="bm-id-preview" style="margin-top:12px">
-            <span class="id-label">粘贴文字后自动解析…</span>
+            <span class="id-label">粘贴文字或手动填写…</span>
           </div>
 
           <div class="form-actions">
-            <button type="button" id="bm-quick-submit" class="bm-btn bm-btn-primary">解析并提交</button>
+            <button type="button" id="bm-quick-submit" class="bm-btn bm-btn-primary">提交添加</button>
             <button type="button" class="bm-btn" id="bm-panel-close">关闭</button>
           </div>
         </div>
         `;
 
         const quickInput = document.getElementById('bm-quick-input') as HTMLTextAreaElement;
-        quickInput.addEventListener('input', () => updateQuickPreview());
-        document.getElementById('bm-quick-region')!.addEventListener('change', () => updateQuickPreview());
+        quickInput.addEventListener('input', () => { fillQuickFieldsFromText(); updateQuickPreview(); });
         document.getElementById('bm-quick-submit')!.addEventListener('click', handleQuickSubmit);
         document.getElementById('bm-panel-close')!.addEventListener('click', closePanel);
+
+        // 所有字段变更 → 实时刷新预览
+        for (const id of ['bm-quick-fname', 'bm-quick-flag', 'bm-quick-cname', 'bm-quick-lat', 'bm-quick-lng',
+            'bm-quick-genname', 'bm-quick-elite']) {
+            document.getElementById(id)!.addEventListener('input', () => updateQuickPreview());
+        }
+        for (const id of ['bm-quick-region', 'bm-quick-tier', 'bm-quick-tac', 'bm-quick-str', 'bm-quick-elitetier']) {
+            document.getElementById(id)!.addEventListener('change', () => updateQuickPreview());
+        }
+
+        // 立绘搜索 + 预览联动
+        const qPortrait = document.getElementById('bm-quick-portrait') as HTMLInputElement;
+        const qPortraitImg = document.getElementById('bm-quick-portrait-img') as HTMLImageElement;
+        const qPortraitEmpty = document.getElementById('bm-quick-portrait-empty') as HTMLElement;
+        attachPortraitSearch(qPortrait);
+        qPortrait.addEventListener('input', () => {
+            const p = qPortrait.value.trim();
+            if (p) {
+                qPortraitImg.src = p;
+                qPortraitImg.style.display = '';
+                qPortraitEmpty.style.display = 'none';
+            } else {
+                qPortraitImg.style.display = 'none';
+                qPortraitEmpty.textContent = '未选立绘';
+                qPortraitEmpty.style.display = '';
+            }
+            updateQuickPreview();
+        });
+        qPortraitImg.addEventListener('error', () => {
+            qPortraitImg.style.display = 'none';
+            qPortraitEmpty.textContent = '加载失败';
+            qPortraitEmpty.style.display = '';
+        });
+
         quickInput.focus();
         return;
     } else {
@@ -839,6 +1007,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             }
         };
         portraitInput.addEventListener('input', refresh);
+        attachPortraitSearch(portraitInput);
         portraitImg.addEventListener('error', () => {
             portraitImg.style.display = 'none';
             portraitEmpty.textContent = '加载失败';
@@ -964,96 +1133,201 @@ function parseQuickInput(text: string): ParsedEntity | null {
     };
 }
 
+/** 识别文本 → 预填空字段（只填空的，不覆盖手动修改） */
+function fillQuickFieldsFromText(): void {
+    const input = document.getElementById('bm-quick-input') as HTMLTextAreaElement | null;
+    if (!input) return;
+    const parsed = parseQuickInput(input.value);
+    if (!parsed) return;
+    const fillIfEmpty = (id: string, val: string): boolean => {
+        const el = document.getElementById(id) as HTMLInputElement | null;
+        if (el && val && !el.value.trim()) { el.value = val; return true; }
+        return false;
+    };
+    fillIfEmpty('bm-quick-fname', parsed.factionName);
+    fillIfEmpty('bm-quick-flag', parsed.flagText);
+    fillIfEmpty('bm-quick-cname', parsed.cityName);
+    if (!isNaN(parsed.lat)) fillIfEmpty('bm-quick-lat', String(parsed.lat));
+    if (!isNaN(parsed.lng)) fillIfEmpty('bm-quick-lng', String(parsed.lng));
+    const regionSelect = document.getElementById('bm-quick-region') as HTMLSelectElement | null;
+    if (regionSelect && parsed.region && !regionSelect.value) regionSelect.value = parsed.region;
+    if (fillIfEmpty('bm-quick-genname', parsed.generalName)) {
+        const tierSelect = document.getElementById('bm-quick-tier') as HTMLSelectElement | null;
+        if (tierSelect) tierSelect.value = parsed.tier;
+    }
+    if (fillIfEmpty('bm-quick-elite', parsed.eliteName)) {
+        const eliteTierSel = document.getElementById('bm-quick-elitetier') as HTMLSelectElement | null;
+        if (eliteTierSel) eliteTierSel.value = String(parsed.eliteTier);
+    }
+}
+
+/** 读取新增面板所有字段（提交与预览共用同一读法） */
+function readQuickFields() {
+    const val = (id: string) => (document.getElementById(id) as HTMLInputElement | HTMLSelectElement | null)?.value?.trim() ?? '';
+    const factionName = val('bm-quick-fname');
+    return {
+        factionName,
+        flagText: val('bm-quick-flag') || factionName.slice(0, 1),
+        cityName: val('bm-quick-cname'),
+        lat: parseFloat(val('bm-quick-lat')),
+        lng: parseFloat(val('bm-quick-lng')),
+        region: val('bm-quick-region'),
+        genName: val('bm-quick-genname'),
+        genTier: (val('bm-quick-tier') === 'famous' ? 'famous' : 'ordinary') as 'famous' | 'ordinary',
+        portrait: val('bm-quick-portrait'),
+        tacticalSkillId: val('bm-quick-tac'),
+        strategicSkillId: val('bm-quick-str'),
+        eliteName: val('bm-quick-elite'),
+        eliteTier: parseInt(val('bm-quick-elitetier') || '2', 10),
+    };
+}
+
+// ── 随机分配（不选就随机，不留空） ──
+
+function pickRandom<T>(arr: readonly T[]): T | null {
+    if (arr.length === 0) return null;
+    return arr[Math.floor(Math.random() * arr.length)] ?? null;
+}
+
+/** 随机战术技只从 common 档挑：limited/gamble/专属等限量档禁止随机乱发（见 TACTICAL_ASSIGN_TIER） */
+function pickRandomTacticalSkill(): { id: string; displayName: string } | null {
+    return pickRandom((entityData?.tacticalSkills ?? []).filter(s => s.assignTier === 'common'));
+}
+
+function pickRandomStrategicSkill(): { id: string; displayName: string } | null {
+    return pickRandom(entityData?.strategicSkills ?? []);
+}
+
+/** 随机立绘：优先挑未被任何武将占用的，避免两人共用一张脸；全占用才复用 */
+async function pickRandomUnusedPortrait(): Promise<string | null> {
+    const all = await loadPortraitCatalog();
+    if (all.length === 0) return null;
+    const used = new Set(rows.map(r => (r.portrait ?? '').trim()).filter(Boolean));
+    const unused = all.filter(p => !used.has(p));
+    return pickRandom(unused.length > 0 ? unused : all);
+}
+
 function updateQuickPreview(): void {
     const preview = document.getElementById('bm-quick-preview');
-    const input = document.getElementById('bm-quick-input') as HTMLTextAreaElement;
-    const regionSelect = document.getElementById('bm-quick-region') as HTMLSelectElement;
-    if (!preview || !input) return;
-
-    const parsed = parseQuickInput(input.value);
-    if (!parsed) {
-        preview.innerHTML = '<span class="id-label">粘贴文字后自动解析…</span>';
+    if (!preview || !document.getElementById('bm-quick-fname')) return;
+    const f = readQuickFields();
+    if (!f.factionName && !f.cityName) {
+        preview.innerHTML = '<span class="id-label">粘贴文字或手动填写…</span>';
         return;
     }
 
-    const ids = computeIds(parsed.factionName, parsed.cityName, parsed.generalName);
-    if (parsed.region && regionSelect) {
-        regionSelect.value = parsed.region;
-    }
-    const region = regionSelect?.value || '';
+    const ids = computeIds(f.factionName, f.cityName, f.genName);
     const lines: string[] = [
-        `<span class="id-label">势力:</span> ${parsed.factionName} → <span class="id-value">${ids.factionId}</span>${ids.factionDup ? ' <span class="id-dup">(+后缀)</span>' : ''}`,
-        `<span class="id-label">旗号:</span> ${parsed.flagText}`,
-        `<span class="id-label">据点:</span> ${parsed.cityName} → <span class="id-value">${ids.cityId}</span>${ids.cityDup ? ' <span class="id-dup">(+后缀)</span>' : ''}`,
-        `<span class="id-label">坐标:</span> ${isNaN(parsed.lat) ? '<span class="id-dup">未识别</span>' : `${parsed.lat}, ${parsed.lng}`}`,
-        `<span class="id-label">文化区:</span> ${region || '<span class="id-dup">请选择</span>'}`,
+        `<span class="id-label">势力:</span> ${f.factionName || '<span class="id-dup">必填</span>'} → <span class="id-value">${ids.factionId}</span>${ids.factionDup ? ' <span class="id-dup">(+后缀)</span>' : ''}`,
+        `<span class="id-label">旗号:</span> ${f.flagText || '<span class="id-dup">取势力名首字</span>'}`,
+        `<span class="id-label">据点:</span> ${f.cityName || '<span class="id-dup">必填</span>'} → <span class="id-value">${ids.cityId}</span>${ids.cityDup ? ' <span class="id-dup">(+后缀)</span>' : ''}`,
+        `<span class="id-label">坐标:</span> ${isNaN(f.lat) || isNaN(f.lng) ? '<span class="id-dup">必填</span>' : `${f.lat}, ${f.lng}`}`,
+        `<span class="id-label">文化区:</span> ${f.region || '<span class="id-dup">请选择</span>'}`,
     ];
     const existingFaction = rows.find(r => r.id === ids.factionId);
     if (existingFaction) {
         lines.push(`<span class="id-dup">⚠ 势力已存在，将跳过据点导入，仅补充武将/精锐</span>`);
     }
-    if (parsed.generalName) {
-        const portraitPath = region ? `/assets/${region}/${ids.generalId}.png` : '';
-        lines.push(`<span class="id-label">武将:</span> ${parsed.generalName} → <span class="id-value">${ids.generalId}</span>${ids.generalDup ? ' <span class="id-dup">(+后缀)</span>' : ''} (${parsed.tier === 'famous' ? '名将' : '普将'})`);
-        if (portraitPath) {
-            lines.push(`<span class="id-label">立绘:</span> <span class="id-value">${portraitPath}</span>`);
+    if (f.genName) {
+        lines.push(`<span class="id-label">武将:</span> ${f.genName} → <span class="id-value">${ids.generalId}</span>${ids.generalDup ? ' <span class="id-dup">(+后缀)</span>' : ''} (${f.genTier === 'famous' ? '名将' : '普将'})`);
+        lines.push(f.portrait
+            ? `<span class="id-label">立绘:</span> <span class="id-value">${f.portrait}</span> (已选择)`
+            : `<span class="id-label">立绘:</span> 未选 → <span class="id-value">提交时从未占用立绘中随机</span>`);
+        const tacName = entityData?.tacticalSkills.find(s => s.id === f.tacticalSkillId)?.displayName;
+        lines.push(f.tacticalSkillId
+            ? `<span class="id-label">战术技:</span> <span class="id-value">${tacName ?? f.tacticalSkillId}</span>`
+            : `<span class="id-label">战术技:</span> 未选 → <span class="id-value">提交时从 common 档随机</span>`);
+        if (f.genTier === 'famous') {
+            const strName = entityData?.strategicSkills.find(s => s.id === f.strategicSkillId)?.displayName;
+            lines.push(f.strategicSkillId
+                ? `<span class="id-label">战略技:</span> <span class="id-value">${strName ?? f.strategicSkillId}</span>`
+                : `<span class="id-label">战略技:</span> 未选 → <span class="id-value">提交时随机（名将必有）</span>`);
+        } else if (f.strategicSkillId) {
+            lines.push(`<span class="id-dup">⚠ 普将不应有战略技，提交时将忽略所选战略技</span>`);
         }
     }
-    if (parsed.eliteName) {
-        lines.push(`<span class="id-label">精锐:</span> ${parsed.eliteName} T${parsed.eliteTier}`);
+    if (f.eliteName) {
+        lines.push(`<span class="id-label">精锐:</span> ${f.eliteName} T${f.eliteTier}`);
     }
-    const dupWarnings = checkNameDuplicates(parsed.cityName, parsed.factionName, parsed.generalName || '', parsed.eliteName || '');
+    const dupWarnings = checkNameDuplicates(f.cityName, f.factionName, f.genName, f.eliteName);
     for (const w of dupWarnings) {
-        lines.push(`<span class="id-dup">⚠ ${w}</span>`);
+        lines.push(`<span class="id-dup">⚠ ${w}（仅提醒，不阻止提交）</span>`);
     }
     preview.innerHTML = lines.join('<br>');
 }
 
 async function handleQuickSubmit(): Promise<void> {
-    const input = document.getElementById('bm-quick-input') as HTMLTextAreaElement;
-    const regionSelect = document.getElementById('bm-quick-region') as HTMLSelectElement;
-    const tacSelect = document.getElementById('bm-quick-tac') as HTMLSelectElement;
-    const strSelect = document.getElementById('bm-quick-str') as HTMLSelectElement;
+    const f = readQuickFields();
 
-    const parsed = parseQuickInput(input.value);
-    if (!parsed) {
-        showToast('无法解析，请检查格式。需要至少包含: 据点：xx，势力：xx', true);
+    // 硬校验：必填项与数据完整性（重名不在此列——只提醒不阻止）
+    if (!f.factionName || !f.cityName) {
+        showToast('势力名与据点名必填（可粘贴文字自动识别）', true);
         return;
     }
-    if (isNaN(parsed.lat) || isNaN(parsed.lng)) {
-        showToast('未识别到坐标，请包含 lat: xx, lng: xx', true);
+    if (isNaN(f.lat) || isNaN(f.lng)) {
+        showToast('坐标必填，如 lat: 31.11, lng: 105.06', true);
         return;
     }
-    const region = regionSelect.value;
-    if (!region) {
+    if (!f.region) {
         showToast('请选择文化区', true);
         return;
     }
 
-    const ids = computeIds(parsed.factionName, parsed.cityName, parsed.generalName);
+    const ids = computeIds(f.factionName, f.cityName, f.genName);
     if (!ids.factionId || !ids.cityId) {
         showToast('无法生成 ID，请检查名称', true);
         return;
     }
 
-    const dupWarnings = checkNameDuplicates(parsed.cityName, parsed.factionName, parsed.generalName || '', parsed.eliteName || '');
+    // 重名：只提醒，不阻止（预览区已实时列出全部重名）
+    const dupWarnings = checkNameDuplicates(f.cityName, f.factionName, f.genName, f.eliteName);
     if (dupWarnings.length > 0) {
-        showToast(`重名检测: ${dupWarnings[0]}`, true);
-        return;
+        showToast(`⚠ 重名提醒（继续提交）: ${dupWarnings[0]}${dupWarnings.length > 1 ? ` 等 ${dupWarnings.length} 条` : ''}`, true);
     }
 
-    const tacticalSkillId = tacSelect?.value || '';
-    const strategicSkillId = strSelect?.value || '';
+    // 武将：立绘/武将技不选则随机，不留空
+    let portrait = normalizePortraitPath(f.portrait);
+    if (portrait && !portrait.toLowerCase().endsWith('.png')) {
+        showToast(`立绘路径必须是 .png: ${portrait}`, true);
+        return;
+    }
+    let tacticalSkillId = f.tacticalSkillId;
+    let strategicSkillId = f.strategicSkillId;
+    const randomNotes: string[] = [];
+    if (f.genName) {
+        if (!tacticalSkillId) {
+            const t = pickRandomTacticalSkill();
+            if (!t) { showToast('随机战术技失败：common 档池为空，请手动选择', true); return; }
+            tacticalSkillId = t.id;
+            randomNotes.push(`战术技=${t.displayName}`);
+        }
+        if (f.genTier === 'famous' && !strategicSkillId) {
+            const s = pickRandomStrategicSkill();
+            if (!s) { showToast('随机战略技失败：清单为空，请手动选择', true); return; }
+            strategicSkillId = s.id;
+            randomNotes.push(`战略技=${s.displayName}`);
+        }
+        if (f.genTier === 'ordinary' && strategicSkillId) {
+            showToast('⚠ 普将不应有战略技，已忽略所选战略技', true);
+            strategicSkillId = '';
+        }
+        if (!portrait) {
+            const p = await pickRandomUnusedPortrait();
+            if (!p) { showToast('随机立绘失败：立绘清单为空，请手动选择', true); return; }
+            portrait = p;
+            randomNotes.push(`立绘=${p.split('/').pop()}`);
+        }
+    }
 
     const existingFaction = rows.find(r => r.id === ids.factionId);
 
     try {
-        // Step 0: 50km proximity check (always run)
+        // Step 0: 50km proximity check（游戏规则约束，保持拦截）
         const proxRes = await fetch('/api/check-proximity', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                lat: parsed.lat, lng: parsed.lng,
+                lat: f.lat, lng: f.lng,
                 excludeCityId: existingFaction?.cityId || '',
             }),
         });
@@ -1066,7 +1340,7 @@ async function handleQuickSubmit(): Promise<void> {
 
         // Step 1: batch-import (skip if faction already exists)
         if (existingFaction) {
-            showToast(`势力 "${parsed.factionName}" 已存在，跳过据点导入，补充武将/精锐…`);
+            showToast(`势力 "${f.factionName}" 已存在，跳过据点导入，补充武将/精锐…`);
         } else {
             const importRes = await fetch('/api/batch-import', {
                 method: 'POST',
@@ -1074,12 +1348,12 @@ async function handleQuickSubmit(): Promise<void> {
                 body: JSON.stringify({
                     entries: [{
                         factionId: ids.factionId,
-                        factionName: parsed.factionName,
-                        flagText: parsed.flagText,
+                        factionName: f.factionName,
+                        flagText: f.flagText,
                         cityId: ids.cityId,
-                        cityName: parsed.cityName,
-                        lat: parsed.lat, lng: parsed.lng,
-                        region,
+                        cityName: f.cityName,
+                        lat: f.lat, lng: f.lng,
+                        region: f.region,
                     }]
                 }),
             });
@@ -1092,16 +1366,16 @@ async function handleQuickSubmit(): Promise<void> {
         }
 
         // Step 2: save general (if provided)
-        if (parsed.generalName && tacticalSkillId) {
+        if (f.genName) {
             const genRes = await fetch('/api/save-general', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     factionId: ids.factionId,
                     generalId: ids.generalId,
-                    generalName: parsed.generalName,
-                    portrait: `/assets/${region}/${ids.generalId}.png`,
-                    tier: parsed.tier,
+                    generalName: f.genName,
+                    portrait,
+                    tier: f.genTier,
                     tacticalSkillId,
                     strategicSkillId: strategicSkillId || undefined,
                 }),
@@ -1118,15 +1392,15 @@ async function handleQuickSubmit(): Promise<void> {
         }
 
         // Step 3: save elite (if provided)
-        if (parsed.eliteName) {
+        if (f.eliteName) {
             const eliteRes = await fetch('/api/save-elite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     factionId: ids.factionId,
-                    eliteName: parsed.eliteName,
-                    eliteTier: parsed.eliteTier,
-                    region,
+                    eliteName: f.eliteName,
+                    eliteTier: f.eliteTier,
+                    region: f.region,
                 }),
             });
             const eliteData = await eliteRes.json();
@@ -1136,7 +1410,7 @@ async function handleQuickSubmit(): Promise<void> {
             }
         }
 
-        showToast(`✓ ${parsed.factionName} 添加成功 → ${ids.factionId}`);
+        showToast(`✓ ${f.factionName} 添加成功 → ${ids.factionId}${randomNotes.length ? `（随机分配：${randomNotes.join('，')}）` : ''}`);
         await loadData();
         editingFactionId = ids.factionId;
         openEditPanel(ids.factionId);

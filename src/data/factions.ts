@@ -170,6 +170,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jurchen', name: '女真' },
     { id: 'dangxiang', name: '大夏' },
 
+
     { id: 'menggu_d', name: '蒙古' },
     { id: 'manzhou', name: '满洲' },
 
@@ -313,7 +314,9 @@ export const FACTIONS: Faction[] = [
     // 紫檀 - 谯国桓氏(桓温/桓玄)
     // 草原灰绿 - 丁零翟魏(翟氏)       // 辽东褐 - 段部鲜卑(段氏)
     { id: 'pingyuan', name: '高唐' },    // 暗金黄 - 平原郡治(平原)；旗号取郡内高唐县避与据点名重
-    { id: 'yao', name: '尧帝' },         // 尧都平阳
+    { id: 'yao', name: '平阳' },
+
+         // 尧都平阳
 
     // ── 2026-05-26 新增：两晋核对追加势力 ──
     { id: 'murong', name: '慕容' },
@@ -694,6 +697,9 @@ export const FACTIONS: Faction[] = [
               // 瓦剌蓝 - 绰罗斯氏(瓦剌王族/准噶尔盆地)
     { id: 'weiming', name: '嵬名' },
 
+
+
+
     // ── 2026-06-11 新增：野利（西夏权臣/克夷门）──
     { id: 'yeli', name: '野利' },
 
@@ -988,11 +994,13 @@ export const FACTIONS: Faction[] = [
 
 
 
-    { id: 'kang', name: '夏州' },
+    { id: 'kang', name: '宥州' },
+
     { id: 'wudu', name: '阶州' },
 
 
     { id: 'woye', name: '沃野' },
+
     { id: 'shuofang', name: '朔方' },
     { id: 'lushui', name: '卢水' },
 
@@ -1456,6 +1464,12 @@ export const FACTIONS: Faction[] = [
 
     { id: 'weiyuan', name: '亹源' },
     { id: 'yansui', name: '延绥' },
+    { id: 'xiazhou', name: '夏州' },
+    { id: 'yanzhou', name: '盐州' },
+
+
+
+
 
 
 

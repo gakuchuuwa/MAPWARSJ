@@ -95,7 +95,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'bing': '并',
 'bohai': '渤海',
     'jurchen': '女真',
-'dangxiang': '夏',
+'dangxiang': '大夏',
 'menggu_d': '蒙古',
 'manzhou': '满洲',
 'manzhou_d': '清',
@@ -567,9 +567,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yangshe': '羊舌',
 'sima_d': '司马',
 'liguo': '潞',
-    'kang': '康',
+'kang': '宥',
 'wudu': '阶',
-    'woye': '沃野',
+'woye': '沃野',
     'shuofang': '朔方',
 'lushui': '卢水',
     'yingli': '应理',
@@ -684,7 +684,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'zhong': '寿',
 'qingyuan_bd': '清苑',
     'pingyuan': '高唐',
-    'yao': '尧',
+'yao': '平阳',
 'xichu': '楚',
 'yunzhong': '索头',
 'chunshen': '春申',
@@ -862,6 +862,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dongsheng': '云中',
 'weiyuan': '亹源',
     'yansui': '延绥',
+'xiazhou': '夏',
+'yanzhou': '盐',
 };
 
 // @ts-ignore

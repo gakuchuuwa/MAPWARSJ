@@ -499,7 +499,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     shazhou: { generalId: 'shazhou_zhangyichao', generalName: '张议潮', portrait: '/assets/litang/shazhou_zhangyichao.png' },
     dongshengwei: { generalId: 'dongshengwei_wangyue', generalName: '王越', portrait: '/assets/daming/dongshengwei_wangyue.png' },
     guiyi: { generalId: 'guiyi_caoyijin', generalName: '曹议金', portrait: '/assets/HEXI/guiyi_caoyijin.png' },
-    weiming: { generalId: 'weiming_lijiqian', generalName: '李继迁', portrait: '/assets/HEXI/weiming_lijiqian.png' },
+    weiming: { generalId: 'weiming_huhanxie', generalName: '呼韩邪', portrait: '' },
     helian: { generalId: 'helian_helianbobo', generalName: '赫连勃勃', portrait: '/assets/HEXI/helian_helianbobo.png' },
     chile: { generalId: 'chile_hulvjin', generalName: '斛律金', portrait: '/assets/HEXI/chile_hulvjin.png' },
     chijin: { generalId: 'chijin_qiewangshijia', generalName: '且旺失加', portrait: '/assets/HEXI/chijin_qiewangshijia.png' },
@@ -508,7 +508,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     hunxie: { generalId: 'hunxie_xuziwei', generalName: '徐自为', portrait: '/assets/HEXI/hunxie_xuziwei.png' },
     guazhou: { generalId: 'guazhou_zhangshougui', generalName: '张守珪', portrait: '/assets/HEXI/guazhou_zhangshougui.png' },
     kang: { generalId: 'kang_liangshidou', generalName: '梁师都', portrait: '/assets/zhaosong/kang_liangshidou.png' },
-        woye: { generalId: 'woye_huangfugui', generalName: '皇甫规', portrait: '/assets/HEXI/woye_huangfugui.png' },
+    woye: { generalId: 'woye_huangfugui', generalName: '皇甫规', portrait: '/assets/HEXI/woye_huangfugui.png' },
     yingli: { generalId: 'yingli_jilasiyi', generalName: '籍辣思义', portrait: '/assets/HEXI/yingli_jilasiyi.png' },
     dangxiang: { generalId: 'dangxiang_liyuanhao', generalName: '李元昊', portrait: '/assets/HEXI/dangxiang_liyuanhao.png' },
     huizhou: { generalId: 'huizhou_yaosi', generalName: '姚兕', portrait: '/assets/HEXI/huizhou_yaosi.png' },
@@ -792,6 +792,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dongsheng: { generalId: 'dongsheng_weishang', generalName: '魏尚', portrait: '/assets/liuhan/dongsheng_weishang.png' },
     weiyuan: { generalId: 'weiyuan_d_niangengyao', generalName: '年羹尧', portrait: '/assets/manqing/weiyuan_d_niangengyao.png' },
     yansui: { generalId: 'yansui_wangwei', generalName: '王威', portrait: '/assets/daming/yansui_wangwei.png' },
+    xiazhou: { generalId: 'xiazhou_lijiqian', generalName: '李继迁', portrait: '/assets/HEXI/weiming_lijiqian.png' },
 };
 
 /** 取某势力的开局名将；未配置返回 null（该势力不带将） */

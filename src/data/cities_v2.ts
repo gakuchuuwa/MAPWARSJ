@@ -243,7 +243,9 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     },
         // ── 京同山川走廊 (北京→大同 的中城) ──
     // ── 晋陕走廊/汾河谷地 (大同→长安 的中城) ──
-    { id: 'city_linfen', name: '平阳', factionId: 'yao', lat: 36.088000, lng: 111.516724, type: 'small_city', region: 'CENTRAL', troops: 20000, note: '尧都平阳（临汾）；距曲沃≥50km' },
+    { id: 'city_linfen', name: '临汾', factionId: 'yao', lat: 36.088, lng: 111.516724, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
+
     // ── 太行山脉走廊/八陉周边中城 ──
                 // ── 淮海与齐鲁中原走廊中城 ──
     { id: 'city_shangqiu', name: '商丘', factionId: 'liang_d', lat: 34.41, lng: 115.66, type: 'medium_city', troops: 20000, region: 'CENTRAL' },
@@ -866,7 +868,10 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
     // ── 2026-06-18 新增：李靖@恶阳岭（贞观四年定襄夜袭）──
     { id: 'city_eyangling', name: '恶阳岭', factionId: 'dingxiang_d', lat: 39.910000, lng: 111.650000, type: 'pass', troops: 20000, region: 'NORTH', mirror: true, note: '贞观四年李靖三千骑出恶阳岭夜袭定襄城（《旧唐书·李靖传》）；清水河南缘，距盛乐≥50km' },
-    { id: 'city_jilusai', name: '鸡鹿塞', factionId: 'weiming', lat: 40.807568, lng: 106.630554, type: 'pass', troops: 20000, region: 'HEXI' },
+    { id: 'city_jilusai', name: '鸡鹿塞', factionId: 'weiming', lat: 40.46, lng: 106.26, type: 'pass', troops: 20000, region: 'HEXI' },
+
+
+
 
     {
         id: 'city_guyangsai',
@@ -2213,14 +2218,17 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_fushi', name: '肤施', factionId: 'zhai_han', lat: 36.59, lng: 109.48, type: 'small_city', troops: 20000, region: 'HEXI' },
 
 
-    { id: 'city_changze', name: '长泽', factionId: 'kang', lat: 39.1, lng: 107.98, type: 'small_city', region: 'HEXI', troops: 20000, note: '梁师都鹰扬郎将起兵建梁' },
-    { id: 'city_linrong', name: '临戎', factionId: 'woye', lat: 40.3, lng: 107, type: 'small_city', region: 'HEXI', troops: 20000, note: '皇甫规度辽将军驻朔方' },
+    { id: 'city_changze', name: '长泽', factionId: 'kang', lat: 39.1, lng: 107.98, type: 'small_city', troops: 20000, region: 'HEXI' },
+
+    { id: 'city_linrong', name: '临戎', factionId: 'woye', lat: 40.3, lng: 107, type: 'small_city', troops: 20000, region: 'HEXI' },
+
     { id: 'city_aowei', name: '媪围', factionId: 'lushui', lat: 37.396289, lng: 104.111938, type: 'small_city', troops: 20000, region: 'HEXI' },
 
     { id: 'city_mingsha', name: '鸣沙', factionId: 'yingli', lat: 37.51, lng: 105.18, type: 'small_city', region: 'HEXI', troops: 20000,
         note: '鸣沙；应理小城',
     },
     { id: 'city_xingqingfu2', name: '兴庆府', factionId: 'dangxiang', lat: 38.537412, lng: 106.295471, type: 'medium_city', troops: 20000, region: 'HEXI' },
+
 
     { id: 'city_lingju', name: '令居', factionId: 'guangwu', lat: 36.73, lng: 103.26, type: 'small_city', troops: 20000, region: 'TIBET' },
 
@@ -2742,6 +2750,12 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_haomen', name: '浩门', factionId: 'weiyuan', lat: 37.464, lng: 101.4258, type: 'small_city', troops: 20000, region: 'HEXI' },
     { id: 'city_yulin', name: '榆林', factionId: 'yansui', lat: 38.3567, lng: 109.7644, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+    { id: 'city_jingbianbao', name: '靖边堡', factionId: 'xiazhou', lat: 37.5685, lng: 108.8608, type: 'pass', troops: 20000, region: 'HEXI' },
+    { id: 'city_quyancheng', name: '朐衍城', factionId: 'yanzhou', lat: 37.7794, lng: 107.4078, type: 'small_city', troops: 20000, region: 'HEXI' },
+
+
+
+
 
 
 
