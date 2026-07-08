@@ -65,7 +65,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   weihaiwei: { name: '大唐神灭军', tier: 1 },        // 李晟收复长安，平定朱泚之乱，属于重大战略胜利，但不属于"灭国/重塑地缘格局"的T0级别，降为T1。
   jianzhou_nvzhen: { name: '建州女真卫', tier: 2 }, // 仅为后金初期的特定前身武装，缺乏长久建制延续性（真正的T1战略主力为后期的满洲八旗），降入T2战术
   pinghai: { name: '征东舟师', tier: 2 },     // 来护儿征东水师，隋征高句丽核心，显著文化知名度，升T2
-  liangshidu: { name: '雕阴戍卒', tier: 2 }, // 龙贾戍卒抗秦，战国经典防御战，升T2
+    liangshidu: { name: '雕阴戍卒', tier: 2 },
   yangshe: { name: '铜鞮私卒', tier: 4 }, // 铜鞮·羊舌职封邑（缺乏极其著名的战术高光，降T3）
     guzhu: { name: '辽西威锋', tier: 3 },
     dizhou: { name: '龙骧军', tier: 2 },

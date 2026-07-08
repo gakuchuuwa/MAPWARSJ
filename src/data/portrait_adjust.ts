@@ -4832,11 +4832,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/daming/__闲置__daming_12.png": {
-            "scale": 1.29,
-            "offsetX": 0,
-            "offsetY": -16
-        },
         "/assets/daming/shanrong_lanyu.png": {
             "scale": 1.12,
             "offsetX": 0,
@@ -5626,6 +5621,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -14
+        },
+        "/assets/daming/yansui_wangwei.png": {
+            "scale": 1.29,
+            "offsetX": 0,
+            "offsetY": -16
         }
     },
     "folderGuides": {

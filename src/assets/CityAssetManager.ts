@@ -49,7 +49,7 @@ export class CityAssetManager {
     // 因此从 private 改为 public。仅作只读引用，请勿在外部修改其内容。
     public static readonly factionFlagMap: { [key: string]: string } = {
 'zhen': '武珍',
-'dongshengwei': '延绥',
+'dongshengwei': '胜',
 'dizhou': '棣',
 'gaogouli': '高句',
         'xinluo': '新罗',
@@ -203,7 +203,7 @@ export class CityAssetManager {
 'qiuci': '龟兹',
 'yanqi': '焉耆',
 'qifu_d': '乞伏',
-        'tuyu_d': '吐谷',
+'tuyu_d': '廓',
         'linyi': '林邑',
 'murong': '慕容',
         'yingzhou_ying_d': '营',
@@ -239,7 +239,7 @@ export class CityAssetManager {
         'sunwu_d': '孙吴',
 
 'wazhai': '济阴',
-        'liangshidu': '银',
+'liangshidu': '绥',
         'linshihong': '楚南',
 'kumo': '楮特',
 'xijue': '十箭',
@@ -824,8 +824,9 @@ export class CityAssetManager {
 'shanzhou': '鄯',
 'weizhou': '维',
 'yingzhou_d2': '应',
-'dongsheng': '胜',
+'dongsheng': '云中',
 'weiyuan': '亹源',
+        'yansui': '延绥',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

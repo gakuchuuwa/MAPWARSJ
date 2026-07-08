@@ -59,7 +59,9 @@ export const FACTIONS: Faction[] = [
     { id: 'zhen', name: '武珍' },
 
 
-    { id: 'dongshengwei', name: '延绥' },
+    { id: 'dongshengwei', name: '东胜' },
+
+
 
     { id: 'dizhou', name: '棣州' },
 
@@ -305,7 +307,8 @@ export const FACTIONS: Faction[] = [
     { id: 'qifu_d', name: '乞伏' },
 
      // 高原栗 - 西秦(乞伏氏/陇西鲜卑)
-    { id: 'tuyu_d', name: '吐谷浑' },   // 青海碧 - 吐谷浑
+    { id: 'tuyu_d', name: '廓州' },
+   // 青海碧 - 吐谷浑
     { id: 'linyi', name: '林邑' },
     // 紫檀 - 谯国桓氏(桓温/桓玄)
     // 草原灰绿 - 丁零翟魏(翟氏)       // 辽东褐 - 段部鲜卑(段氏)
@@ -391,7 +394,8 @@ export const FACTIONS: Faction[] = [
     { id: 'wazhai', name: '济阴' },
         // 深红 - 瓦岗军/李密魏政权(洛口仓)
     // 番茄红 - 窦建德夏政权(乐寿)     // 铁灰 - 刘武周定杨政权(马邑)
-    { id: 'liangshidu', name: '梁朔' },
+    { id: 'liangshidu', name: '绥州' },
+
     // 深紫 - 宇文化及许政权(魏县/江都)           // 道奇蓝 - 罗艺燕政权(渔阳)
     { id: 'linshihong', name: '楚南' },    // 暗紫 - 林士弘楚政权(豫章)
     { id: 'lu', name: '庐州' },
@@ -1448,8 +1452,10 @@ export const FACTIONS: Faction[] = [
     { id: 'weizhou', name: '维州' },
     { id: 'yingzhou_d2', name: '应州' },
 
-    { id: 'dongsheng', name: '东胜' },
+    { id: 'dongsheng', name: '云中' },
+
     { id: 'weiyuan', name: '亹源' },
+    { id: 'yansui', name: '延绥' },
 
 
 

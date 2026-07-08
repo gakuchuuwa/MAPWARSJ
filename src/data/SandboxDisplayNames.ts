@@ -48,7 +48,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'muer': '呼',
     'xiajiasi': '坚昆',
 'zhen': '武珍',
-'dongshengwei': '延绥',
+'dongshengwei': '胜',
 'dizhou': '棣',
     'weihaiwei': '威海',
     'shang': '商',
@@ -182,7 +182,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'hezhou': '合',
     'chanzhou': '澶',
 'qifu_d': '乞伏',
-    'tuyu_d': '吐谷',
+'tuyu_d': '廓',
     'linyi': '林邑',
 
     // 2026-05-25 两晋核对追加势力
@@ -226,7 +226,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-25 新增：隋朝核对追加势力 ──
 'wazhai': '济阴',
-    'liangshidu': '银',
+'liangshidu': '绥',
     'linshihong': '楚南',
 'kumo': '楮特',
 'xijue': '十箭',
@@ -859,8 +859,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'shanzhou': '鄯',
 'weizhou': '维',
 'yingzhou_d2': '应',
-'dongsheng': '胜',
+'dongsheng': '云中',
 'weiyuan': '亹源',
+    'yansui': '延绥',
 };
 
 // @ts-ignore

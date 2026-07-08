@@ -170,7 +170,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'loulan': 'city_jingjue',
     'shache': 'city_shache',
 'qiuci': 'city_yiluolucheng',
-    'tuyu_d': 'city_ledu',
+'tuyu_d': 'city_ledu',
     'linyi': 'city_xianglin',
 
     'erzhu': 'city_xiurongchuan',
@@ -208,7 +208,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'sunwu_d': 'city_wuchang',
 
 'wazhai': 'city_dingtao',
-    'liangshidu': 'city_yinzhou',
+'liangshidu': 'city_yinzhou',
     'linshihong': 'city_raozhou',
     'hejian': 'city_wenan',
 'lu': 'city_hefei',
@@ -793,6 +793,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yingzhou_d2': 'city_zhangguojuncheng',
 'dongsheng': 'city_yunzhongcheng',
 'weiyuan': 'city_haomen',
+    'yansui': 'city_yulin',
 };
 
 // @ts-ignore

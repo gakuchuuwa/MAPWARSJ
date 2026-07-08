@@ -468,7 +468,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.062422, lng: 103.765869, type: 'medium_city', troops: 20000, region: 'HEXI' },
 
 
-    { id: 'city_ledu', name: '浇河', factionId: 'tuyu_d', lat: 35.7264, lng: 101.2061, type: 'small_city', region: 'TIBET', troops: 20000, note: '浇河故地；吐谷浑南界据地（王都伏俟城为隋西海郡）' },
+    { id: 'city_ledu', name: '浇河', factionId: 'tuyu_d', lat: 35.7264, lng: 101.2061, type: 'small_city', troops: 20000, region: 'TIBET' },
+
     { id: 'city_lintao', name: '狄道', factionId: 'didao', lat: 35.37, lng: 103.86, type: 'small_city', troops: 20000, region: 'HEXI' },
 
     { id: 'city_songzhou', name: '嘉诚', factionId: 'song2', lat: 32.787239, lng: 103.625793, type: 'small_city', troops: 20000, region: 'TIBET' },
@@ -747,10 +748,11 @@ export const T2_STRATEGIC: CityDataV2[] = [
         tier: 2,
         note: '湟溪关；英州关隘',
     },
-    { id: 'city_yinzhou', name: '雕阴', factionId: 'liangshidu', lat: 37.796785, lng: 110.206604, type: 'small_city', region: 'NORTH', troops: 20000,
-        note: '雕阴；梁朔小城',
-    },
-    { id: 'city_dongshengzhou', name: '榆林', factionId: 'dongshengwei', lat: 39.810643, lng: 109.959412, type: 'small_city', troops: 20000, region: 'HEXI' },
+    { id: 'city_yinzhou', name: '绥德', factionId: 'liangshidu', lat: 37.5119, lng: 110.2396, type: 'small_city', troops: 20000, region: 'NORTH' },
+
+    { id: 'city_dongshengzhou', name: '增山', factionId: 'dongshengwei', lat: 39.810643, lng: 109.959412, type: 'pass', troops: 20000, region: 'STEPPE' },
+
+
 
     // ── 战略要塞/县级城镇 (移入的小城) ──
     {
@@ -2736,8 +2738,10 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_xuecheng', name: '薛城', factionId: 'weizhou', lat: 31.43, lng: 103.16, type: 'small_city', troops: 20000, region: 'BASHU' },
     { id: 'city_zhangguojuncheng', name: '彰国军城', factionId: 'yingzhou_d2', lat: 39.5761, lng: 113.1894, type: 'small_city', troops: 20000, region: 'NORTH' },
 
-    { id: 'city_yunzhongcheng', name: '云中城', factionId: 'dongsheng', lat: 40.2732, lng: 111.1404, type: 'small_city', troops: 20000, region: 'STEPPE' },
+    { id: 'city_yunzhongcheng', name: '君子津', factionId: 'dongsheng', lat: 40.2732, lng: 111.1404, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
     { id: 'city_haomen', name: '浩门', factionId: 'weiyuan', lat: 37.464, lng: 101.4258, type: 'small_city', troops: 20000, region: 'HEXI' },
+    { id: 'city_yulin', name: '榆林', factionId: 'yansui', lat: 38.3567, lng: 109.7644, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
 
 
