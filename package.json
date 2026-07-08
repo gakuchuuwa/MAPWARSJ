@@ -44,6 +44,7 @@
     "tactical:counter-mc": "tsx tools/tactical-counter-mc.ts",
     "tactical:balance": "tsx tools/tactical-balance-mc.ts",
     "tactical:assign-audit": "tsx tools/tactical-assign-audit.ts",
+    "tactical:triclass": "tsx tools/tactical-triclass-audit.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",

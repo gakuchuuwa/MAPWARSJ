@@ -39,7 +39,7 @@ export const GENERAL_FIRST_EXPEDITION_TARGETS: Readonly<Record<string, GeneralFi
     yuwen_yuwentai:              { cityId: 'city_changan', label: '入主关中' },  // 宇文泰·yuwen
     dajin_wanyanaguda:           { cityId: 'city_linhuang', label: '灭辽取都' },  // 完颜阿骨打·dajin
     manzhou_d_duoergun:          { cityId: 'city_beijing', label: '入关定鼎' },  // 多尔衮·manzhou_d
-    menggu_d_chengjisihan:       { cityId: 'city_samaerhan', label: '西征花剌子模' },  // 成吉思汗·menggu_d
+    menggu_d_chengjisihan:       { cityId: 'city_urgench', label: '西征花剌子模' },  // 成吉思汗·menggu_d
     zhong_xiexuan:               { cityId: 'city_luoyang', label: '北府北伐' },  // 谢玄·zhong
     wei_wuqi:                    { cityId: 'city_tianshui', label: '魏武卒破秦' },  // 吴起·wei
     dayue_chenguojun:            { cityId: 'city_shangdu', label: '反攻大元' },  // 陈国峻·dayue

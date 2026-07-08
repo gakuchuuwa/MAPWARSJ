@@ -8,7 +8,7 @@ import type { LandTerrainKind } from '../world/land-sea';
 
 export type SkillLayer = 'tactical' | 'strategic';
 
-/** 六系（戏码分类，供 UI / 分配 / 审计） */
+/** 五系（戏码分类，供 UI / 分配 / 审计；原第六系"士气系"仅一鼓作气一条，已并入强化系） */
 export type TacticalSeries =
     | 'enhance'   // 强化系
     | 'fate'      // 命运系
@@ -119,6 +119,88 @@ export interface TacticalConditionContext {
     isFirstSortieSinceDepart: boolean;
     /** 当前侧是否已达逆局阈值 */
     sideInComeback: boolean;
+}
+
+// ── 三类六种（唯一判据代码；条文见 docs/02-design/武将技-分类逻辑说明.md）──────
+// 分类只看 baseEffect（第1步 效果→六种）＋ 劣势 condition 强制覆盖（第3步），
+// 不看典故、不看技名、不看 series（五系是另一套旧标签，勿混）。
+
+/** 六种（手法家族，借三十六计六套之名） */
+export type TacticalSixSet =
+    | 'gongzhan'   // 攻战·机：加己攻
+    | 'shengzhan'  // 胜战·全：减敌兵
+    | 'dizhan'     // 敌战·衡：更随机
+    | 'hunzhan'    // 混战·乱：克夺反
+    | 'bingzhan'   // 并战·借：减己损
+    | 'baizhan';   // 败战·险：败不垒
+
+/** 三类（战局标签，与 GeneralSkillCombat.BattleSituation 同字面量） */
+export type TacticalTriClass = 'advantage' | 'balance' | 'disadvantage';
+
+export const SIX_SET_LABEL: Readonly<Record<TacticalSixSet, string>> = {
+    gongzhan: '攻战', shengzhan: '胜战', dizhan: '敌战',
+    hunzhan: '混战', bingzhan: '并战', baizhan: '败战',
+};
+
+export const TRI_CLASS_LABEL: Readonly<Record<TacticalTriClass, string>> = {
+    advantage: '优势技（碾压计）', balance: '均势技（破局计）', disadvantage: '劣势技（翻盘计）',
+};
+
+/** 第1步：baseEffect → 六种（Record 穷举，新增 effect 不配则编译报错） */
+export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixSet>> = {
+    // 攻战·机（加己攻）
+    ally_power_mult: 'gongzhan',
+    first_sortie_power_mult: 'gongzhan',
+    ally_add_troops_opening: 'gongzhan',
+    // 胜战·全（减敌兵）
+    enemy_sub_troops_opening: 'shengzhan',
+    dual_sub_troops_opening: 'shengzhan',
+    // 敌战·衡（更随机）
+    luck_variance_self: 'dizhan',
+    luck_variance_enemy: 'dizhan',
+    luck_lock_self: 'dizhan',
+    // 混战·乱（克夺反）
+    steal_enemy_skill: 'hunzhan',
+    negate_enemy_skill: 'hunzhan',
+    partial_negate_enemy_skill: 'hunzhan',
+    reflect_enemy_opening_cut: 'hunzhan',
+    nullify_enemy_opening_cut: 'hunzhan',
+    cancel_enemy_terrain_buff: 'hunzhan',
+    halve_enemy_terrain_buff: 'hunzhan',
+    // 并战·借（减己损）
+    win_casualty_reduction: 'bingzhan',
+    elite_casualty_reduction: 'bingzhan',
+    post_recovery_rate: 'bingzhan',
+    // 败战·险（败不垒）
+    lose_enemy_casualty_boost: 'baizhan',
+    recompute_comeback: 'baizhan',
+    lose_zero_enemy_recovery: 'baizhan',
+    ally_add_troops_comeback: 'baizhan',
+};
+
+/** 第2步：六种 → 三类（攻·胜=优势 / 敌·混=均势 / 并·败=劣势） */
+export const SIX_SET_TO_TRI_CLASS: Readonly<Record<TacticalSixSet, TacticalTriClass>> = {
+    gongzhan: 'advantage', shengzhan: 'advantage',
+    dizhan: 'balance', hunzhan: 'balance',
+    bingzhan: 'disadvantage', baizhan: 'disadvantage',
+};
+
+/** 第3步：劣势才触发的 condition —— 强制归劣势（唯一覆盖规则，如破釜沉舟） */
+export const UNDERDOG_CONDITIONS: ReadonlySet<TacticalSkillCondition> = new Set([
+    'ratio_underdog',
+    'self_troops_below_enemy_pct',
+    'side_comeback',
+    'lose_as_underdog',
+    'battle_siege_defender',
+]);
+
+export function getTacticalSixSet(entry: TacticalSkillEntry): TacticalSixSet {
+    return EFFECT_TO_SIX_SET[entry.baseEffect];
+}
+
+export function getTacticalTriClass(entry: TacticalSkillEntry): TacticalTriClass {
+    if (UNDERDOG_CONDITIONS.has(entry.condition)) return 'disadvantage';
+    return SIX_SET_TO_TRI_CLASS[EFFECT_TO_SIX_SET[entry.baseEffect]];
 }
 
 // ── 一、强化系 ─────────────────────────────────────────────
@@ -1868,7 +1950,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_286', layer: 'tactical', series: 'enhance', index: 286,
         displayName: '凭险摧锐', sourceQuote: '《新唐书·韦皋传》：镇蜀二十一年，凭山险数破吐蕃，取维州。',
-        baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
     {
@@ -2556,7 +2638,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_471', layer: 'tactical', series: 'enhance', index: 471,
         displayName: '据险摧锋', sourceQuote: '大祚荣历史记载：天门岭据险设伏击溃唐军',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【大祚荣】T1精锐·三势精修·势reverse·优局专属',
     },
@@ -3992,7 +4074,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     {
         id: 'ts_675', layer: 'tactical', series: 'enhance', index: 675,
         displayName: '凭坚歼锋', sourceQuote: '《史传》袁崇焕：宁远凭坚城红夷大炮重创后金',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【袁崇焕】T1精锐·三势精修·势create·优',
     },
@@ -4335,7 +4417,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         displayName: '拔帜易帜', sourceQuote: '《史记·淮阴侯列传》：遣二千骑入赵壁，拔赵帜立汉赤帜，赵军溃。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
-        note: '【韩信】T0精锐·韩信·势reverse·劣局专属（三势精修）',
+        note: '【韩信】T0精锐·韩信·势reverse·均局专属（三势精修；原劣局技，改 luck_variance_enemy 后归均势）',
     },
     {
         id: 'ts_426', layer: 'tactical', series: 'enhance', index: 426,
@@ -4349,7 +4431,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         displayName: '溃围断后', sourceQuote: '《史记·项羽本纪》：垓下突围自断后，斩汉军数百，二十八骑犹列阵。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
-        note: '【项羽】T0精锐·项羽·势reverse·劣局专属（三势精修）',
+        note: '【项羽】T0精锐·项羽·势reverse·均局专属（三势精修；原劣局技，改 luck_variance_enemy 后归均势）',
     },
     {
         id: 'ts_428', layer: 'tactical', series: 'fate', index: 428,
@@ -4378,7 +4460,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         displayName: '溃军反扼', sourceQuote: '《晋书·谢玄传》：以少兵扼险要水道，阻遏秦军长驱。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
-        note: '【谢玄】T0精锐·reverse·势劣局专属（三势精修）',
+        note: '【谢玄】T0精锐·reverse·势均局专属（三势精修；原劣局技，改 luck_variance_enemy 后归均势）',
     },
     {
         id: 'ts_432', layer: 'tactical', series: 'enhance', index: 432,
@@ -4514,7 +4596,7 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
     {
         id: 'ts_450', layer: 'tactical', series: 'enhance', index: 450,
         displayName: '塞道遏冲', sourceQuote: '《宋史·王坚传》相关记载：钓鱼山设多重塞垒，箭石交替遏阻蒙军冲锋，久攻不克。《宋史·王坚传》',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【王坚】T1精锐·赵宋区·势reverse·均局专属（三势精修）',
     },
