@@ -341,23 +341,15 @@ export class GameApp {
                     const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
                     const byFollowed = !!event.captorLegionId && followedId === event.captorLegionId;
                     if (byFollowed) {
-                        if (isCenter) {
-                            const regionKey = this.cityManager.getCity(event.cityId)?.region;
-                            const regionLabel = regionKey ? (REGION_LABELS[regionKey as RegionType] ?? '') : '';
-                            speechAnnouncer.announceRegionCenterCapture(
-                                event.newFactionId,
-                                event.cityName,
-                                regionLabel
-                            );
-                        } else {
-                            speechAnnouncer.announceCityCapture(
-                                event.newFactionId,
-                                event.captorLegionName || '军团',
-                                event.cityName,
-                                event.captorGeneralId,
-                                event.defenderHadNamedForce ?? false
-                            );
-                        }
+                        const regionKey = isCenter ? this.cityManager.getCity(event.cityId)?.region : undefined;
+                        const regionLabel = regionKey ? (REGION_LABELS[regionKey as RegionType] ?? '') : undefined;
+                        speechAnnouncer.announceCityCapture({
+                            attackerFactionId: event.newFactionId,
+                            cityName: event.cityName,
+                            attackerSkillId: event.attackerSkillId,
+                            defenderGeneralId: event.defenderGeneralId,
+                            regionLabel,
+                        });
                     }
 
                     if (!event.captorLegionName) return;

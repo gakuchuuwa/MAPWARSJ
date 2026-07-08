@@ -983,7 +983,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/BASHU/qianzhong_wubayue.png": {
-            "scale": 0.98,
+            "scale": 1.09,
             "offsetX": -13,
             "offsetY": -16
         },
@@ -1068,11 +1068,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/litang/liang_d_zhangxun.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -13
-        },
-        "/assets/NORTH/hejian_gongsunzan.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -13
@@ -3498,9 +3493,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -22
         },
         "/assets/NORTH/__闲置__NORTH_04.png": {
-            "scale": 1.11,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": 8
+            "offsetY": -13
         },
         "/assets/xianqin/yangshe_yangshezhi.png": {
             "scale": 1,
@@ -5676,6 +5671,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 7
+        },
+        "/assets/NORTH/c425ce42-7fc4-4e93-abf1-7e5ad7fde4aa.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/NORTH/hejian_gongsunzan.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -25
         }
     },
     "folderGuides": {

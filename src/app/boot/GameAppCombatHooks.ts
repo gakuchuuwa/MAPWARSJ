@@ -110,7 +110,7 @@ export function wireGeneralSkillCombat(app: GameApp, legionManager: LegionManage
     setGeneralSkillLegionManager(legionManager);
     setOnTacticalSkillTriggered((info) => {
         if (!app.combatUI.isRegionalVisible()) return;
-        app.combatUI.flashTacticalSkill(info.displayName, info.generalId);
+        app.combatUI.flashTacticalSkill(info.displayName, info.generalId, info.skillId);
         gameLog('battle', `✨ [CombatUI] 战术技展示: 【${info.displayName}】 (${info.generalId})`);
     });
 }

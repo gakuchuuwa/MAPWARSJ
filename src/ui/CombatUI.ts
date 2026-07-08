@@ -50,6 +50,7 @@ import {
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
 import type { Army } from '../legion/Army';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 const T = COMBAT_UI_TOKENS;
 
 /** 战报技能条/系数链：精锐或远征 ×1.2 用番号专名作标签（去「军团」等尾缀） */
@@ -1575,7 +1576,7 @@ export class CombatUI {
     }
 
     /** 战术武将技触发效果（侧边徽章闪烁，不再弹大字） */
-    public flashTacticalSkill(displayName: string, generalId?: string): void {
+    public flashTacticalSkill(displayName: string, generalId?: string, skillId?: string): void {
         if (!displayName) return;
         // 如果战斗已经结束（胜负已分），不再响应任何新的脉冲（例如致死一击触发的逆局技）
         if (this.boundRegionalBattleField?.isOver) return;
@@ -1649,6 +1650,9 @@ export class CombatUI {
             `;
             frame.appendChild(cutIn);
             window.setTimeout(() => cutIn.remove(), 3000);
+
+            // [语音播报] 技能释放：与技能名 Cut-in 同步（攻先守后由 SpeechAnnouncer 串行队列保证不互相打断）
+            this.announceSkillReleaseVoice(pulseSide, displayName, generalId, skillId);
         };
         // 长战错开念名；短战（≤10s）或相持窗不足时允许叠字，但攻先守后、双方都必须 Cut-in
         const now = Date.now();
@@ -1671,6 +1675,34 @@ export class CombatUI {
         return (Array.from(box.children).find(
             (el) => el.textContent?.includes(displayName),
         ) as HTMLElement | undefined) ?? null;
+    }
+
+    /** 技能释放语音：武将，势技名，命，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。 */
+    private announceSkillReleaseVoice(
+        side: 'attacker' | 'defender',
+        displayName: string,
+        generalId?: string,
+        skillId?: string,
+    ): void {
+        if (!generalId || !skillId || !displayName) return;
+        const bf = this.boundRegionalBattleField;
+        if (!bf || bf.isOver) return;
+        const rec = getGeneralRecordByGeneralId(generalId);
+        if (!rec) return;
+        const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+        const gUnit = units.find((u) => u.generalId === generalId) ?? null;
+        const eliteName = gUnit ? getLegionEliteBadgeName(gUnit) : null;
+        const opponentHasGeneral = side === 'attacker'
+            ? !!this.rightGeneralNameTag.dataset.generalId
+            : !!this.leftGeneralNameTag.dataset.generalId;
+        speechAnnouncer.announceSkillRelease({
+            side,
+            generalName: rec.generalName,
+            skillDisplayName: displayName,
+            skillId,
+            eliteName,
+            opponentHasGeneral,
+        });
     }
 
     /** 武将技释放的立绘脉冲：快起慢落（0.15s 放大到 1.09 → 缓缓落回），只动外框 transform */

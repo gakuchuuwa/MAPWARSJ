@@ -702,6 +702,11 @@ export class SiegeManager {
                     const defenderHadNamedForce = defenderUnits.some(
                         (u) => !!u.generalId || getUnitEliteTier(u) !== null
                     );
+                    // [语音播报·攻占] 攻方这一仗的势（读攻方将领 battleOverriddenSkillId 判优/均/劣）+ 守方武将
+                    const capAttackerUnit = attackerUnits.find((u) => u.generalId === army.generalId)
+                        ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
+                    const capAttackerSkillId = capAttackerUnit?.battleOverriddenSkillId ?? undefined;
+                    const capDefenderGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? undefined;
                     this.cityManager.updateCity(targetCity.id, {
                         factionId: army.getFactionId(),
                         troops: 1000,
@@ -710,6 +715,8 @@ export class SiegeManager {
                         captorLegionId: army.id,
                         captorGeneralId: army.generalId,
                         defenderHadNamedForce,
+                        attackerSkillId: capAttackerSkillId ?? undefined,
+                        defenderGeneralId: capDefenderGeneralId,
                     });
 
                     // [FIX] CityManager 的 updateCity 内部会触发 onCityUpdated 回调，自动调用 legionManager.refreshCityRegistry()
