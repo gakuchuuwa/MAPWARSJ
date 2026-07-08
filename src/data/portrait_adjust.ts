@@ -378,9 +378,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -34
         },
         "/assets/daming/jinzhou_lichengliang.png": {
-            "scale": 1.04,
-            "offsetX": 0,
-            "offsetY": -59
+            "scale": 1.08,
+            "offsetX": 10,
+            "offsetY": -63
         },
         "/assets/JIANGNAN/wuwu_d_lvmeng.png": {
             "scale": 0.99,
@@ -1462,11 +1462,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/daming/zu_d_yuanchonghuan.png": {
-            "scale": 1.13,
-            "offsetX": 0,
-            "offsetY": -28
-        },
         "/assets/daming/qi_d_qijiguang.png": {
             "scale": 1,
             "offsetX": 0,
@@ -1522,11 +1517,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 19
         },
-        "/assets/DIANQIAN/hani_d_zhebi.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -34
-        },
         "/assets/pugan/__闲置__pugan_03.png": {
             "scale": 0.89,
             "offsetX": 0,
@@ -1551,11 +1541,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -66
-        },
-        "/assets/DIANQIAN/mingzheng_jianzandechang.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -43
         },
         "/assets/pugan/__闲置__pugan_01.png": {
             "scale": 0.9,
@@ -2888,7 +2873,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 30
         },
         "/assets/TIBET/xihai_d_fulianchou.png": {
-            "scale": 1.1,
+            "scale": 1.12,
             "offsetX": 0,
             "offsetY": 30
         },
@@ -2968,19 +2953,14 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/TIBET/dong_nangqianjiabo.png": {
-            "scale": 0.89,
+            "scale": 0.81,
             "offsetX": 0,
-            "offsetY": 30
+            "offsetY": 26
         },
         "/assets/TIBET/dulan_dashibatuer.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -4
-        },
-        "/assets/TIBET/duomi_lunkongre.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -63
         },
         "/assets/TIBET/fuguo_yizeng.png": {
             "scale": 0.86,
@@ -3023,13 +3003,13 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -34
         },
         "/assets/TIBET/keliya_fuduxin.png": {
-            "scale": 1.02,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": 0
         },
         "/assets/TIBET/khyungpo_qiongbobangse.png": {
             "scale": 1,
-            "offsetX": 0,
+            "offsetX": 23,
             "offsetY": 6
         },
         "/assets/TIBET/kongsa_kongsayiduo.png": {
@@ -3706,11 +3686,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -28
-        },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_05.png": {
-            "scale": 0.83,
-            "offsetX": 0,
-            "offsetY": 8
         },
         "/assets/DIANQIAN/dongxu_mangruiti.png": {
             "scale": 0.93,
@@ -4442,11 +4417,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -30
         },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_07.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -17
-        },
         "/assets/DIANQIAN/pagan_anulvtuo.png": {
             "scale": 1.02,
             "offsetX": 3,
@@ -4743,7 +4713,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/STEPPE/baidi_baidizi.png": {
-            "scale": 1.16,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": -11
         },
@@ -4996,11 +4966,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 14,
             "offsetY": 7
-        },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_08.png": {
-            "scale": 0.83,
-            "offsetX": 0,
-            "offsetY": -34
         },
         "/assets/BASHU/cuanshi_cuanlongyan.png": {
             "scale": 1,
@@ -5601,6 +5566,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -10
+        },
+        "/assets/TIBET/khon_basiba.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/TIBET/__闲置__TIBET_14.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -63
+        },
+        "/assets/TIBET/duomi_lunkongre.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/TIBET/galangdiba_wangqindundui.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_14.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -43
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_15.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/DIANQIAN/mingzheng_jianzandechang.png": {
+            "scale": 0.83,
+            "offsetX": 6,
+            "offsetY": 8
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_16.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -34
+        },
+        "/assets/DIANQIAN/hani_d_zhebi.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": -34
+        },
+        "/assets/daming/__闲置__JIANGNAN_19.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/daming/zu_d_yuanchonghuan.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 19
         }
     },
     "folderGuides": {

@@ -93,7 +93,8 @@ export class FieldBattleManager {
             // destroyAfterBattle：战后胜方全部解散
             if (fieldBattleData.destroyAfterBattle && winningArmies.length > 0) {
                 winningArmies.forEach(army => {
-                    army.destroy();
+                    // 胜方战后解散属于并编撤收，不应被判定为战败冷却
+                    army.disband();
                     this.legionManager.removeArmy(army);
                 });
                 return;

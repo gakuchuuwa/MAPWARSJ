@@ -1347,12 +1347,26 @@ export class CombatUI {
     }
 
     private createPortraitImage(): HTMLImageElement {
+        // 给立绘本体叠一层更轻的边缘渐隐（弱于外层框架裁剪渐隐），
+        // 让人物与框架融合更自然，但不抢 UI 框架主效果。
+        const innerFade = Math.max(1.5, Math.min(4.5, T.portraitEdgeFade * 0.35));
+        const innerHorizontal =
+            `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${innerFade}%, rgba(0,0,0,1) calc(100% - ${innerFade}%), rgba(0,0,0,0) 100%)`;
+        const innerVertical =
+            `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) ${innerFade}%, rgba(0,0,0,1) calc(100% - ${innerFade}%), rgba(0,0,0,0) 100%)`;
+        const innerMask = `${innerHorizontal}, ${innerVertical}`;
         const img = document.createElement('img');
         img.style.cssText = `
             width: auto;
             height: 100%;
             display: block;
             pointer-events: auto;
+            -webkit-mask-image: ${innerMask};
+            mask-image: ${innerMask};
+            -webkit-mask-composite: source-in;
+            mask-composite: intersect;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
         `;
         return img;
     }

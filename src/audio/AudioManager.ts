@@ -63,7 +63,7 @@ const DUCK = {
     sfxUnderSpeech: 0.0,
 } as const;
 /** 播报有效音量 = master × SPEECH_GAIN（TTS 感知偏轻，补偿至与音效/音乐齐平） */
-const SPEECH_GAIN = 0.9;
+const SPEECH_GAIN = 0.95; // 小幅上调播报音量（+5%）
 
 // ---- 音量渐变时长（ms）：消除各路声音硬切的不适感 ----
 const FADE = {
@@ -168,7 +168,8 @@ export class AudioManager {
         marching: boolean;
         inCombat: boolean;
         isCavalry: boolean;
-    } = { armyId: null, marching: false, inCombat: false, isCavalry: false };
+        isNaval: boolean;
+    } = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false };
     /** 播报进行中：音效 + 音乐压低（优先级闪避） */
     private speechDucking = false;
     private bgmAudio: HTMLAudioElement | null = null;
@@ -279,18 +280,21 @@ export class AudioManager {
         marching: boolean;
         inCombat: boolean;
         isCavalry?: boolean;
+        isNaval?: boolean;
     }): void {
         const isCavalry = state.isCavalry ?? false;
+        const isNaval = state.isNaval ?? false;
         if (
             this.followedAudioState.armyId === state.armyId &&
             this.followedAudioState.marching === state.marching &&
             this.followedAudioState.inCombat === state.inCombat &&
-            this.followedAudioState.isCavalry === isCavalry
+            this.followedAudioState.isCavalry === isCavalry &&
+            this.followedAudioState.isNaval === isNaval
         ) {
             return;
         }
 
-        this.followedAudioState = { ...state, isCavalry };
+        this.followedAudioState = { ...state, isCavalry, isNaval };
 
         // 纯骑（草原/青藏/中亚）走专用行军音，步骑/纯步走 march_loop
         const marchKey: SoundKey = isCavalry ? 'cavalry_march_loop' : 'march_loop';
@@ -311,6 +315,12 @@ export class AudioManager {
         }
 
         this.stopLoop('battle_loop');
+        // 海上（海军贴图）行军：关闭行军循环音，避免陆军脚步/马蹄与海军观感冲突。
+        if (isNaval) {
+            this.stopLoop('march_loop');
+            this.stopLoop('cavalry_march_loop');
+            return;
+        }
         // 切换军团或下马/上马时，先停掉另一种行军音，避免两条同时循环
         this.stopLoop(otherMarchKey);
         if (state.marching) {
@@ -646,7 +656,7 @@ export class AudioManager {
 
     private reapplyFollowedLegionAudio(): void {
         const state = { ...this.followedAudioState };
-        this.followedAudioState = { armyId: null, marching: false, inCombat: false, isCavalry: false };
+        this.followedAudioState = { armyId: null, marching: false, inCombat: false, isCavalry: false, isNaval: false };
         this.syncFollowedLegionAudio(state);
     }
 

@@ -371,14 +371,6 @@ export class LegionManager {
     }
 
     public removeArmy(army: Army): void {
-        if (army.isDestroyed && !army.wasDisbanded) {
-            const cityId = army.homeCityId ?? army.getSourceCityId();
-            if (cityId) {
-                if (army.generalId) lockGeneralAfterDefeat(cityId);
-                if (army.isElite) lockEliteAfterDefeat(cityId);
-            }
-        }
-
         this.followResupplySystem?.clearForArmy(army.id);
         this.armies = this.armies.filter(a => a !== army);
 
@@ -495,6 +487,19 @@ export class LegionManager {
         for (let i = this.armies.length - 1; i >= 0; i--) {
             const army = this.armies[i];
             if (!army.isDestroyed) continue;
+
+            // 战败冷却与尸体显示彻底解耦：
+            // 军团一旦判定阵亡（且非 disband），立刻给其锚点城挂将/精冷却，
+            // 不再等待 CORPSE_DISPLAY_MS 的延迟 removeArmy。
+            const defeatLocked = (army as Army & { _defeatCooldownLocked?: boolean })._defeatCooldownLocked;
+            if (!army.wasDisbanded && !defeatLocked) {
+                const cityId = army.homeCityId ?? army.getSourceCityId();
+                if (cityId) {
+                    if (army.generalId) lockGeneralAfterDefeat(cityId);
+                    if (army.isElite) lockEliteAfterDefeat(cityId);
+                }
+                (army as Army & { _defeatCooldownLocked?: boolean })._defeatCooldownLocked = true;
+            }
 
             const scheduled = (army as Army & { _corpseRemovalScheduled?: boolean })._corpseRemovalScheduled;
             if (scheduled) continue;

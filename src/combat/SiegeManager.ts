@@ -35,7 +35,7 @@ import {
     clearSiegeGarrisonBoost,
     type SiegeGarrisonBoostFields,
 } from './SiegeGarrisonTier';
-import { repositionAllLegionsNearSiegeCity } from './SiegeArmyPlacement';
+import { repositionAllLegionsNearSiegeCity, repositionSiegeArmiesAroundCity } from './SiegeArmyPlacement';
 
 export class SiegeManager {
     private static get JOIN_RADIUS(): number {
@@ -88,7 +88,17 @@ export class SiegeManager {
 
     /** 同城第三方排队后：连同已在途/参战者整体重排 */
     private repositionThirdPartyWaiters(cityId: string, cityPos: { lat: number; lng: number }): void {
-        void cityId;
+        const queue = this.siegeThirdPartyWaiters.get(cityId) ?? [];
+        const waiters = queue
+            .map((e) => e.army)
+            .filter((a) => !a.isDestroyed);
+
+        // 仅对“排队等待”的军团做强制错位；其它在途/参战军团作为占位阻挡参与避让。
+        if (waiters.length > 0) {
+            repositionSiegeArmiesAroundCity(cityPos, waiters, this.legionManager.getArmies());
+            return;
+        }
+        // 队列已空时退回全量重排，清理可能遗留的重叠。
         repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies());
     }
 
@@ -159,6 +169,8 @@ export class SiegeManager {
             } else {
                 this.siegeThirdPartyWaiters.set(cityId, queue);
             }
+            const city = this.cityManager.getCity(cityId);
+            if (city) this.repositionThirdPartyWaiters(cityId, cityToLatLng(city));
             siegeLog(`↩️ [SiegeManager] ${entry.army.name ?? armyId} 离开第三方排队（${cityId}）`);
             return true;
         }
@@ -914,6 +926,8 @@ export class SiegeManager {
         } else {
             this.siegeThirdPartyWaiters.delete(cityId);
         }
+        const city = this.cityManager.getCity(cityId);
+        if (city) this.repositionThirdPartyWaiters(cityId, cityToLatLng(city));
     }
 
     /** AI/碰撞触发的动态攻城：战后交还 AI，不要默认 garrison 锁死 */

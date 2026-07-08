@@ -81,8 +81,9 @@ export class GlobalUnitRenderer {
     private needsSort: boolean = false;
 
     private unitFightingStates: Map<string, boolean> = new Map();
-    // [NEW] Visual Angle Smoothing
+    private lastMapCenter: L.LatLng | null = null;
     private unitVisualAngles: Map<string, number> = new Map();
+    private positionCounts: Map<string, number> = new Map(); // [NEW] Track overlapping units per frame
 
     private lastTime: number = 0;
     private isRunning: boolean = false;
@@ -590,6 +591,7 @@ export class GlobalUnitRenderer {
         }
 
         const corpseFadeMs = GameConfig.LEGION.CORPSE_FADE_OUT_MS;
+        this.positionCounts.clear(); // [NEW] Clear overlap counts per frame
         for (let i = 0; i < drawList.length; i++) {
             const unit = drawList[i];
 
@@ -712,6 +714,22 @@ export class GlobalUnitRenderer {
         const unitPos = unit.getPosition();
         // Base center point
         let centerPoint = this.map.latLngToContainerPoint([unitPos.lat, unitPos.lng]);
+
+        // [NEW] Check for identical positions to apply visual fan-out offset
+        const posKey = `${unitPos.lat.toFixed(5)},${unitPos.lng.toFixed(5)}`;
+        const overlapCount = this.positionCounts.get(posKey) || 0;
+        this.positionCounts.set(posKey, overlapCount + 1);
+
+        if (overlapCount > 0) {
+            const currentZoom = this.map.getZoom();
+            const effectiveZoom = Math.min(currentZoom, 10);
+            const offsetScale = Math.pow(2, effectiveZoom - 9) * 0.7;
+            const offsetDist = 45 * offsetScale; // Spread distance
+            // Spread out in a circle
+            const angle = overlapCount * (Math.PI / 3) + (Math.PI / 6);
+            centerPoint.x += Math.cos(angle) * offsetDist;
+            centerPoint.y += Math.sin(angle) * offsetDist;
+        }
 
         const m = GlobalUnitRenderer.VIEW_CULL_MARGIN_PX;
         if (

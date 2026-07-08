@@ -762,7 +762,8 @@ export class LegionPhalanxDrawer {
         const frameW = sampleSprite.width / spriteTotalFrames;
         const frameH = sampleSprite.height;
         const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
-        const baseHeight = 80;
+        // 海军船贴图略微缩小，避免靠港/围城时遮挡过重。
+        const baseHeight = 72;
         const targetH = baseHeight * scale * frameHeightNorm;
         const targetW = targetH * (frameW / frameH);
         // 纵向(前后)：0.45 船高。让后排船头刚好能挡住前船的船尾水波，显得紧凑。
