@@ -646,17 +646,6 @@ export class SiegeManager {
             });
         }
 
-        // [语音播报] 跟随军团攻城时自动朗读
-        const followedId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
-        if (followedId === army.id) {
-            speechAnnouncer.announceSiegeStart(
-                army.getFactionId(),
-                army.name,
-                targetCity.name,
-                army.generalId
-            );
-        }
-
         const cityPos = cityToLatLng(targetCity);
 
         const excludedIds = new Set<string>([army.id]);
@@ -831,6 +820,21 @@ export class SiegeManager {
             );
             attackerUnits.push(legionAdapter);
         });
+
+        // [语音播报] 跟随军团攻城：守方分 无将/普将/名将；城「凭城据守」、关隘「据险而守」。
+        // 守将取实际参战守方单位（城驻军优先，其次守军军团），与攻占 defenderHadNamedForce 同源。
+        const followedIdForSpeech = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+        if (followedIdForSpeech === army.id) {
+            const defenderGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
+            speechAnnouncer.announceSiegeStart({
+                attackerFactionId: army.getFactionId(),
+                attackerGeneralId: army.generalId,
+                cityName: targetCity.name,
+                isPass: targetCity.type === 'pass',
+                defenderFactionId: targetCity.factionId,
+                defenderGeneralId,
+            });
+        }
 
         const finalTitle = siegeData.title || `${targetCity.name} 攻防战`;
 

@@ -583,7 +583,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
         tier: 2,
         note: '大散关；凤州关隘',
     },
-    { id: 'city_dusong', name: '独松关', factionId: 'shenshi', lat: 30.566952, lng: 119.679565, type: 'pass', troops: 20000, region: 'JIANGNAN' },
+    { id: 'city_dusong', name: '独松关', factionId: 'shenshi', lat: 30.566952, lng: 119.679565, type: 'pass', troops: 20000, region: 'JIANGNAN', mirror: true },
+
 //镜像
     { id: 'city_xianxia', name: '仙霞关', factionId: 'huangwang', lat: 28.35, lng: 118.51, type: 'pass', region: 'JIANGNAN', troops: 20000, tier: 2,
         note: '仙霞关；黄王关隘',

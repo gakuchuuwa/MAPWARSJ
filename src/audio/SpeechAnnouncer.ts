@@ -38,6 +38,12 @@ function hasEliteName(name: string): boolean {
   return !!name && name !== "军团" && !name.startsWith("Army ");
 }
 
+/** 名将 = 拥有战略技（普将无 strategicSkillId）。用于攻城播报是否冠「名将」二字。 */
+function isFamousGeneral(generalId?: string | null): boolean {
+  if (!generalId) return false;
+  return !!GENERAL_PROFILES[generalId]?.strategicSkillId;
+}
+
 export class SpeechAnnouncer {
   private enabled = true;
   // 当前偏好的声音
@@ -109,17 +115,45 @@ export class SpeechAnnouncer {
     return this.preferredVoice === "Yunjian" ? "云健" : "云希";
   }
 
-  /** 攻城开始 */
-  public announceSiegeStart(factionId: string, _legionName: string, cityName: string, generalId?: string): void {
+  /**
+   * 攻城/攻关开始（仅跟随军团触发）。守方分三档：
+   *   无将 → 「白起率领秦国军，兵临邯郸」（一句带过，不描写守御）
+   *   普将 → 「白起率领秦国军，攻打邯郸。赵国廉颇凭城据守」（关隘：据险而守）
+   *   名将 → 「白起率领秦国军，攻打邯郸。赵国名将廉颇凭城据守」（关隘：据险而守）
+   * 守将由 SiegeManager 从实际参战守方单位取（与攻占 defenderHadNamedForce 同源）。
+   */
+  public announceSiegeStart(opts: {
+    attackerFactionId: string;
+    cityName: string;
+    isPass: boolean;
+    attackerGeneralId?: string | null;
+    defenderFactionId?: string | null;
+    defenderGeneralId?: string | null;
+  }): void {
     if (!this.enabled) return;
-    const general = generalId ? getGeneralRecordByGeneralId(generalId) : getFactionGeneral(factionId);
+    const attGeneral = opts.attackerGeneralId
+      ? getGeneralRecordByGeneralId(opts.attackerGeneralId)
+      : getFactionGeneral(opts.attackerFactionId);
+    const attFaction = getFactionNameForSpeech(opts.attackerFactionId);
+    const attackerPart = attGeneral
+      ? `${attGeneral.generalName}率领${attFaction}军`
+      : `${attFaction}军`;
+
+    const defGeneral = opts.defenderGeneralId
+      ? getGeneralRecordByGeneralId(opts.defenderGeneralId)
+      : null;
+
     let text: string;
-    if (general) {
-      text = `${general.generalName}率领${getFactionNameForSpeech(factionId)}军，攻打${cityName}`;
+    if (!defGeneral) {
+      // 无将：守将已随军出征、只剩纯守军 → 一句「兵临」带过
+      text = `${attackerPart}，兵临${opts.cityName}`;
     } else {
-      text = `${getFactionNameForSpeech(factionId)}将军，攻打${cityName}`;
+      const defFaction = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
+      const holdVerb = opts.isPass ? "据险而守" : "凭城据守";
+      const mingjiang = isFamousGeneral(defGeneral.generalId) ? "名将" : "";
+      text = `${attackerPart}，攻打${opts.cityName}。${defFaction}${mingjiang}${defGeneral.generalName}${holdVerb}`;
     }
-    console.log("[Speech] 攻打:", text);
+    console.log("[Speech] 攻城:", text);
     this.speak(text);
   }
 
@@ -169,16 +203,7 @@ export class SpeechAnnouncer {
     this.speak(text);
   }
 
-  // ---- S 级大事播报（复国 / 文化中心易主）：全程播报，不限跟拍镜头 ----
-
-  /** S 级 · 复国：异文化占领地起义 */
-  public announceRestoration(factionId: string, cityName: string): void {
-    if (!this.enabled) return;
-    const name = getFactionNameForSpeech(factionId);
-    const text = `${name}遗民起事，于${cityName}复国`;
-    console.log("[Speech] 复国:", text);
-    this.speak(text, { sTier: true, rate: 0.92, banner: `${name}复国 · 于${cityName}` });
-  }
+  // ---- S 级大事播报（文化中心易主）----
 
   /** S 级 · 文化中心易主（14 区中心城被攻占） */
   public announceRegionCenterCapture(attackerFactionId: string, cityName: string, regionLabel: string): void {
