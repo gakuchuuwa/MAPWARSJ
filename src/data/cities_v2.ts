@@ -625,7 +625,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
         note: '虎牢关；郑州关隘',
     },
     // ── 洛阳周边防御关隘群 ──
-    { id: 'city_guangchengguan', name: '广成关', factionId: 'ruzhou', lat: 34.139089, lng: 112.887268, type: 'pass', troops: 20000, region: 'CENTRAL' },
+    { id: 'city_guangchengguan', name: '广成关', factionId: 'ruzhou', lat: 34.139089, lng: 112.887268, type: 'pass', troops: 20000, region: 'CENTRAL', mirror: true },
+
 
     
     // ── 京同山川走廊关隘 ──
@@ -639,13 +640,15 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
 
 
-    { id: 'city_pingxingguan', name: '平型关', factionId: 'lingqiu', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 20000, region: 'NORTH' },
+    { id: 'city_pingxingguan', name: '平型关', factionId: 'lingqiu', lat: 39.281169, lng: 113.744202, type: 'pass', troops: 20000, region: 'NORTH', mirror: true },
+
 
     { id: 'city_lingshiguan', name: '灵石关', factionId: 'huo', lat: 36.844462, lng: 111.796875, type: 'pass', region: 'NORTH', troops: 20000,
         note: '灵石关；宋老生霍邑',
     },
         // ── 关中盆地防御要塞群 ──
-    { id: 'city_wuguan', name: '少习关', factionId: 'ruo', lat: 33.6, lng: 110.62, type: 'pass', troops: 20000, region: 'CENTRAL' },
+    { id: 'city_wuguan', name: '少习关', factionId: 'ruo', lat: 33.6, lng: 110.62, type: 'pass', troops: 20000, region: 'CENTRAL', mirror: true },
+
 
 
 
@@ -665,12 +668,14 @@ export const T2_STRATEGIC: CityDataV2[] = [
         note: '金锁关；耀州关隘',
     },
     // ── 太行八陉防御要塞关隘群 ──
-    { id: 'city_zhiguan', name: '轵关', factionId: 'jiyuan', lat: 35.15, lng: 112.3, type: 'pass', troops: 20000, region: 'CENTRAL' },
+    { id: 'city_zhiguan', name: '轵关', factionId: 'jiyuan', lat: 35.15, lng: 112.3, type: 'pass', troops: 20000, region: 'CENTRAL', mirror: true },
+
 
             { id: 'city_jingxingguan', name: '土门关', factionId: 'xianyu', lat: 38.02, lng: 114, type: 'pass', troops: 20000, region: 'NORTH' },
 
 
-    { id: 'city_daomaguan', name: '倒马关', factionId: 'changshan', lat: 38.861098, lng: 114.768677, type: 'pass', troops: 20000, region: 'NORTH' },
+    { id: 'city_daomaguan', name: '倒马关', factionId: 'changshan', lat: 38.861098, lng: 114.768677, type: 'pass', troops: 20000, region: 'NORTH', mirror: true },
+
 
     { id: 'city_feihu', name: '飞狐', factionId: 'wangyan', lat: 39.3487, lng: 114.6986, type: 'small_city', region: 'NORTH', troops: 20000,
         note: '飞狐；太行小城',
@@ -886,7 +891,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
         note: '隋来护儿征东舟师出海口' },
 
     // ── 太行陉关隘 ──
-    { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.27, lng: 112.93, type: 'pass', troops: 20000, region: 'CENTRAL' },
+    { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.27, lng: 112.93, type: 'pass', troops: 20000, region: 'CENTRAL', mirror: true },
+
 ];
 
 // ============================================================
@@ -1745,7 +1751,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
 { id: 'city_ningwuguan', name: '宁武关', factionId: 'loufan', lat: 39.05, lng: 112.24, type: 'pass', troops: 20000, region: 'NORTH' },
 
 
-{ id: 'city_yanmenguan', name: '雁门关', factionId: 'heng1', lat: 39.19, lng: 112.87, type: 'pass', troops: 20000, region: 'NORTH' },
+{ id: 'city_yanmenguan', name: '雁门关', factionId: 'heng1', lat: 39.19, lng: 112.87, type: 'pass', troops: 20000, region: 'NORTH', mirror: true },
+
 
 
 

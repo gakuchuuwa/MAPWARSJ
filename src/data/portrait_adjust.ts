@@ -437,11 +437,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -37
         },
-        "/assets/KOREA/chen3_jizhun.png": {
-            "scale": 0.99,
-            "offsetX": 0,
-            "offsetY": 5
-        },
         "/assets/KOREA/baiji_jiebo.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -5443,8 +5438,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/daming/yi_yuqian.png": {
-            "scale": 1.07,
-            "offsetX": 10,
+            "scale": 1.01,
+            "offsetX": 14,
             "offsetY": 6
         },
         "/assets/xianqin/__闲置__xianqin_24.png": {
@@ -5621,6 +5616,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": 19
+        },
+        "/assets/KOREA/__闲置__KOREA_05.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/KOREA/chen3_jizhun.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -14
         }
     },
     "folderGuides": {

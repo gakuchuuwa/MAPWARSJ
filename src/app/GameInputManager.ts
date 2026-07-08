@@ -138,6 +138,10 @@ export class GameInputManager {
                     // [DEV] 快速测试远征：把当前跟随军团补到 4.5 万（生产构建自动剔除）
                     if (import.meta.env.DEV) this.devBoostFollowedArmyForExpedition();
                     break;
+                case 'v':
+                    // [DEV] 三势选技+战略技实机自检浮层（生产构建因动态import在DEV分支内被Rollup剔除）
+                    if (import.meta.env.DEV) import('../debug/SituationalSelfCheck').then((m) => m.toggleSituationalSelfCheck()).catch(() => {});
+                    break;
                 case 'h':
                     // Reset Camera / Help
                     this.map.flyTo({ lat: 34.5, lng: 112.5 }, 2, { zoom: 6 });
