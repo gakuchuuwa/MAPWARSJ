@@ -30,7 +30,7 @@ export interface ReinforcementJoinDeps {
     /** 编入攻城战前城周错开（仅攻城注入，野战不传） */
     beforeJoinLegion?: (legion: Army, center: LatLng) => void;
     /**
-     * 攻城城 id：有值时不拉「路过/奔他城」军团入战。
+     * 攻城城 id：有值时不拉攻方「路过/奔他城」军团入战。
      * 野战不传（短距接触战，路过同旗仍可协战）。
      */
     siegeCityId?: string;
@@ -41,7 +41,8 @@ export function isEligibleReinforcement(
     factionId: string,
     battleField: BattleField,
     center: LatLng,
-    deps: ReinforcementJoinDeps
+    deps: ReinforcementJoinDeps,
+    isAttacker: boolean,
 ): boolean {
     if (legion.getFactionId() !== factionId) return false;
     if (legion.type !== 'legion' || legion.isDestroyed) return false;
@@ -53,8 +54,8 @@ export function isEligibleReinforcement(
     const dist = getEuclideanDistance(legion.getPosition(), center);
     if (dist > GameConfig.COMBAT.BATTLE_JOIN_RADIUS) return false;
 
-    // 攻城援军：勿拉路过奔他城者（与 SiegeManager.collectNearbyLegionsForFaction 同口径）
-    if (deps.siegeCityId) {
+    // 攻城援军：守方同旗路过也强制参战；攻方不拉路过者
+    if (deps.siegeCityId && isAttacker) {
         const targetId = legion.getTargetCity?.()?.id;
         if (!legion.isIdle()) {
             if (targetId && targetId !== deps.siegeCityId) return false;
@@ -103,7 +104,7 @@ export function tryJoinLegionToBattle(
         ? battleField.getAttackerFactionId()
         : battleField.getDefenderFactionId();
 
-    if (!isEligibleReinforcement(legion, factionId, battleField, center, deps)) {
+    if (!isEligibleReinforcement(legion, factionId, battleField, center, deps, isAttacker)) {
         return false;
     }
 
@@ -141,7 +142,7 @@ export function pollBattleFieldReinforcements(
             : battleField.getDefenderFactionId();
 
         const eligible = nearby
-            .filter((legion) => isEligibleReinforcement(legion, factionId, battleField, center, deps))
+            .filter((legion) => isEligibleReinforcement(legion, factionId, battleField, center, deps, isAttacker))
             .sort((a, b) => (b.getTroops() || 0) - (a.getTroops() || 0));
 
         for (const legion of eligible) {

@@ -1430,13 +1430,16 @@ export class CombatUI {
             'portrait-frame-enter-right 0.55s ease-out 0.18s both, portrait-kenburns-settle 5s cubic-bezier(0.22, 1, 0.36, 1) 0.73s forwards';
     }
 
-    /** 复位上一场的败方褪灰与技能脉冲状态（每场开战与关窗时调用） */
-    private resetBattleOverlays(): void {
+    /** 复位上一场的败方褪灰与技能脉冲状态（仅真正换场时清，同场 UI 刷新保留去重） */
+    private resetBattleOverlays(battleField?: BattleField | null): void {
         for (const img of [this.leftPortrait, this.rightPortrait]) {
             img.style.transition = '';
             img.style.filter = '';
         }
-        this.skillPulseShownKeys.clear();
+        // 同场刷新（援军编入等）不清技能去重集，防止脉冲重复
+        if (!battleField || this.boundRegionalBattleField !== battleField) {
+            this.skillPulseShownKeys.clear();
+        }
         this.skillPulseLastAt = 0;
         this.skillBurstSfxPlayed = false;
         for (const t of this.skillPulseTimers) window.clearTimeout(t);
@@ -1496,7 +1499,7 @@ export class CombatUI {
         if (attackers.length === 0 || defenders.length === 0) return;
 
         this.clearRegionalTimers();
-        this.resetBattleOverlays();
+        this.resetBattleOverlays(battleField);
 
         this.currentBattle = null;
         this.currentRegionalUnits = { attackers, defenders };
@@ -1610,6 +1613,15 @@ export class CombatUI {
         return getGeneralRecordByGeneralId(generalId)?.generalName ?? null;
     }
 
+    /** 技能事件是否属于当前绑定战场（异场事件禁止上面板/进语音，防同名技能冒名顶替） */
+    public isTacticalEventForBoundBattle(info: { unitId?: string; generalId?: string }): boolean {
+        const bf = this.boundRegionalBattleField;
+        if (!bf) return true; // 未绑战场（旧调用路径）：维持原有启发式
+        if (info.unitId) return bf.hasUnit(info.unitId);
+        if (info.generalId) return this.resolveGeneralBattleSide(bf, info.generalId) !== null;
+        return true;
+    }
+
     /** 战术武将技触发效果（侧边徽章闪烁，不再弹大字） */
     public flashTacticalSkill(displayName: string, generalId?: string, skillId?: string): void {
         if (!displayName) return;
@@ -1627,7 +1639,8 @@ export class CombatUI {
 
         // —— 立绘/标签脉冲 ——
         // 武将技一局只放一次：UI 事件可能被重复广播（援军编入补发等），每侧一局只脉冲一次。
-        // 侧别：① 战场单位列表 ② generalId 对名牌 ③ 技能标签兜底。
+        // 侧别：① 战场单位列表 ② generalId 对名牌 ③ 技能标签兜底（仅限无将事件——
+        //    带将事件若两级都找不到，多半是异场事件漏进来，用标签文字猜侧会冒名顶替，直接丢弃）。
         let side: 'attacker' | 'defender' | null = null;
         if (generalId && bf) {
             side = this.resolveGeneralBattleSide(bf, generalId);
@@ -1636,7 +1649,7 @@ export class CombatUI {
             if (this.leftGeneralNameTag.dataset.generalId === generalId) side = 'attacker';
             else if (this.rightGeneralNameTag.dataset.generalId === generalId) side = 'defender';
         }
-        if (!side) {
+        if (!side && !generalId) {
             const inLeft = !!this.findSkillTag(this.leftSkillsBox, displayName);
             const inRight = !!this.findSkillTag(this.rightSkillsBox, displayName);
             if (inLeft !== inRight) {
@@ -1645,6 +1658,12 @@ export class CombatUI {
         }
         if (!side) return;
         const pulseSide = side;
+        // 一将一技：同将不再放第二次（含逆局/对抗/援军入队）
+        if (generalId) {
+            const genKey = `${pulseSide}|${generalId}`;
+            if (this.skillPulseShownKeys.has(genKey)) return;
+            this.skillPulseShownKeys.add(genKey);
+        }
         const key = `${pulseSide}-${displayName}`;
         if (this.skillPulseShownKeys.has(key)) return;
         this.skillPulseShownKeys.add(key);

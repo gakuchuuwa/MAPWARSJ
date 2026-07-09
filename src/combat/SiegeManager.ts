@@ -101,7 +101,7 @@ export class SiegeManager {
         });
     }
 
-    /** 由 CombatSystem 节流调用：扫描圈内同旗军团并加入进行中的攻城战 */
+    /** 由 CombatSystem 节流调用：扫描圈内同旗军团并加入进行中的攻城战；异旗军团排队等待 */
     public runReinforcementPoll(): void {
         pollSiegeReinforcements(
             this.activeSieges,
@@ -113,6 +113,43 @@ export class SiegeManager {
             (armyId) => this.isArmyWaitingSiege(armyId),
             (legion, center) => this.positionArmyForSiege(legion, center),
         );
+
+        // 扫描圈内异旗军团：不穿过交战区，排队等待
+        this.interceptThirdPartyPassersBy();
+    }
+
+    /** 扫所有活跃攻城战：圈内非同旗军团 → 停步排队（不穿越交战区） */
+    private interceptThirdPartyPassersBy(): void {
+        for (const [cityId, battleField] of this.activeSieges) {
+            if (battleField.isOver) continue;
+            const city = this.cityManager.getCity(cityId);
+            if (!city) continue;
+            const center = cityToLatLng(city);
+            const attFaction = battleField.getAttackerFactionId();
+            const defFaction = battleField.getDefenderFactionId();
+
+            const nearby = this.legionManager.getSpatialRegistry().getArmiesInRadius(
+                center.lat, center.lng, GameConfig.COMBAT.BATTLE_JOIN_RADIUS,
+            );
+            for (const legion of nearby) {
+                if (legion.isDestroyed || legion.type !== 'legion') continue;
+                if (legion.getIsInCombat()) continue;
+                if (this.isArmyWaitingSiege(legion.id)) continue;
+                const myFaction = legion.getFactionId();
+                if (myFaction === attFaction || myFaction === defFaction) continue; // 同旗由 pollSiegeReinforcements 处理
+
+                // 异旗：停步排队
+                siegeLog(`🚧 [SiegeManager] ${legion.name} (${myFaction}) 途经【${city.name}】交战区，排队等待`);
+                legion.stopMovement(true);
+                legion.setTargetCity(null);
+                legion.setCombatState(false);
+                this.enqueueSiegeThirdPartyWaiter(cityId, legion, {
+                    defenderCityId: cityId,
+                    attackerFactionId: attFaction,
+                    isDynamic: true,
+                } as SiegeData);
+            }
+        }
     }
 
     public hasActiveSieges(): boolean {
@@ -543,9 +580,8 @@ export class SiegeManager {
                 return false;
             }
 
-            // 路过/奔他城：不协战、不传送（曾导致乘胜追击后卡死）
-            // 本城军团（homeCityId = siegeCityId）必须回援，不受此限
-            if (siegeCityId) {
+            // 路过/奔他城：守方 allowPassingBy=true 时同旗不论目标强制参战
+            if (siegeCityId && !allowPassingBy) {
                 const targetId = legion.getTargetCity?.()?.id;
                 const idle = legion.isIdle();
                 const isHomeLegion = legion.homeCityId === siegeCityId;
@@ -570,7 +606,7 @@ export class SiegeManager {
         return candidates;
     }
 
-    /** 守城参战军团：仅 BATTLE_JOIN_RADIUS 内同阵营军团（homeCityId 不豁免距离） */
+    /** 守城参战军团：同旗路过也强制参战（BATTLE_JOIN_RADIUS 内） */
     private collectDefenderLegionsForSiege(
         targetCity: { id: string; factionId: string; latitude: number; longitude: number },
         cityPos: { lat: number; lng: number },
@@ -581,6 +617,7 @@ export class SiegeManager {
             targetCity.factionId,
             excludeArmyIds,
             targetCity.id,
+            true, // 守方：同旗路过也强制参战
         );
     }
 

@@ -110,6 +110,8 @@ export function wireGeneralSkillCombat(app: GameApp, legionManager: LegionManage
     setGeneralSkillLegionManager(legionManager);
     setOnTacticalSkillTriggered((info) => {
         if (!app.combatUI.isRegionalVisible()) return;
+        // 全图多战并行：异场技能事件不得上面板/进语音（曾借同名技能标签冒名顶替，把人名念成别场武将）
+        if (!app.combatUI.isTacticalEventForBoundBattle(info)) return;
         app.combatUI.flashTacticalSkill(info.displayName, info.generalId, info.skillId);
         gameLog('battle', `✨ [CombatUI] 战术技展示: 【${info.displayName}】 (${info.generalId})`);
     });

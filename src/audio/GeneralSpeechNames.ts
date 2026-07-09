@@ -7,7 +7,6 @@
  *   2. 复姓替换（尉迟→遇迟 等）
  *   3. 姓氏首字多音替换（乐→悦、种→仲 等）
  *   4. 名内易错字替换（勣→绩 等）
- *   5. 日本/朝鲜立绘夹：逐字 thin-space，减轻连读误判
  */
 import { FACTION_GENERALS } from "../data/FactionGenerals";
 
@@ -105,8 +104,6 @@ const CHAR_REPLACEMENT: Readonly<Record<string, string>> = {
   阚: "瞰",
 };
 
-const THIN = "\u2009";
-
 function fixCompoundSurname(name: string): string {
   for (const [from, to] of COMPOUND_SURNAME_FIX) {
     if (name.startsWith(from)) return to + name.slice(from.length);
@@ -127,25 +124,6 @@ function replaceRareChars(name: string): string {
   return [...name].map((c) => CHAR_REPLACEMENT[c] ?? c).join("");
 }
 
-/** 日式/韩式汉名：逐字 thin-space，减轻 TTS 连读错音 */
-function spacePerChar(name: string): string {
-  return [...name].join(THIN);
-}
-
-function portraitFolderForGeneralId(generalId: string): string | null {
-  for (const g of Object.values(FACTION_GENERALS)) {
-    if (g.generalId === generalId) {
-      const m = g.portrait.match(/\/assets\/([^/]+)\//);
-      return m?.[1] ?? null;
-    }
-  }
-  return null;
-}
-
-function shouldSpacePerChar(folder: string | null): boolean {
-  return folder === "JAPAN" || folder === "KOREA";
-}
-
 /**
  * 将屏幕上的武将名转为 TTS 友好读法。
  */
@@ -162,11 +140,6 @@ export function getGeneralNameForSpeech(
   name = fixCompoundSurname(name);
   name = fixSurnamePolyphone(name);
   name = replaceRareChars(name);
-
-  const folder = generalId ? portraitFolderForGeneralId(generalId) : null;
-  if (shouldSpacePerChar(folder)) {
-    name = spacePerChar(name);
-  }
 
   return name;
 }

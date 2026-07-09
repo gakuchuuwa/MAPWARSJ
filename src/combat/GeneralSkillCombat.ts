@@ -152,8 +152,9 @@ export function setActiveOpeningPulseSink(sink: IOpeningPulseSink | null): void 
     activeOpeningPulseSink = sink;
 }
 
-function fireOpeningPulse(trigger: TacticalSkillTrigger, _audioUnitId?: string): void {
-    onTacticalSkillTriggered?.(trigger);
+function fireOpeningPulse(trigger: TacticalSkillTrigger, audioUnitId?: string): void {
+    // unitId 随事件下发：CombatUI 钩子据此过滤异场事件（全图多战并行，异场技能曾借同名标签冒名顶替）
+    onTacticalSkillTriggered?.(audioUnitId ? { ...trigger, unitId: audioUnitId } : trigger);
     // 技能音效改由语音 onStart 驱动（与 Cut-in 同刻）；无语音兜底见 CombatUI.run
 }
 
@@ -179,6 +180,8 @@ export type TacticalSkillTrigger = {
     skillId: string;
     /** 0 = 立即；名将开局默认 OPENING_TACTICAL_UI_DELAY_SEC */
     uiDelaySec?: number;
+    /** 释放单位 id（fireOpeningPulse 下发时填）：CombatUI 钩子据此过滤异场事件 */
+    unitId?: string;
 };
 
 export type ComebackTacticalContext = {
