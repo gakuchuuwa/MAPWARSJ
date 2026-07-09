@@ -14,6 +14,7 @@ const FOLLOW_LERP_FACTOR = 0.22;
 /** 跟随中重复插队旗号优先（毫秒），避免每帧 setView 刷屏 */
 const FOLLOW_FLAG_PRIORITY_INTERVAL_MS = 600;
 let lastFollowFlagPriorityKick = 0;
+let lastBgmFollowedId: string | null = null;
 
 /**
  * 单帧主循环（日历 / 事件 / 战斗 / AI / 招募 / 战斗 UI / 跟随镜头）。
@@ -185,16 +186,16 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 });
             }
             app.cameraFollowUI.update();
-            // BGM 跟随军团：优先用军团武将立绘文件夹，无立绘则回落地理区域
+            // BGM 仅跟随军团切换时播放（不随镜头移动）
             if (followedId && legionManager) {
                 const legion = legionManager.getLegionById(followedId);
                 const pos = legion?.getPosition();
-                if (pos) app.audioManager.syncPortraitBgm(legion?.portraitPath, pos.lat, pos.lng);
+                if (pos && followedId !== lastBgmFollowedId) {
+                    lastBgmFollowedId = followedId;
+                    app.audioManager.syncPortraitBgm(legion?.portraitPath, pos.lat, pos.lng);
+                }
             } else {
-                // 未跟随军团时，按地图视野中心播放地理区域 BGM
-                const bgmMap = app.map.getLeafletMap();
-                const center = bgmMap.getCenter();
-                if (center) app.audioManager.syncPortraitBgm(undefined, center.lat, center.lng);
+                lastBgmFollowedId = null;
             }
             perfMonitor.endTimer('camera');
         }

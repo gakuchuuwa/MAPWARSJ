@@ -1262,11 +1262,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 8
         },
-        "/assets/CENTRAL_ASIA/jibin_jianisejia.png": {
-            "scale": 1.18,
-            "offsetX": 0,
-            "offsetY": -4
-        },
         "/assets/TIBET/faqiang_niechizanpu.png": {
             "scale": 0.93,
             "offsetX": 0,
@@ -1687,11 +1682,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/JAPAN/__闲置__JAPAN_10.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 18
-        },
         "/assets/JAPAN/__闲置__JAPAN_11.png": {
             "scale": 1.06,
             "offsetX": 0,
@@ -1732,20 +1722,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -29
         },
-        "/assets/JAPAN/echigo_shangshanqianxin.png": {
-            "scale": 0.86,
-            "offsetX": 0,
-            "offsetY": -38
-        },
         "/assets/JAPAN/higo_d_juchiwuguang.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": -11
-        },
-        "/assets/JAPAN/iga_d_baididanbo.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": -12
         },
         "/assets/JAPAN/iyo_d_cunshangwuji.png": {
             "scale": 1,
@@ -2457,11 +2437,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -25
         },
-        "/assets/panjun/__闲置__PANJUN_10.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": 33
-        },
         "/assets/panjun/__闲置__PANJUN_12.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -2698,11 +2673,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/STEPPE/sunite_sousai.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -29
-        },
-        "/assets/TIBET/gongtang_gongtangcang.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -29
@@ -3641,11 +3611,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 0
-        },
-        "/assets/panjun/ketagalan_huangqingyun.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -24
         },
         "/assets/zhaosong/__闲置__zhaosong_15.png": {
             "scale": 0.98,
@@ -4757,11 +4722,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/JAPAN/__闲置__JAPAN_22.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 8
-        },
         "/assets/JAPAN/jibei2_qingshuizongzhi.png": {
             "scale": 0.92,
             "offsetX": 0,
@@ -5267,11 +5227,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -9
         },
-        "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -11
-        },
         "/assets/LINGNAN/__闲置__LINGNAN_26.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -5451,11 +5406,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -10
-        },
-        "/assets/TIBET/khon_basiba.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": -16
         },
         "/assets/TIBET/__闲置__TIBET_14.png": {
             "scale": 1,
@@ -5716,6 +5666,76 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": -48
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_12.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_13.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/CENTRAL_ASIA/jibin_jianisejia.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/JAPAN/__闲置__JAPAN_24.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": -38
+        },
+        "/assets/JAPAN/echigo_shangshanqianxin.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/JAPAN/__闲置__JAPAN_25.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/JAPAN/iga_d_baididanbo.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/panjun/__闲置__PANJUN_23.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -24
+        },
+        "/assets/panjun/ketagalan_huangqingyun.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/TIBET/__闲置__TIBET_16.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/TIBET/khon_basiba.png": {
+            "scale": 0.94,
+            "offsetX": 8,
+            "offsetY": -9
+        },
+        "/assets/TIBET/__闲置__TIBET_17.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -29
+        },
+        "/assets/TIBET/gongtang_gongtangcang.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 15
         }
     },
     "folderGuides": {

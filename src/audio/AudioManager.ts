@@ -64,12 +64,12 @@ const SPEECH_GAIN = 0.95; // 小幅上调播报音量（+5%）
 
 // ---- 音量渐变时长（ms）：消除各路声音硬切的不适感 ----
 const FADE = {
-    /** 播报/音效闪避（duck）的音量渐变——够快跟得上事件，又不生切 */
-    duck: 380,
+    /** 播报/音效闪避（duck）的音量渐变——更缓，消除硬切感 */
+    duck: 600,
     /** 行军/战斗循环音的淡入淡出 */
     loop: 300,
     /** 一次性音效淡入（武将技等） */
-    oneShot: 150,
+    oneShot: 200,
     /** BGM 换曲（切文化区/随机轮播）交叉淡入淡出 */
     bgmCrossfade: 900,
 } as const;
@@ -184,6 +184,8 @@ export class AudioManager {
     private initialized = false;
     private unlocked = false;
     private gamePaused = false;
+    /** 战斗已开始但语音未播完，等所有播报结束后再起 battle_loop */
+    private battleLoopPending = false;
     private settings: AudioSettings = mergeSettings(null);
     private audioCache = new Map<SoundKey, HTMLAudioElement>();
     private loopCache = new Map<SoundKey, HTMLAudioElement>();
@@ -354,7 +356,8 @@ export class AudioManager {
         if (state.inCombat) {
             this.stopLoop('march_loop');
             this.stopLoop('cavalry_march_loop');
-            this.startLoop('battle_loop');
+            // 延迟到所有语音播报结束后再起战斗音效
+            this.battleLoopPending = true;
             return;
         }
 
@@ -388,6 +391,14 @@ export class AudioManager {
 
     public isEnabled(): boolean {
         return this.settings.enabled;
+    }
+
+    /** 语音播报全部结束回调：延迟启动 battle_loop（播报时不插音效） */
+    public onAllSpeechDone(): void {
+        if (!this.battleLoopPending) return;
+        this.battleLoopPending = false;
+        // 短暂间隙后起战斗音效（避免念完立刻咣的一声）
+        setTimeout(() => this.startLoop('battle_loop'), 800);
     }
 
     public isUnlocked(): boolean {
@@ -664,8 +675,9 @@ export class AudioManager {
             void audio.play().catch((error) => {
                 this.warnMissingOnce('bgm_main', error);
             });
-            // 新曲淡入 + 旧曲交叉淡出后停掉（换文化区/轮播不再生切）
-            this.setVolume(audio, targetVol, FADE.bgmCrossfade);
+            // 新曲淡入：若当前正在战斗中（音效循环已激活），BGM 开机即静音
+            const duckedVol = this.isSfxLoopActive() ? 0 : targetVol;
+            this.setVolume(audio, duckedVol, FADE.bgmCrossfade);
             if (oldAudio) {
                 this.setVolume(oldAudio, 0, FADE.bgmCrossfade, () => {
                     oldAudio.pause();

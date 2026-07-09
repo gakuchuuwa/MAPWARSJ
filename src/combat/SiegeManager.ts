@@ -10,8 +10,9 @@ import { BattleUnitFactory } from './BattleUnitFactory';
 import { BattleField } from './BattleField';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
-import { getFactionGeneral } from '../data/FactionGenerals';
+import { getFactionGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { getUnitEliteTier } from '../systems/CultureCombat';
+import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
 
 const siegeLog = (...args: unknown[]) => gameLog('siege', ...args);
 import { LegionType, getDefaultLegionTypeForFaction } from '../types/UnitTypes';
