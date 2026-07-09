@@ -1122,11 +1122,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 19,
             "offsetY": 43
         },
-        "/assets/LINGNAN/xian_d_xianfuren.png": {
-            "scale": 1.21,
-            "offsetX": 0,
-            "offsetY": 43
-        },
         "/assets/CENTRAL_ASIA/zhaowu_timuermieli.png": {
             "scale": 1,
             "offsetX": 0,
@@ -3007,11 +3002,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 23
         },
-        "/assets/wuzhou/__闲置__wuzhou_01.png": {
-            "scale": 0.81,
-            "offsetX": 0,
-            "offsetY": -41
-        },
         "/assets/wuzhou/__闲置__wuzhou_02.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -4023,7 +4013,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 20
         },
         "/assets/panjun/taiping_shidakai.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -5423,9 +5413,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -43
         },
         "/assets/LINGNAN/__闲置__LINGNAN_27.png": {
-            "scale": 0.96,
+            "scale": 1.21,
             "offsetX": 0,
-            "offsetY": 22
+            "offsetY": 43
         },
         "/assets/DIANQIAN/paiwan_alugu.png": {
             "scale": 0.96,
@@ -5721,6 +5711,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 3
+        },
+        "/assets/wuzhou/xian_d_xianfuren.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -48
         }
     },
     "folderGuides": {

@@ -54,10 +54,10 @@ const DEFAULT_SETTINGS: AudioSettings = {
 const DUCK = {
     /** 播报时音乐压到 35%（衬托不抢） */
     bgmUnderSpeech: 0.35,
-    /** 仅音效循环(行军/战斗)时音乐压到 45% */
-    bgmUnderSfx: 0.45,
+    /** 仅音效循环(行军/战斗)时音乐压到 15% */
+    bgmUnderSfx: 0,
     /** 播报时音效压到 12%（微弱衬托，不抢语音） */
-    sfxUnderSpeech: 0.12,
+    sfxUnderSpeech: 0.28,
 } as const;
 /** 播报有效音量 = master × SPEECH_GAIN（TTS 感知偏轻，补偿至与音效/音乐齐平） */
 const SPEECH_GAIN = 0.95; // 小幅上调播报音量（+5%）
@@ -80,11 +80,11 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     march_loop: sound('battle', 'march_loop', 0.32, 0),
     // 纯骑部队（草原/青藏/中亚）专用行军音效，与步骑 march_loop 分开
     cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.32, 0),
-    battle_loop: sound('battle', 'battle_loop', 0.5, 0),
+    battle_loop: sound('battle', 'battle_loop', 0.8, 0),
     battle_start: sound('battle', 'battle_start', 0.65, 1600),
     battle_end: sound('battle', 'battle_end', 0.55, 1600),
-    battle_victory: sound('battle', 'battle_victory', 0.8, 1800),
-    battle_defeat: sound('battle', 'battle_defeat', 0.7, 1800),
+    battle_victory: sound('battle', 'battle_victory', 0.5, 1800),
+    battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
     battle_reinforcement: sound('battle', 'battle_reinforcement', 0.5, 2200),
     city_capture: sound('feed', 'city_capture', 0.7, 1200),
     faction_fall: sound('feed', 'faction_fall', 0.85, 1800),
@@ -121,6 +121,33 @@ const BGM_FALLBACK_MAP: Record<string, string> = {
     avg: 'CENTRAL',
     inbox: 'CENTRAL',
     portraits: 'CENTRAL',
+};
+
+/** 各文化区 BGM 响度补偿（以 CENTRAL -20.9dB 为基准；<1=压低，>1=提升） */
+const BGM_REGION_GAIN: Record<string, number> = {
+    BASHU: 0.84,         // -19.4 → 压低 1.5dB
+    CENTRAL: 1.0,        // -20.9 基准
+    CENTRAL_ASIA: 0.92,  // -20.2
+    daming: 0.95,        // -20.5
+    DIANQIAN: 1.0,       // -20.9
+    HEXI: 0.97,          // -20.6
+    JAPAN: 1.03,         // -21.2
+    JIANGNAN: 0.89,      // -19.9
+    KOREA: 0.92,         // -20.2
+    LINGNAN: 0.76,       // -18.5 → 最响，大幅压低
+    litang: 0.98,        // -20.7
+    liuhan: 1.08,        // -21.6
+    manqing: 0.93,       // -20.3
+    NORTH: 1.0,          // -20.9
+    NORTHEAST: 0.98,     // -20.7
+    pugan: 1.0,          // -20.9
+    STEPPE: 1.15,        // -22.1 → 最轻，大幅提升
+    TIBET: 0.97,         // -20.6
+    WESTERN: 1.01,       // -21.0
+    wuzhou: 1.0,         // -20.9
+    xianqin: 0.97,       // -20.6
+    yingqin: 0.97,       // -20.6
+    zhaosong: 0.91,      // -20.1
 };
 
 /**
@@ -475,7 +502,6 @@ export class AudioManager {
             // 异步加载期间状态可能已变（停止跟拍/转入战斗/暂停），仅当仍被期望且未暂停时才播
             if (!audio || !this.wantedLoops.has(key)) return;
             if (this.gamePaused && definition.category !== 'bgm') return;
-            // 新起：从 0 淡入；已在播（可能正处于停音淡出中）：撤销淡出、淡回目标
             if (audio.paused) {
                 audio.currentTime = 0;
                 audio.volume = 0;
@@ -622,7 +648,8 @@ export class AudioManager {
             audio.loop = false; // 单曲不循环：放完随机轮播下一文化
             audio.preload = 'auto';
             const def = SOUND_DEFINITIONS['bgm_main'];
-            const targetVol = def ? this.resolveVolume(def) : 0.125;
+            const regionGain = BGM_REGION_GAIN[folder] ?? 1.0;
+            const targetVol = (def ? this.resolveVolume(def) : 0.125) * regionGain;
             audio.volume = 0; // 从 0 交叉淡入
             audio.addEventListener(
                 'ended',

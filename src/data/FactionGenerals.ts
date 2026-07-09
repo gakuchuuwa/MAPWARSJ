@@ -412,7 +412,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     paiyao: { generalId: 'paiyao_huangguasi', generalName: '黄瓜四', portrait: '/assets/LINGNAN/paiyao_huangguasi.png' },
     yingzhou: { generalId: 'yingzhou_liuyan', generalName: '刘龑', portrait: '/assets/LINGNAN/yingzhou_liuyan.png' },
     linyi: { generalId: 'linyi_fanyangmai', generalName: '范阳迈', portrait: '/assets/LINGNAN/linyi_fanyangmai.png' },
-    xian_d: { generalId: 'xian_d_xianfuren', generalName: '冼夫人', portrait: '/assets/LINGNAN/xian_d_xianfuren.png' },
+    xian_d: { generalId: 'xian_d_xianfuren', generalName: '冼夫人', portrait: '/assets/wuzhou/xian_d_xianfuren.png' },
     luodian: { generalId: 'luodian_shexiang', generalName: '奢香夫人', portrait: '/assets/LINGNAN/luodian_shexiangfuren.png' },
     nong2: { generalId: 'nong2_nongzhigao', generalName: '侬智高', portrait: '/assets/LINGNAN/nong2_nongzhigao.png' },
     taiping: { generalId: 'taiping_shidakai', generalName: '石达开', portrait: '/assets/panjun/taiping_shidakai.png' },
