@@ -38,6 +38,7 @@ import {
 import { isCampaignLegion, shouldSkipHomeRecapture } from '../../legion/LegionSpawnPolicy';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { clampCityTroops } from '../../config/CityConfig';
+import { roadRegistry } from '../../roads/RoadRegistry';
 import type { Army } from '../../legion/Army';
 
 // =====================
@@ -256,8 +257,11 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
         );
         setStrategicArmyTarget(ctx, nearbyEnemy.id, { lat: ePos.lat, lng: ePos.lng });
         ctx.army.setTargetCity(null);
-        // 直接改道追击，避免先停步再等下一帧 FindTarget 造成「不动了」
-        ctx.army.moveAlongPath([{ lat: ePos.lat, lng: ePos.lng }]);
+        // 沿路追击：取敌军最近路网城，路由过去（永不离开道路）
+        const huntCityId = roadRegistry.getNearestCityId(ePos.lat, ePos.lng);
+        if (huntCityId) {
+            ctx.legionManager.moveLegionToCity(ctx.army, huntCityId);
+        }
         return true;
     }
 
@@ -410,7 +414,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     return BTStatus.SUCCESS;
 });
 
-/** 朝敌军团当前位置直线追击（短距；接战靠 LegionFieldBattle 碰撞） */
+/** 朝敌军团沿路追击（永不离开道路） */
 function chaseEnemyArmy(ctx: BTContext, enemy: Army): BTStatus {
     const myPos = ctx.army.getPosition();
     const ePos = enemy.getPosition();
@@ -422,20 +426,27 @@ function chaseEnemyArmy(ctx: BTContext, enemy: Army): BTStatus {
         return BTStatus.SUCCESS;
     }
 
-    // 已在朝目标方向走：每帧刷新终点（敌军在动）
+    // 已在沿路行军：持续，不每帧重设（避免路径抖动）
     ctx.targetPosition = { lat: ePos.lat, lng: ePos.lng };
     if (ctx.army.isBlocked()) {
         markMoveFailure(ctx, `army:${enemy.id}`, 'blocked');
         return BTStatus.FAILURE;
     }
 
-    // 直线追：每帧重设短路径，避免敌军跑偏后仍沿旧路点
-    ctx.army.moveAlongPath([{ lat: ePos.lat, lng: ePos.lng }]);
+    // 沿路追击：取敌军最近路网城，路由过去
+    if (!ctx.army.isIdle()) return BTStatus.SUCCESS;
+
+    const huntCityId = roadRegistry.getNearestCityId(ePos.lat, ePos.lng);
+    if (!huntCityId) {
+        markMoveFailure(ctx, `army:${enemy.id}`, 'no_road');
+        return BTStatus.FAILURE;
+    }
+    ctx.legionManager.moveLegionToCity(ctx.army, huntCityId);
     ctx.lastMoveResult = 'success';
     btLog(
         ctx,
         `chase:${enemy.id}`,
-        `[AI] ${ctx.army.name} 追击【${enemy.name}】`
+        `[AI] ${ctx.army.name} 沿路追击【${enemy.name}】`
     );
     return BTStatus.SUCCESS;
 }

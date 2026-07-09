@@ -159,8 +159,23 @@ export class SpeechAnnouncer {
   /** 技能释放播报串行队列（入队顺序=亮相顺序：优势先/均势攻先；不互相打断）；onStart 在 TTS 开口时触发 */
   private skillSpeakQueue: { text: string; onStart?: () => void }[] = [];
   private skillSpeaking = false;
+  /** 播报会话：技能连播期间保持 ducking，避免句间音效/音乐脉冲 */
+  private speechDuckSession = false;
 
   constructor() {}
+
+  private beginSpeechDuckSession(): void {
+    if (this.speechDuckSession) return;
+    this.speechDuckSession = true;
+    audioManager.setSpeechDucking(true);
+  }
+
+  private endSpeechDuckSessionIfIdle(): void {
+    if (this.skillSpeaking || this.skillSpeakQueue.length > 0) return;
+    if (!this.speechDuckSession) return;
+    this.speechDuckSession = false;
+    audioManager.setSpeechDucking(false);
+  }
 
   /**
    * 挑选最佳中文男声。
@@ -208,6 +223,11 @@ export class SpeechAnnouncer {
 
   public setEnabled(on: boolean): void { this.enabled = on; }
   public isEnabled(): boolean { return this.enabled; }
+
+  /** 技能语音队列是否空闲（下一句入队时是否会附带技能音效） */
+  public isSkillVoiceIdle(): boolean {
+    return this.skillSpeakQueue.length === 0 && !this.skillSpeaking;
+  }
 
   /** 切换男声偏好，并试播一句 */
   public toggleVoicePreference(): void {
@@ -411,6 +431,8 @@ export class SpeechAnnouncer {
     skillId: string;
     eliteName?: string | null;
     opponentHasGeneral: boolean;
+    /** 跟拍军团单位 id（用于技能音效；非跟拍不播） */
+    audioUnitId?: string | null;
     onStart?: () => void;
   }): boolean {
     if (!this.enabled) return false;
@@ -423,7 +445,19 @@ export class SpeechAnnouncer {
     const eliteClause = opts.eliteName ? `，亲率，${opts.eliteName}` : "";
     const text = `${opts.generalName}，${opts.skillDisplayName}${eliteClause}，${bajue}`;
     console.log("[Speech] 技能:", text);
-    this.skillSpeakQueue.push({ text, onStart: opts.onStart });
+    // 双方技能紧挨入队（短战/相持窗不足）→ 仅第一句开口时插技能音效，避免句间硬切
+    const playSkillSfxOnStart = this.skillSpeakQueue.length === 0 && !this.skillSpeaking;
+    const userOnStart = opts.onStart;
+    const audioUnitId = opts.audioUnitId;
+    this.skillSpeakQueue.push({
+      text,
+      onStart: () => {
+        if (playSkillSfxOnStart && audioUnitId) {
+          audioManager.playGeneralSkillSfx(audioUnitId);
+        }
+        userOnStart?.();
+      },
+    });
     this.drainSkillQueue();
     return true;
   }
@@ -432,6 +466,7 @@ export class SpeechAnnouncer {
   private clearSkillQueue(): void {
     this.skillSpeakQueue.length = 0;
     this.skillSpeaking = false;
+    this.endSpeechDuckSessionIfIdle();
   }
 
   /** 串行出队：按入队顺序依次念（BattleField 已排优势先/均势攻先）；onStart 在 TTS 开口时触发 */
@@ -488,8 +523,8 @@ export class SpeechAnnouncer {
         console.log("[Speech] 使用:", voice.name);
       }
 
-      // 优先级闪避：播报期间压低音效 + 音乐，念完恢复
-      audioManager.setSpeechDucking(true);
+      // 优先级闪避：播报期间压低音效 + 音乐；技能连播保持同一会话不反复起落
+      this.beginSpeechDuckSession();
       // 兜底：语音事件偶发不触发时，按估读时长强制走完收尾（恢复音量 + onDone 推进队列，防技能脉冲卡死）
       const duckSafetyMs = Math.min(15000, 1500 + text.length * 400);
       let settled = false;
@@ -505,18 +540,19 @@ export class SpeechAnnouncer {
         // 引擎偶发不触发 onstart：收尾前补一次，避免脉冲永远不亮
         fireStart();
         window.clearTimeout(safety);
-        audioManager.setSpeechDucking(false);
         if (opts?.sTier) this.sTierBusyUntilMs = 0;
         if (opts?.banner) {
           // 念完后字幕再停留片刻，缓缓淡出
           window.setTimeout(() => SubtitleBanner.hide(), 1200);
         }
         opts?.onDone?.();
+        // 技能队列未排空 → 保持 ducking，避免句间 BGM/战斗循环音量脉冲
+        this.endSpeechDuckSessionIfIdle();
       };
       const safety = window.setTimeout(settle, duckSafetyMs);
 
       utterance.onstart = () => {
-        audioManager.setSpeechDucking(true);
+        this.beginSpeechDuckSession();
         fireStart();
       };
       utterance.onend = settle;

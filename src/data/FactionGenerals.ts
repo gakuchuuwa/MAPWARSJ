@@ -680,7 +680,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ssangseong: { generalId: 'ssangseong_lizichun', generalName: '李子春', portrait: '/assets/KOREA/ssangseong_lizichun.png' },
     yao: { generalId: 'yao_liuyuan', generalName: '刘渊', portrait: '/assets/STEPPE/yao_liuyuan.png' },
     kong_d: { generalId: 'kong_d_caogui', generalName: '曹刿', portrait: '/assets/xianqin/kong_d_caogui.png' },
-    tongma: { generalId: 'tongma_taishici', generalName: '太史慈', portrait: '/assets/CENTRAL/tongma_liuang.png' },
+    tongma: { generalId: 'tongma_taishici', generalName: '太史慈', portrait: '/assets/JIANGNAN/tongma_taishici.png' },
     yanchuan_d: { generalId: 'yanchuan_d_yuefei', generalName: '岳飞', portrait: '/assets/zhaosong/yanchuan_d_yuefei.png' },
     guide_d: { generalId: 'guide_d_xiaohe', generalName: '萧何', portrait: '/assets/liuhan/guide_d_xiaohe.png' },
     tongzhou: { generalId: 'tongzhou_liuzhiyuan', generalName: '刘知远', portrait: '/assets/CENTRAL/tongzhou_liuzhiyuan.png' },

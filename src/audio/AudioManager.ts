@@ -59,8 +59,8 @@ const DUCK = {
     bgmUnderSpeech: 0.25,
     /** 仅音效循环(行军/战斗)时音乐压到 45% */
     bgmUnderSfx: 0.45,
-    /** 播报时音效静音（同层互斥：要么响播报，要么响音效） */
-    sfxUnderSpeech: 0.0,
+    /** 播报时音效层轻压（非完全静音，减轻硬切感） */
+    sfxUnderSpeech: 0.08,
 } as const;
 /** 播报有效音量 = master × SPEECH_GAIN（TTS 感知偏轻，补偿至与音效/音乐齐平） */
 const SPEECH_GAIN = 0.95; // 小幅上调播报音量（+5%）
@@ -68,9 +68,11 @@ const SPEECH_GAIN = 0.95; // 小幅上调播报音量（+5%）
 // ---- 音量渐变时长（ms）：消除各路声音硬切的不适感 ----
 const FADE = {
     /** 播报/音效闪避（duck）的音量渐变——够快跟得上事件，又不生切 */
-    duck: 220,
+    duck: 380,
     /** 行军/战斗循环音的淡入淡出 */
     loop: 300,
+    /** 一次性音效淡入（武将技等） */
+    oneShot: 150,
     /** BGM 换曲（切文化区/随机轮播）交叉淡入淡出 */
     bgmCrossfade: 900,
 } as const;
@@ -245,7 +247,7 @@ export class AudioManager {
         }
     }
 
-    public play(key: SoundKey): boolean {
+    public play(key: SoundKey, opts?: { fadeInMs?: number }): boolean {
         if (!this.settings.enabled || !this.unlocked) return false;
 
         const definition = SOUND_DEFINITIONS[key];
@@ -258,7 +260,9 @@ export class AudioManager {
         if (!baseAudio) return false;
 
         const audio = baseAudio.cloneNode(true) as HTMLAudioElement;
-        audio.volume = this.resolveVolume(definition);
+        const targetVol = this.resolveVolume(definition);
+        const fadeInMs = opts?.fadeInMs ?? 0;
+        audio.volume = fadeInMs > 0 ? 0 : targetVol;
         audio.currentTime = 0;
 
         this.lastPlayedAt.set(key, Date.now());
@@ -272,7 +276,21 @@ export class AudioManager {
             this.warnMissingOnce(key, error);
         });
 
+        if (fadeInMs > 0) {
+            this.setVolume(audio, targetVol, fadeInMs);
+        }
+
         return true;
+    }
+
+    /** 跟拍军团释放武将技时的短音效（非跟拍军团不播） */
+    public playGeneralSkillSfx(unitId?: string | null): void {
+        if (!unitId || typeof window === 'undefined') return;
+        const followedId =
+            (window as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } }).game
+                ?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
+        if (!followedId || followedId !== unitId) return;
+        this.play('general_skill', { fadeInMs: FADE.oneShot });
     }
 
     public syncFollowedLegionAudio(state: {

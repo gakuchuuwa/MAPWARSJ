@@ -90,7 +90,7 @@ export class SiegeManager {
         });
     }
 
-    /** 第三方排队重排：只挪排队者与本城交战中单位 */
+    /** 第三方排队：只统一面朝据点，不传送 */
     private repositionThirdPartyWaiters(cityId: string, cityPos: { lat: number; lng: number }): void {
         const queue = this.siegeThirdPartyWaiters.get(cityId) ?? [];
         const forceArmies = queue.map((e) => e.army).filter((a) => !a.isDestroyed);
@@ -696,7 +696,7 @@ export class SiegeManager {
             [army, ...nearbyAttackerLegions],  // 攻方全体，含主攻军团
         );
 
-        // 先停步存档，再城周错开（避免先传送后 stop 存下脏几何）
+        // 开战前：停步存档 + 统一面朝据点（绝不 setPosition）
         army.stopMovement(true);
         for (const legion of [...nearbyAttackerLegions, ...nearbyDefenderLegions]) {
             legion.stopMovement(true);
@@ -706,7 +706,7 @@ export class SiegeManager {
             forceArmies: [army, ...nearbyAttackerLegions, ...nearbyDefenderLegions],
             isWaitingSiege: (id) => this.isArmyWaitingSiege(id),
         });
-        siegeLog(`🛤️ [Sandbox Siege] ${army.name} 城周就位后开战`);
+        siegeLog(`🛤️ [Sandbox Siege] ${army.name} 城周就位（无传送）后开战`);
 
         const siegePreset = siegeData.result;
 

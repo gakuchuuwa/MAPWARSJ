@@ -1387,11 +1387,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/CENTRAL/tongma_liuang.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": 11
-        },
         "/assets/CENTRAL/wang_d_wangdao.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -4393,7 +4388,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/NORTH/mushi_muchong.png": {
-            "scale": 1.15,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": -52
         },
@@ -4566,11 +4561,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": -39
-        },
-        "/assets/STEPPE/dongdan_yelbei.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 19
         },
         "/assets/WESTERN/__闲置__WESTERN_14.png": {
             "scale": 1.01,
@@ -4838,9 +4828,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/STEPPE/__闲置__STEPPE_37.png": {
-            "scale": 0.92,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": -28
+            "offsetY": -24
         },
         "/assets/STEPPE/merkit_boyan.png": {
             "scale": 1.09,
@@ -5488,9 +5478,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/STEPPE/__闲置__STEPPE_40.png": {
-            "scale": 1.03,
-            "offsetX": 5,
-            "offsetY": -18
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
         },
         "/assets/STEPPE/zhasaketu_zhasakesubadi.png": {
             "scale": 0.95,
@@ -5681,6 +5671,46 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -25
+        },
+        "/assets/STEPPE/3113431b-d5dd-43bd-8493-333ad7a3738a.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/STEPPE/10c6eef2-3174-4004-b7f9-ebaeaaae4f4b.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/STEPPE/dongdan_yelbei.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/STEPPE/houliao_yelliuge.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/STEPPE/image (3).png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/STEPPE/yel_yelxiuge.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_36.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/JIANGNAN/tongma_taishici.png": {
+            "scale": 1,
+            "offsetX": 14,
+            "offsetY": -33
         }
     },
     "folderGuides": {

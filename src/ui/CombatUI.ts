@@ -53,6 +53,7 @@ import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
 import type { Army } from '../legion/Army';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { audioManager } from '../audio/AudioManager';
 const T = COMBAT_UI_TOKENS;
 
 /** 战报技能条/系数链：精锐或远征 ×1.2 用番号专名作标签（去「军团」等尾缀） */
@@ -83,6 +84,8 @@ export class CombatUI {
     private skillPulseShownKeys = new Set<string>();
     private skillPulseLastAt = 0;
     private skillPulseTimers: number[] = [];
+    /** 同场双方技能连放时仅首句插技能音效（无语音兜底路径） */
+    private skillBurstSfxPlayed = false;
     /** 慢直播：双方技能 Cut-in 理想错开（与 GeneralSkillCombat 同步） */
     private static readonly SKILL_PULSE_STAGGER_MS = SKILL_PULSE_STAGGER_IDEAL_SEC * 1000;
 
@@ -1429,6 +1432,7 @@ export class CombatUI {
         }
         this.skillPulseShownKeys.clear();
         this.skillPulseLastAt = 0;
+        this.skillBurstSfxPlayed = false;
         for (const t of this.skillPulseTimers) window.clearTimeout(t);
         this.skillPulseTimers.length = 0;
     }
@@ -1610,7 +1614,12 @@ export class CombatUI {
         if (this.skillPulseShownKeys.has(key)) return;
         this.skillPulseShownKeys.add(key);
 
-        const run = () => {
+        const bf = this.boundRegionalBattleField;
+        const units = pulseSide === 'attacker' ? bf?.getAttackerUnits() : bf?.getDefenderUnits();
+        const pulseUnit = generalId ? units?.find((u) => u.generalId === generalId) : undefined;
+        const audioUnitId = pulseUnit?.id ?? null;
+
+        const runUi = () => {
             if (this.boundRegionalBattleField?.isOver) return;
             // 实际弹出时刻记档：混合场景（一侧语音驱动、一侧计时兜底）也按真实弹出时间错开
             this.skillPulseLastAt = Math.max(this.skillPulseLastAt, Date.now());
@@ -1656,14 +1665,24 @@ export class CombatUI {
             window.setTimeout(() => cutIn.remove(), 3000);
         };
 
+        /** 无语音兜底：音效与 Cut-in 同刻；双方紧挨时仅首句插音效 */
+        const runWithSfx = () => {
+            if (!this.skillBurstSfxPlayed && audioUnitId) {
+                this.skillBurstSfxPlayed = true;
+                audioManager.playGeneralSkillSfx(audioUnitId);
+            }
+            runUi();
+        };
+
         // [语音播报] 技能释放：语音入队成功则由「开口那一刻」驱动 Cut-in（念谁弹谁，声画同刻；
         // 入队顺序由 BattleField 排：优势先放，均势攻方先放）。不播 → 走下方错开计时兜底。
-        if (this.announceSkillReleaseVoice(pulseSide, displayName, run, generalId, skillId)) {
+        const voiceWillPlaySfx = speechAnnouncer.isSkillVoiceIdle();
+        if (this.announceSkillReleaseVoice(pulseSide, displayName, runUi, generalId, skillId, audioUnitId)) {
+            if (voiceWillPlaySfx) this.skillBurstSfxPlayed = true;
             return;
         }
         // 长战错开念名；短战（≤10s）或相持窗不足时允许叠字，但双方都必须 Cut-in（顺序跟入队）
         const now = Date.now();
-        const bf = this.boundRegionalBattleField;
         const staggerMs = bf && !bf.isOver && bf.targetDuration > 0
             ? resolveSkillPulseStaggerSec(bf.targetDuration, bf.elapsed) * 1000
             : CombatUI.SKILL_PULSE_STAGGER_MS;
@@ -1672,9 +1691,9 @@ export class CombatUI {
             : Math.max(now, this.skillPulseLastAt + staggerMs);
         this.skillPulseLastAt = startAt;
         if (startAt <= now) {
-            run();
+            runWithSfx();
         } else {
-            this.skillPulseTimers.push(window.setTimeout(run, startAt - now));
+            this.skillPulseTimers.push(window.setTimeout(runWithSfx, startAt - now));
         }
     }
 
@@ -1694,6 +1713,7 @@ export class CombatUI {
         onStart: () => void,
         generalId?: string,
         skillId?: string,
+        audioUnitId?: string | null,
     ): boolean {
         if (!generalId || !skillId || !displayName) return false;
         const bf = this.boundRegionalBattleField;
@@ -1713,6 +1733,7 @@ export class CombatUI {
             skillId,
             eliteName,
             opponentHasGeneral,
+            audioUnitId: audioUnitId ?? gUnit?.id ?? null,
             onStart,
         });
     }

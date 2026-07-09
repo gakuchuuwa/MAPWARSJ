@@ -38,15 +38,6 @@ import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world
 import { COMEBACK_TROOP_THRESHOLD } from './TacticalConstants';
 import { readSiegeGarrisonEliteName } from './SiegeGarrisonTier';
 import { gameLog } from '../utils/GameLogger';
-import { audioManager } from '../audio/AudioManager';
-
-function getFollowedArmyId(): string | null {
-    try {
-        return (window as any).game?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
-    } catch {
-        return null;
-    }
-}
 
 /** 普将逆局阈值：单一真理源 TacticalConstants（纯常量，供审计侧解耦引用），此处再导出保持兼容 */
 export { COMEBACK_TROOP_THRESHOLD };
@@ -170,13 +161,9 @@ export function setActiveOpeningPulseSink(sink: IOpeningPulseSink | null): void 
     activeOpeningPulseSink = sink;
 }
 
-function fireOpeningPulse(trigger: TacticalSkillTrigger, audioUnitId?: string): void {
+function fireOpeningPulse(trigger: TacticalSkillTrigger, _audioUnitId?: string): void {
     onTacticalSkillTriggered?.(trigger);
-    if (!audioUnitId) return;
-    const followedId = getFollowedArmyId();
-    if (followedId && followedId === audioUnitId) {
-        audioManager.play('general_skill');
-    }
+    // 技能音效改由语音 onStart 驱动（与 Cut-in 同刻）；无语音兜底见 CombatUI.run
 }
 
 /** BattleField 在相持段阈值到达时统一释放已排队脉冲 */
@@ -649,13 +636,6 @@ function emitTacticalUi(
         window.setTimeout(() => fireOpeningPulse(trigger, unit.id), delay * 1000);
     } else {
         fireOpeningPulse(trigger, unit.id);
-    }
-}
-
-function playGeneralSkillAudio(unit: IBattleUnit): void {
-    const followedId = getFollowedArmyId();
-    if (followedId && unit.id === followedId) {
-        audioManager.play('general_skill');
     }
 }
 

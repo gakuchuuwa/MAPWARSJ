@@ -87,7 +87,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   huai: { name: '淮西子弟', tier: 3 },                // 朱元璋开国初期的核心将帅班底，极具政治与军事符号意义，升入T3知名
   dang_d: { name: '厅子都', tier: 2 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
-    xiao_d: { name: '兰陵宿卫', tier: 3 },
+    xiao_d: { name: '兰陵护卫', tier: 3 },
   zhengzhou: { name: '白袍军', tier: 2 },        // 仅存在于北伐战役，随后覆灭，极度缺乏建制延续性，属于特定战役的巅峰高光，符合T2战术
     song: { name: '殿前捧日', tier: 1 },
     zhao: { name: '丛台绝剑', tier: 2 },
