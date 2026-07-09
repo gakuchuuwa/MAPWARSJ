@@ -91,9 +91,12 @@ export function applySiegeGarrisonBoostIfNeeded(
     if (!isCityGeneralEliteAnchor(city.id)) return;
 
     const anchorFactionId = getCityAnchorFactionId(city.id);
+    // ① 占城不过户：占城势力 ≠ 锚点势力时他势不得用敌将（曾漏检 → 易主城守将总念别家将名）。
+    //    精锐番号「随城不看旗号」不受此限（ExpeditionLegions 语义）；与军团侧 attachFactionGeneralToArmy 同一道防线。
+    const generalOwnedByOccupier = anchorFactionId === city.factionId;
 
     const eliteName = getCityEliteLegionName(city.id);
-    const anchoredGeneral = getCityAnchoredGeneral(city.id);
+    const anchoredGeneral = generalOwnedByOccupier ? getCityAnchoredGeneral(city.id) : null;
 
     // ③ 同场唯一：攻方已有该武将则守城不得重复出场
     const attackerHasThisGeneral =

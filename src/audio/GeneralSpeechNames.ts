@@ -37,8 +37,6 @@ const EXPLICIT_SPEECH_NAMES: Readonly<Record<string, string>> = {
   zhuqian_shaoerzineng: "少二资能",
   ayinu_hushemoquan: "胡赊魔犬",
   beihai_shamusheyun: "沙牟赊允",
-  // 刘锜（顺昌大捷）：锜 qí；thin-space 减轻 TTS 连读成别姓别字
-  yingzhou_d_liuqi: "刘\u2009其",
 };
 
 /** 复姓（长匹配优先） */
@@ -105,7 +103,6 @@ const CHAR_REPLACEMENT: Readonly<Record<string, string>> = {
   贰: "二",
   皝: "晃",
   阚: "瞰",
-  锜: "其",
 };
 
 const THIN = "\u2009";

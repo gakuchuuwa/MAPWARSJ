@@ -139,12 +139,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "播报.md",
+                "file": "语音播报.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "播报"
+              "title": "语音播报"
             }
           }
         ],
@@ -221,7 +221,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "播报.md",
+                "file": "语音播报.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -231,7 +231,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "播报 的反向链接列表"
+              "title": "语音播报 的反向链接列表"
             }
           },
           {
@@ -311,42 +311,42 @@
   },
   "active": "e25cd6f7ab62a05b",
   "lastOpenFiles": [
-    "01_势力/阿巴尔.md",
-    "播报.md",
-    "全地图据点详尽目录.md",
-    "01_势力/阶州.md",
-    "01_势力/洪州.md",
-    "01_势力/瓜州.md",
-    "01_势力/东濊.md",
-    "01_势力/大顺.md",
-    "01_势力/常山.md",
-    "01_势力/巴哈尔兹.md",
-    "日志.md",
-    "03_武将/种世衡.md",
-    "03_武将/刘聪.md",
-    "03_武将/李继迁.md",
-    "03_武将/王威.md",
-    "03_武将/年羹尧.md",
-    "03_武将/魏尚.md",
-    "03_武将/李存勖.md",
-    "03_武将/韦皋.md",
-    "03_武将/王忠嗣.md",
-    "03_武将/慕容垂.md",
-    "03_武将/卢象升.md",
-    "03_武将/沈希仪.md",
-    "03_武将/潘新简.md",
-    "03_武将/早丹.md",
-    "03_武将/库尔班.md",
+    "01_势力/下野.md",
+    "01_势力/且末.md",
+    "01_势力/东丹.md",
+    "01_势力/东吁.md",
+    "01_势力/东夏.md",
+    "01_势力/东平.md",
+    "01_势力/东海.md",
+    "01_势力/东胡.md",
+    "01_势力/严州.md",
+    "01_势力/丰臣.md",
+    "01_势力/丹阳.md",
+    "01_势力/丽江.md",
+    "01_势力/乃蛮.md",
+    "01_势力/义阳.md",
+    "01_势力/乌古斯.md",
+    "01_势力/乌垒.md",
+    "01_势力/乌拉.md",
+    "01_势力/乌梁海.md",
+    "01_势力/乌蛮.md",
+    "01_势力/乌里.md",
+    "01_势力/乐浪.md",
+    "01_势力/九江.md",
+    "01_势力/乞伏.md",
+    "01_势力/乞颜.md",
+    "01_势力/乾州.md",
+    "01_势力/五原.md",
+    "99_开发文档/history",
+    "99_开发文档/archive/old_plans",
+    "99_开发文档/archive/old_overviews",
+    "99_开发文档/archive/daily_updates",
+    "99_开发文档/archive",
+    "99_开发文档/04-ai-export",
+    "99_开发文档/03-runtime",
+    "99_开发文档/03-audio",
     "05_武将技",
     "未命名.canvas",
-    "99_开发文档/_meta",
-    "99_开发文档/武将分级依据",
-    "99_开发文档/_archive_stale/docs/archive/old_plans",
-    "99_开发文档/_archive_stale/docs/archive/old_overviews",
-    "99_开发文档/_archive_stale/docs/archive/daily_updates",
-    "99_开发文档/_archive_stale/docs/02-design/world",
-    "99_开发文档/_archive_stale/docs/02-design/systems",
-    "99_开发文档/_archive_stale/docs/02-design/battle",
-    "99_开发文档/_archive_stale/docs/02-design/ai"
+    "99_开发文档/_meta"
   ]
 }

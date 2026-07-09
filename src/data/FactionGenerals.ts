@@ -658,7 +658,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yiyang_d: { generalId: 'yiyang_d_mengzongzheng', generalName: '孟宗政', portrait: '/assets/JIANGNAN/yiyang_d_mengzongzheng.png' },
     yezongliu: { generalId: 'yezongliu_yezongliu', generalName: '叶宗留', portrait: '/assets/JIANGNAN/yezongliu_yezongliu.png' },
     shenshi: { generalId: 'shenshi_shenqingzhi', generalName: '文天祥', portrait: '/assets/zhaosong/shenshi_wentianxiang.png' },
-    huangwang: { generalId: 'huangwang_huangchao', generalName: '黄巢', portrait: '/assets/JIANGNAN/huangwang_huangchao.png' },
+    huangwang: { generalId: 'huangwang_huangchao', generalName: '黄巢', portrait: '/assets/panjun/huangwang_huangchao.png' },
     lujian: { generalId: 'lujian_zhanghuangyan', generalName: '张煌言', portrait: '/assets/JIANGNAN/lujian_zhanghuangyan.png' },
     linshihong: { generalId: 'linshihong_linshihong', generalName: '林士弘', portrait: '/assets/JIANGNAN/linshihong_linshihong.png' },
     liu: { generalId: 'liu_yingbu', generalName: '英布', portrait: '/assets/JIANGNAN/liu_yingbu.png' },

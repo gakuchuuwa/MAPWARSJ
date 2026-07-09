@@ -511,13 +511,15 @@ export class SiegeManager {
         return success;
     }
 
-    /** 攻城触发时，自动卷入附近同阵营友军（只做两边，不做第三方混战） */
+    /** 攻城触发时，自动卷入附近同阵营友军（只做两边，不做第三方混战）。
+     * @param allowPassingBy 守方设 true：同旗军团即使是路过/奔他城也强制参战。攻方通常 false。 */
     private collectNearbyLegionsForFaction(
         center: { lat: number; lng: number },
         factionId: string,
         excludeArmyIds: Set<string>,
         /** 开战城 id：仅拉闲置或目标就是本城的军团，勿拉路过奔他城者 */
         siegeCityId?: string,
+        allowPassingBy?: boolean,
     ): Army[] {
         const allArmies = this.legionManager.getArmies();
         const candidates = allArmies.filter((legion) => {
