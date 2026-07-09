@@ -1,6 +1,8 @@
 /**
  * 攻城待命占位：城周 COMBAT_RADIUS 圈上错开角度，**每支军团**中心间距 ≥ 0.12（约半格六边形，与野战 BATTLE_OFFSET 0.14 同量级）。
  * 0.05 仅 ~20px 屏距，小于方阵贴图宽度，会视觉叠在一起。
+ *
+ * [2026-07-09] 只挪「本场参战/排队」军团；路过、战后闲置、奔向他城的军团只作占位阻挡，禁止被传送（曾导致乘胜追击后卡死）。
  */
 import { GameConfig } from '../config/GameConfig';
 import { getEuclideanDistance, type LatLng } from '../core/DistanceUtils';
@@ -16,7 +18,7 @@ const MAX_RINGS = 3;
 const RING_STEP = 0.04;
 /** 扫描城周待命军团的范围（略大于 COMBAT_RADIUS） */
 const NEAR_CITY_SCAN_RADIUS = GameConfig.SIEGE.COMBAT_RADIUS + 0.12;
-/** 重排时纳入的军团：与开战圈 BATTLE_JOIN_RADIUS 一致，含尚在途/排队者 */
+/** 重排扫描：与开战圈 BATTLE_JOIN_RADIUS 一致 */
 const SIEGE_REPOSITION_SCAN_RADIUS = GameConfig.COMBAT.BATTLE_JOIN_RADIUS;
 
 function standoffRadius(ring: number): number {
@@ -53,18 +55,30 @@ function filterArmiesNearCity(
     });
 }
 
-/** 开战圈内所有军团（异势/同势/在途/排队/已参战） */
+/** 开战圈内所有军团（仅扫描，不表示都该被传送） */
 export function collectLegionsNearSiegeCity(cityPos: LatLng, allArmies: Army[]): Army[] {
     return filterArmiesNearCity(allArmies, cityPos, undefined, SIEGE_REPOSITION_SCAN_RADIUS);
 }
 
 /**
- * 城周一切军团统一重排（解决：异势仍叠——旧逻辑只挪「当前这一支」且行军共路点未触发）。
+ * 是否应被城周错开传送：仅交战中 / 明确参战名单 / 目标就是本城的攻城相关单位。
+ * 路过、闲置、奔向他城 → 只挡位，不挪。
  */
-export function repositionAllLegionsNearSiegeCity(cityPos: LatLng, allArmies: Army[]): void {
-    const near = collectLegionsNearSiegeCity(cityPos, allArmies);
-    if (near.length === 0) return;
-    repositionSiegeArmiesAroundCity(cityPos, near, allArmies);
+function shouldRepositionForSiege(
+    army: Army,
+    cityPos: LatLng,
+    cityId: string | null,
+    forceIds: Set<string>,
+): boolean {
+    if (army.isDestroyed || army.type !== 'legion') return false;
+    if (forceIds.has(army.id)) return true;
+    if (army.getIsInCombat()) return true;
+    // 正以该城为攻城目标（在途抵达瞬间、尚未 setCombat）
+    const target = army.getTargetCity?.();
+    if (cityId && target?.id === cityId) return true;
+    // 无 cityId 时：仅圈内且已交战/强制名单（上面已覆盖）
+    void cityPos;
+    return false;
 }
 
 function hasOverlapWithPositions(
@@ -83,7 +97,9 @@ function faceCity(army: Army, cityPos: LatLng): void {
 }
 
 /**
- * 批量为城周参战/待命军团分配互不重叠的圈上槽位（主攻、协战、第三方排队均走此路径）。
+ * 批量为城周参战/待命军团分配互不重叠的圈上槽位。
+ * @param armiesToPlace 必须挪位的名单（主攻、协战、排队等）
+ * @param allArmies 全图军团：圈内其余单位只作阻挡，不传送
  */
 export function repositionSiegeArmiesAroundCity(
     cityPos: LatLng,
@@ -94,12 +110,15 @@ export function repositionSiegeArmiesAroundCity(
     if (live.length === 0) return;
 
     const placeIds = new Set(live.map((a) => a.id));
-    const externalNear = filterArmiesNearCity(
+    // 圈内非参战者：占位阻挡，禁止被挪走
+    const blockers = filterArmiesNearCity(
         allArmies.filter((a) => !placeIds.has(a.id)),
         cityPos,
+        undefined,
+        SIEGE_REPOSITION_SCAN_RADIUS,
     );
 
-    const blockedPositions: LatLng[] = externalNear.map((a) => a.getPosition());
+    const blockedPositions: LatLng[] = blockers.map((a) => a.getPosition());
     const candidates = generateStandoffCandidates(cityPos);
     const sorted = [...live].sort((a, b) => a.id.localeCompare(b.id));
 
@@ -129,17 +148,55 @@ export function repositionSiegeArmiesAroundCity(
     }
 }
 
+export interface RepositionSiegeOpts {
+    /** 据点 id：用于识别「目标就是本城」的在途攻城军 */
+    cityId?: string | null;
+    /** 必须纳入重排的军团（主攻、刚编入的援军、排队者等） */
+    forceArmies?: Army[];
+    /** 第三方排队判定（可选） */
+    isWaitingSiege?: (armyId: string) => boolean;
+}
+
 /**
- * 单军团编入攻城（援军 poll / 第三方排队）：与城周已有军团错开，同势亦不占同一格。
+ * 城周错开：只传送本场相关军团，不碰路过/闲置/他目标行军。
+ */
+export function repositionAllLegionsNearSiegeCity(
+    cityPos: LatLng,
+    allArmies: Army[],
+    opts?: RepositionSiegeOpts,
+): void {
+    const cityId = opts?.cityId ?? null;
+    const forceIds = new Set((opts?.forceArmies ?? []).map((a) => a.id));
+    const near = collectLegionsNearSiegeCity(cityPos, allArmies);
+    const toPlace = near.filter((a) => {
+        if (opts?.isWaitingSiege?.(a.id)) return true;
+        return shouldRepositionForSiege(a, cityPos, cityId, forceIds);
+    });
+    // force 名单可能刚到圈外边缘：仍强制纳入
+    for (const a of opts?.forceArmies ?? []) {
+        if (!a.isDestroyed && !toPlace.some((x) => x.id === a.id)) {
+            toPlace.push(a);
+        }
+    }
+    if (toPlace.length === 0) return;
+    repositionSiegeArmiesAroundCity(cityPos, toPlace, allArmies);
+}
+
+/**
+ * 单军团编入攻城：只强制挪这一支（+圈内已交战/排队者），不扫射路过闲军。
  */
 export function snapArmyToSiegeStandoff(
     army: Army,
     cityPos: LatLng,
     allArmies: Army[],
+    opts?: Omit<RepositionSiegeOpts, 'forceArmies'>,
 ): boolean {
     if (army.isDestroyed) return false;
     const before = army.getPosition();
-    repositionAllLegionsNearSiegeCity(cityPos, allArmies);
+    repositionAllLegionsNearSiegeCity(cityPos, allArmies, {
+        ...opts,
+        forceArmies: [army],
+    });
     const after = army.getPosition();
     return getEuclideanDistance(before, after) > 0.001;
 }

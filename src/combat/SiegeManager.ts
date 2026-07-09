@@ -80,16 +80,25 @@ export class SiegeManager {
         };
     }
 
-    /** 城周开战圈内所有军团错开（异势/同势/在途/排队一并重排） */
+    /** 编入攻城：只强制挪本军 + 本场相关单位，不传送路过/闲置军团 */
     private positionArmyForSiege(army: Army, cityPos: { lat: number; lng: number }): void {
-        void army;
-        repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies());
+        const cityId = army.getTargetCity()?.id ?? null;
+        repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies(), {
+            cityId,
+            forceArmies: [army],
+            isWaitingSiege: (id) => this.isArmyWaitingSiege(id),
+        });
     }
 
-    /** 城周开战圈内所有军团错开（异势/同势/在途/排队/参战一并重排） */
+    /** 第三方排队重排：只挪排队者与本城交战中单位 */
     private repositionThirdPartyWaiters(cityId: string, cityPos: { lat: number; lng: number }): void {
-        void cityId;
-        repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies());
+        const queue = this.siegeThirdPartyWaiters.get(cityId) ?? [];
+        const forceArmies = queue.map((e) => e.army).filter((a) => !a.isDestroyed);
+        repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies(), {
+            cityId,
+            forceArmies,
+            isWaitingSiege: (id) => this.isArmyWaitingSiege(id),
+        });
     }
 
     /** 由 CombatSystem 节流调用：扫描圈内同旗军团并加入进行中的攻城战 */
@@ -661,8 +670,12 @@ export class SiegeManager {
             [army, ...nearbyAttackerLegions],  // 攻方全体，含主攻军团
         );
 
-        // 开战圈内全部军团（主攻/协战/在途/排队）统一分配城周槽位
-        repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies());
+        // 城周错开：主攻 + 圈内协战/守军；路过闲军只挡位不传送
+        repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies(), {
+            cityId: targetCity.id,
+            forceArmies: [army, ...nearbyAttackerLegions, ...nearbyDefenderLegions],
+            isWaitingSiege: (id) => this.isArmyWaitingSiege(id),
+        });
         siegeLog(`🛤️ [Sandbox Siege] ${army.name} 城周就位后开战`);
 
         const siegePreset = siegeData.result;

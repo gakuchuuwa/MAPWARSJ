@@ -3,12 +3,16 @@
  * 14 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
  * [2026-05-30 立] 用户拍板的 14 区阵型 + 12 兵种映射
+ * [2026-07-09] 行军四系 MovementClass（史地定案）：
+ *   CAVALRY 纯骑 = 草原 / 青藏 / 中亚（三角 123）
+ *   MIXED   步骑 = 中原 / 北方 / 东北 / 朝鲜 / 河西 / 西域
+ *   INFANTRY 纯步 = 日本 / 川蜀 / 江南
+ *   ELEPHANT 步象 = 岭南 / 滇缅
+ *   ※ 西域=绿洲城郭步骑；中亚=河中突厥系纯骑（勿与旧文档「西域纯骑」混淆）
  *
  * 阵型 2 种:
  *   ① 3×3 方阵 (11 文化): 前列3 + 中列(侧2+刀骑1) + 后列3 = 9 人
- *     - 6 步骑: 中列侧 = 真骑兵
- *     - 5 纯步: 中列侧也是步兵 (但中心仍 general_cavalry, 仿中原简化)
- *   ② 1-2-3 三角 (3 文化, 纯骑): 单一兵种 ×6
+ *   ② 1-2-3 三角 (3 文化, 纯骑): 草原 / 青藏 / 中亚
  *
  * 12 兵种 (sprite IDs in UnitAssets.ts):
  *   步兵: light_infantry 1-48 / heavy_infantry 52-99 / shield 103-150 /
@@ -29,6 +33,34 @@ import type { LegionType } from './UnitTypes';
 
 /** 军队编辑器可选阵型：3×3 方阵 (9人) 或 1-2-3 三角 (6人) */
 export type FormationMode = 'square' | 'triangle';
+
+/**
+ * 行军兵种大类（与阵型骨架相关但独立映射；速度查表用此，勿仅靠 triangle 布尔）
+ * 史地定案 2026-07-09：中亚=纯骑，西域=步骑
+ */
+export type MovementClass = 'CAVALRY' | 'MIXED' | 'INFANTRY' | 'ELEPHANT';
+
+/** 14 文化 → 行军大类（单一真理；改速度/上限逻辑只改这里） */
+export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
+    STEPPE:       'CAVALRY',
+    TIBET:        'CAVALRY',
+    CENTRAL_ASIA: 'CAVALRY',
+    CENTRAL:      'MIXED',
+    NORTH:        'MIXED',
+    NORTHEAST:    'MIXED',
+    KOREA:        'MIXED',
+    HEXI:         'MIXED',
+    WESTERN:      'MIXED',
+    JAPAN:        'INFANTRY',
+    BASHU:        'INFANTRY',
+    JIANGNAN:     'INFANTRY',
+    LINGNAN:      'ELEPHANT',
+    DIANQIAN:     'ELEPHANT',
+};
+
+export function getCultureMovementClass(culture: RegionType): MovementClass {
+    return CULTURE_MOVEMENT_CLASS[culture] ?? 'MIXED';
+}
 
 /** 14 文化默认阵型（可被军队编辑器覆盖保存） */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
@@ -192,7 +224,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     army.legionType =
         army.factionId === 'qin'
             ? 'mixed'
-            : getCultureFormationMode(culture) === 'triangle'
+            : getCultureMovementClass(culture) === 'CAVALRY'
               ? 'cavalry'
               : 'mixed';
 }
@@ -347,7 +379,7 @@ export const TIBET_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 13. 中亚 纯骑 轻骑+弓骑 123 */
+/** 13. 中亚 纯骑（河中突厥系）轻骑+弓骑 123 — MovementClass=CAVALRY */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -360,7 +392,7 @@ export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 14. 西域 步骑 轻+轻骑+弓 */
+/** 14. 西域 步骑（绿洲城郭）轻步+轻骑+弓 — MovementClass=MIXED */
 export const WESTERN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -436,17 +468,15 @@ export function getCultureTier(culture: RegionType, troops: number = 5000): Comp
 }
 
 /**
- * 判断某文化是否使用 1-2-3 三角阵型（由 CULTURE_FORMATION_MODE 决定，编辑器可改）
+ * 是否纯骑文化（行军/贴图/音效用）。
+ * 以 MovementClass 为准（草原/青藏/中亚），与三角阵型默认一致。
  */
 export function isCultureCavalryOnly(culture: RegionType): boolean {
-    return getCultureFormationMode(culture) === 'triangle';
+    return getCultureMovementClass(culture) === 'CAVALRY';
 }
 
-/** 军团兵力上限：纯骑三角 8 万，其余 10 万（与据点驻军上限无关） */
-export function getArmyMaxTroops(culture: RegionType | null | undefined): number {
-    if (culture && isCultureCavalryOnly(culture)) {
-        return GameConfig.LEGION.TRIANGLE_CAVALRY_ARMY_MAX_TROOPS;
-    }
+/** 军团兵力上限：全兵种统一 10 万（主人 2026-07-09 定） */
+export function getArmyMaxTroops(_culture?: RegionType | null): number {
     return GameConfig.LEGION.ARMY_MAX_TROOPS;
 }
 
@@ -455,5 +485,5 @@ export function getArmyMaxTroops(culture: RegionType | null | undefined): number
  * legionType 仅用于阵型骨架（三角 vs 3×3 步骑）。
  */
 export function getLegionTypeForCulture(culture: RegionType): LegionType {
-    return getCultureFormationMode(culture) === 'triangle' ? 'cavalry' : 'mixed';
+    return getCultureMovementClass(culture) === 'CAVALRY' ? 'cavalry' : 'mixed';
 }

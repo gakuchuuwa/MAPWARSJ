@@ -237,6 +237,24 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
         ctx.army.setTargetCity(null);
         return false;
     }
+
+    // 关键：已锁定据点时 EnsureTarget 不会再进 FindTarget，同屏新刷敌军团会被无视。
+    // 非收复/非远征的攻城途中，若寻敌半径内出现可打敌军团 → 清城目标并立刻改追（勿 stopMovement 空窗卡死）。
+    const nearbyEnemy = pickNearbyEnemyLegion(ctx, new Set());
+    if (nearbyEnemy) {
+        const ePos = nearbyEnemy.getPosition();
+        btLog(
+            ctx,
+            `retarget_hunt:${nearbyEnemy.id}`,
+            `[AI] ${ctx.army.name} 途中发现敌军【${nearbyEnemy.name}】，放弃据点【${city.name}】改追击`,
+        );
+        setStrategicArmyTarget(ctx, nearbyEnemy.id, { lat: ePos.lat, lng: ePos.lng });
+        ctx.army.setTargetCity(null);
+        // 直接改道追击，避免先停步再等下一帧 FindTarget 造成「不动了」
+        ctx.army.moveAlongPath([{ lat: ePos.lat, lng: ePos.lng }]);
+        return true;
+    }
+
     return true;
 });
 

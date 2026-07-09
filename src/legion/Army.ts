@@ -5,7 +5,7 @@ import { GridSystem } from '../systems/GridSystem';
 import { TerrainSpeedSystem, TERRAIN_SPEED_CONFIG } from '../core/TerrainSpeedSystem';
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { UnitRenderer } from '../map/UnitRenderer';
-import { GameConfig, MARCH_SPEED_MULTIPLIERS, PLAYER_SPEED_TIERS } from '../config/GameConfig';
+import { GameConfig, MOVEMENT_MATRIX, PLAYER_SPEED_TIERS, SEA_SPEED_MULTIPLIER } from '../config/GameConfig';
 import { GameTime } from '../app/GameTime';
 import { LegionType, getUnitTypeConfig } from '../types/UnitTypes';
 import type { RegionType } from '../systems/RegionSystem';
@@ -15,7 +15,7 @@ import { gameLog } from '../utils/GameLogger';
 import { getRandomFactionPortrait } from '../config/portrait_defaults';
 import { getGeneralMarchSpeedMultiplier, generalHasStrategicEffect } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
-import { isCultureCavalryOnly } from '../types/CultureFormations';
+import { getCultureMovementClass, isCultureCavalryOnly } from '../types/CultureFormations';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 
 export class Army implements IBattleUnit {
@@ -499,30 +499,24 @@ export class Army implements IBattleUnit {
             this.navalShipTierLock = null;
         }
 
-        const terrainKind = this.isOnSea ? 'sea' : (LandTerrainSystem.classifyAt(pos) ?? 'mountain');
-        const marchTerrainKind =
-            terrainKind === 'mountain'
-            && !this.isOnSea
-            && generalHasStrategicEffect(this, 'mountain_march_immunity')
-                ? 'plain'
-                : terrainKind;
-        const terrainMult =
-            marchTerrainKind === 'sea'
-                ? MARCH_SPEED_MULTIPLIERS.TERRAIN.sea
-                : marchTerrainKind === 'plain'
-                    ? MARCH_SPEED_MULTIPLIERS.TERRAIN.plain
-                    : MARCH_SPEED_MULTIPLIERS.TERRAIN.mountain;
-
-        let cavalryMult = 1.0;
-        const isTriangleCavalryCulture = this.cultureRegion ? isCultureCavalryOnly(this.cultureRegion) : false;
-        if (!this.isOnSea && isTriangleCavalryCulture) {
-            const preset = MARCH_SPEED_MULTIPLIERS.USE_CONSERVATIVE_CAVALRY_PRESET
-                ? MARCH_SPEED_MULTIPLIERS.CAVALRY_LAND.conservative
-                : MARCH_SPEED_MULTIPLIERS.CAVALRY_LAND.current;
-            cavalryMult = marchTerrainKind === 'plain' ? preset.plain : preset.mountain;
+        // 水域：登船后全军统一速度（兵种加成失效）
+        if (this.isOnSea) {
+            this.currentTerrainMultiplier = SEA_SPEED_MULTIPLIER;
+        } else {
+            // 陆地：四系 MovementClass × 平原/山地；如履平地 → 山地按平原格查表
+            const rawLand = LandTerrainSystem.classifyAt(pos) ?? 'mountain';
+            const landKind: 'plain' | 'mountain' =
+                rawLand === 'mountain'
+                && generalHasStrategicEffect(this, 'mountain_march_immunity')
+                    ? 'plain'
+                    : rawLand === 'plain'
+                        ? 'plain'
+                        : 'mountain';
+            const moveClass = this.cultureRegion
+                ? getCultureMovementClass(this.cultureRegion)
+                : 'MIXED';
+            this.currentTerrainMultiplier = MOVEMENT_MATRIX[moveClass][landKind];
         }
-
-        this.currentTerrainMultiplier = terrainMult * cavalryMult;
 
         if (this.renderer) {
             this.renderer.isOnSea = this.isOnSea;

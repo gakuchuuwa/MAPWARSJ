@@ -86,10 +86,13 @@ export class GameConfig {
         } as const,
         /** 可出兵据点：大城、中城、小城、关隘（关隘守城仍有 PASS_GARRISON_MULT 加成） */
         SPAWN_CITY_TYPES: ['big_city', 'medium_city', 'small_city', 'pass'] as const,
-        /** 方阵文化军团兵力上限（出征 / 跟随补兵） */
+        /** 全兵种军团兵力上限（出征 / 跟随补兵；主人 2026-07-09 统一 10 万） */
         ARMY_MAX_TROOPS: 100_000,
-        /** 纯骑三角文化（草原/青藏/中亚）军团兵力上限 */
-        TRIANGLE_CAVALRY_ARMY_MAX_TROOPS: 70_000,
+        /**
+         * @deprecated 已与 ARMY_MAX_TROOPS 同为 10 万；勿再按兵种分上限。
+         * 保留字段以免旧脚本/注释引用报错。
+         */
+        TRIANGLE_CAVALRY_ARMY_MAX_TROOPS: 100_000,
     };
     /** 乱斗游戏时间：现实 1 分钟 = 游戏 1 年（1x 倍速） */
     static TIME = {
@@ -178,13 +181,13 @@ export class GameConfig {
             PROBABILITY: 0.20,
         },
         /**
-         * 选目标时优先寻附近敌军团（LatLng 欧氏，约 0.5≈55km）。
+         * 选目标 / 途中改追：寻附近敌军团（LatLng 欧氏，约 0.8≈90km，贴近 zoom=9 同屏尺度）。
          * 命中则追击接野战；范围内无敌军团再走原「近敌城抽签」。
-         * 与野战接触半径 0.2 / 扫描 0.28 对齐：寻敌窗更大，撞上后仍由 LegionFieldBattle 开战。
+         * 已锁定据点时也会每帧扫一次，发现敌军则打断攻城改追（见 HasTarget）。
          */
-        HUNT_ENEMY_LEGION_RADIUS: 0.5,
+        HUNT_ENEMY_LEGION_RADIUS: 0.8,
         /** 追击中敌军团跑出此半径则放弃，改选据点（略大于寻敌半径，防边界抖） */
-        HUNT_ENEMY_LEGION_ABANDON_RADIUS: 0.7,
+        HUNT_ENEMY_LEGION_ABANDON_RADIUS: 1.1,
         /** 行军首段超过此距离（LatLng 单位）时打诊断日志 */
         MARCH_DIAG_FIRST_LEG: 0.35,
         /** 距出兵/驻地据点超过此距离时，寻路优先用当前位置最近城作道路起点（避免野战后折返首都） */
@@ -283,19 +286,34 @@ export const PLAYER_SPEED_TIERS = {
     UNIFIED_MARCH_SPEED: 0.2
 };
 
-/** 行军倍率（以山地=1.0 为基准） */
+/**
+ * 行军速度（主人 2026-07-09 四系矩阵）。
+ * 陆地按 MovementClass × 平原/山地；水域全军统一（登船后兵种加成失效）。
+ * 数值为相对 UNIFIED_MARCH_SPEED 的乘数。
+ */
+export const SEA_SPEED_MULTIPLIER = 1.2;
+
+export const MOVEMENT_MATRIX = {
+    CAVALRY:  { plain: 3.0, mountain: 1.2 }, // 草原/青藏/中亚：平原王，山地骤降
+    MIXED:    { plain: 1.5, mountain: 0.9 }, // 中原等步骑：平原基准，山地受马辎拖累
+    INFANTRY: { plain: 1.4, mountain: 1.1 }, // 日本/川蜀/江南：山地之王
+    ELEPHANT: { plain: 1.2, mountain: 0.7 }, // 岭南/滇缅：战略机动笨重
+} as const;
+
+/**
+ * @deprecated 旧地形×骑兵叠乘表；新逻辑用 MOVEMENT_MATRIX + SEA_SPEED_MULTIPLIER。
+ * 保留字段供对照/旧脚本，Army 已不再读取。
+ */
 export const MARCH_SPEED_MULTIPLIERS = {
     TERRAIN: {
         mountain: 1.0,
         plain: 1.5,
-        sea: 1.2,     // 帆船纯速度快但贴岸绕/等风/昼行夜泊，有效推进不如平原行军
+        sea: SEA_SPEED_MULTIPLIER,
     },
-    /** 三角纯骑文化（STEPPE/TIBET/CENTRAL_ASIA）仅在陆地生效 */
     CAVALRY_LAND: {
         current: { mountain: 1.5, plain: 2.0 },
         conservative: { mountain: 1.2, plain: 1.5 },
     },
-    /** 可快速回调到保守档（无需改逻辑） */
     USE_CONSERVATIVE_CAVALRY_PRESET: false,
 } as const;
 
