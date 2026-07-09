@@ -421,7 +421,8 @@ export class LegionManager {
                         'legionSiege',
                         `🛡️ [LegionManager] ${army.name} 进入【${zocCity.name}】控制范围，强制攻城（不可绕过）`
                     );
-                    army.stopMovement();
+                    // 先存档再攻城：勿 stop(false) 清空战前路径，否则战后无法 resume
+                    army.stopMovement(true);
                     army.setTargetCity(zocCity);
                     this.triggerSiege(army, zocCity);
                     return;
@@ -557,10 +558,12 @@ export class LegionManager {
         army.stopMovement(true);
         army.setCombatState(true, 'siege', { lat: targetCity.latitude, lng: targetCity.longitude });
 
+        // isDynamic：沙盒 AI/碰撞攻城胜后交还 BT，禁止默认 garrison 清存档锁死原地
         const siegeData: SiegeData = {
             ...(army.siegeMissionData ?? {}),
             defenderCityId: targetCity.id,
             attackerFactionId: army.getFactionId(),
+            isDynamic: !(army.siegeMissionData?.afterBattleChain?.length || army.siegeMissionData?.afterBattle),
         };
 
         this.siegeManager.startSiegeWithArmy(army, siegeData);

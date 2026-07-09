@@ -2511,7 +2511,8 @@ export const CITIES_V2: CityDataV2[] = [
     },
     { id: 'city_sailan', name: '讹答剌', factionId: 'dayuzi', lat: 42.2863, lng: 69.5709, type: 'small_city', troops: 20000, region: 'CENTRAL_ASIA' },
 
-    { id: 'city_saiyinshanda', name: '薛灵哥', factionId: 'wuliangha', lat: 49.437762, lng: 101.428528, type: 'small_city', troops: 20000, region: 'NORTHEAST' },
+    { id: 'city_saiyinshanda', name: '薛灵哥', factionId: 'wuliangha', lat: 49.437762, lng: 101.428528, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
 
 
     // ── 2026-06-18 新增：赛音山达（漠东隘口，叛军旗）──

@@ -131,6 +131,8 @@ export interface SiegeData {
         speedMultiplier?: number;
     }>;
     destroyAfterBattle?: boolean; // 战后军队解散（通用标签，攻城战和野战均可用）
+    /** 沙盒 AI/碰撞动态攻城：胜后空 chain → 交还 BT，不默认 garrison */
+    isDynamic?: boolean;
     newCityParams?: {
         name: string;
         lat: number;

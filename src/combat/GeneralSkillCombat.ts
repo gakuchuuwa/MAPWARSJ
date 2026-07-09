@@ -290,13 +290,19 @@ function getActiveTacticalSkillDisplayName(unit: IBattleUnit): { displayName: st
 /**
  * 相持阶段保底脉冲：机制未触发 UI 时，仍按侧栏当前战术技亮相（与开局比例延迟对齐）。
  * 与效果路径重复时由 CombatUI 按「侧+技名」去重。
+ * @param firstSide 先放侧（优势方 / 均势攻方）；入队顺序与 BattleField 排序一致。
  */
 export function scheduleStalemateSkillShowcasePulses(
     attackerUnits: IBattleUnit[],
     defenderUnits: IBattleUnit[],
+    firstSide: 'attacker' | 'defender' = 'attacker',
 ): void {
     const delay = resolveStalemateUiThresholdSec(currentBattleTargetDurationSec);
-    for (const units of [attackerUnits, defenderUnits]) {
+    const sides =
+        firstSide === 'attacker'
+            ? [attackerUnits, defenderUnits]
+            : [defenderUnits, attackerUnits];
+    for (const units of sides) {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) continue;
         const info = getActiveTacticalSkillDisplayName(unit);

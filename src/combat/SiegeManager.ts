@@ -510,7 +510,9 @@ export class SiegeManager {
     private collectNearbyLegionsForFaction(
         center: { lat: number; lng: number },
         factionId: string,
-        excludeArmyIds: Set<string>
+        excludeArmyIds: Set<string>,
+        /** 开战城 id：仅拉闲置或目标就是本城的军团，勿拉路过奔他城者 */
+        siegeCityId?: string,
     ): Army[] {
         const allArmies = this.legionManager.getArmies();
         const candidates = allArmies.filter((legion) => {
@@ -533,7 +535,22 @@ export class SiegeManager {
                 siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 距离过远 (${dist.toFixed(3)} > ${SiegeManager.JOIN_RADIUS})`);
                 return false;
             }
-            
+
+            // 路过/奔他城：不协战、不传送（曾导致乘胜追击后卡死）
+            if (siegeCityId) {
+                const targetId = legion.getTargetCity?.()?.id;
+                const idle = legion.isIdle();
+                if (!idle && targetId && targetId !== siegeCityId) {
+                    siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 路过/奔他城（目标≠本城）`);
+                    return false;
+                }
+                if (!idle && !targetId) {
+                    // 有路径但无城目标（如追击敌军）：也不强拉协战
+                    siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 行军中且无本城目标`);
+                    return false;
+                }
+            }
+
             siegeLog(`✅ [SiegeManager] ${legion.name} 符合支援条件! 距离: ${dist.toFixed(3)}`);
             return true;
         });
@@ -554,6 +571,7 @@ export class SiegeManager {
             cityPos,
             targetCity.factionId,
             excludeArmyIds,
+            targetCity.id,
         );
     }
 
@@ -656,11 +674,12 @@ export class SiegeManager {
         );
         nearbyDefenderLegions.forEach((legion) => excludedIds.add(legion.id));
 
-        // 攻方：主攻军团 + 附近援军（守城前先算，用于"同场唯一"武将检查）
+        // 攻方：主攻军团 + 附近援军（仅闲置/目标本城；路过不拉）
         const nearbyAttackerLegions = this.collectNearbyLegionsForFaction(
             cityPos,
             army.getFactionId(),
-            excludedIds
+            excludedIds,
+            targetCity.id,
         );
 
         // 守城城防加成：传入攻方军团列表，防止攻守双方出现同一武将
@@ -670,7 +689,11 @@ export class SiegeManager {
             [army, ...nearbyAttackerLegions],  // 攻方全体，含主攻军团
         );
 
-        // 城周错开：主攻 + 圈内协战/守军；路过闲军只挡位不传送
+        // 先停步存档，再城周错开（避免先传送后 stop 存下脏几何）
+        army.stopMovement(true);
+        for (const legion of [...nearbyAttackerLegions, ...nearbyDefenderLegions]) {
+            legion.stopMovement(true);
+        }
         repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies(), {
             cityId: targetCity.id,
             forceArmies: [army, ...nearbyAttackerLegions, ...nearbyDefenderLegions],
@@ -807,7 +830,7 @@ export class SiegeManager {
         }
 
         nearbyDefenderLegions.forEach((legion) => {
-            legion.stopMovement(true);
+            // 开战前已统一 stopMovement(true)；此处勿二次 stop 以免空队列覆写存档意图
             legion.setCombatState(true, 'siege', cityPos);
             const legionAdapter = BattleUnitFactory.createAdapter(
                 legion.id,
@@ -827,7 +850,7 @@ export class SiegeManager {
         });
 
         nearbyAttackerLegions.forEach((legion) => {
-            legion.stopMovement(true);
+            // 开战前已统一 stopMovement(true)
             legion.setCombatState(true, 'siege', cityPos);
             const legionAdapter = BattleUnitFactory.createAdapter(
                 legion.id,
@@ -927,9 +950,11 @@ export class SiegeManager {
 
             const myFaction = army.getFactionId();
             if (myFaction === winnerFactionId) {
+                // 己方已胜：出队交还 BT（勿留战斗态；目标由下一帧 FindTarget 重选）
                 army.setCombatState(false);
                 army.ignoreCityCollision = false;
                 army.ignoreUnitCollision = false;
+                army.clearBlocked();
                 onSiegeComplete?.();
                 continue;
             }

@@ -193,9 +193,9 @@ export class BattleUnitFactory {
                 if (isMobile && entity.setCombatState) {
                     const opponentPos = opponent.getPosition();
                     entity.setCombatState(true, battleType, opponentPos);
-                    // Stop movement
-                    if (entity.moveAlongPath) {
-                        entity.moveAlongPath([]);
+                    // moveAlongPath([]) 是 no-op；须 stopMovement 才能真正停步
+                    if (typeof entity.stopMovement === 'function') {
+                        entity.stopMovement(true);
                     }
                 }
             },

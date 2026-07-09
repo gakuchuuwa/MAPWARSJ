@@ -89,4 +89,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     murong: { name: '龙城甲骑', tier: 2 },
     chuyue: { name: '处月骑兵', tier: 3 },
     dongshengwei: { name: '九边夜不收', tier: 2 },
+    wuliangha: { name: '兀良哈突骑', tier: 1 },
 };

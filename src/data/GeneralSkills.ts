@@ -360,7 +360,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     // ── 东北
     manzhou_d_duoergun: { generalId: 'manzhou_d_duoergun', tier: 'famous', tacticalSkillId: 'ts_067', strategicSkillId: 'str_03', advantageSkillId: 'ts_067', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_041', aptitude: 'create' },
     dajin_wanyanaguda: { generalId: 'dajin_wanyanaguda', tier: 'famous', tacticalSkillId: 'ts_057', strategicSkillId: 'str_01', advantageSkillId: 'ts_057', balanceSkillId: 'ts_444', disadvantageSkillId: 'ts_445', aptitude: 'create' },
-    wuliangha_subutai: { generalId: 'wuliangha_subutai', tier: 'famous', tacticalSkillId: 'ts_102', strategicSkillId: 'str_01', advantageSkillId: 'ts_102', balanceSkillId: 'ts_637', disadvantageSkillId: 'ts_638', aptitude: 'create' },
+    wuliangha_subutai: { generalId: 'wuliangha_subutai', tier: 'famous', tacticalSkillId: 'ts_102', advantageSkillId: 'ts_102', balanceSkillId: 'ts_637', disadvantageSkillId: 'ts_638', strategicSkillId: 'str_01', aptitude: 'create' },
     unassigned_naierbuhua: { generalId: 'unassigned_naierbuhua', tier: 'ordinary', tacticalSkillId: 'ts_103', advantageSkillId: 'ts_027', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_103', aptitude: 'reverse' }, // 永乐北伐兀良哈败乃儿不花
     fuyu_weichoutai: { generalId: 'fuyu_weichoutai', tier: 'ordinary', tacticalSkillId: 'ts_104', advantageSkillId: 'ts_390', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_104', aptitude: 'reverse' }, // 扶余据城固守
     jurchen_wanyanzongbi: { generalId: 'jurchen_wanyanzongbi', tier: 'famous', tacticalSkillId: 'ts_076', strategicSkillId: 'str_03', advantageSkillId: 'ts_076', balanceSkillId: 'ts_547', disadvantageSkillId: 'ts_548', aptitude: 'create' }, // 如墙而进（郾城铁浮屠平原突击·归位现成技）

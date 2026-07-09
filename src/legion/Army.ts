@@ -5,7 +5,14 @@ import { GridSystem } from '../systems/GridSystem';
 import { TerrainSpeedSystem, TERRAIN_SPEED_CONFIG } from '../core/TerrainSpeedSystem';
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { UnitRenderer } from '../map/UnitRenderer';
-import { GameConfig, MOVEMENT_MATRIX, PLAYER_SPEED_TIERS, SEA_SPEED_MULTIPLIER } from '../config/GameConfig';
+import {
+    GameConfig,
+    LAND_TERRAIN_FLIP_CONFIRM_FRAMES,
+    MOVEMENT_MATRIX,
+    PLAYER_SPEED_TIERS,
+    SEA_SPEED_MULTIPLIER,
+    TERRAIN_SPEED_LERP_TAU_SEC,
+} from '../config/GameConfig';
 import { GameTime } from '../app/GameTime';
 import { LegionType, getUnitTypeConfig } from '../types/UnitTypes';
 import type { RegionType } from '../systems/RegionSystem';
@@ -66,7 +73,13 @@ export class Army implements IBattleUnit {
     private label: L.Marker | null = null;
     private renderer: UnitRenderer | null = null;
     public isDestroyed: boolean = false;
+    /** 实际用于位移的地形倍率（平滑后） */
     private currentTerrainMultiplier: number = 1.0;
+    /** 查表目标倍率；current 以 tau 追赶，避免平原↔山地瞬间 2× 窜 */
+    private terrainSpeedTarget: number = 1.0;
+    /** 已确认的陆地地形（滞回后）；null = 尚未初始化 */
+    private confirmedLandKind: 'plain' | 'mountain' | null = null;
+    private landFlipFrames: number = 0;
     private lastRegisteredPos: { lat: number, lng: number } | null = null;
     private spatialRegistry: any = null; // [NEW] Keep reference for unregistration
     private hasArrived: boolean = true; // [FIX] 新建军队默认 idle，让 AI BT 首帧就能发出行军指令
@@ -371,7 +384,7 @@ export class Army implements IBattleUnit {
     public update(deltaTime: number): void {
         if (this.isDestroyed) return;
 
-        this.updateTerrainSpeed();
+        this.updateTerrainSpeed(deltaTime);
 
         if (this.postBattleRestRemaining > 0) {
             this.postBattleRestRemaining = Math.max(0, this.postBattleRestRemaining - deltaTime);
@@ -473,7 +486,11 @@ export class Army implements IBattleUnit {
         this.lastRegisteredPos = { lat, lng };
     }
 
-    private updateTerrainSpeed(): void {
+    /**
+     * 更新海陆贴图 + 地形速度目标；实际倍率对目标做指数平滑。
+     * @param deltaTime 游戏秒；≤0（构造/瞬移）时直接贴齐目标，不 lerp
+     */
+    private updateTerrainSpeed(deltaTime: number = 0): void {
         const pos = { lat: this.position.lat, lng: this.position.lng };
         const wasOnSea = this.isOnSea;
 
@@ -501,21 +518,44 @@ export class Army implements IBattleUnit {
 
         // 水域：登船后全军统一速度（兵种加成失效）
         if (this.isOnSea) {
-            this.currentTerrainMultiplier = SEA_SPEED_MULTIPLIER;
+            this.terrainSpeedTarget = SEA_SPEED_MULTIPLIER;
+            this.confirmedLandKind = null;
+            this.landFlipFrames = 0;
         } else {
-            // 陆地：四系 MovementClass × 平原/山地；如履平地 → 山地按平原格查表
+            // 陆地：四系 × 平原/山地；如履平地 → 山地按平原格查表
             const rawLand = LandTerrainSystem.classifyAt(pos) ?? 'mountain';
-            const landKind: 'plain' | 'mountain' =
+            const desiredKind: 'plain' | 'mountain' =
                 rawLand === 'mountain'
                 && generalHasStrategicEffect(this, 'mountain_march_immunity')
                     ? 'plain'
                     : rawLand === 'plain'
                         ? 'plain'
                         : 'mountain';
+
+            // 平原/山地滞回：边界 hex 抖动时不立刻改目标倍率（与海陆去抖同思路）
+            if (this.confirmedLandKind === null) {
+                this.confirmedLandKind = desiredKind;
+                this.landFlipFrames = 0;
+            } else if (desiredKind === this.confirmedLandKind) {
+                this.landFlipFrames = 0;
+            } else if (++this.landFlipFrames >= LAND_TERRAIN_FLIP_CONFIRM_FRAMES) {
+                this.confirmedLandKind = desiredKind;
+                this.landFlipFrames = 0;
+            }
+
             const moveClass = this.cultureRegion
                 ? getCultureMovementClass(this.cultureRegion)
                 : 'MIXED';
-            this.currentTerrainMultiplier = MOVEMENT_MATRIX[moveClass][landKind];
+            this.terrainSpeedTarget = MOVEMENT_MATRIX[moveClass][this.confirmedLandKind];
+        }
+
+        // 平滑：约 TERRAIN_SPEED_LERP_TAU_SEC 内贴近目标；构造/瞬移 deltaTime≤0 则贴齐
+        if (deltaTime <= 0) {
+            this.currentTerrainMultiplier = this.terrainSpeedTarget;
+        } else {
+            const t = 1 - Math.exp(-deltaTime / TERRAIN_SPEED_LERP_TAU_SEC);
+            this.currentTerrainMultiplier +=
+                (this.terrainSpeedTarget - this.currentTerrainMultiplier) * t;
         }
 
         if (this.renderer) {
@@ -821,7 +861,16 @@ export class Army implements IBattleUnit {
         return this.renderer;
     }
 
+    /**
+     * 硬设坐标。若仍在行军（pathQueue 非空），先停步并清空路径，避免传送后沿旧路点蠕动/卡死。
+     * 战前道路存档请调用方用 stopMovement(true) 自行处理；此处不写存档。
+     */
     public setPosition(lat: number, lng: number): void {
+        if (!this.hasArrived || this.pathQueue.length > 0) {
+            this.pathQueue = [];
+            this.hasArrived = true;
+            this.destination = { lat, lng };
+        }
         this.position.lat = lat;
         this.position.lng = lng;
 

@@ -29,6 +29,11 @@ export interface ReinforcementJoinDeps {
     resolveBattleCityName?: (center: LatLng) => string;
     /** 编入攻城战前城周错开（仅攻城注入，野战不传） */
     beforeJoinLegion?: (legion: Army, center: LatLng) => void;
+    /**
+     * 攻城城 id：有值时不拉「路过/奔他城」军团入战。
+     * 野战不传（短距接触战，路过同旗仍可协战）。
+     */
+    siegeCityId?: string;
 }
 
 export function isEligibleReinforcement(
@@ -46,7 +51,18 @@ export function isEligibleReinforcement(
     if (deps.isArmyWaitingSiege?.(legion.id)) return false;
 
     const dist = getEuclideanDistance(legion.getPosition(), center);
-    return dist <= GameConfig.COMBAT.BATTLE_JOIN_RADIUS;
+    if (dist > GameConfig.COMBAT.BATTLE_JOIN_RADIUS) return false;
+
+    // 攻城援军：勿拉路过奔他城者（与 SiegeManager.collectNearbyLegionsForFaction 同口径）
+    if (deps.siegeCityId) {
+        const targetId = legion.getTargetCity?.()?.id;
+        if (!legion.isIdle()) {
+            if (targetId && targetId !== deps.siegeCityId) return false;
+            if (!targetId) return false;
+        }
+    }
+
+    return true;
 }
 
 function createLegionAdapter(
@@ -167,13 +183,14 @@ export function pollSiegeReinforcements(
     isArmyWaitingSiege?: (armyId: string) => boolean,
     beforeJoinLegion?: (legion: Army, center: LatLng) => void,
 ): number {
-    const deps = buildJoinDeps(legionManager, isArmyWaitingSiege, beforeJoinLegion);
     let joined = 0;
 
     for (const [cityId, battleField] of activeSieges) {
         if (battleField.isOver) continue;
         const center = getCityPosition(cityId);
         if (!center) continue;
+        const deps = buildJoinDeps(legionManager, isArmyWaitingSiege, beforeJoinLegion);
+        deps.siegeCityId = cityId;
         joined += pollBattleFieldReinforcements(battleField, center, deps);
     }
 

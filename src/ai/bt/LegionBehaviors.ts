@@ -149,6 +149,12 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
         clearStrategicTarget(ctx);
         return null;
     }
+    // 敌已在交战：贴脸也无法再开战，必须放弃，否则永久 HoldForFieldContact
+    if (enemy.getIsInCombat?.()) {
+        markTargetCooldown(ctx, `army:${huntId}`, 'hunt_in_combat');
+        clearStrategicTarget(ctx);
+        return null;
+    }
     const myPos = ctx.army.getPosition();
     const ePos = enemy.getPosition();
     if (getEuclideanDistance(myPos, ePos) > abandonR) {
@@ -456,8 +462,14 @@ export const MoveToTarget = new Action('MoveToTarget', (ctx) => {
         }
     }
 
+    // 看似在走：若已 blocked，强制停步并重算，避免「非 idle 早退」永久卡死
     if (!ctx.army.isIdle()) {
-        return BTStatus.SUCCESS;
+        if (ctx.army.isBlocked()) {
+            ctx.army.stopMovement?.(false);
+            // 落入下方重算路径
+        } else {
+            return BTStatus.SUCCESS;
+        }
     }
 
     if (ctx.army.isBlocked()) {

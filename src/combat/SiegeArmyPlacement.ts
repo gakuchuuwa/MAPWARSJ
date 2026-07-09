@@ -3,6 +3,7 @@
  * 0.05 仅 ~20px 屏距，小于方阵贴图宽度，会视觉叠在一起。
  *
  * [2026-07-09] 只挪「本场参战/排队」军团；路过、战后闲置、奔向他城的军团只作占位阻挡，禁止被传送（曾导致乘胜追击后卡死）。
+ * [2026-07-09] 走到哪站到哪：原地不压据点、与他军不叠 → 不传送只转向；在途行军者不挪（开战前可见跳位的根因）。
  */
 import { GameConfig } from '../config/GameConfig';
 import { getEuclideanDistance, type LatLng } from '../core/DistanceUtils';
@@ -20,6 +21,8 @@ const RING_STEP = 0.04;
 const NEAR_CITY_SCAN_RADIUS = GameConfig.SIEGE.COMBAT_RADIUS + 0.12;
 /** 重排扫描：与开战圈 BATTLE_JOIN_RADIUS 一致 */
 const SIEGE_REPOSITION_SCAN_RADIUS = GameConfig.COMBAT.BATTLE_JOIN_RADIUS;
+/** 距城低于此值视为压在据点贴图上，必须挪出（抵达停步点 ≈ COMBAT_RADIUS，留浮点余量） */
+const KEEP_MIN_CITY_DIST = GameConfig.SIEGE.COMBAT_RADIUS * 0.8;
 
 function standoffRadius(ring: number): number {
     // 首圈略外扩，使 6 槽弦长 ≥ MIN_ARMY_SEPARATION
@@ -73,9 +76,10 @@ function shouldRepositionForSiege(
     if (army.isDestroyed || army.type !== 'legion') return false;
     if (forceIds.has(army.id)) return true;
     if (army.getIsInCombat()) return true;
-    // 正以该城为攻城目标（在途抵达瞬间、尚未 setCombat）
+    // 正以该城为攻城目标且已停步（抵达瞬间、尚未 setCombat）。
+    // 在途行军者不挪：离城最远可达开战圈 0.3，隔空拉到 0.12 环槽就是「攻打前跳位」；等它自己走到，由触发/编入时强制入列。
     const target = army.getTargetCity?.();
-    if (cityId && target?.id === cityId) return true;
+    if (cityId && target?.id === cityId && !army.isMarching()) return true;
     // 无 cityId 时：仅圈内且已交战/强制名单（上面已覆盖）
     void cityPos;
     return false;
@@ -124,6 +128,18 @@ export function repositionSiegeArmiesAroundCity(
 
     for (const army of sorted) {
         const armyPos = army.getPosition();
+
+        // 走到哪站到哪：原地不压据点、与他军不叠 → 不传送，只转向面城。
+        // 抵达停步点(≈COMBAT_RADIUS)本就合规，吸附最近环槽（6 槽偏角可达 30°+径向外扩）才是开战前可见跳位的来源。
+        if (
+            getEuclideanDistance(armyPos, cityPos) >= KEEP_MIN_CITY_DIST &&
+            !hasOverlapWithPositions(armyPos, blockedPositions)
+        ) {
+            faceCity(army, cityPos);
+            blockedPositions.push(armyPos);
+            continue;
+        }
+
         const free = candidates
             .filter((c) => !hasOverlapWithPositions(c, blockedPositions))
             .sort((a, b) => getEuclideanDistance(armyPos, a) - getEuclideanDistance(armyPos, b));
@@ -137,7 +153,10 @@ export function repositionSiegeArmiesAroundCity(
 
         const target = free[0];
         if (getEuclideanDistance(armyPos, target) > 0.001) {
+            // 传送前停步存档意图；传送后清存档——旧路点相对传送前坐标，resume 会走歪/卡死
+            army.stopMovement(true);
             army.setPosition(target.lat, target.lng);
+            army.clearSavedMarchState();
             gameLog(
                 'siege',
                 `📍 [SiegeStandoff] ${army.name ?? army.id} → (${target.lat.toFixed(3)},${target.lng.toFixed(3)})`,

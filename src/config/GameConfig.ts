@@ -110,6 +110,12 @@ export class GameConfig {
     static COMBAT = {
         /** 自动战斗时长：游戏秒，按双方总兵力在 [MIN, MAX] 间线性插值 */
         BATTLE_DURATION_MIN_SEC: 5,
+        /**
+         * 任一侧有武将时的时长下限（游戏秒）。
+         * 开战语音（兵临/大战）约 10–14s 墙钟；第一幕 = 时长×45%，须 ≥~10s → 下限 22。
+         * 无将小战仍走 MIN_SEC=5，避免全体拖长。
+         */
+        BATTLE_DURATION_MIN_WITH_GENERAL_SEC: 22,
         BATTLE_DURATION_MAX_SEC: 60,
         /** 双方总兵力达到此值时取 MAX 时长 */
         BATTLE_DURATION_TROOPS_SCALE: 100000,
@@ -240,12 +246,16 @@ export class GameConfig {
     } as const;
 }
 
-/** 钳制到 [MIN, MAX] 游戏秒（导演时长 / 事件配置均须走此函数） */
-export function clampBattleDurationSec(seconds: number): number {
+/**
+ * 钳制到 [min, MAX] 游戏秒（导演时长 / 事件配置均须走此函数）。
+ * @param minSec 可选下限；有将战斗传 WITH_GENERAL，默认无将 MIN。
+ */
+export function clampBattleDurationSec(seconds: number, minSec?: number): number {
     const c = GameConfig.COMBAT;
+    const floor = minSec ?? c.BATTLE_DURATION_MIN_SEC;
     return Math.min(
         c.BATTLE_DURATION_MAX_SEC,
-        Math.max(c.BATTLE_DURATION_MIN_SEC, seconds)
+        Math.max(floor, seconds)
     );
 }
 
@@ -272,14 +282,24 @@ export function rollCombatEffectivePower(troops: number): number {
     return troops * rollCombatLuckMultiplier();
 }
 
-/** 按参战总兵力计算战斗目标时长（游戏秒），恒在 5–60 */
-export function calculateBattleDurationSec(totalTroops: number): number {
+/**
+ * 按参战总兵力计算战斗目标时长（游戏秒）。
+ * 无将：5–60；有将：下限抬到 WITH_GENERAL（插值仍按兵力，但不得低于该地板）。
+ */
+export function calculateBattleDurationSec(
+    totalTroops: number,
+    opts?: { hasGeneral?: boolean },
+): number {
     const c = GameConfig.COMBAT;
+    const minSec = opts?.hasGeneral
+        ? c.BATTLE_DURATION_MIN_WITH_GENERAL_SEC
+        : c.BATTLE_DURATION_MIN_SEC;
     const ratio = Math.min(1.0, Math.max(0, totalTroops) / c.BATTLE_DURATION_TROOPS_SCALE);
-    return clampBattleDurationSec(
+    // 插值仍以无将 MIN 为底，再抬到有将地板——大兵团曲线不变，小战有将才加长
+    const raw =
         c.BATTLE_DURATION_MIN_SEC +
-            (c.BATTLE_DURATION_MAX_SEC - c.BATTLE_DURATION_MIN_SEC) * ratio
-    );
+        (c.BATTLE_DURATION_MAX_SEC - c.BATTLE_DURATION_MIN_SEC) * ratio;
+    return clampBattleDurationSec(raw, minSec);
 }
 
 export const PLAYER_SPEED_TIERS = {
@@ -294,11 +314,17 @@ export const PLAYER_SPEED_TIERS = {
 export const SEA_SPEED_MULTIPLIER = 1.2;
 
 export const MOVEMENT_MATRIX = {
-    CAVALRY:  { plain: 3.0, mountain: 1.2 }, // 草原/青藏/中亚：平原王，山地骤降
+    /** 平原 2.4（原 3.0）：仍明显快于步骑 1.5；与山地 1.2 落差约 2×，再靠 Army 平滑过渡消「一窜」 */
+    CAVALRY:  { plain: 2.4, mountain: 1.2 },
     MIXED:    { plain: 1.5, mountain: 0.9 }, // 中原等步骑：平原基准，山地受马辎拖累
     INFANTRY: { plain: 1.4, mountain: 1.1 }, // 日本/川蜀/江南：山地之王
     ELEPHANT: { plain: 1.2, mountain: 0.7 }, // 岭南/滇缅：战略机动笨重
 } as const;
+
+/** 地形速度倍率追赶时间常数（游戏秒）：约 0.5s 内贴近目标，消平原↔山地硬切 */
+export const TERRAIN_SPEED_LERP_TAU_SEC = 0.5;
+/** 平原/山地翻转确认帧数：hex 边界抖动时不立刻改目标倍率 */
+export const LAND_TERRAIN_FLIP_CONFIRM_FRAMES = 4;
 
 /**
  * @deprecated 旧地形×骑兵叠乘表；新逻辑用 MOVEMENT_MATRIX + SEA_SPEED_MULTIPLIER。

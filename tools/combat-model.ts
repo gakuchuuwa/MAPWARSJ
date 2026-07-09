@@ -591,14 +591,16 @@ function applyComebackEffect(
     }
 }
 
-function calcDuration(totalTroops: number): number {
+function calcDuration(totalTroops: number, hasGeneral = false): number {
     const c = GameConfig.COMBAT;
+    const minSec = hasGeneral
+        ? c.BATTLE_DURATION_MIN_WITH_GENERAL_SEC
+        : c.BATTLE_DURATION_MIN_SEC;
     const ratio = Math.min(1, Math.max(0, totalTroops) / c.BATTLE_DURATION_TROOPS_SCALE);
-    return Math.min(
-        c.BATTLE_DURATION_MAX_SEC,
-        Math.max(c.BATTLE_DURATION_MIN_SEC,
-            c.BATTLE_DURATION_MIN_SEC + (c.BATTLE_DURATION_MAX_SEC - c.BATTLE_DURATION_MIN_SEC) * ratio),
-    );
+    const raw =
+        c.BATTLE_DURATION_MIN_SEC +
+        (c.BATTLE_DURATION_MAX_SEC - c.BATTLE_DURATION_MIN_SEC) * ratio;
+    return Math.min(c.BATTLE_DURATION_MAX_SEC, Math.max(minSec, raw));
 }
 
 // ────────────────────────── 蒙特卡洛聚合 ──────────────────────────

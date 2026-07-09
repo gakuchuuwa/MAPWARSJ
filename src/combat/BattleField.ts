@@ -143,6 +143,11 @@ export class BattleField implements IOpeningPulseSink {
     /** 相持段（≈45% 时长）前排队、之后统一释放的开局战术脉冲 */
     private readonly openingPulseQueue: Array<{ trigger: TacticalSkillTrigger; audioUnitId?: string }> = [];
     private stalemateSkillUiReleased = false;
+    /**
+     * 开局定势时锁定的攻/守兵力比（削兵前），专供技能脉冲释放顺序。
+     * 勿用释放时的 initialTotalTroops——开局削兵后会把均势误判成优劣。
+     */
+    private situationalAttDefRatio = 1;
 
     // 伤害系数现在从 GameConfig 读取
 
@@ -202,14 +207,14 @@ export class BattleField implements IOpeningPulseSink {
         // 与真值仅差开局加兵技的微小兵力漂移）——脉冲延迟与战损引爆点按同一把尺对齐（第一幕末 ≈45%）。
         // 注入与发射同 tick 同步完成，多场战斗并发也不会互相污染。
         setBattleTargetDurationForSkillUi(
-            clampBattleDurationSec(this.targetDuration * this.computeFearDurationMult())
+            this.clampDuration(this.targetDuration * this.computeFearDurationMult())
         );
         // 三势适性：须在 pickPredictedSides 之前——先按兵力比给带将单位选局技，让开局脉冲/战力/卡片都用局技(否则局技未设,三处不一致且战力用招牌)
         this.assignSituationalSkills();
         this.pickPredictedSides();
         // 威慑系统：定强弱后算战损减免 + 节奏时长系数
         this.applyIntimidationModifiers();
-        this.targetDuration = clampBattleDurationSec(this.targetDuration * this.fearDurationMult);
+        this.targetDuration = this.clampDuration(this.targetDuration * this.fearDurationMult);
         this.reconcileSiegeGarrisonBoostWithDefenders();
         
         this.notifyBattleStart();
@@ -220,8 +225,26 @@ export class BattleField implements IOpeningPulseSink {
         gameLog('battle', `   ⏱️ 预计战斗时长: ${this.targetDuration.toFixed(1)}秒`);
     }
 
+    /** 任一侧有武将 → 时长地板抬高，给开战语音留第一幕 */
+    private battleHasGeneral(): boolean {
+        return (
+            this.attackerGroup.units.some((bu) => !!bu.unit.generalId) ||
+            this.defenderGroup.units.some((bu) => !!bu.unit.generalId)
+        );
+    }
+
+    private durationFloorSec(): number {
+        return this.battleHasGeneral()
+            ? GameConfig.COMBAT.BATTLE_DURATION_MIN_WITH_GENERAL_SEC
+            : GameConfig.COMBAT.BATTLE_DURATION_MIN_SEC;
+    }
+
+    private clampDuration(seconds: number): number {
+        return clampBattleDurationSec(seconds, this.durationFloorSec());
+    }
+
     private calculateTargetDuration() {
-        // [NEW] If customDuration is specified, use it directly (director control)
+        // 导演时长：尊重事件配置，只钳 5–60（不强制有将地板，避免剧本短战被抬）
         if (this.customDuration !== undefined && this.customDuration > 0) {
             this.targetDuration = clampBattleDurationSec(this.customDuration);
             gameLog('battle', `🎬 [BattleField] 导演时长: ${this.targetDuration.toFixed(1)}s (钳制 5–60)`);
@@ -230,7 +253,9 @@ export class BattleField implements IOpeningPulseSink {
 
         const totalTroops =
             this.attackerGroup.initialTotalTroops + this.defenderGroup.initialTotalTroops;
-        this.targetDuration = calculateBattleDurationSec(totalTroops);
+        this.targetDuration = calculateBattleDurationSec(totalTroops, {
+            hasGeneral: this.battleHasGeneral(),
+        });
     }
 
     /**
@@ -352,11 +377,13 @@ export class BattleField implements IOpeningPulseSink {
     /**
      * 三势适性：开局定强弱后，给每个带将单位按局势(优/均/劣)选对应局技，写入 battleOverriddenSkillId。
      * 未配3技的武将 resolveSituationalSkillId 返回 null → 不写 → 回退招牌单技（现役零影响）。
-     * 兵力比 <1.3 视为均势；否则强方=优势、弱方=劣势。counter 系战斗中会再覆盖，顺序不冲突。
+     * 阈值：兵力比 >1.5 优势 / <0.67 劣势 / 其间均势。counter 系战斗中会再覆盖，顺序不冲突。
+     * 同时锁定 situationalAttDefRatio，供相持段技能释放排序（优势先 / 均势攻先）。
      */
     private assignSituationalSkills(): void {
         const at = this.attackerGroup.initialTotalTroops;
         const dt = this.defenderGroup.initialTotalTroops;
+        this.situationalAttDefRatio = at / Math.max(1, dt);
         for (const g of [this.attackerGroup, this.defenderGroup]) {
             const my = g === this.attackerGroup ? at : dt;
             const opp = g === this.attackerGroup ? dt : at;
@@ -369,6 +396,14 @@ export class BattleField implements IOpeningPulseSink {
                 if (sid) u.battleOverriddenSkillId = sid;
             }
         }
+    }
+
+    /** 技能脉冲先放哪一侧：优势方先；均势（及无法判势）攻方先 */
+    private resolveSkillPulseFirstSide(): 'attacker' | 'defender' {
+        const r = this.situationalAttDefRatio;
+        if (r > 1.5) return 'attacker';
+        if (r < 0.67) return 'defender';
+        return 'attacker';
     }
 
     /** 预设结果或「初始兵力 × 随机系数」一次定胜负走向 */
@@ -589,30 +624,33 @@ export class BattleField implements IOpeningPulseSink {
         if (this.elapsed < threshold) return;
 
         this.stalemateSkillUiReleased = true;
+        const firstSide = this.resolveSkillPulseFirstSide();
         setActiveOpeningPulseSink(this);
+        // 保底亮相也按「先放侧」入队，与下方排序一致
         scheduleStalemateSkillShowcasePulses(
             this.getAttackerUnits(),
             this.getDefenderUnits(),
+            firstSide,
         );
         setActiveOpeningPulseSink(null);
 
-        // 脉冲/播报顺序：优势方先放；均势（及无法判势）时攻方先放（主人 2026-07 定）
-        // 局势阈值与 assignSituationalSkills 一致：兵力比 >1.5 优势 / <0.67 劣势 / 其间均势
-        const attTroops = this.attackerGroup.initialTotalTroops;
-        const defTroops = this.defenderGroup.initialTotalTroops;
-        const attRatio = attTroops / Math.max(1, defTroops);
-        const firstSide: 'attacker' | 'defender' =
-            attRatio > 1.5 ? 'attacker' : attRatio < 0.67 ? 'defender' : 'attacker';
+        // 脉冲/播报顺序：优势方先放；均势时攻方先放（用开局定势锁定的兵力比，勿用削兵后兵力）
         const attGeneralIds = new Set(
             this.getAttackerUnits().map((u) => u.generalId).filter((id): id is string => !!id),
         );
         const sideRank = (generalId: string): number => {
-            const isAtt = attGeneralIds.has(generalId);
+            const isAtt = !!generalId && attGeneralIds.has(generalId);
             const side: 'attacker' | 'defender' = isAtt ? 'attacker' : 'defender';
             return side === firstSide ? 0 : 1;
         };
         const ordered = [...this.openingPulseQueue].sort(
             (a, b) => sideRank(a.trigger.generalId) - sideRank(b.trigger.generalId),
+        );
+        gameLog(
+            'battle',
+            `✨ [SkillPulse] 释放顺序: ${firstSide === 'attacker' ? '攻方' : '守方'}先` +
+                `（开局兵力比攻/守=${this.situationalAttDefRatio.toFixed(2)}）` +
+                ` → ${ordered.map((o) => o.trigger.generalId || '?').join(' → ')}`,
         );
         for (const item of ordered) {
             dispatchOpeningSkillPulse(item.trigger, item.audioUnitId);
@@ -1124,8 +1162,9 @@ export class BattleField implements IOpeningPulseSink {
         }
         this.refreshPredictedSidesFromTotals();
         // refreshPredictedSidesFromTotals 已重算 fearDurationMult，重新套用节奏系数
+        // 有将地板：威慑系数不得把时长压破 WITH_GENERAL（否则开战语音仍不够）
         if (!this.customDuration) {
-            this.targetDuration = clampBattleDurationSec(this.targetDuration * this.fearDurationMult);
+            this.targetDuration = this.clampDuration(this.targetDuration * this.fearDurationMult);
         }
 
         // 三势适性：援军新将补指派局技（仅未被开局/counter设过的新单位，避免覆盖counter、不重复施加）

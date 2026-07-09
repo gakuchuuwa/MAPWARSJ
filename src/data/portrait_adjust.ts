@@ -768,12 +768,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/JIANGNAN/min_wangshenzhi.png": {
-            "scale": 1.33,
+            "scale": 1.13,
             "offsetX": 0,
             "offsetY": 28
         },
         "/assets/JIANGNAN/quanzhou_liucongxiao.png": {
-            "scale": 0.94,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -16
         },
@@ -1278,7 +1278,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/CENTRAL_ASIA/jibin_jianisejia.png": {
-            "scale": 1.14,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": -4
         },

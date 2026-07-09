@@ -183,7 +183,8 @@ export class Battle {
 
         // 3. Calculate Combat Duration (Physics Pacing)
         const totalTroops = this.attacker.troops + this.defender.troops;
-        let calculatedDuration = CombatSystem.calculateCombatDuration(totalTroops);
+        const hasGeneral = !!(this.attacker.generalId || this.defender.generalId);
+        let calculatedDuration = CombatSystem.calculateCombatDuration(totalTroops, hasGeneral);
 
 
 
@@ -356,8 +357,8 @@ import { BattleField } from './BattleField';
 
 export class CombatSystem {
     // [NEW] Static helper for duration calculation (Dynamic Interpolation)
-    public static calculateCombatDuration(totalTroops: number): number {
-        return calculateBattleDurationSec(totalTroops);
+    public static calculateCombatDuration(totalTroops: number, hasGeneral = false): number {
+        return calculateBattleDurationSec(totalTroops, { hasGeneral });
     }
 
     // [NEW] Global event for RTS trigger

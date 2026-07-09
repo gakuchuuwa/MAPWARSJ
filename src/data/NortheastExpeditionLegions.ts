@@ -21,7 +21,6 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
     manzhou_d: { name: '满洲八旗', tier: 0 },
     hezhe: { name: '松花伏涛', tier: 2 },
   aola: { name: '敖拉部骑', tier: 4 },       // 雅克萨·孟烈伦敖拉氏
-    wuliangha: { name: '兀良哈突骑', tier: 1 },
   fuyu: { name: '夫余步骑', tier: 4 },       // 黄龙府·夫余步骑（§1）
   keerqin: { name: '达尔罕卫', tier: 4 },
     yehe: { name: '八面关骁骑', tier: 4 },
