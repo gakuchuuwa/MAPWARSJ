@@ -11,6 +11,9 @@ import { LatLng } from '../../types/core';
 import { SpatialRegistry } from '../../world/SpatialRegistry';
 import type { LegionManager } from '../LegionManager';
 import { markLegionAnnihilationFeed } from '../LegionAnnihilationFeed';
+import { speechAnnouncer } from '../../audio/SpeechAnnouncer';
+import { getGeneralRecordByGeneralId } from '../../data/FactionGenerals';
+import { getLegionEliteLegionName } from '../../data/ExpeditionLegions';
 
 export const BATTLE_REINFORCEMENT_POLL_INTERVAL_SEC = 0.2;
 
@@ -72,7 +75,7 @@ function createLegionAdapter(
     side: 'attacker' | 'defender',
     battleCityName: string
 ) {
-    return BattleUnitFactory.createAdapter(
+    const adapter = BattleUnitFactory.createAdapter(
         legion.id,
         legion.name || '军团',
         legion.getFactionId(),
@@ -83,11 +86,12 @@ function createLegionAdapter(
             legion.setCombatState(false);
         },
         () => {
-            markLegionAnnihilationFeed(legion, side, battleCityName);
+            markLegionAnnihilationFeed(legion, side, battleCityName, 'siege', adapter.battleOverriddenSkillId);
             legion.destroy();
             deps.removeArmy(legion);
         }
     );
+    return adapter;
 }
 
 /** 将单支军团加入进行中的区域战；成功返回 true */
@@ -117,6 +121,22 @@ export function tryJoinLegionToBattle(
     const battleCityName = deps.resolveBattleCityName?.(center) ?? '未知';
     const adapter = createLegionAdapter(legion, deps, side, battleCityName);
     battleField.addReinforcement(adapter, isAttacker);
+
+    // [语音播报] 跟随军团作为援军参战
+    const followedId = (window as any).game?.cameraFollowUI?.getFollowedArmyId?.();
+    if (followedId === legion.id) {
+        const genRec = legion.generalId ? getGeneralRecordByGeneralId(legion.generalId) : null;
+        speechAnnouncer.announceReinforcementJoin({
+            factionId: legion.getFactionId(),
+            generalId: legion.generalId ?? null,
+            generalName: genRec?.generalName ?? null,
+            eliteName: getLegionEliteLegionName(legion),
+            side,
+            cityName: battleCityName,
+            battleSkillId: adapter.battleOverriddenSkillId ?? null,
+        });
+    }
+
     return true;
 }
 

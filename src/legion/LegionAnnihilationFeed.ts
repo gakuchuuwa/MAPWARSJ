@@ -19,8 +19,9 @@ export function markLegionAnnihilationFeed(
     side: LegionBattleSide,
     cityName: string,
     kind: 'siege' | 'field' | 'siege_attacker' = 'siege',
+    battleSkillId?: string | null,
 ): void {
     if (!GameConfig.SYSTEM.SANDBOX_MODE) return;
     if (army.type !== 'legion') return;
-    army.feedAnnihilation = { side, cityName, kind };
+    army.feedAnnihilation = { side, cityName, kind, battleSkillId };
 }

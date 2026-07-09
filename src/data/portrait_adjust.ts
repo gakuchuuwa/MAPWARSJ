@@ -1063,7 +1063,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/NORTH/yuzhou_zuti.png": {
-            "scale": 0.92,
+            "scale": 0.86,
             "offsetX": 0,
             "offsetY": 4
         },

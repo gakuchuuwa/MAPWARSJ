@@ -26,7 +26,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   quanzhou: { name: '清源军', tier: 4 },        // 刺桐·留从效清源军
 
     yue_d: { name: '巴陵楼船', tier: 2 },
-    xiangzhou: { name: '襄樊孤军', tier: 3 },
+    xiangzhou: { name: '襄樊捍卫', tier: 3 },
   zaoyang_d: { name: '忠顺军', tier: 1 },       // 枣阳·孟珙忠顺军（《宋史·孟珙传》）
   sizhou: { name: '克敌军', tier: 2 },       // 南宋因装备战术兵器克敌弓而建立的特种部队，属于战术兵器部队，下调至T2战术
     qian_d: { name: '嘉兴水师', tier: 3 },

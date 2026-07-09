@@ -887,7 +887,7 @@ export class SiegeManager {
                 legion.getTroops(),
                 () => { siegeLog(`[Siege] Defender Legion ${legion.name} Victory`); },
                 () => {
-                    markLegionAnnihilationFeed(legion, 'defender', targetCity.name);
+                    markLegionAnnihilationFeed(legion, 'defender', targetCity.name, 'siege', legionAdapter.battleOverriddenSkillId);
                     legion.destroy();
                     this.legionManager.removeArmy(legion);
                 }
@@ -907,7 +907,7 @@ export class SiegeManager {
                 legion.getTroops(),
                 () => { siegeLog(`[Siege] Attacker Legion ${legion.name} Victory`); },
                 () => {
-                    markLegionAnnihilationFeed(legion, 'attacker', targetCity.name);
+                    markLegionAnnihilationFeed(legion, 'attacker', targetCity.name, 'siege', legionAdapter.battleOverriddenSkillId);
                     legion.destroy();
                     this.legionManager.removeArmy(legion);
                 }

@@ -159,6 +159,7 @@ export const T0_CAPITALS: CityDataV2[] = [
     { id: 'city_xiangyang', name: '襄阳', factionId: 'xiangzhou', lat: 32.01, lng: 112.12, type: 'medium_city', troops: 20000, region: 'JIANGNAN' },
 
 
+
     { id: 'city_shouxian', name: '寿春', factionId: 'zhong', lat: 32.59, lng: 116.8, type: 'medium_city', region: 'CENTRAL', troops: 20000, tier: 1, note: '楚后期都、淮南/寿州治；淮西重镇' },
     { id: 'city_ueda', name: '上田城', factionId: 'sanada_d', lat: 36.4025, lng: 138.2464, type: 'small_city', troops: 20000, region: 'JAPAN', note: '真田氏名城，两次击退德川大军' },
 ];
@@ -321,9 +322,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_huaiyang', name: '宛丘', factionId: 'huaiyang', lat: 33.63, lng: 114.7, type: 'small_city', region: 'CENTRAL', troops: 20000,
         note: '宛丘；淮阳小城',
     },
-    { id: 'city_shunchang', name: '顺昌', factionId: 'yingzhou_d', lat: 32.9, lng: 115.81, type: 'small_city', region: 'CENTRAL', troops: 20000,
-        note: '顺昌；颍州小城',
-    },
+    { id: 'city_shunchang', name: '顺昌', factionId: 'yingzhou_d', lat: 32.9, lng: 115.81, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
     { id: 'city_qiaojun', name: '谯县', factionId: 'cao_d', lat: 33.88, lng: 115.77, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
 
@@ -2541,6 +2541,8 @@ export const CITIES_V2: CityDataV2[] = [
 
 
 
+
+
     { id: 'city_dashicheng', name: '大石城', factionId: 'zhuxie', lat: 41.28, lng: 79.22, type: 'pass', region: 'WESTERN', troops: 20000,
         note: '大石城；朱邪关隘',
     },
@@ -2556,6 +2558,8 @@ export const CITIES_V2: CityDataV2[] = [
         note: '巴米扬；梵衍那小城',
     },
     { id: 'city_paixiucheng', name: '排修城', factionId: 'juandu', lat: 39.48, lng: 76.72, type: 'small_city', troops: 20000, region: 'WESTERN' },
+
+
 
 
     { id: 'city_daerhan', name: '达尔罕', factionId: 'keerqin', lat: 43.6064, lng: 122.2229, type: 'small_city', region: 'NORTHEAST', troops: 20000,

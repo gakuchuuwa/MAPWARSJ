@@ -380,14 +380,14 @@ export class GameApp {
                 Army.setAnnihilationReporter((army, info) => {
                     // [语音播报] 跟随军团全军覆没 (移至最前，防止 panjun 被 return)
                     const followedId = this.cameraFollowUI?.getFollowedArmyId?.();
-                    // 野战阵亡('field')/攻城失败('siege_attacker')语音由专句接管，此处跳过通用覆没语音（军情面板仍留字）
+                    // 野战阵亡('field')/攻城失败('siege_attacker')语音由专句接管，此处跳过通用覆没语音
+                    // 援军('siege') — 不管是攻城还是守城援军 — 统一走野战结束句
                     if (followedId === army.id && info.kind !== 'field' && info.kind !== 'siege_attacker') {
-                        speechAnnouncer.announceAnnihilation(
-                            army.getFactionId(),
-                            army.name || '军团',
-                            info.cityName,
-                            army.generalId
-                        );
+                        speechAnnouncer.announceFieldBattleEnd({
+                            win: false,
+                            followerFactionId: army.getFactionId(),
+                            followerSkillId: info.battleSkillId ?? null,
+                        });
                     }
 
                     if (!BrawlFeedPanel.isEliminableFaction(army.getFactionId())) return;

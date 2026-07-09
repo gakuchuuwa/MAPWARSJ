@@ -35,6 +35,8 @@ export const FACTIONS: Faction[] = [
   { id: 'juandu', name: '捐毒' },
 
 
+
+
   { id: 'sai', name: '塞种' },
   { id: 'yangtong', name: '羊同' },
 
@@ -362,6 +364,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 新增：三国核对追加势力 ──
     // ── 2026-06-19 改：襄阳·襄州州名旗号（§4.1-5）──
     { id: 'xiangzhou', name: '襄州' },
+
 
     // ── 2026-06-19 新增：枣阳@枣阳（孟珙·忠顺军；《宋史·孟珙传》；旗号舂陵≠枣阳）──
     { id: 'zaoyang_d', name: '唐州' },
@@ -1242,6 +1245,8 @@ export const FACTIONS: Faction[] = [
 
 
 
+
+
     { id: 'konbaung', name: '贡榜' },
 
     { id: 'qi_d', name: '横水' },
@@ -1253,7 +1258,8 @@ export const FACTIONS: Faction[] = [
            // 卢象升天雄军@大名（贾庄标志战；旗号魏博≠番号天雄军）
     { id: 'sunqin', name: '潼津' },
     // ── 2026-06-11 中原走廊21座（淮西—豫东—江淮西翼）──
-    { id: 'yingzhou_d', name: '颍州' },           // 颍@汝阴
+    { id: 'yingzhou_d', name: '颍州' },
+           // 颍@汝阴
     { id: 'yanchuan_d', name: '郾川' },
 
            // 郾@郾城

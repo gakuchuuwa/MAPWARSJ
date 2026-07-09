@@ -107,7 +107,7 @@ const STRATAGEM_BAJUE: Record<"attacker" | "defender", Record<StratagemKey, stri
     di: "虚张声势，挫其锐气",
     hun: "将计就计，后发制人",
     bing: "坚壁清野，以拖待变",
-    bai: "困兽犹斗，玉石俱焚",
+    bai: "困兽犹斗，力战殉城",
   },
 };
 
@@ -421,6 +421,31 @@ export class SpeechAnnouncer {
     if (!this.enabled) return;
     const text = `${getFactionNameForSpeech(factionId)}军于${cityName}外，全军覆没`;
     console.log("[Speech] 覆没:", text);
+    this.speak(text);
+  }
+
+  /** 援军参战（跟随军团中途加入进行中的攻城/野战，守方→救援，攻方→攻打；势=加入时该侧的兵力比） */
+  public announceReinforcementJoin(opts: {
+    factionId: string;
+    generalId?: string | null;
+    generalName?: string | null;
+    eliteName?: string | null;
+    side: 'attacker' | 'defender';
+    cityName: string;
+    battleSkillId?: string | null;
+  }): void {
+    if (!this.enabled) return;
+    const ju: CaptureJu = opts.battleSkillId ? (classifyJu(opts.battleSkillId) ?? 'balance') : 'balance';
+    const action = opts.side === 'attacker' ? '攻打' : '救援';
+    const fFaction = getFactionNameForSpeech(opts.factionId);
+    const elClause = opts.eliteName ? `之${opts.eliteName}` : '';
+    const genLead = opts.generalName
+      ? `${opts.generalName}亲率${fFaction}${elClause}`
+      : `${fFaction}援军`;
+
+    const RUSH_PHRASE: Record<CaptureJu, string> = { advantage: '星夜驰骋', balance: '日夜兼程', disadvantage: '履险疾进' };
+    const text = `${genLead}，${RUSH_PHRASE[ju]}，${action}${opts.cityName}`;
+    console.log("[Speech] 援军参战:", text);
     this.speak(text);
   }
 

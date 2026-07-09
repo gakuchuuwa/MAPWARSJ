@@ -4165,7 +4165,7 @@ const SANSHILIU: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_390', layer: 'tactical', series: 'troop', index: 390,
-        displayName: '围魏救赵', sourceQuote: '《史记·孙子吴起列传》：直捣大梁，魏军回救，破于桂陵。',
+        displayName: '围点打援', sourceQuote: '《史记·孙子吴起列传》：直捣大梁，魏军回救，破于桂陵。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.12, engineStatus: 'ready',
         note: '【胜战计·全】孙膑；三十六计补充',

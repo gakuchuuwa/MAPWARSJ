@@ -38,11 +38,11 @@ export class Army implements IBattleUnit {
     public siegeMissionComplete: (() => void) | null = null;
 
     /** 大乱斗军情：全军覆没播报（destroy 时触发）。kind='field'/'siege_attacker' 时语音由「野战败/攻城失败」接管，覆没语音跳过 */
-    public feedAnnihilation?: { side: 'attacker' | 'defender'; cityName: string; kind?: 'siege' | 'field' | 'siege_attacker' };
+    public feedAnnihilation?: { side: 'attacker' | 'defender'; cityName: string; kind?: 'siege' | 'field' | 'siege_attacker'; battleSkillId?: string | null };
 
     private static annihilationReporter?: (
         army: Army,
-        info: { side: 'attacker' | 'defender'; cityName: string; kind?: 'siege' | 'field' | 'siege_attacker' }
+        info: { side: 'attacker' | 'defender'; cityName: string; kind?: 'siege' | 'field' | 'siege_attacker'; battleSkillId?: string | null }
     ) => void;
 
     public static setAnnihilationReporter(

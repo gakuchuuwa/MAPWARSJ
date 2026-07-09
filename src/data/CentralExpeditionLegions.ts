@@ -58,7 +58,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     yuzhou: { name: '中流击楫军', tier: 3 },
     xin: { name: '上党锐骑', tier: 2 },
     beidi: { name: '北地羌骑', tier: 2 },
-  yingzhou_d: { name: '选锋军', tier: 2 },       // 南宋及多朝极常见的临战前锋突击队编制，缺乏主宰大局的战略唯一性，下调至T2战术
+    yingzhou_d: { name: '选锋军', tier: 2 },
   // 北门飞骑除名
     // 大明龙骧卫除名（与明初龙骧卫无专属番号典，改挂殿前诸班）
   lulin: { name: '云台突骑', tier: 0 },           // 昆阳·云台二十八将突骑（昆阳破莽大捷，升T0）
