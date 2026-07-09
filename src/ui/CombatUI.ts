@@ -48,6 +48,7 @@ import {
     SKILL_PULSE_STAGGER_IDEAL_SEC,
     PHASE_STALEMATE_START,
     PHASE_COLLAPSE_START,
+    pickSideSkillGeneralUnit,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -904,6 +905,11 @@ export class CombatUI {
         return this.pickPrimaryDisplayUnit(units);
     }
 
+    /** 侧栏立绘/名牌/技能：与放技将领一致（城防将优先于无将军团） */
+    private pickGeneralDisplayUnit(units: IBattleUnit[]): IBattleUnit | null {
+        return pickSideSkillGeneralUnit(units) ?? this.pickPrimaryDisplayUnit(units);
+    }
+
     /** 侧栏立绘/技能/系数：优先带将+精锐的军团，避免攻城时城防「驻军」盖住守城军团 */
     private pickPrimaryDisplayUnit(units: IBattleUnit[]): IBattleUnit | null {
         if (units.length === 0) return null;
@@ -1534,8 +1540,10 @@ export class CombatUI {
             }
         }
 
-        const attacker = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
-        const defender = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
+        const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
+        const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
+        const attacker = this.pickGeneralDisplayUnit(attackers) ?? attBattler;
+        const defender = this.pickGeneralDisplayUnit(defenders) ?? defBattler;
 
         const attName = this.buildWaveGroupedSideName(attackers);
         const defName = this.buildWaveGroupedSideName(defenders);
@@ -1544,7 +1552,7 @@ export class CombatUI {
         this.defenderFactionId = defender.factionId;
         this.currentBattleKey = this.buildPortraitConfigKey(displayTitle, attacker, defender);
 
-        this.updateMultiplierBadges(attacker, defender);
+        this.updateMultiplierBadges(attBattler, defBattler);
         this.updateSkillBadges(attacker, defender);
         this.updateInfoDirect(attName, defName, displayTitle, displayYear, description);
 
@@ -1581,11 +1589,33 @@ export class CombatUI {
         return this.isVisible && this.currentRegionalUnits !== null;
     }
 
+    /** 以战场单位列表判定 generalId 属攻/守（优先于名牌 dataset，防攻城城防将错位） */
+    private resolveGeneralBattleSide(
+        bf: BattleField,
+        generalId: string,
+    ): 'attacker' | 'defender' | null {
+        if (bf.getDefenderUnits().some((u) => u.generalId === generalId)) return 'defender';
+        if (bf.getAttackerUnits().some((u) => u.generalId === generalId)) return 'attacker';
+        return null;
+    }
+
+    private resolveGeneralSpeechName(
+        generalId: string,
+        side: 'attacker' | 'defender',
+    ): string | null {
+        const tag = side === 'attacker' ? this.leftGeneralNameTag : this.rightGeneralNameTag;
+        if (tag.dataset.generalId === generalId && tag.textContent?.trim()) {
+            return tag.textContent.trim();
+        }
+        return getGeneralRecordByGeneralId(generalId)?.generalName ?? null;
+    }
+
     /** 战术武将技触发效果（侧边徽章闪烁，不再弹大字） */
     public flashTacticalSkill(displayName: string, generalId?: string, skillId?: string): void {
         if (!displayName) return;
         // 如果战斗已经结束（胜负已分），不再响应任何新的脉冲（例如致死一击触发的逆局技）
         if (this.boundRegionalBattleField?.isOver) return;
+        const bf = this.boundRegionalBattleField;
         const addFlash = (badge: HTMLSpanElement | null) => {
             if (!badge || !badge.textContent?.includes(displayName)) return;
             badge.style.animation = 'none';
@@ -1597,16 +1627,21 @@ export class CombatUI {
 
         // —— 立绘/标签脉冲 ——
         // 武将技一局只放一次：UI 事件可能被重复广播（援军编入补发等），每侧一局只脉冲一次。
-        // 侧别优先 generalId 与名牌对应；对不上时回退技能标签（与侧栏卡片一致，防攻城多单位张冠李戴）。
+        // 侧别：① 战场单位列表 ② generalId 对名牌 ③ 技能标签兜底。
         let side: 'attacker' | 'defender' | null = null;
-        const inLeft = !!this.findSkillTag(this.leftSkillsBox, displayName);
-        const inRight = !!this.findSkillTag(this.rightSkillsBox, displayName);
-        if (generalId) {
+        if (generalId && bf) {
+            side = this.resolveGeneralBattleSide(bf, generalId);
+        }
+        if (!side && generalId) {
             if (this.leftGeneralNameTag.dataset.generalId === generalId) side = 'attacker';
             else if (this.rightGeneralNameTag.dataset.generalId === generalId) side = 'defender';
         }
-        if (!side && inLeft !== inRight) {
-            side = inLeft ? 'attacker' : 'defender';
+        if (!side) {
+            const inLeft = !!this.findSkillTag(this.leftSkillsBox, displayName);
+            const inRight = !!this.findSkillTag(this.rightSkillsBox, displayName);
+            if (inLeft !== inRight) {
+                side = inLeft ? 'attacker' : 'defender';
+            }
         }
         if (!side) return;
         const pulseSide = side;
@@ -1614,7 +1649,6 @@ export class CombatUI {
         if (this.skillPulseShownKeys.has(key)) return;
         this.skillPulseShownKeys.add(key);
 
-        const bf = this.boundRegionalBattleField;
         const units = pulseSide === 'attacker' ? bf?.getAttackerUnits() : bf?.getDefenderUnits();
         const pulseUnit = generalId ? units?.find((u) => u.generalId === generalId) : undefined;
         const audioUnitId = pulseUnit?.id ?? null;
@@ -1720,15 +1754,19 @@ export class CombatUI {
         if (!bf || bf.isOver) return false;
         const rec = getGeneralRecordByGeneralId(generalId);
         if (!rec) return false;
-        const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+
+        const battleSide = this.resolveGeneralBattleSide(bf, generalId) ?? side;
+        const units = battleSide === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
         const gUnit = units.find((u) => u.generalId === generalId) ?? null;
+        const generalName = this.resolveGeneralSpeechName(generalId, battleSide) ?? rec.generalName;
         const eliteName = gUnit ? getLegionEliteBadgeName(gUnit) : null;
-        const opponentHasGeneral = side === 'attacker'
+        const opponentHasGeneral = battleSide === 'attacker'
             ? !!this.rightGeneralNameTag.dataset.generalId
             : !!this.leftGeneralNameTag.dataset.generalId;
         return speechAnnouncer.announceSkillRelease({
-            side,
-            generalName: rec.generalName,
+            side: battleSide,
+            generalId,
+            generalName,
             skillDisplayName: displayName,
             skillId,
             eliteName,
@@ -1763,22 +1801,24 @@ export class CombatUI {
         this.attackerDisplayName = this.buildWaveGroupedSideName(attackers);
         this.defenderDisplayName = this.buildWaveGroupedSideName(defenders);
 
-        const attPrimary = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
-        const defPrimary = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
+        const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
+        const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
+        const attGeneral = this.pickGeneralDisplayUnit(attackers) ?? attBattler;
+        const defGeneral = this.pickGeneralDisplayUnit(defenders) ?? defBattler;
 
-        this.updateMultiplierBadges(attPrimary, defPrimary);
-        this.updateSkillBadges(attPrimary, defPrimary);
-        this.setPortrait(this.leftPortrait, attPrimary, attPrimary.generalId, attPrimary.factionId, attPrimary.portraitPath, 'attacker');
+        this.updateMultiplierBadges(attBattler, defBattler);
+        this.updateSkillBadges(attGeneral, defGeneral);
+        this.setPortrait(this.leftPortrait, attGeneral, attGeneral.generalId, attGeneral.factionId, attGeneral.portraitPath, 'attacker');
         this.setPortrait(
             this.rightPortrait,
-            defPrimary,
-            defPrimary.generalId,
-            defPrimary.factionId,
-            defPrimary.portraitPath,
+            defGeneral,
+            defGeneral.generalId,
+            defGeneral.factionId,
+            defGeneral.portraitPath,
             'defender',
             this.leftPortrait.src || undefined,
         );
-        this.updateGeneralNameTags(attPrimary, defPrimary);
+        this.updateGeneralNameTags(attGeneral, defGeneral);
         this.refreshRegionalSafetyDeadline();
         this.updateStats();
     }
@@ -2915,7 +2955,7 @@ export class CombatUI {
         const total = attCurrent + defCurrent;
         const baseAttPct = total > 0 ? (attCurrent / total) * 100 : 50;
 
-        // 视觉微摆：配合 BattleField 三阶段节奏（45%/75%/100%）
+        // 视觉微摆：配合 BattleField 三阶段节奏（40%/80%/100%）
         let progress = 0;
         if (this.currentBattle) {
             const b: any = this.currentBattle;
@@ -2933,7 +2973,7 @@ export class CombatUI {
             // 第一幕胶着：小幅角力，不与相持段技能脉冲抢戏（开战语音时段）
             swingAmp = 1;
         } else if (progress < PHASE_COLLAPSE_START) {
-            // 第二幕相持（≈45% 武将技脉冲）：摆幅拉满后渐收，与亮相同刻起大幅拉锯
+            // 第二幕相持（≈40% 武将技脉冲）：摆幅拉满后渐收，与亮相同刻起大幅拉锯
             swingAmp = 4 - 3 * ((progress - PHASE_STALEMATE_START) / phase2Span); // 4 → 1
         } else {
             // 第三幕溃败：几乎不摆，真实兵力比主导

@@ -77,11 +77,11 @@ export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
 
 /**
  * 战斗三阶段进度分界（与 BattleField 战损 / CombatUI 摆幅 / 武将技脉冲共用）。
- * 第一幕加长到 45%：给开战语音（兵临/大战）念完的时间，再进相持放技能。
+ * 主人 2026-07 定：12s + 12s + 6s @ 30s 有将战 → 40% / 40% / 20%。
  */
-export const PHASE_STALEMATE_START = 0.45;
-/** 第三幕（溃败）起点；第二幕 ≈ 45%～75% */
-export const PHASE_COLLAPSE_START = 0.75;
+export const PHASE_STALEMATE_START = 0.4;
+/** 第三幕（溃败）起点；第二幕 ≈ 40%～80% */
+export const PHASE_COLLAPSE_START = 0.8;
 
 // 开局脉冲按本场目标时长比例后移；慢直播：短战略提早亮相留错开窗，长战对齐第一幕末。
 const OPENING_UI_DELAY_RATIO = PHASE_STALEMATE_START;
@@ -110,25 +110,16 @@ export function resolvePhase2RemainingSec(targetDurationSec: number, elapsedSec:
 }
 
 /**
- * 相持段武将技亮相时刻（游戏内秒）。
- * 慢直播：对齐加长后的第一幕末（≈45%）；短战略提早，避免挤在溃败段。
+ * 相持段武将技亮相时刻（游戏内秒）= 第一幕末 ≈ 时长×40%。
  */
 export function resolveStalemateUiThresholdSec(targetDurationSec: number): number {
     if (targetDurationSec <= 0) return 3.5;
     const T = targetDurationSec;
     const cap = (v: number) => Math.min(OPENING_UI_DELAY_MAX_SEC, v);
-
-    if (T <= 7) {
-        // 极短碾压：略早于 45%，仍给开战句一点铺垫
-        return cap(Math.max(2.0, T * 0.40));
-    }
     if (T <= 12) {
-        return cap(Math.max(3.0, T * 0.43));
+        return cap(Math.max(3.0, T * 0.38));
     }
-    if (T <= 22) {
-        return cap(Math.max(4.5, T * 0.45));
-    }
-    return cap(Math.max(5.0, T * OPENING_UI_DELAY_RATIO));
+    return cap(Math.max(6.0, T * OPENING_UI_DELAY_RATIO));
 }
 
 /**
@@ -241,6 +232,11 @@ function scoreSideGeneralPickPriority(u: IBattleUnit): number {
     if (u.unitType === 'city' && readSiegeGarrisonEliteName(u.getEntity?.())) score += 500;
     score += Math.min(Math.max(0, u.troops) / 1000, 99);
     return score;
+}
+
+/** 该侧「放技将领」：脉冲/机制/侧栏名牌与技能展示须同一单位 */
+export function pickSideSkillGeneralUnit(units: IBattleUnit[]): IBattleUnit | null {
+    return findEligibleGeneralUnit(units);
 }
 
 function findEligibleGeneralUnit(units: IBattleUnit[]): IBattleUnit | null {

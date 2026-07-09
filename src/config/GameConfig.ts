@@ -112,10 +112,10 @@ export class GameConfig {
         BATTLE_DURATION_MIN_SEC: 5,
         /**
          * 任一侧有武将时的时长下限（游戏秒）。
-         * 开战语音（兵临/大战）约 10–14s 墙钟；第一幕 = 时长×45%，须 ≥~10s → 下限 22。
-         * 无将小战仍走 MIN_SEC=5，避免全体拖长。
+         * 三幕墙钟预算 12+12+6（开战句 / 双方技能 / 溃败），比例 40/40/20 → 下限 30。
+         * 无将小战仍走 MIN_SEC=5。
          */
-        BATTLE_DURATION_MIN_WITH_GENERAL_SEC: 22,
+        BATTLE_DURATION_MIN_WITH_GENERAL_SEC: 30,
         BATTLE_DURATION_MAX_SEC: 60,
         /** 双方总兵力达到此值时取 MAX 时长 */
         BATTLE_DURATION_TROOPS_SCALE: 100000,

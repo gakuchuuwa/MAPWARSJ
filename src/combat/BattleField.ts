@@ -140,7 +140,7 @@ export class BattleField implements IOpeningPulseSink {
     private strongerCasualtyReduction: number = 0;
     /** 穷寇勿迫：弱方已跌破 20% 初始并触发过一次减损重算（锁存防抖，翻转时清） */
     private poorBanditLatched: boolean = false;
-    /** 相持段（≈45% 时长）前排队、之后统一释放的开局战术脉冲 */
+    /** 相持段（≈40% 时长）前排队、之后统一释放的开局战术脉冲 */
     private readonly openingPulseQueue: Array<{ trigger: TacticalSkillTrigger; audioUnitId?: string }> = [];
     private stalemateSkillUiReleased = false;
     /**
@@ -204,7 +204,7 @@ export class BattleField implements IOpeningPulseSink {
         this.calculateTargetDuration();
         // 开局脉冲按本场时长比例后移：须在 pickPredictedSides（内部同步 emit 开局技能 UI）之前注入。
         // 注入「估算最终时长」= 基础 × 节奏系数（computeFearDurationMult 与强弱判定无关，此刻即可算；
-        // 与真值仅差开局加兵技的微小兵力漂移）——脉冲延迟与战损引爆点按同一把尺对齐（第一幕末 ≈45%）。
+        // 与真值仅差开局加兵技的微小兵力漂移）——脉冲延迟与战损引爆点按同一把尺对齐（第一幕末 ≈40%）。
         // 注入与发射同 tick 同步完成，多场战斗并发也不会互相污染。
         setBattleTargetDurationForSkillUi(
             this.clampDuration(this.targetDuration * this.computeFearDurationMult())
@@ -616,7 +616,7 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     /**
-     * 相持第二幕（≈ targetDuration×45%）释放已排队脉冲；战斗 UI 晚开时由 showRegional 补调。
+     * 相持第二幕（≈ targetDuration×40%）释放已排队脉冲；战斗 UI 晚开时由 showRegional 补调。
      */
     public tryReleaseStalemateSkillUi(): void {
         if (this.stalemateSkillUiReleased || this.isOver) return;
@@ -732,10 +732,10 @@ export class BattleField implements IOpeningPulseSink {
         const swingEnvelope = this.presetResult ? 0 : Math.pow(1 - clampedProgress, 0.7);
         const swing = this.presetResult ? 0 : this.momentumValue * swingEnvelope * 0.85;
 
-        // 三阶段战损节奏（用户 2026-07 定，势均/悬殊同构；第一幕加长以适配开战语音）：
-        //   第一阶段(<45%)：双方净战损压到 45%（打得慢、胶着）→ 开战播报念完再进相持；
-        //   第二阶段(45%~75% 放开到全速)：恰逢技能脉冲亮相 → 悬殊「看起来」由技能引爆；
-        //   第三阶段(最后25%)：收敛模型 troops/timeLeft 自我修正，前期少掉的兵在末段自动补回 → 覆灭自然加快。
+        // 三阶段战损节奏（12+12+6 @ 30s，40/40/20）：
+        //   第一阶段(<40%)：胶着慢打 → 开战播报；
+        //   第二阶段(40%~80%)：技能脉冲 + 战损加速；
+        //   第三阶段(最后20%)：溃败收敛。
         //   总时长与胜负不受影响。
         const phase2Span = PHASE_COLLAPSE_START - PHASE_STALEMATE_START;
         const pacing = this.presetResult

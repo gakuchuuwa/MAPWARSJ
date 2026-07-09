@@ -10,6 +10,7 @@ import {
 } from "../data/GeneralSkills";
 import { SubtitleBanner } from "../ui/SubtitleBanner";
 import { audioManager } from "./AudioManager";
+import { getGeneralNameForSpeech, prepareSpeechText } from "./GeneralSpeechNames";
 import { getTacticalSkillEntry } from "../data/TacticalSkillCatalog";
 
 interface SpeakOptions {
@@ -18,6 +19,8 @@ interface SpeakOptions {
   /** 同步显示的字幕条文案（不传则不显示字幕） */
   banner?: string;
   rate?: number;
+  /** 技能句已做人名校正，跳过全文 prepareSpeechText（防误替技能名/精锐名） */
+  skipGlobalNameReplace?: boolean;
   /** TTS 真正开口时回调（技能 Cut-in 与念名同刻；引擎无 onstart 时在 speak 前兜底） */
   onStart?: () => void;
   /** 念完 / 被丢弃后回调（技能释放脉冲串行队列用） */
@@ -157,7 +160,11 @@ export class SpeechAnnouncer {
   private sTierBusyUntilMs = 0;
 
   /** 技能释放播报串行队列（入队顺序=亮相顺序：优势先/均势攻先；不互相打断）；onStart 在 TTS 开口时触发 */
-  private skillSpeakQueue: { text: string; onStart?: () => void }[] = [];
+  private skillSpeakQueue: {
+    text: string;
+    skipGlobalNameReplace?: boolean;
+    onStart?: () => void;
+  }[] = [];
   private skillSpeaking = false;
   /** 播报会话：技能连播期间保持 ducking，避免句间音效/音乐脉冲 */
   private speechDuckSession = false;
@@ -266,7 +273,7 @@ export class SpeechAnnouncer {
       : null; // 攻方无将则不加将名，只用势力军（锚定将≠出征将）
     const attFaction = getFactionNameForSpeech(opts.attackerFactionId);
     const attackerLead = attGeneral
-      ? `${attGeneral.generalName}率领${attFaction}军`
+      ? `${getGeneralNameForSpeech(attGeneral.generalId, attGeneral.generalName)}率领${attFaction}军`
       : `${attFaction}军`;
     const verb = opts.isPass ? "攻打" : "兵临"; // 关隘攻打、城池兵临
 
@@ -285,7 +292,7 @@ export class SpeechAnnouncer {
       const defPhrase = SIEGE_DEF_PHRASE[j][terrain];
       const defFaction = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
       const mingjiang = isFamousGeneral(defGeneral.generalId) ? "名将" : "";
-      text = `${attackerLead}，${atkPrefix}，${verb}${opts.cityName}。${defFaction}${mingjiang}${defGeneral.generalName}，${defPhrase}`;
+      text = `${attackerLead}，${atkPrefix}，${verb}${opts.cityName}。${defFaction}${mingjiang}${getGeneralNameForSpeech(defGeneral.generalId, defGeneral.generalName)}，${defPhrase}`;
     }
     console.log("[Speech] 攻城:", text);
     this.speak(text);
@@ -317,7 +324,7 @@ export class SpeechAnnouncer {
       // 守方无武将（或攻方势未知）→ 简报
       text = `${att}军，攻占${cityPhrase}`;
     } else {
-      text = `${att}军，${CAPTURE_WIN[ju]}，攻占${cityPhrase}。${defGeneral.generalName}，${CAPTURE_DEFEAT_SIGN[ju]}，${CAPTURE_DEFEAT_YIELD[ju]}`;
+      text = `${att}军，${CAPTURE_WIN[ju]}，攻占${cityPhrase}。${getGeneralNameForSpeech(defGeneral.generalId, defGeneral.generalName)}，${CAPTURE_DEFEAT_SIGN[ju]}，${CAPTURE_DEFEAT_YIELD[ju]}`;
     }
     console.log("[Speech] 攻占:", text);
     if (isCenter) {
@@ -348,11 +355,11 @@ export class SpeechAnnouncer {
     const eFaction = getFactionNameForSpeech(opts.enemyFactionId);
     const ju: CaptureJu = (opts.followerSkillId ? classifyJu(opts.followerSkillId) : null) ?? "balance";
     const fPart = isFamousGeneral(follower.generalId)
-      ? `${fFaction}，名将，${follower.generalName}`
-      : `${fFaction}，${follower.generalName}`;
+      ? `${fFaction}，名将，${getGeneralNameForSpeech(follower.generalId, follower.generalName)}`
+      : `${fFaction}，${getGeneralNameForSpeech(follower.generalId, follower.generalName)}`;
     const ePart = isFamousGeneral(enemy.generalId)
-      ? `${eFaction}，名将，${enemy.generalName}`
-      : `${eFaction}，${enemy.generalName}`;
+      ? `${eFaction}，名将，${getGeneralNameForSpeech(enemy.generalId, enemy.generalName)}`
+      : `${eFaction}，${getGeneralNameForSpeech(enemy.generalId, enemy.generalName)}`;
     const text = `${fPart}，${FIELD_SHISHU[ju]}，大战，${ePart}`;
     console.log("[Speech] 野战:", text);
     this.speak(text);
@@ -380,7 +387,7 @@ export class SpeechAnnouncer {
       const enemy = getGeneralRecordByGeneralId(opts.enemyGeneralId);
       if (!enemy) return;
       const eFaction = opts.enemyFactionId ? getFactionNameForSpeech(opts.enemyFactionId) : "";
-      text = `${fFaction}军，${FIELD_WIN_METHOD[ju]}，${FIELD_WIN_BREAK[ju]}，${eFaction}军，${enemy.generalName}，${FIELD_WIN_ROUT[ju]}`;
+      text = `${fFaction}军，${FIELD_WIN_METHOD[ju]}，${FIELD_WIN_BREAK[ju]}，${eFaction}军，${getGeneralNameForSpeech(enemy.generalId, enemy.generalName)}，${FIELD_WIN_ROUT[ju]}`;
     } else {
       // 跟随败：只报跟随军团崩溃，不提敌方（always 播，野战里取代通用覆没语音）
       text = `${fFaction}军，${FIELD_LOSE[ju]}`;
@@ -425,6 +432,7 @@ export class SpeechAnnouncer {
    */
   public announceSkillRelease(opts: {
     side: "attacker" | "defender";
+    generalId?: string | null;
     generalName: string;
     skillDisplayName: string;
     skillId: string;
@@ -441,14 +449,16 @@ export class SpeechAnnouncer {
     const bajue = STRATAGEM_BAJUE[opts.side][key];
     if (!bajue) return false;
     const eliteClause = opts.eliteName ? `，${opts.eliteName}` : "";
-    const text = `${opts.generalName}，${opts.skillDisplayName}${eliteClause}，${bajue}`;
-    console.log("[Speech] 技能:", text);
+    const speechName = getGeneralNameForSpeech(opts.generalId, opts.generalName);
+    const text = `${speechName}，${opts.skillDisplayName}${eliteClause}，${bajue}`;
+    console.log("[Speech] 技能:", text, `(id=${opts.generalId ?? "?"}, side=${opts.side})`);
     // 双方技能紧挨入队（短战/相持窗不足）→ 仅第一句开口时插技能音效，避免句间硬切
     const playSkillSfxOnStart = this.skillSpeakQueue.length === 0 && !this.skillSpeaking;
     const userOnStart = opts.onStart;
     const audioUnitId = opts.audioUnitId;
     this.skillSpeakQueue.push({
       text,
+      skipGlobalNameReplace: true,
       onStart: () => {
         if (playSkillSfxOnStart && audioUnitId) {
           audioManager.playGeneralSkillSfx(audioUnitId);
@@ -474,6 +484,7 @@ export class SpeechAnnouncer {
     if (next === undefined) return;
     this.skillSpeaking = true;
     this.speak(next.text, {
+      skipGlobalNameReplace: next.skipGlobalNameReplace,
       onStart: next.onStart,
       onDone: () => {
         this.skillSpeaking = false;
@@ -509,7 +520,8 @@ export class SpeechAnnouncer {
     synth.cancel();
 
     setTimeout(() => {
-      const utterance = new SpeechSynthesisUtterance(text);
+      const speechText = opts?.skipGlobalNameReplace ? text : prepareSpeechText(text);
+      const utterance = new SpeechSynthesisUtterance(speechText);
       utterance.lang = "zh-CN";
       if (opts?.rate !== undefined) utterance.rate = opts.rate;
       // 播报音量跟随主音量（与音效/音乐感知齐平，不再固定满音量盖过一切）

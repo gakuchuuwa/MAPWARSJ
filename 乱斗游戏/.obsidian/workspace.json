@@ -13,31 +13,142 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "欢迎.md",
+                "file": "游戏设计资料.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "欢迎"
+              "title": "游戏设计资料"
             }
-          }
-        ]
-      },
-      {
-        "id": "26c27df337e95c51",
-        "type": "tabs",
-        "children": [
+          },
           {
-            "id": "cdccf05f1b38614a",
+            "id": "d838f3764d6759fb",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "关系图谱"
+              "type": "markdown",
+              "state": {
+                "file": "武将.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "武将"
+            }
+          },
+          {
+            "id": "9536f5e615d147c5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "战术技能.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "战术技能"
+            }
+          },
+          {
+            "id": "44b3cf7f9c5a3605",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "武将.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "武将"
+            }
+          },
+          {
+            "id": "c00a62bb3135cd0b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "文化.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "文化"
+            }
+          },
+          {
+            "id": "1c4a78007aa233ee",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "精锐.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "精锐"
+            }
+          },
+          {
+            "id": "c87cbd971d4b45e2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "游戏设计资料.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "游戏设计资料"
+            }
+          },
+          {
+            "id": "59434c9e1642d14d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "目录.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "目录"
+            }
+          },
+          {
+            "id": "d423f0b4269493fc",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "01_势力/阿巴尔.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "阿巴尔"
+            }
+          },
+          {
+            "id": "e25cd6f7ab62a05b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "播报.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "播报"
             }
           }
-        ]
+        ],
+        "currentTab": 9
       }
     ],
     "direction": "vertical"
@@ -110,7 +221,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "欢迎.md",
+                "file": "播报.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -120,7 +231,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "欢迎 的反向链接列表"
+              "title": "播报 的反向链接列表"
             }
           },
           {
@@ -129,12 +240,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "欢迎.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "欢迎 的出链列表"
+              "title": "出链"
             }
           },
           {
@@ -172,16 +282,16 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "欢迎.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "欢迎 的大纲"
+              "title": "大纲"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
@@ -199,8 +309,44 @@
       "bases:新建数据库": false
     }
   },
-  "active": "c03d03bb49f45c08",
+  "active": "e25cd6f7ab62a05b",
   "lastOpenFiles": [
-    "欢迎.md"
+    "01_势力/阿巴尔.md",
+    "播报.md",
+    "全地图据点详尽目录.md",
+    "01_势力/阶州.md",
+    "01_势力/洪州.md",
+    "01_势力/瓜州.md",
+    "01_势力/东濊.md",
+    "01_势力/大顺.md",
+    "01_势力/常山.md",
+    "01_势力/巴哈尔兹.md",
+    "日志.md",
+    "03_武将/种世衡.md",
+    "03_武将/刘聪.md",
+    "03_武将/李继迁.md",
+    "03_武将/王威.md",
+    "03_武将/年羹尧.md",
+    "03_武将/魏尚.md",
+    "03_武将/李存勖.md",
+    "03_武将/韦皋.md",
+    "03_武将/王忠嗣.md",
+    "03_武将/慕容垂.md",
+    "03_武将/卢象升.md",
+    "03_武将/沈希仪.md",
+    "03_武将/潘新简.md",
+    "03_武将/早丹.md",
+    "03_武将/库尔班.md",
+    "05_武将技",
+    "未命名.canvas",
+    "99_开发文档/_meta",
+    "99_开发文档/武将分级依据",
+    "99_开发文档/_archive_stale/docs/archive/old_plans",
+    "99_开发文档/_archive_stale/docs/archive/old_overviews",
+    "99_开发文档/_archive_stale/docs/archive/daily_updates",
+    "99_开发文档/_archive_stale/docs/02-design/world",
+    "99_开发文档/_archive_stale/docs/02-design/systems",
+    "99_开发文档/_archive_stale/docs/02-design/battle",
+    "99_开发文档/_archive_stale/docs/02-design/ai"
   ]
 }
