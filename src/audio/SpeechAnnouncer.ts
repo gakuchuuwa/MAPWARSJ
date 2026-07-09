@@ -263,7 +263,7 @@ export class SpeechAnnouncer {
     this.clearSkillQueue();
     const attGeneral = opts.attackerGeneralId
       ? getGeneralRecordByGeneralId(opts.attackerGeneralId)
-      : getFactionGeneral(opts.attackerFactionId);
+      : null; // 攻方无将则不加将名，只用势力军（锚定将≠出征将）
     const attFaction = getFactionNameForSpeech(opts.attackerFactionId);
     const attackerLead = attGeneral
       ? `${attGeneral.generalName}率领${attFaction}军`
@@ -419,8 +419,7 @@ export class SpeechAnnouncer {
 
   /**
    * 三势技释放（仅跟随军团那场战斗，攻/守各一次，由 CombatUI 调用）。
-   * 句式：武将，本人势技名，亲率，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
-   * 守方无将领 → 攻方技不播（主人规则：不值一提）。
+   * 句式：武将，本人势技名，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
    * 入队成功返回 true，onStart 在 TTS 真正开口时触发（CombatUI 用它驱动脉冲 Cut-in，声画同刻）；
    * 返回 false = 本句不播，调用方自行安排脉冲时机。
    */
@@ -436,13 +435,12 @@ export class SpeechAnnouncer {
     onStart?: () => void;
   }): boolean {
     if (!this.enabled) return false;
-    if (opts.side === "attacker" && !opts.opponentHasGeneral) return false; // 守方无将 → 攻方技不播
     if (!opts.generalName || !opts.skillDisplayName) return false;
     const key = classifyStratagem(opts.skillId);
     if (!key) return false;
     const bajue = STRATAGEM_BAJUE[opts.side][key];
     if (!bajue) return false;
-    const eliteClause = opts.eliteName ? `，亲率，${opts.eliteName}` : "";
+    const eliteClause = opts.eliteName ? `，${opts.eliteName}` : "";
     const text = `${opts.generalName}，${opts.skillDisplayName}${eliteClause}，${bajue}`;
     console.log("[Speech] 技能:", text);
     // 双方技能紧挨入队（短战/相持窗不足）→ 仅第一句开口时插技能音效，避免句间硬切

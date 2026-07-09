@@ -1704,7 +1704,7 @@ export class CombatUI {
     }
 
     /**
-     * 技能释放语音：武将，势技名，亲率，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
+     * 技能释放语音：武将，势技名，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
      * 入队成功返回 true，onStart 在该句开口时触发（驱动脉冲 Cut-in，念谁弹谁）；false = 不播，调用方自排脉冲。
      */
     private announceSkillReleaseVoice(

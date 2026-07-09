@@ -73,11 +73,13 @@ export function noteCitySpawnTierFromLegion(
     if (army.isElite) tierState.spawnEliteUsed = true;
 }
 
-/** 挂据点锚定将领（旗号≠档案势力时仍挂该城录入将） */
+/** 挂据点锚定将领（仅当军团势力 = 据点锚定势力，防止占城方错挂守将） */
 export function attachFactionGeneralToArmy(army: Army): boolean {
     if (army.generalId) return false;
     const cityId = army.homeCityId ?? army.getSourceCityId();
     if (!isCityGeneralEliteAnchor(cityId)) return false;
+    const anchorFactionId = getCityAnchorFactionId(cityId);
+    if (anchorFactionId !== army.getFactionId()) return false; // 占城势力≠锚定势力，不给将
     const general = getCityAnchoredGeneral(cityId);
     if (!general) return false;
     army.generalId = general.generalId;

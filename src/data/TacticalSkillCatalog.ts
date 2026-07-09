@@ -358,7 +358,7 @@ const TROOP: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_022', layer: 'tactical', series: 'troop', index: 22,
-        displayName: '攻其不备', sourceQuote: '《孙子兵法·计》：“攻其无备，出其不意。”',
+        displayName: '乘瑕袭隙', sourceQuote: '《孙子兵法·计》：“攻其无备，出其不意。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         // 【2026-07-03】削20%→15%：always 高频 + 103 将持有，削20%→触发时~90% 超高频上限88%。
@@ -436,7 +436,7 @@ const CASUALTY: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_033', layer: 'tactical', series: 'casualty', index: 33,
-        displayName: '困兽犹斗', sourceQuote: '《左传·宣公十二年》：“困兽犹斗，况国相乎！”',
+        displayName: '绝境逆搏', sourceQuote: '《左传·宣公十二年》：“困兽犹斗，况国相乎！”',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
         magnitude: 1.5, engineStatus: 'ready',
         note: '败时咬人：胜方本场战损×1.5；胜方保底存活 10% 初始兵',
@@ -507,7 +507,7 @@ const COUNTER: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_043', layer: 'tactical', series: 'counter', index: 43,
-        displayName: '将计就计', sourceQuote: '《三国志·郭嘉传》注引：“因其计而用之。”',
+        displayName: '借策还施', sourceQuote: '《三国志·郭嘉传》注引：“因其计而用之。”',
         baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 0.7, engineStatus: 'ready',
         note: 'magnitude=0.7 是【70%概率完全否决敌技】，非按比例缩放；字段名 partial_negate 易误读，实现走概率门（跨量纲通用+直播悬念）',
@@ -534,7 +534,7 @@ const COUNTER: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_047', layer: 'tactical', series: 'troop', index: 47,
-        displayName: '声东击西', sourceQuote: '《通典·兵典》：“声言击东，其实击西。”',
+        displayName: '指南打北', sourceQuote: '《通典·兵典》：“声言击东，其实击西。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.12, engineStatus: 'ready',
         note: '地形对抗：引擎侧待接线（仅 combat-model 工具支持）',
@@ -760,7 +760,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_086', layer: 'tactical', series: 'fate', index: 86,
-        displayName: '以逸待劳', sourceQuote: '《新唐书·吐蕃传》：“钦陵悉众拒战，以逸待劳。”',
+        displayName: '整暇破疲', sourceQuote: '《新唐书·吐蕃传》：“钦陵悉众拒战，以逸待劳。”',
         baseEffect: 'luck_variance_enemy', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.2, luckMax: 0.85, engineStatus: 'ready',
     },
@@ -955,7 +955,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_121', layer: 'tactical', series: 'enhance', index: 121,
-        displayName: '摧枯拉朽', sourceQuote: '《华阳国志·蜀志》：“秦使司马错伐蜀，灭之。”',
+        displayName: '破关夺隘', sourceQuote: '《华阳国志·蜀志》：“秦使司马错伐蜀，灭之。”',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.35, engineStatus: 'ready',
     },
@@ -992,7 +992,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     // ── 第六批 T1（29 位名将补贴合技；ID ts_127-155）──
     {
         id: 'ts_127', layer: 'tactical', series: 'enhance', index: 127,
-        displayName: '后发制人', sourceQuote: '《日本外史》：“家康隐忍持重，后发而制人。”',
+        displayName: '隐忍伺机', sourceQuote: '《日本外史》：“家康隐忍持重，后发而制人。”',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.4, engineStatus: 'ready',
     },
@@ -4305,7 +4305,7 @@ const SANSHILIU: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_410', layer: 'tactical', series: 'casualty', index: 410,
-        displayName: '反客为主', sourceQuote: '《晋书·宣帝纪》：诈疾十年，高平陵闭城夺兵，诛曹爽三族，由辅臣易天下之主。',
+        displayName: '循序夺柄', sourceQuote: '《晋书·宣帝纪》：诈疾十年，高平陵闭城夺兵，诛曹爽三族，由辅臣易天下之主。',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.2, engineStatus: 'ready',
         note: '【并战计·借】司马懿；三十六计补充',
