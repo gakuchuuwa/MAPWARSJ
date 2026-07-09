@@ -17,9 +17,10 @@ export function resolveAnnihilationCityName(cityManager: CityManager, pos: LatLn
 export function markLegionAnnihilationFeed(
     army: Army,
     side: LegionBattleSide,
-    cityName: string
+    cityName: string,
+    kind: 'siege' | 'field' | 'siege_attacker' = 'siege',
 ): void {
     if (!GameConfig.SYSTEM.SANDBOX_MODE) return;
     if (army.type !== 'legion') return;
-    army.feedAnnihilation = { side, cityName };
+    army.feedAnnihilation = { side, cityName, kind };
 }

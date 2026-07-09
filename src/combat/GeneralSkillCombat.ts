@@ -84,8 +84,16 @@ function sideIsFirstSortie(units: IBattleUnit[]): boolean {
 /** 名将开局战术 UI 延迟（秒）：无时长信息时的兜底 */
 export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
 
-// 开局脉冲按本场目标时长比例后移；慢直播：短战提早亮相留错开窗，长战多给第一幕胶着。
-const OPENING_UI_DELAY_RATIO = 0.3;
+/**
+ * 战斗三阶段进度分界（与 BattleField 战损 / CombatUI 摆幅 / 武将技脉冲共用）。
+ * 第一幕加长到 45%：给开战语音（兵临/大战）念完的时间，再进相持放技能。
+ */
+export const PHASE_STALEMATE_START = 0.45;
+/** 第三幕（溃败）起点；第二幕 ≈ 45%～75% */
+export const PHASE_COLLAPSE_START = 0.75;
+
+// 开局脉冲按本场目标时长比例后移；慢直播：短战略提早亮相留错开窗，长战对齐第一幕末。
+const OPENING_UI_DELAY_RATIO = PHASE_STALEMATE_START;
 const OPENING_UI_DELAY_MAX_SEC = 20;
 /** 慢直播：双方技能 Cut-in 理想错开（秒），与 skill-cut-in 动画同长 */
 export const SKILL_PULSE_STAGGER_IDEAL_SEC = 3;
@@ -100,9 +108,9 @@ export function setBattleTargetDurationForSkillUi(sec: number): void {
     currentBattleTargetDurationSec = Number.isFinite(sec) && sec > 0 ? sec : 0;
 }
 
-/** 相持第二幕结束时刻（游戏内秒）= 目标时长 × 70% */
+/** 相持第二幕结束时刻（游戏内秒）= 目标时长 × PHASE_COLLAPSE_START */
 export function resolvePhase2EndSec(targetDurationSec: number): number {
-    return targetDurationSec * 0.7;
+    return targetDurationSec * PHASE_COLLAPSE_START;
 }
 
 /** 自当前时刻起，相持段还剩多少秒（供直播错开/是否播守方脉冲） */
@@ -112,23 +120,24 @@ export function resolvePhase2RemainingSec(targetDurationSec: number, elapsedSec:
 
 /**
  * 相持段武将技亮相时刻（游戏内秒）。
- * 慢直播：短战提早进第二幕留叙述窗；长战多给第一幕胶着，再亮技能。
+ * 慢直播：对齐加长后的第一幕末（≈45%）；短战略提早，避免挤在溃败段。
  */
 export function resolveStalemateUiThresholdSec(targetDurationSec: number): number {
-    if (targetDurationSec <= 0) return 2.5;
+    if (targetDurationSec <= 0) return 3.5;
     const T = targetDurationSec;
     const cap = (v: number) => Math.min(OPENING_UI_DELAY_MAX_SEC, v);
 
     if (T <= 7) {
-        return cap(Math.max(1.4, T * 0.24));
+        // 极短碾压：略早于 45%，仍给开战句一点铺垫
+        return cap(Math.max(2.0, T * 0.40));
     }
     if (T <= 12) {
-        return cap(Math.max(2.2, T * 0.27));
+        return cap(Math.max(3.0, T * 0.43));
     }
     if (T <= 22) {
-        return cap(Math.max(3.2, T * 0.29));
+        return cap(Math.max(4.5, T * 0.45));
     }
-    return cap(Math.max(3.5, T * OPENING_UI_DELAY_RATIO));
+    return cap(Math.max(5.0, T * OPENING_UI_DELAY_RATIO));
 }
 
 /**
@@ -603,7 +612,7 @@ function emitTacticalUi(
     options?: { uiDelaySec?: number; immediate?: boolean; fixedDelay?: boolean },
 ): void {
     // 与 emitTacticalUiV1 同约定：传默认常量 = 开局语义 → 按本场时长比例延迟；
-    // fixedDelay=true（援军入场亮相）例外——入场后尽快亮相，不等全场 30%。
+    // fixedDelay=true（援军入场亮相）例外——入场后尽快亮相，不等全场相持门槛。
     const delay =
         options?.immediate === true
             ? 0

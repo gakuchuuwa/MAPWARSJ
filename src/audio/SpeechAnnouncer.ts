@@ -18,6 +18,8 @@ interface SpeakOptions {
   /** 同步显示的字幕条文案（不传则不显示字幕） */
   banner?: string;
   rate?: number;
+  /** TTS 真正开口时回调（技能 Cut-in 与念名同刻；引擎无 onstart 时在 speak 前兜底） */
+  onStart?: () => void;
   /** 念完 / 被丢弃后回调（技能释放脉冲串行队列用） */
   onDone?: () => void;
 }
@@ -135,6 +137,18 @@ const FIELD_SHISHU: Record<CaptureJu, string> = {
   advantage: "势不可挡", balance: "势均力敌", disadvantage: "孤军奋勇",
 };
 
+/** 野战结束·三势词（主人 2026-07 定稿，原文照录；势=跟随军团的势） */
+const FIELD_WIN_METHOD: Record<CaptureJu, string> = { advantage: "所向披靡", balance: "奇兵制胜", disadvantage: "殊死一战" };
+const FIELD_WIN_BREAK: Record<CaptureJu, string> = { advantage: "大破", balance: "击破", disadvantage: "险胜" };
+const FIELD_WIN_ROUT: Record<CaptureJu, string> = { advantage: "败走而逃", balance: "引军退却", disadvantage: "功亏一篑" };
+const FIELD_LOSE: Record<CaptureJu, string> = {
+  advantage: "前功尽弃，兵败如山倒", balance: "溃不成军，一败涂地", disadvantage: "全军覆没，尸横遍野",
+};
+
+/** 攻城失败·三势词（主人 2026-07 定稿，原文照录；势=跟随军团的势） */
+const SIEGE_FAIL_PHRASE: Record<CaptureJu, string> = { advantage: "丢盔弃甲", balance: "无功而返", disadvantage: "以卵击石" };
+const SIEGE_FAIL_VERB: Record<CaptureJu, string> = { advantage: "惨败", balance: "兵败", disadvantage: "败于" };
+
 export class SpeechAnnouncer {
   private enabled = true;
   // 当前偏好的声音
@@ -142,8 +156,8 @@ export class SpeechAnnouncer {
   /** S 级播报占用截止时间戳：期间常规播报直接丢弃（S 级大事不被小事打断） */
   private sTierBusyUntilMs = 0;
 
-  /** 技能释放播报串行队列（攻先守后，不互相打断） */
-  private skillSpeakQueue: string[] = [];
+  /** 技能释放播报串行队列（入队顺序=亮相顺序：优势先/均势攻先；不互相打断）；onStart 在 TTS 开口时触发 */
+  private skillSpeakQueue: { text: string; onStart?: () => void }[] = [];
   private skillSpeaking = false;
 
   constructor() {}
@@ -324,6 +338,57 @@ export class SpeechAnnouncer {
     this.speak(text);
   }
 
+  /**
+   * 野战结束（仅跟随军团那场）。势=跟随军团这一仗的势（与攻打/技能/攻占同源）。
+   *   胜 → 「秦国军，{胜法}，{破}，赵国军，廉颇，{败象}」（敌无将不播；败将不冠名将）
+   *   败 → 「秦国军，{八字}」（不提敌方；取代野战里的通用覆没语音）
+   */
+  public announceFieldBattleEnd(opts: {
+    win: boolean;
+    followerFactionId: string;
+    followerSkillId?: string | null;
+    enemyFactionId?: string | null;
+    enemyGeneralId?: string | null;
+  }): void {
+    if (!this.enabled) return;
+    this.clearSkillQueue();
+    const ju: CaptureJu = (opts.followerSkillId ? classifyJu(opts.followerSkillId) : null) ?? "balance";
+    const fFaction = getFactionNameForSpeech(opts.followerFactionId);
+    let text: string;
+    if (opts.win) {
+      if (!opts.enemyGeneralId) return; // 敌无将 → 不播（胜利句）
+      const enemy = getGeneralRecordByGeneralId(opts.enemyGeneralId);
+      if (!enemy) return;
+      const eFaction = opts.enemyFactionId ? getFactionNameForSpeech(opts.enemyFactionId) : "";
+      text = `${fFaction}军，${FIELD_WIN_METHOD[ju]}，${FIELD_WIN_BREAK[ju]}，${eFaction}军，${enemy.generalName}，${FIELD_WIN_ROUT[ju]}`;
+    } else {
+      // 跟随败：只报跟随军团崩溃，不提敌方（always 播，野战里取代通用覆没语音）
+      text = `${fFaction}军，${FIELD_LOSE[ju]}`;
+    }
+    console.log("[Speech] 野战结束:", text);
+    this.speak(text);
+  }
+
+  /**
+   * 攻城失败（仅跟随军团那场，跟随军团攻城被打退）。势=跟随军团这一仗的势。
+   *   「秦国军，{四字}，{败动词}{据点}」；守方无将 → 不播报。取代攻城场景的通用覆没语音。
+   */
+  public announceSiegeFailure(opts: {
+    attackerFactionId: string;
+    attackerSkillId?: string | null;
+    cityName: string;
+    defenderGeneralId?: string | null;
+  }): void {
+    if (!this.enabled) return;
+    this.clearSkillQueue();
+    if (!opts.defenderGeneralId) return; // 守方无将 → 不播报
+    const ju: CaptureJu = (opts.attackerSkillId ? classifyJu(opts.attackerSkillId) : null) ?? "balance";
+    const fFaction = getFactionNameForSpeech(opts.attackerFactionId);
+    const text = `${fFaction}军，${SIEGE_FAIL_PHRASE[ju]}，${SIEGE_FAIL_VERB[ju]}${opts.cityName}`;
+    console.log("[Speech] 攻城失败:", text);
+    this.speak(text);
+  }
+
   /** 全军覆没 */
   public announceAnnihilation(factionId: string, _legionName: string, cityName: string, _generalId?: string): void {
     if (!this.enabled) return;
@@ -333,9 +398,11 @@ export class SpeechAnnouncer {
   }
 
   /**
-   * 三势技释放（仅跟随军团那场战斗，攻/守各一次，由 CombatUI 在技能名闪现时调用）。
+   * 三势技释放（仅跟随军团那场战斗，攻/守各一次，由 CombatUI 调用）。
    * 句式：武将，本人势技名，命，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
    * 守方无将领 → 攻方技不播（主人规则：不值一提）。
+   * 入队成功返回 true，onStart 在 TTS 真正开口时触发（CombatUI 用它驱动脉冲 Cut-in，声画同刻）；
+   * 返回 false = 本句不播，调用方自行安排脉冲时机。
    */
   public announceSkillRelease(opts: {
     side: "attacker" | "defender";
@@ -344,19 +411,21 @@ export class SpeechAnnouncer {
     skillId: string;
     eliteName?: string | null;
     opponentHasGeneral: boolean;
-  }): void {
-    if (!this.enabled) return;
-    if (opts.side === "attacker" && !opts.opponentHasGeneral) return; // 守方无将 → 攻方技不播
-    if (!opts.generalName || !opts.skillDisplayName) return;
+    onStart?: () => void;
+  }): boolean {
+    if (!this.enabled) return false;
+    if (opts.side === "attacker" && !opts.opponentHasGeneral) return false; // 守方无将 → 攻方技不播
+    if (!opts.generalName || !opts.skillDisplayName) return false;
     const key = classifyStratagem(opts.skillId);
-    if (!key) return;
+    if (!key) return false;
     const bajue = STRATAGEM_BAJUE[opts.side][key];
-    if (!bajue) return;
+    if (!bajue) return false;
     const eliteClause = opts.eliteName ? `，命，${opts.eliteName}` : "";
     const text = `${opts.generalName}，${opts.skillDisplayName}${eliteClause}，${bajue}`;
     console.log("[Speech] 技能:", text);
-    this.skillSpeakQueue.push(text);
+    this.skillSpeakQueue.push({ text, onStart: opts.onStart });
     this.drainSkillQueue();
+    return true;
   }
 
   /** 清空技能播报队列（新战斗开打时，旧残留不再念） */
@@ -365,13 +434,14 @@ export class SpeechAnnouncer {
     this.skillSpeaking = false;
   }
 
-  /** 串行出队：攻先守后依次念，不互相打断 */
+  /** 串行出队：按入队顺序依次念（BattleField 已排优势先/均势攻先）；onStart 在 TTS 开口时触发 */
   private drainSkillQueue(): void {
     if (this.skillSpeaking) return;
     const next = this.skillSpeakQueue.shift();
     if (next === undefined) return;
     this.skillSpeaking = true;
-    this.speak(next, {
+    this.speak(next.text, {
+      onStart: next.onStart,
       onDone: () => {
         this.skillSpeaking = false;
         this.drainSkillQueue();
@@ -382,12 +452,20 @@ export class SpeechAnnouncer {
   private speak(text: string, opts?: SpeakOptions): void {
     const now = Date.now();
     // S 级播报期间，常规播报直接丢弃（不 cancel，不排队——慢直播宁缺毋滥）
-    if (!opts?.sTier && now < this.sTierBusyUntilMs) { opts?.onDone?.(); return; }
+    if (!opts?.sTier && now < this.sTierBusyUntilMs) {
+      opts?.onStart?.();
+      opts?.onDone?.();
+      return;
+    }
 
     // 字幕条不依赖语音引擎是否可用（无声环境下画面仍完整）
     if (opts?.banner) SubtitleBanner.show(opts.banner);
 
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) { opts?.onDone?.(); return; }
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      opts?.onStart?.();
+      opts?.onDone?.();
+      return;
+    }
     const synth = window.speechSynthesis;
 
     if (opts?.sTier) {
@@ -412,30 +490,34 @@ export class SpeechAnnouncer {
 
       // 优先级闪避：播报期间压低音效 + 音乐，念完恢复
       audioManager.setSpeechDucking(true);
-      // 兜底：语音事件偶发不触发时，按估读时长强制恢复，避免音效/音乐一直被压
+      // 兜底：语音事件偶发不触发时，按估读时长强制走完收尾（恢复音量 + onDone 推进队列，防技能脉冲卡死）
       const duckSafetyMs = Math.min(15000, 1500 + text.length * 400);
-      let released = false;
-      const safety = window.setTimeout(() => {
-        released = true;
-        audioManager.setSpeechDucking(false);
-      }, duckSafetyMs);
-      const releaseDuck = () => {
-        if (released) return;
-        released = true;
+      let settled = false;
+      let started = false;
+      const fireStart = () => {
+        if (started) return;
+        started = true;
+        opts?.onStart?.();
+      };
+      const settle = () => {
+        if (settled) return;
+        settled = true;
+        // 引擎偶发不触发 onstart：收尾前补一次，避免脉冲永远不亮
+        fireStart();
         window.clearTimeout(safety);
         audioManager.setSpeechDucking(false);
-      };
-
-      utterance.onstart = () => audioManager.setSpeechDucking(true);
-
-      const settle = () => {
-        releaseDuck();
         if (opts?.sTier) this.sTierBusyUntilMs = 0;
         if (opts?.banner) {
           // 念完后字幕再停留片刻，缓缓淡出
           window.setTimeout(() => SubtitleBanner.hide(), 1200);
         }
         opts?.onDone?.();
+      };
+      const safety = window.setTimeout(settle, duckSafetyMs);
+
+      utterance.onstart = () => {
+        audioManager.setSpeechDucking(true);
+        fireStart();
       };
       utterance.onend = settle;
       utterance.onerror = settle;

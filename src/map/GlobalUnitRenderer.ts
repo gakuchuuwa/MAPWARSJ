@@ -715,17 +715,17 @@ export class GlobalUnitRenderer {
         // Base center point
         let centerPoint = this.map.latLngToContainerPoint([unitPos.lat, unitPos.lng]);
 
-        // [NEW] Check for identical positions to apply visual fan-out offset
-        const posKey = `${unitPos.lat.toFixed(5)},${unitPos.lng.toFixed(5)}`;
-        const overlapCount = this.positionCounts.get(posKey) || 0;
-        this.positionCounts.set(posKey, overlapCount + 1);
+        // [FIX] 屏距聚类 fan-out：逻辑坐标差 0.05 仍可能叠在同一像素格（方阵宽 >80px）
+        const currentZoom = this.map.getZoom();
+        const effectiveZoom = Math.min(currentZoom, 10);
+        const scale = Math.pow(2, effectiveZoom - 9) * 0.7;
+        const cellPx = 48;
+        const screenCellKey = `${Math.floor(centerPoint.x / cellPx)},${Math.floor(centerPoint.y / cellPx)}`;
+        const overlapCount = this.positionCounts.get(screenCellKey) || 0;
+        this.positionCounts.set(screenCellKey, overlapCount + 1);
 
         if (overlapCount > 0) {
-            const currentZoom = this.map.getZoom();
-            const effectiveZoom = Math.min(currentZoom, 10);
-            const offsetScale = Math.pow(2, effectiveZoom - 9) * 0.7;
-            const offsetDist = 45 * offsetScale; // Spread distance
-            // Spread out in a circle
+            const offsetDist = 58 * scale;
             const angle = overlapCount * (Math.PI / 3) + (Math.PI / 6);
             centerPoint.x += Math.cos(angle) * offsetDist;
             centerPoint.y += Math.sin(angle) * offsetDist;
@@ -741,9 +741,6 @@ export class GlobalUnitRenderer {
             return;
         }
 
-        const currentZoom = this.map.getZoom();
-        const effectiveZoom = Math.min(currentZoom, 10);
-        const scale = Math.pow(2, effectiveZoom - 9) * 0.7; // [USER REQUEST] Reduced to 0.7
         const troops = unit.getTroops();
 
         // Determine Direction First (needed for offset)

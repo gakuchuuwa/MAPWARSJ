@@ -147,6 +147,9 @@ export class AIController {
      * 黑板与 Army 对齐：路径「第一站」只存在 Army 上，不覆盖 strategicTargetCityId。
      */
     private syncBlackboardTarget(context: BTContext, army: Army): void {
+        // 追击敌军团时不与城目标黑板互写
+        if (context.strategicTargetArmyId) return;
+
         const strategicId = getStrategicTargetId(context);
         const armyCity = army.getTargetCity();
 
@@ -173,6 +176,7 @@ export class AIController {
             army: army,
             targetCityId: null,
             strategicTargetCityId: null,
+            strategicTargetArmyId: null,
             targetPosition: null,
             lastMoveResult: null,
             recentFailedTargets: new Map(),
@@ -202,7 +206,7 @@ export class AIController {
         const ctx = this.armyContexts.get(armyId);
         if (!ctx) return 'IDLE';
         if (ctx.army.getIsInCombat()) return 'IN_COMBAT';
-        if (ctx.strategicTargetCityId || ctx.targetCityId) return 'ATTACKING';
+        if (ctx.strategicTargetArmyId || ctx.strategicTargetCityId || ctx.targetCityId) return 'ATTACKING';
         return 'IDLE';
     }
 

@@ -56,6 +56,12 @@ export interface BTContext {
     /** 抽签终目标：不因路径「第一站」改写 */
     strategicTargetCityId: string | null;
 
+    /**
+     * 战略追击目标：附近敌军团 id（与 city 目标互斥）。
+     * 有值时优先野战追击，不走攻城链。
+     */
+    strategicTargetArmyId: string | null;
+
     /** 当前锁定的目标位置（终目标坐标） */
     targetPosition: { lat: number; lng: number } | null;
 

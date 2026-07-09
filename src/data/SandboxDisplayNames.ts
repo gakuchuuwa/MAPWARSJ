@@ -159,7 +159,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'dayuan': '大宛',
     'gouding': '句町',
 'dongxian': '东海',
-    'tongma': '铜马',
+'tongma': '胶西',
     'tongzhou': '同',
     'baibo': '黄巾',
     'wuhuan': '乌桓',

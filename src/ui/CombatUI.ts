@@ -46,6 +46,8 @@ import {
     getBattleTerrainKind,
     resolveSkillPulseStaggerSec,
     SKILL_PULSE_STAGGER_IDEAL_SEC,
+    PHASE_STALEMATE_START,
+    PHASE_COLLAPSE_START,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -1610,6 +1612,8 @@ export class CombatUI {
 
         const run = () => {
             if (this.boundRegionalBattleField?.isOver) return;
+            // 实际弹出时刻记档：混合场景（一侧语音驱动、一侧计时兜底）也按真实弹出时间错开
+            this.skillPulseLastAt = Math.max(this.skillPulseLastAt, Date.now());
             const box = pulseSide === 'attacker' ? this.leftSkillsBox : this.rightSkillsBox;
             const tag = this.findSkillTag(box, displayName);
             if (tag) {
@@ -1650,11 +1654,14 @@ export class CombatUI {
             `;
             frame.appendChild(cutIn);
             window.setTimeout(() => cutIn.remove(), 3000);
-
-            // [语音播报] 技能释放：与技能名 Cut-in 同步（攻先守后由 SpeechAnnouncer 串行队列保证不互相打断）
-            this.announceSkillReleaseVoice(pulseSide, displayName, generalId, skillId);
         };
-        // 长战错开念名；短战（≤10s）或相持窗不足时允许叠字，但攻先守后、双方都必须 Cut-in
+
+        // [语音播报] 技能释放：语音入队成功则由「开口那一刻」驱动 Cut-in（念谁弹谁，声画同刻；
+        // 入队顺序由 BattleField 排：优势先放，均势攻方先放）。不播 → 走下方错开计时兜底。
+        if (this.announceSkillReleaseVoice(pulseSide, displayName, run, generalId, skillId)) {
+            return;
+        }
+        // 长战错开念名；短战（≤10s）或相持窗不足时允许叠字，但双方都必须 Cut-in（顺序跟入队）
         const now = Date.now();
         const bf = this.boundRegionalBattleField;
         const staggerMs = bf && !bf.isOver && bf.targetDuration > 0
@@ -1677,31 +1684,36 @@ export class CombatUI {
         ) as HTMLElement | undefined) ?? null;
     }
 
-    /** 技能释放语音：武将，势技名，命，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。 */
+    /**
+     * 技能释放语音：武将，势技名，命，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
+     * 入队成功返回 true，onStart 在该句开口时触发（驱动脉冲 Cut-in，念谁弹谁）；false = 不播，调用方自排脉冲。
+     */
     private announceSkillReleaseVoice(
         side: 'attacker' | 'defender',
         displayName: string,
+        onStart: () => void,
         generalId?: string,
         skillId?: string,
-    ): void {
-        if (!generalId || !skillId || !displayName) return;
+    ): boolean {
+        if (!generalId || !skillId || !displayName) return false;
         const bf = this.boundRegionalBattleField;
-        if (!bf || bf.isOver) return;
+        if (!bf || bf.isOver) return false;
         const rec = getGeneralRecordByGeneralId(generalId);
-        if (!rec) return;
+        if (!rec) return false;
         const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
         const gUnit = units.find((u) => u.generalId === generalId) ?? null;
         const eliteName = gUnit ? getLegionEliteBadgeName(gUnit) : null;
         const opponentHasGeneral = side === 'attacker'
             ? !!this.rightGeneralNameTag.dataset.generalId
             : !!this.leftGeneralNameTag.dataset.generalId;
-        speechAnnouncer.announceSkillRelease({
+        return speechAnnouncer.announceSkillRelease({
             side,
             generalName: rec.generalName,
             skillDisplayName: displayName,
             skillId,
             eliteName,
             opponentHasGeneral,
+            onStart,
         });
     }
 
@@ -2882,7 +2894,7 @@ export class CombatUI {
         const total = attCurrent + defCurrent;
         const baseAttPct = total > 0 ? (attCurrent / total) * 100 : 50;
 
-        // 视觉微摆：配合 BattleField 三阶段节奏（30%/70%/100%）
+        // 视觉微摆：配合 BattleField 三阶段节奏（45%/75%/100%）
         let progress = 0;
         if (this.currentBattle) {
             const b: any = this.currentBattle;
@@ -2893,16 +2905,18 @@ export class CombatUI {
             progress = 1;
         }
 
+        const phase2Span = PHASE_COLLAPSE_START - PHASE_STALEMATE_START;
+        const phase3Span = 1 - PHASE_COLLAPSE_START;
         let swingAmp = 0;
-        if (progress < 0.3) {
-            // 第一幕胶着：小幅角力，不与相持段技能脉冲抢戏
+        if (progress < PHASE_STALEMATE_START) {
+            // 第一幕胶着：小幅角力，不与相持段技能脉冲抢戏（开战语音时段）
             swingAmp = 1;
-        } else if (progress < 0.7) {
-            // 第二幕相持（≈30% 武将技脉冲）：摆幅拉满后渐收，与亮相同刻起大幅拉锯
-            swingAmp = 4 - 3 * ((progress - 0.3) / 0.4); // 4 → 1
+        } else if (progress < PHASE_COLLAPSE_START) {
+            // 第二幕相持（≈45% 武将技脉冲）：摆幅拉满后渐收，与亮相同刻起大幅拉锯
+            swingAmp = 4 - 3 * ((progress - PHASE_STALEMATE_START) / phase2Span); // 4 → 1
         } else {
             // 第三幕溃败：几乎不摆，真实兵力比主导
-            swingAmp = 1 * (1 - (progress - 0.7) / 0.3); // 1 → 0
+            swingAmp = 1 * (1 - (progress - PHASE_COLLAPSE_START) / phase3Span); // 1 → 0
         }
 
         // 摇摆周期放慢 3 倍，使得拉锯显得厚重沉稳

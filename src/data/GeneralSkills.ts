@@ -461,7 +461,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     shache_xian_suoche_shachexian: { generalId: 'shache_xian_suoche_shachexian', tier: 'ordinary', tacticalSkillId: 'ts_024', advantageSkillId: 'ts_007', balanceSkillId: 'ts_046', disadvantageSkillId: 'ts_024', aptitude: 'reverse' }, // 莎车王纵横西域外交
     yao_liuyuan: { tacticalSkillId: 'ts_001', generalId: 'yao_liuyuan', tier: 'famous', strategicSkillId: 'str_13', advantageSkillId: 'ts_001', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_061', aptitude: 'create' },
     kong_d_caogui: { generalId: 'kong_d_caogui', tier: 'famous', tacticalSkillId: 'ts_049', strategicSkillId: 'str_12', advantageSkillId: 'ts_049', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_410', aptitude: 'reverse' }, // 曹刿·曲阜(长勺之战·一鼓作气·遂逐齐师)
-    tongma_liuang: { generalId: 'tongma_liuang', tier: 'ordinary', tacticalSkillId: 'ts_159', advantageSkillId: 'ts_399', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_159', aptitude: 'reverse' },
     yanchuan_d_yuefei: { generalId: 'yanchuan_d_yuefei', tier: 'famous', tacticalSkillId: 'ts_092', strategicSkillId: 'str_03', advantageSkillId: 'ts_092', balanceSkillId: 'ts_420', disadvantageSkillId: 'ts_421', aptitude: 'create' }, // 岳飞·郾城大捷
     guide_d_xiaohe: { generalId: 'guide_d_xiaohe', tier: 'ordinary', tacticalSkillId: 'ts_014', advantageSkillId: 'ts_401', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_024', aptitude: 'leverage' }, // 萧何深沟高垒
     tongzhou_liuzhiyuan: { generalId: 'tongzhou_liuzhiyuan', tier: 'ordinary', tacticalSkillId: 'ts_095', advantageSkillId: 'ts_022', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_095', aptitude: 'reverse' },
@@ -1326,6 +1325,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
     yanzhou_zhongshiheng: { generalId: 'yanzhou_zhongshiheng', tier: 'ordinary', tacticalSkillId: 'ts_006', advantageSkillId: 'ts_001', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_006', aptitude: 'leverage' },
     yansui_wangwei: { generalId: 'yansui_wangwei', tier: 'ordinary', tacticalSkillId: 'ts_409', advantageSkillId: 'ts_047', balanceSkillId: 'ts_046', disadvantageSkillId: 'ts_409', aptitude: 'reverse' },
+    tongma_taishici: { generalId: 'tongma_taishici', tier: 'ordinary', tacticalSkillId: 'ts_159', advantageSkillId: 'ts_399', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_159', aptitude: 'reverse' },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

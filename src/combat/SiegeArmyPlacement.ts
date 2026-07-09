@@ -1,6 +1,6 @@
 /**
- * 攻城待命占位：城周 COMBAT_RADIUS 圈上错开角度，**每支军团**间距 ≥ 0.05°（与 MultiLegionFieldBattle 同量级）。
- * 不靠六边形格；与 trimPathFromEnd / ZOC 同一套距离语义。
+ * 攻城待命占位：城周 COMBAT_RADIUS 圈上错开角度，**每支军团**中心间距 ≥ 0.12（约半格六边形，与野战 BATTLE_OFFSET 0.14 同量级）。
+ * 0.05 仅 ~20px 屏距，小于方阵贴图宽度，会视觉叠在一起。
  */
 import { GameConfig } from '../config/GameConfig';
 import { getEuclideanDistance, type LatLng } from '../core/DistanceUtils';
@@ -8,9 +8,10 @@ import { OrientationSystem } from '../core/OrientationSystem';
 import { Army } from '../legion/Army';
 import { gameLog } from '../utils/GameLogger';
 
-/** 任意两支军团最小间距（同势/异势均适用） */
-const MIN_ARMY_SEPARATION = 0.05;
-const SLOT_COUNT = 12;
+/** 任意两支军团最小间距（同势/异势均适用；须大于军团贴图视觉半径） */
+const MIN_ARMY_SEPARATION = 0.12;
+/** 每圈槽位数：6 槽 @ r≈0.12 时弦长 ≈ MIN_ARMY_SEPARATION */
+const SLOT_COUNT = 6;
 const MAX_RINGS = 3;
 const RING_STEP = 0.04;
 /** 扫描城周待命军团的范围（略大于 COMBAT_RADIUS） */
@@ -19,7 +20,8 @@ const NEAR_CITY_SCAN_RADIUS = GameConfig.SIEGE.COMBAT_RADIUS + 0.12;
 const SIEGE_REPOSITION_SCAN_RADIUS = GameConfig.COMBAT.BATTLE_JOIN_RADIUS;
 
 function standoffRadius(ring: number): number {
-    return GameConfig.SIEGE.COMBAT_RADIUS + ring * RING_STEP;
+    // 首圈略外扩，使 6 槽弦长 ≥ MIN_ARMY_SEPARATION
+    return GameConfig.SIEGE.COMBAT_RADIUS + 0.02 + ring * RING_STEP;
 }
 
 function generateStandoffCandidates(cityPos: LatLng): LatLng[] {

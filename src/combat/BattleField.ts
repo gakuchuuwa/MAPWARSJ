@@ -53,6 +53,8 @@ import {
     setActiveOpeningPulseSink,
     resolveStalemateUiThresholdSec,
     dispatchOpeningSkillPulse,
+    PHASE_STALEMATE_START,
+    PHASE_COLLAPSE_START,
     type IOpeningPulseSink,
     type TacticalSkillTrigger,
 } from './GeneralSkillCombat';
@@ -138,7 +140,7 @@ export class BattleField implements IOpeningPulseSink {
     private strongerCasualtyReduction: number = 0;
     /** 穷寇勿迫：弱方已跌破 20% 初始并触发过一次减损重算（锁存防抖，翻转时清） */
     private poorBanditLatched: boolean = false;
-    /** 相持段（≈30% 时长）前排队、之后统一释放的开局战术脉冲 */
+    /** 相持段（≈45% 时长）前排队、之后统一释放的开局战术脉冲 */
     private readonly openingPulseQueue: Array<{ trigger: TacticalSkillTrigger; audioUnitId?: string }> = [];
     private stalemateSkillUiReleased = false;
 
@@ -197,7 +199,7 @@ export class BattleField implements IOpeningPulseSink {
         this.calculateTargetDuration();
         // 开局脉冲按本场时长比例后移：须在 pickPredictedSides（内部同步 emit 开局技能 UI）之前注入。
         // 注入「估算最终时长」= 基础 × 节奏系数（computeFearDurationMult 与强弱判定无关，此刻即可算；
-        // 与真值仅差开局加兵技的微小兵力漂移）——脉冲延迟(30%)与战损引爆点(30%)按同一把尺对齐。
+        // 与真值仅差开局加兵技的微小兵力漂移）——脉冲延迟与战损引爆点按同一把尺对齐（第一幕末 ≈45%）。
         // 注入与发射同 tick 同步完成，多场战斗并发也不会互相污染。
         setBattleTargetDurationForSkillUi(
             clampBattleDurationSec(this.targetDuration * this.computeFearDurationMult())
@@ -579,7 +581,7 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     /**
-     * 相持第二幕（≈ targetDuration×30%）释放已排队脉冲；战斗 UI 晚开时由 showRegional 补调。
+     * 相持第二幕（≈ targetDuration×45%）释放已排队脉冲；战斗 UI 晚开时由 showRegional 补调。
      */
     public tryReleaseStalemateSkillUi(): void {
         if (this.stalemateSkillUiReleased || this.isOver) return;
@@ -594,14 +596,24 @@ export class BattleField implements IOpeningPulseSink {
         );
         setActiveOpeningPulseSink(null);
 
+        // 脉冲/播报顺序：优势方先放；均势（及无法判势）时攻方先放（主人 2026-07 定）
+        // 局势阈值与 assignSituationalSkills 一致：兵力比 >1.5 优势 / <0.67 劣势 / 其间均势
+        const attTroops = this.attackerGroup.initialTotalTroops;
+        const defTroops = this.defenderGroup.initialTotalTroops;
+        const attRatio = attTroops / Math.max(1, defTroops);
+        const firstSide: 'attacker' | 'defender' =
+            attRatio > 1.5 ? 'attacker' : attRatio < 0.67 ? 'defender' : 'attacker';
         const attGeneralIds = new Set(
             this.getAttackerUnits().map((u) => u.generalId).filter((id): id is string => !!id),
         );
-        const ordered = [...this.openingPulseQueue].sort((a, b) => {
-            const aAtt = attGeneralIds.has(a.trigger.generalId) ? 0 : 1;
-            const bAtt = attGeneralIds.has(b.trigger.generalId) ? 0 : 1;
-            return aAtt - bAtt;
-        });
+        const sideRank = (generalId: string): number => {
+            const isAtt = attGeneralIds.has(generalId);
+            const side: 'attacker' | 'defender' = isAtt ? 'attacker' : 'defender';
+            return side === firstSide ? 0 : 1;
+        };
+        const ordered = [...this.openingPulseQueue].sort(
+            (a, b) => sideRank(a.trigger.generalId) - sideRank(b.trigger.generalId),
+        );
         for (const item of ordered) {
             dispatchOpeningSkillPulse(item.trigger, item.audioUnitId);
         }
@@ -682,17 +694,18 @@ export class BattleField implements IOpeningPulseSink {
         const swingEnvelope = this.presetResult ? 0 : Math.pow(1 - clampedProgress, 0.7);
         const swing = this.presetResult ? 0 : this.momentumValue * swingEnvelope * 0.85;
 
-        // 三阶段战损节奏（用户 2026-07 定，势均/悬殊同构）：
-        //   第一阶段(<30%)：双方净战损压到 45%（打得慢、胶着）→ 配合上面的大摆动 = 大幅拉锯难料；
-        //   第二阶段(30%~70% 放开到全速)：恰逢技能脉冲亮相（延迟≈时长30%）→ 悬殊「看起来」由技能引爆；
-        //   第三阶段(最后30%)：收敛模型 troops/timeLeft 自我修正，前期少掉的兵在末段自动补回 → 覆灭自然加快。
+        // 三阶段战损节奏（用户 2026-07 定，势均/悬殊同构；第一幕加长以适配开战语音）：
+        //   第一阶段(<45%)：双方净战损压到 45%（打得慢、胶着）→ 开战播报念完再进相持；
+        //   第二阶段(45%~75% 放开到全速)：恰逢技能脉冲亮相 → 悬殊「看起来」由技能引爆；
+        //   第三阶段(最后25%)：收敛模型 troops/timeLeft 自我修正，前期少掉的兵在末段自动补回 → 覆灭自然加快。
         //   总时长与胜负不受影响。
+        const phase2Span = PHASE_COLLAPSE_START - PHASE_STALEMATE_START;
         const pacing = this.presetResult
             ? 1
-            : progress < 0.3
+            : progress < PHASE_STALEMATE_START
                 ? 0.45
-                : progress < 0.7
-                    ? 0.45 + 0.55 * ((progress - 0.3) / 0.4)
+                : progress < PHASE_COLLAPSE_START
+                    ? 0.45 + 0.55 * ((progress - PHASE_STALEMATE_START) / phase2Span)
                     : 1;
 
         // swing>0 强方冲击（弱方多掉、强方少掉）；swing<0 弱方反击。

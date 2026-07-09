@@ -72,7 +72,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   huaiyang: { name: '细柳营', tier: 3 },     // 周亚夫细柳营，军纪严明之文化符号，提拔至T3知名
     yao: { name: '屠各精骑', tier: 3 },
     kong_d: { name: '曲阜甲士', tier: 3 },
-  tongma: { name: '胶西郡国兵', tier: 4 },       // 胶西·刘卬发国兵参与七国之乱，战败
+    tongma: { name: '高密强弩', tier: 4 },
     yanchuan_d: { name: '背嵬军', tier: 0 },
   guide_d: { name: '酂侯亲卫', tier: 4 },   // 永城·萧何酂侯
   tongzhou: { name: '匡国牙兵', tier: 4 },    // 长宁·后汉高祖镇守同州（缺乏进攻高光，降T3）

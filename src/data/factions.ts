@@ -329,7 +329,11 @@ export const FACTIONS: Faction[] = [
     { id: 'chanzhou', name: '澶州' },       // 澶州(濮阳)；代表卫国，避免旗号重名；澶州弩手
     { id: 'pizhou', name: '邳州' },       // 邳州(下邳)；陷阵营高顺
     // ── 2026-05-26 新增：汉朝补全半成品势力 ──
-    { id: 'tongma', name: '铜马' },
+    { id: 'tongma', name: '胶西' },
+
+
+
+
     { id: 'tongzhou', name: '同州' },
     { id: 'dongxian', name: '东海' },
 

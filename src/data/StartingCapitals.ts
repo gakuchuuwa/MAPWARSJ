@@ -156,7 +156,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'xingliao': 'city_longwan',
 'cen_d': 'city_cen',
 'dongxian': 'city_tancheng',
-    'tongma': 'city_jiaoxi',
+'tongma': 'city_jiaoxi',
     'tongzhou': 'city_shayuan',
     'baibo': 'city_baibogu',
     'wuhuan': 'city_bailangshan',

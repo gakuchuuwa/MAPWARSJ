@@ -30,16 +30,16 @@ export class Army implements IBattleUnit {
     /** 事件链攻城任务的完成回调：只在最终目标城之战结束时触发（途中 hop 战不触发） */
     public siegeMissionComplete: (() => void) | null = null;
 
-    /** 大乱斗军情：全军覆没播报（destroy 时触发） */
-    public feedAnnihilation?: { side: 'attacker' | 'defender'; cityName: string };
+    /** 大乱斗军情：全军覆没播报（destroy 时触发）。kind='field'/'siege_attacker' 时语音由「野战败/攻城失败」接管，覆没语音跳过 */
+    public feedAnnihilation?: { side: 'attacker' | 'defender'; cityName: string; kind?: 'siege' | 'field' | 'siege_attacker' };
 
     private static annihilationReporter?: (
         army: Army,
-        info: { side: 'attacker' | 'defender'; cityName: string }
+        info: { side: 'attacker' | 'defender'; cityName: string; kind?: 'siege' | 'field' | 'siege_attacker' }
     ) => void;
 
     public static setAnnihilationReporter(
-        reporter: ((army: Army, info: { side: 'attacker' | 'defender'; cityName: string }) => void) | null
+        reporter: ((army: Army, info: { side: 'attacker' | 'defender'; cityName: string; kind?: 'siege' | 'field' | 'siege_attacker' }) => void) | null
     ): void {
         Army.annihilationReporter = reporter ?? undefined;
     }

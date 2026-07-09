@@ -75,7 +75,7 @@ function legionToFieldAdapter(
             legion.setCombatState(false);
         },
         () => {
-            markLegionAnnihilationFeed(legion, side, battleCityName);
+            markLegionAnnihilationFeed(legion, side, battleCityName, 'field');
             legion.destroy();
             deps.removeArmy(legion);
         }
@@ -245,7 +245,7 @@ function startFieldBattleBetween(
     const attName = deps.getCityManager().getFactionName(attFaction);
     const defName = deps.getCityManager().getFactionName(defFaction);
 
-    combatSystem.startRegionalBattle(
+    const fieldBattleField = combatSystem.startRegionalBattle(
         attFaction,
         attUnits,
         defFaction,
@@ -257,8 +257,7 @@ function startFieldBattleBetween(
         `${attName} 大战 ${defName}`
     );
 
-    // [语音播报] 野战开战（仅跟随军团那场）：跟随军团念在前 + 它这一仗的势；敌方无将不播。
-    // 势读跟随军团 battleOverriddenSkillId（startRegionalBattle 已写；与攻打/技能/攻占同源）。
+    // [语音播报] 野战开战（仅跟随军团那场）。势读跟随军团 battleOverriddenSkillId（与攻打/技能/攻占同源）。
     const followedFieldId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
     if (followedFieldId) {
         const onAtt = attLegions.some((l) => l.id === followedFieldId);
@@ -277,4 +276,27 @@ function startFieldBattleBetween(
             });
         }
     }
+    // [语音播报] 野战结束：结算时再查跟随对象（中途换跟随也接得上；覆没→跟拍延迟切换，结算同帧仍可读到）。
+    // 接管本场首发军团的覆没语音（legionToFieldAdapter 标 'field' 已抑制通用覆没）；
+    // 跟随军团覆没时即使本方获胜也按败句播（win 须本方胜且跟随存活）。
+    fieldBattleField.onBattleComplete = (winnerFactionId: string) => {
+        const endFollowedId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+        if (!endFollowedId) return;
+        const endOnAtt = attLegions.some((l) => l.id === endFollowedId);
+        const endOnDef = defLegions.some((l) => l.id === endFollowedId);
+        if (!endOnAtt && !endOnDef) return; // 中途编入的援军走通用覆没语音（其标记为默认 'siege'）
+        const endLegions = endOnAtt ? attLegions : defLegions;
+        const endUnits = endOnAtt ? attUnits : defUnits;
+        const endIdx = endLegions.findIndex((l) => l.id === endFollowedId);
+        const follower = endLegions[endIdx];
+        const endEnemyPrimary = endOnAtt ? otherArmy : army;
+        const endFollowerFaction = endOnAtt ? attFaction : defFaction;
+        speechAnnouncer.announceFieldBattleEnd({
+            win: winnerFactionId === endFollowerFaction && !!follower && !follower.isDestroyed,
+            followerFactionId: endFollowerFaction,
+            followerSkillId: endUnits[endIdx]?.battleOverriddenSkillId ?? null,
+            enemyFactionId: endOnAtt ? defFaction : attFaction,
+            enemyGeneralId: endEnemyPrimary?.generalId ?? null,
+        });
+    };
 }

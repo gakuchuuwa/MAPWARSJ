@@ -35,7 +35,7 @@ import {
     clearSiegeGarrisonBoost,
     type SiegeGarrisonBoostFields,
 } from './SiegeGarrisonTier';
-import { repositionAllLegionsNearSiegeCity, repositionSiegeArmiesAroundCity } from './SiegeArmyPlacement';
+import { repositionAllLegionsNearSiegeCity } from './SiegeArmyPlacement';
 
 export class SiegeManager {
     private static get JOIN_RADIUS(): number {
@@ -86,19 +86,9 @@ export class SiegeManager {
         repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies());
     }
 
-    /** 同城第三方排队后：连同已在途/参战者整体重排 */
+    /** 城周开战圈内所有军团错开（异势/同势/在途/排队/参战一并重排） */
     private repositionThirdPartyWaiters(cityId: string, cityPos: { lat: number; lng: number }): void {
-        const queue = this.siegeThirdPartyWaiters.get(cityId) ?? [];
-        const waiters = queue
-            .map((e) => e.army)
-            .filter((a) => !a.isDestroyed);
-
-        // 仅对“排队等待”的军团做强制错位；其它在途/参战军团作为占位阻挡参与避让。
-        if (waiters.length > 0) {
-            repositionSiegeArmiesAroundCity(cityPos, waiters, this.legionManager.getArmies());
-            return;
-        }
-        // 队列已空时退回全量重排，清理可能遗留的重叠。
+        void cityId;
         repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies());
     }
 
@@ -745,7 +735,22 @@ export class SiegeManager {
             () => { // Defeat
                 siegeLog(`[Siege] Attacker Defeat!`);
                 this.activeSieges.delete(targetCity.id);
-                markLegionAnnihilationFeed(army, 'attacker', targetCity.name);
+                // [语音播报] 跟随军团攻城失败（守方有将才播）；专句真播出时才标记 siege_attacker 抑制通用覆没语音，
+                // 否则（守方无将/未跟随）保持默认 'siege'，覆没语音照常兜底，避免跟随军团无声覆没。
+                const followedIdFail = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+                const failDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
+                const failSpeechTaken = followedIdFail === army.id && !!failDefGeneralId;
+                if (failSpeechTaken) {
+                    const failAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
+                        ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
+                    speechAnnouncer.announceSiegeFailure({
+                        attackerFactionId: army.getFactionId(),
+                        attackerSkillId: failAtkUnit?.battleOverriddenSkillId ?? null,
+                        cityName: targetCity.name,
+                        defenderGeneralId: failDefGeneralId,
+                    });
+                }
+                markLegionAnnihilationFeed(army, 'attacker', targetCity.name, failSpeechTaken ? 'siege_attacker' : 'siege');
                 army.expeditionTargetCityId = null;
                 army.destroy();
             }

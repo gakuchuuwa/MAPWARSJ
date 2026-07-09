@@ -177,6 +177,14 @@ export class GameConfig {
             CITY_THRESHOLD: 40,
             PROBABILITY: 0.20,
         },
+        /**
+         * 选目标时优先寻附近敌军团（LatLng 欧氏，约 0.5≈55km）。
+         * 命中则追击接野战；范围内无敌军团再走原「近敌城抽签」。
+         * 与野战接触半径 0.2 / 扫描 0.28 对齐：寻敌窗更大，撞上后仍由 LegionFieldBattle 开战。
+         */
+        HUNT_ENEMY_LEGION_RADIUS: 0.5,
+        /** 追击中敌军团跑出此半径则放弃，改选据点（略大于寻敌半径，防边界抖） */
+        HUNT_ENEMY_LEGION_ABANDON_RADIUS: 0.7,
         /** 行军首段超过此距离（LatLng 单位）时打诊断日志 */
         MARCH_DIAG_FIRST_LEG: 0.35,
         /** 距出兵/驻地据点超过此距离时，寻路优先用当前位置最近城作道路起点（避免野战后折返首都） */

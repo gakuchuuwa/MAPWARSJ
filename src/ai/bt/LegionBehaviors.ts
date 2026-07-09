@@ -1,13 +1,13 @@
 /**
  * LegionBehaviors.ts
  *
- * 军团 AI 行为树节点（收复发出点 → 推进锚点近敌池抽签 → 沿路推进 → 攻城）
+ * 军团 AI 行为树节点（收复发出点 → 附近敌军团追击 → 推进锚点近敌池抽签 → 沿路推进 → 攻城）
  *
  * 双模式（GAME_DIRECTION 2026-06-11）：
  *   据点军团：
  *     · 本城正被攻打且仍属己方 → 回援守城（reinforceHome，以守方援军身份中途加入，早于城破）
  *     · 本城已失守（易主）→ 强制回师收复（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
- *     · 否则 → 推进锚点近 3 敌城抽签
+ *     · 否则 → 先扫附近敌军团（野战追击）→ 无则推进锚点近 3 敌城抽签
  *   远征军团：目标锁死、家城被攻打/失守均不回师（shouldSkipHomeRecapture），直至占领/兵败或全军覆没
  */
 
@@ -17,8 +17,11 @@ import {
     btLog,
     clearStrategicTarget,
     formatTargetLabel,
+    getStrategicTargetArmyId,
     getStrategicTargetId,
+    getStrategicTargetKey,
     markTargetCooldown,
+    setStrategicArmyTarget,
     setStrategicTarget,
 } from './BtDecisionLog';
 import { TargetEvaluator } from '../TargetEvaluator';
@@ -35,6 +38,7 @@ import {
 import { isCampaignLegion, shouldSkipHomeRecapture } from '../../legion/LegionSpawnPolicy';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { clampCityTroops } from '../../config/CityConfig';
+import type { Army } from '../../legion/Army';
 
 // =====================
 // 条件检查节点
@@ -121,6 +125,75 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
     return 'locked';
 }
 
+/** 从 LegionManager 按 id 取现役军团（无 getArmy API 时线性扫） */
+function findArmyById(ctx: BTContext, armyId: string): Army | null {
+    const armies: Army[] | undefined = ctx.legionManager?.getArmies?.();
+    if (!armies) return null;
+    return armies.find((a) => a.id === armyId) ?? null;
+}
+
+/** 追击目标是否仍有效；有效时刷新黑板坐标 */
+function refreshHuntArmyTarget(ctx: BTContext): Army | null {
+    const huntId = getStrategicTargetArmyId(ctx);
+    if (!huntId) return null;
+    const enemy = findArmyById(ctx, huntId);
+    const abandonR = GameConfig.AI.HUNT_ENEMY_LEGION_ABANDON_RADIUS;
+    if (
+        !enemy ||
+        enemy.isDestroyed ||
+        enemy.getTroops() <= 0 ||
+        enemy.getFactionId() === ctx.army.getFactionId() ||
+        enemy.getFactionId() === 'neutral'
+    ) {
+        markTargetCooldown(ctx, `army:${huntId}`, 'hunt_invalid');
+        clearStrategicTarget(ctx);
+        return null;
+    }
+    const myPos = ctx.army.getPosition();
+    const ePos = enemy.getPosition();
+    if (getEuclideanDistance(myPos, ePos) > abandonR) {
+        markTargetCooldown(ctx, `army:${huntId}`, 'hunt_out_of_range');
+        clearStrategicTarget(ctx);
+        return null;
+    }
+    ctx.targetPosition = { lat: ePos.lat, lng: ePos.lng };
+    return enemy;
+}
+
+/**
+ * 在寻敌半径内找最近可野战敌军团（排除冷却、交战中、排队攻城）。
+ * 收复本城优先于本函数；本函数优先于近敌城抽签。
+ */
+function pickNearbyEnemyLegion(ctx: BTContext, excludeTargetIds: Set<string>): Army | null {
+    const huntR = GameConfig.AI.HUNT_ENEMY_LEGION_RADIUS;
+    const myPos = ctx.army.getPosition();
+    const myFaction = ctx.army.getFactionId();
+    const registry = ctx.legionManager?.getSpatialRegistry?.();
+    if (!registry?.getArmiesInRadius) return null;
+
+    const nearby: Army[] = registry.getArmiesInRadius(myPos.lat, myPos.lng, huntR);
+    let best: Army | null = null;
+    let bestDist = Infinity;
+
+    for (const other of nearby) {
+        if (!other || other === ctx.army || other.isDestroyed || other.getTroops() <= 0) continue;
+        if (other.getFactionId() === myFaction) continue;
+        if (other.getFactionId() === 'neutral') continue;
+        if (other.getIsInCombat?.()) continue;
+        if (ctx.legionManager.isArmyWaitingSiege?.(other.id)) continue;
+        const key = `army:${other.id}`;
+        if (excludeTargetIds.has(key)) continue;
+
+        const d = getEuclideanDistance(myPos, other.getPosition());
+        if (d > huntR) continue;
+        if (d < bestDist) {
+            bestDist = d;
+            best = other;
+        }
+    }
+    return best;
+}
+
 export const HasTarget = new Condition('HasTarget', (ctx) => {
     // 远征模式：跳过回师检查（断粮不回），目标锁死
     const expedition = resolveExpeditionState(ctx);
@@ -134,15 +207,22 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
 
         if (recaptureId) {
             const strategicId = getStrategicTargetId(ctx);
-            if (strategicId !== recaptureId) {
-                if (strategicId) {
-                    markTargetCooldown(ctx, strategicId, 'capital_recapture');
+            const huntId = getStrategicTargetArmyId(ctx);
+            if (strategicId !== recaptureId || huntId) {
+                const prevKey = getStrategicTargetKey(ctx);
+                if (prevKey) {
+                    markTargetCooldown(ctx, prevKey, 'capital_recapture');
                 }
                 clearStrategicTarget(ctx);
                 ctx.army.setTargetCity(null);
             }
             return false;
         }
+    }
+
+    // 追击敌军团：目标仍有效则保持
+    if (getStrategicTargetArmyId(ctx)) {
+        return !!refreshHuntArmyTarget(ctx);
     }
 
     const strategicId = getStrategicTargetId(ctx);
@@ -163,6 +243,8 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
 export const IsMoving = new Condition('IsMoving', (ctx) => !ctx.army.isIdle());
 
 const SIEGE_REACH_RADIUS = GameConfig.SIEGE.COMBAT_RADIUS + 0.1;
+/** 与 LegionFieldBattle 接触半径一致：追到此距离内等碰撞开战 */
+const FIELD_HUNT_CONTACT_RADIUS = 0.2;
 const FAILED_TARGET_COOLDOWN_MS = GameConfig.AI.FAILED_TARGET_COOLDOWN_MS;
 const MOVE_FAILURE_LOG_COOLDOWN_MS = 10_000;
 
@@ -186,6 +268,13 @@ function resolveSiegeCity(ctx: BTContext) {
 }
 
 export const IsNearTarget = new Condition('IsNearTarget', (ctx) => {
+    // 追击军团：近到野战接触半径即可（开战由 LegionManager 碰撞触发）
+    if (getStrategicTargetArmyId(ctx)) {
+        const enemy = refreshHuntArmyTarget(ctx);
+        if (!enemy) return false;
+        const dist = getEuclideanDistance(ctx.army.getPosition(), enemy.getPosition());
+        return dist <= FIELD_HUNT_CONTACT_RADIUS;
+    }
     const target = resolveSiegeCity(ctx);
     if (!target || target.factionId === ctx.army.getFactionId()) return false;
     const armyPos = ctx.army.getPosition();
@@ -240,6 +329,22 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         }
     }
 
+    // ① 先找附近敌军团（野战追击）；无则再选据点
+    const nearbyEnemy = pickNearbyEnemyLegion(ctx, excludeTargetIds);
+    if (nearbyEnemy) {
+        const ePos = nearbyEnemy.getPosition();
+        setStrategicArmyTarget(ctx, nearbyEnemy.id, { lat: ePos.lat, lng: ePos.lng });
+        ctx.army.setTargetCity(null);
+        const distKm = getEuclideanDistance(ctx.army.getPosition(), ePos) * 111;
+        btLog(
+            ctx,
+            `hunt:${nearbyEnemy.id}`,
+            `[AI] ${ctx.army.name} 追击附近敌军【${nearbyEnemy.name}】` +
+                `（约 ${distKm.toFixed(0)} km，优先于攻城）`
+        );
+        return BTStatus.SUCCESS;
+    }
+
     const useHomeAnchor = ctx.army.getTroops() < GameConfig.LEGION.HOME_ANCHOR_TROOP_THRESHOLD;
     const anchorId = useHomeAnchor
         ? originCityId
@@ -281,7 +386,44 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     return BTStatus.SUCCESS;
 });
 
+/** 朝敌军团当前位置直线追击（短距；接战靠 LegionFieldBattle 碰撞） */
+function chaseEnemyArmy(ctx: BTContext, enemy: Army): BTStatus {
+    const myPos = ctx.army.getPosition();
+    const ePos = enemy.getPosition();
+    const dist = getEuclideanDistance(myPos, ePos);
+    if (dist <= FIELD_HUNT_CONTACT_RADIUS) {
+        // 已贴身：停步等碰撞开战；若本帧仍未开战则保持 SUCCESS 不放弃
+        if (!ctx.army.isIdle()) ctx.army.stopMovement?.(false);
+        ctx.targetPosition = { lat: ePos.lat, lng: ePos.lng };
+        return BTStatus.SUCCESS;
+    }
+
+    // 已在朝目标方向走：每帧刷新终点（敌军在动）
+    ctx.targetPosition = { lat: ePos.lat, lng: ePos.lng };
+    if (ctx.army.isBlocked()) {
+        markMoveFailure(ctx, `army:${enemy.id}`, 'blocked');
+        return BTStatus.FAILURE;
+    }
+
+    // 直线追：每帧重设短路径，避免敌军跑偏后仍沿旧路点
+    ctx.army.moveAlongPath([{ lat: ePos.lat, lng: ePos.lng }]);
+    ctx.lastMoveResult = 'success';
+    btLog(
+        ctx,
+        `chase:${enemy.id}`,
+        `[AI] ${ctx.army.name} 追击【${enemy.name}】`
+    );
+    return BTStatus.SUCCESS;
+}
+
 export const MoveToTarget = new Action('MoveToTarget', (ctx) => {
+    // 追击敌军团
+    if (getStrategicTargetArmyId(ctx)) {
+        const enemy = refreshHuntArmyTarget(ctx);
+        if (!enemy) return BTStatus.FAILURE;
+        return chaseEnemyArmy(ctx, enemy);
+    }
+
     const strategicId = getStrategicTargetId(ctx);
     if (!strategicId) return BTStatus.FAILURE;
 
@@ -330,22 +472,41 @@ export const MoveToTarget = new Action('MoveToTarget', (ctx) => {
 });
 
 export const AbandonTarget = new Action('AbandonTarget', (ctx) => {
-    const abandoned = getStrategicTargetId(ctx);
+    const abandoned = getStrategicTargetKey(ctx);
     if (!abandoned) {
         return BTStatus.FAILURE;
     }
 
     markTargetCooldown(ctx, abandoned, 'abandon');
+    const huntId = getStrategicTargetArmyId(ctx);
+    const huntName = huntId ? (findArmyById(ctx, huntId)?.name ?? huntId) : null;
     clearStrategicTarget(ctx);
     ctx.army.setTargetCity(null);
     ctx.army.stopMovement();
 
-    const name = formatTargetLabel(ctx.cityManager, abandoned);
+    const name = huntName ?? formatTargetLabel(ctx.cityManager, abandoned);
     btLog(ctx, `abandon:${abandoned}`, `[AI] ${ctx.army.name} 放弃【${name}】`);
     return BTStatus.SUCCESS;
 });
 
+/** 追击贴身后：开战由碰撞系统负责；此处仅占位成功，避免误走攻城 */
+export const HoldForFieldContact = new Action('HoldForFieldContact', (ctx) => {
+    if (!getStrategicTargetArmyId(ctx)) return BTStatus.FAILURE;
+    const enemy = refreshHuntArmyTarget(ctx);
+    if (!enemy) return BTStatus.FAILURE;
+    // 已在战斗则清追击目标
+    if (ctx.army.getIsInCombat()) {
+        clearStrategicTarget(ctx);
+        return BTStatus.SUCCESS;
+    }
+    if (!ctx.army.isIdle()) ctx.army.stopMovement?.(false);
+    return BTStatus.SUCCESS;
+});
+
 export const TriggerSiege = new Action('TriggerSiege', (ctx) => {
+    // 军团追击目标不走攻城
+    if (getStrategicTargetArmyId(ctx)) return BTStatus.FAILURE;
+
     const targetCity = resolveSiegeCity(ctx);
     if (!targetCity) return BTStatus.FAILURE;
     if (targetCity.factionId === ctx.army.getFactionId()) {
@@ -491,7 +652,11 @@ const giveUpUnreachable = new Sequence('GiveUpUnreachable', [
 ]);
 
 const approachOrStrike = new Selector('ApproachOrStrike', [
-    new Sequence('StrikeIfNear', [IsNearTarget, TriggerSiege]),
+    // 追击敌军：贴身后等待野战碰撞；攻城链仅对城目标
+    new Sequence('EngageIfNear', [
+        IsNearTarget,
+        new Selector('SiegeOrHoldHunt', [TriggerSiege, HoldForFieldContact]),
+    ]),
     new Selector('MarchOrGiveUp', [MoveToTarget, giveUpUnreachable]),
 ]);
 

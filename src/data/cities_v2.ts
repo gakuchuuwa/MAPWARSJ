@@ -1273,9 +1273,11 @@ export const PERIPHERY: CityDataV2[] = [
         tier: 4,
         
         note: '蓬莱；天顺小城', region: 'NORTH' },
-    { id: 'city_jiaoxi', name: '胶西', factionId: 'tongma', lat: 36.228777, lng: 119.924011, type: 'small_city', region: 'CENTRAL', troops: 20000,
-        note: '胶西；铜马小城',
-    },
+    { id: 'city_jiaoxi', name: '胶西', factionId: 'tongma', lat: 36.228777, lng: 119.924011, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
+
+
+
 
     // ── 2026-05-25 元朝蒙古势力新增城市 ──
     // 第一类：西征摧毁政权
