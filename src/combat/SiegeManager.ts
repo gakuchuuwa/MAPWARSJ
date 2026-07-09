@@ -135,6 +135,11 @@ export class SiegeManager {
             if (!army || army.isDestroyed) continue;
             if (army.getTargetCity()?.id === cityId) return true;
         }
+        // 行为树行军路径：LegionRoadMarch 会设 army.setTargetCity()，不在 pendingSieges 中
+        for (const army of this.legionManager.getArmies()) {
+            if (army.isDestroyed) continue;
+            if (army.getTargetCity()?.id === cityId) return true;
+        }
         return false;
     }
 
@@ -537,14 +542,16 @@ export class SiegeManager {
             }
 
             // 路过/奔他城：不协战、不传送（曾导致乘胜追击后卡死）
+            // 本城军团（homeCityId = siegeCityId）必须回援，不受此限
             if (siegeCityId) {
                 const targetId = legion.getTargetCity?.()?.id;
                 const idle = legion.isIdle();
-                if (!idle && targetId && targetId !== siegeCityId) {
+                const isHomeLegion = legion.homeCityId === siegeCityId;
+                if (!idle && targetId && targetId !== siegeCityId && !isHomeLegion) {
                     siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 路过/奔他城（目标≠本城）`);
                     return false;
                 }
-                if (!idle && !targetId) {
+                if (!idle && !targetId && !isHomeLegion) {
                     // 有路径但无城目标（如追击敌军）：也不强拉协战
                     siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 行军中且无本城目标`);
                     return false;

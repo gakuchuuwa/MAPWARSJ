@@ -399,7 +399,7 @@ export class SpeechAnnouncer {
 
   /**
    * 三势技释放（仅跟随军团那场战斗，攻/守各一次，由 CombatUI 调用）。
-   * 句式：武将，本人势技名，命，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
+   * 句式：武将，本人势技名，亲率，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
    * 守方无将领 → 攻方技不播（主人规则：不值一提）。
    * 入队成功返回 true，onStart 在 TTS 真正开口时触发（CombatUI 用它驱动脉冲 Cut-in，声画同刻）；
    * 返回 false = 本句不播，调用方自行安排脉冲时机。
@@ -420,7 +420,7 @@ export class SpeechAnnouncer {
     if (!key) return false;
     const bajue = STRATAGEM_BAJUE[opts.side][key];
     if (!bajue) return false;
-    const eliteClause = opts.eliteName ? `，命，${opts.eliteName}` : "";
+    const eliteClause = opts.eliteName ? `，亲率，${opts.eliteName}` : "";
     const text = `${opts.generalName}，${opts.skillDisplayName}${eliteClause}，${bajue}`;
     console.log("[Speech] 技能:", text);
     this.skillSpeakQueue.push({ text, onStart: opts.onStart });

@@ -658,7 +658,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/NORTH/huo_songlaosheng.png": {
-            "scale": 0.94,
+            "scale": 0.9,
             "offsetX": 0,
             "offsetY": -20
         },
@@ -5303,7 +5303,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/CENTRAL_ASIA/9ef0f16d-448b-4e10-873e-4e5027693e11.png": {
-            "scale": 1.01,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": -11
         },

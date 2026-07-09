@@ -262,6 +262,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
 
 
 
+
     // ── 齐鲁古国与半岛走廊中城 ──
     { id: 'city_dingtao', name: '定陶', factionId: 'wazhai', lat: 35.200716, lng: 115.471802, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
@@ -2563,6 +2564,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_linchuan', name: '临川', factionId: 'fu2', lat: 27.9779, lng: 116.3562, type: 'small_city', region: 'JIANGNAN', troops: 20000, note: '抚州治临川；陈周迪据守，临川郡兵' },
     { id: 'city_binzhou2', name: '新平', factionId: 'xinping', lat: 35.03, lng: 108.08, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
+
+
+
     { id: 'city_fangqu', name: '方渠', factionId: 'huan', lat: 36.58, lng: 107.3, type: 'small_city', region: 'HEXI', troops: 20000,
         note: '方渠；环州小城',
     },
@@ -2694,6 +2698,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
 
+
     { id: 'city_liaocheng', name: '聊城', factionId: 'bozhou_d', lat: 36.4322, lng: 115.9552, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
 
@@ -2746,6 +2751,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yunyang', name: '郧阳', factionId: 'luming', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 20000, region: 'CENTRAL' },
     { id: 'city_zhongshan', name: '中山', factionId: 'dingzhou', lat: 38.4708, lng: 115.0626, type: 'small_city', troops: 20000, region: 'NORTH' },
     { id: 'city_ledou', name: '乐都', factionId: 'shanzhou', lat: 36.49, lng: 102.37, type: 'pass', troops: 20000, region: 'TIBET' },
+
 
     { id: 'city_xuecheng', name: '薛城', factionId: 'weizhou', lat: 31.43, lng: 103.16, type: 'small_city', troops: 20000, region: 'BASHU' },
     { id: 'city_zhangguojuncheng', name: '彰国军城', factionId: 'yingzhou_d2', lat: 39.5761, lng: 113.1894, type: 'small_city', troops: 20000, region: 'NORTH' },

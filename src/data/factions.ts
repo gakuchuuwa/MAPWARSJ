@@ -197,6 +197,7 @@ export const FACTIONS: Faction[] = [
 
 
 
+
     { id: 'li_lx_d', name: '陇西' },
 
 
@@ -1184,6 +1185,9 @@ export const FACTIONS: Faction[] = [
     { id: 'fu2', name: '抚州' },
     { id: 'xinping', name: '邠州' },
 
+
+
+
     { id: 'huan', name: '环州' },
     { id: 'wei2', name: '韦州' },
     { id: 'lingzhou', name: '灵州' },
@@ -1261,6 +1265,7 @@ export const FACTIONS: Faction[] = [
     { id: 'dang_d', name: '虞国' },               // 砀@虞城（汉砀郡；豫东梁国属县）
     // ── 2026-06-11 新增：濠州（原凤阳朱氏改挂）──
     { id: 'hao_d', name: '濠州' },
+
 
 
                 // 濠@蚌埠（隋唐濠州治钟离故地）
@@ -1462,6 +1467,7 @@ export const FACTIONS: Faction[] = [
     { id: 'luming', name: '郧州' },
     { id: 'dingzhou', name: '定州' },
     { id: 'shanzhou', name: '鄯州' },
+
 
     { id: 'weizhou', name: '维州' },
     { id: 'yingzhou_d2', name: '应州' },

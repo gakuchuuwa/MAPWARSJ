@@ -76,18 +76,18 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     yanchuan_d: { name: '背嵬军', tier: 0 },
   guide_d: { name: '酂侯亲卫', tier: 4 },   // 永城·萧何酂侯
   tongzhou: { name: '匡国牙兵', tier: 4 },    // 长宁·后汉高祖镇守同州（缺乏进攻高光，降T3）
-    hao_d: { name: '钟离健儿', tier: 3 },
+    hao_d: { name: '钟离护卫', tier: 3 },
     suzhou_d: { name: '江北四镇', tier: 3 },
     sima_d: { name: '宣王中军', tier: 3 },
     bozhou_d: { name: '青州兵', tier: 2 },
   mengcheng_d: { name: '山桑弓手', tier: 4 },
   shangzhou: { name: '商州锐士', tier: 4 },
     bailian: { name: '白莲教众', tier: 4 },
-    xinping: { name: '朔方健儿', tier: 3 },
+    xinping: { name: '邠宁铁骑', tier: 2 },
   huai: { name: '淮西子弟', tier: 3 },                // 朱元璋开国初期的核心将帅班底，极具政治与军事符号意义，升入T3知名
   dang_d: { name: '厅子都', tier: 2 },
   qianzhou: { name: '神策军', tier: 1 },          // 奉天·李晟神策军收复长安
-    xiao_d: { name: '兰陵健儿', tier: 3 },
+    xiao_d: { name: '兰陵宿卫', tier: 3 },
   zhengzhou: { name: '白袍军', tier: 2 },        // 仅存在于北伐战役，随后覆灭，极度缺乏建制延续性，属于特定战役的巅峰高光，符合T2战术
     song: { name: '殿前捧日', tier: 1 },
     zhao: { name: '丛台绝剑', tier: 2 },
