@@ -40,27 +40,24 @@ const STORAGE_KEY = 'mapwar_audio_settings_v2';
 const DEFAULT_SETTINGS: AudioSettings = {
     enabled: true,
     masterVolume: 0.5,
-    // 三层基准（播报/音效/音乐）原为齐平 1.0，优先级靠 ducking。
-    // 2026-07-06 主人反馈音效+背景音乐略大 → 音效层(ui/battle/feed)与音乐层(bgm)小幅下调至 0.85（约 -15%），
-    // 播报层(走 master×SPEECH_GAIN，不受此表)不动。仅小调，勿再改回 1.0。
+    // 三层基准：语音优先（master×0.95），音效次之（匹配战斗氛围），音乐打底
     categoryVolume: {
         ui: 0.85,
-        battle: 0.85,
-        feed: 0.85,
-        bgm: 0.85,
+        battle: 0.95,
+        feed: 0.95,
+        bgm: 0.55,
     },
 };
 
-// ---- 混音闪避（ducking）：播报/音效同层互斥，音乐打底 ----
-// 播报和音效是同一层级、同音量，但互斥：播报响时音效静音，播报不响时音效正常。
-// BGM 始终播放，只是在播报或音效活跃时压低音量。
+// ---- 混音闪避（ducking）：语音优先，音效与音乐打底衬托 ----
+// 播报响时音效/音乐压到低量衬托，不抢语音；无播报时各层正常。
 const DUCK = {
-    /** 播报时音乐压到 25% */
-    bgmUnderSpeech: 0.25,
+    /** 播报时音乐压到 35%（衬托不抢） */
+    bgmUnderSpeech: 0.35,
     /** 仅音效循环(行军/战斗)时音乐压到 45% */
     bgmUnderSfx: 0.45,
-    /** 播报时音效层轻压（非完全静音，减轻硬切感） */
-    sfxUnderSpeech: 0.08,
+    /** 播报时音效压到 12%（微弱衬托，不抢语音） */
+    sfxUnderSpeech: 0.12,
 } as const;
 /** 播报有效音量 = master × SPEECH_GAIN（TTS 感知偏轻，补偿至与音效/音乐齐平） */
 const SPEECH_GAIN = 0.95; // 小幅上调播报音量（+5%）
@@ -86,8 +83,8 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     battle_loop: sound('battle', 'battle_loop', 0.5, 0),
     battle_start: sound('battle', 'battle_start', 0.65, 1600),
     battle_end: sound('battle', 'battle_end', 0.55, 1600),
-    battle_victory: sound('battle', 'battle_victory', 0.7, 1800),
-    battle_defeat: sound('battle', 'battle_defeat', 0.6, 1800),
+    battle_victory: sound('battle', 'battle_victory', 0.8, 1800),
+    battle_defeat: sound('battle', 'battle_defeat', 0.7, 1800),
     battle_reinforcement: sound('battle', 'battle_reinforcement', 0.5, 2200),
     city_capture: sound('feed', 'city_capture', 0.7, 1200),
     faction_fall: sound('feed', 'faction_fall', 0.85, 1800),
@@ -235,7 +232,9 @@ export class AudioManager {
         const cached = this.objectUrlCache.get(src);
         if (cached) return cached;
         try {
-            const res = await fetch(src, { cache: 'force-cache' });
+            // 破缓存：加 ?ts 防止旧文件被浏览器磁盘缓存死咬
+            const cacheKey = `${src}?ts=${Date.now()}`;
+            const res = await fetch(cacheKey);
             if (!res.ok) return null;
             const buf = await res.arrayBuffer();
             const blob = new Blob([buf], { type: 'audio/ogg' });

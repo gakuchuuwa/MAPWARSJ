@@ -956,6 +956,24 @@ export class SiegeManager {
             });
         }
 
+        // [语音播报] 跟随军团作为援军参战（开战时卷入的附近友军）
+        for (const legion of [...nearbyDefenderLegions, ...nearbyAttackerLegions]) {
+            if (followedIdForSpeech !== legion.id) continue;
+            const isAttacker = nearbyAttackerLegions.includes(legion);
+            const unit = (isAttacker ? attackerUnits : defenderUnits).find((u) => u.generalId === legion.generalId)
+                ?? null;
+            const genRec = legion.generalId ? getGeneralRecordByGeneralId(legion.generalId) : null;
+            speechAnnouncer.announceReinforcementJoin({
+                factionId: legion.getFactionId(),
+                generalId: legion.generalId ?? null,
+                generalName: genRec?.generalName ?? null,
+                eliteName: getLegionEliteLegionName(legion),
+                side: isAttacker ? 'attacker' : 'defender',
+                cityName: targetCity.name,
+                battleSkillId: unit?.battleOverriddenSkillId ?? null,
+            });
+        }
+
         // 战斗结束 = 事件结束（战后动作在后台运行）
         battleField.onBattleComplete = (winnerFactionId) => {
             siegeLog(`✅ [Siege] Battle complete. Winner: ${winnerFactionId}`);
