@@ -788,6 +788,8 @@ export function getStrategicBattlePowerMultiplier(
     battleType?: BattleType,
     terrain?: LandTerrainKind | null,
     side?: 'attacker' | 'defender',
+    selfTroops?: number,
+    enemyTroops?: number,
 ): number {
     if (!canUnitUseGeneralSkills(unit) || !battleType) return 1;
     const profile = getGeneralProfile(unit.generalId);
@@ -798,6 +800,15 @@ export function getStrategicBattlePowerMultiplier(
         // S③所向披靡：进攻方专用，攻城/野战通吃
         case 'attacker_power_mult':
             return side === 'attacker' ? skill.magnitude : 1;
+        // S⑨以寡击众：劣势时（兵力<0.67倍敌方）自身战力×1.4
+        case 'disadvantage_power_mult':
+            if (selfTroops !== undefined && enemyTroops !== undefined && enemyTroops > 0) {
+                return (selfTroops / enemyTroops) < 0.67 ? skill.magnitude : 1;
+            }
+            return 1;
+        // S⑧固若金汤：守城时城防战力×1.5（仅攻城战守方）
+        case 'garrison_defense_mult':
+            return battleType === 'siege' && side === 'defender' ? skill.magnitude : 1;
         default:
             return 1;
     }
@@ -818,6 +829,56 @@ export function generalHasStrategicEffect(unit: IBattleUnit, effect: StrategicEf
 }
 
 /** 据点锚定将领的战略效果乘数（无匹配则 1） */
+/**
+ * 战略技对战术技效果的乘区加成（S②因地制宜 / S④威震华夏）。
+ * 返回乘数（默认 1），调用处用 skill.magnitude * 此值。
+ */
+function getStrategicTacticalSkillMult(
+    unit: IBattleUnit,
+    selfTroops: number,
+    enemyTroops: number,
+    terrain?: LandTerrainKind | null,
+): number {
+    if (!canUnitUseGeneralSkills(unit)) return 1;
+    const profile = getGeneralProfile(unit.generalId);
+    if (!profile?.strategicSkillId) return 1;
+    const stratSkill = getStrategicSkillDef(profile.strategicSkillId);
+    if (!stratSkill) return 1;
+
+    let mult = 1;
+
+    // S④威震华夏：优势时（兵力>1.5倍）战术技效果×1.3
+    if (stratSkill.effect === 'advantage_skill_effect_mult') {
+        if (enemyTroops > 0 && selfTroops / enemyTroops > 1.5) {
+            mult *= stratSkill.magnitude;
+        }
+    }
+
+    // S②因地制宜：地形匹配时战术技效果翻倍（magnitude=2.0）
+    if (stratSkill.effect === 'terrain_tactical_double' && terrain) {
+        const activeTacId = getActiveTacticalSkillId(unit);
+        if (activeTacId) {
+            const tacEntry = getTacticalSkillEntry(activeTacId);
+            if (tacEntry) {
+                const terrainTags = tacEntry.tags ?? [];
+                const hasTerrainTag = terrainTags.some((t: string) => {
+                    const tag = t.toLowerCase();
+                    return (terrain === 'mountain' && (tag.includes('山') || tag.includes('高地')))
+                        || (terrain === 'plain' && (tag.includes('平原') || tag.includes('骑')))
+                        || (terrain === 'water' && (tag.includes('水') || tag.includes('船') || tag.includes('江')));
+                });
+                if (hasTerrainTag) mult *= stratSkill.magnitude;
+            }
+        }
+    }
+
+    return mult;
+}
+
+function formatStrategicTacticalLabel(mult: number): string {
+    if (mult > 1.01) return `（战略技加成 ×${mult.toFixed(1)}）`;
+    return '';
+}
 export function getCityAnchoredStrategicMagnitude(
     cityId: string,
     effect: StrategicEffect,
@@ -1419,12 +1480,12 @@ export function applyOpeningTacticalToRolls(
 
         if (skill.effect === 'ally_mult_1_2') {
             if (!bridgedOpeningEnhanceActive(units, opponentUnits, isAttacker, opts)) return roll;
-            let mult = skill.magnitude;
+            const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
+            const oppTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+            let mult = skill.magnitude * getStrategicTacticalSkillMult(unit, selfTroops, oppTroops, opts?.terrain);
             const oppUnit = findEligibleGeneralUnit(opponentUnits);
             const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
             if (oppActiveId && mult > 1) {
-                const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
-                const oppTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
                 const oppCtx = buildTacticalConditionContext({
                     battleType: opts?.battleType ?? 'field',
                     terrain: opts?.terrain ?? null,
@@ -1674,14 +1735,14 @@ export function applyStrategicBattleToRolls(
     ): number => {
         const unit = findEligibleGeneralUnit(units);
         if (!unit?.generalId) return roll;
-        let mult = getStrategicBattlePowerMultiplier(unit, battleType, terrainKind, side);
+        const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
+        const oppTroops = opponents.reduce((s, u) => s + Math.max(0, u.troops), 0);
+        let mult = getStrategicBattlePowerMultiplier(unit, battleType, terrainKind, side, selfTroops, oppTroops);
         if (Math.abs(mult - 1) < 0.001) return roll;
 
         const oppUnit = findEligibleGeneralUnit(opponents);
         const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
         if (oppActiveId) {
-            const oppTroops = opponents.reduce((s, u) => s + Math.max(0, u.troops), 0);
-            const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
             const oppCtx = buildTacticalConditionContext({
                 battleType,
                 terrain: terrainKind,
@@ -1740,6 +1801,7 @@ function applyPostBattleTroopPct(
 export function applyPostBattleStrategicBonus(
     unit: IBattleUnit,
     _battleType: BattleType,
+    enemySurvivors?: number,
 ): number {
     let total = 0;
 
@@ -1757,8 +1819,15 @@ export function applyPostBattleStrategicBonus(
             const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
             if (profileSkill && profileSkill.effect === 'post_battle_troop_pct' && !appliedForage) {
                 total += applyPostBattleTroopPct(unit, profileSkill, '');
+            } else if (profileSkill?.effect === 'post_battle_recruit_enemy_pct' && enemySurvivors !== undefined && enemySurvivors > 0) {
+                // S⑥招降纳叛：胜后缴获敌方残兵 10%
+                const bonus = Math.floor(enemySurvivors * profileSkill.magnitude);
+                if (bonus > 0) {
+                    unit.setTroops(unit.troops + bonus);
+                    total += bonus;
+                    gameLog('battle', `🏳️ [武将技] ${unit.generalId ?? '?'} 【${profileSkill.displayName}】缴获降兵 +${bonus}（敌残兵 ${enemySurvivors} × ${(profileSkill.magnitude * 100).toFixed(0)}%）`);
+                }
             } else if (profileSkill?.hiddenPostBattlePct && profileSkill.hiddenPostBattlePct > 0) {
-                // 地图系战略技隐藏胜后续航：静默补血，不写日志、不显示 UI（见 StrategicSkillDef.hiddenPostBattlePct）
                 const bonus = Math.floor(unit.troops * profileSkill.hiddenPostBattlePct);
                 if (bonus > 0) {
                     unit.setTroops(unit.troops + bonus);

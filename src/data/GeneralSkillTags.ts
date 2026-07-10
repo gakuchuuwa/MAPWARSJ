@@ -351,8 +351,8 @@ export function auditAssignTierConstraints(
 // ── 战略技分配闸门（2026-07-03 v1 重设计随行）────────────────────
 /** 战略限量技上限（所向披靡=战略层唯一战斗乘区，防重蹈攻其不备 123 人覆辙） */
 export const STRATEGIC_LIMITED_CAPS: Readonly<Record<string, number>> = { str_03: 30 };
-/** 退役战略技（S④⑤⑥⑧ 地形/守方战斗乘区，2026-07-03 删）——档案中出现即违规 */
-export const RETIRED_STRATEGIC_IDS: readonly string[] = ['str_04', 'str_05', 'str_06', 'str_08'];
+/** 退役战略技（v1 地形/守方战斗乘区已于 v2 复活为新六类技，当前无退役） */
+export const RETIRED_STRATEGIC_IDS: readonly string[] = [];
 
 export interface StrategicAssignAuditResult {
     ok: boolean;
@@ -712,9 +712,9 @@ export const STRATEGIC_SKILL_TAGS = [
     { id: 'str_01', grid: 'S①', name: '兵贵神速', tags: ['急行军', '闪击', '远征机动'], terrain: '行军' },
     // S②攻城拔寨已并入 S③所向披靡（2026-06-27）：进攻方专精，攻城/野战通吃
     { id: 'str_03', grid: 'S③', name: '所向披靡', tags: ['攻城', '破城', '野战', '会战', '正面决战'], terrain: '进攻方' },
-    { id: 'str_04', grid: 'S④', name: '长驱直入', tags: ['平原', '骑兵', '长驱'], terrain: '平原' },
-    { id: 'str_05', grid: 'S⑤', name: '居高临下', tags: ['山地', '山城', '据险'], terrain: '山地' },
-    { id: 'str_06', grid: 'S⑥', name: '乘风破浪', tags: ['水战', '渡海', '江面'], terrain: '水域' },
+    { id: 'str_04', grid: 'S④', name: '威震华夏', tags: ['威慑', '威名', '心理压制'], terrain: '奇策' },
+    { id: 'str_05', grid: 'S⑤', name: '坚壁清野', tags: ['焦土', '清野', '拖守'], terrain: '据点防' },
+    { id: 'str_06', grid: 'S⑥', name: '招降纳叛', tags: ['纳降', '收编', '化敌'], terrain: '奇策' },
 ] as const;
 
 /** 按 tacticalId 查标签 */

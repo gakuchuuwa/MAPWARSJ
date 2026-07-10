@@ -13,7 +13,7 @@ import { GameConfig } from '../config/GameConfig';
 import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
-import { generalHasStrategicEffect } from '../combat/GeneralSkillCombat';
+import { generalHasStrategicEffect, getCityAnchoredStrategicMagnitude } from '../combat/GeneralSkillCombat';
 
 export class FollowResupplySystem {
     private cityManager: CityManager;
@@ -58,7 +58,19 @@ export class FollowResupplySystem {
         });
         if (nearFriendly) return;
 
-        const ratePerSec = armyMax * 0.00015;
+        // S⑤坚壁清野：附近有敌方据点守将持有此效果时，攻城方缓回血减半
+        let resupplyMult = 1;
+        const allCities = this.cityManager.getCities();
+        for (const city of allCities) {
+            if (city.factionId === factionId || city.factionId === 'neutral' || city.factionId === 'panjun') continue;
+            const dist = getEuclideanDistance(pos, { lat: city.latitude, lng: city.longitude });
+            if (dist <= radius) {
+                const mag = getCityAnchoredStrategicMagnitude(city.id, 'siege_attacker_supply_halved');
+                if (mag < 1) { resupplyMult = Math.min(resupplyMult, mag); }
+            }
+        }
+
+        const ratePerSec = armyMax * 0.00015 * resupplyMult;
         const accum = (this.fieldResupplyAccum.get(army.id) ?? 0) + ratePerSec * deltaTimeSec;
         if (accum < 1) {
             this.fieldResupplyAccum.set(army.id, accum);

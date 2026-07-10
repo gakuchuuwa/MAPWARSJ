@@ -985,7 +985,8 @@ export class BattleField implements IOpeningPulseSink {
                 gameLog('battle', `🦂 [BattleField] ${bu.unit.name} 被咬 -${extraBite}（保底存活 ${survivalFloor}）`);
             }
 
-            const strategicBonus = applyPostBattleStrategicBonus(bu.unit, this.type);
+            const enemySurvivors = loserGroup.units.reduce((s, bu) => s + Math.max(0, bu.unit.troops), 0);
+            const strategicBonus = applyPostBattleStrategicBonus(bu.unit, this.type, enemySurvivors);
             if (strategicBonus > 0) {
                 gameLog('battle', `🌾 [BattleField] ${bu.unit.name} 战略增兵 +${strategicBonus}`);
             }

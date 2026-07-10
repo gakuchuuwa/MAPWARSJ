@@ -423,6 +423,8 @@ export class LegionManager {
                     );
                     // 先存档再攻城：勿 stop(false) 清空战前路径，否则战后无法 resume
                     army.stopMovement(true);
+                    // 存档后再收位：setPosition 会清行军路径，先收位会毁掉战前存档
+                    this.clampArmyToSiegeRing(army, zocCity, oldPos);
                     army.setTargetCity(zocCity);
                     this.triggerSiege(army, zocCity);
                     return;
@@ -447,6 +449,7 @@ export class LegionManager {
                         if (dist <= 0.2) {
                             // 已有攻城战时仍走 triggerSiege → onArmyArrive（同旗加入 / 第三方排队 / 新开战）
                             gameLog('legionSiege', `🏯 [LegionManager] ${army.name} arrived at hostile city ${latestTargetCity.name} (${dist.toFixed(4)}). Triggering Siege!`);
+                            this.clampArmyToSiegeRing(army, latestTargetCity, oldPos);
                             this.triggerSiege(army, latestTargetCity);
                             return; // Stop processing this army
                         }
@@ -593,6 +596,30 @@ export class LegionManager {
     /** 当前位置是否已进入敌方/叛军据点攻城圈 */
     private findHostileCityInZOC(army: Army): City | null {
         return this.findHostileCityNear(army.getPosition(), army.getFactionId(), army);
+    }
+
+    /**
+     * 高速军团（骑兵×兵贵神速×高倍速）一帧步距可达 0.06+，越过 COMBAT_RADIUS 停步线
+     * 才被逐帧检测发现，停得离城过近甚至穿心。停步后把越线部分沿「城→军团」方向收回
+     * 到线上：同一帧渲染前完成，观感即「冲到停步线停住」，所有军团停在同一条线。
+     * 必须在 stopMovement(true) 之后调用——setPosition 对行军中军团会清路径，先收位会毁战前存档。
+     * @param fallbackFrom 本帧移动前坐标；军团恰好踩在城心（方向不可求）时用它定方向
+     */
+    private clampArmyToSiegeRing(army: Army, city: City, fallbackFrom: LatLng): void {
+        const ring = GameConfig.SIEGE.COMBAT_RADIUS;
+        const cityPos = { lat: city.latitude, lng: city.longitude };
+        const pos = army.getPosition();
+        if (getEuclideanDistance(pos, cityPos) >= ring) return;
+        let dirLat = pos.lat - cityPos.lat;
+        let dirLng = pos.lng - cityPos.lng;
+        let len = Math.sqrt(dirLat * dirLat + dirLng * dirLng);
+        if (len < 1e-9) {
+            dirLat = fallbackFrom.lat - cityPos.lat;
+            dirLng = fallbackFrom.lng - cityPos.lng;
+            len = Math.sqrt(dirLat * dirLat + dirLng * dirLng);
+            if (len < 1e-9) return; // 连上一帧也在城心：放弃收位（极端罕见）
+        }
+        army.setPosition(cityPos.lat + (dirLat / len) * ring, cityPos.lng + (dirLng / len) * ring);
     }
 
     /** 供 AI：军团站在敌对据点 ZOC 内时必须先处理该城 */
