@@ -2215,6 +2215,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_huixian', name: '河池', factionId: 'huizhou_d', lat: 33.80, lng: 106.06, type: 'small_city', region: 'BASHU', troops: 20000, note: '河池；诸葛亮元戎' },
 { id: 'city_huojia', name: '获嘉', factionId: 'sima_d', lat: 35.26, lng: 113.66, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
+
     { id: 'city_eyu', name: '阏与', factionId: 'liguo', lat: 36.487, lng: 113.381, type: 'pass', troops: 20000, region: 'CENTRAL' },
 
 

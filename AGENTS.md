@@ -699,7 +699,7 @@ npm run skeleton:audit
 2. **坐标** — 史料锚定，原则上不改  
 3. **旗号** — §4.1 最高可考一级；与据点名防重  
 4. **势力全名** — `factions.ts`；军情/叙事用，≠旗号  
-5. **将领** — 绑 `factionId`；占城不过户  
+5. **将领** — 绑 `cityId`（四位一体：据点、势力、武将、精锐随城走）  
 6. **精锐** — 绑 **首都 cityId**（番号随城）；与将领、旗号**不要求同代同族**  
 7. **文化区** — `region` 字段与 `getCityRegion` 一致  
 
@@ -990,7 +990,7 @@ npm run skeleton:audit
 
 - **数据录入**：`*ExpeditionLegions.ts` 仍写 `factionId → 番号`；经 `STARTING_CAPITALS` 推导为 `cityId → 番号`（`CITY_ELITE_LEGIONS`）。
 - **运行时募兵**：番号查 **`homeCityId` / `sourceCityId`**（番号随城），见 `getLegionEliteLegionName`。
-- **将领档案**：`FactionGenerals.ts` 绑 `factionId`（占城不过户）。
+- **将领档案**：`FactionGenerals.ts` 绑 `factionId` → `cityId`（四位一体，谁占城谁得将）。
 - **将领出场**：仅 **锚点据点**（默认 `STARTING_CAPITALS[factionId]`）的军团或该城守城城防；**军团与城防互斥**，共用 `spawnGeneralUsed`。
 
 ```

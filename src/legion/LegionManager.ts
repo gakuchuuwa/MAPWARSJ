@@ -613,10 +613,14 @@ export class LegionManager {
             if (!city.factionId || city.factionId === factionId) continue;
             // 长驱深入：仅 small_city 可被绕过，按 (军团id+据点id) 稳定掷点（同一军团对同一小城结果固定，
             // 不逐帧闪烁），命中概率 = magnitude。big_city / medium_city / pass 不进此分支，恒拦截。
+            // 本军团自己的攻击目标城不适用绕过：绕过意为"路过不被拦"，若绕过自己要打的城，
+            // 军团会一直走到城中心才触发攻城，开战时贴在城头上（离城 0 而非统一的 0.1）。
             if (
                 city.type === 'small_city' &&
                 smallCityBypassChance > 0 &&
                 army &&
+                city.id !== army.getTargetCity?.()?.id &&
+                city.id !== army.expeditionTargetCityId &&
                 this.rollSmallCityZocBypass(army.id, city.id, smallCityBypassChance)
             ) {
                 continue;

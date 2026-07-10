@@ -565,7 +565,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'owari': '尾张',
     'xuan': '宣府',
     'yangshe': '羊舌',
-'sima_d': '司马',
+'sima_d': '河内',
 'liguo': '潞',
 'kang': '宥',
 'wudu': '阶',
