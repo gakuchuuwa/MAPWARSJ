@@ -33,16 +33,27 @@ export type TacticalEffect =
     | 'ally_recompute';
 
 export type StrategicEffect =
-    // ── v1 五系（2026-07-03 重设计：战略技 = 大地图效果）──
-    | 'march_speed_mult'          // 行军：全局提速（✅现役）
-    | 'mountain_march_immunity'   // 行军：山地行军免减速（Step2 接 Army.updateTerrainSpeed）
-    | 'ignore_small_city_zoc'     // 行军：无视小城 ZOC（Step2 接 findHostileCityInZOC）
-    | 'skip_post_battle_rest'     // 补给：胜后免休整立即开拔（Step2 接 startPostBattleRest）
-    | 'field_resupply'            // 补给：远离本土缓慢回血（Step2 接 FollowResupplySystem）
-    | 'post_battle_troop_pct'     // 补给：胜后就食补员（✅现役）
-    | 'city_growth_mult'          // 爆兵：出身城增长×2（Step2 接 CityManager.updateTroops；无须坐城）
-    | 'recruit_cooldown_mult'     // 爆兵：出征时出身城募兵冷却减半（Step2 接 RecruitmentSystem）
-    | 'attacker_power_mult'       // 战斗：攻方乘区（✅现役；唯一保留的战斗层战略技，限量 ≤30）
+    // ── 军团攻 ──
+    | 'attacker_power_mult'       // 攻方战力乘区
+    // ── 军团速 ──
+    | 'march_speed_mult'          // 全局提速
+    | 'mountain_march_immunity'   // 山地按平原速度
+    | 'ignore_small_city_zoc'     // 无视小城 ZOC
+    // ── 补给 ──
+    | 'skip_post_battle_rest'     // 胜后免休整
+    | 'field_resupply'            // 远离本土缓回血
+    | 'post_battle_troop_pct'     // 胜后就食补员
+    // ── 据点兵 ──
+    | 'city_growth_mult'          // 出身城增长 ×2
+    | 'recruit_cooldown_mult'     // 征兵冷却减半
+    // ── 据点防 ──
+    | 'garrison_defense_mult'     // 守城城防战力 ×1.5
+    | 'siege_attacker_supply_halved' // 攻城方缓回血减半
+    // ── 奇策 ──
+    | 'advantage_skill_effect_mult'   // 优势时战术技效果 ×1.3
+    | 'post_battle_recruit_enemy_pct' // 胜后缴获敌残兵
+    | 'disadvantage_power_mult'       // 劣势时自身战力 ×1.4
+    | 'terrain_tactical_double'       // 地形匹配时战术技翻倍
     // ── 退役 effect（S④⑤⑥⑧ 条目已删；类型保留至 Step2 清理引擎 switch 后移除）──
     | 'defender_power_mult'
     | 'plain_power_mult'
@@ -114,32 +125,36 @@ export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
 };
 
 /**
- * 战略技 v1（2026-07-03 重设计）：五系 9 技，战略技 = 大地图效果
- *   行军：str_01 兵贵神速 / str_10 如履平地 / str_11 长驱深入
- *   补给：str_12 乘胜追击 / str_13 以战养战 / str_07 因粮于敌
- *   爆兵：str_14 足食足兵 / str_15 招兵买马
- *   战斗：str_03 所向披靡（唯一保留的战斗乘区，限量 ≤30）
- *   二期：传檄而定（攻兵力悬殊敌小城概率不战而下，必须走城池易主管线）——引擎就绪前不入表
- * 退役（2026-07-03）：str_04 长驱直入 / str_05 居高临下 / str_06 乘风破浪 / str_08 固若金汤
- *   ——地形/守方战斗乘区与战术层 ts_002–004 / ts_006 重复（双吃），删除。
- *   ⚠️ Step2 接引擎时必须同步：暗度陈仓/声东击西的对抗靶从战略地形乘区扩到战术地形技
- *   （见 TacticalSkillResolver TODO(v1-migration)），否则那 4 个持有者变死技。
- * 命名注记：履险如夷不叫「如履平地」（战术 ts_002 已用）；长驱深入不叫「长驱直入」（战术 ts_003 已用）。
+ * 战略技 v2（2026-07-10 重设计）：六系 15 技
+ *   军团攻：str_03 所向披靡
+ *   军团速：str_01 兵贵神速 / str_10 如履平地 / str_11 长驱深入
+ *   补给 ：str_12 乘胜追击 / str_13 以战养战 / str_07 因粮于敌
+ *   据点兵：str_14 足食足兵 / str_15 招兵买马
+ *   据点防：str_08 固若金汤 / str_05 坚壁清野
+ *   奇策 ：str_04 威震华夏 / str_06 招降纳叛 / str_09 以寡击众 / str_02 因地制宜
  */
 export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
-    // ── 行军系 ──（hiddenPostBattlePct: 地图技的隐藏 1% 胜后续航，静默不显示，仅体现名将连战价值）
-    str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '隐藏胜后续航 1%（静默，不显示）' },
-    str_10: { id: 'str_10', grid: 'S⑩', displayName: '如履平地', effect: 'mountain_march_immunity', magnitude: 1, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '山地按平原速度走；magnitude 占位；隐藏胜后续航 1%（静默，不显示）' },
-    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: 'magnitude=0.5：50% 几率无视 small_city 级 ZOC（按 军团id+据点id 稳定掷点，不逐帧闪烁）；big_city/medium_city/pass 一律拦截，永不绕过；隐藏胜后续航 1%（静默，不显示）' },
-    // ── 补给系 ──
-    str_12: { id: 'str_12', grid: 'S⑫', displayName: '乘胜追击', effect: 'skip_post_battle_rest', magnitude: 0, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '胜后休整时长置 0；隐藏胜后续航 1%（静默，不显示）' },
-    str_13: { id: 'str_13', grid: 'S⑬', displayName: '以战养战', effect: 'field_resupply', magnitude: 1, engineStatus: 'ready', note: '远离本土缓回血；FollowResupplySystem.tickStrategicFieldResupply' },
-    str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.02, engineStatus: 'ready' },
-    // ── 爆兵系 ──
-    str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '出征期间出身城增长率×2（getCityAnchoredStrategicMagnitude，无须坐城）；隐藏胜后续航 1%（静默，不显示）' },
-    str_15: { id: 'str_15', grid: 'S⑮', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '出征离城后可再募（RecruitmentSystem.cityHasActiveLegion）；隐藏胜后续航 1%（静默，不显示）' },
-    // ── 战斗系（唯一保留，限量 ≤30，与战术攻城技跨层叠加=名将牌面）──
+    // ── 军团攻 ──
     str_03: { id: 'str_03', grid: 'S③', displayName: '所向披靡', effect: 'attacker_power_mult', magnitude: 1.5, engineStatus: 'ready' },
+    // ── 军团速 ──
+    str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '隐藏胜后续航 1%（静默，不显示）' },
+    str_10: { id: 'str_10', grid: 'S⑩', displayName: '如履平地', effect: 'mountain_march_immunity', magnitude: 1, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '山地按平原速度走；隐藏胜后续航 1%' },
+    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '50% 无视小城 ZOC；隐藏胜后续航 1%' },
+    // ── 补给 ──
+    str_12: { id: 'str_12', grid: 'S⑫', displayName: '乘胜追击', effect: 'skip_post_battle_rest', magnitude: 0, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '胜后休整时长置 0' },
+    str_13: { id: 'str_13', grid: 'S⑬', displayName: '以战养战', effect: 'field_resupply', magnitude: 1, engineStatus: 'ready', note: '远离本土缓回血' },
+    str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.02, engineStatus: 'ready' },
+    // ── 据点兵 ──
+    str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '出身城增长率 ×2' },
+    str_15: { id: 'str_15', grid: 'S⑮', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '征兵冷却 ×0.5' },
+    // ── 据点防 ──
+    str_08: { id: 'str_08', grid: 'S⑧', displayName: '固若金汤', effect: 'garrison_defense_mult', magnitude: 1.5, engineStatus: 'ready', note: '守城时城防战力 ×1.5' },
+    str_05: { id: 'str_05', grid: 'S⑤', displayName: '坚壁清野', effect: 'siege_attacker_supply_halved', magnitude: 0.5, engineStatus: 'ready', note: '攻城方在城外缓回血减半' },
+    // ── 奇策 ──
+    str_04: { id: 'str_04', grid: 'S④', displayName: '威震华夏', effect: 'advantage_skill_effect_mult', magnitude: 1.3, engineStatus: 'ready', note: '优势时（兵力>1.5）战术技效果 ×1.3' },
+    str_06: { id: 'str_06', grid: 'S⑥', displayName: '招降纳叛', effect: 'post_battle_recruit_enemy_pct', magnitude: 0.10, engineStatus: 'ready', note: '胜后缴获 10% 敌残兵' },
+    str_09: { id: 'str_09', grid: 'S⑨', displayName: '以寡击众', effect: 'disadvantage_power_mult', magnitude: 1.4, engineStatus: 'ready', note: '劣势时（兵力<0.67）自身战力 ×1.4' },
+    str_02: { id: 'str_02', grid: 'S②', displayName: '因地制宜', effect: 'terrain_tactical_double', magnitude: 2.0, engineStatus: 'ready', note: '地形匹配时战术技效果翻倍' },
 };
 
 /**
