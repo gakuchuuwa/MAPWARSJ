@@ -184,8 +184,6 @@ export class AudioManager {
     private initialized = false;
     private unlocked = false;
     private gamePaused = false;
-    /** 战斗已开始但语音未播完，等所有播报结束后再起 battle_loop */
-    private battleLoopPending = false;
     private settings: AudioSettings = mergeSettings(null);
     private audioCache = new Map<SoundKey, HTMLAudioElement>();
     private loopCache = new Map<SoundKey, HTMLAudioElement>();
@@ -356,8 +354,7 @@ export class AudioManager {
         if (state.inCombat) {
             this.stopLoop('march_loop');
             this.stopLoop('cavalry_march_loop');
-            // 延迟到所有语音播报结束后再起战斗音效
-            this.battleLoopPending = true;
+            this.startLoop('battle_loop');
             return;
         }
 
@@ -391,14 +388,6 @@ export class AudioManager {
 
     public isEnabled(): boolean {
         return this.settings.enabled;
-    }
-
-    /** 语音播报全部结束回调：延迟启动 battle_loop（播报时不插音效） */
-    public onAllSpeechDone(): void {
-        if (!this.battleLoopPending) return;
-        this.battleLoopPending = false;
-        // 短暂间隙后起战斗音效（避免念完立刻咣的一声）
-        setTimeout(() => this.startLoop('battle_loop'), 800);
     }
 
     public isUnlocked(): boolean {

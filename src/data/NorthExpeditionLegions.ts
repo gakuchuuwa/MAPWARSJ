@@ -19,7 +19,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // ── §2 北方 12 支 ──
   yan: { name: '渔阳突骑', tier: 1 },       // 古北口·§2 #2 光武幽州精骑（升T1）
   gongsun_d: { name: '襄平狟骑', tier: 4 }, // 襄平·公孙度襄平狟骑（缺乏极其著名的战术高光，降T3）
-  shizhao_d: { name: '黑槊龙骧', tier: 2 }, // 邢台·石虎后赵禁军
+    shizhao_d: { name: '黑槊龙骧', tier: 2 },
     yunzhong: { name: '苍头军', tier: 3 },           // 中国古代（秦汉等）特指奴仆组成的军队，极具军制与阶级特色的文化名词，升入T3知名
     tuoba: { name: '拓跋虎骑', tier: 3 },
   // 武川镇军已迁草原（yuwen@武川镇）

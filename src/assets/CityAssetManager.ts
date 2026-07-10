@@ -231,7 +231,7 @@ export class CityAssetManager {
 'xibo_d': '锡伯',
         'jinling': '南京',
         'wuwu_d': '无为',
-        'shizhao_d': '石赵',
+'shizhao_d': '邢',
         'ranwei_d': '冉魏',
 'zu_d': '严',
 
@@ -365,7 +365,7 @@ export class CityAssetManager {
         'geluolu': '葛逻',
         'yuchi': '尉迟',
         'an': '安',
-        'shi_clan': '石',
+'shi_clan': '石',
 
 'huyan': '呼衍',
 'yujiulu': '郁久',

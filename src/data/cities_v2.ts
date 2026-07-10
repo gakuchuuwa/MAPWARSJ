@@ -1099,7 +1099,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_weirong', name: '威戎', factionId: 'quanrong', lat: 35.585841, lng: 105.512695, type: 'small_city', region: 'CENTRAL', troops: 20000,
         note: '威戎；犬戎小城',
     },
-    { id: 'city_xingtai', name: '邢台', factionId: 'shizhao_d', lat: 37.08, lng: 114.48, type: 'small_city', region: 'NORTH', troops: 20000, note: '襄国，后赵石勒都城' },
+    { id: 'city_xingtai', name: '邢台', factionId: 'shizhao_d', lat: 37.08, lng: 114.48, type: 'small_city', troops: 20000, region: 'NORTH' },
+
     { id: 'city_shengle', name: '盛乐', factionId: 'yunzhong', lat: 40.38, lng: 111.82, type: 'small_city', troops: 20000, region: 'NORTH' },
 
     
@@ -1582,11 +1583,8 @@ export const PERIPHERY: CityDataV2[] = [
     {
         id: 'city_bukhara', name: '蒲华', factionId: 'an',
         lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 20000, region: 'CENTRAL_ASIA', note: '昭武九姓安国故地（布哈拉）；昭武精骑' },
-    {
-        id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan',
-        lat: 41.30, lng: 69.30, type: 'small_city', region: 'CENTRAL_ASIA', troops: 20000,
-        note: '柘折城；石氏小城',
-    },
+    { id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan', lat: 41.3, lng: 69.3, type: 'small_city', troops: 20000, region: 'CENTRAL_ASIA' },
+
     // ── 2026-05-26 新增：青藏高原势力城市（24个）──
     // === 第一类：高原帝国与割据强权 ===
     { id: 'city_qionglong', name: '穹窿银', factionId: 'xiangxiong', lat: 31.193972, lng: 80.771484, type: 'small_city', region: 'TIBET', troops: 20000,

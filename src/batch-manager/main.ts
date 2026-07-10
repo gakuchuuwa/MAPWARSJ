@@ -546,6 +546,7 @@ function renderTable(): void {
     els.tableWrap.querySelectorAll('th').forEach(th => {
         th.addEventListener('click', () => {
             const col = (th as HTMLElement).dataset.col!;
+            if (col === '_actions') return; // 操作列无数据，不参与排序
             if (sortCol === col) sortAsc = !sortAsc;
             else { sortCol = col; sortAsc = true; }
             sortRows();
@@ -598,7 +599,7 @@ const EFFECT_CN: Record<string, string> = {
     attacker_power_mult: '攻方加成',
 };
 
-function formatSkill(id?: string, isStrategic = false): string {
+function formatSkill(id?: string): string {
     if (!id) return '';
     if (!entityData) return id;
     const tac = entityData.tacticalSkills.find(s => s.id === id);
@@ -673,35 +674,6 @@ function checkNameDuplicates(cityName: string, factionName: string, generalName:
     return warnings;
 }
 
-function updateIdPreview(): void {
-    const preview = document.getElementById('bm-id-preview');
-    if (!preview) return;
-    const form = document.getElementById('bm-edit-form') as HTMLFormElement;
-    if (!form) return;
-
-    const factionName = (form.querySelector('[name="factionName"]') as HTMLInputElement)?.value.trim() ?? '';
-    const cityName = (form.querySelector('[name="cityName"]') as HTMLInputElement)?.value.trim() ?? '';
-    const generalName = (form.querySelector('[name="generalName"]') as HTMLInputElement)?.value.trim() ?? '';
-
-    if (!factionName && !cityName) {
-        preview.innerHTML = '<span class="id-label">输入名称后自动生成 ID…</span>';
-        return;
-    }
-
-    const ids = computeIds(factionName, cityName, generalName);
-    const lines: string[] = [];
-    if (ids.factionId) {
-        lines.push(`<span class="id-label">势力 ID:</span> <span class="id-value">${ids.factionId}</span>${ids.factionDup ? ' <span class="id-dup">(已存在同名, 自动加后缀)</span>' : ''}`);
-    }
-    if (ids.cityId) {
-        lines.push(`<span class="id-label">据点 ID:</span> <span class="id-value">${ids.cityId}</span>${ids.cityDup ? ' <span class="id-dup">(已存在同名, 自动加后缀)</span>' : ''}`);
-    }
-    if (ids.generalId) {
-        lines.push(`<span class="id-label">武将 ID:</span> <span class="id-value">${ids.generalId}</span>${ids.generalDup ? ' <span class="id-dup">(已存在同名, 自动加后缀)</span>' : ''}`);
-    }
-    preview.innerHTML = lines.join('<br>');
-}
-
 // ── Edit / Add Panel ──
 
 /** 文化区代码 → 中文名（下拉显示用；option value 仍存代码，与 cities_v2 的 region 字段一致，不影响保存/解析） */
@@ -726,12 +698,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
         `<option value="${s.id}" ${s.id === (row?.tacticalSkillId ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
     ).join('');
     // 三格下拉：只列对应三类的技；当前值类别不符时保留在顶部并标注（防止保存时被静默清掉）
-    const slotOptions = (tri: 'advantage' | 'balance' | 'disadvantage', selected?: string) => {
+    //   借势(leverage)武将故意跨类放技，不标⚠
+    const slotOptions = (tri: 'advantage' | 'balance' | 'disadvantage', selected?: string, aptitude?: string) => {
         const pool = (entityData?.tacticalSkills ?? []).filter(s => s.triClass === tri);
         let html = pool.map(s =>
             `<option value="${s.id}" ${s.id === (selected ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
         ).join('');
-        if (selected && !pool.some(s => s.id === selected)) {
+        if (selected && !pool.some(s => s.id === selected) && aptitude !== 'leverage') {
             const cur = entityData?.tacticalSkills.find(s => s.id === selected);
             html = `<option value="${selected}" selected>⚠ ${cur ? `${cur.grid} ${cur.displayName}` : selected}（类别不符）</option>` + html;
         }
@@ -958,13 +931,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>优势格（碾压计）</span>
               <select name="advantageSkillId">
                 <option value="">不设</option>
-                ${slotOptions('advantage', row!.advantageSkillId)}
+                ${slotOptions('advantage', row!.advantageSkillId, row!.aptitude)}
               </select>
             </label>
             <label><span>均势格（破局计）</span>
               <select name="balanceSkillId">
                 <option value="">不设</option>
-                ${slotOptions('balance', row!.balanceSkillId)}
+                ${slotOptions('balance', row!.balanceSkillId, row!.aptitude)}
               </select>
             </label>
           </div>
@@ -972,7 +945,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>劣势格（翻盘计）</span>
               <select name="disadvantageSkillId">
                 <option value="">不设</option>
-                ${slotOptions('disadvantage', row!.disadvantageSkillId)}
+                ${slotOptions('disadvantage', row!.disadvantageSkillId, row!.aptitude)}
               </select>
             </label>
             <label><span>三势 aptitude</span>
@@ -1581,6 +1554,22 @@ async function handleFormSubmit(e: Event): Promise<void> {
         }
     }
 
+    // 武将/立绘字段先行校验：填了武将名但缺品阶/战术技时，旧逻辑会静默跳过武将保存
+    // 却仍提示"保存成功"。放在所有 API 调用之前，避免据点存了武将没存的半保存状态。
+    const generalName = get('generalName');
+    const portrait = normalizePortraitPath(get('portrait'));
+    if (portrait && !portrait.toLowerCase().endsWith('.png')) {
+        showToast('立绘路径必须以 .png 结尾！不支持 .jpg 等格式', true);
+        return;
+    }
+    const tier = get('tier');
+    const tacticalSkillId = get('tacticalSkillId');
+    const strategicSkillId = get('strategicSkillId');
+    if (generalName && (!tier || !tacticalSkillId)) {
+        showToast(`武将「${generalName}」缺少${!tier ? '品阶' : '战术技'}，请选择后再保存`, true);
+        return;
+    }
+
     try {
         // Step 1: batch-import (faction + city + flag + startingCapital + region)
         const importRes = await fetch('/api/batch-import', {
@@ -1604,16 +1593,6 @@ async function handleFormSubmit(e: Event): Promise<void> {
         }
 
         // Step 2: save general (if provided)
-        const generalName = get('generalName');
-        const portrait = normalizePortraitPath(get('portrait'));
-        if (portrait && !portrait.toLowerCase().endsWith('.png')) {
-            showToast('立绘路径必须以 .png 结尾！不支持 .jpg 等格式', true);
-            return;
-        }
-        const tier = get('tier');
-        const tacticalSkillId = get('tacticalSkillId');
-        const strategicSkillId = get('strategicSkillId');
-
         if (generalName && tier && tacticalSkillId) {
             if (!generalId) {
                 const ids = computeIds(factionName, cityName, generalName);

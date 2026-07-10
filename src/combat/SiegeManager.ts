@@ -61,7 +61,16 @@ export class SiegeManager {
         army: Army;
         siegeData: SiegeData;
         onSiegeComplete?: () => void;
+        /** 该等待者的停步环距离（先到者近、后到者远，沿各自道路错开，防重叠） */
+        stopDist: number;
+        /** true=已入队但仍在沿原路走近停步环（绝不传送，走到环上再停） */
+        approaching: boolean;
     }>> = new Map();
+
+    /** 等待环基准：比开战圈稍外（攻城军停在 COMBAT_RADIUS≈0.1，等待者最近停 0.16） */
+    private static readonly WAIT_RING_BASE = GameConfig.SIEGE.COMBAT_RADIUS + 0.06;
+    /** 同城每多一个等待者，停步环外推一档（同路来的自然前后排开，不同路来的方向本就不同） */
+    private static readonly WAIT_RING_SPACING = 0.05;
 
     private getReinforcementJoinDeps(): ReinforcementJoinDeps {
         return {
@@ -91,10 +100,10 @@ export class SiegeManager {
         });
     }
 
-    /** 第三方排队：只统一面朝据点，不传送 */
+    /** 第三方排队：只统一面朝据点，不传送（仍在走近的不转向，行军朝向由移动系统管） */
     private repositionThirdPartyWaiters(cityId: string, cityPos: { lat: number; lng: number }): void {
         const queue = this.siegeThirdPartyWaiters.get(cityId) ?? [];
-        const forceArmies = queue.map((e) => e.army).filter((a) => !a.isDestroyed);
+        const forceArmies = queue.filter((e) => !e.approaching).map((e) => e.army).filter((a) => !a.isDestroyed);
         repositionAllLegionsNearSiegeCity(cityPos, this.legionManager.getArmies(), {
             cityId,
             forceArmies,
@@ -119,7 +128,7 @@ export class SiegeManager {
         this.interceptThirdPartyPassersBy();
     }
 
-    /** 扫所有活跃攻城战：圈内非同旗军团 → 停步排队（不穿越交战区） */
+    /** 扫所有活跃攻城战：圈内非同旗军团 → 排队等待（不穿越交战区、不瞬移） */
     private interceptThirdPartyPassersBy(): void {
         for (const [cityId, battleField] of this.activeSieges) {
             if (battleField.isOver) continue;
@@ -139,18 +148,60 @@ export class SiegeManager {
                 const myFaction = legion.getFactionId();
                 if (myFaction === attFaction || myFaction === defFaction) continue; // 同旗由 pollSiegeReinforcements 处理
 
-                // 异旗：停步排队
-                siegeLog(`🚧 [SiegeManager] ${legion.name} (${myFaction}) 途经【${city.name}】交战区，排队等待`);
-                legion.stopMovement(true);
-                legion.setTargetCity(null);
-                legion.setCombatState(false);
+                // 异旗：入队。已在停步环内的原地停步；还在环外的继续沿原路走近，
+                // 由 settleApproachingWaiters 每次轮询检查、走到环上再停（绝不传送）。
                 this.enqueueSiegeThirdPartyWaiter(cityId, legion, {
                     defenderCityId: cityId,
                     attackerFactionId: attFaction,
                     isDynamic: true,
-                } as SiegeData);
+                } as SiegeData, undefined, /* approaching */ true);
+                siegeLog(`🚧 [SiegeManager] ${legion.name} (${myFaction}) 途经【${city.name}】交战区，排队等待（走近停步环）`);
+            }
+            this.settleApproachingWaiters(cityId, center);
+        }
+    }
+
+    /**
+     * 已入队但仍在行军的等待者：走到各自停步环（先到者近、后到者远）即停步面城。
+     * 路径只是擦圈而过、已走出开战圈的 → 出队放行（从未穿越交战核心区）。
+     */
+    private settleApproachingWaiters(cityId: string, center: { lat: number; lng: number }): void {
+        const queue = this.siegeThirdPartyWaiters.get(cityId);
+        if (!queue || queue.length === 0) return;
+
+        let settled = false;
+        const remaining: typeof queue = [];
+        for (const entry of queue) {
+            const { army } = entry;
+            if (army.isDestroyed) continue;
+            if (!entry.approaching) { remaining.push(entry); continue; }
+            if (army.getIsInCombat()) { remaining.push(entry); continue; }
+
+            const dist = getEuclideanDistance(army.getPosition(), center);
+            if (dist <= entry.stopDist || army.isIdle()) {
+                // 到环（或已自行停步）→ 正式停步排队
+                army.stopMovement(true);
+                army.setTargetCity(null);
+                army.setCombatState(false);
+                entry.approaching = false;
+                settled = true;
+                siegeLog(`🚧 [SiegeManager] ${army.name} 抵达【${cityId}】停步环（${dist.toFixed(2)}），排队等待`);
+                remaining.push(entry);
+            } else if (dist > SiegeManager.JOIN_RADIUS + 0.05) {
+                // 路线只是擦边而过，已走远 → 放行，不再视为等待者
+                entry.onSiegeComplete?.();
+                siegeLog(`↩️ [SiegeManager] ${army.name} 擦边路过【${cityId}】未入交战区，放行`);
+            } else {
+                remaining.push(entry); // 仍在走近，下轮再查
             }
         }
+
+        if (remaining.length > 0) {
+            this.siegeThirdPartyWaiters.set(cityId, remaining);
+        } else {
+            this.siegeThirdPartyWaiters.delete(cityId);
+        }
+        if (settled) this.repositionThirdPartyWaiters(cityId, center);
     }
 
     public hasActiveSieges(): boolean {
@@ -993,11 +1044,16 @@ export class SiegeManager {
         cityId: string,
         army: Army,
         siegeData: SiegeData,
-        onSiegeComplete?: () => void
+        onSiegeComplete?: () => void,
+        approaching: boolean = false,
     ): void {
         const queue = this.siegeThirdPartyWaiters.get(cityId) || [];
         if (queue.some((e) => e.army.id === army.id)) return;
-        queue.push({ army, siegeData, onSiegeComplete });
+        const stopDist = Math.min(
+            SiegeManager.WAIT_RING_BASE + queue.length * SiegeManager.WAIT_RING_SPACING,
+            SiegeManager.JOIN_RADIUS - 0.02,
+        );
+        queue.push({ army, siegeData, onSiegeComplete, stopDist, approaching });
         this.siegeThirdPartyWaiters.set(cityId, queue);
     }
 
@@ -1036,11 +1092,33 @@ export class SiegeManager {
                     onSiegeComplete?.();
                     continue;
                 }
+                // 在途走近中、或停在外环离城尚远（>0.2 到达阈值）→ 不在远处原地开战，
+                // 沿道路走到城下由 ZOC/到达检测自然触发攻城（出队；绝不传送）。
+                // 带事件链回调的等待者不走此分支（重新触发会丢回调），它们本就停在城边。
+                const distToCity = getEuclideanDistance(army.getPosition(), cityToLatLng(city));
+                if ((entry.approaching || distToCity > 0.2) && !onSiegeComplete) {
+                    army.setCombatState(false);
+                    if (this.moveArmyToTarget(army, city)) {
+                        siegeLog(`⚔️ [SiegeManager] ${army.name} (${myFaction}) 接战胜方 ${winnerFactionId} @ ${city.name}（走到城下开战，距 ${distToCity.toFixed(2)}）`);
+                        continue;
+                    }
+                    // 无路可走 → 回落原地开战
+                }
                 siegeLog(`⚔️ [SiegeManager] ${army.name} (${myFaction}) 接战胜方 ${winnerFactionId} @ ${city.name}`);
                 this.onArmyArrive(army, city, myFaction, siegeData, onSiegeComplete);
             } else {
                 remaining.push(entry);
             }
+        }
+
+        // 留队的在途者就地停步转正式等待：唤醒者在走向城下、新战斗尚未开打，
+        // 此窗口没有 settleApproachingWaiters 轮询，放任行军会一路进 ZOC 抢跑插队
+        for (const entry of remaining) {
+            if (!entry.approaching || entry.army.isDestroyed || entry.army.getIsInCombat()) continue;
+            entry.army.stopMovement(true);
+            entry.army.setTargetCity(null);
+            entry.army.setCombatState(false);
+            entry.approaching = false;
         }
 
         if (remaining.length > 0) {

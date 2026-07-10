@@ -394,7 +394,8 @@ export const FACTIONS: Faction[] = [
     { id: 'jinling', name: '南国' },
     // ── 2026-06-12 新增：无为（濡须水畔无为州）；北府兵改挂仲@寿春 ──
     { id: 'wuwu_d', name: '无为' },
-    { id: 'shizhao_d', name: '石赵' },          // 后赵@襄国
+    { id: 'shizhao_d', name: '邢国' },
+          // 后赵@襄国
     { id: 'ranwei_d', name: '冉魏' },
     { id: 'taizhou', name: '泰州' },
     { id: 'zu_d', name: '严州' },
@@ -677,6 +678,7 @@ export const FACTIONS: Faction[] = [
 // 西域沙金 - 麴氏(高昌汉人王族/柏孜克里克)
 { id: 'an', name: '安氏' },
 { id: 'shi_clan', name: '石氏' },
+
 
 // ── 2026-05-26 新增：漠北草原势力 ──
     { id: 'gaoche', name: '高车' },

@@ -201,7 +201,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'hani_d': 'city_situo',
     'basha_d': 'city_shangding',
     'wuwu_d': 'city_jingkou',
-    'shizhao_d': 'city_xingtai',
+'shizhao_d': 'city_xingtai',
     'ranwei_d': 'city_liyang',
 'zu_d': 'city_ningyuan',
 
@@ -335,7 +335,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'sogdian': 'city_varaksha',
     'kangju': 'city_kanka',
     'geluolu': 'city_almaliq',
-    'shi_clan': 'city_tashkent',
+'shi_clan': 'city_tashkent',
 'guge': 'city_zhaburang2',
 'ladakh': 'city_leh',
 'tsangpa': 'city_sangzhuzi',

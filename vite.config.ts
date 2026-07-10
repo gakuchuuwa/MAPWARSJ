@@ -2320,16 +2320,19 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
                 issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) 缺 ${missing.join('/')}`, factionId: fId });
             }
             // 格子里配的技类别不符（如均势技放进劣势格）
-            const slotChecks: Array<[string, string | undefined, string]> = [
-                ['优势格', prof.advantageSkillId, 'advantage'],
-                ['均势格', prof.balanceSkillId, 'balance'],
-                ['劣势格', prof.disadvantageSkillId, 'disadvantage'],
-            ];
-            for (const [label, id, expect] of slotChecks) {
-                if (!id) continue;
-                const tri = triById.get(id);
-                if (tri && tri !== expect) {
-                    issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) ${label}=${id} 实为${TRI_LABEL[tri] ?? tri}，类别不符`, factionId: fId });
+            //   借势(leverage)武将故意跨类放技，跳过此校验
+            if (prof.aptitude !== 'leverage') {
+                const slotChecks: Array<[string, string | undefined, string]> = [
+                    ['优势格', prof.advantageSkillId, 'advantage'],
+                    ['均势格', prof.balanceSkillId, 'balance'],
+                    ['劣势格', prof.disadvantageSkillId, 'disadvantage'],
+                ];
+                for (const [label, id, expect] of slotChecks) {
+                    if (!id) continue;
+                    const tri = triById.get(id);
+                    if (tri && tri !== expect) {
+                        issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) ${label}=${id} 实为${TRI_LABEL[tri] ?? tri}，类别不符`, factionId: fId });
+                    }
                 }
             }
         }

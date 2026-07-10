@@ -182,7 +182,6 @@ export class SpeechAnnouncer {
     if (!this.speechDuckSession) return;
     this.speechDuckSession = false;
     audioManager.setSpeechDucking(false);
-    audioManager.onAllSpeechDone();
   }
 
   /**
@@ -514,8 +513,7 @@ export class SpeechAnnouncer {
       onStart: next.onStart,
       onDone: () => {
         this.skillSpeaking = false;
-        // 两句技能之间停顿 1.2s，避免连念
-        setTimeout(() => this.drainSkillQueue(), 1200);
+        this.drainSkillQueue();
       },
     });
   }

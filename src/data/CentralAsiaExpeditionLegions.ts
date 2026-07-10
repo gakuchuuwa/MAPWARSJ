@@ -37,7 +37,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     wugu_d: { name: '乌古斯弓骑', tier: 3 },
     mamon: { name: '呼罗珊之剑', tier: 2 },
   khoja: { name: '白山派卫兵', tier: 4 },        // 休循·阿帕克和卓白山派（缺乏极其著名的战术高光，降T3）
-  shi_clan: { name: '石国胡兵', tier: 4 },       // 柘折城·莫贺咄吐屯御大食（缺乏极其著名的战术高光，降T3）
+    shi_clan: { name: '柘枝胡骑', tier: 4 },
   guzgan: { name: '古兹根卫队', tier: 4 },       // 法里亚布·古兹根戍卫
   badakhshan: { name: '达克游骑', tier: 4 },     // 法扎巴德·达克边防
   kawusi: { name: '卡乌斯铁卫', tier: 4 },     // 吉扎克·粟特要塞

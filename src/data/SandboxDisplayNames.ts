@@ -217,7 +217,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jinling': '南',
     'wuwu_d': '无为',
     'taizhou': '泰',
-    'shizhao_d': '石赵',
+'shizhao_d': '邢',
     'ranwei_d': '冉魏',
 'zu_d': '严',
 
@@ -360,7 +360,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'geluolu': '葛逻',
     'yuchi': '尉迟',
     'an': '安',
-    'shi_clan': '石',
+'shi_clan': '石',
 
     
 'huyan': '呼衍',

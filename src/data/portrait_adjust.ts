@@ -487,11 +487,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -42
         },
-        "/assets/WESTERN/chuyue_shatuonasu.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -15
-        },
         "/assets/KOREA/gaogouli_yizhiwende.png": {
             "scale": 1.17,
             "offsetX": -5,
@@ -573,7 +568,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -14
         },
         "/assets/xianqin/yue_goujian.png": {
-            "scale": 1.01,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": 1
         },
@@ -713,7 +708,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/JIANGNAN/wuyue_qianliu.png": {
-            "scale": 0.88,
+            "scale": 0.84,
             "offsetX": 9,
             "offsetY": -4
         },
@@ -853,7 +848,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/xianqin/qi_simarangju.png": {
-            "scale": 1.12,
+            "scale": 1.08,
             "offsetX": 4,
             "offsetY": 5
         },
@@ -1028,7 +1023,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/NORTH/qu_d_quyi.png": {
-            "scale": 0.96,
+            "scale": 0.9,
             "offsetX": 5,
             "offsetY": -40
         },
@@ -2913,8 +2908,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/TIBET/khyungpo_qiongbobangse.png": {
-            "scale": 1,
-            "offsetX": 23,
+            "scale": 1.04,
+            "offsetX": 32,
             "offsetY": 6
         },
         "/assets/TIBET/kongsa_kongsayiduo.png": {
@@ -3888,7 +3883,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -36
         },
         "/assets/JIANGNAN/chuzhou_d_huangfuhui.png": {
-            "scale": 1.12,
+            "scale": 1.1,
             "offsetX": 9,
             "offsetY": -12
         },
@@ -4053,7 +4048,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 32
         },
         "/assets/STEPPE/oirat_ming_gaerdan.png": {
-            "scale": 1.15,
+            "scale": 1.19,
             "offsetX": 0,
             "offsetY": 12
         },
@@ -4373,7 +4368,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/STEPPE/yuwen_yuwentai.png": {
-            "scale": 1.02,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -5132,11 +5127,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/WESTERN/__闲置__WESTERN_18.png": {
-            "scale": 1.38,
-            "offsetX": 0,
-            "offsetY": 9
-        },
         "/assets/WESTERN/saman_yisimayi.png": {
             "scale": 1.32,
             "offsetX": 0,
@@ -5563,8 +5553,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/NORTH/hejian_gongsunzan.png": {
-            "scale": 1.01,
-            "offsetX": 0,
+            "scale": 1.05,
+            "offsetX": 9,
             "offsetY": -25
         },
         "/assets/STEPPE/3113431b-d5dd-43bd-8493-333ad7a3738a.png": {
@@ -5736,6 +5726,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 15
+        },
+        "/assets/WESTERN/__闲置__WESTERN_19.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/WESTERN/__闲置__WESTERN_20.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/WESTERN/chuyue_shatuonasu.png": {
+            "scale": 1.34,
+            "offsetX": 0,
+            "offsetY": 9
         }
     },
     "folderGuides": {
