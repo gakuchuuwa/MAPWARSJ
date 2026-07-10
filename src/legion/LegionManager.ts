@@ -2,7 +2,6 @@ import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { generalHasStrategicEffect, getGeneralStrategicMagnitude } from '../combat/GeneralSkillCombat';
-import { tryBypassPulse } from '../utils/MapFloatingText';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
@@ -655,11 +654,6 @@ export class LegionManager {
                 if (!bypassedSet.has(city.id)) {
                     bypassedSet.add(city.id);
                     gameLog('battle', `〔长驱深入〕${army.generalId || '将领'}无视【${city.name}】守军，长驱直入`);
-                    // 只给跟拍军团飘、只飘四字技名；密集区 3 秒去重由 tryBypassPulse 兜底
-                    if (this.isFollowedLegion(army)) {
-                        const aPos = army.getPosition();
-                        tryBypassPulse(army.id, aPos.lat, aPos.lng, '#00ffff');
-                    }
                 }
                 continue;
             }

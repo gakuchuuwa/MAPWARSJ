@@ -1769,12 +1769,20 @@ export function applyStrategicBattleToRolls(
         const label = skill?.displayName ?? '战略';
 
         if (skill && profile) {
-            dispatchOpeningSkillPulse({
-                displayName: label,
-                generalId: unit.generalId!,
-                skillId: profile.strategicSkillId!,
-                uiDelaySec: 0.2, // 略微延后于战术技闪卡
-            }, unit.id);
+            if (skill.id === 'str_03') {
+                const army = getArmyEntity(unit);
+                if (army && army.id === getFollowedArmyId()) {
+                    const pos = army.getPosition();
+                    spawnMapFloatingText(pos.lat, pos.lng, skill.displayName, '#ffaa00');
+                }
+            } else {
+                dispatchOpeningSkillPulse({
+                    displayName: label,
+                    generalId: unit.generalId!,
+                    skillId: profile.strategicSkillId!,
+                    uiDelaySec: 0.2, // 略微延后于战术技闪卡
+                }, unit.id);
+            }
         }
         const next = roll * mult;
         gameLog(
