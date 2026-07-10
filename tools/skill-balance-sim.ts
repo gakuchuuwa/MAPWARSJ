@@ -98,7 +98,7 @@ function main(): void {
     const fam = (str: string): UnitSpec => base({ general: { tier: 'famous', tacticalSkillId: '', strategicSkillId: str } });
     const famTac = (str: string, tac: string): UnitSpec => base({ general: { tier: 'famous', tacticalSkillId: tac, strategicSkillId: str } });
     row('S③所向披靡(攻)', winRate([fam('str_03')], [base()], T, 'plain'), `攻方×${STRATEGIC_SKILL_CATALOG.str_03.magnitude}`);
-    row('S⑧固若金汤(守攻城)', winRate([base()], [fam('str_08')], T, 'plain', 'siege'), '攻城战守方×1.5');
+    row('S⑧固若金汤(守攻城)', winRate([base()], [fam('str_08')], T, 'plain', 'siege'), `攻城战守方×${STRATEGIC_SKILL_CATALOG.str_08.magnitude}`);
     row('S⑧固若金汤(野战无效)', winRate([base()], [fam('str_08')], T, 'plain', 'field'), '野战→无效果');
     // S⑨以寡击众：A(劣势方,6000兵,带str_09) vs B(优势方,10000兵)
     row('S⑨以寡击众(劣势触发)', winRate(

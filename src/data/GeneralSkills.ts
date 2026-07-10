@@ -47,7 +47,7 @@ export type StrategicEffect =
     | 'city_growth_mult'          // 出身城增长 ×2
     | 'recruit_cooldown_mult'     // 征兵冷却减半
     // ── 据点防 ──
-    | 'garrison_defense_mult'     // 守城城防战力 ×1.5
+    | 'garrison_defense_mult'     // 守城城防战力 ×1.3（1.5 顶 luck 帽=等兵力必守住，2026-07-11 降档）
     | 'siege_attacker_supply_halved' // 攻城方缓回血减半
     // ── 奇策 ──
     | 'advantage_skill_effect_mult'   // 优势时战术技效果 ×1.3

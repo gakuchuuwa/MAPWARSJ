@@ -807,7 +807,7 @@ export function getStrategicBattlePowerMultiplier(
                 return (selfTroops / enemyTroops) < 0.67 ? skill.magnitude : 1;
             }
             return 1;
-        // S⑧固若金汤：守城时城防战力×1.5（仅攻城战守方）
+        // S⑧固若金汤：守城时城防战力×magnitude（仅攻城战守方；数值见 GeneralSkills str_08）
         case 'garrison_defense_mult':
             return battleType === 'siege' && side === 'defender' ? skill.magnitude : 1;
         default:
