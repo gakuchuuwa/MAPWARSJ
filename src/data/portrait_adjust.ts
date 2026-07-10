@@ -203,9 +203,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -39
         },
         "/assets/DIANQIAN/chenla_duyebamoqishi.png": {
-            "scale": 0.92,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": -50
+            "offsetY": -49
         },
         "/assets/wuzhou/wuzhou_d_wuzetian.png": {
             "scale": 1.44,
@@ -1032,16 +1032,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/LINGNAN/leizhou_limao.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": 4
-        },
-        "/assets/LINGNAN/duanzhou_d_caojin.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -12
-        },
         "/assets/LINGNAN/chen2_zhaofan.png": {
             "scale": 1.03,
             "offsetX": 0,
@@ -1071,11 +1061,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -12
-        },
-        "/assets/LINGNAN/liren_funanshe.png": {
-            "scale": 0.99,
-            "offsetX": 7,
-            "offsetY": 5
         },
         "/assets/BASHU/yong_lujili.png": {
             "scale": 1.06,
@@ -1873,7 +1858,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/JIANGNAN/xie_xiefangde.png": {
-            "scale": 1.13,
+            "scale": 1.15,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -5623,9 +5608,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/wuzhou/xian_d_xianfuren.png": {
-            "scale": 0.93,
+            "scale": 0.85,
             "offsetX": 0,
-            "offsetY": -48
+            "offsetY": -45
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_12.png": {
             "scale": 1.01,
@@ -5741,6 +5726,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -13
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_28.png": {
+            "scale": 0.99,
+            "offsetX": 7,
+            "offsetY": 5
+        },
+        "/assets/LINGNAN/liren_funanshe.png": {
+            "scale": 1.18,
+            "offsetX": 20,
+            "offsetY": -5
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_29.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/LINGNAN/leizhou_limao.png": {
+            "scale": 1.12,
+            "offsetX": 30,
+            "offsetY": -10
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_30.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/LINGNAN/duanzhou_d_caojin.png": {
+            "scale": 1,
+            "offsetX": 16,
+            "offsetY": 8
         }
     },
     "folderGuides": {

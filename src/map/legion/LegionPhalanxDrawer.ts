@@ -8,7 +8,7 @@ import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import { FactionTintSystem } from '../../systems/tinting/FactionTintSystem';
 import { getCompositionTier, CompositionTier, expandCompositionSlots } from '../../types/LegionComposition';
-import { getNavalShipAssetId, type NavalShipAssetId } from '../../types/NavalShipTiers';
+import { getNavalShipAssetId, getNavalShipDrawScale, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
@@ -764,7 +764,8 @@ export class LegionPhalanxDrawer {
         const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
         // 海军船贴图略微缩小，避免靠港/围城时遮挡过重。
         const baseHeight = 72;
-        const targetH = baseHeight * scale * frameHeightNorm;
+        const shipDrawScale = getNavalShipDrawScale(shipId);
+        const targetH = baseHeight * scale * frameHeightNorm * shipDrawScale;
         const targetW = targetH * (frameW / frameH);
         // 纵向(前后)：0.45 船高。让后排船头刚好能挡住前船的船尾水波，显得紧凑。
         // 横向(左右偏移)：0.40 船宽。两船总距 0.8 船宽，会有 20% 的轻微并排重叠，形成雁阵感。

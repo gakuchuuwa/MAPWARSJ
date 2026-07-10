@@ -1,0 +1,320 @@
+/**
+ * MAPWAR 连续攻城模拟器
+ * 指定军团（5万兵），逐城攻打真实据点，直到兵力耗尽。
+ * 使用 combat-model 完整复刻战斗数学。
+ *
+ * 用法:
+ *   npx tsx tools/legion-campaign.ts 曹操 --trials 50
+ *   npx tsx tools/legion-campaign.ts --rank --trials 30 --pool 50
+ */
+import * as fs from 'fs';
+import * as path from 'path';
+import { simulateOnce, type UnitSpec, type Terrain } from './combat-model';
+import { getRegion } from '../src/systems/RegionSystem';
+import { GameConfig } from '../src/config/GameConfig';
+import { T0_CAPITALS, T1_MEDIUM_CITIES, T2_STRATEGIC, PERIPHERY } from '../src/data/cities_v2';
+import { GENERAL_PROFILES } from '../src/data/GeneralSkills';
+
+// ── CLI ──
+function argStr(flag: string, def: string): string {
+  const i = process.argv.indexOf(flag);
+  return i >= 0 ? (process.argv[i + 1] || def) : def;
+}
+function argNum(flag: string, def: number): number {
+  const i = process.argv.indexOf(flag);
+  return i >= 0 ? (parseInt(process.argv[i + 1]) || def) : def;
+}
+
+const ROSTER_PATH = argStr('--roster',
+  path.resolve(process.env.USERPROFILE || '~', 'Downloads/MAPWAR名册_2026-07-11.md'));
+const TRIALS = argNum('--trials', 50);
+const HARD_CAP = 200; // 安全上限，正常打不到
+const LEGION_TROOPS = argNum('--troops', 50000);
+const TARGET_GENERAL = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : null;
+const RANK_MODE = process.argv.includes('--rank') || !TARGET_GENERAL;
+
+// ── 地形 ──
+const TERRAINS: { t: Terrain; w: number }[] = [
+  { t: 'plain',   w: 0.50 },
+  { t: 'mountain', w: 0.40 },
+  { t: 'sea',     w: 0.10 },
+];
+function randomTerrain(): Terrain {
+  const r = Math.random(); let acc = 0;
+  for (const x of TERRAINS) { acc += x.w; if (r < acc) return x.t; }
+  return 'plain';
+}
+
+// ── 名册解析 ──
+interface CityEntry {
+  faction: string; city: string; lat: number; lng: number;
+  generalName: string; tier: string; tacticalName: string;
+  strategicName: string; eliteName: string; eliteTier: string;
+}
+function parseRoster(fp: string): CityEntry[] {
+  const t = fs.readFileSync(fp, 'utf-8'), e: CityEntry[] = [];
+  for (const l of t.split('\n')) {
+    if (!l.startsWith('|') || l.includes('---|---')) continue;
+    if (l.includes('叛军 | —') || l.includes('势力 | 据点')) continue;
+    const c = l.split('|').map(x => x.trim()).filter(x => x);
+    if (c.length < 11) continue;
+    const [ls, gs] = (c[2] || ', ').split(',').map(s => s.trim());
+    e.push({
+      faction: c[0], city: c[1],
+      lat: parseFloat(ls) || 0, lng: parseFloat(gs) || 0,
+      generalName: c[4], tier: c[5],
+      tacticalName: c[6], strategicName: c[7],
+      eliteName: c[8], eliteTier: c[9],
+    } as CityEntry);
+  }
+  return e;
+}
+
+const CIRC: Record<string, string> = {
+  '①':'01','②':'02','③':'03','④':'04','⑤':'05',
+  '⑥':'06','⑦':'07','⑧':'08','⑨':'09','⑩':'10',
+  '⑪':'11','⑫':'12','⑬':'13','⑭':'14','⑮':'15',
+  '⑯':'16','⑰':'17','⑱':'18','⑲':'19','⑳':'20',
+};
+function tacId(n: string): string | null {
+  const m = n.match(/^(\d+)\s/);
+  if (m) return `ts_${m[1].padStart(3, '0')}`;
+  const cm = n.match(/^([①-⑳])/);
+  if (cm) return `tac_${CIRC[cm[0][0]] || '01'}`;
+  return null;
+}
+function stratId(n: string): string | null {
+  const m = n.match(/S([①-⑮])\s/);
+  if (!m) return null;
+  const map: Record<string, string> = {
+    '①':'01','②':'02','③':'03','④':'04','⑤':'05',
+    '⑥':'06','⑦':'07','⑧':'08','⑨':'09','⑩':'10',
+    '⑪':'11','⑫':'12','⑬':'13','⑭':'14','⑮':'15',
+  };
+  return `str_${map[m[1]] || '01'}`;
+}
+
+// ── 城市数据 ──
+const CITY_TABLE: Record<string, { type: string; troops: number; tier: number }> = {};
+for (const c of [...T0_CAPITALS, ...T1_MEDIUM_CITIES, ...T2_STRATEGIC, ...PERIPHERY]) {
+  CITY_TABLE[c.name] = {
+    type: (c as any).type || 'small_city',
+    troops: (c as any).troops || 20000,
+    tier: (c as any).tier ?? 4,
+  };
+}
+const TYPE_LABEL: Record<string, string> = {
+  big_city: '都城', medium_city: '中城', small_city: '小城', pass: '关隘',
+};
+
+// ── 军团数据 ──
+interface LegionData {
+  name: string; city: string; tier: string;
+  region: string; cultureField: number; cultureGarrison: number;
+  eliteTier: number | null; tacticalSkillId: string | null;
+  strategicSkillId: string | null; isPass: boolean;
+  eliteName: string; aptitude: string;
+}
+
+function buildLegion(e: CityEntry): LegionData {
+  const region = getRegion(e.lat, e.lng);
+  const cult = GameConfig.CULTURE_COMBAT.TIER_TABLE[region] ?? [1, 1];
+  const ei = parseInt(e.eliteTier.replace('T', '')) || 4;
+  const tid = tacId(e.tacticalName);
+  const sid = stratId(e.strategicName);
+  const passKw = ['关', '塞', '口', '津', '渡', '门', '隘', '堡', '镇'];
+
+  let aptitude = 'create';
+  for (const [, prof] of Object.entries(GENERAL_PROFILES)) {
+    if (prof.tier === (e.tier === '名将' ? 'famous' : 'ordinary')) {
+      aptitude = (prof as any).aptitude ?? 'create'; break;
+    }
+  }
+
+  return {
+    name: e.generalName, city: e.city,
+    tier: e.tier, region,
+    cultureField: cult[0], cultureGarrison: cult[1],
+    eliteTier: ei < 4 ? ei : null,
+    tacticalSkillId: tid, strategicSkillId: sid,
+    isPass: passKw.some(k => e.city.includes(k)),
+    eliteName: e.eliteName, aptitude,
+  };
+}
+
+function toUnitSpec(legion: LegionData, troops: number, role: 'field' | 'garrison'): UnitSpec {
+  return {
+    troops,
+    region: legion.region,
+    role,
+    pass: role === 'garrison' ? legion.isPass : undefined,
+    eliteTier: legion.eliteTier,
+    general: {
+      tier: legion.tier === '名将' ? 'famous' : 'ordinary',
+      tacticalSkillId: legion.tacticalSkillId ?? undefined,
+      strategicSkillId: legion.strategicSkillId ?? undefined,
+    },
+  };
+}
+
+// ── 单轮战役（打到死为止）──
+interface BattleLog {
+  city: string; type: string; defender: string;
+  defElite: string; defTier: string; defTroops: number;
+  won: boolean; survivors: number; terrain: string;
+}
+
+function runCampaign(attacker: LegionData, pool: LegionData[]): BattleLog[] {
+  let troops = LEGION_TROOPS;
+  const log: BattleLog[] = [];
+  const attacked = new Set<string>();
+
+  for (let b = 0; b < HARD_CAP; b++) {
+    if (troops < 2000) break;
+
+    // 随机选守城方（不打自己，避免同城重复）
+    let def: LegionData;
+    let tries = 0;
+    do {
+      def = pool[Math.floor(Math.random() * pool.length)];
+      tries++;
+    } while ((def.city === attacker.city || attacked.has(def.city)) && tries < 100);
+    attacked.add(def.city);
+
+    const defTroops = CITY_TABLE[def.city]?.troops || 20000;
+    const terrain = randomTerrain();
+    const attSpec = toUnitSpec(attacker, troops, 'field');
+    const defSpec = toUnitSpec(def, defTroops, 'garrison');
+
+    const r = simulateOnce([attSpec], [defSpec], terrain, true, 'siege');
+
+    const cityType = CITY_TABLE[def.city]?.type || 'small_city';
+    const defTierLabel = def.tier === '名将' ? '名' : '普';
+
+    log.push({
+      city: def.city,
+      type: TYPE_LABEL[cityType] || cityType,
+      defender: def.name,
+      defElite: def.eliteName,
+      defTier: defTierLabel,
+      defTroops,
+      won: r.attackerWon,
+      survivors: r.attSurvivors,
+      terrain,
+    });
+
+    if (!r.attackerWon) break;
+    troops = r.attSurvivors;
+  }
+
+  return log;
+}
+
+// ── 主函数 ──
+function main() {
+  console.log('加载...');
+  const entries = parseRoster(ROSTER_PATH);
+  const legions = entries.map(buildLegion);
+  const legionByName = new Map<string, LegionData>();
+  for (const l of legions) legionByName.set(l.name, l);
+
+  const famous = legions.filter(l => l.tier === '名将');
+  console.log(`${entries.length} 势力，名将 ${famous.length}\n`);
+
+  if (RANK_MODE) {
+    // 全量排名模式
+    console.log(`━`.repeat(62));
+    console.log(`  ⚡ 连续攻城排名  军团${(LEGION_TROOPS/10000).toFixed(0)}万 × 打到死 × 各${TRIALS}次`);
+    console.log(`━`.repeat(62));
+
+    interface RankEntry {
+      name: string; city: string; elite: string; str: string; tac: string;
+      avg: number; best: number; bestCities: string;
+    }
+    const ranks: RankEntry[] = [];
+
+    // Show top generals
+    const topN = argNum('--top', 20);
+    const pool = famous.slice(0, Math.min(famous.length, argNum('--pool', 50)));
+
+    for (const att of pool) {
+      let totalBattles = 0, bestRun = 0;
+      let bestCities = '';
+      for (let t = 0; t < TRIALS; t++) {
+        const log = runCampaign(att, legions);
+        const won = log.filter(l => l.won).length;
+        totalBattles += won;
+        if (won > bestRun) {
+          bestRun = won;
+          bestCities = log.filter(l => l.won).map(l => l.city).join(' → ');
+        }
+      }
+
+      const stratName = entries.find(e => e.generalName === att.name)?.strategicName || '';
+      const tacName = entries.find(e => e.generalName === att.name)?.tacticalName || '';
+
+      ranks.push({
+        name: att.name, city: att.city, elite: att.eliteName,
+        str: stratName, tac: tacName,
+        avg: totalBattles / TRIALS,
+        best: bestRun,
+        bestCities: bestCities || '-',
+      });
+    }
+
+    ranks.sort((a, b) => b.avg - a.avg);
+
+    console.log(`\n  #  武将      据点        精锐          平址攻克  最佳`);
+    console.log(`  ─`.repeat(62));
+    for (let i = 0; i < Math.min(ranks.length, topN); i++) {
+      const r = ranks[i];
+      const m = i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : ' ';
+      console.log(`  ${m}${(i+1).toString().padStart(2)} ${r.name.padEnd(7)} ${r.city.padEnd(9)} ${r.elite.padEnd(11)} ${r.avg.toFixed(1).padStart(5)}城  ${r.best}城`);
+    }
+
+    // Detail for top 3
+    console.log(`\n  ━`.repeat(62));
+    console.log(`  🏆 前3 详细记录`);
+    console.log(`  ━`.repeat(62));
+    for (let i = 0; i < Math.min(3, ranks.length); i++) {
+      const r = ranks[i];
+      console.log(`\n  ▶ ${r.name}  🏰${r.city}  ⚔${r.elite}  ${r.str}  ${r.tac}`);
+      console.log(`     最佳战绩: ${r.bestCities}`);
+    }
+  } else {
+    // Single general mode
+    const att = legionByName.get(TARGET_GENERAL!);
+    if (!att) {
+      console.log(`未找到武将: ${TARGET_GENERAL}`);
+      console.log(`可用名将: ${famous.slice(0,10).map(l=>l.name).join(', ')}...`);
+      return;
+    }
+
+    console.log(`━`.repeat(72));
+    console.log(`  ⚔ ${att.name}  🏰${att.city}  ⚔${att.eliteName}  ${att.tier}`);
+    console.log(`  军团 ${(LEGION_TROOPS/10000).toFixed(0)}万 × 打到死 × ${TRIALS}次`);
+    console.log(`━`.repeat(72));
+
+    let totalWon = 0, bestRun = 0, bestLog: BattleLog[] = [];
+    for (let t = 0; t < TRIALS; t++) {
+      const log = runCampaign(att, legions);
+      const won = log.filter(l => l.won).length;
+      totalWon += won;
+      if (won > bestRun) { bestRun = won; bestLog = log; }
+    }
+
+    console.log(`\n  平均攻克: ${(totalWon/TRIALS).toFixed(1)} 城  |  最佳: ${bestRun} 城`);
+    console.log(`\n  ━━━ 最佳战绩详情 ━━━`);
+    console.log(`  战  据点      类型  守将      守军  精锐           结果  残兵`);
+
+    for (let i = 0; i < bestLog.length; i++) {
+      const b = bestLog[i];
+      const icon = b.won ? '✅' : '❌';
+      const surv = b.won ? Math.round(b.survivors).toLocaleString() : '-';
+      console.log(`  ${(i+1).toString().padStart(2)} ${b.city.padEnd(8)} ${b.type.padEnd(3)} ${b.defender.padEnd(7)} ${b.defTroops.toLocaleString().padStart(6)} ${b.defElite.padEnd(12)} ${icon}   ${surv}`);
+    }
+  }
+  console.log();
+}
+
+main();

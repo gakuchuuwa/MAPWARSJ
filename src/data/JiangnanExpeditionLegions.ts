@@ -77,7 +77,7 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
     shuntian: { name: '天地会义军', tier: 3 },         // 反清复明的终极化身，江南华南名气最大的民间秘密武装，升入T3知名
   lujian: { name: '义乌营', tier: 2 },       // 戚继光戚家军绝对步战核心，执行了无数次完美的鸳鸯阵战术，升入T2战术
     danyang: { name: '姑孰护卫', tier: 2 },
-  linshihong: { name: '大楚水军', tier: 4 },  // 鄱阳·林士弘称帝建楚（常规番号，降T3）
+    linshihong: { name: '大楚水军', tier: 4 },
     gumie: { name: '衢州镇标', tier: 4 },
     wang_s: { name: '新安兵', tier: 4 },
     wuyue: { name: '安国衣锦军', tier: 3 },

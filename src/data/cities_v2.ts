@@ -597,9 +597,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
     },
     { id: 'city_quzhou', name: '信安', factionId: 'gumie', lat: 28.96, lng: 118.87, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
 
-    { id: 'city_raozhou', name: '鄱阳', factionId: 'linshihong', lat: 28.99, lng: 116.66, type: 'small_city', region: 'JIANGNAN', troops: 20000,
-        note: '鄱阳；楚南小城',
-    },
+    { id: 'city_raozhou', name: '鄱阳', factionId: 'linshihong', lat: 28.99, lng: 116.66, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
 
     
     { id: 'city_qianzhou', name: '南康', factionId: 'dayu', lat: 25.8509, lng: 114.93, type: 'small_city', troops: 20000, region: 'JIANGNAN' },

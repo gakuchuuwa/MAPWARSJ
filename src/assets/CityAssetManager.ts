@@ -240,7 +240,7 @@ export class CityAssetManager {
 
 'wazhai': '济阴',
 'liangshidu': '绥',
-        'linshihong': '楚南',
+'linshihong': '干越',
 'kumo': '楮特',
 'xijue': '十箭',
 'xian_d': '高',

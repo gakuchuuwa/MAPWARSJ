@@ -209,7 +209,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
 'wazhai': 'city_dingtao',
 'liangshidu': 'city_yinzhou',
-    'linshihong': 'city_raozhou',
+'linshihong': 'city_raozhou',
     'hejian': 'city_wenan',
 'lu': 'city_hefei',
 'kumo': 'city_songmo',

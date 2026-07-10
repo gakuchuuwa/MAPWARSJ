@@ -227,7 +227,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-25 新增：隋朝核对追加势力 ──
 'wazhai': '济阴',
 'liangshidu': '绥',
-    'linshihong': '楚南',
+'linshihong': '干越',
 'kumo': '楮特',
 'xijue': '十箭',
 'xian_d': '高',

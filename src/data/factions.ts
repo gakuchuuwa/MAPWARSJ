@@ -411,7 +411,8 @@ export const FACTIONS: Faction[] = [
     { id: 'liangshidu', name: '绥州' },
 
     // 深紫 - 宇文化及许政权(魏县/江都)           // 道奇蓝 - 罗艺燕政权(渔阳)
-    { id: 'linshihong', name: '楚南' },    // 暗紫 - 林士弘楚政权(豫章)
+    { id: 'linshihong', name: '干越' },
+    // 暗紫 - 林士弘楚政权(豫章)
     { id: 'lu', name: '庐州' },
        // 秘鲁黄 - 杜伏威楚政权(历阳)
     { id: 'kumo', name: '奚族' },
