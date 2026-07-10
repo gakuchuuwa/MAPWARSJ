@@ -171,25 +171,35 @@ function main() {
     const highP25 = percentile(anchorHigh.map(s => s.avgWins), 0.25);
     const lowP75 = percentile(anchorLow.map(s => s.avgWins), 0.75);
 
+    /** 草原普将T4 攻×1.25 为设计预期，不参与锚点倒挂告警 */
+    function isSteppeT4Expected(l: LegionData): boolean {
+        return l.tier !== '名将' && l.eliteTier === 4 && l.region === 'STEPPE';
+    }
+
+    function buildFlags(s: GeneralStat, z: number): string[] {
+        const flags: string[] = [];
+        const l = s.legion;
+        if (!isSteppeT4Expected(l) && l.tier !== '名将' && l.eliteTier === 4 && s.avgWins > highP25) {
+            flags.push(`普将T4高于名将T0下四分位(${highP25.toFixed(1)})`);
+        }
+        if (l.tier === '名将' && l.eliteTier === 0 && s.avgWins < lowP75) {
+            flags.push(`名将T0低于普将T4上四分位(${lowP75.toFixed(1)})`);
+        }
+        if (Math.abs(z) >= Z_THRESHOLD) flags.push(`cohort内|z|≥${Z_THRESHOLD}`);
+        return flags;
+    }
+
     interface Scored { s: GeneralStat; z: number; residual: number; flags: string[] }
     const scored: Scored[] = stats.map(s => {
         const med = cohortMedian.get(s.cohort) ?? 0;
         const sd = cohortStd.get(s.cohort) ?? 1;
         const z = (s.avgWins - med) / sd;
         const residual = s.avgWins - med;
-        const flags: string[] = [];
-        if (s.legion.tier !== '名将' && s.legion.eliteTier === 4 && s.avgWins > highP25) {
-            flags.push(`普将T4高于名将T0下四分位(${highP25.toFixed(1)})`);
-        }
-        if (s.legion.tier === '名将' && s.legion.eliteTier === 0 && s.avgWins < lowP75) {
-            flags.push(`名将T0低于普将T4上四分位(${lowP75.toFixed(1)})`);
-        }
-        if (Math.abs(z) >= Z_THRESHOLD) flags.push(`cohort内|z|≥${Z_THRESHOLD}`);
-        return { s, z, residual, flags };
+        return { s, z, residual, flags: buildFlags(s, z) };
     });
 
     const outliers = scored
-        .filter(x => x.flags.length > 0)
+        .filter(x => Math.abs(x.z) >= Z_THRESHOLD)
         .sort((a, b) => Math.abs(b.z) - Math.abs(a.z));
 
     // 全池 battle 因子基准（用于对比）
@@ -208,9 +218,14 @@ function main() {
         console.log(`  ${k.padEnd(10)} n=${String(arr.length).padStart(3)}  中位${percentile(avgs, 0.5).toFixed(1)}  P25~P75 ${percentile(avgs, 0.25).toFixed(1)}~${percentile(avgs, 0.75).toFixed(1)}`);
     }
     console.log(`\n  锚点：名将+T0 中位 ${highMed.toFixed(1)} | 普将+T4 中位 ${lowMed.toFixed(1)}  （方向：前者应整体高于后者，允许重叠）`);
+    const steppeT4 = anchorLow.filter(s => s.legion.region === 'STEPPE');
+    if (steppeT4.length) {
+        const sa = steppeT4.map(s => s.avgWins);
+        console.log(`  草原普将+T4  n=${steppeT4.length}  中位${percentile(sa, 0.5).toFixed(1)}  （攻×1.25骁勇区，锚点倒挂不计）`);
+    }
 
     console.log('\n' + '═'.repeat(72));
-    console.log(`  🚨 极不合理 outlier（${outliers.length} 条，|z|≥${Z_THRESHOLD} 或 锚点倒挂）`);
+    console.log(`  🚨 极不合理 outlier（|z|≥${Z_THRESHOLD}，共 ${outliers.length} 条）`);
     console.log('═'.repeat(72));
 
     if (!outliers.length) {
@@ -228,16 +243,7 @@ function main() {
             const sd = cohortStd.get(deep.cohort) ?? 1;
             outliers[i].z = (deep.avgWins - med) / sd;
             outliers[i].residual = deep.avgWins - med;
-            outliers[i].flags = [];
-            if (deep.legion.tier !== '名将' && deep.legion.eliteTier === 4 && deep.avgWins > highP25) {
-                outliers[i].flags.push(`普将T4高于名将T0下四分位(${highP25.toFixed(1)})`);
-            }
-            if (deep.legion.tier === '名将' && deep.legion.eliteTier === 0 && deep.avgWins < lowP75) {
-                outliers[i].flags.push(`名将T0低于普将T4上四分位(${lowP75.toFixed(1)})`);
-            }
-            if (Math.abs(outliers[i].z) >= Z_THRESHOLD) {
-                outliers[i].flags.push(`cohort内|z|≥${Z_THRESHOLD}`);
-            }
+            outliers[i].flags = buildFlags(outliers[i].s, outliers[i].z);
         }
     }
 
@@ -263,12 +269,15 @@ function main() {
         }
 
         const suspects: string[] = [];
-        if (l.strategicSkillId === 'str_03') suspects.push('战略S③所向披靡(攻×1.5)');
-        if (l.strategicSkillId === 'str_07') suspects.push('战略S⑦因粮于敌(胜后膨胀)');
-        if (l.strategicSkillId === 'str_13') suspects.push('战略S⑬以战养战(续航)');
-        if (l.tacticalSkillId && ['ts_003', 'ts_004'].includes(l.tacticalSkillId)) suspects.push(`开局战术${l.tacticalName}(×1.2战力)`);
+        if (l.strategicName?.includes('所向披靡')) suspects.push('战略「所向披靡」攻×1.5');
+        if (l.strategicName?.includes('因粮于敌')) suspects.push('战略「因粮于敌」胜后+1%');
+        if (l.strategicName?.includes('以战养战')) suspects.push('战略「以战养战」行军缓回');
+        if (l.strategicName?.includes('固若金汤')) suspects.push('战略「固若金汤」守城技，连攻侧近乎无效');
+        if (l.strategicName?.includes('坚壁清野')) suspects.push('战略「坚壁清野」守城技，连攻侧近乎无效');
+        if (l.tacticalName && /^(1|2|3|4|5)\s/.test(l.tacticalName)) suspects.push(`开局战术「${l.tacticalName.split(' ').slice(1).join(' ')}」`);
         if (l.cultureField >= 1.15) suspects.push(`高文化军团攻×${l.cultureField}`);
         if (l.cultureField <= 0.85) suspects.push(`低文化军团攻×${l.cultureField}`);
+        if (l.region === 'STEPPE' && l.eliteTier === 4 && l.tier !== '名将') suspects.push('草原骁勇(攻×1.25)预期');
         if (l.eliteTier === 0) suspects.push('T0精锐×1.5');
         if (l.eliteTier === 4 && l.tier !== '名将') suspects.push('普将+T4地板档');
         if (f.lossPassPct > 0.5 && z < 0) suspects.push('首败多遇关隘');

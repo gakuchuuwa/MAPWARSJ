@@ -7,7 +7,8 @@ import { getRegion } from '../src/systems/RegionSystem';
 import { GameConfig } from '../src/config/GameConfig';
 import { T0_CAPITALS, T1_MEDIUM_CITIES, T2_STRATEGIC, PERIPHERY } from '../src/data/cities_v2';
 import { buildSimCityMetaByName } from './sim-city-meta';
-import { getCityMaxTroops } from './sim-troop-caps';
+import { getCityMaxTroops, getArmyMaxTroops } from './sim-troop-caps';
+import { applyStrategicSustainAfterVictory } from './sim-strategic-sustain';
 import type { CityType } from '../src/types/core';
 import { resolveAptitudeByGeneralName, parseRosterEliteTier } from './sim-general-lookup';
 
@@ -238,7 +239,11 @@ export function runCampaign(
         });
 
         if (!r.attackerWon) break;
-        troops = r.attSurvivors;
+        troops = applyStrategicSustainAfterVictory(
+            r.attSurvivors,
+            getArmyMaxTroops(attacker.region),
+            attacker.strategicSkillId,
+        );
     }
 
     return log;

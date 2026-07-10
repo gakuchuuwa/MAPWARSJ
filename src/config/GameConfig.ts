@@ -144,6 +144,11 @@ export class GameConfig {
         CAMPAIGN_LEGION_MULT: 1.2,
         /** 精锐 tier 战力乘数 T0→T4（AGENTS.md §12.3.1；CultureCombat 读取） */
         ELITE_TIER_MULT: [1.5, 1.4, 1.3, 1.2, 1.1] as const,
+        /**
+         * 以战养战：远离己方据点时，每秒恢复 = 军团上限 × 此系数（游戏秒）。
+         * FollowResupplySystem 与模拟器共用；连战模拟 tick 秒数见 TIME.POST_BATTLE_REST。
+         */
+        FIELD_RESUPPLY_RATE_PER_CAP_PER_SEC: 0.00015,
     };
     /**
      * 14文化六维属性（2026-07-10 四维定稿，2026-07-11 扩六维）

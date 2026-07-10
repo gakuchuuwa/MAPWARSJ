@@ -3,8 +3,7 @@ import { City } from '../types/core';
 import { GameMap } from '../map/GameMap';
 import { GridSystem } from '../systems/GridSystem';
 import { FactionManager } from './FactionManager';
-import { CITY_CONFIG, clampCityTroopsForCity, getCityMaxTroops } from '../config/CityConfig';
-import { resolveCityCultureRegion } from '../systems/CultureTroopCaps';
+import { clampCityTroopsForCity } from '../config/CityConfig';
 import { GameConfig } from '../config/GameConfig';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { VECTOR_ROAD_DATA } from '../data/VectorRoadData';
@@ -15,7 +14,6 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { isMacroMapZoom, isRegionBoundaryZoom } from '../config/StrategicView';
 import { audioManager } from '../audio/AudioManager';
-import { getCityAnchoredStrategicMagnitude } from '../combat/GeneralSkillCombat';
 
 export interface CityUpdateOptions {
     skipCaptureLog?: boolean;
@@ -455,22 +453,8 @@ export class CityManager {
         PerformanceMonitor.getInstance().noteAsyncWork('cityLabel', performance.now() - t0);
     }
 
-    // Game Logic
-    public updateTroops(): void {
-        this.cities.forEach(city => {
-            const config = CITY_CONFIG[city.type];
-            if (!config || city.factionId === 'panjun') return;
-
-            const region = resolveCityCultureRegion(city);
-            const maxTroops = getCityMaxTroops(city.type, region);
-            const growthMult = getCityAnchoredStrategicMagnitude(city.id, 'city_growth_mult');
-            const growth = Math.floor(CITY_CONFIG[city.type].maxTroops * config.growthRate * growthMult);
-            if (city.troops < maxTroops) {
-                city.troops = clampCityTroopsForCity(city, city.troops + growth);
-                this.territorySystem.updateCityLabel(city);
-            }
-        });
-    }
+    // [2026-07-11 删除死代码] updateTroops()（growthRate 自然增长管线）全仓无调用方，从未运行；
+    // 城市增兵唯一活管线 = RecruitmentSystem.recruitSeasonGarrison（每季补驻军，足食足兵×2 挂在那）。
 
     public updateCity(
         id: string,

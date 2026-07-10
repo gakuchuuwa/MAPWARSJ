@@ -2,6 +2,7 @@ import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { generalHasStrategicEffect, getGeneralStrategicMagnitude } from '../combat/GeneralSkillCombat';
+import { spawnSkillWordPulse } from '../utils/MapFloatingText';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
@@ -638,6 +639,10 @@ export class LegionManager {
 
         for (const city of this.cityManager.getCities()) {
             if (!city.factionId || city.factionId === factionId) continue;
+            const dist = getEuclideanDistance(pos, {
+                lat: city.latitude,
+                lng: city.longitude,
+            });
             // 长驱深入：仅 small_city 可被绕过，按 (军团id+据点id) 稳定掷点（同一军团对同一小城结果固定，
             // 不逐帧闪烁），命中概率 = magnitude。big_city / medium_city / pass 不进此分支，恒拦截。
             // 本军团自己的攻击目标城不适用绕过：绕过意为"路过不被拦"，若绕过自己要打的城，
@@ -650,17 +655,22 @@ export class LegionManager {
                 city.id !== army.expeditionTargetCityId &&
                 this.rollSmallCityZocBypass(army.id, city.id, smallCityBypassChance)
             ) {
-                const bypassedSet = (army as any).bypassedCities || ((army as any).bypassedCities = new Set<string>());
-                if (!bypassedSet.has(city.id)) {
-                    bypassedSet.add(city.id);
-                    gameLog('battle', `〔长驱深入〕${army.generalId || '将领'}无视【${city.name}】守军，长驱直入`);
+                // 演出只在「真的走进这座小城控制圈」的瞬间发：本循环遍历全图据点且被 AI
+                // 规划调用，若不看距离，军团一出生就会对着千里外掷点命中的城飘字。
+                // 只给跟拍军团飘、只飘四字技名；重复由 spawnSkillWordPulse 键控节流兜底。
+                if (dist <= zoc && !army.getIsInCombat()) {
+                    const bypassedSet = (army as any).bypassedCities || ((army as any).bypassedCities = new Set<string>());
+                    if (!bypassedSet.has(city.id)) {
+                        bypassedSet.add(city.id);
+                        gameLog('battle', `〔长驱深入〕${army.generalId || '将领'}无视【${city.name}】守军，长驱直入`);
+                        if (this.isFollowedLegion(army)) {
+                            const aPos = army.getPosition();
+                            spawnSkillWordPulse(`${army.id}|长驱深入`, aPos.lat, aPos.lng, '长驱深入', '#00ffff');
+                        }
+                    }
                 }
                 continue;
             }
-            const dist = getEuclideanDistance(pos, {
-                lat: city.latitude,
-                lng: city.longitude,
-            });
             if (dist <= zoc && dist < minDist) {
                 minDist = dist;
                 nearest = city;

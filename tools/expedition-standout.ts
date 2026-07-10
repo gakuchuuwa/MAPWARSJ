@@ -16,11 +16,10 @@
 import { simulateOnce, type UnitSpec, type Terrain } from './combat-model';
 import {
     GENERAL_PROFILES,
-    STRATEGIC_SKILL_CATALOG,
-    getStrategicSkillDef,
     TACTICAL_SKILL_ENTRIES_V1,
 } from '../src/data/GeneralSkills';
 import { FACTION_GENERALS } from '../src/data/FactionGenerals';
+import { applyStrategicSustainAfterVictory } from './sim-strategic-sustain';
 
 function argNum(flag: string, def: number): number {
     const i = process.argv.indexOf(flag);
@@ -34,7 +33,6 @@ const HARD_CAP = 60;
 const REGION = 'CENTRAL';
 const TRIALS = argNum('--trials', 200);
 const ELITE_TIER = argNum('--elite', 0); // T0=0
-const FIELD_RESUPPLY_RATIO = 0.15;
 
 const TERRAINS: { t: Terrain; w: number }[] = [
     { t: 'plain', w: 0.55 }, { t: 'mountain', w: 0.40 }, { t: 'sea', w: 0.05 },
@@ -50,13 +48,8 @@ function randomTs(): string { return ALL_TS[(Math.random() * ALL_TS.length) | 0]
 const generalNameById = new Map<string, string>();
 for (const [, g] of Object.entries(FACTION_GENERALS)) generalNameById.set(g.generalId, g.generalName);
 
-function applyStrategicSustain(survivors: number, lost: number, strId?: string): number {
-    let t = survivors;
-    const str = strId ? getStrategicSkillDef(strId) : null;
-    if (str?.effect === 'post_battle_troop_pct') t += Math.floor(t * str.magnitude);
-    else if (str?.hiddenPostBattlePct && str.hiddenPostBattlePct > 0) t += Math.floor(t * str.hiddenPostBattlePct);
-    if (str?.effect === 'field_resupply') t += Math.floor(Math.max(0, lost) * FIELD_RESUPPLY_RATIO);
-    return Math.min(t, MAX_TROOPS);
+function applyStrategicSustain(survivors: number, strId?: string): number {
+    return applyStrategicSustainAfterVictory(survivors, MAX_TROOPS, strId);
 }
 
 interface LegionCfg {
@@ -79,11 +72,10 @@ function runOne(cfg: LegionCfg): number {
             troops: ENEMY_TROOPS, region: REGION, role: 'field',
             general: { tier: 'ordinary', tacticalSkillId: randomTs() },
         };
-        const before = troops;
         const r = simulateOnce([legion], [enemy], randomTerrain(), true, 'field');
         if (!r.attackerWon || r.attSurvivors < 1) break;
         battles++;
-        troops = applyStrategicSustain(r.attSurvivors, before - r.attSurvivors, cfg.strategicSkillId);
+        troops = applyStrategicSustain(r.attSurvivors, cfg.strategicSkillId);
     }
     return battles;
 }

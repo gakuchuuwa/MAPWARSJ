@@ -39,8 +39,7 @@ import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world
 import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR } from './TacticalConstants';
 import { readSiegeGarrisonEliteName } from './SiegeGarrisonTier';
 import { gameLog } from '../utils/GameLogger';
-
-/** 普将逆局阈值：单一真理源 TacticalConstants（纯常量，供审计侧解耦引用），此处再导出保持兼容 */
+import { spawnSkillWordPulse, getFollowedArmyId } from '../utils/MapFloatingText';
 export { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR };
 
 export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
@@ -1806,6 +1805,12 @@ function applyPostBattleTroopPct(
         'battle',
         `🌾 [武将技] ${unit.generalId ?? '?'} ${source}【${skill.displayName}】 +${bonus}`,
     );
+    // 只给跟拍军团飘；只飘四字技名（数字细节看战报/日志，不上屏）
+    const army = getArmyEntity(unit);
+    if (army && army.id === getFollowedArmyId()) {
+        const pos = army.getPosition();
+        spawnSkillWordPulse(`${army.id}|${skill.displayName}`, pos.lat, pos.lng, skill.displayName, '#55ff55');
+    }
     return bonus;
 }
 
@@ -1837,6 +1842,10 @@ export function applyPostBattleStrategicBonus(
                     unit.setTroops(unit.troops + bonus);
                     total += bonus;
                     gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}收编残部降卒 ${bonus.toLocaleString()}`);
+                    if (army && army.id === getFollowedArmyId()) {
+                        const pos = army.getPosition();
+                        spawnSkillWordPulse(`${army.id}|${profileSkill.displayName}`, pos.lat, pos.lng, profileSkill.displayName, '#55ff55');
+                    }
                 }
             } else if (profileSkill?.hiddenPostBattlePct && profileSkill.hiddenPostBattlePct > 0) {
                 const bonus = Math.floor(unit.troops * profileSkill.hiddenPostBattlePct);
@@ -1849,6 +1858,10 @@ export function applyPostBattleStrategicBonus(
             // S⑫乘胜追击 (skip_post_battle_rest)
             if (profileSkill?.effect === 'skip_post_battle_rest') {
                 gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}不作休整，挥师再进`);
+                if (army && army.id === getFollowedArmyId()) {
+                    const pos = army.getPosition();
+                    spawnSkillWordPulse(`${army.id}|${profileSkill.displayName}`, pos.lat, pos.lng, profileSkill.displayName, '#ffaa00');
+                }
             }
         }
     }

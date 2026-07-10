@@ -9,8 +9,8 @@
  * 续航规则（贴合游戏）：
  *   · 每胜一场：combat-model 已含【基础战后恢复 30% + 战术恢复技】结算（attSurvivors）
  *   · 战略续航（组合带才生效）：
- *       - 因粮于敌 str_07 (post_battle_troop_pct)：胜后 += 自身当前兵 × magnitude（对齐游戏源码）
- *       - 以战养战 str_13 (field_resupply)：胜后额外补回本场战损的一部分（远征在外缓回血）
+ *       - 因粮于敌：胜后 += 自身当前兵 × 配置比例（对齐游戏）
+ *       - 以战养战：军团上限 × 每秒恢复率 × 假定行军秒数（与 FollowResupplySystem 同公式）
  *   · 兵力上限 = MAX_TROOPS（默认 10 万）
  *   · 乘胜追击/兵贵神速/履险如夷/直捣黄龙/足食足兵/募兵有道：行军/爆兵类，
  *     对"连续战斗存活"无直接影响，本模拟不计（会体现为这些组合场数相近）。
@@ -26,12 +26,12 @@ import { getArmyMaxTroops } from './sim-troop-caps';
 import {
     GENERAL_PROFILES,
     STRATEGIC_SKILL_CATALOG,
-    getStrategicSkillDef,
     getTacticalSkillDef,
     TACTICAL_SKILL_ENTRIES_V1,
 } from '../src/data/GeneralSkills';
 import { FACTION_GENERALS } from '../src/data/FactionGenerals';
 import { writeFileSync } from 'node:fs';
+import { applyStrategicSustainAfterVictory, getChainSimFieldResupplySec } from './sim-strategic-sustain';
 
 // ────────── 参数 ──────────
 function argNum(flag: string, def: number): number {
@@ -53,8 +53,8 @@ const MAX_TROOPS = process.argv.includes('--cap')
 const TRIALS = argNum('--trials', 100);
 const MODE = argStr('--mode', 'general'); // general | combos | both
 const HARD_CAP_BATTLES = argNum('--maxbattles', 60); // 防无敌组合无限循环
-/** 以战养战：胜后额外补回本场战损的比例（v1 近似值，可调） */
-const FIELD_RESUPPLY_RATIO = argNum('--fieldresupply', 0.15);
+/** 以战养战 tick 秒数：默认 = 战后驻留（与游戏一致）；可用 --travel-sec 覆盖 */
+const FIELD_RESUPPLY_TRAVEL_SEC = argNum('--travel-sec', getChainSimFieldResupplySec());
 
 // 地形权重（远征跨区）
 const TERRAINS: { t: Terrain; w: number }[] = [
@@ -84,21 +84,9 @@ for (const [, g] of Object.entries(FACTION_GENERALS)) generalNameById.set(g.gene
 const tsNameById = new Map<string, string>();
 for (const e of TACTICAL_SKILL_ENTRIES_V1) tsNameById.set(e.id, e.displayName);
 
-// ────────── 续航：战略技胜后补员 ──────────
-function applyStrategicSustain(survivors: number, lostThisBattle: number, strId: string | undefined): number {
-    let t = survivors;
-    const str = strId ? getStrategicSkillDef(strId) : null;
-    if (str?.effect === 'post_battle_troop_pct') {
-        // 对齐游戏源码 GeneralSkillCombat.applyPostBattleTroopPct：胜后 += 自身当前兵 × magnitude
-        t += Math.floor(t * str.magnitude);
-    } else if (str?.hiddenPostBattlePct && str.hiddenPostBattlePct > 0) {
-        // 地图系战略技隐藏胜后续航（静默 1%）：对齐 applyPostBattleStrategicBonus
-        t += Math.floor(t * str.hiddenPostBattlePct);
-    }
-    if (str?.effect === 'field_resupply') {
-        t += Math.floor(Math.max(0, lostThisBattle) * FIELD_RESUPPLY_RATIO); // 以战养战（保下限）：按自身战损补回
-    }
-    return Math.min(t, MAX_TROOPS);
+// ────────── 续航：战略技胜后补员（对齐 applyPostBattleStrategicBonus） ──────────
+function applyStrategicSustain(survivors: number, strId: string | undefined): number {
+    return applyStrategicSustainAfterVictory(survivors, MAX_TROOPS, strId, FIELD_RESUPPLY_TRAVEL_SEC);
 }
 
 // ────────── 单次远征：打到覆没，返回连胜场数 ──────────
@@ -114,12 +102,10 @@ function runOneExpedition(tsId: string | undefined, strId: string | undefined): 
             troops: ENEMY_TROOPS, region: REGION, role: 'field',
             general: { tier: 'ordinary', tacticalSkillId: randomEnemyTs() },
         };
-        const before = troops;
         const r = simulateOnce([legion], [enemy], randomTerrain(), true, 'field');
         if (!r.attackerWon || r.attSurvivors < 1) break;
         battles++;
-        const lost = before - r.attSurvivors;
-        troops = applyStrategicSustain(r.attSurvivors, lost, strId);
+        troops = applyStrategicSustain(r.attSurvivors, strId);
     }
     return battles;
 }
@@ -169,7 +155,7 @@ function pad(s: string, w: number): string {
 }
 
 console.log(`\n远征续航模拟 | 名将军团 ${LEGION_TROOPS}（cap ${MAX_TROOPS}） vs 连续普将 ${ENEMY_TROOPS} | 每组 ${TRIALS} 次 | 文化区 ${REGION}`);
-console.log(`地形权重 平原${TERRAINS[0].w}/山地${TERRAINS[1].w}/海${TERRAINS[2].w} | 场数封顶 ${HARD_CAP_BATTLES} | 以战养战补给系数 ${FIELD_RESUPPLY_RATIO}`);
+console.log(`地形权重 平原${TERRAINS[0].w}/山地${TERRAINS[1].w}/海${TERRAINS[2].w} | 场数封顶 ${HARD_CAP_BATTLES} | 以战养战 tick ${FIELD_RESUPPLY_TRAVEL_SEC}s（战后驻留）`);
 
 // ────────── 视角1：名将排行 ──────────
 if (MODE === 'general' || MODE === 'both') {

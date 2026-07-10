@@ -137,16 +137,16 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     // ── 军团攻 ──
     str_03: { id: 'str_03', grid: 'S③', displayName: '所向披靡', effect: 'attacker_power_mult', magnitude: 1.5, engineStatus: 'ready' },
     // ── 军团速 ──
-    str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '隐藏胜后续航 1%（静默，不显示）' },
-    str_10: { id: 'str_10', grid: 'S⑩', displayName: '如履平地', effect: 'mountain_march_immunity', magnitude: 1, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '山地按平原速度走；隐藏胜后续航 1%' },
-    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '50% 无视小城 ZOC；隐藏胜后续航 1%' },
+    str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.5, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '隐藏胜后续航 0.5%（静默，不显示）' },
+    str_10: { id: 'str_10', grid: 'S⑩', displayName: '如履平地', effect: 'mountain_march_immunity', magnitude: 1, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '山地按平原速度走；隐藏胜后续航 0.5%' },
+    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '50% 无视小城 ZOC；隐藏胜后续航 0.5%' },
     // ── 补给 ──
-    str_12: { id: 'str_12', grid: 'S⑫', displayName: '乘胜追击', effect: 'skip_post_battle_rest', magnitude: 0, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '胜后休整时长置 0' },
+    str_12: { id: 'str_12', grid: 'S⑫', displayName: '乘胜追击', effect: 'skip_post_battle_rest', magnitude: 0, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '胜后休整时长置 0' },
     str_13: { id: 'str_13', grid: 'S⑬', displayName: '以战养战', effect: 'field_resupply', magnitude: 1, engineStatus: 'ready', note: '远离本土缓回血' },
-    str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.02, engineStatus: 'ready' },
+    str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.01, engineStatus: 'ready' },
     // ── 据点兵 ──
-    str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '出身城每季补兵 ×2（活管线在 RecruitmentSystem 季度补驻军；CityManager.updateTroops 无调用方，勿再挂）' },
-    str_15: { id: 'str_15', grid: 'S⑮', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '征兵冷却 ×0.5' },
+    str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '出身城每季补兵 ×2（活管线在 RecruitmentSystem 季度补驻军；CityManager.updateTroops 无调用方，勿再挂）' },
+    str_15: { id: 'str_15', grid: 'S⑮', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '征兵冷却 ×0.5' },
     // ── 据点防 ──
     str_08: { id: 'str_08', grid: 'S⑧', displayName: '固若金汤', effect: 'garrison_defense_mult', magnitude: 1.3, engineStatus: 'ready', note: '守城时城防战力 ×1.3' },
     str_05: { id: 'str_05', grid: 'S⑤', displayName: '坚壁清野', effect: 'siege_attacker_supply_halved', magnitude: 0.5, engineStatus: 'ready', note: '攻城方在城外缓回血减半' },
@@ -169,7 +169,7 @@ export interface ExpeditionSystemSkillDef {
 export const EXPEDITION_FORAGE_SKILL: ExpeditionSystemSkillDef = {
     displayName: '因粮于敌',
     effect: 'post_battle_troop_pct',
-    magnitude: 0.02,
+    magnitude: 0.01,
 };
 
 /** 守军系统技 effect（非战术十格 / 战略六格） */

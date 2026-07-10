@@ -14,6 +14,7 @@ import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { generalHasStrategicEffect, getCityAnchoredStrategicMagnitude } from '../combat/GeneralSkillCombat';
+import { spawnSkillWordPulse, getFollowedArmyId } from '../utils/MapFloatingText';
 
 export class FollowResupplySystem {
     private cityManager: CityManager;
@@ -34,7 +35,8 @@ export class FollowResupplySystem {
 
     /**
      * S⑬以战养战：远离己方据点时缓慢回血（全军团，不限跟拍）
-     * 速率约满编 0.015%/游戏秒（远离 PASS_RADIUS 外生效）
+     * 速率 = 军团上限 × GameConfig.COMBAT.FIELD_RESUPPLY_RATE_PER_CAP_PER_SEC × 游戏秒
+     * 连战模拟 tick 窗口 = TIME.POST_BATTLE_REST（战后驻留 3 秒，无地图行军时）
      */
     public tickStrategicFieldResupply(army: Army, deltaTimeSec: number): void {
         if (!GameConfig.SYSTEM.SANDBOX_MODE) return;
@@ -69,17 +71,20 @@ export class FollowResupplySystem {
                 if (mag < 1) { 
                     resupplyMult = Math.min(resupplyMult, mag); 
                     
-                    // S⑤坚壁清野 进圈日志
+                    // S⑤坚壁清野 进圈日志；飘字只给跟拍军团（受害方视角）、只飘四字技名
                     const scorchedSet = (army as any).scorchedEarthCities || ((army as any).scorchedEarthCities = new Set<string>());
                     if (!scorchedSet.has(city.id)) {
                         scorchedSet.add(city.id);
                         gameLog('battle', `〔坚壁清野〕${army.generalId || '将领'}进入【${city.name}】清野范围，补给受阻`);
+                        if (army.id === getFollowedArmyId()) {
+                            spawnSkillWordPulse(`${army.id}|坚壁清野`, pos.lat, pos.lng, '坚壁清野', '#ff5555');
+                        }
                     }
                 }
             }
         }
 
-        const ratePerSec = armyMax * 0.00015 * resupplyMult;
+        const ratePerSec = armyMax * GameConfig.COMBAT.FIELD_RESUPPLY_RATE_PER_CAP_PER_SEC * resupplyMult;
         const accum = (this.fieldResupplyAccum.get(army.id) ?? 0) + ratePerSec * deltaTimeSec;
         if (accum < 1) {
             this.fieldResupplyAccum.set(army.id, accum);
@@ -89,11 +94,14 @@ export class FollowResupplySystem {
         this.fieldResupplyAccum.set(army.id, accum - add);
         army.setTroops(Math.min(armyMax, army.getTroops() + add));
 
-        // S⑬以战养战 累积满 1000 发一次战报
+        // S十三以战养战 累积满 1000 发一次；飘字只给跟拍军团、只飘四字技名
         const uiAccum = ((army as any).fieldResupplyUiAccum ?? 0) + add;
         if (uiAccum >= 1000) {
             (army as any).fieldResupplyUiAccum = 0; // 清零
             gameLog('battle', `〔以战养战〕${army.generalId || '将领'}沿途就粮，恢复 +1,000`);
+            if (army.id === getFollowedArmyId()) {
+                spawnSkillWordPulse(`${army.id}|以战养战`, pos.lat, pos.lng, '以战养战', '#55ff55');
+            }
         } else {
             (army as any).fieldResupplyUiAccum = uiAccum;
         }
