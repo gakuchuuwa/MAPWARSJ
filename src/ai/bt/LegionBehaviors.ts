@@ -37,7 +37,7 @@ import {
 } from '../../data/ExpeditionLegions';
 import { isCampaignLegion, shouldSkipHomeRecapture } from '../../legion/LegionSpawnPolicy';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
-import { clampCityTroopsForCity } from '../../config/CityConfig';
+import { clampCityTroops } from '../../config/CityConfig';
 import { roadRegistry } from '../../roads/RoadRegistry';
 import type { Army } from '../../legion/Army';
 
@@ -222,7 +222,6 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
                 }
                 clearStrategicTarget(ctx);
                 ctx.army.setTargetCity(null);
-                ctx.army.stopMovement();
             }
             return false;
         }
@@ -243,7 +242,6 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
         }
         clearStrategicTarget(ctx);
         ctx.army.setTargetCity(null);
-        ctx.army.stopMovement();
         return false;
     }
 
@@ -320,9 +318,6 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     // 远征模式：目标只有一个，不进近 3 敌城抽签、不回师
     const expedition = resolveExpeditionState(ctx);
     if (expedition === 'locked') return BTStatus.SUCCESS;
-
-    // 旧目标已失效（HasTarget 或 AbandonTarget 清退），立即停步以便重路由到新目标
-    ctx.army.stopMovement();
 
     const myFaction = ctx.army.getFactionId();
     const now = performance.now();
@@ -615,7 +610,7 @@ export const DisbandIntoHome = new Action('DisbandIntoHome', (ctx) => {
     if (!home) return BTStatus.FAILURE;
 
     const merged = army.getTroops();
-    home.troops = clampCityTroopsForCity(home, (home.troops || 0) + merged);
+    home.troops = clampCityTroops(home.type, (home.troops || 0) + merged);
     ctx.cityManager.updateCityLabel?.(home.id);
 
     btLog(

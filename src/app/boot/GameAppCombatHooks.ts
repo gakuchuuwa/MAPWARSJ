@@ -1,6 +1,7 @@
 import { gameLog } from '../../utils/GameLogger';
 import type { GameApp } from '../GameApp';
 import type { LegionManager } from '../../legion/LegionManager';
+import { spawnMapFloatingText, getFollowedArmyId } from '../../utils/MapFloatingText';
 import {
     setGeneralSkillLegionManager,
     setOnTacticalSkillTriggered,
@@ -109,10 +110,16 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
 export function wireGeneralSkillCombat(app: GameApp, legionManager: LegionManager): void {
     setGeneralSkillLegionManager(legionManager);
     setOnTacticalSkillTriggered((info) => {
-        if (!app.combatUI.isRegionalVisible()) return;
-        // 全图多战并行：异场技能事件不得上面板/进语音（曾借同名技能标签冒名顶替，把人名念成别场武将）
-        if (!app.combatUI.isTacticalEventForBoundBattle(info)) return;
-        app.combatUI.flashTacticalSkill(info.displayName, info.generalId, info.skillId);
-        gameLog('battle', `✨ [CombatUI] 战术技展示: 【${info.displayName}】 (${info.generalId})`);
+        // 全改到大地图飘字，不再在战斗面板闪卡（只给跟拍军团显示）
+        const armyId = info.unitId;
+        if (armyId && armyId === getFollowedArmyId()) {
+            const army = legionManager.getLegionById(armyId);
+            if (army) {
+                const pos = army.getPosition();
+                // 战术技（开局技能）用橙黄色标识
+                spawnMapFloatingText(pos.lat, pos.lng, info.displayName, '#ffaa00');
+            }
+        }
+        gameLog('battle', `✨ [大地图] 战术技展示: 【${info.displayName}】 (${info.generalId})`);
     });
 }

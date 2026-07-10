@@ -67,8 +67,8 @@ export class SiegeManager {
         approaching: boolean;
     }>> = new Map();
 
-    /** 等待环基准：比开战圈稍外（攻城军停在 COMBAT_RADIUS≈0.1，等待者最近停 0.16） */
-    private static readonly WAIT_RING_BASE = GameConfig.SIEGE.COMBAT_RADIUS + 0.06;
+    /** 等待环基准：比开战圈稍外（攻城军停在 COMBAT_RADIUS≈0.1，等待者最近停 0.2） */
+    private static readonly WAIT_RING_BASE = GameConfig.SIEGE.COMBAT_RADIUS + 0.1;
     /** 同城每多一个等待者，停步环外推一档（同路来的自然前后排开，不同路来的方向本就不同） */
     private static readonly WAIT_RING_SPACING = 0.05;
 
