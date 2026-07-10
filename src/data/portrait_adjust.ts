@@ -5313,7 +5313,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/JIANGNAN/yang_zhou_yangxingmi.png": {
-            "scale": 0.92,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -22
         },
