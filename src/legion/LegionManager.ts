@@ -2,7 +2,7 @@ import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { generalHasStrategicEffect, getGeneralStrategicMagnitude } from '../combat/GeneralSkillCombat';
-import { spawnSkillWordPulse } from '../utils/MapFloatingText';
+import { tryBypassPulse } from '../utils/MapFloatingText';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
@@ -657,7 +657,7 @@ export class LegionManager {
             ) {
                 // 演出只在「真的走进这座小城控制圈」的瞬间发：本循环遍历全图据点且被 AI
                 // 规划调用，若不看距离，军团一出生就会对着千里外掷点命中的城飘字。
-                // 只给跟拍军团飘、只飘四字技名；重复由 spawnSkillWordPulse 键控节流兜底。
+                // 只给跟拍军团飘、只飘四字技名；密集区 3 秒去重由 tryBypassPulse 兜底。
                 if (dist <= zoc && !army.getIsInCombat()) {
                     const bypassedSet = (army as any).bypassedCities || ((army as any).bypassedCities = new Set<string>());
                     if (!bypassedSet.has(city.id)) {
@@ -665,7 +665,7 @@ export class LegionManager {
                         gameLog('battle', `〔长驱深入〕${army.generalId || '将领'}无视【${city.name}】守军，长驱直入`);
                         if (this.isFollowedLegion(army)) {
                             const aPos = army.getPosition();
-                            spawnSkillWordPulse(`${army.id}|长驱深入`, aPos.lat, aPos.lng, '长驱深入', '#00ffff');
+                            tryBypassPulse(army.id, aPos.lat, aPos.lng, '#00ffff');
                         }
                     }
                 }

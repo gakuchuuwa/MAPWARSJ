@@ -157,7 +157,7 @@ function buildLegion(e: CityEntry): LegionData {
   };
 }
 
-function toUnitSpec(legion: LegionData, troops: number, role: 'field' | 'garrison'): UnitSpec {
+function toUnitSpec(legion: LegionData, troops: number, role: 'field' | 'garrison', isFirstSortieSinceDepart = false): UnitSpec {
   return {
     troops,
     region: legion.region,
@@ -165,6 +165,7 @@ function toUnitSpec(legion: LegionData, troops: number, role: 'field' | 'garriso
     pass: role === 'garrison' ? legion.isPass : undefined,
     regionCenter: role === 'garrison' ? legion.isRegionCenter : undefined,
     eliteTier: legion.eliteTier,
+    isFirstSortieSinceDepart: role === 'field' ? isFirstSortieSinceDepart : undefined,
     general: {
       tier: legion.tier === '名将' ? 'famous' : 'ordinary',
       tacticalSkillId: legion.tacticalSkillId ?? undefined,
@@ -201,7 +202,7 @@ function runCampaign(attacker: LegionData, pool: LegionData[]): BattleLog[] {
     const cityType = (CITY_TABLE[def.city]?.type || 'small_city') as CityType;
     const defTroops = randomTroops(cityType, def.region);
     const terrain = randomTerrain();
-    const attSpec = toUnitSpec(attacker, troops, 'field');
+    const attSpec = toUnitSpec(attacker, troops, 'field', b === 0);
     const defSpec = toUnitSpec(def, defTroops, 'garrison');
 
     const r = simulateOnce([attSpec], [defSpec], terrain, true, 'siege');

@@ -24,7 +24,7 @@ import { getCityRegion, REGION_ORDER, RegionType, isRegionCenter } from '../syst
 import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile, getStrategicSkillDef } from '../data/GeneralSkills';
-import { spawnSkillWordPulse, getFollowedArmyId } from '../utils/MapFloatingText';
+import { spawnMapFloatingText, getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCityAnchoredStrategicMagnitude } from '../combat/GeneralSkillCombat';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 
@@ -168,7 +168,7 @@ export class RecruitmentSystem {
                         const followedGen = followedId ? this.legionManager.getLegionById(followedId)?.generalId : null;
                         const anchoredGen = getCityAnchoredGeneral(city.id)?.generalId;
                         if (followedGen && anchoredGen === followedGen) {
-                            spawnSkillWordPulse(`${city.id}|足食足兵`, city.latitude, city.longitude, '足食足兵', '#55ff55');
+                            spawnMapFloatingText(city.latitude, city.longitude, '足食足兵', '#55ff55');
                         }
                     }
                 }

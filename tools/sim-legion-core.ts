@@ -170,7 +170,7 @@ export function buildLegion(e: RosterEntry): LegionData {
     };
 }
 
-export function toUnitSpec(legion: LegionData, troops: number, role: 'field' | 'garrison'): UnitSpec {
+export function toUnitSpec(legion: LegionData, troops: number, role: 'field' | 'garrison', isFirstSortieSinceDepart = false): UnitSpec {
     return {
         troops,
         region: legion.region,
@@ -178,6 +178,7 @@ export function toUnitSpec(legion: LegionData, troops: number, role: 'field' | '
         pass: role === 'garrison' ? legion.isPass : undefined,
         regionCenter: role === 'garrison' ? legion.isRegionCenter : undefined,
         eliteTier: legion.eliteTier,
+        isFirstSortieSinceDepart: role === 'field' ? isFirstSortieSinceDepart : undefined,
         general: {
             tier: legion.tier === '名将' ? 'famous' : 'ordinary',
             tacticalSkillId: legion.tacticalSkillId ?? undefined,
@@ -213,7 +214,7 @@ export function runCampaign(
         const terrain = randomTerrain();
         const attStart = troops;
         const r = simulateOnce(
-            [toUnitSpec(attacker, troops, 'field')],
+            [toUnitSpec(attacker, troops, 'field', b === 0)],
             [toUnitSpec(def, defTroops, 'garrison')],
             terrain,
             true,

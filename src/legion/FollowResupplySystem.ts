@@ -14,7 +14,7 @@ import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { generalHasStrategicEffect, getCityAnchoredStrategicMagnitude } from '../combat/GeneralSkillCombat';
-import { spawnSkillWordPulse, getFollowedArmyId } from '../utils/MapFloatingText';
+import { spawnMapFloatingText, getFollowedArmyId } from '../utils/MapFloatingText';
 
 export class FollowResupplySystem {
     private cityManager: CityManager;
@@ -77,7 +77,7 @@ export class FollowResupplySystem {
                         scorchedSet.add(city.id);
                         gameLog('battle', `〔坚壁清野〕${army.generalId || '将领'}进入【${city.name}】清野范围，补给受阻`);
                         if (army.id === getFollowedArmyId()) {
-                            spawnSkillWordPulse(`${army.id}|坚壁清野`, pos.lat, pos.lng, '坚壁清野', '#ff5555');
+                            spawnMapFloatingText(pos.lat, pos.lng, '坚壁清野', '#ff5555');
                         }
                     }
                 }
@@ -100,7 +100,7 @@ export class FollowResupplySystem {
             (army as any).fieldResupplyUiAccum = 0; // 清零
             gameLog('battle', `〔以战养战〕${army.generalId || '将领'}沿途就粮，恢复 +1,000`);
             if (army.id === getFollowedArmyId()) {
-                spawnSkillWordPulse(`${army.id}|以战养战`, pos.lat, pos.lng, '以战养战', '#55ff55');
+                spawnMapFloatingText(pos.lat, pos.lng, '以战养战', '#55ff55');
             }
         } else {
             (army as any).fieldResupplyUiAccum = uiAccum;

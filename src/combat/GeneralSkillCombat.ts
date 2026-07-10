@@ -39,7 +39,7 @@ import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world
 import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR } from './TacticalConstants';
 import { readSiegeGarrisonEliteName } from './SiegeGarrisonTier';
 import { gameLog } from '../utils/GameLogger';
-import { spawnSkillWordPulse, getFollowedArmyId } from '../utils/MapFloatingText';
+import { spawnMapFloatingText, getFollowedArmyId } from '../utils/MapFloatingText';
 export { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR };
 
 export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
@@ -1809,7 +1809,7 @@ function applyPostBattleTroopPct(
     const army = getArmyEntity(unit);
     if (army && army.id === getFollowedArmyId()) {
         const pos = army.getPosition();
-        spawnSkillWordPulse(`${army.id}|${skill.displayName}`, pos.lat, pos.lng, skill.displayName, '#55ff55');
+        spawnMapFloatingText(pos.lat, pos.lng, skill.displayName, '#55ff55');
     }
     return bonus;
 }
@@ -1844,7 +1844,7 @@ export function applyPostBattleStrategicBonus(
                     gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}收编残部降卒 ${bonus.toLocaleString()}`);
                     if (army && army.id === getFollowedArmyId()) {
                         const pos = army.getPosition();
-                        spawnSkillWordPulse(`${army.id}|${profileSkill.displayName}`, pos.lat, pos.lng, profileSkill.displayName, '#55ff55');
+                        spawnMapFloatingText(pos.lat, pos.lng, profileSkill.displayName, '#55ff55');
                     }
                 }
             } else if (profileSkill?.hiddenPostBattlePct && profileSkill.hiddenPostBattlePct > 0) {
@@ -1860,7 +1860,7 @@ export function applyPostBattleStrategicBonus(
                 gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}不作休整，挥师再进`);
                 if (army && army.id === getFollowedArmyId()) {
                     const pos = army.getPosition();
-                    spawnSkillWordPulse(`${army.id}|${profileSkill.displayName}`, pos.lat, pos.lng, profileSkill.displayName, '#ffaa00');
+                    spawnMapFloatingText(pos.lat, pos.lng, profileSkill.displayName, '#ffaa00');
                 }
             }
         }

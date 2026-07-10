@@ -86,6 +86,8 @@ export interface UnitSpec {
     campaign?: boolean;       // 非精锐远征军团 ×CAMPAIGN_LEGION_MULT
     general?: InlineGeneral | string | null; // 内联档 或 真实 GENERAL_PROFILES 键
     multOverride?: number;    // 直接指定固定系数（标定用，跳过文化/精锐推导）
+    /** 对齐 Army.isFirstSortieSinceDepart；封狼居胥等首战技门控 */
+    isFirstSortieSinceDepart?: boolean;
 }
 
 export interface Unit {
@@ -96,6 +98,11 @@ export interface Unit {
     profile: GeneralProfile | null;
     /** 精锐档 0..4；null=非精锐（战损系 has_elite_legion 判定用） */
     eliteTier: number | null;
+    isFirstSortieSinceDepart?: boolean;
+}
+
+function sideIsFirstSortie(units: Unit[]): boolean {
+    return units.some(u => u.isFirstSortieSinceDepart === true);
 }
 
 // ────────────────────────── 单位构建 ──────────────────────────
@@ -138,6 +145,7 @@ export function makeUnit(spec: UnitSpec): Unit {
         mult,
         profile: resolveProfile(spec.general),
         eliteTier: spec.eliteTier ?? null,
+        isFirstSortieSinceDepart: spec.isFirstSortieSinceDepart === true,
     };
 }
 
@@ -177,6 +185,7 @@ function ctxForSide(
         selfInitialTroops: selfT, enemyInitialTroops: enemyT,
         selfIsAttacker: isAtt,
         enemyHasFamousGeneral: eligible(oppU)?.profile?.tier === 'famous',
+        isFirstSortieSinceDepart: sideIsFirstSortie(ownU),
     });
 }
 
@@ -222,6 +231,7 @@ export function rollLuckForSide(
         enemyInitialTroops: enemyTroops,
         selfIsAttacker: sideIsAttacker,
         enemyHasFamousGeneral: eligible(opp)?.profile?.tier === 'famous',
+        isFirstSortieSinceDepart: sideIsFirstSortie(own),
     });
     const selfFate = resolveOpeningFateEntry(eligible(own)?.profile?.tacticalSkillId);
     const oppFate = resolveOpeningFateEntry(eligible(opp)?.profile?.tacticalSkillId);
@@ -254,6 +264,7 @@ function applyOpeningPreRollTroops(
         selfInitialTroops: ownTroops, enemyInitialTroops: oppTroops,
         selfIsAttacker: ownIsAttacker,
         enemyHasFamousGeneral: eligible(opp)?.profile?.tier === 'famous',
+        isFirstSortieSinceDepart: sideIsFirstSortie(own),
     });
     const effect = resolveOpeningTroopEffect(skillId, ownCtx);
     if (!effect.entry) return;
@@ -272,6 +283,7 @@ function applyOpeningPreRollTroops(
             selfInitialTroops: oppTroops, enemyInitialTroops: ownTroops,
             selfIsAttacker: !ownIsAttacker,
             enemyHasFamousGeneral: ownUnit?.profile?.tier === 'famous',
+            isFirstSortieSinceDepart: sideIsFirstSortie(opp),
         });
         const counter = resolveOpeningTroopCutCounter(
             eligible(opp)?.profile?.tacticalSkillId, effect.enemyCutMagnitude, oppCtx,
@@ -378,17 +390,18 @@ function applyStrategicRollMults(
     let attG = strategicMult(eligible(attU), 'attacker', terrain, attTroops, defTroops, battleType);
     let defG = strategicMult(eligible(defU), 'defender', terrain, defTroops, attTroops, battleType);
     // 地形对抗（#46 暗度陈仓 cancel / #47 声东击西 halve）：一方持对抗技 → 削弱对手地形增益。
-    const mkCtx = (selfT: number, enemyT: number, isAtt: boolean) =>
+    const mkCtx = (selfT: number, enemyT: number, isAtt: boolean, selfUnits: Unit[]) =>
         buildTacticalConditionContext({
             battleType, terrain,
             selfTroops: selfT, enemyTroops: enemyT,
             selfInitialTroops: selfT, enemyInitialTroops: enemyT,
             selfIsAttacker: isAtt,
+            isFirstSortieSinceDepart: sideIsFirstSortie(selfUnits),
         });
     const attId = eligible(attU)?.profile?.tacticalSkillId;
     const defId = eligible(defU)?.profile?.tacticalSkillId;
-    defG = resolveEnemyTerrainBuffCounter(attId, defG, mkCtx(attTroops, defTroops, true)).adjustedMult;
-    attG = resolveEnemyTerrainBuffCounter(defId, attG, mkCtx(defTroops, attTroops, false)).adjustedMult;
+    defG = resolveEnemyTerrainBuffCounter(attId, defG, mkCtx(attTroops, defTroops, true, attU)).adjustedMult;
+    attG = resolveEnemyTerrainBuffCounter(defId, attG, mkCtx(defTroops, attTroops, false, defU)).adjustedMult;
     return { attRoll: attRoll * attG, defRoll: defRoll * defG };
 }
 
@@ -533,6 +546,7 @@ function simulateTicks(
             selfInitialTroops: sInit, enemyInitialTroops: wInit,
             selfIsAttacker: attackerStronger,
             selfHasEliteLegion: sHasElite,
+            isFirstSortieSinceDepart: sideIsFirstSortie(attackerStronger ? att : def),
         });
         return resolveMidBattleCasualtyReduction([id], ctx).lossReduction;
     };
@@ -597,15 +611,16 @@ function simulateTicks(
     // 用 eligibleProfile（忽略兵力）：败方战斗结束时兵力已归零，eligible 会漏取其技
     const winnerId = eligibleProfile(winnerUnits)?.profile?.tacticalSkillId ?? null;
     const loserId = eligibleProfile(loserUnits)?.profile?.tacticalSkillId ?? null;
-    const mkCtx = (selfInit: number, enemyInit: number, selfIsAtt: boolean) =>
+    const mkCtx = (selfInit: number, enemyInit: number, selfIsAtt: boolean, selfUnits: Unit[]) =>
         buildTacticalConditionContext({
             battleType, terrain,
             selfTroops: selfInit, enemyTroops: enemyInit,
             selfInitialTroops: selfInit, enemyInitialTroops: enemyInit,
             selfIsAttacker: selfIsAtt,
+            isFirstSortieSinceDepart: sideIsFirstSortie(selfUnits),
         });
-    const winnerCtx = mkCtx(winnerInit, loserInit, attackerWon);
-    const loserCtx = mkCtx(loserInit, winnerInit, !attackerWon);
+    const winnerCtx = mkCtx(winnerInit, loserInit, attackerWon, winnerUnits);
+    const loserCtx = mkCtx(loserInit, winnerInit, !attackerWon, loserUnits);
     const blocked = resolveWinnerRecoveryBlockedByLoser([loserId], loserCtx).blocked;
     const recRate = blocked ? 0 : resolvePostBattleRecoveryRate([winnerId], winnerCtx, base).rate;
     let biteMult = resolveLoserBiteWinnerLossMult([loserId], loserCtx).mult;

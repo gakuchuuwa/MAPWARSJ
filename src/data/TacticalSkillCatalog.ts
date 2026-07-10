@@ -559,8 +559,9 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
     {
         id: 'ts_052', layer: 'tactical', series: 'enhance', index: 52,
         displayName: '封狼居胥', sourceQuote: '《汉书·霍去病传》：“封狼居胥山，禅于姑衍。”',
-        baseEffect: 'first_sortie_power_mult', condition: 'first_sortie', phase: 'opening_roll',
-        magnitude: 1.4, engineStatus: 'ready',
+        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.5, engineStatus: 'ready',
+        note: '【霍去病】T0专属；轻骑驰突全域适用（2026-07-11 连战模拟校准：原首战门控致连攻第2场起无战术技）',
     },
     {
         id: 'ts_053', layer: 'tactical', series: 'fate', index: 53,

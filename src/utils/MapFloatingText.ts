@@ -3,16 +3,18 @@ export function getFollowedArmyId(): string | null {
     return (window as any).game?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
 }
 
-/** 键控节流：同一 key（军团|技名）冷却时间内只飘一次，防连环战/密集触发短时间重复 */
-const lastPulseAt = new Map<string, number>();
-export function spawnSkillWordPulse(
-    key: string, lat: number, lng: number, word: string, color: string, cooldownMs = 8000,
-): void {
+/**
+ * 长驱深入专用：密集小城区域 3 秒内只飘一次，防连过多城叠字。
+ * 其余技能（战后一次性 / 每城一次 / 满千一次）均有天然去重，不走此函数。
+ */
+const bypassLastAt = new Map<string, number>();
+export function tryBypassPulse(armyId: string, lat: number, lng: number, color: string): void {
     const now = Date.now();
-    if (now - (lastPulseAt.get(key) ?? 0) < cooldownMs) return;
-    lastPulseAt.set(key, now);
-    spawnMapFloatingText(lat, lng, word, color);
+    if (now - (bypassLastAt.get(armyId) ?? 0) < 3000) return;
+    bypassLastAt.set(armyId, now);
+    spawnMapFloatingText(lat, lng, '长驱深入', color);
 }
+
 
 export function spawnMapFloatingText(lat: number, lng: number, text: string, color: string): void {
     const map = (window as any).game?.map?.getLeafletMap?.();
