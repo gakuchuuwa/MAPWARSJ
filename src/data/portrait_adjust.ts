@@ -642,11 +642,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/JAPAN/date_d_yidazhengzong.png": {
-            "scale": 0.84,
-            "offsetX": 7,
-            "offsetY": -20
-        },
         "/assets/NORTH/lai_wangshifan.png": {
             "scale": 1,
             "offsetX": 0,
@@ -1641,11 +1636,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -28
-        },
-        "/assets/JAPAN/__闲置__JAPAN_04.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -13
         },
         "/assets/JAPAN/__闲置__JAPAN_05.png": {
             "scale": 1,
@@ -5741,6 +5731,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": -22
+        },
+        "/assets/JAPAN/__闲置__JAPAN_26.png": {
+            "scale": 0.84,
+            "offsetX": 7,
+            "offsetY": -20
+        },
+        "/assets/JAPAN/date_d_yidazhengzong.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -13
         }
     },
     "folderGuides": {
