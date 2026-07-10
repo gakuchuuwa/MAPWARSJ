@@ -13,14 +13,12 @@ import { simulateOnce, type UnitSpec, type Terrain } from './combat-model';
 import { getRegion } from '../src/systems/RegionSystem';
 import { GameConfig } from '../src/config/GameConfig';
 import { T0_CAPITALS, T1_MEDIUM_CITIES, T2_STRATEGIC, PERIPHERY } from '../src/data/cities_v2';
-import { GENERAL_PROFILES } from '../src/data/GeneralSkills';
-import { FACTION_GENERALS } from '../src/data/FactionGenerals';
+import { buildSimCityMetaByName } from './sim-city-meta';
+import { getCityMaxTroops } from './sim-troop-caps';
+import type { CityType } from '../src/types/core';
+import { auditRosterGenerals, resolveAptitudeByGeneralName, parseRosterEliteTier } from './sim-general-lookup';
 
-// name → generalId 映射（用于查 aptitude）
-const GENERAL_ID_BY_NAME: Record<string, string> = {};
-for (const [, entry] of Object.entries(FACTION_GENERALS)) {
-  GENERAL_ID_BY_NAME[(entry as any).generalName] = (entry as any).generalId;
-}
+const SIM_CITY_META = buildSimCityMetaByName(20000);
 
 // ── CLI ──
 function argStr(flag: string, def: string): string {
@@ -35,7 +33,9 @@ function argNum(flag: string, def: number): number {
 const ROSTER_PATH = argStr('--roster',
   path.resolve(process.env.USERPROFILE || '~', 'Downloads/MAPWAR名册_2026-07-11 (1).md'));
 const TRIALS = argNum('--trials', 50);
-const HARD_CAP = 200; // 安全上限，正常打不到
+const MAX_BATTLES = argNum('--max-battles', argNum('--battles', 200));
+const T0_ONLY = process.argv.includes('--t0-only');
+const HARD_CAP = MAX_BATTLES;
 const LEGION_TROOPS = argNum('--troops', 50000);
 const TARGET_GENERAL = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : null;
 const RANK_MODE = process.argv.includes('--rank') || !TARGET_GENERAL;
@@ -114,15 +114,12 @@ const TYPE_LABEL: Record<string, string> = {
   big_city: '都城', medium_city: '中城', small_city: '小城', pass: '关隘',
 };
 
-// 驻军随机范围（按据点类型）
-const TROOP_RANGE: Record<string, [number, number]> = {
-  big_city:    [30000, 50000],
-  medium_city: [15000, 30000],
-  small_city:  [ 1000, 15000],
-  pass:        [ 5000, 20000],
-};
-function randomTroops(cityType: string): number {
-  const [lo, hi] = TROOP_RANGE[cityType] || [1000, 15000];
+const T0_CITY_NAMES = new Set(T0_CAPITALS.map(c => c.name));
+
+// 驻军随机范围：上限 = 城型基准 × CITY_TROOP_CAP_TABLE[region]
+function randomTroops(cityType: CityType, region: string): number {
+  const hi = getCityMaxTroops(cityType, region);
+  const lo = Math.min(1000, hi);
   return lo + Math.floor(Math.random() * (hi - lo + 1));
 }
 
@@ -131,31 +128,27 @@ interface LegionData {
   name: string; city: string; tier: string;
   region: string; cultureField: number; cultureGarrison: number;
   eliteTier: number | null; tacticalSkillId: string | null;
-  strategicSkillId: string | null; isPass: boolean;
-  eliteName: string; aptitude: string;
+  strategicSkillId: string | null; isPass: boolean; isRegionCenter: boolean;
+  eliteName: string; aptitude: 'create' | 'leverage' | 'reverse';
 }
 
 function buildLegion(e: CityEntry): LegionData {
   const region = getRegion(e.lat, e.lng);
   const cult = GameConfig.CULTURE_COMBAT.TIER_TABLE[region] ?? [1, 1];
-  const ei = parseInt(e.eliteTier.replace('T', '')) || 4;
+  const ei = parseRosterEliteTier(e.eliteTier);
   const tid = tacId(e.tacticalName);
   const sid = stratId(e.strategicName);
-  const passKw = ['关', '塞', '口', '津', '渡', '门', '隘', '堡', '镇'];
-
-  let aptitude = 'create';
-  const gid = GENERAL_ID_BY_NAME[e.generalName];
-  if (gid && GENERAL_PROFILES[gid]) {
-    aptitude = (GENERAL_PROFILES[gid] as any).aptitude ?? 'create';
-  }
+  const meta = SIM_CITY_META[e.city];
+  const aptitude = resolveAptitudeByGeneralName(e.generalName);
 
   return {
     name: e.generalName, city: e.city,
     tier: e.tier, region,
     cultureField: cult[0], cultureGarrison: cult[1],
-    eliteTier: ei < 4 ? ei : null,
+    eliteTier: ei,
     tacticalSkillId: tid, strategicSkillId: sid,
-    isPass: passKw.some(k => e.city.includes(k)),
+    isPass: meta?.isPass ?? false,
+    isRegionCenter: meta?.isRegionCenter ?? false,
     eliteName: e.eliteName, aptitude,
   };
 }
@@ -166,12 +159,13 @@ function toUnitSpec(legion: LegionData, troops: number, role: 'field' | 'garriso
     region: legion.region,
     role,
     pass: role === 'garrison' ? legion.isPass : undefined,
+    regionCenter: role === 'garrison' ? legion.isRegionCenter : undefined,
     eliteTier: legion.eliteTier,
     general: {
       tier: legion.tier === '名将' ? 'famous' : 'ordinary',
       tacticalSkillId: legion.tacticalSkillId ?? undefined,
       strategicSkillId: legion.strategicSkillId ?? undefined,
-      aptitude: legion.aptitude as 'create' | 'leverage' | 'reverse' | undefined,
+      aptitude: legion.aptitude,
     },
   };
 }
@@ -200,8 +194,8 @@ function runCampaign(attacker: LegionData, pool: LegionData[]): BattleLog[] {
     } while ((def.city === attacker.city || attacked.has(def.city)) && tries < 100);
     attacked.add(def.city);
 
-    const cityType = CITY_TABLE[def.city]?.type || 'small_city';
-    const defTroops = randomTroops(cityType);
+    const cityType = (CITY_TABLE[def.city]?.type || 'small_city') as CityType;
+    const defTroops = randomTroops(cityType, def.region);
     const terrain = randomTerrain();
     const attSpec = toUnitSpec(attacker, troops, 'field');
     const defSpec = toUnitSpec(def, defTroops, 'garrison');
@@ -232,17 +226,29 @@ function runCampaign(attacker: LegionData, pool: LegionData[]): BattleLog[] {
 function main() {
   console.log('加载...');
   const entries = parseRoster(ROSTER_PATH);
+  const rosterAudit = auditRosterGenerals(entries);
+  if (rosterAudit.missingId.length > 0) {
+    console.warn(`⚠ 名册名将无 generalId: ${rosterAudit.missingId.length} 人`);
+  }
   const legions = entries.map(buildLegion);
   const legionByName = new Map<string, LegionData>();
   for (const l of legions) legionByName.set(l.name, l);
 
   const famous = legions.filter(l => l.tier === '名将');
-  console.log(`${entries.length} 势力，名将 ${famous.length}\n`);
+  const attackers = T0_ONLY
+    ? famous.filter(l => T0_CITY_NAMES.has(l.city))
+    : famous;
+  console.log(`${entries.length} 势力，名将 ${famous.length}${T0_ONLY ? `，T0大城名将 ${attackers.length}` : ''}\n`);
+
+  if (T0_ONLY && attackers.length === 0) {
+    console.log('未找到 T0 大城名将，请检查名册与 cities_v2 T0_CAPITALS');
+    return;
+  }
 
   if (RANK_MODE) {
     // 全量排名模式
     console.log(`━`.repeat(62));
-    console.log(`  ⚡ 连续攻城排名  军团${(LEGION_TROOPS/10000).toFixed(0)}万 × 打到死 × 各${TRIALS}次`);
+    console.log(`  ⚡ 连续攻城排名  军团${(LEGION_TROOPS/10000).toFixed(0)}万 × 最多${MAX_BATTLES}战/轮 × 各${TRIALS}次  守军1000~文化上限`);
     console.log(`━`.repeat(62));
 
     interface RankEntry {
@@ -252,8 +258,10 @@ function main() {
     const ranks: RankEntry[] = [];
 
     // Show top generals
-    const topN = argNum('--top', 20);
-    const pool = famous.slice(0, Math.min(famous.length, argNum('--pool', 50)));
+    const topN = argNum('--top', T0_ONLY ? attackers.length : 20);
+    const pool = T0_ONLY
+      ? attackers
+      : famous.slice(0, Math.min(famous.length, argNum('--pool', 50)));
 
     for (const att of pool) {
       let totalBattles = 0, bestRun = 0;
@@ -282,12 +290,13 @@ function main() {
 
     ranks.sort((a, b) => b.avg - a.avg);
 
-    console.log(`\n  #  武将      据点        精锐          平址攻克  最佳`);
+    console.log(`\n  #  武将      据点        精锐          均胜场  最佳  最佳路线（前5城）`);
     console.log(`  ─`.repeat(62));
     for (let i = 0; i < Math.min(ranks.length, topN); i++) {
       const r = ranks[i];
       const m = i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : ' ';
-      console.log(`  ${m}${(i+1).toString().padStart(2)} ${r.name.padEnd(7)} ${r.city.padEnd(9)} ${r.elite.padEnd(11)} ${r.avg.toFixed(1).padStart(5)}城  ${r.best}城`);
+      const route = r.bestCities.split(' → ').slice(0, 5).join('→') + (r.best > 5 ? '…' : '');
+      console.log(`  ${m}${(i+1).toString().padStart(2)} ${r.name.padEnd(7)} ${r.city.padEnd(9)} ${r.elite.padEnd(11)} ${r.avg.toFixed(1).padStart(5)}   ${String(r.best).padStart(2)}  ${route}`);
     }
 
     // Detail for top 3

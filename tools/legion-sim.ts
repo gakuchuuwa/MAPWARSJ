@@ -13,8 +13,8 @@ import * as path from 'path';
 import { simulateOnce, type UnitSpec, type Terrain } from './combat-model';
 import { getRegion } from '../src/systems/RegionSystem';
 import { GameConfig } from '../src/config/GameConfig';
-import { T0_CAPITALS, T1_MEDIUM_CITIES, T2_STRATEGIC, PERIPHERY } from '../src/data/cities_v2';
-import { GENERAL_PROFILES } from '../src/data/GeneralSkills';
+import { buildSimCityMetaByName, resolveSimGarrisonTroops } from './sim-city-meta';
+import { auditRosterGenerals, resolveAptitudeByGeneralName, parseRosterEliteTier } from './sim-general-lookup';
 
 // ── CLI ──
 function argStr(flag: string, def: string): string {
@@ -31,6 +31,7 @@ const ROSTER_PATH = argStr('--roster',
 const TRIALS = argNum('--trials', 300);
 const OPPONENTS = argNum('--opponents', 30);
 const CITY_TROOPS = argNum('--city-troops', 20000);
+const CITY_META = buildSimCityMetaByName(CITY_TROOPS);
 
 // ── 地形权重 ──
 const TERRAINS: { t: Terrain; w: number }[] = [
@@ -96,45 +97,30 @@ interface UnitData {
   city: string; generalName: string; tier: string;
   region: string; cultureField: number; cultureGarrison: number;
   eliteTier: number | null; tacticalSkillId: string | null;
-  strategicSkillId: string | null; isPass: boolean;
-  aptitude: string;
+  strategicSkillId: string | null; isPass: boolean; isRegionCenter: boolean;
+  aptitude: 'create' | 'leverage' | 'reverse';
 }
 
 function precalc(e: CityEntry): UnitData {
   const region = getRegion(e.lat, e.lng);
   const cult = GameConfig.CULTURE_COMBAT.TIER_TABLE[region] ?? [1, 1];
-  const ei = parseInt(e.eliteTier.replace('T', '')) || 4;
+  const ei = parseRosterEliteTier(e.eliteTier);
   const tid = tacId(e.tacticalName);
   const sid = stratId(e.strategicName);
-  const passKw = ['关', '塞', '口', '津', '渡', '门', '隘', '堡', '镇'];
-
-  let aptitude = 'create';
-  for (const [, prof] of Object.entries(GENERAL_PROFILES)) {
-    if (prof.tier === (e.tier === '名将' ? 'famous' : 'ordinary')) {
-      aptitude = (prof as any).aptitude ?? 'create';
-      break;
-    }
-  }
-
+  const meta = CITY_META[e.city];
+  const aptitude = resolveAptitudeByGeneralName(e.generalName);
   return {
     city: e.city, generalName: e.generalName, tier: e.tier,
     region, cultureField: cult[0], cultureGarrison: cult[1],
-    eliteTier: ei < 4 ? ei : null,
+    eliteTier: ei,
     tacticalSkillId: tid, strategicSkillId: sid,
-    isPass: passKw.some(k => e.city.includes(k)),
+    isPass: meta?.isPass ?? false,
+    isRegionCenter: meta?.isRegionCenter ?? false,
     aptitude,
   };
 }
 
-// 三势系数（combat-model 不含此层；引擎独立叠加）
-function aptMult(aptitude: string, selfT: number, enemyT: number): number {
-  const r = enemyT > 0 ? selfT / enemyT : 999;
-  if (r > 1.5) return aptitude === 'create' ? 1.08 : 1;
-  if (r < 0.67) return aptitude === 'reverse' ? 1.12 : 1;
-  return aptitude === 'leverage' ? 1.05 : 1;
-}
-
-// ── 单局模拟（接 combat-model） ──
+// ── 单局模拟（接 combat-model，三势已由 combat-model 内置）──
 function simOneBattle(
   att: UnitData, def: UnitData,
   attTroops: number, defTroops: number,
@@ -149,6 +135,7 @@ function simOneBattle(
       tier: att.tier === '名将' ? 'famous' : 'ordinary',
       tacticalSkillId: att.tacticalSkillId ?? undefined,
       strategicSkillId: att.strategicSkillId ?? undefined,
+      aptitude: att.aptitude,
     },
   };
   const defSpec: UnitSpec = {
@@ -156,11 +143,13 @@ function simOneBattle(
     region: def.region,
     role: 'garrison',
     pass: def.isPass,
+    regionCenter: def.isRegionCenter,
     eliteTier: def.eliteTier,
     general: {
       tier: def.tier === '名将' ? 'famous' : 'ordinary',
       tacticalSkillId: def.tacticalSkillId ?? undefined,
       strategicSkillId: def.strategicSkillId ?? undefined,
+      aptitude: def.aptitude,
     },
   };
 
@@ -174,8 +163,16 @@ function main() {
   const entries = parseRoster(ROSTER_PATH);
 
   const cityDataMap: Record<string, number> = {};
-  for (const c of [...T0_CAPITALS, ...T1_MEDIUM_CITIES, ...T2_STRATEGIC, ...PERIPHERY]) {
-    cityDataMap[c.name] = (c as any).troops || CITY_TROOPS;
+  for (const [name, meta] of Object.entries(CITY_META)) {
+    cityDataMap[name] = meta.troops;
+  }
+
+  const rosterAudit = auditRosterGenerals(entries);
+  if (rosterAudit.missingId.length > 0) {
+    console.warn(`⚠ 名册名将无 generalId（默认 create 适性）: ${rosterAudit.missingId.slice(0, 8).join('、')}${rosterAudit.missingId.length > 8 ? '…' : ''}`);
+  }
+  if (rosterAudit.missingProfile.length > 0) {
+    console.warn(`⚠ 名册名将无 GENERAL_PROFILES: ${rosterAudit.missingProfile.slice(0, 8).join('、')}${rosterAudit.missingProfile.length > 8 ? '…' : ''}`);
   }
 
   const units = entries.map(precalc);
@@ -199,7 +196,7 @@ function main() {
         const di = Math.floor(Math.random() * units.length);
         if (units[di].city === att.city) continue;
         const def = units[di];
-        const defT = cityDataMap[def.city] || CITY_TROOPS;
+        const defT = resolveSimGarrisonTroops(CITY_META[def.city], cityDataMap[def.city] || CITY_TROOPS);
         for (let t = 0; t < TRIALS; t++) {
           const terrain = randomTerrain();
           const r = simOneBattle(att, def, legionTroops, defT, terrain);
@@ -218,7 +215,7 @@ function main() {
 
     const bar = '\u2550'.repeat(74);
     console.log(`${bar}`);
-    console.log(`  \uD83D\uDCCA ${label}轮  军团${(legionTroops / 10000).toFixed(0)}万 vs 守军${(CITY_TROOPS / 10000).toFixed(0)}万  (含地形/攻城/条件门控)`);
+    console.log(`  📊 ${label}轮  军团${(legionTroops / 10000).toFixed(0)}万 vs 守军（文化×城型上限）  (含地形/攻城/关隘/中心/三势)`);
     console.log(`${bar}\n`);
     console.log(`  #    武将      据点          胜率     均存活`);
     console.log(`  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500`);

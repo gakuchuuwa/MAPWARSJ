@@ -36,12 +36,12 @@ import {
 import { getTacticalSkillEntry } from '../data/TacticalSkillCatalog';
 import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
-import { COMEBACK_TROOP_THRESHOLD } from './TacticalConstants';
+import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR } from './TacticalConstants';
 import { readSiegeGarrisonEliteName } from './SiegeGarrisonTier';
 import { gameLog } from '../utils/GameLogger';
 
 /** 普将逆局阈值：单一真理源 TacticalConstants（纯常量，供审计侧解耦引用），此处再导出保持兼容 */
-export { COMEBACK_TROOP_THRESHOLD };
+export { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR };
 
 export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
     if (unit.battleOverriddenSkillId !== undefined) {
@@ -740,16 +740,8 @@ export function getOpeningTacticalPowerMultiplier(
     return skill.magnitude;
 }
 
-// ── 三势适性：势×局 开战战力系数（③整合。初值，最终以 mapwar-skill-balance 模拟器验证后调）──
+// ── 三势适性：势×局 开战战力系数（③整合。常量见 TacticalConstants.ts）──
 // 势与局匹配放大战力：造势顺风碾压 / 借势均势破局 / 逆势逆风爆发(提翻盘机会,不稳赢)。
-// 单一真理表，调数值只改这里，不动逻辑。
-export const APTITUDE_POWER_MULT: Record<string, Record<'advantage'|'balance'|'disadvantage', number>> = {
-    create:   { advantage: 1.35, balance: 1.15, disadvantage: 1.0  },
-    leverage: { advantage: 1.1,  balance: 1.35, disadvantage: 1.15 },
-    reverse:  { advantage: 1.0,  balance: 1.15, disadvantage: 1.3  },
-};
-/** ③b 逆势将在劣势(兵不到敌67%)战败 → 对方战损保底倍率(让它惨胜)；初值,模拟器调 */
-export const APTITUDE_LOSER_BITE_FLOOR = 1.5;
 /** 按该侧带将单位的势 × 当前兵力局(我方/敌方 >1.5优 / <0.67劣 / 中间均)返回开战战力系数 */
 function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[]): number {
     const unit = findEligibleGeneralUnit(sideUnits);

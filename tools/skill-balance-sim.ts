@@ -13,6 +13,7 @@
 
 import {
     LUCK_MIN, LUCK_MAX, ELITE_TIER_MULT, CAMPAIGN_LEGION_MULT, PASS_GARRISON_MULT,
+    REGION_CENTER_GARRISON_MULT, TIER_TABLE,
     STRATEGIC_SKILL_CATALOG, simConfig, winRate,
     type UnitSpec,
 } from './combat-model';
@@ -88,11 +89,26 @@ function main(): void {
     }
     row('远征军(非精锐)', winRate([base({ campaign: true })], [base()], T), `×${CAMPAIGN_LEGION_MULT}`);
 
-    header('【3】文化区 / 关隘（等兵力）');
-    row('草原野战 vs 中原', winRate([base({ region: 'STEPPE' })], [base()], T), '草原野战×1.2');
-    row('中原攻 vs 岭南守', winRate([base()], [base({ region: 'LINGNAN', role: 'garrison' })], T), '岭南守×1.2');
-    row('中原攻 vs 关隘守', winRate([base()], [base({ region: 'CENTRAL', role: 'garrison', pass: true })], T), `关隘×${PASS_GARRISON_MULT}`);
-    row('中原攻 vs 岭南关隘', winRate([base()], [base({ region: 'LINGNAN', role: 'garrison', pass: true })], T), '1.2×1.2=1.44');
+    header('【3】文化区 / 关隘 / 中心（等兵力）');
+    row('草原野战 vs 中原', winRate([base({ region: 'STEPPE' })], [base()], T),
+        `草原军团攻×${TIER_TABLE.STEPPE[0]}`);
+    row('中原攻 vs 岭南守', winRate([base()], [base({ region: 'LINGNAN', role: 'garrison' })], T),
+        `岭南据点防×${TIER_TABLE.LINGNAN[1]}`);
+    row('中原攻 vs 关隘守', winRate([base()], [base({ region: 'CENTRAL', role: 'garrison', pass: true })], T),
+        `文化×${TIER_TABLE.CENTRAL[1]} 关隘×${PASS_GARRISON_MULT}`);
+    row('中原攻 vs 岭南关隘', winRate([base()], [base({ region: 'LINGNAN', role: 'garrison', pass: true })], T),
+        `岭南防×${TIER_TABLE.LINGNAN[1]} × 关隘×${PASS_GARRISON_MULT}`);
+    row('中原攻 vs 川蜀中心守', winRate([base()], [base({ region: 'BASHU', role: 'garrison', regionCenter: true })], T),
+        `川蜀防×${TIER_TABLE.BASHU[1]} × 中心×${REGION_CENTER_GARRISON_MULT}`);
+
+    header('【3b】14 文化 TIER_TABLE（军团攻 vs 裸守中原，标定用）');
+    for (const [region, [fieldMult, garMult]] of Object.entries(TIER_TABLE)) {
+        if (fieldMult === 1 && garMult === 1) continue;
+        if (fieldMult !== 1) {
+            row(`${region} 野战`, winRate([base({ region })], [base()], Math.min(T, 5000)),
+                `军团攻×${fieldMult}`);
+        }
+    }
 
     header('【4】战略技价值（A 名将带战略技 vs B 裸，等兵力）');
     const fam = (str: string): UnitSpec => base({ general: { tier: 'famous', tacticalSkillId: '', strategicSkillId: str } });

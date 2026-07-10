@@ -146,10 +146,12 @@ export class GameConfig {
         ELITE_TIER_MULT: [1.5, 1.4, 1.3, 1.2, 1.1] as const,
     };
     /**
-     * 14文化四维属性（2026-07-10 定稿）
-     *   TIER_TABLE:  [军团攻, 据点防]
-     *   SPEED_TABLE: 军团速
-     *   RECRUIT_TABLE: 据点兵
+     * 14文化六维属性（2026-07-10 四维定稿，2026-07-11 扩六维）
+     *   TIER_TABLE:             [军团攻, 据点防]
+     *   SPEED_TABLE:            军团速
+     *   RECRUIT_TABLE:          据点兵（季产驻军乘数）
+     *   LEGION_TROOP_CAP_TABLE: 军团兵上限
+     *   CITY_TROOP_CAP_TABLE:   据点兵上限
      *   "军团"属性绑军团（legion），"据点"属性绑城池（city），不随攻守方切换。
      */
     static CULTURE_COMBAT = {
@@ -171,11 +173,27 @@ export class GameConfig {
         } as Record<string, number>,
         /** region → 据点兵 */
         RECRUIT_TABLE: {
-            STEPPE: 0.75, TIBET: 0.80, CENTRAL_ASIA: 0.90,
+            STEPPE: 0.75, TIBET: 0.75, CENTRAL_ASIA: 0.90,
             NORTHEAST: 0.85, HEXI: 0.90, NORTH: 1.00,
             CENTRAL: 1.20, WESTERN: 0.90,
             JAPAN: 1.00, KOREA: 1.15, JIANGNAN: 1.15,
             LINGNAN: 0.90, DIANQIAN: 0.85, BASHU: 1.20,
+        } as Record<string, number>,
+        /** region → 军团兵上限 */
+        LEGION_TROOP_CAP_TABLE: {
+            STEPPE: 1.10, TIBET: 0.85, CENTRAL_ASIA: 1.10,
+            NORTHEAST: 1.10, HEXI: 0.85, NORTH: 1.15,
+            CENTRAL: 1.20, WESTERN: 0.80,
+            JAPAN: 1.00, KOREA: 0.90, JIANGNAN: 1.00,
+            LINGNAN: 0.90, DIANQIAN: 0.85, BASHU: 1.00,
+        } as Record<string, number>,
+        /** region → 据点兵上限 */
+        CITY_TROOP_CAP_TABLE: {
+            STEPPE: 0.75, TIBET: 0.75, CENTRAL_ASIA: 0.90,
+            NORTHEAST: 0.90, HEXI: 0.85, NORTH: 1.10,
+            CENTRAL: 1.20, WESTERN: 0.85,
+            JAPAN: 1.05, KOREA: 1.15, JIANGNAN: 1.20,
+            LINGNAN: 1.00, DIANQIAN: 0.85, BASHU: 1.20,
         } as Record<string, number>,
         /** 关隘据点守军额外系数（拒险而守；与 GeneralSkills「拒险而战」展示名对应） */
         PASS_GARRISON_MULT: 1.2,

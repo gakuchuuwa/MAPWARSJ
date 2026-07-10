@@ -22,6 +22,7 @@
  *   npm run sim:expedition -- --legion 50000 --enemy 10000 --cap 100000
  */
 import { simulateOnce, type UnitSpec, type Terrain } from './combat-model';
+import { getArmyMaxTroops } from './sim-troop-caps';
 import {
     GENERAL_PROFILES,
     STRATEGIC_SKILL_CATALOG,
@@ -44,10 +45,13 @@ function argStr(flag: string, def: string): string {
 
 const LEGION_TROOPS = argNum('--legion', 50000);
 const ENEMY_TROOPS = argNum('--enemy', 10000);
-const MAX_TROOPS = argNum('--cap', 100000);
+const REGION = argStr('--region', 'CENTRAL'); // 统一文化区，专注比技能
+/** 未传 --cap 时按 LEGION_TROOP_CAP_TABLE[region] 推导（如中原 12 万） */
+const MAX_TROOPS = process.argv.includes('--cap')
+    ? argNum('--cap', 100000)
+    : getArmyMaxTroops(REGION);
 const TRIALS = argNum('--trials', 100);
 const MODE = argStr('--mode', 'general'); // general | combos | both
-const REGION = argStr('--region', 'CENTRAL'); // 统一文化区，专注比技能
 const HARD_CAP_BATTLES = argNum('--maxbattles', 60); // 防无敌组合无限循环
 /** 以战养战：胜后额外补回本场战损的比例（v1 近似值，可调） */
 const FIELD_RESUPPLY_RATIO = argNum('--fieldresupply', 0.15);

@@ -3,7 +3,8 @@ import { City } from '../types/core';
 import { GameMap } from '../map/GameMap';
 import { GridSystem } from '../systems/GridSystem';
 import { FactionManager } from './FactionManager';
-import { CITY_CONFIG, clampCityTroops } from '../config/CityConfig';
+import { CITY_CONFIG, clampCityTroopsForCity, getCityMaxTroops } from '../config/CityConfig';
+import { resolveCityCultureRegion } from '../systems/CultureTroopCaps';
 import { GameConfig } from '../config/GameConfig';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { VECTOR_ROAD_DATA } from '../data/VectorRoadData';
@@ -214,14 +215,14 @@ export class CityManager {
 
     // CRUD & Logic
     public addCity(city: City): void {
-        city.troops = clampCityTroops(city.type, city.troops || 0);
+        city.troops = clampCityTroopsForCity(city, city.troops || 0);
         this.cities.push(city);
         this.requestRender();
     }
 
     public addCities(cities: City[]): void {
         for (const city of cities) {
-            city.troops = clampCityTroops(city.type, city.troops || 0);
+            city.troops = clampCityTroopsForCity(city, city.troops || 0);
         }
         this.cities.push(...cities);
         this.requestRender();
@@ -460,10 +461,12 @@ export class CityManager {
             const config = CITY_CONFIG[city.type];
             if (!config || city.factionId === 'panjun') return;
 
+            const region = resolveCityCultureRegion(city);
+            const maxTroops = getCityMaxTroops(city.type, region);
             const growthMult = getCityAnchoredStrategicMagnitude(city.id, 'city_growth_mult');
-            const growth = Math.floor(config.maxTroops * config.growthRate * growthMult);
-            if (city.troops < config.maxTroops) {
-                city.troops = clampCityTroops(city.type, city.troops + growth);
+            const growth = Math.floor(CITY_CONFIG[city.type].maxTroops * config.growthRate * growthMult);
+            if (city.troops < maxTroops) {
+                city.troops = clampCityTroopsForCity(city, city.troops + growth);
                 this.territorySystem.updateCityLabel(city);
             }
         });
@@ -481,7 +484,7 @@ export class CityManager {
             const updatedCity = this.cities[cityIndex];
 
             if ('troops' in data || 'type' in data) {
-                updatedCity.troops = clampCityTroops(updatedCity.type, updatedCity.troops || 0);
+                updatedCity.troops = clampCityTroopsForCity(updatedCity, updatedCity.troops || 0);
             }
 
             const visualProps = ['factionId', 'type', 'name', 'image', 'mirror', 'latitude', 'longitude'];
@@ -661,7 +664,7 @@ export class CityManager {
     public addTroops(cityId: string, amount: number): void {
         const city = this.getCity(cityId);
         if (city) {
-            city.troops = clampCityTroops(city.type, city.troops + amount);
+            city.troops = clampCityTroopsForCity(city, city.troops + amount);
             this.territorySystem.updateCityLabel(city);
         }
     }

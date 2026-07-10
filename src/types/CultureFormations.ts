@@ -475,10 +475,8 @@ export function isCultureCavalryOnly(culture: RegionType): boolean {
     return getCultureMovementClass(culture) === 'CAVALRY';
 }
 
-/** 军团兵力上限：全兵种统一 10 万（主人 2026-07-09 定） */
-export function getArmyMaxTroops(_culture?: RegionType | null): number {
-    return GameConfig.LEGION.ARMY_MAX_TROOPS;
-}
+/** 军团兵力上限：10 万基准 × LEGION_TROOP_CAP_TABLE（见 CultureTroopCaps） */
+export { getArmyMaxTroops } from '../systems/CultureTroopCaps';
 
 /**
  * 与军队编辑器一致：外观由 cultureSlots（14 区阵型）决定；

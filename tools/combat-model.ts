@@ -2,7 +2,7 @@
  * 战斗模型（无头，供 tools/ 下各测试程序复用）
  * ───────────────────────────────────────────────────────────────
  * 忠实复刻游戏战斗数学（对照 CombatSystem / BattleField / CultureCombat / GeneralSkillCombat）：
- *   1. 单位固定系数 = 文化区(野战/守城) × 关隘拒险(仅 pass 守军) × 精锐 tier 或 远征
+ *   1. 单位固定系数 = 文化区(野战/守城) × 关隘拒险(仅 pass 守军) × 文化中心据险(仅 regionCenter 守军) × 精锐 tier 或 远征
  *   2. 一侧修正兵力 = Σ(兵力 × 固定系数)
  *   3. 一侧有效战力 = 修正兵力 × luck，luck ∈ [LUCK_MIN, LUCK_MAX]
  *   4. 武将技挂在有效战力上（开局③④⑤乘区 / 战略攻守地形乘区 / 逆局⑥⑦⑧⑨⑩），战力高者胜
@@ -44,23 +44,20 @@ import {
     type GeneralProfile,
     type GeneralTier,
 } from '../src/data/GeneralSkills';
+import {
+    APTITUDE_POWER_MULT,
+    APTITUDE_LOSER_BITE_FLOOR,
+} from '../src/combat/TacticalConstants';
 
 export { TACTICAL_SKILL_CATALOG, STRATEGIC_SKILL_CATALOG, GENERAL_PROFILES };
 export type { GeneralProfile, GeneralTier };
+export { APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR };
 
 // ────────────────────────── 常量（全部来自游戏源） ──────────────────────────
 export const { LUCK_MIN, LUCK_MAX, ELITE_TIER_MULT, CAMPAIGN_LEGION_MULT } = GameConfig.COMBAT;
 export const TIER_TABLE = GameConfig.CULTURE_COMBAT.TIER_TABLE;
 export const PASS_GARRISON_MULT = GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT;
-
-/** 三势适性：势×局 开战战力系数（对齐 GeneralSkillCombat.ts APTITUDE_POWER_MULT） */
-export const APTITUDE_POWER_MULT: Record<string, Record<'advantage'|'balance'|'disadvantage', number>> = {
-    create:   { advantage: 1.35, balance: 1.15, disadvantage: 1.0  },
-    leverage: { advantage: 1.1,  balance: 1.35, disadvantage: 1.15 },
-    reverse:  { advantage: 1.0,  balance: 1.15, disadvantage: 1.3  },
-};
-/** 逆势劣势战败 → 胜方战损保底倍率（对齐 GeneralSkillCombat.ts APTITUDE_LOSER_BITE_FLOOR） */
-export const APTITUDE_LOSER_BITE_FLOOR = 1.5;
+export const REGION_CENTER_GARRISON_MULT = GameConfig.CULTURE_COMBAT.REGION_CENTER_GARRISON_MULT;
 
 /** 可调运行时配置（默认对齐游戏 GeneralSkillCombat / BattleField 行为） */
 export const simConfig = {
@@ -84,6 +81,7 @@ export interface UnitSpec {
     region?: string;          // TIER_TABLE 的键；缺省 CENTRAL(×1.0)
     role?: Role;              // field=野战单位 / garrison=守城单位
     pass?: boolean;           // 关隘据点（仅 garrison 生效 ×PASS_GARRISON_MULT）
+    regionCenter?: boolean;     // 14 文化中心（仅 garrison 生效 ×REGION_CENTER_GARRISON_MULT）
     eliteTier?: number | null;// 0..4 → ELITE_TIER_MULT；null=非精锐
     campaign?: boolean;       // 非精锐远征军团 ×CAMPAIGN_LEGION_MULT
     general?: InlineGeneral | string | null; // 内联档 或 真实 GENERAL_PROFILES 键
@@ -131,7 +129,8 @@ function eliteMult(spec: UnitSpec): number {
 export function makeUnit(spec: UnitSpec): Unit {
     const role: Role = spec.role ?? 'field';
     const passMult = spec.pass && role === 'garrison' ? PASS_GARRISON_MULT : 1;
-    const mult = spec.multOverride ?? cultureMult(spec.region, role) * passMult * eliteMult(spec);
+    const centerMult = spec.regionCenter && role === 'garrison' ? REGION_CENTER_GARRISON_MULT : 1;
+    const mult = spec.multOverride ?? cultureMult(spec.region, role) * passMult * centerMult * eliteMult(spec);
     return {
         name: spec.name ?? 'unit',
         troops: spec.troops,
@@ -487,7 +486,8 @@ function simulateTicks(
     attackerStronger: boolean, terrain: Terrain, battleType: BattleType = 'field',
 ): SimResult {
     const dt = 0.1;
-    const targetDuration = calcDuration(attInit + defInit);
+    const hasGeneral = !!(eligible(att)?.profile || eligible(def)?.profile);
+    const targetDuration = calcDuration(attInit + defInit, hasGeneral);
 
     let elapsed = 0;
     let attTriggered = false, defTriggered = false;

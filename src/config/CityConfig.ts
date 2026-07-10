@@ -1,4 +1,18 @@
 import { CityType } from '../types/core';
+import {
+    clampCityTroopsForCityWithBaseMax,
+    clampCityTroopsWithBaseMax,
+    getCityTroopCapMult,
+    getLegionTroopCapMult,
+    scaleCityBaseMaxTroops,
+} from '../systems/CultureTroopCaps';
+import type { RegionType } from '../systems/RegionSystem';
+
+export {
+    getLegionTroopCapMult,
+    getCityTroopCapMult,
+    getArmyMaxTroops,
+} from '../systems/CultureTroopCaps';
 
 export interface CityTypeConfig {
     name: string;
@@ -40,12 +54,26 @@ export const CITY_CONFIG: Record<CityType, CityTypeConfig> = {
     },
 };
 
-/** 据点类型驻军上限（大城 10 万 / 中城 5 万 / 小城 2 万 / 关隘 5 万） */
-export function getCityMaxTroops(type: CityType): number {
-    return CITY_CONFIG[type]?.maxTroops ?? 0;
+/** 据点驻军上限（城型基准 × 文化 CITY_TROOP_CAP_TABLE；无 region 时倍率 1.0） */
+export function getCityMaxTroops(type: CityType, region?: RegionType | string | null): number {
+    const base = CITY_CONFIG[type]?.maxTroops ?? 0;
+    return scaleCityBaseMaxTroops(base, region);
 }
 
-export function clampCityTroops(type: CityType, troops: number): number {
-    const max = getCityMaxTroops(type);
-    return Math.max(0, Math.min(max, Math.floor(troops)));
+export function clampCityTroops(
+    type: CityType,
+    troops: number,
+    region?: RegionType | string | null,
+): number {
+    const base = CITY_CONFIG[type]?.maxTroops ?? 0;
+    return clampCityTroopsWithBaseMax(base, troops, region);
+}
+
+/** 据 city.region 或坐标解析文化区后 clamp */
+export function clampCityTroopsForCity(
+    city: { type: CityType; region?: string; latitude: number; longitude: number },
+    troops: number,
+): number {
+    const base = CITY_CONFIG[city.type]?.maxTroops ?? 0;
+    return clampCityTroopsForCityWithBaseMax(city, base, troops);
 }

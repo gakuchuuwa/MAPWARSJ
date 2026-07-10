@@ -37,7 +37,7 @@ import {
 } from '../../data/ExpeditionLegions';
 import { isCampaignLegion, shouldSkipHomeRecapture } from '../../legion/LegionSpawnPolicy';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
-import { clampCityTroops } from '../../config/CityConfig';
+import { clampCityTroopsForCity } from '../../config/CityConfig';
 import { roadRegistry } from '../../roads/RoadRegistry';
 import type { Army } from '../../legion/Army';
 
@@ -610,7 +610,7 @@ export const DisbandIntoHome = new Action('DisbandIntoHome', (ctx) => {
     if (!home) return BTStatus.FAILURE;
 
     const merged = army.getTroops();
-    home.troops = clampCityTroops(home.type, (home.troops || 0) + merged);
+    home.troops = clampCityTroopsForCity(home, (home.troops || 0) + merged);
     ctx.cityManager.updateCityLabel?.(home.id);
 
     btLog(

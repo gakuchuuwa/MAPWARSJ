@@ -157,7 +157,7 @@ export class RecruitmentSystem {
                 
                 const baseAdded = Math.floor(cfg.recruitPerSeason * recruitMult);
                 const added = Math.floor(baseAdded * skillMult);
-                city.troops = clampCityTroops(city.type, (city.troops || 0) + added);
+                city.troops = clampCityTroops(city.type, (city.troops || 0) + added, region);
                 
                 // 仅当有加成且在镜头内时飘字
                 if (skillMult > 1.0) {
