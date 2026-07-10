@@ -225,9 +225,17 @@ export class SiegeManager {
             if (army.getTargetCity()?.id === cityId) return true;
         }
         // 行为树行军路径：LegionRoadMarch 会设 army.setTargetCity()，不在 pendingSieges 中
-        for (const army of this.legionManager.getArmies()) {
-            if (army.isDestroyed) continue;
-            if (army.getTargetCity()?.id === cityId) return true;
+        // 仅计算真正迫近的威胁（≤ BATTLE_JOIN_RADIUS），避免远在千里外的行军触发送头
+        const city = this.cityManager.getCity(cityId);
+        if (city) {
+            const cityPos = cityToLatLng(city);
+            const threatR = GameConfig.COMBAT.BATTLE_JOIN_RADIUS;
+            for (const army of this.legionManager.getArmies()) {
+                if (army.isDestroyed) continue;
+                if (army.getTargetCity()?.id !== cityId) continue;
+                const dist = getEuclideanDistance(army.getPosition(), cityPos);
+                if (dist <= threatR) return true;
+            }
         }
         return false;
     }

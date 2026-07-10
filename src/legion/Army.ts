@@ -22,6 +22,7 @@ import { gameLog } from '../utils/GameLogger';
 import { getRandomFactionPortrait } from '../config/portrait_defaults';
 import { getGeneralMarchSpeedMultiplier, generalHasStrategicEffect } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
+import { spawnMapFloatingText, getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCultureMovementClass, isCultureCavalryOnly } from '../types/CultureFormations';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 
@@ -388,6 +389,15 @@ export class Army implements IBattleUnit {
 
         if (this.postBattleRestRemaining > 0) {
             this.postBattleRestRemaining = Math.max(0, this.postBattleRestRemaining - deltaTime);
+            if (this.postBattleRestRemaining === 0) {
+                if (this.id === getFollowedArmyId()) {
+                    if (generalHasStrategicEffect(this, 'march_speed_mult')) {
+                        spawnMapFloatingText(this.position.lat, this.position.lng, '兵贵神速', '#55ff55');
+                    } else if (generalHasStrategicEffect(this, 'mountain_march_immunity')) {
+                        spawnMapFloatingText(this.position.lat, this.position.lng, '如履平地', '#55ff55');
+                    }
+                }
+            }
         }
         if (this.isPostBattleResting()) return;
 

@@ -41,6 +41,7 @@ import {
 } from '../types/CultureFormations';
 import { gameLog } from '../utils/GameLogger';
 import { FollowResupplySystem } from './FollowResupplySystem';
+import { tryBypassPulse, getFollowedArmyId } from '../utils/MapFloatingText';
 
 export class LegionManager {
     private cityManager: CityManager;
@@ -654,6 +655,9 @@ export class LegionManager {
                 if (!bypassedSet.has(city.id)) {
                     bypassedSet.add(city.id);
                     gameLog('battle', `〔长驱深入〕${army.generalId || '将领'}无视【${city.name}】守军，长驱直入`);
+                    if (army.id === getFollowedArmyId()) {
+                        tryBypassPulse(army.id, city.latitude, city.longitude, '#55ff55');
+                    }
                 }
                 continue;
             }

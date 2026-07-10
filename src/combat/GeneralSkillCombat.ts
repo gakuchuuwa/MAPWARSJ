@@ -39,7 +39,7 @@ import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world
 import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR } from './TacticalConstants';
 import { readSiegeGarrisonEliteName } from './SiegeGarrisonTier';
 import { gameLog } from '../utils/GameLogger';
-import { spawnMapFloatingText, getFollowedArmyId } from '../utils/MapFloatingText';
+import { spawnMapFloatingText, spawnMapPulse, getFollowedArmyId } from '../utils/MapFloatingText';
 export { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR };
 
 export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
@@ -845,12 +845,11 @@ function getStrategicTacticalSkillMult(
     if (stratSkill.effect === 'advantage_skill_effect_mult') {
         if (enemyTroops > 0 && selfTroops / enemyTroops > 1.5) {
             mult *= stratSkill.magnitude;
-            dispatchOpeningSkillPulse({
-                displayName: stratSkill.displayName,
-                generalId,
-                skillId: stratSkill.id,
-                uiDelaySec: 0.5,
-            }, unit.id);
+            const army = getArmyEntity(unit);
+            if (army && army.id === getFollowedArmyId()) {
+                const pos = unit.getPosition();
+                spawnMapPulse(pos.lat, pos.lng, stratSkill.displayName, '#aa55ff');
+            }
         }
     }
 
@@ -862,12 +861,11 @@ function getStrategicTacticalSkillMult(
         const tacEntry = activeTacId ? getTacticalSkillEntry(activeTacId) : null;
         if (tacEntry && tacEntry.condition === `terrain_${terrain}`) {
             mult *= stratSkill.magnitude;
-            dispatchOpeningSkillPulse({
-                displayName: stratSkill.displayName,
-                generalId,
-                skillId: stratSkill.id,
-                uiDelaySec: 0.5,
-            }, unit.id);
+            const army = getArmyEntity(unit);
+            if (army && army.id === getFollowedArmyId()) {
+                const pos = unit.getPosition();
+                spawnMapPulse(pos.lat, pos.lng, stratSkill.displayName, '#55ff55');
+            }
         }
     }
 
@@ -1361,6 +1359,7 @@ export function applyStrategicRollMultipliersOnly(
         defRoll,
         battleType,
         terrain,
+        false, // emitUi = false (不重发开局 UI / 闪卡)
     );
 }
 
@@ -1721,6 +1720,7 @@ export function applyStrategicBattleToRolls(
     defRoll: number,
     battleType: BattleType,
     terrain?: LandTerrainKind | null,
+    emitUi: boolean = true,
 ): { attRoll: number; defRoll: number } {
     const terrainKind =
         terrain ?? getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
@@ -1756,7 +1756,7 @@ export function applyStrategicBattleToRolls(
             const counter = resolveEnemyTerrainBuffCounter(oppActiveId, mult, oppCtx);
             if (counter.adjustedMult < mult) {
                 mult = counter.adjustedMult;
-                if (counter.entry && oppUnit) {
+                if (emitUi && counter.entry && oppUnit) {
                     gameLog('battle', `⛰️ [对抗系] ${oppUnit.generalId} 触发【${counter.entry.displayName}】，压制了${sideLabel}地形优势！`);
                 }
             }
@@ -1768,12 +1768,15 @@ export function applyStrategicBattleToRolls(
             : null;
         const label = skill?.displayName ?? '战略';
 
-        if (skill && profile) {
-            if (skill.id === 'str_03') {
+        if (skill && profile && emitUi) {
+            if (skill.id === 'str_03' || skill.id === 'str_08' || skill.id === 'str_09') {
                 const army = getArmyEntity(unit);
                 if (army && army.id === getFollowedArmyId()) {
-                    const pos = army.getPosition();
-                    spawnMapFloatingText(pos.lat, pos.lng, skill.displayName, '#ffaa00');
+                    const pos = unit.getPosition();
+                    let color = '#ffaa00'; // str_03
+                    if (skill.id === 'str_08') color = '#44aaff';
+                    else if (skill.id === 'str_09') color = '#ff5555';
+                    spawnMapPulse(pos.lat, pos.lng, skill.displayName, color);
                 }
             } else {
                 dispatchOpeningSkillPulse({
@@ -1785,10 +1788,12 @@ export function applyStrategicBattleToRolls(
             }
         }
         const next = roll * mult;
-        gameLog(
-            'battle',
-            `🏯 [武将技] ${unit.generalId} 【${label}】 ${sideLabel}有效战力 ×${parseFloat(mult.toFixed(2))} (${roll.toFixed(0)}→${next.toFixed(0)})`,
-        );
+        if (emitUi) {
+            gameLog(
+                'battle',
+                `🏯 [武将技] ${unit.generalId} 【${label}】 ${sideLabel}有效战力 ×${parseFloat(mult.toFixed(2))} (${roll.toFixed(0)}→${next.toFixed(0)})`,
+            );
+        }
         return next;
     };
 
@@ -1868,7 +1873,7 @@ export function applyPostBattleStrategicBonus(
                 gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}不作休整，挥师再进`);
                 if (army && army.id === getFollowedArmyId()) {
                     const pos = army.getPosition();
-                    spawnMapFloatingText(pos.lat, pos.lng, profileSkill.displayName, '#ffaa00');
+                    spawnMapPulse(pos.lat, pos.lng, profileSkill.displayName, '#ffaa00');
                 }
             }
         }
