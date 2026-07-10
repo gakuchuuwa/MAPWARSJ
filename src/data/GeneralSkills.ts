@@ -148,7 +148,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '出身城增长率 ×2' },
     str_15: { id: 'str_15', grid: 'S⑮', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '征兵冷却 ×0.5' },
     // ── 据点防 ──
-    str_08: { id: 'str_08', grid: 'S⑧', displayName: '固若金汤', effect: 'garrison_defense_mult', magnitude: 1.5, engineStatus: 'ready', note: '守城时城防战力 ×1.5' },
+    str_08: { id: 'str_08', grid: 'S⑧', displayName: '固若金汤', effect: 'garrison_defense_mult', magnitude: 1.3, engineStatus: 'ready', note: '守城时城防战力 ×1.3' },
     str_05: { id: 'str_05', grid: 'S⑤', displayName: '坚壁清野', effect: 'siege_attacker_supply_halved', magnitude: 0.5, engineStatus: 'ready', note: '攻城方在城外缓回血减半' },
     // ── 奇策 ──
     str_04: { id: 'str_04', grid: 'S④', displayName: '威震华夏', effect: 'advantage_skill_effect_mult', magnitude: 1.3, engineStatus: 'ready', note: '优势时（兵力>1.5）战术技效果 ×1.3' },

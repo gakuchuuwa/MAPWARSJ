@@ -302,9 +302,20 @@ function applyOpeningRollMults(
         ? openingTacticalOf(attUnit) : null;
     const d = openingTacticalActive(defUnit, defU, attU, false, battleType, terrain)
         ? openingTacticalOf(defUnit) : null;
+
+    // S④威震华夏 / S②因地制宜：战略技对战术技效果的乘区加成
+    const attTroops = attU.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const defTroops = defU.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const attStratSkill = strategicOf(attUnit);
+    const defStratSkill = strategicOf(defUnit);
+    const attStratTacMult = attStratSkill && a ? strategicTacticalMult(attStratSkill, attTroops, defTroops, terrain, attUnit) : 1;
+    const defStratTacMult = defStratSkill && d ? strategicTacticalMult(defStratSkill, defTroops, attTroops, terrain, defUnit) : 1;
+
     let oa = attRoll, od = defRoll;
-    if (a?.effect === 'ally_mult_1_2') oa *= a.magnitude;
-    if (d?.effect === 'ally_mult_1_2') od *= d.magnitude;
+    // 与引擎一致：战略技乘区（S④/S②）只加成 ally_mult_1_2（己方增益型）。
+    // 减益型 enemy_mult_0_8 不得直乘（0.8×1.3=1.04 会把减益反转成资敌），引擎未接，模型同样不接。
+    if (a?.effect === 'ally_mult_1_2') oa *= a.magnitude * attStratTacMult;
+    if (d?.effect === 'ally_mult_1_2') od *= d.magnitude * defStratTacMult;
     if (a?.effect === 'enemy_mult_0_8') od *= a.magnitude;
     if (d?.effect === 'enemy_mult_0_8') oa *= d.magnitude;
     if (a?.effect === 'ally_invincible' && a.rollEdge) oa *= a.rollEdge;
@@ -312,28 +323,52 @@ function applyOpeningRollMults(
     return { attRoll: oa, defRoll: od };
 }
 
-/** 战略技掷色乘区（须匹配攻守/地形） */
-function strategicMult(u: Unit | null, side: Side, terrain: Terrain): number {
+/** S④威震华夏 / S②因地制宜：战略技对战术技效果的乘区 */
+function strategicTacticalMult(
+    stratSkill: NonNullable<ReturnType<typeof strategicOf>>,
+    selfTroops: number, enemyTroops: number,
+    terrain: Terrain, u: Unit | null,
+): number {
+    let mult = 1;
+    // S④威震华夏：优势时（兵力>1.5倍）战术技效果×1.3
+    if (stratSkill.effect === 'advantage_skill_effect_mult') {
+        if (enemyTroops > 0 && selfTroops / enemyTroops > 1.5) mult *= stratSkill.magnitude;
+    }
+    // S②因地制宜：地形匹配时战术技翻倍。与引擎同口径：条件枚举只有
+    // terrain_mountain/plain/sea，直接 `terrain_${terrain}` 精确比对，不引入不存在的别名。
+    if (stratSkill.effect === 'terrain_tactical_double' && terrain) {
+        const tacId = u?.profile?.tacticalSkillId;
+        const entry = tacId ? resolveGeneralTacticalEntry(tacId) : null;
+        if (entry && entry.condition === `terrain_${terrain}`) mult *= stratSkill.magnitude;
+    }
+    return mult;
+}
+
+/** 战略技掷色乘区（v2 十五技；须匹配攻守/地形/兵力比） */
+function strategicMult(
+    u: Unit | null, side: Side, terrain: Terrain,
+    selfTroops: number, enemyTroops: number,
+    battleType: BattleType = 'field',
+): number {
     const s = strategicOf(u);
     if (!s) return 1;
     switch (s.effect) {
-        case 'attacker_power_mult': return side === 'attacker' ? s.magnitude : 1;
-        case 'defender_power_mult': return side === 'defender' ? s.magnitude : 1;
-        case 'plain_power_mult':    return terrain === 'plain' ? s.magnitude : 1;
-        case 'mountain_power_mult': return terrain === 'mountain' ? s.magnitude : 1;
-        case 'water_power_mult':    return terrain === 'sea' ? s.magnitude : 1;
-        default: return 1; // march_speed / post_battle 不参与掷色
+        case 'attacker_power_mult':      return side === 'attacker' ? s.magnitude : 1;
+        case 'garrison_defense_mult':    return battleType === 'siege' && side === 'defender' ? s.magnitude : 1;
+        case 'disadvantage_power_mult':  return enemyTroops > 0 && selfTroops / enemyTroops < 0.67 ? s.magnitude : 1;
+        // 军团速 / 补给 / 据点兵 / 奇策(advantage_skill_effect_mult/terrain_tactical_double) 在战术技乘区处理
+        default: return 1;
     }
 }
 function applyStrategicRollMults(
     attU: Unit[], defU: Unit[], attRoll: number, defRoll: number, terrain: Terrain,
     battleType: BattleType = 'field',
 ): { attRoll: number; defRoll: number } {
-    let attG = strategicMult(eligible(attU), 'attacker', terrain);
-    let defG = strategicMult(eligible(defU), 'defender', terrain);
-    // 地形对抗（#46 暗度陈仓 cancel / #47 声东击西 halve）：一方持对抗技 → 削弱对手地形增益。
     const attTroops = attU.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const defTroops = defU.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    let attG = strategicMult(eligible(attU), 'attacker', terrain, attTroops, defTroops, battleType);
+    let defG = strategicMult(eligible(defU), 'defender', terrain, defTroops, attTroops, battleType);
+    // 地形对抗（#46 暗度陈仓 cancel / #47 声东击西 halve）：一方持对抗技 → 削弱对手地形增益。
     const mkCtx = (selfT: number, enemyT: number, isAtt: boolean) =>
         buildTacticalConditionContext({
             battleType, terrain,

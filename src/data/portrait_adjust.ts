@@ -1587,11 +1587,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/HEXI/juqu_d_juqumengxun.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": -16
-        },
         "/assets/HEXI/juyan_d_liling.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -4677,11 +4672,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/HEXI/__闲置__HEXI_16.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": -22
-        },
         "/assets/HEXI/dai_d_shijingtang.png": {
             "scale": 1.11,
             "offsetX": 0,
@@ -5741,6 +5731,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -59
+        },
+        "/assets/HEXI/__闲置__CENTRAL_20.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/HEXI/juqu_d_juqumengxun.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -22
         }
     },
     "folderGuides": {

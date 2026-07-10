@@ -96,12 +96,20 @@ function main(): void {
 
     header('【4】战略技价值（A 名将带战略技 vs B 裸，等兵力）');
     const fam = (str: string): UnitSpec => base({ general: { tier: 'famous', tacticalSkillId: '', strategicSkillId: str } });
+    const famTac = (str: string, tac: string): UnitSpec => base({ general: { tier: 'famous', tacticalSkillId: tac, strategicSkillId: str } });
     row('S③所向披靡(攻)', winRate([fam('str_03')], [base()], T, 'plain'), `攻方×${STRATEGIC_SKILL_CATALOG.str_03.magnitude}`);
-    row('S⑧固若金汤(守)', winRate([base()], [fam('str_08')], T, 'plain'), '守方×1.5（B 视角，A 胜率↓）');
-    row('S④长驱直入@平原', winRate([fam('str_04')], [base()], T, 'plain'), '平原×1.5');
-    row('S④长驱直入@山地', winRate([fam('str_04')], [base()], T, 'mountain'), '地形不符→无效');
-    row('S⑤居高临下@山地', winRate([fam('str_05')], [base()], T, 'mountain'), '山地×1.5');
-    row('S⑥乘风破浪@水域', winRate([fam('str_06')], [base()], T, 'sea'), '水域×1.5');
+    row('S⑧固若金汤(守攻城)', winRate([base()], [fam('str_08')], T, 'plain', 'siege'), '攻城战守方×1.5');
+    row('S⑧固若金汤(野战无效)', winRate([base()], [fam('str_08')], T, 'plain', 'field'), '野战→无效果');
+    // S⑨以寡击众：A(劣势方,6000兵,带str_09) vs B(优势方,10000兵)
+    row('S⑨以寡击众(劣势触发)', winRate(
+        [base({ troops: 6000, general: { tier: 'famous', tacticalSkillId: '', strategicSkillId: 'str_09' } })],
+        [base({ troops: 10000 })], T), '0.6倍兵力→己×1.4');
+    row('S⑨以寡击众(均势不触发)', winRate([fam('str_09')], [base()], T), '等兵力→无效果');
+    // S④威震华夏：A(优势方,15000兵,带str_04+tac_01) vs B(10000兵)
+    row('S④威震华夏(优势触发)', winRate(
+        [base({ troops: 15000, general: { tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' } })],
+        [base({ troops: 10000 })], T), '1.5倍兵力→战术技×1.3');
+    row('S④威震华夏(均势不触发)', winRate([famTac('str_04', 'tac_01')], [base()], T), '等兵力→无效果');
 
     header('【5】开局战术价值（A 带战术技 vs B 裸，等兵力）');
     const tac = (id: string): UnitSpec => base({ general: { tier: 'ordinary', tacticalSkillId: id } });
