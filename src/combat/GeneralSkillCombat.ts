@@ -1340,6 +1340,7 @@ export function applyGeneralSkillSideRollMultipliers(
         tactical.defRoll,
         battleType,
         terrain,
+        emitUi,
     );
 }
 
@@ -1768,23 +1769,15 @@ export function applyStrategicBattleToRolls(
             : null;
         const label = skill?.displayName ?? '战略';
 
+        // 开战战力战略（S③/S⑧/S⑨）：跟拍军团大地图脉冲，不进战斗 Cut-in
         if (skill && profile && emitUi) {
-            if (skill.id === 'str_03' || skill.id === 'str_08' || skill.id === 'str_09') {
-                const army = getArmyEntity(unit);
-                if (army && army.id === getFollowedArmyId()) {
-                    const pos = unit.getPosition();
-                    let color = '#ffaa00'; // str_03
-                    if (skill.id === 'str_08') color = '#44aaff';
-                    else if (skill.id === 'str_09') color = '#ff5555';
-                    spawnMapPulse(pos.lat, pos.lng, skill.displayName, color);
-                }
-            } else {
-                dispatchOpeningSkillPulse({
-                    displayName: label,
-                    generalId: unit.generalId!,
-                    skillId: profile.strategicSkillId!,
-                    uiDelaySec: 0.2, // 略微延后于战术技闪卡
-                }, unit.id);
+            const army = getArmyEntity(unit);
+            if (army && army.id === getFollowedArmyId()) {
+                const pos = unit.getPosition();
+                let color = '#ffaa00'; // str_03 所向披靡
+                if (skill.id === 'str_08') color = '#44aaff';
+                else if (skill.id === 'str_09') color = '#ff5555';
+                spawnMapPulse(pos.lat, pos.lng, skill.displayName, color);
             }
         }
         const next = roll * mult;

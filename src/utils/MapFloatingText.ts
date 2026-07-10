@@ -37,12 +37,20 @@ export function spawnMapFloatingText(lat: number, lng: number, text: string, col
     el.style.position = 'absolute';
     el.style.left = `${point.x}px`;
     el.style.top = `${point.y - 30}px`; // 军团头顶起飘
-    el.style.color = color;
-    el.style.fontWeight = '900'; // 加粗
-    el.style.fontSize = '16px'; // 稍微加大
-    el.style.letterSpacing = '1px';
-    // 更立体的黑边 + 随字体颜色的柔和发光，增强在复杂地图背景上的可读性
-    el.style.textShadow = `0 1.5px 2px black, 0 -1.5px 2px black, 1.5px 0 2px black, -1.5px 0 2px black, 0 0 8px ${color}`;
+    // 战略技专属高级视觉：金石兵符（隶书/楷体 + 3D立体厚度 + 强溢光）
+    el.style.fontFamily = "'LiSu', 'STXinwei', 'KaiTi', serif"; // 隶书/魏碑，区别于战术的细致宋体，更有大地图的雄浑感
+    el.style.color = color; // 保持技能专属高纯度色彩
+    el.style.fontWeight = '900';
+    el.style.fontSize = '20px'; // 隶书字面较小，放大到20px保证气场
+    el.style.letterSpacing = '2px';
+    // 3D 挤出立体特效：向下逐层加深黑影，形成厚实的金属铸字感，外加光晕
+    el.style.textShadow = `
+        0 1px 0 rgba(0,0,0,0.9),
+        0 2px 0 rgba(0,0,0,0.8),
+        0 3px 0 rgba(0,0,0,0.7),
+        0 4px 6px rgba(0,0,0,0.9),
+        0 0 10px ${color}
+    `;
     el.style.pointerEvents = 'none';
     el.style.whiteSpace = 'nowrap';
     el.style.zIndex = '1000';
@@ -94,11 +102,24 @@ export function spawnMapPulse(lat: number, lng: number, text: string, color: str
     el.style.position = 'absolute';
     el.style.left = `${point.x}px`;
     el.style.top = `${point.y - 50}px`; // 军团头顶稍微高一点，给大字留空间
+    // 大招专属高级视觉：金石印章（隶书/楷体 + 深层3D立体厚度 + 强溢光）
+    el.style.fontFamily = "'LiSu', 'STXinwei', 'KaiTi', serif";
     el.style.color = color;
     el.style.fontWeight = '900';
-    el.style.fontSize = '36px'; // 大字闪卡
-    el.style.letterSpacing = '4px';
-    el.style.textShadow = '0 2px 4px black, 0 -2px 4px black, 2px 0 4px black, -2px 0 4px black, 0 0 10px ' + color; // 发光边缘
+    el.style.fontSize = '42px'; // 隶书字面较小，放大到42px压场子
+    el.style.letterSpacing = '6px';
+    // 3D 挤出立体特效：7层厚实向下黑影，打造兵符砸向地图的物理厚重感，伴随两层能量发光
+    el.style.textShadow = `
+        0 1px 0 rgba(0,0,0,0.9),
+        0 2px 0 rgba(0,0,0,0.9),
+        0 3px 0 rgba(0,0,0,0.8),
+        0 4px 0 rgba(0,0,0,0.8),
+        0 5px 0 rgba(0,0,0,0.7),
+        0 6px 0 rgba(0,0,0,0.7),
+        0 7px 10px rgba(0,0,0,0.9),
+        0 0 15px ${color},
+        0 0 30px ${color}
+    `;
     el.style.pointerEvents = 'none';
     el.style.whiteSpace = 'nowrap';
     el.style.zIndex = '1000';

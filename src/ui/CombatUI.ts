@@ -1169,7 +1169,7 @@ export class CombatUI {
             pushIfNotOne(`压制(${opponentDebuff.label})`, opponentDebuff.value);
         }
 
-        pushIfNotOne('战略', getStrategicBattlePowerMultiplier(unit, battleType, terrain, side));
+        // 战略技不在战斗面板展示乘区链（大地图/跟拍横幅/胜后飘字见 GeneralSkillCombat + MapFloatingText）
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
         if (joinLuck !== null) {
             pushIfNotOne(REINFORCEMENT_JOIN_SKILL.displayName, joinLuck);
@@ -1625,6 +1625,8 @@ export class CombatUI {
     /** 战术武将技触发效果（侧边徽章闪烁，不再弹大字） */
     public flashTacticalSkill(displayName: string, generalId?: string, skillId?: string): void {
         if (!displayName) return;
+        // 战略技（str_*）只在大地图展示，禁止战斗 Cut-in
+        if (skillId?.startsWith('str_')) return;
         // 如果战斗已经结束（胜负已分），不再响应任何新的脉冲（例如致死一击触发的逆局技）
         if (this.boundRegionalBattleField?.isOver) return;
         const bf = this.boundRegionalBattleField;

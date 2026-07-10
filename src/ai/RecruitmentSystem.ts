@@ -333,7 +333,7 @@ export class RecruitmentSystem {
             if (skill?.effect === 'recruit_cooldown_mult') {
                 const followedId = getFollowedArmyId();
                 if (followedId) {
-                    const followedArmy = this.legionManager.getArmy(followedId);
+                    const followedArmy = this.legionManager.getLegionById(followedId);
                     if (followedArmy && followedArmy.generalId === anchored.generalId) {
                         spawnMapFloatingText(city.latitude, city.longitude, '招兵买马', '#55ff55');
                     }
