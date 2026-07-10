@@ -951,6 +951,10 @@ export class BattleField implements IOpeningPulseSink {
             gameLog('battle', `🦂 [战损] ${casualtyOutcome.biteEntry?.displayName ?? '咬人'}：胜方本场战损 ×${casualtyOutcome.biteWinnerLossMult}`);
         }
 
+        // S⑥招降纳叛结算基数：败方战败瞬间的残兵。下面败方处理会先 setTroops(0) 再销毁，
+        // 必须在清零前取值，否则永远是 0、技能永不触发。
+        const loserSurvivors = loserGroup.units.reduce((s, bu) => s + Math.max(0, bu.unit.troops), 0);
+
         // 处理失败方（先 onBattleEnd 再 destroy，避免败军误触发战胜驻留）
         loserGroup.units.forEach(bu => {
             bu.unit.setTroops(0);
@@ -985,8 +989,7 @@ export class BattleField implements IOpeningPulseSink {
                 gameLog('battle', `🦂 [BattleField] ${bu.unit.name} 被咬 -${extraBite}（保底存活 ${survivalFloor}）`);
             }
 
-            const enemySurvivors = loserGroup.units.reduce((s, bu) => s + Math.max(0, bu.unit.troops), 0);
-            const strategicBonus = applyPostBattleStrategicBonus(bu.unit, this.type, enemySurvivors);
+            const strategicBonus = applyPostBattleStrategicBonus(bu.unit, this.type, loserSurvivors);
             if (strategicBonus > 0) {
                 gameLog('battle', `🌾 [BattleField] ${bu.unit.name} 战略增兵 +${strategicBonus}`);
             }

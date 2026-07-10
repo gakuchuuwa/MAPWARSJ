@@ -33,6 +33,7 @@ import {
     resolveSkillCountersForSide,
     type TacticalSkillEntry,
 } from './TacticalSkillResolver';
+import { getTacticalSkillEntry } from '../data/TacticalSkillCatalog';
 import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
 import { COMEBACK_TROOP_THRESHOLD } from './TacticalConstants';
@@ -854,22 +855,13 @@ function getStrategicTacticalSkillMult(
         }
     }
 
-    // S②因地制宜：地形匹配时战术技效果翻倍（magnitude=2.0）
+    // S②因地制宜：地形匹配时战术技效果翻倍（magnitude=2.0）。
+    // 战术技词条以 condition 表达地形门槛（terrain_mountain/plain/sea），
+    // 与本场地形直接比对，不做标签猜测。
     if (stratSkill.effect === 'terrain_tactical_double' && terrain) {
         const activeTacId = getActiveTacticalSkillId(unit);
-        if (activeTacId) {
-            const tacEntry = getTacticalSkillEntry(activeTacId);
-            if (tacEntry) {
-                const terrainTags = tacEntry.tags ?? [];
-                const hasTerrainTag = terrainTags.some((t: string) => {
-                    const tag = t.toLowerCase();
-                    return (terrain === 'mountain' && (tag.includes('山') || tag.includes('高地')))
-                        || (terrain === 'plain' && (tag.includes('平原') || tag.includes('骑')))
-                        || (terrain === 'water' && (tag.includes('水') || tag.includes('船') || tag.includes('江')));
-                });
-                if (hasTerrainTag) mult *= stratSkill.magnitude;
-            }
-        }
+        const tacEntry = activeTacId ? getTacticalSkillEntry(activeTacId) : null;
+        if (tacEntry && tacEntry.condition === `terrain_${terrain}`) mult *= stratSkill.magnitude;
     }
 
     return mult;
