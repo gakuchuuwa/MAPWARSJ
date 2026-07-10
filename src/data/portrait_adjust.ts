@@ -977,11 +977,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -13,
             "offsetY": -16
         },
-        "/assets/BASHU/qingqiang_jiangwei.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -18
-        },
         "/assets/LINGNAN/guangxin_shixie.png": {
             "scale": 0.96,
             "offsetX": 0,
@@ -4568,7 +4563,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/CENTRAL/yingzhou_d2_licunxu.png": {
-            "scale": 0.97,
+            "scale": 0.95,
             "offsetX": 7,
             "offsetY": 4
         },
@@ -5756,6 +5751,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 16,
             "offsetY": 8
+        },
+        "/assets/BASHU/__闲置__BASHU_04.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/BASHU/qingqiang_jiangwei.png": {
+            "scale": 1.09,
+            "offsetX": -13,
+            "offsetY": -16
         }
     },
     "folderGuides": {

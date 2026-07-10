@@ -986,7 +986,8 @@ export const FACTIONS: Faction[] = [
     { id: 'kawusi', name: '卡乌斯' },
     { id: 'keerkezi', name: '柯尔克孜' },
     { id: 'yiduhu', name: '亦都护' },
-    { id: 'yangshao', name: '仰韶' },
+    { id: 'yangshao', name: '三川' },
+
 
 
     { id: 'yel', name: '耶律' },

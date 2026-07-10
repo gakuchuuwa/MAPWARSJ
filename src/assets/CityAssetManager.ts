@@ -530,7 +530,7 @@ export class CityAssetManager {
         'kawusi': '卡乌',
         'keerkezi': '柯尔',
         'yiduhu': '亦都',
-'yangshao': '仰韶',
+'yangshao': '三川',
         'yel': '耶律',
 'guzhu': '孤竹',
         'yizhi': '一支',

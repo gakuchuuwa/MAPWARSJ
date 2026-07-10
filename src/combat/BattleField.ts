@@ -253,6 +253,24 @@ export class BattleField implements IOpeningPulseSink {
 
         const totalTroops =
             this.attackerGroup.initialTotalTroops + this.defenderGroup.initialTotalTroops;
+        const attHasGen = this.attackerGroup.units.some((bu) => !!bu.unit.generalId);
+        const defHasGen = this.defenderGroup.units.some((bu) => !!bu.unit.generalId);
+
+        // 一方有将 vs 无将：不看总兵力，按有将方的势定 10/15/20
+        if ((attHasGen || defHasGen) && !(attHasGen && defHasGen)) {
+            const genTroops = attHasGen
+                ? this.attackerGroup.initialTotalTroops
+                : this.defenderGroup.initialTotalTroops;
+            const noGenTroops = attHasGen
+                ? this.defenderGroup.initialTotalTroops
+                : this.attackerGroup.initialTotalTroops;
+            const ratio = genTroops / Math.max(1, noGenTroops);
+            const [adv, bal, dis] = GameConfig.COMBAT.ONE_SIDED_GENERAL_DURATION;
+            this.targetDuration = ratio > 1.5 ? adv : ratio < 0.67 ? dis : bal;
+            gameLog('battle', `⚡ [BattleField] 名将 vs 无将 · 势=${ratio > 1.5 ? '优' : ratio < 0.67 ? '劣' : '均'}(${ratio.toFixed(2)}) → ${this.targetDuration}s`);
+            return;
+        }
+
         this.targetDuration = calculateBattleDurationSec(totalTroops, {
             hasGeneral: this.battleHasGeneral(),
         });
