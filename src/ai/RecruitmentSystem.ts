@@ -148,7 +148,10 @@ export class RecruitmentSystem {
 
             // 攻城战中驻军兵力由 BattleUnitFactory 适配器缓存驱动，勿直接改 city.troops
             if (!this.isCityGarrisonCommitted(city.id)) {
-                city.troops = clampCityTroops(city.type, (city.troops || 0) + cfg.recruitPerSeason);
+                const region = this.getCityRegion(city as RecruitmentCity);
+                const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[region] ?? 1.0;
+                const added = Math.floor(cfg.recruitPerSeason * recruitMult);
+                city.troops = clampCityTroops(city.type, (city.troops || 0) + added);
             }
             this.pendingLabelCityIds.add(city.id);
         }

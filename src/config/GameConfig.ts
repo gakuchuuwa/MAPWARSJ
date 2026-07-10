@@ -146,23 +146,37 @@ export class GameConfig {
         ELITE_TIER_MULT: [1.5, 1.4, 1.3, 1.2, 1.1] as const,
     };
     /**
-     * 五级文化攻防固定系数（只影响掷色，不改显示兵力）
-     * 主人 2026-06-11 拍板（GAME_DIRECTION.md「五级文化攻防」，100 局推演验证：日本胜率 65%→43%）：
-     *   刺客（高攻型） 草原/青藏/中亚：野战 ×1.2，守城 ×0.8（纯肉食/高机动/重骑突击，善攻不善守）
-     *   射手（低攻型） 东北/河西/北方：野战 ×1.1，守城 ×0.9（具装骑兵/草原边缘区域，攻击性较强）
-     *   法师（中性型） 中原/西域：野战 ×1.0，守城 ×1.0（四战之地、绿洲城邦，攻防兼备，不偏科）
-     *   战士（低防型） 日本/朝鲜/江南：野战 ×0.9，守城 ×1.1（岛国环境、江河之险，水战善守，陆战偏弱）
-     *   坦克（高防型） 岭南/滇缅/川蜀：野战 ×0.8，守城 ×1.2（瘴疠山城、蜀道之难，极度依赖本土作战）
+     * 14文化四维属性（2026-07-10 定稿）
+     *   TIER_TABLE:  [军团攻, 据点防]
+     *   SPEED_TABLE: 军团速
+     *   RECRUIT_TABLE: 据点兵
+     *   "军团"属性绑军团（legion），"据点"属性绑城池（city），不随攻守方切换。
      */
     static CULTURE_COMBAT = {
-        /** region → [野战系数, 守城系数]；未列出的区按 1.0 */
+        /** region → [军团攻, 据点防] */
         TIER_TABLE: {
-            STEPPE: [1.2, 0.8], TIBET: [1.2, 0.8], CENTRAL_ASIA: [1.2, 0.8],
-            NORTHEAST: [1.1, 0.9], HEXI: [1.1, 0.9], NORTH: [1.1, 0.9],
-            CENTRAL: [1.0, 1.0], WESTERN: [1.0, 1.0],
-            JAPAN: [0.9, 1.1], KOREA: [0.9, 1.1], JIANGNAN: [0.9, 1.1],
-            LINGNAN: [0.8, 1.2], DIANQIAN: [0.8, 1.2], BASHU: [0.8, 1.2],
+            STEPPE: [1.25, 0.75], TIBET: [1.10, 0.85], CENTRAL_ASIA: [1.15, 0.90],
+            NORTHEAST: [1.15, 1.00], HEXI: [1.00, 0.90], NORTH: [1.15, 0.85],
+            CENTRAL: [1.00, 1.10], WESTERN: [0.85, 1.10],
+            JAPAN: [1.15, 1.00], KOREA: [0.85, 1.05], JIANGNAN: [0.85, 1.15],
+            LINGNAN: [1.00, 1.15], DIANQIAN: [1.10, 1.05], BASHU: [1.00, 1.20],
         } as Record<string, readonly [number, number]>,
+        /** region → 军团速 */
+        SPEED_TABLE: {
+            STEPPE: 1.25, TIBET: 1.25, CENTRAL_ASIA: 1.15,
+            NORTHEAST: 1.00, HEXI: 1.20, NORTH: 1.00,
+            CENTRAL: 1.00, WESTERN: 1.15,
+            JAPAN: 0.85, KOREA: 1.00, JIANGNAN: 0.85,
+            LINGNAN: 0.85, DIANQIAN: 0.85, BASHU: 0.80,
+        } as Record<string, number>,
+        /** region → 据点兵 */
+        RECRUIT_TABLE: {
+            STEPPE: 0.75, TIBET: 0.80, CENTRAL_ASIA: 0.90,
+            NORTHEAST: 0.85, HEXI: 0.90, NORTH: 1.00,
+            CENTRAL: 1.20, WESTERN: 0.90,
+            JAPAN: 1.00, KOREA: 1.15, JIANGNAN: 1.15,
+            LINGNAN: 0.90, DIANQIAN: 0.85, BASHU: 1.20,
+        } as Record<string, number>,
         /** 关隘据点守军额外系数（拒险而守；与 GeneralSkills「拒险而战」展示名对应） */
         PASS_GARRISON_MULT: 1.2,
         /** 14 文化中心据点守军额外系数（据险而守；与 GeneralSkills「据险而守」展示名对应）*/

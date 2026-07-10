@@ -565,10 +565,14 @@ export class Army implements IBattleUnit {
     }
 
     private getSpeed(): number {
+        const regionSpeedMult = this.cultureRegion
+            ? (GameConfig.CULTURE_COMBAT.SPEED_TABLE[this.cultureRegion] ?? 1.0)
+            : 1.0;
         return (
             PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED
             * this.speedMultiplier
             * getGeneralMarchSpeedMultiplier(this)
+            * regionSpeedMult
         );
     }
 
