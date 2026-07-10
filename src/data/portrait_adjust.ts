@@ -4693,9 +4693,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/WESTERN/tuerhute_wobaxi.png": {
-            "scale": 1,
+            "scale": 1.18,
             "offsetX": 0,
-            "offsetY": -7
+            "offsetY": -25
         },
         "/assets/daming/shanrong_lanyu.png": {
             "scale": 1.12,

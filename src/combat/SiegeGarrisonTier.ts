@@ -36,7 +36,8 @@ export function clearSiegeGarrisonBoost(city: SiegeGarrisonBoostFields): void {
     delete city._siegeGarrisonEliteName;
 }
 
-/** 守城军团已承担将/精锐时，从城防临时加成中剥掉对应项（援军编入后防重复） */
+/** 守城军团已承担将/精锐时，从城防临时加成中剥掉战力项（援军编入后防重复叠加）；
+ *  保留名称供面板展示（精锐番号不变）。 */
 export function reconcileSiegeGarrisonBoostWithLegion(
     city: SiegeGarrisonBoostFields,
     legion: Army,
@@ -47,7 +48,7 @@ export function reconcileSiegeGarrisonBoostWithLegion(
     }
     if (legion.isElite) {
         delete city._siegeGarrisonElite;
-        delete city._siegeGarrisonEliteName;
+        // _siegeGarrisonEliteName 保留，面板继续显示城池精锐番号
     }
 }
 
