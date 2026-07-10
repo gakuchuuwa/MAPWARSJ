@@ -152,8 +152,8 @@ export class RecruitmentSystem {
                 const region = this.getCityRegion(city as RecruitmentCity);
                 const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[region] ?? 1.0;
                 
-                // D类据点系：S⑭足食足兵 / S⑮招兵买马
-                const skillMult = getCityAnchoredStrategicMagnitude(city.id, 'city_growth_mult', 1.0);
+                // D类据点系：S⑭足食足兵（招兵买马 recruit_cooldown_mult 另有独立管线）
+                const skillMult = getCityAnchoredStrategicMagnitude(city.id, 'city_growth_mult');
                 
                 const baseAdded = Math.floor(cfg.recruitPerSeason * recruitMult);
                 const added = Math.floor(baseAdded * skillMult);

@@ -17,6 +17,7 @@ import { buildSimCityMetaByName } from './sim-city-meta';
 import { getCityMaxTroops } from './sim-troop-caps';
 import type { CityType } from '../src/types/core';
 import { auditRosterGenerals, resolveAptitudeByGeneralName, parseRosterEliteTier } from './sim-general-lookup';
+import { matchesFilters } from './sim-legion-core';
 
 const SIM_CITY_META = buildSimCityMetaByName(20000);
 
@@ -34,7 +35,9 @@ const ROSTER_PATH = argStr('--roster',
   path.resolve(process.env.USERPROFILE || '~', 'Downloads/MAPWAR名册_2026-07-11 (1).md'));
 const TRIALS = argNum('--trials', 50);
 const MAX_BATTLES = argNum('--max-battles', argNum('--battles', 200));
-const T0_ONLY = process.argv.includes('--t0-only');
+const T0_ONLY = process.argv.includes('--t0-only'); // 已废弃：实为20大城；请用 --elite-tier T0 --general-tier 名将
+const ELITE_TIER_FILTER = argStr('--elite-tier', '') || null;
+const GENERAL_TIER_FILTER = argStr('--general-tier', '') || null;
 const HARD_CAP = MAX_BATTLES;
 const LEGION_TROOPS = argNum('--troops', 50000);
 const TARGET_GENERAL = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : null;
@@ -235,13 +238,18 @@ function main() {
   for (const l of legions) legionByName.set(l.name, l);
 
   const famous = legions.filter(l => l.tier === '名将');
-  const attackers = T0_ONLY
-    ? famous.filter(l => T0_CITY_NAMES.has(l.city))
-    : famous;
-  console.log(`${entries.length} 势力，名将 ${famous.length}${T0_ONLY ? `，T0大城名将 ${attackers.length}` : ''}\n`);
+  let attackers = famous;
+  if (T0_ONLY) attackers = famous.filter(l => T0_CITY_NAMES.has(l.city));
+  if (ELITE_TIER_FILTER || GENERAL_TIER_FILTER) {
+    attackers = legions.filter(l => matchesFilters(l, GENERAL_TIER_FILTER, ELITE_TIER_FILTER));
+  }
+  const filterLabel = ELITE_TIER_FILTER || GENERAL_TIER_FILTER
+    ? `${GENERAL_TIER_FILTER || '全将'}+精锐${ELITE_TIER_FILTER || '任意'}`
+    : T0_ONLY ? 'T0大城名将(旧筛)' : '名将';
+  console.log(`${entries.length} 势力，名将 ${famous.length}，攻方池 ${attackers.length}（${filterLabel}）\n`);
 
-  if (T0_ONLY && attackers.length === 0) {
-    console.log('未找到 T0 大城名将，请检查名册与 cities_v2 T0_CAPITALS');
+  if (attackers.length === 0) {
+    console.log('攻方池为空，请检查 --general-tier / --elite-tier / 名册');
     return;
   }
 
@@ -258,8 +266,8 @@ function main() {
     const ranks: RankEntry[] = [];
 
     // Show top generals
-    const topN = argNum('--top', T0_ONLY ? attackers.length : 20);
-    const pool = T0_ONLY
+    const topN = argNum('--top', attackers.length);
+    const pool = ELITE_TIER_FILTER || GENERAL_TIER_FILTER || T0_ONLY
       ? attackers
       : famous.slice(0, Math.min(famous.length, argNum('--pool', 50)));
 

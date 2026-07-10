@@ -145,7 +145,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     str_13: { id: 'str_13', grid: 'S⑬', displayName: '以战养战', effect: 'field_resupply', magnitude: 1, engineStatus: 'ready', note: '远离本土缓回血' },
     str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.02, engineStatus: 'ready' },
     // ── 据点兵 ──
-    str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '出身城增长率 ×2' },
+    str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '出身城每季补兵 ×2（活管线在 RecruitmentSystem 季度补驻军；CityManager.updateTroops 无调用方，勿再挂）' },
     str_15: { id: 'str_15', grid: 'S⑮', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '征兵冷却 ×0.5' },
     // ── 据点防 ──
     str_08: { id: 'str_08', grid: 'S⑧', displayName: '固若金汤', effect: 'garrison_defense_mult', magnitude: 1.3, engineStatus: 'ready', note: '守城时城防战力 ×1.3' },

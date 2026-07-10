@@ -38,6 +38,8 @@
     "sim:skill": "tsx tools/skill-balance-sim.ts",
     "sim:legion": "tsx --import ./tools/sim-preload.mjs tools/legion-sim.ts",
     "sim:campaign": "tsx --import ./tools/sim-preload.mjs tools/legion-campaign.ts",
+    "sim:balance-audit": "tsx --import ./tools/sim-preload.mjs tools/balance-cohort-audit.ts",
+    "sim:diagnose-t0": "tsx --import ./tools/sim-preload.mjs tools/balance-diagnose-t0.ts",
     "sim:follow": "tsx tools/follow-legion-test.ts",
     "tactical:audit": "tsx tools/tactical-skill-audit.ts",
     "tactical:weights": "tsx tools/tactical-condition-weights.ts",

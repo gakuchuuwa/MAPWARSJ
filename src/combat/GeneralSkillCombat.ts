@@ -833,7 +833,9 @@ function getStrategicTacticalSkillMult(
     terrain?: LandTerrainKind | null,
 ): number {
     if (!canUnitUseGeneralSkills(unit)) return 1;
-    const profile = getGeneralProfile(unit.generalId);
+    const generalId = unit.generalId;
+    if (!generalId) return 1;
+    const profile = getGeneralProfile(generalId);
     if (!profile?.strategicSkillId) return 1;
     const stratSkill = getStrategicSkillDef(profile.strategicSkillId);
     if (!stratSkill) return 1;
@@ -846,8 +848,8 @@ function getStrategicTacticalSkillMult(
             mult *= stratSkill.magnitude;
             dispatchOpeningSkillPulse({
                 displayName: stratSkill.displayName,
-                generalId: unit.generalId,
-                skillId: profile.strategicSkillId,
+                generalId,
+                skillId: stratSkill.id,
                 uiDelaySec: 0.5,
             }, unit.id);
         }
@@ -863,8 +865,8 @@ function getStrategicTacticalSkillMult(
             mult *= stratSkill.magnitude;
             dispatchOpeningSkillPulse({
                 displayName: stratSkill.displayName,
-                generalId: unit.generalId,
-                skillId: profile.strategicSkillId,
+                generalId,
+                skillId: stratSkill.id,
                 uiDelaySec: 0.5,
             }, unit.id);
         }
