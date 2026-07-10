@@ -10,7 +10,7 @@ import { buildSimCityMetaByName } from './sim-city-meta';
 import { getCityMaxTroops, getArmyMaxTroops } from './sim-troop-caps';
 import { applyStrategicSustainAfterVictory } from './sim-strategic-sustain';
 import type { CityType } from '../src/types/core';
-import { resolveAptitudeByGeneralName, parseRosterEliteTier } from './sim-general-lookup';
+import { resolveAptitudeByGeneralName, parseRosterEliteTier, resolveCombatSkillIds, resolveCombatSkillLabels } from './sim-general-lookup';
 
 export const SIM_CITY_META = buildSimCityMetaByName(20000);
 
@@ -68,13 +68,6 @@ export interface CampaignOptions {
     maxBattles: number;
 }
 
-const CIRC: Record<string, string> = {
-    '①': '01', '②': '02', '③': '03', '④': '04', '⑤': '05',
-    '⑥': '06', '⑦': '07', '⑧': '08', '⑨': '09', '⑩': '10',
-    '⑪': '11', '⑫': '12', '⑬': '13', '⑭': '14', '⑮': '15',
-    '⑯': '16', '⑰': '17', '⑱': '18', '⑲': '19', '⑳': '20',
-};
-
 export function parseRoster(fp: string): RosterEntry[] {
     const out: RosterEntry[] = [];
     for (const l of fs.readFileSync(fp, 'utf-8').split('\n')) {
@@ -92,25 +85,6 @@ export function parseRoster(fp: string): RosterEntry[] {
         });
     }
     return out;
-}
-
-function tacId(n: string): string | null {
-    const m = n.match(/^(\d+)\s/);
-    if (m) return `ts_${m[1].padStart(3, '0')}`;
-    const cm = n.match(/^([①-⑳])/);
-    if (cm) return `tac_${CIRC[cm[0][0]] || '01'}`;
-    return null;
-}
-
-function stratId(n: string): string | null {
-    const m = n.match(/S([①-⑮])\s/);
-    if (!m) return null;
-    const map: Record<string, string> = {
-        '①': '01', '②': '02', '③': '03', '④': '04', '⑤': '05',
-        '⑥': '06', '⑦': '07', '⑧': '08', '⑨': '09', '⑩': '10',
-        '⑪': '11', '⑫': '12', '⑬': '13', '⑭': '14', '⑮': '15',
-    };
-    return `str_${map[m[1]] || '01'}`;
 }
 
 export const CITY_TABLE: Record<string, { type: string; troops: number; tier: number }> = {};
@@ -151,6 +125,8 @@ export function buildLegion(e: RosterEntry): LegionData {
     const region = getRegion(e.lat, e.lng);
     const cult = GameConfig.CULTURE_COMBAT.TIER_TABLE[region] ?? [1, 1];
     const meta = SIM_CITY_META[e.city];
+    const skills = resolveCombatSkillIds(e.generalName, e.tier, e.tacticalName, e.strategicName);
+    const labels = resolveCombatSkillLabels(e.generalName, e.tier, e.tacticalName, e.strategicName);
     return {
         name: e.generalName,
         city: e.city,
@@ -159,14 +135,14 @@ export function buildLegion(e: RosterEntry): LegionData {
         cultureField: cult[0],
         cultureGarrison: cult[1],
         eliteTier: parseRosterEliteTier(e.eliteTier),
-        tacticalSkillId: tacId(e.tacticalName),
-        strategicSkillId: stratId(e.strategicName),
+        tacticalSkillId: skills.tacticalSkillId,
+        strategicSkillId: skills.strategicSkillId,
         isPass: meta?.isPass ?? false,
         isRegionCenter: meta?.isRegionCenter ?? false,
         eliteName: e.eliteName,
         aptitude: resolveAptitudeByGeneralName(e.generalName),
-        tacticalName: e.tacticalName,
-        strategicName: e.strategicName,
+        tacticalName: labels.tacticalName,
+        strategicName: labels.strategicName,
     };
 }
 

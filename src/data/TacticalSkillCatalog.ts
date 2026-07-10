@@ -596,8 +596,9 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
     {
         id: 'ts_059', layer: 'tactical', series: 'counter', index: 59,
         displayName: '长生天佑', sourceQuote: '大蒙古国圣旨固定起首：“长生天气力里，大福荫护助里”。',
-        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 1.0, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+        note: '【成吉思汗】T0专属；苍天佑助稳态进取（2026-07-11 慢慢直播连战校准：原纯免疫削兵无攻面，连战偏软）',
     },
     {
         id: 'ts_060', layer: 'tactical', series: 'fate', index: 60,
@@ -1411,8 +1412,9 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_196', layer: 'tactical', series: 'fate', index: 196,
         displayName: '一箭落雕', sourceQuote: '《北齐书·斛律光传》：射一大雕，号落雕都督。',
-        baseEffect: 'luck_variance_self', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.8, luckMin: 0.5, luckMax: 1.5, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.35, engineStatus: 'ready',
+        // 2026-07-11 慢慢直播：原 luck 0.5–1.5 方差连战不稳；仅 jiyuan_huluguang 使用
     },
     {
         id: 'ts_197', layer: 'tactical', series: 'fate', index: 197,
@@ -4537,8 +4539,8 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_442', layer: 'tactical', series: 'enhance', index: 442,
         displayName: '凿道迂摧', sourceQuote: '《元史·太祖本纪》：野狐岭正面佯攻，木华黎山间凿道迂回侧后。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.15, engineStatus: 'ready',
-        note: '【成吉思汗】T0精锐·create·势均局专属（三势精修）',
+        magnitude: 0.167, engineStatus: 'ready',
+        note: '【成吉思汗】T0精锐·create·势优局专属（三势精修）；2026-07-11 略提削敌以配慢慢直播连战',
     },
     {
         id: 'ts_443', layer: 'tactical', series: 'casualty', index: 443,

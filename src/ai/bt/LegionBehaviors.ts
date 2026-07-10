@@ -222,6 +222,7 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
                 }
                 clearStrategicTarget(ctx);
                 ctx.army.setTargetCity(null);
+                ctx.army.stopMovement();
             }
             return false;
         }
@@ -242,6 +243,7 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
         }
         clearStrategicTarget(ctx);
         ctx.army.setTargetCity(null);
+        ctx.army.stopMovement();
         return false;
     }
 
@@ -318,6 +320,9 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     // 远征模式：目标只有一个，不进近 3 敌城抽签、不回师
     const expedition = resolveExpeditionState(ctx);
     if (expedition === 'locked') return BTStatus.SUCCESS;
+
+    // 旧目标已失效（HasTarget 或 AbandonTarget 清退），立即停步以便重路由到新目标
+    ctx.army.stopMovement();
 
     const myFaction = ctx.army.getFactionId();
     const now = performance.now();

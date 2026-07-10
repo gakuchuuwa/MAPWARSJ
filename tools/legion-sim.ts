@@ -14,7 +14,7 @@ import { simulateOnce, type UnitSpec, type Terrain } from './combat-model';
 import { getRegion } from '../src/systems/RegionSystem';
 import { GameConfig } from '../src/config/GameConfig';
 import { buildSimCityMetaByName, resolveSimGarrisonTroops } from './sim-city-meta';
-import { auditRosterGenerals, resolveAptitudeByGeneralName, parseRosterEliteTier } from './sim-general-lookup';
+import { auditRosterGenerals, resolveAptitudeByGeneralName, parseRosterEliteTier, resolveCombatSkillIds } from './sim-general-lookup';
 
 // ── CLI ──
 function argStr(flag: string, def: string): string {
@@ -70,28 +70,6 @@ function parseRoster(fp: string): CityEntry[] {
   return e;
 }
 
-const CIRC: Record<string, string> = {
-  '\u2460':'01','\u2461':'02','\u2462':'03','\u2463':'04','\u2464':'05','\u2465':'06','\u2466':'07','\u2467':'08',
-  '\u2468':'09','\u2469':'10','\u246a':'11','\u246b':'12','\u246c':'13','\u246d':'14','\u246e':'15','\u246f':'16',
-  '\u2470':'17','\u2471':'18','\u2472':'19','\u2473':'20',
-};
-function tacId(n: string): string | null {
-  const m = n.match(/^(\d+)\s/);
-  if (m) return `ts_${m[1].padStart(3, '0')}`;
-  const cm = n.match(/^([\u2460-\u2473])/);
-  if (cm) return `tac_${CIRC[cm[0][0]] || '01'}`;
-  return null;
-}
-function stratId(n: string): string | null {
-  const m = n.match(/S([①-⑮])\s/);
-  if (!m) return null;
-  const map: Record<string, string> = {
-    '①':'01','②':'02','③':'03','④':'04','⑤':'05','⑥':'06','⑦':'07',
-    '⑧':'08','⑨':'09','⑩':'10','⑪':'11','⑫':'12','⑬':'13','⑭':'14','⑮':'15',
-  };
-  return `str_${map[m[1]] || '01'}`;
-}
-
 // ── 单位预计算 ──
 interface UnitData {
   city: string; generalName: string; tier: string;
@@ -105,15 +83,14 @@ function precalc(e: CityEntry): UnitData {
   const region = getRegion(e.lat, e.lng);
   const cult = GameConfig.CULTURE_COMBAT.TIER_TABLE[region] ?? [1, 1];
   const ei = parseRosterEliteTier(e.eliteTier);
-  const tid = tacId(e.tacticalName);
-  const sid = stratId(e.strategicName);
+  const skills = resolveCombatSkillIds(e.generalName, e.tier, e.tacticalName, e.strategicName);
   const meta = CITY_META[e.city];
   const aptitude = resolveAptitudeByGeneralName(e.generalName);
   return {
     city: e.city, generalName: e.generalName, tier: e.tier,
     region, cultureField: cult[0], cultureGarrison: cult[1],
     eliteTier: ei,
-    tacticalSkillId: tid, strategicSkillId: sid,
+    tacticalSkillId: skills.tacticalSkillId, strategicSkillId: skills.strategicSkillId,
     isPass: meta?.isPass ?? false,
     isRegionCenter: meta?.isRegionCenter ?? false,
     aptitude,

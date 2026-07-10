@@ -17,7 +17,7 @@ import { buildSimCityMetaByName } from './sim-city-meta';
 import { getCityMaxTroops, getArmyMaxTroops } from './sim-troop-caps';
 import { applyStrategicSustainAfterVictory } from './sim-strategic-sustain';
 import type { CityType } from '../src/types/core';
-import { auditRosterGenerals, resolveAptitudeByGeneralName, parseRosterEliteTier } from './sim-general-lookup';
+import { auditRosterGenerals, resolveAptitudeByGeneralName, parseRosterEliteTier, resolveCombatSkillIds, resolveCombatSkillLabels } from './sim-general-lookup';
 import { matchesFilters } from './sim-legion-core';
 
 const SIM_CITY_META = buildSimCityMetaByName(20000);
@@ -81,30 +81,6 @@ function parseRoster(fp: string): CityEntry[] {
   return e;
 }
 
-const CIRC: Record<string, string> = {
-  '①':'01','②':'02','③':'03','④':'04','⑤':'05',
-  '⑥':'06','⑦':'07','⑧':'08','⑨':'09','⑩':'10',
-  '⑪':'11','⑫':'12','⑬':'13','⑭':'14','⑮':'15',
-  '⑯':'16','⑰':'17','⑱':'18','⑲':'19','⑳':'20',
-};
-function tacId(n: string): string | null {
-  const m = n.match(/^(\d+)\s/);
-  if (m) return `ts_${m[1].padStart(3, '0')}`;
-  const cm = n.match(/^([①-⑳])/);
-  if (cm) return `tac_${CIRC[cm[0][0]] || '01'}`;
-  return null;
-}
-function stratId(n: string): string | null {
-  const m = n.match(/S([①-⑮])\s/);
-  if (!m) return null;
-  const map: Record<string, string> = {
-    '①':'01','②':'02','③':'03','④':'04','⑤':'05',
-    '⑥':'06','⑦':'07','⑧':'08','⑨':'09','⑩':'10',
-    '⑪':'11','⑫':'12','⑬':'13','⑭':'14','⑮':'15',
-  };
-  return `str_${map[m[1]] || '01'}`;
-}
-
 // ── 城市数据 ──
 const CITY_TABLE: Record<string, { type: string; troops: number; tier: number }> = {};
 for (const c of [...T0_CAPITALS, ...T1_MEDIUM_CITIES, ...T2_STRATEGIC, ...PERIPHERY]) {
@@ -134,14 +110,15 @@ interface LegionData {
   eliteTier: number | null; tacticalSkillId: string | null;
   strategicSkillId: string | null; isPass: boolean; isRegionCenter: boolean;
   eliteName: string; aptitude: 'create' | 'leverage' | 'reverse';
+  tacticalName: string; strategicName: string;
 }
 
 function buildLegion(e: CityEntry): LegionData {
   const region = getRegion(e.lat, e.lng);
   const cult = GameConfig.CULTURE_COMBAT.TIER_TABLE[region] ?? [1, 1];
   const ei = parseRosterEliteTier(e.eliteTier);
-  const tid = tacId(e.tacticalName);
-  const sid = stratId(e.strategicName);
+  const skills = resolveCombatSkillIds(e.generalName, e.tier, e.tacticalName, e.strategicName);
+  const labels = resolveCombatSkillLabels(e.generalName, e.tier, e.tacticalName, e.strategicName);
   const meta = SIM_CITY_META[e.city];
   const aptitude = resolveAptitudeByGeneralName(e.generalName);
 
@@ -150,10 +127,12 @@ function buildLegion(e: CityEntry): LegionData {
     tier: e.tier, region,
     cultureField: cult[0], cultureGarrison: cult[1],
     eliteTier: ei,
-    tacticalSkillId: tid, strategicSkillId: sid,
+    tacticalSkillId: skills.tacticalSkillId, strategicSkillId: skills.strategicSkillId,
     isPass: meta?.isPass ?? false,
     isRegionCenter: meta?.isRegionCenter ?? false,
     eliteName: e.eliteName, aptitude,
+    tacticalName: labels.tacticalName,
+    strategicName: labels.strategicName,
   };
 }
 
@@ -290,12 +269,9 @@ function main() {
         }
       }
 
-      const stratName = entries.find(e => e.generalName === att.name)?.strategicName || '';
-      const tacName = entries.find(e => e.generalName === att.name)?.tacticalName || '';
-
       ranks.push({
         name: att.name, city: att.city, elite: att.eliteName,
-        str: stratName, tac: tacName,
+        str: att.strategicName, tac: att.tacticalName,
         avg: totalBattles / TRIALS,
         best: bestRun,
         bestCities: bestCities || '-',
