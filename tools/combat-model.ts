@@ -53,6 +53,15 @@ export const { LUCK_MIN, LUCK_MAX, ELITE_TIER_MULT, CAMPAIGN_LEGION_MULT } = Gam
 export const TIER_TABLE = GameConfig.CULTURE_COMBAT.TIER_TABLE;
 export const PASS_GARRISON_MULT = GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT;
 
+/** 三势适性：势×局 开战战力系数（对齐 GeneralSkillCombat.ts APTITUDE_POWER_MULT） */
+export const APTITUDE_POWER_MULT: Record<string, Record<'advantage'|'balance'|'disadvantage', number>> = {
+    create:   { advantage: 1.35, balance: 1.15, disadvantage: 1.0  },
+    leverage: { advantage: 1.1,  balance: 1.35, disadvantage: 1.15 },
+    reverse:  { advantage: 1.0,  balance: 1.15, disadvantage: 1.3  },
+};
+/** 逆势劣势战败 → 胜方战损保底倍率（对齐 GeneralSkillCombat.ts APTITUDE_LOSER_BITE_FLOOR） */
+export const APTITUDE_LOSER_BITE_FLOOR = 1.5;
+
 /** 可调运行时配置（默认对齐游戏 GeneralSkillCombat / BattleField 行为） */
 export const simConfig = {
     /** 逆局阈值 = GeneralSkillCombat.COMEBACK_TROOP_THRESHOLD */
@@ -66,7 +75,7 @@ export type Terrain = 'plain' | 'mountain' | 'sea' | null;
 export type Side = 'attacker' | 'defender';
 
 /** 内联武将档（测试任意技能组合，无需真实 generalId） */
-export type InlineGeneral = { tier: GeneralTier; tacticalSkillId?: string; strategicSkillId?: string };
+export type InlineGeneral = { tier: GeneralTier; tacticalSkillId?: string; strategicSkillId?: string; aptitude?: 'create'|'leverage'|'reverse' };
 
 export interface UnitSpec {
     name?: string;
@@ -100,6 +109,7 @@ function resolveProfile(g: UnitSpec['general']): GeneralProfile | null {
         tier: g.tier,
         tacticalSkillId: g.tacticalSkillId ?? '',
         strategicSkillId: g.strategicSkillId,
+        aptitude: g.aptitude,
     };
 }
 
@@ -400,6 +410,19 @@ function unitIntimidation(u: Unit, eliteTier: number | null): number {
     return gen + elite;
 }
 
+// ────────────────────────── 三势适性 ──────────────────────────
+/** 按侧势×兵力局返回开战战力系数（对齐 GeneralSkillCombat.getAptitudePowerMult） */
+function getAptitudePowerMult(own: Unit[], opp: Unit[]): number {
+    const u = eligible(own);
+    const apt = u?.profile?.aptitude;
+    if (!apt) return 1;
+    const st = own.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const ot = opp.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const r = st / Math.max(1, ot);
+    const sit: 'advantage'|'balance'|'disadvantage' = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
+    return APTITUDE_POWER_MULT[apt]?.[sit] ?? 1;
+}
+
 // ────────────────────────── 单局模拟 ──────────────────────────
 export interface SimResult {
     attackerWon: boolean;
@@ -429,6 +452,10 @@ export function simulateOnce(
     let defRoll = sumAdjusted(def) * rollLuckForSide(def, att, battleType, terrain, false);
     ({ attRoll, defRoll } = applyOpeningRollMults(att, def, attRoll, defRoll, terrain, battleType));
     ({ attRoll, defRoll } = applyStrategicRollMults(att, def, attRoll, defRoll, terrain, battleType));
+
+    // 三势适性：势×局战力系数（对齐 GeneralSkillCombat.applyOpeningTacticalToRolls:1597-1599）
+    attRoll *= getAptitudePowerMult(att, def);
+    defRoll *= getAptitudePowerMult(def, att);
 
     const attackerStronger = attRoll >= defRoll;
 
@@ -581,7 +608,12 @@ function simulateTicks(
     const loserCtx = mkCtx(loserInit, winnerInit, !attackerWon);
     const blocked = resolveWinnerRecoveryBlockedByLoser([loserId], loserCtx).blocked;
     const recRate = blocked ? 0 : resolvePostBattleRecoveryRate([winnerId], winnerCtx, base).rate;
-    const biteMult = resolveLoserBiteWinnerLossMult([loserId], loserCtx).mult;
+    let biteMult = resolveLoserBiteWinnerLossMult([loserId], loserCtx).mult;
+    // 三势败不垒：逆势劣势战败 → 对方战损×1.5保底（对齐 GeneralSkillCombat:543-545）
+    const loserProfile = eligibleProfile(loserUnits)?.profile;
+    if (loserProfile?.aptitude === 'reverse' && loserInit < winnerInit * 0.67) {
+        biteMult = Math.max(biteMult, APTITUDE_LOSER_BITE_FLOOR);
+    }
     const wUnit = winnerUnits[0];
     const lost = Math.max(0, winnerInit - wUnit.troops);
     const recovery = Math.floor(lost * recRate);

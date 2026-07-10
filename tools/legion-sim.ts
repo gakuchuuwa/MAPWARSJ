@@ -27,7 +27,7 @@ function argNum(flag: string, def: number): number {
 }
 
 const ROSTER_PATH = argStr('--roster',
-  path.resolve(process.env.USERPROFILE || '~', 'Downloads/MAPWAR名册_2026-07-11.md'));
+  path.resolve(process.env.USERPROFILE || '~', 'Downloads/MAPWAR名册_2026-07-11 (1).md'));
 const TRIALS = argNum('--trials', 300);
 const OPPONENTS = argNum('--opponents', 30);
 const CITY_TROOPS = argNum('--city-troops', 20000);

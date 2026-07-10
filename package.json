@@ -37,7 +37,7 @@
     "sim:expedition": "tsx --import ./tools/sim-preload.mjs tools/expedition-sim.ts",
     "sim:skill": "tsx tools/skill-balance-sim.ts",
     "sim:legion": "tsx tools/legion-sim.ts",
-    "sim:campaign": "tsx tools/legion-campaign.ts",
+    "sim:campaign": "tsx --import ./tools/sim-preload.mjs tools/legion-campaign.ts",
     "sim:follow": "tsx tools/follow-legion-test.ts",
     "tactical:audit": "tsx tools/tactical-skill-audit.ts",
     "tactical:weights": "tsx tools/tactical-condition-weights.ts",

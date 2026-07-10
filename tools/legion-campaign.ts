@@ -14,6 +14,13 @@ import { getRegion } from '../src/systems/RegionSystem';
 import { GameConfig } from '../src/config/GameConfig';
 import { T0_CAPITALS, T1_MEDIUM_CITIES, T2_STRATEGIC, PERIPHERY } from '../src/data/cities_v2';
 import { GENERAL_PROFILES } from '../src/data/GeneralSkills';
+import { FACTION_GENERALS } from '../src/data/FactionGenerals';
+
+// name → generalId 映射（用于查 aptitude）
+const GENERAL_ID_BY_NAME: Record<string, string> = {};
+for (const [, entry] of Object.entries(FACTION_GENERALS)) {
+  GENERAL_ID_BY_NAME[(entry as any).generalName] = (entry as any).generalId;
+}
 
 // ── CLI ──
 function argStr(flag: string, def: string): string {
@@ -26,7 +33,7 @@ function argNum(flag: string, def: number): number {
 }
 
 const ROSTER_PATH = argStr('--roster',
-  path.resolve(process.env.USERPROFILE || '~', 'Downloads/MAPWAR名册_2026-07-11.md'));
+  path.resolve(process.env.USERPROFILE || '~', 'Downloads/MAPWAR名册_2026-07-11 (1).md'));
 const TRIALS = argNum('--trials', 50);
 const HARD_CAP = 200; // 安全上限，正常打不到
 const LEGION_TROOPS = argNum('--troops', 50000);
@@ -107,6 +114,18 @@ const TYPE_LABEL: Record<string, string> = {
   big_city: '都城', medium_city: '中城', small_city: '小城', pass: '关隘',
 };
 
+// 驻军随机范围（按据点类型）
+const TROOP_RANGE: Record<string, [number, number]> = {
+  big_city:    [30000, 50000],
+  medium_city: [15000, 30000],
+  small_city:  [ 1000, 15000],
+  pass:        [ 5000, 20000],
+};
+function randomTroops(cityType: string): number {
+  const [lo, hi] = TROOP_RANGE[cityType] || [1000, 15000];
+  return lo + Math.floor(Math.random() * (hi - lo + 1));
+}
+
 // ── 军团数据 ──
 interface LegionData {
   name: string; city: string; tier: string;
@@ -125,10 +144,9 @@ function buildLegion(e: CityEntry): LegionData {
   const passKw = ['关', '塞', '口', '津', '渡', '门', '隘', '堡', '镇'];
 
   let aptitude = 'create';
-  for (const [, prof] of Object.entries(GENERAL_PROFILES)) {
-    if (prof.tier === (e.tier === '名将' ? 'famous' : 'ordinary')) {
-      aptitude = (prof as any).aptitude ?? 'create'; break;
-    }
+  const gid = GENERAL_ID_BY_NAME[e.generalName];
+  if (gid && GENERAL_PROFILES[gid]) {
+    aptitude = (GENERAL_PROFILES[gid] as any).aptitude ?? 'create';
   }
 
   return {
@@ -153,6 +171,7 @@ function toUnitSpec(legion: LegionData, troops: number, role: 'field' | 'garriso
       tier: legion.tier === '名将' ? 'famous' : 'ordinary',
       tacticalSkillId: legion.tacticalSkillId ?? undefined,
       strategicSkillId: legion.strategicSkillId ?? undefined,
+      aptitude: legion.aptitude as 'create' | 'leverage' | 'reverse' | undefined,
     },
   };
 }
@@ -181,14 +200,13 @@ function runCampaign(attacker: LegionData, pool: LegionData[]): BattleLog[] {
     } while ((def.city === attacker.city || attacked.has(def.city)) && tries < 100);
     attacked.add(def.city);
 
-    const defTroops = CITY_TABLE[def.city]?.troops || 20000;
+    const cityType = CITY_TABLE[def.city]?.type || 'small_city';
+    const defTroops = randomTroops(cityType);
     const terrain = randomTerrain();
     const attSpec = toUnitSpec(attacker, troops, 'field');
     const defSpec = toUnitSpec(def, defTroops, 'garrison');
 
     const r = simulateOnce([attSpec], [defSpec], terrain, true, 'siege');
-
-    const cityType = CITY_TABLE[def.city]?.type || 'small_city';
     const defTierLabel = def.tier === '名将' ? '名' : '普';
 
     log.push({
