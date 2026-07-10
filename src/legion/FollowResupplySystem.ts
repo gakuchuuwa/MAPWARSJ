@@ -66,7 +66,16 @@ export class FollowResupplySystem {
             const dist = getEuclideanDistance(pos, { lat: city.latitude, lng: city.longitude });
             if (dist <= radius) {
                 const mag = getCityAnchoredStrategicMagnitude(city.id, 'siege_attacker_supply_halved');
-                if (mag < 1) { resupplyMult = Math.min(resupplyMult, mag); }
+                if (mag < 1) { 
+                    resupplyMult = Math.min(resupplyMult, mag); 
+                    
+                    // S⑤坚壁清野 进圈日志
+                    const scorchedSet = (army as any).scorchedEarthCities || ((army as any).scorchedEarthCities = new Set<string>());
+                    if (!scorchedSet.has(city.id)) {
+                        scorchedSet.add(city.id);
+                        gameLog('battle', `〔坚壁清野〕${army.generalId || '将领'}进入【${city.name}】清野范围，补给受阻`);
+                    }
+                }
             }
         }
 
@@ -79,6 +88,15 @@ export class FollowResupplySystem {
         const add = Math.floor(accum);
         this.fieldResupplyAccum.set(army.id, accum - add);
         army.setTroops(Math.min(armyMax, army.getTroops() + add));
+
+        // S⑬以战养战 累积满 1000 发一次战报
+        const uiAccum = ((army as any).fieldResupplyUiAccum ?? 0) + add;
+        if (uiAccum >= 1000) {
+            (army as any).fieldResupplyUiAccum = 0; // 清零
+            gameLog('battle', `〔以战养战〕${army.generalId || '将领'}沿途就粮，恢复 +1,000`);
+        } else {
+            (army as any).fieldResupplyUiAccum = uiAccum;
+        }
     }
 
     public update(army: Army): void {

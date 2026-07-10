@@ -852,6 +852,12 @@ function getStrategicTacticalSkillMult(
     if (stratSkill.effect === 'advantage_skill_effect_mult') {
         if (enemyTroops > 0 && selfTroops / enemyTroops > 1.5) {
             mult *= stratSkill.magnitude;
+            dispatchOpeningSkillPulse({
+                displayName: stratSkill.displayName,
+                generalId: unit.generalId,
+                skillId: profile.strategicSkillId,
+                uiDelaySec: 0.5,
+            }, unit.id);
         }
     }
 
@@ -861,7 +867,15 @@ function getStrategicTacticalSkillMult(
     if (stratSkill.effect === 'terrain_tactical_double' && terrain) {
         const activeTacId = getActiveTacticalSkillId(unit);
         const tacEntry = activeTacId ? getTacticalSkillEntry(activeTacId) : null;
-        if (tacEntry && tacEntry.condition === `terrain_${terrain}`) mult *= stratSkill.magnitude;
+        if (tacEntry && tacEntry.condition === `terrain_${terrain}`) {
+            mult *= stratSkill.magnitude;
+            dispatchOpeningSkillPulse({
+                displayName: stratSkill.displayName,
+                generalId: unit.generalId,
+                skillId: profile.strategicSkillId,
+                uiDelaySec: 0.5,
+            }, unit.id);
+        }
     }
 
     return mult;
@@ -1760,6 +1774,15 @@ export function applyStrategicBattleToRolls(
             ? getStrategicSkillDef(profile.strategicSkillId)
             : null;
         const label = skill?.displayName ?? '战略';
+
+        if (skill && profile) {
+            dispatchOpeningSkillPulse({
+                displayName: label,
+                generalId: unit.generalId!,
+                skillId: profile.strategicSkillId!,
+                uiDelaySec: 0.2, // 略微延后于战术技闪卡
+            }, unit.id);
+        }
         const next = roll * mult;
         gameLog(
             'battle',
@@ -1783,9 +1806,11 @@ function applyPostBattleTroopPct(
     if (bonus <= 0) return 0;
 
     unit.setTroops(unit.troops + bonus);
+    
+    // S⑦因粮于敌：数字小，仅面板小字或不刷屏的简单记录
     gameLog(
         'battle',
-        `🌾 [武将技] ${unit.generalId ?? '?'} ${source}【${skill.displayName}】 +${bonus}（当前兵 +${(skill.magnitude * 100).toFixed(0)}%）`,
+        `🌾 [武将技] ${unit.generalId ?? '?'} ${source}【${skill.displayName}】 +${bonus}`,
     );
     return bonus;
 }
@@ -1817,7 +1842,7 @@ export function applyPostBattleStrategicBonus(
                 if (bonus > 0) {
                     unit.setTroops(unit.troops + bonus);
                     total += bonus;
-                    gameLog('battle', `🏳️ [武将技] ${unit.generalId ?? '?'} 【${profileSkill.displayName}】缴获降兵 +${bonus}（敌残兵 ${enemySurvivors} × ${(profileSkill.magnitude * 100).toFixed(0)}%）`);
+                    gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}收编残部降卒 ${bonus.toLocaleString()}`);
                 }
             } else if (profileSkill?.hiddenPostBattlePct && profileSkill.hiddenPostBattlePct > 0) {
                 const bonus = Math.floor(unit.troops * profileSkill.hiddenPostBattlePct);
@@ -1825,6 +1850,11 @@ export function applyPostBattleStrategicBonus(
                     unit.setTroops(unit.troops + bonus);
                     total += bonus;
                 }
+            }
+
+            // S⑫乘胜追击 (skip_post_battle_rest)
+            if (profileSkill?.effect === 'skip_post_battle_rest') {
+                gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}不作休整，挥师再进`);
             }
         }
     }

@@ -1658,9 +1658,9 @@ export class CombatUI {
         }
         if (!side) return;
         const pulseSide = side;
-        // 一将一技：同将不再放第二次（含逆局/对抗/援军入队）
+        // 一将一技（战术/战略分键，避免战术闪卡被战略闪卡去重误吞）
         if (generalId) {
-            const genKey = `${pulseSide}|${generalId}`;
+            const genKey = `${pulseSide}|${generalId}|${skillId ?? ''}`;
             if (this.skillPulseShownKeys.has(genKey)) return;
             this.skillPulseShownKeys.add(genKey);
         }

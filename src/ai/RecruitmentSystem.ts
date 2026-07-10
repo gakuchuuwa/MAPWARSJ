@@ -24,6 +24,7 @@ import { getCityRegion, REGION_ORDER, RegionType, isRegionCenter } from '../syst
 import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile, getStrategicSkillDef } from '../data/GeneralSkills';
+import { getCityAnchoredStrategicMagnitude } from '../combat/GeneralSkillCombat';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
@@ -150,11 +151,68 @@ export class RecruitmentSystem {
             if (!this.isCityGarrisonCommitted(city.id)) {
                 const region = this.getCityRegion(city as RecruitmentCity);
                 const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[region] ?? 1.0;
-                const added = Math.floor(cfg.recruitPerSeason * recruitMult);
+                
+                // D类据点系：S⑭足食足兵 / S⑮招兵买马
+                const skillMult = getCityAnchoredStrategicMagnitude(city.id, 'city_growth_mult', 1.0);
+                
+                const baseAdded = Math.floor(cfg.recruitPerSeason * recruitMult);
+                const added = Math.floor(baseAdded * skillMult);
                 city.troops = clampCityTroops(city.type, (city.troops || 0) + added);
+                
+                // 仅当有加成且在镜头内时飘字
+                if (skillMult > 1.0) {
+                    const extra = added - baseAdded;
+                    if (extra > 0) {
+                        const bounds = this.getCurrentViewportBounds();
+                        if (bounds && bounds.contains([city.latitude, city.longitude])) {
+                            this.spawnFloatingText(city.latitude, city.longitude, `+${extra} (技能加成)`, '#55ff55');
+                        }
+                    }
+                }
             }
             this.pendingLabelCityIds.add(city.id);
         }
+    }
+
+    private spawnFloatingText(lat: number, lng: number, text: string, color: string): void {
+        const map = (window as any).game?.map?.getLeafletMap?.();
+        if (!map) return;
+        
+        // 挂载到 leaflet 的 popupPane 层保证层级足够高
+        const container = map.getPanes().popupPane;
+        if (!container) return;
+        
+        const point = map.latLngToLayerPoint([lat, lng]);
+        
+        const el = document.createElement('div');
+        el.innerText = text;
+        el.style.position = 'absolute';
+        el.style.left = `${point.x}px`;
+        el.style.top = `${point.y - 20}px`; // 起点稍微偏上
+        el.style.color = color;
+        el.style.fontWeight = 'bold';
+        el.style.fontSize = '14px';
+        el.style.textShadow = '0 1px 2px black, 0 -1px 2px black, 1px 0 2px black, -1px 0 2px black';
+        el.style.pointerEvents = 'none';
+        el.style.whiteSpace = 'nowrap';
+        el.style.transition = 'all 2s ease-out';
+        el.style.transform = 'translate(-50%, 0)';
+        el.style.zIndex = '1000';
+        
+        container.appendChild(el);
+        
+        // 下一帧触发动画
+        requestAnimationFrame(() => {
+            el.style.transform = 'translate(-50%, -40px)'; // 向上飘动
+            el.style.opacity = '0';
+        });
+        
+        // 动画结束后清理
+        setTimeout(() => {
+            if (el.parentNode === container) {
+                container.removeChild(el);
+            }
+        }, 2000);
     }
 
     private queueCityLabel(cityId: string): void {

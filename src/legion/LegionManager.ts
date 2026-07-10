@@ -650,6 +650,11 @@ export class LegionManager {
                 city.id !== army.expeditionTargetCityId &&
                 this.rollSmallCityZocBypass(army.id, city.id, smallCityBypassChance)
             ) {
+                const bypassedSet = (army as any).bypassedCities || ((army as any).bypassedCities = new Set<string>());
+                if (!bypassedSet.has(city.id)) {
+                    bypassedSet.add(city.id);
+                    gameLog('battle', `〔长驱深入〕${army.generalId || '将领'}无视【${city.name}】守军，长驱直入`);
+                }
                 continue;
             }
             const dist = getEuclideanDistance(pos, {
