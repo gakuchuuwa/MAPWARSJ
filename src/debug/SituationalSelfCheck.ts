@@ -16,7 +16,7 @@ const REPS: Array<[string, string]> = [
     ['xichu_xiangyu', '项羽'],        // 战斗str_03·破釜沉舟(劣势招牌)
     ['xianyu_hanxin', '韩信'],        // 补给·背水一战
     ['suzhou_huoqubing', '霍去病'],   // 行军·封狼居胥
-    ['yanchuan_d_yuefei', '岳飞'],    // 战斗str_03·痛饮黄龙
+    ['yanchuan_d_yuefei', '岳飞'],    // 战斗str_04·痛饮黄龙/散阵遏骑/空寨掩击
     ['sima_d_simayi', '司马懿'],      // 爆兵足食足兵(保留·熬国力)
     ['huizhou_zhugeliang', '诸葛亮'], // 改→补给以战养战(北伐为粮所困)
     ['jiaodong_tiandan', '田单'],     // 改→补给以战养战(即墨守城)
@@ -27,10 +27,11 @@ const REPS: Array<[string, string]> = [
 ];
 
 const STRAT_SYS: Record<string, string> = {
-    str_01: '行军', str_10: '行军', str_11: '行军',
-    str_12: '补给', str_13: '补给', str_07: '补给',
-    str_14: '爆兵', str_15: '爆兵', str_03: '战斗',
-    str_02: '奇策', str_04: '奇策', str_06: '奇策', str_09: '奇策',
+    str_01: '行军', str_10: '行军', str_11: '行军', str_12: '行军',
+    str_13: '补给', str_07: '补给',
+    str_14: '爆兵', str_15: '爆兵',
+    str_03: '战斗', str_04: '战斗', str_09: '战斗',
+    str_02: '奇策', str_06: '奇策',
     str_05: '据点防', str_08: '据点防',
 };
 

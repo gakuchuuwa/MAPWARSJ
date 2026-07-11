@@ -41,7 +41,6 @@ import {
     getPassGarrisonDefenseSkillDisplay,
     getRegionCenterDefenseSkillDisplay,
     getReinforcementJoinSkillDisplay,
-    getExpeditionForageSkillDisplay,
     canUnitUseGeneralSkills,
     getBattleTerrainKind,
     resolveSkillPulseStaggerSec,
@@ -1067,10 +1066,6 @@ export class CombatUI {
             // const joinLuck = this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
             // const reinfSkill = getReinforcementJoinSkillDisplay(joinLuck);
             // if (reinfSkill) add(reinfSkill.name, reinfSkill.effectLabel, false, 'other');
-
-            // 远征/因粮于敌（不再显示为独立技能框，节约空间，但乘区仍生效）
-            // const forageSkill = getExpeditionForageSkillDisplay(unit);
-            // if (forageSkill) add(forageSkill.name, forageSkill.effectLabel, true, 'other');
 
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {

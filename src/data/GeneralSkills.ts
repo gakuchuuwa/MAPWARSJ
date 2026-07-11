@@ -34,13 +34,15 @@ export type TacticalEffect =
 
 export type StrategicEffect =
     // ── 军团攻 ──
-    | 'attacker_power_mult'       // 攻方战力乘区
+    | 'attacker_power_mult'       // 攻方战力乘区（所向披靡）
+    | 'advantage_skill_effect_mult'   // 优势时战术技效果 ×1.3（威震华夏）
+    | 'disadvantage_power_mult'       // 劣势时自身战力 ×1.4（以寡击众）
     // ── 军团速 ──
     | 'march_speed_mult'          // 全局提速
     | 'mountain_march_immunity'   // 山地按平原速度
     | 'ignore_small_city_zoc'     // 无视小城 ZOC
+    | 'skip_post_battle_rest'     // 胜后免休整（乘胜追击，连续行军节奏）
     // ── 补给 ──
-    | 'skip_post_battle_rest'     // 胜后免休整
     | 'field_resupply'            // 远离本土缓回血
     | 'post_battle_troop_pct'     // 胜后就食补员
     // ── 据点兵 ──
@@ -50,9 +52,7 @@ export type StrategicEffect =
     | 'garrison_defense_mult'     // 守城城防战力 ×1.3（1.5 顶 luck 帽=等兵力必守住，2026-07-11 降档）
     | 'siege_attacker_supply_halved' // 攻城方缓回血减半
     // ── 奇策 ──
-    | 'advantage_skill_effect_mult'   // 优势时战术技效果 ×1.3
     | 'post_battle_recruit_enemy_pct' // 胜后缴获敌残兵
-    | 'disadvantage_power_mult'       // 劣势时自身战力 ×1.4
     | 'terrain_tactical_double'       // 地形匹配时战术技翻倍
     // ── 退役 effect（S④⑤⑥⑧ 条目已删；类型保留至 Step2 清理引擎 switch 后移除）──
     | 'defender_power_mult'
@@ -84,9 +84,9 @@ export interface StrategicSkillDef {
     /** 引擎接线状态：ready=真实生效；new=数据就位、Step2 接引擎前不生效（诚实标注，audit 依赖） */
     engineStatus: 'ready' | 'new';
     /**
-     * 隐藏胜后续航：地图系战略技（行军/爆兵/补给类）的名将，胜后按自身当前兵 × 此比例静默补血。
-     * 用于让这些"大地图收益"技在连续战斗里也能体现名将价值，避免续航垫底。
-     * ⚠️ 静默：不写战斗日志、不显示 UI 标签（与因粮于敌 post_battle_troop_pct 的可见回血区分）。
+     * 隐藏胜后续航： **军团速**（str_01/10/11/12）、**威震华夏**（str_04）附带；
+     * **据点兵**（str_14/15）与 **据点防** 不含——守备向不配远征续航。
+     * 胜后按自身当前兵 × 此比例静默补血；与 str_07 因粮于敌（1% 可见）相比为半效 0.5%。
      */
     hiddenPostBattlePct?: number;
     note?: string;
@@ -126,50 +126,35 @@ export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
 
 /**
  * 战略技 v2（2026-07-10 重设计）：六系 15 技
- *   军团攻：str_03 所向披靡
- *   军团速：str_01 兵贵神速 / str_10 如履平地 / str_11 长驱深入
- *   补给 ：str_12 乘胜追击 / str_13 以战养战 / str_07 因粮于敌
+ *   军团攻：str_03 所向披靡 / str_04 威震华夏 / str_09 以寡击众
+ *   军团速：str_01 兵贵神速 / str_10 如履平地 / str_11 长驱深入 / str_12 乘胜追击
+ *   补给 ：str_13 以战养战 / str_07 因粮于敌
  *   据点兵：str_14 足食足兵 / str_15 招兵买马
  *   据点防：str_08 固若金汤 / str_05 坚壁清野
- *   奇策 ：str_04 威震华夏 / str_06 招降纳叛 / str_09 以寡击众 / str_02 因地制宜
+ *   奇策 ：str_06 招降纳叛 / str_02 因地制宜
  */
 export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     // ── 军团攻 ──
     str_03: { id: 'str_03', grid: 'S③', displayName: '所向披靡', effect: 'attacker_power_mult', magnitude: 1.5, engineStatus: 'ready' },
+    str_04: { id: 'str_04', grid: 'S④', displayName: '威震华夏', effect: 'advantage_skill_effect_mult', magnitude: 1.3, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '优势时（兵力>1.5）战术技效果 ×1.3；隐藏胜后续航 1%' },
+    str_09: { id: 'str_09', grid: 'S⑨', displayName: '以寡击众', effect: 'disadvantage_power_mult', magnitude: 1.4, engineStatus: 'ready', note: '劣势时（兵力<0.67）自身战力 ×1.4' },
     // ── 军团速 ──
     str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.5, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '隐藏胜后续航 0.5%（静默，不显示）' },
     str_10: { id: 'str_10', grid: 'S⑩', displayName: '如履平地', effect: 'mountain_march_immunity', magnitude: 1, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '山地按平原速度走；隐藏胜后续航 0.5%' },
     str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '50% 无视小城 ZOC；隐藏胜后续航 0.5%' },
-    // ── 补给 ──
     str_12: { id: 'str_12', grid: 'S⑫', displayName: '乘胜追击', effect: 'skip_post_battle_rest', magnitude: 0, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '胜后休整时长置 0' },
+    // ── 补给 ──
     str_13: { id: 'str_13', grid: 'S⑬', displayName: '以战养战', effect: 'field_resupply', magnitude: 1, engineStatus: 'ready', note: '远离本土缓回血' },
     str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0.01, engineStatus: 'ready' },
     // ── 据点兵 ──
-    str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '出身城每季补兵 ×2（活管线在 RecruitmentSystem 季度补驻军；CityManager.updateTroops 无调用方，勿再挂）' },
-    str_15: { id: 'str_15', grid: 'S⑮', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '征兵冷却 ×0.5' },
+    str_14: { id: 'str_14', grid: 'S⑭', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2, engineStatus: 'ready', note: '出身城每季补兵 ×2（活管线在 RecruitmentSystem 季度补驻军；CityManager.updateTroops 无调用方，勿再挂）' },
+    str_15: { id: 'str_15', grid: 'S⑮', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', note: '征兵冷却 ×0.5' },
     // ── 据点防 ──
     str_08: { id: 'str_08', grid: 'S⑧', displayName: '固若金汤', effect: 'garrison_defense_mult', magnitude: 1.3, engineStatus: 'ready', note: '守城时城防战力 ×1.3' },
     str_05: { id: 'str_05', grid: 'S⑤', displayName: '坚壁清野', effect: 'siege_attacker_supply_halved', magnitude: 0.5, engineStatus: 'ready', note: '攻城方在城外缓回血减半' },
     // ── 奇策 ──
-    str_04: { id: 'str_04', grid: 'S④', displayName: '威震华夏', effect: 'advantage_skill_effect_mult', magnitude: 1.3, engineStatus: 'ready', note: '优势时（兵力>1.5）战术技效果 ×1.3' },
     str_06: { id: 'str_06', grid: 'S⑥', displayName: '招降纳叛', effect: 'post_battle_recruit_enemy_pct', magnitude: 0.10, engineStatus: 'ready', note: '胜后缴获 10% 敌残兵' },
-    str_09: { id: 'str_09', grid: 'S⑨', displayName: '以寡击众', effect: 'disadvantage_power_mult', magnitude: 1.4, engineStatus: 'ready', note: '劣势时（兵力<0.67）自身战力 ×1.4' },
     str_02: { id: 'str_02', grid: 'S②', displayName: '因地制宜', effect: 'terrain_tactical_double', magnitude: 2.0, engineStatus: 'ready', note: '地形匹配时战术技效果翻倍' },
-};
-
-/**
- * 远征军系统技：胜后「因粮于敌」补兵（远征断粮、就食于敌）。
- * 仅远征军（army.expeditionTargetCityId）享；**非战略格 / 非战术格**，独立系统技，不占名将技格。
- */
-export interface ExpeditionSystemSkillDef {
-    displayName: string;
-    effect: 'post_battle_troop_pct';
-    magnitude: number;
-}
-export const EXPEDITION_FORAGE_SKILL: ExpeditionSystemSkillDef = {
-    displayName: '因粮于敌',
-    effect: 'post_battle_troop_pct',
-    magnitude: 0.01,
 };
 
 /** 守军系统技 effect（非战术十格 / 战略六格） */
@@ -222,7 +207,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_simacuo: { generalId: 'unassigned_simacuo', tier: 'ordinary', tacticalSkillId: 'ts_024', advantageSkillId: 'ts_022', balanceSkillId: 'ts_396', disadvantageSkillId: 'ts_024', aptitude: 'reverse' }, // 前316年灭蜀苴巴
     tang_lishimin: { generalId: 'tang_lishimin', tier: 'famous', tacticalSkillId: 'ts_051', strategicSkillId: 'str_03', advantageSkillId: 'ts_051', balanceSkillId: 'ts_434', disadvantageSkillId: 'ts_435', aptitude: 'create' }, // 所向无前（天策破阵）
     unassigned_direnjie: { generalId: 'unassigned_direnjie', tier: 'ordinary', tacticalSkillId: 'ts_019', advantageSkillId: 'ts_390', balanceSkillId: 'ts_396', disadvantageSkillId: 'ts_019', aptitude: 'reverse' }, // 退突厥：间谍离间后反击
-    pinghai_laihuer: { generalId: 'pinghai_laihuer', tier: 'famous', tacticalSkillId: 'ts_217', strategicSkillId: 'str_13', advantageSkillId: 'ts_217', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_019', aptitude: 'create' }, // 征东：水师突击平壤焚舰
+    pinghai_laihuer: { generalId: 'pinghai_laihuer', tier: 'famous', tacticalSkillId: 'ts_217', strategicSkillId: 'str_03', advantageSkillId: 'ts_217', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_019', aptitude: 'create' }, // 征东：水师突击平壤焚舰
     jianzhou_nvzhen_limanzhu: { generalId: 'jianzhou_nvzhen_limanzhu', tier: 'ordinary', tacticalSkillId: 'ts_037', advantageSkillId: 'ts_402', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_037', aptitude: 'reverse' }, // 建州：聚合诸部筑城自守
     unassigned_zhangliang: { generalId: 'unassigned_zhangliang', tier: 'ordinary', tacticalSkillId: 'ts_028', advantageSkillId: 'ts_028', balanceSkillId: 'ts_396', disadvantageSkillId: 'ts_045', aptitude: 'create' }, // 征东：唐水军渡海攻坚
     mushi_muchong: { generalId: 'mushi_muchong', tier: 'ordinary', tacticalSkillId: 'ts_021', advantageSkillId: 'ts_021', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_410', aptitude: 'create' },
@@ -291,7 +276,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     bohai_dazuorong: { generalId: 'bohai_dazuorong', tier: 'famous', tacticalSkillId: 'ts_091', strategicSkillId: 'str_14', advantageSkillId: 'ts_471', balanceSkillId: 'ts_091', disadvantageSkillId: 'ts_473', aptitude: 'reverse' }, // 阻险御敌
     goryeo_jianghanzan: { generalId: 'goryeo_jianghanzan', tier: 'famous', tacticalSkillId: 'ts_382', strategicSkillId: 'str_08', advantageSkillId: 'ts_382', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_036', aptitude: 'leverage' },
     ashikaga_zulizunshi: { generalId: 'ashikaga_zulizunshi', tier: 'famous', tacticalSkillId: 'ts_345', strategicSkillId: 'str_14', advantageSkillId: 'ts_345', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_419', aptitude: 'create' }, // 凑川败后据九州水师固守
-    tiemuer_tiemuer: { generalId: 'tiemuer_tiemuer', tier: 'famous', tacticalSkillId: 'ts_115', strategicSkillId: 'str_04', advantageSkillId: 'ts_115', balanceSkillId: 'ts_681', disadvantageSkillId: 'ts_682', aptitude: 'create' },
+    tiemuer_tiemuer: { generalId: 'tiemuer_tiemuer', tier: 'famous', tacticalSkillId: 'ts_115', strategicSkillId: 'str_03', advantageSkillId: 'ts_115', balanceSkillId: 'ts_681', disadvantageSkillId: 'ts_682', aptitude: 'create' },
     siam_nalixuan: { generalId: 'siam_nalixuan', tier: 'famous', tacticalSkillId: 'ts_348', strategicSkillId: 'str_13', advantageSkillId: 'ts_348', balanceSkillId: 'ts_613', disadvantageSkillId: 'ts_614', aptitude: 'create' }, // 象战击杀缅甸王储复国
     shang_fuhao: { generalId: 'shang_fuhao', tier: 'famous', tacticalSkillId: 'ts_200', strategicSkillId: 'str_03', advantageSkillId: 'ts_200', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_024', aptitude: 'create' }, // 征伐土方武丁妇好率军突击
     pizhou_lvbu: { generalId: 'pizhou_lvbu', tier: 'ordinary', tacticalSkillId: 'ts_026', advantageSkillId: 'ts_391', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_026', aptitude: 'reverse' }, // 下邳飞将
@@ -327,7 +312,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_danjin: { generalId: 'unassigned_danjin', tier: 'ordinary', tacticalSkillId: 'ts_026', advantageSkillId: 'ts_027', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_026', aptitude: 'reverse' }, // 首任唐努总管丹津 // 布尔根乌梁海部
     // ── 日本 ──
     edo_dechuanjiakang: { generalId: 'edo_dechuanjiakang', tier: 'famous', tacticalSkillId: 'ts_127', strategicSkillId: 'str_14', advantageSkillId: 'ts_508', balanceSkillId: 'ts_127', disadvantageSkillId: 'ts_509', aptitude: 'leverage' }, // 关原后稳坐江户待变
-    kai_wutianxinxuan: { generalId: 'kai_wutianxinxuan', tier: 'famous', tacticalSkillId: 'ts_171', strategicSkillId: 'str_14', advantageSkillId: 'ts_171', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_035', aptitude: 'create' }, // 川中岛铁骑突击
+    kai_wutianxinxuan: { generalId: 'kai_wutianxinxuan', tier: 'famous', tacticalSkillId: 'ts_171', strategicSkillId: 'str_03', advantageSkillId: 'ts_171', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_035', aptitude: 'create' }, // 川中岛铁骑突击
     echigo_shangshanqianxin: { generalId: 'echigo_shangshanqianxin', tier: 'famous', tacticalSkillId: 'ts_281', strategicSkillId: 'str_09', advantageSkillId: 'ts_281', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_017', aptitude: 'create' }, // 川中岛车悬突击
     hashiba_fengchenxiuji: { generalId: 'hashiba_fengchenxiuji', tier: 'famous', tacticalSkillId: 'ts_280', strategicSkillId: 'str_01', advantageSkillId: 'ts_280', balanceSkillId: 'ts_404', disadvantageSkillId: 'ts_413', aptitude: 'leverage' }, // 鸟取忍城粮道奇袭
     sanada_d_zhentianxingcun: { generalId: 'sanada_d_zhentianxingcun', tier: 'ordinary', tacticalSkillId: 'ts_156', advantageSkillId: 'ts_156', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_416', aptitude: 'create' }, // 大阪夏之阵赤备突击
@@ -335,7 +320,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     owari_zhitianxinchang: { generalId: 'owari_zhitianxinchang', tier: 'famous', tacticalSkillId: 'ts_114', strategicSkillId: 'str_01', advantageSkillId: 'ts_579', balanceSkillId: 'ts_580', disadvantageSkillId: 'ts_114', aptitude: 'create' }, // 桶狭间奇袭破今川
     totomi_jiujingzhongci: { generalId: 'totomi_jiujingzhongci', tier: 'famous', tacticalSkillId: 'ts_363', strategicSkillId: 'str_08', advantageSkillId: 'ts_363', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_025', aptitude: 'create' }, // 浜松城·德川四天王
     jinchuan_jinchuanyiyuan: { generalId: 'jinchuan_jinchuanyiyuan', tier: 'ordinary', tacticalSkillId: 'ts_021', advantageSkillId: 'ts_021', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_017', aptitude: 'create' }, // 东海道第一弓取·大军压境
-    aki_maoliyuanjiu: { generalId: 'aki_maoliyuanjiu', tier: 'famous', tacticalSkillId: 'ts_380', strategicSkillId: 'str_04', advantageSkillId: 'ts_380', balanceSkillId: 'ts_469', disadvantageSkillId: 'ts_470', aptitude: 'leverage' }, // 严岛夜袭少胜多
+    aki_maoliyuanjiu: { generalId: 'aki_maoliyuanjiu', tier: 'famous', tacticalSkillId: 'ts_380', strategicSkillId: 'str_09', advantageSkillId: 'ts_380', balanceSkillId: 'ts_469', disadvantageSkillId: 'ts_470', aptitude: 'leverage' }, // 严岛夜袭少胜多
     satsuma_daojinjiajiu: { generalId: 'satsuma_daojinjiajiu', tier: 'famous', tacticalSkillId: 'ts_130', strategicSkillId: 'str_12', advantageSkillId: 'ts_706', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_130', aptitude: 'leverage' }, // 钓野伏·冲田畷耳川合战
     otomo_d_lihuadaoxue: { generalId: 'otomo_d_lihuadaoxue', tier: 'ordinary', tacticalSkillId: 'ts_031', advantageSkillId: 'ts_047', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_031', aptitude: 'reverse' }, // 迁冈筑城拒敌
     higo_d_juchiwuguang: { generalId: 'higo_d_juchiwuguang', tier: 'famous', tacticalSkillId: 'ts_381', strategicSkillId: 'str_10', advantageSkillId: 'ts_381', balanceSkillId: 'ts_406', disadvantageSkillId: 'ts_035', aptitude: 'create' }, // 菊池河山战突击
@@ -364,7 +349,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     baiji_jiebo: { generalId: 'baiji_jiebo', tier: 'ordinary', tacticalSkillId: 'ts_098', advantageSkillId: 'ts_029', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_098', aptitude: 'reverse' }, // 车昌野隘突击
     zhen_zhenxuan: { generalId: 'zhen_zhenxuan', tier: 'famous', tacticalSkillId: 'ts_340', strategicSkillId: 'str_09', advantageSkillId: 'ts_340', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_418', aptitude: 'create' },
     danluo_jintongjing: { generalId: 'danluo_jintongjing', tier: 'ordinary', tacticalSkillId: 'ts_037', advantageSkillId: 'ts_389', balanceSkillId: 'ts_396', disadvantageSkillId: 'ts_037', aptitude: 'reverse' }, // 金通精守城逆袭
-    sambyeol_lishunchen: { generalId: 'sambyeol_lishunchen', tier: 'famous', tacticalSkillId: 'ts_060', strategicSkillId: 'str_08', advantageSkillId: 'ts_401', balanceSkillId: 'ts_404', disadvantageSkillId: 'ts_060', aptitude: 'leverage' }, // 必死则生（绝地反击重掷极品）
+    sambyeol_lishunchen: { generalId: 'sambyeol_lishunchen', tier: 'famous', tacticalSkillId: 'ts_060', strategicSkillId: 'str_09', advantageSkillId: 'ts_401', balanceSkillId: 'ts_404', disadvantageSkillId: 'ts_060', aptitude: 'leverage' }, // 必死则生（绝地反击以寡击众）
     gaya_jinshoulu: { generalId: 'gaya_jinshoulu', tier: 'ordinary', tacticalSkillId: 'ts_024', advantageSkillId: 'ts_023', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_024', aptitude: 'reverse' }, // 金官伽倻筑城
     woju_yinguan: { generalId: 'woju_yinguan', tier: 'famous', tacticalSkillId: 'ts_095', strategicSkillId: 'str_14', advantageSkillId: 'ts_009', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_095', aptitude: 'create' }, // 勿里伐高句丽久战拖敌
     xuantu_yuangaisuwen: { generalId: 'xuantu_yuangaisuwen', tier: 'famous', tacticalSkillId: 'ts_096', strategicSkillId: 'str_08', advantageSkillId: 'ts_390', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_096', aptitude: 'reverse' }, // 安市围城守城破唐
@@ -373,13 +358,13 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     chungju_d_quanli: { generalId: 'chungju_d_quanli', tier: 'famous', tacticalSkillId: 'ts_099', strategicSkillId: 'str_08', advantageSkillId: 'ts_708', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_099', aptitude: 'reverse' },
     sabeol_jinshimin: { generalId: 'sabeol_jinshimin', tier: 'famous', tacticalSkillId: 'ts_100', strategicSkillId: 'str_08', advantageSkillId: 'ts_023', balanceSkillId: 'ts_699', disadvantageSkillId: 'ts_100', aptitude: 'reverse' },
     // ── 东北
-    manzhou_d_duoergun: { generalId: 'manzhou_d_duoergun', tier: 'famous', tacticalSkillId: 'ts_067', strategicSkillId: 'str_04', advantageSkillId: 'ts_067', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_041', aptitude: 'create' },
+    manzhou_d_duoergun: { generalId: 'manzhou_d_duoergun', tier: 'famous', tacticalSkillId: 'ts_067', strategicSkillId: 'str_01', advantageSkillId: 'ts_067', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_041', aptitude: 'create' },
     dajin_wanyanaguda: { generalId: 'dajin_wanyanaguda', tier: 'famous', tacticalSkillId: 'ts_057', strategicSkillId: 'str_01', advantageSkillId: 'ts_057', balanceSkillId: 'ts_444', disadvantageSkillId: 'ts_445', aptitude: 'create' },
     wuliangha_subutai: { generalId: 'wuliangha_subutai', tier: 'famous', tacticalSkillId: 'ts_102', advantageSkillId: 'ts_102', balanceSkillId: 'ts_637', disadvantageSkillId: 'ts_638', strategicSkillId: 'str_01', aptitude: 'create' },
     unassigned_naierbuhua: { generalId: 'unassigned_naierbuhua', tier: 'ordinary', tacticalSkillId: 'ts_103', advantageSkillId: 'ts_027', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_103', aptitude: 'reverse' }, // 永乐北伐兀良哈败乃儿不花
     fuyu_weichoutai: { generalId: 'fuyu_weichoutai', tier: 'ordinary', tacticalSkillId: 'ts_104', advantageSkillId: 'ts_390', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_104', aptitude: 'reverse' }, // 扶余据城固守
     jurchen_wanyanzongbi: { generalId: 'jurchen_wanyanzongbi', tier: 'famous', tacticalSkillId: 'ts_076', strategicSkillId: 'str_03', advantageSkillId: 'ts_076', balanceSkillId: 'ts_547', disadvantageSkillId: 'ts_548', aptitude: 'create' }, // 如墙而进（郾城铁浮屠平原突击·归位现成技）
-    aisin_d_huangtaiji: { generalId: 'aisin_d_huangtaiji', tier: 'famous', tacticalSkillId: 'ts_077', strategicSkillId: 'str_04', advantageSkillId: 'ts_465', balanceSkillId: 'ts_077', disadvantageSkillId: 'ts_467', aptitude: 'leverage' }, // 长围久困
+    aisin_d_huangtaiji: { generalId: 'aisin_d_huangtaiji', tier: 'famous', tacticalSkillId: 'ts_077', strategicSkillId: 'str_05', advantageSkillId: 'ts_465', balanceSkillId: 'ts_077', disadvantageSkillId: 'ts_467', aptitude: 'leverage' }, // 长围久困（坚壁清野围城）
     mohe_wanyanzonghan: { generalId: 'mohe_wanyanzonghan', tier: 'famous', tacticalSkillId: 'ts_360', strategicSkillId: 'str_03', advantageSkillId: 'ts_360', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_410', aptitude: 'create' },
     suolun_bomuboguoer: { generalId: 'suolun_bomuboguoer', tier: 'ordinary', tacticalSkillId: 'ts_095', advantageSkillId: 'ts_400', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_095', aptitude: 'reverse' },
     wula_buzhantai: { generalId: 'wula_buzhantai', tier: 'ordinary', tacticalSkillId: 'ts_082', advantageSkillId: 'ts_082', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_017', aptitude: 'create' },
@@ -424,11 +409,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     geluolu_chisipijia: { generalId: 'geluolu_chisipijia', tier: 'ordinary', tacticalSkillId: 'ts_099', advantageSkillId: 'ts_022', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_099', aptitude: 'reverse' }, // 葛逻禄纵横西域外交
     ogodei_chuoermahan: { generalId: 'ogodei_chuoermahan', tier: 'famous', tacticalSkillId: 'ts_089', strategicSkillId: 'str_07', advantageSkillId: 'ts_089', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_410', aptitude: 'create' }, // 风卷残云
     merkit_boyan: { generalId: 'merkit_boyan', tier: 'famous', tacticalSkillId: 'ts_235', strategicSkillId: 'str_11', advantageSkillId: 'ts_235', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_722', aptitude: 'create' },
-    tumed_andahan: { generalId: 'tumed_andahan', tier: 'famous', tacticalSkillId: 'ts_124', strategicSkillId: 'str_04', advantageSkillId: 'ts_124', balanceSkillId: 'ts_622', disadvantageSkillId: 'ts_623', aptitude: 'create' }, // 庚戌之变长驱围北京
+    tumed_andahan: { generalId: 'tumed_andahan', tier: 'famous', tacticalSkillId: 'ts_124', strategicSkillId: 'str_07', advantageSkillId: 'ts_124', balanceSkillId: 'ts_622', disadvantageSkillId: 'ts_623', aptitude: 'create' }, // 庚戌之变长驱围北京（草原劫掠）
     kiyad_yesugai: { generalId: 'kiyad_yesugai', tier: 'ordinary', tacticalSkillId: 'ts_009', advantageSkillId: 'ts_009', balanceSkillId: 'ts_046', disadvantageSkillId: 'ts_008', aptitude: 'create' }, // 也速该草原奔袭
     unassigned_mahamu: { generalId: 'unassigned_mahamu', tier: 'ordinary', tacticalSkillId: 'ts_017', advantageSkillId: 'ts_389', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_017', aptitude: 'reverse' }, // 忽兰忽失温后重整
     xiajiasi_are: { generalId: 'xiajiasi_are', tier: 'famous', tacticalSkillId: 'ts_242', strategicSkillId: 'str_01', advantageSkillId: 'ts_242', balanceSkillId: 'ts_643', disadvantageSkillId: 'ts_644', aptitude: 'create' }, // 黠戛斯灭回鹘神速
-    xiongnu_maodun: { generalId: 'xiongnu_maodun', tier: 'famous', tacticalSkillId: 'ts_066', strategicSkillId: 'str_04', advantageSkillId: 'ts_066', balanceSkillId: 'ts_649', disadvantageSkillId: 'ts_650', aptitude: 'leverage' }, // 鸣镝所向（白登围刘邦）
+    xiongnu_maodun: { generalId: 'xiongnu_maodun', tier: 'famous', tacticalSkillId: 'ts_066', strategicSkillId: 'str_03', advantageSkillId: 'ts_066', balanceSkillId: 'ts_649', disadvantageSkillId: 'ts_650', aptitude: 'leverage' }, // 鸣镝所向（白登围刘邦·草原征服者）
     murong_murongke: { generalId: 'murong_murongke', tier: 'famous', tacticalSkillId: 'ts_236', strategicSkillId: 'str_05', advantageSkillId: 'ts_236', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_410', aptitude: 'create' },
     wuhuan_tadun: { generalId: 'wuhuan_tadun', tier: 'ordinary', tacticalSkillId: 'ts_038', advantageSkillId: 'ts_389', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_038', aptitude: 'reverse' }, // 白狼山死战曹操
     yuan_d_hubilie: { generalId: 'yuan_d_hubilie', tier: 'famous', tacticalSkillId: 'ts_246', strategicSkillId: 'str_03', advantageSkillId: 'ts_246', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_020', aptitude: 'create' },
@@ -464,7 +449,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     pugu_ashinaguduolu: { generalId: 'pugu_ashinaguduolu', tier: 'famous', tacticalSkillId: 'ts_238', strategicSkillId: 'str_13', advantageSkillId: 'ts_238', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_036', aptitude: 'create' },
     kelie_zhaheganbu: { generalId: 'kelie_zhaheganbu', tier: 'ordinary', tacticalSkillId: 'ts_066', advantageSkillId: 'ts_066', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_031', aptitude: 'create' },
     borjigin_tuolei: { generalId: 'borjigin_tuolei', tier: 'famous', tacticalSkillId: 'ts_080', strategicSkillId: 'str_09', advantageSkillId: 'ts_080', balanceSkillId: 'ts_475', disadvantageSkillId: 'ts_476', aptitude: 'create' }, // 三峰山奇袭灭金主力
-    zhadalan_zhamuhe: { generalId: 'zhadalan_zhamuhe', tier: 'famous', tacticalSkillId: 'ts_247', strategicSkillId: 'str_14', advantageSkillId: 'ts_247', balanceSkillId: 'ts_396', disadvantageSkillId: 'ts_024', aptitude: 'leverage' },
+    zhadalan_zhamuhe: { generalId: 'zhadalan_zhamuhe', tier: 'famous', tacticalSkillId: 'ts_247', strategicSkillId: 'str_03', advantageSkillId: 'ts_247', balanceSkillId: 'ts_396', disadvantageSkillId: 'ts_024', aptitude: 'leverage' },
     zhuerqi_sachabieqi: { generalId: 'zhuerqi_sachabieqi', tier: 'ordinary', tacticalSkillId: 'ts_137', advantageSkillId: 'ts_007', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_137', aptitude: 'reverse' }, // 主儿乞部决战
     chechen_chechenhanshuolei: { generalId: 'chechen_chechenhanshuolei', tier: 'ordinary', tacticalSkillId: 'ts_086', advantageSkillId: 'ts_021', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_086', aptitude: 'reverse' }, // 车臣部驻牧固守
     kepantuo_dulimi: { generalId: 'kepantuo_dulimi', tier: 'ordinary', tacticalSkillId: 'ts_058', advantageSkillId: 'ts_058', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_020', aptitude: 'create' },
@@ -476,7 +461,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     shache_xian_suoche_shachexian: { generalId: 'shache_xian_suoche_shachexian', tier: 'ordinary', tacticalSkillId: 'ts_024', advantageSkillId: 'ts_007', balanceSkillId: 'ts_046', disadvantageSkillId: 'ts_024', aptitude: 'reverse' }, // 莎车王纵横西域外交
     yao_liuyuan: { tacticalSkillId: 'ts_001', generalId: 'yao_liuyuan', tier: 'famous', strategicSkillId: 'str_15', advantageSkillId: 'ts_001', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_061', aptitude: 'create' },
     kong_d_caogui: { generalId: 'kong_d_caogui', tier: 'famous', tacticalSkillId: 'ts_049', strategicSkillId: 'str_05', advantageSkillId: 'ts_049', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_410', aptitude: 'reverse' }, // 曹刿·曲阜(长勺之战·一鼓作气·遂逐齐师)
-    yanchuan_d_yuefei: { generalId: 'yanchuan_d_yuefei', tier: 'famous', tacticalSkillId: 'ts_092', strategicSkillId: 'str_03', advantageSkillId: 'ts_092', balanceSkillId: 'ts_420', disadvantageSkillId: 'ts_421', aptitude: 'create' }, // 岳飞·郾城大捷
+    yanchuan_d_yuefei: { generalId: 'yanchuan_d_yuefei', tier: 'famous', tacticalSkillId: 'ts_092', strategicSkillId: 'str_04', advantageSkillId: 'ts_092', balanceSkillId: 'ts_420', disadvantageSkillId: 'ts_421', aptitude: 'create' }, // 岳飞·痛饮黄龙/散阵遏骑/空寨掩击·威震华夏
     guide_d_xiaohe: { generalId: 'guide_d_xiaohe', tier: 'ordinary', tacticalSkillId: 'ts_014', advantageSkillId: 'ts_401', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_024', aptitude: 'leverage' }, // 萧何深沟高垒
     tongzhou_liuzhiyuan: { generalId: 'tongzhou_liuzhiyuan', tier: 'ordinary', tacticalSkillId: 'ts_095', advantageSkillId: 'ts_022', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_095', aptitude: 'reverse' },
     unassigned_chenpan: { generalId: 'unassigned_chenpan', tier: 'ordinary', tacticalSkillId: 'ts_021', advantageSkillId: 'ts_021', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_033', aptitude: 'create' }, // 疏勒王联汉奇袭
@@ -489,7 +474,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     zhuxie_zhuxiechixin: { generalId: 'zhuxie_zhuxiechixin', tier: 'ordinary', tacticalSkillId: 'ts_007', advantageSkillId: 'ts_007', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_416', aptitude: 'create' }, // 朱邪赤心骑破庞勋
     saman_yisimayi: { generalId: 'saman_yisimayi', tier: 'famous', tacticalSkillId: 'ts_302', strategicSkillId: 'str_13', advantageSkillId: 'ts_302', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_716', aptitude: 'leverage' }, // 萨曼埃米尔巴尔赫以逸待劳
     tujishi_sulukehan: { generalId: 'tujishi_sulukehan', tier: 'famous', tacticalSkillId: 'ts_312', strategicSkillId: 'str_13', advantageSkillId: 'ts_312', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_045', aptitude: 'create' },
-    xiliao_yelvdashi: { generalId: 'xiliao_yelvdashi', tier: 'famous', tacticalSkillId: 'ts_138', strategicSkillId: 'str_04', advantageSkillId: 'ts_645', balanceSkillId: 'ts_646', disadvantageSkillId: 'ts_138', aptitude: 'create' },
+    xiliao_yelvdashi: { generalId: 'xiliao_yelvdashi', tier: 'famous', tacticalSkillId: 'ts_138', strategicSkillId: 'str_01', advantageSkillId: 'ts_645', balanceSkillId: 'ts_646', disadvantageSkillId: 'ts_138', aptitude: 'create' },
     jiazini_mahamaode: { generalId: 'jiazini_mahamaode', tier: 'famous', tacticalSkillId: 'ts_354', strategicSkillId: 'str_11', advantageSkillId: 'ts_354', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_025', aptitude: 'create' }, // 马哈茂德十七征印度
     an_xibanni: { generalId: 'an_xibanni', tier: 'famous', tacticalSkillId: 'ts_308', strategicSkillId: 'str_07', advantageSkillId: 'ts_308', balanceSkillId: 'ts_689', disadvantageSkillId: 'ts_020', aptitude: 'create' }, // 昔班尼攻布哈拉建汗国
     wusun_liejiaomi: { generalId: 'wusun_liejiaomi', tier: 'famous', tacticalSkillId: 'ts_313', strategicSkillId: 'str_13', advantageSkillId: 'ts_313', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_025', aptitude: 'create' }, // 乌孙昆莫西迁奇袭月氏
@@ -555,7 +540,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     khoshut_gushihan: { generalId: 'khoshut_gushihan', tier: 'famous', tacticalSkillId: 'ts_071', strategicSkillId: 'str_13', advantageSkillId: 'ts_071', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_041', aptitude: 'create' }, // 锐不可当（和硕特入藏）
     nvguo_mojie: { generalId: 'nvguo_mojie', tier: 'ordinary', tacticalSkillId: 'ts_031', advantageSkillId: 'ts_030', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_031', aptitude: 'reverse' }, // 女国女王
     karmapa_queyingduoji: { generalId: 'karmapa_queyingduoji', tier: 'ordinary', tacticalSkillId: 'ts_016', advantageSkillId: 'ts_009', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_016', aptitude: 'reverse' }, // 噶玛巴活佛
-    xianlingqiang_dianling: { generalId: 'xianlingqiang_dianling', tier: 'famous', tacticalSkillId: 'ts_336', strategicSkillId: 'str_14', advantageSkillId: 'ts_336', balanceSkillId: 'ts_396', disadvantageSkillId: 'ts_409', aptitude: 'reverse' },
+    xianlingqiang_dianling: { generalId: 'xianlingqiang_dianling', tier: 'famous', tacticalSkillId: 'ts_336', strategicSkillId: 'str_09', advantageSkillId: 'ts_336', balanceSkillId: 'ts_396', disadvantageSkillId: 'ts_409', aptitude: 'reverse' },
     lang_clan_jiangqujianzan: { generalId: 'lang_clan_jiangqujianzan', tier: 'famous', tacticalSkillId: 'ts_317', strategicSkillId: 'str_14', advantageSkillId: 'ts_317', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_045', aptitude: 'create' }, // 帕竹立国
     xiutu_jinridi: { generalId: 'xiutu_jinridi', tier: 'ordinary', tacticalSkillId: 'ts_017', advantageSkillId: 'ts_047', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_017', aptitude: 'reverse' },
     gandenpozhang_dibasangjiejiacuo: { generalId: 'gandenpozhang_dibasangjiejiacuo', tier: 'ordinary', tacticalSkillId: 'ts_024', advantageSkillId: 'ts_402', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_024', aptitude: 'reverse' },
@@ -576,7 +561,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     dali_duansiping: { generalId: 'dali_duansiping', tier: 'famous', tacticalSkillId: 'ts_144', strategicSkillId: 'str_14', advantageSkillId: 'ts_007', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_144', aptitude: 'reverse' },
     dongxu_mangruiti: { generalId: 'dongxu_mangruiti', tier: 'famous', tacticalSkillId: 'ts_304', strategicSkillId: 'str_13', advantageSkillId: 'ts_304', balanceSkillId: 'ts_408', disadvantageSkillId: 'ts_416', aptitude: 'create' },
     mu_lijiang_muzeng: { generalId: 'mu_lijiang_muzeng', tier: 'ordinary', tacticalSkillId: 'ts_099', advantageSkillId: 'ts_002', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_099', aptitude: 'reverse' },
-    dianguo_zhuangqiao: { generalId: 'dianguo_zhuangqiao', tier: 'famous', tacticalSkillId: 'ts_341', strategicSkillId: 'str_14', advantageSkillId: 'ts_341', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_033', aptitude: 'create' },
+    dianguo_zhuangqiao: { generalId: 'dianguo_zhuangqiao', tier: 'famous', tacticalSkillId: 'ts_341', strategicSkillId: 'str_03', advantageSkillId: 'ts_341', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_033', aptitude: 'create' },
     konbaung_yongjiya: { generalId: 'konbaung_yongjiya', tier: 'famous', tacticalSkillId: 'ts_373', strategicSkillId: 'str_14', advantageSkillId: 'ts_373', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_031', aptitude: 'create' },
     nanzhao_geluofeng: { generalId: 'nanzhao_geluofeng', tier: 'famous', tacticalSkillId: 'ts_268', strategicSkillId: 'str_13', advantageSkillId: 'ts_268', balanceSkillId: 'ts_700', disadvantageSkillId: 'ts_008', aptitude: 'leverage' }, // 天宝战争击唐
     wuman_cuanguiwang: { generalId: 'wuman_cuanguiwang', tier: 'ordinary', tacticalSkillId: 'ts_096', advantageSkillId: 'ts_002', balanceSkillId: 'ts_408', disadvantageSkillId: 'ts_096', aptitude: 'reverse' }, // 东爨乌蛮首领
@@ -621,12 +606,12 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     dongzu_wumian: { generalId: 'dongzu_wumian', tier: 'ordinary', tacticalSkillId: 'ts_038', advantageSkillId: 'ts_030', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_038', aptitude: 'reverse' }, // 侗族起义
     tian_sizhou_tianyougong: { generalId: 'tian_sizhou_tianyougong', tier: 'ordinary', tacticalSkillId: 'ts_065', advantageSkillId: 'ts_047', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_065', aptitude: 'reverse' },
     luoyue_zhengce: { generalId: 'luoyue_zhengce', tier: 'ordinary', tacticalSkillId: 'ts_006', advantageSkillId: 'ts_021', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_006', aptitude: 'reverse' }, // 骆越反汉
-    li_s_mayuan: { generalId: 'li_s_mayuan', tier: 'famous', tacticalSkillId: 'ts_178', strategicSkillId: 'str_14', advantageSkillId: 'ts_178', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_018', aptitude: 'leverage' }, // 马援·海门(伏波)
+    li_s_mayuan: { generalId: 'li_s_mayuan', tier: 'famous', tacticalSkillId: 'ts_178', strategicSkillId: 'str_07', advantageSkillId: 'ts_178', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_018', aptitude: 'leverage' }, // 马援·海门(伏波远征)
     leloi: { generalId: 'leloi', tier: 'famous', tacticalSkillId: 'ts_073', strategicSkillId: 'str_09', advantageSkillId: 'ts_705', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_073', aptitude: 'reverse' }, // 以弱敌强（黎利抗明）
     dacheng_chenkai: { generalId: 'dacheng_chenkai', tier: 'ordinary', tacticalSkillId: 'ts_011', advantageSkillId: 'ts_030', balanceSkillId: 'ts_406', disadvantageSkillId: 'ts_011', aptitude: 'reverse' }, // 大成国起义
     dayue_chenguojun: { generalId: 'dayue_chenguojun', tier: 'famous', tacticalSkillId: 'ts_061', strategicSkillId: 'str_12', advantageSkillId: 'ts_005', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_061', aptitude: 'leverage' }, // 以短制长（白藤江抗蒙三捷开局削兵）
     shengmiao_baoli: { generalId: 'shengmiao_baoli', tier: 'ordinary', tacticalSkillId: 'ts_026', advantageSkillId: 'ts_004', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_026', aptitude: 'reverse' }, // 苗民起义
-    miao_qing_yangwanzhe: { generalId: 'miao_qing_yangwanzhe', tier: 'famous', tacticalSkillId: 'ts_356', strategicSkillId: 'str_14', advantageSkillId: 'ts_356', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_006', aptitude: 'create' },
+    miao_qing_yangwanzhe: { generalId: 'miao_qing_yangwanzhe', tier: 'famous', tacticalSkillId: 'ts_356', strategicSkillId: 'str_09', advantageSkillId: 'ts_356', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_006', aptitude: 'create' },
     unassigned_zhuyoulang: { generalId: 'unassigned_zhuyoulang', tier: 'ordinary', tacticalSkillId: 'ts_035', advantageSkillId: 'ts_010', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_035', aptitude: 'reverse' }, // 永历帝抗清
     xinjiang_maji: { generalId: 'xinjiang_maji', tier: 'ordinary', tacticalSkillId: 'ts_033', advantageSkillId: 'ts_390', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_033', aptitude: 'reverse' }, // 肇庆摧锋军抗元
     liren_funanshe: { generalId: 'liren_funanshe', tier: 'ordinary', tacticalSkillId: 'ts_166', advantageSkillId: 'ts_028', balanceSkillId: 'ts_404', disadvantageSkillId: 'ts_166', aptitude: 'reverse' }, // 黎族起义
@@ -647,7 +632,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     zuo_d_wufu: { generalId: 'zuo_d_wufu', tier: 'ordinary', tacticalSkillId: 'ts_021', advantageSkillId: 'ts_021', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_412', aptitude: 'create' }, // 明代平南中
     wumeng_azi: { generalId: 'wumeng_azi', tier: 'ordinary', tacticalSkillId: 'ts_098', advantageSkillId: 'ts_047', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_098', aptitude: 'reverse' }, // 乌蒙土司
 // ── 巴蜀区 2026-06-18 ──
-      huizhou_zhugeliang: { generalId: 'huizhou_zhugeliang', tier: 'famous', tacticalSkillId: 'ts_159', strategicSkillId: 'str_13', advantageSkillId: 'ts_002', balanceSkillId: 'ts_695', disadvantageSkillId: 'ts_159', aptitude: 'leverage' }, // 诸葛亮六出祁山·八阵图（空城退敌）
+      huizhou_zhugeliang: { generalId: 'huizhou_zhugeliang', tier: 'famous', tacticalSkillId: 'ts_159', strategicSkillId: 'str_02', advantageSkillId: 'ts_002', balanceSkillId: 'ts_695', disadvantageSkillId: 'ts_159', aptitude: 'leverage' }, // 诸葛亮六出祁山·木牛流马八阵图（因地制宜）
     wudu_dengai: { generalId: 'wudu_dengai', tier: 'famous', tacticalSkillId: 'ts_162', strategicSkillId: 'str_10', advantageSkillId: 'ts_162', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_032', aptitude: 'leverage' },
       baishui_yanghuai: { generalId: 'baishui_yanghuai', tier: 'ordinary', tacticalSkillId: 'ts_144', advantageSkillId: 'ts_009', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_144', aptitude: 'reverse' },
       dangzhou_qiangduan: { generalId: 'dangzhou_qiangduan', tier: 'ordinary', tacticalSkillId: 'ts_104', advantageSkillId: 'ts_399', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_104', aptitude: 'reverse' },
@@ -709,7 +694,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     woye_huangfugui: { tacticalSkillId: 'ts_356', generalId: 'woye_huangfugui', tier: 'famous', strategicSkillId: 'str_08', advantageSkillId: 'ts_356', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_006', aptitude: 'leverage' },
     yeli_yeliwangrong: { generalId: 'yeli_yeliwangrong', tier: 'famous', tacticalSkillId: 'ts_315', advantageSkillId: 'ts_315', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_414', strategicSkillId: 'str_13', aptitude: 'leverage' }, // 定川寨破宋
     hunxie_xuziwei: { generalId: 'hunxie_xuziwei', tier: 'ordinary', tacticalSkillId: 'ts_021', advantageSkillId: 'ts_021', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_045', aptitude: 'create' }, // 浑邪降汉
-    guazhou_zhangshougui: { generalId: 'guazhou_zhangshougui', tier: 'famous', tacticalSkillId: 'ts_253', strategicSkillId: 'str_14', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_253', aptitude: 'create' },
+    guazhou_zhangshougui: { generalId: 'guazhou_zhangshougui', tier: 'famous', tacticalSkillId: 'ts_253', strategicSkillId: 'str_08', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_253', aptitude: 'create' },
     kang_liangshidou: { generalId: 'kang_liangshidou', tier: 'ordinary', tacticalSkillId: 'ts_037' , advantageSkillId: 'ts_001', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_037', aptitude: 'reverse' },
     yingli_jilasiyi: { generalId: 'yingli_jilasiyi', tier: 'ordinary', tacticalSkillId: 'ts_016', advantageSkillId: 'ts_029', balanceSkillId: 'ts_406', disadvantageSkillId: 'ts_016', aptitude: 'reverse' }, // 守应理抗蒙
     dangxiang_liyuanhao: { tacticalSkillId: 'ts_082', generalId: 'dangxiang_liyuanhao', tier: 'famous', strategicSkillId: 'str_13', advantageSkillId: 'ts_082', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_006', aptitude: 'create' },
@@ -766,7 +751,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yiyang_d_mengzongzheng: { generalId: 'yiyang_d_mengzongzheng', tier: 'famous', tacticalSkillId: 'ts_321', strategicSkillId: 'str_08', advantageSkillId: 'ts_028', balanceSkillId: 'ts_688', disadvantageSkillId: 'ts_321', aptitude: 'reverse' }, // 三关之捷
     wuwu_d_lvmeng: { generalId: 'wuwu_d_lvmeng', tier: 'famous', tacticalSkillId: 'ts_078', strategicSkillId: 'str_06', advantageSkillId: 'ts_639', balanceSkillId: 'ts_078', disadvantageSkillId: 'ts_641', aptitude: 'leverage' }, // 白衣渡江
     li_bian: { generalId: 'li_bian', tier: 'ordinary', tacticalSkillId: 'ts_018', advantageSkillId: 'ts_022', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_018', aptitude: 'reverse' }, // 南唐烈祖，保境息民，固若金汤
-    yangshao_zhoubo: { generalId: 'yangshao_zhoubo', tier: 'famous', tacticalSkillId: 'ts_206', advantageSkillId: 'ts_206', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_410', strategicSkillId: 'str_14', aptitude: 'create' },
+    yangshao_zhoubo: { generalId: 'yangshao_zhoubo', tier: 'famous', tacticalSkillId: 'ts_206', advantageSkillId: 'ts_206', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_410', strategicSkillId: 'str_08', aptitude: 'create' },
     unassigned_liuyan_ly: { generalId: 'unassigned_liuyan_ly', tier: 'famous', tacticalSkillId: 'ts_007', strategicSkillId: 'str_08', advantageSkillId: 'ts_007', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_045', aptitude: 'create' }, // 舂陵起兵
     zhou_jifa: { generalId: 'zhou_jifa', tier: 'famous', tacticalSkillId: 'ts_117', strategicSkillId: 'str_12', advantageSkillId: 'ts_117', balanceSkillId: 'ts_673', disadvantageSkillId: 'ts_674', aptitude: 'create' }, // 武王伐纣
     quanrong_yiquhai: { generalId: 'quanrong_yiquhai', tier: 'ordinary', tacticalSkillId: 'ts_065', advantageSkillId: 'ts_007', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_065', aptitude: 'reverse' }, // 犬戎弑幽王
@@ -774,7 +759,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     song_zhaokuangyin: { generalId: 'song_zhaokuangyin', tier: 'famous', tacticalSkillId: 'ts_201', strategicSkillId: 'str_14', advantageSkillId: 'ts_201', balanceSkillId: 'ts_406', disadvantageSkillId: 'ts_008', aptitude: 'create' },
     ruo_wangjian: { generalId: 'ruo_wangjian', tier: 'famous', tacticalSkillId: 'ts_108', strategicSkillId: 'str_03', advantageSkillId: 'ts_108', balanceSkillId: 'ts_729', disadvantageSkillId: 'ts_730', aptitude: 'create' },
     unassigned_luhunrongwang: { generalId: 'unassigned_luhunrongwang', tier: 'ordinary', tacticalSkillId: 'ts_014', advantageSkillId: 'ts_391', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_032', aptitude: 'leverage' }, // 陆浑戎
-    sizhou_hanshizhong: { generalId: 'sizhou_hanshizhong', tier: 'famous', tacticalSkillId: 'ts_170', strategicSkillId: 'str_08', advantageSkillId: 'ts_170', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_412', aptitude: 'leverage' }, // 黄天荡
+    sizhou_hanshizhong: { generalId: 'sizhou_hanshizhong', tier: 'famous', tacticalSkillId: 'ts_170', strategicSkillId: 'str_09', advantageSkillId: 'ts_170', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_412', aptitude: 'leverage' }, // 黄天荡以寡击众
     yin_dixin: { generalId: 'yin_dixin', tier: 'ordinary', tacticalSkillId: 'ts_038', advantageSkillId: 'ts_023', balanceSkillId: 'ts_046', disadvantageSkillId: 'ts_038', aptitude: 'reverse' }, // 纣王征东夷
     liwang_liguangbi: { generalId: 'liwang_liguangbi', tier: 'famous', tacticalSkillId: 'ts_215', strategicSkillId: 'str_08', advantageSkillId: 'ts_400', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_215', aptitude: 'reverse' },
     han_baoyuan: { generalId: 'han_baoyuan', tier: 'ordinary', tacticalSkillId: 'ts_026', advantageSkillId: 'ts_027', balanceSkillId: 'ts_046', disadvantageSkillId: 'ts_026', aptitude: 'reverse' }, // 韩将暴鸢
@@ -784,7 +769,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_zhaoshe: { generalId: 'unassigned_zhaoshe', tier: 'famous', tacticalSkillId: 'ts_001', strategicSkillId: 'str_05', advantageSkillId: 'ts_001', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_013', aptitude: 'create' }, // 阏与之战
     huai_zhuyuanzhang: { generalId: 'huai_zhuyuanzhang', tier: 'famous', tacticalSkillId: 'ts_182', strategicSkillId: 'str_15', advantageSkillId: 'ts_182', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_011', aptitude: 'create' }, // 洪武大帝
     shangzhou_shangyang: { generalId: 'shangzhou_shangyang', tier: 'ordinary', tacticalSkillId: 'ts_056', advantageSkillId: 'ts_056', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_039', aptitude: 'create' }, // 商鞅变法
-    yue_d_lusu: { generalId: 'yue_d_lusu', tier: 'famous', tacticalSkillId: 'ts_006', strategicSkillId: 'str_14', advantageSkillId: 'ts_022', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_006', aptitude: 'leverage' }, // 鲁肃·巴陵(守巴丘·指囷济军)
+    yue_d_lusu: { generalId: 'yue_d_lusu', tier: 'famous', tacticalSkillId: 'ts_006', strategicSkillId: 'str_06', advantageSkillId: 'ts_022', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_006', aptitude: 'leverage' }, // 鲁肃·巴陵(联刘抗曹·招贤纳士)
     unassigned_yuanshao: { generalId: 'unassigned_yuanshao', tier: 'famous', tacticalSkillId: 'ts_001', strategicSkillId: 'str_12', advantageSkillId: 'ts_001', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_409', aptitude: 'create' }, // 四世三公
     xinping_haozhao: { generalId: 'xinping_haozhao', tier: 'famous', tacticalSkillId: 'ts_034', strategicSkillId: 'str_08', advantageSkillId: 'ts_027', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_034', aptitude: 'reverse' }, // 陈仓守城·拒诸葛亮
     yuzhou_zuti: { generalId: 'yuzhou_zuti', tier: 'famous', tacticalSkillId: 'ts_383', strategicSkillId: 'str_01', advantageSkillId: 'ts_383', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_724', aptitude: 'create' },
@@ -793,7 +778,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     lulin_liuxiu: { generalId: 'lulin_liuxiu', tier: 'famous', tacticalSkillId: 'ts_054', strategicSkillId: 'str_15', advantageSkillId: 'ts_400', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_054', aptitude: 'reverse' }, // 流星坠营（昆阳之战位面之子干扰敌军）
     unassigned_fankuai: { generalId: 'unassigned_fankuai', tier: 'ordinary', tacticalSkillId: 'ts_011', advantageSkillId: 'ts_401', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_011', aptitude: 'reverse' }, // 鸿门宴
     hao_d_weirui: { generalId: 'hao_d_weirui', tier: 'famous', tacticalSkillId: 'ts_193', advantageSkillId: 'ts_193', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_019', strategicSkillId: 'str_08', aptitude: 'leverage' },
-    dang_d_zhuwen: { generalId: 'dang_d_zhuwen', tier: 'famous', tacticalSkillId: 'ts_191', strategicSkillId: 'str_04', advantageSkillId: 'ts_191', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_412', aptitude: 'create' }, // 后梁太祖
+    dang_d_zhuwen: { generalId: 'dang_d_zhuwen', tier: 'famous', tacticalSkillId: 'ts_191', strategicSkillId: 'str_06', advantageSkillId: 'ts_191', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_412', aptitude: 'create' }, // 后梁太祖（收编降兵成军）
     // ── 北方区 2026-06-18 ──
     gongsun_d_gongsundu: { generalId: 'gongsun_d_gongsundu', tier: 'ordinary', tacticalSkillId: 'ts_006', advantageSkillId: 'ts_401', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_006', aptitude: 'reverse' }, // 辽东割据
     unassigned_yanganer2: { generalId: 'unassigned_yanganer2', tier: 'ordinary', tacticalSkillId: 'ts_026', advantageSkillId: 'ts_047', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_026', aptitude: 'reverse' }, // 红袄天顺
@@ -809,7 +794,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_liangshidu_ls: { generalId: 'unassigned_liangshidu_ls', tier: 'ordinary', tacticalSkillId: 'ts_021', advantageSkillId: 'ts_021', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_018', aptitude: 'create' }, // 梁国割据
     liangshidu_longjia: { generalId: 'liangshidu_longjia', tier: 'ordinary', tacticalSkillId: 'ts_166', advantageSkillId: 'ts_004', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_166', aptitude: 'reverse' }, // 雕阴抗秦兵败
     yangshe_yangshezhi: { generalId: 'yangshe_yangshezhi', tier: 'ordinary', tacticalSkillId: 'ts_041', advantageSkillId: 'ts_004', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_041', aptitude: 'reverse' }, // 铜鞮大夫
-    guzhu_tianyu: { generalId: 'guzhu_tianyu', tier: 'famous', tacticalSkillId: 'ts_212', strategicSkillId: 'str_14', advantageSkillId: 'ts_400', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_212', aptitude: 'leverage' },
+    guzhu_tianyu: { generalId: 'guzhu_tianyu', tier: 'famous', tacticalSkillId: 'ts_212', strategicSkillId: 'str_08', advantageSkillId: 'ts_400', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_212', aptitude: 'leverage' },
     dizhou_wangyanzhang: { generalId: 'dizhou_wangyanzhang', tier: 'ordinary', tacticalSkillId: 'ts_083', advantageSkillId: 'ts_083', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_415', aptitude: 'create' }, // 铁枪拔阵
     dai_d_shijingtang: { generalId: 'dai_d_shijingtang', tier: 'ordinary', tacticalSkillId: 'ts_007', advantageSkillId: 'ts_007', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_026', aptitude: 'create' }, // 兵贵神速+侵掠如火
     erzhu_erzhurong: { generalId: 'erzhu_erzhurong', tier: 'famous', tacticalSkillId: 'ts_063', strategicSkillId: 'str_11', advantageSkillId: 'ts_063', balanceSkillId: 'ts_511', disadvantageSkillId: 'ts_512', aptitude: 'create' }, // 所向摧陷（滏口七千破三十万）
@@ -837,7 +822,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yue_goujian: { generalId: 'yue_goujian', tier: 'famous', tacticalSkillId: 'ts_177', strategicSkillId: 'str_02', advantageSkillId: 'ts_003', balanceSkillId: 'ts_408', disadvantageSkillId: 'ts_177', aptitude: 'reverse' }, // 卧薪尝胆
     heng_hetengjiao: { generalId: 'heng_hetengjiao', tier: 'ordinary', tacticalSkillId: 'ts_088', advantageSkillId: 'ts_088', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_414', aptitude: 'create' }, // 衡州抗清
     xushouhui_zhaopusheng: { generalId: 'xushouhui_zhaopusheng', tier: 'ordinary', tacticalSkillId: 'ts_028', advantageSkillId: 'ts_028', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_034', aptitude: 'create' },
-    lu_zhangliao: { generalId: 'lu_zhangliao', tier: 'famous', tacticalSkillId: 'ts_161', strategicSkillId: 'str_08', advantageSkillId: 'ts_399', balanceSkillId: 'ts_406', disadvantageSkillId: 'ts_161', aptitude: 'reverse' }, // 逍遥津之战（以寡击众）
+    lu_zhangliao: { generalId: 'lu_zhangliao', tier: 'famous', tacticalSkillId: 'ts_161', strategicSkillId: 'str_03', advantageSkillId: 'ts_399', balanceSkillId: 'ts_406', disadvantageSkillId: 'ts_161', aptitude: 'reverse' }, // 逍遥津突袭（所向披靡）
     sui_yangjian: { generalId: 'sui_yangjian', tier: 'ordinary', tacticalSkillId: 'ts_118', advantageSkillId: 'ts_118', balanceSkillId: 'ts_404', disadvantageSkillId: 'ts_041', aptitude: 'create' }, // 隋文帝
     yang_aner_yanganer: { generalId: 'yang_aner_yanganer', tier: 'ordinary', tacticalSkillId: 'ts_099', advantageSkillId: 'ts_021', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_099', aptitude: 'reverse' }, // 杨安儿红袄军克登莱
     unassigned_mayin: { generalId: 'unassigned_mayin', tier: 'famous', tacticalSkillId: 'ts_024', strategicSkillId: 'str_10', advantageSkillId: 'ts_005', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_024', aptitude: 'reverse' }, // 马楚开国
@@ -945,7 +930,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         generalId: 'dada_ming_dayanhan',
         tier: 'famous',
         tacticalSkillId: 'ts_132', advantageSkillId: 'ts_132', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_025',
-        strategicSkillId: 'str_04',
+        strategicSkillId: 'str_12',
         aptitude: 'create',
     },
     luzhou_zhangwenxiu: {
@@ -1258,10 +1243,10 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         generalId: 'qianzhou_lisheng',
         tier: 'famous',
         tacticalSkillId: 'ts_155', advantageSkillId: 'ts_155', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_040',
-        strategicSkillId: 'str_13',
+        strategicSkillId: 'str_03',
         aptitude: 'create',
     },
-    xiao_d_xiaoyan: { generalId: 'xiao_d_xiaoyan', tier: 'famous', tacticalSkillId: 'ts_204', advantageSkillId: 'ts_204', balanceSkillId: 'ts_406', disadvantageSkillId: 'ts_034', strategicSkillId: 'str_13', aptitude: 'create' },
+    xiao_d_xiaoyan: { generalId: 'xiao_d_xiaoyan', tier: 'famous', tacticalSkillId: 'ts_204', advantageSkillId: 'ts_204', balanceSkillId: 'ts_406', disadvantageSkillId: 'ts_034', strategicSkillId: 'str_06', aptitude: 'create' },
     unassigned_sudinfang: {
         generalId: 'unassigned_sudinfang',
         tier: 'famous',
@@ -1310,7 +1295,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
         aptitude: 'create',
     }, // 苏定方：灭西突厥、平百济，长驱万里
     // ── 2026-06-29 新增：马殷 ──
-    yingzhou_d2_licunxu: { generalId: 'yingzhou_d2_licunxu', tier: 'famous', tacticalSkillId: 'ts_120', strategicSkillId: 'str_08', advantageSkillId: 'ts_120', balanceSkillId: 'ts_628', disadvantageSkillId: 'ts_629', aptitude: 'create' },
+    yingzhou_d2_licunxu: { generalId: 'yingzhou_d2_licunxu', tier: 'famous', tacticalSkillId: 'ts_120', strategicSkillId: 'str_01', advantageSkillId: 'ts_120', balanceSkillId: 'ts_628', disadvantageSkillId: 'ts_629', aptitude: 'create' },
     anxi_guoxin: { generalId: 'anxi_guoxin', tier: 'famous', tacticalSkillId: 'ts_296', advantageSkillId: 'ts_002', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_296', strategicSkillId: 'str_08', aptitude: 'reverse' },
     ahaomu_laqite: { generalId: 'ahaomu_laqite', tier: 'famous', tacticalSkillId: 'ts_343', strategicSkillId: 'str_10', advantageSkillId: 'ts_343', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_025', aptitude: 'leverage' },
     dongshengwei_wangyue: { generalId: 'dongshengwei_wangyue', tier: 'famous', tacticalSkillId: 'ts_251', strategicSkillId: 'str_13', aptitude: 'create', advantageSkillId: 'ts_251', balanceSkillId: 'ts_735', disadvantageSkillId: 'ts_736', },
@@ -1320,7 +1305,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     kala_satuke: { generalId: 'kala_satuke', tier: 'ordinary', tacticalSkillId: 'ts_005', advantageSkillId: 'ts_005', balanceSkillId: 'ts_408', disadvantageSkillId: 'ts_025', aptitude: 'create' },
     lancang_faang: { generalId: 'lancang_faang', tier: 'famous', tacticalSkillId: 'ts_324', strategicSkillId: 'str_13', advantageSkillId: 'ts_324', balanceSkillId: 'ts_404', disadvantageSkillId: 'ts_008', aptitude: 'create' },
     liuzhou_shenxiyi: { generalId: 'liuzhou_shenxiyi', tier: 'famous', tacticalSkillId: 'ts_323', strategicSkillId: 'str_08', advantageSkillId: 'ts_323', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_041', aptitude: 'create' },
-    luming_luxiangsheng: { generalId: 'luming_luxiangsheng', tier: 'famous', tacticalSkillId: 'ts_179', strategicSkillId: 'str_08', advantageSkillId: 'ts_179', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_036', aptitude: 'create' },
+    luming_luxiangsheng: { generalId: 'luming_luxiangsheng', tier: 'famous', tacticalSkillId: 'ts_179', strategicSkillId: 'str_03', advantageSkillId: 'ts_179', balanceSkillId: 'ts_395', disadvantageSkillId: 'ts_036', aptitude: 'create' },
     wuzhou_limu: { generalId: 'wuzhou_limu', tier: 'famous', tacticalSkillId: 'ts_241', strategicSkillId: 'str_05', advantageSkillId: 'ts_241', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_413', aptitude: 'leverage' },
     weiyuan_d_niangengyao: { generalId: 'weiyuan_d_niangengyao', tier: 'famous', tacticalSkillId: 'ts_272', strategicSkillId: 'str_07', advantageSkillId: 'ts_272', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_711', aptitude: 'create' },
     shaodang_mitang: { generalId: 'shaodang_mitang', tier: 'ordinary', tacticalSkillId: 'ts_009', advantageSkillId: 'ts_009', balanceSkillId: 'ts_044', disadvantageSkillId: 'ts_037', aptitude: 'create' },

@@ -10,7 +10,11 @@
  *   target 变己方 → LegionBehaviors.resolveExpeditionState 自动清空 → 本脚本推进下一城。
  */
 
+import { GameConfig } from '../config/GameConfig';
+import { clampCityTroopsForCity, getCityMaxTroops } from '../config/CityConfig';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { roadRegistry } from '../roads/RoadRegistry';
+import type { CityType } from '../types/core';
 import { gameLog } from '../utils/GameLogger';
 
 /** 起兵据点：郾城（岳飞·郾川势力都城） */
@@ -49,6 +53,9 @@ interface ScriptCity {
     factionId: string;
     latitude: number;
     longitude: number;
+    type: CityType;
+    region?: string;
+    troops: number;
 }
 
 interface YuefeiDeps {
@@ -67,6 +74,7 @@ interface YuefeiDeps {
     };
     cityManager: {
         getCity(id: string): ScriptCity | undefined;
+        updateCity(id: string, data: { troops: number }): void;
     };
     cameraFollowUI: {
         setFollow(armyId: string, armyName: string): void;
@@ -106,6 +114,8 @@ export class YuefeiExpedition {
             this.notify('未找到起兵据点（郾城），无法北伐');
             return;
         }
+
+        this.randomizeRouteGarrisons();
 
         const army = this.deps.legionManager.createLegion(
             { lat: city.latitude, lng: city.longitude },
@@ -189,6 +199,52 @@ export class YuefeiExpedition {
             army.expeditionTargetCityId = desired.id;
             gameLog('expedition', `🐎 [圆梦] 岳飞·背嵬军锁定目标：${desired.name}`);
         }
+    }
+
+    /** 圆梦开战前：沿途须攻城据点驻军随机为 [1000, 满编上限] */
+    private randomizeRouteGarrisons(): void {
+        const min = GameConfig.CITY.MIN_GARRISON;
+        const waypointIds = ROUTE.map((wp) => wp.id);
+        const factionOf = new Map<string, string>();
+        for (const wp of ROUTE) {
+            const c = this.deps.cityManager.getCity(wp.id);
+            if (c) factionOf.set(wp.id, c.factionId);
+        }
+        factionOf.set(START_CITY_ID, FACTION_ID);
+
+        const battleCityIds = new Set<string>();
+        let currentId = START_CITY_ID;
+        for (const waypointId of waypointIds) {
+            let guard = 0;
+            while (currentId !== waypointId && guard++ < 200) {
+                const hopId = roadRegistry.resolveFirstHostileCityOnPath(
+                    FACTION_ID,
+                    currentId,
+                    waypointId,
+                    (id) => factionOf.get(id) ?? this.deps.cityManager.getCity(id)?.factionId,
+                );
+                battleCityIds.add(hopId);
+                factionOf.set(hopId, FACTION_ID);
+                currentId = hopId;
+            }
+        }
+
+        let count = 0;
+        for (const cityId of battleCityIds) {
+            if (cityId === START_CITY_ID) continue;
+            const c = this.deps.cityManager.getCity(cityId);
+            if (!c) continue;
+            const maxCap = getCityMaxTroops(c.type, c.region);
+            const lo = Math.min(min, maxCap);
+            const hi = maxCap;
+            const troops =
+                hi <= lo ? hi : lo + Math.floor(Math.random() * (hi - lo + 1));
+            this.deps.cityManager.updateCity(cityId, {
+                troops: clampCityTroopsForCity(c, troops),
+            });
+            count++;
+        }
+        gameLog('expedition', `🐎 [圆梦] 沿途 ${count} 座据点驻军已随机（${min}～满编）`);
     }
 
     /** 停止脚本推进（军团仍留在场上） */

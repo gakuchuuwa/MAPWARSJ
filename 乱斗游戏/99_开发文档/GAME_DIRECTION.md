@@ -277,7 +277,7 @@
 | **仅精锐** | 有番号、&lt;4万 摇中「仅精锐」 | 番号 + ×1.2；无名将 |
 | **仅将领** | 有番号据点、&lt;4万 摇中「仅将领」 | 「{城名}军团」+ **名将脸**；**无** ×1.2 |
 | **精锐 + 名将** | &lt;4万 摇中「精锐+将」，或 **≥4万**（必） | 番号 + 脸 + ×1.2 |
-| **远征军** | 当前跟随的那支精锐（同时仅一支） | 同上 + 远征令 +「因粮于敌」 |
+| **远征军** | 当前跟随的那支精锐（同时仅一支） | 同上 + 远征令 |
 
 - 配置：`GameConfig.LEGION_TIER` 四档概率；番号 [`ExpeditionLegions.ts`](../src/data/ExpeditionLegions.ts)；将领 [`FactionGenerals.ts`](../src/data/FactionGenerals.ts)。
 - 分层：[`LegionManager.applyLegionTier`](../src/legion/LegionManager.ts) + `tickLegionTiers`（长到 4万 补精锐+将）。出生定档，精锐/将领**不降级**。

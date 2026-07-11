@@ -9,7 +9,6 @@ import {
     getGeneralProfile,
     getStrategicSkillDef,
     getTacticalSkillDef,
-    EXPEDITION_FORAGE_SKILL,
     PASS_GARRISON_DEFENSE_SKILL,
     REGION_CENTER_DEFENSE_SKILL,
     REINFORCEMENT_JOIN_SKILL,
@@ -1110,18 +1109,6 @@ export function getGeneralSkillDisplayTags(
     return tags;
 }
 
-export function getExpeditionForageSkillDisplay(
-    unit: IBattleUnit,
-): { name: string; effectLabel: string } | null {
-    const army = getArmyEntity(unit);
-    if (!army?.expeditionTargetCityId) return null;
-    // ⚠️ 仅供乘区/tooltip 只读；禁止上战斗面板或大地图飘字（非名将战略格，与 S⑦ 同名）
-    return {
-        name: EXPEDITION_FORAGE_SKILL.displayName,
-        effectLabel: `胜后+${Math.round(EXPEDITION_FORAGE_SKILL.magnitude * 100)}%`,
-    };
-}
-
 function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
     switch (skill.effect) {
         case 'ally_mult_1_2':
@@ -1894,7 +1881,6 @@ function applyPostBattleTroopPct(
     unit: IBattleUnit,
     skill: { displayName: string; effect: string; magnitude: number },
     source: string,
-    /** 远征系统技等非战略格补兵：机制生效但不飘字，避免与名将战略技混淆 */
     emitMapText = true,
 ): number {
     if (skill.effect !== 'post_battle_troop_pct') return 0;
@@ -1926,24 +1912,13 @@ export function applyPostBattleStrategicBonus(
 ): number {
     let total = 0;
 
-    let appliedForage = false;
-
     const army = getArmyEntity(unit);
-    if (army?.expeditionTargetCityId) {
-        // 远征系统技：机制全员生效；上屏仅 profile 为 S⑦ 的名将
-        total += applyPostBattleTroopPct(unit, EXPEDITION_FORAGE_SKILL, '[远征] ', false);
-        if (army) {
-            const pos = army.getPosition();
-            emitFollowedGeneralStrategicMapFx(unit, 'post_battle_troop_pct', pos.lat, pos.lng, 'float');
-        }
-        appliedForage = true;
-    }
 
     if (canUnitUseGeneralSkills(unit)) {
         const profile = getGeneralProfile(unit.generalId);
         if (profile?.strategicSkillId) {
             const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
-            if (profileSkill && profileSkill.effect === 'post_battle_troop_pct' && !appliedForage) {
+            if (profileSkill && profileSkill.effect === 'post_battle_troop_pct') {
                 total += applyPostBattleTroopPct(unit, profileSkill, '');
             } else if (profileSkill?.effect === 'post_battle_recruit_enemy_pct' && enemySurvivors !== undefined && enemySurvivors > 0) {
                 // S⑥招降纳叛：胜后缴获敌方残兵 10%
