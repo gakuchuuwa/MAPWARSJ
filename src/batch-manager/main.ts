@@ -93,7 +93,7 @@ let rows: FactionRow[] = [];
 let filteredRows: FactionRow[] = [];
 let issues: ValidationIssue[] = [];
 let searchQuery = '';
-let filterMode: 'all' | 'incomplete' | 'no-general' | 'no-portrait' | 'no-elite' | 'errors' = 'all';
+let filterMode: 'all' | 'incomplete' | 'no-general' | 'no-portrait' | 'no-elite' | 'no-skill' | 'errors' = 'all';
 let sortCol = 'id';
 let sortAsc = true;
 let editingFactionId: string | null = null;
@@ -118,6 +118,7 @@ app.innerHTML = `
     <option value="no-general">缺武将</option>
     <option value="no-portrait">缺立绘</option>
     <option value="no-elite">缺精锐</option>
+    <option value="no-skill">缺武将技</option>
     <option value="errors">有错误</option>
   </select>
   <span id="bm-stats" class="bm-stats"></span>
@@ -415,7 +416,8 @@ function buildRows(): void {
         if (flag) completeness++;
         if (cId && city) completeness++;
         if (gen) completeness++;
-        if (profile) completeness++;
+        if (profile?.tacticalSkillId) completeness++;
+        else if (gen) { /* 有武将无战术技：不计入技能完整度 */ }
         if (elite) completeness++;
         completeness = Math.round(completeness / 5 * 100);
 
@@ -448,6 +450,10 @@ function buildRows(): void {
     });
 }
 
+function rowHasSkillError(r: FactionRow): boolean {
+    return !!r.generalId && !r.tacticalSkillId;
+}
+
 function applyFilter(): void {
     const errorFactionIds = new Set(issues.filter(i => i.level === 'error' && i.factionId).map(i => i.factionId));
     filteredRows = rows.filter(r => {
@@ -461,7 +467,8 @@ function applyFilter(): void {
             case 'no-general': return !r.generalId;
             case 'no-portrait': return !!r.generalId && !(r.portrait ?? '').trim();
             case 'no-elite': return !r.eliteName;
-            case 'errors': return errorFactionIds.has(r.id);
+            case 'no-skill': return rowHasSkillError(r);
+            case 'errors': return errorFactionIds.has(r.id) || rowHasSkillError(r);
         }
         return true;
     });
@@ -483,13 +490,14 @@ function updateStats(): void {
     const complete = rows.filter(r => r.completeness === 100).length;
     const noGen = rows.filter(r => !r.generalId).length;
     const noPortrait = rows.filter(r => !!r.generalId && !(r.portrait ?? '').trim()).length;
+    const noSkill = rows.filter(r => rowHasSkillError(r)).length;
     const noElite = rows.filter(r => !r.eliteName).length;
     const famous = rows.filter(r => r.tier === 'famous').length;
     const ordinary = rows.filter(r => r.tier === 'ordinary').length;
     const t = [0, 0, 0, 0, 0];
     for (const r of rows) if (r.eliteTier != null && r.eliteTier >= 0 && r.eliteTier <= 4) t[r.eliteTier]++;
     els.stats.innerHTML =
-        `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺立绘 ${noPortrait} | 缺精锐 ${noElite} | 显示 ${filteredRows.length}`
+        `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺武将技 ${noSkill} | 缺立绘 ${noPortrait} | 缺精锐 ${noElite} | 显示 ${filteredRows.length}`
         + `<br><span style="color:#c8a868">名将 ${famous} | 普将 ${ordinary}</span>`
         + `<span style="margin-left:12px;color:#8ab4c4">T0:<b>${t[0]}</b> T1:<b>${t[1]}</b> T2:<b>${t[2]}</b> T3:<b>${t[3]}</b> T4:<b>${t[4]}</b></span>`;
 }
@@ -532,8 +540,8 @@ function renderTable(): void {
             <td>${r.lat != null ? r.lat.toFixed(1) : ''}</td>
             <td>${r.lng != null ? r.lng.toFixed(1) : ''}</td>
             <td>${r.generalName ? `<span class="cell-ok">${r.generalName}</span>` : '<span class="cell-miss">✗</span>'}</td>
-            <td>${formatSkill(r.tacticalSkillId)}</td>
-            <td>${formatSkill(r.strategicSkillId)}</td>
+            <td>${r.tacticalSkillId ? formatSkill(r.tacticalSkillId) : (r.generalName ? '<span class="cell-miss">✗</span>' : '')}</td>
+            <td>${r.strategicSkillId ? formatSkill(r.strategicSkillId) : (r.tier === 'famous' ? '<span class="cell-miss">✗</span>' : '')}</td>
             <td>${r.eliteName ? `<span class="cell-ok">${r.eliteName}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${r.eliteTier != null ? `T${r.eliteTier}` : ''}</td>
             <td>${renderBar(r.completeness)}</td>
@@ -1915,6 +1923,12 @@ async function boot(): Promise<void> {
     els.search.value = searchQuery;
     els.filter.value = filterMode;
     await loadData();
+    await runValidation();
+    const errN = issues.filter(i => i.level === 'error').length;
+    const noSkillN = rows.filter(r => rowHasSkillError(r)).length;
+    if (errN > 0 || noSkillN > 0) {
+        showToast(`校验：错误 ${errN} 条${noSkillN > 0 ? `，缺武将技 ${noSkillN} 势力` : ''}`, true);
+    }
 }
 
 boot().catch(err => {

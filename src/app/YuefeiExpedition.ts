@@ -116,7 +116,7 @@ export class YuefeiExpedition {
     private appliedZhongyi = new Set<string>();
     /** 上一 tick 是否在战斗中（用于捕捉「战斗刚结束」这一帧做结算补员） */
     private wasInCombat = false;
-    /** 忠义归顺开关：出山海关后关闭 */
+    /** 忠义归顺开关：过锦州（徒河）后关闭 */
     private zhongyiActive = true;
 
     constructor(deps: YuefeiDeps) {
@@ -274,12 +274,12 @@ export class YuefeiExpedition {
             return;
         }
 
-        // 出山海关后关闭忠义归顺
+        // 过锦州（徒河）后关闭忠义归顺
         if (this.zhongyiActive) {
-            const shg = this.deps.cityManager.getCity('city_shanhaiguan');
+            const shg = this.deps.cityManager.getCity('city_tuhe');
             if (shg && shg.factionId === FACTION_ID) {
                 this.zhongyiActive = false;
-                gameLog('expedition', `🐎 [圆梦] 已出山海关，忠义归顺关闭`);
+                gameLog('expedition', `🐎 [圆梦] 已过锦州，忠义归顺关闭`);
             }
         }
 

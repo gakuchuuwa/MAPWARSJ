@@ -384,7 +384,7 @@ const TROOP: TacticalSkillEntry[] = [
     {
         id: 'ts_024', layer: 'tactical', series: 'troop', index: 24,
         displayName: '反戈一击', sourceQuote: '《尚书·武成》：“前徒倒戈，攻于后以北。”',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'side_comeback', phase: 'pre_opening_troops',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.25, engineStatus: 'ready',
     },
     {
@@ -576,7 +576,7 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
     {
         id: 'ts_053', layer: 'tactical', series: 'fate', index: 53,
         displayName: '无坚不摧', sourceQuote: '《吴子兵法·图国》：“击之必破，无坚不摧。”',
-        baseEffect: 'luck_lock_self', condition: 'always', phase: 'opening_roll',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1.15, engineStatus: 'ready',
     },
     {
@@ -641,7 +641,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_064', layer: 'tactical', series: 'fate', index: 64,
         displayName: '虎穴奇袭', sourceQuote: '《后汉书·班超传》：“不入虎穴，不得虎子。当今之计，独有因夜以火攻虏。”',
-        baseEffect: 'luck_variance_self', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
+        baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.6, luckMax: 2.0, engineStatus: 'ready',
     },
     {
@@ -870,7 +870,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_114', layer: 'tactical', series: 'enhance', index: 114,
         displayName: '奇兵斩将', sourceQuote: '《信长公记》：“桶狭间山……今川义元讨死。”',
-        baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll',
         magnitude: 1.5, engineStatus: 'ready',
     },
     {
@@ -998,7 +998,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_126', layer: 'tactical', series: 'casualty', index: 126,
         displayName: '东挡西杀', sourceQuote: '《宋史·孟珙传》：“珙连破北军，威名震于境外。”',
-        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.5, engineStatus: 'ready',
     },
     // ── 第六批 T1（29 位名将补贴合技；ID ts_127-155）──
@@ -2576,7 +2576,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_388', layer: 'tactical', series: 'enhance', index: 388,
         displayName: '孤胆陷阵', sourceQuote: '《三国志·蜀书·赵云传》注引《云别传》："云将数十骑轻行出围……先主曰：子龙一身都是胆也。"',
-        baseEffect: 'ally_power_mult', condition: 'ratio_underdog', phase: 'opening_roll',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1.55, engineStatus: 'ready',
         note: '赵云长坂坡冲阵救主、汉水以数十骑出围破众；以少打多时爆发。绝地反击(ts_011)的赵云专属签名版',
     },
@@ -2588,7 +2588,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_462', layer: 'tactical', series: 'enhance', index: 462,
         displayName: '合围攻心', sourceQuote: '沙普尔历史记载：沙普尔二世围攻罗马城塞并施心理威压',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【沙普尔】T1精锐·三势精修·势create·优局专属',
     },
@@ -2630,14 +2630,14 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_468', layer: 'tactical', series: 'enhance', index: 468,
         displayName: '风涛掩击', sourceQuote: '毛利元就历史记载：严岛风涛夜袭陶晴贤大营',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【毛利元就】T1精锐·三势精修·势leverage·优局专属',
     },
     {
         id: 'ts_469', layer: 'tactical', series: 'fate', index: 469,
         displayName: '诱锋夹击', sourceQuote: '毛利元就历史记载：吉田郡山诱敌深入两面夹击尼子军',
-        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
         note: '【毛利元就】T1精锐·三势精修·势leverage·均局专属',
     },
@@ -2672,14 +2672,14 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_474', layer: 'tactical', series: 'enhance', index: 474,
         displayName: '踏雪溃阵', sourceQuote: '拖雷历史记载：三峰山踏雪急袭溃灭金军主力',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【拖雷】T1精锐·三势精修·势create·优局专属',
     },
     {
         id: 'ts_475', layer: 'tactical', series: 'fate', index: 475,
         displayName: '假道迂击', sourceQuote: '拖雷历史记载：假道南宋迂回攻金侧翼',
-        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
         note: '【拖雷】T1精锐·三势精修·势create·均局专属',
     },
@@ -2714,7 +2714,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_480', layer: 'tactical', series: 'enhance', index: 480,
         displayName: '长驱贯阵', sourceQuote: '柴荣历史记载：高平之战长驱贯阵勇破北汉',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【柴荣】T1精锐·三势精修·势create·优局专属',
     },
@@ -2735,7 +2735,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_483', layer: 'tactical', series: 'enhance', index: 483,
         displayName: '象冲突阵', sourceQuote: '阇耶跋摩历史记载：象兵冲突敌阵踏破敌军防线',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【阇耶跋摩】T1精锐·三势精修·势create·优局专属',
     },
@@ -2840,7 +2840,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_498', layer: 'tactical', series: 'enhance', index: 498,
         displayName: '驰射回锋', sourceQuote: '苏伦历史记载：卡莱之战回马驰射崩溃罗马军团',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【苏伦】T1精锐·三势精修·势create·优局专属',
     },
@@ -2861,7 +2861,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_501', layer: 'tactical', series: 'enhance', index: 501,
         displayName: '破盟摧众', sourceQuote: '艾哈迈德历史记载：破敌联盟摧其众军统一阿富汗',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【艾哈迈德】T1精锐·三势精修·势create·优局专属',
     },
@@ -2903,7 +2903,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_507', layer: 'tactical', series: 'enhance', index: 507,
         displayName: '后发摧敌', sourceQuote: '德川家康历史记载：关原后发制人摧灭丰臣',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【德川家康】T1精锐·三势精修·势leverage·优局专属',
     },
@@ -2987,7 +2987,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_519', layer: 'tactical', series: 'enhance', index: 519,
         displayName: '雪岭摧垒', sourceQuote: '巴都尔萨野历史记载：雪岭翻越摧破藏军壁垒',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【巴都尔萨野】T1精锐·三势精修·势create·优局专属',
     },
@@ -3029,7 +3029,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_525', layer: 'tactical', series: 'enhance', index: 525,
         displayName: '兵雄摧阵', sourceQuote: '摩诃末历史记载：兵雄势盛摧击西辽阵线',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【摩诃末】T1精锐·三势精修·势create·优局专属',
     },
@@ -3050,7 +3050,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_528', layer: 'tactical', series: 'enhance', index: 528,
         displayName: '建帐摧敌', sourceQuote: '骨力裴罗历史记载：建牙立帐摧破后突厥',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【骨力裴罗】T1精锐·三势精修·势create·优局专属',
     },
@@ -3071,7 +3071,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_531', layer: 'tactical', series: 'enhance', index: 531,
         displayName: '黑旗摧阵', sourceQuote: '吉亚斯丁历史记载：黑旗壮军摧破敌军',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【吉亚斯丁】T1精锐·三势精修·势create·优局专属',
     },
@@ -3138,7 +3138,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     {
         id: 'ts_540', layer: 'tactical', series: 'enhance', index: 540,
         displayName: '飞骑蹙敌', sourceQuote: '李成梁专题记载',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【李成梁】T1精锐·三势精修·势create',
     },
@@ -3166,7 +3166,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     {
         id: 'ts_544', layer: 'tactical', series: 'fate', index: 544,
         displayName: '持重伺隙', sourceQuote: '李成桂专题记载',
-        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
         note: '【李成桂】T1精锐·三势精修·势leverage',
     },
@@ -3180,7 +3180,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     {
         id: 'ts_546', layer: 'tactical', series: 'enhance', index: 546,
         displayName: '如墙摧阵', sourceQuote: '完颜宗弼专题记载',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【完颜宗弼】T1精锐·三势精修·势create',
     },
@@ -3453,7 +3453,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     {
         id: 'ts_585', layer: 'tactical', series: 'enhance', index: 585,
         displayName: '鸳鸯阵摧', sourceQuote: '戚继光专题记载',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【戚继光】T1精锐·三势精修·势create',
     },
@@ -3495,7 +3495,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     {
         id: 'ts_591', layer: 'tactical', series: 'enhance', index: 591,
         displayName: '摧枯破险', sourceQuote: '司马错专题记载',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【司马错】T1精锐·三势精修·势create',
     },
@@ -3516,7 +3516,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     {
         id: 'ts_594', layer: 'tactical', series: 'enhance', index: 594,
         displayName: '号令摧阵', sourceQuote: '社仑专题记载',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【社仑】T1精锐·三势精修·势create',
     },
@@ -3537,7 +3537,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     {
         id: 'ts_597', layer: 'tactical', series: 'enhance', index: 597,
         displayName: '倾国摧坚', sourceQuote: '王翦专题记载',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【王翦】T1精锐·三势精修·势create',
     },
@@ -3912,7 +3912,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     {
         id: 'ts_650', layer: 'tactical', series: 'casualty', index: 650,
         displayName: '退避骄敌', sourceQuote: '《史传》冒顿：白登后退避草原使汉军补给困自退',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'post_battle',
         magnitude: 2.0, engineStatus: 'ready',
         note: '【冒顿】T1精锐·三势精修·势create·劣',
     },
@@ -4094,7 +4094,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     {
         id: 'ts_676', layer: 'tactical', series: 'fate', index: 676,
         displayName: '塞道遏骑', sourceQuote: '《史传》袁崇焕：锦州筑堡塞后金骑兵进攻道路',
-        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
         note: '【袁崇焕】T1精锐·三势精修·势create·均',
     },
@@ -4478,7 +4478,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
     {
         id: 'ts_432', layer: 'tactical', series: 'enhance', index: 432,
         displayName: '收郡疲敌', sourceQuote: '《后汉书·光武帝纪》：分遣将领招抚郡县，断铜马补给，粮尽自溃。',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【刘秀】T0精锐·reverse·势均局专属（三势精修）',
     },
@@ -4513,7 +4513,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
     {
         id: 'ts_437', layer: 'tactical', series: 'casualty', index: 437,
         displayName: '佯败诱截', sourceQuote: '《旧唐书·李靖传》：佯败诱颉利追击，伏兵截归路大破突厥。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'post_battle',
         magnitude: 2.0, engineStatus: 'ready',
         note: '【李靖】T0精锐·create·势劣局专属（三势精修）',
     },
@@ -4534,7 +4534,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
     {
         id: 'ts_440', layer: 'tactical', series: 'enhance', index: 440,
         displayName: '伏桩遏舟', sourceQuote: '《大越史记全书》：江底植桩，诱元船入，退潮桩出搁浅火攻破之。',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【陈国峻】T0精锐·reverse·势均局专属（三势精修）',
     },
@@ -4548,7 +4548,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
     {
         id: 'ts_442', layer: 'tactical', series: 'enhance', index: 442,
         displayName: '凿道迂摧', sourceQuote: '《元史·太祖本纪》：野狐岭正面佯攻，木华黎山间凿道迂回侧后。',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.167, engineStatus: 'ready',
         note: '【成吉思汗】T0精锐·create·势优局专属（三势精修）；2026-07-11 略提削敌以配慢慢直播连战',
     },
@@ -4595,7 +4595,7 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
     {
         id: 'ts_448', layer: 'tactical', series: 'enhance', index: 448,
         displayName: '诱营掩袭', sourceQuote: '《宋史·赵匡胤传》相关记载：清流关夜遣军绕营后，正面佯攻，伏兵掩杀，皇甫晖败走。《宋史·太祖本纪》',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【赵匡胤】T1精锐·赵宋区·势create·均局专属（三势精修）',
     },
@@ -4623,7 +4623,7 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
     {
         id: 'ts_452', layer: 'tactical', series: 'enhance', index: 452,
         displayName: '叠砦疲敌', sourceQuote: '《宋史·孟珙传》相关记载：黄州城外设层砦互为掎角，金军屡犯屡耗，力竭自退。《宋史·孟珙传》',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【孟珙】T1精锐·赵宋区·势reverse·均局专属（三势精修）',
     },
@@ -4637,7 +4637,7 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
     {
         id: 'ts_454', layer: 'tactical', series: 'enhance', index: 454,
         displayName: '伏隘截锋', sourceQuote: '《宋史·杨业传》相关记载：雁门出数百骑诱敌入山隘，伏兵断其首尾，大破辽军。《宋史·杨业传》',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【杨业】T1精锐·赵宋区·势reverse·均局专属（三势精修）',
     },
@@ -4651,7 +4651,7 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
     {
         id: 'ts_456', layer: 'tactical', series: 'enhance', index: 456,
         displayName: '散骑扰牧', sourceQuote: '《宋史·王韶传》相关记载：熙河派轻骑深入蕃区袭扰畜群，吐蕃各部疲于救援，联盟自裂。《宋史·王韶传》',
-        baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.15, engineStatus: 'ready',
         note: '【王韶】T1精锐·赵宋区·势create·均局专属（三势精修）',
     },
@@ -4787,6 +4787,27 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     { id: 'ts_774', layer: 'tactical', series: 'counter', index: 774, displayName: '击鼓骂曹', sourceQuote: '《三国演义》祢衡裸衣击鼓，气场压制敌方，废除其战术', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_775', layer: 'tactical', series: 'counter', index: 775, displayName: '兵不厌诈', sourceQuote: '《韩非子·难一》战阵之间，不厌诈伪，以此看破敌方诡计', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_776', layer: 'tactical', series: 'counter', index: 776, displayName: '反间奇谋', sourceQuote: '利用敌方内部矛盾，使敌方战术布置直接瘱痪', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    // ── 2026-07-12 三格劣局补全：20 武将劣势格专属（史料·败战/并战）──
+    { id: 'ts_777', layer: 'tactical', series: 'casualty', index: 777, displayName: '备边固守', sourceQuote: '甲骨卜辞载妇好驻守王畿边境，御羌方土方袭扰。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【妇好】势create·劣局专属' },
+    { id: 'ts_778', layer: 'tactical', series: 'casualty', index: 778, displayName: '林伏脱身', sourceQuote: '《伊贺乱记》：伊贺众遭织田军围剿，散入密林脱身，保存首领。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.5, engineStatus: 'ready', note: '【百地丹波】势reverse·劣局专属' },
+    { id: 'ts_779', layer: 'tactical', series: 'casualty', index: 779, displayName: '鹤城殉节', sourceQuote: '会津藩史：蒲生氏乡于鹤之城败绩自刃，激励藩士死战。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 2.0, engineStatus: 'ready', note: '【蒲生氏乡】势reverse·劣局专属' },
+    { id: 'ts_780', layer: 'tactical', series: 'casualty', index: 780, displayName: '金城御海', sourceQuote: '《三国史记·伽倻本纪》：金首露筑金官伽倻城，御外侮自固。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【金首露】势reverse·劣局专属' },
+    { id: 'ts_781', layer: 'tactical', series: 'casualty', index: 781, displayName: '河畔聚部', sourceQuote: '《蒙古秘史》：孛端察儿亡命斡难河畔，仍能聚结部众。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【孛端察儿】势reverse·劣局专属' },
+    { id: 'ts_782', layer: 'tactical', series: 'casualty', index: 782, displayName: '南道自固', sourceQuote: '《汉书·西域传》：莎车王贤称霸南道，遭汉廷反攻时缩守自固。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【莎车贤】势reverse·劣局专属' },
+    { id: 'ts_783', layer: 'tactical', series: 'casualty', index: 783, displayName: '谷隘拒侵', sourceQuote: '《大唐西域记》：梵衍那国据山谷险隘，拒大食东征。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【谢尔】势reverse·劣局专属' },
+    { id: 'ts_784', layer: 'tactical', series: 'casualty', index: 784, displayName: '摄政据隘', sourceQuote: '《清实录》：甘丹颇章摄政整军据拉萨门户御边。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【第巴桑结嘉措】势reverse·劣局专属' },
+    { id: 'ts_785', layer: 'tactical', series: 'casualty', index: 785, displayName: '遣防据险', sourceQuote: '《西藏王统记》相关：桑杰嘉措摄政遣兵镇守建塘御边。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【桑杰嘉措】势reverse·劣局专属' },
+    { id: 'ts_786', layer: 'tactical', series: 'casualty', index: 786, displayName: '平叛定贼', sourceQuote: '《大理国史段氏本纪》：高升泰诛杨义贞平乱，逆境夺权定大理。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.5, engineStatus: 'ready', note: '【高升泰】势reverse·劣局专属' },
+    { id: 'ts_787', layer: 'tactical', series: 'casualty', index: 787, displayName: '退据美山', sourceQuote: '《大越史记全书》：制蓬峨屡寇大越，败后退据美山自固。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【制蓬峨】势create·劣局专属' },
+    { id: 'ts_788', layer: 'tactical', series: 'casualty', index: 788, displayName: '徼徼存众', sourceQuote: '《华阳国志·南中志》：爨部从征失利，收缩保存部曲。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【爨习】势reverse·劣局专属' },
+    { id: 'ts_789', layer: 'tactical', series: 'casualty', index: 789, displayName: '刎颈存城', sourceQuote: '《华阳国志·巴志》：巴蔓子自刎存巴，军民绝境死战。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 2.0, engineStatus: 'ready', note: '【巴蔓子】势reverse·劣局专属' },
+    { id: 'ts_790', layer: 'tactical', series: 'casualty', index: 790, displayName: '败走存氐', sourceQuote: '《宋书·萧承之传》：杨难当攻萧承之四十日，氐军败而不溃，保存主力南退。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【杨难当】势create·劣局专属' },
+    { id: 'ts_791', layer: 'tactical', series: 'casualty', index: 791, displayName: '賨人助守', sourceQuote: '《华阳国志》：板楯賨人范目率部助汉平定三秦，据险协防。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【范目】势reverse·劣局专属' },
+    { id: 'ts_792', layer: 'tactical', series: 'casualty', index: 792, displayName: '河湖死守', sourceQuote: '《旧唐书·颜真卿传》：河朔起兵，真卿据平原河湖死守拒贼。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【颜真卿】势create·劣局专属' },
+    { id: 'ts_793', layer: 'tactical', series: 'casualty', index: 793, displayName: '林中保全', sourceQuote: '布里亚特部史：图门吉尔嘎勒率部散入贝加尔林中，保全部众。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【图门吉尔嘎勒】势reverse·劣局专属' },
+    { id: 'ts_794', layer: 'tactical', series: 'casualty', index: 794, displayName: '真珠聚族', sourceQuote: '《突厥民族史》：乌古斯先祖都卡克于真珠河畔聚结部族。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【都卡克】势reverse·劣局专属' },
+    { id: 'ts_795', layer: 'tactical', series: 'casualty', index: 795, displayName: '西北固守', sourceQuote: '《弥兰陀王问经》背景：米南德据西北印度华氏城固守，威震诸邦。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【米南德】势create·劣局专属' },
+    { id: 'ts_796', layer: 'tactical', series: 'casualty', index: 796, displayName: '御边据险', sourceQuote: '塔西陀《编年史》：帕提亚戈达尔兹二世御罗马东侵，据边防战。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【戈达尔兹】势reverse·劣局专属' },
 ];
 
 export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
@@ -5309,6 +5330,26 @@ ts_740: 'common',
     ts_685: 'limited',
     ts_387: 'ai_defensive',
     ts_388: 'underdog',
+    ts_777: 'limited',
+    ts_778: 'limited',
+    ts_779: 'limited',
+    ts_780: 'limited',
+    ts_781: 'limited',
+    ts_782: 'limited',
+    ts_783: 'limited',
+    ts_784: 'limited',
+    ts_785: 'limited',
+    ts_786: 'limited',
+    ts_787: 'limited',
+    ts_788: 'limited',
+    ts_789: 'limited',
+    ts_790: 'limited',
+    ts_791: 'limited',
+    ts_792: 'limited',
+    ts_793: 'limited',
+    ts_794: 'limited',
+    ts_795: 'limited',
+    ts_796: 'limited',
 
 };
 

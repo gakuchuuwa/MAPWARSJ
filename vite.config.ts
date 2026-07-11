@@ -1931,15 +1931,20 @@ function serverReadAllEntityData() {
         advantageSkillId?: string; balanceSkillId?: string; disadvantageSkillId?: string; aptitude?: string;
     }> = {};
     const misplacedProfiles: string[] = [];
+    /** GENERAL_PROFILES 块内有条目但缺 tacticalSkillId → 运行时无武将技 */
+    const malformedProfiles: string[] = [];
     for (const m of gsText.matchAll(/(\w+):\s*\{([^{}]*)\}/g)) {
         const body = m[2];
         if (!body.includes('generalId:')) continue;
         const tier = profileEntryField(body, 'tier');
         const tacticalSkillId = profileEntryField(body, 'tacticalSkillId');
-        if (!tier || !tacticalSkillId) continue;
         const inBlock = profilesBlockRange && m.index! >= profilesBlockRange.start && m.index! < profilesBlockRange.end;
         if (!inBlock) {
-            misplacedProfiles.push(m[1]);
+            if (tier) misplacedProfiles.push(m[1]);
+            continue;
+        }
+        if (!tier || !tacticalSkillId) {
+            if (tier && !tacticalSkillId) malformedProfiles.push(m[1]);
             continue;
         }
         profiles[m[1]] = {
@@ -2010,7 +2015,7 @@ function serverReadAllEntityData() {
         if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4], effect: m[5], magnitude: parseFloat(m[6]) });
     }
 
-    return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, regions: Object.keys(REGION_TO_ELITE_FILE) };
+    return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, regions: Object.keys(REGION_TO_ELITE_FILE) };
 }
 
 /** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → 统一 /assets/.../x.png。
@@ -2237,9 +2242,29 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         if (!data.generals[f.id]) issues.push({ level: 'info', msg: `势力 "${f.name}" (${f.id}) 无武将`, factionId: f.id });
     }
 
-    // 9. 武将缺技能档案
+    // 9. 武将有记录但无有效武将技档案（缺 GENERAL_PROFILES 或缺战术技）
+    const malformedSet = new Set(data.malformedProfiles ?? []);
     for (const [fId, g] of Object.entries(data.generals)) {
-        if (!data.profiles[g.generalId]) issues.push({ level: 'warn', msg: `武将 "${g.generalName}" (${g.generalId}) 缺技能档案`, factionId: fId });
+        if (malformedSet.has(g.generalId)) continue; // 9.1 已报「块内缺战术技」
+        if (!data.profiles[g.generalId]) {
+            issues.push({
+                level: 'error',
+                msg: `武将 "${g.generalName}" (${g.generalId}) 无武将技（缺 GENERAL_PROFILES 档案或缺 tacticalSkillId）`,
+                factionId: fId,
+            });
+        }
+    }
+
+    // 9.1 GENERAL_PROFILES 块内条目有品阶但无战术技（解析器会跳过，等同无武将技）
+    const generalIdToFaction = new Map(
+        Object.entries(data.generals).map(([fId, g]) => [g.generalId, fId]),
+    );
+    for (const gid of data.malformedProfiles ?? []) {
+        issues.push({
+            level: 'error',
+            msg: `武将档案 "${gid}" 在 GENERAL_PROFILES 内缺战术技（条目无效，战斗不触发武将技）`,
+            factionId: generalIdToFaction.get(gid),
+        });
     }
 
     // 10. 缺精锐
@@ -2271,8 +2296,11 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
     for (const [fId, g] of Object.entries(data.generals)) {
         const prof = data.profiles[g.generalId];
         if (!prof) continue;
+        if (!prof.tacticalSkillId?.trim()) {
+            issues.push({ level: 'error', msg: `武将 "${g.generalName}"(${g.generalId}) 缺战术技`, factionId: fId });
+        }
         if (prof.tier === 'famous' && !prof.strategicSkillId) {
-            issues.push({ level: 'warn', msg: `名将 "${g.generalName}"(${g.generalId}) 缺战略技（名将应为战略技+战术技）`, factionId: fId });
+            issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 缺战略技（名将应为战略技+战术技）`, factionId: fId });
         }
         if (prof.tier === 'ordinary' && prof.strategicSkillId) {
             issues.push({ level: 'warn', msg: `普将 "${g.generalName}"(${g.generalId}) 不应有战略技（普将仅战术技）`, factionId: fId });
