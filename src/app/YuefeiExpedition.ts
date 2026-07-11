@@ -34,9 +34,12 @@ const ROUTE: { id: string; name: string }[] = [
     { id: 'city_fuyu', name: '黄龙府' },
 ];
 
-/** 忠义归顺 v3：每次战后再加兵力范围（须与 yuefei-huanglong-sim 同步，勿单边改） */
-const ZHONGYI_BONUS_MIN = 5000;
-const ZHONGYI_BONUS_MAX = 10000;
+/** 忠义归顺 v4：按城型分级加兵（须与 yuefei-huanglong-sim 同步，勿单边改） */
+function zhongyiBonusRange(cityType: string): { min: number; max: number } {
+    if (cityType === 'big_city' || cityType === 'pass') return { min: 5000, max: 10000 };
+    if (cityType === 'medium_city') return { min: 3000, max: 5000 };
+    return { min: 1000, max: 3000 }; // small_city
+}
 
 /** 克大站演出（纯字幕/脉冲，不再直接加兵——补员由徐徐来投承担） */
 const ZHONGYI_WAYPOINT_LABELS: Record<string, string> = {
@@ -113,6 +116,8 @@ export class YuefeiExpedition {
     private appliedZhongyi = new Set<string>();
     /** 上一 tick 是否在战斗中（用于捕捉「战斗刚结束」这一帧做结算补员） */
     private wasInCombat = false;
+    /** 忠义归顺开关：出山海关后关闭 */
+    private zhongyiActive = true;
 
     constructor(deps: YuefeiDeps) {
         this.deps = deps;
@@ -216,6 +221,7 @@ export class YuefeiExpedition {
         this.armyId = army.id;
         this.waypointIndex = 0;
         this.appliedZhongyi.clear();
+        this.zhongyiActive = true;
         this.wasInCombat = false;
 
         gameLog('expedition', `🐎 [圆梦] 岳飞率背嵬军自郾城起兵，北伐黄龙：开封 → 北京 → 黄龙府，忠义归顺，众望所归`);
@@ -268,6 +274,15 @@ export class YuefeiExpedition {
             return;
         }
 
+        // 出山海关后关闭忠义归顺
+        if (this.zhongyiActive) {
+            const shg = this.deps.cityManager.getCity('city_shanhaiguan');
+            if (shg && shg.factionId === FACTION_ID) {
+                this.zhongyiActive = false;
+                gameLog('expedition', `🐎 [圆梦] 已出山海关，忠义归顺关闭`);
+            }
+        }
+
         // 锁定当前目标城（覆盖任何被自动远征逻辑塞入的其它目标）
         const desired = ROUTE[this.waypointIndex];
         if (army.expeditionTargetCityId !== desired.id) {
@@ -278,22 +293,28 @@ export class YuefeiExpedition {
     }
 
     /**
-     * 忠义归顺 v3（脚本专属技）：捕捉「战斗刚结束」这一帧，河朔忠义来投 +5,000~10,000（随机）。
+     * 忠义归顺 v4（脚本专属技）：捕捉「战斗刚结束」这一帧，按城型分级加兵。
      * 战后结算（非沿途涓流）→ 不依赖行军长短与倍速。
-     * 演出：白字绿光（与战略技脉冲同款配色），军团头顶飘四字技名「忠义归顺」。
+     * 演出：白字绿光，军团头顶飘四字技名「忠义归顺」。
      */
     private tickZhongyiTrickle(army: ScriptArmy): void {
+        if (!this.zhongyiActive) return;
         const inCombat = army.getIsInCombat?.() ?? false;
         if (inCombat) {
             this.wasInCombat = true;
             return;
         }
-        if (!this.wasInCombat) return; // 只在「战斗刚结束」这一帧结算
+        if (!this.wasInCombat) return;
         this.wasInCombat = false;
 
         const troops = army.getTroops();
         if (troops <= 0) return;
-        const added = ZHONGYI_BONUS_MIN + Math.floor(Math.random() * (ZHONGYI_BONUS_MAX - ZHONGYI_BONUS_MIN + 1));
+        const targetCityId = army.expeditionTargetCityId;
+        if (!targetCityId) return;
+        const city = this.deps.cityManager.getCity(targetCityId);
+        if (!city) return;
+        const r = zhongyiBonusRange((city as any).type ?? 'small_city');
+        const added = r.min + Math.floor(Math.random() * (r.max - r.min + 1));
         army.setTroops(troops + added);
 
         const pos = army.getPosition?.();

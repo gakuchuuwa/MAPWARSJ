@@ -2,10 +2,10 @@
  * TargetEvaluator — 乱斗进攻目标选择
  *
  * 规则：
- * 1. 以推进锚点 anchorCityId 为路网中心（见 TargetAnchorResolver.resolveForwardAnchor）
+ * 1. 以推进锚点 anchorCityId 为路网中心（见 TargetAnchorResolver.resolveForwardAnchor；兵力 <2 万用出发点，≥2 万用推进锚点）
  * 2. 只考虑从该点沿路可达的非己方据点
- * 3. 按道路里程从近到远排序，取最近 N 座（GameConfig.AI.TARGET_NEAR_POOL，默认 3）
- * 4. 在池内均匀随机抽 1 座进攻
+ * 3. 锚点每条直连道路各取该方向最近 1 座敌城，组成方向池
+ * 4. 在方向池内均匀随机抽 1 座进攻（无直连或无方向敌城时回退「全局最近 N」）
  */
 import { City } from '../types/core';
 import { GameConfig } from '../config/GameConfig';
@@ -43,7 +43,7 @@ export class TargetEvaluator {
     }
 
     /**
-     * 在「从锚点算最近的 N 座敌城」里随机抽一座作为进攻目标
+     * 在锚点各直连道路方向的最近敌城池里随机抽一座；无方向池时回退全局最近 N。
      */
     public static pickTarget(
         factionId: string,
@@ -72,9 +72,52 @@ export class TargetEvaluator {
             }
         }
 
-        const poolSize = Math.max(1, GameConfig.AI.TARGET_NEAR_POOL);
-        const pool = reachable.slice(0, Math.min(poolSize, reachable.length));
+        let pool = TargetEvaluator.buildDirectionalPool(anchorCityId, reachable);
+        if (pool.length === 0) {
+            const poolSize = Math.max(1, GameConfig.AI.TARGET_NEAR_POOL);
+            pool = reachable.slice(0, Math.min(poolSize, reachable.length));
+        }
         return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    /**
+     * 锚点每条直连边 = 一个方向；该方向取最短路上第一跳经此邻城、且最近的敌城。
+     * 邻城本身若为敌城则直接入选。
+     */
+    private static buildDirectionalPool(
+        anchorCityId: string,
+        reachable: TargetScore[],
+    ): TargetScore[] {
+        const neighbors = roadRegistry.getConnectedCities(anchorCityId);
+        if (neighbors.length === 0) return [];
+
+        const reachableById = new Map(reachable.map((s) => [s.targetId, s]));
+        const pool: TargetScore[] = [];
+        const seen = new Set<string>();
+
+        for (const neighborId of neighbors) {
+            const directEnemy = reachableById.get(neighborId);
+            if (directEnemy && !seen.has(directEnemy.targetId)) {
+                pool.push(directEnemy);
+                seen.add(directEnemy.targetId);
+                continue;
+            }
+
+            let best: TargetScore | null = null;
+            for (const score of reachable) {
+                const path = roadRegistry.findCityPath(anchorCityId, score.targetId);
+                if (!path || path.length < 2 || path[1] !== neighborId) continue;
+                if (!best || score.distanceKm < best.distanceKm) {
+                    best = score;
+                }
+            }
+            if (best && !seen.has(best.targetId)) {
+                pool.push(best);
+                seen.add(best.targetId);
+            }
+        }
+
+        return pool;
     }
 
     /** 当前据点最多的势力（排除无主/叛军 panjun） */

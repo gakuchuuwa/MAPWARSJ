@@ -47,8 +47,12 @@ const BEIWEI_ELITE_TIER = 0;
  * CLI：--zhongyi-min M 调最低加成；--zhongyi-max M 调最高加成；--no-zhongyi 关闭。
  * ⚠️ 守军须用 --defenders initial（城型初始驻军 5,000~10,000，反映实机早期北伐）。
  */
-const ZHONGYI_BONUS_MIN_DEFAULT = 5000;
-const ZHONGYI_BONUS_MAX_DEFAULT = 10000;
+/** 按城型分级加兵：小城少补防滚雪球，大城多补助强攻 */
+function zhongyiBonusRange(cityType: string): { min: number; max: number } {
+    if (cityType === 'big_city' || cityType === 'pass') return { min: 2500, max: 5000 };
+    if (cityType === 'medium_city') return { min: 1500, max: 3000 };
+    return { min: 500, max: 1500 }; // small_city
+}
 
 function argNum(flag: string, fallback: number): number {
     const i = process.argv.indexOf(flag);
@@ -176,10 +180,8 @@ function runOne(
     defenderMode: DefenderMode,
     terrainMode: string,
     initialTroops: number,
-    /** 忠义归顺每次战间加成下限（0 = 关闭） */
-    zhongyiBonusMin: number,
-    /** 忠义归顺每次战间加成上限 */
-    zhongyiBonusMax: number,
+    /** 忠义归顺开关 */
+    zhongyiOff: boolean,
 ): StepLog[] {
     let troops = initialTroops;
     const startCity = cityById(START_CITY_ID);
@@ -207,11 +209,12 @@ function runOne(
                 target.type,
             )
             : 0;
-        // 忠义归顺 v3：每场战斗胜利后，河朔忠义来投 +[bonusMin, bonusMax] 随机
+        // 忠义归顺 v4：按城型分级加兵
         let zhongyiBonus = 0;
         let afterZhongyi = sustained;
-        if (result.attackerWon && zhongyiBonusMax > 0) {
-            zhongyiBonus = zhongyiBonusMin + Math.floor(Math.random() * (zhongyiBonusMax - zhongyiBonusMin + 1));
+        if (result.attackerWon && !zhongyiOff) {
+            const r = zhongyiBonusRange(target.type);
+            zhongyiBonus = r.min + Math.floor(Math.random() * (r.max - r.min + 1));
             afterZhongyi = Math.min(sustained + zhongyiBonus, cap);
         }
         logs.push({
@@ -245,14 +248,7 @@ function main(): void {
     const terrainMode = argStr('--terrain', 'plain');
     const sample = argNum('--sample', 1) > 0;
 
-    // 忠义归顺 v3：--no-zhongyi 关闭；--zhongyi-min N 每次最低加成；--zhongyi-max N 每次最高加成
     const zhongyiOff = process.argv.includes('--no-zhongyi');
-    const zhongyiBonusMin = zhongyiOff
-        ? 0
-        : Math.max(0, Math.floor(argNum('--zhongyi-min', ZHONGYI_BONUS_MIN_DEFAULT)));
-    const zhongyiBonusMax = zhongyiOff
-        ? 0
-        : Math.max(zhongyiBonusMin, Math.floor(argNum('--zhongyi-max', ZHONGYI_BONUS_MAX_DEFAULT)));
 
     const routeIds = routeMode === 'full'
         ? buildFullRouteCityIds()
@@ -266,7 +262,7 @@ function main(): void {
     let firstSample: StepLog[] | null = null;
 
     for (let t = 0; t < trials; t++) {
-        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops, zhongyiBonusMin, zhongyiBonusMax);
+        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops, zhongyiOff);
         if (!firstSample) firstSample = logs;
         const wonCount = logs.filter((l) => l.won).length;
         capturedCounts[wonCount]++;
@@ -283,10 +279,10 @@ function main(): void {
     console.log('岳飞北伐黄龙路线模拟');
     console.log(`路线：${routeMode === 'full' ? `路网逐城 ${routeIds.length} 场` : '四阶段目标 4 场'}（郾城 → … → 黄龙府）`);
     console.log(`参数：初始 ${initialTroops.toLocaleString()} 兵，防守=${defenderMode}，地形=${terrainMode}，试跑=${trials}`);
-    if (zhongyiBonusMax > 0) {
-        console.log(`忠义归顺：每场战后再加 ${zhongyiBonusMin.toLocaleString()}~${zhongyiBonusMax.toLocaleString()} 兵`);
-    } else {
+    if (zhongyiOff) {
         console.log('忠义归顺：关闭');
+    } else {
+        console.log('忠义归顺：大城·关隘 +2,500~5,000 | 中城 +1,500~3,000 | 小城 +500~1,500');
     }
     const fullSuccess = capturedCounts[routeIds.length] ?? 0;
     console.log(`直捣黄龙成功率：${formatPct(fullSuccess / trials)}（两次至少一成：${formatPct(1 - (1 - fullSuccess / trials) ** 2)}）`);
