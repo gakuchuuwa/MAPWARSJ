@@ -50,4 +50,5 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   nanai: { name: '赫哲快桨船', tier: 3 },         // 著名的“鱼皮部落”赫哲族，极具民族特色，升入T3知名
   dongping: { name: '东平镇营', tier: 4 },        // 锡尔喀·金代东平府,
     elunchunzu: { name: '鄂伦春猎骑', tier: 3 },
+    yingzhou_ying_d: { name: '黄龙兵', tier: 1 },
 };

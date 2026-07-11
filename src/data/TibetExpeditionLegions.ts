@@ -9,7 +9,7 @@
 export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   keliya: { name: '疏勒镇军', tier: 4 },   // 阿什库尔·尉迟曜于阗王助唐（常规番号，降T3）
     qinghai: { name: '川陕绿营', tier: 3 },
-  xining: { name: '西宁边军', tier: 4 }, // 马海台·杨应琚整顿边军（常规番号，降T3）
+    xining: { name: '西宁边军', tier: 4 },
     dulan: { name: '青海归锋', tier: 3 },
     kalun: { name: '尕斯铁卫', tier: 4 },
   shaodang: { name: '湟中义从羌', tier: 3 },  // 东汉经典羌族从军制度，兵种名号极具特色，升T2
@@ -74,4 +74,5 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     qifu_d: { name: '苑川突骑', tier: 3 },
     jinchuan_g: { name: '嘉绒碉锋', tier: 3 },
     shanzhou: { name: '陇右骁骑', tier: 1 },
+    yeli: { name: '擒生军', tier: 3 },
 };

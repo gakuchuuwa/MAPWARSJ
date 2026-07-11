@@ -25,7 +25,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 武川镇军已迁草原（yuwen@武川镇）
   erzhu: { name: '六镇戍兵', tier: 1 },     // 北魏六镇，横扫天下的基石，六镇之乱孕育了北齐、北周及隋唐开国集团，影响极其深远，升入T1战略
   gaoqi_d: { name: '百保鲜卑', tier: 2 },   // 蓨城·北齐百保精兵·高长恭禁卫（顶级近卫，降T2）
-  yingzhou_ying_d: { name: '黄龙兵', tier: 1 }, // 朝阳·慕容皝棘城大破石赵
     ming_d: { name: '明军三大营', tier: 1 },
 
   // ── §1 中原表·地理偏北（用户指定）──

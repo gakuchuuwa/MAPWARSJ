@@ -42,6 +42,7 @@ import { Army } from '../legion/Army';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
+import { YuefeiExpedition } from './YuefeiExpedition'; // 岳飞北伐黄龙 圆梦脚本
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { initUnattendedStream } from './UnattendedStream'; // 无人值守直播（?stream=1）
 import { audioManager, type AudioManager } from '../audio/AudioManager';
@@ -102,6 +103,7 @@ export class GameApp {
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
     public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥4万解锁）
+    public yuefeiExpedition!: YuefeiExpedition; // 岳飞北伐黄龙 圆梦脚本
     public audioManager: AudioManager = audioManager;
 
     // Game Loop
@@ -531,6 +533,15 @@ export class GameApp {
                 },
                 this.cityManager
             );
+
+            // 岳飞北伐黄龙 圆梦脚本：军团按钮下方按钮触发
+            this.yuefeiExpedition = new YuefeiExpedition({
+                legionManager,
+                cityManager: this.cityManager,
+                cameraFollowUI: this.cameraFollowUI,
+                notify: (msg) => gameLog('expedition', msg),
+            });
+            this.cameraFollowUI.setYuefeiHandler(() => this.yuefeiExpedition.start());
 
             StreamModeToggle.init();
             SpeechVoiceToggle.init();

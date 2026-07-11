@@ -1482,11 +1482,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/DIANQIAN/suke_langanheng.png": {
-            "scale": 0.89,
-            "offsetX": 0,
-            "offsetY": -14
-        },
         "/assets/pugan/__闲置__pugan_06.png": {
             "scale": 0.89,
             "offsetX": 0,
@@ -4242,16 +4237,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_06.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": -25
-        },
-        "/assets/DIANQIAN/mon_monuhe.png": {
-            "scale": 0.89,
-            "offsetX": 0,
-            "offsetY": -30
-        },
         "/assets/DIANQIAN/pagan_anulvtuo.png": {
             "scale": 1.02,
             "offsetX": 3,
@@ -5752,15 +5737,30 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -13,
             "offsetY": -16
         },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_19.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -48
-        },
         "/assets/DIANQIAN/ailao_leilao.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -18
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_20.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/DIANQIAN/suke_langanheng.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_21.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/DIANQIAN/mon_monuhe.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -48
         }
     },
     "folderGuides": {

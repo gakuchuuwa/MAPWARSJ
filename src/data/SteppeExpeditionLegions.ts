@@ -63,7 +63,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tushetu: { name: '库伦铁骑', tier: 4 },       // 库伦·土谢图汗
     yaoluoge: { name: '娑陵鹰骑', tier: 4 },
     huihu: { name: '回鹘骑兵', tier: 3 },
-  ashide: { name: '阿史德骑', tier: 4 },        // 黑沙城·阿史德氏
     pugu: { name: '燕然黑砂', tier: 2 },
     pulei: { name: '蒲类落雕骑', tier: 3 },
   chechen: { name: '车臣汗骑', tier: 4 },       // 巴彦图门·车臣汗硕垒
@@ -90,4 +89,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     chuyue: { name: '处月骑兵', tier: 3 },
     dongshengwei: { name: '九边夜不收', tier: 2 },
     wuliangha: { name: '兀良哈突骑', tier: 1 },
+    juqu_d: { name: '卢水胡兵', tier: 3 },
+    yuezhi: { name: '折兰骑', tier: 3 },
+    lushui: { name: '飞熊军', tier: 2 },
 };

@@ -138,6 +138,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'juqu_d', name: '沮渠' },
+
     { id: 'tufa_d', name: '秃发' },
     { id: 'qiuchi', name: '仇池' },
 
@@ -149,6 +150,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xianbei', name: '鲜卑' },
     { id: 'jie', name: '羯族' }, // 代表后赵/前赵，避免旗号重名
     { id: 'beidi', name: '北地' },
+
 
     { id: 'tuoba', name: '拓跋' },
  // 代表北魏，避免旗号重名
@@ -327,7 +329,9 @@ export const FACTIONS: Faction[] = [
     { id: 'murong', name: '慕容' },
 
  // 代表前燕，避免旗号重名
-    { id: 'yingzhou_ying_d', name: '营州' }, // ── 2026-06-20：朝阳（柳城）；北齐黄龙兵 ──
+    { id: 'yingzhou_ying_d', name: '营州' },
+
+ // ── 2026-06-20：朝阳（柳城）；北齐黄龙兵 ──
     { id: 'erzhu', name: '尔朱' },      // 铁锈红 - 契胡尔朱氏(秀容川/北魏权臣)
 
 
@@ -424,6 +428,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xiqin', name: '宁州' },
          // 胡萝卜橙 - 薛举西秦政权(折墌)
     { id: 'xueyantuo', name: '薛延陀' },
+
 
     { id: 'tujishi', name: '突骑施' },
      // 巧克力色 - 突骑施汗国(碎叶川)
@@ -696,7 +701,8 @@ export const FACTIONS: Faction[] = [
             // 柔然紫 - 郁久闾氏(柔然王族/弱水畔)
     { id: 'ashina', name: '阿史那' },
               // 草原绿灰 - 阿史那氏
-    { id: 'ashide', name: '阿史德' },              // 草原绿 - 阿史德氏(突厥别部)
+    { id: 'ashide', name: '阿史德' },
+              // 草原绿 - 阿史德氏(突厥别部)
     { id: 'kiyad', name: '乞颜' },
     { id: 'borjigin', name: '孛儿只斤' },
           // 黄金家族褐 - 孛儿只斤氏(蒙古黄金家族/斡难河源)
@@ -716,6 +722,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-06-11 新增：野利（西夏权臣/克夷门）──
     { id: 'yeli', name: '野利' },
+
 
     // ── 2026-05-26 新增：青藏高原势力（24个）──
     // 第一类：高原帝国与割据强权
@@ -1019,6 +1026,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'shuofang', name: '朔方' },
     { id: 'lushui', name: '卢水' },
+
 
     { id: 'yingli', name: '应理' },
     { id: 'guangwu', name: '广武' },
@@ -1364,6 +1372,7 @@ export const FACTIONS: Faction[] = [
     { id: 'baidi', name: '白狄' },
     { id: 'dulan', name: '都兰' },
 
+
     { id: 'duomi', name: '多弥' },
     { id: 'wumeng', name: '溪州' },
     { id: 'lelang', name: '乐浪' },
@@ -1435,7 +1444,9 @@ export const FACTIONS: Faction[] = [
     { id: 'kepantuo', name: '渴盘陀' },
     { id: 'qinghai', name: '青海' },
 
+
     { id: 'xining', name: '西宁' },
+
     { id: 'kalun', name: '柴达木' },
 
     { id: 'sagami', name: '相模' },
@@ -1462,6 +1473,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'cangzhou', name: '沧州' },
     { id: 'yuezhi', name: '月氏' },
+
     { id: 'minyue', name: '闽越' },
     { id: 'funan', name: '扶南' },
     { id: 'lancang', name: '澜沧' },
@@ -1481,6 +1493,7 @@ export const FACTIONS: Faction[] = [
     { id: 'luming', name: '郧州' },
     { id: 'dingzhou', name: '定州' },
     { id: 'shanzhou', name: '鄯州' },
+
 
 
     { id: 'weizhou', name: '维州' },

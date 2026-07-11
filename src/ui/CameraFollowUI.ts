@@ -38,10 +38,19 @@ export class CameraFollowUI {
     private cityManager: { getCities(): any[] } | null = null;
     private factionManager: { getFactionName(id: string): string | undefined; getFactionColor(id: string): string | undefined } | null = null;
 
+    /** 「岳飞北伐黄龙」圆梦按钮回调（由 GameApp 注入） */
+    private onYuefeiExpedition: (() => void) | null = null;
+
     constructor() {
         this.createListButton();
+        this.createYuefeiButton();
         this.createListPanel();
         this.createFollowBanner();
+    }
+
+    /** 注入「岳飞北伐黄龙」按钮点击回调 */
+    public setYuefeiHandler(fn: () => void): void {
+        this.onYuefeiExpedition = fn;
     }
 
     /** 开局尚未手动选军团时，首次出现野战军团则自动跟随（名将优先，否则兵力最多） */
@@ -138,6 +147,46 @@ export class CameraFollowUI {
 
         document.body.appendChild(btn);
         this.listButton = btn;
+    }
+
+    // ─── 1b. 岳飞北伐黄龙 圆梦按钮（军团按钮正下方） ────────
+
+    private createYuefeiButton(): void {
+        const btn = document.createElement('button');
+        btn.id = 'yuefei-expedition-btn';
+        btn.title = '岳飞率背嵬军十万，自郾城北伐：开封 → 北京 → 沈阳 → 黄龙府';
+        btn.innerHTML = '⚔ 岳飞北伐黄龙';
+        btn.style.cssText = `
+            position: fixed;
+            top: 62px;
+            left: 16px;
+            z-index: 10000;
+            padding: 9px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffe9c8;
+            background: linear-gradient(135deg, rgba(90,20,15,0.94), rgba(120,35,20,0.96));
+            border: 2px solid rgba(210,110,70,0.75);
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+            font-family: 'SimSun', 'Songti SC', serif;
+            letter-spacing: 2px;
+        `;
+
+        btn.addEventListener('mouseenter', () => {
+            btn.style.borderColor = 'rgba(240,150,90,0.95)';
+            btn.style.boxShadow = '0 4px 20px rgba(210,110,70,0.45), inset 0 1px 0 rgba(255,255,255,0.15)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.borderColor = 'rgba(210,110,70,0.75)';
+            btn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)';
+        });
+
+        btn.addEventListener('click', () => this.onYuefeiExpedition?.());
+
+        document.body.appendChild(btn);
     }
 
     // ─── 2. 军团列表面板 ──────────────────────────────
