@@ -30,6 +30,8 @@ const STRAT_SYS: Record<string, string> = {
     str_01: '行军', str_10: '行军', str_11: '行军',
     str_12: '补给', str_13: '补给', str_07: '补给',
     str_14: '爆兵', str_15: '爆兵', str_03: '战斗',
+    str_02: '奇策', str_04: '奇策', str_06: '奇策', str_09: '奇策',
+    str_05: '据点防', str_08: '据点防',
 };
 
 function tacName(unit: { generalId: string }, sit: 'advantage' | 'balance' | 'disadvantage'): string {

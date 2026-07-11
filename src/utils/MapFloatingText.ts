@@ -3,18 +3,6 @@ export function getFollowedArmyId(): string | null {
     return (window as any).game?.cameraFollowUI?.getFollowedArmyId?.() ?? null;
 }
 
-/**
- * 长驱深入专用：密集小城区域 3 秒内只飘一次，防连过多城叠字。
- * 其余技能（战后一次性 / 每城一次 / 满千一次）均有天然去重，不走此函数。
- */
-const bypassLastAt = new Map<string, number>();
-export function tryBypassPulse(armyId: string, lat: number, lng: number, color: string): void {
-    const now = Date.now();
-    if (now - (bypassLastAt.get(armyId) ?? 0) < 3000) return;
-    bypassLastAt.set(armyId, now);
-    spawnMapFloatingText(lat, lng, '长驱深入', color);
-}
-
 
 export function spawnMapFloatingText(lat: number, lng: number, text: string, color: string): void {
     const map = (window as any).game?.map?.getLeafletMap?.();
@@ -39,17 +27,18 @@ export function spawnMapFloatingText(lat: number, lng: number, text: string, col
     el.style.top = `${point.y - 30}px`; // 军团头顶起飘
     // 战略技专属高级视觉：金石兵符（隶书/楷体 + 3D立体厚度 + 强溢光）
     el.style.fontFamily = "'LiSu', 'STXinwei', 'KaiTi', serif"; // 隶书/魏碑，区别于战术的细致宋体，更有大地图的雄浑感
-    el.style.color = color; // 保持技能专属高纯度色彩
+    el.style.color = '#ffffff'; // 采用极致纯白/银白（区别于战术的暖白金），更冷峻犀利
     el.style.fontWeight = '900';
     el.style.fontSize = '20px'; // 隶书字面较小，放大到20px保证气场
     el.style.letterSpacing = '2px';
-    // 3D 挤出立体特效：向下逐层加深黑影，形成厚实的金属铸字感，外加光晕
+    // 3D 挤出立体特效：黑影做底层金属块，外加原本技能颜色（如翠绿/橙色）的高亮光晕
     el.style.textShadow = `
         0 1px 0 rgba(0,0,0,0.9),
         0 2px 0 rgba(0,0,0,0.8),
         0 3px 0 rgba(0,0,0,0.7),
         0 4px 6px rgba(0,0,0,0.9),
-        0 0 10px ${color}
+        0 0 12px ${color},
+        0 0 20px ${color}
     `;
     el.style.pointerEvents = 'none';
     el.style.whiteSpace = 'nowrap';
@@ -104,21 +93,18 @@ export function spawnMapPulse(lat: number, lng: number, text: string, color: str
     el.style.top = `${point.y - 50}px`; // 军团头顶稍微高一点，给大字留空间
     // 大招专属高级视觉：金石印章（隶书/楷体 + 深层3D立体厚度 + 强溢光）
     el.style.fontFamily = "'LiSu', 'STXinwei', 'KaiTi', serif";
-    el.style.color = color;
+    el.style.color = '#ffffff'; // 极致纯白，区别于战术的暖白金
     el.style.fontWeight = '900';
-    el.style.fontSize = '42px'; // 隶书字面较小，放大到42px压场子
-    el.style.letterSpacing = '6px';
-    // 3D 挤出立体特效：7层厚实向下黑影，打造兵符砸向地图的物理厚重感，伴随两层能量发光
+    el.style.fontSize = '24px'; // 隶书字面较小，24px 醒目但不压画面
+    el.style.letterSpacing = '3px';
+    // 3D 挤出立体特效：4层黑影 + 技能色光晕
     el.style.textShadow = `
         0 1px 0 rgba(0,0,0,0.9),
-        0 2px 0 rgba(0,0,0,0.9),
-        0 3px 0 rgba(0,0,0,0.8),
-        0 4px 0 rgba(0,0,0,0.8),
-        0 5px 0 rgba(0,0,0,0.7),
-        0 6px 0 rgba(0,0,0,0.7),
-        0 7px 10px rgba(0,0,0,0.9),
-        0 0 15px ${color},
-        0 0 30px ${color}
+        0 2px 0 rgba(0,0,0,0.8),
+        0 3px 0 rgba(0,0,0,0.7),
+        0 4px 8px rgba(0,0,0,0.9),
+        0 0 10px ${color},
+        0 0 22px ${color}
     `;
     el.style.pointerEvents = 'none';
     el.style.whiteSpace = 'nowrap';
