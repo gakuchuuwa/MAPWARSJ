@@ -36,6 +36,18 @@ const YUEFEI_FACTION_ID = 'yanchuan_d';
 const YUEFEI_GENERAL_ID = 'yanchuan_d_yuefei';
 const BEIWEI_ELITE_TIER = 0;
 
+/**
+ * 忠义来投（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 的 ZHONGYI_EVENTS 保持同步）：
+ * 克大站后河朔忠义响应，大额补兵（上限不超过开局十万）。
+ * 数值经本工具批量调参（2026-07-11，300 局）：单次直捣黄龙 67.7%，两次至少一成 89.5%。
+ * CLI：--zhongyi 15000,34000,26000（开封,北京,沈阳顺序）；--no-zhongyi 关闭。
+ */
+const ZHONGYI_DEFAULTS: { cityId: string; label: string; amount: number }[] = [
+    { cityId: 'city_bianliang', label: '中原义军来投', amount: 15000 },
+    { cityId: 'city_beijing', label: '两河忠义蜂起', amount: 34000 },
+    { cityId: 'city_shenyang', label: '辽东义士来归', amount: 26000 },
+];
+
 function argNum(flag: string, fallback: number): number {
     const i = process.argv.indexOf(flag);
     if (i < 0) return fallback;
@@ -151,6 +163,8 @@ interface StepLog {
     won: boolean;
     survivorsAfterBattle: number;
     survivorsAfterSustain: number;
+    /** 忠义来投补兵（克大站后，0 = 本站无事件） */
+    zhongyiBonus: number;
 }
 
 function runOne(
@@ -158,10 +172,13 @@ function runOne(
     defenderMode: DefenderMode,
     terrainMode: string,
     initialTroops: number,
+    zhongyiByCityId: ReadonlyMap<string, number>,
 ): StepLog[] {
     let troops = initialTroops;
     const startCity = cityById(START_CITY_ID);
     const cap = getArmyMaxTroops(cityRegion(startCity));
+    /** 忠义补兵上限：不超过开局兵力（与游戏脚本一致） */
+    const zhongyiCap = Math.min(cap, initialTroops);
     const logs: StepLog[] = [];
 
     for (let i = 0; i < routeIds.length; i++) {
@@ -185,6 +202,16 @@ function runOne(
                 target.type,
             )
             : 0;
+        // 忠义来投：克大站后补兵（上限=开局兵力）
+        let zhongyiBonus = 0;
+        let afterZhongyi = sustained;
+        if (result.attackerWon) {
+            const amount = zhongyiByCityId.get(target.id) ?? 0;
+            if (amount > 0) {
+                afterZhongyi = Math.min(zhongyiCap, sustained + amount);
+                zhongyiBonus = afterZhongyi - sustained;
+            }
+        }
         logs.push({
             cityName: target.name,
             defenderName: defender.name ?? `${target.name}守军`,
@@ -193,10 +220,11 @@ function runOne(
             terrain,
             won: result.attackerWon,
             survivorsAfterBattle: result.attSurvivors,
-            survivorsAfterSustain: sustained,
+            survivorsAfterSustain: afterZhongyi,
+            zhongyiBonus,
         });
         if (!result.attackerWon) break;
-        troops = sustained;
+        troops = afterZhongyi;
     }
 
     return logs;
@@ -214,6 +242,19 @@ function main(): void {
     const terrainMode = argStr('--terrain', 'plain');
     const sample = argNum('--sample', 1) > 0;
 
+    // 忠义来投：--no-zhongyi 关闭；--zhongyi a,b,c 覆盖三站数额（开封,北京,沈阳）
+    const zhongyiOff = process.argv.includes('--no-zhongyi');
+    const zhongyiArg = argStr('--zhongyi', '');
+    const zhongyiAmounts = zhongyiArg
+        ? zhongyiArg.split(',').map((s) => Math.max(0, Math.floor(Number(s) || 0)))
+        : ZHONGYI_DEFAULTS.map((e) => e.amount);
+    const zhongyiByCityId = new Map<string, number>();
+    if (!zhongyiOff) {
+        ZHONGYI_DEFAULTS.forEach((e, i) => {
+            zhongyiByCityId.set(e.cityId, zhongyiAmounts[i] ?? e.amount);
+        });
+    }
+
     const routeIds = routeMode === 'full'
         ? buildFullRouteCityIds()
         : [...WAYPOINT_CITY_IDS];
@@ -226,7 +267,7 @@ function main(): void {
     let firstSample: StepLog[] | null = null;
 
     for (let t = 0; t < trials; t++) {
-        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops);
+        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops, zhongyiByCityId);
         if (!firstSample) firstSample = logs;
         const wonCount = logs.filter((l) => l.won).length;
         capturedCounts[wonCount]++;
@@ -243,6 +284,16 @@ function main(): void {
     console.log('岳飞北伐黄龙路线模拟');
     console.log(`路线：${routeMode === 'full' ? `路网逐城 ${routeIds.length} 场` : '四阶段目标 4 场'}（郾城 → … → 黄龙府）`);
     console.log(`参数：初始 ${initialTroops.toLocaleString()} 兵，防守=${defenderMode}，地形=${terrainMode}，试跑=${trials}`);
+    if (zhongyiByCityId.size > 0) {
+        const desc = ZHONGYI_DEFAULTS
+            .map((e) => `${e.label}(${cityById(e.cityId).name}) +${(zhongyiByCityId.get(e.cityId) ?? 0).toLocaleString()}`)
+            .join('，');
+        console.log(`忠义来投：${desc}（上限=开局兵力）`);
+    } else {
+        console.log('忠义来投：关闭');
+    }
+    const fullSuccess = capturedCounts[routeIds.length] ?? 0;
+    console.log(`直捣黄龙成功率：${formatPct(fullSuccess / trials)}（两次至少一成：${formatPct(1 - (1 - fullSuccess / trials) ** 2)}）`);
     console.log('');
 
     console.log('逐站通过率：');
@@ -278,7 +329,8 @@ function main(): void {
             console.log(
                 `${String(idx + 1).padStart(2)}. ${log.won ? '胜' : '败'} ${log.cityName} | ` +
                 `岳飞 ${log.startTroops.toLocaleString()} vs ${log.defenderName} ${log.defenderTroops.toLocaleString()} | ` +
-                `地形=${log.terrain ?? 'none'} | 战后=${log.survivorsAfterBattle.toLocaleString()} | 续航后=${log.survivorsAfterSustain.toLocaleString()}`,
+                `地形=${log.terrain ?? 'none'} | 战后=${log.survivorsAfterBattle.toLocaleString()} | 续航后=${log.survivorsAfterSustain.toLocaleString()}` +
+                (log.zhongyiBonus > 0 ? `（含忠义+${log.zhongyiBonus.toLocaleString()}）` : ''),
             );
         }
         const won = firstSample.filter((l) => l.won).length;

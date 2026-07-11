@@ -8,10 +8,15 @@
  * 不改动任何常规游戏逻辑，仅借用现成远征机制（army.expeditionTargetCityId）：
  *   set target → 行为树锁死目标行军攻城（断粮不回）；
  *   target 变己方 → LegionBehaviors.resolveExpeditionState 自动清空 → 本脚本推进下一城。
+ *
+ * 忠义来投（脚本专属事件，与 tools/yuefei-huanglong-sim.ts 的 ZHONGYI_DEFAULTS 同步）：
+ *   克开封/北京/沈阳三大站后河朔忠义响应，大额补兵（上限=开局十万）。
+ *   数值经仿真 300 局调参：单次直捣黄龙 67.7%，两次至少一成 89.5%（主人定的悬念档）。
  */
 
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { gameLog } from '../utils/GameLogger';
+import { spawnMapPulse } from '../utils/MapFloatingText';
 
 /** 起兵据点：郾城（岳飞·郾川势力都城） */
 const START_CITY_ID = 'city_yancheng2';
@@ -27,6 +32,13 @@ const ROUTE: { id: string; name: string }[] = [
     { id: 'city_shenyang', name: '沈阳' },
     { id: 'city_fuyu', name: '黄龙府' },
 ];
+
+/** 忠义来投：克大站补兵（数值与 yuefei-huanglong-sim 调参结果同步，勿单边改） */
+const ZHONGYI_EVENTS: Record<string, { label: string; amount: number }> = {
+    city_bianliang: { label: '中原义军来投', amount: 15000 },
+    city_beijing: { label: '两河忠义蜂起', amount: 34000 },
+    city_shenyang: { label: '辽东义士来归', amount: 26000 },
+};
 
 const TICK_INTERVAL_MS = 400;
 
@@ -89,6 +101,8 @@ export class YuefeiExpedition {
     private armyId: string | null = null;
     private waypointIndex = 0;
     private timer: number | null = null;
+    /** 已触发过的忠义来投站点（防重复补兵） */
+    private appliedZhongyi = new Set<string>();
 
     constructor(deps: YuefeiDeps) {
         this.deps = deps;
@@ -190,6 +204,7 @@ export class YuefeiExpedition {
 
         this.armyId = army.id;
         this.waypointIndex = 0;
+        this.appliedZhongyi.clear();
 
         gameLog('expedition', `🐎 [圆梦] 岳飞率背嵬军十万自郾城起兵，北伐黄龙：开封 → 北京 → 沈阳 → 黄龙府`);
         this.notify('岳飞率背嵬军十万北伐——直捣黄龙！');
@@ -223,6 +238,7 @@ export class YuefeiExpedition {
             const c = this.deps.cityManager.getCity(wp.id);
             if (c && c.factionId === FACTION_ID) {
                 gameLog('expedition', `🐎 [圆梦] 岳飞·背嵬军已克 ${wp.name}`);
+                this.applyZhongyiEvent(army, wp.id, wp.name, c);
                 this.waypointIndex++;
                 continue;
             }
@@ -245,6 +261,34 @@ export class YuefeiExpedition {
             army.expeditionTargetCityId = desired.id;
             gameLog('expedition', `🐎 [圆梦] 岳飞·背嵬军锁定目标：${desired.name}`);
         }
+    }
+
+    /**
+     * 忠义来投：克大站补兵（上限=开局十万），大地图金色脉冲 + 播报。
+     * 每站只触发一次（appliedZhongyi 防重）。
+     */
+    private applyZhongyiEvent(
+        army: ScriptArmy,
+        cityId: string,
+        cityName: string,
+        city: ScriptCity,
+    ): void {
+        const event = ZHONGYI_EVENTS[cityId];
+        if (!event || this.appliedZhongyi.has(cityId)) return;
+        this.appliedZhongyi.add(cityId);
+
+        const before = army.getTroops();
+        const after = Math.min(TROOPS, before + event.amount);
+        const added = after - before;
+        if (added <= 0) return;
+        army.setTroops(after);
+
+        gameLog(
+            'expedition',
+            `🐎 [圆梦] 克 ${cityName}，${event.label} +${added.toLocaleString()}（${before.toLocaleString()} → ${after.toLocaleString()}）`,
+        );
+        this.notify(`${event.label}！背嵬军得众 ${added.toLocaleString()}`);
+        spawnMapPulse(city.latitude, city.longitude, event.label, '#ffd700');
     }
 
     /** 停止脚本推进（军团仍留在场上） */
