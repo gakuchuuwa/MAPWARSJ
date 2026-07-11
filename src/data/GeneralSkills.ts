@@ -255,7 +255,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     hani_d_zhebi: { generalId: 'hani_d_zhebi', tier: 'ordinary', tacticalSkillId: 'ts_374', advantageSkillId: 'ts_392', balanceSkillId: 'ts_397', disadvantageSkillId: 'ts_374', aptitude: 'reverse' }, // 思陀：从征安南
     unassigned_piqiluomo: { generalId: 'unassigned_piqiluomo', tier: 'ordinary', tacticalSkillId: 'ts_006', advantageSkillId: 'ts_003', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_006', aptitude: 'reverse' }, // 骠国：守城戍卒
     ali_gandancaiwang: { generalId: 'ali_gandancaiwang', tier: 'famous', tacticalSkillId: 'ts_362', strategicSkillId: 'str_07', advantageSkillId: 'ts_362', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_413', aptitude: 'create' },
-    gaoliang_dongzhen: { generalId: 'gaoliang_dongzhen', tier: 'ordinary', tacticalSkillId: 'ts_049', advantageSkillId: 'ts_049', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_417', aptitude: 'create' },
     bailan_pabala: { generalId: 'bailan_pabala', tier: 'ordinary', tacticalSkillId: 'ts_134', advantageSkillId: 'ts_134', balanceSkillId: 'ts_407', disadvantageSkillId: 'ts_048', aptitude: 'create' }, // 昌都：率僧兵守城
     jiantang_sangjiejia: { generalId: 'jiantang_sangjiejia', tier: 'ordinary', tacticalSkillId: 'ts_024', advantageSkillId: 'ts_027', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_024', aptitude: 'reverse' }, // 建塘：第巴摄政遣防
     kongsa_kongsayiduo: { generalId: 'kongsa_kongsayiduo', tier: 'ordinary', tacticalSkillId: 'ts_086', advantageSkillId: 'ts_023', balanceSkillId: 'ts_396', disadvantageSkillId: 'ts_086', aptitude: 'reverse' }, // 甘孜：从征瞻对
@@ -368,7 +367,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     unassigned_naierbuhua: { generalId: 'unassigned_naierbuhua', tier: 'ordinary', tacticalSkillId: 'ts_103', advantageSkillId: 'ts_027', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_103', aptitude: 'reverse' }, // 永乐北伐兀良哈败乃儿不花
     fuyu_weichoutai: { generalId: 'fuyu_weichoutai', tier: 'ordinary', tacticalSkillId: 'ts_104', advantageSkillId: 'ts_390', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_104', aptitude: 'reverse' }, // 扶余据城固守
     jurchen_wanyanzongbi: { generalId: 'jurchen_wanyanzongbi', tier: 'famous', tacticalSkillId: 'ts_076', strategicSkillId: 'str_04', advantageSkillId: 'ts_076', balanceSkillId: 'ts_547', disadvantageSkillId: 'ts_548', aptitude: 'create' }, // 如墙而进（郾城铁浮屠平原突击·归位现成技）
-    aisin_d_huangtaiji: { generalId: 'aisin_d_huangtaiji', tier: 'famous', tacticalSkillId: 'ts_077', strategicSkillId: 'str_05', advantageSkillId: 'ts_465', balanceSkillId: 'ts_077', disadvantageSkillId: 'ts_467', aptitude: 'leverage' }, // 《清太宗实录》崇德六年亲征松锦长围、俘洪承畴（锚围城非野战 alone）
+    aisin_d_huangtaiji: { generalId: 'aisin_d_huangtaiji', tier: 'famous', tacticalSkillId: 'ts_077', strategicSkillId: 'str_14', advantageSkillId: 'ts_465', balanceSkillId: 'ts_077', disadvantageSkillId: 'ts_467', aptitude: 'leverage' }, // 《清太宗实录》崇德六年亲征松锦长围、俘洪承畴（锚围城非野战 alone）
     mohe_wanyanzonghan: { generalId: 'mohe_wanyanzonghan', tier: 'famous', tacticalSkillId: 'ts_360', strategicSkillId: 'str_04', advantageSkillId: 'ts_360', balanceSkillId: 'ts_394', disadvantageSkillId: 'ts_410', aptitude: 'create' },
     suolun_bomuboguoer: { generalId: 'suolun_bomuboguoer', tier: 'ordinary', tacticalSkillId: 'ts_095', advantageSkillId: 'ts_400', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_095', aptitude: 'reverse' },
     wula_buzhantai: { generalId: 'wula_buzhantai', tier: 'ordinary', tacticalSkillId: 'ts_082', advantageSkillId: 'ts_082', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_017', aptitude: 'create' },
@@ -632,7 +631,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     kui_gongsunshu: { generalId: 'kui_gongsunshu', tier: 'ordinary', tacticalSkillId: 'ts_096', advantageSkillId: 'ts_022', balanceSkillId: 'ts_405', disadvantageSkillId: 'ts_096', aptitude: 'reverse' }, // 公孙述白帝
     yang_bozhou_yangyinglong: { generalId: 'yang_bozhou_yangyinglong', tier: 'ordinary', tacticalSkillId: 'ts_151', advantageSkillId: 'ts_030', balanceSkillId: 'ts_151', disadvantageSkillId: 'ts_410', aptitude: 'leverage' }, // 播州末代
     chenghan_lite: { generalId: 'chenghan_lite', tier: 'famous', tacticalSkillId: 'ts_143', strategicSkillId: 'str_13', advantageSkillId: 'ts_400', balanceSkillId: 'ts_043', disadvantageSkillId: 'ts_143', aptitude: 'reverse' }, // 成汉开国
-    agui: { generalId: 'agui', tier: 'famous', tacticalSkillId: 'ts_291', strategicSkillId: 'str_05', advantageSkillId: 'ts_291', balanceSkillId: 'ts_404', disadvantageSkillId: 'ts_714', aptitude: 'create' },
+    agui: { generalId: 'agui', tier: 'famous', tacticalSkillId: 'ts_291', strategicSkillId: 'str_08', advantageSkillId: 'ts_291', balanceSkillId: 'ts_404', disadvantageSkillId: 'ts_714', aptitude: 'create' },
     zuo_d_wufu: { generalId: 'zuo_d_wufu', tier: 'ordinary', tacticalSkillId: 'ts_021', advantageSkillId: 'ts_021', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_412', aptitude: 'create' }, // 明代平南中
     wumeng_azi: { generalId: 'wumeng_azi', tier: 'ordinary', tacticalSkillId: 'ts_098', advantageSkillId: 'ts_047', balanceSkillId: 'ts_014', disadvantageSkillId: 'ts_098', aptitude: 'reverse' }, // 乌蒙土司
 // ── 巴蜀区 2026-06-18 ──
@@ -1325,6 +1324,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yanzhou_zhongshiheng: { generalId: 'yanzhou_zhongshiheng', tier: 'ordinary', tacticalSkillId: 'ts_006', advantageSkillId: 'ts_001', balanceSkillId: 'ts_042', disadvantageSkillId: 'ts_006', aptitude: 'leverage' },
     yansui_wangwei: { generalId: 'yansui_wangwei', tier: 'ordinary', tacticalSkillId: 'ts_409', advantageSkillId: 'ts_047', balanceSkillId: 'ts_046', disadvantageSkillId: 'ts_409', aptitude: 'reverse' },
     tongma_taishici: { generalId: 'tongma_taishici', tier: 'ordinary', tacticalSkillId: 'ts_159', advantageSkillId: 'ts_399', balanceSkillId: 'ts_403', disadvantageSkillId: 'ts_159', aptitude: 'reverse' },
+    gaoliang_geshuhan: { generalId: 'gaoliang_geshuhan', tier: 'ordinary', tacticalSkillId: 'ts_049', advantageSkillId: 'ts_049', balanceSkillId: 'ts_393', disadvantageSkillId: 'ts_417', aptitude: 'create' },
 };
 
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {

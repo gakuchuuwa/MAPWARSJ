@@ -60,7 +60,7 @@ type StratagemKey = "gong" | "sheng" | "di" | "hun" | "bing" | "bai";
 
 /** A.6：这些 condition 一律归劣势（覆盖 effect 判定；背水一战/破釜沉舟/守城死战等） */
 const LOSE_CONDITIONS = new Set<string>([
-  "ratio_underdog", "self_troops_below_enemy_pct", "side_comeback", "lose_as_underdog", "battle_siege_defender",
+  "ratio_underdog", "self_troops_below_enemy_pct", "side_comeback", "lose_as_underdog",
 ]);
 const EFF_JIANDI = new Set<string>(["enemy_sub_troops_opening", "dual_sub_troops_opening"]);                 // 减敌兵·胜战(全)
 const EFF_JIAJI = new Set<string>(["ally_power_mult", "first_sortie_power_mult", "ally_add_troops_opening"]); // 加己攻·攻战(机)

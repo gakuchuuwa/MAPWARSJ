@@ -672,7 +672,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'qingqiang': '冉駹',
 'zhaowu': '昭武',
 'ganzhou': '甘',
-'gaoliang': '冉駹',
+'gaoliang': '潘',
     'ruoqiang': '婼羌',
 
     // ── 2026-05-31 新增：原生小政权都城4势力 ──
@@ -851,7 +851,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   'wazu': '佤',
 'tajikezu': '塔吉',
 'jingpozu': '景颇',
-  'shuizu': '水',
+'shuizu': '水',
   'liuzhou': '柳',
 
 'luming': '郧',

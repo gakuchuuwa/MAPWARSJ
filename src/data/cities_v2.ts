@@ -712,7 +712,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_diezhou', name: '迭部', factionId: 'dangchang', lat: 33.975273, lng: 103.482971, type: 'small_city', troops: 20000, region: 'BASHU' },
 
 
-    { id: 'city_panzhou', name: '茂名', factionId: 'gaoliang', lat: 33.578015, lng: 103.029785, type: 'small_city', troops: 20000, region: 'TIBET' },
+    { id: 'city_panzhou', name: '潘城', factionId: 'gaoliang', lat: 33.578015, lng: 103.029785, type: 'small_city', troops: 20000, region: 'TIBET' },
+
 
 
 
@@ -2749,6 +2750,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_mizhina', name: '密支那', factionId: 'jingpozu', lat: 25.38, lng: 97.4, type: 'small_city', troops: 20000, region: 'DIANQIAN' },
 
     { id: 'city_sandou', name: '三都', factionId: 'shuizu', lat: 25.98, lng: 107.87, type: 'small_city', troops: 20000, region: 'LINGNAN' },
+
     { id: 'city_tanzhong', name: '潭中', factionId: 'liuzhou', lat: 24.28, lng: 109.41, type: 'small_city', troops: 20000, region: 'LINGNAN' },
     { id: 'city_yunyang', name: '郧阳', factionId: 'luming', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 20000, region: 'CENTRAL' },
     { id: 'city_zhongshan', name: '中山', factionId: 'dingzhou', lat: 38.4708, lng: 115.0626, type: 'small_city', troops: 20000, region: 'NORTH' },

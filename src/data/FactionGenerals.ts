@@ -343,7 +343,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     guge: { generalId: 'guge_chizhaxichabade', generalName: '赤扎西查巴德', portrait: '/assets/TIBET/guge_chizhaxichabade.png' },
     pazhu: { generalId: 'pazhu_redangunsangpa', generalName: '热丹衮桑帕', portrait: '/assets/TIBET/pazhu_redangunsangpa.png' },
     ali: { generalId: 'ali_gandancaiwang', generalName: '甘丹才旺', portrait: '/assets/TIBET/ali_gandancaiwang.png' },
-    gaoliang: { generalId: 'gaoliang_dongzhen', generalName: '董振', portrait: '/assets/TIBET/gaoliang_dongzhen.png' },
+    gaoliang: { generalId: 'gaoliang_geshuhan', generalName: '哥舒翰', portrait: '/assets/litang/gaoliang_geshuhan.png' },
     nandou: { generalId: 'nandou_sushili', generalName: '苏失利', portrait: '/assets/TIBET/nandou_sushili.png' }, // 孽多
     bailan: { generalId: 'bailan_pabala', generalName: '帕巴拉', portrait: '/assets/TIBET/bailan_pabala.png' }, // 察木多
     jiantang: { generalId: 'jiantang_sangjiejia', generalName: '桑杰嘉措', portrait: '/assets/TIBET/jiantang_sangjiejia.png' }, // 独克宗

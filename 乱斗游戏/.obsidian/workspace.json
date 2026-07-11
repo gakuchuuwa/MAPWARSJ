@@ -8,147 +8,20 @@
         "type": "tabs",
         "children": [
           {
-            "id": "c03d03bb49f45c08",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "游戏设计资料.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "游戏设计资料"
-            }
-          },
-          {
-            "id": "d838f3764d6759fb",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "武将.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "武将"
-            }
-          },
-          {
-            "id": "9536f5e615d147c5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "战术技能.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "战术技能"
-            }
-          },
-          {
-            "id": "44b3cf7f9c5a3605",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "武将.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "武将"
-            }
-          },
-          {
-            "id": "c00a62bb3135cd0b",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "文化.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "文化"
-            }
-          },
-          {
-            "id": "1c4a78007aa233ee",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "精锐.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "精锐"
-            }
-          },
-          {
-            "id": "c87cbd971d4b45e2",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "游戏设计资料.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "游戏设计资料"
-            }
-          },
-          {
-            "id": "59434c9e1642d14d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "目录.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "目录"
-            }
-          },
-          {
-            "id": "d423f0b4269493fc",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "01_势力/阿巴尔.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "阿巴尔"
-            }
-          },
-          {
             "id": "e25cd6f7ab62a05b",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "03_武将技/全武将技名录.md",
+                "file": "03_武将技/战术技_6_败战计.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "全武将技名录"
+              "title": "战术技_6_败战计"
             }
           }
-        ],
-        "currentTab": 9
+        ]
       }
     ],
     "direction": "vertical"
@@ -311,9 +184,19 @@
   },
   "active": "e25cd6f7ab62a05b",
   "lastOpenFiles": [
-    "03_武将技/武将技体系.md",
-    "03_武将技/武将技规则.md",
+    "03_武将技/战术技_5_并战计.md",
+    "03_武将技/战术技_4_混战计.md",
+    "03_武将技/战术技_3_敌战计.md",
+    "03_武将技/战术技_2_胜战计.md",
+    "03_武将技/战术技_1_攻战计.md",
+    "03_武将技/武将战术技能.md",
+    "03_武将技/战术技_6_败战计.md",
     "03_武将技/全武将技名录.md",
+    "03_武将技/武将技规则.md",
+    "03_武将技/武将战略技能.md",
+    "03_武将技/武将技体系.md",
+    "04_系统机制/语音播报.md",
+    "04_系统机制/历史事件.md",
     "02_核心据点/00_全图势力与武将名册.md",
     "02_核心据点/00_全地图据点名册.md",
     "02_核心据点/阿墩子.md",
@@ -327,18 +210,8 @@
     "02_核心据点/迪化城.md",
     "02_核心据点/达尔甘.md",
     "02_核心据点/阊门.md",
-    "02_核心据点/白主.md",
-    "02_核心据点/卑沙城.md",
-    "02_核心据点/安阳.md",
-    "02_核心据点/阿托克.md",
-    "01_文化大区/00_十四文化圈汇总.md",
-    "04_系统机制/语音播报.md",
-    "04_系统机制/历史事件.md",
     "04_系统机制",
     "03_武将技",
-    "02_核心据点/龙门.md",
-    "02_核心据点/龙潭山.md",
-    "02_核心据点/龙溪.md",
     "02_核心据点",
     "02_据点",
     "02_势力",

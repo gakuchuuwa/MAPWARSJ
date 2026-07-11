@@ -1188,7 +1188,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'zhaowu', name: '昭武' },
 
-    { id: 'gaoliang', name: '冉駹羌' },
+    { id: 'gaoliang', name: '潘州' },
+
 
 
 
@@ -1496,6 +1497,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jingpozu', name: '景颇' },
 
     { id: 'shuizu', name: '水族' },
+
     { id: 'liuzhou', name: '柳州' },
     { id: 'luming', name: '郧州' },
     { id: 'dingzhou', name: '定州' },

@@ -191,7 +191,6 @@ export const UNDERDOG_CONDITIONS: ReadonlySet<TacticalSkillCondition> = new Set(
     'self_troops_below_enemy_pct',
     'side_comeback',
     'lose_as_underdog',
-    'battle_siege_defender',
 ]);
 
 export function getTacticalSixSet(entry: TacticalSkillEntry): TacticalSixSet {

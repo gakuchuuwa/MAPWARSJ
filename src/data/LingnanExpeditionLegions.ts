@@ -75,4 +75,5 @@ shengmiao: { name: '古州苗兵', tier: 4 },     // 甲定·包利连破清军�
     lancang: { name: '澜沧象兵', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     liuzhou: { name: '柳州狼兵', tier: 3 },           // 大明西南最强土司武装之一，雄于天下，抗倭名军，升入T3知名,
     chen: { name: '百越甲兵', tier: 3 },
+    shuizu: { name: '水族藤甲', tier: 3 },
 };

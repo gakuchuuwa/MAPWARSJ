@@ -2472,11 +2472,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -32
         },
-        "/assets/TIBET/gaoliang_dongzhen.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -32
-        },
         "/assets/STEPPE/geluolu_chisipijia.png": {
             "scale": 1.11,
             "offsetX": 0,
@@ -5633,9 +5628,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/TIBET/__闲置__TIBET_17.png": {
-            "scale": 1,
+            "scale": 0.91,
             "offsetX": 0,
-            "offsetY": -29
+            "offsetY": -32
         },
         "/assets/TIBET/gongtang_gongtangcang.png": {
             "scale": 0.93,
@@ -5761,6 +5756,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/litang/282afd3a-12fa-48b4-8c86-2c07ee12abe6.png": {
+            "scale": 1.25,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/litang/gaoliang_geshuhan.png": {
+            "scale": 1.25,
+            "offsetX": 0,
+            "offsetY": 20
         }
     },
     "folderGuides": {
