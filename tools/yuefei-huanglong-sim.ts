@@ -1,14 +1,13 @@
-/**
+﻿/**
  * 岳飞北伐黄龙路线模拟
  *
  * 用途：
- *   验证「岳飞率背嵬军：郾城 → … → 黄龙府」圆梦脚本，
- *   按路网逐城攻城（默认 22 场），守军 1000～满编随机，看 10 万兵能打到哪里。
+ *   验证「岳飞率背嵬军：郾城 → … → 黄龙府」圆梦脚本（v2 忠义归顺），
+ *   按路网逐城攻城（约 22 场），2 万起兵 + 战间徐徐补员，看能否直捣黄龙。
  *
  * 运行：
- *   npm run sim:yuefei
- *   npm run sim:yuefei -- --trials 50
- *   npm run sim:yuefei -- --defenders max --route waypoints   # 旧 4 城满编
+ *   npx tsx --import ./tools/sim-preload.mjs tools/yuefei-huanglong-sim.ts --trials 500 --sample 0
+ *   附加：--zhongyi-target N --zhongyi-jitter J --no-zhongyi --defenders max|random
  */
 import { GameConfig } from '../src/config/GameConfig';
 import { simulateOnce, type Terrain, type UnitSpec } from './combat-model';
@@ -24,10 +23,10 @@ import { isRegionCenter, type RegionType } from '../src/systems/RegionSystem';
 type DefenderMode = 'listed' | 'max' | 'random';
 type RouteMode = 'full' | 'waypoints';
 
+/** 必打路标：开封 → 北京 → 黄龙府（主人 2026-07-11 定；沈阳不必打，路网自定沿途） */
 const WAYPOINT_CITY_IDS = [
     'city_bianliang',
     'city_beijing',
-    'city_shenyang',
     'city_fuyu',
 ] as const;
 
@@ -37,16 +36,17 @@ const YUEFEI_GENERAL_ID = 'yanchuan_d_yuefei';
 const BEIWEI_ELITE_TIER = 0;
 
 /**
- * 忠义来投（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 的 ZHONGYI_EVENTS 保持同步）：
- * 克大站后河朔忠义响应，大额补兵（上限不超过开局十万）。
- * 数值经本工具批量调参（2026-07-11，300 局）：单次直捣黄龙 67.7%，两次至少一成 89.5%。
- * CLI：--zhongyi 15000,34000,26000（开封,北京,沈阳顺序）；--no-zhongyi 关闭。
+ * 忠义归顺 v2（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 保持同步）：
+ * 开局一律 2 万（不再强推十万），行军途中河朔忠义徐徐来投，
+ * 战间回填至目标值 → 每场攻城都是势均力敌（略有优势/略有劣势）。
+ * 本工具将「战间徐徐补员」近似为每胜后回填至 [target-jitter, target]
+ * 的随机值（实机行军长短不一，到站兵力天然浮动）。
+ * CLI：--zhongyi-target N 调回填上限；--zhongyi-jitter J 调浮动幅度；--no-zhongyi 关闭。
+ * 调参定稿（2026-07-11，500 局）：31750/3000 → 单次直捣黄龙 67.4%，两次至少一成 89.4%；
+ * 宁远城（袁崇焕）为天然最终 Boss（过关率 ~73%），黄龙府决战 ~94%。
  */
-const ZHONGYI_DEFAULTS: { cityId: string; label: string; amount: number }[] = [
-    { cityId: 'city_bianliang', label: '中原义军来投', amount: 15000 },
-    { cityId: 'city_beijing', label: '两河忠义蜂起', amount: 34000 },
-    { cityId: 'city_shenyang', label: '辽东义士来归', amount: 26000 },
-];
+const ZHONGYI_REFILL_TARGET_DEFAULT = 31750;
+const ZHONGYI_REFILL_JITTER_DEFAULT = 3000;
 
 function argNum(flag: string, fallback: number): number {
     const i = process.argv.indexOf(flag);
@@ -163,7 +163,7 @@ interface StepLog {
     won: boolean;
     survivorsAfterBattle: number;
     survivorsAfterSustain: number;
-    /** 忠义来投补兵（克大站后，0 = 本站无事件） */
+    /** 忠义归顺补兵（克大站后，0 = 本站无事件） */
     zhongyiBonus: number;
 }
 
@@ -172,13 +172,15 @@ function runOne(
     defenderMode: DefenderMode,
     terrainMode: string,
     initialTroops: number,
-    zhongyiByCityId: ReadonlyMap<string, number>,
+    /** 忠义归顺战间回填上限（0 = 关闭） */
+    zhongyiRefillTarget: number,
+    /** 回填浮动：实际回填到 [target-jitter, target] 的随机值 */
+    zhongyiRefillJitter: number,
 ): StepLog[] {
     let troops = initialTroops;
     const startCity = cityById(START_CITY_ID);
     const cap = getArmyMaxTroops(cityRegion(startCity));
-    /** 忠义补兵上限：不超过开局兵力（与游戏脚本一致） */
-    const zhongyiCap = Math.min(cap, initialTroops);
+    const refillMax = Math.min(cap, zhongyiRefillTarget);
     const logs: StepLog[] = [];
 
     for (let i = 0; i < routeIds.length; i++) {
@@ -202,13 +204,13 @@ function runOne(
                 target.type,
             )
             : 0;
-        // 忠义来投：克大站后补兵（上限=开局兵力）
+        // 忠义归顺 v2：战间徐徐补员，近似为胜后回填至 [max-jitter, max] 随机值
         let zhongyiBonus = 0;
         let afterZhongyi = sustained;
-        if (result.attackerWon) {
-            const amount = zhongyiByCityId.get(target.id) ?? 0;
-            if (amount > 0) {
-                afterZhongyi = Math.min(zhongyiCap, sustained + amount);
+        if (result.attackerWon && refillMax > 0) {
+            const refillTo = refillMax - Math.floor(Math.random() * (zhongyiRefillJitter + 1));
+            if (sustained < refillTo) {
+                afterZhongyi = refillTo;
                 zhongyiBonus = afterZhongyi - sustained;
             }
         }
@@ -236,24 +238,18 @@ function formatPct(n: number): string {
 
 function main(): void {
     const trials = Math.max(1, Math.floor(argNum('--trials', 100)));
-    const initialTroops = Math.max(1000, Math.floor(argNum('--troops', 100000)));
+    const initialTroops = Math.max(1000, Math.floor(argNum('--troops', 20000)));
     const defenderMode = argStr<DefenderMode>('--defenders', 'listed');
     const routeMode = argStr<RouteMode>('--route', 'full');
     const terrainMode = argStr('--terrain', 'plain');
     const sample = argNum('--sample', 1) > 0;
 
-    // 忠义来投：--no-zhongyi 关闭；--zhongyi a,b,c 覆盖三站数额（开封,北京,沈阳）
+    // 忠义归顺 v2：--no-zhongyi 关闭；--zhongyi-target N 回填上限；--zhongyi-jitter J 浮动
     const zhongyiOff = process.argv.includes('--no-zhongyi');
-    const zhongyiArg = argStr('--zhongyi', '');
-    const zhongyiAmounts = zhongyiArg
-        ? zhongyiArg.split(',').map((s) => Math.max(0, Math.floor(Number(s) || 0)))
-        : ZHONGYI_DEFAULTS.map((e) => e.amount);
-    const zhongyiByCityId = new Map<string, number>();
-    if (!zhongyiOff) {
-        ZHONGYI_DEFAULTS.forEach((e, i) => {
-            zhongyiByCityId.set(e.cityId, zhongyiAmounts[i] ?? e.amount);
-        });
-    }
+    const zhongyiRefillTarget = zhongyiOff
+        ? 0
+        : Math.max(0, Math.floor(argNum('--zhongyi-target', ZHONGYI_REFILL_TARGET_DEFAULT)));
+    const zhongyiRefillJitter = Math.max(0, Math.floor(argNum('--zhongyi-jitter', ZHONGYI_REFILL_JITTER_DEFAULT)));
 
     const routeIds = routeMode === 'full'
         ? buildFullRouteCityIds()
@@ -267,7 +263,7 @@ function main(): void {
     let firstSample: StepLog[] | null = null;
 
     for (let t = 0; t < trials; t++) {
-        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops, zhongyiByCityId);
+        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops, zhongyiRefillTarget, zhongyiRefillJitter);
         if (!firstSample) firstSample = logs;
         const wonCount = logs.filter((l) => l.won).length;
         capturedCounts[wonCount]++;
@@ -284,13 +280,12 @@ function main(): void {
     console.log('岳飞北伐黄龙路线模拟');
     console.log(`路线：${routeMode === 'full' ? `路网逐城 ${routeIds.length} 场` : '四阶段目标 4 场'}（郾城 → … → 黄龙府）`);
     console.log(`参数：初始 ${initialTroops.toLocaleString()} 兵，防守=${defenderMode}，地形=${terrainMode}，试跑=${trials}`);
-    if (zhongyiByCityId.size > 0) {
-        const desc = ZHONGYI_DEFAULTS
-            .map((e) => `${e.label}(${cityById(e.cityId).name}) +${(zhongyiByCityId.get(e.cityId) ?? 0).toLocaleString()}`)
-            .join('，');
-        console.log(`忠义来投：${desc}（上限=开局兵力）`);
+    if (zhongyiRefillTarget > 0) {
+        console.log(
+            `忠义归顺：战间徐徐补员至 ${(zhongyiRefillTarget - zhongyiRefillJitter).toLocaleString()}~${zhongyiRefillTarget.toLocaleString()}（随行军长短浮动）`,
+        );
     } else {
-        console.log('忠义来投：关闭');
+        console.log('忠义归顺：关闭');
     }
     const fullSuccess = capturedCounts[routeIds.length] ?? 0;
     console.log(`直捣黄龙成功率：${formatPct(fullSuccess / trials)}（两次至少一成：${formatPct(1 - (1 - fullSuccess / trials) ** 2)}）`);
