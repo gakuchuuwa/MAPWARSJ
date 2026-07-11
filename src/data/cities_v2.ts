@@ -2225,6 +2225,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_linrong', name: '临戎', factionId: 'woye', lat: 40.3, lng: 107, type: 'small_city', troops: 20000, region: 'HEXI' },
 
+
     { id: 'city_aowei', name: '媪围', factionId: 'lushui', lat: 37.396289, lng: 104.111938, type: 'small_city', troops: 20000, region: 'STEPPE' },
 
 

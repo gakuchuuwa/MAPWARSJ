@@ -897,11 +897,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 10,
             "offsetY": -2
         },
-        "/assets/LINGNAN/zhancheng_zhimin.png": {
-            "scale": 0.99,
-            "offsetX": 0,
-            "offsetY": 12
-        },
         "/assets/BASHU/chenzhou_d_zhanghao.png": {
             "scale": 0.98,
             "offsetX": 0,
@@ -3882,11 +3877,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/LINGNAN/__闲置__LINGNAN_14.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -6
-        },
         "/assets/LINGNAN/dayue_chenguojun.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5761,6 +5751,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -48
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_31.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/LINGNAN/zhancheng_zhimin.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {

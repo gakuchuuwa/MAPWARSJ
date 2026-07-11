@@ -33,7 +33,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）
   suzhou: { name: '骠骑郎卫', tier: 0 },  // 霍去病封狼居胥，彻底解除百年威胁，完全踩中T0“灭国级大捷”，升T0
     kang: { name: '鹰扬骁骑', tier: 4 },
-    woye: { name: '沃野镇兵', tier: 4 },
+    woye: { name: '沃野镇兵', tier: 3 },
     yangguan: { name: '西凉铁骑', tier: 2 },
     chile: { name: '两池军', tier: 3 },
     weiyuan: { name: '永安营兵', tier: 3 },

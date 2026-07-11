@@ -21668,23 +21668,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "富春-珠崖",
-                type: "road",
-                id: "road_city_fuchun_city_yazhou_1781120331265",
-                startConnection: "city_fuchun",
-                endConnection: "city_yazhou"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [107.5833, 16.4667],
-                    [108.989868, 18.432692],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "长乐府-艋舺",
                 type: "road",
                 id: "road_city_fuzhou_city_mengjia_1781121440794",
@@ -35067,6 +35050,34 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [114.90137456127097, 40.479609718428584],
                     [114.93024551678855, 40.47548529621179],
                     [115.052, 40.609],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "珠崖-海门",
+                type: "road",
+                id: "road_city_yazhou_city_hepu_1783781648122",
+                startConnection: "city_yazhou",
+                endConnection: "city_hepu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [108.989868, 18.432692],
+                    [108.72207641601564, 18.61110889734033],
+                    [108.67675781250001, 18.923175265301367],
+                    [108.67813110351564, 19.086777795661845],
+                    [108.94454956054689, 19.491191339807546],
+                    [109.08033966666666, 19.778653666666667],
+                    [109.098434, 20.047846],
+                    [109.11652833333333, 20.317038333333333],
+                    [109.13462266666666, 20.586230666666665],
+                    [109.152717, 20.855423000000002],
+                    [109.17081133333333, 21.124615333333335],
+                    [109.24118041992189, 21.419833053493488],
+                    [109.207, 21.663],
                 ]
             }
         },

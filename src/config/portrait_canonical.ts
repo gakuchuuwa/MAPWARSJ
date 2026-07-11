@@ -6,9 +6,7 @@
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
     "/assets/LINGNAN/guizhou_lidingguo.png": "/assets/BASHU/ba_bamanzi.png",
-    "/assets/chongfu/__闲置__LINGNAN_13.png": "/assets/BASHU/boren_ada.png",
-    "/assets/LINGNAN/zhancheng_zhimin.png": "/assets/BASHU/chenghan_lite.png",
-    "/assets/LINGNAN/jingjiang_qushisi.png": "/assets/BASHU/cong_puhu.png",
+    "/assets/chongfu/__闲置__LINGNAN_13.png": "/assets/BASHU/boren_ada.png",    "/assets/LINGNAN/jingjiang_qushisi.png": "/assets/BASHU/cong_puhu.png",
     "/assets/chongfu/__闲置__PANJUN_11.png": "/assets/BASHU/cong_puhu.png",
     "/assets/LINGNAN/xiou_yixusong.png": "/assets/BASHU/dangchang_liangmiding.png",
     "/assets/LINGNAN/luodian_shexiang.png": "/assets/BASHU/daxi_ming_zhangxianzhong.png",    "/assets/LINGNAN/yang_aner_yanganer.png": "/assets/BASHU/hezhou_wangjian.png",
