@@ -181,7 +181,7 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
 /** 第2步：六种 → 三类（攻·胜=优势 / 敌·混=均势 / 并·败=劣势） */
 export const SIX_SET_TO_TRI_CLASS: Readonly<Record<TacticalSixSet, TacticalTriClass>> = {
     gongzhan: 'advantage', shengzhan: 'advantage',
-    dizhan: 'disadvantage', hunzhan: 'balance',
+    dizhan: 'balance', hunzhan: 'balance',
     bingzhan: 'disadvantage', baizhan: 'disadvantage',
 };
 
@@ -193,12 +193,21 @@ export const UNDERDOG_CONDITIONS: ReadonlySet<TacticalSkillCondition> = new Set(
     'lose_as_underdog',
 ]);
 
+/** 方差/投机效果 —— 扩大随机性是劣势策略，强制归劣势 */
+const VARIANCE_EFFECTS: ReadonlySet<TacticalBaseEffect> = new Set<TacticalBaseEffect>([
+    'luck_variance_self',
+    'luck_variance_enemy',
+    'luck_lock_self',
+    'recompute_comeback',
+]);
+
 export function getTacticalSixSet(entry: TacticalSkillEntry): TacticalSixSet {
     return EFFECT_TO_SIX_SET[entry.baseEffect];
 }
 
 export function getTacticalTriClass(entry: TacticalSkillEntry): TacticalTriClass {
     if (UNDERDOG_CONDITIONS.has(entry.condition)) return 'disadvantage';
+    if (VARIANCE_EFFECTS.has(entry.baseEffect)) return 'disadvantage';
     return SIX_SET_TO_TRI_CLASS[EFFECT_TO_SIX_SET[entry.baseEffect]];
 }
 
