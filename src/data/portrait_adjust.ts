@@ -1417,11 +1417,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/DIANQIAN/ailao_leilao.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -48
-        },
         "/assets/DIANQIAN/basha_d_daogengmeng.png": {
             "scale": 1.35,
             "offsetX": -31,
@@ -4792,11 +4787,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -33
         },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_09.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -18
-        },
         "/assets/BASHU/nanzhong_mazhong.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5761,6 +5751,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.09,
             "offsetX": -13,
             "offsetY": -16
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_19.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -48
+        },
+        "/assets/DIANQIAN/ailao_leilao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -18
         }
     },
     "folderGuides": {
