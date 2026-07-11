@@ -122,7 +122,7 @@ export class Army implements IBattleUnit {
     /**
      * 远征目标城（GAME_DIRECTION「远征细则」2026-06-11）：
      * 非 null = 远征军团——目标锁死该城、断粮不回师，直至占领或全军覆没；
-     * null = 据点军团（近 3 敌城抽签 + 家城失守强制回师）。
+     * null = 据点军团（近 3 敌城抽签；家城正被攻城则回援、已失守则强制回师收复）。
      * 仅跟拍军团可被玩家下达远征指令（ExpeditionUI），AI 不会自行远征。
      */
     public expeditionTargetCityId: string | null = null;

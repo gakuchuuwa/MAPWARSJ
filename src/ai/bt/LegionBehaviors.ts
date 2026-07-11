@@ -3,12 +3,13 @@
  *
  * 军团 AI 行为树节点（收复发出点 → 附近敌军团追击 → 推进锚点近敌池抽签 → 沿路推进 → 攻城）
  *
- * 双模式（GAME_DIRECTION 2026-06-11）：
+ * 双模式（GAME_DIRECTION 2026-06-11；回援规则见 AGENTS.md「军团回援与收复规则」2026-07-11）：
  *   据点军团：
- *     · 本城正被攻打且仍属己方 → 回援守城（reinforceHome，以守方援军身份中途加入，早于城破）
+ *     · 本城正被攻城（真打起来的攻城战）且仍属己方 → 回援守城（reinforceHome）。
+ *       仅「非战斗状态」的军团回援（交战中不脱离；排队攻城算在路上，可回）；敌军仅在途/迫近不触发。
  *     · 本城已失守（易主）→ 强制回师收复（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
  *     · 否则 → 先扫附近敌军团（野战追击）→ 无则推进锚点近 3 敌城抽签
- *   远征军团：目标锁死、家城被攻打/失守均不回师（shouldSkipHomeRecapture），直至占领/兵败或全军覆没
+ *   远征军团：目标锁死、家城被攻城/失守均不回（shouldSkipHomeRecapture），直至占领/兵败或全军覆没
  */
 
 import { BTNode, BTStatus, BTContext, Condition, Action, Sequence, Selector } from './BehaviorTree';
@@ -52,7 +53,8 @@ export const IsPostBattleResting = new Condition('IsPostBattleResting', (ctx) =>
 });
 
 /**
- * 本城告急：正被攻打（仍我方，需回援）或已失守（需收复）。远征军团豁免（目标锁死不回家）。
+ * 本城告急：正被攻城（仍我方，需回援）或已失守（需收复）。远征军团豁免（目标锁死不回家）。
+ * 「正被攻城」取严格口径（isCityBeingSieged，真打起来才算；在途/迫近不算）。
  * 用于让「排队攻城干等」的军团在老家有事时立刻退出排队，回援/收复不受距离限制。
  */
 function homeNeedsHelp(ctx: BTContext): boolean {
@@ -61,7 +63,7 @@ function homeNeedsHelp(ctx: BTContext): boolean {
     if (!homeId) return false;
     const home = ctx.cityManager.getCity(homeId);
     if (!home || home.factionId !== ctx.army.getFactionId()) return true; // 已失守 → 收复
-    return ctx.legionManager.isCityUnderAttack(homeId);                    // 仍我方但被攻打 → 回援
+    return ctx.legionManager.isCityBeingSieged(homeId);                   // 仍我方且正被攻城 → 回援（在途/迫近不算）
 }
 
 /**
@@ -625,10 +627,10 @@ export const DisbandIntoHome = new Action('DisbandIntoHome', (ctx) => {
     return BTStatus.SUCCESS;
 });
 
-/** 本城是否正被攻打（围城/在途/排队） */
+/** 本城是否正在被攻城（严格：真打起来的攻城战；敌军在途/迫近不算） */
 export const IsHomeUnderAttack = new Condition('IsHomeUnderAttack', (ctx) => {
     const homeId = getArmyOriginCityId(ctx.army);
-    return !!homeId && ctx.legionManager.isCityUnderAttack(homeId);
+    return !!homeId && ctx.legionManager.isCityBeingSieged(homeId);
 });
 
 /** 本城仍属己方（尚未沦陷）——区分「回援守城」与「回攻收复」 */
@@ -721,8 +723,8 @@ const retreatWeakLegion = new Sequence('RetreatWeakLegion', [
     ]),
 ]);
 
-// 回援本城（不限兵力）：本城正被攻打且仍属己方（未沦陷）、非远征 →
-// 抵家则以援军身份中途加入守城，未抵家则星夜回援。
+// 回援本城（不限兵力）：本城正被攻城（真打起来）且仍属己方（未沦陷）、非远征 →
+// 抵家则以援军身份中途加入守城，未抵家则星夜回援。敌军仅在途/迫近不触发。
 // 比「等城破再回攻」更早救援；城一旦失守则由 attackSequence 内的收复逻辑接手。
 const reinforceHome = new Sequence('ReinforceHome', [
     IsNotExpeditionLegion,

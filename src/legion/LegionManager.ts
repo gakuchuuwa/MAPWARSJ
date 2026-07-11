@@ -521,9 +521,17 @@ export class LegionManager {
         return this.siegeManager?.isArmyWaitingSiege?.(armyId) ?? false;
     }
 
-    /** 本城是否正被攻打（围城/在途/排队） */
+    /** 本城是否正被攻打（围城/在途/排队）——宽口径，募兵等通用判定用 */
     public isCityUnderAttack(cityId: string): boolean {
         return this.siegeManager?.isCityUnderAttack?.(cityId) ?? false;
+    }
+
+    /**
+     * 本城是否正在被攻城——严格口径：只认真打起来的攻城战（hasActiveSiegeAt），
+     * 敌军仅在途/迫近不算。军团回援判定专用（AGENTS.md 军团回援与收复规则）。
+     */
+    public isCityBeingSieged(cityId: string): boolean {
+        return this.siegeManager?.hasActiveSiegeAt?.(cityId) ?? false;
     }
 
     /** 残兵撤回本城：本城守城战进行中则作为守方加入，成功返回 true */
