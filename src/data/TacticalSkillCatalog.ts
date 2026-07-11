@@ -181,7 +181,7 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
 /** 第2步：六种 → 三类（攻·胜=优势 / 敌·混=均势 / 并·败=劣势） */
 export const SIX_SET_TO_TRI_CLASS: Readonly<Record<TacticalSixSet, TacticalTriClass>> = {
     gongzhan: 'advantage', shengzhan: 'advantage',
-    dizhan: 'balance', hunzhan: 'balance',
+    dizhan: 'disadvantage', hunzhan: 'balance',
     bingzhan: 'disadvantage', baizhan: 'disadvantage',
 };
 

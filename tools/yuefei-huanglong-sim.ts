@@ -156,6 +156,7 @@ function pickTerrain(mode: string): Terrain {
 
 interface StepLog {
     cityName: string;
+    cityType: string;
     defenderName: string;
     startTroops: number;
     defenderTroops: number;
@@ -216,6 +217,7 @@ function runOne(
         }
         logs.push({
             cityName: target.name,
+            cityType: target.type,
             defenderName: defender.name ?? `${target.name}守军`,
             startTroops,
             defenderTroops: defender.troops,
@@ -291,15 +293,21 @@ function main(): void {
     console.log(`直捣黄龙成功率：${formatPct(fullSuccess / trials)}（两次至少一成：${formatPct(1 - (1 - fullSuccess / trials) ** 2)}）`);
     console.log('');
 
-    console.log('逐站通过率：');
+    const TYPE_LABEL: Record<string, string> = {
+        big_city: '大城', medium_city: '中城', small_city: '小城', pass: '关隘',
+    };
+    console.log('逐站通过率（类型 | 守军 | 抵达后胜率 | 胜后均兵）：');
     for (let i = 0; i < routeIds.length; i++) {
         const city = cityById(routeIds[i]);
         const reachRate = reached[i] / trials;
         const captureRate = captured[i] / trials;
         const conditionalRate = reached[i] > 0 ? captured[i] / reached[i] : 0;
         const avgSurvivors = captured[i] > 0 ? Math.round(survivorSums[i] / captured[i]) : 0;
+        const typeLabel = TYPE_LABEL[city.type] ?? city.type;
+        const garrison = defenderTroops(city, defenderMode);
         console.log(
-            `${String(i + 1).padStart(2)}. ${city.name}: 抵达 ${formatPct(reachRate)}，攻克 ${formatPct(captureRate)}，` +
+            `${String(i + 1).padStart(2)}. ${city.name}（${typeLabel}）: 守军 ${garrison.toLocaleString()}，` +
+            `抵达 ${formatPct(reachRate)}，攻克 ${formatPct(captureRate)}，` +
             `抵达后胜率 ${formatPct(conditionalRate)}，胜后均兵 ${avgSurvivors.toLocaleString()}`,
         );
     }
