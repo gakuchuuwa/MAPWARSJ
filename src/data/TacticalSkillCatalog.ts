@@ -150,7 +150,6 @@ export const TRI_CLASS_LABEL: Readonly<Record<TacticalTriClass, string>> = {
 export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixSet>> = {
     // 攻战·机（加己攻）
     ally_power_mult: 'gongzhan',
-    first_sortie_power_mult: 'gongzhan',
     // 胜战·全（减敌兵）
     enemy_sub_troops_opening: 'shengzhan',
     dual_sub_troops_opening: 'shengzhan',
@@ -158,8 +157,9 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
     luck_variance_self: 'dizhan',
     luck_variance_enemy: 'dizhan',
     luck_lock_self: 'dizhan',
-    // 混战·乱（克夺反 + 增兵破局）
+    // 混战·乱（克夺反 + 增兵破局 + 首战爆发）
     ally_add_troops_opening: 'hunzhan',
+    first_sortie_power_mult: 'hunzhan',
     steal_enemy_skill: 'hunzhan',
     negate_enemy_skill: 'hunzhan',
     partial_negate_enemy_skill: 'hunzhan',
