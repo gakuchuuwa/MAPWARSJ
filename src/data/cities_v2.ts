@@ -1417,7 +1417,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_yadong', name: '卓木', factionId: 'gaxa', lat: 28.243709, lng: 89.376526, type: 'small_city', region: 'TIBET', troops: 20000,
         note: '卓木；噶厦小城',
     },
-    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', troops: 20000, region: 'TIBET' },
+    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'pass', troops: 20000, region: 'TIBET', mirror: true },
+
 
 
  // 镜像

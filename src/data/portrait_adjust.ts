@@ -4992,11 +4992,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 7
         },
-        "/assets/litang/__闲置__litang_01.png": {
-            "scale": 1.14,
-            "offsetX": 0,
-            "offsetY": 6
-        },
         "/assets/litang/hepan_gaoxianzhi.png": {
             "scale": 1.05,
             "offsetX": 0,
@@ -5766,6 +5761,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.25,
             "offsetX": 0,
             "offsetY": 20
+        },
+        "/assets/litang/weizhou_weigao.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 6
         }
     },
     "folderGuides": {

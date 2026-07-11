@@ -58,8 +58,8 @@ const BEIWEI_ELITE_TIER = 0;
  * 调参定稿（2026-07-11，实机初始驻军 400 局）：13000/2000 → 单次直捣黄龙 72%，两次至少一成 92%；
  * 只压岳飞自身兵力、不碰敌方数据：小城 ~2.4 倍略优、大城/关隘 ~1.2 倍险胜。
  */
-const ZHONGYI_REFILL_TARGET_DEFAULT = 13000;
-const ZHONGYI_REFILL_JITTER_DEFAULT = 2000;
+const ZHONGYI_REFILL_TARGET_DEFAULT = 31750;
+const ZHONGYI_REFILL_JITTER_DEFAULT = 3000;
 
 function argNum(flag: string, fallback: number): number {
     const i = process.argv.indexOf(flag);
@@ -259,7 +259,7 @@ function formatPct(n: number): string {
 function main(): void {
     const trials = Math.max(1, Math.floor(argNum('--trials', 100)));
     const initialTroops = Math.max(1000, Math.floor(argNum('--troops', 20000)));
-    const defenderMode = argStr<DefenderMode>('--defenders', 'initial');
+    const defenderMode = argStr<DefenderMode>('--defenders', 'listed');
     const routeMode = argStr<RouteMode>('--route', 'full');
     const terrainMode = argStr('--terrain', 'plain');
     const sample = argNum('--sample', 1) > 0;
