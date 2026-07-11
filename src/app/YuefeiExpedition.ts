@@ -10,8 +10,10 @@
  *   target 变己方 → LegionBehaviors.resolveExpeditionState 自动清空 → 本脚本推进下一城。
  *
  * 忠义归顺 v2（脚本专属事件，数值与 tools/yuefei-huanglong-sim.ts 同步，勿单边改）：
- *   非战斗状态下河朔忠义徐徐来投（每 tick 小额补员），每场战后重掷回填上限
- *   （31,750 − 0~3,000 浮动），使每场攻城处于略有优势/略有劣势的胶着区间。
+ *   每克一城 / 每场战斗结束，河朔忠义即来投，一次性把兵力补齐到本程回填上限
+ *   （31,750 − 0~3,000 随机浮动）→ 每场攻城处于略有优势/略有劣势的胶着区间。
+ *   ⚠️ 补员必须在「战后结算」而非「沿途按真实时间涓流」：setInterval 按真实时间、
+ *      行军按游戏时间且受倍速影响，短程/5 倍速下涓流严重补不够（曾致第二战败于开封）。
  *   仿真 500 局定稿：单次直捣黄龙 67.4%，两次至少一成 89.4%（主人定的悬念档）；
  *   宁远城（袁崇焕）为天然最终 Boss，黄龙府决战 ~94%。
  */
@@ -35,13 +37,9 @@ const ROUTE: { id: string; name: string }[] = [
     { id: 'city_fuyu', name: '黄龙府' },
 ];
 
-/** 忠义归顺 v2：回填上限/浮动/速率（上限与浮动须与 yuefei-huanglong-sim 同步，勿单边改） */
+/** 忠义归顺 v2：回填上限/浮动（须与 yuefei-huanglong-sim 同步，勿单边改） */
 const ZHONGYI_REFILL_MAX = 31750;
 const ZHONGYI_REFILL_JITTER = 3000;
-/** 每 tick（400ms）补员量：典型行军一程可补回一场战损，长短程自然浮动 */
-const ZHONGYI_REFILL_PER_TICK = 150;
-/** 累计补员每满此数，军团头顶飘一次「忠义归顺」 */
-const ZHONGYI_FLOAT_TEXT_EVERY = 5000;
 
 /** 克大站演出（纯字幕/脉冲，不再直接加兵——补员由徐徐来投承担） */
 const ZHONGYI_WAYPOINT_LABELS: Record<string, string> = {
@@ -118,10 +116,8 @@ export class YuefeiExpedition {
     private appliedZhongyi = new Set<string>();
     /** 本程回填上限（每场战后在 MAX−JITTER~MAX 间重掷） */
     private refillCeiling = ZHONGYI_REFILL_MAX;
-    /** 上一 tick 是否在战斗中（用于捕捉战斗结束、重掷回填上限） */
+    /** 上一 tick 是否在战斗中（用于捕捉「战斗刚结束」这一帧做结算补员） */
     private wasInCombat = false;
-    /** 累计补员计数（飘字节流） */
-    private trickleAccum = 0;
 
     constructor(deps: YuefeiDeps) {
         this.deps = deps;
@@ -226,7 +222,6 @@ export class YuefeiExpedition {
         this.appliedZhongyi.clear();
         this.rerollRefillCeiling();
         this.wasInCombat = false;
-        this.trickleAccum = 0;
 
         gameLog('expedition', `🐎 [圆梦] 岳飞率背嵬军自郾城起兵，北伐黄龙：开封 → 北京 → 黄龙府，忠义归顺，众望所归`);
         this.notify('岳飞率背嵬军北伐——直捣黄龙！');
@@ -294,9 +289,10 @@ export class YuefeiExpedition {
     }
 
     /**
-     * 忠义归顺（脚本专属技）：非战斗状态下每 tick 小额补员至本程回填上限；
-     * 每场战斗结束重掷上限（长短程/浮动 → 每场攻城略有优势或略有劣势）。
-     * 演出：白字绿光（与战略技脉冲同款配色），累计补满一档在军团头顶飘四字技名。
+     * 忠义归顺（脚本专属技）：捕捉「战斗刚结束」这一帧，重掷本程回填上限并一次性补齐。
+     * 战后结算（非沿途涓流）→ 不依赖行军长短与倍速，与仿真「战后回填」完全对齐，
+     * 保证下一场攻城处于 refillCeiling 的略优/略劣胶着区间。
+     * 演出：白字绿光（与战略技脉冲同款配色），军团头顶飘四字技名「忠义归顺」。
      */
     private tickZhongyiTrickle(army: ScriptArmy): void {
         const inCombat = army.getIsInCombat?.() ?? false;
@@ -304,23 +300,21 @@ export class YuefeiExpedition {
             this.wasInCombat = true;
             return;
         }
-        if (this.wasInCombat) {
-            this.wasInCombat = false;
-            this.rerollRefillCeiling();
-        }
+        if (!this.wasInCombat) return; // 只在「战斗刚结束」这一帧结算
+        this.wasInCombat = false;
+        this.rerollRefillCeiling();
 
         const troops = army.getTroops();
         if (troops <= 0 || troops >= this.refillCeiling) return;
-        const next = Math.min(this.refillCeiling, troops + ZHONGYI_REFILL_PER_TICK);
-        army.setTroops(next);
+        const added = this.refillCeiling - troops;
+        army.setTroops(this.refillCeiling);
 
-        this.trickleAccum += next - troops;
-        if (this.trickleAccum >= ZHONGYI_FLOAT_TEXT_EVERY) {
-            this.trickleAccum = 0;
-            const pos = army.getPosition?.();
-            if (pos) spawnMapFloatingText(pos.lat, pos.lng, '忠义归顺', '#55ff55');
-            gameLog('expedition', `🐎 [圆梦] 忠义归顺，背嵬军现有 ${next.toLocaleString()} 众`);
-        }
+        const pos = army.getPosition?.();
+        if (pos) spawnMapFloatingText(pos.lat, pos.lng, '忠义归顺', '#55ff55');
+        gameLog(
+            'expedition',
+            `🐎 [圆梦] 忠义归顺 +${added.toLocaleString()}，背嵬军补至 ${this.refillCeiling.toLocaleString()} 众`,
+        );
     }
 
     /**
