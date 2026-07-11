@@ -2188,7 +2188,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/NORTH/guzhu_tianyu.png": {
-            "scale": 1.17,
+            "scale": 1.15,
             "offsetX": 0,
             "offsetY": 0
         },
