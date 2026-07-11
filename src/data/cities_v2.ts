@@ -717,9 +717,8 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
 
 
-    { id: 'city_maozhou', name: '汶川', factionId: 'qingqiang', lat: 31.693115, lng: 103.867493, type: 'small_city', region: 'BASHU', troops: 20000,
-        note: '汶川；青羌小城',
-    },
+    { id: 'city_maozhou', name: '汶川', factionId: 'qingqiang', lat: 31.693115, lng: 103.867493, type: 'small_city', troops: 20000, region: 'BASHU' },
+
     { id: 'city_qingyuan', name: '清远', factionId: 'chen', lat: 23.68, lng: 113.06, type: 'small_city', troops: 20000, region: 'LINGNAN' },
 
     { id: 'city_gaoque', name: '高阙塞', factionId: 'baiyang', lat: 41.195202, lng: 107.166138, type: 'pass', troops: 20000, region: 'HEXI' },
@@ -2468,17 +2467,8 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     // ── 2026-05-30 新增：哈拉和林(蒙古帝国首都) ──
-    {
-        id: 'city_karakorum',
-        name: '哈拉和林',
-        factionId: 'menggu_d',
-        lat: 47.137441,
-        lng: 103.035278,
-        type: 'big_city',
-        troops: 20000,
-        tier: 0,
-        
-        note: '蒙古帝国哈拉和林', region: 'STEPPE' },
+    { id: 'city_karakorum', name: '哈拉和林', factionId: 'menggu_d', lat: 47.137441, lng: 103.035278, type: 'big_city', troops: 20000, region: 'STEPPE' },
+
     { id: 'city_xingzhuting', name: '星主厅', factionId: 'danluo', lat: 33.5131, lng: 126.5215, type: 'small_city', region: 'KOREA', troops: 20000, note: '南方/日本/朝鲜环线共用锚点；文化朝鲜（济州）' },
     { id: 'city_deokwon', name: '德源', factionId: 'donghui', lat: 39.54, lng: 127.24, type: 'pass', region: 'KOREA', troops: 20000, note: '朝鲜德源郡旧地；咸兴—平壤道关隘；≠黑龙江双城' },
     { id: 'city_yuezhi', name: '大木岳', factionId: 'chen3', lat: 36.8353, lng: 127.0417, type: 'pass', region: 'KOREA', troops: 20000,

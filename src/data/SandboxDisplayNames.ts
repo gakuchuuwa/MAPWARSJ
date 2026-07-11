@@ -669,7 +669,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-31 新增：民族起源地6势力 ──
     'xiangxiong': '象雄',
-    'qingqiang': '茂',
+'qingqiang': '冉駹',
 'zhaowu': '昭武',
 'ganzhou': '甘',
 'gaoliang': '冉駹',

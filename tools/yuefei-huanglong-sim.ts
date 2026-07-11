@@ -23,7 +23,7 @@ import { isRegionCenter, type RegionType } from '../src/systems/RegionSystem';
 type DefenderMode = 'listed' | 'max' | 'random';
 type RouteMode = 'full' | 'waypoints';
 
-/** 必打路标：开封 → 北京 → 黄龙府（主人 2026-07-11 定；沈阳不必打，路网自定沿途） */
+/** 必打路标：开封 → 北京 → 黄龙府（主人 2026-07-11 定） */
 const WAYPOINT_CITY_IDS = [
     'city_bianliang',
     'city_beijing',

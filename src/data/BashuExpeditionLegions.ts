@@ -50,7 +50,7 @@ qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅�
     dangchang: { name: '陇右铁骑', tier: 2 },
   liao: { name: '巴僚弩手', tier: 4 },        // 江阳·侯弘远僚人酋帅（缺乏极其著名的战术高光，降T3）
   sou: { name: '越巂叟兵', tier: 4 },         // 乐山·高定元叟族反蜀（缺乏极其著名的战术高光，降T3）
-  qingqiang: { name: '青羌突骑', tier: 3 },    // 姜维北伐核心兵源，三国文化特色异族骑兵，升T2
+    qingqiang: { name: '冉駹突骑', tier: 3 },
   qingyi: { name: '天师道众', tier: 3 },       // 汉末张鲁政教合一的道教武装（鬼卒/祭酒），文化辨识度极高，升入T3知名
   // ── 2026-06-18：武陵/叙永/慈利/秀山/房陵/珙县/来凤精锐 ──
     zhongxiang: { name: '锦帆贼', tier: 2 },

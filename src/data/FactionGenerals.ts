@@ -482,7 +482,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dangchang: { generalId: 'dangchang_liangmiding', generalName: '梁弥定', portrait: '/assets/BASHU/dangchang_liangmiding.png' },
     liao: { generalId: 'liao_houhongyuan', generalName: '侯弘远', portrait: '/assets/BASHU/liao_houhongyuan.png' }, // 江阳·僚人酋帅
     sou: { generalId: 'sou_gaodingyuan', generalName: '高定元', portrait: '/assets/BASHU/sou_gaodingyuan.png' }, // 乐山·越巂叟族首领
-    qingqiang: { generalId: 'qingqiang_jiangwei', generalName: '姜维', portrait: '/assets/BASHU/qingqiang_jiangwei.png' }, // 汶川·蜀汉大将军
+    qingqiang: { generalId: 'qingqiang_jiangwei', generalName: '姜维', portrait: '/assets/BASHU/qingqiang_jiangwei.png' },
     qingyi: { generalId: 'qingyi_fanchangsheng', generalName: '范长生', portrait: '/assets/BASHU/qingyi_fanchangsheng.png' },
 
   // ── 河西区 2026-06-18 ──

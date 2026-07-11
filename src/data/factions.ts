@@ -177,6 +177,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'menggu_d', name: '蒙古' },
+
     { id: 'manzhou', name: '满洲' },
 
     { id: 'manzhou_d', name: '大清' },
@@ -1182,7 +1183,8 @@ export const FACTIONS: Faction[] = [
     { id: 'keerqin', name: '科尔沁' },
 
     { id: 'xiangxiong', name: '象雄' },
-    { id: 'qingqiang', name: '青羌' },
+    { id: 'qingqiang', name: '冉駹' },
+
     { id: 'zhaowu', name: '昭武' },
 
     { id: 'gaoliang', name: '冉駹羌' },

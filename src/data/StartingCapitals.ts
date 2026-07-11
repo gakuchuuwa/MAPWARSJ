@@ -609,7 +609,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'keerqin': 'city_daerhan',
     // -- 2026-05-31 民族起源地6势力 --
     'xiangxiong': 'city_qionglong',
-    'qingqiang': 'city_maozhou',
+'qingqiang': 'city_maozhou',
 'zhaowu': 'city_huzhan',
 'ganzhou': 'city_zhangye',
 'gaoliang': 'city_panzhou',

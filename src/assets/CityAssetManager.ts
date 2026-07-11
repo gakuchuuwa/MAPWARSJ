@@ -667,7 +667,7 @@ export class CityAssetManager {
         'wensu': '温宿',
         'keerqin': '科尔',
         'xiangxiong': '象雄',
-        'qingqiang': '茂',
+'qingqiang': '冉駹',
 'zhaowu': '昭武',
 'ganzhou': '甘',
 'gaoliang': '冉駹',
