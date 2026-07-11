@@ -91,7 +91,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   zhengzhou: { name: '白袍军', tier: 2 },        // 仅存在于北伐战役，随后覆灭，极度缺乏建制延续性，属于特定战役的巅峰高光，符合T2战术
     song: { name: '殿前捧日', tier: 1 },
     zhao: { name: '丛台绝剑', tier: 2 },
-    qing: { name: '泾原锐骑', tier: 1 },
+    qing: { name: '泾原锐骑', tier: 2 },
     luming: { name: '天雄军', tier: 2 },
     long2: { name: '陇上暗桩', tier: 3 },
     chimei: { name: '赤眉军', tier: 2 },
