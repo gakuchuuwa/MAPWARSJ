@@ -4750,6 +4750,45 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_740', layer: 'tactical', series: 'casualty', index: 740, displayName: '整军挫锐', sourceQuote: '治军挫锐', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【整军挫锐】三势精修·劣局' },
 ];
 
+const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
+    { id: 'ts_741', layer: 'tactical', series: 'troop', index: 741, displayName: '八百壮士', sourceQuote: '四行仓库八百壮士，誓死坚守，震撼敌军', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'opening_roll', magnitude: 0.15, engineStatus: 'ready' },
+    { id: 'ts_742', layer: 'tactical', series: 'troop', index: 742, displayName: '孤注一掷', sourceQuote: '《晋书·何无忌传》刘裕倾其所有，孤注一挗', baseEffect: 'ally_add_troops_opening', condition: 'ratio_underdog', phase: 'opening_roll', magnitude: 0.1, engineStatus: 'ready' },
+    { id: 'ts_743', layer: 'tactical', series: 'counter', index: 743, displayName: '断道绝险', sourceQuote: '《三国志·张郃传》街亭之战张郃断马谡汲水之道', baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_744', layer: 'tactical', series: 'counter', index: 744, displayName: '暗渡陈仓', sourceQuote: '《史记·淮阴侯列传》韩信绕开正面险要，出奇兵平定三秦', baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_745', layer: 'tactical', series: 'counter', index: 745, displayName: '引蛇出洞', sourceQuote: '《三十六计》战术，引诱敌人离开坚固阵地', baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_746', layer: 'tactical', series: 'counter', index: 746, displayName: '白马救围', sourceQuote: '《三国志·关羽传》关羽策马刺颜良于万众之中，解白马之围', baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_747', layer: 'tactical', series: 'counter', index: 747, displayName: '平地起雷', sourceQuote: '隐喻在平原野战中突然发动的奇袭，粉碎敌军阵型', baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_748', layer: 'tactical', series: 'counter', index: 748, displayName: '围魏救赵', sourceQuote: '《史记·孙子吴起列传》孙膡避实就虚，攻其必救', baseEffect: 'halve_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
+    { id: 'ts_749', layer: 'tactical', series: 'counter', index: 749, displayName: '威震逍遥', sourceQuote: '《三国志·张辽传》张辽威震逍遥津，挫败孙权攻城优势', baseEffect: 'halve_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
+    { id: 'ts_750', layer: 'tactical', series: 'counter', index: 750, displayName: '敲山震虎', sourceQuote: '隐语战术，通过攻击旁侧来动摇敌方主力据点', baseEffect: 'halve_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
+    { id: 'ts_751', layer: 'tactical', series: 'counter', index: 751, displayName: '退避三舍', sourceQuote: '《左传·僖公二十二年》城濮之战晋文公主动后退避开楚军锋芒', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_752', layer: 'tactical', series: 'counter', index: 752, displayName: '结营凭险', sourceQuote: '《三国志·陆逊传》夷陵之战陆逊坚守不出，拒敌锋锐', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_753', layer: 'tactical', series: 'counter', index: 753, displayName: '按甲休兵', sourceQuote: '《吕氏春秋》不战而屈人之兵，免去接战损失', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_754', layer: 'tactical', series: 'counter', index: 754, displayName: '偃旗息鼓', sourceQuote: '《三国志·赵云传》赵云汉水空营计，堰旗息鼓拒曹操', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_755', layer: 'tactical', series: 'counter', index: 755, displayName: '刮骨疗毒', sourceQuote: '《三国志·关羽传》关羽从容刮骨，军心不乱，无视开局创伤', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_756', layer: 'tactical', series: 'counter', index: 756, displayName: '单刀赴会', sourceQuote: '《三国志·鲁肃传》肃邀羽相见，各驻兵马百步上，免遭暗算', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_757', layer: 'tactical', series: 'counter', index: 757, displayName: '壁垒森严', sourceQuote: '形容营垒防御极其严密，令敌军无隙可乘', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_758', layer: 'tactical', series: 'counter', index: 758, displayName: '坚如磐石', sourceQuote: '《玉台新咏》防守如同磐石般不可动摇', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_759', layer: 'tactical', series: 'counter', index: 759, displayName: '反客为主', sourceQuote: '《三十六计》乘隙插足，扼其主机，将敌方优势化为己用', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_760', layer: 'tactical', series: 'counter', index: 760, displayName: '临阵倒戈', sourceQuote: '《尚书·武成》牧野之战商军前徒倒戈，敌军战术反助我方', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_761', layer: 'tactical', series: 'counter', index: 761, displayName: '草船借箭', sourceQuote: '《三国演义》诸葛亮大雾江中借箭，化敌之攻为己之备', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_762', layer: 'tactical', series: 'counter', index: 762, displayName: '借东风势', sourceQuote: '《三国演义》诸葛亮借东风，窃取天时为己方火攻之利', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_763', layer: 'tactical', series: 'counter', index: 763, displayName: '移花接木', sourceQuote: '巧妙偷换手段，将敌方施加的技能转移化用', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_764', layer: 'tactical', series: 'counter', index: 764, displayName: '减灶诱敌', sourceQuote: '《史记·孙子吴起列传》马陵之战孙膡减灶诱庞涓，以退为进斩之', baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_765', layer: 'tactical', series: 'counter', index: 765, displayName: '火烧连营', sourceQuote: '《三国志·陆逊传》陆逊退避后纵火烧连营，将敌方前压化为反噬', baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_766', layer: 'tactical', series: 'counter', index: 766, displayName: '请君入瓮', sourceQuote: '《资治通鉴》周兴酷吏被来俊臣以其人之道还治其人之身', baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_767', layer: 'tactical', series: 'counter', index: 767, displayName: '借力打力', sourceQuote: '太极拳理，将敌方开局猛攻的动能反弹给对方', baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_768', layer: 'tactical', series: 'counter', index: 768, displayName: '诱敌伏击', sourceQuote: '故意暴露出破绽承受小损，换取合围全歼的巨大战果', baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_769', layer: 'tactical', series: 'counter', index: 769, displayName: '连环妙计', sourceQuote: '《三十六计》将多兵众，不可以敌，使其自累，化解半数攻势', baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
+    { id: 'ts_770', layer: 'tactical', series: 'counter', index: 770, displayName: '锦囊妙计', sourceQuote: '《三国演义》诸葛亮预留锦囊，在关键时刻化解敌方计谋', baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
+    { id: 'ts_771', layer: 'tactical', series: 'counter', index: 771, displayName: '纸上谈兵', sourceQuote: '《史记·廉颇蔺相如列传》看破赵括死板战术，令其战术效果大减', baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
+    { id: 'ts_772', layer: 'tactical', series: 'counter', index: 772, displayName: '割须弃袍', sourceQuote: '《三国演义》曹操狼狈逃窜，但也借此化解了马超的致命一击', baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
+    { id: 'ts_773', layer: 'tactical', series: 'counter', index: 773, displayName: '辕门射戟', sourceQuote: '《三国志·吕布传》吕布射戟解纪灵之围，强行中止敌方攻势', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_774', layer: 'tactical', series: 'counter', index: 774, displayName: '击鼓骂曹', sourceQuote: '《三国演义》祢衡裸衣击鼓，气场压制敌方，废除其战术', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_775', layer: 'tactical', series: 'counter', index: 775, displayName: '兵不厌诈', sourceQuote: '《韩非子·难一》战阵之间，不厌诈伪，以此看破敌方诡计', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+    { id: 'ts_776', layer: 'tactical', series: 'counter', index: 776, displayName: '反间奇谋', sourceQuote: '利用敌方内部矛盾，使敌方战术布置直接瘱痪', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
+];
+
 export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
     ...ENHANCE,
     ...FATE,
@@ -4766,6 +4805,7 @@ export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
     ...UNIQUE_T1_GENERAL3,
     ...UNIQUE_T1_TAIL,
     ...UNIQUE_T1_PRECISION,
+    ...UNIQUE_T1_EXPAND,
 ];
 
 export const TACTICAL_SKILL_BY_ID: Readonly<Record<string, TacticalSkillEntry>> = Object.fromEntries(

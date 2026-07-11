@@ -455,6 +455,11 @@ export class CombatSystem {
         title?: string,
         description?: string
     ): BattleField {
+        // 岳飞北伐圆梦脚本：脚本激活中 → 岳飞军团每场必胜
+        if (!presetResult && (window as any).__yuefeiExpeditionActive) {
+            const isYuefeiAttacking = attackerUnits.some((u) => u.generalId === 'yanchuan_d_yuefei');
+            if (isYuefeiAttacking) presetResult = 'attacker_win';
+        }
         const battleField = new BattleField(
             attackerFactionId,
             attackerUnits,

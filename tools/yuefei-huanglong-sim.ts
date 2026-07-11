@@ -22,18 +22,11 @@ import { isRegionCenter, type RegionType } from '../src/systems/RegionSystem';
 
 type DefenderMode = 'listed' | 'max' | 'random' | 'initial';
 type RouteMode = 'full' | 'waypoints';
-type RefillMode = 'always' | 'hard';
 
 /** 城型初始驻军（与 src/config/CityConfig.ts CITY_CONFIG.initialTroops 同步）——反映脚本早期实机守军 */
 const CITY_INITIAL_GARRISON: Record<string, number> = {
     big_city: 10000, medium_city: 5000, small_city: 5000, pass: 10000,
 };
-
-/** 忠义归顺「硬仗才补」判定：非小城即硬据点；宁远城为小城强将（袁崇焕），单独并入 */
-const EXTRA_HARD_CITY_IDS = new Set<string>(['city_ningyuan']);
-function isHardTarget(city: CityDataV2): boolean {
-    return city.type !== 'small_city' || EXTRA_HARD_CITY_IDS.has(city.id);
-}
 
 /** 必打路标：开封 → 北京 → 黄龙府（主人 2026-07-11 定） */
 const WAYPOINT_CITY_IDS = [
@@ -48,18 +41,14 @@ const YUEFEI_GENERAL_ID = 'yanchuan_d_yuefei';
 const BEIWEI_ELITE_TIER = 0;
 
 /**
- * 忠义归顺 v2（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 保持同步）：
- * 开局一律 2 万（不再强推十万），行军途中河朔忠义徐徐来投，
- * 战间回填至目标值 → 每场攻城都是势均力敌（略有优势/略有劣势）。
- * 本工具将补员近似为每胜后回填至 [target-jitter, target] 的随机值。
- * CLI：--zhongyi-target N 调回填上限；--zhongyi-jitter J 调浮动幅度；--no-zhongyi 关闭。
- * ⚠️ 守军须用 --defenders initial（城型初始驻军 5,000~10,000，反映实机早期北伐）；
- *    listed 的 2 万是录入值、非实机，勿用它调参（曾据此错调出 3 万上限 → 实机 100% 无悬念）。
- * 调参定稿（2026-07-11，实机初始驻军 400 局）：13000/2000 → 单次直捣黄龙 72%，两次至少一成 92%；
- * 只压岳飞自身兵力、不碰敌方数据：小城 ~2.4 倍略优、大城/关隘 ~1.2 倍险胜。
+ * 忠义归顺 v3（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 保持同步）：
+ * 开局一律 2 万，每场战斗胜利后河朔忠义来投 +5,000~10,000（随机）。
+ * 兵力可自然累积至远超起兵数，反映「越打越多」的北伐实况。
+ * CLI：--zhongyi-min M 调最低加成；--zhongyi-max M 调最高加成；--no-zhongyi 关闭。
+ * ⚠️ 守军须用 --defenders initial（城型初始驻军 5,000~10,000，反映实机早期北伐）。
  */
-const ZHONGYI_REFILL_TARGET_DEFAULT = 31750;
-const ZHONGYI_REFILL_JITTER_DEFAULT = 3000;
+const ZHONGYI_BONUS_MIN_DEFAULT = 5000;
+const ZHONGYI_BONUS_MAX_DEFAULT = 10000;
 
 function argNum(flag: string, fallback: number): number {
     const i = process.argv.indexOf(flag);
@@ -187,17 +176,14 @@ function runOne(
     defenderMode: DefenderMode,
     terrainMode: string,
     initialTroops: number,
-    /** 忠义归顺战间回填上限（0 = 关闭） */
-    zhongyiRefillTarget: number,
-    /** 回填浮动：实际回填到 [target-jitter, target] 的随机值 */
-    zhongyiRefillJitter: number,
-    /** always=每场补；hard=只在下一站硬据点（非小城 / 宁远）前补 */
-    refillMode: RefillMode,
+    /** 忠义归顺每次战间加成下限（0 = 关闭） */
+    zhongyiBonusMin: number,
+    /** 忠义归顺每次战间加成上限 */
+    zhongyiBonusMax: number,
 ): StepLog[] {
     let troops = initialTroops;
     const startCity = cityById(START_CITY_ID);
     const cap = getArmyMaxTroops(cityRegion(startCity));
-    const refillMax = Math.min(cap, zhongyiRefillTarget);
     const logs: StepLog[] = [];
 
     for (let i = 0; i < routeIds.length; i++) {
@@ -221,17 +207,12 @@ function runOne(
                 target.type,
             )
             : 0;
-        // 忠义归顺 v2：战后为「下一战」回填；hard 模式只在下一站硬据点前补，小城不补
+        // 忠义归顺 v3：每场战斗胜利后，河朔忠义来投 +[bonusMin, bonusMax] 随机
         let zhongyiBonus = 0;
         let afterZhongyi = sustained;
-        const nextTarget = i + 1 < routeIds.length ? cityById(routeIds[i + 1]) : null;
-        const doRefill = refillMode === 'always' || (nextTarget != null && isHardTarget(nextTarget));
-        if (result.attackerWon && refillMax > 0 && doRefill) {
-            const refillTo = refillMax - Math.floor(Math.random() * (zhongyiRefillJitter + 1));
-            if (sustained < refillTo) {
-                afterZhongyi = refillTo;
-                zhongyiBonus = afterZhongyi - sustained;
-            }
+        if (result.attackerWon && zhongyiBonusMax > 0) {
+            zhongyiBonus = zhongyiBonusMin + Math.floor(Math.random() * (zhongyiBonusMax - zhongyiBonusMin + 1));
+            afterZhongyi = Math.min(sustained + zhongyiBonus, cap);
         }
         logs.push({
             cityName: target.name,
@@ -264,13 +245,14 @@ function main(): void {
     const terrainMode = argStr('--terrain', 'plain');
     const sample = argNum('--sample', 1) > 0;
 
-    // 忠义归顺 v2：--no-zhongyi 关闭；--zhongyi-target N 回填上限；--zhongyi-jitter J 浮动
+    // 忠义归顺 v3：--no-zhongyi 关闭；--zhongyi-min N 每次最低加成；--zhongyi-max N 每次最高加成
     const zhongyiOff = process.argv.includes('--no-zhongyi');
-    const zhongyiRefillTarget = zhongyiOff
+    const zhongyiBonusMin = zhongyiOff
         ? 0
-        : Math.max(0, Math.floor(argNum('--zhongyi-target', ZHONGYI_REFILL_TARGET_DEFAULT)));
-    const zhongyiRefillJitter = Math.max(0, Math.floor(argNum('--zhongyi-jitter', ZHONGYI_REFILL_JITTER_DEFAULT)));
-    const refillMode = argStr<RefillMode>('--refill-mode', 'always');
+        : Math.max(0, Math.floor(argNum('--zhongyi-min', ZHONGYI_BONUS_MIN_DEFAULT)));
+    const zhongyiBonusMax = zhongyiOff
+        ? 0
+        : Math.max(zhongyiBonusMin, Math.floor(argNum('--zhongyi-max', ZHONGYI_BONUS_MAX_DEFAULT)));
 
     const routeIds = routeMode === 'full'
         ? buildFullRouteCityIds()
@@ -284,7 +266,7 @@ function main(): void {
     let firstSample: StepLog[] | null = null;
 
     for (let t = 0; t < trials; t++) {
-        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops, zhongyiRefillTarget, zhongyiRefillJitter, refillMode);
+        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops, zhongyiBonusMin, zhongyiBonusMax);
         if (!firstSample) firstSample = logs;
         const wonCount = logs.filter((l) => l.won).length;
         capturedCounts[wonCount]++;
@@ -301,11 +283,8 @@ function main(): void {
     console.log('岳飞北伐黄龙路线模拟');
     console.log(`路线：${routeMode === 'full' ? `路网逐城 ${routeIds.length} 场` : '四阶段目标 4 场'}（郾城 → … → 黄龙府）`);
     console.log(`参数：初始 ${initialTroops.toLocaleString()} 兵，防守=${defenderMode}，地形=${terrainMode}，试跑=${trials}`);
-    if (zhongyiRefillTarget > 0) {
-        const modeDesc = refillMode === 'hard' ? '仅硬据点前补（小城不补）' : '每场战后补';
-        console.log(
-            `忠义归顺：回填 ${(zhongyiRefillTarget - zhongyiRefillJitter).toLocaleString()}~${zhongyiRefillTarget.toLocaleString()}，${modeDesc}`,
-        );
+    if (zhongyiBonusMax > 0) {
+        console.log(`忠义归顺：每场战后再加 ${zhongyiBonusMin.toLocaleString()}~${zhongyiBonusMax.toLocaleString()} 兵`);
     } else {
         console.log('忠义归顺：关闭');
     }

@@ -1,5 +1,5 @@
 ﻿/**
- * 岳飞北伐黄龙圆梦脚本（2026-07-11，v2 忠义归顺）
+ * 岳飞北伐黄龙圆梦脚本（2026-07-11，v3 忠义归顺）
  *
  * 玩家点「⚔ 岳飞北伐黄龙」按钮 → 郾城生成岳飞·背嵬军（2 万兵，与常规军团同量级），
  * 镜头自动跟拍，按必打路标逐城远征：开封 → 北京 → 黄龙府；沿途经路网逐城攻城。
@@ -9,19 +9,15 @@
  *   set target → 行为树锁死目标行军攻城（断粮不回）；
  *   target 变己方 → LegionBehaviors.resolveExpeditionState 自动清空 → 本脚本推进下一城。
  *
- * 忠义归顺 v2（脚本专属事件，数值与 tools/yuefei-huanglong-sim.ts 同步，勿单边改）：
- *   每克一城 / 每场战斗结束，河朔忠义即来投，一次性把兵力补齐到本程回填上限
- *   （31,750 − 0~3,000 随机浮动）→ 全程约 3 万，稳定推进直捣黄龙（实测能稳到黄龙）。
- *   ⚠️ 补员必须在「战后结算」而非「沿途按真实时间涓流」：setInterval 按真实时间、
- *      行军按游戏时间且受倍速影响，短程/5 倍速下涓流严重补不够（曾致第二战败于开封）。
- *   ⚠️ 教训（勿再犯）：曾把上限压到 1.3 万想弱化小城碾压，结果实机大城守军会成长、
- *      远高于城型初始值（1.3 万打不过开封）→ 已回滚 3 万。只靠压岳飞兵力无法兼得
- *      「不碾压小城」与「打得过大城」；要弱化碾压须改寻路跳过小城，不能削岳飞。
+ * 忠义归顺 v3（脚本专属事件，数值与 tools/yuefei-huanglong-sim.ts 同步，勿单边改）：
+ *   每场战斗胜利后，河朔忠义来投 +5,000~10,000（随机），兵力可自然累积。
+ *   ⚠️ 补员必须在「战后结算」而非「沿途涓流」：setInterval 按真实时间、
+ *      行军按游戏时间且受倍速影响，短程/5 倍速下涓流严重补不够。
  */
 
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { gameLog } from '../utils/GameLogger';
-import { spawnMapPulse, spawnMapFloatingText } from '../utils/MapFloatingText';
+import { spawnMapFloatingText } from '../utils/MapFloatingText';
 
 /** 起兵据点：郾城（岳飞·郾川势力都城） */
 const START_CITY_ID = 'city_yancheng2';
@@ -38,9 +34,9 @@ const ROUTE: { id: string; name: string }[] = [
     { id: 'city_fuyu', name: '黄龙府' },
 ];
 
-/** 忠义归顺 v2：回填上限/浮动（须与 yuefei-huanglong-sim 同步，勿单边改） */
-const ZHONGYI_REFILL_MAX = 31750;
-const ZHONGYI_REFILL_JITTER = 3000;
+/** 忠义归顺 v3：每次战后再加兵力范围（须与 yuefei-huanglong-sim 同步，勿单边改） */
+const ZHONGYI_BONUS_MIN = 5000;
+const ZHONGYI_BONUS_MAX = 10000;
 
 /** 克大站演出（纯字幕/脉冲，不再直接加兵——补员由徐徐来投承担） */
 const ZHONGYI_WAYPOINT_LABELS: Record<string, string> = {
@@ -115,8 +111,6 @@ export class YuefeiExpedition {
     private timer: number | null = null;
     /** 已演出过的忠义大站（防重复脉冲） */
     private appliedZhongyi = new Set<string>();
-    /** 本程回填上限（每场战后在 MAX−JITTER~MAX 间重掷） */
-    private refillCeiling = ZHONGYI_REFILL_MAX;
     /** 上一 tick 是否在战斗中（用于捕捉「战斗刚结束」这一帧做结算补员） */
     private wasInCombat = false;
 
@@ -176,6 +170,7 @@ export class YuefeiExpedition {
 
     /** 点按钮：起兵北伐（已有岳飞军则切跟随并继续，不重复出兵） */
     public start(): void {
+        (window as any).__yuefeiExpeditionActive = true;
         const existing = this.findExistingYuefeiArmy();
         if (existing) {
             this.resumeOrStartScript(existing);
@@ -221,7 +216,6 @@ export class YuefeiExpedition {
         this.armyId = army.id;
         this.waypointIndex = 0;
         this.appliedZhongyi.clear();
-        this.rerollRefillCeiling();
         this.wasInCombat = false;
 
         gameLog('expedition', `🐎 [圆梦] 岳飞率背嵬军自郾城起兵，北伐黄龙：开封 → 北京 → 黄龙府，忠义归顺，众望所归`);
@@ -283,16 +277,9 @@ export class YuefeiExpedition {
         }
     }
 
-    /** 重掷本程回填上限：MAX − 0~JITTER（与仿真同分布） */
-    private rerollRefillCeiling(): void {
-        this.refillCeiling =
-            ZHONGYI_REFILL_MAX - Math.floor(Math.random() * (ZHONGYI_REFILL_JITTER + 1));
-    }
-
     /**
-     * 忠义归顺（脚本专属技）：捕捉「战斗刚结束」这一帧，重掷本程回填上限并一次性补齐。
-     * 战后结算（非沿途涓流）→ 不依赖行军长短与倍速，与仿真「战后回填」完全对齐，
-     * 保证下一场攻城处于 refillCeiling 的略优/略劣胶着区间。
+     * 忠义归顺 v3（脚本专属技）：捕捉「战斗刚结束」这一帧，河朔忠义来投 +5,000~10,000（随机）。
+     * 战后结算（非沿途涓流）→ 不依赖行军长短与倍速。
      * 演出：白字绿光（与战略技脉冲同款配色），军团头顶飘四字技名「忠义归顺」。
      */
     private tickZhongyiTrickle(army: ScriptArmy): void {
@@ -303,18 +290,17 @@ export class YuefeiExpedition {
         }
         if (!this.wasInCombat) return; // 只在「战斗刚结束」这一帧结算
         this.wasInCombat = false;
-        this.rerollRefillCeiling();
 
         const troops = army.getTroops();
-        if (troops <= 0 || troops >= this.refillCeiling) return;
-        const added = this.refillCeiling - troops;
-        army.setTroops(this.refillCeiling);
+        if (troops <= 0) return;
+        const added = ZHONGYI_BONUS_MIN + Math.floor(Math.random() * (ZHONGYI_BONUS_MAX - ZHONGYI_BONUS_MIN + 1));
+        army.setTroops(troops + added);
 
         const pos = army.getPosition?.();
         if (pos) spawnMapFloatingText(pos.lat, pos.lng, '忠义归顺', '#55ff55');
         gameLog(
             'expedition',
-            `🐎 [圆梦] 忠义归顺 +${added.toLocaleString()}，背嵬军补至 ${this.refillCeiling.toLocaleString()} 众`,
+            `🐎 [圆梦] 忠义归顺 +${added.toLocaleString()}，背嵬军增至 ${(troops + added).toLocaleString()} 众`,
         );
     }
 
@@ -329,11 +315,11 @@ export class YuefeiExpedition {
 
         gameLog('expedition', `🐎 [圆梦] 克 ${cityName}，${label}`);
         this.notify(`克 ${cityName}——${label}！`);
-        spawnMapPulse(city.latitude, city.longitude, '忠义归顺', '#55ff55');
     }
 
     /** 停止脚本推进（军团仍留在场上） */
     public stop(): void {
+        (window as any).__yuefeiExpeditionActive = false;
         if (this.timer != null) {
             window.clearInterval(this.timer);
             this.timer = null;
