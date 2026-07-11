@@ -1987,9 +1987,10 @@ function serverReadAllEntityData() {
     //   此处用正则+内联映射而不 import 目录模块：vite 会 watch 配置文件的依赖，
     //   一旦 import 目录，每次改技能数据都会整个重启 dev server。两处若改必须同步改。
     const EFFECT_TO_TRI: Record<string, string> = {
-        ally_power_mult: 'advantage', first_sortie_power_mult: 'advantage', ally_add_troops_opening: 'advantage',
+        ally_power_mult: 'advantage', first_sortie_power_mult: 'advantage',
+        ally_add_troops_opening: 'balance',
         enemy_sub_troops_opening: 'advantage', dual_sub_troops_opening: 'advantage',
-        luck_variance_self: 'balance', luck_variance_enemy: 'balance', luck_lock_self: 'balance',
+        luck_variance_self: 'disadvantage', luck_variance_enemy: 'disadvantage', luck_lock_self: 'disadvantage',
         steal_enemy_skill: 'balance', negate_enemy_skill: 'balance', partial_negate_enemy_skill: 'balance',
         reflect_enemy_opening_cut: 'balance', nullify_enemy_opening_cut: 'balance',
         cancel_enemy_terrain_buff: 'balance', halve_enemy_terrain_buff: 'balance',
@@ -1997,10 +1998,11 @@ function serverReadAllEntityData() {
         lose_enemy_casualty_boost: 'disadvantage', recompute_comeback: 'disadvantage',
         lose_zero_enemy_recovery: 'disadvantage', ally_add_troops_comeback: 'disadvantage',
     };
-    const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog', 'battle_siege_defender']);
+    const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog']);
+    const VARIANCE_EFFECTS = new Set(['luck_variance_self', 'luck_variance_enemy', 'luck_lock_self', 'recompute_comeback']);
     const triClassById = new Map<string, string>();
     for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'[\s\S]*?baseEffect:\s*'(\w+)',\s*condition:\s*'(\w+)'/g)) {
-        const tri = UNDERDOG_CONDS.has(m[3]) ? 'disadvantage' : EFFECT_TO_TRI[m[2]];
+        const tri = UNDERDOG_CONDS.has(m[3]) || VARIANCE_EFFECTS.has(m[2]) ? 'disadvantage' : EFFECT_TO_TRI[m[2]];
         if (tri && !triClassById.has(m[1])) triClassById.set(m[1], tri);
     }
     const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string }> = [];

@@ -58,6 +58,7 @@ import {
     PHASE_COLLAPSE_START,
     type IOpeningPulseSink,
     type TacticalSkillTrigger,
+    pickSideSkillGeneralUnit,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 import {
@@ -141,6 +142,8 @@ export class BattleField implements IOpeningPulseSink {
     private strongerCasualtyReduction: number = 0;
     /** 穷寇勿迫：弱方已跌破 20% 初始并触发过一次减损重算（锁存防抖，翻转时清） */
     private poorBanditLatched: boolean = false;
+    readonly attackerCommander: IBattleUnit | null;
+    readonly defenderCommander: IBattleUnit | null;
     /** 相持段（≈40% 时长）前排队、之后统一释放的开局战术脉冲 */
     private readonly openingPulseQueue: Array<{ trigger: TacticalSkillTrigger; audioUnitId?: string }> = [];
     private stalemateSkillUiReleased = false;
@@ -213,6 +216,8 @@ export class BattleField implements IOpeningPulseSink {
         // 三势适性：须在 pickPredictedSides 之前——先按兵力比给带将单位选局技，让开局脉冲/战力/卡片都用局技(否则局技未设,三处不一致且战力用招牌)
         this.assignSituationalSkills();
         this.pickPredictedSides();
+        this.attackerCommander = pickSideSkillGeneralUnit(attackerUnits);
+        this.defenderCommander = pickSideSkillGeneralUnit(defenderUnits);
         // 威慑系统：定强弱后算战损减免 + 节奏时长系数
         this.applyIntimidationModifiers();
         this.targetDuration = this.clampDuration(this.targetDuration * this.fearDurationMult);
@@ -389,6 +394,7 @@ export class BattleField implements IOpeningPulseSink {
             terrain,
             stronger === this.attackerGroup,
             { enemyTroops: weaker.totalTroops, enemyInitialTroops: Math.max(1, weaker.initialTotalTroops) },
+            stronger === this.attackerGroup ? this.attackerCommander : this.defenderCommander,
         );
         this.strongerCasualtyReduction = res.lossReduction;
     }
@@ -485,6 +491,8 @@ export class BattleField implements IOpeningPulseSink {
                 defRoll,
                 this.type,
                 { openingUiShown: this.openingTacticalUiShown },
+                this.attackerCommander,
+                this.defenderCommander,
             );
             gameLog(
                 'battle',
@@ -546,10 +554,10 @@ export class BattleField implements IOpeningPulseSink {
         //  · 逆局翻盘（rollLuckOnRecompute=true）：按命运技区间重掷一次（破釜沉舟仍 [0.5,1.5]，
         //    无命运技者退回默认 [0.8,1.2]，与旧逆局重掷行为一致）。
         const attFateLuck = rollLuckOnRecompute
-            ? resolveSideOpeningFateLuck(attUnits, defUnits, this.type, terrain, true, { emitUi: false }).luck
+            ? resolveSideOpeningFateLuck(attUnits, defUnits, this.type, terrain, true, { emitUi: false }, this.attackerCommander, this.defenderCommander).luck
             : this.attackerOpeningFateLuck;
         const defFateLuck = rollLuckOnRecompute
-            ? resolveSideOpeningFateLuck(defUnits, attUnits, this.type, terrain, false, { emitUi: false }).luck
+            ? resolveSideOpeningFateLuck(defUnits, attUnits, this.type, terrain, false, { emitUi: false }, this.defenderCommander, this.attackerCommander).luck
             : this.defenderOpeningFateLuck;
 
         const attAdj = this.adjustedPowerWithReinforcement(this.attackerGroup) * attFateLuck;
@@ -961,6 +969,8 @@ export class BattleField implements IOpeningPulseSink {
                 GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE,
                 Math.max(1, winnerGroup.initialTotalTroops),
                 Math.max(1, loserGroup.initialTotalTroops),
+                winnerGroup === this.attackerGroup ? this.attackerCommander : this.defenderCommander,
+                winnerGroup === this.attackerGroup ? this.defenderCommander : this.attackerCommander,
             );
         }
         if (casualtyOutcome.recoveryBlocked) {
