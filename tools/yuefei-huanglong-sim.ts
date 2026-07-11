@@ -20,8 +20,20 @@ import { getCityAnchorFactionId, getCityEliteConfig } from '../src/data/Expediti
 import { roadRegistry } from '../src/roads/RoadRegistry';
 import { isRegionCenter, type RegionType } from '../src/systems/RegionSystem';
 
-type DefenderMode = 'listed' | 'max' | 'random';
+type DefenderMode = 'listed' | 'max' | 'random' | 'initial';
 type RouteMode = 'full' | 'waypoints';
+type RefillMode = 'always' | 'hard';
+
+/** 城型初始驻军（与 src/config/CityConfig.ts CITY_CONFIG.initialTroops 同步）——反映脚本早期实机守军 */
+const CITY_INITIAL_GARRISON: Record<string, number> = {
+    big_city: 10000, medium_city: 5000, small_city: 5000, pass: 10000,
+};
+
+/** 忠义归顺「硬仗才补」判定：非小城即硬据点；宁远城为小城强将（袁崇焕），单独并入 */
+const EXTRA_HARD_CITY_IDS = new Set<string>(['city_ningyuan']);
+function isHardTarget(city: CityDataV2): boolean {
+    return city.type !== 'small_city' || EXTRA_HARD_CITY_IDS.has(city.id);
+}
 
 /** 必打路标：开封 → 北京 → 黄龙府（主人 2026-07-11 定） */
 const WAYPOINT_CITY_IDS = [
@@ -94,6 +106,7 @@ function randomGarrison(city: CityDataV2): number {
 function defenderTroops(city: CityDataV2, mode: DefenderMode): number {
     if (mode === 'max') return getCityMaxTroops(city.type, cityRegion(city));
     if (mode === 'random') return randomGarrison(city);
+    if (mode === 'initial') return CITY_INITIAL_GARRISON[city.type] ?? 5000;
     return Math.min(city.troops ?? 20000, getCityMaxTroops(city.type, cityRegion(city)));
 }
 
@@ -177,6 +190,8 @@ function runOne(
     zhongyiRefillTarget: number,
     /** 回填浮动：实际回填到 [target-jitter, target] 的随机值 */
     zhongyiRefillJitter: number,
+    /** always=每场补；hard=只在下一站硬据点（非小城 / 宁远）前补 */
+    refillMode: RefillMode,
 ): StepLog[] {
     let troops = initialTroops;
     const startCity = cityById(START_CITY_ID);
@@ -205,10 +220,12 @@ function runOne(
                 target.type,
             )
             : 0;
-        // 忠义归顺 v2：战间徐徐补员，近似为胜后回填至 [max-jitter, max] 随机值
+        // 忠义归顺 v2：战后为「下一战」回填；hard 模式只在下一站硬据点前补，小城不补
         let zhongyiBonus = 0;
         let afterZhongyi = sustained;
-        if (result.attackerWon && refillMax > 0) {
+        const nextTarget = i + 1 < routeIds.length ? cityById(routeIds[i + 1]) : null;
+        const doRefill = refillMode === 'always' || (nextTarget != null && isHardTarget(nextTarget));
+        if (result.attackerWon && refillMax > 0 && doRefill) {
             const refillTo = refillMax - Math.floor(Math.random() * (zhongyiRefillJitter + 1));
             if (sustained < refillTo) {
                 afterZhongyi = refillTo;
@@ -252,6 +269,7 @@ function main(): void {
         ? 0
         : Math.max(0, Math.floor(argNum('--zhongyi-target', ZHONGYI_REFILL_TARGET_DEFAULT)));
     const zhongyiRefillJitter = Math.max(0, Math.floor(argNum('--zhongyi-jitter', ZHONGYI_REFILL_JITTER_DEFAULT)));
+    const refillMode = argStr<RefillMode>('--refill-mode', 'always');
 
     const routeIds = routeMode === 'full'
         ? buildFullRouteCityIds()
@@ -265,7 +283,7 @@ function main(): void {
     let firstSample: StepLog[] | null = null;
 
     for (let t = 0; t < trials; t++) {
-        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops, zhongyiRefillTarget, zhongyiRefillJitter);
+        const logs = runOne(routeIds, defenderMode, terrainMode, initialTroops, zhongyiRefillTarget, zhongyiRefillJitter, refillMode);
         if (!firstSample) firstSample = logs;
         const wonCount = logs.filter((l) => l.won).length;
         capturedCounts[wonCount]++;
@@ -283,8 +301,9 @@ function main(): void {
     console.log(`路线：${routeMode === 'full' ? `路网逐城 ${routeIds.length} 场` : '四阶段目标 4 场'}（郾城 → … → 黄龙府）`);
     console.log(`参数：初始 ${initialTroops.toLocaleString()} 兵，防守=${defenderMode}，地形=${terrainMode}，试跑=${trials}`);
     if (zhongyiRefillTarget > 0) {
+        const modeDesc = refillMode === 'hard' ? '仅硬据点前补（小城不补）' : '每场战后补';
         console.log(
-            `忠义归顺：战间徐徐补员至 ${(zhongyiRefillTarget - zhongyiRefillJitter).toLocaleString()}~${zhongyiRefillTarget.toLocaleString()}（随行军长短浮动）`,
+            `忠义归顺：回填 ${(zhongyiRefillTarget - zhongyiRefillJitter).toLocaleString()}~${zhongyiRefillTarget.toLocaleString()}，${modeDesc}`,
         );
     } else {
         console.log('忠义归顺：关闭');

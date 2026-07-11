@@ -151,15 +151,15 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
     // 攻战·机（加己攻）
     ally_power_mult: 'gongzhan',
     first_sortie_power_mult: 'gongzhan',
-    ally_add_troops_opening: 'gongzhan',
     // 胜战·全（减敌兵）
     enemy_sub_troops_opening: 'shengzhan',
     dual_sub_troops_opening: 'shengzhan',
-    // 敌战·衡（更随机）
+    // 敌战·衡（更随机；方差效果由 VARIANCE_EFFECTS 强制归劣势）
     luck_variance_self: 'dizhan',
     luck_variance_enemy: 'dizhan',
     luck_lock_self: 'dizhan',
-    // 混战·乱（克夺反）
+    // 混战·乱（克夺反 + 增兵破局）
+    ally_add_troops_opening: 'hunzhan',
     steal_enemy_skill: 'hunzhan',
     negate_enemy_skill: 'hunzhan',
     partial_negate_enemy_skill: 'hunzhan',
