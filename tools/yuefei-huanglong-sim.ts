@@ -51,14 +51,15 @@ const BEIWEI_ELITE_TIER = 0;
  * 忠义归顺 v2（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 保持同步）：
  * 开局一律 2 万（不再强推十万），行军途中河朔忠义徐徐来投，
  * 战间回填至目标值 → 每场攻城都是势均力敌（略有优势/略有劣势）。
- * 本工具将「战间徐徐补员」近似为每胜后回填至 [target-jitter, target]
- * 的随机值（实机行军长短不一，到站兵力天然浮动）。
+ * 本工具将补员近似为每胜后回填至 [target-jitter, target] 的随机值。
  * CLI：--zhongyi-target N 调回填上限；--zhongyi-jitter J 调浮动幅度；--no-zhongyi 关闭。
- * 调参定稿（2026-07-11，500 局）：31750/3000 → 单次直捣黄龙 67.4%，两次至少一成 89.4%；
- * 宁远城（袁崇焕）为天然最终 Boss（过关率 ~73%），黄龙府决战 ~94%。
+ * ⚠️ 守军须用 --defenders initial（城型初始驻军 5,000~10,000，反映实机早期北伐）；
+ *    listed 的 2 万是录入值、非实机，勿用它调参（曾据此错调出 3 万上限 → 实机 100% 无悬念）。
+ * 调参定稿（2026-07-11，实机初始驻军 400 局）：13000/2000 → 单次直捣黄龙 72%，两次至少一成 92%；
+ * 只压岳飞自身兵力、不碰敌方数据：小城 ~2.4 倍略优、大城/关隘 ~1.2 倍险胜。
  */
-const ZHONGYI_REFILL_TARGET_DEFAULT = 31750;
-const ZHONGYI_REFILL_JITTER_DEFAULT = 3000;
+const ZHONGYI_REFILL_TARGET_DEFAULT = 13000;
+const ZHONGYI_REFILL_JITTER_DEFAULT = 2000;
 
 function argNum(flag: string, fallback: number): number {
     const i = process.argv.indexOf(flag);
@@ -258,7 +259,7 @@ function formatPct(n: number): string {
 function main(): void {
     const trials = Math.max(1, Math.floor(argNum('--trials', 100)));
     const initialTroops = Math.max(1000, Math.floor(argNum('--troops', 20000)));
-    const defenderMode = argStr<DefenderMode>('--defenders', 'listed');
+    const defenderMode = argStr<DefenderMode>('--defenders', 'initial');
     const routeMode = argStr<RouteMode>('--route', 'full');
     const terrainMode = argStr('--terrain', 'plain');
     const sample = argNum('--sample', 1) > 0;
