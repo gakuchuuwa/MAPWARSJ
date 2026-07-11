@@ -43,6 +43,7 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
+import { initUnattendedStream } from './UnattendedStream'; // 无人值守直播（?stream=1）
 import { audioManager, type AudioManager } from '../audio/AudioManager';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 import { SpeechVoiceToggle } from '../ui/SpeechVoiceToggle';
@@ -541,6 +542,8 @@ export class GameApp {
             });
 
             this.exposeGlobals();
+
+            initUnattendedStream(this, this.gameTimeHUD);
 
             setInterval(() => {
                 this.uiManager.update();

@@ -1,0 +1,73 @@
+/**
+ * UnattendedStream.ts — 无人值守直播模式（URL 带 ?stream=1 时激活）
+ *
+ * 云机 24 小时直播链路（全程无人点击）：
+ *   1. 开机自启：启动落定后自动走「直播」按钮的一键链路
+ *      （进直播模式 + 开始推演 + 初始刷兵 + 拉镜头 + 打开跟拍列表）
+ *   2. 一统天下检测：全图据点只剩一个势力并保持 5 分钟（给观众看结局）→ 整页刷新开新局
+ *   3. 每日 04:00 低峰整页刷新兜底（防浏览器长跑内存缓涨）
+ *
+ * 刷新用 location.reload()：?stream=1 参数保留，刷新后本模块自动重新接管。
+ */
+import type { GameApp } from './GameApp';
+import type { GameTimeHUD } from '../ui/GameTimeHUD';
+import { StreamModeToggle } from '../ui/StreamModeToggle';
+import { gameLog } from '../utils/GameLogger';
+
+const AUTO_START_DELAY_MS = 3_000;
+const CHECK_INTERVAL_MS = 60_000;
+const UNIFIED_HOLD_MS = 5 * 60_000;
+const DAILY_RELOAD_HOUR = 4;
+const DAILY_RELOAD_MIN_UPTIME_MS = 2 * 3_600_000;
+
+export function isUnattendedStream(): boolean {
+    return new URLSearchParams(window.location.search).get('stream') === '1';
+}
+
+export function initUnattendedStream(app: GameApp, gameTimeHUD: GameTimeHUD): void {
+    if (!isUnattendedStream()) return;
+    gameLog('startup', '📺 [无人值守] ?stream=1 已激活：自动开播 + 一统重开 + 每日刷新');
+
+    window.setTimeout(() => autoStart(app, gameTimeHUD), AUTO_START_DELAY_MS);
+
+    const bootAt = Date.now();
+    let unifiedSince = 0;
+    window.setInterval(() => {
+        const now = new Date();
+        if (now.getHours() === DAILY_RELOAD_HOUR && Date.now() - bootAt >= DAILY_RELOAD_MIN_UPTIME_MS) {
+            gameLog('world', '📺 [无人值守] 每日低峰刷新，重开新局');
+            window.location.reload();
+            return;
+        }
+
+        const factions = new Set<string>();
+        for (const city of app.cityManager.getCities()) {
+            if (city.factionId) factions.add(city.factionId);
+            if (factions.size > 1) break;
+        }
+        if (factions.size === 1) {
+            if (unifiedSince === 0) {
+                unifiedSince = Date.now();
+                gameLog('world', `👑 [无人值守] ${[...factions][0]} 一统天下，${UNIFIED_HOLD_MS / 60_000} 分钟后开新局`);
+            } else if (Date.now() - unifiedSince >= UNIFIED_HOLD_MS) {
+                window.location.reload();
+            }
+        } else {
+            unifiedSince = 0;
+        }
+    }, CHECK_INTERVAL_MS);
+}
+
+function autoStart(app: GameApp, gameTimeHUD: GameTimeHUD): void {
+    if (StreamModeToggle.isActive()) return;
+    const btn = document.getElementById('stream-mode-btn');
+    if (btn) {
+        btn.click();
+    } else {
+        // 按钮缺失兜底：直接走播放链路（开局必为暂停态，toggle 即开始）
+        const playing = app.historicalEventManager.togglePlayback();
+        if (playing) app.recruitmentSystem.runInitialSpawn();
+    }
+    gameTimeHUD.setPlayingState(true);
+    gameLog('startup', '📺 [无人值守] 已自动开播');
+}
