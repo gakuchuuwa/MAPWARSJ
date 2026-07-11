@@ -717,7 +717,10 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
 
 
-    { id: 'city_maozhou', name: '汶川', factionId: 'qingqiang', lat: 31.693115, lng: 103.867493, type: 'small_city', troops: 20000, region: 'BASHU' },
+
+
+    { id: 'city_maozhou', name: '汶山城', factionId: 'qingqiang', lat: 31.693115, lng: 103.867493, type: 'small_city', troops: 20000, region: 'BASHU' },
+
 
     { id: 'city_qingyuan', name: '清远', factionId: 'chen', lat: 23.68, lng: 113.06, type: 'small_city', troops: 20000, region: 'LINGNAN' },
 

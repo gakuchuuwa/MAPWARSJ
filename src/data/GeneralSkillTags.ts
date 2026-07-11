@@ -714,7 +714,7 @@ export const STRATEGIC_SKILL_TAGS = [
     { id: 'str_03', grid: 'S③', name: '所向披靡', tags: ['攻城', '破城', '野战', '会战', '正面决战'], terrain: '进攻方' },
     { id: 'str_04', grid: 'S④', name: '威震华夏', tags: ['威慑', '威名', '心理压制'], terrain: '奇策' },
     { id: 'str_05', grid: 'S⑤', name: '坚壁清野', tags: ['焦土', '清野', '拖守'], terrain: '据点防' },
-    { id: 'str_06', grid: 'S⑥', name: '招降纳叛', tags: ['纳降', '收编', '化敌'], terrain: '奇策' },
+    { id: 'str_06', grid: 'S⑥', name: '招降纳叛', tags: ['纳降', '收编', '化敌'], terrain: '补给' },
 ] as const;
 
 /** 按 tacticalId 查标签 */

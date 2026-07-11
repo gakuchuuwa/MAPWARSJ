@@ -38,7 +38,12 @@ export function applyStrategicSustainAfterVictory(
     if (!str) return Math.min(troopCap, t);
 
     if (str.effect === 'post_battle_troop_pct') {
-        t += Math.floor(t * str.magnitude);
+        if (defenderCityType && str.postBattlePctByCityType) {
+            const pct = resolvePostBattlePctByCityType(str, defenderCityType);
+            if (pct > 0) t += Math.floor(t * pct);
+        } else if (str.magnitude > 0) {
+            t += Math.floor(t * str.magnitude);
+        }
     } else if (defenderCityType && str.postBattlePctByCityType) {
         const pct = resolvePostBattlePctByCityType(str, defenderCityType);
         if (pct > 0) t += Math.floor(t * pct);

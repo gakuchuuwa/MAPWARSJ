@@ -596,7 +596,7 @@ const EFFECT_CN: Record<string, string> = {
     post_battle_troop_pct: '胜后补兵',
     city_growth_mult: '城市增长',
     recruit_cooldown_mult: '募兵加速',
-    attacker_power_mult: '攻方加成',
+    equal_power_mult: '均势×',
 };
 
 function formatSkill(id?: string): string {

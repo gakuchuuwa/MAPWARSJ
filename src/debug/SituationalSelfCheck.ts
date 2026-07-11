@@ -28,10 +28,10 @@ const REPS: Array<[string, string]> = [
 
 const STRAT_SYS: Record<string, string> = {
     str_01: '行军', str_10: '行军', str_11: '行军', str_12: '行军',
-    str_13: '补给', str_07: '补给',
+    str_13: '补给', str_07: '补给', str_06: '补给',
     str_14: '爆兵', str_15: '爆兵',
     str_03: '战斗', str_04: '战斗', str_09: '战斗',
-    str_02: '奇策', str_06: '奇策',
+    str_02: '奇策',
     str_05: '据点防', str_08: '据点防',
 };
 

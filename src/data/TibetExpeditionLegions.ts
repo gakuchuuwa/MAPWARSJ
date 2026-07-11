@@ -52,7 +52,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   kangba: { name: '康巴骁骑', tier: 3 },   // 康巴汉子尚武精神代名词，显著文化知名度，升T2
     xiadun: { name: '竹巴护法', tier: 3 },
     ali: { name: '象泉蒙骑', tier: 3 },
-    gaoliang: { name: '茂州飞骑', tier: 4 },
+    gaoliang: { name: '陇山飞骑', tier: 3 },
   nandou: { name: '勃律山兵', tier: 4 },          // 孽多·苏失利据守抗唐（缺乏极其著名的战术高光，降T3）
   bailan: { name: '昌都僧兵', tier: 4 },        // 察木多·帕巴拉协助守城（缺乏极其著名的战术高光，降T3）
   jiantang: { name: '建塘马兵', tier: 4 },       // 独克宗·桑杰嘉措驻防（缺乏极其著名的战术高光，降T3）

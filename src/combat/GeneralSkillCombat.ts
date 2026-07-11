@@ -790,9 +790,13 @@ export function getStrategicBattlePowerMultiplier(
     const skill = getStrategicSkillDef(profile.strategicSkillId);
     if (!skill) return 1;
     switch (skill.effect) {
-        // S③所向披靡：进攻方专用，攻城/野战通吃
-        case 'attacker_power_mult':
-            return side === 'attacker' ? skill.magnitude : 1;
+        // S③因敌制胜：均势时（兵力在 0.67–1.5 倍敌方之间）自身战力×1.3
+        case 'equal_power_mult':
+            if (selfTroops !== undefined && enemyTroops !== undefined && enemyTroops > 0) {
+                const ratio = selfTroops / enemyTroops;
+                return (ratio >= 0.67 && ratio <= 1.5) ? skill.magnitude : 1;
+            }
+            return 1;
         // S⑨以寡击众：劣势时（兵力<0.67倍敌方）自身战力×1.4
         case 'disadvantage_power_mult':
             if (selfTroops !== undefined && enemyTroops !== undefined && enemyTroops > 0) {
@@ -948,7 +952,7 @@ function getStrategicTacticalSkillMult(
 
     let mult = 1;
 
-    // S④威震华夏：优势时（兵力>1.5倍）战术技效果×1.3
+    // S④威震华夏：优势时（兵力>1.5倍）战术技效果×1.2
     if (stratSkill.effect === 'advantage_skill_effect_mult') {
         if (enemyTroops > 0 && selfTroops / enemyTroops > 1.5) {
             mult *= stratSkill.magnitude;
@@ -1171,8 +1175,8 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
             return `速度×${skill.magnitude}`;
         case 'post_battle_troop_pct':
             return `胜后+${Math.round(skill.magnitude * 100)}%`;
-        case 'attacker_power_mult':
-            return `攻方×${skill.magnitude}`;
+        case 'equal_power_mult':
+            return `均势×${skill.magnitude}`;
         case 'defender_power_mult':
             return `守方×${skill.magnitude}`;
         case 'plain_power_mult':
@@ -1910,7 +1914,7 @@ function applyPostBattleTroopPct(
 export function applyPostBattleStrategicBonus(
     unit: IBattleUnit,
     battleType: BattleType,
-    enemySurvivors?: number,
+    enemyInitialTroops?: number,
     defenderCityType?: CityType | null,
 ): number {
     let total = 0;
@@ -1922,14 +1926,40 @@ export function applyPostBattleStrategicBonus(
         if (profile?.strategicSkillId) {
             const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
             if (profileSkill && profileSkill.effect === 'post_battle_troop_pct') {
-                total += applyPostBattleTroopPct(unit, profileSkill, '');
-            } else if (profileSkill?.effect === 'post_battle_recruit_enemy_pct' && enemySurvivors !== undefined && enemySurvivors > 0) {
-                // S⑥招降纳叛：胜后缴获敌方残兵 10%
-                const bonus = Math.floor(enemySurvivors * profileSkill.magnitude);
+                // S⑦因粮于敌：攻城胜后按守方城型补兵；无城型表时回退 magnitude 固定比例
+                if (battleType === 'siege' && profileSkill.postBattlePctByCityType && defenderCityType) {
+                    const pct = resolvePostBattlePctByCityType(profileSkill, defenderCityType);
+                    if (pct > 0) {
+                        const bonus = Math.floor(unit.troops * pct);
+                        if (bonus > 0) {
+                            unit.setTroops(unit.troops + bonus);
+                            total += bonus;
+                            gameLog(
+                                'battle',
+                                `🌾 [武将技] ${unit.generalId ?? '?'} 【${profileSkill.displayName}】 +${bonus}`,
+                            );
+                            if (army) {
+                                const pos = army.getPosition();
+                                emitFollowedGeneralStrategicMapFx(
+                                    unit,
+                                    'post_battle_troop_pct',
+                                    pos.lat,
+                                    pos.lng,
+                                    'float',
+                                );
+                            }
+                        }
+                    }
+                } else if (profileSkill.magnitude > 0) {
+                    total += applyPostBattleTroopPct(unit, profileSkill, '');
+                }
+            } else if (profileSkill?.effect === 'post_battle_recruit_enemy_pct' && enemyInitialTroops !== undefined && enemyInitialTroops > 0) {
+                // S⑥招降纳叛：胜后收编敌方开战总兵 10%（与战损系同用 initialTotalTroops）
+                const bonus = Math.floor(enemyInitialTroops * profileSkill.magnitude);
                 if (bonus > 0) {
                     unit.setTroops(unit.troops + bonus);
                     total += bonus;
-                    gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}收编残部降卒 ${bonus.toLocaleString()}`);
+                    gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}收编降卒 ${bonus.toLocaleString()}（敌开战兵 ${enemyInitialTroops.toLocaleString()} 之 ${Math.round(profileSkill.magnitude * 100)}%）`);
                     if (army) {
                         const pos = army.getPosition();
                         emitFollowedGeneralStrategicMapFx(
