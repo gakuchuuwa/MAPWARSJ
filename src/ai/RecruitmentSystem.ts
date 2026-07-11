@@ -24,8 +24,8 @@ import { getCityRegion, REGION_ORDER, RegionType, isRegionCenter } from '../syst
 import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile, getStrategicSkillDef } from '../data/GeneralSkills';
-import { spawnMapFloatingText, getFollowedArmyId } from '../utils/MapFloatingText';
-import { getCityAnchoredStrategicMagnitude } from '../combat/GeneralSkillCombat';
+import { getCityAnchoredStrategicMagnitude, emitFollowedHomeCityStrategicMapFx } from '../combat/GeneralSkillCombat';
+import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
@@ -160,16 +160,19 @@ export class RecruitmentSystem {
                 const added = Math.floor(baseAdded * skillMult);
                 city.troops = clampCityTroops(city.type, (city.troops || 0) + added, region);
                 
-                // 足食足兵飘字：只在「城的锚定将 = 跟拍军团的名将」时飘（主角出身城），只飘四字技名
-                if (skillMult > 1.0) {
-                    const extra = added - baseAdded;
-                    if (extra > 0) {
-                        const followedId = getFollowedArmyId();
-                        const followedGen = followedId ? this.legionManager.getLegionById(followedId)?.generalId : null;
-                        const anchoredGen = getCityAnchoredGeneral(city.id)?.generalId;
-                        if (followedGen && anchoredGen === followedGen) {
-                            spawnMapFloatingText(city.latitude, city.longitude, '足食足兵', '#55ff55');
-                        }
+                // S⑭足食足兵：跟拍军团出身城季度补兵 ×2
+                if (skillMult > 1.0 && added > baseAdded) {
+                    const followedId = getFollowedArmyId();
+                    const followedArmy = followedId ? this.legionManager.getLegionById(followedId) : null;
+                    if (followedArmy) {
+                        emitFollowedHomeCityStrategicMapFx(
+                            followedArmy,
+                            city.id,
+                            city.latitude,
+                            city.longitude,
+                            'city_growth_mult',
+                            'pulse',
+                        );
                     }
                 }
             }
@@ -326,19 +329,10 @@ export class RecruitmentSystem {
         city.troops = (city.troops || 0) - newLegion.getTroops();
         this.queueCityLabel(city.id);
 
-        const anchored = getCityAnchoredGeneral(city.id);
-        if (anchored?.generalId) {
-            const profile = getGeneralProfile(anchored.generalId);
-            const skill = profile?.strategicSkillId ? getStrategicSkillDef(profile.strategicSkillId) : null;
-            if (skill?.effect === 'recruit_cooldown_mult') {
-                const followedId = getFollowedArmyId();
-                if (followedId) {
-                    const followedArmy = this.legionManager.getLegionById(followedId);
-                    if (followedArmy && followedArmy.generalId === anchored.generalId) {
-                        spawnMapFloatingText(city.latitude, city.longitude, '招兵买马', '#55ff55');
-                    }
-                }
-            }
+        const followedId = getFollowedArmyId();
+        const followedArmy = followedId ? this.legionManager.getLegionById(followedId) : null;
+        if (followedArmy) {
+            emitFollowedHomeCityStrategicMapFx(followedArmy, city.id, city.latitude, city.longitude, 'recruit_cooldown_mult', 'pulse');
         }
 
         return newLegion;

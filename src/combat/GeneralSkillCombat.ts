@@ -820,6 +820,112 @@ export function generalHasStrategicEffect(unit: IBattleUnit, effect: StrategicEf
     return skill?.effect === effect;
 }
 
+/** 15 战略技大地图配色（绑 skill.id，禁止硬编码技名） */
+const STRATEGIC_PULSE_COLORS: Record<string, string> = {
+    str_01: '#55ff55',
+    str_02: '#55ff55',
+    str_03: '#ffaa00',
+    str_04: '#aa55ff',
+    str_05: '#ff5555',
+    str_06: '#55ff55',
+    str_07: '#55ff55',
+    str_08: '#44aaff',
+    str_09: '#ff5555',
+    str_10: '#55ff55',
+    str_11: '#55ff55',
+    str_12: '#ffaa00',
+    str_13: '#55ff55',
+    str_14: '#55cc55',
+    str_15: '#55aa55',
+};
+
+export function getStrategicPulseColor(skillId: string): string {
+    return STRATEGIC_PULSE_COLORS[skillId] ?? '#55ff55';
+}
+
+type StrategicMapFxUnit = Pick<IBattleUnit, 'id' | 'generalId'>;
+
+const strategicMapFxDedupe = new Map<string, number>();
+
+function resolveGeneralStrategicSkillForEffect(
+    generalId: string | null | undefined,
+    expectedEffect: StrategicEffect,
+) {
+    if (!generalId) return null;
+    const profile = getGeneralProfile(generalId);
+    if (!profile?.strategicSkillId) return null;
+    const skill = getStrategicSkillDef(profile.strategicSkillId);
+    if (!skill || skill.effect !== expectedEffect) return null;
+    return skill;
+}
+
+/**
+ * 跟拍名将战略技大地图展示：机制 effect 须与 profile.strategicSkillId 一致才上屏。
+ * 保证「释放时机」与「脉冲技名」始终对应该将战略格。
+ */
+export function emitFollowedGeneralStrategicMapFx(
+    unit: StrategicMapFxUnit,
+    expectedEffect: StrategicEffect,
+    lat: number,
+    lng: number,
+    style: 'pulse' | 'float' = 'pulse',
+    opts?: { dedupeMs?: number; dedupeKey?: string },
+): boolean {
+    if (unit.id !== getFollowedArmyId()) return false;
+    const skill = resolveGeneralStrategicSkillForEffect(unit.generalId, expectedEffect);
+    if (!skill) return false;
+
+    const dedupeMs = opts?.dedupeMs ?? 0;
+    if (dedupeMs > 0) {
+        const key = opts?.dedupeKey ?? `${unit.id}|${expectedEffect}`;
+        const now = Date.now();
+        if (now - (strategicMapFxDedupe.get(key) ?? 0) < dedupeMs) return false;
+        strategicMapFxDedupe.set(key, now);
+    }
+
+    const color = getStrategicPulseColor(skill.id);
+    if (style === 'pulse') spawnMapPulse(lat, lng, skill.displayName, color);
+    else spawnMapFloatingText(lat, lng, skill.displayName, color);
+    return true;
+}
+
+/** 跟拍军团出身城：据点锚将战略 effect 触发（S⑭ / S⑮ 等）。脉冲显示在据点坐标上（非军团脚下）。 */
+export function emitFollowedHomeCityStrategicMapFx(
+    army: Pick<Army, 'id' | 'homeCityId' | 'getSourceCityId' | 'getPosition'>,
+    cityId: string,
+    cityLat: number,
+    cityLng: number,
+    expectedEffect: StrategicEffect,
+    style: 'pulse' | 'float' = 'pulse',
+): boolean {
+    if (army.id !== getFollowedArmyId()) return false;
+    const homeId = army.homeCityId ?? army.getSourceCityId();
+    if (homeId !== cityId) return false;
+    const anchored = getCityAnchoredGeneral(cityId);
+    const skill = resolveGeneralStrategicSkillForEffect(anchored?.generalId, expectedEffect);
+    if (!skill) return false;
+    const color = getStrategicPulseColor(skill.id);
+    if (style === 'pulse') spawnMapPulse(cityLat, cityLng, skill.displayName, color);
+    else spawnMapFloatingText(cityLat, cityLng, skill.displayName, color);
+    return true;
+}
+
+/** 敌方据点锚将战略减益（S⑤ 坚壁清野：跟拍受害攻方） */
+export function emitFollowedEnemyCityStrategicDebuffFx(
+    army: Pick<Army, 'id' | 'getPosition'>,
+    enemyCityId: string,
+    expectedEffect: StrategicEffect,
+): boolean {
+    if (army.id !== getFollowedArmyId()) return false;
+    if (getCityAnchoredStrategicMagnitude(enemyCityId, expectedEffect) >= 1) return false;
+    const anchored = getCityAnchoredGeneral(enemyCityId);
+    const skill = resolveGeneralStrategicSkillForEffect(anchored?.generalId, expectedEffect);
+    if (!skill) return false;
+    const pos = army.getPosition();
+    spawnMapFloatingText(pos.lat, pos.lng, skill.displayName, getStrategicPulseColor(skill.id));
+    return true;
+}
+
 /** 据点锚定将领的战略效果乘数（无匹配则 1） */
 /**
  * 战略技对战术技效果的乘区加成（S②因地制宜 / S④威震华夏）。
@@ -845,11 +951,8 @@ function getStrategicTacticalSkillMult(
     if (stratSkill.effect === 'advantage_skill_effect_mult') {
         if (enemyTroops > 0 && selfTroops / enemyTroops > 1.5) {
             mult *= stratSkill.magnitude;
-            const army = getArmyEntity(unit);
-            if (army && army.id === getFollowedArmyId()) {
-                const pos = unit.getPosition();
-                spawnMapPulse(pos.lat, pos.lng, stratSkill.displayName, '#aa55ff');
-            }
+            const pos = unit.getPosition();
+            emitFollowedGeneralStrategicMapFx(unit, 'advantage_skill_effect_mult', pos.lat, pos.lng, 'pulse');
         }
     }
 
@@ -861,11 +964,8 @@ function getStrategicTacticalSkillMult(
         const tacEntry = activeTacId ? getTacticalSkillEntry(activeTacId) : null;
         if (tacEntry && tacEntry.condition === `terrain_${terrain}`) {
             mult *= stratSkill.magnitude;
-            const army = getArmyEntity(unit);
-            if (army && army.id === getFollowedArmyId()) {
-                const pos = unit.getPosition();
-                spawnMapPulse(pos.lat, pos.lng, stratSkill.displayName, '#55ff55');
-            }
+            const pos = unit.getPosition();
+            emitFollowedGeneralStrategicMapFx(unit, 'terrain_tactical_double', pos.lat, pos.lng, 'pulse');
         }
     }
 
@@ -1015,6 +1115,7 @@ export function getExpeditionForageSkillDisplay(
 ): { name: string; effectLabel: string } | null {
     const army = getArmyEntity(unit);
     if (!army?.expeditionTargetCityId) return null;
+    // ⚠️ 仅供乘区/tooltip 只读；禁止上战斗面板或大地图飘字（非名将战略格，与 S⑦ 同名）
     return {
         name: EXPEDITION_FORAGE_SKILL.displayName,
         effectLabel: `胜后+${Math.round(EXPEDITION_FORAGE_SKILL.magnitude * 100)}%`,
@@ -1769,16 +1870,10 @@ export function applyStrategicBattleToRolls(
             : null;
         const label = skill?.displayName ?? '战略';
 
-        // 开战战力战略（S③/S⑧/S⑨）：跟拍军团大地图脉冲，不进战斗 Cut-in
-        if (skill && profile && emitUi) {
-            const army = getArmyEntity(unit);
-            if (army && army.id === getFollowedArmyId()) {
-                const pos = unit.getPosition();
-                let color = '#ffaa00'; // str_03 所向披靡
-                if (skill.id === 'str_08') color = '#44aaff';
-                else if (skill.id === 'str_09') color = '#ff5555';
-                spawnMapPulse(pos.lat, pos.lng, skill.displayName, color);
-            }
+        // 开战战力战略（S③/S⑧/S⑨ 等：effect 与 profile 一致才 pulse）
+        if (skill && emitUi) {
+            const pos = unit.getPosition();
+            emitFollowedGeneralStrategicMapFx(unit, skill.effect, pos.lat, pos.lng, 'pulse');
         }
         const next = roll * mult;
         if (emitUi) {
@@ -1799,6 +1894,8 @@ function applyPostBattleTroopPct(
     unit: IBattleUnit,
     skill: { displayName: string; effect: string; magnitude: number },
     source: string,
+    /** 远征系统技等非战略格补兵：机制生效但不飘字，避免与名将战略技混淆 */
+    emitMapText = true,
 ): number {
     if (skill.effect !== 'post_battle_troop_pct') return 0;
     const bonus = Math.floor(unit.troops * skill.magnitude);
@@ -1811,11 +1908,13 @@ function applyPostBattleTroopPct(
         'battle',
         `🌾 [武将技] ${unit.generalId ?? '?'} ${source}【${skill.displayName}】 +${bonus}`,
     );
-    // 只给跟拍军团飘；只飘四字技名（数字细节看战报/日志，不上屏）
-    const army = getArmyEntity(unit);
-    if (army && army.id === getFollowedArmyId()) {
-        const pos = army.getPosition();
-        spawnMapFloatingText(pos.lat, pos.lng, skill.displayName, '#55ff55');
+    // 飘字须与名将战略格一致（禁止用传入 skill 的 displayName 顶替 profile）
+    if (emitMapText) {
+        const army = getArmyEntity(unit);
+        if (army) {
+            const pos = army.getPosition();
+            emitFollowedGeneralStrategicMapFx(unit, 'post_battle_troop_pct', pos.lat, pos.lng, 'float');
+        }
     }
     return bonus;
 }
@@ -1831,7 +1930,12 @@ export function applyPostBattleStrategicBonus(
 
     const army = getArmyEntity(unit);
     if (army?.expeditionTargetCityId) {
-        total += applyPostBattleTroopPct(unit, EXPEDITION_FORAGE_SKILL, '[远征] ');
+        // 远征系统技：机制全员生效；上屏仅 profile 为 S⑦ 的名将
+        total += applyPostBattleTroopPct(unit, EXPEDITION_FORAGE_SKILL, '[远征] ', false);
+        if (army) {
+            const pos = army.getPosition();
+            emitFollowedGeneralStrategicMapFx(unit, 'post_battle_troop_pct', pos.lat, pos.lng, 'float');
+        }
         appliedForage = true;
     }
 
@@ -1848,9 +1952,15 @@ export function applyPostBattleStrategicBonus(
                     unit.setTroops(unit.troops + bonus);
                     total += bonus;
                     gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}收编残部降卒 ${bonus.toLocaleString()}`);
-                    if (army && army.id === getFollowedArmyId()) {
+                    if (army) {
                         const pos = army.getPosition();
-                        spawnMapFloatingText(pos.lat, pos.lng, profileSkill.displayName, '#55ff55');
+                        emitFollowedGeneralStrategicMapFx(
+                            unit,
+                            'post_battle_recruit_enemy_pct',
+                            pos.lat,
+                            pos.lng,
+                            'float',
+                        );
                     }
                 }
             } else if (profileSkill?.hiddenPostBattlePct && profileSkill.hiddenPostBattlePct > 0) {
@@ -1864,9 +1974,9 @@ export function applyPostBattleStrategicBonus(
             // S⑫乘胜追击 (skip_post_battle_rest)
             if (profileSkill?.effect === 'skip_post_battle_rest') {
                 gameLog('battle', `〔${profileSkill.displayName}〕${unit.generalId ?? '将领'}不作休整，挥师再进`);
-                if (army && army.id === getFollowedArmyId()) {
+                if (army) {
                     const pos = army.getPosition();
-                    spawnMapPulse(pos.lat, pos.lng, profileSkill.displayName, '#ffaa00');
+                    emitFollowedGeneralStrategicMapFx(unit, 'skip_post_battle_rest', pos.lat, pos.lng, 'pulse');
                 }
             }
         }

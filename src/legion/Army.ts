@@ -20,9 +20,9 @@ import type { RegionType } from '../systems/RegionSystem';
 import { IBattleUnit } from '../combat/CombatSystem';
 import { gameLog } from '../utils/GameLogger';
 import { getRandomFactionPortrait } from '../config/portrait_defaults';
-import { getGeneralMarchSpeedMultiplier, generalHasStrategicEffect } from '../combat/GeneralSkillCombat';
+import { getGeneralMarchSpeedMultiplier, generalHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
-import { spawnMapFloatingText, getFollowedArmyId } from '../utils/MapFloatingText';
+import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCultureMovementClass, isCultureCavalryOnly } from '../types/CultureFormations';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 
@@ -47,7 +47,7 @@ export class Army implements IBattleUnit {
     ) => void;
 
     public static setAnnihilationReporter(
-        reporter: ((army: Army, info: { side: 'attacker' | 'defender'; cityName: string; kind?: 'siege' | 'field' | 'siege_attacker' }) => void) | null
+        reporter: ((army: Army, info: { side: 'attacker' | 'defender'; cityName: string; kind?: 'siege' | 'field' | 'siege_attacker'; battleSkillId?: string | null }) => void) | null
     ): void {
         Army.annihilationReporter = reporter ?? undefined;
     }
@@ -391,10 +391,11 @@ export class Army implements IBattleUnit {
             this.postBattleRestRemaining = Math.max(0, this.postBattleRestRemaining - deltaTime);
             if (this.postBattleRestRemaining === 0) {
                 if (this.id === getFollowedArmyId()) {
+                    const { lat, lng } = this.position;
                     if (generalHasStrategicEffect(this, 'march_speed_mult')) {
-                        spawnMapFloatingText(this.position.lat, this.position.lng, '兵贵神速', '#55ff55');
+                        emitFollowedGeneralStrategicMapFx(this, 'march_speed_mult', lat, lng, 'float');
                     } else if (generalHasStrategicEffect(this, 'mountain_march_immunity')) {
-                        spawnMapFloatingText(this.position.lat, this.position.lng, '如履平地', '#55ff55');
+                        emitFollowedGeneralStrategicMapFx(this, 'mountain_march_immunity', lat, lng, 'float');
                     }
                 }
             }

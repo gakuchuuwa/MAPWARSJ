@@ -13,8 +13,8 @@ import { GameConfig } from '../config/GameConfig';
 import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
-import { generalHasStrategicEffect, getCityAnchoredStrategicMagnitude } from '../combat/GeneralSkillCombat';
-import { spawnMapFloatingText, getFollowedArmyId } from '../utils/MapFloatingText';
+import { generalHasStrategicEffect, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedEnemyCityStrategicDebuffFx } from '../combat/GeneralSkillCombat';
+import { getFollowedArmyId } from '../utils/MapFloatingText';
 
 export class FollowResupplySystem {
     private cityManager: CityManager;
@@ -76,9 +76,7 @@ export class FollowResupplySystem {
                     if (!scorchedSet.has(city.id)) {
                         scorchedSet.add(city.id);
                         gameLog('battle', `〔坚壁清野〕${army.generalId || '将领'}进入【${city.name}】清野范围，补给受阻`);
-                        if (army.id === getFollowedArmyId()) {
-                            spawnMapFloatingText(pos.lat, pos.lng, '坚壁清野', '#ff5555');
-                        }
+                        emitFollowedEnemyCityStrategicDebuffFx(army, city.id, 'siege_attacker_supply_halved');
                     }
                 }
             }
@@ -99,9 +97,8 @@ export class FollowResupplySystem {
         if (uiAccum >= 1000) {
             (army as any).fieldResupplyUiAccum = 0; // 清零
             gameLog('battle', `〔以战养战〕${army.generalId || '将领'}沿途就粮，恢复 +1,000`);
-            if (army.id === getFollowedArmyId()) {
-                spawnMapFloatingText(pos.lat, pos.lng, '以战养战', '#55ff55');
-            }
+            const pos = army.getPosition();
+            emitFollowedGeneralStrategicMapFx(army, 'field_resupply', pos.lat, pos.lng, 'float');
         } else {
             (army as any).fieldResupplyUiAccum = uiAccum;
         }

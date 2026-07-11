@@ -1,7 +1,7 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
-import { generalHasStrategicEffect, getGeneralStrategicMagnitude } from '../combat/GeneralSkillCombat';
+import { generalHasStrategicEffect, getGeneralStrategicMagnitude, emitFollowedGeneralStrategicMapFx } from '../combat/GeneralSkillCombat';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
@@ -41,7 +41,6 @@ import {
 } from '../types/CultureFormations';
 import { gameLog } from '../utils/GameLogger';
 import { FollowResupplySystem } from './FollowResupplySystem';
-import { tryBypassPulse, getFollowedArmyId } from '../utils/MapFloatingText';
 
 export class LegionManager {
     private cityManager: CityManager;
@@ -655,9 +654,14 @@ export class LegionManager {
                 if (!bypassedSet.has(city.id)) {
                     bypassedSet.add(city.id);
                     gameLog('battle', `〔长驱深入〕${army.generalId || '将领'}无视【${city.name}】守军，长驱直入`);
-                    if (army.id === getFollowedArmyId()) {
-                        tryBypassPulse(army.id, city.latitude, city.longitude, '#55ff55');
-                    }
+                    emitFollowedGeneralStrategicMapFx(
+                        army,
+                        'ignore_small_city_zoc',
+                        city.latitude,
+                        city.longitude,
+                        'float',
+                        { dedupeMs: 3000, dedupeKey: `${army.id}|str_11|${city.id}` },
+                    );
                 }
                 continue;
             }
