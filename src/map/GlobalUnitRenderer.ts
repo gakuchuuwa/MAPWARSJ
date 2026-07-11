@@ -17,6 +17,7 @@ import { GameConfig, SPRITE_PATHS } from '../config/GameConfig';
 import { FACTIONS } from '../data/factions';
 import { gameLog } from '../utils/GameLogger';
 import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG } from '../data/GeneralSkills';
+import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 
 export interface IRenderable {
     getPosition(): { lat: number; lng: number };
@@ -946,14 +947,13 @@ export class GlobalUnitRenderer {
         if (!this.showLabels) return;
         if (!unit.name) return;
 
-        let skillName = '';
+        let generalText = '';
+        let eliteText = unit.name || '';
+
         if (unit.generalId) {
-            const profile = GENERAL_PROFILES[unit.generalId];
-            if (profile?.strategicSkillId) {
-                const skill = STRATEGIC_SKILL_CATALOG[profile.strategicSkillId];
-                if (skill) {
-                    skillName = `[${skill.displayName}]`;
-                }
+            const genRec = getGeneralRecordByGeneralId(unit.generalId);
+            if (genRec && genRec.generalName) {
+                generalText = genRec.generalName;
             }
         }
 
@@ -964,34 +964,37 @@ export class GlobalUnitRenderer {
         ctx.textAlign = 'center'; 
         ctx.textBaseline = 'top';
 
-        // 1. Draw Unit Name
-        const nameFontSize = 13;
-        ctx.font = `bold ${nameFontSize}px Arial`;
-        
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 3;
-        ctx.lineJoin = 'round';
-        ctx.strokeText(unit.name, center.x, currentY);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowBlur = 0; // Reset shadow
-        ctx.fillText(unit.name, center.x, currentY);
-        
-        currentY += nameFontSize + 4;
-
-        // 2. Draw Skill Name (if exists)
-        if (skillName) {
-            const skillFontSize = 12;
-            ctx.font = `bold ${skillFontSize}px Arial`;
+        // 1. Draw General (if exists, Cyan)
+        if (generalText) {
+            const genFontSize = 13;
+            ctx.font = `bold ${genFontSize}px Arial`;
             
             ctx.strokeStyle = 'black';
             ctx.lineWidth = 3;
-            ctx.strokeText(skillName, center.x, currentY);
+            ctx.lineJoin = 'round';
+            ctx.strokeText(generalText, center.x, currentY);
 
-            ctx.fillStyle = '#00FFFF'; // Bright Cyan for Strategy
-            ctx.fillText(skillName, center.x, currentY);
+            ctx.fillStyle = '#00FFFF'; // Bright Cyan
+            ctx.fillText(generalText, center.x, currentY);
             
-            currentY += skillFontSize + 4;
+            currentY += genFontSize + 4;
+        }
+
+        // 2. Draw Elite / Unit Name (White)
+        if (eliteText) {
+            const nameFontSize = 13; // Changed back to 13 to keep name prominent
+            ctx.font = `bold ${nameFontSize}px Arial`;
+            
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 3;
+            ctx.lineJoin = 'round';
+            ctx.strokeText(eliteText, center.x, currentY);
+
+            ctx.fillStyle = '#ffffff'; // White
+            ctx.shadowBlur = 0; // Reset shadow
+            ctx.fillText(eliteText, center.x, currentY);
+            
+            currentY += nameFontSize + 4;
         }
 
         // 3. Draw Troops

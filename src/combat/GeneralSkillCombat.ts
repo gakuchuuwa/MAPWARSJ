@@ -4,6 +4,7 @@
 import type { IBattleUnit, BattleType } from './CombatSystem';
 import type { Army } from '../legion/Army';
 import type { LegionManager } from '../legion/LegionManager';
+import type { CityType } from '../types/core';
 import { GameConfig } from '../config/GameConfig';
 import {
     getGeneralProfile,
@@ -12,6 +13,7 @@ import {
     PASS_GARRISON_DEFENSE_SKILL,
     REGION_CENTER_DEFENSE_SKILL,
     REINFORCEMENT_JOIN_SKILL,
+    resolvePostBattlePctByCityType,
     type StrategicEffect,
     type TacticalSkillDef,
 } from '../data/GeneralSkills';
@@ -1907,8 +1909,9 @@ function applyPostBattleTroopPct(
 
 export function applyPostBattleStrategicBonus(
     unit: IBattleUnit,
-    _battleType: BattleType,
+    battleType: BattleType,
     enemySurvivors?: number,
+    defenderCityType?: CityType | null,
 ): number {
     let total = 0;
 
@@ -1936,6 +1939,19 @@ export function applyPostBattleStrategicBonus(
                             pos.lng,
                             'float',
                         );
+                    }
+                }
+            } else if (
+                battleType === 'siege' &&
+                profileSkill?.postBattlePctByCityType &&
+                defenderCityType
+            ) {
+                const pct = resolvePostBattlePctByCityType(profileSkill, defenderCityType);
+                if (pct > 0) {
+                    const bonus = Math.floor(unit.troops * pct);
+                    if (bonus > 0) {
+                        unit.setTroops(unit.troops + bonus);
+                        total += bonus;
                     }
                 }
             } else if (profileSkill?.hiddenPostBattlePct && profileSkill.hiddenPostBattlePct > 0) {

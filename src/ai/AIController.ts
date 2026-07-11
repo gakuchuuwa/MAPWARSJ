@@ -115,6 +115,16 @@ export class AIController {
     }
 
     /**
+     * 强制单军团行为树 tick（圆梦脚本起兵后立即行军）
+     */
+    public tickArmyById(armyId: string): void {
+        if (!this.enabled) return;
+        const army = this.legionManager.getLegionById(armyId);
+        if (!army || army.isDestroyed || army.type !== 'legion') return;
+        this.tickArmy(army);
+    }
+
+    /**
      * 执行单个军团的行为树
      */
     private tickArmy(army: Army): void {

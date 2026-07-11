@@ -10,11 +10,7 @@
  *   target 变己方 → LegionBehaviors.resolveExpeditionState 自动清空 → 本脚本推进下一城。
  */
 
-import { GameConfig } from '../config/GameConfig';
-import { clampCityTroopsForCity, getCityMaxTroops } from '../config/CityConfig';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
-import { roadRegistry } from '../roads/RoadRegistry';
-import type { CityType } from '../types/core';
 import { gameLog } from '../utils/GameLogger';
 
 /** 起兵据点：郾城（岳飞·郾川势力都城） */
@@ -42,6 +38,7 @@ interface ScriptArmy {
     isElite: boolean;
     generalId?: string;
     portraitPath?: string | null;
+    homeCityId?: string | null;
     expeditionTargetCityId: string | null;
     expeditionSavedName: string | null;
     expeditionUnlocked: boolean;
@@ -53,9 +50,6 @@ interface ScriptCity {
     factionId: string;
     latitude: number;
     longitude: number;
-    type: CityType;
-    region?: string;
-    troops: number;
 }
 
 interface YuefeiDeps {
@@ -69,16 +63,23 @@ interface YuefeiDeps {
             legionType?: unknown,
             sourceCityId?: string,
             generalId?: string,
+            forceCreate?: boolean,
         ): ScriptArmy | null;
         getLegionById(id: string): ScriptArmy | undefined;
+        getArmies(): ScriptArmy[];
     };
     cityManager: {
         getCity(id: string): ScriptCity | undefined;
-        updateCity(id: string, data: { troops: number }): void;
     };
     cameraFollowUI: {
         setFollow(armyId: string, armyName: string): void;
     };
+    /** 若游戏暂停则恢复运行（否则 AI/行军不推进） */
+    ensureUnpaused?: () => void;
+    /** 镜头立刻吸附到军团位置 */
+    snapCameraToArmy?: (armyId: string) => void;
+    /** 立刻跑一次该军团行为树（锁定远征目标后马上开拔） */
+    kickLegionAi?: (armyId: string) => void;
     /** 玩家提示（可选，走 toast/console） */
     notify?: (msg: string) => void;
 }
@@ -93,19 +94,62 @@ export class YuefeiExpedition {
         this.deps = deps;
     }
 
-    /** 是否已有一支在途的岳飞军团 */
+    /** 脚本 tick 是否在跑 */
     public isRunning(): boolean {
-        if (this.timer == null || !this.armyId) return false;
-        const army = this.deps.legionManager.getLegionById(this.armyId);
-        return !!army && !army.isDestroyed;
+        return this.timer != null && !!this.findExistingYuefeiArmy();
     }
 
-    /** 点按钮：起兵北伐（已在途则重新聚焦，不重复出兵） */
+    /** 场上是否已有岳飞·背嵬军（不论脚本是否在跑） */
+    private isYuefeiArmy(army: ScriptArmy): boolean {
+        if (army.isDestroyed || army.getTroops() <= 0) return false;
+        if (army.generalId === GENERAL_ID) return true;
+        if (army.homeCityId === START_CITY_ID && army.name === ELITE_NAME) return true;
+        return false;
+    }
+
+    /** 查找已有岳飞军团（优先缓存 id，否则扫全场） */
+    private findExistingYuefeiArmy(): ScriptArmy | undefined {
+        if (this.armyId) {
+            const cached = this.deps.legionManager.getLegionById(this.armyId);
+            if (cached && this.isYuefeiArmy(cached)) return cached;
+        }
+        const candidates = this.deps.legionManager
+            .getArmies()
+            .filter((a) => this.isYuefeiArmy(a));
+        if (candidates.length === 0) return undefined;
+        return candidates.sort((a, b) => b.getTroops() - a.getTroops())[0];
+    }
+
+    /** 切跟随、开镜、锁目标并 kick AI */
+    private attachFollowAndMarch(army: ScriptArmy): void {
+        this.deps.ensureUnpaused?.();
+        this.deps.cameraFollowUI.setFollow(army.id, army.name || ELITE_NAME);
+        this.deps.snapCameraToArmy?.(army.id);
+
+        if (this.timer == null) {
+            this.tick();
+            this.timer = window.setInterval(() => this.tick(), TICK_INTERVAL_MS);
+        } else {
+            this.tick();
+        }
+        this.deps.kickLegionAi?.(army.id);
+    }
+
+    /** 切跟随并恢复/启动北伐脚本 */
+    private resumeOrStartScript(army: ScriptArmy): void {
+        this.armyId = army.id;
+        army.expeditionUnlocked = true;
+        army.isElite = true;
+        if (!army.generalId) army.generalId = GENERAL_ID;
+        this.attachFollowAndMarch(army);
+    }
+
+    /** 点按钮：起兵北伐（已有岳飞军则切跟随并继续，不重复出兵） */
     public start(): void {
-        if (this.isRunning()) {
-            const army = this.deps.legionManager.getLegionById(this.armyId!);
-            if (army) this.deps.cameraFollowUI.setFollow(army.id, army.name);
-            this.notify('岳飞·背嵬军正在北伐途中');
+        const existing = this.findExistingYuefeiArmy();
+        if (existing) {
+            this.resumeOrStartScript(existing);
+            this.notify('岳飞·背嵬军继续北伐');
             return;
         }
 
@@ -114,8 +158,6 @@ export class YuefeiExpedition {
             this.notify('未找到起兵据点（郾城），无法北伐');
             return;
         }
-
-        this.randomizeRouteGarrisons();
 
         const army = this.deps.legionManager.createLegion(
             { lat: city.latitude, lng: city.longitude },
@@ -126,9 +168,14 @@ export class YuefeiExpedition {
             undefined,
             START_CITY_ID,
             GENERAL_ID,
+            true,
         );
         if (!army) {
-            this.notify('军团数已达上限，无法起兵（可先精简军团）');
+            this.notify('岳飞·背嵬军起兵失败');
+            return;
+        }
+        if (!this.deps.legionManager.getLegionById(army.id)) {
+            this.notify('岳飞·背嵬军起兵失败（军团未注册）');
             return;
         }
 
@@ -143,13 +190,11 @@ export class YuefeiExpedition {
 
         this.armyId = army.id;
         this.waypointIndex = 0;
-        this.deps.cameraFollowUI.setFollow(army.id, army.name);
 
         gameLog('expedition', `🐎 [圆梦] 岳飞率背嵬军十万自郾城起兵，北伐黄龙：开封 → 北京 → 沈阳 → 黄龙府`);
         this.notify('岳飞率背嵬军十万北伐——直捣黄龙！');
 
-        this.tick(); // 立刻锁定开封
-        this.timer = window.setInterval(() => this.tick(), TICK_INTERVAL_MS);
+        this.attachFollowAndMarch(army);
     }
 
     /** 每 tick：推进路线、锁定当前目标城 */
@@ -160,6 +205,7 @@ export class YuefeiExpedition {
         }
         const army = this.deps.legionManager.getLegionById(this.armyId);
         if (!army || army.isDestroyed || army.getTroops() <= 0) {
+            this.armyId = null;
             const reached = ROUTE[Math.max(0, this.waypointIndex - 1)]?.name ?? '开封';
             gameLog('expedition', `🐎 [圆梦] 岳飞·背嵬军覆没，北伐止步于 ${reached} 一线，壮志未酬`);
             this.notify(`岳飞·背嵬军覆没，北伐止步于 ${reached} 一线`);
@@ -199,52 +245,6 @@ export class YuefeiExpedition {
             army.expeditionTargetCityId = desired.id;
             gameLog('expedition', `🐎 [圆梦] 岳飞·背嵬军锁定目标：${desired.name}`);
         }
-    }
-
-    /** 圆梦开战前：沿途须攻城据点驻军随机为 [1000, 满编上限] */
-    private randomizeRouteGarrisons(): void {
-        const min = GameConfig.CITY.MIN_GARRISON;
-        const waypointIds = ROUTE.map((wp) => wp.id);
-        const factionOf = new Map<string, string>();
-        for (const wp of ROUTE) {
-            const c = this.deps.cityManager.getCity(wp.id);
-            if (c) factionOf.set(wp.id, c.factionId);
-        }
-        factionOf.set(START_CITY_ID, FACTION_ID);
-
-        const battleCityIds = new Set<string>();
-        let currentId = START_CITY_ID;
-        for (const waypointId of waypointIds) {
-            let guard = 0;
-            while (currentId !== waypointId && guard++ < 200) {
-                const hopId = roadRegistry.resolveFirstHostileCityOnPath(
-                    FACTION_ID,
-                    currentId,
-                    waypointId,
-                    (id) => factionOf.get(id) ?? this.deps.cityManager.getCity(id)?.factionId,
-                );
-                battleCityIds.add(hopId);
-                factionOf.set(hopId, FACTION_ID);
-                currentId = hopId;
-            }
-        }
-
-        let count = 0;
-        for (const cityId of battleCityIds) {
-            if (cityId === START_CITY_ID) continue;
-            const c = this.deps.cityManager.getCity(cityId);
-            if (!c) continue;
-            const maxCap = getCityMaxTroops(c.type, c.region);
-            const lo = Math.min(min, maxCap);
-            const hi = maxCap;
-            const troops =
-                hi <= lo ? hi : lo + Math.floor(Math.random() * (hi - lo + 1));
-            this.deps.cityManager.updateCity(cityId, {
-                troops: clampCityTroopsForCity(c, troops),
-            });
-            count++;
-        }
-        gameLog('expedition', `🐎 [圆梦] 沿途 ${count} 座据点驻军已随机（${min}～满编）`);
     }
 
     /** 停止脚本推进（军团仍留在场上） */

@@ -34,6 +34,10 @@ export class CameraFollowUI {
     /** 面板展开时列表节流刷新（势力兵力/据点/色条实时） */
     private lastListRefreshAt = 0;
     private static readonly LIST_REFRESH_INTERVAL_MS = 500;
+    /** 军团按钮下缘 ≈ 62px；岳飞按钮固定于此，列表面板 z-index 更高盖住它 */
+    private static readonly STACK_LEFT_PX = 16;
+    private static readonly YUEFEI_BTN_TOP_PX = 62;
+    private static readonly LIST_PANEL_TOP_PX = 62;
     /** 势力统计数据源（合并势力榜后，每行附带势力兵力/据点数） */
     private cityManager: { getCities(): any[] } | null = null;
     private factionManager: { getFactionName(id: string): string | undefined; getFactionColor(id: string): string | undefined } | null = null;
@@ -149,7 +153,7 @@ export class CameraFollowUI {
         this.listButton = btn;
     }
 
-    // ─── 1b. 岳飞北伐黄龙 圆梦按钮（军团按钮正下方） ────────
+    // ─── 1b. 岳飞北伐黄龙（固定于军团按钮下；列表展开时被面板盖住） ────────
 
     private createYuefeiButton(): void {
         const btn = document.createElement('button');
@@ -158,8 +162,8 @@ export class CameraFollowUI {
         btn.innerHTML = '⚔ 岳飞北伐黄龙';
         btn.style.cssText = `
             position: fixed;
-            top: 62px;
-            left: 16px;
+            top: ${CameraFollowUI.YUEFEI_BTN_TOP_PX}px;
+            left: ${CameraFollowUI.STACK_LEFT_PX}px;
             z-index: 10000;
             padding: 9px 16px;
             font-size: 14px;
@@ -189,15 +193,15 @@ export class CameraFollowUI {
         document.body.appendChild(btn);
     }
 
-    // ─── 2. 军团列表面板 ──────────────────────────────
+    // ─── 2. 军团列表面板（z-index 高于岳飞按钮，展开时盖住下层按钮） ────────
 
     private createListPanel(): void {
         const panel = document.createElement('div');
         panel.id = 'army-list-panel';
         panel.style.cssText = `
             position: fixed;
-            top: 62px;
-            left: 16px;
+            top: ${CameraFollowUI.LIST_PANEL_TOP_PX}px;
+            left: ${CameraFollowUI.STACK_LEFT_PX}px;
             width: 280px;
             max-height: 70vh;
             overflow-y: auto;

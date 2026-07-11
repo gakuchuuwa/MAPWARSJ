@@ -14,6 +14,7 @@
  */
 
 import { IBattleUnit, BattleType, UnitType } from './CombatSystem';
+import type { CityType } from '../types/core';
 import { gameLog } from '../utils/GameLogger';
 import { audioManager } from '../audio/AudioManager';
 
@@ -1007,7 +1008,14 @@ export class BattleField implements IOpeningPulseSink {
                 gameLog('battle', `🦂 [BattleField] ${bu.unit.name} 被咬 -${extraBite}（保底存活 ${survivalFloor}）`);
             }
 
-            const strategicBonus = applyPostBattleStrategicBonus(bu.unit, this.type, loserSurvivors);
+            const siegeCity = this.getSiegeGarrisonCityEntity();
+            const defenderCityType = (siegeCity as { type?: CityType } | null)?.type ?? null;
+            const strategicBonus = applyPostBattleStrategicBonus(
+                bu.unit,
+                this.type,
+                loserSurvivors,
+                defenderCityType,
+            );
             if (strategicBonus > 0) {
                 gameLog('battle', `🌾 [BattleField] ${bu.unit.name} 战略增兵 +${strategicBonus}`);
             }

@@ -201,11 +201,16 @@ export class LegionManager {
         return this.armies.some(army => !army.isIdle());
     }
 
-    public addArmy(army: Army): void {
+    public addArmy(army: Army, force = false): void {
         // [FIX] Idempotency: Avoid adding the same army multiple times
         if (this.armies.includes(army)) return;
 
-        if (army.type === 'legion' && !army.isDestroyed && !this.canSpawnMoreLegions()) {
+        if (
+            !force &&
+            army.type === 'legion' &&
+            !army.isDestroyed &&
+            !this.canSpawnMoreLegions()
+        ) {
             console.warn(
                 `[LegionManager] 已达军团上限 ${GameConfig.LEGION.MAX_ACTIVE_LEGIONS}，拒绝加入: ${army.name}`
             );
@@ -797,9 +802,10 @@ export class LegionManager {
         onArrive?: (army: Army) => void,
         legionType?: LegionType, // [UNIT SYSTEM] 兵种类型
         sourceCityId?: string, // [NEW] Source City
-        generalId?: string // [NEW] General Avatar
+        generalId?: string, // [NEW] General Avatar
+        forceCreate: boolean = false
     ): Army | null {
-        if (!this.canSpawnMoreLegions()) {
+        if (!forceCreate && !this.canSpawnMoreLegions()) {
             console.warn(`[LegionManager] 已达军团上限 ${GameConfig.LEGION.MAX_ACTIVE_LEGIONS}，无法创建 ${name ?? '军团'}`);
             return null;
         }
@@ -843,7 +849,7 @@ export class LegionManager {
         }
 
         applyLegionCultureComposition(army, region);
-        this.addArmy(army);
+        this.addArmy(army, forceCreate);
 
         return army;
     }

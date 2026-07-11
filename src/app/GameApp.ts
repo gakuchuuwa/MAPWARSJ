@@ -540,6 +540,21 @@ export class GameApp {
                 cityManager: this.cityManager,
                 cameraFollowUI: this.cameraFollowUI,
                 notify: (msg) => gameLog('expedition', msg),
+                ensureUnpaused: () => {
+                    if (this.timeSystem.isGamePaused()) {
+                        this.timeSystem.setPaused(false);
+                    }
+                },
+                snapCameraToArmy: (armyId) => {
+                    const army = legionManager.getLegionById(armyId);
+                    if (!army) return;
+                    const pos = army.getPosition();
+                    const lMap = this.map.getLeafletMap();
+                    lMap.setView([pos.lat, pos.lng], lMap.getZoom(), { animate: false });
+                },
+                kickLegionAi: (armyId) => {
+                    this.aiController?.tickArmyById(armyId);
+                },
             });
             this.cameraFollowUI.setYuefeiHandler(() => this.yuefeiExpedition.start());
 

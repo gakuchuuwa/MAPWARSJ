@@ -7,7 +7,8 @@
  *   · 真游戏行军 → FollowResupplySystem 按实际 delta 累计
  */
 import { GameConfig } from '../src/config/GameConfig';
-import { getStrategicSkillDef } from '../src/data/GeneralSkills';
+import { getStrategicSkillDef, resolvePostBattlePctByCityType } from '../src/data/GeneralSkills';
+import type { CityType } from '../src/types/core';
 
 /** 以战养战：给定军团上限与 tick 秒数，应补兵力 */
 export function computeFieldResupplyBonus(troopCap: number, travelSec: number): number {
@@ -21,14 +22,16 @@ export function getChainSimFieldResupplySec(): number {
 }
 
 /**
- * 胜后叠战略续航：因粮于敌 / 隐藏1% / 以战养战
+ * 胜后叠战略续航：因粮于敌 / 威震华夏城型续航 / 隐藏0.5% / 以战养战
  * @param travelSec 以战养战 tick 秒数；默认战后驻留 3 秒
+ * @param defenderCityType 攻城战守方城型（威震华夏 S④ 按城型 1–4%）
  */
 export function applyStrategicSustainAfterVictory(
     survivors: number,
     troopCap: number,
     strategicSkillId: string | null | undefined,
     travelSec: number = getChainSimFieldResupplySec(),
+    defenderCityType?: CityType | null,
 ): number {
     let t = survivors;
     const str = strategicSkillId ? getStrategicSkillDef(strategicSkillId) : null;
@@ -36,6 +39,9 @@ export function applyStrategicSustainAfterVictory(
 
     if (str.effect === 'post_battle_troop_pct') {
         t += Math.floor(t * str.magnitude);
+    } else if (defenderCityType && str.postBattlePctByCityType) {
+        const pct = resolvePostBattlePctByCityType(str, defenderCityType);
+        if (pct > 0) t += Math.floor(t * pct);
     } else if (str.hiddenPostBattlePct && str.hiddenPostBattlePct > 0) {
         t += Math.floor(t * str.hiddenPostBattlePct);
     }

@@ -10,6 +10,8 @@
  *   名将 = 战略技 + 战术技；普将 = 仅战术技。
  */
 
+import type { CityType } from '../types/core';
+
 export type GeneralTier = 'famous' | 'ordinary';
 
 export type TacticalTiming = 'opening' | 'comeback';
@@ -84,11 +86,13 @@ export interface StrategicSkillDef {
     /** 引擎接线状态：ready=真实生效；new=数据就位、Step2 接引擎前不生效（诚实标注，audit 依赖） */
     engineStatus: 'ready' | 'new';
     /**
-     * 隐藏胜后续航： **军团速**（str_01/10/11/12）、**威震华夏**（str_04）附带；
+     * 隐藏胜后续航： **军团速**（str_01/10/11/12）附带；
      * **据点兵**（str_14/15）与 **据点防** 不含——守备向不配远征续航。
-     * 胜后按自身当前兵 × 此比例静默补血；与 str_07 因粮于敌（1% 可见）相比为半效 0.5%。
+     * 胜后按自身当前兵 × 此比例静默补血。
      */
     hiddenPostBattlePct?: number;
+    /** 攻城胜后按城型续航（S④威震华夏）：关隘1%/小城2%/中城3%/大城4% */
+    postBattlePctByCityType?: Partial<Record<CityType, number>>;
     note?: string;
 }
 
@@ -136,7 +140,7 @@ export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
 export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
     // ── 军团攻 ──
     str_03: { id: 'str_03', grid: 'S③', displayName: '所向披靡', effect: 'attacker_power_mult', magnitude: 1.5, engineStatus: 'ready' },
-    str_04: { id: 'str_04', grid: 'S④', displayName: '威震华夏', effect: 'advantage_skill_effect_mult', magnitude: 1.3, engineStatus: 'ready', hiddenPostBattlePct: 0.01, note: '优势时（兵力>1.5）战术技效果 ×1.3；隐藏胜后续航 1%' },
+    str_04: { id: 'str_04', grid: 'S④', displayName: '威震华夏', effect: 'advantage_skill_effect_mult', magnitude: 1.3, engineStatus: 'ready', postBattlePctByCityType: { pass: 0.01, small_city: 0.02, medium_city: 0.03, big_city: 0.04 }, note: '优势时（兵力>1.5）战术技效果 ×1.3；攻城胜后续航：关隘1%/小城2%/中城3%/大城4%' },
     str_09: { id: 'str_09', grid: 'S⑨', displayName: '以寡击众', effect: 'disadvantage_power_mult', magnitude: 1.4, engineStatus: 'ready', note: '劣势时（兵力<0.67）自身战力 ×1.4' },
     // ── 军团速 ──
     str_01: { id: 'str_01', grid: 'S①', displayName: '兵贵神速', effect: 'march_speed_mult', magnitude: 1.5, engineStatus: 'ready', hiddenPostBattlePct: 0.005, note: '隐藏胜后续航 0.5%（静默，不显示）' },
@@ -1400,6 +1404,15 @@ export {
 
 export function getStrategicSkillDef(skillId: string): StrategicSkillDef | null {
     return STRATEGIC_SKILL_CATALOG[skillId] ?? null;
+}
+
+/** S④威震华夏等：攻城胜后按守方城型取续航比例 */
+export function resolvePostBattlePctByCityType(
+    skill: StrategicSkillDef | null | undefined,
+    cityType: CityType | null | undefined,
+): number {
+    if (!skill?.postBattlePctByCityType || !cityType) return 0;
+    return skill.postBattlePctByCityType[cityType] ?? 0;
 }
 
 // @ts-ignore
