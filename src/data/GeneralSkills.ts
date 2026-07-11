@@ -1336,6 +1336,7 @@ export function getGeneralProfile(generalId: string | undefined): GeneralProfile
 const V1_EFFECT_BRIDGE: Record<string, { effect: TacticalEffect; timing: TacticalTiming }> = {
     ally_power_mult:            { effect: 'ally_mult_1_2',      timing: 'opening' },
     first_sortie_power_mult:    { effect: 'ally_mult_1_2',      timing: 'opening' },
+    first_sortie_comeback_mult: { effect: 'ally_mult_1_2',      timing: 'comeback' },
     enemy_sub_troops_opening:   { effect: 'enemy_sub_troops',   timing: 'opening' },
     ally_add_troops_comeback:   { effect: 'ally_add_troops',    timing: 'comeback' },
     win_casualty_reduction:     { effect: 'ally_casualty_reduce', timing: 'opening' },

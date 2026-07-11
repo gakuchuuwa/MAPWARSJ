@@ -53,7 +53,8 @@ export type TacticalBaseEffect =
     | 'cancel_enemy_terrain_buff'
     | 'halve_enemy_terrain_buff'
     | 'nullify_enemy_opening_cut'
-    | 'first_sortie_power_mult';
+    | 'first_sortie_power_mult'
+    | 'first_sortie_comeback_mult';
 
 /** 触发条件（观众可辨者优先） */
 export type TacticalSkillCondition =
@@ -150,6 +151,7 @@ export const TRI_CLASS_LABEL: Readonly<Record<TacticalTriClass, string>> = {
 export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixSet>> = {
     // 攻战·机（加己攻）
     ally_power_mult: 'gongzhan',
+    first_sortie_power_mult: 'gongzhan',
     // 胜战·全（减敌兵）
     enemy_sub_troops_opening: 'shengzhan',
     dual_sub_troops_opening: 'shengzhan',
@@ -157,9 +159,8 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
     luck_variance_self: 'dizhan',
     luck_variance_enemy: 'dizhan',
     luck_lock_self: 'dizhan',
-    // 混战·乱（克夺反 + 增兵破局 + 首战爆发）
+    // 混战·乱（克夺反 + 增兵破局）
     ally_add_troops_opening: 'hunzhan',
-    first_sortie_power_mult: 'hunzhan',
     steal_enemy_skill: 'hunzhan',
     negate_enemy_skill: 'hunzhan',
     partial_negate_enemy_skill: 'hunzhan',
@@ -171,11 +172,12 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
     win_casualty_reduction: 'bingzhan',
     elite_casualty_reduction: 'bingzhan',
     post_recovery_rate: 'bingzhan',
-    // 败战·险（败不垒）
+    // 败战·险（败不垒 + 首战逆袭）
     lose_enemy_casualty_boost: 'baizhan',
     recompute_comeback: 'baizhan',
     lose_zero_enemy_recovery: 'baizhan',
     ally_add_troops_comeback: 'baizhan',
+    first_sortie_comeback_mult: 'baizhan',
 };
 
 /** 第2步：六种 → 三类（攻·胜=优势 / 敌·混=均势 / 并·败=劣势） */
