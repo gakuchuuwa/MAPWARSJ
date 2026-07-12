@@ -2317,8 +2317,8 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         });
     }
 
-    // 合法战略武将技白名单 —— 唯一权威（主人定稿 20 个）。名单外一律非法：
-    //   str_11 长驱深入（远征技，走脚本层，不是战略技）、str_02/03/04/08/09（战术类乘区，已退役）。
+    // 合法战略武将技白名单 —— 唯一权威（主人定稿的 20 个）。名单外一律非法：
+    //   含 str_11 长驱深入（远征技，走脚本层）、str_02/03/04/08/09（战术类乘区，已退役）。
     const CANONICAL_STRATEGIC_IDS = new Set([
         'str_01', 'str_10', 'str_12',            // 加速
         'str_06', 'str_07', 'str_13', 'str_28',  // 续航
