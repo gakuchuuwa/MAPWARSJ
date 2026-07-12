@@ -2338,25 +2338,14 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         'str_05', 'str_25', 'str_26', 'str_27',  // 防务
     ]);
 
-    // 各战略技三势（create 造势=优势 / leverage 借势=均势 / reverse 逆势=劣势）。
-    //   武将 aptitude 须与所戴战略技三势一致，否则报错（规则 11.7③）。
-    //   str_11 长驱深入=远征技、无三势，不在此表 → 佩戴它时跳过三势校验。
-    const STRATEGIC_APTITUDE: Record<string, 'create' | 'leverage' | 'reverse'> = {
-        str_01: 'reverse',  str_10: 'leverage', str_12: 'create',                       // 加速
-        str_06: 'create',   str_07: 'reverse',  str_13: 'leverage', str_28: 'create',   // 续航
-        str_16: 'leverage', str_17: 'reverse',  str_18: 'create',                       // 视野
-        str_19: 'create',   str_20: 'leverage', str_21: 'reverse',                      // 威慑
-        str_22: 'reverse',  str_23: 'leverage', str_24: 'create',                       // 纵横
-        str_05: 'reverse',  str_25: 'create',   str_26: 'create',   str_27: 'leverage', // 防务
-    };
+    // 【主人定 2026-07-13】战略技允许跨势佩戴（武将 aptitude ≠ 技三势，符合历史即可），
+    //   原「STRATEGIC_APTITUDE 三势对照表 + 跨势 warn」已删，勿再加此类校验。
 
-    // 11.6. [NEW 2026-07-08] 武将技配置深检：悬空引用 / 三格完整性 / 三格类别错配
-    //   三格类别判据 = 三类六种（docs/02-design/武将技-分类逻辑说明.md），与 npm run tactical:triclass 一致
+    // 11.6. [NEW 2026-07-08] 武将技配置深检：全部技能格的悬空引用 + aptitude 缺失
+    //   （原「三格类别错配」检查已按主人 2026-07-13 决定删除，见下方注释）
     {
         const tacIdSet = new Set(data.tacticalSkills.map(s => s.id));
-        // 战略技合法性统一交规则 11.7 白名单校验，此处只查战术四格悬空引用
-        const triById = new Map(data.tacticalSkills.map(s => [s.id, s.triClass]));
-        const TRI_LABEL: Record<string, string> = { advantage: '优势技', balance: '均势技', disadvantage: '劣势技' };
+        // 战略技合法性统一交规则 11.7 白名单校验，此处只查战术格悬空引用
         for (const [fId, g] of Object.entries(data.generals)) {
             const prof = data.profiles[g.generalId];
             if (!prof) continue;
@@ -2382,22 +2371,9 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
             if (!prof.aptitude) {
                 issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) 缺 aptitude三势`, factionId: fId });
             }
-            // 格子里配的技类别不符（如均势技放进劣势格）
-            //   借势(leverage)武将故意跨类放技，跳过此校验
-            if (prof.aptitude !== 'leverage') {
-                const slotChecks: Array<[string, string | undefined, string]> = [
-                    ['优势格', prof.advantageSkillId, 'advantage'],
-                    ['均势格', prof.balanceSkillId, 'balance'],
-                    ['劣势格', prof.disadvantageSkillId, 'disadvantage'],
-                ];
-                for (const [label, id, expect] of slotChecks) {
-                    if (!id) continue;
-                    const tri = triById.get(id);
-                    if (tri && tri !== expect) {
-                        issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) ${label}=${id} 实为${TRI_LABEL[tri] ?? tri}，类别不符`, factionId: fId });
-                    }
-                }
-            }
+            // 【主人定 2026-07-13】格位与技能三类（优/均/劣）不要求匹配，符合历史即可：
+            //   格位只决定"何时放"（攻守×兵力局），技能类别只是播报分类。实测六格约 40% 跨类，
+            //   属正常配置。原「类别不符」warn 已删，勿再加格位×技类的匹配校验。
         }
     }
 
@@ -2422,25 +2398,19 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
             }
         }
 
-        // ②③ 名将战略技合法性 + 三势一致
+        // ② 名将战略技合法性（白名单）
         //   str_11 长驱深入（远征技）主人定：佩戴放行、不报错；也不参与①的"必须有人戴"（不在白名单 20 内）。
+        //   【主人定 2026-07-13】战略技允许跨势佩戴（武将 aptitude ≠ 技三势，只要符合历史即可）：
+        //   不校验、不报 warn。勿再加"三势不符/跨势"类检查。
         const WEAR_EXEMPT_IDS = new Set(['str_11']);
-        const APT_LABEL: Record<string, string> = { create: '造势(优势)', leverage: '借势(均势)', reverse: '逆势(劣势)' };
         for (const [fId, g] of Object.entries(data.generals)) {
             const prof = data.profiles[g.generalId];
             if (!prof || prof.tier !== 'famous') continue;
             const sid = prof.strategicSkillId;
             if (!sid) continue; // 「名将缺战略技」已由规则 11.5 报，不重复
-            if (WEAR_EXEMPT_IDS.has(sid)) continue; // 长驱深入除外：不报非法、无三势校验
-            // ② 必须在白名单内
+            if (WEAR_EXEMPT_IDS.has(sid)) continue; // 长驱深入除外：不报非法
             if (!CANONICAL_STRATEGIC_IDS.has(sid)) {
                 issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 佩戴的 ${sid}（${nameOf(sid)}）不是合法战略技，请改配白名单内的战略技`, factionId: fId });
-                continue;
-            }
-            // ③ 三势一致：武将 aptitude 须 = 该战略技三势（str_11 等无三势技不在 STRATEGIC_APTITUDE，跳过）
-            const skillApt = STRATEGIC_APTITUDE[sid];
-            if (skillApt && prof.aptitude && prof.aptitude !== skillApt) {
-                issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 三势不符：武将是${APT_LABEL[prof.aptitude] ?? prof.aptitude}，战略技「${nameOf(sid)}」是${APT_LABEL[skillApt]}`, factionId: fId });
             }
         }
     }

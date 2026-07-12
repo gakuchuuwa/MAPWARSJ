@@ -48,6 +48,7 @@ import {
     PHASE_STALEMATE_START,
     PHASE_COLLAPSE_START,
     pickSideSkillGeneralUnit,
+    resolveStalemateUiThresholdSec,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -86,6 +87,18 @@ export class CombatUI {
     private skillPulseTimers: number[] = [];
     /** 同场双方技能连放时仅首句插技能音效（无语音兜底路径） */
     private skillBurstSfxPlayed = false;
+    /**
+     * 蓄力收缩（winddown）：会放技的一侧立绘从沉降后的 1.0 继续缓缩到 0.94，
+     * 到相持阈值（技能亮相时刻）缩到底，脉冲从收缩值弹起 → 一收一放对比更狠。
+     * 无技可放侧【不缩】（主人定：单侧缩到底没有回弹，两边立绘不对称）。
+     * 逐帧按游戏内 elapsed 驱动（CSS 动画走真实时间，倍速下会漂移，故不用）。只动外框，不碰 img 调校。
+     */
+    private portraitWind: Record<'attacker' | 'defender', { driving: boolean; pulsed: boolean; scale: number }> = {
+        attacker: { driving: false, pulsed: false, scale: 1 },
+        defender: { driving: false, pulsed: false, scale: 1 },
+    };
+    /** 蓄力收缩的最小比例（缩到底 = 0.90，收缩 10% 才够肉眼可辨；0.94 实测太隐晦） */
+    private static readonly PORTRAIT_WIND_MIN_SCALE = 0.90;
     /** 慢直播：双方技能 Cut-in 理想错开（与 GeneralSkillCombat 同步） */
     private static readonly SKILL_PULSE_STAGGER_MS = SKILL_PULSE_STAGGER_IDEAL_SEC * 1000;
 
@@ -246,9 +259,11 @@ export class CombatUI {
                 85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
                 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); }
             }
-            /* 武将技释放：立绘快速放大 → 缓缓复原（动外框，不碰 img 调校） */
+            /* 武将技释放：立绘快速放大 → 缓缓复原（动外框，不碰 img 调校）
+               起点读 --pre-scale：蓄力收缩(winddown)把立绘缓缩到 0.94 后，从收缩值直接弹到 1.08，
+               对比幅度 ≈ +15%（原 +8%），爆发感更强。无蓄力时回退 scale(1)，行为同旧版。 */
             @keyframes portrait-skill-surge {
-                0% { transform: scale(1); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+                0% { transform: scale(var(--pre-scale, 1)); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
                 15% { transform: scale(1.08); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
                 100% { transform: scale(1); }
             }
@@ -1423,6 +1438,44 @@ export class CombatUI {
             'portrait-frame-enter-left 0.55s ease-out 0.12s both, portrait-kenburns-settle 5s cubic-bezier(0.22, 1, 0.36, 1) 0.67s forwards';
         this.rightPortraitFrame.style.animation =
             'portrait-frame-enter-right 0.55s ease-out 0.18s both, portrait-kenburns-settle 5s cubic-bezier(0.22, 1, 0.36, 1) 0.73s forwards';
+        // 蓄力收缩状态复位（换场重新蓄力；清上一场残留的内联缩放与 --pre-scale）
+        for (const side of ['attacker', 'defender'] as const) {
+            this.portraitWind[side] = { driving: false, pulsed: false, scale: 1 };
+        }
+        for (const frame of [this.leftPortraitFrame, this.rightPortraitFrame]) {
+            frame.style.transform = '';
+            frame.style.removeProperty('--pre-scale');
+        }
+    }
+
+    /**
+     * 蓄力收缩逐帧驱动（updateStats 每帧调）：
+     * 仅当该侧存在可放技将领（pickSideSkillGeneralUnit，与保底亮相同判据）才收缩，
+     * 从沉降结束（min(阈值×0.45, 5.8s)）起，随游戏内 elapsed 缓缩至 0.94，相持阈值处缩到底。
+     * 无将侧保持 1.0（对称铁律）；脉冲放完（pulsed）不再二次收缩。
+     */
+    private updatePortraitWinddown(): void {
+        const bf = this.boundRegionalBattleField;
+        if (!bf || bf.isOver) return;
+        const threshold = resolveStalemateUiThresholdSec(bf.targetDuration);
+        const startSec = Math.min(threshold * 0.45, 5.8);
+        if (bf.elapsed <= startSec) return;
+        for (const side of ['attacker', 'defender'] as const) {
+            const st = this.portraitWind[side];
+            if (st.pulsed) continue;
+            const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+            if (!pickSideSkillGeneralUnit(units)) continue; // 无技可放 → 不缩，保持两侧对称
+            const frame = side === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
+            if (!st.driving) {
+                st.driving = true;
+                frame.style.animation = 'none'; // 清掉 settle 的 forwards 填充，让内联 transform 生效
+                console.log(`✨ [PortraitWind] ${side === 'attacker' ? '攻方' : '守方'}立绘开始蓄力收缩 → ${CombatUI.PORTRAIT_WIND_MIN_SCALE}（至 ${threshold.toFixed(1)}s 技能亮相）`);
+            }
+            const k = Math.min(1, (bf.elapsed - startSec) / Math.max(0.001, threshold - startSec));
+            const eased = 0.5 - 0.5 * Math.cos(Math.PI * k); // easeInOutSine：起收轻、中段沉、到底缓
+            st.scale = 1 - (1 - CombatUI.PORTRAIT_WIND_MIN_SCALE) * eased;
+            frame.style.transform = `scale(${st.scale.toFixed(4)})`;
+        }
     }
 
     /** 复位上一场的败方褪灰与技能脉冲状态（仅真正换场时清，同场 UI 刷新保留去重） */
@@ -1792,9 +1845,15 @@ export class CombatUI {
         });
     }
 
-    /** 武将技释放的立绘脉冲：快起慢落（0.15s 放大到 1.09 → 缓缓落回），只动外框 transform */
+    /** 武将技释放的立绘脉冲：快起慢落（0.15s 放大到 1.08 → 缓缓落回），只动外框 transform。
+     *  起点接蓄力收缩值（--pre-scale）：缩到 0.94 后弹到 1.08，一收一放；无蓄力时同旧版从 1 弹起。 */
     private pulsePortraitForSkill(side: 'attacker' | 'defender'): void {
         const frame = side === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
+        const st = this.portraitWind[side];
+        frame.style.setProperty('--pre-scale', st.scale.toFixed(4));
+        frame.style.transform = ''; // 交还给 surge 动画（both 填充结束时停在 scale(1)）
+        st.pulsed = true; // 放完不再二次收缩；同侧后续脉冲 --pre-scale 已是 1 附近，行为同旧版
+        st.scale = 1;
         frame.style.animation = 'none';
         void frame.offsetWidth;
         frame.style.animation = 'portrait-skill-surge 1.6s cubic-bezier(0.22, 1, 0.36, 1) both';
@@ -2950,6 +3009,8 @@ export class CombatUI {
             }
         }
 
+        // 蓄力收缩：会放技侧立绘随游戏时间缓缩，技能亮相时刻缩到底（脉冲从收缩值弹起）
+        this.updatePortraitWinddown();
         // 侧栏「名称: 兵力」+ 各自小血条；中央主条为双方兵力比
         this.renderSideLabel('attacker', this.attackerDisplayName, attCurrent);
         this.renderSideLabel('defender', this.defenderDisplayName, defCurrent);
