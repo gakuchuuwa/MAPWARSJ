@@ -1953,6 +1953,12 @@ function serverReadAllEntityData() {
             advantageSkillId: profileEntryField(body, 'advantageSkillId'),
             balanceSkillId: profileEntryField(body, 'balanceSkillId'),
             disadvantageSkillId: profileEntryField(body, 'disadvantageSkillId'),
+            atkAdvantageSkillId: profileEntryField(body, 'atkAdvantageSkillId'),
+            atkBalanceSkillId: profileEntryField(body, 'atkBalanceSkillId'),
+            atkDisadvantageSkillId: profileEntryField(body, 'atkDisadvantageSkillId'),
+            defAdvantageSkillId: profileEntryField(body, 'defAdvantageSkillId'),
+            defBalanceSkillId: profileEntryField(body, 'defBalanceSkillId'),
+            defDisadvantageSkillId: profileEntryField(body, 'defDisadvantageSkillId'),
             aptitude: profileEntryField(body, 'aptitude'),
         };
     }
@@ -2352,24 +2358,25 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
             if (!prof) continue;
             // 引用了技能目录中不存在的 ID（会导致战斗时查不到技）
             const refs: Array<[string, string | undefined, Set<string>]> = [
-                ['战术技', prof.tacticalSkillId, tacIdSet],
+                ['战术技(通用)', prof.tacticalSkillId, tacIdSet],
                 ['优势格', prof.advantageSkillId, tacIdSet],
                 ['均势格', prof.balanceSkillId, tacIdSet],
                 ['劣势格', prof.disadvantageSkillId, tacIdSet],
+                ['攻·优势格', prof.atkAdvantageSkillId, tacIdSet],
+                ['攻·均势格', prof.atkBalanceSkillId, tacIdSet],
+                ['攻·劣势格', prof.atkDisadvantageSkillId, tacIdSet],
+                ['守·优势格', prof.defAdvantageSkillId, tacIdSet],
+                ['守·均势格', prof.defBalanceSkillId, tacIdSet],
+                ['守·劣势格', prof.defDisadvantageSkillId, tacIdSet],
             ];
             for (const [label, id, set] of refs) {
                 if (id && !set.has(id)) {
                     issues.push({ level: 'error', msg: `武将 "${g.generalName}"(${g.generalId}) ${label} ${id} 在技能目录中不存在`, factionId: fId });
                 }
             }
-            // 三格/三势不全（运行时回退单技不报错，但按三势系统应配全）
-            const missing: string[] = [];
-            if (!prof.advantageSkillId) missing.push('优势格');
-            if (!prof.balanceSkillId) missing.push('均势格');
-            if (!prof.disadvantageSkillId) missing.push('劣势格');
-            if (!prof.aptitude) missing.push('aptitude三势');
-            if (missing.length > 0) {
-                issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) 缺 ${missing.join('/')}`, factionId: fId });
+            // 三势天赋缺失（技能格缺失已由规则 11.9 六技配齐统一报 error，此处不重复）
+            if (!prof.aptitude) {
+                issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) 缺 aptitude三势`, factionId: fId });
             }
             // 格子里配的技类别不符（如均势技放进劣势格）
             //   借势(leverage)武将故意跨类放技，跳过此校验
@@ -2435,18 +2442,41 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
     }
 
     // 11.8. [NEW] 战术技覆盖：目录里每个战术技（ts_*）都必须有武将佩戴
-    //   佩戴口径 = 武将档案四格任一（招牌 tacticalSkillId / 优势格 / 均势格 / 劣势格）。
+    //   佩戴口径 = 武将档案全部战术格任一（通用 / 优·均·劣三势格 / 攻三格 / 守三格，共 10 字段）。
     //   无人佩戴的战术技 = 空技，报错（需配将，或从 TACTICAL_SKILL_CATALOG 删除）。
     {
         const wornTactical = new Set<string>();
         for (const prof of Object.values(data.profiles)) {
-            for (const id of [prof.tacticalSkillId, prof.advantageSkillId, prof.balanceSkillId, prof.disadvantageSkillId]) {
+            for (const id of [
+                prof.tacticalSkillId, prof.advantageSkillId, prof.balanceSkillId, prof.disadvantageSkillId,
+                prof.atkAdvantageSkillId, prof.atkBalanceSkillId, prof.atkDisadvantageSkillId,
+                prof.defAdvantageSkillId, prof.defBalanceSkillId, prof.defDisadvantageSkillId,
+            ]) {
                 if (id) wornTactical.add(id);
             }
         }
         for (const s of data.tacticalSkills) {
             if (!wornTactical.has(s.id)) {
                 issues.push({ level: 'error', msg: `战术技 "${s.displayName}"(${s.id}) 无任何武将佩戴（所有战术技都必须有人戴，请配将或删除该技）` });
+            }
+        }
+    }
+
+    // 11.9. [NEW] 六技配齐：一人六个武将技 = 攻击(攻三格)/通用/防御(守三格)/优势/均势/劣势
+    //   普将 = 六技全配；名将 = 六技 + 1 战略技（战略技缺失已由规则 11.5 报，此处只查战术六技）。
+    {
+        for (const [fId, g] of Object.entries(data.generals)) {
+            const prof = data.profiles[g.generalId];
+            if (!prof) continue;
+            const missing: string[] = [];
+            if (!prof.tacticalSkillId) missing.push('通用');
+            if (!prof.advantageSkillId) missing.push('优势');
+            if (!prof.balanceSkillId) missing.push('均势');
+            if (!prof.disadvantageSkillId) missing.push('劣势');
+            if (!prof.atkAdvantageSkillId || !prof.atkBalanceSkillId || !prof.atkDisadvantageSkillId) missing.push('攻击');
+            if (!prof.defAdvantageSkillId || !prof.defBalanceSkillId || !prof.defDisadvantageSkillId) missing.push('防御');
+            if (missing.length > 0) {
+                issues.push({ level: 'error', msg: `武将 "${g.generalName}"(${g.generalId}) 六技不全，缺：${missing.join('/')}（${prof.tier === 'famous' ? '名将=六技+1战略技' : '普将=六技'}）`, factionId: fId });
             }
         }
     }
