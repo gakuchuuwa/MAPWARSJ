@@ -4751,7 +4751,7 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
 ];
 
 const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
-    { id: 'ts_741', layer: 'tactical', series: 'troop', index: 741, displayName: '八百壮士', sourceQuote: '四行仓库八百壮士，誓死坚守，震撼敌军', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'opening_roll', magnitude: 0.15, engineStatus: 'ready' },
+    // ts_741 已删除（八百壮士，1937年近现代典故，不符合游戏时代设定）
     { id: 'ts_742', layer: 'tactical', series: 'troop', index: 742, displayName: '孤注一掷', sourceQuote: '《晋书·何无忌传》刘裕倾其所有，孤注一挗', baseEffect: 'ally_add_troops_opening', condition: 'ratio_underdog', phase: 'opening_roll', magnitude: 0.1, engineStatus: 'ready' },
     { id: 'ts_743', layer: 'tactical', series: 'counter', index: 743, displayName: '断道绝险', sourceQuote: '《三国志·张郃传》街亭之战张郃断马谡汲水之道', baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_744', layer: 'tactical', series: 'counter', index: 744, displayName: '暗渡陈仓', sourceQuote: '《史记·淮阴侯列传》韩信绕开正面险要，出奇兵平定三秦', baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
