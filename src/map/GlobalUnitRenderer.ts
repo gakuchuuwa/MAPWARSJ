@@ -16,8 +16,19 @@ import { LegionType } from '../types/UnitTypes';
 import { GameConfig, SPRITE_PATHS } from '../config/GameConfig';
 import { FACTIONS } from '../data/factions';
 import { gameLog } from '../utils/GameLogger';
-import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG } from '../data/GeneralSkills';
+import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG, getStrategicSkillDef } from '../data/GeneralSkills';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { generalIdHasStrategicEffect } from '../combat/GeneralSkillCombat';
+
+/** 虚张声势倍率：从武将的战略技 catalog 读取 magnitude，fallback 2 */
+function getBluffMagnitude(generalId: string | undefined): number {
+    if (!generalId) return 2;
+    const profile = GENERAL_PROFILES[generalId];
+    if (!profile?.strategicSkillId) return 2;
+    const skill = STRATEGIC_SKILL_CATALOG[profile.strategicSkillId];
+    if (skill?.effect !== 'bluff_troop_count') return 2;
+    return skill.magnitude;
+}
 
 export interface IRenderable {
     getPosition(): { lat: number; lng: number };
@@ -319,12 +330,14 @@ export class GlobalUnitRenderer {
         return pt.x >= -m && pt.x <= w + m && pt.y >= -m && pt.y <= h + m;
     }
 
-    /** 视口内可见单位（已做屏幕裁剪） */
+    /** 视口内可见单位（已做屏幕裁剪 + 战略视野技判定） */
     private collectVisibleUnitsInView(): IAnimatedUnit[] {
         const list: IAnimatedUnit[] = [];
         for (let i = 0; i < this.sortedUnitsCache.length; i++) {
             const unit = this.sortedUnitsCache[i];
             if ((unit as any).visible === false) continue;
+            // 神出鬼没：非战斗时不可见
+            if (generalIdHasStrategicEffect(unit.generalId, 'hide_during_peacetime') && !(unit as any).isAttacking) continue;
             if (!this.isUnitInContainerView(unit)) continue;
             list.push(unit);
         }
@@ -422,6 +435,11 @@ export class GlobalUnitRenderer {
         console.warn(`⚠️ [GlobalUnitRenderer] Unit not found for visibility toggle: ${unitId}`);
     }
 
+    /** 强制下一帧重绘（状态变更但无动画驱动时，避免旧帧残留） */
+    public invalidateView(): void {
+        this.mapNeedsRedraw = true;
+    }
+
     // [OPTIMIZATION]
     // Track if any unit is moving or animating to decide if we need to redraw
     private lastFrameDrawMs = 0;
@@ -503,7 +521,8 @@ export class GlobalUnitRenderer {
                 continue;
             }
 
-            const isVisible = (unit as any).visible !== false;
+            const isVisible = (unit as any).visible !== false
+                && !(generalIdHasStrategicEffect(unit.generalId, 'hide_during_peacetime') && !(unit as any).isAttacking);
             const inView = isVisible && this.isUnitInContainerView(unit);
             const animating =
                 unit.isMoving || unit.isAttacking || (unit as any).isBattling;
@@ -997,17 +1016,26 @@ export class GlobalUnitRenderer {
             currentY += nameFontSize + 4;
         }
 
-        // 3. Draw Troops
-        const troopsFontSize = 12;
-        const troopsText = `${Math.floor(unit.getTroops())}`;
-        ctx.font = `bold ${troopsFontSize}px Arial`;
-        
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 3;
-        ctx.strokeText(troopsText, center.x, currentY);
+        // 3. Draw Troops（视野技：偃旗息鼓 隐藏 / 虚张声势 ×2）
+        const hideCount = generalIdHasStrategicEffect(unit.generalId, 'hide_troop_count');
+        const bluffCount = generalIdHasStrategicEffect(unit.generalId, 'bluff_troop_count');
+        const inCombat = !!(unit as any).isAttacking;
+        const shouldShowTroops = !hideCount || inCombat;
+        if (shouldShowTroops) {
+            const rawTroops = Math.floor(unit.getTroops());
+            const bluffMult = getBluffMagnitude(unit.generalId);
+            const displayTroops = (bluffCount && !inCombat) ? Math.floor(rawTroops * bluffMult) : rawTroops;
+            const troopsFontSize = 12;
+            const troopsText = `${displayTroops}`;
+            ctx.font = `bold ${troopsFontSize}px Arial`;
 
-        ctx.fillStyle = '#ffd700'; // Gold
-        ctx.fillText(troopsText, center.x, currentY);
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 3;
+            ctx.strokeText(troopsText, center.x, currentY);
+
+            ctx.fillStyle = '#ffd700'; // Gold
+            ctx.fillText(troopsText, center.x, currentY);
+        }
     }
 
     public destroy(): void {

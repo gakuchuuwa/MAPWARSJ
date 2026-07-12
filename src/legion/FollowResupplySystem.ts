@@ -13,7 +13,7 @@ import { GameConfig } from '../config/GameConfig';
 import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
-import { generalHasStrategicEffect, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedEnemyCityStrategicDebuffFx } from '../combat/GeneralSkillCombat';
+import { generalHasStrategicEffect, generalIdHasStrategicEffect, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedEnemyCityStrategicDebuffFx } from '../combat/GeneralSkillCombat';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 
 export class FollowResupplySystem {
@@ -41,7 +41,7 @@ export class FollowResupplySystem {
     public tickStrategicFieldResupply(army: Army, deltaTimeSec: number): void {
         if (!GameConfig.SYSTEM.SANDBOX_MODE) return;
         if (army.isDestroyed || army.getTroops() <= 0) return;
-        if (!generalHasStrategicEffect(army, 'field_resupply')) return;
+        if (!generalIdHasStrategicEffect(army.generalId, 'field_resupply')) return;
 
         const armyMax = getLegionTroopCap(army);
         if (army.getTroops() >= armyMax) return;
@@ -60,27 +60,8 @@ export class FollowResupplySystem {
         });
         if (nearFriendly) return;
 
-        // S⑤坚壁清野：附近有敌方据点守将持有此效果时，攻城方缓回血减半
+        // S⑤坚壁清野（已迁移至 LegionManager.tickApproachAttrition，此处原 supply_halved 效果已废止）
         let resupplyMult = 1;
-        const allCities = this.cityManager.getCities();
-        for (const city of allCities) {
-            if (city.factionId === factionId || city.factionId === 'neutral' || city.factionId === 'panjun') continue;
-            const dist = getEuclideanDistance(pos, { lat: city.latitude, lng: city.longitude });
-            if (dist <= radius) {
-                const mag = getCityAnchoredStrategicMagnitude(city.id, 'siege_attacker_supply_halved');
-                if (mag < 1) { 
-                    resupplyMult = Math.min(resupplyMult, mag); 
-                    
-                    // S⑤坚壁清野 进圈日志；飘字只给跟拍军团（受害方视角）、只飘四字技名
-                    const scorchedSet = (army as any).scorchedEarthCities || ((army as any).scorchedEarthCities = new Set<string>());
-                    if (!scorchedSet.has(city.id)) {
-                        scorchedSet.add(city.id);
-                        gameLog('battle', `〔坚壁清野〕${army.generalId || '将领'}进入【${city.name}】清野范围，补给受阻`);
-                        emitFollowedEnemyCityStrategicDebuffFx(army, city.id, 'siege_attacker_supply_halved');
-                    }
-                }
-            }
-        }
 
         const ratePerSec = armyMax * GameConfig.COMBAT.FIELD_RESUPPLY_RATE_PER_CAP_PER_SEC * resupplyMult;
         const accum = (this.fieldResupplyAccum.get(army.id) ?? 0) + ratePerSec * deltaTimeSec;
@@ -95,10 +76,10 @@ export class FollowResupplySystem {
         // S十三以战养战 累积满 1000 发一次；飘字只给跟拍军团、只飘四字技名
         const uiAccum = ((army as any).fieldResupplyUiAccum ?? 0) + add;
         if (uiAccum >= 1000) {
-            (army as any).fieldResupplyUiAccum = 0; // 清零
+            (army as any).fieldResupplyUiAccum = 0;
             gameLog('battle', `〔以战养战〕${army.generalId || '将领'}沿途就粮，恢复 +1,000`);
             const pos = army.getPosition();
-            emitFollowedGeneralStrategicMapFx(army, 'field_resupply', pos.lat, pos.lng, 'float');
+            emitFollowedGeneralStrategicMapFx(army, 'field_resupply', pos.lat, pos.lng, 'float', { dedupeMs: 2000, dedupeKey: `${army.id}|field_resupply` });
         } else {
             (army as any).fieldResupplyUiAccum = uiAccum;
         }

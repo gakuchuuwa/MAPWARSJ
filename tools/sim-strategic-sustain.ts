@@ -22,7 +22,7 @@ export function getChainSimFieldResupplySec(): number {
 }
 
 /**
- * 胜后叠战略续航：因粮于敌 / 威震华夏城型续航 / 隐藏0.5% / 以战养战
+ * 胜后叠战略续航：因粮于敌 / 以战养战
  * @param travelSec 以战养战 tick 秒数；默认战后驻留 3 秒
  * @param defenderCityType 攻城战守方城型（威震华夏 S④ 按城型 1–4%）
  */
@@ -47,8 +47,6 @@ export function applyStrategicSustainAfterVictory(
     } else if (defenderCityType && str.postBattlePctByCityType) {
         const pct = resolvePostBattlePctByCityType(str, defenderCityType);
         if (pct > 0) t += Math.floor(t * pct);
-    } else if (str.hiddenPostBattlePct && str.hiddenPostBattlePct > 0) {
-        t += Math.floor(t * str.hiddenPostBattlePct);
     }
     if (str.effect === 'field_resupply') {
         t += computeFieldResupplyBonus(troopCap, travelSec);

@@ -1,7 +1,7 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
-import { generalHasStrategicEffect, getGeneralStrategicMagnitude, emitFollowedGeneralStrategicMapFx } from '../combat/GeneralSkillCombat';
+import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedEnemyCityStrategicDebuffFx } from '../combat/GeneralSkillCombat';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
@@ -414,6 +414,9 @@ export class LegionManager {
                 this.followResupplySystem.tickStrategicFieldResupply(army, deltaTime);
             }
 
+            // 坚壁清野：军团逼近敌方据点时每秒减兵
+            this.tickApproachAttrition(army, deltaTime);
+
             // 行军 ZOC：进入非己方据点（含叛军 panjun）控制范围必须先停攻，不可绕路穿过
             if (
                 !army.getIsInCombat() &&
@@ -567,6 +570,22 @@ export class LegionManager {
             army.setTargetCity(null);
             army.stopMovement(true);
             return;
+        }
+
+        // ── 威慑·越城而走：兵力劣势时概率跳过此城（统一入口，覆盖 ZOC/idle/路网等所有调用路径）──
+        if (generalHasStrategicEffect(army, 'skip_disadvantaged_siege')) {
+            const myTroops = army.getTroops();
+            const enemyTroops = targetCity.troops ?? 0;
+            if (myTroops < enemyTroops) {
+                const chance = getGeneralStrategicMagnitude(army, 'skip_disadvantaged_siege', 0.10);
+                if (Math.random() < chance) {
+                    gameLog('legionSiege', `[威慑] 越城而走：${army.name} 跳过【${targetCity.name}】`);
+                    const pos = army.getPosition();
+                    emitFollowedGeneralStrategicMapFx(army, 'skip_disadvantaged_siege', pos.lat, pos.lng, 'pulse');
+                    army.setTargetCity(null);
+                    return;
+                }
+            }
         }
 
         gameLog('legionSiege', `🏯 ${army.name} 攻城【${targetCity.name}】`);
@@ -887,4 +906,23 @@ export class LegionManager {
         }
     }
 
+    /** 坚壁清野：军团逼近敌方据点时每秒减兵（在 update 循环中每帧调用） */
+    private tickApproachAttrition(army: Army, deltaTime: number): void {
+        if (army.getIsInCombat()) return;
+        const targetCity = army.getTargetCity();
+        if (!targetCity) return;
+        const factionId = army.getFactionId();
+        if (targetCity.factionId === factionId || targetCity.factionId === 'panjun') return;
+        const mag = getCityAnchoredStrategicMagnitude(targetCity.id, 'siege_approach_attrition');
+        if (mag <= 0 || mag >= 1) return;
+        const loss = Math.max(1, Math.floor(army.getTroops() * mag * deltaTime));
+        army.setTroops(Math.max(1, army.getTroops() - loss));
+        // 跟拍 FX 去重：每段 target 只飘一次
+        const key = `${army.id}:${targetCity.id}`;
+        const shown = (army as any)._attritionDebuffShown || ((army as any)._attritionDebuffShown = new Set<string>());
+        if (!shown.has(key)) {
+            shown.add(key);
+            emitFollowedEnemyCityStrategicDebuffFx(army, targetCity.id, 'siege_approach_attrition');
+        }
+    }
 }

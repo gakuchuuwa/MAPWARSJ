@@ -53,6 +53,7 @@ export type TacticalBaseEffect =
     | 'cancel_enemy_terrain_buff'
     | 'halve_enemy_terrain_buff'
     | 'nullify_enemy_opening_cut'
+    | 'battle_duration_mult'    // 战斗时长乘区：<1=加速结束，>1=拖延
     | 'first_sortie_power_mult'
     | 'first_sortie_comeback_mult';
 
@@ -168,6 +169,7 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
     nullify_enemy_opening_cut: 'hunzhan',
     cancel_enemy_terrain_buff: 'hunzhan',
     halve_enemy_terrain_buff: 'hunzhan',
+    battle_duration_mult: 'hunzhan',
     // 并战·借（减己损）
     win_casualty_reduction: 'bingzhan',
     elite_casualty_reduction: 'bingzhan',
@@ -4814,6 +4816,9 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     // ── 帝王专属 ──
     { id: 'ts_806', layer: 'tactical', series: 'enhance', index: 806, displayName: '日月重开', sourceQuote: '《明太祖实录》：“驱除胡虏，恢复中华，立纲陈纪，救济斯民。”', baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll', magnitude: 1.30, engineStatus: 'ready', note: '【朱元璋】大明开国·常驻战力·势create·优局专属' },
     { id: 'ts_807', layer: 'tactical', series: 'troop', index: 807, displayName: '开皇一统', sourceQuote: '《隋书·高祖纪》：高祖受禅，平陈定乱，结束三百年分裂，混一南北。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'opening_roll', magnitude: 0.15, engineStatus: 'ready', note: '【杨坚】开国整合全国兵力·常驻开局增兵·势create·均局专属' },
+    // ── 战斗时长 ──
+    { id: 'ts_808', layer: 'tactical', series: 'troop', index: 808, displayName: '疾风迅雷', sourceQuote: '《孙子兵法·军争》：“其疾如风，其徐如林，侵掠如火，不动如山。”', baseEffect: 'battle_duration_mult', condition: 'always', phase: 'opening_roll', magnitude: 0.7, engineStatus: 'hook', note: '【通用】优势局·速战速决：战斗时长×0.7（缩短30%）；引擎接线待Step2' },
+    { id: 'ts_809', layer: 'tactical', series: 'troop', index: 809, displayName: '以拖待变', sourceQuote: '《孙子兵法·虚实》：“先处战地而待敌者佚，后处战地而趋战者劳。”', baseEffect: 'battle_duration_mult', condition: 'always', phase: 'opening_roll', magnitude: 1.4, engineStatus: 'hook', note: '【通用】劣势局·拖延待援：战斗时长×1.4（延长40%）；引擎接线待Step2' },
 ];
 
 export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
@@ -5356,7 +5361,8 @@ ts_740: 'common',
     ts_794: 'limited',
     ts_795: 'limited',
     ts_796: 'limited',
-
+    ts_808: 'common',
+    ts_809: 'common',
 };
 
 export function getTacticalAssignTier(skillId: string): TacticalAssignTier | null {

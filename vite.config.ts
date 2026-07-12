@@ -2317,11 +2317,34 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         });
     }
 
+    // 合法战略武将技白名单 —— 唯一权威（主人定稿 20 个）。名单外一律非法：
+    //   str_11 长驱深入（远征技，走脚本层，不是战略技）、str_02/03/04/08/09（战术类乘区，已退役）。
+    const CANONICAL_STRATEGIC_IDS = new Set([
+        'str_01', 'str_10', 'str_12',            // 加速
+        'str_06', 'str_07', 'str_13', 'str_28',  // 续航
+        'str_16', 'str_17', 'str_18',            // 视野
+        'str_19', 'str_20', 'str_21',            // 威慑
+        'str_22', 'str_23', 'str_24',            // 纵横
+        'str_05', 'str_25', 'str_26', 'str_27',  // 防务
+    ]);
+
+    // 各战略技三势（create 造势=优势 / leverage 借势=均势 / reverse 逆势=劣势）。
+    //   武将 aptitude 须与所戴战略技三势一致，否则报错（规则 11.7③）。
+    //   str_11 长驱深入=远征技、无三势，不在此表 → 佩戴它时跳过三势校验。
+    const STRATEGIC_APTITUDE: Record<string, 'create' | 'leverage' | 'reverse'> = {
+        str_01: 'reverse',  str_10: 'leverage', str_12: 'create',                       // 加速
+        str_06: 'create',   str_07: 'reverse',  str_13: 'leverage', str_28: 'create',   // 续航
+        str_16: 'leverage', str_17: 'reverse',  str_18: 'create',                       // 视野
+        str_19: 'create',   str_20: 'leverage', str_21: 'reverse',                      // 威慑
+        str_22: 'reverse',  str_23: 'leverage', str_24: 'create',                       // 纵横
+        str_05: 'reverse',  str_25: 'create',   str_26: 'create',   str_27: 'leverage', // 防务
+    };
+
     // 11.6. [NEW 2026-07-08] 武将技配置深检：悬空引用 / 三格完整性 / 三格类别错配
     //   三格类别判据 = 三类六种（docs/02-design/武将技-分类逻辑说明.md），与 npm run tactical:triclass 一致
     {
         const tacIdSet = new Set(data.tacticalSkills.map(s => s.id));
-        const strIdSet = new Set(data.strategicSkills.map(s => s.id));
+        // 战略技合法性统一交规则 11.7 白名单校验，此处只查战术四格悬空引用
         const triById = new Map(data.tacticalSkills.map(s => [s.id, s.triClass]));
         const TRI_LABEL: Record<string, string> = { advantage: '优势技', balance: '均势技', disadvantage: '劣势技' };
         for (const [fId, g] of Object.entries(data.generals)) {
@@ -2333,7 +2356,6 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
                 ['优势格', prof.advantageSkillId, tacIdSet],
                 ['均势格', prof.balanceSkillId, tacIdSet],
                 ['劣势格', prof.disadvantageSkillId, tacIdSet],
-                ['战略技', prof.strategicSkillId, strIdSet],
             ];
             for (const [label, id, set] of refs) {
                 if (id && !set.has(id)) {
@@ -2364,6 +2386,47 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
                         issues.push({ level: 'warn', msg: `武将 "${g.generalName}"(${g.generalId}) ${label}=${id} 实为${TRI_LABEL[tri] ?? tri}，类别不符`, factionId: fId });
                     }
                 }
+            }
+        }
+    }
+
+    // 11.7. [NEW] 战略技白名单校验（唯一权威 = CANONICAL_STRATEGIC_IDS 的 20 个）
+    //   ① 每个白名单战略技都必须有武将佩戴（空技 = 违规）
+    //   ② 名将佩戴的战略技必须在白名单内（戴 str_11 远征技、退役战术类等 = 非法）
+    {
+        const strNameById = new Map(data.strategicSkills.map(s => [s.id, s.displayName]));
+        const nameOf = (id: string) => strNameById.get(id) ?? id;
+
+        // 各战略技佩戴人数（全体档案）
+        const wearerCount = new Map<string, number>();
+        for (const prof of Object.values(data.profiles)) {
+            const sid = prof.strategicSkillId;
+            if (sid) wearerCount.set(sid, (wearerCount.get(sid) ?? 0) + 1);
+        }
+
+        // ① 20 个战略技，每个都要有人戴
+        for (const sid of CANONICAL_STRATEGIC_IDS) {
+            if ((wearerCount.get(sid) ?? 0) === 0) {
+                issues.push({ level: 'error', msg: `战略技 "${nameOf(sid)}"(${sid}) 无任何武将佩戴（20 个战略技都必须有人戴）` });
+            }
+        }
+
+        // ②③ 名将战略技合法性 + 三势一致
+        const APT_LABEL: Record<string, string> = { create: '造势(优势)', leverage: '借势(均势)', reverse: '逆势(劣势)' };
+        for (const [fId, g] of Object.entries(data.generals)) {
+            const prof = data.profiles[g.generalId];
+            if (!prof || prof.tier !== 'famous') continue;
+            const sid = prof.strategicSkillId;
+            if (!sid) continue; // 「名将缺战略技」已由规则 11.5 报，不重复
+            // ② 必须在白名单内
+            if (!CANONICAL_STRATEGIC_IDS.has(sid)) {
+                issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 佩戴的 ${sid}（${nameOf(sid)}）不是合法战略技，请改配白名单内的战略技`, factionId: fId });
+                continue;
+            }
+            // ③ 三势一致：武将 aptitude 须 = 该战略技三势（str_11 等无三势技不在 STRATEGIC_APTITUDE，跳过）
+            const skillApt = STRATEGIC_APTITUDE[sid];
+            if (skillApt && prof.aptitude && prof.aptitude !== skillApt) {
+                issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 三势不符：武将是${APT_LABEL[prof.aptitude] ?? prof.aptitude}，战略技「${nameOf(sid)}」是${APT_LABEL[skillApt]}`, factionId: fId });
             }
         }
     }

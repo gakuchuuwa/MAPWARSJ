@@ -349,7 +349,7 @@ export function auditAssignTierConstraints(
 }
 
 // ── 战略技分配闸门（2026-07-03 v1 重设计随行）────────────────────
-/** 战略限量技上限（所向披靡=战略层唯一战斗乘区，防重蹈攻其不备 123 人覆辙） */
+/** 战略限量技上限（因敌制胜=战略层均势战斗乘区，防重蹈攻其不备 123 人覆辙） */
 export const STRATEGIC_LIMITED_CAPS: Readonly<Record<string, number>> = { str_03: 30 };
 /** 退役战略技（v1 地形/守方战斗乘区已于 v2 复活为新六类技，当前无退役） */
 export const RETIRED_STRATEGIC_IDS: readonly string[] = [];
@@ -707,14 +707,41 @@ export const ORDINARY_ARCHETYPE_POOL: Readonly<Record<SkillArchetype, readonly s
     stratagem_weaken: ['ts_039', 'ts_008'],
 };
 
-/** 战略六格简要标签（名将专用；与地形/行军匹配） */
+/** 26 战略技简要标签（名将专用；配将见 STRATEGIC_SKILL_CATALOG） */
 export const STRATEGIC_SKILL_TAGS = [
+    // ── 战术类（战斗面板乘区）──
+    { id: 'str_02', grid: 'S②', name: '因地制宜', tags: ['地形', '战术加成'], terrain: '战斗' },
+    { id: 'str_03', grid: 'S③', name: '因敌制胜', tags: ['均势', '会战', '正面决战'], terrain: '战斗' },
+    { id: 'str_04', grid: 'S④', name: '威震华夏', tags: ['优势', '威慑', '心理压制'], terrain: '战斗' },
+    { id: 'str_08', grid: 'S⑧', name: '固若金汤', tags: ['守城', '城防', '据守'], terrain: '战斗' },
+    { id: 'str_09', grid: 'S⑨', name: '以寡击众', tags: ['劣势', '逆转', '背水'], terrain: '战斗' },
+    // ── 加速类 ──
     { id: 'str_01', grid: 'S①', name: '兵贵神速', tags: ['急行军', '闪击', '远征机动'], terrain: '行军' },
-    // S②攻城拔寨已并入 S③所向披靡（2026-06-27）：进攻方专精，攻城/野战通吃
-    { id: 'str_03', grid: 'S③', name: '所向披靡', tags: ['攻城', '破城', '野战', '会战', '正面决战'], terrain: '进攻方' },
-    { id: 'str_04', grid: 'S④', name: '威震华夏', tags: ['威慑', '威名', '心理压制'], terrain: '奇策' },
-    { id: 'str_05', grid: 'S⑤', name: '坚壁清野', tags: ['焦土', '清野', '拖守'], terrain: '据点防' },
-    { id: 'str_06', grid: 'S⑥', name: '招降纳叛', tags: ['纳降', '收编', '化敌'], terrain: '补给' },
+    { id: 'str_10', grid: 'S⑩', name: '如履平地', tags: ['山地', '迂回', '奇袭'], terrain: '行军' },
+    { id: 'str_11', grid: 'S⑪', name: '长驱深入', tags: ['远征', '绕城', 'ZOC'], terrain: '行军' },
+    { id: 'str_12', grid: 'S⑫', name: '乘胜追击', tags: ['连胜', '连续行军'], terrain: '行军' },
+    // ── 加兵类 ──
+    { id: 'str_07', grid: 'S⑦', name: '因粮于敌', tags: ['胜后补兵', '以战养战'], terrain: '补给' },
+    { id: 'str_13', grid: 'S⑬', name: '以战养战', tags: ['野外回血', '远征续航'], terrain: '补给' },
+    { id: 'str_28', grid: 'S㉘', name: '调兵遣将', tags: ['征兵', '扩编'], terrain: '补给' },
+    // ── 视野类 ──
+    { id: 'str_16', grid: 'S⑯', name: '神出鬼没', tags: ['隐身', '奇袭'], terrain: '隐蔽' },
+    { id: 'str_17', grid: 'S⑰', name: '偃旗息鼓', tags: ['藏兵', '疑兵'], terrain: '隐蔽' },
+    { id: 'str_18', grid: 'S⑱', name: '虚张声势', tags: ['虚兵', '造势'], terrain: '隐蔽' },
+    // ── 威慑类 ──
+    { id: 'str_06', grid: 'S⑥', name: '招降纳叛', tags: ['纳降', '收编', '化敌'], terrain: '战后' },
+    { id: 'str_19', grid: 'S⑲', name: '不战而屈', tags: ['不战而胜', '威压'], terrain: '攻城' },
+    { id: 'str_20', grid: 'S⑳', name: '先声夺人', tags: ['战前削敌', '震慑'], terrain: '攻城' },
+    { id: 'str_21', grid: 'S㉑', name: '越城而走', tags: ['跳城', '避战'], terrain: '行军' },
+    // ── 纵横类 ──
+    { id: 'str_22', grid: 'S㉒', name: '釜底抽薪', tags: ['废将', '破防'], terrain: '攻城' },
+    { id: 'str_23', grid: 'S㉓', name: '调虎离山', tags: ['调守军', '空城'], terrain: '攻城' },
+    { id: 'str_24', grid: 'S㉔', name: '坐收渔翁', tags: ['借兵', '助攻'], terrain: '攻城' },
+    // ── 防务类 ──
+    { id: 'str_05', grid: 'S⑤', name: '坚壁清野', tags: ['焦土', '清野', '逼近减兵'], terrain: '据点防' },
+    { id: 'str_25', grid: 'S㉕', name: '足食足兵', tags: ['产兵', '增长'], terrain: '据点' },
+    { id: 'str_26', grid: 'S㉖', name: '招兵买马', tags: ['募兵', '冷却'], terrain: '据点' },
+    { id: 'str_27', grid: 'S㉗', name: '屯兵经略', tags: ['留兵', '屯田'], terrain: '据点' },
 ] as const;
 
 /** 按 tacticalId 查标签 */
@@ -738,15 +765,15 @@ export const SKILL_ASSIGNMENT_PROMPT = `【角色设定】
 1. 统计池子：名将 N、普将 M → computeDistributionTargets(N,M)，各 archetype 目标 ±3
 2. 硬锁定：HARD_LOCKED_TACTICAL_ASSIGNMENTS 先写入（如皇太极④谋略、白起③突击·擒王、韩信③突击·背水）
 3. 柔性将：史料允许 2–3 个 archetype 时 → pickFlexibleArchetype（同池计数最低）
-4. 战略格：名将另对 S①–S⑥ 独立跑低位优先
-5. 提交前：auditTacticalDistribution，任一技能占比 >25% 则回溯（④除外）
+4. 战略格：名将从 26 战略技（STRATEGIC_SKILL_CATALOG / STRATEGIC_SKILL_TAGS）独立跑低位优先；战术类(str_02/03/04/08/09)勿与六大类混配
+5. 提交前：auditTacticalDistribution + auditStrategicAssignment，任一技能占比 >25% 则回溯（④除外）
 
 【史料 > 配额】
 PRIMARY_ARCHETYPE_PRIORITY 能唯一决断 → 不得为凑配额改配。
 低位优先仅当多 archetype 皆有合格战役证据时启用。
 
 【技能库】
-名将战术 ①–⑤ / 普将战术 ⑥–⑩（镜像）；名将另选战略 S①–S⑥。
+名将战术 ①–⑤ / 普将战术 ⑥–⑩（镜像）；名将另选战略 26 技（六大类+战术类，见 STRATEGIC_SKILL_TAGS）。
 ③侵掠如火：仅正面强攻一生标签；④全图极少（无史料不凑数）。
 
 【品阶】

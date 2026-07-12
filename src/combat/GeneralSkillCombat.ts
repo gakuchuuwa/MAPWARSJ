@@ -835,7 +835,16 @@ export function generalHasStrategicEffect(unit: IBattleUnit, effect: StrategicEf
     return skill?.effect === effect;
 }
 
-/** 15 战略技大地图配色（绑 skill.id，禁止硬编码技名） */
+/** 轻量版：仅需 generalId（供渲染层等无 IBattleUnit 的调用方使用） */
+export function generalIdHasStrategicEffect(generalId: string | undefined, effect: StrategicEffect): boolean {
+    if (!generalId) return false;
+    const profile = getGeneralProfile(generalId);
+    if (!profile?.strategicSkillId) return false;
+    const skill = getStrategicSkillDef(profile.strategicSkillId);
+    return skill?.effect === effect;
+}
+
+/** 26 战略技大地图配色（绑 skill.id，禁止硬编码技名） */
 const STRATEGIC_PULSE_COLORS: Record<string, string> = {
     str_01: '#55ff55',
     str_02: '#55ff55',
@@ -850,8 +859,19 @@ const STRATEGIC_PULSE_COLORS: Record<string, string> = {
     str_11: '#55ff55',
     str_12: '#ffaa00',
     str_13: '#55ff55',
-    str_14: '#55cc55',
-    str_15: '#55aa55',
+    str_16: '#8888cc', // 神出鬼没 视野
+    str_17: '#8888cc', // 偃旗息鼓 视野
+    str_18: '#8888cc', // 虚张声势 视野
+    str_19: '#cc8844', // 不战而屈 威慑
+    str_20: '#cc8844', // 先声夺人 威慑
+    str_21: '#cc8844', // 越城而走 威慑
+    str_22: '#ccaadd', // 釜底抽薪 纵横
+    str_23: '#ccaadd', // 调虎离山 纵横
+    str_24: '#ccaadd', // 坐收渔翁 纵横
+    str_25: '#55ff55', // 足食足兵
+    str_26: '#55ff55', // 招兵买马
+    str_27: '#55ff55', // 屯兵经略
+    str_28: '#55ff55', // 调兵遣将
 };
 
 export function getStrategicPulseColor(skillId: string): string {
@@ -939,6 +959,65 @@ export function emitFollowedEnemyCityStrategicDebuffFx(
     const pos = army.getPosition();
     spawnMapFloatingText(pos.lat, pos.lng, skill.displayName, getStrategicPulseColor(skill.id));
     return true;
+}
+
+/** 跟拍军团参与攻城战后：该城据点锚将战略技脉冲（脉冲在据点坐标，不要求出身城） */
+export function emitFollowedSiegeCityStrategicMapFx(
+    army: Pick<Army, 'id'>,
+    cityId: string,
+    cityLat: number,
+    cityLng: number,
+    expectedEffect: StrategicEffect,
+    style: 'pulse' | 'float' = 'pulse',
+): boolean {
+    if (army.id !== getFollowedArmyId()) return false;
+    const anchored = getCityAnchoredGeneral(cityId);
+    const skill = resolveGeneralStrategicSkillForEffect(anchored?.generalId, expectedEffect);
+    if (!skill) return false;
+    const color = getStrategicPulseColor(skill.id);
+    if (style === 'pulse') spawnMapPulse(cityLat, cityLng, skill.displayName, color);
+    else spawnMapFloatingText(cityLat, cityLng, skill.displayName, color);
+    return true;
+}
+
+const VISION_STRATEGIC_EFFECTS: StrategicEffect[] = [
+    'hide_during_peacetime',
+    'hide_troop_count',
+    'bluff_troop_count',
+];
+
+/** 战后开拔前：视野系 + 本战已触发的纵横技脉冲（军团脚下） */
+export function tryEmitPostBattleResumeStrategicFx(
+    unit: StrategicMapFxUnit,
+    lat: number,
+    lng: number,
+    pendingDiplomacyEffects: readonly StrategicEffect[] = [],
+): void {
+    if (unit.id !== getFollowedArmyId()) return;
+    const profile = getGeneralProfile(unit.generalId);
+    const skill = profile?.strategicSkillId
+        ? getStrategicSkillDef(profile.strategicSkillId)
+        : null;
+    if (skill && VISION_STRATEGIC_EFFECTS.includes(skill.effect)) {
+        emitFollowedGeneralStrategicMapFx(
+            unit,
+            skill.effect,
+            lat,
+            lng,
+            'pulse',
+            { dedupeMs: 3000, dedupeKey: `${unit.id}|vision|resume` },
+        );
+    }
+    for (const effect of pendingDiplomacyEffects) {
+        emitFollowedGeneralStrategicMapFx(
+            unit,
+            effect,
+            lat,
+            lng,
+            'pulse',
+            { dedupeMs: 5000, dedupeKey: `${unit.id}|diplomacy|${effect}|resume` },
+        );
+    }
 }
 
 /** 据点锚定将领的战略效果乘数（无匹配则 1） */
@@ -1187,15 +1266,19 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
             return `胜后+${Math.round(skill.magnitude * 100)}%`;
         case 'equal_power_mult':
             return `均势×${skill.magnitude}`;
-        case 'defender_power_mult':
-            return `守方×${skill.magnitude}`;
-        case 'plain_power_mult':
-            return `平原×${skill.magnitude}`;
-        case 'mountain_power_mult':
-            return `山地×${skill.magnitude}`;
-        case 'water_power_mult':
-            return `水域×${skill.magnitude}`;
-        // ── 战略 v1 新系（Step2 接引擎前仅展示用）──
+        case 'disadvantage_power_mult':
+            return `劣势×${skill.magnitude}`;
+        case 'advantage_skill_effect_mult':
+            return `优势技×${skill.magnitude}`;
+        case 'terrain_tactical_double':
+            return `地形技×${skill.magnitude}`;
+        case 'garrison_defense_mult':
+            return `守城×${skill.magnitude}`;
+        case 'post_battle_recruit_enemy_pct':
+            return `收编${Math.round(skill.magnitude * 100)}%`;
+        case 'recruit_troops_mult':
+            return `征兵×${skill.magnitude}`;
+        // ── 战略大地图系 ──
         case 'mountain_march_immunity':
             return '山地不减速';
         case 'ignore_small_city_zoc':
@@ -1208,6 +1291,32 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
             return `出身城增长×${skill.magnitude}`;
         case 'recruit_cooldown_mult':
             return `募兵冷却×${skill.magnitude}`;
+        // ── 视野 ──
+        case 'hide_during_peacetime':
+            return '非战隐身';
+        case 'hide_troop_count':
+            return '非战藏兵';
+        case 'bluff_troop_count':
+            return `虚兵×${skill.magnitude}`;
+        // ── 威慑 ──
+        case 'intimidate_instant_win':
+            return `不战胜${Math.round(skill.magnitude * 100)}%`;
+        case 'pre_battle_intimidate':
+            return `削城防${Math.round(skill.magnitude * 100)}%`;
+        case 'skip_disadvantaged_siege':
+            return `劣势跳城${Math.round(skill.magnitude * 100)}%`;
+        // ── 纵横 ──
+        case 'sabotage_garrison':
+            return '废将/精';
+        case 'lure_tiger_leave_mountain':
+            return '调守军出征';
+        case 'third_party_siege':
+            return `借兵≤${skill.magnitude}`;
+        // ── 防务 ──
+        case 'siege_approach_attrition':
+            return `逼近减${Math.round(skill.magnitude * 100)}%/秒`;
+        case 'garrison_reserve_troops':
+            return `留兵≥${skill.magnitude}`;
         default:
             return '';
     }
@@ -1936,7 +2045,7 @@ function applyPostBattleTroopPct(
         const army = getArmyEntity(unit);
         if (army) {
             const pos = army.getPosition();
-            emitFollowedGeneralStrategicMapFx(unit, 'post_battle_troop_pct', pos.lat, pos.lng, 'float');
+            emitFollowedGeneralStrategicMapFx(unit, 'post_battle_troop_pct', pos.lat, pos.lng, 'float', { dedupeMs: 3000, dedupeKey: `${unit.id}|post_battle_troop` });
         }
     }
     return bonus;
@@ -2014,12 +2123,6 @@ export function applyPostBattleStrategicBonus(
                         unit.setTroops(unit.troops + bonus);
                         total += bonus;
                     }
-                }
-            } else if (profileSkill?.hiddenPostBattlePct && profileSkill.hiddenPostBattlePct > 0) {
-                const bonus = Math.floor(unit.troops * profileSkill.hiddenPostBattlePct);
-                if (bonus > 0) {
-                    unit.setTroops(unit.troops + bonus);
-                    total += bonus;
                 }
             }
 

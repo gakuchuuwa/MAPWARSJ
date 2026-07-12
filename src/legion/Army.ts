@@ -5,6 +5,7 @@ import { GridSystem } from '../systems/GridSystem';
 import { TerrainSpeedSystem, TERRAIN_SPEED_CONFIG } from '../core/TerrainSpeedSystem';
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
 import { UnitRenderer } from '../map/UnitRenderer';
+import { getGlobalUnitRenderer } from '../map/UnitRenderer';
 import {
     GameConfig,
     LAND_TERRAIN_FLIP_CONFIRM_FRAMES,
@@ -20,7 +21,13 @@ import type { RegionType } from '../systems/RegionSystem';
 import { IBattleUnit } from '../combat/CombatSystem';
 import { gameLog } from '../utils/GameLogger';
 import { getRandomFactionPortrait } from '../config/portrait_defaults';
-import { getGeneralMarchSpeedMultiplier, generalHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../combat/GeneralSkillCombat';
+import type { StrategicEffect } from '../data/GeneralSkills';
+import {
+    getGeneralMarchSpeedMultiplier,
+    generalHasStrategicEffect,
+    emitFollowedGeneralStrategicMapFx,
+    tryEmitPostBattleResumeStrategicFx,
+} from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCultureMovementClass, isCultureCavalryOnly } from '../types/CultureFormations';
@@ -96,6 +103,8 @@ export class Army implements IBattleUnit {
 
     /** 战后驻留剩余时间（游戏秒，随 timeScale 流逝） */
     private postBattleRestRemaining: number = 0;
+    /** 本战攻城前已触发的纵横技，战后开拔前 pulse */
+    private pendingPostBattleDiplomacyFx: StrategicEffect[] = [];
 
     // [NEW] IAnimatedUnit Interface Compatibility
     public isAttacking: boolean = false;
@@ -160,6 +169,12 @@ export class Army implements IBattleUnit {
         this.currentBattleType = isFighting ? (battleType || 'field') : null;
         this.targetPos = targetPos || null;
 
+        // 神出鬼没：非战斗时隐藏，战斗开始现形
+        if (generalHasStrategicEffect(this, 'hide_during_peacetime')) {
+            this.setVisible(isFighting);
+            getGlobalUnitRenderer()?.invalidateView();
+        }
+
         // [DISABLED] 自动调速功能已禁用
         // const game = (window as any).game;
         // if (game && game.timeSystem) {
@@ -197,6 +212,9 @@ export class Army implements IBattleUnit {
         if (wasFighting && !isFighting && this.type === 'legion' && !this.isDestroyed
             && GameConfig.SYSTEM.SANDBOX_MODE && this.troops > 0) {
             this.startPostBattleRest();
+            if (!this.isPostBattleResting()) {
+                this.tryEmitPostBattleResumeFx();
+            }
             this.onCombatEndedCallback?.(this);
         }
     }
@@ -224,6 +242,11 @@ export class Army implements IBattleUnit {
         }
         if (this.renderer) {
             this.renderer.stopAttack();
+        }
+        // 神出鬼没：非战斗时回收隐藏（败战 / 多军团野战结束等未走 setCombatState 的路径）
+        if (generalHasStrategicEffect(this, 'hide_during_peacetime')) {
+            this.setVisible(false);
+            getGlobalUnitRenderer()?.invalidateView();
         }
     }
 
@@ -284,6 +307,30 @@ export class Army implements IBattleUnit {
 
     public clearPostBattleRest(): void {
         this.postBattleRestRemaining = 0;
+    }
+
+    /** 攻城战前纵横技已触发，战后开拔前再 pulse */
+    public markPendingPostBattleDiplomacyFx(effect: StrategicEffect): void {
+        if (!this.pendingPostBattleDiplomacyFx.includes(effect)) {
+            this.pendingPostBattleDiplomacyFx.push(effect);
+        }
+    }
+
+    private drainPendingPostBattleDiplomacyFx(): StrategicEffect[] {
+        const pending = this.pendingPostBattleDiplomacyFx;
+        this.pendingPostBattleDiplomacyFx = [];
+        return pending;
+    }
+
+    /** 战后休整结束或免休整：视野系 + 纵横技 pulse */
+    private tryEmitPostBattleResumeFx(): void {
+        const { lat, lng } = this.position;
+        tryEmitPostBattleResumeStrategicFx(
+            this,
+            lat,
+            lng,
+            this.drainPendingPostBattleDiplomacyFx(),
+        );
     }
 
     public getMaxTroops(): number {
@@ -393,10 +440,11 @@ export class Army implements IBattleUnit {
                 if (this.id === getFollowedArmyId()) {
                     const { lat, lng } = this.position;
                     if (generalHasStrategicEffect(this, 'march_speed_mult')) {
-                        emitFollowedGeneralStrategicMapFx(this, 'march_speed_mult', lat, lng, 'float');
+                        emitFollowedGeneralStrategicMapFx(this, 'march_speed_mult', lat, lng, 'float', { dedupeMs: 5000, dedupeKey: `${this.id}|march_speed|rest_end` });
                     } else if (generalHasStrategicEffect(this, 'mountain_march_immunity')) {
-                        emitFollowedGeneralStrategicMapFx(this, 'mountain_march_immunity', lat, lng, 'float');
+                        emitFollowedGeneralStrategicMapFx(this, 'mountain_march_immunity', lat, lng, 'float', { dedupeMs: 5000, dedupeKey: `${this.id}|mountain|rest_end` });
                     }
+                    this.tryEmitPostBattleResumeFx();
                 }
             }
         }

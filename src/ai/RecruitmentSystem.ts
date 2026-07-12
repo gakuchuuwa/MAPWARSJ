@@ -253,9 +253,17 @@ export class RecruitmentSystem {
             if (!spawnTypes.includes(city.type)) continue;
             if (this.cityHasActiveLegion(city.id)) continue;
             if (this.isCityGarrisonCommitted(city.id)) continue;
-
-            const armySize = Math.floor((city.troops || 0) * 0.9);
+            // 计算征兵兵力（城市兵力的90%）
+            const baseArmySize = Math.floor((city.troops || 0) * 0.9);
+            // 调兵遣将：征兵时出征兵力 +10%
+            const recruitMult = getCityAnchoredStrategicMagnitude(city.id, 'recruit_troops_mult');
+            let armySize = Math.floor(baseArmySize * (recruitMult > 1 ? recruitMult : 1));
             const minTroops = this.getCityMinSpawnTroops(city);
+            // 屯兵经略：可征兵力不得超过城防减留兵保底
+            const reserveMag = getCityAnchoredStrategicMagnitude(city.id, 'garrison_reserve_troops');
+            if (reserveMag > 0) {
+                armySize = Math.min(armySize, Math.max(0, Math.floor((city.troops || 0) - reserveMag)));
+            }
             if (armySize < minTroops) continue;
 
             candidates.push({
@@ -326,13 +334,33 @@ export class RecruitmentSystem {
 
         if (!newLegion) return null;
 
-        city.troops = (city.troops || 0) - newLegion.getTroops();
+        // 屯兵经略：征兵后据点最低留兵（限制征用量）
+        const reserveMag = getCityAnchoredStrategicMagnitude(city.id, 'garrison_reserve_troops');
+        const minTroops = this.getCityMinSpawnTroops(city);
+        if (reserveMag > 0) {
+            const maxDeduction = Math.max(0, (city.troops || 0) - reserveMag);
+            const actualDeduction = Math.min(newLegion.getTroops(), maxDeduction);
+            if (actualDeduction < minTroops) {
+                newLegion.destroy();
+                return null;
+            }
+            city.troops = (city.troops || 0) - actualDeduction;
+            if (actualDeduction < newLegion.getTroops()) {
+                newLegion.setTroops(actualDeduction);
+            }
+        } else {
+            city.troops = (city.troops || 0) - newLegion.getTroops();
+        }
+
         this.queueCityLabel(city.id);
 
         const followedId = getFollowedArmyId();
         const followedArmy = followedId ? this.legionManager.getLegionById(followedId) : null;
         if (followedArmy) {
-            emitFollowedHomeCityStrategicMapFx(followedArmy, city.id, city.latitude, city.longitude, 'recruit_cooldown_mult', 'pulse');
+            // 仅该城锚将持 recruit_cooldown_mult 时才飘脉冲（str_26）
+            if (getCityAnchoredStrategicMagnitude(city.id, 'recruit_cooldown_mult') < 1) {
+                emitFollowedHomeCityStrategicMapFx(followedArmy, city.id, city.latitude, city.longitude, 'recruit_cooldown_mult', 'pulse');
+            }
         }
 
         return newLegion;
