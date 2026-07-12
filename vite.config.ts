@@ -1933,6 +1933,8 @@ function serverReadAllEntityData() {
     const misplacedProfiles: string[] = [];
     /** GENERAL_PROFILES 块内有条目但缺 tacticalSkillId → 运行时无武将技 */
     const malformedProfiles: string[] = [];
+    /** 档案键 ≠ generalId 字段（批量脚本截断事故检出）：{ 键: 错误的generalId } */
+    const profileIdMismatches: Record<string, string> = {};
     for (const m of gsText.matchAll(/(\w+):\s*\{([^{}]*)\}/g)) {
         const body = m[2];
         if (!body.includes('generalId:')) continue;
@@ -1947,6 +1949,8 @@ function serverReadAllEntityData() {
             if (tier && !tacticalSkillId) malformedProfiles.push(m[1]);
             continue;
         }
+        const gidField = profileEntryField(body, 'generalId');
+        if (gidField && gidField !== m[1]) profileIdMismatches[m[1]] = gidField;
         profiles[m[1]] = {
             tier, tacticalSkillId,
             strategicSkillId: profileEntryField(body, 'strategicSkillId'),
@@ -2023,7 +2027,7 @@ function serverReadAllEntityData() {
         if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4], effect: m[5], magnitude: parseFloat(m[6]) });
     }
 
-    return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, regions: Object.keys(REGION_TO_ELITE_FILE) };
+    return { factions, cities, flags, capitals, generals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: Object.keys(REGION_TO_ELITE_FILE) };
 }
 
 /** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → 统一 /assets/.../x.png。
@@ -2479,6 +2483,12 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
                 issues.push({ level: 'error', msg: `武将 "${g.generalName}"(${g.generalId}) 六技不全，缺：${missing.join('/')}（${prof.tier === 'famous' ? '名将=六技+1战略技' : '普将=六技'}）`, factionId: fId });
             }
         }
+    }
+
+    // 11.10. [NEW 2026-07-13] 档案键 ≠ generalId 字段（批量修复脚本截断事故的检出）
+    //   GENERAL_PROFILES 的键与条目内 generalId 必须一致；不一致时读 profile.generalId 的逻辑全部错乱。
+    for (const [key, gid] of Object.entries(data.profileIdMismatches ?? {})) {
+        issues.push({ level: 'error', msg: `武将档案 "${key}" 的 generalId 字段是 '${gid}'，与键不一致（疑似批量脚本截断），请改回 '${key}'` });
     }
 
     // 12. 据点名重复（完全同名 或 一方完整包含另一方）
