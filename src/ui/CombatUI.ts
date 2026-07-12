@@ -93,12 +93,15 @@ export class CombatUI {
      * 无技可放侧【不缩】（主人定：单侧缩到底没有回弹，两边立绘不对称）。
      * 逐帧按游戏内 elapsed 驱动（CSS 动画走真实时间，倍速下会漂移，故不用）。只动外框，不碰 img 调校。
      */
-    private portraitWind: Record<'attacker' | 'defender', { driving: boolean; pulsed: boolean; scale: number }> = {
+    private portraitWind: Record<'attacker' | 'defender', { driving: boolean; pulsed: boolean; scale: number; lastE?: number }> = {
         attacker: { driving: false, pulsed: false, scale: 1 },
         defender: { driving: false, pulsed: false, scale: 1 },
     };
-    /** 蓄力收缩的最小比例（缩到底 = 0.90，收缩 10% 才够肉眼可辨；0.94 实测太隐晦） */
+    /** 蓄力收缩主段目标比例（线性缓缩到 0.90；主人定：要慢、要一直缩到释放） */
     private static readonly PORTRAIT_WIND_MIN_SCALE = 0.90;
+    /** 主段走完后若技能仍未释放：继续极缓下潜的每秒速率与硬底（别停，直至释放） */
+    private static readonly PORTRAIT_WIND_DRIFT_PER_SEC = 0.004;
+    private static readonly PORTRAIT_WIND_FLOOR = 0.88;
     /** 慢直播：双方技能 Cut-in 理想错开（与 GeneralSkillCombat 同步） */
     private static readonly SKILL_PULSE_STAGGER_MS = SKILL_PULSE_STAGGER_IDEAL_SEC * 1000;
 
@@ -1471,9 +1474,17 @@ export class CombatUI {
                 frame.style.animation = 'none'; // 清掉 settle 的 forwards 填充，让内联 transform 生效
                 console.log(`✨ [PortraitWind] ${side === 'attacker' ? '攻方' : '守方'}立绘开始蓄力收缩 → ${CombatUI.PORTRAIT_WIND_MIN_SCALE}（至 ${threshold.toFixed(1)}s 技能亮相）`);
             }
-            const k = Math.min(1, (bf.elapsed - startSec) / Math.max(0.001, threshold - startSec));
-            const eased = 0.5 - 0.5 * Math.cos(Math.PI * k); // easeInOutSine：起收轻、中段沉、到底缓
-            st.scale = 1 - (1 - CombatUI.PORTRAIT_WIND_MIN_SCALE) * eased;
+            // 主段：线性缓缩到 0.90，终点 = 相持阈值 + 双方脉冲错开上限（后放侧也缩到它释放那一刻）
+            const endSec = threshold + SKILL_PULSE_STAGGER_IDEAL_SEC;
+            const k = Math.min(1, (bf.elapsed - startSec) / Math.max(0.001, endSec - startSec));
+            if (k < 1) {
+                st.scale = 1 - (1 - CombatUI.PORTRAIT_WIND_MIN_SCALE) * k;
+            } else {
+                // 主段走完技能仍未放（罕见）：不停，极缓下潜到硬底，直至脉冲释放
+                const dt = Math.max(0, bf.elapsed - (st.lastE ?? bf.elapsed));
+                st.scale = Math.max(CombatUI.PORTRAIT_WIND_FLOOR, st.scale - CombatUI.PORTRAIT_WIND_DRIFT_PER_SEC * dt);
+            }
+            st.lastE = bf.elapsed;
             frame.style.transform = `scale(${st.scale.toFixed(4)})`;
         }
     }

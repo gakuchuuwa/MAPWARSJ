@@ -2054,6 +2054,12 @@ function serverSaveGeneral(data: {
     advantageSkillId?: string;
     balanceSkillId?: string;
     disadvantageSkillId?: string;
+    atkAdvantageSkillId?: string;
+    atkBalanceSkillId?: string;
+    atkDisadvantageSkillId?: string;
+    defAdvantageSkillId?: string;
+    defBalanceSkillId?: string;
+    defDisadvantageSkillId?: string;
     aptitude?: string;
 }) {
     // 立绘路径先归一化：反斜杠/Windows 路径 → /assets/.../x.png（根治粘贴 Windows 路径写坏 TS 文件）
@@ -2094,6 +2100,12 @@ function serverSaveGeneral(data: {
             advantageSkillId: field('advantageSkillId'),
             balanceSkillId: field('balanceSkillId'),
             disadvantageSkillId: field('disadvantageSkillId'),
+            atkAdvantageSkillId: field('atkAdvantageSkillId'),
+            atkBalanceSkillId: field('atkBalanceSkillId'),
+            atkDisadvantageSkillId: field('atkDisadvantageSkillId'),
+            defAdvantageSkillId: field('defAdvantageSkillId'),
+            defBalanceSkillId: field('defBalanceSkillId'),
+            defDisadvantageSkillId: field('defDisadvantageSkillId'),
             aptitude: field('aptitude'),
             comment: mm[3] ?? '',
         };
@@ -2106,6 +2118,12 @@ function serverSaveGeneral(data: {
         advantageSkillId: mergeField(data.advantageSkillId, existingEntry.advantageSkillId),
         balanceSkillId: mergeField(data.balanceSkillId, existingEntry.balanceSkillId),
         disadvantageSkillId: mergeField(data.disadvantageSkillId, existingEntry.disadvantageSkillId),
+        atkAdvantageSkillId: mergeField(data.atkAdvantageSkillId, existingEntry.atkAdvantageSkillId),
+        atkBalanceSkillId: mergeField(data.atkBalanceSkillId, existingEntry.atkBalanceSkillId),
+        atkDisadvantageSkillId: mergeField(data.atkDisadvantageSkillId, existingEntry.atkDisadvantageSkillId),
+        defAdvantageSkillId: mergeField(data.defAdvantageSkillId, existingEntry.defAdvantageSkillId),
+        defBalanceSkillId: mergeField(data.defBalanceSkillId, existingEntry.defBalanceSkillId),
+        defDisadvantageSkillId: mergeField(data.defDisadvantageSkillId, existingEntry.defDisadvantageSkillId),
         aptitude: mergeField(data.aptitude, existingEntry.aptitude),
     };
     const parts = [
@@ -2116,6 +2134,12 @@ function serverSaveGeneral(data: {
     if (merged.advantageSkillId) parts.push(`advantageSkillId: '${merged.advantageSkillId}'`);
     if (merged.balanceSkillId) parts.push(`balanceSkillId: '${merged.balanceSkillId}'`);
     if (merged.disadvantageSkillId) parts.push(`disadvantageSkillId: '${merged.disadvantageSkillId}'`);
+    if (merged.atkAdvantageSkillId) parts.push(`atkAdvantageSkillId: '${merged.atkAdvantageSkillId}'`);
+    if (merged.atkBalanceSkillId) parts.push(`atkBalanceSkillId: '${merged.atkBalanceSkillId}'`);
+    if (merged.atkDisadvantageSkillId) parts.push(`atkDisadvantageSkillId: '${merged.atkDisadvantageSkillId}'`);
+    if (merged.defAdvantageSkillId) parts.push(`defAdvantageSkillId: '${merged.defAdvantageSkillId}'`);
+    if (merged.defBalanceSkillId) parts.push(`defBalanceSkillId: '${merged.defBalanceSkillId}'`);
+    if (merged.defDisadvantageSkillId) parts.push(`defDisadvantageSkillId: '${merged.defDisadvantageSkillId}'`);
     if (merged.strategicSkillId) parts.push(`strategicSkillId: '${merged.strategicSkillId}'`);
     if (merged.aptitude) parts.push(`aptitude: '${merged.aptitude}'`);
     const gsLine = `${data.generalId}: { ${parts.join(', ')} },${existingEntry.comment ? ' ' + existingEntry.comment.trim().replace(/^,\s*/, '') : ''}`;
@@ -2540,6 +2564,36 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
             issues.push({ level: 'error', msg: `武将 ID "${genId}" 被多势力共用: ${fIds.join(', ')}`, factionId: fIds[0] });
         }
     });
+
+    // 18. [NEW 2026-07-13] 精锐 tier vs 武将品阶 匹配审计
+    //    T0/T1 精锐 → 必须是名将；名将 → 精锐不能是 T4
+    for (const [fId, elite] of Object.entries(data.elites)) {
+        const gen = data.generals[fId];
+        if (!gen) continue;
+        const prof = data.profiles[gen.generalId];
+        if (!prof) continue;
+
+        const eliteTier = elite.tier;
+        const isFamous = prof.tier === 'famous';
+
+        // T0/T1 精锐 + 普将 = 报错
+        if ((eliteTier === 0 || eliteTier === 1) && !isFamous) {
+            issues.push({
+                level: 'error',
+                msg: `精锐 "${elite.name}" 为 T${eliteTier}，但武将 "${gen.generalName}"(${gen.generalId}) 是普将（T0/T1 精锐必须配名将）`,
+                factionId: fId,
+            });
+        }
+
+        // 名将 + T4 精锐 = 报错
+        if (isFamous && eliteTier === 4) {
+            issues.push({
+                level: 'error',
+                msg: `武将 "${gen.generalName}"(${gen.generalId}) 是名将，但精锐 "${elite.name}" 仅为 T4（名将至少配 T3 以上精锐）`,
+                factionId: fId,
+            });
+        }
+    }
 
     return issues;
 }
