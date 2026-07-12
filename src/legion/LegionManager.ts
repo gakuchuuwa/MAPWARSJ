@@ -1,7 +1,7 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
-import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedEnemyCityStrategicDebuffFx } from '../combat/GeneralSkillCombat';
+import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedLongDriveDeepBypassFx, getLongDriveDeepBypassChance, emitFollowedEnemyCityStrategicDebuffFx } from '../combat/GeneralSkillCombat';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
@@ -656,25 +656,24 @@ export class LegionManager {
 
     /** 供 AI：军团站在敌对据点 ZOC 内时必须先处理该城 */
     public findHostileCityNear(pos: LatLng, factionId: string, army?: Army | null): City | null {
-        const ignoreSmallCityZoc = army
-            ? generalHasStrategicEffect(army, 'ignore_small_city_zoc')
-            : false;
-        // 长驱深入(str_11)：无视 small_city ZOC 的概率 = 该技 magnitude（默认 0.5 = 50%）。
-        // 仅 small_city 适用；big_city / medium_city / pass 一律拦截，永不绕过。
-        const smallCityBypassChance = ignoreSmallCityZoc && army
-            ? getGeneralStrategicMagnitude(army, 'ignore_small_city_zoc', 0.5)
-            : 0;
+        // 长驱深入(str_11)：远征军团默认 50% 绕 small_city；非远征时仅挂 str_11 的将。概率 = 目录 magnitude。
+        const smallCityBypassChance = army ? getLongDriveDeepBypassChance(army) : 0;
         const zoc = GameConfig.SIEGE.COMBAT_RADIUS;
         let nearest: City | null = null;
         let minDist = Infinity;
 
         for (const city of this.cityManager.getCities()) {
             if (!city.factionId || city.factionId === factionId) continue;
+            const dist = getEuclideanDistance(pos, {
+                lat: city.latitude,
+                lng: city.longitude,
+            });
             // 长驱深入：仅 small_city 可被绕过，按 (军团id+据点id) 稳定掷点（同一军团对同一小城结果固定，
             // 不逐帧闪烁），命中概率 = magnitude。big_city / medium_city / pass 不进此分支，恒拦截。
             // 本军团自己的攻击目标城不适用绕过：绕过意为"路过不被拦"，若绕过自己要打的城，
             // 军团会一直走到城中心才触发攻城，开战时贴在城头上（离城 0 而非统一的 0.1）。
             if (
+                dist <= zoc &&
                 city.type === 'small_city' &&
                 smallCityBypassChance > 0 &&
                 army &&
@@ -685,22 +684,17 @@ export class LegionManager {
                 const bypassedSet = (army as any).bypassedCities || ((army as any).bypassedCities = new Set<string>());
                 if (!bypassedSet.has(city.id)) {
                     bypassedSet.add(city.id);
-                    gameLog('battle', `〔长驱深入〕${army.generalId || '将领'}无视【${city.name}】守军，长驱直入`);
-                    emitFollowedGeneralStrategicMapFx(
-                        army,
-                        'ignore_small_city_zoc',
-                        city.latitude,
-                        city.longitude,
-                        'float',
-                        { dedupeMs: 3000, dedupeKey: `${army.id}|str_11|${city.id}` },
-                    );
+                    gameLog('battle', `〔长驱深入〕${army.expeditionTargetCityId ? '远征军' : (army.generalId || '将领')}无视【${city.name}】守军，长驱直入`);
                 }
+                // 进入 ZOC 且判定绕城：跟拍时在军团脚下 pulse（未跟拍不写 dedupe，开跟拍后仍可补显示）
+                emitFollowedLongDriveDeepBypassFx(
+                    army,
+                    pos.lat,
+                    pos.lng,
+                    { dedupeMs: 6000, dedupeKey: `${army.id}|str_11|${city.id}` },
+                );
                 continue;
             }
-            const dist = getEuclideanDistance(pos, {
-                lat: city.latitude,
-                lng: city.longitude,
-            });
             if (dist <= zoc && dist < minDist) {
                 minDist = dist;
                 nearest = city;

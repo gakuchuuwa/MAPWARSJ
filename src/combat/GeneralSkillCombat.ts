@@ -56,16 +56,23 @@ export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
 export type BattleSituation = 'advantage' | 'balance' | 'disadvantage';
 
 /**
- * 三势适性：按开局局势(优/均/劣)返回该武将对应局的战术技。
- * 未配对应局技 → 返回 null（调用方不设 battleOverriddenSkillId，回退招牌单技，现役零影响）。
+ * 三势适性·攻防六槽：按开局局势(优/均/劣) + 攻/守侧返回对应局技。
+ * 优先攻防专槽 → 未配则回退旧三槽 → 仍无则 null。
  */
-export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation): string | null {
+export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation, isAttacker: boolean): string | null {
     if (!unit.generalId) return null;
     const p = getGeneralProfile(unit.generalId);
     if (!p) return null;
-    if (situation === 'advantage') return p.advantageSkillId ?? null;
-    if (situation === 'disadvantage') return p.disadvantageSkillId ?? null;
-    return p.balanceSkillId ?? null;
+    // 攻防六槽优先
+    if (isAttacker) {
+        if (situation === 'advantage') return p.atkAdvantageSkillId ?? p.advantageSkillId ?? null;
+        if (situation === 'disadvantage') return p.atkDisadvantageSkillId ?? p.disadvantageSkillId ?? null;
+        return p.atkBalanceSkillId ?? p.balanceSkillId ?? null;
+    } else {
+        if (situation === 'advantage') return p.defAdvantageSkillId ?? p.advantageSkillId ?? null;
+        if (situation === 'disadvantage') return p.defDisadvantageSkillId ?? p.disadvantageSkillId ?? null;
+        return p.defBalanceSkillId ?? p.balanceSkillId ?? null;
+    }
 }
 
 function sideIsFirstSortie(units: IBattleUnit[]): boolean {
@@ -1099,6 +1106,44 @@ export function getGeneralStrategicMagnitude(
     const skill = getGeneralStrategicSkillDef(unit);
     if (!skill || skill.effect !== effect) return fallback;
     return skill.magnitude;
+}
+
+/** str_11 长驱深入：远征军团默认享有；非远征时仅挂 str_11 的将触发。二者不叠乘。 */
+export function getLongDriveDeepBypassChance(
+    army: Pick<Army, 'expeditionTargetCityId' | 'id'> & IBattleUnit,
+): number {
+    const def = getStrategicSkillDef('str_11');
+    const catalogChance = def?.magnitude ?? 0.5;
+    const onExpedition = army.expeditionTargetCityId != null;
+    const generalHas = generalHasStrategicEffect(army, 'ignore_small_city_zoc');
+    if (!onExpedition && !generalHas) return 0;
+    if (onExpedition) return catalogChance;
+    return getGeneralStrategicMagnitude(army, 'ignore_small_city_zoc', catalogChance);
+}
+
+/** 跟拍：长驱深入绕小城 pulse（不占用将 profile 的 strategicSkillId；坐标取军团脚下） */
+export function emitFollowedLongDriveDeepBypassFx(
+    army: Pick<Army, 'id'>,
+    lat: number,
+    lng: number,
+    opts?: { dedupeMs?: number; dedupeKey?: string },
+): boolean {
+    if (army.id !== getFollowedArmyId()) return false;
+    const skill = getStrategicSkillDef('str_11');
+    if (!skill) return false;
+
+    const dedupeMs = opts?.dedupeMs ?? 6000;
+    const key = opts?.dedupeKey ?? `${army.id}|str_11`;
+    if (dedupeMs > 0) {
+        const now = Date.now();
+        if (now - (strategicMapFxDedupe.get(key) ?? 0) < dedupeMs) return false;
+    }
+
+    const shown = spawnMapPulse(lat, lng, skill.displayName, getStrategicPulseColor(skill.id));
+    if (shown && dedupeMs > 0) {
+        strategicMapFxDedupe.set(key, Date.now());
+    }
+    return shown;
 }
 
 export function unitQualifiesForPassGarrisonDefenseSkill(unit: IBattleUnit): boolean {

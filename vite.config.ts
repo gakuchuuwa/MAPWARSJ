@@ -2412,12 +2412,15 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         }
 
         // ②③ 名将战略技合法性 + 三势一致
+        //   str_11 长驱深入（远征技）主人定：佩戴放行、不报错；也不参与①的"必须有人戴"（不在白名单 20 内）。
+        const WEAR_EXEMPT_IDS = new Set(['str_11']);
         const APT_LABEL: Record<string, string> = { create: '造势(优势)', leverage: '借势(均势)', reverse: '逆势(劣势)' };
         for (const [fId, g] of Object.entries(data.generals)) {
             const prof = data.profiles[g.generalId];
             if (!prof || prof.tier !== 'famous') continue;
             const sid = prof.strategicSkillId;
             if (!sid) continue; // 「名将缺战略技」已由规则 11.5 报，不重复
+            if (WEAR_EXEMPT_IDS.has(sid)) continue; // 长驱深入除外：不报非法、无三势校验
             // ② 必须在白名单内
             if (!CANONICAL_STRATEGIC_IDS.has(sid)) {
                 issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 佩戴的 ${sid}（${nameOf(sid)}）不是合法战略技，请改配白名单内的战略技`, factionId: fId });
@@ -2427,6 +2430,23 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
             const skillApt = STRATEGIC_APTITUDE[sid];
             if (skillApt && prof.aptitude && prof.aptitude !== skillApt) {
                 issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 三势不符：武将是${APT_LABEL[prof.aptitude] ?? prof.aptitude}，战略技「${nameOf(sid)}」是${APT_LABEL[skillApt]}`, factionId: fId });
+            }
+        }
+    }
+
+    // 11.8. [NEW] 战术技覆盖：目录里每个战术技（ts_*）都必须有武将佩戴
+    //   佩戴口径 = 武将档案四格任一（招牌 tacticalSkillId / 优势格 / 均势格 / 劣势格）。
+    //   无人佩戴的战术技 = 空技，报错（需配将，或从 TACTICAL_SKILL_CATALOG 删除）。
+    {
+        const wornTactical = new Set<string>();
+        for (const prof of Object.values(data.profiles)) {
+            for (const id of [prof.tacticalSkillId, prof.advantageSkillId, prof.balanceSkillId, prof.disadvantageSkillId]) {
+                if (id) wornTactical.add(id);
+            }
+        }
+        for (const s of data.tacticalSkills) {
+            if (!wornTactical.has(s.id)) {
+                issues.push({ level: 'error', msg: `战术技 "${s.displayName}"(${s.id}) 无任何武将佩戴（所有战术技都必须有人戴，请配将或删除该技）` });
             }
         }
     }

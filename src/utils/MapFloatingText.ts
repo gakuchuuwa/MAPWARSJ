@@ -70,19 +70,19 @@ export function spawnMapFloatingText(lat: number, lng: number, text: string, col
 /** 
  * 大地图技能脉冲（闪卡级演出）：用于显示“所向披靡”等战役级大招，呈现类似战斗面板的大字闪烁脉冲效果
  */
-export function spawnMapPulse(lat: number, lng: number, text: string, color: string): void {
+export function spawnMapPulse(lat: number, lng: number, text: string, color: string): boolean {
     const map = (window as any).game?.map?.getLeafletMap?.();
-    if (!map) return;
+    if (!map) return false;
     
     // 只有在镜头范围内才飘，零干扰
     const bounds = map.getBounds();
     if (!bounds || !bounds.contains([lat, lng])) {
-        return;
+        return false;
     }
 
     // 挂载到 leaflet 的 popupPane 层保证层级足够高
     const container = map.getPanes().popupPane;
-    if (!container) return;
+    if (!container) return false;
     
     const point = map.latLngToLayerPoint([lat, lng]);
     
@@ -130,4 +130,5 @@ export function spawnMapPulse(lat: number, lng: number, text: string, color: str
             el.parentNode.removeChild(el);
         }
     }, 1600);
+    return true;
 }
