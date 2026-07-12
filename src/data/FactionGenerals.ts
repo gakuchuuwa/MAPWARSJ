@@ -18,7 +18,7 @@
  *   1. 本表加一行：factionId → { generalId, generalName, portrait }
  *      portrait = 专图预留路径（通常 {政权夹}/{factionId}_{generalId}.png）；无文件时
  *      自动 fallback：政权夹随机 → 文化夹随机（见 AGENTS.md §十三，禁止跨区乱抽）
- *   2. GeneralSkills.ts 的 GENERAL_PROFILES 加 generalId 的武将技档案（不加则技能不触发）
+ *   2. general-skills/profiles.ts 的 GENERAL_PROFILES 加 generalId 的武将技档案（不加则技能不触发）
  *   3. 立绘 PNG → 写入对应素材夹 <code>{generalId}.png</code>（F2 绑定）；F2 可校正位置
  *
  * 红线：一势力一将领；专图文件名全局唯一；fallback 仅限本政权夹与本文化夹。

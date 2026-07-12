@@ -157,7 +157,7 @@ function main(): void {
     runComeback((plain * 1.05) | 0);
     runComeback((plain * 1.15) | 0);
 
-    console.log('\n提示：改 src/data/GeneralSkills.ts 的 magnitude 或 GameConfig 的 ELITE_TIER_MULT/LUCK 后重跑，数值即同步。\n');
+    console.log('\n提示：改 src/data/general-skills/catalogs.ts 的 magnitude 或 GameConfig 的 ELITE_TIER_MULT/LUCK 后重跑，数值即同步。\n');
 }
 
 main();

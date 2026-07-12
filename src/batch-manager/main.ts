@@ -1830,7 +1830,7 @@ function renderValidation(): void {
             const targets: Array<{ factionId?: string; cityId?: string }> = [{ factionId: fid }];
             if (cityId) targets.push({ cityId });
             const cityHint = city ? `\n以及关联据点 "${city.name}" (${cityId})` : cityId ? `\n以及关联据点 "${cityId}"（cities_v2 中未找到，仅清 SC 引用）` : '';
-            const filesTip = `StartingCapitals / CityAssetManager / SandboxDisplayNames / FactionGenerals / GeneralSkills / 14 区精锐${cityId ? ' / cities_v2 / VectorRoadData' : ''}`;
+            const filesTip = `StartingCapitals / CityAssetManager / SandboxDisplayNames / FactionGenerals / general-skills/profiles / 14 区精锐${cityId ? ' / cities_v2 / VectorRoadData' : ''}`;
             if (!confirm(`确认清扫孤儿势力 "${fid}"${cityHint}？\n将从 ${filesTip} 中删除所有残留。`)) return;
             try {
                 const res = await fetch('/api/batch-delete', {

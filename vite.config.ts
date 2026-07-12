@@ -1176,8 +1176,8 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
                 if (generalId && gsKwIdx !== -1 && findObjectKeyIdx(generalSkillsText, gsKwIdx, generalId) !== -1) {
                     try {
                         generalSkillsText = serverDeleteObjectLine(generalSkillsText, 'GENERAL_PROFILES', generalId);
-                        results.push({ target: tag, file: 'GeneralSkills.ts', ok: true });
-                    } catch (e: any) { results.push({ target: tag, file: 'GeneralSkills.ts', ok: false, error: e.message }); }
+                        results.push({ target: tag, file: 'general-skills/profiles.ts', ok: true });
+                    } catch (e: any) { results.push({ target: tag, file: 'general-skills/profiles.ts', ok: false, error: e.message }); }
                 }
             }
 
@@ -2150,17 +2150,17 @@ function serverSaveGeneral(data: {
     const gsLine = `${data.generalId}: { ${parts.join(', ')} },${existingEntry.comment ? ' ' + existingEntry.comment.trim().replace(/^,\s*/, '') : ''}`;
     if (gsText.includes(`${data.generalId}:`)) {
         gsText = serverReplaceObjectLine(gsText, 'GENERAL_PROFILES', data.generalId, `    ${gsLine}`);
-        results.push('GeneralSkills.ts: replaced');
+        results.push('general-skills/profiles.ts: replaced');
     } else {
         gsText = serverInsertIntoStructure(gsText, 'GENERAL_PROFILES', gsLine, '    ');
-        results.push('GeneralSkills.ts: inserted');
+        results.push('general-skills/profiles.ts: inserted');
     }
 
     // [换将清理] generalId 变了 → 删旧 generalId 的孤儿技能档，防 profile 残留
     if (data.oldGeneralId && data.oldGeneralId !== data.generalId) {
         try {
             gsText = serverDeleteObjectLine(gsText, 'GENERAL_PROFILES', data.oldGeneralId);
-            results.push(`GeneralSkills.ts: 清理旧档 ${data.oldGeneralId}`);
+            results.push(`general-skills/profiles.ts: 清理旧档 ${data.oldGeneralId}`);
         } catch { /* 旧档不存在，忽略 */ }
     }
 

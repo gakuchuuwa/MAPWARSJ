@@ -222,7 +222,7 @@ function main(): void {
     console.log('\n✅ batch-manager 口径三格合规');
 
     if (!DRY && changes.length > 0) {
-        const gsPath = path.resolve(__dirname, '../src/data/GeneralSkills.ts');
+        const gsPath = path.resolve(__dirname, '../src/data/general-skills/profiles.ts'); // [2026-07-13 拆分] 档案在 profiles.ts，勿写转发壳
         let text = fs.readFileSync(gsPath, 'utf-8');
         for (const c of changes) {
             const re = new RegExp(
