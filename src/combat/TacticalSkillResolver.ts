@@ -166,8 +166,11 @@ export function isTacticalEffectImplemented(effect: TacticalBaseEffect): boolean
         case 'nullify_enemy_opening_cut':
         // ── 士气系（已接 first_sortie 桥接 + 门控）──
         case 'first_sortie_power_mult':
+        case 'first_sortie_comeback_mult':
             return true;
-        // 地形对抗（cancel/halve_enemy_terrain_buff）引擎侧尚未接线，仅 combat-model 工具支持 → 归 default(new)
+        case 'cancel_enemy_terrain_buff':
+        case 'halve_enemy_terrain_buff':
+            return true;
         default:
             return false;
     }

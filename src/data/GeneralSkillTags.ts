@@ -292,7 +292,7 @@ export function auditTacticalDistribution(
 // 背景：auditTacticalDistribution 只查 25% 占比，查不出「limited 技挂 123 人」
 // 这类违反 TACTICAL_ASSIGN_TIER 限量策略的分配。本闸门补上，批量提交前必跑。
 // ⚠️ 已知缺口：countTacticalByArchetype 仍按旧 tac_01–10 标签映射，档案迁 ts_ 后
-//    统计恒为零；补 49 技 archetype 表前，archetype 配额流程不可信（TODO(v1-tags)）。
+//    统计恒为零；archetype 配额流程不可信（TODO(v1-tags)）。
 
 /** limited 层单技持有人数上限（「个位数」的硬化） */
 export const LIMITED_TIER_MAX_HOLDERS = 9;
@@ -599,7 +599,7 @@ export const ARCHETYPE_TO_TACTICAL: Record<
 /**
  * 【v1 迁移蓝图 · 2026-07-03】5 风格 × 2 品阶 → 目标 v1 战术技（ts_xxx）
  *
- * 旧 10 格（tac_xx）→ 新 49 技（ts_xxx）的分配总图。武将风格已由现挂的 tac 编号
+ * 旧 10 格（tac_xx）→ v1 战术技（ts_xxx）的分配总图。武将风格已由现挂的 tac 编号
  * 决定（见 ARCHETYPE_TO_TACTICAL），迁移时按本表把每个风格槽整体换成对应 v1 技。
  *
  * engineReady = 该 v1 技当前是否已在 BattleField 引擎生效：

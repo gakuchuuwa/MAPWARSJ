@@ -1990,7 +1990,7 @@ function serverReadAllEntityData() {
         ally_power_mult: 'advantage', first_sortie_power_mult: 'advantage',
         ally_add_troops_opening: 'balance',
         enemy_sub_troops_opening: 'advantage', dual_sub_troops_opening: 'advantage',
-        luck_variance_self: 'disadvantage', luck_variance_enemy: 'disadvantage', luck_lock_self: 'disadvantage',
+        luck_variance_self: 'disadvantage', luck_variance_enemy: 'balance', luck_lock_self: 'disadvantage',
         steal_enemy_skill: 'balance', negate_enemy_skill: 'balance', partial_negate_enemy_skill: 'balance',
         reflect_enemy_opening_cut: 'balance', nullify_enemy_opening_cut: 'balance',
         cancel_enemy_terrain_buff: 'balance', halve_enemy_terrain_buff: 'balance',
@@ -1999,7 +1999,7 @@ function serverReadAllEntityData() {
         lose_zero_enemy_recovery: 'disadvantage', ally_add_troops_comeback: 'disadvantage',
     };
     const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog']);
-    const VARIANCE_EFFECTS = new Set(['luck_variance_self', 'luck_variance_enemy', 'luck_lock_self', 'recompute_comeback']);
+    const VARIANCE_EFFECTS = new Set(['luck_variance_self', 'luck_lock_self', 'recompute_comeback']);
     const triClassById = new Map<string, string>();
     for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'[\s\S]*?baseEffect:\s*'(\w+)',\s*condition:\s*'(\w+)'/g)) {
         const tri = UNDERDOG_CONDS.has(m[3]) || VARIANCE_EFFECTS.has(m[2]) ? 'disadvantage' : EFFECT_TO_TRI[m[2]];

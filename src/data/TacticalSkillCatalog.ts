@@ -196,9 +196,9 @@ export const UNDERDOG_CONDITIONS: ReadonlySet<TacticalSkillCondition> = new Set(
 ]);
 
 /** 方差/投机效果 —— 扩大随机性是劣势策略，强制归劣势 */
-const VARIANCE_EFFECTS: ReadonlySet<TacticalBaseEffect> = new Set<TacticalBaseEffect>([
+export const VARIANCE_EFFECTS: ReadonlySet<TacticalBaseEffect> = new Set<TacticalBaseEffect>([
     'luck_variance_self',
-    'luck_variance_enemy',
+    // luck_variance_enemy 归 dizhan→均势（散阵遏骑/溃围断后/拔帜易帜 等名将专属均局技）
     'luck_lock_self',
     'recompute_comeback',
 ]);

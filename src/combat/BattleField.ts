@@ -586,6 +586,7 @@ export class BattleField implements IOpeningPulseSink {
             withSkills.attRoll,
             withSkills.defRoll,
             this.attackerTacticalTriggered,
+            this.attackerCommander,
         );
         withSkills = {
             attRoll: attComeback.sideRoll,
@@ -597,6 +598,7 @@ export class BattleField implements IOpeningPulseSink {
             withSkills.defRoll,
             withSkills.attRoll,
             this.defenderTacticalTriggered,
+            this.defenderCommander,
         );
         withSkills = {
             attRoll: defComeback.opponentRoll,
@@ -858,6 +860,8 @@ export class BattleField implements IOpeningPulseSink {
                 ...ctxBase,
                 triggeredSkillIds: this.attackerTacticalTriggered,
             },
+            this.attackerCommander,
+            this.defenderCommander,
         );
         tryApplyComebackTacticalForSide(
             defUnits,
@@ -869,6 +873,8 @@ export class BattleField implements IOpeningPulseSink {
                 ...ctxBase,
                 triggeredSkillIds: this.defenderTacticalTriggered,
             },
+            this.defenderCommander,
+            this.attackerCommander,
         );
     }
 

@@ -1226,6 +1226,8 @@ export function applyOpeningTacticalPreRoll(
     emitUi: boolean,
     openingUiShown?: { attacker: boolean; defender: boolean },
     opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
+    attCommander?: IBattleUnit | null,
+    defCommander?: IBattleUnit | null,
 ): void {
     const battleType = opts?.battleType ?? 'field';
     const terrain =
@@ -1286,7 +1288,7 @@ export function applyOpeningTacticalPreRoll(
         }
 
         if (effect.enemyCutMagnitude > 0) {
-            const oppUnit = findEligibleGeneralUnit(opponents, oppCommander);
+            const oppUnit = findEligibleGeneralUnit(opponents, isAttacker ? defCommander : attCommander);
             const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
             const oppCtx = buildSideCtx(opponents, units, !isAttacker);
             const counter = resolveOpeningTroopCutCounter(
@@ -1348,7 +1350,7 @@ export function applyOpeningTacticalPreRoll(
         triggered: Set<string>,
         isAttacker: boolean,
     ) => {
-        const unit = findEligibleGeneralUnit(units, selfCommander);
+        const unit = findEligibleGeneralUnit(units, isAttacker ? attCommander : defCommander);
         if (!unit?.generalId) return;
 
         if (tryApplyV1OpeningTroop(unit, units, opponents, sideLabel, isAttacker, triggered)) {
@@ -1438,6 +1440,8 @@ export function applyGeneralSkillSideRollMultipliers(
         emitUi,
         options?.openingUiShown,
         { battleType, terrain },
+        attCommander,
+        defCommander,
     );
     return applyStrategicBattleToRolls(
         attackerUnits,
@@ -1457,6 +1461,8 @@ export function applyStrategicRollMultipliersOnly(
     attRoll: number,
     defRoll: number,
     battleType: BattleType,
+    attCommander?: IBattleUnit | null,
+    defCommander?: IBattleUnit | null,
 ): { attRoll: number; defRoll: number } {
     const terrain = getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
     return applyStrategicBattleToRolls(
@@ -1466,7 +1472,9 @@ export function applyStrategicRollMultipliersOnly(
         defRoll,
         battleType,
         terrain,
-        false, // emitUi = false (不重发开局 UI / 闪卡)
+        false,
+        attCommander,
+        defCommander,
     );
 }
 
@@ -1531,8 +1539,9 @@ function bridgedOpeningEnhanceActive(
     opponentUnits: IBattleUnit[],
     isAttacker: boolean,
     opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
+    selfCommander?: IBattleUnit | null,
 ): boolean {
-    const unit = findEligibleGeneralUnit(sideUnits);
+    const unit = findEligibleGeneralUnit(sideUnits, selfCommander);
     if (!unit?.generalId) return true;
     const tacId = (unit ? getActiveTacticalSkillId(unit) : null);
     if (!tacId) return true;
@@ -1564,6 +1573,8 @@ export function applyOpeningTacticalToRolls(
     emitUi = true,
     openingUiShown?: { attacker: boolean; defender: boolean },
     opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
+    attCommander?: IBattleUnit | null,
+    defCommander?: IBattleUnit | null,
 ): { attRoll: number; defRoll: number; trigger?: TacticalSkillTrigger } {
     let lastTrigger: TacticalSkillTrigger | undefined;
 
@@ -1586,7 +1597,7 @@ export function applyOpeningTacticalToRolls(
         if (!skill) return roll;
 
         if (skill.effect === 'ally_mult_1_2') {
-            if (!bridgedOpeningEnhanceActive(units, opponentUnits, isAttacker, opts)) return roll;
+            if (!bridgedOpeningEnhanceActive(units, opponentUnits, isAttacker, opts, isAttacker ? attCommander : defCommander)) return roll;
             const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
             const oppTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
             let mult = skill.magnitude * getStrategicTacticalSkillMult(unit, selfTroops, oppTroops, opts?.terrain);
@@ -1642,7 +1653,7 @@ export function applyOpeningTacticalToRolls(
         sideLabel: string,
         isAttacker: boolean,
     ): number => {
-        const unit = findEligibleGeneralUnit(units, selfCommander);
+        const unit = findEligibleGeneralUnit(units, isAttacker ? attCommander : defCommander);
         if (!unit?.generalId) return opponentRoll;
         const skill = getTacticalSkillForTiming(unit, 'opening');
         if (!skill) return opponentRoll;
@@ -1673,8 +1684,9 @@ export function applyOpeningTacticalToRolls(
         units: IBattleUnit[],
         roll: number,
         sideLabel: string,
+        isAttacker: boolean,
     ): number => {
-        const unit = findEligibleGeneralUnit(units, selfCommander);
+        const unit = findEligibleGeneralUnit(units, isAttacker ? attCommander : defCommander);
         if (!unit?.generalId) return roll;
         const skill = getTacticalSkillForTiming(unit, 'opening');
         if (!skill) return roll;
@@ -1692,12 +1704,12 @@ export function applyOpeningTacticalToRolls(
     let outDef = applyAllyMult(defenderUnits, attackerUnits, defRoll, '守方', false);
     outDef = applyEnemyDebuff(attackerUnits, outDef, '攻方', true);
     outAtt = applyEnemyDebuff(defenderUnits, outAtt, '守方', false);
-    outAtt = applyInvRollEdge(attackerUnits, outAtt, '攻方');
-    outDef = applyInvRollEdge(defenderUnits, outDef, '守方');
+    outAtt = applyInvRollEdge(attackerUnits, outAtt, '攻方', true);
+    outDef = applyInvRollEdge(defenderUnits, outDef, '守方', false);
 
     // 三势适性：势×局 开战战力系数（造势顺风↑ / 逆势逆风↑提翻盘机会；初值待模拟器调 APTITUDE_POWER_MULT）
-    outAtt *= getAptitudePowerMult(attackerUnits, defenderUnits);
-    outDef *= getAptitudePowerMult(defenderUnits, attackerUnits);
+    outAtt *= getAptitudePowerMult(attackerUnits, defenderUnits, attCommander);
+    outDef *= getAptitudePowerMult(defenderUnits, attackerUnits, defCommander);
 
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }
@@ -1712,6 +1724,7 @@ export function tryApplyComebackTacticalForSide(
     sideInitialTroops: number,
     sideLabel: string,
     ctx: ComebackTacticalContext,
+    selfCommander?: IBattleUnit | null,
     oppCommander?: IBattleUnit | null,
 ): boolean {
     const unit = findEligibleGeneralUnit(sideUnits, selfCommander);
@@ -1805,6 +1818,7 @@ export function applyComebackRollMultipliersForSide(
     sideRoll: number,
     opponentRoll: number,
     triggeredSkillIds: Set<string>,
+    selfCommander?: IBattleUnit | null,
 ): { sideRoll: number; opponentRoll: number } {
     const unit = findEligibleGeneralUnit(sideUnits, selfCommander);
     if (!unit?.generalId) return { sideRoll, opponentRoll };
@@ -1831,6 +1845,8 @@ export function applyStrategicBattleToRolls(
     battleType: BattleType,
     terrain?: LandTerrainKind | null,
     emitUi: boolean = true,
+    attCommander?: IBattleUnit | null,
+    defCommander?: IBattleUnit | null,
 ): { attRoll: number; defRoll: number } {
     const terrainKind =
         terrain ?? getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
@@ -1842,14 +1858,14 @@ export function applyStrategicBattleToRolls(
         sideLabel: string,
         side: 'attacker' | 'defender',
     ): number => {
-        const unit = findEligibleGeneralUnit(units, attCommander);
+        const unit = findEligibleGeneralUnit(units, side === 'attacker' ? attCommander : defCommander);
         if (!unit?.generalId) return roll;
         const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
         const oppTroops = opponents.reduce((s, u) => s + Math.max(0, u.troops), 0);
         let mult = getStrategicBattlePowerMultiplier(unit, battleType, terrainKind, side, selfTroops, oppTroops);
         if (Math.abs(mult - 1) < 0.001) return roll;
 
-        const oppUnit = findEligibleGeneralUnit(opponents, defCommander);
+        const oppUnit = findEligibleGeneralUnit(opponents, side === 'attacker' ? defCommander : attCommander);
         const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
         if (oppActiveId) {
             const oppCtx = buildTacticalConditionContext({
