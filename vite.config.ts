@@ -1117,7 +1117,8 @@ function batchDeleteFiles(targets: DeleteTarget[]): DeleteResult[] {
     const roadsPath = path.resolve(__dirname, 'src/data/VectorRoadData.ts');
     // [FIX 2026-07-01] 删势力须同步删武将记录/档案/精锐, 否则成孤儿, 校验仍报错
     const factionGeneralsPath = path.resolve(__dirname, 'src/data/FactionGenerals.ts');
-    const generalSkillsPath = path.resolve(__dirname, 'src/data/GeneralSkills.ts');
+    // [2026-07-13 拆分] GENERAL_PROFILES 已拆到 general-skills/profiles.ts（GeneralSkills.ts 只是转发壳）
+    const generalSkillsPath = path.resolve(__dirname, 'src/data/general-skills/profiles.ts');
 
     let factionText = fs.readFileSync(factionPath, 'utf-8');
     let citiesText = fs.readFileSync(citiesPath, 'utf-8');
@@ -1864,7 +1865,9 @@ function serverReadAllEntityData() {
     const sdnText = fs.readFileSync(path.resolve(__dirname, 'src/data/SandboxDisplayNames.ts'), 'utf-8');
     const scText = fs.readFileSync(path.resolve(__dirname, 'src/data/StartingCapitals.ts'), 'utf-8');
     const fgText = fs.readFileSync(path.resolve(__dirname, 'src/data/FactionGenerals.ts'), 'utf-8');
-    const gsText = fs.readFileSync(path.resolve(__dirname, 'src/data/GeneralSkills.ts'), 'utf-8');
+    // [2026-07-13 拆分] 档案在 general-skills/profiles.ts；战略技目录在 general-skills/catalogs.ts
+    const gsText = fs.readFileSync(path.resolve(__dirname, 'src/data/general-skills/profiles.ts'), 'utf-8');
+    const gsCatText = fs.readFileSync(path.resolve(__dirname, 'src/data/general-skills/catalogs.ts'), 'utf-8');
     const tscText = fs.readFileSync(path.resolve(__dirname, 'src/data/TacticalSkillCatalog.ts'), 'utf-8');
 
     // factions: { id, name }[]
@@ -2023,7 +2026,8 @@ function serverReadAllEntityData() {
         });
     }
     const strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }> = [];
-    for (const m of gsText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)',\s*effect:\s*'([^']+)',\s*magnitude:\s*([\d.]+)/g)) {
+    // [2026-07-13 拆分] 战略技目录已在 general-skills/catalogs.ts（profiles.ts 里没有 str_ 条目）
+    for (const m of gsCatText.matchAll(/(\w+):\s*\{\s*id:\s*'([^']+)',\s*grid:\s*'([^']+)',\s*displayName:\s*'([^']+)',\s*effect:\s*'([^']+)',\s*magnitude:\s*([\d.]+)/g)) {
         if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4], effect: m[5], magnitude: parseFloat(m[6]) });
     }
 
@@ -2070,7 +2074,8 @@ function serverSaveGeneral(data: {
     }
 
     const fgPath = path.resolve(__dirname, 'src/data/FactionGenerals.ts');
-    const gsPath = path.resolve(__dirname, 'src/data/GeneralSkills.ts');
+    // [2026-07-13 拆分] 档案写入目标 = general-skills/profiles.ts（GeneralSkills.ts 只是转发壳，勿写）
+    const gsPath = path.resolve(__dirname, 'src/data/general-skills/profiles.ts');
     let fgText = fs.readFileSync(fgPath, 'utf-8');
     let gsText = fs.readFileSync(gsPath, 'utf-8');
     const results: string[] = [];
