@@ -428,6 +428,53 @@ export default defineConfig({
                 });
 
                 // ========================================================
+                // /api/skill-editor/* — 武将技编辑器（/skill-editor.html）
+                // ========================================================
+                server.middlewares.use('/api/skill-editor/list', (req, res) => {
+                    if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
+                    try {
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: true, ...serverSkillEditorList() }));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: false, error: err.message }));
+                    }
+                });
+                server.middlewares.use('/api/skill-editor/save', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    let body = '';
+                    req.on('data', (chunk: string) => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const result = serverSkillEditorSave(JSON.parse(body));
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, ...result }));
+                        } catch (err: any) {
+                            res.statusCode = 400;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+                server.middlewares.use('/api/skill-editor/create', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    let body = '';
+                    req.on('data', (chunk: string) => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const result = serverSkillEditorCreate(JSON.parse(body));
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, ...result }));
+                        } catch (err: any) {
+                            res.statusCode = 400;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // ========================================================
                 // /api/check-proximity
                 //   检查坐标与所有已有据点的50km间距
                 // ========================================================
@@ -2329,6 +2376,281 @@ function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
         unusedTactical,
         unusedStrategic,
     };
+}
+
+// ============================================================
+// [NEW 2026-07-14] 武将技编辑器（/skill-editor.html）服务端
+//   原则与 serverReadAllEntityData 相同：纯文本解析，不 import 目录模块
+//   （import 会让 vite watch 数据文件，改一次技能就重启一次 dev server）。
+//   写盘统一走 guardSerializedDataText 防线。
+//   数值治理：magnitude 不接受自由数字，只接受"档位"，服务端查表写标准值
+//   （四币平衡定稿唯一数值来源，见 docs/02-design/武将技-四币平衡定稿.md）。
+// ============================================================
+
+const SE_TSC_PATH = 'src/data/TacticalSkillCatalog.ts';
+/** 定稿锁定值（百折不挠/兵不血刃），编辑器禁改档位 */
+const SE_LOCKED_MAGNITUDE = new Set(['ts_026', 'ts_032']);
+
+/** baseEffect → 货币家族（决定档位下拉；不在表内 = 档位不可编辑，只能改元数据） */
+const SE_FAMILY: Record<string, string> = {
+    ally_power_mult: 'power', first_sortie_power_mult: 'power', first_sortie_comeback_mult: 'power',
+    enemy_sub_troops_opening: 'pct', ally_add_troops_opening: 'pct', dual_sub_troops_opening: 'pct',
+    negate_enemy_skill: 'negate', partial_negate_enemy_skill: 'negate',
+    steal_enemy_skill: 'steal',
+    luck_variance_self: 'luck', luck_variance_enemy: 'luck',
+    win_casualty_reduction: 'casualty', elite_casualty_reduction: 'casualty',
+    lose_enemy_casualty_boost: 'bite', post_recovery_rate: 'recovery',
+    battle_duration_mult: 'duration',
+};
+/** 家族 → 档位（luck 家族写 [luckMin, luckMax]，其余写 magnitude） */
+const SE_TIERS: Record<string, Record<string, number | [number, number]>> = {
+    power: { '通用 ×1.05': 1.05, '条件/专属 ×1.10': 1.1, '绝品 ×1.15': 1.15 },
+    pct: { '通用 5%': 0.05, '条件/专属 9%': 0.09, '绝品 13%': 0.13 },
+    negate: { '通用 25%': 0.25, '专属 70%': 0.7, '绝品 100%': 1 },
+    steal: { '通用 15%': 0.15, '专属 50%': 0.5 },
+    luck: { '通用 [0.7,1.3]': [0.7, 1.3], '守城条件 [0.6,1.4]': [0.6, 1.4], '专属 [0.5,1.5]': [0.5, 1.5] },
+    casualty: { '通用 0.3': 0.3, '专属 0.5': 0.5 },
+    bite: { '通用 1.25': 1.25, '专属 1.5': 1.5 },
+    recovery: { '标准 0.5': 0.5 },
+    duration: { '速战 ×0.7': 0.7, '拖延 ×1.4': 1.4 },
+};
+const SE_CONDITIONS = [
+    'always', 'terrain_mountain', 'terrain_plain', 'terrain_sea',
+    'battle_siege_attacker', 'battle_siege_defender', 'battle_field',
+    'ratio_underdog', 'self_troops_reach_ten_thousand', 'enemy_different_culture',
+    'enemy_famous_general', 'side_comeback', 'enemy_troops_below_pct',
+    'self_troops_below_enemy_pct', 'lose_as_underdog', 'has_elite_legion',
+    'first_sortie', 'siege_attacker_on_water',
+];
+
+function seReadTagTable(text: string, tableName: string): Record<string, string> {
+    const out: Record<string, string> = {};
+    const kw = text.indexOf(`const ${tableName}`);
+    if (kw === -1) return out;
+    const end = text.indexOf('\n};', kw);
+    if (end === -1) return out;
+    for (const m of text.slice(kw, end).matchAll(/(ts_\d+):\s*'([^']*)'/g)) out[m[1]] = m[2];
+    return out;
+}
+
+function seEntryField(block: string, name: string): string | undefined {
+    return block.match(new RegExp(`(?:^|[,{\\s])${name}:\\s*'([^']*)'`))?.[1] || undefined;
+}
+function seEntryNum(block: string, name: string): number | undefined {
+    const m = block.match(new RegExp(`(?:^|[,{\\s])${name}:\\s*([\\d.]+)`));
+    return m ? parseFloat(m[1]) : undefined;
+}
+
+function seFindEntryBlock(text: string, id: string): { start: number; end: number } {
+    const idIdx = text.indexOf(`id: '${id}'`);
+    if (idIdx === -1) throw new Error(`目录中找不到 ${id}`);
+    let start = idIdx;
+    while (start > 0 && text[start] !== '{') start--;
+    let depth = 0, end = -1;
+    for (let i = start; i < text.length; i++) {
+        if (text[i] === '{') depth++;
+        else if (text[i] === '}') { depth--; if (depth === 0) { end = i + 1; break; } }
+    }
+    if (end === -1) throw new Error(`${id} 条目括号不闭合`);
+    return { start, end };
+}
+
+/** 字符串字段 upsert（value=null 删除字段）；新字段插在 id 之后保持可读 */
+function seUpsertStr(block: string, field: string, value: string | null): string {
+    const re = new RegExp(`\\s*${field}:\\s*'[^']*',?`);
+    if (value === null) return re.test(block) ? block.replace(re, '') : block;
+    if (/['\n\r]/.test(value)) throw new Error(`${field} 含非法字符（单引号/换行）`);
+    if (re.test(block)) return block.replace(re, ` ${field}: '${value}',`);
+    return block.replace(/(id:\s*'ts_\d+',)/, `$1 ${field}: '${value}',`);
+}
+/** 数值字段 upsert；新字段插在 magnitude 之后 */
+function seUpsertNum(block: string, field: string, value: number): string {
+    const re = new RegExp(`(${field}:\\s*)[\\d.]+`);
+    if (re.test(block)) return block.replace(re, `$1${value}`);
+    return block.replace(/(magnitude:\s*[\d.]+\s*,?)/, `$1 ${field}: ${value},`);
+}
+/** 从四张散表中移除 id（增量迁移：内联字段写入后散表条目退役） */
+function seRemoveFromTagTables(text: string, id: string): string {
+    let out = text;
+    for (const table of ['SKILL_SITUATION_TAG', 'SKILL_USAGE_TAG', 'SKILL_EXCLUSIVE_TAG', 'SKILL_CHARACTER']) {
+        const kw = out.indexOf(`const ${table}`);
+        if (kw === -1) continue;
+        const end = out.indexOf('\n};', kw);
+        if (end === -1) continue;
+        const seg = out.slice(kw, end).replace(new RegExp(`${id}:\\s*'[^']*',?\\s*`, 'g'), '');
+        out = out.slice(0, kw) + seg + out.slice(end);
+    }
+    return out;
+}
+
+/** 全目录合并视图 + 佩戴实况 + 在册名录 */
+function serverSkillEditorList() {
+    const text = fs.readFileSync(path.resolve(__dirname, SE_TSC_PATH), 'utf-8');
+    const data = serverReadAllEntityData();
+    const wearers = new Map<string, string[]>();
+    for (const [gid, prof] of Object.entries(data.profiles)) {
+        for (const sid of [
+            prof.atkAdvantageSkillId, prof.atkBalanceSkillId, prof.atkDisadvantageSkillId,
+            prof.defAdvantageSkillId, prof.defBalanceSkillId, prof.defDisadvantageSkillId,
+        ]) {
+            if (!sid) continue;
+            if (!wearers.has(sid)) wearers.set(sid, []);
+            wearers.get(sid)!.push(gid);
+        }
+    }
+    const gidInfo = new Map<string, { name: string; tier: string }>();
+    for (const g of Object.values(data.generals)) {
+        gidInfo.set(g.generalId, { name: g.generalName, tier: data.profiles[g.generalId]?.tier ?? '?' });
+    }
+    const sitTable = seReadTagTable(text, 'SKILL_SITUATION_TAG');
+    const useTable = seReadTagTable(text, 'SKILL_USAGE_TAG');
+    const exTable = seReadTagTable(text, 'SKILL_EXCLUSIVE_TAG');
+    const chTable = seReadTagTable(text, 'SKILL_CHARACTER');
+    const triById = new Map(data.tacticalSkills.map(s => [s.id, s.triClass]));
+    const TRI_CN: Record<string, string> = { advantage: '优势', balance: '均势', disadvantage: '劣势' };
+
+    const skills: any[] = [];
+    const seen = new Set<string>();
+    for (const m of text.matchAll(/id:\s*'(ts_\d+)'/g)) {
+        const id = m[1];
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const { start, end } = seFindEntryBlock(text, id);
+        const block = text.slice(start, end);
+        const inlineSit = seEntryField(block, 'situationTag');
+        const inlineUse = seEntryField(block, 'usageTag');
+        const ownerGeneralId = seEntryField(block, 'ownerGeneralId');
+        const ownerName = seEntryField(block, 'ownerName') ?? (ownerGeneralId ? gidInfo.get(ownerGeneralId)?.name : undefined) ?? chTable[id];
+        const baseEffect = seEntryField(block, 'baseEffect') ?? '';
+        const wearerGids = wearers.get(id) ?? [];
+        skills.push({
+            id,
+            displayName: seEntryField(block, 'displayName') ?? '',
+            sourceQuote: seEntryField(block, 'sourceQuote') ?? '',
+            baseEffect,
+            condition: seEntryField(block, 'condition') ?? '',
+            phase: seEntryField(block, 'phase') ?? '',
+            magnitude: seEntryNum(block, 'magnitude'),
+            luckMin: seEntryNum(block, 'luckMin'),
+            luckMax: seEntryNum(block, 'luckMax'),
+            engineStatus: seEntryField(block, 'engineStatus') ?? '',
+            note: seEntryField(block, 'note') ?? '',
+            family: SE_FAMILY[baseEffect] ?? null,
+            locked: SE_LOCKED_MAGNITUDE.has(id),
+            situationTag: inlineSit ?? sitTable[id] ?? TRI_CN[triById.get(id) ?? ''] ?? '优势',
+            situationSource: inlineSit ? 'inline' : sitTable[id] ? 'table' : 'derived',
+            usageTag: inlineUse ?? useTable[id] ?? '通用',
+            usageSource: inlineUse ? 'inline' : useTable[id] ? 'table' : 'default',
+            ownerGeneralId: ownerGeneralId ?? null,
+            ownerName: ownerName ?? null,
+            ownerSource: ownerGeneralId ? 'inline' : chTable[id] ? 'table' : null,
+            exclusive: ownerGeneralId ? '专用' : (exTable[id] ?? '通行'),
+            status: seEntryField(block, 'status') ?? 'active',
+            wearers: wearerGids.map(g => ({ gid: g, name: gidInfo.get(g)?.name ?? g, tier: gidInfo.get(g)?.tier ?? '?' })),
+        });
+    }
+    const generals = [...gidInfo.entries()].map(([gid, v]) => ({ generalId: gid, name: v.name, tier: v.tier }));
+    return { skills, generals, tiers: SE_TIERS, conditions: SE_CONDITIONS };
+}
+
+/** 保存一条：元数据内联写入 + 档位查表写数值 + 散表迁移退役 */
+function serverSkillEditorSave(body: {
+    id: string; situationTag?: string; usageTag?: string;
+    ownerGeneralId?: string | null; ownerName?: string | null;
+    status?: string; tierLabel?: string;
+}): { warnings: string[] } {
+    const warnings: string[] = [];
+    if (!/^ts_\d+$/.test(body.id)) throw new Error('非法 id');
+    if (body.situationTag && !['优势', '均势', '劣势'].includes(body.situationTag)) throw new Error('非法三势标签');
+    if (body.usageTag && !['通用', '攻击', '防御'].includes(body.usageTag)) throw new Error('非法攻防标签');
+    if (body.status && !['active', 'retired'].includes(body.status)) throw new Error('非法状态');
+    const data = serverReadAllEntityData();
+    if (body.ownerGeneralId) {
+        if (!data.profiles[body.ownerGeneralId]) throw new Error(`典故主 ${body.ownerGeneralId} 不在册（须为在册武将 generalId）`);
+        if (!body.ownerName) throw new Error('指定典故主时须同时给 ownerName');
+    }
+    const fp = path.resolve(__dirname, SE_TSC_PATH);
+    let text = fs.readFileSync(fp, 'utf-8');
+    const { start, end } = seFindEntryBlock(text, body.id);
+    let block = text.slice(start, end);
+
+    if (body.situationTag) block = seUpsertStr(block, 'situationTag', body.situationTag);
+    if (body.usageTag) block = seUpsertStr(block, 'usageTag', body.usageTag);
+    if (body.status) block = seUpsertStr(block, 'status', body.status);
+    if (body.ownerGeneralId !== undefined) {
+        block = seUpsertStr(block, 'ownerGeneralId', body.ownerGeneralId);
+        block = seUpsertStr(block, 'ownerName', body.ownerGeneralId ? (body.ownerName ?? null) : null);
+    }
+    if (body.tierLabel) {
+        if (SE_LOCKED_MAGNITUDE.has(body.id)) throw new Error(`${body.id} 为定稿锁定值，禁改档位`);
+        const baseEffect = seEntryField(block, 'baseEffect') ?? '';
+        const family = SE_FAMILY[baseEffect];
+        if (!family) throw new Error(`效果 ${baseEffect} 不在可调档家族内`);
+        const v = SE_TIERS[family]?.[body.tierLabel];
+        if (v === undefined) throw new Error(`家族 ${family} 无档位「${body.tierLabel}」`);
+        if (Array.isArray(v)) {
+            block = seUpsertNum(block, 'luckMin', v[0]);
+            block = seUpsertNum(block, 'luckMax', v[1]);
+        } else {
+            block = block.replace(/(magnitude:\s*)[\d.]+/, `$1${v}`);
+        }
+    }
+    text = text.slice(0, start) + block + text.slice(end);
+    text = seRemoveFromTagTables(text, body.id);
+    markBatchSaveWrite();
+    fs.writeFileSync(fp, guardSerializedDataText(text, SE_TSC_PATH), 'utf-8');
+
+    // 保存后即时体检（进门安检的"出门提示"）
+    const quote = seEntryField(block, 'sourceQuote') ?? '';
+    if (body.ownerGeneralId && body.ownerName && !quote.includes(body.ownerName)) {
+        warnings.push(`出处未提到典故主「${body.ownerName}」，请人工核对史料`);
+    }
+    return { warnings };
+}
+
+/** 新增一条：四字技名 + 全局查重 + 自动 id + 档位写标准值 + 元数据必填 */
+function serverSkillEditorCreate(body: {
+    displayName: string; sourceQuote: string; baseEffect: string; condition: string;
+    situationTag: string; usageTag: string; tierLabel: string;
+    ownerGeneralId?: string | null; ownerName?: string | null; note?: string;
+}): { id: string } {
+    if (!/^[一-龥]{4}$/.test(body.displayName)) throw new Error('技名必须是四字汉语（定稿：技能名一律四字成语）');
+    const family = SE_FAMILY[body.baseEffect];
+    if (!family) throw new Error(`baseEffect ${body.baseEffect} 不在可新增家族内`);
+    if (!SE_CONDITIONS.includes(body.condition)) throw new Error(`非法条件 ${body.condition}`);
+    if (!['优势', '均势', '劣势'].includes(body.situationTag)) throw new Error('三势标签必填（优势/均势/劣势）');
+    if (!['通用', '攻击', '防御'].includes(body.usageTag)) throw new Error('攻防标签必填');
+    const v = SE_TIERS[family]?.[body.tierLabel];
+    if (v === undefined) throw new Error(`档位必填且须属于家族 ${family}`);
+    const data = serverReadAllEntityData();
+    if (data.tacticalSkills.some(s => s.displayName === body.displayName)) throw new Error(`技名「${body.displayName}」已存在，禁止同名`);
+    if (body.ownerGeneralId && !data.profiles[body.ownerGeneralId]) throw new Error(`典故主 ${body.ownerGeneralId} 不在册`);
+    if (body.ownerGeneralId && !body.ownerName) throw new Error('指定典故主时须同时给 ownerName');
+    for (const s of [body.sourceQuote, body.note ?? '', body.ownerName ?? '']) {
+        if (/['\n\r]/.test(s)) throw new Error('文本字段不得含 ASCII 单引号/换行（引号请用“”）');
+    }
+    const fp = path.resolve(__dirname, SE_TSC_PATH);
+    let text = fs.readFileSync(fp, 'utf-8');
+    let maxIdx = 0;
+    for (const m of text.matchAll(/id:\s*'ts_(\d+)'/g)) maxIdx = Math.max(maxIdx, parseInt(m[1], 10));
+    const nextId = `ts_${maxIdx + 1}`;
+    const series = family === 'power' ? 'enhance' : family === 'luck' ? 'fate'
+        : (family === 'negate' || family === 'steal') ? 'counter'
+        : (family === 'casualty' || family === 'bite' || family === 'recovery') ? 'casualty' : 'troop';
+    const phase = family === 'pct' ? 'pre_opening_troops'
+        : (family === 'casualty' || family === 'bite') ? 'mid_battle_passive'
+        : family === 'recovery' ? 'post_battle' : 'opening_roll';
+    const magnitude = Array.isArray(v) ? 1 : v;
+    const luckPart = Array.isArray(v) ? ` luckMin: ${v[0]}, luckMax: ${v[1]},` : '';
+    const ownerPart = body.ownerGeneralId ? ` ownerGeneralId: '${body.ownerGeneralId}', ownerName: '${body.ownerName}',` : '';
+    const notePart = body.note ? ` note: '${body.note}',` : '';
+    const line = `    { id: '${nextId}', layer: 'tactical', series: '${series}', index: ${maxIdx + 1}, displayName: '${body.displayName}', sourceQuote: '${body.sourceQuote}', baseEffect: '${body.baseEffect}', condition: '${body.condition}', phase: '${phase}', magnitude: ${magnitude},${luckPart} engineStatus: 'ready', situationTag: '${body.situationTag}', usageTag: '${body.usageTag}',${ownerPart} status: 'active',${notePart} },\n`;
+    const anchor = /\n\];\n\nexport const TACTICAL_SKILL_ENTRIES_V1/;
+    if (!anchor.test(text)) throw new Error('找不到目录尾部插入锚点');
+    text = text.replace(anchor, `\n${line}];\n\nexport const TACTICAL_SKILL_ENTRIES_V1`);
+    markBatchSaveWrite();
+    fs.writeFileSync(fp, guardSerializedDataText(text, SE_TSC_PATH), 'utf-8');
+    return { id: nextId };
 }
 
 function serverValidateEntities(): {

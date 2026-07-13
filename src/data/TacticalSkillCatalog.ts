@@ -105,6 +105,15 @@ export interface TacticalSkillEntry {
     note?: string;
     /** 第一标签：技能用途分类（通用 / 攻击 / 防御），控制攻防六槽分配 */
     usageTag?: '通用' | '攻击' | '防御';
+    // ── 编辑器内联元数据（2026-07-14 起，skill-editor.html 写入；内联为唯一权威，缺省回退散表→推导）──
+    /** 三势标签（优势/均势/劣势）；内联优先于 SKILL_SITUATION_TAG 散表 */
+    situationTag?: SkillSituationTag;
+    /** 典故主 generalId（在册武将）；有主 = 专属，无主 = 通用（内联优先于 SKILL_CHARACTER/SKILL_EXCLUSIVE_TAG） */
+    ownerGeneralId?: string;
+    /** 典故主显示名（与 ownerGeneralId 同步写入，展示与出处一致性校验用） */
+    ownerName?: string;
+    /** 条目状态：active=在役（默认）/ retired=退役（不参与分配与覆盖检查） */
+    status?: 'active' | 'retired';
 }
 
 /** 条件判定上下文（Resolver 入参） */
@@ -1141,7 +1150,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_149', layer: 'tactical', series: 'counter', index: 149,
-        displayName: '庙算制胜', sourceQuote: '【孙膑】围魏救赵庙算制胜',
+        displayName: '庙算制胜', sourceQuote: '围魏救赵庙算制胜',
         baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 0.25, engineStatus: 'ready',
     },
@@ -1184,7 +1193,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     // ── 第七批：T0缺口 + T2头部名将（ts_156-167；项羽/韩信认领招牌不占号）──
     {
         id: 'ts_156', layer: 'tactical', series: 'enhance', index: 156,
-        displayName: '赤备突阵', sourceQuote: '《日本战史·大阪之阵》：“真田赤备突入德川本阵，家康几殆。”',
+        displayName: '赤备突阵', sourceQuote: '【武田信玄】赤备骑兵突击敌阵，势不可挡',
         baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.05, engineStatus: 'ready',
     },
@@ -1583,7 +1592,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_222', layer: 'tactical', series: 'troop', index: 222,
-        displayName: '诱锋夹截', sourceQuote: '【孙膑】诱庞涓前锋深入，设伏夹截大破魏军。',
+        displayName: '诱锋夹截', sourceQuote: '诱庞涓前锋深入，设伏夹截大破魏军。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
         magnitude: 0.05, engineStatus: 'ready',
     },
@@ -2159,7 +2168,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_318', layer: 'tactical', series: 'casualty', index: 318,
-        displayName: '恩威服众', sourceQuote: '【诸葛亮】七擒孟获恩威服众',
+        displayName: '恩威服众', sourceQuote: '七擒孟获恩威服众',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.3, engineStatus: 'ready',
     },
@@ -4453,7 +4462,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_428', layer: 'tactical', series: 'fate', index: 428,
-        displayName: '诱锋夹截', sourceQuote: '【孙膑】诱庞涓前锋深入，设伏夹截大破魏军。',
+        displayName: '诱锋夹截', sourceQuote: '诱庞涓前锋深入，设伏夹截大破魏军。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【吴起】T0精锐·吴起·势create·均局专属（三势精修）',
@@ -4725,7 +4734,7 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_710', layer: 'tactical', series: 'casualty', index: 710, displayName: '斩将肃阵', sourceQuote: '斩庄贾立威', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.3, engineStatus: 'ready', note: '【斩将肃阵】三势精修·劣局' },
     { id: 'ts_711', layer: 'tactical', series: 'casualty', index: 711, displayName: '穷搜死战', sourceQuote: '【张巡】睢阳粮尽，掘鼠雀穷搜死战抗击燕军。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【穷搜死战】三势精修·劣局' },
     { id: 'ts_712', layer: 'tactical', series: 'fate', index: 712, displayName: '溃师复振', sourceQuote: '东昌后反击', baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback', magnitude: 1, comebackThreshold: 0.8, engineStatus: 'ready', note: '【溃师复振】三势精修·劣局' },
-    { id: 'ts_713', layer: 'tactical', series: 'casualty', index: 713, displayName: '据险死拒', sourceQuote: '【耿恭】疏勒城据险死拒，匈奴数月攻之不下。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.3, engineStatus: 'ready', note: '【据险死拒】三势精修·劣局' },
+    { id: 'ts_713', layer: 'tactical', series: 'casualty', index: 713, displayName: '据险死拒', sourceQuote: '疏勒城据险死拒，匈奴数月攻之不下。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.3, engineStatus: 'ready', note: '【据险死拒】三势精修·劣局' },
     { id: 'ts_714', layer: 'tactical', series: 'casualty', index: 714, displayName: '攻坚摧碉', sourceQuote: '【阿桂】清平大小金川以火炮攻坚摧碉堡', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【攻坚摧碉】三势精修·劣局' },
     { id: 'ts_715', layer: 'tactical', series: 'casualty', index: 715, displayName: '矫制绝诛', sourceQuote: '矫制诛郅支', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【矫制绝诛】三势精修·劣局' },
     { id: 'ts_716', layer: 'tactical', series: 'casualty', index: 716, displayName: '据城退敌', sourceQuote: '【刘仁恭】据幽州退朱温', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.3, engineStatus: 'ready', note: '【据城退敌】三势精修·劣局' },
@@ -4748,7 +4757,7 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_733', layer: 'tactical', series: 'fate', index: 733, displayName: '驰骋扰阵', sourceQuote: '【项羽】垓下率二十八骑驰骋扰阵，汉军披靡。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.5, luckMax: 1.5, engineStatus: 'ready', note: '【驰骋扰阵】三势精修·均局' },
     { id: 'ts_734', layer: 'tactical', series: 'casualty', index: 734, displayName: '驰掠脱困', sourceQuote: '【赵云】长坂坡七进七出，驰掠突围脱困。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【驰掠脱困】三势精修·劣局' },
     { id: 'ts_735', layer: 'tactical', series: 'fate', index: 735, displayName: '轻骑驰扰', sourceQuote: '【李世民】率轻骑昼夜驰扰，疲弊刘武周大军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.5, luckMax: 1.5, engineStatus: 'ready', note: '【轻骑驰扰】三势精修·均局' },
-    { id: 'ts_736', layer: 'tactical', series: 'casualty', index: 736, displayName: '孤军力斗', sourceQuote: '【项羽】彭城之战以三万孤军力斗刘邦联军。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【孤军力斗】三势精修·劣局' },
+    { id: 'ts_736', layer: 'tactical', series: 'casualty', index: 736, displayName: '孤军力斗', sourceQuote: '彭城之战以三万孤军力斗刘邦联军。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【孤军力斗】三势精修·劣局' },
     { id: 'ts_737', layer: 'tactical', series: 'troop', index: 737, displayName: '伏隘摧锋', sourceQuote: '羊山伏击', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.05, engineStatus: 'ready', note: '【伏隘摧锋】三势精修·优局' },
     { id: 'ts_738', layer: 'tactical', series: 'fate', index: 738, displayName: '疑兵惑敌', sourceQuote: '疑兵惑敌', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【疑兵惑敌】三势精修·均局' },
     { id: 'ts_739', layer: 'tactical', series: 'enhance', index: 739, displayName: '陷阵摧坚', sourceQuote: '汾北冲阵', baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll', magnitude: 1.05, engineStatus: 'ready', note: '【陷阵摧坚】三势精修·优局' },
@@ -4938,7 +4947,7 @@ ts_709: '防御',
 ts_710: '攻击',
 ts_711: '攻击',
 ts_712: '攻击',
-ts_713: '防御',
+ts_713: '通用',
 ts_714: '攻击',
 ts_715: '攻击',
 ts_716: '防御',
@@ -4961,7 +4970,7 @@ ts_732: '防御',
 ts_733: '攻击',
 ts_734: '攻击',
 ts_735: '攻击',
-ts_736: '攻击',
+ts_736: '通用',
 ts_737: '防御',
 ts_738: '通用',
 ts_739: '攻击',
@@ -5084,7 +5093,7 @@ ts_740: '攻击',
     ts_425: '攻击',
     ts_426: '攻击',
     ts_427: '防御',
-    ts_428: '防御',
+    ts_428: '通用',
     ts_429: '攻击',
     ts_430: '防御',
     ts_431: '防御',
@@ -5418,7 +5427,6 @@ export const SKILL_USAGE_TAG: Readonly<Record<string, SkillUsageTag>> = {
     ts_039: '攻击',
     ts_040: '通用',
     ts_041: '通用',
-    ts_042: '通用',
     ts_043: '通用',
     ts_044: '通用',
     ts_045: '防御',
@@ -6485,7 +6493,6 @@ export const SKILL_SITUATION_TAG: Readonly<Record<string, SkillSituationTag>> = 
     ts_806: '劣势',
     ts_019: '优势',
     ts_024: '劣势',
-    ts_042: '均势',
     ts_043: '均势',
     ts_044: '均势',
     ts_045: '劣势',
@@ -6928,13 +6935,17 @@ export const SKILL_SITUATION_TAG: Readonly<Record<string, SkillSituationTag>> = 
 };
 
 export function getSkillUsageTag(skillId: string): SkillUsageTag {
+    // 内联（编辑器写入）优先 → 散表 → 默认通用
+    const entry = getTacticalSkillEntry(skillId);
+    if (entry?.usageTag) return entry.usageTag;
     return SKILL_USAGE_TAG[skillId] ?? '通用';
 }
 
-/** 第二标签：用户标注优先 → 未标注走 getTacticalTriClass */
+/** 第二标签：条目内联（编辑器）优先 → 散表标注 → 未标注走 getTacticalTriClass */
 export function getSkillSituationTag(skillId: string): SkillSituationTag {
-    if (SKILL_SITUATION_TAG[skillId]) return SKILL_SITUATION_TAG[skillId];
     const entry = getTacticalSkillEntry(skillId);
+    if (entry?.situationTag) return entry.situationTag;
+    if (SKILL_SITUATION_TAG[skillId]) return SKILL_SITUATION_TAG[skillId];
     if (!entry) return '优势';
     const tc = getTacticalTriClass(entry);
     return tc === 'advantage' ? '优势' : tc === 'disadvantage' ? '劣势' : '均势';
@@ -6986,7 +6997,6 @@ export const SKILL_EXCLUSIVE_TAG: Readonly<Record<string, SkillExclusiveTag>> = 
     ts_039: '通行',
     ts_040: '通行',
     ts_041: '通行',
-    ts_042: '通行',
     ts_043: '通行',
     ts_044: '通行',
     ts_045: '通行',
@@ -7742,6 +7752,9 @@ export const SKILL_EXCLUSIVE_TAG: Readonly<Record<string, SkillExclusiveTag>> = 
 };
 
 export function getSkillExclusiveTag(skillId: string): SkillExclusiveTag {
+    // 内联典故主（编辑器写入）= 专属；否则散表 → 默认通行
+    const entry = getTacticalSkillEntry(skillId);
+    if (entry?.ownerGeneralId) return '专用';
     return SKILL_EXCLUSIVE_TAG[skillId] ?? '通行';
 }
 
@@ -8499,6 +8512,9 @@ export const SKILL_CHARACTER: Readonly<Record<string, string>> = {
 };
 
 export function getSkillCharacter(skillId: string): string | undefined {
+    // 内联典故主名（编辑器写入）优先 → 散表
+    const entry = getTacticalSkillEntry(skillId);
+    if (entry?.ownerName) return entry.ownerName;
     return SKILL_CHARACTER[skillId];
 }
 
