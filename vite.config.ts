@@ -2523,6 +2523,7 @@ function serverSkillEditorList() {
         const ownerName = seEntryField(block, 'ownerName') ?? (ownerGeneralId ? gidInfo.get(ownerGeneralId)?.name : undefined) ?? chTable[id];
         const baseEffect = seEntryField(block, 'baseEffect') ?? '';
         const wearerGids = wearers.get(id) ?? [];
+        const inlineSix = seEntryField(block, 'sixClass');
         skills.push({
             id,
             displayName: seEntryField(block, 'displayName') ?? '',
@@ -2546,6 +2547,7 @@ function serverSkillEditorList() {
             ownerSource: ownerGeneralId ? 'inline' : chTable[id] ? 'table' : null,
             exclusive: ownerGeneralId ? '专用' : (exTable[id] ?? '通行'),
             status: seEntryField(block, 'status') ?? 'active',
+            sixClass: inlineSix ?? '',
             wearers: wearerGids.map(g => ({ gid: g, name: gidInfo.get(g)?.name ?? g, tier: gidInfo.get(g)?.tier ?? '?' })),
         });
     }
@@ -2557,13 +2559,14 @@ function serverSkillEditorList() {
 function serverSkillEditorSave(body: {
     id: string; situationTag?: string; usageTag?: string;
     ownerGeneralId?: string | null; ownerName?: string | null;
-    status?: string; tierLabel?: string;
+    status?: string; tierLabel?: string; sixClass?: string;
 }): { warnings: string[] } {
     const warnings: string[] = [];
     if (!/^ts_\d+$/.test(body.id)) throw new Error('非法 id');
     if (body.situationTag && !['优势', '均势', '劣势'].includes(body.situationTag)) throw new Error('非法三势标签');
     if (body.usageTag && !['通用', '攻击', '防御'].includes(body.usageTag)) throw new Error('非法攻防标签');
     if (body.status && !['active', 'retired'].includes(body.status)) throw new Error('非法状态');
+    if (body.sixClass !== undefined && body.sixClass !== '' && !['攻战计', '胜战计', '敌战计', '混战计', '并战计', '败战计'].includes(body.sixClass)) throw new Error('非法六类标签');
     const data = serverReadAllEntityData();
     if (body.ownerGeneralId) {
         if (!data.profiles[body.ownerGeneralId]) throw new Error(`典故主 ${body.ownerGeneralId} 不在册（须为在册武将 generalId）`);
@@ -2577,6 +2580,7 @@ function serverSkillEditorSave(body: {
     if (body.situationTag) block = seUpsertStr(block, 'situationTag', body.situationTag);
     if (body.usageTag) block = seUpsertStr(block, 'usageTag', body.usageTag);
     if (body.status) block = seUpsertStr(block, 'status', body.status);
+    if (body.sixClass !== undefined) block = seUpsertStr(block, 'sixClass', body.sixClass || null);
     if (body.ownerGeneralId !== undefined) {
         block = seUpsertStr(block, 'ownerGeneralId', body.ownerGeneralId);
         block = seUpsertStr(block, 'ownerName', body.ownerGeneralId ? (body.ownerName ?? null) : null);
@@ -2612,7 +2616,7 @@ function serverSkillEditorSave(body: {
 function serverSkillEditorCreate(body: {
     displayName: string; sourceQuote: string; baseEffect: string; condition: string;
     situationTag: string; usageTag: string; tierLabel: string;
-    ownerGeneralId?: string | null; ownerName?: string | null; note?: string;
+    ownerGeneralId?: string | null; ownerName?: string | null; note?: string; sixClass?: string;
 }): { id: string } {
     if (!/^[一-龥]{4}$/.test(body.displayName)) throw new Error('技名必须是四字汉语（定稿：技能名一律四字成语）');
     const family = SE_FAMILY[body.baseEffect];
@@ -2643,6 +2647,7 @@ function serverSkillEditorCreate(body: {
     const magnitude = Array.isArray(v) ? 1 : v;
     const luckPart = Array.isArray(v) ? ` luckMin: ${v[0]}, luckMax: ${v[1]},` : '';
     const ownerPart = body.ownerGeneralId ? ` ownerGeneralId: '${body.ownerGeneralId}', ownerName: '${body.ownerName}',` : '';
+    const sixClassPart = body.sixClass ? ` sixClass: '${body.sixClass}',` : '';
     const notePart = body.note ? ` note: '${body.note}',` : '';
     const line = `    { id: '${nextId}', layer: 'tactical', series: '${series}', index: ${maxIdx + 1}, displayName: '${body.displayName}', sourceQuote: '${body.sourceQuote}', baseEffect: '${body.baseEffect}', condition: '${body.condition}', phase: '${phase}', magnitude: ${magnitude},${luckPart} engineStatus: 'ready', situationTag: '${body.situationTag}', usageTag: '${body.usageTag}',${ownerPart} status: 'active',${notePart} },\n`;
     const anchor = /\n\];\n\nexport const TACTICAL_SKILL_ENTRIES_V1/;
