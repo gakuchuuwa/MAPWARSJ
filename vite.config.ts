@@ -2423,6 +2423,39 @@ const SE_CONDITIONS = [
     'first_sortie', 'siege_attacker_on_water',
 ];
 
+/** baseEffect → 六类（效果大类）+ 规范三势 */
+const SIX_CLASS_BY_EFFECT: Record<string, { label: string; canonicalSituation: string }> = {
+    // 加己攻 → 优势 → 攻战计(机)
+    ally_power_mult: { label: '攻战计', canonicalSituation: '优势' },
+    first_sortie_power_mult: { label: '攻战计', canonicalSituation: '优势' },
+    first_sortie_comeback_mult: { label: '攻战计', canonicalSituation: '优势' },
+    // 减敌兵 → 优势 → 胜战计(全)
+    enemy_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
+    ally_add_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
+    dual_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
+    // 变随机 → 均势 → 敌战计(衡)
+    luck_variance_self: { label: '敌战计', canonicalSituation: '均势' },
+    luck_variance_enemy: { label: '敌战计', canonicalSituation: '均势' },
+    luck_lock_self: { label: '敌战计', canonicalSituation: '均势' },
+    // 克夺反 → 均势 → 混战计(乱)
+    negate_enemy_skill: { label: '混战计', canonicalSituation: '均势' },
+    partial_negate_enemy_skill: { label: '混战计', canonicalSituation: '均势' },
+    steal_enemy_skill: { label: '混战计', canonicalSituation: '均势' },
+    nullify_enemy_opening_cut: { label: '混战计', canonicalSituation: '均势' },
+    reflect_enemy_opening_cut: { label: '混战计', canonicalSituation: '均势' },
+    cancel_enemy_terrain_buff: { label: '混战计', canonicalSituation: '均势' },
+    // 减己损 → 劣势 → 并战计(借)
+    win_casualty_reduction: { label: '并战计', canonicalSituation: '劣势' },
+    elite_casualty_reduction: { label: '并战计', canonicalSituation: '劣势' },
+    // 翻盘技 → 劣势 → 败战计(险)
+    lose_enemy_casualty_boost: { label: '败战计', canonicalSituation: '劣势' },
+    post_recovery_rate: { label: '败战计', canonicalSituation: '劣势' },
+    battle_duration_mult: { label: '败战计', canonicalSituation: '劣势' },
+    recompute_comeback: { label: '败战计', canonicalSituation: '劣势' },
+    lose_zero_enemy_recovery: { label: '败战计', canonicalSituation: '劣势' },
+    ally_add_troops_comeback: { label: '败战计', canonicalSituation: '劣势' },
+};
+
 function seReadTagTable(text: string, tableName: string): Record<string, string> {
     const out: Record<string, string> = {};
     const kw = text.indexOf(`const ${tableName}`);
@@ -2523,7 +2556,10 @@ function serverSkillEditorList() {
         const ownerName = seEntryField(block, 'ownerName') ?? (ownerGeneralId ? gidInfo.get(ownerGeneralId)?.name : undefined) ?? chTable[id];
         const baseEffect = seEntryField(block, 'baseEffect') ?? '';
         const wearerGids = wearers.get(id) ?? [];
-        const inlineSix = seEntryField(block, 'sixClass');
+        const situationTag = inlineSit ?? sitTable[id] ?? TRI_CN[triById.get(id) ?? ''] ?? '优势';
+        const sixEntry = SIX_CLASS_BY_EFFECT[baseEffect];
+        const sixClass = sixEntry?.label ?? '';
+        const sixClassMatch = sixEntry ? situationTag === sixEntry.canonicalSituation : false;
         skills.push({
             id,
             displayName: seEntryField(block, 'displayName') ?? '',
@@ -2538,7 +2574,7 @@ function serverSkillEditorList() {
             note: seEntryField(block, 'note') ?? '',
             family: SE_FAMILY[baseEffect] ?? null,
             locked: SE_LOCKED_MAGNITUDE.has(id),
-            situationTag: inlineSit ?? sitTable[id] ?? TRI_CN[triById.get(id) ?? ''] ?? '优势',
+            situationTag,
             situationSource: inlineSit ? 'inline' : sitTable[id] ? 'table' : 'derived',
             usageTag: inlineUse ?? useTable[id] ?? '通用',
             usageSource: inlineUse ? 'inline' : useTable[id] ? 'table' : 'default',
@@ -2547,7 +2583,8 @@ function serverSkillEditorList() {
             ownerSource: ownerGeneralId ? 'inline' : chTable[id] ? 'table' : null,
             exclusive: ownerGeneralId ? '专用' : (exTable[id] ?? '通行'),
             status: seEntryField(block, 'status') ?? 'active',
-            sixClass: inlineSix ?? '',
+            sixClass,
+            sixClassMatch,
             wearers: wearerGids.map(g => ({ gid: g, name: gidInfo.get(g)?.name ?? g, tier: gidInfo.get(g)?.tier ?? '?' })),
         });
     }
@@ -2559,14 +2596,13 @@ function serverSkillEditorList() {
 function serverSkillEditorSave(body: {
     id: string; situationTag?: string; usageTag?: string;
     ownerGeneralId?: string | null; ownerName?: string | null;
-    status?: string; tierLabel?: string; sixClass?: string;
+    status?: string; tierLabel?: string;
 }): { warnings: string[] } {
     const warnings: string[] = [];
     if (!/^ts_\d+$/.test(body.id)) throw new Error('非法 id');
     if (body.situationTag && !['优势', '均势', '劣势'].includes(body.situationTag)) throw new Error('非法三势标签');
     if (body.usageTag && !['通用', '攻击', '防御'].includes(body.usageTag)) throw new Error('非法攻防标签');
     if (body.status && !['active', 'retired'].includes(body.status)) throw new Error('非法状态');
-    if (body.sixClass !== undefined && body.sixClass !== '' && !['攻战计', '胜战计', '敌战计', '混战计', '并战计', '败战计'].includes(body.sixClass)) throw new Error('非法六类标签');
     const data = serverReadAllEntityData();
     if (body.ownerGeneralId) {
         if (!data.profiles[body.ownerGeneralId]) throw new Error(`典故主 ${body.ownerGeneralId} 不在册（须为在册武将 generalId）`);
@@ -2580,7 +2616,6 @@ function serverSkillEditorSave(body: {
     if (body.situationTag) block = seUpsertStr(block, 'situationTag', body.situationTag);
     if (body.usageTag) block = seUpsertStr(block, 'usageTag', body.usageTag);
     if (body.status) block = seUpsertStr(block, 'status', body.status);
-    if (body.sixClass !== undefined) block = seUpsertStr(block, 'sixClass', body.sixClass || null);
     if (body.ownerGeneralId !== undefined) {
         block = seUpsertStr(block, 'ownerGeneralId', body.ownerGeneralId);
         block = seUpsertStr(block, 'ownerName', body.ownerGeneralId ? (body.ownerName ?? null) : null);
@@ -2616,7 +2651,7 @@ function serverSkillEditorSave(body: {
 function serverSkillEditorCreate(body: {
     displayName: string; sourceQuote: string; baseEffect: string; condition: string;
     situationTag: string; usageTag: string; tierLabel: string;
-    ownerGeneralId?: string | null; ownerName?: string | null; note?: string; sixClass?: string;
+    ownerGeneralId?: string | null; ownerName?: string | null; note?: string;
 }): { id: string } {
     if (!/^[一-龥]{4}$/.test(body.displayName)) throw new Error('技名必须是四字汉语（定稿：技能名一律四字成语）');
     const family = SE_FAMILY[body.baseEffect];
@@ -2647,7 +2682,6 @@ function serverSkillEditorCreate(body: {
     const magnitude = Array.isArray(v) ? 1 : v;
     const luckPart = Array.isArray(v) ? ` luckMin: ${v[0]}, luckMax: ${v[1]},` : '';
     const ownerPart = body.ownerGeneralId ? ` ownerGeneralId: '${body.ownerGeneralId}', ownerName: '${body.ownerName}',` : '';
-    const sixClassPart = body.sixClass ? ` sixClass: '${body.sixClass}',` : '';
     const notePart = body.note ? ` note: '${body.note}',` : '';
     const line = `    { id: '${nextId}', layer: 'tactical', series: '${series}', index: ${maxIdx + 1}, displayName: '${body.displayName}', sourceQuote: '${body.sourceQuote}', baseEffect: '${body.baseEffect}', condition: '${body.condition}', phase: '${phase}', magnitude: ${magnitude},${luckPart} engineStatus: 'ready', situationTag: '${body.situationTag}', usageTag: '${body.usageTag}',${ownerPart} status: 'active',${notePart} },\n`;
     const anchor = /\n\];\n\nexport const TACTICAL_SKILL_ENTRIES_V1/;

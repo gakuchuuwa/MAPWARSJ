@@ -1,7 +1,8 @@
 /**
  * 武将技编辑器（/skill-editor.html）
  * ────────────────────────────────────────────
- * 一技一档案：三势 / 攻防 / 典故主(=专属) / 状态 / 档位（查表写标准值，不给自由数字）。
+ * 一技一档案：三势 / 攻防 / 六类(推导) / 典故主(=专属) / 状态 / 档位。
+ * 六类 = baseEffect → 效果大类 → 与三势结合自动推导（不手动填写）。
  * 保存即迁移：内联字段写入条目本体，四张散表中的该条同时退役。
  * 服务端：vite.config.ts /api/skill-editor/{list,save,create}
  */
@@ -14,6 +15,7 @@ interface SkillRow {
     family: string | null; locked: boolean;
     situationTag: string; situationSource: string;
     usageTag: string; usageSource: string;
+    sixClass: string; sixClassMatch: boolean;
     ownerGeneralId: string | null; ownerName: string | null; ownerSource: string | null;
     exclusive: string; status: string;
     wearers: { gid: string; name: string; tier: string }[];
@@ -35,19 +37,23 @@ app.innerHTML = `
     .se-btn { background: #3a3226; color: #e8d9b0; border: 1px solid #6a5c3c; border-radius: 4px; padding: 5px 14px; cursor: pointer; font-family: inherit; }
     .se-btn:hover { background: #4a4234; }
     .se-btn-gold { background: #5c4a1e; border-color: #b48c3c; }
+    .se-btn-red { background: #5c2a1e; border-color: #b45c3c; }
     .se-main { flex: 1; display: flex; min-height: 0; }
-    .se-list { flex: 1; overflow: auto; }
-    .se-list table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .se-list { flex: 1; overflow: auto; min-width: 280px; }
+    .se-splitter { width: 5px; cursor: col-resize; background: #2a2418; flex-shrink: 0; transition: background 0.15s; }
+    .se-splitter:hover, .se-splitter.dragging { background: #6a5c3c; }
+    .se-detail { width: 480px; min-width: 280px; max-width: 70%; border-left: 1px solid #3a3226; overflow: auto; padding: 14px; background: #131110; flex-shrink: 0; }
     .se-list th { position: sticky; top: 0; background: #1a1713; color: #b8a878; text-align: left; padding: 6px 8px; border-bottom: 1px solid #3a3226; }
     .se-list td { padding: 4px 8px; border-bottom: 1px solid #221e18; white-space: nowrap; }
     .se-list tr { cursor: pointer; }
     .se-list tr:hover td { background: #221e18; }
     .se-list tr.sel td { background: #2e281c; }
-    .se-detail { width: 460px; border-left: 1px solid #3a3226; overflow: auto; padding: 14px; background: #131110; }
+    .se-detail { width: 480px; border-left: 1px solid #3a3226; overflow: auto; padding: 14px; background: #131110; }
     .se-detail h3 { margin: 0 0 4px; color: #d8b95e; }
     .se-field { margin: 8px 0; }
     .se-field label { display: inline-block; width: 76px; color: #b8a878; font-size: 13px; }
     .se-field select, .se-field input { background: #0e0d0c; color: #e8e0d0; border: 1px solid #4a4234; border-radius: 4px; padding: 4px 8px; font-family: inherit; width: 300px; }
+    .se-field .se-ro { color: #8a7a5a; font-size: 13px; }
     .se-quote { font-size: 12px; color: #9a8e78; margin: 6px 0; line-height: 1.5; }
     .se-wearers { font-size: 12px; color: #8a9a78; margin: 6px 0; line-height: 1.6; }
     .se-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; margin-left: 4px; }
@@ -60,12 +66,30 @@ app.innerHTML = `
     .se-mono { font-family: Consolas, monospace; font-size: 12px; color: #8a97a8; }
     .se-count { color: #8a8271; font-size: 13px; margin-left: auto; }
     .se-retired td { opacity: 0.45; }
+    .se-match-warn { color: #d8a05e; font-size: 11px; }
+    /* 错误检查弹窗 */
+    .se-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .se-modal { background: #1a1713; border: 1px solid #6a5c3c; border-radius: 8px; width: 820px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
+    .se-modal-hd { padding: 14px 18px; border-bottom: 1px solid #3a3226; display: flex; align-items: center; gap: 12px; }
+    .se-modal-hd h3 { margin: 0; color: #d8b95e; }
+    .se-modal-body { flex: 1; overflow: auto; padding: 12px 18px; }
+    .se-modal-body table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .se-modal-body th { text-align: left; padding: 6px 8px; border-bottom: 1px solid #3a3226; color: #b8a878; position: sticky; top: 0; background: #1a1713; }
+    .se-modal-body td { padding: 4px 8px; border-bottom: 1px solid #221e18; }
+    .se-err-count { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 13px; }
+    .se-err-red { background: #5a2424; color: #f0a0a0; }
+    .se-err-ok { background: #2c4a2c; color: #a8d8a8; }
+    .se-err-warn { background: #4a3c1e; color: #d8c88e; }
+    .se-issue-row td { color: #e8a0a0; }
+    .se-issue-row:hover td { background: #2a1a1a; }
+    .se-summary { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
 </style>
 <div class="se-header">
     <span class="se-title">武将技编辑器</span>
     <input id="f-search" placeholder="搜技名 / id / 典故主" style="width:180px">
     <select id="f-sit"><option value="">三势·全部</option><option>优势</option><option>均势</option><option>劣势</option></select>
     <select id="f-use"><option value="">攻防·全部</option><option>攻击</option><option>防御</option><option>通用</option></select>
+    <select id="f-six"><option value="">六类·全部</option><option value="攻战计">攻战计</option><option value="胜战计">胜战计</option><option value="敌战计">敌战计</option><option value="混战计">混战计</option><option value="并战计">并战计</option><option value="败战计">败战计</option><option value="(空)">未标六类</option><option value="(x)">三势跨类</option></select>
     <select id="f-ex"><option value="">归属·全部</option><option>专用</option><option>通行</option></select>
     <select id="f-wear">
         <option value="">佩戴·全部</option>
@@ -75,15 +99,17 @@ app.innerHTML = `
     </select>
     <select id="f-status"><option value="">状态·全部</option><option value="active">在役</option><option value="retired">退役</option></select>
     <button class="se-btn se-btn-gold" id="btn-new">＋ 新增技能</button>
+    <button class="se-btn se-btn-red" id="btn-check">🔍 检查错误</button>
     <button class="se-btn" id="btn-refresh">刷新</button>
     <span class="se-count" id="count"></span>
 </div>
 <div class="se-main">
     <div class="se-list"><table>
-        <thead><tr><th>id</th><th>技名</th><th>三势</th><th>攻防</th><th>典故主</th><th>档位/数值</th><th>佩戴</th><th>状态</th></tr></thead>
+        <thead><tr><th>id</th><th>技名</th><th>三势</th><th>攻防</th><th>六类(推导)</th><th>典故主</th><th>档位/数值</th><th>佩戴</th><th>状态</th></tr></thead>
         <tbody id="list-body"></tbody>
     </table></div>
-    <div class="se-detail" id="detail"><div style="color:#6a6254">← 点击左侧条目编辑；每次保存会把该技的散表标注迁入条目本体。</div></div>
+    <div class="se-splitter" id="splitter"></div>
+    <div class="se-detail" id="detail"><div style="color:#6a6254">← 点击左侧条目编辑；六类由 baseEffect 自动推导，不可手动修改。</div></div>
 </div>
 <div class="se-toast" id="toast"></div>
 <datalist id="dl-generals"></datalist>
@@ -95,7 +121,7 @@ function toast(msg: string, err = false): void {
     t.textContent = msg;
     t.className = 'se-toast' + (err ? ' err' : '');
     t.style.display = 'block';
-    window.setTimeout(() => { t.style.display = 'none'; }, err ? 6000 : 3000);
+    window.setTimeout(() => { t.style.display = 'none'; }, err ? 8000 : 3000);
 }
 
 function valueLabel(s: SkillRow): string {
@@ -126,6 +152,7 @@ function applyFilters(): SkillRow[] {
     const q = ($('f-search') as HTMLInputElement).value.trim();
     const sit = ($('f-sit') as HTMLSelectElement).value;
     const use = ($('f-use') as HTMLSelectElement).value;
+    const six = ($('f-six') as HTMLSelectElement).value;
     const ex = ($('f-ex') as HTMLSelectElement).value;
     const wear = ($('f-wear') as HTMLSelectElement).value;
     const status = ($('f-status') as HTMLSelectElement).value;
@@ -133,11 +160,21 @@ function applyFilters(): SkillRow[] {
         if (q && !(s.id.includes(q) || s.displayName.includes(q) || (s.ownerName ?? '').includes(q))) return false;
         if (sit && s.situationTag !== sit) return false;
         if (use && s.usageTag !== use) return false;
+        if (six === '(空)' && s.sixClass) return false;
+        if (six === '(x)' && s.sixClassMatch) return false;
+        if (six && six !== '(空)' && six !== '(x)' && s.sixClass !== six) return false;
         if (ex && s.exclusive !== ex) return false;
         if (status && s.status !== status) return false;
         if (wear && wearProblem(s) !== wear) return false;
         return true;
     });
+}
+
+function sixClassDisplay(s: SkillRow): string {
+    if (!s.sixClass) return '<span style="color:#5a3a3a">???</span>';
+    let html = s.sixClass;
+    if (!s.sixClassMatch) html += ' <span class="se-match-warn" title="三势不匹配规范值">⚠</span>';
+    return html;
 }
 
 function renderList(): void {
@@ -149,6 +186,7 @@ function renderList(): void {
             <td>${s.displayName}${s.locked ? ' 🔒' : ''}</td>
             <td>${s.situationTag}${srcBadge(s.situationSource)}</td>
             <td>${s.usageTag}</td>
+            <td style="color:${s.sixClass ? '#d8c88e' : '#5a4a3a'}">${sixClassDisplay(s)}</td>
             <td>${s.ownerName ?? '<span style="color:#6a6254">通用</span>'}${s.ownerSource ? srcBadge(s.ownerSource) : ''}</td>
             <td class="se-mono">${valueLabel(s)}</td>
             <td>${s.wearers.length}${wearProblem(s) === 'stray' ? ' ⚠' : wearProblem(s) === 'orphanOwner' ? ' ✂' : s.wearers.length === 0 && s.status === 'active' ? ' ∅' : ''}</td>
@@ -172,6 +210,9 @@ function renderDetail(): void {
     const s = SKILLS.find(x => x.id === selectedId);
     if (!s) return;
     const ownerVal = s.ownerName ? `${s.ownerName} (${s.ownerGeneralId ?? '?'})` : '';
+    const sixInfo = s.sixClass
+        ? `${s.sixClass}${s.sixClassMatch ? '' : ' ⚠ 三势与规范值不匹配'}`
+        : '⚠ 未知效果类型，无法归类';
     $('detail').innerHTML = `
         <h3>${s.displayName} <span class="se-mono">${s.id}</span>${s.locked ? ' 🔒锁定值' : ''}</h3>
         <div class="se-quote">${s.sourceQuote || '（无出处）'}</div>
@@ -184,6 +225,7 @@ function renderDetail(): void {
         <div class="se-field"><label>攻防</label><select id="d-use">
             ${['通用', '攻击', '防御'].map(v => `<option ${v === s.usageTag ? 'selected' : ''}>${v}</option>`).join('')}
         </select></div>
+        <div class="se-field"><label>六类</label><span class="se-ro">${sixInfo}</span></div>
         <div class="se-field"><label>典故主</label><input id="d-owner" list="dl-generals" value="${ownerVal}" placeholder="留空 = 通用；输入人名从名录选"></div>
         <div class="se-field"><label>状态</label><select id="d-status">
             <option value="active" ${s.status !== 'retired' ? 'selected' : ''}>在役</option>
@@ -217,7 +259,7 @@ async function saveDetail(s: SkillRow): Promise<void> {
     try { owner = parseOwnerInput(($('d-owner') as HTMLInputElement).value); }
     catch (e: any) { toast(e.message, true); return; }
     const tierSel = document.getElementById('d-tier') as HTMLSelectElement | null;
-    const body = {
+    const body: Record<string, any> = {
         id: s.id,
         situationTag: ($('d-sit') as HTMLSelectElement).value,
         usageTag: ($('d-use') as HTMLSelectElement).value,
@@ -248,7 +290,7 @@ function renderNewForm(): void {
     panel.innerHTML = `
         <h3 style="color:#d8b95e;margin:0 0 6px">新增技能（保存时全部必填项过闸）</h3>
         <div class="se-field"><label>技名(四字)</label><input id="n-name" maxlength="4"></div>
-        <div class="se-field"><label>出处</label><input id="n-quote" placeholder="史料引文，引号用“”"></div>
+        <div class="se-field"><label>出处</label><input id="n-quote" placeholder="史料引文，引号用"""></div>
         <div class="se-field"><label>效果</label><select id="n-effect">${effects.map(e => `<option>${e}</option>`).join('')}</select></div>
         <div class="se-field"><label>条件</label><select id="n-cond">${CONDITIONS.map(c => `<option>${c}</option>`).join('')}</select></div>
         <div class="se-field"><label>三势</label><select id="n-sit"><option>优势</option><option>均势</option><option>劣势</option></select></div>
@@ -297,6 +339,101 @@ function renderNewForm(): void {
     });
 }
 
+// ========== 错误检查 ==========
+
+interface CheckIssue {
+    id: string; displayName: string;
+    type: 'non4char' | 'noWearer' | 'noSituation' | 'noUsage' | 'noSixClass' | 'sixClassMismatch';
+    msg: string;
+}
+
+function runErrorCheck(): void {
+    const issues: CheckIssue[] = [];
+    for (const s of SKILLS) {
+        if (s.displayName.length !== 4) {
+            issues.push({ id: s.id, displayName: s.displayName, type: 'non4char', msg: `技名「${s.displayName}」不是四字（${s.displayName.length}字）` });
+        }
+        if (s.status === 'active' && s.wearers.length === 0) {
+            issues.push({ id: s.id, displayName: s.displayName, type: 'noWearer', msg: '在役但无任何武将佩戴' });
+        }
+        if (!s.situationTag || !['优势', '均势', '劣势'].includes(s.situationTag)) {
+            issues.push({ id: s.id, displayName: s.displayName, type: 'noSituation', msg: `三势标签缺失或异常（当前：${s.situationTag || '空'}）` });
+        }
+        if (!s.usageTag || !['攻击', '防御', '通用'].includes(s.usageTag)) {
+            issues.push({ id: s.id, displayName: s.displayName, type: 'noUsage', msg: `攻防标签缺失或异常（当前：${s.usageTag || '空'}）` });
+        }
+        if (s.status === 'active' && !s.sixClass) {
+            issues.push({ id: s.id, displayName: s.displayName, type: 'noSixClass', msg: `baseEffect「${s.baseEffect}」无法归入六类——效果类型不在已知映射中` });
+        }
+        if (s.status === 'active' && s.sixClass && !s.sixClassMatch) {
+            issues.push({ id: s.id, displayName: s.displayName, type: 'sixClassMismatch', msg: `六类=${s.sixClass} 但三势=${s.situationTag}（规范值应为${s.sixClass ? getCanonicalSit(s.sixClass) : '?'}），效果与三势不匹配` });
+        }
+    }
+
+    const counts: Record<string, number> = { non4char: 0, noWearer: 0, noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, total: issues.length };
+    for (const i of issues) counts[i.type]++;
+
+    const typeLabel: Record<string, string> = {
+        non4char: '非四字', noWearer: '无佩戴', noSituation: '缺三势', noUsage: '缺攻防', noSixClass: '效果未归类', sixClassMismatch: '三势跨类',
+    };
+    const typeColor: Record<string, string> = {
+        non4char: 'se-err-red', noWearer: 'se-err-red', noSituation: 'se-err-red', noUsage: 'se-err-red', noSixClass: 'se-err-red', sixClassMismatch: 'se-err-warn',
+    };
+
+    let html = `<div class="se-modal-bg" id="check-modal-bg"><div class="se-modal">
+        <div class="se-modal-hd">
+            <h3>🔍 技能错误检查</h3>
+            <span class="se-err-count ${counts.total > 0 ? 'se-err-red' : 'se-err-ok'}">${counts.total > 0 ? `⚠ ${counts.total} 个问题` : '✅ 全部通过'}</span>
+            <button class="se-btn" style="margin-left:auto" id="check-close">关闭</button>
+        </div>
+        <div class="se-modal-body">
+            <div class="se-summary">`;
+    for (const [t, c] of Object.entries(counts)) {
+        if (t === 'total') continue;
+        html += `<span class="se-err-count ${c > 0 ? typeColor[t] : 'se-err-ok'}">${typeLabel[t]}: ${c}</span>`;
+    }
+    html += `</div>`;
+
+    if (issues.length === 0) {
+        html += `<div style="color:#a8d8a8;text-align:center;padding:40px">🎉 全部 ${SKILLS.length} 条技能检查通过！</div>`;
+    } else {
+        html += `<table><thead><tr><th>id</th><th>技名</th><th>问题类型</th><th>详情</th></tr></thead><tbody>`;
+        for (const i of issues) {
+            html += `<tr class="se-issue-row">
+                <td class="se-mono">${i.id}</td>
+                <td>${i.displayName}</td>
+                <td>${typeLabel[i.type] ?? i.type}</td>
+                <td>${i.msg}</td>
+            </tr>`;
+        }
+        html += `</tbody></table>`;
+    }
+
+    html += `</div></div></div>`;
+
+    const old = document.getElementById('check-modal-bg');
+    if (old) old.remove();
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    document.body.appendChild(wrapper.firstElementChild!);
+
+    document.getElementById('check-modal-bg')!.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).id === 'check-modal-bg') closeCheck();
+    });
+    document.getElementById('check-close')!.addEventListener('click', closeCheck);
+}
+
+function getCanonicalSit(sixClass: string): string {
+    const m: Record<string, string> = { '攻战计': '优势', '胜战计': '优势', '敌战计': '均势', '混战计': '均势', '并战计': '劣势', '败战计': '劣势' };
+    return m[sixClass] ?? '?';
+}
+
+function closeCheck(): void {
+    document.getElementById('check-modal-bg')?.remove();
+}
+
+// ========== 数据加载 ==========
+
 async function load(keepSelected?: string): Promise<void> {
     const res = await fetch('/api/skill-editor/list');
     const j = await res.json();
@@ -312,15 +449,55 @@ async function load(keepSelected?: string): Promise<void> {
     if (selectedId) renderDetail();
 }
 
-for (const id of ['f-search', 'f-sit', 'f-use', 'f-ex', 'f-wear', 'f-status']) {
+for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-ex', 'f-wear', 'f-status']) {
     $(id).addEventListener('input', renderList);
+    if (id.endsWith('-six') || id.endsWith('-sit') || id.endsWith('-use') || id.endsWith('-ex') || id.endsWith('-wear') || id.endsWith('-status')) {
+        $(id).addEventListener('change', renderList);
+    }
 }
 $('btn-refresh').addEventListener('click', () => load());
+$('btn-check').addEventListener('click', runErrorCheck);
 $('btn-new').addEventListener('click', () => {
     selectedId = null;
     renderList();
     $('detail').innerHTML = '<div class="se-new" id="new-panel"></div>';
     renderNewForm();
 });
+
+// ── 左右分栏拖拽 ──
+(function initSplitter() {
+    const splitter = $('splitter');
+    const detail = $('detail');
+    let dragging = false;
+
+    splitter.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        dragging = true;
+        splitter.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        const main = splitter.parentElement!;
+        const rect = main.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const detailW = rect.width - x;
+        const minW = 280;
+        const maxW = rect.width * 0.7;
+        if (detailW >= minW && detailW <= maxW) {
+            detail.style.width = detailW + 'px';
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        splitter.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    });
+})();
 
 load();
