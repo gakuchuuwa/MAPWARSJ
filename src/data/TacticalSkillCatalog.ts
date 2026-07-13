@@ -312,7 +312,7 @@ const FATE: TacticalSkillEntry[] = [
         id: 'ts_013', layer: 'tactical', series: 'fate', index: 13,
         displayName: '背水一战', sourceQuote: '《史记·淮阴侯列传》：“信乃使万人先行，出，背水阵。”（韩信）',
         baseEffect: 'luck_variance_self', condition: 'ratio_underdog', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.65, luckMax: 1.35, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
     },
     {
         id: 'ts_014', layer: 'tactical', series: 'fate', index: 14,
@@ -324,7 +324,7 @@ const FATE: TacticalSkillEntry[] = [
         id: 'ts_015', layer: 'tactical', series: 'fate', index: 15,
         displayName: '进退有度', sourceQuote: '《左传·成公十六年》：“师之耳目，在吾旗鼓，进退有度。”',
         baseEffect: 'luck_variance_self', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.9, luckMax: 1.1, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
     },
     {
         id: 'ts_016', layer: 'tactical', series: 'fate', index: 16,
@@ -356,7 +356,7 @@ const FATE: TacticalSkillEntry[] = [
         id: 'ts_020', layer: 'tactical', series: 'fate', index: 20,
         displayName: '济河焚舟', sourceQuote: '《左传·僖公二十八年》：“济河焚舟，示无还心。”',
         baseEffect: 'luck_variance_self', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
-        magnitude: 0.7, luckMin: 0.9, luckMax: 1.5, engineStatus: 'ready',
+        magnitude: 0.7, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         mutexGroup: 'deep_gamble',
         note: '深劣势(本方<敌70%)·上偏稳赌[0.9,1.5]均值1.2；与 ts_012 破釜沉舟同 deep_gamble 组二选一（本技下限0.9稳，破釜全开方差博上限）',
     },
@@ -544,7 +544,7 @@ const COUNTER: TacticalSkillEntry[] = [
         id: 'ts_046', layer: 'tactical', series: 'fate', index: 46,
         displayName: '暗度陈仓', sourceQuote: '《史记·淮阴侯列传》：“明修栈道，暗度陈仓。”',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '地形对抗：引擎侧待接线（仅 combat-model 工具支持）',
     },
     {
@@ -588,7 +588,7 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
         id: 'ts_054', layer: 'tactical', series: 'fate', index: 54,
         displayName: '流星坠营', sourceQuote: '【刘秀】昆阳之战流星坠营激励士气',
         baseEffect: 'luck_variance_enemy', condition: 'ratio_underdog', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_056', layer: 'tactical', series: 'troop', index: 56,
@@ -647,13 +647,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_064', layer: 'tactical', series: 'fate', index: 64,
         displayName: '虎穴奇袭', sourceQuote: '《后汉书·班超传》：“不入虎穴，不得虎子。当今之计，独有因夜以火攻虏。”',
         baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.6, luckMax: 2.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
     },
     {
         id: 'ts_065', layer: 'tactical', series: 'fate', index: 65,
         displayName: '凭坚摧锋', sourceQuote: '《明史·袁崇焕传》：“凭坚城用大炮，是以所向无前。”',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_066', layer: 'tactical', series: 'enhance', index: 66,
@@ -701,7 +701,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_073', layer: 'tactical', series: 'fate', index: 73,
         displayName: '以弱敌强', sourceQuote: '【刘秀】昆阳以弱敌强破王莽',
         baseEffect: 'luck_variance_self', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.5, luckMax: 1.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
     },
     {
         id: 'ts_074', layer: 'tactical', series: 'enhance', index: 74,
@@ -713,7 +713,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_075', layer: 'tactical', series: 'fate', index: 75,
         displayName: '出没如神', sourceQuote: '《清史稿·洪秀全传》：“达开尤狡捷，出没如神。”',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.2, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_076', layer: 'tactical', series: 'enhance', index: 76,
@@ -725,7 +725,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_077', layer: 'tactical', series: 'fate', index: 77,
         displayName: '长围久困', sourceQuote: '《清史稿·太宗本纪》：“长围久困，城中食尽。”',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 0.95, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
     },
     {
         id: 'ts_078', layer: 'tactical', series: 'counter', index: 78,
@@ -767,7 +767,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_084', layer: 'tactical', series: 'fate', index: 84,
         displayName: '铁骑蹙敌', sourceQuote: '【耶律休哥】高梁河之战铁骑蹙宋军',
         baseEffect: 'luck_variance_self', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.9, luckMax: 1.45, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
     },
     {
         id: 'ts_085', layer: 'tactical', series: 'enhance', index: 85,
@@ -779,7 +779,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_086', layer: 'tactical', series: 'fate', index: 86,
         displayName: '整暇破疲', sourceQuote: '【慕容恪】以严整之军击破疲惫之敌',
         baseEffect: 'luck_variance_enemy', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.2, luckMax: 0.85, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_087', layer: 'tactical', series: 'casualty', index: 87,
@@ -809,7 +809,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_091', layer: 'tactical', series: 'fate', index: 91,
         displayName: '阻险御敌', sourceQuote: '【吴玠】和尚原据险御金兵',
         baseEffect: 'luck_variance_enemy', condition: 'terrain_mountain', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.25, luckMax: 0.85, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     // ── 第三批 T1（13人；ID 避开迁移中的 095-106 区段）──
     {
@@ -852,7 +852,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_110', layer: 'tactical', series: 'fate', index: 110,
         displayName: '望旗遁去', sourceQuote: '【薛仁贵】三箭定天山敌望旗遁去',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.15, luckMax: 0.85, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_111', layer: 'tactical', series: 'fate', index: 111,
@@ -901,7 +901,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_096', layer: 'tactical', series: 'fate', index: 96,
         displayName: '坚壁挫锐', sourceQuote: '《新唐书·高丽传》：“帝攻安市不能下，遂班师。”（渊盖苏文）',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.15, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_097', layer: 'tactical', series: 'casualty', index: 97,
@@ -919,7 +919,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_099', layer: 'tactical', series: 'fate', index: 99,
         displayName: '据险破众', sourceQuote: '《宣祖实录》：“权栗保幸州山城，以寡击众，倭大败。”',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.2, luckMax: 0.85, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_100', layer: 'tactical', series: 'casualty', index: 100,
@@ -943,7 +943,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_104', layer: 'tactical', series: 'fate', index: 104,
         displayName: '负险固守', sourceQuote: '《后汉书·东夷传》：“夫余以员栅为城，恃险固守。”',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.3, luckMax: 0.9, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     // ── 第五批 T1（10 位名将补贴合技；ID ts_117-126 顺延）──
     {
@@ -986,7 +986,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_123', layer: 'tactical', series: 'fate', index: 123,
         displayName: '不战屈人', sourceQuote: '【孙武】不战而屈人之兵',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.4, luckMax: 0.95, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_124', layer: 'tactical', series: 'troop', index: 124,
@@ -1071,7 +1071,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_137', layer: 'tactical', series: 'fate', index: 137,
         displayName: '安边御寇', sourceQuote: '【李牧】北拒匈奴安边御寇',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.3, luckMax: 0.9, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_138', layer: 'tactical', series: 'enhance', index: 138,
@@ -1113,7 +1113,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_144', layer: 'tactical', series: 'fate', index: 144,
         displayName: '坚城折锐', sourceQuote: '【袁崇焕】宁远坚城折努尔哈赤锐',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.15, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_145', layer: 'tactical', series: 'enhance', index: 145,
@@ -1155,7 +1155,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_151', layer: 'tactical', series: 'fate', index: 151,
         displayName: '扼险却敌', sourceQuote: '《锡克史》载哈里辛格·纳尔瓦：扼守开伯尔，阿富汗畏之。',
         baseEffect: 'luck_variance_enemy', condition: 'terrain_mountain', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.2, luckMax: 0.85, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_152', layer: 'tactical', series: 'enhance', index: 152,
@@ -1246,7 +1246,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_166', layer: 'tactical', series: 'fate', index: 166,
         displayName: '背城借一', sourceQuote: '【项羽】垓下背靠城墙决一死战',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.15, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_167', layer: 'tactical', series: 'casualty', index: 167,
@@ -1284,7 +1284,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_172', layer: 'tactical', series: 'fate', index: 172,
         displayName: '奇正守险', sourceQuote: '【诸葛亮】北伐奇正并用守险',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.15, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_173', layer: 'tactical', series: 'enhance', index: 173,
@@ -1356,7 +1356,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_184', layer: 'tactical', series: 'fate', index: 184,
         displayName: '深壁扼粮', sourceQuote: '《史记·绛侯周勃世家》：“亚夫坚壁不出，绝吴楚粮道。”',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_185', layer: 'tactical', series: 'enhance', index: 185,
@@ -1374,7 +1374,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_187', layer: 'tactical', series: 'fate', index: 187,
         displayName: '愈挫愈奋', sourceQuote: '《史记·高祖本纪》：“汉王深壁而守之，卒破项籍。”（刘邦）',
         baseEffect: 'luck_variance_self', condition: 'self_troops_below_enemy_pct', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.6, luckMax: 2.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
     },
     {
         id: 'ts_188', layer: 'tactical', series: 'fate', index: 188,
@@ -1422,7 +1422,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_195', layer: 'tactical', series: 'fate', index: 195,
         displayName: '诈降毙帅', sourceQuote: '《明史·铁铉传》：诈请降，下铁板几毙燕王。',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_196', layer: 'tactical', series: 'fate', index: 196,
@@ -1435,7 +1435,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_197', layer: 'tactical', series: 'fate', index: 197,
         displayName: '凭堞折冲', sourceQuote: '《周书·韦孝宽传》：玉璧被围，孝宽随方御之。',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_198', layer: 'tactical', series: 'enhance', index: 198,
@@ -1507,7 +1507,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_209', layer: 'tactical', series: 'fate', index: 209,
         displayName: '汲水凝冰', sourceQuote: '《宋史·杨延昭传》：汲水灌城，旦悉为冰，坚不可上。',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_210', layer: 'tactical', series: 'enhance', index: 210,
@@ -1525,7 +1525,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_212', layer: 'tactical', series: 'fate', index: 212,
         displayName: '结围御虏', sourceQuote: '《三国志·田豫传》：豫因地形，回车结围御鲜卑。',
         baseEffect: 'luck_variance_self', condition: 'ratio_underdog', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.6, luckMax: 2.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
     },
     {
         id: 'ts_213', layer: 'tactical', series: 'enhance', index: 213,
@@ -1543,7 +1543,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_215', layer: 'tactical', series: 'fate', index: 215,
         displayName: '凿隧破围', sourceQuote: '《旧唐书·李光弼传》：太原掘地道，出兵破史思明。',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_216', layer: 'tactical', series: 'fate', index: 216,
@@ -1561,7 +1561,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_218', layer: 'tactical', series: 'fate', index: 218,
         displayName: '诱骄致溃', sourceQuote: '《旧五代史·周德威传》：柏乡诱梁军，骄惰而溃。（李存勖）',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.2, luckMax: 0.9, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_219', layer: 'tactical', series: 'troop', index: 219,
@@ -1771,7 +1771,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_253', layer: 'tactical', series: 'fate', index: 253,
         displayName: '张乐却虏', sourceQuote: '《旧唐书·张守珪传》：置酒作乐，虏疑而退。',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_254', layer: 'tactical', series: 'enhance', index: 254,
@@ -1825,13 +1825,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_262', layer: 'tactical', series: 'fate', index: 262,
         displayName: '唱筹量沙', sourceQuote: '【檀道济】唱筹量沙骗北魏',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_263', layer: 'tactical', series: 'fate', index: 263,
         displayName: '婴城挫众', sourceQuote: '【朱文正】洪都婴城挫陈友谅',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_264', layer: 'tactical', series: 'enhance', index: 264,
@@ -1891,7 +1891,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_273', layer: 'tactical', series: 'fate', index: 273,
         displayName: '铁壁挫锋', sourceQuote: '《宋史·吕文焕传》：守襄阳，蒙古围之六载不下。铁壁挫锋——守城挫敌锐气。',
         baseEffect: 'luck_variance_enemy', condition: 'battle_siege_defender', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.1, luckMax: 0.8, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
         id: 'ts_274', layer: 'tactical', series: 'enhance', index: 274,
@@ -2601,7 +2601,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_463', layer: 'tactical', series: 'fate', index: 463,
         displayName: '分进乱阵', sourceQuote: '沙普尔历史记载：沙普尔分路进击搅乱罗马防线',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【沙普尔】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2622,7 +2622,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_466', layer: 'tactical', series: 'fate', index: 466,
         displayName: '长围断援', sourceQuote: '皇太极历史记载：大凌河长围久困绝敌外援使其自溃',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【皇太极】T1精锐·三势精修·势reverse·均局专属',
     },
     {
@@ -2643,7 +2643,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_469', layer: 'tactical', series: 'fate', index: 469,
         displayName: '诱锋夹击', sourceQuote: '毛利元就历史记载：吉田郡山诱敌深入两面夹击尼子军',
         baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【毛利元就】T1精锐·三势精修·势leverage·均局专属',
     },
     {
@@ -2685,7 +2685,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_475', layer: 'tactical', series: 'fate', index: 475,
         displayName: '假道迂击', sourceQuote: '拖雷历史记载：假道南宋迂回攻金侧翼',
         baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【拖雷】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2727,7 +2727,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_481', layer: 'tactical', series: 'fate', index: 481,
         displayName: '虚实扰敌', sourceQuote: '柴荣历史记载：虚实扰敌疲耗南唐水寨',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【柴荣】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2748,7 +2748,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_484', layer: 'tactical', series: 'fate', index: 484,
         displayName: '林沼设伏', sourceQuote: '阇耶跋摩历史记载：林沼设伏诱敌深入覆灭',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【阇耶跋摩】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2769,7 +2769,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_487', layer: 'tactical', series: 'fate', index: 487,
         displayName: '沙尘掩袭', sourceQuote: '扩廓帖木儿历史记载：沙尘掩护突袭明军大营',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【扩廓帖木儿】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2790,7 +2790,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_490', layer: 'tactical', series: 'fate', index: 490,
         displayName: '分道疲敌', sourceQuote: '达延汗历史记载：分道出击疲敌各部使其降服',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【达延汗】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2811,7 +2811,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_493', layer: 'tactical', series: 'fate', index: 493,
         displayName: '流动作势', sourceQuote: '李自成历史记载：流动作势调动明军疲于奔命',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【李自成】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2832,7 +2832,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_496', layer: 'tactical', series: 'fate', index: 496,
         displayName: '设伏夹截', sourceQuote: '张献忠历史记载：设伏山谷夹截追击明军',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【张献忠】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2853,7 +2853,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_499', layer: 'tactical', series: 'fate', index: 499,
         displayName: '伪遁诱截', sourceQuote: '苏伦历史记载：伪遁诱敌深入帕提亚腹地',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【苏伦】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2874,7 +2874,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_502', layer: 'tactical', series: 'fate', index: 502,
         displayName: '间使离敌', sourceQuote: '艾哈迈德历史记载：间使离间敌盟内部使其瓦解',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【艾哈迈德】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2895,7 +2895,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_505', layer: 'tactical', series: 'fate', index: 505,
         displayName: '诈退设伏', sourceQuote: '噶勒丹策凌历史记载：诈退设伏诱清军深入',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【噶勒丹策凌】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2916,7 +2916,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_508', layer: 'tactical', series: 'fate', index: 508,
         displayName: '持重疲彼', sourceQuote: '德川家康历史记载：长久手持重不出疲敌待机',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【德川家康】T1精锐·三势精修·势leverage·均局专属',
     },
     {
@@ -2937,7 +2937,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_511', layer: 'tactical', series: 'fate', index: 511,
         displayName: '并阵夹击', sourceQuote: '尔朱荣历史记载：并阵夹击冲乱敌军大阵',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【尔朱荣】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2958,7 +2958,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_514', layer: 'tactical', series: 'fate', index: 514,
         displayName: '据高遏骑', sourceQuote: '论钦陵历史记载：据高遏骑截唐军退路',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【论钦陵】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -2979,7 +2979,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_517', layer: 'tactical', series: 'fate', index: 517,
         displayName: '伏山断道', sourceQuote: '李定国历史记载：伏山断道截清军退路',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【李定国】T1精锐·三势精修·势reverse·均局专属',
     },
     {
@@ -3000,7 +3000,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_520', layer: 'tactical', series: 'fate', index: 520,
         displayName: '断道截粮', sourceQuote: '巴都尔萨野历史记载：断道截粮饥困守军',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【巴都尔萨野】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -3021,7 +3021,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_523', layer: 'tactical', series: 'fate', index: 523,
         displayName: '象阵扰敌', sourceQuote: '莽应龙历史记载：象阵纵横扰乱敌军',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【莽应龙】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -3042,7 +3042,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_526', layer: 'tactical', series: 'fate', index: 526,
         displayName: '退避疲敌', sourceQuote: '摩诃末历史记载：退避坚城疲耗蒙古远征军',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【摩诃末】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -3063,7 +3063,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_529', layer: 'tactical', series: 'fate', index: 529,
         displayName: '纵骑扰后', sourceQuote: '骨力裴罗历史记载：纵骑扰后疲耗突厥',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【骨力裴罗】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -3084,7 +3084,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_532', layer: 'tactical', series: 'fate', index: 532,
         displayName: '重骑截锋', sourceQuote: '吉亚斯丁历史记载：重骑截锋冲断敌军',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【吉亚斯丁】T1精锐·三势精修·势create·均局专属',
     },
     {
@@ -3130,7 +3130,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_538', layer: 'tactical', series: 'fate', index: 538,
         displayName: '退师崩敌', sourceQuote: '先轸专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【先轸】T1精锐·三势精修·势leverage',
     },
     {
@@ -3151,7 +3151,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_541', layer: 'tactical', series: 'fate', index: 541,
         displayName: '诱锋夹围', sourceQuote: '李成梁专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【李成梁】T1精锐·三势精修·势leverage',
     },
     {
@@ -3172,7 +3172,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_544', layer: 'tactical', series: 'fate', index: 544,
         displayName: '持重伺隙', sourceQuote: '李成桂专题记载',
         baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.5, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 0.5, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【李成桂】T1精锐·三势精修·势leverage',
     },
     {
@@ -3193,7 +3193,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_547', layer: 'tactical', series: 'fate', index: 547,
         displayName: '分道耗敌', sourceQuote: '完颜宗弼专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【完颜宗弼】T1精锐·三势精修·势leverage',
     },
     {
@@ -3361,7 +3361,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_571', layer: 'tactical', series: 'fate', index: 571,
         displayName: '诱敌分兵', sourceQuote: '【韩信】井陉之战诱赵军分兵出营',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【努尔哈赤】T1精锐·三势精修·势leverage',
     },
     {
@@ -3382,7 +3382,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_574', layer: 'tactical', series: 'fate', index: 574,
         displayName: '持重挫敌', sourceQuote: '朱棣专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【朱棣】T1精锐·三势精修·势leverage',
     },
     {
@@ -3424,7 +3424,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_580', layer: 'tactical', series: 'fate', index: 580,
         displayName: '诱敌夹击', sourceQuote: '织田信长专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【织田信长】T1精锐·三势精修·势leverage',
     },
     {
@@ -3466,7 +3466,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_586', layer: 'tactical', series: 'fate', index: 586,
         displayName: '叠阵疲敌', sourceQuote: '戚继光专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【戚继光】T1精锐·三势精修·势leverage',
     },
     {
@@ -3508,7 +3508,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_592', layer: 'tactical', series: 'fate', index: 592,
         displayName: '假道伐交', sourceQuote: '司马错专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【司马错】T1精锐·三势精修·势leverage',
     },
     {
@@ -3529,7 +3529,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_595', layer: 'tactical', series: 'fate', index: 595,
         displayName: '纵骑疲敌', sourceQuote: '社仑专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【社仑】T1精锐·三势精修·势leverage',
     },
     {
@@ -3550,7 +3550,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_598', layer: 'tactical', series: 'fate', index: 598,
         displayName: '深垒疲敌', sourceQuote: '王翦专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【王翦】T1精锐·三势精修·势leverage',
     },
     {
@@ -3571,7 +3571,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_601', layer: 'tactical', series: 'fate', index: 601,
         displayName: '分道夹截', sourceQuote: '桑贾尔专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【桑贾尔】T1精锐·三势精修·势leverage',
     },
     {
@@ -3592,7 +3592,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_604', layer: 'tactical', series: 'fate', index: 604,
         displayName: '持重俟机', sourceQuote: '王忠嗣专题记载',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【王忠嗣】T1精锐·三势精修·势leverage',
     },
     {
@@ -3659,7 +3659,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_613', layer: 'tactical', series: 'fate', index: 613,
         displayName: '林沼伏击', sourceQuote: '《史传》纳黎萱：丛林沼泽设伏待缅军半渡而击',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【纳黎萱】T1精锐·三势精修·势create·均',
     },
     {
@@ -3701,7 +3701,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_619', layer: 'tactical', series: 'fate', index: 619,
         displayName: '分道合击', sourceQuote: '《史传》阿史那土门：分兵正面佯攻迂回侧后合击高车',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【阿史那土门】T1精锐·三势精修·势create·均',
     },
     {
@@ -3764,7 +3764,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_628', layer: 'tactical', series: 'fate', index: 628,
         displayName: '间道奇袭', sourceQuote: '《史传》苏定方：奇兵间道渡江袭百济军后',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【苏定方】T1精锐·三势精修·势create·均',
     },
     {
@@ -3806,7 +3806,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_634', layer: 'tactical', series: 'fate', index: 634,
         displayName: '因形用兵', sourceQuote: '《史传》孙武：兵无常势因敌变阵扰敌部署',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【孙武】T1精锐·三势精修·势create·均',
     },
     {
@@ -3848,7 +3848,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_640', layer: 'tactical', series: 'fate', index: 640,
         displayName: '伪病懈敌', sourceQuote: '《史传》吕蒙：诈病回建业使关羽撤荆州守军',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【吕蒙】T1精锐·三势精修·势leverage·均',
     },
     {
@@ -3911,7 +3911,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_649', layer: 'tactical', series: 'fate', index: 649,
         displayName: '诱敌示弱', sourceQuote: '《史传》冒顿：示弱献马阏氏使东胡骄纵后突袭',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【冒顿】T1精锐·三势精修·势create·均',
     },
     {
@@ -3953,7 +3953,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_655', layer: 'tactical', series: 'fate', index: 655,
         displayName: '持重耗敌', sourceQuote: '《史传》徐达：与王保保对峙深沟高垒待粮尽追击',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【徐达】T1精锐·三势精修·势create·均',
     },
     {
@@ -3974,7 +3974,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_658', layer: 'tactical', series: 'fate', index: 658,
         displayName: '分兵疲敌', sourceQuote: '《史传》乐毅：齐地分兵略地使齐军疲于防守',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【乐毅】T1精锐·三势精修·势create·均',
     },
     {
@@ -4037,7 +4037,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_667', layer: 'tactical', series: 'fate', index: 667,
         displayName: '诱敌调兵', sourceQuote: '《史传》完颜娄室：佯攻一处诱宋军分兵趁机取城',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【完颜娄室】T1精锐·三势精修·势create·均',
     },
     {
@@ -4058,7 +4058,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_670', layer: 'tactical', series: 'fate', index: 670,
         displayName: '持重候隙', sourceQuote: '《史传》耿弇：与张步对峙坚守待粮尽追击',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【耿弇】T1精锐·三势精修·势create·均',
     },
     {
@@ -4079,7 +4079,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_673', layer: 'tactical', series: 'fate', index: 673,
         displayName: '盟誓合兵', sourceQuote: '《史传》姬发：孟津会盟八百诸侯壮大削商',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【姬发】T1精锐·三势精修·势create·均',
     },
     {
@@ -4100,7 +4100,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_676', layer: 'tactical', series: 'fate', index: 676,
         displayName: '塞道遏骑', sourceQuote: '《史传》袁崇焕：锦州筑堡塞后金骑兵进攻道路',
         baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.5, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 0.5, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【袁崇焕】T1精锐·三势精修·势create·均',
     },
     {
@@ -4125,7 +4125,7 @@ const UNIQUE_T1_TAIL: TacticalSkillEntry[] = [
         id: 'ts_679', layer: 'tactical', series: 'fate', index: 679,
         displayName: '分军迭进', sourceQuote: '邙山之战分军迭进，轮番冲击东魏军阵。《周书·文帝纪》',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【宇文泰】T0/T1精锐·三势精修·势create·均',
     },
     {
@@ -4139,7 +4139,7 @@ const UNIQUE_T1_TAIL: TacticalSkillEntry[] = [
         id: 'ts_681', layer: 'tactical', series: 'fate', index: 681,
         displayName: '佯退伏截', sourceQuote: '与脱脱迷失战，佯退诱追，伏兵截其归路。《帖木儿武功记》',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0,engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3,engineStatus: 'ready',
         note: '【帖木儿】T0/T1精锐·三势精修·势create·均',
     },
     {
@@ -4206,35 +4206,35 @@ const SANSHILIU: TacticalSkillEntry[] = [
         id: 'ts_393', layer: 'tactical', series: 'fate', index: 393,
         displayName: '无中生有', sourceQuote: '《南史·檀道济传》：唱筹量沙，全军而反，魏人不敢逼。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【敌战计·衡】檀道济；三十六计补充',
     },
     {
         id: 'ts_394', layer: 'tactical', series: 'fate', index: 394,
         displayName: '隔岸观火', sourceQuote: '《晋书·慕容垂载记》：淝水溃，唯垂军三万独完，不援苻坚，北归建燕。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【敌战计·衡】慕容垂；三十六计补充',
     },
     {
         id: 'ts_395', layer: 'tactical', series: 'fate', index: 395,
         displayName: '笑里藏刀', sourceQuote: '《史记·商君列传》：致书公子卬约盟，饮而伏甲掳之，遂破魏。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【敌战计·衡】商鞅；三十六计补充',
     },
     {
         id: 'ts_396', layer: 'tactical', series: 'fate', index: 396,
         displayName: '李代桃僵', sourceQuote: '《三国志·陆逊传》：孙桓部吸引刘备前锋，逊按兵寻机，火烧连营破蜀。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【敌战计·衡】陆逊；三十六计补充',
     },
     {
         id: 'ts_397', layer: 'tactical', series: 'fate', index: 397,
         displayName: '顺手牵羊', sourceQuote: '《三国志·吕蒙传》：诈病代己，白衣渡江袭荆州。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【敌战计·衡】吕蒙；三十六计补充',
     },
     {
@@ -4399,7 +4399,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_420', layer: 'tactical', series: 'fate', index: 420,
         displayName: '散阵遏骑', sourceQuote: '《宋史·岳飞传》：步卒麻扎刀入阵，砍拐子马足，金军大乱。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【岳飞】T0精锐·岳飞·势create·均局专属（三势精修）',
     },
     {
@@ -4413,7 +4413,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_422', layer: 'tactical', series: 'fate', index: 422,
         displayName: '弃辎突袭', sourceQuote: '《汉书·卫青霍去病传》：取食于敌，轻骑驰突数千里。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【霍去病】T0精锐·霍去病·势create·均局专属（三势精修）',
     },
     {
@@ -4434,7 +4434,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_425', layer: 'tactical', series: 'fate', index: 425,
         displayName: '拔帜易帜', sourceQuote: '《史记·淮阴侯列传》：遣二千骑入赵壁，拔赵帜立汉赤帜，赵军溃。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【韩信】T0精锐·韩信·势reverse·均局专属（三势精修；原劣局技，改 luck_variance_enemy 后归均势）',
     },
     {
@@ -4448,14 +4448,14 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_427', layer: 'tactical', series: 'fate', index: 427,
         displayName: '溃围断后', sourceQuote: '《史记·项羽本纪》：垓下突围自断后，斩汉军数百，二十八骑犹列阵。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【项羽】T0精锐·项羽·势reverse·均局专属（三势精修；原劣局技，改 luck_variance_enemy 后归均势）',
     },
     {
         id: 'ts_428', layer: 'tactical', series: 'fate', index: 428,
         displayName: '诱锋夹截', sourceQuote: '《吴子·图国》：示弱诱秦前锋深入，两翼截断，秦军溃乱。（吴起）',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【吴起】T0精锐·吴起·势create·均局专属（三势精修）',
     },
     {
@@ -4477,7 +4477,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_431', layer: 'tactical', series: 'fate', index: 431,
         displayName: '溃军反扼', sourceQuote: '《晋书·谢玄传》：以少兵扼险要水道，阻遏秦军长驱。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【谢玄】T0精锐·reverse·势均局专属（三势精修；原劣局技，改 luck_variance_enemy 后归均势）',
     },
     {
@@ -4498,7 +4498,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_434', layer: 'tactical', series: 'fate', index: 434,
         displayName: '贯阵摧坚', sourceQuote: '《旧唐书·太宗本纪》：三千五百玄甲贯夏军十万大阵，阵后张唐帜，夏军溃乱。（李世民）',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【李世民】T0精锐·create·势均局专属（三势精修）',
     },
     {
@@ -4512,7 +4512,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_436', layer: 'tactical', series: 'fate', index: 436,
         displayName: '纵舟乱阵', sourceQuote: '《旧唐书·李靖传》：火舟纵流入敌水寨焚其战船，乘烟掩杀破寨。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【李靖】T0精锐·create·势均局专属（三势精修）',
     },
     {
@@ -4568,7 +4568,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_444', layer: 'tactical', series: 'fate', index: 444,
         displayName: '中军截阵', sourceQuote: '《金史·太祖本纪》：护步答冈精兵直突辽中军，斩首指挥，辽军全溃。（完颜阿骨打）',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【完颜阿骨打】T0精锐·create·势均局专属（三势精修）',
     },
     {
@@ -4622,7 +4622,7 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
         id: 'ts_451', layer: 'tactical', series: 'fate', index: 451,
         displayName: '死士逆摧', sourceQuote: '《宋史·王坚传》相关记载：外城将陷，募死士逆冲蒙军先锋推出寨外，蒙哥督战受伤。《宋史·王坚传》',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【王坚】T1精锐·赵宋区·势reverse·劣局专属（三势精修）',
     },
     {
@@ -4685,7 +4685,7 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
         id: 'ts_460', layer: 'tactical', series: 'fate', index: 460,
         displayName: '鼓噪乱阵', sourceQuote: '《宋史·狄青传》相关记载：戴铜面具冲入敌阵，令士兵四面擂鼓鸣金，夏军不辨虚实自乱。《宋史·狄青传》',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, luckMin: 0.55, luckMax: 1.0, engineStatus: 'ready',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
         note: '【狄青】T1精锐·赵宋区·势create·均局专属（三势精修）',
     },
     {
@@ -4699,18 +4699,18 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
 
 const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_686', layer: 'tactical', series: 'fate', index: 686, displayName: '据险持重', sourceQuote: '【廉颇】长平据险持重拒王龁', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【据险持重】三势精修·均局' },
-    { id: 'ts_687', layer: 'tactical', series: 'fate', index: 687, displayName: '步阵遏骑', sourceQuote: '以步兵拒突厥骑', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【步阵遏骑】三势精修·均局' },
-    { id: 'ts_688', layer: 'tactical', series: 'fate', index: 688, displayName: '设伏疲敌', sourceQuote: '枣阳设伏疲金', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【设伏疲敌】三势精修·均局' },
+    { id: 'ts_687', layer: 'tactical', series: 'fate', index: 687, displayName: '步阵遏骑', sourceQuote: '以步兵拒突厥骑', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【步阵遏骑】三势精修·均局' },
+    { id: 'ts_688', layer: 'tactical', series: 'fate', index: 688, displayName: '设伏疲敌', sourceQuote: '枣阳设伏疲金', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【设伏疲敌】三势精修·均局' },
     { id: 'ts_689', layer: 'tactical', series: 'fate', index: 689, displayName: '游骑扰阵', sourceQuote: '【成吉思汗】蒙古游骑扰阵战术', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【游骑扰阵】三势精修·均局' },
     { id: 'ts_690', layer: 'tactical', series: 'fate', index: 690, displayName: '周旋疲敌', sourceQuote: '【曹操】官渡与袁绍周旋疲敌', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【周旋疲敌】三势精修·均局' },
     { id: 'ts_691', layer: 'tactical', series: 'fate', index: 691, displayName: '联部破盟', sourceQuote: '【努尔哈赤】联各部破九部联军', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【联部破盟】三势精修·均局' },
-    { id: 'ts_692', layer: 'tactical', series: 'fate', index: 692, displayName: '越险掩袭', sourceQuote: '鵯越奇袭', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【越险掩袭】三势精修·均局' },
-    { id: 'ts_693', layer: 'tactical', series: 'fate', index: 693, displayName: '绝漠追袭', sourceQuote: '稽落山破北匈奴', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【绝漠追袭】三势精修·均局' },
-    { id: 'ts_694', layer: 'tactical', series: 'fate', index: 694, displayName: '连郡拒敌', sourceQuote: '河西五郡连兵', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【连郡拒敌】三势精修·均局' },
-    { id: 'ts_695', layer: 'tactical', series: 'fate', index: 695, displayName: '阵变惑敌', sourceQuote: '八阵图', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【阵变惑敌】三势精修·均局' },
-    { id: 'ts_696', layer: 'tactical', series: 'fate', index: 696, displayName: '飘忽袭扰', sourceQuote: '飘忽游击', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【飘忽袭扰】三势精修·均局' },
-    { id: 'ts_697', layer: 'tactical', series: 'fate', index: 697, displayName: '骄兵诱溃', sourceQuote: '阏与示弱', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【骄兵诱溃】三势精修·均局' },
-    { id: 'ts_698', layer: 'tactical', series: 'fate', index: 698, displayName: '驰突扰阵', sourceQuote: '贵霜驰突', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【驰突扰阵】三势精修·均局' },
+    { id: 'ts_692', layer: 'tactical', series: 'fate', index: 692, displayName: '越险掩袭', sourceQuote: '鵯越奇袭', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【越险掩袭】三势精修·均局' },
+    { id: 'ts_693', layer: 'tactical', series: 'fate', index: 693, displayName: '绝漠追袭', sourceQuote: '稽落山破北匈奴', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【绝漠追袭】三势精修·均局' },
+    { id: 'ts_694', layer: 'tactical', series: 'fate', index: 694, displayName: '连郡拒敌', sourceQuote: '河西五郡连兵', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【连郡拒敌】三势精修·均局' },
+    { id: 'ts_695', layer: 'tactical', series: 'fate', index: 695, displayName: '阵变惑敌', sourceQuote: '八阵图', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【阵变惑敌】三势精修·均局' },
+    { id: 'ts_696', layer: 'tactical', series: 'fate', index: 696, displayName: '飘忽袭扰', sourceQuote: '飘忽游击', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【飘忽袭扰】三势精修·均局' },
+    { id: 'ts_697', layer: 'tactical', series: 'fate', index: 697, displayName: '骄兵诱溃', sourceQuote: '阏与示弱', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【骄兵诱溃】三势精修·均局' },
+    { id: 'ts_698', layer: 'tactical', series: 'fate', index: 698, displayName: '驰突扰阵', sourceQuote: '贵霜驰突', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【驰突扰阵】三势精修·均局' },
     { id: 'ts_699', layer: 'tactical', series: 'fate', index: 699, displayName: '火器遏冲', sourceQuote: '【袁崇焕】宁远红夷大炮遏后金冲势', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【火器遏冲】三势精修·均局' },
     { id: 'ts_700', layer: 'tactical', series: 'fate', index: 700, displayName: '诱敌据险', sourceQuote: '【韩信】背水诱敌据险出战', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【诱敌据险】三势精修·均局' },
     { id: 'ts_701', layer: 'tactical', series: 'counter', index: 701, displayName: '纵间戕帅', sourceQuote: '反间杀斛律光', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '【纵间戕帅】三势精修·均局' },
@@ -4739,9 +4739,9 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_724', layer: 'tactical', series: 'casualty', index: 724, displayName: '誓师济河', sourceQuote: '【祖逖】中流击楫誓师济河', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.5, engineStatus: 'ready', note: '【誓师济河】三势精修·劣局' },
     { id: 'ts_725', layer: 'tactical', series: 'casualty', index: 725, displayName: '绝域摧锋', sourceQuote: '【侯君集】灭高昌绝域摧锋', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.5, engineStatus: 'ready', note: '【绝域摧锋】三势精修·劣局' },
     { id: 'ts_726', layer: 'tactical', series: 'casualty', index: 726, displayName: '先登强弩', sourceQuote: '界桥先登', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.5, engineStatus: 'ready', note: '【先登强弩】三势精修·劣局' },
-    { id: 'ts_727', layer: 'tactical', series: 'fate', index: 727, displayName: '轻锐扰阵', sourceQuote: '讨黄巾轻锐扰敌', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【轻锐扰阵】三势精修·均局' },
+    { id: 'ts_727', layer: 'tactical', series: 'fate', index: 727, displayName: '轻锐扰阵', sourceQuote: '讨黄巾轻锐扰敌', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【轻锐扰阵】三势精修·均局' },
     { id: 'ts_728', layer: 'tactical', series: 'casualty', index: 728, displayName: '孤军死斗', sourceQuote: '岘山孤军死', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.5, engineStatus: 'ready', note: '【孤军死斗】三势精修·劣局' },
-    { id: 'ts_729', layer: 'tactical', series: 'fate', index: 729, displayName: '坚壁养锐', sourceQuote: '灭楚坚壁养锐', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【坚壁养锐】三势精修·均局' },
+    { id: 'ts_729', layer: 'tactical', series: 'fate', index: 729, displayName: '坚壁养锐', sourceQuote: '灭楚坚壁养锐', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【坚壁养锐】三势精修·均局' },
     { id: 'ts_730', layer: 'tactical', series: 'casualty', index: 730, displayName: '持重待疲', sourceQuote: '以逸待劳', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.3, engineStatus: 'ready', note: '【持重待疲】三势精修·劣局' },
     { id: 'ts_731', layer: 'tactical', series: 'troop', index: 731, displayName: '奇袭摧阵', sourceQuote: '雁门奇袭', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.13, engineStatus: 'ready', note: '【奇袭摧阵】三势精修·优局' },
     { id: 'ts_732', layer: 'tactical', series: 'casualty', index: 732, displayName: '断后殉节', sourceQuote: '陈家谷', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.5, engineStatus: 'ready', note: '【断后殉节】三势精修·劣局' },
@@ -4750,7 +4750,7 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_735', layer: 'tactical', series: 'fate', index: 735, displayName: '轻骑驰扰', sourceQuote: '【霍去病】轻骑驰扰匈奴后方', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【轻骑驰扰】三势精修·均局' },
     { id: 'ts_736', layer: 'tactical', series: 'casualty', index: 736, displayName: '孤军力斗', sourceQuote: '【李陵】孤军五千力斗匈奴', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.5, engineStatus: 'ready', note: '【孤军力斗】三势精修·劣局' },
     { id: 'ts_737', layer: 'tactical', series: 'troop', index: 737, displayName: '伏隘摧锋', sourceQuote: '羊山伏击', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.13, engineStatus: 'ready', note: '【伏隘摧锋】三势精修·优局' },
-    { id: 'ts_738', layer: 'tactical', series: 'fate', index: 738, displayName: '疑兵惑敌', sourceQuote: '疑兵惑敌', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.55, luckMax: 1, engineStatus: 'ready', note: '【疑兵惑敌】三势精修·均局' },
+    { id: 'ts_738', layer: 'tactical', series: 'fate', index: 738, displayName: '疑兵惑敌', sourceQuote: '疑兵惑敌', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【疑兵惑敌】三势精修·均局' },
     { id: 'ts_739', layer: 'tactical', series: 'enhance', index: 739, displayName: '陷阵摧坚', sourceQuote: '汾北冲阵', baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll', magnitude: 1.3, engineStatus: 'ready', note: '【陷阵摧坚】三势精修·优局' },
     { id: 'ts_740', layer: 'tactical', series: 'casualty', index: 740, displayName: '整军挫锐', sourceQuote: '治军挫锐', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.35, engineStatus: 'ready', note: '【整军挫锐】三势精修·劣局' },
 ];
