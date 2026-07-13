@@ -2431,7 +2431,7 @@ const SIX_CLASS_BY_EFFECT: Record<string, { label: string; canonicalSituation: s
     first_sortie_comeback_mult: { label: '攻战计', canonicalSituation: '优势' },
     // 减敌兵 → 优势 → 胜战计(全)
     enemy_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
-    ally_add_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
+    ally_add_troops_opening: { label: '混战计', canonicalSituation: '均势' },
     dual_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
     // 变随机 → 均势 → 敌战计(衡)
     luck_variance_self: { label: '敌战计', canonicalSituation: '均势' },
@@ -2520,6 +2520,8 @@ function seRemoveFromTagTables(text: string, id: string): string {
 function serverSkillEditorList() {
     const text = fs.readFileSync(path.resolve(__dirname, SE_TSC_PATH), 'utf-8');
     const data = serverReadAllEntityData();
+    const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog']);
+    const VARIANCE_EFFECTS = new Set(['luck_variance_self', 'luck_lock_self', 'recompute_comeback']);
     const wearers = new Map<string, string[]>();
     for (const [gid, prof] of Object.entries(data.profiles)) {
         for (const sid of [
@@ -2555,11 +2557,14 @@ function serverSkillEditorList() {
         const ownerGeneralId = seEntryField(block, 'ownerGeneralId');
         const ownerName = seEntryField(block, 'ownerName') ?? (ownerGeneralId ? gidInfo.get(ownerGeneralId)?.name : undefined) ?? chTable[id];
         const baseEffect = seEntryField(block, 'baseEffect') ?? '';
+        const condition = seEntryField(block, 'condition') ?? '';
         const wearerGids = wearers.get(id) ?? [];
         const situationTag = inlineSit ?? sitTable[id] ?? TRI_CN[triById.get(id) ?? ''] ?? '优势';
+        const isUnderdog = UNDERDOG_CONDS.has(condition) || VARIANCE_EFFECTS.has(baseEffect);
         const sixEntry = SIX_CLASS_BY_EFFECT[baseEffect];
-        const sixClass = sixEntry?.label ?? '';
-        const sixClassMatch = sixEntry ? situationTag === sixEntry.canonicalSituation : false;
+        const sixClass = isUnderdog ? '败战计' : (sixEntry?.label ?? '');
+        const expectedSit = isUnderdog ? '劣势' : (sixEntry?.canonicalSituation ?? '');
+        const sixClassMatch = sixEntry ? situationTag === expectedSit : false;
         skills.push({
             id,
             displayName: seEntryField(block, 'displayName') ?? '',
@@ -2576,7 +2581,7 @@ function serverSkillEditorList() {
             locked: SE_LOCKED_MAGNITUDE.has(id),
             situationTag,
             situationSource: inlineSit ? 'inline' : sitTable[id] ? 'table' : 'derived',
-            usageTag: inlineUse ?? useTable[id] ?? '通用',
+            usageTag: inlineUse ?? useTable[id] ?? '双行',
             usageSource: inlineUse ? 'inline' : useTable[id] ? 'table' : 'default',
             ownerGeneralId: ownerGeneralId ?? null,
             ownerName: ownerName ?? null,
@@ -2601,7 +2606,7 @@ function serverSkillEditorSave(body: {
     const warnings: string[] = [];
     if (!/^ts_\d+$/.test(body.id)) throw new Error('非法 id');
     if (body.situationTag && !['优势', '均势', '劣势'].includes(body.situationTag)) throw new Error('非法三势标签');
-    if (body.usageTag && !['通用', '攻击', '防御'].includes(body.usageTag)) throw new Error('非法攻防标签');
+    if (body.usageTag && !['双行', '攻击', '防御'].includes(body.usageTag)) throw new Error('非法攻防标签');
     if (body.status && !['active', 'retired'].includes(body.status)) throw new Error('非法状态');
     const data = serverReadAllEntityData();
     if (body.ownerGeneralId) {
@@ -2658,7 +2663,7 @@ function serverSkillEditorCreate(body: {
     if (!family) throw new Error(`baseEffect ${body.baseEffect} 不在可新增家族内`);
     if (!SE_CONDITIONS.includes(body.condition)) throw new Error(`非法条件 ${body.condition}`);
     if (!['优势', '均势', '劣势'].includes(body.situationTag)) throw new Error('三势标签必填（优势/均势/劣势）');
-    if (!['通用', '攻击', '防御'].includes(body.usageTag)) throw new Error('攻防标签必填');
+    if (!['双行', '攻击', '防御'].includes(body.usageTag)) throw new Error('攻防标签必填');
     const v = SE_TIERS[family]?.[body.tierLabel];
     if (v === undefined) throw new Error(`档位必填且须属于家族 ${family}`);
     const data = serverReadAllEntityData();

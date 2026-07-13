@@ -67,6 +67,8 @@ app.innerHTML = `
     .se-count { color: #8a8271; font-size: 13px; margin-left: auto; }
     .se-retired td { opacity: 0.45; }
     .se-match-warn { color: #d8a05e; font-size: 11px; }
+    .se-copy-btn { background: none; border: 1px solid #3a3226; color: #8a7a5a; cursor: pointer; border-radius: 3px; padding: 0 4px; font-size: 12px; }
+    .se-copy-btn:hover { background: #2e281c; color: #d8b95e; border-color: #6a5c3c; }
     /* 错误检查弹窗 */
     .se-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; }
     .se-modal { background: #1a1713; border: 1px solid #6a5c3c; border-radius: 8px; width: 820px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
@@ -105,7 +107,7 @@ app.innerHTML = `
 </div>
 <div class="se-main">
     <div class="se-list"><table>
-        <thead><tr><th>id</th><th>技名</th><th>三势</th><th>攻防</th><th>六类(推导)</th><th>典故主</th><th>档位/数值</th><th>佩戴</th><th>状态</th></tr></thead>
+        <thead><tr><th>id</th><th>技名</th><th>三势</th><th>攻防</th><th>六类(推导)</th><th>典故主</th><th>档位/数值</th><th>佩戴</th><th>状态</th><th>复制</th></tr></thead>
         <tbody id="list-body"></tbody>
     </table></div>
     <div class="se-splitter" id="splitter"></div>
@@ -191,9 +193,25 @@ function renderList(): void {
             <td class="se-mono">${valueLabel(s)}</td>
             <td>${s.wearers.length}${wearProblem(s) === 'stray' ? ' ⚠' : wearProblem(s) === 'orphanOwner' ? ' ✂' : s.wearers.length === 0 && s.status === 'active' ? ' ∅' : ''}</td>
             <td>${s.status === 'retired' ? '退役' : '在役'}</td>
+            <td><button class=\"se-copy-btn\" data-id=\"${s.id}\" title=\"复制此行\">📋</button></td>
         </tr>`).join('');
     for (const tr of $('list-body').querySelectorAll('tr')) {
-        tr.addEventListener('click', () => { selectedId = (tr as HTMLElement).dataset.id!; renderList(); renderDetail(); });
+        tr.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            if (target.closest('.se-copy-btn')) return; // 不拦截复制按钮
+            selectedId = (tr as HTMLElement).dataset.id!; renderList(); renderDetail();
+        });
+    }
+    // 复制按钮事件委托
+    for (const btn of $('list-body').querySelectorAll('.se-copy-btn')) {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const sid = (btn as HTMLElement).dataset.id!;
+            const s = SKILLS.find(x => x.id === sid);
+            if (!s) return;
+            const line = `${s.id}\t${s.displayName}\t${s.ownerName ?? '通用'}\t${s.sourceQuote}\t${s.usageTag}\t${s.situationTag}\t${s.sixClass}`;
+            navigator.clipboard.writeText(line).then(() => toast(`已复制：${s.id} ${s.displayName}`));
+        });
     }
 }
 
