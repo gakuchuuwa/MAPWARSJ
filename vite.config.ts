@@ -1976,6 +1976,7 @@ function serverReadAllEntityData() {
         atkAdvantageSkillId?: string; atkBalanceSkillId?: string; atkDisadvantageSkillId?: string;
         defAdvantageSkillId?: string; defBalanceSkillId?: string; defDisadvantageSkillId?: string;
         attackStyle?: string;
+        attackStyleStatus?: string;
     }> = {};
     const misplacedProfiles: string[] = [];
     /** GENERAL_PROFILES 块内有条目但缺 tacticalSkillId → 运行时无武将技 */
@@ -2012,6 +2013,7 @@ function serverReadAllEntityData() {
             defDisadvantageSkillId: profileEntryField(body, 'defDisadvantageSkillId'),
             aptitude: profileEntryField(body, 'aptitude'),
             attackStyle: profileEntryField(body, 'attackStyle'),
+            attackStyleStatus: profileEntryField(body, 'attackStyleStatus'),
         };
     }
 
@@ -2111,10 +2113,18 @@ function serverSaveGeneral(data: {
     defDisadvantageSkillId?: string;
     aptitude?: string;
     attackStyle?: 'attack' | 'defense' | 'balanced' | '';
+    attackStyleStatus?: 'not_applicable_or_unresolved' | '';
 }) {
     if (data.attackStyle !== undefined && data.attackStyle !== ''
         && !['attack', 'defense', 'balanced'].includes(data.attackStyle)) {
         throw new Error(`无效 attackStyle：${data.attackStyle}`);
+    }
+    if (data.attackStyleStatus !== undefined && data.attackStyleStatus !== ''
+        && data.attackStyleStatus !== 'not_applicable_or_unresolved') {
+        throw new Error(`无效 attackStyleStatus：${data.attackStyleStatus}`);
+    }
+    if (data.attackStyle && data.attackStyleStatus) {
+        throw new Error('attackStyle 与 attackStyleStatus 不能同时设置');
     }
     // 立绘路径先归一化：反斜杠/Windows 路径 → /assets/.../x.png（根治粘贴 Windows 路径写坏 TS 文件）
     if (data.portrait) data.portrait = serverNormalizePortraitPath(data.portrait);
@@ -2163,6 +2173,7 @@ function serverSaveGeneral(data: {
             defDisadvantageSkillId: field('defDisadvantageSkillId'),
             aptitude: field('aptitude'),
             attackStyle: field('attackStyle'),
+            attackStyleStatus: field('attackStyleStatus'),
             comment: mm[3] ?? '',
         };
     })();
@@ -2182,6 +2193,7 @@ function serverSaveGeneral(data: {
         defDisadvantageSkillId: mergeField(data.defDisadvantageSkillId, existingEntry.defDisadvantageSkillId),
         aptitude: mergeField(data.aptitude, existingEntry.aptitude),
         attackStyle: mergeField(data.attackStyle, existingEntry.attackStyle),
+        attackStyleStatus: mergeField(data.attackStyleStatus, existingEntry.attackStyleStatus),
     };
     const parts = [
         `generalId: '${data.generalId}'`,
@@ -2200,6 +2212,7 @@ function serverSaveGeneral(data: {
     if (merged.strategicSkillId) parts.push(`strategicSkillId: '${merged.strategicSkillId}'`);
     if (merged.aptitude) parts.push(`aptitude: '${merged.aptitude}'`);
     if (merged.attackStyle) parts.push(`attackStyle: '${merged.attackStyle}'`);
+    if (merged.attackStyleStatus) parts.push(`attackStyleStatus: '${merged.attackStyleStatus}'`);
     const gsLine = `${data.generalId}: { ${parts.join(', ')} },${existingEntry.comment ? ' ' + existingEntry.comment.trim().replace(/^,\s*/, '') : ''}`;
     if (gsText.includes(`${data.generalId}:`)) {
         gsText = serverReplaceObjectLine(gsText, 'GENERAL_PROFILES', data.generalId, `    ${gsLine}`);
@@ -2337,6 +2350,7 @@ function serverValidateEntities(): {
         attackStyle: {
             registered: { covered: number; total: number };
             famous: { covered: number; total: number };
+            reviewedUnclassifiable: number;
         };
     };
 } {
@@ -2347,19 +2361,40 @@ function serverValidateEntities(): {
     const factionSet = new Set(data.factions.map(f => f.id));
     const skipFactions = new Set(['panjun']);
     const validAttackStyles = new Set(['attack', 'defense', 'balanced']);
+    const validAttackStyleStatuses = new Set(['not_applicable_or_unresolved']);
 
     // P-01 影子字段审计：只按 FactionGenerals 在册名册检查，孤儿 profile 不参与。
     let attackStyleCovered = 0;
+    let reviewedUnclassifiable = 0;
     let famousTotal = 0;
     let famousAttackStyleCovered = 0;
     for (const [fId, g] of Object.entries(data.generals)) {
         const prof = data.profiles[g.generalId];
         const style = prof?.attackStyle;
+        const styleStatus = prof?.attackStyleStatus;
         const isFamous = prof?.tier === 'famous';
         if (isFamous) famousTotal++;
+        if (styleStatus && !validAttackStyleStatuses.has(styleStatus)) {
+            issues.push({
+                level: 'error',
+                msg: `武将 "${g.generalName}"(${g.generalId}) attackStyleStatus 值无效：${styleStatus}`,
+                factionId: fId,
+            });
+            continue;
+        }
+        if (style && styleStatus) {
+            issues.push({
+                level: 'error',
+                msg: `武将 "${g.generalName}"(${g.generalId}) 同时设置 attackStyle 与 attackStyleStatus`,
+                factionId: fId,
+            });
+            continue;
+        }
         if (style && validAttackStyles.has(style)) {
             attackStyleCovered++;
             if (isFamous) famousAttackStyleCovered++;
+        } else if (!style && styleStatus && validAttackStyleStatuses.has(styleStatus)) {
+            reviewedUnclassifiable++;
         } else if (!style) {
             issues.push({
                 level: 'warn',
@@ -2720,6 +2755,7 @@ function serverValidateEntities(): {
             attackStyle: {
                 registered: { covered: attackStyleCovered, total: Object.keys(data.generals).length },
                 famous: { covered: famousAttackStyleCovered, total: famousTotal },
+                reviewedUnclassifiable,
             },
         },
     };

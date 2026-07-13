@@ -283,4 +283,8 @@ export interface GeneralProfile {
 
     attackStyle?: 'attack' | 'defense' | 'balanced';
 
+    /** 已核史但无法合法归入攻守三类：非统军人物、身份待考或史料不足 */
+
+    attackStyleStatus?: 'not_applicable_or_unresolved';
+
 }
