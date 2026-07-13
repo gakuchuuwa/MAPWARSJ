@@ -34,7 +34,6 @@ interface FactionRow {
     defDisadvantageSkillId?: string;
     aptitude?: string;
     attackStyle?: 'attack' | 'defense' | 'balanced';
-    attackStyleStatus?: 'not_applicable_or_unresolved';
     eliteName?: string;
     eliteTier?: number;
     eliteRegion?: string;
@@ -55,7 +54,6 @@ interface EntityData {
         defAdvantageSkillId?: string; defBalanceSkillId?: string; defDisadvantageSkillId?: string;
         aptitude?: string;
         attackStyle?: 'attack' | 'defense' | 'balanced';
-        attackStyleStatus?: 'not_applicable_or_unresolved';
     }>;
     elites: Record<string, { name: string; tier: number; region: string }>;
     tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string }>;
@@ -72,7 +70,6 @@ interface ValidationIssue {
 interface AttackStyleCoverageStats {
     registered: { covered: number; total: number };
     famous: { covered: number; total: number };
-    reviewedUnclassifiable: number;
 }
 
 interface SkillCoverageReport {
@@ -478,7 +475,6 @@ function buildRows(): void {
             defDisadvantageSkillId: profile?.defDisadvantageSkillId,
             aptitude: profile?.aptitude,
             attackStyle: profile?.attackStyle,
-            attackStyleStatus: profile?.attackStyleStatus,
             eliteName: elite?.name,
             eliteTier: elite?.tier,
             eliteRegion: elite?.region,
@@ -998,12 +994,6 @@ async function openEditPanel(factionId: string | null): Promise<void> {
               <option value="attack" ${row!.attackStyle === 'attack' ? 'selected' : ''}>善攻 attack</option>
               <option value="defense" ${row!.attackStyle === 'defense' ? 'selected' : ''}>善防 defense</option>
               <option value="balanced" ${row!.attackStyle === 'balanced' ? 'selected' : ''}>双行 balanced</option>
-            </select>
-          </label>
-          <label><span>核史状态（无合法攻守结论时使用）</span>
-            <select name="attackStyleStatus">
-              <option value="">未标记</option>
-              <option value="not_applicable_or_unresolved" ${row!.attackStyleStatus === 'not_applicable_or_unresolved' ? 'selected' : ''}>已复核：不适用或身份待考</option>
             </select>
           </label>
           <p style="font-size:12px;color:#9a9080;margin:4px 0 8px;line-height:1.5">
@@ -1679,6 +1669,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
         showToast(`武将「${generalName}」攻防六槽须全部配齐（6 个战术技）`, true);
         return;
     }
+    const attackStyle = get('attackStyle');
 
     try {
         // Step 1: batch-import (faction + city + flag + startingCapital + region)
@@ -1723,8 +1714,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
                     defBalanceSkillId: get('defBalanceSkillId'),
                     defDisadvantageSkillId: get('defDisadvantageSkillId'),
                     aptitude: get('aptitude'),
-                    attackStyle: get('attackStyle'),
-                    attackStyleStatus: get('attackStyleStatus'),
+                    attackStyle,
                     oldGeneralId: oldGeneralId || undefined,
                 }),
             });
@@ -1784,7 +1774,7 @@ async function runValidation(): Promise<void> {
         if (coverage) {
             issues.unshift({
                 level: 'info',
-                msg: `攻守风格覆盖：在册 ${coverage.registered.covered}/${coverage.registered.total}，名将 ${coverage.famous.covered}/${coverage.famous.total}；已复核但不适用/待考 ${coverage.reviewedUnclassifiable}`,
+                msg: `攻守风格覆盖：在册 ${coverage.registered.covered}/${coverage.registered.total}，名将 ${coverage.famous.covered}/${coverage.famous.total}`,
             });
         }
         els.validationTitle.textContent = '校验结果';
