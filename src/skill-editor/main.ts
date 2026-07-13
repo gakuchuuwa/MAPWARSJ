@@ -397,14 +397,24 @@ function runErrorCheck(): void {
     if (issues.length === 0) {
         html += `<div style="color:#a8d8a8;text-align:center;padding:40px">🎉 全部 ${SKILLS.length} 条技能检查通过！</div>`;
     } else {
-        html += `<table><thead><tr><th>id</th><th>技名</th><th>问题类型</th><th>详情</th></tr></thead><tbody>`;
-        for (const i of issues) {
-            html += `<tr class="se-issue-row">
-                <td class="se-mono">${i.id}</td>
-                <td>${i.displayName}</td>
-                <td>${typeLabel[i.type] ?? i.type}</td>
-                <td>${i.msg}</td>
-            </tr>`;
+        // 按错误类型分组
+        const typeOrder = ['non4char', 'noWearer', 'noSituation', 'noUsage', 'noSixClass', 'sixClassMismatch'];
+        const grouped: Record<string, CheckIssue[]> = {};
+        for (const t of typeOrder) grouped[t] = [];
+        for (const i of issues) { if (grouped[i.type]) grouped[i.type].push(i); else (grouped[i.type] = [i]); }
+
+        html += `<table><thead><tr><th>id</th><th>技名</th><th>详情</th></tr></thead><tbody>`;
+        for (const type of typeOrder) {
+            const group = grouped[type];
+            if (!group || group.length === 0) continue;
+            html += `<tr style="background:#2a2018"><td colspan="3" style="color:#d8b95e;font-weight:bold;padding:6px 8px">${typeLabel[type]}（${group.length} 条）</td></tr>`;
+            for (const i of group) {
+                html += `<tr class="se-issue-row">
+                    <td class="se-mono">${i.id}</td>
+                    <td>${i.displayName}</td>
+                    <td>${i.msg}</td>
+                </tr>`;
+            }
         }
         html += `</tbody></table>`;
     }
