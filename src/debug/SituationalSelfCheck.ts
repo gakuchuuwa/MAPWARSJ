@@ -35,8 +35,8 @@ const STRAT_SYS: Record<string, string> = {
     str_05: '据点防', str_08: '据点防',
 };
 
-function tacName(unit: { generalId: string }, sit: 'advantage' | 'balance' | 'disadvantage'): string {
-    const id = resolveSituationalSkillId(unit as any, sit);
+function tacName(unit: { generalId: string }, sit: 'advantage' | 'balance' | 'disadvantage', isAttacker: boolean): string {
+    const id = resolveSituationalSkillId(unit as any, sit, isAttacker);
     if (!id) return '—(回退招牌)';
     return getTacticalSkillDef(id)?.displayName ?? id;
 }
@@ -47,20 +47,28 @@ export function toggleSituationalSelfCheck(): void {
 
     const rowsHtml = REPS.map(([gid, name]) => {
         const p = getGeneralProfile(gid);
-        if (!p) return `<tr><td>${name}</td><td colspan="5" style="color:#e88">无档案(gid=${gid})</td></tr>`;
+        if (!p) return `<tr><td>${name}</td><td colspan="8" style="color:#e88">无档案(gid=${gid})</td></tr>`;
         const u = { generalId: gid };
-        const adv = tacName(u, 'advantage');
-        const bal = tacName(u, 'balance');
-        const dis = tacName(u, 'disadvantage');
+        const atkAdv = tacName(u, 'advantage', true);
+        const atkBal = tacName(u, 'balance', true);
+        const atkDis = tacName(u, 'disadvantage', true);
+        const defAdv = tacName(u, 'advantage', false);
+        const defBal = tacName(u, 'balance', false);
+        const defDis = tacName(u, 'disadvantage', false);
         const sig = getTacticalSkillDef(p.tacticalSkillId)?.displayName ?? p.tacticalSkillId;
         const strat = p.strategicSkillId
             ? `${getStrategicSkillDef(p.strategicSkillId)?.displayName ?? p.strategicSkillId}(${STRAT_SYS[p.strategicSkillId] ?? '?'})`
             : '—';
         // 招牌应落在某一局；若三局都没包含招牌=丢失(标红)
-        const sigOk = [p.advantageSkillId, p.balanceSkillId, p.disadvantageSkillId].includes(p.tacticalSkillId);
+        const sigOk = [
+            p.atkAdvantageSkillId, p.atkBalanceSkillId, p.atkDisadvantageSkillId,
+            p.defAdvantageSkillId, p.defBalanceSkillId, p.defDisadvantageSkillId,
+            p.advantageSkillId, p.balanceSkillId, p.disadvantageSkillId,
+        ].includes(p.tacticalSkillId);
         return `<tr>
             <td style="color:#ffd27a">${name}</td>
-            <td>${adv}</td><td>${bal}</td><td>${dis}</td>
+            <td>${atkAdv}</td><td>${atkBal}</td><td>${atkDis}</td>
+            <td>${defAdv}</td><td>${defBal}</td><td>${defDis}</td>
             <td style="color:${sigOk ? '#8f8' : '#f66'}">${sig}${sigOk ? '' : ' ⚠丢失'}</td>
             <td style="color:#9cf">${strat}</td>
         </tr>`;
@@ -75,7 +83,8 @@ export function toggleSituationalSelfCheck(): void {
         <table style="border-collapse:collapse;width:100%;">
             <thead><tr style="color:#f0b96a;border-bottom:1px solid #654;">
                 <th style="padding:3px 8px;text-align:left;">名将</th>
-                <th style="padding:3px 8px;">优势局</th><th style="padding:3px 8px;">均势局</th><th style="padding:3px 8px;">劣势局</th>
+                <th style="padding:3px 8px;">攻·优势</th><th style="padding:3px 8px;">攻·均势</th><th style="padding:3px 8px;">攻·劣势</th>
+                <th style="padding:3px 8px;">守·优势</th><th style="padding:3px 8px;">守·均势</th><th style="padding:3px 8px;">守·劣势</th>
                 <th style="padding:3px 8px;">招牌技</th><th style="padding:3px 8px;">战略技</th>
             </tr></thead>
             <tbody>${rowsHtml}</tbody>

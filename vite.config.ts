@@ -400,9 +400,9 @@ export default defineConfig({
                 server.middlewares.use('/api/validate-entities', (req, res) => {
                     if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
                     try {
-                        const issues = serverValidateEntities();
+                        const validation = serverValidateEntities();
                         res.setHeader('Content-Type', 'application/json');
-                        res.end(JSON.stringify({ ok: true, issues }));
+                        res.end(JSON.stringify({ ok: true, ...validation }));
                     } catch (err: any) {
                         res.statusCode = 500;
                         res.setHeader('Content-Type', 'application/json');
@@ -1973,6 +1973,9 @@ function serverReadAllEntityData() {
     const profiles: Record<string, {
         tier: string; tacticalSkillId: string; strategicSkillId?: string;
         advantageSkillId?: string; balanceSkillId?: string; disadvantageSkillId?: string; aptitude?: string;
+        atkAdvantageSkillId?: string; atkBalanceSkillId?: string; atkDisadvantageSkillId?: string;
+        defAdvantageSkillId?: string; defBalanceSkillId?: string; defDisadvantageSkillId?: string;
+        attackStyle?: string;
     }> = {};
     const misplacedProfiles: string[] = [];
     /** GENERAL_PROFILES 块内有条目但缺 tacticalSkillId → 运行时无武将技 */
@@ -2008,6 +2011,7 @@ function serverReadAllEntityData() {
             defBalanceSkillId: profileEntryField(body, 'defBalanceSkillId'),
             defDisadvantageSkillId: profileEntryField(body, 'defDisadvantageSkillId'),
             aptitude: profileEntryField(body, 'aptitude'),
+            attackStyle: profileEntryField(body, 'attackStyle'),
         };
     }
 
@@ -2106,7 +2110,12 @@ function serverSaveGeneral(data: {
     defBalanceSkillId?: string;
     defDisadvantageSkillId?: string;
     aptitude?: string;
+    attackStyle?: 'attack' | 'defense' | 'balanced' | '';
 }) {
+    if (data.attackStyle !== undefined && data.attackStyle !== ''
+        && !['attack', 'defense', 'balanced'].includes(data.attackStyle)) {
+        throw new Error(`无效 attackStyle：${data.attackStyle}`);
+    }
     // 立绘路径先归一化：反斜杠/Windows 路径 → /assets/.../x.png（根治粘贴 Windows 路径写坏 TS 文件）
     if (data.portrait) data.portrait = serverNormalizePortraitPath(data.portrait);
     // 立绘只允许 PNG（服务端强制，防客户端校验被绕过）；非 PNG 直接拒绝，不写任何盘
@@ -2153,6 +2162,7 @@ function serverSaveGeneral(data: {
             defBalanceSkillId: field('defBalanceSkillId'),
             defDisadvantageSkillId: field('defDisadvantageSkillId'),
             aptitude: field('aptitude'),
+            attackStyle: field('attackStyle'),
             comment: mm[3] ?? '',
         };
     })();
@@ -2171,6 +2181,7 @@ function serverSaveGeneral(data: {
         defBalanceSkillId: mergeField(data.defBalanceSkillId, existingEntry.defBalanceSkillId),
         defDisadvantageSkillId: mergeField(data.defDisadvantageSkillId, existingEntry.defDisadvantageSkillId),
         aptitude: mergeField(data.aptitude, existingEntry.aptitude),
+        attackStyle: mergeField(data.attackStyle, existingEntry.attackStyle),
     };
     const parts = [
         `generalId: '${data.generalId}'`,
@@ -2188,6 +2199,7 @@ function serverSaveGeneral(data: {
     if (merged.defDisadvantageSkillId) parts.push(`defDisadvantageSkillId: '${merged.defDisadvantageSkillId}'`);
     if (merged.strategicSkillId) parts.push(`strategicSkillId: '${merged.strategicSkillId}'`);
     if (merged.aptitude) parts.push(`aptitude: '${merged.aptitude}'`);
+    if (merged.attackStyle) parts.push(`attackStyle: '${merged.attackStyle}'`);
     const gsLine = `${data.generalId}: { ${parts.join(', ')} },${existingEntry.comment ? ' ' + existingEntry.comment.trim().replace(/^,\s*/, '') : ''}`;
     if (gsText.includes(`${data.generalId}:`)) {
         gsText = serverReplaceObjectLine(gsText, 'GENERAL_PROFILES', data.generalId, `    ${gsLine}`);
@@ -2319,13 +2331,49 @@ function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
     };
 }
 
-function serverValidateEntities(): Array<{ level: string; msg: string; factionId?: string }> {
+function serverValidateEntities(): {
+    issues: Array<{ level: string; msg: string; factionId?: string }>;
+    stats: {
+        attackStyle: {
+            registered: { covered: number; total: number };
+            famous: { covered: number; total: number };
+        };
+    };
+} {
     const data = serverReadAllEntityData();
     const issues: Array<{ level: string; msg: string; factionId?: string }> = [];
 
     const cityById = new Map(data.cities.map(c => [c.id, c]));
     const factionSet = new Set(data.factions.map(f => f.id));
     const skipFactions = new Set(['panjun']);
+    const validAttackStyles = new Set(['attack', 'defense', 'balanced']);
+
+    // P-01 影子字段审计：只按 FactionGenerals 在册名册检查，孤儿 profile 不参与。
+    let attackStyleCovered = 0;
+    let famousTotal = 0;
+    let famousAttackStyleCovered = 0;
+    for (const [fId, g] of Object.entries(data.generals)) {
+        const prof = data.profiles[g.generalId];
+        const style = prof?.attackStyle;
+        const isFamous = prof?.tier === 'famous';
+        if (isFamous) famousTotal++;
+        if (style && validAttackStyles.has(style)) {
+            attackStyleCovered++;
+            if (isFamous) famousAttackStyleCovered++;
+        } else if (!style) {
+            issues.push({
+                level: 'warn',
+                msg: `武将 "${g.generalName}"(${g.generalId}) 缺 attackStyle 攻守风格`,
+                factionId: fId,
+            });
+        } else {
+            issues.push({
+                level: 'error',
+                msg: `武将 "${g.generalName}"(${g.generalId}) attackStyle 值无效：${style}`,
+                factionId: fId,
+            });
+        }
+    }
 
     // 1. 据点间距 < 50km
     for (let i = 0; i < data.cities.length; i++) {
@@ -2666,5 +2714,13 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         }
     }
 
-    return issues;
+    return {
+        issues,
+        stats: {
+            attackStyle: {
+                registered: { covered: attackStyleCovered, total: Object.keys(data.generals).length },
+                famous: { covered: famousAttackStyleCovered, total: famousTotal },
+            },
+        },
+    };
 }

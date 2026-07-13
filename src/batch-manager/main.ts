@@ -33,6 +33,7 @@ interface FactionRow {
     defBalanceSkillId?: string;
     defDisadvantageSkillId?: string;
     aptitude?: string;
+    attackStyle?: 'attack' | 'defense' | 'balanced';
     eliteName?: string;
     eliteTier?: number;
     eliteRegion?: string;
@@ -52,6 +53,7 @@ interface EntityData {
         atkAdvantageSkillId?: string; atkBalanceSkillId?: string; atkDisadvantageSkillId?: string;
         defAdvantageSkillId?: string; defBalanceSkillId?: string; defDisadvantageSkillId?: string;
         aptitude?: string;
+        attackStyle?: 'attack' | 'defense' | 'balanced';
     }>;
     elites: Record<string, { name: string; tier: number; region: string }>;
     tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string }>;
@@ -63,6 +65,11 @@ interface ValidationIssue {
     level: string;
     msg: string;
     factionId?: string;
+}
+
+interface AttackStyleCoverageStats {
+    registered: { covered: number; total: number };
+    famous: { covered: number; total: number };
 }
 
 interface SkillCoverageReport {
@@ -467,6 +474,7 @@ function buildRows(): void {
             defBalanceSkillId: profile?.defBalanceSkillId,
             defDisadvantageSkillId: profile?.defDisadvantageSkillId,
             aptitude: profile?.aptitude,
+            attackStyle: profile?.attackStyle,
             eliteName: elite?.name,
             eliteTier: elite?.tier,
             eliteRegion: elite?.region,
@@ -979,8 +987,17 @@ async function openEditPanel(factionId: string | null): Promise<void> {
               </select>
             </label>
           </div>
+          <h4 style="margin:10px 0 6px;font-size:13px;color:#8ab4c4">攻守风格 · 人物标签（影子字段，不参与战斗结算）</h4>
+          <label><span>攻守风格（独立于三势，不是技能）</span>
+            <select name="attackStyle">
+              <option value="">不设</option>
+              <option value="attack" ${row!.attackStyle === 'attack' ? 'selected' : ''}>善攻 attack</option>
+              <option value="defense" ${row!.attackStyle === 'defense' ? 'selected' : ''}>善防 defense</option>
+              <option value="balanced" ${row!.attackStyle === 'balanced' ? 'selected' : ''}>双行 balanced</option>
+            </select>
+          </label>
           <p style="font-size:12px;color:#9a9080;margin:4px 0 8px;line-height:1.5">
-            战术 <b>6+1</b>：下列 <b>攻防六槽（6）</b> + 名将 <b>1 战略技</b>。不单独配「战术技」——保存时招牌字段自动取自六槽（优先攻·优势）。
+            下方是技能配置区：战术 <b>6+1</b> = <b>攻防六槽（6）</b> + 名将 <b>1 战略技</b>。攻守风格不属于三势或技能；保存时招牌字段自动取自六槽（优先攻·优势）。
           </p>
           <label><span>战略技 (+1，仅名将)</span>
             <select name="strategicSkillId">
@@ -1696,6 +1713,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
                     defBalanceSkillId: get('defBalanceSkillId'),
                     defDisadvantageSkillId: get('defDisadvantageSkillId'),
                     aptitude: get('aptitude'),
+                    attackStyle: get('attackStyle'),
                     oldGeneralId: oldGeneralId || undefined,
                 }),
             });
@@ -1751,6 +1769,13 @@ async function runValidation(): Promise<void> {
         const res = await fetch('/api/validate-entities');
         const data = await res.json();
         issues = data.issues ?? [];
+        const coverage = data.stats?.attackStyle as AttackStyleCoverageStats | undefined;
+        if (coverage) {
+            issues.unshift({
+                level: 'info',
+                msg: `攻守风格覆盖：在册 ${coverage.registered.covered}/${coverage.registered.total}，名将 ${coverage.famous.covered}/${coverage.famous.total}`,
+            });
+        }
         els.validationTitle.textContent = '校验结果';
         renderValidation();
         els.validation.style.display = 'block';
