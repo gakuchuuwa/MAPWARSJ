@@ -539,7 +539,10 @@ export function auditTacticalSkillEngineReadiness(): {
 
 
 /**
- * 战前判定：料敌机先(100%否决)、将计就计(70%否决)、以子之矛(50%夺取，50%仅否决)
+ * 战前判定：三类效果的 magnitude 一律读作【触发概率】（2026-07-13 定，修复 negate 无视 magnitude 必否决）：
+ *   negate_enemy_skill  按 magnitude 概率否决（料敌机先 mag=1 → 100%；反戈一击 mag=0.25 → 25%）
+ *   partial_negate      按 magnitude 概率完全否决（将计就计 0.7）
+ *   steal               按 magnitude 概率夺取为己用，失败仅否决（以子之矛 0.5；全目录封顶 0.5，不设 100% 夺取）
  */
 export function resolveSkillCountersForSide(
     selfSkillId: string | undefined | null,
@@ -547,9 +550,12 @@ export function resolveSkillCountersForSide(
 ): { isNegated: boolean; isStolen: boolean; entry?: TacticalSkillEntry } {
     const e = selfSkillId ? resolveGeneralTacticalEntry(selfSkillId) : null;
     if (!e || !isTacticalSkillActive(e, selfCtx)) return { isNegated: false, isStolen: false };
-    
+
     if (e.baseEffect === 'negate_enemy_skill') {
-        return { isNegated: true, isStolen: false, entry: e };
+        if (Math.random() <= e.magnitude) {
+            return { isNegated: true, isStolen: false, entry: e };
+        }
+        return { isNegated: false, isStolen: false };
     }
     if (e.baseEffect === 'partial_negate_enemy_skill') {
         if (Math.random() <= e.magnitude) {
