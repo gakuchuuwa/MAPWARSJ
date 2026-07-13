@@ -2035,8 +2035,8 @@ function serverReadAllEntityData() {
         if (n >= 21 && n <= 35) return String.fromCodePoint(0x3251 + n - 21);
         if (n >= 36 && n <= 50) return String.fromCodePoint(0x32B1 + n - 36);
         return String(n);
-    };
-    // 分配层（TACTICAL_ASSIGN_TIER）：随机分配技能时只允许 common 档，避免撞限量/专属技
+        };
+        // 分配层（TACTICAL_ASSIGN_TIER）：随机分配技能时只允许 common 档
     const assignTierById = new Map<string, string>();
     for (const m of tscText.matchAll(/(ts_\d+):\s*'(common|limited|ai_defensive|underdog|gamble|star_survival)'/g)) {
         assignTierById.set(m[1], m[2]);
@@ -2602,6 +2602,44 @@ function serverValidateEntities(): {
     //   GENERAL_PROFILES 的键与条目内 generalId 必须一致；不一致时读 profile.generalId 的逻辑全部错乱。
     for (const [key, gid] of Object.entries(data.profileIdMismatches ?? {})) {
         issues.push({ level: 'error', msg: `武将档案 "${key}" 的 generalId 字段是 '${gid}'，与键不一致（疑似批量脚本截断），请改回 '${key}'` });
+    }
+
+    // 11.11. [NEW 2026-07-14] sourceQuote 【武将名】标注 vs 六槽归属：技能目录里注明了典故主角，
+    //   该武将的攻防六槽必须包含此技（防批量脚本覆盖后典故技丢失）。
+    {
+        // 建 武将名 → generalId 映射
+        const nameToGid = new Map<string, string>();
+        for (const [, g] of Object.entries(data.generals)) {
+            nameToGid.set(g.generalName, g.generalId);
+        }
+        // 扫描 TacticalSkillCatalog 中 sourceQuote 含【武将名】的技能
+        const tscText = fs.readFileSync(
+            path.resolve(__dirname, 'src/data/TacticalSkillCatalog.ts'), 'utf-8',
+        );
+        for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'[^}]*sourceQuote:\s*'【([^】]+)】/g)) {
+            const skillId = m[1];
+            const namesStr = m[2]; // 可能是 "谢玄" 或 "苻坚/谢玄"
+            const names = namesStr.split('/').map(n => n.trim());
+            const nameMatch = names.find(n => nameToGid.has(n));
+            if (!nameMatch) continue;
+            const gid = nameToGid.get(nameMatch)!;
+            const prof = data.profiles[gid];
+            if (!prof) continue;
+            const six = [
+                prof.atkAdvantageSkillId, prof.atkBalanceSkillId, prof.atkDisadvantageSkillId,
+                prof.defAdvantageSkillId, prof.defBalanceSkillId, prof.defDisadvantageSkillId,
+            ];
+            if (!six.includes(skillId)) {
+                const dispMatch = tscText.slice(m.index, m.index + 300).match(/displayName:\s*'([^']+)'/);
+                const dispName = dispMatch?.[1] ?? skillId;
+                const genEntry = Object.entries(data.generals).find(([, g]) => g.generalId === gid);
+                issues.push({
+                    level: 'error',
+                    msg: `技能 "${dispName}"(${skillId}) 典故主角【${nameMatch}】(${gid})，但该武将攻防六槽中无此技（疑似批量脚本覆盖丢失）`,
+                    factionId: genEntry?.[0],
+                });
+            }
+        }
     }
 
     // 12. 据点名重复（完全同名 或 一方完整包含另一方）
