@@ -90,7 +90,7 @@ app.innerHTML = `
     <span class="se-title">武将技编辑器</span>
     <input id="f-search" placeholder="搜技名 / id / 典故主" style="width:180px">
     <select id="f-sit"><option value="">三势·全部</option><option>优势</option><option>均势</option><option>劣势</option></select>
-    <select id="f-use"><option value="">攻防·全部</option><option>攻击</option><option>防御</option><option>通用</option></select>
+    <select id="f-use"><option value="">攻防·全部</option><option>攻击</option><option>防御</option><option>双行</option></select>
     <select id="f-six"><option value="">六类·全部</option><option value="攻战计">攻战计</option><option value="胜战计">胜战计</option><option value="敌战计">敌战计</option><option value="混战计">混战计</option><option value="并战计">并战计</option><option value="败战计">败战计</option><option value="(空)">未标六类</option><option value="(x)">三势跨类</option></select>
     <select id="f-ex"><option value="">归属·全部</option><option>专用</option><option>通行</option></select>
     <select id="f-wear">
@@ -241,7 +241,7 @@ function renderDetail(): void {
             ${['优势', '均势', '劣势'].map(v => `<option ${v === s.situationTag ? 'selected' : ''}>${v}</option>`).join('')}
         </select> ${srcBadge(s.situationSource)}</div>
         <div class="se-field"><label>攻防</label><select id="d-use">
-            ${['通用', '攻击', '防御'].map(v => `<option ${v === s.usageTag ? 'selected' : ''}>${v}</option>`).join('')}
+            ${['双行', '攻击', '防御'].map(v => `<option ${v === s.usageTag ? 'selected' : ''}>${v}</option>`).join('')}
         </select></div>
         <div class="se-field"><label>六类</label><span class="se-ro">${sixInfo}</span></div>
         <div class="se-field"><label>典故主</label><input id="d-owner" list="dl-generals" value="${ownerVal}" placeholder="留空 = 通用；输入人名从名录选"></div>
@@ -312,7 +312,7 @@ function renderNewForm(): void {
         <div class="se-field"><label>效果</label><select id="n-effect">${effects.map(e => `<option>${e}</option>`).join('')}</select></div>
         <div class="se-field"><label>条件</label><select id="n-cond">${CONDITIONS.map(c => `<option>${c}</option>`).join('')}</select></div>
         <div class="se-field"><label>三势</label><select id="n-sit"><option>优势</option><option>均势</option><option>劣势</option></select></div>
-        <div class="se-field"><label>攻防</label><select id="n-use"><option>通用</option><option>攻击</option><option>防御</option></select></div>
+        <div class="se-field"><label>攻防</label><select id="n-use"><option>双行</option><option>攻击</option><option>防御</option></select></div>
         <div class="se-field"><label>典故主</label><input id="n-owner" list="dl-generals" placeholder="留空 = 通用"></div>
         <div class="se-field"><label>档位</label><select id="n-tier"></select></div>
         <div class="se-field"><label>备注</label><input id="n-note"></div>
@@ -377,7 +377,7 @@ function runErrorCheck(): void {
         if (!s.situationTag || !['优势', '均势', '劣势'].includes(s.situationTag)) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'noSituation', msg: `三势标签缺失或异常（当前：${s.situationTag || '空'}）` });
         }
-        if (!s.usageTag || !['攻击', '防御', '通用'].includes(s.usageTag)) {
+        if (!s.usageTag || !['攻击', '防御', '双行'].includes(s.usageTag)) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'noUsage', msg: `攻防标签缺失或异常（当前：${s.usageTag || '空'}）` });
         }
         if (s.status === 'active' && !s.sixClass) {
