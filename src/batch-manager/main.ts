@@ -997,7 +997,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             </select>
           </label>
           <p style="font-size:12px;color:#9a9080;margin:4px 0 8px;line-height:1.5">
-            下方是技能配置区：战术 <b>6+1</b> = <b>攻防六槽（6）</b> + 名将 <b>1 战略技</b>。攻守风格不属于三势或技能；保存时招牌字段自动取自六槽（优先攻·优势）。
+            下方是技能配置区：战术 <b>6+1</b> = <b>攻防六槽（6）</b> + 名将 <b>1 战略技</b>。攻守风格不属于三势或技能；保存时 tacticalSkillId 自动取自六槽（优先攻·优势）。
           </p>
           <label><span>战略技 (+1，仅名将)</span>
             <select name="strategicSkillId">
