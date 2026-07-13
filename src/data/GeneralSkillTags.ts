@@ -1,13 +1,8 @@
 /**
- * 武将技标签化 — AI / 脚本分配 GENERAL_PROFILES 时的唯一参考
+ * 武将技旧分配辅助
  *
- * 用法（配额优先，禁止「先配再均化」）：
- *   1. 统计池子 → computeDistributionTargets
- *   2. 硬约束将 → HARD_LOCKED_TACTICAL_ASSIGNMENTS 先锁定
- *   3. 柔性将 → 史料允许的 archetype 中 pickFlexibleArchetype（低位优先）
- *   4. 批量写入前 → auditTacticalDistribution
- *
- * 批量 Prompt：见 SKILL_ASSIGNMENT_PROMPT
+ * @deprecated 本文件保留旧 archetype 审计与 tac_* 存档迁移辅助，不再是配将依据。
+ * 现行分配依据：TacticalSkillCatalog.ts 的六种/三类 + GeneralProfile 攻防六槽。
  */
 
 import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG, type GeneralTier } from './GeneralSkills';
@@ -17,7 +12,7 @@ import {
     getTacticalSkillEntryForGeneral,
 } from './TacticalSkillCatalog';
 
-/** 五种战术风格（名将①–⑤ 与 普将⑥–⑩ 一一对应） */
+/** 旧版五种 archetype，仅供迁移与历史审计 */
 export type SkillArchetype =
     | 'steadfast_counter'   // 胜战计：稳健/防反
     | 'mobile_raid'         // 敌战计：机动/奇袭
@@ -211,7 +206,7 @@ export function computeDistributionTargets(famousCount: number, ordinaryCount: n
     return { famous: build(famousCount), ordinary: build(ordinaryCount) };
 }
 
-/** 统计 GENERAL_PROFILES 战术格分布（可按 tier 过滤） */
+/** @deprecated 统计旧 archetype 分布；现行六槽审计不调用 */
 export function countTacticalByArchetype(
     tier?: GeneralTier,
     profiles: Record<string, { tier: GeneralTier; tacticalSkillId: string }> = GENERAL_PROFILES,
@@ -291,7 +286,7 @@ export function auditTacticalDistribution(
 // ── 分配层（tier）约束闸门（2026-07-03 加固）──────────────────────
 // 背景：auditTacticalDistribution 只查 25% 占比，查不出「limited 技挂 123 人」
 // 这类违反 TACTICAL_ASSIGN_TIER 限量策略的分配。本闸门补上，批量提交前必跑。
-// ⚠️ 已知缺口：countTacticalByArchetype 仍按旧 tac_01–10 标签映射，档案迁 ts_ 后
+// ⚠️ 已知缺口：countTacticalByArchetype 仍按已退役 tac_* 标签映射，档案迁 ts_ 后
 //    统计恒为零；archetype 配额流程不可信（TODO(v1-tags)）。
 
 /** limited 层单技持有人数上限（「个位数」的硬化） */
@@ -456,7 +451,7 @@ export const STRATAGEM_TAC09_NOTE = {
     notTac04: '若敌未战即降，名将应考④；若敌已接战，用⑨（普将）或②③（名将）',
 } as const;
 
-/** 战术十格标签表（①–⑩） */
+/** @deprecated 已退役 tac_* 兼容标签表；禁止用于新武将分配 */
 export const TACTICAL_SKILL_TAGS: readonly TacticalSkillTagEntry[] = [
     {
         tacticalId: 'tac_01',
@@ -584,7 +579,7 @@ export const TACTICAL_SKILL_TAGS: readonly TacticalSkillTagEntry[] = [
     },
 ] as const;
 
-/** archetype → 名将战术 id / 普将战术 id */
+/** @deprecated archetype → 已退役 tac_* ID，仅供旧数据迁移 */
 export const ARCHETYPE_TO_TACTICAL: Record<
     SkillArchetype,
     { famous: string; ordinary: string }
@@ -597,16 +592,12 @@ export const ARCHETYPE_TO_TACTICAL: Record<
 };
 
 /**
- * 【v1 迁移蓝图 · 2026-07-03】5 风格 × 2 品阶 → 目标 v1 战术技（ts_xxx）
+ * 【历史迁移蓝图 · 2026-07-03】旧 archetype → ts_xxx
  *
- * 旧 10 格（tac_xx）→ v1 战术技（ts_xxx）的分配总图。武将风格已由现挂的 tac 编号
- * 决定（见 ARCHETYPE_TO_TACTICAL），迁移时按本表把每个风格槽整体换成对应 v1 技。
+ * 已退役 tac_* → ts_xxx 的迁移总图。迁移已完成，仅保留查错用途。
  *
  * engineReady = 该 v1 技当前是否已在 BattleField 引擎生效。
- * 迁移已全部完成（2026-07-03），本表仅作历史参考。
- *
- * 迁移顺序：先迁 engineReady=true 的槽，再接其他引擎，解锁剩余槽。
- * 选型依据：风格语义 + 引擎就绪优先；名将槽取更主动/上限更高的技，普将槽取保底/情境技。
+ * 迁移已全部完成（2026-07-03），禁止据此给新武将配技。
  */
 export const ARCHETYPE_TO_V1_TACTICAL: Record<
     SkillArchetype,
@@ -645,7 +636,7 @@ export const ARCHETYPE_TO_V1_TACTICAL: Record<
 /**
  * 【v1 战术技 → 风格映射 · 2026-07-03】按技能语义归类（非机械按 series 字段）
  *
- * 用途：武将已从 tac_01~10 迁移到 ts_xxx，旧 TACTICAL_SKILL_TAGS 只认 tac，
+ * 用途：武将已从 tac_* 迁移到 ts_xxx，旧 TACTICAL_SKILL_TAGS 只认 tac，
  * 导致 countTacticalByArchetype / auditTacticalDistribution 对 ts 全部失效。
  * 本表补全断层，供审计与分配脚本反推每将风格。
  *
@@ -686,7 +677,7 @@ export const TS_V1_ARCHETYPE: Readonly<Record<string, SkillArchetype>> = {
 /**
  * 普将分散池（每风格 3–5 个「无条件/宽条件」ready 技，温和档）
  *
- * 用于把 506 普将在【保持现有风格】前提下分散到同风格多技，破除「10 种技占 70%」单调。
+ * 用于历史迁移期间把普将分散到同风格多技；现行六槽不再使用此池。
  * 选池原则：① 仅 ready（不挂 hook/new）② 避开纯地形/攻守限定（防普将「从不放技」）
  *          ③ 强档（兵不血刃-60%/宁为玉碎咬×2/破釜沉舟）留名将，普将用温和档。
  * 名将不走本池（保留已精调的 21 种技分配）。
@@ -752,40 +743,9 @@ export function resolveTacticalId(tier: GeneralTier, archetype: SkillArchetype):
 }
 
 /**
- * 批量分配用 Prompt（复制给 AI）
- * 待评估名单替换末尾列表即可。
+ * @deprecated 旧 archetype 批量分配提示已停用。
+ * 新武将必须按据点史实与具体战役证据，在攻/守 × 优/均/劣六槽中分别选取
+ * TacticalSkillCatalog.ts 的 ts_* 技；名将才可另配一个战略技。
  */
-export const SKILL_ASSIGNMENT_PROMPT = `【角色设定】
-你是资深历史游戏策划，为本项目将领分配武将技（见 GeneralSkillTags.ts）。
-
-【分配顺序 — 配额优先，禁止先配再均化】
-1. 统计池子：名将 N、普将 M → computeDistributionTargets(N,M)，各 archetype 目标 ±3
-2. 硬锁定：HARD_LOCKED_TACTICAL_ASSIGNMENTS 先写入（如皇太极④谋略、白起③突击·擒王、韩信③突击·背水）
-3. 柔性将：史料允许 2–3 个 archetype 时 → pickFlexibleArchetype（同池计数最低）
-4. 战略格：名将从 26 战略技（STRATEGIC_SKILL_CATALOG / STRATEGIC_SKILL_TAGS）独立跑低位优先；战术类(str_02/03/04/08/09)勿与六大类混配
-5. 提交前：auditTacticalDistribution + auditStrategicAssignment，任一技能占比 >25% 则回溯（④除外）
-
-【史料 > 配额】
-PRIMARY_ARCHETYPE_PRIORITY 能唯一决断 → 不得为凑配额改配。
-低位优先仅当多 archetype 皆有合格战役证据时启用。
-
-【技能库】
-名将战术 ①–⑤ / 普将战术 ⑥–⑩（镜像）；名将另选战略 26 技（六大类+战术类，见 STRATEGIC_SKILL_TAGS）。
-③侵掠如火：仅正面强攻一生标签；④全图极少（无史料不凑数）。
-
-【品阶】
-名将：主帅/开国/武庙/改变战局。普将：偏将、太守、局部亮点。
-
-【④⑨ 谋略 — 最易误判】
-④不战而屈：正史须有「未战而降/不攻自破/说退未战」；火烧赤壁、七擒孟获 → ②③⑨，禁④
-⑨釜底抽薪（普将）：断粮离间后仍可交战；与④严格区分
-
-【首选证据 — 强制】
-理由须引用≥1场正史具体战役（战役名+关键行动）。
-禁：「擅长奇袭」「以XX著称」等空泛句。
-
-【输出格式】
-将领名 | tier | tacticalId | strategicId | 理由（战役证据一句）
-
-【待评估名单】
-（在此列出将领）`;
+export const SKILL_ASSIGNMENT_PROMPT =
+    '旧 archetype 分配流程已停用；请按现行攻防六槽、三势与六种/三类规则配技。';

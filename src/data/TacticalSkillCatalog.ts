@@ -4856,8 +4856,8 @@ export const LEGACY_TAC_TO_V1: Readonly<Record<string, string>> = (() => {
 })();
 
 /**
- * 【批量迁移地基】旧 10 技到 V1 战术技的完整映射表（2026-07-03 定稿）
- * 不动现有 legacyTacId 避免影响运行时，此表专用于将 GeneralSkills.ts 中的旧 tac_xxx 批量替换为 ts_xxx。
+ * 【旧 ID 兼容】已退役 tac_* 到现行 ts_* 的映射（2026-07-03）
+ * 保留 legacyTacId 仅用于读取旧数据；禁止据此设计或分配新武将。
  */
 export const LEGACY_ARCHETYPE_TO_V1: Readonly<Record<string, string>> = {
     'tac_01': 'ts_001', // 以逸待劳 -> 百战不殆

@@ -104,8 +104,8 @@ function main(): void {
     }
     console.log('');
 
-    // 敌方减兵源用 tac_02（避实击虚，减 16.7%）：combat-model 开局减兵走旧 10 技 catalog，
-    // v1 兵力系 ts_021~030 尚未接入开局减兵路径（引擎减兵当前亦为 tac_xx）。
+    // 兼容性对照仍用旧 ID tac_02（避实击虚，减 16.7%）；
+    // 该测试只验证旧存档桥接，不代表现行技能分配口径。
     console.log('【③ 诱敌深入整场（siege，att 挂避实击虚 减 def 16.7%）—— att 胜率】');
     {
         const base = attWin(20000, 20000, null, 'siege', 'tac_02', '', '');

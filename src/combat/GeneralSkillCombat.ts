@@ -715,8 +715,8 @@ function canTriggerTactical(
     skill: TacticalSkillDef,
     triggeredSkillIds: Set<string>,
 ): boolean {
-    // 【2026-07-03】战术技不再限品阶：名将/普将均可用全部 10 个战术技。
-    //   触发时机由 skill.timing 决定（①–⑤开局放、⑥–⑩降至 60% 兵力放），品阶只决定是否额外带战略技。
+    // 战术技不按品阶限制；触发时机由 skill.timing / v1 phase 与 condition 决定。
+    // 品阶只决定是否可额外携带战略技。
     if (isOncePerBattleTactical(skill) && triggeredSkillIds.has(skill.id)) return false;
     return true;
 }
@@ -1868,9 +1868,7 @@ export function applyOpeningTacticalToRolls(
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }
 
-/**
- * 普将逆局战术（侧兵力 ≤ 开战 50% 时触发，⑥–⑩）
- */
+/** 逆局战术（达到 COMEBACK_TROOP_THRESHOLD 后按当前局技触发） */
 export function tryApplyComebackTacticalForSide(
     sideUnits: IBattleUnit[],
     opponentUnits: IBattleUnit[],

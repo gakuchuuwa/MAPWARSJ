@@ -1984,7 +1984,7 @@ function serverReadAllEntityData() {
     // tactical/strategic skill catalogs for UI dropdowns
     // 战术技：ts_xxx 定义在 TacticalSkillCatalog.ts（非 GeneralSkills.ts）。
     // 名将 profile.tacticalSkillId 已全迁移为 ts_xxx；旧 tac_01–10 仅作兼容映射，不再展示。
-    // grid 用 index 生成圈码字（①..㊿），与十格战术格视觉一致。
+    // grid 用 index 生成圈码字（①..㊿），仅作目录序号展示。
     const circledNum = (n: number): string => {
         if (n >= 1 && n <= 20) return String.fromCodePoint(0x2460 + n - 1);
         if (n >= 21 && n <= 35) return String.fromCodePoint(0x3251 + n - 21);
@@ -2332,8 +2332,8 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
     }
 
     // 11.5. 武将品阶与战略技匹配校验
-    //   【2026-07-03 改】战术技不再限品阶：名将/普将均可用全部 10 个战术技（时机由 skill.timing 决定）。
-    //   仅校验：名将 = 战略技 + 战术技；普将 = 仅战术技。
+    //   战术技不按品阶限制；名将与普将都按攻防六槽配置。
+    //   此处仅额外校验名将必须具有战略技。
     for (const [fId, g] of Object.entries(data.generals)) {
         const prof = data.profiles[g.generalId];
         if (!prof) continue;

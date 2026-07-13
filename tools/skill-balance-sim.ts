@@ -43,11 +43,11 @@ function header(title: string): void {
 
 const base = (over: Partial<UnitSpec> = {}): UnitSpec => ({ troops: 10000, region: 'CENTRAL', role: 'field', ...over });
 
-/** 逆局阈值扫描：找让逆局技 ≈ 开局技(~85%) 的 θ */
+/** 旧 tac_* 兼容基线：扫描逆局阈值，使逆局技与开局技效力接近 */
 function sweepComeback(): void {
     const T = TRIALS;
     console.log(`\n逆局阈值 θ 扫描  —  A(逆局技) vs B(裸)，等兵力 10000，每项 ${T.toLocaleString()} 次`);
-    console.log('目标：θ 使逆局技胜率 ≈ 开局技(~85%)，即与①–⑤ 一档平衡\n');
+    console.log('目标：θ 使逆局技胜率接近旧版开局技基线（约85%）\n');
     const tac = (id: string): UnitSpec => base({ general: { tier: 'ordinary', tacticalSkillId: id } });
     const skills: [string, string][] = [
         ['⑥哀兵必胜', 'tac_06'], ['⑦攻其不备', 'tac_07'], ['⑧置之死地', 'tac_08'],
@@ -127,7 +127,7 @@ function main(): void {
         [base({ troops: 10000 })], T), '1.5倍兵力→战术技×1.3');
     row('S④威震华夏(均势不触发)', winRate([famTac('str_04', 'tac_01')], [base()], T), '等兵力→无效果');
 
-    header('【5】开局战术价值（A 带战术技 vs B 裸，等兵力）');
+    header('【5】旧 tac_* 开局兼容基线（A 带战术技 vs B 裸，等兵力）');
     const tac = (id: string): UnitSpec => base({ general: { tier: 'ordinary', tacticalSkillId: id } });
     row('①以逸待劳', winRate([tac('tac_01')], [base()], T), '己战力×1.2(2026-07-03改,不写真实兵,零膨胀)');
     row('②避实击虚', winRate([tac('tac_02')], [base()], T), '敌-16.7%兵');
@@ -137,9 +137,9 @@ function main(): void {
     console.log('  ③④ 对撞（双方各带一技）：');
     row('③ vs ④', winRate([tac('tac_03')], [tac('tac_04')], T), '侵掠如火 vs 不战而屈');
 
-    header('【6】逆局战术翻盘力（A 劣势方，逐帧模拟）');
+    header('【6】旧 tac_* 逆局兼容基线（A 劣势方，逐帧模拟）');
     console.log(`  结构说明：己方掉到开战 ${(simConfig.comebackThreshold * 100).toFixed(0)}% 触发；重算掷 luck（概率化翻盘）。`);
-    console.log('           等兵力时逆局技 ≈ 85%（与开局技①–⑤ 同档）；下方为「带劣势」时的翻盘力。');
+    console.log('           等兵力时逆局技约85%；下方为「带劣势」时的翻盘力。');
     const runComeback = (bTroops: number) => {
         const weak = (id?: string): UnitSpec =>
             base({ troops: plain, general: id ? { tier: 'ordinary', tacticalSkillId: id } : null });

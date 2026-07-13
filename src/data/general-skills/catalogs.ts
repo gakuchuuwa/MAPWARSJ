@@ -1,12 +1,15 @@
 /**
  * 武将技 · 技能目录（从 GeneralSkills.ts 拆出，2026-07-13）
- * 战术十格 TACTICAL_SKILL_CATALOG / 战略技 STRATEGIC_SKILL_CATALOG / 守军·援军系统技。
+ * 旧 tac_* 存档兼容定义 / 战略技 STRATEGIC_SKILL_CATALOG / 守军·援军系统技。
  * ⚠ 批量脚本不得写本文件——武将档案在 profiles.ts。
  */
 import type { CityType } from '../../types/core';
 import type { TacticalSkillDef, StrategicSkillDef } from './types';
 
-/** 战术十格 */
+/**
+ * @deprecated 仅供读取旧存档中的 tac_01…tac_10。
+ * 新武将不得再分配 tac_*；现行战术技唯一目录是 TacticalSkillCatalog.ts 的 ts_* 条目。
+ */
 
 export const TACTICAL_SKILL_CATALOG: Record<string, TacticalSkillDef> = {
 
@@ -144,7 +147,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
 
 
-/** 守军系统技 effect（非战术十格 / 战略六大类） */
+/** 守军系统技 effect（非武将战术技 / 战略技） */
 
 export type GarrisonSystemEffect = 'pass_garrison_mult';
 

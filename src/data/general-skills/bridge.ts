@@ -1,6 +1,7 @@
 /**
  * 武将技 · v1 桥接（从 GeneralSkills.ts 拆出，2026-07-13）
- * ts_xxx（TacticalSkillCatalog v1 条目）→ 旧 TacticalSkillDef 格式合成，供旧引擎路径使用。
+ * ts_xxx（现行 TacticalSkillCatalog 条目）→ TacticalSkillDef 格式合成。
+ * 同时允许读取已退役的 tac_* 存档 ID，但新数据不得再写 tac_*。
  */
 import type { TacticalEffect, TacticalTiming, TacticalSkillDef } from './types';
 import { TACTICAL_SKILL_CATALOG } from './catalogs';
