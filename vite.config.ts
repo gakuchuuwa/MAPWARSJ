@@ -2640,6 +2640,18 @@ function serverSkillEditorSave(body: {
         }
     }
     text = text.slice(0, start) + block + text.slice(end);
+    // ── 自动同步 situationTag：从 baseEffect 推导 ──
+    const curEffect = seEntryField(block, 'baseEffect') ?? '';
+    const autoSit = SIX_CLASS_BY_EFFECT[curEffect]?.canonicalSituation;
+    if (autoSit) {
+        const curSit = seEntryField(block, 'situationTag');
+        if (curSit !== autoSit) {
+            text = text.replace(
+                new RegExp(`(id:\\\\s*'${body.id}'.*?situationTag:\\\\s*)'[^']*'`, 's'),
+                `$1'${autoSit}'`
+            );
+        }
+    }
     text = seRemoveFromTagTables(text, body.id);
     markBatchSaveWrite();
     fs.writeFileSync(fp, guardSerializedDataText(text, SE_TSC_PATH), 'utf-8');
@@ -2688,7 +2700,9 @@ function serverSkillEditorCreate(body: {
     const luckPart = Array.isArray(v) ? ` luckMin: ${v[0]}, luckMax: ${v[1]},` : '';
     const ownerPart = body.ownerGeneralId ? ` ownerGeneralId: '${body.ownerGeneralId}', ownerName: '${body.ownerName}',` : '';
     const notePart = body.note ? ` note: '${body.note}',` : '';
-    const line = `    { id: '${nextId}', layer: 'tactical', series: '${series}', index: ${maxIdx + 1}, displayName: '${body.displayName}', sourceQuote: '${body.sourceQuote}', baseEffect: '${body.baseEffect}', condition: '${body.condition}', phase: '${phase}', magnitude: ${magnitude},${luckPart} engineStatus: 'ready', situationTag: '${body.situationTag}', usageTag: '${body.usageTag}',${ownerPart} status: 'active',${notePart} },\n`;
+    // 自动推导 situationTag（从六类）
+    const autoSit = SIX_CLASS_BY_EFFECT[body.baseEffect]?.canonicalSituation ?? '均势';
+    const line = `    { id: '${nextId}', layer: 'tactical', series: '${series}', index: ${maxIdx + 1}, displayName: '${body.displayName}', sourceQuote: '${body.sourceQuote}', baseEffect: '${body.baseEffect}', condition: '${body.condition}', phase: '${phase}', magnitude: ${magnitude},${luckPart} engineStatus: 'ready', situationTag: '${autoSit}', usageTag: '${body.usageTag}',${ownerPart} status: 'active',${notePart} },\\n`;
     const anchor = /\n\];\n\nexport const TACTICAL_SKILL_ENTRIES_V1/;
     if (!anchor.test(text)) throw new Error('找不到目录尾部插入锚点');
     text = text.replace(anchor, `\n${line}];\n\nexport const TACTICAL_SKILL_ENTRIES_V1`);
