@@ -1,5 +1,5 @@
 /**
- * 战术技 v1 数据表（49 条定稿）
+ * 战术技数据表（793 条，含通用池 49 + T0/T1/T2 名将专属 + 大批量配发技）
  * layer=tactical；战略技将来同表加 layer=strategic。
  * 本文件只定义数据，战斗挂钩见 TacticalSkillResolver.ts / GeneralSkillCombat.ts。
  */
@@ -127,7 +127,7 @@ export interface TacticalConditionContext {
 
 // ── 三类六种（唯一判据代码；条文见 docs/02-design/武将技-分类逻辑说明.md）──────
 // 分类只看 baseEffect（第1步 效果→六种）＋ 劣势 condition 强制覆盖（第3步），
-// 不看典故、不看技名、不看 series（五系是另一套旧标签，勿混）。
+// 不看典故、不看技名、不看 series（仅是内部组织标签，勿混）。
 
 /** 六种（手法家族，借三十六计六套之名） */
 export type TacticalSixSet =
@@ -531,7 +531,7 @@ const COUNTER: TacticalSkillEntry[] = [
         displayName: '以子之矛', sourceQuote: '《韩非子·难一》：“以子之矛，陷子之盾，何如？”',
         baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 0.5, engineStatus: 'ready',
-        note: '绝品：magnitude=0.5 → 50%概率夺取敌技为己用（按敌技五家族 switch 自用），失败则仅否决。【2026-07-03 定】不设100%夺取（否决+复制双收益过强，破坏49技内部平衡）；直播牌面「夺【破釜沉舟】为己用」',
+        note: '绝品：magnitude=0.5 → 50%概率夺取敌技为己用，失败则仅否决。【2026-07-03 定】不设100%夺取（否决+复制双收益过强）；直播牌面「夺【破釜沉舟】为己用」',
     },
     {
         id: 'ts_045', layer: 'tactical', series: 'counter', index: 45,

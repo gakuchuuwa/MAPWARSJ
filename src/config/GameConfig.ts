@@ -307,11 +307,11 @@ export function rollCombatLuckMultiplier(): number {
     return LUCK_MIN + Math.random() * (LUCK_MAX - LUCK_MIN);
 }
 
-/** luck 绝对边界（防未来新增技能误传坏值；命运系区间硬夹于此） */
+/** luck 绝对边界（防未来新增技能误传坏值） */
 export const LUCK_ABS_MIN = 0.3;
 export const LUCK_ABS_MAX = 2.0;
 
-/** 在指定区间内均匀掷 luck（命运系战术技）；硬夹到 [LUCK_ABS_MIN, LUCK_ABS_MAX] */
+/** 在指定区间内均匀掷 luck；硬夹到 [LUCK_ABS_MIN, LUCK_ABS_MAX] */
 export function rollCombatLuckMultiplierInRange(min: number, max: number): number {
     const lo = Math.max(LUCK_ABS_MIN, Math.min(min, max));
     const hi = Math.min(LUCK_ABS_MAX, Math.max(min, max));

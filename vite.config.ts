@@ -1982,7 +1982,7 @@ function serverReadAllEntityData() {
     }
 
     // tactical/strategic skill catalogs for UI dropdowns
-    // 战术技：现行 49 技 ts_xxx 定义在 TacticalSkillCatalog.ts（非 GeneralSkills.ts）。
+    // 战术技：ts_xxx 定义在 TacticalSkillCatalog.ts（非 GeneralSkills.ts）。
     // 名将 profile.tacticalSkillId 已全迁移为 ts_xxx；旧 tac_01–10 仅作兼容映射，不再展示。
     // grid 用 index 生成圈码字（①..㊿），与十格战术格视觉一致。
     const circledNum = (n: number): string => {

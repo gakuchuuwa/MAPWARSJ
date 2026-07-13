@@ -260,7 +260,7 @@ function buildReport(data: Awaited<ReturnType<typeof run>>): string {
     lines.push('# 战术技 v1 条件权重与参数平衡报告');
     lines.push('');
     lines.push(`> 生成时间：${data.generatedAt}`);
-    lines.push('> 用途：冻结 49 条战术技数值前的条件权重与档位建议；**动代码前请主人过目**。');
+    lines.push('> 用途：战术技数值条件权重与档位建议；**动代码前请主人过目**。');
     lines.push('');
     lines.push('## 一、测算方法');
     lines.push('');

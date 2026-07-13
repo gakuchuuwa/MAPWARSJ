@@ -643,7 +643,7 @@ export const ARCHETYPE_TO_V1_TACTICAL: Record<
 };
 
 /**
- * 【v1 战术技 → 风格映射 · 2026-07-03】49 技各归 5 风格（唯一主 archetype）
+ * 【v1 战术技 → 风格映射 · 2026-07-03】按技能语义归类（非机械按 series 字段）
  *
  * 用途：武将已从 tac_01~10 迁移到 ts_xxx，旧 TACTICAL_SKILL_TAGS 只认 tac，
  * 导致 countTacticalByArchetype / auditTacticalDistribution 对 ts 全部失效。

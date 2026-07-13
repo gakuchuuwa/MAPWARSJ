@@ -175,7 +175,7 @@ function main(): void {
     if (missing.length > 0) {
         console.log(`🔴 ${missing.length} 技缺分配层标注: ${missing.map(e => e.id).join(', ')}`);
     } else {
-        console.log('✅ 49 技全部有分配层标注');
+        console.log('✅ 全部有分配层标注');
     }
     // 高频/无条件却偏强的技，分配层必须非 common（限量/豪赌/AI守）
     const leaks = rows.filter(r =>
