@@ -510,7 +510,7 @@ export function resolveOpeningFateEntry(
     return isOpeningFateLuckEntry(entry) ? entry : null;
 }
 
-/** 统计 v1 表引擎就绪度（审计 / CI） */
+/** 统计 v1 表引擎就绪度（审计 / CI）。bySeries 保留仅为兼容旧审计输出，设计分类以三势六计为准。 */
 export function auditTacticalSkillEngineReadiness(): {
     total: number;
     ready: number;

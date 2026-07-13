@@ -14,19 +14,19 @@ const V1_EFFECT_BRIDGE: Record<string, { effect: TacticalEffect; timing: Tactica
     enemy_sub_troops_opening:   { effect: 'enemy_sub_troops',   timing: 'opening' },
     ally_add_troops_comeback:   { effect: 'ally_add_troops',    timing: 'comeback' },
     win_casualty_reduction:     { effect: 'ally_casualty_reduce', timing: 'opening' },
-    // ── 命运系 ──
+    // ── 掷点类 ──
     luck_variance_self:         { effect: 'ally_luck_up',       timing: 'opening' },
     luck_variance_enemy:        { effect: 'enemy_luck_down',    timing: 'opening' },
     luck_lock_self:             { effect: 'ally_luck_lock',     timing: 'opening' },
     recompute_comeback:         { effect: 'ally_recompute',     timing: 'comeback' },
-    // ── 兵力系 ──
+    // ── 兵力类 ──
     ally_add_troops_opening:    { effect: 'ally_add_troops',    timing: 'opening' },
-    // ── 战损系 ──
+    // ── 战后恢复/咬人类 ──
     elite_casualty_reduction:   { effect: 'ally_elite_casualty', timing: 'opening' },
     lose_enemy_casualty_boost:  { effect: 'lose_effect',        timing: 'comeback' },
     lose_zero_enemy_recovery:   { effect: 'lose_effect',        timing: 'comeback' },
     post_recovery_rate:         { effect: 'ally_recovery',      timing: 'comeback' },
-    // ── 对抗系 ──
+    // ── 克夺反制类 ──
     negate_enemy_skill:         { effect: 'enemy_counter',      timing: 'opening' },
     partial_negate_enemy_skill: { effect: 'enemy_counter',      timing: 'opening' },
     steal_enemy_skill:          { effect: 'enemy_counter',      timing: 'opening' },

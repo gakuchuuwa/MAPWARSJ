@@ -8,13 +8,13 @@ import type { LandTerrainKind } from '../world/land-sea';
 
 export type SkillLayer = 'tactical' | 'strategic';
 
-/** 五系（戏码分类，供 UI / 分配 / 审计；原第六系"士气系"仅一鼓作气一条，已并入强化系） */
+/** @deprecated 旧五系组织标签（仅数据层内部残留，不参与战斗/分配判定）。设计分类以三势六计为准。 */
 export type TacticalSeries =
-    | 'enhance'   // 强化系
-    | 'fate'      // 命运系
-    | 'troop'     // 兵力系
-    | 'casualty'  // 战损系
-    | 'counter';  // 对抗系
+    | 'enhance'
+    | 'fate'
+    | 'troop'
+    | 'casualty'
+    | 'counter';
 
 /** 结算时点（按战斗流程排序） */
 export type TacticalSkillPhase =
@@ -217,7 +217,7 @@ export function getTacticalTriClass(entry: TacticalSkillEntry): TacticalTriClass
     return SIX_SET_TO_TRI_CLASS[EFFECT_TO_SIX_SET[entry.baseEffect]];
 }
 
-// ── 一、强化系 ─────────────────────────────────────────────
+// ── 一、攻战/胜战类（ally_power_mult / enemy_sub_troops）──
 const ENHANCE: TacticalSkillEntry[] = [
     {
         id: 'ts_001', layer: 'tactical', series: 'enhance', index: 1,
@@ -294,11 +294,11 @@ const ENHANCE: TacticalSkillEntry[] = [
         displayName: '一鼓作气', sourceQuote: '《左传·庄公十年》：“夫战，勇气也。一鼓作气，再而衰，三而竭。”',
         baseEffect: 'first_sortie_power_mult', condition: 'first_sortie', phase: 'opening_roll',
         magnitude: 1.25, engineStatus: 'ready',
-        note: '出征首战×1.25（桥接 ally_mult_1_2 + first_sortie 门控）；契合名将远征首战爆发看点；原士气系并入强化系',
+        note: '出征首战×1.25（桥接 ally_mult_1_2 + first_sortie 门控）；契合名将远征首战爆发看点',
     },
 ];
 
-// ── 二、命运系 ─────────────────────────────────────────────
+// ── 二、敌战/混战类（luck_variance / steal / negate）──
 const FATE: TacticalSkillEntry[] = [
     {
         id: 'ts_012', layer: 'tactical', series: 'fate', index: 12,
@@ -362,7 +362,7 @@ const FATE: TacticalSkillEntry[] = [
     },
 ];
 
-// ── 三、兵力系 ─────────────────────────────────────────────
+// ── 三、兵力增减技（enemy_sub_troops / ally_add_troops / dual）──
 const TROOP: TacticalSkillEntry[] = [
     {
         id: 'ts_021', layer: 'tactical', series: 'troop', index: 21,
@@ -434,7 +434,7 @@ const TROOP: TacticalSkillEntry[] = [
     },
 ];
 
-// ── 四、战损系 ─────────────────────────────────────────────
+// ── 四、并战/败战类（casualty_reduction / recovery / bite）──
 const CASUALTY: TacticalSkillEntry[] = [
     {
         id: 'ts_031', layer: 'tactical', series: 'casualty', index: 31,
@@ -510,7 +510,7 @@ const CASUALTY: TacticalSkillEntry[] = [
     },
 ];
 
-// ── 五、对抗系 ─────────────────────────────────────────────
+// ── 五、对抗反制技（negate / partial_negate / steal / reflect）──
 const COUNTER: TacticalSkillEntry[] = [
     {
         id: 'ts_042', layer: 'tactical', series: 'counter', index: 42,
@@ -4883,12 +4883,8 @@ export function getTacticalSkillEntryForGeneral(tacticalSkillId: string): Tactic
     return mapped ? getTacticalSkillEntry(mapped) : null;
 }
 
-export function listTacticalSkillsBySeries(series: TacticalSeries): TacticalSkillEntry[] {
-    return TACTICAL_SKILL_ENTRIES_V1.filter((e) => e.series === series);
-}
-
 /**
- * ── 分配层策略（2026-07-03 立）──────────────────────────────
+ * ── 分配层策略（2026-07-03 立）──
  * 战术技「单层平衡」的第二道闸门（第一道=条件稀有度）。
  * 主人裁定：条件技「触发即爆发」是设计意图（战术深度/直播看点），
  * 靠触发率 + 本分配层摊薄；无条件/准无条件强技则靠此层限量，防乱发污染均势 AI 生态。
