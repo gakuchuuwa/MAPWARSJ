@@ -411,6 +411,23 @@ export default defineConfig({
                 });
 
                 // ========================================================
+                // /api/check-skill-coverage
+                //   当前攻防六槽 + 可分配战略技：每个技能都必须至少有一名武将佩戴
+                // ========================================================
+                server.middlewares.use('/api/check-skill-coverage', (req, res) => {
+                    if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
+                    try {
+                        const report = serverCheckGeneralSkillCoverage();
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: report.unusedTactical.length === 0 && report.unusedStrategic.length === 0, ...report }));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: false, error: err.message }));
+                    }
+                });
+
+                // ========================================================
                 // /api/check-proximity
                 //   检查坐标与所有已有据点的50km间距
                 // ========================================================
@@ -683,6 +700,30 @@ function serverInsertIntoStructure(text: string, keyword: string, line: string, 
     const needsComma = lastCh !== ',' && lastCh !== openCh;
     const newSegment = `${needsComma ? ',' : ''}${lineEnding}${indent}${line}`;
     return text.slice(0, scan + 1) + newSegment + text.slice(scan + 1);
+}
+
+/**
+ * 写盘前防线：拦截「对象闭合 } 后紧跟两个逗号」`},,` 这类会让整个 build 崩溃的畸形序列化。
+ * [2026-07-13] 曾有一次性批量写入在 profiles.ts 留下 21 处 `},,`，导致 vite/tsx 全量解析失败。
+ * 当前保存路径本身不产此错，但作为最后一道闸门，凡经此函数落盘的数据文件一律自愈 + 告警，
+ * 避免任何来源（批量脚本 / 手工粘贴 / 未来改动）的双逗号畸形悄悄进入源文件。
+ */
+function guardSerializedDataText(text: string, label: string): string {
+    // 匹配：} 后可含空白 + 逗号 + 空白 + 再一个逗号 → 收敛为单逗号；循环到稳定以吃掉 3+ 连逗号
+    const re = /\}(\s*),(\s*),/g;
+    let count = 0;
+    let out = text;
+    for (;;) {
+        let hit = 0;
+        const next = out.replace(re, (_m, s1, _s2) => { hit++; return `}${s1},`; });
+        count += hit;
+        if (hit === 0) break;
+        out = next;
+    }
+    if (count > 0) {
+        console.warn(`⚠ [写盘防线] ${label}: 检测并修复 ${count} 处畸形双逗号 "},," → "},"（畸形源非本保存路径，请排查最近的批量写入）`);
+    }
+    return out;
 }
 
 // ============================================================
@@ -2171,8 +2212,8 @@ function serverSaveGeneral(data: {
     }
 
     markBatchSaveWrite();
-    fs.writeFileSync(fgPath, fgText, 'utf-8');
-    fs.writeFileSync(gsPath, gsText, 'utf-8');
+    fs.writeFileSync(fgPath, guardSerializedDataText(fgText, 'FactionGenerals.ts'), 'utf-8');
+    fs.writeFileSync(gsPath, guardSerializedDataText(gsText, 'general-skills/profiles.ts'), 'utf-8');
     return results;
 }
 
@@ -2220,6 +2261,62 @@ function serverSaveEliteLegion(data: {
     markBatchSaveWrite();
     fs.writeFileSync(fp, text, 'utf-8');
     return { file: info.file, operation: exists ? 'replace' : 'insert', cleanedFrom };
+}
+
+/**
+ * batch-manager 中允许武将佩戴、且必须至少有一名武将佩戴的战略技。
+ * str_11 长驱深入是远征默认能力；据险而守与守土继绝分别是关隘、文化中心系统技。
+ * 三者均不纳入武将技能覆盖检查。
+ */
+const REQUIRED_STRATEGIC_SKILL_IDS = [
+    'str_01', 'str_10', 'str_12',            // 加速
+    'str_06', 'str_07', 'str_13', 'str_28',  // 续航
+    'str_16', 'str_17', 'str_18',            // 视野
+    'str_19', 'str_20', 'str_21',            // 威慑
+    'str_22', 'str_23', 'str_24',            // 纵横
+    'str_05', 'str_25', 'str_26', 'str_27',  // 防务
+] as const;
+
+function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
+    const tacticalWearers = new Map<string, number>();
+    const strategicWearers = new Map<string, number>();
+
+    for (const prof of Object.values(data.profiles)) {
+        // 只认现行攻防六槽。tacticalSkillId 与旧三槽仅是兼容回退，不算实际覆盖。
+        for (const id of [
+            prof.atkAdvantageSkillId, prof.atkBalanceSkillId, prof.atkDisadvantageSkillId,
+            prof.defAdvantageSkillId, prof.defBalanceSkillId, prof.defDisadvantageSkillId,
+        ]) {
+            if (id) tacticalWearers.set(id, (tacticalWearers.get(id) ?? 0) + 1);
+        }
+        if (prof.strategicSkillId) {
+            strategicWearers.set(
+                prof.strategicSkillId,
+                (strategicWearers.get(prof.strategicSkillId) ?? 0) + 1,
+            );
+        }
+    }
+
+    const strategicNames = new Map(data.strategicSkills.map(s => [s.id, s.displayName]));
+    const unusedTactical = data.tacticalSkills
+        .filter(s => (tacticalWearers.get(s.id) ?? 0) === 0)
+        .map(s => ({ id: s.id, displayName: s.displayName }));
+    const unusedStrategic = REQUIRED_STRATEGIC_SKILL_IDS
+        .filter(id => (strategicWearers.get(id) ?? 0) === 0)
+        .map(id => ({ id, displayName: strategicNames.get(id) ?? id }));
+
+    return {
+        tactical: {
+            total: data.tacticalSkills.length,
+            used: data.tacticalSkills.length - unusedTactical.length,
+        },
+        strategic: {
+            total: REQUIRED_STRATEGIC_SKILL_IDS.length,
+            used: REQUIRED_STRATEGIC_SKILL_IDS.length - unusedStrategic.length,
+        },
+        unusedTactical,
+        unusedStrategic,
+    };
 }
 
 function serverValidateEntities(): Array<{ level: string; msg: string; factionId?: string }> {
@@ -2356,16 +2453,9 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         });
     }
 
-    // 合法战略武将技白名单 —— 唯一权威（主人定稿的 20 个）。名单外一律非法：
-    //   含 str_11 长驱深入（远征技，走脚本层）、str_02/03/04/08/09（战术类乘区，已退役）。
-    const CANONICAL_STRATEGIC_IDS = new Set([
-        'str_01', 'str_10', 'str_12',            // 加速
-        'str_06', 'str_07', 'str_13', 'str_28',  // 续航
-        'str_16', 'str_17', 'str_18',            // 视野
-        'str_19', 'str_20', 'str_21',            // 威慑
-        'str_22', 'str_23', 'str_24',            // 纵横
-        'str_05', 'str_25', 'str_26', 'str_27',  // 防务
-    ]);
+    // 合法战略武将技白名单。str_11 是远征系统默认能力，不占武将战略格；
+    // str_02/03/04/08/09 为已退役战斗乘区，不属于可分配战略技。
+    const CANONICAL_STRATEGIC_IDS = new Set<string>(REQUIRED_STRATEGIC_SKILL_IDS);
 
     // 【主人定 2026-07-13】战略技允许跨势佩戴（武将 aptitude ≠ 技三势，符合历史即可），
     //   原「STRATEGIC_APTITUDE 三势对照表 + 跨势 warn」已删，勿再加此类校验。
@@ -2406,29 +2496,13 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         }
     }
 
-    // 11.7. [NEW] 战略技白名单校验（唯一权威 = CANONICAL_STRATEGIC_IDS 的 20 个）
-    //   ① 每个白名单战略技都必须有武将佩戴（空技 = 违规）
-    //   ② 名将佩戴的战略技必须在白名单内（戴 str_11 远征技、退役战术类等 = 非法）
+    // 11.7. 战略技白名单校验：名将佩戴的战略技必须在白名单内。
+    // 技能是否至少有人使用统一交给规则 11.8，避免重复报错。
     {
         const strNameById = new Map(data.strategicSkills.map(s => [s.id, s.displayName]));
         const nameOf = (id: string) => strNameById.get(id) ?? id;
 
-        // 各战略技佩戴人数（全体档案）
-        const wearerCount = new Map<string, number>();
-        for (const prof of Object.values(data.profiles)) {
-            const sid = prof.strategicSkillId;
-            if (sid) wearerCount.set(sid, (wearerCount.get(sid) ?? 0) + 1);
-        }
-
-        // ① 20 个战略技，每个都要有人戴
-        for (const sid of CANONICAL_STRATEGIC_IDS) {
-            if ((wearerCount.get(sid) ?? 0) === 0) {
-                issues.push({ level: 'error', msg: `战略技 "${nameOf(sid)}"(${sid}) 无任何武将佩戴（20 个战略技都必须有人戴）` });
-            }
-        }
-
-        // ② 名将战略技合法性（白名单）
-        //   str_11 长驱深入（远征技）主人定：佩戴放行、不报错；也不参与①的"必须有人戴"（不在白名单 20 内）。
+        // str_11 长驱深入（远征技）主人定：佩戴放行、不报错，也不参与覆盖检查。
         //   【主人定 2026-07-13】战略技允许跨势佩戴（武将 aptitude ≠ 技三势，只要符合历史即可）：
         //   不校验、不报 warn。勿再加"三势不符/跨势"类检查。
         const WEAR_EXEMPT_IDS = new Set(['str_11']);
@@ -2444,24 +2518,16 @@ function serverValidateEntities(): Array<{ level: string; msg: string; factionId
         }
     }
 
-    // 11.8. [NEW] 战术技覆盖：目录里每个战术技（ts_*）都必须有武将佩戴
-    //   佩戴口径 = 武将档案全部战术格任一（通用 / 优·均·劣三势格 / 攻三格 / 守三格，共 10 字段）。
-    //   无人佩戴的战术技 = 空技，报错（需配将，或从 TACTICAL_SKILL_CATALOG 删除）。
+    // 11.8. 技能覆盖：当前攻防六槽中的每个 ts_*，以及 20 个可分配战略技，都必须有人佩戴。
+    // 排除：长驱深入（远征）、据险而守（关隘）、守土继绝（文化中心）。
+    // tacticalSkillId 与旧三槽只是兼容回退，不计作“有人使用”，避免废弃字段造成假通过。
     {
-        const wornTactical = new Set<string>();
-        for (const prof of Object.values(data.profiles)) {
-            for (const id of [
-                prof.tacticalSkillId, prof.advantageSkillId, prof.balanceSkillId, prof.disadvantageSkillId,
-                prof.atkAdvantageSkillId, prof.atkBalanceSkillId, prof.atkDisadvantageSkillId,
-                prof.defAdvantageSkillId, prof.defBalanceSkillId, prof.defDisadvantageSkillId,
-            ]) {
-                if (id) wornTactical.add(id);
-            }
+        const coverage = serverCheckGeneralSkillCoverage(data);
+        for (const s of coverage.unusedTactical) {
+            issues.push({ level: 'error', msg: `战术技 "${s.displayName}"(${s.id}) 未出现在任何武将的攻防六槽（所有战术技都必须有人使用）` });
         }
-        for (const s of data.tacticalSkills) {
-            if (!wornTactical.has(s.id)) {
-                issues.push({ level: 'error', msg: `战术技 "${s.displayName}"(${s.id}) 无任何武将佩戴（所有战术技都必须有人戴，请配将或删除该技）` });
-            }
+        for (const s of coverage.unusedStrategic) {
+            issues.push({ level: 'error', msg: `战略技 "${s.displayName}"(${s.id}) 无任何武将佩戴（所有可分配战略技都必须有人使用）` });
         }
     }
 

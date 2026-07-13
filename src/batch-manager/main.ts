@@ -65,6 +65,15 @@ interface ValidationIssue {
     factionId?: string;
 }
 
+interface SkillCoverageReport {
+    ok: boolean;
+    tactical: { total: number; used: number };
+    strategic: { total: number; used: number };
+    unusedTactical: Array<{ id: string; displayName: string }>;
+    unusedStrategic: Array<{ id: string; displayName: string }>;
+    error?: string;
+}
+
 // ── Pinyin helpers ──
 
 function toPinyinId(chinese: string): string {
@@ -116,6 +125,7 @@ app.innerHTML = `
     <a href="/portrait-tuner.html" class="bm-link">立绘调校</a>
     <button type="button" id="bm-reload" class="bm-btn">刷新数据</button>
     <button type="button" id="bm-export" class="bm-btn">导出名册</button>
+    <button type="button" id="bm-skill-coverage" class="bm-btn bm-btn-warn" title="只检查武将可佩戴技能；不含长驱深入、据险而守、守土继绝">检查技能覆盖</button>
     <button type="button" id="bm-validate" class="bm-btn bm-btn-warn">运行校验</button>
   </div>
 </header>
@@ -143,7 +153,7 @@ app.innerHTML = `
 </div>
 <div id="bm-validation" class="bm-validation" style="display:none">
   <div class="bm-validation-header">
-    <span>校验结果</span>
+    <span id="bm-validation-title">校验结果</span>
     <button type="button" id="bm-close-validation" class="bm-btn bm-btn-sm">关闭</button>
   </div>
   <div id="bm-validation-list"></div>
@@ -161,6 +171,7 @@ const els = {
     panel: document.getElementById('bm-panel')!,
     panelContent: document.getElementById('bm-panel-content')!,
     validation: document.getElementById('bm-validation')!,
+    validationTitle: document.getElementById('bm-validation-title')!,
     validationList: document.getElementById('bm-validation-list')!,
     toast: document.getElementById('bm-toast')!,
 };
@@ -1740,6 +1751,7 @@ async function runValidation(): Promise<void> {
         const res = await fetch('/api/validate-entities');
         const data = await res.json();
         issues = data.issues ?? [];
+        els.validationTitle.textContent = '校验结果';
         renderValidation();
         els.validation.style.display = 'block';
         applyFilter();
@@ -1747,6 +1759,52 @@ async function runValidation(): Promise<void> {
         updateStats();
     } catch (err: any) {
         showToast(`校验失败: ${err.message}`, true);
+    }
+}
+
+async function runSkillCoverageCheck(): Promise<void> {
+    try {
+        const res = await fetch('/api/check-skill-coverage');
+        const report = await res.json() as SkillCoverageReport;
+        if (!res.ok || report.error) {
+            throw new Error(report.error ?? `HTTP ${res.status}`);
+        }
+
+        issues = [
+            ...report.unusedTactical.map(s => ({
+                level: 'error',
+                msg: `战术技 "${s.displayName}"(${s.id}) 未被任何武将的攻防六槽使用`,
+            })),
+            ...report.unusedStrategic.map(s => ({
+                level: 'error',
+                msg: `战略技 "${s.displayName}"(${s.id}) 无任何武将佩戴`,
+            })),
+            {
+                level: 'info',
+                msg: `技能覆盖：战术 ${report.tactical.used}/${report.tactical.total}，战略 ${report.strategic.used}/${report.strategic.total}`,
+            },
+            {
+                level: 'info',
+                msg: '排除系统技能：长驱深入（远征）、据险而守（关隘）、守土继绝（文化中心）',
+            },
+        ];
+
+        els.validationTitle.textContent = '武将技能覆盖检查';
+        renderValidation();
+        els.validation.style.display = 'block';
+        applyFilter();
+        renderTable();
+        updateStats();
+
+        const missing = report.unusedTactical.length + report.unusedStrategic.length;
+        showToast(
+            missing === 0
+                ? `✓ 所有武将技能均有人使用（战术 ${report.tactical.total}，战略 ${report.strategic.total}）`
+                : `技能覆盖失败：${missing} 个技能无人使用`,
+            missing > 0,
+        );
+    } catch (err: any) {
+        showToast(`技能覆盖检查失败: ${err.message}`, true);
     }
 }
 
@@ -1967,6 +2025,9 @@ function bindEvents(): void {
     });
     document.getElementById('bm-export')!.addEventListener('click', () => {
         exportCatalog();
+    });
+    document.getElementById('bm-skill-coverage')!.addEventListener('click', () => {
+        runSkillCoverageCheck();
     });
     document.getElementById('bm-validate')!.addEventListener('click', () => {
         runValidation();

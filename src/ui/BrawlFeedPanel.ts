@@ -121,7 +121,7 @@ function formatPassSiegeLine(
            `<span class="feed-legion">${escapeHtml(legionName)}</span>` +
            `<span class="feed-action">攻打</span>` +
            `<span class="feed-city">${escapeHtml(cityName)}</span>` +
-           `<span class="feed-action">，驻军拒险而战。</span>`;
+           `<span class="feed-action">，驻军据险而守。</span>`;
 }
 
 /**

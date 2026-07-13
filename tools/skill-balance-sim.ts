@@ -111,21 +111,34 @@ function main(): void {
     }
 
     header('【4】战略技价值（A 名将带战略技 vs B 裸，等兵力）');
+    // 战斗战力乘区类战略技（str_03/04/08/09）已于战略技 v2 退役（2026-07-11），改由三势适性/战术技承担；
+    // 现存战略技全是大地图效果（行军/隐蔽/征兵/威慑），对战斗 winRate 无影响，故本节仅测目录中仍存在者。
     const fam = (str: string): UnitSpec => base({ general: { tier: 'famous', tacticalSkillId: '', strategicSkillId: str } });
     const famTac = (str: string, tac: string): UnitSpec => base({ general: { tier: 'famous', tacticalSkillId: tac, strategicSkillId: str } });
-    row('S③所向披靡(攻)', winRate([fam('str_03')], [base()], T, 'plain'), `攻方×${STRATEGIC_SKILL_CATALOG.str_03.magnitude}`);
-    row('S⑧固若金汤(守攻城)', winRate([base()], [fam('str_08')], T, 'plain', 'siege'), `攻城战守方×${STRATEGIC_SKILL_CATALOG.str_08.magnitude}`);
-    row('S⑧固若金汤(野战无效)', winRate([base()], [fam('str_08')], T, 'plain', 'field'), '野战→无效果');
+    const hasStr = (id: string): boolean => !!STRATEGIC_SKILL_CATALOG[id];
+    const skipped: string[] = [];
+    const strRow = (id: string, label: string, run: () => number, note: string): void => {
+        if (!hasStr(id)) { skipped.push(`${id}(${label})`); return; }
+        row(label, run(), note);
+    };
+    strRow('str_03', 'S③所向披靡(攻)', () => winRate([fam('str_03')], [base()], T, 'plain'),
+        hasStr('str_03') ? `攻方×${STRATEGIC_SKILL_CATALOG.str_03.magnitude}` : '');
+    strRow('str_08', 'S⑧固若金汤(守攻城)', () => winRate([base()], [fam('str_08')], T, 'plain', 'siege'),
+        hasStr('str_08') ? `攻城战守方×${STRATEGIC_SKILL_CATALOG.str_08.magnitude}` : '');
+    strRow('str_08', 'S⑧固若金汤(野战无效)', () => winRate([base()], [fam('str_08')], T, 'plain', 'field'), '野战→无效果');
     // S⑨以寡击众：A(劣势方,6000兵,带str_09) vs B(优势方,10000兵)
-    row('S⑨以寡击众(劣势触发)', winRate(
+    strRow('str_09', 'S⑨以寡击众(劣势触发)', () => winRate(
         [base({ troops: 6000, general: { tier: 'famous', tacticalSkillId: '', strategicSkillId: 'str_09' } })],
         [base({ troops: 10000 })], T), '0.6倍兵力→己×1.4');
-    row('S⑨以寡击众(均势不触发)', winRate([fam('str_09')], [base()], T), '等兵力→无效果');
+    strRow('str_09', 'S⑨以寡击众(均势不触发)', () => winRate([fam('str_09')], [base()], T), '等兵力→无效果');
     // S④威震华夏：A(优势方,15000兵,带str_04+tac_01) vs B(10000兵)
-    row('S④威震华夏(优势触发)', winRate(
+    strRow('str_04', 'S④威震华夏(优势触发)', () => winRate(
         [base({ troops: 15000, general: { tier: 'famous', tacticalSkillId: 'tac_01', strategicSkillId: 'str_04' } })],
         [base({ troops: 10000 })], T), '1.5倍兵力→战术技×1.3');
-    row('S④威震华夏(均势不触发)', winRate([famTac('str_04', 'tac_01')], [base()], T), '等兵力→无效果');
+    strRow('str_04', 'S④威震华夏(均势不触发)', () => winRate([famTac('str_04', 'tac_01')], [base()], T), '等兵力→无效果');
+    if (skipped.length) {
+        console.log(`  （已退役、跳过 ${skipped.length} 项：${[...new Set(skipped.map(s => s.split('(')[0]))].join(', ')} — 战力乘区类战略技已于 v2 退役）`);
+    }
 
     header('【5】旧 tac_* 开局兼容基线（A 带战术技 vs B 裸，等兵力）');
     const tac = (id: string): UnitSpec => base({ general: { tier: 'ordinary', tacticalSkillId: id } });

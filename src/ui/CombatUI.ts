@@ -980,7 +980,7 @@ export class CombatUI {
                     sideColor = '#00e5ff'; // 战略守：青
                 }
             } else if (skillType === 'pass') {
-                // 关隘/据险而守：使用岩石/大地色系
+                // 关隘「据险而守」/文化中心「守土继绝」：使用岩石/大地色系
                 if (isAttacker) {
                     bgColor = isFamous ? 'rgba(70, 50, 20, 0.85)' : 'rgba(50, 40, 20, 0.8)';
                     sideColor = '#c4a45a'; // 关隘攻：土黄（理论上关隘不攻击，仅为防错）

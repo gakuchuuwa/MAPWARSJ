@@ -55,7 +55,7 @@ function getPassGarrisonMultiplier(unit: IBattleUnit): number {
     return 1;
 }
 
-/** 14 文化中心据点守军「据险而守」系数（非中心或非城防恒为 1） */
+/** 14 文化中心据点守军「守土继绝」系数（非中心或非城防恒为 1） */
 function getRegionCenterGarrisonMultiplier(unit: IBattleUnit): number {
     if (!isGarrisonUnit(unit)) return 1;
     const city = unit.getEntity?.() as { id?: string } | undefined;
@@ -72,17 +72,17 @@ export function getCultureOnlyCombatMultiplier(unit: IBattleUnit): number {
     return getCultureCombatMultiplier(region, role);
 }
 
-/** 关隘守军拒险而守系数（非 pass 或非农夫城防恒为 1） */
+/** 关隘守军「据险而守」系数（非 pass 或非城防恒为 1） */
 export function getPassGarrisonCombatMultiplier(unit: IBattleUnit): number {
     return getPassGarrisonMultiplier(unit);
 }
 
-/** 14 文化中心守军据险而守系数（非中心或非城防恒为 1） */
+/** 14 文化中心守军「守土继绝」系数（非中心或非城防恒为 1） */
 export function getRegionCenterCombatMultiplier(unit: IBattleUnit): number {
     return getRegionCenterGarrisonMultiplier(unit);
 }
 
-/** 单单位固定战力系数 = 文化区 ×（关隘守军拒险而守 ×1.2）×（文化中心守军据险而守 ×1.2） */
+/** 单单位固定战力系数 = 文化区 ×（关隘「据险而守」×1.2）×（文化中心「守土继绝」×1.2） */
 export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
     return (
         getCultureOnlyCombatMultiplier(unit) *

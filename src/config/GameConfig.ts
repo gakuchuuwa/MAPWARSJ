@@ -205,9 +205,9 @@ export class GameConfig {
             JAPAN: 1.05, KOREA: 1.15, JIANGNAN: 1.20,
             LINGNAN: 1.00, DIANQIAN: 0.85, BASHU: 1.20,
         } as Record<string, number>,
-        /** 关隘据点守军额外系数（拒险而守；与 GeneralSkills「拒险而战」展示名对应） */
+        /** 关隘据点守军额外系数（与系统技「据险而守」对应） */
         PASS_GARRISON_MULT: 1.2,
-        /** 14 文化中心据点守军额外系数（据险而守；与 GeneralSkills「据险而守」展示名对应）*/
+        /** 14 文化中心据点守军额外系数（与系统技「守土继绝」对应） */
         REGION_CENTER_GARRISON_MULT: 1.2,
     };
     // [2026-06-12 删除] static MORALE（士气衰减 + FLANKING 侧翼系数）——全项目零引用的死配置。
