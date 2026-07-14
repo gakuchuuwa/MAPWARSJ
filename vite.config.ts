@@ -2598,10 +2598,25 @@ function serverSkillEditorList() {
 }
 
 /** 保存一条：元数据内联写入 + 档位查表写数值 + 散表迁移退役 */
+/** 六计 → 机制模板（专属/签名档口径；setSixClass 时服务端据此原子改 baseEffect+数值+条件+阶段）。
+ *  luck 系写 [luckMin,luckMax] 并删 magnitude 语义歧义；其余写 magnitude。 */
+const SE_SIX_TO_MECHANIC: Record<string, {
+    baseEffect: string; magnitude?: number; luckMin?: number; luckMax?: number;
+    condition: string; phase: string;
+}> = {
+    '攻战计': { baseEffect: 'ally_power_mult', magnitude: 1.1, condition: 'battle_field', phase: 'opening_roll' },
+    '胜战计': { baseEffect: 'enemy_sub_troops_opening', magnitude: 0.09, condition: 'always', phase: 'pre_opening_troops' },
+    '敌战计': { baseEffect: 'luck_variance_enemy', luckMin: 0.5, luckMax: 1.5, condition: 'always', phase: 'opening_roll' },
+    '混战计': { baseEffect: 'negate_enemy_skill', magnitude: 0.7, condition: 'always', phase: 'opening_roll' },
+    '并战计': { baseEffect: 'win_casualty_reduction', magnitude: 0.5, condition: 'always', phase: 'mid_battle_passive' },
+    '败战计': { baseEffect: 'lose_enemy_casualty_boost', magnitude: 1.5, condition: 'ratio_underdog', phase: 'mid_battle_passive' },
+};
+
 function serverSkillEditorSave(body: {
     id: string; situationTag?: string; usageTag?: string;
     ownerGeneralId?: string | null; ownerName?: string | null;
     status?: string; tierLabel?: string;
+    setSixClass?: string; sourceQuote?: string; note?: string;
 }): { warnings: string[] } {
     const warnings: string[] = [];
     if (!/^ts_\d+$/.test(body.id)) throw new Error('非法 id');
@@ -2613,11 +2628,38 @@ function serverSkillEditorSave(body: {
         if (!data.profiles[body.ownerGeneralId]) throw new Error(`典故主 ${body.ownerGeneralId} 不在册（须为在册武将 generalId）`);
         if (!body.ownerName) throw new Error('指定典故主时须同时给 ownerName');
     }
+    if (body.setSixClass && !SE_SIX_TO_MECHANIC[body.setSixClass]) throw new Error(`非法六计 ${body.setSixClass}`);
     const fp = path.resolve(__dirname, SE_TSC_PATH);
     let text = fs.readFileSync(fp, 'utf-8');
     const { start, end } = seFindEntryBlock(text, body.id);
     let block = text.slice(start, end);
 
+    // ── 六计重派：原子改 baseEffect + 数值 + 条件 + 阶段（走服务端串行写，杜绝 Edit 竞争回退）──
+    if (body.setSixClass) {
+        if (SE_LOCKED_MAGNITUDE.has(body.id)) throw new Error(`${body.id} 为定稿锁定值，禁改六计`);
+        const m = SE_SIX_TO_MECHANIC[body.setSixClass];
+        block = block.replace(/(baseEffect:\s*)'[^']*'/, `$1'${m.baseEffect}'`);
+        block = block.replace(/(condition:\s*)'[^']*'/, `$1'${m.condition}'`);
+        block = block.replace(/(phase:\s*)'[^']*'/, `$1'${m.phase}'`);
+        // luck 系与 magnitude 系互斥：清掉不属于目标机制的字段
+        if (m.luckMin !== undefined) {
+            block = seUpsertNum(block, 'luckMin', m.luckMin);
+            block = seUpsertNum(block, 'luckMax', m.luckMax!);
+            block = block.replace(/\s*magnitude:\s*[\d.]+,?/, ' magnitude: 1,');
+        } else {
+            block = block.replace(/(magnitude:\s*)[\d.]+/, `$1${m.magnitude}`);
+            block = block.replace(/\s*luckMin:\s*[\d.]+,?/, '');
+            block = block.replace(/\s*luckMax:\s*[\d.]+,?/, '');
+        }
+    }
+    if (body.sourceQuote !== undefined) {
+        if (/['\n\r]/.test(body.sourceQuote)) throw new Error('出处含非法字符（单引号/换行，引号请用“”）');
+        block = seUpsertStr(block, 'sourceQuote', body.sourceQuote);
+    }
+    if (body.note !== undefined) {
+        if (/['\n\r]/.test(body.note)) throw new Error('备注含非法字符');
+        block = seUpsertStr(block, 'note', body.note);
+    }
     if (body.situationTag) block = seUpsertStr(block, 'situationTag', body.situationTag);
     if (body.usageTag) block = seUpsertStr(block, 'usageTag', body.usageTag);
     if (body.status) block = seUpsertStr(block, 'status', body.status);

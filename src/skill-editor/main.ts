@@ -571,7 +571,8 @@ for (const th of document.querySelectorAll('.se-sortable')) {
     });
 }
 $('btn-refresh').addEventListener('click', () => load());
-$('btn-check').addEventListener('click', runErrorCheck);
+// 检查前先拉最新盘：防止用它检查旧内存快照（服务端/脚本改盘后页面未刷新时的假阳性）
+$('btn-check').addEventListener('click', async () => { await load(); runErrorCheck(); });
 $('btn-new').addEventListener('click', () => {
     selectedId = null;
     renderList();
