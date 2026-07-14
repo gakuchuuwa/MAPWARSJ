@@ -240,10 +240,11 @@ const ENHANCE: TacticalSkillEntry[] = [
         magnitude: 1.1, engineStatus: 'ready',
     },
     {
-        id: 'ts_003', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 3,
+        id: 'ts_003', ownerName: '乐毅', ownerGeneralId: 'yan_leyi', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 3,
         displayName: '长驱直入', sourceQuote: '《战国策·燕策》：“长驱至齐，齐王遁逃。”',
         baseEffect: 'ally_power_mult', condition: 'terrain_plain', phase: 'opening_roll',
         magnitude: 1.05, engineStatus: 'ready',
+    }magnitude: 1.05, engineStatus: 'ready',
     },
     {
         id: 'ts_004', ownerName: '祖逖', ownerGeneralId: 'yuzhou_zuti', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 4,
@@ -4420,7 +4421,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
 /** 第一标签查找表（id → 双行/攻击/防御），未列入 = 双行 */export const SKILL_CHARACTER: Readonly<Record<string, string>> = {
     ts_001: '孙武',
     ts_002: '马谡',
-    ts_003: '曹操/卫青',
     ts_004: '祖逖',
     ts_005: '乐毅',
     ts_006: '蒯通',
