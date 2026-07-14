@@ -411,7 +411,7 @@ function renderNewForm(): void {
 
 interface CheckIssue {
     id: string; displayName: string;
-    type: 'non4char' | 'noWearer' | 'noSituation' | 'noUsage' | 'noSixClass' | 'sixClassMismatch' | 'duplicateSixClass' | 'tooManySkills';
+    type: 'non4char' | 'noWearer' | 'noSituation' | 'noUsage' | 'noSixClass' | 'sixClassMismatch' | 'duplicateSixClass' | 'tooManySkills' | 'duplicateName';
     msg: string;
 }
 
@@ -478,14 +478,33 @@ function runErrorCheck(): void {
         }
     }
 
-    const counts: Record<string, number> = { non4char: 0, noWearer: 0, noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, duplicateSixClass: 0, tooManySkills: 0, total: issues.length };
+    // ── 技名重复 ──
+    const nameGroups = new Map<string, string[]>();
+    for (const s of SKILLS) {
+        if (s.status !== 'active') continue;
+        const ids = nameGroups.get(s.displayName) ?? [];
+        ids.push(s.id);
+        nameGroups.set(s.displayName, ids);
+    }
+    for (const [name, ids] of nameGroups) {
+        if (ids.length < 2) continue;
+        for (const sid of ids) {
+            const s = SKILLS.find(x => x.id === sid)!;
+            issues.push({
+                id: s.id, displayName: s.displayName, type: 'duplicateName',
+                msg: `技名「${name}」重复（${ids.join('、')}），同名技不得存在`,
+            });
+        }
+    }
+
+    const counts: Record<string, number> = { non4char: 0, noWearer: 0, noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, duplicateSixClass: 0, tooManySkills: 0, duplicateName: 0, total: issues.length };
     for (const i of issues) counts[i.type]++;
 
     const typeLabel: Record<string, string> = {
-        non4char: '非四字', noWearer: '无佩戴', noSituation: '缺三势', noUsage: '缺攻防', noSixClass: '效果未归类', sixClassMismatch: '三势跨类', duplicateSixClass: '典故主六类重复', tooManySkills: '典故主超6技',
+        non4char: '非四字', noWearer: '无佩戴', noSituation: '缺三势', noUsage: '缺攻防', noSixClass: '效果未归类', sixClassMismatch: '三势跨类', tooManySkills: '典故主超6技', duplicateName: '技名重复', duplicateSixClass: '典故主六类重复',
     };
     const typeColor: Record<string, string> = {
-        non4char: 'se-err-red', noWearer: 'se-err-red', noSituation: 'se-err-red', noUsage: 'se-err-red', noSixClass: 'se-err-red', sixClassMismatch: 'se-err-warn', duplicateSixClass: 'se-err-red', tooManySkills: 'se-err-warn',
+        non4char: 'se-err-red', noWearer: 'se-err-red', noSituation: 'se-err-red', noUsage: 'se-err-red', noSixClass: 'se-err-red', sixClassMismatch: 'se-err-warn', duplicateSixClass: 'se-err-red', tooManySkills: 'se-err-warn', duplicateName: 'se-err-red',
     };
 
     let html = `<div class="se-modal-bg" id="check-modal-bg"><div class="se-modal">
@@ -506,7 +525,7 @@ function runErrorCheck(): void {
         html += `<div style="color:#a8d8a8;text-align:center;padding:40px">🎉 全部 ${SKILLS.length} 条技能检查通过！</div>`;
     } else {
         // 按错误类型分组
-        const typeOrder = ['non4char', 'noWearer', 'noSituation', 'noUsage', 'noSixClass', 'sixClassMismatch', 'tooManySkills', 'duplicateSixClass'];
+        const typeOrder = ['non4char', 'noWearer', 'noSituation', 'noUsage', 'noSixClass', 'sixClassMismatch', 'duplicateName', 'tooManySkills', 'duplicateSixClass'];
         const grouped: Record<string, CheckIssue[]> = {};
         for (const t of typeOrder) grouped[t] = [];
         for (const i of issues) { if (grouped[i.type]) grouped[i.type].push(i); else (grouped[i.type] = [i]); }
