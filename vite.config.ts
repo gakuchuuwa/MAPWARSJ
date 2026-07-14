@@ -2389,7 +2389,9 @@ function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
 
 const SE_TSC_PATH = 'src/data/TacticalSkillCatalog.ts';
 /** 定稿锁定值（百折不挠/兵不血刃），编辑器禁改档位 */
-const SE_LOCKED_MAGNITUDE = new Set(['ts_026', 'ts_032']);
+/** 档位锁定名单（2026-07-14 主人定：取消锁定，编辑器不再对任何技禁改档位/六计；数值本身不受影响）。
+ *  留空 Set 即全部解锁；4 处引用（locked 标记 + 改六计/档位守卫）自动失效。 */
+const SE_LOCKED_MAGNITUDE = new Set<string>([]);
 
 /** baseEffect → 货币家族（决定档位下拉；不在表内 = 档位不可编辑，只能改元数据） */
 const SE_FAMILY: Record<string, string> = {

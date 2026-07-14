@@ -1,12 +1,10 @@
 /**
  * 武将技编辑器（/skill-editor.html）
  * ────────────────────────────────────────────
- * 一技一档案：三势 / 攻防 / 六类(推导) / 典故主(=专属) / 状态 / 档位。
+ * 一技一档案：三势 / 攻防 / 六类(推导) / 典故主(=专属) / 档位。
  * 六类 = baseEffect → 效果大类 → 与三势结合自动推导（不手动填写）。
- * 保存即迁移：内联字段写入条目本体，四张散表中的该条同时退役。
  * 服务端：vite.config.ts /api/skill-editor/{list,save,create}
  */
-
 interface SkillRow {
     id: string; displayName: string; sourceQuote: string;
     baseEffect: string; condition: string; phase: string;
@@ -17,7 +15,7 @@ interface SkillRow {
     usageTag: string; usageSource: string;
     sixClass: string; sixClassMatch: boolean;
     ownerGeneralId: string | null; ownerName: string | null; ownerSource: string | null;
-    exclusive: string; status: string;
+    exclusive: string;
     wearers: { gid: string; name: string; tier: string }[];
 }
 interface GeneralRow { generalId: string; name: string; tier: string; }
@@ -29,8 +27,9 @@ let CONDITIONS: string[] = [];
 let selectedId: string | null = null;
 let sortKey: string | null = null;
 let sortDir: 1 | -1 = 1;
+/** 典故主→其拥有的在役技数（renderList 排序前重算，供"按人数排"用） */
+let ownerCount = new Map<string, number>();
 
-// 各列排序取值（三势/攻防按逻辑序，其余按自然值）
 const SIT_ORDER: Record<string, number> = { '优势': 0, '均势': 1, '劣势': 2 };
 const USE_ORDER: Record<string, number> = { '攻击': 0, '双行': 1, '防御': 2 };
 const SIX_ORDER: Record<string, number> = { '攻战计': 0, '胜战计': 1, '敌战计': 2, '混战计': 3, '并战计': 4, '败战计': 5 };
@@ -41,10 +40,9 @@ function sortValue(s: SkillRow, key: string): number | string {
         case 'sit': return SIT_ORDER[s.situationTag] ?? 9;
         case 'use': return USE_ORDER[s.usageTag] ?? 9;
         case 'six': return s.sixClass ? (SIX_ORDER[s.sixClass] ?? 8) : 9;
-        case 'owner': return s.ownerName ?? '￿'; // 无主排末尾
+        case 'owner': return s.ownerName ? (ownerCount.get(s.ownerName) ?? 0) : -1;
         case 'value': return s.family === 'luck' ? (s.luckMin ?? 0.8) : (s.magnitude ?? -1);
         case 'wear': return s.wearers.length;
-        case 'status': return s.status === 'retired' ? 1 : 0;
         default: return 0;
     }
 }
@@ -91,7 +89,6 @@ app.innerHTML = `
     .se-new { border: 1px solid #3a3226; border-radius: 6px; padding: 10px; margin-top: 14px; background: #17140f; display: none; }
     .se-mono { font-family: Consolas, monospace; font-size: 12px; color: #8a97a8; }
     .se-count { color: #8a8271; font-size: 13px; margin-left: auto; }
-    .se-retired td { opacity: 0.45; }
     .se-match-warn { color: #d8a05e; font-size: 11px; }
     .se-copy-btn { background: none; border: 1px solid #3a3226; color: #8a7a5a; cursor: pointer; border-radius: 3px; padding: 0 4px; font-size: 12px; }
     .se-copy-btn:hover { background: #2e281c; color: #d8b95e; border-color: #6a5c3c; }
@@ -125,9 +122,9 @@ app.innerHTML = `
         <option value="stray">戴错人（专属被外人戴）</option>
         <option value="orphanOwner">典故主未佩戴</option>
     </select>
-    <select id="f-status"><option value="">状态·全部</option><option value="active">在役</option><option value="retired">退役</option></select>
     <button class="se-btn se-btn-gold" id="btn-new">＋ 新增技能</button>
     <button class="se-btn se-btn-red" id="btn-check">🔍 检查错误</button>
+    <button class="se-btn" id="btn-export">📄 导出文档</button>
     <button class="se-btn" id="btn-refresh">刷新</button>
     <span class="se-count" id="count"></span>
 </div>
@@ -142,7 +139,6 @@ app.innerHTML = `
             <th class="se-sortable" data-sort="owner">典故主</th>
             <th class="se-sortable" data-sort="value">档位/数值</th>
             <th class="se-sortable" data-sort="wear">佩戴</th>
-            <th class="se-sortable" data-sort="status">状态</th>
             <th>复制</th>
         </tr></thead>
         <tbody id="list-body"></tbody>
@@ -173,7 +169,6 @@ function srcBadge(src: string): string {
     return '<span class="se-badge se-derived">推导</span>';
 }
 function wearProblem(s: SkillRow): string {
-    if (s.status === 'retired') return '';
     if (s.wearers.length === 0) return 'none';
     if (s.ownerGeneralId) {
         const stray = s.wearers.some(w => w.gid !== s.ownerGeneralId);
@@ -194,7 +189,6 @@ function applyFilters(): SkillRow[] {
     const six = ($('f-six') as HTMLSelectElement).value;
     const ex = ($('f-ex') as HTMLSelectElement).value;
     const wear = ($('f-wear') as HTMLSelectElement).value;
-    const status = ($('f-status') as HTMLSelectElement).value;
     return SKILLS.filter(s => {
         if (q && !(s.id.includes(q) || s.displayName.includes(q) || (s.ownerName ?? '').includes(q))) return false;
         if (sit && s.situationTag !== sit) return false;
@@ -203,7 +197,6 @@ function applyFilters(): SkillRow[] {
         if (six === '(x)' && s.sixClassMatch) return false;
         if (six && six !== '(空)' && six !== '(x)' && s.sixClass !== six) return false;
         if (ex && s.exclusive !== ex) return false;
-        if (status && s.status !== status) return false;
         if (wear && wearProblem(s) !== wear) return false;
         return true;
     });
@@ -219,15 +212,25 @@ function sixClassDisplay(s: SkillRow): string {
 function renderList(): void {
     const rows = applyFilters();
     if (sortKey) {
+        // 按人数排"典故主"列前，先重算每个典故主的技数
+        if (sortKey === 'owner') {
+            ownerCount = new Map();
+            for (const s of SKILLS) if (s.ownerName) ownerCount.set(s.ownerName, (ownerCount.get(s.ownerName) ?? 0) + 1);
+        }
         rows.sort((a, b) => {
             const va = sortValue(a, sortKey!), vb = sortValue(b, sortKey!);
             const c = typeof va === 'number' && typeof vb === 'number'
                 ? va - vb
                 : String(va).localeCompare(String(vb), 'zh');
-            return c !== 0 ? c * sortDir : (parseInt(a.id.replace('ts_', ''), 10) - parseInt(b.id.replace('ts_', ''), 10));
+            if (c !== 0) return c * sortDir;
+            // 人数相同的典故主分到一起（同名相邻），再按 id
+            if (sortKey === 'owner') {
+                const nc = (a.ownerName ?? '').localeCompare(b.ownerName ?? '', 'zh');
+                if (nc !== 0) return nc;
+            }
+            return parseInt(a.id.replace('ts_', ''), 10) - parseInt(b.id.replace('ts_', ''), 10);
         });
     }
-    // 列头箭头指示
     for (const th of document.querySelectorAll('.se-sortable')) {
         const k = (th as HTMLElement).dataset.sort!;
         const base = (th.textContent ?? '').replace(/[▲▼]\s*$/, '').trim();
@@ -235,7 +238,7 @@ function renderList(): void {
     }
     $('count').textContent = `${rows.length} / ${SKILLS.length} 条`;
     $('list-body').innerHTML = rows.map(s => `
-        <tr data-id="${s.id}" class="${s.id === selectedId ? 'sel' : ''}${s.status === 'retired' ? ' se-retired' : ''}">
+        <tr data-id="${s.id}" class="${s.id === selectedId ? 'sel' : ''}">
             <td class="se-mono">${s.id}</td>
             <td>${s.displayName}${s.locked ? ' 🔒' : ''}</td>
             <td>${s.situationTag}${srcBadge(s.situationSource)}</td>
@@ -243,18 +246,16 @@ function renderList(): void {
             <td style="color:${s.sixClass ? '#d8c88e' : '#5a4a3a'}">${sixClassDisplay(s)}</td>
             <td>${s.ownerName ?? '<span style="color:#6a6254">通用</span>'}${s.ownerSource ? srcBadge(s.ownerSource) : ''}</td>
             <td class="se-mono">${valueLabel(s)}</td>
-            <td>${s.wearers.length}${wearProblem(s) === 'stray' ? ' ⚠' : wearProblem(s) === 'orphanOwner' ? ' ✂' : s.wearers.length === 0 && s.status === 'active' ? ' ∅' : ''}</td>
-            <td>${s.status === 'retired' ? '退役' : '在役'}</td>
+            <td>${s.wearers.length}${wearProblem(s) === 'stray' ? ' ⚠' : wearProblem(s) === 'orphanOwner' ? ' ✂' : s.wearers.length === 0 ? ' ∅' : ''}</td>
             <td><button class=\"se-copy-btn\" data-id=\"${s.id}\" title=\"复制此行\">📋</button></td>
         </tr>`).join('');
     for (const tr of $('list-body').querySelectorAll('tr')) {
         tr.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
-            if (target.closest('.se-copy-btn')) return; // 不拦截复制按钮
+            if (target.closest('.se-copy-btn')) return;
             selectedId = (tr as HTMLElement).dataset.id!; renderList(); renderDetail();
         });
     }
-    // 复制按钮事件委托
     for (const btn of $('list-body').querySelectorAll('.se-copy-btn')) {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -313,17 +314,13 @@ function renderDetail(): void {
         </select></div>
         <div class="se-field"><label>六类</label><span class="se-ro">${sixInfo}</span></div>
         <div class="se-field"><label>典故主</label><input id="d-owner" list="dl-generals" value="${ownerVal}" placeholder="留空 = 通用；输入人名从名录选"></div>
-        <div class="se-field"><label>状态</label><select id="d-status">
-            <option value="active" ${s.status !== 'retired' ? 'selected' : ''}>在役</option>
-            <option value="retired" ${s.status === 'retired' ? 'selected' : ''}>退役</option>
-        </select></div>
         <div class="se-field"><label>档位</label>${s.family && !s.locked
             ? `<select id="d-tier"><option value="">（不改）</option>${tierOptions(s)}</select>`
             : `<span style="color:#6a6254">${s.locked ? '定稿锁定，禁改' : '该效果家族不走档位（维持现值 ' + valueLabel(s) + '）'}</span>`}</div>
         <div class="se-wearers"><b>佩戴（六槽，${s.wearers.length} 人）：</b>${s.wearers.map(w =>
             `${w.name}${w.tier === 'famous' ? '★' : ''}${s.ownerGeneralId && w.gid !== s.ownerGeneralId ? '⚠' : ''}`).join('、') || '无人'}
             ${s.ownerGeneralId && !s.wearers.some(w => w.gid === s.ownerGeneralId) ? '<div style="color:#d8a05e">✂ 典故主本人未佩戴</div>' : ''}</div>
-        <button class="se-btn se-btn-gold" id="d-save">保存（写入条目本体 + 散表退役）</button>
+        <button class="se-btn se-btn-gold" id="d-save">保存</button>
         <div class="se-new" id="new-panel"></div>
     `;
     $('d-save').addEventListener('click', () => saveDetail(s));
@@ -350,7 +347,6 @@ async function saveDetail(s: SkillRow): Promise<void> {
         id: s.id,
         situationTag: ($('d-sit') as HTMLSelectElement).value,
         usageTag: ($('d-use') as HTMLSelectElement).value,
-        status: ($('d-status') as HTMLSelectElement).value,
         ownerGeneralId: owner.gid,
         ownerName: owner.name,
         tierLabel: tierSel?.value || undefined,
@@ -377,7 +373,7 @@ function renderNewForm(): void {
     panel.innerHTML = `
         <h3 style="color:#d8b95e;margin:0 0 6px">新增技能（保存时全部必填项过闸）</h3>
         <div class="se-field"><label>技名(四字)</label><input id="n-name" maxlength="4"></div>
-        <div class="se-field"><label>出处</label><input id="n-quote" placeholder="史料引文，引号用"""></div>
+        <div class="se-field"><label>出处</label><input id="n-quote" placeholder="史料引文，引号用&quot;&quot;"></div>
         <div class="se-field"><label>效果</label><select id="n-effect">${effects.map(e => `<option>${e}</option>`).join('')}</select></div>
         <div class="se-field"><label>条件</label><select id="n-cond">${CONDITIONS.map(c => `<option>${c}</option>`).join('')}</select></div>
         <div class="se-field"><label>三势</label><select id="n-sit"><option>优势</option><option>均势</option><option>劣势</option></select></div>
@@ -440,7 +436,7 @@ function runErrorCheck(): void {
         if (s.displayName.length !== 4) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'non4char', msg: `技名「${s.displayName}」不是四字（${s.displayName.length}字）` });
         }
-        if (s.status === 'active' && s.wearers.length === 0) {
+        if (s.wearers.length === 0) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'noWearer', msg: '在役但无任何武将佩戴' });
         }
         if (!s.situationTag || !['优势', '均势', '劣势'].includes(s.situationTag)) {
@@ -449,10 +445,10 @@ function runErrorCheck(): void {
         if (!s.usageTag || !['攻击', '防御', '双行'].includes(s.usageTag)) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'noUsage', msg: `攻防标签缺失或异常（当前：${s.usageTag || '空'}）` });
         }
-        if (s.status === 'active' && !s.sixClass) {
+        if (!s.sixClass) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'noSixClass', msg: `baseEffect「${s.baseEffect}」无法归入六类——效果类型不在已知映射中` });
         }
-        if (s.status === 'active' && s.sixClass && !s.sixClassMatch) {
+        if (s.sixClass && !s.sixClassMatch) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'sixClassMismatch', msg: `六类=${s.sixClass} 但三势=${s.situationTag}（规范值应为${s.sixClass ? getCanonicalSit(s.sixClass) : '?'}），效果与三势不匹配` });
         }
     }
@@ -460,7 +456,7 @@ function runErrorCheck(): void {
     // ── 同典故主六类去重（按重复数降序）──
     const ownerGroups = new Map<string, { id: string; displayName: string; sixClass: string }[]>();
     for (const s of SKILLS) {
-        if (!s.ownerName || s.status !== 'active' || !s.sixClass) continue;
+        if (!s.ownerName || !s.sixClass) continue;
         const group = ownerGroups.get(s.ownerName) ?? [];
         group.push({ id: s.id, displayName: s.displayName, sixClass: s.sixClass });
         ownerGroups.set(s.ownerName, group);
@@ -485,7 +481,6 @@ function runErrorCheck(): void {
             }
         }
     }
-    // 按重复数量降序排列
     dupIssues.sort((a, b) => {
         const na = parseInt(a.msg.match(/的 (\d+) 个技/)![1]);
         const nb = parseInt(b.msg.match(/的 (\d+) 个技/)![1]);
@@ -508,7 +503,6 @@ function runErrorCheck(): void {
     // ── 技名重复 ──
     const nameGroups = new Map<string, string[]>();
     for (const s of SKILLS) {
-        if (s.status !== 'active') continue;
         const ids = nameGroups.get(s.displayName) ?? [];
         ids.push(s.id);
         nameGroups.set(s.displayName, ids);
@@ -528,99 +522,183 @@ function runErrorCheck(): void {
     for (const i of issues) counts[i.type]++;
 
     const typeLabel: Record<string, string> = {
-        non4char: '非四字', noWearer: '无佩戴', noSituation: '缺三势', noUsage: '缺攻防', noSixClass: '效果未归类', sixClassMismatch: '三势跨类', tooManySkills: '典故主超6技', duplicateName: '技名重复', duplicateSixClass: '典故主六类重复',
+        non4char: '非四字技名', noWearer: '无佩戴', noSituation: '三势缺失', noUsage: '攻防缺失',
+        noSixClass: '六类未标', sixClassMismatch: '三势跨类', duplicateSixClass: '典故主六类重复',
+        tooManySkills: '典故主超6技', duplicateName: '技名重复',
     };
-    const typeColor: Record<string, string> = {
-        non4char: 'se-err-red', noWearer: 'se-err-red', noSituation: 'se-err-red', noUsage: 'se-err-red', noSixClass: 'se-err-red', sixClassMismatch: 'se-err-warn', duplicateSixClass: 'se-err-red', tooManySkills: 'se-err-warn', duplicateName: 'se-err-red',
-    };
+    const summaryHtml = Object.entries(typeLabel).map(([k, label]) => {
+        const n = counts[k] ?? 0;
+        const cls = n > 0 ? (k === 'duplicateName' || k === 'duplicateSixClass' ? 'se-err-red' : 'se-err-warn') : 'se-err-ok';
+        return `<span class="se-err-count ${cls}">${label}: ${n}</span>`;
+    }).join('');
 
-    let html = `<div class="se-modal-bg" id="check-modal-bg"><div class="se-modal">
-        <div class="se-modal-hd">
-            <h3>🔍 技能错误检查</h3>
-            <span class="se-err-count ${counts.total > 0 ? 'se-err-red' : 'se-err-ok'}">${counts.total > 0 ? `⚠ ${counts.total} 个问题` : '✅ 全部通过'}</span>
-            <button class="se-btn" style="margin-left:auto" id="check-close">关闭</button>
+    const modal = document.createElement('div');
+    modal.className = 'se-modal-bg';
+    modal.innerHTML = `
+        <div class="se-modal">
+            <div class="se-modal-hd">
+                <h3>错误检查</h3>
+                <span style="color:#8a8271">共 ${issues.length} 条</span>
+                <button class="se-btn" id="modal-close" style="margin-left:auto">✕</button>
+            </div>
+            <div class="se-modal-body">
+                <div class="se-summary">${summaryHtml}</div>
+                ${issues.length === 0 ? '<p style="color:#8a9a78">✅ 无错误</p>' : `
+                <table><thead><tr><th>id</th><th>技名</th><th>类型</th><th>详情</th></tr></thead><tbody>
+                    ${issues.map(i => `
+                        <tr class="se-issue-row" data-id="${i.id}" style="cursor:pointer">
+                            <td class="se-mono">${i.id}</td>
+                            <td>${i.displayName}</td>
+                            <td>${typeLabel[i.type] ?? i.type}</td>
+                            <td>${i.msg}</td>
+                        </tr>`).join('')}
+                </tbody></table>`}
+            </div>
         </div>
-        <div class="se-modal-body">
-            <div class="se-summary">`;
-    for (const [t, c] of Object.entries(counts)) {
-        if (t === 'total') continue;
-        html += `<span class="se-err-count ${c > 0 ? typeColor[t] : 'se-err-ok'}">${typeLabel[t]}: ${c}</span>`;
-    }
-    html += `</div>`;
-
-    if (issues.length === 0) {
-        html += `<div style="color:#a8d8a8;text-align:center;padding:40px">🎉 全部 ${SKILLS.length} 条技能检查通过！</div>`;
-    } else {
-        // 按错误类型分组
-        const typeOrder = ['non4char', 'noWearer', 'noSituation', 'noUsage', 'noSixClass', 'sixClassMismatch', 'duplicateName', 'tooManySkills', 'duplicateSixClass'];
-        const grouped: Record<string, CheckIssue[]> = {};
-        for (const t of typeOrder) grouped[t] = [];
-        for (const i of issues) { if (grouped[i.type]) grouped[i.type].push(i); else (grouped[i.type] = [i]); }
-
-        html += `<table><thead><tr><th>id</th><th>技名</th><th>详情</th></tr></thead><tbody>`;
-        for (const type of typeOrder) {
-            const group = grouped[type];
-            if (!group || group.length === 0) continue;
-            html += `<tr style="background:#2a2018"><td colspan="3" style="color:#d8b95e;font-weight:bold;padding:6px 8px">${typeLabel[type]}（${group.length} 条）</td></tr>`;
-            for (const i of group) {
-                html += `<tr class="se-issue-row">
-                    <td class="se-mono">${i.id}</td>
-                    <td>${i.displayName}</td>
-                    <td>${i.msg}</td>
-                </tr>`;
-            }
-        }
-        html += `</tbody></table>`;
-    }
-
-    html += `</div></div></div>`;
-
-    const old = document.getElementById('check-modal-bg');
-    if (old) old.remove();
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = html;
-    document.body.appendChild(wrapper.firstElementChild!);
-
-    document.getElementById('check-modal-bg')!.addEventListener('click', (e) => {
-        if ((e.target as HTMLElement).id === 'check-modal-bg') closeCheck();
+    `;
+    document.body.appendChild(modal);
+    ($('modal-close') as HTMLElement).addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).className === 'se-modal-bg') modal.remove();
     });
-    document.getElementById('check-close')!.addEventListener('click', closeCheck);
+    for (const row of modal.querySelectorAll('.se-issue-row')) {
+        row.addEventListener('click', () => {
+            selectedId = (row as HTMLElement).dataset.id!;
+            renderList(); renderDetail();
+            modal.remove();
+        });
+    }
 }
 
-function getCanonicalSit(sixClass: string): string {
-    const m: Record<string, string> = { '攻战计': '优势', '胜战计': '优势', '敌战计': '均势', '混战计': '均势', '并战计': '劣势', '败战计': '劣势' };
-    return m[sixClass] ?? '?';
-}
-
-function closeCheck(): void {
-    document.getElementById('check-modal-bg')?.remove();
-}
-
-// ========== 数据加载 ==========
-
-async function load(keepSelected?: string): Promise<void> {
-    const res = await fetch('/api/skill-editor/list');
-    const j = await res.json();
-    if (!j.ok) { toast(`加载失败：${j.error}`, true); return; }
-    SKILLS = j.skills;
-    GENERALS = j.generals;
-    TIERS = j.tiers;
-    CONDITIONS = j.conditions;
-    $('dl-generals').innerHTML = GENERALS.map(g =>
-        `<option value="${g.name} (${g.generalId})">${g.tier === 'famous' ? '★名将' : '普将'}</option>`).join('');
-    if (keepSelected) selectedId = keepSelected;
+async function load(selectId?: string): Promise<void> {
+    const data = await (await fetch('/api/skill-editor/list')).json();
+    SKILLS = data.skills;
+    GENERALS = data.generals;
+    TIERS = data.tiers;
+    CONDITIONS = data.conditions;
+    ($('dl-generals') as HTMLElement).innerHTML = GENERALS.map(g => `<option>${g.name} (${g.generalId})</option>`).join('');
+    if (selectId && SKILLS.find(s => s.id === selectId)) selectedId = selectId;
+    else if (selectedId && !SKILLS.find(s => s.id === selectedId)) selectedId = null;
     renderList();
     if (selectedId) renderDetail();
-    else setDetailOpen(false);
 }
 
-for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-ex', 'f-wear', 'f-status']) {
-    $(id).addEventListener('input', renderList);
-    if (id.endsWith('-six') || id.endsWith('-sit') || id.endsWith('-use') || id.endsWith('-ex') || id.endsWith('-wear') || id.endsWith('-status')) {
-        $(id).addEventListener('change', renderList);
-    }
+// Global for error check
+function getCanonicalSit(sixClass: string): string {
+    const map: Record<string, string> = {
+        '攻战计': '优势', '胜战计': '优势',
+        '敌战计': '均势', '混战计': '均势',
+        '并战计': '劣势', '败战计': '劣势',
+    };
+    return map[sixClass] ?? '?';
 }
-// 列头点击排序：同列切升/降，换列默认升序
+(window as any).getCanonicalSit = getCanonicalSit;
+
+$('btn-refresh').addEventListener('click', () => load());
+$('btn-check').addEventListener('click', () => runErrorCheck());
+$('btn-export').addEventListener('click', () => exportDoc());
+
+// ========== 导出文档（Markdown）==========
+function exportDoc(): void {
+    const SIX_ORD: Record<string, number> = { '攻战计': 0, '胜战计': 1, '敌战计': 2, '混战计': 3, '并战计': 4, '败战计': 5 };
+    const inReg = new Set(GENERALS.map(g => g.name));
+    const act = SKILLS.filter(s => (s as any).status !== 'retired');
+
+    // 按典故主聚合
+    const byOwner = new Map<string, SkillRow[]>();
+    const generic: SkillRow[] = [];
+    for (const s of act) {
+        if (s.ownerName) { (byOwner.get(s.ownerName) ?? byOwner.set(s.ownerName, []).get(s.ownerName)!).push(s); }
+        else generic.push(s);
+    }
+    // 统计
+    let dupOwners = 0, orphanOwners = 0;
+    for (const [owner, list] of byOwner) {
+        const cnt: Record<string, number> = {};
+        for (const s of list) cnt[s.sixClass] = (cnt[s.sixClass] ?? 0) + 1;
+        if (Object.values(cnt).some(n => n > 1)) dupOwners++;
+        if (!inReg.has(owner)) orphanOwners++;
+    }
+    const fmtSkill = (s: SkillRow) => `${s.sixClass || '—'}｜${s.displayName}｜${s.situationTag}/${s.usageTag}｜${s.baseEffect}` +
+        (s.sourceQuote ? `｜${s.sourceQuote}` : '');
+
+    const L: string[] = [];
+    L.push('# 武将技·典故主与六计一览');
+    L.push('');
+    L.push(`> 导出时间：${new Date().toLocaleString('zh-CN')}`);
+    L.push(`> 技能总数 ${act.length}｜典故主 ${byOwner.size} 位｜通用技 ${generic.length} 条`);
+    L.push(`> 六计重复的典故主：**${dupOwners}** 位（0 = 全部符合"一将六计各异"）`);
+    L.push(`> 游戏未收录的典故主（孤儿）：**${orphanOwners}** 种`);
+    L.push('');
+    L.push('---');
+    L.push('');
+
+    // 一、在册武将（按名字排；每人列其六计分布 + 各技）
+    const regOwners = [...byOwner.keys()].filter(o => inReg.has(o)).sort((a, b) => a.localeCompare(b, 'zh'));
+    L.push(`## 一、在册武将（${regOwners.length} 位）`);
+    L.push('');
+    for (const owner of regOwners) {
+        const list = byOwner.get(owner)!.slice().sort((a, b) => (SIX_ORD[a.sixClass] ?? 9) - (SIX_ORD[b.sixClass] ?? 9));
+        const six = [...new Set(list.map(s => s.sixClass))].sort((a, b) => (SIX_ORD[a] ?? 9) - (SIX_ORD[b] ?? 9)).join('/');
+        const cnt: Record<string, number> = {};
+        for (const s of list) cnt[s.sixClass] = (cnt[s.sixClass] ?? 0) + 1;
+        const dup = Object.values(cnt).some(n => n > 1);
+        L.push(`### ${owner}${dup ? ' ⚠六计重复' : ''}  〔${six}〕`);
+        for (const s of list) L.push(`- ${fmtSkill(s)}`);
+        L.push('');
+    }
+
+    // 二、孤儿典故主（游戏没这个人）
+    const orphans = [...byOwner.keys()].filter(o => !inReg.has(o)).sort((a, b) => byOwner.get(b)!.length - byOwner.get(a)!.length);
+    if (orphans.length) {
+        L.push('---');
+        L.push('');
+        L.push(`## 二、待处理·孤儿典故主（${orphans.length} 种，游戏未收录此人/多人标签/非武将，宜改通用或还给正主）`);
+        L.push('');
+        for (const owner of orphans) {
+            const list = byOwner.get(owner)!;
+            L.push(`- **${owner}**${owner.includes('/') ? '（多人假标签）' : ''} ×${list.length}：${list.map(s => s.displayName + '(' + s.sixClass + ')').join('、')}`);
+        }
+        L.push('');
+    }
+
+    // 三、通用技（按六计分组）
+    L.push('---');
+    L.push('');
+    L.push(`## 三、通用技（${generic.length} 条，无典故主，共享）`);
+    L.push('');
+    const bySix = new Map<string, SkillRow[]>();
+    for (const s of generic) (bySix.get(s.sixClass) ?? bySix.set(s.sixClass, []).get(s.sixClass)!).push(s);
+    for (const six of Object.keys(SIX_ORD)) {
+        const list = bySix.get(six);
+        if (!list?.length) continue;
+        L.push(`### ${six}（${list.length}）`);
+        L.push(list.map(s => s.displayName).join('、'));
+        L.push('');
+    }
+
+    // 下载
+    const blob = new Blob([L.join('\n')], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `武将技-典故主六计一览-${new Date().toISOString().slice(0, 10)}.md`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast(`已导出文档：${act.length} 技 / ${byOwner.size} 典故主`);
+}
+$('btn-new').addEventListener('click', () => { selectedId = null; setDetailOpen(true); renderNewForm(); });
+$('list-body').addEventListener('dblclick', (e) => {
+    const tr = (e.target as HTMLElement).closest('tr');
+    if (!tr) return;
+    selectedId = (tr as HTMLElement).dataset.id!;
+    renderList();
+    renderDetail();
+});
+
+// 列头排序
 for (const th of document.querySelectorAll('.se-sortable')) {
     th.addEventListener('click', () => {
         const k = (th as HTMLElement).dataset.sort!;
@@ -629,57 +707,31 @@ for (const th of document.querySelectorAll('.se-sortable')) {
         renderList();
     });
 }
-$('btn-refresh').addEventListener('click', () => load());
-// 检查前先拉最新盘：防止用它检查旧内存快照（服务端/脚本改盘后页面未刷新时的假阳性）
-$('btn-check').addEventListener('click', async () => { await load(); runErrorCheck(); });
-$('btn-new').addEventListener('click', () => {
-    selectedId = null;
-    renderList();
-    setDetailOpen(true);
-    $('detail').innerHTML = `
-        <div class="se-detail-hd">
-            <h3>新增技能</h3>
-            <button type="button" class="se-btn" id="d-close" title="关闭右侧编辑">✕</button>
-        </div>
-        <div class="se-new" id="new-panel"></div>`;
-    $('d-close').addEventListener('click', () => closeDetail());
-    renderNewForm();
-});
 
-// ── 左右分栏拖拽 ──
-(function initSplitter() {
-    const splitter = $('splitter');
-    const detail = $('detail');
-    let dragging = false;
+// 筛选器实时刷新
+for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-ex', 'f-wear']) {
+    $(id).addEventListener('input', () => { renderList(); if (!selectedId) setDetailOpen(false); });
+    $(id).addEventListener('change', () => { renderList(); if (!selectedId) setDetailOpen(false); });
+}
 
-    splitter.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        dragging = true;
-        splitter.classList.add('dragging');
-        document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!dragging) return;
-        const main = splitter.parentElement!;
-        const rect = main.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const detailW = rect.width - x;
-        const minW = 280;
-        const maxW = rect.width * 0.7;
-        if (detailW >= minW && detailW <= maxW) {
-            detail.style.width = detailW + 'px';
-        }
-    });
-
-    document.addEventListener('mouseup', () => {
-        if (!dragging) return;
-        dragging = false;
+// 拖拽面板宽
+const splitter = $('splitter');
+splitter.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    splitter.classList.add('dragging');
+    const onMove = (ev: MouseEvent) => {
+        const detail = $('detail');
+        if (!detail || detail.classList.contains('se-closed')) return;
+        const w = document.body.clientWidth - ev.clientX;
+        detail.style.width = `${Math.max(280, Math.min(w, document.body.clientWidth * 0.7))}px`;
+    };
+    const onUp = () => {
         splitter.classList.remove('dragging');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-    });
-})();
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+});
 
 load();
