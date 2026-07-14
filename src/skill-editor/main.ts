@@ -438,7 +438,7 @@ function runErrorCheck(): void {
         }
     }
 
-    // ── 同典故主六类去重 ──
+    // ── 同典故主六类去重（按重复数降序）──
     const ownerGroups = new Map<string, { id: string; displayName: string; sixClass: string }[]>();
     for (const s of SKILLS) {
         if (!s.ownerName || s.status !== 'active' || !s.sixClass) continue;
@@ -446,6 +446,7 @@ function runErrorCheck(): void {
         group.push({ id: s.id, displayName: s.displayName, sixClass: s.sixClass });
         ownerGroups.set(s.ownerName, group);
     }
+    const dupIssues: CheckIssue[] = [];
     for (const [owner, skills] of ownerGroups) {
         if (skills.length < 2) continue;
         const seen = new Map<string, string[]>(); // sixClass → [ids]
@@ -458,13 +459,20 @@ function runErrorCheck(): void {
             if (ids.length < 2) continue;
             for (const sid of ids) {
                 const sk = skills.find(x => x.id === sid)!;
-                issues.push({
+                dupIssues.push({
                     id: sk.id, displayName: sk.displayName, type: 'duplicateSixClass',
                     msg: `典故主「${owner}」的 ${ids.length} 个技六类同为「${sixClass}」（${ids.join('、')}），同一典故主各技六类不得重复`,
                 });
             }
         }
     }
+    // 按重复数量降序排列
+    dupIssues.sort((a, b) => {
+        const na = parseInt(a.msg.match(/的 (\d+) 个技/)![1]);
+        const nb = parseInt(b.msg.match(/的 (\d+) 个技/)![1]);
+        return nb - na;
+    });
+    for (const di of dupIssues) issues.push(di);
 
     // ── 典故主超 6 技（按技能数降序）──
     const sortedOwners = [...ownerGroups.entries()].sort((a, b) => b[1].length - a[1].length);
