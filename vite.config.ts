@@ -2646,12 +2646,15 @@ function serverSkillEditorSave(body: {
     if (autoSit) {
         const curSit = seEntryField(block, 'situationTag');
         if (curSit !== autoSit) {
-            text = text.replace(
-                new RegExp(`(id:\\\\s*'${body.id}'.*?situationTag:\\\\s*)'[^']*'`, 's'),
-                `$1'${autoSit}'`
-            );
+            if (curSit) {
+                block = block.replace(new RegExp(`situationTag:\\\\s*'[^']*'`), `situationTag: '${autoSit}'`);
+            } else {
+                // 没有 situationTag 字段，在 displayName 之后插入
+                block = block.replace(/(displayName:\s*'[^']*')/, `$1, situationTag: '${autoSit}'`);
+            }
         }
     }
+    text = text.slice(0, start) + block + text.slice(end);
     text = seRemoveFromTagTables(text, body.id);
     markBatchSaveWrite();
     fs.writeFileSync(fp, guardSerializedDataText(text, SE_TSC_PATH), 'utf-8');
