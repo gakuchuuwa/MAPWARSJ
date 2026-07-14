@@ -64,6 +64,9 @@ app.innerHTML = `
     .se-splitter { width: 5px; cursor: col-resize; background: #2a2418; flex-shrink: 0; transition: background 0.15s; }
     .se-splitter:hover, .se-splitter.dragging { background: #6a5c3c; }
     .se-detail { width: 480px; min-width: 280px; max-width: 70%; border-left: 1px solid #3a3226; overflow: auto; padding: 14px; background: #131110; flex-shrink: 0; }
+    .se-detail.se-closed, .se-splitter.se-closed { display: none; }
+    .se-detail-hd { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
+    .se-detail-hd h3 { margin: 0; flex: 1; color: #d8b95e; }
     .se-list th { position: sticky; top: 0; background: #1a1713; color: #b8a878; text-align: left; padding: 6px 8px; border-bottom: 1px solid #3a3226; }
     .se-sortable { cursor: pointer; user-select: none; }
     .se-sortable:hover { color: #d8b95e; }
@@ -72,7 +75,6 @@ app.innerHTML = `
     .se-list tr { cursor: pointer; }
     .se-list tr:hover td { background: #221e18; }
     .se-list tr.sel td { background: #2e281c; }
-    .se-detail { width: 480px; border-left: 1px solid #3a3226; overflow: auto; padding: 14px; background: #131110; }
     .se-detail h3 { margin: 0 0 4px; color: #d8b95e; }
     .se-field { margin: 8px 0; }
     .se-field label { display: inline-block; width: 76px; color: #b8a878; font-size: 13px; }
@@ -145,8 +147,8 @@ app.innerHTML = `
         </tr></thead>
         <tbody id="list-body"></tbody>
     </table></div>
-    <div class="se-splitter" id="splitter"></div>
-    <div class="se-detail" id="detail"><div style="color:#6a6254">← 点击左侧条目编辑；六类由 baseEffect 自动推导，不可手动修改。</div></div>
+    <div class="se-splitter se-closed" id="splitter"></div>
+    <div class="se-detail se-closed" id="detail"></div>
 </div>
 <div class="se-toast" id="toast"></div>
 <datalist id="dl-generals"></datalist>
@@ -274,15 +276,31 @@ function tierOptions(s: SkillRow): string {
     }).join('');
 }
 
+function setDetailOpen(open: boolean): void {
+    $('detail').classList.toggle('se-closed', !open);
+    $('splitter').classList.toggle('se-closed', !open);
+}
+
+function closeDetail(): void {
+    selectedId = null;
+    setDetailOpen(false);
+    $('detail').innerHTML = '';
+    renderList();
+}
+
 function renderDetail(): void {
     const s = SKILLS.find(x => x.id === selectedId);
     if (!s) return;
+    setDetailOpen(true);
     const ownerVal = s.ownerName ? `${s.ownerName} (${s.ownerGeneralId ?? '?'})` : '';
     const sixInfo = s.sixClass
         ? `${s.sixClass}${s.sixClassMatch ? '' : ' ⚠ 三势与规范值不匹配'}`
         : '⚠ 未知效果类型，无法归类';
     $('detail').innerHTML = `
-        <h3>${s.displayName} <span class="se-mono">${s.id}</span>${s.locked ? ' 🔒锁定值' : ''}</h3>
+        <div class="se-detail-hd">
+            <h3>${s.displayName} <span class="se-mono">${s.id}</span>${s.locked ? ' 🔒锁定值' : ''}</h3>
+            <button type="button" class="se-btn" id="d-close" title="关闭右侧编辑">✕</button>
+        </div>
         <div class="se-quote">${s.sourceQuote || '（无出处）'}</div>
         <div class="se-mono">effect=${s.baseEffect} · cond=${s.condition} · phase=${s.phase} · ${s.engineStatus}</div>
         ${s.note ? `<div class="se-quote">note: ${s.note}</div>` : ''}
@@ -309,6 +327,7 @@ function renderDetail(): void {
         <div class="se-new" id="new-panel"></div>
     `;
     $('d-save').addEventListener('click', () => saveDetail(s));
+    $('d-close').addEventListener('click', () => closeDetail());
 }
 
 function parseOwnerInput(raw: string): { gid: string | null; name: string | null } {
@@ -592,6 +611,7 @@ async function load(keepSelected?: string): Promise<void> {
     if (keepSelected) selectedId = keepSelected;
     renderList();
     if (selectedId) renderDetail();
+    else setDetailOpen(false);
 }
 
 for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-ex', 'f-wear', 'f-status']) {
@@ -615,7 +635,14 @@ $('btn-check').addEventListener('click', async () => { await load(); runErrorChe
 $('btn-new').addEventListener('click', () => {
     selectedId = null;
     renderList();
-    $('detail').innerHTML = '<div class="se-new" id="new-panel"></div>';
+    setDetailOpen(true);
+    $('detail').innerHTML = `
+        <div class="se-detail-hd">
+            <h3>新增技能</h3>
+            <button type="button" class="se-btn" id="d-close" title="关闭右侧编辑">✕</button>
+        </div>
+        <div class="se-new" id="new-panel"></div>`;
+    $('d-close').addEventListener('click', () => closeDetail());
     renderNewForm();
 });
 
