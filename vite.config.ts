@@ -2110,12 +2110,24 @@ function serverReadAllEntityData() {
         const tri = UNDERDOG_CONDS.has(m[3]) || VARIANCE_EFFECTS.has(m[2]) ? 'disadvantage' : EFFECT_TO_TRI[m[2]];
         if (tri && !triClassById.has(m[1])) triClassById.set(m[1], tri);
     }
+    // [2026-07-14 修复] 不再要求 id 后紧跟 layer/index/displayName（编辑器会在 id 后插 usageTag/situationTag 等内联字段，
+    //   打乱字段顺序会让严格顺序正则漏掉整条技 → 校验误报"技能不存在"）。改为逐条目取窗口，字段顺序无关地提取。
     const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string }> = [];
-    for (const m of tscText.matchAll(/id:\s*'(ts_\d+)',\s*layer:\s*'[^']*',\s*series:\s*'[^']*',\s*index:\s*(\d+),\s*displayName:\s*'([^']+)'/g)) {
-        tacticalSkills.push({
-            id: m[1], grid: circledNum(parseInt(m[2])), displayName: m[3],
-            assignTier: assignTierById.get(m[1]), triClass: triClassById.get(m[1]),
-        });
+    {
+        const idPositions: Array<{ id: string; idx: number }> = [];
+        for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'/g)) idPositions.push({ id: m[1], idx: m.index! });
+        for (let i = 0; i < idPositions.length; i++) {
+            const { id, idx } = idPositions[i];
+            const end = i + 1 < idPositions.length ? idPositions[i + 1].idx : Math.min(idx + 800, tscText.length);
+            const seg = tscText.slice(idx, end);
+            const dn = seg.match(/displayName:\s*'([^']+)'/)?.[1];
+            if (!dn) continue; // 无 displayName（非技能条目）跳过
+            const index = seg.match(/index:\s*(\d+)/)?.[1] ?? '0';
+            tacticalSkills.push({
+                id, grid: circledNum(parseInt(index)), displayName: dn,
+                assignTier: assignTierById.get(id), triClass: triClassById.get(id),
+            });
+        }
     }
     const strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }> = [];
     // [2026-07-13 拆分] 战略技目录已在 general-skills/catalogs.ts（profiles.ts 里没有 str_ 条目）
@@ -3014,9 +3026,8 @@ function serverValidateEntities(): {
             if (!prof) continue;
             const missing: string[] = [];
             if (!prof.tacticalSkillId) missing.push('通用');
-            if (!prof.advantageSkillId) missing.push('优势');
-            if (!prof.balanceSkillId) missing.push('均势');
-            if (!prof.disadvantageSkillId) missing.push('劣势');
+            // [2026-07-14] 旧三槽 advantage/balance/disadvantageSkillId 已弃用（引擎只读攻防六槽），不再校验；
+            //   否则清掉旧三槽的武将（如张巡/项羽）会被误报"缺优势/均势/劣势"。
             if (!prof.atkAdvantageSkillId || !prof.atkBalanceSkillId || !prof.atkDisadvantageSkillId) missing.push('攻击');
             if (!prof.defAdvantageSkillId || !prof.defBalanceSkillId || !prof.defDisadvantageSkillId) missing.push('防御');
             if (missing.length > 0) {
@@ -3031,43 +3042,10 @@ function serverValidateEntities(): {
         issues.push({ level: 'error', msg: `武将档案 "${key}" 的 generalId 字段是 '${gid}'，与键不一致（疑似批量脚本截断），请改回 '${key}'` });
     }
 
-    // 11.11. [NEW 2026-07-14] sourceQuote 【武将名】标注 vs 六槽归属：技能目录里注明了典故主角，
-    //   该武将的攻防六槽必须包含此技（防批量脚本覆盖后典故技丢失）。
-    {
-        // 建 武将名 → generalId 映射
-        const nameToGid = new Map<string, string>();
-        for (const [, g] of Object.entries(data.generals)) {
-            nameToGid.set(g.generalName, g.generalId);
-        }
-        // 扫描 TacticalSkillCatalog 中 sourceQuote 含【武将名】的技能
-        const tscText = fs.readFileSync(
-            path.resolve(__dirname, 'src/data/TacticalSkillCatalog.ts'), 'utf-8',
-        );
-        for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'[^}]*sourceQuote:\s*'【([^】]+)】/g)) {
-            const skillId = m[1];
-            const namesStr = m[2]; // 可能是 "谢玄" 或 "苻坚/谢玄"
-            const names = namesStr.split('/').map(n => n.trim());
-            const nameMatch = names.find(n => nameToGid.has(n));
-            if (!nameMatch) continue;
-            const gid = nameToGid.get(nameMatch)!;
-            const prof = data.profiles[gid];
-            if (!prof) continue;
-            const six = [
-                prof.atkAdvantageSkillId, prof.atkBalanceSkillId, prof.atkDisadvantageSkillId,
-                prof.defAdvantageSkillId, prof.defBalanceSkillId, prof.defDisadvantageSkillId,
-            ];
-            if (!six.includes(skillId)) {
-                const dispMatch = tscText.slice(m.index, m.index + 300).match(/displayName:\s*'([^']+)'/);
-                const dispName = dispMatch?.[1] ?? skillId;
-                const genEntry = Object.entries(data.generals).find(([, g]) => g.generalId === gid);
-                issues.push({
-                    level: 'error',
-                    msg: `技能 "${dispName}"(${skillId}) 典故主角【${nameMatch}】(${gid})，但该武将攻防六槽中无此技（疑似批量脚本覆盖丢失）`,
-                    factionId: genEntry?.[0],
-                });
-            }
-        }
-    }
+    // 11.11.（已废弃 2026-07-14）原校验：sourceQuote 含【武将名】的技，该武将六槽必须装它。
+    //   与新典故主系统不兼容——典故主=归属（这技历史上属于谁），不要求该武将必装它；
+    //   一将可拥有多个签名技（不同六计），但六槽只有 6 个、按六计各装一个，装不下的签名技只挂归属不出场。
+    //   且它读的是旧的 sourceQuote【名字】而非现在权威的内联 ownerName，双重过时。故移除。
 
     // 11.12. [NEW 2026-07-14] 六计齐全：每将六技须覆盖 攻战/胜战/敌战/混战/并战/败战 各一。
     //   六槽 = 攻/守 × 优/均/劣；两优势格=攻战+胜战、两均势格=敌战+混战、两劣势格=并战+败战。

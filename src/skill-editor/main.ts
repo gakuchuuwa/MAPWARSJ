@@ -426,7 +426,7 @@ function renderNewForm(): void {
 
 interface CheckIssue {
     id: string; displayName: string;
-    type: 'non4char' | 'noWearer' | 'noSituation' | 'noUsage' | 'noSixClass' | 'sixClassMismatch' | 'duplicateSixClass' | 'tooManySkills' | 'duplicateName';
+    type: 'non4char' | 'noWearer' | 'noSituation' | 'noUsage' | 'noSixClass' | 'sixClassMismatch' | 'duplicateSixClass' | 'tooManySkills' | 'duplicateName' | 'generalSixIncomplete';
     msg: string;
 }
 
@@ -518,13 +518,42 @@ function runErrorCheck(): void {
         }
     }
 
-    const counts: Record<string, number> = { non4char: 0, noWearer: 0, noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, duplicateSixClass: 0, tooManySkills: 0, duplicateName: 0, total: issues.length };
+    // ── 武将六计不齐（从佩戴反查：每将六槽应覆盖攻/胜/敌/混/并/败各一，与 batch-manager 同口径）──
+    //   佩戴数据 = 各将六槽装的技；若某槽指向已删技则该将佩戴不足6，也会体现为"缺"。
+    {
+        const genSix = new Map<string, string[]>(); // gid → 所佩戴技的六计
+        for (const s of SKILLS) {
+            if (!s.sixClass) continue;
+            for (const w of s.wearers) {
+                (genSix.get(w.gid) ?? genSix.set(w.gid, []).get(w.gid)!).push(s.sixClass);
+            }
+        }
+        const ALL_SIX = ['攻战计', '胜战计', '敌战计', '混战计', '并战计', '败战计'];
+        for (const g of GENERALS) {
+            const six = genSix.get(g.generalId) ?? [];
+            const cnt: Record<string, number> = {};
+            for (const c of six) cnt[c] = (cnt[c] ?? 0) + 1;
+            const missing = ALL_SIX.filter(c => !cnt[c]);
+            const dup = Object.entries(cnt).filter(([, n]) => n > 1).map(([c, n]) => c + '×' + n);
+            if (missing.length || dup.length) {
+                const parts: string[] = [];
+                if (missing.length) parts.push('缺' + missing.join('/'));
+                if (dup.length) parts.push('重' + dup.join('/'));
+                issues.push({
+                    id: g.generalId, displayName: g.name, type: 'generalSixIncomplete',
+                    msg: `武将「${g.name}」六计不齐：${parts.join('，')}（六槽应攻/胜/敌/混/并/败各一）`,
+                });
+            }
+        }
+    }
+
+    const counts: Record<string, number> = { non4char: 0, noWearer: 0, noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, duplicateSixClass: 0, tooManySkills: 0, duplicateName: 0, generalSixIncomplete: 0, total: issues.length };
     for (const i of issues) counts[i.type]++;
 
     const typeLabel: Record<string, string> = {
         non4char: '非四字技名', noWearer: '无佩戴', noSituation: '三势缺失', noUsage: '攻防缺失',
         noSixClass: '六类未标', sixClassMismatch: '三势跨类', duplicateSixClass: '典故主六类重复',
-        tooManySkills: '典故主超6技', duplicateName: '技名重复',
+        tooManySkills: '典故主超6技', duplicateName: '技名重复', generalSixIncomplete: '武将六计不齐',
     };
     const summaryHtml = Object.entries(typeLabel).map(([k, label]) => {
         const n = counts[k] ?? 0;
