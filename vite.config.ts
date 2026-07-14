@@ -2745,8 +2745,10 @@ function serverSkillEditorSave(body: {
             block = block.replace(/(magnitude:\s*)[\d.]+/, `$1${v}`);
         }
     }
-    text = text.slice(0, start) + block + text.slice(end);
     // ── 自动同步 situationTag：从 baseEffect 推导 ──
+    // 注意：此处只改 block、不重组 text；text 的最终重组只在下方做唯一一次。
+    // （历史 bug：曾在此处提前 text=slice+block+slice 组一次，下方又用旧 end 对已变长的 text 再组一次，
+    //   旧 end 落入新 block 内部导致 block 尾巴被复制→ '}magnitude:...' 残尾。删掉提前重组即修复。）
     const curEffect = seEntryField(block, 'baseEffect') ?? '';
     const autoSit = SIX_CLASS_BY_EFFECT[curEffect]?.canonicalSituation;
     if (autoSit) {
