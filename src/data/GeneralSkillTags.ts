@@ -670,7 +670,6 @@ export const TS_V1_ARCHETYPE: Readonly<Record<string, SkillArchetype>> = {
     ts_006: 'siege_hold', ts_016: 'siege_hold', ts_017: 'siege_hold',
     ts_020: 'siege_hold', ts_031: 'siege_hold', ts_032: 'siege_hold',
     ts_033: 'siege_hold', ts_034: 'siege_hold', ts_037: 'siege_hold',
-    ts_038: 'siege_hold', ts_040: 'siege_hold', ts_041: 'siege_hold',
     ts_045: 'siege_hold', ts_048: 'siege_hold',
 };
 
