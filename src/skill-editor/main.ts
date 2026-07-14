@@ -27,6 +27,27 @@ let GENERALS: GeneralRow[] = [];
 let TIERS: Record<string, Record<string, number | [number, number]>> = {};
 let CONDITIONS: string[] = [];
 let selectedId: string | null = null;
+let sortKey: string | null = null;
+let sortDir: 1 | -1 = 1;
+
+// 各列排序取值（三势/攻防按逻辑序，其余按自然值）
+const SIT_ORDER: Record<string, number> = { '优势': 0, '均势': 1, '劣势': 2 };
+const USE_ORDER: Record<string, number> = { '攻击': 0, '双行': 1, '防御': 2 };
+const SIX_ORDER: Record<string, number> = { '攻战计': 0, '胜战计': 1, '敌战计': 2, '混战计': 3, '并战计': 4, '败战计': 5 };
+function sortValue(s: SkillRow, key: string): number | string {
+    switch (key) {
+        case 'id': return parseInt(s.id.replace('ts_', ''), 10) || 0;
+        case 'name': return s.displayName;
+        case 'sit': return SIT_ORDER[s.situationTag] ?? 9;
+        case 'use': return USE_ORDER[s.usageTag] ?? 9;
+        case 'six': return s.sixClass ? (SIX_ORDER[s.sixClass] ?? 8) : 9;
+        case 'owner': return s.ownerName ?? '￿'; // 无主排末尾
+        case 'value': return s.family === 'luck' ? (s.luckMin ?? 0.8) : (s.magnitude ?? -1);
+        case 'wear': return s.wearers.length;
+        case 'status': return s.status === 'retired' ? 1 : 0;
+        default: return 0;
+    }
+}
 
 const app = document.getElementById('app')!;
 app.innerHTML = `
@@ -44,6 +65,9 @@ app.innerHTML = `
     .se-splitter:hover, .se-splitter.dragging { background: #6a5c3c; }
     .se-detail { width: 480px; min-width: 280px; max-width: 70%; border-left: 1px solid #3a3226; overflow: auto; padding: 14px; background: #131110; flex-shrink: 0; }
     .se-list th { position: sticky; top: 0; background: #1a1713; color: #b8a878; text-align: left; padding: 6px 8px; border-bottom: 1px solid #3a3226; }
+    .se-sortable { cursor: pointer; user-select: none; }
+    .se-sortable:hover { color: #d8b95e; }
+    .se-sort-arrow { color: #d8b95e; font-size: 11px; margin-left: 3px; }
     .se-list td { padding: 4px 8px; border-bottom: 1px solid #221e18; white-space: nowrap; }
     .se-list tr { cursor: pointer; }
     .se-list tr:hover td { background: #221e18; }
@@ -107,7 +131,18 @@ app.innerHTML = `
 </div>
 <div class="se-main">
     <div class="se-list"><table>
-        <thead><tr><th>id</th><th>技名</th><th>三势</th><th>攻防</th><th>六类(推导)</th><th>典故主</th><th>档位/数值</th><th>佩戴</th><th>状态</th><th>复制</th></tr></thead>
+        <thead><tr>
+            <th class="se-sortable" data-sort="id">id</th>
+            <th class="se-sortable" data-sort="name">技名</th>
+            <th class="se-sortable" data-sort="sit">三势</th>
+            <th class="se-sortable" data-sort="use">攻防</th>
+            <th class="se-sortable" data-sort="six">六类(推导)</th>
+            <th class="se-sortable" data-sort="owner">典故主</th>
+            <th class="se-sortable" data-sort="value">档位/数值</th>
+            <th class="se-sortable" data-sort="wear">佩戴</th>
+            <th class="se-sortable" data-sort="status">状态</th>
+            <th>复制</th>
+        </tr></thead>
         <tbody id="list-body"></tbody>
     </table></div>
     <div class="se-splitter" id="splitter"></div>
@@ -181,6 +216,21 @@ function sixClassDisplay(s: SkillRow): string {
 
 function renderList(): void {
     const rows = applyFilters();
+    if (sortKey) {
+        rows.sort((a, b) => {
+            const va = sortValue(a, sortKey!), vb = sortValue(b, sortKey!);
+            const c = typeof va === 'number' && typeof vb === 'number'
+                ? va - vb
+                : String(va).localeCompare(String(vb), 'zh');
+            return c !== 0 ? c * sortDir : (parseInt(a.id.replace('ts_', ''), 10) - parseInt(b.id.replace('ts_', ''), 10));
+        });
+    }
+    // 列头箭头指示
+    for (const th of document.querySelectorAll('.se-sortable')) {
+        const k = (th as HTMLElement).dataset.sort!;
+        const base = (th.textContent ?? '').replace(/[▲▼]\s*$/, '').trim();
+        th.innerHTML = k === sortKey ? `${base}<span class="se-sort-arrow">${sortDir === 1 ? '▲' : '▼'}</span>` : base;
+    }
     $('count').textContent = `${rows.length} / ${SKILLS.length} 条`;
     $('list-body').innerHTML = rows.map(s => `
         <tr data-id="${s.id}" class="${s.id === selectedId ? 'sel' : ''}${s.status === 'retired' ? ' se-retired' : ''}">
@@ -510,6 +560,15 @@ for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-ex', 'f-wear', 'f-st
     if (id.endsWith('-six') || id.endsWith('-sit') || id.endsWith('-use') || id.endsWith('-ex') || id.endsWith('-wear') || id.endsWith('-status')) {
         $(id).addEventListener('change', renderList);
     }
+}
+// 列头点击排序：同列切升/降，换列默认升序
+for (const th of document.querySelectorAll('.se-sortable')) {
+    th.addEventListener('click', () => {
+        const k = (th as HTMLElement).dataset.sort!;
+        if (sortKey === k) sortDir = sortDir === 1 ? -1 : 1;
+        else { sortKey = k; sortDir = 1; }
+        renderList();
+    });
 }
 $('btn-refresh').addEventListener('click', () => load());
 $('btn-check').addEventListener('click', runErrorCheck);
