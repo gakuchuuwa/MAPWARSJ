@@ -838,7 +838,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_108', layer: 'tactical', series: 'enhance', index: 108,
-        displayName: '倾国压境', ownerName: '白起', sourceQuote: '《史记·白起王翦列传》：“王翦将兵六十万……大破楚军。”',
+        displayName: '倾国压境',  ownerName: '王翦', sourceQuote: '《史记·白起王翦列传》：“王翦将兵六十万……大破楚军。”',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.05, engineStatus: 'ready',
     },
@@ -1214,7 +1214,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_165', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 165,
-        displayName: '减灶诱歼', ownerName: '孙膑', ownerGeneralId: 'qi_sunbin', sourceQuote: '【孙膑】《史记·孙子吴起列传》：马陵道减灶示弱诱庞涓深入设伏全歼。',
+        displayName: '减灶诱歼',  ownerGeneralId: 'qi_sunbin', sourceQuote: '【孙膑】《史记·孙子吴起列传》：马陵道减灶示弱诱庞涓深入设伏全歼。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.05, engineStatus: 'ready',
     },
@@ -3067,7 +3067,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_537', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 537,
-        displayName: '设伏摧锋', ownerName: '孙膑', ownerGeneralId: 'qi_sunbin', sourceQuote: '【孙膑】《史记·孙子吴起列传》：马陵道设伏歼灭庞涓。',
+        displayName: '设伏摧锋',  ownerGeneralId: 'qi_sunbin', sourceQuote: '【孙膑】《史记·孙子吴起列传》：马陵道设伏歼灭庞涓。',
         baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.1, engineStatus: 'ready',
     },
@@ -4571,7 +4571,7 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_702', layer: 'tactical', series: 'troop', index: 702, displayName: '倍道袭擒', sourceQuote: '奔袭擒孟达', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.05, engineStatus: 'ready', note: '【倍道袭擒】三势精修·优局' },
     { id: 'ts_703', layer: 'tactical', series: 'enhance', index: 703, displayName: '恩威抚讨', ownerName: '桑吉温', sourceQuote: '【桑吉温】在藏区恩威并施，抚讨兼顾平定局势。', baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll', magnitude: 1.05, engineStatus: 'ready', note: '【恩威抚讨】三势精修·优局' },
     { id: 'ts_704', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 704, displayName: '据垒固守', ownerName: '周亚夫', sourceQuote: '【周亚夫】《史记·绛侯周勃世家》：细柳营据垒固守。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
-    { id: 'ts_705', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 705, displayName: '伏锐歼敌', ownerName: '孙膑', sourceQuote: '【孙膑】《史记·孙子吴起列传》：马陵道隘口伏击庞涓。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
+    { id: 'ts_705', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 705, displayName: '伏锐歼敌',  sourceQuote: '【孙膑】《史记·孙子吴起列传》：马陵道隘口伏击庞涓。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
     { id: 'ts_706', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 706, displayName: '钓野诱歼', ownerName: '岛津家久', sourceQuote: '【岛津家久】日本战国岛津家"钓野伏"诱敌合围。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
     { id: 'ts_707', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 707, displayName: '草人诱射', ownerName: '张巡', sourceQuote: '【张巡】《新唐书·张巡传》：睢阳草人借箭，智守孤城。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_708', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 708, displayName: '石炮摧锋', sourceQuote: '投石机摧毁敌军先锋，攻城利器，如襄阳炮等多将皆有。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
@@ -5226,7 +5226,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_728: '耿恭/李陵',
     ts_729: '司马懿',
     ts_732: '张巡/许远',
-    ts_733: '耶律大石',
     ts_736: '李陵',
     ts_742: '苻坚',
     ts_743: '马谡',
