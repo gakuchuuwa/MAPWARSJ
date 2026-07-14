@@ -108,6 +108,15 @@ app.innerHTML = `
     .se-issue-row td { color: #e8a0a0; }
     .se-issue-row:hover td { background: #2a1a1a; }
     .se-summary { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    /* 典故主级汇总 */
+    .se-owner-summary { background: #1e1a14; border: 1px solid #4a3c1e; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; }
+    .se-owner-summary-hd { color: #d8b95e; font-size: 14px; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #3a3226; padding-bottom: 6px; }
+    .se-owner-item { display: flex; align-items: flex-start; gap: 8px; padding: 4px 0; font-size: 13px; line-height: 1.5; }
+    .se-owner-item + .se-owner-item { border-top: 1px solid #2a2418; }
+    .se-owner-tag { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
+    .se-owner-tag-over { background: #5a2424; color: #f0a0a0; }
+    .se-owner-tag-dup { background: #4a3c1e; color: #d8c88e; }
+    .se-owner-msg { flex: 1; color: #d0b090; word-break: break-all; }
 </style>
 <div class="se-header">
     <span class="se-title">武将技编辑器</span>
@@ -461,7 +470,11 @@ function runErrorCheck(): void {
         group.push({ id: s.id, displayName: s.displayName, sixClass: s.sixClass });
         ownerGroups.set(s.ownerName, group);
     }
-    const dupIssues: CheckIssue[] = [];
+    // ── 典故主级汇总问题（放错误面板顶部，不逐技展开）──
+    interface OwnerIssue { owner: string; skillCount: number; type: 'tooManySkills' | 'duplicateSixClass'; msg: string; dupClass?: string; dupIds?: string; }
+    const ownerIssues: OwnerIssue[] = [];
+
+    // 典故主六类重复（按重复数降序，每 owner+class 一条）
     for (const [owner, skills] of ownerGroups) {
         if (skills.length < 2) continue;
         const seen = new Map<string, string[]>(); // sixClass → [ids]
@@ -472,33 +485,29 @@ function runErrorCheck(): void {
         }
         for (const [sixClass, ids] of seen) {
             if (ids.length < 2) continue;
-            for (const sid of ids) {
-                const sk = skills.find(x => x.id === sid)!;
-                dupIssues.push({
-                    id: sk.id, displayName: sk.displayName, type: 'duplicateSixClass',
-                    msg: `典故主「${owner}」的 ${ids.length} 个技六类同为「${sixClass}」（${ids.join('、')}），同一典故主各技六类不得重复`,
-                });
-            }
-        }
-    }
-    dupIssues.sort((a, b) => {
-        const na = parseInt(a.msg.match(/的 (\d+) 个技/)![1]);
-        const nb = parseInt(b.msg.match(/的 (\d+) 个技/)![1]);
-        return nb - na;
-    });
-    for (const di of dupIssues) issues.push(di);
-
-    // ── 典故主超 6 技（按技能数降序）──
-    const sortedOwners = [...ownerGroups.entries()].sort((a, b) => b[1].length - a[1].length);
-    for (const [owner, skills] of sortedOwners) {
-        if (skills.length <= 6) continue;
-        for (const sk of skills) {
-            issues.push({
-                id: sk.id, displayName: sk.displayName, type: 'tooManySkills',
-                msg: `典故主「${owner}」共有 ${skills.length} 个技（六类只有 6 种，超 6 必重复），需核查归属或分摊`,
+            ownerIssues.push({
+                owner, skillCount: skills.length, type: 'duplicateSixClass',
+                msg: `典故主「${owner}」的 ${ids.length} 个技六类同为「${sixClass}」（${ids.join('、')}），同一典故主各技六类不得重复`,
+                dupClass: sixClass, dupIds: ids.join('、'),
             });
         }
     }
+
+    // 典故主超 6 技（按技能数降序，每 owner 一条）
+    const sortedOwners = [...ownerGroups.entries()].sort((a, b) => b[1].length - a[1].length);
+    for (const [owner, skills] of sortedOwners) {
+        if (skills.length <= 6) continue;
+        ownerIssues.push({
+            owner, skillCount: skills.length, type: 'tooManySkills',
+            msg: `典故主「${owner}」共有 ${skills.length} 个技（六类只有 6 种，超 6 必重复），需核查归属或分摊`,
+        });
+    }
+    // 按严重程度排序：超6技优先（按技能数降序），再排六类重复（按重复数降序）
+    ownerIssues.sort((a, b) => {
+        const order = { tooManySkills: 0, duplicateSixClass: 1 };
+        if (order[a.type] !== order[b.type]) return order[a.type] - order[b.type];
+        return b.skillCount - a.skillCount;
+    });
 
     // ── 技名重复 ──
     const nameGroups = new Map<string, string[]>();
@@ -572,6 +581,8 @@ function runErrorCheck(): void {
 
     const counts: Record<string, number> = { non4char: 0, noWearer: 0, orphanOwner: 0, missingOwnerGid: 0, noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, duplicateSixClass: 0, tooManySkills: 0, duplicateName: 0, generalSixIncomplete: 0, total: issues.length };
     for (const i of issues) counts[i.type]++;
+    // 从 ownerIssues 补计（不再逐技入表）
+    for (const oi of ownerIssues) counts[oi.type]++;
 
     const typeLabel: Record<string, string> = {
         non4char: '非四字技名', noWearer: '无佩戴', noSituation: '三势缺失', noUsage: '攻防缺失',
@@ -584,27 +595,45 @@ function runErrorCheck(): void {
         return `<span class="se-err-count ${cls}">${label}: ${n}</span>`;
     }).join('');
 
+    // ── 典故主级汇总（放在表格上方，一主一条，不逐技展开）──
+    const ownerSummaryHtml = ownerIssues.length > 0 ? `
+        <div class="se-owner-summary">
+            <div class="se-owner-summary-hd">📋 典故主问题（${ownerIssues.length} 项）</div>
+            ${ownerIssues.map(oi => `
+                <div class="se-owner-item">
+                    <span class="se-owner-tag se-owner-tag-${oi.type === 'tooManySkills' ? 'over' : 'dup'}">${typeLabel[oi.type]}</span>
+                    <span class="se-owner-msg">${oi.msg}</span>
+                    <button class="se-copy-btn se-copy-owner" data-msg="${oi.msg.replace(/"/g, '&quot;')}" title="复制此项">📋</button>
+                </div>`).join('')}
+        </div>` : '';
+
+    const tableIssues = issues.filter(i => i.type !== 'tooManySkills' && i.type !== 'duplicateSixClass');
+    const hasIssues = tableIssues.length > 0;
+
     const modal = document.createElement('div');
     modal.className = 'se-modal-bg';
     modal.innerHTML = `
         <div class="se-modal">
             <div class="se-modal-hd">
                 <h3>错误检查</h3>
-                <span style="color:#8a8271">共 ${issues.length} 条</span>
+                <span style="color:#8a8271">共 ${tableIssues.length + ownerIssues.length} 项问题</span>
                 <button class="se-btn" id="modal-close" style="margin-left:auto">✕</button>
             </div>
             <div class="se-modal-body">
                 <div class="se-summary">${summaryHtml}</div>
-                ${issues.length === 0 ? '<p style="color:#8a9a78">✅ 无错误</p>' : `
+                ${ownerSummaryHtml}
+                ${!hasIssues && ownerIssues.length > 0 ? '<p style="color:#8a9a78;margin-top:12px">✅ 逐技检查无其他错误</p>' : ''}
+                ${!hasIssues && ownerIssues.length === 0 ? '<p style="color:#8a9a78">✅ 无错误</p>' : ''}
+                ${hasIssues ? `
                 <table><thead><tr><th>id</th><th>技名</th><th>类型</th><th>详情</th></tr></thead><tbody>
-                    ${issues.map(i => `
+                    ${tableIssues.map(i => `
                         <tr class="se-issue-row" data-id="${i.id}" style="cursor:pointer">
                             <td class="se-mono">${i.id}</td>
                             <td>${i.displayName}</td>
                             <td>${typeLabel[i.type] ?? i.type}</td>
                             <td>${i.msg} <button class="se-copy-btn se-copy-issue" data-id="${i.id}" data-msg="${i.msg.replace(/"/g, '&quot;')}" title="复制此行">📋</button></td>
                         </tr>`).join('')}
-                </tbody></table>`}
+                </tbody></table>` : ''}
             </div>
         </div>
     `;
@@ -621,6 +650,13 @@ function runErrorCheck(): void {
             const msg = decodeURIComponent((btn as HTMLElement).dataset.msg!.replace(/&quot;/g, '"'));
             const id = (btn as HTMLElement).dataset.id!;
             navigator.clipboard.writeText(`${id}\t${msg}`).then(() => toast(`已复制：${id}`));
+        });
+    }
+    for (const btn of modal.querySelectorAll('.se-copy-owner')) {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const msg = decodeURIComponent((btn as HTMLElement).dataset.msg!.replace(/&quot;/g, '"'));
+            navigator.clipboard.writeText(msg).then(() => toast('已复制典故主问题'));
         });
     }
     for (const row of modal.querySelectorAll('.se-issue-row')) {

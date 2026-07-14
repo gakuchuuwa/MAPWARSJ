@@ -304,16 +304,18 @@ const ENHANCE: TacticalSkillEntry[] = [
         note: '出征首战×1.25（桥接 ally_mult_1_2 + first_sortie 门控）；契合名将远征首战爆发看点',
     },
     {
-        id: 'ts_815', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 815,
+        id: 'ts_815', ownerName: '廉颇', ownerGeneralId: 'zhao_lianpo', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 815,
         displayName: '以逸待劳', sourceQuote: '《三十六计·第四计》：困敌之势，不以战，损刚益柔。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.05, engineStatus: 'ready',
+    }   magnitude: 0.05, engineStatus: 'ready',
     },
     {
-        id: 'ts_816', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 816,
+        id: 'ts_816', ownerName: '孙策', ownerGeneralId: 'shanyue_sunce', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 816,
         displayName: '声东击西', sourceQuote: '《三十六计·第六计》：敌志乱萃，不虞，坤下兑上之象。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.05, engineStatus: 'ready',
+    }     magnitude: 0.05, engineStatus: 'ready',
     },
 ];
 
@@ -4329,13 +4331,15 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     { id: 'ts_809', layer: 'tactical', series: 'troop', index: 809, displayName: '以拖待变', situationTag: '劣势', sourceQuote: '《孙子兵法·虚实》：“先处战地而待敌者佚，后处战地而趋战者劳。”', baseEffect: 'battle_duration_mult', condition: 'always', phase: 'opening_roll', magnitude: 1.4, engineStatus: 'hook', note: '【通用】劣势局·拖延待援：战斗时长×1.4（延长40%）；引擎接线待Step2' },
     { id: 'ts_810', layer: 'tactical', series: 'fate', index: 810, displayName: '料敌机先', ownerName: '孙膑', ownerGeneralId: 'dongxian_sunbin', sourceQuote: '【孙膑】《史记》：马陵道预判庞涓行程设伏', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1.0, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【孙膑】绝品·专属·一人一张·原主复活' },
     { id: 'ts_811', layer: 'tactical', series: 'counter', index: 811, displayName: '长平合围', ownerName: '白起', ownerGeneralId: 'xin_baiqi', sourceQuote: '《三十六计·混战计》：“小敌困之。”（白起·长平合围）', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1.0, engineStatus: 'ready', note: '【白起】绝品·专属·长平围歼典故' },
-    { id: 'ts_812', layer: 'tactical', series: 'counter', index: 812, displayName: '乌巢断粮', sourceQuote: '《三十六计·混战计》：“不敌其力，而消其势。”（曹操·乌巢烧粮）', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1.0, engineStatus: 'ready', note: '【曹操】绝品·专属·乌巢断粮典故' },
+    { id: 'ts_812', ownerName: '曹操', ownerGeneralId: 'cao_d_caocao', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 812, displayName: '乌巢断粮', sourceQuote: '《三十六计·混战计》：“不敌其力，而消其势。”（曹操·乌巢烧粮）', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '【曹操】绝品·专属·乌巢断粮典故' }se: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '【曹操】绝品·专属·乌巢断粮典故' },
     { id: 'ts_813', layer: 'tactical', series: 'counter', index: 813, displayName: '辕门射戟', ownerName: '吕布', ownerGeneralId: 'pizhou_lvbu', sourceQuote: '《三国志·吕布传》：布于沛城设宴，树戟于营门，一箭中戟小支，慑退纪灵三万兵。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1.0, engineStatus: 'ready', note: '【吕布】绝品·专属·辕门射戟原主' },
-    { id: 'ts_814', layer: 'tactical', series: 'counter', index: 814, displayName: '将计就计', sourceQuote: '《三国志·贾诩传》注引：“因其计而用之。”（司马懿）', baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.7, engineStatus: 'ready', note: '【司马懿】绝品·专属·借敌之计反制·原主复活' },
+    { id: 'ts_814', ownerName: '司马懿', ownerGeneralId: 'sima_d_simayi', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 814, displayName: '将计就计', sourceQuote: '《三国志·贾诩传》注引：“因其计而用之。”（司马懿）', baseEffect: 'partial_negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.7, engineStatus: 'ready', note: '【司马懿】绝品·专属·借敌之计反制·原主复活' }'opening_roll', magnitude: 0.7, engineStatus: 'ready', note: '【司马懿】绝品·专属·借敌之计反制·原主复活' },
     {
-        id: 'ts_822', layer: 'tactical', series: 'casualty', index: 822,
+        id: 'ts_822', ownerName: '李自成', ownerGeneralId: 'dashun_lizicheng', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 822,
         displayName: '走为上计', sourceQuote: '《三十六计·第三十六计》：全师避敌，左次无咎，未失常也。',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
+        magnitude: 1.25, engineStatus: 'ready',
+    }ion: 'always', phase: 'post_battle',
         magnitude: 1.25, engineStatus: 'ready',
     },
 ];
