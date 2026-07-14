@@ -457,6 +457,43 @@ export default defineConfig({
                         }
                     });
                 });
+                // fix-six-slots: run auto_fill + distribute_orphans
+                // Return raw profiles data for six-slot editor
+                server.middlewares.use('/api/skill-editor/profiles', (req, res) => {
+                    if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
+                    try {
+                        const data = serverReadAllEntityData();
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify(data.profiles));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.end(JSON.stringify({ ok: false, error: err.message }));
+                    }
+                });
+
+                server.middlewares.use('/api/skill-editor/fix-six-slots', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    try {
+                        const { execSync } = require('child_process');
+                        const r1 = execSync('python scratch/auto_fill_six_slots.py --write', {
+                            cwd: path.resolve(__dirname),
+                            encoding: 'utf-8',
+                            timeout: 60000,
+                        });
+                        const r2 = execSync('python scratch/distribute_orphans.py --write', {
+                            cwd: path.resolve(__dirname),
+                            encoding: 'utf-8',
+                            timeout: 60000,
+                        });
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: true, auto: r1.slice(-80), orphan: r2.slice(-80) }));
+                    } catch (err: any) {
+                        res.statusCode = 500;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ ok: false, error: err.message }));
+                    }
+                });
+
                 server.middlewares.use('/api/skill-editor/create', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
@@ -2631,12 +2668,20 @@ function serverSkillEditorSave(body: {
     ownerGeneralId?: string | null; ownerName?: string | null;
     status?: string; tierLabel?: string;
     setSixClass?: string; sourceQuote?: string; note?: string;
+    displayName?: string;
 }): { warnings: string[] } {
     const warnings: string[] = [];
     if (!/^ts_\d+$/.test(body.id)) throw new Error('非法 id');
     if (body.situationTag && !['优势', '均势', '劣势'].includes(body.situationTag)) throw new Error('非法三势标签');
     if (body.usageTag && !['双行', '攻击', '防御'].includes(body.usageTag)) throw new Error('非法攻防标签');
     if (body.status && !['active', 'retired'].includes(body.status)) throw new Error('非法状态');
+    if (body.displayName !== undefined) {
+        if (!/^[\u4e00-\u9fff]{4}$/.test(body.displayName)) throw new Error('技名必须是四字汉语');
+        // Check for duplicate
+        const data = serverReadAllEntityData();
+        if (data.tacticalSkills.some(s => s.id !== body.id && s.displayName === body.displayName))
+            throw new Error(`技名「${body.displayName}」已存在，禁止同名`);
+    }
     const data = serverReadAllEntityData();
     if (body.ownerGeneralId) {
         if (!data.profiles[body.ownerGeneralId]) throw new Error(`典故主 ${body.ownerGeneralId} 不在册（须为在册武将 generalId）`);
@@ -2647,6 +2692,11 @@ function serverSkillEditorSave(body: {
     let text = fs.readFileSync(fp, 'utf-8');
     const { start, end } = seFindEntryBlock(text, body.id);
     let block = text.slice(start, end);
+
+    // rename
+    if (body.displayName !== undefined) {
+        block = block.replace(/(displayName:\s*)'[^']*'/, `$1'${body.displayName}'`);
+    }
 
     // ── 六计重派：原子改 baseEffect + 数值 + 条件 + 阶段（走服务端串行写，杜绝 Edit 竞争回退）──
     if (body.setSixClass) {
@@ -3054,13 +3104,28 @@ function serverValidateEntities(): {
     {
         const tscForSix = fs.readFileSync(path.resolve(__dirname, 'src/data/TacticalSkillCatalog.ts'), 'utf-8');
         const effectById = new Map<string, string>();
-        for (const m of tscForSix.matchAll(/id:\s*'(ts_\d+)'[\s\S]*?baseEffect:\s*'(\w+)'/g)) {
-            if (!effectById.has(m[1])) effectById.set(m[1], m[2]);
+        const condById = new Map<string, string>();
+        // Extract each entry block, then parse effect + condition inside it
+        const entryRe = /\{\s*\n?\s*id:\s*'(ts_\d+)'[\s\S]*?\},?\s*\n/g;
+        let em;
+        while ((em = entryRe.exec(tscForSix)) !== null) {
+            const block = em[0];
+            const sid = em[1];
+            if (effectById.has(sid)) continue;
+            const effM = block.match(/baseEffect:\s*'(\w+)'/);
+            const condM = block.match(/condition:\s*'(\w+)'/);
+            if (effM) effectById.set(sid, effM[1]);
+            if (condM) condById.set(sid, condM[1]);
         }
+        const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog']);
+        const VARIANCE_EFFECTS = new Set(['luck_variance_self', 'luck_lock_self', 'recompute_comeback']);
         const sixOf = (id?: string): string | null => {
             if (!id) return null;
             const eff = effectById.get(id);
-            return eff ? (SIX_CLASS_BY_EFFECT[eff]?.label ?? null) : null;
+            if (!eff) return null;
+            const cond = condById.get(id) ?? '';
+            if (UNDERDOG_CONDS.has(cond) || VARIANCE_EFFECTS.has(eff)) return '败战计';
+            return SIX_CLASS_BY_EFFECT[eff]?.label ?? null;
         };
         const ALL_SIX = ['攻战计', '胜战计', '敌战计', '混战计', '并战计', '败战计'];
         const SIX_SLOTS = [

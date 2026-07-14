@@ -4,7 +4,7 @@
  * 按 V 键触发（仅开发模式；生产构建因动态 import 在 import.meta.env.DEV 分支内而被 Rollup 剔除）。
  * 对一批代表名将，调用引擎【真实】的 resolveSituationalSkillId（同一套开局选技逻辑），
  * 屏幕显示「优/均/劣三局各选中的战术技 + 战略技」，一眼验证：
- *   ① 三局选不同技（慢直播播报不重复的根） ② 招牌技钉在对应局 ③ 战略技符合历史×远征生效改动。
+ *   ① 三局选不同技（慢直播播报不重复的根） ② 武将技钉在对应局 ③ 战略技符合历史×远征生效改动。
  * 纯只读（只喂 {generalId} 读 profile），不构造战斗、不碰核心战斗类 → 零风险。
  */
 import { getGeneralProfile, getTacticalSkillDef, getStrategicSkillDef } from '../data/GeneralSkills';
@@ -85,7 +85,7 @@ export function toggleSituationalSelfCheck(): void {
                 <th style="padding:3px 8px;text-align:left;">名将</th>
                 <th style="padding:3px 8px;">攻·优势</th><th style="padding:3px 8px;">攻·均势</th><th style="padding:3px 8px;">攻·劣势</th>
                 <th style="padding:3px 8px;">守·优势</th><th style="padding:3px 8px;">守·均势</th><th style="padding:3px 8px;">守·劣势</th>
-                <th style="padding:3px 8px;">招牌技</th><th style="padding:3px 8px;">战略技</th>
+                <th style="padding:3px 8px;">武将技</th><th style="padding:3px 8px;">战略技</th>
             </tr></thead>
             <tbody>${rowsHtml}</tbody>
         </table>`;

@@ -115,15 +115,14 @@ app.innerHTML = `
     <select id="f-sit"><option value="">三势·全部</option><option>优势</option><option>均势</option><option>劣势</option></select>
     <select id="f-use"><option value="">攻防·全部</option><option>攻击</option><option>防御</option><option>双行</option></select>
     <select id="f-six"><option value="">六类·全部</option><option value="攻战计">攻战计</option><option value="胜战计">胜战计</option><option value="敌战计">敌战计</option><option value="混战计">混战计</option><option value="并战计">并战计</option><option value="败战计">败战计</option><option value="(空)">未标六类</option><option value="(x)">三势跨类</option></select>
-    <select id="f-ex"><option value="">归属·全部</option><option>专用</option><option>通行</option></select>
     <select id="f-wear">
         <option value="">佩戴·全部</option>
         <option value="none">无人佩戴</option>
-        <option value="stray">戴错人（专属被外人戴）</option>
-        <option value="orphanOwner">典故主未佩戴</option>
+
     </select>
     <button class="se-btn se-btn-gold" id="btn-new">＋ 新增技能</button>
     <button class="se-btn se-btn-red" id="btn-check">🔍 检查错误</button>
+    <button class="se-btn se-btn-gold" id="btn-six">⚔ 六槽管理</button>
     <button class="se-btn" id="btn-export">📄 导出文档</button>
     <button class="se-btn" id="btn-refresh">刷新</button>
     <span class="se-count" id="count"></span>
@@ -169,17 +168,7 @@ function srcBadge(src: string): string {
     return '<span class="se-badge se-derived">推导</span>';
 }
 function wearProblem(s: SkillRow): string {
-    if (s.wearers.length === 0) return 'none';
-    if (s.ownerGeneralId) {
-        const stray = s.wearers.some(w => w.gid !== s.ownerGeneralId);
-        const ownerHas = s.wearers.some(w => w.gid === s.ownerGeneralId);
-        if (stray) return 'stray';
-        if (!ownerHas) return 'orphanOwner';
-    } else if (s.ownerName) {
-        const ownerHas = s.wearers.some(w => w.name === s.ownerName);
-        if (!ownerHas) return 'orphanOwner';
-    }
-    return '';
+    return s.wearers.length === 0 ? 'none' : '';
 }
 
 function applyFilters(): SkillRow[] {
@@ -187,7 +176,6 @@ function applyFilters(): SkillRow[] {
     const sit = ($('f-sit') as HTMLSelectElement).value;
     const use = ($('f-use') as HTMLSelectElement).value;
     const six = ($('f-six') as HTMLSelectElement).value;
-    const ex = ($('f-ex') as HTMLSelectElement).value;
     const wear = ($('f-wear') as HTMLSelectElement).value;
     return SKILLS.filter(s => {
         if (q && !(s.id.includes(q) || s.displayName.includes(q) || (s.ownerName ?? '').includes(q))) return false;
@@ -196,7 +184,6 @@ function applyFilters(): SkillRow[] {
         if (six === '(空)' && s.sixClass) return false;
         if (six === '(x)' && s.sixClassMatch) return false;
         if (six && six !== '(空)' && six !== '(x)' && s.sixClass !== six) return false;
-        if (ex && s.exclusive !== ex) return false;
         if (wear && wearProblem(s) !== wear) return false;
         return true;
     });
@@ -244,9 +231,9 @@ function renderList(): void {
             <td>${s.situationTag}${srcBadge(s.situationSource)}</td>
             <td>${s.usageTag}</td>
             <td style="color:${s.sixClass ? '#d8c88e' : '#5a4a3a'}">${sixClassDisplay(s)}</td>
-            <td>${s.ownerName ?? '<span style="color:#6a6254">通用</span>'}${s.ownerSource ? srcBadge(s.ownerSource) : ''}</td>
+            <td>${s.ownerName ?? '<span style="color:#6a6254">无</span>'}</td>
             <td class="se-mono">${valueLabel(s)}</td>
-            <td>${s.wearers.length}${wearProblem(s) === 'stray' ? ' ⚠' : wearProblem(s) === 'orphanOwner' ? ' ✂' : s.wearers.length === 0 ? ' ∅' : ''}</td>
+            <td>${s.wearers.length}${s.wearers.length === 0 ? ' ∅' : ''}</td>
             <td><button class=\"se-copy-btn\" data-id=\"${s.id}\" title=\"复制此行\">📋</button></td>
         </tr>`).join('');
     for (const tr of $('list-body').querySelectorAll('tr')) {
@@ -300,6 +287,7 @@ function renderDetail(): void {
     $('detail').innerHTML = `
         <div class="se-detail-hd">
             <h3>${s.displayName} <span class="se-mono">${s.id}</span>${s.locked ? ' 🔒锁定值' : ''}</h3>
+            <button type="button" class="se-btn" id="d-rename" title="重命名">✏</button>
             <button type="button" class="se-btn" id="d-close" title="关闭右侧编辑">✕</button>
         </div>
         <div class="se-quote">${s.sourceQuote || '（无出处）'}</div>
@@ -308,7 +296,7 @@ function renderDetail(): void {
         <hr style="border-color:#3a3226">
         <div class="se-field"><label>三势</label><select id="d-sit">
             ${['优势', '均势', '劣势'].map(v => `<option ${v === s.situationTag ? 'selected' : ''}>${v}</option>`).join('')}
-        </select> ${srcBadge(s.situationSource)}</div>
+        </select></div>
         <div class="se-field"><label>攻防</label><select id="d-use">
             ${['双行', '攻击', '防御'].map(v => `<option ${v === s.usageTag ? 'selected' : ''}>${v}</option>`).join('')}
         </select></div>
@@ -318,12 +306,13 @@ function renderDetail(): void {
             ? `<select id="d-tier"><option value="">（不改）</option>${tierOptions(s)}</select>`
             : `<span style="color:#6a6254">${s.locked ? '定稿锁定，禁改' : '该效果家族不走档位（维持现值 ' + valueLabel(s) + '）'}</span>`}</div>
         <div class="se-wearers"><b>佩戴（六槽，${s.wearers.length} 人）：</b>${s.wearers.map(w =>
-            `${w.name}${w.tier === 'famous' ? '★' : ''}${s.ownerGeneralId && w.gid !== s.ownerGeneralId ? '⚠' : ''}`).join('、') || '无人'}
-            ${s.ownerGeneralId && !s.wearers.some(w => w.gid === s.ownerGeneralId) ? '<div style="color:#d8a05e">✂ 典故主本人未佩戴</div>' : ''}</div>
+            `${w.name}${w.tier === 'famous' ? '★' : ''}`).join('、') || '无人'}
+            </div>
         <button class="se-btn se-btn-gold" id="d-save">保存</button>
         <div class="se-new" id="new-panel"></div>
     `;
     $('d-save').addEventListener('click', () => saveDetail(s));
+    $('d-rename').addEventListener('click', () => renameSkill(s));
     $('d-close').addEventListener('click', () => closeDetail());
 }
 
@@ -336,6 +325,17 @@ function parseOwnerInput(raw: string): { gid: string | null; name: string | null
     if (hits.length === 1) return { gid: hits[0].generalId, name: hits[0].name };
     if (hits.length > 1) throw new Error(`「${t}」在册有 ${hits.length} 人（${hits.map(h => h.generalId).join(', ')}），请用下拉精确选择`);
     throw new Error(`「${t}」不在册——典故主必须是在册武将；查无此人请留空归通用`);
+}
+
+async function renameSkill(s: SkillRow): Promise<void> {
+    const newName = window.prompt('新技名（四字汉语）：', s.displayName);
+    if (!newName || newName === s.displayName) return;
+    const body = { id: s.id, displayName: newName };
+    const res = await fetch('/api/skill-editor/save', { method: 'POST', body: JSON.stringify(body) });
+    const j = await res.json();
+    if (!j.ok) { toast(`改名失败：${j.error}`, true); return; }
+    toast(`已改名：${s.displayName} → ${newName}`);
+    await load(s.id);
 }
 
 async function saveDetail(s: SkillRow): Promise<void> {
@@ -426,7 +426,7 @@ function renderNewForm(): void {
 
 interface CheckIssue {
     id: string; displayName: string;
-    type: 'non4char' | 'noWearer' | 'noSituation' | 'noUsage' | 'noSixClass' | 'sixClassMismatch' | 'duplicateSixClass' | 'tooManySkills' | 'duplicateName' | 'generalSixIncomplete';
+    type: 'non4char' | 'noWearer' | 'noSituation' | 'noUsage' | 'noSixClass' | 'sixClassMismatch' | 'duplicateSixClass' | 'tooManySkills' | 'duplicateName' | 'generalSixIncomplete' | 'orphanOwner' | 'missingOwnerGid';
     msg: string;
 }
 
@@ -507,6 +507,29 @@ function runErrorCheck(): void {
         ids.push(s.id);
         nameGroups.set(s.displayName, ids);
     }
+    // ── 典故主缺武将ID ──
+    for (const s of SKILLS) {
+        if (!s.ownerName) continue;
+        if (!s.ownerGeneralId) {
+            issues.push({
+                id: s.id, displayName: s.displayName, type: 'missingOwnerGid',
+                msg: `典故主「${s.ownerName}」缺少武将ID（编辑器中显示为?），需补全generalId`,
+            });
+        }
+    }
+
+    // ── 典故主不在册 ──
+    const inRegNames = new Set(GENERALS.map(g => g.name));
+    for (const s of SKILLS) {
+        if (!s.ownerName) continue;
+        if (!inRegNames.has(s.ownerName)) {
+            issues.push({
+                id: s.id, displayName: s.displayName, type: 'orphanOwner',
+                msg: `典故主「${s.ownerName}」不在册武将中（游戏无法渲染此人的专属技）`,
+            });
+        }
+    }
+
     for (const [name, ids] of nameGroups) {
         if (ids.length < 2) continue;
         for (const sid of ids) {
@@ -547,13 +570,13 @@ function runErrorCheck(): void {
         }
     }
 
-    const counts: Record<string, number> = { non4char: 0, noWearer: 0, noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, duplicateSixClass: 0, tooManySkills: 0, duplicateName: 0, generalSixIncomplete: 0, total: issues.length };
+    const counts: Record<string, number> = { non4char: 0, noWearer: 0, orphanOwner: 0, missingOwnerGid: 0, noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, duplicateSixClass: 0, tooManySkills: 0, duplicateName: 0, generalSixIncomplete: 0, total: issues.length };
     for (const i of issues) counts[i.type]++;
 
     const typeLabel: Record<string, string> = {
         non4char: '非四字技名', noWearer: '无佩戴', noSituation: '三势缺失', noUsage: '攻防缺失',
         noSixClass: '六类未标', sixClassMismatch: '三势跨类', duplicateSixClass: '典故主六类重复',
-        tooManySkills: '典故主超6技', duplicateName: '技名重复', generalSixIncomplete: '武将六计不齐',
+        tooManySkills: '典故主超6技', duplicateName: '技名重复', generalSixIncomplete: '武将六计不齐', orphanOwner: '典故主不在册', missingOwnerGid: '缺武将ID',
     };
     const summaryHtml = Object.entries(typeLabel).map(([k, label]) => {
         const n = counts[k] ?? 0;
@@ -579,17 +602,27 @@ function runErrorCheck(): void {
                             <td class="se-mono">${i.id}</td>
                             <td>${i.displayName}</td>
                             <td>${typeLabel[i.type] ?? i.type}</td>
-                            <td>${i.msg}</td>
+                            <td>${i.msg} <button class="se-copy-btn se-copy-issue" data-id="${i.id}" data-msg="${i.msg.replace(/"/g, '&quot;')}" title="复制此行">📋</button></td>
                         </tr>`).join('')}
                 </tbody></table>`}
             </div>
         </div>
     `;
     document.body.appendChild(modal);
+    const modalBox = modal.querySelector('.se-modal') as HTMLElement;
+    modalBox.addEventListener('click', (e) => { e.stopPropagation(); });
     ($('modal-close') as HTMLElement).addEventListener('click', () => modal.remove());
     modal.addEventListener('click', (e) => {
-        if ((e.target as HTMLElement).className === 'se-modal-bg') modal.remove();
+        if ((e.target as HTMLElement) === modal) modal.remove();
     });
+    for (const btn of modal.querySelectorAll('.se-copy-issue')) {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const msg = decodeURIComponent((btn as HTMLElement).dataset.msg!.replace(/&quot;/g, '"'));
+            const id = (btn as HTMLElement).dataset.id!;
+            navigator.clipboard.writeText(`${id}\t${msg}`).then(() => toast(`已复制：${id}`));
+        });
+    }
     for (const row of modal.querySelectorAll('.se-issue-row')) {
         row.addEventListener('click', () => {
             selectedId = (row as HTMLElement).dataset.id!;
@@ -625,6 +658,144 @@ function getCanonicalSit(sixClass: string): string {
 
 $('btn-refresh').addEventListener('click', () => load());
 $('btn-check').addEventListener('click', () => runErrorCheck());
+let sixSlotData: any[] = [];
+let sixSlotSortKey: string | null = null;
+let sixSlotSortDir: 1 | -1 = 1;
+
+async function loadSixSlotData() {
+    const [listRes, profilesText] = await Promise.all([
+        fetch('/api/skill-editor/list'),
+        fetch('/api/skill-editor/profiles'),
+    ]);
+    const data = await listRes.json();
+    const profilesData = await profilesText.json();
+    const skills = data.skills;
+    const generals = data.generals;
+    const gidToName: Record<string,string> = {};
+    for (const g of generals) gidToName[g.generalId] = g.name;
+    const skillMap: Record<string, {displayName:string, baseEffect:string, condition:string, sixClass:string, ownerName:string|null}> = {};
+    const SIX: Record<string,string> = {'ally_power_mult':'攻战计','first_sortie_power_mult':'攻战计','enemy_sub_troops_opening':'胜战计','dual_sub_troops_opening':'胜战计','ally_add_troops_opening':'混战计','luck_variance_self':'敌战计','luck_variance_enemy':'敌战计','luck_lock_self':'敌战计','negate_enemy_skill':'混战计','partial_negate_enemy_skill':'混战计','steal_enemy_skill':'混战计','nullify_enemy_opening_cut':'混战计','reflect_enemy_opening_cut':'混战计','cancel_enemy_terrain_buff':'混战计','win_casualty_reduction':'并战计','elite_casualty_reduction':'并战计','lose_enemy_casualty_boost':'败战计','post_recovery_rate':'败战计','recompute_comeback':'败战计','lose_zero_enemy_recovery':'败战计','ally_add_troops_comeback':'败战计','battle_duration_mult':'败战计'};
+    const UD=new Set(['ratio_underdog','self_troops_below_enemy_pct','side_comeback','lose_as_underdog']);
+    const VE=new Set(['luck_variance_self','luck_lock_self','recompute_comeback']);
+    for (const s of skills) {
+        let sc = SIX[s.baseEffect] || '';
+        if (UD.has(s.condition||'') || VE.has(s.baseEffect)) sc = '败战计';
+        skillMap[s.id] = {displayName:s.displayName, baseEffect:s.baseEffect, condition:s.condition||'', sixClass:sc, ownerName:s.ownerName};
+    }
+    const ALL_SLOTS=['atkAdvantageSkillId','atkBalanceSkillId','atkDisadvantageSkillId','defAdvantageSkillId','defBalanceSkillId','defDisadvantageSkillId'];
+    sixSlotData = [];
+    for (const g of generals) {
+        const prof = profilesData[g.generalId];
+        if (!prof) continue;
+        const row: any = { gid: g.generalId, name: g.name, tier: g.tier, slots: {} };
+        for (const sn of ALL_SLOTS) {
+            const sid = prof[sn];
+            if (sid && skillMap[sid]) {
+                row.slots[sn] = { id: sid, name: skillMap[sid].displayName, sixClass: skillMap[sid].sixClass, isPersonal: !!skillMap[sid].ownerName };
+            }
+        }
+        sixSlotData.push(row);
+    }
+}
+
+function renderSixSlotPanel() {
+    if (sixSlotData.length === 0) { loadSixSlotData().then(() => renderSixSlotPanel()); return; }
+    const ALL_SLOTS = ['atkAdvantageSkillId','atkBalanceSkillId','atkDisadvantageSkillId','defAdvantageSkillId','defBalanceSkillId','defDisadvantageSkillId'];
+    const SLOT_LABEL: Record<string,string> = {'atkAdvantageSkillId':'攻优','atkBalanceSkillId':'攻均','atkDisadvantageSkillId':'攻劣','defAdvantageSkillId':'防优','defBalanceSkillId':'防均','defDisadvantageSkillId':'防劣'};
+    const SIX_COLORS: Record<string,string> = {'攻战计':'#d85040','胜战计':'#d89030','敌战计':'#4088d8','混战计':'#60a860','并战计':'#b070c0','败战计':'#888888'};
+    const ALL_SIX=['攻战计','胜战计','敌战计','混战计','并战计','败战计'];
+
+    let rows = sixSlotData;
+    let issues=0, complete=0;
+    for (const r of rows) {
+        const got: string[] = [];
+        for (const sn of ALL_SLOTS) {
+            const s = r.slots[sn];
+            if (s) got.push(s.sixClass);
+        }
+        const cnt: Record<string,number>={};
+        for (const c of got) cnt[c]=(cnt[c]||0)+1;
+        r.missing = ALL_SIX.filter(c => !cnt[c]);
+        r.dup = Object.entries(cnt).filter(e => e[1]>1).map(e => e[0]);
+        r.hasIssue = r.missing.length>0 || r.dup.length>0;
+        if (r.hasIssue) issues++; else complete++;
+    }
+
+    // Sort
+    if (sixSlotSortKey) {
+        rows.sort((a,b) => {
+            const va = sixSlotSortKey==='name' ? a.name : sixSlotSortKey==='issues' ? (a.hasIssue?0:1) : '';
+            const vb = sixSlotSortKey==='name' ? b.name : sixSlotSortKey==='issues' ? (b.hasIssue?0:1) : '';
+            return String(va).localeCompare(String(vb),'zh') * sixSlotSortDir;
+        });
+    }
+
+    const q = ($('f-six-search') as HTMLInputElement).value.trim().toLowerCase();
+    if (q) rows = rows.filter(r => r.name.includes(q) || r.gid.includes(q));
+
+    const modal = document.createElement('div');
+    modal.className = 'se-modal-bg';
+    modal.innerHTML = `
+        <div class="se-modal" style="width:95%;max-width:1200px">
+            <div class="se-modal-hd">
+                <h3>⚔ 六槽管理 <span style="color:#8a8271;font-size:13px">${rows.length}将 · ${issues}⚠ · ${complete}✅</span></h3>
+                <input id="f-six-search" placeholder="搜武将名" style="background:#0e0d0c;color:#e8e0d0;border:1px solid #4a4234;padding:4px 8px;width:150px" value="${q}">
+                <button class="se-btn se-btn-gold" id="btn-six-fix">🛠 一键修复</button>
+                <button class="se-btn" id="modal-close-six" style="margin-left:auto">✕</button>
+            </div>
+            <div class="se-modal-body" style="overflow:auto;max-height:75vh">
+                <table><thead><tr>
+                    <th class="se-sortable" data-sort="name">武将</th>
+                    <th>T</th>
+                    ${ALL_SLOTS.map(sn => `<th>${SLOT_LABEL[sn]}</th>`).join('')}
+                    <th>六计</th>
+                </tr></thead><tbody>
+                ${rows.map(r => {
+                    const got: string[] = [];
+                    const cells = ALL_SLOTS.map(sn => {
+                        const s = r.slots[sn];
+                        if (!s) return '<td style="color:#5a3a3a">空</td>';
+                        got.push(s.sixClass);
+                        const color = SIX_COLORS[s.sixClass] || '#888';
+                        return `<td style="color:${color};font-size:12px" title="${s.id} ${s.name} ${s.sixClass}">${s.name}</td>`;
+                    });
+                    const cnt: Record<string,number>={};
+                    for (const c of got) cnt[c]=(cnt[c]||0)+1;
+                    const missing = ALL_SIX.filter(c => !cnt[c]);
+                    const dup = Object.entries(cnt).filter(e => e[1]>1).map(e => e[0]);
+                    let status = '';
+                    if (missing.length&&dup.length) status='<span style="color:#e86040">缺'+missing.join('/')+' 重'+dup.join('×'+dup.length)+'</span>';
+                    else if (missing.length) status='<span style="color:#d89030">缺'+missing.join('/')+'</span>';
+                    else if (dup.length) status='<span style="color:#d89030">重'+dup.join('/')+'</span>';
+                    else status='<span style="color:#60a860">✅</span>';
+                    return `<tr class="${r.hasIssue?'se-issue-row':''}" style="${r.hasIssue?'':'opacity:0.6'}">
+                        <td>${r.name}</td><td>${r.tier==='famous'?'★':''}</td>
+                        ${cells.join('')}<td>${status}</td>
+                    </tr>`;
+                }).join('')}
+                </tbody></table>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    const modalBox = modal.querySelector('.se-modal') as HTMLElement;
+    modalBox.addEventListener('click', (e) => { e.stopPropagation(); });
+    ($('modal-close-six') as HTMLElement).addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement) === modal) modal.remove();
+    });
+    ($('f-six-search') as HTMLElement).addEventListener('input', () => { modal.remove(); renderSixSlotPanel(); });
+    ($('btn-six-fix') as HTMLElement).addEventListener('click', async () => {
+        toast('正在修复…');
+        const res = await fetch('/api/skill-editor/fix-six-slots', { method: 'POST' });
+        const j = await res.json();
+        toast(j.ok ? '修复完成' : '修复失败: '+j.error, !j.ok);
+        modal.remove();
+        renderSixSlotPanel();
+    });
+}
+
+$('btn-six').addEventListener('click', () => window.open('/six-slot.html', '_blank'));
 $('btn-export').addEventListener('click', () => exportDoc());
 
 // ========== 导出文档（Markdown）==========
@@ -738,7 +909,7 @@ for (const th of document.querySelectorAll('.se-sortable')) {
 }
 
 // 筛选器实时刷新
-for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-ex', 'f-wear']) {
+for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-wear']) {
     $(id).addEventListener('input', () => { renderList(); if (!selectedId) setDetailOpen(false); });
     $(id).addEventListener('change', () => { renderList(); if (!selectedId) setDetailOpen(false); });
 }
