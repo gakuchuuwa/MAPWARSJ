@@ -70,6 +70,14 @@ function getLegionEliteBadgeName(unit: IBattleUnit): string {
     return stripped || raw;
 }
 
+/** 精锐五级 → 二字标签（2026-07-16） */
+function getEliteTierLabel(unit: IBattleUnit): string | null {
+    const tier = getUnitEliteTier(unit);
+    if (tier === null) return null;
+    const LABELS = ['天军', '王师', '精锐', '劲旅', '戍卫'];
+    return LABELS[tier] ?? null;
+}
+
 export class CombatUI {
     private container: HTMLDivElement;
     private leftPortrait!: HTMLImageElement;
@@ -1163,9 +1171,29 @@ export class CombatUI {
             if (Math.abs(n - 1) > 0.001) labeled.push({ label, value: n });
         };
         pushIfNotOne('文化', getCultureOnlyCombatMultiplier(unit));
-        pushIfNotOne(PASS_GARRISON_DEFENSE_SKILL.displayName, getPassGarrisonCombatMultiplier(unit));
-        pushIfNotOne(REGION_CENTER_DEFENSE_SKILL.displayName, getRegionCenterCombatMultiplier(unit));
-        pushIfNotOne(getLegionEliteBadgeName(unit), getCampaignLegionCombatMultiplier(unit));
+
+        // 关隘加成 -> 不显数字，显「关隘」文字
+        const passMult = getPassGarrisonCombatMultiplier(unit);
+        let passLabel = '';
+        if (Math.abs(passMult - 1) > 0.001) {
+            passLabel = '关隘';
+        }
+
+        // 区中心加成 -> 不显数字，显「名城」文字
+        const regionMult = getRegionCenterCombatMultiplier(unit);
+        let regionLabel = '';
+        if (Math.abs(regionMult - 1) > 0.001) {
+            regionLabel = '名城';
+        }
+
+        // 精锐加成 -> 不显数字，显五级标签（天军/王师/精锐/劲旅/戍卫）
+        const eliteMult = getCampaignLegionCombatMultiplier(unit);
+        let eliteLabel = '';
+        const eliteTier = getEliteTierLabel(unit);
+        if (Math.abs(eliteMult - 1) > 0.001 && eliteTier) {
+            eliteLabel = eliteTier;
+        }
+
         pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(
             this.getUnitsForSide(side),
             this.getOpponentUnitsFor(side),
@@ -1198,16 +1226,23 @@ export class CombatUI {
             else if (fateLuck < 0.999) luckLabel = '厄运';
         }
 
-        if (labeled.length === 0 && !luckLabel) {
+        if (labeled.length === 0 && !luckLabel && !passLabel && !regionLabel && !eliteLabel) {
             return { chain: '', title: '' };
         }
 
         const numChain = labeled.map((l) => fmt(l.value)).join('×');
-        const chain = luckLabel
-            ? (numChain ? `${luckLabel} ${numChain}` : luckLabel)
-            : numChain;
+        const parts: string[] = [];
+        if (luckLabel) parts.push(luckLabel);
+        if (passLabel) parts.push('关隘');
+        if (regionLabel) parts.push('名城');
+        if (eliteLabel) parts.push(eliteLabel);
+        if (numChain) parts.push(numChain);
+        const chain = parts.join(' ');
+
         const titleParts = labeled.map((l) => `${l.label}×${fmt(l.value)}`);
         if (luckLabel) titleParts.unshift(`运气:${luckLabel}(×${parseFloat(fateLuck!.toFixed(2))})`);
+        if (passLabel) titleParts.unshift(passLabel);
+        if (regionLabel) titleParts.unshift(regionLabel);
         const title = `${role}：${titleParts.join(' ')}`;
         return { chain, title };
     }
