@@ -231,10 +231,10 @@ function renderList(): void {
                 const g = (s: SkillRow) => s.ownerGeneralId ? 0 : s.ownerName ? 1 : 2;
                 const ga = g(a), gb = g(b);
                 if (ga !== gb) return ga - gb; // 组排序固定升序，不受 sortDir 影响
-                // 组内按人数降序（多的在前）
+                // 组内按人数降序（多的在前），不受 sortDir 影响
                 const ca = ownerCount.get(a.ownerName ?? '') ?? 0;
                 const cb = ownerCount.get(b.ownerName ?? '') ?? 0;
-                if (ca !== cb) return (cb - ca) * sortDir;
+                if (ca !== cb) return cb - ca;
                 const nc = (a.ownerName ?? '').localeCompare(b.ownerName ?? '', 'zh');
                 if (nc !== 0) return nc;
                 return parseInt(a.id.replace('ts_', ''), 10) - parseInt(b.id.replace('ts_', ''), 10);
@@ -255,7 +255,7 @@ function renderList(): void {
     for (const th of document.querySelectorAll('.se-sortable')) {
         const k = (th as HTMLElement).dataset.sort!;
         const base = (th.textContent ?? '').replace(/[▲▼]\s*$/, '').trim();
-        th.innerHTML = k === sortKey ? `${base}<span class="se-sort-arrow">${sortDir === 1 ? '▲' : '▼'}</span>` : base;
+        th.innerHTML = k === sortKey && k !== 'owner' ? `${base}<span class="se-sort-arrow">${sortDir === 1 ? '▲' : '▼'}</span>` : base;
     }
     $('count').textContent = `${rows.length} / ${SKILLS.length} 条`;
     $('list-body').innerHTML = rows.map(s => `
@@ -1016,6 +1016,16 @@ $('list-body').addEventListener('dblclick', (e) => {
 for (const th of document.querySelectorAll('.se-sortable')) {
     th.addEventListener('click', () => {
         const k = (th as HTMLElement).dataset.sort!;
+        if (k === 'owner') {
+            // 典故主列：循环过滤 全部 → 在册 → 不在册 → 全部，并保持组内人数降序
+            sortKey = 'owner'; sortDir = 1;
+            const sel = $('f-owner') as HTMLSelectElement;
+            const cycle = ['', 'registered', 'unregistered'];
+            const idx = cycle.indexOf(sel.value);
+            sel.value = cycle[(idx + 1) % 3];
+            renderList();
+            return;
+        }
         if (sortKey === k) sortDir = sortDir === 1 ? -1 : 1;
         else { sortKey = k; sortDir = 1; }
         renderList();
