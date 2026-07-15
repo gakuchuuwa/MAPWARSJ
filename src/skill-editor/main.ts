@@ -519,7 +519,7 @@ function runErrorCheck(): void {
     // ── 同典故主六类去重（按重复数降序）──
     const ownerGroups = new Map<string, { id: string; displayName: string; sixClass: string }[]>();
     for (const s of SKILLS) {
-        if (!s.ownerName || !s.sixClass) continue;
+        if (!s.ownerName || !s.sixClass || s.ownerName === '通用') continue;
         const group = ownerGroups.get(s.ownerName) ?? [];
         group.push({ id: s.id, displayName: s.displayName, sixClass: s.sixClass });
         ownerGroups.set(s.ownerName, group);
@@ -631,24 +631,16 @@ function runErrorCheck(): void {
     const HARD_TYPES = new Set(['duplicateName', 'duplicateSixClass', 'non4char', 'noSituation', 'noUsage', 'noSixClass', 'invalidOwnerGid']);
     const summaryHtml = Object.entries(typeLabel).map(([k, label]) => {
         const n = counts[k] ?? 0;
-        if (k === 'missingOwnerGid' || k === 'orphanOwner') return ''; // 已由 pendingOwner / invalidOwnerGid 取代
-        const cls = n === 0 ? 'se-err-ok' : (HARD_TYPES.has(k) ? 'se-err-red' : (k === 'pendingOwner' ? 'se-err-info' : 'se-err-warn'));
+        if (k === 'missingOwnerGid' || k === 'orphanOwner' || k === 'pendingOwner') return '';
+        const cls = n === 0 ? 'se-err-ok' : (HARD_TYPES.has(k) ? 'se-err-red' : 'se-err-warn');
         return `<span class="se-err-count ${cls}">${label}: ${n}</span>`;
     }).filter(Boolean).join('');
 
     // ── 典故主级汇总（放在表格下方，不逐技展开）──
-    // 史料待挂将（信息，非错误）
-    const pendingIssues = issues.filter(i => i.type === 'pendingOwner');
-    const allOwnerCount = ownerIssues.length + pendingIssues.length;
-    const ownerSummaryHtml = (allOwnerCount > 0) ? `
+    const allOwnerCount = ownerIssues.length;
+    const ownerSummaryHtml = ownerIssues.length > 0 ? `
         <div class="se-owner-summary">
-            <div class="se-owner-summary-hd">📋 典故主汇总（${allOwnerCount} 项）</div>
-            ${pendingIssues.map(pi => `
-                <div class="se-owner-item">
-                    <span class="se-owner-tag se-owner-tag-info">${typeLabel[pi.type]}</span>
-                    <span class="se-owner-msg">${pi.msg}</span>
-                    <button class="se-copy-btn se-copy-owner" data-msg="${pi.msg.replace(/"/g, '&quot;')}" title="复制此项">📋</button>
-                </div>`).join('')}
+            <div class="se-owner-summary-hd">📋 典故主问题（${ownerIssues.length} 项）</div>
             ${ownerIssues.map(oi => `
                 <div class="se-owner-item">
                     <span class="se-owner-tag se-owner-tag-${oi.type === 'tooManySkills' ? 'over' : 'dup'}">${typeLabel[oi.type]}</span>
@@ -829,7 +821,8 @@ function renderSixSlotPanel() {
             <div class="se-modal-hd">
                 <h3>⚔ 六槽管理 <span style="color:#8a8271;font-size:13px">${rows.length}将 · ${issues}⚠ · ${complete}✅</span></h3>
                 <input id="f-six-search" placeholder="搜武将名" style="background:#0e0d0c;color:#e8e0d0;border:1px solid #4a4234;padding:4px 8px;width:150px" value="${q}">
-                <button class="se-btn se-btn-gold" id="btn-six-fix">🛠 一键修复</button>
+                <button class="se-btn se-btn-gold" id="btn-six-fix">① 典故主钉槽</button>
+                <button class="se-btn" id="btn-six-open" title="打开独立六槽页">↗ 分步页</button>
                 <button class="se-btn" id="modal-close-six" style="margin-left:auto">✕</button>
             </div>
             <div class="se-modal-body" style="overflow:auto;max-height:75vh">
@@ -875,13 +868,21 @@ function renderSixSlotPanel() {
     });
     ($('f-six-search') as HTMLElement).addEventListener('input', () => { modal.remove(); renderSixSlotPanel(); });
     ($('btn-six-fix') as HTMLElement).addEventListener('click', async () => {
-        toast('正在修复…');
-        const res = await fetch('/api/skill-editor/fix-six-slots', { method: 'POST' });
+        if (!confirm('第一步：按典故主钉入合法攻防槽（不补通用）。确定？')) return;
+        toast('步骤① 执行中…');
+        const res = await fetch('/api/skill-editor/fix-six-slots', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ step: 1 }),
+        });
         const j = await res.json();
-        toast(j.ok ? '修复完成' : '修复失败: '+j.error, !j.ok);
+        if (j.log) console.log(j.log);
+        toast(j.ok ? '① 完成，请检查后再做②' : '失败: ' + j.error, !j.ok);
         modal.remove();
-        renderSixSlotPanel();
+        renderSixSlotModal();
     });
+    const openBtn = $('btn-six-open') as HTMLElement | null;
+    if (openBtn) openBtn.addEventListener('click', () => window.open('/six-slot.html', '_blank'));
 }
 
 $('btn-six').addEventListener('click', () => window.open('/six-slot.html', '_blank'));

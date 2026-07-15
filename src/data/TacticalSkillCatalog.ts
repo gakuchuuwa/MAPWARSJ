@@ -2011,7 +2011,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         displayName: '收部摧庭', sourceQuote: '收编溃散部众后反攻摧毁敌指挥中心，多将皆有。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.05, engineStatus: 'ready',
-        note: '同源：泛称（非李靖专属）',,
+        note: '同源：泛称（非李靖专属）',
     },
     {
         id: 'ts_309', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'counter', index: 309,
@@ -2376,7 +2376,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         displayName: '奔袭陷城', sourceQuote: '长途奔袭攻陷城池，多将皆有。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.05, engineStatus: 'ready',
-        note: '同源：泛称（非李靖专属）',,
+        note: '同源：泛称（非李靖专属）',
     },
     {
         id: 'ts_373', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 373,

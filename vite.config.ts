@@ -471,27 +471,50 @@ export default defineConfig({
                     }
                 });
 
+                // 六槽分步：step=1 典故主钉槽；后续 step=2 通用补缺（未实现）
                 server.middlewares.use('/api/skill-editor/fix-six-slots', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
-                    try {
-                        const { execSync } = require('child_process');
-                        const r1 = execSync('python scratch/auto_fill_six_slots.py --write', {
-                            cwd: path.resolve(__dirname),
-                            encoding: 'utf-8',
-                            timeout: 60000,
-                        });
-                        const r2 = execSync('python scratch/distribute_orphans.py --write', {
-                            cwd: path.resolve(__dirname),
-                            encoding: 'utf-8',
-                            timeout: 60000,
-                        });
-                        res.setHeader('Content-Type', 'application/json');
-                        res.end(JSON.stringify({ ok: true, auto: r1.slice(-80), orphan: r2.slice(-80) }));
-                    } catch (err: any) {
-                        res.statusCode = 500;
-                        res.setHeader('Content-Type', 'application/json');
-                        res.end(JSON.stringify({ ok: false, error: err.message }));
-                    }
+                    let body = '';
+                    req.on('data', (chunk: string) => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            const { execSync } = require('child_process');
+                            let step = 1;
+                            try {
+                                if (body) step = Number(JSON.parse(body).step) || 1;
+                            } catch { /* 无 body 默认 step1 */ }
+                            if (step === 1) {
+                                const out = execSync('node scratch/six_slot_step1_pin_owners.mjs --write', {
+                                    cwd: path.resolve(__dirname),
+                                    encoding: 'utf-8',
+                                    timeout: 120000,
+                                });
+                                res.setHeader('Content-Type', 'application/json');
+                                res.end(JSON.stringify({ ok: true, step: 1, log: out.slice(-1200) }));
+                                return;
+                            }
+                            if (step === 2) {
+                                const out = execSync('node scratch/six_slot_step2_fill_generic.mjs --write', {
+                                    cwd: path.resolve(__dirname),
+                                    encoding: 'utf-8',
+                                    timeout: 120000,
+                                });
+                                res.setHeader('Content-Type', 'application/json');
+                                res.end(JSON.stringify({ ok: true, step: 2, log: out.slice(-1200) }));
+                                return;
+                            }
+                            res.statusCode = 400;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({
+                                ok: false,
+                                error: `未知 step=${step}（仅支持 1=典故主钉槽，2=通用补缺削峰）`,
+                            }));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
                 });
 
                 server.middlewares.use('/api/skill-editor/create', (req, res) => {
