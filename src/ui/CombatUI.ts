@@ -287,11 +287,11 @@ export class CombatUI {
                 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); }
             }
             /* 武将技释放：立绘快速放大 → 缓缓复原（动外框，不碰 img 调校）
-               起点读 --pre-scale：蓄力收缩(winddown)把立绘缓缩到 0.94 后，从收缩值直接弹到 1.08，
-               对比幅度 ≈ +15%（原 +8%），爆发感更强。无蓄力时回退 scale(1)，行为同旧版。 */
+               起点读 --pre-scale：蓄力收缩(winddown)把立绘缓缩到 0.90 后，从收缩值直接弹到 1.1，
+               对比幅度 ≈ +22%，爆发感更强。无蓄力时回退 scale(1)，行为同旧版。 */
             @keyframes portrait-skill-surge {
                 0% { transform: scale(var(--pre-scale, 1)); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-                15% { transform: scale(1.08); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
+                15% { transform: scale(1.10); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
                 100% { transform: scale(1); }
             }
             /* 武将技释放：对应技能标签放大提亮 → 缓缓复原（标明放的是哪个技能） */
@@ -1225,12 +1225,12 @@ export class CombatUI {
             const entry = sid ? resolveGeneralTacticalEntry(sid) : null;
             if (entry) {
                 const be = entry.baseEffect ?? '';
-                if (be.includes('power_mult')) tacLabel = '加功';
-                else if (be.includes('sub_troops') || be.includes('add_troops')) tacLabel = '减兵';
-                else if (be.includes('luck')) tacLabel = '改运';
-                else if (be.includes('negate') || be.includes('counter') || be.includes('steal')) tacLabel = '克反';
-                else if (be.includes('casualty') || be.includes('win_casualty')) tacLabel = '减损';
-                else if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')) tacLabel = '翻盘';
+                if (be.includes('power_mult')) tacLabel = '攻计';
+                else if (be.includes('sub_troops') || be.includes('add_troops')) tacLabel = '胜计';
+                else if (be.includes('luck')) tacLabel = '敌计';
+                else if (be.includes('negate') || be.includes('counter') || be.includes('steal')) tacLabel = '混计';
+                else if (be.includes('casualty') || be.includes('win_casualty')) tacLabel = '并计';
+                else if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')) tacLabel = '败计';
             }
         }
 
@@ -1511,7 +1511,7 @@ export class CombatUI {
     }
 
     private playPortraitEntrance(): void {
-        // 滑入（结束时略大 1.045）→ 5 秒极缓沉降回原尺寸：低调的 Ken Burns 呼吸感。
+        // 滑入（结束时略大 1.045），不沉降
         // 缩放只动外框 transform，绝不碰 img 的调校 transform（F2 位置/缩放数据）。
         this.leftPortraitFrame.style.animation =
             'portrait-frame-enter-left 0.55s ease-out 0.12s both';
@@ -1530,7 +1530,7 @@ export class CombatUI {
     /**
      * 蓄力收缩逐帧驱动（updateStats 每帧调）：
      * 仅当该侧存在可放技将领（pickSideSkillGeneralUnit，与保底亮相同判据）才收缩，
-     * 从进场 1s 后即刻开始，随游戏内 elapsed 缓缩至 0.90，相持阈值处缩到底。
+     * 从滑入结束(0.7s)即刻开始，随游戏内 elapsed 缓缩至 0.90，相持阈值处缩到底。
      * 无将侧保持 1.0（对称铁律）；脉冲放完（pulsed）不再二次收缩。
      */
     private updatePortraitWinddown(): void {
