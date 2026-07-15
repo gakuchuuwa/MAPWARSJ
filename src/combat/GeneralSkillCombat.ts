@@ -37,11 +37,11 @@ import {
 import { getTacticalSkillEntry } from '../data/TacticalSkillCatalog';
 import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
-import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR } from './TacticalConstants';
+import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT } from './TacticalConstants';
 import { readSiegeGarrisonEliteName } from './SiegeGarrisonTier';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText, spawnMapPulse, getFollowedArmyId } from '../utils/MapFloatingText';
-export { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR };
+export { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT };
 
 export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
     if (unit.battleOverriddenSkillId !== undefined) {
@@ -775,6 +775,22 @@ function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[],
     const r = st / Math.max(1, ot);
     const sit: 'advantage'|'balance'|'disadvantage' = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
     return APTITUDE_POWER_MULT[apt]?.[sit] ?? 1;
+}
+
+/**
+ * 第四层·攻防风格战力系数（2026-07-16）
+ * 武将 attackStyle → 攻/守不同角色下的 roll 乘数
+ *   attack:  攻城专精，攻方 ×1.25，守方 ×1.00
+ *   defense: 守城专精，攻方 ×1.00，守方 ×1.25
+ *   balanced:攻守双全，两面 ×1.20
+ */
+export function getAttackStylePowerMult(unit: IBattleUnit | null, isAttacker: boolean): number {
+    if (!unit?.generalId) return 1;
+    const style = getGeneralProfile(unit.generalId)?.attackStyle;
+    if (!style) return 1;
+    const row = ATTACK_STYLE_POWER_MULT[style];
+    if (!row) return 1;
+    return isAttacker ? row.attack : row.defense;
 }
 
 /**
@@ -1902,6 +1918,12 @@ export function applyOpeningTacticalToRolls(
     // 三势适性：势×局 开战战力系数（造势顺风↑ / 逆势逆风↑提翻盘机会；初值待模拟器调 APTITUDE_POWER_MULT）
     outAtt *= getAptitudePowerMult(attackerUnits, defenderUnits, attCommander);
     outDef *= getAptitudePowerMult(defenderUnits, attackerUnits, defCommander);
+
+    // 第四层·攻防风格（attackStyle → 攻/守角色系数）
+    const attGen = findEligibleGeneralUnit(attackerUnits, attCommander);
+    const defGen = findEligibleGeneralUnit(defenderUnits, defCommander);
+    outAtt *= getAttackStylePowerMult(attGen, true);
+    outDef *= getAttackStylePowerMult(defGen, false);
 
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }

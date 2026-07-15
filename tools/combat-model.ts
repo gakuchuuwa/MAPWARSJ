@@ -47,11 +47,12 @@ import {
 import {
     APTITUDE_POWER_MULT,
     APTITUDE_LOSER_BITE_FLOOR,
+    ATTACK_STYLE_POWER_MULT,
 } from '../src/combat/TacticalConstants';
 
 export { TACTICAL_SKILL_CATALOG, STRATEGIC_SKILL_CATALOG, GENERAL_PROFILES };
 export type { GeneralProfile, GeneralTier };
-export { APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR };
+export { APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT };
 
 // ────────────────────────── 常量（全部来自游戏源） ──────────────────────────
 export const { LUCK_MIN, LUCK_MAX, ELITE_TIER_MULT, CAMPAIGN_LEGION_MULT } = GameConfig.COMBAT;
@@ -435,6 +436,16 @@ function getAptitudePowerMult(own: Unit[], opp: Unit[]): number {
     return APTITUDE_POWER_MULT[apt]?.[sit] ?? 1;
 }
 
+/** 攻防风格战力系数（对齐 GeneralSkillCombat.getAttackStylePowerMult） */
+function getAttackStylePowerMult(own: Unit[], isAttacker: boolean): number {
+    const u = eligible(own);
+    const style = u?.profile?.attackStyle;
+    if (!style) return 1;
+    const row = ATTACK_STYLE_POWER_MULT[style];
+    if (!row) return 1;
+    return isAttacker ? row.attack : row.defense;
+}
+
 // ────────────────────────── 单局模拟 ──────────────────────────
 export interface SimResult {
     attackerWon: boolean;
@@ -465,9 +476,13 @@ export function simulateOnce(
     ({ attRoll, defRoll } = applyOpeningRollMults(att, def, attRoll, defRoll, terrain, battleType));
     ({ attRoll, defRoll } = applyStrategicRollMults(att, def, attRoll, defRoll, terrain, battleType));
 
-    // 三势适性：势×局战力系数（对齐 GeneralSkillCombat.applyOpeningTacticalToRolls:1597-1599）
+    // 三势适性：势×局战力系数（对齐 GeneralSkillCombat.applyOpeningTacticalToRolls）
     attRoll *= getAptitudePowerMult(att, def);
     defRoll *= getAptitudePowerMult(def, att);
+
+    // 第四层·攻防风格战力系数
+    attRoll *= getAttackStylePowerMult(att, true);
+    defRoll *= getAttackStylePowerMult(def, false);
 
     const attackerStronger = attRoll >= defRoll;
 
@@ -515,6 +530,8 @@ function simulateTicks(
         let d = def[0].troops * def[0].mult;
         ({ attRoll: a, defRoll: d } = applyOpeningRollMults(att, def, a, d, terrain, battleType));
         ({ attRoll: a, defRoll: d } = applyStrategicRollMults(att, def, a, d, terrain, battleType));
+        a *= getAttackStylePowerMult(att, true);
+        d *= getAttackStylePowerMult(def, false);
         let r1 = applyComebackRollMult(attU(), a, d, attTriggered); a = r1.sideRoll; d = r1.oppRoll;
         let r2 = applyComebackRollMult(defU(), d, a, defTriggered); d = r2.sideRoll; a = r2.oppRoll;
         if (simConfig.comebackRollLuck) { a *= rollLuck(); d *= rollLuck(); }
