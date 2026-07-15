@@ -304,7 +304,7 @@ export class CombatUI {
                 80% { transform: translate(-50%, 3px); }
                 100% { transform: translate(-50%, 0); }
             }
-            /* 立绘外框进场：左从左→右，右从右→左（进场时略放大，交给 kenburns-settle 缓慢沉降） */
+            /* 立绘外框进场：左从左→右，右从右→左 */
             @keyframes portrait-frame-enter-left {
                 0% { opacity: 0; transform: translateX(-72px) scale(1.045); }
                 100% { opacity: 1; transform: translateX(0) scale(1.045); }
@@ -312,11 +312,6 @@ export class CombatUI {
             @keyframes portrait-frame-enter-right {
                 0% { opacity: 0; transform: translateX(72px) scale(1.045); }
                 100% { opacity: 1; transform: translateX(0) scale(1.045); }
-            }
-            /* 入场后极缓沉降回原尺寸（Ken Burns 质感，接在外框进场之后） */
-            @keyframes portrait-kenburns-settle {
-                0% { transform: scale(1.045); }
-                100% { transform: scale(1); }
             }
         `;
         document.head.appendChild(style);
@@ -1493,9 +1488,9 @@ export class CombatUI {
         // 滑入（结束时略大 1.045）→ 5 秒极缓沉降回原尺寸：低调的 Ken Burns 呼吸感。
         // 缩放只动外框 transform，绝不碰 img 的调校 transform（F2 位置/缩放数据）。
         this.leftPortraitFrame.style.animation =
-            'portrait-frame-enter-left 0.55s ease-out 0.12s both, portrait-kenburns-settle 5s cubic-bezier(0.22, 1, 0.36, 1) 0.67s forwards';
+            'portrait-frame-enter-left 0.55s ease-out 0.12s both';
         this.rightPortraitFrame.style.animation =
-            'portrait-frame-enter-right 0.55s ease-out 0.18s both, portrait-kenburns-settle 5s cubic-bezier(0.22, 1, 0.36, 1) 0.73s forwards';
+            'portrait-frame-enter-right 0.55s ease-out 0.18s both';
         // 蓄力收缩状态复位（换场重新蓄力；清上一场残留的内联缩放与 --pre-scale）
         for (const side of ['attacker', 'defender'] as const) {
             this.portraitWind[side] = { driving: false, pulsed: false, scale: 1 };
@@ -1516,7 +1511,7 @@ export class CombatUI {
         const bf = this.boundRegionalBattleField;
         if (!bf || bf.isOver) return;
         const threshold = resolveStalemateUiThresholdSec(bf.targetDuration);
-        const startSec = 1.0; // 进场后即刻蓄力
+        const startSec = 0.7; // 滑入结束即刻蓄力
         if (bf.elapsed <= startSec) return;
         for (const side of ['attacker', 'defender'] as const) {
             const st = this.portraitWind[side];
