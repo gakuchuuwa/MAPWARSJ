@@ -597,7 +597,7 @@ function runErrorCheck(): void {
         return `<span class="se-err-count ${cls}">${label}: ${n}</span>`;
     }).join('');
 
-    // ── 典故主级汇总（放在表格上方，一主一条，不逐技展开）──
+    // ── 典故主级汇总（放在表格下方，不逐技展开）──
     const ownerSummaryHtml = ownerIssues.length > 0 ? `
         <div class="se-owner-summary">
             <div class="se-owner-summary-hd">📋 典故主问题（${ownerIssues.length} 项）</div>
@@ -623,9 +623,6 @@ function runErrorCheck(): void {
             </div>
             <div class="se-modal-body">
                 <div class="se-summary">${summaryHtml}</div>
-                ${ownerSummaryHtml}
-                ${!hasIssues && ownerIssues.length > 0 ? '<p style="color:#8a9a78;margin-top:12px">✅ 逐技检查无其他错误</p>' : ''}
-                ${!hasIssues && ownerIssues.length === 0 ? '<p style="color:#8a9a78">✅ 无错误</p>' : ''}
                 ${hasIssues ? `
                 <table><thead><tr><th>id</th><th>技名</th><th>类型</th><th>详情</th></tr></thead><tbody>
                     ${tableIssues.map(i => `
@@ -636,6 +633,9 @@ function runErrorCheck(): void {
                             <td>${i.msg} <button class="se-copy-btn se-copy-issue" data-id="${i.id}" data-msg="${i.msg.replace(/"/g, '&quot;')}" title="复制此行">📋</button></td>
                         </tr>`).join('')}
                 </tbody></table>` : ''}
+                ${ownerSummaryHtml}
+                ${!hasIssues && ownerIssues.length > 0 ? '<p style="color:#8a9a78;margin-top:12px">✅ 逐技检查无其他错误</p>' : ''}
+                ${!hasIssues && ownerIssues.length === 0 ? '<p style="color:#8a9a78">✅ 无错误</p>' : ''}
             </div>
         </div>
     `;
