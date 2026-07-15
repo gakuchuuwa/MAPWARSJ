@@ -11,15 +11,14 @@
 export const COMEBACK_TROOP_THRESHOLD = 0.80;
 
 /** 三势适性：势×局 开战战力系数（单一真理表；GeneralSkillCombat / combat-model 共用）
- *  【2026-07-13】错配减成落地（设计文档"短板局减成"）：
- *  造势缺劣势（强攻型困于死地最致命）→ 0.75；借势/逆势缺优势（不擅平推硬碾）→ 0.9。
- *  优势格只减到 0.9 不减 0.75：优势侧本有 ≥1.5 兵力差，0.75 会在 r=1.5 阈值两侧
- *  造成"兵多反而更弱"的胜率倒挂断崖（如借势 1.49 倍必胜、1.51 倍反低于五成）；
- *  0.9 保留短板又不倒挂。均势列不动 → 等兵力对局不受影响。 */
+ *  【2026-07-16】0.7–1.3 区间统一设计：
+ *  造势：顺风碾压(1.30) / 均势(1.00) / 逆风崩盘(0.70)
+ *  借势：永不吃亏永不高光(0.90/1.20/0.90)
+ *  逆势：顺风松懈(0.70) / 均势(1.00) / 逆风觉醒(1.30) */
 export const APTITUDE_POWER_MULT: Record<string, Record<'advantage' | 'balance' | 'disadvantage', number>> = {
-    create:   { advantage: 1.35, balance: 1.15, disadvantage: 0.75 },
-    leverage: { advantage: 0.9,  balance: 1.35, disadvantage: 1.15 },
-    reverse:  { advantage: 0.9,  balance: 1.15, disadvantage: 1.3  },
+    create:   { advantage: 1.30, balance: 1.00, disadvantage: 0.70 },
+    leverage: { advantage: 0.90, balance: 1.20, disadvantage: 0.90 },
+    reverse:  { advantage: 0.70, balance: 1.00, disadvantage: 1.30 },
 };
 
 /** 逆势劣势战败 → 胜方战损保底倍率（败不垒） */
