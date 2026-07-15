@@ -457,7 +457,7 @@ export default defineConfig({
                         }
                     });
                 });
-                // 六槽：严格分步 API（一次只跑一步；①钉专属 ②通用补缺 ③同格削峰）
+                // 六槽：严格分步 API（一次只跑一步；①钉专属 ②不在册补缺 ③同格削峰）
                 // Return raw profiles data for six-slot editor
                 server.middlewares.use('/api/skill-editor/profiles', (req, res) => {
                     if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
@@ -471,7 +471,7 @@ export default defineConfig({
                     }
                 });
 
-                // 六槽分步：1钉专属 2通用补缺 3同格削峰
+                // 六槽分步：1钉专属 2不在册补缺 3同格削峰
                 server.middlewares.use('/api/skill-editor/fix-six-slots', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
@@ -499,7 +499,7 @@ export default defineConfig({
                                 res.setHeader('Content-Type', 'application/json');
                                 res.end(JSON.stringify({
                                     ok: false,
-                                    error: '必须指定 step=1|2|3（1钉专属 2通用补缺 3同格削峰），禁止默认一键',
+                                    error: '必须指定 step=1|2|3（1钉专属 2不在册补缺 3同格削峰），禁止默认一键',
                                 }));
                                 return;
                             }

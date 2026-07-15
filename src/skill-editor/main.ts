@@ -822,8 +822,8 @@ function renderSixSlotPanel() {
                 <h3>⚔ 六槽（分步） <span style="color:#8a8271;font-size:13px">${rows.length}将 · ${issues}⚠ · ${complete}✅</span></h3>
                 <input id="f-six-search" placeholder="搜武将名" style="background:#0e0d0c;color:#e8e0d0;border:1px solid #4a4234;padding:4px 8px;width:150px" value="${q}">
                 <button class="se-btn se-btn-gold" id="btn-six-1">①钉专属</button>
-                <button class="se-btn" id="btn-six-2">②补缺</button>
-                <button class="se-btn" id="btn-six-3">③削峰</button>
+                <button class="se-btn" id="btn-six-2">②不在册补缺</button>
+                <button class="se-btn" id="btn-six-3">③同格削峰</button>
                 <button class="se-btn" id="btn-six-open" title="带门禁的分步页">↗ 分步页</button>
                 <button class="se-btn" id="modal-close-six" style="margin-left:auto">✕</button>
             </div>
@@ -871,8 +871,8 @@ function renderSixSlotPanel() {
     ($('f-six-search') as HTMLElement).addEventListener('input', () => { modal.remove(); renderSixSlotPanel(); });
     const sixTips: Record<number, string> = {
         1: '① 钉专属（仅本步）：在册典故主技写入本将合法槽。完成后请检查，再点②',
-        2: '② 通用补缺（仅本步）：缺口只从「通用」池补。完成后请检查，再点③',
-        3: '③ 同格削峰（仅本步）：非专属槽，同六计把过热换成更冷门通用',
+        2: '② 不在册补缺（仅本步）：缺口从不在册池补（无 ownerGeneralId；含旧标「通用」名）。完成后请检查，再点③',
+        3: '③ 同格削峰（仅本步）：非专属槽，同六计把过热换成更冷门的不在册技',
     };
     const runSixStep = async (step: number) => {
         if (!confirm(sixTips[step] + '。禁止一键全跑。确定？')) return;
