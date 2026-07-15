@@ -1003,7 +1003,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.05, engineStatus: 'ready'},
     {
         id: 'ts_134', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 134,
-        displayName: '号令如山', ownerName: '周亚夫', ownerGeneralId: 'xiliu_zhouyafu', sourceQuote: '【周亚夫】《史记·绛侯周勃世家》：军细柳，天子至不得入，号令如山。',
+        displayName: '号令如山', ownerName: '周亚夫', ownerGeneralId: 'huaiyang_zhouyafu', sourceQuote: '【周亚夫】《史记·绛侯周勃世家》：军细柳，天子至不得入，号令如山。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.05, engineStatus: 'ready',
         note: '同源：耿恭·疏勒',
@@ -3382,7 +3382,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_616', layer: 'tactical', series: 'counter', index: 616,
-        displayName: '诱敌设伏', ownerName: '松赞干布', ownerGeneralId: 'tufan_songzanganbu', sourceQuote: '诱敌入伏而后击之，多将皆有。',
+        displayName: '诱敌设伏', ownerName: '松赞干布', ownerGeneralId: 'tubo_songzanganbu', sourceQuote: '诱敌入伏而后击之，多将皆有。',
         baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 1, engineStatus: 'ready',
         note: '同源：张巡·雍丘（前误挂）；【松赞干布】T1精锐·三势精修·势create·均',
