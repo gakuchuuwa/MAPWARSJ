@@ -1427,11 +1427,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -30
         },
-        "/assets/DIANQIAN/konbaung_yongjiya.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -46
-        },
         "/assets/pugan/__闲置__pugan_02.png": {
             "scale": 0.92,
             "offsetX": 0,
@@ -5322,11 +5317,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -18
         },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_14.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -43
-        },
         "/assets/DIANQIAN/mingzheng_jianzandechang.png": {
             "scale": 0.83,
             "offsetX": 6,
@@ -5766,6 +5756,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 6
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_22.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -46
+        },
+        "/assets/DIANQIAN/konbaung_yongjiya.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -43
         }
     },
     "folderGuides": {

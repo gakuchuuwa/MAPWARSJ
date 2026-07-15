@@ -1202,12 +1202,32 @@ export class CombatUI {
             eliteLabel = eliteTier;
         }
 
-        pushIfNotOne('战术', getOpeningTacticalPowerMultiplier(
+        // ②战术技 -> 六计文字标签
+        const tacMult = getOpeningTacticalPowerMultiplier(
             this.getUnitsForSide(side),
             this.getOpponentUnitsFor(side),
             side === 'attacker',
             { battleType, terrain },
-        ));
+        );
+        let tacLabel = '';
+        if (Math.abs(tacMult - 1) > 0.001) {
+            // 按 baseEffect 映射六计标签
+            const unit2 = pickSideSkillGeneralUnit(this.getUnitsForSide(side));
+            const tacId = unit2 ? getActiveTacticalSkillId(unit2) : null;
+            const entry = tacId ? resolveGeneralTacticalEntry(tacId) : null;
+            const SIX_LABELS: Record<string, string> = {
+                攻战计: '加功', 胜战计: '减兵', 敌战计: '改运',
+                混战计: '克反', 并战计: '减损', 败战计: '翻盘',
+            };
+            // 简单按 baseEffect 前缀分类
+            const be = entry?.baseEffect ?? '';
+            if (be.includes('power_mult')) tacLabel = '加功';
+            else if (be.includes('sub_troops') || be.includes('add_troops')) tacLabel = '减兵';
+            else if (be.includes('luck')) tacLabel = '改运';
+            else if (be.includes('negate') || be.includes('counter') || be.includes('steal')) tacLabel = '克反';
+            else if (be.includes('casualty') || be.includes('win_casualty')) tacLabel = '减损';
+            else if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')) tacLabel = '翻盘';
+        }
 
         // 战略技不在战斗面板展示乘区链（大地图/跟拍横幅/胜后飘字见 GeneralSkillCombat + MapFloatingText）
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
