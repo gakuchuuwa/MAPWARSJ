@@ -471,7 +471,7 @@ export default defineConfig({
                     }
                 });
 
-                // 六槽分步：1清别人在册 2钉专属 3不在册补缺 4同格削峰 5孤儿分发
+                // 六槽四步：1清空 2钉在册 3补不全(优先不在册) 4孤儿
                 server.middlewares.use('/api/skill-editor/fix-six-slots', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
@@ -488,26 +488,25 @@ export default defineConfig({
                                 res.setHeader('Content-Type', 'application/json');
                                 res.end(JSON.stringify({
                                     ok: false,
-                                    error: '已改为严格分步：禁止一键全跑。请每次只传 step=1|2|3|4|5',
+                                    error: '已改为严格分步：禁止一键全跑。请每次只传 step=1|2|3|4',
                                 }));
                                 return;
                             }
                             step = Number(parsed?.step);
-                            if (![1, 2, 3, 4, 5].includes(step)) {
+                            if (![1, 2, 3, 4].includes(step)) {
                                 res.statusCode = 400;
                                 res.setHeader('Content-Type', 'application/json');
                                 res.end(JSON.stringify({
                                     ok: false,
-                                    error: '必须指定 step=1|2|3|4|5（1清别人在册 2钉专属 3不在册补缺 4同格削峰 5孤儿分发），禁止默认一键',
+                                    error: '必须指定 step=1|2|3|4（①清空 ②钉在册 ③补不全 ④孤儿），禁止默认一键',
                                 }));
                                 return;
                             }
                             const scripts: Record<number, string> = {
-                                1: 'node scratch/six_slot_step1_strip_foreign.mjs --write',
+                                1: 'node scratch/six_slot_step1_clear_all.mjs --write',
                                 2: 'node scratch/six_slot_step1_pin_owners.mjs --write',
                                 3: 'node scratch/six_slot_step2_fill_generic.mjs --write',
-                                4: 'node scratch/six_slot_step3_peak_shave.mjs --write',
-                                5: 'node scratch/six_slot_step4_orphan_place.mjs --write',
+                                4: 'node scratch/six_slot_step4_orphan_place.mjs --write',
                             };
                             const cmd = scripts[step];
                             const out = execSync(cmd, {
@@ -516,7 +515,7 @@ export default defineConfig({
                                 timeout: 180000,
                             });
                             res.setHeader('Content-Type', 'application/json');
-                            res.end(JSON.stringify({ ok: true, step, log: out.slice(-1500) }));
+                            res.end(JSON.stringify({ ok: true, step, log: out.slice(-2000) }));
                         } catch (err: any) {
                             res.statusCode = 500;
                             res.setHeader('Content-Type', 'application/json');

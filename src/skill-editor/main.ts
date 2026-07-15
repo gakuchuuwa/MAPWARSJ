@@ -829,11 +829,10 @@ function renderSixSlotPanel() {
             <div class="se-modal-hd">
                 <h3>⚔ 六槽（分步） <span style="color:#8a8271;font-size:13px">${rows.length}将 · ${issues}⚠ · ${complete}✅</span></h3>
                 <input id="f-six-search" placeholder="搜武将名" style="background:#0e0d0c;color:#e8e0d0;border:1px solid #4a4234;padding:4px 8px;width:150px" value="${q}">
-                <button class="se-btn se-btn-gold" id="btn-six-1">①清别人在册</button>
-                <button class="se-btn" id="btn-six-2">②钉专属</button>
-                <button class="se-btn" id="btn-six-3">③不在册补缺</button>
-                <button class="se-btn" id="btn-six-4">④同格削峰</button>
-                <button class="se-btn" id="btn-six-5">⑤孤儿分发</button>
+                <button class="se-btn se-btn-gold" id="btn-six-1">①清空六槽</button>
+                <button class="se-btn" id="btn-six-2">②钉在册</button>
+                <button class="se-btn" id="btn-six-3">③补不全</button>
+                <button class="se-btn" id="btn-six-4">④挂孤儿</button>
                 <button class="se-btn" id="btn-six-open" title="带门禁的分步页">↗ 分步页</button>
                 <button class="se-btn" id="modal-close-six" style="margin-left:auto">✕</button>
             </div>
@@ -880,11 +879,10 @@ function renderSixSlotPanel() {
     });
     ($('f-six-search') as HTMLElement).addEventListener('input', () => { modal.remove(); renderSixSlotPanel(); });
     const sixTips: Record<number, string> = {
-        1: '① 清别人在册（仅本步）：清空戴着别人在册专属的槽。完成后请检查，再点②',
-        2: '② 钉专属（仅本步）：自己的在册典故主写入合法槽。完成后请检查，再点③',
-        3: '③ 不在册补缺（仅本步）：空槽优先补缺；攻防三势对应；双行可攻可防；少人戴优先。完成后请检查，再点④',
-        4: '④ 同格削峰（仅本步）：同攻防三势·同六计，换掉佩戴过多的。完成后请检查，再点⑤',
-        5: '⑤ 孤儿分发（仅本步）：零佩戴技挂合法槽（优先主人，须仍六计各一）',
+        1: '① 清空全体六槽（仅本步）。完成后请检查，再点②',
+        2: '② 钉在册：典故主写入合法槽（仅本步）。完成后请检查，再点③',
+        3: '③ 补不全：优先不在册，可复戴（仅本步）。完成后请检查，再点④',
+        4: '④ 挂孤儿：零佩戴技挂合法槽（仅本步）',
     };
     const runSixStep = async (step: number) => {
         if (!confirm(sixTips[step] + '。禁止一键全跑。确定？')) return;
@@ -904,7 +902,6 @@ function renderSixSlotPanel() {
     ($('btn-six-2') as HTMLElement).addEventListener('click', () => runSixStep(2));
     ($('btn-six-3') as HTMLElement).addEventListener('click', () => runSixStep(3));
     ($('btn-six-4') as HTMLElement).addEventListener('click', () => runSixStep(4));
-    ($('btn-six-5') as HTMLElement).addEventListener('click', () => runSixStep(5));
     const openBtn = $('btn-six-open') as HTMLElement | null;
     if (openBtn) openBtn.addEventListener('click', () => window.open('/six-slot.html', '_blank'));
 }
