@@ -486,8 +486,8 @@ function runErrorCheck(): void {
             }
             continue;
         }
-        // 仅有史料名、尚未挂将 → 警告（勿清空 ownerName）
-        if (s.ownerName) {
+        // 仅有史料名、尚未挂将 → 警告（勿清空 ownerName）；「通用」例外
+        if (s.ownerName && s.ownerName !== '通用') {
             issues.push({
                 id: s.id, displayName: s.displayName, type: 'pendingOwner', severity: 'warn',
                 msg: `史料典故主「${s.ownerName}」待挂将（暂作通用技；立将后补 ownerGeneralId，勿删此名）`,
