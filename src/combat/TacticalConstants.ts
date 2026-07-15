@@ -26,3 +26,16 @@ export const APTITUDE_LOSER_BITE_FLOOR = 1.5;
 
 /** 翻盘重掷 luck 区间：极小概率（等势层上线后由势调整） */
 export const COMEBACK_LUCK_RANGE: [number, number] = [0.25, 0.45];
+
+/**
+ * 第四层·攻防风格战力系数（2026-07-16）
+ * 武将 attackStyle → 攻/守不同角色下的 roll 乘数
+ *   attack:  攻城专精，攻方 ×1.25，守方 ×1.00
+ *   defense: 守城专精，攻方 ×1.00，守方 ×1.25
+ *   balanced:攻守双全，两面 ×1.20
+ */
+export const ATTACK_STYLE_POWER_MULT: Record<string, Record<'attack' | 'defense', number>> = {
+    attack:   { attack: 1.25, defense: 1.00 },
+    defense:  { attack: 1.00, defense: 1.25 },
+    balanced: { attack: 1.20, defense: 1.20 },
+};
