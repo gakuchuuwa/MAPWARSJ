@@ -228,19 +228,19 @@ export function getTacticalTriClass(entry: TacticalSkillEntry): TacticalTriClass
 // ── 一、攻战/胜战类（ally_power_mult / enemy_sub_troops）──
 const ENHANCE: TacticalSkillEntry[] = [
     {
-        id: 'ts_001', layer: 'tactical', series: 'enhance', index: 1,
+        id: 'ts_001', ownerName: '孙武', ownerGeneralId: 'wu_sunwu', layer: 'tactical', series: 'enhance', index: 1,
         displayName: '百战不殆', sourceQuote: '《孙子兵法·谋攻》：“知彼知己，百战不殆。”',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.05, engineStatus: 'ready', legacyTacId: 'tac_01',
     },
     {
-        id: 'ts_002', layer: 'tactical', series: 'enhance', index: 2,
+        id: 'ts_002', ownerName: '马援', ownerGeneralId: 'li_s_mayuan', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 2,
         displayName: '居高临下', sourceQuote: '《后汉书·马援传》：“据高临下，势如劈竹。”',
         baseEffect: 'ally_power_mult', condition: 'terrain_mountain', phase: 'opening_roll',
         magnitude: 1.1, engineStatus: 'ready',
     },
     {
-        id: 'ts_003', ownerName: '乐毅', ownerGeneralId: 'yan_leyi', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 3,
+        id: 'ts_003', ownerName: '刘备', ownerGeneralId: 'shu_liubei', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 3,
         displayName: '长驱直入', sourceQuote: '《战国策·燕策》：“长驱至齐，齐王遁逃。”',
         baseEffect: 'ally_power_mult', condition: 'terrain_plain', phase: 'opening_roll',
         magnitude: 1.05, engineStatus: 'ready',
@@ -252,7 +252,7 @@ const ENHANCE: TacticalSkillEntry[] = [
         magnitude: 0.05, engineStatus: 'ready',
     },
     {
-        id: 'ts_005', layer: 'tactical', series: 'enhance', index: 5,
+        id: 'ts_005', ownerName: '刘备', ownerGeneralId: 'shu_liubei', layer: 'tactical', series: 'enhance', index: 5,
         displayName: '摧城拔寨', sourceQuote: '《三国演义》：“先主怒……摧城拔寨。”',
         baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll',
         magnitude: 1.1, engineStatus: 'ready',
@@ -4413,10 +4413,8 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
 
 /** 第一标签查找表（id → 双行/攻击/防御），未列入 = 双行 */export const SKILL_CHARACTER: Readonly<Record<string, string>> = {
     ts_001: '孙武',
-    ts_002: '马谡',
-    ts_003: '曹操/卫青',
     ts_004: '祖逖',
-    ts_005: '乐毅',
+    ts_005: '刘备',
     ts_006: '蒯通',
     ts_007: '项羽',
     ts_008: '张辽',

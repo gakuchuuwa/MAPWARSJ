@@ -441,6 +441,18 @@ interface CheckIssue {
 
 function runErrorCheck(): void {
     const issues: CheckIssue[] = [];
+
+    // ── 典故主缺武将ID（最优先：在册武将缺ID = 数据断裂，游戏功能直接受影响）──
+    for (const s of SKILLS) {
+        if (!s.ownerName) continue;
+        if (!s.ownerGeneralId) {
+            issues.push({
+                id: s.id, displayName: s.displayName, type: 'missingOwnerGid',
+                msg: `典故主「${s.ownerName}」缺少武将ID（编辑器中显示为?），需补全generalId`,
+            });
+        }
+    }
+
     for (const s of SKILLS) {
         if (s.displayName.length !== 4) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'non4char', msg: `技名「${s.displayName}」不是四字（${s.displayName.length}字）` });
@@ -516,17 +528,6 @@ function runErrorCheck(): void {
         ids.push(s.id);
         nameGroups.set(s.displayName, ids);
     }
-    // ── 典故主缺武将ID ──
-    for (const s of SKILLS) {
-        if (!s.ownerName) continue;
-        if (!s.ownerGeneralId) {
-            issues.push({
-                id: s.id, displayName: s.displayName, type: 'missingOwnerGid',
-                msg: `典故主「${s.ownerName}」缺少武将ID（编辑器中显示为?），需补全generalId`,
-            });
-        }
-    }
-
     // ── 典故主不在册 ──
     const inRegNames = new Set(GENERALS.map(g => g.name));
     for (const s of SKILLS) {
@@ -585,9 +586,10 @@ function runErrorCheck(): void {
     for (const oi of ownerIssues) counts[oi.type]++;
 
     const typeLabel: Record<string, string> = {
+        missingOwnerGid: '缺武将ID', orphanOwner: '典故主不在册',
         non4char: '非四字技名', noWearer: '无佩戴', noSituation: '三势缺失', noUsage: '攻防缺失',
         noSixClass: '六类未标', sixClassMismatch: '三势跨类', duplicateSixClass: '典故主六类重复',
-        tooManySkills: '典故主超6技', duplicateName: '技名重复', generalSixIncomplete: '武将六计不齐', orphanOwner: '典故主不在册', missingOwnerGid: '缺武将ID',
+        tooManySkills: '典故主超6技', duplicateName: '技名重复', generalSixIncomplete: '武将六计不齐',
     };
     const summaryHtml = Object.entries(typeLabel).map(([k, label]) => {
         const n = counts[k] ?? 0;
