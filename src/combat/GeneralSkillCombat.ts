@@ -778,10 +778,10 @@ function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[],
 }
 
 /**
- * 第四层·攻防风格战力系数（2026-07-16）
+ * 第四层·攻防风格战力系数（2026-07-16 · 0.7–1.3 区间）
  * 武将 attackStyle → 攻/守不同角色下的 roll 乘数
- *   attack:  攻城专精，攻方 ×1.25，守方 ×1.00
- *   defense: 守城专精，攻方 ×1.00，守方 ×1.25
+ *   attack:  攻城专精 ×1.30，守城崩盘 ×0.70
+ *   defense: 守城专精 ×1.30，攻城崩盘 ×0.70
  *   balanced:攻守双全，两面 ×1.20
  */
 export function getAttackStylePowerMult(unit: IBattleUnit | null, isAttacker: boolean): number {
