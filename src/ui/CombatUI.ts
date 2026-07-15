@@ -1176,11 +1176,14 @@ export class CombatUI {
         };
         const cultureMult = getCultureOnlyCombatMultiplier(unit);
         const round = Math.round(cultureMult * 100) / 100;
-        const CULTURE_LABELS: Record<number, string> = {
-            1.25: '骁勇', 1.20: '雄踞', 1.15: '善战', 1.10: '尚武', 1.05: '坚守',
-            1.00: '持重', 0.90: '偏安', 0.85: '守成', 0.75: '游牧',
+        const ATK_LABELS: Record<number, string> = {
+            1.25: '骁勇', 1.15: '善战', 1.10: '尚武', 1.00: '持重', 0.85: '守成',
         };
-        let cultureLabel = CULTURE_LABELS[round] ?? '';
+        const DEF_LABELS: Record<number, string> = {
+            1.20: '雄踞', 1.15: '固垒', 1.10: '坚城', 1.05: '刚毅',
+            1.00: '自守', 0.90: '偏安', 0.85: '边陲', 0.75: '游牧',
+        };
+        let cultureLabel = (isGarrison ? DEF_LABELS[round] : ATK_LABELS[round]) ?? '';
 
         // 关隘/要塞加成 -> 不显数字，显「险要」文字
         const passMult = getPassGarrisonCombatMultiplier(unit);
@@ -1506,14 +1509,14 @@ export class CombatUI {
     /**
      * 蓄力收缩逐帧驱动（updateStats 每帧调）：
      * 仅当该侧存在可放技将领（pickSideSkillGeneralUnit，与保底亮相同判据）才收缩，
-     * 从沉降结束（min(阈值×0.45, 5.8s)）起，随游戏内 elapsed 缓缩至 0.94，相持阈值处缩到底。
+     * 从进场 1s 后即刻开始，随游戏内 elapsed 缓缩至 0.90，相持阈值处缩到底。
      * 无将侧保持 1.0（对称铁律）；脉冲放完（pulsed）不再二次收缩。
      */
     private updatePortraitWinddown(): void {
         const bf = this.boundRegionalBattleField;
         if (!bf || bf.isOver) return;
         const threshold = resolveStalemateUiThresholdSec(bf.targetDuration);
-        const startSec = Math.min(threshold * 0.45, 5.8);
+        const startSec = 1.0; // 进场后即刻蓄力
         if (bf.elapsed <= startSec) return;
         for (const side of ['attacker', 'defender'] as const) {
             const st = this.portraitWind[side];
