@@ -31,7 +31,7 @@ import {
 } from '../data/portrait_adjust';
 import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
-import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier } from '../systems/CultureCombat';
+import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
 import {
     getOpeningTacticalPowerMultiplier,
@@ -1139,7 +1139,6 @@ export class CombatUI {
             side === 'attacker',
             { battleType, terrain },
         );
-        const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
 
         // ③ 势层
         const myUnits = this.getUnitsForSide(side);
@@ -1176,13 +1175,10 @@ export class CombatUI {
             if (Math.abs(n - 1) > 0.001) labeled.push({ label, value: n });
         };
         const cultureMult = getCultureOnlyCombatMultiplier(unit);
-        let cultureLabel = '';
-        if (Math.abs(cultureMult - 1) > 0.001) {
-            const CULTURE_LABELS: Record<number, string> = {
-                1.25: '骁勇', 1.15: '善战', 1.10: '尚武', 1.00: '持重', 0.85: '守成',
-            };
-            cultureLabel = CULTURE_LABELS[parseFloat(cultureMult.toFixed(2))] ?? '文化';
-        }
+        const CULTURE_LABELS: Record<number, string> = {
+            1.25: '骁勇', 1.15: '善战', 1.10: '尚武', 1.00: '持重', 0.85: '守成',
+        };
+        let cultureLabel = CULTURE_LABELS[parseFloat(cultureMult.toFixed(2))] ?? '';
 
         // 关隘/要塞加成 -> 不显数字，显「险要」文字
         const passMult = getPassGarrisonCombatMultiplier(unit);
@@ -1515,7 +1511,7 @@ export class CombatUI {
         const bf = this.boundRegionalBattleField;
         if (!bf || bf.isOver) return;
         const threshold = resolveStalemateUiThresholdSec(bf.targetDuration);
-        const startSec = Math.min(threshold * 0.45, 5.8);
+        const startSec = 1.0; // 进场后即刻蓄力，不等
         if (bf.elapsed <= startSec) return;
         for (const side of ['attacker', 'defender'] as const) {
             const st = this.portraitWind[side];
