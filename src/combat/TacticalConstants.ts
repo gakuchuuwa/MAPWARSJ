@@ -24,3 +24,6 @@ export const APTITUDE_POWER_MULT: Record<string, Record<'advantage' | 'balance' 
 
 /** 逆势劣势战败 → 胜方战损保底倍率（败不垒） */
 export const APTITUDE_LOSER_BITE_FLOOR = 1.5;
+
+/** 翻盘重掷 luck 区间：极小概率（等势层上线后由势调整） */
+export const COMEBACK_LUCK_RANGE: [number, number] = [0.25, 0.45];

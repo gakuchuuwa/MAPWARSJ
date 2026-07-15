@@ -33,6 +33,7 @@ import {
 } from '../config/GameConfig';
 import { sumCultureAdjustedTroops, getUnitBattlePowerMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import { getGeneralProfile } from '../data/GeneralSkills';
+import { COMEBACK_LUCK_RANGE } from './TacticalConstants';
 import {
     applyGeneralSkillSideRollMultipliers,
     applyOpeningTacticalPreRoll,
@@ -555,15 +556,15 @@ export class BattleField implements IOpeningPulseSink {
             .map((bu) => bu.unit);
 
         const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
-        // 命运系 luck（#12–#20）在 refresh 时的处理（P0 修复）：
-        //  · 援军编入（rollLuckOnRecompute=false）：确定性回放开战掷定的命运 luck，绝不抹掉；
-        //  · 逆局翻盘（rollLuckOnRecompute=true）：按命运技区间重掷一次（破釜沉舟仍 [0.5,1.5]，
-        //    无命运技者退回默认 [0.9,1.1]，与旧逆局重掷行为一致）。
+        // 翻盘重掷：统一低概率区间（等势层上线后由势调整）
+        const rollComebackLuck = (): number => {
+            return COMEBACK_LUCK_RANGE[0] + Math.random() * (COMEBACK_LUCK_RANGE[1] - COMEBACK_LUCK_RANGE[0]);
+        };
         const attFateLuck = rollLuckOnRecompute
-            ? resolveSideOpeningFateLuck(attUnits, defUnits, this.type, terrain, true, { emitUi: false }, this.attackerCommander, this.defenderCommander).luck
+            ? rollComebackLuck()
             : this.attackerOpeningFateLuck;
         const defFateLuck = rollLuckOnRecompute
-            ? resolveSideOpeningFateLuck(defUnits, attUnits, this.type, terrain, false, { emitUi: false }, this.defenderCommander, this.attackerCommander).luck
+            ? rollComebackLuck()
             : this.defenderOpeningFateLuck;
 
         const attAdj = this.adjustedPowerWithReinforcement(this.attackerGroup) * attFateLuck;
