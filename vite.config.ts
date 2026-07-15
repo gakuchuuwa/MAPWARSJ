@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import { execFile } from 'child_process';
+import { execFile, execSync } from 'child_process';
 import { pinyin } from 'pinyin-pro';
 
 /** 中文名 → 立绘ID用拼音（与 batch-manager 的 toPinyinId 完全一致） */
@@ -163,7 +163,7 @@ export default defineConfig({
 
                 // 每次启动 dev server 自动重建 canonical 映射，防止改名/换图后旧映射残留
                 try {
-                    require('child_process').execSync('node scratch/build_portrait_canonical.mjs', {
+                    execSync('node scratch/build_portrait_canonical.mjs', {
                         cwd: __dirname,
                         stdio: 'pipe',
                         timeout: 30000,
@@ -457,7 +457,7 @@ export default defineConfig({
                         }
                     });
                 });
-                // 六槽：严格分步 API（一次只跑一步；①钉专属 ②不在册补缺 ③同格削峰）
+                // 六槽：严格分步 API（一次只跑一步；①清别人在册 ②钉专属 ③不在册补缺 ④同格削峰 ⑤孤儿分发）
                 // Return raw profiles data for six-slot editor
                 server.middlewares.use('/api/skill-editor/profiles', (req, res) => {
                     if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
@@ -471,14 +471,13 @@ export default defineConfig({
                     }
                 });
 
-                // 六槽分步：1钉专属 2不在册补缺 3同格削峰
+                // 六槽分步：1清别人在册 2钉专属 3不在册补缺 4同格削峰 5孤儿分发
                 server.middlewares.use('/api/skill-editor/fix-six-slots', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
                     req.on('data', (chunk: string) => { body += chunk; });
                     req.on('end', () => {
                         try {
-                            const { execSync } = require('child_process');
                             let step = 0;
                             let parsed: any = null;
                             try {
@@ -489,24 +488,26 @@ export default defineConfig({
                                 res.setHeader('Content-Type', 'application/json');
                                 res.end(JSON.stringify({
                                     ok: false,
-                                    error: '已改为严格分步：禁止一键全跑。请每次只传 step=1|2|3',
+                                    error: '已改为严格分步：禁止一键全跑。请每次只传 step=1|2|3|4|5',
                                 }));
                                 return;
                             }
                             step = Number(parsed?.step);
-                            if (![1, 2, 3].includes(step)) {
+                            if (![1, 2, 3, 4, 5].includes(step)) {
                                 res.statusCode = 400;
                                 res.setHeader('Content-Type', 'application/json');
                                 res.end(JSON.stringify({
                                     ok: false,
-                                    error: '必须指定 step=1|2|3（1钉专属 2不在册补缺 3同格削峰），禁止默认一键',
+                                    error: '必须指定 step=1|2|3|4|5（1清别人在册 2钉专属 3不在册补缺 4同格削峰 5孤儿分发），禁止默认一键',
                                 }));
                                 return;
                             }
                             const scripts: Record<number, string> = {
-                                1: 'node scratch/six_slot_step1_pin_owners.mjs --write',
-                                2: 'node scratch/six_slot_step2_fill_generic.mjs --write',
-                                3: 'node scratch/six_slot_step3_peak_shave.mjs --write',
+                                1: 'node scratch/six_slot_step1_strip_foreign.mjs --write',
+                                2: 'node scratch/six_slot_step1_pin_owners.mjs --write',
+                                3: 'node scratch/six_slot_step2_fill_generic.mjs --write',
+                                4: 'node scratch/six_slot_step3_peak_shave.mjs --write',
+                                5: 'node scratch/six_slot_step4_orphan_place.mjs --write',
                             };
                             const cmd = scripts[step];
                             const out = execSync(cmd, {
