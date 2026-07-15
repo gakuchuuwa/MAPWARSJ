@@ -339,10 +339,11 @@ const FATE: TacticalSkillEntry[] = [
         magnitude: 1.25, engineStatus: 'ready',
     },
     {
-        id: 'ts_015', ownerName: '赵云', ownerGeneralId: 'jingmen_zhaoyun', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 15,
+        id: 'ts_015', ownerName: '通用', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 15,
         displayName: '进退有度', sourceQuote: '败局中从容调度退而不溃保存实力，多将皆有。',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive',
         magnitude: 1.25, engineStatus: 'ready',
+        note: '同源：泛称（原挂赵云；无专典）',
     },
     {
         id: 'ts_016', ownerName: '郭嘉', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'fate', index: 16,
@@ -2771,10 +2772,11 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         note: '【尔朱荣】T1精锐·三势精修·势create·优局专属',
     },
     {
-        id: 'ts_511', ownerName: '项羽', ownerGeneralId: 'xichu_xiangyu', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 511,
+        id: 'ts_511', ownerName: '通用', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 511,
         displayName: '并阵夹击', sourceQuote: '两翼阵列同时夹击敌军，如坎尼会战等多将皆有。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.05,engineStatus: 'ready',
+        note: '同源：泛称/两翼夹击（原挂项羽；非巨鹿·东城专典）',
     },
     {
         id: 'ts_512', layer: 'tactical', series: 'casualty', index: 512,
@@ -4481,7 +4483,7 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_012: '项羽',
     ts_013: '韩信',
     ts_014: '诸葛亮',
-    ts_015: '赵云',
+    ts_015: '通用',
     ts_016: '郭嘉',
     ts_017: '管仲',
     ts_018: '孙膑',
@@ -5249,7 +5251,7 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_321: '通用',
     ts_348: '刘龑',
     ts_479: '司马懿',
-    ts_511: '项羽',
+    ts_511: '通用',
     ts_563: '通用',
     ts_586: '通用',
     ts_391: '子贡',

@@ -619,7 +619,7 @@ function runErrorCheck(): void {
     for (const oi of ownerIssues) counts[oi.type]++;
 
     const errN = issues.filter(i => i.severity === 'error').length;
-    const warnN = issues.filter(i => i.severity === 'warn').length;
+    const warnN = issues.filter(i => i.severity === 'warn' && i.type !== 'pendingOwner').length;
 
     const typeLabel: Record<string, string> = {
         pendingOwner: '史料待挂将', invalidOwnerGid: '典故主ID非法',
@@ -632,14 +632,23 @@ function runErrorCheck(): void {
     const summaryHtml = Object.entries(typeLabel).map(([k, label]) => {
         const n = counts[k] ?? 0;
         if (k === 'missingOwnerGid' || k === 'orphanOwner') return ''; // 已由 pendingOwner / invalidOwnerGid 取代
-        const cls = n === 0 ? 'se-err-ok' : (HARD_TYPES.has(k) ? 'se-err-red' : 'se-err-warn');
+        const cls = n === 0 ? 'se-err-ok' : (HARD_TYPES.has(k) ? 'se-err-red' : (k === 'pendingOwner' ? 'se-err-info' : 'se-err-warn'));
         return `<span class="se-err-count ${cls}">${label}: ${n}</span>`;
     }).filter(Boolean).join('');
 
     // ── 典故主级汇总（放在表格下方，不逐技展开）──
-    const ownerSummaryHtml = ownerIssues.length > 0 ? `
+    // 史料待挂将（信息，非错误）
+    const pendingIssues = issues.filter(i => i.type === 'pendingOwner');
+    const allOwnerCount = ownerIssues.length + pendingIssues.length;
+    const ownerSummaryHtml = (allOwnerCount > 0) ? `
         <div class="se-owner-summary">
-            <div class="se-owner-summary-hd">📋 典故主问题（${ownerIssues.length} 项）</div>
+            <div class="se-owner-summary-hd">📋 典故主汇总（${allOwnerCount} 项）</div>
+            ${pendingIssues.map(pi => `
+                <div class="se-owner-item">
+                    <span class="se-owner-tag se-owner-tag-info">${typeLabel[pi.type]}</span>
+                    <span class="se-owner-msg">${pi.msg}</span>
+                    <button class="se-copy-btn se-copy-owner" data-msg="${pi.msg.replace(/"/g, '&quot;')}" title="复制此项">📋</button>
+                </div>`).join('')}
             ${ownerIssues.map(oi => `
                 <div class="se-owner-item">
                     <span class="se-owner-tag se-owner-tag-${oi.type === 'tooManySkills' ? 'over' : 'dup'}">${typeLabel[oi.type]}</span>
@@ -648,7 +657,7 @@ function runErrorCheck(): void {
                 </div>`).join('')}
         </div>` : '';
 
-    const tableIssues = issues.filter(i => i.type !== 'tooManySkills' && i.type !== 'duplicateSixClass');
+    const tableIssues = issues.filter(i => i.type !== 'tooManySkills' && i.type !== 'duplicateSixClass' && i.type !== 'pendingOwner');
     // 警告默认折叠列出：仍全部显示，但硬错误排前
     tableIssues.sort((a, b) => (a.severity === b.severity ? 0 : a.severity === 'error' ? -1 : 1));
     const hasIssues = tableIssues.length > 0;
@@ -659,7 +668,7 @@ function runErrorCheck(): void {
         <div class="se-modal">
             <div class="se-modal-hd">
                 <h3>错误检查</h3>
-                <span style="color:#8a8271">硬错误 ${errN} · 警告 ${warnN} · 典故主汇总 ${ownerIssues.length}</span>
+                <span style="color:#8a8271">硬错误 ${errN} · 警告 ${warnN} · 典故主汇总 ${allOwnerCount}</span>
                 <button class="se-btn" id="modal-close" style="margin-left:auto">✕</button>
             </div>
             <div class="se-modal-body">
@@ -676,8 +685,8 @@ function runErrorCheck(): void {
                         </tr>`).join('')}
                 </tbody></table>` : ''}
                 ${ownerSummaryHtml}
-                ${!hasIssues && ownerIssues.length > 0 ? '<p style="color:#8a9a78;margin-top:12px">✅ 逐技检查无其他硬错误（上方为典故主汇总）</p>' : ''}
-                ${!hasIssues && ownerIssues.length === 0 ? '<p style="color:#8a9a78">✅ 无错误</p>' : ''}
+                ${!hasIssues && allOwnerCount > 0 ? '<p style="color:#8a9a78;margin-top:12px">✅ 逐技检查无其他硬错误（上方为典故主汇总）</p>' : ''}
+                ${!hasIssues && allOwnerCount === 0 ? '<p style="color:#8a9a78">✅ 无错误</p>' : ''}
             </div>
         </div>
     `;
