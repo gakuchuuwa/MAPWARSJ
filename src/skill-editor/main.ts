@@ -832,7 +832,7 @@ function renderSixSlotPanel() {
                 <button class="se-btn se-btn-gold" id="btn-six-1">①清空六槽</button>
                 <button class="se-btn" id="btn-six-2">②钉在册</button>
                 <button class="se-btn" id="btn-six-3">③挂孤儿</button>
-                <button class="se-btn" id="btn-six-4">④补缺打散</button>
+                <button class="se-btn" id="btn-six-4">④在册≤1</button>
                 <button class="se-btn" id="btn-six-open" title="带门禁的分步页">↗ 分步页</button>
                 <button class="se-btn" id="modal-close-six" style="margin-left:auto">✕</button>
             </div>
@@ -882,7 +882,7 @@ function renderSixSlotPanel() {
         1: '① 清空全体六槽（仅本步）。完成后请检查，再点②',
         2: '② 钉在册：典故主写入合法槽（仅本步）。完成后请检查，再点③',
         3: '③ 挂孤儿：wear=0 找将挂上，须零孤儿（仅本步）。完成后请检查，再点④',
-        4: '④ 补不全+打散：专属钉不动，同计 wear 均摊（仅本步）',
+        4: '④ 补不全：在册≤1，不在册均摊（仅本步）',
     };
     const runSixStep = async (step: number) => {
         if (!confirm(sixTips[step] + '。禁止一键全跑。确定？')) return;
