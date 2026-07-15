@@ -1170,13 +1170,20 @@ export class CombatUI {
         const pushIfNotOne = (label: string, n: number) => {
             if (Math.abs(n - 1) > 0.001) labeled.push({ label, value: n });
         };
-        pushIfNotOne('文化', getCultureOnlyCombatMultiplier(unit));
+        const cultureMult = getCultureOnlyCombatMultiplier(unit);
+        let cultureLabel = '';
+        if (Math.abs(cultureMult - 1) > 0.001) {
+            const CULTURE_LABELS: Record<number, string> = {
+                1.25: '骁勇', 1.15: '善战', 1.10: '尚武', 1.00: '持重', 0.85: '守成',
+            };
+            cultureLabel = CULTURE_LABELS[parseFloat(cultureMult.toFixed(2))] ?? '文化';
+        }
 
-        // 关隘加成 -> 不显数字，显「关隘」文字
+        // 关隘/要塞加成 -> 不显数字，显「险要」文字
         const passMult = getPassGarrisonCombatMultiplier(unit);
         let passLabel = '';
         if (Math.abs(passMult - 1) > 0.001) {
-            passLabel = '关隘';
+            passLabel = '险要';
         }
 
         // 区中心加成 -> 不显数字，显「名城」文字
@@ -1226,16 +1233,17 @@ export class CombatUI {
             else if (fateLuck < 0.999) luckLabel = '厄运';
         }
 
-        if (labeled.length === 0 && !luckLabel && !passLabel && !regionLabel && !eliteLabel) {
+        if (labeled.length === 0 && !luckLabel && !passLabel && !regionLabel && !eliteLabel && !cultureLabel) {
             return { chain: '', title: '' };
         }
 
         const numChain = labeled.map((l) => fmt(l.value)).join('×');
         const parts: string[] = [];
         if (luckLabel) parts.push(luckLabel);
-        if (passLabel) parts.push('关隘');
+        if (passLabel) parts.push('险要');
         if (regionLabel) parts.push('名城');
         if (eliteLabel) parts.push(eliteLabel);
+        if (cultureLabel) parts.push(cultureLabel);
         if (numChain) parts.push(numChain);
         const chain = parts.join(' ');
 
