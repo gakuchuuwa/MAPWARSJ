@@ -2512,13 +2512,13 @@ const SIX_CLASS_BY_EFFECT: Record<string, { label: string; canonicalSituation: s
     first_sortie_comeback_mult: { label: '攻战计', canonicalSituation: '优势' },
     // 减敌兵 → 优势 → 胜战计(全)
     enemy_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
-    ally_add_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
     dual_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
     // 变随机 → 均势 → 敌战计(衡)
     luck_variance_self: { label: '敌战计', canonicalSituation: '均势' },
     luck_variance_enemy: { label: '敌战计', canonicalSituation: '均势' },
     luck_lock_self: { label: '敌战计', canonicalSituation: '均势' },
-    // 克夺反 → 均势 → 混战计(乱)
+    // 克夺反 / 增兵破局 → 均势 → 混战计(乱)；技能 situationTag 多为均势，标签为准
+    ally_add_troops_opening: { label: '混战计', canonicalSituation: '均势' },
     negate_enemy_skill: { label: '混战计', canonicalSituation: '均势' },
     partial_negate_enemy_skill: { label: '混战计', canonicalSituation: '均势' },
     steal_enemy_skill: { label: '混战计', canonicalSituation: '均势' },
