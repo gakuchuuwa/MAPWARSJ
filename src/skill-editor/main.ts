@@ -131,6 +131,12 @@ app.innerHTML = `
         <option value="none">无人佩戴</option>
 
     </select>
+    <select id="f-owner">
+        <option value="">典故主·全部</option>
+        <option value="registered">在册武将</option>
+        <option value="unregistered">不在册（史料名）</option>
+        <option value="none">无典故主</option>
+    </select>
     <button class="se-btn se-btn-gold" id="btn-new">＋ 新增技能</button>
     <button class="se-btn se-btn-red" id="btn-check">🔍 检查错误</button>
     <button class="se-btn se-btn-gold" id="btn-six">⚔ 六槽管理</button>
@@ -188,6 +194,7 @@ function applyFilters(): SkillRow[] {
     const use = ($('f-use') as HTMLSelectElement).value;
     const six = ($('f-six') as HTMLSelectElement).value;
     const wear = ($('f-wear') as HTMLSelectElement).value;
+    const owner = ($('f-owner') as HTMLSelectElement).value;
     return SKILLS.filter(s => {
         if (q && !(s.id.includes(q) || s.displayName.includes(q) || (s.ownerName ?? '').includes(q))) return false;
         if (sit && s.situationTag !== sit) return false;
@@ -196,6 +203,9 @@ function applyFilters(): SkillRow[] {
         if (six === '(x)' && s.sixClassMatch) return false;
         if (six && six !== '(空)' && six !== '(x)' && s.sixClass !== six) return false;
         if (wear && wearProblem(s) !== wear) return false;
+        if (owner === 'registered' && !s.ownerGeneralId) return false;
+        if (owner === 'unregistered' && (s.ownerGeneralId || !s.ownerName)) return false;
+        if (owner === 'none' && s.ownerName) return false;
         return true;
     });
 }
@@ -242,7 +252,11 @@ function renderList(): void {
             <td>${s.situationTag}${srcBadge(s.situationSource)}</td>
             <td>${s.usageTag}</td>
             <td style="color:${s.sixClass ? '#d8c88e' : '#5a4a3a'}">${sixClassDisplay(s)}</td>
-            <td>${s.ownerName ?? '<span style="color:#6a6254">无</span>'}</td>
+            <td>${s.ownerGeneralId
+                ? `<span style="color:#a8d8a8">${s.ownerName}</span>`
+                : s.ownerName
+                    ? `<span style="color:#d8a85e">${s.ownerName} <small style="color:#8a7a5a">（?）</small></span>`
+                    : '<span style="color:#6a6254">无</span>'}</td>
             <td class="se-mono">${valueLabel(s)}</td>
             <td>${s.wearers.length}${s.wearers.length === 0 ? ' ∅' : ''}</td>
             <td><button class=\"se-copy-btn\" data-id=\"${s.id}\" title=\"复制此行\">📋</button></td>
@@ -962,7 +976,7 @@ for (const th of document.querySelectorAll('.se-sortable')) {
 }
 
 // 筛选器实时刷新
-for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-wear']) {
+for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-wear', 'f-owner']) {
     $(id).addEventListener('input', () => { renderList(); if (!selectedId) setDetailOpen(false); });
     $(id).addEventListener('change', () => { renderList(); if (!selectedId) setDetailOpen(false); });
 }
