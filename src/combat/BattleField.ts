@@ -396,7 +396,13 @@ export class BattleField implements IOpeningPulseSink {
             { enemyTroops: weaker.totalTroops, enemyInitialTroops: Math.max(1, weaker.initialTotalTroops) },
             stronger === this.attackerGroup ? this.attackerCommander : this.defenderCommander,
         );
-        this.strongerCasualtyReduction = res.lossReduction;
+        // 并战计·劣势方获胜：初始兵力少的一方赢了，减己损翻倍
+        let reduction = res.lossReduction;
+        if (reduction > 0 && stronger.initialTotalTroops < weaker.initialTotalTroops) {
+            reduction = Math.min(0.9, reduction * 2.0);
+            gameLog('battle', `[并战计] 劣势方获胜！减己损翻倍 ${(res.lossReduction*100).toFixed(0)}%→${(reduction*100).toFixed(0)}%`);
+        }
+        this.strongerCasualtyReduction = reduction;
     }
 
     /**
@@ -552,7 +558,7 @@ export class BattleField implements IOpeningPulseSink {
         // 命运系 luck（#12–#20）在 refresh 时的处理（P0 修复）：
         //  · 援军编入（rollLuckOnRecompute=false）：确定性回放开战掷定的命运 luck，绝不抹掉；
         //  · 逆局翻盘（rollLuckOnRecompute=true）：按命运技区间重掷一次（破釜沉舟仍 [0.5,1.5]，
-        //    无命运技者退回默认 [0.8,1.2]，与旧逆局重掷行为一致）。
+        //    无命运技者退回默认 [0.9,1.1]，与旧逆局重掷行为一致）。
         const attFateLuck = rollLuckOnRecompute
             ? resolveSideOpeningFateLuck(attUnits, defUnits, this.type, terrain, true, { emitUi: false }, this.attackerCommander, this.defenderCommander).luck
             : this.attackerOpeningFateLuck;
@@ -1307,7 +1313,7 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     /**
-     * 援军合兵一处：waveIndex≥1 时返回编入时掷定的 luck [0.8, 1.2]；主力返回 null。
+     * 援军合兵一处：waveIndex≥1 时返回编入时掷定的 luck [0.9, 1.1]；主力返回 null。
      */
     public getReinforcementJoinLuck(unitId: string): number | null {
         if (this.getUnitWaveIndex(unitId) < 1) return null;

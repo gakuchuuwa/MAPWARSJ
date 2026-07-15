@@ -4287,7 +4287,7 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
 ];
 
 const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
-    { id: 'ts_686', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'counter', index: 686, displayName: '据险持重', ownerName: '王翦', ownerGeneralId: 'ruo_wangjian', sourceQuote: '【王翦】《史记·白起王翦列传》：翦将六十万伐楚，据垒坚壁，岁余不动，待楚兵罢乃击。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.5, engineStatus: 'ready'
+    { id: 'ts_686', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'counter', index: 686, displayName: '据险持重', ownerName: '王翦', ownerGeneralId: 'ruo_wangjian', sourceQuote: '【王翦】《史记·白起王翦列传》：翦将六十万伐楚，据垒坚壁，岁余不动，待楚兵罢乃击。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.5, engineStatus: 'ready',
         note: '据险持重：灭楚岁余坚壁（长平据险已留廉颇）', },
     { id: 'ts_688', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', layer: 'tactical', series: 'fate', index: 688, displayName: '设伏疲敌', sourceQuote: '【岳飞】枣阳等地设伏疲敝金军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【设伏疲敌】三势精修·均局' },
     { id: 'ts_689', ownerName: '冒顿', ownerGeneralId: 'xiongnu_maodun', layer: 'tactical', series: 'fate', index: 689, displayName: '游骑扰阵', sourceQuote: '【冒顿】《史记·匈奴列传》：控弦之士三十余万，来如飘风，去如收电；游骑扰边，疲弊汉军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.5, luckMax: 1.5, engineStatus: 'ready', note: '游骑扰阵：匈奴控弦游骑' },

@@ -160,7 +160,7 @@ export class Battle {
         battleLog(
             `[Battle] ${this.attacker.name} vs ${this.defender.name}: ` +
             `有效战力 ${attPower.toFixed(0)} vs ${defPower.toFixed(0)} ` +
-            `(文化修正后 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)}，再 ×[0.8,1.2] 掷一次)`
+            `(文化修正后 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)}，再 ×[LUCK] 掷一次)`
         );
 
         // 2. Determine Winner/Loser

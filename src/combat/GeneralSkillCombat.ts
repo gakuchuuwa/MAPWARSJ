@@ -558,6 +558,11 @@ export function resolvePostBattleCasualtyOutcome(
     if (loserProfile?.aptitude === 'reverse' && loserInitialTroops < winnerInitialTroops * 0.67) {
         biteMult = Math.max(biteMult, APTITUDE_LOSER_BITE_FLOOR);
     }
+    // ③c 并战计·劣势方失败：初始兵力少的一方输了，加敌损 ×1.5
+    if (biteMult > 1 && loserInitialTroops < winnerInitialTroops) {
+        biteMult = Math.min(4.0, biteMult * 1.5);
+        gameLog('battle', `[并战计] 劣势方战败！加敌损 ×1.5 → ${biteMult.toFixed(2)}`);
+    }
 
     return {
         recoveryRate,
@@ -570,7 +575,7 @@ export function resolvePostBattleCasualtyOutcome(
 }
 
 /**
- * 一侧有效战力：文化修正兵力 × 命运系 luck（#12–#20；默认 [0.8,1.2]）
+ * 一侧有效战力：文化修正兵力 × 命运系 luck（#12–#20；默认 [0.9,1.1]）
  */
 export function rollSideEffectivePowerWithOpeningFate(
     sideUnits: IBattleUnit[],
@@ -1744,14 +1749,14 @@ export function applyOpeningTacticalToRolls(
         roll: number,
         sideLabel: string,
         isAttacker: boolean,
-    ): number => {
+    ): { roll: number; enemyDebuff: number } => {
         const unit = findEligibleGeneralUnit(units, isAttacker ? attCommander : defCommander);
-        if (!unit?.generalId) return roll;
+        if (!unit?.generalId) return { roll, enemyDebuff: 1 };
         const skill = getTacticalSkillForTiming(unit, 'opening');
-        if (!skill) return roll;
+        if (!skill) return { roll, enemyDebuff: 1 };
 
         if (skill.effect === 'ally_mult_1_2') {
-            if (!bridgedOpeningEnhanceActive(units, opponentUnits, isAttacker, opts, isAttacker ? attCommander : defCommander)) return roll;
+            if (!bridgedOpeningEnhanceActive(units, opponentUnits, isAttacker, opts, isAttacker ? attCommander : defCommander)) return { roll, enemyDebuff: 1 };
             const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
             const oppTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
             let mult = skill.magnitude * getStrategicTacticalSkillMult(unit, selfTroops, oppTroops, opts?.terrain);
@@ -1780,25 +1785,46 @@ export function applyOpeningTacticalToRolls(
                     }
                 }
             }
-            const next = roll * mult;
-            gameLog(
-                'battle',
-                `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}有效战力 ×${parseFloat(mult.toFixed(2))} (${roll.toFixed(0)}→${next.toFixed(0)})`,
-            );
-            if (emitUi) {
-                markShown(isAttacker);
-                const trigger: TacticalSkillTrigger = {
-                    displayName: skill.displayName,
-                    generalId: unit.generalId,
-                    skillId: skill.id,
-                    uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
-                };
-                scheduleOpeningTacticalUi(unit, trigger);
-                lastTrigger = trigger;
+            if (isAttacker) {
+                // 攻方攻战计: 加己攻
+                const next = roll * mult;
+                gameLog(
+                    'battle',
+                    `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}加己攻 ×${parseFloat(mult.toFixed(2))} (${roll.toFixed(0)}→${next.toFixed(0)})`,
+                );
+                if (emitUi) {
+                    markShown(isAttacker);
+                    const trigger: TacticalSkillTrigger = {
+                        displayName: skill.displayName,
+                        generalId: unit.generalId,
+                        skillId: skill.id,
+                        uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+                    };
+                    scheduleOpeningTacticalUi(unit, trigger);
+                    lastTrigger = trigger;
+                }
+                return { roll: next, enemyDebuff: 1 };
+            } else {
+                // 守方攻战计: 减敌攻
+                gameLog(
+                    'battle',
+                    `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}减敌攻 ÷${parseFloat(mult.toFixed(2))}`,
+                );
+                if (emitUi) {
+                    markShown(isAttacker);
+                    const trigger: TacticalSkillTrigger = {
+                        displayName: skill.displayName,
+                        generalId: unit.generalId,
+                        skillId: skill.id,
+                        uiDelaySec: OPENING_TACTICAL_UI_DELAY_SEC,
+                    };
+                    scheduleOpeningTacticalUi(unit, trigger);
+                    lastTrigger = trigger;
+                }
+                return { roll, enemyDebuff: mult };
             }
-            return next;
         }
-        return roll;
+        return { roll, enemyDebuff: 1 };
     };
 
     const applyEnemyDebuff = (
@@ -1854,8 +1880,10 @@ export function applyOpeningTacticalToRolls(
         return next;
     };
 
-    let outAtt = applyAllyMult(attackerUnits, defenderUnits, attRoll, '攻方', true);
-    let outDef = applyAllyMult(defenderUnits, attackerUnits, defRoll, '守方', false);
+    const attAlly = applyAllyMult(attackerUnits, defenderUnits, attRoll, '攻方', true);
+    const defAlly = applyAllyMult(defenderUnits, attackerUnits, defRoll, '守方', false);
+    let outAtt = attAlly.roll / defAlly.enemyDebuff;  // 守方攻战计减敌攻
+    let outDef = defAlly.roll;
     outDef = applyEnemyDebuff(attackerUnits, outDef, '攻方', true);
     outAtt = applyEnemyDebuff(defenderUnits, outAtt, '守方', false);
     outAtt = applyInvRollEdge(attackerUnits, outAtt, '攻方', true);

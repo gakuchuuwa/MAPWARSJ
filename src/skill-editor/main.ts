@@ -176,7 +176,7 @@ function toast(msg: string, err = false): void {
 }
 
 function valueLabel(s: SkillRow): string {
-    if (s.family === 'luck') return `[${s.luckMin ?? 0.8},${s.luckMax ?? 1.2}]`;
+    if (s.family === 'luck') return `[${s.luckMin ?? 0.9},${s.luckMax ?? 1.1}]`;
     return String(s.magnitude ?? '—');
 }
 function srcBadge(src: string): string {

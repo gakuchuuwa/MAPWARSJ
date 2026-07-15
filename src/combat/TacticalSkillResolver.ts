@@ -448,7 +448,7 @@ function isOpeningFateLuckEntry(entry: TacticalSkillEntry | null): entry is Tact
 }
 
 /**
- * 开战 luck 掷点：锁死 > 己方方差 > 对手扰敌 > 默认 [0.8,1.2]
+ * 开战 luck 掷点：锁死 > 己方方差 > 对手扰敌 > 默认 [0.9,1.1]
  * 仅评估 opening_roll 命运系；强化/兵力系由其他路径处理。
  */
 export function resolveOpeningLuckMultiplier(

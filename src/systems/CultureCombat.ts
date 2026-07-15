@@ -11,7 +11,7 @@
  * 关隘（type===pass 的守军）：再 × 拒险而守（`GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT`，默认 1.2），与文化区相乘。
  *   例：岭南关隘守军 = 1.2（文化）× 1.2（关隘）= 1.44，不是 1.2³。
  *
- * 一侧合算后再 × 总 luck [0.8, 1.2] 掷一次（与上述固定系数独立）。
+ * 一侧合算后再 × 总 luck [0.9, 1.1] 掷一次（与上述固定系数独立）。
  *
  * 远征军团（LegionSpawnPolicy.isCampaignLegion，expeditionTargetCityId 非空）：
  *   野战单位再 × CAMPAIGN_LEGION_MULT（默认 1.2），与文化系数相乘。
@@ -155,7 +155,7 @@ export function sumCultureAdjustedTroops(units: IBattleUnit[]): number {
     return sum;
 }
 
-/** 一侧：Σ(兵力×文化固定系数) 后 × 总 luck [0.8, 1.2] 一次 */
+/** 一侧：Σ(兵力×文化固定系数) 后 × 总 luck [0.9, 1.1] 一次 */
 export function rollSideEffectivePower(units: IBattleUnit[]): number {
     const adjusted = sumCultureAdjustedTroops(units);
     const raw = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
