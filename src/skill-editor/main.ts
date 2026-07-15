@@ -650,8 +650,16 @@ function runErrorCheck(): void {
         </div>` : '';
 
     const tableIssues = issues.filter(i => i.type !== 'tooManySkills' && i.type !== 'duplicateSixClass' && i.type !== 'pendingOwner');
-    // 警告默认折叠列出：仍全部显示，但硬错误排前
-    tableIssues.sort((a, b) => (a.severity === b.severity ? 0 : a.severity === 'error' ? -1 : 1));
+    // 警告默认折叠列出：仍全部显示，但硬错误排前；警告内六计不齐排前，无佩戴排后
+    const WARN_ORDER: Record<string, number> = { generalSixIncomplete: 0, noWearer: 1 };
+    tableIssues.sort((a, b) => {
+        if (a.severity !== b.severity) return a.severity === 'error' ? -1 : 1;
+        if (a.severity === 'warn') {
+            const oa = WARN_ORDER[a.type] ?? 2, ob = WARN_ORDER[b.type] ?? 2;
+            if (oa !== ob) return oa - ob;
+        }
+        return 0;
+    });
     const hasIssues = tableIssues.length > 0;
 
     const modal = document.createElement('div');
@@ -874,7 +882,7 @@ function renderSixSlotPanel() {
     const sixTips: Record<number, string> = {
         1: '① 清别人在册（仅本步）：清空戴着别人在册专属的槽。完成后请检查，再点②',
         2: '② 钉专属（仅本步）：自己的在册典故主写入合法槽。完成后请检查，再点③',
-        3: '③ 不在册补缺（仅本步）：缺口从不在册池补（少人戴优先）。完成后请检查，再点④',
+        3: '③ 不在册补缺（仅本步）：空槽优先补缺；攻防三势对应；双行可攻可防；少人戴优先。完成后请检查，再点④',
         4: '④ 同格削峰（仅本步）：同攻防三势·同六计，换掉佩戴过多的。完成后请检查，再点⑤',
         5: '⑤ 孤儿分发（仅本步）：零佩戴技挂合法槽（优先主人，须仍六计各一）',
     };
