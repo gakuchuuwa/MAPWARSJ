@@ -249,7 +249,7 @@ const ENHANCE: TacticalSkillEntry[] = [
         id: 'ts_004', ownerName: '祖逖', ownerGeneralId: 'yuzhou_zuti', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 4,
         displayName: '中流击楫', sourceQuote: '《晋书·祖逖传》：“中流击楫而誓。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_005', usageTag: '攻击', situationTag: '优势', ownerName: '关羽', ownerGeneralId: 'chu_guanyu', layer: 'tactical', series: 'enhance', index: 5,
@@ -300,22 +300,22 @@ const ENHANCE: TacticalSkillEntry[] = [
     {
         id: 'ts_049', ownerName: '曹刿', ownerGeneralId: 'kong_d_caogui', layer: 'tactical', series: 'enhance', index: 49,
         displayName: '一鼓作气', sourceQuote: '《左传·庄公十年》：“夫战，勇气也。一鼓作气，再而衰，三而竭。”',
-        baseEffect: 'first_sortie_power_mult', condition: 'first_sortie', phase: 'opening_roll',
-        magnitude: 1.1, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.2, engineStatus: 'ready',
         note: '出征首战×1.25（桥接 ally_mult_1_2 + first_sortie 门控）；契合名将远征首战爆发看点',
     },
     {
         id: 'ts_815', ownerName: '王翦', ownerGeneralId: 'ruo_wangjian', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 815,
         displayName: '以逸待劳', sourceQuote: '【王翦】《史记·白起王翦列传》：楚兵数挑战，翦坚壁不出；楚兵既罢，乃一举破之。以逸待劳。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '以逸待劳：灭楚待疲而后击',
     },
     {
         id: 'ts_816', ownerName: '孙策', ownerGeneralId: 'shanyue_sunce', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 816,
         displayName: '声东击西', sourceQuote: '《三十六计·第六计》：敌志乱萃，不虞，坤下兑上之象。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
 ];
 
@@ -385,14 +385,14 @@ const TROOP: TacticalSkillEntry[] = [
         id: 'ts_021', ownerName: '王通', layer: 'tactical', series: 'troop', index: 21,
         displayName: '先声夺人', sourceQuote: '《左传·襄公二十六年》：“先人有夺人之心。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready', legacyTacId: 'tac_02',
+        magnitude: 0.05, engineStatus: 'ready', legacyTacId: 'tac_02',
     },
     {
         ownerGeneralId: 'cao_d_caocao',
         id: 'ts_022', ownerName: '曹操', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 22,
         displayName: '乘瑕袭隙', sourceQuote: '【曹操】官渡之战袭乌巢，乘其不备',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '同源：曹操·官渡乌巢',
         // 【2026-07-03】削20%→15%：always 高频 + 103 将持有，削20%→触发时~90% 超高频上限88%。
         // 降至15%→×1.176→~82%，回归「广发型温和削兵」；削敌阶梯 先声夺人10% < 本技15% < 夜半劫营25%(稀有个位数名将)。
@@ -401,7 +401,7 @@ const TROOP: TacticalSkillEntry[] = [
         id: 'ts_023', ownerName: '狄青', ownerGeneralId: 'zhai_han_diqing', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 23,
         displayName: '夜半劫营', sourceQuote: '【狄青】夜袭昆仑关，乘夜破敌',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '稀有大档；【2026-07-03】30%→25%：削30% 胜率~99% 无悬念；稀有度靠分配层（仅个位数名将），不加逆局门槛（夜袭=开局奇袭）',
     },
     {
@@ -428,14 +428,14 @@ const TROOP: TacticalSkillEntry[] = [
         id: 'ts_027', layer: 'tactical', series: 'troop', index: 27,
         displayName: '四面楚歌', ownerName: '张良', sourceQuote: '【张良】《史记·项羽本纪》：汉军及诸侯兵围项羽垓下；夜闻汉军四面皆楚歌，项王大惊。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_siege_attacker', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready',
+        magnitude: 0.05, engineStatus: 'ready',
         note: '四面楚歌：垓下楚歌（非韩信井陉/潍水专典）',
     },
     {
         id: 'ts_028', ownerName: '宋襄公', layer: 'tactical', series: 'troop', index: 28,
         displayName: '半渡而击', sourceQuote: '《孙子兵法·行军》：“令半渡而击之，利。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'terrain_sea', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready',
+        magnitude: 0.05, engineStatus: 'ready',
         mutexGroup: 'water_opening_cut',
     },
     {
@@ -458,7 +458,7 @@ const CASUALTY: TacticalSkillEntry[] = [
         id: 'ts_032', ownerName: '荀子', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'troop', index: 32,
         displayName: '兵不血刃', sourceQuote: '《荀子·议兵》：“远者慕其德，兵不血刃。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready'},
+        magnitude: 0.05, engineStatus: 'ready'},
     {
         id: 'ts_033', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', layer: 'tactical', series: 'casualty', index: 33,
         displayName: '绝境逆搏', sourceQuote: '《左传·宣公十二年》：“困兽犹斗，况国相乎！”',
@@ -495,7 +495,7 @@ const CASUALTY: TacticalSkillEntry[] = [
         id: 'ts_039', ownerName: '朱元璋', ownerGeneralId: 'huai_zhuyuanzhang', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 39,
         displayName: '斩草除根', sourceQuote: '【朱元璋】《明太祖实录》：削平陈友谅、张士诚，务绝本根，勿使再起。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '我败时，胜方战后恢复率归零'},
     {
         id: 'ts_040', ownerName: '贾谊', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 40,
@@ -506,7 +506,7 @@ const CASUALTY: TacticalSkillEntry[] = [
         id: 'ts_041', ownerName: '孙武', ownerGeneralId: 'wu_sunwu', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'troop', index: 41,
         displayName: '穷寇勿迫', sourceQuote: '《孙子兵法·军争》：“归师勿遏，围师必阙，穷寇勿迫。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '敌兵<20% 时己方战损-40%'},
 ];
 
@@ -543,7 +543,7 @@ const COUNTER: TacticalSkillEntry[] = [
         id: 'ts_047', ownerName: '毛文龙', ownerGeneralId: 'mao_wenlong_maowenlong', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 47,
         displayName: '指南打北', sourceQuote: '《通典·兵典》：“声言击东，其实击西。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '地形对抗：引擎侧待接线（仅 combat-model 工具支持）',
     },
     {
@@ -566,8 +566,8 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
     {
         id: 'ts_052', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', layer: 'tactical', series: 'enhance', index: 52,
         displayName: '封狼居胥', sourceQuote: '《汉书·霍去病传》：“封狼居胥山，禅于姑衍。”',
-        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.05, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.2, engineStatus: 'ready',
         note: '【霍去病】T0专属；轻骑驰突全域适用（2026-07-11 连战模拟校准：原首战门控致连攻第2场起无战术技）',
     },
     {
@@ -584,7 +584,7 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
         id: 'ts_056', ownerName: '李靖', ownerGeneralId: 'dingxiang_d_lijing', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 56,
         displayName: '乘夜掩至', sourceQuote: '【李靖】率三千骑趁夜掩至定襄袭破颉利可汗',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_siege_attacker', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_057', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 57,
@@ -624,7 +624,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_063', layer: 'tactical', series: 'troop', index: 63,
         displayName: '所向摧陷', ownerName: '常遇春', ownerGeneralId: 'chizhou_changyuchun', sourceQuote: '【常遇春】自言十万众横行天下，冲锋摧阵',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_064', ownerName: '班超', ownerGeneralId: 'xiyuduhu_banchao', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'fate', index: 64,
@@ -641,8 +641,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_066', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'enhance', index: 66,
         displayName: '鸣镝所向', ownerName: '冒顿', ownerGeneralId: 'xiongnu_maodun', sourceQuote: '【冒顿】鸣镝弑父训练骑兵，所向必射',
-        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.2, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_067', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 67,
@@ -654,7 +654,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_068', layer: 'tactical', series: 'troop', index: 68,
         displayName: '乘虚直捣', ownerName: '李自成', ownerGeneralId: 'dashun_lizicheng', sourceQuote: '【李自成】乘明空虚直捣北京',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_069', ownerName: '孙武', ownerGeneralId: 'wu_sunwu', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 69,
@@ -673,7 +673,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_071', layer: 'tactical', series: 'troop', index: 71,
         displayName: '锐不可当', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：去病所将常选，敢深入，战匈奴锐不可当，益封。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '锐不可当：骠骑深入（巨鹿锐势已含于破釜沉舟）',
     },
     {
@@ -703,13 +703,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_076', layer: 'tactical', series: 'troop', index: 76,
         displayName: '如墙而进', ownerName: '完颜宗弼', ownerGeneralId: 'jurchen_wanyanzongbi', sourceQuote: '【完颜宗弼】《宋史》：金军铁浮屠如墙而进',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_077', ownerName: '王翦', ownerGeneralId: 'ruo_wangjian', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 77,
         displayName: '长围久困', sourceQuote: '《史记·白起王翦列传》：王翦灭楚，坚壁岁余不战，待楚军懈退而击破之。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready'},
+        magnitude: 0.08, engineStatus: 'ready'},
     {
         id: 'ts_078', layer: 'tactical', series: 'counter', index: 78,
         displayName: '白衣渡江', ownerName: '吕蒙', ownerGeneralId: 'wuwu_d_lvmeng', sourceQuote: '《三国志·吕蒙传》：“蒙乃密收兵，白衣渡江。”',
@@ -726,18 +726,18 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_080', layer: 'tactical', series: 'troop', index: 80,
         displayName: '踏雪破阵', ownerName: '拖雷', ownerGeneralId: 'borjigin_tuolei', sourceQuote: '《元史·睿宗传》：“会大雪，睿宗乘雪击之。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_081', ownerName: '宇文泰', ownerGeneralId: 'yuwen_yuwentai', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 81,
         displayName: '苇泽奋击', sourceQuote: '【宇文泰】沙苑芦苇藏兵奋击高欢',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready'},
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready'},
     {
         id: 'ts_082', ownerName: '李存孝', layer: 'tactical', series: 'enhance', index: 82,
         displayName: '飞虎突阵', sourceQuote: '《旧五代史·武皇纪》：“军中号为飞虎子。”',
-        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.05, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.15, engineStatus: 'ready',
     },
     {
         id: 'ts_083', ownerName: '王彦章', ownerGeneralId: 'dizhou_wangyanzhang', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 83,
@@ -753,14 +753,14 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_085', layer: 'tactical', series: 'troop', index: 85,
         displayName: '铁甲冲突', ownerName: '完颜宗弼', ownerGeneralId: 'jurchen_wanyanzongbi', sourceQuote: '【完颜宗弼】金兀术率铁浮屠重甲骑兵冲锋陷阵',
-        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.05, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.2, engineStatus: 'ready',
     },
     {
         id: 'ts_086', ownerName: '慕容恪', ownerGeneralId: 'murong_murongke', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 86,
         displayName: '整暇破疲', sourceQuote: '【慕容恪】以严整之军击破疲惫之敌',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready'},
+        magnitude: 0.08, engineStatus: 'ready'},
     {
         id: 'ts_087', ownerName: '柴荣', ownerGeneralId: 'chanzhou_chairong', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 87,
         displayName: '鼓行而西', sourceQuote: '【柴荣】高平之战后鼓行北伐',
@@ -771,7 +771,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         ownerGeneralId: 'tang_lishimin',
         displayName: '勒兵摧阵', ownerName: '李世民', sourceQuote: '【李世民】虎牢关勒兵摧窦建德阵',
         baseEffect: 'enemy_sub_troops_opening', condition: 'first_sortie', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready', note: '同源：李世民·勒骑（与 ts_618 勒骑摧阵同典）',
+        magnitude: 0.08, engineStatus: 'ready', note: '同源：李世民·勒骑（与 ts_618 勒骑摧阵同典）',
     },
     {
         id: 'ts_089', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 89,
@@ -801,7 +801,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_094', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 94,
         displayName: '廓清朔漠', ownerName: '蓝玉', ownerGeneralId: 'shanrong_lanyu', sourceQuote: '【蓝玉】捕鱼儿海之战廓清北元',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_107', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 107,
@@ -892,7 +892,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_102', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 102,
         displayName: '席卷八荒', ownerName: '成吉思汗', ownerGeneralId: 'menggu_d_chengjisihan', sourceQuote: '【成吉思汗】蒙古西征席卷八荒',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_103', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 103,
@@ -920,13 +920,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_119', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 119,
         displayName: '追奔逐北', ownerName: '耶律休哥', ownerGeneralId: 'yel_yelvxiuge', sourceQuote: '《辽史·耶律休哥传》：“宋兵大溃，追奔逐北，杀获甚众。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_120', ownerName: '完颜陈和尚', ownerGeneralId: 'xiqin_wanyanchenheshang', layer: 'tactical', series: 'enhance', index: 120,
         displayName: '铁骑突出', sourceQuote: '白居易《琵琶行》：“银瓶乍破水浆迸，铁骑突出刀枪鸣。”',
-        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.05, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.2, engineStatus: 'ready',
     },
     {
         id: 'ts_121', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 121,
@@ -949,7 +949,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_124', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'troop', index: 124,
         displayName: '长驱饮马', ownerName: '俺答汗', ownerGeneralId: 'tumed_andahan', sourceQuote: '《明史·鞑靼传》：“俺答帅众薄都城，纵掠畿甸。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_125', layer: 'tactical', series: 'fate', index: 125,
@@ -976,14 +976,14 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_129', layer: 'tactical', series: 'enhance', index: 129,
         displayName: '象阵摧锋', ownerName: '阇耶跋摩', ownerGeneralId: 'chenla_duyebamo', sourceQuote: '【阇耶跋摩】周达观《真腊风土记》：其国乘象以战，阇耶跋摩拓土却敌。',
-        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.05, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.2, engineStatus: 'ready',
     },
     {
         id: 'ts_130', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 130,
         displayName: '示弱诱歼', ownerName: '李牧', ownerGeneralId: 'wuzhou_limu', sourceQuote: '《史记·廉颇蔺相如列传》：“李牧多为奇陈……大破杀匈奴十余万骑。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready'},
+        magnitude: 0.08, engineStatus: 'ready'},
     {
         id: 'ts_131', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 131,
         displayName: '摧坚擒王', ownerName: '侯君集', ownerGeneralId: 'song2_houjunji', sourceQuote: '【侯君集】灭高昌擒其王',
@@ -1012,14 +1012,14 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_135', layer: 'tactical', series: 'troop', index: 135,
         displayName: '刺山飞泉', ownerName: '耿恭', ownerGeneralId: 'chagatai_genggong', sourceQuote: '【耿恭】疏勒城刺山得泉',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_siege_defender', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '同源：耿恭·疏勒',
     },
     {
         id: 'ts_136', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 136,
         displayName: '疾风劲骑', ownerName: '速不台', ownerGeneralId: 'wuliangha_subutai', sourceQuote: '【速不台】蒙古西征疾风劲骑',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_137', layer: 'tactical', series: 'fate', index: 137,
@@ -1042,7 +1042,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_140', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 140,
         displayName: '控弦制胜', ownerName: '冒顿', ownerGeneralId: 'xiongnu_maodun', sourceQuote: '【冒顿】控弦三十万雄踞北方',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_141', ownerName: '脱欢', ownerGeneralId: 'choros_tuohuan', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 141,
@@ -1053,8 +1053,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_142', layer: 'tactical', series: 'enhance', index: 142,
         displayName: '巨象蹈坚', ownerName: '莽应龙', ownerGeneralId: 'hantawadi_mangyinglong', sourceQuote: '《明史·缅甸传》：“莽应龙乘象督战，并吞诸部。”',
-        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.05, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.2, engineStatus: 'ready',
     },
     {
         id: 'ts_143', ownerName: '陈胜', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 143,
@@ -1080,12 +1080,12 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_147', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'troop', index: 147,
         displayName: '决胜千里', ownerName: '柴荣', ownerGeneralId: 'chanzhou_chairong', sourceQuote: '《旧五代史·世宗纪》：“世宗神武雄略，决胜于千里。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready'},
+        magnitude: 0.08, engineStatus: 'ready'},
     {
         id: 'ts_148', ownerName: '吴三桂', ownerGeneralId: 'linyu_wusangui', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 148,
         displayName: '突骑陷坚', sourceQuote: '《明史·吴三桂传》：“选夷丁为突骑，冲坚陷阵，莫之能当。”',
-        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.05, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.2, engineStatus: 'ready',
     },
     {
         id: 'ts_149', ownerName: '孙膑', ownerGeneralId: 'dongxian_sunbin', layer: 'tactical', series: 'counter', index: 149,
@@ -1098,7 +1098,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_150', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 150,
         displayName: '驰突破阵', ownerName: '吕布', ownerGeneralId: 'pizhou_lvbu', sourceQuote: '【吕布】驰突破阵骁勇无双',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_152', ownerName: '谢玄', ownerGeneralId: 'zhong_xiexuan', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 152,
@@ -1113,8 +1113,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_154', ownerName: '刘黑闼', layer: 'tactical', series: 'enhance', index: 154,
         displayName: '黑旗蔽日', sourceQuote: '阿拉伯史载阿布·穆斯林：于木鹿升起黑旗，呼罗珊群雄景从，遂覆白衣大食。',
-        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.05, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.15, engineStatus: 'ready',
     },
     {
         id: 'ts_155', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 155,
@@ -1125,8 +1125,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_156', layer: 'tactical', series: 'enhance', index: 156,
         displayName: '赤备突阵', ownerName: '武田信玄', ownerGeneralId: 'kai_wutianxinxuan', sourceQuote: '【武田信玄】赤备骑兵突击敌阵，势不可挡',
-        baseEffect: 'first_sortie_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.05, engineStatus: 'ready',
+        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
+        magnitude: 1.2, engineStatus: 'ready',
     },
     {
         id: 'ts_157', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'enhance', index: 157,
@@ -1173,7 +1173,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_164', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 164,
         displayName: '火牛奔冲', ownerName: '田单', ownerGeneralId: 'jiaodong_tiandan', sourceQuote: '【田单】《史记·田单列传》：即墨火牛阵大破燕军，绝地翻盘复国。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_166', ownerName: '国佐', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 166,
@@ -1204,7 +1204,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_170', ownerName: '韩世忠', ownerGeneralId: 'sizhou_hanshizhong', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 170,
         displayName: '横江扼敌', sourceQuote: '【韩世忠】《宋史·韩世忠传》：黄天荡以海舟横截江面，扼金军北归。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_171', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'fate', index: 171,
@@ -1222,7 +1222,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_173', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 173,
         displayName: '诱敌疲歼', ownerName: '周亚夫', ownerGeneralId: 'huaiyang_zhouyafu', sourceQuote: '【周亚夫】《史记·绛侯周勃世家》：平七国之乱坚壁不出断敌粮道，待敌疲后一举击破。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_174', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'enhance', index: 174,
@@ -1263,26 +1263,26 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_180', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 180,
         displayName: '百骑劫营', ownerName: '甘宁', ownerGeneralId: 'zhongxiang_ganning', sourceQuote: '【甘宁】《三国志·甘宁传》：率百骑夜劫曹营，不折一人而还。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_181', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 181,
         displayName: '雪夜奇袭', ownerName: '李愬', sourceQuote: '【李愬】《旧唐书·李愬传》：雪夜入蔡州擒吴元济。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.5, engineStatus: 'ready',
     },
     {
         id: 'ts_182', layer: 'tactical', series: 'troop', index: 182,
         displayName: '火焚连舰', ownerName: '朱元璋', ownerGeneralId: 'huai_zhuyuanzhang', sourceQuote: '《明史·太祖本纪》：“乘风纵火，焚友谅舟，湖水尽赤。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_183', layer: 'tactical', series: 'troop', index: 183,
         displayName: '乘风纵火', ownerName: '皇甫嵩', ownerGeneralId: 'jingzhou_gs_huangfusong', sourceQuote: '《后汉书·皇甫嵩传》：“嵩因夜纵火，大呼，奔击其阵。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_184', layer: 'tactical', series: 'fate', index: 184,
@@ -1299,8 +1299,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_186', ownerName: '陆逊', ownerGeneralId: 'yidou_luxun', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 186,
         displayName: '潜锋设伏', sourceQuote: '隐藏锋芒设置伏兵，如崤之战晋伏秦等，多将皆有此战术。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_187', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 187,
@@ -1344,8 +1344,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_193', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 193,
         displayName: '临机决水', ownerName: '关羽', ownerGeneralId: 'chu_guanyu', sourceQuote: '【关羽】《三国志·关羽传》：樊城决水淹于禁七军。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_194', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 194,
@@ -1488,13 +1488,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_216', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 216,
         displayName: '三箭慑虏', ownerName: '薛仁贵', ownerGeneralId: 'loufan_xuerengui', sourceQuote: '【薛仁贵】《旧唐书·薛仁贵传》：三箭定天山。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_217', layer: 'tactical', series: 'troop', index: 217,
         displayName: '楼船焚垒', ownerName: '来护儿', ownerGeneralId: 'pinghai_laihuer', sourceQuote: '《隋书·来护儿传》：护儿率楼船，泛海入平壤。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_218', ownerName: '高长恭', layer: 'tactical', series: 'fate', index: 218,
@@ -1505,14 +1505,14 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_219', ownerName: '麴义', ownerGeneralId: 'qu_d_quyi', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 219,
         displayName: '强弩破骑', sourceQuote: '《后汉书·袁绍传》：麴义八百强弩，破瓒白马义从。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_220', ownerName: '蓝玉', ownerGeneralId: 'shanrong_lanyu', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'troop', index: 220,
         displayName: '奄袭虏庭', sourceQuote: '《明史·蓝玉传》：捕鱼儿海，奄至虏营，尽俘之。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_221', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 221,
@@ -1601,8 +1601,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_236', ownerName: '慕容恪', ownerGeneralId: 'murong_murongke', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 236,
         displayName: '连环锁骑', sourceQuote: '《晋书·慕容恪载记》：以铁锁连马为方阵，擒冉闵。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_237', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 237,
@@ -1665,7 +1665,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_246', layer: 'tactical', series: 'troop', index: 246,
         displayName: '席卷海宇', ownerName: '徐达', ownerGeneralId: 'xuan_xuda', sourceQuote: '【徐达】北伐中原席卷海宇，推翻元朝统治。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_siege_attacker', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_247', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'fate', index: 247,
@@ -1683,7 +1683,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_249', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 249,
         displayName: '却胡筑塞', ownerName: '蒙恬', ownerGeneralId: 'baiyang_mengtian', sourceQuote: '《史记·蒙恬列传》：却匈奴七百余里，筑长城。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_250', ownerName: '李元昊', ownerGeneralId: 'dangxiang_liyuanhao', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 250,
@@ -1695,7 +1695,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_251', layer: 'tactical', series: 'troop', index: 251,
         displayName: '奇袭虏巢', ownerName: '王越', ownerGeneralId: 'dongshengwei_wangyue', sourceQuote: '《明史·王越传》：袭红盐池、威宁海，破鞑靼。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_252', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'fate', index: 252,
@@ -1731,7 +1731,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_257', layer: 'tactical', series: 'troop', index: 257,
         displayName: '水淹七军', ownerName: '关羽', ownerGeneralId: 'chu_guanyu', sourceQuote: '《三国志·关羽传》：会大霖雨，汉水溢，禁七军皆没。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_258', usageTag: '攻击', situationTag: '优势', ownerName: '常遇春', ownerGeneralId: 'chizhou_changyuchun', layer: 'tactical', series: 'enhance', index: 258,
@@ -1755,7 +1755,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_261', layer: 'tactical', series: 'troop', index: 261,
         displayName: '火攻破舰', ownerName: '周瑜', ownerGeneralId: 'jiujiang_zhouyu', sourceQuote: '【周瑜】赤壁火攻烧毁曹军战舰',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_262', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 262,
@@ -1773,7 +1773,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_264', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 264,
         displayName: '屯田制敌', ownerName: '赵充国', ownerGeneralId: 'lanzhou_zhaochongguo', sourceQuote: '【赵充国】《汉书·赵充国传》：河湟屯田以守制敌，不战而屈羌。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_265', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 265,
@@ -1791,7 +1791,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_267', ownerGeneralId: 'mi_chu_xionglv', ownerName: '熊旅', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 267,
         displayName: '饮马问鼎', sourceQuote: '《左传·宣十二年》：楚子观兵于周疆，问鼎之轻重。（熊旅）',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_268', ownerName: '阁罗凤', ownerGeneralId: 'nanzhao_geluofeng', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 268,
@@ -1850,8 +1850,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_278', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 278,
         displayName: '火燔连营', ownerName: '陆逊', ownerGeneralId: 'yidou_luxun', sourceQuote: '【陆逊】《三国志·陆逊传》：夷陵之战火烧刘备七百里连营。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
         note: '同源：陆逊·夷陵火攻',
     },
     {
@@ -1859,7 +1859,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         ownerGeneralId: 'liang_d_zhangxun',
         displayName: '雷厉摧锋', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】死守睢阳面中六矢岿然不动，雷厉风行摧破敌锋。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '同源：张巡·睢阳',
     },
     {
@@ -1884,13 +1884,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_283', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 283,
         displayName: '逾岭袭国', ownerName: '司马错', ownerGeneralId: 'qin_simacuo', sourceQuote: '翻越山岭袭击敌国，如邓艾偷渡阴平、司马错灭蜀等。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_284', ownerName: '裴行俭', ownerGeneralId: 'juandu_peixingjian', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 284,
         displayName: '诡道擒渠', sourceQuote: '用诡诈之计擒获敌军首领，如裴行俭执都支等多将皆有。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.5, engineStatus: 'ready',
         note: '改挂：裴行俭执都支（原误挂田单）',
     },
     {
@@ -1902,8 +1902,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_286', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 286,
         displayName: '凭险摧锐', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】《新唐书·张巡传》：守睢阳十月，耗光叛军锐气，凭险摧锐。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_287', ownerName: '杨素', ownerGeneralId: 'hongnong_jun_yangsu', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 287,
@@ -1915,7 +1915,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_288', layer: 'tactical', series: 'troop', index: 288,
         displayName: '荡海歼寇', ownerName: '俞大猷', ownerGeneralId: 'qian_d_yudayou', sourceQuote: '【俞大猷】《明史》：破倭于海上，数有功，世称俞家军。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_289', ownerName: '汉武帝', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 289,
@@ -1926,8 +1926,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_291', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'enhance', index: 291,
         displayName: '破碉摧堡', ownerName: '阿桂', ownerGeneralId: 'agui', sourceQuote: '《清史稿·阿桂传》：攻金川碉卡，凡克碉数千，遂平两金川。',
-        baseEffect: 'ally_power_mult', condition: 'terrain_mountain', phase: 'opening_roll',
-        magnitude: 1.2, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'terrain_mountain', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_292', ownerName: '岳钟琪', ownerGeneralId: 'qinghai_yuezhongqi', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 292,
@@ -1939,7 +1939,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_293', ownerName: '王贲', layer: 'tactical', series: 'troop', index: 293,
         displayName: '壅水灌垒', sourceQuote: '《史记·王翦列传》：王贲引河沟灌大梁，城坏，魏王假降，遂灭魏。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready',
+        magnitude: 0.05, engineStatus: 'ready',
     },
     {
         id: 'ts_294', ownerName: '马谡', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'fate', index: 294,
@@ -1980,8 +1980,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_300', ownerName: '李愬', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 300,
         displayName: '夜袭破虏', sourceQuote: '趁夜突袭击破敌军营寨，多将皆有。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.5, engineStatus: 'ready',
     },
     {
         id: 'ts_301', ownerName: '李光弼', ownerGeneralId: 'liwang_liguangbi', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 301,
@@ -2035,8 +2035,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_310', ownerGeneralId: 'jiashi_wangxuance', usageTag: '双行', situationTag: '均势', ownerName: '王玄策', layer: 'tactical', series: 'enhance', index: 310,
         displayName: '借兵破国', sourceQuote: '《旧唐书·天竺传》：王玄策发吐蕃、泥婆罗兵，破中天竺，擒阿罗那顺以归。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.5, engineStatus: 'ready',
     },
     {
         id: 'ts_311', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 311,
@@ -2047,14 +2047,14 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_312', layer: 'tactical', series: 'enhance', index: 312,
         displayName: '控弦拒虏', ownerName: '苏禄', ownerGeneralId: 'tujishi_sulukehan', sourceQuote: '《旧唐书·突厥传》：苏禄收突骑施余众，控弦数十万，屡拒大食东侵。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_313', layer: 'tactical', series: 'enhance', index: 313,
         displayName: '西迁破月', ownerName: '猎骄靡', ownerGeneralId: 'wusun_liejiaomi', sourceQuote: '【猎骄靡】《汉书·西域传》：昆莫西攻破大月氏，徙居其地，遂雄西域。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_314', ownerName: '乐毅', ownerGeneralId: 'yan_leyi', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 314,
@@ -2134,7 +2134,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_326', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 326,
         displayName: '扼险歼师', ownerName: '廉颇', ownerGeneralId: 'zhao_lianpo', sourceQuote: '【廉颇】《史记·廉颇蔺相如列传》：长平坚壁扼险以待秦，数月不克。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_327', ownerName: '多尔衮', ownerGeneralId: 'manzhou_d_duoergun', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 327,
@@ -2152,13 +2152,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_329', ownerName: '苏定方', ownerGeneralId: 'weihaiwei_sudingfang', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 329,
         displayName: '合围俘君', sourceQuote: '四面合围擒获敌国君主，灭国之功，多将皆有。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_330', ownerName: '皇太极', ownerGeneralId: 'aisin_d_huangtaiji', layer: 'tactical', series: 'enhance', index: 330,
         displayName: '黄山破敌', sourceQuote: '《三国史记》：金庾信黄山破百济，协唐灭丽，成三韩一统之业。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_331', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 331,
@@ -2176,8 +2176,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_333', ownerName: '耶律留哥', ownerGeneralId: 'houliao_yelvliuge', layer: 'tactical', series: 'enhance', index: 333,
         displayName: '倡义附盟', sourceQuote: '《元史·耶律留哥传》：留哥起兵辽东，破金军，附蒙古，建东辽。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_334', ownerName: '沐英', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 334,
@@ -2189,7 +2189,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_335', ownerName: '沐英', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 335,
         displayName: '世镇摧锋', sourceQuote: '世代镇守边关传承抗敌锋锐，多将皆有。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready',
+        magnitude: 0.05, engineStatus: 'ready',
     },
     {
         id: 'ts_336', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 336,
@@ -2207,13 +2207,13 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_338', ownerName: '王坚', ownerGeneralId: 'hezhou_wangjian', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 338,
         displayName: '恃险困敌', sourceQuote: '利用险要地形围困敌军，多将皆有。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_339', layer: 'tactical', series: 'troop', index: 339,
         displayName: '奔袭擒渠', ownerName: '盖嘉运', ownerGeneralId: 'sai_gaijiayun', sourceQuote: '《旧唐书·突骑施传》：盖嘉运袭碎叶，破突骑施，擒吐火仙可汗。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_340', ownerName: '徐达', ownerGeneralId: 'xuan_xuda', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 340,
@@ -2225,7 +2225,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_341', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 341,
         displayName: '远驱破国', ownerName: '苏定方', ownerGeneralId: 'weihaiwei_sudingfang', sourceQuote: '【苏定方】《旧唐书·苏定方传》：远征千里灭西突厥。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_342', ownerName: '杨素', ownerGeneralId: 'hongnong_jun_yangsu', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 342,
@@ -2237,7 +2237,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_343', layer: 'tactical', series: 'troop', index: 343,
         displayName: '舟师歼锐', ownerName: '拉其特', ownerGeneralId: 'ahaomu_laqite', sourceQuote: '《阿萨姆编年史》：拉其特萨莱加特水战大破莫卧儿舟师，保阿萨姆。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_345', ownerName: '朱元璋', ownerGeneralId: 'huai_zhuyuanzhang', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 345,
@@ -2249,7 +2249,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_346', ownerName: '黄盖', ownerGeneralId: 'jiang_s_huanggai', layer: 'tactical', series: 'troop', index: 346,
         displayName: '火矢焚舟', sourceQuote: '《阴德太平记》：村上水军以焙烙火矢焚织田舟师于木津川口。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_347', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 347,
@@ -2278,8 +2278,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_351', ownerName: '狄青', ownerGeneralId: 'zhai_han_diqing', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 351,
         displayName: '昼伏夜击', sourceQuote: '昼间隐藏夜间出击，出奇制胜，多将皆有。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_352', ownerName: '汉武帝', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 352,
@@ -2309,7 +2309,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_357', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'troop', index: 357,
         displayName: '威震绝域', ownerName: '班超', ownerGeneralId: 'xiyuduhu_banchao', sourceQuote: '【班超】《后汉书·班超传》：定远西域，威震绝域。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_358', ownerName: '完颜宗弼', ownerGeneralId: 'jurchen_wanyanzongbi', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 358,
@@ -2321,7 +2321,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_359', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 359,
         displayName: '深入捣巢', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：深入漠北捣匈奴王庭。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_360', ownerName: '苏定方', ownerGeneralId: 'weihaiwei_sudingfang', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 360,
@@ -2343,21 +2343,21 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_363', ownerName: '邓艾', ownerGeneralId: 'wudu_dengai', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 363,
-        displayName: '迂回袭砦', sourceQuote: '【邓艾】《三国志·邓艾传》：自阴平道行无人之地七百余里，凿山通道，奇袭绵竹，成都遂降。',baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        displayName: '迂回袭砦', sourceQuote: '【邓艾】《三国志·邓艾传》：自阴平道行无人之地七百余里，凿山通道，奇袭绵竹，成都遂降。',baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
         note: '迂回袭砦：阴平奇袭',
     },
     {
         id: 'ts_365', ownerName: '沙尔虎达', ownerGeneralId: 'hezhe_shaerhuda', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'troop', index: 365,
         displayName: '扼江破舰', sourceQuote: '《清史稿》：沙尔虎达战罗刹于松花江，焚其舟舰，镇宁古塔。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_366', ownerName: '李愬', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 366,
         displayName: '夜渡袭城', sourceQuote: '趁夜渡河突袭攻城，多将皆有。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.5, engineStatus: 'ready',
     },
     {
         id: 'ts_367', ownerName: '班超', ownerGeneralId: 'xiyuduhu_banchao', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 367,
@@ -2380,14 +2380,14 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_370', layer: 'tactical', series: 'enhance', index: 370,
         displayName: '逾岭破阵', ownerName: '僧格朗杰', ownerGeneralId: 'ladakh_senggelangjie', sourceQuote: '《拉达克王统记》：僧格朗杰越山扩张，征古格、象雄，拉达克极盛。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_371', layer: 'tactical', series: 'enhance', index: 371,
         displayName: '秉钺制敌', ownerName: '琼波邦色', ownerGeneralId: 'khyungpo_qiongbobangse', sourceQuote: '《敦煌吐蕃文书》：琼波邦色为苏毗大论，秉兵柄，屡制强敌。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_372', ownerName: '李愬', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 372,
@@ -2424,20 +2424,20 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_378', layer: 'tactical', series: 'enhance', index: 378,
         displayName: '乘虚陷阙', ownerName: '赤松德赞', ownerGeneralId: 'yangtong_chisongdezan', sourceQuote: '《旧唐书·吐蕃传》：赤松德赞乘虚入寇，陷长安，立傀儡，吐蕃极盛。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_379', ownerName: '李继迁', ownerGeneralId: 'xiazhou_lijiqian', layer: 'tactical', series: 'troop', index: 379,
         displayName: '奄袭夺城', sourceQuote: '《宋史·夏国传》：李继迁出没无常，奄袭灵州，据银夏，奠西夏之基。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_380', ownerName: '李愬', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 380,
         displayName: '风雨掩袭', sourceQuote: '借风雨掩护突袭敌军，多将皆有。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.5, engineStatus: 'ready',
     },
     {
         id: 'ts_381', ownerName: '杨再兴', ownerGeneralId: 'daozhou_yangzaixing', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 381,
@@ -2449,7 +2449,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         id: 'ts_382', layer: 'tactical', series: 'troop', index: 382,
         displayName: '决堰歼敌', ownerName: '姜邯赞', ownerGeneralId: 'goryeo_jianghanzan', sourceQuote: '《高丽史》：姜邯赞堰水兴化镇，契丹半渡决之，龟州追歼十万。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_383', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 383,
@@ -2466,8 +2466,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_385', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'enhance', index: 385,
         displayName: '嚼齿吞贼', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】《新唐书·忠义传》：巡守睢阳，嚼齿吞贼，至死骂不绝口。',
-        baseEffect: 'ally_power_mult', condition: 'battle_siege_defender', phase: 'post_battle',
-        magnitude: 1.2, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'battle_siege_defender', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
         note: '同源：耿恭·疏勒',
     },
     {
@@ -2497,7 +2497,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_462', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 462,
         displayName: '合围攻心', ownerName: '耿弇', ownerGeneralId: 'you_gengyan', sourceQuote: '【耿弇】《后汉书·耿弇传》：围城打援，先灭外援以夺敌心。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_463', layer: 'tactical', series: 'fate', index: 463,
@@ -2517,7 +2517,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_465', layer: 'tactical', series: 'enhance', index: 465,
         displayName: '围城困崩', ownerName: '皇太极', ownerGeneralId: 'aisin_d_huangtaiji', sourceQuote: '皇太极历史记载：松锦围城断粮困死明军主力',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【皇太极】T1精锐·三势精修·势reverse·优局专属',
     },
     {
@@ -2644,15 +2644,15 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
     {
         id: 'ts_485', ownerName: '沐英', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 485,
         displayName: '散象溃敌', sourceQuote: '惊散敌方战象使其反踏本阵，多将皆有。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll',
         magnitude: 0.08, engineStatus: 'ready',
     },
     {
         ownerGeneralId: 'cao_d_caocao',
         id: 'ts_486', ownerName: '曹操', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 486,
         displayName: '捣虚袭隙', sourceQuote: '【曹操】《三国志·武帝纪》：官渡袭乌巢断袁绍粮草，捣虚袭隙。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
         note: '同源：曹操·官渡乌巢',
     },
     {
@@ -2666,7 +2666,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_489', ownerName: '达延汗', ownerGeneralId: 'dada_ming_dayanhan', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 489,
         displayName: '威服摧盟', sourceQuote: '达延汗历史记载：威服漠南各部摧破联盟',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【达延汗】T1精锐·三势精修·势create·优局专属',
     },
     {
@@ -2701,7 +2701,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_495', layer: 'tactical', series: 'enhance', index: 495,
         displayName: '转战摧虚', ownerName: '张献忠', ownerGeneralId: 'daxi_ming_zhangxianzhong', sourceQuote: '张献忠历史记载：转战千里摧击明军薄弱州邑',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【张献忠】T1精锐·三势精修·势create·优局专属',
     },
     {
@@ -2789,7 +2789,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_510', layer: 'tactical', series: 'enhance', index: 510,
         displayName: '冲阵摧众', ownerName: '尔朱荣', ownerGeneralId: 'erzhu_erzhurong', sourceQuote: '尔朱荣历史记载：滏口破阵摧灭葛荣百万军',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【尔朱荣】T1精锐·三势精修·势create·优局专属',
     },
     {
@@ -2830,7 +2830,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_516', layer: 'tactical', series: 'enhance', index: 516,
         displayName: '两蹶摧锋', ownerName: '李定国', ownerGeneralId: 'guizhou_lidingguo', sourceQuote: '李定国历史记载：两蹶名王摧锋桂林衡阳',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【李定国】T1精锐·三势精修·势reverse·优局专属',
     },
     {
@@ -2870,7 +2870,7 @@ const UNIQUE_T1_GENERAL: TacticalSkillEntry[] = [
         id: 'ts_522', layer: 'tactical', series: 'enhance', index: 522,
         displayName: '象蹈摧坚', ownerName: '莽应龙', ownerGeneralId: 'hantawadi_mangyinglong', sourceQuote: '莽应龙历史记载：白象践踏阿瑜陀耶步阵摧毁其坚',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【莽应龙】T1精锐·三势精修·势create·优局专属',
     },
     {
@@ -2968,8 +2968,8 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         ownerGeneralId: 'dongxian_sunbin',
         id: 'ts_537', ownerName: '孙膑', ownerGeneralId: 'wuzhou_limu', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 537,
         displayName: '设伏摧锋', sourceQuote: '【孙膑】《史记·孙子吴起列传》：马陵道狭而旁多阻隘，膑令万弩夹道而伏，期曰暮见火举而俱发。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready', note: '设伏摧锋：马陵设伏',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready', note: '设伏摧锋：马陵设伏',
     },
     {
         id: 'ts_538', layer: 'tactical', series: 'fate', index: 538,
@@ -3036,7 +3036,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_549', ownerName: '哈斯木', ownerGeneralId: 'kazakh_hasimu', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 549,
         displayName: '控弦摧阵', sourceQuote: '哈斯木专题记载',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【哈斯木】T1精锐·三势精修·势create',
     },
     {
@@ -3078,7 +3078,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_558', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'casualty', index: 558,
         displayName: '以弱摧强', ownerName: '谢玄', ownerGeneralId: 'zhong_xiexuan', sourceQuote: '【谢玄】《晋书·谢玄传》：淝水之战以寡敌众，以弱摧强。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_559', layer: 'tactical', series: 'counter', index: 559,
@@ -3098,7 +3098,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         ownerGeneralId: 'liao_d_yelvabaoji',
         displayName: '鼓行摧阵', ownerName: '耶律阿保机', sourceQuote: '【耶律阿保机】《辽史·太祖纪》：亲征讨叛，鼓行而进，摧破敌阵，肇基契丹。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '鼓行摧阵：辽太祖亲征鼓行（非廉颇）',
     },
     {
@@ -3111,7 +3111,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_564', ownerName: '赵武灵王', ownerGeneralId: 'lingqiu_zhaowuling', layer: 'tactical', series: 'troop', index: 564,
         displayName: '胡服摧阵', sourceQuote: '赵武灵王专题记载',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【赵武灵王】T1精锐·三势精修·势create',
     },
     {
@@ -3159,7 +3159,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_573', layer: 'tactical', series: 'troop', index: 573,
         displayName: '摧锋决胜', ownerName: '朱棣', ownerGeneralId: 'ming_d_zhudi', sourceQuote: '【朱棣】《明史·成祖本纪》：每战摧锋陷阵，长驱决胜。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【朱棣】T1精锐·三势精修·势create',
     },
     {
@@ -3206,8 +3206,8 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     {
         id: 'ts_582', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 582,
         displayName: '扼险摧锋',  ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', sourceQuote: '【岳飞】《宋史·岳飞传》：清水亭、牛头山扼险伏击，金军伏尸十五里。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_584', ownerName: '彭越', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 584,
@@ -3269,7 +3269,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         ownerGeneralId: 'huaiyang_zhouyafu',
         displayName: '号令摧阵', ownerName: '周亚夫', sourceQuote: '【周亚夫】《史记·绛侯周勃世家》：亚夫军细柳，天子先驱至不得入；军中闻将军令，不闻天子之诏。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '号令摧阵：细柳军令（孙武斩姬号令已留令行禁止）',
     },
     {
@@ -3290,7 +3290,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
         id: 'ts_597', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 597,
         displayName: '倾国摧坚', ownerName: '王翦', ownerGeneralId: 'ruo_wangjian', sourceQuote: '【王翦】《史记·白起王翦列传》：灭楚倾全国兵力，倾国摧坚。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         ownerGeneralId: 'shuofang_weiqing',
@@ -3342,7 +3342,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_609', layer: 'tactical', series: 'troop', index: 609,
         displayName: '义旗摧阵', ownerName: '张议潮', ownerGeneralId: 'shazhou_zhangyichao', sourceQuote: '《史传》张议潮：归义军起义连克瓜沙驱逐吐蕃',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【张议潮】T1精锐·三势精修·势create·优',
     },
     {
@@ -3464,7 +3464,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_630', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 630,
         displayName: '凭险歼锐',  ownerName: '陆逊', ownerGeneralId: 'yidou_luxun', sourceQuote: '【陆逊】《三国志·陆逊传》：夷陵据险待疲，火攻连营，歼蜀军精锐。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_631', ownerName: '陈平', layer: 'tactical', series: 'counter', index: 631,
@@ -3610,7 +3610,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         ownerGeneralId: 'sima_d_simayi',
         displayName: '持重耗敌', ownerName: '司马懿', ownerGeneralId: 'sima_d_simayi', sourceQuote: '【司马懿】《晋书·宣帝纪》：对蜀持重相持，消耗蜀军粮草。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1,engineStatus: 'ready',
+        magnitude: 0.08,engineStatus: 'ready',
         note: '同源：司马懿·持重',
     },
     {
@@ -3734,13 +3734,13 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         id: 'ts_675', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 675,
         displayName: '凭坚歼锋', ownerName: '袁崇焕', ownerGeneralId: 'zu_d_yuanchonghuan', sourceQuote: '【袁崇焕】《明史·袁崇焕传》：宁远之战凭坚城歼敌先锋。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_677', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'enhance', index: 677,
         displayName: '死士突摧', ownerName: '田单', ownerGeneralId: 'jiaodong_tiandan', sourceQuote: '【田单】即墨死士火牛阵突摧燕军',
-        baseEffect: 'ally_power_mult', condition: 'always', phase: 'post_battle',
-        magnitude: 1.2, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
         note: '【袁崇焕】T1精锐·三势精修·势create·劣',
     },
 ];
@@ -3764,7 +3764,7 @@ const UNIQUE_T1_TAIL: TacticalSkillEntry[] = [
         id: 'ts_680', layer: 'tactical', series: 'troop', index: 680,
         displayName: '铁骑横扫', ownerName: '帖木儿', ownerGeneralId: 'tiemuer_tiemuer', sourceQuote: '西征波斯，铁骑横扫敌阵，数日连破数城。《帖木儿武功记》',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【帖木儿】T0/T1精锐·三势精修·势create·优',
     },
     {
@@ -3808,27 +3808,27 @@ const SANSHILIU: TacticalSkillEntry[] = [
         id: 'ts_389', ownerName: '太史慈', ownerGeneralId: 'tongma_taishici', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'troop', index: 389,
         displayName: '瞒天过海', sourceQuote: '三十六计之一，示假隐真，如太史慈突围等多将皆有。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_390', layer: 'tactical', series: 'troop', index: 390,
         displayName: '围点打援', ownerName: '耿弇', ownerGeneralId: 'you_gengyan', sourceQuote: '【耿弇】《后汉书·耿弇传》：攻张步，先灭援军而后取城，围点打援。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【胜战计·全】孙膑；三十六计补充',
     },
     {
         id: 'ts_391', layer: 'tactical', series: 'troop', index: 391,
         displayName: '借刀杀人', ownerName: '子贡', situationTag: '优势', sourceQuote: '【三十六计】利用矛盾借敌之手除患，借刀杀人。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.08, engineStatus: 'ready',
+        magnitude: 0.05, engineStatus: 'ready',
         note: '【胜战计·全】曹操；三十六计补充',
     },
     {
         id: 'ts_392', layer: 'tactical', series: 'troop', index: 392,
         displayName: '趁火打劫', ownerName: '孙策', ownerGeneralId: 'shanyue_sunce', sourceQuote: '《三国志·孙策传》：欲趁官渡相持袭许昌挟帝，未行而遇刺。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【胜战计·全】孙策；三十六计补充',
     },
     {
@@ -3867,21 +3867,21 @@ const SANSHILIU: TacticalSkillEntry[] = [
     {
         id: 'ts_398', usageTag: '双行', situationTag: '均势', ownerName: '耿弇', ownerGeneralId: 'you_gengyan', layer: 'tactical', series: 'enhance', index: 398,
         displayName: '打草惊蛇', sourceQuote: '【耿弇】《后汉书·耿弇传》：攻张步，先击西安，西安城小而坚，临淄名大而实易，弇声言攻西安以惊动之，卒拔临淄。',
-        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.2, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
         note: '打草惊蛇：声言攻西安、卒拔临淄',
     },
     {
         id: 'ts_399', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'troop', index: 399,
         displayName: '借尸还魂', ownerName: '刘备', ownerGeneralId: 'shu_liubei', sourceQuote: '【刘备】借汉室宗亲之旗号立势，复振汉统。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_400', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'enhance', index: 400,
         displayName: '调虎离山', ownerName: '慕容恪', ownerGeneralId: 'murong_murongke', sourceQuote: '《晋书·慕容恪载记》：慕容恪围广固，守将段龛据城坚守。恪围而不攻、诱其出城野战，段龛屡出屡败，终城破被俘。',
-        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.2, engineStatus: 'ready',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.5, engineStatus: 'ready',
         note: '【攻战计·机】虞诩；三十六计补充',
     },
     {
@@ -4021,7 +4021,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_421', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'troop', index: 421,
         displayName: '空寨掩击', ownerName: '赵云', ownerGeneralId: 'jingmen_zhaoyun', sourceQuote: '【赵云】《云别传》：汉水空营偃旗息鼓，空寨掩击退曹军。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
     },
     {
         id: 'ts_422', ownerName: '邓艾', ownerGeneralId: 'wudu_dengai', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 422,
@@ -4039,7 +4039,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_424', ownerName: '韩信', ownerGeneralId: 'xianyu_hanxin', layer: 'tactical', series: 'enhance', index: 424,
         displayName: '囊沙壅流', sourceQuote: '《史记·淮阴侯列传》：万只沙囊壅潍水，待楚军半渡决囊截击。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'opening_roll',
-        magnitude: 0.1, engineStatus: 'ready',
+        magnitude: 0.08, engineStatus: 'ready',
         note: '【韩信】T0精锐·韩信·势reverse·均局专属（三势精修）',
     },
     {
@@ -4080,8 +4080,8 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
     {
         id: 'ts_430', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 430,
         displayName: '阵遏锋摧', ownerName: '刘裕', ownerGeneralId: 'wang_d_liuyu', sourceQuote: '【刘裕】《宋书·武帝纪》：却月阵以步制骑，大破北魏铁骑。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_431', ownerName: '先轸', ownerGeneralId: 'jin_xianzhen', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 431,
@@ -4094,14 +4094,14 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         ownerGeneralId: 'huizhou_zhugeliang',
         displayName: '收郡疲敌',   ownerName: '诸葛亮', ownerGeneralId: 'huizhou_zhugeliang', sourceQuote: '【诸葛亮】平定南中收服诸郡，疲弊敌军。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, phase: 'pre_opening_troops', series: 'troop', engineStatus: 'ready',
+        magnitude: 0.08, phase: 'pre_opening_troops', series: 'troop', engineStatus: 'ready',
         note: '同源：诸葛亮·南中（【刘秀】T0精锐·reverse·势均局专属槽位）',
     },
     {
         id: 'ts_433', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'enhance', index: 433,
         displayName: '溃围突冲', ownerName: '张辽', ownerGeneralId: 'lu_zhangliao', sourceQuote: '【张辽】《三国志》：合肥八百人溃围突冲孙权大营',
-        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
-        magnitude: 1.2, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
         note: '【刘秀】T0精锐·reverse·势劣局专属（三势精修）',
     },
     {
@@ -4135,14 +4135,14 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         ownerGeneralId: 'qi_d_qijiguang',
         id: 'ts_438', ownerName: '戚继光', ownerGeneralId: 'wuzhou_limu', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 438,
         displayName: '鹤翼散击', sourceQuote: '【戚继光】《纪效新书》：鸳鸯阵可分可合，散击包抄；御倭战中分合奇正，散击破敌。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready', note: '鹤翼散击：鸳鸯分合散击',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready', note: '鹤翼散击：鸳鸯分合散击',
     },
     {
         id: 'ts_439', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 439,
         displayName: '潮截归路', ownerName: '村上武吉', ownerGeneralId: 'iyo_d_cunshangwuji', sourceQuote: '【村上武吉】日本村上水军利用潮汐截断敌船归路。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_440', layer: 'tactical', series: 'enhance', index: 440,
@@ -4154,8 +4154,8 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
     {
         id: 'ts_441', ownerName: '朱元璋', ownerGeneralId: 'huai_zhuyuanzhang', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 441,
         displayName: '散舟火扰', sourceQuote: '【朱元璋】《明史·太祖本纪》：鄱阳湖以火船散袭，扰乱陈友谅水阵。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_442', layer: 'tactical', series: 'enhance', index: 442,
@@ -4220,8 +4220,8 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
     {
         id: 'ts_450', ownerName: '张飞', ownerGeneralId: 'langzhou_zhangfei', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 450,
         displayName: '塞道遏冲', sourceQuote: '堵塞道路遏制骑兵冲锋，如王坚钓鱼城塞道等多将皆有。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_451', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 451,
@@ -4260,8 +4260,8 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
     {
         id: 'ts_458', ownerName: '刘裕', ownerGeneralId: 'wang_d_liuyu', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 458,
         displayName: '叠伏遏骑', sourceQuote: '多重伏兵遏制骑兵冲击，如曲端延安叠伏等多将皆有。',
-        baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_459', layer: 'tactical', series: 'casualty', index: 459,
@@ -4302,38 +4302,38 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_699', layer: 'tactical', series: 'casualty', index: 699, displayName: '火器遏冲', ownerName: '袁崇焕', ownerGeneralId: 'zu_d_yuanchonghuan', sourceQuote: '【袁崇焕】《明史·袁崇焕传》：宁远以红夷大炮遏后金冲阵。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.2, engineStatus: 'ready', note: '【诱敌据险】三势精修·均局（槽位挂牌）' },
     { id: 'ts_700', layer: 'tactical', series: 'casualty', index: 700, displayName: '诱敌据险', ownerName: '吴玠', ownerGeneralId: 'fengzhou_wujie', sourceQuote: '【吴玠】《宋史·吴玠传》：仙人关诱敌入杀金坪，据险大破金军。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.2, engineStatus: 'ready', note: '【诱敌据险】三势精修·均局' },
     { id: 'ts_701', layer: 'tactical', series: 'counter', index: 701, displayName: '纵间戕帅', ownerName: '斛律光', ownerGeneralId: 'jiyuan_huluguang', sourceQuote: '反间杀斛律光', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '【纵间戕帅】三势精修·均局' },
-    { id: 'ts_702', ownerName: '司马懿', ownerGeneralId: 'sima_d_simayi', layer: 'tactical', series: 'troop', index: 702, displayName: '倍道袭擒', sourceQuote: '【司马懿】《晋书·宣帝纪》：倍道兼行，八日抵新城，擒孟达。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready', note: '【倍道袭擒】三势精修·优局' },
+    { id: 'ts_702', ownerName: '司马懿', ownerGeneralId: 'sima_d_simayi', layer: 'tactical', series: 'troop', index: 702, displayName: '倍道袭擒', sourceQuote: '【司马懿】《晋书·宣帝纪》：倍道兼行，八日抵新城，擒孟达。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.08, engineStatus: 'ready', note: '【倍道袭擒】三势精修·优局' },
     { id: 'ts_703', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 703, displayName: '恩威抚讨', ownerName: '桑吉温', ownerGeneralId: 'dalung_sangjiwen', sourceQuote: '【桑吉温】在藏区恩威并施，抚讨兼顾平定局势。', baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll', magnitude: 1.2, engineStatus: 'ready', note: '【恩威抚讨】三势精修·优局' },
     { id: 'ts_704', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 704, displayName: '据垒固守', ownerName: '郝昭', sourceQuote: '【郝昭】《三国志·明帝纪》注引《魏略》：守陈仓据垒固守，拒诸葛亮二十余日。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
-    { id: 'ts_705', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 705, displayName: '伏锐歼敌',  ownerName: '班超', ownerGeneralId: 'xiyuduhu_banchao', sourceQuote: '【班超】《后汉书·班超传》：以少击众，设伏大破莎车。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready', note: '同源：班超·破莎车' },
-    { id: 'ts_706', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 706, displayName: '钓野诱歼', ownerName: '岛津家久', ownerGeneralId: 'satsuma_daojinjiajiu', sourceQuote: '【岛津家久】日本战国岛津家"钓野伏"诱敌合围。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
+    { id: 'ts_705', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 705, displayName: '伏锐歼敌',  ownerName: '班超', ownerGeneralId: 'xiyuduhu_banchao', sourceQuote: '【班超】《后汉书·班超传》：以少击众，设伏大破莎车。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '同源：班超·破莎车' },
+    { id: 'ts_706', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 706, displayName: '钓野诱歼', ownerName: '岛津家久', ownerGeneralId: 'satsuma_daojinjiajiu', sourceQuote: '【岛津家久】日本战国岛津家"钓野伏"诱敌合围。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_707', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'counter', index: 707, displayName: '草人诱射', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】《新唐书·张巡传》：睢阳草人借箭，智守孤城。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'mid_battle_passive', magnitude: 1, engineStatus: 'ready' },
-    { id: 'ts_708', ownerName: '王翦', ownerGeneralId: 'ruo_wangjian', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 708, displayName: '石炮摧锋', sourceQuote: '投石机摧毁敌军先锋，攻城利器，如襄阳炮等多将皆有。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready', note: '同源：王翦系腾位（灭楚缓攻）' },
-    { id: 'ts_709', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 709, displayName: '据险摧敌', ownerName: '王坚', ownerGeneralId: 'hezhou_wangjian', sourceQuote: '【王坚】《宋史·王坚传》：钓鱼城据险毙蒙哥。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
+    { id: 'ts_708', ownerName: '王翦', ownerGeneralId: 'ruo_wangjian', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 708, displayName: '石炮摧锋', sourceQuote: '投石机摧毁敌军先锋，攻城利器，如襄阳炮等多将皆有。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '同源：王翦系腾位（灭楚缓攻）' },
+    { id: 'ts_709', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 709, displayName: '据险摧敌', ownerName: '王坚', ownerGeneralId: 'hezhou_wangjian', sourceQuote: '【王坚】《宋史·王坚传》：钓鱼城据险毙蒙哥。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_710', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'fate', index: 710, displayName: '斩将肃阵', ownerName: '关羽', ownerGeneralId: 'chu_guanyu', sourceQuote: '【关羽】《三国志·关羽传》：斩颜良解白马围，万军之中取上将首级。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', luckMin: 0.6, luckMax: 1.4, magnitude: 1, engineStatus: 'ready', note: '斩将肃阵：万军取首' },
     { id: 'ts_711', layer: 'tactical', series: 'fate', index: 711, displayName: '穷搜死战', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】睢阳粮尽，掘鼠雀穷搜死战抗击燕军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'post_battle', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '同源：张巡·睢阳（【穷搜死战】三势精修·劣局）' },
     { id: 'ts_712', ownerName: '耿恭', ownerGeneralId: 'chagatai_genggong', layer: 'tactical', series: 'fate', index: 712, displayName: '溃师复振', sourceQuote: '疏勒城据险死拒，匈奴数月攻之不下。', baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback', magnitude: 1, comebackThreshold: 0.8, engineStatus: 'ready', note: '同源：耿恭·疏勒' },
     { id: 'ts_713', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 713, displayName: '据险死拒', ownerName: '耿恭', ownerGeneralId: 'chagatai_genggong', sourceQuote: '疏勒城据险死拒，匈奴数月攻之不下。', baseEffect: 'ally_power_mult', condition: 'always', phase: 'mid_battle_passive', magnitude: 1.2, engineStatus: 'ready', note: '同源：耿恭·疏勒（【据险死拒】三势精修·劣局）' },
-    { id: 'ts_714', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 714, displayName: '攻坚摧碉', ownerName: '阿桂', ownerGeneralId: 'agui', sourceQuote: '【阿桂】清平大小金川以火炮攻坚摧碉堡。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
-    { id: 'ts_715', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 715, displayName: '矫制绝诛', ownerName: '陈汤', ownerGeneralId: 'quli_chentang', sourceQuote: '【陈汤】《汉书·陈汤传》：矫诏发兵灭郅支单于。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
+    { id: 'ts_714', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 714, displayName: '攻坚摧碉', ownerName: '阿桂', ownerGeneralId: 'agui', sourceQuote: '【阿桂】清平大小金川以火炮攻坚摧碉堡。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.08, engineStatus: 'ready' },
+    { id: 'ts_715', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 715, displayName: '矫制绝诛', ownerName: '陈汤', ownerGeneralId: 'quli_chentang', sourceQuote: '【陈汤】《汉书·陈汤传》：矫诏发兵灭郅支单于。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.08, engineStatus: 'ready' },
     { id: 'ts_717', ownerName: '关羽', ownerGeneralId: 'chu_guanyu', layer: 'tactical', series: 'casualty', index: 717, displayName: '刮骨溃围', sourceQuote: '【关羽】《三国志·关羽传》：刮骨疗毒；麦城溃围。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '刮骨溃围：麦城绝境' },
     { id: 'ts_718', layer: 'tactical', series: 'casualty', index: 718, displayName: '据垒死守', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】《新唐书·忠义传》：巡守睢阳，以数千卒抗贼十余万，据垒死守十月，城陷杀敌十二万。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.2, engineStatus: 'ready', note: '【据垒死守】三势精修·劣局' },
     { id: 'ts_719', ownerName: '曹操', ownerGeneralId: 'cao_d_caocao', layer: 'tactical', series: 'casualty', index: 719, displayName: '火攻溃围', sourceQuote: '【曹操】《三国志·武帝纪》：长社夜以火攻溃黄巾之围。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【火攻溃围】三势精修·劣局' },
     { id: 'ts_720', ownerName: '刘邦', ownerGeneralId: 'han_d_liubang', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 720, displayName: '整众反击', sourceQuote: '【刘邦】《史记·高祖本纪》：彭城溃后整众，与楚相持荥阳，伺机反击。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.2, engineStatus: 'ready' },
-    { id: 'ts_722', layer: 'tactical', series: 'troop', index: 722, displayName: '孤军渡江', situationTag: '均势', ownerName: '祖逖', ownerGeneralId: 'yuzhou_zuti', sourceQuote: '孤军渡江', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready', note: '【孤军渡江】三势精修·劣局' },
+    { id: 'ts_722', layer: 'tactical', series: 'troop', index: 722, displayName: '孤军渡江', situationTag: '均势', ownerName: '祖逖', ownerGeneralId: 'yuzhou_zuti', sourceQuote: '孤军渡江', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '【孤军渡江】三势精修·劣局' },
     { id: 'ts_724', ownerName: '祖逖', ownerGeneralId: 'yuzhou_zuti', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 724, displayName: '誓师济河', sourceQuote: '誓师渡河决死一战，破釜沉舟之志，如祖逖中流击楫等，无单一专属。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
-    { id: 'ts_725', ownerName: '班超', ownerGeneralId: 'xiyuduhu_banchao', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 725, displayName: '绝域摧锋', sourceQuote: '长途远征在极远之地摧破敌军，如侯君集灭高昌、班超定西域等。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
+    { id: 'ts_725', ownerName: '班超', ownerGeneralId: 'xiyuduhu_banchao', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 725, displayName: '绝域摧锋', sourceQuote: '长途远征在极远之地摧破敌军，如侯君集灭高昌、班超定西域等。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.08, engineStatus: 'ready' },
     { id: 'ts_726', ownerName: '李陵', ownerGeneralId: 'ningkou_liling', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 726, displayName: '先登强弩', sourceQuote: '攻城时率先登城并以强弩射击，破城锐器，如界桥之战等。', baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll', magnitude: 1.2, engineStatus: 'ready' },
     { id: 'ts_727', ownerGeneralId: 'suzhou_huoqubing', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', layer: 'tactical', series: 'fate', index: 727, displayName: '轻锐扰阵', situationTag: '均势', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：轻骑长途奔袭，反复穿插扰敌阵脚。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '同源：霍去病·轻骑奔袭（与 ts_733 驰骋扰阵同系）' },
     { id: 'ts_729', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 729, displayName: '坚壁养锐', ownerName: '司马懿', ownerGeneralId: 'sima_d_simayi', sourceQuote: '【司马懿】《晋书·宣帝纪》：对蜀闭垒不出，养精蓄锐待敌自退。', baseEffect: 'ally_power_mult', condition: 'always', phase: 'mid_battle_passive', magnitude: 1.2, engineStatus: 'ready' },
     { id: 'ts_730', ownerName: '司马懿', ownerGeneralId: 'sima_d_simayi', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'fate', index: 730, displayName: '持重待疲', sourceQuote: '以稳重防守消耗敌军，待其疲惫再寻战机，多将皆有此守。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '同源：司马懿·五丈原等（非专属）' },
-    { id: 'ts_731', ownerName: '甘宁', ownerGeneralId: 'zhongxiang_ganning', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 731, displayName: '奇袭摧阵', sourceQuote: '以奇兵突袭冲垮敌阵，如甘宁百骑劫营等多将皆有。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
+    { id: 'ts_731', ownerName: '甘宁', ownerGeneralId: 'zhongxiang_ganning', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 731, displayName: '奇袭摧阵', sourceQuote: '以奇兵突袭冲垮敌阵，如甘宁百骑劫营等多将皆有。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_732', ownerName: '杨业', ownerGeneralId: 'heng1_yangye', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 732, displayName: '断后殉节', sourceQuote: '陈家谷', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【断后殉节】三势精修·劣局' },
     { id: 'ts_733', layer: 'tactical', series: 'fate', index: 733, displayName: '驰骋扰阵', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：轻骑长途奔袭，反复穿插扰敌阵脚。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '同源：霍去病·轻骑奔袭（与 ts_727 轻锐扰阵同典）' },
     { id: 'ts_734', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 734, displayName: '驰掠脱困', ownerName: '赵云', ownerGeneralId: 'jingmen_zhaoyun', sourceQuote: '【赵云】长坂坡七进七出，驰掠突围脱困。', baseEffect: 'ally_power_mult', condition: 'always', phase: 'post_battle', magnitude: 1.2, engineStatus: 'ready', note: '【驰掠脱困】三势精修·劣局' },
     { id: 'ts_735', layer: 'tactical', series: 'fate', index: 735, displayName: '轻骑驰扰', situationTag: '均势', ownerName: '李世民', ownerGeneralId: 'tang_lishimin', sourceQuote: '【李世民】率轻骑昼夜驰扰，疲弊刘武周大军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '【轻骑驰扰】三势精修·均局' },
     { id: 'ts_736', ownerName: '耿恭', ownerGeneralId: 'chagatai_genggong', layer: 'tactical', series: 'casualty', index: 736, displayName: '孤军力斗', sourceQuote: '【耿恭】《后汉书·耿恭传》：孤军守疏勒，面对匈奴围攻力战不降。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【孤军力斗】三势精修·劣局' },
-    { id: 'ts_737', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 737, displayName: '伏隘摧锋', ownerName: '韩信', ownerGeneralId: 'xianyu_hanxin', sourceQuote: '【韩信】《史记·淮阴侯列传》：井陉口狭，信背水为阵，诱赵空壁逐利，伏兵夺其壁，大破赵军。', baseEffect: 'ally_add_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready', note: '伏隘摧锋：井陉隘道破赵' },
+    { id: 'ts_737', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 737, displayName: '伏隘摧锋', ownerName: '韩信', ownerGeneralId: 'xianyu_hanxin', sourceQuote: '【韩信】《史记·淮阴侯列传》：井陉口狭，信背水为阵，诱赵空壁逐利，伏兵夺其壁，大破赵军。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '伏隘摧锋：井陉隘道破赵' },
     { id: 'ts_738', ownerName: '诸葛亮', ownerGeneralId: 'huizhou_zhugeliang', layer: 'tactical', series: 'fate', index: 738, displayName: '疑兵惑敌', sourceQuote: '疑兵惑敌', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '【疑兵惑敌】三势精修·均局' },
     { id: 'ts_739', usageTag: '攻击', situationTag: '优势', ownerName: '吕布', ownerGeneralId: 'pizhou_lvbu', layer: 'tactical', series: 'enhance', index: 739, displayName: '陷阵摧坚', sourceQuote: '汾北冲阵', baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll', magnitude: 1.2, engineStatus: 'ready', note: '【陷阵摧坚】三势精修·优局' },
     { id: 'ts_740', ownerName: '戚继光', ownerGeneralId: 'qi_d_qijiguang', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'fate', index: 740, displayName: '整军挫锐', sourceQuote: '【戚继光】《纪效新书》：教练士卒整军为伍，鸳鸯阵挫倭锐。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready' },
@@ -4347,7 +4347,7 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     { id: 'ts_746', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 746, displayName: '白马救围', ownerName: '公孙瓒', ownerGeneralId: 'hejian_gongsunzan', sourceQuote: '【公孙瓒】《后汉书·公孙瓒传》：白马义从驰援解围。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_747', ownerName: '朱棣', ownerGeneralId: 'ming_d_zhudi', layer: 'tactical', series: 'counter', index: 747, displayName: '平地起雷', sourceQuote: '【火器战术】神机营火器齐发，声若平地起雷。', baseEffect: 'cancel_enemy_terrain_buff', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_748', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 748, displayName: '围魏救赵', ownerName: '孙膑', ownerGeneralId: 'dongxian_sunbin', sourceQuote: '【孙膑】《史记·孙子吴起列传》：攻其必救，解友军之围。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.2, engineStatus: 'ready' },
-    { id: 'ts_749', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 749, displayName: '威震逍遥', ownerName: '张辽', ownerGeneralId: 'lu_zhangliao', sourceQuote: '【张辽】《三国志·张辽传》：逍遥津八百人冲孙权十万大营。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
+    { id: 'ts_749', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 749, displayName: '威震逍遥', ownerName: '张辽', ownerGeneralId: 'lu_zhangliao', sourceQuote: '【张辽】《三国志·张辽传》：逍遥津八百人冲孙权十万大营。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.08, engineStatus: 'ready' },
     { id: 'ts_750', usageTag: '攻击', situationTag: '优势', ownerName: '李成梁', ownerGeneralId: 'jinzhou_lichengliang', layer: 'tactical', series: 'counter', index: 750, displayName: '敲山震虎', sourceQuote: '隐语战术，通过攻击旁侧来动摇敌方主力据点', baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll', magnitude: 1.2, engineStatus: 'ready' },
     { id: 'ts_751', ownerName: '先轸', ownerGeneralId: 'jin_xianzhen', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 751, displayName: '退避三舍', sourceQuote: '《左传·僖公二十二年》城濮之战晋文公主动后退避开楚军锋芒', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_752', layer: 'tactical', series: 'casualty', index: 752, displayName: '结营凭险', ownerName: '陆逊', ownerGeneralId: 'yidou_luxun', sourceQuote: '《三国志·陆逊传》夷陵之战陆逊坚守不出，拒敌锋锐', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.2, engineStatus: 'ready',
@@ -4364,12 +4364,12 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     { id: 'ts_762', ownerName: '诸葛亮', ownerGeneralId: 'huizhou_zhugeliang', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 762, displayName: '借东风势',  sourceQuote: '【诸葛亮】《三国演义》：借东风助周瑜火攻赤壁。', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
     { id: 'ts_763', ownerName: '吕蒙', ownerGeneralId: 'wuwu_d_lvmeng', layer: 'tactical', series: 'counter', index: 763, displayName: '移花接木', sourceQuote: '巧妙偷换手段，将敌方施加的技能转移化用', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
     { id: 'ts_764', ownerName: '孙膑', ownerGeneralId: 'dongxian_sunbin', layer: 'tactical', series: 'counter', index: 764, displayName: '减灶斩将', sourceQuote: '《史记·孙子吴起列传》马陵之战孙膡减灶诱庞涓，以退为进斩之', baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
-    { id: 'ts_765', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 765, displayName: '火烧连营', ownerName: '陆逊', ownerGeneralId: 'yidou_luxun', sourceQuote: '【陆逊】《三国志·陆逊传》：夷陵之战火攻刘备七百里连营。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready' },
+    { id: 'ts_765', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 765, displayName: '火烧连营', ownerName: '陆逊', ownerGeneralId: 'yidou_luxun', sourceQuote: '【陆逊】《三国志·陆逊传》：夷陵之战火攻刘备七百里连营。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.08, engineStatus: 'ready' },
     { id: 'ts_766', ownerName: '武则天', ownerGeneralId: 'wuzhou_d_wuzetian', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 766, displayName: '请君入瓮', sourceQuote: '《资治通鉴》周兴酷吏被来俊臣以其人之道还治其人之身', baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_767', ownerName: '张三丰', layer: 'tactical', series: 'counter', index: 767, displayName: '借力打力', sourceQuote: '太极拳理，将敌方开局猛攻的动能反弹给对方', baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_768', ownerName: '陆逊', ownerGeneralId: 'yidou_luxun', layer: 'tactical', series: 'counter', index: 768, displayName: '诱敌伏击', sourceQuote: '【陆逊】《三国志·陆逊传》：彝陵之役，逊诱刘备连营深入，待其兵疲，火攻大破之。', baseEffect: 'reflect_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '诱敌伏击：彝陵诱敌火攻（李牧设伏同典已留 ts_315）' },
     { id: 'ts_769', ownerName: '王允', layer: 'tactical', series: 'counter', index: 769, displayName: '连环妙计', sourceQuote: '《三十六计》将多兵众，不可以敌，使其自累，化解半数攻势', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
-    { id: 'ts_770', ownerName: '诸葛亮', ownerGeneralId: 'huizhou_zhugeliang', layer: 'tactical', series: 'troop', index: 770, displayName: '锦囊妙计', situationTag: '优势', sourceQuote: '《三国演义》诸葛亮预留锦囊，在关键时刻化解敌方计谋', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.1, engineStatus: 'ready', note: '同源：诸葛亮·演义锦囊' },
+    { id: 'ts_770', ownerName: '诸葛亮', ownerGeneralId: 'huizhou_zhugeliang', layer: 'tactical', series: 'troop', index: 770, displayName: '锦囊妙计', situationTag: '优势', sourceQuote: '《三国演义》诸葛亮预留锦囊，在关键时刻化解敌方计谋', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.08, engineStatus: 'ready', note: '同源：诸葛亮·演义锦囊' },
     { id: 'ts_772', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 772, displayName: '割须弃袍', ownerName: '曹操', ownerGeneralId: 'cao_d_caocao', sourceQuote: '【曹操】潼关之战败逃割须弃袍，虽狼狈亦得以脱身。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_774', ownerName: '祢衡', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 774, displayName: '击鼓骂曹', sourceQuote: '【祢衡】《后汉书·祢衡传》：裸衣击鼓羞辱曹操，以气夺人。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_775', ownerName: '韩非子', layer: 'tactical', series: 'counter', index: 775, displayName: '兵不厌诈', sourceQuote: '《韩非子·难一》战阵之间，不厌诈伪，以此看破敌方诡计', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
