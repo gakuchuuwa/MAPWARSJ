@@ -134,7 +134,7 @@ app.innerHTML = `
     <select id="f-owner">
         <option value="">典故主·全部</option>
         <option value="registered">在册武将</option>
-        <option value="unregistered">不在册（史料名）</option>
+        <option value="unregistered">不在册</option>
         <option value="none">无典故主</option>
     </select>
     <button class="se-btn se-btn-gold" id="btn-new">＋ 新增技能</button>
@@ -255,7 +255,7 @@ function renderList(): void {
             <td>${s.ownerGeneralId
                 ? `<span style="color:#a8d8a8">${s.ownerName}</span>`
                 : s.ownerName
-                    ? `<span style="color:#d8a85e">${s.ownerName} <small style="color:#8a7a5a">（?）</small></span>`
+                    ? `<span style="color:#d8a85e">${s.ownerName} <small style="color:#8a7a5a">不在册</small></span>`
                     : '<span style="color:#6a6254">无</span>'}</td>
             <td class="se-mono">${valueLabel(s)}</td>
             <td>${s.wearers.length}${s.wearers.length === 0 ? ' ∅' : ''}</td>
