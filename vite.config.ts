@@ -2512,7 +2512,7 @@ const SIX_CLASS_BY_EFFECT: Record<string, { label: string; canonicalSituation: s
     first_sortie_comeback_mult: { label: '攻战计', canonicalSituation: '优势' },
     // 减敌兵 → 优势 → 胜战计(全)
     enemy_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
-    ally_add_troops_opening: { label: '混战计', canonicalSituation: '均势' },
+    ally_add_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
     dual_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
     // 变随机 → 均势 → 敌战计(衡)
     luck_variance_self: { label: '敌战计', canonicalSituation: '均势' },

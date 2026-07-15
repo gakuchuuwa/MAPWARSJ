@@ -1447,26 +1447,36 @@ export function applyOpeningTacticalPreRoll(
         }
 
         if (effect.enemyCutMagnitude > 0) {
-            const oppUnit = findEligibleGeneralUnit(opponents, isAttacker ? defCommander : attCommander);
-            const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
-            const oppCtx = buildSideCtx(opponents, units, !isAttacker);
-            const counter = resolveOpeningTroopCutCounter(
-                oppActiveId,
-                effect.enemyCutMagnitude,
-                oppCtx,
-            );
-            if (counter.selfCutMagnitude > 0) {
-                enemyLossTotal = applyTroopSubToUnits(opponents, counter.selfCutMagnitude);
-            }
-            if (counter.reflectBackMagnitude > 0) {
-                const reflectLoss = applyTroopSubToUnits(units, counter.reflectBackMagnitude);
-                if (reflectLoss > 0) {
-                    selfLossTotal += reflectLoss;
+            if (!isAttacker) {
+                // 守方胜战计: 减敌兵 → 加己兵
+                const added = applyTroopAddToUnits(units, effect.enemyCutMagnitude);
+                if (added > 0) {
                     applied = true;
+                    logMsg = `⚔️ [武将技] ${unit.generalId} 【${effect.entry.displayName}】 ${sideLabel} +${added} 兵（守方加己）`;
                 }
+            } else {
+                // 攻方胜战计: 减敌兵（原有逻辑）
+                const oppUnit = findEligibleGeneralUnit(opponents, isAttacker ? defCommander : attCommander);
+                const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
+                const oppCtx = buildSideCtx(opponents, units, !isAttacker);
+                const counter = resolveOpeningTroopCutCounter(
+                    oppActiveId,
+                    effect.enemyCutMagnitude,
+                    oppCtx,
+                );
+                if (counter.selfCutMagnitude > 0) {
+                    enemyLossTotal = applyTroopSubToUnits(opponents, counter.selfCutMagnitude);
+                }
+                if (counter.reflectBackMagnitude > 0) {
+                    const reflectLoss = applyTroopSubToUnits(units, counter.reflectBackMagnitude);
+                    if (reflectLoss > 0) {
+                        selfLossTotal += reflectLoss;
+                        applied = true;
+                    }
+                }
+                if (enemyLossTotal > 0) applied = true;
+                else if (counter.entry && counter.selfCutMagnitude === 0) applied = true;
             }
-            if (enemyLossTotal > 0) applied = true;
-            else if (counter.entry && counter.selfCutMagnitude === 0) applied = true;
         }
 
         if (effect.allyAddMagnitude > 0) {
