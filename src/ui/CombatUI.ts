@@ -1188,12 +1188,27 @@ export class CombatUI {
             pushIfNotOne(REINFORCEMENT_JOIN_SKILL.displayName, joinLuck);
         }
 
-        if (labeled.length === 0) {
+        // ①运气标签：不显数字，只显「好运」或「厄运」
+        const fateLuck = side === 'attacker'
+            ? (this.boundRegionalBattleField?.getAttackerOpeningFateLuck() ?? null)
+            : (this.boundRegionalBattleField?.getDefenderOpeningFateLuck() ?? null);
+        let luckLabel = '';
+        if (fateLuck !== null && fateLuck !== undefined) {
+            if (fateLuck > 1.001) luckLabel = '好运';
+            else if (fateLuck < 0.999) luckLabel = '厄运';
+        }
+
+        if (labeled.length === 0 && !luckLabel) {
             return { chain: '', title: '' };
         }
 
-        const chain = labeled.map((l) => fmt(l.value)).join('×');
-        const title = `${role}：${labeled.map((l) => `${l.label}×${fmt(l.value)}`).join(' ')}`;
+        const numChain = labeled.map((l) => fmt(l.value)).join('×');
+        const chain = luckLabel
+            ? (numChain ? `${luckLabel} ${numChain}` : luckLabel)
+            : numChain;
+        const titleParts = labeled.map((l) => `${l.label}×${fmt(l.value)}`);
+        if (luckLabel) titleParts.unshift(`运气:${luckLabel}(×${parseFloat(fateLuck!.toFixed(2))})`);
+        const title = `${role}：${titleParts.join(' ')}`;
         return { chain, title };
     }
 

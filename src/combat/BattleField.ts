@@ -1322,6 +1322,11 @@ export class BattleField implements IOpeningPulseSink {
         return luck ?? null;
     }
 
+    /** 开局命运系运气值（攻方），供战斗面板运气标签 */
+    public getAttackerOpeningFateLuck(): number { return this.attackerOpeningFateLuck; }
+    /** 开局命运系运气值（守方），供战斗面板运气标签 */
+    public getDefenderOpeningFateLuck(): number { return this.defenderOpeningFateLuck; }
+
     /**
      * 获取战场信息
      */
