@@ -33,6 +33,7 @@ import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
+import { resolveGeneralTacticalEntry } from '../combat/TacticalSkillResolver';
 import {
     getOpeningTacticalPowerMultiplier,
     getStrategicBattlePowerMultiplier,
@@ -50,9 +51,11 @@ import {
     resolveStalemateUiThresholdSec,
     getAttackStylePowerMult,
     getAptitudePowerMult,
+    resolveSituationalSkillId,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
+import { getCityEliteConfig } from '../data/ExpeditionLegions';
 import type { Army } from '../legion/Army';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
@@ -71,12 +74,24 @@ function getLegionEliteBadgeName(unit: IBattleUnit): string {
     return stripped || raw;
 }
 
-/** 精锐五级 → 二字标签（2026-07-16） */
+/** 精锐五级 → 二字标签（2026-07-16）。按 unit 所属据点查精锐，不依赖 army.isElite */
 function getEliteTierLabel(unit: IBattleUnit): string | null {
     const tier = getUnitEliteTier(unit);
-    if (tier === null) return null;
-    const LABELS = ['天军', '王师', '精锐', '劲旅', '戍卫'];
-    return LABELS[tier] ?? null;
+    if (tier !== null) {
+        const LABELS = ['天军', '王师', '精锐', '劲旅', '戍卫'];
+        return LABELS[tier] ?? null;
+    }
+    // fallback：从 entity 的 cityId 直接查精锐 config
+    const entity = unit.getEntity?.() as { homeCityId?: string; getSourceCityId?: () => string | null } | undefined;
+    const cityId = entity?.homeCityId ?? entity?.getSourceCityId?.() ?? null;
+    if (cityId) {
+        const config = getCityEliteConfig(cityId);
+        if (config?.tier !== undefined) {
+            const LABELS = ['天军', '王师', '精锐', '劲旅', '戍卫'];
+            return LABELS[config.tier] ?? null;
+        }
+    }
+    return null;
 }
 
 export class CombatUI {
@@ -1195,38 +1210,28 @@ export class CombatUI {
         }
 
         // 精锐加成 -> 不显数字，显五级标签（天军/王师/精锐/劲旅/戍卫）
-        const eliteMult = getCampaignLegionCombatMultiplier(unit);
-        let eliteLabel = '';
         const eliteTier = getEliteTierLabel(unit);
-        if (Math.abs(eliteMult - 1) > 0.001 && eliteTier) {
-            eliteLabel = eliteTier;
-        }
+        let eliteLabel = eliteTier ?? '';
 
-        // ②战术技 -> 六计文字标签
-        const tacMult = getOpeningTacticalPowerMultiplier(
-            this.getUnitsForSide(side),
-            this.getOpponentUnitsFor(side),
-            side === 'attacker',
-            { battleType, terrain },
-        );
+        // ②战术技 -> 六计文字标签（用六槽形势技，非旧 tacticalSkillId）
+        const tacUnit = pickSideSkillGeneralUnit(this.getUnitsForSide(side));
         let tacLabel = '';
-        if (Math.abs(tacMult - 1) > 0.001) {
-            // 按 baseEffect 映射六计标签
-            const unit2 = pickSideSkillGeneralUnit(this.getUnitsForSide(side));
-            const tacId = unit2 ? getActiveTacticalSkillId(unit2) : null;
-            const entry = tacId ? resolveGeneralTacticalEntry(tacId) : null;
-            const SIX_LABELS: Record<string, string> = {
-                攻战计: '加功', 胜战计: '减兵', 敌战计: '改运',
-                混战计: '克反', 并战计: '减损', 败战计: '翻盘',
-            };
-            // 简单按 baseEffect 前缀分类
-            const be = entry?.baseEffect ?? '';
-            if (be.includes('power_mult')) tacLabel = '加功';
-            else if (be.includes('sub_troops') || be.includes('add_troops')) tacLabel = '减兵';
-            else if (be.includes('luck')) tacLabel = '改运';
-            else if (be.includes('negate') || be.includes('counter') || be.includes('steal')) tacLabel = '克反';
-            else if (be.includes('casualty') || be.includes('win_casualty')) tacLabel = '减损';
-            else if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')) tacLabel = '翻盘';
+        if (tacUnit?.generalId) {
+            const myTroops = this.getUnitsForSide(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
+            const oppTroops = this.getOpponentUnitsFor(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
+            const ratio = myTroops / Math.max(1, oppTroops);
+            const sit = ratio > 1.5 ? 'advantage' : ratio < 0.67 ? 'disadvantage' : 'balance';
+            const sid = resolveSituationalSkillId(tacUnit, sit as 'advantage'|'balance'|'disadvantage', side === 'attacker');
+            const entry = sid ? resolveGeneralTacticalEntry(sid) : null;
+            if (entry) {
+                const be = entry.baseEffect ?? '';
+                if (be.includes('power_mult')) tacLabel = '加功';
+                else if (be.includes('sub_troops') || be.includes('add_troops')) tacLabel = '减兵';
+                else if (be.includes('luck')) tacLabel = '改运';
+                else if (be.includes('negate') || be.includes('counter') || be.includes('steal')) tacLabel = '克反';
+                else if (be.includes('casualty') || be.includes('win_casualty')) tacLabel = '减损';
+                else if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')) tacLabel = '翻盘';
+            }
         }
 
         // 战略技不在战斗面板展示乘区链（大地图/跟拍横幅/胜后飘字见 GeneralSkillCombat + MapFloatingText）
@@ -1245,7 +1250,7 @@ export class CombatUI {
             else if (fateLuck < 0.999) luckLabel = '厄运';
         }
 
-        if (labeled.length === 0 && !luckLabel && !passLabel && !regionLabel && !eliteLabel && !cultureLabel) {
+        if (labeled.length === 0 && !luckLabel && !passLabel && !regionLabel && !eliteLabel && !cultureLabel && !tacLabel) {
             return { chain: '', title: '' };
         }
 
@@ -1256,6 +1261,7 @@ export class CombatUI {
         if (regionLabel) parts.push('名城');
         if (eliteLabel) parts.push(eliteLabel);
         if (cultureLabel) parts.push(cultureLabel);
+        if (tacLabel) parts.push(tacLabel);
         if (numChain) parts.push(numChain);
         const chain = parts.join(' ');
 
