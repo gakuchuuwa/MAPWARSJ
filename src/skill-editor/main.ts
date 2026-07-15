@@ -819,10 +819,12 @@ function renderSixSlotPanel() {
     modal.innerHTML = `
         <div class="se-modal" style="width:95%;max-width:1200px">
             <div class="se-modal-hd">
-                <h3>⚔ 六槽管理 <span style="color:#8a8271;font-size:13px">${rows.length}将 · ${issues}⚠ · ${complete}✅</span></h3>
+                <h3>⚔ 六槽（分步） <span style="color:#8a8271;font-size:13px">${rows.length}将 · ${issues}⚠ · ${complete}✅</span></h3>
                 <input id="f-six-search" placeholder="搜武将名" style="background:#0e0d0c;color:#e8e0d0;border:1px solid #4a4234;padding:4px 8px;width:150px" value="${q}">
-                <button class="se-btn se-btn-gold" id="btn-six-fix">① 典故主钉槽</button>
-                <button class="se-btn" id="btn-six-open" title="打开独立六槽页">↗ 分步页</button>
+                <button class="se-btn se-btn-gold" id="btn-six-1">①钉专属</button>
+                <button class="se-btn" id="btn-six-2">②补缺</button>
+                <button class="se-btn" id="btn-six-3">③削峰</button>
+                <button class="se-btn" id="btn-six-open" title="带门禁的分步页">↗ 分步页</button>
                 <button class="se-btn" id="modal-close-six" style="margin-left:auto">✕</button>
             </div>
             <div class="se-modal-body" style="overflow:auto;max-height:75vh">
@@ -867,20 +869,28 @@ function renderSixSlotPanel() {
         if ((e.target as HTMLElement) === modal) modal.remove();
     });
     ($('f-six-search') as HTMLElement).addEventListener('input', () => { modal.remove(); renderSixSlotPanel(); });
-    ($('btn-six-fix') as HTMLElement).addEventListener('click', async () => {
-        if (!confirm('第一步：按典故主钉入合法攻防槽（不补通用）。确定？')) return;
-        toast('步骤① 执行中…');
+    const sixTips: Record<number, string> = {
+        1: '① 钉专属（仅本步）：在册典故主技写入本将合法槽。完成后请检查，再点②',
+        2: '② 通用补缺（仅本步）：缺口只从「通用」池补。完成后请检查，再点③',
+        3: '③ 同格削峰（仅本步）：非专属槽，同六计把过热换成更冷门通用',
+    };
+    const runSixStep = async (step: number) => {
+        if (!confirm(sixTips[step] + '。禁止一键全跑。确定？')) return;
+        toast('步骤' + step + ' 执行中…');
         const res = await fetch('/api/skill-editor/fix-six-slots', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ step: 1 }),
+            body: JSON.stringify({ step }),
         });
         const j = await res.json();
         if (j.log) console.log(j.log);
-        toast(j.ok ? '① 完成，请检查后再做②' : '失败: ' + j.error, !j.ok);
+        toast(j.ok ? ('✅ ' + step + ' 完成 — 请检查后再下一步') : '失败: ' + j.error, !j.ok);
         modal.remove();
         renderSixSlotModal();
-    });
+    };
+    ($('btn-six-1') as HTMLElement).addEventListener('click', () => runSixStep(1));
+    ($('btn-six-2') as HTMLElement).addEventListener('click', () => runSixStep(2));
+    ($('btn-six-3') as HTMLElement).addEventListener('click', () => runSixStep(3));
     const openBtn = $('btn-six-open') as HTMLElement | null;
     if (openBtn) openBtn.addEventListener('click', () => window.open('/six-slot.html', '_blank'));
 }

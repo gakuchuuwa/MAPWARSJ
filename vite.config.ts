@@ -457,7 +457,7 @@ export default defineConfig({
                         }
                     });
                 });
-                // fix-six-slots: run auto_fill + distribute_orphans
+                // 六槽：严格分步 API（一次只跑一步；①钉专属 ②通用补缺 ③同格削峰）
                 // Return raw profiles data for six-slot editor
                 server.middlewares.use('/api/skill-editor/profiles', (req, res) => {
                     if (req.method !== 'GET') { res.statusCode = 405; res.end('{}'); return; }
@@ -471,7 +471,7 @@ export default defineConfig({
                     }
                 });
 
-                // 六槽分步：step=1 典故主钉槽；后续 step=2 通用补缺（未实现）
+                // 六槽分步：1钉专属 2通用补缺 3同格削峰
                 server.middlewares.use('/api/skill-editor/fix-six-slots', (req, res) => {
                     if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
                     let body = '';
@@ -479,36 +479,43 @@ export default defineConfig({
                     req.on('end', () => {
                         try {
                             const { execSync } = require('child_process');
-                            let step = 1;
+                            let step = 0;
+                            let parsed: any = null;
                             try {
-                                if (body) step = Number(JSON.parse(body).step) || 1;
-                            } catch { /* 无 body 默认 step1 */ }
-                            if (step === 1) {
-                                const out = execSync('node scratch/six_slot_step1_pin_owners.mjs --write', {
-                                    cwd: path.resolve(__dirname),
-                                    encoding: 'utf-8',
-                                    timeout: 120000,
-                                });
+                                if (body) parsed = JSON.parse(body);
+                            } catch { /* ignore */ }
+                            if (parsed && (parsed.all || parsed.steps || parsed.step === 'all')) {
+                                res.statusCode = 400;
                                 res.setHeader('Content-Type', 'application/json');
-                                res.end(JSON.stringify({ ok: true, step: 1, log: out.slice(-1200) }));
+                                res.end(JSON.stringify({
+                                    ok: false,
+                                    error: '已改为严格分步：禁止一键全跑。请每次只传 step=1|2|3',
+                                }));
                                 return;
                             }
-                            if (step === 2) {
-                                const out = execSync('node scratch/six_slot_step2_fill_generic.mjs --write', {
-                                    cwd: path.resolve(__dirname),
-                                    encoding: 'utf-8',
-                                    timeout: 120000,
-                                });
+                            step = Number(parsed?.step);
+                            if (![1, 2, 3].includes(step)) {
+                                res.statusCode = 400;
                                 res.setHeader('Content-Type', 'application/json');
-                                res.end(JSON.stringify({ ok: true, step: 2, log: out.slice(-1200) }));
+                                res.end(JSON.stringify({
+                                    ok: false,
+                                    error: '必须指定 step=1|2|3（1钉专属 2通用补缺 3同格削峰），禁止默认一键',
+                                }));
                                 return;
                             }
-                            res.statusCode = 400;
+                            const scripts: Record<number, string> = {
+                                1: 'node scratch/six_slot_step1_pin_owners.mjs --write',
+                                2: 'node scratch/six_slot_step2_fill_generic.mjs --write',
+                                3: 'node scratch/six_slot_step3_peak_shave.mjs --write',
+                            };
+                            const cmd = scripts[step];
+                            const out = execSync(cmd, {
+                                cwd: path.resolve(__dirname),
+                                encoding: 'utf-8',
+                                timeout: 180000,
+                            });
                             res.setHeader('Content-Type', 'application/json');
-                            res.end(JSON.stringify({
-                                ok: false,
-                                error: `未知 step=${step}（仅支持 1=典故主钉槽，2=通用补缺削峰）`,
-                            }));
+                            res.end(JSON.stringify({ ok: true, step, log: out.slice(-1500) }));
                         } catch (err: any) {
                             res.statusCode = 500;
                             res.setHeader('Content-Type', 'application/json');
