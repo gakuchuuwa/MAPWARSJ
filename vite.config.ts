@@ -498,15 +498,15 @@ export default defineConfig({
                                 res.setHeader('Content-Type', 'application/json');
                                 res.end(JSON.stringify({
                                     ok: false,
-                                    error: '必须指定 step=1|2|3|4（①清空 ②钉在册 ③补不全 ④孤儿），禁止默认一键',
+                                    error: '必须指定 step=1|2|3|4（①清空 ②钉在册 ③挂孤儿 ④补不全），禁止默认一键',
                                 }));
                                 return;
                             }
                             const scripts: Record<number, string> = {
                                 1: 'node scratch/six_slot_step1_clear_all.mjs --write',
                                 2: 'node scratch/six_slot_step1_pin_owners.mjs --write',
-                                3: 'node scratch/six_slot_step2_fill_generic.mjs --write',
-                                4: 'node scratch/six_slot_step4_orphan_place.mjs --write',
+                                3: 'node scratch/six_slot_step4_orphan_place.mjs --write',
+                                4: 'node scratch/six_slot_step2_fill_generic.mjs --write',
                             };
                             const cmd = scripts[step];
                             const out = execSync(cmd, {

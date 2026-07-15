@@ -831,8 +831,8 @@ function renderSixSlotPanel() {
                 <input id="f-six-search" placeholder="搜武将名" style="background:#0e0d0c;color:#e8e0d0;border:1px solid #4a4234;padding:4px 8px;width:150px" value="${q}">
                 <button class="se-btn se-btn-gold" id="btn-six-1">①清空六槽</button>
                 <button class="se-btn" id="btn-six-2">②钉在册</button>
-                <button class="se-btn" id="btn-six-3">③补不全</button>
-                <button class="se-btn" id="btn-six-4">④挂孤儿</button>
+                <button class="se-btn" id="btn-six-3">③挂孤儿</button>
+                <button class="se-btn" id="btn-six-4">④补不全</button>
                 <button class="se-btn" id="btn-six-open" title="带门禁的分步页">↗ 分步页</button>
                 <button class="se-btn" id="modal-close-six" style="margin-left:auto">✕</button>
             </div>
@@ -881,8 +881,8 @@ function renderSixSlotPanel() {
     const sixTips: Record<number, string> = {
         1: '① 清空全体六槽（仅本步）。完成后请检查，再点②',
         2: '② 钉在册：典故主写入合法槽（仅本步）。完成后请检查，再点③',
-        3: '③ 补不全：优先不在册，可复戴（仅本步）。完成后请检查，再点④',
-        4: '④ 挂孤儿：零佩戴技挂合法槽（仅本步）',
+        3: '③ 挂孤儿：wear=0 找将（空槽优先，再同计顶替；仅本步）。完成后请检查，再点④',
+        4: '④ 补不全：仍缺计用不在册补，可复戴（仅本步）',
     };
     const runSixStep = async (step: number) => {
         if (!confirm(sixTips[step] + '。禁止一键全跑。确定？')) return;
