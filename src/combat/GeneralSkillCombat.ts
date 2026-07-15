@@ -765,7 +765,7 @@ export function getOpeningTacticalPowerMultiplier(
 // ── 三势适性：势×局 开战战力系数（③整合。常量见 TacticalConstants.ts）──
 // 势与局匹配放大战力：造势顺风碾压 / 借势均势破局 / 逆势逆风爆发(提翻盘机会,不稳赢)。
 /** 按该侧带将单位的势 × 当前兵力局(我方/敌方 >1.5优 / <0.67劣 / 中间均)返回开战战力系数 */
-function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[], selfCommander?: IBattleUnit | null): number {
+export function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[], selfCommander?: IBattleUnit | null): number {
     const unit = findEligibleGeneralUnit(sideUnits, selfCommander);
     if (!unit?.generalId) return 1;
     const apt = getGeneralProfile(unit.generalId)?.aptitude;

@@ -35,7 +35,6 @@ import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getC
 import type { LandTerrainKind } from '../world/land-sea';
 import {
     getOpeningTacticalPowerMultiplier,
-    getOpeningTacticalEnemyPowerDebuffMultiplier,
     getStrategicBattlePowerMultiplier,
     getGeneralSkillDisplayTags,
     getPassGarrisonDefenseSkillDisplay,
@@ -49,6 +48,8 @@ import {
     PHASE_COLLAPSE_START,
     pickSideSkillGeneralUnit,
     resolveStalemateUiThresholdSec,
+    getAttackStylePowerMult,
+    getAptitudePowerMult,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -1138,18 +1139,22 @@ export class CombatUI {
             side === 'attacker',
             { battleType, terrain },
         );
-        product *= getStrategicBattlePowerMultiplier(unit, battleType, terrain, side);
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
-        if (joinLuck !== null) product *= joinLuck;
 
-        // 应用对手的减益（与底层 applyEnemyDebuff 完全对齐：多单位合战取 findEligibleGeneralUnit）
-        const opponentUnits = this.getOpponentUnitsFor(side);
-        const opponentDebuff = getOpeningTacticalEnemyPowerDebuffMultiplier(
-            opponentUnits.length > 0 ? opponentUnits : opponent
-        );
-        if (opponentDebuff !== null) {
-            product *= opponentDebuff.value;
-        }
+        // ③ 势层
+        const myUnits = this.getUnitsForSide(side);
+        const oppUnits = this.getOpponentUnitsFor(side);
+        product *= getAptitudePowerMult(myUnits, oppUnits);
+
+        // ④ 攻防层
+        const myGen = pickSideSkillGeneralUnit(myUnits);
+        product *= getAttackStylePowerMult(myGen, side === 'attacker');
+
+        // ① 运气
+        const fateLuck = side === 'attacker'
+            ? (this.boundRegionalBattleField?.getAttackerOpeningFateLuck() ?? 1)
+            : (this.boundRegionalBattleField?.getDefenderOpeningFateLuck() ?? 1);
+        product *= fateLuck;
 
         if (Math.abs(product - 1) <= 0.001) return `×1`;
         return `×${parseFloat(product.toFixed(1))}`;
@@ -1207,15 +1212,6 @@ export class CombatUI {
             side === 'attacker',
             { battleType, terrain },
         ));
-
-        // 压制减益（来自对手，与底层 applyEnemyDebuff 完全对齐：多单位合战取 findEligibleGeneralUnit）
-        const opponentUnits = this.getOpponentUnitsFor(side);
-        const opponentDebuff = getOpeningTacticalEnemyPowerDebuffMultiplier(
-            opponentUnits.length > 0 ? opponentUnits : opponent
-        );
-        if (opponentDebuff !== null) {
-            pushIfNotOne(`压制(${opponentDebuff.label})`, opponentDebuff.value);
-        }
 
         // 战略技不在战斗面板展示乘区链（大地图/跟拍横幅/胜后飘字见 GeneralSkillCombat + MapFloatingText）
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
