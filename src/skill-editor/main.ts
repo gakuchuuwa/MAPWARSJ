@@ -107,6 +107,8 @@ app.innerHTML = `
     .se-err-warn { background: #4a3c1e; color: #d8c88e; }
     .se-issue-row td { color: #e8a0a0; }
     .se-issue-row:hover td { background: #2a1a1a; }
+    .se-issue-row.se-issue-warn td { color: #d8c88e; }
+    .se-issue-row.se-issue-warn:hover td { background: #2a2418; }
     .se-summary { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
     /* 典故主级汇总 */
     .se-owner-summary { background: #1e1a14; border: 1px solid #4a3c1e; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; }
@@ -289,7 +291,7 @@ function renderDetail(): void {
     const s = SKILLS.find(x => x.id === selectedId);
     if (!s) return;
     setDetailOpen(true);
-    const ownerVal = s.ownerName ? `${s.ownerName} (${s.ownerGeneralId ?? '?'})` : '';
+    const ownerVal = s.ownerName ? `${s.ownerName} (${s.ownerGeneralId ?? '待挂将'})` : '';
     const sixInfo = s.sixClass
         ? `${s.sixClass}${s.sixClassMatch ? '' : ' ⚠ 三势与规范值不匹配'}`
         : '⚠ 未知效果类型，无法归类';
@@ -435,42 +437,55 @@ function renderNewForm(): void {
 
 interface CheckIssue {
     id: string; displayName: string;
-    type: 'non4char' | 'noWearer' | 'noSituation' | 'noUsage' | 'noSixClass' | 'sixClassMismatch' | 'duplicateSixClass' | 'tooManySkills' | 'duplicateName' | 'generalSixIncomplete' | 'orphanOwner' | 'missingOwnerGid';
+    type: 'non4char' | 'noWearer' | 'noSituation' | 'noUsage' | 'noSixClass' | 'sixClassMismatch' | 'duplicateSixClass' | 'tooManySkills' | 'duplicateName' | 'generalSixIncomplete' | 'orphanOwner' | 'missingOwnerGid' | 'pendingOwner' | 'invalidOwnerGid';
     msg: string;
+    /** error=硬错误；warn=可保留史料、待挂将等 */
+    severity: 'error' | 'warn';
 }
 
 function runErrorCheck(): void {
     const issues: CheckIssue[] = [];
+    const gidSet = new Set(GENERALS.map(g => g.generalId));
 
-    // ── 典故主缺武将ID（最优先：在册武将缺ID = 数据断裂，游戏功能直接受影响）──
+    // ── 典故主：史料名可保留；无 ID = 待挂将（警告，不删）；ID 非法才报错 ──
     for (const s of SKILLS) {
-        if (!s.ownerName) continue;
-        if (!s.ownerGeneralId) {
+        if (!s.ownerName && !s.ownerGeneralId) continue;
+        if (s.ownerGeneralId) {
+            if (!gidSet.has(s.ownerGeneralId)) {
+                issues.push({
+                    id: s.id, displayName: s.displayName, type: 'invalidOwnerGid', severity: 'error',
+                    msg: `典故主 ID「${s.ownerGeneralId}」不在册（${s.ownerName ?? '无写名'}），须改绑合法 generalId`,
+                });
+            }
+            continue;
+        }
+        // 仅有史料名、尚未挂将 → 警告（勿清空 ownerName）
+        if (s.ownerName) {
             issues.push({
-                id: s.id, displayName: s.displayName, type: 'missingOwnerGid',
-                msg: `典故主「${s.ownerName}」缺少武将ID（编辑器中显示为?），需补全generalId`,
+                id: s.id, displayName: s.displayName, type: 'pendingOwner', severity: 'warn',
+                msg: `史料典故主「${s.ownerName}」待挂将（暂作通用技；立将后补 ownerGeneralId，勿删此名）`,
             });
         }
     }
 
     for (const s of SKILLS) {
         if (s.displayName.length !== 4) {
-            issues.push({ id: s.id, displayName: s.displayName, type: 'non4char', msg: `技名「${s.displayName}」不是四字（${s.displayName.length}字）` });
+            issues.push({ id: s.id, displayName: s.displayName, type: 'non4char', severity: 'error', msg: `技名「${s.displayName}」不是四字（${s.displayName.length}字）` });
         }
         if (s.wearers.length === 0) {
-            issues.push({ id: s.id, displayName: s.displayName, type: 'noWearer', msg: '在役但无任何武将佩戴' });
+            issues.push({ id: s.id, displayName: s.displayName, type: 'noWearer', severity: 'warn', msg: '在役但无任何武将佩戴' });
         }
         if (!s.situationTag || !['优势', '均势', '劣势'].includes(s.situationTag)) {
-            issues.push({ id: s.id, displayName: s.displayName, type: 'noSituation', msg: `三势标签缺失或异常（当前：${s.situationTag || '空'}）` });
+            issues.push({ id: s.id, displayName: s.displayName, type: 'noSituation', severity: 'error', msg: `三势标签缺失或异常（当前：${s.situationTag || '空'}）` });
         }
         if (!s.usageTag || !['攻击', '防御', '双行'].includes(s.usageTag)) {
-            issues.push({ id: s.id, displayName: s.displayName, type: 'noUsage', msg: `攻防标签缺失或异常（当前：${s.usageTag || '空'}）` });
+            issues.push({ id: s.id, displayName: s.displayName, type: 'noUsage', severity: 'error', msg: `攻防标签缺失或异常（当前：${s.usageTag || '空'}）` });
         }
         if (!s.sixClass) {
-            issues.push({ id: s.id, displayName: s.displayName, type: 'noSixClass', msg: `baseEffect「${s.baseEffect}」无法归入六类——效果类型不在已知映射中` });
+            issues.push({ id: s.id, displayName: s.displayName, type: 'noSixClass', severity: 'error', msg: `baseEffect「${s.baseEffect}」无法归入六类——效果类型不在已知映射中` });
         }
         if (s.sixClass && !s.sixClassMatch) {
-            issues.push({ id: s.id, displayName: s.displayName, type: 'sixClassMismatch', msg: `六类=${s.sixClass} 但三势=${s.situationTag}（规范值应为${s.sixClass ? getCanonicalSit(s.sixClass) : '?'}），效果与三势不匹配` });
+            issues.push({ id: s.id, displayName: s.displayName, type: 'sixClassMismatch', severity: 'warn', msg: `六类=${s.sixClass} 但三势=${s.situationTag}（规范值应为${s.sixClass ? getCanonicalSit(s.sixClass) : '?'}），效果与三势不匹配` });
         }
     }
 
@@ -528,31 +543,19 @@ function runErrorCheck(): void {
         ids.push(s.id);
         nameGroups.set(s.displayName, ids);
     }
-    // ── 典故主不在册 ──
-    const inRegNames = new Set(GENERALS.map(g => g.name));
-    for (const s of SKILLS) {
-        if (!s.ownerName) continue;
-        if (!inRegNames.has(s.ownerName)) {
-            issues.push({
-                id: s.id, displayName: s.displayName, type: 'orphanOwner',
-                msg: `典故主「${s.ownerName}」不在册武将中（游戏无法渲染此人的专属技）`,
-            });
-        }
-    }
 
     for (const [name, ids] of nameGroups) {
         if (ids.length < 2) continue;
         for (const sid of ids) {
             const s = SKILLS.find(x => x.id === sid)!;
             issues.push({
-                id: s.id, displayName: s.displayName, type: 'duplicateName',
+                id: s.id, displayName: s.displayName, type: 'duplicateName', severity: 'error',
                 msg: `技名「${name}」重复（${ids.join('、')}），同名技不得存在`,
             });
         }
     }
 
     // ── 武将六计不齐（从佩戴反查：每将六槽应覆盖攻/胜/敌/混/并/败各一，与 batch-manager 同口径）──
-    //   佩戴数据 = 各将六槽装的技；若某槽指向已删技则该将佩戴不足6，也会体现为"缺"。
     {
         const genSix = new Map<string, string[]>(); // gid → 所佩戴技的六计
         for (const s of SKILLS) {
@@ -573,29 +576,38 @@ function runErrorCheck(): void {
                 if (missing.length) parts.push('缺' + missing.join('/'));
                 if (dup.length) parts.push('重' + dup.join('/'));
                 issues.push({
-                    id: g.generalId, displayName: g.name, type: 'generalSixIncomplete',
+                    id: g.generalId, displayName: g.name, type: 'generalSixIncomplete', severity: 'warn',
                     msg: `武将「${g.name}」六计不齐：${parts.join('，')}（六槽应攻/胜/敌/混/并/败各一）`,
                 });
             }
         }
     }
 
-    const counts: Record<string, number> = { non4char: 0, noWearer: 0, orphanOwner: 0, missingOwnerGid: 0, noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, duplicateSixClass: 0, tooManySkills: 0, duplicateName: 0, generalSixIncomplete: 0, total: issues.length };
+    const counts: Record<string, number> = {
+        non4char: 0, noWearer: 0, orphanOwner: 0, missingOwnerGid: 0, pendingOwner: 0, invalidOwnerGid: 0,
+        noSituation: 0, noUsage: 0, noSixClass: 0, sixClassMismatch: 0, duplicateSixClass: 0, tooManySkills: 0,
+        duplicateName: 0, generalSixIncomplete: 0, total: issues.length,
+    };
     for (const i of issues) counts[i.type]++;
-    // 从 ownerIssues 补计（不再逐技入表）
     for (const oi of ownerIssues) counts[oi.type]++;
 
+    const errN = issues.filter(i => i.severity === 'error').length;
+    const warnN = issues.filter(i => i.severity === 'warn').length;
+
     const typeLabel: Record<string, string> = {
+        pendingOwner: '史料待挂将', invalidOwnerGid: '典故主ID非法',
         missingOwnerGid: '缺武将ID', orphanOwner: '典故主不在册',
         non4char: '非四字技名', noWearer: '无佩戴', noSituation: '三势缺失', noUsage: '攻防缺失',
         noSixClass: '六类未标', sixClassMismatch: '三势跨类', duplicateSixClass: '典故主六类重复',
         tooManySkills: '典故主超6技', duplicateName: '技名重复', generalSixIncomplete: '武将六计不齐',
     };
+    const HARD_TYPES = new Set(['duplicateName', 'duplicateSixClass', 'non4char', 'noSituation', 'noUsage', 'noSixClass', 'invalidOwnerGid']);
     const summaryHtml = Object.entries(typeLabel).map(([k, label]) => {
         const n = counts[k] ?? 0;
-        const cls = n > 0 ? (k === 'duplicateName' || k === 'duplicateSixClass' ? 'se-err-red' : 'se-err-warn') : 'se-err-ok';
+        if (k === 'missingOwnerGid' || k === 'orphanOwner') return ''; // 已由 pendingOwner / invalidOwnerGid 取代
+        const cls = n === 0 ? 'se-err-ok' : (HARD_TYPES.has(k) ? 'se-err-red' : 'se-err-warn');
         return `<span class="se-err-count ${cls}">${label}: ${n}</span>`;
-    }).join('');
+    }).filter(Boolean).join('');
 
     // ── 典故主级汇总（放在表格下方，不逐技展开）──
     const ownerSummaryHtml = ownerIssues.length > 0 ? `
@@ -610,6 +622,8 @@ function runErrorCheck(): void {
         </div>` : '';
 
     const tableIssues = issues.filter(i => i.type !== 'tooManySkills' && i.type !== 'duplicateSixClass');
+    // 警告默认折叠列出：仍全部显示，但硬错误排前
+    tableIssues.sort((a, b) => (a.severity === b.severity ? 0 : a.severity === 'error' ? -1 : 1));
     const hasIssues = tableIssues.length > 0;
 
     const modal = document.createElement('div');
@@ -618,23 +632,24 @@ function runErrorCheck(): void {
         <div class="se-modal">
             <div class="se-modal-hd">
                 <h3>错误检查</h3>
-                <span style="color:#8a8271">共 ${tableIssues.length + ownerIssues.length} 项问题</span>
+                <span style="color:#8a8271">硬错误 ${errN} · 警告 ${warnN} · 典故主汇总 ${ownerIssues.length}</span>
                 <button class="se-btn" id="modal-close" style="margin-left:auto">✕</button>
             </div>
             <div class="se-modal-body">
                 <div class="se-summary">${summaryHtml}</div>
                 ${hasIssues ? `
-                <table><thead><tr><th>id</th><th>技名</th><th>类型</th><th>详情</th></tr></thead><tbody>
+                <table><thead><tr><th>id</th><th>技名</th><th>级别</th><th>类型</th><th>详情</th></tr></thead><tbody>
                     ${tableIssues.map(i => `
-                        <tr class="se-issue-row" data-id="${i.id}" style="cursor:pointer">
+                        <tr class="se-issue-row${i.severity === 'warn' ? ' se-issue-warn' : ''}" data-id="${i.id}" style="cursor:pointer">
                             <td class="se-mono">${i.id}</td>
                             <td>${i.displayName}</td>
+                            <td>${i.severity === 'error' ? '错误' : '警告'}</td>
                             <td>${typeLabel[i.type] ?? i.type}</td>
                             <td>${i.msg} <button class="se-copy-btn se-copy-issue" data-id="${i.id}" data-msg="${i.msg.replace(/"/g, '&quot;')}" title="复制此行">📋</button></td>
                         </tr>`).join('')}
                 </tbody></table>` : ''}
                 ${ownerSummaryHtml}
-                ${!hasIssues && ownerIssues.length > 0 ? '<p style="color:#8a9a78;margin-top:12px">✅ 逐技检查无其他错误</p>' : ''}
+                ${!hasIssues && ownerIssues.length > 0 ? '<p style="color:#8a9a78;margin-top:12px">✅ 逐技检查无其他硬错误（上方为典故主汇总）</p>' : ''}
                 ${!hasIssues && ownerIssues.length === 0 ? '<p style="color:#8a9a78">✅ 无错误</p>' : ''}
             </div>
         </div>
@@ -866,7 +881,7 @@ function exportDoc(): void {
     L.push(`> 导出时间：${new Date().toLocaleString('zh-CN')}`);
     L.push(`> 技能总数 ${act.length}｜典故主 ${byOwner.size} 位｜通用技 ${generic.length} 条`);
     L.push(`> 六计重复的典故主：**${dupOwners}** 位（0 = 全部符合"一将六计各异"）`);
-    L.push(`> 游戏未收录的典故主（孤儿）：**${orphanOwners}** 种`);
+    L.push(`> 游戏未收录、待日后挂将的典故主：**${orphanOwners}** 种（史料名已保留）`);
     L.push('');
     L.push('---');
     L.push('');

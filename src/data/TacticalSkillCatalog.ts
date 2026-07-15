@@ -350,7 +350,7 @@ const FATE: TacticalSkillEntry[] = [
         magnitude: 1, comebackThreshold: 0.8, engineStatus: 'ready',
     },
     {
-        id: 'ts_017', layer: 'tactical', series: 'fate', index: 17,
+        id: 'ts_017', ownerName: '管仲', layer: 'tactical', series: 'fate', index: 17,
         displayName: '转败为功', sourceQuote: '《史记·管晏列传》：“善因祸而为福，转败而为功。”',
         baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
         magnitude: 1, comebackThreshold: 0.5, engineStatus: 'ready',
@@ -479,7 +479,7 @@ const CASUALTY: TacticalSkillEntry[] = [
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.1, engineStatus: 'ready'},
     {
-        id: 'ts_037', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 37,
+        id: 'ts_037', ownerName: '伶州鸠', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 37,
         displayName: '众志成城', sourceQuote: '《国语·周语下》：“众心成城，众口铄金。”',
         baseEffect: 'win_casualty_reduction', condition: 'battle_siege_defender', phase: 'mid_battle_passive',
         magnitude: 0.5, engineStatus: 'ready',
@@ -657,7 +657,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.25, engineStatus: 'ready',
     },
     {
-        id: 'ts_070', layer: 'tactical', series: 'enhance', index: 70,
+        id: 'ts_070', ownerName: '松赞干布', ownerGeneralId: 'tubo_songzanganbu', layer: 'tactical', series: 'enhance', index: 70,
         displayName: '席卷驰突', sourceQuote: '《新唐书·吐蕃传》：“遂并诸羌，雄霸西域。”',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.05, engineStatus: 'ready',
@@ -890,7 +890,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.3, engineStatus: 'ready'},
     {
-        id: 'ts_104', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 104,
+        id: 'ts_104', ownerName: '夫余', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 104,
         displayName: '负险固守', sourceQuote: '《后汉书·东夷传》：“夫余以员栅为城，恃险固守。”',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive',
         magnitude: 1.25, engineStatus: 'ready'},
@@ -1161,7 +1161,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.5, engineStatus: 'ready',
     },
     {
-        id: 'ts_166', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 166,
+        id: 'ts_166', ownerName: '国佐', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 166,
         displayName: '背城借一', sourceQuote: '《左传·成公二年》：“请收合余烬，背城借一。”《左传·成公二年》：“请收合余烬，背城借一。”背城决死一战，通用。',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive',
         magnitude: 1.25, engineStatus: 'ready',
@@ -1367,7 +1367,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.1, engineStatus: 'ready',
     },
     {
-        id: 'ts_200', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'fate', index: 200,
+        id: 'ts_200', ownerName: '张辽', ownerGeneralId: 'lu_zhangliao', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'fate', index: 200,
         displayName: '登旅致师', sourceQuote: '古代致师挑战，两军对垒时单车或单骑突阵挑战，如许褚、张辽等。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready',
@@ -4426,6 +4426,7 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_014: '诸葛亮',
     ts_015: '赵云',
     ts_016: '郭嘉',
+    ts_017: '管仲',
     ts_018: '韩信',
     ts_019: '苻坚',
     ts_020: '秦穆公/孟明视',
@@ -4445,6 +4446,7 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_034: '元景安',
     ts_035: '汉高祖刘邦',
     ts_036: '吴起',
+    ts_037: '伶州鸠',
     ts_038: '诸葛亮',
     ts_039: '徐达',
     ts_040: '贾谊',
@@ -4475,6 +4477,7 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_067: '刘邦',
     ts_068: '邓艾',
     ts_069: '李靖',
+    ts_070: '松赞干布',
     ts_071: '关羽',
     ts_072: '马超',
     ts_073: '周瑜',
@@ -4507,6 +4510,7 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_100: '耿恭',
     ts_102: '秦始皇',
     ts_103: '晋文公',
+    ts_104: '夫余',
     ts_107: '李靖',
     ts_108: '苻坚',
     ts_109: '典韦',
@@ -4566,6 +4570,7 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_163: '陈庆之',
     ts_164: '田单',
     ts_165: '孙膑',
+    ts_166: '国佐',
     ts_167: '张巡',
     ts_168: '刘备',
     ts_169: '王平',
@@ -4599,6 +4604,7 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_197: '郝昭',
     ts_198: '关羽',
     ts_199: '白起',
+    ts_200: '张辽',
     ts_201: '项羽',
     ts_202: '李靖',
     ts_203: '章邯',
@@ -5207,5 +5213,4 @@ export function getSkillCharacter(skillId: string): string | undefined {
     // 内联典故主名（编辑器写入）优先 → 散表
     const entry = getTacticalSkillEntry(skillId);
     if (entry?.ownerName) return entry.ownerName;
-    return SKILL_CHARACTER[skillId];
-}
+    return SKILL
