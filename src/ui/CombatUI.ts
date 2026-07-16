@@ -982,24 +982,16 @@ export class CombatUI {
             effect: string,
             isFamous: boolean,
             isAttacker: boolean,
-            skillType: 'tactical' | 'strategic' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
+            skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
         ) => {
             const tag = document.createElement('div');
             const borderColor = isFamous ? 'rgba(255, 215, 0, 0.7)' : 'rgba(200, 200, 200, 0.6)';
             
-            // 加入攻守与战术/战略/地形/精锐颜色区分
+            // 战术 / 地形 / 精锐 / 文化颜色区分
             let bgColor = '';
             let sideColor = isAttacker ? '#ff8800' : '#00aabb'; // 默认战术/其他：攻橙 守蓝
 
-            if (skillType === 'strategic') {
-                if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(80, 10, 60, 0.85)' : 'rgba(50, 10, 40, 0.8)';
-                    sideColor = '#e033ff'; // 战略攻：紫
-                } else {
-                    bgColor = isFamous ? 'rgba(10, 60, 60, 0.85)' : 'rgba(10, 40, 40, 0.8)';
-                    sideColor = '#00e5ff'; // 战略守：青
-                }
-            } else if (skillType === 'pass') {
+            if (skillType === 'pass') {
                 // 关隘「据险而守」/文化中心「守土继绝」：使用岩石/大地色系
                 if (isAttacker) {
                     bgColor = isFamous ? 'rgba(70, 50, 20, 0.85)' : 'rgba(50, 40, 20, 0.8)';
@@ -1098,7 +1090,7 @@ export class CombatUI {
                 name: string,
                 effect: string,
                 famous: boolean,
-                skillType: 'tactical' | 'strategic' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
+                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
             ) => {
                 if (pending.length < 4) pending.push(createSkillTag(name, effect, famous, isAttacker, skillType));
             };

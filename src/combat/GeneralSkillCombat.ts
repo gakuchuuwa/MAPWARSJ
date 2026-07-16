@@ -1198,27 +1198,12 @@ export function getReinforcementJoinSkillDisplay(
     };
 }
 
-function appendStrategicDisplayTag(
-    tags: { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' | 'strategic' }[],
-    skillId: string,
-): void {
-    const str = getStrategicSkillDef(skillId);
-    if (!str) return;
-    if (tags.some((t) => t.name === str.displayName)) return;
-    tags.push({
-        name: str.displayName,
-        effectLabel: formatStrategicEffectLabel(str),
-        isFamous: true,
-        skillType: 'strategic',
-    });
-}
-
 export function getGeneralSkillDisplayTags(
     unit: IBattleUnit,
-): { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' | 'strategic' }[] {
+): { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' }[] {
     const profile = getGeneralProfile(unit.generalId);
     if (!profile) return [];
-    const tags: { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' | 'strategic' }[] = [];
+    const tags: { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' }[] = [];
     const famous = profile.tier === 'famous';
 
     const tacId = getActiveTacticalSkillId(unit);
@@ -1295,71 +1280,6 @@ function formatV1NativeTacticalDisplayLabel(entry: { baseEffect: string; magnitu
     if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')
         || be.includes('battle_duration')) return '挽败局';
     return '';
-}
-
-function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDef>): string {
-    if (!skill) return '';
-    switch (skill.effect) {
-        case 'march_speed_mult':
-            return `速度×${skill.magnitude}`;
-        case 'post_battle_troop_pct':
-            return `胜后+${Math.round(skill.magnitude * 100)}%`;
-        case 'equal_power_mult':
-            return `均势×${skill.magnitude}`;
-        case 'disadvantage_power_mult':
-            return `劣势×${skill.magnitude}`;
-        case 'advantage_skill_effect_mult':
-            return `优势技×${skill.magnitude}`;
-        case 'terrain_tactical_double':
-            return `地形技×${skill.magnitude}`;
-        case 'garrison_defense_mult':
-            return `守城×${skill.magnitude}`;
-        case 'post_battle_recruit_enemy_pct':
-            return `收编${Math.round(skill.magnitude * 100)}%`;
-        case 'recruit_troops_mult':
-            return `征兵×${skill.magnitude}`;
-        // ── 战略大地图系 ──
-        case 'mountain_march_immunity':
-            return '山地不减速';
-        case 'ignore_small_city_zoc':
-            return '无视小城拦截';
-        case 'skip_post_battle_rest':
-            return '胜后即开拔';
-        case 'field_resupply':
-            return '野外缓补';
-        case 'city_growth_mult':
-            return `出身城增长×${skill.magnitude}`;
-        case 'recruit_cooldown_mult':
-            return `离城可募`;
-        // ── 视野 ──
-        case 'hide_during_peacetime':
-            return '非战隐身';
-        case 'hide_troop_count':
-            return '非战藏兵';
-        case 'bluff_troop_count':
-            return `虚兵×${skill.magnitude}`;
-        // ── 威慑 ──
-        case 'intimidate_instant_win':
-            return `不战胜${Math.round(skill.magnitude * 100)}%`;
-        case 'pre_battle_intimidate':
-            return `削城防${Math.round(skill.magnitude * 100)}%`;
-        case 'skip_disadvantaged_siege':
-            return `劣势跳城${Math.round(skill.magnitude * 100)}%`;
-        // ── 纵横 ──
-        case 'sabotage_garrison':
-            return '废将/精';
-        case 'lure_tiger_leave_mountain':
-            return '调守军出征';
-        case 'third_party_siege':
-            return `借兵≤${skill.magnitude}`;
-        // ── 防务 ──
-        case 'siege_approach_attrition':
-            return `逼近减${Math.round(skill.magnitude * 100)}%/秒`;
-        case 'garrison_reserve_troops':
-            return `留兵≥${skill.magnitude}`;
-        default:
-            return '';
-    }
 }
 
 /**
