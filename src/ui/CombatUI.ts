@@ -1139,30 +1139,36 @@ export class CombatUI {
         return getBattleTerrainKind(units, this.boundRegionalBattleField.type);
     }
 
+    /**
+     * 战力徽章/标签同源单位：强制用该侧放技指挥官。
+     * 文化·精锐·势·攻防风格·对势全读同一 unit，避免跟拍/主显示与指挥官错位丢精锐。
+     */
+    private resolvePowerBadgeUnit(fallback: IBattleUnit, side: 'attacker' | 'defender'): IBattleUnit {
+        return pickSideSkillGeneralUnit(this.getUnitsForSide(side)) ?? fallback;
+    }
+
     private formatBattlePowerBadge(unit: IBattleUnit, opponent: IBattleUnit | null, side: 'attacker' | 'defender'): string {
-        const isGarrison = unit.unitType === 'city';
+        unit = this.resolvePowerBadgeUnit(unit, side);
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
-        const role = isGarrison ? '城防' : battleType === 'siege' ? '攻城' : '野战';
+        const myUnits = this.getUnitsForSide(side);
+        const oppUnits = this.getOpponentUnitsFor(side);
 
         let product = 1;
         product *= getUnitCultureCombatMultiplier(unit);
         product *= getCampaignLegionCombatMultiplier(unit);
         product *= getOpeningTacticalPowerMultiplier(
-            this.getUnitsForSide(side),
-            this.getOpponentUnitsFor(side),
+            myUnits,
+            oppUnits,
             side === 'attacker',
             { battleType, terrain },
         );
 
         // ③ 势层
-        const myUnits = this.getUnitsForSide(side);
-        const oppUnits = this.getOpponentUnitsFor(side);
         product *= getAptitudePowerMult(myUnits, oppUnits);
 
-        // ④ 攻防层
-        const myGen = pickSideSkillGeneralUnit(myUnits);
-        product *= getAttackStylePowerMult(myGen, side === 'attacker');
+        // ④ 攻防层（与 unit 同源：指挥官）
+        product *= getAttackStylePowerMult(unit, side === 'attacker');
 
         // ① 运气
         const fateLuck = side === 'attacker'
@@ -1171,7 +1177,7 @@ export class CombatUI {
         product *= fateLuck;
 
         // ⑥ 六计局势匹配加成
-        if ((unit as any).situationSkillMatch) product *= SITUATION_MATCH_BONUS;
+        if (unit.situationSkillMatch) product *= SITUATION_MATCH_BONUS;
 
         if (Math.abs(product - 1) <= 0.001) return `×1`;
         return `×${parseFloat(product.toFixed(1))}`;
@@ -1182,6 +1188,7 @@ export class CombatUI {
         opponent: IBattleUnit | null,
         side: 'attacker' | 'defender',
     ): { chain: string; title: string } {
+        unit = this.resolvePowerBadgeUnit(unit, side);
         const isGarrison = unit.unitType === 'city';
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
@@ -1219,11 +1226,10 @@ export class CombatUI {
 
         // 精锐加成 → 不显文字（已在技能按钮展示）
 
-        // ②战术技 → 六计文字标签（用开局选定的 battleOverriddenSkillId，被否决则用 negatedSkillId）
-        const tacUnit = pickSideSkillGeneralUnit(this.getUnitsForSide(side));
+        // ②战术技 → 六计文字标签（与徽章同源：指挥官）
         let tacLabel = '';
-        if (tacUnit?.generalId) {
-            const skillId = tacUnit.battleOverriddenSkillId ?? tacUnit.negatedSkillId ?? null;
+        if (unit.generalId) {
+            const skillId = unit.battleOverriddenSkillId ?? unit.negatedSkillId ?? null;
             const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
             if (entry) {
                 const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
@@ -1268,14 +1274,13 @@ export class CombatUI {
         if (cultureLabel) parts.push(cultureLabel);
         if (tacLabel) parts.push(tacLabel);
 
-        // ③武将适性标签：攻防风格 + 三势（分开显示，各自按匹配高亮）
-        const generalUnit = pickSideSkillGeneralUnit(this.getUnitsForSide(side));
+        // ③武将适性标签：攻防风格 + 三势（与徽章同源：指挥官）
         let styleLabel = '';
         let aptLabel2 = '';
         let styleHighlight = 0;
         let aptHighlight2 = 0;
-        if (generalUnit?.generalId) {
-            const profile = getGeneralProfile(generalUnit.generalId);
+        if (unit.generalId) {
+            const profile = getGeneralProfile(unit.generalId);
             if (profile) {
                 const rawStyle = profile.attackStyle;
                 // 双行 → 按当前攻守角色派生 擅攻/擅守，不显示「双行」
@@ -1294,7 +1299,7 @@ export class CombatUI {
                         || (profile.attackStyle === 'attack' && side === 'attacker')
                         || (profile.attackStyle === 'defense' && side === 'defender') ? 2 : 0;
                     // 势匹配（三势：兵力局势 × 武将适性 × 技能六类 三者对齐）
-                    const skillId = tacUnit?.battleOverriddenSkillId ?? null;
+                    const skillId = unit.battleOverriddenSkillId ?? null;
                     const skillCls = skillId ? (EFFECT_TO_SIX_SET[resolveGeneralTacticalEntry(skillId)?.baseEffect ?? ''] as string | undefined) : undefined;
                     if (profile.aptitude === 'create' && sit === 'advantage' && skillCls && ['gongzhan', 'shengzhan'].includes(skillCls)) aptHighlight2 = 2;
                     else if (profile.aptitude === 'leverage' && sit === 'balance' && skillCls && ['dizhan', 'hunzhan'].includes(skillCls)) aptHighlight2 = 2;
