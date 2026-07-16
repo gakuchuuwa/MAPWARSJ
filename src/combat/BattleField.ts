@@ -51,6 +51,7 @@ import {
     applySkillCountersToUnits,
     setBattleTargetDurationForSkillUi,
     resolveSituationalSkillId,
+    getSkillSixClass,
     scheduleStalemateSkillShowcasePulses,
     setActiveOpeningPulseSink,
     resolveStalemateUiThresholdSec,
@@ -407,9 +408,9 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     /**
-     * 三势适性：开局定强弱后，给每个带将单位按局势(优/均/劣)选对应局技，写入 battleOverriddenSkillId。
-     * 未配3技的武将 resolveSituationalSkillId 返回 null → 不写 → 回退招牌单技（现役零影响）。
-     * 阈值：兵力比 >1.5 优势 / <0.67 劣势 / 其间均势。counter 系战斗中会再覆盖，顺序不冲突。
+     * 六计随机：开局定强弱后，给每个带将单位从攻/守三槽随机抽一个局技，写入 battleOverriddenSkillId。
+     * 同时判定技能六类是否匹配局势，写入 situationSkillMatch（优势→攻/胜、均势→敌/混、劣势→并/败）。
+     * 阈值：兵力比 >1.5 优势 / <0.67 劣势 / 其间均势。
      * 同时锁定 situationalAttDefRatio，供相持段技能释放排序（优势先 / 均势攻先）。
      */
     private assignSituationalSkills(): void {
@@ -1226,7 +1227,10 @@ export class BattleField implements IOpeningPulseSink {
                 const rr = rs.initialTotalTroops / Math.max(1, rw.initialTotalTroops);
                 const rsit = rr < 1.5 ? 'balance' : ((isAttacker ? this.attackerGroup : this.defenderGroup) === rs ? 'advantage' : 'disadvantage');
                 const rresult = resolveSituationalSkillId(unit, rsit as any, isAttacker);
-                if (rresult.skillId) unit.battleOverriddenSkillId = rresult.skillId;
+                if (rresult.skillId) {
+                    unit.battleOverriddenSkillId = rresult.skillId;
+                    unit.situationSkillMatch = rresult.situationMatch;
+                }
             }
         }
 

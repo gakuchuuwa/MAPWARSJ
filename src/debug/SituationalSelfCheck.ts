@@ -78,8 +78,8 @@ export function toggleSituationalSelfCheck(): void {
     el.id = 'dev-situational-selfcheck';
     el.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:100000;background:rgba(18,18,22,0.96);color:#e8e8e0;padding:14px 18px;border:1px solid rgba(220,140,70,0.6);border-radius:10px;font-family:SimSun,serif;font-size:13px;max-height:80vh;overflow:auto;box-shadow:0 6px 24px rgba(0,0,0,0.6);';
     el.innerHTML = `
-        <div style="font-size:15px;color:#ffd27a;margin-bottom:6px;">三势选技·战略技 实机自检 <span style="color:#888;font-size:12px;">(引擎真实 resolveSituationalSkillId · 再按 V 关闭)</span></div>
-        <div style="color:#9c9;font-size:12px;margin-bottom:8px;">开局判局: 我方兵力 &gt;1.5倍→优局 / &lt;0.67倍→劣局 / 之间→均局。同将三局应选不同技=播报不重复。</div>
+        <div style="font-size:15px;color:#ffd27a;margin-bottom:6px;">六计随机·实机自检 <span style="color:#888;font-size:12px;">(引擎真实 resolveSituationalSkillId · 再按 V 关闭)</span></div>
+        <div style="color:#9c9;font-size:12px;margin-bottom:8px;">六计随机：攻方三槽/守方三槽等概率抽1技。对势匹配（优→攻胜、均→敌混、劣→并败）有×1.15加成。</div>
         <table style="border-collapse:collapse;width:100%;">
             <thead><tr style="color:#f0b96a;border-bottom:1px solid #654;">
                 <th style="padding:3px 8px;text-align:left;">名将</th>

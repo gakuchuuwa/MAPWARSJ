@@ -50,9 +50,9 @@ import {
     PHASE_COLLAPSE_START,
     pickSideSkillGeneralUnit,
     resolveStalemateUiThresholdSec,
+    resolveSituationalSkillId,
     getAttackStylePowerMult,
     getAptitudePowerMult,
-    resolveSituationalSkillId,
     SITUATION_MATCH_BONUS,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
@@ -1218,16 +1218,12 @@ export class CombatUI {
         const eliteTier = getEliteTierLabel(unit);
         let eliteLabel = eliteTier ?? '';
 
-        // ②战术技 -> 六计文字标签（用六槽形势技，非旧 tacticalSkillId）
+        // ②战术技 → 六计文字标签（用开局选定的 battleOverriddenSkillId，不重复随机）
         const tacUnit = pickSideSkillGeneralUnit(this.getUnitsForSide(side));
         let tacLabel = '';
         if (tacUnit?.generalId) {
-            const myTroops = this.getUnitsForSide(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
-            const oppTroops = this.getOpponentUnitsFor(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
-            const ratio = myTroops / Math.max(1, oppTroops);
-            const sit = ratio > 1.5 ? 'advantage' : ratio < 0.67 ? 'disadvantage' : 'balance';
-            const result = resolveSituationalSkillId(tacUnit, sit as 'advantage'|'balance'|'disadvantage', side === 'attacker');
-            const entry = result.skillId ? resolveGeneralTacticalEntry(result.skillId) : null;
+            const skillId = tacUnit.battleOverriddenSkillId ?? null;
+            const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
             if (entry) {
                 const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
                 if (cls) {

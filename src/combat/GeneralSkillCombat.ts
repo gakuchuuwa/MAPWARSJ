@@ -97,6 +97,14 @@ export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSi
     return { skillId, situationMatch };
 }
 
+/** 查技能六类（攻战/胜战/敌战/混战/并战/败战），不在目录返回 null */
+export function getSkillSixClass(skillId: string | null | undefined): string | null {
+    if (!skillId) return null;
+    const entry = getTacticalSkillEntry(skillId);
+    if (!entry) return null;
+    return (EFFECT_TO_SIX_SET[entry.baseEffect] as string) ?? null;
+}
+
 function sideIsFirstSortie(units: IBattleUnit[]): boolean {
     return units.some(u => u.isFirstSortieSinceDepart === true);
 }
@@ -1637,11 +1645,20 @@ export function applyGeneralSkillSideRollMultipliers(
         attCommander,
         defCommander,
     );
+
+    // 六计局势匹配加成
+    let aRoll = tactical.attRoll;
+    let dRoll = tactical.defRoll;
+    const attUnit = attCommander ?? findEligibleGeneralUnit(attackerUnits);
+    const defUnit = defCommander ?? findEligibleGeneralUnit(defenderUnits);
+    if (attUnit?.situationSkillMatch) aRoll *= SITUATION_MATCH_BONUS;
+    if (defUnit?.situationSkillMatch) dRoll *= SITUATION_MATCH_BONUS;
+
     return applyStrategicBattleToRolls(
         attackerUnits,
         defenderUnits,
-        tactical.attRoll,
-        tactical.defRoll,
+        aRoll,
+        dRoll,
         battleType,
         terrain,
         emitUi,
@@ -1659,7 +1676,7 @@ export function applyStrategicRollMultipliersOnly(
     defCommander?: IBattleUnit | null,
 ): { attRoll: number; defRoll: number } {
     const terrain = getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
-    return applyStrategicBattleToRolls(
+    const base = applyStrategicBattleToRolls(
         attackerUnits,
         defenderUnits,
         attRoll,
@@ -1670,6 +1687,14 @@ export function applyStrategicRollMultipliersOnly(
         attCommander,
         defCommander,
     );
+    // 六计局势匹配加成（refresh 也带，与开局掷点一致）
+    let aRoll = base.attRoll;
+    let dRoll = base.defRoll;
+    const attUnit = attCommander ?? findEligibleGeneralUnit(attackerUnits);
+    const defUnit = defCommander ?? findEligibleGeneralUnit(defenderUnits);
+    if (attUnit?.situationSkillMatch) aRoll *= SITUATION_MATCH_BONUS;
+    if (defUnit?.situationSkillMatch) dRoll *= SITUATION_MATCH_BONUS;
+    return { attRoll: aRoll, defRoll: dRoll };
 }
 
 /**
@@ -2299,6 +2324,7 @@ export function applySkillCountersToUnits(
     if (defCounter.isNegated && attUnit) {
         attUnit.negatedSkillId = attSkillId;
         attUnit.battleOverriddenSkillId = null;
+        attUnit.situationSkillMatch = false;
         if (defCounter.isStolen && defUnit) {
             defUnit.battleOverriddenSkillId = attSkillId;
         }
@@ -2312,6 +2338,7 @@ export function applySkillCountersToUnits(
     if (attCounter.isNegated && defUnit) {
         defUnit.negatedSkillId = defSkillId;
         defUnit.battleOverriddenSkillId = null;
+        defUnit.situationSkillMatch = false;
         if (attCounter.isStolen && attUnit) {
             attUnit.battleOverriddenSkillId = defSkillId;
         }
