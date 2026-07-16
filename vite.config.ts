@@ -2758,8 +2758,14 @@ function serverSkillEditorSave(body: {
     if (body.usageTag) block = seUpsertStr(block, 'usageTag', body.usageTag);
     if (body.status) block = seUpsertStr(block, 'status', body.status);
     if (body.ownerGeneralId !== undefined) {
-        block = seUpsertStr(block, 'ownerGeneralId', body.ownerGeneralId);
-        block = seUpsertStr(block, 'ownerName', body.ownerGeneralId ? (body.ownerName ?? null) : null);
+        // 有 ID → 专属；无 ID + 有名 → 待挂将（保留史料名）；皆空 → 通用（清掉两字段）
+        if (body.ownerGeneralId) {
+            block = seUpsertStr(block, 'ownerGeneralId', body.ownerGeneralId);
+            block = seUpsertStr(block, 'ownerName', body.ownerName ?? null);
+        } else {
+            block = seUpsertStr(block, 'ownerGeneralId', null);
+            block = seUpsertStr(block, 'ownerName', body.ownerName?.trim() ? body.ownerName.trim() : null);
+        }
     }
     if (body.tierLabel) {
         if (SE_LOCKED_MAGNITUDE.has(body.id)) throw new Error(`${body.id} 为定稿锁定值，禁改档位`);

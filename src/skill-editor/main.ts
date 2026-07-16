@@ -339,7 +339,7 @@ function renderDetail(): void {
             ${['双行', '攻击', '防御'].map(v => `<option ${v === s.usageTag ? 'selected' : ''}>${v}</option>`).join('')}
         </select></div>
         <div class="se-field"><label>六类</label><span class="se-ro">${sixInfo}</span></div>
-        <div class="se-field"><label>典故主</label><input id="d-owner" list="dl-generals" value="${ownerVal}" placeholder="留空 = 通用；输入人名从名录选"></div>
+        <div class="se-field"><label>典故主</label><input id="d-owner" list="dl-generals" value="${ownerVal}" placeholder="留空=通用；在册人名从下拉选；待挂将可保留原样再保存"></div>
         <div class="se-field"><label>档位</label>${s.family && !s.locked
             ? `<select id="d-tier"><option value="">（不改）</option>${tierOptions(s)}</select>`
             : `<span style="color:#6a6254">${s.locked ? '定稿锁定，禁改' : '该效果家族不走档位（维持现值 ' + valueLabel(s) + '）'}</span>`}</div>
@@ -357,7 +357,11 @@ function renderDetail(): void {
 function parseOwnerInput(raw: string): { gid: string | null; name: string | null } {
     const t = raw.trim();
     if (!t) return { gid: null, name: null };
-    const m = t.match(/^(.+?)\s*\(([\w]+)\)$/);
+    // 编辑器展示态「张良 (待挂将)」：无在册 ID，保留史料名（勿当非法名整串报错）
+    const pending = t.match(/^(.+?)\s*[（(]待挂将[）)]$/);
+    if (pending) return { gid: null, name: pending[1].trim() || null };
+    // 在册选择：「关羽 (chu_guanyu)」
+    const m = t.match(/^(.+?)\s*[（(]([\w]+)[）)]$/);
     if (m) return { gid: m[2], name: m[1].trim() };
     const hits = GENERALS.filter(g => g.name === t);
     if (hits.length === 1) return { gid: hits[0].generalId, name: hits[0].name };

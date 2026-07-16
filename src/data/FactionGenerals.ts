@@ -632,7 +632,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
         xie_cj_d: { generalId: 'xie_xiefangde', generalName: '谢枋得', portrait: '/assets/JIANGNAN/xie_xiefangde.png' }, // 葛溪·信州抗元殉国
     wan: { generalId: 'wan_liuyuan', generalName: '刘源', portrait: '/assets/JIANGNAN/wan_liuyuan.png' },
     huang_d: { generalId: 'huang_d_sunshuao', generalName: '贾逵', portrait: '/assets/CENTRAL/huang_d_jiakui.png' },
-    wenzhou: { generalId: 'wenzhou_zhangcong', generalName: '方国珍', portrait: '/assets/JIANGNAN/wenzhou_zhangcong.png' },
+    wenzhou: { generalId: 'wenzhou_zhangcong', generalName: '方国珍', portrait: '/assets/JIANGNAN/wenzhou_fangguozhen.png' },
     wuling: { generalId: 'wuling_xiangdancheng', generalName: '相单程', portrait: '/assets/JIANGNAN/wuling_xiangdancheng.png' },
 
 // ── 江南区 2026-06-18 ──
