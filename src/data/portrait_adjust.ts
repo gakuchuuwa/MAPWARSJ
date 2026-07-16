@@ -1542,11 +1542,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -15
         },
-        "/assets/HEXI/woye_huangfugui.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -25
-        },
         "/assets/WESTERN/shache_xian_suoche_shachexian.png": {
             "scale": 0.91,
             "offsetX": 0,
@@ -3772,11 +3767,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -36
         },
-        "/assets/JIANGNAN/chuzhou_d_huangfuhui.png": {
-            "scale": 1.1,
-            "offsetX": 9,
-            "offsetY": -12
-        },
         "/assets/CENTRAL/__闲置__CENTRAL_17.png": {
             "scale": 0.95,
             "offsetX": 0,
@@ -5787,11 +5777,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 8
         },
-        "/assets/CENTRAL/__闲置__CENTRAL_23.png": {
-            "scale": 1.45,
-            "offsetX": 10,
-            "offsetY": 27
-        },
         "/assets/LINGNAN/__闲置__LINGNAN_33.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -5801,6 +5786,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_24.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_22.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_19.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/HEXI/__闲置__CENTRAL_21.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/CENTRAL/woye_huangfugui.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/JIANGNAN/__闲置__JIANGNAN_24.png": {
+            "scale": 1.1,
+            "offsetX": 9,
+            "offsetY": -12
+        },
+        "/assets/CENTRAL/chuzhou_d_huangfuhui.png": {
+            "scale": 1.45,
+            "offsetX": 10,
+            "offsetY": 27
         }
     },
     "folderGuides": {

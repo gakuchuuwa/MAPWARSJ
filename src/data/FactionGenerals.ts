@@ -508,7 +508,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     hunxie: { generalId: 'hunxie_xuziwei', generalName: '徐自为', portrait: '/assets/HEXI/hunxie_xuziwei.png' },
     guazhou: { generalId: 'guazhou_zhangshougui', generalName: '张守珪', portrait: '/assets/HEXI/guazhou_zhangshougui.png' },
     kang: { generalId: 'kang_liangshidou', generalName: '梁师都', portrait: '/assets/zhaosong/kang_liangshidou.png' },
-    woye: { generalId: 'woye_huangfugui', generalName: '皇甫规', portrait: '/assets/HEXI/woye_huangfugui.png' },
+    woye: { generalId: 'woye_huangfugui', generalName: '皇甫规', portrait: '/assets/CENTRAL/woye_huangfugui.png' },
     yingli: { generalId: 'yingli_jilasiyi', generalName: '籍辣思义', portrait: '/assets/HEXI/yingli_jilasiyi.png' },
     dangxiang: { generalId: 'dangxiang_liyuanhao', generalName: '李元昊', portrait: '/assets/HEXI/dangxiang_liyuanhao.png' },
     huizhou: { generalId: 'huizhou_yaosi', generalName: '姚兕', portrait: '/assets/HEXI/huizhou_yaosi.png' },
@@ -769,7 +769,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     shaozhou_d: { generalId: 'shaozhou_d_mayin', generalName: '马殷', portrait: '/assets/JIANGNAN/shaozhou_d_mayin.png' },
 
     song: { generalId: 'song_zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhaosong/song_zhaokuangyin.png' },
-    chuzhou_d: { generalId: 'chuzhou_d_huangfuhui', generalName: '皇甫晖', portrait: '/assets/JIANGNAN/chuzhou_d_huangfuhui.png' },
+    chuzhou_d: { generalId: 'chuzhou_d_huangfuhui', generalName: '皇甫晖', portrait: '/assets/CENTRAL/chuzhou_d_huangfuhui.png' },
     xiyuduhu: { generalId: 'xiyuduhu_banchao', generalName: '班超', portrait: '/assets/liuhan/xiyuduhu_banchao.png' },
     zizhou: { generalId: 'zizhou_wangjian', generalName: '王建', portrait: '/assets/BASHU/zizhou_wangjian.png' },
     cangzhou: { generalId: 'cangzhou_liurengong', generalName: '刘仁恭', portrait: '/assets/NORTH/cangzhou_liurengong.png' },
