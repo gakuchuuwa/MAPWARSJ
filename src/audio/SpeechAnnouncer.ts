@@ -432,7 +432,7 @@ export class SpeechAnnouncer {
     this.speak(text);
   }
 
-  /** 援军参战（跟随军团中途加入进行中的攻城/野战，守方→救援，攻方→攻打；势=加入时该侧的兵力比） */
+  /** 援军参战：只有「武将+精锐」或「无将无精锐」两种；势取本场开局锁定值。 */
   public announceReinforcementJoin(opts: {
     factionId: string;
     ju: CaptureJu;                        // 援军加入时该侧的势（兵力比判定）
@@ -447,12 +447,11 @@ export class SpeechAnnouncer {
     const ju: CaptureJu = opts.ju;
     const action = opts.side === 'attacker' ? '攻打' : '救援';
     const fFaction = getFactionNameForSpeech(opts.factionId);
-    const elClause = opts.eliteName ? `之${opts.eliteName}` : '';
-    const genLead = opts.generalName
-      ? `${opts.generalName}亲率${fFaction}${elClause}`
+    const genLead = opts.generalName && opts.eliteName
+      ? `${opts.generalName}亲率${opts.eliteName}`
       : `${fFaction}援军`;
 
-    const RUSH_PHRASE: Record<CaptureJu, string> = { advantage: '星夜驰骋', balance: '日夜兼程', disadvantage: '履险疾进' };
+    const RUSH_PHRASE: Record<CaptureJu, string> = { advantage: '星夜驰骋', balance: '日夜兼程', disadvantage: '冒死急行' };
     const text = `${genLead}，${RUSH_PHRASE[ju]}，${action}${opts.cityName}`;
     console.log("[Speech] 援军参战:", text);
     this.speak(text);
