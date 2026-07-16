@@ -2607,11 +2607,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -9
         },
-        "/assets/TIBET/tufa_d_tufanutan.png": {
-            "scale": 0.84,
-            "offsetX": 0,
-            "offsetY": -12
-        },
         "/assets/STEPPE/tumed_andahan.png": {
             "scale": 0.83,
             "offsetX": 0,
@@ -4322,11 +4317,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/TIBET/__闲置__TIBET_10.png": {
-            "scale": 1.15,
-            "offsetX": 0,
-            "offsetY": 34
-        },
         "/assets/STEPPE/__闲置__STEPPE_28.png": {
             "scale": 1.08,
             "offsetX": 4,
@@ -5771,6 +5761,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/TIBET/__闲置__TIBET_18.png": {
+            "scale": 0.84,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/TIBET/tufa_d_tufanutan.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 34
         }
     },
     "folderGuides": {
