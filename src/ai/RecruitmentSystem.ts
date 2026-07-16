@@ -195,14 +195,15 @@ export class RecruitmentSystem {
         }
     }
 
-    /** 驻军高的优先；同驻军随机，避免 cities_v2 录入顺序让固定录入顺序总是先出兵 */
+    /** 随机打乱候选顺序，确保每次开局军团来自不同的城 */
     private static sortSpawnCandidates(
         candidates: Array<{ city: { troops?: number }; armySize: number }>
     ): void {
-        candidates.sort((a, b) => {
-            const diff = (b.city.troops || 0) - (a.city.troops || 0);
-            return diff !== 0 ? diff : Math.random() - 0.5;
-        });
+        // Fisher-Yates 洗牌
+        for (let i = candidates.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+        }
     }
 
     private getCityRegion(city: RecruitmentCity): RegionType {

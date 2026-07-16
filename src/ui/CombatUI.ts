@@ -413,7 +413,7 @@ export class CombatUI {
         rightFrame.appendChild(this.rightGeneralNameTag);
 
         const leftIndGroup = document.createElement('div');
-        leftIndGroup.style.cssText = `position: absolute; bottom: 41.5%; right: -${uiPx(42)}; transform: translateX(50%); display: flex; gap: ${uiPx(4)}; z-index: 20; pointer-events: none;`;
+        leftIndGroup.style.cssText = `position: absolute; bottom: 41.5%; right: -${uiPx(7)}; transform: translateX(50%); display: flex; gap: ${uiPx(8)}; z-index: 20; pointer-events: none;`;
         this.indicatorLeftYou = this.createIndicatorNode('优');
         this.indicatorLeftLie = this.createIndicatorNode('劣');
         leftIndGroup.appendChild(this.indicatorLeftYou);
@@ -421,7 +421,7 @@ export class CombatUI {
         leftFrame.appendChild(leftIndGroup);
 
         const rightIndGroup = document.createElement('div');
-        rightIndGroup.style.cssText = `position: absolute; bottom: 41.5%; left: -${uiPx(42)}; transform: translateX(-50%); display: flex; gap: ${uiPx(4)}; z-index: 20; pointer-events: none;`;
+        rightIndGroup.style.cssText = `position: absolute; bottom: 41.5%; left: -${uiPx(7)}; transform: translateX(-50%); display: flex; gap: ${uiPx(8)}; z-index: 20; pointer-events: none;`;
         this.indicatorRightYou = this.createIndicatorNode('优');
         this.indicatorRightLie = this.createIndicatorNode('劣');
         rightIndGroup.appendChild(this.indicatorRightYou);
