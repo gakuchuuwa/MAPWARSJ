@@ -1076,8 +1076,10 @@ export class CombatUI {
                 width: 100%;
                 text-align: center;
             `;
-            effectEl.textContent = effect;
-            
+            // 效果行：空串（如文化卡只显四字词）时用不换行空格占位——
+            // 保证与双行卡完全等高、四字名同一水平线，避免行内卡片高低不齐
+            effectEl.textContent = effect || ' '; // 不换行空格占位(显式转义防被格式化误清)
+
             tag.appendChild(nameEl);
             tag.appendChild(effectEl);
             return tag;
@@ -1095,11 +1097,12 @@ export class CombatUI {
                 if (pending.length < 4) pending.push(createSkillTag(name, effect, famous, isAttacker, skillType));
             };
 
-            const passSkill = getPassGarrisonDefenseSkillDisplay(unit);
-            if (passSkill) add(passSkill.name, passSkill.effectLabel, false, 'pass');
-
-            const regionCenterSkill = getRegionCenterDefenseSkillDisplay(unit);
-            if (regionCenterSkill) add(regionCenterSkill.name, regionCenterSkill.effectLabel, false, 'pass');
+            // 关隘/名城不再显示为顶部四字卡（2026-07-17 主人定口径：顶部卡=恒有信息（文化/技能/精锐），
+            // 时有时无的条件信息走下方乘区链条二字词——关隘「险要」、区中心「名城」，避免双份显示）
+            // const passSkill = getPassGarrisonDefenseSkillDisplay(unit);
+            // if (passSkill) add(passSkill.name, passSkill.effectLabel, false, 'pass');
+            // const regionCenterSkill = getRegionCenterDefenseSkillDisplay(unit);
+            // if (regionCenterSkill) add(regionCenterSkill.name, regionCenterSkill.effectLabel, false, 'pass');
 
             // 文化区标签：攻/防四字词，与精锐技能同排卡片（无 ≠1 门槛：×1.00 的 习于行阵/据城而守 也常显，
             // 2026-07-17 自下方乘区链条移植上来，链条不再重复展示文化标签）
@@ -1111,22 +1114,15 @@ export class CombatUI {
                 };
                 // 档位以 GameConfig.CULTURE_COMBAT.TIER_TABLE 实际取值为准：
                 // 攻 1.20/1.15/1.10/1.00/0.85；防 1.20/1.15/1.10/1.05/1.00/0.90/0.85/0.80
-                //（旧表 0.95 是死档、0.85 缺失致青藏/汉北城防无卡，2026-07-17 修正；1.00 档补 常军攻/常城防）
+                //（旧表 0.95 是死档、0.85 缺失致青藏/汉北城防无卡，2026-07-17 修正）
+                // 2026-07-17 主人定：文化卡只显四字词，无效果行（三字档次词已移除）
                 const DEF_LABELS: Record<number, string> = {
                     1.20: '山河险固', 1.15: '水网为屏', 1.10: '城池为固', 1.05: '城池为固',
                     1.00: '据城而守', 0.90: '山城自顾', 0.85: '无险可恃', 0.80: '无遮无蔽',
                 };
-                const ATK_EFFECT: Record<number, string> = {
-                    1.20: '锐军攻', 1.15: '劲军攻', 1.10: '惯军攻', 1.00: '常军攻', 0.85: '弱军攻',
-                };
-                const DEF_EFFECT: Record<number, string> = {
-                    1.20: '固城防', 1.15: '坚城防', 1.10: '安城防', 1.05: '守城防',
-                    1.00: '常城防', 0.90: '薄城防', 0.85: '虚城防', 0.80: '空城防',
-                };
                 const isGarrison = unit.unitType === 'city';
                 const label = isGarrison ? (DEF_LABELS[round] ?? '') : (ATK_LABELS[round] ?? '');
-                const effect = isGarrison ? (DEF_EFFECT[round] ?? '') : (ATK_EFFECT[round] ?? '');
-                if (label) add(label, effect, false, 'culture');
+                if (label) add(label, '', false, 'culture');
             }
 
             // 兵合一处（不再显示为独立技能框，但下方乘区链条依然会有）
@@ -1886,7 +1882,8 @@ export class CombatUI {
         }
         if (!side) return;
         const pulseSide = side;
-        // 一将一技（战术/战略分键，避免战术闪卡被战略闪卡去重误吞）
+        // 一将一技按 skillId 分键去重（战略技 str_* 已在本函数入口拦截，不会到这里；
+        // 分键是为同将不同战术技——如开局技与逆局技——互不误吞）
         if (generalId) {
             const genKey = `${pulseSide}|${generalId}|${skillId ?? ''}`;
             if (this.skillPulseShownKeys.has(genKey)) return;
