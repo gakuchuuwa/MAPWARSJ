@@ -1302,11 +1302,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 12,
             "offsetY": -14
         },
-        "/assets/CENTRAL/jingzhou_gs_huangfusong.png": {
-            "scale": 0.78,
-            "offsetX": 0,
-            "offsetY": -21
-        },
         "/assets/CENTRAL/kong_d_kongrong.png": {
             "scale": 1.02,
             "offsetX": 3,
@@ -1366,11 +1361,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -7
-        },
-        "/assets/daming/qi_d_qijiguang.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -15
         },
         "/assets/daming/suzhou_d_shikefa.png": {
             "scale": 1.07,
@@ -5787,11 +5777,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/CENTRAL/__闲置__CENTRAL_24.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 7
-        },
         "/assets/CENTRAL/__闲置__CENTRAL_22.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5821,6 +5806,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.45,
             "offsetX": 10,
             "offsetY": 27
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_38.png": {
+            "scale": 0.78,
+            "offsetX": 0,
+            "offsetY": -21
+        },
+        "/assets/CENTRAL/jingzhou_gs_huangfusong.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/daming/__闲置__JIANGNAN_18.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/daming/1f2009c0-955d-436a-9f93-d7e736239d9b.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": -59
+        },
+        "/assets/daming/__闲置__JIANGNAN_20.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/daming/qi_d_qijiguang.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": -59
         }
     },
     "folderGuides": {
