@@ -1101,9 +1101,10 @@ export class CombatUI {
             const regionCenterSkill = getRegionCenterDefenseSkillDisplay(unit);
             if (regionCenterSkill) add(regionCenterSkill.name, regionCenterSkill.effectLabel, false, 'pass');
 
-            // 文化区标签：攻/防四字词，与精锐技能同排卡片
-            const cultureMult = getCultureOnlyCombatMultiplier(unit);
-            if (Math.abs(cultureMult - 1) > 0.001) {
+            // 文化区标签：攻/防四字词，与精锐技能同排卡片（无 ≠1 门槛：×1.00 的 习于行阵/据城而守 也常显，
+            // 2026-07-17 自下方乘区链条移植上来，链条不再重复展示文化标签）
+            {
+                const cultureMult = getCultureOnlyCombatMultiplier(unit);
                 const round = Math.round(cultureMult * 100) / 100;
                 const ATK_LABELS: Record<number, string> = {
                     1.20: '侵略如火', 1.15: '骁勇善战', 1.10: '能征惯战', 1.00: '习于行阵', 0.85: '保境安民',
@@ -1229,16 +1230,7 @@ export class CombatUI {
         const pushIfNotOne = (label: string, n: number) => {
             if (Math.abs(n - 1) > 0.001) labeled.push({ label, value: n });
         };
-        const cultureMult = getCultureOnlyCombatMultiplier(unit);
-        const round = Math.round(cultureMult * 100) / 100;
-        const ATK_LABELS: Record<number, string> = {
-            1.20: '侵略如火', 1.15: '骁勇善战', 1.10: '能征惯战', 1.00: '习于行阵', 0.85: '保境安民',
-        };
-        const DEF_LABELS: Record<number, string> = {
-            1.20: '山河险固', 1.15: '水网为屏', 1.10: '城池为固', 1.05: '城池为固',
-            1.00: '据城而守', 0.95: '山城自顾', 0.90: '无险可恃', 0.80: '无遮无蔽',
-        };
-        let cultureLabel = (isGarrison ? DEF_LABELS[round] : ATK_LABELS[round]) ?? '';
+        // 文化标签已移植到顶部技能/精锐卡片区（updateSkillBadges），链条不再展示
 
         // 关隘/要塞加成 -> 不显数字，显「险要」文字
         const passMult = getPassGarrisonCombatMultiplier(unit);
@@ -1291,7 +1283,7 @@ export class CombatUI {
             else if (fateLuck < 0.999) luckLabel = '厄运';
         }
 
-        if (labeled.length === 0 && !luckLabel && !joinLabel && !passLabel && !regionLabel && !cultureLabel && !tacLabel) {
+        if (labeled.length === 0 && !luckLabel && !joinLabel && !passLabel && !regionLabel && !tacLabel) {
             return { chain: '', title: '' };
         }
 
@@ -1305,13 +1297,6 @@ export class CombatUI {
         if (joinLabel) parts.push(tag(joinLabel));
         if (passLabel) parts.push(tag('险要'));
         if (regionLabel) parts.push(tag('名城'));
-        if (cultureLabel) {
-            // 文化标签独立配色：攻暖铜 守冷铁，与精锐/技能盒同排显眼
-            const cultureStyle = isAtt
-                ? 'border-color:rgba(200,140,60,0.55);background:rgba(50,25,5,0.45);'
-                : 'border-color:rgba(80,150,170,0.55);background:rgba(5,30,45,0.45);';
-            parts.push(tag(cultureLabel, cultureStyle));
-        }
         if (tacLabel) parts.push(tag(tacLabel));
 
         // ③武将适性标签：攻防风格 + 三势（与徽章同源：指挥官）
