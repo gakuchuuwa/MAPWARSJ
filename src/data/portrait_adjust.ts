@@ -1952,11 +1952,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 23
         },
-        "/assets/LINGNAN/dayu_wangshouren.png": {
-            "scale": 0.93,
-            "offsetX": 1,
-            "offsetY": -6
-        },
         "/assets/LINGNAN/dengmaoqi_dengmaoqi.png": {
             "scale": 0.92,
             "offsetX": 0,
@@ -4752,11 +4747,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/LINGNAN/__闲置__LINGNAN_21.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 7
-        },
         "/assets/LINGNAN/guangping_ruanwenzhang.png": {
             "scale": 0.96,
             "offsetX": 0,
@@ -5776,6 +5766,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -5
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_32.png": {
+            "scale": 0.93,
+            "offsetX": 1,
+            "offsetY": -6
+        },
+        "/assets/LINGNAN/dayu_wangshouren.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 7
         }
     },
     "folderGuides": {

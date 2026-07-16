@@ -80,7 +80,7 @@ function getLegionEliteBadgeName(unit: IBattleUnit): string {
 function getEliteTierLabel(unit: IBattleUnit): string | null {
     const tier = getUnitEliteTier(unit);
     if (tier !== null) {
-        const LABELS = ['天军', '王师', '精锐', '劲旅', '戍卫'];
+        const LABELS = ['天神军', '王者师', '劲锐旅', '精锐团', '戍卫营'];
         return LABELS[tier] ?? null;
     }
     // fallback：从 entity 的 cityId 直接查精锐 config
@@ -89,7 +89,7 @@ function getEliteTierLabel(unit: IBattleUnit): string | null {
     if (cityId) {
         const config = getCityEliteConfig(cityId);
         if (config?.tier !== undefined) {
-            const LABELS = ['天军', '王师', '精锐', '劲旅', '戍卫'];
+            const LABELS = ['天神军', '王者师', '劲锐旅', '精锐团', '戍卫营'];
             return LABELS[config.tier] ?? null;
         }
     }
@@ -1114,7 +1114,10 @@ export class CombatUI {
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
-                add(getLegionEliteBadgeName(unit), '加军攻', true, 'elite');
+                const tier = getUnitEliteTier(unit);
+                const TIER_LABELS = ['天神军', '王者师', '劲锐旅', '精锐团', '戍卫营'];
+                const tierLabel = tier !== null ? (TIER_LABELS[tier] ?? '精锐') : '精锐';
+                add(getLegionEliteBadgeName(unit), tierLabel, true, 'elite');
             }
 
             for (const tag of pending) box.appendChild(tag);
