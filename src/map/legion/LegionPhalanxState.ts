@@ -143,6 +143,34 @@ export class LegionPhalanxStateManager {
             state.isFighting = false;
         }
 
+        // Revival Logic（战损侵蚀的逆操作，2026-07-16）：
+        // 旧 bug：DEAD 格永不复活——打残过的军团补满兵后地图上仍缺人，直到缩放触发重建。
+        // 按同一比例公式复活：① 新战斗开始 maxTroops 重置 → ratio=1 满员归位；
+        // ② 和平期补员/伤兵归队 → 逐步复活。内圈先活（与"外圈先死"对称）。
+        {
+            const healthRatio = Math.min(1, Math.max(0, troops / Math.max(1, state.maxTroops)));
+            const targetAlive = Math.ceil(state.slots.length * healthRatio);
+            let currentAlive = 0;
+            state.slots.forEach(s => { if (s.state === 'ALIVE') currentAlive++; });
+            let reviveNeeded = targetAlive - currentAlive;
+            if (reviveNeeded > 0) {
+                const candidates: number[] = [];
+                state.slots.forEach((s, i) => { if (s.state !== 'ALIVE') candidates.push(i); });
+                candidates.sort((a, b) => a - b); // Low Index 先复活（内圈）
+                for (let i = 0; i < candidates.length && reviveNeeded > 0; i++) {
+                    const slot = state.slots[candidates[i]];
+                    slot.state = 'ALIVE';
+                    slot.stateStartTime = tick;
+                    slot.deathDirection = undefined;
+                    slot.deadOffsetX = undefined;
+                    slot.deadOffsetY = undefined;
+                    slot.deadLat = undefined;
+                    slot.deadLng = undefined;
+                    reviveNeeded--;
+                }
+            }
+        }
+
         // Erosion Logic
         if (state.isFighting && troops < state.lastTroops) {
             const healthRatio = Math.max(0, troops / Math.max(1, state.maxTroops));
