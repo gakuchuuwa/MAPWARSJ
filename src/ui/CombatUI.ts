@@ -1056,6 +1056,8 @@ export class CombatUI {
                 color: #fff8e0;
                 letter-spacing: 1px;
                 margin-bottom: ${uiPx(2)};
+                position: relative;
+                top: ${uiPx(7)};
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
