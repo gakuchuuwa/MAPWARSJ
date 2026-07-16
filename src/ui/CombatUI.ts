@@ -1109,13 +1109,24 @@ export class CombatUI {
                 const ATK_LABELS: Record<number, string> = {
                     1.20: '侵略如火', 1.15: '骁勇善战', 1.10: '能征惯战', 1.00: '习于行阵', 0.85: '保境安民',
                 };
+                // 档位以 GameConfig.CULTURE_COMBAT.TIER_TABLE 实际取值为准：
+                // 攻 1.20/1.15/1.10/1.00/0.85；防 1.20/1.15/1.10/1.05/1.00/0.90/0.85/0.80
+                //（旧表 0.95 是死档、0.85 缺失致青藏/汉北城防无卡，2026-07-17 修正；1.00 档补 常军攻/常城防）
                 const DEF_LABELS: Record<number, string> = {
                     1.20: '山河险固', 1.15: '水网为屏', 1.10: '城池为固', 1.05: '城池为固',
-                    1.00: '据城而守', 0.95: '山城自顾', 0.90: '无险可恃', 0.80: '无遮无蔽',
+                    1.00: '据城而守', 0.90: '山城自顾', 0.85: '无险可恃', 0.80: '无遮无蔽',
+                };
+                const ATK_EFFECT: Record<number, string> = {
+                    1.20: '锐军攻', 1.15: '劲军攻', 1.10: '惯军攻', 1.00: '常军攻', 0.85: '弱军攻',
+                };
+                const DEF_EFFECT: Record<number, string> = {
+                    1.20: '固城防', 1.15: '坚城防', 1.10: '安城防', 1.05: '守城防',
+                    1.00: '常城防', 0.90: '薄城防', 0.85: '虚城防', 0.80: '空城防',
                 };
                 const isGarrison = unit.unitType === 'city';
                 const label = isGarrison ? (DEF_LABELS[round] ?? '') : (ATK_LABELS[round] ?? '');
-                if (label) add(label, `${cultureMult.toFixed(2)}×`, false, 'culture');
+                const effect = isGarrison ? (DEF_EFFECT[round] ?? '') : (ATK_EFFECT[round] ?? '');
+                if (label) add(label, effect, false, 'culture');
             }
 
             // 兵合一处（不再显示为独立技能框，但下方乘区链条依然会有）
