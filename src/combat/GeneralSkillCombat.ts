@@ -41,7 +41,7 @@ import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOO
 import { readSiegeGarrisonEliteName } from './SiegeGarrisonTier';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText, spawnMapPulse, getFollowedArmyId } from '../utils/MapFloatingText';
-export { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT };
+export { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT, FAMOUS_GENERAL_MULT };
 
 export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
     if (unit.battleOverriddenSkillId !== undefined) {
@@ -930,7 +930,7 @@ const STRATEGIC_PULSE_COLORS: Record<string, string> = {
     str_19: '#cc8844', // 不战而屈 威慑
     str_20: '#cc8844', // 先声夺人 威慑
     str_21: '#cc8844', // 越城而走 威慑
-    str_22: '#ccaadd', // 釜底抽薪 纵横
+    str_22: '#ccaadd', // 翦除羽翼 纵横
     str_23: '#ccaadd', // 调虎离山 纵横
     str_24: '#ccaadd', // 坐收渔翁 纵横
     str_25: '#55ff55', // 足食足兵

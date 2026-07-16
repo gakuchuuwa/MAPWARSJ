@@ -793,12 +793,15 @@ export class SiegeManager {
 
         // ── 纵横技（必须在守城加成 applySiegeGarrisonBoostIfNeeded 前执行，确保 spawnUsed 优先消耗）──
 
-        // 釜底抽薪：攻城前消耗守城将/精出场配额
+        // 翦除羽翼：攻城前按 magnitude 概率消耗守城将/精出场配额（原100%必触发过强：守方次次无将无精）
         if (generalHasStrategicEffect(army, 'sabotage_garrison')) {
-            targetCity.spawnGeneralUsed = true;
-            targetCity.spawnEliteUsed = true;
-            army.markPendingPostBattleDiplomacyFx('sabotage_garrison');
-            siegeLog(`[纵横] 釜底抽薪：【${targetCity.name}】将/精出场配额已消耗`);
+            const chance = getGeneralStrategicMagnitude(army, 'sabotage_garrison', 0.25);
+            if (Math.random() < chance) {
+                targetCity.spawnGeneralUsed = true;
+                targetCity.spawnEliteUsed = true;
+                army.markPendingPostBattleDiplomacyFx('sabotage_garrison');
+                siegeLog(`[纵横] 翦除羽翼触发：【${targetCity.name}】将/精出场配额已消耗`);
+            }
         }
 
         // 调虎离山：攻城前守城将/精组建军团出征（仅有将/精才出兵）

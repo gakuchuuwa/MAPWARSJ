@@ -52,6 +52,7 @@ import {
     resolveSituationalSkillId,
     getAttackStylePowerMult,
     getAptitudePowerMult,
+    getFamousGeneralMult,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -1182,6 +1183,9 @@ export class CombatUI {
         // ④ 攻防层（与 unit 同源：指挥官）
         product *= getAttackStylePowerMult(unit, side === 'attacker');
 
+        // ⑤ 名将光环（tier='famous' ×1.20）
+        product *= getFamousGeneralMult(unit);
+
         // ① 运气（读当前值：开场=开局值，败战翻盘后=重掷值）
         const fateLuck = side === 'attacker'
             ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
@@ -1321,6 +1325,10 @@ export class CombatUI {
         const aptColor = side === 'attacker' ? 'rgba(255,180,40,1)' : 'rgba(80,200,240,1)';
         if (styleLabel && styleHighlight === 2) parts.push(`<span style="color:${aptColor};font-weight:700;">${styleLabel}</span>`);
         if (aptLabel2 && aptHighlight2 === 2) parts.push(`<span style="color:${aptColor};font-weight:700;">${aptLabel2}</span>`);
+        // ⑤ 名将光环（名将常显，普将不显）
+        if (unit.generalId && getGeneralProfile(unit.generalId)?.tier === 'famous') {
+            parts.push(`<span style="color:${aptColor};font-weight:700;">名将</span>`);
+        }
         if (numChain) parts.push(numChain);
         const chain = parts.join(' ');
 

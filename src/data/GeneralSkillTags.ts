@@ -721,7 +721,7 @@ export const STRATEGIC_SKILL_TAGS = [
     { id: 'str_20', grid: 'S⑳', name: '先声夺人', tags: ['战前削敌', '震慑'], terrain: '攻城' },
     { id: 'str_21', grid: 'S㉑', name: '越城而走', tags: ['跳城', '避战'], terrain: '行军' },
     // ── 纵横类 ──
-    { id: 'str_22', grid: 'S㉒', name: '釜底抽薪', tags: ['废将', '破防'], terrain: '攻城' },
+    { id: 'str_22', grid: 'S㉒', name: '翦除羽翼', tags: ['废将', '破防'], terrain: '攻城' },
     { id: 'str_23', grid: 'S㉓', name: '调虎离山', tags: ['调守军', '空城'], terrain: '攻城' },
     { id: 'str_24', grid: 'S㉔', name: '坐收渔翁', tags: ['借兵', '助攻'], terrain: '攻城' },
     // ── 防务类 ──
