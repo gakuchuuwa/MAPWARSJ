@@ -2523,6 +2523,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_yancheng2', name: '郾城', factionId: 'yanchuan_d', lat: 33.58, lng: 114.03, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
 
+
+
     { id: 'city_xuanhu', name: '悬瓠', factionId: 'yuan_cj_d', lat: 33.01, lng: 114.36, type: 'medium_city', troops: 20000, region: 'CENTRAL' },
 
 

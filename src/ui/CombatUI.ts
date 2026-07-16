@@ -772,6 +772,10 @@ export class CombatUI {
             text-shadow: 0 1px 3px rgba(0,0,0,0.9);
             white-space: nowrap;
             display: none;
+            padding: ${uiPx(2)} ${uiPx(6)};
+            border: 1px solid ${isAtt ? 'rgba(253, 185, 49, 0.35)' : 'rgba(90, 170, 190, 0.35)'};
+            border-radius: 3px;
+            background: ${isAtt ? 'rgba(60, 25, 5, 0.4)' : 'rgba(10, 35, 55, 0.4)'};
         `;
 
         const nameSpan = document.createElement('span');
