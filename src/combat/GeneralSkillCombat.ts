@@ -947,6 +947,22 @@ type StrategicMapFxUnit = Pick<IBattleUnit, 'id' | 'generalId'>;
 
 const strategicMapFxDedupe = new Map<string, number>();
 
+/** 防务战略技脉冲：同城同 effect 最短间隔（现实毫秒） */
+const DEFENSE_PULSE_MIN_INTERVAL_MS = 15_000;
+
+/** 变季类防务 effect：每城每游戏季至多 pulse 一次 */
+const DEFENSE_PULSE_SEASON_ONCE_EFFECTS: ReadonlySet<StrategicEffect> = new Set([
+    'city_growth_mult',
+]);
+
+const defensePulseSeasonShown = new Set<string>();
+
+function getGameSeasonDedupeTag(): string | null {
+    const ts = (window as any).game?.timeSystem as { getYear?: () => number; getSeason?: () => string } | undefined;
+    if (!ts?.getYear || !ts?.getSeason) return null;
+    return `${ts.getYear()}|${ts.getSeason()}`;
+}
+
 function resolveGeneralStrategicSkillForEffect(
     generalId: string | null | undefined,
     expectedEffect: StrategicEffect,
@@ -989,6 +1005,75 @@ export function emitFollowedGeneralStrategicMapFx(
     return true;
 }
 
+/** 防务类据点锚将战略 effect（S⑤/S㉕/S㉖/S㉗）— 统一大地图脉冲 */
+export const DEFENSE_CITY_ANCHORED_EFFECTS = [
+    'siege_approach_attrition',
+    'city_growth_mult',
+    'recruit_cooldown_mult',
+    'garrison_reserve_troops',
+] as const satisfies readonly StrategicEffect[];
+
+type DefensePulseArmyContext = Pick<
+    Army,
+    'id' | 'homeCityId' | 'getSourceCityId' | 'getTargetCity'
+>;
+
+/** 跟拍军团与据点有关联：出身/来源城 或 当前行军目标城 */
+export function isFollowedArmyRelatedToCity(
+    army: DefensePulseArmyContext,
+    cityId: string,
+): boolean {
+    if (army.id !== getFollowedArmyId()) return false;
+    const homeId = army.homeCityId ?? army.getSourceCityId?.();
+    if (homeId === cityId) return true;
+    const target = army.getTargetCity?.();
+    if (target?.id === cityId) return true;
+    return false;
+}
+
+/**
+ * 防务战略技统一脉冲：据点坐标 spawnMapPulse（非战斗 Cut-in）。
+ * str_05 坚壁清野 / str_25 足食足兵 / str_26 招兵买马 / str_27 屯兵经略 共用。
+ * 限频：同城同 effect 间隔 ≥15s；足食足兵（变季产兵）每城每季至多 1 次。
+ */
+export function emitFollowedCityAnchoredDefensePulse(
+    cityId: string,
+    cityLat: number,
+    cityLng: number,
+    expectedEffect: StrategicEffect,
+    contextArmy: DefensePulseArmyContext,
+    opts?: { dedupeKey?: string; dedupeMs?: number },
+): boolean {
+    if (!isFollowedArmyRelatedToCity(contextArmy, cityId)) return false;
+    const anchored = getCityAnchoredGeneral(cityId);
+    const skill = resolveGeneralStrategicSkillForEffect(anchored?.generalId, expectedEffect);
+    if (!skill) return false;
+
+    const intervalKey = opts?.dedupeKey ?? `${cityId}|${expectedEffect}`;
+    const minInterval = opts?.dedupeMs ?? DEFENSE_PULSE_MIN_INTERVAL_MS;
+
+    if (DEFENSE_PULSE_SEASON_ONCE_EFFECTS.has(expectedEffect)) {
+        const seasonTag = getGameSeasonDedupeTag();
+        if (seasonTag) {
+            const seasonKey = `${intervalKey}|${seasonTag}`;
+            if (defensePulseSeasonShown.has(seasonKey)) return false;
+        }
+    }
+
+    const now = Date.now();
+    if (now - (strategicMapFxDedupe.get(intervalKey) ?? 0) < minInterval) return false;
+
+    strategicMapFxDedupe.set(intervalKey, now);
+    if (DEFENSE_PULSE_SEASON_ONCE_EFFECTS.has(expectedEffect)) {
+        const seasonTag = getGameSeasonDedupeTag();
+        if (seasonTag) {
+            defensePulseSeasonShown.add(`${intervalKey}|${seasonTag}`);
+        }
+    }
+
+    return spawnMapPulse(cityLat, cityLng, skill.displayName, getStrategicPulseColor(skill.id));
+}
+
 /** 跟拍军团出身城：据点锚将战略 effect 触发（S⑭ / S⑮ 等）。脉冲显示在据点坐标上（非军团脚下）。 */
 export function emitFollowedHomeCityStrategicMapFx(
     army: Pick<Army, 'id' | 'homeCityId' | 'getSourceCityId' | 'getPosition'>,
@@ -1007,22 +1092,6 @@ export function emitFollowedHomeCityStrategicMapFx(
     const color = getStrategicPulseColor(skill.id);
     if (style === 'pulse') spawnMapPulse(cityLat, cityLng, skill.displayName, color);
     else spawnMapFloatingText(cityLat, cityLng, skill.displayName, color);
-    return true;
-}
-
-/** 敌方据点锚将战略减益（S⑤ 坚壁清野：跟拍受害攻方） */
-export function emitFollowedEnemyCityStrategicDebuffFx(
-    army: Pick<Army, 'id' | 'getPosition'>,
-    enemyCityId: string,
-    expectedEffect: StrategicEffect,
-): boolean {
-    if (army.id !== getFollowedArmyId()) return false;
-    if (getCityAnchoredStrategicMagnitude(enemyCityId, expectedEffect) >= 1) return false;
-    const anchored = getCityAnchoredGeneral(enemyCityId);
-    const skill = resolveGeneralStrategicSkillForEffect(anchored?.generalId, expectedEffect);
-    if (!skill) return false;
-    const pos = army.getPosition();
-    spawnMapFloatingText(pos.lat, pos.lng, skill.displayName, getStrategicPulseColor(skill.id));
     return true;
 }
 

@@ -524,6 +524,7 @@ export class CombatUI {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+            margin-top: ${uiPx(6)};
             margin-bottom: ${uiPx(6)};
             padding: 0 ${uiPx(T.portraitHorizontalReserve)};
             box-sizing: border-box;
@@ -1050,7 +1051,7 @@ export class CombatUI {
             const nameEl = document.createElement('div');
             nameEl.style.cssText = `
                 font-family: 'Noto Serif SC', serif;
-                font-size: ${uiPx(16)};
+                font-size: ${uiPx(18)};
                 font-weight: 900;
                 color: #fff8e0;
                 letter-spacing: 1px;
@@ -1118,7 +1119,7 @@ export class CombatUI {
                 // 2026-07-17 主人定：文化卡只显四字词，无效果行（三字档次词已移除）
                 const DEF_LABELS: Record<number, string> = {
                     1.20: '山河险固', 1.15: '水网为屏', 1.10: '城池为固', 1.05: '城池为固',
-                    1.00: '据城而守', 0.90: '山城自顾', 0.85: '无险可恃', 0.80: '无遮无蔽',
+                    1.00: '据城而守', 0.95: '凭城为守', 0.90: '山城自顾', 0.85: '无险可恃', 0.80: '无遮无蔽',
                 };
                 const isGarrison = unit.unitType === 'city';
                 const label = isGarrison ? (DEF_LABELS[round] ?? '') : (ATK_LABELS[round] ?? '');

@@ -24,7 +24,7 @@ import { getCityRegion, REGION_ORDER, RegionType, isRegionCenter } from '../syst
 import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile, getStrategicSkillDef } from '../data/GeneralSkills';
-import { getCityAnchoredStrategicMagnitude, emitFollowedHomeCityStrategicMapFx } from '../combat/GeneralSkillCombat';
+import { getCityAnchoredStrategicMagnitude, emitFollowedCityAnchoredDefensePulse } from '../combat/GeneralSkillCombat';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 
@@ -165,13 +165,12 @@ export class RecruitmentSystem {
                     const followedId = getFollowedArmyId();
                     const followedArmy = followedId ? this.legionManager.getLegionById(followedId) : null;
                     if (followedArmy) {
-                        emitFollowedHomeCityStrategicMapFx(
-                            followedArmy,
+                        emitFollowedCityAnchoredDefensePulse(
                             city.id,
                             city.latitude,
                             city.longitude,
                             'city_growth_mult',
-                            'pulse',
+                            followedArmy,
                         );
                     }
                 }
@@ -357,9 +356,23 @@ export class RecruitmentSystem {
         const followedId = getFollowedArmyId();
         const followedArmy = followedId ? this.legionManager.getLegionById(followedId) : null;
         if (followedArmy) {
-            // 仅该城锚将持 recruit_cooldown_mult 时才飘脉冲（str_26）
             if (getCityAnchoredStrategicMagnitude(city.id, 'recruit_cooldown_mult') < 1) {
-                emitFollowedHomeCityStrategicMapFx(followedArmy, city.id, city.latitude, city.longitude, 'recruit_cooldown_mult', 'pulse');
+                emitFollowedCityAnchoredDefensePulse(
+                    city.id,
+                    city.latitude,
+                    city.longitude,
+                    'recruit_cooldown_mult',
+                    followedArmy,
+                );
+            }
+            if (reserveMag > 0) {
+                emitFollowedCityAnchoredDefensePulse(
+                    city.id,
+                    city.latitude,
+                    city.longitude,
+                    'garrison_reserve_troops',
+                    followedArmy,
+                );
             }
         }
 

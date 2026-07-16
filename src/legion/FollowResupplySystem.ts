@@ -13,7 +13,7 @@ import { GameConfig } from '../config/GameConfig';
 import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
-import { generalHasStrategicEffect, generalIdHasStrategicEffect, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedEnemyCityStrategicDebuffFx } from '../combat/GeneralSkillCombat';
+import { generalHasStrategicEffect, generalIdHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../combat/GeneralSkillCombat';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 
 export class FollowResupplySystem {

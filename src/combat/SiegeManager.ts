@@ -13,7 +13,7 @@ import { gameLog } from '../utils/GameLogger';
 import { getFactionGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { getUnitEliteTier } from '../systems/CultureCombat';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
-import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedSiegeCityStrategicMapFx } from './GeneralSkillCombat';
+import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx } from './GeneralSkillCombat';
 import { applyLegionSpawnTierToArmy } from '../legion/LegionSpawnTier';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 
@@ -1197,18 +1197,6 @@ export class SiegeManager {
         // 战斗结束 = 事件结束（战后动作在后台运行）
         battleField.onBattleComplete = (winnerFactionId) => {
             siegeLog(`✅ [Siege] Battle complete. Winner: ${winnerFactionId}`);
-            const followedId = getFollowedArmyId();
-            const followedArmy = followedId ? this.legionManager.getLegionById(followedId) : null;
-            if (followedArmy && !followedArmy.isDestroyed) {
-                emitFollowedSiegeCityStrategicMapFx(
-                    followedArmy,
-                    targetCity.id,
-                    targetCity.latitude,
-                    targetCity.longitude,
-                    'garrison_reserve_troops',
-                    'pulse',
-                );
-            }
             clearSiegeGarrisonBoost(targetCity as typeof targetCity & SiegeGarrisonBoostFields);
             this.cityManager.stopSiegeEffect(targetCity.id, true);
             this.activeSieges.delete(targetCity.id);

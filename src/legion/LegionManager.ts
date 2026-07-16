@@ -1,7 +1,7 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
-import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedLongDriveDeepBypassFx, getLongDriveDeepBypassChance, emitFollowedEnemyCityStrategicDebuffFx } from '../combat/GeneralSkillCombat';
+import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, emitFollowedLongDriveDeepBypassFx, getLongDriveDeepBypassChance, emitFollowedCityAnchoredDefensePulse } from '../combat/GeneralSkillCombat';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
@@ -916,7 +916,13 @@ export class LegionManager {
         const shown = (army as any)._attritionDebuffShown || ((army as any)._attritionDebuffShown = new Set<string>());
         if (!shown.has(key)) {
             shown.add(key);
-            emitFollowedEnemyCityStrategicDebuffFx(army, targetCity.id, 'siege_approach_attrition');
+            emitFollowedCityAnchoredDefensePulse(
+                targetCity.id,
+                targetCity.latitude,
+                targetCity.longitude,
+                'siege_approach_attrition',
+                army,
+            );
         }
     }
 }
