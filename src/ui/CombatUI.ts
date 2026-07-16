@@ -894,7 +894,7 @@ export class CombatUI {
                 multSpan.textContent = '';
                 return;
             }
-            multSpan.textContent = chain;
+            multSpan.innerHTML = chain;
             multSpan.title = title;
             multSpan.style.display = 'inline';
         };
@@ -1267,6 +1267,39 @@ export class CombatUI {
         if (eliteLabel) parts.push(eliteLabel);
         if (cultureLabel) parts.push(cultureLabel);
         if (tacLabel) parts.push(tacLabel);
+
+        // ③武将适性标签：攻防风格 + 三势（分开显示，各自按匹配高亮）
+        const generalUnit = pickSideSkillGeneralUnit(this.getUnitsForSide(side));
+        let styleLabel = '';
+        let aptLabel2 = '';
+        let styleHighlight = 0;
+        let aptHighlight2 = 0;
+        if (generalUnit?.generalId) {
+            const profile = getGeneralProfile(generalUnit.generalId);
+            if (profile) {
+                const STYLE_MAP: Record<string, string> = { attack: '擅攻', defense: '擅守', balanced: '双行' };
+                const APT_MAP: Record<string, string> = { create: '造势', leverage: '借势', reverse: '逆势' };
+                styleLabel = STYLE_MAP[profile.attackStyle] ?? '';
+                aptLabel2 = APT_MAP[profile.aptitude ?? ''] ?? '';
+                if (styleLabel || aptLabel2) {
+                    const myTroops = this.getUnitsForSide(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
+                    const oppTroops = this.getOpponentUnitsFor(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
+                    const ratio = myTroops / Math.max(1, oppTroops);
+                    const sit: string = ratio > 1.5 ? 'advantage' : ratio < 0.67 ? 'disadvantage' : 'balance';
+                    // 位匹配（攻防风格）
+                    styleHighlight = profile.attackStyle === 'balanced'
+                        || (profile.attackStyle === 'attack' && side === 'attacker')
+                        || (profile.attackStyle === 'defense' && side === 'defender') ? 2 : 0;
+                    // 势匹配（三势）
+                    aptHighlight2 = (profile.aptitude === 'create' && sit === 'advantage')
+                        || (profile.aptitude === 'leverage' && sit === 'balance')
+                        || (profile.aptitude === 'reverse' && sit === 'disadvantage') ? 2 : 0;
+                }
+            }
+        }
+        const HIGHLIGHT_COLORS = ['rgba(120,120,120,0.6)', 'rgba(200,180,140,0.85)', 'rgba(255,215,80,1)'];
+        if (styleLabel) parts.push(`<span style="color:${HIGHLIGHT_COLORS[styleHighlight]};font-weight:700;">${styleLabel}</span>`);
+        if (aptLabel2) parts.push(`<span style="color:${HIGHLIGHT_COLORS[aptHighlight2]};font-weight:700;">${aptLabel2}</span>`);
         if (numChain) parts.push(numChain);
         const chain = parts.join(' ');
 
