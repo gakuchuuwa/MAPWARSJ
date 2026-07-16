@@ -990,41 +990,51 @@ export class CombatUI {
             
             // 战术 / 地形 / 精锐 / 文化颜色区分
             let bgColor = '';
-            let sideColor = isAttacker ? '#ff8800' : '#00aabb'; // 默认战术/其他：攻橙 守蓝
+            let bgHighlight = '';
+            let sideColor = isAttacker ? '#e63900' : '#0066cc'; // 默认战术/其他：攻血红 守深蓝
 
             if (skillType === 'pass') {
-                // 关隘「据险而守」/文化中心「守土继绝」：使用岩石/大地色系
                 if (isAttacker) {
                     bgColor = isFamous ? 'rgba(70, 50, 20, 0.85)' : 'rgba(50, 40, 20, 0.8)';
-                    sideColor = '#c4a45a'; // 关隘攻：土黄（理论上关隘不攻击，仅为防错）
+                    bgHighlight = 'rgba(196, 164, 90, 0.15)';
+                    sideColor = '#c4a45a';
                 } else {
                     bgColor = isFamous ? 'rgba(40, 50, 30, 0.85)' : 'rgba(30, 40, 25, 0.8)';
-                    sideColor = '#94ad6e'; // 关隘守：青灰/草石色
+                    bgHighlight = 'rgba(148, 173, 110, 0.15)';
+                    sideColor = '#94ad6e';
                 }
             } else if (skillType === 'elite') {
-                // 精锐部队：金属深色系
+                // 精锐部队：极具质感的黑金 / 暗夜冰银
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(50, 30, 15, 0.85)' : 'rgba(40, 20, 10, 0.8)';
-                    sideColor = '#ffbb00'; // 精锐攻：暗金
+                    bgColor = isFamous ? 'rgba(45, 25, 0, 0.9)' : 'rgba(30, 15, 0, 0.85)';
+                    bgHighlight = 'rgba(255, 200, 50, 0.15)';
+                    sideColor = '#ffc800'; // 纯粹的正金
                 } else {
-                    bgColor = isFamous ? 'rgba(15, 30, 40, 0.85)' : 'rgba(10, 20, 30, 0.8)';
-                    sideColor = '#88ccff'; // 精锐守：亮银/冰蓝
+                    bgColor = isFamous ? 'rgba(5, 20, 35, 0.9)' : 'rgba(0, 15, 25, 0.85)';
+                    bgHighlight = 'rgba(160, 210, 255, 0.15)';
+                    sideColor = '#aaddff'; // 冰霜银蓝
                 }
             } else if (skillType === 'culture') {
-                // 文化区标签：大地暖色系
+                // 文化区标签：沉稳的大地暖色 / 青岩色
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(60, 35, 10, 0.85)' : 'rgba(40, 20, 5, 0.8)';
-                    sideColor = '#d4883c'; // 文化攻：古铜
+                    bgColor = isFamous ? 'rgba(55, 30, 15, 0.85)' : 'rgba(40, 20, 10, 0.8)';
+                    bgHighlight = 'rgba(212, 136, 60, 0.15)';
+                    sideColor = '#c86b28'; // 偏暗的赤铜
                 } else {
-                    bgColor = isFamous ? 'rgba(10, 40, 35, 0.85)' : 'rgba(5, 25, 20, 0.8)';
-                    sideColor = '#5a9e8f'; // 文化守：青绿
+                    bgColor = isFamous ? 'rgba(10, 35, 25, 0.85)' : 'rgba(5, 25, 15, 0.8)';
+                    bgHighlight = 'rgba(90, 158, 143, 0.15)';
+                    sideColor = '#4a8f7c'; // 沉稳的青石
                 }
             } else {
-                // 战术或其他技能保持原色调（攻红 守蓝）
+                // 战术或其他：具有攻击性的红橙 / 深邃的海洋蓝
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(80, 20, 0, 0.85)' : 'rgba(50, 15, 0, 0.8)';
+                    bgColor = isFamous ? 'rgba(70, 10, 0, 0.85)' : 'rgba(45, 5, 0, 0.8)';
+                    bgHighlight = 'rgba(255, 60, 20, 0.12)';
+                    sideColor = '#e63900'; // 血红偏橙
                 } else {
-                    bgColor = isFamous ? 'rgba(10, 40, 70, 0.85)' : 'rgba(10, 25, 45, 0.8)';
+                    bgColor = isFamous ? 'rgba(0, 25, 60, 0.85)' : 'rgba(0, 15, 40, 0.8)';
+                    bgHighlight = 'rgba(40, 120, 255, 0.12)';
+                    sideColor = '#0066cc'; // 纯粹的深湛蓝
                 }
             }
 
@@ -1035,16 +1045,17 @@ export class CombatUI {
                 flex: 0 0 ${uiPx(98)};
                 width: ${uiPx(98)};
                 box-sizing: border-box;
-                background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, ${bgColor} 100%);
+                background: linear-gradient(180deg, ${bgHighlight} 0%, rgba(0,0,0,0.5) 40%, ${bgColor} 100%);
                 backdrop-filter: blur(4px);
-                border: 1px solid ${borderColor};
+                border: 1px solid rgba(0, 0, 0, 0.6);
+                border-top: 1px solid rgba(255, 255, 255, 0.15);
                 border-bottom: 2px solid ${sideColor};
                 border-radius: 4px;
                 padding: ${uiPx(4)} ${uiPx(3)};
                 box-shadow: 
-                    inset 0 1px 2px rgba(255,255,255,0.15), 
-                    inset 0 -8px 16px ${sideColor}30, 
-                    0 2px 6px rgba(0,0,0,0.85);
+                    inset 0 1px 1px rgba(255,255,255,0.25), 
+                    inset 0 -10px 20px ${sideColor}35, 
+                    0 3px 8px rgba(0,0,0,0.9);
                 overflow: hidden;
             `;
             
