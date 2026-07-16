@@ -788,7 +788,32 @@ export function getOpeningTacticalPowerMultiplier(
     const skill = getTacticalSkillForTiming(unit, 'opening');
     if (!skill || skill.effect !== 'ally_mult_1_2') return 1;
     if (!bridgedOpeningEnhanceActive(sideUnits, opponentUnits, isAttacker, opts)) return 1;
-    return skill.magnitude;
+    let mult = skill.magnitude;
+    // 对手地形反制（与引擎 applyAllyMult 一致：tactical/cancel/halve_enemy_terrain_buff）
+    const oppUnit = findEligibleGeneralUnit(opponentUnits);
+    if (oppUnit && mult > 1) {
+        const oppActiveId = getActiveTacticalSkillId(oppUnit);
+        if (oppActiveId) {
+            const selfTroops = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+            const oppTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+            const oppCtx = buildTacticalConditionContext({
+                battleType: opts?.battleType ?? 'field',
+                terrain: opts?.terrain ?? null,
+                selfTroops: oppTroops,
+                enemyTroops: selfTroops,
+                selfInitialTroops: oppTroops,
+                enemyInitialTroops: selfTroops,
+                selfIsAttacker: !isAttacker,
+                enemyHasFamousGeneral: sideHasFamousGeneral(sideUnits),
+                isFirstSortieSinceDepart: sideIsFirstSortie(opponentUnits),
+            });
+            const counter = resolveEnemyTerrainBuffCounter(oppActiveId, mult, oppCtx);
+            if (counter.adjustedMult < mult) {
+                mult = counter.adjustedMult;
+            }
+        }
+    }
+    return mult;
 }
 
 // ── 三势适性：势×局 开战战力系数（③整合。常量见 TacticalConstants.ts）──

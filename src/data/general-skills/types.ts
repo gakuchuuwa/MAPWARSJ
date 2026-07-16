@@ -51,7 +51,9 @@ export type TacticalEffect =
 export type StrategicEffect =
 
     // ── 军团攻 ──
-
+    // ⚠️ 以下三个 effect 对应的战略技（S③因敌制胜/S④威震华夏/S⑨以寡击众）
+    // 已从 catalogs.ts 注释移除（2026-07-16），因为战略技=大地图、战术技=战斗。
+    // 类型保留以兼容 formatStrategicEffectLabel / batch-manager 等显示标签。
     | 'equal_power_mult'          // 兵力接近时战力 ×1.3（因敌制胜，原所向披靡改）
 
     | 'advantage_skill_effect_mult'   // 优势时战术技效果 ×1.2（威震华夏）
@@ -82,6 +84,7 @@ export type StrategicEffect =
 
     | 'recruit_cooldown_mult'         // 征兵冷却 ×0.5（招兵买马）
 
+    // ⚠️ S⑧固若金汤 已从 catalogs.ts 注释移除（战略技=大地图、战术技=战斗）。
     | 'garrison_defense_mult'         // 守城城防战力 ×1.3（固若金汤）
 
     | 'siege_approach_attrition'      // 军团逼近据点时每秒减兵 magnitude（坚壁清野）
@@ -116,6 +119,7 @@ export type StrategicEffect =
 
     | 'post_battle_recruit_enemy_pct' // 胜后收编敌方开战总兵
 
+    // ⚠️ S②因地制宜 已从 catalogs.ts 注释移除（战略技=大地图、战术技=战斗）。
     | 'terrain_tactical_double';       // 地形匹配时战术技翻倍
 
 

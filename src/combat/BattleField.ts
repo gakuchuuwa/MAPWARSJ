@@ -123,6 +123,9 @@ export class BattleField implements IOpeningPulseSink {
     /** 开战命运系 luck（#12–#20 或默认），refresh 时回放以免被抹掉（P0 修复） */
     private attackerOpeningFateLuck = 1;
     private defenderOpeningFateLuck = 1;
+    /** 当前实际使用的 luck（开场 = opening；败战翻盘重掷后 = COMEBACK_LUCK_RANGE 区间值） */
+    private attackerCurrentFateLuck = 1;
+    private defenderCurrentFateLuck = 1;
     /** 每侧已触发的战术技 id（①–⑩ 每场一次类） */
     private readonly attackerTacticalTriggered = new Set<string>();
     private readonly defenderTacticalTriggered = new Set<string>();
@@ -507,6 +510,8 @@ export class BattleField implements IOpeningPulseSink {
             // 缓存开战命运 luck，供 refresh（援军编入 / 逆局）确定性回放，避免 #12–#20 掷点被抹掉
             this.attackerOpeningFateLuck = attFate.luck;
             this.defenderOpeningFateLuck = defFate.luck;
+            this.attackerCurrentFateLuck = attFate.luck;
+            this.defenderCurrentFateLuck = defFate.luck;
             const attRoll = sideBasePower(attUnits) * attFate.luck;
             const defRoll = sideBasePower(defUnits) * defFate.luck;
             const strategic = applyGeneralSkillSideRollMultipliers(
@@ -584,6 +589,9 @@ export class BattleField implements IOpeningPulseSink {
         const defFateLuck = rollLuckOnRecompute
             ? rollComebackLuck()
             : this.defenderOpeningFateLuck;
+        // 同步当前 luck，供战斗面板 badge 读取（败战翻盘后不再是开局值）
+        this.attackerCurrentFateLuck = attFateLuck;
+        this.defenderCurrentFateLuck = defFateLuck;
 
         const attAdj = this.adjustedPowerWithReinforcement(this.attackerGroup) * attFateLuck;
         const defAdj = this.adjustedPowerWithReinforcement(this.defenderGroup) * defFateLuck;
@@ -1346,6 +1354,10 @@ export class BattleField implements IOpeningPulseSink {
     public getAttackerOpeningFateLuck(): number { return this.attackerOpeningFateLuck; }
     /** 开局命运系运气值（守方），供战斗面板运气标签 */
     public getDefenderOpeningFateLuck(): number { return this.defenderOpeningFateLuck; }
+    /** 当前实际使用的 luck（开场=开局值，败战翻盘后=重掷值），供战斗面板 badge */
+    public getAttackerCurrentFateLuck(): number { return this.attackerCurrentFateLuck; }
+    /** 当前实际使用的 luck */
+    public getDefenderCurrentFateLuck(): number { return this.defenderCurrentFateLuck; }
 
     /**
      * 获取战场信息

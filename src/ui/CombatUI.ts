@@ -1169,10 +1169,10 @@ export class CombatUI {
         // ④ 攻防层（与 unit 同源：指挥官）
         product *= getAttackStylePowerMult(unit, side === 'attacker');
 
-        // ① 运气
+        // ① 运气（读当前值：开场=开局值，败战翻盘后=重掷值）
         const fateLuck = side === 'attacker'
-            ? (this.boundRegionalBattleField?.getAttackerOpeningFateLuck() ?? 1)
-            : (this.boundRegionalBattleField?.getDefenderOpeningFateLuck() ?? 1);
+            ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
+            : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
         product *= fateLuck;
 
         if (Math.abs(product - 1) <= 0.001) return `×1`;
@@ -1247,10 +1247,10 @@ export class CombatUI {
             else if (joinLuck < 0.999) joinLabel = '掣肘';
         }
 
-        // ①运气标签：不显数字，只显「好运」或「厄运」
+        // ①运气标签：不显数字，只显「好运」或「厄运」（读当前值）
         const fateLuck = side === 'attacker'
-            ? (this.boundRegionalBattleField?.getAttackerOpeningFateLuck() ?? null)
-            : (this.boundRegionalBattleField?.getDefenderOpeningFateLuck() ?? null);
+            ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? null)
+            : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? null);
         let luckLabel = '';
         if (fateLuck !== null && fateLuck !== undefined) {
             if (fateLuck > 1.001) luckLabel = '好运';
