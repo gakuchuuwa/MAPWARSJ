@@ -13,7 +13,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
 
   // ── 室町—战国—江户（辞典映射表）──
   ashikaga: { name: '奉公众', tier: 3 },         // 室町幕府直辖军，更多是身份象征和常规卫队，缺乏战略级大捷，降为T3知名。
-  edo: { name: '旗本武士', tier: 1 },          // 江户城·§5 #20 旗本（Hatamoto）
+    edo: { name: '旗本武士', tier: 1 },
     satsuma: { name: '萨摩隼人', tier: 2 },
     iga_d: { name: '伊贺众', tier: 3 },
   hashiba: { name: '黄母衣众', tier: 3 },        // 姬路城·秀吉亲卫母衣黄组（原七手组 T3）
@@ -39,7 +39,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   sanada_d: { name: '真田赤备', tier: 2 },            // “日本一之兵”，大坂夏之阵中战术冲锋的传奇代表，战术辨识度爆表，升入T2战术
   // ── 2026-06-17 令制国补点（古代据点名 + 精锐）──
   kaga_d: { name: '一向宗门徒', tier: 3 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）
-  date_d: { name: '伊达铁骑', tier: 3 },     // 缺乏重大战略级野战大捷，实为地方特色铁骑，降回T2
+    date_d: { name: '青叶骑铁', tier: 3 },
   higo_d: { name: '菊池党', tier: 3 },       // 九州豪强武士代名词，文化知名度高，但非战略主力，降为T3知名。
     iyo_d: { name: '伊予滩水军', tier: 4 },
   otomo_d: { name: '大友水军', tier: 3 },   // 无极高战术高光（逊于村上水军），属于常规地方水军，降回T3

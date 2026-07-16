@@ -1071,9 +1071,8 @@ export const PERIPHERY: CityDataV2[] = [
         note: '泗沘；百济治所/重镇',
     },
     
-    { id: 'city_edo', name: '江户城', factionId: 'edo', lat: 35.68, lng: 139.76, type: 'big_city', region: 'JAPAN', troops: 20000,
-        note: '江户城；德川幕府治所',
-    }, // [2026-05-30] 升 big_city: 江户幕府 264 年 + 1700 年代百万人口世界第一
+    { id: 'city_edo', name: '江户城', factionId: 'edo', lat: 35.68, lng: 139.76, type: 'big_city', troops: 20000, region: 'JAPAN' },
+ // [2026-05-30] 升 big_city: 江户幕府 264 年 + 1700 年代百万人口世界第一
 
     {
         id: 'city_kyoto',
@@ -1122,7 +1121,8 @@ export const PERIPHERY: CityDataV2[] = [
 
     // ── 2026-06-16 新增：日本令制国补点（方案A·6城）──
     { id: 'city_jianghu', name: '金泽', factionId: 'kaga_d', lat: 36.56, lng: 136.65, type: 'small_city', region: 'JAPAN', troops: 20000, note: '加贺一向一揆尾山御坊故地（金泽古名）；下间赖廉守备' },
-    { id: 'city_xiantai', name: '仙台', factionId: 'date_d', lat: 38.27, lng: 140.87, type: 'small_city', region: 'JAPAN', troops: 20000, note: '陆前国仙台平；伊达氏居城（古代地名，非江户城专名）' },
+    { id: 'city_xiantai', name: '青叶城', factionId: 'date_d', lat: 38.27, lng: 140.87, type: 'small_city', troops: 20000, region: 'JAPAN' },
+
     { id: 'city_xiongben', name: '熊本', factionId: 'higo_d', lat: 32.81, lng: 130.71, type: 'medium_city', region: 'JAPAN', troops: 20000, note: '肥后国熊本；菊池氏故地；江户期人口破10万，2026-06-18 升为中城' },
     { id: 'city_songshan', name: '松山', factionId: 'iyo_d', lat: 33.84, lng: 132.77, type: 'small_city', troops: 20000, region: 'JAPAN' },
 

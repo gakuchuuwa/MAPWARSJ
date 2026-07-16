@@ -289,7 +289,8 @@ export const FACTIONS: Faction[] = [
     { id: 'dayue', name: '大越' },
 
     { id: 'yamato', name: '大和' },
-    { id: 'edo', name: '德川' },
+    { id: 'edo', name: '武藏' },
+
 
     { id: 'izumo', name: '出云' },
     { id: 'satsuma', name: '萨摩' },
@@ -1259,7 +1260,8 @@ export const FACTIONS: Faction[] = [
     // 名张·伊贺国东境；远征精锐「伊贺众」,
     // ── 2026-06-16 新增：日本令制国补点（方案A·6城·间距≥50km）──
     { id: 'kaga_d', name: '一向宗' },   // 金泽·加贺一向一揆；一向宗门徒
-    { id: 'date_d', name: '伊达' },   // 仙台·陆前；伊达铁骑
+    { id: 'date_d', name: '仙台' },
+   // 仙台·陆前；伊达铁骑
     { id: 'higo_d', name: '肥后' },   // 熊本·菊池党
     { id: 'iyo_d', name: '伊予' },
     // 松山·河野水军

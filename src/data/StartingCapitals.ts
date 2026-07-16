@@ -146,7 +146,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'shimotsuke': 'city_utsunomiya',
     'aizu': 'city_tsuruga',
     'kaga_d': 'city_jianghu',
-    'date_d': 'city_xiantai',
+'date_d': 'city_xiantai',
     'higo_d': 'city_xiongben',
 'iyo_d': 'city_songshan',
     'otomo_d': 'city_funei',
