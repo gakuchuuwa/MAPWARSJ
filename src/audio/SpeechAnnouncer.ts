@@ -387,11 +387,14 @@ export class SpeechAnnouncer {
     const fFaction = getFactionNameForSpeech(opts.followerFactionId);
     let text: string;
     if (opts.win) {
-      if (!opts.enemyGeneralId) return; // 敌无将 → 不播（胜利句）
-      const enemy = getGeneralRecordByGeneralId(opts.enemyGeneralId);
-      if (!enemy) return;
+      // 跟随胜：主角结果永远播。敌方有将则续「敌国军，某将，败走」，无将则省将名只报敌国军。
+      const enemy = opts.enemyGeneralId ? getGeneralRecordByGeneralId(opts.enemyGeneralId) : null;
       const eFaction = opts.enemyFactionId ? getFactionNameForSpeech(opts.enemyFactionId) : "";
-      text = `${fFaction}军，${FIELD_WIN_METHOD[ju]}，${FIELD_WIN_BREAK[ju]}，${eFaction}军，${getGeneralNameForSpeech(enemy.generalId, enemy.generalName)}，${FIELD_WIN_ROUT[ju]}`;
+      const eLead = eFaction ? `${eFaction}军` : "敌军";
+      const enemyClause = enemy
+        ? `${eLead}，${getGeneralNameForSpeech(enemy.generalId, enemy.generalName)}`
+        : eLead;
+      text = `${fFaction}军，${FIELD_WIN_METHOD[ju]}，${FIELD_WIN_BREAK[ju]}，${enemyClause}，${FIELD_WIN_ROUT[ju]}`;
     } else {
       // 跟随败：只报跟随军团崩溃，不提敌方（always 播，野战里取代通用覆没语音）
       text = `${fFaction}军，${FIELD_LOSE[ju]}`;

@@ -1163,9 +1163,12 @@ export class BattleField implements IOpeningPulseSink {
         return this.defenderGroup.factionId;
     }
 
-    /** 开局攻守初始兵力比（attacker / defender），用于语音播报等判势。 */
+    /**
+     * 开局攻守兵力比（attacker / defender）——刚接战、任何武将技生效前锁定，全程不变。
+     * 所有播报与优劣均判势统一读此值：一场战斗只按开局兵力定一次势，直至结束。
+     */
     public getInitialAttDefRatio(): number {
-        return this.attackerGroup.initialTotalTroops / Math.max(1, this.defenderGroup.initialTotalTroops);
+        return this.situationalAttDefRatio;
     }
 
     /** 战场参考坐标（未溃败单位的重心，用于邻近增援判定） */
