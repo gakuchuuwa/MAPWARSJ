@@ -6,7 +6,7 @@
 export const APTITUDE_POWER_MULT: Record<string, Record<'advantage' | 'balance' | 'disadvantage', number>> = {
     //          优势   均势   劣势
     create:   { advantage: 1.20, balance: 1.00, disadvantage: 0.80 },
-    leverage: { advantage: 1.10, balance: 1.20, disadvantage: 1.10 },
+    leverage: { advantage: 0.90, balance: 1.20, disadvantage: 0.80 },
     reverse:  { advantage: 0.90, balance: 1.00, disadvantage: 1.20 },
 };
 

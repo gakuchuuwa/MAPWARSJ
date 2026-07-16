@@ -175,7 +175,7 @@ export class GameConfig {
         } as Record<string, readonly [number, number]>,
         /** region → 军团速 */
         SPEED_TABLE: {
-            STEPPE: 1.25, TIBET: 1.25, CENTRAL_ASIA: 1.15,
+            STEPPE: 1.20, TIBET: 1.20, CENTRAL_ASIA: 1.15,
             NORTHEAST: 1.00, HEXI: 1.20, NORTH: 1.00,
             CENTRAL: 1.00, WESTERN: 1.15,
             JAPAN: 0.85, KOREA: 1.00, JIANGNAN: 0.85,
@@ -183,7 +183,7 @@ export class GameConfig {
         } as Record<string, number>,
         /** region → 据点兵 */
         RECRUIT_TABLE: {
-            STEPPE: 0.75, TIBET: 0.75, CENTRAL_ASIA: 0.90,
+            STEPPE: 0.80, TIBET: 0.80, CENTRAL_ASIA: 0.90,
             NORTHEAST: 0.85, HEXI: 0.90, NORTH: 1.00,
             CENTRAL: 1.20, WESTERN: 0.90,
             JAPAN: 1.00, KOREA: 1.15, JIANGNAN: 1.15,
