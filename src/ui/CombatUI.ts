@@ -772,10 +772,6 @@ export class CombatUI {
             text-shadow: 0 1px 3px rgba(0,0,0,0.9);
             white-space: nowrap;
             display: none;
-            padding: ${uiPx(2)} ${uiPx(6)};
-            border: 1px solid ${isAtt ? 'rgba(253, 185, 49, 0.35)' : 'rgba(90, 170, 190, 0.35)'};
-            border-radius: 3px;
-            background: ${isAtt ? 'rgba(60, 25, 5, 0.4)' : 'rgba(10, 35, 55, 0.4)'};
         `;
 
         const nameSpan = document.createElement('span');
@@ -1284,12 +1280,16 @@ export class CombatUI {
 
         const numChain = labeled.map((l) => fmt(l.value)).join('×');
         const parts: string[] = [];
-        if (luckLabel) parts.push(luckLabel);
-        if (joinLabel) parts.push(joinLabel);
-        if (passLabel) parts.push('险要');
-        if (regionLabel) parts.push('名城');
-        if (cultureLabel) parts.push(cultureLabel);
-        if (tacLabel) parts.push(tacLabel);
+        // 标签框样式（每个词独立边框）
+        const isAtt = side === 'attacker';
+        const tag = (text: string, extraStyle = '') =>
+            `<span style=\"display:inline-block;padding:1px 5px;border:1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};border-radius:3px;background:${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};margin:0 1px;${extraStyle}\">${text}</span>`;
+        if (luckLabel) parts.push(tag(luckLabel));
+        if (joinLabel) parts.push(tag(joinLabel));
+        if (passLabel) parts.push(tag('险要'));
+        if (regionLabel) parts.push(tag('名城'));
+        if (cultureLabel) parts.push(tag(cultureLabel));
+        if (tacLabel) parts.push(tag(tacLabel));
 
         // ③武将适性标签：攻防风格 + 三势（与徽章同源：指挥官）
         let styleLabel = '';
@@ -1327,14 +1327,14 @@ export class CombatUI {
             }
         }
         const aptColor = side === 'attacker' ? 'rgba(255,180,40,1)' : 'rgba(80,200,240,1)';
-        if (styleLabel && styleHighlight === 2) parts.push(`<span style="color:${aptColor};font-weight:700;">${styleLabel}</span>`);
-        if (aptLabel2 && aptHighlight2 === 2) parts.push(`<span style="color:${aptColor};font-weight:700;">${aptLabel2}</span>`);
-        // ⑤ 名将光环（名将常显，普将不显）
+        if (styleLabel && styleHighlight === 2) parts.push(tag(styleLabel, `color:${aptColor};font-weight:700;`));
+        if (aptLabel2 && aptHighlight2 === 2) parts.push(tag(aptLabel2, `color:${aptColor};font-weight:700;`));
+        // ⑤ 名将光环
         if (unit.generalId && getGeneralProfile(unit.generalId)?.tier === 'famous') {
-            parts.push(`<span style="color:${aptColor};font-weight:700;">名将</span>`);
+            parts.push(tag('名将', `color:${aptColor};font-weight:700;`));
         }
-        if (numChain) parts.push(numChain);
-        const chain = parts.join(' ');
+        if (numChain) parts.push(tag(numChain));
+        const chain = parts.join('');
 
         const titleParts = labeled.map((l) => `${l.label}×${fmt(l.value)}`);
         if (joinLabel) titleParts.unshift(`援军:${joinLabel}(×${parseFloat(joinLuck!.toFixed(2))})`);
