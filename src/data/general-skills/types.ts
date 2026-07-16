@@ -87,7 +87,7 @@ export type StrategicEffect =
     // ⚠️ S⑧固若金汤 已从 catalogs.ts 注释移除（战略技=大地图、战术技=战斗）。
     | 'garrison_defense_mult'         // 守城城防战力 ×1.3（固若金汤）
 
-    | 'siege_approach_attrition'      // 军团逼近据点时每秒减兵 magnitude（坚壁清野）
+    | 'siege_approach_attrition'      // 本城被攻击（含沿途）时来犯军每秒减兵 magnitude（坚壁清野，录入锚将）
 
     | 'garrison_reserve_troops'       // 征兵时城市最低留兵 magnitude（屯兵经略）
 

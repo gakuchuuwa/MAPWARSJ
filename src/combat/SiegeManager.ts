@@ -218,6 +218,21 @@ export class SiegeManager {
         return !!battle && !battle.isOver;
     }
 
+    /** 军团是否在 pending 攻城队列（已触发、尚未抵达开打） */
+    public isArmyPendingSiege(armyId: string): boolean {
+        return this.pendingSieges.has(armyId);
+    }
+
+    /** 已开打攻城战中 targetCity 可能已清，按参战军团反查 siegeCityId */
+    public getActiveSiegeCityIdForArmy(army: Army): string | null {
+        if (!army.getIsInCombat() || army.currentBattleType !== 'siege') return null;
+        for (const [cityId, battle] of this.activeSieges) {
+            if (battle.isOver) continue;
+            if (battle.hasParticipant(army.id)) return cityId;
+        }
+        return null;
+    }
+
     /** 该城是否正被围攻或已有军团在途/排队攻城（驻军已投入战场，不可再募兵出城） */
     public isCityUnderAttack(cityId: string): boolean {
         if (this.hasActiveSiegeAt(cityId)) return true;

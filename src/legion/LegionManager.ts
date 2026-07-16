@@ -19,7 +19,8 @@ import { CityManager } from '../world/CityManager';
 import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
 import { City, LatLng, SiegeData } from '../types/core';
-import { getEuclideanDistance } from '../core/DistanceUtils';
+import { cityToLatLng, getEuclideanDistance } from '../core/DistanceUtils';
+import { getFollowedArmyId } from '../utils/MapFloatingText';
 import {
     releaseFieldBattleCombatState,
     tryEngageFieldBattle,
@@ -414,7 +415,7 @@ export class LegionManager {
                 this.followResupplySystem.tickStrategicFieldResupply(army, deltaTime);
             }
 
-            // 坚壁清野：军团逼近敌方据点时每秒减兵
+            // 坚壁清野：本城被攻击（含沿途/排队/已开战）时来犯军每秒减兵，技挂录入锚将
             this.tickApproachAttrition(army, deltaTime);
 
             // 行军 ZOC：进入非己方据点（含叛军 panjun）控制范围必须先停攻，不可绕路穿过
@@ -900,29 +901,67 @@ export class LegionManager {
         }
     }
 
-    /** 坚壁清野：军团逼近敌方据点时每秒减兵（在 update 循环中每帧调用） */
+    /**
+     * 坚壁清野（str_05）：守城据点录入锚将挂技；本城 isCityUnderAttack（1 宽）时，
+     * 来犯军团每秒 −magnitude（默认 1%），含沿途迫近、排队与已开战攻城。
+     */
     private tickApproachAttrition(army: Army, deltaTime: number): void {
-        if (army.getIsInCombat()) return;
-        const targetCity = army.getTargetCity();
-        if (!targetCity) return;
-        const factionId = army.getFactionId();
-        if (targetCity.factionId === factionId || targetCity.factionId === 'panjun') return;
-        const mag = getCityAnchoredStrategicMagnitude(targetCity.id, 'siege_approach_attrition');
+        if (army.isDestroyed || army.getTroops() <= 0) return;
+
+        const cityId = this.resolveApproachAttritionCityId(army);
+        if (!cityId) return;
+
+        const city = this.cityManager.getCity(cityId);
+        if (!city) return;
+
+        const armyFaction = army.getFactionId();
+        if (!armyFaction || armyFaction === city.factionId) return;
+
+        if (!this.isCityUnderAttack(cityId)) return;
+        if (!this.isArmyThreateningCityUnderAttack(army, cityId)) return;
+
+        const mag = getCityAnchoredStrategicMagnitude(cityId, 'siege_approach_attrition');
         if (mag <= 0 || mag >= 1) return;
+
         const loss = Math.max(1, Math.floor(army.getTroops() * mag * deltaTime));
         army.setTroops(Math.max(1, army.getTroops() - loss));
-        // 跟拍 FX 去重：每段 target 只飘一次
-        const key = `${army.id}:${targetCity.id}`;
-        const shown = (army as any)._attritionDebuffShown || ((army as any)._attritionDebuffShown = new Set<string>());
-        if (!shown.has(key)) {
-            shown.add(key);
-            emitFollowedCityAnchoredDefensePulse(
-                targetCity.id,
-                targetCity.latitude,
-                targetCity.longitude,
-                'siege_approach_attrition',
-                army,
-            );
+
+        const followedId = getFollowedArmyId();
+        const pulseArmy =
+            (followedId ? this.getLegionById(followedId) : undefined) ?? army;
+        emitFollowedCityAnchoredDefensePulse(
+            cityId,
+            city.latitude,
+            city.longitude,
+            'siege_approach_attrition',
+            pulseArmy,
+        );
+    }
+
+    /** 来犯减兵锚定之城：行军 targetCity，或已开打攻城战之 siegeCityId */
+    private resolveApproachAttritionCityId(army: Army): string | null {
+        const targetCity = army.getTargetCity();
+        if (targetCity?.id) return targetCity.id;
+        return this.siegeManager?.getActiveSiegeCityIdForArmy?.(army) ?? null;
+    }
+
+    /** 该军团是否构成对本城的来犯威胁（与 isCityUnderAttack 宽口径子集对齐） */
+    private isArmyThreateningCityUnderAttack(army: Army, cityId: string): boolean {
+        if (army.getIsInCombat()) {
+            if (army.currentBattleType !== 'siege') return false;
+            const siegeCityId = this.siegeManager?.getActiveSiegeCityIdForArmy?.(army);
+            if (siegeCityId !== cityId) return false;
+            const battle = this.siegeManager?.getActiveSiege(cityId);
+            return !!battle && army.getFactionId() === battle.getAttackerFactionId();
         }
+
+        if (army.getTargetCity()?.id !== cityId) return false;
+        if (this.isArmyWaitingSiege(army.id)) return true;
+        if (this.siegeManager?.isArmyPendingSiege?.(army.id)) return true;
+
+        const city = this.cityManager.getCity(cityId);
+        if (!city) return false;
+        const dist = getEuclideanDistance(army.getPosition(), cityToLatLng(city));
+        return dist <= GameConfig.COMBAT.BATTLE_JOIN_RADIUS;
     }
 }

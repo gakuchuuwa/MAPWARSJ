@@ -1032,6 +1032,7 @@ export class CombatUI {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                justify-content: center;
                 flex: 0 0 ${uiPx(98)};
                 width: ${uiPx(98)};
                 box-sizing: border-box;
@@ -1077,12 +1078,17 @@ export class CombatUI {
                 width: 100%;
                 text-align: center;
             `;
-            // 效果行：空串（如文化卡只显四字词）时用不换行空格占位——
-            // 保证与双行卡完全等高、四字名同一水平线，避免行内卡片高低不齐
-            effectEl.textContent = effect || '\u00A0'; // 不换行空格占位(显式转义防被格式化误清)
+            effectEl.textContent = effect;
 
             tag.appendChild(nameEl);
-            tag.appendChild(effectEl);
+            // 2026-07-17 全面板统一四字词单行卡（战术/精锐/文化均不传效果词）：
+            // 空效果不渲染副行、也不用空行占位（占位会把名字顶到上半截），
+            // 配合 tag 的 justify-content:center 让四字词在卡内垂直居中
+            if (effect) {
+                tag.appendChild(effectEl);
+            } else {
+                nameEl.style.marginBottom = '0';
+            }
             return tag;
         };
 
