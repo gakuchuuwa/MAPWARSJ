@@ -367,11 +367,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/CENTRAL/yuan_yuanshu.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -8
-        },
         "/assets/zhaosong/fengzhou_wujie.png": {
             "scale": 1,
             "offsetX": 0,
@@ -4657,11 +4652,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/litang/__闲置__litang_03.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": -14
-        },
         "/assets/litang/zhongshan_yangaoqing.png": {
             "scale": 1.12,
             "offsetX": 0,
@@ -5727,11 +5717,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 20
         },
-        "/assets/litang/weizhou_weigao.png": {
-            "scale": 1.14,
-            "offsetX": 0,
-            "offsetY": 6
-        },
         "/assets/DIANQIAN/__闲置__DIANQIAN_22.png": {
             "scale": 0.92,
             "offsetX": 0,
@@ -5771,6 +5756,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.15,
             "offsetX": 0,
             "offsetY": 34
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_37.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/litang/yuan_cj_d_lishuo.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/litang/__闲置__litang_04.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/litang/weizhou_weigao.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {
