@@ -2526,6 +2526,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_xuanhu', name: '悬瓠', factionId: 'yuan_cj_d', lat: 33.01, lng: 114.36, type: 'medium_city', troops: 20000, region: 'CENTRAL' },
 
 
+
+
     {
         id: 'city_yiluolucheng',
         name: '伊逻卢',
