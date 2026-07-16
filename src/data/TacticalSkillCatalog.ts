@@ -477,7 +477,7 @@ const CASUALTY: TacticalSkillEntry[] = [
         id: 'ts_035', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 35,
         displayName: '休养生息', ownerName: '李渊', sourceQuote: '【李渊】《旧唐书·高祖纪》：“扫除烦苛，与民休息。”',
         baseEffect: 'post_recovery_rate', condition: 'always', phase: 'post_battle',
-        magnitude: 0.5, engineStatus: 'ready',
+        magnitude: 0.2, engineStatus: 'ready',
     },
     {
         id: 'ts_036', ownerName: '吴起', ownerGeneralId: 'wei_wuqi', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 36,

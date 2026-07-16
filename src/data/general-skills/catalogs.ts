@@ -199,9 +199,9 @@ export const REINFORCEMENT_JOIN_SKILL: ReinforcementJoinSkillDef = {
 
     displayName: '合兵一处',
 
-    luckMin: 0.8,
+    luckMin: 0.9,
 
-    luckMax: 1.2,
+    luckMax: 1.1,
 
 };
 

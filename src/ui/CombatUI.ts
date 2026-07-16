@@ -54,7 +54,7 @@ import {
     getAptitudePowerMult,
     resolveSituationalSkillId,
 } from '../combat/GeneralSkillCombat';
-import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, REINFORCEMENT_JOIN_SKILL, getGeneralProfile } from '../data/GeneralSkills';
+import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
 import { getCityEliteConfig } from '../data/ExpeditionLegions';
 import type { Army } from '../legion/Army';
@@ -1238,8 +1238,10 @@ export class CombatUI {
 
         // 战略技不在战斗面板展示乘区链（大地图/跟拍横幅/胜后飘字见 GeneralSkillCombat + MapFloatingText）
         const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
+        let joinLabel = '';
         if (joinLuck !== null) {
-            pushIfNotOne(REINFORCEMENT_JOIN_SKILL.displayName, joinLuck);
+            if (joinLuck > 1.001) joinLabel = '得助';
+            else if (joinLuck < 0.999) joinLabel = '掣肘';
         }
 
         // ①运气标签：不显数字，只显「好运」或「厄运」
@@ -1252,13 +1254,14 @@ export class CombatUI {
             else if (fateLuck < 0.999) luckLabel = '厄运';
         }
 
-        if (labeled.length === 0 && !luckLabel && !passLabel && !regionLabel && !eliteLabel && !cultureLabel && !tacLabel) {
+        if (labeled.length === 0 && !luckLabel && !joinLabel && !passLabel && !regionLabel && !eliteLabel && !cultureLabel && !tacLabel) {
             return { chain: '', title: '' };
         }
 
         const numChain = labeled.map((l) => fmt(l.value)).join('×');
         const parts: string[] = [];
         if (luckLabel) parts.push(luckLabel);
+        if (joinLabel) parts.push(joinLabel);
         if (passLabel) parts.push('险要');
         if (regionLabel) parts.push('名城');
         if (eliteLabel) parts.push(eliteLabel);
@@ -1268,6 +1271,7 @@ export class CombatUI {
         const chain = parts.join(' ');
 
         const titleParts = labeled.map((l) => `${l.label}×${fmt(l.value)}`);
+        if (joinLabel) titleParts.unshift(`援军:${joinLabel}(×${parseFloat(joinLuck!.toFixed(2))})`);
         if (luckLabel) titleParts.unshift(`运气:${luckLabel}(×${parseFloat(fateLuck!.toFixed(2))})`);
         if (passLabel) titleParts.unshift(passLabel);
         if (regionLabel) titleParts.unshift(regionLabel);
