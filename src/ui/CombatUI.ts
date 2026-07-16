@@ -1042,8 +1042,8 @@ export class CombatUI {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                flex: 0 0 ${uiPx(98)};
-                width: ${uiPx(98)};
+                flex: 0 0 ${uiPx(108)};
+                width: ${uiPx(108)};
                 box-sizing: border-box;
                 background: linear-gradient(180deg, ${bgHighlight} 0%, rgba(0,0,0,0.5) 40%, ${bgColor} 100%);
                 backdrop-filter: blur(4px);
@@ -1062,7 +1062,7 @@ export class CombatUI {
             const nameEl = document.createElement('div');
             nameEl.style.cssText = `
                 font-family: 'Noto Serif SC', serif;
-                font-size: ${uiPx(17)};
+                font-size: ${uiPx(18)};
                 font-weight: 900;
                 color: #fff8e0;
                 letter-spacing: 1px;
@@ -1332,6 +1332,7 @@ export class CombatUI {
                 styleLabel = STYLE_MAP[effStyle] ?? '';
                 const APT_MAP: Record<string, string> = { create: '造势', leverage: '借势', reverse: '逆势' };
                 aptLabel2 = APT_MAP[profile.aptitude ?? ''] ?? '';
+                let comboLabel = '';
                 if (styleLabel || aptLabel2) {
                     // 用缓存兵力（与乘数同源，防战中跨阈值导致标签漂移）
                     const bf2 = this.boundRegionalBattleField;
@@ -1346,15 +1347,24 @@ export class CombatUI {
                     // 势匹配（三势：兵力局势 × 武将适性 × 技能六类 三者对齐）
                     const skillId = unit.battleOverriddenSkillId ?? null;
                     const skillCls = skillId ? (EFFECT_TO_SIX_SET[resolveGeneralTacticalEntry(skillId)?.baseEffect ?? ''] as string | undefined) : undefined;
-                    if (profile.aptitude === 'create' && sit === 'advantage' && skillCls && ['gongzhan', 'shengzhan'].includes(skillCls)) aptHighlight2 = 2;
-                    else if (profile.aptitude === 'leverage' && sit === 'balance' && skillCls && ['dizhan', 'hunzhan'].includes(skillCls)) aptHighlight2 = 2;
-                    else if (profile.aptitude === 'reverse' && sit === 'disadvantage' && skillCls && ['bingzhan', 'baizhan'].includes(skillCls)) aptHighlight2 = 2;
+                    if (profile.aptitude === 'create' && sit === 'advantage' && skillCls && ['gongzhan', 'shengzhan'].includes(skillCls)) {
+                        aptHighlight2 = 2;
+                        comboLabel = '造势·优势·强势';
+                    }
+                    else if (profile.aptitude === 'leverage' && sit === 'balance' && skillCls && ['dizhan', 'hunzhan'].includes(skillCls)) {
+                        aptHighlight2 = 2;
+                        comboLabel = '借势·均势·中势';
+                    }
+                    else if (profile.aptitude === 'reverse' && sit === 'disadvantage' && skillCls && ['bingzhan', 'baizhan'].includes(skillCls)) {
+                        aptHighlight2 = 2;
+                        comboLabel = '逆势·劣势·弱势';
+                    }
                 }
             }
         }
         const aptColor = side === 'attacker' ? 'rgba(255,180,40,1)' : 'rgba(80,200,240,1)';
         if (styleLabel && styleHighlight === 2) parts.push(tag(styleLabel, `color:${aptColor};font-weight:700;`));
-        if (aptLabel2 && aptHighlight2 === 2) parts.push(tag(aptLabel2, `color:${aptColor};font-weight:700;`));
+        if (comboLabel && aptHighlight2 === 2) parts.push(tag(comboLabel, `color:${aptColor};font-weight:700;text-shadow:0 0 4px ${aptColor}60;`));
         // ⑤ 名将光环
         if (unit.generalId && getGeneralProfile(unit.generalId)?.tier === 'famous') {
             parts.push(tag('名将', `color:${aptColor};font-weight:700;`));
