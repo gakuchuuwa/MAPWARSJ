@@ -2138,7 +2138,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jieshuangna', name: '羯霜那', factionId: 'jie', lat: 40.124284, lng: 65.341187, type: 'small_city', region: 'CENTRAL_ASIA', troops: 20000,
         note: '羯霜那；羯族小城',
     },
-    { id: 'city_samaerhan', name: '撒马尔罕', factionId: 'tiemuer', lat: 39.6525, lng: 66.9714, type: 'big_city', troops: 20000, region: 'CENTRAL_ASIA' },
+    { id: 'city_samaerhan', name: '撒马尔罕', factionId: 'tiemuer', lat: 39.6525, lng: 66.9714, type: 'medium_city', troops: 20000, region: 'CENTRAL_ASIA' },
 
     { id: 'city_jizhake', name: '吉扎克', factionId: 'kawusi', lat: 40.1167, lng: 67.8333, type: 'small_city', region: 'CENTRAL_ASIA', troops: 20000,
         note: '吉扎克；卡乌斯小城',

@@ -34,6 +34,7 @@ import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
 import { resolveGeneralTacticalEntry } from '../combat/TacticalSkillResolver';
+import { EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 import {
     getOpeningTacticalPowerMultiplier,
     getStrategicBattlePowerMultiplier,
@@ -1224,13 +1225,14 @@ export class CombatUI {
             const sid = resolveSituationalSkillId(tacUnit, sit as 'advantage'|'balance'|'disadvantage', side === 'attacker');
             const entry = sid ? resolveGeneralTacticalEntry(sid) : null;
             if (entry) {
-                const be = entry.baseEffect ?? '';
-                if (be.includes('power_mult')) tacLabel = '攻计';
-                else if (be.includes('sub_troops') || be.includes('add_troops')) tacLabel = '胜计';
-                else if (be.includes('luck')) tacLabel = '敌计';
-                else if (be.includes('negate') || be.includes('counter') || be.includes('steal')) tacLabel = '混计';
-                else if (be.includes('casualty') || be.includes('win_casualty')) tacLabel = '并计';
-                else if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')) tacLabel = '败计';
+                const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
+                if (cls) {
+                    const LABELS: Record<TacticalSixSet, string> = {
+                        gongzhan: '攻计', shengzhan: '胜计', dizhan: '敌计',
+                        hunzhan: '混计', bingzhan: '并计', baizhan: '败计',
+                    };
+                    tacLabel = LABELS[cls] ?? '';
+                }
             }
         }
 
