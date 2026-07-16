@@ -982,7 +982,7 @@ export class CombatUI {
             effect: string,
             isFamous: boolean,
             isAttacker: boolean,
-            skillType: 'tactical' | 'strategic' | 'pass' | 'elite' | 'other' = 'other'
+            skillType: 'tactical' | 'strategic' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
         ) => {
             const tag = document.createElement('div');
             const borderColor = isFamous ? 'rgba(255, 215, 0, 0.7)' : 'rgba(200, 200, 200, 0.6)';
@@ -1016,6 +1016,15 @@ export class CombatUI {
                 } else {
                     bgColor = isFamous ? 'rgba(15, 30, 40, 0.85)' : 'rgba(10, 20, 30, 0.8)';
                     sideColor = '#88ccff'; // 精锐守：亮银/冰蓝
+                }
+            } else if (skillType === 'culture') {
+                // 文化区标签：大地暖色系
+                if (isAttacker) {
+                    bgColor = isFamous ? 'rgba(60, 35, 10, 0.85)' : 'rgba(40, 20, 5, 0.8)';
+                    sideColor = '#d4883c'; // 文化攻：古铜
+                } else {
+                    bgColor = isFamous ? 'rgba(10, 40, 35, 0.85)' : 'rgba(5, 25, 20, 0.8)';
+                    sideColor = '#5a9e8f'; // 文化守：青绿
                 }
             } else {
                 // 战术或其他技能保持原色调（攻红 守蓝）
@@ -1089,7 +1098,7 @@ export class CombatUI {
                 name: string,
                 effect: string,
                 famous: boolean,
-                skillType: 'tactical' | 'strategic' | 'pass' | 'elite' | 'other' = 'other'
+                skillType: 'tactical' | 'strategic' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
             ) => {
                 if (pending.length < 4) pending.push(createSkillTag(name, effect, famous, isAttacker, skillType));
             };
@@ -1099,6 +1108,22 @@ export class CombatUI {
 
             const regionCenterSkill = getRegionCenterDefenseSkillDisplay(unit);
             if (regionCenterSkill) add(regionCenterSkill.name, regionCenterSkill.effectLabel, false, 'pass');
+
+            // 文化区标签：攻/防四字词，与精锐技能同排卡片
+            const cultureMult = getCultureOnlyCombatMultiplier(unit);
+            if (Math.abs(cultureMult - 1) > 0.001) {
+                const round = Math.round(cultureMult * 100) / 100;
+                const ATK_LABELS: Record<number, string> = {
+                    1.20: '侵略如火', 1.15: '骁勇善战', 1.10: '能征惯战', 1.00: '习于行阵', 0.85: '保境安民',
+                };
+                const DEF_LABELS: Record<number, string> = {
+                    1.20: '山河险固', 1.15: '水网为屏', 1.10: '城池为固', 1.05: '城池为固',
+                    1.00: '据城而守', 0.95: '山城自顾', 0.90: '无险可恃', 0.80: '无遮无蔽',
+                };
+                const isGarrison = unit.unitType === 'city';
+                const label = isGarrison ? (DEF_LABELS[round] ?? '') : (ATK_LABELS[round] ?? '');
+                if (label) add(label, `${cultureMult.toFixed(2)}×`, false, 'culture');
+            }
 
             // 兵合一处（不再显示为独立技能框，但下方乘区链条依然会有）
             // const joinLuck = this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
@@ -1215,11 +1240,11 @@ export class CombatUI {
         const cultureMult = getCultureOnlyCombatMultiplier(unit);
         const round = Math.round(cultureMult * 100) / 100;
         const ATK_LABELS: Record<number, string> = {
-            1.20: '骁勇', 1.15: '善战', 1.10: '尚武', 1.00: '持重', 0.85: '守成',
+            1.20: '侵略如火', 1.15: '骁勇善战', 1.10: '能征惯战', 1.00: '习于行阵', 0.85: '保境安民',
         };
         const DEF_LABELS: Record<number, string> = {
-            1.20: '雄踞', 1.15: '固垒', 1.10: '坚城', 1.05: '刚毅',
-            1.00: '自守', 0.90: '偏安', 0.85: '边陲', 0.80: '游牧',
+            1.20: '山河险固', 1.15: '水网为屏', 1.10: '城池为固', 1.05: '城池为固',
+            1.00: '据城而守', 0.95: '山城自顾', 0.90: '无险可恃', 0.80: '无遮无蔽',
         };
         let cultureLabel = (isGarrison ? DEF_LABELS[round] : ATK_LABELS[round]) ?? '';
 
@@ -1288,7 +1313,13 @@ export class CombatUI {
         if (joinLabel) parts.push(tag(joinLabel));
         if (passLabel) parts.push(tag('险要'));
         if (regionLabel) parts.push(tag('名城'));
-        if (cultureLabel) parts.push(tag(cultureLabel));
+        if (cultureLabel) {
+            // 文化标签独立配色：攻暖铜 守冷铁，与精锐/技能盒同排显眼
+            const cultureStyle = isAtt
+                ? 'border-color:rgba(200,140,60,0.55);background:rgba(50,25,5,0.45);'
+                : 'border-color:rgba(80,150,170,0.55);background:rgba(5,30,45,0.45);';
+            parts.push(tag(cultureLabel, cultureStyle));
+        }
         if (tacLabel) parts.push(tag(tacLabel));
 
         // ③武将适性标签：攻防风格 + 三势（与徽章同源：指挥官）
