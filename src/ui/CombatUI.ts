@@ -53,7 +53,6 @@ import {
     resolveSituationalSkillId,
     getAttackStylePowerMult,
     getAptitudePowerMult,
-    SITUATION_MATCH_BONUS,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -1175,9 +1174,6 @@ export class CombatUI {
             ? (this.boundRegionalBattleField?.getAttackerOpeningFateLuck() ?? 1)
             : (this.boundRegionalBattleField?.getDefenderOpeningFateLuck() ?? 1);
         product *= fateLuck;
-
-        // ⑥ 六计局势匹配加成
-        if (unit.situationSkillMatch) product *= SITUATION_MATCH_BONUS;
 
         if (Math.abs(product - 1) <= 0.001) return `×1`;
         return `×${parseFloat(product.toFixed(1))}`;

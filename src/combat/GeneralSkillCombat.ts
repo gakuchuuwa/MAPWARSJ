@@ -1646,19 +1646,11 @@ export function applyGeneralSkillSideRollMultipliers(
         defCommander,
     );
 
-    // 六计局势匹配加成
-    let aRoll = tactical.attRoll;
-    let dRoll = tactical.defRoll;
-    const attUnit = attCommander ?? findEligibleGeneralUnit(attackerUnits);
-    const defUnit = defCommander ?? findEligibleGeneralUnit(defenderUnits);
-    if (attUnit?.situationSkillMatch) aRoll *= SITUATION_MATCH_BONUS;
-    if (defUnit?.situationSkillMatch) dRoll *= SITUATION_MATCH_BONUS;
-
     return applyStrategicBattleToRolls(
         attackerUnits,
         defenderUnits,
-        aRoll,
-        dRoll,
+        tactical.attRoll,
+        tactical.defRoll,
         battleType,
         terrain,
         emitUi,
@@ -1687,14 +1679,7 @@ export function applyStrategicRollMultipliersOnly(
         attCommander,
         defCommander,
     );
-    // 六计局势匹配加成（refresh 也带，与开局掷点一致）
-    let aRoll = base.attRoll;
-    let dRoll = base.defRoll;
-    const attUnit = attCommander ?? findEligibleGeneralUnit(attackerUnits);
-    const defUnit = defCommander ?? findEligibleGeneralUnit(defenderUnits);
-    if (attUnit?.situationSkillMatch) aRoll *= SITUATION_MATCH_BONUS;
-    if (defUnit?.situationSkillMatch) dRoll *= SITUATION_MATCH_BONUS;
-    return { attRoll: aRoll, defRoll: dRoll };
+    return { attRoll: base.attRoll, defRoll: base.defRoll };
 }
 
 /**
