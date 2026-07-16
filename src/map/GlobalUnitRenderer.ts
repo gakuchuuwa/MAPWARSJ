@@ -963,6 +963,12 @@ export class GlobalUnitRenderer {
         if (!this.showLabels) return;
         if (!unit.name) return;
 
+        const hideCount = generalIdHasStrategicEffect(unit.generalId, 'hide_troop_count');
+        const inCombat = !!(unit as any).isAttacking;
+        const isMoving = !!(unit as any).destination && !(unit as any).hasArrived && !inCombat;
+        // 偃旗息鼓：生效时整组军情隐藏——武将名、精锐番号、兵力均不显示。
+        if (hideCount && isMoving) return;
+
         let generalText = '';
         let eliteText = unit.name || '';
 
@@ -1013,28 +1019,21 @@ export class GlobalUnitRenderer {
             currentY += nameFontSize + 4;
         }
 
-        // 3. Draw Troops（视野技：偃旗息鼓 隐藏 / 虚张声势 ×2；与神出鬼没同步——非战移动时生效）
-        const hideCount = generalIdHasStrategicEffect(unit.generalId, 'hide_troop_count');
+        // 3. Draw Troops（虚张声势 ×2；与其他视野技同步——非战移动时生效）
         const bluffCount = generalIdHasStrategicEffect(unit.generalId, 'bluff_troop_count');
-        const inCombat = !!(unit as any).isAttacking;
-        // 仅行军时生效：战斗/战后停留时显示真实兵力
-        const isMoving = !!(unit as any).destination && !(unit as any).hasArrived && !inCombat;
-        const shouldShowTroops = !hideCount || inCombat || !isMoving;
-        if (shouldShowTroops) {
-            const rawTroops = Math.floor(unit.getTroops());
-            const bluffMult = getBluffMagnitude(unit.generalId);
-            const displayTroops = (bluffCount && isMoving) ? Math.floor(rawTroops * bluffMult) : rawTroops;
-            const troopsFontSize = 12;
-            const troopsText = `${displayTroops}`;
-            ctx.font = `bold ${troopsFontSize}px Arial`;
+        const rawTroops = Math.floor(unit.getTroops());
+        const bluffMult = getBluffMagnitude(unit.generalId);
+        const displayTroops = (bluffCount && isMoving) ? Math.floor(rawTroops * bluffMult) : rawTroops;
+        const troopsFontSize = 12;
+        const troopsText = `${displayTroops}`;
+        ctx.font = `bold ${troopsFontSize}px Arial`;
 
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 3;
-            ctx.strokeText(troopsText, center.x, currentY);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 3;
+        ctx.strokeText(troopsText, center.x, currentY);
 
-            ctx.fillStyle = '#ffd700'; // Gold
-            ctx.fillText(troopsText, center.x, currentY);
-        }
+        ctx.fillStyle = '#ffd700'; // Gold
+        ctx.fillText(troopsText, center.x, currentY);
     }
 
     public destroy(): void {

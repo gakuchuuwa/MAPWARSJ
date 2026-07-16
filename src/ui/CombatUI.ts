@@ -3305,18 +3305,35 @@ export class CombatUI {
         const attAdvantage = bfRatio > 1.5;
         const attDisadvantage = bfRatio < 0.67;
 
-        const setActive = (el: HTMLDivElement, color: string) => {
-            el.style.color = '#fff';
-            el.style.background = `linear-gradient(135deg, rgba(50,50,50,0.9), rgba(10,10,10,0.9))`;
-            el.style.borderColor = color;
-            el.style.boxShadow = `0 0 10px ${color}, inset 0 0 5px ${color}`;
-            el.style.textShadow = `0 0 4px ${color}`;
+        const setActive = (el: HTMLDivElement, theme: 'you' | 'lie' | 'jun') => {
+            el.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            if (theme === 'you') {
+                el.style.color = '#FFF2D4'; // 柔和的鎏金色
+                el.style.background = 'linear-gradient(135deg, rgba(120, 80, 10, 0.95), rgba(40, 20, 5, 0.95))';
+                el.style.borderColor = 'rgba(255, 184, 0, 0.8)';
+                el.style.boxShadow = '0 0 12px rgba(255, 184, 0, 0.5), inset 0 0 8px rgba(255, 184, 0, 0.3)';
+                el.style.textShadow = '0 0 6px rgba(255, 184, 0, 0.8)';
+            } else if (theme === 'lie') {
+                el.style.color = '#FFD4D4'; // 柔和的血月色
+                el.style.background = 'linear-gradient(135deg, rgba(90, 20, 20, 0.95), rgba(30, 5, 5, 0.95))';
+                el.style.borderColor = 'rgba(255, 59, 48, 0.8)';
+                el.style.boxShadow = '0 0 12px rgba(255, 59, 48, 0.5), inset 0 0 8px rgba(255, 59, 48, 0.3)';
+                el.style.textShadow = '0 0 6px rgba(255, 59, 48, 0.8)';
+            } else if (theme === 'jun') {
+                el.style.color = '#D4F4FF'; // 柔和的冰蓝色
+                el.style.background = 'linear-gradient(135deg, rgba(15, 60, 90, 0.95), rgba(5, 20, 40, 0.95))';
+                el.style.borderColor = 'rgba(0, 229, 255, 0.8)';
+                el.style.boxShadow = '0 0 12px rgba(0, 229, 255, 0.5), inset 0 0 8px rgba(0, 229, 255, 0.3)';
+                el.style.textShadow = '0 0 6px rgba(0, 229, 255, 0.8)';
+            }
         };
+        
         const setInactive = (el: HTMLDivElement) => {
-            el.style.color = 'rgba(255, 255, 255, 0.3)';
-            el.style.background = 'rgba(20, 20, 20, 0.8)';
-            el.style.borderColor = 'rgba(100, 100, 100, 0.5)';
-            el.style.boxShadow = '0 0 4px rgba(0,0,0,0.8)';
+            el.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            el.style.color = 'rgba(255, 255, 255, 0.15)'; // 极暗的灰字
+            el.style.background = 'linear-gradient(135deg, rgba(30, 30, 32, 0.8), rgba(10, 10, 12, 0.8))';
+            el.style.borderColor = 'rgba(80, 80, 85, 0.4)'; // 黯淡的边框
+            el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.6)';
             el.style.textShadow = 'none';
         };
 
@@ -3326,18 +3343,14 @@ export class CombatUI {
         setInactive(this.indicatorRightLie);
         setInactive(this.indicatorJun);
 
-        const colorYou = 'rgba(255, 215, 0, 0.8)'; // 金色
-        const colorLie = 'rgba(255, 50, 50, 0.8)'; // 红色
-        const colorJun = 'rgba(100, 200, 255, 0.8)'; // 青色
-
         if (attAdvantage) {
-            setActive(this.indicatorLeftYou, colorYou);
-            setActive(this.indicatorRightLie, colorLie); // 守方劣势
+            setActive(this.indicatorLeftYou, 'you');
+            setActive(this.indicatorRightLie, 'lie'); // 守方劣势
         } else if (attDisadvantage) {
-            setActive(this.indicatorLeftLie, colorLie);
-            setActive(this.indicatorRightYou, colorYou); // 守方优势
+            setActive(this.indicatorLeftLie, 'lie');
+            setActive(this.indicatorRightYou, 'you'); // 守方优势
         } else {
-            setActive(this.indicatorJun, colorJun);
+            setActive(this.indicatorJun, 'jun');
         }
     }
 

@@ -1120,7 +1120,28 @@ const VISION_STRATEGIC_EFFECTS: StrategicEffect[] = [
     'bluff_troop_count',
 ];
 
-/** 战后开拔前：视野系 + 本战已触发的纵横技脉冲（军团脚下） */
+/** 三种视野技统一入口：开始/恢复行军时，效果与脉冲同时起效。 */
+export function emitFollowedVisionStrategicFxOnMarch(
+    unit: StrategicMapFxUnit,
+    lat: number,
+    lng: number,
+): void {
+    const profile = getGeneralProfile(unit.generalId);
+    const skill = profile?.strategicSkillId
+        ? getStrategicSkillDef(profile.strategicSkillId)
+        : null;
+    if (!skill || !VISION_STRATEGIC_EFFECTS.includes(skill.effect)) return;
+    emitFollowedGeneralStrategicMapFx(
+        unit,
+        skill.effect,
+        lat,
+        lng,
+        'pulse',
+        { dedupeMs: 3000, dedupeKey: `${unit.id}|vision|march` },
+    );
+}
+
+/** 战后开拔前：本战已触发的纵横技脉冲（军团脚下） */
 export function tryEmitPostBattleResumeStrategicFx(
     unit: StrategicMapFxUnit,
     lat: number,
@@ -1128,20 +1149,6 @@ export function tryEmitPostBattleResumeStrategicFx(
     pendingDiplomacyEffects: readonly StrategicEffect[] = [],
 ): void {
     if (unit.id !== getFollowedArmyId()) return;
-    const profile = getGeneralProfile(unit.generalId);
-    const skill = profile?.strategicSkillId
-        ? getStrategicSkillDef(profile.strategicSkillId)
-        : null;
-    if (skill && VISION_STRATEGIC_EFFECTS.includes(skill.effect)) {
-        emitFollowedGeneralStrategicMapFx(
-            unit,
-            skill.effect,
-            lat,
-            lng,
-            'pulse',
-            { dedupeMs: 3000, dedupeKey: `${unit.id}|vision|resume` },
-        );
-    }
     for (const effect of pendingDiplomacyEffects) {
         emitFollowedGeneralStrategicMapFx(
             unit,

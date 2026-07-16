@@ -115,7 +115,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_16: { id: 'str_16', grid: 'S⑯', displayName: '神出鬼没', effect: 'hide_during_peacetime', magnitude: 1, engineStatus: 'ready', category: 'vision', note: '非战斗不可见（均势）' },
 
-    str_17: { id: 'str_17', grid: 'S⑰', displayName: '偃旗息鼓', effect: 'hide_troop_count', magnitude: 1, engineStatus: 'ready', category: 'vision', note: '非战斗隐藏兵力（逆势）' },
+    str_17: { id: 'str_17', grid: 'S⑰', displayName: '偃旗息鼓', effect: 'hide_troop_count', magnitude: 1, engineStatus: 'ready', category: 'vision', note: '非战斗隐藏武将名、精锐番号与兵力（逆势）' },
 
     str_18: { id: 'str_18', grid: 'S⑱', displayName: '虚张声势', effect: 'bluff_troop_count', magnitude: 2, engineStatus: 'ready', category: 'vision', note: '非战斗兵力×2（造势）' },
 

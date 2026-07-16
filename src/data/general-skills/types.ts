@@ -95,7 +95,7 @@ export type StrategicEffect =
 
     | 'hide_during_peacetime'        // 非战斗时军团不可见（神出鬼没）
 
-    | 'hide_troop_count'             // 非战斗时兵力数字隐藏（偃旗息鼓）
+    | 'hide_troop_count'             // 非战斗时武将名、精锐番号与兵力隐藏（偃旗息鼓）
 
     | 'bluff_troop_count'            // 非战斗时兵力显示 ×2（虚张声势）
 

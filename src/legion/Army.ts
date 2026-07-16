@@ -26,6 +26,7 @@ import {
     getGeneralMarchSpeedMultiplier,
     generalHasStrategicEffect,
     emitFollowedGeneralStrategicMapFx,
+    emitFollowedVisionStrategicFxOnMarch,
     tryEmitPostBattleResumeStrategicFx,
 } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
@@ -318,7 +319,7 @@ export class Army implements IBattleUnit {
         return pending;
     }
 
-    /** 战后休整结束或免休整：视野系 + 纵横技 pulse */
+    /** 战后休整结束或免休整：纵横技 pulse；视野技统一在实际恢复行军时触发 */
     private tryEmitPostBattleResumeFx(): void {
         const { lat, lng } = this.position;
         tryEmitPostBattleResumeStrategicFx(
@@ -899,11 +900,12 @@ export class Army implements IBattleUnit {
         this.savedPathQueue = [];
         this.savedTargetCity = null;
 
-        // 神出鬼没：恢复移动时隐身（与脉冲同步）
+        // 三种视野技统一于恢复行军时起效并 pulse
         if (generalHasStrategicEffect(this, 'hide_during_peacetime')) {
             this.setVisible(false);
             getGlobalUnitRenderer()?.invalidateView();
         }
+        emitFollowedVisionStrategicFxOnMarch(this, this.position.lat, this.position.lng);
 
         this.updateMarkerPosition();
         return true;
@@ -918,11 +920,12 @@ export class Army implements IBattleUnit {
         this.pathQueue = newPath;
         this.hasArrived = false;
 
-        // 神出鬼没：开始移动时隐身（与脉冲同步）
+        // 三种视野技统一于开始行军时起效并 pulse
         if (generalHasStrategicEffect(this, 'hide_during_peacetime')) {
             this.setVisible(false);
             getGlobalUnitRenderer()?.invalidateView();
         }
+        emitFollowedVisionStrategicFxOnMarch(this, this.position.lat, this.position.lng);
 
         // Update marker rotation immediately
         this.updateMarkerPosition();
@@ -979,6 +982,11 @@ export class Army implements IBattleUnit {
     // [IBattleUnit Implementation]
     public get unitType(): import('../combat/CombatSystem').UnitType {
         return 'army'; // 明确作为 army 类型
+    }
+
+    /** 战略技门禁需由 IBattleUnit 取回实际军团实体。 */
+    public getEntity(): Army {
+        return this;
     }
 
     // Morale System
