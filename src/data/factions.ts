@@ -293,6 +293,7 @@ export const FACTIONS: Faction[] = [
     { id: 'edo', name: '武藏' },
 
 
+
     { id: 'izumo', name: '出云' },
     { id: 'satsuma', name: '萨摩' },
 

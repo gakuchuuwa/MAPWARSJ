@@ -1073,6 +1073,7 @@ export const PERIPHERY: CityDataV2[] = [
     },
     
     { id: 'city_edo', name: '江户城', factionId: 'edo', lat: 35.68, lng: 139.76, type: 'big_city', troops: 20000, region: 'JAPAN' },
+
  // [2026-05-30] 升 big_city: 江户幕府 264 年 + 1700 年代百万人口世界第一
 
     {

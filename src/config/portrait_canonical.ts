@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/17 04:29:39（共 230 条）
+ * 生成时间：2026/7/17 07:16:58（共 231 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
@@ -10,7 +10,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__闲置__LINGNAN_31.png": "/assets/BASHU/chenghan_lite.png",
     "/assets/LINGNAN/jingjiang_qushisi.png": "/assets/BASHU/cong_puhu.png",
     "/assets/chongfu/__闲置__PANJUN_11.png": "/assets/BASHU/cong_puhu.png",
-    "/assets/LINGNAN/yang_aner_yanganer.png": "/assets/BASHU/cuanshi_cuanlongyan.png",
+    "/assets/LINGNAN/__闲置__LINGNAN_34.png": "/assets/BASHU/cuanshi_cuanlongyan.png",
     "/assets/LINGNAN/xiou_yixusong.png": "/assets/BASHU/dangchang_liangmiding.png",
     "/assets/LINGNAN/__闲置__LINGNAN_25.png": "/assets/BASHU/daxi_ming_zhangxianzhong.png",
     "/assets/LINGNAN/__闲置__LINGNAN_16.png": "/assets/BASHU/fu_zhou_yanyan.png",
@@ -136,6 +136,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/xianqin/mi_chu_xiongl.png": "/assets/chongfu/__闲置__xianqin_19.png",
     "/assets/chongfu/__闲置__xianqin_20.png": "/assets/LINGNAN/_闲置 (4).png",
     "/assets/xianqin/liguo_zhaoshe.png": "/assets/LINGNAN/_闲置 (4).png",
+    "/assets/daming/qi_d_qijiguang.png": "/assets/daming/1f2009c0-955d-436a-9f93-d7e736239d9b.png",
     "/assets/DIANQIAN/nanzhao_geluofeng.png": "/assets/DIANQIAN/20e2a9c2-62bb-4bae-b424-0f6a6bec4105.png",
     "/assets/DIANQIAN/dian_duansiping.png": "/assets/DIANQIAN/30af1504-6d64-4b14-90e6-cf3ef0f41365.png",
     "/assets/DIANQIAN/paiwan_alugu.png": "/assets/DIANQIAN/ahaomu_laqite.png",
@@ -192,7 +193,9 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/NORTHEAST/yizhou_wanyanloushi.png": "/assets/NORTHEAST/2dce8f19-3676-4a0a-ad1f-1681c9b30fb3.png",
     "/assets/NORTHEAST/dazhen_wanyantiege.png": "/assets/NORTHEAST/3f2c529a-23f6-41e2-9caf-8c8e0d475fd4.png",
     "/assets/NORTHEAST/jurchen_wanyanzongbi.png": "/assets/NORTHEAST/61191f6b-a9fe-44ae-829e-7023c5a8524f.png",
-    "/assets/NORTHEAST/mohe_wanyanzonghan.png": "/assets/NORTHEAST/e1d99529-303b-417a-bac1-2a0f351cf552.png",    "/assets/panjun/huangwang_huangchao.png": "/assets/panjun/__闲置__PANJUN_23.png",
+    "/assets/NORTHEAST/mohe_wanyanzonghan.png": "/assets/NORTHEAST/e1d99529-303b-417a-bac1-2a0f351cf552.png",
+    "/assets/NORTHEAST/__闲置__NORTHEAST_31.png": "/assets/NORTHEAST/__闲置__NORTHEAST_23.png",
+    "/assets/panjun/huangwang_huangchao.png": "/assets/panjun/__闲置__PANJUN_23.png",
     "/assets/TIBET/hor_chisang.png": "/assets/STEPPE/ashide_ashidejieli.png",
     "/assets/TIBET/gling_lingesar.png": "/assets/STEPPE/bayegu_qulishi.png",
     "/assets/TIBET/lopi_abo.png": "/assets/STEPPE/chechen_chechenhanshuolei.png",
