@@ -243,11 +243,7 @@ export class Army implements IBattleUnit {
         if (this.renderer) {
             this.renderer.stopAttack();
         }
-        // 神出鬼没：非战斗时回收隐藏（败战 / 多军团野战结束等未走 setCombatState 的路径）
-        if (generalHasStrategicEffect(this, 'hide_during_peacetime')) {
-            this.setVisible(false);
-            getGlobalUnitRenderer()?.invalidateView();
-        }
+        // 神出鬼没：等再次移动时隐身，此处不立即隐藏
     }
 
     public isIdle(): boolean {
@@ -903,6 +899,12 @@ export class Army implements IBattleUnit {
         this.savedPathQueue = [];
         this.savedTargetCity = null;
 
+        // 神出鬼没：恢复移动时隐身（与脉冲同步）
+        if (generalHasStrategicEffect(this, 'hide_during_peacetime')) {
+            this.setVisible(false);
+            getGlobalUnitRenderer()?.invalidateView();
+        }
+
         this.updateMarkerPosition();
         return true;
     }
@@ -915,6 +917,12 @@ export class Army implements IBattleUnit {
         this.destination = newPath.shift()!;
         this.pathQueue = newPath;
         this.hasArrived = false;
+
+        // 神出鬼没：开始移动时隐身（与脉冲同步）
+        if (generalHasStrategicEffect(this, 'hide_during_peacetime')) {
+            this.setVisible(false);
+            getGlobalUnitRenderer()?.invalidateView();
+        }
 
         // Update marker rotation immediately
         this.updateMarkerPosition();

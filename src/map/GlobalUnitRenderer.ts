@@ -336,8 +336,6 @@ export class GlobalUnitRenderer {
         for (let i = 0; i < this.sortedUnitsCache.length; i++) {
             const unit = this.sortedUnitsCache[i];
             if ((unit as any).visible === false) continue;
-            // 神出鬼没：非战斗时不可见
-            if (generalIdHasStrategicEffect(unit.generalId, 'hide_during_peacetime') && !(unit as any).isAttacking) continue;
             if (!this.isUnitInContainerView(unit)) continue;
             list.push(unit);
         }
@@ -521,8 +519,7 @@ export class GlobalUnitRenderer {
                 continue;
             }
 
-            const isVisible = (unit as any).visible !== false
-                && !(generalIdHasStrategicEffect(unit.generalId, 'hide_during_peacetime') && !(unit as any).isAttacking);
+            const isVisible = (unit as any).visible !== false;
             const inView = isVisible && this.isUnitInContainerView(unit);
             const animating =
                 unit.isMoving || unit.isAttacking || (unit as any).isBattling;
@@ -1016,15 +1013,17 @@ export class GlobalUnitRenderer {
             currentY += nameFontSize + 4;
         }
 
-        // 3. Draw Troops（视野技：偃旗息鼓 隐藏 / 虚张声势 ×2）
+        // 3. Draw Troops（视野技：偃旗息鼓 隐藏 / 虚张声势 ×2；与神出鬼没同步——非战移动时生效）
         const hideCount = generalIdHasStrategicEffect(unit.generalId, 'hide_troop_count');
         const bluffCount = generalIdHasStrategicEffect(unit.generalId, 'bluff_troop_count');
         const inCombat = !!(unit as any).isAttacking;
-        const shouldShowTroops = !hideCount || inCombat;
+        // 仅行军时生效：战斗/战后停留时显示真实兵力
+        const isMoving = !!(unit as any).destination && !(unit as any).hasArrived && !inCombat;
+        const shouldShowTroops = !hideCount || inCombat || !isMoving;
         if (shouldShowTroops) {
             const rawTroops = Math.floor(unit.getTroops());
             const bluffMult = getBluffMagnitude(unit.generalId);
-            const displayTroops = (bluffCount && !inCombat) ? Math.floor(rawTroops * bluffMult) : rawTroops;
+            const displayTroops = (bluffCount && isMoving) ? Math.floor(rawTroops * bluffMult) : rawTroops;
             const troopsFontSize = 12;
             const troopsText = `${displayTroops}`;
             ctx.font = `bold ${troopsFontSize}px Arial`;

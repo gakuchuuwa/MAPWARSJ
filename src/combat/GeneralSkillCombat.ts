@@ -1167,11 +1167,18 @@ export function getCityAnchoredStrategicMagnitude(
     return skill.magnitude;
 }
 
-/** 名将 S① 兵贵神速：行军速度乘区 */
+/** 名将 S① 兵贵神速：行军速度乘区；视野技（S⑯⑰⑱）自带 ×1.1 加速 */
 export function getGeneralMarchSpeedMultiplier(unit: IBattleUnit): number {
     const skill = getGeneralStrategicSkillDef(unit);
-    if (!skill || skill.effect !== 'march_speed_mult') return 1;
-    return skill.magnitude;
+    if (!skill) return 1;
+    if (skill.effect === 'march_speed_mult') return skill.magnitude;
+    // 视野三技：神出鬼没 / 偃旗息鼓 / 虚张声势 均带 ×1.1 加速
+    if (skill.effect === 'hide_during_peacetime'
+        || skill.effect === 'hide_troop_count'
+        || skill.effect === 'bluff_troop_count') {
+        return 1.1;
+    }
+    return 1;
 }
 
 /** 取名将战略技指定效果的 magnitude（无匹配则返回 fallback）。用于数据驱动概率/乘数，如 str_11 长驱深入 magnitude=0.5 即无视小城 ZOC 的概率。 */
