@@ -628,7 +628,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yan: { generalId: 'yan_leyi', generalName: '乐毅', portrait: '/assets/xianqin/yan_leyi.png' },
     zhao: { generalId: 'zhao_lianpo', generalName: '廉颇', portrait: '/assets/xianqin/zhao_lianpo.png' },
     yunzhong: { generalId: 'yunzhong_tuobaliwei', generalName: '拓跋力微', portrait: '/assets/STEPPE/yunzhong_tuobaliwei.png' },
-    yang_aner: { generalId: 'yang_aner_yanganer', generalName: '杨安儿', portrait: '/assets/LINGNAN/yang_aner_yanganer.png' },
+    yang_aner: { generalId: 'yang_aner_yanganer', generalName: '杨安儿', portrait: '/assets/panjun/yang_aner_yanganer.png' },
         xie_cj_d: { generalId: 'xie_xiefangde', generalName: '谢枋得', portrait: '/assets/JIANGNAN/xie_xiefangde.png' }, // 葛溪·信州抗元殉国
     wan: { generalId: 'wan_liuyuan', generalName: '刘源', portrait: '/assets/JIANGNAN/wan_liuyuan.png' },
     huang_d: { generalId: 'huang_d_sunshuao', generalName: '贾逵', portrait: '/assets/CENTRAL/huang_d_jiakui.png' },

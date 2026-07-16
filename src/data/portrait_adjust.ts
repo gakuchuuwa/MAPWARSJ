@@ -927,11 +927,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/LINGNAN/yang_aner_yanganer.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 6
-        },
         "/assets/BASHU/kuai_kuaiyue.png": {
             "scale": 0.94,
             "offsetX": 0,
@@ -2182,11 +2177,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 35
         },
-        "/assets/NORTHEAST/maomingan_suoetu.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": 21
-        },
         "/assets/NORTHEAST/nifuhe_baerhudai.png": {
             "scale": 0.86,
             "offsetX": 0,
@@ -2294,11 +2284,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/panjun/dashun_lizicheng.png": {
             "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -18
-        },
-        "/assets/panjun/__闲置__PANJUN_02.png": {
-            "scale": 1.17,
             "offsetX": 0,
             "offsetY": -18
         },
@@ -4087,11 +4072,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 14
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_05.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -9
-        },
         "/assets/STEPPE/yingzhou_ying_d_muronghuang.png": {
             "scale": 0.95,
             "offsetX": 0,
@@ -5098,9 +5078,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/xianqin/jiaodong_tiandan.png": {
-            "scale": 0.92,
-            "offsetX": 1,
-            "offsetY": -47
+            "scale": 1.02,
+            "offsetX": 32,
+            "offsetY": -54
         },
         "/assets/DIANQIAN/__闲置__DIANQIAN_11.png": {
             "scale": 1.04,
@@ -5836,6 +5816,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.17,
             "offsetX": 0,
             "offsetY": -59
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_34.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/panjun/yang_aner_yanganer.png": {
+            "scale": 1.21,
+            "offsetX": 10,
+            "offsetY": -18
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_31.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/NORTHEAST/maomingan_suoetu.png": {
+            "scale": 0.97,
+            "offsetX": 6,
+            "offsetY": -9
         }
     },
     "folderGuides": {
