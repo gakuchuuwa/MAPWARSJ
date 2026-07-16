@@ -189,6 +189,7 @@ export class SiegeManager {
                 entry.approaching = false;
                 settled = true;
                 siegeLog(`🚧 [SiegeManager] ${army.name} 抵达【${cityId}】停步环（${dist.toFixed(2)}），排队等待`);
+                this.tryAnnounceQueueWait(army);
                 remaining.push(entry);
             } else if (dist > SiegeManager.JOIN_RADIUS + 0.05) {
                 // 路线只是擦边而过，已走远 → 放行，不再视为等待者
@@ -1238,6 +1239,20 @@ export class SiegeManager {
         );
         queue.push({ army, siegeData, onSiegeComplete, stopDist, approaching });
         this.siegeThirdPartyWaiters.set(cityId, queue);
+        // 已停步入队（非走近途中）→ 跟拍军团播排队旁观
+        if (!approaching) this.tryAnnounceQueueWait(army);
+    }
+
+    /** 跟拍军团进入排队旁观时播报（原句） */
+    private tryAnnounceQueueWait(army: Army): void {
+        if (getFollowedArmyId() !== army.id) return;
+        const genRec = army.generalId ? getGeneralRecordByGeneralId(army.generalId) : null;
+        const eliteName = getLegionEliteLegionName(army);
+        if (!genRec || !eliteName) return;
+        speechAnnouncer.announceQueueWait({
+            generalName: genRec.generalName,
+            eliteName,
+        });
     }
 
     /** 每场攻城结束后唤醒一个第三方（FCFS），与胜方再开新战 */

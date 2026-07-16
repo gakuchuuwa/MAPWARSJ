@@ -432,6 +432,17 @@ export class SpeechAnnouncer {
     this.speak(text);
   }
 
+  /** 排队旁观（第三方攻城等待）：跟随军团固定有武将和精锐。 */
+  public announceQueueWait(opts: {
+    generalName: string;
+    eliteName: string;
+  }): void {
+    if (!this.enabled) return;
+    const text = `${opts.generalName}命全军待命，亲率${opts.eliteName}，居高临下，坐山观虎斗，伺机而动，坐收渔利。`;
+    console.log("[Speech] 排队等待:", text);
+    this.speak(text);
+  }
+
   /** 援军参战：只有「武将+精锐」或「无将无精锐」两种；势取本场开局锁定值。 */
   public announceReinforcementJoin(opts: {
     factionId: string;
