@@ -118,8 +118,8 @@ export class GameConfig {
         BATTLE_DURATION_MAX_SEC: 60,
         /** 双方总兵力达到此值时取 MAX 时长 */
         BATTLE_DURATION_TROOPS_SCALE: 100000,
-        /** 并非双方都有武将时（纯兵 / 一方有将）：固定 8 秒 */
-        BATTLE_DURATION_PARTIAL_GENERAL_SEC: 8,
+        /** 并非双方都有武将时（纯兵 / 一方有将）：固定 9 秒 */
+        BATTLE_DURATION_PARTIAL_GENERAL_SEC: 9,
         THRESHOLD_SMALL: 20000,
         THRESHOLD_LARGE: 100000,
         /**

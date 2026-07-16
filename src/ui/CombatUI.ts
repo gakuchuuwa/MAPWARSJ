@@ -1062,7 +1062,7 @@ export class CombatUI {
             const nameEl = document.createElement('div');
             nameEl.style.cssText = `
                 font-family: 'Noto Serif SC', serif;
-                font-size: ${uiPx(18)};
+                font-size: ${uiPx(17)};
                 font-weight: 900;
                 color: #fff8e0;
                 letter-spacing: 1px;

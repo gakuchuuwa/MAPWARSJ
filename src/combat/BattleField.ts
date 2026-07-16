@@ -248,7 +248,7 @@ export class BattleField implements IOpeningPulseSink {
             : GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
     }
 
-    /** 开局脉冲用：双将才乘威慑节奏系数，否则固定 8 秒 */
+    /** 开局脉冲用：双将才乘威慑节奏系数，否则固定 9 秒 */
     private estimateSkillUiTargetDuration(): number {
         if (!this.bothSidesHaveGeneral()) {
             return GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
@@ -256,7 +256,7 @@ export class BattleField implements IOpeningPulseSink {
         return this.clampDuration(this.targetDuration * this.computeFearDurationMult());
     }
 
-    /** 定强弱后：双将 × 威慑系数并钳 30–60；否则固定 8 秒 */
+    /** 定强弱后：双将 × 威慑系数并钳 30–60；否则固定 9 秒 */
     private resolveFinalTargetDuration(): number {
         if (!this.bothSidesHaveGeneral()) {
             return GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
@@ -278,7 +278,7 @@ export class BattleField implements IOpeningPulseSink {
 
         const totalTroops =
             this.attackerGroup.initialTotalTroops + this.defenderGroup.initialTotalTroops;
-        // 并非双方都有将（纯兵 / 一方有将）→ 固定 8 秒
+        // 并非双方都有将（纯兵 / 一方有将）→ 固定 9 秒
         if (!this.bothSidesHaveGeneral()) {
             this.targetDuration = GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
             gameLog('battle', `⚔️ [BattleField] 非双将战 → ${this.targetDuration}s`);
