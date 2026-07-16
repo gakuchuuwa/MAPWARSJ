@@ -2182,11 +2182,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -22
         },
-        "/assets/NORTHEAST/hezhe_shaerhuda.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": -5
-        },
         "/assets/NORTHEAST/jilin_fujun.png": {
             "scale": 1.13,
             "offsetX": 0,
@@ -2216,11 +2211,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 21
-        },
-        "/assets/NORTHEAST/nanai_zhahaluo.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -3
         },
         "/assets/NORTHEAST/nifuhe_baerhudai.png": {
             "scale": 0.86,
@@ -5781,6 +5771,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": 11
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_28.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/NORTHEAST/hezhe_shaerhuda.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_29.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/NORTHEAST/nanai_zhahaluo.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {
