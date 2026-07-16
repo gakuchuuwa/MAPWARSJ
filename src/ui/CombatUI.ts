@@ -1132,16 +1132,13 @@ export class CombatUI {
 
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {
-                    add(tag.name, tag.effectLabel, tag.isFamous, tag.skillType);
+                    add(tag.name, '', tag.isFamous, tag.skillType);
                 }
             }
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
-                const tier = getUnitEliteTier(unit);
-                const TIER_LABELS = ['天神军', '王者师', '劲锐旅', '精英团', '戍卫营'];
-                const tierLabel = tier !== null ? (TIER_LABELS[tier] ?? '精锐') : '精锐';
-                add(getLegionEliteBadgeName(unit), tierLabel, true, 'elite');
+                add(getLegionEliteBadgeName(unit), '', true, 'elite');
             }
 
             for (const tag of pending) box.appendChild(tag);
@@ -2092,8 +2089,11 @@ export class CombatUI {
         for (const [wi, waveUnits] of sortedWaves) {
             const dim = maxWave <= 1 ? 1 : wi === 0 ? 1 : wi === 1 ? 0.82 : 0.62;
             const size = maxWave <= 1 ? '1em' : wi === 0 ? '1em' : wi === 1 ? '0.92em' : '0.82em';
+            // 同波次有军团时，跳过 city 单位（避免"XX驻军"盖过守城军团名）
+            const hasLegionInWave = waveUnits.some((u) => u.unitType === 'legion' || u.unitType === 'army');
 
             for (const u of waveUnits) {
+                if (u.unitType === 'city' && hasLegionInWave) continue;
                 const garrisonElite = u.unitType === 'city' ? readSiegeGarrisonEliteName(u.getEntity?.()) : undefined;
                 if (garrisonElite) {
                     html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap; grid-column: span 2;">${garrisonElite}</span>`;

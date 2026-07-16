@@ -111,18 +111,15 @@ export class GameConfig {
         /** 自动战斗时长：游戏秒，按双方总兵力在 [MIN, MAX] 间线性插值 */
         BATTLE_DURATION_MIN_SEC: 5,
         /**
-         * 任一侧有武将时的时长下限（游戏秒）。
+         * 双方都有武将时的时长下限（游戏秒）。
          * 三幕墙钟预算 12+12+6（开战句 / 双方技能 / 溃败），比例 40/40/20 → 下限 30。
-         * 无将小战仍走 MIN_SEC=5。
          */
         BATTLE_DURATION_MIN_WITH_GENERAL_SEC: 30,
         BATTLE_DURATION_MAX_SEC: 60,
         /** 双方总兵力达到此值时取 MAX 时长 */
         BATTLE_DURATION_TROOPS_SCALE: 100000,
-        /**
-         * 一方有将 vs 无将：统一 8 秒。
-         */
-        ONE_SIDED_GENERAL_DURATION: [8, 8, 8] as const,
+        /** 并非双方都有武将时（纯兵 / 一方有将）：固定 8 秒 */
+        BATTLE_DURATION_PARTIAL_GENERAL_SEC: 8,
         THRESHOLD_SMALL: 20000,
         THRESHOLD_LARGE: 100000,
         /**

@@ -215,9 +215,7 @@ export class BattleField implements IOpeningPulseSink {
         // 注入「估算最终时长」= 基础 × 节奏系数（computeFearDurationMult 与强弱判定无关，此刻即可算；
         // 与真值仅差开局加兵技的微小兵力漂移）——脉冲延迟与战损引爆点按同一把尺对齐（第一幕末 ≈40%）。
         // 注入与发射同 tick 同步完成，多场战斗并发也不会互相污染。
-        setBattleTargetDurationForSkillUi(
-            this.clampDuration(this.targetDuration * this.computeFearDurationMult())
-        );
+        setBattleTargetDurationForSkillUi(this.estimateSkillUiTargetDuration());
         // 三势适性：须在 pickPredictedSides 之前——先按兵力比给带将单位选局技，让开局脉冲/战力/卡片都用局技(否则局技未设,三处不一致且战力用招牌)
         this.assignSituationalSkills();
         // 锁定指挥官：assignSituationalSkills 已设局技，此后 pickSideSkillGeneralUnit 选的将是带着局技的单位
@@ -226,7 +224,7 @@ export class BattleField implements IOpeningPulseSink {
         this.pickPredictedSides();
         // 威慑系统：定强弱后算战损减免 + 节奏时长系数
         this.applyIntimidationModifiers();
-        this.targetDuration = this.clampDuration(this.targetDuration * this.fearDurationMult);
+        this.targetDuration = this.resolveFinalTargetDuration();
         this.reconcileSiegeGarrisonBoostWithDefenders();
         
         this.notifyBattleStart();
@@ -237,18 +235,33 @@ export class BattleField implements IOpeningPulseSink {
         gameLog('battle', `   ⏱️ 预计战斗时长: ${this.targetDuration.toFixed(1)}秒`);
     }
 
-    /** 任一侧有武将 → 时长地板抬高，给开战语音留第一幕 */
-    private battleHasGeneral(): boolean {
-        return (
-            this.attackerGroup.units.some((bu) => !!bu.unit.generalId) ||
-            this.defenderGroup.units.some((bu) => !!bu.unit.generalId)
-        );
+    /** 攻守双方各至少一侧有 generalId */
+    private bothSidesHaveGeneral(): boolean {
+        const attHasGen = this.attackerGroup.units.some((bu) => !!bu.unit.generalId);
+        const defHasGen = this.defenderGroup.units.some((bu) => !!bu.unit.generalId);
+        return attHasGen && defHasGen;
     }
 
     private durationFloorSec(): number {
-        return this.battleHasGeneral()
+        return this.bothSidesHaveGeneral()
             ? GameConfig.COMBAT.BATTLE_DURATION_MIN_WITH_GENERAL_SEC
-            : GameConfig.COMBAT.BATTLE_DURATION_MIN_SEC;
+            : GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
+    }
+
+    /** 开局脉冲用：双将才乘威慑节奏系数，否则固定 8 秒 */
+    private estimateSkillUiTargetDuration(): number {
+        if (!this.bothSidesHaveGeneral()) {
+            return GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
+        }
+        return this.clampDuration(this.targetDuration * this.computeFearDurationMult());
+    }
+
+    /** 定强弱后：双将 × 威慑系数并钳 30–60；否则固定 8 秒 */
+    private resolveFinalTargetDuration(): number {
+        if (!this.bothSidesHaveGeneral()) {
+            return GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
+        }
+        return this.clampDuration(this.targetDuration * this.fearDurationMult);
     }
 
     private clampDuration(seconds: number): number {
@@ -265,34 +278,15 @@ export class BattleField implements IOpeningPulseSink {
 
         const totalTroops =
             this.attackerGroup.initialTotalTroops + this.defenderGroup.initialTotalTroops;
-        const attHasGen = this.attackerGroup.units.some((bu) => !!bu.unit.generalId);
-        const defHasGen = this.defenderGroup.units.some((bu) => !!bu.unit.generalId);
-
-        // 一方有将 vs 无将：不看总兵力，按有将方的势定 10/15/20
-        if ((attHasGen || defHasGen) && !(attHasGen && defHasGen)) {
-            const genTroops = attHasGen
-                ? this.attackerGroup.initialTotalTroops
-                : this.defenderGroup.initialTotalTroops;
-            const noGenTroops = attHasGen
-                ? this.defenderGroup.initialTotalTroops
-                : this.attackerGroup.initialTotalTroops;
-            const ratio = genTroops / Math.max(1, noGenTroops);
-            const [adv, bal, dis] = GameConfig.COMBAT.ONE_SIDED_GENERAL_DURATION;
-            this.targetDuration = ratio > 1.5 ? adv : ratio < 0.67 ? dis : bal;
-            gameLog('battle', `⚡ [BattleField] 名将 vs 无将 · 势=${ratio > 1.5 ? '优' : ratio < 0.67 ? '劣' : '均'}(${ratio.toFixed(2)}) → ${this.targetDuration}s`);
+        // 并非双方都有将（纯兵 / 一方有将）→ 固定 8 秒
+        if (!this.bothSidesHaveGeneral()) {
+            this.targetDuration = GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
+            gameLog('battle', `⚔️ [BattleField] 非双将战 → ${this.targetDuration}s`);
             return;
         }
 
-        // 双方均无将：纯兵对战，统一 6 秒
-        if (!attHasGen && !defHasGen) {
-            this.targetDuration = 6;
-            gameLog('battle', `⚔️ [BattleField] 无将战 → 6s`);
-            return;
-        }
-
-        this.targetDuration = calculateBattleDurationSec(totalTroops, {
-            hasGeneral: this.battleHasGeneral(),
-        });
+        this.targetDuration = calculateBattleDurationSec(totalTroops, { hasGeneral: true });
+        gameLog('battle', `⚔️ [BattleField] 双将战 · 总兵 ${totalTroops} → ${this.targetDuration.toFixed(1)}s（下限 30）`);
     }
 
     /**
@@ -1259,7 +1253,7 @@ export class BattleField implements IOpeningPulseSink {
         // refreshPredictedSidesFromTotals 已重算 fearDurationMult，重新套用节奏系数
         // 有将地板：威慑系数不得把时长压破 WITH_GENERAL（否则开战语音仍不够）
         if (!this.customDuration) {
-            this.targetDuration = this.clampDuration(this.targetDuration * this.fearDurationMult);
+            this.targetDuration = this.resolveFinalTargetDuration();
         }
 
         // 三势适性：援军新将补指派局技（仅未被开局/counter设过的新单位，避免覆盖counter、不重复施加）
