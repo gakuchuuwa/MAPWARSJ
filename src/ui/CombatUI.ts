@@ -1078,7 +1078,7 @@ export class CombatUI {
             `;
             // 效果行：空串（如文化卡只显四字词）时用不换行空格占位——
             // 保证与双行卡完全等高、四字名同一水平线，避免行内卡片高低不齐
-            effectEl.textContent = effect || ' '; // 不换行空格占位(显式转义防被格式化误清)
+            effectEl.textContent = effect || '\u00A0'; // 不换行空格占位(显式转义防被格式化误清)
 
             tag.appendChild(nameEl);
             tag.appendChild(effectEl);
