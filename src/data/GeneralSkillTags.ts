@@ -696,12 +696,12 @@ export const ORDINARY_ARCHETYPE_POOL: Readonly<Record<SkillArchetype, readonly s
 
 /** 26 战略技简要标签（名将专用；配将见 STRATEGIC_SKILL_CATALOG） */
 export const STRATEGIC_SKILL_TAGS = [
-    // ── 战术类（战斗面板乘区）──
-    { id: 'str_02', grid: 'S②', name: '因地制宜', tags: ['地形', '战术加成'], terrain: '战斗' },
-    { id: 'str_03', grid: 'S③', name: '因敌制胜', tags: ['均势', '会战', '正面决战'], terrain: '战斗' },
-    { id: 'str_04', grid: 'S④', name: '威震华夏', tags: ['优势', '威慑', '心理压制'], terrain: '战斗' },
-    { id: 'str_08', grid: 'S⑧', name: '固若金汤', tags: ['守城', '城防', '据守'], terrain: '战斗' },
-    { id: 'str_09', grid: 'S⑨', name: '以寡击众', tags: ['劣势', '逆转', '背水'], terrain: '战斗' },
+    // ── 以下 5 个对应已注释的战略技（catalogs.ts 已移除，因为战略技=大地图）──
+    // { id: 'str_02', grid: 'S②', name: '因地制宜', tags: ['地形', '战术加成'], terrain: '战斗' },
+    // { id: 'str_03', grid: 'S③', name: '因敌制胜', tags: ['均势', '会战', '正面决战'], terrain: '战斗' },
+    // { id: 'str_04', grid: 'S④', name: '威震华夏', tags: ['优势', '威慑', '心理压制'], terrain: '战斗' },
+    // { id: 'str_08', grid: 'S⑧', name: '固若金汤', tags: ['守城', '城防', '据守'], terrain: '战斗' },
+    // { id: 'str_09', grid: 'S⑨', name: '以寡击众', tags: ['劣势', '逆转', '背水'], terrain: '战斗' },
     // ── 加速类 ──
     { id: 'str_01', grid: 'S①', name: '兵贵神速', tags: ['急行军', '闪击', '远征机动'], terrain: '行军' },
     { id: 'str_10', grid: 'S⑩', name: '如履平地', tags: ['山地', '迂回', '奇袭'], terrain: '行军' },

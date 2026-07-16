@@ -120,10 +120,7 @@ export class BattleField implements IOpeningPulseSink {
     private nextReinforcementWave = 1; // 下一波援军编号，从 1 开始
     /** 援军编入时掷定的有效战力系数（waveIndex≥1），不重掷 */
     private readonly reinforcementLuckByUnitId = new Map<string, number>();
-    /** 开战命运系 luck（#12–#20 或默认），refresh 时回放以免被抹掉（P0 修复） */
-    private attackerOpeningFateLuck = 1;
-    private defenderOpeningFateLuck = 1;
-    /** 当前实际使用的 luck（开场 = opening；败战翻盘重掷后 = COMEBACK_LUCK_RANGE 区间值） */
+    /** 当前实际使用的 luck（开场 = 开局掷值；败战翻盘重掷后 = COMEBACK_LUCK_RANGE 区间值） */
     private attackerCurrentFateLuck = 1;
     private defenderCurrentFateLuck = 1;
     /** 引擎滚点时的兵力缓存（徽章用此算比，防战中兵力改变导致条件漂移） */
@@ -514,9 +511,6 @@ export class BattleField implements IOpeningPulseSink {
                 defUnits, attUnits, this.type, terrain, false,
                 { emitUi: true, openingUiShown: this.openingTacticalUiShown },
             );
-            // 缓存开战命运 luck，供 refresh（援军编入 / 逆局）确定性回放，避免 #12–#20 掷点被抹掉
-            this.attackerOpeningFateLuck = attFate.luck;
-            this.defenderOpeningFateLuck = defFate.luck;
             this.attackerCurrentFateLuck = attFate.luck;
             this.defenderCurrentFateLuck = defFate.luck;
             const attRoll = sideBasePower(attUnits) * attFate.luck;
@@ -596,10 +590,10 @@ export class BattleField implements IOpeningPulseSink {
         };
         const attFateLuck = rollLuckOnRecompute
             ? rollComebackLuck()
-            : this.attackerOpeningFateLuck;
+            : this.attackerCurrentFateLuck;
         const defFateLuck = rollLuckOnRecompute
             ? rollComebackLuck()
-            : this.defenderOpeningFateLuck;
+            : this.defenderCurrentFateLuck;
         // 同步当前 luck，供战斗面板 badge 读取（败战翻盘后不再是开局值）
         this.attackerCurrentFateLuck = attFateLuck;
         this.defenderCurrentFateLuck = defFateLuck;
@@ -1363,10 +1357,6 @@ export class BattleField implements IOpeningPulseSink {
         return luck ?? null;
     }
 
-    /** 开局命运系运气值（攻方），供战斗面板运气标签 */
-    public getAttackerOpeningFateLuck(): number { return this.attackerOpeningFateLuck; }
-    /** 开局命运系运气值（守方），供战斗面板运气标签 */
-    public getDefenderOpeningFateLuck(): number { return this.defenderOpeningFateLuck; }
     /** 当前实际使用的 luck（开场=开局值，败战翻盘后=重掷值），供战斗面板 badge */
     public getAttackerCurrentFateLuck(): number { return this.attackerCurrentFateLuck; }
     /** 当前实际使用的 luck */

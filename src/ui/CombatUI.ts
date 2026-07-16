@@ -37,7 +37,6 @@ import { resolveGeneralTacticalEntry } from '../combat/TacticalSkillResolver';
 import { EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 import {
     getOpeningTacticalPowerMultiplier,
-    getStrategicBattlePowerMultiplier,
     getGeneralSkillDisplayTags,
     getPassGarrisonDefenseSkillDisplay,
     getRegionCenterDefenseSkillDisplay,
@@ -3083,8 +3082,7 @@ export class CombatUI {
                         this.getOpponentUnitsFor(side),
                         side === 'attacker',
                         { battleType: this.currentBattleType, terrain },
-                    )
-                    * getStrategicBattlePowerMultiplier(u, this.currentBattleType, terrain, side);
+                    );
                 break;
             }
         }

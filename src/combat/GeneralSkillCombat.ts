@@ -861,24 +861,6 @@ export function getAttackStylePowerMult(unit: IBattleUnit | null, isAttacker: bo
 }
 
 /**
- * 开局战术战力压制乘区（④ 不战而屈类敌方减益，名将/普将通用）。
- * 接受单个 IBattleUnit 或整支部队数组（与底层 applyEnemyDebuff 逻辑一致，
- * 多单位时用 findEligibleGeneralUnit 找第一个有资格的将领）。
- */
-export function getOpeningTacticalEnemyPowerDebuffMultiplier(
-    opponentUnits: IBattleUnit | IBattleUnit[] | null
-): { value: number; label: string } | null {
-    if (!opponentUnits) return null;
-    const unit = Array.isArray(opponentUnits)
-        ? findEligibleGeneralUnit(opponentUnits)
-        : opponentUnits;
-    if (!unit || !canUnitUseGeneralSkills(unit)) return null;
-    const skill = getTacticalSkillForTiming(unit, 'opening');
-    if (!skill || skill.effect !== 'enemy_mult_0_8') return null;
-    return { value: skill.magnitude, label: skill.displayName };
-}
-
-/**
  * 战略技不再作用于战斗面板滚点（2026-07-16 定案）。
  * 全部 21 个战略技只在大地图层生效（行军/补给/征兵/视野/威慑/纵横/防务）。
  * 此函数保留以兼容 UI 调用方，始终返回 1。
