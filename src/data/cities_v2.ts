@@ -1277,7 +1277,8 @@ export const PERIPHERY: CityDataV2[] = [
         tier: 4,
         
         note: '蓬莱；天顺小城', region: 'NORTH' },
-    { id: 'city_jiaoxi', name: '胶西', factionId: 'tongma', lat: 36.228777, lng: 119.924011, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+    { id: 'city_jiaoxi', name: '黔陬', factionId: 'tongma', lat: 36.228777, lng: 119.924011, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
 
 
 
