@@ -4418,6 +4418,8 @@ export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
     ...TROOP,
     ...CASUALTY,
     ...COUNTER,
+    ...UNIQUE_T0,        // 满万无敌(ts_057)等 T0；漏注册会导致阿骨打等技能标签不显示
+    ...UNIQUE_T0_REVISE, // T0 三势精修补丁（含 ts_444/ts_445 等）
     ...UNIQUE_T1,
     ...UNIQUE_T1_GENERAL,
     ...UNIQUE_T1_GENERAL2,

@@ -2267,11 +2267,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/NORTHEAST/yeren_nvzhen_boke.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/NORTHEAST/yilou_naoya.png": {
             "scale": 1.09,
             "offsetX": 0,
@@ -2291,11 +2286,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.88,
             "offsetX": 0,
             "offsetY": 5
-        },
-        "/assets/NORTHEAST/dawoer_baerdaqi.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 27
         },
         "/assets/NORTHEAST/dongping_langtan.png": {
             "scale": 1,
@@ -5422,11 +5412,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_25.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": 23
-        },
         "/assets/NORTHEAST/huimo_gaoyanshou.png": {
             "scale": 1.12,
             "offsetX": 3,
@@ -5766,6 +5751,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -43
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_26.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 27
+        },
+        "/assets/NORTHEAST/dawoer_baerdaqi.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_27.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/NORTHEAST/yeren_nvzhen_boke.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {
