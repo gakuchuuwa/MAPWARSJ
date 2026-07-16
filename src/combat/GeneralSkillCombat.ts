@@ -841,41 +841,19 @@ export function getOpeningTacticalEnemyPowerDebuffMultiplier(
 }
 
 /**
- * 战略开战战力乘区（须匹配战场类型 / 地形）
+ * 战略技不再作用于战斗面板滚点（2026-07-16 定案）。
+ * 全部 21 个战略技只在大地图层生效（行军/补给/征兵/视野/威慑/纵横/防务）。
+ * 此函数保留以兼容 UI 调用方，始终返回 1。
  */
 export function getStrategicBattlePowerMultiplier(
-    unit: IBattleUnit,
-    battleType?: BattleType,
-    terrain?: LandTerrainKind | null,
-    side?: 'attacker' | 'defender',
-    selfTroops?: number,
-    enemyTroops?: number,
+    _unit: IBattleUnit,
+    _battleType?: BattleType,
+    _terrain?: LandTerrainKind | null,
+    _side?: 'attacker' | 'defender',
+    _selfTroops?: number,
+    _enemyTroops?: number,
 ): number {
-    if (!canUnitUseGeneralSkills(unit) || !battleType) return 1;
-    const profile = getGeneralProfile(unit.generalId);
-    if (!profile?.strategicSkillId) return 1;
-    const skill = getStrategicSkillDef(profile.strategicSkillId);
-    if (!skill) return 1;
-    switch (skill.effect) {
-        // S③因敌制胜：均势时（兵力在 0.67–1.5 倍敌方之间）自身战力×1.3
-        case 'equal_power_mult':
-            if (selfTroops !== undefined && enemyTroops !== undefined && enemyTroops > 0) {
-                const ratio = selfTroops / enemyTroops;
-                return (ratio >= 0.67 && ratio <= 1.5) ? skill.magnitude : 1;
-            }
-            return 1;
-        // S⑨以寡击众：劣势时（兵力<0.67倍敌方）自身战力×1.4
-        case 'disadvantage_power_mult':
-            if (selfTroops !== undefined && enemyTroops !== undefined && enemyTroops > 0) {
-                return (selfTroops / enemyTroops) < 0.67 ? skill.magnitude : 1;
-            }
-            return 1;
-        // S⑧固若金汤：守城时城防战力×magnitude（仅攻城战守方；数值见 GeneralSkills str_08）
-        case 'garrison_defense_mult':
-            return battleType === 'siege' && side === 'defender' ? skill.magnitude : 1;
-        default:
-            return 1;
-    }
+    return 1;
 }
 
 /** 军团/城防单位当前战略技定义（无则 null） */
@@ -1077,56 +1055,6 @@ export function tryEmitPostBattleResumeStrategicFx(
     }
 }
 
-/** 据点锚定将领的战略效果乘数（无匹配则 1） */
-/**
- * 战略技对战术技效果的乘区加成（S②因地制宜 / S④威震华夏）。
- * 返回乘数（默认 1），调用处用 skill.magnitude * 此值。
- */
-function getStrategicTacticalSkillMult(
-    unit: IBattleUnit,
-    selfTroops: number,
-    enemyTroops: number,
-    terrain?: LandTerrainKind | null,
-): number {
-    if (!canUnitUseGeneralSkills(unit)) return 1;
-    const generalId = unit.generalId;
-    if (!generalId) return 1;
-    const profile = getGeneralProfile(generalId);
-    if (!profile?.strategicSkillId) return 1;
-    const stratSkill = getStrategicSkillDef(profile.strategicSkillId);
-    if (!stratSkill) return 1;
-
-    let mult = 1;
-
-    // S④威震华夏：优势时（兵力>1.5倍）战术技效果×1.2
-    if (stratSkill.effect === 'advantage_skill_effect_mult') {
-        if (enemyTroops > 0 && selfTroops / enemyTroops > 1.5) {
-            mult *= stratSkill.magnitude;
-            const pos = unit.getPosition();
-            emitFollowedGeneralStrategicMapFx(unit, 'advantage_skill_effect_mult', pos.lat, pos.lng, 'pulse');
-        }
-    }
-
-    // S②因地制宜：地形匹配时战术技效果翻倍（magnitude=2.0）。
-    // 战术技词条以 condition 表达地形门槛（terrain_mountain/plain/sea），
-    // 与本场地形直接比对，不做标签猜测。
-    if (stratSkill.effect === 'terrain_tactical_double' && terrain) {
-        const activeTacId = getActiveTacticalSkillId(unit);
-        const tacEntry = activeTacId ? getTacticalSkillEntry(activeTacId) : null;
-        if (tacEntry && tacEntry.condition === `terrain_${terrain}`) {
-            mult *= stratSkill.magnitude;
-            const pos = unit.getPosition();
-            emitFollowedGeneralStrategicMapFx(unit, 'terrain_tactical_double', pos.lat, pos.lng, 'pulse');
-        }
-    }
-
-    return mult;
-}
-
-function formatStrategicTacticalLabel(mult: number): string {
-    if (mult > 1.01) return `（战略技加成 ×${mult.toFixed(1)}）`;
-    return '';
-}
 export function getCityAnchoredStrategicMagnitude(
     cityId: string,
     effect: StrategicEffect,
@@ -1803,7 +1731,7 @@ export function applyOpeningTacticalToRolls(
             if (!bridgedOpeningEnhanceActive(units, opponentUnits, isAttacker, opts, isAttacker ? attCommander : defCommander)) return { roll, enemyDebuff: 1 };
             const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
             const oppTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
-            let mult = skill.magnitude * getStrategicTacticalSkillMult(unit, selfTroops, oppTroops, opts?.terrain);
+            let mult = skill.magnitude;
             const oppUnit = findEligibleGeneralUnit(opponentUnits, isAttacker ? defCommander : attCommander);
             const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
             if (oppActiveId && mult > 1) {
@@ -2067,81 +1995,23 @@ export function applyComebackRollMultipliersForSide(
     return { sideRoll, opponentRoll };
 }
 
+/**
+ * 战略技不再作用于战斗面板滚点（2026-07-16 定案）。
+ * 全部 21 个战略技只在大地图层生效。
+ * 此函数保留以兼容调用方，直接透传 roll 值。
+ */
 export function applyStrategicBattleToRolls(
-    attackerUnits: IBattleUnit[],
-    defenderUnits: IBattleUnit[],
+    _attackerUnits: IBattleUnit[],
+    _defenderUnits: IBattleUnit[],
     attRoll: number,
     defRoll: number,
-    battleType: BattleType,
-    terrain?: LandTerrainKind | null,
-    emitUi: boolean = true,
-    attCommander?: IBattleUnit | null,
-    defCommander?: IBattleUnit | null,
+    _battleType: BattleType,
+    _terrain?: LandTerrainKind | null,
+    _emitUi: boolean = true,
+    _attCommander?: IBattleUnit | null,
+    _defCommander?: IBattleUnit | null,
 ): { attRoll: number; defRoll: number } {
-    const terrainKind =
-        terrain ?? getBattleTerrainKind([...attackerUnits, ...defenderUnits], battleType);
-
-    const applySide = (
-        units: IBattleUnit[],
-        opponents: IBattleUnit[],
-        roll: number,
-        sideLabel: string,
-        side: 'attacker' | 'defender',
-    ): number => {
-        const unit = findEligibleGeneralUnit(units, side === 'attacker' ? attCommander : defCommander);
-        if (!unit?.generalId) return roll;
-        const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
-        const oppTroops = opponents.reduce((s, u) => s + Math.max(0, u.troops), 0);
-        let mult = getStrategicBattlePowerMultiplier(unit, battleType, terrainKind, side, selfTroops, oppTroops);
-        if (Math.abs(mult - 1) < 0.001) return roll;
-
-        const oppUnit = findEligibleGeneralUnit(opponents, side === 'attacker' ? defCommander : attCommander);
-        const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
-        if (oppActiveId) {
-            const oppCtx = buildTacticalConditionContext({
-                battleType,
-                terrain: terrainKind,
-                selfTroops: oppTroops,
-                enemyTroops: selfTroops,
-                selfInitialTroops: oppTroops,
-                enemyInitialTroops: selfTroops,
-                selfIsAttacker: side !== 'attacker',
-                enemyHasFamousGeneral: sideHasFamousGeneral(units),
-                isFirstSortieSinceDepart: sideIsFirstSortie(opponents),
-            });
-            const counter = resolveEnemyTerrainBuffCounter(oppActiveId, mult, oppCtx);
-            if (counter.adjustedMult < mult) {
-                mult = counter.adjustedMult;
-                if (emitUi && counter.entry && oppUnit) {
-                    gameLog('battle', `⛰️ [对抗系] ${oppUnit.generalId} 触发【${counter.entry.displayName}】，压制了${sideLabel}地形优势！`);
-                }
-            }
-        }
-
-        const profile = getGeneralProfile(unit.generalId);
-        const skill = profile?.strategicSkillId
-            ? getStrategicSkillDef(profile.strategicSkillId)
-            : null;
-        const label = skill?.displayName ?? '战略';
-
-        // 开战战力战略（S③/S⑧/S⑨ 等：effect 与 profile 一致才 pulse）
-        if (skill && emitUi) {
-            const pos = unit.getPosition();
-            emitFollowedGeneralStrategicMapFx(unit, skill.effect, pos.lat, pos.lng, 'pulse');
-        }
-        const next = roll * mult;
-        if (emitUi) {
-            gameLog(
-                'battle',
-                `🏯 [武将技] ${unit.generalId} 【${label}】 ${sideLabel}有效战力 ×${parseFloat(mult.toFixed(2))} (${roll.toFixed(0)}→${next.toFixed(0)})`,
-            );
-        }
-        return next;
-    };
-
-    const outAtt = applySide(attackerUnits, defenderUnits, attRoll, '攻方', 'attacker');
-    const outDef = applySide(defenderUnits, attackerUnits, defRoll, '守方', 'defender');
-    return { attRoll: outAtt, defRoll: outDef };
+    return { attRoll, defRoll };
 }
 
 function applyPostBattleTroopPct(
