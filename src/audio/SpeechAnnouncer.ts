@@ -120,7 +120,7 @@ const CAPTURE_DEFEAT_SIGN: Record<CaptureJu, string> = {  // 守方败象
   advantage: "独木难支", balance: "计穷力竭", disadvantage: "大势已去",
 };
 const CAPTURE_DEFEAT_YIELD: Record<CaptureJu, string> = { // 守方降服
-  advantage: "甘拜下风", balance: "解甲归降", disadvantage: "俯首称臣",
+  advantage: "甘拜下风", balance: "卸甲归降", disadvantage: "俯首称臣",
 };
 
 /** 攻城播报·三势词（主人 2026-07 定稿，原文照录；城池 city / 关隘 pass 各一套） */

@@ -109,7 +109,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     // ── 防务类 ──
 
-    str_05: { id: 'str_05', grid: 'S⑤', displayName: '坚壁清野', effect: 'siege_approach_attrition', magnitude: 0.01, engineStatus: 'ready', category: 'defense', note: '本城被攻击（含沿途）时来犯军每秒减1%（逆势，录入锚将）' },
+    str_05: { id: 'str_05', grid: 'S⑤', displayName: '坚壁清野', effect: 'siege_approach_attrition', magnitude: 0.10, engineStatus: 'ready', category: 'defense', note: '本城被攻击（含沿途）时来犯军每秒减10%（逆势，录入锚将）' },
 
     // ── 视野类 ──
 
