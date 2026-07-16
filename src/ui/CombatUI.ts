@@ -1299,8 +1299,10 @@ export class CombatUI {
                 const APT_MAP: Record<string, string> = { create: '造势', leverage: '借势', reverse: '逆势' };
                 aptLabel2 = APT_MAP[profile.aptitude ?? ''] ?? '';
                 if (styleLabel || aptLabel2) {
-                    const myTroops = this.getUnitsForSide(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
-                    const oppTroops = this.getOpponentUnitsFor(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
+                    // 用缓存兵力（与乘数同源，防战中跨阈值导致标签漂移）
+                    const bf2 = this.boundRegionalBattleField;
+                    const myTroops = side === 'attacker' ? (bf2?.getCachedAttackerTroops() ?? 0) : (bf2?.getCachedDefenderTroops() ?? 0);
+                    const oppTroops = side === 'attacker' ? (bf2?.getCachedDefenderTroops() ?? 0) : (bf2?.getCachedAttackerTroops() ?? 0);
                     const ratio = myTroops / Math.max(1, oppTroops);
                     const sit: string = ratio > 1.5 ? 'advantage' : ratio < 0.67 ? 'disadvantage' : 'balance';
                     // 位匹配（攻防风格：武将风格 × 攻守位置）
