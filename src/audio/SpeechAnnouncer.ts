@@ -107,7 +107,7 @@ const STRATAGEM_BAJUE: Record<"attacker" | "defender", Record<StratagemKey, stri
     di: "虚张声势，挫其锐气",
     hun: "将计就计，后发制人",
     bing: "坚壁清野，以拖待变",
-    bai: "困兽犹斗，力战殉城",
+    bai: "背城借一，以身殉城",
   },
 };
 
