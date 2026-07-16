@@ -96,9 +96,9 @@ const STRATAGEM_BAJUE: Record<"attacker" | "defender", Record<StratagemKey, stri
   attacker: {
     gong: "厉兵秣马，先发制人",
     sheng: "摧枯拉朽，分割聚歼",
-    di: "声东击西，乱敌阵脚",
+    di: "乱其阵脚，出奇制胜",
     hun: "攻其不备，出其不意",
-    bing: "以逸待劳，反客为主",
+    bing: "孤注一掷，乘虚而击",
     bai: "置之死地，而后生",
   },
   defender: {

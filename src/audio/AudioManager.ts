@@ -55,7 +55,7 @@ const DUCK = {
     /** 播报时音乐压到 35%（衬托不抢） */
     bgmUnderSpeech: 0.35,
     /** 仅音效循环(行军/战斗)时音乐压到 15% */
-    bgmUnderSfx: 0,
+    bgmUnderSfx: 0.30,
     /** 播报时音效压到 12%（微弱衬托，不抢语音） */
     sfxUnderSpeech: 0.28,
 } as const;
