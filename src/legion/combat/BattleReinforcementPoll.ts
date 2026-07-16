@@ -11,7 +11,7 @@ import { LatLng } from '../../types/core';
 import { SpatialRegistry } from '../../world/SpatialRegistry';
 import type { LegionManager } from '../LegionManager';
 import { markLegionAnnihilationFeed } from '../LegionAnnihilationFeed';
-import { speechAnnouncer } from '../../audio/SpeechAnnouncer';
+import { speechAnnouncer, type CaptureJu } from '../../audio/SpeechAnnouncer';
 import { getGeneralRecordByGeneralId } from '../../data/FactionGenerals';
 import { getLegionEliteLegionName } from '../../data/ExpeditionLegions';
 
@@ -126,6 +126,9 @@ export function tryJoinLegionToBattle(
     const followedId = (window as any).game?.cameraFollowUI?.getFollowedArmyId?.();
     if (followedId === legion.id) {
         const genRec = legion.generalId ? getGeneralRecordByGeneralId(legion.generalId) : null;
+        const brR = battleField.getInitialAttDefRatio();
+        const brFollowerR = isAttacker ? brR : (1 / Math.max(brR, 0.001));
+        const brJu: CaptureJu = brFollowerR > 1.5 ? 'advantage' : brFollowerR < 0.67 ? 'disadvantage' : 'balance';
         speechAnnouncer.announceReinforcementJoin({
             factionId: legion.getFactionId(),
             generalId: legion.generalId ?? null,
@@ -133,6 +136,7 @@ export function tryJoinLegionToBattle(
             eliteName: getLegionEliteLegionName(legion),
             side,
             cityName: battleCityName,
+            ju: brJu,
             battleSkillId: adapter.battleOverriddenSkillId ?? null,
         });
     }

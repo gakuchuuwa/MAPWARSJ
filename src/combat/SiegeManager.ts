@@ -32,7 +32,7 @@ import {
     type ReinforcementJoinDeps,
 } from '../legion/combat/BattleReinforcementPoll';
 import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
-import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { shouldSkipHomeRecapture } from '../legion/LegionSpawnPolicy';
 import {
     applySiegeGarrisonBoostIfNeeded,
@@ -927,11 +927,13 @@ export class SiegeManager {
                     const defenderHadNamedForce = defenderUnits.some(
                         (u) => !!u.generalId || getUnitEliteTier(u) !== null
                     );
-                    // [语音播报·攻占] 攻方这一仗的势（读攻方将领 battleOverriddenSkillId 判优/均/劣）+ 守方武将
+                    // [语音播报·攻占] 势=攻守初始兵力比（与 announceSiegeStart 同算法）
                     const capAttackerUnit = attackerUnits.find((u) => u.generalId === army.generalId)
                         ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
                     const capAttackerSkillId = capAttackerUnit?.battleOverriddenSkillId ?? undefined;
                     const capDefenderGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? undefined;
+                    const capR = battleField.getInitialAttDefRatio();
+                    const capAttackerJu: CaptureJu = capR > 1.5 ? 'advantage' : capR < 0.67 ? 'disadvantage' : 'balance';
                     this.cityManager.updateCity(targetCity.id, {
                         factionId: army.getFactionId(),
                         troops: 1000,
@@ -941,6 +943,7 @@ export class SiegeManager {
                         captorGeneralId: army.generalId,
                         defenderHadNamedForce,
                         attackerSkillId: capAttackerSkillId ?? undefined,
+                        attackerJu: capAttackerJu,
                         defenderGeneralId: capDefenderGeneralId,
                     });
 
@@ -978,8 +981,11 @@ export class SiegeManager {
                 if (failSpeechTaken) {
                     const failAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
                         ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
+                    const failR = battleField.getInitialAttDefRatio();
+                    const failJu: CaptureJu = failR > 1.5 ? 'advantage' : failR < 0.67 ? 'disadvantage' : 'balance';
                     speechAnnouncer.announceSiegeFailure({
                         attackerFactionId: army.getFactionId(),
+                        ju: failJu,
                         attackerSkillId: failAtkUnit?.battleOverriddenSkillId ?? null,
                         cityName: targetCity.name,
                         defenderGeneralId: failDefGeneralId,
@@ -1145,16 +1151,19 @@ export class SiegeManager {
             throw err;
         }
 
-        // [语音播报] 跟随军团攻城：开战后一刻触发，读攻方将领这一仗的势（battleOverriddenSkillId，与攻占/技能同源）。
+        // [语音播报] 跟随军团攻城：开战后一刻触发，势=攻守初始兵力比（与 BattleField assignSituationalSkills 同公式）。
         // 城池「兵临」、关隘「攻打」；守方有将续「势前缀…赵国[名将]武将，守方八字」，无将只一句。
         const followedIdForSpeech = window.game?.cameraFollowUI?.getFollowedArmyId?.();
         if (followedIdForSpeech === army.id) {
             const siegeAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
                 ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
             const siegeDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
+            const r = battleField.getInitialAttDefRatio(); // attacker / defender
+            const attJu: CaptureJu = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
             speechAnnouncer.announceSiegeStart({
                 attackerFactionId: army.getFactionId(),
                 attackerGeneralId: army.generalId,
+                ju: attJu,
                 attackerSkillId: siegeAtkUnit?.battleOverriddenSkillId ?? null,
                 cityName: targetCity.name,
                 isPass: targetCity.type === 'pass',
@@ -1170,6 +1179,9 @@ export class SiegeManager {
             const unit = (isAttacker ? attackerUnits : defenderUnits).find((u) => u.generalId === legion.generalId)
                 ?? null;
             const genRec = legion.generalId ? getGeneralRecordByGeneralId(legion.generalId) : null;
+            // 援军加入的势：攻方用 attJu，守方用 defJu（取反）
+            const reinfR = isAttacker ? r : (1 / Math.max(r, 0.001));
+            const reinfJu: CaptureJu = reinfR > 1.5 ? 'advantage' : reinfR < 0.67 ? 'disadvantage' : 'balance';
             speechAnnouncer.announceReinforcementJoin({
                 factionId: legion.getFactionId(),
                 generalId: legion.generalId ?? null,
@@ -1177,6 +1189,7 @@ export class SiegeManager {
                 eliteName: getLegionEliteLegionName(legion),
                 side: isAttacker ? 'attacker' : 'defender',
                 cityName: targetCity.name,
+                ju: reinfJu,
                 battleSkillId: unit?.battleOverriddenSkillId ?? null,
             });
         }

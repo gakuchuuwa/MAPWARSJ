@@ -46,7 +46,7 @@ import { YuefeiExpedition } from './YuefeiExpedition'; // 岳飞北伐黄龙 圆
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { initUnattendedStream } from './UnattendedStream'; // 无人值守直播（?stream=1）
 import { audioManager, type AudioManager } from '../audio/AudioManager';
-import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { SpeechVoiceToggle } from '../ui/SpeechVoiceToggle';
 import { gameLog } from '../utils/GameLogger';
 import { tickGameAppFrame, tickGameLogicOnly } from './GameAppLoop';
@@ -346,9 +346,11 @@ export class GameApp {
                     if (byFollowed) {
                         const regionKey = isCenter ? this.cityManager.getCity(event.cityId)?.region : undefined;
                         const regionLabel = regionKey ? (REGION_LABELS[regionKey as RegionType] ?? '') : undefined;
+                        const capJu = (event.attackerJu as CaptureJu) ?? 'balance';
                         speechAnnouncer.announceCityCapture({
                             attackerFactionId: event.newFactionId,
                             cityName: event.cityName,
+                            ju: capJu,
                             attackerSkillId: event.attackerSkillId,
                             defenderGeneralId: event.defenderGeneralId,
                             regionLabel,
@@ -389,6 +391,7 @@ export class GameApp {
                         speechAnnouncer.announceFieldBattleEnd({
                             win: false,
                             followerFactionId: army.getFactionId(),
+                            ju: 'balance', // 援军覆没兜底：无战场可直接读比例
                             followerSkillId: info.battleSkillId ?? null,
                         });
                     }

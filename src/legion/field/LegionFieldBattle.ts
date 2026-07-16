@@ -13,7 +13,7 @@ import { GameConfig } from '../../config/GameConfig';
 import { City, LatLng } from '../../types/core';
 import { gameLog } from '../../utils/GameLogger';
 import { Army } from '../Army';
-import { speechAnnouncer } from '../../audio/SpeechAnnouncer';
+import { speechAnnouncer, type CaptureJu } from '../../audio/SpeechAnnouncer';
 import {
     markLegionAnnihilationFeed,
     resolveAnnihilationCityName,
@@ -257,7 +257,7 @@ function startFieldBattleBetween(
         `${attName} 大战 ${defName}`
     );
 
-    // [语音播报] 野战开战（仅跟随军团那场）。势读跟随军团 battleOverriddenSkillId（与攻打/技能/攻占同源）。
+    // [语音播报] 野战开战（仅跟随军团那场）。势=攻守初始兵力比（与攻城/攻占同源）。
     const followedFieldId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
     if (followedFieldId) {
         const onAtt = attLegions.some((l) => l.id === followedFieldId);
@@ -267,8 +267,12 @@ function startFieldBattleBetween(
             const fUnits = onAtt ? attUnits : defUnits;
             const idx = fLegions.findIndex((l) => l.id === followedFieldId);
             const enemyPrimary = onAtt ? otherArmy : army;
+            const flR = fieldBattleField.getInitialAttDefRatio();
+            const followerR = onAtt ? flR : (1 / Math.max(flR, 0.001));
+            const fieldJu: CaptureJu = followerR > 1.5 ? 'advantage' : followerR < 0.67 ? 'disadvantage' : 'balance';
             speechAnnouncer.announceFieldBattle({
                 followerFactionId: onAtt ? attFaction : defFaction,
+                ju: fieldJu,
                 followerGeneralId: fLegions[idx]?.generalId ?? null,
                 followerSkillId: fUnits[idx]?.battleOverriddenSkillId ?? null,
                 enemyFactionId: onAtt ? defFaction : attFaction,
@@ -291,9 +295,13 @@ function startFieldBattleBetween(
         const follower = endLegions[endIdx];
         const endEnemyPrimary = endOnAtt ? otherArmy : army;
         const endFollowerFaction = endOnAtt ? attFaction : defFaction;
+        const endFlR = fieldBattleField.getInitialAttDefRatio();
+        const endFollowerR = endOnAtt ? endFlR : (1 / Math.max(endFlR, 0.001));
+        const endJu: CaptureJu = endFollowerR > 1.5 ? 'advantage' : endFollowerR < 0.67 ? 'disadvantage' : 'balance';
         speechAnnouncer.announceFieldBattleEnd({
             win: winnerFactionId === endFollowerFaction && !!follower && !follower.isDestroyed,
             followerFactionId: endFollowerFaction,
+            ju: endJu,
             followerSkillId: endUnits[endIdx]?.battleOverriddenSkillId ?? null,
             enemyFactionId: endOnAtt ? defFaction : attFaction,
             enemyGeneralId: endEnemyPrimary?.generalId ?? null,

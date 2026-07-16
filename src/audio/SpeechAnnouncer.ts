@@ -69,7 +69,7 @@ const EFF_KEDUO = new Set<string>(["steal_enemy_skill", "negate_enemy_skill", "p
 const EFF_SUIJI = new Set<string>(["luck_variance_self", "luck_variance_enemy", "luck_lock_self"]);           // 更随机·敌战(衡)
 const EFF_JIANJI = new Set<string>(["win_casualty_reduction", "elite_casualty_reduction", "post_recovery_rate"]); // 减己损·并战(借)
 
-/** 判局：由势技 skillId 推 优/均/劣（A.5 effect + A.6 condition）；未知则 null。 */
+/** 判局：由技的 baseEffect+condition 推 优/均/劣（A.5+A.6）。仅用于 classifyStratagem→八字诀分类，不再用于语音播报判势。播报势=兵力比。 */
 function classifyJu(skillId: string): "advantage" | "balance" | "disadvantage" | null {
   const entry = getTacticalSkillEntry(skillId);
   if (!entry) return null;
@@ -112,7 +112,7 @@ const STRATAGEM_BAJUE: Record<"attacker" | "defender", Record<StratagemKey, stri
 };
 
 /** 攻占播报·三势词（主人 2026-07 定稿，原文照录，勿改） */
-type CaptureJu = "advantage" | "balance" | "disadvantage";
+export type CaptureJu = "advantage" | "balance" | "disadvantage";
 const CAPTURE_WIN: Record<CaptureJu, string> = {          // 攻方胜法
   advantage: "势如破竹", balance: "顺势而为", disadvantage: "力挽狂澜",
 };
@@ -322,8 +322,8 @@ export class SpeechAnnouncer {
     const ju = opts.ju;
 
     let text: string;
-    if (!defGeneral || !ju) {
-      // 守方无武将（或攻方势未知）→ 简报
+    if (!defGeneral) {
+      // 守方无武将 → 简报
       text = `${att}军，攻占${cityPhrase}`;
     } else {
       text = `${att}军，${CAPTURE_WIN[ju]}，攻占${cityPhrase}。${getGeneralNameForSpeech(defGeneral.generalId, defGeneral.generalName)}，${CAPTURE_DEFEAT_SIGN[ju]}，${CAPTURE_DEFEAT_YIELD[ju]}`;
@@ -342,10 +342,11 @@ export class SpeechAnnouncer {
    */
   public announceFieldBattle(opts: {
     followerFactionId: string;
+    ju: CaptureJu;                        // 跟随军团这一仗的势（兵力比判定）
     followerGeneralId?: string | null;
-    followerSkillId?: string | null;   // 跟随军团这一仗的势技 → 判优/均/劣（与攻打/攻占同源）
+    followerSkillId?: string | null;     // 保留
     enemyFactionId: string;
-    enemyGeneralId?: string | null;    // 无 → 不播报
+    enemyGeneralId?: string | null;      // 无 → 不播报
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue();
@@ -355,7 +356,7 @@ export class SpeechAnnouncer {
     if (!follower || !enemy) return; // 跟随必有将；缺任一不播
     const fFaction = getFactionNameForSpeech(opts.followerFactionId);
     const eFaction = getFactionNameForSpeech(opts.enemyFactionId);
-    const ju: CaptureJu = (opts.followerSkillId ? classifyJu(opts.followerSkillId) : null) ?? "balance";
+    const ju: CaptureJu = opts.ju;
     const fPart = isFamousGeneral(follower.generalId)
       ? `${fFaction}，名将，${getGeneralNameForSpeech(follower.generalId, follower.generalName)}`
       : `${fFaction}，${getGeneralNameForSpeech(follower.generalId, follower.generalName)}`;
@@ -375,13 +376,14 @@ export class SpeechAnnouncer {
   public announceFieldBattleEnd(opts: {
     win: boolean;
     followerFactionId: string;
-    followerSkillId?: string | null;
+    ju: CaptureJu;                        // 跟随军团这一仗的势（兵力比判定）
+    followerSkillId?: string | null;     // 保留
     enemyFactionId?: string | null;
     enemyGeneralId?: string | null;
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue();
-    const ju: CaptureJu = (opts.followerSkillId ? classifyJu(opts.followerSkillId) : null) ?? "balance";
+    const ju: CaptureJu = opts.ju;
     const fFaction = getFactionNameForSpeech(opts.followerFactionId);
     let text: string;
     if (opts.win) {
@@ -404,14 +406,15 @@ export class SpeechAnnouncer {
    */
   public announceSiegeFailure(opts: {
     attackerFactionId: string;
-    attackerSkillId?: string | null;
+    ju: CaptureJu;                        // 攻方这一仗的势（兵力比判定）
+    attackerSkillId?: string | null;     // 保留
     cityName: string;
     defenderGeneralId?: string | null;
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue();
     if (!opts.defenderGeneralId) return; // 守方无将 → 不播报
-    const ju: CaptureJu = (opts.attackerSkillId ? classifyJu(opts.attackerSkillId) : null) ?? "balance";
+    const ju: CaptureJu = opts.ju;
     const fFaction = getFactionNameForSpeech(opts.attackerFactionId);
     const text = `${fFaction}军，${SIEGE_FAIL_PHRASE[ju]}，${SIEGE_FAIL_VERB[ju]}${opts.cityName}`;
     console.log("[Speech] 攻城失败:", text);
@@ -429,15 +432,16 @@ export class SpeechAnnouncer {
   /** 援军参战（跟随军团中途加入进行中的攻城/野战，守方→救援，攻方→攻打；势=加入时该侧的兵力比） */
   public announceReinforcementJoin(opts: {
     factionId: string;
+    ju: CaptureJu;                        // 援军加入时该侧的势（兵力比判定）
     generalId?: string | null;
     generalName?: string | null;
     eliteName?: string | null;
     side: 'attacker' | 'defender';
     cityName: string;
-    battleSkillId?: string | null;
+    battleSkillId?: string | null;       // 保留
   }): void {
     if (!this.enabled) return;
-    const ju: CaptureJu = opts.battleSkillId ? (classifyJu(opts.battleSkillId) ?? 'balance') : 'balance';
+    const ju: CaptureJu = opts.ju;
     const action = opts.side === 'attacker' ? '攻打' : '救援';
     const fFaction = getFactionNameForSpeech(opts.factionId);
     const elClause = opts.eliteName ? `之${opts.eliteName}` : '';

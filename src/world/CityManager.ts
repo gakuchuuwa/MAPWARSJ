@@ -24,8 +24,10 @@ export interface CityUpdateOptions {
     captorGeneralId?: string;
     /** 守方这一仗是否有出将或出精（守军实际参战单位含武将/精锐）；无=无名据点，播报简化为「势力攻占据点」 */
     defenderHadNamedForce?: boolean;
-    /** 攻方（跟随军团）这一仗释放的势技 id → 攻占播报判优/均/劣 */
+    /** 攻方（跟随军团）这一仗释放的势技 id → 攻占播报判优/均/劣（旧：已改用 attackerJu） */
     attackerSkillId?: string;
+    /** 攻方这一仗的势（兵力比判定：>1.5优 <0.67劣 其余均） */
+    attackerJu?: string;
     /** 守方武将 id → 攻占播报守方句（无=无将，不续守方句） */
     defenderGeneralId?: string;
 }
@@ -41,8 +43,10 @@ export interface CityCapturedEvent {
     captorGeneralId?: string;
     /** 守方这一仗是否有出将/出精（见 CityUpdateOptions） */
     defenderHadNamedForce?: boolean;
-    /** 攻方势技 id（攻占播报判优/均/劣） */
+    /** 攻方势技 id（攻占播报判优/均/劣 — 旧：已改用 attackerJu） */
     attackerSkillId?: string;
+    /** 攻方这一仗的势（兵力比判定） */
+    attackerJu?: string;
     /** 守方武将 id（攻占播报守方句） */
     defenderGeneralId?: string;
 }
@@ -504,6 +508,7 @@ export class CityManager {
                         captorGeneralId: options?.captorGeneralId,
                         defenderHadNamedForce: options?.defenderHadNamedForce,
                         attackerSkillId: options?.attackerSkillId,
+                        attackerJu: options?.attackerJu,
                         defenderGeneralId: options?.defenderGeneralId,
                     });
                 }
