@@ -1051,7 +1051,7 @@ export class CombatUI {
             const nameEl = document.createElement('div');
             nameEl.style.cssText = `
                 font-family: 'Noto Serif SC', serif;
-                font-size: ${uiPx(16)};
+                font-size: ${uiPx(18)};
                 font-weight: 900;
                 color: #fff8e0;
                 letter-spacing: 1px;
@@ -1133,16 +1133,13 @@ export class CombatUI {
 
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {
-                    add(tag.name, tag.effectLabel, tag.isFamous, tag.skillType);
+                    add(tag.name, '', tag.isFamous, tag.skillType);
                 }
             }
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
-                const tier = getUnitEliteTier(unit);
-                const TIER_LABELS = ['天神军', '王者师', '劲锐旅', '精英团', '戍卫营'];
-                const tierLabel = tier !== null ? (TIER_LABELS[tier] ?? '精锐') : '精锐';
-                add(getLegionEliteBadgeName(unit), tierLabel, true, 'elite');
+                add(getLegionEliteBadgeName(unit), '', true, 'elite');
             }
 
             for (const tag of pending) box.appendChild(tag);
