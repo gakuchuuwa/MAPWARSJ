@@ -107,7 +107,7 @@ const STRATAGEM_BAJUE: Record<"attacker" | "defender", Record<StratagemKey, stri
     di: "虚张声势，挫其锐气",
     hun: "将计就计，后发制人",
     bing: "坚壁清野，以拖待变",
-    bai: "背城借一，决一死战",
+    bai: "背城借一，负隅坚守",
   },
 };
 
@@ -463,6 +463,7 @@ export class SpeechAnnouncer {
    */
   public announceSkillRelease(opts: {
     side: "attacker" | "defender";
+    ju: CaptureJu;                    // 兵力比决定的势 → 选八字诀
     generalId?: string | null;
     generalName: string;
     skillDisplayName: string;
@@ -475,9 +476,14 @@ export class SpeechAnnouncer {
   }): boolean {
     if (!this.enabled) return false;
     if (!opts.generalName || !opts.skillDisplayName) return false;
-    const key = classifyStratagem(opts.skillId);
-    if (!key) return false;
-    const bajue = STRATAGEM_BAJUE[opts.side][key];
+    // 按兵力比势选八字诀：优势→攻战/胜战 二选一，均势→敌战/混战 二选一，劣势→并战/败战 二选一
+    const pick = (a: StratagemKey, b: StratagemKey): StratagemKey => Math.random() < 0.5 ? a : b;
+    const juMap: Record<CaptureJu, StratagemKey> = {
+      advantage: pick('gong', 'sheng'),
+      balance: pick('di', 'hun'),
+      disadvantage: pick('bing', 'bai'),
+    };
+    const bajue = STRATAGEM_BAJUE[opts.side][juMap[opts.ju]];
     if (!bajue) return false;
     const eliteClause = opts.eliteName ? `，${opts.eliteName}` : "";
     const speechName = getGeneralNameForSpeech(opts.generalId, opts.generalName);

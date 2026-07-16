@@ -58,7 +58,7 @@ import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralPro
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
 import { getCityEliteConfig } from '../data/ExpeditionLegions';
 import type { Army } from '../legion/Army';
-import { speechAnnouncer } from '../audio/SpeechAnnouncer';
+import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
 const T = COMBAT_UI_TOKENS;
 
@@ -1991,8 +1991,13 @@ export class CombatUI {
         const opponentHasGeneral = battleSide === 'attacker'
             ? !!this.rightGeneralNameTag.dataset.generalId
             : !!this.leftGeneralNameTag.dataset.generalId;
+        // 技能八字诀按兵力比势选，与该侧视角一致
+        const bfRatio = bf.getInitialAttDefRatio();
+        const sideR = battleSide === 'attacker' ? bfRatio : (1 / Math.max(bfRatio, 0.001));
+        const skillJu: CaptureJu = sideR > 1.5 ? 'advantage' : sideR < 0.67 ? 'disadvantage' : 'balance';
         return speechAnnouncer.announceSkillRelease({
             side: battleSide,
+            ju: skillJu,
             generalId,
             generalName,
             skillDisplayName: displayName,
