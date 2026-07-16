@@ -79,3 +79,4 @@ juji/
 !/vite.config.ts
 !/index.html
 start_server.bat
+.auto_deploy_state.json
