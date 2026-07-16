@@ -1180,7 +1180,7 @@ export function getPassGarrisonDefenseSkillDisplay(
     const mult = GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT;
     return {
         name: PASS_GARRISON_DEFENSE_SKILL.displayName,
-        effectLabel: `城防×${parseFloat(mult.toFixed(2))}`,
+        effectLabel: '加城防',
     };
 }
 
@@ -1197,7 +1197,7 @@ export function getRegionCenterDefenseSkillDisplay(
     const mult = GameConfig.CULTURE_COMBAT.REGION_CENTER_GARRISON_MULT;
     return {
         name: REGION_CENTER_DEFENSE_SKILL.displayName,
-        effectLabel: `城防×${parseFloat(mult.toFixed(2))}`,
+        effectLabel: '加城防',
     };
 }
 
@@ -1257,11 +1257,11 @@ export function getGeneralSkillDisplayTags(
             });
         }
     } else if (unit.battleOverriddenSkillId === null && unit.negatedSkillId) {
-        // 战术技被对抗系(混战计)看破/夺走 → 显示原技名+「被看破」,不留空白(战术博弈可见)
+        // 战术技被对抗系(混战计)看破/夺走 → 显示原技名+「克夺反」
         const neg = getTacticalSkillDef(unit.negatedSkillId);
         const negName = neg ? neg.displayName : resolveGeneralTacticalEntry(unit.negatedSkillId)?.displayName;
         if (negName) {
-            tags.push({ name: negName, effectLabel: '被看破', isFamous: famous, skillType: 'tactical' });
+            tags.push({ name: negName, effectLabel: '克夺反', isFamous: famous, skillType: 'tactical' });
         }
     }
 
@@ -1274,7 +1274,7 @@ function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
     switch (skill.effect) {
         case 'ally_mult_1_2':   return '加己攻';
         case 'enemy_mult_0_8':  return '克夺反';
-        case 'ally_add_troops': return '加己攻';
+        case 'ally_add_troops': return '克夺反';
         case 'enemy_sub_troops':return '减敌兵';
         case 'ally_invincible': return '减己损';
         case 'ally_casualty_reduce': return '减己损';
@@ -1299,11 +1299,14 @@ function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
 function formatV1NativeTacticalDisplayLabel(entry: { baseEffect: string; magnitude: number }): string {
     const be = entry.baseEffect ?? '';
     if (be.includes('power_mult')) return '加己攻';
-    if (be.includes('sub_troops') || be.includes('add_troops')) return '减敌兵';
+    if (be.includes('enemy_sub_troops') || be.includes('dual_sub_troops')) return '减敌兵';
     if (be.includes('luck')) return '变随机';
-    if (be.includes('negate') || be.includes('counter') || be.includes('steal')) return '克夺反';
-    if (be.includes('casualty')) return '减己损';
-    if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')) return '挽败局';
+    if (be.includes('negate') || be.includes('counter') || be.includes('steal')
+        || be.includes('nullify') || be.includes('reflect') || be.includes('cancel_')
+        || be.includes('ally_add_troops')) return '克夺反';
+    if (be.includes('casualty') || be.includes('post_recovery')) return '减己损';
+    if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')
+        || be.includes('battle_duration')) return '挽败局';
     return '';
 }
 

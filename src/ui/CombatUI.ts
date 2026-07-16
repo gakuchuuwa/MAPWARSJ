@@ -1112,7 +1112,7 @@ export class CombatUI {
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
-                add(getLegionEliteBadgeName(unit), `×${parseFloat(legionMult.toFixed(1))}`, true, 'elite');
+                add(getLegionEliteBadgeName(unit), '加军攻', true, 'elite');
             }
 
             for (const tag of pending) box.appendChild(tag);
