@@ -404,7 +404,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jing': '京',
     'muong': '芒',
     'paiwan': '排湾',
-    'leloi': '黎',
+'leloi': '清化',
 'nguyen_guangnan': '阮',
 
     // ── 2026-05-26 Phase 3h：新增賨、僰、谯、折、山越、畲、蒲 ──

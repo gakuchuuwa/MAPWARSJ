@@ -791,7 +791,8 @@ export const FACTIONS: Faction[] = [
     { id: 'muong', name: '芒族' },
     { id: 'paiwan', name: '排湾' },
     // ── 第六类：岭南土司、安南权臣与海商门阀 ──
-    { id: 'leloi', name: '后黎' },                  // 黎利蓝山起义
+    { id: 'leloi', name: '清化' },
+                  // 黎利蓝山起义
     { id: 'nguyen_guangnan', name: '顺化' },
 
 

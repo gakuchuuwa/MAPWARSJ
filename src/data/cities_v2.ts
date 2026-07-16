@@ -1706,11 +1706,8 @@ export const PERIPHERY: CityDataV2[] = [
 
 
 
-    {
-        id: 'city_xidu', name: '蓝山', factionId: 'leloi',
-        lat: 19.80, lng: 105.7833, type: 'small_city', region: 'LINGNAN', troops: 20000, tier: 4,
-        note: '西都城；郑主小城',
-    },
+    { id: 'city_xidu', name: '蓝山', factionId: 'leloi', lat: 19.8, lng: 105.7833, type: 'small_city', troops: 20000, region: 'LINGNAN' },
+
     { id: 'city_fuchun', name: '富春', factionId: 'nguyen_guangnan', lat: 16.4667, lng: 107.5833, type: 'small_city', troops: 20000, region: 'LINGNAN' },
 
 

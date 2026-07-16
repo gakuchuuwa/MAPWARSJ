@@ -13,7 +13,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     xian_d: { name: '高凉犀甲', tier: 3 },
   dayue: { name: '白藤江水师', tier: 0 },           // 昇龙·陈国峻白藤江伏击灭元（区T0锚点·奇袭以少胜多）
   jing: { name: '丁朝禁卫', tier: 4 },         // 华闾·丁部领前李朝都城禁卫（无史籍专名番号）
-  leloi: { name: '蓝山义军', tier: 1 },        // 蓝山·黎利抗明复国主力
+    leloi: { name: '蓝山义军', tier: 1 },
     nguyen_guangnan: { name: '富春禁卫', tier: 3 },
   // guangnanguo → 洞海城归 panjun
   ryukyu: { name: '那霸水师', tier: 3 },       // 琉球王国武装代表，东亚海上贸易网络重要文化符号，升入T3知名

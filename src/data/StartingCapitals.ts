@@ -363,7 +363,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'jing': 'city_hoalu',
     'muong': 'city_hoabinh',
     'paiwan': 'city_mudan',
-    'leloi': 'city_xidu',
+'leloi': 'city_xidu',
 'nguyen_guangnan': 'city_fuchun',
 
     'cong': 'city_dangqu',

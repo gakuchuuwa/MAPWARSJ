@@ -40,7 +40,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    leloi: { generalId: 'leloi', tier: 'famous', tacticalSkillId: 'ts_558', strategicSkillId: 'str_12', advantageSkillId: 'ts_558', balanceSkillId: 'ts_559', disadvantageSkillId: 'ts_560', atkBalanceSkillId: 'ts_696', defBalanceSkillId: 'ts_559', atkAdvantageSkillId: 'ts_010', atkDisadvantageSkillId: 'ts_037', defAdvantageSkillId: 'ts_021', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse' , attackStyle: 'attack'},
+    leloi: { generalId: 'leloi', tier: 'famous', tacticalSkillId: 'ts_010', advantageSkillId: 'ts_558', balanceSkillId: 'ts_559', disadvantageSkillId: 'ts_560', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_696', atkDisadvantageSkillId: 'ts_037', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_559', defDisadvantageSkillId: 'ts_016', strategicSkillId: 'str_12', aptitude: 'reverse', attackStyle: 'attack' },
 
 
 
