@@ -2187,11 +2187,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -18
         },
-        "/assets/NORTHEAST/jilizhou_chengmingzhen.png": {
-            "scale": 0.86,
-            "offsetX": 0,
-            "offsetY": -62
-        },
         "/assets/NORTHEAST/keerqin_aoba.png": {
             "scale": 1,
             "offsetX": 0,
@@ -3967,11 +3962,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 4,
             "offsetY": -7
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_04.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": 8
-        },
         "/assets/STEPPE/wuliangha_subutai.png": {
             "scale": 1.03,
             "offsetX": 6,
@@ -5123,7 +5113,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/daming/yi_yuqian.png": {
-            "scale": 1.01,
+            "scale": 0.97,
             "offsetX": 14,
             "offsetY": 6
         },
@@ -5791,6 +5781,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_30.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": -62
+        },
+        "/assets/NORTHEAST/jilizhou_chengmingzhen.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 8
         }
     },
     "folderGuides": {
