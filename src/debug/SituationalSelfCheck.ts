@@ -36,9 +36,9 @@ const STRAT_SYS: Record<string, string> = {
 };
 
 function tacName(unit: { generalId: string }, sit: 'advantage' | 'balance' | 'disadvantage', isAttacker: boolean): string {
-    const id = resolveSituationalSkillId(unit as any, sit, isAttacker);
-    if (!id) return '—(回退招牌)';
-    return getTacticalSkillDef(id)?.displayName ?? id;
+    const result = resolveSituationalSkillId(unit as any, sit, isAttacker);
+    if (!result.skillId) return '—(回退招牌)';
+    return getTacticalSkillDef(result.skillId)?.displayName ?? result.skillId;
 }
 
 export function toggleSituationalSelfCheck(): void {

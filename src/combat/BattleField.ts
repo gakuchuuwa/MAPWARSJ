@@ -424,8 +424,11 @@ export class BattleField implements IOpeningPulseSink {
             for (const bu of g.units) {
                 const u = bu.unit;
                 if (!u.generalId) continue;
-                const sid = resolveSituationalSkillId(u, sit as any, g === this.attackerGroup);
-                if (sid) u.battleOverriddenSkillId = sid;
+                const result = resolveSituationalSkillId(u, sit as any, g === this.attackerGroup);
+                if (result.skillId) {
+                    u.battleOverriddenSkillId = result.skillId;
+                    u.situationSkillMatch = result.situationMatch;
+                }
             }
         }
     }
@@ -1222,8 +1225,8 @@ export class BattleField implements IOpeningPulseSink {
             if (rs && rw) {
                 const rr = rs.initialTotalTroops / Math.max(1, rw.initialTotalTroops);
                 const rsit = rr < 1.5 ? 'balance' : ((isAttacker ? this.attackerGroup : this.defenderGroup) === rs ? 'advantage' : 'disadvantage');
-                const rsid = resolveSituationalSkillId(unit, rsit as any, isAttacker);
-                if (rsid) unit.battleOverriddenSkillId = rsid;
+                const rresult = resolveSituationalSkillId(unit, rsit as any, isAttacker);
+                if (rresult.skillId) unit.battleOverriddenSkillId = rresult.skillId;
             }
         }
 

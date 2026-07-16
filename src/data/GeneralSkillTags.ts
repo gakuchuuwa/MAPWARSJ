@@ -646,7 +646,7 @@ export const ARCHETYPE_TO_V1_TACTICAL: Record<
  *   突击破阵：正面强攻/博命方差/自损突击/首战爆发
  *   智将谋略：否决夺技/断敌恢复/以寡智取/扰敌
  *   死守殿后：战损减免/守城/败时咬人/逆局重算
- * hook 技（ts_009 扫穴犁庭 / ts_046 暗度陈仓 / ts_047 声东击西）引擎未接，不参与武将分配。
+ * hook 技（ts_009 扫穴犁庭 / ts_047 指南打北）引擎未接，不参与武将分配。
  */
 export const TS_V1_ARCHETYPE: Readonly<Record<string, SkillArchetype>> = {
     // 稳健防反

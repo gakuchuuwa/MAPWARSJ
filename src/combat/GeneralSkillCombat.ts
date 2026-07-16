@@ -34,7 +34,7 @@ import {
     resolveSkillCountersForSide,
     type TacticalSkillEntry,
 } from './TacticalSkillResolver';
-import { getTacticalSkillEntry } from '../data/TacticalSkillCatalog';
+import { getTacticalSkillEntry, EFFECT_TO_SIX_SET } from '../data/TacticalSkillCatalog';
 import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
 import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT } from './TacticalConstants';
@@ -55,24 +55,46 @@ export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
 /** 战斗局势（开局按兵力比判定） */
 export type BattleSituation = 'advantage' | 'balance' | 'disadvantage';
 
+/** 六计随机·局势匹配结果 */
+export interface SituationalSkillResult {
+    skillId: string | null;
+    /** 技能六类是否匹配当前局势 */
+    situationMatch: boolean;
+}
+
+/** 局势匹配加成系数 */
+export const SITUATION_MATCH_BONUS = 1.15;
+
 /**
- * 三势适性·攻防六槽：按开局局势(优/均/劣) + 攻/守侧返回对应局技。
- * 优先攻防专槽 → 未配则回退旧三槽 → 仍无则 null。
+ * 六计随机：攻方三槽 / 守方三槽各等概率随机抽一个技。
+ * 抽中后按六类判定是否匹配当前局势（优势→攻/胜、均势→敌/混、劣势→并/败）。
  */
-export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation, isAttacker: boolean): string | null {
-    if (!unit.generalId) return null;
+export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation, isAttacker: boolean): SituationalSkillResult {
+    if (!unit.generalId) return { skillId: null, situationMatch: false };
     const p = getGeneralProfile(unit.generalId);
-    if (!p) return null;
-    // 攻防六槽优先
-    if (isAttacker) {
-        if (situation === 'advantage') return p.atkAdvantageSkillId ?? p.advantageSkillId ?? null;
-        if (situation === 'disadvantage') return p.atkDisadvantageSkillId ?? p.disadvantageSkillId ?? null;
-        return p.atkBalanceSkillId ?? p.balanceSkillId ?? null;
-    } else {
-        if (situation === 'advantage') return p.defAdvantageSkillId ?? p.advantageSkillId ?? null;
-        if (situation === 'disadvantage') return p.defDisadvantageSkillId ?? p.disadvantageSkillId ?? null;
-        return p.defBalanceSkillId ?? p.balanceSkillId ?? null;
-    }
+    if (!p) return { skillId: null, situationMatch: false };
+
+    // 收集可用槽位
+    const slots: (string | undefined)[] = isAttacker
+        ? [p.atkAdvantageSkillId, p.atkBalanceSkillId, p.atkDisadvantageSkillId]
+        : [p.defAdvantageSkillId, p.defBalanceSkillId, p.defDisadvantageSkillId];
+    const available = slots.filter(Boolean) as string[];
+    if (available.length === 0) return { skillId: null, situationMatch: false };
+
+    // 随机抽一个
+    const skillId = available[Math.floor(Math.random() * available.length)];
+
+    // 判定局势匹配
+    const entry = getTacticalSkillEntry(skillId);
+    const cls = entry ? (EFFECT_TO_SIX_SET[entry.baseEffect] as string | undefined) : undefined;
+    const MATCH_MAP: Record<BattleSituation, string[]> = {
+        advantage: ['gongzhan', 'shengzhan'],
+        balance: ['dizhan', 'hunzhan'],
+        disadvantage: ['bingzhan', 'baizhan'],
+    };
+    const situationMatch = cls ? (MATCH_MAP[situation]?.includes(cls) ?? false) : false;
+
+    return { skillId, situationMatch };
 }
 
 function sideIsFirstSortie(units: IBattleUnit[]): boolean {

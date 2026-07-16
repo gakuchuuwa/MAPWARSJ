@@ -53,6 +53,7 @@ import {
     getAttackStylePowerMult,
     getAptitudePowerMult,
     resolveSituationalSkillId,
+    SITUATION_MATCH_BONUS,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -1166,6 +1167,9 @@ export class CombatUI {
             : (this.boundRegionalBattleField?.getDefenderOpeningFateLuck() ?? 1);
         product *= fateLuck;
 
+        // ⑥ 六计局势匹配加成
+        if ((unit as any).situationSkillMatch) product *= SITUATION_MATCH_BONUS;
+
         if (Math.abs(product - 1) <= 0.001) return `×1`;
         return `×${parseFloat(product.toFixed(1))}`;
     }
@@ -1222,8 +1226,8 @@ export class CombatUI {
             const oppTroops = this.getOpponentUnitsFor(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
             const ratio = myTroops / Math.max(1, oppTroops);
             const sit = ratio > 1.5 ? 'advantage' : ratio < 0.67 ? 'disadvantage' : 'balance';
-            const sid = resolveSituationalSkillId(tacUnit, sit as 'advantage'|'balance'|'disadvantage', side === 'attacker');
-            const entry = sid ? resolveGeneralTacticalEntry(sid) : null;
+            const result = resolveSituationalSkillId(tacUnit, sit as 'advantage'|'balance'|'disadvantage', side === 'attacker');
+            const entry = result.skillId ? resolveGeneralTacticalEntry(result.skillId) : null;
             if (entry) {
                 const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
                 if (cls) {

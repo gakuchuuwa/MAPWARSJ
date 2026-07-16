@@ -78,6 +78,8 @@ export interface IBattleUnit {
     portraitPath?: string;
     // [NEW] V1 Tactical
     battleOverriddenSkillId?: string | null;
+    /** 六计局势匹配标记（优势→攻/胜、均势→敌/混、劣势→并/败匹配时=true） */
+    situationSkillMatch?: boolean;
     /** 被对抗系(混战计)看破/夺走的原战术技id — 仅供卡片显示"技名·被看破",不参与战斗机制 */
     negatedSkillId?: string | null;
     isFirstSortieSinceDepart?: boolean;
