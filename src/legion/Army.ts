@@ -169,9 +169,9 @@ export class Army implements IBattleUnit {
         this.currentBattleType = isFighting ? (battleType || 'field') : null;
         this.targetPos = targetPos || null;
 
-        // 神出鬼没：非战斗时隐藏，战斗开始现形
-        if (generalHasStrategicEffect(this, 'hide_during_peacetime')) {
-            this.setVisible(isFighting);
+        // 神出鬼没：战斗开始现形；战斗结束不立即隐藏，等再次移动时隐身（与脉冲同步）
+        if (isFighting && generalHasStrategicEffect(this, 'hide_during_peacetime')) {
+            this.setVisible(true);
             getGlobalUnitRenderer()?.invalidateView();
         }
 
