@@ -123,7 +123,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_19: { id: 'str_19', grid: 'S⑲', displayName: '不战而屈', effect: 'intimidate_instant_win', magnitude: 0.01, engineStatus: 'ready', category: 'deterrence', note: '优势1%不战占城（造势）' },
 
-    str_20: { id: 'str_20', grid: 'S⑳', displayName: '先声夺人', effect: 'pre_battle_intimidate', magnitude: 0.10, engineStatus: 'ready', category: 'deterrence', note: '战前敌减兵10%（均势）' },
+    str_20: { id: 'str_20', grid: 'S⑳', displayName: '先声夺人', effect: 'pre_battle_intimidate', magnitude: 0.10, engineStatus: 'ready', category: 'deterrence', note: '攻城前削守军10%（均势）' },
 
     str_21: { id: 'str_21', grid: 'S㉑', displayName: '越城而走', effect: 'skip_disadvantaged_siege', magnitude: 0.10, engineStatus: 'ready', category: 'deterrence', note: '劣势10%跳城重选（逆势）' },
 
@@ -139,7 +139,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_25: { id: 'str_25', grid: 'S㉕', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2.0, engineStatus: 'ready', category: 'defense', note: '产兵加速×2（造势）' },
 
-    str_26: { id: 'str_26', grid: 'S㉖', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', category: 'defense', note: '征兵冷却减半（造势）' },
+    str_26: { id: 'str_26', grid: 'S㉖', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', category: 'defense', note: '军团离城即可再募（造势）' },
 
     str_27: { id: 'str_27', grid: 'S㉗', displayName: '屯兵经略', effect: 'garrison_reserve_troops', magnitude: 2000, engineStatus: 'ready', category: 'defense', note: '征兵后留兵≥2000（均势）' },
 

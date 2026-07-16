@@ -1321,7 +1321,7 @@ function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDe
         case 'city_growth_mult':
             return `出身城增长×${skill.magnitude}`;
         case 'recruit_cooldown_mult':
-            return `募兵冷却×${skill.magnitude}`;
+            return `离城可募`;
         // ── 视野 ──
         case 'hide_during_peacetime':
             return '非战隐身';
@@ -2070,6 +2070,7 @@ export function applyPostBattleStrategicBonus(
     battleType: BattleType,
     enemyInitialTroops?: number,
     defenderCityType?: CityType | null,
+    isAttacker?: boolean,
 ): number {
     let total = 0;
 
@@ -2081,7 +2082,7 @@ export function applyPostBattleStrategicBonus(
             const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
             if (profileSkill && profileSkill.effect === 'post_battle_troop_pct') {
                 // S⑦因粮于敌：攻城胜后按守方城型补兵；无城型表时回退 magnitude 固定比例
-                if (battleType === 'siege' && profileSkill.postBattlePctByCityType && defenderCityType) {
+                if (isAttacker && battleType === 'siege' && profileSkill.postBattlePctByCityType && defenderCityType) {
                     const pct = resolvePostBattlePctByCityType(profileSkill, defenderCityType);
                     if (pct > 0) {
                         const bonus = Math.floor(unit.troops * pct);
@@ -2123,19 +2124,6 @@ export function applyPostBattleStrategicBonus(
                             pos.lng,
                             'float',
                         );
-                    }
-                }
-            } else if (
-                battleType === 'siege' &&
-                profileSkill?.postBattlePctByCityType &&
-                defenderCityType
-            ) {
-                const pct = resolvePostBattlePctByCityType(profileSkill, defenderCityType);
-                if (pct > 0) {
-                    const bonus = Math.floor(unit.troops * pct);
-                    if (bonus > 0) {
-                        unit.setTroops(unit.troops + bonus);
-                        total += bonus;
                     }
                 }
             }

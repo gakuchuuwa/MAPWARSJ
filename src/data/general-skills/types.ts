@@ -82,7 +82,7 @@ export type StrategicEffect =
 
     | 'city_growth_mult'              // 出身城增长 ×2（足食足兵）
 
-    | 'recruit_cooldown_mult'         // 征兵冷却 ×0.5（招兵买马）
+    | 'recruit_cooldown_mult'         // 军团离城即可再募（招兵买马）
 
     // ⚠️ S⑧固若金汤 已从 catalogs.ts 注释移除（战略技=大地图、战术技=战斗）。
     | 'garrison_defense_mult'         // 守城城防战力 ×1.3（固若金汤）
@@ -103,7 +103,7 @@ export type StrategicEffect =
 
     | 'intimidate_instant_win'       // 兵力优势时概率不战而胜（不战而屈）
 
-    | 'pre_battle_intimidate'        // 战前削敌兵（先声夺人）
+    | 'pre_battle_intimidate'        // 攻城前削守军（先声夺人）
 
     | 'skip_disadvantaged_siege'     // 劣势时概率跳过此城（越城而走）
 

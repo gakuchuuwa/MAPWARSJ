@@ -672,7 +672,7 @@ const EFFECT_CN: Record<string, string> = {
     field_resupply: '野外回血',
     post_battle_troop_pct: '胜后补兵',
     city_growth_mult: '城市增长',
-    recruit_cooldown_mult: '募兵加速',
+    recruit_cooldown_mult: '离城可募',
     equal_power_mult: '均势×',
 };
 

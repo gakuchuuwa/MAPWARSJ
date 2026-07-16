@@ -1067,6 +1067,7 @@ export class BattleField implements IOpeningPulseSink {
                 this.type,
                 loserGroup.initialTotalTroops,
                 defenderCityType,
+                winnerGroup === this.attackerGroup,
             );
             if (strategicBonus > 0) {
                 gameLog('battle', `🌾 [BattleField] ${bu.unit.name} 战略增兵 +${strategicBonus}`);
