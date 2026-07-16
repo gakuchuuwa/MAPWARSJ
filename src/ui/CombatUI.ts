@@ -1171,6 +1171,7 @@ export class CombatUI {
             side === 'attacker',
             { battleType, terrain },
             unit,
+            side === 'attacker' ? bf?.getDefenderCommander() : bf?.getAttackerCommander(),
             cachedMyTroops,
             cachedOppTroops,
         );
@@ -3062,7 +3063,7 @@ export class CombatUI {
     // 赔率：开战即定胜率（闭式结算，运气单侧各掷一次 [0.9,1.1]）
     // ============================================================
 
-    /** 一侧开战底力（无运气）：Σ(兵力×文化×远征×关隘) × 名将技乘区 */
+    /** 一侧开战底力（无运气）：Σ(兵力×文化×远征) × 名将技乘区 */
     private sideBasePower(units: IBattleUnit[], side: 'attacker' | 'defender'): number {
         let base = 0;
         for (const u of units) {
@@ -3070,11 +3071,15 @@ export class CombatUI {
             if (t <= 0) continue;
             base += t
                 * getUnitCultureCombatMultiplier(u)
-                * getCampaignLegionCombatMultiplier(u)
-                * getPassGarrisonCombatMultiplier(u);
+                * getCampaignLegionCombatMultiplier(u);
         }
-        // 名将技乘区（该侧第一支可用名将的军团，开局战术 × 战略）
+        // 名将技乘区（与 badge 同参数：锁定的指挥官 + 缓存兵力）
         const terrain = this.getBattleTerrainForUi();
+        const bf = this.boundRegionalBattleField;
+        const cmd = side === 'attacker' ? bf?.getAttackerCommander() : bf?.getDefenderCommander();
+        const oppCmd = side === 'attacker' ? bf?.getDefenderCommander() : bf?.getAttackerCommander();
+        const cachedMyTroops = side === 'attacker' ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
+        const cachedOppTroops = side === 'attacker' ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
         for (const u of units) {
             if (canUnitUseGeneralSkills(u)) {
                 base *= getOpeningTacticalPowerMultiplier(
@@ -3082,6 +3087,10 @@ export class CombatUI {
                         this.getOpponentUnitsFor(side),
                         side === 'attacker',
                         { battleType: this.currentBattleType, terrain },
+                        cmd,
+                        oppCmd,
+                        cachedMyTroops,
+                        cachedOppTroops,
                     );
                 break;
             }

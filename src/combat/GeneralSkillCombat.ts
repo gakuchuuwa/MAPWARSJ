@@ -782,6 +782,7 @@ export function getOpeningTacticalPowerMultiplier(
     isAttacker: boolean,
     opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
     selfCommander?: IBattleUnit | null,
+    oppCommander?: IBattleUnit | null,
     overrideSelfTroops?: number,
     overrideEnemyTroops?: number,
 ): number {
@@ -794,8 +795,8 @@ export function getOpeningTacticalPowerMultiplier(
     if (skill.effect === 'ally_mult_1_2') {
         if (!bridgedOpeningEnhanceActive(sideUnits, opponentUnits, isAttacker, opts, selfCommander, overrideSelfTroops, overrideEnemyTroops)) return 1;
         let mult = skill.magnitude;
-        // 对手地形反制（与引擎 applyAllyMult 一致）
-        const oppUnit = findEligibleGeneralUnit(opponentUnits);
+        // 对手地形反制（与引擎 applyAllyMult 一致：传入对手锁定的指挥官）
+        const oppUnit = findEligibleGeneralUnit(opponentUnits, oppCommander);
         if (oppUnit && mult > 1) {
             const oppActiveId = getActiveTacticalSkillId(oppUnit);
             if (oppActiveId) {
