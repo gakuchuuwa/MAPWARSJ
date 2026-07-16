@@ -106,6 +106,13 @@ export class CombatUI {
     private rightPortraitFrame!: HTMLDivElement;
     private leftGeneralNameTag!: HTMLDivElement;
     private rightGeneralNameTag!: HTMLDivElement;
+
+    // Troop State Indicators
+    private indicatorLeftYou!: HTMLDivElement;
+    private indicatorLeftLie!: HTMLDivElement;
+    private indicatorRightYou!: HTMLDivElement;
+    private indicatorRightLie!: HTMLDivElement;
+    private indicatorJun!: HTMLDivElement;
     /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
     private skillPulseShownKeys = new Set<string>();
     private skillPulseLastAt = 0;
@@ -404,6 +411,32 @@ export class CombatUI {
         rightFrame.appendChild(this.rightPortraitWrap);
         this.rightGeneralNameTag = this.createGeneralNameTag('right');
         rightFrame.appendChild(this.rightGeneralNameTag);
+
+        const leftIndGroup = document.createElement('div');
+        leftIndGroup.style.cssText = `position: absolute; bottom: 41.5%; right: -${uiPx(42)}; transform: translateX(50%); display: flex; gap: ${uiPx(4)}; z-index: 20; pointer-events: none;`;
+        this.indicatorLeftYou = this.createIndicatorNode('优');
+        this.indicatorLeftLie = this.createIndicatorNode('劣');
+        leftIndGroup.appendChild(this.indicatorLeftYou);
+        leftIndGroup.appendChild(this.indicatorLeftLie);
+        leftFrame.appendChild(leftIndGroup);
+
+        const rightIndGroup = document.createElement('div');
+        rightIndGroup.style.cssText = `position: absolute; bottom: 41.5%; left: -${uiPx(42)}; transform: translateX(-50%); display: flex; gap: ${uiPx(4)}; z-index: 20; pointer-events: none;`;
+        this.indicatorRightYou = this.createIndicatorNode('优');
+        this.indicatorRightLie = this.createIndicatorNode('劣');
+        rightIndGroup.appendChild(this.indicatorRightYou);
+        rightIndGroup.appendChild(this.indicatorRightLie);
+        rightFrame.appendChild(rightIndGroup);
+
+        this.indicatorJun = this.createIndicatorNode('均');
+        this.indicatorJun.style.position = 'absolute';
+        this.indicatorJun.style.bottom = `calc(${uiPx(T.portraitBottom)} + ${uiPx(620 * 0.415)})`;
+        this.indicatorJun.style.left = '50%';
+        this.indicatorJun.style.transform = 'translateX(-50%)';
+        this.indicatorJun.style.zIndex = '20';
+        this.indicatorJun.style.pointerEvents = 'none';
+        this.container.appendChild(this.indicatorJun);
+
         this.wireGeneralNameTagClicks();
         this.refreshGeneralNameTagInteract();
 
@@ -1322,7 +1355,6 @@ export class CombatUI {
         let aptLabel2 = '';
         let styleHighlight = 0;
         let aptHighlight2 = 0;
-        let comboLabel = '';
         if (unit.generalId) {
             const profile = getGeneralProfile(unit.generalId);
             if (profile) {
@@ -1330,7 +1362,7 @@ export class CombatUI {
                 // 双行 → 按当前攻守角色派生 擅攻/擅守，不显示「双行」
                 const effStyle = rawStyle === 'balanced' ? (side === 'attacker' ? 'attack' : 'defense') : rawStyle;
                 const STYLE_MAP: Record<string, string> = { attack: '擅攻', defense: '擅守' };
-                styleLabel = STYLE_MAP[(effStyle as string) ?? ''] ?? '';
+                styleLabel = STYLE_MAP[effStyle] ?? '';
                 const APT_MAP: Record<string, string> = { create: '造势', leverage: '借势', reverse: '逆势' };
                 aptLabel2 = APT_MAP[profile.aptitude ?? ''] ?? '';
                 if (styleLabel || aptLabel2) {
@@ -1346,26 +1378,16 @@ export class CombatUI {
                         || (profile.attackStyle === 'defense' && side === 'defender') ? 2 : 0;
                     // 势匹配（三势：兵力局势 × 武将适性 × 技能六类 三者对齐）
                     const skillId = unit.battleOverriddenSkillId ?? null;
-                    const baseEffect = skillId ? resolveGeneralTacticalEntry(skillId)?.baseEffect : undefined;
-                    const skillCls = baseEffect ? (EFFECT_TO_SIX_SET[baseEffect] as string | undefined) : undefined;
-                    if (profile.aptitude === 'create' && sit === 'advantage' && skillCls && ['gongzhan', 'shengzhan'].includes(skillCls)) {
-                        aptHighlight2 = 2;
-                        comboLabel = '造势·优势·强势';
-                    }
-                    else if (profile.aptitude === 'leverage' && sit === 'balance' && skillCls && ['dizhan', 'hunzhan'].includes(skillCls)) {
-                        aptHighlight2 = 2;
-                        comboLabel = '借势·均势·中势';
-                    }
-                    else if (profile.aptitude === 'reverse' && sit === 'disadvantage' && skillCls && ['bingzhan', 'baizhan'].includes(skillCls)) {
-                        aptHighlight2 = 2;
-                        comboLabel = '逆势·劣势·弱势';
-                    }
+                    const skillCls = skillId ? (EFFECT_TO_SIX_SET[resolveGeneralTacticalEntry(skillId)?.baseEffect ?? ''] as string | undefined) : undefined;
+                    if (profile.aptitude === 'create' && sit === 'advantage' && skillCls && ['gongzhan', 'shengzhan'].includes(skillCls)) aptHighlight2 = 2;
+                    else if (profile.aptitude === 'leverage' && sit === 'balance' && skillCls && ['dizhan', 'hunzhan'].includes(skillCls)) aptHighlight2 = 2;
+                    else if (profile.aptitude === 'reverse' && sit === 'disadvantage' && skillCls && ['bingzhan', 'baizhan'].includes(skillCls)) aptHighlight2 = 2;
                 }
             }
         }
         const aptColor = side === 'attacker' ? 'rgba(255,180,40,1)' : 'rgba(80,200,240,1)';
         if (styleLabel && styleHighlight === 2) parts.push(tag(styleLabel, `color:${aptColor};font-weight:700;`));
-        if (comboLabel && aptHighlight2 === 2) parts.push(tag(comboLabel, `color:${aptColor};font-weight:700;text-shadow:0 0 4px ${aptColor}60;`));
+        if (aptLabel2 && aptHighlight2 === 2) parts.push(tag(aptLabel2, `color:${aptColor};font-weight:700;`));
         // ⑤ 名将光环
         if (unit.generalId && getGeneralProfile(unit.generalId)?.tier === 'famous') {
             parts.push(tag('名将', `color:${aptColor};font-weight:700;`));
@@ -3277,6 +3299,46 @@ export class CombatUI {
 
         this.attackerBar.style.width = `${attPct}%`;
         this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
+
+        // --- 优劣均 兵力状态指示器 ---
+        const bfRatio = this.boundRegionalBattleField ? this.boundRegionalBattleField.getInitialAttDefRatio() : (attMax / Math.max(1, defMax));
+        const attAdvantage = bfRatio > 1.5;
+        const attDisadvantage = bfRatio < 0.67;
+
+        const setActive = (el: HTMLDivElement, color: string) => {
+            el.style.color = '#fff';
+            el.style.background = `linear-gradient(135deg, rgba(50,50,50,0.9), rgba(10,10,10,0.9))`;
+            el.style.borderColor = color;
+            el.style.boxShadow = `0 0 10px ${color}, inset 0 0 5px ${color}`;
+            el.style.textShadow = `0 0 4px ${color}`;
+        };
+        const setInactive = (el: HTMLDivElement) => {
+            el.style.color = 'rgba(255, 255, 255, 0.3)';
+            el.style.background = 'rgba(20, 20, 20, 0.8)';
+            el.style.borderColor = 'rgba(100, 100, 100, 0.5)';
+            el.style.boxShadow = '0 0 4px rgba(0,0,0,0.8)';
+            el.style.textShadow = 'none';
+        };
+
+        setInactive(this.indicatorLeftYou);
+        setInactive(this.indicatorLeftLie);
+        setInactive(this.indicatorRightYou);
+        setInactive(this.indicatorRightLie);
+        setInactive(this.indicatorJun);
+
+        const colorYou = 'rgba(255, 215, 0, 0.8)'; // 金色
+        const colorLie = 'rgba(255, 50, 50, 0.8)'; // 红色
+        const colorJun = 'rgba(100, 200, 255, 0.8)'; // 青色
+
+        if (attAdvantage) {
+            setActive(this.indicatorLeftYou, colorYou);
+            setActive(this.indicatorRightLie, colorLie); // 守方劣势
+        } else if (attDisadvantage) {
+            setActive(this.indicatorLeftLie, colorLie);
+            setActive(this.indicatorRightYou, colorYou); // 守方优势
+        } else {
+            setActive(this.indicatorJun, colorJun);
+        }
     }
 
     private wireGeneralNameTagClicks(): void {
@@ -3597,6 +3659,27 @@ export class CombatUI {
             `✓ 已选定 ${generalId}.png · 微调后 Enter 写盘（不关 F2）`,
         );
         this.refreshGeneralNameTagInteract();
+    }
+
+    private createIndicatorNode(text: string): HTMLDivElement {
+        const el = document.createElement('div');
+        el.textContent = text;
+        el.style.cssText = `
+            width: ${uiPx(24)};
+            height: ${uiPx(24)};
+            line-height: ${uiPx(22)};
+            text-align: center;
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(16)};
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.3);
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(100, 100, 100, 0.5);
+            border-radius: 2px;
+            box-shadow: 0 0 4px rgba(0,0,0,0.8);
+            transition: all 0.3s ease;
+        `;
+        return el;
     }
 
     private createGeneralNameTag(side: 'left' | 'right'): HTMLDivElement {
