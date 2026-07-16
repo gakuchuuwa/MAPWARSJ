@@ -1211,11 +1211,11 @@ export class CombatUI {
         const cultureMult = getCultureOnlyCombatMultiplier(unit);
         const round = Math.round(cultureMult * 100) / 100;
         const ATK_LABELS: Record<number, string> = {
-            1.25: '骁勇', 1.15: '善战', 1.10: '尚武', 1.00: '持重', 0.85: '守成',
+            1.20: '骁勇', 1.15: '善战', 1.10: '尚武', 1.00: '持重', 0.85: '守成',
         };
         const DEF_LABELS: Record<number, string> = {
             1.20: '雄踞', 1.15: '固垒', 1.10: '坚城', 1.05: '刚毅',
-            1.00: '自守', 0.90: '偏安', 0.85: '边陲', 0.75: '游牧',
+            1.00: '自守', 0.90: '偏安', 0.85: '边陲', 0.80: '游牧',
         };
         let cultureLabel = (isGarrison ? DEF_LABELS[round] : ATK_LABELS[round]) ?? '';
 
