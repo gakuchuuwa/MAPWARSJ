@@ -70,6 +70,14 @@ export class SiegeManager {
         approaching: boolean;
     }>> = new Map();
 
+    /** 看门狗（2026-07-17）：等候队列所在城首次被发现「无进行中攻城」的时刻（cityId → ms）。
+     *  正常流转下队列只在攻城进行中存在；无战超时 = 某条结束路径漏调 processSiegeThirdPartyWaiters
+     *  （如曾经的不战而屈泄漏），排队者会被 BT 的 IsWaitingSiege 永久冻结——自动直播不可接受，超时整队放行兜底。 */
+    private waiterQueueOrphanSince: Map<string, number> = new Map();
+
+    /** 看门狗超时：60 秒真实时间（正常"唤醒者走向城下开新战"的空窗只有几秒到十几秒，60s 远在其外） */
+    private static readonly WAITER_WATCHDOG_MS = 60_000;
+
     /** 等待环基准：比开战圈稍外（攻城军停在 COMBAT_RADIUS≈0.1，等待者最近停 0.2） */
     private static readonly WAIT_RING_BASE = GameConfig.SIEGE.COMBAT_RADIUS + 0.1;
     /** 同城每多一个等待者，停步环外推一档（同路来的自然前后排开，不同路来的方向本就不同） */
@@ -129,6 +137,58 @@ export class SiegeManager {
 
         // 扫描圈内异旗军团：不穿过交战区，排队等待
         this.interceptThirdPartyPassersBy();
+
+        // 看门狗：兜住任何"攻城已结束却没人放行队列"的漏网（防排队者被 IsWaitingSiege 永久冻结）
+        this.tickWaiterWatchdog();
+    }
+
+    /**
+     * 排队看门狗（2026-07-17 主人定，自动直播兜底）：
+     * 队列所在城已无进行中的攻城 → 开始计时；持续 60s 仍无战 → 整队放行交还 AI 决策。
+     * 交战中的等待者保留在队（其战斗结束自有流转，且不能丢事件链回调）；其余出队并触发回调解锁事件队列。
+     */
+    private tickWaiterWatchdog(): void {
+        const now = Date.now();
+        for (const [cityId, queue] of [...this.siegeThirdPartyWaiters.entries()]) {
+            const battle = this.activeSieges.get(cityId);
+            if (battle && !battle.isOver) {
+                this.waiterQueueOrphanSince.delete(cityId);
+                continue;
+            }
+            const since = this.waiterQueueOrphanSince.get(cityId);
+            if (since === undefined) {
+                this.waiterQueueOrphanSince.set(cityId, now);
+                continue;
+            }
+            if (now - since < SiegeManager.WAITER_WATCHDOG_MS) continue;
+
+            // 超时：放行整队（交战中的保留，等其战斗结束后由下一轮看门狗接手）
+            const remaining: typeof queue = [];
+            const cityName = this.cityManager.getCity(cityId)?.name ?? cityId;
+            for (const entry of queue) {
+                const { army, onSiegeComplete } = entry;
+                if (army.isDestroyed) continue;
+                if (army.getIsInCombat()) { remaining.push(entry); continue; }
+                army.setCombatState(false);
+                army.ignoreCityCollision = false;
+                army.ignoreUnitCollision = false;
+                army.clearBlocked();
+                army.setTargetCity(null);
+                onSiegeComplete?.(); // 事件链回调必须触发，防事件队列锁死
+                siegeLog(`⏰ [看门狗] ${army.name} 在【${cityName}】排队等待超时（攻城早已结束却未出队），放行交还 AI 决策`);
+            }
+            if (remaining.length > 0) {
+                this.siegeThirdPartyWaiters.set(cityId, remaining);
+                // 保留计时（不删 orphanSince）：残留者战斗结束后下一次超时判定立即放行
+            } else {
+                this.siegeThirdPartyWaiters.delete(cityId);
+                this.waiterQueueOrphanSince.delete(cityId);
+            }
+        }
+        // 清理已不存在队列的孤儿计时
+        for (const cityId of [...this.waiterQueueOrphanSince.keys()]) {
+            if (!this.siegeThirdPartyWaiters.has(cityId)) this.waiterQueueOrphanSince.delete(cityId);
+        }
     }
 
     /** 扫所有活跃攻城战：圈内非同旗军团 → 排队等待（不穿越交战区、不瞬移） */
@@ -1141,6 +1201,9 @@ export class SiegeManager {
 
                     this.resolveChain(siegeData, targetCity, army);
                     onSiegeComplete?.();
+                    // [修复 2026-07-17] 与正常胜利路径(onBattleComplete)对齐：处理排队等候的第三方军团。
+                    // 此前漏调 → 排队者永远留在 siegeThirdPartyWaiters，被 BT 的 IsWaitingSiege 冻结原地（弋阳英布卡死事故）
+                    this.processSiegeThirdPartyWaiters(targetCity.id, army.getFactionId());
                     return;
                 }
             }
