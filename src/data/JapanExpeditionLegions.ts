@@ -15,7 +15,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   ashikaga: { name: '奉公众', tier: 3 },         // 室町幕府直辖军，更多是身份象征和常规卫队，缺乏战略级大捷，降为T3知名。
   edo: { name: '旗本武士', tier: 1 },          // 江户城·§5 #20 旗本（Hatamoto）
     satsuma: { name: '萨摩隼人', tier: 2 },
-  iga_d: { name: '伊贺众', tier: 3 },          // 名张·§5 #16
+    iga_d: { name: '伊贺众', tier: 3 },
   hashiba: { name: '黄母衣众', tier: 3 },        // 姬路城·秀吉亲卫母衣黄组（原七手组 T3）
   kai: { name: '武田赤备', tier: 2 },          // 标准明确列为T2代表（地方特色兵种/战术尖刀），降回T2
   jinchuan: { name: '骏河弓取', tier: 3 },      // 骏河·今川义元（无重大战略级胜利，T2）

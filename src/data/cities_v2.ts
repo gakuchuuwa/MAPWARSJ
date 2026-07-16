@@ -944,16 +944,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_jeonju', name: '完山', factionId: 'zhen', lat: 35.75, lng: 127.14, type: 'small_city', troops: 20000, region: 'KOREA' },
 
 
-    {
-        id: 'city_jindo',
-        name: '鸣梁',
-        factionId: 'sambyeol',
-        lat: 34.487, lng: 126.263,
-        type: 'pass',
-        troops: 20000,
-        tier: 4,
-        region: 'KOREA',
-        note: '高丽三别抄抗蒙根据地（1232 裴仲孙）' },
+    { id: 'city_jindo', name: '鸣梁', factionId: 'sambyeol', lat: 34.487, lng: 126.263, type: 'pass', troops: 20000, region: 'KOREA' },
+
     {
         id: 'city_suncheon_k',
         name: '顺天',
@@ -1126,7 +1118,8 @@ export const PERIPHERY: CityDataV2[] = [
         note: '鹤之城；会津小城',
     },
     // ── 2026-06-11 日本精锐：北条@小田原、伊贺@名张（恶党/千早城距飞鸟宫旧址3km）──
-    { id: 'city_nabari', name: '名张', factionId: 'iga_d', lat: 34.627, lng: 136.108, type: 'small_city', region: 'JAPAN', troops: 20000, note: '伊贺国名张郡；伊贺众锚点（2026-06-17 主人裁定：必须名张；上野虽名气更大但与京都<50km，删小留大留京都）' },
+    { id: 'city_nabari', name: '名张', factionId: 'iga_d', lat: 34.627, lng: 136.108, type: 'small_city', troops: 20000, region: 'JAPAN' },
+
     // ── 2026-06-16 新增：日本令制国补点（方案A·6城）──
     { id: 'city_jianghu', name: '金泽', factionId: 'kaga_d', lat: 36.56, lng: 136.65, type: 'small_city', region: 'JAPAN', troops: 20000, note: '加贺一向一揆尾山御坊故地（金泽古名）；下间赖廉守备' },
     { id: 'city_xiantai', name: '仙台', factionId: 'date_d', lat: 38.27, lng: 140.87, type: 'small_city', region: 'JAPAN', troops: 20000, note: '陆前国仙台平；伊达氏居城（古代地名，非江户城专名）' },
