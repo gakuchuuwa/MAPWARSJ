@@ -1218,11 +1218,11 @@ export class CombatUI {
         const eliteTier = getEliteTierLabel(unit);
         let eliteLabel = eliteTier ?? '';
 
-        // ②战术技 → 六计文字标签（用开局选定的 battleOverriddenSkillId，不重复随机）
+        // ②战术技 → 六计文字标签（用开局选定的 battleOverriddenSkillId，被否决则用 negatedSkillId）
         const tacUnit = pickSideSkillGeneralUnit(this.getUnitsForSide(side));
         let tacLabel = '';
         if (tacUnit?.generalId) {
-            const skillId = tacUnit.battleOverriddenSkillId ?? null;
+            const skillId = tacUnit.battleOverriddenSkillId ?? tacUnit.negatedSkillId ?? null;
             const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
             if (entry) {
                 const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;

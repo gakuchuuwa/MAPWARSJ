@@ -432,6 +432,23 @@ export class BattleField implements IOpeningPulseSink {
                 }
             }
         }
+
+        // 六计防重：攻守双方的主将技不能同六类，同则守方重抽（最多 5 次）
+        const attUnit = this.attackerGroup.units.find(bu => bu.unit.generalId && bu.unit.battleOverriddenSkillId)?.unit;
+        const defUnit = this.defenderGroup.units.find(bu => bu.unit.generalId && bu.unit.battleOverriddenSkillId)?.unit;
+        if (attUnit && defUnit) {
+            const attCls = getSkillSixClass(attUnit.battleOverriddenSkillId);
+            for (let i = 0; i < 5; i++) {
+                const defCls = getSkillSixClass(defUnit.battleOverriddenSkillId);
+                if (!defCls || defCls !== attCls) break;
+                const sit = dt / Math.max(1, at) > 1.5 ? 'advantage' : dt / Math.max(1, at) < 0.67 ? 'disadvantage' : 'balance';
+                const rr = resolveSituationalSkillId(defUnit, sit as any, false);
+                if (rr.skillId) {
+                    defUnit.battleOverriddenSkillId = rr.skillId;
+                    defUnit.situationSkillMatch = rr.situationMatch;
+                }
+            }
+        }
     }
 
     /** 技能脉冲先放哪一侧：优势方先；均势（及无法判势）攻方先 */
