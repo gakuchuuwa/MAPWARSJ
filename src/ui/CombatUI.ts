@@ -1322,6 +1322,7 @@ export class CombatUI {
         let aptLabel2 = '';
         let styleHighlight = 0;
         let aptHighlight2 = 0;
+        let comboLabel = '';
         if (unit.generalId) {
             const profile = getGeneralProfile(unit.generalId);
             if (profile) {
@@ -1329,10 +1330,9 @@ export class CombatUI {
                 // 双行 → 按当前攻守角色派生 擅攻/擅守，不显示「双行」
                 const effStyle = rawStyle === 'balanced' ? (side === 'attacker' ? 'attack' : 'defense') : rawStyle;
                 const STYLE_MAP: Record<string, string> = { attack: '擅攻', defense: '擅守' };
-                styleLabel = STYLE_MAP[effStyle] ?? '';
+                styleLabel = STYLE_MAP[(effStyle as string) ?? ''] ?? '';
                 const APT_MAP: Record<string, string> = { create: '造势', leverage: '借势', reverse: '逆势' };
                 aptLabel2 = APT_MAP[profile.aptitude ?? ''] ?? '';
-                let comboLabel = '';
                 if (styleLabel || aptLabel2) {
                     // 用缓存兵力（与乘数同源，防战中跨阈值导致标签漂移）
                     const bf2 = this.boundRegionalBattleField;
@@ -1346,7 +1346,8 @@ export class CombatUI {
                         || (profile.attackStyle === 'defense' && side === 'defender') ? 2 : 0;
                     // 势匹配（三势：兵力局势 × 武将适性 × 技能六类 三者对齐）
                     const skillId = unit.battleOverriddenSkillId ?? null;
-                    const skillCls = skillId ? (EFFECT_TO_SIX_SET[resolveGeneralTacticalEntry(skillId)?.baseEffect ?? ''] as string | undefined) : undefined;
+                    const baseEffect = skillId ? resolveGeneralTacticalEntry(skillId)?.baseEffect : undefined;
+                    const skillCls = baseEffect ? (EFFECT_TO_SIX_SET[baseEffect] as string | undefined) : undefined;
                     if (profile.aptitude === 'create' && sit === 'advantage' && skillCls && ['gongzhan', 'shengzhan'].includes(skillCls)) {
                         aptHighlight2 = 2;
                         comboLabel = '造势·优势·强势';
