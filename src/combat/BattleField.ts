@@ -283,6 +283,13 @@ export class BattleField implements IOpeningPulseSink {
             return;
         }
 
+        // 双方均无将：纯兵对战，统一 6 秒
+        if (!attHasGen && !defHasGen) {
+            this.targetDuration = 6;
+            gameLog('battle', `⚔️ [BattleField] 无将战 → 6s`);
+            return;
+        }
+
         this.targetDuration = calculateBattleDurationSec(totalTroops, {
             hasGeneral: this.battleHasGeneral(),
         });
