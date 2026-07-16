@@ -974,8 +974,10 @@ export class Army implements IBattleUnit {
         if (this.isDestroyed) return;
         if (result === 'victory') {
             this.setCombatState(false);
+            this.resumeMovement();
         } else {
             this.clearExternalCombatState();
+            this.resumeMovement();
         }
     };
 

@@ -16,7 +16,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     edo: { name: '旗本武士', tier: 1 },
     satsuma: { name: '萨摩隼人', tier: 2 },
     iga_d: { name: '伊贺众', tier: 3 },
-  hashiba: { name: '黄母衣众', tier: 3 },        // 姬路城·秀吉亲卫母衣黄组（原七手组 T3）
+    hashiba: { name: '黄母衣众', tier: 3 },
   kai: { name: '武田赤备', tier: 2 },          // 标准明确列为T2代表（地方特色兵种/战术尖刀），降回T2
   jinchuan: { name: '骏河弓取', tier: 3 },      // 骏河·今川义元（无重大战略级胜利，T2）
   owari: { name: '织田马廻众', tier: 1 },     // 织田信长亲卫，虽参与众多大战，但"马廻众"本身作为建制未能独立达成灭国，更偏向T1战略主力或T2战术尖刀。归入T1。
@@ -36,7 +36,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   ayinu: { name: '阿伊努猎兵', tier: 3 },       // 虾夷/阿伊努人独特的狩猎与战斗文化代表，极具民族辨识度，升入T3知名
   beihai: { name: '雪国斥候', tier: 4 },       // 宗谷界城·（原雪国斥候，避开越后地域错位）
   yamato: { name: '千早众', tier: 2 },       // 千早城·楠木正成笼城（特定战役防御高光，T2）
-  sanada_d: { name: '真田赤备', tier: 2 },            // “日本一之兵”，大坂夏之阵中战术冲锋的传奇代表，战术辨识度爆表，升入T2战术
+    sanada_d: { name: '真田赤备', tier: 2 },
   // ── 2026-06-17 令制国补点（古代据点名 + 精锐）──
   kaga_d: { name: '一向宗门徒', tier: 3 },       // 金泽·加贺一向一揆，石山合战以少胜多（下间赖廉）
     date_d: { name: '青叶骑铁', tier: 3 },
@@ -49,5 +49,5 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   sagami: { name: '风魔党', tier: 3 },         // 箱根关·北条氏专属特种风魔忍者
   mino: { name: '大谷部众', tier: 4 },         // 不破关·大谷吉继（缺乏极其著名的战术高光，降T3）
   yizhi: { name: '原之辻戍卒', tier: 4 },       // 原之辻·壹岐国元寇戍卒（《元史》《高丽史》壹岐守备）
-  gonggu: { name: '宫古岛卒', tier: 4 },       // 宫古岛·琉球宫古守卒（《中山世谱》见载）
+    gonggu: { name: '宫古岛卒', tier: 4 },
 };

@@ -15,6 +15,7 @@ export const FACTIONS: Faction[] = [
 
   { id: 'donghui', name: '东濊' },
   { id: 'gonggu', name: '宫古' },
+
   { id: 'fuguo', name: '附国' },
   { id: 'fengzhou', name: '凤州' },
   { id: 'fushi', name: '苻秦' }, // 代表前秦，避免旗号重名
@@ -304,7 +305,8 @@ export const FACTIONS: Faction[] = [
     { id: 'echigo', name: '越后' },
     { id: 'kai', name: '甲斐' },
     { id: 'chosokabe', name: '土佐' },
-    { id: 'hashiba', name: '丰臣' },
+    { id: 'hashiba', name: '播磨' },
+
     { id: 'shimotsuke', name: '下野' },
     { id: 'aizu', name: '会津' },
 
@@ -1449,7 +1451,8 @@ export const FACTIONS: Faction[] = [
     { id: 'wuli_d', name: '乌里' },                // 扎布汗·乌里雅苏台辖区
     { id: 'jiluo_d', name: '涿涂' },               // 涿邪山·窦宪北征突骑
     { id: 'heisha_d', name: '黑沙' },              // 特尔门·漠北黑沙/后突厥境
-  { id: 'sanada_d', name: '真田' },
+  { id: 'sanada_d', name: '信浓' },
+
     { id: 'wuzhou', name: '武州' },
 
     { id: 'bailong', name: '白龙' },

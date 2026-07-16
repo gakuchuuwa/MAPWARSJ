@@ -180,11 +180,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    hashiba_fengchenxiuji: { generalId: 'hashiba_fengchenxiuji', tier: 'famous', tacticalSkillId: 'ts_280', strategicSkillId: 'str_28', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_380', atkAdvantageSkillId: 'ts_154', atkDisadvantageSkillId: 'ts_584', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_650', defDisadvantageSkillId: 'ts_034', aptitude: 'leverage' , attackStyle: 'attack'},
+    hashiba_fengchenxiuji: { generalId: 'hashiba_fengchenxiuji', tier: 'famous', tacticalSkillId: 'ts_154', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_154', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_584', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_650', defDisadvantageSkillId: 'ts_034', strategicSkillId: 'str_28', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
-    sanada_d_zhentianxingcun: { generalId: 'sanada_d_zhentianxingcun', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_289', atkBalanceSkillId: 'ts_046', atkDisadvantageSkillId: 'ts_759', defAdvantageSkillId: 'ts_027', defBalanceSkillId: 'ts_757', defDisadvantageSkillId: 'ts_035', aptitude: 'leverage' , attackStyle: 'defense'},
+    sanada_d_zhentianxingcun: { generalId: 'sanada_d_zhentianxingcun', tier: 'ordinary', tacticalSkillId: 'ts_289', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_289', atkBalanceSkillId: 'ts_046', atkDisadvantageSkillId: 'ts_759', defAdvantageSkillId: 'ts_027', defBalanceSkillId: 'ts_757', defDisadvantageSkillId: 'ts_035', aptitude: 'leverage', attackStyle: 'defense' },
 
 
 
@@ -2496,7 +2496,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    gonggu_gonggudaozhu: { generalId: 'gonggu_gonggudaozhu', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_795', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_394', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_043', defDisadvantageSkillId: 'ts_048', aptitude: 'reverse' , attackStyle: 'defense'},
+    gonggu_gonggudaozhu: { generalId: 'gonggu_gonggudaozhu', tier: 'ordinary', tacticalSkillId: 'ts_010', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_795', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_043', defDisadvantageSkillId: 'ts_048', aptitude: 'reverse', attackStyle: 'defense' },
 
 
 
