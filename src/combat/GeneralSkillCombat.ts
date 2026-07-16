@@ -1272,40 +1272,23 @@ export function getGeneralSkillDisplayTags(
 
 function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
     switch (skill.effect) {
-        case 'ally_mult_1_2':
-            return `己战×${skill.magnitude}`;
-        case 'enemy_mult_0_8':
-            return '敌战×0.8';
-        case 'ally_add_troops':
-            return `增兵${Math.round(skill.magnitude * 100)}%`;
-        case 'enemy_sub_troops':
-            return `减兵${Math.round(skill.magnitude * 100)}%`;
-        case 'ally_invincible':
-            return `免伤${skill.magnitude}秒`;
-        case 'ally_casualty_reduce':
-            return `减损${Math.round(skill.magnitude * 100)}%`;
-        case 'ally_luck_up':
-            return `己运+${Math.round(skill.magnitude * 100)}%`;
-        case 'enemy_luck_down':
-            return `敌运-${Math.round(skill.magnitude * 100)}%`;
-        case 'ally_luck_lock':
-            return '运锁';
-        case 'ally_recovery':
-            return `恢复${Math.round(skill.magnitude * 100)}%`;
-        case 'lose_effect':
-            return '败方惩罚';
-        case 'ally_elite_casualty':
-            return `精锐减损${Math.round(skill.magnitude * 100)}%`;
-        case 'enemy_counter':
-            return '对抗敌技';
-        case 'opening_counter':
-            return '对抗削兵';
-        case 'terrain_counter':
-            return '对抗地形';
-        case 'ally_recompute':
-            return '重算强弱';
-        default:
-            return '';
+        case 'ally_mult_1_2':   return '加己攻';
+        case 'enemy_mult_0_8':  return '克夺反';
+        case 'ally_add_troops': return '加己攻';
+        case 'enemy_sub_troops':return '减敌兵';
+        case 'ally_invincible': return '减己损';
+        case 'ally_casualty_reduce': return '减己损';
+        case 'ally_luck_up':    return '变随机';
+        case 'enemy_luck_down': return '变随机';
+        case 'ally_luck_lock':  return '变随机';
+        case 'ally_recovery':   return '加己攻';
+        case 'lose_effect':     return '挽败局';
+        case 'ally_elite_casualty': return '减己损';
+        case 'enemy_counter':   return '克夺反';
+        case 'opening_counter': return '克夺反';
+        case 'terrain_counter': return '克夺反';
+        case 'ally_recompute':  return '挽败局';
+        default: return '';
     }
 }
 
@@ -1314,13 +1297,14 @@ function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
  * 纯显示用，不参与任何战斗机制——机制仍由原生路径（tryApplyV1OpeningTroop 等）实现。
  */
 function formatV1NativeTacticalDisplayLabel(entry: { baseEffect: string; magnitude: number }): string {
-    const pct = Math.round(entry.magnitude * 100);
-    switch (entry.baseEffect) {
-        case 'dual_sub_troops_opening':
-            return `双损${pct}%`;
-        default:
-            return '';
-    }
+    const be = entry.baseEffect ?? '';
+    if (be.includes('power_mult')) return '加己攻';
+    if (be.includes('sub_troops') || be.includes('add_troops')) return '减敌兵';
+    if (be.includes('luck')) return '变随机';
+    if (be.includes('negate') || be.includes('counter') || be.includes('steal')) return '克夺反';
+    if (be.includes('casualty')) return '减己损';
+    if (be.includes('comeback') || be.includes('lose_effect') || be.includes('recompute')) return '挽败局';
+    return '';
 }
 
 function formatStrategicEffectLabel(skill: ReturnType<typeof getStrategicSkillDef>): string {
