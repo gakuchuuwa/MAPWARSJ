@@ -126,6 +126,9 @@ export class BattleField implements IOpeningPulseSink {
     /** 当前实际使用的 luck（开场 = opening；败战翻盘重掷后 = COMEBACK_LUCK_RANGE 区间值） */
     private attackerCurrentFateLuck = 1;
     private defenderCurrentFateLuck = 1;
+    /** 引擎滚点时的兵力缓存（徽章用此算比，防战中兵力改变导致条件漂移） */
+    private cachedAttackerTroops = 0;
+    private cachedDefenderTroops = 0;
     /** 每侧已触发的战术技 id（①–⑩ 每场一次类） */
     private readonly attackerTacticalTriggered = new Set<string>();
     private readonly defenderTacticalTriggered = new Set<string>();
@@ -147,8 +150,8 @@ export class BattleField implements IOpeningPulseSink {
     private strongerCasualtyReduction: number = 0;
     /** 穷寇勿迫：弱方已跌破 20% 初始并触发过一次减损重算（锁存防抖，翻转时清） */
     private poorBanditLatched: boolean = false;
-    readonly attackerCommander: IBattleUnit | null;
-    readonly defenderCommander: IBattleUnit | null;
+    attackerCommander: IBattleUnit | null = null;
+    defenderCommander: IBattleUnit | null = null;
     /** 相持段（≈40% 时长）前排队、之后统一释放的开局战术脉冲 */
     private readonly openingPulseQueue: Array<{ trigger: TacticalSkillTrigger; audioUnitId?: string }> = [];
     private stalemateSkillUiReleased = false;
@@ -220,9 +223,10 @@ export class BattleField implements IOpeningPulseSink {
         );
         // 三势适性：须在 pickPredictedSides 之前——先按兵力比给带将单位选局技，让开局脉冲/战力/卡片都用局技(否则局技未设,三处不一致且战力用招牌)
         this.assignSituationalSkills();
-        this.pickPredictedSides();
+        // 锁定指挥官：assignSituationalSkills 已设局技，此后 pickSideSkillGeneralUnit 选的将是带着局技的单位
         this.attackerCommander = pickSideSkillGeneralUnit(attackerUnits);
         this.defenderCommander = pickSideSkillGeneralUnit(defenderUnits);
+        this.pickPredictedSides();
         // 威慑系统：定强弱后算战损减免 + 节奏时长系数
         this.applyIntimidationModifiers();
         this.targetDuration = this.clampDuration(this.targetDuration * this.fearDurationMult);
@@ -498,6 +502,9 @@ export class BattleField implements IOpeningPulseSink {
             this.updateGroupStats();
             this.attackerGroup.initialTotalTroops = this.attackerGroup.totalTroops;
             this.defenderGroup.initialTotalTroops = this.defenderGroup.totalTroops;
+            // 缓存滚点时的总兵力，供徽章计算势比（防战中兵力改变导致条件漂移）
+            this.cachedAttackerTroops = this.attackerGroup.totalTroops;
+            this.cachedDefenderTroops = this.defenderGroup.totalTroops;
 
             const attFate = resolveSideOpeningFateLuck(
                 attUnits, defUnits, this.type, terrain, true,
@@ -578,6 +585,10 @@ export class BattleField implements IOpeningPulseSink {
             .filter((bu) => !bu.isDefeated && bu.unit.troops > 0)
             .map((bu) => bu.unit);
 
+        // 缓存当前滚点用的总兵力（refresh 时用当前值，徽章保持一致）
+        this.cachedAttackerTroops = attUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+        this.cachedDefenderTroops = defUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+
         const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
         // 翻盘重掷：统一低概率区间（等势层上线后由势调整）
         const rollComebackLuck = (): number => {
@@ -605,6 +616,8 @@ export class BattleField implements IOpeningPulseSink {
             false,
             undefined,
             { battleType: this.type, terrain },
+            this.attackerCommander,
+            this.defenderCommander,
         );
         let withSkills = applyStrategicRollMultipliersOnly(
             attUnits,
@@ -1358,6 +1371,12 @@ export class BattleField implements IOpeningPulseSink {
     public getAttackerCurrentFateLuck(): number { return this.attackerCurrentFateLuck; }
     /** 当前实际使用的 luck */
     public getDefenderCurrentFateLuck(): number { return this.defenderCurrentFateLuck; }
+    /** 开战时锁定的指挥官（此后援军入场/阵亡不改变），供战斗面板徽章同源 */
+    public getAttackerCommander(): IBattleUnit | null { return this.attackerCommander; }
+    public getDefenderCommander(): IBattleUnit | null { return this.defenderCommander; }
+    /** 引擎滚点时的总兵力缓存（徽章用此算势比，防战中条件漂移） */
+    public getCachedAttackerTroops(): number { return this.cachedAttackerTroops; }
+    public getCachedDefenderTroops(): number { return this.cachedDefenderTroops; }
 
     /**
      * 获取战场信息

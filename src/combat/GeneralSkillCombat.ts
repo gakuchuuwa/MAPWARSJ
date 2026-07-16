@@ -782,50 +782,63 @@ export function getOpeningTacticalPowerMultiplier(
     isAttacker: boolean,
     opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
     selfCommander?: IBattleUnit | null,
+    overrideSelfTroops?: number,
+    overrideEnemyTroops?: number,
 ): number {
     const unit = findEligibleGeneralUnit(sideUnits, selfCommander);
     if (!unit || !canUnitUseGeneralSkills(unit)) return 1;
     const skill = getTacticalSkillForTiming(unit, 'opening');
-    if (!skill || skill.effect !== 'ally_mult_1_2') return 1;
-    if (!bridgedOpeningEnhanceActive(sideUnits, opponentUnits, isAttacker, opts)) return 1;
-    let mult = skill.magnitude;
-    // 对手地形反制（与引擎 applyAllyMult 一致：tactical/cancel/halve_enemy_terrain_buff）
-    const oppUnit = findEligibleGeneralUnit(opponentUnits);
-    if (oppUnit && mult > 1) {
-        const oppActiveId = getActiveTacticalSkillId(oppUnit);
-        if (oppActiveId) {
-            const selfTroops = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
-            const oppTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
-            const oppCtx = buildTacticalConditionContext({
-                battleType: opts?.battleType ?? 'field',
-                terrain: opts?.terrain ?? null,
-                selfTroops: oppTroops,
-                enemyTroops: selfTroops,
-                selfInitialTroops: oppTroops,
-                enemyInitialTroops: selfTroops,
-                selfIsAttacker: !isAttacker,
-                enemyHasFamousGeneral: sideHasFamousGeneral(sideUnits),
-                isFirstSortieSinceDepart: sideIsFirstSortie(opponentUnits),
-            });
-            const counter = resolveEnemyTerrainBuffCounter(oppActiveId, mult, oppCtx);
-            if (counter.adjustedMult < mult) {
-                mult = counter.adjustedMult;
+    if (!skill) return 1;
+
+    // 攻战计（ally_mult_1_2）：加己攻/减敌攻，受条件门控 + 对手地形反制
+    if (skill.effect === 'ally_mult_1_2') {
+        if (!bridgedOpeningEnhanceActive(sideUnits, opponentUnits, isAttacker, opts, selfCommander, overrideSelfTroops, overrideEnemyTroops)) return 1;
+        let mult = skill.magnitude;
+        // 对手地形反制（与引擎 applyAllyMult 一致）
+        const oppUnit = findEligibleGeneralUnit(opponentUnits);
+        if (oppUnit && mult > 1) {
+            const oppActiveId = getActiveTacticalSkillId(oppUnit);
+            if (oppActiveId) {
+                const selfTroops = overrideSelfTroops ?? sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+                const oppTroops = overrideEnemyTroops ?? opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+                const oppCtx = buildTacticalConditionContext({
+                    battleType: opts?.battleType ?? 'field',
+                    terrain: opts?.terrain ?? null,
+                    selfTroops: oppTroops,
+                    enemyTroops: selfTroops,
+                    selfInitialTroops: oppTroops,
+                    enemyInitialTroops: selfTroops,
+                    selfIsAttacker: !isAttacker,
+                    enemyHasFamousGeneral: sideHasFamousGeneral(sideUnits),
+                    isFirstSortieSinceDepart: sideIsFirstSortie(opponentUnits),
+                });
+                const counter = resolveEnemyTerrainBuffCounter(oppActiveId, mult, oppCtx);
+                if (counter.adjustedMult < mult) {
+                    mult = counter.adjustedMult;
+                }
             }
         }
+        return mult;
     }
-    return mult;
+
+    // 摧锋（ally_invincible）：己方掷点 ×rollEdge，无条件（与引擎 applyInvRollEdge 一致）
+    if (skill.effect === 'ally_invincible' && skill.rollEdge) {
+        return skill.rollEdge;
+    }
+
+    return 1;
 }
 
 // ── 三势适性：势×局 开战战力系数（③整合。常量见 TacticalConstants.ts）──
 // 势与局匹配放大战力：造势顺风碾压 / 借势均势破局 / 逆势逆风爆发(提翻盘机会,不稳赢)。
 /** 按该侧带将单位的势 × 当前兵力局(我方/敌方 >1.5优 / <0.67劣 / 中间均)返回开战战力系数 */
-export function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[], selfCommander?: IBattleUnit | null): number {
+export function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[], selfCommander?: IBattleUnit | null, overrideSelfTroops?: number, overrideEnemyTroops?: number): number {
     const unit = findEligibleGeneralUnit(sideUnits, selfCommander);
     if (!unit?.generalId) return 1;
     const apt = getGeneralProfile(unit.generalId)?.aptitude;
     if (!apt) return 1;
-    const st = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
-    const ot = oppUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const st = overrideSelfTroops ?? sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const ot = overrideEnemyTroops ?? oppUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const r = st / Math.max(1, ot);
     const sit: 'advantage'|'balance'|'disadvantage' = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
     return APTITUDE_POWER_MULT[apt]?.[sit] ?? 1;
@@ -1696,6 +1709,8 @@ function bridgedOpeningEnhanceActive(
     isAttacker: boolean,
     opts?: { battleType?: BattleType; terrain?: LandTerrainKind | null },
     selfCommander?: IBattleUnit | null,
+    overrideSelfTroops?: number,
+    overrideEnemyTroops?: number,
 ): boolean {
     const unit = findEligibleGeneralUnit(sideUnits, selfCommander);
     if (!unit?.generalId) return true;
@@ -1703,8 +1718,8 @@ function bridgedOpeningEnhanceActive(
     if (!tacId) return true;
     const entry = resolveGeneralTacticalEntry(tacId);
     if (!entry || entry.condition === 'always') return true;
-    const selfTroops = sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
-    const enemyTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const selfTroops = overrideSelfTroops ?? sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const enemyTroops = overrideEnemyTroops ?? opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const ctx = buildTacticalConditionContext({ isFirstSortieSinceDepart: sideIsFirstSortie(sideUnits),
         battleType: opts?.battleType ?? 'field',
         terrain: opts?.terrain ?? null,

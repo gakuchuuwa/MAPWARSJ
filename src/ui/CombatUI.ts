@@ -1139,10 +1139,16 @@ export class CombatUI {
     }
 
     /**
-     * 战力徽章/标签同源单位：强制用该侧放技指挥官。
-     * 文化·精锐·势·攻防风格·对势全读同一 unit，避免跟拍/主显示与指挥官错位丢精锐。
+     * 战力徽章/标签同源单位：读引擎锁定的指挥官（与滚点一致）。
+     * 文化·精锐·势·攻防风格全读同一 unit，避免援军入场/原将阵亡后张冠李戴。
      */
     private resolvePowerBadgeUnit(fallback: IBattleUnit, side: 'attacker' | 'defender'): IBattleUnit {
+        const bf = this.boundRegionalBattleField;
+        if (bf) {
+            const cmd = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
+            if (cmd) return cmd;
+        }
+        // 无战场 / 指挥官未锁定 → 退回到当前最优将
         return pickSideSkillGeneralUnit(this.getUnitsForSide(side)) ?? fallback;
     }
 
@@ -1152,6 +1158,10 @@ export class CombatUI {
         const terrain = this.getBattleTerrainForUi();
         const myUnits = this.getUnitsForSide(side);
         const oppUnits = this.getOpponentUnitsFor(side);
+        const bf = this.boundRegionalBattleField;
+        // 用引擎滚点时的缓存兵力（非当前兵力），防战中条件漂移
+        const cachedMyTroops = side === 'attacker' ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
+        const cachedOppTroops = side === 'attacker' ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
 
         let product = 1;
         product *= getUnitCultureCombatMultiplier(unit);
@@ -1161,10 +1171,13 @@ export class CombatUI {
             oppUnits,
             side === 'attacker',
             { battleType, terrain },
+            unit,
+            cachedMyTroops,
+            cachedOppTroops,
         );
 
         // ③ 势层
-        product *= getAptitudePowerMult(myUnits, oppUnits);
+        product *= getAptitudePowerMult(myUnits, oppUnits, unit, cachedMyTroops, cachedOppTroops);
 
         // ④ 攻防层（与 unit 同源：指挥官）
         product *= getAttackStylePowerMult(unit, side === 'attacker');
