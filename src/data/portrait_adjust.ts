@@ -2022,11 +2022,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 1
         },
-        "/assets/LINGNAN/ryukyu_shangbazhi.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -16
-        },
         "/assets/LINGNAN/shaozhou_zhangzhensun.png": {
             "scale": 1.04,
             "offsetX": 0,
@@ -5796,6 +5791,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.45,
             "offsetX": 10,
             "offsetY": 27
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_33.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/LINGNAN/ryukyu_shangbazhi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {

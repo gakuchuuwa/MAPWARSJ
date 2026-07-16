@@ -1032,7 +1032,6 @@ export class CombatUI {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
                 flex: 0 0 ${uiPx(98)};
                 width: ${uiPx(98)};
                 box-sizing: border-box;
@@ -1052,7 +1051,7 @@ export class CombatUI {
             const nameEl = document.createElement('div');
             nameEl.style.cssText = `
                 font-family: 'Noto Serif SC', serif;
-                font-size: ${uiPx(18)};
+                font-size: ${uiPx(16)};
                 font-weight: 900;
                 color: #fff8e0;
                 letter-spacing: 1px;
@@ -1078,17 +1077,12 @@ export class CombatUI {
                 width: 100%;
                 text-align: center;
             `;
-            effectEl.textContent = effect;
+            // 效果行：空串（如文化卡只显四字词）时用不换行空格占位——
+            // 保证与双行卡完全等高、四字名同一水平线，避免行内卡片高低不齐
+            effectEl.textContent = effect || '\u00A0'; // 不换行空格占位(显式转义防被格式化误清)
 
             tag.appendChild(nameEl);
-            // 2026-07-17 全面板统一四字词单行卡（战术/精锐/文化均不传效果词）：
-            // 空效果不渲染副行、也不用空行占位（占位会把名字顶到上半截），
-            // 配合 tag 的 justify-content:center 让四字词在卡内垂直居中
-            if (effect) {
-                tag.appendChild(effectEl);
-            } else {
-                nameEl.style.marginBottom = '0';
-            }
+            tag.appendChild(effectEl);
             return tag;
         };
 
@@ -1139,13 +1133,16 @@ export class CombatUI {
 
             if (unit.generalId) {
                 for (const tag of getGeneralSkillDisplayTags(unit)) {
-                    add(tag.name, '', tag.isFamous, tag.skillType);
+                    add(tag.name, tag.effectLabel, tag.isFamous, tag.skillType);
                 }
             }
 
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
-                add(getLegionEliteBadgeName(unit), '', true, 'elite');
+                const tier = getUnitEliteTier(unit);
+                const TIER_LABELS = ['天神军', '王者师', '劲锐旅', '精英团', '戍卫营'];
+                const tierLabel = tier !== null ? (TIER_LABELS[tier] ?? '精锐') : '精锐';
+                add(getLegionEliteBadgeName(unit), tierLabel, true, 'elite');
             }
 
             for (const tag of pending) box.appendChild(tag);
