@@ -261,8 +261,9 @@ export class SpeechAnnouncer {
     attackerFactionId: string;
     cityName: string;
     isPass: boolean;
+    ju: CaptureJu;                      // 攻方这一仗的势（兵力比判定，与攻占/技能同源）
     attackerGeneralId?: string | null;
-    attackerSkillId?: string | null;   // 攻方将领这一仗的势技 → 判优/均/劣（与攻占同源）
+    attackerSkillId?: string | null;   // 保留：将来可选用于技名等
     defenderFactionId?: string | null;
     defenderGeneralId?: string | null;
   }): void {
@@ -287,7 +288,7 @@ export class SpeechAnnouncer {
       text = `${attackerLead}，${verb}${opts.cityName}`;
     } else {
       const terrain: "city" | "pass" = opts.isPass ? "pass" : "city";
-      const j: CaptureJu = (opts.attackerSkillId ? classifyJu(opts.attackerSkillId) : null) ?? "balance";
+      const j: CaptureJu = opts.ju;
       const atkPrefix = SIEGE_ATK_PREFIX[j][terrain];
       const defPhrase = SIEGE_DEF_PHRASE[j][terrain];
       const defFaction = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
@@ -307,9 +308,10 @@ export class SpeechAnnouncer {
   public announceCityCapture(opts: {
     attackerFactionId: string;
     cityName: string;
-    attackerSkillId?: string | null;   // 攻方将领这一仗的势技 → 判优/均/劣
-    defenderGeneralId?: string | null; // 守方武将（无=无将，不续守方句）
-    regionLabel?: string | null;       // 文化中心时传（S 级 + 前缀 + 横幅）
+    ju: CaptureJu;                        // 攻方这一仗的势（兵力比判定）
+    attackerSkillId?: string | null;     // 保留
+    defenderGeneralId?: string | null;   // 守方武将（无=无将，不续守方句）
+    regionLabel?: string | null;         // 文化中心时传（S 级 + 前缀 + 横幅）
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue(); // 攻占是战斗收尾，清掉未念完的技能脉冲
@@ -317,7 +319,7 @@ export class SpeechAnnouncer {
     const isCenter = !!opts.regionLabel;
     const cityPhrase = isCenter ? `${opts.regionLabel}中心，${opts.cityName}` : opts.cityName;
     const defGeneral = opts.defenderGeneralId ? getGeneralRecordByGeneralId(opts.defenderGeneralId) : null;
-    const ju = opts.attackerSkillId ? classifyJu(opts.attackerSkillId) : null;
+    const ju = opts.ju;
 
     let text: string;
     if (!defGeneral || !ju) {

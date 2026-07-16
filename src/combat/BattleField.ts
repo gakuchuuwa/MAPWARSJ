@@ -1162,6 +1162,11 @@ export class BattleField implements IOpeningPulseSink {
         return this.defenderGroup.factionId;
     }
 
+    /** 开局攻守初始兵力比（attacker / defender），用于语音播报等判势。 */
+    public getInitialAttDefRatio(): number {
+        return this.attackerGroup.initialTotalTroops / Math.max(1, this.defenderGroup.initialTotalTroops);
+    }
+
     /** 战场参考坐标（未溃败单位的重心，用于邻近增援判定） */
     public getReferencePosition(): { lat: number; lng: number } {
         let lat = 0;
