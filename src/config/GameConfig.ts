@@ -166,8 +166,8 @@ export class GameConfig {
     static CULTURE_COMBAT = {
         /** region → [军团攻, 据点防] */
         TIER_TABLE: {
-            STEPPE: [1.20, 0.80], TIBET: [1.10, 0.85], CENTRAL_ASIA: [1.15, 0.90],
-            NORTHEAST: [1.15, 1.00], HEXI: [1.00, 0.90], NORTH: [1.15, 0.85],
+            STEPPE: [1.20, 0.80], TIBET: [1.10, 0.95], CENTRAL_ASIA: [1.15, 0.90],
+            NORTHEAST: [1.15, 1.00], HEXI: [1.00, 0.90], NORTH: [1.15, 0.95],
             CENTRAL: [1.00, 1.10], WESTERN: [0.85, 1.10],
             JAPAN: [1.15, 1.00], KOREA: [0.85, 1.05], JIANGNAN: [0.85, 1.15],
             LINGNAN: [1.00, 1.15], DIANQIAN: [1.10, 1.05], BASHU: [1.00, 1.20],
@@ -198,7 +198,7 @@ export class GameConfig {
         } as Record<string, number>,
         /** region → 据点兵上限 */
         CITY_TROOP_CAP_TABLE: {
-            STEPPE: 0.75, TIBET: 0.75, CENTRAL_ASIA: 0.90,
+            STEPPE: 0.80, TIBET: 0.80, CENTRAL_ASIA: 0.90,
             NORTHEAST: 0.90, HEXI: 0.85, NORTH: 1.10,
             CENTRAL: 1.20, WESTERN: 0.85,
             JAPAN: 1.05, KOREA: 1.15, JIANGNAN: 1.20,
