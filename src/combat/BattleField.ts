@@ -409,7 +409,6 @@ export class BattleField implements IOpeningPulseSink {
 
     /**
      * 六计随机：开局定强弱后，给每个带将单位从攻/守三槽随机抽一个局技，写入 battleOverriddenSkillId。
-     * 同时判定技能六类是否匹配局势，写入 situationSkillMatch（优势→攻/胜、均势→敌/混、劣势→并/败）。
      * 阈值：兵力比 >1.5 优势 / <0.67 劣势 / 其间均势。
      * 同时锁定 situationalAttDefRatio，供相持段技能释放排序（优势先 / 均势攻先）。
      */
@@ -428,7 +427,6 @@ export class BattleField implements IOpeningPulseSink {
                 const result = resolveSituationalSkillId(u, sit as any, g === this.attackerGroup);
                 if (result.skillId) {
                     u.battleOverriddenSkillId = result.skillId;
-                    u.situationSkillMatch = result.situationMatch;
                 }
             }
         }
@@ -445,7 +443,6 @@ export class BattleField implements IOpeningPulseSink {
                 const rr = resolveSituationalSkillId(defUnit, sit as any, false);
                 if (rr.skillId) {
                     defUnit.battleOverriddenSkillId = rr.skillId;
-                    defUnit.situationSkillMatch = rr.situationMatch;
                 }
             }
         }
@@ -1246,7 +1243,6 @@ export class BattleField implements IOpeningPulseSink {
                 const rresult = resolveSituationalSkillId(unit, rsit as any, isAttacker);
                 if (rresult.skillId) {
                     unit.battleOverriddenSkillId = rresult.skillId;
-                    unit.situationSkillMatch = rresult.situationMatch;
                 }
             }
         }

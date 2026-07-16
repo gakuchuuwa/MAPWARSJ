@@ -28,5 +28,5 @@ export const COMEBACK_LUCK_RANGE: [number, number] = [0.25, 0.45];
 export const ATTACK_STYLE_POWER_MULT: Record<string, Record<'attack' | 'defense', number>> = {
     attack:   { attack: 1.30, defense: 0.70 },
     defense:  { attack: 0.70, defense: 1.30 },
-    balanced: { attack: 1.20, defense: 1.20 },
+    balanced: { attack: 1.30, defense: 1.30 },
 };

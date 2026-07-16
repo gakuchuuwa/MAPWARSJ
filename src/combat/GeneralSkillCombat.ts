@@ -63,7 +63,6 @@ export interface SituationalSkillResult {
 }
 
 /** 局势匹配加成系数 */
-export const SITUATION_MATCH_BONUS = 1.15;
 
 /**
  * 六计随机：攻方三槽 / 守方三槽各等概率随机抽一个技。
@@ -2309,7 +2308,6 @@ export function applySkillCountersToUnits(
     if (defCounter.isNegated && attUnit) {
         attUnit.negatedSkillId = attSkillId;
         attUnit.battleOverriddenSkillId = null;
-        attUnit.situationSkillMatch = false;
         if (defCounter.isStolen && defUnit) {
             defUnit.battleOverriddenSkillId = attSkillId;
         }
@@ -2323,7 +2321,6 @@ export function applySkillCountersToUnits(
     if (attCounter.isNegated && defUnit) {
         defUnit.negatedSkillId = defSkillId;
         defUnit.battleOverriddenSkillId = null;
-        defUnit.situationSkillMatch = false;
         if (attCounter.isStolen && attUnit) {
             attUnit.battleOverriddenSkillId = defSkillId;
         }
