@@ -80,7 +80,7 @@ function getLegionEliteBadgeName(unit: IBattleUnit): string {
 function getEliteTierLabel(unit: IBattleUnit): string | null {
     const tier = getUnitEliteTier(unit);
     if (tier !== null) {
-        const LABELS = ['天神军', '王者师', '劲锐旅', '精锐团', '戍卫营'];
+        const LABELS = ['天神军', '王者师', '劲锐旅', '精英团', '戍卫营'];
         return LABELS[tier] ?? null;
     }
     // fallback：从 entity 的 cityId 直接查精锐 config
@@ -89,7 +89,7 @@ function getEliteTierLabel(unit: IBattleUnit): string | null {
     if (cityId) {
         const config = getCityEliteConfig(cityId);
         if (config?.tier !== undefined) {
-            const LABELS = ['天神军', '王者师', '劲锐旅', '精锐团', '戍卫营'];
+            const LABELS = ['天神军', '王者师', '劲锐旅', '精英团', '戍卫营'];
             return LABELS[config.tier] ?? null;
         }
     }
@@ -1115,7 +1115,7 @@ export class CombatUI {
             const legionMult = getCampaignLegionCombatMultiplier(unit);
             if (Math.abs(legionMult - 1) > 0.001) {
                 const tier = getUnitEliteTier(unit);
-                const TIER_LABELS = ['天神军', '王者师', '劲锐旅', '精锐团', '戍卫营'];
+                const TIER_LABELS = ['天神军', '王者师', '劲锐旅', '精英团', '戍卫营'];
                 const tierLabel = tier !== null ? (TIER_LABELS[tier] ?? '精锐') : '精锐';
                 add(getLegionEliteBadgeName(unit), tierLabel, true, 'elite');
             }
@@ -1217,9 +1217,7 @@ export class CombatUI {
             regionLabel = '名城';
         }
 
-        // 精锐加成 -> 不显数字，显五级标签（天军/王师/精锐/劲旅/戍卫）
-        const eliteTier = getEliteTierLabel(unit);
-        let eliteLabel = eliteTier ?? '';
+        // 精锐加成 → 不显文字（已在技能按钮展示）
 
         // ②战术技 → 六计文字标签（用开局选定的 battleOverriddenSkillId，被否决则用 negatedSkillId）
         const tacUnit = pickSideSkillGeneralUnit(this.getUnitsForSide(side));
@@ -1257,7 +1255,7 @@ export class CombatUI {
             else if (fateLuck < 0.999) luckLabel = '厄运';
         }
 
-        if (labeled.length === 0 && !luckLabel && !joinLabel && !passLabel && !regionLabel && !eliteLabel && !cultureLabel && !tacLabel) {
+        if (labeled.length === 0 && !luckLabel && !joinLabel && !passLabel && !regionLabel && !cultureLabel && !tacLabel) {
             return { chain: '', title: '' };
         }
 
@@ -1267,7 +1265,6 @@ export class CombatUI {
         if (joinLabel) parts.push(joinLabel);
         if (passLabel) parts.push('险要');
         if (regionLabel) parts.push('名城');
-        if (eliteLabel) parts.push(eliteLabel);
         if (cultureLabel) parts.push(cultureLabel);
         if (tacLabel) parts.push(tacLabel);
 
@@ -1280,9 +1277,12 @@ export class CombatUI {
         if (generalUnit?.generalId) {
             const profile = getGeneralProfile(generalUnit.generalId);
             if (profile) {
-                const STYLE_MAP: Record<string, string> = { attack: '擅攻', defense: '擅守', balanced: '双行' };
+                const rawStyle = profile.attackStyle;
+                // 双行 → 按当前攻守角色派生 擅攻/擅守，不显示「双行」
+                const effStyle = rawStyle === 'balanced' ? (side === 'attacker' ? 'attack' : 'defense') : rawStyle;
+                const STYLE_MAP: Record<string, string> = { attack: '擅攻', defense: '擅守' };
+                styleLabel = STYLE_MAP[effStyle] ?? '';
                 const APT_MAP: Record<string, string> = { create: '造势', leverage: '借势', reverse: '逆势' };
-                styleLabel = STYLE_MAP[profile.attackStyle] ?? '';
                 aptLabel2 = APT_MAP[profile.aptitude ?? ''] ?? '';
                 if (styleLabel || aptLabel2) {
                     const myTroops = this.getUnitsForSide(side).reduce((s, u) => s + Math.max(0, u.troops), 0);
