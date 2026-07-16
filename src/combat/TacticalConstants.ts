@@ -29,3 +29,9 @@ export const ATTACK_STYLE_POWER_MULT: Record<string, Record<'attack' | 'defense'
     defense:  { attack: 0.80, defense: 1.20 },
     balanced: { attack: 1.10, defense: 1.10 },
 };
+
+/**
+ * 第五层·名将光环（2026-07-16 · 第 8 环）
+ * 名将 (tier='famous') ×1.20，普将 ×1.00。
+ */
+export const FAMOUS_GENERAL_MULT = 1.20;

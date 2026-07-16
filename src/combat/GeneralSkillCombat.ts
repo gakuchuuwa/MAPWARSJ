@@ -37,7 +37,7 @@ import {
 import { getTacticalSkillEntry, EFFECT_TO_SIX_SET } from '../data/TacticalSkillCatalog';
 import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
-import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT } from './TacticalConstants';
+import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT, FAMOUS_GENERAL_MULT } from './TacticalConstants';
 import { readSiegeGarrisonEliteName } from './SiegeGarrisonTier';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText, spawnMapPulse, getFollowedArmyId } from '../utils/MapFloatingText';
@@ -859,6 +859,15 @@ export function getAttackStylePowerMult(unit: IBattleUnit | null, isAttacker: bo
     const row = ATTACK_STYLE_POWER_MULT[style];
     if (!row) return 1;
     return isAttacker ? row.attack : row.defense;
+}
+
+/**
+ * 第五层·名将光环（2026-07-16 · 第 8 环）
+ * 名将 (tier='famous') ×1.20，普将 ×1.00。
+ */
+export function getFamousGeneralMult(unit: IBattleUnit | null): number {
+    if (!unit?.generalId) return 1;
+    return getGeneralProfile(unit.generalId)?.tier === 'famous' ? FAMOUS_GENERAL_MULT : 1;
 }
 
 /**
@@ -1893,6 +1902,10 @@ export function applyOpeningTacticalToRolls(
     const defGen = findEligibleGeneralUnit(defenderUnits, defCommander);
     outAtt *= getAttackStylePowerMult(attGen, true);
     outDef *= getAttackStylePowerMult(defGen, false);
+
+    // 第五层·名将光环（tier='famous' ×1.20，普将 ×1.00）
+    outAtt *= getFamousGeneralMult(attGen);
+    outDef *= getFamousGeneralMult(defGen);
 
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }
