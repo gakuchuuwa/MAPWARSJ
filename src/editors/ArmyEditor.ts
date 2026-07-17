@@ -611,8 +611,8 @@ export class ArmyEditor {
         this.currentLat = center.lat;
         this.currentLng = center.lng;
 
-        // [2026-05-30] 加黑色圆背景 — 凸显军队
-        this.backgroundCircle = L.circle([center.lat, center.lng], {
+        // [2026-05-30] 加黑色圆背景 — 凸显军队（略偏上，不挡面板）
+        this.backgroundCircle = L.circle([center.lat + 2.0, center.lng], {
             radius: 80000, // 80km 半径
             color: 'transparent',
             fillColor: '#000000',
@@ -649,6 +649,7 @@ export class ArmyEditor {
             isOnSea: this.simulateNaval,
             forceNavalVisual: this.simulateNaval,
             navalShipTierLock: this.simulateNaval ? (this.detectShipTier() as any) ?? null : null,
+            previewScale: 2.5,
         };
 
         renderer.register(unit);

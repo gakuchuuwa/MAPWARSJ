@@ -781,7 +781,7 @@ export class GlobalUnitRenderer {
                     { x: centerPoint.x, y: centerPoint.y },
                     state,
                     directionIndex,
-                    scale,
+                    scale * (unit.previewScale ?? 1),
                     troops,
                     Date.now(),
                     unit.factionId || 'zhonghua',
@@ -801,7 +801,7 @@ export class GlobalUnitRenderer {
                     { x: centerPoint.x, y: centerPoint.y },
                     state,
                     directionIndex,
-                    scale,
+                    scale * (unit.previewScale ?? 1),
                     troops,
                     Date.now(),
                     false,
@@ -831,7 +831,7 @@ export class GlobalUnitRenderer {
                 ctx,
                 { x: centerPoint.x, y: centerPoint.y },
                 directionIndex,
-                useNavalVisual ? scale * 0.85 : scale,
+                useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
                 Date.now(),
                 unit.factionId || 'panjun',
                 currentYear // [NEW] Pass year
@@ -842,7 +842,7 @@ export class GlobalUnitRenderer {
         unit.lastPosition = { lat: unitPos.lat, lng: unitPos.lng };
 
         // Draw Unit Name/Info (Optional)
-        this.renderInfo(ctx, centerPoint, unit, scale);
+        this.renderInfo(ctx, centerPoint, unit, scale * (unit.previewScale ?? 1));
     }
 
     private renderInfo(ctx: CanvasRenderingContext2D, center: L.Point, unit: IAnimatedUnit, scale: number) {
