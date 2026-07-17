@@ -116,6 +116,7 @@ export function tryJoinLegionToBattle(
 
     legion.stopMovement(true);
     legion.setCombatState(true, battleField.type, center);
+    legion.isSiegeAttacker = isAttacker; // 援军按攻守方正确设置器械标记
 
     const side: 'attacker' | 'defender' = isAttacker ? 'attacker' : 'defender';
     const battleCityName = deps.resolveBattleCityName?.(center) ?? '未知';
