@@ -753,8 +753,8 @@ export class LegionPhalanxDrawer {
 
     private static readonly NAVAL_FORMATION = [
         { r: 0, c: 0, ship: 'ship_large' },
-        { r: 1, c: -1.2, ship: 'ship_small' }, { r: 1, c: 1.2, ship: 'ship_medium' },
-        { r: -1, c: -1.2, ship: 'ship_medium' }, { r: -1, c: 1.2, ship: 'ship_small' },
+        { r: 1, c: -1.5, ship: 'ship_small' }, { r: 1, c: 1.5, ship: 'ship_medium' },
+        { r: -1, c: -1.5, ship: 'ship_medium' }, { r: -1, c: 1.5, ship: 'ship_small' },
     ] as const;
 
     public static drawNaval(
@@ -796,10 +796,14 @@ export class LegionPhalanxDrawer {
             typeDraws.set(typeId, { set, totalFrames, w: h * (frameW / frameH), h });
         }
 
-        // 编队间距以旗舰（大船）尺寸为基准：纵向 0.45 船高、横向 0.40 船宽（沿用雁阵紧凑感）
+        // 编队间距以旗舰（大船）尺寸为基准：纵向 0.45 船高、横向 0.40 船宽
         const flagship = typeDraws.get('ship_large')!;
         const shipDepth = flagship.h * 0.45;
         const shipSpread = flagship.w * 0.40;
+
+        // 对角朝向（1,3,5,7）c 轴加 0.15 补偿视觉压缩；正朝向不变
+        const isDiagonal = direction % 2 === 1;
+        const cMult = isDiagonal ? 1.15 : 1.0;
 
         // 旋转角（与陆军一致）
         const angle = (direction + 1) * Math.PI / 4;
@@ -814,7 +818,7 @@ export class LegionPhalanxDrawer {
             const td = typeDraws.get(pos.ship)!;
             const currentSet = td.set;
             const ox = pos.r * shipDepth;
-            const oy = pos.c * shipSpread;
+            const oy = pos.c * shipSpread * cMult;
             const dx = center.x + (ox * cos - oy * sin);
             const dy = center.y + (ox * sin + oy * cos);
 
