@@ -4793,7 +4793,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -14
         },
         "/assets/litang/weihaiwei_sudingfang.png": {
-            "scale": 1.09,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": 4
         },
