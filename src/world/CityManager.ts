@@ -685,20 +685,27 @@ export class CityManager {
         }
     }
 
-    public stopSiegeEffect(cityId: string, immediate = false): void {
+    /**
+     * @param immediate true=立即清场（中止/复国等），不等延迟
+     * @param restoreDelayMs 非立即时据点缩回延迟：攻方胜 1s（缩小藏进城破烟雾）；守方胜 2s（城未破无烟雾，等溃灭/回城动画收尾）
+     */
+    public stopSiegeEffect(cityId: string, immediate = false, restoreDelayMs = 1000): void {
         this.siegeEffectRenderer.stopEffect(cityId, immediate);
-        // 据点建筑还原（2026-07-18 主人定）：非立即场景延迟 1s——火焰淡出（0.8s）+
-        // 城破尘爆起来之后再缩，缩小动作藏进烟雾里；immediate（接战/连战）不等，直接还原。
+        // 据点建筑还原（2026-07-18 主人定）：非立即场景延迟——火焰淡出（0.8s）+
+        // 城破尘爆起来之后再缩，缩小动作藏进烟雾里；immediate（中止/复国）不等，直接还原。
+        const pending = this.siegeZoomRestoreTimers.get(cityId);
+        if (pending) {
+            clearTimeout(pending);
+            this.siegeZoomRestoreTimers.delete(cityId);
+        }
         if (immediate) {
             this.territorySystem.setCitySiegeZoom(cityId, false);
             return;
         }
-        const pending = this.siegeZoomRestoreTimers.get(cityId);
-        if (pending) clearTimeout(pending);
         const timer = setTimeout(() => {
             this.siegeZoomRestoreTimers.delete(cityId);
             this.territorySystem.setCitySiegeZoom(cityId, false);
-        }, 1000);
+        }, restoreDelayMs);
         this.siegeZoomRestoreTimers.set(cityId, timer);
     }
 
