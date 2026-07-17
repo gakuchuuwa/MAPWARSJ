@@ -757,11 +757,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/daming/ming_zheng_zhengchenggong.png": {
-            "scale": 1.1,
-            "offsetX": 6,
-            "offsetY": 3
-        },
         "/assets/BASHU/lizhou_d_liaohua.png": {
             "scale": 1.12,
             "offsetX": 0,
@@ -5851,6 +5846,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -40
+        },
+        "/assets/daming/__闲置__JIANGNAN_21.png": {
+            "scale": 1.1,
+            "offsetX": 6,
+            "offsetY": 3
+        },
+        "/assets/BASHU/ming_zheng_zhengchenggong.png": {
+            "scale": 1.02,
+            "offsetX": 10,
+            "offsetY": -2
         }
     },
     "folderGuides": {
