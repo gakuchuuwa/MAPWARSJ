@@ -135,6 +135,13 @@ export class LegionPhalanxDrawer {
         return false;
     }
 
+    /** 攻城器械渐显起始 tick：key = unitId */
+    private static gearSpawnTicks = new Map<string, number>();
+    private static readonly GEAR_SPAWN_DURATION = 1000; // 1 秒渐显
+    /** 攻城器械渐隐起始 tick：key = unitId（胜利后 4 秒淡出） */
+    private static gearFadeOutStarts = new Map<string, number>();
+    private static readonly GEAR_FADE_OUT_DURATION = 4000; // 4 秒渐隐
+
     private static async ensureSiegeGearLoaded(type: string): Promise<void> {
         const cache = this.getGearCache(type);
         if (cache.loaded) return;
@@ -1005,11 +1012,38 @@ export class LegionPhalanxDrawer {
                 return;
             }
 
-            // 战斗结束 + 兵力 > 0 = 胜利，器械恢复
+            // 战斗结束 + 兵力 > 0 = 胜利，器械渐隐
             if (state !== 'ATTACK' && state !== 'DEATH' && troops > 0) {
-                cache.deathStarts.delete(unitId);
-                cache.deathThresholds.delete(unitId);
-                return;
+                if (!LegionPhalanxDrawer.gearFadeOutStarts.has(unitId)) {
+                    LegionPhalanxDrawer.gearFadeOutStarts.set(unitId, tick);
+                }
+                const fadeStart = LegionPhalanxDrawer.gearFadeOutStarts.get(unitId)!;
+                const fadeElapsed = tick - fadeStart;
+                if (fadeElapsed >= LegionPhalanxDrawer.GEAR_FADE_OUT_DURATION) {
+                    // 渐隐完毕，清本器械状态（共享标记等最后清）
+                    cache.deathStarts.delete(unitId);
+                    cache.deathThresholds.delete(unitId);
+                    return;
+                }
+                // 继续画，alpha 由下面统一处理
+            } else {
+                // 战斗中，清除渐隐标记
+                LegionPhalanxDrawer.gearFadeOutStarts.delete(unitId);
+            }
+
+            // 首次攻城：记录渐显起始 tick
+            if (!LegionPhalanxDrawer.gearSpawnTicks.has(unitId)) {
+                LegionPhalanxDrawer.gearSpawnTicks.set(unitId, tick);
+            }
+            const spawnStart = LegionPhalanxDrawer.gearSpawnTicks.get(unitId)!;
+            const spawnElapsed = tick - spawnStart;
+            let gearAlpha = Math.min(1, spawnElapsed / LegionPhalanxDrawer.GEAR_SPAWN_DURATION);
+
+            // 胜利渐隐
+            const fadeOutStart = LegionPhalanxDrawer.gearFadeOutStarts.get(unitId);
+            if (fadeOutStart !== undefined) {
+                const fadeElapsed = tick - fadeOutStart;
+                gearAlpha = Math.max(0, 1 - fadeElapsed / LegionPhalanxDrawer.GEAR_FADE_OUT_DURATION);
             }
 
             // 随机阵亡阈值，首次设置
@@ -1073,11 +1107,14 @@ export class LegionPhalanxDrawer {
             const targetW = targetH * currentRatio;
 
             const sx = frameIndex * frameW;
+            const prevAlpha = ctx.globalAlpha;
+            ctx.globalAlpha = prevAlpha * gearAlpha;
             ctx.drawImage(
                 sprite,
                 sx, 0, frameW, frameH,
                 gx - targetW / 2, gy - targetH * 0.5, targetW, targetH,
             );
+            ctx.globalAlpha = prevAlpha;
         }
     }
 

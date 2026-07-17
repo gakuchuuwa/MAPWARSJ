@@ -1096,7 +1096,9 @@ export class SiegeManager {
 
         // [EFFECT] 守军从据点向进攻军团射箭（须在 battleField 创建并挂回调之后启动，避免异常泄漏）
         // Army stays visible during siege
-        army.setCombatState(true);
+        // 主攻军团：siege 姿态 + 攻城目标（自身发箭前提），并标记带器械（投石机石弹发射条件）
+        army.isSiegeAttacker = true;
+        army.setCombatState(true, 'siege', cityPos);
         // Use adapters directly - no player participation
         const finalAttacker: IBattleUnit = attackerAdapter;
         const finalDefender: IBattleUnit = defenderAdapter;

@@ -114,6 +114,11 @@ export class UnitRenderer implements IAnimatedUnit {
         return (this.unit as any).cultureScales || null;
     }
 
+    /** 攻城方器械标记（委托底层 Army；GlobalUnitRenderer 石弹发射条件 reads 此值） */
+    public get isSiegeAttacker(): boolean {
+        return !!(this.unit as any).isSiegeAttacker;
+    }
+
     // IRenderable implementation
     public getPosition(): { lat: number; lng: number } {
         return this.unit.getPosition();
