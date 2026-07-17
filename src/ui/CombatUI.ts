@@ -1345,7 +1345,6 @@ export class CombatUI {
         const tag = (text: string, extraStyle = '') =>
             `<span style=\"display:inline-block;padding:1px 5px;border:1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};border-radius:3px;background:${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};margin:0 1px;${extraStyle}\">${text}</span>`;
         if (luckLabel) parts.push(tag(luckLabel));
-        if (joinLabel) parts.push(tag(joinLabel));
         if (passLabel) parts.push(tag('险要'));
         if (regionLabel) parts.push(tag('名城'));
         if (tacLabel) parts.push(tag(tacLabel));
@@ -1511,7 +1510,18 @@ export class CombatUI {
         const troopsEl = side === 'attacker' ? this.leftSideTroopsSpan : this.rightSideTroopsSpan;
         nameEl.innerHTML = name;
         const t = Math.max(0, Math.floor(troops));
-        troopsEl.textContent = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : String(t);
+        let troopsText = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : String(t);
+        
+        const unit = this.getPrimaryBattler(side);
+        if (unit) {
+            const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
+            if (joinLuck !== null) {
+                if (joinLuck > 1.001) troopsText += ' [得助]';
+                else if (joinLuck < 0.999) troopsText += ' [掣肘]';
+            }
+        }
+        
+        troopsEl.textContent = troopsText;
     }
 
     private resolveFactionLabel(factionId: string | null): string {

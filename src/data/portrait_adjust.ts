@@ -2522,11 +2522,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/STEPPE/rouran_shelun.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -9
-        },
         "/assets/STEPPE/shiwei_saihou.png": {
             "scale": 1.09,
             "offsetX": 0,
@@ -3956,11 +3951,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.89,
             "offsetX": 0,
             "offsetY": -7
-        },
-        "/assets/STEPPE/__闲置__STEPPE_18.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -13
         },
         "/assets/STEPPE/__闲置__STEPPE_17.png": {
             "scale": 1.21,
@@ -5836,6 +5826,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 6,
             "offsetY": -9
+        },
+        "/assets/STEPPE/__闲置__STEPPE_43.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/STEPPE/rouran_shelun.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -13
         }
     },
     "folderGuides": {
