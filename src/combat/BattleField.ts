@@ -97,10 +97,11 @@ export class BattleField implements IOpeningPulseSink {
     public onBattleComplete?: (winnerFactionId: string) => void; // [NEW] Callback for event sequencing
     /** 攻城战守方 cityId（构造时锁定，结算后仍可读） */
     public readonly siegeCityId: string | null;
-    /** 由 SiegeManager 注册：区域战 resolve 时必停火焰/齐射，不依赖 onBattleComplete 赋值时机 */
-    private static siegeVisualStopHandler: ((cityId: string) => void) | null = null;
+    /** 由 SiegeManager 注册：区域战 resolve 时必停火焰/齐射，不依赖 onBattleComplete 赋值时机。
+     *  immediate=true 立刻清场（中止/换场/复国）；false 火焰淡出 + 据点延迟缩回（正常分出胜负） */
+    private static siegeVisualStopHandler: ((cityId: string, immediate: boolean) => void) | null = null;
 
-    public static setSiegeVisualStopHandler(handler: ((cityId: string) => void) | null): void {
+    public static setSiegeVisualStopHandler(handler: ((cityId: string, immediate: boolean) => void) | null): void {
         BattleField.siegeVisualStopHandler = handler;
     }
     /** 援军编入本场区域战（用于跟随军团 UI） */
@@ -930,8 +931,9 @@ export class BattleField implements IOpeningPulseSink {
             }
         }
 
+        // 正常分出胜负：火焰淡出 + 据点延迟缩回（缩小藏进城破烟雾）
         if (this.siegeCityId && BattleField.siegeVisualStopHandler) {
-            BattleField.siegeVisualStopHandler(this.siegeCityId);
+            BattleField.siegeVisualStopHandler(this.siegeCityId, false);
         }
 
         gameLog('battle', `🏆 [BattleField] 战斗结束! 胜者: ${winnerGroup.factionId}`);
@@ -1091,7 +1093,7 @@ export class BattleField implements IOpeningPulseSink {
         if (this.isOver) return;
         this.isOver = true;
         if (this.siegeCityId && BattleField.siegeVisualStopHandler) {
-            BattleField.siegeVisualStopHandler(this.siegeCityId);
+            BattleField.siegeVisualStopHandler(this.siegeCityId, true);
         }
         this.onBattleComplete = undefined;
         this.releaseAllMobileCombatStates();

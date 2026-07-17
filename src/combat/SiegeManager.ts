@@ -372,8 +372,8 @@ export class SiegeManager {
         this.visualizer = visualizer;
         this.onLegionUpdate = onLegionUpdate;
 
-        BattleField.setSiegeVisualStopHandler((cityId) => {
-            this.cityManager.stopSiegeEffect(cityId, true);
+        BattleField.setSiegeVisualStopHandler((cityId, immediate) => {
+            this.cityManager.stopSiegeEffect(cityId, immediate);
         });
     }
 

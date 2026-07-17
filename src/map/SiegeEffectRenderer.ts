@@ -44,7 +44,9 @@ export class SiegeEffectRenderer {
     /** 攻城态据点建筑视觉放大倍数：与 city-marker.css 的 scale(2) 同步（仅火箭发射点用；火焰不随城放大） */
     private static readonly SIEGE_CITY_VISUAL_ZOOM = 2.0;
     /** 火焰片散布半径（相对基准半径比例，<1 保证火落在城内） */
-    private static readonly FIRE_SPREAD_RATIO = 0.7;
+    private static readonly FIRE_SPREAD_RATIO = 0.55;
+    /** 火苗位于贴图下部：bounds 按片高×此比例上移，使火苗落在城内而不是烧到城下 */
+    private static readonly FIRE_ANCHOR_LIFT_RATIO = 0.5;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -72,15 +74,19 @@ export class SiegeEffectRenderer {
 
         gameLog('siegeEffect', `🔥 [SiegeEffect] 在城市 ${cityId} (类型: ${cityType}) 启动火焰特效`);
 
-        // 随机火片：大城 4 片、其余 3 片；圆盘均匀分布 × 散布系数 → 集中在城内
+        // 随机火片：大城 3 片、其余 2 片——每片即一处"起火街区"，宁大勿碎（2026-07-18 主人定：小火太多）
         const base = this.getBaseHalfSize(cityType);
-        const patchCount = base.isHuge ? 4 : 3;
+        const patchCount = base.isHuge ? 3 : 2;
         const effect: ActiveSiegeEffect = {
             patches: [],
             cityLocation: location,
             cityType,
             getTarget,
         };
+
+        // 风向全场统一（2026-07-18 主人定）：所有火片共享一次翻转随机——烟火只朝一个方向飘；
+        // 各自随机的只是位置/大小/透明度
+        const windFlipped = Math.random() > 0.5;
 
         for (let i = 0; i < patchCount; i++) {
             const ang = Math.random() * Math.PI * 2;
@@ -89,9 +95,9 @@ export class SiegeEffectRenderer {
                 overlay: null as unknown as L.ImageOverlay, // 下方立即创建
                 offsetLat: Math.sin(ang) * rad * base.halfHeight,
                 offsetLng: Math.cos(ang) * rad * base.halfWidth,
-                sizeScale: 0.5 + Math.random() * 0.35,   // 0.5 ~ 0.85
+                sizeScale: 0.75 + Math.random() * 0.25,  // 0.75 ~ 1.0（大片火区，不碎）
                 peakOpacity: 0.8 + Math.random() * 0.2,  // 0.8 ~ 1.0
-                isFlipped: Math.random() > 0.5,
+                isFlipped: windFlipped,
             };
             patch.overlay = L.imageOverlay(
                 SiegeEffectRenderer.APNG_PATH,
@@ -318,10 +324,11 @@ export class SiegeEffectRenderer {
         const scaleFactor = Math.pow(2, Math.min(zoom, 10) - zoom);
         const base = this.getBaseHalfSize(cityType);
 
-        const cLat = center.lat + patch.offsetLat * scaleFactor;
-        const cLng = center.lng + patch.offsetLng * scaleFactor;
         const halfW = base.halfWidth * scaleFactor * patch.sizeScale;
         const halfH = base.halfHeight * scaleFactor * patch.sizeScale;
+        // 火苗在贴图下部：bounds 上移 halfH×比例，让火苗落在城内目标点上（不烧城下）
+        const cLat = center.lat + patch.offsetLat * scaleFactor + halfH * SiegeEffectRenderer.FIRE_ANCHOR_LIFT_RATIO;
+        const cLng = center.lng + patch.offsetLng * scaleFactor;
 
         return L.latLngBounds(
             [cLat - halfH, cLng - halfW],

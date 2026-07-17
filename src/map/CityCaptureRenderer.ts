@@ -55,7 +55,7 @@ export class CityCaptureRenderer {
 
     public playCaptureEffect(lat: number, lng: number, _factionColor: string) {
         const particles: Particle[] = [];
-        const particleCount = 50;
+        const particleCount = 60;
 
         // [USER REQUEST] Always use grey dust color, ignore faction color
         // Grey dust looks more natural for city capture effects
@@ -67,14 +67,15 @@ export class CityCaptureRenderer {
             const speed = 1.0 + Math.random() * 4.0;
             // const spread = Math.random() * 20; // Initial random spread
 
-            const size = 20 + Math.random() * 30;
+            // 2026-07-18 主人定：烟雾加大拖长——城破烟要盖得住据点缩回
+            const size = 30 + Math.random() * 40;
             particles.push({
                 x: (Math.random() - 0.5) * 40,
                 y: (Math.random() - 0.5) * 40,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 life: 1.0,
-                decay: 0.003 + Math.random() * 0.01,
+                decay: 0.0025 + Math.random() * 0.008,
                 size: size,
                 color: dustColor,
                 texture: this.getOrCreateTexture(dustColor, Math.ceil(size * 2))
@@ -142,7 +143,7 @@ export class CityCaptureRenderer {
                 const drawSize = p.size * 2; // Diameter
 
                 this.ctx.save();
-                this.ctx.globalAlpha = p.life * 0.25; // Fade out
+                this.ctx.globalAlpha = p.life * 0.4; // Fade out（2026-07-18 主人定：加浓，直播远观可见）
                 this.ctx.drawImage(
                     p.texture,
                     screenX - drawSize / 2,

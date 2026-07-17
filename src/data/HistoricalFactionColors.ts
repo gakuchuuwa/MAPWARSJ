@@ -384,7 +384,7 @@ const _FIXED: Record<string, string> = {
     'kelie': '#57D682', // 自动分配 (邻域相斥)
     'donghui': '#B34065', // 自动分配 (邻域相斥)
     'gonggu': '#4B97C6', // 自动分配 (邻域相斥)
-    'fuguo': '#91DA4C', // 自动分配 (邻域相斥)
+    'fuguo': '#502870', // 附国（宜缯）
     'gongtang': '#7BAB55', // 自动分配 (邻域相斥)
     'chizhou': '#7A1421', // 池州（常遇春·明系深绛）
     'yada': '#65AC41', // 自动分配 (邻域相斥)
@@ -393,7 +393,7 @@ const _FIXED: Record<string, string> = {
     // guishuang 已迁移到固定色（见上方）
     'juandu': '#F0CC45', // 自动分配 (邻域相斥)
     'sai': '#818B48', // 自动分配 (邻域相斥)
-    'yangtong': '#8CCC61', // 自动分配 (邻域相斥)
+    'yangtong': '#4A2869', // 羊同（赤松德赞）
     'monong': '#92D95C', // 自动分配 (邻域相斥)
     'shuizhen': '#27BB82', // 自动分配 (邻域相斥)
     'dingling': '#80C768', // 自动分配 (邻域相斥)
@@ -433,7 +433,7 @@ const _FIXED: Record<string, string> = {
     guishuang: '#D7CE4D', // 贵霜·大月氏兵
     'tiele': '#8FC362', // 自动分配 (邻域相斥)
     'gaya': '#4D20A1', // 自动分配 (邻域相斥)
-    'xingliao': '#92BC74', // 自动分配 (邻域相斥)
+    'xingliao': '#302E2B', // 兴辽（大延琳·辽系铁黑）
     'donghu': '#4372B4', // 自动分配 (邻域相斥)
     'luoyue': '#A09537', // 自动分配 (邻域相斥)
     'linyi': '#8356B1', // 自动分配 (邻域相斥)
@@ -470,9 +470,9 @@ const _FIXED: Record<string, string> = {
     'yezongliu': '#2195A0', // 自动分配 (邻域相斥)
     'dada_ming': '#A6D43C', // 自动分配 (邻域相斥)
     'oirat_ming': '#D728D2', // 自动分配 (邻域相斥)
-    'jianzhou_nvzhen': '#874CC9', // 自动分配 (邻域相斥)
-    'haixi_nvzhen': '#2C932F', // 自动分配 (邻域相斥)
-    'yeren_nvzhen': '#A1D941', // 自动分配 (邻域相斥)
+    'jianzhou_nvzhen': '#DCD8D2', // 建州女真（李满住·金系骨白）
+    'haixi_nvzhen': '#DCD8D3', // 海西女真（拜音达里·金系骨白）
+    'yeren_nvzhen': '#DCD8D4', // 野人女真（博克·金系骨白）
     'jilimi': '#60B54B', // 自动分配 (邻域相斥)
     'lujian': '#B0AC5E', // 自动分配 (邻域相斥)
     'chahar': '#ECE8E3', // 察哈尔（燕帖木儿·元系灰白）
@@ -496,7 +496,7 @@ const _FIXED: Record<string, string> = {
     'tuoming': '#B03166', // 自动分配 (邻域相斥)
     'yilou': '#A53C68', // 自动分配 (邻域相斥)
     'wuji': '#64AF95', // 自动分配 (邻域相斥)
-    'mohe': '#66A056', // 自动分配 (邻域相斥)
+    'mohe': '#DCD8D1', // 靺鞨（完颜宗翰·金系骨白）
     'shiwei': '#9AA738', // 自动分配 (邻域相斥)
     'huimo': '#3FAC9D', // 自动分配 (邻域相斥)
     'sogdian': '#BA4632', // 粟特·红袍金带
@@ -511,13 +511,13 @@ const _FIXED: Record<string, string> = {
     'hongirad': '#8D345B', // 自动分配 (邻域相斥)
     'choros': '#4DAA4A', // 自动分配 (邻域相斥)
     'ladakh': '#CE78B6', // 自动分配 (邻域相斥)
-    'ganden': '#4C58A4', // 自动分配 (邻域相斥)
+    'ganden': '#4E3878', // 格鲁（宗喀巴）
     'bailan': '#32C976', // 自动分配 (邻域相斥)
-    'supi': '#9BBE3A', // 自动分配 (邻域相斥)
-    'monpa': '#D92D35', // 自动分配 (邻域相斥)
-    'lopi': '#DC5BC0', // 自动分配 (邻域相斥)
-    'spurgyal': '#2DA68A', // 自动分配 (邻域相斥)
-    'khon': '#6ACE65', // 自动分配 (邻域相斥)
+    'supi': '#4A3072', // 苏毗（悉诺逻）
+    'monpa': '#523682', // 门巴（梅惹洛珠嘉措）
+    'lopi': '#503680', // 门巴（阿波）
+    'spurgyal': '#4C3074', // 悉补野（达日年塞）
+    'khon': '#4C3876', // 萨迦（八思巴）
     'lang_clan': '#B95F80', // 自动分配 (邻域相斥)
     'karmapa': '#894D31', // 自动分配 (邻域相斥)
     'ava': '#37D18C', // 自动分配 (邻域相斥)
@@ -565,7 +565,7 @@ const _FIXED: Record<string, string> = {
     'nong2': '#CA9B61', // 自动分配 (邻域相斥)
     'yaoluoge': '#ACCA26', // 自动分配 (邻域相斥)
     'hepan': '#F0CC43', // 自动分配 (邻域相斥)
-    'humi': '#4871C9', // 自动分配 (邻域相斥)
+    'humi': '#503070', // 胡蜜（真檀）
     'mamon': '#A9C168', // 自动分配 (邻域相斥)
     'guzgan': '#756ABD', // 自动分配 (邻域相斥)
     'dai': '#6E6BC1', // 自动分配 (邻域相斥)
@@ -575,7 +575,7 @@ const _FIXED: Record<string, string> = {
     'feiyaka': '#AD943F', // 自动分配 (邻域相斥)
     'anushidgin': '#47D13A', // 自动分配 (邻域相斥)
     'nanjie': '#1FA194', // 自动分配 (邻域相斥)
-    'gandenpozhang': '#478EBE', // 自动分配 (邻域相斥)
+    'gandenpozhang': '#4C387A', // 甘丹颇章（第巴桑结嘉措）
     'dawoer': '#B155A2', // 自动分配 (邻域相斥)
     'tumengken': '#BB3188', // 自动分配 (邻域相斥)
     'liren': '#DF66D3', // 自动分配 (邻域相斥)
@@ -749,6 +749,7 @@ const _FIXED: Record<string, string> = {
     'luming': '#7A1426', // 卢明（卢象升·明系深绛）
     'yansui': '#7A1427', // 延绥（王威·明系深绛）
     'weiyuan': '#D4A52E', // 威远（年羹尧·清系明黄）
+    'xiazhou': '#D6D2CB', // 夏州（李继迁·夏系党项白）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
