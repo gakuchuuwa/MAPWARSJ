@@ -169,6 +169,7 @@ export class Army implements IBattleUnit {
         this.isExternalCombat = isFighting;
         this.isAttacking = isFighting; // Sync IAnimatedUnit property
         this.currentBattleType = isFighting ? (battleType || 'field') : null;
+        if (!isFighting) this.isSiegeAttacker = false; // 战斗结束清器械标记
         const validTarget = targetPos
             && Number.isFinite(targetPos.lat)
             && Number.isFinite(targetPos.lng)

@@ -46,7 +46,7 @@ const _FIXED: Record<string, string> = {
     tuoba: '#242220', // 拓跋（北魏水德尚黑）
     xin: '#1C1C1D', // 上党（近秦玄黑，仅末位微差）
     chen: '#C49830', // 陈
-    chunshen: '#D0AA35', // 春申
+    chunshen: '#C03029', // 春申（春申君·楚红）
     pizhou: '#A67C2A', // 邳州·陷阵营（下邳土黄）
     baibo: '#E0B040', // 黄巾
     zhangshicheng: '#B89838', // 大周(张士诚)
@@ -223,9 +223,9 @@ const _FIXED: Record<string, string> = {
     yan: '#286888', // 燕·幽州突骑（水德蓝青）
     gongsun_d: '#E8E4D8', // 辽东·铁骑（白马白）
     shizhao_d: '#3A2820', // 石赵·黑槊龙骧（羯族玄褐）
-    yunzhong: '#8A7858', // 云中·苍头军（代北土黄）
-    murong: '#353A40', // 慕容·龙城甲骑（承晋水德黑）
-    yingzhou_ying_d: '#887040', // 营州·黄龙兵（朝阳/柳城）
+    yunzhong: '#242221', // 云中（拓跋力微·北魏黑）
+    murong: '#887040', // 慕容·龙城甲骑（尚黄龙）
+    yingzhou_ying_d: '#887041', // 营州（慕容皝·黄龙金褐）
     gaoqi_d: '#322C30', // 高齐·百保鲜卑 T0（蓨城；北齐承水德尚黑）
     yin: '#A08038', // 殷·朝歌（汉初司马卬殷国）
     hejian: '#756048', // 莫州·文安
@@ -279,7 +279,7 @@ const _FIXED: Record<string, string> = {
     // tang/wei/qin/shang/xia/sui/fu/sunqin 见上方尚色表
     shanyue: '#C43A2D', // 山越（孙策·吴红）
     ruochu: '#984838', // 若敖·六卒精锐（楚系赭红）
-    mi_chu: '#8B6848', // 芈氏·左右广军（云梦褐；避 xiliang 撞色）
+    mi_chu: '#C0302A', // 芈氏（楚庄王·楚红）
     nanyue: '#1C1C20', // 南越（赵佗·秦系玄黑）
     guangzhou: '#1F7060', // 广州·清海军（南海碧玉/深水绿）
     // chu/song/chen/xiao_d/yue_d/ming_d 见南方表\r\n
@@ -317,7 +317,7 @@ const _FIXED: Record<string, string> = {
     ruzhou: '#C43A2E', // 汝州（孙坚·吴红）
     yun: '#8A6A3A', // 允戎（陆浑赭黄，陆浑戎骑）
     jiyuan: '#5A6B7A', // 济源（太行钢蓝，落雕卫）
-    xiongding: '#6B4A5A', // 雄定（碗子城紫褐，碗子城军）
+    xiongding: '#887042', // 雄定（慕容永·黄龙金褐）
     yaozhou: '#9A8A3A', // 耀州（金甲铜黄，金甲卫）
     mushi: '#5A5A7A', // 穆氏（丘穆陵靛紫，丘穆陵骑）
     zuo_d: '#7A5A3A', // 笮人（南中赭褐，南中叟兵）
@@ -326,7 +326,7 @@ const _FIXED: Record<string, string> = {
     lai: '#3E7C85', // 莱国（齐莱海青，齐莱锐士）
     zangke: '#2F7A50', // 牂牁（夜郎雨林绿，夜郎锐卒）
     chanzhou: '#6D323A', // 澶州·弩手（澶州暗红）
-    liguo: '#857053', // 黎国（黎国沙土褐，黎之耆戎）
+    liguo: '#B83A3C', // 黎国（赵奢·赵红）
     yiyang_d: '#4F6B8A', // 义阳（义阳青蓝，申息锐师）
     dafeichuan: '#614B3B', // 大非川（大非川土褐，退浑骑）
     chijin: '#C14B3A', // 赤斤·赤金营（赤金堡）
@@ -417,7 +417,7 @@ const _FIXED: Record<string, string> = {
     'li_lx_d': '#C41E26', // 陇西李氏（李广·汉系赤红）
     'xie_cj_d': '#B1BD5F', // 自动分配 (邻域相斥)
     'kong_d': '#CA55C4', // 自动分配 (邻域相斥)
-    'jiaodong': '#25C825', // 自动分配 (邻域相斥)
+    'jiaodong': '#6A3379', // 胶东（田单·齐紫）
     'jingzhou_gs': '#BB265C', // 自动分配 (邻域相斥)
     'guo': '#BC82BD', // 自动分配 (邻域相斥)
     'zi': '#463DAB', // 自动分配 (邻域相斥)
@@ -441,7 +441,7 @@ const _FIXED: Record<string, string> = {
     'yao': '#6D9625', // 自动分配 (邻域相斥)
     'tongma': '#C43A31', // 铜马（太史慈·吴红）
     'tongzhou': '#6B5A4A', // 同州（沙苑同褐）
-    'dongxian': '#C12A9E', // 自动分配 (邻域相斥)
+    'dongxian': '#6A337A', // 东线（孙膑·齐紫）
     'cheshihou': '#A3C179', // 自动分配 (邻域相斥)
     'zhai_han': '#DC4858', // 自动分配 (邻域相斥)
     'liu': '#397F36', // 自动分配 (邻域相斥)
@@ -723,7 +723,7 @@ const _FIXED: Record<string, string> = {
     jilizhou: '#3F5061',
     nuergan: '#445566',
     ewenki: '#495A6B',
-    wuzhou: '#536475',
+    wuzhou: '#B83A3B', // 武州（李牧·赵红）
     bailong: '#5D6E7F',
     kepantuo: '#627384',
     xingxingxia: '#677889',
@@ -751,6 +751,8 @@ const _FIXED: Record<string, string> = {
     'weiyuan': '#D4A52E', // 威远（年羹尧·清系明黄）
     'xiazhou': '#D6D2CB', // 夏州（李继迁·夏系党项白）
     'cangsong': '#2E7D38', // 苍松（马超·蜀绿）
+    'dingzhou': '#887043', // 定州（慕容垂·黄龙金褐）
+    'qianqin': '#3A6A5A', // 前秦（苻坚·木德尚青）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
