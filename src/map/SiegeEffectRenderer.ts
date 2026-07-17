@@ -5,11 +5,20 @@ import { gameLog } from '../utils/GameLogger';
 
 type TargetResolver = () => { lat: number; lng: number } | null | undefined;
 
-interface ActiveSiegeEffect {
+/** 一片火焰叠层及其归一化随机参数（地图缩放重算 bounds 时保持同一片火的位置/尺寸/翻转） */
+interface FirePatch {
     overlay: L.ImageOverlay;
+    offsetLat: number;   // 相对城心的纬度偏移（度，缩放前）
+    offsetLng: number;   // 相对城心的经度偏移（度，缩放前）
+    sizeScale: number;   // 尺寸系数（相对基准火焰）
+    peakOpacity: number; // 各自峰值透明度（淡入终点不同，火势有强有弱）
+    isFlipped: boolean;
+}
+
+interface ActiveSiegeEffect {
+    patches: FirePatch[];
     cityLocation: { lat: number; lng: number };
     cityType: string;
-    isFlipped: boolean;
     getTarget?: TargetResolver;
     volleyIntervalId?: ReturnType<typeof setInterval>;
     fadeTimerId?: ReturnType<typeof setInterval>;
@@ -17,6 +26,9 @@ interface ActiveSiegeEffect {
 
 /**
  * 攻城战视觉：火焰 APNG 叠层 + 守军向进攻军团射箭。
+ * 2026-07-18 主人定：火焰不随据点放大同步放大——改为 3-4 片小火随机落在城内
+ * （位置/大小/透明度/翻转各自随机，每场攻城火势布局都不同），像城中多处起火；
+ * 火箭发射点仍按放大后的城墙外推（箭从墙上来）。
  */
 export class SiegeEffectRenderer {
     private map: GameMap;
@@ -29,8 +41,10 @@ export class SiegeEffectRenderer {
     private static readonly ARROWS_PER_VOLLEY = 5;
     private static readonly WALL_INSET = 0.014;
     private static readonly LAUNCH_HEIGHT = 0.032;
-    /** 攻城态据点建筑视觉放大倍数：与 city-marker.css 的 scale(2) 保持同步（火焰 bounds/火箭发射点一并放大） */
+    /** 攻城态据点建筑视觉放大倍数：与 city-marker.css 的 scale(2) 同步（仅火箭发射点用；火焰不随城放大） */
     private static readonly SIEGE_CITY_VISUAL_ZOOM = 2.0;
+    /** 火焰片散布半径（相对基准半径比例，<1 保证火落在城内） */
+    private static readonly FIRE_SPREAD_RATIO = 0.7;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -58,25 +72,40 @@ export class SiegeEffectRenderer {
 
         gameLog('siegeEffect', `🔥 [SiegeEffect] 在城市 ${cityId} (类型: ${cityType}) 启动火焰特效`);
 
-        const bounds = this.getBounds(location, cityType);
-        const isFlipped = Math.random() > 0.5;
-
-        const overlay = L.imageOverlay(SiegeEffectRenderer.APNG_PATH, bounds, {
-            pane: 'effectsPane',
-            interactive: false,
-            opacity: 0,
-        }).addTo(this.map.getLeafletMap());
-
+        // 随机火片：大城 4 片、其余 3 片；圆盘均匀分布 × 散布系数 → 集中在城内
+        const base = this.getBaseHalfSize(cityType);
+        const patchCount = base.isHuge ? 4 : 3;
         const effect: ActiveSiegeEffect = {
-            overlay,
+            patches: [],
             cityLocation: location,
             cityType,
-            isFlipped,
             getTarget,
         };
 
-        // 镜像：往 Leaflet 自己的 transform 后面追加翻转，不改 transform-origin
-        this.applyFlip(effect);
+        for (let i = 0; i < patchCount; i++) {
+            const ang = Math.random() * Math.PI * 2;
+            const rad = Math.sqrt(Math.random()) * SiegeEffectRenderer.FIRE_SPREAD_RATIO;
+            const patch: FirePatch = {
+                overlay: null as unknown as L.ImageOverlay, // 下方立即创建
+                offsetLat: Math.sin(ang) * rad * base.halfHeight,
+                offsetLng: Math.cos(ang) * rad * base.halfWidth,
+                sizeScale: 0.5 + Math.random() * 0.35,   // 0.5 ~ 0.85
+                peakOpacity: 0.8 + Math.random() * 0.2,  // 0.8 ~ 1.0
+                isFlipped: Math.random() > 0.5,
+            };
+            patch.overlay = L.imageOverlay(
+                SiegeEffectRenderer.APNG_PATH,
+                this.computePatchBounds(effect.cityLocation, effect.cityType, patch),
+                {
+                    pane: 'effectsPane',
+                    interactive: false,
+                    opacity: 0,
+                }
+            ).addTo(this.map.getLeafletMap());
+            // 镜像：往 Leaflet 自己的 transform 后面追加翻转，不改 transform-origin
+            this.applyFlip(patch);
+            effect.patches.push(patch);
+        }
 
         if (getTarget) {
             gameLog('siegeEffect', `🏹 [SiegeEffect] ${cityId} 守军向进攻方齐射`);
@@ -119,7 +148,7 @@ export class SiegeEffectRenderer {
         }
 
         if (immediate) {
-            effect.overlay.remove();
+            for (const patch of effect.patches) patch.overlay.remove();
             this.activeEffects.delete(cityId);
             return;
         }
@@ -135,7 +164,7 @@ export class SiegeEffectRenderer {
 
         const stepDuration = SiegeEffectRenderer.FADE_DURATION_MS / SiegeEffectRenderer.FADE_STEPS;
         const opacityStep = 1.0 / SiegeEffectRenderer.FADE_STEPS;
-        let currentOpacity = 0;
+        let t = 0;
 
         effect.fadeTimerId = setInterval(() => {
             if (this.activeEffects.get(cityId) !== effect) {
@@ -143,41 +172,51 @@ export class SiegeEffectRenderer {
                 effect.fadeTimerId = undefined;
                 return;
             }
-            currentOpacity += opacityStep;
-            if (currentOpacity >= 1.0) {
-                currentOpacity = 1.0;
+            t += opacityStep;
+            if (t >= 1.0) {
+                t = 1.0;
                 if (effect.fadeTimerId) clearInterval(effect.fadeTimerId);
                 effect.fadeTimerId = undefined;
             }
-            effect.overlay.setOpacity(currentOpacity);
+            // 各片火有自己的峰值透明度：同一次淡入，火势强弱不一
+            for (const patch of effect.patches) {
+                patch.overlay.setOpacity(t * patch.peakOpacity);
+            }
         }, stepDuration);
     }
 
     private fadeOut(cityId: string, effect: ActiveSiegeEffect): void {
         const stepDuration = SiegeEffectRenderer.FADE_DURATION_MS / SiegeEffectRenderer.FADE_STEPS;
         const opacityStep = 1.0 / SiegeEffectRenderer.FADE_STEPS;
-        let currentOpacity = effect.overlay.options.opacity ?? 1.0;
+        const p0 = effect.patches[0];
+        const startOpacity = p0 && p0.peakOpacity > 0
+            ? (p0.overlay.options.opacity ?? p0.peakOpacity)
+            : 1.0;
+        let t = p0 && p0.peakOpacity > 0
+            ? Math.min(1, Math.max(0, startOpacity / p0.peakOpacity))
+            : 1;
 
         effect.fadeTimerId = setInterval(() => {
             if (this.activeEffects.get(cityId) !== effect) {
                 if (effect.fadeTimerId) clearInterval(effect.fadeTimerId);
                 effect.fadeTimerId = undefined;
-                effect.overlay.remove();
+                for (const patch of effect.patches) patch.overlay.remove();
                 return;
             }
-            currentOpacity -= opacityStep;
-            if (currentOpacity <= 0) {
-                currentOpacity = 0;
+            t -= opacityStep;
+            if (t <= 0) {
                 if (effect.fadeTimerId) clearInterval(effect.fadeTimerId);
                 effect.fadeTimerId = undefined;
-                effect.overlay.remove();
+                for (const patch of effect.patches) patch.overlay.remove();
                 if (this.activeEffects.get(cityId) === effect) {
                     this.activeEffects.delete(cityId);
                 }
                 gameLog('siegeEffect', `🧯 [SiegeEffect] 城市 ${cityId} 的特效已完全消失`);
                 return;
             }
-            effect.overlay.setOpacity(currentOpacity);
+            for (const patch of effect.patches) {
+                patch.overlay.setOpacity(t * patch.peakOpacity);
+            }
         }, stepDuration);
     }
 
@@ -210,7 +249,7 @@ export class SiegeEffectRenderer {
         const dx = target.lng - city.lng;
         const dy = target.lat - city.lat;
         const len = Math.hypot(dx, dy) || 1;
-        // 发射点随攻城态城的视觉放大外推（与火焰 bounds 同一系数）
+        // 发射点按放大后的城墙外推（火焰不随城放大，火箭仍从城墙来）
         const visualZoom = SiegeEffectRenderer.SIEGE_CITY_VISUAL_ZOOM;
         return L.latLng(
             city.lat + (dy / len) * SiegeEffectRenderer.WALL_INSET * visualZoom + SiegeEffectRenderer.LAUNCH_HEIGHT * visualZoom,
@@ -220,10 +259,13 @@ export class SiegeEffectRenderer {
 
     private updateEffectScales(): void {
         this.activeEffects.forEach((effect) => {
-            const newBounds = this.getBounds(effect.cityLocation, effect.cityType);
-            effect.overlay.setBounds(newBounds);
-            // setBounds 会重置 transform，需要重新追加翻转
-            this.applyFlip(effect);
+            for (const patch of effect.patches) {
+                patch.overlay.setBounds(
+                    this.computePatchBounds(effect.cityLocation, effect.cityType, patch)
+                );
+                // setBounds 会重置 transform，需要重新追加翻转
+                this.applyFlip(patch);
+            }
         });
     }
 
@@ -231,9 +273,9 @@ export class SiegeEffectRenderer {
      * 在 Leaflet 的 translate3d 后追加 translateX(100%) scaleX(-1)，
      * 实现原地水平镜像（不改 transform-origin，不偏移）。
      */
-    private applyFlip(effect: ActiveSiegeEffect): void {
-        if (!effect.isFlipped) return;
-        const img = (effect.overlay as any)._image as HTMLElement;
+    private applyFlip(patch: FirePatch): void {
+        if (!patch.isFlipped) return;
+        const img = (patch.overlay as any)._image as HTMLElement;
         if (!img) return;
         const t = img.style.transform;
         if (t && !t.includes('scaleX')) {
@@ -241,10 +283,8 @@ export class SiegeEffectRenderer {
         }
     }
 
-    private getBounds(center: { lat: number; lng: number }, cityType: string = 'small_city'): L.LatLngBounds {
-        const zoom = this.map.getLeafletMap().getZoom();
-        const scaleFactor = Math.pow(2, Math.min(zoom, 10) - zoom);
-
+    /** 各城级火焰基准半径（不随据点视觉放大；isHuge 用于决定火片数量） */
+    private getBaseHalfSize(cityType: string): { halfWidth: number; halfHeight: number; isHuge: boolean } {
         const hugeCityTypes = [
             'huge_city', 'hannan_huge_city', 'hanbei_huge_city', 'hanhuang_huge_city',
             'dian_huge_city', 'capital', 'west_huge_city', 'manchu_huge_city',
@@ -259,27 +299,33 @@ export class SiegeEffectRenderer {
             'grassland_fortress', 'western_fortress', 'tibetan_fortress', 'huangdukou',
         ];
 
-        let baseHalfWidth = 0.22;
-        let baseHalfHeight = 0.15;
-        let baseLatOffset = 0;
-
         if (imperialCityTypes.includes(cityType) || hugeCityTypes.includes(cityType)) {
-            baseHalfWidth = 0.28;
-            baseHalfHeight = 0.18;
-        } else if (smallCityTypes.includes(cityType)) {
-            baseHalfWidth = 0.18;
-            baseHalfHeight = 0.12;
+            return { halfWidth: 0.28, halfHeight: 0.18, isHuge: true };
         }
+        if (smallCityTypes.includes(cityType)) {
+            return { halfWidth: 0.18, halfHeight: 0.12, isHuge: false };
+        }
+        return { halfWidth: 0.22, halfHeight: 0.15, isHuge: false };
+    }
 
-        // 攻城态据点视觉放大（city-marker.css scale(2)）：火焰 bounds 同步放大
-        const visualZoom = SiegeEffectRenderer.SIEGE_CITY_VISUAL_ZOOM;
-        const currentHalfWidth = baseHalfWidth * scaleFactor * visualZoom;
-        const currentHalfHeight = baseHalfHeight * scaleFactor * visualZoom;
-        const currentLatOffset = baseLatOffset * scaleFactor * visualZoom;
+    /** 单片火的 bounds：城心 + 随机偏移（随缩放系数），尺寸 = 基准 × 随机系数 */
+    private computePatchBounds(
+        center: { lat: number; lng: number },
+        cityType: string,
+        patch: FirePatch
+    ): L.LatLngBounds {
+        const zoom = this.map.getLeafletMap().getZoom();
+        const scaleFactor = Math.pow(2, Math.min(zoom, 10) - zoom);
+        const base = this.getBaseHalfSize(cityType);
+
+        const cLat = center.lat + patch.offsetLat * scaleFactor;
+        const cLng = center.lng + patch.offsetLng * scaleFactor;
+        const halfW = base.halfWidth * scaleFactor * patch.sizeScale;
+        const halfH = base.halfHeight * scaleFactor * patch.sizeScale;
 
         return L.latLngBounds(
-            [center.lat - currentHalfHeight + currentLatOffset, center.lng - currentHalfWidth],
-            [center.lat + currentHalfHeight + currentLatOffset, center.lng + currentHalfWidth]
+            [cLat - halfH, cLng - halfW],
+            [cLat + halfH, cLng + halfW]
         );
     }
 }
