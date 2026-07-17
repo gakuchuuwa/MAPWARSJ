@@ -864,6 +864,26 @@ export class GlobalUnitRenderer {
                 );
             }
 
+            // ── 攻城额外士兵：三角形尖兵左右各一弓步兵 ──
+            if ((unit as any).isSiegeAttacker && unit.currentBattleType === 'siege'
+                && (unit.cultureSlots?.length ?? 0) === 6) {
+                const siegeScale = scale * (unit.previewScale ?? 1);
+                const baseH = 75;
+                const rH = baseH * siegeScale;
+                const sX = rH * 0.8 * 0.50;
+                const sY = rH * 0.42;
+                LegionPhalanxDrawer.drawSiegeSoldier(
+                    ctx, { x: centerPoint.x, y: centerPoint.y },
+                    state, directionIndex, siegeScale, Date.now(), sX, sY,
+                    'archer', -0.7, -1.0,
+                );
+                LegionPhalanxDrawer.drawSiegeSoldier(
+                    ctx, { x: centerPoint.x, y: centerPoint.y },
+                    state, directionIndex, siegeScale, Date.now(), sX, sY,
+                    'archer', +0.7, -1.0,
+                );
+            }
+
 
             if (useNavalVisual) {
                 LegionPhalanxDrawer.drawNaval(
@@ -886,17 +906,6 @@ export class GlobalUnitRenderer {
                         ? rawType
                         : 'mixed';
 
-                // 攻城方阵型改造：三角形前排左右加弓步兵（6→8 人）
-                let siegeSlots = unit.cultureSlots || null;
-                if ((unit as any).isSiegeAttacker && unit.currentBattleType === 'siege'
-                    && siegeSlots && siegeSlots.length === 6) {
-                    siegeSlots = [
-                        'archer', siegeSlots[0], 'archer',  // 前排加塞
-                        siegeSlots[1], siegeSlots[2],        // 中排不动
-                        siegeSlots[3], siegeSlots[4], siegeSlots[5], // 后排不动
-                    ];
-                }
-
                 LegionPhalanxDrawer.draw(
                     unit.id || 'unknown',
                     ctx,
@@ -918,7 +927,7 @@ export class GlobalUnitRenderer {
                     },
                     unit.legionType || 'infantry',
                     unit.factionId || 'zhonghua',
-                    siegeSlots,
+                    unit.cultureSlots || null,
                     assetsId,
                     unit.isPlayer || false,
                     unit.cultureScales || null
