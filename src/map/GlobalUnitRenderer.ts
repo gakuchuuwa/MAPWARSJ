@@ -635,11 +635,10 @@ export class GlobalUnitRenderer {
 
                         const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
                         if (useNavalVisual) {
-                            // 舰队一共 10 支火箭（与据点齐射同 type:'fire'），从编队中心发出
+                            // 舰队 10 支箭
                             this.projectileSystem.spawnVolley(baseStart, baseEnd, {
                                 count: 10,
                                 spreadFactor: 0.04,
-                                type: 'fire',
                             });
                         } else {
                             this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 6, spreadFactor: 0.025 });

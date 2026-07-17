@@ -621,12 +621,28 @@ export class BattleField implements IOpeningPulseSink {
 
         this.stalemateSkillUiReleased = true;
         const firstSide = this.resolveSkillPulseFirstSide();
+        // 一将一战一技：该侧已有存活武将的机制/援军脉冲在队 → 不再排保底亮相
+        // （防援军换将后同侧双 Cut-in；已阵亡武将的脉冲会被 CombatUI 按异场丢弃，不占名额）
+        const queuedSides = { attacker: false, defender: false };
+        for (const item of this.openingPulseQueue) {
+            const uid = item.audioUnitId;
+            if (!uid) continue;
+            const attBu = this.attackerGroup.units.find((bu) => bu.unit.id === uid);
+            const defBu = attBu
+                ? undefined
+                : this.defenderGroup.units.find((bu) => bu.unit.id === uid);
+            const bu = attBu ?? defBu;
+            if (!bu || bu.isDefeated || bu.unit.isDestroyed) continue;
+            if (attBu) queuedSides.attacker = true;
+            else queuedSides.defender = true;
+        }
         setActiveOpeningPulseSink(this);
         // 保底亮相也按「先放侧」入队，与下方排序一致
         scheduleStalemateSkillShowcasePulses(
             this.getAttackerUnits(),
             this.getDefenderUnits(),
             firstSide,
+            queuedSides,
         );
         setActiveOpeningPulseSink(null);
 
