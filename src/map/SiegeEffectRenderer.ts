@@ -29,6 +29,8 @@ export class SiegeEffectRenderer {
     private static readonly ARROWS_PER_VOLLEY = 5;
     private static readonly WALL_INSET = 0.014;
     private static readonly LAUNCH_HEIGHT = 0.032;
+    /** 攻城态据点建筑视觉放大倍数：与 city-marker.css 的 scale(2) 保持同步（火焰 bounds/火箭发射点一并放大） */
+    private static readonly SIEGE_CITY_VISUAL_ZOOM = 2.0;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -208,9 +210,11 @@ export class SiegeEffectRenderer {
         const dx = target.lng - city.lng;
         const dy = target.lat - city.lat;
         const len = Math.hypot(dx, dy) || 1;
+        // 发射点随攻城态城的视觉放大外推（与火焰 bounds 同一系数）
+        const visualZoom = SiegeEffectRenderer.SIEGE_CITY_VISUAL_ZOOM;
         return L.latLng(
-            city.lat + (dy / len) * SiegeEffectRenderer.WALL_INSET + SiegeEffectRenderer.LAUNCH_HEIGHT,
-            city.lng + (dx / len) * SiegeEffectRenderer.WALL_INSET
+            city.lat + (dy / len) * SiegeEffectRenderer.WALL_INSET * visualZoom + SiegeEffectRenderer.LAUNCH_HEIGHT * visualZoom,
+            city.lng + (dx / len) * SiegeEffectRenderer.WALL_INSET * visualZoom
         );
     }
 
@@ -267,9 +271,11 @@ export class SiegeEffectRenderer {
             baseHalfHeight = 0.12;
         }
 
-        const currentHalfWidth = baseHalfWidth * scaleFactor;
-        const currentHalfHeight = baseHalfHeight * scaleFactor;
-        const currentLatOffset = baseLatOffset * scaleFactor;
+        // 攻城态据点视觉放大（city-marker.css scale(2)）：火焰 bounds 同步放大
+        const visualZoom = SiegeEffectRenderer.SIEGE_CITY_VISUAL_ZOOM;
+        const currentHalfWidth = baseHalfWidth * scaleFactor * visualZoom;
+        const currentHalfHeight = baseHalfHeight * scaleFactor * visualZoom;
+        const currentLatOffset = baseLatOffset * scaleFactor * visualZoom;
 
         return L.latLngBounds(
             [center.lat - currentHalfHeight + currentLatOffset, center.lng - currentHalfWidth],

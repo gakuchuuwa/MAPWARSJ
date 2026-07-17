@@ -1,4 +1,4 @@
-﻿import * as L from 'leaflet';
+import * as L from 'leaflet';
 import { City } from '../types/core';
 import { GameMap } from '../map/GameMap';
 import { GridSystem } from '../systems/GridSystem';
@@ -659,6 +659,9 @@ export class CityManager {
     }
 
     // Siege Effects
+    /** 攻城放大还原的延迟定时器：同城新攻城重开时取消未走的还原（防陈旧定时器把新城缩回去） */
+    private readonly siegeZoomRestoreTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
     public playSiegeEffect(
         cityId: string,
         getAttackerPos?: () => { lat: number; lng: number } | null | undefined
@@ -671,15 +674,32 @@ export class CityManager {
                 city.type,
                 getAttackerPos
             );
-            // 据点建筑贴图放大（2026-07-18）
+            // 新攻城开始：取消上一场未走的"延迟还原"
+            const pending = this.siegeZoomRestoreTimers.get(cityId);
+            if (pending) {
+                clearTimeout(pending);
+                this.siegeZoomRestoreTimers.delete(cityId);
+            }
+            // 据点建筑贴图放大 ×2（2026-07-18）
             this.territorySystem.setCitySiegeZoom(cityId, true);
         }
     }
 
     public stopSiegeEffect(cityId: string, immediate = false): void {
         this.siegeEffectRenderer.stopEffect(cityId, immediate);
-        // 据点建筑贴图还原（2026-07-18）
-        this.territorySystem.setCitySiegeZoom(cityId, false);
+        // 据点建筑还原（2026-07-18 主人定）：非立即场景延迟 1s——火焰淡出（0.8s）+
+        // 城破尘爆起来之后再缩，缩小动作藏进烟雾里；immediate（接战/连战）不等，直接还原。
+        if (immediate) {
+            this.territorySystem.setCitySiegeZoom(cityId, false);
+            return;
+        }
+        const pending = this.siegeZoomRestoreTimers.get(cityId);
+        if (pending) clearTimeout(pending);
+        const timer = setTimeout(() => {
+            this.siegeZoomRestoreTimers.delete(cityId);
+            this.territorySystem.setCitySiegeZoom(cityId, false);
+        }, 1000);
+        this.siegeZoomRestoreTimers.set(cityId, timer);
     }
 
     // Road / Path Utils
