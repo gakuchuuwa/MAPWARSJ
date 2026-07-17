@@ -88,6 +88,24 @@ export class LegionPhalanxDrawer {
             posOffsetY: +0.85,
             scaleMul: 0.70,
         },
+        catapult_l: {
+            attackIds: [801, 802, 803, 804, 805, 806, 807, 808],
+            deathIds: [825, 826, 827, 828, 829, 830, 831, 832],
+            posOffsetX: -1.0,     // 第三排后左
+            posOffsetY: +1.80,    // 第三排后
+            scaleMul: 0.70,
+            frameStagger: 0,      // 攻击帧偏移（错开同步）
+            frameSpeed: 250,      // 投石慢速（ms/帧）
+        },
+        catapult_r: {
+            attackIds: [801, 802, 803, 804, 805, 806, 807, 808],
+            deathIds: [825, 826, 827, 828, 829, 830, 831, 832],
+            posOffsetX: +1.0,     // 第三排后右
+            posOffsetY: +1.80,
+            scaleMul: 0.70,
+            frameStagger: 4,      // 错开半周期
+            frameSpeed: 250,      // 投石慢速（ms/帧）
+        },
     } as const;
 
 
@@ -1022,7 +1040,8 @@ export class LegionPhalanxDrawer {
                 sprite = cache.attackSprites[dirIdx] ?? null;
                 if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return;
                 frameCount = Math.floor(sprite.width / sprite.height);
-                frameIndex = Math.floor((tick / 150)) % frameCount;
+                const speed = def.frameSpeed ?? 150;
+                frameIndex = (Math.floor((tick / speed)) + (def.frameStagger ?? 0)) % frameCount;
             } else {
                 return;
             }
