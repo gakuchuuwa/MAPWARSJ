@@ -273,7 +273,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -27
         },
         "/assets/litang/qianzhou_lisheng.png": {
-            "scale": 1.05,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 1
         },

@@ -1833,7 +1833,7 @@ export class CombatUI {
 
         this.updateMultiplierBadges(attBattler, defBattler);
         this.updateSkillBadges(attacker, defender);
-        this.updateInfoDirect(attName, defName, displayTitle, displayYear, description, defender);
+        this.updateInfoDirect(attName, defName, displayTitle, displayYear, description, defenders);
 
         this.setPortrait(
             this.leftPortrait,
@@ -3133,18 +3133,20 @@ export class CombatUI {
         this.updateStats();
     }
 
-    private updateInfoDirect(attName: string, defName: string, title: string, year: string, description?: string, defUnit?: IBattleUnit) {
+    private updateInfoDirect(attName: string, defName: string, title: string, year: string, description?: string, defUnits?: IBattleUnit | IBattleUnit[]) {
         this.attackerDisplayName = attName;
         this.defenderDisplayName = defName;
         
         let suffix = '';
-        if (defUnit) {
-            if (Math.abs(getPassGarrisonCombatMultiplier(defUnit) - 1) > 0.001) suffix = ' [关隘]';
-            else if (Math.abs(getRegionCenterCombatMultiplier(defUnit) - 1) > 0.001) suffix = ' [名城]';
+        const defs = defUnits ? (Array.isArray(defUnits) ? defUnits : [defUnits]) : [];
+        const cityUnit = defs.find(u => u.unitType === 'city');
+        if (cityUnit) {
+            if (Math.abs(getPassGarrisonCombatMultiplier(cityUnit) - 1) > 0.001) suffix = ' [险要]';
+            else if (Math.abs(getRegionCenterCombatMultiplier(cityUnit) - 1) > 0.001) suffix = ' [名城]';
         }
         
         if (suffix) {
-            this.battleTitle.innerHTML = `${title} <span style="font-size:0.5em;color:rgba(255,215,0,0.85);vertical-align:middle;text-shadow:0 1px 2px rgba(0,0,0,0.8);">${suffix}</span>`;
+            this.battleTitle.innerHTML = `${title} <span style="font-size:0.4em;margin-left:4px;color:rgba(255,215,0,0.85);vertical-align:middle;text-shadow:0 1px 2px rgba(0,0,0,0.8);">${suffix}</span>`;
         } else {
             this.battleTitle.textContent = title;
         }
@@ -3761,7 +3763,7 @@ export class CombatUI {
         tag.style.cssText = `
             position: absolute;
             bottom: 52%;
-            ${isAtt ? 'right' : 'left'}: -${uiPx(70)};
+            ${isAtt ? 'right' : 'left'}: -${uiPx(80)};
             display: none;
             padding: 1px 5px;
             border: 1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};
