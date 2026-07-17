@@ -2918,7 +2918,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/xianqin/__闲置__xianqin_11.png": {
-            "scale": 0.98,
+            "scale": 1.15,
             "offsetX": 0,
             "offsetY": 6
         },
@@ -4558,9 +4558,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -1
         },
         "/assets/xianqin/__闲置__xianqin_22.png": {
-            "scale": 1,
+            "scale": 0.92,
             "offsetX": 0,
-            "offsetY": -40
+            "offsetY": -34
         },
         "/assets/CENTRAL/huang_d_jiakui.png": {
             "scale": 1.03,
@@ -4723,7 +4723,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/xianqin/__闲置__xianqin_13.png": {
-            "scale": 1,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -12
         },
@@ -4733,7 +4733,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/xianqin/huo_songlaosheng.png": {
-            "scale": 0.92,
+            "scale": 0.9,
             "offsetX": 0,
             "offsetY": -19
         },
@@ -5018,14 +5018,14 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/xianqin/__闲置__xianqin_24.png": {
-            "scale": 1.05,
+            "scale": 1.17,
             "offsetX": 0,
             "offsetY": 13
         },
         "/assets/xianqin/jiaodong_tiandan.png": {
-            "scale": 1.02,
+            "scale": 0.98,
             "offsetX": 32,
-            "offsetY": -54
+            "offsetY": -52
         },
         "/assets/DIANQIAN/__闲置__DIANQIAN_11.png": {
             "scale": 1.04,
@@ -5843,7 +5843,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/xianqin/jin_xianzhen.png": {
-            "scale": 1,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": -40
         },
@@ -5856,6 +5856,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 10,
             "offsetY": -2
+        },
+        "/assets/xianqin/10349d1d-e207-4753-8962-530f563bb9b0.png": {
+            "scale": 1.28,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/xianqin/4973a163-7946-43f2-9043-c4c799414d34.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/xianqin/833a8a5f-8a12-410e-a531-f3e8c2c3d3b1.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -37
+        },
+        "/assets/xianqin/8eb702ce-762e-4fc3-8391-39621018761a.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/xianqin/931cf26d-b89b-4654-a5b2-4d5aa5311d28.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/xianqin/c97f3cdc-39ba-4bef-9e8c-6233d05592fe.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -1
         }
     },
     "folderGuides": {

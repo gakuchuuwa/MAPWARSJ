@@ -168,7 +168,12 @@ export class Army implements IBattleUnit {
         this.isExternalCombat = isFighting;
         this.isAttacking = isFighting; // Sync IAnimatedUnit property
         this.currentBattleType = isFighting ? (battleType || 'field') : null;
-        this.targetPos = targetPos || null;
+        const validTarget = targetPos
+            && Number.isFinite(targetPos.lat)
+            && Number.isFinite(targetPos.lng)
+            ? targetPos
+            : null;
+        this.targetPos = validTarget;
 
         // 神出鬼没：战斗开始现形；战斗结束不立即隐藏，等再次移动时隐身（与脉冲同步）
         if (isFighting && generalHasStrategicEffect(this, 'hide_during_peacetime')) {
@@ -449,6 +454,19 @@ export class Army implements IBattleUnit {
 
         if (this.pathQueue.length === 0 && this.hasArrived) return;
         if (this.isBlocked()) return;
+
+        // 坐标或路点已坏：停步，避免 NaN 继续污染并拖垮地图渲染
+        if (!Number.isFinite(this.position.lat) || !Number.isFinite(this.position.lng)
+            || !Number.isFinite(this.destination.lat) || !Number.isFinite(this.destination.lng)) {
+            this.pathQueue = [];
+            this.hasArrived = true;
+            if (Number.isFinite(this.lastPosition.lat) && Number.isFinite(this.lastPosition.lng)) {
+                this.position.lat = this.lastPosition.lat;
+                this.position.lng = this.lastPosition.lng;
+            }
+            this.destination = { ...this.position };
+            return;
+        }
 
         const currentPos = this.position;
         const dest = this.destination;
@@ -914,8 +932,9 @@ export class Army implements IBattleUnit {
     public moveAlongPath(path: LatLng[]): void {
         if (path.length === 0) return;
 
-        // clone to avoid side effects
-        const newPath = [...path];
+        // clone to avoid side effects；滤掉坏点，避免一路写进 NaN
+        const newPath = path.filter((p) => Number.isFinite(p?.lat) && Number.isFinite(p?.lng));
+        if (newPath.length === 0) return;
         this.destination = newPath.shift()!;
         this.pathQueue = newPath;
         this.hasArrived = false;
@@ -940,6 +959,7 @@ export class Army implements IBattleUnit {
      * 战前道路存档请调用方用 stopMovement(true) 自行处理；此处不写存档。
      */
     public setPosition(lat: number, lng: number): void {
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
         if (!this.hasArrived || this.pathQueue.length > 0) {
             this.pathQueue = [];
             this.hasArrived = true;
