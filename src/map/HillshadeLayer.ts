@@ -3,6 +3,7 @@ import HillshadeWorker from '../workers/HillshadeWorker?worker'; // Vite Worker 
 import { HillshadeRequest, HillshadeResponse, HillshadeRegion } from '../workers/HillshadeWorker';
 import { HISTORICAL_REGIONS } from '../data/HistoricalRegions';
 import { gameLog } from '../utils/GameLogger';
+import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 
 // 转换 HistoricalRegion 为 Worker 友好结构(扁平化, 默认值)
 const REGIONS_FOR_WORKER: HillshadeRegion[] = HISTORICAL_REGIONS.map(r => ({
@@ -127,6 +128,8 @@ export class HillshadeLayer extends L.GridLayer {
         img.src = url;
 
         img.onload = () => {
+            // [诊断 2026-07-17] 量化每块山体瓦片占用主线程的时长（drawImage+getImageData 有 GPU 同步风险）
+            const tTileMain = performance.now();
             // Draw image to canvas to get pixel data
             ctx.drawImage(img, 0, 0);
             // Verify context read
@@ -167,6 +170,7 @@ export class HillshadeLayer extends L.GridLayer {
                 // [PERF] Zero-Copy Transfer: Move buffer ownership to Worker
                 const buffer = imgData.data.buffer;
                 this.worker.postMessage(request, [buffer]);
+                PerformanceMonitor.getInstance().noteAsyncWork('hillshadeTileMain', performance.now() - tTileMain);
 
             } catch (err) {
                 console.error('Hillshade read error (cors?):', err);
