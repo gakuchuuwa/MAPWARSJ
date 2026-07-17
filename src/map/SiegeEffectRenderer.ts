@@ -197,6 +197,7 @@ export class SiegeEffectRenderer {
             spreadFactor: 0.022,
             staggerMs: 70,
             durationMs: 380,
+            type: 'fire', // 守军齐射火箭（2026-07-18 主人定）
         });
     }
 
