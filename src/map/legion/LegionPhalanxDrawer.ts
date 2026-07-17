@@ -728,10 +728,13 @@ export class LegionPhalanxDrawer {
     }
 
     /**
-     * 海上三角编队渲染（3艘：前1后2）
+     * 海上五船编队（2026-07-18 主人定）：中 1 + 四角
+     *   r = 航行方向轴（-1 前 / +1 后），c = 左右横轴
+     *   前排两角、中央旗舰、后排两角，随 direction 整体旋转
      */
-    private static readonly NAVAL_TRIANGLE = [
+    private static readonly NAVAL_FORMATION = [
         { r: 0, c: 0 },
+        { r: -1, c: -1 }, { r: -1, c: 1 },
         { r: 1, c: -1 }, { r: 1, c: 1 },
     ] as const;
 
@@ -777,11 +780,11 @@ export class LegionPhalanxDrawer {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
 
-        // 收集 3 艘船的位置
+        // 收集 5 艘船的位置（中 1 + 四角）
         const ships: { x: number; y: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number }[] = [];
 
-        for (let i = 0; i < 3; i++) {
-            const pos = this.NAVAL_TRIANGLE[i] ?? this.NAVAL_TRIANGLE[0];
+        for (let i = 0; i < this.NAVAL_FORMATION.length; i++) {
+            const pos = this.NAVAL_FORMATION[i] ?? this.NAVAL_FORMATION[0];
             const ox = pos.r * shipDepth;
             const oy = pos.c * shipSpread;
             const dx = center.x + (ox * cos - oy * sin);
