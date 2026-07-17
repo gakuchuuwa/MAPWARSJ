@@ -1207,10 +1207,11 @@ export class CityAssetManager {
         const unique = [...new Set(factionIds)];
         const _PANJUN = 'pan' + 'jun';
 
-        for (const templatePath of getAllFactionFlagTemplatePaths()) {
-            await this.ensureChromaNeutralTemplateForPath(templatePath);
-            await CityAssetManager.yieldSchedulingSlice(false);
-        }
+        // [PERF 2026-07-17] 6 张模板并行处理：像素工作仅 ~3ms/张，启动期主线程被山体瓦片等挤占时
+        // 逐张 await 的每个 hop 要等数百 ms～数秒，改并行让等待重叠（6 张不构成并行 chromaKey 风暴）。
+        await Promise.all(
+            getAllFactionFlagTemplatePaths().map((p) => this.ensureChromaNeutralTemplateForPath(p)),
+        );
 
         const placeholderByFaction = new Map<string, string>();
         for (const factionId of unique) {
@@ -1322,7 +1323,10 @@ export class CityAssetManager {
             return;
         }
         await this.ensureFlagPole();
-        await this.processPanjunFlags(false);
+        // [PERF 2026-07-17 主人定] 开局 0 座叛军城（叛乱皆开局后发生），启动全量 await 52 面纯属白等：
+        // 只装第 1 面兜底（极早期叛乱不至于无旗），其余开局后台断点续载补满，叛军旗多样性一面不少。
+        await this.processPanjunFlags(false, 1);
+        setTimeout(() => { void this.ensureFullPanjunRebelFlags().catch(() => { /* 后台补载失败下次 preloadFlags 再续 */ }); }, 3000);
     }
 
     /**
@@ -1356,7 +1360,7 @@ export class CityAssetManager {
     }
 
     /** 叛军 S10QZ 7–58 共 52 面；可断点续载（processedRebelFlags.length） */
-    private static async processPanjunFlags(preferIdleYield = false): Promise<void> {
+    private static async processPanjunFlags(preferIdleYield = false, maxCount?: number): Promise<void> {
         if (this.panjunRebelsFullyLoaded) return;
         const _PANJUN = 'pan' + 'jun';
         const minId = PANJUN_REBEL_FLAG_ID_MIN;
@@ -1369,7 +1373,8 @@ export class CityAssetManager {
         const rebelT0 = performance.now();
         const prevMode = this.chromaScheduleMode;
         this.chromaScheduleMode = preferIdleYield ? 'background' : 'boot';
-        for (let i = start; i <= maxId; i++) {
+        const endId = maxCount !== undefined ? Math.min(maxId, start + maxCount - 1) : maxId;
+        for (let i = start; i <= endId; i++) {
             const path = `/SUCAI/S10QZ/${i}-1.png`;
             const dataUrl = await this.chromaKeyImage(path, null).catch(() => null);
             if (dataUrl) this.processedRebelFlags.push(dataUrl);
@@ -1382,6 +1387,14 @@ export class CityAssetManager {
         const loaded = this.processedRebelFlags.length;
         if (loaded > 0) {
             this.processedFlagCache.set(_PANJUN, this.processedRebelFlags[0]);
+        }
+        // [PERF 2026-07-17] 部分装载（开局仅兜底面）：样式先可用，不标记完成，留给后台断点续载补满
+        if (endId < maxId) {
+            if (loaded > 0) {
+                this.appendRebelFlagStyleRules();
+                this.notifyRebelFlagsReady();
+            }
+            return;
         }
         if (loaded === 0) {
             console.error(

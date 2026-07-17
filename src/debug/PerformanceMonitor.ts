@@ -108,6 +108,10 @@ export class PerformanceMonitor {
     private timerResults: Record<string, number> = {};
     /** 会话最高值（只升不降；画布 150ms 等尖峰会一直保持显示） */
     private sessionPeaks: Record<string, number> = {};
+    /** [诊断 2026-07-17] 启动期浏览器长任务累计（boot-timing 上报用） */
+    private bootLongTaskMs = 0;
+    private bootLongTaskCount = 0;
+    private bootLongTaskMax = 0;
     /** 短窗口平均（EMA，偏灵敏，避免“太平均”） */
     private sessionAvg: Record<string, number> = {};
     private static readonly AVG_ALPHA = 0.32;
@@ -199,6 +203,9 @@ export class PerformanceMonitor {
                     // 旗帜管线分项秒表（CityAssetManager.flagPerf；无循环依赖，经 window 转交）
                     flagPerf: (window as any).__flagPerf ?? null,
                     hidden: document.hidden,
+                    // 启动期主线程拥堵证据：浏览器长任务总量 + 各子系统自报峰值
+                    bootLongTask: { totalMs: this.bootLongTaskMs, count: this.bootLongTaskCount, maxMs: this.bootLongTaskMax },
+                    sessionPeaks: this.sessionPeaks,
                 }),
             }).catch(() => { /* 打点尽力而为，不影响游戏 */ });
         }
@@ -347,6 +354,12 @@ export class PerformanceMonitor {
                     const ms = entry.duration;
                     this.bumpSessionPeak('longTask', ms);
                     this.bumpSessionAvg('longTask', ms);
+                    // [诊断 2026-07-17] 启动期长任务累计（谁堵了主线程，总量+最大单笔随 boot-timing 上报）
+                    if (!this.bootDone) {
+                        this.bootLongTaskMs += ms;
+                        this.bootLongTaskCount++;
+                        this.bootLongTaskMax = Math.max(this.bootLongTaskMax, ms);
+                    }
                     if (ms >= 1500) {
                         this.logWallHitch(`浏览器 Long Task (${entry.name || 'script'})`, ms);
                     }
