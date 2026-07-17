@@ -65,55 +65,89 @@ export class LegionPhalanxDrawer {
     // [PERF-FIX] Re-entrancy guard：防止被并发调用时重复跑全量 canvas 处理
     private static loadingPromise: Promise<void> | null = null;
 
-    // ─── 攻城冲车（2026-07-18）────────────────────────────
-    // 攻击 8 方向条带：731-1 ～ 738-1，每张 8 帧 (800×100)
-    // 阵亡 8 方向条带：755-1 ～ 762-1，每张 9 帧 (900×100)
-    private static ramAttackSprites: HTMLImageElement[] = [];
-    private static ramDeathSprites: HTMLImageElement[] = [];
-    private static ramLoaded = false;
-    private static ramLoading = false;
-    /** 冲车阵亡起始 tick：key = unitId */
-    private static ramDeathStarts = new Map<string, number>();
-    /** 冲车阵亡阈值：key = unitId, value = troops/maxTroops 低于此值时阵亡（随机，模拟 10 人中随机一位） */
-    private static ramDeathThresholds = new Map<string, number>();
+    // ─── 攻城器械通用系统（2026-07-18）────────────────────────────
+    private static readonly SIEGE_GEAR_DEFS = {
+        ram: {
+            attackIds: [731, 732, 733, 734, 735, 736, 737, 738],
+            deathIds: [755, 756, 757, 758, 759, 760, 761, 762],
+            posOffsetX: 0,      // 正中
+            posOffsetY: -1.55,  // 第一排前
+            scaleMul: 0.70,
+        },
+        well_lan: {
+            attackIds: [774, 775, 776, 777, 778, 779, 780, 781],
+            deathIds: [782, 783, 784, 785, 786, 787, 788, 789],
+            posOffsetX: -1.2,    // 第二排左
+            posOffsetY: +0.30,   // 第二排稍后
+            scaleMul: 0.70,
+        },
+        well_lan_r: {
+            attackIds: [774, 775, 776, 777, 778, 779, 780, 781],
+            deathIds: [782, 783, 784, 785, 786, 787, 788, 789],
+            posOffsetX: +1.2,    // 第二排右
+            posOffsetY: +0.30,
+            scaleMul: 0.70,
+        },
+    } as const;
 
-    /** 外部查询：该 unit 是否曾参与攻城（用于覆灭后保留冲车尸体） */
-    public static wasSiegeUnit(unitId: string): boolean {
-        return this.ramDeathThresholds.has(unitId);
+
+    private static siegeGearCaches = new Map<string, any>();
+
+    private static getGearCache(type: string): any {
+        let c = this.siegeGearCaches.get(type);
+        if (!c) {
+            c = {
+                attackSprites: [],
+                deathSprites: [],
+                deathStarts: new Map(),
+                deathThresholds: new Map(),
+                loaded: false,
+                loading: false,
+            } as any;
+            this.siegeGearCaches.set(type, c);
+        }
+        return c;
     }
 
-    private static readonly RAM_ATTACK_IDS = [731, 732, 733, 734, 735, 736, 737, 738];
-    private static readonly RAM_DEATH_IDS = [755, 756, 757, 758, 759, 760, 761, 762];
+    /** 外部查询：该 unit 是否曾参与攻城（用于覆灭后保留器械尸体） */
+    public static wasSiegeUnit(unitId: string): boolean {
+        for (const cache of this.siegeGearCaches.values()) {
+            if (cache.deathThresholds.has(unitId)) return true;
+        }
+        return false;
+    }
 
-    private static async ensureRamLoaded(): Promise<void> {
-        if (this.ramLoaded) return;
-        if (this.ramLoading) {
+    private static async ensureSiegeGearLoaded(type: string): Promise<void> {
+        const cache = this.getGearCache(type);
+        if (cache.loaded) return;
+        if (cache.loading) {
             let waited = 0;
-            while (this.ramLoading && waited < 100) {
+            while (cache.loading && waited < 100) {
                 await new Promise(r => setTimeout(r, 50));
                 waited++;
             }
             return;
         }
-        this.ramLoading = true;
+        cache.loading = true;
+        const def = SIEGE_GEAR_DEFS[type];
         try {
             const allPaths = [
-                ...this.RAM_ATTACK_IDS.map(id => `/SUCAI/S10DB/${id}-1.png`),
-                ...this.RAM_DEATH_IDS.map(id => `/SUCAI/S10DB/${id}-1.png`),
+                ...def.attackIds.map(id => `/SUCAI/S10DB/${id}-1.png`),
+                ...def.deathIds.map(id => `/SUCAI/S10DB/${id}-1.png`),
             ];
             await AssetLoader.preloadImages(allPaths);
-            for (const id of this.RAM_ATTACK_IDS) {
+            for (const id of def.attackIds) {
                 const raw = AssetLoader.getImage(`/SUCAI/S10DB/${id}-1.png`);
-                if (raw) this.ramAttackSprites.push(await this.processImage(raw));
+                if (raw) cache.attackSprites.push(await this.processImage(raw));
             }
-            for (const id of this.RAM_DEATH_IDS) {
+            for (const id of def.deathIds) {
                 const raw = AssetLoader.getImage(`/SUCAI/S10DB/${id}-1.png`);
-                if (raw) this.ramDeathSprites.push(await this.processImage(raw));
+                if (raw) cache.deathSprites.push(await this.processImage(raw));
             }
-            this.ramLoaded = true;
-            gameLog('unit', '🔨 攻城冲车素材加载完成');
+            cache.loaded = true;
+            gameLog('unit', `🔨 攻城器械 ${type} 加载完成`);
         } finally {
-            this.ramLoading = false;
+            cache.loading = false;
         }
     }
 
@@ -918,136 +952,107 @@ export class LegionPhalanxDrawer {
     }
 
     // [NEW] Custom Formation Offset Calculation
-    // ─── 攻城冲车绘制（2026-07-18）────────────────────────────
-    /**
-     * 在攻城方阵第一排前方画冲车。仅在 currentBattleType === 'siege' 时调用。
-     * @param center   方阵中心屏幕坐标
-     * @param state    军团整体动画状态（ATTACK=攻城攻击，DEATH=阵亡）
-     * @param direction 方阵朝向 0-7
-     * @param scale    缩放倍率
-     * @param tick     动画时间 ms
-     * @param factionId 势力 id（染色用）
-     * @param spacingX 方阵列间距
-     * @param spacingY 方阵行间距
-     */
-    public static drawSiegeRam(
+    // ─── 攻城器械通用绘制（2026-07-18）────────────────────────────
+
+    /** 绘制所有攻城器械（冲车、井阑等） */
+    public static drawSiegeGear(
         ctx: CanvasRenderingContext2D,
         center: { x: number, y: number },
         state: PhalanxAnimState,
         direction: number,
         scale: number,
         tick: number,
-        factionId: string,
         spacingX: number,
         spacingY: number,
         unitId: string,
         troops: number,
     ): void {
-        // 懒加载冲车素材
-        if (!this.ramLoaded) {
-            void this.ensureRamLoaded();
-            return;
+        for (const gearType of Object.keys(SIEGE_GEAR_DEFS) as string[]) {
+            drawSingleGear(gearType);
         }
 
-        // 战斗结束 + 兵力 > 0 = 胜利，冲车恢复（清阵亡状态，下次攻城重建）
-        if (state !== 'ATTACK' && state !== 'DEATH' && troops > 0) {
-            this.ramDeathStarts.delete(unitId);
-            this.ramDeathThresholds.delete(unitId);
-            return; // 非战斗状态不画冲车
-        }
+        function drawSingleGear(type: string): void {
+            const cache = LegionPhalanxDrawer.getGearCache(type);
+            const def = SIEGE_GEAR_DEFS[type];
 
-        // 10 人中随机一位：首次设置随机阵亡阈值（0.05~0.95，和 9 兵同概率）
-        if (!this.ramDeathThresholds.has(unitId)) {
-            this.ramDeathThresholds.set(unitId, 0.05 + Math.random() * 0.90);
-        }
-        const threshold = this.ramDeathThresholds.get(unitId)!;
-
-        // 查方阵状态取 maxTroops，计算当前存活比
-        const phState = LegionPhalanxStateManager.getState(unitId);
-        const maxT = phState?.maxTroops ?? troops;
-        const aliveRatio = maxT > 0 ? troops / maxT : 0;
-
-        // 存活比跌到阈值以下 = 冲车阵亡，永久标记（不复活）
-        if (!this.ramDeathStarts.has(unitId) && aliveRatio <= threshold) {
-            this.ramDeathStarts.set(unitId, tick);
-        }
-        const ramDead = this.ramDeathStarts.has(unitId);
-
-        // 按方向取对应精灵（和士兵一样的 8 方向体系）
-        const dirIdx = ((direction % 8) + 8) % 8;
-        let ramSprite: HTMLImageElement | null = null;
-        let frameCount = 1;
-
-        if (state === 'DEATH' || ramDead) {
-            ramSprite = this.ramDeathSprites[dirIdx] ?? null;
-            if (!ramSprite || !ramSprite.complete || ramSprite.naturalWidth === 0) return;
-            frameCount = Math.floor(ramSprite.width / ramSprite.height);
-            // 阵亡：记录首次进入 DEATH 的 tick，播完冻结末帧
-            let deathStart = this.ramDeathStarts.get(unitId);
-            if (deathStart === undefined) {
-                deathStart = tick;
-                this.ramDeathStarts.set(unitId, deathStart);
+            if (!cache.loaded) {
+                void LegionPhalanxDrawer.ensureSiegeGearLoaded(type);
+                return;
             }
-            const deathFrameDur = 150;
-            const elapsed = tick - deathStart;
-            const deathIdx = Math.min(
-                Math.floor(elapsed / deathFrameDur),
-                frameCount - 1,
+
+            // 战斗结束 + 兵力 > 0 = 胜利，器械恢复
+            if (state !== 'ATTACK' && state !== 'DEATH' && troops > 0) {
+                cache.deathStarts.delete(unitId);
+                cache.deathThresholds.delete(unitId);
+                return;
+            }
+
+            // 随机阵亡阈值，首次设置
+            if (!cache.deathThresholds.has(unitId)) {
+                cache.deathThresholds.set(unitId, 0.05 + Math.random() * 0.90);
+            }
+            const threshold = cache.deathThresholds.get(unitId)!;
+
+            const phState = LegionPhalanxStateManager.getState(unitId);
+            const maxT = phState?.maxTroops ?? troops;
+            const aliveRatio = maxT > 0 ? troops / maxT : 0;
+
+            if (!cache.deathStarts.has(unitId) && aliveRatio <= threshold) {
+                cache.deathStarts.set(unitId, tick);
+            }
+            const gearDead = cache.deathStarts.has(unitId);
+
+            const dirIdx = ((direction % 8) + 8) % 8;
+            let sprite: HTMLImageElement | null = null;
+            let frameCount = 1;
+            let frameIndex = 0;
+
+            if (state === 'DEATH' || gearDead) {
+                sprite = cache.deathSprites[dirIdx] ?? null;
+                if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return;
+                frameCount = Math.floor(sprite.width / sprite.height);
+                let deathStart = cache.deathStarts.get(unitId);
+                if (deathStart === undefined) {
+                    deathStart = tick;
+                    cache.deathStarts.set(unitId, deathStart);
+                }
+                const elapsed = tick - deathStart;
+                frameIndex = Math.min(Math.floor(elapsed / 150), frameCount - 1);
+            } else if (state === 'ATTACK') {
+                sprite = cache.attackSprites[dirIdx] ?? null;
+                if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return;
+                frameCount = Math.floor(sprite.width / sprite.height);
+                frameIndex = Math.floor((tick / 150)) % frameCount;
+            } else {
+                return;
+            }
+
+            const frameW = sprite.width / frameCount;
+            const frameH = sprite.height;
+
+            // ── 位置 ──
+            const angle = (direction + 1) * Math.PI / 4;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            const origX = def.posOffsetX * spacingX;
+            const origY = def.posOffsetY * spacingY;
+            const gx = center.x + (origX * cos - origY * sin);
+            const gy = center.y + (origX * sin + origY * cos);
+
+            // ── 尺寸 ──
+            const baseHeight = 60;
+            const currentRatio = frameW / frameH;
+            const frameHeightNorm = frameH / LegionPhalanxDrawer.S10DB_REF_FRAME_H;
+            const targetH = baseHeight * scale * def.scaleMul * frameHeightNorm;
+            const targetW = targetH * currentRatio;
+
+            const sx = frameIndex * frameW;
+            ctx.drawImage(
+                sprite,
+                sx, 0, frameW, frameH,
+                gx - targetW / 2, gy - targetH * 0.5, targetW, targetH,
             );
-            const frameW = ramSprite.width / frameCount;
-            const frameH = ramSprite.height;
-            this.drawRamFrame(ctx, center, ramSprite, deathIdx, frameW, frameH, scale, spacingX, spacingY, direction);
-        } else if (state === 'ATTACK') {
-            ramSprite = this.ramAttackSprites[dirIdx] ?? null;
-            if (!ramSprite || !ramSprite.complete || ramSprite.naturalWidth === 0) return;
-            frameCount = Math.floor(ramSprite.width / ramSprite.height);
-            const frameW = ramSprite.width / frameCount;
-            const frameH = ramSprite.height;
-            // 攻击条带循环（和士兵一样的帧速）
-            const frameIndex = Math.floor((tick / 150)) % frameCount;
-            this.drawRamFrame(ctx, center, ramSprite, frameIndex, frameW, frameH, scale, spacingX, spacingY, direction);
         }
-        // IDLE/MOVE/DAMAGE 不画冲车
-    }
-
-    /** 冲车单帧绘制：无旋转，方向精灵已自带朝向 */
-    private static drawRamFrame(
-        ctx: CanvasRenderingContext2D,
-        center: { x: number, y: number },
-        sprite: HTMLImageElement,
-        frameIndex: number,
-        frameW: number,
-        frameH: number,
-        scale: number,
-        spacingX: number,
-        spacingY: number,
-        direction: number,
-    ): void {
-        // ── 位置：第一排前方 ──
-        const ramForwardOffset = spacingY * 0.70;
-        const originalY = -spacingY - ramForwardOffset;
-        const originalX = 0;
-
-        const angle = (direction + 1) * Math.PI / 4;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-        const ramX = center.x + (originalX * cos - originalY * sin);
-        const ramY = center.y + (originalX * sin + originalY * cos);
-
-        // ── 尺寸 ──
-        const baseHeight = 60;
-        const currentRatio = frameW / frameH;
-        const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
-        const targetH = baseHeight * scale * 0.70 * frameHeightNorm;
-        const targetW = targetH * currentRatio;
-
-        // ── 绘制（无旋转：精灵自带朝向）──
-        const sx = frameIndex * frameW;
-        ctx.drawImage(
-            sprite,
-            sx, 0, frameW, frameH,
-            ramX - targetW / 2, ramY - targetH * 0.5, targetW, targetH,
-        );
     }
 
     private static getFormationOffset(
