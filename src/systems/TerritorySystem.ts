@@ -477,6 +477,13 @@ export class TerritorySystem {
 
         this.cityMarkers = tempCityMarkers;
         this.cityLabels = tempCityLabels;
+        // 攻城放大状态跟随全量重绘（2026-07-18）：临时层渲染时 marker 未上图，getElement() 为空，
+        // renderSingleCity 里的补回不生效——必须在原子换层后统一补回，否则战斗中据点"提前恢复"
+        for (const cityId of this.siegeZoomedCities) {
+            const marker = this.cityMarkers.get(cityId);
+            const root = marker?.getElement()?.querySelector('.city-image-container');
+            root?.classList.add('city-under-siege');
+        }
         this.updateCityScales();
     }
 

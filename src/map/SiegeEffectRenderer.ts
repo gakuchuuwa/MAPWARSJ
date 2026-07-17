@@ -73,8 +73,25 @@ export class SiegeEffectRenderer {
         cityType: string = 'small_city',
         getTarget?: TargetResolver
     ): void {
-        // 接战/连战须立刻清掉上一场，不能走淡出（否则旧 timer 会误删新叠层）
-        this.disposeEffect(cityId, true);
+        // 连锁攻城（2026-07-18 主人定）：同城连战火势延续——不清场、不重新渐显；
+        // 只换攻击目标、重排齐射，并把（可能正在淡出的）旧火快速升回各自峰值
+        const existing = this.activeEffects.get(cityId);
+        if (existing) {
+            gameLog('siegeEffect', `🔥 [SiegeEffect] 城市 ${cityId} 连战，火势延续`);
+            existing.getTarget = getTarget;
+            if (existing.volleyIntervalId) {
+                clearInterval(existing.volleyIntervalId);
+                existing.volleyIntervalId = undefined;
+            }
+            if (getTarget) {
+                existing.volleyIntervalId = setInterval(() => {
+                    this.fireVolley(cityId);
+                }, SiegeEffectRenderer.VOLLEY_INTERVAL_MS);
+                this.fireVolley(cityId);
+            }
+            this.rampToPeak(cityId, existing);
+            return;
+        }
 
         gameLog('siegeEffect', `🔥 [SiegeEffect] 在城市 ${cityId} (类型: ${cityType}) 启动火焰特效`);
 
@@ -197,6 +214,35 @@ export class SiegeEffectRenderer {
                 patch.overlay.setOpacity(t * patch.peakOpacity);
             });
             if (done) {
+                if (effect.fadeTimerId) clearInterval(effect.fadeTimerId);
+                effect.fadeTimerId = undefined;
+            }
+        }, stepDuration);
+    }
+
+    /** 连战续火：各片火从【当前】透明度 ~0.4s 升回各自峰值——接住正在淡出/渐显的旧火，不硬切、不重新 5s 渐显 */
+    private rampToPeak(cityId: string, effect: ActiveSiegeEffect): void {
+        if (effect.fadeTimerId) {
+            clearInterval(effect.fadeTimerId);
+            effect.fadeTimerId = undefined;
+        }
+        const stepDuration = SiegeEffectRenderer.FADE_DURATION_MS / SiegeEffectRenderer.FADE_STEPS;
+        const startOpacities = effect.patches.map(p => p.overlay.options.opacity ?? 0);
+        const totalSteps = 10; // 10 × 40ms ≈ 0.4s
+        let step = 0;
+
+        effect.fadeTimerId = setInterval(() => {
+            if (this.activeEffects.get(cityId) !== effect) {
+                if (effect.fadeTimerId) clearInterval(effect.fadeTimerId);
+                effect.fadeTimerId = undefined;
+                return;
+            }
+            step++;
+            const t = Math.min(1, step / totalSteps);
+            effect.patches.forEach((patch, i) => {
+                patch.overlay.setOpacity(startOpacities[i] + (patch.peakOpacity - startOpacities[i]) * t);
+            });
+            if (t >= 1) {
                 if (effect.fadeTimerId) clearInterval(effect.fadeTimerId);
                 effect.fadeTimerId = undefined;
             }
