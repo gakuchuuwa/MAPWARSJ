@@ -16,7 +16,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     han_d: { name: '大汉材官', tier: 2 },
   pizhou: { name: '陷阵营', tier: 2 },        // 下邳·高顺陷阵营
     cao_d: { name: '虎豹骑', tier: 1 },
-  ranwei_d: { name: '乞活军', tier: 2 },   // 五胡乱华时期的流民武装，虽悲壮且在特定战役有高光，但缺乏战略主导地位，降为T2战术。
+    ranwei_d: { name: '乞活军', tier: 2 },
     wuzhou_d: { name: '羽林军', tier: 2 },     // 洛阳·李多祚羽林军（武周）
   shang: { name: '虎贲多射', tier: 2 },       // 周武王牧野之战的核心三千虎贲突击队，打出改朝换代的史诗级战役高光，升入T2战术
   zhou: { name: '岐阳虎贲', tier: 1 },     // 岐山·武王伐纣牧野（《史记》）

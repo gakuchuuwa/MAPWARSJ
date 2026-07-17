@@ -1794,7 +1794,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    ranwei_d_ranmin: { generalId: 'ranwei_d_ranmin', tier: 'famous', tacticalSkillId: 'ts_236', strategicSkillId: 'str_22', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_401', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_032', defBalanceSkillId: 'ts_775', defDisadvantageSkillId: 'ts_417', aptitude: 'create' , attackStyle: 'attack'},
+    ranwei_d_ranmin: { generalId: 'ranwei_d_ranmin', tier: 'famous', tacticalSkillId: 'ts_401', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_401', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_032', defBalanceSkillId: 'ts_775', defDisadvantageSkillId: 'ts_417', strategicSkillId: 'str_20', aptitude: 'create', attackStyle: 'attack' },
 
 
 

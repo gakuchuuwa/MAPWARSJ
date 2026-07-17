@@ -2257,7 +2257,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_tianyang', name: '田阳', factionId: 'zhuang_d', lat: 23.720000, lng: 106.650000, type: 'small_city', region: 'LINGNAN', troops: 20000, note: '瓦氏田州土官故里；标志战王江泾距嘉兴<50km未立城，据点取成军地' },
     { id: 'city_hailing', name: '海陵', factionId: 'taizhou', lat: 32.550000, lng: 120.000000, type: 'small_city', region: 'JIANGNAN', troops: 20000, note: '唐/杨吴海陵镇，后升泰州；李昪为制置使时所治发迹之地' },
     { id: 'city_jingkou', name: '濡须口', factionId: 'wuwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', troops: 20000, mirror: true, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
-    { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.220000, lng: 115.040000, type: 'small_city', region: 'CENTRAL', troops: 20000, note: '冉魏迁巨鹿；黎阳过密冀南' },
+    { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.22, lng: 115.04, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
     { id: 'city_ningyuan', name: '宁远城', factionId: 'zu_d', lat: 40.618, lng: 120.72, type: 'small_city', troops: 20000, region: 'NORTH' },
 
 

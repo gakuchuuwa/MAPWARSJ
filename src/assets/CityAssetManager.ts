@@ -233,7 +233,7 @@ export class CityAssetManager {
         'jinling': '南京',
         'wuwu_d': '无为',
 'shizhao_d': '邢',
-        'ranwei_d': '冉魏',
+'ranwei_d': '冉魏',
 'zu_d': '严',
 
         'aisin_d': '爱新',

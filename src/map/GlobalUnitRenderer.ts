@@ -127,6 +127,9 @@ export class GlobalUnitRenderer {
     // [NEW] Visual Systems
     private projectileSystem: ProjectileRenderer;
 
+    /** [2026-07-18] 攻城器械渐隐锚点：军团乘胜开拔后器械留在城下原地淡出（经纬度+冻结朝向） */
+    private siegeGearAnchors = new Map<string, { lat: number; lng: number; dir: number }>();
+
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
     private static assetsPromise: Promise<void> | null = null;
     private static assetsLoaded: boolean = false;
@@ -255,6 +258,7 @@ export class GlobalUnitRenderer {
             this.unitFightingStates.delete(id);
             LegionPhalanxStateManager.dispose(id);
             LegionPhalanxDrawer.disposeUnit(id); // 注销：方阵 + 攻城器械状态全清
+            this.siegeGearAnchors.delete(id);
         }
         this.units.delete(unit);
         this.needsSort = true;
@@ -827,9 +831,19 @@ export class GlobalUnitRenderer {
             );
 
             // ── 攻城器械（仅攻城方陆战；覆灭后留尸体同步士兵）──
-            if (!useNavalVisual
-                && ((unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker !== false)
-                || LegionPhalanxDrawer.wasSiegeUnit(unit.id || ''))) {
+            const unitIdForGear = unit.id || 'unknown';
+            const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker !== false;
+            if (!useNavalVisual && (activelySieging || LegionPhalanxDrawer.wasSiegeUnit(unitIdForGear))) {
+                // [2026-07-18] 乘胜追击不休整时军团立即开拔，器械须留在城下原地渐隐（史实：器械就地弃置）。
+                // 攻城期间每帧刷新锚点＝城下位置；战后改按锚点(经纬度)换算屏幕坐标并冻结朝向，镜头平移缩放不漂。
+                if (activelySieging) {
+                    this.siegeGearAnchors.set(unitIdForGear, { lat: unitPos.lat, lng: unitPos.lng, dir: directionIndex });
+                }
+                const gearAnchor = activelySieging ? null : this.siegeGearAnchors.get(unitIdForGear);
+                const gearCenter = gearAnchor
+                    ? this.map.latLngToContainerPoint([gearAnchor.lat, gearAnchor.lng])
+                    : centerPoint;
+                const gearDir = gearAnchor ? gearAnchor.dir : directionIndex;
                 const siegeScale = scale * (unit.previewScale ?? 1);
                 const baseH = 75;
                 const rH = baseH * siegeScale;
@@ -837,16 +851,20 @@ export class GlobalUnitRenderer {
                 const ramSpacingX = rH * 0.8 * 0.50;
                 LegionPhalanxDrawer.drawSiegeGear(
                     ctx,
-                    { x: centerPoint.x, y: centerPoint.y },
+                    { x: gearCenter.x, y: gearCenter.y },
                     state,
-                    directionIndex,
+                    gearDir,
                     siegeScale,
                     Date.now(),
                     ramSpacingX,
                     ramSpacingY,
-                    unit.id || 'unknown',
+                    unitIdForGear,
                     troops,
                 );
+                // 渐隐走完（drawSiegeGear 内部已清器械状态）→ 锚点同步清除
+                if (!activelySieging && !LegionPhalanxDrawer.wasSiegeUnit(unitIdForGear)) {
+                    this.siegeGearAnchors.delete(unitIdForGear);
+                }
             }
 
             // ── 攻城额外士兵：三角形尖兵左右各一弓步兵（仅陆战）──
