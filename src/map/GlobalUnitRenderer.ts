@@ -600,7 +600,35 @@ export class GlobalUnitRenderer {
                             currentPos.lng + startJitterLng
                         );
                         const baseEnd = L.latLng(unit.targetPos.lat, unit.targetPos.lng);
-                        this.projectileSystem.spawnVolley(baseStart, baseEnd);
+
+                        const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
+                        if (useNavalVisual) {
+                            // 舰队 5 艘船各自射箭，从编队各位置发射
+                            const angle = (unit.lastDirection + 1) * Math.PI / 4;
+                            const cos = Math.cos(angle);
+                            const sin = Math.sin(angle);
+                            // 船间偏移（经纬度 ≈ 屏幕像素 / 缩放因子，约 0.003° ≈ 1 船距）
+                            const rOff = 0.004;
+                            const cOff = 0.006;
+                            const offsets = [
+                                { r: 0, c: 0 },      // 大船
+                                { r: 1, c: -1.5 },   // 前左
+                                { r: 1, c: 1.5 },    // 前右
+                                { r: -1, c: -1.5 },  // 后左
+                                { r: -1, c: 1.5 },   // 后右
+                            ];
+                            for (const o of offsets) {
+                                const ox = o.r * rOff;
+                                const oy = o.c * cOff;
+                                const shipStart = L.latLng(
+                                    baseStart.lat + (ox * cos - oy * sin),
+                                    baseStart.lng + (ox * sin + oy * cos),
+                                );
+                                this.projectileSystem.spawnVolley(shipStart, baseEnd);
+                            }
+                        } else {
+                            this.projectileSystem.spawnVolley(baseStart, baseEnd);
+                        }
 
                         unit.lastShotTime = now;
                     }
