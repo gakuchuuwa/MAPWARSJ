@@ -44,7 +44,7 @@ export class SiegeEffectRenderer {
     /** 攻城态据点建筑视觉放大倍数：与 city-marker.css 的 scale(2) 同步（仅火箭发射点用；火焰不随城放大） */
     private static readonly SIEGE_CITY_VISUAL_ZOOM = 2.0;
     /** 火焰片散布半径（相对基准半径比例，<1 保证火落在城内） */
-    private static readonly FIRE_SPREAD_RATIO = 0.55;
+    private static readonly FIRE_SPREAD_RATIO = 0.7;
     /** 火苗群在贴图中的实测重心偏下 0.067H（2026-07-18 像素级测量：cx=0.46W、cy=0.57H）：
         bounds 上移 0.13×halfH 精确补偿，使火苗重心落在目标点（中心放大后 = 城视觉中心）。
         ⚠️ 勿凭感觉调大——过大火群飘到城北墙外，过小沉到城南墙根 */
@@ -99,9 +99,9 @@ export class SiegeEffectRenderer {
 
         gameLog('siegeEffect', `🔥 [SiegeEffect] 在城市 ${cityId} (类型: ${cityType}) 启动火焰特效`);
 
-        // 随机火片：大城 3 片、其余 2 片——每片即一处"起火街区"，宁大勿碎（2026-07-18 主人定：小火太多）
+        // 随机火片：统一 3 片——120° 三角分布天然覆盖全城无死角（2026-07-18 修：2 片丢南北）
         const base = this.getBaseHalfSize(cityType);
-        const patchCount = base.isHuge ? 3 : 2;
+        const patchCount = 3;
         const effect: ActiveSiegeEffect = {
             patches: [],
             cityLocation: location,
@@ -122,7 +122,7 @@ export class SiegeEffectRenderer {
                 offsetLat: Math.sin(ang) * rad * base.halfHeight,
                 offsetLng: Math.cos(ang) * rad * base.halfWidth,
                 sizeScale: 0.75 + Math.random() * 0.25,  // 0.75 ~ 1.0（大片火区，不碎）
-                peakOpacity: 0.8 + Math.random() * 0.2,  // 0.8 ~ 1.0
+                peakOpacity: 0.7 + Math.random() * 0.3,  // 0.7 ~ 1.0
                 isFlipped: windFlipped,
             };
             patch.overlay = L.imageOverlay(

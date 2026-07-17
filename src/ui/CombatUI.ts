@@ -305,12 +305,6 @@ export class CombatUI {
                 15% { transform: scale(1.10); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
                 100% { transform: scale(1); }
             }
-            /* 武将技释放：对应技能标签放大提亮 → 缓缓复原（标明放的是哪个技能） */
-            @keyframes skill-badge-surge {
-                0% { transform: scale(1); filter: brightness(1); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-                15% { transform: scale(1.32); filter: brightness(1.4); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
-                100% { transform: scale(1); filter: brightness(1); }
-            }
             @keyframes skill-cut-in {
                 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
                 10% { 
@@ -1168,10 +1162,10 @@ export class CombatUI {
             ) => {
                 if (pending.length >= 4) return;
                 const el = createSkillTag(name, effect, famous, isAttacker, skillType);
-                // 已燃态（P1）：本局已放过的技能——surge 播完（1.9s）后定格为降亮度+金框+✓；
+                // 已燃态（P1）：本局已放过的技能——Cut-in 弹出 0.6s 后定格为降亮度+金框+✓；
                 // 标签每帧重建，必须按 skillSpentAt 在创建时补挂
                 const spentAt = this.skillSpentAt.get(`${sideKey}-${name}`);
-                if (spentAt !== undefined && Date.now() - spentAt >= 1900) {
+                if (spentAt !== undefined && Date.now() - spentAt >= 600) {
                     el.classList.add('skill-tag-spent');
                 }
                 pending.push(el);
@@ -2008,15 +2002,9 @@ export class CombatUI {
             if (this.boundRegionalBattleField?.isOver) return;
             // 实际弹出时刻记档：混合场景（一侧语音驱动、一侧计时兜底）也按真实弹出时间错开
             this.skillPulseLastAt = Math.max(this.skillPulseLastAt, Date.now());
-            // 已燃时刻（P1）：surge 播完后标签定格——updateSkillBadges 每帧重建时按此补挂
+            // 已燃时刻（P1）：0.6s 后标签定格为降亮度+金框+✓——updateSkillBadges 每帧重建时按此补挂；
+            // 「标明放了哪个技」由已燃态承担（旧标签 surge 附着于每帧被重建的元素，从未真正可见，已清理）
             this.skillSpentAt.set(`${pulseSide}-${displayName}`, Date.now());
-            const box = pulseSide === 'attacker' ? this.leftSkillsBox : this.rightSkillsBox;
-            const tag = this.findSkillTag(box, displayName);
-            if (tag) {
-                tag.style.animation = 'none';
-                void tag.offsetWidth;
-                tag.style.animation = 'skill-badge-surge 2s cubic-bezier(0.22, 1, 0.36, 1) both';
-            }
             this.pulsePortraitForSkill(pulseSide);
             
             // 联动：在立绘正中央弹出巨大化技能文字 Cut-in
@@ -3301,6 +3289,28 @@ export class CombatUI {
         if (!this.outcomeLocked) {
             this.attackerBar.style.width = `${attPct}%`;
             this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
+        }
+
+        // 溃败预兆（2026-07-18 主人定 P2）：第三幕起，落后方立绘渐染血红+变暗、名牌闪烁——高潮前的情绪铺垫；
+        // 定格后（outcomeLocked）交给 showBattleOutcome 的褪灰，不插手
+        if (!this.outcomeLocked && progress >= PHASE_COLLAPSE_START && total > 0 && attCurrent !== defCurrent) {
+            const k = Math.min(1, (progress - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
+            const attBehind = attCurrent < defCurrent;
+            const behindImg = attBehind ? this.leftPortrait : this.rightPortrait;
+            const aheadImg = attBehind ? this.rightPortrait : this.leftPortrait;
+            const behindTag = attBehind ? this.leftGeneralNameTag : this.rightGeneralNameTag;
+            const aheadTag = attBehind ? this.rightGeneralNameTag : this.leftGeneralNameTag;
+            aheadImg.style.filter = '';
+            aheadTag.style.opacity = '';
+            behindImg.style.filter =
+                `drop-shadow(0 0 ${10 + 20 * k}px rgba(255, 40, 20, ${0.45 + 0.45 * k})) brightness(${1 - 0.18 * k})`;
+            behindTag.style.opacity = `${0.45 + 0.55 * Math.abs(Math.sin(performance.now() / 160))}`;
+        } else if (!this.outcomeLocked) {
+            // 未进第三幕（或战平）：清掉两側残留（resetBattleOverlays 开场已清，这里防同场拉锯反复）
+            this.leftPortrait.style.filter = '';
+            this.rightPortrait.style.filter = '';
+            this.leftGeneralNameTag.style.opacity = '';
+            this.rightGeneralNameTag.style.opacity = '';
         }
 
         // --- 优劣均 兵力状态指示器 ---
