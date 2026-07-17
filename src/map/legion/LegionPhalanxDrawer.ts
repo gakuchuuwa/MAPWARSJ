@@ -74,6 +74,8 @@ export class LegionPhalanxDrawer {
     private static ramLoading = false;
     /** 冲车阵亡起始 tick：key = unitId */
     private static ramDeathStarts = new Map<string, number>();
+    /** 冲车阵亡阈值：key = unitId, value = troops/maxTroops 低于此值时阵亡（随机，模拟 10 人中随机一位） */
+    private static ramDeathThresholds = new Map<string, number>();
 
     private static readonly RAM_ATTACK_IDS = [731, 732, 733, 734, 735, 736, 737, 738];
     private static readonly RAM_DEATH_IDS = [755, 756, 757, 758, 759, 760, 761, 762];
@@ -934,6 +936,7 @@ export class LegionPhalanxDrawer {
         spacingX: number,
         spacingY: number,
         unitId: string,
+        troops: number,
     ): void {
         // 懒加载冲车素材
         if (!this.ramLoaded) {
@@ -941,12 +944,29 @@ export class LegionPhalanxDrawer {
             return;
         }
 
+        // 10 人中随机一位：首次设置随机阵亡阈值（0.05~0.95，和 9 兵同概率）
+        if (!this.ramDeathThresholds.has(unitId)) {
+            this.ramDeathThresholds.set(unitId, 0.05 + Math.random() * 0.90);
+        }
+        const threshold = this.ramDeathThresholds.get(unitId)!;
+
+        // 查方阵状态取 maxTroops，计算当前存活比
+        const phState = LegionPhalanxStateManager.getState(unitId);
+        const maxT = phState?.maxTroops ?? troops;
+        const aliveRatio = maxT > 0 ? troops / maxT : 0;
+
+        // 存活比跌到阈值以下 = 冲车阵亡，永久标记（不复活）
+        if (!this.ramDeathStarts.has(unitId) && aliveRatio <= threshold) {
+            this.ramDeathStarts.set(unitId, tick);
+        }
+        const ramDead = this.ramDeathStarts.has(unitId);
+
         // 按方向取对应精灵（和士兵一样的 8 方向体系）
         const dirIdx = ((direction % 8) + 8) % 8;
         let ramSprite: HTMLImageElement | null = null;
         let frameCount = 1;
 
-        if (state === 'DEATH') {
+        if (state === 'DEATH' || ramDead) {
             ramSprite = this.ramDeathSprites[dirIdx] ?? null;
             if (!ramSprite || !ramSprite.complete || ramSprite.naturalWidth === 0) return;
             frameCount = Math.floor(ramSprite.width / ramSprite.height);
