@@ -570,10 +570,6 @@ export class GameMap {
                         <b>🏯 开启城市贴图</b>
                     </label>
 
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#9c27b0;margin-top:4px;">
-                        <input type="checkbox" id="chk-showcase"> 
-                        <b>♟️ 开启兵种展示</b>
-                    </label>
 
                     <hr style="margin:8px 0;width:100%;border:0;border-top:1px solid #eee;">
                     <div style="font-weight:bold;margin-bottom:4px;font-size:13px;color:#5d4037;">音效</div>
@@ -830,15 +826,6 @@ export class GameMap {
             if (chkCityTexture) {
                 chkCityTexture.addEventListener('change', (e: any) => {
                     window.dispatchEvent(new CustomEvent('toggle-city-texture', {
-                        detail: { visible: e.target.checked }
-                    }));
-                });
-            }
-
-            const chkShowcase = document.getElementById('chk-showcase') as HTMLInputElement;
-            if (chkShowcase) {
-                chkShowcase.addEventListener('change', (e: any) => {
-                    window.dispatchEvent(new CustomEvent('toggle-showcase-units', {
                         detail: { visible: e.target.checked }
                     }));
                 });

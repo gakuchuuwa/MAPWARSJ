@@ -1,10 +1,7 @@
 export { SPRITE_PATHS } from './UnitAssets';
 
 export class GameConfig {
-    static SYSTEM = {
-        // [2026-05-30] 开启展示模式: 启动时生成 9 个 showcase 兵种
-        DEBUG_SHOWCASE_UNITS: false,
-        ENABLE_HISTORY_LOG: true,
+    static SYSTEM = {        ENABLE_HISTORY_LOG: true,
         /** 历史事件链（逐年 JSON 脚本）；默认关 = 纯沙盒乱斗 */
         ENABLE_HISTORICAL_EVENTS: false,
         SANDBOX_MODE: true,
