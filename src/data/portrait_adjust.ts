@@ -4988,7 +4988,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 19
         },
         "/assets/JAPAN/gonggu_gonggudaozhu.png": {
-            "scale": 1.09,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": 3
         },
@@ -5683,7 +5683,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/LINGNAN/ryukyu_shangbazhi.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": -6
         },
