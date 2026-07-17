@@ -1037,11 +1037,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/BASHU/yong_lujili.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": -8
-        },
         "/assets/LINGNAN/shixing_houandou.png": {
             "scale": 1.06,
             "offsetX": 0,
@@ -1982,11 +1977,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 19
         },
-        "/assets/LINGNAN/nanyue_zhaotuo.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/xianqin/shen_shenbo.png": {
             "scale": 1.07,
             "offsetX": 0,
@@ -2917,11 +2907,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -15
         },
-        "/assets/xianqin/__闲置__xianqin_03.png": {
-            "scale": 1.2,
-            "offsetX": 0,
-            "offsetY": -42
-        },
         "/assets/xianqin/__闲置__xianqin_04.png": {
             "scale": 1.23,
             "offsetX": 0,
@@ -2971,11 +2956,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -5
-        },
-        "/assets/yingqin/__闲置__yingqin_07.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": -42
         },
         "/assets/yingqin/__闲置__yingqin_08.png": {
             "scale": 0.99,
@@ -3553,9 +3533,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/BASHU/__闲置__BASHU_05.png": {
-            "scale": 1.02,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": -3
+            "offsetY": -8
         },
         "/assets/BASHU/langzhou_zhangfei.png": {
             "scale": 0.94,
@@ -5836,6 +5816,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -13
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_35.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/yingqin/nanyue_zhaotuo.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -42
+        },
+        "/assets/xianqin/yong_lujili.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": -42
         }
     },
     "folderGuides": {

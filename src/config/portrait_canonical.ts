@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/17 21:12:24（共 231 条）
+ * 生成时间：2026/7/17 21:19:53（共 231 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
@@ -173,13 +173,13 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/luodian_shexiangfuren.png": "/assets/LINGNAN/__闲置__LINGNAN_32.png",
     "/assets/xianqin/linhu_mafang.png": "/assets/LINGNAN/miao_qing_yangwanzhe.png",
     "/assets/xianqin/__闲置__yingqin_11.png": "/assets/LINGNAN/minyue_wuzhu.png",
-    "/assets/xianqin/shen_shenbo.png": "/assets/LINGNAN/nanyue_zhaotuo.png",
     "/assets/LINGNAN/yue_goujian.png": "/assets/LINGNAN/qian_songjingyang.png",
     "/assets/xianqin/yue_goujian.png": "/assets/LINGNAN/qian_songjingyang.png",
     "/assets/xianqin/yan_leyi.png": "/assets/LINGNAN/shaozhou_zhangzhensun.png",
     "/assets/xianqin/chunshen_huangxie.png": "/assets/LINGNAN/xinjiang_maji.png",
     "/assets/zhaosong/kejia_wentianxiang.png": "/assets/LINGNAN/__闲置__LINGNAN_23.png",
     "/assets/zhaosong/shenshi_wentianxiang.png": "/assets/LINGNAN/__闲置__LINGNAN_23.png",
+    "/assets/xianqin/shen_shenbo.png": "/assets/LINGNAN/__闲置__LINGNAN_35.png",
     "/assets/xianqin/__闲置__xianqin_13.png": "/assets/LINGNAN/__闲置__xianqin_13.png",
     "/assets/NORTH/__闲置__NORTH_02.png": "/assets/LINGNAN/_闲置 (1).png",
     "/assets/litang/gaoliang_geshuhan.png": "/assets/litang/282afd3a-12fa-48b4-8c86-2c07ee12abe6.png",

@@ -106,6 +106,8 @@ export class CombatUI {
     private rightPortraitFrame!: HTMLDivElement;
     private leftGeneralNameTag!: HTMLDivElement;
     private rightGeneralNameTag!: HTMLDivElement;
+    private leftFamousBadge!: HTMLDivElement;
+    private rightFamousBadge!: HTMLDivElement;
 
     // Troop State Indicators
     private indicatorLeftYou!: HTMLDivElement;
@@ -397,6 +399,8 @@ export class CombatUI {
         leftFrame.appendChild(this.leftPortraitWrap);
         this.leftGeneralNameTag = this.createGeneralNameTag('left');
         leftFrame.appendChild(this.leftGeneralNameTag);
+        this.leftFamousBadge = this.createFamousBadge('left');
+        leftFrame.appendChild(this.leftFamousBadge);
 
         const rightFrame = this.createPortraitFrame();
         this.rightPortraitFrame = rightFrame;
@@ -411,6 +415,8 @@ export class CombatUI {
         rightFrame.appendChild(this.rightPortraitWrap);
         this.rightGeneralNameTag = this.createGeneralNameTag('right');
         rightFrame.appendChild(this.rightGeneralNameTag);
+        this.rightFamousBadge = this.createFamousBadge('right');
+        rightFrame.appendChild(this.rightFamousBadge);
 
         const leftIndGroup = document.createElement('div');
         leftIndGroup.style.cssText = `position: absolute; bottom: 41.5%; right: -${uiPx(7)}; transform: translateX(50%); display: flex; gap: ${uiPx(8)}; z-index: 20; pointer-events: none;`;
@@ -1386,7 +1392,7 @@ export class CombatUI {
         const aptColor = side === 'attacker' ? 'rgba(255,180,40,1)' : 'rgba(80,200,240,1)';
         if (styleLabel && styleHighlight === 2) parts.push(tag(styleLabel, `color:${aptColor};font-weight:700;`));
         if (aptLabel2 && aptHighlight2 === 2) parts.push(tag(aptLabel2, `color:${aptColor};font-weight:700;`));
-        // ⑤ 名将光环 (moved to general name tag)
+        // ⑤ 名将光环 (moved to famous badge near name tag)
         if (numChain) parts.push(tag(numChain));
         const chain = parts.join('');
 
@@ -1877,8 +1883,8 @@ export class CombatUI {
         side: 'attacker' | 'defender',
     ): string | null {
         const tag = side === 'attacker' ? this.leftGeneralNameTag : this.rightGeneralNameTag;
-        if (tag.dataset.generalId === generalId && tag.dataset.rawName) {
-            return tag.dataset.rawName;
+        if (tag.dataset.generalId === generalId && tag.textContent?.trim()) {
+            return tag.textContent.trim();
         }
         return getGeneralRecordByGeneralId(generalId)?.generalName ?? null;
     }
@@ -3387,22 +3393,21 @@ export class CombatUI {
         side: 'attacker' | 'defender',
     ): void {
         const rec = unit.generalId ? getGeneralRecordByGeneralId(unit.generalId) : null;
+        const famousBadge = side === 'attacker' ? this.leftFamousBadge : this.rightFamousBadge;
         if (rec) {
-            tag.dataset.rawName = rec.generalName;
-            let html = `<span style="writing-mode: vertical-rl; text-orientation: upright;">${rec.generalName}</span>`;
-            if (unit.generalId && getGeneralProfile(unit.generalId)?.tier === 'famous') {
-                html += `<div style="margin-top: 8px; font-size: 0.6em; font-family: sans-serif; color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.6); border-radius: 3px; padding: 2px 0; text-align: center; writing-mode: horizontal-tb; text-orientation: mixed; letter-spacing: 0; line-height: 1.2; font-weight: normal; text-shadow: none;">名将</div>`;
-            }
-            tag.innerHTML = html;
-            tag.style.display = 'flex';
-            tag.style.flexDirection = 'column';
-            tag.style.alignItems = 'center';
+            tag.textContent = rec.generalName;
+            tag.style.display = 'block';
             tag.dataset.generalId = unit.generalId!;
+            if (unit.generalId && getGeneralProfile(unit.generalId)?.tier === 'famous') {
+                famousBadge.style.display = 'block';
+            } else {
+                famousBadge.style.display = 'none';
+            }
         } else {
-            tag.innerHTML = '';
+            tag.textContent = '';
             tag.style.display = 'none';
             delete tag.dataset.generalId;
-            delete tag.dataset.rawName;
+            famousBadge.style.display = 'none';
         }
         tag.dataset.side = side;
         this.refreshGeneralNameTagInteract();
@@ -3748,6 +3753,30 @@ export class CombatUI {
             pointer-events: none;
             letter-spacing: 4px;
         `;
+        return tag;
+    }
+
+    private createFamousBadge(side: 'left' | 'right'): HTMLDivElement {
+        const tag = document.createElement('div');
+        const isAtt = side === 'left';
+        tag.style.cssText = `
+            position: absolute;
+            bottom: 52%;
+            ${isAtt ? 'right' : 'left'}: -${uiPx(70)};
+            display: none;
+            padding: 1px 5px;
+            border: 1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};
+            border-radius: 3px;
+            background: ${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};
+            color: ${isAtt ? 'rgba(255,180,40,1)' : 'rgba(80,200,240,1)'};
+            font-size: ${uiPx(16)};
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 700;
+            z-index: ${T.zIndex.portrait + 5};
+            pointer-events: none;
+            writing-mode: horizontal-tb;
+        `;
+        tag.textContent = '名将';
         return tag;
     }
 

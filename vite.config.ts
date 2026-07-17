@@ -135,15 +135,42 @@ export default defineConfig({
             name: 'suppress-portrait-dev-hmr',
             configureServer(server) {
                 const origSend = server.ws.send.bind(server.ws);
+                // [2026-07-17 主人裁定] 批量/编辑器保存的整页刷新改为「窗口内拦截 + 窗口结束自动补发一次」：
+                //   - 窗口内仍拦截，保护连环写盘（batch-import → save-general → save-elite）不被刷新打断；
+                //   - 窗口结束后自动补发 full-reload，编辑器改完即见，不再需要手动 F5；
+                //   - 连续保存会顺延窗口，最终只补发一次；
+                //   - 立绘 F2 窗口维持旧行为「只拦不补」：立绘调校常发生在追镜对局中，补刷会炸掉正在看的战斗。
+                let pendingBatchReloadTimer: ReturnType<typeof setTimeout> | null = null;
+                const sendQueuedFullReload = (): void => {
+                    // 若任一抑制窗仍开着（期间又有保存顺延了窗口），继续等到全部关闭
+                    const wait = Math.max(portraitDevSuppressReloadUntil, batchSaveSuppressReloadUntil) - Date.now();
+                    if (wait > 0) {
+                        pendingBatchReloadTimer = setTimeout(sendQueuedFullReload, wait + 250);
+                        return;
+                    }
+                    pendingBatchReloadTimer = null;
+                    console.log('[HMR-Suppress] 批量保存窗口结束，自动补发整页刷新');
+                    origSend({ type: 'full-reload' });
+                };
                 server.ws.send = (payload: unknown) => {
                     if (
                         typeof payload === 'object'
                         && payload !== null
                         && (payload as { type?: string }).type === 'full-reload'
-                        && (Date.now() < portraitDevSuppressReloadUntil || Date.now() < batchSaveSuppressReloadUntil)
                     ) {
-                        console.log('[HMR-Suppress] 已拦截写盘触发的整页刷新');
-                        return;
+                        const now = Date.now();
+                        const inPortrait = now < portraitDevSuppressReloadUntil;
+                        const inBatch = now < batchSaveSuppressReloadUntil;
+                        if (inPortrait || inBatch) {
+                            if (inBatch && !inPortrait) {
+                                if (pendingBatchReloadTimer) clearTimeout(pendingBatchReloadTimer);
+                                pendingBatchReloadTimer = setTimeout(sendQueuedFullReload, batchSaveSuppressReloadUntil - now + 250);
+                                console.log('[HMR-Suppress] 已拦截写盘触发的整页刷新（批量窗口，结束后自动补发）');
+                            } else {
+                                console.log('[HMR-Suppress] 已拦截写盘触发的整页刷新（立绘窗口，不补发）');
+                            }
+                            return;
+                        }
                     }
                     origSend(payload);
                 };
