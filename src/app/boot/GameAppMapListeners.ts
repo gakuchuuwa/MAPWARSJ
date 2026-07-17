@@ -25,12 +25,6 @@ export function setupGameAppMapListeners(app: GameApp): void {
         if (app.speedOverlay) app.speedOverlay.setLandSeaViewMode(!!detail?.visible);
     });
 
-    window.addEventListener('toggle-showcase-units', (e: Event) => {
-        const detail = (e as CustomEvent<{ visible?: boolean }>).detail;
-        const renderer = getGlobalUnitRenderer();
-        if (renderer) renderer.toggleShowcase(!!detail?.visible);
-    });
-
     window.addEventListener('toggle-city-texture', (e: Event) => {
         const detail = (e as CustomEvent<{ visible?: boolean }>).detail;
         if (app.cityManager) app.cityManager.toggleCityTextures(!!detail?.visible);

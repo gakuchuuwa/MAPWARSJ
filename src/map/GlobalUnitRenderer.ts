@@ -196,68 +196,9 @@ export class GlobalUnitRenderer {
 
         // Wait for preload to finish then start
         GlobalUnitRenderer.assetsPromise!.then(() => {
-            this.start();
-            // [DEBUG] Spawn Showcase Units if enabled
-            if (GameConfig.SYSTEM.DEBUG_SHOWCASE_UNITS) {
-                this.spawnShowcaseUnits();
-            }
-        });
-
-        // [NEW] Listen for UI toggle events
-        window.addEventListener('toggle-showcase-units', (e: any) => {
-            this.toggleShowcase(e.detail?.visible ?? false);
-        });
-        window.addEventListener('toggle-showcase-battle', (e: any) => {
-            this.toggleShowcaseBattle(e.detail?.attacking ?? false);
-        });
+            this.start();        });
 
         gameLog('startup', '🎨 GlobalUnitRenderer initialized');
-    }
-
-    private spawnShowcaseUnits(): void {
-        gameLog('editorDebug', '🧪 [DEBUG] Spawning Showcase Units (Event Types)...');
-
-        // [2026-05-30 修复] 旧聚合势力 id 已删，缺 factionId 时用 panjun
-        // 换用项目里仍存在的势力 ID
-        const showcaseTypes: { legionType: LegionType, factionId: string, label: string }[] = [
-            { legionType: 'mixed',    factionId: 'tang',  label: '3×3 步骑骨架（示例）' },
-            { legionType: 'cavalry',  factionId: 'menggu_d', label: '纯骑三角骨架（示例）' },
-        ];
-
-        // Grid Start (Near Luoyang)
-        const startLat = 34.62;
-        const startLng = 112.45;
-        const gapLat = 0.60;
-
-        showcaseTypes.forEach((entry, index) => {
-            const lat = startLat - (index * gapLat);
-            const lng = startLng;
-            const id = `showcase_${entry.factionId}_${entry.legionType}_${index}`;
-            const fixedPos = { lat, lng };
-
-            const unit: IAnimatedUnit = {
-                id: id,
-                name: entry.label,
-                getTroops: () => 60000,
-                getPosition: () => fixedPos,
-                isDestroyed: false,
-                isAttacking: false,
-                isMoving: false,
-                currentBattleType: null,
-                targetPos: null,
-                lastPosition: fixedPos,
-                type: 'legion',
-                legionType: entry.legionType,
-                factionId: entry.factionId,
-                lastDirection: Math.floor(Math.random() * 8),
-                visible: false, // Default OFF
-            };
-
-            this.register(unit);
-            gameLog('editorDebug', `🧪 [DEBUG] Registered: ${id} (${entry.label})`);
-        });
-
-        gameLog('editorDebug', `✅ [DEBUG] Total showcase units: ${showcaseTypes.length}`);
     }
 
     private createCanvas(): HTMLCanvasElement {
@@ -357,63 +298,6 @@ export class GlobalUnitRenderer {
 
     public stop(): void {
         this.isRunning = false;
-    }
-
-    // [NEW] Toggle Showcase Units Visibility
-    public toggleShowcase(visible: boolean): void {
-        console.log(`🧪 [GlobalUnitRenderer] Toggling showcase units: ${visible}`);
-        let count = 0;
-        this.units.forEach(unit => {
-            if (unit.id && unit.id.startsWith('showcase_')) {
-                (unit as any).visible = visible;
-                count++;
-            }
-        });
-        console.log(`   - Updated ${count} units`);
-        this.needsSort = true; // Force redraw
-        this.mapNeedsRedraw = true;
-    }
-
-    // [NEW] Toggle Showcase Units Battle State (for testing animations)
-    public toggleShowcaseBattle(attacking: boolean): void {
-        console.log(`⚔️ [GlobalUnitRenderer] Toggling showcase battle: ${attacking}`);
-        let count = 0;
-        let directionIndex = 0;
-
-        // 8方向向量 (用于计算目标位置)
-        const dirVectors = [
-            { lat: -0.3, lng: 0 },     // 0: S
-            { lat: -0.2, lng: 0.2 },   // 1: SE
-            { lat: 0, lng: 0.3 },      // 2: E
-            { lat: 0.2, lng: 0.2 },    // 3: NE
-            { lat: 0.3, lng: 0 },      // 4: N
-            { lat: 0.2, lng: -0.2 },   // 5: NW
-            { lat: 0, lng: -0.3 },     // 6: W
-            { lat: -0.2, lng: -0.2 },  // 7: SW
-        ];
-
-        this.units.forEach(unit => {
-            if (unit.id && unit.id.startsWith('showcase_')) {
-                unit.isAttacking = attacking;
-                unit.currentBattleType = attacking ? 'field' : null;
-
-                if (attacking) {
-                    const pos = unit.getPosition();
-                    // 每个单位使用不同朝向 (随机8个方向)
-                    const dir = Math.floor(Math.random() * 8);
-                    const vec = dirVectors[dir];
-                    unit.targetPos = { lat: pos.lat + vec.lat, lng: pos.lng + vec.lng };
-                    unit.lastDirection = dir;
-                    directionIndex++;
-                } else {
-                    unit.targetPos = null;
-                    unit.lastDirection = Math.floor(Math.random() * 8); // Randomize direction when idle
-                }
-                count++;
-            }
-        });
-        console.log(`   - Updated ${count} units to ${attacking ? 'ATTACKING (8 directions)' : 'IDLE'}`);
-        this.needsSort = true;
     }
 
     public setShowLabels(visible: boolean): void {
