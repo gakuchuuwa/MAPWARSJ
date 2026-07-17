@@ -607,9 +607,9 @@ export class GlobalUnitRenderer {
                             const angle = (unit.lastDirection + 1) * Math.PI / 4;
                             const cos = Math.cos(angle);
                             const sin = Math.sin(angle);
-                            // 船间偏移（经纬度 ≈ 屏幕像素 / 缩放因子，约 0.003° ≈ 1 船距）
-                            const rOff = 0.004;
-                            const cOff = 0.006;
+                            // 船间偏移（经纬度，加大可见分离）
+                            const rOff = 0.015;
+                            const cOff = 0.022;
                             const offsets = [
                                 { r: 0, c: 0 },      // 大船
                                 { r: 1, c: -1.5 },   // 前左
@@ -617,6 +617,7 @@ export class GlobalUnitRenderer {
                                 { r: -1, c: -1.5 },  // 后左
                                 { r: -1, c: 1.5 },   // 后右
                             ];
+                            console.log(`🚢 Naval volley: ${offsets.length} ships, dir=${unit.lastDirection}, isOnSea=${unit.isOnSea}, forceNaval=${unit.forceNavalVisual}`);
                             for (const o of offsets) {
                                 const ox = o.r * rOff;
                                 const oy = o.c * cOff;
@@ -624,7 +625,7 @@ export class GlobalUnitRenderer {
                                     baseStart.lat + (ox * cos - oy * sin),
                                     baseStart.lng + (ox * sin + oy * cos),
                                 );
-                                this.projectileSystem.spawnVolley(shipStart, baseEnd);
+                                this.projectileSystem.spawnVolley(shipStart, baseEnd, { count: 10, spreadFactor: 0.04 });
                             }
                         } else {
                             this.projectileSystem.spawnVolley(baseStart, baseEnd);
