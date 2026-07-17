@@ -178,7 +178,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/xianqin/shang_fuhao.png": {
-            "scale": 0.99,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -23
         },
@@ -353,7 +353,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -2
         },
         "/assets/xianqin/zhou_jifa.png": {
-            "scale": 1.21,
+            "scale": 1.2,
             "offsetX": 0,
             "offsetY": -5
         },
@@ -673,7 +673,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/xianqin/ouyue_zouyao.png": {
-            "scale": 0.95,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": 6
         },
@@ -708,7 +708,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/xianqin/zhao_lianpo.png": {
-            "scale": 0.96,
+            "scale": 0.95,
             "offsetX": 8,
             "offsetY": 5
         },
@@ -828,7 +828,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/xianqin/qi_simarangju.png": {
-            "scale": 1.08,
+            "scale": 1.05,
             "offsetX": 4,
             "offsetY": 5
         },
@@ -3478,9 +3478,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 30
         },
         "/assets/xianqin/wei_wuqi.png": {
-            "scale": 1.25,
+            "scale": 1.27,
             "offsetX": 0,
-            "offsetY": 18
+            "offsetY": 24
         },
         "/assets/HEXI/__闲置__HEXI_07.png": {
             "scale": 1.01,
@@ -3518,7 +3518,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -26
         },
         "/assets/xianqin/mi_chu_xiongl.png": {
-            "scale": 0.96,
+            "scale": 0.9,
             "offsetX": 15,
             "offsetY": -13
         },
