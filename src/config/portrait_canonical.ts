@@ -1,11 +1,12 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/17 23:06:47（共 231 条）
+ * 生成时间：2026/7/18 04:09:57（共 229 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
     "/assets/LINGNAN/__闲置__LINGNAN_24.png": "/assets/BASHU/ba_bamanzi.png",
+    "/assets/BASHU/ming_zheng_zhengchenggong.png": "/assets/BASHU/boren_ada.png",
     "/assets/chongfu/__闲置__LINGNAN_13.png": "/assets/BASHU/boren_ada.png",
     "/assets/LINGNAN/__闲置__LINGNAN_31.png": "/assets/BASHU/chenghan_lite.png",
     "/assets/LINGNAN/jingjiang_qushisi.png": "/assets/BASHU/cong_puhu.png",
@@ -46,8 +47,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__闲置__LINGNAN_27.png": "/assets/BASHU/zuo_d_wufu.png",
     "/assets/chongfu/__闲置__NORTH_04.png": "/assets/BASHU/__闲置__BASHU_03.png",
     "/assets/LINGNAN/guangxin_shixie.png": "/assets/BASHU/__闲置__BASHU_04.png",
-    "/assets/LINGNAN/shixing_houandou.png": "/assets/BASHU/__闲置__BASHU_05.png",
-    "/assets/xianqin/wu_sunwu.png": "/assets/BASHU/__闲置__BASHU_05.png",
     "/assets/LINGNAN/kong_d_kongrong.png": "/assets/CENTRAL/kong_d_kongrong.png",
     "/assets/LINGNAN/ranwei_d_ranmin.png": "/assets/CENTRAL/ranwei_d_ranmin.png",
     "/assets/JIANGNAN/wenzhou_fangguozhen.png": "/assets/CENTRAL/ruzhou_sunjian.png",
@@ -137,8 +136,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/chongfu/__闲置__xianqin_20.png": "/assets/LINGNAN/_闲置 (4).png",
     "/assets/xianqin/liguo_zhaoshe.png": "/assets/LINGNAN/_闲置 (4).png",
     "/assets/daming/qi_d_qijiguang.png": "/assets/daming/1f2009c0-955d-436a-9f93-d7e736239d9b.png",
-    "/assets/DIANQIAN/nanzhao_geluofeng.png": "/assets/DIANQIAN/20e2a9c2-62bb-4bae-b424-0f6a6bec4105.png",
-    "/assets/DIANQIAN/dian_duansiping.png": "/assets/DIANQIAN/30af1504-6d64-4b14-90e6-cf3ef0f41365.png",
     "/assets/DIANQIAN/paiwan_alugu.png": "/assets/DIANQIAN/ahaomu_laqite.png",
     "/assets/DIANQIAN/dongxu_mangruiti.png": "/assets/DIANQIAN/__闲置__DIANQIAN_16.png",
     "/assets/DIANQIAN/pagan_anultuo.png": "/assets/DIANQIAN/konbaung_yongjiya.png",
@@ -168,12 +165,15 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/monong_anong.png": "/assets/LINGNAN/lancang_faang.png",
     "/assets/LINGNAN/leizhou_limao.png": "/assets/LINGNAN/_闲置 (3).png",
     "/assets/LINGNAN/ryukyu_shangbazhi.png": "/assets/LINGNAN/_闲置 (3).png",
-    "/assets/LINGNAN/liren_funanshe.png": "/assets/LINGNAN/_闲置 (2).png",    "/assets/LINGNAN/luodian_shexiangfuren.png": "/assets/LINGNAN/__闲置__LINGNAN_32.png",
+    "/assets/LINGNAN/liren_funanshe.png": "/assets/LINGNAN/_闲置 (2).png",
+    "/assets/xianqin/__闲置__xianqin_25.png": "/assets/LINGNAN/_闲置 (2).png",
+    "/assets/LINGNAN/luodian_shexiangfuren.png": "/assets/LINGNAN/__闲置__LINGNAN_32.png",
     "/assets/xianqin/linhu_mafang.png": "/assets/LINGNAN/miao_qing_yangwanzhe.png",
     "/assets/xianqin/__闲置__yingqin_11.png": "/assets/LINGNAN/minyue_wuzhu.png",
     "/assets/LINGNAN/yue_goujian.png": "/assets/LINGNAN/qian_songjingyang.png",
     "/assets/xianqin/yue_goujian.png": "/assets/LINGNAN/qian_songjingyang.png",
     "/assets/xianqin/yan_leyi.png": "/assets/LINGNAN/shaozhou_zhangzhensun.png",
+    "/assets/xianqin/wu_sunwu.png": "/assets/LINGNAN/shixing_houandou.png",
     "/assets/xianqin/chunshen_huangxie.png": "/assets/LINGNAN/xinjiang_maji.png",
     "/assets/zhaosong/kejia_wentianxiang.png": "/assets/LINGNAN/__闲置__LINGNAN_23.png",
     "/assets/zhaosong/shenshi_wentianxiang.png": "/assets/LINGNAN/__闲置__LINGNAN_23.png",

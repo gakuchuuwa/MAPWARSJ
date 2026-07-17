@@ -206,7 +206,9 @@ export default defineConfig({
                     req.on('end', () => {
                         try {
                             fs.writeFileSync(path.resolve(__dirname, 'scratch/boot_timing_latest.json'), body, 'utf-8');
-                            console.log('[BootTiming] 已记录本次启动耗时 → scratch/boot_timing_latest.json');
+                            // [2026-07-17] 同时追加一行到 jsonl：多标签页各自的账单都留痕，便于分清真实 Chrome vs 预览
+                            fs.appendFileSync(path.resolve(__dirname, 'scratch/boot_timing_log.jsonl'), body + '\n', 'utf-8');
+                            console.log('[BootTiming] 已记录本次启动耗时 → scratch/boot_timing_latest.json (+log.jsonl)');
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
                         } catch (err: any) {
