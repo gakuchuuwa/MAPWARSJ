@@ -137,13 +137,9 @@ export class BattleField implements IOpeningPulseSink {
     private momentumValue: number = 0;
     private momentumTarget: number = 0;
     private momentumTimer: number = 0;
-    /** 威慑系统：强方战损减免 0~0.8（保命），与战斗节奏时长系数（碾压短/巅峰长） */
-    private fearLossReduction: number = 0;
-    private fearDurationMult: number = 1;
-
-    // ── 战损系（Step2）：强方战损减免，开战锁死 + 跟随强弱翻转重算 ──
-    //  值随「谁是强方」在 recomputeStrongerCasualtyReduction 里更新（挂在威慑重算链，
-    //  与 fearLossReduction 同步），穷寇勿迫另在 update 里按弱方跌破 20% 锁存触发。
+    // ── 战损系：强方战损减免，开战锁死 + 跟随强弱翻转重算 ──
+    //  值随「谁是强方」在 recomputeStrongerCasualtyReduction 里更新，
+    //  穷寇勿迫另在 update 里按弱方跌破 20% 锁存触发。
     private strongerCasualtyReduction: number = 0;
     /** 穷寇勿迫：弱方已跌破 20% 初始并触发过一次减损重算（锁存防抖，翻转时清） */
     private poorBanditLatched: boolean = false;
@@ -212,8 +208,7 @@ export class BattleField implements IOpeningPulseSink {
         // [NEW] Calculate Duration immediately
         this.calculateTargetDuration();
         // 开局脉冲按本场时长比例后移：须在 pickPredictedSides（内部同步 emit 开局技能 UI）之前注入。
-        // 注入「估算最终时长」= 基础 × 节奏系数（computeFearDurationMult 与强弱判定无关，此刻即可算；
-        // 与真值仅差开局加兵技的微小兵力漂移）——脉冲延迟与战损引爆点按同一把尺对齐（第一幕末 ≈40%）。
+        // 注入估算最终时长供开局技能脉冲对齐（第一幕末 ≈40%）。
         // 注入与发射同 tick 同步完成，多场战斗并发也不会互相污染。
         setBattleTargetDurationForSkillUi(this.estimateSkillUiTargetDuration());
         // 三势适性：须在 pickPredictedSides 之前——先按兵力比给带将单位选局技，让开局脉冲/战力/卡片都用局技(否则局技未设,三处不一致且战力用招牌)
@@ -222,8 +217,8 @@ export class BattleField implements IOpeningPulseSink {
         this.attackerCommander = pickSideSkillGeneralUnit(attackerUnits);
         this.defenderCommander = pickSideSkillGeneralUnit(defenderUnits);
         this.pickPredictedSides();
-        // 威慑系统：定强弱后算战损减免 + 节奏时长系数
-        this.applyIntimidationModifiers();
+        // 定强弱后重算战损减免
+        this.recomputeStrongerCasualtyReduction();
         this.targetDuration = this.resolveFinalTargetDuration();
         this.reconcileSiegeGarrisonBoostWithDefenders();
         
@@ -248,20 +243,20 @@ export class BattleField implements IOpeningPulseSink {
             : GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
     }
 
-    /** 开局脉冲用：双将才乘威慑节奏系数，否则固定 9 秒 */
+    /** 开局脉冲用：双将按基础时长、否则固定 9 秒 */
     private estimateSkillUiTargetDuration(): number {
         if (!this.bothSidesHaveGeneral()) {
             return GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
         }
-        return this.clampDuration(this.targetDuration * this.computeFearDurationMult());
+        return this.clampDuration(this.targetDuration);
     }
 
-    /** 定强弱后：双将 × 威慑系数并钳 30–60；否则固定 9 秒 */
+    /** 定强弱后：双将按基础时长并钳 30–60；否则固定 9 秒 */
     private resolveFinalTargetDuration(): number {
         if (!this.bothSidesHaveGeneral()) {
             return GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
         }
-        return this.clampDuration(this.targetDuration * this.fearDurationMult);
+        return this.clampDuration(this.targetDuration);
     }
 
     private clampDuration(seconds: number): number {
@@ -304,83 +299,14 @@ export class BattleField implements IOpeningPulseSink {
             * Math.min(1, lerpSpeed * deltaTime);
     }
 
-    /** 单位威慑值（0~4）= 将领分(名将2/普将1/无0) + 精锐分(T0~T4 = 2/1.5/1/0.5/0.25，无0) */
-    private unitIntimidation(unit: IBattleUnit): number {
-        const genTier = getGeneralProfile(unit.generalId)?.tier;
-        const gen = genTier === 'famous' ? 2 : genTier === 'ordinary' ? 1 : 0;
-        const eliteTier = getUnitEliteTier(unit);
-        const elite = eliteTier === null ? 0 : [2, 1.5, 1, 0.5, 0.25][eliteTier];
-        return gen + elite;
-    }
 
-    /** 一侧威慑 = 存活单位最强威慑（最猛的将/精锐定调） */
-    private sideIntimidation(group: FactionGroup): number {
-        let max = 0;
-        for (const bu of group.units) {
-            if (bu.isDefeated || bu.unit.troops <= 0) continue;
-            const v = this.unitIntimidation(bu.unit);
-            if (v > max) max = v;
-        }
-        return max;
-    }
 
-    /**
-     * 节奏系数（用户 2026-07 定）：兵力悬殊度为主闸门，威慑精彩度在「接近」前提下决定拉多长。
-     *   troopParity = 弱侧兵力 / 强侧兵力（0=悬殊、1=兵力相当）。
-     *   · 兵力悬殊（parity 小）→ excitement 被压低 → 压短：碾压就是碾压，不管有无名将。
-     *   · 兵力接近（parity≈1）→ 至少中等拉锯；双方越强且越接近（skillExcitement 高）→ 越长。
-     *   规模由基础时长（∝总兵力）负责，此系数只管「悬殊度 + 精彩度」，分工不重叠。
-     * 刻意做成与强弱判定无关（min/|gap| 对称）——构造期在 pickPredictedSides 之前
-     * 就能算出估算最终时长，供开局技能脉冲按「最终时长」对齐第二幕（而非基础时长）。
-     */
-    private computeFearDurationMult(): number {
-        const MAX = 4;
-        const attIntim = this.sideIntimidation(this.attackerGroup);
-        const defIntim = this.sideIntimidation(this.defenderGroup);
 
-        const hiTroops = Math.max(this.attackerGroup.initialTotalTroops, this.defenderGroup.initialTotalTroops);
-        const loTroops = Math.min(this.attackerGroup.initialTotalTroops, this.defenderGroup.initialTotalTroops);
-        const troopParity = hiTroops > 0 ? loTroops / hiTroops : 1;
-
-        const minIntim = Math.min(attIntim, defIntim);
-        const gap = Math.abs(attIntim - defIntim);
-        const skillExcitement = (minIntim / MAX) * (1 - gap / MAX); // 威慑精彩度 [0,1]
-
-        const excitement = troopParity * (0.5 + 0.5 * skillExcitement);
-        return 0.5 + (1.6 - 0.5) * excitement;
-    }
-
-    /**
-     * 威慑系统：按双方将领+精锐质量差，
-     *  ① 减免强方战损（保命核心）；② 调节战斗节奏（兵力悬殊/质量碾压→压短，势均力敌→拉长）。
-     * 不改胜负判定。事件战斗（presetResult）整套跳过。
-     */
-    private applyIntimidationModifiers(): void {
-        if (this.presetResult) {
-            this.fearLossReduction = 0;
-            this.fearDurationMult = 1;
-            this.strongerCasualtyReduction = 0;
-            return;
-        }
-        const MAX = 4;
-        const strongerIntim = this.sideIntimidation(this.predictedStrongerGroup);
-        const weakerIntim = this.sideIntimidation(this.predictedWeakerGroup);
-
-        // 保命：强方威慑越压制弱方，战损减免越多（最高 80%）
-        const adv = Math.max(0, Math.min(1, (strongerIntim - weakerIntim) / MAX));
-        this.fearLossReduction = 0.8 * adv;
-
-        this.fearDurationMult = this.computeFearDurationMult();
-
-        // 战损系（Step2）：强方减损跟随强弱重算；穷寇锁存清零，交 update 重新监控
-        this.poorBanditLatched = false;
-        this.recomputeStrongerCasualtyReduction();
-    }
 
     /**
      * 重算强方战损减免（战损系 win_casualty_reduction / elite_casualty_reduction）。
-     * 用实时兵力求值以支持穷寇勿迫（弱方跌破 20% 初始）；由威慑重算链 + update 锁存触发，
-     * 与 fearLossReduction 叠乘作用于 update 的 strongerLossPercent。
+     * 用实时兵力求值以支持穷寇勿迫（弱方跌破 20% 初始）；由强弱重算 + update 锁存触发，
+     * 与 strongerCasualtyReduction 叠乘作用于 update 的 strongerLossPercent。
      */
     private recomputeStrongerCasualtyReduction(): void {
         if (this.presetResult) { this.strongerCasualtyReduction = 0; return; }
@@ -651,8 +577,8 @@ export class BattleField implements IOpeningPulseSink {
 
         const prevStronger = this.predictedStrongerGroup.factionId;
         this.applyPredictedSidesFromRoll(withSkills.attRoll, withSkills.defRoll);
-        // 强弱可能翻转，威慑减免/节奏需跟随重算
-        this.applyIntimidationModifiers();
+        // 强弱可能翻转，战损减免需跟随重算
+        this.recomputeStrongerCasualtyReduction();
 
         if (this.predictedStrongerGroup.factionId !== prevStronger) {
             gameLog(
@@ -780,9 +706,9 @@ export class BattleField implements IOpeningPulseSink {
             this.recomputeStrongerCasualtyReduction();
         }
 
-        // 强方存活地板：1:1 留 50%，10:1 留 95%；威慑 + 战损系减损再抬高存活（保命核心）
+        // 强方存活地板：1:1 留 50%，10:1 留 95%；战损系减损再抬高存活
         const strongerLossPercent =
-            Math.max(0.05, 0.5 / ratio) * (1 - this.fearLossReduction) * (1 - this.strongerCasualtyReduction);
+            Math.max(0.05, 0.5 / ratio) * (1 - this.strongerCasualtyReduction);
         const strongerFloor = strongerInitial * (1 - strongerLossPercent);
 
         // 实时收敛速率：弱方→0，强方→存活地板
@@ -1253,8 +1179,8 @@ export class BattleField implements IOpeningPulseSink {
             this.calculateTargetDuration();
         }
         this.refreshPredictedSidesFromTotals();
-        // refreshPredictedSidesFromTotals 已重算 fearDurationMult，重新套用节奏系数
-        // 有将地板：威慑系数不得把时长压破 WITH_GENERAL（否则开战语音仍不够）
+        // refreshPredictedSidesFromTotals 后重新套用目标时长
+        // 有将地板：不得把时长压破 WITH_GENERAL（否则开战语音仍不够）
         if (!this.customDuration) {
             this.targetDuration = this.resolveFinalTargetDuration();
         }
@@ -1359,7 +1285,8 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     /**
-     * 援军合兵一处：waveIndex≥1 时返回编入时掷定的 luck [0.9, 1.1]；主力返回 null。
+     * 援军合兵一处：waveIndex≥1 时返回编入时掷定的 luck [0.8, 1.2]；主力返回 null。
+     * （与 GameConfig.COMBAT.LUCK_MULTIPLIER_RANGE 保持一致）
      */
     public getReinforcementJoinLuck(unitId: string): number | null {
         if (this.getUnitWaveIndex(unitId) < 1) return null;

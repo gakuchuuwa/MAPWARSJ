@@ -124,7 +124,7 @@ export class GameConfig {
         THRESHOLD_LARGE: 100000,
         /**
          * 战后恢复（2026-06 统一）：胜方恢复本场战损的 30%（野战/攻城/关隘同率）。
-         * 古代战损多为溃逃与伤兵，致死率相对低；守城方胜利同样适用。
+         * 注：本作机制为败方全灭（部队解散/彻底溃败），此 30% 的伤兵与收编恢复仅对胜方生效。
          */
         POST_BATTLE_RECOVERY_RATE: 0.3,
         /** @deprecated 推演/旧代码兼容；一律读 POST_BATTLE_RECOVERY_RATE */
