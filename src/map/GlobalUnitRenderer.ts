@@ -638,7 +638,7 @@ export class GlobalUnitRenderer {
                                 type: 'fire',
                             });
                         } else {
-                            this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 10, spreadFactor: 0.03 });
+                            this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 6, spreadFactor: 0.025 });
                         }
 
                         // 攻城方额外发射石弹（投石机）

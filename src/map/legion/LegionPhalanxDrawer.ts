@@ -1066,11 +1066,11 @@ export class LegionPhalanxDrawer {
             const spawnElapsed = tick - spawnStart;
             let gearAlpha = Math.min(1, spawnElapsed / LegionPhalanxDrawer.GEAR_SPAWN_DURATION);
 
-            // 胜利渐隐
+            // 胜利渐隐（与渐显取较暗值：速胜时器械未显全，若直接覆盖会先跳亮再淡出）
             const fadeOutStart = LegionPhalanxDrawer.gearFadeOutStarts.get(unitId);
             if (fadeOutStart !== undefined) {
                 const fadeElapsed = tick - fadeOutStart;
-                gearAlpha = Math.max(0, 1 - fadeElapsed / LegionPhalanxDrawer.GEAR_FADE_OUT_DURATION);
+                gearAlpha = Math.min(gearAlpha, Math.max(0, 1 - fadeElapsed / LegionPhalanxDrawer.GEAR_FADE_OUT_DURATION));
             }
 
             // 随机阵亡阈值，首次设置
@@ -1104,12 +1104,15 @@ export class LegionPhalanxDrawer {
                 }
                 const elapsed = tick - deathStart;
                 frameIndex = Math.min(Math.floor(elapsed / 150), frameCount - 1);
-            } else if (state === 'ATTACK') {
+            } else if (state === 'ATTACK' || fadeOutStart !== undefined) {
+                // [修复 2026-07-18] 胜利渐隐期 state 已非 ATTACK，原先掉进末尾 return 导致器械瞬间消失
+                // （4 秒渐隐计时空转、无物可画）。渐隐期继续画攻击贴图，帧定格在战斗结束瞬间。
                 sprite = cache.attackSprites[dirIdx] ?? null;
                 if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return;
                 frameCount = Math.floor(sprite.width / sprite.height);
                 const speed = def.frameSpeed ?? 150;
-                frameIndex = (Math.floor((tick / speed)) + (def.frameStagger ?? 0)) % frameCount;
+                const animTick = fadeOutStart !== undefined ? fadeOutStart : tick;
+                frameIndex = (Math.floor((animTick / speed)) + (def.frameStagger ?? 0)) % frameCount;
             } else {
                 return;
             }
