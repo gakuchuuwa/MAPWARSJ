@@ -218,7 +218,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'wuwu_d': '无为',
     'taizhou': '泰',
 'shizhao_d': '邢',
-    'ranwei_d': '冉魏',
+'ranwei_d': '冉魏',
 'zu_d': '严',
 
     'aisin_d': '爱新', // 建女真皇族；≠大清(manzhou_d)
