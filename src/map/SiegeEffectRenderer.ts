@@ -26,7 +26,7 @@ export class SiegeEffectRenderer {
     private static readonly FADE_DURATION_MS = 800;
     private static readonly FADE_STEPS = 20;
     private static readonly VOLLEY_INTERVAL_MS = 1100;
-    private static readonly ARROWS_PER_VOLLEY = 4;
+    private static readonly ARROWS_PER_VOLLEY = 5;
     private static readonly WALL_INSET = 0.014;
     private static readonly LAUNCH_HEIGHT = 0.032;
 

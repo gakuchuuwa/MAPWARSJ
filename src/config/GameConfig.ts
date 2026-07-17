@@ -99,7 +99,7 @@ export class GameConfig {
         /** 1 年 = 4 季 = 60 游戏秒（1x 下 = 现实 60 秒） */
         YEAR_DURATION: 60,
         /** 战后驻留（游戏秒） */
-        POST_BATTLE_REST: 3,
+        POST_BATTLE_REST: 5,
         /** 顶部竹简时间轴：前246年东进十城起 → 公元1912年 */
         TIMELINE_START_YEAR: -246,
         TIMELINE_END_YEAR: 1912
