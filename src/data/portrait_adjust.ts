@@ -4852,11 +4852,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -47
         },
-        "/assets/xianqin/jin_xianzhen.png": {
-            "scale": 1.21,
-            "offsetX": 14,
-            "offsetY": -3
-        },
         "/assets/litang/__闲置__litang_02.png": {
             "scale": 1.29,
             "offsetX": 0,
@@ -5836,6 +5831,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -37
+        },
+        "/assets/xianqin/3ec87a35-56eb-44f4-94fc-fc03ae6c2cf7.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/xianqin/cb100820-155f-4f48-8c7f-425727ed9a39.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -40
+        },
+        "/assets/xianqin/__闲置__xianqin_25.png": {
+            "scale": 1.21,
+            "offsetX": 14,
+            "offsetY": -3
+        },
+        "/assets/xianqin/jin_xianzhen.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -40
         }
     },
     "folderGuides": {
