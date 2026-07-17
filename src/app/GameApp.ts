@@ -182,9 +182,10 @@ export class GameApp {
             await CityAssetManager.seedBootPlaceholderFlags(activeFactions);
 
             // 军团贴图延后到首帧之后，避免与旗号 chromaKey 抢主线程
-            void GlobalUnitRenderer.preloadAssets().catch((e) =>
-                console.warn('[GameApp] Unit asset preload failed', e)
-            );
+            const tUnitPreload = performance.now();
+            void GlobalUnitRenderer.preloadAssets()
+                .then(() => this.perfMonitor.noteAsyncWork('unitPreloadWall', performance.now() - tUnitPreload))
+                .catch((e) => console.warn('[GameApp] Unit asset preload failed', e));
             this.perfMonitor.markBootPhase('旗号占位');
 
             // 3. Initialize remaining Core Managers (Lightweight JS)
@@ -258,7 +259,12 @@ export class GameApp {
             await yieldToBrowser();
 
             // [PERF] 道路光栅化真正异步（首帧渲染完再执行，不阻塞据点首显）
-            setTimeout(() => roadRegistry.rasterizeRoadsDeferred(), 0);
+            setTimeout(() => {
+                // [诊断 2026-07-17] 道路光栅化是同步大循环，量化它对启动期主线程的占用
+                const tRaster = performance.now();
+                roadRegistry.rasterizeRoadsDeferred();
+                this.perfMonitor.noteAsyncWork('roadRasterize', performance.now() - tRaster);
+            }, 0);
 
             // [PERF] Report city count to PerformanceMonitor
             this.perfMonitor.reportCount('cities', CITIES.length);

@@ -163,9 +163,6 @@ export class CombatUI {
     private leftSideBarFill!: HTMLDivElement;
     private rightSideBarFill!: HTMLDivElement;
     private battleTitle!: HTMLDivElement;
-    private oddsRow!: HTMLDivElement;
-    /** 开战即定的攻方胜率（闭式结算 → 开战时算一次缓存，全程不变） */
-    private cachedOddsAtt: number | null = null;
     private battleYear!: HTMLDivElement;
     private eventDescription!: HTMLDivElement;
     /** 侧栏展示用名称（不含兵力，由 updateStats 拼成「名称: 兵力」） */
@@ -539,20 +536,6 @@ export class CombatUI {
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.8)) drop-shadow(0 6px 12px rgba(0,0,0,0.6));
         `;
 
-        // 赔率行：开战即亮胜率（🔒 必胜 / 胜率 XX% : YY%），制造悬念
-        this.oddsRow = document.createElement('div');
-        this.oddsRow.style.cssText = `
-            font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(20)};
-            font-weight: 700;
-            letter-spacing: ${uiPx(2)};
-            text-align: center;
-            margin-bottom: ${uiPx(8)};
-            text-shadow: 0 2px 6px rgba(0,0,0,0.9);
-            white-space: nowrap;
-            display: none;
-        `;
-
         // 中央对峙条（攻橙 / 守蓝，参考稿主进度条）
         this.topInfoRow = document.createElement('div');
         this.topInfoRow.style.display = 'none';
@@ -723,7 +706,6 @@ export class CombatUI {
 
         this.centerPanel.appendChild(this.battleYear);
         this.centerPanel.appendChild(this.battleTitle);
-        this.centerPanel.appendChild(this.oddsRow);
         this.centerPanel.appendChild(this.skillsRow);
         this.centerPanel.appendChild(this.healthBarContainer);
         this.centerPanel.appendChild(this.sideStatsRow);
@@ -1752,7 +1734,6 @@ export class CombatUI {
         this.resetBattleOverlays();
         this.attackerFactionId = battle.attacker.factionId;
         this.defenderFactionId = battle.defender.factionId;
-        this.computeAndRenderOdds([battle.attacker], [battle.defender]);
         this.updateMultiplierBadges(battle.attacker, battle.defender);
         this.updateSkillBadges(battle.attacker, battle.defender);
         this.updateInfo(battle.attacker, battle.defender, '正在交战', '');
@@ -1784,7 +1765,6 @@ export class CombatUI {
         this.lastTimeScale = Math.max(0.1, timeScale);
         this.isVisible = true;
         this.refreshCorrectorDataOnBattleOpen();
-        this.computeAndRenderOdds(attackers, defenders);
 
         if (this.boundRegionalBattleField) {
             this.refreshRegionalSafetyDeadline();
@@ -3013,8 +2993,6 @@ export class CombatUI {
     public hide() {
         if (this.correctorOpen) this.closeCorrector();
         else this.closePortraitPicker();
-        this.cachedOddsAtt = null;
-        if (this.oddsRow) this.oddsRow.style.display = 'none';
         this.clearRegionalTimers();
         this.isVisible = false;
         this.currentBattle = null;
@@ -3160,79 +3138,6 @@ export class CombatUI {
         } else {
             this.eventDescription.style.display = 'none';
         }
-    }
-
-    // ============================================================
-    // 赔率（⚠️ 当前不显示：renderOdds 为 display:none 空操作，cachedOddsAtt 无人读取。
-    //   sideBasePower 缺少 ③势 ±30% 和 ④攻防 ±30% 两层乘区。若启用胜率显示须先补这两层。）
-    // ============================================================
-
-    /** 一侧开战底力（无运气）：Σ(兵力×文化×远征) × 名将技乘区 */
-    private sideBasePower(units: IBattleUnit[], side: 'attacker' | 'defender'): number {
-        let base = 0;
-        for (const u of units) {
-            const t = Math.max(0, u.troops ?? 0);
-            if (t <= 0) continue;
-            base += t
-                * getUnitCultureCombatMultiplier(u)
-                * getCampaignLegionCombatMultiplier(u);
-        }
-        // 名将技乘区（与 badge 同参数：锁定的指挥官 + 缓存兵力）
-        const terrain = this.getBattleTerrainForUi();
-        const bf = this.boundRegionalBattleField;
-        const cmd = side === 'attacker' ? bf?.getAttackerCommander() : bf?.getDefenderCommander();
-        const oppCmd = side === 'attacker' ? bf?.getDefenderCommander() : bf?.getAttackerCommander();
-        const cachedMyTroops = side === 'attacker' ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
-        const cachedOppTroops = side === 'attacker' ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
-        for (const u of units) {
-            if (canUnitUseGeneralSkills(u)) {
-                base *= getOpeningTacticalPowerMultiplier(
-                        units,
-                        this.getOpponentUnitsFor(side),
-                        side === 'attacker',
-                        { battleType: this.currentBattleType, terrain },
-                        cmd,
-                        oppCmd,
-                        cachedMyTroops,
-                        cachedOppTroops,
-                    );
-                break;
-            }
-        }
-        return base;
-    }
-
-    /**
-     * 攻方胜率 P(attBase·U1 ≥ defBase·U2)，U~Unif[LUCK_MIN,LUCK_MAX]。
-     * 底力比 ≥ 运气最大摆动(H/L=1.5) → 锁定 100%/0%；之间为平滑曲线（数值积分）。
-     */
-    private computeWinProbability(attBase: number, defBase: number): number {
-        if (attBase <= 0) return defBase <= 0 ? 0.5 : 0;
-        if (defBase <= 0) return 1;
-        const L = GameConfig.COMBAT.LUCK_MIN;
-        const H = GameConfig.COMBAT.LUCK_MAX;
-        const K = attBase / defBase;
-        const N = 400;
-        let acc = 0;
-        for (let i = 0; i < N; i++) {
-            const u1 = L + ((H - L) * (i + 0.5)) / N; // 攻方运气样本
-            const x = K * u1;                          // 守方运气需 ≤ x 攻方才胜
-            acc += Math.max(0, Math.min(1, (x - L) / (H - L)));
-        }
-        return acc / N;
-    }
-
-    /** 开战算一次胜率并渲染（之后兵力变动不重算，结果开战已定） */
-    private computeAndRenderOdds(attUnits: IBattleUnit[], defUnits: IBattleUnit[]): void {
-        const attBase = this.sideBasePower(attUnits, 'attacker');
-        const defBase = this.sideBasePower(defUnits, 'defender');
-        this.cachedOddsAtt = this.computeWinProbability(attBase, defBase);
-        this.renderOdds(this.cachedOddsAtt);
-    }
-
-    private renderOdds(winAtt: number): void {
-        this.oddsRow.style.display = 'none';
-        this.oddsRow.innerHTML = '';
     }
 
     private updateStats() {
