@@ -45,8 +45,8 @@ export class SiegeEffectRenderer {
     private static readonly SIEGE_CITY_VISUAL_ZOOM = 2.0;
     /** 火焰片散布半径（相对基准半径比例，<1 保证火落在城内） */
     private static readonly FIRE_SPREAD_RATIO = 0.55;
-    /** 火苗位于贴图下部：bounds 按片高×此比例上移，使火苗落在城内而不是烧到城下 */
-    private static readonly FIRE_ANCHOR_LIFT_RATIO = 0.5;
+    /** 火苗群在贴图中呈对角分布（贯穿整图）：bounds 上移片高×此比例，使火群中心大致对齐城内目标点 */
+    private static readonly FIRE_ANCHOR_LIFT_RATIO = 0.85;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -89,8 +89,9 @@ export class SiegeEffectRenderer {
         const windFlipped = Math.random() > 0.5;
 
         for (let i = 0; i < patchCount; i++) {
-            const ang = Math.random() * Math.PI * 2;
-            const rad = Math.sqrt(Math.random()) * SiegeEffectRenderer.FIRE_SPREAD_RATIO;
+            // 分层布点：方位角按片数均分 + 抖动，距离 0.3~1.0×散布——保证均匀，不挤成一团
+            const ang = (i / patchCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.8;
+            const rad = (0.3 + Math.sqrt(Math.random()) * 0.7) * SiegeEffectRenderer.FIRE_SPREAD_RATIO;
             const patch: FirePatch = {
                 overlay: null as unknown as L.ImageOverlay, // 下方立即创建
                 offsetLat: Math.sin(ang) * rad * base.halfHeight,
