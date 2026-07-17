@@ -735,8 +735,6 @@ function checkNameDuplicates(cityName: string, factionName: string, generalName:
             if (!exist || exist.length < 2) continue;
             if (newName === exist) {
                 warnings.push(`${label}"${newName}" 与已有${existLabel}"${exist}"(${row.name}) 完全同名`);
-            } else if (!exactOnly && (newName.includes(exist) || exist.includes(newName))) {
-                warnings.push(`${label}"${newName}" 与已有${existLabel}"${exist}"(${row.name}) 名字包含关系`);
             }
         }
     };
@@ -1007,13 +1005,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           </label>
           <h4 style="margin:10px 0 6px;font-size:13px;color:#c9a86c">攻方三槽 · 攻城</h4>
           <div class="form-row">
-            <label><span>攻·优势（碾压）</span>
+            <label><span>攻·优势（攻战/胜战）</span>
               <select name="atkAdvantageSkillId">
                 <option value="">不设</option>
                 ${slotOptions('advantage', row!.atkAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
               </select>
             </label>
-            <label><span>攻·均势（破局）</span>
+            <label><span>攻·均势（敌战/混战）</span>
               <select name="atkBalanceSkillId">
                 <option value="">不设</option>
                 ${slotOptions('balance', row!.atkBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
@@ -1021,7 +1019,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             </label>
           </div>
           <div class="form-row">
-            <label><span>攻·劣势（翻盘）</span>
+            <label><span>攻·劣势（并战/败战）</span>
               <select name="atkDisadvantageSkillId">
                 <option value="">不设</option>
                 ${slotOptions('disadvantage', row!.atkDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}
@@ -1038,13 +1036,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           </div>
           <h4 style="margin:10px 0 6px;font-size:13px;color:#c9a86c">守方三槽 · 守城</h4>
           <div class="form-row">
-            <label><span>守·优势（碾压）</span>
+            <label><span>守·优势（胜战/攻战）</span>
               <select name="defAdvantageSkillId">
                 <option value="">不设</option>
                 ${slotOptions('advantage', row!.defAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
               </select>
             </label>
-            <label><span>守·均势（破局）</span>
+            <label><span>守·均势（混战/敌战）</span>
               <select name="defBalanceSkillId">
                 <option value="">不设</option>
                 ${slotOptions('balance', row!.defBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
@@ -1052,7 +1050,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             </label>
           </div>
           <div class="form-row">
-            <label><span>守·劣势（翻盘）</span>
+            <label><span>守·劣势（败战/并战）</span>
               <select name="defDisadvantageSkillId">
                 <option value="">不设</option>
                 ${slotOptions('disadvantage', row!.defDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}

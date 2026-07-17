@@ -526,21 +526,8 @@ export class FactionEditor {
                 }
             }
 
-            // [2026-05-29] 包含关系软警告: 名字 A 是 B 的子串 (或反之), 长度都 ≥ 2
-            //   不阻止保存, 但提示人工审 (例: 克鲁伦河 vs 克鲁伦, 大明国 vs 大明)
-            //   仅对新建条目检查 (修改是 replace 模式, 不存在"误重")
+            // [2026-07-17] 删除包含关系软警告：只有严格相等才算重复，子串不算
             let similarWarn = '';
-            if (isNew) {
-                const findSimilar = (myName: string, pool: Array<{name: string}>) =>
-                    pool.find(p => p.name && p.name !== myName && p.name.length >= 2 && myName.length >= 2
-                        && (myName.includes(p.name) || p.name.includes(myName)));
-                const simCity = findSimilar(entry.cityName, CITIES as any[]);
-                const simFaction = findSimilar(entry.factionName, FACTIONS as any[]);
-                const bits: string[] = [];
-                if (simCity)    bits.push(`据点似 "${simCity.name}"`);
-                if (simFaction) bits.push(`势力似 "${simFaction.name}"`);
-                if (bits.length > 0) similarWarn = bits.join('<br>');
-            }
 
             // 冲突信息列
             let conflictHtml = '';

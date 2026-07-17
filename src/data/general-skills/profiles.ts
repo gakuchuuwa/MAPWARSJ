@@ -2392,7 +2392,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yanchuan_d_yuefei: { generalId: 'yanchuan_d_yuefei', tier: 'famous', tacticalSkillId: 'ts_092', advantageSkillId: 'ts_092', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_421', atkAdvantageSkillId: 'ts_092', atkBalanceSkillId: 'ts_420', atkDisadvantageSkillId: 'ts_777', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_582', defDisadvantageSkillId: 'ts_248', strategicSkillId: 'str_22', aptitude: 'create', attackStyle: 'attack' },
+    yanchuan_d_yuefei: { generalId: 'yanchuan_d_yuefei', tier: 'famous', tacticalSkillId: 'ts_092', advantageSkillId: 'ts_092', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_421', atkAdvantageSkillId: 'ts_092', atkBalanceSkillId: 'ts_420', atkDisadvantageSkillId: 'ts_318', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_582', defDisadvantageSkillId: 'ts_248', strategicSkillId: 'str_22', aptitude: 'create', attackStyle: 'attack' },
 
 
 

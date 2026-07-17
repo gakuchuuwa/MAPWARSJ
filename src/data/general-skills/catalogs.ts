@@ -129,7 +129,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     // ── 纵横类 ──
 
-    str_22: { id: 'str_22', grid: 'S㉒', displayName: '翦除羽翼', effect: 'sabotage_garrison', magnitude: 0.25, engineStatus: 'ready', category: 'diplomacy', note: '攻城前25%概率封杀守将/精（逆势）。原名釜底抽薪，因与李世民战术技撞名改之；magnitude=触发概率' },
+    str_22: { id: 'str_22', grid: 'S㉒', displayName: '翦除羽翼', effect: 'sabotage_garrison', magnitude: 0.10, engineStatus: 'ready', category: 'diplomacy', note: '攻城前10%概率封杀守将/精（逆势）。原名釜底抽薪，因与李世民战术技撞名改之；magnitude=触发概率' },
 
     str_23: { id: 'str_23', grid: 'S㉓', displayName: '调虎离山', effect: 'lure_tiger_leave_mountain', magnitude: 1, engineStatus: 'ready', category: 'diplomacy', note: '攻城前逼守将出征（均势）' },
 

@@ -3197,20 +3197,18 @@ function serverValidateEntities(): {
         }
     }
 
-    // 12. 据点名重复（完全同名 或 一方完整包含另一方）
+    // 12. 据点名重复（仅完全同名）
     for (let i = 0; i < data.cities.length; i++) {
         for (let j = i + 1; j < data.cities.length; j++) {
             const ci = data.cities[i], cj = data.cities[j];
             if (ci.name.length < 2 || cj.name.length < 2) continue;
             if (ci.name === cj.name) {
                 issues.push({ level: 'error', msg: `据点 "${ci.name}"(${ci.id}) 与 "${cj.name}"(${cj.id}) 完全同名`, factionId: ci.factionId });
-            } else if (ci.name.includes(cj.name) || cj.name.includes(ci.name)) {
-                issues.push({ level: 'warn', msg: `据点 "${ci.name}"(${ci.factionId}) 与 "${cj.name}"(${cj.factionId}) 名字包含关系`, factionId: ci.factionId });
             }
         }
     }
 
-    // 13. 精锐名重复（完全同名 或 一方完整包含另一方）
+    // 13. 精锐名重复（仅完全同名）
     const eliteEntries = Object.entries(data.elites) as [string, { name: string }][];
     for (let i = 0; i < eliteEntries.length; i++) {
         for (let j = i + 1; j < eliteEntries.length; j++) {
@@ -3218,21 +3216,17 @@ function serverValidateEntities(): {
             if (eA.name.length < 2 || eB.name.length < 2) continue;
             if (eA.name === eB.name) {
                 issues.push({ level: 'error', msg: `精锐 "${eA.name}"(${idA}) 与 "${eB.name}"(${idB}) 完全同名` });
-            } else if (eA.name.includes(eB.name) || eB.name.includes(eA.name)) {
-                issues.push({ level: 'warn', msg: `精锐 "${eA.name}"(${idA}) 与 "${eB.name}"(${idB}) 名字包含关系` });
             }
         }
     }
 
-    // 14. 势力名重复（势力名之间互相比较）
+    // 14. 势力名重复（仅完全同名）
     for (let i = 0; i < data.factions.length; i++) {
         for (let j = i + 1; j < data.factions.length; j++) {
             const fi = data.factions[i], fj = data.factions[j];
             if (fi.name.length < 2 || fj.name.length < 2) continue;
             if (fi.name === fj.name) {
                 issues.push({ level: 'error', msg: `势力 "${fi.name}"(${fi.id}) 与 "${fj.name}"(${fj.id}) 势力名完全相同`, factionId: fi.id });
-            } else if (fi.name.includes(fj.name) || fj.name.includes(fi.name)) {
-                issues.push({ level: 'warn', msg: `势力 "${fi.name}"(${fi.id}) 与 "${fj.name}"(${fj.id}) 势力名包含关系`, factionId: fi.id });
             }
         }
     }
