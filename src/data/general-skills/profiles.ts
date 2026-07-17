@@ -2875,7 +2875,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     pingnan_muying: { generalId: 'pingnan_muying', tier: 'famous', tacticalSkillId: 'ts_154', strategicSkillId: 'str_27', atkAdvantageSkillId: 'ts_523', atkBalanceSkillId: 'ts_485', atkDisadvantageSkillId: 'ts_334', defAdvantageSkillId: 'ts_335', defBalanceSkillId: 'ts_294', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },
 
     yuan_cj_d_lishuo: { generalId: 'yuan_cj_d_lishuo', tier: 'famous', tacticalSkillId: 'ts_289', strategicSkillId: 'str_16', atkAdvantageSkillId: 'ts_260', atkBalanceSkillId: 'ts_181', atkDisadvantageSkillId: 'ts_759', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_384', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage', attackStyle: 'defense' },
-    cangsong_machao: { generalId: 'cangsong_machao', tier: 'ordinary', tacticalSkillId: 'ts_307', atkAdvantageSkillId: 'ts_307', atkBalanceSkillId: 'ts_408', atkDisadvantageSkillId: 'ts_273', defAdvantageSkillId: 'ts_214', defBalanceSkillId: 'ts_200', defDisadvantageSkillId: 'ts_699', aptitude: 'create', attackStyle: 'attack' },
+    cangsong_machao: { generalId: 'cangsong_machao', tier: 'ordinary', tacticalSkillId: 'ts_124', atkAdvantageSkillId: 'ts_124', atkBalanceSkillId: 'ts_408', atkDisadvantageSkillId: 'ts_273', defAdvantageSkillId: 'ts_214', defBalanceSkillId: 'ts_200', defDisadvantageSkillId: 'ts_699', aptitude: 'create', attackStyle: 'attack' },
 
 
 

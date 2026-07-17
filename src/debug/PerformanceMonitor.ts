@@ -181,6 +181,20 @@ export class PerformanceMonitor {
     public finishBoot(): void {
         this.markBootPhase('启动完成');
         this.bootDone = true;
+        // [2026-07-17] 启动各阶段耗时打进控制台：主人反馈启动要数分钟，供定位慢在哪一阶段
+        const totalMs = this.bootPhases.reduce((sum, p) => sum + p.ms, 0);
+        const detail = this.bootPhases
+            .map((p) => `${p.name} ${(p.ms / 1000).toFixed(1)}s`)
+            .join(' | ');
+        console.log(`[Boot] 启动总耗时 ${(totalMs / 1000).toFixed(1)}s ▶ ${detail}`);
+        // DEV 下同时回传 dev server 存档（scratch/boot_timing_latest.json），便于服务端排查慢启动
+        if (import.meta.env.DEV) {
+            void fetch('/api/boot-timing', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ at: new Date().toISOString(), totalMs, phases: this.bootPhases }),
+            }).catch(() => { /* 打点尽力而为，不影响游戏 */ });
+        }
     }
 
     /** 异步/独立 rAF 工作（领土重绘、季末募兵等） */

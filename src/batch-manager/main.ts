@@ -786,6 +786,11 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     const slotOptions = (slot: string, selected?: string, aptitude?: string) => {
         const allowed = SLOT_SIX_CLASS[slot] ?? [];
         const pool = (entityData?.tacticalSkills ?? []).filter(s => s.sixClass && allowed.includes(s.sixClass));
+        pool.sort((a, b) => {
+            const na = parseInt(a.id.replace('ts_', ''), 10);
+            const nb = parseInt(b.id.replace('ts_', ''), 10);
+            return na - nb;
+        });
         let html = pool.map(s =>
             `<option value="${s.id}" ${s.id === (selected ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
         ).join('');
