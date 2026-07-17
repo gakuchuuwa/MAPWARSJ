@@ -13,7 +13,7 @@ export type NavalShipAssetId = 'ship_small' | 'ship_medium' | 'ship_large';
 const NAVAL_SHIP_DRAW_SCALE: Readonly<Record<NavalShipAssetId, number>> = {
     ship_small: 1.0,
     ship_medium: 0.8,
-    ship_large: 0.6,
+    ship_large: 0.7,
 };
 
 export function getNavalShipDrawScale(shipId: NavalShipAssetId): number {
