@@ -192,7 +192,14 @@ export class PerformanceMonitor {
             void fetch('/api/boot-timing', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ at: new Date().toISOString(), totalMs, phases: this.bootPhases }),
+                body: JSON.stringify({
+                    at: new Date().toISOString(),
+                    totalMs,
+                    phases: this.bootPhases,
+                    // 旗帜管线分项秒表（CityAssetManager.flagPerf；无循环依赖，经 window 转交）
+                    flagPerf: (window as any).__flagPerf ?? null,
+                    hidden: document.hidden,
+                }),
             }).catch(() => { /* 打点尽力而为，不影响游戏 */ });
         }
     }
