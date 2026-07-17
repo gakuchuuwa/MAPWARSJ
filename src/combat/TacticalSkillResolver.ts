@@ -188,7 +188,7 @@ export function isTacticalEffectImplemented(effect: TacticalBaseEffect): boolean
 //     只作「宽容入参」，不授权把整侧技全塞进来叠乘（否则 0.6×0.5×0.2=84% 减免）。
 //  【规则2·减损跟随强弱重算链】减损值本身开战锁死（不逐帧重算，穷寇勿迫等
 //     条件在开战判定一次），但「哪侧是强方」会在 refreshPredictedSidesFromTotals
-//     翻转 → 应像 fearLossReduction 一样：两侧各缓存一个减损值，强方取自己那侧，
+//     翻转 → 两侧各缓存一个减损值，强方取自己那侧，
 //     翻盘换边时跟着换，绝不张冠李戴。
 //  【规则3·战后结算顺序】BattleField.resolve 必须按此序，顺序错会静默削弱咬人：
 //     ① 斩草除根：败方持技 → 胜方恢复率归零

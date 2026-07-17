@@ -24,7 +24,7 @@ export interface ISiegeReinforcementPollSource {
 
 export type BattleType = 'siege' | 'field';
 
-/** 战后恢复比例：武将+精锐 50%，其余 30%（见 GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE） */
+/** 战后恢复比例（遗留机制）：旧版 1v1 Battle 中武将+精锐恢复 50%，其余 30%。现主路径 BattleField 统一走 30%（+战术技加成） */
 export function getPostBattleRecoveryRate(
     _battleType?: BattleType,
     _attacker?: IBattleUnit,
@@ -33,7 +33,7 @@ export function getPostBattleRecoveryRate(
     return GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE;
 }
 
-/** 检测胜方是否有武将+精锐，有则恢复 50% */
+/** 检测胜方是否有武将+精锐，有则恢复 50%（注：此机制仅在旧 1v1 `Battle` 生效，`BattleField` 不走此逻辑） */
 function getWinnerRecoveryRate(winner: IBattleUnit): number {
     const hasGeneral = !!winner.generalId;
     if (!hasGeneral) return GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE;
