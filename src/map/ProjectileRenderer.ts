@@ -38,7 +38,7 @@ export class ProjectileRenderer {
      * @param end 终点坐标
      * @param duration 飞行时间 (毫秒)，默认 800ms
      */
-    public spawn(start: L.LatLng, end: L.LatLng, duration: number = 800): void {
+    public spawn(start: L.LatLng, end: L.LatLng, duration: number = 800, type: Projectile['type'] = 'arrow'): void {
         const id = Math.random().toString(36).substr(2, 9);
         const speed = 1000 / duration;
 
@@ -49,7 +49,7 @@ export class ProjectileRenderer {
             progress: 0,
             speed,
             maxHeight: 0,
-            type: 'arrow'
+            type
         });
     }
 
@@ -64,6 +64,7 @@ export class ProjectileRenderer {
             spreadFactor?: number;
             staggerMs?: number;
             durationMs?: number;
+            type?: Projectile['type'];
         }
     ): void {
         const count = options?.count ?? 5;
@@ -91,7 +92,7 @@ export class ProjectileRenderer {
             );
             const staggerDelay = k * staggerMs + Math.random() * 30;
             setTimeout(() => {
-                this.spawn(s, e, durationMs + Math.random() * 50);
+                this.spawn(s, e, durationMs + Math.random() * 50, options?.type ?? 'arrow');
             }, staggerDelay);
         }
     }
@@ -165,40 +166,48 @@ export class ProjectileRenderer {
 
             const angle = Math.atan2(dirY, dirX);
 
-            // Draw Arrow
+            // Draw based on type
             ctx.translate(drawX, drawY);
             ctx.rotate(angle);
 
-            // Shaft (longer for visibility)
-            ctx.strokeStyle = arrowColor;
-            ctx.lineWidth = 1.5 * currentScale;
-            ctx.beginPath();
-            ctx.moveTo(-12 * currentScale, 0);
-            ctx.lineTo(6 * currentScale, 0);
-            ctx.stroke();
+            if (p.type === 'stone') {
+                // 石弹：灰色填充圆
+                const r = 3.5 * currentScale;
+                ctx.fillStyle = '#7a7a7a';
+                ctx.beginPath();
+                ctx.arc(0, 0, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#4a4a4a';
+                ctx.lineWidth = 1 * currentScale;
+                ctx.stroke();
+            } else {
+                // Arrow: shaft + head + fletching
+                ctx.strokeStyle = arrowColor;
+                ctx.lineWidth = 1.5 * currentScale;
+                ctx.beginPath();
+                ctx.moveTo(-12 * currentScale, 0);
+                ctx.lineTo(6 * currentScale, 0);
+                ctx.stroke();
 
-            // Head (Filled triangle for better visibility)
-            ctx.fillStyle = arrowHeadColor;
-            ctx.beginPath();
-            ctx.moveTo(6 * currentScale, 0);
-            ctx.lineTo(3 * currentScale, -2.5 * currentScale);
-            ctx.lineTo(3 * currentScale, 2.5 * currentScale);
-            ctx.closePath();
-            ctx.fill();
+                ctx.fillStyle = arrowHeadColor;
+                ctx.beginPath();
+                ctx.moveTo(6 * currentScale, 0);
+                ctx.lineTo(3 * currentScale, -2.5 * currentScale);
+                ctx.lineTo(3 * currentScale, 2.5 * currentScale);
+                ctx.closePath();
+                ctx.fill();
 
-            // [NEW] Fletching (Tail feathers) - Makes direction VERY clear
-            ctx.strokeStyle = '#8b4513'; // Brown feather color
-            ctx.lineWidth = 1 * currentScale;
-            // Upper feather
-            ctx.beginPath();
-            ctx.moveTo(-12 * currentScale, 0);
-            ctx.lineTo(-15 * currentScale, -3 * currentScale);
-            ctx.stroke();
-            // Lower feather
-            ctx.beginPath();
-            ctx.moveTo(-12 * currentScale, 0);
-            ctx.lineTo(-15 * currentScale, 3 * currentScale);
-            ctx.stroke();
+                ctx.strokeStyle = '#8b4513';
+                ctx.lineWidth = 1 * currentScale;
+                ctx.beginPath();
+                ctx.moveTo(-12 * currentScale, 0);
+                ctx.lineTo(-15 * currentScale, -3 * currentScale);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(-12 * currentScale, 0);
+                ctx.lineTo(-15 * currentScale, 3 * currentScale);
+                ctx.stroke();
+            }
 
             ctx.rotate(-angle);
             ctx.translate(-drawX, -drawY);

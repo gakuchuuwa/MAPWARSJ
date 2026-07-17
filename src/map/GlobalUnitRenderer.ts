@@ -656,6 +656,17 @@ export class GlobalUnitRenderer {
                             this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 10, spreadFactor: 0.03 });
                         }
 
+                        // 攻城方额外发射石弹（投石机）
+                        if ((unit as any).isSiegeAttacker && unit.currentBattleType === 'siege') {
+                            this.projectileSystem.spawnVolley(baseStart, baseEnd, {
+                                count: 2,
+                                spreadFactor: 0.04,
+                                durationMs: 600,
+                                staggerMs: 120,
+                                type: 'stone',
+                            });
+                        }
+
                         unit.lastShotTime = now;
                     }
                 }

@@ -150,8 +150,8 @@ export class LegionPhalanxDrawer {
         const def = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[type];
         try {
             const allPaths = [
-                ...def.attackIds.map(id => `/SUCAI/S10DB/${id}-1.png`),
-                ...def.deathIds.map(id => `/SUCAI/S10DB/${id}-1.png`),
+                ...def.attackIds.map((id: number) => `/SUCAI/S10DB/${id}-1.png`),
+                ...def.deathIds.map((id: number) => `/SUCAI/S10DB/${id}-1.png`),
             ];
             await AssetLoader.preloadImages(allPaths);
             for (const id of def.attackIds) {
@@ -308,6 +308,13 @@ export class LegionPhalanxDrawer {
 
 
         await GeneralDrawer.preload();
+
+        // 预载攻城器械素材（避免首次攻城时懒加载延迟）
+        gameLog('unit', '🔨 预载攻城器械素材...');
+        for (const gearType of Object.keys(LegionPhalanxDrawer.SIEGE_GEAR_DEFS)) {
+            await LegionPhalanxDrawer.ensureSiegeGearLoaded(gearType);
+        }
+
         this.isLoaded = true;
         gameLog('unit', '✅ LegionPhalanxDrawer: All dynamic unit assets loaded.');
     }

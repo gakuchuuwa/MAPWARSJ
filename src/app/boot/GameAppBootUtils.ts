@@ -198,4 +198,7 @@ export function hideLoadingOverlay(): void {
     if (el) el.remove();
     const style = document.getElementById('game-loading-styles');
     if (style) style.remove();
+    // [诊断 2026-07-17] 记录"加载动画消失"墙钟时刻（= 用户看到游戏出现，从打开页面算起）
+    // performance.now() 以导航开始为 0 点，故此值即用户主观等待时长。
+    (window as any).__overlayHiddenAtMs = performance.now();
 }

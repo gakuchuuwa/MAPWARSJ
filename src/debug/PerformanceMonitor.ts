@@ -206,6 +206,10 @@ export class PerformanceMonitor {
                     // 启动期主线程拥堵证据：浏览器长任务总量 + 各子系统自报峰值
                     bootLongTask: { totalMs: this.bootLongTaskMs, count: this.bootLongTaskCount, maxMs: this.bootLongTaskMax },
                     sessionPeaks: this.sessionPeaks,
+                    // 用户主观等待：加载动画消失墙钟（导航开始→动画消失）+ finishBoot 墙钟 + 环境标识
+                    overlayHiddenMs: (window as any).__overlayHiddenAtMs ?? null,
+                    finishBootWallMs: performance.now(),
+                    ua: navigator.userAgent,
                 }),
             }).catch(() => { /* 打点尽力而为，不影响游戏 */ });
         }
