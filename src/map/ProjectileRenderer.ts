@@ -180,6 +180,34 @@ export class ProjectileRenderer {
                 ctx.strokeStyle = '#4a4a4a';
                 ctx.lineWidth = 1 * currentScale;
                 ctx.stroke();
+            } else if (p.type === 'fire') {
+                // 火箭（2026-07-18 主人定：据点守军齐射）：焦木杆 + 三层火焰头 + 光晕，随进度闪烁
+                const s = currentScale;
+                const flicker = 1 + 0.25 * Math.sin(p.progress * 30 + p.id.charCodeAt(0));
+
+                // 焦木杆
+                ctx.strokeStyle = '#5a3a1a';
+                ctx.lineWidth = 1.5 * s;
+                ctx.beginPath();
+                ctx.moveTo(-11 * s, 0);
+                ctx.lineTo(4 * s, 0);
+                ctx.stroke();
+
+                // 光晕
+                ctx.fillStyle = 'rgba(255, 110, 20, 0.35)';
+                ctx.beginPath();
+                ctx.arc(5 * s, 0, 6 * s * flicker, 0, Math.PI * 2);
+                ctx.fill();
+                // 外焰（橙）
+                ctx.fillStyle = '#ff6a00';
+                ctx.beginPath();
+                ctx.arc(5.5 * s, 0, 3.2 * s * flicker, 0, Math.PI * 2);
+                ctx.fill();
+                // 内焰（黄白核心）
+                ctx.fillStyle = '#ffd54a';
+                ctx.beginPath();
+                ctx.arc(6.2 * s, 0, 1.6 * s * flicker, 0, Math.PI * 2);
+                ctx.fill();
             } else {
                 // Arrow: shaft + head + fletching
                 ctx.strokeStyle = arrowColor;

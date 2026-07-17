@@ -355,6 +355,7 @@ export class GlobalUnitRenderer {
             spreadFactor?: number;
             staggerMs?: number;
             durationMs?: number;
+            type?: 'arrow' | 'stone' | 'fire';
         }
     ): void {
         this.projectileSystem.spawnVolley(L.latLng(from), L.latLng(to), options);
@@ -885,6 +886,17 @@ export class GlobalUnitRenderer {
                         ? rawType
                         : 'mixed';
 
+                // 攻城方阵型改造：三角形前排左右加弓步兵（6→8 人）
+                let siegeSlots = unit.cultureSlots || null;
+                if ((unit as any).isSiegeAttacker && unit.currentBattleType === 'siege'
+                    && siegeSlots && siegeSlots.length === 6) {
+                    siegeSlots = [
+                        'archer', siegeSlots[0], 'archer',  // 前排加塞
+                        siegeSlots[1], siegeSlots[2],        // 中排不动
+                        siegeSlots[3], siegeSlots[4], siegeSlots[5], // 后排不动
+                    ];
+                }
+
                 LegionPhalanxDrawer.draw(
                     unit.id || 'unknown',
                     ctx,
@@ -906,7 +918,7 @@ export class GlobalUnitRenderer {
                     },
                     unit.legionType || 'infantry',
                     unit.factionId || 'zhonghua',
-                    unit.cultureSlots || null,
+                    siegeSlots,
                     assetsId,
                     unit.isPlayer || false,
                     unit.cultureScales || null
