@@ -109,19 +109,19 @@ export class SiegeEffectRenderer {
             getTarget,
         };
 
-        // 风向全场统一（2026-07-18 主人定）：所有火片共享一次翻转随机——烟火只朝一个方向飘；
-        // 各自随机的只是位置/大小/透明度
+        // 风向全场统一 + 随机起始角（每次攻城火布局完全不同）
         const windFlipped = Math.random() > 0.5;
+        const baseAngle = Math.random() * Math.PI * 2;
 
         for (let i = 0; i < patchCount; i++) {
-            // 分层布点：方位角按片数均分 + 抖动，距离 0.3~1.0×散布——保证均匀，不挤成一团
-            const ang = (i / patchCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.8;
+            // 三角均分 + 随机起始角 + 抖动
+            const ang = baseAngle + (i / patchCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.8;
             const rad = (0.3 + Math.sqrt(Math.random()) * 0.7) * SiegeEffectRenderer.FIRE_SPREAD_RATIO;
             const patch: FirePatch = {
                 overlay: null as unknown as L.ImageOverlay, // 下方立即创建
                 offsetLat: Math.sin(ang) * rad * base.halfHeight,
                 offsetLng: Math.cos(ang) * rad * base.halfWidth,
-                sizeScale: 0.75 + Math.random() * 0.25,  // 0.75 ~ 1.0（大片火区，不碎）
+                sizeScale: 0.6 + Math.random() * 0.4,  // 0.6 ~ 1.0
                 peakOpacity: 0.7 + Math.random() * 0.3,  // 0.7 ~ 1.0
                 isFlipped: windFlipped,
             };

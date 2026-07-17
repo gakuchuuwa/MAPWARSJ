@@ -1040,17 +1040,17 @@ export class LegionPhalanxDrawer {
 
             // 逐舰读取个体状态（2026-07-18）
             const shipSlot = navalState?.ships[i];
-            const shipAlive = !shipSlot || shipSlot.state === 'ALIVE';
             const shipDying = shipSlot?.state === 'DYING';
             const shipDead = shipSlot?.state === 'DEAD';
-
-            // DEAD 舰不绘制
-            if (shipDead) continue;
 
             let rawSprite: HTMLImageElement | undefined;
             let currentFrameIndex = 0;
 
-            if (shipDying) {
+            if (shipDead) {
+                // 残骸：定格在死亡动画最后一帧，随军团尸体一同渐隐
+                rawSprite = currentSet.DEATH[shipSlot.deathDirection] || currentSet.DEATH[0];
+                currentFrameIndex = td.totalFrames - 1;
+            } else if (shipDying) {
                 // 逐舰阵亡动画：用该舰的 stateStartTime 驱动
                 rawSprite = currentSet.DEATH[shipSlot.deathDirection] || currentSet.DEATH[0];
                 const timeDead = Math.max(0, tick - shipSlot.stateStartTime);
