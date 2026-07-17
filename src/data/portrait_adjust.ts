@@ -4373,7 +4373,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/daming/xuan_xuda.png": {
-            "scale": 1.33,
+            "scale": 1.25,
             "offsetX": 0,
             "offsetY": -6
         },
