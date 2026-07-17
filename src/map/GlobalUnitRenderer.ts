@@ -30,6 +30,13 @@ function getBluffMagnitude(generalId: string | undefined): number {
     return skill.magnitude;
 }
 
+/** Leaflet LatLng 拒收 NaN；坐标无效时跳过渲染/投影，避免整页崩溃 */
+function isValidMapCoord(pos: { lat?: number; lng?: number } | null | undefined): pos is { lat: number; lng: number } {
+    return !!pos
+        && Number.isFinite(pos.lat)
+        && Number.isFinite(pos.lng);
+}
+
 export interface IRenderable {
     getPosition(): { lat: number; lng: number };
     getTroops(): number;
@@ -266,6 +273,7 @@ export class GlobalUnitRenderer {
 
     private isUnitInContainerView(unit: IAnimatedUnit): boolean {
         const pos = unit.getPosition();
+        if (!isValidMapCoord(pos)) return false;
         const pt = this.map.latLngToContainerPoint([pos.lat, pos.lng]);
         const m = GlobalUnitRenderer.VIEW_CULL_MARGIN_PX;
         const w = this.canvas.width;
@@ -279,6 +287,7 @@ export class GlobalUnitRenderer {
         for (let i = 0; i < this.sortedUnitsCache.length; i++) {
             const unit = this.sortedUnitsCache[i];
             if ((unit as any).visible === false) continue;
+            if (!isValidMapCoord(unit.getPosition())) continue;
             if (!this.isUnitInContainerView(unit)) continue;
             list.push(unit);
         }
@@ -549,10 +558,20 @@ export class GlobalUnitRenderer {
         this.unitFightingStates.set(id, isFighting);
 
         const currentPos = unit.getPosition();
+        if (!isValidMapCoord(currentPos)) {
+            // 坐标已坏：清掉射击目标，避免 L.latLng(NaN) 拖垮整页
+            if (unit.targetPos && !isValidMapCoord(unit.targetPos)) unit.targetPos = null;
+            return;
+        }
+        if (unit.targetPos && !isValidMapCoord(unit.targetPos)) {
+            unit.targetPos = null;
+        }
 
         // Check if unit is moving
-        const posChanged = Math.abs(currentPos.lat - unit.lastPosition.lat) > 0.0001 ||
-            Math.abs(currentPos.lng - unit.lastPosition.lng) > 0.0001;
+        const last = unit.lastPosition;
+        const posChanged = isValidMapCoord(last)
+            && (Math.abs(currentPos.lat - last.lat) > 0.0001
+                || Math.abs(currentPos.lng - last.lng) > 0.0001);
 
         if (unit.id?.startsWith('army_editor_preview_')) {
             // ArmyEditor strictly controls its own isMoving state
@@ -563,7 +582,7 @@ export class GlobalUnitRenderer {
 
         // [NEW] Projectile Spawner Logic
         // If attacking AND is ranged/mixed AND has target
-        if (unit.isAttacking && unit.targetPos) {
+        if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
             const lType = unit.legionType || 'infantry';
             const hasRangedSlots = ((unit as any).cultureSlots as string[] | undefined)?.some(
                 (s) => s === 'archer' || s === 'crossbow' || s.includes('archer')
@@ -644,6 +663,7 @@ export class GlobalUnitRenderer {
         const isBandit = banditTypes.includes(unit.type || '') || (unit as any).factionId === 'bandit';
 
         const unitPos = unit.getPosition();
+        if (!isValidMapCoord(unitPos)) return;
         // Base center point
         let centerPoint = this.map.latLngToContainerPoint([unitPos.lat, unitPos.lng]);
 
@@ -681,7 +701,7 @@ export class GlobalUnitRenderer {
             unit.lastDirection = Math.floor(Math.random() * 8);
         }
         let directionIndex = unit.lastDirection;
-        if (unit.isAttacking && unit.targetPos) {
+        if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
             const dLat = Math.abs(unitPos.lat - unit.targetPos.lat);
             const dLng = Math.abs(unitPos.lng - unit.targetPos.lng);
             if (dLat > 0.00001 || dLng > 0.00001) {

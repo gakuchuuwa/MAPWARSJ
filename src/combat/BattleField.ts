@@ -1106,13 +1106,19 @@ export class BattleField implements IOpeningPulseSink {
         for (const entry of all) {
             if (entry.isDefeated) continue;
             const p = entry.unit.getPosition();
+            if (!Number.isFinite(p.lat) || !Number.isFinite(p.lng)) continue;
             lat += p.lat;
             lng += p.lng;
             count++;
         }
         if (count === 0) {
-            const fallback = all[0]?.unit.getPosition();
-            return fallback ? { lat: fallback.lat, lng: fallback.lng } : { lat: 0, lng: 0 };
+            for (const entry of all) {
+                const fallback = entry.unit.getPosition();
+                if (Number.isFinite(fallback.lat) && Number.isFinite(fallback.lng)) {
+                    return { lat: fallback.lat, lng: fallback.lng };
+                }
+            }
+            return { lat: 0, lng: 0 };
         }
         return { lat: lat / count, lng: lng / count };
     }

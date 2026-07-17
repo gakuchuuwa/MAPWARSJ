@@ -964,7 +964,7 @@ export class LegionPhalanxDrawer {
         // ── 位置计算：第一排前方 ──
         // 第一排中心在 originalY = -(rows-1)/2 * spacingY = -spacingY（3×3）
         // 冲车紧挨第一排前方，偏移 0.55 倍行距（不要太远）
-        const ramForwardOffset = spacingY * 0.55;
+        const ramForwardOffset = spacingY * 0.70;
         const originalY = -spacingY - ramForwardOffset;
         const originalX = 0; // 第一排正中
 
@@ -981,7 +981,7 @@ export class LegionPhalanxDrawer {
         const currentRatio = frameW / frameH;
         const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
         // 冲车比士兵稍大
-        const targetH = baseHeight * scale * 1.3 * frameHeightNorm;
+        const targetH = baseHeight * scale * 0.70 * frameHeightNorm;
         const targetW = targetH * currentRatio;
 
         // ── 帧计算 ──
