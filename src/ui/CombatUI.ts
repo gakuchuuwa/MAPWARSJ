@@ -1833,7 +1833,7 @@ export class CombatUI {
 
         this.updateMultiplierBadges(attBattler, defBattler);
         this.updateSkillBadges(attacker, defender);
-        this.updateInfoDirect(attName, defName, displayTitle, displayYear, description);
+        this.updateInfoDirect(attName, defName, displayTitle, displayYear, description, defender);
 
         this.setPortrait(
             this.leftPortrait,
@@ -3122,14 +3122,26 @@ export class CombatUI {
             }
             return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; text-align: inherit;"><span style="white-space: nowrap;">${base}</span><span style="opacity: 0.85; font-size: 0.95em; margin-left: 2px; white-space: nowrap;">${suffix}</span></div>`;
         };
-        this.attackerDisplayName = mapName(att);
-        this.defenderDisplayName = mapName(def);
         this.attackerFactionId = att.factionId;
         this.defenderFactionId = def.factionId;
         
+        this.updateInfoDirect(mapName(att), mapName(def), title, year, undefined, def);
+        
+        this.currentBattleKey = title || `battle_${Date.now()}`;
+        this.setPortrait(this.leftPortrait, att, att.generalId, att.factionId, undefined, 'attacker');
+        this.setPortrait(this.rightPortrait, def, def.generalId, def.factionId, undefined, 'defender', this.leftPortrait.src || undefined);
+        this.updateStats();
+    }
+
+    private updateInfoDirect(attName: string, defName: string, title: string, year: string, description?: string, defUnit?: IBattleUnit) {
+        this.attackerDisplayName = attName;
+        this.defenderDisplayName = defName;
+        
         let suffix = '';
-        if (Math.abs(getPassGarrisonCombatMultiplier(def) - 1) > 0.001) suffix = ' [关隘]';
-        else if (Math.abs(getRegionCenterCombatMultiplier(def) - 1) > 0.001) suffix = ' [名城]';
+        if (defUnit) {
+            if (Math.abs(getPassGarrisonCombatMultiplier(defUnit) - 1) > 0.001) suffix = ' [关隘]';
+            else if (Math.abs(getRegionCenterCombatMultiplier(defUnit) - 1) > 0.001) suffix = ' [名城]';
+        }
         
         if (suffix) {
             this.battleTitle.innerHTML = `${title} <span style="font-size:0.5em;color:rgba(255,215,0,0.85);vertical-align:middle;text-shadow:0 1px 2px rgba(0,0,0,0.8);">${suffix}</span>`;
@@ -3137,19 +3149,6 @@ export class CombatUI {
             this.battleTitle.textContent = title;
         }
         
-        this.battleYear.textContent = year;
-        this.battleYear.style.display = year ? 'block' : 'none';
-
-        this.currentBattleKey = title || `battle_${Date.now()}`;
-        this.setPortrait(this.leftPortrait, att, att.generalId, att.factionId, undefined, 'attacker');
-        this.setPortrait(this.rightPortrait, def, def.generalId, def.factionId, undefined, 'defender', this.leftPortrait.src || undefined);
-        this.updateStats();
-    }
-
-    private updateInfoDirect(attName: string, defName: string, title: string, year: string, description?: string) {
-        this.attackerDisplayName = attName;
-        this.defenderDisplayName = defName;
-        this.battleTitle.textContent = title;
         this.battleYear.textContent = year;
         this.battleYear.style.display = year ? 'block' : 'none';
 

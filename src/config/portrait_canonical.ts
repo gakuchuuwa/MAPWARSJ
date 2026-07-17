@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/17 21:19:53（共 231 条）
+ * 生成时间：2026/7/17 21:38:04（共 231 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
@@ -39,8 +39,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/chongfu/__闲置__LINGNAN_08.png": "/assets/BASHU/xiang_d_xiangdakun.png",
     "/assets/LINGNAN/__闲置__LINGNAN_28.png": "/assets/BASHU/yangzhou_wangping.png",
     "/assets/LINGNAN/__闲置__LINGNAN_19.png": "/assets/BASHU/yidou_luxun.png",
-    "/assets/LINGNAN/shixing_houandou.png": "/assets/BASHU/yong_lujili.png",
-    "/assets/xianqin/wu_sunwu.png": "/assets/BASHU/yong_lujili.png",
     "/assets/NORTH/dangzhou_qiangduan.png": "/assets/BASHU/yueyi_zhangyi.png",
     "/assets/LINGNAN/shengmiao_baoli.png": "/assets/BASHU/zhuoshi_zhuowangsun.png",
     "/assets/LINGNAN/xinggu_cuanxi.png": "/assets/BASHU/zhuoshi_zhuowangsun.png",
@@ -48,6 +46,8 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__闲置__LINGNAN_27.png": "/assets/BASHU/zuo_d_wufu.png",
     "/assets/chongfu/__闲置__NORTH_04.png": "/assets/BASHU/__闲置__BASHU_03.png",
     "/assets/LINGNAN/guangxin_shixie.png": "/assets/BASHU/__闲置__BASHU_04.png",
+    "/assets/LINGNAN/shixing_houandou.png": "/assets/BASHU/__闲置__BASHU_05.png",
+    "/assets/xianqin/wu_sunwu.png": "/assets/BASHU/__闲置__BASHU_05.png",
     "/assets/LINGNAN/kong_d_kongrong.png": "/assets/CENTRAL/kong_d_kongrong.png",
     "/assets/LINGNAN/ranwei_d_ranmin.png": "/assets/CENTRAL/ranwei_d_ranmin.png",
     "/assets/JIANGNAN/wenzhou_fangguozhen.png": "/assets/CENTRAL/ruzhou_sunjian.png",
