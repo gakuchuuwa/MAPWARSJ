@@ -366,16 +366,15 @@ export const DIANQIAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 12. 青藏 纯骑 斧骑+弓骑 123 */
+/** 12. 青藏 纯骑三角 123 斧骑 + 456 弓骑 */
 export const TIBET_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'general_cavalry', count: 1, scale: 1.2 },
-            { type: 'horse_archer', count: 2 },
-            { type: 'heavy_cavalry', count: 3 }
+            { type: 'heavy_cavalry', count: 3 },
+            { type: 'horse_archer', count: 3 }
         ]
     }
 ];
