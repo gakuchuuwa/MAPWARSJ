@@ -843,9 +843,10 @@ export class GlobalUnitRenderer {
                 unit.factionId || 'panjun'
             );
 
-            // ── 攻城器械（仅攻城方；覆灭后留尸体同步士兵）──
-            if ((unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker !== false)
-                || LegionPhalanxDrawer.wasSiegeUnit(unit.id || '')) {
+            // ── 攻城器械（仅攻城方陆战；覆灭后留尸体同步士兵）──
+            if (!useNavalVisual
+                && ((unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker !== false)
+                || LegionPhalanxDrawer.wasSiegeUnit(unit.id || ''))) {
                 const siegeScale = scale * (unit.previewScale ?? 1);
                 const baseH = 75;
                 const rH = baseH * siegeScale;
@@ -865,8 +866,9 @@ export class GlobalUnitRenderer {
                 );
             }
 
-            // ── 攻城额外士兵：三角形尖兵左右各一弓步兵 ──
-            if ((unit as any).isSiegeAttacker && unit.currentBattleType === 'siege'
+            // ── 攻城额外士兵：三角形尖兵左右各一弓步兵（仅陆战）──
+            if (!useNavalVisual
+                && (unit as any).isSiegeAttacker && unit.currentBattleType === 'siege'
                 && (unit.cultureSlots?.length ?? 0) === 6) {
                 const siegeScale = scale * (unit.previewScale ?? 1);
                 const baseH = 75;
@@ -876,12 +878,12 @@ export class GlobalUnitRenderer {
                 LegionPhalanxDrawer.drawSiegeSoldier(
                     ctx, { x: centerPoint.x, y: centerPoint.y },
                     state, directionIndex, siegeScale, Date.now(), sX, sY,
-                    'archer', -0.9, -1.0, unit.id || 'unknown',
+                    'archer', -1.2, -1.0, unit.id || 'unknown',
                 );
                 LegionPhalanxDrawer.drawSiegeSoldier(
                     ctx, { x: centerPoint.x, y: centerPoint.y },
                     state, directionIndex, siegeScale, Date.now(), sX, sY,
-                    'archer', +0.9, -1.0, unit.id || 'unknown',
+                    'archer', +1.2, -1.0, unit.id || 'unknown',
                 );
             }
 
