@@ -242,7 +242,9 @@ export class GameApp {
             loadGameAppCityData(this);
             // 叛军：S10QZ 7–58 共 52 面，画据点前 await。见 AGENTS.md §10.3
             await CityAssetManager.preloadRebelFlagsForBoot();
+            this.perfMonitor.markBootPhase('叛军旗52面');
             await CityAssetManager.onBootMapReady();
+            this.perfMonitor.markBootPhase('视口势力旗染色');
             this.cityManager.bindViewportCitySync();
 
             setLoadingMessage('正在升旗入场…');
