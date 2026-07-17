@@ -671,11 +671,15 @@ export class CityManager {
                 city.type,
                 getAttackerPos
             );
+            // 据点建筑贴图放大（2026-07-18）
+            this.territorySystem.setCitySiegeZoom(cityId, true);
         }
     }
 
     public stopSiegeEffect(cityId: string, immediate = false): void {
         this.siegeEffectRenderer.stopEffect(cityId, immediate);
+        // 据点建筑贴图还原（2026-07-18）
+        this.territorySystem.setCitySiegeZoom(cityId, false);
     }
 
     // Road / Path Utils

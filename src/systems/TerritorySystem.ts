@@ -1298,6 +1298,19 @@ export class TerritorySystem {
         }
     }
 
+    /** 攻城时据点建筑贴图放大/还原（2026-07-18） */
+    public setCitySiegeZoom(cityId: string, enabled: boolean): void {
+        const marker = this.cityMarkers.get(cityId);
+        if (!marker) return;
+        const root = marker.getElement()?.querySelector('.city-image-container');
+        if (!root) return;
+        if (enabled) {
+            root.classList.add('city-under-siege');
+        } else {
+            root.classList.remove('city-under-siege');
+        }
+    }
+
     // Helper: Merge hexes into polygon paths
     private getMergedPaths(hexList: { q: number, r: number, key: number }[]): L.LatLng[][] {
         if (hexList.length === 0) return [];

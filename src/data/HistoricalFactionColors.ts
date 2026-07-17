@@ -234,7 +234,6 @@ const _FIXED: Record<string, string> = {
     zhuozhou: '#482838', // 涿州·曳落河（范阳暗绛）
     'lingzhou': '#F0CC50', // 灵·朔方突骑（灵州青灰）
     'zhongshan': '#F0CC51', // 恒州·常山兵（真定水蓝）
-    huan: '#6A8870', // 环·宣毅军（环州青绿）
     qingyuan_bd: '#708898', // 清苑·神臂营（保定弩阵灰蓝）
     // tuoba/erzhu/yuwen/shatuo 见上方尚色/草原表
 
@@ -526,7 +525,7 @@ const _FIXED: Record<string, string> = {
     'miao': '#AFDE68', // 自动分配 (邻域相斥)
     'mon': '#43A561', // 自动分配 (邻域相斥)
     'yang_bozhou': '#6876B7', // 自动分配 (邻域相斥)
-    'tian_'sizhou': '#DC4851', // 自动分配 (邻域相斥)
+    'tian_sizhou': '#6B76B8', // 自动分配 (邻域相斥)
     'mu_lijiang': '#2F2FAC', // 自动分配 (邻域相斥)
     'xiou': '#455DD4', // 自动分配 (邻域相斥)
     'muong': '#29957A', // 自动分配 (邻域相斥)
@@ -740,7 +739,7 @@ const _FIXED: Record<string, string> = {
     guangping: '#9EAFC0',
     wuling: '#A3B4C5',
     yang_zhou: '#A8B9CA',
-    sizhou: '#ADBECF',
+    sizhou: '#DC4851', // 宋系近色（韩世忠）
     jinan: '#B2C3D4',
     wenzhou: '#B7C8D9',
     pinghai: '#BCCDDE',
