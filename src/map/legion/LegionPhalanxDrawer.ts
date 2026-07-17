@@ -65,6 +65,49 @@ export class LegionPhalanxDrawer {
     // [PERF-FIX] Re-entrancy guard：防止被并发调用时重复跑全量 canvas 处理
     private static loadingPromise: Promise<void> | null = null;
 
+    // ─── 攻城冲车（2026-07-18）────────────────────────────
+    // 冲车条带：731-1 = 待机 8 帧, 738-1 = 攻击 8 帧
+    // 阵亡单帧：755-1 ～ 762-1 共 8 张
+    private static ramAttackStrip: HTMLImageElement | null = null;
+    private static ramDeathFrames: HTMLImageElement[] = [];
+    private static ramLoaded = false;
+    private static ramLoading = false;
+
+    private static readonly RAM_ATTACK_PATH = '/SUCAI/S10DB/738-1.png';
+    private static readonly RAM_DEATH_IDS = [755, 756, 757, 758, 759, 760, 761, 762];
+
+    private static async ensureRamLoaded(): Promise<void> {
+        if (this.ramLoaded) return;
+        if (this.ramLoading) {
+            // 等待已在进行的加载
+            let waited = 0;
+            while (this.ramLoading && waited < 100) {
+                await new Promise(r => setTimeout(r, 50));
+                waited++;
+            }
+            return;
+        }
+        this.ramLoading = true;
+        try {
+            const deathPaths = this.RAM_DEATH_IDS.map(id => `/SUCAI/S10DB/${id}-1.png`);
+            await AssetLoader.preloadImages([this.RAM_ATTACK_PATH, ...deathPaths]);
+            const rawAttack = AssetLoader.getImage(this.RAM_ATTACK_PATH);
+            if (rawAttack) {
+                this.ramAttackStrip = await this.processImage(rawAttack);
+            }
+            for (const path of deathPaths) {
+                const raw = AssetLoader.getImage(path);
+                if (raw) {
+                    this.ramDeathFrames.push(await this.processImage(raw));
+                }
+            }
+            this.ramLoaded = true;
+            gameLog('unit', '🔨 攻城冲车素材加载完成');
+        } finally {
+            this.ramLoading = false;
+        }
+    }
+
     public static async preload(): Promise<void> {
         if (this.isLoaded) return;
         if (this.loadingPromise) return this.loadingPromise;
@@ -866,6 +909,106 @@ export class LegionPhalanxDrawer {
     }
 
     // [NEW] Custom Formation Offset Calculation
+    // ─── 攻城冲车绘制（2026-07-18）────────────────────────────
+    /**
+     * 在攻城方阵第一排前方画冲车。仅在 currentBattleType === 'siege' 时调用。
+     * @param center   方阵中心屏幕坐标
+     * @param state    军团整体动画状态（ATTACK=攻城攻击，DEATH=阵亡）
+     * @param direction 方阵朝向 0-7
+     * @param scale    缩放倍率
+     * @param tick     动画时间 ms
+     * @param factionId 势力 id（染色用）
+     * @param spacingX 方阵列间距
+     * @param spacingY 方阵行间距
+     */
+    public static drawSiegeRam(
+        ctx: CanvasRenderingContext2D,
+        center: { x: number, y: number },
+        state: PhalanxAnimState,
+        direction: number,
+        scale: number,
+        tick: number,
+        factionId: string,
+        spacingX: number,
+        spacingY: number,
+    ): void {
+        // 懒加载冲车素材
+        if (!this.ramLoaded) {
+            void this.ensureRamLoaded();
+            return;
+        }
+
+        // 选精灵：攻击用条带，阵亡用单帧序列
+        let ramSprite: HTMLImageElement | null = null;
+        let isStrip = false; // true = 8 帧条带，false = 单帧图
+        let deathIndex = 0;
+
+        if (state === 'DEATH') {
+            if (this.ramDeathFrames.length === 0) return;
+            // 阵亡：播完 8 帧冻结末帧
+            const deathFrameDur = 150;
+            const elapsed = tick % (deathFrameDur * this.ramDeathFrames.length);
+            deathIndex = Math.min(
+                Math.floor(elapsed / deathFrameDur),
+                this.ramDeathFrames.length - 1,
+            );
+            ramSprite = this.ramDeathFrames[deathIndex];
+        } else {
+            // ATTACK：播 8 帧条带循环
+            ramSprite = this.ramAttackStrip;
+            isStrip = true;
+        }
+
+        if (!ramSprite || !ramSprite.complete || ramSprite.naturalWidth === 0) return;
+
+        // ── 位置计算：第一排前方 ──
+        // 第一排中心在 originalY = -(rows-1)/2 * spacingY = -spacingY（3×3）
+        // 冲车紧挨第一排前方，偏移 0.55 倍行距（不要太远）
+        const ramForwardOffset = spacingY * 0.55;
+        const originalY = -spacingY - ramForwardOffset;
+        const originalX = 0; // 第一排正中
+
+        const angle = (direction + 1) * Math.PI / 4;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const ramX = center.x + (originalX * cos - originalY * sin);
+        const ramY = center.y + (originalX * sin + originalY * cos);
+
+        // ── 尺寸 ──
+        const baseHeight = 60;
+        const frameW = isStrip ? ramSprite.width / 8 : ramSprite.width;
+        const frameH = ramSprite.height;
+        const currentRatio = frameW / frameH;
+        const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
+        // 冲车比士兵稍大
+        const targetH = baseHeight * scale * 1.3 * frameHeightNorm;
+        const targetW = targetH * currentRatio;
+
+        // ── 帧计算 ──
+        let frameIndex = 0;
+        if (isStrip) {
+            // 攻击条带循环
+            const stagger = 0;
+            frameIndex = Math.floor((tick / 150) + stagger) % 8;
+        }
+        // 阵亡帧的 deathIndex 已在上面计算
+
+        const sx = frameIndex * frameW;
+        const sy = 0;
+
+        // ── 绘制 ──
+        ctx.save();
+        // 面向城池旋转
+        ctx.translate(ramX, ramY);
+        ctx.rotate(angle);
+        ctx.drawImage(
+            ramSprite,
+            sx, sy, frameW, frameH,
+            -targetW / 2, -targetH * 0.5, targetW, targetH,
+        );
+        ctx.restore();
+    }
+
     private static getFormationOffset(
         index: number,
         spacingX: number,

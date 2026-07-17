@@ -853,6 +853,26 @@ export class GlobalUnitRenderer {
                 );
             }
 
+            // ── 攻城冲车（仅攻城时画在第一排士兵前方）──
+            if (unit.currentBattleType === 'siege' && !unit.isDestroyed) {
+                const siegeScale = scale * (unit.previewScale ?? 1);
+                const baseH = 75;
+                const rH = baseH * siegeScale;
+                const ramSpacingY = rH * 0.42;
+                const ramSpacingX = rH * 0.8 * 0.50;
+                LegionPhalanxDrawer.drawSiegeRam(
+                    ctx,
+                    { x: centerPoint.x, y: centerPoint.y },
+                    state,
+                    directionIndex,
+                    siegeScale,
+                    Date.now(),
+                    unit.factionId || 'panjun',
+                    ramSpacingX,
+                    ramSpacingY,
+                );
+            }
+
             // 3. Draw Flag Body (On Top of Soldiers / Ship)
             // [NEW] Get current year for conditional flag logic
             const currentYear = (window as any).game?.timeSystem?.getYear() ?? -999;
