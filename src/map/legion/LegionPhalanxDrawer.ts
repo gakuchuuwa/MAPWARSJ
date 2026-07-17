@@ -469,6 +469,59 @@ export class LegionPhalanxDrawer {
     }
 
     /**
+     * 方阵微动参数（2026-07-18 主人定：只动方阵绘制层，行军 bob + 待机 sway）
+     * 振幅按 scale 缩放：直播远观（scale<1）自动收敛为微光感，近看才有明显起伏。
+     */
+    private static readonly MICRO_MOTION = {
+        SWAY_AMP: 0.7,          // 待机呼吸振幅（px，scale=1 基准）
+        SWAY_SPEED: 0.0011,     // 待机呼吸角速度（rad/ms，≈5.7s 一次呼吸）
+        BOB_INF_AMP: 1.5,       // 步兵行军起伏振幅
+        BOB_INF_SPEED: 0.0052,  // 步兵步频：对齐 150ms×8 帧步态循环（约每步一伏）
+        BOB_CAV_AMP: 1.4,       // 骑兵起伏振幅
+        BOB_CAV_SPEED: 0.0078,  // 骑兵步频：快而碎（小跑）
+        BOB_ELE_AMP: 2.0,       // 象兵起伏振幅：更沉
+        BOB_ELE_SPEED: 0.0039,  // 象兵步频：更稳
+    } as const;
+
+    /**
+     * 方阵微动偏移：待机/交战 sway（双轴错相呼吸漂移），行军 bob（按兵种分频的步态起伏）。
+     * 逐 slot 错开相位，避免整阵同频"僵尸共振"。纯函数只读 tick，不改任何游戏状态。
+     */
+    private static getMicroMotion(
+        slotIndex: number,
+        state: PhalanxAnimState,
+        unitType: string,
+        tick: number,
+        scale: number,
+    ): { dx: number; dy: number } {
+        const MM = LegionPhalanxDrawer.MICRO_MOTION;
+        const phase = slotIndex * 0.9;
+
+        if (state === 'MOVE') {
+            const isElephant = unitType.includes('elephant');
+            // 与上方骑兵冲锋同一判定：弓骑/枪骑算骑，步弓/弩不算
+            const isCavalry = !isElephant && (
+                (unitType.includes('cavalry') ||
+                    unitType === 'lancer' ||
+                    unitType === 'general_cavalry' ||
+                    unitType === 'horse_archer') &&
+                unitType !== 'archer' &&
+                unitType !== 'crossbow'
+            );
+            const amp = isElephant ? MM.BOB_ELE_AMP : isCavalry ? MM.BOB_CAV_AMP : MM.BOB_INF_AMP;
+            const speed = isElephant ? MM.BOB_ELE_SPEED : isCavalry ? MM.BOB_CAV_SPEED : MM.BOB_INF_SPEED;
+            return { dx: 0, dy: Math.sin(tick * speed + phase) * -amp * scale };
+        }
+
+        if (state === 'DEATH') return { dx: 0, dy: 0 };
+
+        // IDLE / ATTACK / DAMAGE：双轴呼吸漂移（x、y 频率错开，避免圆周式机械感）
+        const amp = MM.SWAY_AMP * scale;
+        const t = tick * MM.SWAY_SPEED + phase;
+        return { dx: Math.sin(t) * amp, dy: Math.cos(t * 0.83) * amp * 0.7 };
+    }
+
+    /**
      * Draw a Legion Phalanx (3x3 Grid or Hex)
      */
     public static draw(
@@ -700,6 +753,14 @@ export class LegionPhalanxDrawer {
                 const jitterAmt = 8 * (spacingX / 35);
                 drawX += (rnd - 0.5) * jitterAmt;
                 drawY += ((1.0 - rnd) - 0.5) * jitterAmt;
+            }
+
+            // 3.5 方阵微动（2026-07-18 主人定：行军 bob + 待机 sway，全项目只此一处）
+            // 仅活体士兵；尸体保持静止，出生渐显期不叠加（缩放入场本身已足够动感）
+            if (slot.state === 'ALIVE' && !isSpawning) {
+                const mm = LegionPhalanxDrawer.getMicroMotion(i, state, resolvedUnitType, tick, scale);
+                drawX += mm.dx;
+                drawY += mm.dy;
             }
 
             // C. Select Specific Sprite based on State
