@@ -73,6 +73,8 @@ export interface IAnimatedUnit extends IRenderable {
     navalShipTierLock?: NavalShipAssetId | null;
     /** ArmyEditor：强制模拟海上 */
     forceNavalVisual?: boolean;
+    /** 预览缩放倍率（仅编辑器用，默认 1） */
+    previewScale?: number;
 }
 
 /**
@@ -743,7 +745,7 @@ export class GlobalUnitRenderer {
                 { x: centerPoint.x, y: centerPoint.y },
                 state,
                 directionIndex,
-                scale,
+                scale * (unit.previewScale ?? 1),
                 troops,
                 Date.now(),
                 unit.type || 'bandit' // Pass type for formation
@@ -769,7 +771,7 @@ export class GlobalUnitRenderer {
             LegionFlagDrawer.drawPole(
                 ctx,
                 { x: centerPoint.x, y: centerPoint.y },
-                useNavalVisual ? scale * 0.85 : scale,
+                useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
                 unit.factionId || 'panjun'
             );
 

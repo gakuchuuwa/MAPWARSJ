@@ -52,8 +52,8 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     CENTRAL_ASIA: 'seljuq',    // 中亚-木鹿(梅尔夫) → 塞尔柱
 };
 
-/** 12 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */
-const UNIT_TYPES: { id: string; label: string; category: '步' | '骑' | '远' }[] = [
+/** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */
+const UNIT_TYPES: { id: string; label: string; category: '步' | '骑' | '远' | '船' }[] = [
     // 步兵类
     { id: 'light_infantry', label: '轻步兵',     category: '步' },
     { id: 'heavy_infantry', label: '重步兵',     category: '步' },
@@ -70,6 +70,10 @@ const UNIT_TYPES: { id: string; label: string; category: '步' | '骑' | '远' }
     // 远程类
     { id: 'archer',         label: '弓兵',       category: '远' },
     { id: 'crossbow',       label: '弩兵',       category: '远' },
+    // 船只类
+    { id: 'ship_small',     label: '小船',       category: '船' },
+    { id: 'ship_medium',    label: '中船',       category: '船' },
+    { id: 'ship_large',     label: '大船',       category: '船' },
 ];
 
 export class ArmyEditor {
@@ -287,7 +291,7 @@ export class ArmyEditor {
                     <option value="triangle"${this.currentFormationMode === 'triangle' ? ' selected' : ''}>1-2-3 三角 (6人)</option>
                 </select>
             </label>
-            <span style="color:#aaa;font-size:12px;">每格下拉可选 12 兵种</span>
+            <span style="color:#aaa;font-size:12px;">每格下拉可选 15 兵种</span>
         `;
         container.appendChild(modeRow);
 
@@ -497,6 +501,12 @@ export class ArmyEditor {
                     this.currentSlots[slotIdx].type = newUnit;
                     delete this.currentSlots[slotIdx].scale;
                 }
+                // 选船型 → 自动开启海上模式
+                if (newUnit.startsWith('ship_')) {
+                    this.simulateNaval = true;
+                    const chk = this.panel!.querySelector('#ae-simulate-naval') as HTMLInputElement;
+                    if (chk) chk.checked = true;
+                }
                 // 重新渲染该行 (因为前3/后3 是同一 slot 显示 3 次)
                 const area = this.panel!.querySelector('#ae-formation-area') as HTMLDivElement;
                 if (area) this.renderFormationArea(area);
@@ -527,6 +537,14 @@ export class ArmyEditor {
         });
     }
 
+    /** 从当前阵型槽位中检测船型（返回第一个匹配的 ship_* id） */
+    private detectShipTier(): string | null {
+        for (const slot of this.currentSlots) {
+            if (slot.type.startsWith('ship_')) return slot.type;
+        }
+        return null;
+    }
+
     /** 实时更新预览单位的兵种和缩放比例 (无缝生效) */
     private updatePreviewInstant(): void {
         // [NEW] 临时保存草稿到 localStorage
@@ -541,6 +559,7 @@ export class ArmyEditor {
             this.previewUnit.cultureScales = expandCompositionScales(this.currentSlots as any);
             this.previewUnit.forceNavalVisual = this.simulateNaval;
             this.previewUnit.isOnSea = this.simulateNaval;
+            this.previewUnit.navalShipTierLock = this.simulateNaval ? (this.detectShipTier() as any) ?? null : null;
         }
     }
 
@@ -629,6 +648,7 @@ export class ArmyEditor {
             cultureScales: expandCompositionScales(this.currentSlots as any),
             isOnSea: this.simulateNaval,
             forceNavalVisual: this.simulateNaval,
+            navalShipTierLock: this.simulateNaval ? (this.detectShipTier() as any) ?? null : null,
         };
 
         renderer.register(unit);
