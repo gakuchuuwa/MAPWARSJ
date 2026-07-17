@@ -1113,6 +1113,7 @@ export class SiegeManager {
         nearbyDefenderLegions.forEach((legion) => {
             // 开战前已统一 stopMovement(true)；此处勿二次 stop 以免空队列覆写存档意图
             legion.setCombatState(true, 'siege', cityPos);
+            legion.isSiegeAttacker = false; // 守方无器械
             const legionAdapter = BattleUnitFactory.createAdapter(
                 legion.id,
                 legion.name || '守军',
@@ -1133,6 +1134,7 @@ export class SiegeManager {
         nearbyAttackerLegions.forEach((legion) => {
             // 开战前已统一 stopMovement(true)
             legion.setCombatState(true, 'siege', cityPos);
+            legion.isSiegeAttacker = true; // 攻方带器械
             const legionAdapter = BattleUnitFactory.createAdapter(
                 legion.id,
                 legion.name || '攻军',

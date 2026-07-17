@@ -110,6 +110,7 @@ export class Army implements IBattleUnit {
     // [NEW] IAnimatedUnit Interface Compatibility
     public isAttacking: boolean = false;
     public currentBattleType: 'siege' | 'field' | null = null;
+    public isSiegeAttacker: boolean = false; // 攻城方才有器械
     public targetPos: { lat: number; lng: number } | null = null;
     public lastPosition: { lat: number; lng: number } = { lat: 0, lng: 0 };
     public lastDirection: number = 0; // Cache direction

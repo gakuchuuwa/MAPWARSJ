@@ -77,14 +77,14 @@ export class LegionPhalanxDrawer {
         well_lan: {
             attackIds: [774, 775, 776, 777, 778, 779, 780, 781],
             deathIds: [782, 783, 784, 785, 786, 787, 788, 789],
-            posOffsetX: -1.4,    // 第三排左
-            posOffsetY: +0.85,   // 第三排对齐
+            posOffsetX: -1.7,    // 第三排左
+            posOffsetY: +0.75,   // 左稍前
             scaleMul: 0.70,
         },
         well_lan_r: {
             attackIds: [774, 775, 776, 777, 778, 779, 780, 781],
             deathIds: [782, 783, 784, 785, 786, 787, 788, 789],
-            posOffsetX: +1.4,    // 第三排右
+            posOffsetX: +1.7,    // 第三排右
             posOffsetY: +0.85,
             scaleMul: 0.70,
         },

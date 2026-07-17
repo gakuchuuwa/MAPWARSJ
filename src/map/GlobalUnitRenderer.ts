@@ -52,6 +52,7 @@ export interface IAnimatedUnit extends IRenderable {
 
     // Battle Info
     currentBattleType: 'siege' | 'field' | null;
+    isSiegeAttacker?: boolean; // 攻城方才有器械
     targetPos: { lat: number; lng: number } | null;
 
     // Movement Tracking
@@ -652,7 +653,7 @@ export class GlobalUnitRenderer {
                                 this.projectileSystem.spawnVolley(shipStart, baseEnd, { count: 10, spreadFactor: 0.04 });
                             }
                         } else {
-                            this.projectileSystem.spawnVolley(baseStart, baseEnd);
+                            this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 10, spreadFactor: 0.03 });
                         }
 
                         unit.lastShotTime = now;
@@ -829,8 +830,9 @@ export class GlobalUnitRenderer {
                 unit.factionId || 'panjun'
             );
 
-            // ── 攻城器械（攻城时画在方阵周围；覆灭后留尸体同步士兵）──
-            if (unit.currentBattleType === 'siege' || LegionPhalanxDrawer.wasSiegeUnit(unit.id || '')) {
+            // ── 攻城器械（仅攻城方；覆灭后留尸体同步士兵）──
+            if ((unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker !== false)
+                || LegionPhalanxDrawer.wasSiegeUnit(unit.id || '')) {
                 const siegeScale = scale * (unit.previewScale ?? 1);
                 const baseH = 75;
                 const rH = baseH * siegeScale;
