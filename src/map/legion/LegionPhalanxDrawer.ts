@@ -77,6 +77,11 @@ export class LegionPhalanxDrawer {
     /** 冲车阵亡阈值：key = unitId, value = troops/maxTroops 低于此值时阵亡（随机，模拟 10 人中随机一位） */
     private static ramDeathThresholds = new Map<string, number>();
 
+    /** 外部查询：该 unit 是否曾参与攻城（用于覆灭后保留冲车尸体） */
+    public static wasSiegeUnit(unitId: string): boolean {
+        return this.ramDeathThresholds.has(unitId);
+    }
+
     private static readonly RAM_ATTACK_IDS = [731, 732, 733, 734, 735, 736, 737, 738];
     private static readonly RAM_DEATH_IDS = [755, 756, 757, 758, 759, 760, 761, 762];
 
@@ -942,6 +947,13 @@ export class LegionPhalanxDrawer {
         if (!this.ramLoaded) {
             void this.ensureRamLoaded();
             return;
+        }
+
+        // 战斗结束 + 兵力 > 0 = 胜利，冲车恢复（清阵亡状态，下次攻城重建）
+        if (state !== 'ATTACK' && state !== 'DEATH' && troops > 0) {
+            this.ramDeathStarts.delete(unitId);
+            this.ramDeathThresholds.delete(unitId);
+            return; // 非战斗状态不画冲车
         }
 
         // 10 人中随机一位：首次设置随机阵亡阈值（0.05~0.95，和 9 兵同概率）

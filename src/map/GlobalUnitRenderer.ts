@@ -830,7 +830,7 @@ export class GlobalUnitRenderer {
             );
 
             // ── 攻城冲车（攻城时画在第一排士兵前方；覆灭后留尸体同步士兵）──
-            if (unit.currentBattleType === 'siege') {
+            if (unit.currentBattleType === 'siege' || LegionPhalanxDrawer.wasSiegeUnit(unit.id || '')) {
                 const siegeScale = scale * (unit.previewScale ?? 1);
                 const baseH = 75;
                 const rH = baseH * siegeScale;
