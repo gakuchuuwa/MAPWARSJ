@@ -829,21 +829,20 @@ export class GlobalUnitRenderer {
                 unit.factionId || 'panjun'
             );
 
-            // ── 攻城冲车（攻城时画在第一排士兵前方；覆灭后留尸体同步士兵）──
+            // ── 攻城器械（攻城时画在方阵周围；覆灭后留尸体同步士兵）──
             if (unit.currentBattleType === 'siege' || LegionPhalanxDrawer.wasSiegeUnit(unit.id || '')) {
                 const siegeScale = scale * (unit.previewScale ?? 1);
                 const baseH = 75;
                 const rH = baseH * siegeScale;
                 const ramSpacingY = rH * 0.42;
                 const ramSpacingX = rH * 0.8 * 0.50;
-                LegionPhalanxDrawer.drawSiegeRam(
+                LegionPhalanxDrawer.drawSiegeGear(
                     ctx,
                     { x: centerPoint.x, y: centerPoint.y },
                     state,
                     directionIndex,
                     siegeScale,
                     Date.now(),
-                    unit.factionId || 'panjun',
                     ramSpacingX,
                     ramSpacingY,
                     unit.id || 'unknown',
