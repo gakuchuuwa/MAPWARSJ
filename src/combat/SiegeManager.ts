@@ -372,8 +372,8 @@ export class SiegeManager {
         this.visualizer = visualizer;
         this.onLegionUpdate = onLegionUpdate;
 
-        BattleField.setSiegeVisualStopHandler((cityId, immediate) => {
-            this.cityManager.stopSiegeEffect(cityId, immediate);
+        BattleField.setSiegeVisualStopHandler((cityId, immediate, restoreDelayMs) => {
+            this.cityManager.stopSiegeEffect(cityId, immediate, restoreDelayMs);
         });
     }
 
@@ -1282,7 +1282,8 @@ export class SiegeManager {
         battleField.onBattleComplete = (winnerFactionId) => {
             siegeLog(`✅ [Siege] Battle complete. Winner: ${winnerFactionId}`);
             clearSiegeGarrisonBoost(targetCity as typeof targetCity & SiegeGarrisonBoostFields);
-            this.cityManager.stopSiegeEffect(targetCity.id, true);
+            // 特效停止/据点缩回由 BattleField.resolve() 的软停负责（火焰淡出 + 延迟缩回）；
+            // 此处不得再立即硬停——否则会把淡出和"缩小藏进烟雾"杀死，战斗中据点提前恢复（2026-07-18 修复）
             this.activeSieges.delete(targetCity.id);
             onSiegeComplete?.();
             this.processSiegeThirdPartyWaiters(targetCity.id, winnerFactionId);

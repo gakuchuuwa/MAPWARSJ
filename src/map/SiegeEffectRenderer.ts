@@ -47,6 +47,10 @@ export class SiegeEffectRenderer {
     private static readonly FIRE_SPREAD_RATIO = 0.55;
     /** 火苗群在贴图中呈对角分布（贯穿整图）：bounds 上移片高×此比例，使火群中心大致对齐城内目标点 */
     private static readonly FIRE_ANCHOR_LIFT_RATIO = 0.85;
+    /** 单片火渐显时长（2026-07-18 主人定：第一坨火 5 秒渐显） */
+    private static readonly FIRE_FADE_IN_DURATION_MS = 5000;
+    /** 相邻火片渐显起始间隔（主人定：下一坨从第 4 秒开始）——第 i 片从第 i×4 秒起、5 秒渐显 */
+    private static readonly FIRE_FADE_IN_STAGGER_MS = 4000;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -163,6 +167,10 @@ export class SiegeEffectRenderer {
         this.fadeOut(cityId, effect);
     }
 
+    /**
+     * 错落渐显（2026-07-18 主人定）：第 1 坨火开战后 5 秒渐显；
+     * 第 i 坨从第 i×4 秒开始、同样 5 秒渐显——火是一处处烧起来的，不是同时冒出来
+     */
     private fadeIn(cityId: string): void {
         const effect = this.activeEffects.get(cityId);
         if (!effect) return;
@@ -170,8 +178,9 @@ export class SiegeEffectRenderer {
         if (effect.fadeTimerId) clearInterval(effect.fadeTimerId);
 
         const stepDuration = SiegeEffectRenderer.FADE_DURATION_MS / SiegeEffectRenderer.FADE_STEPS;
-        const opacityStep = 1.0 / SiegeEffectRenderer.FADE_STEPS;
-        let t = 0;
+        const totalMs = (effect.patches.length - 1) * SiegeEffectRenderer.FIRE_FADE_IN_STAGGER_MS
+            + SiegeEffectRenderer.FIRE_FADE_IN_DURATION_MS;
+        let elapsed = 0;
 
         effect.fadeTimerId = setInterval(() => {
             if (this.activeEffects.get(cityId) !== effect) {
@@ -179,29 +188,27 @@ export class SiegeEffectRenderer {
                 effect.fadeTimerId = undefined;
                 return;
             }
-            t += opacityStep;
-            if (t >= 1.0) {
-                t = 1.0;
+            elapsed += stepDuration;
+            const done = elapsed >= totalMs;
+            effect.patches.forEach((patch, i) => {
+                const local = (elapsed - i * SiegeEffectRenderer.FIRE_FADE_IN_STAGGER_MS)
+                    / SiegeEffectRenderer.FIRE_FADE_IN_DURATION_MS;
+                const t = done ? 1 : Math.min(1, Math.max(0, local));
+                patch.overlay.setOpacity(t * patch.peakOpacity);
+            });
+            if (done) {
                 if (effect.fadeTimerId) clearInterval(effect.fadeTimerId);
                 effect.fadeTimerId = undefined;
-            }
-            // 各片火有自己的峰值透明度：同一次淡入，火势强弱不一
-            for (const patch of effect.patches) {
-                patch.overlay.setOpacity(t * patch.peakOpacity);
             }
         }, stepDuration);
     }
 
+    /** 淡出：每片火从各自【当前】透明度 0.8s 归零（错落渐显中途停火也不会跳变） */
     private fadeOut(cityId: string, effect: ActiveSiegeEffect): void {
         const stepDuration = SiegeEffectRenderer.FADE_DURATION_MS / SiegeEffectRenderer.FADE_STEPS;
         const opacityStep = 1.0 / SiegeEffectRenderer.FADE_STEPS;
-        const p0 = effect.patches[0];
-        const startOpacity = p0 && p0.peakOpacity > 0
-            ? (p0.overlay.options.opacity ?? p0.peakOpacity)
-            : 1.0;
-        let t = p0 && p0.peakOpacity > 0
-            ? Math.min(1, Math.max(0, startOpacity / p0.peakOpacity))
-            : 1;
+        const startOpacities = effect.patches.map(p => p.overlay.options.opacity ?? p.peakOpacity);
+        let t = 1;
 
         effect.fadeTimerId = setInterval(() => {
             if (this.activeEffects.get(cityId) !== effect) {
@@ -221,9 +228,9 @@ export class SiegeEffectRenderer {
                 gameLog('siegeEffect', `🧯 [SiegeEffect] 城市 ${cityId} 的特效已完全消失`);
                 return;
             }
-            for (const patch of effect.patches) {
-                patch.overlay.setOpacity(t * patch.peakOpacity);
-            }
+            effect.patches.forEach((patch, i) => {
+                patch.overlay.setOpacity(t * startOpacities[i]);
+            });
         }, stepDuration);
     }
 

@@ -1105,6 +1105,13 @@ export class TerritorySystem {
 
         markersMap.set(city.id, marker);
 
+        // 攻城放大状态跟随 DOM 重建（2026-07-18）：别处占城增量重绘重建本城 marker 时补回 class，
+        // 否则"战斗中据点提前恢复"。marker 刚 addTo，DOM 已同步可用
+        if (this.siegeZoomedCities.has(city.id)) {
+            const root = marker.getElement()?.querySelector('.city-image-container');
+            root?.classList.add('city-under-siege');
+        }
+
         scheduleCityMarkerTerrainSample(city.id, displayLat, displayLng, (id) => this.getCityImageContainer(id));
 
         this.renderCityLabel(city, displayLat, displayLng, targetLayerGroup, labelsMap);
@@ -1298,8 +1305,16 @@ export class TerritorySystem {
         }
     }
 
+    /** 攻城放大中的据点集合：marker 因别处占城增量重绘而重建时，renderSingleCity 据此补回 class（2026-07-18 修复"战斗中据点提前恢复"） */
+    private readonly siegeZoomedCities = new Set<string>();
+
     /** 攻城时据点建筑贴图放大/还原（2026-07-18） */
     public setCitySiegeZoom(cityId: string, enabled: boolean): void {
+        if (enabled) {
+            this.siegeZoomedCities.add(cityId);
+        } else {
+            this.siegeZoomedCities.delete(cityId);
+        }
         const marker = this.cityMarkers.get(cityId);
         if (!marker) return;
         const root = marker.getElement()?.querySelector('.city-image-container');

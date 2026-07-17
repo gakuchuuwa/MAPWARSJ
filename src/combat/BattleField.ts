@@ -98,10 +98,11 @@ export class BattleField implements IOpeningPulseSink {
     /** 攻城战守方 cityId（构造时锁定，结算后仍可读） */
     public readonly siegeCityId: string | null;
     /** 由 SiegeManager 注册：区域战 resolve 时必停火焰/齐射，不依赖 onBattleComplete 赋值时机。
-     *  immediate=true 立刻清场（中止/换场/复国）；false 火焰淡出 + 据点延迟缩回（正常分出胜负） */
-    private static siegeVisualStopHandler: ((cityId: string, immediate: boolean) => void) | null = null;
+     *  immediate=true 立刻清场（中止/换场/复国）；false 火焰淡出 + 据点延迟缩回（正常分出胜负）。
+     *  restoreDelayMs：据点缩回延迟——守方胜 2s（城未破无烟雾，等动画收尾），攻方胜 1s（缩小藏进城破烟雾） */
+    private static siegeVisualStopHandler: ((cityId: string, immediate: boolean, restoreDelayMs?: number) => void) | null = null;
 
-    public static setSiegeVisualStopHandler(handler: ((cityId: string, immediate: boolean) => void) | null): void {
+    public static setSiegeVisualStopHandler(handler: ((cityId: string, immediate: boolean, restoreDelayMs?: number) => void) | null): void {
         BattleField.siegeVisualStopHandler = handler;
     }
     /** 援军编入本场区域战（用于跟随军团 UI） */
@@ -931,9 +932,11 @@ export class BattleField implements IOpeningPulseSink {
             }
         }
 
-        // 正常分出胜负：火焰淡出 + 据点延迟缩回（缩小藏进城破烟雾）
+        // 正常分出胜负：火焰淡出 + 据点延迟缩回。
+        // 攻方胜（城破）：1s 后缩回，缩小藏进城破烟雾；守方胜（城未破）：无烟雾，延 2s 等溃灭/回城动画收尾再从容缩回
         if (this.siegeCityId && BattleField.siegeVisualStopHandler) {
-            BattleField.siegeVisualStopHandler(this.siegeCityId, false);
+            const defenderWon = winnerGroup === this.defenderGroup;
+            BattleField.siegeVisualStopHandler(this.siegeCityId, false, defenderWon ? 2000 : 1000);
         }
 
         gameLog('battle', `🏆 [BattleField] 战斗结束! 胜者: ${winnerGroup.factionId}`);
