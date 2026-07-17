@@ -45,8 +45,12 @@ export class SiegeEffectRenderer {
     private static readonly SIEGE_CITY_VISUAL_ZOOM = 2.0;
     /** 火焰片散布半径（相对基准半径比例，<1 保证火落在城内） */
     private static readonly FIRE_SPREAD_RATIO = 0.55;
-    /** 火苗群在贴图中呈对角分布（贯穿整图）：bounds 上移片高×此比例，使火群中心大致对齐城内目标点 */
-    private static readonly FIRE_ANCHOR_LIFT_RATIO = 0.85;
+    /** 火苗群在贴图中的实测重心偏下 0.067H（2026-07-18 像素级测量：cx=0.46W、cy=0.57H）：
+        bounds 上移 0.13×halfH 精确补偿，使火苗重心落在目标点（中心放大后 = 城视觉中心）。
+        ⚠️ 勿凭感觉调大——过大火群飘到城北墙外，过小沉到城南墙根 */
+    private static readonly FIRE_ANCHOR_LIFT_RATIO = 0.13;
+    /** 火苗重心偏左 0.041W：bounds 东移 0.08×halfW 补偿；贴图镜像时火苗偏右，取反 */
+    private static readonly FIRE_ANCHOR_EAST_RATIO = 0.08;
     /** 单片火渐显时长（2026-07-18 主人定：第一坨火 5 秒渐显） */
     private static readonly FIRE_FADE_IN_DURATION_MS = 5000;
     /** 相邻火片渐显起始间隔（主人定：下一坨从第 4 秒开始）——第 i 片从第 i×4 秒起、5 秒渐显 */
@@ -380,9 +384,10 @@ export class SiegeEffectRenderer {
 
         const halfW = base.halfWidth * scaleFactor * patch.sizeScale;
         const halfH = base.halfHeight * scaleFactor * patch.sizeScale;
-        // 火苗在贴图下部：bounds 上移 halfH×比例，让火苗落在城内目标点上（不烧城下）
+        // 火苗重心补偿：垂直上移 0.13×halfH；水平东移 0.08×halfW，贴图镜像时火苗偏右、取反
+        const flipSign = patch.isFlipped ? -1 : 1;
         const cLat = center.lat + patch.offsetLat * scaleFactor + halfH * SiegeEffectRenderer.FIRE_ANCHOR_LIFT_RATIO;
-        const cLng = center.lng + patch.offsetLng * scaleFactor;
+        const cLng = center.lng + patch.offsetLng * scaleFactor + halfW * SiegeEffectRenderer.FIRE_ANCHOR_EAST_RATIO * flipSign;
 
         return L.latLngBounds(
             [cLat - halfH, cLng - halfW],
