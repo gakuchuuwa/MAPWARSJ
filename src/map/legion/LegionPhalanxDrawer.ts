@@ -438,6 +438,12 @@ export class LegionPhalanxDrawer {
 
     public static resetUnit(unitId: string): void {
         LegionPhalanxStateManager.reset(unitId);
+        this.gearSpawnTicks.delete(unitId);
+        this.gearFadeOutStarts.delete(unitId);
+        for (const cache of this.siegeGearCaches.values()) {
+            cache.deathStarts?.delete(unitId);
+            cache.deathThresholds?.delete(unitId);
+        }
     }
 
     // [NEW] Helper: Get Frame Count based on Aspect Ratio
@@ -671,7 +677,7 @@ export class LegionPhalanxDrawer {
                     drawY += Math.sin(chargeAngle) * (surgeFactor * chargeRange);
 
                     if (surgeFactor > 0) {
-                        dynamicScale = 1.0 + (surgeFactor * 0.15);
+                        dynamicScale = 1.0 + (surgeFactor * 0.10);
                     }
                 }
 
@@ -1001,8 +1007,14 @@ export class LegionPhalanxDrawer {
         unitId: string,
         troops: number,
     ): void {
+        // 多器械类型共用 unitId 的 spawn/fade 标记；整轮画完后再删，避免同帧后几种器械重开渐隐
+        let fadeFullyDone = false;
         for (const gearType of Object.keys(LegionPhalanxDrawer.SIEGE_GEAR_DEFS) as string[]) {
             drawSingleGear(gearType);
+        }
+        if (fadeFullyDone) {
+            LegionPhalanxDrawer.gearSpawnTicks.delete(unitId);
+            LegionPhalanxDrawer.gearFadeOutStarts.delete(unitId);
         }
 
         function drawSingleGear(type: string): void {
@@ -1022,9 +1034,10 @@ export class LegionPhalanxDrawer {
                 const fadeStart = LegionPhalanxDrawer.gearFadeOutStarts.get(unitId)!;
                 const fadeElapsed = tick - fadeStart;
                 if (fadeElapsed >= LegionPhalanxDrawer.GEAR_FADE_OUT_DURATION) {
-                    // 渐隐完毕，清本器械状态（共享标记等最后清）
+                    // 渐隐完毕，清本器械状态；共享 spawn/fade 等整轮结束后再删
                     cache.deathStarts.delete(unitId);
                     cache.deathThresholds.delete(unitId);
+                    fadeFullyDone = true;
                     return;
                 }
                 // 继续画，alpha 由下面统一处理
@@ -1120,6 +1133,9 @@ export class LegionPhalanxDrawer {
         }
     }
 
+    /** 攻城额外士兵阵亡起始 tick：key = unitId */
+    private static siegeSoldierDeathStarts = new Map<string, number>();
+
     /** 攻城额外士兵：在方阵指定偏移位置画一个兵种精灵 */
     public static drawSiegeSoldier(
         ctx: CanvasRenderingContext2D,
@@ -1133,6 +1149,7 @@ export class LegionPhalanxDrawer {
         unitType: string,     // e.g. 'archer'
         offsetX: number,      // in spacingX units
         offsetY: number,      // in spacingY units
+        unitId: string,
     ): void {
         const assets = this.unitSpriteCache.get(unitType);
         if (!assets) return;
@@ -1158,7 +1175,21 @@ export class LegionPhalanxDrawer {
 
         if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return;
         frameCount = Math.floor(sprite.width / sprite.height);
-        const frameIndex = Math.floor((tick / 150)) % frameCount;
+
+        let frameIndex: number;
+        if (state === 'DEATH') {
+            // 阵亡：播一次冻结末帧（和正规方阵一致）
+            if (!LegionPhalanxDrawer.siegeSoldierDeathStarts.has(unitId)) {
+                LegionPhalanxDrawer.siegeSoldierDeathStarts.set(unitId, tick);
+            }
+            const deathStart = LegionPhalanxDrawer.siegeSoldierDeathStarts.get(unitId)!;
+            const elapsed = tick - deathStart;
+            frameIndex = Math.min(Math.floor(elapsed / 150), frameCount - 1);
+        } else {
+            frameIndex = Math.floor((tick / 150)) % frameCount;
+            // 非阵亡状态清除死亡标记
+            LegionPhalanxDrawer.siegeSoldierDeathStarts.delete(unitId);
+        }
 
         const frameW = sprite.width / frameCount;
         const frameH = sprite.height;

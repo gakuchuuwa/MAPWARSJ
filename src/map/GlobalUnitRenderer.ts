@@ -254,6 +254,7 @@ export class GlobalUnitRenderer {
         if (id) {
             this.unitFightingStates.delete(id);
             LegionPhalanxStateManager.dispose(id);
+            LegionPhalanxDrawer.resetUnit(id); // 攻城器械状态清理
         }
         this.units.delete(unit);
         this.needsSort = true;
@@ -875,12 +876,12 @@ export class GlobalUnitRenderer {
                 LegionPhalanxDrawer.drawSiegeSoldier(
                     ctx, { x: centerPoint.x, y: centerPoint.y },
                     state, directionIndex, siegeScale, Date.now(), sX, sY,
-                    'archer', -0.9, -1.0,
+                    'archer', -0.9, -1.0, unit.id || 'unknown',
                 );
                 LegionPhalanxDrawer.drawSiegeSoldier(
                     ctx, { x: centerPoint.x, y: centerPoint.y },
                     state, directionIndex, siegeScale, Date.now(), sX, sY,
-                    'archer', +0.9, -1.0,
+                    'archer', +0.9, -1.0, unit.id || 'unknown',
                 );
             }
 
