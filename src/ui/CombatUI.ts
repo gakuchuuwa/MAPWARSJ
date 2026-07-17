@@ -3141,12 +3141,12 @@ export class CombatUI {
         const defs = defUnits ? (Array.isArray(defUnits) ? defUnits : [defUnits]) : [];
         const cityUnit = defs.find(u => u.unitType === 'city');
         if (cityUnit) {
-            if (Math.abs(getPassGarrisonCombatMultiplier(cityUnit) - 1) > 0.001) suffix = ' [险要]';
-            else if (Math.abs(getRegionCenterCombatMultiplier(cityUnit) - 1) > 0.001) suffix = ' [名城]';
+            if (Math.abs(getPassGarrisonCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '险要';
+            else if (Math.abs(getRegionCenterCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '名城';
         }
         
         if (suffix) {
-            this.battleTitle.innerHTML = `${title} <span style="font-size:0.3em;margin-left:8px;color:rgba(255,215,0,0.85);vertical-align:middle;text-shadow:0 1px 2px rgba(0,0,0,0.8);">${suffix}</span>`;
+            this.battleTitle.innerHTML = `${title} <span style="display:inline-block;padding:0 4px;border:1px solid rgba(255,215,0,0.4);border-radius:2px;font-size:0.35em;background:rgba(0,0,0,0.5);margin-left:8px;color:rgba(255,215,0,0.85);vertical-align:middle;transform:translateY(-3px);">${suffix}</span>`;
         } else {
             this.battleTitle.textContent = title;
         }

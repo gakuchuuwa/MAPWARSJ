@@ -770,7 +770,7 @@ export class CityAssetManager {
 'sanada_d': '信浓',
         'jiazini': '伽色',
 'jibin': '罽宾',
-        'dulan_d': '杜兰',
+'dulan_d': '杜兰',
         'baha': '巴哈',
 'hali': '萨洛',
         'kalan': '卡兰',

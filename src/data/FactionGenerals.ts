@@ -254,7 +254,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 // ── 西域区 2026-06-18 ──
     shache: { generalId: 'shache_xian_suoche_shachexian', generalName: '莎车贤', portrait: '/assets/WESTERN/shache_xian_suoche_shachexian.png' },
     shule: { generalId: 'shule_aersilan', generalName: '阿尔斯兰', portrait: '/assets/WESTERN/shule_aersilan.png' },
-    dzungar: { generalId: 'dzungar_galedanceling', generalName: '噶勒丹策凌', portrait: '/assets/WESTERN/dzungar_galedanceling.png' },
+    dzungar: { generalId: 'dzungar_galedanceling', generalName: '噶勒丹策凌', portrait: '/assets/STEPPE/dzungar_galedanceling.png' },
     anxi: { generalId: 'anxi_guoxin', generalName: '郭昕', portrait: '/assets/litang/anxi_guoxin.png' },
     yanqi: { generalId: 'yanqi_longtuqizhi', generalName: '龙突骑支', portrait: '/assets/WESTERN/yanqi_longtuqizhi.png' },
     tuerhute: { generalId: 'tuerhute_wobaxi', generalName: '渥巴锡', portrait: '/assets/WESTERN/tuerhute_wobaxi.png' },
@@ -754,7 +754,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xin: { generalId: 'xin_baiqi', generalName: '白起', portrait: '/assets/yingqin/xin_baiqi.png' },
   pangzha: { generalId: 'pangzha_halixinge', generalName: '哈里辛格', portrait: '/assets/CENTRAL_ASIA/pangzha_halixinge.png' },
     najie: { generalId: 'najie_minande', generalName: '米南德', portrait: '/assets/CENTRAL_ASIA/najie_minande.png' },
-  dulan_d: { generalId: 'dulan_d_aihamaide', generalName: '艾哈迈德', portrait: '/assets/CENTRAL_ASIA/dulan_d_aihamaide.png' },
+    dulan_d: { generalId: 'dulan_d_aihamaide', generalName: '艾哈迈德', portrait: '/assets/CENTRAL_ASIA/dulan_d_aihamaide.png' },
     muer: { generalId: 'muer_mujier', generalName: '穆吉尔', portrait: '/assets/CENTRAL_ASIA/muer_mujier.png' },
   baha: { generalId: 'baha_gaiwamu', generalName: '盖瓦姆', portrait: '/assets/CENTRAL_ASIA/baha_gaiwamu.png' },
     hali: { generalId: 'hali_gedaerzi', generalName: '戈达尔兹', portrait: '/assets/CENTRAL_ASIA/hali_gedaerzi.png' },
@@ -795,7 +795,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xiazhou: { generalId: 'xiazhou_lijiqian', generalName: '李继迁', portrait: '/assets/HEXI/weiming_lijiqian.png' },
     shizhou: { generalId: 'shizhou_liucong', generalName: '刘聪', portrait: '/assets/STEPPE/shizhou_liucong.png' },
     yanzhou: { generalId: 'yanzhou_zhongshiheng', generalName: '种世衡', portrait: '/assets/zhaosong/yanzhou_zhongshiheng.png' },
-    cangsong: { generalId: 'cangsong_machao', generalName: '马超', portrait: '/assets/CENTRAL/__闲置__CENTRAL_35.png' },
+    cangsong: { generalId: 'cangsong_machao', generalName: '马超', portrait: '/assets/HEXI/cangsong_machao.png' },
 
 };
 

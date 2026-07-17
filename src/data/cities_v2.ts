@@ -2546,7 +2546,9 @@ export const CITIES_V2: CityDataV2[] = [
         note: '哥疾宁；伽色尼治所/重镇',
     },
     // ── 2026-06-20 替换：喀布尔→迦毕试（罽宾）──
-    { id: 'city_gaofu', name: '迦毕试', factionId: 'jibin', lat: 34.55, lng: 69.2, type: 'medium_city', troops: 20000, region: 'CENTRAL_ASIA' },
+    { id: 'city_gaofu', name: '迦毕试', factionId: 'jibin', lat: 34.55, lng: 69.2, type: 'small_city', troops: 20000, region: 'CENTRAL_ASIA' },
+
+
 
     { id: 'city_fanyanna', name: '巴米扬', factionId: 'fanyanna', lat: 34.8659, lng: 67.9807, type: 'small_city', region: 'CENTRAL_ASIA', troops: 20000,
         note: '巴米扬；梵衍那小城',
@@ -2660,7 +2662,8 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-06-20 新增：德兰吉亚·法拉 ──
     { id: 'city_fala', name: '法拉', factionId: 'delan', lat: 32.3700, lng: 62.1100, type: 'small_city', region: 'CENTRAL_ASIA', troops: 20000, note: '古德兰吉亚省法拉河畔要塞；苏伦家族世袭领地，帕提亚东境战略枢纽' },
     // ── 2026-06-20 新增：杜兰尼·坎大哈 ──
-    { id: 'city_kandaha', name: '坎大哈', factionId: 'dulan_d', lat: 31.6289, lng: 65.7372, type: 'medium_city', tier: 1, region: 'CENTRAL_ASIA', troops: 20000, note: '杜兰尼帝国第一首都；艾哈迈德沙阿1747年在此加冕为阿富汗王' },
+    { id: 'city_kandaha', name: '坎大哈', factionId: 'dulan_d', lat: 31.6289, lng: 65.7372, type: 'small_city', troops: 20000, region: 'CENTRAL_ASIA' },
+
     // ── 2026-06-20 新增：呼罗珊·赫拉特 ──
     { id: 'city_helate', name: '赫拉特', factionId: 'huluo', lat: 34.3419, lng: 62.2031, type: 'small_city', troops: 20000, region: 'CENTRAL_ASIA' },
 

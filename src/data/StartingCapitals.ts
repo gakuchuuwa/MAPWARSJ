@@ -756,7 +756,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'haikou': 'city_diaoyudao',
   'pangzha': 'city_atuoke',
 'najie': 'city_dinggucheng',
-  'dulan_d': 'city_kandaha',
+'dulan_d': 'city_kandaha',
   'baha': 'city_taibade',
 'hali': 'city_salahesi',
   'kalan': 'city_tusi',
