@@ -868,6 +868,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_yangguan', name: '阳关', factionId: 'yangguan', lat: 39.92, lng: 94.06, type: 'pass', troops: 20000, region: 'HEXI' },
 
 
+
     { id: 'city_wuzhousai', name: '善无', factionId: 'wuzhou', lat: 39.998214, lng: 112.420349, type: 'pass', troops: 20000, region: 'STEPPE' },
 
     // ── 2026-06-18 新增：李靖@恶阳岭（贞观四年定襄夜袭）──

@@ -1324,14 +1324,14 @@ export class CombatUI {
             else if (joinLuck < 0.999) joinLabel = '掣肘';
         }
 
-        // ①运气标签：不显数字，只显「好运」或「厄运」（读当前值）
+        // ①运气标签：只有极端值才显示（0.8→厄运, 1.2→好运, 中间不显）
         const fateLuck = side === 'attacker'
             ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? null)
             : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? null);
         let luckLabel = '';
         if (fateLuck !== null && fateLuck !== undefined) {
-            if (fateLuck > 1.001) luckLabel = '好运';
-            else if (fateLuck < 0.999) luckLabel = '厄运';
+            if (fateLuck > 1.15) luckLabel = '好运';
+            else if (fateLuck < 0.85) luckLabel = '厄运';
         }
 
         if (labeled.length === 0 && !luckLabel && !joinLabel && !passLabel && !regionLabel && !tacLabel) {

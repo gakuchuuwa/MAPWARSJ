@@ -136,9 +136,9 @@ export class GameConfig {
             big_city: 0.3,
         } as Record<string, number>,
         MIN_SURVIVAL_TROOPS: 0.1,
-        /** 有效战力随机系数 [0.9, 1.1]：开战整侧掷一次；援军编入再掷一次（系统技「合兵一处」） */
-        LUCK_MIN: 0.9,
-        LUCK_MAX: 1.1,
+        /** 有效战力随机系数 [0.8, 1.2]：开战整侧掷一次；援军编入再掷一次（系统技「合兵一处」） */
+        LUCK_MIN: 0.8,
+        LUCK_MAX: 1.2,
         /** 开战编入半径（经纬度欧氏距离，约 0.3 ≈ 30km；开战瞬间 + 每 0.2s 圈内扫描，可随时加入） */
         BATTLE_JOIN_RADIUS: 0.3,
         /** 远征军团有效战力 ×1.2（与文化系数相乘，见 CultureCombat） */
@@ -297,7 +297,7 @@ export function clampBattleDurationSec(seconds: number, minSec?: number): number
     );
 }
 
-/** 开战 luck ∈ [LUCK_MIN, LUCK_MAX]（当前 0.9～1.1） */
+/** 开战 luck ∈ [LUCK_MIN, LUCK_MAX]（当前 0.8～1.2） */
 export function rollCombatLuckMultiplier(): number {
     const { LUCK_MIN, LUCK_MAX } = GameConfig.COMBAT;
     return LUCK_MIN + Math.random() * (LUCK_MAX - LUCK_MIN);

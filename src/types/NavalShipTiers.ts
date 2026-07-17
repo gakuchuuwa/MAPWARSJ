@@ -9,11 +9,11 @@
 
 export type NavalShipAssetId = 'ship_small' | 'ship_medium' | 'ship_large';
 
-/** 地图渲染各档船相对基准的缩放（小船/大船 1.0，中船 0.9） */
+/** 地图渲染各档船相对基准的缩放（小船 1.0，中船 0.8，大船 0.6） */
 const NAVAL_SHIP_DRAW_SCALE: Readonly<Record<NavalShipAssetId, number>> = {
     ship_small: 1.0,
-    ship_medium: 0.9,
-    ship_large: 1.0,
+    ship_medium: 0.8,
+    ship_large: 0.6,
 };
 
 export function getNavalShipDrawScale(shipId: NavalShipAssetId): number {

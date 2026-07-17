@@ -840,7 +840,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yangguan_lihao: { generalId: 'yangguan_lihao', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_352', atkBalanceSkillId: 'ts_046', atkDisadvantageSkillId: 'ts_794', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_405', defDisadvantageSkillId: 'ts_016', aptitude: 'leverage' , attackStyle: 'attack'},
+    yangguan_lihao: { generalId: 'yangguan_lihao', tier: 'ordinary', tacticalSkillId: 'ts_352', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_352', atkBalanceSkillId: 'ts_046', atkDisadvantageSkillId: 'ts_794', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_405', defDisadvantageSkillId: 'ts_016', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
