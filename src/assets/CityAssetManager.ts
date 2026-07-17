@@ -1307,8 +1307,12 @@ export class CityAssetManager {
         this.assignedRandomFlags.clear();
     }
 
+    /** [诊断 2026-07-17] 旗帜管线耗时分解（图片加载/像素工作/让步等待），finishBoot 随 boot-timing 上报 */
+    public static readonly flagPerf = { imgLoadMs: 0, sliceMs: 0, yieldMs: 0, flags: 0 };
+
     /** 画据点前加载叛军旗：S10QZ 编号 PANJUN_REBEL_FLAG_ID_MIN–MAX（52 面）。AGENTS.md §10.3 */
     public static async preloadRebelFlagsForBoot(): Promise<void> {
+        (window as any).__flagPerf = this.flagPerf;
         this.resetRebelFlagAssignments();
         if (this.panjunRebelsFullyLoaded) {
             if (this.processedRebelFlags.length > 0) {
@@ -1369,7 +1373,10 @@ export class CityAssetManager {
             const path = `/SUCAI/S10QZ/${i}-1.png`;
             const dataUrl = await this.chromaKeyImage(path, null).catch(() => null);
             if (dataUrl) this.processedRebelFlags.push(dataUrl);
+            const tYield = performance.now();
             await CityAssetManager.yieldSchedulingSlice(preferIdleYield);
+            this.flagPerf.yieldMs += performance.now() - tYield;
+            this.flagPerf.flags++;
         }
         this.chromaScheduleMode = prevMode;
         const loaded = this.processedRebelFlags.length;
@@ -1656,11 +1663,17 @@ export class CityAssetManager {
      * 像素环分片 + rAF 让步，避免 img.onload 内一次性扫全图触发 50ms+ Long Task。
      */
     private static async chromaKeyImage(src: string, tintColorHex: string | null): Promise<string> {
+        // [PERF 2026-07-17] fetch+createImageBitmap 取代 <img>：后台标签页里 <img> 的加载/解码
+        // 被 Chrome 降优先级（52 面叛军旗串行实测 9.2s，文件仅 ~3KB/面）；fetch 不受该节流。
+        // 行为不变：成功返回 dataURL，加载失败照旧抛错（调用方 catch 兜底）。
+        const tStart = performance.now();
+        const resp = await fetch(src);
+        if (!resp.ok) throw new Error(`Failed to load flag image: ${src}`);
+        const blob = await resp.blob();
+        const img = await createImageBitmap(blob);
+        CityAssetManager.flagPerf.imgLoadMs += performance.now() - tStart;
         return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onerror = () => reject(new Error(`Failed to load flag image: ${src}`));
-            img.onload = () => {
+            const run = () => {
                 const w = img.width;
                 const h = img.height;
 
@@ -1687,6 +1700,7 @@ export class CityAssetManager {
                 const rowsPerSlice = CityAssetManager.CHROMA_ROWS_PER_SLICE;
 
                 const processSlice = () => {
+                    const tSlice = performance.now();
                     try {
                         if (!canvas) {
                             canvas = document.createElement('canvas');
@@ -1727,20 +1741,30 @@ export class CityAssetManager {
                         }
                         y0 = yEnd;
                         if (y0 < h) {
+                            CityAssetManager.flagPerf.sliceMs += performance.now() - tSlice;
                             CityAssetManager.scheduleChromaWorkStep(processSlice);
                             return;
                         }
 
                         ctx!.putImageData(imageData!, 0, 0);
-                        resolve(canvas.toDataURL('image/png'));
+                        const out = canvas.toDataURL('image/png');
+                        CityAssetManager.flagPerf.sliceMs += performance.now() - tSlice;
+                        resolve(out);
                     } catch (e) {
                         reject(e);
                     }
                 };
 
-                CityAssetManager.scheduleChromaWorkStep(processSlice);
+                // [PERF 2026-07-17] 小图（≤CHROMA_ROWS_PER_SLICE 行）同步一步做完，不进调度器：
+                // rIC/setTimeout 在后台标签页被节流到 ≥1 秒/次，52 面叛军旗的调度 hop 曾把启动
+                // 吃到 98s（实际像素工作仅 ~3ms/面，见 2026-06-12 同病历史）。超大图仍分片走调度。
+                if (h <= rowsPerSlice) {
+                    processSlice();
+                } else {
+                    CityAssetManager.scheduleChromaWorkStep(processSlice);
+                }
             };
-            img.src = src;
+            run();
         });
     }
 }
