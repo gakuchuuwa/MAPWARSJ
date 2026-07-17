@@ -3146,7 +3146,7 @@ export class CombatUI {
         }
         
         if (suffix) {
-            this.battleTitle.innerHTML = `${title} <span style="display:inline-block;padding:0 4px;border:1px solid rgba(255,215,0,0.4);border-radius:2px;font-size:0.35em;background:rgba(0,0,0,0.5);margin-left:8px;color:rgba(255,215,0,0.85);vertical-align:middle;transform:translateY(-3px);">${suffix}</span>`;
+            this.battleTitle.innerHTML = `${title} <span style="display:inline-block;padding:0 4px;border:1px solid rgba(255,215,0,0.4);border-radius:2px;font-size:0.35em;background:rgba(0,0,0,0.5);margin-left:8px;color:rgba(255,215,0,0.85);vertical-align:bottom;transform:translateY(-6px);letter-spacing:normal;">${suffix}</span>`;
         } else {
             this.battleTitle.textContent = title;
         }

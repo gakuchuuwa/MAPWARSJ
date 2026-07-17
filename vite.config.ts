@@ -197,6 +197,25 @@ export default defineConfig({
                     });
                 } catch (_) { /* 静默：png 未变时可能无输出，不影响启动 */ }
 
+                // [2026-07-17] 启动耗时打点落盘：finishBoot POST 上来，写 scratch/boot_timing_latest.json
+                // 供排查"启动要数分钟"到底慢在哪一阶段（任何窗口启动游戏都会覆盖写一份最新的）
+                server.middlewares.use('/api/boot-timing', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    let body = '';
+                    req.on('data', (chunk: string) => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            fs.writeFileSync(path.resolve(__dirname, 'scratch/boot_timing_latest.json'), body, 'utf-8');
+                            console.log('[BootTiming] 已记录本次启动耗时 → scratch/boot_timing_latest.json');
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
                 server.middlewares.use('/api/save-roads', (req, res) => {
                     if (req.method !== 'POST') {
                         res.statusCode = 405;
