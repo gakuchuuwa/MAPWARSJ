@@ -36,7 +36,7 @@ export class FollowResupplySystem {
     /**
      * S⑬以战养战：远离己方据点时缓慢回血（全军团，不限跟拍）
      * 速率 = 军团上限 × GameConfig.COMBAT.FIELD_RESUPPLY_RATE_PER_CAP_PER_SEC × 游戏秒
-     * 连战模拟 tick 窗口 = TIME.POST_BATTLE_REST（战后驻留 3 秒，无地图行军时）
+     * 连战模拟 tick 窗口 = TIME.POST_BATTLE_REST（战后驻留 5 秒，无地图行军时）
      */
     public tickStrategicFieldResupply(army: Army, deltaTimeSec: number): void {
         if (!GameConfig.SYSTEM.SANDBOX_MODE) return;

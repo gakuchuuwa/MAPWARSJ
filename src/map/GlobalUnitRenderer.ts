@@ -254,7 +254,7 @@ export class GlobalUnitRenderer {
         if (id) {
             this.unitFightingStates.delete(id);
             LegionPhalanxStateManager.dispose(id);
-            LegionPhalanxDrawer.resetUnit(id); // 攻城器械状态清理
+            LegionPhalanxDrawer.disposeUnit(id); // 注销：方阵 + 攻城器械状态全清
         }
         this.units.delete(unit);
         this.needsSort = true;
@@ -561,7 +561,8 @@ export class GlobalUnitRenderer {
         const wasFighting = this.unitFightingStates.get(id) || false;
 
         if (wasFighting && !isFighting) {
-            LegionPhalanxDrawer.resetUnit(id); // [AI SYSTEM]
+            // 只重置方阵/额外弓步状态；器械 Map 保留给战后 4s 渐隐
+            LegionPhalanxDrawer.resetUnit(id);
         }
         this.unitFightingStates.set(id, isFighting);
 
@@ -630,30 +631,12 @@ export class GlobalUnitRenderer {
 
                         const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
                         if (useNavalVisual) {
-                            // 舰队 5 艘船各自射箭，从编队各位置发射
-                            const angle = (unit.lastDirection + 1) * Math.PI / 4;
-                            const cos = Math.cos(angle);
-                            const sin = Math.sin(angle);
-                            // 船间偏移（经纬度，加大可见分离）
-                            const rOff = 0.015;
-                            const cOff = 0.022;
-                            const offsets = [
-                                { r: 0, c: 0 },      // 大船
-                                { r: 1, c: -1.5 },   // 前左
-                                { r: 1, c: 1.5 },    // 前右
-                                { r: -1, c: -1.5 },  // 后左
-                                { r: -1, c: 1.5 },   // 后右
-                            ];
-                            console.log(`🚢 Naval volley: ${offsets.length} ships, dir=${unit.lastDirection}, isOnSea=${unit.isOnSea}, forceNaval=${unit.forceNavalVisual}`);
-                            for (const o of offsets) {
-                                const ox = o.r * rOff;
-                                const oy = o.c * cOff;
-                                const shipStart = L.latLng(
-                                    baseStart.lat + (ox * cos - oy * sin),
-                                    baseStart.lng + (ox * sin + oy * cos),
-                                );
-                                this.projectileSystem.spawnVolley(shipStart, baseEnd, { count: 10, spreadFactor: 0.04 });
-                            }
+                            // 舰队一共 10 支火箭（与据点齐射同 type:'fire'），从编队中心发出
+                            this.projectileSystem.spawnVolley(baseStart, baseEnd, {
+                                count: 10,
+                                spreadFactor: 0.04,
+                                type: 'fire',
+                            });
                         } else {
                             this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 10, spreadFactor: 0.03 });
                         }

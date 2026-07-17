@@ -39,7 +39,7 @@ const _FIXED: Record<string, string> = {
     tang: '#F0CC40', // 唐（明亮赭黄；与魏深黄对照）
     manzhou_d: '#D4A528', // 大清
     tuoba: '#B08220', // 拓跋
-    xin: '#A88A24', // 新
+    xin: '#1C1C1D', // 上党（近秦玄黑，仅末位微差）
     chen: '#C49830', // 陈
     chunshen: '#D0AA35', // 春申
     pizhou: '#A67C2A', // 邳州·陷阵营（下邳土黄）
@@ -309,7 +309,7 @@ const _FIXED: Record<string, string> = {
     linyu: '#4A5A6B', // 临榆（碣石靛蓝，夷丁突骑）
     loufan: '#6B5B4A', // 楼烦（塞北土棕，楼烦兵）
     hongnong_jun: '#5A8A3A', // 弘农（桃林翠绿，桃林射士）
-    ruo: '#7A6A4A', // 鄀国（商於赭石，商於材官）
+    ruo: '#1C1C1B', // 武关（近秦玄黑，仅末位微差）
     ruzhou: '#6B6B5A', // 汝州（广成灰褐，赤帻先锋）
     yun: '#8A6A3A', // 允戎（陆浑赭黄，陆浑戎骑）
     jiyuan: '#5A6B7A', // 济源（太行钢蓝，落雕卫）
