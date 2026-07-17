@@ -683,6 +683,8 @@ export const FACTIONS: Faction[] = [
 
     { id: 'jiazini', name: '伽色尼' },      // 伽色尼王朝(哥疾宁/马哈茂德), Ghaznavid
     { id: 'jibin', name: '罽宾' },
+
+
           // 罽宾/迦毕试(丘就却/贵霜), Kapisa/Kushan
     { id: 'fanyanna', name: '梵衍那' },      // 梵衍那国(巴米扬/兴都库什), Bamiyan
 // 土褐 - 吐火罗(员渠城/焉耆盆地)
@@ -1428,6 +1430,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-06-20 新增：杜兰尼（坎大哈）/ 呼罗珊（赫拉特）/ 阿巴尔（尼沙布尔）──
     { id: 'dulan_d', name: '杜兰尼' },
+
     { id: 'huluo', name: '古尔' },
 
 

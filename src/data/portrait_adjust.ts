@@ -1222,11 +1222,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 1
         },
-        "/assets/WESTERN/dzungar_galedanceling.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/CENTRAL_ASIA/fanyanna_xieer.png": {
             "scale": 1.08,
             "offsetX": 0,
@@ -3912,11 +3907,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/STEPPE/__闲置__STEPPE_02.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": -28
-        },
         "/assets/STEPPE/__闲置__STEPPE_04.png": {
             "scale": 1.42,
             "offsetX": 0,
@@ -5007,11 +4997,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -11
         },
-        "/assets/HEXI/__闲置__CENTRAL_19.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -37
-        },
         "/assets/daming/dongshengwei_wangyue.png": {
             "scale": 0.97,
             "offsetX": 19,
@@ -5141,11 +5126,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 9,
             "offsetY": 21
-        },
-        "/assets/CENTRAL/__闲置__CENTRAL_35.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 1
         },
         "/assets/CENTRAL/ranwei_d_ranmin.png": {
             "scale": 0.92,
@@ -5831,6 +5811,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": 0,
             "offsetY": -42
+        },
+        "/assets/WESTERN/__闲置__WESTERN_21.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/STEPPE/dzungar_galedanceling.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/HEXI/__闲置__CENTRAL_18.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_39.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/HEXI/cangsong_machao.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -37
         }
     },
     "folderGuides": {

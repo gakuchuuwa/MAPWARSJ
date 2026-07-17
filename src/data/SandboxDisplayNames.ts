@@ -827,7 +827,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   pangzha: '旁遮',
   // —— 2026-06-20 新增：那竭国·顶骨城 ——
 'najie': '那竭',
-  dulan_d: '杜兰',
+'dulan_d': '杜兰',
   baha: '巴哈',
   hali: '哈里',
   kalan: '卡兰',
