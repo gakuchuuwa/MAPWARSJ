@@ -753,8 +753,8 @@ export class LegionPhalanxDrawer {
 
     private static readonly NAVAL_FORMATION = [
         { r: 0, c: 0, ship: 'ship_large' },
-        { r: 1, c: -1.5, ship: 'ship_small' }, { r: 1, c: 1.5, ship: 'ship_small' },
-        { r: -1, c: -1.5, ship: 'ship_medium' }, { r: -1, c: 1.5, ship: 'ship_medium' },
+        { r: 1, c: -1.5, ship: 'ship_medium' }, { r: 1, c: 1.5, ship: 'ship_small' },
+        { r: -1, c: -1.5, ship: 'ship_medium' }, { r: -1, c: 1.5, ship: 'ship_small' },
     ] as const;
 
     public static drawNaval(
