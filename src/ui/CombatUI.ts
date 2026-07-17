@@ -1345,8 +1345,6 @@ export class CombatUI {
         const tag = (text: string, extraStyle = '') =>
             `<span style=\"display:inline-block;padding:1px 5px;border:1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};border-radius:3px;background:${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};margin:0 1px;${extraStyle}\">${text}</span>`;
         if (luckLabel) parts.push(tag(luckLabel));
-        if (passLabel) parts.push(tag('险要'));
-        if (regionLabel) parts.push(tag('名城'));
         if (tacLabel) parts.push(tag(tacLabel));
 
         // ③武将适性标签：攻防风格 + 三势（与徽章同源：指挥官）
@@ -1388,18 +1386,13 @@ export class CombatUI {
         const aptColor = side === 'attacker' ? 'rgba(255,180,40,1)' : 'rgba(80,200,240,1)';
         if (styleLabel && styleHighlight === 2) parts.push(tag(styleLabel, `color:${aptColor};font-weight:700;`));
         if (aptLabel2 && aptHighlight2 === 2) parts.push(tag(aptLabel2, `color:${aptColor};font-weight:700;`));
-        // ⑤ 名将光环
-        if (unit.generalId && getGeneralProfile(unit.generalId)?.tier === 'famous') {
-            parts.push(tag('名将', `color:${aptColor};font-weight:700;`));
-        }
+        // ⑤ 名将光环 (moved to general name tag)
         if (numChain) parts.push(tag(numChain));
         const chain = parts.join('');
 
         const titleParts = labeled.map((l) => `${l.label}×${fmt(l.value)}`);
         if (joinLabel) titleParts.unshift(`援军:${joinLabel}(×${parseFloat(joinLuck!.toFixed(2))})`);
         if (luckLabel) titleParts.unshift(`运气:${luckLabel}(×${parseFloat(fateLuck!.toFixed(2))})`);
-        if (passLabel) titleParts.unshift(passLabel);
-        if (regionLabel) titleParts.unshift(regionLabel);
         const title = `${role}：${titleParts.join(' ')}`;
         return { chain, title };
     }
@@ -1884,8 +1877,8 @@ export class CombatUI {
         side: 'attacker' | 'defender',
     ): string | null {
         const tag = side === 'attacker' ? this.leftGeneralNameTag : this.rightGeneralNameTag;
-        if (tag.dataset.generalId === generalId && tag.textContent?.trim()) {
-            return tag.textContent.trim();
+        if (tag.dataset.generalId === generalId && tag.dataset.rawName) {
+            return tag.dataset.rawName;
         }
         return getGeneralRecordByGeneralId(generalId)?.generalName ?? null;
     }
@@ -3127,7 +3120,17 @@ export class CombatUI {
         this.defenderDisplayName = mapName(def);
         this.attackerFactionId = att.factionId;
         this.defenderFactionId = def.factionId;
-        this.battleTitle.textContent = title;
+        
+        let suffix = '';
+        if (Math.abs(getPassGarrisonCombatMultiplier(def) - 1) > 0.001) suffix = ' [关隘]';
+        else if (Math.abs(getRegionCenterCombatMultiplier(def) - 1) > 0.001) suffix = ' [名城]';
+        
+        if (suffix) {
+            this.battleTitle.innerHTML = `${title} <span style="font-size:0.5em;color:rgba(255,215,0,0.85);vertical-align:middle;text-shadow:0 1px 2px rgba(0,0,0,0.8);">${suffix}</span>`;
+        } else {
+            this.battleTitle.textContent = title;
+        }
+        
         this.battleYear.textContent = year;
         this.battleYear.style.display = year ? 'block' : 'none';
 
@@ -3385,13 +3388,21 @@ export class CombatUI {
     ): void {
         const rec = unit.generalId ? getGeneralRecordByGeneralId(unit.generalId) : null;
         if (rec) {
-            tag.textContent = rec.generalName;
-            tag.style.display = 'block';
+            tag.dataset.rawName = rec.generalName;
+            let html = `<span style="writing-mode: vertical-rl; text-orientation: upright;">${rec.generalName}</span>`;
+            if (unit.generalId && getGeneralProfile(unit.generalId)?.tier === 'famous') {
+                html += `<div style="margin-top: 8px; font-size: 0.6em; font-family: sans-serif; color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.6); border-radius: 3px; padding: 2px 0; text-align: center; writing-mode: horizontal-tb; text-orientation: mixed; letter-spacing: 0; line-height: 1.2; font-weight: normal; text-shadow: none;">名将</div>`;
+            }
+            tag.innerHTML = html;
+            tag.style.display = 'flex';
+            tag.style.flexDirection = 'column';
+            tag.style.alignItems = 'center';
             tag.dataset.generalId = unit.generalId!;
         } else {
-            tag.textContent = '';
+            tag.innerHTML = '';
             tag.style.display = 'none';
             delete tag.dataset.generalId;
+            delete tag.dataset.rawName;
         }
         tag.dataset.side = side;
         this.refreshGeneralNameTagInteract();
