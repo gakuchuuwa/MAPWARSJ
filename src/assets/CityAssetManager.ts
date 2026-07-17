@@ -216,6 +216,7 @@ export class CityAssetManager {
 'qu_d': '界津',
 'liu': '九江',
         'ouyue': '台',
+        'taizhou': '泰',
 
 'xiangzhou': '襄',
         'zaoyang_d': '舂陵',

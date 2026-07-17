@@ -55,7 +55,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 蔡国劲卒除名（无此部队）
   shen: { name: '申伯亲卫', tier: 4 },         // 安康·西周申国
   // 汴河戍旅除名（无此编制）
-    yuzhou: { name: '中流击楫军', tier: 3 },
+    yuzhou: { name: '义勇北伐军', tier: 3 },
     xin: { name: '上党锐骑', tier: 2 },
     beidi: { name: '北地羌骑', tier: 2 },
     yingzhou_d: { name: '选锋军', tier: 2 },

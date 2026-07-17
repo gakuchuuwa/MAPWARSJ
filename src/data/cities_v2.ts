@@ -2690,6 +2690,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_yongqiu', name: '雍丘', factionId: 'yuzhou', lat: 34.55, lng: 114.78, type: 'small_city', troops: 20000, region: 'CENTRAL' },
 
+
     { id: 'city_mengcheng', name: '蒙城', factionId: 'mengcheng_d', lat: 33.27, lng: 116.56, type: 'small_city', region: 'CENTRAL', troops: 20000, note: '汉沛郡山桑县治地；唐天宝改蒙城县；庄子故里（有争议）' },
     { id: 'city_yongcheng', name: '永城', factionId: 'guide_d', lat: 33.93, lng: 116.37, type: 'small_city', region: 'CENTRAL', troops: 20000, note: '归德府辖；芒砀山/汉高潜居；走廊东翼' },
     { id: 'city_kunyang', name: '昆阳', factionId: 'lulin', lat: 33.22, lng: 113.22, type: 'small_city', region: 'CENTRAL', troops: 20000, note: '昆阳故城（叶县北）；绿林—刘秀昆阳之战' },

@@ -75,8 +75,8 @@ export class SiegeManager {
      *  （如曾经的不战而屈泄漏），排队者会被 BT 的 IsWaitingSiege 永久冻结——自动直播不可接受，超时整队放行兜底。 */
     private waiterQueueOrphanSince: Map<string, number> = new Map();
 
-    /** 看门狗超时：60 秒真实时间（正常"唤醒者走向城下开新战"的空窗只有几秒到十几秒，60s 远在其外） */
-    private static readonly WAITER_WATCHDOG_MS = 60_000;
+    /** 看门狗超时：160 秒真实时间（主人 2026-07-17 定；正常"唤醒者走向城下开新战"的空窗只有几秒到十几秒，160s 远在其外） */
+    private static readonly WAITER_WATCHDOG_MS = 160_000;
 
     /** 等待环基准：比开战圈稍外（攻城军停在 COMBAT_RADIUS≈0.1，等待者最近停 0.2） */
     private static readonly WAIT_RING_BASE = GameConfig.SIEGE.COMBAT_RADIUS + 0.1;
@@ -1233,11 +1233,12 @@ export class SiegeManager {
         // [语音播报] 跟随军团攻城：开战后一刻触发，势=攻守初始兵力比（与 BattleField assignSituationalSkills 同公式）。
         // 城池「兵临」、关隘「攻打」；守方有将续「势前缀…赵国[名将]武将，守方八字」，无将只一句。
         const followedIdForSpeech = window.game?.cameraFollowUI?.getFollowedArmyId?.();
+        // [修复 2026-07-17] r 原在 if 块内声明，下方援军播报循环（块外）引用会 ReferenceError 崩溃——提升到共用作用域
+        const r = battleField.getInitialAttDefRatio(); // attacker / defender
         if (followedIdForSpeech === army.id) {
             const siegeAtkUnit = attackerUnits.find((u) => u.generalId === army.generalId)
                 ?? attackerUnits.find((u) => !!u.battleOverriddenSkillId) ?? null;
             const siegeDefGeneralId = defenderUnits.find((u) => !!u.generalId)?.generalId ?? null;
-            const r = battleField.getInitialAttDefRatio(); // attacker / defender
             const attJu: CaptureJu = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
             speechAnnouncer.announceSiegeStart({
                 attackerFactionId: army.getFactionId(),

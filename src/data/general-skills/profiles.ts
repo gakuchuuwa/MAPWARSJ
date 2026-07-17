@@ -1968,7 +1968,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yuzhou_zuti: { generalId: 'yuzhou_zuti', tier: 'famous', tacticalSkillId: 'ts_004', strategicSkillId: 'str_25', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_373', atkBalanceSkillId: 'ts_722', atkDisadvantageSkillId: 'ts_724', defAdvantageSkillId: 'ts_004', defDisadvantageSkillId: 'ts_383', defBalanceSkillId: 'ts_396', aptitude: 'create' , attackStyle: 'attack'},
+    yuzhou_zuti: { generalId: 'yuzhou_zuti', tier: 'famous', tacticalSkillId: 'ts_373', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_373', atkBalanceSkillId: 'ts_722', atkDisadvantageSkillId: 'ts_724', defAdvantageSkillId: 'ts_004', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_383', strategicSkillId: 'str_25', aptitude: 'create', attackStyle: 'attack' },
 
 
 

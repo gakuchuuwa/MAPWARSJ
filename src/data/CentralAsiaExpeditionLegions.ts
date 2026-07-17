@@ -51,7 +51,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   // ── 2026-06-20 新增：杜兰尼·呼罗珊·阿巴尔 ──
   dulan_d: { name: '普什图骑兵', tier: 1 },    // 坎大哈·摧毁马拉塔帝国的战略主力
   // ── 2026-06-20 新增：布兹詹·哈里·卡伦 ──
-  baha: { name: '巴哈尔兹铁卫', tier: 4 }, // 泰巴德·巴哈尔兹重装戍卫（缺乏极其著名的战术高光，降T3）
+  baha: { name: '巴哈铁卫', tier: 4 }, // 泰巴德·巴哈尔兹重装戍卫（缺乏极其著名的战术高光，降T3）
     hali: { name: '萨洛尔弓骑', tier: 4 },
   kalan: { name: '萨珊边骑', tier: 4 },    // 图斯·卡伦家族世袭东北边防元帅（常规番号，降T3）
   // ── 2026-06-20 新增：锡斯坦·德兰吉亚 ──

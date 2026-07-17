@@ -5,10 +5,11 @@
  * 现行分配依据：TacticalSkillCatalog.ts 的六种/三类 + GeneralProfile 攻防六槽。
  */
 
-import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG, type GeneralTier } from './GeneralSkills';
+import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG, type GeneralTier, type GeneralProfile } from './GeneralSkills';
 import {
     TACTICAL_SKILL_BY_ID,
     getTacticalAssignTier,
+    getTacticalSkillEntry,
     getTacticalSkillEntryForGeneral,
 } from './TacticalSkillCatalog';
 
@@ -259,9 +260,28 @@ export interface DistributionAuditViolation {
     maxShare: number;
 }
 
-/** 批量提交前审计：任一技能占比 > DISTRIBUTION_MAX_SHARE 则违规（④ 除外） */
+/**
+ * 武将开战「可部署」的战术技集合（去重，一将一技至多记一次）。
+ *
+ * ⚠️ 口径校正（2026-07-17）：战斗开局由 BattleField.assignSituationalSkills →
+ * GeneralSkillCombat.resolveSituationalSkillId 决定放哪个技——攻方从 atk 三槽、
+ * 守方从 def 三槽等概率抽；某侧三槽全空时才回退 tacticalSkillId（见
+ * getActiveTacticalSkillId）。而 tacticalSkillId 单字段现已无一武将真正落到兜底
+ * （717 将全配了六槽），继续按它统计会把 437 名挂 ts_001 兜底的普将误报成
+ * 「单技 94.6% 占比 + 数百技 0 持有」的假违规。占比/限量/零持有一律按本函数口径。
+ */
+export function deployableTacticalSkillIds(p: GeneralProfile): string[] {
+    const atk = [p.atkAdvantageSkillId, p.atkBalanceSkillId, p.atkDisadvantageSkillId].filter(Boolean) as string[];
+    const def = [p.defAdvantageSkillId, p.defBalanceSkillId, p.defDisadvantageSkillId].filter(Boolean) as string[];
+    const out = new Set<string>();
+    for (const s of (atk.length ? atk : [p.tacticalSkillId])) if (s) out.add(s);
+    for (const s of (def.length ? def : [p.tacticalSkillId])) if (s) out.add(s);
+    return [...out];
+}
+
+/** 批量提交前审计：任一技能可部署占比 > DISTRIBUTION_MAX_SHARE 则违规 */
 export function auditTacticalDistribution(
-    profiles: Record<string, { tier: GeneralTier; tacticalSkillId: string }> = GENERAL_PROFILES,
+    profiles: Record<string, GeneralProfile> = GENERAL_PROFILES,
 ): { ok: boolean; violations: DistributionAuditViolation[] } {
     const violations: DistributionAuditViolation[] = [];
     for (const tier of ['famous', 'ordinary'] as const) {
@@ -270,10 +290,11 @@ export function auditTacticalDistribution(
         if (total === 0) continue;
         const byTac: Record<string, number> = {};
         for (const p of pool) {
-            byTac[p.tacticalSkillId] = (byTac[p.tacticalSkillId] ?? 0) + 1;
+            for (const skillId of deployableTacticalSkillIds(p)) {
+                byTac[skillId] = (byTac[skillId] ?? 0) + 1;
+            }
         }
         for (const [tacticalId, count] of Object.entries(byTac)) {
-            if (TAC04_QUOTA_EXEMPT && tacticalId === 'tac_04') continue;
             const share = count / total;
             if (share > DISTRIBUTION_MAX_SHARE) {
                 violations.push({ tier, tacticalId, count, share, maxShare: DISTRIBUTION_MAX_SHARE });
@@ -303,15 +324,18 @@ export interface AssignTierAuditResult {
 }
 
 export function auditAssignTierConstraints(
-    profiles: Record<string, { tier: GeneralTier; tacticalSkillId: string }> = GENERAL_PROFILES,
+    profiles: Record<string, GeneralProfile> = GENERAL_PROFILES,
 ): AssignTierAuditResult {
     const holders: Record<string, number> = {};
     const famousHolders: Record<string, number> = {};
     for (const p of Object.values(profiles)) {
-        const entry = getTacticalSkillEntryForGeneral(p.tacticalSkillId);
-        if (!entry) continue;
-        holders[entry.id] = (holders[entry.id] ?? 0) + 1;
-        if (p.tier === 'famous') famousHolders[entry.id] = (famousHolders[entry.id] ?? 0) + 1;
+        // 按战斗真实可部署技能计数（六槽，兜底 tacticalSkillId），一将一技至多记一次
+        for (const skillId of deployableTacticalSkillIds(p)) {
+            const entry = getTacticalSkillEntry(skillId) ?? getTacticalSkillEntryForGeneral(skillId);
+            if (!entry) continue;
+            holders[entry.id] = (holders[entry.id] ?? 0) + 1;
+            if (p.tier === 'famous') famousHolders[entry.id] = (famousHolders[entry.id] ?? 0) + 1;
+        }
     }
     const limitedViolations: AssignTierAuditResult['limitedViolations'] = [];
     const gambleFamousViolations: AssignTierAuditResult['gambleFamousViolations'] = [];

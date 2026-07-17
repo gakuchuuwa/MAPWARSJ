@@ -900,7 +900,7 @@ function renderSixSlotPanel() {
         if (j.log) console.log(j.log);
         toast(j.ok ? ('✅ ' + step + ' 完成 — 请检查后再下一步') : '失败: ' + j.error, !j.ok);
         modal.remove();
-        renderSixSlotModal();
+        renderSixSlotPanel();
     };
     ($('btn-six-1') as HTMLElement).addEventListener('click', () => runSixStep(1));
     ($('btn-six-2') as HTMLElement).addEventListener('click', () => runSixStep(2));
