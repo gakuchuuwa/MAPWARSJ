@@ -71,7 +71,7 @@ export class LegionPhalanxDrawer {
             attackIds: [731, 732, 733, 734, 735, 736, 737, 738],
             deathIds: [755, 756, 757, 758, 759, 760, 761, 762],
             posOffsetX: 0,      // 正中
-            posOffsetY: -1.75,  // 第一排前
+            posOffsetY: -2.0,  // 第一排前
             scaleMul: 0.70,
         },
         well_lan: {
