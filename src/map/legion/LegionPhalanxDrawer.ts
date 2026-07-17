@@ -12,6 +12,9 @@ import { getNavalShipDrawScale, type NavalShipAssetId } from '../../types/NavalS
 import { gameLog } from '../../utils/GameLogger';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
+import { NavalPhalanxStateManager } from './NavalPhalanxState';
+
+/** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 const LAZY_BOOT_UNIT_IDS = new Set(['ship_small', 'ship_medium', 'ship_large']);
 
 export type PhalanxAnimState = 'IDLE' | 'MOVE' | 'ATTACK' | 'DAMAGE' | 'DEATH';
@@ -457,6 +460,8 @@ export class LegionPhalanxDrawer {
     public static disposeUnit(unitId: string): void {
         this.resetUnit(unitId);
         this.clearSiegeGearState(unitId);
+        this.resetNavalDeath(unitId);
+        NavalPhalanxStateManager.dispose(unitId);
     }
 
     // [NEW] Helper: Get Frame Count based on Aspect Ratio
@@ -974,6 +979,16 @@ export class LegionPhalanxDrawer {
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
         const baseHeight = 72;
 
+        // 逐舰阵亡状态更新（2026-07-18）：参照 LegionPhalanxStateManager 模式
+        const isFighting = state === 'ATTACK' || state === 'DAMAGE';
+        if (unitId) {
+            NavalPhalanxStateManager.update(unitId, troops, isFighting, tick);
+            // 非战时重置状态（战后补员/切换单位）
+            if (!isFighting && state !== 'DEATH') {
+                NavalPhalanxStateManager.reset(unitId);
+            }
+        }
+
         // 按三档船型各备一份贴图集与绘制尺寸；缺任一档 → 触发懒加载，等下一帧
         interface NavalTypeDraw {
             set: NonNullable<ReturnType<typeof LegionPhalanxDrawer.getUnitAssets>>;
@@ -1010,8 +1025,9 @@ export class LegionPhalanxDrawer {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
 
-        // 收集 5 艘船的位置（中 1 大船 + 前 2 小船 + 后 2 中船）
+        // 收集 5 艘船的位置（中 1 大船 + 前 2 小船 + 后 2 中船），逐舰读取阵亡状态
         const ships: { x: number; y: number; img: HTMLImageElement; sx: number; sy: number; sw: number; sh: number; w: number; h: number }[] = [];
+        const navalState = unitId ? NavalPhalanxStateManager.getState(unitId) : undefined;
 
         for (let i = 0; i < this.NAVAL_FORMATION.length; i++) {
             const pos = this.NAVAL_FORMATION[i] ?? this.NAVAL_FORMATION[0];
@@ -1022,15 +1038,38 @@ export class LegionPhalanxDrawer {
             const dx = center.x + (ox * cos - oy * sin);
             const dy = center.y + (ox * sin + oy * cos);
 
+            // 逐舰读取个体状态（2026-07-18）
+            const shipSlot = navalState?.ships[i];
+            const shipAlive = !shipSlot || shipSlot.state === 'ALIVE';
+            const shipDying = shipSlot?.state === 'DYING';
+            const shipDead = shipSlot?.state === 'DEAD';
+
+            // DEAD 舰不绘制
+            if (shipDead) continue;
+
             let rawSprite: HTMLImageElement | undefined;
-            if (state === 'DEATH') {
+            let currentFrameIndex = 0;
+
+            if (shipDying) {
+                // 逐舰阵亡动画：用该舰的 stateStartTime 驱动
+                rawSprite = currentSet.DEATH[shipSlot.deathDirection] || currentSet.DEATH[0];
+                const timeDead = Math.max(0, tick - shipSlot.stateStartTime);
+                currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);
+            } else if (state === 'DEATH') {
+                // 全局 DEATH（战斗结束残余舰统一沉没）
                 rawSprite = currentSet.DEATH[direction] || currentSet.DEATH[0];
+                const starts = this.ensureNavalDeathStarts(unitId, this.NAVAL_FORMATION.length, tick);
+                const timeDead = Math.max(0, tick - (starts[i] ?? tick));
+                currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);
             } else if (state === 'DAMAGE') {
                 rawSprite = currentSet.DAMAGE[direction] || currentSet.DAMAGE[0];
+                currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
             } else if (state === 'ATTACK') {
                 rawSprite = currentSet.ATTACK[direction] || currentSet.ATTACK[0];
+                currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
             } else if (state === 'MOVE') {
                 rawSprite = currentSet.MOVE[direction] || currentSet.MOVE[0];
+                currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
             } else {
                 rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
             }
@@ -1038,15 +1077,6 @@ export class LegionPhalanxDrawer {
 
             const tintedSprite = SpriteTinter.getTintedSprite(rawSprite, factionId);
             if (!tintedSprite) continue;
-
-            let currentFrameIndex = 0;
-            if (state === 'DEATH') {
-                const starts = this.ensureNavalDeathStarts(unitId, this.NAVAL_FORMATION.length, tick);
-                const timeDead = Math.max(0, tick - (starts[i] ?? tick));
-                currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);
-            } else if (state === 'MOVE' || state === 'ATTACK' || state === 'DAMAGE') {
-                currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
-            }
 
             const tfw = tintedSprite.width / td.totalFrames;
             ships.push({
