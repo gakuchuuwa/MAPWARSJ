@@ -278,7 +278,7 @@ export const JAPAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 6. 草原 纯骑 刀骑+弓骑 123 */
+/** 6. 草原 纯骑 刀骑1+弓骑5 123（骑射云：尖刀骑领，中后排全弓骑） */
 export const STEPPE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -287,7 +287,7 @@ export const STEPPE_TIERS: CompositionTier[] = [
         slots: [
             { type: 'general_cavalry', count: 1, scale: 1.2 },
             { type: 'horse_archer', count: 2 },
-            { type: 'general_cavalry', count: 3 }
+            { type: 'horse_archer', count: 3 }
         ]
     }
 ];

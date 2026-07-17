@@ -604,15 +604,16 @@ export class ArmyEditor {
             return;
         }
 
-        // 地图中心
+        // 地图中心（略偏上，不挡面板）
         const center = this.map.getCenter();
-        this.spawnLat = center.lat;
+        const offsetLat = 0.3; // 向北偏移 ~33km，军团和黑圈一起移
+        this.spawnLat = center.lat + offsetLat;
         this.spawnLng = center.lng;
-        this.currentLat = center.lat;
+        this.currentLat = center.lat + offsetLat;
         this.currentLng = center.lng;
 
-        // [2026-05-30] 加黑色圆背景 — 凸显军队（略偏上，不挡面板）
-        this.backgroundCircle = L.circle([center.lat + 2.0, center.lng], {
+        // [2026-05-30] 加黑色圆背景 — 凸显军队
+        this.backgroundCircle = L.circle([center.lat + offsetLat, center.lng], {
             radius: 80000, // 80km 半径
             color: 'transparent',
             fillColor: '#000000',
