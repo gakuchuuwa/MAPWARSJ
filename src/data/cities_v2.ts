@@ -2772,6 +2772,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_quyancheng', name: '朐衍城', factionId: 'yanzhou', lat: 37.7794, lng: 107.4078, type: 'small_city', troops: 20000, region: 'HEXI' },
 
     { id: 'city_lishi', name: '离石', factionId: 'shizhou', lat: 37.48, lng: 111.09, type: 'small_city', troops: 20000, region: 'NORTH' },
+    { id: 'city_chiwubao', name: '赤乌堡', factionId: 'cangsong', lat: 37.477, lng: 102.8815, type: 'pass', troops: 20000, region: 'HEXI' },
+
 
 
 

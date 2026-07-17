@@ -41,4 +41,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     xiazhou: { name: '平夏部骑', tier: 3 },
     yanzhou: { name: '步跋子', tier: 3 },
     ashide: { name: '阿史德骑', tier: 4 },
+    cangsong: { name: '西凉铁骑', tier: 2 },
 };

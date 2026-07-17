@@ -2173,13 +2173,16 @@ function serverReadAllEntityData() {
     const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog']);
     const VARIANCE_EFFECTS = new Set(['luck_variance_self', 'luck_lock_self', 'recompute_comeback']);
     const triClassById = new Map<string, string>();
+    const sixClassById = new Map<string, string>();
     for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'[\s\S]*?baseEffect:\s*'(\w+)',\s*condition:\s*'(\w+)'/g)) {
         const tri = UNDERDOG_CONDS.has(m[3]) || VARIANCE_EFFECTS.has(m[2]) ? 'disadvantage' : EFFECT_TO_TRI[m[2]];
         if (tri && !triClassById.has(m[1])) triClassById.set(m[1], tri);
+        const six = SIX_CLASS_BY_EFFECT[m[2]]?.label;
+        if (six && !sixClassById.has(m[1])) sixClassById.set(m[1], six);
     }
     // [2026-07-14 修复] 不再要求 id 后紧跟 layer/index/displayName（编辑器会在 id 后插 usageTag/situationTag 等内联字段，
     //   打乱字段顺序会让严格顺序正则漏掉整条技 → 校验误报"技能不存在"）。改为逐条目取窗口，字段顺序无关地提取。
-    const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string }> = [];
+    const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string; sixClass?: string }> = [];
     {
         const idPositions: Array<{ id: string; idx: number }> = [];
         for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'/g)) idPositions.push({ id: m[1], idx: m.index! });
@@ -2192,7 +2195,7 @@ function serverReadAllEntityData() {
             const index = seg.match(/index:\s*(\d+)/)?.[1] ?? '0';
             tacticalSkills.push({
                 id, grid: circledNum(parseInt(index)), displayName: dn,
-                assignTier: assignTierById.get(id), triClass: triClassById.get(id),
+                assignTier: assignTierById.get(id), triClass: triClassById.get(id), sixClass: sixClassById.get(id),
             });
         }
     }

@@ -56,7 +56,7 @@ interface EntityData {
         attackStyle?: 'attack' | 'defense' | 'balanced';
     }>;
     elites: Record<string, { name: string; tier: number; region: string }>;
-    tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string }>;
+    tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string; sixClass?: string }>;
     strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }>;
     regions: string[];
 }
@@ -774,8 +774,18 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     ).join('');
     // 三格下拉：只列对应三类的技；当前值类别不符时保留在顶部并标注（防止保存时被静默清掉）
     //   借势(leverage)武将故意跨类放技，不标⚠
-    const slotOptions = (tri: 'advantage' | 'balance' | 'disadvantage', selected?: string, aptitude?: string) => {
-        const pool = (entityData?.tacticalSkills ?? []).filter(s => s.triClass === tri);
+    // 槽位→允许的六计（攻守互补）
+    const SLOT_SIX_CLASS: Record<string, string[]> = {
+        atkAdvantage: ['攻战计', '胜战计'],
+        atkBalance: ['敌战计', '混战计'],
+        atkDisadvantage: ['并战计', '败战计'],
+        defAdvantage: ['胜战计', '攻战计'],
+        defBalance: ['混战计', '敌战计'],
+        defDisadvantage: ['败战计', '并战计'],
+    };
+    const slotOptions = (slot: string, selected?: string, aptitude?: string) => {
+        const allowed = SLOT_SIX_CLASS[slot] ?? [];
+        const pool = (entityData?.tacticalSkills ?? []).filter(s => s.sixClass && allowed.includes(s.sixClass));
         let html = pool.map(s =>
             `<option value="${s.id}" ${s.id === (selected ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
         ).join('');
@@ -1008,13 +1018,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>攻·优势（攻战/胜战）</span>
               <select name="atkAdvantageSkillId">
                 <option value="">不设</option>
-                ${slotOptions('advantage', row!.atkAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
+                ${slotOptions('atkAdvantage', row!.atkAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
               </select>
             </label>
             <label><span>攻·均势（敌战/混战）</span>
               <select name="atkBalanceSkillId">
                 <option value="">不设</option>
-                ${slotOptions('balance', row!.atkBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
+                ${slotOptions('atkBalance', row!.atkBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
               </select>
             </label>
           </div>
@@ -1022,7 +1032,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>攻·劣势（并战/败战）</span>
               <select name="atkDisadvantageSkillId">
                 <option value="">不设</option>
-                ${slotOptions('disadvantage', row!.atkDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}
+                ${slotOptions('atkDisadvantage', row!.atkDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}
               </select>
             </label>
             <label><span>三势 aptitude</span>
@@ -1039,13 +1049,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>守·优势（胜战/攻战）</span>
               <select name="defAdvantageSkillId">
                 <option value="">不设</option>
-                ${slotOptions('advantage', row!.defAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
+                ${slotOptions('defAdvantage', row!.defAdvantageSkillId ?? row!.advantageSkillId, row!.aptitude)}
               </select>
             </label>
             <label><span>守·均势（混战/敌战）</span>
               <select name="defBalanceSkillId">
                 <option value="">不设</option>
-                ${slotOptions('balance', row!.defBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
+                ${slotOptions('defBalance', row!.defBalanceSkillId ?? row!.balanceSkillId, row!.aptitude)}
               </select>
             </label>
           </div>
@@ -1053,7 +1063,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>守·劣势（败战/并战）</span>
               <select name="defDisadvantageSkillId">
                 <option value="">不设</option>
-                ${slotOptions('disadvantage', row!.defDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}
+                ${slotOptions('defDisadvantage', row!.defDisadvantageSkillId ?? row!.disadvantageSkillId, row!.aptitude)}
               </select>
             </label>
           </div>
@@ -1421,14 +1431,13 @@ async function handleQuickSubmit(): Promise<void> {
     let aptitude = '';
     let tacticalSkillId = '';
     if (f.genName) {
-        const SLOT_LABEL = { advantage: '优势', balance: '均势', disadvantage: '劣势' } as const;
-        const sideTriKeys: Array<[SixSlotKey, 'advantage' | 'balance' | 'disadvantage']> = [
-            ['atkAdvantageSkillId', 'advantage'], ['atkBalanceSkillId', 'balance'], ['atkDisadvantageSkillId', 'disadvantage'],
-            ['defAdvantageSkillId', 'advantage'], ['defBalanceSkillId', 'balance'], ['defDisadvantageSkillId', 'disadvantage'],
+        const sideTriKeys: Array<[SixSlotKey, string[]]> = [
+            ['atkAdvantageSkillId', ['攻战计', '胜战计']], ['atkBalanceSkillId', ['敌战计', '混战计']], ['atkDisadvantageSkillId', ['并战计', '败战计']],
+            ['defAdvantageSkillId', ['胜战计', '攻战计']], ['defBalanceSkillId', ['混战计', '敌战计']], ['defDisadvantageSkillId', ['败战计', '并战计']],
         ];
-        for (const [field, tri] of sideTriKeys) {
-            const p = pickRandom((entityData?.tacticalSkills ?? []).filter(s => s.assignTier === 'common' && s.triClass === tri));
-            if (!p) { showToast(`随机${field}失败：common∩${SLOT_LABEL[tri]}池为空`, true); return; }
+        for (const [field, allowed] of sideTriKeys) {
+            const p = pickRandom((entityData?.tacticalSkills ?? []).filter(s => s.assignTier === 'common' && s.sixClass && allowed.includes(s.sixClass)));
+            if (!p) { showToast(`随机${field}失败：common∩${allowed.join('/')}池为空`, true); return; }
             sixSlots[field] = p.id;
         }
         tacticalSkillId = deriveTacticalSkillIdFromSix(sixSlots as SixSlotIds);
