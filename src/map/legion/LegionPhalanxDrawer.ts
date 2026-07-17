@@ -731,10 +731,30 @@ export class LegionPhalanxDrawer {
      * 海上五船编队（2026-07-18 主人定）：中大船 + 前 2 小船 + 后 2 中船
      *   r = 航行方向轴（-1 前 / +1 后），c = 左右横轴；全图统一样式，不按兵力分档
      */
+    /** 舰队逐艘阵亡起始时间（参考陆军 PhalanxAnimState 逐兵阵亡） */
+    private static navalDeathStarts = new Map<string, number[]>();
+
+    public static resetNavalDeath(unitId: string): void {
+        this.navalDeathStarts.delete(unitId);
+    }
+
+    /** 为舰队分配逐艘阵亡起始时间（首次进入 DEATH 时调用） */
+    private static ensureNavalDeathStarts(unitId: string, shipCount: number, now: number): number[] {
+        let starts = this.navalDeathStarts.get(unitId);
+        if (!starts) {
+            // 5 艘船：大船最后一个沉（旗舰），小船→中船→大船 各间隔 600ms
+            // 索引 0=大船(中) 1=小船(前左) 2=小船(前右) 3=中船(后左) 4=中船(后右)
+            const delayMs = [1800, 0, 300, 600, 900]; // 前小船先沉 → 后中船 → 旗舰最后
+            starts = delayMs.slice(0, shipCount).map(d => now + d);
+            this.navalDeathStarts.set(unitId, starts);
+        }
+        return starts;
+    }
+
     private static readonly NAVAL_FORMATION = [
         { r: 0, c: 0, ship: 'ship_large' },
-        { r: 1, c: -1, ship: 'ship_small' }, { r: 1, c: 1, ship: 'ship_small' },
-        { r: -1, c: -1, ship: 'ship_medium' }, { r: -1, c: 1, ship: 'ship_medium' },
+        { r: 2, c: -1, ship: 'ship_small' }, { r: 2, c: 1, ship: 'ship_small' },
+        { r: -2, c: -1, ship: 'ship_medium' }, { r: -2, c: 1, ship: 'ship_medium' },
     ] as const;
 
     public static drawNaval(
@@ -747,6 +767,7 @@ export class LegionPhalanxDrawer {
         tick: number,
         factionId: string,
         lockedShipId: NavalShipAssetId | null = null,
+        unitId: string = '',
     ): void {
         // 五船定编（2026-07-18 主人定）：样式全图统一，不按兵力/登船锁定分档；
         // troops、lockedShipId 保留签名兼容，不再参与船型选择。
@@ -816,7 +837,9 @@ export class LegionPhalanxDrawer {
 
             let currentFrameIndex = 0;
             if (state === 'DEATH') {
-                currentFrameIndex = Math.min(Math.floor((tick + i * 80) / 150), td.totalFrames - 1);
+                const starts = this.ensureNavalDeathStarts(unitId, this.NAVAL_FORMATION.length, tick);
+                const timeDead = Math.max(0, tick - (starts[i] ?? tick));
+                currentFrameIndex = Math.min(Math.floor(timeDead / 150), td.totalFrames - 1);
             } else if (state === 'MOVE' || state === 'ATTACK' || state === 'DAMAGE') {
                 currentFrameIndex = Math.floor((tick + i * 80) / 150) % td.totalFrames;
             }

@@ -786,6 +786,7 @@ export class ArmyEditor {
         this.clearAnimIntervals();
         if (this.previewUnit) {
             const renderer = getGlobalUnitRenderer();
+            if (this.previewUnit.id) LegionPhalanxDrawer.resetNavalDeath(this.previewUnit.id);
             renderer?.unregister(this.previewUnit);
             this.previewUnit = null;
         }

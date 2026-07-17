@@ -786,6 +786,7 @@ export class GlobalUnitRenderer {
                     Date.now(),
                     unit.factionId || 'zhonghua',
                     unit.navalShipTierLock ?? null,
+                    unit.id ?? '',
                 );
             } else {
                 // [AI SYSTEM] Use Dedicated Legion Drawer
