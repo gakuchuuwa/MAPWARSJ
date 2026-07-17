@@ -71,7 +71,7 @@ export class LegionPhalanxDrawer {
             attackIds: [731, 732, 733, 734, 735, 736, 737, 738],
             deathIds: [755, 756, 757, 758, 759, 760, 761, 762],
             posOffsetX: 0,      // 正中
-            posOffsetY: -1.55,  // 第一排前
+            posOffsetY: -1.75,  // 第一排前
             scaleMul: 0.70,
         },
         well_lan: {
@@ -91,17 +91,17 @@ export class LegionPhalanxDrawer {
         catapult_l: {
             attackIds: [801, 802, 803, 804, 805, 806, 807, 808],
             deathIds: [825, 826, 827, 828, 829, 830, 831, 832],
-            posOffsetX: -1.0,     // 第三排后左
-            posOffsetY: +1.80,    // 第三排后
+            posOffsetX: -0.8,     // 第三排后左
+            posOffsetY: +1.70,    // 左稍前
             scaleMul: 0.70,
-            frameStagger: 0,      // 攻击帧偏移（错开同步）
-            frameSpeed: 250,      // 投石慢速（ms/帧）
+            frameStagger: 0,
+            frameSpeed: 250,
         },
         catapult_r: {
             attackIds: [801, 802, 803, 804, 805, 806, 807, 808],
             deathIds: [825, 826, 827, 828, 829, 830, 831, 832],
-            posOffsetX: +1.0,     // 第三排后右
-            posOffsetY: +1.80,
+            posOffsetX: +0.8,     // 第三排后右
+            posOffsetY: +1.90,    // 右稍后
             scaleMul: 0.70,
             frameStagger: 4,      // 错开半周期
             frameSpeed: 250,      // 投石慢速（ms/帧）
@@ -137,7 +137,7 @@ export class LegionPhalanxDrawer {
 
     /** 攻城器械渐显起始 tick：key = unitId */
     private static gearSpawnTicks = new Map<string, number>();
-    private static readonly GEAR_SPAWN_DURATION = 1000; // 1 秒渐显
+    private static readonly GEAR_SPAWN_DURATION = 2000; // 2 秒渐显
     /** 攻城器械渐隐起始 tick：key = unitId（胜利后 4 秒淡出） */
     private static gearFadeOutStarts = new Map<string, number>();
     private static readonly GEAR_FADE_OUT_DURATION = 4000; // 4 秒渐隐
