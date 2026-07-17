@@ -379,14 +379,14 @@ export const TIBET_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 13. 中亚 纯骑三角（重骑前锋 + 弓骑后排）— MovementClass=CAVALRY */
+/** 13. 中亚 纯骑三角（轻骑前锋 + 弓骑后排）— MovementClass=CAVALRY */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'heavy_cavalry', count: 3 },
+            { type: 'lancer', count: 3 },
             { type: 'horse_archer', count: 3 }
         ]
     }

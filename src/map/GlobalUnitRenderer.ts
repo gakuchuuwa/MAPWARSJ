@@ -875,12 +875,12 @@ export class GlobalUnitRenderer {
                 LegionPhalanxDrawer.drawSiegeSoldier(
                     ctx, { x: centerPoint.x, y: centerPoint.y },
                     state, directionIndex, siegeScale, Date.now(), sX, sY,
-                    'archer', -0.7, -1.0,
+                    'archer', -0.9, -1.0,
                 );
                 LegionPhalanxDrawer.drawSiegeSoldier(
                     ctx, { x: centerPoint.x, y: centerPoint.y },
                     state, directionIndex, siegeScale, Date.now(), sX, sY,
-                    'archer', +0.7, -1.0,
+                    'archer', +0.9, -1.0,
                 );
             }
 

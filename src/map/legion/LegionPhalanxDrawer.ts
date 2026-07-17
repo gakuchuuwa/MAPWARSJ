@@ -633,7 +633,8 @@ export class LegionPhalanxDrawer {
                 const isCavalryUnit =
                     (resolvedUnitType.includes('cavalry') ||
                     resolvedUnitType === 'lancer' ||
-                    resolvedUnitType === 'general_cavalry') &&
+                    resolvedUnitType === 'general_cavalry' ||
+                    resolvedUnitType === 'horse_archer') &&
                     resolvedUnitType !== 'archer' &&
                     resolvedUnitType !== 'crossbow';
 
@@ -1173,7 +1174,7 @@ export class LegionPhalanxDrawer {
         const baseHeight = 60;
         const currentRatio = frameW / frameH;
         const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
-        const targetH = baseHeight * scale * 0.85 * frameHeightNorm;
+        const targetH = baseHeight * scale * 1.0 * frameHeightNorm;
         const targetW = targetH * currentRatio;
 
         const sx = frameIndex * frameW;
