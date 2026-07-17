@@ -547,6 +547,11 @@ export class GlobalUnitRenderer {
     }
 
     private updateUnitState(unit: IAnimatedUnit): void {
+        // [FIX] Initialize random direction if undefined to prevent NaN angle in naval volleys
+        if (unit.lastDirection === undefined) {
+            unit.lastDirection = Math.floor(Math.random() * 8);
+        }
+
         // [NEW] Check for battle end signal to clear corpses
         const id = unit.id || 'unknown';
         const isFighting = unit.currentBattleType !== null; // OR unit.isAttacking?
@@ -891,6 +896,7 @@ export class GlobalUnitRenderer {
                     ramSpacingX,
                     ramSpacingY,
                     unit.id || 'unknown',
+                    troops,
                 );
             }
 
