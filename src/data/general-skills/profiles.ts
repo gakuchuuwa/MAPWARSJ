@@ -1878,7 +1878,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        ruo_wangjian: { generalId: 'ruo_wangjian', tier: 'famous', tacticalSkillId: 'ts_597', strategicSkillId: 'str_12', advantageSkillId: 'ts_005', balanceSkillId: 'ts_597', disadvantageSkillId: 'ts_001', atkAdvantageSkillId: 'ts_108', atkBalanceSkillId: 'ts_708', atkDisadvantageSkillId: 'ts_659', defAdvantageSkillId: 'ts_597', defBalanceSkillId: 'ts_466', defDisadvantageSkillId: 'ts_037', aptitude: 'create' , attackStyle: 'attack'},
+    ruo_wangjian: { generalId: 'ruo_wangjian', tier: 'famous', tacticalSkillId: 'ts_108', advantageSkillId: 'ts_005', balanceSkillId: 'ts_597', disadvantageSkillId: 'ts_001', atkAdvantageSkillId: 'ts_108', atkBalanceSkillId: 'ts_708', atkDisadvantageSkillId: 'ts_659', defAdvantageSkillId: 'ts_597', defBalanceSkillId: 'ts_466', defDisadvantageSkillId: 'ts_037', strategicSkillId: 'str_12', aptitude: 'create', attackStyle: 'attack' },
 
 
 

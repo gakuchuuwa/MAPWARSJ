@@ -2497,11 +2497,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/WESTERN/yangguan_lihao.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -10
-        },
         "/assets/STEPPE/shiwei_saihou.png": {
             "scale": 1.09,
             "offsetX": 0,
@@ -3441,11 +3436,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 7
-        },
-        "/assets/HEXI/__闲置__HEXI_03.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": 16
         },
         "/assets/xianqin/__闲置__xianqin_17.png": {
             "scale": 1.15,
@@ -5886,6 +5876,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -1
+        },
+        "/assets/WESTERN/__闲置__WESTERN_22.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/HEXI/yangguan_lihao.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

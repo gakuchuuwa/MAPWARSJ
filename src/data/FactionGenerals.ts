@@ -248,7 +248,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     keerkezi: { generalId: 'keerkezi_manasi', generalName: '玛纳斯', portrait: '/assets/WESTERN/keerkezi_manasi.png' },
     pisha: { generalId: 'pisha_weichisheng', generalName: '尉迟胜', portrait: '/assets/WESTERN/pisha_weichisheng.png' },
     xingxingxia: { generalId: 'xingxingxia_guoxiaoke', generalName: '郭孝恪', portrait: '/assets/HEXI/xingxingxia_guoxiaoke.png' },
-    yangguan: { generalId: 'yangguan_lihao', generalName: '李暠', portrait: '/assets/WESTERN/yangguan_lihao.png' },
+    yangguan: { generalId: 'yangguan_lihao', generalName: '李暠', portrait: '/assets/HEXI/yangguan_lihao.png' },
     wulianghai: { generalId: 'wulianghai_chelingwubashen', generalName: '车凌乌巴什', portrait: '/assets/WESTERN/wulianghai_chelingwubashen.png' },
     // 三陇沙·白龙 宁缺毋滥
 // ── 西域区 2026-06-18 ──

@@ -438,12 +438,25 @@ export class LegionPhalanxDrawer {
 
     public static resetUnit(unitId: string): void {
         LegionPhalanxStateManager.reset(unitId);
+        this.siegeSoldierDeathStarts.delete(unitId);
+        // 攻城器械 deathThresholds / spawn / fade 故意保留：
+        // 战终后仍靠 wasSiegeUnit 继续画 4s 渐隐；真正清理由 clearSiegeGearState。
+    }
+
+    /** 攻城器械相关 Map 全清（渐隐结束 / 单位注销） */
+    public static clearSiegeGearState(unitId: string): void {
         this.gearSpawnTicks.delete(unitId);
         this.gearFadeOutStarts.delete(unitId);
         for (const cache of this.siegeGearCaches.values()) {
             cache.deathStarts?.delete(unitId);
             cache.deathThresholds?.delete(unitId);
         }
+    }
+
+    /** 单位从渲染器移除：方阵 + 器械状态一并释放 */
+    public static disposeUnit(unitId: string): void {
+        this.resetUnit(unitId);
+        this.clearSiegeGearState(unitId);
     }
 
     // [NEW] Helper: Get Frame Count based on Aspect Ratio
@@ -1013,8 +1026,7 @@ export class LegionPhalanxDrawer {
             drawSingleGear(gearType);
         }
         if (fadeFullyDone) {
-            LegionPhalanxDrawer.gearSpawnTicks.delete(unitId);
-            LegionPhalanxDrawer.gearFadeOutStarts.delete(unitId);
+            LegionPhalanxDrawer.clearSiegeGearState(unitId);
         }
 
         function drawSingleGear(type: string): void {
