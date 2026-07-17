@@ -890,6 +890,7 @@ export class GlobalUnitRenderer {
                     unit.factionId || 'panjun',
                     ramSpacingX,
                     ramSpacingY,
+                    unit.id || 'unknown',
                 );
             }
 
