@@ -117,6 +117,10 @@ export class CombatUI {
     private indicatorJun!: HTMLDivElement;
     /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
     private skillPulseShownKeys = new Set<string>();
+    /** 已燃时刻表（P1）：技能 Cut-in 实际弹出时刻 → 1.9s（surge 播完）后标签进入已燃态 */
+    private readonly skillSpentAt = new Map<string, number>();
+    /** 胜负定格（P0）：true 时 updateStats 不再覆写拉锯条/交界（终态已由 showBattleOutcome 写死） */
+    private outcomeLocked = false;
     private skillPulseLastAt = 0;
     private skillPulseTimers: number[] = [];
     /** 同场双方技能连放时仅首句插技能音效（无语音兜底路径） */
@@ -334,6 +338,38 @@ export class CombatUI {
             @keyframes portrait-frame-enter-right {
                 0% { opacity: 0; transform: translateX(72px) scale(1.045); }
                 100% { opacity: 1; transform: translateX(0) scale(1.045); }
+            }
+            /* 胜负定格（2026-07-18 主人定 P0）：「XX 勝」标题弹出 */
+            @keyframes outcome-title-pop {
+                0% { transform: scale(1.35); opacity: 0.3; filter: brightness(2.2) drop-shadow(0 0 26px rgba(255, 215, 0, 0.9)); }
+                60% { transform: scale(0.97); opacity: 1; }
+                100% { transform: scale(1); filter: brightness(1) drop-shadow(0 2px 2px rgba(0,0,0,0.8)) drop-shadow(0 6px 12px rgba(0,0,0,0.6)); }
+            }
+            /* 胜负定格：clash 交界爆闪（末帧回到 clash-pulse 的原生辉光） */
+            @keyframes clash-burst-flash {
+                0% { filter: brightness(3.2); box-shadow: 0 0 30px #FFF, 0 0 64px #FFD700, 0 0 96px rgba(255, 120, 40, 0.95); }
+                100% { filter: brightness(1); box-shadow: 0 0 16px #FFD700, 0 0 28px rgba(255, 120, 40, 0.6), 0 0 48px rgba(255, 80, 20, 0.25); }
+            }
+            /* 已燃技能标签（2026-07-18 主人定 P1）：放过的技不再复原——降亮度+金框+✓；
+               中途进场的观众一眼看出双方各放了几个技（悬念：谁还捏着技）。
+               标签每帧由 updateSkillBadges 重建，此类在创建时按 skillSpentAt 补挂 */
+            .skill-tag-spent {
+                position: relative !important;
+                filter: brightness(0.5) saturate(0.55) !important;
+                border-color: rgba(255, 215, 0, 0.75) !important;
+                border-bottom: 2px solid rgba(255, 215, 0, 0.9) !important;
+                box-shadow: 0 0 10px rgba(255, 200, 60, 0.3), inset 0 0 8px rgba(255, 215, 0, 0.12) !important;
+            }
+            .skill-tag-spent::after {
+                content: '✓';
+                position: absolute;
+                top: 0;
+                right: 4px;
+                font-size: 12px;
+                font-weight: 900;
+                color: rgba(255, 215, 0, 0.95);
+                text-shadow: 0 1px 2px #000;
+                z-index: 5;
             }
         `;
         document.head.appendChild(style);
@@ -1123,13 +1159,22 @@ export class CombatUI {
         const renderSide = (box: HTMLDivElement, unit: IBattleUnit | null, isAttacker: boolean) => {
             if (!unit) return;
             const pending: HTMLDivElement[] = [];
+            const sideKey = isAttacker ? 'attacker' : 'defender';
             const add = (
                 name: string,
                 effect: string,
                 famous: boolean,
                 skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
             ) => {
-                if (pending.length < 4) pending.push(createSkillTag(name, effect, famous, isAttacker, skillType));
+                if (pending.length >= 4) return;
+                const el = createSkillTag(name, effect, famous, isAttacker, skillType);
+                // 已燃态（P1）：本局已放过的技能——surge 播完（1.9s）后定格为降亮度+金框+✓；
+                // 标签每帧重建，必须按 skillSpentAt 在创建时补挂
+                const spentAt = this.skillSpentAt.get(`${sideKey}-${name}`);
+                if (spentAt !== undefined && Date.now() - spentAt >= 1900) {
+                    el.classList.add('skill-tag-spent');
+                }
+                pending.push(el);
             };
 
             // 关隘/名城不再显示为顶部四字卡（2026-07-17 主人定口径：顶部卡=恒有信息（文化/技能/精锐），
@@ -1694,22 +1739,50 @@ export class CombatUI {
             img.style.transition = '';
             img.style.filter = '';
         }
-        // 同场刷新（援军编入等）不清技能去重集，防止脉冲重复
+        // 同场刷新（援军编入等）不清技能去重集/已燃表，防止脉冲重复、已燃态丢失
         if (!battleField || this.boundRegionalBattleField !== battleField) {
             this.skillPulseShownKeys.clear();
+            this.skillSpentAt.clear();
         }
+        // P0 终态复位：恢复拉锯条/交界的缓动与呼吸、标题动画（showBattleOutcome 改过）
+        this.outcomeLocked = false;
+        this.attackerBar.style.transition = 'width 0.55s cubic-bezier(0.22, 1, 0.36, 1)';
+        this.clashEffect.style.transition = 'left 0.55s cubic-bezier(0.22, 1, 0.36, 1)';
+        this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
+        this.battleTitle.style.animation = '';
         this.skillPulseLastAt = 0;
         this.skillBurstSfxPlayed = false;
         for (const t of this.skillPulseTimers) window.clearTimeout(t);
         this.skillPulseTimers.length = 0;
     }
 
-    /** 胜负揭晓：标题栏改写为「XX 勝」（复用现有槽位，不遮挡面板），败方立绘缓缓褪灰 */
+    /** 胜负揭晓·定格一拍（2026-07-18 主人定 P0）：
+     *  ① 拉锯条 0.2s 快速撞底（不等 updateStats 的 0.55s 缓滑与 98% 钳制）
+     *  ② 交界爆闪 → 交还呼吸
+     *  ③ 标题改写「XX 勝」并从 1.35 倍弹出；败方立绘缓缓褪灰 */
     private showBattleOutcome(winnerFactionId: string | null): void {
         if (!winnerFactionId) return;
+        this.outcomeLocked = true;
+        // ① 拉锯条撞底
+        const attackerWon = winnerFactionId === this.attackerFactionId;
+        const finalPct = attackerWon ? 100 : 0;
+        const slam = '0.2s cubic-bezier(0.55, 0, 0.9, 0.4)';
+        this.attackerBar.style.transition = `width ${slam}`;
+        this.clashEffect.style.transition = `left ${slam}`;
+        this.attackerBar.style.width = `${finalPct}%`;
+        this.clashEffect.style.left = `calc(${finalPct}% - 8px)`;
+        // ② 交界爆闪：撞底同刻起闪，0.6s 后交还呼吸循环
+        this.clashEffect.style.animation = 'clash-burst-flash 0.6s ease-out';
+        window.setTimeout(() => {
+            this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
+        }, 600);
+        // ③ 「XX 勝」弹出
         const name = (window as any).game?.cityManager?.getFactionName?.(winnerFactionId) ?? '';
         if (name && name !== '未知势力') {
             this.battleTitle.textContent = `${name} 勝`;
+            this.battleTitle.style.animation = 'none';
+            void this.battleTitle.offsetWidth;
+            this.battleTitle.style.animation = 'outcome-title-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both';
         }
         // 败方立绘缓缓褪灰（只动 filter，不碰调校 transform；下场开战时复位）
         let loserImg: HTMLImageElement | null = null;
@@ -1935,6 +2008,8 @@ export class CombatUI {
             if (this.boundRegionalBattleField?.isOver) return;
             // 实际弹出时刻记档：混合场景（一侧语音驱动、一侧计时兜底）也按真实弹出时间错开
             this.skillPulseLastAt = Math.max(this.skillPulseLastAt, Date.now());
+            // 已燃时刻（P1）：surge 播完后标签定格——updateSkillBadges 每帧重建时按此补挂
+            this.skillSpentAt.set(`${pulseSide}-${displayName}`, Date.now());
             const box = pulseSide === 'attacker' ? this.leftSkillsBox : this.rightSkillsBox;
             const tag = this.findSkillTag(box, displayName);
             if (tag) {
@@ -3223,8 +3298,10 @@ export class CombatUI {
         const swing = (Math.sin(t) * 0.8 + Math.sin(t * 1.4) * 0.2) * swingAmp;
         let attPct = Math.max(2, Math.min(98, baseAttPct + swing));
 
-        this.attackerBar.style.width = `${attPct}%`;
-        this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
+        if (!this.outcomeLocked) {
+            this.attackerBar.style.width = `${attPct}%`;
+            this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
+        }
 
         // --- 优劣均 兵力状态指示器 ---
         const bfRatio = this.boundRegionalBattleField ? this.boundRegionalBattleField.getInitialAttDefRatio() : (attMax / Math.max(1, defMax));
