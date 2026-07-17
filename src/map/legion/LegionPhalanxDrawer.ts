@@ -631,10 +631,11 @@ export class LegionPhalanxDrawer {
                 // 2. CAVALRY CHARGE (Refined with resolvedUnitType)
                 // Identify if this unit IS a cavalry type unit
                 const isCavalryUnit =
-                    resolvedUnitType.includes('cavalry') ||
+                    (resolvedUnitType.includes('cavalry') ||
                     resolvedUnitType === 'lancer' ||
-                    resolvedUnitType === 'general_cavalry' ||
-                    legionType.includes('cavalry'); // Fallback
+                    resolvedUnitType === 'general_cavalry') &&
+                    resolvedUnitType !== 'archer' &&
+                    resolvedUnitType !== 'crossbow';
 
                 // Only charge if it IS cavalry, AND we are in a mixed/cavalry context
                 // (Pure infantry shouldn't charge even if they have cavalry name? No, sticking to intent)
@@ -1116,6 +1117,71 @@ export class LegionPhalanxDrawer {
             );
             ctx.globalAlpha = prevAlpha;
         }
+    }
+
+    /** 攻城额外士兵：在方阵指定偏移位置画一个兵种精灵 */
+    public static drawSiegeSoldier(
+        ctx: CanvasRenderingContext2D,
+        center: { x: number, y: number },
+        state: PhalanxAnimState,
+        direction: number,
+        scale: number,
+        tick: number,
+        spacingX: number,
+        spacingY: number,
+        unitType: string,     // e.g. 'archer'
+        offsetX: number,      // in spacingX units
+        offsetY: number,      // in spacingY units
+    ): void {
+        const assets = this.unitSpriteCache.get(unitType);
+        if (!assets) return;
+
+        const dirIdx = ((direction % 8) + 8) % 8;
+        let sprite: HTMLImageElement | null = null;
+        let frameCount = 1;
+
+        if (state === 'DEATH') {
+            sprite = assets.DEATH[dirIdx] || assets.DEATH[0];
+        } else if (state === 'ATTACK') {
+            const shoot = (assets as any).SHOOT;
+            if (shoot && shoot.length > 0) {
+                sprite = shoot[dirIdx] || shoot[0];
+            } else {
+                sprite = assets.ATTACK[dirIdx] || assets.ATTACK[0];
+            }
+        } else if (state === 'MOVE') {
+            sprite = assets.MOVE[dirIdx] || assets.MOVE[0];
+        } else {
+            sprite = assets.IDLE[dirIdx] || assets.IDLE[0];
+        }
+
+        if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return;
+        frameCount = Math.floor(sprite.width / sprite.height);
+        const frameIndex = Math.floor((tick / 150)) % frameCount;
+
+        const frameW = sprite.width / frameCount;
+        const frameH = sprite.height;
+
+        const angle = (direction + 1) * Math.PI / 4;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const origX = offsetX * spacingX;
+        const origY = offsetY * spacingY;
+        const gx = center.x + (origX * cos - origY * sin);
+        const gy = center.y + (origX * sin + origY * cos);
+
+        const baseHeight = 60;
+        const currentRatio = frameW / frameH;
+        const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
+        const targetH = baseHeight * scale * 0.85 * frameHeightNorm;
+        const targetW = targetH * currentRatio;
+
+        const sx = frameIndex * frameW;
+        ctx.drawImage(
+            sprite,
+            sx, 0, frameW, frameH,
+            gx - targetW / 2, gy - targetH * 0.5, targetW, targetH,
+        );
     }
 
     private static getFormationOffset(
