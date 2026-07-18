@@ -29,6 +29,7 @@ import { getEuclideanDistance } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText } from '../utils/MapFloatingText';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 
 /** 起兵据点：郾城（岳飞·岳家势力都城） */
 const START_CITY_ID = 'city_yancheng2';
@@ -62,6 +63,7 @@ const WANYAN_TROOPS = 30000;
 const ROUTE: { id: string; name: string }[] = [
     { id: KAIFENG_ID, name: '开封' },
     { id: 'city_beijing', name: '北京' },
+    { id: 'city_shenyang', name: '沈阳' },
     { id: 'city_fuyu', name: '黄龙府' },
 ];
 
@@ -372,6 +374,14 @@ export class YuefeiExpedition {
             if (c && c.factionId === FACTION_ID) {
                 gameLog('expedition', `🐎 [圆梦] 岳飞·背嵬军已克 ${wp.name}`);
                 this.celebrateZhongyiWaypoint(wp.id, wp.name, c);
+                // 收复北京·脚本专属语音
+                if (wp.id === 'city_beijing') {
+                    (speechAnnouncer as any).speak('岳家军北伐功成，燕幽故地，今日复归！收拾旧山河，朝天阙！');
+                }
+                // 攻占沈阳·脚本专属语音
+                if (wp.id === 'city_shenyang') {
+                    (speechAnnouncer as any).speak('王师北定，踏破辽东！岳家军雪靖康耻，饮马松江！直捣黄龙，与诸君痛饮！');
+                }
                 this.waypointIndex++;
                 continue;
             }
@@ -584,6 +594,8 @@ export class YuefeiExpedition {
         spawnMapFloatingText(pos.lat, pos.lng, '克复开封', '#55ff55');
         gameLog('expedition', `🐎 [圆梦] 朱仙镇大捷——十二道金牌无效，岳家军挺进汴梁`);
         this.notify('朱仙镇大捷——十二道金牌无效，岳家军挺进汴梁');
+        // 脚本专属语音：收复开封
+        (speechAnnouncer as any).speak('岳家军旌旗北指，所向克捷！朱仙镇一役，撼山易，撼岳家军难，收复汴梁，还我河山！');
     }
 
     /**
