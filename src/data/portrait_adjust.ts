@@ -172,11 +172,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -30
         },
-        "/assets/litang/lingwu_guoziyi.png": {
-            "scale": 1.09,
-            "offsetX": 11,
-            "offsetY": -3
-        },
         "/assets/xianqin/shang_fuhao.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -5891,6 +5886,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -13
+        },
+        "/assets/litang/__闲置__litang_09.png": {
+            "scale": 1.09,
+            "offsetX": 11,
+            "offsetY": -3
+        },
+        "/assets/litang/lingwu_guoziyi.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 6
         }
     },
     "folderGuides": {
