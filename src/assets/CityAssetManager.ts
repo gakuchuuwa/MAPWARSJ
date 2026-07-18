@@ -1620,6 +1620,11 @@ export class CityAssetManager {
 
         let textToRender = SANDBOX_DISPLAY_NAMES[factionId];
 
+        // 岳飞北伐脚本进行中：郾川旗面临时改「岳」（结束/覆没后恢复「郾」）
+        if (factionId === 'yanchuan_d' && (window as any).__yuefeiExpeditionActive) {
+            textToRender = '岳';
+        }
+
         if (!textToRender) {
             const factionManager = (window as any).game?.factionManager;
             const factionName = factionManager ? factionManager.getFactionName(factionId) : '';

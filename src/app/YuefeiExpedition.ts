@@ -1,11 +1,16 @@
 ﻿/**
- * 岳飞北伐黄龙圆梦脚本（2026-07-11，v3 忠义归顺）
+ * 岳飞北伐黄龙圆梦脚本（2026-07-11，v3 忠义归顺；2026-07-18 朱仙镇拦路）
  *
  * 玩家点「⚔ 岳飞北伐黄龙」按钮：
  *   · 场上尚无岳飞军 → 郾城生成岳飞·背嵬军（2 万），镜头跟拍，开北伐脚本；
  *   · 场上已有岳飞军 → 加兵 1 万（吸引重复点击），切跟随并继续北伐。
  * 按必打路标逐城远征：开封 → 北京 → 黄龙府；沿途经路网逐城攻城。
  * 打下一城即自动锁定下一城；直至拿下黄龙府（直捣黄龙）或全军覆没。
+ *
+ * 朱仙镇（脚本专属，不新建据点）：
+ *   逼近开封时，于朱仙镇附近「最近道路点」刷完颜宗弼·铁浮图（3 万）；
+ *   岳飞仍沿路远征开封，路上撞上即野战——禁止直线拉离路网；
+ *   胜后开封直接易主给郾川，不再攻打开封城，再北上北京。
  *
  * 不改动任何常规游戏逻辑，仅借用现成远征机制（army.expeditionTargetCityId）：
  *   set target → 行为树锁死目标行军攻城（断粮不回）；
@@ -18,6 +23,8 @@
  */
 
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getEuclideanDistance } from '../core/DistanceUtils';
+import { roadRegistry } from '../roads/RoadRegistry';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText } from '../utils/MapFloatingText';
 
@@ -31,9 +38,27 @@ const TROOPS = 20000;
 /** 已有岳飞军时，再点 UI 加兵量（吸引重复点击） */
 const CLICK_REINFORCE_TROOPS = 10000;
 
+/** 开封路标 id（朱仙镇拦路与易主共用） */
+const KAIFENG_ID = 'city_bianliang';
+
+/**
+ * 朱仙镇落点（仅野战坐标，不建 city_*）
+ * 维基 WGS84：34°36′40″N 114°15′32″E ≈ 34.61103, 114.25893
+ */
+const ZHUXIANZHEN = { lat: 34.61103, lng: 114.25893 };
+/** 逼近朱仙镇 / 开封时触发拦路（欧氏，约 30–40 km 量级） */
+const ZHUXIAN_TRIGGER_DIST = 0.28;
+const KAIFENG_NEAR_DIST = 0.40;
+
+/** 完颜宗弼·铁浮图 */
+const WANYAN_FACTION = 'jurchen';
+const WANYAN_GENERAL = 'jurchen_wanyanzongbi';
+const WANYAN_ELITE = '铁浮图';
+const WANYAN_TROOPS = 30000;
+
 /** 必打路标：逐城攻取，终点黄龙府 */
 const ROUTE: { id: string; name: string }[] = [
-    { id: 'city_bianliang', name: '开封' },
+    { id: KAIFENG_ID, name: '开封' },
     { id: 'city_beijing', name: '北京' },
     { id: 'city_fuyu', name: '黄龙府' },
 ];
@@ -53,6 +78,8 @@ const ZHONGYI_WAYPOINT_LABELS: Record<string, string> = {
 
 const TICK_INTERVAL_MS = 400;
 
+type ZhuxianPhase = 'pending' | 'spawned' | 'done';
+
 /** 借用的军团实例最小接口（避免耦合 Army 全量类型） */
 interface ScriptArmy {
     id: string;
@@ -65,18 +92,23 @@ interface ScriptArmy {
     expeditionTargetCityId: string | null;
     expeditionSavedName: string | null;
     expeditionUnlocked: boolean;
+    ignoreCityCollision?: boolean;
+    /** 脚本钉死：AI 行为树跳过（完颜宗弼拦路军） */
+    __scriptPinned?: boolean;
     getTroops(): number;
     setTroops(n: number): void;
-    /** 战斗中禁补员（忠义归顺只在行军/待命时生效） */
     getIsInCombat?(): boolean;
-    /** 军团当前位置（忠义归顺飘字用） */
     getPosition?(): { lat: number; lng: number };
+    stopMovement?(saveState?: boolean): void;
+    setPosition?(lat: number, lng: number): void;
+    setTargetCity?(city: unknown): void;
 }
 
 interface ScriptCity {
     factionId: string;
     latitude: number;
     longitude: number;
+    type?: string;
 }
 
 interface YuefeiDeps {
@@ -97,17 +129,24 @@ interface YuefeiDeps {
     };
     cityManager: {
         getCity(id: string): ScriptCity | undefined;
+        updateCity?(
+            id: string,
+            data: { factionId: string },
+            options?: {
+                captorLegionName?: string;
+                captorLegionId?: string;
+                captorGeneralId?: string;
+                defenderHadNamedForce?: boolean;
+                defenderGeneralId?: string;
+            },
+        ): void;
     };
     cameraFollowUI: {
         setFollow(armyId: string, armyName: string): void;
     };
-    /** 若游戏暂停则恢复运行（否则 AI/行军不推进） */
     ensureUnpaused?: () => void;
-    /** 镜头立刻吸附到军团位置 */
     snapCameraToArmy?: (armyId: string) => void;
-    /** 立刻跑一次该军团行为树（锁定远征目标后马上开拔） */
     kickLegionAi?: (armyId: string) => void;
-    /** 玩家提示（可选，走 toast/console） */
     notify?: (msg: string) => void;
 }
 
@@ -120,8 +159,12 @@ export class YuefeiExpedition {
     private appliedZhongyi = new Set<string>();
     /** 上一 tick 是否在战斗中（用于捕捉「战斗刚结束」这一帧做结算补员） */
     private wasInCombat = false;
-    /** 忠义归顺开关：过锦州（徒河）后关闭 */
-    private zhongyiActive = true;
+
+    /** 朱仙镇拦路阶段 */
+    private zhuxianPhase: ZhuxianPhase = 'pending';
+    private wanyanArmyId: string | null = null;
+    /** 宗弼钉点：朱仙镇吸附到最近道路后的坐标（禁止离路） */
+    private zhuxianRoadPos = { ...ZHUXIANZHEN };
 
     constructor(deps: YuefeiDeps) {
         this.deps = deps;
@@ -233,8 +276,10 @@ export class YuefeiExpedition {
         this.armyId = army.id;
         this.waypointIndex = 0;
         this.appliedZhongyi.clear();
-        this.zhongyiActive = true;
         this.wasInCombat = false;
+        this.zhuxianPhase = 'pending';
+        this.wanyanArmyId = null;
+        this.zhuxianRoadPos = { ...ZHUXIANZHEN };
 
         gameLog('expedition', `🐎 [圆梦] 岳飞率背嵬军自郾城起兵，北伐黄龙：开封 → 北京 → 黄龙府，忠义归顺，众望所归`);
         this.notify('岳飞率背嵬军北伐——直捣黄龙！');
@@ -242,7 +287,7 @@ export class YuefeiExpedition {
         this.attachFollowAndMarch(army);
     }
 
-    /** 每 tick：推进路线、锁定当前目标城 */
+    /** 每 tick：推进路线、锁定当前目标城；朱仙镇拦路优先于开封攻城 */
     private tick(): void {
         if (!this.armyId) {
             this.stop();
@@ -254,6 +299,7 @@ export class YuefeiExpedition {
             const reached = ROUTE[Math.max(0, this.waypointIndex - 1)]?.name ?? '开封';
             gameLog('expedition', `🐎 [圆梦] 岳飞·背嵬军覆没，北伐止步于 ${reached} 一线，壮志未酬`);
             this.notify(`岳飞·背嵬军覆没，北伐止步于 ${reached} 一线`);
+            this.cleanupWanyanArmy();
             this.stop();
             return;
         }
@@ -263,6 +309,18 @@ export class YuefeiExpedition {
         army.isElite = true;
 
         this.tickZhongyiTrickle(army);
+
+        // 朱仙镇拦路（开封路标未克前；岳飞始终沿路远征，不直线离路）
+        if (this.waypointIndex === 0 && this.zhuxianPhase !== 'done') {
+            const kaifeng = this.deps.cityManager.getCity(KAIFENG_ID);
+            if (kaifeng && kaifeng.factionId === FACTION_ID) {
+                this.zhuxianPhase = 'done';
+                this.cleanupWanyanArmy();
+                army.ignoreCityCollision = false;
+            } else {
+                this.tickZhuxianIntercept(army);
+            }
+        }
 
         // 跳过已攻克的路线城
         while (this.waypointIndex < ROUTE.length) {
@@ -286,15 +344,6 @@ export class YuefeiExpedition {
             return;
         }
 
-        // 过锦州（徒河）后关闭忠义归顺
-        if (this.zhongyiActive) {
-            const shg = this.deps.cityManager.getCity('city_tuhe');
-            if (shg && shg.factionId === FACTION_ID) {
-                this.zhongyiActive = false;
-                gameLog('expedition', `🐎 [圆梦] 已过锦州，忠义归顺关闭`);
-            }
-        }
-
         // 锁定当前目标城（覆盖任何被自动远征逻辑塞入的其它目标）
         const desired = ROUTE[this.waypointIndex];
         if (army.expeditionTargetCityId !== desired.id) {
@@ -305,12 +354,201 @@ export class YuefeiExpedition {
     }
 
     /**
+     * 朱仙镇史地坐标 → 可贴路接战点（禁止离路）
+     * 优先取「当前军 → 开封」路网折线上距朱仙镇最近的点；否则全网最近道路投影。
+     */
+    private resolveZhuxianRoadPos(armyPos?: { lat: number; lng: number }): { lat: number; lng: number } {
+        if (armyPos) {
+            const route = roadRegistry.getFullPathToCity(armyPos, KAIFENG_ID);
+            if (route.length >= 2) {
+                let best = route[0];
+                let bestD = getEuclideanDistance(best, ZHUXIANZHEN);
+                for (let i = 1; i < route.length; i++) {
+                    const d = getEuclideanDistance(route[i], ZHUXIANZHEN);
+                    if (d < bestD) {
+                        bestD = d;
+                        best = route[i];
+                    }
+                }
+                // 折线顶点之外：再在相邻段上投影，取更贴近朱仙镇的道路点
+                let bestSeg = { ...best };
+                for (let i = 0; i < route.length - 1; i++) {
+                    const a = route[i];
+                    const b = route[i + 1];
+                    const abLat = b.lat - a.lat;
+                    const abLng = b.lng - a.lng;
+                    const len2 = abLat * abLat + abLng * abLng;
+                    if (len2 < 1e-12) continue;
+                    let t =
+                        ((ZHUXIANZHEN.lat - a.lat) * abLat + (ZHUXIANZHEN.lng - a.lng) * abLng) / len2;
+                    t = Math.max(0, Math.min(1, t));
+                    const p = { lat: a.lat + t * abLat, lng: a.lng + t * abLng };
+                    const d = getEuclideanDistance(p, ZHUXIANZHEN);
+                    if (d < bestD) {
+                        bestD = d;
+                        bestSeg = p;
+                    }
+                }
+                return bestSeg;
+            }
+        }
+        const snapped = roadRegistry.findNearestRoadPoint(ZHUXIANZHEN.lat, ZHUXIANZHEN.lng, 80);
+        if (snapped) {
+            return { lat: snapped.lat, lng: snapped.lng };
+        }
+        return { ...ZHUXIANZHEN };
+    }
+
+    /**
+     * 朱仙镇拦路：逼近时在道路上刷完颜宗弼·铁浮图；胜后开封易主。
+     * 岳飞不改道、不直线接敌——继续锁开封沿路行军，路上撞上即野战。
+     */
+    private tickZhuxianIntercept(army: ScriptArmy): void {
+        if (this.zhuxianPhase === 'done') return;
+
+        const pos = army.getPosition?.();
+        if (!pos) return;
+
+        if (this.zhuxianPhase === 'pending') {
+            const kaifeng = this.deps.cityManager.getCity(KAIFENG_ID);
+            const nearZhuxian = getEuclideanDistance(pos, ZHUXIANZHEN) <= ZHUXIAN_TRIGGER_DIST;
+            const nearKaifeng =
+                !!kaifeng &&
+                getEuclideanDistance(pos, { lat: kaifeng.latitude, lng: kaifeng.longitude }) <=
+                    KAIFENG_NEAR_DIST;
+            if (!nearZhuxian && !nearKaifeng) return;
+
+            if (!this.spawnWanyanArmy(pos)) {
+                this.zhuxianPhase = 'done';
+                return;
+            }
+            this.zhuxianPhase = 'spawned';
+            // 防未战先开封攻城；远征目标仍由 tick 锁开封，保持贴路
+            army.ignoreCityCollision = true;
+            gameLog(
+                'expedition',
+                `🐎 [圆梦] 朱仙镇道路一线遭遇完颜宗弼·铁浮图（${WANYAN_TROOPS.toLocaleString()}），背嵬军沿路迎战`,
+            );
+            this.notify('朱仙镇——完颜宗弼率铁浮图拦路！');
+            return;
+        }
+
+        // spawned：钉死宗弼于道路点；岳飞继续沿路；判胜负
+        this.pinWanyanArmy();
+
+        const wanyan = this.wanyanArmyId
+            ? this.deps.legionManager.getLegionById(this.wanyanArmyId)
+            : undefined;
+        const wanyanAlive = !!wanyan && !wanyan.isDestroyed && wanyan.getTroops() > 0;
+        const inCombat = army.getIsInCombat?.() ?? false;
+
+        if (wanyanAlive) {
+            army.ignoreCityCollision = true;
+            return;
+        }
+
+        if (!inCombat) {
+            this.grantKaifengToYuefei(army);
+            this.zhuxianPhase = 'done';
+            this.wanyanArmyId = null;
+            army.ignoreCityCollision = false;
+        }
+    }
+
+    private spawnWanyanArmy(armyPos?: { lat: number; lng: number }): boolean {
+        this.zhuxianRoadPos = this.resolveZhuxianRoadPos(armyPos);
+        const enemy = this.deps.legionManager.createLegion(
+            { ...this.zhuxianRoadPos },
+            WANYAN_TROOPS,
+            WANYAN_FACTION,
+            WANYAN_ELITE,
+            undefined,
+            undefined,
+            'city_wuguo',
+            WANYAN_GENERAL,
+            true,
+        );
+        if (!enemy) {
+            gameLog('expedition', '🐎 [圆梦] 朱仙镇刷完颜宗弼失败，改攻打开封');
+            return false;
+        }
+        // createLegion 可能抖动偏移 → 强制落回道路点
+        enemy.setPosition?.(this.zhuxianRoadPos.lat, this.zhuxianRoadPos.lng);
+        enemy.setTroops(WANYAN_TROOPS);
+        enemy.isElite = true;
+        enemy.name = WANYAN_ELITE;
+        enemy.generalId = WANYAN_GENERAL;
+        enemy.__scriptPinned = true;
+        enemy.ignoreCityCollision = true;
+        enemy.stopMovement?.(false);
+        enemy.setTargetCity?.(null);
+        enemy.expeditionTargetCityId = null;
+        const rec = getGeneralRecordByGeneralId(WANYAN_GENERAL);
+        if (rec?.portrait) enemy.portraitPath = rec.portrait;
+
+        this.wanyanArmyId = enemy.id;
+        spawnMapFloatingText(this.zhuxianRoadPos.lat, this.zhuxianRoadPos.lng, '铁浮图', '#ffcc66');
+        return true;
+    }
+
+    /** 钉在朱仙镇最近道路点，防 AI 拉走 / 离路 */
+    private pinWanyanArmy(): void {
+        if (!this.wanyanArmyId) return;
+        const w = this.deps.legionManager.getLegionById(this.wanyanArmyId);
+        if (!w || w.isDestroyed || w.getTroops() <= 0) return;
+        w.__scriptPinned = true;
+        w.ignoreCityCollision = true;
+        w.expeditionTargetCityId = null;
+        w.setTargetCity?.(null);
+        if (w.getIsInCombat?.()) return;
+        w.stopMovement?.(false);
+        const p = w.getPosition?.();
+        if (p && getEuclideanDistance(p, this.zhuxianRoadPos) > 0.05) {
+            w.setPosition?.(this.zhuxianRoadPos.lat, this.zhuxianRoadPos.lng);
+        }
+    }
+
+    private cleanupWanyanArmy(): void {
+        if (!this.wanyanArmyId) return;
+        const w = this.deps.legionManager.getLegionById(this.wanyanArmyId);
+        if (w && !w.isDestroyed) {
+            w.__scriptPinned = false;
+        }
+        this.wanyanArmyId = null;
+    }
+
+    /** 朱仙镇大捷 → 开封归郾川（不再攻城） */
+    private grantKaifengToYuefei(army: ScriptArmy): void {
+        const city = this.deps.cityManager.getCity(KAIFENG_ID);
+        if (!city) return;
+        if (city.factionId === FACTION_ID) return;
+        if (!this.deps.cityManager.updateCity) {
+            gameLog('expedition', '🐎 [圆梦] cityManager.updateCity 不可用，无法移交开封');
+            return;
+        }
+        this.deps.cityManager.updateCity(
+            KAIFENG_ID,
+            { factionId: FACTION_ID },
+            {
+                captorLegionName: army.name || ELITE_NAME,
+                captorLegionId: army.id,
+                captorGeneralId: GENERAL_ID,
+                defenderHadNamedForce: true,
+                defenderGeneralId: WANYAN_GENERAL,
+            },
+        );
+        const pos = army.getPosition?.() ?? ZHUXIANZHEN;
+        spawnMapFloatingText(pos.lat, pos.lng, '克复开封', '#55ff55');
+        gameLog('expedition', `🐎 [圆梦] 朱仙镇大捷——十二道金牌无效，岳家军挺进汴梁`);
+        this.notify('朱仙镇大捷——十二道金牌无效，岳家军挺进汴梁');
+    }
+
+    /**
      * 忠义归顺 v4（脚本专属技）：捕捉「战斗刚结束」这一帧，按城型分级加兵。
      * 战后结算（非沿途涓流）→ 不依赖行军长短与倍速。
      * 演出：白字绿光，军团头顶飘四字技名「忠义归顺」。
      */
     private tickZhongyiTrickle(army: ScriptArmy): void {
-        if (!this.zhongyiActive) return;
         const inCombat = army.getIsInCombat?.() ?? false;
         if (inCombat) {
             this.wasInCombat = true;
@@ -321,11 +559,20 @@ export class YuefeiExpedition {
 
         const troops = army.getTroops();
         if (troops <= 0) return;
+
+        // 朱仙镇野战无远征目标城：按大城档补员
+        let cityType = 'small_city';
         const targetCityId = army.expeditionTargetCityId;
-        if (!targetCityId) return;
-        const city = this.deps.cityManager.getCity(targetCityId);
-        if (!city) return;
-        const r = zhongyiBonusRange((city as any).type ?? 'small_city');
+        if (targetCityId) {
+            const city = this.deps.cityManager.getCity(targetCityId);
+            if (city) cityType = city.type ?? 'small_city';
+        } else if (this.zhuxianPhase === 'spawned' || this.waypointIndex === 0) {
+            cityType = 'big_city';
+        } else {
+            return;
+        }
+
+        const r = zhongyiBonusRange(cityType);
         const added = r.min + Math.floor(Math.random() * (r.max - r.min + 1));
         army.setTroops(troops + added);
 
