@@ -185,6 +185,25 @@ self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
                 }
             }
         }
+
+        // [FOREST] zoom10 战斗视图专用程序化林地（其他缩放级不出效果）
+        // 由瓦片经度跨度推等效 zoom：span = 360 / 2^z → z = log2(360/span)
+        // zoomSnap=1 的整数缩放下，仅 z10 落在窗口内；z9/z11 完全无森林
+        const FOREST_GRAD_MIN = 1.2;   // 坡度门槛(米/像素梯度)：平原农田无林，山坡才有
+        const FOREST_GRAD_FULL = 4.5;  // 到此梯度林地长满
+        const FOREST_ELEV_MAX = 2500;  // 林线
+        const FOREST_TINT_MAX = 0.55;  // 区域染色最大强度(向深绿偏移)
+        const FOREST_CANOPY_AMP = 0.05;// 树冠团块明暗幅度
+        let forestStrength = 0;
+        if (tileBounds) {
+            const span = tileBounds.east - tileBounds.west;
+            if (span > 0) {
+                const zoomEquiv = Math.log2(360 / span);
+                const dz = Math.abs(zoomEquiv - 10);
+                if (dz < 0.6) forestStrength = 1 - dz / 0.6;
+            }
+        }
+
         for (let y = 0; y < height; y++) {
             const yT = (y === 0 ? 0 : y - 1) * width;
             const yM = y * width;
@@ -298,6 +317,46 @@ self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
                         r = r * icw + 196 * cw;
                         g = g * icw + 214 * cw;
                         b = b * icw + 208 * cw;
+                    }
+                }
+
+                // [FOREST] zoom10 林地：山坡(梯度门槛)+林线内+非历史区域，噪声斑块化成片
+                // ① 区域染色向深绿偏移 ② 3px 树冠团块明暗；最终经 shadeFactor 与山体明暗同源
+                if (forestStrength > 0 && zC > 0 && zC < FOREST_ELEV_MAX) {
+                    let inRegion = false;
+                    if (hasRegions) {
+                        const flat = tileBounds!.north + y * regionLatStep;
+                        const flng = tileBounds!.west + x * regionLngStep;
+                        for (let ri = 0; ri < regions!.length; ri++) {
+                            const reg = regions![ri];
+                            if (zC < reg.elevMin || zC > reg.elevMax) continue;
+                            const fdLat = (flat - reg.center[0]) / reg.radii[0];
+                            const fdLng = (flng - reg.center[1]) / reg.radii[1];
+                            if (fdLat * fdLat + fdLng * fdLng < 1.0) { inRegion = true; break; }
+                        }
+                    }
+                    if (!inRegion) {
+                        const grad = Math.sqrt(dzdx * dzdx + dzdy * dzdy);
+                        if (grad > FOREST_GRAD_MIN) {
+                            // 4px 团块噪声：林地成片、边缘参差（clump ∈ ±2 → 系数截断到 0..1）
+                            const clump = noiseLUT[(((y >> 2) & 255) * 256) + ((x >> 2) & 255)];
+                            let fm = (grad - FOREST_GRAD_MIN) / (FOREST_GRAD_FULL - FOREST_GRAD_MIN);
+                            if (fm > 1) fm = 1;
+                            fm *= Math.min(1, Math.max(0, 0.75 + clump * 0.35));
+                            fm *= forestStrength;
+                            if (fm > 0.02) {
+                                // ① 区域染色：向深绿 (80,115,75) 偏移
+                                const tw = fm * FOREST_TINT_MAX;
+                                const itw = 1.0 - tw;
+                                r = r * itw + 80 * tw;
+                                g = g * itw + 115 * tw;
+                                b = b * itw + 75 * tw;
+                                // ② 树冠颗粒：3px 团块明暗，模拟林冠起伏
+                                const crown = noiseLUT[((((y / 3) | 0) & 255) * 256) + (((x / 3) | 0) & 255)];
+                                const canopy = 1.0 + crown * FOREST_CANOPY_AMP * fm;
+                                r *= canopy; g *= canopy; b *= canopy;
+                            }
+                        }
                     }
                 }
 
