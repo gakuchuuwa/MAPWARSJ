@@ -157,34 +157,8 @@ self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
     // [OPTIMIZATION-PERF] Branch logic outside the loop
     if (params.useElevationColor) {
         // --- COLORED RENDERING PATH ---
-        // [COASTAL-TINT] 近岸晕染预计算：陆地=0，向海面逐环扩张 4 环(1..4)，远海=255
-        // 配合水深门槛(-60m)使用：瓦片两侧高程各自连续，环带在深水处自然中断，避免瓦片边界接缝
-        const coastRing = new Uint8Array(width * height).fill(255);
-        {
-            const elevAt = (p4: number) => (data[p4] * 256 + data[p4 + 1] + data[p4 + 2] * 0.00390625) - 32768;
-            for (let p = 0; p < width * height; p++) {
-                if (elevAt(p * 4) > 0) coastRing[p] = 0;
-            }
-            for (let ring = 1; ring <= 4; ring++) {
-                for (let cy = 0; cy < height; cy++) {
-                    const rowU = (cy === 0 ? 0 : cy - 1) * width;
-                    const rowM = cy * width;
-                    const rowD = (cy === height - 1 ? height - 1 : cy + 1) * width;
-                    for (let cx = 0; cx < width; cx++) {
-                        const p = rowM + cx;
-                        if (coastRing[p] !== 255) continue;
-                        const cl = cx === 0 ? 0 : cx - 1;
-                        const cr = cx === width - 1 ? width - 1 : cx + 1;
-                        // 8 邻域中只要有一个属于上一环，本像素即归入本环（逐环扩张不会链式穿透）
-                        if (coastRing[rowU + cl] === ring - 1 || coastRing[rowU + cx] === ring - 1 || coastRing[rowU + cr] === ring - 1 ||
-                            coastRing[rowM + cl] === ring - 1 || coastRing[rowM + cr] === ring - 1 ||
-                            coastRing[rowD + cl] === ring - 1 || coastRing[rowD + cx] === ring - 1 || coastRing[rowD + cr] === ring - 1) {
-                            coastRing[p] = ring;
-                        }
-                    }
-                }
-            }
-        }
+        // 【2026-07-19 主人定：移除近岸晕染】原有 4 环扩散预计算每瓦片约 200 万次数组读取，
+        // 换来的只是 4px 宽淡青边、肉眼几乎不可见；拖慢 Worker 反而加剧瓦片卡死。勿再加回。
         for (let y = 0; y < height; y++) {
             const yT = (y === 0 ? 0 : y - 1) * width;
             const yM = y * width;
@@ -288,19 +262,6 @@ self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
                     const oceanGrain = 1.0 + (oceanNoise * 0.006); // ±0.6% 亮度微扰
                     r *= oceanGrain; g *= oceanGrain; b *= oceanGrain;
                 }
-                // [COASTAL-TINT] 近岸晕染：距陆 ≤4px 且浅于 60m 的海面，向淡青瓷色渐变
-                // 环1 最强(0.36) → 环4 最弱(0.09)，模拟古地图海岸线浅晕；深水(>-60m 之外)不染
-                if (zC < 0 && zC > -60) {
-                    const ring = coastRing[yM + x];
-                    if (ring >= 1 && ring <= 4) {
-                        const cw = (5 - ring) * 0.09;
-                        const icw = 1.0 - cw;
-                        r = r * icw + 196 * cw;
-                        g = g * icw + 214 * cw;
-                        b = b * icw + 208 * cw;
-                    }
-                }
-
                 // [HISTORICAL-REGIONS] 沙漠/湿地/古湖等历史地理特殊区域着色
                 if (hasRegions && zC > 0) {
                     const lat = tileBounds!.north + y * regionLatStep;
