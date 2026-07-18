@@ -158,7 +158,7 @@ self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
     if (params.useElevationColor) {
         // --- COLORED RENDERING PATH ---
         // 【2026-07-19 主人定：移除近岸晕染】原有 4 环扩散预计算每瓦片约 200 万次数组读取，
-        // 换来的只是 4px 宽淡青边、肉眼几乎不可见；拖慢 Worker 反而加剧瓦片卡死。勿再加回。
+        // 换来的只是 4px 宽淡青边、肉眼几乎不可见，纯属拖慢 Worker。勿再加回。
         for (let y = 0; y < height; y++) {
             const yT = (y === 0 ? 0 : y - 1) * width;
             const yM = y * width;
