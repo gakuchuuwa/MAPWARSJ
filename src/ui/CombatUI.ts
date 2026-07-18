@@ -109,12 +109,6 @@ export class CombatUI {
     private leftFamousBadge!: HTMLDivElement;
     private rightFamousBadge!: HTMLDivElement;
 
-    // Troop State Indicators
-    private indicatorLeftYou!: HTMLDivElement;
-    private indicatorLeftLie!: HTMLDivElement;
-    private indicatorRightYou!: HTMLDivElement;
-    private indicatorRightLie!: HTMLDivElement;
-    private indicatorJun!: HTMLDivElement;
     /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
     private skillPulseShownKeys = new Set<string>();
     /** 已燃时刻表（P1）：技能 Cut-in 实际弹出时刻 → 1.9s（surge 播完）后标签进入已燃态 */
@@ -344,7 +338,7 @@ export class CombatUI {
                 0% { filter: brightness(3.2); box-shadow: 0 0 30px #FFF, 0 0 64px #FFD700, 0 0 96px rgba(255, 120, 40, 0.95); }
                 100% { filter: brightness(1); box-shadow: 0 0 16px #FFD700, 0 0 28px rgba(255, 120, 40, 0.6), 0 0 48px rgba(255, 80, 20, 0.25); }
             }
-            /* 已燃技能标签（2026-07-18 主人定 P1）：放过的技不再复原——降亮度+金框+✓；
+            /* 已燃技能标签（2026-07-18 主人定 P1）：放过的技不再复原——降亮度+金框；
                中途进场的观众一眼看出双方各放了几个技（悬念：谁还捏着技）。
                标签每帧由 updateSkillBadges 重建，此类在创建时按 skillSpentAt 补挂 */
             .skill-tag-spent {
@@ -353,17 +347,6 @@ export class CombatUI {
                 border-color: rgba(255, 215, 0, 0.75) !important;
                 border-bottom: 2px solid rgba(255, 215, 0, 0.9) !important;
                 box-shadow: 0 0 10px rgba(255, 200, 60, 0.3), inset 0 0 8px rgba(255, 215, 0, 0.12) !important;
-            }
-            .skill-tag-spent::after {
-                content: '✓';
-                position: absolute;
-                top: 0;
-                right: 4px;
-                font-size: 12px;
-                font-weight: 900;
-                color: rgba(255, 215, 0, 0.95);
-                text-shadow: 0 1px 2px #000;
-                z-index: 5;
             }
         `;
         document.head.appendChild(style);
@@ -445,30 +428,8 @@ export class CombatUI {
         this.rightFamousBadge = this.createFamousBadge('right');
         rightFrame.appendChild(this.rightFamousBadge);
 
-        const leftIndGroup = document.createElement('div');
-        leftIndGroup.style.cssText = `position: absolute; bottom: 41.5%; right: -${uiPx(7)}; transform: translateX(50%); display: flex; gap: ${uiPx(8)}; z-index: 20; pointer-events: none;`;
-        this.indicatorLeftYou = this.createIndicatorNode('优');
-        this.indicatorLeftLie = this.createIndicatorNode('劣');
-        leftIndGroup.appendChild(this.indicatorLeftYou);
-        leftIndGroup.appendChild(this.indicatorLeftLie);
-        leftFrame.appendChild(leftIndGroup);
-
-        const rightIndGroup = document.createElement('div');
-        rightIndGroup.style.cssText = `position: absolute; bottom: 41.5%; left: -${uiPx(7)}; transform: translateX(-50%); display: flex; gap: ${uiPx(8)}; z-index: 20; pointer-events: none;`;
-        this.indicatorRightYou = this.createIndicatorNode('优');
-        this.indicatorRightLie = this.createIndicatorNode('劣');
-        rightIndGroup.appendChild(this.indicatorRightYou);
-        rightIndGroup.appendChild(this.indicatorRightLie);
-        rightFrame.appendChild(rightIndGroup);
-
-        this.indicatorJun = this.createIndicatorNode('均');
-        this.indicatorJun.style.position = 'absolute';
-        this.indicatorJun.style.bottom = `calc(${uiPx(T.portraitBottom)} + ${uiPx(620 * 0.415)})`;
-        this.indicatorJun.style.left = '50%';
-        this.indicatorJun.style.transform = 'translateX(-50%)';
-        this.indicatorJun.style.zIndex = '20';
-        this.indicatorJun.style.pointerEvents = 'none';
-        this.container.appendChild(this.indicatorJun);
+        // （优劣均指示器已删除，2026-07-18 主人定：六计随机、与开局"势"无关，
+        //  且静态标签会与实时拉锯条矛盾——误导源）
 
         this.wireGeneralNameTagClicks();
         this.refreshGeneralNameTagInteract();
@@ -3303,7 +3264,7 @@ export class CombatUI {
             aheadImg.style.filter = '';
             aheadTag.style.opacity = '';
             behindImg.style.filter =
-                `drop-shadow(0 0 ${10 + 20 * k}px rgba(255, 40, 20, ${0.45 + 0.45 * k})) brightness(${1 - 0.18 * k})`;
+                `drop-shadow(0 0 ${6 + 8 * k}px rgba(255, 40, 20, ${0.3 + 0.25 * k})) brightness(${1 - 0.06 * k})`;
             behindTag.style.opacity = `${0.45 + 0.55 * Math.abs(Math.sin(performance.now() / 160))}`;
         } else if (!this.outcomeLocked) {
             // 未进第三幕（或战平）：清掉两側残留（resetBattleOverlays 开场已清，这里防同场拉锯反复）
@@ -3313,58 +3274,6 @@ export class CombatUI {
             this.rightGeneralNameTag.style.opacity = '';
         }
 
-        // --- 优劣均 兵力状态指示器 ---
-        const bfRatio = this.boundRegionalBattleField ? this.boundRegionalBattleField.getInitialAttDefRatio() : (attMax / Math.max(1, defMax));
-        const attAdvantage = bfRatio > 1.5;
-        const attDisadvantage = bfRatio < 0.67;
-
-        const setActive = (el: HTMLDivElement, theme: 'you' | 'lie' | 'jun') => {
-            el.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-            if (theme === 'you') {
-                el.style.color = '#FFF2D4'; // 柔和的鎏金色
-                el.style.background = 'linear-gradient(135deg, rgba(120, 80, 10, 0.95), rgba(40, 20, 5, 0.95))';
-                el.style.borderColor = 'rgba(255, 184, 0, 0.8)';
-                el.style.boxShadow = '0 0 12px rgba(255, 184, 0, 0.5), inset 0 0 8px rgba(255, 184, 0, 0.3)';
-                el.style.textShadow = '0 0 6px rgba(255, 184, 0, 0.8)';
-            } else if (theme === 'lie') {
-                el.style.color = '#FFD4D4'; // 柔和的血月色
-                el.style.background = 'linear-gradient(135deg, rgba(90, 20, 20, 0.95), rgba(30, 5, 5, 0.95))';
-                el.style.borderColor = 'rgba(255, 59, 48, 0.8)';
-                el.style.boxShadow = '0 0 12px rgba(255, 59, 48, 0.5), inset 0 0 8px rgba(255, 59, 48, 0.3)';
-                el.style.textShadow = '0 0 6px rgba(255, 59, 48, 0.8)';
-            } else if (theme === 'jun') {
-                el.style.color = '#D4F4FF'; // 柔和的冰蓝色
-                el.style.background = 'linear-gradient(135deg, rgba(15, 60, 90, 0.95), rgba(5, 20, 40, 0.95))';
-                el.style.borderColor = 'rgba(0, 229, 255, 0.8)';
-                el.style.boxShadow = '0 0 12px rgba(0, 229, 255, 0.5), inset 0 0 8px rgba(0, 229, 255, 0.3)';
-                el.style.textShadow = '0 0 6px rgba(0, 229, 255, 0.8)';
-            }
-        };
-        
-        const setInactive = (el: HTMLDivElement) => {
-            el.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-            el.style.color = 'rgba(255, 255, 255, 0.15)'; // 极暗的灰字
-            el.style.background = 'linear-gradient(135deg, rgba(30, 30, 32, 0.8), rgba(10, 10, 12, 0.8))';
-            el.style.borderColor = 'rgba(80, 80, 85, 0.4)'; // 黯淡的边框
-            el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.6)';
-            el.style.textShadow = 'none';
-        };
-
-        setInactive(this.indicatorLeftYou);
-        setInactive(this.indicatorLeftLie);
-        setInactive(this.indicatorRightYou);
-        setInactive(this.indicatorRightLie);
-        setInactive(this.indicatorJun);
-
-        if (attAdvantage) {
-            setActive(this.indicatorLeftYou, 'you');
-            setActive(this.indicatorRightLie, 'lie'); // 守方劣势
-        } else if (attDisadvantage) {
-            setActive(this.indicatorLeftLie, 'lie');
-            setActive(this.indicatorRightYou, 'you'); // 守方优势
-        } else {
-            setActive(this.indicatorJun, 'jun');
-        }
     }
 
     private wireGeneralNameTagClicks(): void {
@@ -3692,27 +3601,6 @@ export class CombatUI {
             `✓ 已选定 ${generalId}.png · 微调后 Enter 写盘（不关 F2）`,
         );
         this.refreshGeneralNameTagInteract();
-    }
-
-    private createIndicatorNode(text: string): HTMLDivElement {
-        const el = document.createElement('div');
-        el.textContent = text;
-        el.style.cssText = `
-            width: ${uiPx(24)};
-            height: ${uiPx(24)};
-            line-height: ${uiPx(22)};
-            text-align: center;
-            font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(16)};
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.3);
-            background: rgba(20, 20, 20, 0.8);
-            border: 1px solid rgba(100, 100, 100, 0.5);
-            border-radius: 2px;
-            box-shadow: 0 0 4px rgba(0,0,0,0.8);
-            transition: all 0.3s ease;
-        `;
-        return el;
     }
 
     private createGeneralNameTag(side: 'left' | 'right'): HTMLDivElement {
