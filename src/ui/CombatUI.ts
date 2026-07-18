@@ -3384,6 +3384,59 @@ export class CombatUI {
             this.rightGeneralNameTag.style.opacity = '';
         }
 
+        // --- 优劣均 兵力状态指示器 ---
+        const bfRatio = this.boundRegionalBattleField ? this.boundRegionalBattleField.getInitialAttDefRatio() : (attMax / Math.max(1, defMax));
+        const attAdvantage = bfRatio > 1.5;
+        const attDisadvantage = bfRatio < 0.67;
+
+        const setActive = (el: HTMLDivElement, theme: 'you' | 'lie' | 'jun') => {
+            el.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            if (theme === 'you') {
+                el.style.color = '#FFF2D4'; // 柔和的鎏金色
+                el.style.background = 'linear-gradient(135deg, rgba(120, 80, 10, 0.95), rgba(40, 20, 5, 0.95))';
+                el.style.borderColor = 'rgba(255, 184, 0, 0.8)';
+                el.style.boxShadow = '0 0 12px rgba(255, 184, 0, 0.5), inset 0 0 8px rgba(255, 184, 0, 0.3)';
+                el.style.textShadow = '0 0 6px rgba(255, 184, 0, 0.8)';
+            } else if (theme === 'lie') {
+                el.style.color = '#FFD4D4'; // 柔和的血月色
+                el.style.background = 'linear-gradient(135deg, rgba(90, 20, 20, 0.95), rgba(30, 5, 5, 0.95))';
+                el.style.borderColor = 'rgba(255, 59, 48, 0.8)';
+                el.style.boxShadow = '0 0 12px rgba(255, 59, 48, 0.5), inset 0 0 8px rgba(255, 59, 48, 0.3)';
+                el.style.textShadow = '0 0 6px rgba(255, 59, 48, 0.8)';
+            } else if (theme === 'jun') {
+                el.style.color = '#D4F4FF'; // 柔和的冰蓝色
+                el.style.background = 'linear-gradient(135deg, rgba(15, 60, 90, 0.95), rgba(5, 20, 40, 0.95))';
+                el.style.borderColor = 'rgba(0, 229, 255, 0.8)';
+                el.style.boxShadow = '0 0 12px rgba(0, 229, 255, 0.5), inset 0 0 8px rgba(0, 229, 255, 0.3)';
+                el.style.textShadow = '0 0 6px rgba(0, 229, 255, 0.8)';
+            }
+        };
+
+        const setInactive = (el: HTMLDivElement) => {
+            el.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            el.style.color = 'rgba(255, 255, 255, 0.15)'; // 极暗的灰字
+            el.style.background = 'linear-gradient(135deg, rgba(30, 30, 32, 0.8), rgba(10, 10, 12, 0.8))';
+            el.style.borderColor = 'rgba(80, 80, 85, 0.4)'; // 黯淡的边框
+            el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.6)';
+            el.style.textShadow = 'none';
+        };
+
+        setInactive(this.indicatorLeftYou);
+        setInactive(this.indicatorLeftLie);
+        setInactive(this.indicatorRightYou);
+        setInactive(this.indicatorRightLie);
+        setInactive(this.indicatorJun);
+
+        if (attAdvantage) {
+            setActive(this.indicatorLeftYou, 'you');
+            setActive(this.indicatorRightLie, 'lie'); // 守方劣势
+        } else if (attDisadvantage) {
+            setActive(this.indicatorLeftLie, 'lie');
+            setActive(this.indicatorRightYou, 'you'); // 守方优势
+        } else {
+            setActive(this.indicatorJun, 'jun');
+        }
+
     }
 
     private wireGeneralNameTagClicks(): void {
@@ -3711,6 +3764,27 @@ export class CombatUI {
             `✓ 已选定 ${generalId}.png · 微调后 Enter 写盘（不关 F2）`,
         );
         this.refreshGeneralNameTagInteract();
+    }
+
+    private createIndicatorNode(text: string): HTMLDivElement {
+        const el = document.createElement('div');
+        el.textContent = text;
+        el.style.cssText = `
+            width: ${uiPx(24)};
+            height: ${uiPx(24)};
+            line-height: ${uiPx(22)};
+            text-align: center;
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(16)};
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.3);
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(100, 100, 100, 0.5);
+            border-radius: 2px;
+            box-shadow: 0 0 4px rgba(0,0,0,0.8);
+            transition: all 0.3s ease;
+        `;
+        return el;
     }
 
     private createGeneralNameTag(side: 'left' | 'right'): HTMLDivElement {
