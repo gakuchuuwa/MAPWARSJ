@@ -1007,11 +1007,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/litang/liang_d_zhangxun.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -13
-        },
         "/assets/BASHU/xiang_d_xiangdakun.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -1601,11 +1596,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.09,
             "offsetX": 0,
             "offsetY": -19
-        },
-        "/assets/JAPAN/chosokabe_changzongwobuyuanqin.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -29
         },
         "/assets/JAPAN/higo_d_juchiwuguang.png": {
             "scale": 0.95,
@@ -4017,11 +4007,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -15
         },
-        "/assets/JAPAN/__闲置__JAPAN_15.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -4
-        },
         "/assets/JAPAN/48fb6c70-ae5d-49df-9eab-cb95ae2cb1ba.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5888,6 +5873,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/NORTH/hejian_gongsunzan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/JAPAN/__闲置__JAPAN_27.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -29
+        },
+        "/assets/JAPAN/chosokabe_changzongwobuyuanqin.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/litang/__闲置__litang_03.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -13
