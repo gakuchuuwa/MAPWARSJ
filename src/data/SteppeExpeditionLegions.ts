@@ -92,4 +92,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     juqu_d: { name: '卢水胡兵', tier: 3 },
     yuezhi: { name: '折兰骑', tier: 3 },
     lushui: { name: '飞熊军', tier: 2 },
+    xijue: { name: '郅支精骑', tier: 4 },
 };
