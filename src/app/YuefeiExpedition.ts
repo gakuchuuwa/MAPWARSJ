@@ -69,9 +69,9 @@ const ROUTE: { id: string; name: string }[] = [
 
 /** 忠义归顺 v4：按城型分级加兵（须与 yuefei-huanglong-sim 同步，勿单边改） */
 function zhongyiBonusRange(cityType: string): { min: number; max: number } {
-    if (cityType === 'big_city' || cityType === 'pass') return { min: 10000, max: 15000 };
-    if (cityType === 'medium_city') return { min: 5000, max: 10000 };
-    return { min: 1000, max: 5000 }; // small_city
+    if (cityType === 'big_city' || cityType === 'pass') return { min: 8000, max: 12000 };
+    if (cityType === 'medium_city') return { min: 4000, max: 7000 };
+    return { min: 1000, max: 4000 }; // small_city
 }
 
 const TICK_INTERVAL_MS = 400;
