@@ -171,6 +171,13 @@ export class YuefeiExpedition {
     /** 宗弼钉点：朱仙镇吸附到最近道路后的坐标（禁止离路） */
     private zhuxianRoadPos = { ...ZHUXIANZHEN };
 
+    /** 克城后休整截止时间戳（留 10 秒给语音播完再开拔下一城） */
+    private pauseUntilMs = 0;
+
+    /** 脚本期间抑制游戏自带占城/野战结束播报（避免与定制语音重叠） */
+    private _origAnnounceCityCapture: ((...args: any[]) => void) | null = null;
+    private _origAnnounceFieldBattleEnd: ((...args: any[]) => void) | null = null;
+
     constructor(deps: YuefeiDeps) {
         this.deps = deps;
     }
@@ -231,6 +238,8 @@ export class YuefeiExpedition {
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         // 语音播报用「岳家」而非 factions.ts 里的原名（不改游戏数据，仅脚本内覆盖）
         this.overrideFactionName();
+        // 抑制游戏自带占城/野战播报，脚本用定制语音替代
+        this.muteGameAnnouncements();
     }
 
     private _origGetFactionName: ((id: string) => string) | null = null;
@@ -247,6 +256,26 @@ export class YuefeiExpedition {
         };
     }
 
+    /** 抑制游戏自带的占城/野战结束播报（脚本用定制语音替代） */
+    private muteGameAnnouncements(): void {
+        if (this._origAnnounceCityCapture) return; // 已静默
+        this._origAnnounceCityCapture = speechAnnouncer.announceCityCapture.bind(speechAnnouncer);
+        this._origAnnounceFieldBattleEnd = speechAnnouncer.announceFieldBattleEnd.bind(speechAnnouncer);
+        speechAnnouncer.announceCityCapture = () => {};
+        speechAnnouncer.announceFieldBattleEnd = () => {};
+    }
+
+    private unmuteGameAnnouncements(): void {
+        if (this._origAnnounceCityCapture) {
+            speechAnnouncer.announceCityCapture = this._origAnnounceCityCapture;
+            this._origAnnounceCityCapture = null;
+        }
+        if (this._origAnnounceFieldBattleEnd) {
+            speechAnnouncer.announceFieldBattleEnd = this._origAnnounceFieldBattleEnd;
+            this._origAnnounceFieldBattleEnd = null;
+        }
+    }
+
     private restoreFactionName(): void {
         const fm = (window as any).game?.factionManager;
         if (!fm || !this._origGetFactionName) return;
@@ -259,6 +288,7 @@ export class YuefeiExpedition {
         (window as any).__yuefeiExpeditionActive = false;
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.restoreFactionName();
+        this.unmuteGameAnnouncements();
     }
 
     /** 点按钮：无岳飞军则起兵；已有则加兵一万并继续北伐 */
@@ -325,6 +355,7 @@ export class YuefeiExpedition {
         this.zhuxianPhase = 'pending';
         this.wanyanArmyId = null;
         this.zhuxianRoadPos = { ...ZHUXIANZHEN };
+        this.pauseUntilMs = 0;
 
         gameLog('expedition', `🐎 [圆梦] 岳飞率背嵬军自郾城起兵，北伐黄龙：开封 → 北京 → 黄龙府，忠义归顺，众望所归`);
         this.notify('岳飞率背嵬军北伐——直捣黄龙！');
@@ -355,6 +386,9 @@ export class YuefeiExpedition {
 
         this.tickZhongyiTrickle(army);
 
+        // 克城休整（留时间给语音播完再开拔下一城）
+        if (Date.now() < this.pauseUntilMs) return;
+
         // 朱仙镇拦路（开封路标未克前；岳飞始终沿路远征，不直线离路）
         if (this.waypointIndex === 0 && this.zhuxianPhase !== 'done') {
             const kaifeng = this.deps.cityManager.getCity(KAIFENG_ID);
@@ -377,10 +411,12 @@ export class YuefeiExpedition {
                 // 收复北京·脚本专属语音
                 if (wp.id === 'city_beijing') {
                     (speechAnnouncer as any).speak('岳家军北伐功成，燕幽故地，今日复归！收拾旧山河，朝天阙！');
+                    this.pauseUntilMs = Date.now() + 10000;
                 }
                 // 攻占沈阳·脚本专属语音
                 if (wp.id === 'city_shenyang') {
                     (speechAnnouncer as any).speak('王师北定，踏破辽东！岳家军雪靖康耻，饮马松江！直捣黄龙，与诸君痛饮！');
+                    this.pauseUntilMs = Date.now() + 10000;
                 }
                 this.waypointIndex++;
                 continue;
@@ -400,6 +436,8 @@ export class YuefeiExpedition {
         }
 
         // 锁定当前目标城（覆盖任何被自动远征逻辑塞入的其它目标）
+        // 二次休整检查：while 循环内设了 pause 时，本 tick 不锁目标
+        if (Date.now() < this.pauseUntilMs) return;
         const desired = ROUTE[this.waypointIndex];
         if (army.expeditionTargetCityId !== desired.id) {
             if (army.name !== ELITE_NAME) army.name = ELITE_NAME;
@@ -598,6 +636,7 @@ export class YuefeiExpedition {
         this.notify('朱仙镇大捷——十二道金牌无效，岳家军挺进汴梁');
         // 脚本专属语音：收复开封
         (speechAnnouncer as any).speak('岳家军旌旗北指，所向克捷！朱仙镇一役，撼山易，撼岳家军难，收复汴梁，还我河山！');
+        this.pauseUntilMs = Date.now() + 10000;
     }
 
     /**
@@ -659,6 +698,7 @@ export class YuefeiExpedition {
         (window as any).__yuefeiExpeditionActive = false;
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.restoreFactionName();
+        this.unmuteGameAnnouncements();
         if (this.timer != null) {
             window.clearInterval(this.timer);
             this.timer = null;
