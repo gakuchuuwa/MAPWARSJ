@@ -194,7 +194,7 @@ export class SiegeEffectRenderer {
 
     /**
      * 错落渐显（2026-07-18 主人定）：第 1 坨火开战后 5 秒渐显；
-     * 第 i 坨从第 i×4 秒开始、同样 5 秒渐显——火是一处处烧起来的，不是同时冒出来
+     * 第 i 坨从第 i×9 秒开始、同样 5 秒渐显——火是一处处烧起来的，不是同时冒出来
      */
     private fadeIn(cityId: string): void {
         const effect = this.activeEffects.get(cityId);
