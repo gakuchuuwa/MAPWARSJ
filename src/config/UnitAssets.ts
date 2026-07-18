@@ -47,7 +47,7 @@ export const SPRITE_PATHS = {
         'jinling_tandaoji': '/assets/JIANGNAN/jinling_tandaoji.png',
         'yingzhou_liuyan': '/assets/LINGNAN/yingzhou_liuyan.png', // 刘龑（generalId 已更新）
         'yangzhou_wangping': '/assets/BASHU/yangzhou_wangping.png',
-        'pagan_anulvtuo': '/assets/DIANQIAN/pagan_anulvtuo.png',
+        'pagan_anulvtuo': '/assets/DIANQIAN/pagan_anultuo.png',   // 文件名少个 v，以磁盘/FactionGenerals 为准
         'qiuci_baiba': '/assets/WESTERN/qiuci_baiba.png',
         'gar_lunqinling': '/assets/TIBET/gar_lunqinling.png',
         'menggu_d_chengjisihan': '/assets/STEPPE/menggu_d_chengjisihan.png',
@@ -64,18 +64,6 @@ export const SPRITE_PATHS = {
         'xinluo_jinyuxin': '/assets/KOREA/xinluo_jinyuxin.png',
         'seljuq_sangjiaer': '/assets/CENTRAL_ASIA/seljuq_sangjiaer.png',
         'zaoyang_d_menggong': '/assets/zhaosong/zaoyang_d_menggong.png',
-    },
-    PLAYER_DEFAULT: {
-        frames: [
-            '/assets/soldier.png',
-            '/assets/soldier_2.png',
-            '/assets/soldier_3.png',
-        ] as const,
-        attacks: [
-            '/assets/attack_1.png',
-            '/assets/attack_2.png',
-            '/assets/attack_3.png',
-        ] as const,
     },
     PHALANX: {
         // format: /SUCAI/S10DB/{ID}-1.png

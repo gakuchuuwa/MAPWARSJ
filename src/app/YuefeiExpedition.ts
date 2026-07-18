@@ -12,6 +12,8 @@
  *   岳飞仍沿路远征开封，路上撞上即野战——禁止直线拉离路网；
  *   胜后开封直接易主给郾川，不再攻打开封城，再北上北京。
  *
+ * 旗号：北伐脚本运行期间郾川旗面临时显示「岳」，结束/覆没后恢复「郾」。
+ *
  * 不改动任何常规游戏逻辑，仅借用现成远征机制（army.expeditionTargetCityId）：
  *   set target → 行为树锁死目标行军攻城（断粮不回）；
  *   target 变己方 → LegionBehaviors.resolveExpeditionState 自动清空 → 本脚本推进下一城。
@@ -140,6 +142,7 @@ interface YuefeiDeps {
                 defenderGeneralId?: string;
             },
         ): void;
+        refreshFactionFlagText?(factionId: string): void;
     };
     cameraFollowUI: {
         setFollow(armyId: string, armyName: string): void;
@@ -220,9 +223,15 @@ export class YuefeiExpedition {
         this.attachFollowAndMarch(army);
     }
 
+    /** 北伐期间旗号「岳」↔ 平时「郾」：清缓存并刷新据点 overlay */
+    private applyExpeditionFlagText(): void {
+        this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
+    }
+
     /** 点按钮：无岳飞军则起兵；已有则加兵一万并继续北伐 */
     public start(): void {
         (window as any).__yuefeiExpeditionActive = true;
+        this.applyExpeditionFlagText();
         const existing = this.findExistingYuefeiArmy();
         if (existing) {
             const before = existing.getTroops();
@@ -600,6 +609,7 @@ export class YuefeiExpedition {
     /** 停止脚本推进（军团仍留在场上） */
     public stop(): void {
         (window as any).__yuefeiExpeditionActive = false;
+        this.applyExpeditionFlagText();
         if (this.timer != null) {
             window.clearInterval(this.timer);
             this.timer = null;
