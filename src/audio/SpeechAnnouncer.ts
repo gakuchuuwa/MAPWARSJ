@@ -438,7 +438,7 @@ export class SpeechAnnouncer {
     eliteName: string;
   }): void {
     if (!this.enabled) return;
-    const text = `${opts.generalName}命全军待命，亲率${opts.eliteName}，居高临下，坐山观虎斗，伺机而动，坐收渔利。`;
+    const text = `${opts.generalName}传令三军，原地待命。亲率${opts.eliteName}，择高地险要之处，居高以观敌阵。眼下两敌相持，正宜坐山观虎斗，待其疲态尽显、破绽毕露之时，再伺机而动，雷霆出击，一举坐收渔利！`;
     console.log("[Speech] 排队等待:", text);
     this.speak(text);
   }
