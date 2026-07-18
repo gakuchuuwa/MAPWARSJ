@@ -111,9 +111,9 @@ export type StrategicEffect =
 
     | 'sabotage_garrison'             // 攻城前按magnitude概率消耗守城将/精出场配额（翦除羽翼，原名釜底抽薪）
 
-    | 'lure_tiger_leave_mountain'     // 攻城前守城将/精组建军团出征（调虎离山）
+    | 'sabotage_general'              // 攻城前按magnitude概率消耗守城将出场配额（调虎离山）
 
-    | 'third_party_siege'             // 攻城前调用附近据点出兵助攻（坐收渔翁）
+    | 'sabotage_elite'                // 攻城前按magnitude概率消耗守城精锐出场配额（坐收渔翁）
 
     // ── 奇策 ──
 

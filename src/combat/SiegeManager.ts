@@ -869,9 +869,9 @@ export class SiegeManager {
 
         // ── 纵横技（必须在守城加成 applySiegeGarrisonBoostIfNeeded 前执行，确保 spawnUsed 优先消耗）──
 
-        // 翦除羽翼：攻城前按 magnitude 概率消耗守城将/精出场配额（原100%必触发过强：守方次次无将无精）
+        // 翦除羽翼：攻城前按 magnitude 概率消耗守城将/精出场配额
         if (generalHasStrategicEffect(army, 'sabotage_garrison')) {
-            const chance = getGeneralStrategicMagnitude(army, 'sabotage_garrison', 0.25);
+            const chance = getGeneralStrategicMagnitude(army, 'sabotage_garrison', 0.10);
             if (Math.random() < chance) {
                 targetCity.spawnGeneralUsed = true;
                 targetCity.spawnEliteUsed = true;
@@ -880,80 +880,23 @@ export class SiegeManager {
             }
         }
 
-        // 调虎离山：攻城前守城将/精组建军团出征（仅有将/精才出兵）
-        if (generalHasStrategicEffect(army, 'lure_tiger_leave_mountain')) {
-            army.markPendingPostBattleDiplomacyFx('lure_tiger_leave_mountain');
-            const canGen = !targetCity.spawnGeneralUsed;
-            const canEli = !targetCity.spawnEliteUsed;
-            if (canGen || canEli) {
-                const baseArmySize = Math.floor((targetCity.troops || 0) * 0.9);
-                const recruitMult = getCityAnchoredStrategicMagnitude(targetCity.id, 'recruit_troops_mult');
-                const armySize = Math.floor(baseArmySize * (recruitMult > 1 ? recruitMult : 1));
-                const minTroops = (GameConfig.LEGION.CITY_MIN_SPAWN_TROOPS as any)[targetCity.type] ?? 20000;
-                if (armySize >= minTroops) {
-                    const lured = this.legionManager.createArmy({
-                        name: `${targetCity.name}军团`,
-                        factionId: targetCity.factionId || 'panjun',
-                        position: { lat: targetCity.latitude, lng: targetCity.longitude },
-                        troops: armySize,
-                        sourceCityId: targetCity.id,
-                    });
-                    if (lured) {
-                        applyLegionSpawnTierToArmy(lured, targetCity);
-                        targetCity.troops = (targetCity.troops || 0) - lured.getTroops();
-                        siegeLog(`[纵横] 调虎离山：【${targetCity.name}】将/精出征，${targetCity.troops} 城防留守`);
-                    }
-                }
+        // 调虎离山：攻城前按 magnitude 概率消耗守城将出场配额
+        if (generalHasStrategicEffect(army, 'sabotage_general')) {
+            const chance = getGeneralStrategicMagnitude(army, 'sabotage_general', 0.15);
+            if (Math.random() < chance) {
+                targetCity.spawnGeneralUsed = true;
+                army.markPendingPostBattleDiplomacyFx('sabotage_general');
+                siegeLog(`[纵横] 调虎离山触发：【${targetCity.name}】守将出场配额已消耗`);
             }
         }
 
-        // 坐收渔翁：攻城前调用己方附近据点出兵助攻
-        if (generalHasStrategicEffect(army, 'third_party_siege')) {
-            army.markPendingPostBattleDiplomacyFx('third_party_siege');
-            const myFaction = army.getFactionId();
-            const myPos = army.getPosition();
-            const targetPos = { lat: targetCity.latitude, lng: targetCity.longitude };
-            const myDistToTarget = getEuclideanDistance(myPos, targetPos);
-            const maxAllies = getGeneralStrategicMagnitude(army, 'third_party_siege', 3);
-
-            const activeLegionCityIds = new Set(
-                this.legionManager.getArmies()
-                    .filter(a => !a.isDestroyed && a.type === 'legion')
-                    .map(a => a.getSourceCityId() || a.homeCityId)
-                    .filter(Boolean)
-            );
-
-            const candidates = this.cityManager.getCities()
-                .filter(c => c.id !== targetCity.id && c.factionId && c.factionId !== 'panjun')
-                .filter(c => c.factionId === myFaction)
-                .filter(c => !activeLegionCityIds.has(c.id))
-                .map(c => ({
-                    city: c,
-                    dist: getEuclideanDistance({ lat: c.latitude, lng: c.longitude }, targetPos),
-                }))
-                .filter(x => x.dist < myDistToTarget)
-                .filter(x => Math.floor((x.city.troops || 0) * 0.9) >=
-                    ((GameConfig.LEGION.CITY_MIN_SPAWN_TROOPS as any)[x.city.type] ?? 20000))
-                .sort((a, b) => a.dist - b.dist)
-                .slice(0, maxAllies);
-
-            for (const { city, dist } of candidates) {
-                const baseAllySize = Math.floor((city.troops || 0) * 0.9);
-                const allyRecruitMult = getCityAnchoredStrategicMagnitude(city.id, 'recruit_troops_mult');
-                const allySize = Math.floor(baseAllySize * (allyRecruitMult > 1 ? allyRecruitMult : 1));
-                const ally = this.legionManager.createArmy({
-                    name: `${city.name}军团`,
-                    factionId: city.factionId!,
-                    position: { lat: city.latitude, lng: city.longitude },
-                    troops: allySize,
-                    sourceCityId: city.id,
-                });
-                if (ally) {
-                    applyLegionSpawnTierToArmy(ally, city);
-                    city.troops = (city.troops || 0) - ally.getTroops();
-                    this.legionManager.moveLegionToCity(ally, targetCity.id);
-                    siegeLog(`[纵横] 坐收渔翁：【${city.name}】出兵助攻【${targetCity.name}】（距${targetCity.name} ${dist.toFixed(0)}°<攻方${myDistToTarget.toFixed(0)}°）`);
-                }
+        // 坐收渔翁：攻城前按 magnitude 概率消耗守城精锐出场配额
+        if (generalHasStrategicEffect(army, 'sabotage_elite')) {
+            const chance = getGeneralStrategicMagnitude(army, 'sabotage_elite', 0.15);
+            if (Math.random() < chance) {
+                targetCity.spawnEliteUsed = true;
+                army.markPendingPostBattleDiplomacyFx('sabotage_elite');
+                siegeLog(`[纵横] 坐收渔翁触发：【${targetCity.name}】精锐出场配额已消耗`);
             }
         }
 
