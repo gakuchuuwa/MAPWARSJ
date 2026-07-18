@@ -109,11 +109,11 @@ export type StrategicEffect =
 
     // ── 纵横 ──
 
-    | 'sabotage_garrison'             // 攻城前按magnitude概率消耗守城将/精出场配额（翦除羽翼，原名釜底抽薪）
+    | 'sabotage_garrison'             // 攻城前按magnitude概率消耗守城将/精出场配额（纵横捭阖）
 
-    | 'sabotage_general'              // 攻城前按magnitude概率消耗守城将出场配额（调虎离山）
+    | 'sabotage_general'              // 攻城前按magnitude概率消耗守城将出场配额（飞箝擒王）
 
-    | 'sabotage_elite'                // 攻城前按magnitude概率消耗守城精锐出场配额（坐收渔翁）
+    | 'sabotage_elite'                // 攻城前按magnitude概率消耗守城精锐出场配额（转丸破军）
 
     // ── 奇策 ──
 

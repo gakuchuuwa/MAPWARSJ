@@ -129,11 +129,11 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     // ── 纵横类 ──
 
-    str_22: { id: 'str_22', grid: 'S㉒', displayName: '翦除羽翼', effect: 'sabotage_garrison', magnitude: 0.10, engineStatus: 'ready', category: 'diplomacy', note: '10%概率攻城封杀守将/精（造势）。原名釜底抽薪，因与李世民战术技撞名改之；magnitude=触发概率' },
+    str_22: { id: 'str_22', grid: 'S㉒', displayName: '纵横捭阖', effect: 'sabotage_garrison', magnitude: 0.10, engineStatus: 'ready', category: 'diplomacy', note: '10%概率攻城封杀守将/精（造势）。原名翦除羽翼；magnitude=触发概率' },
 
-    str_23: { id: 'str_23', grid: 'S㉓', displayName: '调虎离山', effect: 'sabotage_general', magnitude: 0.15, engineStatus: 'ready', category: 'diplomacy', note: '15%的几率，攻城战封杀守将（均势）' },
+    str_23: { id: 'str_23', grid: 'S㉓', displayName: '飞箝擒王', effect: 'sabotage_general', magnitude: 0.15, engineStatus: 'ready', category: 'diplomacy', note: '15%的几率，攻城战封杀守将（均势）' },
 
-    str_24: { id: 'str_24', grid: 'S㉔', displayName: '坐收渔翁', effect: 'sabotage_elite', magnitude: 0.15, engineStatus: 'ready', category: 'diplomacy', note: '15%的几率，攻城战封杀精锐（逆势）' },
+    str_24: { id: 'str_24', grid: 'S㉔', displayName: '转丸破军', effect: 'sabotage_elite', magnitude: 0.15, engineStatus: 'ready', category: 'diplomacy', note: '15%的几率，攻城战封杀精锐（逆势）' },
 
     // ── 防务类 ──
 
