@@ -112,6 +112,11 @@ export class CombatUI {
     private rightGeneralNameTag!: HTMLDivElement;
     private leftFamousBadge!: HTMLDivElement;
     private rightFamousBadge!: HTMLDivElement;
+    private indicatorLeftYou!: HTMLDivElement;
+    private indicatorLeftLie!: HTMLDivElement;
+    private indicatorRightYou!: HTMLDivElement;
+    private indicatorRightLie!: HTMLDivElement;
+    private indicatorJun!: HTMLDivElement;
 
     /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
     private skillPulseShownKeys = new Set<string>();
@@ -434,8 +439,31 @@ export class CombatUI {
         this.rightFamousBadge = this.createFamousBadge('right');
         rightFrame.appendChild(this.rightFamousBadge);
 
-        // （优劣均指示器已删除，2026-07-18 主人定：六计随机、与开局"势"无关，
-        //  且静态标签会与实时拉锯条矛盾——误导源）
+        // --- 优劣均 兵力状态指示器（2026-07-18 应主人要求按 Git 旧实现恢复，仅此 UI）---
+        const leftIndGroup = document.createElement('div');
+        leftIndGroup.style.cssText = `position: absolute; bottom: 41.5%; right: -${uiPx(7)}; transform: translateX(50%); display: flex; gap: ${uiPx(8)}; z-index: 20; pointer-events: none;`;
+        this.indicatorLeftYou = this.createIndicatorNode('优');
+        this.indicatorLeftLie = this.createIndicatorNode('劣');
+        leftIndGroup.appendChild(this.indicatorLeftYou);
+        leftIndGroup.appendChild(this.indicatorLeftLie);
+        leftFrame.appendChild(leftIndGroup);
+
+        const rightIndGroup = document.createElement('div');
+        rightIndGroup.style.cssText = `position: absolute; bottom: 41.5%; left: -${uiPx(7)}; transform: translateX(-50%); display: flex; gap: ${uiPx(8)}; z-index: 20; pointer-events: none;`;
+        this.indicatorRightYou = this.createIndicatorNode('优');
+        this.indicatorRightLie = this.createIndicatorNode('劣');
+        rightIndGroup.appendChild(this.indicatorRightYou);
+        rightIndGroup.appendChild(this.indicatorRightLie);
+        rightFrame.appendChild(rightIndGroup);
+
+        this.indicatorJun = this.createIndicatorNode('均');
+        this.indicatorJun.style.position = 'absolute';
+        this.indicatorJun.style.bottom = `calc(${uiPx(T.portraitBottom)} + ${uiPx(620 * 0.415)})`;
+        this.indicatorJun.style.left = '50%';
+        this.indicatorJun.style.transform = 'translateX(-50%)';
+        this.indicatorJun.style.zIndex = '20';
+        this.indicatorJun.style.pointerEvents = 'none';
+        this.container.appendChild(this.indicatorJun);
 
         this.wireGeneralNameTagClicks();
         this.refreshGeneralNameTagInteract();
