@@ -2512,7 +2512,9 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-06-19 特尔门·黑沙（草原）──
     { id: 'city_temermen', name: '特尔门',
         factionId: 'heisha_d', lat: 48.7386, lng: 97.8387, type: 'small_city', region: 'STEPPE', troops: 20000, note: '土拉河支流；漠北牧地，近后突厥黑沙道（与黑沙城同系北疆要冲）' },
-    { id: 'city_yancheng2', name: '郾城', factionId: 'yanchuan_d', lat: 33.58, lng: 114.03, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+    { id: 'city_yancheng2', name: '郾城', factionId: 'yanchuan_d', lat: 33.58, lng: 114.03, type: 'small_city', troops: 20000, region: 'NORTH' },
+
+
 
 
 
