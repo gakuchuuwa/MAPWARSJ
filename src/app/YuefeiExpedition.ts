@@ -382,6 +382,9 @@ export class YuefeiExpedition {
         if (!(army as any).siegeMissionData) (army as any).siegeMissionData = {};
         (army as any).siegeMissionData.result = 'attacker_win';
 
+        // 守方不败：岳飞「中途以援军身份编入守方」的漏网场次，在此补设 defender_win
+        this.enforceDefenderWinIfJoined();
+
         this.tickZhongyiTrickle(army);
 
         // 克城休整（留时间给语音播完再开拔下一城）
@@ -491,6 +494,37 @@ export class YuefeiExpedition {
             return { lat: snapped.lat, lng: snapped.lng };
         }
         return { ...ZHUXIANZHEN };
+    }
+
+    /**
+     * 岳飞作为「后到的守方援军」编入进行中的战斗时，补设守方必胜。
+     *
+     * 为何需要：SiegeManager 只在**开战那一刻**检查守方军团名单（nearbyDefenderLegions），
+     * 岳飞若是战斗打响后才由开战圈轮询拉进来的援军，就不在那份名单里，守方必胜漏判。
+     * 本方法每 tick 扫一遍进行中的战场补上，攻城/野战都覆盖。
+     *
+     * 只改脚本：不新增游戏本体代码，直接对该场 BattleField 设预设结果并重跑强弱判定
+     * （与引擎自己在构造期走的是同一条路径：presetResult → pickPredictedSides）。
+     */
+    private enforceDefenderWinIfJoined(): void {
+        const armyId = this.armyId;
+        if (!armyId) return;
+        const fields = (window as any).game?.combatSystem?.getActiveBattleFields?.() as
+            | any[]
+            | undefined;
+        if (!fields?.length) return;
+
+        for (const bf of fields) {
+            if (!bf || bf.isOver) continue;
+            if (bf.presetResult === 'defender_win') continue; // 已是守方必胜，不重复
+            const defenders: any[] = bf.getDefenderUnits?.() ?? [];
+            if (!defenders.some((u) => u?.id === armyId)) continue;
+
+            bf.presetResult = 'defender_win';
+            bf.pickPredictedSides?.(); // 按新预设把强弱走向翻到守方
+            bf.strongerCasualtyReduction = 0; // 与引擎 presetResult 分支一致
+            gameLog('expedition', '🛡️ [圆梦] 岳飞驰援编入守方，本战改判守方必胜');
+        }
     }
 
     /**
