@@ -392,11 +392,11 @@ export class GameMap {
             // [FIX] Bind listener centrally
             this.map.on('zoomend', this.updateRiverVisibility);
 
-            // 1. Load ESRI Layer (Existing)
-            this.riverLayer = new RiverOverlayLayer();
-            this.riverLayer.addTo(this.map);
+            // 【2026-07-19 主人定：停用 ESRI 猜色水域层】RiverOverlayLayer 靠"蓝色分量比红绿高 8"
+            // 从地形晕渲图上猜水域，日本山地阴影偏蓝灰被整片误判成湖泊（中国地形偏黄褐故不触发）。
+            // 真实河湖已由下方 VectorRiverLayer（Natural Earth 实测数据）承担，此层纯属误差来源，勿加回。
 
-            // 2. Load Vector Layer (New Authentic Data)
+            // Load Vector Layer (Authentic Data)
             if (!this.vectorRiverLayer) {
                 const basePath = import.meta.env.BASE_URL || '/';
                 fetch(`${basePath}assets/ne_10m_rivers_lake_centerlines.geojson`)

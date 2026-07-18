@@ -1120,8 +1120,39 @@ export class CityAssetManager {
         CityAssetManager.scheduleChromaWorkStep(step);
     }
 
+    /**
+     * [PERF 2026-07-19] 不受后台标签页节流的让步。
+     * setTimeout/rIC 在后台或失焦窗口被 Chrome 钳到 ≥1 秒一次；MessageChannel 不受该限制。
+     */
+    private static macroYield(): Promise<void> {
+        return new Promise((resolve) => {
+            const ch = new MessageChannel();
+            ch.port1.onmessage = () => {
+                ch.port1.close();
+                ch.port2.close();
+                resolve();
+            };
+            ch.port2.postMessage(0);
+        });
+    }
+
+    private static lastYieldAt = 0;
+    /** 让步预算：累计工作满这么久才让一次（单面旗染色实测 ~7ms） */
+    private static readonly YIELD_BUDGET_MS = 24;
+
+    /**
+     * [PERF 2026-07-19] 改为「按时间预算让步」。
+     * 旧版每染一面旗就 setTimeout(0) 让步一次，后台标签页被钳成 1 秒/面 →
+     * 视口 70 面旗吃掉 70 秒启动（实际像素工作仅 ~7ms/面）。
+     * 现在只在累计工作超预算时才让步，且走 MessageChannel 不吃节流。
+     */
     private static yieldSchedulingSlice(preferIdle: boolean): Promise<void> {
         if (document.hidden) return Promise.resolve();
+        const now = performance.now();
+        if (now - CityAssetManager.lastYieldAt < CityAssetManager.YIELD_BUDGET_MS) {
+            return Promise.resolve();
+        }
+        CityAssetManager.lastYieldAt = now;
         if (preferIdle && CityAssetManager.territoryWorkActive) {
             return CityAssetManager.yieldIdle(100);
         }
@@ -1130,7 +1161,7 @@ export class CityAssetManager {
                 requestIdleCallback(() => resolve(), { timeout: 80 });
             });
         }
-        return new Promise((resolve) => setTimeout(resolve, 0));
+        return CityAssetManager.macroYield();
     }
 
     private static yieldIdle(timeoutMs: number): Promise<void> {
