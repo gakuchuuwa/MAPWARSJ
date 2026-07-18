@@ -55,7 +55,7 @@ export class CityCaptureRenderer {
 
     public playCaptureEffect(lat: number, lng: number, _factionColor: string) {
         const particles: Particle[] = [];
-        const particleCount = 60;
+        const particleCount = 70; // 2026-07-18 主人定：再浓一点（60→70，与 draw 的 0.5 alpha 配套）
 
         // [USER REQUEST] Always use grey dust color, ignore faction color
         // Grey dust looks more natural for city capture effects
@@ -75,7 +75,9 @@ export class CityCaptureRenderer {
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 life: 1.0,
-                decay: 0.0025 + Math.random() * 0.008,
+                // 2026-07-18 主人定：拖尾拉长（浓密期~2→2.5s，余尘最长~6.7→8.3s）；
+                // 勿学火焰拉满5秒——城破的爽点是新旗从烟里显出来，烟太持久会闷住换旗
+                decay: 0.002 + Math.random() * 0.006,
                 size: size,
                 color: dustColor,
                 texture: this.getOrCreateTexture(dustColor, Math.ceil(size * 2))
@@ -143,7 +145,7 @@ export class CityCaptureRenderer {
                 const drawSize = p.size * 2; // Diameter
 
                 this.ctx.save();
-                this.ctx.globalAlpha = p.life * 0.4; // Fade out（2026-07-18 主人定：加浓，直播远观可见）
+                this.ctx.globalAlpha = p.life * 0.5; // Fade out（2026-07-18 主人定二调：0.4→0.5 再加浓，与 70 粒配套）
                 this.ctx.drawImage(
                     p.texture,
                     screenX - drawSize / 2,
