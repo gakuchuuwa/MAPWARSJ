@@ -869,34 +869,34 @@ export class SiegeManager {
 
         // ── 纵横技（必须在守城加成 applySiegeGarrisonBoostIfNeeded 前执行，确保 spawnUsed 优先消耗）──
 
-        // 翦除羽翼：攻城前按 magnitude 概率消耗守城将/精出场配额
+        // 纵横捭阖：攻城前按 magnitude 概率消耗守城将/精出场配额
         if (generalHasStrategicEffect(army, 'sabotage_garrison')) {
             const chance = getGeneralStrategicMagnitude(army, 'sabotage_garrison', 0.10);
             if (Math.random() < chance) {
                 targetCity.spawnGeneralUsed = true;
                 targetCity.spawnEliteUsed = true;
                 army.markPendingPostBattleDiplomacyFx('sabotage_garrison');
-                siegeLog(`[纵横] 翦除羽翼触发：【${targetCity.name}】将/精出场配额已消耗`);
+                siegeLog(`[纵横] 纵横捭阖触发：【${targetCity.name}】将/精出场配额已消耗`);
             }
         }
 
-        // 调虎离山：攻城前按 magnitude 概率消耗守城将出场配额
+        // 飞箝擒王：攻城前按 magnitude 概率消耗守城将出场配额
         if (generalHasStrategicEffect(army, 'sabotage_general')) {
             const chance = getGeneralStrategicMagnitude(army, 'sabotage_general', 0.15);
             if (Math.random() < chance) {
                 targetCity.spawnGeneralUsed = true;
                 army.markPendingPostBattleDiplomacyFx('sabotage_general');
-                siegeLog(`[纵横] 调虎离山触发：【${targetCity.name}】守将出场配额已消耗`);
+                siegeLog(`[纵横] 飞箝擒王触发：【${targetCity.name}】守将出场配额已消耗`);
             }
         }
 
-        // 坐收渔翁：攻城前按 magnitude 概率消耗守城精锐出场配额
+        // 转丸破军：攻城前按 magnitude 概率消耗守城精锐出场配额
         if (generalHasStrategicEffect(army, 'sabotage_elite')) {
             const chance = getGeneralStrategicMagnitude(army, 'sabotage_elite', 0.15);
             if (Math.random() < chance) {
                 targetCity.spawnEliteUsed = true;
                 army.markPendingPostBattleDiplomacyFx('sabotage_elite');
-                siegeLog(`[纵横] 坐收渔翁触发：【${targetCity.name}】精锐出场配额已消耗`);
+                siegeLog(`[纵横] 转丸破军触发：【${targetCity.name}】精锐出场配额已消耗`);
             }
         }
 

@@ -934,9 +934,9 @@ const STRATEGIC_PULSE_COLORS: Record<string, string> = {
     str_19: '#cc8844', // 不战而屈 威慑
     str_20: '#cc8844', // 先声夺人 威慑
     str_21: '#cc8844', // 越城而走 威慑
-    str_22: '#ccaadd', // 翦除羽翼 纵横
-    str_23: '#ccaadd', // 调虎离山 纵横
-    str_24: '#ccaadd', // 坐收渔翁 纵横
+    str_22: '#ccaadd', // 纵横捭阖 纵横
+    str_23: '#ccaadd', // 飞箝擒王 纵横
+    str_24: '#ccaadd', // 转丸破军 纵横
     str_25: '#55ff55', // 足食足兵
     str_26: '#55ff55', // 招兵买马
     str_27: '#55ff55', // 屯兵经略
