@@ -32,7 +32,7 @@
     "faction:sync-audit": "npx tsx scratch/audit_faction_capital_sync.mjs",
     "tier:pending": "node scratch/export_faction_tier_pending.mjs",
     "audit": "node scripts/audit-game-integrity.mjs",
-    "sim": "tsx scripts/sim/headless.ts",
+    "sim": "tsx --import ./tools/sim-preload.mjs scripts/sim/headless.ts",
     "sim:roster": "tsx --import ./tools/sim-preload.mjs tools/simulator-roster.ts",
     "sim:expedition": "tsx --import ./tools/sim-preload.mjs tools/expedition-sim.ts",
     "sim:yuefei": "tsx --import ./tools/sim-preload.mjs tools/yuefei-huanglong-sim.ts",

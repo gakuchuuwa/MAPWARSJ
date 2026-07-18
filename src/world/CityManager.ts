@@ -153,6 +153,12 @@ export class CityManager {
         }
     }
 
+    /** 旗号汉字变更后：清文字缓存并 patch 该势力所有据点 overlay */
+    public refreshFactionFlagText(factionId: string): void {
+        CityAssetManager.invalidateFlagTextCache(factionId);
+        this.territorySystem.patchFactionFlagText(factionId);
+    }
+
     public toggleCityTextures(visible: boolean): void {
         this.territorySystem.toggleCityTextures(visible);
     }

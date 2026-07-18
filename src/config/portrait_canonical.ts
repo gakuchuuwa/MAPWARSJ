@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/18 04:24:03（共 229 条）
+ * 生成时间：2026/7/18 17:48:50（共 229 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
@@ -125,7 +125,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/chongfu/__闲置__pugan_06.png": "/assets/DIANQIAN/__闲置__DIANQIAN_20.png",
     "/assets/chongfu/__闲置__STEPPE_21.png": "/assets/TIBET/niang_suonanjiabo.png",
     "/assets/chongfu/__闲置__STEPPE_22.png": "/assets/TIBET/daca_dacajilong.png",
-    "/assets/chongfu/__闲置__STEPPE_24.png": "/assets/HEXI/__闲置__HEXI_03.png",
+    "/assets/chongfu/__闲置__STEPPE_24.png": "/assets/HEXI/yangguan_lihao.png",
     "/assets/chongfu/__闲置__STEPPE_26.png": "/assets/TIBET/tuyu_d_kualv.png",
     "/assets/panjun/taiping_shidakai.png": "/assets/chongfu/__闲置__STEPPE_27.png",
     "/assets/chongfu/__闲置__TIBET_07.png": "/assets/STEPPE/ongut_alawusi.png",
@@ -207,7 +207,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/TIBET/nandou_sushili.png": "/assets/STEPPE/kumo_xiwanghuilibao.png",
     "/assets/TIBET/jiantang_sangjiejia.png": "/assets/STEPPE/naiman_taiyanghan.png",
     "/assets/TIBET/gaxa_zhashi.png": "/assets/STEPPE/qidan_shulvping.png",
-    "/assets/WESTERN/yangguan_lihao.png": "/assets/STEPPE/qidan_shulvping.png",
+    "/assets/WESTERN/__闲置__WESTERN_22.png": "/assets/STEPPE/qidan_shulvping.png",
     "/assets/TIBET/__闲置__TIBET_18.png": "/assets/STEPPE/tiele_qibiheli.png",
     "/assets/TIBET/__闲置__TIBET_13.png": "/assets/STEPPE/tujue_ashinatumen.png",
     "/assets/TIBET/kangba_suonuomugunbu.png": "/assets/STEPPE/tuva_qinggunzabu.png",
