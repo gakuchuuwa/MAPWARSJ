@@ -115,6 +115,8 @@ export class CombatUI {
     private readonly skillSpentAt = new Map<string, number>();
     /** 胜负定格（P0）：true 时 updateStats 不再覆写拉锯条/交界（终态已由 showBattleOutcome 写死） */
     private outcomeLocked = false;
+    /** 第三幕剧本锚点（2026-07-18 主人定）：进入第三幕瞬间的真实攻方%，崩溃/僵持/断崖从此起算 */
+    private collapseStartAttPct: number | null = null;
     private skillPulseLastAt = 0;
     private skillPulseTimers: number[] = [];
     /** 同场双方技能连放时仅首句插技能音效（无语音兜底路径） */
@@ -3229,23 +3231,47 @@ export class CombatUI {
         }
 
         const phase2Span = PHASE_COLLAPSE_START - PHASE_STALEMATE_START;
-        const phase3Span = 1 - PHASE_COLLAPSE_START;
-        let swingAmp = 0;
-        if (progress < PHASE_STALEMATE_START) {
-            // 第一幕胶着：小幅角力，不与相持段技能脉冲抢戏（开战语音时段）
-            swingAmp = 1;
-        } else if (progress < PHASE_COLLAPSE_START) {
-            // 第二幕相持（≈40% 武将技脉冲）：摆幅拉满后渐收，与亮相同刻起大幅拉锯
-            swingAmp = 4 - 3 * ((progress - PHASE_STALEMATE_START) / phase2Span); // 4 → 1
+        let attPct: number;
+        if (progress < PHASE_COLLAPSE_START) {
+            this.collapseStartAttPct = null; // 未进第三幕（含新场开局），清锚点
+            let swingAmp: number;
+            if (progress < PHASE_STALEMATE_START) {
+                // 第一幕胶着：小幅角力，不与相持段技能脉冲抢戏（开战语音时段）
+                swingAmp = 1;
+            } else {
+                // 第二幕相持（≈40% 武将技脉冲）：摆幅拉满后渐收，与亮相同刻起大幅拉锯
+                swingAmp = 4 - 3 * ((progress - PHASE_STALEMATE_START) / phase2Span); // 4 → 1
+            }
+            // 摇摆周期放慢 3 倍，使得拉锯显得厚重沉稳
+            const t = performance.now() / 1200;
+            const swing = (Math.sin(t) * 0.8 + Math.sin(t * 1.4) * 0.2) * swingAmp;
+            attPct = Math.max(2, Math.min(98, baseAttPct + swing));
         } else {
-            // 第三幕溃败：几乎不摆，真实兵力比主导
-            swingAmp = 1 * (1 - (progress - PHASE_COLLAPSE_START) / phase3Span); // 1 → 0
+            // 第三幕·三段式剧本（2026-07-18 主人定）：崩溃 → 僵持 → 断崖。
+            // 不再跟实时比：入幕真实比 r0 → 僵持线 r1（胜方 78%）→ 崖底（97/3）；
+            // 断崖段 u^4 陡降，落差大半压在最后一小段——"最后秒，一大截到底"；
+            // 终局 100/0 由 showBattleOutcome 定格收束（撞底+爆闪+勝字弹出）
+            if (this.collapseStartAttPct === null) this.collapseStartAttPct = baseAttPct;
+            const r0 = this.collapseStartAttPct;
+            const attackerAhead = r0 >= 50;
+            // 僵持线不回拉：入幕已越线（如 90%）就原地僵持，防"败方回光"的倒放假象
+            const r1 = attackerAhead ? Math.max(78, r0) : Math.min(22, r0);
+            const rCliff = attackerAhead ? 97 : 3;
+            const s = Math.min(1, (progress - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
+            if (s < 0.4) {
+                // 崩溃段：加速滑向僵持线
+                const u = s / 0.4;
+                attPct = r0 + (r1 - r0) * u * u;
+            } else if (s < 0.75) {
+                // 僵持段：最后抵抗——细颤不推进
+                attPct = r1 + Math.sin(performance.now() / 300) * 1.2;
+            } else {
+                // 断崖段：u^4 陡降
+                const u = (s - 0.75) / 0.25;
+                attPct = r1 + (rCliff - r1) * Math.pow(u, 4);
+            }
+            attPct = Math.max(2, Math.min(98, attPct));
         }
-
-        // 摇摆周期放慢 3 倍，使得拉锯显得厚重沉稳
-        const t = performance.now() / 1200;
-        const swing = (Math.sin(t) * 0.8 + Math.sin(t * 1.4) * 0.2) * swingAmp;
-        let attPct = Math.max(2, Math.min(98, baseAttPct + swing));
 
         if (!this.outcomeLocked) {
             this.attackerBar.style.width = `${attPct}%`;
