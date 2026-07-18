@@ -73,7 +73,6 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     yao: { name: '屠各精骑', tier: 3 },
     kong_d: { name: '曲阜甲士', tier: 3 },
     tongma: { name: '高密强弩', tier: 4 },
-    yanchuan_d: { name: '背嵬军', tier: 0 },
   guide_d: { name: '酂侯亲卫', tier: 4 },   // 永城·萧何酂侯
   tongzhou: { name: '匡国牙兵', tier: 4 },    // 长宁·后汉高祖镇守同州（缺乏进攻高光，降T3）
     hao_d: { name: '钟离护卫', tier: 3 },

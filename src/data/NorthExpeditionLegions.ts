@@ -73,4 +73,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     dingzhou: { name: '鲜卑甲骑', tier: 2 },
     yingzhou_d2: { name: '从马直', tier: 2 },
     shizhou: { name: '离石胡骑', tier: 3 },
+    yanchuan_d: { name: '背嵬军', tier: 0 },
 };
