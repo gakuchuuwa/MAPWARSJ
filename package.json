@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "concurrently \"vite\" \"node auto_backup.cjs\" \"cd tools/PortraitMatting && py app.py\"",
+    "dev": "node TOOL/rename_duplicate_idle_portraits.mjs && concurrently \"vite\" \"node auto_backup.cjs\" \"cd tools/PortraitMatting && py app.py\"",
     "build": "vite build",
     "preview": "vite preview",
     "assets:case-check": "node scratch/audit_assets_case.mjs",
@@ -23,6 +23,8 @@
     "portrait:build-canonical": "node scratch/build_portrait_canonical.mjs",
     "portrait:idle-rename": "node TOOL/rename_idle_portraits.mjs",
     "portrait:idle-preview": "node TOOL/rename_idle_portraits.mjs --dry-run",
+    "portrait:dup-rename": "node TOOL/rename_duplicate_idle_portraits.mjs",
+    "portrait:dup-preview": "node TOOL/rename_duplicate_idle_portraits.mjs --dry-run",
     "portrait:folder-audit": "node scratch/dedupe_portraits_within_folder.mjs --audit",
     "portrait:folder-dedupe": "node scratch/dedupe_portraits_within_folder.mjs",
     "portrait:culture-folders": "node scratch/audit_region_portrait_folders.mjs",
