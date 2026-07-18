@@ -15,6 +15,9 @@ const REGIONS_FOR_WORKER: HillshadeRegion[] = HISTORICAL_REGIONS.map(r => ({
     elevMax: r.elevMax ?? 9000
 }));
 
+// [FALLBACK] 高程瓦片加载失败时的兜底平涂色（古图纸色，与 tilePane 的 sepia 滤镜协调）
+const FALLBACK_TILE_COLOR = '#C4BA9E';
+
 // 瓦片 (z, x, y) → lat/lng 边界 (Web Mercator)
 function tileBoundsFromCoords(z: number, x: number, y: number) {
     const n = Math.pow(2, z);
@@ -174,12 +177,18 @@ export class HillshadeLayer extends L.GridLayer {
 
             } catch (err) {
                 console.error('Hillshade read error (cors?):', err);
-                // Fallback or finish
+                // [FALLBACK] 像素读取失败同样平涂兜底，不留透明"秃斑"
+                ctx.fillStyle = FALLBACK_TILE_COLOR;
+                ctx.fillRect(0, 0, size.x, size.y);
                 done(undefined, tile);
             }
         };
 
+        // [FALLBACK] 高程瓦片加载失败(断网/被墙/超时)：平涂古图纸色兜底，
+        // 让 Leaflet 正常收下这块瓦片，杜绝山体消失露出底图空白
         img.onerror = () => {
+            ctx.fillStyle = FALLBACK_TILE_COLOR;
+            ctx.fillRect(0, 0, size.x, size.y);
             done(undefined, tile);
         };
 

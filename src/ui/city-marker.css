@@ -38,6 +38,14 @@
         drop-shadow(-1px 1px 0 rgba(46, 74, 95, 0.4));
 }
 
+/* [2026-07-18 主人定] 停战缩回渐变：过渡写在基础态才对"摘类"的缩小方向生效
+   （旧版过渡只在 .city-under-siege 里，类一摘过渡即失效 → 城瞬间变小）。
+   放大用攻城态的 0.45s（开战紧迫）；缩小 5s 与火焰渐熄(FADE_OUT_DURATION_MS=5000)同步——
+   火慢慢熄、城缓缓收，一个节奏（主人二调：1.6s 太快） */
+.city-image-container .city-building-stack {
+    transition: transform 5s cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+
 /* 攻城时据点建筑放大 ×2（2026-07-18 主人定：2.0；停火后延迟缩回，见 CityManager.stopSiegeEffect）
    放大挂 .city-building-stack 容器而非 img：建筑 img 有行内 transform（镜像/朝向），
    行内样式优先于类规则会盖掉放大；容器无行内 transform，且不波及旗杆旗面。
