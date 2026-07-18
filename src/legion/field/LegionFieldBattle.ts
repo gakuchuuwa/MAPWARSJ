@@ -245,12 +245,17 @@ function startFieldBattleBetween(
     const attName = deps.getCityManager().getFactionName(attFaction);
     const defName = deps.getCityManager().getFactionName(defFaction);
 
+    // 岳飞北伐：每战必胜（仅北伐脚本激活期间生效，防主游戏岳家军野战被误判——2026-07-19 主人定）
+    const yuefeiOnAttack = !!(window as any).__yuefeiExpeditionActive
+        && attLegions.some((l) => (l as any).generalId === 'yanchuan_d_yuefei');
+    const preset = yuefeiOnAttack ? 'attacker_win' as const : undefined;
+
     const fieldBattleField = combatSystem.startRegionalBattle(
         attFaction,
         attUnits,
         defFaction,
         defUnits,
-        undefined,
+        preset,
         undefined,
         undefined,
         undefined,
