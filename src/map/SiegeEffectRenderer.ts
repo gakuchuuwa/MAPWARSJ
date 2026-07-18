@@ -37,6 +37,10 @@ export class SiegeEffectRenderer {
     private static readonly APNG_PATH = '/effects/ezgif.com-apng-maker.png';
     private static readonly FADE_DURATION_MS = 800;
     private static readonly FADE_STEPS = 20;
+    /** 停战渐隐时长（2026-07-18 主人定：0.8s→5s，慢慢熄灭并遮住据点缩回原尺寸） */
+    private static readonly FADE_OUT_DURATION_MS = 5000;
+    /** 渐隐步数（5s 长淡出需更密的步进保持丝滑，~83ms/步） */
+    private static readonly FADE_OUT_STEPS = 60;
     private static readonly VOLLEY_INTERVAL_MS = 1100;
     private static readonly ARROWS_PER_VOLLEY = 5;
     private static readonly WALL_INSET = 0.014;
@@ -253,10 +257,10 @@ export class SiegeEffectRenderer {
         }, stepDuration);
     }
 
-    /** 淡出：每片火从各自【当前】透明度 0.8s 归零（错落渐显中途停火也不会跳变） */
+    /** 淡出：每片火从各自【当前】透明度 5s 归零（错落渐显中途停火也不会跳变；遮住据点缩回） */
     private fadeOut(cityId: string, effect: ActiveSiegeEffect): void {
-        const stepDuration = SiegeEffectRenderer.FADE_DURATION_MS / SiegeEffectRenderer.FADE_STEPS;
-        const opacityStep = 1.0 / SiegeEffectRenderer.FADE_STEPS;
+        const stepDuration = SiegeEffectRenderer.FADE_OUT_DURATION_MS / SiegeEffectRenderer.FADE_OUT_STEPS;
+        const opacityStep = 1.0 / SiegeEffectRenderer.FADE_OUT_STEPS;
         const startOpacities = effect.patches.map(p => p.overlay.options.opacity ?? p.peakOpacity);
         let t = 1;
 
