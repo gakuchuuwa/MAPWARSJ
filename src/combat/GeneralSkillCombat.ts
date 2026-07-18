@@ -318,12 +318,15 @@ function getActiveTacticalSkillDisplayName(unit: IBattleUnit): { displayName: st
  * @param firstSide 先放侧（优势方 / 均势攻方）；入队顺序与 BattleField 排序一致。
  * @param skipSides 该侧已有存活武将的机制/援军脉冲在队时跳过保底（一将一战一技：
  *        防止援军换将后，同侧既放原将真技、又放新将保底技的双亮相）
+ * @param openingUiShown 保底亮相同样占用本侧「开局已亮相」名额，
+ *        否则相持段之后才入场的援军会再放一次同侧 Cut-in。
  */
 export function scheduleStalemateSkillShowcasePulses(
     attackerUnits: IBattleUnit[],
     defenderUnits: IBattleUnit[],
     firstSide: 'attacker' | 'defender' = 'attacker',
     skipSides?: { attacker: boolean; defender: boolean },
+    openingUiShown?: { attacker: boolean; defender: boolean },
 ): void {
     const delay = resolveStalemateUiThresholdSec(currentBattleTargetDurationSec);
     const sides =
@@ -336,6 +339,10 @@ export function scheduleStalemateSkillShowcasePulses(
         if (!unit?.generalId) continue;
         const info = getActiveTacticalSkillDisplayName(unit);
         if (!info) continue;
+        if (openingUiShown) {
+            if (isAttacker) openingUiShown.attacker = true;
+            else openingUiShown.defender = true;
+        }
         const trigger: TacticalSkillTrigger = {
             displayName: info.displayName,
             generalId: unit.generalId,
