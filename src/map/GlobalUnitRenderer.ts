@@ -130,6 +130,12 @@ export class GlobalUnitRenderer {
     /** [2026-07-18] 攻城器械渐隐锚点：军团乘胜开拔后器械留在城下原地淡出（经纬度+冻结朝向） */
     private siegeGearAnchors = new Map<string, { lat: number; lng: number; dir: number }>();
 
+    /** [2026-07-18] 攻城视觉补偿(px)：城图标只向上出墨（旗区到锚点上方约75~95px，贴图下缘仅37~52px），
+     *  从城上方(北面)攻时前排会视觉钻进旗区、且攻城单位画在城图层下层会被盖住。
+     *  按接近方向把攻城方阵沿"背离城"方向外推：正上方推满、斜向按角度递减、侧面/下方不推。
+     *  只动渲染，战斗逻辑坐标不变。数值≈上下出墨差(~40px)+下层遮挡余量。 */
+    private static readonly SIEGE_NORTH_VISUAL_COMP_PX = 50;
+
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
     private static assetsPromise: Promise<void> | null = null;
     private static assetsLoaded: boolean = false;
@@ -821,6 +827,23 @@ export class GlobalUnitRenderer {
 
             const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
 
+            // ── [2026-07-18] 攻城视觉补偿：从城上方攻时整支方阵沿接近线外推（见常量注释）──
+            const unitIdForGear = unit.id || 'unknown';
+            const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker === true;
+            if (!useNavalVisual && activelySieging && unit.targetPos && isValidMapCoord(unit.targetPos)) {
+                const cityPt = this.map.latLngToContainerPoint([unit.targetPos.lat, unit.targetPos.lng]);
+                const dx = centerPoint.x - cityPt.x;
+                const dy = centerPoint.y - cityPt.y;
+                const len = Math.hypot(dx, dy);
+                if (len > 1 && dy < 0) {
+                    const comp = GlobalUnitRenderer.SIEGE_NORTH_VISUAL_COMP_PX * (-dy / len);
+                    centerPoint = L.point(
+                        centerPoint.x + (dx / len) * comp,
+                        centerPoint.y + (dy / len) * comp,
+                    );
+                }
+            }
+
             // 1. Draw Flag Pole (Behind Soldiers / Ship)
             LegionFlagDrawer.drawPole(
                 ctx,
@@ -830,13 +853,12 @@ export class GlobalUnitRenderer {
             );
 
             // ── 攻城器械（仅攻城方陆战；覆灭后留尸体同步士兵）──
-            const unitIdForGear = unit.id || 'unknown';
-            const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker !== false;
             if (!useNavalVisual && (activelySieging || LegionPhalanxDrawer.wasSiegeUnit(unitIdForGear))) {
                 // [2026-07-18] 乘胜追击不休整时军团立即开拔，器械须留在城下原地渐隐（史实：器械就地弃置）。
-                // 攻城期间每帧刷新锚点＝城下位置；战后改按锚点(经纬度)换算屏幕坐标并冻结朝向，镜头平移缩放不漂。
+                // 攻城期间每帧刷新锚点＝城下位置（含攻城视觉补偿，战终渐隐不跳位）；战后按锚点换算屏幕坐标并冻结朝向。
                 if (activelySieging) {
-                    this.siegeGearAnchors.set(unitIdForGear, { lat: unitPos.lat, lng: unitPos.lng, dir: directionIndex });
+                    const anchorLL = this.map.containerPointToLatLng(L.point(centerPoint.x, centerPoint.y));
+                    this.siegeGearAnchors.set(unitIdForGear, { lat: anchorLL.lat, lng: anchorLL.lng, dir: directionIndex });
                 }
                 const gearAnchor = activelySieging ? null : this.siegeGearAnchors.get(unitIdForGear);
                 const gearCenter = gearAnchor
