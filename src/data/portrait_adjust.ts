@@ -3222,11 +3222,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -22
         },
-        "/assets/NORTH/__闲置__NORTH_04.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -13
-        },
         "/assets/xianqin/yangshe_yangshezhi.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5237,11 +5232,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -25
         },
-        "/assets/NORTH/hejian_gongsunzan.png": {
-            "scale": 1.05,
-            "offsetX": 9,
-            "offsetY": -25
-        },
         "/assets/STEPPE/3113431b-d5dd-43bd-8493-333ad7a3738a.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5891,6 +5881,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -12
+        },
+        "/assets/NORTH/__闲置__NORTH_05.png": {
+            "scale": 1.05,
+            "offsetX": 9,
+            "offsetY": -25
+        },
+        "/assets/NORTH/hejian_gongsunzan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -13
         }
     },
     "folderGuides": {
