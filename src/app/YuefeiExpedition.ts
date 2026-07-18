@@ -74,12 +74,6 @@ function zhongyiBonusRange(cityType: string): { min: number; max: number } {
     return { min: 1000, max: 3000 }; // small_city
 }
 
-/** 克大站演出（纯字幕/脉冲，不再直接加兵——补员由徐徐来投承担） */
-const ZHONGYI_WAYPOINT_LABELS: Record<string, string> = {
-    city_bianliang: '中原义军来投',
-    city_beijing: '两河忠义蜂起',
-};
-
 const TICK_INTERVAL_MS = 400;
 
 type ZhuxianPhase = 'pending' | 'spawned' | 'done';
@@ -160,8 +154,6 @@ export class YuefeiExpedition {
     private armyId: string | null = null;
     private waypointIndex = 0;
     private timer: number | null = null;
-    /** 已演出过的忠义大站（防重复脉冲） */
-    private appliedZhongyi = new Set<string>();
     /** 上一 tick 是否在战斗中（用于捕捉「战斗刚结束」这一帧做结算补员） */
     private wasInCombat = false;
 
@@ -350,7 +342,6 @@ export class YuefeiExpedition {
 
         this.armyId = army.id;
         this.waypointIndex = 0;
-        this.appliedZhongyi.clear();
         this.wasInCombat = false;
         this.zhuxianPhase = 'pending';
         this.wanyanArmyId = null;
@@ -407,7 +398,6 @@ export class YuefeiExpedition {
             const c = this.deps.cityManager.getCity(wp.id);
             if (c && c.factionId === FACTION_ID) {
                 gameLog('expedition', `🐎 [圆梦] 岳飞·背嵬军已克 ${wp.name}`);
-                this.celebrateZhongyiWaypoint(wp.id, wp.name, c);
                 // 收复北京·脚本专属语音
                 if (wp.id === 'city_beijing') {
                     (speechAnnouncer as any).speak('岳家军北伐功成，燕幽故地，今日复归！收拾旧山河，朝天阙！');
