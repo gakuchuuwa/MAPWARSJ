@@ -1700,6 +1700,9 @@ export class CombatUI {
         if (!battleField || this.boundRegionalBattleField !== battleField) {
             this.skillPulseShownKeys.clear();
             this.skillSpentAt.clear();
+            // [2026-07-18] 第三幕锚点仅换场清：镜头切进一场已过 80% 的战斗时，
+            // 若沿用上一场锚点，崩溃/断崖方向可能画反（进度<80% 的自愈清零覆盖不到这条路径）
+            this.collapseStartAttPct = null;
         }
         // P0 终态复位：恢复拉锯条/交界的缓动与呼吸、标题动画（showBattleOutcome 改过）
         this.outcomeLocked = false;
