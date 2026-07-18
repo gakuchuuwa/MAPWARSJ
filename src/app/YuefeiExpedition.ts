@@ -292,8 +292,6 @@ export class YuefeiExpedition {
             const before = existing.getTroops();
             existing.setTroops(before + CLICK_REINFORCE_TROOPS);
             this.resumeOrStartScript(existing);
-            const pos = existing.getPosition?.();
-            if (pos) spawnMapFloatingText(pos.lat, pos.lng, '+一万', '#55ff55');
             gameLog(
                 'expedition',
                 `🐎 [圆梦] 再点增援 +${CLICK_REINFORCE_TROOPS.toLocaleString()}，背嵬军 ${(before + CLICK_REINFORCE_TROOPS).toLocaleString()} 众`,
@@ -570,7 +568,6 @@ export class YuefeiExpedition {
         if (rec?.portrait) enemy.portraitPath = rec.portrait;
 
         this.wanyanArmyId = enemy.id;
-        spawnMapFloatingText(this.zhuxianRoadPos.lat, this.zhuxianRoadPos.lng, '铁浮图', '#ffcc66');
         return true;
     }
 
@@ -620,8 +617,6 @@ export class YuefeiExpedition {
                 defenderGeneralId: WANYAN_GENERAL,
             },
         );
-        const pos = army.getPosition?.() ?? ZHUXIANZHEN;
-        spawnMapFloatingText(pos.lat, pos.lng, '克复开封', '#55ff55');
         gameLog('expedition', `🐎 [圆梦] 朱仙镇大捷——十二道金牌无效，岳家军挺进汴梁`);
         // 脚本专属语音：收复开封（不弹 UI 通知，仅语音播报）
         (speechAnnouncer as any).speak('岳家军旌旗北指，所向克捷！朱仙镇一役，撼山易，撼岳家军难，收复汴梁，还我河山！');
@@ -667,19 +662,6 @@ export class YuefeiExpedition {
             'expedition',
             `🐎 [圆梦] 忠义归顺 +${added.toLocaleString()}，背嵬军增至 ${(troops + added).toLocaleString()} 众`,
         );
-    }
-
-    /**
-     * 克大站演出（纯字幕/脉冲，不加兵）：白字绿光脉冲飘四字技名「忠义归顺」，
-     * 播报走六字史实文案。每站只演一次（appliedZhongyi 防重）。
-     */
-    private celebrateZhongyiWaypoint(cityId: string, cityName: string, city: ScriptCity): void {
-        const label = ZHONGYI_WAYPOINT_LABELS[cityId];
-        if (!label || this.appliedZhongyi.has(cityId)) return;
-        this.appliedZhongyi.add(cityId);
-
-        gameLog('expedition', `🐎 [圆梦] 克 ${cityName}，${label}`);
-        this.notify(`克 ${cityName}——${label}！`);
     }
 
     /** 停止脚本推进（军团仍留在场上） */
