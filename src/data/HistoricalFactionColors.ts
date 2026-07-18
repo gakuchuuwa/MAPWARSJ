@@ -683,7 +683,7 @@ const _FIXED: Record<string, string> = {
     'nandou': '#503272', // 孽多/南兜（苏失利）
     'sabeol': '#AD83BF', // 自动分配 (邻域相斥)
     'yingzhou_d': '#DC4862', // 自动分配 (邻域相斥)
-    'yanchuan_d': '#DC4870', // 郾川·岳飞（宋绯朱红，圆梦脚本主角；避 song/yue_d/han_d 撞色）
+    'yanchuan_d': '#FF0000', // 郾川·岳飞（宋绯艳红，圆梦脚本主角；避 song/yue_d/han_d 撞色）
     'huang_d': '#73C4D6', // 自动分配 (邻域相斥)
     'yuzhou': '#462AAD', // 自动分配 (邻域相斥)
     'mengcheng_d': '#5064C8', // 自动分配 (邻域相斥)

@@ -10,9 +10,9 @@
  * 朱仙镇（脚本专属，不新建据点）：
  *   逼近开封时，于朱仙镇附近「最近道路点」刷完颜宗弼·铁浮图（3 万）；
  *   岳飞仍沿路远征开封，路上撞上即野战——禁止直线拉离路网；
- *   胜后开封直接易主给郾川，不再攻打开封城，再北上北京。
+ *   胜后开封直接易主给岳家，不再攻打开封城，再北上北京。
  *
- * 旗号：北伐脚本运行期间郾川旗面临时显示「岳」，结束/覆没后恢复「郾」。
+ * 旗号：北伐脚本运行期间岳家旗面显示「岳」，结束/覆没后恢复。
  *
  * 不改动任何常规游戏逻辑，仅借用现成远征机制（army.expeditionTargetCityId）：
  *   set target → 行为树锁死目标行军攻城（断粮不回）；
@@ -30,7 +30,7 @@ import { roadRegistry } from '../roads/RoadRegistry';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText } from '../utils/MapFloatingText';
 
-/** 起兵据点：郾城（岳飞·郾川势力都城） */
+/** 起兵据点：郾城（岳飞·岳家势力都城） */
 const START_CITY_ID = 'city_yancheng2';
 const FACTION_ID = 'yanchuan_d';
 const GENERAL_ID = 'yanchuan_d_yuefei';
@@ -223,15 +223,46 @@ export class YuefeiExpedition {
         this.attachFollowAndMarch(army);
     }
 
-    /** 北伐期间旗号「岳」↔ 平时「郾」：清缓存并刷新据点 overlay */
-    private applyExpeditionFlagText(): void {
+    /** 北伐期间势力名→「岳家」、旗号→「岳」；结束恢复。 */
+    private applyExpeditionOverride(): void {
+        // 旗号刷新（CityAssetManager 已有 __yuefeiExpeditionActive 检查）
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
+        // 语音播报用「岳家」而非 factions.ts 里的原名（不改游戏数据，仅脚本内覆盖）
+        this.overrideFactionName();
+    }
+
+    private _origGetFactionName: ((id: string) => string) | null = null;
+
+    /** 临时覆盖 FactionManager.getFactionName：yanchuan_d → 「岳家」 */
+    private overrideFactionName(): void {
+        const fm = (window as any).game?.factionManager;
+        if (!fm || this._origGetFactionName) return;
+        this._origGetFactionName = fm.getFactionName.bind(fm);
+        const self = this;
+        fm.getFactionName = function (id: string): string {
+            if (id === FACTION_ID) return '岳家';
+            return self._origGetFactionName!(id);
+        };
+    }
+
+    private restoreFactionName(): void {
+        const fm = (window as any).game?.factionManager;
+        if (!fm || !this._origGetFactionName) return;
+        fm.getFactionName = this._origGetFactionName;
+        this._origGetFactionName = null;
+    }
+
+    /** 起兵失败时回滚覆盖（旗号+势力名），避免泄漏 */
+    private rollbackExpeditionOverride(): void {
+        (window as any).__yuefeiExpeditionActive = false;
+        this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
+        this.restoreFactionName();
     }
 
     /** 点按钮：无岳飞军则起兵；已有则加兵一万并继续北伐 */
     public start(): void {
         (window as any).__yuefeiExpeditionActive = true;
-        this.applyExpeditionFlagText();
+        this.applyExpeditionOverride();
         const existing = this.findExistingYuefeiArmy();
         if (existing) {
             const before = existing.getTroops();
@@ -250,6 +281,7 @@ export class YuefeiExpedition {
         const city = this.deps.cityManager.getCity(START_CITY_ID);
         if (!city) {
             this.notify('未找到起兵据点（郾城），无法北伐');
+            this.rollbackExpeditionOverride();
             return;
         }
 
@@ -266,10 +298,12 @@ export class YuefeiExpedition {
         );
         if (!army) {
             this.notify('岳飞·背嵬军起兵失败');
+            this.rollbackExpeditionOverride();
             return;
         }
         if (!this.deps.legionManager.getLegionById(army.id)) {
             this.notify('岳飞·背嵬军起兵失败（军团未注册）');
+            this.rollbackExpeditionOverride();
             return;
         }
 
@@ -526,7 +560,7 @@ export class YuefeiExpedition {
         this.wanyanArmyId = null;
     }
 
-    /** 朱仙镇大捷 → 开封归郾川（不再攻城） */
+    /** 朱仙镇大捷 → 开封归岳家（不再攻城） */
     private grantKaifengToYuefei(army: ScriptArmy): void {
         const city = this.deps.cityManager.getCity(KAIFENG_ID);
         if (!city) return;
@@ -609,7 +643,8 @@ export class YuefeiExpedition {
     /** 停止脚本推进（军团仍留在场上） */
     public stop(): void {
         (window as any).__yuefeiExpeditionActive = false;
-        this.applyExpeditionFlagText();
+        this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
+        this.restoreFactionName();
         if (this.timer != null) {
             window.clearInterval(this.timer);
             this.timer = null;
