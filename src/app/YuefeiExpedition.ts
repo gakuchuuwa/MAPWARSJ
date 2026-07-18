@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 岳飞北伐黄龙圆梦脚本（2026-07-11，v3 忠义归顺；2026-07-18 朱仙镇拦路）
  *
  * 玩家点「⚔ 岳飞北伐黄龙」按钮：
@@ -373,6 +373,10 @@ export class YuefeiExpedition {
         army.expeditionUnlocked = true;
         army.isElite = true;
 
+        // 每战必胜：攻城战预设结果
+        if (!(army as any).siegeMissionData) (army as any).siegeMissionData = {};
+        (army as any).siegeMissionData.result = 'attacker_win';
+
         this.tickZhongyiTrickle(army);
 
         // 克城休整（留时间给语音播完再开拔下一城）
@@ -671,6 +675,9 @@ export class YuefeiExpedition {
     /** 停止脚本推进（军团仍留在场上） */
     public stop(): void {
         (window as any).__yuefeiExpeditionActive = false;
+        // 清理必胜存根：脚本停止后军团回归主游戏，不得再带预设战果（2026-07-19 主人定）
+        const army = this.armyId ? this.deps.legionManager.getLegionById(this.armyId) : undefined;
+        if (army) (army as any).siegeMissionData = null;
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.restoreFactionName();
         this.unmuteGameAnnouncements();
