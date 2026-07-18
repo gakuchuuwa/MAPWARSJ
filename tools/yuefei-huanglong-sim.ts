@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 岳飞北伐黄龙路线模拟
  *
  * 用途：
@@ -41,17 +41,18 @@ const YUEFEI_GENERAL_ID = 'yanchuan_d_yuefei';
 const BEIWEI_ELITE_TIER = 0;
 
 /**
- * 忠义归顺 v3（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 保持同步）：
- * 开局一律 2 万，每场战斗胜利后河朔忠义来投 +5,000~10,000（随机）。
+ * 忠义归顺 v4（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 保持同步，勿单边改）：
+ * 开局一律 2 万，每场战斗胜利后按城型分级加兵（随机）：
+ * 小城 +1,000~3,000；中城 +3,000~6,000；大城·关隘 +6,000~10,000。
  * 兵力可自然累积至远超起兵数，反映「越打越多」的北伐实况。
- * CLI：--zhongyi-min M 调最低加成；--zhongyi-max M 调最高加成；--no-zhongyi 关闭。
+ * CLI：--no-zhongyi 关闭。
  * ⚠️ 守军须用 --defenders initial（城型初始驻军 5,000~10,000，反映实机早期北伐）。
  */
-/** 按城型分级加兵：小城少补防滚雪球，大城多补助强攻 */
+/** 按城型分级加兵：小城少补防滚雪球，大城多补助强攻（v4：与 src/app/YuefeiExpedition.ts 同步） */
 function zhongyiBonusRange(cityType: string): { min: number; max: number } {
-    if (cityType === 'big_city' || cityType === 'pass') return { min: 2500, max: 5000 };
-    if (cityType === 'medium_city') return { min: 1500, max: 3000 };
-    return { min: 500, max: 1500 }; // small_city
+    if (cityType === 'big_city' || cityType === 'pass') return { min: 6000, max: 10000 };
+    if (cityType === 'medium_city') return { min: 3000, max: 6000 };
+    return { min: 1000, max: 3000 }; // small_city
 }
 
 function argNum(flag: string, fallback: number): number {
@@ -282,7 +283,7 @@ function main(): void {
     if (zhongyiOff) {
         console.log('忠义归顺：关闭');
     } else {
-        console.log('忠义归顺：大城·关隘 +2,500~5,000 | 中城 +1,500~3,000 | 小城 +500~1,500');
+        console.log('忠义归顺：大城·关隘 +6,000~10,000 | 中城 +3,000~6,000 | 小城 +1,000~3,000');
     }
     const fullSuccess = capturedCounts[routeIds.length] ?? 0;
     console.log(`直捣黄龙成功率：${formatPct(fullSuccess / trials)}（两次至少一成：${formatPct(1 - (1 - fullSuccess / trials) ** 2)}）`);
