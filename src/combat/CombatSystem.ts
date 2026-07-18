@@ -489,19 +489,6 @@ export class CombatSystem {
     }
 
     /**
-     * 查找指定位置附近的活跃战场
-     */
-    public findBattleFieldNear(pos: { lat: number; lng: number }, radius: number = 0.5): BattleField | null {
-        for (const bf of this.battleFields) {
-            if (bf.isOver) continue;
-            // 简单实现：检查任意参战单位是否在范围内
-            // 实际应该基于战场中心点
-            return bf; // 暂时返回第一个活跃战场
-        }
-        return null;
-    }
-
-    /**
      * 获取所有活跃战场
      */
     public getActiveBattleFields(): BattleField[] {
