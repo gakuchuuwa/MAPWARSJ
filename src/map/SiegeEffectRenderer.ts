@@ -57,8 +57,8 @@ export class SiegeEffectRenderer {
     private static readonly FIRE_ANCHOR_EAST_RATIO = 0.08;
     /** 单片火渐显时长（2026-07-18 主人定：第一坨火 5 秒渐显） */
     private static readonly FIRE_FADE_IN_DURATION_MS = 5000;
-    /** 相邻火片渐显起始间隔（主人定：下一坨从第 4 秒开始）——第 i 片从第 i×4 秒起、5 秒渐显 */
-    private static readonly FIRE_FADE_IN_STAGGER_MS = 4000;
+    /** 相邻火片渐显起始间隔（主人定：下一坨从第 9 秒开始）——第 i 片从第 i×9 秒起、5 秒渐显 */
+    private static readonly FIRE_FADE_IN_STAGGER_MS = 9000;
 
     constructor(map: GameMap) {
         this.map = map;

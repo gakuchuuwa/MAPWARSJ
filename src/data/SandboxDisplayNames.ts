@@ -323,7 +323,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kokand': '霍罕',
     'badakhshan': '达克',
     // ── 2026-05-25 晚清／近代势力（21个）──
-    'taiping': '太平',
+'taiping': '太平',
     'dacheng': '大成',
 'pingnan': '平南',
     'pinghai': '平海',

@@ -334,7 +334,7 @@ export class CityAssetManager {
         'kazakh': '哈萨',
         'kokand': '霍罕',
         'badakhshan': '达克',
-        'taiping': '太平',
+'taiping': '太平',
         'dacheng': '大成',
 'pingnan': '平南',
     'pinghai': '平海',

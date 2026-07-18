@@ -301,7 +301,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kokand': 'city_kokand',
     'badakhshan': 'city_fayzabad',
 
-    'taiping': 'city_jintian',
+'taiping': 'city_jintian',
     'dacheng': 'city_zhenghe',
 'pingnan': 'city_tengyuecheng',
     'qianhui': 'city_piandaoshui',
