@@ -393,6 +393,8 @@ export class YuefeiExpedition {
             army.expeditionTargetCityId = null;
             gameLog('expedition', `🐎 [圆梦] 直捣黄龙！岳飞·背嵬军攻克黄龙府，北伐功成`);
             this.notify('直捣黄龙！岳飞攻克黄龙府，北伐功成 🎉');
+            // 黄龙府·脚本专属语音
+            (speechAnnouncer as any).speak('黄龙已破，却不见二圣。探寻，方知，远囚五国城。不想，十年之功，终究一场虚空。');
             this.stop();
             return;
         }
