@@ -407,11 +407,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/STEPPE/choros_tuohuan.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 19
-        },
         "/assets/zhaosong/yue_d_yuefei.png": {
             "scale": 1.18,
             "offsetX": 4,
@@ -3907,11 +3902,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/STEPPE/__闲置__STEPPE_17.png": {
-            "scale": 1.21,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/STEPPE/0922ac91-5b31-4416-9804-4ca62b2ee88d.png": {
             "scale": 1,
             "offsetX": 0,
@@ -4316,11 +4306,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": -5
-        },
-        "/assets/NORTHEAST/xiqin_wanyanchenheshang.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 13
         },
         "/assets/NORTHEAST/d8a391c9-11db-4971-b6c4-9c33c54bafce.png": {
             "scale": 0.98,
@@ -5657,11 +5642,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -3
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_29.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -3
-        },
         "/assets/NORTHEAST/nanai_zhahaluo.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5886,6 +5866,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_32.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/NORTHEAST/xiqin_wanyanchenheshang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/STEPPE/__闲置__STEPPE_44.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/STEPPE/choros_tuohuan.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": -7
         }
     },
     "folderGuides": {
