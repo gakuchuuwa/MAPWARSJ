@@ -56,7 +56,7 @@ import {
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
-import { getCityEliteConfig } from '../data/ExpeditionLegions';
+import { getCityEliteConfig, getLegionEliteLegionName } from '../data/ExpeditionLegions';
 import type { Army } from '../legion/Army';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
@@ -68,7 +68,11 @@ function getLegionEliteBadgeName(unit: IBattleUnit): string {
         const eliteName = readSiegeGarrisonEliteName(unit.getEntity?.());
         if (eliteName) return eliteName;
     }
-    const raw = (unit.name ?? '').trim();
+    // 优先实时军团名（精锐改名/远征改名），勿死读 adapter 创建时快照
+    const army = unit.getEntity?.() as Army | undefined;
+    const live = (army?.name ?? '').trim();
+    const elite = army ? getLegionEliteLegionName(army) : null;
+    const raw = (live || elite || unit.name || '').trim();
     if (!raw) return '精锐';
     const match = raw.match(/(军团|驻军|守军)$/);
     const stripped = match ? raw.substring(0, match.index).trim() : raw;
@@ -1188,6 +1192,28 @@ export class CombatUI {
         return this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
     }
 
+    /**
+     * 本侧全体援军（wave≥1）的兵力加权合兵 luck；无援军返回 null。
+     * 状态链「得助/掣肘」与兵力旁标签用此值，勿只查开战指挥官（指挥官永远是主力）。
+     */
+    private getSideReinforcementJoinLuck(side: 'attacker' | 'defender'): number | null {
+        const bf = this.boundRegionalBattleField;
+        if (!bf || bf.isOver) return null;
+        const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
+        let weighted = 0;
+        let weight = 0;
+        for (const u of units) {
+            if (u.isDestroyed || u.troops <= 0) continue;
+            const luck = bf.getReinforcementJoinLuck(u.id);
+            if (luck === null) continue;
+            const w = Math.max(1, u.troops);
+            weighted += luck * w;
+            weight += w;
+        }
+        if (weight <= 0) return null;
+        return weighted / weight;
+    }
+
     private getBattleTerrainForUi(): LandTerrainKind | null {
         if (!this.boundRegionalBattleField) return null;
         const units = [
@@ -1306,8 +1332,8 @@ export class CombatUI {
             }
         }
 
-        // 战略技不在战斗面板展示乘区链（大地图/跟拍横幅/胜后飘字见 GeneralSkillCombat + MapFloatingText）
-        const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
+        // 合兵一处：按本侧全体援军加权 luck（非指挥官单体）
+        const joinLuck = this.getSideReinforcementJoinLuck(side);
         let joinLabel = '';
         if (joinLuck !== null) {
             if (joinLuck > 1.001) joinLabel = '得助';
@@ -1335,6 +1361,9 @@ export class CombatUI {
         const tag = (text: string, extraStyle = '') =>
             `<span style=\"display:inline-block;padding:1px 5px;border:1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};border-radius:3px;background:${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};margin:0 1px;${extraStyle}\">${text}</span>`;
         if (luckLabel) parts.push(tag(luckLabel));
+        if (joinLabel) parts.push(tag(joinLabel));
+        if (passLabel) parts.push(tag(passLabel));
+        if (regionLabel) parts.push(tag(regionLabel));
         if (tacLabel) parts.push(tag(tacLabel));
 
         // ③武将适性标签：攻防风格 + 三势（与徽章同源：指挥官）
@@ -1494,16 +1523,13 @@ export class CombatUI {
         nameEl.innerHTML = name;
         const t = Math.max(0, Math.floor(troops));
         let troopsText = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : String(t);
-        
-        const unit = this.getPrimaryBattler(side);
-        if (unit) {
-            const joinLuck = this.getReinforcementJoinLuckForUnit(unit);
-            if (joinLuck !== null) {
-                if (joinLuck > 1.001) troopsText += ' [得助]';
-                else if (joinLuck < 0.999) troopsText += ' [掣肘]';
-            }
+
+        const joinLuck = this.getSideReinforcementJoinLuck(side);
+        if (joinLuck !== null) {
+            if (joinLuck > 1.001) troopsText += ' [得助]';
+            else if (joinLuck < 0.999) troopsText += ' [掣肘]';
         }
-        
+
         troopsEl.textContent = troopsText;
     }
 
@@ -2141,39 +2167,64 @@ export class CombatUI {
         this.updateStats();
     }
 
+    /**
+     * 侧栏参战名单用名：读实体实时名（军团改名/精锐番号），勿用 adapter 创建快照。
+     */
+    private resolveBattleUnitListName(u: IBattleUnit): string {
+        if (u.unitType === 'city') {
+            const garrisonElite = readSiegeGarrisonEliteName(u.getEntity?.());
+            if (garrisonElite) return garrisonElite;
+            const city = u.getEntity?.() as { name?: string } | undefined;
+            const cityName = (city?.name ?? '').trim();
+            if (cityName) return `${cityName}驻军`;
+            return (u.name || '驻军').trim();
+        }
+        const army = u.getEntity?.() as Army | undefined;
+        if (army) {
+            const live = (army.name ?? '').trim();
+            if (live) return live;
+            const elite = getLegionEliteLegionName(army);
+            if (elite) return elite;
+        }
+        return (u.name || '军团').trim();
+    }
+
     private buildWaveGroupedSideName(units: IBattleUnit[]): string {
         const waves = new Map<number, IBattleUnit[]>();
         for (const u of units) {
+            if (u.isDestroyed || u.troops <= 0) continue;
             const wi = this.boundRegionalBattleField?.getUnitWaveIndex(u.id) ?? 0;
             if (!waves.has(wi)) waves.set(wi, []);
             waves.get(wi)!.push(u);
         }
-        const sortedWaves = [...waves.entries()].sort((a, b) => b[0] - a[0]);
+        // 主力(wave0)在前，后到援军依次列出
+        const sortedWaves = [...waves.entries()].sort((a, b) => a[0] - b[0]);
 
-        const maxWave = sortedWaves.length > 0 ? sortedWaves[0][0] : 0;
+        const maxWave = sortedWaves.length > 0 ? sortedWaves[sortedWaves.length - 1][0] : 0;
         let html = '';
         for (const [wi, waveUnits] of sortedWaves) {
-            const dim = maxWave <= 1 ? 1 : wi === 0 ? 1 : wi === 1 ? 0.82 : 0.62;
-            const size = maxWave <= 1 ? '1em' : wi === 0 ? '1em' : wi === 1 ? '0.92em' : '0.82em';
-            // 同波次有军团时，跳过 city 单位（避免"XX驻军"盖过守城军团名）
+            const dim = maxWave <= 0 ? 1 : wi === 0 ? 1 : wi === 1 ? 0.88 : 0.72;
+            const size = maxWave <= 0 ? '1em' : wi === 0 ? '1em' : wi === 1 ? '0.94em' : '0.88em';
+            // 同波有军团时跳过城防单位，避免「驻军」盖住守城军团名
             const hasLegionInWave = waveUnits.some((u) => u.unitType === 'legion' || u.unitType === 'army');
 
-            for (const u of waveUnits) {
+            // 同波内：带将/精锐优先，便于读名
+            const ordered = [...waveUnits].sort(
+                (a, b) => this.scoreBattleDisplayUnit(b) - this.scoreBattleDisplayUnit(a),
+            );
+
+            for (const u of ordered) {
                 if (u.unitType === 'city' && hasLegionInWave) continue;
-                const garrisonElite = u.unitType === 'city' ? readSiegeGarrisonEliteName(u.getEntity?.()) : undefined;
-                if (garrisonElite) {
-                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap; grid-column: span 2;">${garrisonElite}</span>`;
-                    continue;
-                }
-                const match = u.name.match(/(军团|驻军|守军)$/);
-                const base = match ? u.name.substring(0, match.index) : u.name;
+                const displayName = this.resolveBattleUnitListName(u);
+                const match = displayName.match(/(军团|驻军|守军)$/);
+                const base = match ? displayName.substring(0, match.index) : displayName;
                 const suffix = match ? match[0] : '';
-                
-                if (suffix) {
+
+                if (suffix && base) {
                     html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>`;
                     html += `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}</span>`;
                 } else {
-                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap; grid-column: span 2;">${base}</span>`;
+                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap; grid-column: span 2;">${displayName}</span>`;
                 }
             }
         }
