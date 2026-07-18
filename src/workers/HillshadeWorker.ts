@@ -229,7 +229,19 @@ self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
                 // [FIX] Apply Opacity Parameter
                 shadowStrength *= params.opacity;
 
-                const shadeFactor = ambientBase + hillshade * shadowStrength;
+                // [OCEAN-FLAT 2026-07-19] 深水不做地形浮雕，只保留按水深上色。
+                // 缘由：ESRI World_Shaded_Relief 在部分海域（如北海道以东 z6 瓦片 57,23）
+                // 返回深灰"无数据"瓦片，水域检测判不出水 → 该处不涂蓝 → 露出海底浮雕，
+                // 表现为一块边界笔直的"海底地形矩形"。别人服务器的数据洞我们补不了，
+                // 但让深海本身平滑即可，漏出来也只是平滑海水，看不出接缝。
+                // -60m 以浅（近岸大陆架）保留浮雕，海岸线附近的层次不受影响。
+                let oceanFlatT = 0;
+                if (zC < -60) {
+                    oceanFlatT = Math.min(1, (-60 - zC) / 140); // -60m→0，-200m 以深→全平
+                }
+                const shadeFactor = oceanFlatT > 0
+                    ? (ambientBase + hillshade * shadowStrength) * (1 - oceanFlatT) + 1.0 * oceanFlatT
+                    : ambientBase + hillshade * shadowStrength;
                 //const shadeFactor = Math.min(1.0, ambientBase + hillshade * shadowStrength);
 
                 let noise = 0;
