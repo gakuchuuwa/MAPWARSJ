@@ -377,9 +377,10 @@ export class YuefeiExpedition {
 
         // 克城休整（留时间给语音播完再开拔下一城）
         if (Date.now() < this.pauseUntilMs) {
-            army.expeditionTargetCityId = null;
+            army.__scriptPinned = true;
             return;
         }
+        army.__scriptPinned = false;
 
         // 朱仙镇拦路（开封路标未克前；岳飞始终沿路远征，不直线离路）
         if (this.waypointIndex === 0 && this.zhuxianPhase !== 'done') {
