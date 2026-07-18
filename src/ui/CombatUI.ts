@@ -2202,11 +2202,12 @@ export class CombatUI {
 
         const maxWave = sortedWaves.length > 0 ? sortedWaves[sortedWaves.length - 1][0] : 0;
         let html = '';
+        // 跨波按显示名去重：城池精锐番号在援军编入后仍保留（SiegeGarrisonTier 有意为之），
+        // 同名精锐军团来援会重名。只去重名，勿整类跳过城防——否则「开封驻军」被守城军团吞掉。
+        const usedNames = new Set<string>();
         for (const [wi, waveUnits] of sortedWaves) {
             const dim = maxWave <= 0 ? 1 : wi === 0 ? 1 : wi === 1 ? 0.88 : 0.72;
             const size = maxWave <= 0 ? '1em' : wi === 0 ? '1em' : wi === 1 ? '0.94em' : '0.88em';
-            // 同波有军团时跳过城防单位，避免「驻军」盖住守城军团名
-            const hasLegionInWave = waveUnits.some((u) => u.unitType === 'legion' || u.unitType === 'army');
 
             // 同波内：带将/精锐优先，便于读名
             const ordered = [...waveUnits].sort(
@@ -2214,8 +2215,9 @@ export class CombatUI {
             );
 
             for (const u of ordered) {
-                if (u.unitType === 'city' && hasLegionInWave) continue;
                 const displayName = this.resolveBattleUnitListName(u);
+                if (!displayName || usedNames.has(displayName)) continue;
+                usedNames.add(displayName);
                 const match = displayName.match(/(军团|驻军|守军)$/);
                 const base = match ? displayName.substring(0, match.index) : displayName;
                 const suffix = match ? match[0] : '';

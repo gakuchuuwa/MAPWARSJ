@@ -645,6 +645,7 @@ export class BattleField implements IOpeningPulseSink {
             this.getDefenderUnits(),
             firstSide,
             queuedSides,
+            this.openingTacticalUiShown,
         );
         setActiveOpeningPulseSink(null);
 
@@ -1225,6 +1226,8 @@ export class BattleField implements IOpeningPulseSink {
             }
         }
 
+        // 指挥官开战即锁定、援军入场不改（掷点/乘区全读指挥官）：
+        // 亮相权同样锁给指挥官，否则高分援军会抢到 Cut-in，放一个机制上从未生效的技能。
         tryEmitOpeningTacticalOnReinforcementJoin(
             unit,
             isAttacker,
@@ -1233,6 +1236,8 @@ export class BattleField implements IOpeningPulseSink {
             this.openingTacticalUiShown,
             this,
             this.stalemateSkillUiReleased,
+            isAttacker ? this.attackerCommander : this.defenderCommander,
+            isAttacker ? this.defenderCommander : this.attackerCommander,
         );
 
         this.reconcileSiegeGarrisonBoostForJoinedUnit(unit, isAttacker);
