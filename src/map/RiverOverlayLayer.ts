@@ -69,6 +69,94 @@ export class RiverOverlayLayer extends L.GridLayer {
     private static sharedCtx: CanvasRenderingContext2D | null = null;
 
     /**
+     * ESRI 缓存缺陷瓦片的纯色灰。
+     * 实测 2026-07-19：World_Shaded_Relief 在**仅 zoom 10** 的 z6 瓦片 (57,23) 范围
+     * （北海道及其东侧海面，z10 的 x=912~927 / y=368~383）整块返回 rgb(51,52,54)，
+     * 陆地海面一律如此；同一地点 z9=13431B、z11=7192B 均为完整地形，故非数据缺失，
+     * 而是该级瓦片缓存没烤出来。灰色不满足水域判定（需蓝色占优）→ 不涂色 → 露出海底浮雕。
+     */
+    private static readonly DEFECT_GRAY: readonly [number, number, number] = [51, 52, 54];
+    private static readonly DEFECT_TOLERANCE = 6;
+
+    private buildTileUrl(z: number, x: number, y: number): string {
+        return this.esriUrl
+            .replace('{z}', z.toString())
+            .replace('{y}', y.toString())
+            .replace('{x}', x.toString());
+    }
+
+    private loadImage(url: string): Promise<HTMLImageElement> {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error(`ESRI tile load failed: ${url}`));
+            img.src = url;
+        });
+    }
+
+    /**
+     * 是否整块都是缺陷灰。抽 8×8 网格，任一点不符即否——
+     * 正常晕渲图必有纹理，不可能整块同一个精确灰值，故误判概率极低。
+     */
+    private isDefectGrayTile(img: CanvasImageSource, w: number, h: number): boolean {
+        const c = document.createElement('canvas');
+        c.width = w;
+        c.height = h;
+        const g = c.getContext('2d', { willReadFrequently: true });
+        if (!g) return false;
+        g.drawImage(img as CanvasImageSource, 0, 0);
+        let d: Uint8ClampedArray;
+        try {
+            d = g.getImageData(0, 0, w, h).data;
+        } catch {
+            return false; // 跨域污染等读不到像素时，按"正常"处理，不改变原行为
+        }
+        const [gr, gg, gb] = RiverOverlayLayer.DEFECT_GRAY;
+        const tol = RiverOverlayLayer.DEFECT_TOLERANCE;
+        for (let sy = 0; sy < 8; sy++) {
+            for (let sx = 0; sx < 8; sx++) {
+                const px = Math.min(w - 1, Math.floor((sx + 0.5) * w / 8));
+                const py = Math.min(h - 1, Math.floor((sy + 0.5) * h / 8));
+                const i = (py * w + px) * 4;
+                if (Math.abs(d[i] - gr) > tol ||
+                    Math.abs(d[i + 1] - gg) > tol ||
+                    Math.abs(d[i + 2] - gb) > tol) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 缺陷瓦片替补：取上一级父瓦片的对应象限放大到整块。
+     * 父级完好（实测 z9/z11 均正常），因此拿到的是真实地形内容而非猜色填充；
+     * 一块父瓦片被 4 块子瓦片共用，浏览器 HTTP 缓存下额外请求很少。
+     */
+    private async buildParentSubstitute(
+        coords: L.Coords,
+        w: number,
+        h: number,
+    ): Promise<HTMLCanvasElement | null> {
+        if (coords.z < 1) return null;
+        const parent = await this.loadImage(
+            this.buildTileUrl(coords.z - 1, coords.x >> 1, coords.y >> 1),
+        );
+        const c = document.createElement('canvas');
+        c.width = w;
+        c.height = h;
+        const g = c.getContext('2d');
+        if (!g) return null;
+        g.imageSmoothingEnabled = true;
+        // 本瓦片位于父瓦片的哪个象限
+        const sx = (coords.x & 1) * (w / 2);
+        const sy = (coords.y & 1) * (h / 2);
+        g.drawImage(parent, sx, sy, w / 2, h / 2, 0, 0, w, h);
+        return c;
+    }
+
+    /**
      * 创建瓦片
      */
     protected createTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
@@ -94,9 +182,19 @@ export class RiverOverlayLayer extends L.GridLayer {
         const esriImg = new Image();
         esriImg.crossOrigin = 'Anonymous';
 
-        esriImg.onload = () => {
-            // [OPTIMIZATION] Use createImageBitmap to avoid main thread canvas read
-            createImageBitmap(esriImg).then(bitmap => {
+        esriImg.onload = async () => {
+            try {
+                let source: CanvasImageSource = esriImg;
+
+                // ESRI 该级瓦片缓存烤坏（整块纯灰）→ 换父瓦片对应象限，取真实内容
+                if (this.isDefectGrayTile(esriImg, size.x, size.y)) {
+                    const substitute = await this.buildParentSubstitute(coords, size.x, size.y)
+                        .catch(() => null);
+                    if (substitute) source = substitute;
+                }
+
+                // [OPTIMIZATION] Use createImageBitmap to avoid main thread canvas read
+                const bitmap = await createImageBitmap(source as ImageBitmapSource);
                 const reqId = this.msgIdCounter++;
 
                 // Store callback info
@@ -110,10 +208,10 @@ export class RiverOverlayLayer extends L.GridLayer {
                     bitmap: bitmap // Pass bitmap instead of raw data
                 }, [bitmap]); // Transfer ownership
 
-            }).catch(err => {
+            } catch (err) {
                 console.error('River bitmap creation failed:', err);
                 done(undefined, tile);
-            });
+            }
         };
 
         esriImg.onerror = () => {
