@@ -462,8 +462,8 @@ export class SpeechAnnouncer {
       ? `${opts.generalName}亲率${opts.eliteName}`
       : `${fFaction}援军`;
 
-    const RUSH_PHRASE: Record<CaptureJu, string> = { advantage: '长驱直入', balance: '星夜驰骋', disadvantage: '倍道兼程' };
-    const text = `${genLead}，${RUSH_PHRASE[ju]}，${action}${opts.cityName}`;
+    const RUSH_PHRASE: Record<CaptureJu, string> = { advantage: '星夜驰骋', balance: '马不停蹄', disadvantage: '倍道兼程' };
+    const text = `${genLead}，${RUSH_PHRASE[ju]}，${action}${opts.cityName}。`;
     console.log("[Speech] 援军参战:", text);
     this.speak(text);
   }

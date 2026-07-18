@@ -1,8 +1,10 @@
 ﻿/**
  * 岳飞北伐黄龙圆梦脚本（2026-07-11，v3 忠义归顺）
  *
- * 玩家点「⚔ 岳飞北伐黄龙」按钮 → 郾城生成岳飞·背嵬军（2 万兵，与常规军团同量级），
- * 镜头自动跟拍，按必打路标逐城远征：开封 → 北京 → 黄龙府；沿途经路网逐城攻城。
+ * 玩家点「⚔ 岳飞北伐黄龙」按钮：
+ *   · 场上尚无岳飞军 → 郾城生成岳飞·背嵬军（2 万），镜头跟拍，开北伐脚本；
+ *   · 场上已有岳飞军 → 加兵 1 万（吸引重复点击），切跟随并继续北伐。
+ * 按必打路标逐城远征：开封 → 北京 → 黄龙府；沿途经路网逐城攻城。
  * 打下一城即自动锁定下一城；直至拿下黄龙府（直捣黄龙）或全军覆没。
  *
  * 不改动任何常规游戏逻辑，仅借用现成远征机制（army.expeditionTargetCityId）：
@@ -26,6 +28,8 @@ const GENERAL_ID = 'yanchuan_d_yuefei';
 const ELITE_NAME = '背嵬军';
 /** 起兵 2 万（主人定：与常规军团同量级，靠忠义归顺徐徐补员） */
 const TROOPS = 20000;
+/** 已有岳飞军时，再点 UI 加兵量（吸引重复点击） */
+const CLICK_REINFORCE_TROOPS = 10000;
 
 /** 必打路标：逐城攻取，终点黄龙府 */
 const ROUTE: { id: string; name: string }[] = [
@@ -173,13 +177,21 @@ export class YuefeiExpedition {
         this.attachFollowAndMarch(army);
     }
 
-    /** 点按钮：起兵北伐（已有岳飞军则切跟随并继续，不重复出兵） */
+    /** 点按钮：无岳飞军则起兵；已有则加兵一万并继续北伐 */
     public start(): void {
         (window as any).__yuefeiExpeditionActive = true;
         const existing = this.findExistingYuefeiArmy();
         if (existing) {
+            const before = existing.getTroops();
+            existing.setTroops(before + CLICK_REINFORCE_TROOPS);
             this.resumeOrStartScript(existing);
-            this.notify('岳飞·背嵬军继续北伐');
+            const pos = existing.getPosition?.();
+            if (pos) spawnMapFloatingText(pos.lat, pos.lng, '+一万', '#55ff55');
+            gameLog(
+                'expedition',
+                `🐎 [圆梦] 再点增援 +${CLICK_REINFORCE_TROOPS.toLocaleString()}，背嵬军 ${(before + CLICK_REINFORCE_TROOPS).toLocaleString()} 众`,
+            );
+            this.notify('岳飞·背嵬军增兵一万');
             return;
         }
 
