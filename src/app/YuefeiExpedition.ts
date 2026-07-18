@@ -18,10 +18,9 @@
  *   set target → 行为树锁死目标行军攻城（断粮不回）；
  *   target 变己方 → LegionBehaviors.resolveExpeditionState 自动清空 → 本脚本推进下一城。
  *
- * 忠义归顺 v5（脚本专属事件，数值与 tools/yuefei-huanglong-sim.ts 同步，勿单边改）：
- *   每场战斗胜利后按城型分级加兵（随机）：小城 +1,000~3,000；中城 +3,000~6,000；大城·关隘 +6,000~10,000。
- *   补亏不增厚：补员 ≤ 实际战损，且补后兵力不超过锚点 23,000（2026-07-19 主人定）——
- *   防滚雪球以多打少，也防只耗不补以少胜多。
+ * 忠义归顺 v6（脚本专属事件，数值与 tools/yuefei-huanglong-sim.ts 同步，勿单边改）：
+ *   每场战斗胜利后结算：兵力低于 20,000 才触发，一次性补到 [22222, 29000] 内随机目标（2026-07-19 主人定）——
+ *   高于 2 万不补：防滚雪球以多打少；跌破 2 万补回：防只耗不补以少胜多。
  *   ⚠️ 补员必须在「战后结算」而非「沿途涓流」：setInterval 按真实时间、
  *      行军按游戏时间且受倍速影响，短程/5 倍速下涓流严重补不够。
  */
@@ -69,15 +68,11 @@ const ROUTE: { id: string; name: string }[] = [
     { id: 'city_fuyu', name: '黄龙府' },
 ];
 
-/** 忠义归顺 v5：按城型分级加兵（须与 yuefei-huanglong-sim 同步，勿单边改） */
-function zhongyiBonusRange(cityType: string): { min: number; max: number } {
-    if (cityType === 'big_city' || cityType === 'pass') return { min: 6000, max: 10000 };
-    if (cityType === 'medium_city') return { min: 3000, max: 6000 };
-    return { min: 1000, max: 3000 }; // small_city
-}
-
-/** 忠义归顺锚点：补员后兵力不超过此数（防滚雪球；2026-07-19 主人定：勿用整数 2 万，取 2.3 万） */
-const ZHONGYI_ANCHOR = 23000;
+/** 忠义归顺 v6：触发线 2 万——战后兵力低于此值才补（2026-07-19 主人定；须与 yuefei-huanglong-sim 同步，勿单边改） */
+const ZHONGYI_TRIGGER = 20000;
+/** 补到目标区间：每次补员在 [22222, 29000] 内随机取目标值（主人定：随机数字，不要整数锚点） */
+const ZHONGYI_TARGET_MIN = 22222;
+const ZHONGYI_TARGET_MAX = 29000;
 
 const TICK_INTERVAL_MS = 400;
 
@@ -161,8 +156,6 @@ export class YuefeiExpedition {
     private timer: number | null = null;
     /** 上一 tick 是否在战斗中（用于捕捉「战斗刚结束」这一帧做结算补员） */
     private wasInCombat = false;
-    /** 开战第一帧记下的战前兵力（忠义归顺 v5 按战损补亏用） */
-    private preBattleTroops = 0;
 
     /** 朱仙镇拦路阶段 */
     private zhuxianPhase: ZhuxianPhase = 'pending';
@@ -258,9 +251,14 @@ export class YuefeiExpedition {
     /** 抑制游戏自带的占城/野战结束播报（脚本用定制语音替代） */
     private muteGameAnnouncements(): void {
         if (this._origAnnounceCityCapture) return; // 已静默
+        const MILESTONE_NAMES = new Set(['开封', '北京', '沈阳', '黄龙府']);
         this._origAnnounceCityCapture = speechAnnouncer.announceCityCapture.bind(speechAnnouncer);
         this._origAnnounceFieldBattleEnd = speechAnnouncer.announceFieldBattleEnd.bind(speechAnnouncer);
-        speechAnnouncer.announceCityCapture = () => {};
+        // 仅四座路标城用定制语音，其余照常播报
+        speechAnnouncer.announceCityCapture = (opts: any) => {
+            if (MILESTONE_NAMES.has(opts?.cityName)) return;
+            this._origAnnounceCityCapture!(opts);
+        };
         speechAnnouncer.announceFieldBattleEnd = () => {};
     }
 
@@ -348,7 +346,6 @@ export class YuefeiExpedition {
         this.armyId = army.id;
         this.waypointIndex = 0;
         this.wasInCombat = false;
-        this.preBattleTroops = 0;
         this.zhuxianPhase = 'pending';
         this.wanyanArmyId = null;
         this.zhuxianRoadPos = { ...ZHUXIANZHEN };
@@ -640,16 +637,15 @@ export class YuefeiExpedition {
     }
 
     /**
-     * 忠义归顺 v5（脚本专属技）：捕捉「战斗刚结束」这一帧，按城型分级加兵。
-     * 补亏不增厚：补员 ≤ 实际战损，且补后兵力不超过锚点 ZHONGYI_ANCHOR——
-     * 防滚雪球以多打少，也防只耗不补以少胜多（2026-07-19 主人定）。
+     * 忠义归顺 v6（脚本专属技）：捕捉「战斗刚结束」这一帧结算补员。
+     * 战后兵力低于 2 万才触发，一次性补到 [22222, 29000] 内随机目标（2026-07-19 主人定）——
+     * 高于 2 万不补：防滚雪球以多打少；跌破 2 万补回：防只耗不补以少胜多。
      * 战后结算（非沿途涓流）→ 不依赖行军长短与倍速。
      * 演出：白字绿光，军团头顶飘四字技名「忠义归顺」。
      */
     private tickZhongyiTrickle(army: ScriptArmy): void {
         const inCombat = army.getIsInCombat?.() ?? false;
         if (inCombat) {
-            if (!this.wasInCombat) this.preBattleTroops = army.getTroops(); // 开战第一帧记战前兵力
             this.wasInCombat = true;
             return;
         }
@@ -658,33 +654,21 @@ export class YuefeiExpedition {
 
         const troops = army.getTroops();
         if (troops <= 0) return;
+        if (troops >= ZHONGYI_TRIGGER) return; // 2 万以上不补
 
-        // 朱仙镇野战无远征目标城：按大城档补员
-        let cityType = 'small_city';
-        const targetCityId = army.expeditionTargetCityId;
-        if (targetCityId) {
-            const city = this.deps.cityManager.getCity(targetCityId);
-            if (city) cityType = city.type ?? 'small_city';
-        } else if (this.zhuxianPhase === 'spawned' || this.waypointIndex === 0) {
-            cityType = 'big_city';
-        } else {
-            return;
-        }
-
-        // v5 核心：补员量取「roll、战损、锚点余量」三者最小；碾压局(无战损)/满锚点 → 不补不飘字
-        const r = zhongyiBonusRange(cityType);
-        const roll = r.min + Math.floor(Math.random() * (r.max - r.min + 1));
-        const losses = Math.max(0, this.preBattleTroops - troops);
-        const room = Math.max(0, ZHONGYI_ANCHOR - troops);
-        const added = Math.min(roll, losses, room);
+        // 补到随机目标：每次补员重新在 [22222, 29000] 内取值
+        const target =
+            ZHONGYI_TARGET_MIN +
+            Math.floor(Math.random() * (ZHONGYI_TARGET_MAX - ZHONGYI_TARGET_MIN + 1));
+        const added = target - troops;
         if (added <= 0) return;
-        army.setTroops(troops + added);
+        army.setTroops(target);
 
         const pos = army.getPosition?.();
         if (pos) spawnMapFloatingText(pos.lat, pos.lng, '忠义归顺', '#55ff55');
         gameLog(
             'expedition',
-            `🐎 [圆梦] 忠义归顺 +${added.toLocaleString()}（战损 ${losses.toLocaleString()}），背嵬军补至 ${(troops + added).toLocaleString()} 众`,
+            `🐎 [圆梦] 忠义归顺 +${added.toLocaleString()}，背嵬军补至 ${target.toLocaleString()} 众`,
         );
     }
 

@@ -41,23 +41,18 @@ const YUEFEI_GENERAL_ID = 'yanchuan_d_yuefei';
 const BEIWEI_ELITE_TIER = 0;
 
 /**
- * 忠义归顺 v5（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 保持同步，勿单边改）：
- * 开局一律 2 万，每场战斗胜利后按城型分级加兵（随机）：
- * 小城 +1,000~3,000；中城 +3,000~6,000；大城·关隘 +6,000~10,000。
- * 补亏不增厚：补员 ≤ 实际战损，且补后兵力不超过锚点 23,000——
- * 防滚雪球以多打少，也防只耗不补以少胜多（2026-07-19 主人定）。
+ * 忠义归顺 v6（圆梦脚本专属事件，与 src/app/YuefeiExpedition.ts 保持同步，勿单边改）：
+ * 开局一律 2 万，每场战斗胜利后结算：兵力低于 20,000 才触发，
+ * 一次性补到 [22222, 29000] 内随机目标（2026-07-19 主人定）——
+ * 高于 2 万不补：防滚雪球以多打少；跌破 2 万补回：防只耗不补以少胜多。
  * CLI：--no-zhongyi 关闭。
  * ⚠️ 守军须用 --defenders initial（城型初始驻军 5,000~10,000，反映实机早期北伐）。
  */
-/** 按城型分级加兵：小城少补防滚雪球，大城多补助强攻（v5：与 src/app/YuefeiExpedition.ts 同步） */
-function zhongyiBonusRange(cityType: string): { min: number; max: number } {
-    if (cityType === 'big_city' || cityType === 'pass') return { min: 6000, max: 10000 };
-    if (cityType === 'medium_city') return { min: 3000, max: 6000 };
-    return { min: 1000, max: 3000 }; // small_city
-}
-
-/** 忠义归顺锚点：补员后兵力不超过此数（防滚雪球；2026-07-19 主人定：勿用整数 2 万，取 2.3 万） */
-const ZHONGYI_ANCHOR = 23000;
+/** 忠义归顺 v6：触发线 2 万——战后兵力低于此值才补（2026-07-19 主人定；与 src/app/YuefeiExpedition.ts 同步） */
+const ZHONGYI_TRIGGER = 20000;
+/** 补到目标区间：每次补员在 [22222, 29000] 内随机取目标值（主人定：随机数字，不要整数锚点） */
+const ZHONGYI_TARGET_MIN = 22222;
+const ZHONGYI_TARGET_MAX = 29000;
 
 function argNum(flag: string, fallback: number): number {
     const i = process.argv.indexOf(flag);
@@ -214,15 +209,14 @@ function runOne(
                 target.type,
             )
             : 0;
-        // 忠义归顺 v5：补亏不增厚——补员 ≤ 实际战损，且补后不超过锚点（与 src/app/YuefeiExpedition.ts 同步）
+        // 忠义归顺 v6：战后兵力 < 20,000 才补，一次性补到 [22222, 29000] 内随机目标（与 src/app/YuefeiExpedition.ts 同步）
         let zhongyiBonus = 0;
         let afterZhongyi = sustained;
-        if (result.attackerWon && !zhongyiOff) {
-            const r = zhongyiBonusRange(target.type);
-            const roll = r.min + Math.floor(Math.random() * (r.max - r.min + 1));
-            const losses = Math.max(0, startTroops - sustained);
-            const room = Math.max(0, ZHONGYI_ANCHOR - sustained);
-            zhongyiBonus = Math.min(roll, losses, room);
+        if (result.attackerWon && !zhongyiOff && sustained < ZHONGYI_TRIGGER) {
+            const target =
+                ZHONGYI_TARGET_MIN +
+                Math.floor(Math.random() * (ZHONGYI_TARGET_MAX - ZHONGYI_TARGET_MIN + 1));
+            zhongyiBonus = target - sustained;
             afterZhongyi = Math.min(sustained + zhongyiBonus, cap);
         }
         logs.push({
@@ -290,7 +284,7 @@ function main(): void {
     if (zhongyiOff) {
         console.log('忠义归顺：关闭');
     } else {
-        console.log('忠义归顺 v5：补亏不增厚（≤战损，锚点 23,000）| 大城·关隘 +6,000~10,000 | 中城 +3,000~6,000 | 小城 +1,000~3,000');
+        console.log('忠义归顺 v6：兵力 <20,000 才补，补到 [22,222~29,000] 随机目标');
     }
     const fullSuccess = capturedCounts[routeIds.length] ?? 0;
     console.log(`直捣黄龙成功率：${formatPct(fullSuccess / trials)}（两次至少一成：${formatPct(1 - (1 - fullSuccess / trials) ** 2)}）`);
