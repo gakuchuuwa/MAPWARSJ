@@ -633,8 +633,7 @@ export class YuefeiExpedition {
         const pos = army.getPosition?.() ?? ZHUXIANZHEN;
         spawnMapFloatingText(pos.lat, pos.lng, '克复开封', '#55ff55');
         gameLog('expedition', `🐎 [圆梦] 朱仙镇大捷——十二道金牌无效，岳家军挺进汴梁`);
-        this.notify('朱仙镇大捷——十二道金牌无效，岳家军挺进汴梁');
-        // 脚本专属语音：收复开封
+        // 脚本专属语音：收复开封（不弹 UI 通知，仅语音播报）
         (speechAnnouncer as any).speak('岳家军旌旗北指，所向克捷！朱仙镇一役，撼山易，撼岳家军难，收复汴梁，还我河山！');
         this.pauseUntilMs = Date.now() + 10000;
     }
