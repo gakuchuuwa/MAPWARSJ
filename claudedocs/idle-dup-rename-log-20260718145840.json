@@ -1,0 +1,667 @@
+[
+  {
+    "folder": "BASHU",
+    "from": "__闲置__BASHU_03.png",
+    "to": "__多余__BASHU_01.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "__闲置__BASHU_04.png",
+    "to": "__多余__BASHU_02.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "094091cc-c272-4f5f-a2fd-659738fee5a2.png",
+    "to": "__闲置__BASHU_07.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "17677256-b2eb-47e9-a650-ae12e0ea6ea8.png",
+    "to": "__闲置__BASHU_08.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "4d77fec1-454a-42c1-82af-8d0e0bd8e858.png",
+    "to": "__闲置__BASHU_09.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "5bf4ff9f-380e-4b10-8c6f-3f04210c0d31.png",
+    "to": "__闲置__BASHU_10.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "a457b676-388c-4bcd-889c-4c8038c41927.png",
+    "to": "__闲置__BASHU_11.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "bf50b1db-2e03-4ffa-918d-5de5ea6cbe06.png",
+    "to": "__闲置__BASHU_12.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "c20c8cc4-2ec1-41cf-b3b5-da4992d8fc4a.png",
+    "to": "__闲置__BASHU_13.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "c307bef5-9979-4e83-9377-e701d423c463.png",
+    "to": "__闲置__BASHU_14.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "c5eb4b18-56d4-4306-a81b-ab1353e04fe8.png",
+    "to": "__闲置__BASHU_15.png"
+  },
+  {
+    "folder": "BASHU",
+    "from": "zhuoshi_zhuowangsun.png",
+    "to": "__多余__BASHU_03.png"
+  },
+  {
+    "folder": "CENTRAL",
+    "from": "__闲置__CENTRAL_01.png",
+    "to": "__多余__CENTRAL_01.png"
+  },
+  {
+    "folder": "CENTRAL",
+    "from": "__闲置__CENTRAL_07.png",
+    "to": "__多余__CENTRAL_02.png"
+  },
+  {
+    "folder": "CENTRAL",
+    "from": "__闲置__CENTRAL_09.png",
+    "to": "__多余__CENTRAL_03.png"
+  },
+  {
+    "folder": "CENTRAL",
+    "from": "kong_d_kongrong.png",
+    "to": "__多余__CENTRAL_04.png"
+  },
+  {
+    "folder": "CENTRAL",
+    "from": "wang_d_wangdao.png",
+    "to": "__闲置__CENTRAL_40.png"
+  },
+  {
+    "folder": "CENTRAL_ASIA",
+    "from": "__闲置__CENTRAL_ASIA_08.png",
+    "to": "__多余__CENTRAL_ASIA_01.png"
+  },
+  {
+    "folder": "CENTRAL_ASIA",
+    "from": "__闲置__CENTRAL_ASIA_14.png",
+    "to": "__多余__CENTRAL_ASIA_02.png"
+  },
+  {
+    "folder": "CENTRAL_ASIA",
+    "from": "0003e8fc-eea5-4ba3-83f4-8132154f17c5.png",
+    "to": "__闲置__CENTRAL_ASIA_15.png"
+  },
+  {
+    "folder": "CENTRAL_ASIA",
+    "from": "3969cd48-db8e-4b31-804e-a2b6bcb01066.png",
+    "to": "__闲置__CENTRAL_ASIA_16.png"
+  },
+  {
+    "folder": "CENTRAL_ASIA",
+    "from": "50d1cd12-575d-4cb2-a829-d54b4cfdb75c.png",
+    "to": "__闲置__CENTRAL_ASIA_17.png"
+  },
+  {
+    "folder": "CENTRAL_ASIA",
+    "from": "ad4adc41-8c01-45e5-8585-f0fbd013e135.png",
+    "to": "__闲置__CENTRAL_ASIA_18.png"
+  },
+  {
+    "folder": "CENTRAL_ASIA",
+    "from": "be23071b-7d43-482c-ac93-57a4956eb02f.png",
+    "to": "__闲置__CENTRAL_ASIA_19.png"
+  },
+  {
+    "folder": "daming",
+    "from": "__闲置__JIANGNAN_18.png",
+    "to": "__多余__daming_01.png"
+  },
+  {
+    "folder": "daming",
+    "from": "18ed45d0-a97c-417b-b998-fe5e083af942.png",
+    "to": "__闲置__daming_08.png"
+  },
+  {
+    "folder": "daming",
+    "from": "1f2009c0-955d-436a-9f93-d7e736239d9b.png",
+    "to": "__多余__daming_02.png"
+  },
+  {
+    "folder": "daming",
+    "from": "3fa521fc-8067-4cce-b620-1d4286b41db3.png",
+    "to": "__闲置__daming_09.png"
+  },
+  {
+    "folder": "daming",
+    "from": "740a267a-de9d-4aff-80e3-83e248c81e2d.png",
+    "to": "__闲置__daming_10.png"
+  },
+  {
+    "folder": "daming",
+    "from": "7e7c91c9-3224-4c52-9b98-a60b0d32f4b1.png",
+    "to": "__闲置__daming_11.png"
+  },
+  {
+    "folder": "daming",
+    "from": "c1cb0913-10d2-437d-8795-af26a25a3382.png",
+    "to": "__闲置__daming_12.png"
+  },
+  {
+    "folder": "daming",
+    "from": "e1fb9aaa-d498-4493-bbdd-35dc269205a0.png",
+    "to": "__闲置__daming_13.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__闲置__DIANQIAN_11.png",
+    "to": "__多余__DIANQIAN_01.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__闲置__DIANQIAN_12.png",
+    "to": "__多余__DIANQIAN_02.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__闲置__DIANQIAN_16.png",
+    "to": "__多余__DIANQIAN_03.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__闲置__DIANQIAN_17.png",
+    "to": "__多余__DIANQIAN_04.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__闲置__DIANQIAN_20.png",
+    "to": "__多余__DIANQIAN_05.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__闲置__DIANQIAN_21.png",
+    "to": "__多余__DIANQIAN_06.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__闲置__DIANQIAN_22.png",
+    "to": "__多余__DIANQIAN_07.png"
+  },
+  {
+    "folder": "HEXI",
+    "from": "__闲置__CENTRAL_18.png",
+    "to": "__多余__HEXI_01.png"
+  },
+  {
+    "folder": "HEXI",
+    "from": "__闲置__CENTRAL_21.png",
+    "to": "__多余__HEXI_02.png"
+  },
+  {
+    "folder": "JAPAN",
+    "from": "__闲置__JAPAN_25.png",
+    "to": "__多余__JAPAN_01.png"
+  },
+  {
+    "folder": "JIANGNAN",
+    "from": "__闲置__JIANGNAN_21.png",
+    "to": "__多余__JIANGNAN_01.png"
+  },
+  {
+    "folder": "JIANGNAN",
+    "from": "__闲置__JIANGNAN_24.png",
+    "to": "__多余__JIANGNAN_02.png"
+  },
+  {
+    "folder": "JIANGNAN",
+    "from": "119d2b37-6553-42c3-aef4-994382a0b1bf.png",
+    "to": "__闲置__JIANGNAN_25.png"
+  },
+  {
+    "folder": "JIANGNAN",
+    "from": "7fa1344d-edad-4a58-b2df-65bf116de0d7.png",
+    "to": "__闲置__JIANGNAN_26.png"
+  },
+  {
+    "folder": "JIANGNAN",
+    "from": "image (3).png",
+    "to": "__多余__JIANGNAN_03.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__CENTRAL_01.png",
+    "to": "__多余__LINGNAN_01.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_16.png",
+    "to": "__多余__LINGNAN_02.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_18.png",
+    "to": "__多余__LINGNAN_03.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_19.png",
+    "to": "__多余__LINGNAN_04.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_23.png",
+    "to": "__多余__LINGNAN_05.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_24.png",
+    "to": "__多余__LINGNAN_06.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_25.png",
+    "to": "__多余__LINGNAN_07.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_26.png",
+    "to": "__多余__LINGNAN_08.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_27.png",
+    "to": "__多余__LINGNAN_09.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_28.png",
+    "to": "__多余__LINGNAN_10.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_29.png",
+    "to": "__多余__LINGNAN_11.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_30.png",
+    "to": "__多余__LINGNAN_12.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_31.png",
+    "to": "__多余__LINGNAN_13.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_32.png",
+    "to": "__多余__LINGNAN_14.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_33.png",
+    "to": "__多余__LINGNAN_15.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_34.png",
+    "to": "__多余__LINGNAN_16.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_35.png",
+    "to": "__多余__LINGNAN_17.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_36.png",
+    "to": "__多余__LINGNAN_18.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_37.png",
+    "to": "__多余__LINGNAN_19.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_38.png",
+    "to": "__多余__LINGNAN_20.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_39.png",
+    "to": "__多余__LINGNAN_21.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__闲置__LINGNAN_40.png",
+    "to": "__多余__LINGNAN_22.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "kong_d_kongrong.png",
+    "to": "__多余__LINGNAN_23.png"
+  },
+  {
+    "folder": "litang",
+    "from": "__闲置__litang_03.png",
+    "to": "__多余__litang_01.png"
+  },
+  {
+    "folder": "litang",
+    "from": "__闲置__litang_04.png",
+    "to": "__多余__litang_02.png"
+  },
+  {
+    "folder": "litang",
+    "from": "282afd3a-12fa-48b4-8c86-2c07ee12abe6.png",
+    "to": "__多余__litang_03.png"
+  },
+  {
+    "folder": "litang",
+    "from": "487e6abd-6c33-4c4b-af83-151cb4a0241b.png",
+    "to": "__闲置__litang_05.png"
+  },
+  {
+    "folder": "litang",
+    "from": "94622fca-5730-421b-88a8-dc2a3e45e044.png",
+    "to": "__闲置__litang_06.png"
+  },
+  {
+    "folder": "litang",
+    "from": "f183819f-e5ec-42fb-9814-f6c3ff119d0c.png",
+    "to": "__闲置__litang_07.png"
+  },
+  {
+    "folder": "litang",
+    "from": "image (4).png",
+    "to": "__闲置__litang_08.png"
+  },
+  {
+    "folder": "liuhan",
+    "from": "__闲置__liuhan_17.png",
+    "to": "__多余__liuhan_01.png"
+  },
+  {
+    "folder": "liuhan",
+    "from": "36abb5b4-38ee-4929-8c9e-55909b58f5e5.png",
+    "to": "__闲置__liuhan_18.png"
+  },
+  {
+    "folder": "liuhan",
+    "from": "633f728e-4183-449c-9650-f8cb38bcc26d.png",
+    "to": "__闲置__liuhan_19.png"
+  },
+  {
+    "folder": "liuhan",
+    "from": "67968f1a-0855-4701-bd4f-1a4e2f6262f0.png",
+    "to": "__闲置__liuhan_20.png"
+  },
+  {
+    "folder": "liuhan",
+    "from": "c2bf9c35-40c6-41ea-a6ce-10a48a6ec5e4.png",
+    "to": "__闲置__liuhan_21.png"
+  },
+  {
+    "folder": "liuhan",
+    "from": "e60797d2-ae80-4479-a46f-66f38960aad0.png",
+    "to": "__闲置__liuhan_22.png"
+  },
+  {
+    "folder": "liuhan",
+    "from": "f93afb4f-8aa3-4f0a-a44e-a55b9b6a6895.png",
+    "to": "__多余__liuhan_02.png"
+  },
+  {
+    "folder": "manqing",
+    "from": "85da389d-9e83-454d-a98a-21f39bcf778b.png",
+    "to": "__闲置__manqing_09.png"
+  },
+  {
+    "folder": "manqing",
+    "from": "c37ad1b0-954c-4129-93ef-673a6ef6a391.png",
+    "to": "__多余__manqing_01.png"
+  },
+  {
+    "folder": "manqing",
+    "from": "ea6d5564-ffdf-414a-bc13-72718fcf22b0.png",
+    "to": "__闲置__manqing_10.png"
+  },
+  {
+    "folder": "NORTH",
+    "from": "__闲置__NORTH_02.png",
+    "to": "__多余__NORTH_01.png"
+  },
+  {
+    "folder": "NORTH",
+    "from": "__闲置__NORTH_03.png",
+    "to": "__多余__NORTH_02.png"
+  },
+  {
+    "folder": "NORTH",
+    "from": "__闲置__NORTH_05.png",
+    "to": "__多余__NORTH_03.png"
+  },
+  {
+    "folder": "NORTH",
+    "from": "c425ce42-7fc4-4e93-abf1-7e5ad7fde4aa.png",
+    "to": "__多余__NORTH_04.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "__闲置__NORTHEAST_19.png",
+    "to": "__多余__NORTHEAST_01.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "__闲置__NORTHEAST_23.png",
+    "to": "__多余__NORTHEAST_02.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "__闲置__NORTHEAST_31.png",
+    "to": "__多余__NORTHEAST_03.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "2dce8f19-3676-4a0a-ad1f-1681c9b30fb3.png",
+    "to": "__多余__NORTHEAST_04.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "3f2c529a-23f6-41e2-9caf-8c8e0d475fd4.png",
+    "to": "__多余__NORTHEAST_05.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "61191f6b-a9fe-44ae-829e-7023c5a8524f.png",
+    "to": "__多余__NORTHEAST_06.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "a95574bc-1b41-4deb-8421-53dc7b978f16.png",
+    "to": "__闲置__NORTHEAST_33.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "d8a391c9-11db-4971-b6c4-9c33c54bafce.png",
+    "to": "__闲置__NORTHEAST_34.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "e1d99529-303b-417a-bac1-2a0f351cf552.png",
+    "to": "__多余__NORTHEAST_07.png"
+  },
+  {
+    "folder": "panjun",
+    "from": "__闲置__PANJUN_23.png",
+    "to": "__多余__panjun_01.png"
+  },
+  {
+    "folder": "STEPPE",
+    "from": "__闲置__STEPPE_33.png",
+    "to": "__多余__STEPPE_01.png"
+  },
+  {
+    "folder": "STEPPE",
+    "from": "__闲置__STEPPE_37.png",
+    "to": "__多余__STEPPE_02.png"
+  },
+  {
+    "folder": "STEPPE",
+    "from": "__闲置__STEPPE_38.png",
+    "to": "__多余__STEPPE_03.png"
+  },
+  {
+    "folder": "STEPPE",
+    "from": "__闲置__STEPPE_44.png",
+    "to": "__多余__STEPPE_04.png"
+  },
+  {
+    "folder": "TIBET",
+    "from": "__闲置__TIBET_11.png",
+    "to": "__多余__TIBET_01.png"
+  },
+  {
+    "folder": "TIBET",
+    "from": "__闲置__TIBET_13.png",
+    "to": "__多余__TIBET_02.png"
+  },
+  {
+    "folder": "TIBET",
+    "from": "__闲置__TIBET_17.png",
+    "to": "__多余__TIBET_03.png"
+  },
+  {
+    "folder": "TIBET",
+    "from": "__闲置__TIBET_18.png",
+    "to": "__多余__TIBET_04.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "__闲置__WESTERN_01.png",
+    "to": "__多余__WESTERN_01.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "__闲置__WESTERN_15.png",
+    "to": "__多余__WESTERN_02.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "__闲置__WESTERN_16.png",
+    "to": "__多余__WESTERN_03.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "__闲置__WESTERN_17.png",
+    "to": "__多余__WESTERN_04.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "__闲置__WESTERN_19.png",
+    "to": "__多余__WESTERN_05.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "__闲置__WESTERN_21.png",
+    "to": "__多余__WESTERN_06.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "__闲置__WESTERN_22.png",
+    "to": "__多余__WESTERN_07.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "fa3d3b7a-a752-42c1-b564-87fef1dbd270.png",
+    "to": "__闲置__WESTERN_23.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "__闲置__xianqin_13.png",
+    "to": "__多余__xianqin_01.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "__闲置__xianqin_25.png",
+    "to": "__多余__xianqin_02.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "__闲置__yingqin_11.png",
+    "to": "__多余__xianqin_03.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "10349d1d-e207-4753-8962-530f563bb9b0.png",
+    "to": "__闲置__xianqin_26.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "3ec87a35-56eb-44f4-94fc-fc03ae6c2cf7.png",
+    "to": "__闲置__xianqin_27.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "4973a163-7946-43f2-9043-c4c799414d34.png",
+    "to": "__闲置__xianqin_28.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "833a8a5f-8a12-410e-a531-f3e8c2c3d3b1.png",
+    "to": "__闲置__xianqin_29.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "8eb702ce-762e-4fc3-8391-39621018761a.png",
+    "to": "__闲置__xianqin_30.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "931cf26d-b89b-4654-a5b2-4d5aa5311d28.png",
+    "to": "__闲置__xianqin_31.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "c97f3cdc-39ba-4bef-9e8c-6233d05592fe.png",
+    "to": "__闲置__xianqin_32.png"
+  },
+  {
+    "folder": "zhaosong",
+    "from": "__闲置__litang_03.png",
+    "to": "__多余__zhaosong_01.png"
+  },
+  {
+    "folder": "zhaosong",
+    "from": "18eaf042-a6c4-41ce-96f2-c9b9fc832c33.png",
+    "to": "__闲置__zhaosong_20.png"
+  },
+  {
+    "folder": "zhaosong",
+    "from": "2def5641-f003-4d6a-83ba-103fd2852af5.png",
+    "to": "__闲置__zhaosong_21.png"
+  },
+  {
+    "folder": "zhaosong",
+    "from": "cc34312f-2973-450a-ac98-6df292382241.png",
+    "to": "__闲置__zhaosong_22.png"
+  },
+  {
+    "folder": "zhaosong",
+    "from": "d9e9abd1-e534-4b2d-b246-885e73a28366.png",
+    "to": "__闲置__zhaosong_23.png"
+  },
+  {
+    "folder": "zhaosong",
+    "from": "yue_d_yuefei.png",
+    "to": "__多余__zhaosong_02.png"
+  }
+]

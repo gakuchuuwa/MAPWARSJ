@@ -1,27 +1,30 @@
 /**
- * 启动期「重复闲置立绘」自动改名  __闲置__{文化区}_{编号}.png
+ * 启动期立绘自动分类改名（主人 2026-07-19 定稿）
  * ------------------------------------------------------------------
- * 目标（主人 2026-07-18 定）：每次 npm run dev 启动时自动执行——
- *   凡是「内容与库内其他图重复（跨夹全库 SHA-256 比对）」且「没有被任何代码引用」
- *   的 png，就地改成 __闲置__ 命名。重复组即使全员未引用也全部改（不留原名）。
+ * 每次 npm run dev 启动时执行，除「被代码引用」的图外全部规范命名：
  *
- * 与 TOOL/rename_idle_portraits.mjs 的区别：
- *   那个改所有未引用图（手动跑）；本脚本只改「重复 + 未引用」——
- *   独一无二的图即使闲置也保留原名（原名可能带武将信息，画了还没接线）。
+ *   被引用                     → 原名不动（铁律）
+ *   未引用 + 内容重复（跨夹全库）→ __多余__{token}_{NN}.png   ← 主人审阅后手动删除的暂存标签
+ *   未引用 + 独一无二           → __闲置__{token}_{NN}.png   ← 库存资源，随机池继续抽用
+ *
+ * 每次启动自动重归类（含存量迁移）：
+ *   · __闲置__ 名但内容重复 → 改 __多余__（如另一份后来入库）
+ *   · __多余__ 名但已无重复 → 改回 __闲置__（如主人删掉了另一份副本）
  *
  * 铁律（AGENTS.md 立绘保护条款，绝对红线）：
  *   · 只 renameSync 同夹改名——没有任何删除/覆盖代码路径
  *   · 目标名已存在 → 跳过该张，绝不覆盖
  *   · 被引用的图（无论是否重复）一律不动
- *   · 绝不跨夹移动；chongfu/（已归置重复图）与 avg/（剧情图）只读不改
+ *   · 绝不跨夹移动；chongfu/（主人归置的重复图）只读对照、avg/ 完全排除
+ *   · _prev_ 备份完全不参与（不比对不改名）：备份与正本内容相同不算"重复"
  *   · 每次改名写还原日志 claudedocs/idle-dup-rename-log-{时间}.json
  *   · 任何异常一律吞掉 exit 0，绝不阻塞 dev 启动
+ *   · 「多余」不退随机池：池子仍收夹内所有图（主人确认后手动删，删完下次启动自动回闲置）
  *
- * 性能：SHA-256 结果按 (size, mtimeMs) 缓存于 scratch/portrait_hash_cache.json，
- *   首跑全量哈希（1.4GB 约数秒），之后只 stat 比对，秒级完成。
+ * 性能：SHA-256 按 (size, mtimeMs) 缓存于 scratch/portrait_hash_cache.json，增量 0.1s。
  *
  * 用法：
- *   node TOOL/rename_duplicate_idle_portraits.mjs            # 执行（dev 启动自动跑的就是这个）
+ *   node TOOL/rename_duplicate_idle_portraits.mjs            # 执行（dev 启动自动跑）
  *   node TOOL/rename_duplicate_idle_portraits.mjs --dry-run  # 只预览
  */
 import fs from 'fs';
@@ -41,13 +44,16 @@ const EXCLUDE_TOP = new Set(['avg', 'bgm_backup', 'inbox']);
 const READONLY_TOP = new Set(['chongfu']);
 // 引用扫描跳过（派生/调校表，不算"被套用"）——与 rename_idle_portraits.mjs 口径一致
 const REF_SCAN_SKIP = new Set(['portrait_canonical.ts', 'portrait_adjust.ts']);
+// 整夹跳过：调校表的时间戳备份，同属派生数据（历史遗留记录 ≠ 在用）
+const REF_SCAN_SKIP_DIRS = new Set(['portrait_adjust_backups']);
 
 const IDLE_RE = /^__闲置__(.+)_(\d+)\.png$/i;
+const SURPLUS_RE = /^__多余__(.+)_(\d+)\.png$/i;
 
 try {
     main();
 } catch (e) {
-    console.error('[重复闲置改名] 异常（不阻塞启动）:', e?.message ?? e);
+    console.error('[立绘分类改名] 异常（不阻塞启动）:', e?.message ?? e);
 }
 process.exit(0);
 
@@ -69,6 +75,7 @@ function main() {
             const p = path.join(dir, ent.name);
             if (ent.isDirectory()) {
                 if (ent.name === 'node_modules' || ent.name === '.git') continue;
+                if (REF_SCAN_SKIP_DIRS.has(ent.name)) continue;
                 walkCode(p);
             } else if (/\.(ts|tsx|js|mjs|cjs)$/i.test(ent.name) && !REF_SCAN_SKIP.has(ent.name)) {
                 addRefs(fs.readFileSync(p, 'utf-8'));
@@ -78,7 +85,7 @@ function main() {
     walkCode(path.join(ROOT, 'src'));
     addRefs(fs.readFileSync(path.join(ROOT, 'vite.config.ts'), 'utf-8'));
 
-    // ── 2) 全库哈希（带缓存）──
+    // ── 2) 全库哈希（带缓存；_prev_ 备份不参与）──
     let cache = {};
     try {
         cache = JSON.parse(fs.readFileSync(CACHE_PATH, 'utf-8'));
@@ -86,8 +93,12 @@ function main() {
     const nextCache = {};
     let hashed = 0;
 
-    /** @type {Map<string, {folder:string, file:string, readonly:boolean}[]>} sha256 → 成员 */
-    const byHash = new Map();
+    /** @type {Map<string, number>} sha256 → 库内份数（含 chongfu 对照） */
+    const hashCount = new Map();
+    /** @type {{folder:string, file:string, sha:string}[]} 可改名候选（非只读夹） */
+    const candidates = [];
+    /** 全库（含 chongfu）所有 png 文件名：编号全库唯一用 */
+    const allNamesGlobal = [];
 
     for (const ent of fs.readdirSync(ASSETS, { withFileTypes: true })) {
         if (!ent.isDirectory() || EXCLUDE_TOP.has(ent.name)) continue;
@@ -96,6 +107,7 @@ function main() {
         const readonly = READONLY_TOP.has(folder);
         for (const f of fs.readdirSync(dir)) {
             if (!/\.png$/i.test(f)) continue;
+            if (/_prev_/i.test(f)) continue; // 备份不算重复来源，也永不改名
             const abs = path.join(dir, f);
             const rel = `${folder}/${f}`;
             const st = fs.statSync(abs);
@@ -108,78 +120,85 @@ function main() {
                 hashed++;
             }
             nextCache[rel] = { size: st.size, mtimeMs: st.mtimeMs, sha256: sha };
-            if (!byHash.has(sha)) byHash.set(sha, []);
-            byHash.get(sha).push({ folder, file: f, readonly });
+            hashCount.set(sha, (hashCount.get(sha) ?? 0) + 1);
+            allNamesGlobal.push(f);
+            if (!readonly) candidates.push({ folder, file: f, sha });
         }
     }
     fs.mkdirSync(path.dirname(CACHE_PATH), { recursive: true });
     fs.writeFileSync(CACHE_PATH, JSON.stringify(nextCache), 'utf-8');
 
-    // ── 3) 挑改名候选：重复组内「未引用 + 非只读夹 + 非闲置名 + 非 _prev_」全改 ──
-    /** @type {Map<string, string[]>} folder → 待改文件名 */
+    // ── 3) 分类：期望前缀 vs 当前名 ──
+    /** @type {Map<string, {file:string, want:'多余'|'闲置'}[]>} folder → 改名任务 */
     const planByFolder = new Map();
     let dupGroups = 0;
-    for (const members of byHash.values()) {
-        if (members.length < 2) continue;
-        dupGroups++;
-        for (const m of members) {
-            if (m.readonly) continue;
-            if (IDLE_RE.test(m.file)) continue;
-            if (/_prev_/i.test(m.file)) continue;
-            if (referenced.has(m.file.toLowerCase())) continue;
-            if (!planByFolder.has(m.folder)) planByFolder.set(m.folder, []);
-            planByFolder.get(m.folder).push(m.file);
-        }
+    for (const n of hashCount.values()) if (n >= 2) dupGroups++;
+
+    for (const c of candidates) {
+        if (referenced.has(c.file.toLowerCase())) continue; // 被引用 → 铁律不动
+        const isDup = (hashCount.get(c.sha) ?? 0) >= 2;
+        const want = isDup ? '多余' : '闲置';
+        const isIdleNamed = IDLE_RE.test(c.file);
+        const isSurplusNamed = SURPLUS_RE.test(c.file);
+        // 已是正确前缀 → 不动
+        if (isDup && isSurplusNamed) continue;
+        if (!isDup && isIdleNamed) continue;
+        if (!planByFolder.has(c.folder)) planByFolder.set(c.folder, []);
+        planByFolder.get(c.folder).push({ file: c.file, want });
     }
 
-    // ── 4) 按夹分配闲置编号并执行 ──
+    // ── 4) 按夹分配编号并执行（闲置/多余各自独立编号序列）──
+    // token 一律用夹名；编号取全库（含 chongfu、含其他夹的同 token 遗留名）最大值，
+    // 保证 (前缀, token, 编号) 全库唯一——不同夹永不出现同名文件。
+    /** @type {Map<string, number>} `${前缀}|${token小写}` → 全库最大编号 */
+    const globalMax = new Map();
+    const NUM_RE = /^__(闲置|多余)__(.+)_(\d+)\.png$/i;
+    for (const f of allNamesGlobal) {
+        const mm = f.match(NUM_RE);
+        if (!mm) continue;
+        const key = `${mm[1]}|${mm[2].toLowerCase()}`;
+        const n = parseInt(mm[3], 10);
+        if (n > (globalMax.get(key) ?? 0)) globalMax.set(key, n);
+    }
+
     const log = [];
     let planned = 0;
-    for (const [folder, files] of planByFolder) {
+    for (const [folder, tasks] of planByFolder) {
         const dir = path.join(ASSETS, folder);
         const all = fs.readdirSync(dir).filter((f) => /\.png$/i.test(f));
-        let maxNum = 0;
-        let token = folder;
-        let tokenFromMax = null;
-        for (const f of all) {
-            const mm = f.match(IDLE_RE);
-            if (mm) {
-                const n = parseInt(mm[2], 10);
-                if (n > maxNum) { maxNum = n; tokenFromMax = mm[1]; }
-            }
-        }
-        if (tokenFromMax) token = tokenFromMax;
+        const token = folder;
         const existing = new Set(all.map((f) => f.toLowerCase()));
 
-        for (const from of files.sort()) {
+        for (const task of tasks.sort((a, b) => a.file.localeCompare(b.file))) {
+            const gkey = `${task.want}|${token.toLowerCase()}`;
             let dest;
             do {
-                maxNum++;
-                dest = `__闲置__${token}_${String(maxNum).padStart(2, '0')}.png`;
+                globalMax.set(gkey, (globalMax.get(gkey) ?? 0) + 1);
+                dest = `__${task.want}__${token}_${String(globalMax.get(gkey)).padStart(2, '0')}.png`;
             } while (existing.has(dest.toLowerCase()));
             existing.add(dest.toLowerCase());
             planned++;
-            console.log(`  [${folder}] ${from}  →  ${dest}`);
+            console.log(`  [${folder}] ${task.file}  →  ${dest}`);
             if (DRY) continue;
             const toAbs = path.join(dir, dest);
             if (fs.existsSync(toAbs)) {
                 console.error(`  ⚠ 目标已存在，跳过：${folder}/${dest}`);
                 continue;
             }
-            fs.renameSync(path.join(dir, from), toAbs);
-            // 改名后同步哈希缓存键，避免下次启动重算
-            const relOld = `${folder}/${from}`;
+            fs.renameSync(path.join(dir, task.file), toAbs);
+            // 同步哈希缓存键，避免下次启动重算
+            const relOld = `${folder}/${task.file}`;
             if (nextCache[relOld]) {
                 nextCache[`${folder}/${dest}`] = nextCache[relOld];
                 delete nextCache[relOld];
             }
-            log.push({ folder, from, to: dest });
+            log.push({ folder, from: task.file, to: dest });
         }
     }
 
     const secs = ((Date.now() - t0) / 1000).toFixed(1);
     console.log(
-        `[重复闲置改名] 重复组 ${dupGroups} | 待改 ${planned} | 实改 ${log.length}` +
+        `[立绘分类改名] 重复组 ${dupGroups} | 待改 ${planned} | 实改 ${log.length}` +
         ` | 重新哈希 ${hashed} 张 | 耗时 ${secs}s${DRY ? '（--dry-run 未改盘）' : ''}`,
     );
     if (DRY || log.length === 0) return;
