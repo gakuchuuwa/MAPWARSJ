@@ -128,6 +128,9 @@ export class AIController {
      * 执行单个军团的行为树
      */
     private tickArmy(army: Army): void {
+        // 脚本钉死军团（如岳飞北伐·朱仙镇宗弼军）：不跑行为树，避免被 AI 拉去攻城
+        if ((army as Army & { __scriptPinned?: boolean }).__scriptPinned) return;
+
         // 获取或创建上下文
         let context = this.armyContexts.get(army.id);
         if (!context) {
