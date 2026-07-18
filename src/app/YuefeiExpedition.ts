@@ -69,9 +69,9 @@ const ROUTE: { id: string; name: string }[] = [
 
 /** 忠义归顺 v4：按城型分级加兵（须与 yuefei-huanglong-sim 同步，勿单边改） */
 function zhongyiBonusRange(cityType: string): { min: number; max: number } {
-    if (cityType === 'big_city' || cityType === 'pass') return { min: 8000, max: 12000 };
-    if (cityType === 'medium_city') return { min: 4000, max: 7000 };
-    return { min: 1000, max: 4000 }; // small_city
+    if (cityType === 'big_city' || cityType === 'pass') return { min: 6000, max: 10000 };
+    if (cityType === 'medium_city') return { min: 3000, max: 6000 };
+    return { min: 1000, max: 3000 }; // small_city
 }
 
 const TICK_INTERVAL_MS = 400;
@@ -376,7 +376,10 @@ export class YuefeiExpedition {
         this.tickZhongyiTrickle(army);
 
         // 克城休整（留时间给语音播完再开拔下一城）
-        if (Date.now() < this.pauseUntilMs) return;
+        if (Date.now() < this.pauseUntilMs) {
+            army.expeditionTargetCityId = null;
+            return;
+        }
 
         // 朱仙镇拦路（开封路标未克前；岳飞始终沿路远征，不直线离路）
         if (this.waypointIndex === 0 && this.zhuxianPhase !== 'done') {
