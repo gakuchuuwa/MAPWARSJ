@@ -32,7 +32,7 @@ export const LINGNAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   xiou: { name: '西瓯戍兵', tier: 4 },           // 布山·西瓯
   luoyue: { name: '骆越部卒', tier: 4 },         // 花山·骆越
   guangxin: { name: '苍梧越甲', tier: 4 },       // 苍梧·百越特色重甲步兵
-  taiping: { name: '太平军', tier: 1 },          // 金田村·太平天国（威震天下的战略绝对主力）
+    taiping: { name: '石敢当', tier: 1 },
   leizhou: { name: '雷州戍兵', tier: 4 },        // 海康·李茂雷州卫
   monong: { name: '墨侬部卒', tier: 4 },       // 邦敦·阿侬率余部抗宋（缺乏极其著名的战术高光，降T3）
   shuizhen: { name: '水真戍卒', tier: 4 },     // 三菩·区大任驻守

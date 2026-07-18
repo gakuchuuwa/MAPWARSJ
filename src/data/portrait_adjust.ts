@@ -947,11 +947,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -13,
             "offsetY": -16
         },
-        "/assets/LINGNAN/guangxin_shixie.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -18
-        },
         "/assets/LINGNAN/tian_sizhou_tianyougong.png": {
             "scale": 1.02,
             "offsetX": 0,
@@ -5886,6 +5881,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.23,
             "offsetX": 0,
             "offsetY": -7
+        },
+        "/assets/LINGNAN/__闲置__LINGNAN_36.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/LINGNAN/guangxin_shixie.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -12
         }
     },
     "folderGuides": {

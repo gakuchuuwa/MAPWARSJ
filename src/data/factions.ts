@@ -623,7 +623,8 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 晚清／近代势力（21个）──
     // 第一类：农民革命政权
-    { id: 'taiping', name: '太平天国' },
+    { id: 'taiping', name: '太平' },
+
     { id: 'dacheng', name: '大成' },
 
     // 第二类：少数民族起义

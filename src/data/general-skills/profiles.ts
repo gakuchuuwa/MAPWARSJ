@@ -1402,7 +1402,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        taiping_shidakai: { generalId: 'taiping_shidakai', tier: 'famous', tacticalSkillId: 'ts_683', strategicSkillId: 'str_20', advantageSkillId: 'ts_683', balanceSkillId: 'ts_684', disadvantageSkillId: 'ts_685', atkBalanceSkillId: 'ts_075', atkDisadvantageSkillId: 'ts_685', defBalanceSkillId: 'ts_684', atkAdvantageSkillId: 'ts_040', defAdvantageSkillId: 'ts_815', defDisadvantageSkillId: 'ts_197', aptitude: 'create' , attackStyle: 'balanced'},
+    taiping_shidakai: { generalId: 'taiping_shidakai', tier: 'famous', tacticalSkillId: 'ts_040', advantageSkillId: 'ts_683', balanceSkillId: 'ts_684', disadvantageSkillId: 'ts_685', atkAdvantageSkillId: 'ts_040', atkBalanceSkillId: 'ts_075', atkDisadvantageSkillId: 'ts_685', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_684', defDisadvantageSkillId: 'ts_197', strategicSkillId: 'str_20', aptitude: 'create', attackStyle: 'balanced' },
 
 
 
