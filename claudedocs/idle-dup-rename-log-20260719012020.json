@@ -1,0 +1,67 @@
+[
+  {
+    "folder": "CENTRAL",
+    "from": "__多余__CENTRAL_01.png",
+    "to": "__闲置__CENTRAL_41.png"
+  },
+  {
+    "folder": "CENTRAL",
+    "from": "__多余__CENTRAL_03.png",
+    "to": "__闲置__CENTRAL_42.png"
+  },
+  {
+    "folder": "CENTRAL",
+    "from": "__多余__CENTRAL_04.png",
+    "to": "__闲置__CENTRAL_43.png"
+  },
+  {
+    "folder": "daming",
+    "from": "__多余__daming_01.png",
+    "to": "__闲置__daming_14.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__多余__DIANQIAN_05.png",
+    "to": "__闲置__DIANQIAN_19.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__多余__DIANQIAN_06.png",
+    "to": "__闲置__DIANQIAN_20.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "__多余__DIANQIAN_07.png",
+    "to": "__闲置__DIANQIAN_21.png"
+  },
+  {
+    "folder": "HEXI",
+    "from": "__多余__HEXI_01.png",
+    "to": "__闲置__HEXI_16.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__多余__BASHU_01.png",
+    "to": "__闲置__LINGNAN_01.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "__多余__LINGNAN_18.png",
+    "to": "__闲置__LINGNAN_02.png"
+  },
+  {
+    "folder": "NORTHEAST",
+    "from": "__多余__NORTHEAST_01.png",
+    "to": "__闲置__NORTHEAST_35.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "__多余__WESTERN_01.png",
+    "to": "__闲置__WESTERN_24.png"
+  },
+  {
+    "folder": "zhaosong",
+    "from": "__多余__zhaosong_01.png",
+    "to": "__闲置__zhaosong_24.png"
+  }
+]

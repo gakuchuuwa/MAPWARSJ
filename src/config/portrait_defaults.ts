@@ -920,6 +920,23 @@ export function registerPortraitPathRuntime(path: string): void {
 }
 
 /**
+ * 立绘加载失败时调用：把该路径从内存清单剔除。
+ *
+ * 【2026-07-19 主人工况】主人是「边玩边发现问题、边改边删立绘」，而立绘清单由
+ * vite 插件在 dev server 启动时扫盘生成、之后不再更新 —— 运行期删掉的图仍留在
+ * 抽签池里，抽中即 404，表现为守方城池驻军偶发空白立绘。
+ * 剔除后 pickRandomExisting 会按 portraitAssetExists 自动跳过它（所有文化区池、
+ * 政权专夹池共用同一份清单，故一处剔除全局生效），**无需重启 dev server**。
+ * 与 registerPortraitPathRuntime 对称。
+ */
+export function unregisterPortraitPathRuntime(path: string): void {
+    if (!path) return;
+    // 去掉 ?v= 之类的缓存串再规范化
+    const normalized = normalizePortraitWebPath(path.split('?')[0]).toLowerCase();
+    if (normalized) KNOWN_PORTRAIT_PATHS.delete(normalized);
+}
+
+/**
  * 立绘路径 fallback：
  * 有 requested 且文件在盘 → 直接用；否则 政权专夹 → 文化区夹 → 全局兜底。
  */

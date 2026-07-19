@@ -1,5 +1,5 @@
 import { getFactionGeneral, getGeneralRecordByGeneralId, setGeneralPortraitOverride } from '../data/FactionGenerals';
-import { registerPortraitPathRuntime } from '../config/portrait_defaults';
+import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
 import { SPRITE_PATHS, GameConfig } from '../config/GameConfig';
@@ -3891,6 +3891,11 @@ export class CombatUI {
             if (!isRetry) {
                 img.onerror = () => {
                     img.onerror = null;
+                    // 主人边玩边删立绘：加载失败即从内存清单剔除，
+                    // 之后所有池子抽签自动跳过它，同一张坏图只会坑一次，无需重启 dev server
+                    if (!portraitUrlsEqual(finalUrl, BATTLE_PORTRAIT_FALLBACK)) {
+                        unregisterPortraitPathRuntime(finalUrl);
+                    }
                     if (!unit) {
                         if (finalUrl !== BATTLE_PORTRAIT_FALLBACK) {
                             setSrc(BATTLE_PORTRAIT_FALLBACK, true);
