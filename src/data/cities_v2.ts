@@ -2782,6 +2782,10 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_chiwubao', name: '赤乌堡', factionId: 'cangsong', lat: 37.477, lng: 102.8815, type: 'pass', troops: 20000, region: 'HEXI' },
     { id: 'city_aertaishan', name: '阿尔泰山', factionId: 'aertai', lat: 46.37, lng: 96.27, type: 'small_city', troops: 20000, region: 'STEPPE' },
 
+    { id: 'city_wulihong', name: '乌利洪', factionId: 'manghuti', lat: 49.53, lng: 112.54, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
+
+
 
 
 

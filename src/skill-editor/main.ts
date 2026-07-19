@@ -38,7 +38,6 @@ function sortValue(s: SkillRow, key: string): number | string {
         case 'id': return parseInt(s.id.replace('ts_', ''), 10) || 0;
         case 'name': return s.displayName;
         case 'sit': return SIT_ORDER[s.situationTag] ?? 9;
-        case 'use': return USE_ORDER[s.usageTag] ?? 9;
         case 'six': return s.sixClass ? (SIX_ORDER[s.sixClass] ?? 8) : 9;
         case 'owner': return s.ownerName ? (ownerCount.get(s.ownerName) ?? 0) : -1;
         case 'value': return s.family === 'luck' ? (s.luckMin ?? 0.8) : (s.magnitude ?? -1);
@@ -124,7 +123,6 @@ app.innerHTML = `
     <span class="se-title">武将技编辑器</span>
     <input id="f-search" placeholder="搜技名 / id / 典故主" style="width:180px">
     <select id="f-sit"><option value="">三势·全部</option><option>优势</option><option>均势</option><option>劣势</option></select>
-    <select id="f-use"><option value="">攻防·全部</option><option>攻击</option><option>防御</option><option>双行</option></select>
     <select id="f-six"><option value="">六类·全部</option><option value="攻战计">攻战计</option><option value="胜战计">胜战计</option><option value="敌战计">敌战计</option><option value="混战计">混战计</option><option value="并战计">并战计</option><option value="败战计">败战计</option><option value="(空)">未标六类</option><option value="(x)">三势跨类</option></select>
     <select id="f-wear">
         <option value="">佩戴·全部</option>
@@ -150,7 +148,6 @@ app.innerHTML = `
             <th class="se-sortable" data-sort="id">id</th>
             <th class="se-sortable" data-sort="name">技名</th>
             <th class="se-sortable" data-sort="sit">三势</th>
-            <th class="se-sortable" data-sort="use">攻防</th>
             <th class="se-sortable" data-sort="six">六类(推导)</th>
             <th class="se-sortable" data-sort="owner">典故主</th>
             <th class="se-sortable" data-sort="value">档位/数值</th>
@@ -191,14 +188,12 @@ function wearProblem(s: SkillRow): string {
 function applyFilters(): SkillRow[] {
     const q = ($('f-search') as HTMLInputElement).value.trim();
     const sit = ($('f-sit') as HTMLSelectElement).value;
-    const use = ($('f-use') as HTMLSelectElement).value;
     const six = ($('f-six') as HTMLSelectElement).value;
     const wear = ($('f-wear') as HTMLSelectElement).value;
     const owner = ($('f-owner') as HTMLSelectElement).value;
     return SKILLS.filter(s => {
         if (q && !(s.id.includes(q) || s.displayName.includes(q) || (s.ownerName ?? '').includes(q))) return false;
         if (sit && s.situationTag !== sit) return false;
-        if (use && s.usageTag !== use) return false;
         if (six === '(空)' && s.sixClass) return false;
         if (six === '(x)' && s.sixClassMatch) return false;
         if (six && six !== '(空)' && six !== '(x)' && s.sixClass !== six) return false;
@@ -263,7 +258,6 @@ function renderList(): void {
             <td class="se-mono">${s.id}</td>
             <td>${s.displayName}${s.locked ? ' 🔒' : ''}</td>
             <td>${s.situationTag}${srcBadge(s.situationSource)}</td>
-            <td>${s.usageTag}</td>
             <td style="color:${s.sixClass ? '#d8c88e' : '#5a4a3a'}">${sixClassDisplay(s)}</td>
             <td>${s.ownerGeneralId
                 ? `<span style="color:#a8d8a8">${s.ownerName}</span>`
@@ -287,7 +281,7 @@ function renderList(): void {
             const sid = (btn as HTMLElement).dataset.id!;
             const s = SKILLS.find(x => x.id === sid);
             if (!s) return;
-            const line = `${s.id}\t${s.displayName}\t${s.ownerName ?? '通用'}\t${s.sourceQuote}\t${s.usageTag}\t${s.situationTag}\t${s.sixClass}`;
+            const line = `${s.id}\t${s.displayName}\t${s.ownerName ?? '通用'}\t${s.sourceQuote}\t${s.situationTag}\t${s.sixClass}`;
             navigator.clipboard.writeText(line).then(() => toast(`已复制：${s.id} ${s.displayName}`));
         });
     }
@@ -334,9 +328,6 @@ function renderDetail(): void {
         <hr style="border-color:#3a3226">
         <div class="se-field"><label>三势</label><select id="d-sit">
             ${['优势', '均势', '劣势'].map(v => `<option ${v === s.situationTag ? 'selected' : ''}>${v}</option>`).join('')}
-        </select></div>
-        <div class="se-field"><label>攻防</label><select id="d-use">
-            ${['双行', '攻击', '防御'].map(v => `<option ${v === s.usageTag ? 'selected' : ''}>${v}</option>`).join('')}
         </select></div>
         <div class="se-field"><label>六类</label><span class="se-ro">${sixInfo}</span></div>
         <div class="se-field"><label>典故主</label><input id="d-owner" list="dl-generals" value="${ownerVal}" placeholder="留空=通用；在册人名从下拉选；待挂将可保留原样再保存"></div>
@@ -388,7 +379,6 @@ async function saveDetail(s: SkillRow): Promise<void> {
     const body: Record<string, any> = {
         id: s.id,
         situationTag: ($('d-sit') as HTMLSelectElement).value,
-        usageTag: ($('d-use') as HTMLSelectElement).value,
         ownerGeneralId: owner.gid,
         ownerName: owner.name,
         tierLabel: tierSel?.value || undefined,
@@ -419,7 +409,6 @@ function renderNewForm(): void {
         <div class="se-field"><label>效果</label><select id="n-effect">${effects.map(e => `<option>${e}</option>`).join('')}</select></div>
         <div class="se-field"><label>条件</label><select id="n-cond">${CONDITIONS.map(c => `<option>${c}</option>`).join('')}</select></div>
         <div class="se-field"><label>三势</label><select id="n-sit"><option>优势</option><option>均势</option><option>劣势</option></select></div>
-        <div class="se-field"><label>攻防</label><select id="n-use"><option>双行</option><option>攻击</option><option>防御</option></select></div>
         <div class="se-field"><label>典故主</label><input id="n-owner" list="dl-generals" placeholder="留空 = 通用"></div>
         <div class="se-field"><label>档位</label><select id="n-tier"></select></div>
         <div class="se-field"><label>备注</label><input id="n-note"></div>
@@ -451,7 +440,6 @@ function renderNewForm(): void {
             baseEffect: ($('n-effect') as HTMLSelectElement).value,
             condition: ($('n-cond') as HTMLSelectElement).value,
             situationTag: ($('n-sit') as HTMLSelectElement).value,
-            usageTag: ($('n-use') as HTMLSelectElement).value,
             tierLabel: ($('n-tier') as HTMLSelectElement).value,
             ownerGeneralId: owner.gid, ownerName: owner.name,
             note: ($('n-note') as HTMLInputElement).value.trim() || undefined,
@@ -508,9 +496,6 @@ function runErrorCheck(): void {
         }
         if (!s.situationTag || !['优势', '均势', '劣势'].includes(s.situationTag)) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'noSituation', severity: 'error', msg: `三势标签缺失或异常（当前：${s.situationTag || '空'}）` });
-        }
-        if (!s.usageTag || !['攻击', '防御', '双行'].includes(s.usageTag)) {
-            issues.push({ id: s.id, displayName: s.displayName, type: 'noUsage', severity: 'error', msg: `攻防标签缺失或异常（当前：${s.usageTag || '空'}）` });
         }
         if (!s.sixClass) {
             issues.push({ id: s.id, displayName: s.displayName, type: 'noSixClass', severity: 'error', msg: `baseEffect「${s.baseEffect}」无法归入六类——效果类型不在已知映射中` });
@@ -934,7 +919,7 @@ function exportDoc(): void {
         if (Object.values(cnt).some(n => n > 1)) dupOwners++;
         if (!inReg.has(owner)) orphanOwners++;
     }
-    const fmtSkill = (s: SkillRow) => `${s.sixClass || '—'}｜${s.displayName}｜${s.situationTag}/${s.usageTag}｜${s.baseEffect}` +
+    const fmtSkill = (s: SkillRow) => `${s.sixClass || '—'}｜${s.displayName}｜${s.situationTag}｜${s.baseEffect}` +
         (s.sourceQuote ? `｜${s.sourceQuote}` : '');
 
     const L: string[] = [];
@@ -1034,7 +1019,7 @@ for (const th of document.querySelectorAll('.se-sortable')) {
 }
 
 // 筛选器实时刷新
-for (const id of ['f-search', 'f-sit', 'f-use', 'f-six', 'f-wear', 'f-owner']) {
+for (const id of ['f-search', 'f-sit', 'f-six', 'f-wear', 'f-owner']) {
     $(id).addEventListener('input', () => { renderList(); if (!selectedId) setDetailOpen(false); });
     $(id).addEventListener('change', () => { renderList(); if (!selectedId) setDetailOpen(false); });
 }

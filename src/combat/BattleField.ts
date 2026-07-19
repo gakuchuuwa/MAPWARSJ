@@ -42,6 +42,7 @@ import {
     applyStrategicRollMultipliersOnly,
     applyComebackRollMultipliersForSide,
     tryApplyComebackTacticalForSide,
+    sideHasBattleDurationExtend,
     tryEmitOpeningTacticalOnReinforcementJoin,
     resolveSideOpeningFateLuck,
     sideBasePower,

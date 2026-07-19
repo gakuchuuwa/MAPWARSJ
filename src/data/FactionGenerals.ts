@@ -797,6 +797,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yanzhou: { generalId: 'yanzhou_zhongshiheng', generalName: '种世衡', portrait: '/assets/zhaosong/yanzhou_zhongshiheng.png' },
     cangsong: { generalId: 'cangsong_machao', generalName: '马超', portrait: '/assets/HEXI/cangsong_machao.png' },
     aertai: { generalId: 'aertai_baibuhua', generalName: '拜不花', portrait: '/assets/STEPPE/aertai_baibuhua.png' },
+    manghuti: { generalId: 'manghuti_weidaer', generalName: '畏答儿', portrait: '/assets/STEPPE/manghuti_weidaer.png' },
 
 };
 

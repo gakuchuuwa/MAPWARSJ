@@ -1,11 +1,11 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/19 23:13:17（共 147 条）
+ * 生成时间：2026/7/20 00:40:52（共 146 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
-    "/assets/LINGNAN/__多余__LINGNAN_06.png": "/assets/BASHU/ba_bamanzi.png",
+    "/assets/LINGNAN/__闲置__zhaosong_12.png": "/assets/BASHU/ba_bamanzi.png",
     "/assets/BASHU/ming_zheng_zhengchenggong.png": "/assets/BASHU/boren_ada.png",
     "/assets/LINGNAN/jingjiang_qushisi.png": "/assets/BASHU/cong_puhu.png",
     "/assets/LINGNAN/__多余__LINGNAN_16.png": "/assets/BASHU/cuanshi_cuanlongyan.png",
@@ -143,7 +143,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/TIBET/xiangxiong_limixia_x.png": "/assets/STEPPE/zhadalan_zhamuhe.png",
     "/assets/TIBET/monpa_meire.png": "/assets/STEPPE/zubu_mogusi.png",
     "/assets/TIBET/pazhu_redangunsangpa.png": "/assets/STEPPE/__多余__STEPPE_02.png",
-    "/assets/TIBET/ali_gandancaiwang.png": "/assets/STEPPE/__多余__STEPPE_03.png",
     "/assets/WESTERN/__多余__WESTERN_03.png": "/assets/TIBET/fuguo_yizeng.png",
     "/assets/TIBET/xiutu_jinridi.png": "/assets/TIBET/ganden_zongkaba.png",
     "/assets/TIBET/qifu_d_qifuchipan.png": "/assets/TIBET/gurkha_baduersaye.png",
