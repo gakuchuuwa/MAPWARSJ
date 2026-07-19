@@ -154,10 +154,10 @@ export class Army implements IBattleUnit {
      */
     public timeSinceSupply: number = 0;
     /**
-     * 行军减兵小数累加器：低费率（0.3%/秒档）× 每帧小 dt 下先攒小数、满 1 才扣，
-     * 保证任意帧率下速率精确（严禁照抄坚壁清野 max(1, floor) 每帧扣，会严重超扣）。
+     * 行军减兵整跳计时：断粮后向下一跳累计的游戏秒数，攒满 ATTRITION_CHUNK_SEC 扣一整跳。
+     * 战斗/休整期间不累计（扣减暂停）；split 时子军团继承（防拆分刷补给漏洞）。
      */
-    public attritionLossCarry: number = 0;
+    public attritionChunkSec: number = 0;
 
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;
@@ -232,6 +232,9 @@ export class Army implements IBattleUnit {
         if (wasFighting && !isFighting && this.type === 'legion' && !this.isDestroyed
             && GameConfig.SYSTEM.SANDBOX_MODE && this.troops > 0) {
             this.startPostBattleRest();
+            // 行军减兵：战斗胜利 = 就地进行补给，重新计时（主人裁定 2026-07-21）
+            this.timeSinceSupply = 0;
+            this.attritionChunkSec = 0;
             if (!this.isPostBattleResting()) {
                 this.tryEmitPostBattleResumeFx();
             }
@@ -718,6 +721,7 @@ export class Army implements IBattleUnit {
         newArmy.cultureScales = this.cultureScales ? [...this.cultureScales] : null; // [NEW] Inherit culture scales
         // 行军减兵：子军团继承父军团断粮计时（防拆分刷补给漏洞；小数累加器不复制，<1 兵无刷取空间）
         newArmy.timeSinceSupply = this.timeSinceSupply;
+        newArmy.attritionChunkSec = this.attritionChunkSec;
 
         gameLog('army', `[Army] Splitting ${amount} from ${this.id}. Remaining: ${this.troops}. New Army: ${newArmy.id}`);
         return newArmy;

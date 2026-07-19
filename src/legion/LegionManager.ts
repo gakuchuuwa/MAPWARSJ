@@ -65,8 +65,6 @@ export class LegionManager {
     private roadFailureLogCooldown: Map<string, number> = new Map();
     /** 行军首段异常日志节流（armyId -> timestamp） */
     private marchDiagLogCooldown: Map<string, number> = new Map();
-    /** 远输减员飘字汇总（armyId -> 未飘出的累计损失与计时，游戏秒；≥3 秒汇总一次） */
-    private marchAttritionFloatAccum: Map<string, { loss: number; elapsed: number }> = new Map();
     /** 行军减兵复位查城的每帧缓存（factionId -> 己方城列表；update 开头清空，同帧归属变化最坏下一帧才复位，无感） */
     private ownCitiesFrameCache: Map<string, readonly { latitude: number; longitude: number }[]> = new Map();
 
@@ -388,7 +386,6 @@ export class LegionManager {
 
     public removeArmy(army: Army): void {
         this.followResupplySystem?.clearForArmy(army.id);
-        this.marchAttritionFloatAccum.delete(army.id);
         this.armies = this.armies.filter(a => a !== army);
 
         // Remove from registry
@@ -981,32 +978,16 @@ export class LegionManager {
         }
 
         // ② 途经复位（仅计时器非零才查城；每帧每势力 memoize，见 getOwnCitiesForSupplyReset）
-        if (army.timeSinceSupply > 0 || army.attritionLossCarry > 0) {
+        if (army.timeSinceSupply > 0 || army.attritionChunkSec > 0) {
             resetSupplyTimerIfNearOwnCity(army, this.getOwnCitiesForSupplyReset(army.getFactionId()));
         }
 
-        // ③ 扣减；本帧整数损失汇总给跟拍飘字
+        // ③ 扣减（15 秒整跳）：整跳即飘小字，只飘跟拍军团（脉冲/大字是技能专属，主人裁定）
         const loss = tickMarchAttrition(army, deltaTime);
-        if (loss > 0) this.accumulateMarchAttritionFloat(army, loss, deltaTime);
-    }
-
-    /** 远输减员飘字：每军团 ≥3 游戏秒汇总一次，只飘跟拍军团；飘小字（脉冲/大字是技能专属，主人裁定） */
-    private accumulateMarchAttritionFloat(army: Army, loss: number, deltaTime: number): void {
-        let entry = this.marchAttritionFloatAccum.get(army.id);
-        if (!entry) {
-            entry = { loss: 0, elapsed: 0 };
-            this.marchAttritionFloatAccum.set(army.id, entry);
+        if (loss > 0 && army.id === getFollowedArmyId()) {
+            const pos = army.getPosition();
+            spawnMapFloatingSmallText(pos.lat, pos.lng, `-${loss} 远输减员`, '#ff5555');
         }
-        entry.loss += loss;
-        entry.elapsed += deltaTime;
-        if (entry.elapsed < 3) return;
-        this.marchAttritionFloatAccum.delete(army.id);
-
-        const totalLoss = Math.floor(entry.loss);
-        if (totalLoss <= 0) return;
-        if (army.id !== getFollowedArmyId()) return;
-        const pos = army.getPosition();
-        spawnMapFloatingSmallText(pos.lat, pos.lng, `-${totalLoss} 远输减员`, '#ff5555');
     }
 
     /** 来犯减兵锚定之城：行军 targetCity，或已开打攻城战之 siegeCityId */

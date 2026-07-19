@@ -1,12 +1,12 @@
 /**
- * 行军减兵（远输困境）v2（2026-07-21 主人定稿：时间口径·一视同仁）
+ * 行军减兵（远输困境）v2（2026-07-21 主人定稿：时间口径·一视同仁·15 秒整跳）
  *
  * 语义：timeSinceSupply = 「最后一次途经己方据点至今的游戏秒数」（形成军团即起算；
- *   攻下敌城后该城即己方城，途经即复位）。
+ *   攻下敌城后该城即己方城，途经即复位；战斗胜利 = 就地进行补给，亦复位）。
  *   · 计时：LegionManager 主循环每帧 += deltaTime（战斗中照走、扣减暂停；战后休整停表停扣；远征豁免军团不走表）；
  *   · 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（不要求驻停，静止军团也生效）；
- *   · 扣减：超过 FREE_SUPPLY_SEC（15 游戏秒 = 1 季度携行粮）后对当前兵力按 ATTRITION_RATE_PER_SEC
- *     每秒百分比减员，保底 MIN_TROOPS_FLOOR；
+ *   · 整跳扣减：超过 FREE_SUPPLY_SEC（15 游戏秒 = 1 季度携行粮）后，每 ATTRITION_CHUNK_SEC（15 游戏秒）
+ *     对当前兵力扣 ATTRITION_CHUNK_RATE（7.5% = 0.5%/秒 × 15 秒，与旧涓流曲线等效），保底 MIN_TROOPS_FLOOR；
  *   · 豁免：战斗中暂停扣减 / 远征军团整体豁免（含岳飞脚本军）/ str_13 以战养战全免；
  *   · 一视同仁：不分步骑水陆——同样的时间窗，速度快者走得更远，速度优势自动转为后勤优势
  *     （骑兵得补偿；海运快捷但长途航海同样断粮）。
@@ -19,10 +19,11 @@ import { generalHasStrategicEffect } from '../../combat/GeneralSkillCombat';
 import type { Army } from '../Army';
 
 /**
- * 每帧减员 tick。返回本帧实际扣减的整数兵力（供 LegionManager 飘字汇总），0 = 本帧无扣减。
+ * 每帧减员 tick。返回本帧实际扣减的整数兵力（供 LegionManager 飘字），0 = 本帧无扣减。
  *
- * 扣减用小数累加器：低费率 × 每帧小 dt 下先攒小数、满 1 才扣，保证任意帧率下速率精确——
- * 严禁照抄坚壁清野 max(1, floor(...)) 每帧至少扣 1 的写法，那写法在低费率下会严重超扣（主人裁定口径）。
+ * 整跳模型（主人裁定 2026-07-21）：断粮后向 attritionChunkSec 累计，攒满 ATTRITION_CHUNK_SEC
+ * 一跳、一次扣 ATTRITION_CHUNK_RATE——不逐帧涓流，飘字天然 15 秒一跳、观众可读；单跳至少扣 1。
+ * 一帧 dt 再大也只结一跳（余量留到下帧），避免暂停恢复后单帧暴扣。
  */
 export function tickMarchAttrition(army: Army, deltaTime: number): number {
     const cfg = GameConfig.MARCH_ATTRITION;
@@ -44,16 +45,20 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     // 免费补给时间窗：FREE_SUPPLY_SEC 游戏秒 = 1 季度携行粮
     if (army.timeSinceSupply <= cfg.FREE_SUPPLY_SEC) return 0;
 
-    army.attritionLossCarry += troops * cfg.ATTRITION_RATE_PER_SEC * deltaTime;
-    const whole = Math.floor(army.attritionLossCarry);
-    if (whole < 1) return 0;
-    army.setTroops(Math.max(cfg.MIN_TROOPS_FLOOR, troops - whole));
-    army.attritionLossCarry -= whole;
-    return whole;
+    army.attritionChunkSec += deltaTime;
+    if (army.attritionChunkSec < cfg.ATTRITION_CHUNK_SEC) return 0;
+    army.attritionChunkSec -= cfg.ATTRITION_CHUNK_SEC;
+    const loss = Math.min(
+        troops - cfg.MIN_TROOPS_FLOOR,
+        Math.max(1, Math.floor(troops * cfg.ATTRITION_CHUNK_RATE)),
+    );
+    if (loss <= 0) return 0;
+    army.setTroops(troops - loss);
+    return loss;
 }
 
 /**
- * 途经复位：距任一己方据点 ≤ RESET_RADIUS_KM 即 timeSinceSupply 与 attritionLossCarry 清零。
+ * 途经复位：距任一己方据点 ≤ RESET_RADIUS_KM 即 timeSinceSupply 与 attritionChunkSec 清零。
  * 「己方城」由调用方筛好传入（LegionManager 用 cityManager.getCitiesByFaction(army.getFactionId())，
  * 与 FollowResupplySystem 同款查询）；空 factionId 传空数组自然不命中。
  * 半径换算：km ÷ KM_PER_DEGREE → 度，用 getEuclideanDistance（与 FollowResupplySystem 口径一致）。
@@ -66,7 +71,7 @@ export function resetSupplyTimerIfNearOwnCity(
     const cfg = GameConfig.MARCH_ATTRITION;
     if (!cfg.ENABLED) return false;
     if (army.isDestroyed) return false;
-    if (army.timeSinceSupply === 0 && army.attritionLossCarry === 0) return false;
+    if (army.timeSinceSupply === 0 && army.attritionChunkSec === 0) return false;
 
     const radiusDeg = cfg.RESET_RADIUS_KM / cfg.KM_PER_DEGREE;
     const pos = army.getPosition();
@@ -74,7 +79,7 @@ export function resetSupplyTimerIfNearOwnCity(
         const dist = getEuclideanDistance(pos, { lat: city.latitude, lng: city.longitude });
         if (dist <= radiusDeg) {
             army.timeSinceSupply = 0;
-            army.attritionLossCarry = 0;
+            army.attritionChunkSec = 0;
             return true;
         }
     }

@@ -2147,6 +2147,7 @@ export const CITIES_V2: CityDataV2[] = [
     },
     { id: 'city_guyanshan', name: '姑衍山', factionId: 'chenli_d', lat: 48.6184, lng: 110.6488, type: 'pass', troops: 20000, region: 'STEPPE' },
 
+
     { id: 'city_naomaohu', name: '淖毛湖', factionId: 'huyan', lat: 43.279321, lng: 94.713135, type: 'small_city', troops: 20000, region: 'STEPPE' },
 
     { id: 'city_jiluoshan', name: '稽落山', factionId: 'bayegu', lat: 44.974390, lng: 99.113159, type: 'pass', region: 'STEPPE', troops: 20000,
