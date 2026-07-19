@@ -752,11 +752,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -19
         },
-        "/assets/HEXI/quanrong_yiquhai.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": 5
-        },
         "/assets/HEXI/huizhou_yaosi.png": {
             "scale": 1.1,
             "offsetX": 0,
@@ -2866,11 +2861,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.75,
             "offsetX": 0,
             "offsetY": -15
-        },
-        "/assets/xianqin/__闲置__xianqin_04.png": {
-            "scale": 1.23,
-            "offsetX": 0,
-            "offsetY": -28
         },
         "/assets/xianqin/__闲置__xianqin_06.png": {
             "scale": 0.94,
@@ -5643,9 +5633,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/HEXI/__闲置__CENTRAL_21.png": {
-            "scale": 0.91,
+            "scale": 0.94,
             "offsetX": 0,
-            "offsetY": -25
+            "offsetY": 5
         },
         "/assets/CENTRAL/woye_huangfugui.png": {
             "scale": 1.03,
@@ -5896,6 +5886,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.15,
             "offsetX": 0,
             "offsetY": 6
+        },
+        "/assets/xianqin/quanrong_yiquhai.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": -28
         }
     },
     "folderGuides": {
