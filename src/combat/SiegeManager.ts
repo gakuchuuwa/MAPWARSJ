@@ -1233,7 +1233,11 @@ export class SiegeManager {
         };
 
         this.activeSieges.set(targetCity.id, battleField);
-        this.cityManager.playSiegeEffect(targetCity.id, () => army.getPosition());
+        this.cityManager.playSiegeEffect(
+            targetCity.id,
+            () => army.getPosition(),
+            battleField.targetDuration,
+        );
     }
 
     private enqueueSiegeThirdPartyWaiter(

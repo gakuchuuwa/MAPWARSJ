@@ -193,7 +193,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -35
         },
         "/assets/DIANQIAN/siam_nalixuan_pugan.png": {
-            "scale": 1.02,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": -39
         },
@@ -2357,11 +2357,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/TIBET/lang_clan_jiangqujianzan.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/STEPPE/hongirad_dexuechan.png": {
             "scale": 0.84,
             "offsetX": 0,
@@ -2628,7 +2623,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/TIBET/monpa_meire.png": {
-            "scale": 0.76,
+            "scale": 0.82,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -4593,7 +4588,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -27
         },
         "/assets/zhaosong/yanchuan_d_yuefei.png": {
-            "scale": 1.18,
+            "scale": 1.16,
             "offsetX": 4,
             "offsetY": -28
         },
@@ -5358,9 +5353,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/TIBET/__闲置__TIBET_17.png": {
-            "scale": 0.91,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": -32
+            "offsetY": 0
         },
         "/assets/TIBET/gongtang_gongtangcang.png": {
             "scale": 0.93,
@@ -5906,6 +5901,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.89,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/TIBET/lang_clan_jiangqujianzan.png": {
+            "scale": 1.11,
+            "offsetX": 12,
+            "offsetY": -15
         }
     },
     "folderGuides": {

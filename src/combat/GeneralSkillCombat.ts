@@ -112,13 +112,9 @@ function sideIsFirstSortie(units: IBattleUnit[]): boolean {
 /** 名将开局战术 UI 延迟（秒）：无时长信息时的兜底 */
 export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
 
-/**
- * 战斗三阶段进度分界（与 BattleField 战损 / CombatUI 摆幅 / 武将技脉冲共用）。
- * 主人 2026-07 定：12s + 12s + 6s @ 30s 有将战 → 40% / 40% / 20%。
- */
-export const PHASE_STALEMATE_START = 0.4;
-/** 第三幕（溃败）起点；第二幕 ≈ 40%～80% */
-export const PHASE_COLLAPSE_START = 0.8;
+// 三幕分界已移至 TacticalConstants（零依赖叶子），供 map 层等直接取用；此处原样再导出保持旧引用可用
+export { PHASE_STALEMATE_START, PHASE_COLLAPSE_START } from './TacticalConstants';
+import { PHASE_STALEMATE_START, PHASE_COLLAPSE_START } from './TacticalConstants';
 
 // 开局脉冲按本场目标时长比例后移；慢直播：短战略提早亮相留错开窗，长战对齐第一幕末。
 const OPENING_UI_DELAY_RATIO = PHASE_STALEMATE_START;

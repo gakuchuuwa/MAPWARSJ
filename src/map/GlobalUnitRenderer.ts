@@ -647,18 +647,20 @@ export class GlobalUnitRenderer {
                                 spreadFactor: 0.04,
                             });
                         } else {
-                            this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 6, spreadFactor: 0.025 });
+                            this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 5, spreadFactor: 0.025 });
                         }
 
                         // 攻城方额外发射石弹（投石机）
                         if ((unit as any).isSiegeAttacker && unit.currentBattleType === 'siege') {
-                            this.projectileSystem.spawnVolley(baseStart, baseEnd, {
-                                count: 2,
-                                spreadFactor: 0.04,
-                                durationMs: 600,
-                                staggerMs: 120,
-                                type: 'stone',
-                            });
+                            setTimeout(() => {
+                                this.projectileSystem.spawnVolley(baseStart, baseEnd, {
+                                    count: 2,
+                                    spreadFactor: 0.04,
+                                    durationMs: 600,
+                                    staggerMs: 400,
+                                    type: 'stone',
+                                });
+                            }, 400); // 延迟发射，使箭雨和投石有先后层次感
                         }
 
                         unit.lastShotTime = now;

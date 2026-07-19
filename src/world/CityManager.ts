@@ -668,9 +668,11 @@ export class CityManager {
     /** 攻城放大还原的延迟定时器：同城新攻城重开时取消未走的还原（防陈旧定时器把新城缩回去） */
     private readonly siegeZoomRestoreTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
+    /** @param battleDurationSec 本场攻城战目标时长，用于把三坨火的渐显节奏摊到整场战斗 */
     public playSiegeEffect(
         cityId: string,
-        getAttackerPos?: () => { lat: number; lng: number } | null | undefined
+        getAttackerPos?: () => { lat: number; lng: number } | null | undefined,
+        battleDurationSec?: number
     ): void {
         const city = this.getCity(cityId);
         if (city) {
@@ -678,7 +680,8 @@ export class CityManager {
                 cityId,
                 { lat: city.latitude, lng: city.longitude },
                 city.type,
-                getAttackerPos
+                getAttackerPos,
+                battleDurationSec
             );
             // 新攻城开始：取消上一场未走的"延迟还原"
             const pending = this.siegeZoomRestoreTimers.get(cityId);
