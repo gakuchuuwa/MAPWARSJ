@@ -132,3 +132,57 @@ export function spawnMapPulse(lat: number, lng: number, text: string, color: str
     }, 1600);
     return true;
 }
+
+/**
+ * 大地图飘小字（非技能级）：补给/减员等后勤事件的克制提示。
+ * 与 spawnMapFloatingText / spawnMapPulse（战略技专属隶书大字 + 3D 溢光脉冲）严格区分：
+ * 小号宋体、常规字重、无 3D、无溢光、短动画、层级更低——主人裁定：大字/脉冲都是技能专属，
+ * 后勤事件一律走本函数的小字。
+ */
+export function spawnMapFloatingSmallText(lat: number, lng: number, text: string, color: string): void {
+    const map = (window as any).game?.map?.getLeafletMap?.();
+    if (!map) return;
+
+    // 只有在镜头范围内才飘，零干扰
+    const bounds = map.getBounds();
+    if (!bounds || !bounds.contains([lat, lng])) return;
+
+    const container = map.getPanes().popupPane;
+    if (!container) return;
+
+    const point = map.latLngToLayerPoint([lat, lng]);
+
+    const el = document.createElement('div');
+    el.innerText = text;
+    el.style.position = 'absolute';
+    el.style.left = `${point.x}px`;
+    el.style.top = `${point.y - 24}px`; // 军团头顶略低处起飘，不与技能大字抢位置
+    el.style.fontFamily = "'SimSun', 'Songti SC', serif"; // 宋体小字，区别于技能隶书
+    el.style.fontSize = '12px';
+    el.style.fontWeight = '600';
+    el.style.color = color; // 颜色直接作字色，不做技能式溢光
+    el.style.textShadow = '0 1px 2px rgba(0,0,0,0.8)'; // 仅留可读性底影
+    el.style.pointerEvents = 'none';
+    el.style.whiteSpace = 'nowrap';
+    el.style.zIndex = '999'; // 压在技能飘字（1000）之下
+
+    container.appendChild(el);
+
+    // 克制的“缓升 + 渐隐”，无弹出、无放大脉冲
+    el.animate([
+        { opacity: 0, transform: 'translate(-50%, 0)' },
+        { opacity: 0.9, transform: 'translate(-50%, -10px)', offset: 0.2 },
+        { opacity: 0.9, transform: 'translate(-50%, -22px)', offset: 0.75 },
+        { opacity: 0, transform: 'translate(-50%, -30px)' }
+    ], {
+        duration: 1600,
+        easing: 'ease-out',
+        fill: 'forwards'
+    });
+
+    setTimeout(() => {
+        if (el.parentNode) {
+            el.parentNode.removeChild(el);
+        }
+    }, 1700);
+}

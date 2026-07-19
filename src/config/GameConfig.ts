@@ -164,7 +164,8 @@ export class GameConfig {
      *   每个军团维护 timeSinceSupply——自最后一次途经己方据点半径以来的游戏秒数（形成军团即起算）；
      *   超过 FREE_SUPPLY_SEC（=1 季度携行粮）后按 ATTRITION_RATE_PER_SEC 每秒百分比减员；
      *   途经任一己方据点 RESET_RADIUS_KM 内即复位（不要求驻停；攻下敌城变己方城后途经即复位）；
-     *   战斗中计时照走、扣减暂停；远征军团（expeditionTargetCityId 非空，含岳飞脚本军）整体豁免、不走表；
+     *   战斗中照走表（扣减暂停，围城断粮题中之义）；战后休整停表停扣；
+     *   远征军团（expeditionTargetCityId 非空，含岳飞脚本军）整体豁免、不走表；
      *   保底 MIN_TROOPS_FLOOR，衰减永不会把军团扣到 0。
      *   一视同仁：不分步骑水陆——同样的时间窗，速度快者走得更远，速度优势自动转为后勤优势。
      */

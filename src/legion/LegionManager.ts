@@ -22,7 +22,7 @@ import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
 import { City, LatLng, SiegeData } from '../types/core';
 import { cityToLatLng, getEuclideanDistance } from '../core/DistanceUtils';
-import { getFollowedArmyId, spawnMapFloatingText } from '../utils/MapFloatingText';
+import { getFollowedArmyId, spawnMapFloatingSmallText } from '../utils/MapFloatingText';
 import {
     releaseFieldBattleCombatState,
     tryEngageFieldBattle,
@@ -965,16 +965,18 @@ export class LegionManager {
 
     /**
      * 行军减兵（远输困境）管线（2026-07-21 主人定稿 v2：时间口径·一视同仁）：
-     *   ① 计时：timeSinceSupply 每帧 += deltaTime（战斗中照走；远征豁免军团不走表）；
+     *   ① 计时：timeSinceSupply 每帧 += deltaTime（战斗中照走；战后休整停表；远征豁免军团不走表）；
      *   ② 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（计时器为 0 时不查城，省每帧全表过滤）；
-     *   ③ 扣减：免费窗/战斗/远征/str_13 豁免与保底 1 等守卫全在 MarchAttritionSystem 内。
+     *   ③ 扣减：免费窗/战斗/休整/远征/str_13 豁免与保底 1 等守卫全在 MarchAttritionSystem 内。
      */
     private tickMarchAttritionPipeline(army: Army, deltaTime: number): void {
         if (!GameConfig.MARCH_ATTRITION.ENABLED) return;
         if (army.isDestroyed || army.getTroops() <= 0) return;
 
-        // ① 计时（一视同仁：不分步骑水陆，同样的时间窗速度快者走得更远；远征豁免军团不走表）
-        if (!(GameConfig.MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null)) {
+        // ① 计时（一视同仁：不分步骑水陆；战斗中照走——围城断粮题中之义，扣减在战斗内暂停；
+        //    战后休整停表；远征豁免军团不走表）
+        if (!(army.isPostBattleResting?.() ?? false)
+            && !(GameConfig.MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null)) {
             army.timeSinceSupply += deltaTime;
         }
 
@@ -988,7 +990,7 @@ export class LegionManager {
         if (loss > 0) this.accumulateMarchAttritionFloat(army, loss, deltaTime);
     }
 
-    /** 远输减员飘字：每军团 ≥3 游戏秒汇总一次，只飘跟拍军团（与战略技 pulse 同规） */
+    /** 远输减员飘字：每军团 ≥3 游戏秒汇总一次，只飘跟拍军团；飘小字（脉冲/大字是技能专属，主人裁定） */
     private accumulateMarchAttritionFloat(army: Army, loss: number, deltaTime: number): void {
         let entry = this.marchAttritionFloatAccum.get(army.id);
         if (!entry) {
@@ -1004,7 +1006,7 @@ export class LegionManager {
         if (totalLoss <= 0) return;
         if (army.id !== getFollowedArmyId()) return;
         const pos = army.getPosition();
-        spawnMapFloatingText(pos.lat, pos.lng, `-${totalLoss} 远输减员`, '#ff5555');
+        spawnMapFloatingSmallText(pos.lat, pos.lng, `-${totalLoss} 远输减员`, '#ff5555');
     }
 
     /** 来犯减兵锚定之城：行军 targetCity，或已开打攻城战之 siegeCityId */
