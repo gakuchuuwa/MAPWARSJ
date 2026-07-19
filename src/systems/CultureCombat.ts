@@ -82,13 +82,20 @@ export function getRegionCenterCombatMultiplier(unit: IBattleUnit): number {
     return getRegionCenterGarrisonMultiplier(unit);
 }
 
-/** 单单位固定战力系数 = 文化区 ×（关隘「据险而守」×1.2）×（文化中心「守土继绝」×1.2） */
+/**
+ * 单单位固定战力系数 = 文化环 × 据点环
+ *   文化环：文化区攻防表
+ *   据点环：关隘「据险而守」与文化中心「守土继绝」**取最大值**，不相乘 —— 焊死据点环上限 1.2。
+ *     当前数据两者零重叠（149 关隘 / 14 文化中心），取 max 与相乘结果一致；
+ *     此写法是为了防止日后把某个文化中心改成关隘时，1.44 悄悄出现且无任何报错。
+ */
 export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
-    return (
-        getCultureOnlyCombatMultiplier(unit) *
-        getPassGarrisonMultiplier(unit) *
-        getRegionCenterGarrisonMultiplier(unit)
+    const cultureRing = getCultureOnlyCombatMultiplier(unit);
+    const siteRing = Math.max(
+        getPassGarrisonMultiplier(unit),
+        getRegionCenterGarrisonMultiplier(unit),
     );
+    return cultureRing * siteRing;
 }
 
 /** 远征军团 / 远征精锐 tier 加成；城防本场掷出精锐时同样乘 tier */

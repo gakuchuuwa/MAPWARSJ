@@ -22,14 +22,14 @@ export const COMEBACK_LUCK_RANGE: [number, number] = [0.25, 0.45];
 /**
  * 第四层·攻防风格战力系数
  * 输入只有两个：本场位置（攻方/守方） × 武将 attackStyle。攻城野战同一套。
- *   攻方位：善攻 1.20、双行 1.20、善防 0.80
- *   守方位：善防 1.20、双行 1.20、善攻 0.80
- * 双行两面皆 1.20（永不吃亏），专精只在对口位置拿 1.20、错位吃 0.80。
+ *   攻方位：善攻 1.20、双行 1.10、善防 0.80
+ *   守方位：善防 1.20、双行 1.10、善攻 0.80
+ * 双行两面皆 1.10（永不吃亏但不封顶），专精只在对口位置拿 1.20、错位吃 0.80。
  */
 export const ATTACK_STYLE_POWER_MULT: Record<string, Record<'attack' | 'defense', number>> = {
     attack:   { attack: 1.20, defense: 0.80 },
     defense:  { attack: 0.80, defense: 1.20 },
-    balanced: { attack: 1.20, defense: 1.20 },
+    balanced: { attack: 1.10, defense: 1.10 },
 };
 
 /**
