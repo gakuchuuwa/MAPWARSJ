@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/19 19:50:48（共 147 条）
+ * 生成时间：2026/7/19 22:32:20（共 147 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
@@ -114,7 +114,9 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/TIBET/__多余__TIBET_01.png": "/assets/STEPPE/cheshihou_angui.png",
     "/assets/TIBET/tsangpa_pengcuonanjie.png": "/assets/STEPPE/duolu_ashinahelu.png",
     "/assets/TIBET/__多余__TIBET_03.png": "/assets/STEPPE/gaoche_afuzhiluo.png",
-    "/assets/TIBET/golog_wandezhaxi.png": "/assets/STEPPE/geluolu_chisipijia.png",    "/assets/TIBET/gongbu_gongbumangbuzhi.png": "/assets/STEPPE/jiluo_d_douxian.png",
+    "/assets/TIBET/golog_wandezhaxi.png": "/assets/STEPPE/geluolu_chisipijia.png",
+    "/assets/TIBET/__闲置__TIBET_17.png": "/assets/STEPPE/heisha_d_houlihu.png",
+    "/assets/TIBET/gongbu_gongbumangbuzhi.png": "/assets/STEPPE/jiluo_d_douxian.png",
     "/assets/TIBET/spurgyal_dariniansai.png": "/assets/STEPPE/kelie_zhaheganbu.png",
     "/assets/TIBET/nandou_sushili.png": "/assets/STEPPE/kumo_xiwanghuilibao.png",
     "/assets/TIBET/jiantang_sangjiejia.png": "/assets/STEPPE/naiman_taiyanghan.png",
