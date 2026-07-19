@@ -5901,6 +5901,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -22
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_41.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {

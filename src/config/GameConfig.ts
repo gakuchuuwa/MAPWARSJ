@@ -294,22 +294,33 @@ export function clampBattleDurationSec(seconds: number, minSec?: number): number
     );
 }
 
-/** 开战 luck ∈ [LUCK_MIN, LUCK_MAX]（当前 0.8～1.2） */
+/** 运气环档距：只出 0.1 的整数档，不出中间小数 */
+export const LUCK_STEP = 0.1;
+
+/** 开战 luck：在 [LUCK_MIN, LUCK_MAX] 内按 LUCK_STEP 等概率抽一档（当前 0.8/0.9/1.0/1.1/1.2 五档） */
 export function rollCombatLuckMultiplier(): number {
     const { LUCK_MIN, LUCK_MAX } = GameConfig.COMBAT;
-    return LUCK_MIN + Math.random() * (LUCK_MAX - LUCK_MIN);
+    return rollLuckLadder(LUCK_MIN, LUCK_MAX);
 }
 
 /** luck 绝对边界（防未来新增技能误传坏值） */
 export const LUCK_ABS_MIN = 0.3;
 export const LUCK_ABS_MAX = 2.0;
 
-/** 在指定区间内均匀掷 luck；硬夹到 [LUCK_ABS_MIN, LUCK_ABS_MAX] */
+/** 在 [lo, hi] 内按 LUCK_STEP 等概率抽一档；浮点按档距取整，避免 0.30000000000000004 */
+function rollLuckLadder(lo: number, hi: number): number {
+    const steps = Math.round((hi - lo) / LUCK_STEP);
+    if (steps <= 0) return Math.round(lo / LUCK_STEP) * LUCK_STEP;
+    const pick = Math.floor(Math.random() * (steps + 1));
+    return Math.round((lo + pick * LUCK_STEP) / LUCK_STEP) * LUCK_STEP;
+}
+
+/** 在指定区间内按档抽 luck；硬夹到 [LUCK_ABS_MIN, LUCK_ABS_MAX] */
 export function rollCombatLuckMultiplierInRange(min: number, max: number): number {
     const lo = Math.max(LUCK_ABS_MIN, Math.min(min, max));
     const hi = Math.min(LUCK_ABS_MAX, Math.max(min, max));
     if (hi - lo < 1e-9) return lo;
-    return lo + Math.random() * (hi - lo);
+    return rollLuckLadder(lo, hi);
 }
 
 /** 开战掷有效战力：兵力 × luck（无地形/兵种表） */

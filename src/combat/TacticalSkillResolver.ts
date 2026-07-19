@@ -15,7 +15,7 @@ import {
     type TacticalSkillPhase,
 } from '../data/TacticalSkillCatalog';
 import { COMEBACK_TROOP_THRESHOLD } from './TacticalConstants';
-import { GameConfig, rollCombatLuckMultiplierInRange, LUCK_ABS_MIN, LUCK_ABS_MAX } from '../config/GameConfig';
+import { GameConfig, rollCombatLuckMultiplier, rollCombatLuckMultiplierInRange, LUCK_ABS_MIN, LUCK_ABS_MAX } from '../config/GameConfig';
 
 export type { TacticalConditionContext, TacticalSkillEntry, TacticalBaseEffect, TacticalSkillPhase };
 
@@ -457,7 +457,7 @@ export function resolveOpeningLuckMultiplier(
     opponentEntry: TacticalSkillEntry | null,
 ): OpeningLuckResolveResult {
     const { LUCK_MIN, LUCK_MAX } = GameConfig.COMBAT;
-    const defaultRoll = () => LUCK_MIN + Math.random() * (LUCK_MAX - LUCK_MIN);
+    const defaultRoll = rollCombatLuckMultiplier;
 
     if (
         selfEntry
