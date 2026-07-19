@@ -2876,7 +2876,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
     yuan_cj_d_lishuo: { generalId: 'yuan_cj_d_lishuo', tier: 'famous', tacticalSkillId: 'ts_289', strategicSkillId: 'str_16', atkAdvantageSkillId: 'ts_260', atkBalanceSkillId: 'ts_181', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_393', defDisadvantageSkillId: 'ts_641', aptitude: 'leverage', attackStyle: 'defense' },
     cangsong_machao: { generalId: 'cangsong_machao', tier: 'ordinary', tacticalSkillId: 'ts_124', atkBalanceSkillId: 'ts_394', atkAdvantageSkillId: 'ts_040', atkDisadvantageSkillId: 'ts_035', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_405', defDisadvantageSkillId: 'ts_017', aptitude: 'create', attackStyle: 'attack' },
-    aertai_baibuhua: { generalId: 'aertai_baibuhua', tier: 'ordinary', tacticalSkillId: 'ts_401', atkAdvantageSkillId: 'ts_021', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_037', defAdvantageSkillId: 'ts_006', defBalanceSkillId: 'ts_407', defDisadvantageSkillId: 'ts_034', aptitude: 'reverse', attackStyle: 'attack' },
+    aertai_baibuhua: { generalId: 'aertai_baibuhua', tier: 'ordinary', tacticalSkillId: 'ts_021', atkAdvantageSkillId: 'ts_021', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_037', defAdvantageSkillId: 'ts_006', defBalanceSkillId: 'ts_407', defDisadvantageSkillId: 'ts_034', aptitude: 'reverse', attackStyle: 'attack' },
     manghuti_weidaer: { generalId: 'manghuti_weidaer', tier: 'ordinary', tacticalSkillId: 'ts_765', atkAdvantageSkillId: 'ts_624', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_118', defAdvantageSkillId: 'ts_027', defBalanceSkillId: 'ts_408', defDisadvantageSkillId: 'ts_048', aptitude: 'create', attackStyle: 'attack' },
 
 
