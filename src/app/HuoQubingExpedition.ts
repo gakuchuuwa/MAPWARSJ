@@ -5,7 +5,7 @@
  * 轻骑急进、取食于敌，大破匈奴左贤王，封狼居胥山、禅于姑衍、登临瀚海。
  *
  * 玩家点「⚔ 霍去病封狼居胥」按钮：
- *   · 场上尚无霍去病军 → 灵仙生成霍去病·骠骑郎卫（2 万），镜头跟拍，开北伐脚本；
+ *   · 场上尚无霍去病军 → 灵仙生成霍去病·轻勇骑（5 万），镜头跟拍，开北伐脚本；
  *   · 场上已有霍去病军 → 加兵 1 万，切跟随并继续北伐。
  * 按必打路标逐城远征：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔。
  *
@@ -21,6 +21,7 @@ import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText } from '../utils/MapFloatingText';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 
 /** 起兵坐标：灵仙东北约10km，不触发攻城 */
 const START_POS = { lat: 39.9561, lng: 114.7440 };
@@ -28,8 +29,8 @@ const START_CITY_ID = 'city_daixian';
 const FACTION_ID = 'suzhou';
 const GENERAL_ID = 'suzhou_huoqubing';
 const ELITE_NAME = '轻勇骑';
-/** 起兵 2 万 */
-const TROOPS = 20000;
+/** 起兵 5 万 */
+const TROOPS = 50000;
 /** 已有霍去病军时，再点 UI 加兵量 */
 const CLICK_REINFORCE_TROOPS = 10000;
 
@@ -172,7 +173,7 @@ export class HuoQubingExpedition {
         return this.timer != null && !!this.findExistingArmy();
     }
 
-    /** 场上是否已有霍去病·骠骑郎卫 */
+    /** 场上是否已有霍去病·轻勇骑 */
     private isHuoQubingArmy(army: ScriptArmy): boolean {
         if (army.isDestroyed || army.getTroops() <= 0) return false;
         if (army.generalId === GENERAL_ID) return true;
@@ -260,9 +261,9 @@ export class HuoQubingExpedition {
             this.resumeOrStartScript(existing);
             gameLog(
                 'expedition',
-                `🐎 [封狼居胥] 再点增援 +${CLICK_REINFORCE_TROOPS.toLocaleString()}，骠骑郎卫 ${(before + CLICK_REINFORCE_TROOPS).toLocaleString()} 众`,
+                `🐎 [封狼居胥] 再点增援 +${CLICK_REINFORCE_TROOPS.toLocaleString()}，轻勇骑 ${(before + CLICK_REINFORCE_TROOPS).toLocaleString()} 众`,
             );
-            this.notify('霍去病·骠骑郎卫增兵一万');
+            this.notify('霍去病·轻勇骑增兵一万');
             return;
         }
 
@@ -285,12 +286,12 @@ export class HuoQubingExpedition {
             true,
         );
         if (!army) {
-            this.notify('霍去病·骠骑郎卫起兵失败');
+            this.notify('霍去病·轻勇骑起兵失败');
             this.rollbackExpeditionOverride();
             return;
         }
         if (!this.deps.legionManager.getLegionById(army.id)) {
-            this.notify('霍去病·骠骑郎卫起兵失败（军团未注册）');
+            this.notify('霍去病·轻勇骑起兵失败（军团未注册）');
             this.rollbackExpeditionOverride();
             return;
         }
@@ -299,6 +300,9 @@ export class HuoQubingExpedition {
         army.isElite = true;
         army.name = ELITE_NAME;
         army.expeditionUnlocked = true;
+        // 阵型外观：中亚骑兵风格（三角阵、枪骑+弓骑）
+        army.legionType = 'cavalry';
+        army.cultureRegion = 'CENTRAL_ASIA';
         if (!army.generalId) army.generalId = GENERAL_ID;
         const rec = getGeneralRecordByGeneralId(GENERAL_ID);
         if (rec?.portrait) army.portraitPath = rec.portrait;
@@ -312,8 +316,9 @@ export class HuoQubingExpedition {
         this.gongluPhase = 'pending';
         this.gongluEnemyId = null;
 
-        gameLog('expedition', `🐎 [封狼居胥] 霍去病率骠骑郎卫自灵仙起兵：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔`);
-        this.notify('霍去病率骠骑郎卫北伐——封狼居胥！');
+        gameLog('expedition', `🐎 [封狼居胥] 霍去病率轻勇骑自灵仙起兵：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔`);
+        this.notify('霍去病率轻勇骑北伐——封狼居胥！');
+        (speechAnnouncer as any).speak('骠骑将军，霍去病，亲率铁骑五万，出代郡，绝大幕，狂飙万里，犁庭扫穴。匈奴未灭，何以家为！此去，不破胡虏，誓不南还！');
 
         this.attachFollowAndMarch(army);
     }
@@ -328,8 +333,8 @@ export class HuoQubingExpedition {
         if (!army || army.isDestroyed || army.getTroops() <= 0) {
             this.armyId = null;
             const reached = ROUTE[Math.max(0, this.waypointIndex - 1)]?.name ?? '灵仙';
-            gameLog('expedition', `🐎 [封狼居胥] 霍去病·骠骑郎卫覆没，北伐止步于 ${reached} 一线`);
-            this.notify(`霍去病·骠骑郎卫覆没，止步于 ${reached}`);
+            gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑覆没，北伐止步于 ${reached} 一线`);
+            this.notify(`霍去病·轻勇骑覆没，止步于 ${reached}`);
             this.cleanupAllEnemies();
             this.stop();
             return;
@@ -364,7 +369,7 @@ export class HuoQubingExpedition {
             const wp = ROUTE[this.waypointIndex];
             const c = this.deps.cityManager.getCity(wp.id);
             if (c && c.factionId === FACTION_ID) {
-                gameLog('expedition', `🐎 [封狼居胥] 霍去病·骠骑郎卫已克 ${wp.name}`);
+                gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑已克 ${wp.name}`);
                 this.waypointIndex++;
                 continue;
             }
@@ -374,7 +379,7 @@ export class HuoQubingExpedition {
         // 全线打通 → 封狼居胥功成
         if (this.waypointIndex >= ROUTE.length) {
             army.expeditionTargetCityId = null;
-            gameLog('expedition', `🐎 [封狼居胥] 霍去病·骠骑郎卫登临贝加尔，封狼居胥功成`);
+            gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑登临贝加尔，封狼居胥功成`);
             this.notify('登临瀚海，封狼居胥！霍去病北伐功成 🎉');
             this.stop();
             return;
@@ -386,7 +391,7 @@ export class HuoQubingExpedition {
         if (army.expeditionTargetCityId !== desired.id) {
             if (army.name !== ELITE_NAME) army.name = ELITE_NAME;
             army.expeditionTargetCityId = desired.id;
-            gameLog('expedition', `🐎 [封狼居胥] 霍去病·骠骑郎卫锁定目标：${desired.name}`);
+            gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑锁定目标：${desired.name}`);
         }
     }
 
@@ -412,7 +417,7 @@ export class HuoQubingExpedition {
             army.setTroops(BATTLE_TROOPS);
             gameLog(
                 'expedition',
-                `🐎 [封狼居胥] 祷余山遭遇匈奴左贤王主力（${ZUOXIAN_TROOPS_DAOYU.toLocaleString()}），骠骑郎卫 ${BATTLE_TROOPS.toLocaleString()} 迎战`,
+                `🐎 [封狼居胥] 祷余山遭遇匈奴左贤王主力（${ZUOXIAN_TROOPS_DAOYU.toLocaleString()}），轻勇骑 ${BATTLE_TROOPS.toLocaleString()} 迎战`,
             );
             this.notify('祷余山——左贤王主力拦路！');
             return;
@@ -433,6 +438,7 @@ export class HuoQubingExpedition {
             this.cleanupZuoxian(this.daoyuEnemyId);
             this.daoyuEnemyId = null;
             gameLog('expedition', `🐎 [封狼居胥] 祷余山大捷——左贤王主力溃败`);
+            (speechAnnouncer as any).speak('祷余山下，汉军铁骑，如惊雷乍起，胡骑为之褫魂。左贤王部众飞砂喋血，满盘崩溃。此一役，砂砾饮血，大幕为赤，实乃封山之先声！');
         }
     }
 
@@ -457,7 +463,7 @@ export class HuoQubingExpedition {
             army.setTroops(BATTLE_TROOPS);
             gameLog(
                 'expedition',
-                `🐎 [封狼居胥] 弓庐水遭遇左贤王残部（${ZUOXIAN_TROOPS_GONGLU.toLocaleString()}），骠骑郎卫 ${BATTLE_TROOPS.toLocaleString()} 追击`,
+                `🐎 [封狼居胥] 弓庐水遭遇左贤王残部（${ZUOXIAN_TROOPS_GONGLU.toLocaleString()}），轻勇骑 ${BATTLE_TROOPS.toLocaleString()} 追击`,
             );
             this.notify('弓庐水——左贤王残部再战！');
             return;
@@ -477,6 +483,7 @@ export class HuoQubingExpedition {
             this.cleanupZuoxian(this.gongluEnemyId);
             this.gongluEnemyId = null;
             gameLog('expedition', `🐎 [封狼居胥] 弓庐水再捷——左贤王残部覆灭`);
+            (speechAnnouncer as any).speak('汉军铁骑踏波强渡，弓庐水畔，残虏靡然！擒屯头王、韩王以下凡三王，拘将军、相国、当户、都尉八十三人，斩首七万余级。逐北两千里，胡尘为之荡尽！');
         }
     }
 
@@ -617,7 +624,7 @@ export class HuoQubingExpedition {
         if (pos) spawnMapFloatingText(pos.lat, pos.lng, '取食于敌', '#ffcc44');
         gameLog(
             'expedition',
-            `🐎 [封狼居胥] 取食于敌 +${added.toLocaleString()}，骠骑郎卫补至 ${target.toLocaleString()} 众`,
+            `🐎 [封狼居胥] 取食于敌 +${added.toLocaleString()}，轻勇骑补至 ${target.toLocaleString()} 众`,
         );
     }
 

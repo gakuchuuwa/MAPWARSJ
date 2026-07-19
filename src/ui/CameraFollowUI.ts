@@ -207,7 +207,7 @@ export class CameraFollowUI {
     private createHuoQubingButton(): void {
         const btn = document.createElement('button');
         btn.id = 'huoqubing-expedition-btn';
-        btn.title = '霍去病率骠骑郎卫，出灵仙北伐：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔';
+        btn.title = '霍去病率轻勇骑，出灵仙北伐：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔';
         btn.innerHTML = '⚔ 霍去病封狼居胥';
         btn.style.cssText = `
             position: fixed;

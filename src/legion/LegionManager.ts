@@ -67,6 +67,8 @@ export class LegionManager {
     private marchDiagLogCooldown: Map<string, number> = new Map();
     /** 远输减员飘字汇总（armyId -> 未飘出的累计损失与计时，游戏秒；≥3 秒汇总一次） */
     private marchAttritionFloatAccum: Map<string, { loss: number; elapsed: number }> = new Map();
+    /** 行军减兵复位查城的每帧缓存（factionId -> 己方城列表；update 开头清空，同帧归属变化最坏下一帧才复位，无感） */
+    private ownCitiesFrameCache: Map<string, readonly { latitude: number; longitude: number }[]> = new Map();
 
     constructor(cityManager: CityManager, map: GameMap) {
         this.cityManager = cityManager;
@@ -395,6 +397,7 @@ export class LegionManager {
     }
 
     public update(deltaTime: number): void {
+        this.ownCitiesFrameCache.clear(); // 行军减兵复位查城的每帧缓存，跨帧失效
         this.armies.forEach(army => {
             if (army.isDestroyed || army.getTroops() <= 0) return;
             const oldPos = army.getPosition();
@@ -950,6 +953,16 @@ export class LegionManager {
         );
     }
 
+    /** 行军减兵复位查城：每帧每势力 memoize（主人复核建议；缓存在 update 开头清空，跨帧失效） */
+    private getOwnCitiesForSupplyReset(factionId: string): readonly { latitude: number; longitude: number }[] {
+        let cities = this.ownCitiesFrameCache.get(factionId);
+        if (!cities) {
+            cities = this.cityManager.getCitiesByFaction(factionId);
+            this.ownCitiesFrameCache.set(factionId, cities);
+        }
+        return cities;
+    }
+
     /**
      * 行军减兵（远输困境）管线（2026-07-21 主人定稿 v2：时间口径·一视同仁）：
      *   ① 计时：timeSinceSupply 每帧 += deltaTime（战斗中照走；远征豁免军团不走表）；
@@ -965,9 +978,9 @@ export class LegionManager {
             army.timeSinceSupply += deltaTime;
         }
 
-        // ② 途经复位（仅计时器非零才查城；查询复用 FollowResupplySystem 同款 cityManager.getCitiesByFaction）
+        // ② 途经复位（仅计时器非零才查城；每帧每势力 memoize，见 getOwnCitiesForSupplyReset）
         if (army.timeSinceSupply > 0 || army.attritionLossCarry > 0) {
-            resetSupplyTimerIfNearOwnCity(army, this.cityManager.getCitiesByFaction(army.getFactionId()));
+            resetSupplyTimerIfNearOwnCity(army, this.getOwnCitiesForSupplyReset(army.getFactionId()));
         }
 
         // ③ 扣减；本帧整数损失汇总给跟拍飘字
