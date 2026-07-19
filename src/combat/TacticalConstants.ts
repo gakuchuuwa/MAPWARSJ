@@ -47,8 +47,13 @@ export function resolveSituationKind(selfOverOpponent: number): SituationKind {
 /** 逆势劣势战败 → 胜方战损保底倍率（败不垒） */
 export const APTITUDE_LOSER_BITE_FLOOR = 1.5;
 
-/** 翻盘重掷 luck 区间：极小概率（等势层上线后由势调整） */
+/**
+ * 败战·险 翻盘重掷 luck 区间（六计中唯一能反转胜负的计）。
+ * 在册/不在册均值同为 0.35，在册更宽——典故主更可能掷出 0.45 的高值，也更可能掷崩。
+ */
 export const COMEBACK_LUCK_RANGE: [number, number] = [0.25, 0.45];
+/** 不在册（通用败战技）翻盘重掷区间：更窄更平庸 */
+export const COMEBACK_LUCK_RANGE_GENERIC: [number, number] = [0.30, 0.40];
 
 /**
  * 第四层·攻防风格战力系数

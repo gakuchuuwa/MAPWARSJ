@@ -33,7 +33,7 @@ import {
 } from '../config/GameConfig';
 import { sumCultureAdjustedTroops, getUnitBattlePowerMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import { getGeneralProfile } from '../data/GeneralSkills';
-import { COMEBACK_LUCK_RANGE, resolveSituationKind } from './TacticalConstants';
+import { COMEBACK_LUCK_RANGE, COMEBACK_LUCK_RANGE_GENERIC, resolveSituationKind } from './TacticalConstants';
 import {
     applyGeneralSkillSideRollMultipliers,
     applyOpeningTacticalPreRoll,
@@ -157,6 +157,8 @@ export class BattleField implements IOpeningPulseSink {
     private situationalAttDefRatio = 1;
     /** 开战有效战力比（攻/守，八环乘完）；在 pickPredictedSides 中写入，供时长判定 */
     private effectivePowerRatio = 1;
+    /** 最近一次逆局触发技是否在册——败战翻盘重掷按此选区间 */
+    private comebackTriggerOwnerSkill = false;
     /** 本场是否由导演/剧本指定时长（指定则不套 45/30 两档） */
     private hasDirectorDuration = false;
 
@@ -270,7 +272,16 @@ export class BattleField implements IOpeningPulseSink {
         if (this.hasDirectorDuration) {
             return this.clampDuration(this.targetDuration);
         }
-        const seconds = resolveBattleDurationByPowerRatio(this.effectivePowerRatio);
+        let seconds = resolveBattleDurationByPowerRatio(this.effectivePowerRatio);
+        // 并战·借「拖长一档」：任一侧局技为 battle_duration_mult → 已定档 30s 抬回 45s（等援军）
+        if (seconds === GameConfig.COMBAT.BATTLE_DURATION_DECIDED_SEC) {
+            const attUnits = this.attackerGroup.units.map((bu) => bu.unit);
+            const defUnits = this.defenderGroup.units.map((bu) => bu.unit);
+            if (sideHasBattleDurationExtend(attUnits) || sideHasBattleDurationExtend(defUnits)) {
+                seconds = GameConfig.COMBAT.BATTLE_DURATION_BALANCE_SEC;
+                gameLog('battle', `⚔️ [并战·借] 拖长一档：此战成胶着 30s→${seconds}s（多撑一会儿等援军）`);
+            }
+        }
         gameLog(
             'battle',
             `⚔️ [BattleField] 双将战 · 有效战力比 攻/守=${this.effectivePowerRatio.toFixed(2)} ` +
@@ -537,9 +548,10 @@ export class BattleField implements IOpeningPulseSink {
         this.cachedDefenderTroops = defUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
 
         const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
-        // 翻盘重掷：统一低概率区间（等势层上线后由势调整）
+        // 翻盘重掷：区间按触发技在册/不在册分档（在册 [0.25,0.45] 更宽，通用 [0.30,0.40] 更平庸）
         const rollComebackLuck = (): number => {
-            return COMEBACK_LUCK_RANGE[0] + Math.random() * (COMEBACK_LUCK_RANGE[1] - COMEBACK_LUCK_RANGE[0]);
+            const range = this.comebackTriggerOwnerSkill ? COMEBACK_LUCK_RANGE : COMEBACK_LUCK_RANGE_GENERIC;
+            return range[0] + Math.random() * (range[1] - range[0]);
         };
         const attFateLuck = rollLuckOnRecompute
             ? rollComebackLuck()
@@ -856,7 +868,11 @@ export class BattleField implements IOpeningPulseSink {
             battleElapsed: this.elapsed,
             scheduleInvincible: (unit: IBattleUnit, start: number, dur: number) =>
                 this.scheduleInvincible(unit, start, dur),
-            onSidesChanged: () => this.refreshPredictedSidesFromTotals(true),
+            onSidesChanged: (opts?: { ownerSkill?: boolean }) => {
+                // 败战翻盘重掷区间按触发技在册/不在册分档
+                this.comebackTriggerOwnerSkill = opts?.ownerSkill ?? false;
+                this.refreshPredictedSidesFromTotals(true);
+            },
             emitUi: true,
         };
 

@@ -68,19 +68,29 @@ export interface SituationalSkillResult {
  * 六计随机：攻方三槽 / 守方三槽各等概率随机抽一个技。
  * 抽中后按六类判定是否匹配当前局势（优势→攻/胜、均势→敌/混、劣势→并/败）。
  */
-export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation, isAttacker: boolean): SituationalSkillResult {
+export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation, _isAttacker: boolean): SituationalSkillResult {
     if (!unit.generalId) return { skillId: null, situationMatch: false };
     const p = getGeneralProfile(unit.generalId);
     if (!p) return { skillId: null, situationMatch: false };
 
-    // 收集可用槽位
-    const slots: (string | undefined)[] = isAttacker
-        ? [p.atkAdvantageSkillId, p.atkBalanceSkillId, p.atkDisadvantageSkillId]
-        : [p.defAdvantageSkillId, p.defBalanceSkillId, p.defDisadvantageSkillId];
-    const available = slots.filter(Boolean) as string[];
+    // 三势×两计（2026-07-19 主人定稿）：六技按势分三组，每势两计（优=攻/胜、均=敌/混、劣=并/败），
+    // 攻守双方都从【当前势】的两计池里取——攻方守方都能释放全部六技，_isAttacker 不再参与选技
+    // （攻守数值差由第四层攻防环负责，不在技能层重复表达）。
+    // 旧 bug：此处曾无视 situation 随机抽三格，劣势武将只有 1/3 概率放出劣势技。
+    const bySituation: Record<BattleSituation, (string | undefined)[]> = {
+        advantage: [p.atkAdvantageSkillId, p.defAdvantageSkillId],
+        balance: [p.atkBalanceSkillId, p.defBalanceSkillId],
+        disadvantage: [p.atkDisadvantageSkillId, p.defDisadvantageSkillId],
+    };
+    const pool = bySituation[situation].filter(Boolean) as string[];
+    // 兜底：该势两格全空（数据不合规）→ 退回六格任取，保证必有技可放
+    const available = pool.length > 0
+        ? pool
+        : ([p.atkAdvantageSkillId, p.atkBalanceSkillId, p.atkDisadvantageSkillId,
+            p.defAdvantageSkillId, p.defBalanceSkillId, p.defDisadvantageSkillId].filter(Boolean) as string[]);
     if (available.length === 0) return { skillId: null, situationMatch: false };
 
-    // 随机抽一个
+    // 同势两计（如优势的攻战/胜战）等概率取一，同将同势也能打出不同花样
     const skillId = available[Math.floor(Math.random() * available.length)];
 
     // 判定局势匹配
@@ -221,7 +231,8 @@ export type ComebackTacticalContext = {
     battleElapsed: number;
     triggeredSkillIds: Set<string>;
     scheduleInvincible: (unit: IBattleUnit, startElapsed: number, durationSec: number) => void;
-    onSidesChanged: () => void;
+    /** opts.ownerSkill：触发技是否在册（有 ownerGeneralId）——败战翻盘重掷按此选 [0.25,0.45] / [0.30,0.40] */
+    onSidesChanged: (opts?: { ownerSkill?: boolean }) => void;
     emitUi: boolean;
 };
 
@@ -875,6 +886,19 @@ export function getAttackStylePowerMult(unit: IBattleUnit | null, isAttacker: bo
 export function getFamousGeneralMult(unit: IBattleUnit | null): number {
     if (!unit?.generalId) return 1;
     return getGeneralProfile(unit.generalId)?.tier === 'famous' ? FAMOUS_GENERAL_MULT : 1;
+}
+
+/**
+ * 并战·借「拖长一档」（2026-07-19 定稿）：该侧任一带将单位的当前局技为 battle_duration_mult
+ * → 胜负已定档 30s 抬回均势档 45s。收益在地图层：援军圈每 0.2s 轮询，多撑 15s 等友军编入。
+ * 不碰胜负判定（并战计不改胜负，六计中只有败战计能翻盘）。
+ */
+export function sideHasBattleDurationExtend(units: IBattleUnit[]): boolean {
+    return units.some((u) => {
+        if (!u.generalId) return false;
+        const entry = resolveGeneralTacticalEntry(getActiveTacticalSkillId(u) ?? '');
+        return entry?.baseEffect === 'battle_duration_mult';
+    });
 }
 
 /**
@@ -1946,7 +1970,7 @@ export function tryApplyComebackTacticalForSide(
             'battle',
             `⚔️ [战术技·逆局] ${unit.generalId} 【${v1.displayName}】 ${sideLabel} 重算强弱（兵力≤${(threshold * 100).toFixed(0)}%）`,
         );
-        ctx.onSidesChanged();
+        ctx.onSidesChanged({ ownerSkill: !!v1.ownerGeneralId });
         if (ctx.emitUi) {
             emitTacticalUiV1(unit, v1, sideLabel, { immediate: true });
         }
