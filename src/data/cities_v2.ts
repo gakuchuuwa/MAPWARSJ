@@ -1295,7 +1295,8 @@ export const PERIPHERY: CityDataV2[] = [
     // 第三类：蒙古草原部落
     { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'small_city', troops: 20000, region: 'STEPPE' },
 
-    { id: 'city_naiman', name: '阿尔泰', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'pass', region: 'STEPPE', troops: 20000, note: '阿尔泰山；阿史那氏突厥起源地（《周书·突厥传》）' },
+    { id: 'city_naiman', name: '金微山', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'pass', troops: 20000, region: 'STEPPE' },
+
     { id: 'city_fuhai', name: '福海', factionId: 'naiman', lat: 47.036450, lng: 87.352295, type: 'small_city', region: 'STEPPE', troops: 20000,
         note: '福海；乃蛮小城',
     },
@@ -2143,7 +2144,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_duluohe', name: '独逻河', factionId: 'kaerka', lat: 45.826868, lng: 101.878967, type: 'small_city', region: 'STEPPE', troops: 20000,
         note: '独逻河；喀尔喀小城',
     },
-    { id: 'city_guyanshan', name: '姑衍山', factionId: 'chenli_d', lat: 43.812726, lng: 98.489685, type: 'pass', region: 'STEPPE', troops: 20000, note: '匈奴祭天圣山；霍去病封狼居胥后禅于姑衍（《汉书·霍去病传》）' },
+    { id: 'city_guyanshan', name: '姑衍山', factionId: 'chenli_d', lat: 48.6184, lng: 110.6488, type: 'pass', troops: 20000, region: 'STEPPE' },
+
     { id: 'city_naomaohu', name: '淖毛湖', factionId: 'huyan', lat: 43.279321, lng: 94.713135, type: 'small_city', troops: 20000, region: 'STEPPE' },
 
     { id: 'city_jiluoshan', name: '稽落山', factionId: 'bayegu', lat: 44.974390, lng: 99.113159, type: 'pass', region: 'STEPPE', troops: 20000,
@@ -2778,6 +2780,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_lishi', name: '离石', factionId: 'shizhou', lat: 37.48, lng: 111.09, type: 'small_city', troops: 20000, region: 'NORTH' },
     { id: 'city_chiwubao', name: '赤乌堡', factionId: 'cangsong', lat: 37.477, lng: 102.8815, type: 'pass', troops: 20000, region: 'HEXI' },
+    { id: 'city_aertaishan', name: '阿尔泰山', factionId: 'aertai', lat: 46.37, lng: 96.27, type: 'small_city', troops: 20000, region: 'STEPPE' },
 
 
 

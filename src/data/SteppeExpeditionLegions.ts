@@ -9,7 +9,7 @@
  */
 export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     wuzhou: { name: '百金之士', tier: 2 },
-  ashina: { name: '金山突厥兵', tier: 3 }, // 突厥阿史那氏的龙兴之地，极具突厥汗国起源的图腾色彩，升入T3知名
+    ashina: { name: '金山突厥兵', tier: 3 },
     liao_d: { name: '皮室军', tier: 1 },
   yel: { name: '斡鲁朵军', tier: 1 },         // 大辽帝国压制北宋两百年的最核心禁卫常备军制度，升入T1战略
     menggu_d: { name: '怯薛宿卫', tier: 0 },
@@ -78,7 +78,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   bulat: { name: '布拉特猎兵', tier: 3 },      // 布里亚特（布拉特）人，西伯利亚极具辨识度的民族武装符号，升入T3知名
   tuva: { name: '唐努旗兵', tier: 4 },           // 唐努·唐努乌梁海驻防
   // ── 2026-06-19 新增：漠北/漠南要塞精锐 ──
-  chenli_d: { name: '祭天铁卫', tier: 3 },        // 匈奴祭天王庭护军，名号特色极鲜明，升T2
+    chenli_d: { name: '祭天铁卫', tier: 3 },
   nuoyan_d: { name: '漠北驿骑', tier: 4 },      // 赛音山达·清代大漠驿站护军
   wuli_d: { name: '喀尔喀劲骑', tier: 3 },      // 扎布汗·乌里雅苏台喀尔喀骑兵（缺乏极其著名的战术高光，降T3）
   heisha_d: { name: '黑沙精骑', tier: 3 },  // 后突厥黑沙道，突厥复兴运动核心，专属名号特色鲜明，升T2
@@ -93,4 +93,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     yuezhi: { name: '折兰骑', tier: 3 },
     lushui: { name: '飞熊军', tier: 2 },
     xijue: { name: '郅支精骑', tier: 4 },
+    aertai: { name: '阿尔泰狼骑', tier: 3 },
 };

@@ -3772,11 +3772,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -11
         },
-        "/assets/STEPPE/__闲置__STEPPE_19.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": 33
-        },
         "/assets/NORTHEAST/xingan_hailancha.png": {
             "scale": 1.12,
             "offsetX": 0,
@@ -5906,6 +5901,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 12,
             "offsetY": -15
+        },
+        "/assets/STEPPE/__闲置__STEPPE_11.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/STEPPE/aertai_baibuhua.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/BASHU/__闲置__BASHU_12.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/BASHU/__闲置__BASHU_14.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/BASHU/__闲置__BASHU_15.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/BASHU/__闲置__BASHU_13.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/BASHU/__闲置__BASHU_09.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/BASHU/__闲置__BASHU_11.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/BASHU/__闲置__BASHU_08.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/BASHU/__闲置__BASHU_07.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/BASHU/__多余__BASHU_03.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -33
         }
     },
     "folderGuides": {
