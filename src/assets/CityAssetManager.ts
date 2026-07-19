@@ -143,7 +143,7 @@ export class CityAssetManager {
 'cao_d': '亳',
         'jiujiang': '浔',
         'quanrong': '犬戎',
-        'suzhou': '肃',
+'suzhou': '肃',
         'sushen': '肃慎',
 'guishuang': '贵霜',
 'chile': '敕勒',
@@ -1656,6 +1656,10 @@ export class CityAssetManager {
         // 岳飞北伐脚本进行中：郾川旗面临时改「岳」（结束/覆没后恢复「郾」）
         if (factionId === 'yanchuan_d' && (window as any).__yuefeiExpeditionActive) {
             textToRender = '岳';
+        }
+        // 霍去病封狼居胥脚本进行中：肃州旗面临时改「汉」（结束/覆没后恢复）
+        if (factionId === 'suzhou' && (window as any).__huoqubingExpeditionActive) {
+            textToRender = '汉';
         }
 
         if (!textToRender) {

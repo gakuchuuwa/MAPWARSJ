@@ -22,7 +22,7 @@ import { GameMap } from '../map/GameMap';
 import { GameConfig } from '../config/GameConfig';
 import { City, LatLng, SiegeData } from '../types/core';
 import { cityToLatLng, getEuclideanDistance } from '../core/DistanceUtils';
-import { getFollowedArmyId } from '../utils/MapFloatingText';
+import { getFollowedArmyId, spawnMapFloatingText } from '../utils/MapFloatingText';
 import {
     releaseFieldBattleCombatState,
     tryEngageFieldBattle,
@@ -32,6 +32,11 @@ import {
     moveLegionToCity as roadMarchMoveLegionToCity,
     type LegionRoadMarchDeps,
 } from './march/LegionRoadMarch';
+import {
+    haversineKm,
+    resetKmSinceSupplyIfNearOwnCity,
+    tickMarchAttrition,
+} from './march/MarchAttritionSystem';
 import { SpatialRegistry } from '../world/SpatialRegistry';
 import { CombatSystem } from '../combat/CombatSystem';
 import { LegionType } from '../types/UnitTypes';
@@ -61,6 +66,8 @@ export class LegionManager {
     private roadFailureLogCooldown: Map<string, number> = new Map();
     /** 行军首段异常日志节流（armyId -> timestamp） */
     private marchDiagLogCooldown: Map<string, number> = new Map();
+    /** 远输减员飘字汇总（armyId -> 未飘出的累计损失与计时，游戏秒；≥3 秒汇总一次） */
+    private marchAttritionFloatAccum: Map<string, { loss: number; elapsed: number }> = new Map();
 
     constructor(cityManager: CityManager, map: GameMap) {
         this.cityManager = cityManager;
@@ -380,6 +387,7 @@ export class LegionManager {
 
     public removeArmy(army: Army): void {
         this.followResupplySystem?.clearForArmy(army.id);
+        this.marchAttritionFloatAccum.delete(army.id);
         this.armies = this.armies.filter(a => a !== army);
 
         // Remove from registry
@@ -419,6 +427,9 @@ export class LegionManager {
 
             // 坚壁清野：本城被攻击（含沿途/排队/已开战）时来犯军每秒减兵，技挂录入锚将
             this.tickApproachAttrition(army, deltaTime);
+
+            // 行军减兵（远输困境）：里程累计 → 途经己方据点复位 → 分档扣减
+            this.tickMarchAttritionPipeline(army, oldPos, newPos, deltaTime);
 
             // 行军 ZOC：进入非己方据点（含叛军 panjun）控制范围必须先停攻，不可绕路穿过
             if (
@@ -938,6 +949,49 @@ export class LegionManager {
             'siege_approach_attrition',
             pulseArmy,
         );
+    }
+
+    /**
+     * 行军减兵（远输困境）管线（2026-07-21 主人裁定 v1）：
+     *   ① 里程累计：非战斗、非海上、发生位移才按 haversine km 累加 kmSinceSupply（海上冻结）；
+     *   ② 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（不要求驻停，静止军团也生效）；
+     *   ③ 分档扣减：战斗/远征/海运/str_13 豁免与保底 1 等守卫全在 MarchAttritionSystem 内。
+     */
+    private tickMarchAttritionPipeline(army: Army, oldPos: LatLng, newPos: LatLng, deltaTime: number): void {
+        if (!GameConfig.MARCH_ATTRITION.ENABLED) return;
+        if (army.isDestroyed || army.getTroops() <= 0) return;
+
+        // ① 里程累计（海上/战斗中不计；blocked 分支在主循环已提前 return，不会走到这里）
+        if (!army.getIsInCombat() && !army.isOnSea
+            && (oldPos.lat !== newPos.lat || oldPos.lng !== newPos.lng)) {
+            army.kmSinceSupply += haversineKm(oldPos.lat, oldPos.lng, newPos.lat, newPos.lng);
+        }
+
+        // ② 途经复位（己方城查询复用 FollowResupplySystem 同款 cityManager.getCitiesByFaction）
+        resetKmSinceSupplyIfNearOwnCity(army, this.cityManager.getCitiesByFaction(army.getFactionId()));
+
+        // ③ 分档扣减；本帧整数损失汇总给跟拍飘字
+        const loss = tickMarchAttrition(army, deltaTime);
+        if (loss > 0) this.accumulateMarchAttritionFloat(army, loss, deltaTime);
+    }
+
+    /** 远输减员飘字：每军团 ≥3 游戏秒汇总一次，只飘跟拍军团（与战略技 pulse 同规） */
+    private accumulateMarchAttritionFloat(army: Army, loss: number, deltaTime: number): void {
+        let entry = this.marchAttritionFloatAccum.get(army.id);
+        if (!entry) {
+            entry = { loss: 0, elapsed: 0 };
+            this.marchAttritionFloatAccum.set(army.id, entry);
+        }
+        entry.loss += loss;
+        entry.elapsed += deltaTime;
+        if (entry.elapsed < 3) return;
+        this.marchAttritionFloatAccum.delete(army.id);
+
+        const totalLoss = Math.floor(entry.loss);
+        if (totalLoss <= 0) return;
+        if (army.id !== getFollowedArmyId()) return;
+        const pos = army.getPosition();
+        spawnMapFloatingText(pos.lat, pos.lng, `-${totalLoss} 远输减员`, '#ff5555');
     }
 
     /** 来犯减兵锚定之城：行军 targetCity，或已开打攻城战之 siegeCityId */

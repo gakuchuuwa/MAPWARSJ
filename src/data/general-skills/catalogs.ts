@@ -97,7 +97,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     // ── 加兵类 ──
 
-    str_13: { id: 'str_13', grid: 'S⑬', displayName: '以战养战', effect: 'field_resupply', magnitude: 1, engineStatus: 'ready', category: 'supply', note: '远离本土缓回血（均势）' },
+    str_13: { id: 'str_13', grid: 'S⑬', displayName: '以战养战', effect: 'march_attrition_immunity', magnitude: 1, engineStatus: 'ready', category: 'supply', note: '行军减兵全免（均势）' },
 
     str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0, engineStatus: 'ready', category: 'supply', postBattlePctByCityType: { pass: 0.01, small_city: 0.02, medium_city: 0.03, big_city: 0.04 }, note: '攻城胜后按城型补兵（逆势·以战养战）' },
 

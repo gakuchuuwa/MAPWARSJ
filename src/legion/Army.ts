@@ -147,6 +147,18 @@ export class Army implements IBattleUnit {
      */
     public expeditionUnlocked: boolean = false;
 
+    /**
+     * 行军减兵（远输困境）：自最后一次进入己方据点半径以来累计行军位移（km）。
+     * LegionManager 主循环按帧位移用 haversine 累加（海上/战斗中不计），
+     * 途经任一己方据点 RESET_RADIUS_KM 内清零；split 时子军团继承（防拆分刷补给漏洞）。
+     */
+    public kmSinceSupply: number = 0;
+    /**
+     * 行军减兵小数累加器：低费率（0.3%/秒档）× 每帧小 dt 下先攒小数、满 1 才扣，
+     * 保证任意帧率下速率精确（严禁照抄坚壁清野 max(1, floor) 每帧扣，会严重超扣）。
+     */
+    public attritionLossCarry: number = 0;
+
     // [NEW] Source City ID (One Legion Per City Rule)
     private sourceCityId: string | null = null;
     
@@ -704,6 +716,8 @@ export class Army implements IBattleUnit {
         newArmy.type = this.type; // Inherit type (legion/army)
         newArmy.cultureSlots = this.cultureSlots ? [...this.cultureSlots] : null; // [NEW] Inherit culture slots
         newArmy.cultureScales = this.cultureScales ? [...this.cultureScales] : null; // [NEW] Inherit culture scales
+        // 行军减兵：子军团继承父军团累计里程（防拆分刷补给漏洞；小数累加器不复制，<1 兵无刷取空间）
+        newArmy.kmSinceSupply = this.kmSinceSupply;
 
         gameLog('army', `[Army] Splitting ${amount} from ${this.id}. Remaining: ${this.troops}. New Army: ${newArmy.id}`);
         return newArmy;

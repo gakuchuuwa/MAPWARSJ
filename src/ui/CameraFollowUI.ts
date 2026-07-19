@@ -61,6 +61,11 @@ export class CameraFollowUI {
         this.onYuefeiExpedition = fn;
     }
 
+    /** 注入「霍去病封狼居胥」按钮点击回调 */
+    public setHuoQubingHandler(fn: () => void): void {
+        this.onHuoQubingExpedition = fn;
+    }
+
     /** 开局尚未手动选军团时，首次出现野战军团则自动跟随（名将优先，否则兵力最多） */
     private autoFollowOnStartPending = true;
     private pendingFollowName: string | null = null;
@@ -193,6 +198,46 @@ export class CameraFollowUI {
         });
 
         btn.addEventListener('click', () => this.onYuefeiExpedition?.());
+
+        document.body.appendChild(btn);
+    }
+
+    // ─── 1c. 霍去病封狼居胥（固定于岳飞按钮下） ────────
+
+    private createHuoQubingButton(): void {
+        const btn = document.createElement('button');
+        btn.id = 'huoqubing-expedition-btn';
+        btn.title = '霍去病率骠骑郎卫，出灵仙北伐：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔';
+        btn.innerHTML = '⚔ 霍去病封狼居胥';
+        btn.style.cssText = `
+            position: fixed;
+            top: ${CameraFollowUI.HUOQUBING_BTN_TOP_PX}px;
+            left: ${CameraFollowUI.STACK_LEFT_PX}px;
+            z-index: 10000;
+            padding: 9px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffe9c8;
+            background: linear-gradient(135deg, rgba(90,20,15,0.94), rgba(120,35,20,0.96));
+            border: 2px solid rgba(210,110,70,0.75);
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+            font-family: 'SimSun', 'Songti SC', serif;
+            letter-spacing: 2px;
+        `;
+
+        btn.addEventListener('mouseenter', () => {
+            btn.style.borderColor = 'rgba(240,150,90,0.95)';
+            btn.style.boxShadow = '0 4px 20px rgba(210,110,70,0.45), inset 0 1px 0 rgba(255,255,255,0.15)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.borderColor = 'rgba(210,110,70,0.75)';
+            btn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)';
+        });
+
+        btn.addEventListener('click', () => this.onHuoQubingExpedition?.());
 
         document.body.appendChild(btn);
     }

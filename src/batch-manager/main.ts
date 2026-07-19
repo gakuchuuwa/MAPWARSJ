@@ -1,4 +1,4 @@
-﻿/**
+/**
  * MAPWAR 实体批量管理工具
  * 访问：http://localhost:5173/batch-manager.html
  *
@@ -670,6 +670,7 @@ const EFFECT_CN: Record<string, string> = {
     ignore_small_city_zoc: '无视小城',
     skip_post_battle_rest: '免休整',
     field_resupply: '野外回血',
+    march_attrition_immunity: '行军减兵全免',
     post_battle_troop_pct: '胜后补兵',
     city_growth_mult: '城市增长',
     recruit_cooldown_mult: '离城可募',

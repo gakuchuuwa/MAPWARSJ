@@ -272,6 +272,7 @@ export const FACTIONS: Faction[] = [
     { id: 'ashikaga', name: '室町' },
     { id: 'quanrong', name: '犬戎' },
     { id: 'suzhou', name: '肃州' },
+
     { id: 'sushen', name: '肃慎' },
 
     { id: 'chile', name: '敕勒' },
@@ -1085,6 +1086,7 @@ export const FACTIONS: Faction[] = [
     { id: 'loufan', name: '楼烦' },
              // 宁武关·楼烦族
     { id: 'xianyu', name: '井陉' },
+
 
              // 井陉关·中山国（原鲜虞）
     { id: 'yi', name: '易州' },                 // 紫荆关·易州

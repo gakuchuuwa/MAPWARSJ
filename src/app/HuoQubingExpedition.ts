@@ -9,11 +9,16 @@
  *   · 场上已有霍去病军 → 加兵 1 万，切跟随并继续北伐。
  * 按必打路标逐城远征：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔。
  *
+ * 两场脚本专属野战（不建据点，仅野战坐标）：
+ *   · 祷余山之战（达里湖北）：逼近时刷左贤王 5 万，霍去病加至 5 万迎战；
+ *   · 弓庐水之战（度难侯山后追歼）：逼近时刷左贤王 2 万残部，霍去病 5 万追击。
+ *
  * 旗号：脚本运行期间旗面显示「汉」、势力名显示「大汉」；结束/覆没后恢复。
  * 取食于敌：战后兵力低于 2 万触发，补到 [22222, 29000] 随机（与忠义归顺同参数）。
  */
 
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText } from '../utils/MapFloatingText';
 
@@ -42,7 +47,29 @@ const QUISHI_TRIGGER = 20000;
 const QUISHI_TARGET_MIN = 22222;
 const QUISHI_TARGET_MAX = 29000;
 
+/** ── 两场脚本专属野战 ── */
+
+/** 祷余山之战：达里湖北，大破左贤王主力 */
+const DAOYUSHAN = { lat: 43.4031, lng: 116.5182 };
+/** 弓庐水之战：度难侯山后穷追残部 */
+const GONGLUSHUI = { lat: 46.9146, lng: 109.7452 };
+/** 逼近触发距离（欧氏，约 30–40 km 量级） */
+const BATTLE_TRIGGER_DIST = 0.30;
+
+/** 左贤王 */
+const ZUOXIAN_FACTION = 'xiongnu';
+const ZUOXIAN_NAME = '左贤王';
+const ZUOXIAN_PORTRAIT = '/assets/STEPPE/xiongnu_maodun.png';
+/** 祷余山：左贤王主力 8 万 */
+const ZUOXIAN_TROOPS_DAOYU = 80000;
+/** 弓庐水：左贤王残部 4 万 */
+const ZUOXIAN_TROOPS_GONGLU = 40000;
+/** 霍去病战前兵力加至 5 万 */
+const BATTLE_TROOPS = 50000;
+
 const TICK_INTERVAL_MS = 400;
+
+type BattlePhase = 'pending' | 'spawned' | 'done';
 
 /** 借用的军团实例最小接口 */
 interface ScriptArmy {
@@ -126,6 +153,14 @@ export class HuoQubingExpedition {
 
     /** 临时覆盖：势力名 → 大汉 */
     private _origGetFactionName: ((id: string) => string) | null = null;
+
+    /** 祷余山之战 */
+    private daoyuPhase: BattlePhase = 'pending';
+    private daoyuEnemyId: string | null = null;
+
+    /** 弓庐水之战 */
+    private gongluPhase: BattlePhase = 'pending';
+    private gongluEnemyId: string | null = null;
 
     constructor(deps: HuoQubingDeps) {
         this.deps = deps;
@@ -271,6 +306,10 @@ export class HuoQubingExpedition {
         this.waypointIndex = 0;
         this.wasInCombat = false;
         this.pauseUntilMs = 0;
+        this.daoyuPhase = 'pending';
+        this.daoyuEnemyId = null;
+        this.gongluPhase = 'pending';
+        this.gongluEnemyId = null;
 
         gameLog('expedition', `🐎 [封狼居胥] 霍去病率骠骑郎卫自灵仙起兵：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔`);
         this.notify('霍去病率骠骑郎卫北伐——封狼居胥！');
@@ -278,7 +317,7 @@ export class HuoQubingExpedition {
         this.attachFollowAndMarch(army);
     }
 
-    /** 每 tick：推进路线、锁定当前目标城 */
+    /** 每 tick：推进路线、锁定当前目标城；两场野战优先于攻城 */
     private tick(): void {
         if (!this.armyId) {
             this.stop();
@@ -290,6 +329,7 @@ export class HuoQubingExpedition {
             const reached = ROUTE[Math.max(0, this.waypointIndex - 1)]?.name ?? '灵仙';
             gameLog('expedition', `🐎 [封狼居胥] 霍去病·骠骑郎卫覆没，北伐止步于 ${reached} 一线`);
             this.notify(`霍去病·骠骑郎卫覆没，止步于 ${reached}`);
+            this.cleanupAllEnemies();
             this.stop();
             return;
         }
@@ -313,6 +353,10 @@ export class HuoQubingExpedition {
             return;
         }
         army.__scriptPinned = false;
+
+        // ── 两场野战 ──
+        this.tickDaoyushan(army);
+        this.tickGonglushui(army);
 
         // 跳过已攻克的路线城
         while (this.waypointIndex < ROUTE.length) {
@@ -344,6 +388,173 @@ export class HuoQubingExpedition {
             gameLog('expedition', `🐎 [封狼居胥] 霍去病·骠骑郎卫锁定目标：${desired.name}`);
         }
     }
+
+    // ═══════════════════════════════════════════
+    // 祷余山之战
+    // ═══════════════════════════════════════════
+
+    private tickDaoyushan(army: ScriptArmy): void {
+        if (this.daoyuPhase === 'done') return;
+
+        const pos = army.getPosition?.();
+        if (!pos) return;
+
+        if (this.daoyuPhase === 'pending') {
+            if (getEuclideanDistance(pos, DAOYUSHAN) > BATTLE_TRIGGER_DIST) return;
+
+            if (!this.spawnZuoxian('daoyu', DAOYUSHAN, ZUOXIAN_TROOPS_DAOYU)) {
+                this.daoyuPhase = 'done';
+                return;
+            }
+            this.daoyuPhase = 'spawned';
+            // 霍去病兵力加至 5 万
+            army.setTroops(BATTLE_TROOPS);
+            gameLog(
+                'expedition',
+                `🐎 [封狼居胥] 祷余山遭遇匈奴左贤王主力（${ZUOXIAN_TROOPS_DAOYU.toLocaleString()}），骠骑郎卫 ${BATTLE_TROOPS.toLocaleString()} 迎战`,
+            );
+            this.notify('祷余山——左贤王主力拦路！');
+            return;
+        }
+
+        // spawned：钉死左贤王；等战斗结束
+        this.pinZuoxian(this.daoyuEnemyId, DAOYUSHAN);
+        const enemy = this.daoyuEnemyId
+            ? this.deps.legionManager.getLegionById(this.daoyuEnemyId)
+            : undefined;
+        const enemyAlive = !!enemy && !enemy.isDestroyed && enemy.getTroops() > 0;
+
+        if (enemyAlive) return;
+
+        const inCombat = army.getIsInCombat?.() ?? false;
+        if (!inCombat) {
+            this.daoyuPhase = 'done';
+            this.cleanupZuoxian(this.daoyuEnemyId);
+            this.daoyuEnemyId = null;
+            gameLog('expedition', `🐎 [封狼居胥] 祷余山大捷——左贤王主力溃败`);
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // 弓庐水之战
+    // ═══════════════════════════════════════════
+
+    private tickGonglushui(army: ScriptArmy): void {
+        if (this.gongluPhase === 'done') return;
+
+        const pos = army.getPosition?.();
+        if (!pos) return;
+
+        if (this.gongluPhase === 'pending') {
+            if (getEuclideanDistance(pos, GONGLUSHUI) > BATTLE_TRIGGER_DIST) return;
+
+            if (!this.spawnZuoxian('gonglu', GONGLUSHUI, ZUOXIAN_TROOPS_GONGLU)) {
+                this.gongluPhase = 'done';
+                return;
+            }
+            this.gongluPhase = 'spawned';
+            army.setTroops(BATTLE_TROOPS);
+            gameLog(
+                'expedition',
+                `🐎 [封狼居胥] 弓庐水遭遇左贤王残部（${ZUOXIAN_TROOPS_GONGLU.toLocaleString()}），骠骑郎卫 ${BATTLE_TROOPS.toLocaleString()} 追击`,
+            );
+            this.notify('弓庐水——左贤王残部再战！');
+            return;
+        }
+
+        this.pinZuoxian(this.gongluEnemyId, GONGLUSHUI);
+        const enemy = this.gongluEnemyId
+            ? this.deps.legionManager.getLegionById(this.gongluEnemyId)
+            : undefined;
+        const enemyAlive = !!enemy && !enemy.isDestroyed && enemy.getTroops() > 0;
+
+        if (enemyAlive) return;
+
+        const inCombat = army.getIsInCombat?.() ?? false;
+        if (!inCombat) {
+            this.gongluPhase = 'done';
+            this.cleanupZuoxian(this.gongluEnemyId);
+            this.gongluEnemyId = null;
+            gameLog('expedition', `🐎 [封狼居胥] 弓庐水再捷——左贤王残部覆灭`);
+        }
+    }
+
+    // ═══════════════════════════════════════════
+    // 左贤王 刷兵 / 钉死 / 清理
+    // ═══════════════════════════════════════════
+
+    private spawnZuoxian(
+        battle: 'daoyu' | 'gonglu',
+        pos: { lat: number; lng: number },
+        troops: number,
+    ): boolean {
+        const enemy = this.deps.legionManager.createLegion(
+            { ...pos },
+            troops,
+            ZUOXIAN_FACTION,
+            ZUOXIAN_NAME,
+            undefined,
+            undefined,
+            'city_toumancheng',
+            undefined, // 不绑游戏内武将
+            true,
+        );
+        if (!enemy) {
+            gameLog('expedition', `🐎 [封狼居胥] 刷左贤王失败（${battle}）`);
+            return false;
+        }
+        enemy.setPosition?.(pos.lat, pos.lng);
+        enemy.setTroops(troops);
+        enemy.name = ZUOXIAN_NAME;
+        enemy.portraitPath = ZUOXIAN_PORTRAIT;
+        enemy.__scriptPinned = true;
+        enemy.ignoreCityCollision = true;
+        enemy.stopMovement?.(false);
+        enemy.setTargetCity?.(null);
+        enemy.expeditionTargetCityId = null;
+
+        if (battle === 'daoyu') {
+            this.daoyuEnemyId = enemy.id;
+        } else {
+            this.gongluEnemyId = enemy.id;
+        }
+        return true;
+    }
+
+    private pinZuoxian(enemyId: string | null, homePos: { lat: number; lng: number }): void {
+        if (!enemyId) return;
+        const e = this.deps.legionManager.getLegionById(enemyId);
+        if (!e || e.isDestroyed || e.getTroops() <= 0) return;
+        e.__scriptPinned = true;
+        e.ignoreCityCollision = true;
+        e.expeditionTargetCityId = null;
+        e.setTargetCity?.(null);
+        if (e.getIsInCombat?.()) return;
+        e.stopMovement?.(false);
+        const p = e.getPosition?.();
+        if (p && getEuclideanDistance(p, homePos) > 0.05) {
+            e.setPosition?.(homePos.lat, homePos.lng);
+        }
+    }
+
+    private cleanupZuoxian(enemyId: string | null): void {
+        if (!enemyId) return;
+        const e = this.deps.legionManager.getLegionById(enemyId);
+        if (e && !e.isDestroyed) {
+            e.__scriptPinned = false;
+        }
+    }
+
+    private cleanupAllEnemies(): void {
+        this.cleanupZuoxian(this.daoyuEnemyId);
+        this.daoyuEnemyId = null;
+        this.cleanupZuoxian(this.gongluEnemyId);
+        this.gongluEnemyId = null;
+    }
+
+    // ═══════════════════════════════════════════
+    // 必胜 / 取食于敌 / stop
+    // ═══════════════════════════════════════════
 
     /** 霍去病任何战斗必胜 */
     private enforceAlwaysWin(): void {
@@ -415,6 +626,7 @@ export class HuoQubingExpedition {
         if (army) (army as any).siegeMissionData = null;
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.restoreFactionName();
+        this.cleanupAllEnemies();
         if (this.timer != null) {
             window.clearInterval(this.timer);
             this.timer = null;
