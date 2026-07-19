@@ -7,7 +7,7 @@
  * 玩家点「⚔ 霍去病封狼居胥」按钮：
  *   · 场上尚无霍去病军 → 灵仙生成霍去病·轻勇骑（5 万），镜头跟拍，开北伐脚本；
  *   · 场上已有霍去病军 → 加兵 1 万，切跟随并继续北伐。
- * 按必打路标逐城远征：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔。
+ * 按必打路标逐城远征：上都 → 应昌 → 阔亦田 → 狼居胥山 → 姑衍山 → 贝加尔。
  *
  * 两场脚本专属野战（不建据点，仅野战坐标）：
  *   · 祷余山之战（达里湖北）：逼近时刷左贤王 8 万，霍去病加至 5 万迎战；
@@ -38,6 +38,7 @@ const CLICK_REINFORCE_TROOPS = 10000;
 const ROUTE: { id: string; name: string }[] = [
     { id: 'city_shangdu',    name: '上都' },
     { id: 'city_yingchang',  name: '应昌' },
+    { id: 'city_kuoyitian',  name: '阔亦田' },
     { id: 'city_langjuxu',   name: '狼居胥山' },
     { id: 'city_guyanshan',  name: '姑衍山' },
     { id: 'city_xiaoyenisei', name: '贝加尔' },
@@ -326,8 +327,8 @@ export class HuoQubingExpedition {
 
         gameLog('expedition', `🐎 [封狼居胥] 霍去病率轻勇骑自灵仙起兵：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔`);
         this.notify('霍去病率轻勇骑北伐——封狼居胥！');
-        (speechAnnouncer as any).speak('骠骑将军，霍去病，亲率铁骑五万，出代郡，绝大幕，狂飙万里，犁庭扫穴。匈奴未灭，何以家为！此去，不破胡虏，誓不南还！');
-        this.pauseUntilMs = Date.now() + 10000;
+        (speechAnnouncer as any).speak('骠骑将军，霍去病，亲率铁骑五万，出代郡，绝大幕。匈奴未灭，何以家为！此去，不破胡虏，誓不南还！');
+        this.pauseUntilMs = Date.now() + 15000;
 
         this.attachFollowAndMarch(army);
     }
@@ -381,13 +382,13 @@ export class HuoQubingExpedition {
                 gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑已克 ${wp.name}`);
                 // 封狼居胥山·专属语音
                 if (wp.id === 'city_langjuxu') {
-                    (speechAnnouncer as any).speak('登临绝顶，筑坛燔柴，告天封礼！巍巍狼居胥，今日尽插大汉赤帜！此山向为胡天，今则汉旌蔽之。将军亲读祝文，从骑数万，皆南向泣下。自秦汉以降，封天之礼首行于绝域，汉家威德，播于大幕之北！');
-                    this.pauseUntilMs = Date.now() + 10000;
+                    (speechAnnouncer as any).speak('登临绝顶，告天封礼！巍巍狼居胥，今则汉旌蔽之。自秦汉以降，封天之礼首行于绝域，汉家威德，播于大幕之北！');
+                    this.pauseUntilMs = Date.now() + 15000;
                 }
                 // 姑衍山·专属语音
                 if (wp.id === 'city_guyanshan') {
-                    (speechAnnouncer as any).speak('秩祀姑衍，礼禅后土！封天禅地，功德圆满！将士咸呼万岁，声震群山。胡人祖庭，尽入汉土。自此，匈奴名山大川，皆隶汉家版籍。振旅南旋，瀚海在望！');
-                    this.pauseUntilMs = Date.now() + 10000;
+                    (speechAnnouncer as any).speak('秩祀姑衍，礼禅后土！胡人祖庭，尽入汉土。自此，匈奴名山大川，皆隶汉家版籍。振旅南旋，瀚海在望！');
+                    this.pauseUntilMs = Date.now() + 15000;
                 }
                 this.waypointIndex++;
                 continue;
@@ -402,8 +403,8 @@ export class HuoQubingExpedition {
                 army.expeditionTargetCityId = null;
                 gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑登临贝加尔，封狼居胥功成`);
                 this.notify('登临瀚海，封狼居胥！霍去病北伐功成 🎉');
-                (speechAnnouncer as any).speak('登临瀚海，兵锋至极！极目沧溟，饮马北海之滨。从骑取水，欢声雷动，咸谓此生得至绝域，虽死无憾！自此大幕以南，再无王庭。');
-                this.pauseUntilMs = Date.now() + 10000;
+                (speechAnnouncer as any).speak('登临瀚海，兵锋至极！极目沧溟，饮马北海之滨。咸谓此生得至绝域，虽死无憾！自此大幕以南，再无王庭。');
+                this.pauseUntilMs = Date.now() + 15000;
                 return;
             }
             // 播报完再停
@@ -466,8 +467,8 @@ export class HuoQubingExpedition {
             this.cleanupZuoxian(this.daoyuEnemyId);
             this.daoyuEnemyId = null;
             gameLog('expedition', `🐎 [封狼居胥] 祷余山大捷——左贤王主力溃败`);
-            (speechAnnouncer as any).speak('祷余山下，汉军铁骑，如惊雷乍起，胡骑为之褫魂。左贤王部众飞砂喋血，满盘崩溃。此一役，砂砾饮血，大幕为赤，实乃封山之先声！');
-            this.pauseUntilMs = Date.now() + 10000;
+            (speechAnnouncer as any).speak('祷余山下，汉军铁骑，如惊雷乍起，胡骑为之褫魂。左贤王部众飞砂喋血，大幕为赤，实乃封山之先声！');
+            this.pauseUntilMs = Date.now() + 15000;
         }
     }
 
@@ -512,8 +513,8 @@ export class HuoQubingExpedition {
             this.cleanupZuoxian(this.gongluEnemyId);
             this.gongluEnemyId = null;
             gameLog('expedition', `🐎 [封狼居胥] 弓庐水再捷——左贤王残部覆灭`);
-            (speechAnnouncer as any).speak('汉军铁骑踏波强渡，弓庐水畔，残虏靡然！擒屯头王、韩王以下凡三王，拘将军、相国、当户、都尉八十三人，斩首七万余级。逐北两千里，胡尘为之荡尽！');
-            this.pauseUntilMs = Date.now() + 10000;
+            (speechAnnouncer as any).speak('汉军铁骑踏波强渡，弓庐水畔，残虏靡然！擒头领八十三人，斩首七万余级。逐北两千里，胡尘为之荡尽！');
+            this.pauseUntilMs = Date.now() + 15000;
         }
     }
 
@@ -534,7 +535,7 @@ export class HuoQubingExpedition {
             undefined,
             undefined,
             'city_toumancheng',
-            undefined, // 不绑游戏内武将
+            'xiongnu_maodun', // 挂将：确保双将战斗时长
             true,
         );
         if (!enemy) {
