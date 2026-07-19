@@ -733,7 +733,7 @@ export const STRATEGIC_SKILL_TAGS = [
     { id: 'str_12', grid: 'S⑫', name: '乘胜追击', tags: ['连胜', '连续行军'], terrain: '行军' },
     // ── 加兵类 ──
     { id: 'str_07', grid: 'S⑦', name: '因粮于敌', tags: ['胜后补兵', '以战养战'], terrain: '补给' },
-    { id: 'str_13', grid: 'S⑬', name: '以战养战', tags: ['野外回血', '远征续航'], terrain: '补给' },
+    { id: 'str_13', grid: 'S⑬', name: '以战养战', tags: ['行军减兵全免', '远征续航'], terrain: '补给' },
     { id: 'str_28', grid: 'S㉘', name: '调兵遣将', tags: ['征兵', '扩编'], terrain: '补给' },
     // ── 视野类 ──
     { id: 'str_16', grid: 'S⑯', name: '神出鬼没', tags: ['隐身', '奇袭'], terrain: '隐蔽' },

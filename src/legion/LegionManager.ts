@@ -33,8 +33,7 @@ import {
     type LegionRoadMarchDeps,
 } from './march/LegionRoadMarch';
 import {
-    haversineKm,
-    resetKmSinceSupplyIfNearOwnCity,
+    resetSupplyTimerIfNearOwnCity,
     tickMarchAttrition,
 } from './march/MarchAttritionSystem';
 import { SpatialRegistry } from '../world/SpatialRegistry';
@@ -428,8 +427,8 @@ export class LegionManager {
             // 坚壁清野：本城被攻击（含沿途/排队/已开战）时来犯军每秒减兵，技挂录入锚将
             this.tickApproachAttrition(army, deltaTime);
 
-            // 行军减兵（远输困境）：里程累计 → 途经己方据点复位 → 分档扣减
-            this.tickMarchAttritionPipeline(army, oldPos, newPos, deltaTime);
+            // 行军减兵（远输困境）：断粮计时 → 途经己方据点复位 → 超时扣减
+            this.tickMarchAttritionPipeline(army, deltaTime);
 
             // 行军 ZOC：进入非己方据点（含叛军 panjun）控制范围必须先停攻，不可绕路穿过
             if (
@@ -952,25 +951,26 @@ export class LegionManager {
     }
 
     /**
-     * 行军减兵（远输困境）管线（2026-07-21 主人裁定 v1）：
-     *   ① 里程累计：非战斗、非海上、发生位移才按 haversine km 累加 kmSinceSupply（海上冻结）；
-     *   ② 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（不要求驻停，静止军团也生效）；
-     *   ③ 分档扣减：战斗/远征/海运/str_13 豁免与保底 1 等守卫全在 MarchAttritionSystem 内。
+     * 行军减兵（远输困境）管线（2026-07-21 主人定稿 v2：时间口径·一视同仁）：
+     *   ① 计时：timeSinceSupply 每帧 += deltaTime（战斗中照走；远征豁免军团不走表）；
+     *   ② 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（计时器为 0 时不查城，省每帧全表过滤）；
+     *   ③ 扣减：免费窗/战斗/远征/str_13 豁免与保底 1 等守卫全在 MarchAttritionSystem 内。
      */
-    private tickMarchAttritionPipeline(army: Army, oldPos: LatLng, newPos: LatLng, deltaTime: number): void {
+    private tickMarchAttritionPipeline(army: Army, deltaTime: number): void {
         if (!GameConfig.MARCH_ATTRITION.ENABLED) return;
         if (army.isDestroyed || army.getTroops() <= 0) return;
 
-        // ① 里程累计（海上/战斗中不计；blocked 分支在主循环已提前 return，不会走到这里）
-        if (!army.getIsInCombat() && !army.isOnSea
-            && (oldPos.lat !== newPos.lat || oldPos.lng !== newPos.lng)) {
-            army.kmSinceSupply += haversineKm(oldPos.lat, oldPos.lng, newPos.lat, newPos.lng);
+        // ① 计时（一视同仁：不分步骑水陆，同样的时间窗速度快者走得更远；远征豁免军团不走表）
+        if (!(GameConfig.MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null)) {
+            army.timeSinceSupply += deltaTime;
         }
 
-        // ② 途经复位（己方城查询复用 FollowResupplySystem 同款 cityManager.getCitiesByFaction）
-        resetKmSinceSupplyIfNearOwnCity(army, this.cityManager.getCitiesByFaction(army.getFactionId()));
+        // ② 途经复位（仅计时器非零才查城；查询复用 FollowResupplySystem 同款 cityManager.getCitiesByFaction）
+        if (army.timeSinceSupply > 0 || army.attritionLossCarry > 0) {
+            resetSupplyTimerIfNearOwnCity(army, this.cityManager.getCitiesByFaction(army.getFactionId()));
+        }
 
-        // ③ 分档扣减；本帧整数损失汇总给跟拍飘字
+        // ③ 扣减；本帧整数损失汇总给跟拍飘字
         const loss = tickMarchAttrition(army, deltaTime);
         if (loss > 0) this.accumulateMarchAttritionFloat(army, loss, deltaTime);
     }
