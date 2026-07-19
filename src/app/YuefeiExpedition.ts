@@ -382,8 +382,8 @@ export class YuefeiExpedition {
         if (!(army as any).siegeMissionData) (army as any).siegeMissionData = {};
         (army as any).siegeMissionData.result = 'attacker_win';
 
-        // 守方不败：岳飞「中途以援军身份编入守方」的漏网场次，在此补设 defender_win
-        this.enforceDefenderWinIfJoined();
+        // 任何战斗必胜（攻守通吃）：由本脚本唯一负责，游戏本体不含任何必胜规则
+        this.enforceYuefeiAlwaysWin();
 
         this.tickZhongyiTrickle(army);
 
@@ -497,16 +497,18 @@ export class YuefeiExpedition {
     }
 
     /**
-     * 岳飞作为「后到的守方援军」编入进行中的战斗时，补设守方必胜。
+     * 岳飞任何战斗必胜 —— 攻守通吃，由本脚本**唯一**负责。
      *
-     * 为何需要：SiegeManager 只在**开战那一刻**检查守方军团名单（nearbyDefenderLegions），
-     * 岳飞若是战斗打响后才由开战圈轮询拉进来的援军，就不在那份名单里，守方必胜漏判。
-     * 本方法每 tick 扫一遍进行中的战场补上，攻城/野战都覆盖。
+     * 设计约束（主人 2026-07-19 定）：
+     *   · 游戏本体保持干净，任何势力都不得有必胜规则 —— 故必胜逻辑一行都不写进本体；
+     *   · 不改援军逻辑 —— 这里只看「他此刻是否在某场战斗的参战名单里」，
+     *     无论开战即在场还是中途驰援，扫到就算，天然覆盖援军情形；
+     *   · 攻城/野战一视同仁：在攻方判攻方胜，在守方判守方胜。
      *
-     * 只改脚本：不新增游戏本体代码，直接对该场 BattleField 设预设结果并重跑强弱判定
-     * （与引擎自己在构造期走的是同一条路径：presetResult → pickPredictedSides）。
+     * 手法与引擎构造期完全一致（presetResult → pickPredictedSides），不另造机制。
+     * 脚本 stop() 时会清理必胜存根，军团交回主游戏后不带预设战果。
      */
-    private enforceDefenderWinIfJoined(): void {
+    private enforceYuefeiAlwaysWin(): void {
         const armyId = this.armyId;
         if (!armyId) return;
         const fields = (window as any).game?.combatSystem?.getActiveBattleFields?.() as
@@ -516,14 +518,23 @@ export class YuefeiExpedition {
 
         for (const bf of fields) {
             if (!bf || bf.isOver) continue;
-            if (bf.presetResult === 'defender_win') continue; // 已是守方必胜，不重复
-            const defenders: any[] = bf.getDefenderUnits?.() ?? [];
-            if (!defenders.some((u) => u?.id === armyId)) continue;
 
-            bf.presetResult = 'defender_win';
-            bf.pickPredictedSides?.(); // 按新预设把强弱走向翻到守方
+            const inAttacker = (bf.getAttackerUnits?.() ?? []).some((u: any) => u?.id === armyId);
+            const inDefender = inAttacker
+                ? false
+                : (bf.getDefenderUnits?.() ?? []).some((u: any) => u?.id === armyId);
+            if (!inAttacker && !inDefender) continue;
+
+            const want = inAttacker ? 'attacker_win' : 'defender_win';
+            if (bf.presetResult === want) continue; // 已是该结果，不重复处理
+
+            bf.presetResult = want;
+            bf.pickPredictedSides?.(); // 按新预设把强弱走向翻到岳飞这一侧
             bf.strongerCasualtyReduction = 0; // 与引擎 presetResult 分支一致
-            gameLog('expedition', '🛡️ [圆梦] 岳飞驰援编入守方，本战改判守方必胜');
+            gameLog(
+                'expedition',
+                `⚔️ [圆梦] 岳飞参战，本战改判${inAttacker ? '攻方' : '守方'}必胜`,
+            );
         }
     }
 
