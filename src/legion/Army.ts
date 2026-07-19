@@ -149,7 +149,7 @@ export class Army implements IBattleUnit {
 
     /**
      * 行军减兵（远输困境）：自最后一次途经己方据点半径以来的游戏秒数（时间口径·一视同仁）。
-     * LegionManager 主循环每帧累加（战斗中照走；远征豁免军团不走表），
+     * LegionManager 主循环每帧累加（战斗中照走、战后休整停表；远征豁免军团不走表），
      * 途经任一己方据点 RESET_RADIUS_KM 内清零；split 时子军团继承（防拆分刷补给漏洞）。
      */
     public timeSinceSupply: number = 0;

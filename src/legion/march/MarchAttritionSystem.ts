@@ -3,7 +3,7 @@
  *
  * 语义：timeSinceSupply = 「最后一次途经己方据点至今的游戏秒数」（形成军团即起算；
  *   攻下敌城后该城即己方城，途经即复位）。
- *   · 计时：LegionManager 主循环每帧 += deltaTime（战斗中照走；远征豁免军团不走表）；
+ *   · 计时：LegionManager 主循环每帧 += deltaTime（战斗中照走、扣减暂停；战后休整停表停扣；远征豁免军团不走表）；
  *   · 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（不要求驻停，静止军团也生效）；
  *   · 扣减：超过 FREE_SUPPLY_SEC（15 游戏秒 = 1 季度携行粮）后对当前兵力按 ATTRITION_RATE_PER_SEC
  *     每秒百分比减员，保底 MIN_TROOPS_FLOOR；
@@ -28,8 +28,10 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     const cfg = GameConfig.MARCH_ATTRITION;
     if (!cfg.ENABLED) return 0;
     if (army.isDestroyed) return 0;
-    // 战斗暂停：战斗结算按兵力锁配速（含 80% 翻盘阈值），外部掉血会搅乱六计判定（计时照走）
+    // 战斗暂停扣减：战斗结算按兵力锁配速（含 80% 翻盘阈值），外部掉血会搅乱六计判定（计时照走，在 LegionManager 累计）
     if (army.getIsInCombat()) return 0;
+    // 战后休整：停表停扣（主人裁定：休整为战斗余韵；战斗中照走表但扣减暂停）
+    if (army.isPostBattleResting?.()) return 0;
     // 远征军团整体豁免（expeditionTargetCityId 非空，含岳飞脚本军）
     if (cfg.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null) return 0;
 

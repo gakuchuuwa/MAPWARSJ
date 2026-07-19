@@ -535,7 +535,7 @@ export class HuoQubingExpedition {
             undefined,
             undefined,
             'city_toumancheng',
-            'xiongnu_maodun', // 挂将：确保双将战斗时长
+            undefined, // 不绑真武将
             true,
         );
         if (!enemy) {
@@ -545,8 +545,9 @@ export class HuoQubingExpedition {
         enemy.setPosition?.(pos.lat, pos.lng);
         enemy.setTroops(troops);
         enemy.isElite = true;
-        enemy.name = ZUOXIAN_NAME;
+        enemy.name = '左部控弦';
         enemy.portraitPath = ZUOXIAN_PORTRAIT;
+        enemy.generalId = '__script_zuoxian'; // 假将：仅触发双将战斗时长，不绑真武将
         enemy.__scriptPinned = true;
         enemy.ignoreCityCollision = true;
         enemy.stopMovement?.(false);
