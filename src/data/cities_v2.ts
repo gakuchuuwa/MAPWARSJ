@@ -422,6 +422,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
 
 
 
+
     // ── 塞北与西域中城 ──
     { id: 'city_zhizhicheng', name: '郅支城', factionId: 'xijue', lat: 42.906205, lng: 72.765198, type: 'small_city', troops: 20000, region: 'STEPPE' },
 

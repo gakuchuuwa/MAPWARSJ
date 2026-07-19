@@ -1690,7 +1690,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    suzhou_huoqubing: { generalId: 'suzhou_huoqubing', tier: 'famous', tacticalSkillId: 'ts_240', advantageSkillId: 'ts_052', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_422', atkAdvantageSkillId: 'ts_240', atkBalanceSkillId: 'ts_232', atkDisadvantageSkillId: 'ts_198', defAdvantageSkillId: 'ts_359', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_414', strategicSkillId: 'str_01', aptitude: 'create', attackStyle: 'attack' },
+    suzhou_huoqubing: { generalId: 'suzhou_huoqubing', tier: 'famous', tacticalSkillId: 'ts_240', advantageSkillId: 'ts_052', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_422', atkAdvantageSkillId: 'ts_240', atkBalanceSkillId: 'ts_232', atkDisadvantageSkillId: 'ts_198', defAdvantageSkillId: 'ts_359', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_414', strategicSkillId: 'str_22', aptitude: 'create', attackStyle: 'attack' },
 
 
 

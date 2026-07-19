@@ -4143,7 +4143,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -30
         },
         "/assets/STEPPE/chahar_yantiemuer.png": {
-            "scale": 1.13,
+            "scale": 1.15,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -5956,6 +5956,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.42,
             "offsetX": 0,
             "offsetY": -1
+        },
+        "/assets/STEPPE/__多余__STEPPE_02.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": -20
         }
     },
     "folderGuides": {
