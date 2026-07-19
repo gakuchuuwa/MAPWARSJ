@@ -716,6 +716,7 @@ export const FACTIONS: Faction[] = [
     { id: 'yujiulu', name: '郁久闾' },
             // 柔然紫 - 郁久闾氏(柔然王族/弱水畔)
     { id: 'ashina', name: '阿史那' },
+
               // 草原绿灰 - 阿史那氏
     { id: 'ashide', name: '阿史德' },
               // 草原绿 - 阿史德氏(突厥别部)
@@ -1459,7 +1460,8 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-19 新增：五原郡（固阳塞）──
     { id: 'wuyuan_d', name: '五原' },            // 固阳塞·秦汉北防匈奴要隘
     // ── 2026-06-19 新增：漠北/漠南要塞势力（7点）──
-    { id: 'chenli_d', name: '撑犁' },              // 姑衍山·匈奴祭天（撑犁=天）
+    { id: 'chenli_d', name: '撑犁' },
+              // 姑衍山·匈奴祭天（撑犁=天）
     { id: 'nuoyan_d', name: '诺颜' },              // 赛音山达·赛音诺颜部
     { id: 'wuli_d', name: '乌里' },                // 扎布汗·乌里雅苏台辖区
     { id: 'jiluo_d', name: '涿涂' },               // 涿邪山·窦宪北征突骑
@@ -1546,6 +1548,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'shizhou', name: '石州' },
     { id: 'cangsong', name: '苍松' },
+    { id: 'aertai', name: '阿尔泰' },
 
 
 
