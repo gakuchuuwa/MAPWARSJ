@@ -919,15 +919,7 @@ export class SiegeManager {
         });
         siegeLog(`🛤️ [Sandbox Siege] ${army.name} 城周就位（无传送）后开战`);
 
-        let siegePreset = siegeData.result;
-
-        // 岳飞北伐：守方不败——敌军反攻时，岳飞军团作为守方驻军/守方援军参战则守方必胜
-        // （仅北伐脚本激活期间生效，不碰主游戏；不改 siegeData.result 本体，避免污染事件链判定——2026-07-19 主人定）
-        if ((window as any).__yuefeiExpeditionActive
-            && nearbyDefenderLegions.some((l) => l.generalId === 'yanchuan_d_yuefei')) {
-            siegePreset = 'defender_win';
-            siegeLog(`🛡️ [SiegeManager] 岳飞北伐：守方（岳飞军团驻军/援军参战）不败，预设 defender_win`);
-        }
+        const siegePreset = siegeData.result;
 
         // Adapters
         const attackerAdapter = BattleUnitFactory.createAdapter(
