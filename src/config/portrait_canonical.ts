@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/19 09:21:48（共 147 条）
+ * 生成时间：2026/7/19 10:06:33（共 147 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
@@ -101,12 +101,12 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/liuhan/shuofang_weiqing.png": "/assets/liuhan/__多余__liuhan_02.png",
     "/assets/manqing/gumie_lizhifang.png": "/assets/manqing/__多余__manqing_01.png",
     "/assets/NORTH/wangyan_wangyan.png": "/assets/NORTH/lai_wangshifan.png",
-    "/assets/NORTH/__多余__NORTH_04.png": "/assets/NORTH/__多余__NORTH_03.png",
     "/assets/NORTHEAST/dazhen_wanyantiege.png": "/assets/NORTHEAST/__多余__NORTHEAST_05.png",
     "/assets/NORTHEAST/jurchen_wanyanzongbi.png": "/assets/NORTHEAST/__多余__NORTHEAST_06.png",
     "/assets/NORTHEAST/mohe_wanyanzonghan.png": "/assets/NORTHEAST/__多余__NORTHEAST_07.png",
     "/assets/NORTHEAST/yizhou_wanyanloushi.png": "/assets/NORTHEAST/__多余__NORTHEAST_04.png",
     "/assets/NORTHEAST/__多余__NORTHEAST_03.png": "/assets/NORTHEAST/__多余__NORTHEAST_02.png",
+    "/assets/panjun/chimei_fanchong.png": "/assets/panjun/baodi.png",
     "/assets/panjun/huangwang_huangchao.png": "/assets/panjun/__多余__panjun_01.png",
     "/assets/TIBET/hor_chisang.png": "/assets/STEPPE/ashide_ashidejieli.png",
     "/assets/TIBET/gling_lingesar.png": "/assets/STEPPE/bayegu_qulishi.png",
