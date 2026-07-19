@@ -897,8 +897,16 @@ export function getRandomRegionPortraitPath(
     });
 }
 
-/** 战斗 UI 最终兜底（禁止 img.src 为空） */
-export const BATTLE_PORTRAIT_FALLBACK = '/assets/panjun/panjun.png';
+/**
+ * 战斗 UI 最终兜底（禁止 img.src 为空）。
+ *
+ * 【2026-07-19 修】原指向 /assets/panjun/panjun.png —— 该文件早在 2026-06-13
+ * 「整理闲置立绘」提交中被删除，导致兜底一旦被用到就是**空白立绘**（实测
+ * naturalWidth=0）。守方城池驻军偶发无立绘即由此而来。
+ * 换成主人指定的专用保底图 baodi.png；此路径被代码引用后，
+ * 闲置改名工具会自动跳过它，不会再被改名或误判为闲置。
+ */
+export const BATTLE_PORTRAIT_FALLBACK = '/assets/panjun/baodi.png';
 
 export function portraitAssetExists(path: string | undefined): boolean {
     if (!path) return false;
