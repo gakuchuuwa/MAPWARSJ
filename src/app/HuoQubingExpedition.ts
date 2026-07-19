@@ -60,9 +60,10 @@ const GONGLUSHUI = { lat: 46.9146, lng: 109.7452 };
 const BATTLE_TRIGGER_DIST = 0.30;
 
 /** 左贤王 */
-const ZUOXIAN_FACTION = 'xiongnu';
+const ZUOXIAN_FACTION = 'chenli_d';
+const ZUOXIAN_GENERAL = 'chenli_d_zuoxianwang';
 const ZUOXIAN_NAME = '左贤王';
-const ZUOXIAN_PORTRAIT = '/assets/STEPPE/xiongnu_maodun.png';
+const ZUOXIAN_PORTRAIT = '/assets/STEPPE/chenli_d_wutang.png';
 /** 祷余山：左贤王主力 8 万 */
 const ZUOXIAN_TROOPS_DAOYU = 80000;
 /** 弓庐水：左贤王残部 4 万 */
@@ -90,8 +91,8 @@ interface ScriptArmy {
     __scriptPinned?: boolean;
     /** 阵型外观：'cavalry' 三角骑兵阵；值同 Army.legionType（LegionType） */
     legionType?: string;
-    /** 阵型文化风格：'CENTRAL_ASIA' 等；值同 Army.cultureRegion（RegionType） */
-    cultureRegion?: string;
+    /** 阵型文化风格：'CENTRAL_ASIA' 等；值同 Army.cultureRegion（RegionType | null） */
+    cultureRegion?: string | null;
     getTroops(): number;
     setTroops(n: number): void;
     getIsInCombat?(): boolean;
@@ -311,6 +312,7 @@ export class HuoQubingExpedition {
         // 阵型外观：中亚骑兵风格（三角阵、枪骑+弓骑）
         army.legionType = 'cavalry';
         army.cultureRegion = 'CENTRAL_ASIA';
+        army.homeCityId = null; // 清掉灵仙锚点，精锐名走 army.name 而非据点查表
         if (!army.generalId) army.generalId = GENERAL_ID;
         const rec = getGeneralRecordByGeneralId(GENERAL_ID);
         if (rec?.portrait) army.portraitPath = rec.portrait;
@@ -534,8 +536,8 @@ export class HuoQubingExpedition {
             ZUOXIAN_NAME,
             undefined,
             undefined,
-            'city_toumancheng',
-            undefined, // 不绑真武将
+            'city_guyanshan',
+            ZUOXIAN_GENERAL,
             true,
         );
         if (!enemy) {
@@ -547,7 +549,6 @@ export class HuoQubingExpedition {
         enemy.isElite = true;
         enemy.name = '左部控弦';
         enemy.portraitPath = ZUOXIAN_PORTRAIT;
-        enemy.generalId = '__script_zuoxian'; // 假将：仅触发双将战斗时长，不绑真武将
         enemy.__scriptPinned = true;
         enemy.ignoreCityCollision = true;
         enemy.stopMovement?.(false);

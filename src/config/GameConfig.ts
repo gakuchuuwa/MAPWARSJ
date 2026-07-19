@@ -160,10 +160,11 @@ export class GameConfig {
         FIELD_RESUPPLY_RATE_PER_CAP_PER_SEC: 0.00015,
     };
     /**
-     * 行军减兵（远输困境）v2（2026-07-21 主人定稿：时间口径·一视同仁）：
+     * 行军减兵（远输困境）v2（2026-07-21 主人定稿：时间口径·一视同仁·15 秒整跳）：
      *   每个军团维护 timeSinceSupply——自最后一次途经己方据点半径以来的游戏秒数（形成军团即起算）；
-     *   超过 FREE_SUPPLY_SEC（=1 季度携行粮）后按 ATTRITION_RATE_PER_SEC 每秒百分比减员；
+     *   超过 FREE_SUPPLY_SEC（=1 季度携行粮）后每 ATTRITION_CHUNK_SEC 整跳一次，扣当前兵力 ATTRITION_CHUNK_RATE；
      *   途经任一己方据点 RESET_RADIUS_KM 内即复位（不要求驻停；攻下敌城变己方城后途经即复位）；
+     *   战斗胜利 = 就地进行补给，timeSinceSupply 与整跳计时双双清零（重新计算）；
      *   战斗中照走表（扣减暂停，围城断粮题中之义）；战后休整停表停扣；
      *   远征军团（expeditionTargetCityId 非空，含岳飞脚本军）整体豁免、不走表；
      *   保底 MIN_TROOPS_FLOOR，衰减永不会把军团扣到 0。
@@ -173,8 +174,10 @@ export class GameConfig {
         ENABLED: true,
         /** 免费补给时间窗（游戏秒）：15 = 1 个季度（1 季=15 游戏秒），出门带一季粮 */
         FREE_SUPPLY_SEC: 15,
-        /** 断粮减员速率：每秒对当前兵力百分比（小数累加器满 1 才扣） */
-        ATTRITION_RATE_PER_SEC: 0.005,
+        /** 断粮整跳间隔（游戏秒）：攒满一跳扣一次（主人裁定：15 秒一跳，飘字不刷屏） */
+        ATTRITION_CHUNK_SEC: 15,
+        /** 每跳减员率：对当前兵力百分比。7.5% = 0.5%/秒 × 15 秒，与旧涓流曲线等效 */
+        ATTRITION_CHUNK_RATE: 0.075,
         /** 途经复位半径（km）：距任一己方（同 factionId）据点 ≤ 此值即 timeSinceSupply 清零（不要求驻停） */
         RESET_RADIUS_KM: 20,
         /** 远征军团整体豁免开关（expeditionTargetCityId 非空即豁免，含岳飞脚本军） */

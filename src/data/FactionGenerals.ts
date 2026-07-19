@@ -171,7 +171,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ashina: { generalId: 'ashina_ashinayandou', generalName: '阿史那燕都', portrait: '/assets/STEPPE/ashina_ashinayandou.png' },
     wala: { generalId: 'wala_yexian', generalName: '也先', portrait: '/assets/STEPPE/wala_yexian.png' },
     yuwen: { generalId: 'yuwen_yuwentai', generalName: '宇文泰', portrait: '/assets/STEPPE/yuwen_yuwentai.png' },
-    chenli_d: { generalId: 'chenli_d_wutang', generalName: '吴棠', portrait: '/assets/STEPPE/chenli_d_wutang.png' },
+    chenli_d: { generalId: 'chenli_d_zuoxianwang', generalName: '左贤王', portrait: '/assets/STEPPE/chenli_d_wutang.png' },
     nuoyan_d: { generalId: 'nuoyan_d_sanyinnuoyan', generalName: '三音诺颜', portrait: '/assets/STEPPE/nuoyan_d_sanyinnuoyan.png' },
     wuli_d: { generalId: 'wuli_d_celeng', generalName: '策楞', portrait: '/assets/STEPPE/wuli_d_celeng.png' },
     jiluo_d: { generalId: 'jiluo_d_douxian', generalName: '窦宪', portrait: '/assets/STEPPE/jiluo_d_douxian.png' },
