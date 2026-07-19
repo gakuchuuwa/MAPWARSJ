@@ -3427,11 +3427,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 30
         },
-        "/assets/xianqin/wei_wuqi.png": {
-            "scale": 1.27,
-            "offsetX": 0,
-            "offsetY": 24
-        },
         "/assets/HEXI/__闲置__HEXI_07.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -5767,11 +5762,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 14,
             "offsetY": -3
         },
-        "/assets/xianqin/jin_xianzhen.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -40
-        },
         "/assets/daming/__闲置__JIANGNAN_21.png": {
             "scale": 1.1,
             "offsetX": 6,
@@ -5891,6 +5881,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.23,
             "offsetX": 0,
             "offsetY": -28
+        },
+        "/assets/xianqin/__闲置__xianqin_33.png": {
+            "scale": 1.27,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/xianqin/__闲置__xianqin_34.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -40
+        },
+        "/assets/xianqin/wei_wuqi.png": {
+            "scale": 1.3,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/xianqin/jin_xianzhen.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -22
         }
     },
     "folderGuides": {
