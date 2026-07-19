@@ -31,7 +31,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
   wei2: { name: '静塞军', tier: 2 },                 // 易州·北宋第一精骑（战术尖刀）
     guazhou: { name: '墨离疑锋', tier: 3 },
   shazhou: { name: '归义精骑', tier: 1 },  // 敦煌·张议潮归义军精骑（有名且复河西，升T1）
-  suzhou: { name: '骠骑郎卫', tier: 0 },  // 霍去病封狼居胥，彻底解除百年威胁，完全踩中T0“灭国级大捷”，升T0
+    suzhou: { name: '轻勇骑', tier: 0 },
     kang: { name: '鹰扬骁骑', tier: 4 },
     woye: { name: '沃野镇兵', tier: 3 },
     yangguan: { name: '西凉锐骑', tier: 2 },

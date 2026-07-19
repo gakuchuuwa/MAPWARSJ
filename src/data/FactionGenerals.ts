@@ -495,7 +495,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dashun: { generalId: 'dashun_lizicheng', generalName: '李自成', portrait: '/assets/panjun/dashun_lizicheng.png' },
     zhai_han: { generalId: 'zhai_han_diqing', generalName: '狄青', portrait: '/assets/zhaosong/zhai_han_diqing.png' },
     ganzhou: { generalId: 'ganzhou_dourong', generalName: '窦融', portrait: '/assets/liuhan/ganzhou_dourong.png' },
-        suzhou: { generalId: 'suzhou_huoqubing', generalName: '霍去病', portrait: '/assets/liuhan/suzhou_huoqubing.png' },
+    suzhou: { generalId: 'suzhou_huoqubing', generalName: '霍去病', portrait: '/assets/liuhan/suzhou_huoqubing.png' },
     shazhou: { generalId: 'shazhou_zhangyichao', generalName: '张议潮', portrait: '/assets/litang/shazhou_zhangyichao.png' },
     dongshengwei: { generalId: 'dongshengwei_wangyue', generalName: '王越', portrait: '/assets/daming/dongshengwei_wangyue.png' },
     guiyi: { generalId: 'guiyi_caoyijin', generalName: '曹议金', portrait: '/assets/HEXI/guiyi_caoyijin.png' },

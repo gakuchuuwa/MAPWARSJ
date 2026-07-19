@@ -418,9 +418,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
 
     { id: 'city_zhangye', name: '张掖', factionId: 'ganzhou', lat: 38.93, lng: 100.45, type: 'small_city', troops: 20000, region: 'HEXI' },
 
-    { id: 'city_jiuquan', name: '酒泉', factionId: 'suzhou', lat: 39.73, lng: 98.49, type: 'small_city', region: 'HEXI', troops: 20000,
-        note: '酒泉；肃州小城',
-    },
+    { id: 'city_jiuquan', name: '酒泉', factionId: 'suzhou', lat: 39.73, lng: 98.49, type: 'small_city', troops: 20000, region: 'HEXI' },
+
 
 
     // ── 塞北与西域中城 ──
@@ -677,6 +676,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
 
 
             { id: 'city_jingxingguan', name: '土门关', factionId: 'xianyu', lat: 38.02, lng: 114, type: 'pass', troops: 20000, region: 'NORTH' },
+
 
 
     { id: 'city_daomaguan', name: '倒马关', factionId: 'changshan', lat: 38.861098, lng: 114.768677, type: 'pass', troops: 20000, region: 'NORTH', mirror: true },

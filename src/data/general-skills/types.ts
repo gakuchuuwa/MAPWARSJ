@@ -72,7 +72,9 @@ export type StrategicEffect =
 
     // ── 加兵 ──
 
-    | 'field_resupply'                // 远离本土缓回血（以战养战）
+    | 'field_resupply'                // 远离本土缓回血（以战养战旧效果，已休眠：2026-07-21 str_13 改为 march_attrition_immunity；枚举保留兼容 tools/batch-manager 引用）
+
+    | 'march_attrition_immunity'      // 行军减兵全免（以战养战，因粮于敌）
 
     | 'post_battle_troop_pct'         // 胜后补兵（因粮于敌）
 
