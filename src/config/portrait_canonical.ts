@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/19 09:07:28（共 149 条）
+ * 生成时间：2026/7/19 09:21:48（共 147 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
@@ -79,12 +79,10 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/zhuang_d_washifuren.png": "/assets/LINGNAN/dengmaoqi_dengmaoqi.png",
     "/assets/LINGNAN/zhangshicheng_zhangshicheng.png": "/assets/LINGNAN/geng_gengjingzhong.png",
     "/assets/LINGNAN/nong2_nongzhigao.png": "/assets/LINGNAN/guangping_ruanwenzhang.png",
-    "/assets/xianqin/__多余__xianqin_01.png": "/assets/LINGNAN/guangxin_shixie.png",
     "/assets/NORTH/huo_songlaosheng.png": "/assets/LINGNAN/huo_songlaosheng.png",
     "/assets/xianqin/huo_songlaosheng.png": "/assets/LINGNAN/huo_songlaosheng.png",
     "/assets/LINGNAN/monong_anong.png": "/assets/LINGNAN/lancang_faang.png",
     "/assets/LINGNAN/ryukyu_shangbazhi.png": "/assets/LINGNAN/leizhou_limao.png",
-    "/assets/xianqin/__多余__xianqin_02.png": "/assets/LINGNAN/liren_funanshe.png",
     "/assets/LINGNAN/luodian_shexiangfuren.png": "/assets/LINGNAN/__多余__LINGNAN_14.png",
     "/assets/xianqin/linhu_mafang.png": "/assets/LINGNAN/miao_qing_yangwanzhe.png",
     "/assets/xianqin/__多余__xianqin_03.png": "/assets/LINGNAN/minyue_wuzhu.png",
