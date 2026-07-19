@@ -3837,11 +3837,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/STEPPE/__闲置__STEPPE_04.png": {
-            "scale": 1.42,
-            "offsetX": 0,
-            "offsetY": -1
-        },
         "/assets/STEPPE/__闲置__STEPPE_09.png": {
             "scale": 1.15,
             "offsetX": 0,
@@ -4236,11 +4231,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -5
-        },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_21.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": 12
         },
         "/assets/NORTHEAST/jurchen_wanyanzongbi.png": {
             "scale": 1.03,
@@ -5956,6 +5946,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -33
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_36.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/STEPPE/manghuti_weidaer.png": {
+            "scale": 1.42,
+            "offsetX": 0,
+            "offsetY": -1
         }
     },
     "folderGuides": {

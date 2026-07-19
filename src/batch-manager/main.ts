@@ -863,7 +863,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
               </select>
             </label>
           </div>
-          <p style="font-size:12px;color:#9a9080;margin:4px 0">战术六槽提交时自动随机配齐（common 档）；不单独选「战术技」。</p>
+          <p style="font-size:12px;color:#9a9080;margin:4px 0">战术六槽提交时按<strong>六计各一</strong>自动配齐（攻守互补；仅 common 档）；不单独选「战术技」。</p>
           <h3 style="margin-top:14px">③ 精锐（可选）</h3>
           <div class="form-row">
             <label><span>番号名（留空则不建精锐）</span>${qInput('bm-quick-elite')}</label>
@@ -1334,6 +1334,44 @@ function pickRandomTacticalSkill(): { id: string; displayName: string } | null {
     return pickRandom((entityData?.tacticalSkills ?? []).filter(s => s.assignTier === 'common'));
 }
 
+/**
+ * 按六计各一 + 攻守互补随机配齐攻防六槽（与 AGENTS 六槽铁律 / 校验 11.12 一致）。
+ * 三对槽：优势=攻战+胜战、均势=敌战+混战、劣势=并战+败战；攻守各取其一、不得重复。
+ */
+function pickComplementarySixSlots(): Partial<Record<
+    'atkAdvantageSkillId' | 'atkBalanceSkillId' | 'atkDisadvantageSkillId'
+    | 'defAdvantageSkillId' | 'defBalanceSkillId' | 'defDisadvantageSkillId',
+    string
+>> | { error: string } {
+    type SixSlotKey = 'atkAdvantageSkillId' | 'atkBalanceSkillId' | 'atkDisadvantageSkillId'
+        | 'defAdvantageSkillId' | 'defBalanceSkillId' | 'defDisadvantageSkillId';
+    const common = (entityData?.tacticalSkills ?? []).filter(s => s.assignTier === 'common' && s.sixClass);
+    const usedIds = new Set<string>();
+    const pickFromClass = (cls: string): { id: string; displayName: string } | null => {
+        const pool = common.filter(s => s.sixClass === cls && !usedIds.has(s.id));
+        return pickRandom(pool);
+    };
+    const pairs: Array<[SixSlotKey, SixSlotKey, [string, string]]> = [
+        ['atkAdvantageSkillId', 'defAdvantageSkillId', ['攻战计', '胜战计']],
+        ['atkBalanceSkillId', 'defBalanceSkillId', ['敌战计', '混战计']],
+        ['atkDisadvantageSkillId', 'defDisadvantageSkillId', ['并战计', '败战计']],
+    ];
+    const out: Partial<Record<SixSlotKey, string>> = {};
+    for (const [atkKey, defKey, [a, b]] of pairs) {
+        const atkClass = Math.random() < 0.5 ? a : b;
+        const defClass = atkClass === a ? b : a;
+        const atkSkill = pickFromClass(atkClass);
+        if (!atkSkill) return { error: `common∩${atkClass} 池为空（或已用尽）` };
+        usedIds.add(atkSkill.id);
+        const defSkill = pickFromClass(defClass);
+        if (!defSkill) return { error: `common∩${defClass} 池为空（或已用尽）` };
+        usedIds.add(defSkill.id);
+        out[atkKey] = atkSkill.id;
+        out[defKey] = defSkill.id;
+    }
+    return out;
+}
+
 function pickRandomStrategicSkill(): { id: string; displayName: string } | null {
     return pickRandom(entityData?.strategicSkills ?? []);
 }
@@ -1373,7 +1411,7 @@ function updateQuickPreview(): void {
         lines.push(f.portrait
             ? `<span class="id-label">立绘:</span> <span class="id-value">${f.portrait}</span> (已选择)`
             : `<span class="id-label">立绘:</span> 未选 → <span class="id-value">提交时从未占用立绘中随机</span>`);
-        lines.push(`<span class="id-label">战术:</span> <span class="id-value">提交时随机配齐攻防六槽（6+1 之 6）</span>`);
+        lines.push(`<span class="id-label">战术:</span> <span class="id-value">提交时按六计各一配齐攻防六槽（攻守互补）</span>`);
         if (f.genTier === 'famous') {
             const strName = entityData?.strategicSkills.find(s => s.id === f.strategicSkillId)?.displayName;
             lines.push(f.strategicSkillId
@@ -1436,17 +1474,15 @@ async function handleQuickSubmit(): Promise<void> {
     let aptitude = '';
     let tacticalSkillId = '';
     if (f.genName) {
-        const sideTriKeys: Array<[SixSlotKey, string[]]> = [
-            ['atkAdvantageSkillId', ['攻战计', '胜战计']], ['atkBalanceSkillId', ['敌战计', '混战计']], ['atkDisadvantageSkillId', ['并战计', '败战计']],
-            ['defAdvantageSkillId', ['胜战计', '攻战计']], ['defBalanceSkillId', ['混战计', '敌战计']], ['defDisadvantageSkillId', ['败战计', '并战计']],
-        ];
-        for (const [field, allowed] of sideTriKeys) {
-            const p = pickRandom((entityData?.tacticalSkills ?? []).filter(s => s.assignTier === 'common' && s.sixClass && allowed.includes(s.sixClass)));
-            if (!p) { showToast(`随机${field}失败：common∩${allowed.join('/')}池为空`, true); return; }
-            sixSlots[field] = p.id;
+        // 六计各一 + 攻守互补（勿六槽各自从两类池独立抽，否则会重复同一计）
+        const picked = pickComplementarySixSlots();
+        if ('error' in picked) {
+            showToast(`随机六槽失败：${picked.error}`, true);
+            return;
         }
+        Object.assign(sixSlots, picked);
         tacticalSkillId = deriveTacticalSkillIdFromSix(sixSlots as SixSlotIds);
-        randomNotes.push('攻防六槽已随机配齐');
+        randomNotes.push('攻防六槽已按六计各一配齐');
         aptitude = pickRandom(['create', 'leverage', 'reverse'] as const) ?? 'leverage';
         randomNotes.push(`三势=${aptitude}`);
         if (f.genTier === 'famous' && !strategicSkillId) {

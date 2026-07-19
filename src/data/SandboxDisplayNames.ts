@@ -866,7 +866,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'yanzhou': '盐',
 'shizhou': '石',
 'cangsong': '苍松',
-    'aertai': '阿尔',
+'aertai': '阿尔',
+'manghuti': '忙忽',
 };
 
 // @ts-ignore

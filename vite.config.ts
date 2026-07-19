@@ -2203,9 +2203,9 @@ function serverReadAllEntityData() {
     for (const m of tscText.matchAll(/(ts_\d+):\s*'(common|limited|ai_defensive|underdog|gamble|star_survival)'/g)) {
         assignTierById.set(m[1], m[2]);
     }
-    // 三类（优势/均势/劣势）：判据与 TacticalSkillCatalog.getTacticalTriClass 完全一致。
-    //   此处用正则+内联映射而不 import 目录模块：vite 会 watch 配置文件的依赖，
-    //   一旦 import 目录，每次改技能数据都会整个重启 dev server。两处若改必须同步改。
+    // 三类 / 六计：与 getTacticalTriClass + 校验 11.12 同源。
+    //   劣势覆盖：underdog condition / variance effect → tri=disadvantage、六计=败战计。
+    //   窗口提取（字段顺序无关），勿再用 id→baseEffect,condition 紧邻正则（易漏）。
     const EFFECT_TO_TRI: Record<string, string> = {
         ally_power_mult: 'advantage', first_sortie_power_mult: 'advantage',
         ally_add_troops_opening: 'balance',
@@ -2215,19 +2215,13 @@ function serverReadAllEntityData() {
         reflect_enemy_opening_cut: 'balance', nullify_enemy_opening_cut: 'balance',
         cancel_enemy_terrain_buff: 'balance', halve_enemy_terrain_buff: 'balance',
         win_casualty_reduction: 'disadvantage', elite_casualty_reduction: 'disadvantage', post_recovery_rate: 'disadvantage',
+        battle_duration_mult: 'disadvantage',
         lose_enemy_casualty_boost: 'disadvantage', recompute_comeback: 'disadvantage',
         lose_zero_enemy_recovery: 'disadvantage', ally_add_troops_comeback: 'disadvantage',
+        first_sortie_comeback_mult: 'disadvantage',
     };
     const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog']);
     const VARIANCE_EFFECTS = new Set(['luck_variance_self', 'luck_lock_self', 'recompute_comeback']);
-    const triClassById = new Map<string, string>();
-    const sixClassById = new Map<string, string>();
-    for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'[\s\S]*?baseEffect:\s*'(\w+)',\s*condition:\s*'(\w+)'/g)) {
-        const tri = UNDERDOG_CONDS.has(m[3]) || VARIANCE_EFFECTS.has(m[2]) ? 'disadvantage' : EFFECT_TO_TRI[m[2]];
-        if (tri && !triClassById.has(m[1])) triClassById.set(m[1], tri);
-        const six = SIX_CLASS_BY_EFFECT[m[2]]?.label;
-        if (six && !sixClassById.has(m[1])) sixClassById.set(m[1], six);
-    }
     // [2026-07-14 修复] 不再要求 id 后紧跟 layer/index/displayName（编辑器会在 id 后插 usageTag/situationTag 等内联字段，
     //   打乱字段顺序会让严格顺序正则漏掉整条技 → 校验误报"技能不存在"）。改为逐条目取窗口，字段顺序无关地提取。
     const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string; sixClass?: string }> = [];
@@ -2241,9 +2235,17 @@ function serverReadAllEntityData() {
             const dn = seg.match(/displayName:\s*'([^']+)'/)?.[1];
             if (!dn) continue; // 无 displayName（非技能条目）跳过
             const index = seg.match(/index:\s*(\d+)/)?.[1] ?? '0';
+            const eff = seg.match(/baseEffect:\s*'(\w+)'/)?.[1];
+            const cond = seg.match(/condition:\s*'(\w+)'/)?.[1] ?? '';
+            const forceUnderTri = !!(eff && (UNDERDOG_CONDS.has(cond) || VARIANCE_EFFECTS.has(eff)));
+            const tri = forceUnderTri ? 'disadvantage' : (eff ? EFFECT_TO_TRI[eff] : undefined);
+            // 六计【只按 baseEffect】查表（AGENTS.md 铁律一）——condition 覆盖属三势轴，禁止改判六计。
+            // 当前 forceUnderTri 命中的技恰好全是败战计效果（矛盾技已迁 recompute_comeback、
+            // luck_variance_self/luck_lock_self 为幽灵效果 0 条），但一旦新建此类技就会配错格，故判据分轴。
+            const six = eff ? SIX_CLASS_BY_EFFECT[eff]?.label : undefined;
             tacticalSkills.push({
                 id, grid: circledNum(parseInt(index)), displayName: dn,
-                assignTier: assignTierById.get(id), triClass: triClassById.get(id), sixClass: sixClassById.get(id),
+                assignTier: assignTierById.get(id), triClass: tri, sixClass: six,
             });
         }
     }
@@ -2681,7 +2683,8 @@ function serverSkillEditorList() {
         const situationTag = inlineSit ?? sitTable[id] ?? TRI_CN[triById.get(id) ?? ''] ?? '优势';
         const isUnderdog = UNDERDOG_CONDS.has(condition) || VARIANCE_EFFECTS.has(baseEffect);
         const sixEntry = SIX_CLASS_BY_EFFECT[baseEffect];
-        const sixClass = isUnderdog ? '败战计' : (sixEntry?.label ?? '');
+        // 六计【只按 baseEffect】（AGENTS.md 铁律一）；isUnderdog 只作用于三势期望值(劣势)，不改判六计
+        const sixClass = sixEntry?.label ?? '';
         const expectedSit = isUnderdog ? '劣势' : (sixEntry?.canonicalSituation ?? '');
         const sixClassMatch = sixEntry ? situationTag === expectedSit : false;
         skills.push({
@@ -2860,7 +2863,9 @@ function serverSkillEditorCreate(body: {
     if (!family) throw new Error(`baseEffect ${body.baseEffect} 不在可新增家族内`);
     if (!SE_CONDITIONS.includes(body.condition)) throw new Error(`非法条件 ${body.condition}`);
     if (!['优势', '均势', '劣势'].includes(body.situationTag)) throw new Error('三势标签必填（优势/均势/劣势）');
-    if (!['双行', '攻击', '防御'].includes(body.usageTag)) throw new Error('攻防标签必填');
+    // 攻防标签已从编辑器 UI 移除（2026-07-19 三势×两计定稿：引擎不读 usageTag）；缺省补'双行'保持数据格式
+    if (!body.usageTag) body.usageTag = '双行';
+    else if (!['双行', '攻击', '防御'].includes(body.usageTag)) throw new Error(`非法攻防标签 ${body.usageTag}`);
     const v = SE_TIERS[family]?.[body.tierLabel];
     if (v === undefined) throw new Error(`档位必填且须属于家族 ${family}`);
     const data = serverReadAllEntityData();

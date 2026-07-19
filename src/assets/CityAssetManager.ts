@@ -833,7 +833,8 @@ export class CityAssetManager {
 'shizhou': '石',
         'leloi': '清化',
 'cangsong': '苍松',
-        'aertai': '阿尔',
+'aertai': '阿尔',
+'manghuti': '忙忽',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

@@ -798,7 +798,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'yanzhou': 'city_quyancheng',
 'shizhou': 'city_lishi',
 'cangsong': 'city_chiwubao',
-    'aertai': 'city_aertaishan',
+'aertai': 'city_aertaishan',
+'manghuti': 'city_wulihong',
 };
 
 // @ts-ignore
