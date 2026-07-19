@@ -10,8 +10,8 @@
  * 按必打路标逐城远征：上都 → 应昌 → 狼居胥山 → 姑衍山 → 贝加尔。
  *
  * 两场脚本专属野战（不建据点，仅野战坐标）：
- *   · 祷余山之战（达里湖北）：逼近时刷左贤王 5 万，霍去病加至 5 万迎战；
- *   · 弓庐水之战（度难侯山后追歼）：逼近时刷左贤王 2 万残部，霍去病 5 万追击。
+ *   · 祷余山之战（达里湖北）：逼近时刷左贤王 8 万，霍去病加至 5 万迎战；
+ *   · 弓庐水之战（度难侯山后追歼）：逼近时刷左贤王 4 万残部，霍去病 5 万追击。
  *
  * 旗号：脚本运行期间旗面显示「汉」、势力名显示「大汉」；结束/覆没后恢复。
  * 取食于敌：战后兵力低于 2 万触发，补到 [22222, 29000] 随机（与忠义归顺同参数）。
@@ -22,11 +22,12 @@ import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText } from '../utils/MapFloatingText';
 
-/** 起兵据点：灵仙（汉代代郡治所，蔚县） */
+/** 起兵坐标：灵仙东北约10km，不触发攻城 */
+const START_POS = { lat: 39.9561, lng: 114.7440 };
 const START_CITY_ID = 'city_daixian';
 const FACTION_ID = 'suzhou';
 const GENERAL_ID = 'suzhou_huoqubing';
-const ELITE_NAME = '骠骑郎卫';
+const ELITE_NAME = '轻勇骑';
 /** 起兵 2 万 */
 const TROOPS = 20000;
 /** 已有霍去病军时，再点 UI 加兵量 */
@@ -273,7 +274,7 @@ export class HuoQubingExpedition {
         }
 
         const army = this.deps.legionManager.createLegion(
-            { lat: city.latitude, lng: city.longitude },
+            { lat: START_POS.lat, lng: START_POS.lng },
             TROOPS,
             FACTION_ID,
             ELITE_NAME,
@@ -505,6 +506,7 @@ export class HuoQubingExpedition {
         }
         enemy.setPosition?.(pos.lat, pos.lng);
         enemy.setTroops(troops);
+        enemy.isElite = true;
         enemy.name = ZUOXIAN_NAME;
         enemy.portraitPath = ZUOXIAN_PORTRAIT;
         enemy.__scriptPinned = true;

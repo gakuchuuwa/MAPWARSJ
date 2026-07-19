@@ -160,30 +160,24 @@ export class GameConfig {
         FIELD_RESUPPLY_RATE_PER_CAP_PER_SEC: 0.00015,
     };
     /**
-     * 行军减兵（远输困境）v1（2026-07-21 主人逐条裁定，GAME_DIRECTION「携行粮」口径 B）：
-     *   每个陆军军团维护 kmSinceSupply——自最后一次进入己方据点半径以来累计行军位移（km）；
-     *   超过 FREE_KM 后按 TIERS 分档对当前兵力百分比减员；途经任一己方据点 RESET_RADIUS_KM 内即复位；
-     *   战斗中暂停扣减；远征军团（expeditionTargetCityId 非空，含岳飞脚本军）整体豁免；
-     *   海上地形不计里程也不扣减；保底 MIN_TROOPS_FLOOR，衰减永不会把军团扣到 0。
-     *   速度参照：基础 0.2 度/游戏秒 × KM_PER_DEGREE ≈ 22.2 km/游戏秒（乘区另算）。
+     * 行军减兵（远输困境）v2（2026-07-21 主人定稿：时间口径·一视同仁）：
+     *   每个军团维护 timeSinceSupply——自最后一次途经己方据点半径以来的游戏秒数（形成军团即起算）；
+     *   超过 FREE_SUPPLY_SEC（=1 季度携行粮）后按 ATTRITION_RATE_PER_SEC 每秒百分比减员；
+     *   途经任一己方据点 RESET_RADIUS_KM 内即复位（不要求驻停；攻下敌城变己方城后途经即复位）；
+     *   战斗中计时照走、扣减暂停；远征军团（expeditionTargetCityId 非空，含岳飞脚本军）整体豁免、不走表；
+     *   保底 MIN_TROOPS_FLOOR，衰减永不会把军团扣到 0。
+     *   一视同仁：不分步骑水陆——同样的时间窗，速度快者走得更远，速度优势自动转为后勤优势。
      */
     static MARCH_ATTRITION = {
         ENABLED: true,
-        /** 免减里程（km）：0–50km 为携行粮覆盖段 */
-        FREE_KM: 50,
-        /** 减员分档（按 kmSinceSupply 上界命中第一档）：ratePerSec = 每秒对当前兵力百分比 */
-        TIERS: [
-            { upToKm: 150, ratePerSec: 0.003 },
-            { upToKm: 300, ratePerSec: 0.006 },
-            { upToKm: 500, ratePerSec: 0.01 },
-            { upToKm: Infinity, ratePerSec: 0.015 },
-        ] as const,
-        /** 途经复位半径（km）：距任一己方（同 factionId）据点 ≤ 此值即 kmSinceSupply 清零（不要求驻停） */
+        /** 免费补给时间窗（游戏秒）：15 = 1 个季度（1 季=15 游戏秒），出门带一季粮 */
+        FREE_SUPPLY_SEC: 15,
+        /** 断粮减员速率：每秒对当前兵力百分比（小数累加器满 1 才扣） */
+        ATTRITION_RATE_PER_SEC: 0.005,
+        /** 途经复位半径（km）：距任一己方（同 factionId）据点 ≤ 此值即 timeSinceSupply 清零（不要求驻停） */
         RESET_RADIUS_KM: 20,
         /** 远征军团整体豁免开关（expeditionTargetCityId 非空即豁免，含岳飞脚本军） */
         EXEMPT_CAMPAIGN_LEGIONS: true,
-        /** 海运豁免：海上地形不计里程也不扣减（冻结） */
-        SEA_EXEMPT: true,
         /** 兵力保底：衰减扣减后不得低于此值 */
         MIN_TROOPS_FLOOR: 1,
         /** 经纬换算：1 度 ≈ 111 km（全图约定 0.1°≈10–11km；编辑器内联 *111 同源） */
