@@ -2,6 +2,8 @@ import L from 'leaflet';
 import { GameMap } from './GameMap';
 import { getGlobalUnitRenderer } from './UnitRenderer';
 import { gameLog } from '../utils/GameLogger';
+// TacticalConstants 是零依赖叶子模块，map 层引入不产生循环依赖
+import { PHASE_START_RATIOS, PHASE_COLLAPSE_START } from '../combat/TacticalConstants';
 
 type TargetResolver = () => { lat: number; lng: number } | null | undefined;
 
@@ -22,6 +24,10 @@ interface ActiveSiegeEffect {
     getTarget?: TargetResolver;
     volleyIntervalId?: ReturnType<typeof setInterval>;
     fadeTimerId?: ReturnType<typeof setInterval>;
+    /** 本场每坨火的点燃时刻（ms），第 i 坨对应第 i 幕起点 */
+    igniteOffsetsMs: number[];
+    /** 本场单坨火的渐显时长（ms）；短战会被压缩以免越过战斗结束 */
+    fadeInDurationMs: number;
 }
 
 /**
@@ -55,10 +61,46 @@ export class SiegeEffectRenderer {
     private static readonly FIRE_ANCHOR_LIFT_RATIO = 0.13;
     /** 火苗重心偏左 0.041W：bounds 东移 0.08×halfW 补偿；贴图镜像时火苗偏右，取反 */
     private static readonly FIRE_ANCHOR_EAST_RATIO = 0.08;
-    /** 单片火渐显时长（2026-07-18 主人定：第一坨火 5 秒渐显） */
+    /** 单片火渐显时长（2026-07-18 主人定：第一坨火 5 秒渐显）——固定，不随战斗时长变 */
     private static readonly FIRE_FADE_IN_DURATION_MS = 5000;
-    /** 相邻火片渐显起始间隔（主人定：下一坨从第 9 秒开始）——第 i 片从第 i×9 秒起、5 秒渐显 */
+    /** 未传战斗时长时的兜底间隔（主人定：下一坨从第 9 秒开始） */
     private static readonly FIRE_FADE_IN_STAGGER_MS = 9000;
+
+    /**
+     * 三坨火各自的点燃时刻（ms）——每坨火对应战斗的一幕，火即幕的读数：
+     *   第 1 坨 = 第一幕·胶着 开战即起（0%）
+     *   第 2 坨 = 第二幕·相持 起（40%）
+     *   第 3 坨 = 第三幕·溃败 起（80%）—— 城要破了，第三处火起
+     * 观众看城里烧到第几处，就知道这仗打到第几幕。
+     * @param battleDurationSec 本场战斗目标时长（游戏秒；直播 1x 下等同现实秒）；未知则退回等间隔兜底
+     */
+    private static resolveIgniteOffsetsMs(patchCount: number, battleDurationSec?: number): number[] {
+        if (!battleDurationSec || battleDurationSec <= 0) {
+            return Array.from(
+                { length: patchCount },
+                (_, i) => i * SiegeEffectRenderer.FIRE_FADE_IN_STAGGER_MS,
+            );
+        }
+        const totalMs = battleDurationSec * 1000;
+        return Array.from({ length: patchCount }, (_, i) => {
+            // 火片数与幕数不等时按比例平摊，保证首坨恒在开战、末坨恒在末幕起点
+            const ratio = PHASE_START_RATIOS[i]
+                ?? (patchCount > 1 ? (i / (patchCount - 1)) * PHASE_COLLAPSE_START : 0);
+            return totalMs * ratio;
+        });
+    }
+
+    /** 末坨火的渐显不得越过战斗结束——短战（如 9 秒）压缩渐显时长，保证城破时火已烧满 */
+    private static resolveFadeInDurationMs(
+        igniteOffsetsMs: number[],
+        battleDurationSec?: number,
+    ): number {
+        const base = SiegeEffectRenderer.FIRE_FADE_IN_DURATION_MS;
+        if (!battleDurationSec || battleDurationSec <= 0 || igniteOffsetsMs.length === 0) return base;
+        const lastIgnite = igniteOffsetsMs[igniteOffsetsMs.length - 1];
+        const remainMs = battleDurationSec * 1000 - lastIgnite;
+        return Math.max(500, Math.min(base, remainMs));
+    }
 
     constructor(map: GameMap) {
         this.map = map;
@@ -79,7 +121,8 @@ export class SiegeEffectRenderer {
         cityId: string,
         location: { lat: number; lng: number },
         cityType: string = 'small_city',
-        getTarget?: TargetResolver
+        getTarget?: TargetResolver,
+        battleDurationSec?: number
     ): void {
         // 连锁攻城（2026-07-18 主人定）：同城连战火势延续——不清场、不重新渐显；
         // 只换攻击目标、重排齐射，并把（可能正在淡出的）旧火快速升回各自峰值
@@ -106,11 +149,21 @@ export class SiegeEffectRenderer {
         // 随机火片：统一 3 片——120° 三角分布天然覆盖全城无死角（2026-07-18 修：2 片丢南北）
         const base = this.getBaseHalfSize(cityType);
         const patchCount = 3;
+        const igniteOffsetsMs = SiegeEffectRenderer.resolveIgniteOffsetsMs(patchCount, battleDurationSec);
+        const fadeInDurationMs = SiegeEffectRenderer.resolveFadeInDurationMs(igniteOffsetsMs, battleDurationSec);
+        gameLog(
+            'siegeEffect',
+            `🔥 [SiegeEffect] 战斗 ${battleDurationSec ?? '?'}s · 三幕点火于 ` +
+            `${igniteOffsetsMs.map((ms) => (ms / 1000).toFixed(1) + 's').join(' / ')}` +
+            `（每坨渐显 ${(fadeInDurationMs / 1000).toFixed(1)}s）`,
+        );
         const effect: ActiveSiegeEffect = {
             patches: [],
             cityLocation: location,
             cityType,
             getTarget,
+            igniteOffsetsMs,
+            fadeInDurationMs,
         };
 
         // 风向全场统一 + 随机起始角（每次攻城火布局完全不同）
@@ -203,8 +256,9 @@ export class SiegeEffectRenderer {
         if (effect.fadeTimerId) clearInterval(effect.fadeTimerId);
 
         const stepDuration = SiegeEffectRenderer.FADE_DURATION_MS / SiegeEffectRenderer.FADE_STEPS;
-        const totalMs = (effect.patches.length - 1) * SiegeEffectRenderer.FIRE_FADE_IN_STAGGER_MS
-            + SiegeEffectRenderer.FIRE_FADE_IN_DURATION_MS;
+        const igniteOffsetsMs = effect.igniteOffsetsMs;
+        const fadeInMs = effect.fadeInDurationMs;
+        const totalMs = (igniteOffsetsMs[igniteOffsetsMs.length - 1] ?? 0) + fadeInMs;
         let elapsed = 0;
 
         effect.fadeTimerId = setInterval(() => {
@@ -216,8 +270,7 @@ export class SiegeEffectRenderer {
             elapsed += stepDuration;
             const done = elapsed >= totalMs;
             effect.patches.forEach((patch, i) => {
-                const local = (elapsed - i * SiegeEffectRenderer.FIRE_FADE_IN_STAGGER_MS)
-                    / SiegeEffectRenderer.FIRE_FADE_IN_DURATION_MS;
+                const local = (elapsed - (igniteOffsetsMs[i] ?? 0)) / fadeInMs;
                 const t = done ? 1 : Math.min(1, Math.max(0, local));
                 patch.overlay.setOpacity(t * patch.peakOpacity);
             });

@@ -26,14 +26,14 @@ function getFollowedArmyId(): string | null {
     }
 }
 import {
-    calculateBattleDurationSec,
     clampBattleDurationSec,
+    resolveBattleDurationByPowerRatio,
     GameConfig,
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
 import { sumCultureAdjustedTroops, getUnitBattlePowerMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import { getGeneralProfile } from '../data/GeneralSkills';
-import { COMEBACK_LUCK_RANGE } from './TacticalConstants';
+import { COMEBACK_LUCK_RANGE, resolveSituationKind } from './TacticalConstants';
 import {
     applyGeneralSkillSideRollMultipliers,
     applyOpeningTacticalPreRoll,
@@ -155,6 +155,10 @@ export class BattleField implements IOpeningPulseSink {
      * 勿用释放时的 initialTotalTroops——开局削兵后会把均势误判成优劣。
      */
     private situationalAttDefRatio = 1;
+    /** 开战有效战力比（攻/守，八环乘完）；在 pickPredictedSides 中写入，供时长判定 */
+    private effectivePowerRatio = 1;
+    /** 本场是否由导演/剧本指定时长（指定则不套 45/30 两档） */
+    private hasDirectorDuration = false;
 
     // 伤害系数现在从 GameConfig 读取
 
@@ -253,12 +257,26 @@ export class BattleField implements IOpeningPulseSink {
         return this.clampDuration(this.targetDuration);
     }
 
-    /** 定强弱后：双将按基础时长并钳 30–60；否则固定 9 秒 */
+    /**
+     * 定强弱后敲定时长：
+     *   非双将战 → 固定 9 秒
+     *   导演指定 → 尊重剧本，只钳制
+     *   双将战   → 按开战有效战力比取两档：均势 45 / 优势·劣势 30
+     */
     private resolveFinalTargetDuration(): number {
         if (!this.bothSidesHaveGeneral()) {
             return GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
         }
-        return this.clampDuration(this.targetDuration);
+        if (this.hasDirectorDuration) {
+            return this.clampDuration(this.targetDuration);
+        }
+        const seconds = resolveBattleDurationByPowerRatio(this.effectivePowerRatio);
+        gameLog(
+            'battle',
+            `⚔️ [BattleField] 双将战 · 有效战力比 攻/守=${this.effectivePowerRatio.toFixed(2)} ` +
+            `→ ${resolveSituationKind(this.effectivePowerRatio) === 'balance' ? '均势' : '胜负已定'} ${seconds}s`,
+        );
+        return seconds;
     }
 
     private clampDuration(seconds: number): number {
@@ -268,6 +286,7 @@ export class BattleField implements IOpeningPulseSink {
     private calculateTargetDuration() {
         // 导演时长：尊重事件配置，只钳 5–60（不强制有将地板，避免剧本短战被抬）
         if (this.customDuration !== undefined && this.customDuration > 0) {
+            this.hasDirectorDuration = true;
             this.targetDuration = clampBattleDurationSec(this.customDuration);
             gameLog('battle', `🎬 [BattleField] 导演时长: ${this.targetDuration.toFixed(1)}s (钳制 5–60)`);
             return;
@@ -282,8 +301,11 @@ export class BattleField implements IOpeningPulseSink {
             return;
         }
 
-        this.targetDuration = calculateBattleDurationSec(totalTroops, { hasGeneral: true });
-        gameLog('battle', `⚔️ [BattleField] 双将战 · 总兵 ${totalTroops} → ${this.targetDuration.toFixed(1)}s（下限 30）`);
+        // 此处只给「开局技能 UI 脉冲对齐」用的暂定值——真正的时长在 pickPredictedSides
+        // 拿到有效战力比之后由 resolveFinalTargetDuration 敲定（均势 45 / 已定 30）。
+        // 暂定值取 45：两档中较长者，脉冲宁可偏早也不要冲出战斗尾部。
+        this.targetDuration = GameConfig.COMBAT.BATTLE_DURATION_BALANCE_SEC;
+        gameLog('battle', `⚔️ [BattleField] 双将战 · 暂定 ${this.targetDuration}s（待有效战力比敲定）`);
     }
 
     /**
@@ -467,6 +489,8 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     private applyPredictedSidesFromRoll(attRoll: number, defRoll: number): void {
+        // 八环乘完后的有效战力比，供时长判定用（兵力比不够准：兵力只是八环之一）
+        this.effectivePowerRatio = attRoll / Math.max(1, defRoll);
         if (attRoll >= defRoll) {
             this.predictedStrongerGroup = this.attackerGroup;
             this.predictedWeakerGroup = this.defenderGroup;

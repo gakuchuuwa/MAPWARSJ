@@ -1,4 +1,6 @@
 export { SPRITE_PATHS } from './UnitAssets';
+// TacticalConstants 是零依赖叶子模块，此处引入不产生循环依赖
+import { SITUATION_ADVANTAGE_RATIO, SITUATION_DISADVANTAGE_RATIO } from '../combat/TacticalConstants';
 
 export class GameConfig {
     static SYSTEM = {        ENABLE_HISTORY_LOG: true,
@@ -113,6 +115,15 @@ export class GameConfig {
          */
         BATTLE_DURATION_MIN_WITH_GENERAL_SEC: 30,
         BATTLE_DURATION_MAX_SEC: 60,
+        /**
+         * 双将战只有两档时长，按开战「有效战力比」（八环乘完之后）定：
+         *   均势 → 45 秒（唯一有悬念的局，给足播报时间）
+         *   优势/劣势 → 30 秒（胜负已定，快收）
+         * 判定阈值复用三势的 SITUATION_*_RATIO，全游戏「局势」只有一个定义。
+         * 注：不按兵力比判——兵力只是八环之一，1:1 兵力可能是碾压，2:1 兵力可能是死斗。
+         */
+        BATTLE_DURATION_BALANCE_SEC: 45,
+        BATTLE_DURATION_DECIDED_SEC: 30,
         /** 双方总兵力达到此值时取 MAX 时长 */
         BATTLE_DURATION_TROOPS_SCALE: 100000,
         /** 并非双方都有武将时（纯兵 / 一方有将）：固定 9 秒 */
@@ -326,6 +337,18 @@ export function rollCombatLuckMultiplierInRange(min: number, max: number): numbe
 /** 开战掷有效战力：兵力 × luck（无地形/兵种表） */
 export function rollCombatEffectivePower(troops: number): number {
     return troops * rollCombatLuckMultiplier();
+}
+
+/**
+ * 双将战目标时长（游戏秒）：均势 45，优势/劣势 30。
+ * @param selfOverOpponent 开战有效战力比（八环乘完之后的攻/守），非兵力比。
+ */
+export function resolveBattleDurationByPowerRatio(selfOverOpponent: number): number {
+    const c = GameConfig.COMBAT;
+    const inBalance =
+        selfOverOpponent <= SITUATION_ADVANTAGE_RATIO
+        && selfOverOpponent >= SITUATION_DISADVANTAGE_RATIO;
+    return inBalance ? c.BATTLE_DURATION_BALANCE_SEC : c.BATTLE_DURATION_DECIDED_SEC;
 }
 
 /**

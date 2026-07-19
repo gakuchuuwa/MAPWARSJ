@@ -1,4 +1,4 @@
-import { calculateBattleDurationSec, GameConfig } from '../config/GameConfig';
+import { calculateBattleDurationSec, resolveBattleDurationByPowerRatio, GameConfig } from '../config/GameConfig';
 import { sumCultureAdjustedTroops } from '../systems/CultureCombat';
 import {
     rollSideEffectivePowerWithOpeningFate,
@@ -183,8 +183,12 @@ export class Battle {
 
         // 3. Calculate Combat Duration (Physics Pacing)
         const totalTroops = this.attacker.troops + this.defender.troops;
-        const hasGeneral = !!(this.attacker.generalId || this.defender.generalId);
-        let calculatedDuration = CombatSystem.calculateCombatDuration(totalTroops, hasGeneral);
+        const bothHaveGeneral = !!(this.attacker.generalId && this.defender.generalId);
+        // 双将战：按八环乘完的有效战力比取两档（均势 45 / 优势·劣势 30）
+        // 其余：沿用按兵力插值的旧曲线
+        let calculatedDuration = bothHaveGeneral
+            ? resolveBattleDurationByPowerRatio(attPower / Math.max(1, defPower))
+            : CombatSystem.calculateCombatDuration(totalTroops, false);
 
 
 
