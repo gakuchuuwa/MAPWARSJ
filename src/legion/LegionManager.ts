@@ -14,6 +14,8 @@ import {
     lockGeneralAfterDefeat,
     lockEliteAfterDefeat,
     tickAndApplyDefeatCooldowns,
+    isGeneralOnCooldown,
+    isEliteOnCooldown,
 } from './DefeatCooldown';
 import { CityManager } from '../world/CityManager';
 import { GameMap } from '../map/GameMap';
@@ -334,8 +336,8 @@ export class LegionManager {
             const state: CitySpawnTierState = city ?? {};
             const atAnchor = isCityGeneralEliteAnchor(cityId);
             const canGeneral =
-                atAnchor && !state.spawnGeneralUsed && !!getCityAnchoredGeneral(cityId);
-            const canElite = !state.spawnEliteUsed;
+                atAnchor && !state.spawnGeneralUsed && !!cityId && !isGeneralOnCooldown(cityId) && !!getCityAnchoredGeneral(cityId);
+            const canElite = !state.spawnEliteUsed && !!cityId && !isEliteOnCooldown(cityId);
 
             if (army.isElite && !army.generalId) {
                 if (!canGeneral) continue;

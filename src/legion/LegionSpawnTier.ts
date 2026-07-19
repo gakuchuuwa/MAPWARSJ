@@ -6,6 +6,7 @@ import {
 } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getFactionGeneral } from '../data/FactionGenerals';
+import { isGeneralOnCooldown, isEliteOnCooldown } from './DefeatCooldown';
 import type { Army } from './Army';
 
 export type LegionSpawnTierOutcome = 'plain' | 'elite' | 'general' | 'elite_general';
@@ -21,10 +22,11 @@ export function listAvailableLegionSpawnOutcomes(
     generalFactionId: string | null,
     tierState: CitySpawnTierState,
     eliteName: string | null,
+    cityId?: string | null,
 ): LegionSpawnTierOutcome[] {
     const hasGeneral = !!generalFactionId && !!getFactionGeneral(generalFactionId);
-    const canGeneral = hasGeneral && !tierState.spawnGeneralUsed;
-    const canElite = !!eliteName && !tierState.spawnEliteUsed;
+    const canGeneral = hasGeneral && !tierState.spawnGeneralUsed && (cityId ? !isGeneralOnCooldown(cityId) : true);
+    const canElite = !!eliteName && !tierState.spawnEliteUsed && (cityId ? !isEliteOnCooldown(cityId) : true);
 
     const outcomes: LegionSpawnTierOutcome[] = [];
     outcomes.push('plain');
@@ -40,8 +42,9 @@ export function rollCityLegionSpawnTierOutcome(
     generalFactionId: string | null,
     tierState: CitySpawnTierState,
     eliteName: string | null,
+    cityId?: string | null,
 ): LegionSpawnTierOutcome {
-    const available = listAvailableLegionSpawnOutcomes(generalFactionId, tierState, eliteName);
+    const available = listAvailableLegionSpawnOutcomes(generalFactionId, tierState, eliteName, cityId);
     const idx = Math.floor(Math.random() * available.length);
     return available[idx] ?? 'plain';
 }
@@ -52,7 +55,7 @@ export function rollLegionSpawnTierOutcome(
     tierState: CitySpawnTierState = {},
     eliteName: string | null = null,
 ): LegionSpawnTierOutcome {
-    return rollCityLegionSpawnTierOutcome(generalFactionId, tierState, eliteName);
+    return rollCityLegionSpawnTierOutcome(generalFactionId, tierState, eliteName, undefined);
 }
 
 export function markSpawnTierConsumed(
@@ -116,8 +119,8 @@ export function applyLegionSpawnTierToArmy(
     const cityId = army.homeCityId ?? army.getSourceCityId();
     const anchorFactionId = getCityAnchorFactionId(cityId);
     const hasGeneral = !!getCityAnchoredGeneral(cityId);
-    const canGeneral = hasGeneral && !state.spawnGeneralUsed;
-    const canElite = !state.spawnEliteUsed;
+    const canGeneral = hasGeneral && !state.spawnGeneralUsed && !!cityId && !isGeneralOnCooldown(cityId);
+    const canElite = !state.spawnEliteUsed && !!cityId && !isEliteOnCooldown(cityId);
 
     if (army.getTroops() >= threshold) {
         if (canElite) {
@@ -135,7 +138,7 @@ export function applyLegionSpawnTierToArmy(
         return;
     }
 
-    const outcome = rollCityLegionSpawnTierOutcome(anchorFactionId, state, eliteName);
+    const outcome = rollCityLegionSpawnTierOutcome(anchorFactionId, state, eliteName, cityId);
 
     // 有将/精必出（不再随机）：两者可用则全给，仅一项可用则给一项
     if (canElite && canGeneral) {
@@ -154,11 +157,18 @@ export function applyLegionSpawnTierToArmy(
             break;
         }
         case 'general': {
+            if (!canGeneral) return; // 冷却中，不贴将
             const ok = attachFactionGeneralToArmy(army);
             if (ok) markSpawnTierConsumed(state, { general: true });
             break;
         }
         case 'elite_general': {
+            if (!canGeneral) {
+                // 冷却中只贴精锐，不贴将
+                const applied = makeArmyElite(army, eliteName, false);
+                markSpawnTierConsumed(state, { elite: applied.elite });
+                break;
+            }
             const applied = makeArmyElite(army, eliteName, true);
             markSpawnTierConsumed(state, {
                 elite: applied.elite,

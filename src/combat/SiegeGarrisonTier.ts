@@ -10,6 +10,7 @@ import {
     markSpawnTierConsumed,
     type CitySpawnTierState,
 } from '../legion/LegionSpawnTier';
+import { isGeneralOnCooldown, isEliteOnCooldown } from '../legion/DefeatCooldown';
 import type { Army } from '../legion/Army';
 
 /** 攻城战城防临时加成（仅本场，不写盘） */
@@ -63,39 +64,32 @@ export function reconcileSiegeGarrisonBoostWithLegions(
     }
 }
 
-/**
- * 守城驻军加成（将/精随据点，四位一体：谁占城谁得将）
- *
- * 出将前提（缺一不可）：
- *  1. 守方军团尚无该武将
- *  2. 攻方军团尚无该武将（同场唯一）
- *  3. city.spawnGeneralUsed 未消耗
- *
- * 概率规则（2026-06-23 主人定）：
- *  - 军团：维持原25%随机
- *  - 守城驻军：条件满足则**必出**（不再掷骰）
- *
- * 规则来源：city-anchor-first.mdc 铁律 B。
- */
-export function applySiegeGarrisonBoostIfNeeded(
+/** 为被攻城池判定是否需补发将领/精锐 */
+export function assignSiegeGarrisonTier(
     city: SiegeGarrisonCity,
     defendingLegions: Army[],
-    attackingLegions: Army[] = [],
+    attackingLegions: Army[]
 ): void {
-    clearSiegeGarrisonBoost(city);
-
-    const hasLegionGeneral = defendingLegions.some((l) => l.generalId);
-    const hasLegionElite = defendingLegions.some((l) => l.isElite);
-    if (hasLegionGeneral && hasLegionElite) return;
-
+    // 只有锚点城（文化中心）有资格
     if (!isCityGeneralEliteAnchor(city.id)) return;
 
-    const anchorFactionId = getCityAnchorFactionId(city.id);
-    // ① 据点、势力、武将、精锐四位一体：谁占城谁得将，精锐亦随城。
+    // 清理旧缓存（防连战残留）
+    clearSiegeGarrisonBoost(city);
+
+    // ① 同旗判定：城防目前还是归属锚点势力（即未被占领换旗）
+    const anchorFaction = getCityAnchorFactionId(city.id);
+    if (city.factionId !== anchorFaction) return;
+
     const eliteName = getCityEliteLegionName(city.id);
     const anchoredGeneral = getCityAnchoredGeneral(city.id);
 
-    // ③ 同场唯一：攻方已有该武将则守城不得重复出场
+    // ② 城内已有自家军团带了（守城军团或在场援军），城防就不发了
+    const hasLegionElite = defendingLegions.some((l) => l.isElite && l.name === eliteName);
+    const hasLegionGeneral = defendingLegions.some(
+        (l) => l.generalId === anchoredGeneral?.generalId
+    );
+
+    // ③ 同场唯一：攻方已有此将领，说明武将随军离城正在攻打老家，老家城防不得影分身
     const attackerHasThisGeneral =
         !!anchoredGeneral &&
         attackingLegions.some((l) => l.generalId === anchoredGeneral.generalId);
@@ -105,10 +99,11 @@ export function applySiegeGarrisonBoostIfNeeded(
         !!eliteName &&
         attackingLegions.some((l) => l.isElite && l.name === eliteName);
 
-    const needElite = !hasLegionElite && !attackerHasThisElite && !!eliteName && !city.spawnEliteUsed;
+    const needElite = !hasLegionElite && !attackerHasThisElite && !!eliteName && !city.spawnEliteUsed && !isEliteOnCooldown(city.id);
     const needGeneral =
         !hasLegionGeneral &&
         !city.spawnGeneralUsed &&
+        !isGeneralOnCooldown(city.id) &&
         !!anchoredGeneral &&
         !attackerHasThisGeneral;
 
@@ -126,7 +121,7 @@ export function applySiegeGarrisonBoostIfNeeded(
     if (needGeneral && anchoredGeneral) {
         city._siegeGarrisonGeneralId = anchoredGeneral.generalId;
         city._siegeGarrisonPortrait = resolveGeneralPortraitPath(anchoredGeneral.portrait, {
-            factionId: anchorFactionId ?? undefined,
+            factionId: anchorFaction ?? undefined,
             region: getCityRegion({
                 latitude: city.latitude ?? 0,
                 longitude: city.longitude ?? 0,

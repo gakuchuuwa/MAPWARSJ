@@ -2556,37 +2556,24 @@ const SE_CONDITIONS = [
 ];
 
 /** baseEffect → 六类（效果大类）+ 规范三势 */
-const SIX_CLASS_BY_EFFECT: Record<string, { label: string; canonicalSituation: string }> = {
-    // 加己攻 → 优势 → 攻战计(机)
-    ally_power_mult: { label: '攻战计', canonicalSituation: '优势' },
-    first_sortie_power_mult: { label: '攻战计', canonicalSituation: '优势' },
-    first_sortie_comeback_mult: { label: '攻战计', canonicalSituation: '优势' },
-    // 减敌兵 → 优势 → 胜战计(全)
-    enemy_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
-    dual_sub_troops_opening: { label: '胜战计', canonicalSituation: '优势' },
-    // 变随机 → 均势 → 敌战计(衡)
-    luck_variance_self: { label: '敌战计', canonicalSituation: '均势' },
-    luck_variance_enemy: { label: '敌战计', canonicalSituation: '均势' },
-    luck_lock_self: { label: '敌战计', canonicalSituation: '均势' },
-    // 克夺反 / 增兵破局 → 均势 → 混战计(乱)；技能 situationTag 多为均势，标签为准
-    ally_add_troops_opening: { label: '混战计', canonicalSituation: '均势' },
-    negate_enemy_skill: { label: '混战计', canonicalSituation: '均势' },
-    partial_negate_enemy_skill: { label: '混战计', canonicalSituation: '均势' },
-    steal_enemy_skill: { label: '混战计', canonicalSituation: '均势' },
-    nullify_enemy_opening_cut: { label: '混战计', canonicalSituation: '均势' },
-    reflect_enemy_opening_cut: { label: '混战计', canonicalSituation: '均势' },
-    cancel_enemy_terrain_buff: { label: '混战计', canonicalSituation: '均势' },
-    // 减己损 → 劣势 → 并战计(借)
-    win_casualty_reduction: { label: '并战计', canonicalSituation: '劣势' },
-    elite_casualty_reduction: { label: '并战计', canonicalSituation: '劣势' },
-    // 翻盘技 → 劣势 → 败战计(险)
-    lose_enemy_casualty_boost: { label: '败战计', canonicalSituation: '劣势' },
-    post_recovery_rate: { label: '败战计', canonicalSituation: '劣势' },
-    battle_duration_mult: { label: '败战计', canonicalSituation: '劣势' },
-    recompute_comeback: { label: '败战计', canonicalSituation: '劣势' },
-    lose_zero_enemy_recovery: { label: '败战计', canonicalSituation: '劣势' },
-    ally_add_troops_comeback: { label: '败战计', canonicalSituation: '劣势' },
-};
+// ── 六计判据：从引擎权威表派生，不再手抄（2026-07-19 统一三份判据）──
+// 曾经此处手抄一份 25 条的字面量，与引擎 EFFECT_TO_SIX_SET 漂移出 4 条冲突
+// （first_sortie_comeback_mult/post_recovery_rate/battle_duration_mult 归计不一致 +
+//   halve_enemy_terrain_buff 漏项），导致构建校验 39 违规 vs 引擎实判 66 违规两个数字打架。
+// 现在唯一权威 = src/data/TacticalSkillCatalog.ts 的 EFFECT_TO_SIX_SET；此处仅做格式换算。
+import {
+    EFFECT_TO_SIX_SET as ENGINE_EFFECT_TO_SIX_SET,
+    SIX_SET_LABEL as ENGINE_SIX_SET_LABEL,
+    SIX_SET_TO_TRI_CLASS as ENGINE_SIX_SET_TO_TRI_CLASS,
+} from './src/data/TacticalSkillCatalog';
+const TRI_TO_CN: Record<string, string> = { advantage: '优势', balance: '均势', disadvantage: '劣势' };
+const SIX_CLASS_BY_EFFECT: Record<string, { label: string; canonicalSituation: string }> =
+    Object.fromEntries(
+        Object.entries(ENGINE_EFFECT_TO_SIX_SET).map(([eff, set]) => [eff, {
+            label: `${ENGINE_SIX_SET_LABEL[set]}计`,
+            canonicalSituation: TRI_TO_CN[ENGINE_SIX_SET_TO_TRI_CLASS[set]],
+        }]),
+    );
 
 function seReadTagTable(text: string, tableName: string): Record<string, string> {
     const out: Record<string, string> = {};

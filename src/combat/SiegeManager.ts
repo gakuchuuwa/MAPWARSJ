@@ -35,7 +35,7 @@ import { markLegionAnnihilationFeed } from '../legion/LegionAnnihilationFeed';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { shouldSkipHomeRecapture } from '../legion/LegionSpawnPolicy';
 import {
-    applySiegeGarrisonBoostIfNeeded,
+    assignSiegeGarrisonTier as applySiegeGarrisonBoostIfNeeded,
     clearSiegeGarrisonBoost,
     type SiegeGarrisonBoostFields,
 } from './SiegeGarrisonTier';
