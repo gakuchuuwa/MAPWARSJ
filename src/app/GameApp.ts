@@ -43,6 +43,7 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
 import { YuefeiExpedition } from './YuefeiExpedition'; // 岳飞北伐黄龙 圆梦脚本
+import { HuoQubingExpedition } from './HuoQubingExpedition'; // 霍去病封狼居胥 脚本
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { initUnattendedStream } from './UnattendedStream'; // 无人值守直播（?stream=1）
 import { audioManager, type AudioManager } from '../audio/AudioManager';
@@ -104,6 +105,7 @@ export class GameApp {
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
     public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥4万解锁）
     public yuefeiExpedition!: YuefeiExpedition; // 岳飞北伐黄龙 圆梦脚本
+    public huoqubingExpedition!: HuoQubingExpedition; // 霍去病封狼居胥 脚本
     public audioManager: AudioManager = audioManager;
 
     // Game Loop
@@ -568,6 +570,30 @@ export class GameApp {
                 },
             });
             this.cameraFollowUI.setYuefeiHandler(() => this.yuefeiExpedition.start());
+            this.cameraFollowUI.setHuoQubingHandler(() => this.huoqubingExpedition.start());
+
+            // 霍去病封狼居胥 脚本
+            this.huoqubingExpedition = new HuoQubingExpedition({
+                legionManager,
+                cityManager: this.cityManager,
+                cameraFollowUI: this.cameraFollowUI,
+                notify: (msg) => gameLog('expedition', msg),
+                ensureUnpaused: () => {
+                    if (this.timeSystem.isGamePaused()) {
+                        this.timeSystem.setPaused(false);
+                    }
+                },
+                snapCameraToArmy: (armyId) => {
+                    const army = legionManager.getLegionById(armyId);
+                    if (!army) return;
+                    const pos = army.getPosition();
+                    const lMap = this.map.getLeafletMap();
+                    lMap.setView([pos.lat, pos.lng], lMap.getZoom(), { animate: false });
+                },
+                kickLegionAi: (armyId) => {
+                    this.aiController?.tickArmyById(armyId);
+                },
+            });
 
             StreamModeToggle.init();
             SpeechVoiceToggle.init();

@@ -37,6 +37,7 @@ export class CameraFollowUI {
     /** 军团按钮下缘 ≈ 62px；岳飞按钮固定于此，列表面板 z-index 更高盖住它 */
     private static readonly STACK_LEFT_PX = 16;
     private static readonly YUEFEI_BTN_TOP_PX = 62;
+    private static readonly HUOQUBING_BTN_TOP_PX = 104;
     private static readonly LIST_PANEL_TOP_PX = 62;
     /** 势力统计数据源（合并势力榜后，每行附带势力兵力/据点数） */
     private cityManager: { getCities(): any[] } | null = null;
@@ -44,10 +45,13 @@ export class CameraFollowUI {
 
     /** 「岳飞北伐黄龙」圆梦按钮回调（由 GameApp 注入） */
     private onYuefeiExpedition: (() => void) | null = null;
+    /** 「霍去病封狼居胥」按钮回调（由 GameApp 注入） */
+    private onHuoQubingExpedition: (() => void) | null = null;
 
     constructor() {
         this.createListButton();
         this.createYuefeiButton();
+        this.createHuoQubingButton();
         this.createListPanel();
         this.createFollowBanner();
     }

@@ -2193,9 +2193,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/NORTHEAST/feiyaka_cemutehe.png": {
-            "scale": 0.98,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": 12
+            "offsetY": 8
         },
         "/assets/panjun/__闲置__PANJUN_13.png": {
             "scale": 0.88,
