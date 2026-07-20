@@ -18,6 +18,7 @@
  */
 
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { spawnMapFloatingText } from '../utils/MapFloatingText';
@@ -161,6 +162,9 @@ export class HuoQubingExpedition {
 
     /** 临时覆盖：势力名 → 大汉 */
     private _origGetFactionName: ((id: string) => string) | null = null;
+    /** 抑制引擎野战播报（脚本用定制语音替代） */
+    private _origAnnounceFieldBattleEnd: ((...args: any[]) => void) | null = null;
+    private _origAnnounceFieldBattle: ((...args: any[]) => void) | null = null;
 
     /** 祷余山之战 */
     private daoyuPhase: BattlePhase = 'pending';
@@ -231,6 +235,7 @@ export class HuoQubingExpedition {
     private applyExpeditionOverride(): void {
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.overrideFactionName();
+        this.muteGameAnnouncements();
     }
 
     /** 临时覆盖 FactionManager.getFactionName：suzhou → 「大汉」 */
@@ -252,11 +257,32 @@ export class HuoQubingExpedition {
         this._origGetFactionName = null;
     }
 
+    /** 抑制引擎野战播报（脚本用定制语音替代） */
+    private muteGameAnnouncements(): void {
+        if (this._origAnnounceFieldBattleEnd) return; // 已静默
+        this._origAnnounceFieldBattleEnd = (speechAnnouncer as any).announceFieldBattleEnd?.bind(speechAnnouncer) ?? null;
+        this._origAnnounceFieldBattle = (speechAnnouncer as any).announceFieldBattle?.bind(speechAnnouncer) ?? null;
+        (speechAnnouncer as any).announceFieldBattleEnd = () => {};
+        (speechAnnouncer as any).announceFieldBattle = () => {};
+    }
+
+    private unmuteGameAnnouncements(): void {
+        if (this._origAnnounceFieldBattleEnd) {
+            (speechAnnouncer as any).announceFieldBattleEnd = this._origAnnounceFieldBattleEnd;
+            this._origAnnounceFieldBattleEnd = null;
+        }
+        if (this._origAnnounceFieldBattle) {
+            (speechAnnouncer as any).announceFieldBattle = this._origAnnounceFieldBattle;
+            this._origAnnounceFieldBattle = null;
+        }
+    }
+
     /** 起兵失败时回滚覆盖 */
     private rollbackExpeditionOverride(): void {
         (window as any).__huoqubingExpeditionActive = false;
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.restoreFactionName();
+        this.unmuteGameAnnouncements();
     }
 
     /** 点按钮：无霍去病军则起兵；已有则加兵一万 */
@@ -309,9 +335,11 @@ export class HuoQubingExpedition {
         army.isElite = true;
         army.name = ELITE_NAME;
         army.expeditionUnlocked = true;
-        // 阵型外观：中亚骑兵风格（三角阵、枪骑+弓骑）
-        army.legionType = 'cavalry';
+        // 阵型：中亚三角骑兵阵（粟特/河中风格）。createLegion 已按起兵城(代县=中原)把 cultureSlots
+        // 烘焙成中原步骑；阵型画的是 cultureSlots，故只改 cultureRegion 标签不够，必须重新烘焙成中亚，
+        // 否则霍去病仍披中原阵型。applyLegionCultureComposition 会一并把 legionType 设为 cavalry。
         army.cultureRegion = 'CENTRAL_ASIA';
+        applyLegionCultureComposition(army as any, 'CENTRAL_ASIA');
         army.homeCityId = null; // 清掉灵仙锚点，精锐名走 army.name 而非据点查表
         (army as any).setSourceCityId?.(null);
         if (!army.generalId) army.generalId = GENERAL_ID;
@@ -669,6 +697,7 @@ export class HuoQubingExpedition {
         if (army) (army as any).siegeMissionData = null;
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.restoreFactionName();
+        this.unmuteGameAnnouncements();
         this.cleanupAllEnemies();
         if (this.timer != null) {
             window.clearInterval(this.timer);
