@@ -1358,8 +1358,9 @@ export class CityAssetManager {
             return;
         }
         await this.ensureFlagPole();
-        // [PERF 2026-07-17 主人定] 开局 0 座叛军城（叛乱皆开局后发生），启动全量 await 52 面纯属白等：
-        // 只装第 1 面兜底（极早期叛乱不至于无旗），其余开局后台断点续载补满，叛军旗多样性一面不少。
+        // [PERF 2026-07-17 主人定] 沙盒开局除各势力首都外全图皆叛军城（约 660+ 座，见 GameAppCityLoader），
+        // 但启动全量 await 52 面仍是白等：只装第 1 面兜底（开局短暂全穿同一面旗），
+        // 其余开局 3s 后后台断点续载补满，notifyRebelFlagsReady 会刷新已渲染据点换上各自的旗。
         await this.processPanjunFlags(false, 1);
         setTimeout(() => { void this.ensureFullPanjunRebelFlags().catch(() => { /* 后台补载失败下次 preloadFlags 再续 */ }); }, 3000);
     }
