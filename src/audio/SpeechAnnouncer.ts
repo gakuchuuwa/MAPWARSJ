@@ -12,6 +12,7 @@ import { SubtitleBanner } from "../ui/SubtitleBanner";
 import { audioManager } from "./AudioManager";
 import { getGeneralNameForSpeech, prepareSpeechText } from "./GeneralSpeechNames";
 import { getTacticalSkillEntry } from "../data/TacticalSkillCatalog";
+import { edgeTtsClient, type EdgeVoice } from "./EdgeTtsClient";
 
 interface SpeakOptions {
   /** S 级大事：略慢语速、同步字幕条、播报期间丢弃常规播报（不被打断） */
@@ -172,6 +173,9 @@ export class SpeechAnnouncer {
   /** 缓存系统语音列表（getVoices 首帧常为空，须等 voiceschanged） */
   private cachedVoices: SpeechSynthesisVoice[] = [];
   private voicesHooked = false;
+
+  /** 云健直连通道正在播放的 Audio（synth.cancel 管不到它，换句时须手动停） */
+  private activeEdgeAudio: HTMLAudioElement | null = null;
 
   constructor() {
     this.hookVoices();
@@ -691,6 +695,51 @@ export class SpeechAnnouncer {
     });
   }
 
+  /** 当前男声偏好对应的 Neural 音色名（云健/云希直连用） */
+  private currentEdgeVoice(): EdgeVoice {
+    return this.preferredVoice === "Yunxi" ? "zh-CN-YunxiNeural" : "zh-CN-YunjianNeural";
+  }
+
+  private stopActiveEdgeAudio(): void {
+    if (!this.activeEdgeAudio) return;
+    try { this.activeEdgeAudio.pause(); this.activeEdgeAudio.src = ""; } catch { /* ignore */ }
+    this.activeEdgeAudio = null;
+  }
+
+  /**
+   * 云健优先通道：直连微软合成 Neural 男声并用 Audio 播放（Edge 已从网页语音接口撤除云健，故自建直连）。
+   * 成功走 onPlay/onEnd（与 Web Speech 的 onstart/onend 同语义，驱动 cut-in/推进队列）；
+   * 任何失败（合成/播放/超时/端点变动）调用 fallback 回落到 Web Speech（女声兜底），直播不哑。
+   */
+  private speakViaEdge(
+    text: string,
+    opts: SpeakOptions | undefined,
+    cb: { onPlay: () => void; onEnd: () => void; isSettled: () => boolean; fallback: () => void },
+  ): void {
+    if (edgeTtsClient.isTemporarilyDisabled()) { cb.fallback(); return; }
+    edgeTtsClient
+      .synthesize(text, { voice: this.currentEdgeVoice(), rate: opts?.rate })
+      .then((blob) => {
+        if (cb.isSettled()) return;
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.volume = Math.max(0.05, audioManager.getSpeechVolume());
+        this.activeEdgeAudio = audio;
+        const cleanup = () => {
+          URL.revokeObjectURL(url);
+          if (this.activeEdgeAudio === audio) this.activeEdgeAudio = null;
+        };
+        audio.onplay = () => { console.log("[Speech] 使用: 云健/云希 Neural (直连微软)"); cb.onPlay(); };
+        audio.onended = () => { cleanup(); cb.onEnd(); };
+        audio.onerror = () => { cleanup(); if (!cb.isSettled()) cb.fallback(); };
+        audio.play().catch(() => { cleanup(); if (!cb.isSettled()) cb.fallback(); });
+      })
+      .catch((e) => {
+        console.warn("[Speech] 云健直连失败，回落 Web Speech:", (e as Error)?.message ?? e);
+        if (!cb.isSettled()) cb.fallback();
+      });
+  }
+
   private speak(text: string, opts?: SpeakOptions): void {
     const now = Date.now();
     // S 级播报期间，常规播报直接丢弃（不 cancel，不排队——慢直播宁缺毋滥）
@@ -718,6 +767,8 @@ export class SpeechAnnouncer {
     synth.cancel();
     // Chrome 常见：cancel 后 speaking 卡住 paused，后续 speak 无声
     try { if (synth.paused) synth.resume(); } catch { /* ignore */ }
+    // 停掉上一句云健 Audio（synth.cancel 只停 Web Speech，管不到 Audio 元素）
+    this.stopActiveEdgeAudio();
 
     // 语音列表偶发晚加载（Chrome 常见）：为空或无中文语音时延迟重试再开口
     const attempt = (retried: boolean): void => {
@@ -829,7 +880,13 @@ export class SpeechAnnouncer {
           }
         };
 
-        speakWithCandidate(0);
+        // 云健优先：直连微软取回 Neural 男声；任何失败回落到 Web Speech 候选链（女声兜底）
+        this.speakViaEdge(speechText, opts, {
+          onPlay: () => { this.beginSpeechDuckSession(); fireStart(); },
+          onEnd: settle,
+          isSettled: () => settled,
+          fallback: () => speakWithCandidate(0),
+        });
       }, retried ? 450 : 50);
     };
     attempt(false);
