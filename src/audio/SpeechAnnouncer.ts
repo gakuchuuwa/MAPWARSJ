@@ -176,6 +176,8 @@ export class SpeechAnnouncer {
 
   /** 云健直连通道正在播放的 Audio（synth.cancel 管不到它，换句时须手动停） */
   private activeEdgeAudio: HTMLAudioElement | null = null;
+  /** 播报序号：每次 speak 自增；异步云健 resolve 后凭此判断是否已被新播报取代（防两句声音重叠） */
+  private speechSeq = 0;
 
   constructor() {
     this.hookVoices();
@@ -769,6 +771,10 @@ export class SpeechAnnouncer {
     try { if (synth.paused) synth.resume(); } catch { /* ignore */ }
     // 停掉上一句云健 Audio（synth.cancel 只停 Web Speech，管不到 Audio 元素）
     this.stopActiveEdgeAudio();
+    // 播报序号：本句开始即占号；云健是异步合成（~600ms），若这期间来了新一句，
+    // 旧句 synthesize 迟到 resolve 时凭此判定「已被取代」而放弃播放，杜绝新旧两句声音重叠。
+    const mySeq = ++this.speechSeq;
+    const isCurrent = () => this.speechSeq === mySeq;
 
     // 语音列表偶发晚加载（Chrome 常见）：为空或无中文语音时延迟重试再开口
     const attempt = (retried: boolean): void => {
@@ -884,7 +890,7 @@ export class SpeechAnnouncer {
         this.speakViaEdge(speechText, opts, {
           onPlay: () => { this.beginSpeechDuckSession(); fireStart(); },
           onEnd: settle,
-          isSettled: () => settled,
+          isSettled: () => settled || !isCurrent(),
           fallback: () => speakWithCandidate(0),
         });
       }, retried ? 450 : 50);

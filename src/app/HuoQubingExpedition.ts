@@ -72,6 +72,13 @@ const ZUOXIAN_TROOPS_GONGLU = 40000;
 /** 霍去病战前兵力加至 5 万 */
 const BATTLE_TROOPS = 50000;
 
+/**
+ * 两场野战开战语音（霍去病 vs 左贤王，剧情皆优势）。句式对齐引擎 announceFieldBattle
+ * 的野战开战词（优势=「势不可挡」）；脚本已 mute 引擎野战开战播报，故这里用定制句补上，
+ * 势力名写死「汉/匈奴」与脚本旗号一致。
+ */
+const FIELD_OPENING_SPEECH = '汉，名将，霍去病，势不可挡，大战，匈奴，名将，左贤王';
+
 const TICK_INTERVAL_MS = 400;
 
 type BattlePhase = 'pending' | 'spawned' | 'done';
@@ -480,6 +487,7 @@ export class HuoQubingExpedition {
                 `🐎 [封狼居胥] 祷余山遭遇匈奴左贤王主力（${ZUOXIAN_TROOPS_DAOYU.toLocaleString()}），轻勇骑 ${BATTLE_TROOPS.toLocaleString()} 迎战`,
             );
             this.notify('祷余山——左贤王主力拦路！');
+            (speechAnnouncer as any).speak(FIELD_OPENING_SPEECH);
             return;
         }
 
@@ -527,6 +535,7 @@ export class HuoQubingExpedition {
                 `🐎 [封狼居胥] 弓庐水遭遇左贤王残部（${ZUOXIAN_TROOPS_GONGLU.toLocaleString()}），轻勇骑 ${BATTLE_TROOPS.toLocaleString()} 追击`,
             );
             this.notify('弓庐水——左贤王残部再战！');
+            (speechAnnouncer as any).speak(FIELD_OPENING_SPEECH);
             return;
         }
 
