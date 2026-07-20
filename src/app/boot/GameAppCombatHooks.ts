@@ -83,12 +83,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             `⚔️ [GameApp] Followed army joined battle as reinforcement - showing Combat UI`
         );
 
-        const hqTitle = (window as any).__huoqubingBattleTitle;
-        const isHuoQubingBattle = hqTitle && (
-            attackers.some((u: any) => u?.generalId === 'suzhou_huoqubing') ||
-            defenders.some((u: any) => u?.generalId === 'suzhou_huoqubing')
-        );
-        const title = (isHuoQubingBattle ? hqTitle : battleField.customTitle) ?? (battleField.type === 'siege' ? (battleField.siegeCityId ? `${app.cityManager.getCity(battleField.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(battleField.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(battleField.getDefenderFactionId())}`);
+        const title = (window as any).__huoqubingBattleTitle ?? battleField.customTitle ?? (battleField.type === 'siege' ? (battleField.siegeCityId ? `${app.cityManager.getCity(battleField.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(battleField.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(battleField.getDefenderFactionId())}`);
         const dur = battleField.targetDuration;
         const scale = app.timeSystem.getSpeed();
         try {

@@ -116,14 +116,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                         try {
                             app.combatUI.showRegional(
                                 attackers, defenders, undefined, undefined,
-                                (() => {
-                                    const hqTitle = (window as any).__huoqubingBattleTitle;
-                                    const isHQB = hqTitle && (
-                                        attackers.some((u: any) => u?.generalId === 'suzhou_huoqubing') ||
-                                        defenders.some((u: any) => u?.generalId === 'suzhou_huoqubing')
-                                    );
-                                    return (isHQB ? hqTitle : bf.customTitle) ?? (bf.type === 'siege' ? (bf.siegeCityId ? `${app.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(bf.getDefenderFactionId())}`);
-                                })(),
+                                (window as any).__huoqubingBattleTitle ?? bf.customTitle ?? (bf.type === 'siege' ? (bf.siegeCityId ? `${app.cityManager.getCity(bf.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(bf.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(bf.getDefenderFactionId())}`),
                                 '', false, bf.targetDuration, app.timeSystem.getSpeed(), bf,
                             );
                         } catch (e) { /* ignore */ }
