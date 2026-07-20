@@ -105,7 +105,6 @@ export class GlobalUnitRenderer {
     private unitFightingStates: Map<string, boolean> = new Map();
     private lastMapCenter: L.LatLng | null = null;
     private unitVisualAngles: Map<string, number> = new Map();
-    private positionCounts: Map<string, number> = new Map(); // [NEW] Track overlapping units per frame
 
     private lastTime: number = 0;
     private isRunning: boolean = false;
@@ -516,7 +515,6 @@ export class GlobalUnitRenderer {
         }
 
         const corpseFadeMs = GameConfig.LEGION.CORPSE_FADE_OUT_MS;
-        this.positionCounts.clear(); // [NEW] Clear overlap counts per frame
         for (let i = 0; i < drawList.length; i++) {
             const unit = drawList[i];
 
@@ -680,21 +678,11 @@ export class GlobalUnitRenderer {
         // Base center point
         let centerPoint = this.map.latLngToContainerPoint([unitPos.lat, unitPos.lng]);
 
-        // [FIX] 屏距聚类 fan-out：逻辑坐标差 0.05 仍可能叠在同一像素格（方阵宽 >80px）
+        // 军团一律画在自身真实坐标，绝不做任何屏幕错开/位移——重叠就重叠，也不允许瞬移（不真实）。
+        // 下面 scale 仅供贴图/方阵尺寸计算使用（不参与定位）。
         const currentZoom = this.map.getZoom();
         const effectiveZoom = Math.min(currentZoom, 10);
         const scale = Math.pow(2, effectiveZoom - 9) * 0.7;
-        const cellPx = 48;
-        const screenCellKey = `${Math.floor(centerPoint.x / cellPx)},${Math.floor(centerPoint.y / cellPx)}`;
-        const overlapCount = this.positionCounts.get(screenCellKey) || 0;
-        this.positionCounts.set(screenCellKey, overlapCount + 1);
-
-        if (overlapCount > 0) {
-            const offsetDist = 58 * scale;
-            const angle = overlapCount * (Math.PI / 3) + (Math.PI / 6);
-            centerPoint.x += Math.cos(angle) * offsetDist;
-            centerPoint.y += Math.sin(angle) * offsetDist;
-        }
 
         const m = GlobalUnitRenderer.VIEW_CULL_MARGIN_PX;
         if (
