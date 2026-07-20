@@ -473,8 +473,8 @@ export class HuoQubingExpedition {
             return;
         }
 
-        // 锁定当前目标城
-        if (Date.now() < this.pauseUntilMs) return;
+        // 锁定当前目标城：必须在暂停检查之前，否则战斗结束后的 tick
+        // 被 tickDaoyushan/tickGonglushui 设的 pauseUntilMs 阻断，导致 kickLegionAi 永远不触发。
         const desired = ROUTE[this.waypointIndex];
         if (battleEnded || this.battleJustEnded || army.expeditionTargetCityId !== desired.id) {
             this.battleJustEnded = false;
@@ -487,6 +487,7 @@ export class HuoQubingExpedition {
             this.deps.kickLegionAi?.(army.id);
             gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑锁定目标：${desired.name}`);
         }
+        if (Date.now() < this.pauseUntilMs) return;
     }
 
     // ═══════════════════════════════════════════
@@ -507,6 +508,7 @@ export class HuoQubingExpedition {
                 return;
             }
             this.daoyuPhase = 'spawned';
+            (window as any).__huoqubingBattleTitle = '祷余山之战';
             // 霍去病兵力加至 5 万
             army.setTroops(BATTLE_TROOPS);
             gameLog(
@@ -530,6 +532,7 @@ export class HuoQubingExpedition {
         const inCombat = army.getIsInCombat?.() ?? false;
         if (!inCombat) {
             this.daoyuPhase = 'done';
+            (window as any).__huoqubingBattleTitle = null;
             this.cleanupZuoxian(this.daoyuEnemyId);
             this.daoyuEnemyId = null;
             gameLog('expedition', `🐎 [封狼居胥] 祷余山大捷——左贤王主力溃败`);
@@ -558,6 +561,7 @@ export class HuoQubingExpedition {
                 return;
             }
             this.gongluPhase = 'spawned';
+            (window as any).__huoqubingBattleTitle = '弓庐水之战';
             army.setTroops(BATTLE_TROOPS);
             gameLog(
                 'expedition',
@@ -579,6 +583,7 @@ export class HuoQubingExpedition {
         const inCombat = army.getIsInCombat?.() ?? false;
         if (!inCombat) {
             this.gongluPhase = 'done';
+            (window as any).__huoqubingBattleTitle = null;
             this.cleanupZuoxian(this.gongluEnemyId);
             this.gongluEnemyId = null;
             gameLog('expedition', `🐎 [封狼居胥] 弓庐水再捷——左贤王残部覆灭`);
@@ -737,6 +742,7 @@ export class HuoQubingExpedition {
     /** 停止脚本推进（军团仍留在场上） */
     public stop(): void {
         (window as any).__huoqubingExpeditionActive = false;
+        (window as any).__huoqubingBattleTitle = null;
         const army = this.armyId ? this.deps.legionManager.getLegionById(this.armyId) : undefined;
         if (army) (army as any).siegeMissionData = null;
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);

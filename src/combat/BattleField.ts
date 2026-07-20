@@ -108,6 +108,8 @@ export class BattleField implements IOpeningPulseSink {
     }
     /** 援军编入本场区域战（用于跟随军团 UI） */
     public onReinforcementJoined?: (unit: IBattleUnit, isAttacker: boolean) => void;
+    /** 脚本预设：覆盖战斗面板标题（如「祷余山之战」替代「汉大战匈奴」） */
+    public customTitle?: string;
 
     public elapsed: number = 0;
     public type: BattleType;

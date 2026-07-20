@@ -1226,7 +1226,7 @@ export class CombatUI {
 
     /**
      * 本侧全体援军（wave≥1）的兵力加权合兵 luck；无援军返回 null。
-     * 状态链「得助/掣肘」徽章用此值（侧级汇总），逐支标签已移至 buildWaveGroupedSideName。
+     * buildWaveGroupedSideName 中按单位粒度显示「得助/掣肘」标签（紧跟援军名后）。
      */
     private getSideReinforcementJoinLuck(side: 'attacker' | 'defender'): number | null {
         const bf = this.boundRegionalBattleField;
@@ -1364,14 +1364,6 @@ export class CombatUI {
             }
         }
 
-        // 合兵一处：按本侧全体援军加权 luck（非指挥官单体）
-        const joinLuck = this.getSideReinforcementJoinLuck(side);
-        let joinLabel = '';
-        if (joinLuck !== null) {
-            if (joinLuck > 1.001) joinLabel = '得助';
-            else if (joinLuck < 0.999) joinLabel = '掣肘';
-        }
-
         // ①运气标签：只有极端值才显示（0.8→厄运, 1.2→好运, 中间不显）
         const fateLuck = side === 'attacker'
             ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? null)
@@ -1382,7 +1374,7 @@ export class CombatUI {
             else if (fateLuck < 0.85) luckLabel = '厄运';
         }
 
-        if (labeled.length === 0 && !luckLabel && !joinLabel && !passLabel && !regionLabel && !tacLabel) {
+        if (labeled.length === 0 && !luckLabel && !passLabel && !regionLabel && !tacLabel) {
             return { chain: '', title: '' };
         }
 
@@ -1393,7 +1385,6 @@ export class CombatUI {
         const tag = (text: string, extraStyle = '') =>
             `<span style=\"display:inline-block;padding:1px 5px;border:1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};border-radius:3px;background:${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};margin:0 1px;${extraStyle}\">${text}</span>`;
         if (luckLabel) parts.push(tag(luckLabel));
-        if (joinLabel) parts.push(tag(joinLabel));
         if (passLabel) parts.push(tag(passLabel));
         if (regionLabel) parts.push(tag(regionLabel));
         if (tacLabel) parts.push(tag(tacLabel));
@@ -1442,7 +1433,7 @@ export class CombatUI {
         const chain = parts.join('');
 
         const titleParts = labeled.map((l) => `${l.label}×${fmt(l.value)}`);
-        if (joinLabel) titleParts.unshift(`援军:${joinLabel}(×${parseFloat(joinLuck!.toFixed(2))})`);
+
         if (luckLabel) titleParts.unshift(`运气:${luckLabel}(×${parseFloat(fateLuck!.toFixed(2))})`);
         const title = `${role}：${titleParts.join(' ')}`;
         return { chain, title };
