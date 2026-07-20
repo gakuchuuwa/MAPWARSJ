@@ -796,7 +796,7 @@ export class CityAssetManager {
 'wugu_d': '乌古',
         'adao_d': '阿',
         'wuyuan_d': '五',
-'chenli_d': '禅',
+'chenli_d': '姑衍',
         'nuoyan_d': '赛',
         'wuli_d': '扎',
         'jiluo_d': '涿邪',

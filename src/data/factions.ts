@@ -739,6 +739,7 @@ export const FACTIONS: Faction[] = [
 
 
 
+
     // ── 2026-06-11 新增：野利（西夏权臣/克夷门）──
     { id: 'yeli', name: '野利' },
 
@@ -1463,7 +1464,9 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-19 新增：五原郡（固阳塞）──
     { id: 'wuyuan_d', name: '五原' },            // 固阳塞·秦汉北防匈奴要隘
     // ── 2026-06-19 新增：漠北/漠南要塞势力（7点）──
-    { id: 'chenli_d', name: '撑犁' },
+    { id: 'chenli_d', name: '姑衍' },
+
+
 
               // 姑衍山·匈奴祭天（撑犁=天）
     { id: 'nuoyan_d', name: '诺颜' },              // 赛音山达·赛音诺颜部

@@ -168,7 +168,7 @@ export class CameraFollowUI {
         const btn = document.createElement('button');
         btn.id = 'yuefei-expedition-btn';
         btn.title = '岳飞率背嵬军十万，自郾城北伐：开封 → 北京 → 沈阳 → 黄龙府';
-        btn.innerHTML = '⚔ 岳飞北伐黄龙';
+        btn.innerHTML = '⚔ 岳飞痛饮黄龙';
         btn.style.cssText = `
             position: fixed;
             top: ${CameraFollowUI.YUEFEI_BTN_TOP_PX}px;

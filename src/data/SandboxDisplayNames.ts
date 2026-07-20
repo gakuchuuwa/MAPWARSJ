@@ -813,7 +813,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'wugu_d': '乌古',
     'adao_d': '阿克',     // 昆岗·阿克苏道军台
     'wuyuan_d': '五原',   // 固阳塞·五原郡
-'chenli_d': '禅',
+'chenli_d': '姑衍',
     'nuoyan_d': '赛',   // 赛音山达·赛音诺颜部
     'wuli_d': '扎布',     // 扎布汗·乌里雅苏台
     'jiluo_d': '涿邪',    // 涿邪山·窦宪出涿邪
