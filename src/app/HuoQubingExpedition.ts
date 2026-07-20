@@ -163,6 +163,8 @@ export class HuoQubingExpedition {
     private timer: number | null = null;
     /** 上一 tick 是否在战斗中 */
     private wasInCombat = false;
+    /** 持久战斗结束标志：tick 被暂停阻断时保留，防止 kickLegionAi 被跳过 */
+    private battleJustEnded = false;
 
     /** 克城后休整截止时间戳 */
     private pauseUntilMs = 0;
@@ -278,13 +280,15 @@ export class HuoQubingExpedition {
 
         const self = this;
         (speechAnnouncer as any).announceFieldBattle = function (opts: any) {
-            if (self.isScriptBattleParticipant(opts.followerFactionId, opts.followerGeneralId) ||
+            // 只有双方都是脚本参战者（霍去病 vs 左贤王）才静默，其它野战正常播报
+            if (self.isScriptBattleParticipant(opts.followerFactionId, opts.followerGeneralId) &&
                 self.isScriptBattleParticipant(opts.enemyFactionId, opts.enemyGeneralId)) return;
             self._origAnnounceFieldBattle?.(opts);
         };
         (speechAnnouncer as any).announceFieldBattleEnd = function (opts: any) {
-            if (self.isScriptBattleParticipant(opts.followerFactionId, opts.followerGeneralId) ||
-                (opts.enemyFactionId && self.isScriptBattleParticipant(opts.enemyFactionId, opts.enemyGeneralId))) return;
+            // 只有双方都是脚本参战者才静默，其它野战正常播报
+            if (self.isScriptBattleParticipant(opts.followerFactionId, opts.followerGeneralId) &&
+                self.isScriptBattleParticipant(opts.enemyFactionId, opts.enemyGeneralId)) return;
             self._origAnnounceFieldBattleEnd?.(opts);
         };
     }
@@ -372,6 +376,7 @@ export class HuoQubingExpedition {
         this.armyId = army.id;
         this.waypointIndex = 0;
         this.wasInCombat = false;
+        this.battleJustEnded = false;
         this.pauseUntilMs = 0;
         this.daoyuPhase = 'pending';
         this.daoyuEnemyId = null;
@@ -471,10 +476,14 @@ export class HuoQubingExpedition {
         // 锁定当前目标城
         if (Date.now() < this.pauseUntilMs) return;
         const desired = ROUTE[this.waypointIndex];
-        if (battleEnded || army.expeditionTargetCityId !== desired.id) {
+        if (battleEnded || this.battleJustEnded || army.expeditionTargetCityId !== desired.id) {
+            this.battleJustEnded = false;
             if (army.name !== ELITE_NAME) army.name = ELITE_NAME;
             army.expeditionTargetCityId = desired.id;
             // 重设目标后重新激活 AI 行军：战斗/休整会让军团停下，只改 target 未必自动起步。
+            // 非脚本野战结束后，强制清战斗态 + 重置到达标记，确保行为树不会因为残留状态而跳过行军。
+            (army as any).setCombatState?.(false);
+            (army as any).hasArrived = false;
             this.deps.kickLegionAi?.(army.id);
             gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑锁定目标：${desired.name}`);
         }
@@ -698,10 +707,12 @@ export class HuoQubingExpedition {
         const inCombat = army.getIsInCombat?.() ?? false;
         if (inCombat) {
             this.wasInCombat = true;
+            this.battleJustEnded = false;
             return false;
         }
         if (!this.wasInCombat) return false;
         this.wasInCombat = false;
+        this.battleJustEnded = true;
 
         const troops = army.getTroops();
         if (troops <= 0) return false;

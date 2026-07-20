@@ -2407,11 +2407,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/STEPPE/mengwu_hebulehan.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": -21
-        },
         "/assets/TIBET/pazhu_redangunsangpa.png": {
             "scale": 0.92,
             "offsetX": 0,
@@ -4071,11 +4066,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": 16
-        },
-        "/assets/STEPPE/__闲置__STEPPE_25.png": {
-            "scale": 1.03,
-            "offsetX": -18,
-            "offsetY": -28
         },
         "/assets/STEPPE/tuoba_tuobagui.png": {
             "scale": 1.13,
@@ -5953,14 +5943,19 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 32
         },
         "/assets/STEPPE/__闲置__STEPPE_45.png": {
-            "scale": 1.08,
+            "scale": 1.03,
             "offsetX": 0,
-            "offsetY": 32
+            "offsetY": -21
         },
         "/assets/HEXI/weiming_weiminglinggong.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/STEPPE/mengwu_hebulehan.png": {
+            "scale": 1.05,
+            "offsetX": -18,
+            "offsetY": -28
         }
     },
     "folderGuides": {
