@@ -60,7 +60,10 @@ const GONGLUSHUI = { lat: 46.9146, lng: 109.7452 };
 /** 逼近触发距离（欧氏，约 30–40 km 量级） */
 const BATTLE_TRIGGER_DIST = 0.30;
 
-/** 左贤王 */
+/** 应昌：祷余山大捷后直接归「汉」*/
+const YINGCHANG_ID = 'city_yingchang';
+/** 曲雕阿兰：弓庐水大捷后直接归「汉」*/
+const QUDIAOALAN_ID = 'city_qudiaoalan';
 const ZUOXIAN_FACTION = 'xiongnu';
 const ZUOXIAN_GENERAL = 'chenli_d_zuoxianwang';
 const ZUOXIAN_NAME = '左贤王';
@@ -174,6 +177,8 @@ export class HuoQubingExpedition {
     /** 仅屏蔽脚本专属野战（霍去病 vs 左贤王）的引擎播报，其它野战正常放行 */
     private _origAnnounceFieldBattleEnd: ((...args: any[]) => void) | null = null;
     private _origAnnounceFieldBattle: ((...args: any[]) => void) | null = null;
+    /** 拦截区域战面板标题（本体 LegionFieldBattle 写死「X 大战 Y」，脚本在此替换） */
+    private _origOnRegionalBattleStart: ((...args: any[]) => void) | null = null;
 
     /** 祷余山之战 */
     private daoyuPhase: BattlePhase = 'pending';
@@ -245,6 +250,7 @@ export class HuoQubingExpedition {
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.overrideFactionName();
         this.muteGameAnnouncements();
+        this.installBattleTitleHook();
     }
 
     /** 临时覆盖 FactionManager.getFactionName：suzhou → 「大汉」 */
@@ -304,12 +310,79 @@ export class HuoQubingExpedition {
         }
     }
 
+    /**
+     * 面板标题：本体野战开战写死「{势力} 大战 {势力}」，主路径 onRegionalBattleStart 不读脚本全局。
+     * 仅在脚本运行时挂钩替换 title + 写入 battleField.customTitle；stop 时还原，不影响其它战斗。
+     */
+    private installBattleTitleHook(): void {
+        const cs = (window as any).game?.combatSystem;
+        if (!cs || this._origOnRegionalBattleStart) return;
+        this._origOnRegionalBattleStart = cs.onRegionalBattleStart ?? null;
+        const orig = this._origOnRegionalBattleStart;
+        cs.onRegionalBattleStart = (
+            attackers: unknown,
+            defenders: unknown,
+            attackerPortrait: unknown,
+            defenderPortrait: unknown,
+            title: string,
+            description: unknown,
+            isNarrative: unknown,
+            battleField: { customTitle?: string } | null | undefined,
+        ) => {
+            const scriptTitle = (window as any).__huoqubingBattleTitle as string | null | undefined;
+            const finalTitle = scriptTitle || title;
+            if (scriptTitle && battleField) {
+                battleField.customTitle = scriptTitle;
+            }
+            orig?.(
+                attackers,
+                defenders,
+                attackerPortrait,
+                defenderPortrait,
+                finalTitle,
+                description,
+                isNarrative,
+                battleField,
+            );
+        };
+    }
+
+    private uninstallBattleTitleHook(): void {
+        const cs = (window as any).game?.combatSystem;
+        if (cs && this._origOnRegionalBattleStart !== null) {
+            cs.onRegionalBattleStart = this._origOnRegionalBattleStart;
+        }
+        this._origOnRegionalBattleStart = null;
+    }
+
+    /** 写入脚本战名；开战前先设，避免竞态仍显示「汉 大战 匈奴」 */
+    private setScriptBattleTitle(title: string | null): void {
+        (window as any).__huoqubingBattleTitle = title;
+        const fields = (window as any).game?.combatSystem?.getActiveBattleFields?.() as
+            | Array<{ customTitle?: string; hasParticipant?: (id: string) => boolean }>
+            | undefined;
+        if (!fields?.length) return;
+        for (const bf of fields) {
+            const ours =
+                (this.armyId && bf.hasParticipant?.(this.armyId)) ||
+                (this.daoyuEnemyId && bf.hasParticipant?.(this.daoyuEnemyId)) ||
+                (this.gongluEnemyId && bf.hasParticipant?.(this.gongluEnemyId));
+            if (!ours) continue;
+            if (title) bf.customTitle = title;
+            else if (bf.customTitle === '祷余山之战' || bf.customTitle === '弓庐水之战') {
+                bf.customTitle = undefined;
+            }
+        }
+    }
+
     /** 起兵失败时回滚覆盖 */
     private rollbackExpeditionOverride(): void {
         (window as any).__huoqubingExpeditionActive = false;
+        this.setScriptBattleTitle(null);
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.restoreFactionName();
         this.unmuteGameAnnouncements();
+        this.uninstallBattleTitleHook();
     }
 
     /** 点按钮：无霍去病军则起兵；已有则加兵一万 */
@@ -473,26 +546,72 @@ export class HuoQubingExpedition {
             return;
         }
 
-        // 锁定当前目标城：必须在暂停检查之前，否则战斗结束后的 tick
-        // 被 tickDaoyushan/tickGonglushui 设的 pauseUntilMs 阻断，导致 kickLegionAi 永远不触发。
+        // 休整期间不重新锁定目标，等休整结束（解除 pin）后再 kickLegionAi，确保行军正常启动。
+        // 野战/攻城结束后设定的 pauseUntilMs 会在这里生效。
+        if (Date.now() < this.pauseUntilMs) return;
+
         const desired = ROUTE[this.waypointIndex];
         if (battleEnded || this.battleJustEnded || army.expeditionTargetCityId !== desired.id) {
             this.battleJustEnded = false;
             if (army.name !== ELITE_NAME) army.name = ELITE_NAME;
             army.expeditionTargetCityId = desired.id;
-            // 重设目标后重新激活 AI 行军：战斗/休整会让军团停下，只改 target 未必自动起步。
-            // 非脚本野战结束后，强制清战斗态 + 重置到达标记，确保行为树不会因为残留状态而跳过行军。
+            // 重设目标后重新激活 AI 行军。stopMovement 已设 hasArrived=true，
+            // 必须保持 true 让 MoveToTarget 的 isIdle() 判定通过。
+            // clearPostBattleRest 消除战后驻留阻塞。
             (army as any).setCombatState?.(false);
-            (army as any).hasArrived = false;
+            (army as any).clearPostBattleRest?.();
             this.deps.kickLegionAi?.(army.id);
             gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑锁定目标：${desired.name}`);
         }
-        if (Date.now() < this.pauseUntilMs) return;
     }
 
     // ═══════════════════════════════════════════
     // 祷余山之战
     // ═══════════════════════════════════════════
+
+    /** 祷余山大捷 → 应昌归「汉」（不再攻城）*/
+    private grantYingchangToHuoQubing(army: ScriptArmy): void {
+        const city = this.deps.cityManager.getCity(YINGCHANG_ID);
+        if (!city) return;
+        if (city.factionId === FACTION_ID) return;
+        if (!this.deps.cityManager.updateCity) return;
+        this.deps.cityManager.updateCity(
+            YINGCHANG_ID,
+            { factionId: FACTION_ID },
+            {
+                captorLegionName: army.name || ELITE_NAME,
+                captorLegionId: army.id,
+                captorGeneralId: GENERAL_ID,
+                defenderHadNamedForce: true,
+                defenderGeneralId: ZUOXIAN_GENERAL,
+            },
+        );
+        gameLog('expedition', `🐎 [封狼居胥] 祷余山大捷——应昌归汉`);
+        (speechAnnouncer as any).speak('祷余山下一战，胡骑崩摧，应昌城不战而下！汉家铁骑，从此踏破大幕！');
+        this.pauseUntilMs = Date.now() + 15000;
+    }
+
+    /** 弓庐水大捷 → 曲雕阿兰归「汉」*/
+    private grantQudiaoalanToHuoQubing(army: ScriptArmy): void {
+        const city = this.deps.cityManager.getCity(QUDIAOALAN_ID);
+        if (!city) return;
+        if (city.factionId === FACTION_ID) return;
+        if (!this.deps.cityManager.updateCity) return;
+        this.deps.cityManager.updateCity(
+            QUDIAOALAN_ID,
+            { factionId: FACTION_ID },
+            {
+                captorLegionName: army.name || ELITE_NAME,
+                captorLegionId: army.id,
+                captorGeneralId: GENERAL_ID,
+                defenderHadNamedForce: true,
+                defenderGeneralId: ZUOXIAN_GENERAL,
+            },
+        );
+        gameLog('expedition', `🐎 [封狼居胥] 弓庐水大捷——曲雕阿兰归汉`);
+        (speechAnnouncer as any).speak('弓庐水再捷，残虏尽殪！曲雕阿兰，胡骑发踪之地，今为汉家牧马之场！');
+        this.pauseUntilMs = Date.now() + 15000;
+    }
 
     private tickDaoyushan(army: ScriptArmy): void {
         if (this.daoyuPhase === 'done') return;
@@ -503,12 +622,14 @@ export class HuoQubingExpedition {
         if (this.daoyuPhase === 'pending') {
             if (getEuclideanDistance(pos, DAOYUSHAN) > BATTLE_TRIGGER_DIST) return;
 
+            // 先写标题再刷敌，避免碰撞当帧先弹「汉 大战 匈奴」
+            this.setScriptBattleTitle('祷余山之战');
             if (!this.spawnZuoxian('daoyu', DAOYUSHAN, ZUOXIAN_TROOPS_DAOYU)) {
+                this.setScriptBattleTitle(null);
                 this.daoyuPhase = 'done';
                 return;
             }
             this.daoyuPhase = 'spawned';
-            (window as any).__huoqubingBattleTitle = '祷余山之战';
             // 霍去病兵力加至 5 万
             army.setTroops(BATTLE_TROOPS);
             gameLog(
@@ -532,11 +653,12 @@ export class HuoQubingExpedition {
         const inCombat = army.getIsInCombat?.() ?? false;
         if (!inCombat) {
             this.daoyuPhase = 'done';
-            (window as any).__huoqubingBattleTitle = null;
+            this.setScriptBattleTitle(null);
             this.cleanupZuoxian(this.daoyuEnemyId);
             this.daoyuEnemyId = null;
             gameLog('expedition', `🐎 [封狼居胥] 祷余山大捷——左贤王主力溃败`);
             (speechAnnouncer as any).speak('祷余山下，汉军铁骑，如惊雷乍起，胡骑为之褫魂。左贤王部众飞砂喋血，大幕为赤，实乃封山之先声！');
+            this.grantYingchangToHuoQubing(army);
             this.pauseUntilMs = Date.now() + 15000;
             // 野战不推进 waypointIndex，若不清目标，休整后主循环因「目标未变」不重设 → 军团停在战场不动。
             army.expeditionTargetCityId = null;
@@ -556,12 +678,14 @@ export class HuoQubingExpedition {
         if (this.gongluPhase === 'pending') {
             if (getEuclideanDistance(pos, GONGLUSHUI) > BATTLE_TRIGGER_DIST) return;
 
+            // 先写标题再刷敌，避免碰撞当帧先弹「汉 大战 匈奴」
+            this.setScriptBattleTitle('弓庐水之战');
             if (!this.spawnZuoxian('gonglu', GONGLUSHUI, ZUOXIAN_TROOPS_GONGLU)) {
+                this.setScriptBattleTitle(null);
                 this.gongluPhase = 'done';
                 return;
             }
             this.gongluPhase = 'spawned';
-            (window as any).__huoqubingBattleTitle = '弓庐水之战';
             army.setTroops(BATTLE_TROOPS);
             gameLog(
                 'expedition',
@@ -583,11 +707,12 @@ export class HuoQubingExpedition {
         const inCombat = army.getIsInCombat?.() ?? false;
         if (!inCombat) {
             this.gongluPhase = 'done';
-            (window as any).__huoqubingBattleTitle = null;
+            this.setScriptBattleTitle(null);
             this.cleanupZuoxian(this.gongluEnemyId);
             this.gongluEnemyId = null;
             gameLog('expedition', `🐎 [封狼居胥] 弓庐水再捷——左贤王残部覆灭`);
             (speechAnnouncer as any).speak('汉军铁骑踏波强渡，弓庐水畔，残虏靡然！擒头领八十三人，斩首七万余级。逐北两千里，胡尘为之荡尽！');
+            this.grantQudiaoalanToHuoQubing(army);
             this.pauseUntilMs = Date.now() + 15000;
             // 野战不推进 waypointIndex，若不清目标，休整后主循环因「目标未变」不重设 → 军团停在弓庐水不动。
             army.expeditionTargetCityId = null;
@@ -742,12 +867,16 @@ export class HuoQubingExpedition {
     /** 停止脚本推进（军团仍留在场上） */
     public stop(): void {
         (window as any).__huoqubingExpeditionActive = false;
-        (window as any).__huoqubingBattleTitle = null;
+        this.setScriptBattleTitle(null);
         const army = this.armyId ? this.deps.legionManager.getLegionById(this.armyId) : undefined;
-        if (army) (army as any).siegeMissionData = null;
+        if (army) {
+            (army as any).siegeMissionData = null;
+            army.__scriptPinned = false; // 解钉：防止 stop 时处于暂停态导致 AI 永不再处理
+        }
         this.deps.cityManager.refreshFactionFlagText?.(FACTION_ID);
         this.restoreFactionName();
         this.unmuteGameAnnouncements();
+        this.uninstallBattleTitleHook();
         this.cleanupAllEnemies();
         if (this.timer != null) {
             window.clearInterval(this.timer);
