@@ -298,7 +298,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/STEPPE/dada_ming_dayanhan.png": {
-            "scale": 0.84,
+            "scale": 0.82,
             "offsetX": 13,
             "offsetY": -26
         },
@@ -1463,9 +1463,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -48
         },
         "/assets/HEXI/guiyi_caoyijin.png": {
-            "scale": 1.21,
-            "offsetX": 0,
-            "offsetY": 0
+            "scale": 0.87,
+            "offsetX": 10,
+            "offsetY": -30
         },
         "/assets/HEXI/helian_helianbobo.png": {
             "scale": 1.03,
