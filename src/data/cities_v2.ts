@@ -186,9 +186,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         troops: 20000,
         note: '南充；果州小城',
     },
-    { id: 'city_mianyang', name: '涪城', factionId: 'daxi_ming', lat: 31.482545, lng: 104.718933, type: 'small_city', region: 'BASHU', troops: 20000,
-        note: '涪城；大西小城',
-    },
+    { id: 'city_mianyang', name: '涪城', factionId: 'daxi_ming', lat: 31.482545, lng: 104.718933, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
     {
         id: 'city_chongqing',
         name: '重庆',
@@ -482,7 +481,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
     { id: 'city_songzhou', name: '嘉诚', factionId: 'song2', lat: 32.787239, lng: 103.625793, type: 'small_city', troops: 20000, region: 'TIBET' },
 
 
-    { id: 'city_jianchang', name: '邛都', factionId: 'qiong', lat: 27.870652, lng: 102.310181, type: 'small_city', region: 'DIANQIAN', troops: 20000, note: '任贵自立邛谷王' },
+    { id: 'city_jianchang', name: '邛都', factionId: 'qiong', lat: 27.870652, lng: 102.310181, type: 'small_city', troops: 20000, region: 'BASHU' },
+
 
     { id: 'city_toumancheng', name: '头曼城', factionId: 'xiongnu', lat: 41.302589, lng: 108.506470, type: 'small_city', region: 'STEPPE', troops: 20000,
         note: '头曼城；匈奴小城',
@@ -1001,7 +1001,8 @@ export const PERIPHERY: CityDataV2[] = [
 
 
 
-    { id: 'city_ganquanyi', name: '武都', factionId: 'wudu', lat: 33.4293, lng: 105.1419, type: 'small_city', troops: 20000, region: 'BASHU' },
+    { id: 'city_ganquanyi', name: '武都', factionId: 'wudu', lat: 33.4293, lng: 105.1419, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
 
 
     { id: 'city_dangchang', name: '阴平', factionId: 'dangzhou', lat: 33.6997, lng: 104.5239, type: 'small_city', troops: 20000, region: 'BASHU' },
@@ -2745,7 +2746,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_taqian', name: '它乾城', factionId: 'xiyuduhu', lat: 41.875, lng: 83.59, type: 'pass', region: 'WESTERN', troops: 20000, tier: 4, note: '班超西域都护府驻地' },
     { id: 'city_shaozhou', name: '邵州', factionId: 'shaozhou_d', lat: 27.24, lng: 111.47, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
 
-    { id: 'city_zizhou_d', name: '梓州', factionId: 'zizhou', lat: 31.0788, lng: 105.0925, type: 'small_city', troops: 20000, region: 'BASHU' },
+    { id: 'city_zizhou_d', name: '梓州', factionId: 'zizhou', lat: 31.0788, lng: 105.0925, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
 
     { id: 'city_qingchi', name: '清池', factionId: 'cangzhou', lat: 38.3, lng: 116.83, type: 'small_city', troops: 20000, region: 'NORTH' },
     { id: 'city_shandan', name: '删丹', factionId: 'yuezhi', lat: 38.78, lng: 101.08, type: 'small_city', troops: 20000, region: 'STEPPE' },

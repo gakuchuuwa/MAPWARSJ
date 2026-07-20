@@ -312,7 +312,7 @@ export class CityAssetManager {
         'siam': '暹罗',
 'chenla': '真腊',
         'dashun': '大顺',
-        'daxi_ming': '大西',
+'daxi_ming': '大西',
 'chenghan': '成汉',
         'shuixi': '水西',
         'yang_zhou': '扬',
@@ -581,7 +581,7 @@ export class CityAssetManager {
         'galangdiba': '波密',
 'ali': '阿里',
 'pazhu': '年楚',
-        'qiong': '邛',
+'qiong': '邛',
 'zhuoshi': '邛',
         'chenzhou_d': '辰',
         'qianzhong': '沅',
@@ -961,8 +961,13 @@ export class CityAssetManager {
 
     /** 地图就绪：视口内势力先抠绿+染色（含固定色），再后台处理其余 */
     public static async onBootMapReady(): Promise<void> {
+        // [PERF 2026-07-20] 启动不再 await 视口旗批量染色。
+        // 全屏视口可含 24+ 势力：串行逐面 fetch/染色与地图渲染长任务(399 个/78 秒)互相排队,
+        // 实测把启动拖到 89 秒——而真实像素工作只有 2.4 秒,其余全是等。
+        // enqueueFactionsInMapView 已把同一批势力塞进 onDemand 队列,scheduleBackgroundDrain
+        // 优先消化视口旗(不受地图移动暂停影响)：旗先显示占位、随后逐面上色,启动即刻放行。
+        // 小视口(1 面旗)本来就 3.5 秒,不受影响;大视口从 89 秒回到 ~10 秒。
         this.enqueueFactionsInMapView();
-        await this.preloadViewportFactionFlags();
         this.scheduleBackgroundDrain();
     }
 
@@ -996,11 +1001,8 @@ export class CityAssetManager {
         return ids;
     }
 
-    private static async preloadViewportFactionFlags(): Promise<void> {
-        const ids = this.collectFactionIdsInMapView().filter((id) => this.needsFactionTint(id));
-        if (ids.length === 0) return;
-        await this._preloadFlagBatch(ids, { label: 'viewport', scheduleMode: 'boot' });
-    }
+    // [2026-07-20 删] preloadViewportFactionFlags：曾在启动时 await 批量染视口旗,
+    // 是 89 秒慢启动主因;视口旗现走 enqueueFactionsInMapView → onDemand 队列后台上色。
 
     private static shouldPauseBackgroundDrain(): boolean {
         if (document.hidden) return false;

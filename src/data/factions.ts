@@ -566,7 +566,8 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 明清之际势力（28个）──
     // 第一类：明末农民军政权
     { id: 'dashun', name: '大顺' },
-    { id: 'daxi_ming', name: '大西' },                 // 深紫 - 张献忠大西政权(成都)(与北宋daxi区分)
+    { id: 'daxi_ming', name: '大西' },
+                 // 深紫 - 张献忠大西政权(成都)(与北宋daxi区分)
     // ── 2026-06-11 新增：成汉（李特/鹿头关）、水西（安氏土司/毕节）──
     { id: 'chenghan', name: '成汉' },
 
@@ -1043,6 +1044,7 @@ export const FACTIONS: Faction[] = [
     { id: 'wudu', name: '阶州' },
 
 
+
     { id: 'woye', name: '沃野' },
 
 
@@ -1116,6 +1118,7 @@ export const FACTIONS: Faction[] = [
     { id: 'pazhu', name: '年楚' },
 
     { id: 'qiong', name: '邛人' },
+
     { id: 'zhuoshi', name: '邛州' },
 
 
@@ -1516,6 +1519,7 @@ export const FACTIONS: Faction[] = [
     { id: 'shaozhou_d', name: '邵州' },
 
     { id: 'zizhou', name: '昌城' },
+
 
     { id: 'cangzhou', name: '沧州' },
     { id: 'yuezhi', name: '月氏' },

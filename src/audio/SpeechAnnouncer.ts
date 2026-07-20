@@ -169,7 +169,33 @@ export class SpeechAnnouncer {
   /** 播报会话：技能连播期间保持 ducking，避免句间音效/音乐脉冲 */
   private speechDuckSession = false;
 
-  constructor() {}
+  /** 缓存系统语音列表（getVoices 首帧常为空，须等 voiceschanged） */
+  private cachedVoices: SpeechSynthesisVoice[] = [];
+  private voicesHooked = false;
+
+  constructor() {
+    this.hookVoices();
+  }
+
+  private hookVoices(): void {
+    if (this.voicesHooked) return;
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    this.voicesHooked = true;
+    const refresh = () => {
+      this.cachedVoices = window.speechSynthesis.getVoices();
+    };
+    refresh();
+    window.speechSynthesis.addEventListener("voiceschanged", refresh);
+  }
+
+  private getVoices(): SpeechSynthesisVoice[] {
+    this.hookVoices();
+    const live = typeof window !== "undefined" && "speechSynthesis" in window
+      ? window.speechSynthesis.getVoices()
+      : [];
+    if (live.length > 0) this.cachedVoices = live;
+    return this.cachedVoices;
+  }
 
   private beginSpeechDuckSession(): void {
     if (this.speechDuckSession) return;
@@ -185,16 +211,73 @@ export class SpeechAnnouncer {
   }
 
   /**
+   * 关键词是否命中语音名。
+   * 拉丁名须整词匹配：Yunxi 不得误中女声 Yunxia（"Yunxia".includes("Yunxi")===true）。
+   */
+  private voiceNameMatches(name: string, keyword: string): boolean {
+    if (/^[A-Za-z]+$/.test(keyword)) {
+      const re = new RegExp(`(?:^|[^A-Za-z])${keyword}(?![A-Za-z])`, "i");
+      return re.test(name);
+    }
+    return name.includes(keyword);
+  }
+
+  private isKnownFemaleVoice(name: string): boolean {
+    // 只用完整专名，禁止「晓」「Xiao」单截（会误伤含 Xiao 的其它名）
+    const femaleKeywords = [
+      "Yunxia", "云夏", "云霞", // 易被 Yunxi 误匹配，显式排除
+      "晓晓", "Xiaoxiao", "雲曉",
+      "慧慧", "Huihui",
+      "瑶瑶", "Yaoyao",
+      "彤彤", "Tongtong",
+      "涵涵", "Hanhan",
+      "嵐嵐", "Lanlan",
+      "詩詩", "Shishi",
+      "芊芊", "Qianqian",
+      "雅婷", "Yating",
+      "晓伊", "Xiaoyi",
+      "晓梦", "Xiaomeng",
+      "晓甄", "Xiaozhen",
+      "晓萱", "Xiaoxuan",
+      "晓颜", "Xiaoyan",
+      "晓茹", "Xiaoru",
+      "晓秋", "Xiaoqiu",
+      "晓辰", "Xiaochen",
+      "晓双", "Xiaoshuang",
+      "晓佳", "Xiaojia",
+      // ↓ 2026-07-20 补漏：以下微软官方女声曾漏网，兜底分支会误当男声选中（女声播报事故根因）
+      "晓涵", "Xiaohan",
+      "晓墨", "Xiaomo",
+      "晓睿", "Xiaorui", // 注意：旧条目"Xiaoru"整词匹配不到 Xiaorui
+      "晓悠", "Xiaoyou",
+      "晓北", "Xiaobei", // 辽宁方言女声
+      "晓妮", "Xiaoni",  // 陕西方言女声
+      "曉臻", "HsiaoChen", // zh-TW 女声
+      "曉雨", "HsiaoYu",   // zh-TW 女声
+      "曉曼", "HiuMaan",   // zh-HK 女声
+      "曉佳", "HiuGaai",   // zh-HK 女声
+      "Tracy",             // zh-HK OneCore 女声
+      "善怡", "Sinji",     // Apple zh-HK 女声
+      "婷婷", "Tingting", "Ting-Ting",
+      "莉莉", "Lili",
+      "美佳", "Meijia", "Mei-Jia",
+      "Google 普通话", "Google 國語", "Google 粤語", "Google 廣東話", // Google 中文默认女声
+    ];
+    return femaleKeywords.some((k) => this.voiceNameMatches(name, k) || name.includes(k));
+  }
+
+  /**
    * 挑选最佳中文男声。
-   * 优先使用当前用户偏好的在线男声。
+   * 优先使用当前用户偏好的在线男声；绝不回落到已知女声。
    */
   private pickBestVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
     // 根据偏好设定优先级
     let maleKeywords: string[];
+    const fallbackMales = ["康康", "Kangkang", "Zhiwei", "Zhiyu", "Jianqiang", "Yunyang", "云扬", "Danny", "雲龍", "WanLung"];
     if (this.preferredVoice === "Yunxi") {
       maleKeywords = [
-        "云希", "Yunxi",         // 当前偏好
-        "云健", "Yunjian",       // 备选
+        "云希", "Yunxi",         // 当前偏好（整词，勿误中 Yunxia）
+        "云健", "Yunjian",
         "云扬", "Yunyang",
         "云皓", "Yunhao",
         "云杰", "Yunjie",
@@ -203,11 +286,12 @@ export class SpeechAnnouncer {
         "云枫", "Yunfeng",
         "云龍", "Yunlong",
         "雲哲", "Yunzhe",
+        ...fallbackMales,
       ];
     } else {
       maleKeywords = [
-        "云健", "Yunjian",       // 当前偏好
-        "云希", "Yunxi",         // 备选
+        "云健", "Yunjian",
+        "云希", "Yunxi",
         "云扬", "Yunyang",
         "云皓", "Yunhao",
         "云杰", "Yunjie",
@@ -216,16 +300,24 @@ export class SpeechAnnouncer {
         "云枫", "Yunfeng",
         "云龍", "Yunlong",
         "雲哲", "Yunzhe",
+        ...fallbackMales,
       ];
     }
 
+    const zhVoices = voices.filter((v) => v.lang.toLowerCase().startsWith("zh"));
+
     for (const keyword of maleKeywords) {
-      const found = voices.find((v) => v.lang.startsWith("zh") && v.name.includes(keyword));
+      const found = zhVoices.find(
+        (v) => this.voiceNameMatches(v.name, keyword) && !this.isKnownFemaleVoice(v.name),
+      );
       if (found) return found;
     }
 
-    // 最后兜底：任意中文声音
-    return voices.find((v) => v.lang.startsWith("zh")) || null;
+    // 兜底：任一非已知女声的中文音色；找不到则 null（宁可系统默认，也不主动点选女声）
+    const male = zhVoices.find((v) => !this.isKnownFemaleVoice(v.name));
+    if (male) return male;
+    console.warn("[Speech] 未找到可用中文男声，当前 zh 列表:", zhVoices.map((v) => v.name));
+    return null;
   }
 
   public setEnabled(on: boolean): void { this.enabled = on; }
@@ -577,10 +669,12 @@ export class SpeechAnnouncer {
       // 播报音量跟随主音量（与音效/音乐感知齐平，不再固定满音量盖过一切）
       utterance.volume = audioManager.getSpeechVolume();
 
-      const voice = this.pickBestVoice(synth.getVoices());
+      const voice = this.pickBestVoice(this.getVoices());
       if (voice) {
         utterance.voice = voice;
         console.log("[Speech] 使用:", voice.name);
+      } else {
+        console.warn("[Speech] 无男声可选，未指定 voice（避免点选女声）");
       }
 
       // 优先级闪避：播报期间压低音效 + 音乐；技能连播保持同一会话不反复起落

@@ -1,11 +1,11 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/20 00:40:52（共 146 条）
+ * 生成时间：2026/7/20 21:40:12（共 146 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
-    "/assets/LINGNAN/__闲置__zhaosong_12.png": "/assets/BASHU/ba_bamanzi.png",
+    "/assets/LINGNAN/__多余__LINGNAN_23.png": "/assets/BASHU/ba_bamanzi.png",
     "/assets/BASHU/ming_zheng_zhengchenggong.png": "/assets/BASHU/boren_ada.png",
     "/assets/LINGNAN/jingjiang_qushisi.png": "/assets/BASHU/cong_puhu.png",
     "/assets/LINGNAN/__多余__LINGNAN_16.png": "/assets/BASHU/cuanshi_cuanlongyan.png",
@@ -70,7 +70,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/STEPPE/kereyid_wanghan.png": "/assets/HEXI/juqu_d_juqumengxun.png",
     "/assets/STEPPE/jiyuan_huluguang.png": "/assets/HEXI/yeli_yeliwangrong.png",
     "/assets/TIBET/xiaobolu_meijinmang.png": "/assets/HEXI/yuezhi_xihou.png",
-    "/assets/WESTERN/shache_xian_suoche_shachexian.png": "/assets/HEXI/__多余__HEXI_02.png",
     "/assets/JAPAN/aki_maoliyuanjiu.png": "/assets/JAPAN/__多余__JAPAN_01.png",
     "/assets/JAPAN/jibei2_qingshuizongzhi.png": "/assets/JAPAN/ayinu_hushemoquan.png",
     "/assets/LINGNAN/funan_fanman.png": "/assets/LINGNAN/chendiaoyan_chendiaoyan.png",
@@ -111,11 +110,12 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/TIBET/hor_chisang.png": "/assets/STEPPE/ashide_ashidejieli.png",
     "/assets/TIBET/gling_lingesar.png": "/assets/STEPPE/bayegu_qulishi.png",
     "/assets/TIBET/lopi_abo.png": "/assets/STEPPE/chechen_chechenhanshuolei.png",
+    "/assets/STEPPE/chenli_d_zuoxianwang.png": "/assets/STEPPE/__多余__STEPPE_05.png",
     "/assets/TIBET/__多余__TIBET_01.png": "/assets/STEPPE/cheshihou_angui.png",
     "/assets/TIBET/tsangpa_pengcuonanjie.png": "/assets/STEPPE/duolu_ashinahelu.png",
     "/assets/TIBET/__多余__TIBET_03.png": "/assets/STEPPE/gaoche_afuzhiluo.png",
     "/assets/TIBET/golog_wandezhaxi.png": "/assets/STEPPE/geluolu_chisipijia.png",
-    "/assets/TIBET/__闲置__TIBET_17.png": "/assets/STEPPE/heisha_d_houlihu.png",
+    "/assets/TIBET/__多余__TIBET_05.png": "/assets/STEPPE/heisha_d_houlihu.png",
     "/assets/TIBET/gongbu_gongbumangbuzhi.png": "/assets/STEPPE/jiluo_d_douxian.png",
     "/assets/TIBET/spurgyal_dariniansai.png": "/assets/STEPPE/kelie_zhaheganbu.png",
     "/assets/TIBET/nandou_sushili.png": "/assets/STEPPE/kumo_xiwanghuilibao.png",

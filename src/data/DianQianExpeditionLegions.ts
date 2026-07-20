@@ -36,7 +36,6 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     taiyuan: { name: '清坎陷象', tier: 2 },
   baiman: { name: '白蛮甲士', tier: 4 },       // 威楚·高升泰平杨义贞复大理（缺乏极其著名的战术高光，降T3）
   dai: { name: '车里战象', tier: 4 },          // 勐泐城·刀应勐傣兵助明御缅（缺乏极其著名的战术高光，降T3）
-  qiong: { name: '邛谷锐骑', tier: 4 },        // 邛都·任贵自立邛谷王（缺乏极其著名的战术高光，降T3）
   ava: { name: '掸族象卫', tier: 4 },
     mon: { name: '孟族战象', tier: 4 },
     dian: { name: '秀山白义从', tier: 3 },
