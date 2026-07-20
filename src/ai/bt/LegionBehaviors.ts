@@ -119,12 +119,15 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
         return 'done';
     }
 
-    if (getStrategicTargetId(ctx) !== expeditionId) {
-        setStrategicTarget(ctx, expeditionId, {
-            lat: target.latitude,
-            lng: target.longitude,
-        });
-    }
+    // 远征锁定：每 tick 幂等重设战略目标（setStrategicTarget 只写黑板 targetCityId/targetPosition，无副作用）。
+    // 关键：不能再用「目标 id 未变就跳过」的旧守卫——野战/攻城/休整会把军团挪到新位置、并可能清空黑板目标；
+    // 若战后仍奔同一城（如弓庐水战后仍去狼居胥山，id 未变），旧守卫会跳过重设 → 军团失去有效移动目标、
+    // 留着打断前的陈旧路径卡在战场原地不动（祷余山因占应昌推进路点、目标改为阔亦田而侥幸绕过守卫）。
+    // 幂等重设后，恢复行军时必按军团「当前位置」重新锁定→重新寻路，两场野战一致，绝不卡死。
+    setStrategicTarget(ctx, expeditionId, {
+        lat: target.latitude,
+        lng: target.longitude,
+    });
     return 'locked';
 }
 

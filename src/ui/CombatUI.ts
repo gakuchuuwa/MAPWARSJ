@@ -870,6 +870,7 @@ export class CombatUI {
             min-width: 0;
             max-width: ${T.sideBar.maxDisplayNameCh + T.sideBar.maxNameSuffixCh}ch;
             color: ${isAtt ? T.colors.attackerName : T.colors.defenderName};
+            text-align: ${isAtt ? 'left' : 'right'};
         `;
 
         const troopsSpan = document.createElement('span');

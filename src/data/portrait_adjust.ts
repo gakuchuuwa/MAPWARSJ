@@ -943,7 +943,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/BASHU/qiuchi_yangnandang.png": {
-            "scale": 0.93,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -16
         },
