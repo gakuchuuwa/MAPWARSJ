@@ -258,6 +258,7 @@ export class SpeechAnnouncer {
       "曉佳", "HiuGaai",   // zh-HK 女声
       "Tracy",             // zh-HK OneCore 女声
       "善怡", "Sinji",     // Apple zh-HK 女声
+      "小雨", "Xiaoyu",     // multilingual 女声
       "婷婷", "Tingting", "Ting-Ting",
       "莉莉", "Lili",
       "美佳", "Meijia", "Mei-Jia",
@@ -268,38 +269,42 @@ export class SpeechAnnouncer {
 
   /**
    * 挑选最佳中文男声。
-   * 优先使用当前用户偏好的在线男声；绝不回落到已知女声。
+   * 优先使用历史播报首选声线 + 当前用户偏好；绝不回落到已知女声。
+   * 返回值带 pitchDown 标记：仅当所有中文音色都在女声名单里时，
+   * 显式选第一个中文音色并降调兜底——voice 留空会回落系统默认音色（几乎总是女声）。
    */
-  private pickBestVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+  private pickBestVoice(voices: SpeechSynthesisVoice[]): { voice: SpeechSynthesisVoice; pitchDown: boolean } | null {
     // 根据偏好设定优先级
     let maleKeywords: string[];
     const fallbackMales = ["康康", "Kangkang", "Zhiwei", "Zhiyu", "Jianqiang", "Yunyang", "云扬", "Danny", "雲龍", "WanLung"];
+    // 历史播报首选（2026-07-20 主人定「史官风」）：云泽=沉稳长者/纪录片旁白，云扬=新闻主播正腔
+    const historyMales = ["云泽", "Yunze", "云扬", "Yunyang"];
     if (this.preferredVoice === "Yunxi") {
       maleKeywords = [
+        ...historyMales,
         "云希", "Yunxi",         // 当前偏好（整词，勿误中 Yunxia）
         "云健", "Yunjian",
-        "云扬", "Yunyang",
         "云皓", "Yunhao",
         "云杰", "Yunjie",
         "云野", "Yunye",
-        "云泽", "Yunze",
         "云枫", "Yunfeng",
         "云龍", "Yunlong",
         "雲哲", "Yunzhe",
+        "Yunyi", "Yunfan",       // multilingual 男声
         ...fallbackMales,
       ];
     } else {
       maleKeywords = [
+        ...historyMales,
         "云健", "Yunjian",
         "云希", "Yunxi",
-        "云扬", "Yunyang",
         "云皓", "Yunhao",
         "云杰", "Yunjie",
         "云野", "Yunye",
-        "云泽", "Yunze",
         "云枫", "Yunfeng",
         "云龍", "Yunlong",
         "雲哲", "Yunzhe",
+        "Yunyi", "Yunfan",       // multilingual 男声
         ...fallbackMales,
       ];
     }
@@ -310,13 +315,17 @@ export class SpeechAnnouncer {
       const found = zhVoices.find(
         (v) => this.voiceNameMatches(v.name, keyword) && !this.isKnownFemaleVoice(v.name),
       );
-      if (found) return found;
+      if (found) return { voice: found, pitchDown: false };
     }
 
-    // 兜底：任一非已知女声的中文音色；找不到则 null（宁可系统默认，也不主动点选女声）
+    // 兜底：任一非已知女声的中文音色
     const male = zhVoices.find((v) => !this.isKnownFemaleVoice(v.name));
-    if (male) return male;
-    console.warn("[Speech] 未找到可用中文男声，当前 zh 列表:", zhVoices.map((v) => v.name));
+    if (male) return { voice: male, pitchDown: false };
+    // 最后手段：全部中文音色都在女声名单时，显式选第一个并标记降调。
+    // 绝不返回 null 让 voice 留空——系统默认音色几乎总是女声，那才是「播报变女声」的最后一环。
+    const anyZh = zhVoices[0];
+    if (anyZh) return { voice: anyZh, pitchDown: true };
+    console.warn("[Speech] 系统无任何中文语音，当前语音列表:", voices.map((v) => v.name));
     return null;
   }
 
@@ -661,59 +670,70 @@ export class SpeechAnnouncer {
 
     synth.cancel();
 
-    setTimeout(() => {
-      const speechText = opts?.skipGlobalNameReplace ? text : prepareSpeechText(text);
-      const utterance = new SpeechSynthesisUtterance(speechText);
-      utterance.lang = "zh-CN";
-      if (opts?.rate !== undefined) utterance.rate = opts.rate;
-      // 播报音量跟随主音量（与音效/音乐感知齐平，不再固定满音量盖过一切）
-      utterance.volume = audioManager.getSpeechVolume();
-
-      const voice = this.pickBestVoice(this.getVoices());
-      if (voice) {
-        utterance.voice = voice;
-        console.log("[Speech] 使用:", voice.name);
-      } else {
-        console.warn("[Speech] 无男声可选，未指定 voice（避免点选女声）");
-      }
-
-      // 优先级闪避：播报期间压低音效 + 音乐；技能连播保持同一会话不反复起落
-      this.beginSpeechDuckSession();
-      // 兜底：语音事件偶发不触发时，按估读时长强制走完收尾（恢复音量 + onDone 推进队列，防技能脉冲卡死）
-      const duckSafetyMs = Math.min(15000, 1500 + text.length * 400);
-      let settled = false;
-      let started = false;
-      const fireStart = () => {
-        if (started) return;
-        started = true;
-        opts?.onStart?.();
-      };
-      const settle = () => {
-        if (settled) return;
-        settled = true;
-        // 引擎偶发不触发 onstart：收尾前补一次，避免脉冲永远不亮
-        fireStart();
-        window.clearTimeout(safety);
-        if (opts?.sTier) this.sTierBusyUntilMs = 0;
-        if (opts?.banner) {
-          // 念完后字幕再停留片刻，缓缓淡出
-          window.setTimeout(() => SubtitleBanner.hide(), 1200);
+    // 语音列表偶发晚加载（Chrome 常见）：为空时延迟重试一次再开口，
+    // 避免空列表 → 无音色可选 → 系统默认音色（常为女声）
+    const attempt = (retried: boolean): void => {
+      setTimeout(() => {
+        const voicesNow = this.getVoices();
+        if (voicesNow.length === 0 && !retried) {
+          attempt(true);
+          return;
         }
-        opts?.onDone?.();
-        // 技能队列未排空 → 保持 ducking，避免句间 BGM/战斗循环音量脉冲
-        this.endSpeechDuckSessionIfIdle();
-      };
-      const safety = window.setTimeout(settle, duckSafetyMs);
+        const speechText = opts?.skipGlobalNameReplace ? text : prepareSpeechText(text);
+        const utterance = new SpeechSynthesisUtterance(speechText);
+        utterance.lang = "zh-CN";
+        if (opts?.rate !== undefined) utterance.rate = opts.rate;
+        // 播报音量跟随主音量（与音效/音乐感知齐平，不再固定满音量盖过一切）
+        utterance.volume = audioManager.getSpeechVolume();
 
-      utterance.onstart = () => {
+        const picked = this.pickBestVoice(voicesNow);
+        if (picked) {
+          utterance.voice = picked.voice;
+          if (picked.pitchDown) utterance.pitch = 0.65; // 最后手段：未知中文音色降调，杜绝自然女声
+          console.log("[Speech] 使用:", picked.voice.name, picked.pitchDown ? "（降调兜底）" : "");
+        } else {
+          console.warn("[Speech] 系统无任何中文语音，未指定 voice");
+        }
+
+        // 优先级闪避：播报期间压低音效 + 音乐；技能连播保持同一会话不反复起落
         this.beginSpeechDuckSession();
-        fireStart();
-      };
-      utterance.onend = settle;
-      utterance.onerror = settle;
+        // 兜底：语音事件偶发不触发时，按估读时长强制走完收尾（恢复音量 + onDone 推进队列，防技能脉冲卡死）
+        const duckSafetyMs = Math.min(15000, 1500 + text.length * 400);
+        let settled = false;
+        let started = false;
+        const fireStart = () => {
+          if (started) return;
+          started = true;
+          opts?.onStart?.();
+        };
+        const settle = () => {
+          if (settled) return;
+          settled = true;
+          // 引擎偶发不触发 onstart：收尾前补一次，避免脉冲永远不亮
+          fireStart();
+          window.clearTimeout(safety);
+          if (opts?.sTier) this.sTierBusyUntilMs = 0;
+          if (opts?.banner) {
+            // 念完后字幕再停留片刻，缓缓淡出
+            window.setTimeout(() => SubtitleBanner.hide(), 1200);
+          }
+          opts?.onDone?.();
+          // 技能队列未排空 → 保持 ducking，避免句间 BGM/战斗循环音量脉冲
+          this.endSpeechDuckSessionIfIdle();
+        };
+        const safety = window.setTimeout(settle, duckSafetyMs);
 
-      synth.speak(utterance);
-    }, 50);
+        utterance.onstart = () => {
+          this.beginSpeechDuckSession();
+          fireStart();
+        };
+        utterance.onend = settle;
+        utterance.onerror = settle;
+
+        synth.speak(utterance);
+      }, retried ? 450 : 50);
+    };
+    attempt(false);
   }
 }
 
