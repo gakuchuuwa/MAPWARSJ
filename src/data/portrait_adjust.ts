@@ -2312,11 +2312,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/STEPPE/chenli_d_wutang.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": -22
-        },
         "/assets/STEPPE/dingling_weilu.png": {
             "scale": 1.22,
             "offsetX": 0,
@@ -5092,11 +5087,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/STEPPE/weiming_huhanxie.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": 32
-        },
         "/assets/zhaosong/__闲置__zhaosong_18.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5607,11 +5597,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -8
         },
-        "/assets/HEXI/__闲置__CENTRAL_21.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": 5
-        },
         "/assets/CENTRAL/woye_huangfugui.png": {
             "scale": 1.03,
             "offsetX": 0,
@@ -5803,9 +5788,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/STEPPE/__闲置__STEPPE_44.png": {
-            "scale": 1.05,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": 19
+            "offsetY": -22
         },
         "/assets/STEPPE/choros_tuohuan.png": {
             "scale": 1.23,
@@ -5961,6 +5946,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": -20
+        },
+        "/assets/STEPPE/chenli_d_zuoxianwang.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 32
+        },
+        "/assets/STEPPE/__闲置__STEPPE_45.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 32
+        },
+        "/assets/HEXI/weiming_weiminglinggong.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {

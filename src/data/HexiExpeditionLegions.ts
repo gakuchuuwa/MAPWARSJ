@@ -11,7 +11,7 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     lanzhou: { name: '湟中胡骑', tier: 3 },
     dangxiang: { name: '铁鹞子', tier: 2 },
   // 步跋子已迁环洲（huan@方渠）
-    weiming: { name: '匈奴游骑', tier: 4 },
+    weiming: { name: '嵬名游骑', tier: 4 },
     guiyi: { name: '归义射雕手', tier: 2 },
   tufa_d: { name: '南凉铁骑', tier: 4 },         // 浇河·§7 #8 秃发鲜卑（番号避旗号「秃发」）（缺乏极其著名的战术高光，降T3）
     liangzhou: { name: '凉州大马', tier: 3 },

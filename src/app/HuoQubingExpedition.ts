@@ -60,7 +60,7 @@ const GONGLUSHUI = { lat: 46.9146, lng: 109.7452 };
 const BATTLE_TRIGGER_DIST = 0.30;
 
 /** 左贤王 */
-const ZUOXIAN_FACTION = 'chenli_d';
+const ZUOXIAN_FACTION = 'xiongnu';
 const ZUOXIAN_GENERAL = 'chenli_d_zuoxianwang';
 const ZUOXIAN_NAME = '左贤王';
 const ZUOXIAN_PORTRAIT = '/assets/STEPPE/chenli_d_wutang.png';
@@ -536,7 +536,7 @@ export class HuoQubingExpedition {
             ZUOXIAN_NAME,
             undefined,
             undefined,
-            'city_guyanshan',
+            'city_toumancheng',
             ZUOXIAN_GENERAL,
             true,
         );
