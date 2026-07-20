@@ -320,11 +320,22 @@ export class SpeechAnnouncer {
 
     // 兜底：任一非已知女声的中文音色
     const male = zhVoices.find((v) => !this.isKnownFemaleVoice(v.name));
-    if (male) return { voice: male, pitchDown: false };
+    if (male) {
+      console.log(`[Speech] pickBestVoice 兜底: 关键词未匹配到男声，选中首个非女声 zh 语音: ${male.name}`);
+      return { voice: male, pitchDown: false };
+    }
     // 最后手段：全部中文音色都在女声名单时，显式选第一个并标记降调。
     // 绝不返回 null 让 voice 留空——系统默认音色几乎总是女声，那才是「播报变女声」的最后一环。
     const anyZh = zhVoices[0];
-    if (anyZh) return { voice: anyZh, pitchDown: true };
+    if (anyZh) {
+      const allZhNames = zhVoices.map(v => v.name).join(", ");
+      console.warn(
+        `[Speech] pickBestVoice ⚠️ 全部 ${zhVoices.length} 个中文语音均为已知女声: ${allZhNames}`,
+        "\n  启用降调兜底(pitch=0.65)，但仍可能为女声。",
+        "\n  请开启 Windows「在线语音识别」以获取云健/云希等男声。",
+      );
+      return { voice: anyZh, pitchDown: true };
+    }
     console.warn("[Speech] 系统无任何中文语音，当前语音列表:", voices.map((v) => v.name));
     return null;
   }
@@ -670,12 +681,13 @@ export class SpeechAnnouncer {
 
     synth.cancel();
 
-    // 语音列表偶发晚加载（Chrome 常见）：为空时延迟重试一次再开口，
-    // 避免空列表 → 无音色可选 → 系统默认音色（常为女声）
+    // 语音列表偶发晚加载（Chrome 常见）：为空或无中文语音时延迟重试再开口，
+    // 避免空列表 / 无中文语音 → 无音色可选 → 系统默认音色（常为女声）
     const attempt = (retried: boolean): void => {
       setTimeout(() => {
         const voicesNow = this.getVoices();
-        if (voicesNow.length === 0 && !retried) {
+        const hasZhVoice = voicesNow.some(v => v.lang.toLowerCase().startsWith("zh"));
+        if ((voicesNow.length === 0 || !hasZhVoice) && !retried) {
           attempt(true);
           return;
         }
@@ -690,9 +702,29 @@ export class SpeechAnnouncer {
         if (picked) {
           utterance.voice = picked.voice;
           if (picked.pitchDown) utterance.pitch = 0.65; // 最后手段：未知中文音色降调，杜绝自然女声
-          console.log("[Speech] 使用:", picked.voice.name, picked.pitchDown ? "（降调兜底）" : "");
-        } else {
-          console.warn("[Speech] 系统无任何中文语音，未指定 voice");
+        }
+
+        // ── 诊断日志（每次播报都记录，便于排查女声根因）──
+        const allZh = voicesNow.filter(v => v.lang.toLowerCase().startsWith("zh"));
+        const zhNames = allZh.map(v => `${v.name}[${v.lang}]`).join(" | ");
+        const pickedLabel = picked
+          ? `${picked.voice.name} (${picked.pitchDown ? "降调兜底·女声" : "男声✓"})`
+          : "（无中文语音·系统默认音色）";
+        console.log(
+          `[Speech] 诊断 | 总语音${voicesNow.length} 中文${allZh.length}: ${zhNames || "（空）"}`,
+          `\n  → 选中: ${pickedLabel}`,
+        );
+        if (picked?.pitchDown) {
+          console.warn(
+            "[Speech] ⚠️ 所有中文语音均为已知女声，启用降调兜底（pitch=0.65）。",
+            "播报可能仍为女声。请在 Windows 设置 → 隐私 → 语音 中开启「在线语音识别」，以获取云健/云希等男声。",
+          );
+        }
+        if (!picked) {
+          console.warn(
+            "[Speech] ⚠️ 系统无任何中文语音！播报将使用系统默认音色（通常为女声）。",
+            "请检查 Windows 语音设置是否已安装中文语音包。",
+          );
         }
 
         // 优先级闪避：播报期间压低音效 + 音乐；技能连播保持同一会话不反复起落
