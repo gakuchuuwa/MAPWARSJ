@@ -458,6 +458,8 @@ export class HuoQubingExpedition {
         if (army.expeditionTargetCityId !== desired.id) {
             if (army.name !== ELITE_NAME) army.name = ELITE_NAME;
             army.expeditionTargetCityId = desired.id;
+            // 重设目标后重新激活 AI 行军：战斗/休整会让军团停下，只改 target 未必自动起步。
+            this.deps.kickLegionAi?.(army.id);
             gameLog('expedition', `🐎 [封狼居胥] 霍去病·轻勇骑锁定目标：${desired.name}`);
         }
     }
@@ -508,6 +510,8 @@ export class HuoQubingExpedition {
             gameLog('expedition', `🐎 [封狼居胥] 祷余山大捷——左贤王主力溃败`);
             (speechAnnouncer as any).speak('祷余山下，汉军铁骑，如惊雷乍起，胡骑为之褫魂。左贤王部众飞砂喋血，大幕为赤，实乃封山之先声！');
             this.pauseUntilMs = Date.now() + 15000;
+            // 野战不推进 waypointIndex，若不清目标，休整后主循环因「目标未变」不重设 → 军团停在战场不动。
+            army.expeditionTargetCityId = null;
         }
     }
 
@@ -555,6 +559,8 @@ export class HuoQubingExpedition {
             gameLog('expedition', `🐎 [封狼居胥] 弓庐水再捷——左贤王残部覆灭`);
             (speechAnnouncer as any).speak('汉军铁骑踏波强渡，弓庐水畔，残虏靡然！擒头领八十三人，斩首七万余级。逐北两千里，胡尘为之荡尽！');
             this.pauseUntilMs = Date.now() + 15000;
+            // 野战不推进 waypointIndex，若不清目标，休整后主循环因「目标未变」不重设 → 军团停在弓庐水不动。
+            army.expeditionTargetCityId = null;
         }
     }
 
