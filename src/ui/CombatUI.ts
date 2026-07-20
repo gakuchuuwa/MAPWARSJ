@@ -1487,11 +1487,13 @@ export class CombatUI {
         const units = this.getUnitsForSide(side);
         const container = side === 'attacker' ? this.leftReinforcements : this.rightReinforcements;
         const isAtt = side === 'attacker';
+        const primary = this.getPrimaryBattler(side);
 
-        // 只收集 wave≥1 且存活的援军
+        // 只收集 wave≥1 且存活的援军，并排除当前正在交战的主力
         const reinforcements: IBattleUnit[] = [];
         for (const u of units) {
             if (u.isDestroyed || u.troops <= 0) continue;
+            if (primary && u.id === primary.id) continue;
             const wi = this.boundRegionalBattleField?.getUnitWaveIndex(u.id) ?? 0;
             if (wi >= 1) reinforcements.push(u);
         }
