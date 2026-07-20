@@ -968,7 +968,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/NORTH/qu_d_quyi.png": {
-            "scale": 0.9,
+            "scale": 0.84,
             "offsetX": 5,
             "offsetY": -40
         },

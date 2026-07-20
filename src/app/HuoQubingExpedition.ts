@@ -77,7 +77,7 @@ const BATTLE_TROOPS = 50000;
  * 的野战开战词（优势=「势不可挡」）；脚本已 mute 引擎野战开战播报，故这里用定制句补上，
  * 势力名写死「汉/匈奴」与脚本旗号一致。
  */
-const FIELD_OPENING_SPEECH = '汉，名将，霍去病，势不可挡，大战，匈奴，名将，左贤王';
+const FIELD_OPENING_SPEECH = '汉，名将，霍去病，势不可挡，大战，匈奴，左贤王';
 
 const TICK_INTERVAL_MS = 400;
 
@@ -169,7 +169,7 @@ export class HuoQubingExpedition {
 
     /** 临时覆盖：势力名 → 大汉 */
     private _origGetFactionName: ((id: string) => string) | null = null;
-    /** 抑制引擎野战播报（脚本用定制语音替代） */
+    /** 仅屏蔽脚本专属野战（霍去病 vs 左贤王）的引擎播报，其它野战正常放行 */
     private _origAnnounceFieldBattleEnd: ((...args: any[]) => void) | null = null;
     private _origAnnounceFieldBattle: ((...args: any[]) => void) | null = null;
 
@@ -264,13 +264,29 @@ export class HuoQubingExpedition {
         this._origGetFactionName = null;
     }
 
-    /** 抑制引擎野战播报（脚本用定制语音替代） */
+    /** 仅屏蔽脚本专属野战（霍去病 vs 左贤王）的引擎播报，其它野战正常放行 */
+    private isScriptBattleParticipant(factionId: string, generalId?: string | null): boolean {
+        if (factionId === FACTION_ID && generalId === GENERAL_ID) return true;
+        if (factionId === ZUOXIAN_FACTION && generalId === ZUOXIAN_GENERAL) return true;
+        return false;
+    }
+
     private muteGameAnnouncements(): void {
         if (this._origAnnounceFieldBattleEnd) return; // 已静默
         this._origAnnounceFieldBattleEnd = (speechAnnouncer as any).announceFieldBattleEnd?.bind(speechAnnouncer) ?? null;
         this._origAnnounceFieldBattle = (speechAnnouncer as any).announceFieldBattle?.bind(speechAnnouncer) ?? null;
-        (speechAnnouncer as any).announceFieldBattleEnd = () => {};
-        (speechAnnouncer as any).announceFieldBattle = () => {};
+
+        const self = this;
+        (speechAnnouncer as any).announceFieldBattle = function (opts: any) {
+            if (self.isScriptBattleParticipant(opts.followerFactionId, opts.followerGeneralId) ||
+                self.isScriptBattleParticipant(opts.enemyFactionId, opts.enemyGeneralId)) return;
+            self._origAnnounceFieldBattle?.(opts);
+        };
+        (speechAnnouncer as any).announceFieldBattleEnd = function (opts: any) {
+            if (self.isScriptBattleParticipant(opts.followerFactionId, opts.followerGeneralId) ||
+                (opts.enemyFactionId && self.isScriptBattleParticipant(opts.enemyFactionId, opts.enemyGeneralId))) return;
+            self._origAnnounceFieldBattleEnd?.(opts);
+        };
     }
 
     private unmuteGameAnnouncements(): void {
@@ -399,7 +415,7 @@ export class HuoQubingExpedition {
         // 任何战斗必胜
         this.enforceAlwaysWin();
 
-        this.tickQushi(army);
+        const battleEnded = this.tickQushi(army);
 
         // 克城休整
         if (Date.now() < this.pauseUntilMs) {
@@ -455,7 +471,7 @@ export class HuoQubingExpedition {
         // 锁定当前目标城
         if (Date.now() < this.pauseUntilMs) return;
         const desired = ROUTE[this.waypointIndex];
-        if (army.expeditionTargetCityId !== desired.id) {
+        if (battleEnded || army.expeditionTargetCityId !== desired.id) {
             if (army.name !== ELITE_NAME) army.name = ELITE_NAME;
             army.expeditionTargetCityId = desired.id;
             // 重设目标后重新激活 AI 行军：战斗/休整会让军团停下，只改 target 未必自动起步。
@@ -676,33 +692,35 @@ export class HuoQubingExpedition {
     /**
      * 取食于敌：战后兵力低于 2 万触发，补到 [22222, 29000] 随机。
      * 战后结算（非涓流），与忠义归顺同参数。
+     * 返回值：true = 本 tick 刚脱离战斗（用于上层恢复行军）
      */
-    private tickQushi(army: ScriptArmy): void {
+    private tickQushi(army: ScriptArmy): boolean {
         const inCombat = army.getIsInCombat?.() ?? false;
         if (inCombat) {
             this.wasInCombat = true;
-            return;
+            return false;
         }
-        if (!this.wasInCombat) return;
+        if (!this.wasInCombat) return false;
         this.wasInCombat = false;
 
         const troops = army.getTroops();
-        if (troops <= 0) return;
-        if (troops >= QUISHI_TRIGGER) return;
-
-        const target =
-            QUISHI_TARGET_MIN +
-            Math.floor(Math.random() * (QUISHI_TARGET_MAX - QUISHI_TARGET_MIN + 1));
-        const added = target - troops;
-        if (added <= 0) return;
-        army.setTroops(target);
-
-        const pos = army.getPosition?.();
-        if (pos) spawnMapFloatingText(pos.lat, pos.lng, '取食于敌', '#ffcc44');
-        gameLog(
-            'expedition',
-            `🐎 [封狼居胥] 取食于敌 +${added.toLocaleString()}，轻勇骑补至 ${target.toLocaleString()} 众`,
-        );
+        if (troops <= 0) return false;
+        if (troops < QUISHI_TRIGGER) {
+            const target =
+                QUISHI_TARGET_MIN +
+                Math.floor(Math.random() * (QUISHI_TARGET_MAX - QUISHI_TARGET_MIN + 1));
+            const added = target - troops;
+            if (added > 0) {
+                army.setTroops(target);
+                const pos = army.getPosition?.();
+                if (pos) spawnMapFloatingText(pos.lat, pos.lng, '取食于敌', '#ffcc44');
+                gameLog(
+                    'expedition',
+                    `🐎 [封狼居胥] 取食于敌 +${added.toLocaleString()}，轻勇骑补至 ${target.toLocaleString()} 众`,
+                );
+            }
+        }
+        return true; // 刚脱离战斗
     }
 
     /** 停止脚本推进（军团仍留在场上） */
