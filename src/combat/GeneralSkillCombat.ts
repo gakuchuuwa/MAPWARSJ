@@ -65,32 +65,39 @@ export interface SituationalSkillResult {
 /** 局势匹配加成系数 */
 
 /**
- * 六计随机：攻方三槽 / 守方三槽各等概率随机抽一个技。
- * 抽中后按六类判定是否匹配当前局势（优势→攻/胜、均势→敌/混、劣势→并/败）。
+ * 六计随机·四/四/六（2026-07-20 主人定稿）：
+ *   优势 → 攻战/胜战/敌战/混战 四计随机（不含劣势组，优势方摸不到败战翻盘计，保「只有劣势方能翻盘」悬念铁律）
+ *   劣势 → 并战/败战/敌战/混战 四计随机（不含优势组）
+ *   均势 → 全六计随机
+ * 攻守双方同池，_isAttacker 已作废（攻守数值差归第四层攻防环，不在技能层重复表达）。
  */
 export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation, _isAttacker: boolean): SituationalSkillResult {
     if (!unit.generalId) return { skillId: null, situationMatch: false };
     const p = getGeneralProfile(unit.generalId);
     if (!p) return { skillId: null, situationMatch: false };
 
-    // 三势×两计（2026-07-19 主人定稿）：六技按势分三组，每势两计（优=攻/胜、均=敌/混、劣=并/败），
-    // 攻守双方都从【当前势】的两计池里取——攻方守方都能释放全部六技，_isAttacker 不再参与选技
-    // （攻守数值差由第四层攻防环负责，不在技能层重复表达）。
-    // 旧 bug：此处曾无视 situation 随机抽三格，劣势武将只有 1/3 概率放出劣势技。
+    // 三势选池·四/四/六（2026-07-20 主人定稿）：六格一格一计，按势分三组。
+    //   优势组=攻战/胜战、均势组=敌战/混战、劣势组=并战/败战。
+    //   优势 = 优势组 + 均势组（四计随机；不含劣势组 → 优势方摸不到败战翻盘计，保悬念铁律）
+    //   劣势 = 劣势组 + 均势组（四计随机；不含优势组）
+    //   均势 = 全六计随机
+    // 攻守双方同池，_isAttacker 不参与选技（字段前缀 atk/def 是攻防六槽时代遗留，选技已不分攻防）。
+    const advGrp = [p.atkAdvantageSkillId, p.defAdvantageSkillId];       // 攻战 / 胜战
+    const balGrp = [p.atkBalanceSkillId, p.defBalanceSkillId];           // 敌战 / 混战
+    const disGrp = [p.atkDisadvantageSkillId, p.defDisadvantageSkillId]; // 并战 / 败战
     const bySituation: Record<BattleSituation, (string | undefined)[]> = {
-        advantage: [p.atkAdvantageSkillId, p.defAdvantageSkillId],
-        balance: [p.atkBalanceSkillId, p.defBalanceSkillId],
-        disadvantage: [p.atkDisadvantageSkillId, p.defDisadvantageSkillId],
+        advantage: [...advGrp, ...balGrp],
+        balance: [...advGrp, ...balGrp, ...disGrp],
+        disadvantage: [...disGrp, ...balGrp],
     };
     const pool = bySituation[situation].filter(Boolean) as string[];
-    // 兜底：该势两格全空（数据不合规）→ 退回六格任取，保证必有技可放
+    // 兜底：该势池全空（数据不合规）→ 退回六格任取，保证必有技可放
     const available = pool.length > 0
         ? pool
-        : ([p.atkAdvantageSkillId, p.atkBalanceSkillId, p.atkDisadvantageSkillId,
-            p.defAdvantageSkillId, p.defBalanceSkillId, p.defDisadvantageSkillId].filter(Boolean) as string[]);
+        : ([...advGrp, ...balGrp, ...disGrp].filter(Boolean) as string[]);
     if (available.length === 0) return { skillId: null, situationMatch: false };
 
-    // 同势两计（如优势的攻战/胜战）等概率取一，同将同势也能打出不同花样
+    // 池内等概率取一，同将同势也能打出不同花样
     const skillId = available[Math.floor(Math.random() * available.length)];
 
     // 判定局势匹配

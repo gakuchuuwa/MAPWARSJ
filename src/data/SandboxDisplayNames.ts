@@ -298,7 +298,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'chenla': '真腊',
     // ── 2026-05-25 明清之际势力（28个）──
     'dashun': '大顺',
-    'daxi_ming': '大西',
+'daxi_ming': '大西',
 'chenghan': '成汉',
     'shuixi': '水西',
     'yang_zhou': '扬',
@@ -608,7 +608,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'galangdiba': '波密',
 'ali': '阿里',
 'pazhu': '年楚',
-    'qiong': '邛',
+'qiong': '邛',
 'zhuoshi': '邛',
     'chenzhou_d': '辰',
     'qianzhong': '沅',

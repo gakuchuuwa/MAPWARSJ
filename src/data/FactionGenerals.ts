@@ -452,7 +452,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xiangzhou: { generalId: 'xiangzhou_lvwenhuan', generalName: '吕文焕', portrait: '/assets/zhaosong/xiangzhou_lvwenhuan.png' },
     zaoyang_d: { generalId: 'zaoyang_d_menggong', generalName: '孟珙', portrait: '/assets/zhaosong/zaoyang_d_menggong.png' },
     guo: { generalId: 'guo_jixin', generalName: '纪信', portrait: '/assets/BASHU/guo_jixin.png' },
-        daxi_ming: { generalId: 'daxi_ming_zhangxianzhong', generalName: '张献忠', portrait: '/assets/BASHU/daxi_ming_zhangxianzhong.png' },
+    daxi_ming: { generalId: 'daxi_ming_zhangxianzhong', generalName: '张献忠', portrait: '/assets/BASHU/daxi_ming_zhangxianzhong.png' },
     zi: { generalId: 'zi_changhong', generalName: '苌弘', portrait: '/assets/BASHU/zi_changhong.png' },
     yidou: { generalId: 'yidou_luxun', generalName: '陆逊', portrait: '/assets/BASHU/yidou_luxun.png' },
     chu: { generalId: 'chu_guanyu', generalName: '关羽', portrait: '/assets/BASHU/chu_guanyu.png' },

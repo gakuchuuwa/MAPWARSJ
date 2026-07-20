@@ -313,6 +313,7 @@ export class HuoQubingExpedition {
         army.legionType = 'cavalry';
         army.cultureRegion = 'CENTRAL_ASIA';
         army.homeCityId = null; // 清掉灵仙锚点，精锐名走 army.name 而非据点查表
+        (army as any).setSourceCityId?.(null);
         if (!army.generalId) army.generalId = GENERAL_ID;
         const rec = getGeneralRecordByGeneralId(GENERAL_ID);
         if (rec?.portrait) army.portraitPath = rec.portrait;

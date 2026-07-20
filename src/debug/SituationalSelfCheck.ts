@@ -35,8 +35,8 @@ const STRAT_SYS: Record<string, string> = {
     str_05: '据点防', str_08: '据点防',
 };
 
-function tacName(unit: { generalId: string }, sit: 'advantage' | 'balance' | 'disadvantage', isAttacker: boolean): string {
-    const result = resolveSituationalSkillId(unit as any, sit, isAttacker);
+function tacName(unit: { generalId: string }, sit: 'advantage' | 'balance' | 'disadvantage'): string {
+    const result = resolveSituationalSkillId(unit as any, sit, false); // 第三参 _isAttacker 已废，占位传 false
     if (!result.skillId) return '—(回退招牌)';
     return getTacticalSkillDef(result.skillId)?.displayName ?? result.skillId;
 }
@@ -49,12 +49,10 @@ export function toggleSituationalSelfCheck(): void {
         const p = getGeneralProfile(gid);
         if (!p) return `<tr><td>${name}</td><td colspan="8" style="color:#e88">无档案(gid=${gid})</td></tr>`;
         const u = { generalId: gid };
-        const atkAdv = tacName(u, 'advantage', true);
-        const atkBal = tacName(u, 'balance', true);
-        const atkDis = tacName(u, 'disadvantage', true);
-        const defAdv = tacName(u, 'advantage', false);
-        const defBal = tacName(u, 'balance', false);
-        const defDis = tacName(u, 'disadvantage', false);
+        // 攻守同池（_isAttacker 已废）：每势各抽两次样，展示池内多样性
+        const advA = tacName(u, 'advantage'),    advB = tacName(u, 'advantage');
+        const balA = tacName(u, 'balance'),      balB = tacName(u, 'balance');
+        const disA = tacName(u, 'disadvantage'), disB = tacName(u, 'disadvantage');
         const sig = getTacticalSkillDef(p.tacticalSkillId)?.displayName ?? p.tacticalSkillId;
         const strat = p.strategicSkillId
             ? `${getStrategicSkillDef(p.strategicSkillId)?.displayName ?? p.strategicSkillId}(${STRAT_SYS[p.strategicSkillId] ?? '?'})`
@@ -67,8 +65,9 @@ export function toggleSituationalSelfCheck(): void {
         ].includes(p.tacticalSkillId);
         return `<tr>
             <td style="color:#ffd27a">${name}</td>
-            <td>${atkAdv}</td><td>${atkBal}</td><td>${atkDis}</td>
-            <td>${defAdv}</td><td>${defBal}</td><td>${defDis}</td>
+            <td>${advA}</td><td>${advB}</td>
+            <td>${balA}</td><td>${balB}</td>
+            <td>${disA}</td><td>${disB}</td>
             <td style="color:${sigOk ? '#8f8' : '#f66'}">${sig}${sigOk ? '' : ' ⚠丢失'}</td>
             <td style="color:#9cf">${strat}</td>
         </tr>`;
@@ -79,12 +78,13 @@ export function toggleSituationalSelfCheck(): void {
     el.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:100000;background:rgba(18,18,22,0.96);color:#e8e8e0;padding:14px 18px;border:1px solid rgba(220,140,70,0.6);border-radius:10px;font-family:SimSun,serif;font-size:13px;max-height:80vh;overflow:auto;box-shadow:0 6px 24px rgba(0,0,0,0.6);';
     el.innerHTML = `
         <div style="font-size:15px;color:#ffd27a;margin-bottom:6px;">六计随机·实机自检 <span style="color:#888;font-size:12px;">(引擎真实 resolveSituationalSkillId · 再按 V 关闭)</span></div>
-        <div style="color:#9c9;font-size:12px;margin-bottom:8px;">六计随机：攻方三槽/守方三槽等概率抽1技。对势匹配（优→攻胜、均→敌混、劣→并败）有×1.15加成。</div>
+        <div style="color:#9c9;font-size:12px;margin-bottom:8px;">四/四/六随机：优势=攻/胜/敌/混四计，劣势=并/败/敌/混四计，均势=全六计。优势方摸不到败战翻盘计。每势抽两次样看池内多样性。</div>
         <table style="border-collapse:collapse;width:100%;">
             <thead><tr style="color:#f0b96a;border-bottom:1px solid #654;">
                 <th style="padding:3px 8px;text-align:left;">名将</th>
-                <th style="padding:3px 8px;">攻·优势</th><th style="padding:3px 8px;">攻·均势</th><th style="padding:3px 8px;">攻·劣势</th>
-                <th style="padding:3px 8px;">守·优势</th><th style="padding:3px 8px;">守·均势</th><th style="padding:3px 8px;">守·劣势</th>
+                <th style="padding:3px 8px;">优势·抽A</th><th style="padding:3px 8px;">优势·抽B</th>
+                <th style="padding:3px 8px;">均势·抽A</th><th style="padding:3px 8px;">均势·抽B</th>
+                <th style="padding:3px 8px;">劣势·抽A</th><th style="padding:3px 8px;">劣势·抽B</th>
                 <th style="padding:3px 8px;">武将技</th><th style="padding:3px 8px;">战略技</th>
             </tr></thead>
             <tbody>${rowsHtml}</tbody>

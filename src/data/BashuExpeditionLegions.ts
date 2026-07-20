@@ -8,7 +8,6 @@
  * - 据点取川东近乡或史载成军/战场地
  */
 export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-    wudu: { name: '阴平先锋', tier: 2 },
     baishui: { name: '白水戍卒', tier: 4 },
     dangzhou: { name: '阴平氐兵', tier: 2 }, // 邓艾偷渡阴平时临时征用的特种奇兵，单次战术奇迹的教科书代表，下调至T2战术
   //  miaomin: { name: '苗疆义军', tier: 4 },      // 平陇·石柳邓苗民 — 已迁 DianQianExpeditionLegions
@@ -25,7 +24,6 @@ export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   shuixi: { name: '罗罗兵', tier: 4 },           // 毕节·§8 #7 水西罗罗兵（奢安之乱）
   // 悬棺武士除名
     chenghan: { name: '流民帅突骑', tier: 2 },
-  daxi_ming: { name: '大西老营', tier: 1 },     // 涪城·§8 #10 张献忠大西核心营（旗=大西·§12.1.1）
   ba: { name: '巴渝劲卒', tier: 3 },          // 巴渝舞武士的另一称谓，极其著名的西南精锐，升入T3知名
   hezhou: { name: '兴戎军', tier: 1 },          // 钓鱼城·王坚抗蒙毙蒙哥（防御战，降T1）
   kui: { name: '白帝戍卫', tier: 3 },             // 白帝城·刘备白毻兵（顶级近卫，T2）
@@ -63,8 +61,8 @@ qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅�
     qianhui: { name: '回民义军', tier: 4 },           // 常规番号，降T3
   huizhou_d: { name: '元戎弩兵', tier: 2 }, // 诸葛亮损益连弩部队，战术辨识度极高的特种精锐，升入T2战术
     wuling: { name: '五溪藤甲', tier: 3 },            // 三国藤甲兵文化符号（火烧藤甲），显著文化知名度，升T2
-    zizhou: { name: '忠武八都', tier: 2 },
     weizhou: { name: '奉义军', tier: 1 },
     haikou: { name: '五岛水军', tier: 4 },
     wenling: { name: '福建水师', tier: 3 },
+    qiong: { name: '邛谷锐骑', tier: 4 },
 };
