@@ -211,10 +211,39 @@ export class SpeechAnnouncer {
   }
 
   /**
+   * 获取语音的有效名称。
+   * Edge 在线语音的 name 字段偶发为 "undefined"（如 "Microsoft undefined Online (Natural) - undefined"），
+   * 此时降级使用 voiceURI（通常含完整标识如 "Microsoft Yunxi Online (Natural) - Chinese (PRC)"）。
+   */
+  private getVoiceEffectiveName(v: SpeechSynthesisVoice): string {
+    const name = typeof v.name === "string" ? v.name : "";
+    const uri = typeof v.voiceURI === "string" ? v.voiceURI : "";
+    if (this.isVoiceNameCorrupt(v)) {
+      if (uri && !/\bundefined\b/i.test(uri)) return uri;
+      return uri || name || "";
+    }
+    return name;
+  }
+
+  /** name 损坏的 Online Natural 音色：选中后 Edge/Chrome 常 onerror 无声 */
+  private isVoiceNameCorrupt(v: SpeechSynthesisVoice): boolean {
+    const name = typeof v.name === "string" ? v.name : "";
+    return !name || name === "undefined" || /\bundefined\b/i.test(name);
+  }
+
+  /** 本机 Desktop/OneCore 通常比坏掉的 Online Natural 更稳（能开口） */
+  private isReliableLocalVoice(v: SpeechSynthesisVoice): boolean {
+    if (v.localService) return true;
+    const n = this.getVoiceEffectiveName(v);
+    return /Desktop|OneCore/i.test(n);
+  }
+
+  /**
    * 关键词是否命中语音名。
    * 拉丁名须整词匹配：Yunxi 不得误中女声 Yunxia（"Yunxia".includes("Yunxi")===true）。
    */
   private voiceNameMatches(name: string, keyword: string): boolean {
+    if (!name || !keyword) return false;
     if (/^[A-Za-z]+$/.test(keyword)) {
       const re = new RegExp(`(?:^|[^A-Za-z])${keyword}(?![A-Za-z])`, "i");
       return re.test(name);
@@ -224,6 +253,7 @@ export class SpeechAnnouncer {
 
   private isKnownFemaleVoice(name: string): boolean {
     // 只用完整专名，禁止「晓」「Xiao」单截（会误伤含 Xiao 的其它名）
+    // 注意：微软「康康 / Kangkang」是本地男声，不得列入女声
     const femaleKeywords = [
       "Yunxia", "云夏", "云霞", // 易被 Yunxi 误匹配，显式排除
       "晓晓", "Xiaoxiao", "雲曉",
@@ -245,98 +275,104 @@ export class SpeechAnnouncer {
       "晓辰", "Xiaochen",
       "晓双", "Xiaoshuang",
       "晓佳", "Xiaojia",
-      // ↓ 2026-07-20 补漏：以下微软官方女声曾漏网，兜底分支会误当男声选中（女声播报事故根因）
       "晓涵", "Xiaohan",
       "晓墨", "Xiaomo",
-      "晓睿", "Xiaorui", // 注意：旧条目"Xiaoru"整词匹配不到 Xiaorui
+      "晓睿", "Xiaorui",
       "晓悠", "Xiaoyou",
-      "晓北", "Xiaobei", // 辽宁方言女声
-      "晓妮", "Xiaoni",  // 陕西方言女声
-      "曉臻", "HsiaoChen", // zh-TW 女声
-      "曉雨", "HsiaoYu",   // zh-TW 女声
-      "曉曼", "HiuMaan",   // zh-HK 女声
-      "曉佳", "HiuGaai",   // zh-HK 女声
-      "Tracy",             // zh-HK OneCore 女声
-      "善怡", "Sinji",     // Apple zh-HK 女声
-      "小雨", "Xiaoyu",     // multilingual 女声
+      "晓北", "Xiaobei",
+      "晓妮", "Xiaoni",
+      "曉臻", "HsiaoChen",
+      "曉雨", "HsiaoYu",
+      "曉曼", "HiuMaan",
+      "曉佳", "HiuGaai",
+      "Tracy",
+      "善怡", "Sinji",
+      "小雨", "Xiaoyu",
       "婷婷", "Tingting", "Ting-Ting",
       "莉莉", "Lili",
       "美佳", "Meijia", "Mei-Jia",
-      "Google 普通话", "Google 國語", "Google 粤語", "Google 廣東話", // Google 中文默认女声
+      "Google 普通话", "Google 國語", "Google 粤語", "Google 廣東話",
     ];
     return femaleKeywords.some((k) => this.voiceNameMatches(name, k) || name.includes(k));
   }
 
   /**
-   * 挑选最佳中文男声。
-   * 优先使用历史播报首选声线 + 当前用户偏好；绝不回落到已知女声。
-   * 返回值带 pitchDown 标记：仅当所有中文音色都在女声名单里时，
-   * 显式选第一个中文音色并降调兜底——voice 留空会回落系统默认音色（几乎总是女声）。
+   * 按优先级列出可用中文男声（可多候选，speak 时 onerror 顺延下一位）。
+   * 用户偏好（云健/云希）优先；本机可靠音色优先于 name 损坏的 Online Natural。
    */
-  private pickBestVoice(voices: SpeechSynthesisVoice[]): { voice: SpeechSynthesisVoice; pitchDown: boolean } | null {
-    // 根据偏好设定优先级
-    let maleKeywords: string[];
-    const fallbackMales = ["康康", "Kangkang", "Zhiwei", "Zhiyu", "Jianqiang", "Yunyang", "云扬", "Danny", "雲龍", "WanLung"];
-    // 历史播报首选（2026-07-20 主人定「史官风」）：云泽=沉稳长者/纪录片旁白，云扬=新闻主播正腔
-    const historyMales = ["云泽", "Yunze", "云扬", "Yunyang"];
-    if (this.preferredVoice === "Yunxi") {
-      maleKeywords = [
-        ...historyMales,
-        "云希", "Yunxi",         // 当前偏好（整词，勿误中 Yunxia）
-        "云健", "Yunjian",
-        "云皓", "Yunhao",
-        "云杰", "Yunjie",
-        "云野", "Yunye",
-        "云枫", "Yunfeng",
-        "云龍", "Yunlong",
-        "雲哲", "Yunzhe",
-        "Yunyi", "Yunfan",       // multilingual 男声
-        ...fallbackMales,
-      ];
-    } else {
-      maleKeywords = [
-        ...historyMales,
-        "云健", "Yunjian",
-        "云希", "Yunxi",
-        "云皓", "Yunhao",
-        "云杰", "Yunjie",
-        "云野", "Yunye",
-        "云枫", "Yunfeng",
-        "云龍", "Yunlong",
-        "雲哲", "Yunzhe",
-        "Yunyi", "Yunfan",       // multilingual 男声
-        ...fallbackMales,
-      ];
-    }
-
+  private rankMaleVoices(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice[] {
     const zhVoices = voices.filter((v) => v.lang.toLowerCase().startsWith("zh"));
+    const fallbackMales = [
+      "康康", "Kangkang", // 本机男声（勿当女声）
+      "Zhiwei", "Zhiyu", "Jianqiang",
+      "Danny", "WanLung", "雲龍",
+    ];
+    // 用户偏好优先，再备选其它男声（勿用「史官风」列表盖住云健）
+    const preferredFirst =
+      this.preferredVoice === "Yunxi"
+        ? ["云希", "Yunxi", "云健", "Yunjian"]
+        : ["云健", "Yunjian", "云希", "Yunxi"];
+    const maleKeywords = [
+      ...preferredFirst,
+      "云扬", "Yunyang",
+      "云泽", "Yunze",
+      "云皓", "Yunhao",
+      "云杰", "Yunjie",
+      "云野", "Yunye",
+      "云枫", "Yunfeng",
+      "云龍", "Yunlong",
+      "雲哲", "Yunzhe",
+      "Yunyi", "Yunfan",
+      ...fallbackMales,
+    ];
+
+    const ranked: SpeechSynthesisVoice[] = [];
+    const seen = new Set<string>();
+    const push = (v: SpeechSynthesisVoice) => {
+      const key = v.voiceURI || v.name;
+      if (seen.has(key)) return;
+      seen.add(key);
+      ranked.push(v);
+    };
 
     for (const keyword of maleKeywords) {
-      const found = zhVoices.find(
-        (v) => this.voiceNameMatches(v.name, keyword) && !this.isKnownFemaleVoice(v.name),
-      );
-      if (found) return { voice: found, pitchDown: false };
+      // 同关键词：先可靠本机，再 name 正常的在线，最后才是 name 损坏但 URI 可识别的在线
+      const matches = zhVoices.filter((v) => {
+        const eff = this.getVoiceEffectiveName(v);
+        return this.voiceNameMatches(eff, keyword) && !this.isKnownFemaleVoice(eff);
+      });
+      const local = matches.filter((v) => this.isReliableLocalVoice(v));
+      const onlineOk = matches.filter((v) => !this.isReliableLocalVoice(v) && !this.isVoiceNameCorrupt(v));
+      const onlineCorrupt = matches.filter((v) => !this.isReliableLocalVoice(v) && this.isVoiceNameCorrupt(v));
+      for (const v of [...local, ...onlineOk, ...onlineCorrupt]) push(v);
     }
 
-    // 兜底：任一非已知女声的中文音色
-    const male = zhVoices.find((v) => !this.isKnownFemaleVoice(v.name));
-    if (male) {
-      console.log(`[Speech] pickBestVoice 兜底: 关键词未匹配到男声，选中首个非女声 zh 语音: ${male.name}`);
-      return { voice: male, pitchDown: false };
+    // 兜底：其它非女声中文
+    for (const v of zhVoices) {
+      if (!this.isKnownFemaleVoice(this.getVoiceEffectiveName(v))) push(v);
     }
-    // 最后手段：全部中文音色都在女声名单时，显式选第一个并标记降调。
-    // 绝不返回 null 让 voice 留空——系统默认音色几乎总是女声，那才是「播报变女声」的最后一环。
+    return ranked;
+  }
+
+  /**
+   * 挑选最佳中文男声（取 rank 首位）。
+   * pitchDown：仅当一名男声都没有、被迫用女声时。
+   */
+  private pickBestVoice(voices: SpeechSynthesisVoice[]): { voice: SpeechSynthesisVoice; pitchDown: boolean } | null {
+    const ranked = this.rankMaleVoices(voices);
+    if (ranked.length > 0) {
+      return { voice: ranked[0], pitchDown: false };
+    }
+    const zhVoices = voices.filter((v) => v.lang.toLowerCase().startsWith("zh"));
     const anyZh = zhVoices[0];
     if (anyZh) {
-      const allZhNames = zhVoices.map(v => v.name).join(", ");
       console.warn(
-        `[Speech] pickBestVoice ⚠️ 全部 ${zhVoices.length} 个中文语音均为已知女声: ${allZhNames}`,
-        "\n  启用降调兜底(pitch=0.65)，但仍可能为女声。",
-        "\n  请开启 Windows「在线语音识别」以获取云健/云希等男声。",
+        `[Speech] 无可用男声，降调兜底: ${this.getVoiceEffectiveName(anyZh)}`,
+        zhVoices.map((v) => this.getVoiceEffectiveName(v)),
       );
       return { voice: anyZh, pitchDown: true };
     }
-    console.warn("[Speech] 系统无任何中文语音，当前语音列表:", voices.map((v) => v.name));
+    console.warn("[Speech] 系统无任何中文语音");
     return null;
   }
 
@@ -680,59 +716,49 @@ export class SpeechAnnouncer {
     }
 
     synth.cancel();
+    // Chrome 常见：cancel 后 speaking 卡住 paused，后续 speak 无声
+    try { if (synth.paused) synth.resume(); } catch { /* ignore */ }
 
-    // 语音列表偶发晚加载（Chrome 常见）：为空或无中文语音时延迟重试再开口，
-    // 避免空列表 / 无中文语音 → 无音色可选 → 系统默认音色（常为女声）
+    // 语音列表偶发晚加载（Chrome 常见）：为空或无中文语音时延迟重试再开口
     const attempt = (retried: boolean): void => {
       setTimeout(() => {
         const voicesNow = this.getVoices();
-        const hasZhVoice = voicesNow.some(v => v.lang.toLowerCase().startsWith("zh"));
+        const hasZhVoice = voicesNow.some((v) => v.lang.toLowerCase().startsWith("zh"));
         if ((voicesNow.length === 0 || !hasZhVoice) && !retried) {
           attempt(true);
           return;
         }
+
         const speechText = opts?.skipGlobalNameReplace ? text : prepareSpeechText(text);
-        const utterance = new SpeechSynthesisUtterance(speechText);
-        utterance.lang = "zh-CN";
-        if (opts?.rate !== undefined) utterance.rate = opts.rate;
-        // 播报音量跟随主音量（与音效/音乐感知齐平，不再固定满音量盖过一切）
-        utterance.volume = audioManager.getSpeechVolume();
-
-        const picked = this.pickBestVoice(voicesNow);
-        if (picked) {
-          utterance.voice = picked.voice;
-          if (picked.pitchDown) utterance.pitch = 0.65; // 最后手段：未知中文音色降调，杜绝自然女声
+        const maleCandidates = this.rankMaleVoices(voicesNow);
+        const fallback = this.pickBestVoice(voicesNow);
+        // 候选：男声排序 +（若有）降调兜底；损坏 Online 排在可靠本机之后，onerror 可顺延
+        const candidates: { voice: SpeechSynthesisVoice; pitchDown: boolean }[] = maleCandidates.map((v) => ({
+          voice: v,
+          pitchDown: false,
+        }));
+        if (fallback?.pitchDown && !candidates.some((c) => c.voice === fallback.voice)) {
+          candidates.push(fallback);
         }
+        if (candidates.length === 0 && fallback) candidates.push(fallback);
 
-        // ── 诊断日志（每次播报都记录，便于排查女声根因）──
-        const allZh = voicesNow.filter(v => v.lang.toLowerCase().startsWith("zh"));
-        const zhNames = allZh.map(v => `${v.name}[${v.lang}]`).join(" | ");
-        const pickedLabel = picked
-          ? `${picked.voice.name} (${picked.pitchDown ? "降调兜底·女声" : "男声✓"})`
-          : "（无中文语音·系统默认音色）";
+        const allZh = voicesNow.filter((v) => v.lang.toLowerCase().startsWith("zh"));
+        const zhNames = allZh.map((v) => {
+          const eff = this.getVoiceEffectiveName(v);
+          const bad = this.isVoiceNameCorrupt(v) ? "⚠坏名" : "";
+          return `${bad}${eff}[${v.lang}]`;
+        }).join(" | ");
         console.log(
-          `[Speech] 诊断 | 总语音${voicesNow.length} 中文${allZh.length}: ${zhNames || "（空）"}`,
-          `\n  → 选中: ${pickedLabel}`,
+          `[Speech] 诊断 | 总${voicesNow.length} 中文${allZh.length} 男声候选${maleCandidates.length}`,
+          `\n  中文: ${zhNames || "（空）"}`,
+          `\n  候选: ${candidates.map((c) => this.getVoiceEffectiveName(c.voice)).join(" → ") || "（无）"}`,
         );
-        if (picked?.pitchDown) {
-          console.warn(
-            "[Speech] ⚠️ 所有中文语音均为已知女声，启用降调兜底（pitch=0.65）。",
-            "播报可能仍为女声。请在 Windows 设置 → 隐私 → 语音 中开启「在线语音识别」，以获取云健/云希等男声。",
-          );
-        }
-        if (!picked) {
-          console.warn(
-            "[Speech] ⚠️ 系统无任何中文语音！播报将使用系统默认音色（通常为女声）。",
-            "请检查 Windows 语音设置是否已安装中文语音包。",
-          );
-        }
 
-        // 优先级闪避：播报期间压低音效 + 音乐；技能连播保持同一会话不反复起落
         this.beginSpeechDuckSession();
-        // 兜底：语音事件偶发不触发时，按估读时长强制走完收尾（恢复音量 + onDone 推进队列，防技能脉冲卡死）
         const duckSafetyMs = Math.min(15000, 1500 + text.length * 400);
         let settled = false;
         let started = false;
+        let safety = 0;
         const fireStart = () => {
           if (started) return;
           started = true;
@@ -741,28 +767,69 @@ export class SpeechAnnouncer {
         const settle = () => {
           if (settled) return;
           settled = true;
-          // 引擎偶发不触发 onstart：收尾前补一次，避免脉冲永远不亮
           fireStart();
           window.clearTimeout(safety);
           if (opts?.sTier) this.sTierBusyUntilMs = 0;
           if (opts?.banner) {
-            // 念完后字幕再停留片刻，缓缓淡出
             window.setTimeout(() => SubtitleBanner.hide(), 1200);
           }
           opts?.onDone?.();
-          // 技能队列未排空 → 保持 ducking，避免句间 BGM/战斗循环音量脉冲
           this.endSpeechDuckSessionIfIdle();
         };
-        const safety = window.setTimeout(settle, duckSafetyMs);
+        safety = window.setTimeout(settle, duckSafetyMs);
 
-        utterance.onstart = () => {
-          this.beginSpeechDuckSession();
-          fireStart();
+        const speakWithCandidate = (idx: number): void => {
+          if (settled) return;
+          const utterance = new SpeechSynthesisUtterance(speechText);
+          utterance.lang = "zh-CN";
+          if (opts?.rate !== undefined) utterance.rate = opts.rate;
+          utterance.volume = Math.max(0.05, audioManager.getSpeechVolume());
+
+          const picked = candidates[idx];
+          if (picked) {
+            utterance.voice = picked.voice;
+            if (picked.pitchDown) utterance.pitch = 0.65;
+            console.log(
+              `[Speech] 使用[${idx + 1}/${Math.max(1, candidates.length)}]:`,
+              this.getVoiceEffectiveName(picked.voice),
+              picked.pitchDown ? "(降调兜底)" : "",
+              this.isVoiceNameCorrupt(picked.voice) ? "(name损坏·靠URI)" : "",
+            );
+          } else {
+            console.warn("[Speech] 无候选音色，用系统默认");
+          }
+
+          utterance.onstart = () => {
+            this.beginSpeechDuckSession();
+            fireStart();
+          };
+          utterance.onend = settle;
+          utterance.onerror = (ev) => {
+            const err = (ev as SpeechSynthesisErrorEvent).error;
+            // cancel / 换句打断：忽略，勿顺延或 settle（否则会误杀新一句）
+            if (err === "interrupted" || err === "canceled") return;
+            console.warn(`[Speech] onerror(${err}) @候选${idx}:`, picked ? this.getVoiceEffectiveName(picked.voice) : "default");
+            // 损坏 Online Natural 常在此处失败 → 顺延下一男声（如康康 Desktop）
+            if (idx + 1 < candidates.length) {
+              window.clearTimeout(safety);
+              safety = window.setTimeout(settle, duckSafetyMs);
+              speakWithCandidate(idx + 1);
+              return;
+            }
+            settle();
+          };
+
+          try {
+            synth.speak(utterance);
+            if (synth.paused) synth.resume();
+          } catch (e) {
+            console.warn("[Speech] speak 抛错:", e);
+            if (idx + 1 < candidates.length) speakWithCandidate(idx + 1);
+            else settle();
+          }
         };
-        utterance.onend = settle;
-        utterance.onerror = settle;
 
-        synth.speak(utterance);
+        speakWithCandidate(0);
       }, retried ? 450 : 50);
     };
     attempt(false);
