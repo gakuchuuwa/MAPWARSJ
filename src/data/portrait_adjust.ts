@@ -1983,7 +1983,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/liuhan/suzhou_huoqubing.png": {
-            "scale": 1.07,
+            "scale": 1.05,
             "offsetX": 1,
             "offsetY": -11
         },
@@ -2598,7 +2598,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/STEPPE/zhadalan_zhamuhe.png": {
-            "scale": 0.88,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -17
         },
