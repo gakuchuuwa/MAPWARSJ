@@ -491,8 +491,10 @@ export class SpeechAnnouncer {
   }
 
   /**
-   * 野战开战（仅跟随军团那场）。跟随军团念在前 + 它这一仗的势词；敌方无将 → 不播报。
-   * 「张国，[名将，]张三，{势词}，大战，李国，[名将，]李四」；名将两边各判各的。
+   * 野战开战（仅跟随军团那场）。跟随军团念在前 + 它这一仗的势词；
+   * 任一方无将则降级用「势力名+军」顶替将名（与攻城开战、野战结束一致），
+   * 不再因无将静默——否则正常野战（普通军团多无将）开战几乎从不播报。
+   * 「张国，[名将，]张三，{势词}，大战，李国，[名将，]李四」；无将侧作「李国军」。
    */
   public announceFieldBattle(opts: {
     followerFactionId: string;
@@ -500,23 +502,22 @@ export class SpeechAnnouncer {
     followerGeneralId?: string | null;
     followerSkillId?: string | null;     // 保留
     enemyFactionId: string;
-    enemyGeneralId?: string | null;      // 无 → 不播报
+    enemyGeneralId?: string | null;
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue();
-    if (!opts.enemyGeneralId) return; // 敌方无将 → 不播报
-    const follower = opts.followerGeneralId ? getGeneralRecordByGeneralId(opts.followerGeneralId) : null;
-    const enemy = getGeneralRecordByGeneralId(opts.enemyGeneralId);
-    if (!follower || !enemy) return; // 跟随必有将；缺任一不播
-    const fFaction = getFactionNameForSpeech(opts.followerFactionId);
-    const eFaction = getFactionNameForSpeech(opts.enemyFactionId);
     const ju: CaptureJu = opts.ju;
-    const fPart = isFamousGeneral(follower.generalId)
-      ? `${fFaction}，名将，${getGeneralNameForSpeech(follower.generalId, follower.generalName)}`
-      : `${fFaction}，${getGeneralNameForSpeech(follower.generalId, follower.generalName)}`;
-    const ePart = isFamousGeneral(enemy.generalId)
-      ? `${eFaction}，名将，${getGeneralNameForSpeech(enemy.generalId, enemy.generalName)}`
-      : `${eFaction}，${getGeneralNameForSpeech(enemy.generalId, enemy.generalName)}`;
+    // 有将→「势力，[名将，]将名」；无将→「势力军」
+    const namePart = (factionId: string, generalId?: string | null): string => {
+      const faction = getFactionNameForSpeech(factionId);
+      const rec = generalId ? getGeneralRecordByGeneralId(generalId) : null;
+      if (!rec) return `${faction}军`;
+      return isFamousGeneral(rec.generalId)
+        ? `${faction}，名将，${getGeneralNameForSpeech(rec.generalId, rec.generalName)}`
+        : `${faction}，${getGeneralNameForSpeech(rec.generalId, rec.generalName)}`;
+    };
+    const fPart = namePart(opts.followerFactionId, opts.followerGeneralId);
+    const ePart = namePart(opts.enemyFactionId, opts.enemyGeneralId);
     const text = `${fPart}，${FIELD_SHISHU[ju]}，大战，${ePart}`;
     console.log("[Speech] 野战:", text);
     this.speak(text);
