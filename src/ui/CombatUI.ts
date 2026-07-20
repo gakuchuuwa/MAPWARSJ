@@ -1226,7 +1226,7 @@ export class CombatUI {
 
     /**
      * 本侧全体援军（wave≥1）的兵力加权合兵 luck；无援军返回 null。
-     * 状态链「得助/掣肘」与兵力旁标签用此值，勿只查开战指挥官（指挥官永远是主力）。
+     * 状态链「得助/掣肘」徽章用此值（侧级汇总），逐支标签已移至 buildWaveGroupedSideName。
      */
     private getSideReinforcementJoinLuck(side: 'attacker' | 'defender'): number | null {
         const bf = this.boundRegionalBattleField;
@@ -1556,12 +1556,6 @@ export class CombatUI {
         nameEl.innerHTML = name;
         const t = Math.max(0, Math.floor(troops));
         let troopsText = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : String(t);
-
-        const joinLuck = this.getSideReinforcementJoinLuck(side);
-        if (joinLuck !== null) {
-            if (joinLuck > 1.001) troopsText += ' [得助]';
-            else if (joinLuck < 0.999) troopsText += ' [掣肘]';
-        }
 
         troopsEl.textContent = troopsText;
     }
@@ -2257,11 +2251,20 @@ export class CombatUI {
                 const base = match ? displayName.substring(0, match.index) : displayName;
                 const suffix = match ? match[0] : '';
 
+                let joinStatus = '';
+                if (wi >= 1 && this.boundRegionalBattleField) {
+                    const luck = this.boundRegionalBattleField.getReinforcementJoinLuck(u.id);
+                    if (luck !== null) {
+                        if (luck > 1.001) joinStatus = ' <span style="opacity:0.8">[得助]</span>';
+                        else if (luck < 0.999) joinStatus = ' <span style="opacity:0.8">[掣肘]</span>';
+                    }
+                }
+
                 if (suffix && base) {
                     html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>`;
-                    html += `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}</span>`;
+                    html += `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}${joinStatus}</span>`;
                 } else {
-                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap; grid-column: span 2;">${displayName}</span>`;
+                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap; grid-column: span 2;">${displayName}${joinStatus}</span>`;
                 }
             }
         }
