@@ -440,14 +440,15 @@ export class YuefeiExpedition {
         }
 
         // 锁定当前目标城（覆盖任何被自动远征逻辑塞入的其它目标）
-        // 二次休整检查：while 循环内设了 pause 时，本 tick 不锁目标
-        if (Date.now() < this.pauseUntilMs) return;
+        // 必须在暂停检查之前，否则朱仙镇之战设的 pauseUntilMs 阻断重锁。
         const desired = ROUTE[this.waypointIndex];
         if (army.expeditionTargetCityId !== desired.id) {
             if (army.name !== ELITE_NAME) army.name = ELITE_NAME;
             army.expeditionTargetCityId = desired.id;
             gameLog('expedition', `🐎 [圆梦] 岳飞·背嵬军锁定目标：${desired.name}`);
         }
+        // 二次休整检查：while 循环内设了 pause 时，本 tick 在重锁之后才休整
+        if (Date.now() < this.pauseUntilMs) return;
     }
 
     /**
