@@ -1727,11 +1727,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -26
         },
-        "/assets/JIANGNAN/she_ethnic_leiwanxing.png": {
-            "scale": 0.87,
-            "offsetX": 0,
-            "offsetY": -22
-        },
         "/assets/JIANGNAN/wan_liuyuan.png": {
             "scale": 1,
             "offsetX": 0,
@@ -4587,11 +4582,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/JIANGNAN/__闲置__JIANGNAN_13.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -3
-        },
         "/assets/JIANGNAN/shaozhou_d_mayin.png": {
             "scale": 1.11,
             "offsetX": 0,
@@ -5948,14 +5938,19 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/JIANGNAN/__闲置__JIANGNAN_27.png": {
-            "scale": 1.19,
+            "scale": 0.87,
             "offsetX": 0,
-            "offsetY": 5
+            "offsetY": -22
         },
         "/assets/JIANGNAN/wuling_xiangdancheng.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -22
+        },
+        "/assets/JIANGNAN/she_ethnic_leiwanxing.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
         }
     },
     "folderGuides": {

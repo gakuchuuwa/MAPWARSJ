@@ -169,10 +169,6 @@ export class CombatUI {
     private leftSideTroopsSpan!: HTMLSpanElement;
     private rightSideNameSpan!: HTMLSpanElement;
     private rightSideTroopsSpan!: HTMLSpanElement;
-    private leftReinforcements!: HTMLDivElement;
-    private rightReinforcements!: HTMLDivElement;
-    private leftReinforcementsKey = '';
-    private rightReinforcementsKey = '';
     private battleTitle!: HTMLDivElement;
     private battleYear!: HTMLDivElement;
     private eventDescription!: HTMLDivElement;
@@ -713,20 +709,14 @@ export class CombatUI {
         const leftHud = this.createSideHud('attacker');
         leftHud.appendChild(this.createFactionRow('attacker'));
         this.leftSideLabel = this.buildSideLabel('attacker');
-        this.leftReinforcements = document.createElement('div');
-        this.setupReinforcementsContainer(this.leftReinforcements, 'attacker');
         leftHud.appendChild(this.leftSideLabel);
-        leftHud.appendChild(this.leftReinforcements);
         this.sideStatsRow.appendChild(leftHud);
         this.sideStatsRow.appendChild(this.createSideVsIcon());
 
         const rightHud = this.createSideHud('defender');
         rightHud.appendChild(this.createFactionRow('defender'));
         this.rightSideLabel = this.buildSideLabel('defender');
-        this.rightReinforcements = document.createElement('div');
-        this.setupReinforcementsContainer(this.rightReinforcements, 'defender');
         rightHud.appendChild(this.rightSideLabel);
-        rightHud.appendChild(this.rightReinforcements);
         this.sideStatsRow.appendChild(rightHud);
 
 
@@ -1462,65 +1452,6 @@ export class CombatUI {
     }
 
     /** 援军信息容器（替代原侧栏小血条） */
-    private setupReinforcementsContainer(el: HTMLDivElement, side: 'attacker' | 'defender'): void {
-        const isAtt = side === 'attacker';
-        el.style.cssText = `
-            display: flex;
-            flex-wrap: wrap;
-            gap: ${uiPx(4)};
-            margin-top: ${uiPx(6)};
-            width: 100%;
-            justify-content: ${isAtt ? 'flex-start' : 'flex-end'};
-            align-items: center;
-        `;
-    }
-
-    private renderReinforcements(side: 'attacker' | 'defender'): void {
-        const units = this.getUnitsForSide(side);
-        const container = side === 'attacker' ? this.leftReinforcements : this.rightReinforcements;
-        const isAtt = side === 'attacker';
-        const primary = this.getPrimaryBattler(side);
-
-        // 只收集 wave≥1 且存活的援军，并排除当前正在交战的主力
-        const reinforcements: IBattleUnit[] = [];
-        for (const u of units) {
-            if (u.isDestroyed || u.troops <= 0) continue;
-            if (primary && u.id === primary.id) continue;
-            const wi = this.boundRegionalBattleField?.getUnitWaveIndex(u.id) ?? 0;
-            if (wi >= 1) reinforcements.push(u);
-        }
-
-        // 生成缓存 key：援军 id，避免每帧重建 DOM
-        const key = reinforcements.map(u => u.id).join(',');
-        if (isAtt) {
-            if (key === this.leftReinforcementsKey) return;
-            this.leftReinforcementsKey = key;
-        } else {
-            if (key === this.rightReinforcementsKey) return;
-            this.rightReinforcementsKey = key;
-        }
-
-        container.innerHTML = '';
-        if (reinforcements.length === 0) return;
-
-        for (const u of reinforcements) {
-            const tag = document.createElement('div');
-            tag.textContent = `[援] ${u.name}`;
-            tag.style.cssText = `
-                font-size: ${uiPx(12)};
-                font-family: 'Noto Serif SC', serif;
-                background: ${isAtt ? 'rgba(212, 112, 32, 0.15)' : 'rgba(61, 122, 143, 0.15)'};
-                border: 1px solid ${isAtt ? 'rgba(212, 112, 32, 0.35)' : 'rgba(61, 122, 143, 0.35)'};
-                color: ${isAtt ? '#f5c6a1' : '#b3d9e6'};
-                padding: ${uiPx(2)} ${uiPx(5)};
-                border-radius: ${uiPx(3)};
-                white-space: nowrap;
-                text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            `;
-            container.appendChild(tag);
-        }
-    }
-
     private applySideLabelStyle(el: HTMLDivElement, side: 'attacker' | 'defender'): void {
         const isAtt = side === 'attacker';
         el.style.cssText = `
@@ -1805,8 +1736,6 @@ export class CombatUI {
         this.currentBattle = battle;
         this.currentRegionalUnits = null;
         this.boundRegionalBattleField = null;
-        this.leftReinforcementsKey = '';
-        this.rightReinforcementsKey = '';
         this.currentBattleType = battle.type;
         this.isVisible = true;
         this.refreshCorrectorDataOnBattleOpen();
@@ -3109,10 +3038,6 @@ export class CombatUI {
         this.currentBattle = null;
         this.currentRegionalUnits = null;
         this.boundRegionalBattleField = null;
-        this.leftReinforcementsKey = '';
-        this.rightReinforcementsKey = '';
-        this.leftReinforcements.innerHTML = '';
-        this.rightReinforcements.innerHTML = '';
         this.currentBattleType = undefined;
         this.regionalSafetyDeadline = 0;
         this.attackerFactionId = null;
@@ -3299,9 +3224,6 @@ export class CombatUI {
             this.getPrimaryBattler('attacker'),
             this.getPrimaryBattler('defender'),
         );
-
-        this.renderReinforcements('attacker');
-        this.renderReinforcements('defender');
 
         const total = attCurrent + defCurrent;
         const baseAttPct = total > 0 ? (attCurrent / total) * 100 : 50;
