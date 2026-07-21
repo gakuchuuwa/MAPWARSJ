@@ -1490,8 +1490,8 @@ export class CombatUI {
             if (wi >= 1) reinforcements.push(u);
         }
 
-        // 生成缓存 key：援军 id + 兵力(千人精度)，避免每帧重建 DOM
-        const key = reinforcements.map(u => `${u.id}:${Math.floor(u.troops / 1000)}`).join(',');
+        // 生成缓存 key：援军 id，避免每帧重建 DOM
+        const key = reinforcements.map(u => u.id).join(',');
         if (isAtt) {
             if (key === this.leftReinforcementsKey) return;
             this.leftReinforcementsKey = key;
@@ -1505,8 +1505,7 @@ export class CombatUI {
 
         for (const u of reinforcements) {
             const tag = document.createElement('div');
-            const t = (u.troops / 10000).toFixed(2);
-            tag.textContent = `[援] ${u.name} ${t}万`;
+            tag.textContent = `[援] ${u.name}`;
             tag.style.cssText = `
                 font-size: ${uiPx(12)};
                 font-family: 'Noto Serif SC', serif;
