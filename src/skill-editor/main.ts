@@ -215,10 +215,12 @@ function sixClassDisplay(s: SkillRow): string {
 function renderList(): void {
     const rows = applyFilters();
     if (sortKey) {
-        // 按人数排"典故主"列前，先重算每个典故主的技数
+        // 按人数排"典故主"列前，先重算每个典故主的技数。
+        // 只数【当前筛选后可见的行 rows】而非全表 SKILLS——否则被筛选隐藏的技（如某人只显示在册技时其不在册技仍被计入）会让计数≠所见，
+        // 出现「显示 6 条却按 7 条排」的错位（2026-07-22 修）。
         if (sortKey === 'owner') {
             ownerCount = new Map();
-            for (const s of SKILLS) if (s.ownerName) ownerCount.set(s.ownerName, (ownerCount.get(s.ownerName) ?? 0) + 1);
+            for (const s of rows) if (s.ownerName) ownerCount.set(s.ownerName, (ownerCount.get(s.ownerName) ?? 0) + 1);
         }
         rows.sort((a, b) => {
             // 典故主列排序：默认技能数多的在前；再点列头倒序（少的在前）。无典故主恒排最后。
