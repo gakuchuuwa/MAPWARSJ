@@ -1852,7 +1852,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        cao_d_caocao: { generalId: 'cao_d_caocao', tier: 'famous', tacticalSkillId: 'ts_477', strategicSkillId: 'str_25', advantageSkillId: 'ts_477', balanceSkillId: 'ts_478', disadvantageSkillId: 'ts_479', atkAdvantageSkillId: 'ts_107', atkBalanceSkillId: 'ts_486', atkDisadvantageSkillId: 'ts_453', defAdvantageSkillId: 'ts_022', defBalanceSkillId: 'ts_477', defDisadvantageSkillId: 'ts_719', aptitude: 'leverage' , attackStyle: 'balanced'},
+        cao_d_caocao: { generalId: 'cao_d_caocao', tier: 'famous', tacticalSkillId: 'ts_477', strategicSkillId: 'str_25', advantageSkillId: 'ts_477', balanceSkillId: 'ts_478', disadvantageSkillId: 'ts_479', atkAdvantageSkillId: 'ts_107', atkBalanceSkillId: 'ts_477', atkDisadvantageSkillId: 'ts_453', defAdvantageSkillId: 'ts_022', defBalanceSkillId: 'ts_812', defDisadvantageSkillId: 'ts_772', aptitude: 'leverage' , attackStyle: 'balanced'},
 
 
 
