@@ -2536,18 +2536,29 @@ const SE_FAMILY: Record<string, string> = {
     lose_enemy_casualty_boost: 'bite', post_recovery_rate: 'recovery',
     battle_duration_mult: 'duration',
 };
-/** 家族 → 档位（luck 家族写 [luckMin, luckMax]，其余写 magnitude） */
+/** 家族 → 档位（luck 家族写 [luckMin, luckMax]，其余写 magnitude）
+ *  六计平衡定稿两档（2026-07-22 主人拍板，取代旧四币值）：在册取环强端、不在册取中端，
+ *  每个战力型效果等效落 [0.8,1.2]、满值 ×1.2。此表 = 武将技数值【唯一标准源】，
+ *  漂移校验（seCheckMagnitudeDrift）以本表为准。见 AGENTS.md「铁律零·战力环」。 */
 const SE_TIERS: Record<string, Record<string, number | [number, number]>> = {
-    power: { '通用 ×1.05': 1.05, '条件/专属 ×1.10': 1.1, '绝品 ×1.15': 1.15 },
-    pct: { '通用 5%': 0.05, '条件/专属 9%': 0.09, '绝品 13%': 0.13 },
-    negate: { '通用 25%': 0.25, '专属 70%': 0.7, '绝品 100%': 1 },
-    steal: { '通用 15%': 0.15, '专属 50%': 0.5 },
-    luck: { '通用 [0.7,1.3]': [0.7, 1.3], '守城条件 [0.6,1.4]': [0.6, 1.4], '专属 [0.5,1.5]': [0.5, 1.5] },
-    casualty: { '通用 0.3': 0.3, '专属 0.5': 0.5 },
-    bite: { '通用 1.25': 1.25, '专属 1.5': 1.5 },
+    power: { '不在册 ×1.1': 1.1, '在册 ×1.2': 1.2 },              // 加己战力
+    pct: { '不在册 9%': 0.09, '在册 16.7%': 0.167 },              // 减敌兵：1/(1-x) ⇒ ×1.10 / ×1.20
+    negate: { '不在册 40%': 0.4, '在册 80%': 0.8 },               // 否决概率
+    steal: { '统一 50%': 0.5 },                                   // 夺技封顶 0.5（否决+复制双收益）
+    luck: { '不在册 [0.7,1.3]': [0.7, 1.3], '在册 [0.6,1.4]': [0.6, 1.4] }, // 变随机，均值恒=1
+    casualty: { '不在册 0.1': 0.1, '在册 0.2': 0.2 },             // 减己损（不改胜负）
+    bite: { '不在册 1.25': 1.25, '在册 1.5': 1.5 },               // 咬人（放大敌损，>1）
     recovery: { '标准 0.5': 0.5 },
     duration: { '速战 ×0.7': 0.7, '拖延 ×1.4': 1.4 },
 };
+/** 从 SE_TIERS 反推每个家族的合法数值集合（漂移校验用）。luck 家族比对 [min,max] 元组。 */
+function seFamilyAllowedValues(family: string): Set<string> {
+    const tiers = SE_TIERS[family];
+    const set = new Set<string>();
+    if (!tiers) return set;
+    for (const v of Object.values(tiers)) set.add(Array.isArray(v) ? `${v[0]},${v[1]}` : String(v));
+    return set;
+}
 const SE_CONDITIONS = [
     'always', 'terrain_mountain', 'terrain_plain', 'terrain_sea',
     'battle_siege_attacker', 'battle_siege_defender', 'battle_field',
@@ -3235,6 +3246,47 @@ function serverValidateEntities(): {
                     level: 'error',
                     msg: `武将 "${g.generalName}"(${g.generalId}) 六计不齐：${parts.join('，')}（六技应=攻战/胜战/敌战/混战/并战/败战各一）`,
                     factionId: fId,
+                });
+            }
+        }
+    }
+
+    // 11.13. [NEW 2026-07-22] 数值漂移：每条武将技的 magnitude / luck 区间必须命中 SE_TIERS 该家族的标准档。
+    //   模板（SE_TIERS）= 武将技数值唯一标准源；杜绝手改 / 复制行 / 老数据留下带外值（曾攒出 93 条越带）。
+    //   不在 SE_FAMILY 内的效果（reflect / nullify / recompute_comeback 等）无档位，跳过。luck 家族比对 [min,max]。
+    {
+        const tscForMag = fs.readFileSync(path.resolve(__dirname, 'src/data/TacticalSkillCatalog.ts'), 'utf-8');
+        const entryRe = /\{\s*\n?\s*id:\s*'(ts_\d+)'[\s\S]*?\},?\s*\n/g;
+        const seenMag = new Set<string>();
+        let dm;
+        while ((dm = entryRe.exec(tscForMag)) !== null) {
+            const block = dm[0], sid = dm[1];
+            if (seenMag.has(sid)) continue;
+            seenMag.add(sid);
+            const eff = (block.match(/baseEffect:\s*'(\w+)'/) || [])[1];
+            if (!eff) continue;
+            const family = SE_FAMILY[eff];
+            if (!family) continue;
+            const allow = seFamilyAllowedValues(family);
+            if (allow.size === 0) continue;
+            let actual: string;
+            if (family === 'luck') {
+                const lo = (block.match(/luckMin:\s*([\d.]+)/) || [])[1];
+                const hi = (block.match(/luckMax:\s*([\d.]+)/) || [])[1];
+                if (lo === undefined || hi === undefined) {
+                    issues.push({ level: 'error', msg: `武将技 ${sid} 变随机缺 luckMin/luckMax` });
+                    continue;
+                }
+                actual = `${parseFloat(lo)},${parseFloat(hi)}`;
+            } else {
+                const mg = (block.match(/magnitude:\s*(-?[\d.]+)/) || [])[1];
+                if (mg === undefined) continue;
+                actual = String(parseFloat(mg));
+            }
+            if (!allow.has(actual)) {
+                issues.push({
+                    level: 'error',
+                    msg: `武将技 ${sid} 数值漂移：${eff}=${actual}，非 ${family} 家族标准档（${[...allow].join(' / ')}）；改档位走编辑器，勿手改/复制旧值。`,
                 });
             }
         }
