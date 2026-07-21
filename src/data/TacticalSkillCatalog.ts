@@ -580,7 +580,7 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
         magnitude: 1.2, engineStatus: 'ready',
     },
     {
-        id: 'ts_052', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', layer: 'tactical', series: 'enhance', index: 52,
+        id: 'ts_052', layer: 'tactical', series: 'enhance', index: 52,
         displayName: '封狼居胥', sourceQuote: '《汉书·霍去病传》：“封狼居胥山，禅于姑衍。”',
         baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
         magnitude: 1.2, engineStatus: 'ready',
@@ -687,7 +687,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_071', layer: 'tactical', series: 'troop', index: 71,
-        displayName: '锐不可当', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：去病所将常选，敢深入，战匈奴锐不可当，益封。',
+        displayName: '锐不可当', sourceQuote: '《史记·卫将军骠骑列传》：去病所将常选，敢深入，战匈奴锐不可当，益封。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.18, engineStatus: 'ready',
         note: '锐不可当：骠骑深入（巨鹿锐势已含于破釜沉舟）',
@@ -1381,7 +1381,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_198', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'enhance', index: 198,
-        displayName: '勇冠三军', sourceQuote: '勇敢为三军之首，如项羽、吕布等多将可称。',
+        displayName: '深入绝域', sourceQuote: '【霍去病】《汉书·霍去病传》：“去病长驱，深入绝域。”',
         baseEffect: 'recompute_comeback', condition: 'ratio_underdog', phase: 'mid_battle_comeback', comebackThreshold: 0.8,
         magnitude: 1, engineStatus: 'ready',
     },
@@ -2024,7 +2024,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.2, engineStatus: 'ready',
     },
     {
-        id: 'ts_308', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 308,
+        id: 'ts_308', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 308,
         displayName: '收部摧庭', sourceQuote: '【霍去病】《汉书·霍去病传》：封狼居胥山，禅于姑衍，临翰海而还；匈奴远遁，幕南无王庭。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.2, engineStatus: 'ready',
@@ -2321,7 +2321,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_359', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 359,
-        displayName: '深入捣巢', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：深入漠北捣匈奴王庭。',
+        displayName: '勇冠三军', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', sourceQuote: '【霍去病】《汉书·霍去病传》：去病骑兵冠三军，深入漠北捣匈奴王庭。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.18, engineStatus: 'ready',
     },
@@ -2338,7 +2338,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 1.0, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
-        id: 'ts_362', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 362,
+        id: 'ts_362', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 362,
         displayName: '越沙破垒', sourceQuote: '穿越沙漠攻破敌军堡垒，多将皆有。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.2, engineStatus: 'ready',
@@ -4296,12 +4296,12 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_724', ownerName: '祖逖', ownerGeneralId: 'yuzhou_zuti', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 724, displayName: '誓师济河', sourceQuote: '誓师渡河决死一战，破釜沉舟之志，如祖逖中流击楫等，无单一专属。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_725', ownerName: '班超', ownerGeneralId: 'xiyuduhu_banchao', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 725, displayName: '绝域摧锋', sourceQuote: '长途远征在极远之地摧破敌军，如侯君集灭高昌、班超定西域等。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.18, engineStatus: 'ready' },
     { id: 'ts_726', ownerName: '李陵', ownerGeneralId: 'ningkou_liling', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 726, displayName: '先登强弩', sourceQuote: '攻城时率先登城并以强弩射击，破城锐器，如界桥之战等。', baseEffect: 'ally_power_mult', condition: 'battle_siege_attacker', phase: 'opening_roll', magnitude: 1.2, engineStatus: 'ready' },
-    { id: 'ts_727', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', layer: 'tactical', series: 'fate', index: 727, displayName: '轻锐扰阵', situationTag: '均势', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：轻骑长途奔袭，反复穿插扰敌阵脚。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '同源：霍去病·轻骑奔袭（与 ts_733 驰骋扰阵同系）' },
+    { id: 'ts_727', layer: 'tactical', series: 'fate', index: 727, displayName: '轻锐扰阵', situationTag: '均势', sourceQuote: '轻骑长途奔袭，反复穿插扰敌阵脚。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '轻锐扰阵：轻骑奔袭扰阵（同系 ts_733）' },
     { id: 'ts_729', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 729, displayName: '坚壁养锐', ownerName: '司马懿', ownerGeneralId: 'sima_d_simayi', sourceQuote: '【司马懿】《晋书·宣帝纪》：对蜀闭垒不出，养精蓄锐待敌自退。', baseEffect: 'ally_power_mult', condition: 'always', phase: 'mid_battle_passive', magnitude: 1.2, engineStatus: 'ready' },
     { id: 'ts_730', ownerName: '司马懿', ownerGeneralId: 'sima_d_simayi', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'fate', index: 730, displayName: '持重待疲', sourceQuote: '以稳重防守消耗敌军，待其疲惫再寻战机，多将皆有此守。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '同源：司马懿·五丈原等（非专属）' },
     { id: 'ts_731', ownerName: '甘宁', ownerGeneralId: 'zhongxiang_ganning', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 731, displayName: '奇袭摧阵', sourceQuote: '以奇兵突袭冲垮敌阵，如甘宁百骑劫营等多将皆有。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.8, engineStatus: 'ready' },
     { id: 'ts_732', ownerName: '杨业', ownerGeneralId: 'heng1_yangye', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 732, displayName: '断后殉节', sourceQuote: '陈家谷', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【断后殉节】三势精修·劣局' },
-    { id: 'ts_733', layer: 'tactical', series: 'fate', index: 733, displayName: '驰骋扰阵', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：轻骑长途奔袭，反复穿插扰敌阵脚。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '同源：霍去病·轻骑奔袭（与 ts_727 轻锐扰阵同典）' },
+    { id: 'ts_733', layer: 'tactical', series: 'fate', index: 733, displayName: '驰骋扰阵', sourceQuote: '轻骑长途奔袭，反复穿插扰敌阵脚。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '驰骋扰阵：轻骑奔袭扰阵（同系 ts_727）' },
     { id: 'ts_734', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 734, displayName: '驰掠脱困', ownerName: '赵云', ownerGeneralId: 'jingmen_zhaoyun', sourceQuote: '【赵云】长坂坡七进七出，驰掠突围脱困。', baseEffect: 'ally_power_mult', condition: 'always', phase: 'post_battle', magnitude: 1.2, engineStatus: 'ready', note: '【驰掠脱困】三势精修·劣局' },
     { id: 'ts_735', layer: 'tactical', series: 'fate', index: 735, displayName: '轻骑驰扰', situationTag: '均势', ownerName: '李世民', ownerGeneralId: 'tang_lishimin', sourceQuote: '【李世民】率轻骑昼夜驰扰，疲弊刘武周大军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '【轻骑驰扰】三势精修·均局' },
     { id: 'ts_736', ownerName: '耿恭', ownerGeneralId: 'chagatai_genggong', layer: 'tactical', series: 'casualty', index: 736, displayName: '孤军力斗', sourceQuote: '【耿恭】《后汉书·耿恭传》：孤军守疏勒，面对匈奴围攻力战不降。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【孤军力斗】三势精修·劣局' },
@@ -4388,6 +4388,18 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     {
         id: 'ts_831', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', layer: 'tactical', series: 'casualty', index: 831,
         displayName: '忠义归顺', sourceQuote: '【岳飞】岳飞善纳降，太行忠义民兵响应归顺，壮大军势。',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.20, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_840', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', layer: 'tactical', series: 'counter', index: 840,
+        displayName: '飙发电举', sourceQuote: '【霍去病】《汉书·霍去病传》：“飙发电举”，如旋风闪电般突击。',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.8, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_841', ownerName: '霍去病', ownerGeneralId: 'suzhou_huoqubing', layer: 'tactical', series: 'casualty', index: 841,
+        displayName: '取食于敌', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：“取食于敌，卓行殊远”，轻装奔袭。',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.20, engineStatus: 'ready',
     },
@@ -4664,6 +4676,7 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_812: 'limited', ts_813: 'limited', ts_815: 'common', ts_816: 'common',
     ts_822: 'common',
     ts_830: 'common', ts_831: 'common',
+    ts_840: 'common', ts_841: 'common',
 };
 
 export function getTacticalAssignTier(skillId: string): TacticalAssignTier | null {
@@ -4719,7 +4732,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_047: '毛文龙',
     ts_048: '三十六计',
     ts_049: '曹刿',
-    ts_052: '霍去病',
     ts_053: '吴起',
     ts_054: '刘秀',
     ts_056: '李靖',
@@ -4737,7 +4749,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_068: '李自成',
     ts_069: '孙武',
     ts_070: '松赞干布',
-    ts_071: '霍去病',
     ts_072: '张辽',
     ts_073: '周瑜',
     ts_075: '石达开',
@@ -4957,7 +4968,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_305: '常遇春',
     ts_306: '李存勖',
     ts_307: '蓝玉',
-    ts_308: '霍去病',
     ts_309: '张辽',
     ts_311: '石勒',
     ts_312: '苏禄',
@@ -5005,7 +5015,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_359: '霍去病',
     ts_360: '苏定方',
     ts_361: '诸葛亮',
-    ts_362: '霍去病',
     ts_363: '邓艾',
     ts_364: '刘邦',
     ts_365: '沙尔虎达',
@@ -5340,7 +5349,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_730: '司马懿',
     ts_731: '甘宁',
     ts_732: '杨业',
-    ts_733: '霍去病',
     ts_734: '赵云',
     ts_736: '耿恭',
     ts_737: '韩信',
@@ -5423,7 +5431,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_402: '三十六计',
     ts_403: '三十六计',
     ts_446: '多尔衮',
-    ts_727: '霍去病',
     ts_745: '周瑜',
     ts_753: '廉颇',
     ts_761: '孙权',
@@ -5439,6 +5446,8 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_074: '刘裕',
     ts_830: '岳飞',
     ts_831: '岳飞',
+    ts_840: '霍去病',
+    ts_841: '霍去病',
 };
 
 export function getSkillCharacter(skillId: string): string | undefined {
