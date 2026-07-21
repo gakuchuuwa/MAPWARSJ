@@ -808,7 +808,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_092', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 92,
-        displayName: '痛饮黄龙', sourceQuote: '《宋史·岳飞传》：“直抵黄龙府，与诸君痛饮尔。”',
+        displayName: '背嵬陷阵', sourceQuote: '【岳飞】背嵬军亲兵陷阵冲锋，骑兵为翼、步卒为刃，所向无前。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.2, engineStatus: 'ready',
     },
@@ -1680,7 +1680,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_248', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 248,
-        displayName: '连岁抗虏', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', sourceQuote: '【岳飞】连年北伐抗金，持续抵抗外敌。',
+        displayName: '直捣黄龙', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', sourceQuote: '【岳飞】《宋史·岳飞传》：“直抵黄龙府，与诸君痛饮尔。”',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive',
         magnitude: 1.25, engineStatus: 'ready',
     },
@@ -3199,7 +3199,7 @@ const UNIQUE_T1_GENERAL2: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_582', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 582,
-        displayName: '扼险摧锋',  ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', sourceQuote: '【岳飞】《宋史·岳飞传》：清水亭、牛头山扼险伏击，金军伏尸十五里。',
+        displayName: '夜斫贼营',  ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', sourceQuote: '【岳飞】《宋史·岳飞传》：夜斫金营，金兵惊溃，自相残杀。',
         baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 0.8, engineStatus: 'ready',
     },
@@ -3989,7 +3989,7 @@ const SANSHILIU: TacticalSkillEntry[] = [
 const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
     {
         id: 'ts_420', layer: 'tactical', series: 'fate', index: 420,
-        displayName: '散阵遏骑', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', sourceQuote: '《宋史·岳飞传》：步卒麻扎刀入阵，砍拐子马足，金军大乱。',
+        displayName: '临机制阵', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', sourceQuote: '【岳飞】《宋史·岳飞传》：“阵而后战，兵法之常，运用之妙，存乎一心。”',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
         note: '【岳飞】T0精锐·岳飞·势create·均局专属（三势精修）',
@@ -4261,7 +4261,7 @@ const UNIQUE_T1_ZHAO: TacticalSkillEntry[] = [
 const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_686', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'counter', index: 686, displayName: '据险持重', ownerName: '王翦', ownerGeneralId: 'ruo_wangjian', sourceQuote: '【王翦】《史记·白起王翦列传》：翦将六十万伐楚，据垒坚壁，岁余不动，待楚兵罢乃击。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.8, engineStatus: 'ready',
         note: '据险持重：灭楚岁余坚壁（长平据险已留廉颇）', },
-    { id: 'ts_688', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', layer: 'tactical', series: 'fate', index: 688, displayName: '设伏疲敌', sourceQuote: '【岳飞】枣阳等地设伏疲敝金军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '【设伏疲敌】三势精修·均局' },
+    { id: 'ts_688', layer: 'tactical', series: 'fate', index: 688, displayName: '设伏疲敌', sourceQuote: '枣阳等地设伏疲敝金军，历代多将皆用。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【设伏疲敌】三势精修·均局' },
     { id: 'ts_689', ownerName: '冒顿', ownerGeneralId: 'xiongnu_maodun', layer: 'tactical', series: 'fate', index: 689, displayName: '游骑扰阵', sourceQuote: '【冒顿】《史记·匈奴列传》：控弦之士三十余万，来如飘风，去如收电；游骑扰边，疲弊汉军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '游骑扰阵：匈奴控弦游骑' },
     { id: 'ts_690', ownerName: '彭越', layer: 'tactical', series: 'fate', index: 690, displayName: '周旋疲敌', sourceQuote: '【彭越】在楚军后方游击，与项羽周旋疲敌。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【周旋疲敌】三势精修·均局' },
     { id: 'ts_691', ownerName: '苏秦', layer: 'tactical', series: 'fate', index: 691, displayName: '联部破盟', sourceQuote: '【苏秦】佩六国相印，合纵联部破秦国之盟。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【联部破盟】三势精修·均局' },
@@ -4378,6 +4378,18 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
         displayName: '走为上计', sourceQuote: '《三十六计·第三十六计》：全师避敌，左次无咎，未失常也。',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
         magnitude: 1.25, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_830', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', layer: 'tactical', series: 'troop', index: 830,
+        displayName: '斩马破骑', sourceQuote: '【岳飞】《宋史·岳飞传》：步卒麻扎刀入阵，砍拐子马足，金军大乱。',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        magnitude: 0.18, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_831', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', layer: 'tactical', series: 'casualty', index: 831,
+        displayName: '忠义归顺', sourceQuote: '【岳飞】岳飞善纳降，太行忠义民兵响应归顺，壮大军势。',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.20, engineStatus: 'ready',
     },
 ];
 
@@ -4651,6 +4663,7 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_808: 'common', ts_809: 'common', ts_810: 'gamble', ts_811: 'limited',
     ts_812: 'limited', ts_813: 'limited', ts_815: 'common', ts_816: 'common',
     ts_822: 'common',
+    ts_830: 'common', ts_831: 'common',
 };
 
 export function getTacticalAssignTier(skillId: string): TacticalAssignTier | null {
@@ -5284,7 +5297,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_685: '石达开',
     ts_686: '王翦',
     ts_687: '刘裕',
-    ts_688: '岳飞',
     ts_689: '冒顿',
     ts_690: '彭越',
     ts_691: '苏秦',
@@ -5425,6 +5437,8 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_735: '李世民',
     ts_200: '先轸',
     ts_074: '刘裕',
+    ts_830: '岳飞',
+    ts_831: '岳飞',
 };
 
 export function getSkillCharacter(skillId: string): string | undefined {
