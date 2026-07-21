@@ -3658,7 +3658,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -2
         },
         "/assets/litang/bing_liji.png": {
-            "scale": 0.97,
+            "scale": 0.95,
             "offsetX": 0,
             "offsetY": -43
         },
@@ -3683,7 +3683,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/litang/loufan_xuerengui.png": {
-            "scale": 1.05,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 11
         },
