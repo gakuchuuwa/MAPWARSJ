@@ -221,16 +221,20 @@ function renderList(): void {
             for (const s of SKILLS) if (s.ownerName) ownerCount.set(s.ownerName, (ownerCount.get(s.ownerName) ?? 0) + 1);
         }
         rows.sort((a, b) => {
-            // 典故主列排序：技能数多的排最上面（不分在册/不在册）；无典故主排最后；
-            //   同技能数时在册优先，再按名字、id。
+            // 典故主列排序：默认技能数多的在前；再点列头倒序（少的在前）。无典故主恒排最后。
+            //   同技能数时在册优先，再按名字、id（这些 tie-break 不随方向翻转，保持稳定分组）。
             if (sortKey === 'owner') {
-                const cnt = (s: SkillRow) => s.ownerName ? (ownerCount.get(s.ownerName) ?? 0) : -1;
-                const ca = cnt(a), cb = cnt(b);
-                if (ca !== cb) return cb - ca; // 技能数降序（多的在前）
-                const ga = a.ownerGeneralId ? 0 : 1, gb = b.ownerGeneralId ? 0 : 1;
-                if (ga !== gb) return ga - gb; // 同数量时在册优先
-                const nc = (a.ownerName ?? '').localeCompare(b.ownerName ?? '', 'zh');
-                if (nc !== 0) return nc; // 同名相邻
+                const hasA = !!a.ownerName, hasB = !!b.ownerName;
+                if (hasA !== hasB) return hasA ? -1 : 1; // 无典故主恒排最后，不受方向影响
+                if (hasA) {
+                    const ca = ownerCount.get(a.ownerName!) ?? 0;
+                    const cb = ownerCount.get(b.ownerName!) ?? 0;
+                    if (ca !== cb) return (cb - ca) * sortDir; // sortDir=1 多在前；-1 少在前（倒序）
+                    const ga = a.ownerGeneralId ? 0 : 1, gb = b.ownerGeneralId ? 0 : 1;
+                    if (ga !== gb) return ga - gb; // 同数量时在册优先
+                    const nc = (a.ownerName ?? '').localeCompare(b.ownerName ?? '', 'zh');
+                    if (nc !== 0) return nc; // 同名相邻
+                }
                 return parseInt(a.id.replace('ts_', ''), 10) - parseInt(b.id.replace('ts_', ''), 10);
             }
             const va = sortValue(a, sortKey!), vb = sortValue(b, sortKey!);
@@ -249,7 +253,15 @@ function renderList(): void {
     for (const th of document.querySelectorAll('.se-sortable')) {
         const k = (th as HTMLElement).dataset.sort!;
         const base = (th.textContent ?? '').replace(/[▲▼]\s*$/, '').trim();
-        th.innerHTML = k === sortKey && k !== 'owner' ? `${base}<span class="se-sort-arrow">${sortDir === 1 ? '▲' : '▼'}</span>` : base;
+        if (k === sortKey) {
+            // 典故主列 sortDir=1 表示「多在前」（由多到少 ▼）；其它列 sortDir=1 为升序 ▲
+            const arrow = k === 'owner'
+                ? (sortDir === 1 ? '▼' : '▲')
+                : (sortDir === 1 ? '▲' : '▼');
+            th.innerHTML = `${base}<span class="se-sort-arrow">${arrow}</span>`;
+        } else {
+            th.innerHTML = base;
+        }
     }
     $('count').textContent = `${rows.length} / ${SKILLS.length} 条`;
     $('list-body').innerHTML = rows.map(s => `
@@ -1001,7 +1013,8 @@ $('list-body').addEventListener('dblclick', (e) => {
 for (const th of document.querySelectorAll('.se-sortable')) {
     th.addEventListener('click', () => {
         const k = (th as HTMLElement).dataset.sort!;
-        // 典故主列与其它列一致：只排序（在册>不在册>无，组内人数降序），绝不动筛选器 —— 必须全部显示
+        // 所有列一致：点一次排序、再点倒序，绝不动筛选器 —— 必须全部显示。
+        // 典故主列首点=技能数多的在前，再点=少的在前。
         if (sortKey === k) sortDir = sortDir === 1 ? -1 : 1;
         else { sortKey = k; sortDir = 1; }
         renderList();
