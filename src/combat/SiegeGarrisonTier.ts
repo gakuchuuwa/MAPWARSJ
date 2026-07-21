@@ -76,9 +76,8 @@ export function assignSiegeGarrisonTier(
     // 清理旧缓存（防连战残留）
     clearSiegeGarrisonBoost(city);
 
-    // ① 同旗判定：城防目前还是归属锚点势力（即未被占领换旗）
+    // 谁占城谁得将：将/精锐锚定 cityId，占领换旗后仍随城发给当前守方（与出兵路径一致）
     const anchorFaction = getCityAnchorFactionId(city.id);
-    if (city.factionId !== anchorFaction) return;
 
     const eliteName = getCityEliteLegionName(city.id);
     const anchoredGeneral = getCityAnchoredGeneral(city.id);
