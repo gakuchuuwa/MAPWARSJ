@@ -32,13 +32,14 @@ import {
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
 import { sumCultureAdjustedTroops, getUnitBattlePowerMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
-import { getGeneralProfile } from '../data/GeneralSkills';
+import { getGeneralProfile, POST_BATTLE_RECOVERY_SKILL } from '../data/GeneralSkills';
 import { COMEBACK_LUCK_RANGE, COMEBACK_LUCK_RANGE_GENERIC, resolveSituationKind } from './TacticalConstants';
 import {
     applyGeneralSkillSideRollMultipliers,
     applyOpeningTacticalPreRoll,
     applyOpeningTacticalToRolls,
     applyPostBattleStrategicBonus,
+    applyPostBattleConscription,
     applyStrategicRollMultipliersOnly,
     applyComebackRollMultipliersForSide,
     tryApplyComebackTacticalForSide,
@@ -1046,7 +1047,7 @@ export class BattleField implements IOpeningPulseSink {
                 bu.unit.setTroops(finalTroops);
             }
             if (recovery > 0) {
-                gameLog('battle', `🩹 [BattleField] ${bu.unit.name} 恢复 ${recovery} 伤兵（恢复率 ${recoveryRate}）`);
+                gameLog('battle', `🩹 [${POST_BATTLE_RECOVERY_SKILL.displayName}] ${bu.unit.name} 伤兵归队 ${recovery}（恢复率 ${recoveryRate}）`);
             }
             if (extraBite > 0) {
                 gameLog('battle', `🦂 [BattleField] ${bu.unit.name} 被咬 -${extraBite}（保底存活 ${survivalFloor}）`);
@@ -1071,6 +1072,21 @@ export class BattleField implements IOpeningPulseSink {
                 bu.unit.onBattleEnd?.('victory', opponent, 0);
             }
         });
+
+        // 整编归伍（全员通用，静默）：收编败军，以少胜多×2；全侧分摊 + 统一封顶军团上限
+        // （封顶同时兜底上面招降纳叛等逐将加兵的溢出）。以少胜多按开战兵力口径判定。
+        if (!this.presetResult) {
+            const isUnderdogWin =
+                winnerGroup.initialTotalTroops < loserGroup.initialTotalTroops;
+            const conscripted = applyPostBattleConscription(
+                winnerGroup.units.filter(bu => !bu.isDefeated).map(bu => bu.unit),
+                loserGroup.initialTotalTroops,
+                isUnderdogWin,
+            );
+            if (conscripted > 0) {
+                gameLog('battle', `🪖 [整编归伍] ${winnerGroup.factionId} 收编败军 ${conscripted}${isUnderdogWin ? '（以少胜多×2）' : ''}`);
+            }
+        }
 
         // 处理胜利方中被击败的单位
         winnerGroup.units.filter(u => u.isDefeated).forEach(bu => {

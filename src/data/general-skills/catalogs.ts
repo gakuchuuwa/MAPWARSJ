@@ -205,6 +205,30 @@ export const REINFORCEMENT_JOIN_SKILL: ReinforcementJoinSkillDef = {
 
 };
 
+
+
+/** 全员通用系统技（每将皆有，不占技能槽，静默生效不飘字；战斗结算引擎直引） */
+
+/** 整编归伍：胜后收编败军。普通取胜 = 敌开战总兵 15%，以少胜多（胜方开战兵 < 败方）= 30%；
+ *  全侧按兵力分摊，逐军团封顶军团上限（maxTroops）。与战略技「招降纳叛」(+10%) 叠加。 */
+export interface ConscriptDefeatedSkillDef {
+    displayName: string;
+    baseRate: number;
+    underdogRate: number;
+}
+
+export const CONSCRIPT_DEFEATED_SKILL: ConscriptDefeatedSkillDef = {
+    displayName: '整编归伍',
+    baseRate: 0.15,
+    underdogRate: 0.30,
+};
+
+/** 裹创复战：胜方恢复本场战损（比例走 GameConfig.COMBAT.POST_BATTLE_RECOVERY_RATE）。
+ *  本常量只提供技能名，数值不在此重复，避免两处漂移。 */
+export const POST_BATTLE_RECOVERY_SKILL: { displayName: string } = {
+    displayName: '裹创复战',
+};
+
 export function getStrategicSkillDef(skillId: string): StrategicSkillDef | null {
     return STRATEGIC_SKILL_CATALOG[skillId] ?? null;
 }
