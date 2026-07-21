@@ -2927,11 +2927,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/zhaosong/__闲置__zhaosong_08.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/zhaosong/__闲置__zhaosong_09.png": {
             "scale": 1,
             "offsetX": 0,
@@ -3416,11 +3411,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": -7
-        },
-        "/assets/zhaosong/didao_wangshao.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 12
         },
         "/assets/liuhan/li_lx_d_liguang.png": {
             "scale": 1.03,
@@ -5951,6 +5941,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/zhaosong/__闲置__zhaosong_25.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/zhaosong/didao_wangshao.png": {
+            "scale": 0.96,
+            "offsetX": 19,
+            "offsetY": 0
         }
     },
     "folderGuides": {
