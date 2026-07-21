@@ -221,17 +221,16 @@ function renderList(): void {
             for (const s of SKILLS) if (s.ownerName) ownerCount.set(s.ownerName, (ownerCount.get(s.ownerName) ?? 0) + 1);
         }
         rows.sort((a, b) => {
-            // 典故主列特殊排序：在册 > 不在册 > 无，同组内人数多的在前
+            // 典故主列排序：技能数多的排最上面（不分在册/不在册）；无典故主排最后；
+            //   同技能数时在册优先，再按名字、id。
             if (sortKey === 'owner') {
-                const g = (s: SkillRow) => s.ownerGeneralId ? 0 : s.ownerName ? 1 : 2;
-                const ga = g(a), gb = g(b);
-                if (ga !== gb) return ga - gb; // 组排序固定升序，不受 sortDir 影响
-                // 组内按人数降序（多的在前），不受 sortDir 影响
-                const ca = ownerCount.get(a.ownerName ?? '') ?? 0;
-                const cb = ownerCount.get(b.ownerName ?? '') ?? 0;
-                if (ca !== cb) return cb - ca;
+                const cnt = (s: SkillRow) => s.ownerName ? (ownerCount.get(s.ownerName) ?? 0) : -1;
+                const ca = cnt(a), cb = cnt(b);
+                if (ca !== cb) return cb - ca; // 技能数降序（多的在前）
+                const ga = a.ownerGeneralId ? 0 : 1, gb = b.ownerGeneralId ? 0 : 1;
+                if (ga !== gb) return ga - gb; // 同数量时在册优先
                 const nc = (a.ownerName ?? '').localeCompare(b.ownerName ?? '', 'zh');
-                if (nc !== 0) return nc;
+                if (nc !== 0) return nc; // 同名相邻
                 return parseInt(a.id.replace('ts_', ''), 10) - parseInt(b.id.replace('ts_', ''), 10);
             }
             const va = sortValue(a, sortKey!), vb = sortValue(b, sortKey!);
