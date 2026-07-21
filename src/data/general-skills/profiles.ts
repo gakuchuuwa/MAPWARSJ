@@ -1537,7 +1537,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    chu_guanyu: { generalId: 'chu_guanyu', tier: 'famous', tacticalSkillId: 'ts_257', strategicSkillId: 'str_19', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_005', atkBalanceSkillId: 'ts_710', atkDisadvantageSkillId: 'ts_717', defAdvantageSkillId: 'ts_257', defBalanceSkillId: 'ts_193', defDisadvantageSkillId: 'ts_427', aptitude: 'create' , attackStyle: 'attack'},
+    chu_guanyu: { generalId: 'chu_guanyu', tier: 'famous', tacticalSkillId: 'ts_257', strategicSkillId: 'str_19', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_005', atkBalanceSkillId: 'ts_710', atkDisadvantageSkillId: 'ts_427', defAdvantageSkillId: 'ts_257', defBalanceSkillId: 'ts_193', defDisadvantageSkillId: 'ts_756', aptitude: 'create' , attackStyle: 'attack'},
 
 
 
@@ -1593,7 +1593,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    kuai_kuaiyue: { generalId: 'kuai_kuaiyue', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_571', atkAdvantageSkillId: 'ts_352', atkBalanceSkillId: 'ts_408', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_650', defDisadvantageSkillId: 'ts_526', aptitude: 'leverage' , attackStyle: 'balanced'},
+    kuai_kuaiyue: { generalId: 'kuai_kuaiyue', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_584', atkAdvantageSkillId: 'ts_352', atkBalanceSkillId: 'ts_408', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_650', defDisadvantageSkillId: 'ts_526', aptitude: 'leverage' , attackStyle: 'balanced'},
 
 
 
@@ -1860,7 +1860,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    dongxian_sunbin: { generalId: 'dongxian_sunbin', tier: 'famous', tacticalSkillId: 'ts_018', strategicSkillId: 'str_20', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_211', atkDisadvantageSkillId: 'ts_018', defBalanceSkillId: 'ts_149', atkAdvantageSkillId: 'ts_355', defAdvantageSkillId: 'ts_032', defDisadvantageSkillId: 'ts_204', aptitude: 'leverage' , attackStyle: 'attack'},
+    dongxian_sunbin: { generalId: 'dongxian_sunbin', tier: 'famous', tacticalSkillId: 'ts_018', strategicSkillId: 'str_20', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_211', atkDisadvantageSkillId: 'ts_902', defBalanceSkillId: 'ts_149', atkAdvantageSkillId: 'ts_900', defAdvantageSkillId: 'ts_901', defDisadvantageSkillId: 'ts_160', aptitude: 'leverage' , attackStyle: 'attack'},
 
 
 
@@ -2358,7 +2358,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    hu_d_husansheng: { generalId: 'hu_d_husansheng', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_318', atkAdvantageSkillId: 'ts_154', atkBalanceSkillId: 'ts_046', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_405', defDisadvantageSkillId: 'ts_190', aptitude: 'leverage' , attackStyle: 'attack'},
+    hu_d_husansheng: { generalId: 'hu_d_husansheng', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_584', atkAdvantageSkillId: 'ts_154', atkBalanceSkillId: 'ts_046', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_405', defDisadvantageSkillId: 'ts_190', aptitude: 'leverage' , attackStyle: 'attack'},
 
 
 
