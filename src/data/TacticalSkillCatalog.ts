@@ -2204,7 +2204,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
         magnitude: 0.167, engineStatus: 'ready',
     },
     {
-        id: 'ts_340', ownerName: '徐达', ownerGeneralId: 'xuan_xuda', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 340,
+        id: 'ts_340', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 340,
         displayName: '陷城夺都', sourceQuote: '【徐达】《明史·徐达传》：洪武元年克大都，元帝北奔，夺其国都。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.2, engineStatus: 'ready',
@@ -3563,7 +3563,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         note: '坚壁挫敌：五丈原坚壁（长平坚壁已留廉颇）',
     },
     {
-        id: 'ts_654', usageTag: '攻击', situationTag: '优势', ownerName: '徐达', ownerGeneralId: 'xuan_xuda', layer: 'tactical', series: 'enhance', index: 654,
+        id: 'ts_654', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 654,
         displayName: '廓清摧坚', sourceQuote: '《史传》徐达：北伐连克山东河南直捣大都',
         baseEffect: 'ally_power_mult', condition: 'battle_field', phase: 'opening_roll',
         magnitude: 1.2, engineStatus: 'ready',
@@ -3717,7 +3717,7 @@ const UNIQUE_T1_TAIL: TacticalSkillEntry[] = [
         note: '【宇文泰】T0/T1精锐·三势精修·势create·优',
     },
     {
-        id: 'ts_679', ownerName: '徐达', ownerGeneralId: 'xuan_xuda', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 679,
+        id: 'ts_679', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 679,
         displayName: '分军迭进', sourceQuote: '【徐达】《明史·徐达传》：帅诸将分道并进，迭攻山东河南。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.2, engineStatus: 'ready',
@@ -4678,6 +4678,24 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
         baseEffect: 'recompute_comeback', condition: 'ratio_underdog', phase: 'mid_battle_comeback', comebackThreshold: 0.8,
         magnitude: 1, engineStatus: 'ready',
     },
+    {
+        id: 'ts_998', ownerName: '徐达', ownerGeneralId: 'xuan_xuda', layer: 'tactical', series: 'fate', index: 998,
+        displayName: '兵略如神', sourceQuote: '【徐达】朱元璋评“受命而出，成功而旋”。',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_999', ownerName: '徐达', ownerGeneralId: 'xuan_xuda', layer: 'tactical', series: 'counter', index: 999,
+        displayName: '迭阵摧敌', sourceQuote: '【徐达】分军迭进，阵阵摧敌。',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.8, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_1000', ownerName: '徐达', ownerGeneralId: 'xuan_xuda', layer: 'tactical', series: 'casualty', index: 1000,
+        displayName: '坚垒挫锋', sourceQuote: '【徐达】坚垒挫敌攻势。',
+        baseEffect: 'recompute_comeback', condition: 'ratio_underdog', phase: 'mid_battle_comeback', comebackThreshold: 0.8,
+        magnitude: 1, engineStatus: 'ready',
+    },
 ];
 
 export const TACTICAL_SKILL_ENTRIES_V1: TacticalSkillEntry[] = [
@@ -5485,7 +5503,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_651: '班超',
     ts_652: '班超',
     ts_653: '司马懿',
-    ts_654: '徐达',
     ts_655: '司马懿',
     ts_656: '徐达',
     ts_657: '乐毅',
@@ -5683,6 +5700,9 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_995: '成吉思汗',
     ts_996: '成吉思汗',
     ts_997: '成吉思汗',
+    ts_998: '徐达',
+    ts_999: '徐达',
+    ts_1000: '徐达',
 };
 
 export function getSkillCharacter(skillId: string): string | undefined {

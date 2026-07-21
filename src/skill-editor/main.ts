@@ -25,8 +25,7 @@ let GENERALS: GeneralRow[] = [];
 let TIERS: Record<string, Record<string, number | [number, number]>> = {};
 let CONDITIONS: string[] = [];
 let selectedId: string | null = null;
-let sortKey: string | null = null;
-let sortDir: 1 | -1 = 1;
+let sortStack: { key: string; dir: 1 | -1 }[] = [];
 /** 典故主→其拥有的在役技数（renderList 排序前重算，供"按人数排"用） */
 let ownerCount = new Map<string, number>();
 
@@ -214,40 +213,35 @@ function sixClassDisplay(s: SkillRow): string {
 
 function renderList(): void {
     const rows = applyFilters();
-    if (sortKey) {
-        // 按人数排"典故主"列前，先重算每个典故主的技数。
-        // 只数【当前筛选后可见的行 rows】而非全表 SKILLS——否则被筛选隐藏的技（如某人只显示在册技时其不在册技仍被计入）会让计数≠所见，
-        // 出现「显示 6 条却按 7 条排」的错位（2026-07-22 修）。
-        if (sortKey === 'owner') {
+    if (sortStack.length > 0) {
+        // 重算典故主人数的时机与单列排序一致：用当前可见 rows
+        if (sortStack.some(s => s.key === 'owner')) {
             ownerCount = new Map();
             for (const s of rows) if (s.ownerName) ownerCount.set(s.ownerName, (ownerCount.get(s.ownerName) ?? 0) + 1);
         }
         rows.sort((a, b) => {
-            // 典故主列排序：默认技能数多的在前；再点列头倒序（少的在前）。无典故主恒排最后。
-            //   同技能数时在册优先，再按名字、id（这些 tie-break 不随方向翻转，保持稳定分组）。
-            if (sortKey === 'owner') {
-                const hasA = !!a.ownerName, hasB = !!b.ownerName;
-                if (hasA !== hasB) return hasA ? -1 : 1; // 无典故主恒排最后，不受方向影响
-                if (hasA) {
-                    const ca = ownerCount.get(a.ownerName!) ?? 0;
-                    const cb = ownerCount.get(b.ownerName!) ?? 0;
-                    if (ca !== cb) return (cb - ca) * sortDir; // sortDir=1 多在前；-1 少在前（倒序）
-                    const ga = a.ownerGeneralId ? 0 : 1, gb = b.ownerGeneralId ? 0 : 1;
-                    if (ga !== gb) return ga - gb; // 同数量时在册优先
-                    const nc = (a.ownerName ?? '').localeCompare(b.ownerName ?? '', 'zh');
-                    if (nc !== 0) return nc; // 同名相邻
+            for (const { key, dir } of sortStack) {
+                if (key === 'owner') {
+                    const hasA = !!a.ownerName, hasB = !!b.ownerName;
+                    if (hasA !== hasB) return hasA ? -1 : 1;
+                    if (hasA) {
+                        const ca = ownerCount.get(a.ownerName!) ?? 0;
+                        const cb = ownerCount.get(b.ownerName!) ?? 0;
+                        if (ca !== cb) return (cb - ca) * dir;
+                        const ga = a.ownerGeneralId ? 0 : 1, gb = b.ownerGeneralId ? 0 : 1;
+                        if (ga !== gb) return ga - gb;
+                        const nc = (a.ownerName ?? '').localeCompare(b.ownerName ?? '', 'zh');
+                        if (nc !== 0) return nc;
+                    }
+                    const ic = parseInt(a.id.replace('ts_', ''), 10) - parseInt(b.id.replace('ts_', ''), 10);
+                    if (ic !== 0) return ic;
+                    continue;
                 }
-                return parseInt(a.id.replace('ts_', ''), 10) - parseInt(b.id.replace('ts_', ''), 10);
-            }
-            const va = sortValue(a, sortKey!), vb = sortValue(b, sortKey!);
-            const c = typeof va === 'number' && typeof vb === 'number'
-                ? va - vb
-                : String(va).localeCompare(String(vb), 'zh');
-            if (c !== 0) return c * sortDir;
-            // 人数相同的典故主分到一起（同名相邻），再按 id
-            if (sortKey === 'owner') {
-                const nc = (a.ownerName ?? '').localeCompare(b.ownerName ?? '', 'zh');
-                if (nc !== 0) return nc;
+                const va = sortValue(a, key), vb = sortValue(b, key);
+                const c = typeof va === 'number' && typeof vb === 'number'
+                    ? va - vb
+                    : String(va).localeCompare(String(vb), 'zh');
+                if (c !== 0) return c * dir;
             }
             return parseInt(a.id.replace('ts_', ''), 10) - parseInt(b.id.replace('ts_', ''), 10);
         });
@@ -255,12 +249,14 @@ function renderList(): void {
     for (const th of document.querySelectorAll('.se-sortable')) {
         const k = (th as HTMLElement).dataset.sort!;
         const base = (th.textContent ?? '').replace(/[▲▼]\s*$/, '').trim();
-        if (k === sortKey) {
-            // 典故主列 sortDir=1 表示「多在前」（由多到少 ▼）；其它列 sortDir=1 为升序 ▲
+        const entry = sortStack.find(s => s.key === k);
+        if (entry) {
+            const n = sortStack.indexOf(entry) + 1;
             const arrow = k === 'owner'
-                ? (sortDir === 1 ? '▼' : '▲')
-                : (sortDir === 1 ? '▲' : '▼');
-            th.innerHTML = `${base}<span class="se-sort-arrow">${arrow}</span>`;
+                ? (entry.dir === 1 ? '▼' : '▲')
+                : (entry.dir === 1 ? '▲' : '▼');
+            const num = n > 1 ? String(n) + ' ' : '';
+            th.innerHTML = `${base}<span class="se-sort-arrow">${num}${arrow}</span>`;
         } else {
             th.innerHTML = base;
         }
@@ -1017,8 +1013,13 @@ for (const th of document.querySelectorAll('.se-sortable')) {
         const k = (th as HTMLElement).dataset.sort!;
         // 所有列一致：点一次排序、再点倒序，绝不动筛选器 —— 必须全部显示。
         // 典故主列首点=技能数多的在前，再点=少的在前。
-        if (sortKey === k) sortDir = sortDir === 1 ? -1 : 1;
-        else { sortKey = k; sortDir = 1; }
+        const idx = sortStack.findIndex(s => s.key === k);
+        if (idx >= 0) {
+            const entry = sortStack[idx];
+            entry.dir = entry.dir === 1 ? -1 : 1;
+        } else {
+            sortStack.unshift({ key: k, dir: 1 });
+        }
         renderList();
     });
 }
