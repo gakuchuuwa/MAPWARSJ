@@ -3333,13 +3333,15 @@ export class CombatUI {
             // 摇摆周期放慢 3 倍，使得拉锯显得厚重沉稳
             const t = performance.now() / 1200;
             const swing = (Math.sin(t) * 0.8 + Math.sin(t * 1.4) * 0.2) * swingAmp;
-            attPct = Math.max(2, Math.min(98, baseAttPct + swing));
+            // 【防碰壁静止】：动态收缩基准线，确保 swingAmp 完整的摇摆空间不被 98/2 硬墙切平
+            const safeBase = Math.max(2 + swingAmp, Math.min(98 - swingAmp, baseAttPct));
+            attPct = safeBase + swing;
         } else {
             // 第三幕·三段式剧本（2026-07-18 主人定）：崩溃 → 僵持 → 断崖。
-            // 不再跟实时比：入幕真实比 r0 → 僵持线 r1（胜方 78%）→ 崖底（97/3）；
-            // 断崖段 u^4 陡降，落差大半压在最后一小段——"最后秒，一大截到底"；
-            // 终局 100/0 由 showBattleOutcome 定格收束（撞底+爆闪+勝字弹出）
-            if (this.collapseStartAttPct === null) this.collapseStartAttPct = baseAttPct;
+            if (this.collapseStartAttPct === null) {
+                // 【防碰壁静止】：为最后阶段的颤动（振幅 1.2）和断崖（97/3）预留空间，最大 95.5，绝不碰 98 墙
+                this.collapseStartAttPct = Math.max(4.5, Math.min(95.5, baseAttPct));
+            }
             const r0 = this.collapseStartAttPct;
             const attackerAhead = r0 >= 50;
             // 僵持线不回拉：入幕已越线（如 90%）就原地僵持，防"败方回光"的倒放假象
@@ -3347,9 +3349,9 @@ export class CombatUI {
             const rCliff = attackerAhead ? 97 : 3;
             const s = Math.min(1, (progress - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
             if (s < 0.4) {
-                // 崩溃段：加速滑向僵持线
+                // 崩溃段：加速滑向僵持线，同时保留微弱的角力感防止碾压局画面静止
                 const u = s / 0.4;
-                attPct = r0 + (r1 - r0) * u * u;
+                attPct = r0 + (r1 - r0) * u * u + Math.sin(performance.now() / 600) * 0.8;
             } else if (s < 0.75) {
                 // 僵持段：最后抵抗——细颤不推进
                 attPct = r1 + Math.sin(performance.now() / 300) * 1.2;
@@ -3358,6 +3360,7 @@ export class CombatUI {
                 const u = (s - 0.75) / 0.25;
                 attPct = r1 + (rCliff - r1) * Math.pow(u, 4);
             }
+            // 这里作为绝对兜底，由于上方已有安全边距预留，理论上不再会切平波峰波谷
             attPct = Math.max(2, Math.min(98, attPct));
         }
 
