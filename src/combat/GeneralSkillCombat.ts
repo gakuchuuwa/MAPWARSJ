@@ -10,6 +10,7 @@ import {
     getGeneralProfile,
     getStrategicSkillDef,
     getTacticalSkillDef,
+    CONSCRIPT_DEFEATED_SKILL,
     PASS_GARRISON_DEFENSE_SKILL,
     REGION_CENTER_DEFENSE_SKILL,
     REINFORCEMENT_JOIN_SKILL,
@@ -2117,6 +2118,37 @@ function applyPostBattleTroopPct(
         }
     }
     return bonus;
+}
+
+/**
+ * 整编归伍（全员通用系统技，静默不飘字）：胜方战后收编败军。
+ * rate = 以少胜多 ? 30% : 15%（敌开战总兵为基数），全侧按存活军团兵力分摊，逐军团封顶 maxTroops。
+ * 每支存活胜方军团都会走一遍封顶，因此顺带兜底「招降纳叛」等逐将加兵造成的溢出（不再突破军团上限）。
+ * 须在恢复 + applyPostBattleStrategicBonus（招降纳叛 +10%）之后调用，作为收编与统一封顶的最后一步。
+ */
+export function applyPostBattleConscription(
+    winnerSurvivingUnits: IBattleUnit[],
+    loserInitialTotalTroops: number,
+    isUnderdogWin: boolean,
+): number {
+    const alive = winnerSurvivingUnits.filter((u) => u.troops > 0);
+    if (alive.length === 0) return 0;
+
+    const rate = isUnderdogWin
+        ? CONSCRIPT_DEFEATED_SKILL.underdogRate
+        : CONSCRIPT_DEFEATED_SKILL.baseRate;
+    const pool = Math.floor(Math.max(0, loserInitialTotalTroops) * rate);
+    const denom = alive.reduce((s, u) => s + u.troops, 0) || 1;
+
+    let added = 0;
+    for (const u of alive) {
+        const share = pool > 0 ? Math.floor(pool * (u.troops / denom)) : 0;
+        const before = u.troops;
+        // min(…, maxTroops)：收编不突破军团上限；share=0 时仍执行，兜底招降纳叛溢出
+        u.setTroops(Math.min(u.troops + share, u.maxTroops));
+        added += u.troops - before;
+    }
+    return added;
 }
 
 export function applyPostBattleStrategicBonus(
