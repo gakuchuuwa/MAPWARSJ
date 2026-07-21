@@ -3350,8 +3350,12 @@ export class CombatUI {
             const s = Math.min(1, (progress - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
             if (s < 0.4) {
                 // 崩溃段：加速滑向僵持线，同时保留微弱的角力感防止碾压局画面静止
+                // 双频叠加：/600 慢波出厚重感，/300 快波与僵持段同频——冻结窗口（约 1.36s）
+                // 即使恰好对齐慢波波峰，快波也保证窗口内必有肉眼可见的摆动
                 const u = s / 0.4;
-                attPct = r0 + (r1 - r0) * u * u + Math.sin(performance.now() / 600) * 0.8;
+                attPct = r0 + (r1 - r0) * u * u
+                    + Math.sin(performance.now() / 600) * 0.8
+                    + Math.sin(performance.now() / 300) * 0.4;
             } else if (s < 0.75) {
                 // 僵持段：最后抵抗——细颤不推进
                 attPct = r1 + Math.sin(performance.now() / 300) * 1.2;

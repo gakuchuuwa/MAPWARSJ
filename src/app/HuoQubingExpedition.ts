@@ -27,6 +27,10 @@ import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 /** 起兵坐标：灵仙东北约10km，不触发攻城 */
 const START_POS = { lat: 39.9561, lng: 114.7440 };
 const START_CITY_ID = 'city_daixian';
+/** 霍去病真正的家 = 肃州首都酒泉（STARTING_CAPITALS['suzhou']）。其精锐番号恰为「轻勇骑」= 本脚本 ELITE_NAME，
+ *  故功成交回普通 AI 后，即便被自动远征按家城精锐改名，也仍是「轻勇骑」（no-op）——与岳飞郾城=背嵬军同理。
+ *  ⚠️ 起兵点(START_CITY_ID=代县/灵仙)只是出发地，≠ 家；家必须是酒泉，否则 FindTarget 无出发点→打完呆立。*/
+const HOME_CITY_ID = 'city_jiuquan';
 const FACTION_ID = 'suzhou';
 const GENERAL_ID = 'suzhou_huoqubing';
 const ELITE_NAME = '轻勇骑';
@@ -539,8 +543,9 @@ export class HuoQubingExpedition {
                 this.pauseUntilMs = Date.now() + 15000;
                 return;
             }
-            // 播报完再停
+            // 播报完再停：在停表这一刻做完成收尾（补真家酒泉、转普通军团）。此后 tick 不再跑。
             if (Date.now() >= this.pauseUntilMs) {
+                this.finishHandoff(army);
                 this.stop();
             }
             return;
@@ -862,6 +867,26 @@ export class HuoQubingExpedition {
             }
         }
         return true; // 刚脱离战斗
+    }
+
+    /**
+     * 封狼居胥功成收尾：交回普通 AI 前把远征军转为「有家可依的普通精锐军团」，避免打完贝加尔呆立。
+     *  ① 家 = 终点贝加尔（已归汉/suzhou，同势力合法锚点）：否则 homeCityId=null →
+     *     getArmyOriginCityId 返回 null → FindTarget「无出发点」直接 FAILURE → 军团呆立不动。
+     *     岳飞脚本保留郾城为家，故打完黄龙府能正常转为普通军团、无此问题。
+     *  ② 结束远征资格 → 转普通军团（不再断粮不回，也不再被自动远征逻辑按新家改番号）。
+     *  ③ 保持精锐 + 主将 + 番号：tickLegionTiers 对「isElite && generalId」的军团跳过升档改名，
+     *     番号稳定保持「轻勇骑」，不会按新家贝加尔改成「丁零游骑」。
+     * 只在 stop() 这一刻调用（tick 随即停，不再被每帧的 expeditionUnlocked=true 覆盖）。
+     */
+    private finishHandoff(army: ScriptArmy): void {
+        // 家 = 酒泉/肃州（霍去病真正的家）：交回普通 AI 后 FindTarget 有出发点 → 不呆立。
+        // 酒泉精锐番号 = 「轻勇骑」= ELITE_NAME，故即便功成后被自动远征按家城精锐改名，也仍是「轻勇骑」，
+        // 无可见变化（与岳飞郾城=背嵬军同理）——因此无需 cancelFollow，霍去病可作为肃州·轻勇骑继续征战。
+        army.homeCityId = HOME_CITY_ID;
+        army.expeditionTargetCityId = null;
+        army.isElite = true;
+        army.name = ELITE_NAME;
     }
 
     /** 停止脚本推进（军团仍留在场上） */
