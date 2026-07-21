@@ -476,7 +476,7 @@ const CASUALTY: TacticalSkillEntry[] = [
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.09, engineStatus: 'ready'},
     {
-        id: 'ts_033', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', layer: 'tactical', series: 'casualty', index: 33,
+        id: 'ts_033', layer: 'tactical', series: 'casualty', index: 33,
         displayName: '绝境逆搏', sourceQuote: '《左传·宣公十二年》：“困兽犹斗，况国相乎！”',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
         magnitude: 1.25, engineStatus: 'ready',
@@ -578,13 +578,6 @@ const UNIQUE_T0: TacticalSkillEntry[] = [
         displayName: '所向无前', ownerName: '李世民', ownerGeneralId: 'tang_lishimin', sourceQuote: '《旧唐书·太宗本纪》：“义旗跃马，所向无前。”',
         baseEffect: 'ally_power_mult', condition: 'enemy_famous_general', phase: 'opening_roll',
         magnitude: 1.2, engineStatus: 'ready',
-    },
-    {
-        id: 'ts_052', layer: 'tactical', series: 'enhance', index: 52,
-        displayName: '封狼居胥', sourceQuote: '《汉书·霍去病传》：“封狼居胥山，禅于姑衍。”',
-        baseEffect: 'ally_power_mult', condition: 'first_sortie', phase: 'opening_roll',
-        magnitude: 1.2, engineStatus: 'ready',
-        note: '【霍去病】T0专属；轻骑驰突全域适用（2026-07-11 连战模拟校准：原首战门控致连攻第2场起无战术技）',
     },
     {
         id: 'ts_053', ownerName: '吴起', ownerGeneralId: 'wei_wuqi', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 53,
@@ -1191,7 +1184,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_167', layer: 'tactical', series: 'casualty', index: 167,
-        displayName: '守死遏敌', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】睢阳守死遏叛军',
+        displayName: '守死遏敌', sourceQuote: '【张巡】睢阳守死遏叛军',
         baseEffect: 'lose_enemy_casualty_boost', condition: 'battle_siege_defender', phase: 'post_battle',
         magnitude: 1.5, engineStatus: 'ready',
         note: '守城城破身死，咬人：胜方本场战损×2（睢阳死守，杀敌十二万，蔽遮江淮）；胜方保底存活 10% 初始兵',
@@ -1861,7 +1854,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_279', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 279,
-        displayName: '雷厉摧锋', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】死守睢阳面中六矢岿然不动，雷厉风行摧破敌锋。',
+        displayName: '雷厉摧锋', sourceQuote: '【张巡】死守睢阳面中六矢岿然不动，雷厉风行摧破敌锋。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.18, engineStatus: 'ready',
         note: '同源：张巡·睢阳',
@@ -1905,7 +1898,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_286', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 286,
-        displayName: '凭险摧锐', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】《新唐书·张巡传》：守睢阳十月，耗光叛军锐气，凭险摧锐。',
+        displayName: '凭险摧锐', sourceQuote: '【张巡】《新唐书·张巡传》：守睢阳十月，耗光叛军锐气，凭险摧锐。',
         baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
         magnitude: 0.8, engineStatus: 'ready',
     },
@@ -2101,7 +2094,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_320', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'enhance', index: 320,
-        displayName: '婴城拒逆', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】《新唐书·张巡传》：死守睢阳，婴城拒敌。',
+        displayName: '婴城拒逆', sourceQuote: '【张巡】《新唐书·张巡传》：死守睢阳，婴城拒敌。',
         baseEffect: 'recompute_comeback', condition: 'ratio_underdog', phase: 'mid_battle_comeback', comebackThreshold: 0.8,
         magnitude: 1, engineStatus: 'ready',
         note: '同源：张巡·睢阳',
@@ -2467,7 +2460,7 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_385', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'enhance', index: 385,
-        displayName: '嚼齿吞贼', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】《新唐书·忠义传》：巡守睢阳，嚼齿吞贼，至死骂不绝口。',
+        displayName: '嚼齿吞贼', sourceQuote: '【张巡】《新唐书·忠义传》：巡守睢阳，嚼齿吞贼，至死骂不绝口。',
         baseEffect: 'negate_enemy_skill', condition: 'battle_siege_defender', phase: 'opening_roll',
         magnitude: 0.8, engineStatus: 'ready',
         note: '同源：耿恭·疏勒',
@@ -3378,7 +3371,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
         note: '同源：张巡·雍丘（前误挂）；【松赞干布】T1精锐·三势精修·势create·均',
     },
     {
-        id: 'ts_617', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 617,
+        id: 'ts_617', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 617,
         displayName: '据山遏敌', sourceQuote: '【张巡】《新唐书·张巡传》：守雍丘据城遏制叛军；草人借箭、夜缒突袭。',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.2, engineStatus: 'ready',
@@ -4279,17 +4272,17 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
     { id: 'ts_704', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 704, displayName: '据垒固守', ownerName: '郝昭', sourceQuote: '【郝昭】《三国志·明帝纪》注引《魏略》：守陈仓据垒固守，拒诸葛亮二十余日。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_705', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 705, displayName: '伏锐歼敌',  ownerName: '班超', ownerGeneralId: 'xiyuduhu_banchao', sourceQuote: '【班超】《后汉书·班超传》：以少击众，设伏大破莎车。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.8, engineStatus: 'ready', note: '同源：班超·破莎车' },
     { id: 'ts_706', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 706, displayName: '钓野诱歼', ownerName: '岛津家久', ownerGeneralId: 'satsuma_daojinjiajiu', sourceQuote: '【岛津家久】日本战国岛津家"钓野伏"诱敌合围。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.8, engineStatus: 'ready' },
-    { id: 'ts_707', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'counter', index: 707, displayName: '草人诱射', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】《新唐书·张巡传》：睢阳草人借箭，智守孤城。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.8, engineStatus: 'ready' },
+    { id: 'ts_707', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'counter', index: 707, displayName: '草人诱射', sourceQuote: '【张巡】《新唐书·张巡传》：睢阳草人借箭，智守孤城。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.8, engineStatus: 'ready' },
     { id: 'ts_708', ownerName: '王翦', ownerGeneralId: 'ruo_wangjian', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'troop', index: 708, displayName: '石炮摧锋', sourceQuote: '投石机摧毁敌军先锋，攻城利器，如襄阳炮等多将皆有。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.8, engineStatus: 'ready', note: '同源：王翦系腾位（灭楚缓攻）' },
     { id: 'ts_709', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'troop', index: 709, displayName: '据险摧敌', ownerName: '王坚', ownerGeneralId: 'hezhou_wangjian', sourceQuote: '【王坚】《宋史·王坚传》：钓鱼城据险毙蒙哥。', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.8, engineStatus: 'ready' },
     { id: 'ts_710', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'fate', index: 710, displayName: '斩将肃阵', ownerName: '关羽', ownerGeneralId: 'chu_guanyu', sourceQuote: '【关羽】《三国志·关羽传》：斩颜良解白马围，万军之中取上将首级。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', luckMin: 0.6, luckMax: 1.4, magnitude: 1, engineStatus: 'ready', note: '斩将肃阵：万军取首' },
-    { id: 'ts_711', layer: 'tactical', series: 'fate', index: 711, displayName: '穷搜死战', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】睢阳粮尽，掘鼠雀穷搜死战抗击燕军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'post_battle', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '同源：张巡·睢阳（【穷搜死战】三势精修·劣局）' },
+    { id: 'ts_711', layer: 'tactical', series: 'fate', index: 711, displayName: '穷搜死战', sourceQuote: '【张巡】睢阳粮尽，掘鼠雀穷搜死战抗击燕军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'post_battle', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready', note: '同源：张巡·睢阳（【穷搜死战】三势精修·劣局）' },
     { id: 'ts_712', ownerName: '耿恭', ownerGeneralId: 'chagatai_genggong', layer: 'tactical', series: 'fate', index: 712, displayName: '溃师复振', sourceQuote: '疏勒城据险死拒，匈奴数月攻之不下。', baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback', magnitude: 1, comebackThreshold: 0.8, engineStatus: 'ready', note: '同源：耿恭·疏勒' },
     { id: 'ts_713', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 713, displayName: '据险死拒', ownerName: '耿恭', ownerGeneralId: 'chagatai_genggong', sourceQuote: '疏勒城据险死拒，匈奴数月攻之不下。', baseEffect: 'ally_power_mult', condition: 'always', phase: 'mid_battle_passive', magnitude: 1.2, engineStatus: 'ready', note: '同源：耿恭·疏勒（【据险死拒】三势精修·劣局）' },
     { id: 'ts_714', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 714, displayName: '攻坚摧碉', ownerName: '阿桂', ownerGeneralId: 'agui', sourceQuote: '【阿桂】清平大小金川以火炮攻坚摧碉堡。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.18, engineStatus: 'ready' },
     { id: 'ts_715', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'troop', index: 715, displayName: '矫制绝诛', ownerName: '陈汤', ownerGeneralId: 'quli_chentang', sourceQuote: '【陈汤】《汉书·陈汤传》：矫诏发兵灭郅支单于。', baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops', magnitude: 0.18, engineStatus: 'ready' },
     { id: 'ts_717', ownerName: '关羽', ownerGeneralId: 'chu_guanyu', layer: 'tactical', series: 'casualty', index: 717, displayName: '刮骨溃围', sourceQuote: '【关羽】《三国志·关羽传》：刮骨疗毒；麦城溃围。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '刮骨溃围：麦城绝境' },
-    { id: 'ts_718', layer: 'tactical', series: 'casualty', index: 718, displayName: '据垒死守', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', sourceQuote: '【张巡】《新唐书·忠义传》：巡守睢阳，以数千卒抗贼十余万，据垒死守十月，城陷杀敌十二万。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.2, engineStatus: 'ready', note: '【据垒死守】三势精修·劣局' },
+    { id: 'ts_718', layer: 'tactical', series: 'casualty', index: 718, displayName: '据垒死守', sourceQuote: '【张巡】《新唐书·忠义传》：巡守睢阳，以数千卒抗贼十余万，据垒死守十月，城陷杀敌十二万。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.2, engineStatus: 'ready', note: '【据垒死守】三势精修·劣局' },
     { id: 'ts_719', ownerName: '曹操', ownerGeneralId: 'cao_d_caocao', layer: 'tactical', series: 'casualty', index: 719, displayName: '火攻溃围', sourceQuote: '【曹操】《三国志·武帝纪》：长社夜以火攻溃黄巾之围。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle', magnitude: 1.25, engineStatus: 'ready', note: '【火攻溃围】三势精修·劣局' },
     { id: 'ts_720', ownerName: '刘邦', ownerGeneralId: 'han_d_liubang', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 720, displayName: '整众反击', sourceQuote: '【刘邦】《史记·高祖本纪》：彭城溃后整众，与楚相持荥阳，伺机反击。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.2, engineStatus: 'ready' },
     { id: 'ts_722', layer: 'tactical', series: 'troop', index: 722, displayName: '孤军渡江', situationTag: '均势', ownerName: '祖逖', ownerGeneralId: 'yuzhou_zuti', sourceQuote: '孤军渡江', baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.8, engineStatus: 'ready', note: '【孤军渡江】三势精修·劣局' },
@@ -4328,7 +4321,7 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     { id: 'ts_754', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'fate', index: 754, displayName: '偃旗息鼓', ownerName: '赵云', ownerGeneralId: 'jingmen_zhaoyun', sourceQuote: '【赵云】《三国志·赵云传》：汉水空营偃旗息鼓退曹军。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'mid_battle_passive', magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready' },
     { id: 'ts_756', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 756, displayName: '单刀赴会', ownerName: '关羽', ownerGeneralId: 'chu_guanyu', sourceQuote: '【关羽】《三国志·关羽传》：单刀赴鲁肃宴，胆略脱身。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_757', ownerName: '郝昭', layer: 'tactical', series: 'counter', index: 757, displayName: '壁垒森严', sourceQuote: '【郝昭】《三国志·明帝纪》注引《魏略》：昭守陈仓，诸葛亮进攻二十余日，不能克，乃引去。', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready', note: '壁垒森严：陈仓据守' },
-    { id: 'ts_758', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 758, displayName: '坚如磐石', sourceQuote: '【张巡】《旧唐书·张巡传》：守睢阳，城中粮尽，巡忠义激励，守备弥坚，蔽遮江淮。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready', note: '坚如磐石：睢阳死守' },
+    { id: 'ts_758', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 758, displayName: '坚如磐石', sourceQuote: '【张巡】《旧唐书·张巡传》：守睢阳，城中粮尽，巡忠义激励，守备弥坚，蔽遮江淮。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready', note: '坚如磐石：睢阳死守' },
     { id: 'ts_759', ownerName: '三十六计', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 759, displayName: '反客为主', sourceQuote: '【刘备】《三国志·先主传》：入蜀助璋，反客为主取益州。', baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive', magnitude: 0.1, engineStatus: 'ready', note: '【并战计·借】反客为主；三十六计' },
     { id: 'ts_760', usageTag: '双行', ownerName: '周武王', layer: 'tactical', series: 'counter', index: 760, displayName: '将计就计', situationTag: '均势', sourceQuote: '《尚书·武成》牧野之战商军前徒倒戈，敌军战术反助我方', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
     { id: 'ts_761', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 761, displayName: '草船借箭', ownerName: '孙权', ownerGeneralId: 'sunwu_d_sunquan', sourceQuote: '【诸葛亮】草船借箭化敌之攻为己用，以智取胜。', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 0.5, engineStatus: 'ready' },
@@ -4402,6 +4395,42 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
         displayName: '取食于敌', sourceQuote: '【霍去病】《史记·卫将军骠骑列传》：“取食于敌，卓行殊远”，轻装奔袭。',
         baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
         magnitude: 0.20, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_850', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', layer: 'tactical', series: 'enhance', index: 850,
+        displayName: '缚藁为人', sourceQuote: '【张巡】《新唐书·张巡传》：雍丘城中矢尽，巡缚藁为人千余，被黑衣夜缒城下，贼争射之，得箭数十万。',
+        baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
+        magnitude: 1.20, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_851', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', layer: 'tactical', series: 'troop', index: 851,
+        displayName: '斩将夷城', sourceQuote: '【张巡】《新唐书·张巡传》：令狐潮数万围雍丘，巡以千余守军屡出奇兵，斩其骁将，焚其器械，竟不能下。',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        magnitude: 0.18, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_852', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', layer: 'tactical', series: 'fate', index: 852,
+        displayName: '奇谋迭出', sourceQuote: '【张巡】《新唐书》赞巡用兵不依古法，或火攻或诱敌或伏击，出奇无穷。',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_853', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', layer: 'tactical', series: 'counter', index: 853,
+        displayName: '衔枚斫营', sourceQuote: '【张巡】《新唐书·张巡传》：巡于雍丘夜率勇士衔枚袭贼营，斩首数千，贼众大溃。',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.8, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_854', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', layer: 'tactical', series: 'casualty', index: 854,
+        displayName: '杀妾飨士', sourceQuote: '【张巡】《新唐书·张巡传》：睢阳粮尽，巡杀爱妾飨士，城中感泣，众心益固。',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.20, engineStatus: 'ready',
+    },
+    {
+        id: 'ts_855', ownerName: '张巡', ownerGeneralId: 'liang_d_zhangxun', layer: 'tactical', series: 'fate', index: 855,
+        displayName: '诈降设伏', sourceQuote: '【张巡】《新唐书·张巡传》：雍丘被围，巡偃旗息鼓示以空城，复诈降约期，至夜突袭斩骁将焚营垒，贼大溃。',
+        baseEffect: 'recompute_comeback', condition: 'ratio_underdog', phase: 'mid_battle_comeback', comebackThreshold: 0.8,
+        magnitude: 1, engineStatus: 'ready',
     },
 ];
 
@@ -4501,7 +4530,7 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_034: 'ai_defensive', ts_035: 'star_survival', ts_036: 'star_survival', ts_037: 'star_survival',
     ts_039: 'common', ts_040: 'star_survival', ts_041: 'common', ts_043: 'common',
     ts_044: 'common', ts_045: 'ai_defensive', ts_046: 'common', ts_047: 'common',
-    ts_048: 'ai_defensive', ts_049: 'common', ts_051: 'limited', ts_052: 'limited',
+    ts_048: 'ai_defensive', ts_049: 'common', ts_051: 'limited',
     ts_053: 'limited', ts_054: 'limited', ts_056: 'limited', ts_057: 'limited',
     ts_058: 'limited', ts_059: 'limited', ts_060: 'limited', ts_061: 'limited',
     ts_063: 'limited', ts_064: 'limited', ts_065: 'limited', ts_066: 'limited',
@@ -4677,6 +4706,7 @@ export const TACTICAL_ASSIGN_TIER: Readonly<Record<string, TacticalAssignTier>> 
     ts_822: 'common',
     ts_830: 'common', ts_831: 'common',
     ts_840: 'common', ts_841: 'common',
+    ts_850: 'common', ts_851: 'common', ts_852: 'common', ts_853: 'common', ts_854: 'common', ts_855: 'common',
 };
 
 export function getTacticalAssignTier(skillId: string): TacticalAssignTier | null {
@@ -5448,6 +5478,12 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_831: '岳飞',
     ts_840: '霍去病',
     ts_841: '霍去病',
+    ts_850: '张巡',
+    ts_851: '张巡',
+    ts_852: '张巡',
+    ts_853: '张巡',
+    ts_854: '张巡',
+    ts_855: '张巡',
 };
 
 export function getSkillCharacter(skillId: string): string | undefined {
