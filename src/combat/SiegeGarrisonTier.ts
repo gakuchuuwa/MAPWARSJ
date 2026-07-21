@@ -64,7 +64,11 @@ export function reconcileSiegeGarrisonBoostWithLegions(
     }
 }
 
-/** 为被攻城池判定是否需补发将领/精锐 */
+/** 为被攻城池判定是否需补发将领/精锐。
+ *  ⚠️ 铁律「谁占城谁得将/精锐」：将/精锐锚定 cityId，与旗号无关。占领方守城被攻时，
+ *  本城的武将+精锐照样为占领方守城（例：大清占宁远→袁崇焕+关宁铁骑守城）。
+ *  **禁止**在此加 `if (city.factionId !== anchorFaction) return` 同旗判定——曾有此闸，
+ *  2026-07-21 已删除，勿加回。详见 docs/GAME_DIRECTION.md「谁占城谁得将／精锐」节。 */
 export function assignSiegeGarrisonTier(
     city: SiegeGarrisonCity,
     defendingLegions: Army[],
