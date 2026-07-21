@@ -1002,16 +1002,7 @@ $('list-body').addEventListener('dblclick', (e) => {
 for (const th of document.querySelectorAll('.se-sortable')) {
     th.addEventListener('click', () => {
         const k = (th as HTMLElement).dataset.sort!;
-        if (k === 'owner') {
-            // 典故主列：循环过滤 全部 → 在册 → 不在册 → 全部，并保持组内人数降序
-            sortKey = 'owner'; sortDir = 1;
-            const sel = $('f-owner') as HTMLSelectElement;
-            const cycle = ['', 'registered', 'unregistered'];
-            const idx = cycle.indexOf(sel.value);
-            sel.value = cycle[(idx + 1) % 3];
-            renderList();
-            return;
-        }
+        // 典故主列与其它列一致：只排序（在册>不在册>无，组内人数降序），绝不动筛选器 —— 必须全部显示
         if (sortKey === k) sortDir = sortDir === 1 ? -1 : 1;
         else { sortKey = k; sortDir = 1; }
         renderList();

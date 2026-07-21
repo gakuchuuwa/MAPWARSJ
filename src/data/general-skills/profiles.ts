@@ -88,7 +88,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    liang_d_zhangxun: { generalId: 'liang_d_zhangxun', tier: 'famous', tacticalSkillId: 'ts_167', strategicSkillId: 'str_05', atkAdvantageSkillId: 'ts_279', atkBalanceSkillId: 'ts_711', atkDisadvantageSkillId: 'ts_320', defBalanceSkillId: 'ts_385', defDisadvantageSkillId: 'ts_718', defAdvantageSkillId: 'ts_398', aptitude: 'reverse' , attackStyle: 'defense'},
+    liang_d_zhangxun: { generalId: 'liang_d_zhangxun', tier: 'famous', tacticalSkillId: 'ts_167', strategicSkillId: 'str_05', atkAdvantageSkillId: 'ts_850', atkBalanceSkillId: 'ts_852', atkDisadvantageSkillId: 'ts_854', defBalanceSkillId: 'ts_853', defDisadvantageSkillId: 'ts_855', defAdvantageSkillId: 'ts_851', aptitude: 'reverse' , attackStyle: 'defense'},
 
 
 
@@ -1689,7 +1689,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    suzhou_huoqubing: { generalId: 'suzhou_huoqubing', tier: 'famous', tacticalSkillId: 'ts_240', advantageSkillId: 'ts_052', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_422', atkAdvantageSkillId: 'ts_240', atkBalanceSkillId: 'ts_232', atkDisadvantageSkillId: 'ts_841', defAdvantageSkillId: 'ts_359', defBalanceSkillId: 'ts_840', defDisadvantageSkillId: 'ts_198', strategicSkillId: 'str_22', aptitude: 'create', attackStyle: 'attack' },
+    suzhou_huoqubing: { generalId: 'suzhou_huoqubing', tier: 'famous', tacticalSkillId: 'ts_240', advantageSkillId: 'ts_240', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_422', atkAdvantageSkillId: 'ts_240', atkBalanceSkillId: 'ts_232', atkDisadvantageSkillId: 'ts_841', defAdvantageSkillId: 'ts_359', defBalanceSkillId: 'ts_840', defDisadvantageSkillId: 'ts_198', strategicSkillId: 'str_22', aptitude: 'create', attackStyle: 'attack' },
 
 
 
@@ -2218,7 +2218,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    fangla_fangla: { generalId: 'fangla_fangla', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_052', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_020', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_408', defDisadvantageSkillId: 'ts_542', aptitude: 'leverage' , attackStyle: 'attack'},
+    fangla_fangla: { generalId: 'fangla_fangla', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_005', atkBalanceSkillId: 'ts_395', atkDisadvantageSkillId: 'ts_020', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_408', defDisadvantageSkillId: 'ts_542', aptitude: 'leverage' , attackStyle: 'attack'},
 
 
 
