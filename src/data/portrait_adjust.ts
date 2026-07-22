@@ -867,11 +867,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/BASHU/cong_puhu.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/LINGNAN/jingjiang_qushisi.png": {
             "scale": 1.06,
             "offsetX": 0,
@@ -5847,11 +5842,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 22
         },
-        "/assets/BASHU/__闲置__BASHU_08.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": -13
-        },
         "/assets/BASHU/__闲置__BASHU_07.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5938,9 +5928,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/BASHU/__闲置__BASHU_16.png": {
-            "scale": 0.94,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": -15
+            "offsetY": -7
         },
         "/assets/BASHU/kui_gongsunshu.png": {
             "scale": 0.96,
@@ -5961,6 +5951,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/BASHU/cong_puhu.png": {
+            "scale": 0.98,
+            "offsetX": 1,
+            "offsetY": -13
         }
     },
     "folderGuides": {
