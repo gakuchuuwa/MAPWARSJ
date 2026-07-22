@@ -622,11 +622,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/NORTH/lai_wangshifan.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/NORTH/huo_songlaosheng.png": {
             "scale": 0.9,
             "offsetX": 0,
@@ -4228,9 +4223,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -17
         },
         "/assets/NORTH/__闲置__NORTH_02.png": {
-            "scale": 1.15,
-            "offsetX": 21,
-            "offsetY": -11
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
         },
         "/assets/CENTRAL/yingzhou_d2_licunxu.png": {
             "scale": 0.95,
@@ -4463,9 +4458,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/NORTH/__闲置__NORTH_03.png": {
-            "scale": 1.1,
+            "scale": 1.01,
             "offsetX": 0,
-            "offsetY": -45
+            "offsetY": -13
         },
         "/assets/NORTH/wangyan_wangyan.png": {
             "scale": 1,
@@ -5951,6 +5946,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/NORTH/lai_wangshifan.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -45
         }
     },
     "folderGuides": {
