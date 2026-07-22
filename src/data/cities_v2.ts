@@ -1267,16 +1267,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_qingxi', name: '帮源洞', factionId: 'fangla', lat: 29.6, lng: 119.04, type: 'small_city', troops: 30000, region: 'JIANGNAN' },
 
     // ── 2026-05-25 北宋辽金势力 v2 ──
-    {
-        id: 'city_dengzhou',
-        name: '蓬莱',
-        factionId: 'yang_aner',
-        lat: 37.82, lng: 120.72,
-        type: 'small_city',
-        troops: 30000,
-        tier: 4,
-        
-        note: '蓬莱；天顺小城', region: 'NORTH' },
+    { id: 'city_dengzhou', name: '蓬莱', factionId: 'yang_aner', lat: 37.82, lng: 120.72, type: 'small_city', troops: 20000, region: 'NORTH' },
+
     { id: 'city_jiaoxi', name: '黔陬', factionId: 'tongma', lat: 36.228777, lng: 119.924011, type: 'small_city', troops: 30000, region: 'CENTRAL' },
 
 

@@ -264,7 +264,7 @@ export class CityAssetManager {
 'fangla': '方',
 
 'zhongxiang': '鼎',
-        'yang_aner': '登',
+'yang_aner': '登',
         'jinan': '历',
         'dixiang': '帝乡',
 'liwang': '河间',

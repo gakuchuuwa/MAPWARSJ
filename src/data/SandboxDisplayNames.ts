@@ -252,7 +252,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
     // ── 2026-05-25 北宋辽金势力 v2 ──
 'zhongxiang': '鼎',
-    'yang_aner': '登',
+'yang_aner': '登',
     'jinan': '历',
     'dixiang': '新',
 'liwang': '河间',

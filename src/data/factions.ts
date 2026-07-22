@@ -476,7 +476,8 @@ export const FACTIONS: Faction[] = [
 
 
       // 旗号钟楚（政权国号，非单字截）；钟相@武陵
-    { id: 'yang_aner', name: '天顺' },          // 红袄赤 - 杨安儿天顺政权(登州)
+    { id: 'yang_aner', name: '天顺' },
+          // 红袄赤 - 杨安儿天顺政权(登州)
     { id: 'jinan', name: '济南' },
     // 草原金 - 德寿身圣政权(信州)
     { id: 'liwang', name: '河间' },
