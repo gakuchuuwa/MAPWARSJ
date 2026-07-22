@@ -55,7 +55,8 @@ export type TacticalBaseEffect =
     | 'nullify_enemy_opening_cut'
     | 'battle_duration_mult'    // 战斗时长乘区：<1=加速结束，>1=拖延
     | 'first_sortie_power_mult'
-    | 'first_sortie_comeback_mult';
+    | 'first_sortie_comeback_mult'
+    | 'self_casualty_reduction'; // 减己损（胜战计·全：避实就虚保全自己）
 
 /** 触发条件（观众可辨者优先） */
 export type TacticalSkillCondition =
@@ -183,7 +184,8 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
     // 胜战·全（攻减敌兵 / 守加己兵）
     enemy_sub_troops_opening: 'shengzhan',
     dual_sub_troops_opening: 'shengzhan',
-    ally_add_troops_opening: 'shengzhan', // 守加己兵=胜战（原误归混战；现无技能用此效果，幽灵映射）
+    ally_add_troops_opening: 'shengzhan',
+    self_casualty_reduction: 'shengzhan', // 减己损：避实就虚保全自己
     // 敌战·衡（更随机）
     luck_variance_self: 'dizhan',
     luck_variance_enemy: 'dizhan',
