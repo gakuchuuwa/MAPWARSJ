@@ -46,6 +46,8 @@ import { YuefeiExpedition } from './YuefeiExpedition'; // 岳飞北伐黄龙 圆
 import { HuoQubingExpedition } from './HuoQubingExpedition'; // 霍去病封狼居胥 脚本
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { initUnattendedStream } from './UnattendedStream'; // 无人值守直播（?stream=1）
+import { GameSaveManager } from './GameSaveManager'; // 世界存档（跨天续摊）
+import { SaveLoadUI } from '../ui/SaveLoadUI'; // 存档/读档界面
 import { audioManager, type AudioManager } from '../audio/AudioManager';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { SpeechVoiceToggle } from '../ui/SpeechVoiceToggle';
@@ -107,6 +109,7 @@ export class GameApp {
     public yuefeiExpedition!: YuefeiExpedition; // 岳飞北伐黄龙 圆梦脚本
     public huoqubingExpedition!: HuoQubingExpedition; // 霍去病封狼居胥 脚本
     public audioManager: AudioManager = audioManager;
+    public saveManager!: GameSaveManager; // 世界存档（跨天续摊）
 
     // Game Loop
     public lastFrameTime: number = 0;
@@ -597,6 +600,11 @@ export class GameApp {
 
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
+
+            // 世界存档（跨天续摊）：存/读由人主动点，刷新绝不自动读档；自动存档每 10 分钟覆盖当天档。
+            this.saveManager = new GameSaveManager(this);
+            new SaveLoadUI(this.saveManager).init();
+            this.saveManager.startAutoSave();
             this.map.getLeafletMap().on('dragstart', () => {
                 // [2026-06-23 Fix] 不要自动取消，允许玩家拥有弹性拖拽体验
                 // if (this.cameraFollowUI?.isFollowing()) {

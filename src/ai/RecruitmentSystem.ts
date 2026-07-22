@@ -67,6 +67,15 @@ export class RecruitmentSystem {
      * 用户点击「播放」并开始运行后出兵（仅一次，不等第一个 15 秒季度）
      * 条件与 trySpawnLegions 相同：大城/中城/小城/关隘、无现役军、90% 兵力 ≥ MIN_ARMY_SIZE
      */
+    /**
+     * 读档后必须调用：世界已由存档恢复，禁止再执行「开局首次出兵」。
+     * 否则 ① 会在已成型的中盘局面上从各无军据点批量刷新军团；
+     *      ② runInitialSpawn 开头的 trimLegionsToCap() 会把读档强制加入（force）的军团削掉。
+     */
+    public markInitialSpawnDone(): void {
+        this.hasRunInitialSpawn = true;
+    }
+
     public runInitialSpawn(): void {
         if (this.hasRunInitialSpawn) return;
         this.hasRunInitialSpawn = true;
