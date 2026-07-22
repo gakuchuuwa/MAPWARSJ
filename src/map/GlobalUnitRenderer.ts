@@ -891,11 +891,13 @@ export class GlobalUnitRenderer {
                     ctx, { x: centerPoint.x, y: centerPoint.y },
                     state, directionIndex, siegeScale, Date.now(), sX, sY,
                     'archer', -1.2, -1.0, unit.id || 'unknown',
+                    unit.factionId || 'panjun', troops,
                 );
                 LegionPhalanxDrawer.drawSiegeSoldier(
                     ctx, { x: centerPoint.x, y: centerPoint.y },
                     state, directionIndex, siegeScale, Date.now(), sX, sY,
                     'archer', +1.2, -1.0, unit.id || 'unknown',
+                    unit.factionId || 'panjun', troops,
                 );
             }
 

@@ -3443,7 +3443,7 @@ const UNIQUE_T1_GENERAL3: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_633', ownerGeneralId: 'wu_sunwu', usageTag: '双行', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 633,
-        displayName: '庙算先胜', ownerName: '孙武', ownerGeneralId: 'wu_sunwu', sourceQuote: '【孙武】《孙子兵法·计篇》：夫未战而庙算胜者，得算多也。',
+        displayName: '庙算先胜', ownerName: '孙武', sourceQuote: '【孙武】《孙子兵法·计篇》：夫未战而庙算胜者，得算多也。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.2, engineStatus: 'ready',
         note: '同源：孙武·庙算（与庙算制胜同典）',
@@ -4503,7 +4503,6 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
         magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
     {
-            {
         id: 'ts_940', ownerName: '白起', ownerGeneralId: 'xin_baiqi', layer: 'tactical', series: 'troop', index: 940,
         displayName: '尽歼无遗', sourceQuote: '【白起】《史记·白起列传》：前后斩首虏四十五万，尽歼无遗。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
