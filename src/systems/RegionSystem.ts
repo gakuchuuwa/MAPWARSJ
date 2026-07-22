@@ -61,6 +61,36 @@ export const REGION_LABELS: Record<RegionType, string> = {
     CENTRAL_ASIA: '中亚'
 };
 
+/**
+ * [文化正式名] 战斗面板等玩家可见处显示的「文化」名称（2026-07-22 主人定案）。
+ *
+ * ⚠️ 与上面的 REGION_LABELS 是【两套独立的东西，勿混用、勿合并】：
+ *   - REGION_LABELS：区域标签，供语音播报、据点编辑器下拉等既有用途，本表改动与之无关。
+ *   - CULTURE_NAMES：文化正式名，仅供玩家可见的文化展示。
+ * 改其中一套不影响另一套，这是主人明确要求的分离。
+ */
+export const CULTURE_NAMES: Record<RegionType, string> = {
+    CENTRAL: '中原',
+    NORTH: '河朔',
+    JIANGNAN: '江南',
+    BASHU: '川蜀',
+    HEXI: '河西',
+    LINGNAN: '岭南',
+    STEPPE: '蒙古',
+    NORTHEAST: '东北',
+    TIBET: '青藏',
+    WESTERN: '西域',
+    CENTRAL_ASIA: '中亚',
+    DIANQIAN: '滇缅',
+    KOREA: '朝鲜',
+    JAPAN: '日本',
+};
+
+/** 取文化正式名（未知区兜底中原） */
+export function getCultureName(region: RegionType | null | undefined): string {
+    return (region && CULTURE_NAMES[region]) || CULTURE_NAMES.CENTRAL;
+}
+
 // [LEGACY] 向后兼容旧 region 字符串
 // cities_v2.ts 里有 58 处旧 region 字段。此映射只处理 "纯改名" 情况
 // （旧区和新区的地理范围完全一致，只是名字变了）。
