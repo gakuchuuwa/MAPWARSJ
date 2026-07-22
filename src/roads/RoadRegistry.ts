@@ -410,20 +410,6 @@ export class RoadRegistry {
             return null;
         }
 
-        // 同城：返回仅含起点坐标的零长路径，避免上层因空坐标报「找不到路」
-        if (startNodeId === endNodeId) {
-            const city = this.getCityById(startNodeId);
-            const coord: [number, number] = city
-                ? [city.lng, city.lat]
-                : [0, 0];
-            return {
-                nodes: [startNodeId],
-                edges: [],
-                totalDistance: 0,
-                coordinates: [coord],
-            };
-        }
-
         const cached = this.getDijkstraFrom(startNodeId);
         if (!cached) return null;
         return this.buildPathResult(startNodeId, endNodeId, cached.distances, cached.prev);
@@ -512,13 +498,6 @@ export class RoadRegistry {
         sourceCityId?: string
     ): { lat: number; lng: number }[] {
         const start = { lat: startPos.lat, lng: startPos.lng };
-
-        // 同城：军团已在目标城，无需行军
-        if (sourceCityId === targetCityId) {
-            const city = this.getCityById(targetCityId);
-            if (city) return [start, { lat: city.lat, lng: city.lng }];
-            return [start];
-        }
 
         const cityRoute = this.buildCityAnchoredPath(start, targetCityId, sourceCityId);
         const cityLeg = this.offRoadFirstLeg(start, cityRoute);
