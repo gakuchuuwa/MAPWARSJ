@@ -154,6 +154,7 @@ export function isTacticalEffectImplemented(effect: TacticalBaseEffect): boolean
         case 'luck_lock_self':
         // ── 战损系（Step2 已接 BattleField update/resolve）──
         case 'win_casualty_reduction':
+        case 'self_casualty_reduction':
         case 'elite_casualty_reduction':
         case 'post_recovery_rate':
         case 'lose_enemy_casualty_boost':
@@ -225,6 +226,7 @@ export function resolveMidBattleCasualtyReduction(
         if (!entry) continue;
         if (
             entry.baseEffect !== 'win_casualty_reduction'
+            && entry.baseEffect !== 'self_casualty_reduction'
             && entry.baseEffect !== 'elite_casualty_reduction'
         ) continue;
         if (!isTacticalSkillActive(entry, ctx)) continue;
