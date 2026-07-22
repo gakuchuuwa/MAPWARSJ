@@ -446,10 +446,10 @@ const _FIXED: Record<string, string> = {
     'zhai_han': '#DC4858', // 自动分配 (邻域相斥)
     'liu': '#397F36', // 自动分配 (邻域相斥)
     'ouyue': '#4DCE49', // 自动分配 (邻域相斥)
-    'xibo_d': '#B84A90', // 自动分配 (邻域相斥)
+    'xibo_d': '#3A5A7A', // 锡伯（草原蓝）
     'liangshidu': '#528644', // 自动分配 (邻域相斥)
     'linshihong': '#1E9B91', // 自动分配 (邻域相斥)
-    'xijue': '#A8416C', // 自动分配 (邻域相斥)
+    'xijue': '#6A5848', // 西爵（草原褐）
     'tujishi': '#714988', // 自动分配 (邻域相斥)
     'xiaobolu': '#6A7888', // 勃律（青灰，没谨忙）
     'qiufu': '#8B56AB', // 自动分配 (邻域相斥)
@@ -461,7 +461,7 @@ const _FIXED: Record<string, string> = {
     'liwang': '#F0CC52', // 自动分配 (邻域相斥)
     'dongxia': '#CEC6BC', // 东夏·女真尚白
     'kereyid': '#5350B3', // 自动分配 (邻域相斥)
-    'tatar': '#5F3B87', // 自动分配 (邻域相斥)
+    'tatar': '#3A5A7B', // 塔塔尔（草原蓝）
     'merkit': '#ECE8E1', // 蔑儿乞（伯颜·元系灰白）
     'luoping': '#DC4852', // 自动分配 (邻域相斥)
     'chendiaoyan': '#AC2A72', // 自动分配 (邻域相斥)
@@ -469,7 +469,7 @@ const _FIXED: Record<string, string> = {
     'dixiang': '#C41E27', // 帝乡（王莽·汉系赤红）
     'yezongliu': '#2195A0', // 自动分配 (邻域相斥)
     'dada_ming': '#A6D43C', // 自动分配 (邻域相斥)
-    'oirat_ming': '#D728D2', // 自动分配 (邻域相斥)
+    'oirat_ming': '#585858', // 卫拉特（草原灰）
     'jianzhou_nvzhen': '#DCD8D2', // 建州女真（李满住·金系骨白）
     'haixi_nvzhen': '#DCD8D3', // 海西女真（拜音达里·金系骨白）
     'yeren_nvzhen': '#DCD8D4', // 野人女真（博克·金系骨白）
@@ -493,7 +493,7 @@ const _FIXED: Record<string, string> = {
     'pingnan': '#7A1423', // 平南（沐英·明系深绛）
     'qianhui': '#A9B527', // 自动分配 (邻域相斥)
     'miao_qing': '#219323', // 自动分配 (邻域相斥)
-    'tuoming': '#B03166', // 自动分配 (邻域相斥)
+    'tuoming': '#6A5849', // 拓明（草原褐）
     'yilou': '#A53C68', // 自动分配 (邻域相斥)
     'wuji': '#64AF95', // 自动分配 (邻域相斥)
     'mohe': '#DCD8D1', // 靺鞨（完颜宗翰·金系骨白）
@@ -508,7 +508,7 @@ const _FIXED: Record<string, string> = {
     'yujiulu': '#4FA871', // 自动分配 (邻域相斥)
     'ashide': '#629F3A', // 自动分配 (邻域相斥)
     'jalair': '#ECE8E2', // 札剌亦儿（木华黎·元系灰白）
-    'hongirad': '#8D345B', // 自动分配 (邻域相斥)
+    'hongirad': '#3C5A7A', // 弘吉剌（草原蓝）
     'choros': '#4DAA4A', // 自动分配 (邻域相斥)
     'ladakh': '#5C2820', // 拉达克（暗绛褐，僧格朗杰）
     'ganden': '#C89830', // 格鲁（黄帽派，宗喀巴）
@@ -557,7 +557,7 @@ const _FIXED: Record<string, string> = {
     'li_s': '#C41E2A', // 扶风马氏（马援·汉系赤红）
     'leizhou': '#73B7BE', // 自动分配 (邻域相斥)
     'golog': '#7E6041', // 果洛（土金，完德扎西）
-    'tushetu': '#9046AB', // 自动分配 (邻域相斥)
+    'tushetu': '#3C5A7B', // 土谢图（草原蓝）
     tumed: '#B8A060', // 土默特·精骑（草原金）
     'she': '#C36DA6', // 自动分配 (邻域相斥)
     'liao': '#C565D9',
@@ -577,7 +577,7 @@ const _FIXED: Record<string, string> = {
     'nanjie': '#5E2820', // 南杰/日土（暗绛褐，南杰旺秋）
     'gandenpozhang': '#5A2821', // 甘丹颇章（暗绛褐，第巴桑结嘉措）
     'dawoer': '#B155A2', // 自动分配 (邻域相斥)
-    'tumengken': '#BB3188', // 自动分配 (邻域相斥)
+    'tumengken': '#6C5848', // 土门肯（草原褐）
     'liren': '#DF66D3', // 自动分配 (邻域相斥)
     'gling': '#7A6040', // 岭国（土金，囊谦千户）
     'khyungpo': '#7C6042', // 琼波（土金，琼波邦色）
@@ -591,7 +591,7 @@ const _FIXED: Record<string, string> = {
     'hor': '#C8C0B8', // 霍尔（蒙古尚白，赤桑）
     'dong': '#7E6040', // 董氏（土金，囊谦加波）
     'bailang': '#70C867', // 自动分配 (邻域相斥)
-    'duolu': '#7048BC', // 自动分配 (邻域相斥)
+    'duolu': '#3C5A7C', // 咄陆（草原蓝）
     'dulan': '#7A5C3E', // 都兰（柴达木赭褐，台吉乃尔）
     'zhuxie': '#2FA09E', // 自动分配 (邻域相斥)
     'kawusi': '#C4808E', // 自动分配 (邻域相斥)
@@ -619,7 +619,7 @@ const _FIXED: Record<string, string> = {
     'kaerka': '#C4A030', // 喀尔喀·黄旗（与准噶尔黑对举）
     'huihu': '#C24A2E', // 回鹘·可汗朱红袍
     'wuzhumuqin': '#49A198', // 自动分配 (邻域相斥)
-    'xingan': '#D13AD6', // 自动分配 (邻域相斥)
+    'xingan': '#5A6A4A', // 兴安（草原绿）
     'zhadalan': '#5D833A', // 自动分配 (邻域相斥)
     'zhuerqi': '#81BBAE', // 自动分配 (邻域相斥)
     'chechen': '#635DD3', // 自动分配 (邻域相斥)
@@ -677,7 +677,7 @@ const _FIXED: Record<string, string> = {
     'kuye': '#56CE72', // 自动分配 (邻域相斥)
     'dongping': '#7D92C1', // 自动分配 (邻域相斥)
     'maomingan': '#5F9FB8', // 自动分配 (邻域相斥)
-    'bulat': '#831F9A', // 自动分配 (邻域相斥)
+    'bulat': '#5A6878', // 布拉特（草原蓝灰）
     'buriat': '#9C4F36', // 自动分配 (邻域相斥)
     'xianhai': '#79823D', // 自动分配 (邻域相斥)
     'nandou': '#9A7A58', // 难兜（沙褐，苏失利）
@@ -699,13 +699,13 @@ const _FIXED: Record<string, string> = {
     xiayang_d: '#C41E30', // 夏阳（邓禹·汉系赤红）
     maer_d: '#7A5C3A', // 马尔吉亚纳·沙漠绿洲褐
     wugu_d: '#4A6B3A', // 乌古斯·草原青绿
-    adao_d: '#5A4A6A', // 阿克苏道·军台靛紫
+    adao_d: '#D4A52E', // 阿克苏道（清系明黄）
     wuyuan_d: '#6A5A48', // 五原郡·长城土褐
-    chenli_d: '#4A3848', // 撑犁·祭天玄紫
+    chenli_d: '#3A5A6A', // 撑犁（长生天蓝）
     nuoyan_d: '#5A6850', // 诺颜·喀尔喀青灰
     wuli_d: '#4D5D6D', // 乌里·军台靛灰
     jiluo_d: '#6F5D45', // 稽落·燕然土黄
-    heisha_d: '#3A3848', // 黑沙·漠北玄灰
+    heisha_d: '#383430', // 黑沙（漠北暖灰）
     kumoxi: '#587868', // 库莫奚·饶乐水松漠青
 
     zhengzhou: '#3F4F5F',

@@ -268,7 +268,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -27
         },
         "/assets/litang/qianzhou_lisheng.png": {
-            "scale": 1.07,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": 1
         },
@@ -5951,6 +5951,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": -45
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_29.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/litang/xinping_guoziyi.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 4
         }
     },
     "folderGuides": {
