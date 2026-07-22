@@ -208,7 +208,6 @@ export class HuoQubingExpedition {
     private isHuoQubingArmy(army: ScriptArmy): boolean {
         if (army.isDestroyed || army.getTroops() <= 0) return false;
         if (army.generalId === GENERAL_ID) return true;
-        if (army.homeCityId === START_CITY_ID && army.name === ELITE_NAME) return true;
         return false;
     }
 
@@ -243,8 +242,6 @@ export class HuoQubingExpedition {
     /** 切跟随并恢复/启动北伐脚本 */
     private resumeOrStartScript(army: ScriptArmy): void {
         this.armyId = army.id;
-        army.expeditionUnlocked = true;
-        army.isElite = true;
         if (!army.generalId) army.generalId = GENERAL_ID;
         this.attachFollowAndMarch(army);
     }
@@ -397,6 +394,11 @@ export class HuoQubingExpedition {
         if (existing) {
             const before = existing.getTroops();
             existing.setTroops(before + CLICK_REINFORCE_TROOPS);
+            // 增援时重置瞬态标志（避免 completed 残留导致立即 stop、避免假阳性 tickQushi/重锁）
+            this.wasInCombat = false;
+            this.battleJustEnded = false;
+            this.pauseUntilMs = 0;
+            this.completed = false;
             this.resumeOrStartScript(existing);
             gameLog(
                 'expedition',

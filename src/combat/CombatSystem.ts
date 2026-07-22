@@ -1,4 +1,4 @@
-import { calculateBattleDurationSec, resolveBattleDurationByPowerRatio, GameConfig } from '../config/GameConfig';
+import { resolveBattleDurationByPowerRatio, GameConfig } from '../config/GameConfig';
 import { sumCultureAdjustedTroops } from '../systems/CultureCombat';
 import {
     rollSideEffectivePowerWithOpeningFate,
@@ -128,7 +128,7 @@ export class Battle {
     }
 
     /**
-     * 目标时长由总兵力决定（5–60 游戏秒，仅控伤害节奏）；战至一侧兵力归零。
+     * 非双将战固定 9 秒，双将战按有效战力比取 30/45 秒。
      */
     private calculateBattleParameters(): {
         targetDuration: number;
@@ -182,13 +182,12 @@ export class Battle {
         }
 
         // 3. Calculate Combat Duration (Physics Pacing)
-        const totalTroops = this.attacker.troops + this.defender.troops;
         const bothHaveGeneral = !!(this.attacker.generalId && this.defender.generalId);
         // 双将战：按八环乘完的有效战力比取两档（均势 45 / 优势·劣势 30）
-        // 其余：沿用按兵力插值的旧曲线
+        // 其余：固定 9 秒（不存在双方纯兵对打——守城城防必然带将）
         let calculatedDuration = bothHaveGeneral
             ? resolveBattleDurationByPowerRatio(attPower / Math.max(1, defPower))
-            : CombatSystem.calculateCombatDuration(totalTroops, false);
+            : GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
 
 
 
@@ -360,11 +359,6 @@ export class Battle {
 import { BattleField } from './BattleField';
 
 export class CombatSystem {
-    // [NEW] Static helper for duration calculation (Dynamic Interpolation)
-    public static calculateCombatDuration(totalTroops: number, hasGeneral = false): number {
-        return calculateBattleDurationSec(totalTroops, { hasGeneral });
-    }
-
     // [NEW] Global event for RTS trigger
     public onBattleStart?: (battle: Battle) => void;
     /** 沙盒 1v1 野战结束（用于第三方排队接战） */

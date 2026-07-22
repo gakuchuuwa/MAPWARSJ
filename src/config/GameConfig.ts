@@ -107,13 +107,12 @@ export class GameConfig {
         TIMELINE_END_YEAR: 1912
     };
     static COMBAT = {
-        /** 自动战斗时长：游戏秒，按双方总兵力在 [MIN, MAX] 间线性插值 */
-        BATTLE_DURATION_MIN_SEC: 5,
         /**
          * 双方都有武将时的时长下限（游戏秒）。
          * 三幕墙钟预算 12+12+6（开战句 / 双方技能 / 溃败），比例 40/40/20 → 下限 30。
          */
         BATTLE_DURATION_MIN_WITH_GENERAL_SEC: 30,
+        /** 导演时长钳制上限（游戏秒） */
         BATTLE_DURATION_MAX_SEC: 60,
         /**
          * 双将战只有两档时长，按开战「有效战力比」（八环乘完之后）定：
@@ -124,9 +123,7 @@ export class GameConfig {
          */
         BATTLE_DURATION_BALANCE_SEC: 45,
         BATTLE_DURATION_DECIDED_SEC: 30,
-        /** 双方总兵力达到此值时取 MAX 时长 */
-        BATTLE_DURATION_TROOPS_SCALE: 100000,
-        /** 并非双方都有武将时（纯兵 / 一方有将）：固定 9 秒 */
+        /** 一方有将（非双将战）：固定 9 秒 */
         BATTLE_DURATION_PARTIAL_GENERAL_SEC: 9,
         THRESHOLD_SMALL: 20000,
         THRESHOLD_LARGE: 100000,
@@ -321,12 +318,12 @@ export class GameConfig {
 }
 
 /**
- * 钳制到 [min, MAX] 游戏秒（导演时长 / 事件配置均须走此函数）。
- * @param minSec 可选下限；有将战斗传 WITH_GENERAL，默认无将 MIN。
+ * 钳制到 [floor, MAX] 游戏秒（导演时长 / 事件配置均须走此函数）。
+ * @param minSec 可选下限；双将战传 WITH_GENERAL(30)，默认非双将 9s。
  */
 export function clampBattleDurationSec(seconds: number, minSec?: number): number {
     const c = GameConfig.COMBAT;
-    const floor = minSec ?? c.BATTLE_DURATION_MIN_SEC;
+    const floor = minSec ?? c.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
     return Math.min(
         c.BATTLE_DURATION_MAX_SEC,
         Math.max(floor, seconds)
@@ -377,26 +374,6 @@ export function resolveBattleDurationByPowerRatio(selfOverOpponent: number): num
         selfOverOpponent <= SITUATION_ADVANTAGE_RATIO
         && selfOverOpponent >= SITUATION_DISADVANTAGE_RATIO;
     return inBalance ? c.BATTLE_DURATION_BALANCE_SEC : c.BATTLE_DURATION_DECIDED_SEC;
-}
-
-/**
- * 按参战总兵力计算战斗目标时长（游戏秒）。
- * 无将：5–60；有将：下限抬到 WITH_GENERAL（插值仍按兵力，但不得低于该地板）。
- */
-export function calculateBattleDurationSec(
-    totalTroops: number,
-    opts?: { hasGeneral?: boolean },
-): number {
-    const c = GameConfig.COMBAT;
-    const minSec = opts?.hasGeneral
-        ? c.BATTLE_DURATION_MIN_WITH_GENERAL_SEC
-        : c.BATTLE_DURATION_MIN_SEC;
-    const ratio = Math.min(1.0, Math.max(0, totalTroops) / c.BATTLE_DURATION_TROOPS_SCALE);
-    // 插值仍以无将 MIN 为底，再抬到有将地板——大兵团曲线不变，小战有将才加长
-    const raw =
-        c.BATTLE_DURATION_MIN_SEC +
-        (c.BATTLE_DURATION_MAX_SEC - c.BATTLE_DURATION_MIN_SEC) * ratio;
-    return clampBattleDurationSec(raw, minSec);
 }
 
 export const PLAYER_SPEED_TIERS = {
