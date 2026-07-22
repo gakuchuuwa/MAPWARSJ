@@ -2465,7 +2465,7 @@ const REQUIRED_STRATEGIC_SKILL_IDS = [
     'str_16', 'str_17', 'str_18',            // 视野
     'str_19', 'str_20', 'str_21',            // 威慑
     'str_22', 'str_23', 'str_24',            // 纵横
-    'str_05', 'str_25', 'str_26', 'str_27',  // 防务
+    'str_05', 'str_25', 'str_26',            // 防务（str_27 屯兵经略 2026-07-22 主人裁定退役：不再作为名将战略技，移出白名单）
 ] as const;
 
 function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
