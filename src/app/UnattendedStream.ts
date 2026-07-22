@@ -1,5 +1,9 @@
 /**
- * UnattendedStream.ts — 无人值守直播模式（URL 带 ?stream=1 时激活）
+ * UnattendedStream.ts — 直播自动接管（两种触发）
+ *
+ * ① 边修边播恢复：上次处于直播态（StreamModeToggle 存 localStorage）→ 刷新后仅自动重新开播，
+ *    不开一统/每日刷新循环（免得开发中被自动整页刷新打断）。解决「刷新忘点直播被当挂机」。
+ * ② 无人值守云机（URL 带 ?stream=1）：完整链路——
  *
  * 云机 24 小时直播链路（全程无人点击）：
  *   1. 开机自启：启动落定后自动走「直播」按钮的一键链路
@@ -25,10 +29,20 @@ export function isUnattendedStream(): boolean {
 }
 
 export function initUnattendedStream(app: GameApp, gameTimeHUD: GameTimeHUD): void {
-    if (!isUnattendedStream()) return;
-    gameLog('startup', '📺 [无人值守] ?stream=1 已激活：自动开播 + 一统重开 + 每日刷新');
+    const unattended = isUnattendedStream();
+    // 刷新前处于直播态（localStorage）→ 刷新后自动恢复开播。解决「边修边播，刷新忘点直播被当挂机」。
+    const resume = StreamModeToggle.wasActive();
+    if (!unattended && !resume) return;
+
+    gameLog('startup', unattended
+        ? '📺 [无人值守] ?stream=1 已激活：自动开播 + 一统重开 + 每日刷新'
+        : '📺 [直播恢复] 刷新前处于直播态，自动重新开播');
 
     window.setTimeout(() => autoStart(app, gameTimeHUD), AUTO_START_DELAY_MS);
+
+    // 一统重开 / 每日刷新兜底：仅无人值守云机（?stream=1）启用；
+    // 边修边播（localStorage 恢复）不启用，免得开发中被自动整页刷新打断。
+    if (!unattended) return;
 
     const bootAt = Date.now();
     let unifiedSince = 0;
