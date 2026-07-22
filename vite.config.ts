@@ -2465,7 +2465,7 @@ const REQUIRED_STRATEGIC_SKILL_IDS = [
     'str_16', 'str_17', 'str_18',            // 视野
     'str_19', 'str_20', 'str_21',            // 威慑
     'str_22', 'str_23', 'str_24',            // 纵横
-    'str_05', 'str_25', 'str_26',            // 防务（str_27 屯兵经略 2026-07-22 主人裁定退役：不再作为名将战略技，移出白名单）
+    // 防务四技 str_05/str_25/str_26/str_27 全部封存为储备技（2026-07-22 主人裁定），不入 REQUIRED、不要求覆盖，见下方 CANONICAL_STRATEGIC_IDS。
 ] as const;
 
 function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
@@ -3084,7 +3084,10 @@ function serverValidateEntities(): {
 
     // 合法战略武将技白名单。str_11 是远征系统默认能力，不占武将战略格；
     // str_02/03/04/08/09 为已退役战斗乘区，不属于可分配战略技。
-    const CANONICAL_STRATEGIC_IDS = new Set<string>(REQUIRED_STRATEGIC_SKILL_IDS);
+    // 【主人定 2026-07-22】防务四技 str_05 坚壁清野、str_25 足食足兵、str_26 招兵买马、str_27 屯兵经略：全部封存为储备技，暂不分配、暂不要求覆盖（以后有机会再用）。
+    //   仍在白名单内 = 合法可佩戴；不入 REQUIRED 表 = 覆盖检查（11.8）不要求有人佩戴。
+    //   注：str_25 封存时仍有 21 名武将沿用旧配置持有；封存只解除「必须覆盖」要求，未剥离持有者。若要真正腾空须另行改配（避免名将战略格落空）。
+    const CANONICAL_STRATEGIC_IDS = new Set<string>([...REQUIRED_STRATEGIC_SKILL_IDS, 'str_05', 'str_25', 'str_26', 'str_27']);
 
     // 【主人定 2026-07-13】战略技允许跨势佩戴（武将 aptitude ≠ 技三势，符合历史即可），
     //   原「STRATEGIC_APTITUDE 三势对照表 + 跨势 warn」已删，勿再加此类校验。
