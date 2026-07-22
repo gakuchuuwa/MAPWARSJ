@@ -1448,7 +1448,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -48
         },
         "/assets/HEXI/guiyi_caoyijin.png": {
-            "scale": 0.87,
+            "scale": 0.85,
             "offsetX": 10,
             "offsetY": -30
         },
@@ -1696,11 +1696,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 16
-        },
-        "/assets/JIANGNAN/ruochu_doulian.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": 7
         },
         "/assets/JIANGNAN/shanyue_sunce.png": {
             "scale": 1.02,
@@ -5882,11 +5877,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -18,
             "offsetY": -28
         },
-        "/assets/JIANGNAN/__闲置__JIANGNAN_27.png": {
-            "scale": 0.87,
-            "offsetX": 0,
-            "offsetY": -22
-        },
         "/assets/JIANGNAN/wuling_xiangdancheng.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5961,6 +5951,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -12
+        },
+        "/assets/xianqin/__闲置__xianqin_35.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/JIANGNAN/ruochu_doulian.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 7
         }
     },
     "folderGuides": {

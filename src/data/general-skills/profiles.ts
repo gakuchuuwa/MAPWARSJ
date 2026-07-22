@@ -392,7 +392,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        manzhou_nuerhachi: { generalId: 'manzhou_nuerhachi', tier: 'famous', tacticalSkillId: 'ts_570', strategicSkillId: 'str_07', advantageSkillId: 'ts_570', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_571', atkAdvantageSkillId: 'ts_058', atkBalanceSkillId: 'ts_810', atkDisadvantageSkillId: 'ts_190', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_403', defDisadvantageSkillId: 'ts_572', aptitude: 'create' , attackStyle: 'attack'},
+        manzhou_nuerhachi: { generalId: 'manzhou_nuerhachi', tier: 'famous', tacticalSkillId: 'ts_570', strategicSkillId: 'str_07', advantageSkillId: 'ts_570', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_572', atkAdvantageSkillId: 'ts_058', atkBalanceSkillId: 'ts_810', atkDisadvantageSkillId: 'ts_190', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_403', defDisadvantageSkillId: 'ts_572', aptitude: 'create' , attackStyle: 'attack'},
 
 
 
@@ -1167,7 +1167,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yueyi_zhangyi: { generalId: 'yueyi_zhangyi', tier: 'famous', tacticalSkillId: 'ts_318', strategicSkillId: 'str_10', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_402', atkBalanceSkillId: 'ts_484', atkDisadvantageSkillId: 'ts_718', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_016', aptitude: 'create' , attackStyle: 'attack'},
+    yueyi_zhangyi: { generalId: 'yueyi_zhangyi', tier: 'famous', tacticalSkillId: 'ts_005', strategicSkillId: 'str_10', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_402', atkBalanceSkillId: 'ts_484', atkDisadvantageSkillId: 'ts_718', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_016', aptitude: 'create' , attackStyle: 'attack'},
 
 
 

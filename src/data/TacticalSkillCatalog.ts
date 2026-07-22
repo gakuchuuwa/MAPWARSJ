@@ -307,7 +307,7 @@ const ENHANCE: TacticalSkillEntry[] = [
         displayName: '擒贼擒王', ownerName: '三十六计', sourceQuote: '《杜甫·前出塞》：“射人先射马，擒贼先擒王。”',
         baseEffect: 'ally_power_mult', condition: 'enemy_famous_general', phase: 'opening_roll',
         magnitude: 1.1, engineStatus: 'ready',
-        note: '同源：关羽·斩颜良（与斩将肃阵同系）',
+        note: '【攻战计·机】擒贼擒王；三十六计；同源：关羽·斩颜良',
     },
     {
         id: 'ts_011', ownerName: '孙武', ownerGeneralId: 'wu_sunwu', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 11,
@@ -333,6 +333,7 @@ const ENHANCE: TacticalSkillEntry[] = [
         displayName: '声东击西', sourceQuote: '《三十六计·第六计》：敌志乱萃，不虞，坤下兑上之象。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.09, engineStatus: 'ready',
+        note: '【胜战计·全】声东击西；三十六计',
     },
 ];
 
@@ -3771,10 +3772,11 @@ const SANSHILIU: TacticalSkillEntry[] = [
         displayName: '瞒天过海', sourceQuote: '三十六计之一，示假隐真，如太史慈突围等多将皆有。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.09, engineStatus: 'ready',
+        note: '【胜战计·全】瞒天过海；三十六计',
     },
     {
-        id: 'ts_390', layer: 'tactical', series: 'troop', index: 390,
-        displayName: '围点打援', ownerName: '三十六计', sourceQuote: '【耿弇】《后汉书·耿弇传》：攻张步，先灭援军而后取城，围点打援。',
+        id: 'ts_390', situationTag: '优势', layer: 'tactical', series: 'troop', index: 390,
+        displayName: '围点打援', sourceQuote: '【耿弇】《后汉书·耿弇传》：攻张步，先灭援军而后取城，围点打援。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.09, engineStatus: 'ready',
         note: '【胜战计·全】孙膑；三十六计补充',
@@ -3860,7 +3862,7 @@ const SANSHILIU: TacticalSkillEntry[] = [
         displayName: '抛砖引玉', sourceQuote: '【李世民】《旧唐书·太宗纪》：浅水原相持，先以轻兵诱敌，敌争利，乃纵骑突击破之。',
         baseEffect: 'ally_power_mult', condition: 'always', phase: 'opening_roll',
         magnitude: 1.1, engineStatus: 'ready',
-        note: '抛砖引玉：浅水原轻兵诱敌',
+        note: '【攻战计·机】抛砖引玉：浅水原轻兵诱敌；三十六计',
     },
     {
         id: 'ts_403', ownerName: '三十六计', layer: 'tactical', series: 'counter', index: 403,
@@ -3995,7 +3997,7 @@ const UNIQUE_T0_REVISE: TacticalSkillEntry[] = [
         id: 'ts_424', ownerName: '韩信', ownerGeneralId: 'xianyu_hanxin', layer: 'tactical', series: 'enhance', index: 424,
         displayName: '囊沙壅流', sourceQuote: '《史记·淮阴侯列传》：万只沙囊壅潍水，待楚军半渡决囊截击。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_field', phase: 'opening_roll',
-        magnitude: 0.18, engineStatus: 'ready',
+        magnitude: 0.167, engineStatus: 'ready',
         note: '【韩信】T0精锐·韩信·势reverse·均局专属（三势精修）',
     },
     {
@@ -4468,7 +4470,7 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_911', ownerName: '李愬', ownerGeneralId: 'yuan_cj_d_lishuo', layer: 'tactical', series: 'fate', index: 911,
-        displayName: '示弱骄敌', sourceQuote: '【李愬】《旧唐书·李愬传》：故示怯弱，骄敌而击之。',
+        displayName: '假怯出奇', sourceQuote: '【李愬】《旧唐书·李愬传》：故示怯弱以骄敌，乘其不备雪夜入蔡州擒吴元济。',
         baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
         magnitude: 1, luckMin: 0.6, luckMax: 1.4, engineStatus: 'ready',
     },
@@ -4691,7 +4693,7 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     },
     {
         id: 'ts_1000', ownerName: '徐达', ownerGeneralId: 'xuan_xuda', layer: 'tactical', series: 'casualty', index: 1000,
-        displayName: '坚垒挫锋', sourceQuote: '【徐达】坚垒挫敌攻势。',
+        displayName: '持重摧坚', sourceQuote: '【徐达】《明史·徐达传》：持重有谋，功高不伐。每遇敌，先为不可胜以待敌之可胜。',
         baseEffect: 'recompute_comeback', condition: 'ratio_underdog', phase: 'mid_battle_comeback', comebackThreshold: 0.8,
         magnitude: 1, engineStatus: 'ready',
     },
@@ -5307,7 +5309,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_387: '钱镠',
     ts_388: '吕布',
     ts_389: '三十六计',
-    ts_390: '三十六计',
     ts_392: '三十六计',
     ts_393: '三十六计',
     ts_395: '三十六计',
