@@ -5512,11 +5512,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/LINGNAN/ryukyu_shangbazhi.png": {
-            "scale": 1.04,
-            "offsetX": 0,
-            "offsetY": -6
-        },
         "/assets/CENTRAL/__闲置__CENTRAL_22.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5956,6 +5951,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 1,
             "offsetY": -13
+        },
+        "/assets/LINGNAN/__闲置__zhaosong_12.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/LINGNAN/ryukyu_shangbazhi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -12
         }
     },
     "folderGuides": {

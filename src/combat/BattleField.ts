@@ -299,11 +299,11 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     private calculateTargetDuration() {
-        // 导演时长：尊重事件配置，只钳 5–60（不强制有将地板，避免剧本短战被抬）
+        // 导演时长：尊重事件配置，只钳 9–60（不强制有将地板，避免剧本短战被抬）
         if (this.customDuration !== undefined && this.customDuration > 0) {
             this.hasDirectorDuration = true;
             this.targetDuration = clampBattleDurationSec(this.customDuration);
-            gameLog('battle', `🎬 [BattleField] 导演时长: ${this.targetDuration.toFixed(1)}s (钳制 5–60)`);
+            gameLog('battle', `🎬 [BattleField] 导演时长: ${this.targetDuration.toFixed(1)}s (钳制 9–60)`);
             return;
         }
 
