@@ -29,28 +29,28 @@ export const CITY_CONFIG: Record<CityType, CityTypeConfig> = {
         maxTroops: 90000,
         initialTroops: 10000,
         growthRate: 0.012,
-        recruitPerSeason: 400,
+        recruitPerSeason: 200,
     },
     medium_city: {       // 中城
         name: '中城',
         maxTroops: 60000,
         initialTroops: 5000,
         growthRate: 0.01,
-        recruitPerSeason: 300,
+        recruitPerSeason: 150,
     },
     small_city: {       // 小城（含渡口，可出兵）
         name: '小城',
         maxTroops: 30000,
         initialTroops: 5000,
         growthRate: 0.008,
-        recruitPerSeason: 200,
+        recruitPerSeason: 100,
     },
     pass: {             // 关隘（可出兵；守城有额外防御系数见 PASS_GARRISON_MULT）
         name: '关隘',
         maxTroops: 60000,
         initialTroops: 10000,
         growthRate: 0.008,
-        recruitPerSeason: 100,
+        recruitPerSeason: 50,
     },
 };
 

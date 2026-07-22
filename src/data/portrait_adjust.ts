@@ -1482,11 +1482,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/HEXI/weiming_lijiqian.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -15
-        },
         "/assets/WESTERN/shache_xian_suoche_shachexian.png": {
             "scale": 0.91,
             "offsetX": 0,
@@ -5946,6 +5941,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 23,
             "offsetY": 14
+        },
+        "/assets/HEXI/__闲置__CENTRAL_21.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/HEXI/xiazhou_lijiqian.png": {
+            "scale": 1.19,
+            "offsetX": 0,
+            "offsetY": 6
         }
     },
     "folderGuides": {

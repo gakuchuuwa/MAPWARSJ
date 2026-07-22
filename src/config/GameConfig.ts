@@ -49,7 +49,7 @@ export class GameConfig {
     };
     static LEGION = {
         SPLIT_BUFFER: 1000,
-        /** @deprecated 乱斗季末补兵见 CityConfig.recruitPerSeason（大400/中300/小200/关100） */
+        /** @deprecated 乱斗季末补兵见 CityConfig.recruitPerSeason（大200/中150/小100/关50） */
         RECRUIT_PER_SEASON: 1000,
         /** 自建军团最低出兵数 */
         MIN_ARMY_SIZE: 10000,
