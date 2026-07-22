@@ -441,7 +441,7 @@ const TROOP: TacticalSkillEntry[] = [
         note: '逆局归队，按开战兵力×0.12补员，封顶开战上限（2026-07-04 由0.2下调）',
     },
     {
-        id: 'ts_027', situationTag: '优势', usageTag: '攻击', layer: 'tactical', series: 'troop', index: 27,
+        id: 'ts_027', ownerName: '韩信', ownerGeneralId: 'xianyu_hanxin', situationTag: '优势', usageTag: '攻击', layer: 'tactical', series: 'troop', index: 27,
         displayName: '四面楚歌', sourceQuote: '《史记·项羽本纪》：汉军及诸侯兵围项羽垓下；夜闻汉军四面皆楚歌，项王大惊。',
         baseEffect: 'enemy_sub_troops_opening', condition: 'battle_siege_attacker', phase: 'pre_opening_troops',
         magnitude: 0.09, engineStatus: 'ready',
