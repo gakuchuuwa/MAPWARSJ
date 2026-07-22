@@ -31,7 +31,7 @@ let ownerCount = new Map<string, number>();
 
 const SIT_ORDER: Record<string, number> = { '优势': 0, '均势': 1, '劣势': 2 };
 const USE_ORDER: Record<string, number> = { '攻击': 0, '双行': 1, '防御': 2 };
-const SIX_ORDER: Record<string, number> = { '攻战计': 0, '胜战计': 1, '敌战计': 2, '混战计': 3, '并战计': 4, '败战计': 5 };
+const SIX_ORDER: Record<string, number> = { '胜战计': 0, '敌战计': 1, '攻战计': 2, '混战计': 3, '并战计': 4, '败战计': 5 };
 function sortValue(s: SkillRow, key: string): number | string {
     switch (key) {
         case 'id': return parseInt(s.id.replace('ts_', ''), 10) || 0;
@@ -122,7 +122,7 @@ app.innerHTML = `
     <span class="se-title">武将技编辑器</span>
     <input id="f-search" placeholder="搜技名 / id / 典故主" style="width:180px">
     <select id="f-sit"><option value="">三势·全部</option><option>优势</option><option>均势</option><option>劣势</option></select>
-    <select id="f-six"><option value="">六类·全部</option><option value="攻战计">攻战计</option><option value="胜战计">胜战计</option><option value="敌战计">敌战计</option><option value="混战计">混战计</option><option value="并战计">并战计</option><option value="败战计">败战计</option><option value="(空)">未标六类</option><option value="(x)">三势跨类</option></select>
+    <select id="f-six"><option value="">六类·全部</option><option value="胜战计">胜战计</option><option value="敌战计">敌战计</option><option value="攻战计">攻战计</option><option value="混战计">混战计</option><option value="并战计">并战计</option><option value="败战计">败战计</option><option value="(空)">未标六类</option><option value="(x)">三势跨类</option></select>
     <select id="f-wear">
         <option value="">佩戴·全部</option>
         <option value="none">无人佩戴</option>
@@ -589,7 +589,7 @@ function runErrorCheck(): void {
                 (genSix.get(w.gid) ?? genSix.set(w.gid, []).get(w.gid)!).push(s.sixClass);
             }
         }
-        const ALL_SIX = ['攻战计', '胜战计', '敌战计', '混战计', '并战计', '败战计'];
+        const ALL_SIX = ['胜战计', '敌战计', '攻战计', '混战计', '并战计', '败战计'];
         for (const g of GENERALS) {
             const six = genSix.get(g.generalId) ?? [];
             const cnt: Record<string, number> = {};
@@ -761,12 +761,12 @@ async function loadSixSlotData() {
     const gidToName: Record<string,string> = {};
     for (const g of generals) gidToName[g.generalId] = g.name;
     const skillMap: Record<string, {displayName:string, baseEffect:string, condition:string, sixClass:string, ownerName:string|null}> = {};
-    const SIX: Record<string,string> = {'ally_power_mult':'攻战计','first_sortie_power_mult':'攻战计','enemy_sub_troops_opening':'胜战计','dual_sub_troops_opening':'胜战计','ally_add_troops_opening':'混战计','luck_variance_self':'敌战计','luck_variance_enemy':'敌战计','luck_lock_self':'敌战计','negate_enemy_skill':'混战计','partial_negate_enemy_skill':'混战计','steal_enemy_skill':'混战计','nullify_enemy_opening_cut':'混战计','reflect_enemy_opening_cut':'混战计','cancel_enemy_terrain_buff':'混战计','win_casualty_reduction':'并战计','elite_casualty_reduction':'并战计','lose_enemy_casualty_boost':'败战计','post_recovery_rate':'败战计','recompute_comeback':'败战计','lose_zero_enemy_recovery':'败战计','ally_add_troops_comeback':'败战计','battle_duration_mult':'败战计'};
+    const SIX: Record<string,string> = {'ally_power_mult':'攻战计','first_sortie_power_mult':'攻战计','enemy_sub_troops_opening':'胜战计','dual_sub_troops_opening':'胜战计','ally_add_troops_opening':'胜战计','luck_variance_self':'敌战计','luck_variance_enemy':'敌战计','luck_lock_self':'敌战计','negate_enemy_skill':'混战计','partial_negate_enemy_skill':'混战计','steal_enemy_skill':'混战计','nullify_enemy_opening_cut':'混战计','reflect_enemy_opening_cut':'混战计','cancel_enemy_terrain_buff':'混战计','halve_enemy_terrain_buff':'混战计','win_casualty_reduction':'并战计','elite_casualty_reduction':'并战计','post_recovery_rate':'并战计','battle_duration_mult':'并战计','lose_enemy_casualty_boost':'败战计','recompute_comeback':'败战计','lose_zero_enemy_recovery':'败战计','ally_add_troops_comeback':'败战计','first_sortie_comeback_mult':'败战计'};
     const UD=new Set(['ratio_underdog','self_troops_below_enemy_pct','side_comeback','lose_as_underdog']);
     const VE=new Set(['luck_variance_self','luck_lock_self','recompute_comeback']);
     for (const s of skills) {
         let sc = SIX[s.baseEffect] || '';
-        if (UD.has(s.condition||'') || VE.has(s.baseEffect)) sc = '败战计';
+        // 引擎六类只看 baseEffect，不覆盖；condition/VE 只影响三势
         skillMap[s.id] = {displayName:s.displayName, baseEffect:s.baseEffect, condition:s.condition||'', sixClass:sc, ownerName:s.ownerName};
     }
     const ALL_SLOTS=['atkAdvantageSkillId','atkBalanceSkillId','atkDisadvantageSkillId','defAdvantageSkillId','defBalanceSkillId','defDisadvantageSkillId'];
@@ -790,7 +790,7 @@ function renderSixSlotPanel() {
     const ALL_SLOTS = ['atkAdvantageSkillId','atkBalanceSkillId','atkDisadvantageSkillId','defAdvantageSkillId','defBalanceSkillId','defDisadvantageSkillId'];
     const SLOT_LABEL: Record<string,string> = {'atkAdvantageSkillId':'攻优','atkBalanceSkillId':'攻均','atkDisadvantageSkillId':'攻劣','defAdvantageSkillId':'防优','defBalanceSkillId':'防均','defDisadvantageSkillId':'防劣'};
     const SIX_COLORS: Record<string,string> = {'攻战计':'#d85040','胜战计':'#d89030','敌战计':'#4088d8','混战计':'#60a860','并战计':'#b070c0','败战计':'#888888'};
-    const ALL_SIX=['攻战计','胜战计','敌战计','混战计','并战计','败战计'];
+    const ALL_SIX=['胜战计','敌战计','攻战计','混战计','并战计','败战计'];
 
     let rows = sixSlotData;
     let issues=0, complete=0;
@@ -909,7 +909,7 @@ $('btn-export').addEventListener('click', () => exportDoc());
 
 // ========== 导出文档（Markdown）==========
 function exportDoc(): void {
-    const SIX_ORD: Record<string, number> = { '攻战计': 0, '胜战计': 1, '敌战计': 2, '混战计': 3, '并战计': 4, '败战计': 5 };
+    const SIX_ORD: Record<string, number> = { '胜战计': 0, '敌战计': 1, '攻战计': 2, '混战计': 3, '并战计': 4, '败战计': 5 };
     const inReg = new Set(GENERALS.map(g => g.name));
     const act = SKILLS.filter(s => (s as any).status !== 'retired');
 
@@ -1018,7 +1018,7 @@ for (const th of document.querySelectorAll('.se-sortable')) {
             const entry = sortStack[idx];
             entry.dir = entry.dir === 1 ? -1 : 1;
         } else {
-            sortStack.unshift({ key: k, dir: 1 });
+            sortStack.push({ key: k, dir: 1 });
         }
         renderList();
     });
