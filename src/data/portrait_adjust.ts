@@ -5197,11 +5197,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -11
         },
-        "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": -1
-        },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_13.png": {
             "scale": 1.18,
             "offsetX": 0,
@@ -5782,11 +5777,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/xianqin/jin_xianzhen.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -22
-        },
         "/assets/CENTRAL/__闲置__CENTRAL_41.png": {
             "scale": 0.89,
             "offsetX": 0,
@@ -5952,15 +5942,30 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/xianqin/__闲置__xianqin_35.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": -16
-        },
         "/assets/JIANGNAN/ruochu_doulian.png": {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 7
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_20.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/xianqin/__闲置__xianqin_36.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/xianqin/jin_xianzhen.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -16
         }
     },
     "folderGuides": {

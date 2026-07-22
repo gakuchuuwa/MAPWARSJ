@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/7/23 06:49:01（共 129 条）
+ * 生成时间：2026/7/23 07:15:52（共 129 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/paiyao_huangguasi.png": "/assets/BASHU/baishui_yanghuai.png",
@@ -29,7 +29,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/JIANGNAN/wenzhou_fangguozhen.png": "/assets/CENTRAL/ruzhou_sunjian.png",
     "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png": "/assets/CENTRAL_ASIA/adao_d_mafushou.png",
     "/assets/WESTERN/weitou_douti.png": "/assets/CENTRAL_ASIA/baha_gaiwamu.png",
-    "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": "/assets/CENTRAL_ASIA/dayuan_wugua.png",
+    "/assets/CENTRAL_ASIA/dayuan_wugua.png": "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_20.png",
     "/assets/CENTRAL_ASIA/guzgan_abuhalisi.png": "/assets/CENTRAL_ASIA/fanyanna_xieer.png",
     "/assets/WESTERN/pishan_daihu.png": "/assets/CENTRAL_ASIA/hali_gedaerzi.png",
     "/assets/WESTERN/__多余__WESTERN_02.png": "/assets/CENTRAL_ASIA/huarazim_mohemo.png",

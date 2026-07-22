@@ -30,14 +30,11 @@ export function isUnattendedStream(): boolean {
 
 export function initUnattendedStream(app: GameApp, gameTimeHUD: GameTimeHUD): void {
     const unattended = isUnattendedStream();
-    // 刷新前处于直播态（localStorage）→ 刷新后自动恢复开播。解决「边修边播，刷新忘点直播被当挂机」。
-    const resume = StreamModeToggle.wasActive();
-    if (!unattended && !resume) return;
 
+    // 每次刷新自动开播（不再依赖 localStorage 残留）
     gameLog('startup', unattended
         ? '📺 [无人值守] ?stream=1 已激活：自动开播 + 一统重开 + 每日刷新'
-        : '📺 [直播恢复] 刷新前处于直播态，自动重新开播');
-
+        : '📺 [直播] 自动开播');
     window.setTimeout(() => autoStart(app, gameTimeHUD), AUTO_START_DELAY_MS);
 
     // 一统重开 / 每日刷新兜底：仅无人值守云机（?stream=1）启用；
