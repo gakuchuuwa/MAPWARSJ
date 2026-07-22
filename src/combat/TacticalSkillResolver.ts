@@ -144,6 +144,7 @@ export function resolveGeneralTacticalEntry(tacticalSkillId: string): TacticalSk
 export function isTacticalEffectImplemented(effect: TacticalBaseEffect): boolean {
     switch (effect) {
         case 'ally_power_mult':
+        case 'enemy_mult_0_8':
         case 'recompute_comeback':
         case 'enemy_sub_troops_opening':
         case 'ally_add_troops_opening':
