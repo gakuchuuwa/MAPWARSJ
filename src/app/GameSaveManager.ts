@@ -19,6 +19,7 @@ import type { GameApp } from './GameApp';
 import { Army } from '../legion/Army';
 import { SpatialRegistry } from '../world/SpatialRegistry';
 import { gameLog } from '../utils/GameLogger';
+import { applyLegionCultureComposition } from '../types/CultureFormations';
 
 const SAVE_PREFIX = 'mapwar-save-';
 const SAVE_VERSION = 1;
@@ -34,6 +35,10 @@ export interface CitySnapshot {
     id: string;
     factionId: string;
     troops: number;
+    /** 该据点是否已刷出过将领（读档恢复时可防重复刷将） */
+    spawnGeneralUsed: boolean;
+    /** 该据点是否已刷出过精锐（读档恢复时可防重复刷精） */
+    spawnEliteUsed: boolean;
 }
 
 export interface ArmySnapshot {
@@ -59,7 +64,8 @@ export interface GameSave {
     savedAt: string;
     /** 游戏内纪年 */
     year: number;
-    season: string;
+    /** Season 枚举值（春=0,夏=1,秋=2,冬=3）—— 存数字而非 String() 转换，避免读档后 getSeason() 返回字符串 */
+    season: number;
     cities: CitySnapshot[];
     armies: ArmySnapshot[];
 }
@@ -92,6 +98,8 @@ export class GameSaveManager {
             id: c.id,
             factionId: c.factionId,
             troops: c.troops,
+            spawnGeneralUsed: c.spawnGeneralUsed ?? false,
+            spawnEliteUsed: c.spawnEliteUsed ?? false,
         }));
 
         const armies: ArmySnapshot[] = this.getArmies().map(a => {
@@ -117,7 +125,7 @@ export class GameSaveManager {
             date: todayKey(),
             savedAt: new Date().toISOString(),
             year: app.timeSystem.getYear(),
-            season: String(app.timeSystem.getSeason()),
+            season: app.timeSystem.getSeason(),
             cities,
             armies,
         };
@@ -134,14 +142,28 @@ export class GameSaveManager {
 
         // 1. 纪年
         app.timeSystem.setYear(save.year);
-        if (save.season) app.timeSystem.setSeason(save.season as never);
+        if (save.season !== undefined) app.timeSystem.setSeason(save.season);
 
-        // 2. 据点归属与驻军（据点已从数据中移除的条目跳过）
+        // 2. 据点归属与驻军（读档非占城，抑制特效；据点已从数据中移除的条目跳过）
         let cityHit = 0;
         for (const c of save.cities) {
             if (!app.cityManager.getCityById(c.id)) continue;
-            app.cityManager.updateCity(c.id, { factionId: c.factionId, troops: c.troops });
+            app.cityManager.updateCity(c.id,
+                { factionId: c.factionId, troops: c.troops },
+                { skipCaptureLog: true },
+            );
+            // 恢复 spawn 标记 — updateCity 内 { ...oldCity, ...data } 创建新对象，
+            // 必须重新获取引用再写入，否则改的是旧对象
+            const updated = app.cityManager.getCityById(c.id);
+            if (updated) {
+                updated.spawnGeneralUsed = c.spawnGeneralUsed;
+                updated.spawnEliteUsed = c.spawnEliteUsed;
+            }
             cityHit++;
+        }
+        // 刷新全图据点标签（旗号 / 兵力数字），确保读档后 UI 立即可见
+        for (const c of save.cities) {
+            app.cityManager.updateCityLabel?.(c.id);
         }
 
         // 3. 清空现有军团（先 destroy 再摘出容器，确保 marker/索引一并释放）
@@ -175,6 +197,9 @@ export class GameSaveManager {
             if (s.portraitPath) army.portraitPath = s.portraitPath;
             army.homeCityId = s.homeCityId ?? null;
             if (s.sourceCityId) army.setSourceCityId(s.sourceCityId);
+            // 文化阵型烘焙：cultureSlots / cultureScales 不能为 null（渲染依赖），
+            // 必须重建。legionType 会由此覆写（与存档值一致，因为同 cultureRegion）。
+            applyLegionCultureComposition(army, army.cultureRegion ?? undefined);
             army.setSpatialRegistry(registry);
             lm.addArmy(army, true); // force：读档不受军团上限拦截
             armyHit++;
