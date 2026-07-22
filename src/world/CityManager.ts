@@ -495,29 +495,27 @@ export class CityManager {
                 }
                 if (!options?.skipCaptureLog) {
                     gameLog('world', `[CityManager] City ${oldCity.name} captured by ${data.factionId}!`);
+                    const color = this.factionManager.getFactionColor(data.factionId);
+                    this.map.getCityCaptureRenderer()?.playCaptureEffect(oldCity.latitude, oldCity.longitude, color);
+
+                    if (this.onCityCapturedCallback) {
+                        this.onCityCapturedCallback({
+                            cityId: id,
+                            cityName: oldCity.name,
+                            previousFactionId: oldCity.factionId,
+                            newFactionId: data.factionId,
+                            captorLegionName: options?.captorLegionName,
+                            captorLegionId: options?.captorLegionId,
+                            captorGeneralId: options?.captorGeneralId,
+                            defenderHadNamedForce: options?.defenderHadNamedForce,
+                            attackerSkillId: options?.attackerSkillId,
+                            attackerJu: options?.attackerJu,
+                            defenderGeneralId: options?.defenderGeneralId,
+                        });
+                    }
                 }
-                const color = this.factionManager.getFactionColor(data.factionId);
-
-                this.map.getCityCaptureRenderer()?.playCaptureEffect(oldCity.latitude, oldCity.longitude, color);
-
-                // 旗号立即刷新（全图分块重绘有竞态，会偶发不更新）
+                // 旗号立即刷新（全图分块重绘有竞态，会偶发不更新）— 读档也需要
                 void this.applyFactionChangeVisual(updatedCity, oldCity.factionId);
-
-                if (this.onCityCapturedCallback) {
-                    this.onCityCapturedCallback({
-                        cityId: id,
-                        cityName: oldCity.name,
-                        previousFactionId: oldCity.factionId,
-                        newFactionId: data.factionId,
-                        captorLegionName: options?.captorLegionName,
-                        captorLegionId: options?.captorLegionId,
-                        captorGeneralId: options?.captorGeneralId,
-                        defenderHadNamedForce: options?.defenderHadNamedForce,
-                        attackerSkillId: options?.attackerSkillId,
-                        attackerJu: options?.attackerJu,
-                        defenderGeneralId: options?.defenderGeneralId,
-                    });
-                }
             } else if (needsFullRender) {
                 this.requestRender();
             } else if ('troops' in data) {

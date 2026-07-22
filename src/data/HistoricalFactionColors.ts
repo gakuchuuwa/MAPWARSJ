@@ -677,7 +677,7 @@ const _FIXED: Record<string, string> = {
     'kuye': '#56CE72', // 自动分配 (邻域相斥)
     'dongping': '#7D92C1', // 自动分配 (邻域相斥)
     'maomingan': '#5F9FB8', // 自动分配 (邻域相斥)
-    'bulat': '#5A6878', // 布拉特（草原蓝灰）
+    'bulat': '#5A6879', // 布拉特（草原蓝灰）
     'buriat': '#9C4F36', // 自动分配 (邻域相斥)
     'xianhai': '#79823D', // 自动分配 (邻域相斥)
     'nandou': '#9A7A58', // 难兜（沙褐，苏失利）
@@ -699,7 +699,7 @@ const _FIXED: Record<string, string> = {
     xiayang_d: '#C41E30', // 夏阳（邓禹·汉系赤红）
     maer_d: '#7A5C3A', // 马尔吉亚纳·沙漠绿洲褐
     wugu_d: '#4A6B3A', // 乌古斯·草原青绿
-    adao_d: '#D4A52E', // 阿克苏道（清系明黄）
+    adao_d: '#D4A52F', // 阿克苏道（清系明黄）
     wuyuan_d: '#6A5A48', // 五原郡·长城土褐
     chenli_d: '#3A5A6A', // 撑犁（长生天蓝）
     nuoyan_d: '#5A6850', // 诺颜·喀尔喀青灰
