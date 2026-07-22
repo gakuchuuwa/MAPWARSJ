@@ -77,9 +77,9 @@ export class GameConfig {
         FOLLOW_SWITCH_DELAY_MS: 5000,
         /** 各类型据点最低出兵阈值（armySize = 驻军 × 0.9，须 ≥ 此值才可出兵）。文化中心优先：若据点属 REGION_CENTERS，用 region_center 阈值覆盖。 */
         CITY_MIN_SPAWN_TROOPS: {
-            small_city: 10000,
+            small_city: 20000,
             medium_city: 20000,
-            big_city: 30000,
+            big_city: 20000,
             pass: 40000,
             region_center: 50000,
         } as const,

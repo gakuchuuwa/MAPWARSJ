@@ -2487,11 +2487,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/TIBET/daca_dacajilong.png": {
-            "scale": 0.82,
-            "offsetX": 0,
-            "offsetY": -32
-        },
         "/assets/STEPPE/wuhuan_tadun.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -4027,11 +4022,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/TIBET/__闲置__TIBET_09.png": {
-            "scale": 1.14,
-            "offsetX": 0,
-            "offsetY": 16
-        },
         "/assets/litang/jiashi_wangxuance.png": {
             "scale": 1.08,
             "offsetX": 0,
@@ -5288,9 +5278,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/TIBET/__闲置__TIBET_17.png": {
-            "scale": 0.9,
+            "scale": 0.82,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -32
         },
         "/assets/TIBET/gongtang_gongtangcang.png": {
             "scale": 0.93,
@@ -5951,6 +5941,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 19,
             "offsetY": 0
+        },
+        "/assets/TIBET/daca_dacajilong.png": {
+            "scale": 1.1,
+            "offsetX": 23,
+            "offsetY": 14
         }
     },
     "folderGuides": {
