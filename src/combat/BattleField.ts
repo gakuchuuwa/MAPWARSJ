@@ -159,7 +159,7 @@ export class BattleField implements IOpeningPulseSink {
      * 勿用释放时的 initialTotalTroops——开局削兵后会把均势误判成优劣。
      */
     private situationalAttDefRatio = 1;
-    /** 开战有效战力比（攻/守，八环乘完）；在 pickPredictedSides 中写入，供时长判定 */
+    /** 开战有效战力比（攻/守，六环乘完）；在 pickPredictedSides 中写入，供时长判定 */
     private effectivePowerRatio = 1;
     /** 最近一次逆局触发技是否在册——败战翻盘重掷按此选区间 */
     private comebackTriggerOwnerSkill = false;

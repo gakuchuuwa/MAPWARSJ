@@ -2108,9 +2108,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/NORTHEAST/sushen_tudiji.png": {
-            "scale": 1,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": 28
+            "offsetY": 21
         },
         "/assets/NORTHEAST/wure_wuzhaodu.png": {
             "scale": 1,
