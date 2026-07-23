@@ -64,11 +64,13 @@ const LOSE_CONDITIONS = new Set<string>([
   "ratio_underdog", "self_troops_below_enemy_pct", "side_comeback", "lose_as_underdog",
 ]);
 const EFF_JIANDI = new Set<string>(["enemy_sub_troops_opening", "dual_sub_troops_opening"]);                 // 减敌兵·胜战(全)
-const EFF_JIAJI = new Set<string>(["ally_power_mult", "first_sortie_power_mult", "ally_add_troops_opening"]); // 加己攻·攻战(机)
+const EFF_JIAJI = new Set<string>(["ally_power_mult", "first_sortie_power_mult", "ally_add_troops_opening", "enemy_mult_0_8"]); // 加己攻/减敌攻·攻战(机)
 const EFF_KEDUO = new Set<string>(["steal_enemy_skill", "negate_enemy_skill", "partial_negate_enemy_skill",
   "reflect_enemy_opening_cut", "nullify_enemy_opening_cut", "cancel_enemy_terrain_buff", "halve_enemy_terrain_buff"]); // 克夺反·混战(乱)
-const EFF_SUIJI = new Set<string>(["luck_variance_self", "luck_variance_enemy", "luck_lock_self"]);           // 更随机·敌战(衡)
-const EFF_JIANJI = new Set<string>(["win_casualty_reduction", "elite_casualty_reduction", "post_recovery_rate"]); // 减己损·并战(借)
+const EFF_SUIJI = new Set<string>(["luck_variance_self", "luck_variance_enemy", "luck_lock_self"]);           // 更随机·并战(借)
+const EFF_JIANJI = new Set<string>(["win_casualty_reduction", "elite_casualty_reduction", "post_recovery_rate"]); // 减己损·敌战(衡)
+const EFF_SIYAO = new Set<string>(["lose_enemy_casualty_boost"]);                                              // 输了咬·敌战(衡)
+const EFF_JISUN = new Set<string>(["self_casualty_reduction"]);                                                 // 减己损·胜战(全)
 
 /** 判局：由技的 baseEffect+condition 推 优/均/劣（A.5+A.6）。仅用于 classifyStratagem→八字诀分类，不再用于语音播报判势。播报势=兵力比。 */
 function classifyJu(skillId: string): "advantage" | "balance" | "disadvantage" | null {
@@ -76,10 +78,10 @@ function classifyJu(skillId: string): "advantage" | "balance" | "disadvantage" |
   if (!entry) return null;
   const be: string = entry.baseEffect;
   const cond: string = entry.condition;
-  if (LOSE_CONDITIONS.has(cond) || EFF_JIANJI.has(be)) return "disadvantage";
-  if (EFF_JIAJI.has(be) || EFF_JIANDI.has(be)) return "advantage";
-  if (EFF_KEDUO.has(be) || EFF_SUIJI.has(be)) return "balance";
-  return "disadvantage"; // 其余（lose_enemy_casualty_boost / recompute_comeback / 未知）→劣势
+  if (LOSE_CONDITIONS.has(cond) || EFF_SUIJI.has(be)) return "disadvantage";
+  if (EFF_JIAJI.has(be) || EFF_JIANDI.has(be) || EFF_JISUN.has(be)) return "advantage";
+  if (EFF_KEDUO.has(be) || EFF_JIANJI.has(be) || EFF_SIYAO.has(be)) return "balance";
+  return "disadvantage"; // 其余（recompute_comeback 等败战）→劣势
 }
 
 /** 由势技 skillId 推六套（局内按 effect 二分）；未知则 null（不播报）。 */
@@ -87,9 +89,12 @@ function classifyStratagem(skillId: string): StratagemKey | null {
   const ju = classifyJu(skillId);
   if (!ju) return null;
   const be: string = getTacticalSkillEntry(skillId)!.baseEffect;
-  if (ju === "advantage") return EFF_JIANDI.has(be) ? "sheng" : "gong";
-  if (ju === "balance") return EFF_KEDUO.has(be) ? "hun" : "di";
-  return EFF_JIANJI.has(be) ? "bing" : "bai"; // 减己损→并战借；其余（含 A.6 强归劣势）→败战险
+  if (ju === "advantage") return EFF_JIANDI.has(be) || EFF_JISUN.has(be) ? "sheng" : "gong";
+  if (ju === "balance") {
+    if (EFF_KEDUO.has(be)) return "hun";
+    return "di"; // 敌战：EFF_SIYAO + EFF_JIANJI
+  }
+  return EFF_SUIJI.has(be) ? "bing" : "bai"; // 并战或败战
 }
 
 /** 六套八字诀（攻/守两套，主人 2026-07 定稿，原文照录，勿改） */

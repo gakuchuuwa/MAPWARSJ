@@ -58,10 +58,12 @@ export function resolveForwardAnchor(
         return homeCityId;
     }
 
-    let bestId = homeCityId;
+    let bestId: string | null = null;
     let bestDist = Infinity;
 
     for (const city of friendly) {
+        // 跳过出生城：≥2万已出发，锚点必须在前沿
+        if (city.id === homeCityId) continue;
         const dist = getEuclideanDistance(armyPos, {
             lat: city.latitude,
             lng: city.longitude,
@@ -72,5 +74,5 @@ export function resolveForwardAnchor(
         }
     }
 
-    return bestId;
+    return bestId ?? homeCityId;
 }

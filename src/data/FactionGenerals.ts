@@ -339,7 +339,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     fuguo: { generalId: 'fuguo_yizeng', generalName: '宜缯', portrait: '/assets/TIBET/fuguo_yizeng.png' },
     bailang: { generalId: 'bailang_tangzeng', generalName: '唐缯', portrait: '/assets/TIBET/bailang_tangzeng.png' },
     humi: { generalId: 'humi_zhentan', generalName: '真檀', portrait: '/assets/TIBET/humi_zhentan.png' },
-    xiaobolu: { generalId: 'xiaobolu_meijinmang', generalName: '没谨忙', portrait: '/assets/TIBET/xiaobolu_meijinmang.png' },
+    xiaobolu: { generalId: 'xiaobolu_meijinmang', generalName: '没谨忙', portrait: '/assets/CENTRAL_ASIA/xiaobolu_meijinmang.png' },
     guge: { generalId: 'guge_chizhaxichabade', generalName: '赤扎西查巴德', portrait: '/assets/TIBET/guge_chizhaxichabade.png' },
     pazhu: { generalId: 'pazhu_redangunsangpa', generalName: '热丹衮桑帕', portrait: '/assets/TIBET/pazhu_redangunsangpa.png' },
     ali: { generalId: 'ali_gandancaiwang', generalName: '甘丹才旺', portrait: '/assets/TIBET/ali_gandancaiwang.png' },

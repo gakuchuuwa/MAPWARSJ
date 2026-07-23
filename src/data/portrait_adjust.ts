@@ -558,7 +558,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -48
         },
         "/assets/manqing/aisin_d_huangtaiji.png": {
-            "scale": 1.09,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 1
         },
@@ -1788,7 +1788,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -20
         },
         "/assets/KOREA/luzhou_zhangwenxiu.png": {
-            "scale": 1.04,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -2256,11 +2256,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -26
-        },
-        "/assets/TIBET/xiaobolu_meijinmang.png": {
-            "scale": 1.26,
-            "offsetX": -3,
-            "offsetY": -9
         },
         "/assets/STEPPE/buriat_tumenjiergale.png": {
             "scale": 1,
@@ -3888,7 +3883,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/STEPPE/dingzhou_murongchui.png": {
-            "scale": 0.97,
+            "scale": 0.95,
             "offsetX": 0,
             "offsetY": 14
         },
@@ -5213,7 +5208,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -38
         },
         "/assets/JAPAN/echigo_shangshanqianxin.png": {
-            "scale": 1.02,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 8
         },
@@ -5248,9 +5243,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/TIBET/__闲置__TIBET_17.png": {
-            "scale": 0.82,
-            "offsetX": 0,
-            "offsetY": -32
+            "scale": 1.26,
+            "offsetX": -3,
+            "offsetY": -9
         },
         "/assets/TIBET/gongtang_gongtangcang.png": {
             "scale": 0.93,
@@ -5298,7 +5293,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -20
         },
         "/assets/JAPAN/date_d_yidazhengzong.png": {
-            "scale": 1,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": -13
         },
@@ -5966,6 +5961,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": -16
+        },
+        "/assets/NORTH/__闲置__daming_10.png": {
+            "scale": 1.07,
+            "offsetX": -7,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL_ASIA/xiaobolu_meijinmang.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": -61
         }
     },
     "folderGuides": {

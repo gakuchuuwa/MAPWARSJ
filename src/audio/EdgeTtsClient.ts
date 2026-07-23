@@ -14,7 +14,7 @@
 const TRUSTED_CLIENT_TOKEN = '6A5AA1D4EAFF4E9FB37E23D68491D6F4';
 const WIN_EPOCH = 11644473600; // 1601→1970 秒差
 /** Edge 版本号：微软偶尔收紧校验，403 时优先更新此值（对齐 edge-tts 的 CHROMIUM_FULL_VERSION） */
-const SEC_MS_GEC_VERSION = '1-143.0.3650.75';
+const SEC_MS_GEC_VERSION = '1-150.0.7871.129';
 const OUTPUT_FORMAT = 'audio-24khz-48kbitrate-mono-mp3';
 
 export type EdgeVoice = 'zh-CN-YunjianNeural' | 'zh-CN-YunxiNeural';
