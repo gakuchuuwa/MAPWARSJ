@@ -111,6 +111,27 @@ export class LegionPhalanxDrawer {
         },
     } as const;
 
+    /** 每场攻城随机交换井阑/投石机位置 */
+    private static gearShuffle = new Map<string, Record<string, 'well' | 'catapult'>>();
+    private static readonly SHUFFLE_GEAR_KEYS = ['well_lan', 'well_lan_r', 'catapult_l', 'catapult_r'] as const;
+
+    private static ensureGearShuffle(unitId: string): Record<string, 'well' | 'catapult'> {
+        let s = this.gearShuffle.get(unitId);
+        if (!s) {
+            const types: ('well' | 'catapult')[] = ['well', 'well', 'catapult', 'catapult'];
+            for (let i = types.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [types[i], types[j]] = [types[j], types[i]];
+            }
+            s = {};
+            for (let i = 0; i < this.SHUFFLE_GEAR_KEYS.length; i++) {
+                s[this.SHUFFLE_GEAR_KEYS[i]] = types[i];
+            }
+            this.gearShuffle.set(unitId, s);
+        }
+        return s;
+    }
+
 
     private static siegeGearCaches = new Map<string, any>();
 
@@ -450,6 +471,7 @@ export class LegionPhalanxDrawer {
     public static clearSiegeGearState(unitId: string): void {
         this.gearSpawnTicks.delete(unitId);
         this.gearFadeOutStarts.delete(unitId);
+        this.gearShuffle.delete(unitId);
         for (const cache of this.siegeGearCaches.values()) {
             cache.deathStarts?.delete(unitId);
             cache.deathThresholds?.delete(unitId);
@@ -1120,7 +1142,20 @@ export class LegionPhalanxDrawer {
             LegionPhalanxDrawer.clearSiegeGearState(unitId);
         }
 
-        function drawSingleGear(type: string): void {
+        function drawSingleGear(origType: string): void {
+            // 井阑/投石 4 个位置随机交换：用互换类型的精灵帧，保持原坐标
+            let type = origType;
+            let extraPosOverride: { x?: number; y?: number } = {};
+            if ((LegionPhalanxDrawer.SHUFFLE_GEAR_KEYS as readonly string[]).includes(origType)) {
+                const shuffle = LegionPhalanxDrawer.ensureGearShuffle(unitId);
+                if (shuffle[origType] !== (origType.startsWith('catapult') ? 'catapult' : 'well')) {
+                    type = origType.startsWith('catapult')
+                        ? (origType === 'catapult_l' ? 'well_lan' : 'well_lan_r')
+                        : (origType === 'well_lan' ? 'catapult_l' : 'catapult_r');
+                    const rawDef = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[origType];
+                    extraPosOverride = { x: rawDef.posOffsetX, y: rawDef.posOffsetY };
+                }
+            }
             const cache = LegionPhalanxDrawer.getGearCache(type);
             const def = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[type];
 
@@ -1215,8 +1250,8 @@ export class LegionPhalanxDrawer {
             const angle = (direction + 1) * Math.PI / 4;
             const cos = Math.cos(angle);
             const sin = Math.sin(angle);
-            const origX = def.posOffsetX * spacingX;
-            const origY = def.posOffsetY * spacingY;
+            const origX = (extraPosOverride.x ?? def.posOffsetX) * spacingX;
+            const origY = (extraPosOverride.y ?? def.posOffsetY) * spacingY;
             const gx = center.x + (origX * cos - origY * sin);
             const gy = center.y + (origX * sin + origY * cos);
 

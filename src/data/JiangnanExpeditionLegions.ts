@@ -86,4 +86,6 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
     dayu: { name: '南赣标军', tier: 3 },
     sui: { name: '骁果军', tier: 2 },
     zizhou: { name: '忠武八都', tier: 2 },
+    taiping: { name: '石敢当', tier: 1 },
+    jiang_s: { name: '零陵蒙冲', tier: 3 },
 };

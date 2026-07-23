@@ -629,6 +629,7 @@ export const FACTIONS: Faction[] = [
     // 第一类：农民革命政权
     { id: 'taiping', name: '太平' },
 
+
     { id: 'dacheng', name: '大成' },
 
     // 第二类：少数民族起义
@@ -891,6 +892,7 @@ export const FACTIONS: Faction[] = [
     { id: 'panyao', name: '盘瑶' },                         // 盘瑶(贺州/岭南瑶族)
     // 士氏(广信/交趾士燮)
     { id: 'jiang_s', name: '零陵' },
+
                           // 蒋氏(永州/湘南),
 
     { id: 'li_s', name: '静海' },

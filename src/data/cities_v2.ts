@@ -1450,7 +1450,8 @@ export const PERIPHERY: CityDataV2[] = [
 
     // ── 2026-05-25 晚清／近代城市（35个）──
     // 第一类：太平天国
-    { id: 'city_jintian', name: '金田村', factionId: 'taiping', lat: 23.4, lng: 110.08, type: 'small_city', troops: 30000, region: 'LINGNAN' },
+    { id: 'city_jintian', name: '金田村', factionId: 'taiping', lat: 23.4, lng: 110.08, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
 
     // 第三类：大明国/小刀会
     { id: 'city_shanghai', name: '上海', factionId: 'chunshen', lat: 31.23, lng: 121.47, type: 'small_city', troops: 30000, region: 'JIANGNAN' },
@@ -1928,7 +1929,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
     { id: 'city_mailingguan', name: '麦岭关', factionId: 'daozhou', lat: 25.02, lng: 111.23, type: 'pass', troops: 30000, region: 'LINGNAN', mirror: true },
 
 
-    { id: 'city_yongzhou_hn', name: '泉陵', factionId: 'jiang_s', lat: 26.231835, lng: 111.588135, type: 'small_city', troops: 30000, region: 'LINGNAN' },
+    { id: 'city_yongzhou_hn', name: '泉陵', factionId: 'jiang_s', lat: 26.231835, lng: 111.588135, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
+
 
     // ── 2026-05-28 新增：黎(崖州) ──
     { id: 'city_yazhou', name: '珠崖', factionId: 'liren', lat: 18.432692, lng: 108.989868, type: 'small_city', region: 'LINGNAN', troops: 30000,

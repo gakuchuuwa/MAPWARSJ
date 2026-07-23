@@ -1401,7 +1401,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    taiping_shidakai: { generalId: 'taiping_shidakai', tier: 'famous', tacticalSkillId: 'ts_040', advantageSkillId: 'ts_683', balanceSkillId: 'ts_684', disadvantageSkillId: 'ts_685', strategicSkillId: 'str_20', atkAdvantageSkillId: 'ts_685', atkBalanceSkillId: 'ts_075', atkDisadvantageSkillId: 'ts_684', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_294', aptitude: 'create', attackStyle: 'balanced' },
+    taiping_shidakai: { generalId: 'taiping_shidakai', tier: 'famous', tacticalSkillId: 'ts_685', advantageSkillId: 'ts_683', balanceSkillId: 'ts_684', disadvantageSkillId: 'ts_685', atkAdvantageSkillId: 'ts_685', atkBalanceSkillId: 'ts_075', atkDisadvantageSkillId: 'ts_684', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_294', strategicSkillId: 'str_20', aptitude: 'create', attackStyle: 'balanced' },
 
 
 
@@ -2417,7 +2417,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    jiang_s_huanggai: { generalId: 'jiang_s_huanggai', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_436', atkBalanceSkillId: 'ts_346', atkDisadvantageSkillId: 'ts_440', defAdvantageSkillId: 'ts_474', defBalanceSkillId: 'ts_704', defDisadvantageSkillId: 'ts_376', aptitude: 'leverage' , attackStyle: 'attack'},
+    jiang_s_huanggai: { generalId: 'jiang_s_huanggai', tier: 'ordinary', tacticalSkillId: 'ts_436', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_436', atkBalanceSkillId: 'ts_346', atkDisadvantageSkillId: 'ts_440', defAdvantageSkillId: 'ts_474', defBalanceSkillId: 'ts_704', defDisadvantageSkillId: 'ts_376', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
