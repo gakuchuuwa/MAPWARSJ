@@ -19,13 +19,13 @@ export type TacticalEffect =
     | 'enemy_sub_troops'
 
     | 'ally_mult_1_2'
-
+    | 'ally_power_mult'
     | 'enemy_mult_0_8'
 
     | 'ally_invincible'
 
     | 'ally_casualty_reduce'
-
+    | 'self_casualty_reduce'
     | 'ally_luck_up'
 
     | 'enemy_luck_down'
