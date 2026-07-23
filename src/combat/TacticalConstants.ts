@@ -1,12 +1,12 @@
 /**
- * 三势·9 格战力系数 —— 第4环：武将 aptitude × 兵力局势
- * 铁律「每环平衡」：三组各一 1.20/1.00/0.80，总和 3.00，全在 0.80–1.20 环内。
+ * 三势环（第4环）—— 兵势 × 将势，9 格系数
+ * 铁律「每环平衡」：行等 3.00、列等 3.00，全在 0.80–1.20 内。
  */
 export const APTITUDE_POWER_MULT: Record<string, Record<'advantage' | 'balance' | 'disadvantage', number>> = {
     //          优势   均势   劣势
-    create:   { advantage: 1.20, balance: 1.00, disadvantage: 0.80 },
-    leverage: { advantage: 1.00, balance: 1.20, disadvantage: 0.80 },
-    reverse:  { advantage: 0.80, balance: 1.00, disadvantage: 1.20 },
+    create:   { advantage: 1.20, balance: 1.00, disadvantage: 0.80 }, // 造势
+    leverage: { advantage: 0.80, balance: 1.20, disadvantage: 1.00 }, // 借势
+    reverse:  { advantage: 1.00, balance: 0.80, disadvantage: 1.20 }, // 逆势
 };
 
 /** 普将逆局：侧总兵力 ≤ 开战该侧总兵力 × 此比例时触发 */
@@ -55,16 +55,15 @@ export const COMEBACK_LUCK_RANGE: [number, number] = [0.25, 0.45];
 export const COMEBACK_LUCK_RANGE_GENERIC: [number, number] = [0.30, 0.40];
 
 /**
- * 第四层·攻防风格战力系数
- * 输入只有两个：本场位置（攻方/守方） × 武将 attackStyle。攻城野战同一套。
- *   攻方位：善攻 1.20、双行 1.10、善防 0.80
- *   守方位：善防 1.20、双行 1.10、善攻 0.80
- * 双行两面皆 1.10（永不吃亏但不封顶），专精只在对口位置拿 1.20、错位吃 0.80。
+ * 攻防环（第5环）—— 攻方/守方 × attackStyle，三型各 2.00
+ *   善攻：攻城×1.20 / 守城×0.80 —— 善攻不善守
+ *   善防：攻城×0.80 / 守城×1.20 —— 善守不善攻
+ *   双行：攻城×1.00 / 守城×1.00 —— 既能攻又能守，不偏不倚
  */
 export const ATTACK_STYLE_POWER_MULT: Record<string, Record<'attack' | 'defense', number>> = {
-    attack:   { attack: 1.20, defense: 0.80 },
-    defense:  { attack: 0.80, defense: 1.20 },
-    balanced: { attack: 1.10, defense: 1.10 },
+    attack:   { attack: 1.20, defense: 0.80 },  // 善攻
+    defense:  { attack: 0.80, defense: 1.20 },  // 善防
+    balanced: { attack: 1.00, defense: 1.00 },  // 双行（既能攻又能守）
 };
 
 /**

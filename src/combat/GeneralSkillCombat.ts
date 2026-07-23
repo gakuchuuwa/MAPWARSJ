@@ -856,9 +856,8 @@ export function getOpeningTacticalPowerMultiplier(
     return 1;
 }
 
-// ── 三势适性：势×局 开战战力系数（③整合。常量见 TacticalConstants.ts）──
-// 势与局匹配放大战力：造势顺风碾压 / 借势均势破局 / 逆势逆风爆发(提翻盘机会,不稳赢)。
-/** 按该侧带将单位的势 × 当前兵力局(我方/敌方 >1.5优 / <0.67劣 / 中间均)返回开战战力系数 */
+// ── 三势适性：势×局×计 开战战力系数（三势统一：兵力局势 + 武将天赋 + 技能六类）──
+/** 按该侧带将单位的 兵力局势 × 天赋 × 技能六类 返回开战战力系数 */
 export function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[], selfCommander?: IBattleUnit | null, overrideSelfTroops?: number, overrideEnemyTroops?: number): number {
     const unit = findEligibleGeneralUnit(sideUnits, selfCommander);
     if (!unit?.generalId) return 1;
@@ -868,15 +867,15 @@ export function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattle
     const ot = overrideEnemyTroops ?? oppUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const r = st / Math.max(1, ot);
     const sit: 'advantage'|'balance'|'disadvantage' = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
+    
     return APTITUDE_POWER_MULT[apt]?.[sit] ?? 1;
 }
 
 /**
- * 第四层·攻防风格战力系数（2026-07-16 · 专精本位 1.20 > 双行 1.10 > 专精错位 0.80）
- * 武将 attackStyle → 攻/守不同角色下的 roll 乘数
- *   attack:  攻城专精 ×1.20，守城崩盘 ×0.80
- *   defense: 守城专精 ×1.20，攻城崩盘 ×0.80
- *   balanced:攻守双全，两面 ×1.10
+ * 攻防环（第5环）—— 武将 attackStyle × 攻/守角色
+ *   善攻：攻城×1.20 / 守城×0.80
+ *   善防：攻城×0.80 / 守城×1.20
+ *   双行：攻城×1.00 / 守城×1.00（既能攻又能守）
  */
 export function getAttackStylePowerMult(unit: IBattleUnit | null, isAttacker: boolean): number {
     if (!unit?.generalId) return 1;
@@ -1969,13 +1968,13 @@ export function applyOpeningTacticalToRolls(
     outAtt *= getAptitudePowerMult(attackerUnits, defenderUnits, attCommander);
     outDef *= getAptitudePowerMult(defenderUnits, attackerUnits, defCommander);
 
-    // 第四层·攻防风格（attackStyle → 攻/守角色系数）
+    // 第5环·攻防风格（attackStyle → 攻/守角色系数）
     const attGen = findEligibleGeneralUnit(attackerUnits, attCommander);
     const defGen = findEligibleGeneralUnit(defenderUnits, defCommander);
     outAtt *= getAttackStylePowerMult(attGen, true);
     outDef *= getAttackStylePowerMult(defGen, false);
 
-    // 第五层·名将光环（tier='famous' ×1.20，普将 ×1.00）
+    // 第6环·名将光环（tier='famous' ×1.20，普将 ×1.00）
     outAtt *= getFamousGeneralMult(attGen);
     outDef *= getFamousGeneralMult(defGen);
 
