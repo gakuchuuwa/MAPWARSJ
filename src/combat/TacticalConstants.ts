@@ -1,13 +1,12 @@
 /**
- * 三势·9 格战力系数 —— 层3：武将 aptitude × 兵力局势
- * 不对称设计（2026-07-16 CC 审查定稿）：
- *   本命格 1.20、均势格 1.00、优势格错配 0.90（防断崖：0.90×1.5=1.35 > 运气 1.22）、劣势格错配 0.80
+ * 三势·9 格战力系数 —— 第4环：武将 aptitude × 兵力局势
+ * 铁律「每环平衡」：三组各一 1.20/1.00/0.80，总和 3.00，全在 0.80–1.20 环内。
  */
 export const APTITUDE_POWER_MULT: Record<string, Record<'advantage' | 'balance' | 'disadvantage', number>> = {
     //          优势   均势   劣势
     create:   { advantage: 1.20, balance: 1.00, disadvantage: 0.80 },
-    leverage: { advantage: 0.90, balance: 1.20, disadvantage: 0.80 },
-    reverse:  { advantage: 0.90, balance: 1.00, disadvantage: 1.20 },
+    leverage: { advantage: 1.00, balance: 1.20, disadvantage: 0.80 },
+    reverse:  { advantage: 0.80, balance: 1.00, disadvantage: 1.20 },
 };
 
 /** 普将逆局：侧总兵力 ≤ 开战该侧总兵力 × 此比例时触发 */
