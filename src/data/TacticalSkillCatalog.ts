@@ -335,8 +335,8 @@ const ENHANCE: TacticalSkillEntry[] = [
     {
         id: 'ts_816', ownerName: '三十六计', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 816,
         displayName: '声东击西', sourceQuote: '《三十六计·第六计》：敌志乱萃，不虞，坤下兑上之象。',
-        baseEffect: 'self_casualty_reduction', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.25, engineStatus: 'ready',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        magnitude: 0.18, engineStatus: 'ready',
         note: '【胜战计·全】声东击西；三十六计',
     },
 ];
@@ -571,8 +571,9 @@ const COUNTER: TacticalSkillEntry[] = [
     {
         id: 'ts_048', layer: 'tactical', series: 'casualty', index: 48,
         displayName: '空城退敌', ownerName: '三十六计', sourceQuote: '《三国志·蜀书·赵云传》注引《云别传》：“更大开门，偃旗息鼓。”',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
+        magnitude: 1, engineStatus: 'ready',
+        comebackThreshold: 0.8,
         note: '己兵<敌30% 时，敌先声类技失效',
     },
 ];
@@ -3789,15 +3790,15 @@ const SANSHILIU: TacticalSkillEntry[] = [
     {
         id: 'ts_391', layer: 'tactical', series: 'troop', index: 391,
         displayName: '借刀杀人', ownerName: '三十六计', usageTag: '双行', situationTag: '优势', sourceQuote: '【三十六计】利用矛盾借敌之手除患，借刀杀人。',
-        baseEffect: 'self_casualty_reduction', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.25, engineStatus: 'ready',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        magnitude: 0.18, engineStatus: 'ready',
         note: '【胜战计·全】曹操；三十六计补充',
     },
     {
         id: 'ts_392', layer: 'tactical', series: 'troop', index: 392,
         displayName: '趁火打劫', ownerName: '三十六计', sourceQuote: '《三国志·孙策传》：欲趁官渡相持袭许昌挟帝，未行而遇刺。',
-        baseEffect: 'self_casualty_reduction', condition: 'always', phase: 'pre_opening_troops',
-        magnitude: 0.25, engineStatus: 'ready',
+        baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
+        magnitude: 0.18, engineStatus: 'ready',
         note: '【胜战计·全】孙策；三十六计补充',
     },
     {
@@ -3873,8 +3874,8 @@ const SANSHILIU: TacticalSkillEntry[] = [
     {
         id: 'ts_403', ownerName: '三十六计', layer: 'tactical', series: 'counter', index: 403,
         displayName: '釜底抽薪', situationTag: '均势', sourceQuote: '【李世民】《旧唐书·太宗纪》：浅水原相持，绝薛军粮道，待其溃而铁骑突击灭西秦。',
-        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, engineStatus: 'ready',
+        baseEffect: 'negate_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.8, engineStatus: 'ready',
         note: '【混战计·乱·克】李世民；三十六计补充',
     },
     {
@@ -3900,15 +3901,15 @@ const SANSHILIU: TacticalSkillEntry[] = [
     {
         id: 'ts_407', ownerName: '三十六计', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 407,
         displayName: '远交近攻', sourceQuote: '《史记·赵世家》：盟秦韩宋，专力攻中山，终灭之。',
-        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.5, engineStatus: 'ready',
+        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, engineStatus: 'ready',
         note: '【混战计·乱·反】远交近攻；三十六计',
     },
     {
         id: 'ts_408', ownerName: '三十六计', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 408,
         displayName: '假道伐虢', sourceQuote: '【晋献公】《左传·僖公二年》：假道于虞以伐虢，师还，馆于虞，遂袭虞，灭之。',
-        baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll',
-        magnitude: 1, engineStatus: 'ready',
+        baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll',
+        magnitude: 0.5, engineStatus: 'ready',
         note: '【混战计·乱·夺】假道伐虢；三十六计',
     },
     {
@@ -3949,29 +3950,33 @@ const SANSHILIU: TacticalSkillEntry[] = [
     {
         id: 'ts_415', ownerName: '三十六计', layer: 'tactical', series: 'casualty', index: 415,
         displayName: '美人离间', sourceQuote: '【三十六计】以倾城之色消磨敌将意志，美人计。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'post_battle',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
+        magnitude: 1, engineStatus: 'ready',
+        comebackThreshold: 0.8,
         note: '【败战计·险】勾践；三十六计补充',
     },
     {
         id: 'ts_416', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 416,
         displayName: '反间除帅', ownerName: '三十六计', sourceQuote: '【田单】《史记·田单列传》：反间计使燕惠王换将，乐毅去而骑劫来。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
+        magnitude: 1, engineStatus: 'ready',
+        comebackThreshold: 0.8,
         note: '【败战计·险】反间除帅；三十六计',
     },
     {
         id: 'ts_417', ownerName: '三十六计', layer: 'tactical', series: 'casualty', index: 417,
         displayName: '苦肉诈降', sourceQuote: '【黄盖】《三国志·周瑜传》：盖受笞诈降曹操，火攻赤壁。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
+        magnitude: 1, engineStatus: 'ready',
+        comebackThreshold: 0.8,
         note: '【败战计·险】黄盖；三十六计补充',
     },
     {
         id: 'ts_418', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 418,
         displayName: '连环离间', ownerName: '三十六计', sourceQuote: '【王允】《后汉书·王允传》：连环计结吕布诛董卓。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
+        magnitude: 1, engineStatus: 'ready',
+        comebackThreshold: 0.8,
     },
 ];
 
@@ -4318,7 +4323,7 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     { id: 'ts_756', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 756, displayName: '临沮浴血', ownerName: '关羽', ownerGeneralId: 'chu_guanyu', sourceQuote: '【关羽】《三国志·关羽传》：麦城突围至临沮，力战被执，宁死不屈。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_757', ownerName: '郝昭', layer: 'tactical', series: 'counter', index: 757, displayName: '壁垒森严', sourceQuote: '【郝昭】《三国志·明帝纪》注引《魏略》：昭守陈仓，诸葛亮进攻二十余日，不能克，乃引去。', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready', note: '壁垒森严：陈仓据守' },
     { id: 'ts_758', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 758, displayName: '坚如磐石', sourceQuote: '【张巡】《旧唐书·张巡传》：守睢阳，城中粮尽，巡忠义激励，守备弥坚，蔽遮江淮。', baseEffect: 'lose_enemy_casualty_boost', condition: 'ratio_underdog', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready', note: '坚如磐石：睢阳死守' },
-    { id: 'ts_759', ownerName: '三十六计', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 759, displayName: '反客为主', sourceQuote: '【刘备】《三国志·先主传》：入蜀助璋，反客为主取益州。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1.25, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【并战计·借】反客为主；三十六计' },
+    { id: 'ts_759', ownerName: '三十六计', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 759, displayName: '反客为主', sourceQuote: '【刘备】《三国志·先主传》：入蜀助璋，反客为主取益州。', baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll', magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '【并战计·借】反客为主；三十六计' },
     { id: 'ts_760', usageTag: '双行', layer: 'tactical', series: 'counter', index: 760, displayName: '将计就计', situationTag: '均势', sourceQuote: '《尚书·武成》牧野之战商军前徒倒戈，敌军战术反助我方', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_761', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 761, displayName: '草船借箭', ownerName: '孙权', ownerGeneralId: 'sunwu_d_sunquan', sourceQuote: '【诸葛亮】草船借箭化敌之攻为己用，以智取胜。', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_762', ownerName: '诸葛亮', ownerGeneralId: 'huizhou_zhugeliang', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'counter', index: 762, displayName: '借东风势',  sourceQuote: '【诸葛亮】《三国演义》：借东风助周瑜火攻赤壁。', baseEffect: 'steal_enemy_skill', condition: 'always', phase: 'opening_roll', magnitude: 1.25, engineStatus: 'ready' },
@@ -4364,8 +4369,8 @@ const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
     {
         id: 'ts_822', ownerName: '三十六计', usageTag: '双行', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 822,
         displayName: '走为上计', sourceQuote: '《三十六计·第三十六计》：全师避敌，左次无咎，未失常也。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'post_battle',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback',
+        magnitude: 1, engineStatus: 'ready',
     },
     {
         id: 'ts_830', ownerName: '岳飞', ownerGeneralId: 'yanchuan_d_yuefei', layer: 'tactical', series: 'troop', index: 830,
