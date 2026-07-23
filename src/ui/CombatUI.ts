@@ -1376,8 +1376,8 @@ export class CombatUI {
         const tag = (text: string, extraStyle = '') =>
             `<span style=\"display:inline-block;padding:1px 5px;border:1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};border-radius:3px;background:${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};margin:0 1px;${extraStyle}\">${text}</span>`;
         if (luckLabel) parts.push(tag(luckLabel));
-        if (passLabel) parts.push(tag(passLabel));
-        if (regionLabel) parts.push(tag(regionLabel));
+        if (passLabel) {/* 据点标签已移至战斗标题 */}
+        if (regionLabel) {/* 据点标签已移至战斗标题 */}
         if (tacLabel) parts.push(tag(tacLabel));
 
         // ③武将适性标签：攻防风格 + 三势（与徽章同源：指挥官）
