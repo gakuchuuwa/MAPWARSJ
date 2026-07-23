@@ -554,7 +554,7 @@ export class BattleField implements IOpeningPulseSink {
         const terrain = getBattleTerrainKind([...attUnits, ...defUnits], this.type);
         // 翻盘重掷：区间按触发技在册/不在册分档（在册 [0.25,0.45] 更宽，通用 [0.30,0.40] 更平庸）
         const rollComebackLuck = (): number => {
-            const range = this.comebackTriggerOwnerSkill ? COMEBACK_LUCK_RANGE : COMEBACK_LUCK_RANGE_GENERIC;
+            const range = COMEBACK_LUCK_RANGE; // 统一区间，不再分在册/不在册
             return range[0] + Math.random() * (range[1] - range[0]);
         };
         const attFateLuck = rollLuckOnRecompute
