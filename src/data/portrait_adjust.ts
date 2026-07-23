@@ -4218,7 +4218,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/CENTRAL/yingzhou_d2_licunxu.png": {
-            "scale": 0.95,
+            "scale": 0.93,
             "offsetX": 7,
             "offsetY": 4
         },

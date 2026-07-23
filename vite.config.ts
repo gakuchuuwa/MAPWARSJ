@@ -2207,23 +2207,19 @@ function serverReadAllEntityData() {
     //   劣势覆盖：underdog condition / variance effect → tri=disadvantage、六计=败战计。
     //   窗口提取（字段顺序无关），勿再用 id→baseEffect,condition 紧邻正则（易漏）。
     const EFFECT_TO_TRI: Record<string, string> = {
-        ally_power_mult: 'advantage', first_sortie_power_mult: 'advantage',
-        ally_add_troops_opening: 'balance',
-        enemy_sub_troops_opening: 'advantage', dual_sub_troops_opening: 'advantage',
-        luck_variance_self: 'disadvantage', luck_variance_enemy: 'balance', luck_lock_self: 'disadvantage',
+        ally_power_mult: 'advantage', first_sortie_power_mult: 'advantage', enemy_mult_0_8: 'advantage',
+        ally_add_troops_opening: 'advantage',
+        enemy_sub_troops_opening: 'advantage', dual_sub_troops_opening: 'advantage', self_casualty_reduction: 'advantage',
+        luck_variance_self: 'disadvantage', luck_variance_enemy: 'disadvantage', luck_lock_self: 'disadvantage',
         steal_enemy_skill: 'balance', negate_enemy_skill: 'balance', partial_negate_enemy_skill: 'balance',
         reflect_enemy_opening_cut: 'balance', nullify_enemy_opening_cut: 'balance',
         cancel_enemy_terrain_buff: 'balance', halve_enemy_terrain_buff: 'balance',
-        win_casualty_reduction: 'disadvantage', elite_casualty_reduction: 'disadvantage', post_recovery_rate: 'disadvantage',
-        battle_duration_mult: 'disadvantage',
-        lose_enemy_casualty_boost: 'disadvantage', recompute_comeback: 'disadvantage',
+        win_casualty_reduction: 'balance', elite_casualty_reduction: 'balance', post_recovery_rate: 'balance',
+        battle_duration_mult: 'balance',
+        lose_enemy_casualty_boost: 'balance', recompute_comeback: 'disadvantage',
         lose_zero_enemy_recovery: 'disadvantage', ally_add_troops_comeback: 'disadvantage',
         first_sortie_comeback_mult: 'disadvantage',
     };
-    const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog']);
-    const VARIANCE_EFFECTS = new Set(['luck_variance_self', 'luck_lock_self', 'recompute_comeback']);
-    // [2026-07-14 修复] 不再要求 id 后紧跟 layer/index/displayName（编辑器会在 id 后插 usageTag/situationTag 等内联字段，
-    //   打乱字段顺序会让严格顺序正则漏掉整条技 → 校验误报"技能不存在"）。改为逐条目取窗口，字段顺序无关地提取。
     const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string; sixClass?: string }> = [];
     {
         const idPositions: Array<{ id: string; idx: number }> = [];
@@ -2236,9 +2232,7 @@ function serverReadAllEntityData() {
             if (!dn) continue; // 无 displayName（非技能条目）跳过
             const index = seg.match(/index:\s*(\d+)/)?.[1] ?? '0';
             const eff = seg.match(/baseEffect:\s*'(\w+)'/)?.[1];
-            const cond = seg.match(/condition:\s*'(\w+)'/)?.[1] ?? '';
-            const forceUnderTri = !!(eff && (UNDERDOG_CONDS.has(cond) || VARIANCE_EFFECTS.has(eff)));
-            const tri = forceUnderTri ? 'disadvantage' : (eff ? EFFECT_TO_TRI[eff] : undefined);
+            const tri = eff ? EFFECT_TO_TRI[eff] : undefined;
             // 六计【只按 baseEffect】查表（AGENTS.md 铁律一）——condition 覆盖属三势轴，禁止改判六计。
             // 当前 forceUnderTri 命中的技恰好全是败战计效果（矛盾技已迁 recompute_comeback、
             // luck_variance_self/luck_lock_self 为幽灵效果 0 条），但一旦新建此类技就会配错格，故判据分轴。
@@ -2542,11 +2536,11 @@ const SE_FAMILY: Record<string, string> = {
  *  漂移校验（seCheckMagnitudeDrift）以本表为准。见 AGENTS.md「铁律零·战力环」。 */
 const SE_TIERS: Record<string, Record<string, number | [number, number]>> = {
     power: { '不在册 ×1.1': 1.1, '在册 ×1.2': 1.2 },              // 加己战力
-    pct: { '不在册 9%': 0.09, '在册 16.7%': 0.167 },              // 减敌兵：1/(1-x) ⇒ ×1.10 / ×1.20
+    pct: { '不在册 9%': 0.09, '在册 18%': 0.18, '旧在册 16.7%': 0.167 }, // 减敌兵：1/(1-x) ⇒ ×1.10 / ×1.20
     negate: { '不在册 40%': 0.4, '在册 80%': 0.8 },               // 否决概率
     steal: { '统一 50%': 0.5 },                                   // 夺技封顶 0.5（否决+复制双收益）
     luck: { '不在册 [0.7,1.3]': [0.7, 1.3], '在册 [0.6,1.4]': [0.6, 1.4] }, // 变随机，均值恒=1
-    casualty: { '不在册 0.1': 0.1, '在册 0.2': 0.2 },             // 减己损（不改胜负）
+    casualty: { '不在册 0.1': 0.1, '在册 0.2': 0.2, '定稿 0.25': 0.25 }, // 减己损（不改胜负）
     bite: { '不在册 1.25': 1.25, '在册 1.5': 1.5 },               // 咬人（放大敌损，>1）
     recovery: { '标准 0.5': 0.5 },
     duration: { '速战 ×0.7': 0.7, '拖延 ×1.4': 1.4 },
@@ -2696,7 +2690,7 @@ function serverSkillEditorList() {
         const sixEntry = SIX_CLASS_BY_EFFECT[baseEffect];
         // 六计【只按 baseEffect】（AGENTS.md 铁律一）；isUnderdog 只作用于三势期望值(劣势)，不改判六计
         const sixClass = sixEntry?.label ?? '';
-        const expectedSit = isUnderdog ? '劣势' : (sixEntry?.canonicalSituation ?? '');
+        const expectedSit = sixEntry?.canonicalSituation ?? '';
         const sixClassMatch = sixEntry ? situationTag === expectedSit : false;
         skills.push({
             id,
@@ -3212,14 +3206,10 @@ function serverValidateEntities(): {
             if (effM) effectById.set(sid, effM[1]);
             if (condM) condById.set(sid, condM[1]);
         }
-        const UNDERDOG_CONDS = new Set(['ratio_underdog', 'self_troops_below_enemy_pct', 'side_comeback', 'lose_as_underdog']);
-        const VARIANCE_EFFECTS = new Set(['luck_variance_self', 'luck_lock_self', 'recompute_comeback']);
         const sixOf = (id?: string): string | null => {
             if (!id) return null;
             const eff = effectById.get(id);
             if (!eff) return null;
-            const cond = condById.get(id) ?? '';
-            if (UNDERDOG_CONDS.has(cond) || VARIANCE_EFFECTS.has(eff)) return '败战计';
             return SIX_CLASS_BY_EFFECT[eff]?.label ?? null;
         };
         const ALL_SIX = ['攻战计', '胜战计', '敌战计', '混战计', '并战计', '败战计'];
