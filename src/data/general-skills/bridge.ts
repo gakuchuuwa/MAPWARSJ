@@ -9,9 +9,9 @@ import { getTacticalSkillEntry } from '../TacticalSkillCatalog';
 
 /** v1 baseEffect → 旧 effect 桥接（ts_xxx 武将挂载后引擎兼容） */
 const V1_EFFECT_BRIDGE: Record<string, { effect: TacticalEffect; timing: TacticalTiming }> = {
-    ally_power_mult:            { effect: 'ally_mult_1_2',      timing: 'opening' },
-    first_sortie_power_mult:    { effect: 'ally_mult_1_2',      timing: 'opening' },
-    first_sortie_comeback_mult: { effect: 'ally_mult_1_2',      timing: 'comeback' },
+    ally_power_mult:            { effect: 'ally_power_mult',       timing: 'opening' },
+    first_sortie_power_mult:    { effect: 'ally_power_mult',       timing: 'opening' },
+    first_sortie_comeback_mult: { effect: 'ally_power_mult',       timing: 'comeback' },
     enemy_sub_troops_opening:   { effect: 'enemy_sub_troops',   timing: 'opening' },
     ally_add_troops_comeback:   { effect: 'ally_add_troops',    timing: 'comeback' },
     win_casualty_reduction:     { effect: 'ally_casualty_reduce', timing: 'opening' },
@@ -35,6 +35,9 @@ const V1_EFFECT_BRIDGE: Record<string, { effect: TacticalEffect; timing: Tactica
     nullify_enemy_opening_cut:  { effect: 'opening_counter',    timing: 'opening' },
     cancel_enemy_terrain_buff:  { effect: 'terrain_counter',    timing: 'opening' },
     halve_enemy_terrain_buff:   { effect: 'terrain_counter',    timing: 'opening' },
+    // ── 减己损类 ──
+    self_casualty_reduction:    { effect: 'self_casualty_reduce', timing: 'opening' },
+    enemy_mult_0_8:             { effect: 'enemy_mult_0_8',     timing: 'opening' },
     // ts_029 肉薄骨并（dual_sub_troops_opening）已由 v1 原生路径实现双向削兵（GeneralSkillCombat + combat-model）。
 };
 

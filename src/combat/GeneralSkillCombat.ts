@@ -818,7 +818,7 @@ export function getOpeningTacticalPowerMultiplier(
     if (!skill) return 1;
 
     // 攻战计（ally_mult_1_2）：加己攻/减敌攻，受条件门控 + 对手地形反制
-    if (skill.effect === 'ally_mult_1_2') {
+    if (skill.effect === 'ally_power_mult') {
         if (!bridgedOpeningEnhanceActive(sideUnits, opponentUnits, isAttacker, opts, selfCommander, overrideSelfTroops, overrideEnemyTroops)) return 1;
         let mult = skill.magnitude;
         // 对手地形反制（与引擎 applyAllyMult 一致：传入对手锁定的指挥官）
@@ -1366,7 +1366,7 @@ export function getGeneralSkillDisplayTags(
 
 function formatTacticalEffectLabel(skill: TacticalSkillDef): string {
     switch (skill.effect) {
-        case 'ally_mult_1_2':   return '加己攻';
+        case 'ally_power_mult':   return '加己攻';
         case 'enemy_mult_0_8':  return '克夺反';
         case 'ally_add_troops': return '克夺反';
         case 'enemy_sub_troops':return '减敌兵';
@@ -1594,6 +1594,10 @@ export function applyOpeningTacticalPreRoll(
                 logMsg = `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 战中减损生效`;
                 break;
             }
+            case 'self_casualty_reduce': {
+                logMsg = `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel} 减己损 ${(skill.magnitude * 100).toFixed(0)}%`;
+                break;
+            }
             default:
                 return;
         }
@@ -1801,13 +1805,27 @@ export function applyOpeningTacticalToRolls(
         const skill = getTacticalSkillForTiming(unit, 'opening');
         if (!skill) return { roll, enemyDebuff: 1 };
 
-        if (skill.effect === 'ally_mult_1_2') {
+        if (skill.effect === 'ally_power_mult') {
             if (!bridgedOpeningEnhanceActive(units, opponentUnits, isAttacker, opts, isAttacker ? attCommander : defCommander)) return { roll, enemyDebuff: 1 };
             const selfTroops = units.reduce((s, u) => s + Math.max(0, u.troops), 0);
             const oppTroops = opponentUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
             let mult = skill.magnitude;
             const oppUnit = findEligibleGeneralUnit(opponentUnits, isAttacker ? defCommander : attCommander);
             const oppActiveId = oppUnit ? getActiveTacticalSkillId(oppUnit) : null;
+            // 混战·克/夺（enemy_counter）：否掉本侧加己攻
+            if (oppActiveId && mult > 1) {
+                const oppSkill = getTacticalSkill(oppUnit!);
+                if (oppSkill?.effect === 'enemy_counter') {
+                    // 检查本侧是否有混战·反（opening_counter）护盾
+                    const selfSkill = getTacticalSkill(unit);
+                    if (selfSkill?.effect !== 'opening_counter') {
+                        mult = 1;
+                        gameLog('battle', `⚔️ [武将技] ${oppUnit!.generalId} 【${oppSkill.displayName}】否掉了${sideLabel}加己攻`);
+                    } else {
+                        gameLog('battle', `⚔️ [武将技] ${unit.generalId} 【${selfSkill.displayName}】反制，${sideLabel}加己攻保全`);
+                    }
+                }
+            }
             if (oppActiveId && mult > 1) {
                 const oppCtx = buildTacticalConditionContext({
                     battleType: opts?.battleType ?? 'field',
@@ -1901,6 +1919,18 @@ export function applyOpeningTacticalToRolls(
                 scheduleOpeningTacticalUi(unit, trigger);
                 lastTrigger = trigger;
             }
+            return next;
+        }
+        // 并战·乱（enemy_luck_down）：随机搅乱对手 roll
+        if (skill.effect === 'enemy_luck_down') {
+            const variance = skill.magnitude || 1;
+            const lo = 0.7, hi = 1.3;
+            const r = lo + Math.random() * (hi - lo);
+            const next = opponentRoll * r;
+            gameLog(
+                'battle',
+                `⚔️ [武将技] ${unit.generalId} 【${skill.displayName}】 ${sideLabel}搅乱敌运 ×${r.toFixed(2)}`,
+            );
             return next;
         }
         return opponentRoll;
@@ -2027,7 +2057,7 @@ export function tryApplyComebackTacticalForSide(
             );
             break;
         }
-        case 'ally_mult_1_2':
+        case 'ally_power_mult':
         case 'enemy_mult_0_8':
             ctx.triggeredSkillIds.add(skill.id);
             applied = true;
@@ -2061,7 +2091,7 @@ export function applyComebackRollMultipliersForSide(
     const skill = getTacticalSkillForTiming(unit, 'comeback');
     if (!skill || !triggeredSkillIds.has(skill.id)) return { sideRoll, opponentRoll };
 
-    if (skill.effect === 'ally_mult_1_2') {
+    if (skill.effect === 'ally_power_mult') {
         return { sideRoll: sideRoll * skill.magnitude, opponentRoll };
     }
     if (skill.effect === 'enemy_mult_0_8') {
