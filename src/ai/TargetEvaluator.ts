@@ -10,6 +10,7 @@
 import { City } from '../types/core';
 import { GameConfig } from '../config/GameConfig';
 import { roadRegistry } from '../core/RoadRegistry';
+import { getEuclideanDistance } from '../core/DistanceUtils';
 
 export interface TargetScore {
     targetId: string;
@@ -48,6 +49,7 @@ export class TargetEvaluator {
     public static pickTarget(
         factionId: string,
         anchorCityId: string,
+        homeCityId: string,
         cities: City[],
         options?: TargetEvaluateOptions
     ): TargetScore | null {
@@ -72,7 +74,7 @@ export class TargetEvaluator {
             }
         }
 
-        let pool = TargetEvaluator.buildDirectionalPool(anchorCityId, reachable);
+        let pool = TargetEvaluator.buildDirectionalPool(anchorCityId, reachable, homeCityId, cities);
         if (pool.length === 0) {
             const poolSize = Math.max(1, GameConfig.AI.TARGET_NEAR_POOL);
             pool = reachable.slice(0, Math.min(poolSize, reachable.length));
@@ -83,10 +85,13 @@ export class TargetEvaluator {
     /**
      * 锚点每条直连边 = 一个方向；该方向取最短路上第一跳经此邻城、且最近的敌城。
      * 邻城本身若为敌城则直接入选。
+     * 排除「回头路」：目标离老家不比锚点离老家远 → 跳过该方向。
      */
     private static buildDirectionalPool(
         anchorCityId: string,
         reachable: TargetScore[],
+        homeCityId: string,
+        cities: City[],
     ): TargetScore[] {
         const neighbors = roadRegistry.getConnectedCities(anchorCityId);
         if (neighbors.length === 0) return [];
@@ -95,11 +100,38 @@ export class TargetEvaluator {
         const pool: TargetScore[] = [];
         const seen = new Set<string>();
 
+        // 城ID → City 索引
+        const cityById = new Map(cities.map((c) => [c.id, c]));
+
+        // 锚点到老家的距离（欧氏），用于判断回头路
+        const anchorCity = cityById.get(anchorCityId);
+        const homeCity = cityById.get(homeCityId);
+        const anchorToHome = anchorCity && homeCity
+            ? getEuclideanDistance(
+                { lat: anchorCity.latitude, lng: anchorCity.longitude },
+                { lat: homeCity.latitude, lng: homeCity.longitude }
+              )
+            : 0;
+
+        const computeDistFromCity = (cityId: string): number => {
+            const ct = cityById.get(cityId);
+            return ct && homeCity
+                ? getEuclideanDistance(
+                    { lat: ct.latitude, lng: ct.longitude },
+                    { lat: homeCity.latitude, lng: homeCity.longitude }
+                  )
+                : 0;
+        };
+
         for (const neighborId of neighbors) {
             const directEnemy = reachableById.get(neighborId);
             if (directEnemy && !seen.has(directEnemy.targetId)) {
-                pool.push(directEnemy);
-                seen.add(directEnemy.targetId);
+                // 回头路检查
+                const d = computeDistFromCity(directEnemy.targetId);
+                if (d >= anchorToHome * 0.9) {
+                    pool.push(directEnemy);
+                    seen.add(directEnemy.targetId);
+                }
                 continue;
             }
 
@@ -112,8 +144,11 @@ export class TargetEvaluator {
                 }
             }
             if (best && !seen.has(best.targetId)) {
-                pool.push(best);
-                seen.add(best.targetId);
+                const d = computeDistFromCity(best.targetId);
+                if (d >= anchorToHome * 0.9) {
+                    pool.push(best);
+                    seen.add(best.targetId);
+                }
             }
         }
 

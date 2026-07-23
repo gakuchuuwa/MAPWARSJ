@@ -386,6 +386,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     const picked = TargetEvaluator.pickTarget(
         myFaction,
         anchorId,
+        originCityId,
         ctx.cityManager.getCities(),
         { excludeTargetIds }
     );
