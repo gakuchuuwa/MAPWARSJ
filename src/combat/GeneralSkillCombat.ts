@@ -873,9 +873,9 @@ export function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattle
 
 /**
  * 攻防环（第5环）—— 武将 attackStyle × 攻/守角色
- *   善攻：攻城×1.20 / 守城×0.80
- *   善防：攻城×0.80 / 守城×1.20
- *   双行：攻城×1.00 / 守城×1.00（既能攻又能守）
+ *   善攻：攻城×1.20 / 守城×1.00
+ *   善防：攻城×1.00 / 守城×1.20
+ *   双行：攻城×1.20 / 守城×1.20（既能攻又能守）
  */
 export function getAttackStylePowerMult(unit: IBattleUnit | null, isAttacker: boolean): number {
     if (!unit?.generalId) return 1;
@@ -893,6 +893,16 @@ export function getAttackStylePowerMult(unit: IBattleUnit | null, isAttacker: bo
 export function getFamousGeneralMult(unit: IBattleUnit | null): number {
     if (!unit?.generalId) return 1;
     return getGeneralProfile(unit.generalId)?.tier === 'famous' ? FAMOUS_GENERAL_MULT : 1;
+}
+
+/**
+ * 第7环·精锐光环 — elite tier → 阶梯乘数
+ * T0=1.50 T1=1.40 T2=1.30 T3=1.20 T4=1.10  无精锐=1.00
+ */
+export function getElitePowerMult(unit: IBattleUnit): number {
+    const tier = getUnitEliteTier(unit);
+    if (tier === null) return 1;
+    return GameConfig.COMBAT.ELITE_TIER_MULT[tier] ?? 1;
 }
 
 /**
@@ -1977,6 +1987,12 @@ export function applyOpeningTacticalToRolls(
     // 第6环·名将光环（tier='famous' ×1.20，普将 ×1.00）
     outAtt *= getFamousGeneralMult(attGen);
     outDef *= getFamousGeneralMult(defGen);
+
+    // 第7环·精锐光环（T0–T4 阶梯）
+    const attEliteUnit = findEligibleGeneralUnit(attackerUnits, attCommander);
+    const defEliteUnit = findEligibleGeneralUnit(defenderUnits, defCommander);
+    outAtt *= (attEliteUnit ? getElitePowerMult(attEliteUnit) : 1);
+    outDef *= (defEliteUnit ? getElitePowerMult(defEliteUnit) : 1);
 
     return { attRoll: outAtt, defRoll: outDef, trigger: lastTrigger };
 }

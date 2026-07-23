@@ -5752,11 +5752,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/xianqin/quanrong_yiquhai.png": {
-            "scale": 1.23,
-            "offsetX": 0,
-            "offsetY": -28
-        },
         "/assets/xianqin/__闲置__xianqin_33.png": {
             "scale": 1.27,
             "offsetX": 0,
@@ -5971,6 +5966,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.17,
             "offsetX": 0,
             "offsetY": -61
+        },
+        "/assets/xianqin/__闲置__xianqin_37.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/xianqin/quanrong_yiquhai.png": {
+            "scale": 1.2,
+            "offsetX": -7,
+            "offsetY": -47
         }
     },
     "folderGuides": {

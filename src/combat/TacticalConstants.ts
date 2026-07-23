@@ -55,15 +55,15 @@ export const COMEBACK_LUCK_RANGE: [number, number] = [0.25, 0.45];
 export const COMEBACK_LUCK_RANGE_GENERIC: [number, number] = [0.30, 0.40];
 
 /**
- * 攻防环（第5环）—— 攻方/守方 × attackStyle，三型各 2.00
- *   善攻：攻城×1.20 / 守城×0.80 —— 善攻不善守
- *   善防：攻城×0.80 / 守城×1.20 —— 善守不善攻
- *   双行：攻城×1.00 / 守城×1.00 —— 既能攻又能守，不偏不倚
+ * 攻防环（第5环）—— 攻方/守方 × attackStyle
+ *   善攻：攻城×1.20 / 守城×1.00 —— 擅长攻，守也不扣
+ *   善防：攻城×1.00 / 守城×1.20 —— 擅长守，攻也不扣
+ *   双行：攻城×1.20 / 守城×1.20 —— 既能攻又能守
  */
 export const ATTACK_STYLE_POWER_MULT: Record<string, Record<'attack' | 'defense', number>> = {
-    attack:   { attack: 1.20, defense: 0.80 },  // 善攻
-    defense:  { attack: 0.80, defense: 1.20 },  // 善防
-    balanced: { attack: 1.00, defense: 1.00 },  // 双行（既能攻又能守）
+    attack:   { attack: 1.20, defense: 1.00 },  // 善攻
+    defense:  { attack: 1.00, defense: 1.20 },  // 善防
+    balanced: { attack: 1.20, defense: 1.20 },  // 双行（既能攻又能守）
 };
 
 /**
