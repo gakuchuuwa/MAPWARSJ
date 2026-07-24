@@ -1406,13 +1406,10 @@ export class CombatUI {
                     styleHighlight = profile.attackStyle === 'balanced'
                         || (profile.attackStyle === 'attack' && side === 'attacker')
                         || (profile.attackStyle === 'defense' && side === 'defender') ? 2 : 0;
-                    // 势匹配（三势：兵力局势 × 武将适性 × 技能六类 三者对齐）
-                    const skillId = unit.battleOverriddenSkillId ?? null;
-                    const skillBaseEffect = skillId ? resolveGeneralTacticalEntry(skillId)?.baseEffect : undefined;
-                    const skillCls = skillBaseEffect ? (EFFECT_TO_SIX_SET[skillBaseEffect] as string | undefined) : undefined;
-                    if (profile.aptitude === 'create' && sit === 'advantage' && skillCls && ['gongzhan', 'shengzhan'].includes(skillCls)) aptHighlight2 = 2;
-                    else if (profile.aptitude === 'leverage' && sit === 'balance' && skillCls && ['dizhan', 'hunzhan'].includes(skillCls)) aptHighlight2 = 2;
-                    else if (profile.aptitude === 'reverse' && sit === 'disadvantage' && skillCls && ['bingzhan', 'baizhan'].includes(skillCls)) aptHighlight2 = 2;
+                    // 势匹配（三势：兵力局势 × 武将适性 对应）
+                    if (profile.aptitude === 'create' && sit === 'advantage') aptHighlight2 = 2;
+                    else if (profile.aptitude === 'leverage' && sit === 'balance') aptHighlight2 = 2;
+                    else if (profile.aptitude === 'reverse' && sit === 'disadvantage') aptHighlight2 = 2;
                 }
             }
         }

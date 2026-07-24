@@ -167,11 +167,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         }
     },
     "images": {
-        "/assets/panjun/chimei_fanchong.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -30
-        },
         "/assets/xianqin/shang_fuhao.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -5225,7 +5220,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/panjun/__闲置__PANJUN_23.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": -24
+            "offsetY": -30
         },
         "/assets/panjun/ketagalan_huangqingyun.png": {
             "scale": 1.02,
@@ -5976,6 +5971,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.2,
             "offsetX": -7,
             "offsetY": -47
+        },
+        "/assets/LINGNAN/chimei_fanchong.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {
