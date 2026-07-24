@@ -745,6 +745,7 @@ export class CombatUI {
         strip.style.cssText = `
             width: 100%;
             min-width: 0;
+            max-width: 100%;
             display: grid;
             grid-template-rows: subgrid;
             grid-row: 1 / -1;
@@ -771,6 +772,9 @@ export class CombatUI {
             flex-shrink: 0;
             grid-row: 1 / -1;
             align-self: center;
+            position: relative;
+            z-index: 10;
+            margin: 0 ${uiPx(4)};
         `;
 
         const img = document.createElement('img');
@@ -823,6 +827,7 @@ export class CombatUI {
             letter-spacing: ${uiPx(2)};
             text-shadow: 0 2px 6px rgba(0,0,0,0.85);
             white-space: nowrap;
+            flex-shrink: 0;
         `;
 
         row.appendChild(nameSpan);
@@ -845,19 +850,19 @@ export class CombatUI {
         this.applySideLabelStyle(label, side);
         label.style.display = 'flex';
         label.style.flexDirection = isAtt ? 'row' : 'row-reverse';
-        label.style.alignItems = 'baseline';
+        label.style.alignItems = 'center';
         label.style.flexWrap = 'nowrap';
         label.style.width = '100%';
         label.style.maxWidth = '100%';
-        label.style.overflow = 'visible';
+        label.style.overflow = 'hidden';
 
         const nameSpan = document.createElement('span');
         nameSpan.style.cssText = `
-            overflow: visible;
-            white-space: pre-wrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             line-height: 1.15;
-            flex-shrink: 1;
-            min-width: 0;
+            flex-shrink: 0;
             max-width: ${T.sideBar.maxDisplayNameCh + T.sideBar.maxNameSuffixCh}ch;
             color: ${isAtt ? T.colors.attackerName : T.colors.defenderName};
             text-align: ${isAtt ? 'left' : 'right'};
@@ -868,7 +873,7 @@ export class CombatUI {
             color: rgba(255,255,255,0.92);
             font-weight: 700;
             flex-shrink: 0;
-            margin-${isAtt ? 'left' : 'right'}: auto;
+            margin-${isAtt ? 'left' : 'right'}: ${uiPx(6)};
             min-width: ${T.sideBar.troopsMinCh}ch;
             font-variant-numeric: tabular-nums;
             font-feature-settings: "tnum" 1;
@@ -878,23 +883,13 @@ export class CombatUI {
 
         const multBadge = document.createElement('span');
         multBadge.style.cssText = `
-            flex-shrink: 0;
-            margin-${isAtt ? 'left' : 'right'}: ${uiPx(8)};
-            padding: 0 ${uiPx(6)};
-            font-size: ${uiPx(12)};
-            font-weight: 900;
-            line-height: 1.5;
-            border-radius: 3px;
-            border: 1px solid ${isAtt ? 'rgba(253, 185, 49, 0.6)' : 'rgba(90, 170, 190, 0.6)'};
-            color: ${isAtt ? 'rgba(255, 225, 150, 1)' : 'rgba(180, 230, 255, 1)'};
-            background: ${isAtt ? 'linear-gradient(180deg, rgba(60, 25, 5, 0.85) 0%, rgba(20, 5, 0, 0.7) 100%)' : 'linear-gradient(180deg, rgba(10, 35, 55, 0.85) 0%, rgba(0, 10, 20, 0.7) 100%)'};
-            box-shadow: 
-                inset 0 1px 1px rgba(255,255,255,0.25), 
-                inset 0 -3px 6px ${isAtt ? 'rgba(253, 185, 49, 0.35)' : 'rgba(90, 170, 190, 0.35)'},
-                0 2px 4px rgba(0,0,0,0.8);
-            text-shadow: 0 1px 3px rgba(0,0,0,1), 0 0 6px ${isAtt ? 'rgba(253, 185, 49, 0.5)' : 'rgba(90, 170, 190, 0.5)'};
-            backdrop-filter: blur(2px);
-            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 1;
+            flex-wrap: nowrap;
+            overflow: hidden;
+            gap: ${uiPx(2)};
+            margin-${isAtt ? 'left' : 'right'}: ${uiPx(4)};
             display: none;
         `;
 
@@ -953,8 +948,14 @@ export class CombatUI {
                 badge.style.display = 'none';
                 return;
             }
-            badge.textContent = this.formatBattlePowerBadge(unit, opponent, side);
-            badge.style.display = 'inline-block';
+            const { chain, title } = this.formatBattlePowerBadge(unit, opponent, side);
+            if (!chain) {
+                badge.style.display = 'none';
+                return;
+            }
+            badge.innerHTML = chain;
+            badge.title = title;
+            badge.style.display = 'inline-flex';
         };
         applyTotal(this.leftMultBadge, attacker, defender, 'attacker');
         applyTotal(this.rightMultBadge, defender, attacker, 'defender');
@@ -1258,7 +1259,11 @@ export class CombatUI {
         return pickSideSkillGeneralUnit(this.getUnitsForSide(side)) ?? fallback;
     }
 
-    private formatBattlePowerBadge(unit: IBattleUnit, opponent: IBattleUnit | null, side: 'attacker' | 'defender'): string {
+    private formatBattlePowerBadge(
+        unit: IBattleUnit,
+        opponent: IBattleUnit | null,
+        side: 'attacker' | 'defender',
+    ): { chain: string; title: string } {
         unit = this.resolvePowerBadgeUnit(unit, side);
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
@@ -1269,10 +1274,21 @@ export class CombatUI {
         const cachedMyTroops = side === 'attacker' ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
         const cachedOppTroops = side === 'attacker' ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
 
-        let product = 1;
-        product *= getUnitCultureCombatMultiplier(unit);
-        product *= getCampaignLegionCombatMultiplier(unit);
-        product *= getOpeningTacticalPowerMultiplier(
+        const factors: { label: string; shortName: string; val: number }[] = [];
+        const pushFactor = (label: string, shortName: string, mult: number) => {
+            if (Math.abs(mult - 1) > 0.001) {
+                factors.push({ label, shortName, val: mult });
+            }
+        };
+
+        // 1. 命运运气 (运)
+        const fateLuck = side === 'attacker'
+            ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
+            : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
+        pushFactor('命运运气', '运', fateLuck);
+
+        // 2. 战术技能 (技)
+        pushFactor('战术技能', '技', getOpeningTacticalPowerMultiplier(
             myUnits,
             oppUnits,
             side === 'attacker',
@@ -1281,25 +1297,54 @@ export class CombatUI {
             side === 'attacker' ? bf?.getDefenderCommander() : bf?.getAttackerCommander(),
             cachedMyTroops,
             cachedOppTroops,
-        );
+        ));
 
-        // ③ 势层
-        product *= getAptitudePowerMult(myUnits, oppUnits, unit, cachedMyTroops, cachedOppTroops);
+        // 3. 攻防风格 (攻/守)
+        pushFactor('攻防风格', side === 'attacker' ? '攻' : '守', getAttackStylePowerMult(unit, side === 'attacker'));
 
-        // ④ 攻防层（与 unit 同源：指挥官）
-        product *= getAttackStylePowerMult(unit, side === 'attacker');
+        // 4. 三势适性 (势)
+        pushFactor('三势适性', '势', getAptitudePowerMult(myUnits, oppUnits, unit, cachedMyTroops, cachedOppTroops));
 
-        // ⑤ 名将光环（tier='famous' ×1.20）
-        product *= getFamousGeneralMult(unit);
+        // 5. 文化加成 (文)
+        pushFactor('文化加成', '文', getUnitCultureCombatMultiplier(unit));
 
-        // ① 运气（读当前值：开场=开局值，败战翻盘后=重掷值）
-        const fateLuck = side === 'attacker'
-            ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
-            : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
-        product *= fateLuck;
+        // 6. 据点险要 (据)
+        const passMult = getPassGarrisonCombatMultiplier(unit);
+        const regionMult = getRegionCenterCombatMultiplier(unit);
+        pushFactor('据点险要', '据', passMult * regionMult);
 
-        if (Math.abs(product - 1) <= 0.001) return `×1`;
-        return `×${parseFloat(product.toFixed(1))}`;
+        // 7. 精锐兵种 (兵)
+        pushFactor('精锐兵种', '兵', getCampaignLegionCombatMultiplier(unit));
+
+        // 8. 名将光环 (名)
+        pushFactor('名将光环', '名', getFamousGeneralMult(unit));
+
+        if (factors.length === 0) {
+            return { chain: '', title: '战力无额外加成 (×1)' };
+        }
+
+        const isAtt = side === 'attacker';
+        const chain = factors.map((f) => {
+            const isBuff = f.val > 1.001;
+            const fmtVal = String(parseFloat(f.val.toFixed(2)));
+            const text = `${f.shortName}×${fmtVal}`;
+
+            const borderColor = isBuff
+                ? (isAtt ? 'rgba(253, 185, 49, 0.65)' : 'rgba(90, 170, 190, 0.65)')
+                : 'rgba(235, 85, 75, 0.75)';
+            const color = isBuff
+                ? (isAtt ? 'rgba(255, 230, 160, 1)' : 'rgba(190, 240, 255, 1)')
+                : 'rgba(255, 170, 160, 1)';
+            const bg = isBuff
+                ? (isAtt ? 'rgba(50, 20, 5, 0.85)' : 'rgba(10, 30, 45, 0.85)')
+                : 'rgba(50, 10, 10, 0.85)';
+
+            return `<span style="display:inline-block;padding:2px 6px;margin:0 2px;font-size:12px;font-weight:800;line-height:1.2;border:1px solid ${borderColor};color:${color};background:${bg};border-radius:3px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.4);" title="${f.label}：×${fmtVal}">${text}</span>`;
+        }).join('');
+
+        const title = `战力加成明细：\n` + factors.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n');
+
+        return { chain, title };
     }
 
     private formatBattlePowerFactorChain(
@@ -1353,17 +1398,12 @@ export class CombatUI {
             }
         }
 
-        // ①运气标签：只有极端值才显示（0.8→厄运, 1.2→好运, 中间不显）
+        // ① 运气标签已彻底移除纯文字「好运/厄运」，统一采用第二行「运×参数」八环胶囊展示
         const fateLuck = side === 'attacker'
             ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? null)
             : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? null);
-        let luckLabel = '';
-        if (fateLuck !== null && fateLuck !== undefined) {
-            if (fateLuck > 1.15) luckLabel = '好运';
-            else if (fateLuck < 0.85) luckLabel = '厄运';
-        }
 
-        if (labeled.length === 0 && !luckLabel && !passLabel && !regionLabel && !tacLabel) {
+        if (labeled.length === 0 && !passLabel && !regionLabel && !tacLabel) {
             return { chain: '', title: '' };
         }
 
@@ -1372,8 +1412,7 @@ export class CombatUI {
         // 标签框样式（每个词独立边框）
         const isAtt = side === 'attacker';
         const tag = (text: string, extraStyle = '') =>
-            `<span style=\"display:inline-block;padding:1px 5px;border:1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};border-radius:3px;background:${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};margin:0 1px;${extraStyle}\">${text}</span>`;
-        if (luckLabel) parts.push(tag(luckLabel));
+            `<span style="display:inline-block;padding:2px 6px;margin:0 2px;font-size:12px;font-weight:800;line-height:1.2;border:1px solid ${isAtt ? 'rgba(253,185,49,0.35)' : 'rgba(90,170,190,0.35)'};border-radius:3px;background:${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};box-shadow:0 1px 3px rgba(0,0,0,0.4);white-space:nowrap;${extraStyle}">${text}</span>`;
         if (passLabel) {/* 据点标签已移至战斗标题 */}
         if (regionLabel) {/* 据点标签已移至战斗标题 */}
         if (tacLabel) parts.push(tag(tacLabel));
@@ -1420,7 +1459,6 @@ export class CombatUI {
 
         const titleParts = labeled.map((l) => `${l.label}×${fmt(l.value)}`);
 
-        if (luckLabel) titleParts.unshift(`运气:${luckLabel}(×${parseFloat(fateLuck!.toFixed(2))})`);
         const title = `${role}：${titleParts.join(' ')}`;
         return { chain, title };
     }
@@ -1471,10 +1509,7 @@ export class CombatUI {
         const nameEl = side === 'attacker' ? this.leftSideNameSpan : this.rightSideNameSpan;
         const troopsEl = side === 'attacker' ? this.leftSideTroopsSpan : this.rightSideTroopsSpan;
         nameEl.innerHTML = name;
-        const t = Math.max(0, Math.floor(troops));
-        let troopsText = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : String(t);
-
-        troopsEl.textContent = troopsText;
+        troopsEl.textContent = '';
     }
 
     private resolveFactionLabel(factionId: string | null): string {
@@ -2086,8 +2121,8 @@ export class CombatUI {
 
         this.currentRegionalUnits = { attackers, defenders };
 
-        this.attackerDisplayName = this.buildWaveGroupedSideName(attackers);
-        this.defenderDisplayName = this.buildWaveGroupedSideName(defenders);
+        this.attackerDisplayName = this.buildWaveGroupedSideName(attackers, 'attacker');
+        this.defenderDisplayName = this.buildWaveGroupedSideName(defenders, 'defender');
 
         const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
@@ -2133,7 +2168,7 @@ export class CombatUI {
         return (u.name || '军团').trim();
     }
 
-    private buildWaveGroupedSideName(units: IBattleUnit[]): string {
+    private buildWaveGroupedSideName(units: IBattleUnit[], side: 'attacker' | 'defender'): string {
         const waves = new Map<number, IBattleUnit[]>();
         for (const u of units) {
             if (u.isDestroyed || u.troops <= 0) continue;
@@ -2145,9 +2180,8 @@ export class CombatUI {
         const sortedWaves = [...waves.entries()].sort((a, b) => a[0] - b[0]);
 
         const maxWave = sortedWaves.length > 0 ? sortedWaves[sortedWaves.length - 1][0] : 0;
+        const isAtt = side === 'attacker';
         let html = '';
-        // 跨波按显示名去重：城池精锐番号在援军编入后仍保留（SiegeGarrisonTier 有意为之），
-        // 同名精锐军团来援会重名。只去重名，勿整类跳过城防——否则「开封驻军」被守城军团吞掉。
         const usedNames = new Set<string>();
         for (const [wi, waveUnits] of sortedWaves) {
             const dim = maxWave <= 0 ? 1 : wi === 0 ? 1 : wi === 1 ? 0.88 : 0.72;
@@ -2162,9 +2196,6 @@ export class CombatUI {
                 const displayName = this.resolveBattleUnitListName(u);
                 if (!displayName || usedNames.has(displayName)) continue;
                 usedNames.add(displayName);
-                const match = displayName.match(/(军团|驻军|守军)$/);
-                const base = match ? displayName.substring(0, match.index) : displayName;
-                const suffix = match ? match[0] : '';
 
                 let joinStatus = '';
                 if (wi >= 1 && this.boundRegionalBattleField) {
@@ -2175,15 +2206,20 @@ export class CombatUI {
                     }
                 }
 
-                if (suffix && base) {
-                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${base}</span>`;
-                    html += `<span style="opacity:${dim * 0.85}; font-size:calc(${size} * 0.95); margin-left:2px; white-space: nowrap;">${suffix}${joinStatus}</span>`;
-                } else {
-                    html += `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap; grid-column: span 2;">${displayName}${joinStatus}</span>`;
-                }
+                const t = Math.max(0, Math.floor(u.troops));
+                const troopStr = `${(t / 10000).toFixed(2)}万`;
+
+                const nameSpan = `<span style="opacity:${dim}; font-size:${size}; white-space: nowrap;">${displayName}${joinStatus}</span>`;
+                const troopSpan = `<span style="opacity:${dim}; font-size:${size}; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap;">${troopStr}</span>`;
+
+                const lineHtml = isAtt
+                    ? `${nameSpan}<span style="margin-left: 8px;">${troopSpan}</span>`
+                    : `<span style="margin-right: 8px;">${troopSpan}</span>${nameSpan}`;
+
+                html += `<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; width: 100%; margin-bottom: 2px;">${lineHtml}</div>`;
             }
         }
-        return `<div style="display: grid; grid-template-columns: max-content max-content; column-gap: 4px; row-gap: 4px; text-align: inherit;">${html}</div>`;
+        return `<div style="display: flex; flex-direction: column; text-align: ${isAtt ? 'left' : 'right'};">${html}</div>`;
     }
 
     // ============================================================
