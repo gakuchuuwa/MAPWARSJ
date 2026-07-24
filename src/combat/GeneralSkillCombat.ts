@@ -857,14 +857,14 @@ export function getOpeningTacticalPowerMultiplier(
 }
 
 // ── 三势适性：势×局×计 开战战力系数（三势统一：兵力局势 + 武将天赋 + 技能六类）──
-/** 按该侧带将单位的 兵力局势 × 天赋 × 技能六类 返回开战战力系数 */
+/** 按该侧带将单位的 文化修正有效兵力局势 × 天赋 × 技能六类 返回开战战力系数 */
 export function getAptitudePowerMult(sideUnits: IBattleUnit[], oppUnits: IBattleUnit[], selfCommander?: IBattleUnit | null, overrideSelfTroops?: number, overrideEnemyTroops?: number): number {
     const unit = findEligibleGeneralUnit(sideUnits, selfCommander);
     if (!unit?.generalId) return 1;
     const apt = getGeneralProfile(unit.generalId)?.aptitude;
     if (!apt) return 1;
-    const st = overrideSelfTroops ?? sideUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
-    const ot = overrideEnemyTroops ?? oppUnits.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const st = overrideSelfTroops ?? sumCultureAdjustedTroops(sideUnits);
+    const ot = overrideEnemyTroops ?? sumCultureAdjustedTroops(oppUnits);
     const r = st / Math.max(1, ot);
     const sit: 'advantage'|'balance'|'disadvantage' = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
     
