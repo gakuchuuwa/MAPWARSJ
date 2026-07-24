@@ -36,7 +36,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // §14 #10 喀喇契丹 → 见 CentralAsiaExpeditionLegions xiliao
   // ── 2026-06-16 新增：西域大区平衡补全（5支，精锐随据点，全图无六字番号） ──
     quli: { name: '轮台屯骑', tier: 3 },
-    dzungar: { name: '绰罗斯精骑', tier: 1 },
   yarkand: { name: '英吉沙骑兵', tier: 4 },
   tuerhute: { name: '鹰娑川铁骑', tier: 3 },
     gaochang: { name: '高昌铁骑', tier: 3 },          // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号

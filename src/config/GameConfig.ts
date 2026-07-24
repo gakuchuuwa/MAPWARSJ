@@ -115,13 +115,9 @@ export class GameConfig {
         /** 导演时长钳制上限（游戏秒） */
         BATTLE_DURATION_MAX_SEC: 60,
         /**
-         * 双将战只有两档时长，按开战「有效战力比」（八环乘完之后）定：
-         *   均势 → 45 秒（唯一有悬念的局，给足播报时间）
-         *   优势/劣势 → 30 秒（胜负已定，快收）
-         * 判定阈值复用三势的 SITUATION_*_RATIO，全游戏「局势」只有一个定义。
-         * 注：不按兵力比判——兵力只是八环之一，1:1 兵力可能是碾压，2:1 兵力可能是死斗。
+         * 双将战固定 30 秒。
          */
-        BATTLE_DURATION_BALANCE_SEC: 45,
+        BATTLE_DURATION_BALANCE_SEC: 30,
         BATTLE_DURATION_DECIDED_SEC: 30,
         /** 一方有将（非双将战）：固定 9 秒 */
         BATTLE_DURATION_PARTIAL_GENERAL_SEC: 9,

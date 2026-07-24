@@ -502,11 +502,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/CENTRAL_ASIA/badakhshan_yaerbeige.png": {
-            "scale": 1.04,
-            "offsetX": 22,
-            "offsetY": -10
-        },
         "/assets/CENTRAL/cao_d_caocao.png": {
             "scale": 1.04,
             "offsetX": 0,
@@ -5976,6 +5971,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_18.png": {
+            "scale": 1.04,
+            "offsetX": 22,
+            "offsetY": -10
+        },
+        "/assets/CENTRAL_ASIA/badakhshan_yaerbeige.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {

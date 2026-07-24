@@ -574,11 +574,16 @@ export class CameraFollowUI {
                 ${itemBg}
             `;
 
-            // 第一行：名次 + 军团名 + 军团兵力；第二行：势力色点 + 势力名 + 势力兵力 + 据点数
+            const winStreak = (army as any).winStreak || 0;
+            const streakHtml = winStreak > 0
+                ? `<span style="display:inline-flex; align-items:center; margin-left:6px; padding:0 4px; font-size:10px; font-weight:bold; color:#ff7733; background:rgba(255,85,0,0.15); border:1px solid rgba(255,85,0,0.45); border-radius:3px; text-shadow:0 1px 2px #000; line-height:1.3; vertical-align:middle;">🔥${winStreak}连胜</span>`
+                : '';
+
+            // 第一行：名次 + 军团名 + 连胜 + 军团兵力；第二行：势力色点 + 势力名 + 势力兵力 + 据点数
             item.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; ${nameStyle}">
-                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070; font-weight:normal; text-shadow:none;">${idx + 1}.</span> ${titleHtml}
+                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070; font-weight:normal; text-shadow:none;">${idx + 1}.</span> ${titleHtml}${streakHtml}
                     </span>
                     <span style="color:#e0c878; font-size:12px; margin-left:8px; white-space:nowrap;">
                         ${this.formatTroops(troops)}
