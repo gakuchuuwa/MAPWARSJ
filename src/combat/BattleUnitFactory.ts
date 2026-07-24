@@ -201,6 +201,11 @@ export class BattleUnitFactory {
             },
 
             onBattleEnd: (result, opponent, enemyKilled) => {
+                // 转发给底层实体（如 Army.onBattleEnd 记录连胜数）
+                if (typeof entity.onBattleEnd === 'function') {
+                    entity.onBattleEnd(result, opponent, enemyKilled);
+                }
+
                 if (isMobile && entity.setCombatState) {
                     entity.setCombatState(false);
                 }

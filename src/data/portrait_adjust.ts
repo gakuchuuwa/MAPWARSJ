@@ -1678,7 +1678,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/JIANGNAN/wenling_shilang.png": {
-            "scale": 0.95,
+            "scale": 0.87,
             "offsetX": 0,
             "offsetY": -11
         },
@@ -2838,7 +2838,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -24
         },
         "/assets/zhaosong/tingzhou_d_chenmin.png": {
-            "scale": 0.97,
+            "scale": 0.99,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -5393,7 +5393,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/LINGNAN/dayu_wangshouren.png": {
-            "scale": 1,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": 7
         },

@@ -117,6 +117,9 @@ export class CombatUI {
     private indicatorRightYou!: HTMLDivElement;
     private indicatorRightLie!: HTMLDivElement;
     private indicatorJun!: HTMLDivElement;
+    private leftCenterSixBadge!: HTMLSpanElement;
+    private rightCenterSixBadge!: HTMLSpanElement;
+    private centerSixBadgeGroup!: HTMLDivElement;
 
     /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
     private skillPulseShownKeys = new Set<string>();
@@ -479,6 +482,26 @@ export class CombatUI {
         this.indicatorJun.style.zIndex = '20';
         this.indicatorJun.style.pointerEvents = 'none';
         this.container.appendChild(this.indicatorJun);
+
+        // 中央局势正下方的六计一字双角标
+        this.centerSixBadgeGroup = document.createElement('div');
+        this.centerSixBadgeGroup.style.cssText = `
+            position: absolute;
+            top: calc(100% + ${uiPx(4)});
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: ${uiPx(4)};
+            z-index: 25;
+            pointer-events: none;
+            white-space: nowrap;
+        `;
+        this.leftCenterSixBadge = document.createElement('span');
+        this.rightCenterSixBadge = document.createElement('span');
+        this.centerSixBadgeGroup.appendChild(this.leftCenterSixBadge);
+        this.centerSixBadgeGroup.appendChild(this.rightCenterSixBadge);
+        this.indicatorJun.appendChild(this.centerSixBadgeGroup);
 
         this.wireGeneralNameTagClicks();
         this.refreshGeneralNameTagInteract();
@@ -1287,6 +1310,72 @@ export class CombatUI {
             applyBadgeStyleToElement(badge, aptChar, fmtVal, borderColor, color, bg, `三势适性：×${fmtVal}`);
         };
 
+        const updateCenterSixSetBadges = (attUnit: IBattleUnit | null, defUnit: IBattleUnit | null) => {
+            const getSixChar = (unit: IBattleUnit | null, side: 'attacker' | 'defender') => {
+                if (!unit) return null;
+                const resolved = this.resolvePowerBadgeUnit(unit, side);
+                if (resolved.generalId) {
+                    const skillId = resolved.battleOverriddenSkillId ?? resolved.negatedSkillId ?? null;
+                    const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
+                    if (entry) {
+                        const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
+                        const TAC_MAP: Record<TacticalSixSet, string> = {
+                            gongzhan: '攻', shengzhan: '胜', dizhan: '敌',
+                            hunzhan: '混', bingzhan: '并', baizhan: '败',
+                        };
+                        if (cls && TAC_MAP[cls]) return TAC_MAP[cls];
+                    }
+                }
+                return null;
+            };
+
+            const applyCenterBadge = (el: HTMLSpanElement, char: string | null, isAtt: boolean) => {
+                if (!char) {
+                    el.style.display = 'none';
+                    return;
+                }
+                const SIX_STYLES: Record<string, { color: string; bg: string; border: string; glow: string }> = {
+                    攻: { color: '#FFEADB', bg: 'linear-gradient(135deg, rgba(140, 60, 10, 0.95), rgba(50, 15, 5, 0.95))', border: 'rgba(249, 115, 22, 0.85)', glow: 'rgba(249, 115, 22, 0.5)' },
+                    胜: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(20, 100, 45, 0.95), rgba(5, 40, 15, 0.95))', border: 'rgba(34, 197, 94, 0.85)', glow: 'rgba(34, 197, 94, 0.5)' },
+                    敌: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(10, 90, 110, 0.95), rgba(5, 30, 45, 0.95))', border: 'rgba(6, 182, 212, 0.85)', glow: 'rgba(6, 182, 212, 0.5)' },
+                    混: { color: '#F3E8FF', bg: 'linear-gradient(135deg, rgba(90, 30, 120, 0.95), rgba(30, 5, 45, 0.95))', border: 'rgba(168, 85, 247, 0.85)', glow: 'rgba(168, 85, 247, 0.5)' },
+                    并: { color: '#DBEAFE', bg: 'linear-gradient(135deg, rgba(20, 60, 120, 0.95), rgba(5, 20, 45, 0.95))', border: 'rgba(59, 130, 246, 0.85)', glow: 'rgba(59, 130, 246, 0.5)' },
+                    败: { color: '#FEE2E2', bg: 'linear-gradient(135deg, rgba(120, 20, 20, 0.95), rgba(45, 5, 5, 0.95))', border: 'rgba(239, 68, 68, 0.85)', glow: 'rgba(239, 68, 68, 0.5)' },
+                };
+                const st = SIX_STYLES[char] ?? {
+                    color: '#ffffff',
+                    bg: isAtt ? 'linear-gradient(135deg, rgba(100, 20, 10, 0.95), rgba(40, 5, 5, 0.95))' : 'linear-gradient(135deg, rgba(10, 50, 90, 0.95), rgba(5, 20, 40, 0.95))',
+                    border: isAtt ? 'rgba(230, 57, 0, 0.85)' : 'rgba(0, 102, 204, 0.85)',
+                    glow: isAtt ? 'rgba(230, 57, 0, 0.5)' : 'rgba(0, 102, 204, 0.5)',
+                };
+                el.textContent = char;
+                el.title = `${isAtt ? '攻方' : '守方'}战术六计：【${char}】`;
+                el.style.cssText = `
+                    display: inline-block !important;
+                    width: ${uiPx(22)} !important;
+                    height: ${uiPx(22)} !important;
+                    line-height: ${uiPx(20)} !important;
+                    text-align: center !important;
+                    font-family: 'Noto Serif SC', serif !important;
+                    font-size: ${uiPx(15)} !important;
+                    font-weight: 900 !important;
+                    color: ${st.color} !important;
+                    background: ${st.bg} !important;
+                    border: 1px solid ${st.border} !important;
+                    border-radius: 2px !important;
+                    box-shadow: 0 0 10px ${st.glow}, inset 0 0 6px ${st.glow} !important;
+                    text-shadow: 0 0 5px ${st.glow} !important;
+                    box-sizing: border-box !important;
+                `;
+            };
+
+            const attChar = getSixChar(attUnit, 'attacker');
+            const defChar = getSixChar(defUnit, 'defender');
+
+            applyCenterBadge(this.leftCenterSixBadge, attChar, true);
+            applyCenterBadge(this.rightCenterSixBadge, defChar, false);
+        };
+
         applySideBadges(this.leftFactionMultSpan, this.leftMultBadge, attacker, defender, 'attacker');
         applySideBadges(this.rightFactionMultSpan, this.rightMultBadge, defender, attacker, 'defender');
         updateCultureBadge(attacker, 'attacker');
@@ -1299,6 +1388,7 @@ export class CombatUI {
         updateAptitudeBadge(defender, 'defender');
         updateLuckBadge('attacker');
         updateLuckBadge('defender');
+        updateCenterSixSetBadges(attacker, defender);
         updateReinforcements('attacker');
         updateReinforcements('defender');
     }
@@ -1480,35 +1570,6 @@ export class CombatUI {
 
             tag.appendChild(nameEl);
             tag.appendChild(effectEl);
-
-            if (sixSetChar) {
-                const badgeEl = document.createElement('div');
-                const SIX_COLORS: Record<string, string> = {
-                    攻: '#f97316', 胜: '#22c55e', 敌: '#06b6d4',
-                    混: '#a855f7', 并: '#3b82f6', 败: '#ef4444',
-                };
-                const tagColor = SIX_COLORS[sixSetChar] ?? '#eab308';
-                badgeEl.style.cssText = `
-                    position: absolute;
-                    top: 2px;
-                    ${isAttacker ? 'right: 2px' : 'left: 2px'};
-                    padding: 1px 4px;
-                    font-family: 'Noto Sans SC', sans-serif;
-                    font-size: 10px;
-                    font-weight: 900;
-                    line-height: 1;
-                    color: #ffffff;
-                    background: ${tagColor};
-                    border: 1px solid rgba(255, 255, 255, 0.85);
-                    border-radius: 3px;
-                    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
-                    z-index: 10;
-                    pointer-events: none;
-                `;
-                badgeEl.textContent = sixSetChar;
-                tag.appendChild(badgeEl);
-            }
-
             return tag;
         };
 
@@ -1520,11 +1581,10 @@ export class CombatUI {
                 name: string,
                 effect: string,
                 famous: boolean,
-                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'other' = 'other',
-                sixSetChar?: string,
+                skillType: 'tactical' | 'pass' | 'elite' | 'culture' | 'other' = 'other'
             ) => {
                 if (pending.length >= 4) return;
-                const el = createSkillTag(name, effect, famous, isAttacker, skillType, sixSetChar);
+                const el = createSkillTag(name, effect, famous, isAttacker, skillType);
                 // 已燃态（P1）：本局已放过的技能——Cut-in 弹出 0.6s 后定格为降亮度+金框+✓；
                 // 标签每帧重建，必须按 skillSpentAt 在创建时补挂
                 const spentAt = this.skillSpentAt.get(`${sideKey}-${name}`);
@@ -1541,16 +1601,20 @@ export class CombatUI {
             // const regionCenterSkill = getRegionCenterDefenseSkillDisplay(unit);
             // if (regionCenterSkill) add(regionCenterSkill.name, regionCenterSkill.effectLabel, false, 'pass');
 
-            // 文化区标签：攻/防四字词，与精锐技能同排卡片（无 ≠1 门槛：×1.00 的 习于行阵/据城而守 也常显，
-            // 2026-07-17 自下方乘区链条移植上来，链条不再重复展示文化标签）
-            {
+            const addElite = () => {
+                const legionMult = getCampaignLegionCombatMultiplier(unit);
+                if (Math.abs(legionMult - 1) > 0.001) {
+                    add(getLegionEliteBadgeName(unit), '', true, 'elite');
+                }
+            };
+
+            const addCulture = () => {
                 const cultureMult = getCultureOnlyCombatMultiplier(unit);
                 const round = Math.round(cultureMult * 100) / 100;
                 const ATK_LABELS: Record<number, string> = {
                     1.20: '侵略如火', 1.15: '骁勇善战', 1.10: '能征惯战', 1.00: '习于行阵',
                     0.95: '缮甲厉兵', 0.90: '据阵自保', 0.80: '堪以一战',
                 };
-                // 攻 1.15/1.10/1.00/0.95/0.90/0.80；防 1.20/1.10/1.05/1.00/0.95/0.90/0.80
                 const DEF_LABELS: Record<number, string> = {
                     1.20: '山河险固', 1.10: '城池为固', 1.05: '堡山而立',
                     1.00: '据城而守', 0.95: '凭城为守', 0.90: '山城自顾', 0.80: '无遮无蔽',
@@ -1558,22 +1622,26 @@ export class CombatUI {
                 const isGarrison = unit.unitType === 'city';
                 const label = isGarrison ? (DEF_LABELS[round] ?? '') : (ATK_LABELS[round] ?? '');
                 if (label) add(label, '', false, 'culture');
-            }
+            };
 
-            // 兵合一处（不再显示为独立技能框，但下方乘区链条依然会有）
-            // const joinLuck = this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
-            // const reinfSkill = getReinforcementJoinSkillDisplay(joinLuck);
-            // if (reinfSkill) add(reinfSkill.name, reinfSkill.effectLabel, false, 'other');
-
-            if (unit.generalId) {
-                for (const tag of getGeneralSkillDisplayTags(unit)) {
-                    add(tag.name, '', tag.isFamous, tag.skillType, tag.sixSetChar);
+            const addSkills = () => {
+                if (unit.generalId) {
+                    for (const tag of getGeneralSkillDisplayTags(unit)) {
+                        add(tag.name, '', tag.isFamous, tag.skillType);
+                    }
                 }
-            }
+            };
 
-            const legionMult = getCampaignLegionCombatMultiplier(unit);
-            if (Math.abs(legionMult - 1) > 0.001) {
-                add(getLegionEliteBadgeName(unit), '', true, 'elite');
+            if (isAttacker) {
+                // 攻击方：精锐 -> 文化 -> 技能
+                addElite();
+                addCulture();
+                addSkills();
+            } else {
+                // 防守方：技能 -> 文化 -> 精锐
+                addSkills();
+                addCulture();
+                addElite();
             }
 
             for (const tag of pending) box.appendChild(tag);
@@ -3482,6 +3550,11 @@ export class CombatUI {
                 defCurrent = info.defenderTroops;
                 attMax = Math.max(info.attackerInitial, attCurrent);
                 defMax = Math.max(info.defenderInitial, defCurrent);
+
+                const atts = this.boundRegionalBattleField.getAttackerUnits();
+                const defs = this.boundRegionalBattleField.getDefenderUnits();
+                if (atts.length > 0) this.attackerDisplayName = this.buildWaveGroupedSideName(atts, 'attacker');
+                if (defs.length > 0) this.defenderDisplayName = this.buildWaveGroupedSideName(defs, 'defender');
             } else {
                 for (const u of this.currentRegionalUnits.attackers) {
                     if (u.isDestroyed) continue;
@@ -3492,6 +3565,12 @@ export class CombatUI {
                     if (u.isDestroyed) continue;
                     defCurrent += u.troops;
                     defMax += u.maxTroops;
+                }
+                if (this.currentRegionalUnits.attackers.length > 0) {
+                    this.attackerDisplayName = this.buildWaveGroupedSideName(this.currentRegionalUnits.attackers, 'attacker');
+                }
+                if (this.currentRegionalUnits.defenders.length > 0) {
+                    this.defenderDisplayName = this.buildWaveGroupedSideName(this.currentRegionalUnits.defenders, 'defender');
                 }
             }
         }
