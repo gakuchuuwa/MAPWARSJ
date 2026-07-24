@@ -432,7 +432,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        dada_ming_dayanhan: { generalId: 'dada_ming_dayanhan', tier: 'famous', tacticalSkillId: 'ts_489', strategicSkillId: 'str_28', advantageSkillId: 'ts_489', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_490', atkAdvantageSkillId: 'ts_132', atkBalanceSkillId: 'ts_489', atkDisadvantageSkillId: 'ts_017', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_730', aptitude: 'leverage' , attackStyle: 'attack'},
+    dada_ming_dayanhan: { generalId: 'dada_ming_dayanhan', tier: 'famous', tacticalSkillId: 'ts_132', advantageSkillId: 'ts_489', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_490', atkAdvantageSkillId: 'ts_132', atkBalanceSkillId: 'ts_489', atkDisadvantageSkillId: 'ts_017', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_730', strategicSkillId: 'str_28', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
@@ -544,7 +544,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        yuwen_yuwentai: { generalId: 'yuwen_yuwentai', tier: 'famous', tacticalSkillId: 'ts_678', strategicSkillId: 'str_17', advantageSkillId: 'ts_678', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_081', atkDisadvantageSkillId: 'ts_678', atkAdvantageSkillId: 'ts_660', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_650', aptitude: 'leverage' , attackStyle: 'attack'},
+    yuwen_yuwentai: { generalId: 'yuwen_yuwentai', tier: 'famous', tacticalSkillId: 'ts_660', advantageSkillId: 'ts_678', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_679', atkAdvantageSkillId: 'ts_660', atkBalanceSkillId: 'ts_081', atkDisadvantageSkillId: 'ts_678', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_650', strategicSkillId: 'str_17', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 

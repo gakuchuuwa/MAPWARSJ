@@ -26,6 +26,16 @@ export const CITY_EXCLUSIVE_ICON_BY_ID: Record<string, string> = {
     city_qingjingsi: '/cities/0quanzhou.png',
     city_quanzhou: '/cities/0quanzhou.png',
     quanzhou: '/cities/0quanzhou.png',
+    city_xiangyang: '/cities/0xiangyang.png',
+    xiangyang: '/cities/0xiangyang.png',
+    city_anyang: '/cities/0anyang.png',
+    anyang: '/cities/0anyang.png',
+    city_datong: '/cities/0datong.png',
+    datong: '/cities/0datong.png',
+    city_taiyuan: '/cities/0jinyang.png',
+    city_jinyang: '/cities/0jinyang.png',
+    jinyang: '/cities/0jinyang.png',
+    taiyuan: '/cities/0jinyang.png',
 };
 
 /** 比普通大城 baseSize 140 略大 */
