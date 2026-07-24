@@ -3157,11 +3157,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 7
         },
-        "/assets/LINGNAN/__闲置__LINGNAN_07.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -50
-        },
         "/assets/DIANQIAN/__闲置__DIANQIAN_01.png": {
             "scale": 0.98,
             "offsetX": 0,
@@ -5873,9 +5868,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/LINGNAN/__闲置__zhaosong_12.png": {
-            "scale": 0.98,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": -16
+            "offsetY": -6
         },
         "/assets/LINGNAN/ryukyu_shangbazhi.png": {
             "scale": 1,
@@ -5978,9 +5973,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/LINGNAN/funan_fanman.png": {
-            "scale": 1,
+            "scale": 0.94,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -3
         }
     },
     "folderGuides": {
