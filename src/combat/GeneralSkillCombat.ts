@@ -56,11 +56,8 @@ export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
 /** 战斗局势（开局按兵力比判定） */
 export type BattleSituation = 'advantage' | 'balance' | 'disadvantage';
 
-/** 六计随机·局势匹配结果 */
 export interface SituationalSkillResult {
     skillId: string | null;
-    /** 技能六类是否匹配当前局势 */
-    situationMatch: boolean;
 }
 
 /** 局势匹配加成系数 */
@@ -73,9 +70,9 @@ export interface SituationalSkillResult {
  * 攻守双方同池，_isAttacker 已作废（攻守数值差归第四层攻防环，不在技能层重复表达）。
  */
 export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation, _isAttacker: boolean): SituationalSkillResult {
-    if (!unit.generalId) return { skillId: null, situationMatch: false };
+    if (!unit.generalId) return { skillId: null };
     const p = getGeneralProfile(unit.generalId);
-    if (!p) return { skillId: null, situationMatch: false };
+    if (!p) return { skillId: null };
 
     // 三势选池·四/四/六（2026-07-20 主人定稿）：六格一格一计，按势分三组。
     //   优势组=攻战/胜战、均势组=敌战/混战、劣势组=并战/败战。
@@ -92,26 +89,16 @@ export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSi
         disadvantage: [...disGrp, ...balGrp],
     };
     const pool = bySituation[situation].filter(Boolean) as string[];
-    // 兜底：该势池全空（数据不合规）→ 退回六格任取，保证必有技可放
+    // 兜底：该势池全空（数据不合规）→ 退回优势+均势组（不含劣势组，守「优势方不得摸败战计」红线）
     const available = pool.length > 0
         ? pool
-        : ([...advGrp, ...balGrp, ...disGrp].filter(Boolean) as string[]);
-    if (available.length === 0) return { skillId: null, situationMatch: false };
+        : ([...advGrp, ...balGrp].filter(Boolean) as string[]);
+    if (available.length === 0) return { skillId: null };
 
     // 池内等概率取一，同将同势也能打出不同花样
     const skillId = available[Math.floor(Math.random() * available.length)];
 
-    // 判定局势匹配
-    const entry = getTacticalSkillEntry(skillId);
-    const cls = entry ? (EFFECT_TO_SIX_SET[entry.baseEffect] as string | undefined) : undefined;
-    const MATCH_MAP: Record<BattleSituation, string[]> = {
-        advantage: ['gongzhan', 'shengzhan'],
-        balance: ['dizhan', 'hunzhan'],
-        disadvantage: ['bingzhan', 'baizhan'],
-    };
-    const situationMatch = cls ? (MATCH_MAP[situation]?.includes(cls) ?? false) : false;
-
-    return { skillId, situationMatch };
+    return { skillId };
 }
 
 /** 查技能六类（攻战/胜战/敌战/混战/并战/败战），不在目录返回 null */
