@@ -2352,7 +2352,8 @@ export const CITIES_V2: CityDataV2[] = [
     },
     { id: 'city_dayan', name: '大研', factionId: 'mu_lijiang', lat: 26.87, lng: 100.22, type: 'small_city', troops: 30000, region: 'DIANQIAN' },
 
-    { id: 'city_tengyuecheng', name: '腾越城', factionId: 'pingnan', lat: 25.02, lng: 98.48, type: 'small_city', troops: 30000, region: 'DIANQIAN' },
+    { id: 'city_tengyuecheng', name: '腾越城', factionId: 'pingnan', lat: 25.02, lng: 98.48, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
 
 
     { id: 'city_mengmao', name: '勐卯', factionId: 'luchuan', lat: 24.01, lng: 97.85, type: 'small_city', region: 'DIANQIAN', troops: 30000,
