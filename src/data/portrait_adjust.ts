@@ -2493,8 +2493,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -14
         },
         "/assets/STEPPE/yujiulu_yujiulv.png": {
-            "scale": 1.15,
-            "offsetX": 0,
+            "scale": 1.25,
+            "offsetX": 18,
             "offsetY": -3
         },
         "/assets/WESTERN/huite_amuersana.png": {
@@ -3161,11 +3161,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -50
-        },
-        "/assets/LINGNAN/funan_fanman.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": -16
         },
         "/assets/DIANQIAN/__闲置__DIANQIAN_01.png": {
             "scale": 0.98,
@@ -5803,7 +5798,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -21
         },
         "/assets/HEXI/weiming_weiminglinggong.png": {
-            "scale": 0.94,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -5878,9 +5873,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/LINGNAN/__闲置__zhaosong_12.png": {
-            "scale": 1.04,
+            "scale": 0.98,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -16
         },
         "/assets/LINGNAN/ryukyu_shangbazhi.png": {
             "scale": 1,
@@ -5968,9 +5963,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -14
         },
         "/assets/DIANQIAN/konbaung_yongjiya.png": {
-            "scale": 0.96,
+            "scale": 0.84,
             "offsetX": 0,
-            "offsetY": -28
+            "offsetY": -15
         },
         "/assets/JAPAN/__闲置__JAPAN_30.png": {
             "scale": 1.11,
@@ -5981,6 +5976,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": -28
+        },
+        "/assets/LINGNAN/funan_fanman.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {
