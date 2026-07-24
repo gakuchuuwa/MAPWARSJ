@@ -1507,11 +1507,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -19
         },
-        "/assets/JAPAN/__闲置__JAPAN_07.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -19
-        },
         "/assets/JAPAN/__闲置__JAPAN_08.png": {
             "scale": 1.03,
             "offsetX": 0,
@@ -1521,11 +1516,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": -17
-        },
-        "/assets/JAPAN/__闲置__JAPAN_11.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": -14
         },
         "/assets/JAPAN/__闲置__JAPAN_13.png": {
             "scale": 1.1,
@@ -1597,11 +1587,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 26
         },
-        "/assets/JAPAN/osumi_ganfujianxu.png": {
-            "scale": 0.88,
-            "offsetX": 0,
-            "offsetY": -41
-        },
         "/assets/JAPAN/otomo_d_lihuadaoxue.png": {
             "scale": 0.84,
             "offsetX": 0,
@@ -1641,11 +1626,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 30
-        },
-        "/assets/JAPAN/yizhi_beigou.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": 10
         },
         "/assets/JAPAN/zhuqian_shaoerzineng.png": {
             "scale": 0.94,
@@ -2993,9 +2973,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/CENTRAL/bozhou_d_yujin.png": {
-            "scale": 1.21,
+            "scale": 1.17,
             "offsetX": 7,
-            "offsetY": 30
+            "offsetY": 27
         },
         "/assets/litang/933b26bc-2039-4370-a3d9-52ac5074f9da.png": {
             "scale": 1.05,
@@ -5373,11 +5353,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 20
         },
         "/assets/DIANQIAN/__闲置__DIANQIAN_22.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -46
-        },
-        "/assets/DIANQIAN/konbaung_yongjiya.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -43
@@ -5981,6 +5956,31 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/JAPAN/__闲置__JAPAN_28.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/JAPAN/yizhi_beigou.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/JAPAN/__闲置__JAPAN_29.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -41
+        },
+        "/assets/JAPAN/osumi_ganfujianxu.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/DIANQIAN/konbaung_yongjiya.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -28
         }
     },
     "folderGuides": {
