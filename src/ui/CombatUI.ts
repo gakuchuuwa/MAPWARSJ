@@ -1068,8 +1068,13 @@ export class CombatUI {
 
             const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
             const commander = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
-            // 过滤掉指挥官与城池驻军单位，侧栏第 3 行严格只展现行动军团援军
-            const reinfUnits = units.filter(u => !u.isDestroyed && u.troops > 0 && u.id !== commander?.id && u.unitType !== 'city');
+            // 过滤掉指挥官与城池驻军单位，侧栏第 3 行严格只展现真正的大地图增援军团（须有合兵 JoinLuck 记录）
+            const reinfUnits = units.filter(u => {
+                if (u.isDestroyed || u.troops <= 0) return false;
+                if (u.id === commander?.id || u.unitType === 'city') return false;
+                const joinLuck = bf.getReinforcementJoinLuck(u.id);
+                return joinLuck !== null && joinLuck !== undefined;
+            });
 
             if (reinfUnits.length === 0) {
                 rowEl.style.display = 'none';
