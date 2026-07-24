@@ -48,11 +48,12 @@ import {
     APTITUDE_POWER_MULT,
     APTITUDE_LOSER_BITE_FLOOR,
     ATTACK_STYLE_POWER_MULT,
+    FAMOUS_GENERAL_MULT,
 } from '../src/combat/TacticalConstants';
 
 export { TACTICAL_SKILL_CATALOG, STRATEGIC_SKILL_CATALOG, GENERAL_PROFILES };
 export type { GeneralProfile, GeneralTier };
-export { APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT };
+export { APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT, FAMOUS_GENERAL_MULT };
 
 // ────────────────────────── 常量（全部来自游戏源） ──────────────────────────
 export const { LUCK_MIN, LUCK_MAX, ELITE_TIER_MULT, CAMPAIGN_LEGION_MULT } = GameConfig.COMBAT;
@@ -366,21 +367,13 @@ function strategicTacticalMult(
     return mult;
 }
 
-/** 战略技掷色乘区（v2 十五技；须匹配攻守/地形/兵力比） */
+/** 战略技只在大地图生效，在战斗面板中始终返回 1（对齐 GeneralSkillCombat.getStrategicBattlePowerMultiplier） */
 function strategicMult(
-    u: Unit | null, side: Side, terrain: Terrain,
-    selfTroops: number, enemyTroops: number,
-    battleType: BattleType = 'field',
+    _u: Unit | null, _side: Side, _terrain: Terrain,
+    _selfTroops: number, _enemyTroops: number,
+    _battleType: BattleType = 'field',
 ): number {
-    const s = strategicOf(u);
-    if (!s) return 1;
-    switch (s.effect) {
-        case 'attacker_power_mult':      return side === 'attacker' ? s.magnitude : 1;
-        case 'garrison_defense_mult':    return battleType === 'siege' && side === 'defender' ? s.magnitude : 1;
-        case 'disadvantage_power_mult':  return enemyTroops > 0 && selfTroops / enemyTroops < 0.67 ? s.magnitude : 1;
-        // 军团速 / 补给 / 据点兵 / 奇策(advantage_skill_effect_mult/terrain_tactical_double) 在战术技乘区处理
-        default: return 1;
-    }
+    return 1;
 }
 function applyStrategicRollMults(
     attU: Unit[], defU: Unit[], attRoll: number, defRoll: number, terrain: Terrain,
@@ -483,6 +476,10 @@ export function simulateOnce(
     // 第四层·攻防风格战力系数
     attRoll *= getAttackStylePowerMult(att, true);
     defRoll *= getAttackStylePowerMult(def, false);
+
+    // 第五层·名将光环战力系数（tier='famous' ×1.20，普将 ×1.00）
+    if (eligible(att)?.profile?.tier === 'famous') attRoll *= FAMOUS_GENERAL_MULT;
+    if (eligible(def)?.profile?.tier === 'famous') defRoll *= FAMOUS_GENERAL_MULT;
 
     const attackerStronger = attRoll >= defRoll;
 

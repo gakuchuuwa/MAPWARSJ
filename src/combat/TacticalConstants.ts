@@ -1,12 +1,12 @@
 /**
  * 三势环（第4环）—— 兵势 × 将势，9 格系数
- * 铁律「每环平衡」：行等 3.00、列等 3.00，全在 0.80–1.20 内。
+ * 铁律「每环平衡」：行等 3.30、列等 3.30，全在 1.00–1.20 内。
  */
 export const APTITUDE_POWER_MULT: Record<string, Record<'advantage' | 'balance' | 'disadvantage', number>> = {
     //          优势   均势   劣势
-    create:   { advantage: 1.20, balance: 1.00, disadvantage: 0.80 }, // 造势
-    leverage: { advantage: 0.80, balance: 1.20, disadvantage: 1.00 }, // 借势
-    reverse:  { advantage: 1.00, balance: 0.80, disadvantage: 1.20 }, // 逆势
+    create:   { advantage: 1.20, balance: 1.10, disadvantage: 1.00 }, // 造势
+    leverage: { advantage: 1.00, balance: 1.20, disadvantage: 1.10 }, // 借势
+    reverse:  { advantage: 1.10, balance: 1.00, disadvantage: 1.20 }, // 逆势
 };
 
 /** 普将逆局：侧总兵力 ≤ 开战该侧总兵力 × 此比例时触发 */
