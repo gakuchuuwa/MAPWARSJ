@@ -2266,7 +2266,8 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.530000, lng: 114.320000, type: 'medium_city', region: 'JIANGNAN', troops: 30000, tier: 1, note: '孙吴武昌督治，与春秋吴姑苏区分' },
     { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'small_city', region: 'CENTRAL', troops: 30000, note: '晋国曲沃，太原让位柴周' },
-    { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746, lng: 82.983, type: 'small_city', troops: 30000, region: 'WESTERN' },
+    { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746, lng: 82.983, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
 
 
     { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.83, lng: 93.51, type: 'small_city', region: 'WESTERN', troops: 30000, note: '草原环线西南锚点；文化西域' },

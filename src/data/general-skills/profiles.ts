@@ -855,7 +855,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        dzungar_galedanceling: { generalId: 'dzungar_galedanceling', tier: 'famous', tacticalSkillId: 'ts_504', strategicSkillId: 'str_13', advantageSkillId: 'ts_504', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_505', atkBalanceSkillId: 'ts_506', atkDisadvantageSkillId: 'ts_505', atkAdvantageSkillId: 'ts_285', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_014', defDisadvantageSkillId: 'ts_712', aptitude: 'create' , attackStyle: 'balanced'},
+    dzungar_galedanceling: { generalId: 'dzungar_galedanceling', tier: 'famous', tacticalSkillId: 'ts_285', advantageSkillId: 'ts_504', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_505', atkAdvantageSkillId: 'ts_285', atkBalanceSkillId: 'ts_506', atkDisadvantageSkillId: 'ts_505', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_014', defDisadvantageSkillId: 'ts_712', strategicSkillId: 'str_13', aptitude: 'create', attackStyle: 'balanced' },
 
 
 

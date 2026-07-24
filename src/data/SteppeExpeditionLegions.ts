@@ -95,4 +95,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     xijue: { name: '郅支精骑', tier: 4 },
     aertai: { name: '阿尔泰狼骑', tier: 3 },
     manghuti: { name: '忙忽惕勇士', tier: 4 },
+    dzungar: { name: '绰罗斯精骑', tier: 1 },
 };

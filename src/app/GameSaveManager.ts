@@ -54,6 +54,7 @@ export interface ArmySnapshot {
     cultureRegion?: string | null;
     homeCityId?: string | null;
     sourceCityId?: string | null;
+    winStreak?: number;
 }
 
 export interface GameSave {
@@ -117,6 +118,7 @@ export class GameSaveManager {
                 cultureRegion: a.cultureRegion,
                 homeCityId: a.homeCityId,
                 sourceCityId: a.getSourceCityId(),
+                winStreak: a.winStreak ?? 0,
             };
         });
 
@@ -197,6 +199,7 @@ export class GameSaveManager {
             if (s.portraitPath) army.portraitPath = s.portraitPath;
             army.homeCityId = s.homeCityId ?? null;
             if (s.sourceCityId) army.setSourceCityId(s.sourceCityId);
+            if (s.winStreak) army.winStreak = s.winStreak;
             // 文化阵型烘焙：cultureSlots / cultureScales 不能为 null（渲染依赖），
             // 必须重建。legionType 会由此覆写（与存档值一致，因为同 cultureRegion）。
             applyLegionCultureComposition(army, army.cultureRegion ?? undefined);

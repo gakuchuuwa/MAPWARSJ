@@ -1002,6 +1002,8 @@ export class Army implements IBattleUnit {
     }
 
     // [IBattleUnit] 野战/攻城由 CombatSystem 驱动；必须在此收尾战斗姿态
+    public winStreak: number = 0;
+
     public onBattleStart = (_opponent: IBattleUnit, battleType: 'siege' | 'field'): void => {
         const opponentPos = _opponent.getPosition();
         this.setCombatState(true, battleType, opponentPos);
@@ -1011,6 +1013,11 @@ export class Army implements IBattleUnit {
     public onBattleEnd = (result: 'victory' | 'defeat', _opponent: IBattleUnit, _enemyKilled: number): void => {
         // [Morale] First Sortie ends after the first battle
         this.hasFoughtSinceDepart = true;
+        if (result === 'victory') {
+            this.winStreak = (this.winStreak || 0) + 1;
+        } else {
+            this.winStreak = 0;
+        }
         if (this.isDestroyed) return;
         if (result === 'victory') {
             this.setCombatState(false);
