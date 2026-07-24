@@ -196,43 +196,43 @@ export class GameConfig {
     static CULTURE_COMBAT = {
         /** region → [军团攻, 据点防] */
         TIER_TABLE: {
-            STEPPE: [1.20, 0.80], TIBET: [1.10, 0.95], CENTRAL_ASIA: [1.15, 0.90],
-            NORTHEAST: [1.15, 1.00], HEXI: [1.00, 0.90], NORTH: [1.15, 0.95],
-            CENTRAL: [1.00, 1.10], WESTERN: [0.85, 1.10],
-            JAPAN: [1.15, 1.00], KOREA: [0.85, 1.05], JIANGNAN: [0.85, 1.15],
-            LINGNAN: [1.00, 1.15], DIANQIAN: [1.10, 1.05], BASHU: [1.00, 1.20],
+            STEPPE: [1.10, 0.80], TIBET: [0.90, 1.20], CENTRAL_ASIA: [1.10, 1.00],
+            NORTHEAST: [1.10, 0.90], HEXI: [1.10, 1.00], NORTH: [1.10, 1.00],
+            CENTRAL: [1.00, 0.95], WESTERN: [1.00, 1.00],
+            JAPAN: [1.15, 1.05], KOREA: [0.90, 1.20], JIANGNAN: [0.80, 1.00],
+            LINGNAN: [0.95, 1.10], DIANQIAN: [1.00, 1.10], BASHU: [0.95, 1.20],
         } as Record<string, readonly [number, number]>,
         /** region → 军团速 */
         SPEED_TABLE: {
-            STEPPE: 1.20, TIBET: 1.20, CENTRAL_ASIA: 1.15,
-            NORTHEAST: 1.00, HEXI: 1.20, NORTH: 1.00,
-            CENTRAL: 1.00, WESTERN: 1.15,
-            JAPAN: 0.85, KOREA: 1.00, JIANGNAN: 0.85,
-            LINGNAN: 0.85, DIANQIAN: 0.85, BASHU: 0.80,
+            STEPPE: 1.20, TIBET: 0.90, CENTRAL_ASIA: 1.20,
+            NORTHEAST: 1.00, HEXI: 1.10, NORTH: 1.00,
+            CENTRAL: 0.85, WESTERN: 1.15,
+            JAPAN: 0.85, KOREA: 0.90, JIANGNAN: 0.85,
+            LINGNAN: 0.90, DIANQIAN: 0.90, BASHU: 0.80,
         } as Record<string, number>,
         /** region → 据点兵 */
         RECRUIT_TABLE: {
-            STEPPE: 0.80, TIBET: 0.80, CENTRAL_ASIA: 0.90,
-            NORTHEAST: 0.85, HEXI: 0.90, NORTH: 1.00,
-            CENTRAL: 1.20, WESTERN: 0.90,
-            JAPAN: 1.00, KOREA: 1.15, JIANGNAN: 1.15,
-            LINGNAN: 0.90, DIANQIAN: 0.85, BASHU: 1.20,
+            STEPPE: 0.80, TIBET: 1.00, CENTRAL_ASIA: 0.95,
+            NORTHEAST: 0.90, HEXI: 0.95, NORTH: 0.95,
+            CENTRAL: 1.15, WESTERN: 1.00,
+            JAPAN: 0.95, KOREA: 1.10, JIANGNAN: 1.15,
+            LINGNAN: 1.10, DIANQIAN: 1.10, BASHU: 1.10,
         } as Record<string, number>,
         /** region → 军团兵上限 */
         LEGION_TROOP_CAP_TABLE: {
-            STEPPE: 1.10, TIBET: 0.85, CENTRAL_ASIA: 1.10,
-            NORTHEAST: 1.10, HEXI: 0.85, NORTH: 1.15,
-            CENTRAL: 1.20, WESTERN: 0.80,
-            JAPAN: 1.00, KOREA: 0.90, JIANGNAN: 1.00,
-            LINGNAN: 0.90, DIANQIAN: 0.85, BASHU: 1.00,
+            STEPPE: 1.20, TIBET: 0.90, CENTRAL_ASIA: 0.95,
+            NORTHEAST: 1.20, HEXI: 0.95, NORTH: 1.10,
+            CENTRAL: 1.15, WESTERN: 0.90,
+            JAPAN: 1.05, KOREA: 0.90, JIANGNAN: 1.20,
+            LINGNAN: 1.00, DIANQIAN: 0.90, BASHU: 0.95,
         } as Record<string, number>,
         /** region → 据点兵上限 */
         CITY_TROOP_CAP_TABLE: {
-            STEPPE: 0.80, TIBET: 0.80, CENTRAL_ASIA: 0.90,
-            NORTHEAST: 0.90, HEXI: 0.85, NORTH: 1.10,
-            CENTRAL: 1.20, WESTERN: 0.85,
-            JAPAN: 1.05, KOREA: 1.15, JIANGNAN: 1.20,
-            LINGNAN: 1.00, DIANQIAN: 0.85, BASHU: 1.20,
+            STEPPE: 0.90, TIBET: 1.10, CENTRAL_ASIA: 0.80,
+            NORTHEAST: 0.90, HEXI: 0.90, NORTH: 0.85,
+            CENTRAL: 0.90, WESTERN: 0.95,
+            JAPAN: 0.95, KOREA: 1.00, JIANGNAN: 1.00,
+            LINGNAN: 0.95, DIANQIAN: 1.00, BASHU: 1.00,
         } as Record<string, number>,
         /** 关隘据点守军额外系数（与系统技「据险而守」对应） */
         PASS_GARRISON_MULT: 1.2,
