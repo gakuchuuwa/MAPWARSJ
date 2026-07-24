@@ -552,11 +552,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 1
         },
-        "/assets/JAPAN/so_zongyizhi.png": {
-            "scale": 1.11,
-            "offsetX": 22,
-            "offsetY": -8
-        },
         "/assets/STEPPE/pugu_ashinaguduolu.png": {
             "scale": 1.2,
             "offsetX": 0,
@@ -1516,11 +1511,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": -17
-        },
-        "/assets/JAPAN/__闲置__JAPAN_13.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": -28
         },
         "/assets/JAPAN/__闲置__JAPAN_14.png": {
             "scale": 1.12,
@@ -5979,6 +5969,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/DIANQIAN/konbaung_yongjiya.png": {
             "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/JAPAN/__闲置__JAPAN_30.png": {
+            "scale": 1.11,
+            "offsetX": 22,
+            "offsetY": -8
+        },
+        "/assets/JAPAN/so_zongyizhi.png": {
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": -28
         }
