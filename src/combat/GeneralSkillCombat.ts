@@ -1331,11 +1331,23 @@ export function getReinforcementJoinSkillDisplay(
 
 export function getGeneralSkillDisplayTags(
     unit: IBattleUnit,
-): { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' }[] {
+): { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical'; sixSetChar?: string }[] {
     const profile = getGeneralProfile(unit.generalId);
     if (!profile) return [];
-    const tags: { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical' }[] = [];
+    const tags: { name: string; effectLabel: string; isFamous: boolean; skillType: 'tactical'; sixSetChar?: string }[] = [];
     const famous = profile.tier === 'famous';
+
+    const getSixChar = (skillId: string | null): string | undefined => {
+        if (!skillId) return undefined;
+        const v1 = resolveGeneralTacticalEntry(skillId);
+        if (!v1) return undefined;
+        const cls = EFFECT_TO_SIX_SET[v1.baseEffect] as TacticalSixSet;
+        const TAC_MAP: Record<TacticalSixSet, string> = {
+            gongzhan: '攻', shengzhan: '胜', dizhan: '敌',
+            hunzhan: '混', bingzhan: '并', baizhan: '败',
+        };
+        return TAC_MAP[cls];
+    };
 
     const tacId = getActiveTacticalSkillId(unit);
     const tac = tacId ? getTacticalSkillDef(tacId) : null;
@@ -1345,11 +1357,9 @@ export function getGeneralSkillDisplayTags(
             effectLabel: formatTacticalEffectLabel(tac),
             isFamous: famous,
             skillType: 'tactical',
+            sixSetChar: getSixChar(tacId),
         });
     } else if (tacId) {
-        // v1 原生路径战术技（如 ts_029 肉薄骨并 dual_sub_troops_opening）无 V1_EFFECT_BRIDGE 映射，
-        // getTacticalSkillDef 返回 null，但其削兵机制照常由原生路径生效——仍需显示常驻卡片。
-        // 用 v1 entry 直接合成显示标签，纯显示、不碰任何战斗机制。
         const v1 = resolveGeneralTacticalEntry(tacId);
         if (v1) {
             tags.push({
@@ -1357,6 +1367,7 @@ export function getGeneralSkillDisplayTags(
                 effectLabel: formatV1NativeTacticalDisplayLabel(v1),
                 isFamous: famous,
                 skillType: 'tactical',
+                sixSetChar: getSixChar(tacId),
             });
         }
     } else if (unit.battleOverriddenSkillId === null && unit.negatedSkillId) {
@@ -1364,7 +1375,13 @@ export function getGeneralSkillDisplayTags(
         const neg = getTacticalSkillDef(unit.negatedSkillId);
         const negName = neg ? neg.displayName : resolveGeneralTacticalEntry(unit.negatedSkillId)?.displayName;
         if (negName) {
-            tags.push({ name: negName, effectLabel: '克夺反', isFamous: famous, skillType: 'tactical' });
+            tags.push({
+                name: negName,
+                effectLabel: '克夺反',
+                isFamous: famous,
+                skillType: 'tactical',
+                sixSetChar: getSixChar(unit.negatedSkillId),
+            });
         }
     }
 
