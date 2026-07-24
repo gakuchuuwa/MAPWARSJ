@@ -51,7 +51,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     zhe_d: { name: '折家将兵', tier: 3 },
     shanrong: { name: '蓟镇标营', tier: 3 },
   pingyuan: { name: '平原义军', tier: 3 },      // 颜真卿首倡义兵，无战术突击高光，属于常规义军，降回T3
-  dada_ming: { name: '鞑靼铁骑', tier: 1 },          // 明代蒙古主力，土木堡之变全歼三大营，长达两百年压制在明朝北疆的绝对战略死敌，升入T1战略
   
   // ── 2026-06-18 自东北文件迁回
   jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·李成梁辽东骑兵（打出极强战绩，升T1）
@@ -74,4 +73,5 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     yingzhou_d2: { name: '从马直', tier: 2 },
     shizhou: { name: '离石胡骑', tier: 3 },
     yanchuan_d: { name: '背嵬军', tier: 0 },
+    yuwen: { name: '武川镇军', tier: 0 },
 };

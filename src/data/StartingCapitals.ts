@@ -259,7 +259,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'dixiang': 'city_nanyang',
     'dengmaoqi': 'city_shaxian',
 'yezongliu': 'city_chuzhou_zj',
-    'dada_ming': 'city_hetao',
+'dada_ming': 'city_hetao',
 'oirat_ming': 'city_kobdo',
     'jianzhou_nvzhen': 'city_tongjiajiang',
 'haixi_nvzhen': 'city_huifa',

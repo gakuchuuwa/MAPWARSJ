@@ -1367,9 +1367,8 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     // 第五类：边疆民族
-    { id: 'city_hetao', name: '河套', factionId: 'dada_ming', lat: 40.442769, lng: 109.333191, type: 'small_city', region: 'HEXI', troops: 30000,
-        note: '河套；鞑靼小城',
-    },
+    { id: 'city_hetao', name: '河套', factionId: 'dada_ming', lat: 40.442769, lng: 109.333191, type: 'small_city', troops: 20000, region: 'STEPPE' },
+
     { id: 'city_kobdo', name: '科布多', factionId: 'oirat_ming', lat: 48.01, lng: 91.64, type: 'small_city', troops: 30000, region: 'STEPPE' },
 
 
@@ -1808,7 +1807,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
         troops: 30000,
         note: '西拉木伦河（饶乐水）；库莫奚本部牧地（《魏书·库莫奚传》）' },
     // ── 武川镇 ──
-    { id: 'city_wuchuanzhen', name: '武川镇', factionId: 'yuwen', lat: 41.2661, lng: 111.1322, type: 'pass', troops: 30000, region: 'STEPPE' },
+    { id: 'city_wuchuanzhen', name: '武川镇', factionId: 'yuwen', lat: 41.2661, lng: 111.1322, type: 'small_city', troops: 20000, region: 'NORTH' },
+
 
 
 

@@ -293,7 +293,7 @@ export class CityAssetManager {
 'fang_guozhen': '庆元',
         'dengmaoqi': '铲平',
 'yezongliu': '处',
-        'dada_ming': '鞑靼',
+'dada_ming': '鞑靼',
 'oirat_ming': '卫拉',
         'wala': '瓦剌',
 'wuliangha': '兀良',

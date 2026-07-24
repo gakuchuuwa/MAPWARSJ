@@ -278,7 +278,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'fang_guozhen': '庆元',
     'dengmaoqi': '铲平',
 'yezongliu': '处',
-    'dada_ming': '鞑靼',
+'dada_ming': '鞑靼',
 'oirat_ming': '卫拉',
     'jianzhou_nvzhen': '建',
 'haixi_nvzhen': '海西',

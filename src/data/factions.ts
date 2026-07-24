@@ -157,6 +157,7 @@ export const FACTIONS: Faction[] = [
  // 代表北魏，避免旗号重名
     { id: 'yuwen', name: '宇文' },
 
+
     { id: 'liang_d', name: '梁国' },
 
 
@@ -526,7 +527,8 @@ export const FACTIONS: Faction[] = [
     // 第四类：明朝藩王叛乱
     // 藩王蓝 - 朱高煦汉王叛乱(乐安)
     // 第五类：边疆民族政权
-    { id: 'dada_ming', name: '鞑靼' },              // 草原暗灰 - 明代蒙古鞑靼部(河套)
+    { id: 'dada_ming', name: '鞑靼' },
+              // 草原暗灰 - 明代蒙古鞑靼部(河套)
     { id: 'oirat_ming', name: '卫拉特' },
 
              // 西蒙古碳灰 - 明代瓦剌部(科布多)，旗号与草原 wala 区分

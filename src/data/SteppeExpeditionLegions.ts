@@ -43,7 +43,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tatar: { name: '塔塔儿勇士', tier: 4 },
     merkit: { name: '岭北屯骑', tier: 3 },
     chahar: { name: '哈剌赤军', tier: 2 },
-    yuwen: { name: '武川镇军', tier: 0 },
     da_yuan: { name: '北元怯薛', tier: 1 },
     huyan: { name: '呼衍精骑', tier: 4 },
     yujiulu: { name: '柔然汗骑', tier: 4 },
@@ -96,4 +95,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     aertai: { name: '阿尔泰狼骑', tier: 3 },
     manghuti: { name: '忙忽惕勇士', tier: 4 },
     dzungar: { name: '绰罗斯精骑', tier: 1 },
+    dada_ming: { name: '鞑靼铁骑', tier: 1 },
 };
