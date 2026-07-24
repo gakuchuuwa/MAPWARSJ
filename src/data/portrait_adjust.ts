@@ -2498,8 +2498,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/WESTERN/huite_amuersana.png": {
-            "scale": 1.15,
-            "offsetX": 0,
+            "scale": 1.17,
+            "offsetX": 14,
             "offsetY": -3
         },
         "/assets/TIBET/tuyu_d_kualv.png": {
@@ -5548,7 +5548,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/STEPPE/dzungar_galedanceling.png": {
-            "scale": 1.03,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": -28
         },
