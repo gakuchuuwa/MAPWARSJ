@@ -23,6 +23,9 @@ export const CITY_EXCLUSIVE_ICON_BY_ID: Record<string, string> = {
     youzhou: '/cities/0beijing.png',
     city_buhala: '/cities/0buhala.png',
     city_cheshi: '/cities/0tulufan.png',
+    city_qingjingsi: '/cities/0quanzhou.png',
+    city_quanzhou: '/cities/0quanzhou.png',
+    quanzhou: '/cities/0quanzhou.png',
 };
 
 /** 比普通大城 baseSize 140 略大 */
