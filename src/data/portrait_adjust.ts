@@ -4353,7 +4353,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -34
         },
         "/assets/CENTRAL/huang_d_jiakui.png": {
-            "scale": 1.03,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": 1
         },
