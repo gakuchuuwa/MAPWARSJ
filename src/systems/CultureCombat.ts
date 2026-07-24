@@ -147,12 +147,12 @@ export function getUnitEliteTier(unit: IBattleUnit): EliteTier | null {
     return null;
 }
 
-/** 开战掷色用综合系数 = 文化（含关隘）× 远征 */
+/** 开战掷色用综合系数 = 文化（含关隘）；精锐光环在 环7 applyOpeningTacticalToRolls 中单独乘入，此处不重复 */
 export function getUnitBattlePowerMultiplier(unit: IBattleUnit): number {
-    return getUnitCultureCombatMultiplier(unit) * getCampaignLegionCombatMultiplier(unit);
+    return getUnitCultureCombatMultiplier(unit);
 }
 
-/** 文化 + 远征修正后兵力（固定系数相乘，未掷总 luck） */
+/** 文化修正后兵力（含关隘/文化中心据点加成；精锐光环在 环7 单独乘入） */
 export function sumCultureAdjustedTroops(units: IBattleUnit[]): number {
     let sum = 0;
     for (const u of units) {

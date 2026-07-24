@@ -379,12 +379,14 @@ export class BattleField implements IOpeningPulseSink {
 
     /**
      * 六计随机：开局定强弱后，给每个带将单位从攻/守三槽随机抽一个局技，写入 battleOverriddenSkillId。
-     * 阈值：兵力比 >1.5 优势 / <0.67 劣势 / 其间均势。
+     * 阈值：文化修正后有效兵力比 >1.5 优势 / <0.67 劣势 / 其间均势。
      * 同时锁定 situationalAttDefRatio，供相持段技能释放排序（优势先 / 均势攻先）。
      */
     private assignSituationalSkills(): void {
-        const at = this.attackerGroup.initialTotalTroops;
-        const dt = this.defenderGroup.initialTotalTroops;
+        const attUnits = this.attackerGroup.units.filter(bu => !bu.isDefeated && bu.unit.troops > 0).map(bu => bu.unit);
+        const defUnits = this.defenderGroup.units.filter(bu => !bu.isDefeated && bu.unit.troops > 0).map(bu => bu.unit);
+        const at = sumCultureAdjustedTroops(attUnits) || this.attackerGroup.initialTotalTroops;
+        const dt = sumCultureAdjustedTroops(defUnits) || this.defenderGroup.initialTotalTroops;
         this.situationalAttDefRatio = at / Math.max(1, dt);
         for (const g of [this.attackerGroup, this.defenderGroup]) {
             const my = g === this.attackerGroup ? at : dt;
