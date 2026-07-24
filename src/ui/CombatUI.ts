@@ -710,6 +710,7 @@ export class CombatUI {
         leftHud.appendChild(this.createFactionRow('attacker'));
         this.leftSideLabel = this.buildSideLabel('attacker');
         leftHud.appendChild(this.leftSideLabel);
+        leftHud.appendChild(this.createMultContainer('attacker'));
         this.sideStatsRow.appendChild(leftHud);
         this.sideStatsRow.appendChild(this.createSideVsIcon());
 
@@ -717,6 +718,7 @@ export class CombatUI {
         rightHud.appendChild(this.createFactionRow('defender'));
         this.rightSideLabel = this.buildSideLabel('defender');
         rightHud.appendChild(this.rightSideLabel);
+        rightHud.appendChild(this.createMultContainer('defender'));
         this.sideStatsRow.appendChild(rightHud);
 
 
@@ -791,32 +793,17 @@ export class CombatUI {
         return wrap;
     }
 
-    /** 侧栏势力名称 + 其前战力系数链（位于「军团名: 兵力」之上） */
+    /** 侧栏势力名称（第一行：纯势力名） */
     private createFactionRow(side: 'attacker' | 'defender'): HTMLDivElement {
         const isAtt = side === 'attacker';
         const row = document.createElement('div');
         row.style.cssText = `
             width: 100%;
-            margin-bottom: ${uiPx(6)};
+            margin-bottom: ${uiPx(4)};
             display: flex;
             flex-direction: ${isAtt ? 'row' : 'row-reverse'};
             align-items: baseline;
-            align-self: end;
             pointer-events: none;
-        `;
-        const multSpan = document.createElement('span');
-        multSpan.style.cssText = `
-            margin-${isAtt ? 'left' : 'right'}: auto;
-            font-family: 'Noto Sans SC', sans-serif;
-            font-size: ${uiPx(T.sideBar.factionMultSize)};
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            font-variant-numeric: tabular-nums;
-            font-feature-settings: "tnum" 1;
-            color: ${isAtt ? 'rgba(255, 218, 130, 0.95)' : 'rgba(150, 210, 225, 0.95)'};
-            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-            white-space: nowrap;
-            display: none;
         `;
 
         const nameSpan = document.createElement('span');
@@ -828,22 +815,20 @@ export class CombatUI {
             text-shadow: 0 2px 6px rgba(0,0,0,0.85);
             white-space: nowrap;
             flex-shrink: 0;
+            color: #FFF;
         `;
 
         row.appendChild(nameSpan);
-        row.appendChild(multSpan);
 
         if (isAtt) {
-            this.leftFactionMultSpan = multSpan;
             this.leftFactionNameSpan = nameSpan;
         } else {
-            this.rightFactionMultSpan = multSpan;
             this.rightFactionNameSpan = nameSpan;
         }
         return row;
     }
 
-    /** 构建「名称: 兵力」标签；兵力用等宽数字区，避免位数变化抖动 */
+    /** 构建「名称: 兵力」（第二行：纯部队名与兵力数，独占一行） */
     private buildSideLabel(side: 'attacker' | 'defender'): HTMLDivElement {
         const isAtt = side === 'attacker';
         const label = document.createElement('div');
@@ -854,12 +839,12 @@ export class CombatUI {
         label.style.flexWrap = 'nowrap';
         label.style.width = '100%';
         label.style.maxWidth = '100%';
-        label.style.overflow = 'hidden';
+        label.style.overflow = 'visible';
+        label.style.gap = uiPx(6);
+        label.style.marginBottom = uiPx(6);
 
         const nameSpan = document.createElement('span');
         nameSpan.style.cssText = `
-            overflow: hidden;
-            text-overflow: ellipsis;
             white-space: nowrap;
             line-height: 1.15;
             flex-shrink: 0;
@@ -873,7 +858,6 @@ export class CombatUI {
             color: rgba(255,255,255,0.92);
             font-weight: 700;
             flex-shrink: 0;
-            margin-${isAtt ? 'left' : 'right'}: ${uiPx(6)};
             min-width: ${T.sideBar.troopsMinCh}ch;
             font-variant-numeric: tabular-nums;
             font-feature-settings: "tnum" 1;
@@ -881,84 +865,79 @@ export class CombatUI {
             letter-spacing: 0.02em;
         `;
 
-        const multBadge = document.createElement('span');
-        multBadge.style.cssText = `
-            display: inline-flex;
-            align-items: center;
-            flex-shrink: 1;
-            flex-wrap: nowrap;
-            overflow: hidden;
-            gap: ${uiPx(2)};
-            margin-${isAtt ? 'left' : 'right'}: ${uiPx(4)};
-            display: none;
-        `;
-
         if (isAtt) {
             this.leftSideNameSpan = nameSpan;
             this.leftSideTroopsSpan = troopsSpan;
-            this.leftMultBadge = multBadge;
         } else {
             this.rightSideNameSpan = nameSpan;
             this.rightSideTroopsSpan = troopsSpan;
-            this.rightMultBadge = multBadge;
         }
 
         label.appendChild(nameSpan);
         label.appendChild(troopsSpan);
-        label.appendChild(multBadge);
         return label;
     }
 
-    /** 战力系数链：写在势力名前方，多一层非 1 系数就多叠一个（例 1.2×1.2×1.2） */
-    private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
-        const applyChain = (
-            multSpan: HTMLSpanElement,
-            unit: IBattleUnit | null,
-            opponent: IBattleUnit | null,
-            side: 'attacker' | 'defender',
-        ) => {
-            if (!unit) {
-                multSpan.style.display = 'none';
-                multSpan.removeAttribute('title');
-                multSpan.textContent = '';
-                return;
-            }
-            const { chain, title } = this.formatBattlePowerFactorChain(unit, opponent, side);
-            if (!chain) {
-                multSpan.style.display = 'none';
-                multSpan.removeAttribute('title');
-                multSpan.textContent = '';
-                return;
-            }
-            multSpan.innerHTML = chain;
-            multSpan.title = title;
-            multSpan.style.display = 'inline';
-        };
-        applyChain(this.leftFactionMultSpan, attacker, defender, 'attacker');
-        applyChain(this.rightFactionMultSpan, defender, attacker, 'defender');
+    /** 第三行：独立战力八环容器 (4行 x 2列 8槽网格) */
+    private createMultContainer(side: 'attacker' | 'defender'): HTMLDivElement {
+        const isAtt = side === 'attacker';
+        const wrap = document.createElement('div');
+        wrap.style.cssText = `
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: ${isAtt ? 'flex-start' : 'flex-end'};
+            pointer-events: none;
+        `;
 
-        const applyTotal = (
-            badge: HTMLSpanElement | null,
+        const multGrid = document.createElement('div');
+        multGrid.style.cssText = `
+            display: inline-grid;
+            grid-template-columns: repeat(2, auto);
+            gap: ${uiPx(2)};
+            align-items: center;
+            justify-items: ${isAtt ? 'start' : 'end'};
+            display: none;
+        `;
+
+        wrap.appendChild(multGrid);
+
+        if (isAtt) {
+            this.leftFactionMultSpan = multGrid;
+        } else {
+            this.rightFactionMultSpan = multGrid;
+        }
+
+        return wrap;
+    }
+
+    /** 战力八环标签：4行 x 2列 网格矩阵，最后一行固定为 [名] 和 [城] */
+    private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
+        const applySideBadges = (
+            multGrid: HTMLSpanElement,
             unit: IBattleUnit | null,
             opponent: IBattleUnit | null,
             side: 'attacker' | 'defender',
         ) => {
-            if (!badge) return;
             if (!unit) {
-                badge.style.display = 'none';
+                multGrid.style.display = 'none';
+                multGrid.innerHTML = '';
                 return;
             }
-            const { chain, title } = this.formatBattlePowerBadge(unit, opponent, side);
-            if (!chain) {
-                badge.style.display = 'none';
-                return;
+            const { gridHtml, title } = this.renderEightRingBadges(unit, opponent, side);
+
+            if (gridHtml) {
+                multGrid.innerHTML = gridHtml;
+                multGrid.title = title;
+                multGrid.style.display = 'inline-grid';
+            } else {
+                multGrid.style.display = 'none';
+                multGrid.innerHTML = '';
             }
-            badge.innerHTML = chain;
-            badge.title = title;
-            badge.style.display = 'inline-flex';
         };
-        applyTotal(this.leftMultBadge, attacker, defender, 'attacker');
-        applyTotal(this.rightMultBadge, defender, attacker, 'defender');
+
+        applySideBadges(this.leftFactionMultSpan, attacker, defender, 'attacker');
+        applySideBadges(this.rightFactionMultSpan, defender, attacker, 'defender');
     }
 
     private getPrimaryBattler(side: 'attacker' | 'defender'): IBattleUnit | null {
@@ -1259,75 +1238,27 @@ export class CombatUI {
         return pickSideSkillGeneralUnit(this.getUnitsForSide(side)) ?? fallback;
     }
 
-    private formatBattlePowerBadge(
+    private renderEightRingBadges(
         unit: IBattleUnit,
         opponent: IBattleUnit | null,
         side: 'attacker' | 'defender',
-    ): { chain: string; title: string } {
+    ): { gridHtml: string; title: string } {
         unit = this.resolvePowerBadgeUnit(unit, side);
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
         const myUnits = this.getUnitsForSide(side);
         const oppUnits = this.getOpponentUnitsFor(side);
         const bf = this.boundRegionalBattleField;
-        // 用引擎滚点时的缓存兵力（非当前兵力），防战中条件漂移
         const cachedMyTroops = side === 'attacker' ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
         const cachedOppTroops = side === 'attacker' ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
 
-        const factors: { label: string; shortName: string; val: number }[] = [];
-        const pushFactor = (label: string, shortName: string, mult: number) => {
-            if (Math.abs(mult - 1) > 0.001) {
-                factors.push({ label, shortName, val: mult });
-            }
-        };
-
-        // 1. 命运运气 (运)
-        const fateLuck = side === 'attacker'
-            ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
-            : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
-        pushFactor('命运运气', '运', fateLuck);
-
-        // 2. 战术技能 (技)
-        pushFactor('战术技能', '技', getOpeningTacticalPowerMultiplier(
-            myUnits,
-            oppUnits,
-            side === 'attacker',
-            { battleType, terrain },
-            unit,
-            side === 'attacker' ? bf?.getDefenderCommander() : bf?.getAttackerCommander(),
-            cachedMyTroops,
-            cachedOppTroops,
-        ));
-
-        // 3. 攻防风格 (攻/守)
-        pushFactor('攻防风格', side === 'attacker' ? '攻' : '守', getAttackStylePowerMult(unit, side === 'attacker'));
-
-        // 4. 三势适性 (势)
-        pushFactor('三势适性', '势', getAptitudePowerMult(myUnits, oppUnits, unit, cachedMyTroops, cachedOppTroops));
-
-        // 5. 文化加成 (文)
-        pushFactor('文化加成', '文', getUnitCultureCombatMultiplier(unit));
-
-        // 6. 据点险要 (据)
-        const passMult = getPassGarrisonCombatMultiplier(unit);
-        const regionMult = getRegionCenterCombatMultiplier(unit);
-        pushFactor('据点险要', '据', passMult * regionMult);
-
-        // 7. 精锐兵种 (兵)
-        pushFactor('精锐兵种', '兵', getCampaignLegionCombatMultiplier(unit));
-
-        // 8. 名将光环 (名)
-        pushFactor('名将光环', '名', getFamousGeneralMult(unit));
-
-        if (factors.length === 0) {
-            return { chain: '', title: '战力无额外加成 (×1)' };
-        }
-
         const isAtt = side === 'attacker';
-        const chain = factors.map((f) => {
-            const isBuff = f.val > 1.001;
-            const fmtVal = String(parseFloat(f.val.toFixed(2)));
-            const text = `${f.shortName}×${fmtVal}`;
+        const renderBadge = (label: string, shortName: string, mult: number) => {
+            const isBuff = mult > 1.001;
+            const fmtVal = String(parseFloat(mult.toFixed(1)));
+            if (Math.abs(mult - 1) <= 0.001 || fmtVal === '1' || fmtVal === '1.0') {
+                return `<span style="display:inline-block;width:0;overflow:hidden;visibility:hidden;"></span>`;
+            }
 
             const borderColor = isBuff
                 ? (isAtt ? 'rgba(253, 185, 49, 0.65)' : 'rgba(90, 170, 190, 0.65)')
@@ -1339,128 +1270,88 @@ export class CombatUI {
                 ? (isAtt ? 'rgba(50, 20, 5, 0.85)' : 'rgba(10, 30, 45, 0.85)')
                 : 'rgba(50, 10, 10, 0.85)';
 
-            return `<span style="display:inline-block;padding:2px 6px;margin:0 2px;font-size:12px;font-weight:800;line-height:1.2;border:1px solid ${borderColor};color:${color};background:${bg};border-radius:3px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.4);" title="${f.label}：×${fmtVal}">${text}</span>`;
-        }).join('');
-
-        const title = `战力加成明细：\n` + factors.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n');
-
-        return { chain, title };
-    }
-
-    private formatBattlePowerFactorChain(
-        unit: IBattleUnit,
-        opponent: IBattleUnit | null,
-        side: 'attacker' | 'defender',
-    ): { chain: string; title: string } {
-        unit = this.resolvePowerBadgeUnit(unit, side);
-        const isGarrison = unit.unitType === 'city';
-        const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
-        const terrain = this.getBattleTerrainForUi();
-        const role = isGarrison ? '城防' : battleType === 'siege' ? '攻城' : '野战';
-        const fmt = (n: number) => String(parseFloat(n.toFixed(1)));
-
-        const labeled: { label: string; value: number }[] = [];
-        const pushIfNotOne = (label: string, n: number) => {
-            if (Math.abs(n - 1) > 0.001) labeled.push({ label, value: n });
+            return `<span style="display:inline-block;padding:1px 4px;margin:0 1px;font-size:11.5px;font-weight:800;line-height:1.15;flex-shrink:0;border:1px solid ${borderColor};color:${color};background:${bg};border-radius:3px;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,0.4);" title="${label}：×${fmtVal}">${shortName}×${fmtVal}</span>`;
         };
-        // 文化标签已移植到顶部技能/精锐卡片区（updateSkillBadges），链条不再展示
 
-        // 关隘/要塞加成 -> 不显数字，显「险要」文字
-        const passMult = getPassGarrisonCombatMultiplier(unit);
-        let passLabel = '';
-        if (Math.abs(passMult - 1) > 0.001) {
-            passLabel = '险要';
-        }
+        // ========== Row 1 (运, 技) ==========
+        const fateLuck = side === 'attacker'
+            ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
+            : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
+        const r1c1 = renderBadge('命运运气', '运', fateLuck);
 
-        // 区中心加成 -> 不显数字，显「名城」文字
-        const regionMult = getRegionCenterCombatMultiplier(unit);
-        let regionLabel = '';
-        if (Math.abs(regionMult - 1) > 0.001) {
-            regionLabel = '名城';
-        }
-
-        // 精锐加成 → 不显文字（已在技能按钮展示）
-
-        // ②战术技 → 六计文字标签（与徽章同源：指挥官）
-        let tacLabel = '';
+        let tacChar = '技';
         if (unit.generalId) {
             const skillId = unit.battleOverriddenSkillId ?? unit.negatedSkillId ?? null;
             const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
             if (entry) {
                 const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
-                if (cls) {
-                    const LABELS: Record<TacticalSixSet, string> = {
-                        gongzhan: '攻计', shengzhan: '胜计', dizhan: '敌计',
-                        hunzhan: '混计', bingzhan: '并计', baizhan: '败计',
-                    };
-                    tacLabel = LABELS[cls] ?? '';
-                }
+                const TAC_MAP: Record<TacticalSixSet, string> = {
+                    gongzhan: '攻', shengzhan: '胜', dizhan: '敌',
+                    hunzhan: '混', bingzhan: '并', baizhan: '败',
+                };
+                if (cls && TAC_MAP[cls]) tacChar = TAC_MAP[cls];
             }
         }
+        const tacMult = getOpeningTacticalPowerMultiplier(
+            myUnits, oppUnits, side === 'attacker', { battleType, terrain }, unit,
+            side === 'attacker' ? bf?.getDefenderCommander() : bf?.getAttackerCommander(),
+            cachedMyTroops, cachedOppTroops,
+        );
+        const r1c2 = renderBadge('战术技能', tacChar, tacMult);
 
-        // ① 运气标签已彻底移除纯文字「好运/厄运」，统一采用第二行「运×参数」八环胶囊展示
-        const fateLuck = side === 'attacker'
-            ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? null)
-            : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? null);
-
-        if (labeled.length === 0 && !passLabel && !regionLabel && !tacLabel) {
-            return { chain: '', title: '' };
-        }
-
-        const numChain = labeled.map((l) => fmt(l.value)).join('×');
-        const parts: string[] = [];
-        // 标签框样式（每个词独立边框）
-        const isAtt = side === 'attacker';
-        const tag = (text: string, extraStyle = '') =>
-            `<span style="display:inline-block;padding:2px 6px;margin:0 2px;font-size:12px;font-weight:800;line-height:1.2;border:1px solid ${isAtt ? 'rgba(253,185,49,0.35)' : 'rgba(90,170,190,0.35)'};border-radius:3px;background:${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};box-shadow:0 1px 3px rgba(0,0,0,0.4);white-space:nowrap;${extraStyle}">${text}</span>`;
-        if (passLabel) {/* 据点标签已移至战斗标题 */}
-        if (regionLabel) {/* 据点标签已移至战斗标题 */}
-        if (tacLabel) parts.push(tag(tacLabel));
-
-        // ③武将适性标签：攻防风格 + 三势（与徽章同源：指挥官）
-        let styleLabel = '';
-        let aptLabel2 = '';
-        let styleHighlight = 0;
-        let aptHighlight2 = 0;
+        // ========== Row 2 (势, 攻/防) ==========
+        let aptChar = '势';
         if (unit.generalId) {
             const profile = getGeneralProfile(unit.generalId);
-            if (profile) {
-                const rawStyle = profile.attackStyle;
-                // 双行 → 按当前攻守角色派生 擅攻/擅守，不显示「双行」
-                const effStyle = rawStyle === 'balanced' ? (side === 'attacker' ? 'attack' : 'defense') : rawStyle;
-                const STYLE_MAP: Record<string, string> = { attack: '擅攻', defense: '擅守' };
-                styleLabel = effStyle ? (STYLE_MAP[effStyle] ?? '') : '';
-                const APT_MAP: Record<string, string> = { create: '造势', leverage: '借势', reverse: '逆势' };
-                aptLabel2 = APT_MAP[profile.aptitude ?? ''] ?? '';
-                if (styleLabel || aptLabel2) {
-                    // 用缓存兵力（与乘数同源，防战中跨阈值导致标签漂移）
-                    const bf2 = this.boundRegionalBattleField;
-                    const myTroops = side === 'attacker' ? (bf2?.getCachedAttackerTroops() ?? 0) : (bf2?.getCachedDefenderTroops() ?? 0);
-                    const oppTroops = side === 'attacker' ? (bf2?.getCachedDefenderTroops() ?? 0) : (bf2?.getCachedAttackerTroops() ?? 0);
-                    const ratio = myTroops / Math.max(1, oppTroops);
-                    const sit: string = ratio > 1.5 ? 'advantage' : ratio < 0.67 ? 'disadvantage' : 'balance';
-                    // 位匹配（攻防风格：武将风格 × 攻守位置）
-                    styleHighlight = profile.attackStyle === 'balanced'
-                        || (profile.attackStyle === 'attack' && side === 'attacker')
-                        || (profile.attackStyle === 'defense' && side === 'defender') ? 2 : 0;
-                    // 势匹配（三势：兵力局势 × 武将适性 对应）
-                    if (profile.aptitude === 'create' && sit === 'advantage') aptHighlight2 = 2;
-                    else if (profile.aptitude === 'leverage' && sit === 'balance') aptHighlight2 = 2;
-                    else if (profile.aptitude === 'reverse' && sit === 'disadvantage') aptHighlight2 = 2;
-                }
+            if (profile?.aptitude) {
+                const APT_MAP: Record<string, string> = { create: '造', leverage: '借', reverse: '逆' };
+                if (APT_MAP[profile.aptitude]) aptChar = APT_MAP[profile.aptitude];
             }
         }
-        const aptColor = side === 'attacker' ? 'rgba(255,180,40,1)' : 'rgba(80,200,240,1)';
-        if (styleLabel && styleHighlight === 2) parts.push(tag(styleLabel, `color:${aptColor};font-weight:700;`));
-        if (aptLabel2 && aptHighlight2 === 2) parts.push(tag(aptLabel2, `color:${aptColor};font-weight:700;`));
-        // ⑤ 名将光环 (moved to famous badge near name tag)
-        if (numChain) parts.push(tag(numChain));
-        const chain = parts.join('');
+        const aptMult = getAptitudePowerMult(myUnits, oppUnits, unit, cachedMyTroops, cachedOppTroops);
+        const r2c1 = renderBadge('三势适性', aptChar, aptMult);
 
-        const titleParts = labeled.map((l) => `${l.label}×${fmt(l.value)}`);
+        const styleChar = side === 'attacker' ? '攻' : '防';
+        const styleMult = getAttackStylePowerMult(unit, side === 'attacker');
+        const r2c2 = renderBadge('攻防风格', styleChar, styleMult);
 
-        const title = `${role}：${titleParts.join(' ')}`;
-        return { chain, title };
+        // ========== Row 3 (军, 文) ==========
+        const legionMult = getCampaignLegionCombatMultiplier(unit);
+        const r3c1 = renderBadge('精锐部队', '军', legionMult);
+
+        const cultureMult = getUnitCultureCombatMultiplier(unit);
+        const r3c2 = renderBadge('文化加成', '文', cultureMult);
+
+        // ========== Row 4 (名, 城) -- 确认名将与据点固定在最后一行 ==========
+        const famousMult = getFamousGeneralMult(unit);
+        const r4c1 = renderBadge('名将光环', '名', famousMult);
+
+        const passMult = getPassGarrisonCombatMultiplier(unit);
+        const regionMult = getRegionCenterCombatMultiplier(unit);
+        const r4c2 = renderBadge('据点城池', '城', passMult * regionMult);
+
+        // 每行包含 2 个槽位，如果是守方镜像倒序 Row
+        const row1 = isAtt ? [r1c1, r1c2] : [r1c2, r1c1];
+        const row2 = isAtt ? [r2c1, r2c2] : [r2c2, r2c1];
+        const row3 = isAtt ? [r3c1, r3c2] : [r3c2, r3c1];
+        const row4 = isAtt ? [r4c1, r4c2] : [r4c2, r4c1];
+
+        const gridHtml = [...row1, ...row2, ...row3, ...row4].join('');
+
+        const allDetail = [
+            { label: '命运运气', shortName: '运', val: fateLuck },
+            { label: '战术技能', shortName: tacChar, val: tacMult },
+            { label: '三势适性', shortName: aptChar, val: aptMult },
+            { label: '攻防风格', shortName: styleChar, val: styleMult },
+            { label: '精锐部队', shortName: '军', val: legionMult },
+            { label: '文化加成', shortName: '文', val: cultureMult },
+            { label: '名将光环', shortName: '名', val: famousMult },
+            { label: '据点城池', shortName: '城', val: passMult * regionMult },
+        ].filter(f => Math.abs(f.val - 1) > 0.001);
+
+        const title = `战力加成明细：\n` + allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(1))}`).join('\n');
+
+        return { gridHtml, title };
     }
 
     /** 返回当前战场中指定 side 自己的单位数组（= 对手的对手；与 getOpponentUnitsFor 同源） */
