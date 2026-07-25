@@ -157,7 +157,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     kuye: { generalId: 'kuye_kuye_qichayi', generalName: '齐查伊', portrait: '/assets/NORTHEAST/kuye_kuye_qichayi.png' },
     sushen: { generalId: 'sushen_tudiji', generalName: '突地稽', portrait: '/assets/NORTHEAST/sushen_tudiji.png' },
     yilou: { generalId: 'yilou_naoya', generalName: '恼犽', portrait: '/assets/NORTHEAST/yilou_naoya.png' },
-    maomingan: { generalId: 'maomingan_suoetu', generalName: '索额图', portrait: '/assets/NORTHEAST/maomingan_suoetu.png' },
+    maomingan: { generalId: 'maomingan_suoetu', generalName: '索额图', portrait: '/assets/manqing/maomingan_suoetu.png' },
     jilimi: { generalId: 'jilimi_takuna', generalName: '塔库纳', portrait: '/assets/NORTHEAST/jilimi_takuna.png' },
     eluoke: { generalId: 'eluoke_amuhaer', generalName: '阿穆哈尔', portrait: '/assets/NORTHEAST/eluoke_amuhaer.png' },
     nifuhe: { generalId: 'nifuhe_baerhudai', generalName: '巴尔虎代', portrait: '/assets/NORTHEAST/nifuhe_baerhudai.png' },

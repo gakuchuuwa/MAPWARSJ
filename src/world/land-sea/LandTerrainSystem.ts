@@ -8,7 +8,7 @@ export type LandTerrainKind = 'sea' | 'plain' | 'mountain';
 /**
  * 陆地地形：海拔 + 坡度（方案 B）
  * - 海：elev < 0
- * - 山地：elev ≥ MOUNTAIN_ELEVATION_M 或 slope ≥ MOUNTAIN_SLOPE_DEG
+ * - 山地：slope ≥ MOUNTAIN_SLOPE_DEG
  * - 平原：其余陆地
  */
 export const MOUNTAIN_ELEVATION_M = 600;
@@ -58,7 +58,7 @@ export class LandTerrainSystem {
         if (isSeaElevation(elevationM)) {
             return this.remember(key, 'sea');
         }
-        if (elevationM >= MOUNTAIN_ELEVATION_M || slopeDeg >= MOUNTAIN_SLOPE_DEG) {
+        if (slopeDeg >= MOUNTAIN_SLOPE_DEG) {
             return this.remember(key, 'mountain');
         }
         return this.remember(key, 'plain');
