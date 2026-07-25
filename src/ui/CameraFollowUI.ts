@@ -29,6 +29,7 @@ export class CameraFollowUI {
     private onLegionCapChange: ((cap: number) => void) | null = null;
     private onRenameLegion: ((armyId: string, newName: string) => boolean) | null = null;
     private limitLabel: HTMLSpanElement | null = null;
+    private topStatsContainer: HTMLDivElement | null = null;
     private listHeader: HTMLDivElement | null = null;
     private lastLegionCount: number = -1;
     /** 面板展开时列表节流刷新（势力兵力/据点/色条实时） */
@@ -368,6 +369,18 @@ export class CameraFollowUI {
         limitContainer.appendChild(limitSlider);
         panel.appendChild(limitContainer);
 
+        // 最多连胜武将与据点最多势力统计栏
+        const topStatsContainer = document.createElement('div');
+        topStatsContainer.id = 'army-top-stats';
+        topStatsContainer.style.cssText = `
+            padding: 8px 14px;
+            border-bottom: 1px solid rgba(180,140,60,0.3);
+            background: rgba(0, 0, 0, 0.25);
+            display: flex;
+            gap: 8px;
+        `;
+        panel.appendChild(topStatsContainer);
+        this.topStatsContainer = topStatsContainer;
 
         // 列表容器
         const listContainer = document.createElement('div');
@@ -495,6 +508,9 @@ export class CameraFollowUI {
         if (!container || !this.getArmiesFn) return;
 
         const armies = this.getActiveLegions();
+        const factionTotals = this.computeFactionTotals();
+        this.updateTopStats(armies, factionTotals);
+
         container.innerHTML = '';
 
         if (armies.length === 0) {
@@ -510,7 +526,6 @@ export class CameraFollowUI {
             return;
         }
 
-        const factionTotals = this.computeFactionTotals();
         let maxFactionTroops = 1;
         for (const v of factionTotals.values()) {
             if (v.troops > maxFactionTroops) maxFactionTroops = v.troops;
@@ -625,6 +640,94 @@ export class CameraFollowUI {
             });
 
             container.appendChild(item);
+        }
+    }
+
+    /** 更新顶部高亮栏：最多连胜武将 + 据点最多势力 */
+    private updateTopStats(armies: any[], factionTotals: Map<string, { troops: number; cities: number }>): void {
+        if (!this.topStatsContainer) return;
+
+        // 1. 计算最多连胜武将
+        let maxStreak = 0;
+        let maxStreakArmy: any = null;
+        for (const army of armies) {
+            const streak = (army as any).winStreak || 0;
+            if (streak > maxStreak) {
+                maxStreak = streak;
+                maxStreakArmy = army;
+            }
+        }
+
+        let streakContentHtml = `<span style="color:#8a8070; font-weight:normal;">暂无</span>`;
+        let isStreakClickable = false;
+        let streakArmyId = '';
+        let streakArmyName = '';
+
+        if (maxStreakArmy && maxStreak > 0) {
+            const gRecord = maxStreakArmy.generalId ? getGeneralRecordByGeneralId(maxStreakArmy.generalId) : null;
+            const gName = gRecord?.generalName || maxStreakArmy.name || '武将';
+            streakContentHtml = `<span style="color:#ffe39f; font-weight:bold;">${gName}</span> <span style="color:#ff7733; font-size:11px; font-weight:bold;">🔥${maxStreak}连胜</span>`;
+            isStreakClickable = true;
+            streakArmyId = maxStreakArmy.id;
+            streakArmyName = maxStreakArmy.name || gName;
+        }
+
+        // 2. 计算据点最多势力
+        let maxCities = -1;
+        let topFid = '';
+        for (const [fid, data] of factionTotals.entries()) {
+            if (data.cities > maxCities) {
+                maxCities = data.cities;
+                topFid = fid;
+            }
+        }
+
+        let factionContentHtml = `<span style="color:#8a8070; font-weight:normal;">暂无</span>`;
+        if (topFid && maxCities > 0) {
+            const fName = this.factionManager?.getFactionName(topFid) ?? topFid;
+            const fColor = this.factionManager?.getFactionColor(topFid) ?? '#ffffff';
+            factionContentHtml = `
+                <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(255,255,255,0.3); margin-right:4px; flex-shrink:0;"></span>
+                <span style="color:#f0e6d2; font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${fName}</span> 
+                <span style="color:#ffcf5a; font-size:11px; font-weight:bold; margin-left:3px; flex-shrink:0;">🏯${maxCities}城</span>
+            `;
+        }
+
+        this.topStatsContainer.innerHTML = `
+            <div id="top-streak-card" style="flex:1; background:rgba(40,22,12,0.6); border:1px solid rgba(255,120,40,0.35); border-radius:5px; padding:5px 8px; transition:all 0.15s; ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该连胜武将' : ''}">
+                <div style="font-size:10px; color:#ff9955; margin-bottom:2px; display:flex; align-items:center; gap:3px;">
+                    <span>🔥 最多连胜武将</span>
+                </div>
+                <div style="font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    ${streakContentHtml}
+                </div>
+            </div>
+            <div style="flex:1; background:rgba(20,30,20,0.6); border:1px solid rgba(255,200,60,0.35); border-radius:5px; padding:5px 8px; transition:all 0.15s;">
+                <div style="font-size:10px; color:#ffcf5a; margin-bottom:2px; display:flex; align-items:center; gap:3px;">
+                    <span>🏯 据点最多势力</span>
+                </div>
+                <div style="font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center;">
+                    ${factionContentHtml}
+                </div>
+            </div>
+        `;
+
+        if (isStreakClickable) {
+            const streakCard = this.topStatsContainer.querySelector('#top-streak-card') as HTMLDivElement | null;
+            if (streakCard) {
+                streakCard.addEventListener('mouseenter', () => {
+                    streakCard.style.background = 'rgba(60,32,16,0.85)';
+                    streakCard.style.borderColor = 'rgba(255,140,50,0.6)';
+                });
+                streakCard.addEventListener('mouseleave', () => {
+                    streakCard.style.background = 'rgba(40,22,12,0.6)';
+                    streakCard.style.borderColor = 'rgba(255,120,40,0.35)';
+                });
+                streakCard.addEventListener('click', () => {
+                    this.setFollow(streakArmyId, streakArmyName);
+                    this.closeList();
+                });
+            }
         }
     }
 

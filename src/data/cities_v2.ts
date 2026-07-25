@@ -2721,13 +2721,16 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_gasikou', name: '噶斯口', factionId: 'qinghai', lat: 38.078345, lng: 89.288635, type: 'pass', troops: 30000, region: 'TIBET', mirror: true },
 
 
-    { id: 'city_niubiziliang', name: '牛鼻子梁', factionId: 'golog', lat: 37.838198, lng: 91.678162, type: 'pass', region: 'TIBET', troops: 30000, mirror: true, note: '柴达木东缘驿路隘口；果洛北牧道要冲' },
+    { id: 'city_niubiziliang', name: '牛鼻子梁', factionId: 'golog', lat: 37.838198, lng: 91.678162, type: 'small_city', troops: 20000, region: 'TIBET' },
+
     { id: 'city_mahaitai', name: '马海台', factionId: 'xining', lat: 38.045995, lng: 94.622498, type: 'pass', troops: 30000, region: 'TIBET' },
 
-    { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.896, type: 'pass', troops: 30000, region: 'TIBET', mirror: true },
+    { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.896, type: 'small_city', troops: 20000, region: 'TIBET' },
 
 
-    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'small_city', troops: 30000, region: 'TIBET' },
+
+    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'pass', troops: 20000, region: 'TIBET' },
+
 
     { id: 'city_jieqiao', name: '界桥', factionId: 'qu_d', lat: 36.95, lng: 115.5, type: 'pass', troops: 30000, region: 'NORTH' },
 

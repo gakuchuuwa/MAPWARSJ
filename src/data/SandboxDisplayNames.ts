@@ -470,7 +470,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-28 新增：工布(工布) ──
 
     // ── 2026-05-28 新增：果洛、土谢图、土默特 ──
-    'golog': '果洛',
+'golog': '果洛',
     'tushetu': '土谢',
     'tumed': '土默',
 

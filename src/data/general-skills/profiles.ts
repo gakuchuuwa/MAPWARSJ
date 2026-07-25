@@ -1003,7 +1003,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    dulan_dashibatuer: { generalId: 'dulan_dashibatuer', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_282', atkBalanceSkillId: 'ts_795', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_366', defDisadvantageSkillId: 'ts_635', aptitude: 'leverage' , attackStyle: 'defense'},
+    dulan_dashibatuer: { generalId: 'dulan_dashibatuer', tier: 'ordinary', tacticalSkillId: 'ts_282', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_282', atkBalanceSkillId: 'ts_795', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_366', defDisadvantageSkillId: 'ts_635', aptitude: 'leverage', attackStyle: 'defense' },
 
 
 
@@ -2457,11 +2457,11 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    kalun_dexinga: { generalId: 'kalun_dexinga', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_072', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_631', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'attack'},
+    kalun_dexinga: { generalId: 'kalun_dexinga', tier: 'ordinary', tacticalSkillId: 'ts_679', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_072', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_631', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
-    golog_wandezhaxi: { generalId: 'golog_wandezhaxi', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defBalanceSkillId: 'ts_686', atkAdvantageSkillId: 'ts_654', atkBalanceSkillId: 'ts_109', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_071', defDisadvantageSkillId: 'ts_418', aptitude: 'reverse' , attackStyle: 'defense'},
+    golog_wandezhaxi: { generalId: 'golog_wandezhaxi', tier: 'ordinary', tacticalSkillId: 'ts_654', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_654', atkBalanceSkillId: 'ts_109', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_418', aptitude: 'reverse', attackStyle: 'defense' },
 
 
 

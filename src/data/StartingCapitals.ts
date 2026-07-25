@@ -414,7 +414,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
 'nong2': 'city_guangyuan',
 
-    'golog': 'city_niubiziliang',
+'golog': 'city_niubiziliang',
     'tushetu': 'city_kulun',
 'she': 'city_yongning2',
     'liao': 'city_jiangyang',
