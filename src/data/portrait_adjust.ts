@@ -1563,9 +1563,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -34
         },
         "/assets/JAPAN/kakizaki_liqiqingguang.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 0
+            "scale": 0.92,
+            "offsetX": 1,
+            "offsetY": -2
         },
         "/assets/JAPAN/mino_dagujiji.png": {
             "scale": 1.05,
