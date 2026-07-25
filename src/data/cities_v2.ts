@@ -1667,7 +1667,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_huashan', name: '花山', factionId: 'luoyue', lat: 22.159442, lng: 107.418823, type: 'small_city', region: 'LINGNAN', troops: 30000,
         note: '花山；骆越小城',
     },
-    { id: 'city_hepu', name: '海门', factionId: 'li_s', lat: 21.663, lng: 109.207, type: 'small_city', troops: 30000, region: 'LINGNAN' },
+    { id: 'city_hepu', name: '海门', factionId: 'li_s', lat: 21.663, lng: 109.207, type: 'small_city', troops: 20000, region: 'CENTRAL' },
+
 
 
 
