@@ -388,7 +388,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -50
         },
         "/assets/JIANGNAN/zhong_xiexuan.png": {
-            "scale": 1.1,
+            "scale": 1.04,
             "offsetX": 14,
             "offsetY": 18
         },
@@ -5986,6 +5986,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 10
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_30.png": {
+            "scale": 1.19,
+            "offsetX": 21,
+            "offsetY": -34
         }
     },
     "folderGuides": {
