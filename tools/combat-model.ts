@@ -26,6 +26,7 @@ import {
     resolveOpeningTroopEffect,
     isTacticalSkillActive,
 } from '../src/combat/TacticalSkillResolver';
+import { resolveSituationalSkillId } from '../src/combat/GeneralSkillCombat';
 
 /** 战损系 baseEffect 集合（v1 catalog；判定是否需逐帧存活模拟） */
 const CASUALTY_EFFECTS = new Set<string>([
@@ -161,15 +162,25 @@ function eligibleProfile(units: Unit[]): Unit | null {
     for (const u of units) if (u.profile) return u;
     return null;
 }
-// getTacticalSkillDef 带 ts_xxx→旧格式桥接（10 格直命中；ts_xxx 经 V1_EFFECT_BRIDGE 合成）。
-function openingTacticalOf(u: Unit | null) {
-    const id = u?.profile?.tacticalSkillId;
+export function getUnitActiveSkillId(u: Unit | null, sit: 'advantage' | 'balance' | 'disadvantage' = 'balance'): string | null {
+    if (!u?.profile) return null;
+    const bUnit: any = {
+        generalId: u.profile.generalId,
+        troops: u.troops,
+        initialTroops: u.troops,
+    };
+    const res = resolveSituationalSkillId(bUnit, sit as any, false);
+    return res?.skillId ?? null;
+}
+
+function openingTacticalOf(u: Unit | null, sit: 'advantage' | 'balance' | 'disadvantage' = 'balance') {
+    const id = getUnitActiveSkillId(u, sit);
     if (!id) return null;
     const s = getTacticalSkillDef(id);
     return s && s.timing === 'opening' ? s : null;
 }
-function comebackTacticalOf(u: Unit | null) {
-    const id = u?.profile?.tacticalSkillId;
+function comebackTacticalOf(u: Unit | null, sit: 'advantage' | 'balance' | 'disadvantage' = 'balance') {
+    const id = getUnitActiveSkillId(u, sit);
     if (!id) return null;
     const s = getTacticalSkillDef(id);
     return s && s.timing === 'comeback' ? s : null;
@@ -195,11 +206,19 @@ function ctxForSide(
  * 开局战术技的条件是否满足（真实 ts_xxx 带 terrain/攻守/文化等条件；10 格无 entry 视为无条件）。
  * 不满足 → 该技本场不施加乘区，避免夸大。
  */
+function resolveSitFromTroops(selfTroops: number, enemyTroops: number): 'advantage' | 'balance' | 'disadvantage' {
+    const ratio = selfTroops / Math.max(1, enemyTroops);
+    return ratio > 1.5 ? 'advantage' : ratio < 0.67 ? 'disadvantage' : 'balance';
+}
+
 function openingTacticalActive(
     u: Unit | null, ownU: Unit[], oppU: Unit[], isAtt: boolean,
     battleType: BattleType, terrain: Terrain,
 ): boolean {
-    const id = u?.profile?.tacticalSkillId;
+    const selfT = ownU.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const enemyT = oppU.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const sit = resolveSitFromTroops(selfT, enemyT);
+    const id = getUnitActiveSkillId(u, sit);
     if (!id) return false;
     const entry = resolveGeneralTacticalEntry(id);
     if (!entry) return true; // 10 格 tac_xx：无 v1 条件，保持原无条件行为
@@ -224,6 +243,7 @@ export function rollLuckForSide(
 ): number {
     const selfTroops = own.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const enemyTroops = opp.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const sit = resolveSitFromTroops(selfTroops, enemyTroops);
     const ctx = buildTacticalConditionContext({
         battleType,
         terrain,
@@ -235,8 +255,8 @@ export function rollLuckForSide(
         enemyHasFamousGeneral: eligible(opp)?.profile?.tier === 'famous',
         isFirstSortieSinceDepart: sideIsFirstSortie(own),
     });
-    const selfFate = resolveOpeningFateEntry(eligible(own)?.profile?.tacticalSkillId);
-    const oppFate = resolveOpeningFateEntry(eligible(opp)?.profile?.tacticalSkillId);
+    const selfFate = resolveOpeningFateEntry(getUnitActiveSkillId(eligible(own), sit));
+    const oppFate = resolveOpeningFateEntry(getUnitActiveSkillId(eligible(opp), sit));
     return resolveOpeningLuckMultiplier(ctx, selfFate, oppFate).multiplier;
 }
 function sumAdjusted(units: Unit[]): number {
@@ -255,11 +275,12 @@ function applyOpeningPreRollTroops(
     own: Unit[], opp: Unit[], ownIsAttacker: boolean, battleType: BattleType, terrain: Terrain,
 ): void {
     const ownUnit = eligible(own);
-    const skillId = ownUnit?.profile?.tacticalSkillId;
-    if (!skillId) return;
-
     const oppTroops = opp.reduce((s, u) => s + Math.max(0, u.troops), 0);
     const ownTroops = own.reduce((s, u) => s + Math.max(0, u.troops), 0);
+    const sit = resolveSitFromTroops(ownTroops, oppTroops);
+    const skillId = getUnitActiveSkillId(ownUnit, sit);
+    if (!skillId) return;
+
     const ownCtx = buildTacticalConditionContext({
         battleType, terrain,
         selfTroops: ownTroops, enemyTroops: oppTroops,

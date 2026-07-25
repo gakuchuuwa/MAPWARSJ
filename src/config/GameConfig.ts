@@ -200,11 +200,11 @@ export class GameConfig {
         } as Record<string, readonly [number, number]>,
         /** region → 军团速 */
         SPEED_TABLE: {
-            STEPPE: 1.20, TIBET: 0.90, CENTRAL_ASIA: 1.20,
-            NORTHEAST: 1.00, HEXI: 1.10, NORTH: 1.00,
-            CENTRAL: 0.85, WESTERN: 1.15,
-            JAPAN: 0.85, KOREA: 0.90, JIANGNAN: 0.85,
-            LINGNAN: 0.90, DIANQIAN: 0.90, BASHU: 0.80,
+            STEPPE: 1.04, TIBET: 0.92, CENTRAL_ASIA: 1.04,
+            NORTHEAST: 1.00, HEXI: 1.00, NORTH: 1.00,
+            CENTRAL: 0.88, WESTERN: 1.00,
+            JAPAN: 0.88, KOREA: 0.92, JIANGNAN: 0.88,
+            LINGNAN: 0.92, DIANQIAN: 0.92, BASHU: 0.85,
         } as Record<string, number>,
         /** region → 据点兵 */
         RECRUIT_TABLE: {
@@ -384,8 +384,8 @@ export const PLAYER_SPEED_TIERS = {
 export const SEA_SPEED_MULTIPLIER = 1.2;
 
 export const MOVEMENT_MATRIX = {
-    /** 平原 2.4（原 3.0）：仍明显快于步骑 1.5；与山地 1.2 落差约 2×，再靠 Army 平滑过渡消「一窜」 */
-    CAVALRY:  { plain: 2.4, mountain: 1.2 },
+    /** 平原 2.4（原 3.0）：仍明显快于步骑 1.5；山地 0.9 垫底，步兵 1.1 为山地之王 */
+    CAVALRY:  { plain: 2.4, mountain: 0.9 },
     MIXED:    { plain: 1.5, mountain: 0.9 }, // 中原等步骑：平原基准，山地受马辎拖累
     INFANTRY: { plain: 1.4, mountain: 1.1 }, // 日本/川蜀/江南：山地之王
     ELEPHANT: { plain: 1.2, mountain: 0.7 }, // 岭南/滇缅：战略机动笨重
