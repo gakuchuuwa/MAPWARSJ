@@ -1011,7 +1011,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    song2_houjunji: { generalId: 'song2_houjunji', tier: 'famous', tacticalSkillId: 'ts_285', strategicSkillId: 'str_12', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_131', defDisadvantageSkillId: 'ts_297', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_809', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_380', aptitude: 'create' , attackStyle: 'attack'},
+    song2_houjunji: { generalId: 'song2_houjunji', tier: 'famous', tacticalSkillId: 'ts_679', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_809', atkDisadvantageSkillId: 'ts_131', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_380', defDisadvantageSkillId: 'ts_297', strategicSkillId: 'str_12', aptitude: 'create', attackStyle: 'attack' },
 
 
 

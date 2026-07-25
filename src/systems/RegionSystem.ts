@@ -199,8 +199,8 @@ type Polygon = Point[];
 //  10 岭南  石门关→临烝→牡丹社→邦敦→三菩→吴哥
 //  11 滇缅  打箭炉→大研→加德满都→勃固→直通→阿瑜陀耶→吴哥→石门关
 //  12 青藏  加德满都→阿托克→塔什库尔干→龙木错→卡克里克→姑臧→兰州→打箭炉→大研
-//  13 中亚  塔什库尔干→阿托克→坎大哈→博斯特→法拉→尼沙布尔→玉龙杰赤→养吉干→弓月
-//  14 西域  哈密→楼兰→卡克里克→龙木错→石头城→弓月
+//  13 中亚  石头城→阿托克→坎大哈→博斯特→法拉→尼沙布尔→玉龙杰赤→养吉干→石头城
+//  14 西域  哈密→楼兰→卡克里克→龙木错→养吉干→弓月
 //
 // 绘线: RegionBoundaryLayer @ zoom=6（REGION_BOUNDARY_ZOOM），共 14 区
 // ============================================================
@@ -217,8 +217,8 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'LINGNAN', cityIds: ['city_shimenguan', 'city_linzheng', 'city_mudan', 'city_bangdun', 'city_sanpu', 'city_angkor'] },
     { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_bago', 'city_thaton', 'city_ayutthaya', 'city_angkor', 'city_shimenguan'] },
     { region: 'TIBET', cityIds: ['city_kathmandu', 'city_atuoke', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan'] },
-    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_atuoke', 'city_kandaha', 'city_bosite', 'city_fala', 'city_nishabuer', 'city_urgench', 'city_yangjigan', 'city_almaliq'] },
-    { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_almaliq'] },
+    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_atuoke', 'city_kandaha', 'city_bosite', 'city_fala', 'city_nishabuer', 'city_urgench', 'city_yangjigan', 'city_hepancheng'] },
+    { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_yangjigan', 'city_almaliq'] },
 ];
 
 /** 界城环线配色（与 REGION_LABELS 对应，zoom=6 虚线） */
