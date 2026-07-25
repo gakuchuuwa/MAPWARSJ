@@ -478,7 +478,8 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
 
     { id: 'city_lintao', name: '狄道', factionId: 'didao', lat: 35.37, lng: 103.86, type: 'small_city', troops: 30000, region: 'HEXI' },
 
-    { id: 'city_songzhou', name: '嘉诚', factionId: 'song2', lat: 32.787239, lng: 103.625793, type: 'small_city', troops: 30000, region: 'TIBET' },
+    { id: 'city_songzhou', name: '嘉诚', factionId: 'song2', lat: 32.787239, lng: 103.625793, type: 'medium_city', troops: 20000, region: 'TIBET' },
+
 
 
     { id: 'city_jianchang', name: '邛都', factionId: 'qiong', lat: 27.870652, lng: 102.310181, type: 'small_city', troops: 30000, region: 'BASHU' },
