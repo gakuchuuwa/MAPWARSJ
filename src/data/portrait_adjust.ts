@@ -673,7 +673,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/CENTRAL/tianxiong_tianchengsi.png": {
-            "scale": 0.86,
+            "scale": 0.84,
             "offsetX": 0,
             "offsetY": -25
         },
@@ -796,11 +796,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.05,
             "offsetX": 4,
             "offsetY": 5
-        },
-        "/assets/KOREA/xinluo_jinyuxin.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 10
         },
         "/assets/KOREA/sheng_d_liyiqi.png": {
             "scale": 1.03,
@@ -1298,7 +1293,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -27
         },
         "/assets/daming/jinan_tiexuan.png": {
-            "scale": 1.03,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": -55
         },
@@ -1722,11 +1717,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/KOREA/goryeo_jianghanzan.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/KOREA/hui_bunaihou.png": {
             "scale": 1,
             "offsetX": 0,
@@ -1738,9 +1728,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/KOREA/joseon_lichenggui.png": {
-            "scale": 1.19,
+            "scale": 1.13,
             "offsetX": 0,
-            "offsetY": 16
+            "offsetY": 12
         },
         "/assets/KOREA/lelang_wangqi.png": {
             "scale": 0.98,
@@ -2963,7 +2953,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/CENTRAL/bozhou_d_yujin.png": {
-            "scale": 1.17,
+            "scale": 1.11,
             "offsetX": 7,
             "offsetY": 27
         },
@@ -4942,11 +4932,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 19
         },
-        "/assets/KOREA/__闲置__KOREA_05.png": {
-            "scale": 0.99,
-            "offsetX": 0,
-            "offsetY": 5
-        },
         "/assets/daming/yansui_wangwei.png": {
             "scale": 1.29,
             "offsetX": 0,
@@ -5981,6 +5966,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 13,
             "offsetY": -25
+        },
+        "/assets/KOREA/__闲置__KOREA_08.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/KOREA/xinluo_jinyuxin.png": {
+            "scale": 0.96,
+            "offsetX": 2,
+            "offsetY": 0
+        },
+        "/assets/KOREA/__闲置__KOREA_09.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/KOREA/goryeo_jianghanzan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
         }
     },
     "folderGuides": {
