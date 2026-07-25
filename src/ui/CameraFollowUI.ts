@@ -12,7 +12,37 @@ import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { CITIES_V2 } from '../data/cities_v2';
 import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG } from '../data/GeneralSkills';
 
+export interface HistoricalStreakRecord {
+    streak: number;
+    generalName: string;
+    legionName: string;
+    armyId: string;
+    factionId: string;
+}
+
 export class CameraFollowUI {
+    /** 全局历史最高连胜纪录（即使军团阵亡依然永久保留） */
+    public static historicalMaxStreak: HistoricalStreakRecord | null = null;
+
+    /** 记录/刷新全局历史最高连胜 */
+    public static recordHistoricalStreak(army: any): void {
+        const streak = (army as any)?.winStreak || 0;
+        if (streak <= 0) return;
+
+        const currentMax = CameraFollowUI.historicalMaxStreak?.streak || 0;
+        if (streak > currentMax) {
+            const gRecord = army.generalId ? getGeneralRecordByGeneralId(army.generalId) : null;
+            const gName = gRecord?.generalName || army.name || '武将';
+            CameraFollowUI.historicalMaxStreak = {
+                streak,
+                generalName: gName,
+                legionName: army.name || gName,
+                armyId: army.id,
+                factionId: army.getFactionId?.() ?? '',
+            };
+        }
+    }
+
     // DOM Elements
     private listButton: HTMLButtonElement | null = null;
     private listPanel: HTMLDivElement | null = null;
@@ -449,9 +479,13 @@ export class CameraFollowUI {
 
     private getActiveLegions(): any[] {
         if (!this.getArmiesFn) return [];
-        return this.getArmiesFn().filter(
+        const active = this.getArmiesFn().filter(
             (a) => !a.isDestroyed && a.type === 'legion' && (a.getTroops?.() ?? 0) > 0
         );
+        for (const army of active) {
+            CameraFollowUI.recordHistoricalStreak(army);
+        }
+        return active;
     }
 
     private getActiveLegionCount(): number {
@@ -643,33 +677,33 @@ export class CameraFollowUI {
         }
     }
 
-    /** 更新顶部高亮栏：最多连胜武将 + 据点最多势力 */
+    /** 更新顶部高亮栏：历史最高连胜武将 + 据点最多势力 */
     private updateTopStats(armies: any[], factionTotals: Map<string, { troops: number; cities: number }>): void {
         if (!this.topStatsContainer) return;
 
-        // 1. 计算最多连胜武将
-        let maxStreak = 0;
-        let maxStreakArmy: any = null;
+        // 1. 刷新全场活着的军团连胜至历史记录中
         for (const army of armies) {
-            const streak = (army as any).winStreak || 0;
-            if (streak > maxStreak) {
-                maxStreak = streak;
-                maxStreakArmy = army;
-            }
+            CameraFollowUI.recordHistoricalStreak(army);
         }
 
-        let streakContentHtml = `<span style="color:#8a8070; font-weight:normal;">暂无</span>`;
+        const topRecord = CameraFollowUI.historicalMaxStreak;
+        let streakContentHtml = `<span style="color:#8a8070; font-weight:normal;">暂无记录</span>`;
         let isStreakClickable = false;
         let streakArmyId = '';
         let streakArmyName = '';
 
-        if (maxStreakArmy && maxStreak > 0) {
-            const gRecord = maxStreakArmy.generalId ? getGeneralRecordByGeneralId(maxStreakArmy.generalId) : null;
-            const gName = gRecord?.generalName || maxStreakArmy.name || '武将';
-            streakContentHtml = `<span style="color:#ffe39f; font-weight:bold;">${gName}</span> <span style="color:#ff7733; font-size:11px; font-weight:bold;">🔥${maxStreak}连胜</span>`;
-            isStreakClickable = true;
-            streakArmyId = maxStreakArmy.id;
-            streakArmyName = maxStreakArmy.name || gName;
+        if (topRecord && topRecord.streak > 0) {
+            const aliveArmy = armies.find((a) => a.id === topRecord.armyId);
+            const isAlive = !!aliveArmy;
+
+            if (isAlive) {
+                streakContentHtml = `<span style="color:#ffe39f; font-weight:bold;">${topRecord.generalName}</span> <span style="color:#ff7733; font-size:11px; font-weight:bold;">🔥${topRecord.streak}连胜</span>`;
+                isStreakClickable = true;
+                streakArmyId = topRecord.armyId;
+                streakArmyName = topRecord.legionName;
+            } else {
+                streakContentHtml = `<span style="color:#ffe39f; font-weight:bold;">${topRecord.generalName}</span> <span style="color:#ff5555; font-size:10px; font-weight:bold;">🔥${topRecord.streak}连胜 (已覆灭)</span>`;
+            }
         }
 
         // 2. 计算据点最多势力
@@ -694,9 +728,9 @@ export class CameraFollowUI {
         }
 
         this.topStatsContainer.innerHTML = `
-            <div id="top-streak-card" style="flex:1; background:rgba(40,22,12,0.6); border:1px solid rgba(255,120,40,0.35); border-radius:5px; padding:5px 8px; transition:all 0.15s; ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该连胜武将' : ''}">
+            <div id="top-streak-card" style="flex:1; background:rgba(40,22,12,0.6); border:1px solid rgba(255,120,40,0.35); border-radius:5px; padding:5px 8px; transition:all 0.15s; ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该历史连胜王者' : '传奇历史最高纪录'}">
                 <div style="font-size:10px; color:#ff9955; margin-bottom:2px; display:flex; align-items:center; gap:3px;">
-                    <span>🔥 最多连胜武将</span>
+                    <span>🔥 历史最高连胜</span>
                 </div>
                 <div style="font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                     ${streakContentHtml}
