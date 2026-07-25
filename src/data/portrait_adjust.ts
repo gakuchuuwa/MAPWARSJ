@@ -972,11 +972,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -12
         },
-        "/assets/LINGNAN/shixing_houandou.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": -8
-        },
         "/assets/BASHU/yueyi_zhangyi.png": {
             "scale": 1.04,
             "offsetX": 0,
@@ -5843,9 +5838,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/LINGNAN/__闲置__zhaosong_12.png": {
-            "scale": 1,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -8
         },
         "/assets/LINGNAN/ryukyu_shangbazhi.png": {
             "scale": 1,
@@ -5991,6 +5986,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": -26
+        },
+        "/assets/LINGNAN/shixing_houandou.png": {
+            "scale": 1.1,
+            "offsetX": 14,
+            "offsetY": -8
         }
     },
     "folderGuides": {

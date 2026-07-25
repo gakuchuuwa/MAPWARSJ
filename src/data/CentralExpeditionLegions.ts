@@ -99,4 +99,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     wudu: { name: '阴平先锋', tier: 2 },
     daxi_ming: { name: '大西老营', tier: 1 },
     pingnan: { name: '平南镇营', tier: 3 },
+    li_s: { name: '大汉伏波', tier: 2 },
 };
