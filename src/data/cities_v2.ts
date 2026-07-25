@@ -1047,18 +1047,8 @@ export const PERIPHERY: CityDataV2[] = [
 
     { id: 'city_langjuxu', name: '狼居胥山', factionId: 'mengwu', lat: 47.687578, lng: 108.528442, type: 'pass', troops: 30000, region: 'STEPPE' },
 
-    {
-        id: 'city_luoxie',
-        name: '逻些',
-        factionId: 'tubo',
-        lat: 29.6500,
-        lng: 91.1000,
-        type: 'big_city',
-        region: 'TIBET',
-        troops: 30000,
-        tier: 0,
-        note: '逻些；吐蕃国都',
-    },
+    { id: 'city_luoxie', name: '逻些', factionId: 'tubo', lat: 29.65, lng: 91.1, type: 'big_city', troops: 20000, region: 'TIBET', mirror: true },
+
 
 
     { id: 'city_guanglu', name: '光禄城', factionId: 'shatuo', lat: 41.9000, lng: 108.2000, type: 'small_city', region: 'STEPPE', troops: 30000,
@@ -1586,7 +1576,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_leh', name: '列城', factionId: 'ladakh', lat: 34.16, lng: 77.58, type: 'small_city', troops: 30000, region: 'TIBET' },
 
 
-    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'medium_city', troops: 20000, region: 'TIBET', mirror: true },
+    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'medium_city', troops: 20000, region: 'TIBET' },
+
 
     { id: 'city_dangxiong', name: '当雄', factionId: 'khoshut', lat: 30.48, lng: 91.1, type: 'small_city', region: 'TIBET', troops: 30000,
         note: '当雄；和硕特小城',
@@ -2596,7 +2587,8 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     // 巴达赫尚（Badakhshan）山地政权
-    { id: 'city_pengdi', name: '彭迪', factionId: 'maer_d', lat: 36, lng: 62.7, type: 'pass', troops: 30000, region: 'CENTRAL_ASIA' },
+    { id: 'city_pengdi', name: '彭迪', factionId: 'maer_d', lat: 36, lng: 62.7, type: 'pass', troops: 20000, region: 'CENTRAL_ASIA', mirror: true },
+
 
 
     // 黠戛斯（坚昆）汗庭漠北牧地
