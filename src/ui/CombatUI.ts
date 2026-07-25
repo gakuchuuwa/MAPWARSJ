@@ -196,6 +196,8 @@ export class CombatUI {
     private rightLuckBadge!: HTMLSpanElement;
     private leftAptitudeBadge!: HTMLSpanElement;
     private rightAptitudeBadge!: HTMLSpanElement;
+    private leftReinfJoinBadge!: HTMLSpanElement;
+    private rightReinfJoinBadge!: HTMLSpanElement;
     private leftReinfRow!: HTMLDivElement;
     private rightReinfRow!: HTMLDivElement;
     private leftReinfNameSpan!: HTMLSpanElement;
@@ -943,6 +945,10 @@ export class CombatUI {
         luckBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
         badgeGroup.appendChild(luckBadge);
 
+        const reinfJoinBadge = document.createElement('span');
+        reinfJoinBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(reinfJoinBadge);
+
         label.appendChild(nameSpan);
         label.appendChild(badgeGroup);
 
@@ -956,12 +962,14 @@ export class CombatUI {
             this.leftMultBadge = multBadge;
             this.leftLuckBadge = luckBadge;
             this.leftAptitudeBadge = aptitudeBadge;
+            this.leftReinfJoinBadge = reinfJoinBadge;
         } else {
             this.rightSideNameSpan = nameSpan;
             this.rightSideTroopsSpan = document.createElement('span');
             this.rightMultBadge = multBadge;
             this.rightLuckBadge = luckBadge;
             this.rightAptitudeBadge = aptitudeBadge;
+            this.rightReinfJoinBadge = reinfJoinBadge;
         }
 
         return label;
@@ -1057,72 +1065,116 @@ export class CombatUI {
             const nameEl = isAtt ? this.leftReinfNameSpan : this.rightReinfNameSpan;
             const troopsEl = isAtt ? this.leftReinfTroopsSpan : this.rightReinfTroopsSpan;
             const badgeEl = isAtt ? this.leftReinfMultBadge : this.rightReinfMultBadge;
+            const joinBadgeEl = isAtt ? this.leftReinfJoinBadge : this.rightReinfJoinBadge;
             const rowEl = isAtt ? this.leftReinfRow : this.rightReinfRow;
-            if (!nameEl || !badgeEl || !rowEl) return;
+            if (!nameEl || !badgeEl || !rowEl || !joinBadgeEl) return;
 
             const bf = this.boundRegionalBattleField;
             if (!bf || bf.isOver) {
                 rowEl.style.display = 'none';
+                joinBadgeEl.style.display = 'none';
                 return;
             }
 
             const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
             const commander = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
-            const primaryBattler = this.getPrimaryBattler(side);
 
-            // 过滤掉已在侧栏第二行展示的主战单位、指挥官与城池设施，第 3 行严格只展现额外的第二/第三支援军
+            // 确定第 2 行已展示的主力单位，避免第 3 行重复
+            const primaryBattler = this.pickPrimaryDisplayUnit(units);
+
+            // 若主力单位自身有合兵记录，标签归位到第 2 行
+            if (primaryBattler && !primaryBattler.isDestroyed && primaryBattler.troops > 0) {
+                const primaryJoinLuck = bf.getReinforcementJoinLuck(primaryBattler.id);
+                if (primaryJoinLuck !== null && primaryJoinLuck !== undefined) {
+                    const fmtVal = primaryJoinLuck.toFixed(1);
+                    const isBuff = primaryJoinLuck > 1.001;
+                    const isNerf = primaryJoinLuck < 0.999;
+                    let borderColor: string, color: string, bg: string;
+                    let label = '增';
+                    if (isBuff) {
+                        label = '得';
+                        borderColor = 'rgba(253, 185, 49, 0.65)';
+                        color = 'rgba(255, 230, 160, 1)';
+                        bg = 'rgba(50, 20, 5, 0.85)';
+                    } else if (isNerf) {
+                        label = '掣';
+                        borderColor = 'rgba(235, 85, 75, 0.75)';
+                        color = 'rgba(255, 170, 160, 1)';
+                        bg = 'rgba(50, 10, 10, 0.85)';
+                    } else {
+                        label = '增';
+                        borderColor = 'rgba(160, 160, 160, 0.5)';
+                        color = 'rgba(200, 200, 200, 0.9)';
+                        bg = 'rgba(30, 30, 30, 0.85)';
+                    }
+                    applyBadgeStyleToElement(joinBadgeEl, label, fmtVal, borderColor, color, bg, `合兵协同：×${fmtVal}`);
+                } else {
+                    joinBadgeEl.style.display = 'none';
+                }
+            } else {
+                joinBadgeEl.style.display = 'none';
+            }
+
+            // 过滤掉第 2 行已展示的主力单位
+            // 侧栏第 3 行展现该侧额外的野外援军或据点城防驻军（分行显示各自的名字与兵力）
             const reinfUnits = units.filter(u => {
                 if (u.isDestroyed || u.troops <= 0) return false;
-                if (u.unitType === 'city') return false;
-                if (commander && u.id === commander.id) return false;
-                if (primaryBattler && u.id === primaryBattler.id) return false; // 绝不重复展示第二行已展示的主部队！
-                const joinLuck = bf.getReinforcementJoinLuck(u.id);
-                return joinLuck !== null && joinLuck !== undefined;
+                if (primaryBattler && u.id === primaryBattler.id) return false;
+                return true;
             });
-
+            
             if (reinfUnits.length === 0) {
                 rowEl.style.display = 'none';
                 return;
             }
 
-            let totalTroops = 0;
-            for (const u of reinfUnits) totalTroops += u.troops;
-            const troopsStr = totalTroops >= 10000 ? `${(totalTroops / 10000).toFixed(2)}万` : `${Math.floor(totalTroops)}`;
-
-            const primaryReinf = reinfUnits[0];
-            const displayName = primaryReinf.name || '援军';
-
-            const nameSpanStr = `<span style="white-space: nowrap;">${displayName}</span>`;
-            const troopSpanStr = `<span style="font-weight: 700; color: #ffd700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap;">${troopsStr}</span>`;
-
-            nameEl.innerHTML = isAtt
-                ? `${nameSpanStr}<span style="margin-left: 8px;">${troopSpanStr}</span>`
-                : `<span style="margin-right: 8px;">${troopSpanStr}</span>${nameSpanStr}`;
-
-            const joinLuck = bf.getReinforcementJoinLuck(primaryReinf.id) ?? 1.0;
-            const fmtVal = joinLuck.toFixed(1);
-            const isBuff = joinLuck > 1.001;
-            const isNerf = joinLuck < 0.999;
-            let borderColor: string, color: string, bg: string;
-            let label = '增';
-            if (isBuff) {
-                label = '得';
-                borderColor = 'rgba(253, 185, 49, 0.65)';
-                color = 'rgba(255, 230, 160, 1)';
-                bg = 'rgba(50, 20, 5, 0.85)';
-            } else if (isNerf) {
-                label = '掣';
-                borderColor = 'rgba(235, 85, 75, 0.75)';
-                color = 'rgba(255, 170, 160, 1)';
-                bg = 'rgba(50, 10, 10, 0.85)';
-            } else {
-                label = '增';
-                borderColor = 'rgba(160, 160, 160, 0.5)';
-                color = 'rgba(200, 200, 200, 0.9)';
-                bg = 'rgba(30, 30, 30, 0.85)';
+            // 逐行显示每个单位的独立名字与兵力
+            const lines: string[] = [];
+            for (const u of reinfUnits) {
+                const dName = u.name || (u.unitType === 'city' ? '据点驻军' : '援军');
+                const t = Math.floor(u.troops);
+                const tStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
+                const ns = `<span style="white-space: nowrap;">${dName}</span>`;
+                const ts = `<span style="font-weight: 700; color: #ffd700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap;">${tStr}</span>`;
+                const line = isAtt
+                    ? `${ns}<span style="margin-left: 8px;">${ts}</span>`
+                    : `<span style="margin-right: 8px;">${ts}</span>${ns}`;
+                lines.push(`<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; white-space: nowrap;">${line}</div>`);
             }
+            nameEl.innerHTML = lines.join('');
 
-            applyBadgeStyleToElement(badgeEl, label, fmtVal, borderColor, color, bg, `援军合兵：×${fmtVal}`);
+            // 取第一个有合兵记录的单位显示标签
+            const luckUnit = reinfUnits.find(u => {
+                const l = bf.getReinforcementJoinLuck(u.id);
+                return l !== null && l !== undefined;
+            });
+            if (luckUnit) {
+                const joinLuck = bf.getReinforcementJoinLuck(luckUnit.id)!;
+                const fmtVal = joinLuck.toFixed(1);
+                const isBuff = joinLuck > 1.001;
+                const isNerf = joinLuck < 0.999;
+                let borderColor: string, color: string, bg: string;
+                let label = '增';
+                if (isBuff) {
+                    label = '得';
+                    borderColor = 'rgba(253, 185, 49, 0.65)';
+                    color = 'rgba(255, 230, 160, 1)';
+                    bg = 'rgba(50, 20, 5, 0.85)';
+                } else if (isNerf) {
+                    label = '掣';
+                    borderColor = 'rgba(235, 85, 75, 0.75)';
+                    color = 'rgba(255, 170, 160, 1)';
+                    bg = 'rgba(50, 10, 10, 0.85)';
+                } else {
+                    label = '增';
+                    borderColor = 'rgba(160, 160, 160, 0.5)';
+                    color = 'rgba(200, 200, 200, 0.9)';
+                    bg = 'rgba(30, 30, 30, 0.85)';
+                }
+                applyBadgeStyleToElement(badgeEl, label, fmtVal, borderColor, color, bg, `援军合兵：×${fmtVal}`);
+            } else {
+                badgeEl.style.display = 'none';
+            }
 
             rowEl.style.display = 'flex';
         };
