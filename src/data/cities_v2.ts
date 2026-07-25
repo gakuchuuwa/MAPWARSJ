@@ -1586,7 +1586,8 @@ export const PERIPHERY: CityDataV2[] = [
     { id: 'city_leh', name: '列城', factionId: 'ladakh', lat: 34.16, lng: 77.58, type: 'small_city', troops: 30000, region: 'TIBET' },
 
 
-    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'small_city', region: 'TIBET', troops: 30000, mirror: true },
+    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'medium_city', troops: 20000, region: 'TIBET', mirror: true },
+
     { id: 'city_dangxiong', name: '当雄', factionId: 'khoshut', lat: 30.48, lng: 91.1, type: 'small_city', region: 'TIBET', troops: 30000,
         note: '当雄；和硕特小城',
     },
@@ -2790,6 +2791,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     { id: 'city_wulihong', name: '乌利洪', factionId: 'manghuti', lat: 49.53, lng: 112.54, type: 'small_city', troops: 30000, region: 'STEPPE' },
+    { id: 'city_mubang', name: '木邦', factionId: 'xingwei', lat: 23.32, lng: 97.98, type: 'small_city', troops: 20000, region: 'DIANQIAN' },
 
 
 

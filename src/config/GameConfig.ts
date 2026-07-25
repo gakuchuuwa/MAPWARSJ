@@ -169,8 +169,8 @@ export class GameConfig {
         FREE_SUPPLY_SEC: 15,
         /** 断粮整跳间隔（游戏秒）：攒满一跳扣一次（主人裁定：15 秒一跳，飘字不刷屏） */
         ATTRITION_CHUNK_SEC: 15,
-        /** 每跳减员率：对当前兵力百分比。7.5% = 0.5%/秒 × 15 秒，与旧涓流曲线等效 */
-        ATTRITION_CHUNK_RATE: 0.075,
+        /** 每跳减员率：对当前兵力百分比。15% = 1%/秒 × 15 秒，断粮即溃 */
+        ATTRITION_CHUNK_RATE: 0.15,
         /** 途经复位半径（km）：距任一己方（同 factionId）据点 ≤ 此值即 timeSinceSupply 清零（不要求驻停） */
         RESET_RADIUS_KM: 20,
         /** 远征军团整体豁免开关（expeditionTargetCityId 非空即豁免，含岳飞脚本军） */

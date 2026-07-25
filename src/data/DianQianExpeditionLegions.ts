@@ -43,4 +43,5 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     jingpozu: { name: '景颇长刀兵', tier: 3 },
     yangzhou: { name: '无当飞军', tier: 2 },
     wuxi: { name: '武陵弓蛮', tier: 3 },
+    xingwei: { name: '木邦象兵', tier: 4 },
 };

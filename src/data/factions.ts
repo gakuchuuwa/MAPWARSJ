@@ -141,6 +141,7 @@ export const FACTIONS: Faction[] = [
     { id: 'juqu_d', name: '沮渠' },
 
     { id: 'tufa_d', name: '秃发' },
+
     { id: 'qiuchi', name: '仇池' },
 
 
@@ -1573,6 +1574,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'manghuti', name: '忙忽惕' },
+    { id: 'xingwei', name: '兴威' },
 
 
 

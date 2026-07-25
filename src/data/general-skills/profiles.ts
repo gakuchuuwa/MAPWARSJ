@@ -1035,7 +1035,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    tufa_d_tufanutan: { generalId: 'tufa_d_tufanutan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_043', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_530', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage' , attackStyle: 'attack'},
+    tufa_d_tufanutan: { generalId: 'tufa_d_tufanutan', tier: 'ordinary', tacticalSkillId: 'ts_032', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_043', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_530', defDisadvantageSkillId: 'ts_416', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
@@ -2878,6 +2878,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     chenli_d_zuoxianwang: { generalId: 'chenli_d_zuoxianwang', tier: 'ordinary', tacticalSkillId: 'ts_390', atkAdvantageSkillId: 'ts_357', atkBalanceSkillId: 'ts_034', atkDisadvantageSkillId: 'ts_759', defAdvantageSkillId: 'ts_006', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_320', aptitude: 'leverage', attackStyle: 'defense' },
     weiming_weiminglinggong: { generalId: 'weiming_weiminglinggong', tier: 'ordinary', tacticalSkillId: 'ts_399', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_035', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_634', defDisadvantageSkillId: 'ts_376', aptitude: 'leverage', attackStyle: 'attack' },
     yang_aner_yangan: { generalId: 'yang_aner_yangan', tier: 'ordinary', tacticalSkillId: 'ts_282', atkAdvantageSkillId: 'ts_031', atkBalanceSkillId: 'ts_037', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_730', aptitude: 'leverage', attackStyle: 'attack' },
+    xingwei_hanba: { generalId: 'xingwei_hanba', tier: 'ordinary', tacticalSkillId: 'ts_220', atkAdvantageSkillId: 'ts_220', atkBalanceSkillId: 'ts_686', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_379', defDisadvantageSkillId: 'ts_337', aptitude: 'create' },
 
 
 
