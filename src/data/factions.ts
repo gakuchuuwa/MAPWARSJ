@@ -142,6 +142,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'tufa_d', name: '秃发' },
 
+
     { id: 'qiuchi', name: '仇池' },
 
 
@@ -285,6 +286,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'baiji', name: '百济' },
     { id: 'tubo', name: '吐蕃' },
+
     { id: 'tujue', name: '突厥' },
     { id: 'tiele', name: '铁勒' },
 
@@ -1469,6 +1471,7 @@ export const FACTIONS: Faction[] = [
     { id: 'pangzha', name: '旁遮普' },
 // ── 2026-06-19 新增：马尔吉亚纳（彭迪）·乌古斯（毡的）──
     { id: 'maer_d', name: '马尔吉亚纳' },
+
 
           // 彭迪·穆尔加布绿洲边镇（Margiana）
     { id: 'wugu_d', name: '乌古斯' },

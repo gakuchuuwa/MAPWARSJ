@@ -36,6 +36,21 @@ export const CITY_EXCLUSIVE_ICON_BY_ID: Record<string, string> = {
     city_jinyang: '/cities/0jinyang.png',
     jinyang: '/cities/0jinyang.png',
     taiyuan: '/cities/0jinyang.png',
+    city_qingtang: '/cities/0qingtang.png',
+    qingtang: '/cities/0qingtang.png',
+    city_merv: '/cities/0mulu.png',
+    merv: '/cities/0mulu.png',
+    city_mulu: '/cities/0mulu.png',
+    mulu: '/cities/0mulu.png',
+    city_lanshi: '/cities/0lanshicheng.png',
+    lanshi: '/cities/0lanshicheng.png',
+    city_lanshicheng: '/cities/0lanshicheng.png',
+    city_nishabuer: '/cities/0nishbuer.png',
+    nishabuer: '/cities/0nishbuer.png',
+    nishbuer: '/cities/0nishbuer.png',
+    city_jiaseni: '/cities/0gejining.png',
+    jiaseni: '/cities/0gejining.png',
+    gejining: '/cities/0gejining.png',
 };
 
 /** 比普通大城 baseSize 140 略大 */

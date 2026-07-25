@@ -13,7 +13,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     dulan: { name: '青海归锋', tier: 3 },
     kalun: { name: '尕斯铁卫', tier: 4 },
   shaodang: { name: '湟中义从羌', tier: 3 },  // 东汉经典羌族从军制度，兵种名号极具特色，升T2
-  tubo: { name: '吐蕃大纛军', tier: 1 },       // 逻些·松赞干布吐蕃大纛军
+    tubo: { name: '吐蕃大纛军', tier: 1 },
   gar: { name: '却杰军', tier: 1 },           // 萨毗城·论钦陵大破唐军的野战主力
     tuyu_d: { name: '青海骢精骑', tier: 3 },
     dafeichuan: { name: '退浑骑', tier: 3 },
