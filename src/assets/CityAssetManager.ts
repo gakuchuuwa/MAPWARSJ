@@ -458,7 +458,7 @@ export class CityAssetManager {
         'leizhou': '雷',
 
 'nong2': '侬',
-        'golog': '果洛',
+'golog': '果洛',
         'tushetu': '土谢',
         'tumed': '土默特',
 'she': '永宁',

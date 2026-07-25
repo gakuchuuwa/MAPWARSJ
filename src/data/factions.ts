@@ -911,7 +911,8 @@ export const FACTIONS: Faction[] = [
     // 工布(林芝/西藏工布藏族城邦),
 
     // ── 2026-05-28 新增：果洛(青海)、土谢图(外蒙)、土默特(内蒙) ──
-    { id: 'golog', name: '果洛' },                             // 果洛(青海果洛藏区/花石峡),
+    { id: 'golog', name: '果洛' },
+                             // 果洛(青海果洛藏区/花石峡),
     { id: 'tushetu', name: '土谢图' },                         // 土谢图汗部(外蒙古/库伦/喀尔喀蒙古),
     { id: 'tumed', name: '土默特' },                           // 土默特部(归化城/呼和浩特/蒙古右翼),
 
@@ -1422,6 +1423,7 @@ export const FACTIONS: Faction[] = [
     { id: 'dulan', name: '都兰' },
 
 
+
     { id: 'duomi', name: '多弥' },
     { id: 'wumeng', name: '溪州' },
     { id: 'lelang', name: '乐浪' },
@@ -1504,6 +1506,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xining', name: '西宁' },
 
     { id: 'kalun', name: '柴达木' },
+
 
     { id: 'sagami', name: '相模' },
     { id: 'mino', name: '美浓' },

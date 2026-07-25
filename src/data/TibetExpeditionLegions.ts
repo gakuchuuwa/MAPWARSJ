@@ -35,7 +35,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   khon: { name: '萨迦法王军', tier: 3 },               // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   lang_clan: { name: '帕木竹巴军', tier: 3 }, // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   karmapa: { name: '噶玛巴护教', tier: 4 },
-  golog: { name: '果洛游骑', tier: 3 }, // 青海果洛极其著名的彪悍游牧部落，以不受羁绊闻名于近代西北史，升入T3知名
+    golog: { name: '果洛游骑', tier: 3 },
     xihai_d: { name: '伏俟王骑', tier: 3 },
   heyuan_d: { name: '河源军', tier: 2 },        // 花石峡·黑齿常之夜袭吐蕃大营（战术突袭，T2）
   monpa: { name: '门巴勇士', tier: 4 },  // 错那·梅惹·洛珠嘉措归附达赖（缺乏极其著名的战术高光，降T3）
