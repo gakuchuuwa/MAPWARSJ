@@ -32,11 +32,12 @@ export class CameraFollowUI {
         const currentMax = CameraFollowUI.historicalMaxStreak?.streak || 0;
         if (streak > currentMax) {
             const gRecord = army.generalId ? getGeneralRecordByGeneralId(army.generalId) : null;
-            const gName = gRecord?.generalName || army.name || '武将';
+            const gName = gRecord?.generalName || '';
+            const lName = army.name || gName || '军团';
             CameraFollowUI.historicalMaxStreak = {
                 streak,
                 generalName: gName,
-                legionName: army.name || gName,
+                legionName: lName,
                 armyId: army.id,
                 factionId: army.getFactionId?.() ?? '',
             };
@@ -282,7 +283,7 @@ export class CameraFollowUI {
             position: fixed;
             top: ${CameraFollowUI.LIST_PANEL_TOP_PX}px;
             left: ${CameraFollowUI.STACK_LEFT_PX}px;
-            width: 280px;
+            width: 300px;
             max-height: 70vh;
             overflow-y: auto;
             z-index: 10001;
@@ -687,7 +688,8 @@ export class CameraFollowUI {
         }
 
         const topRecord = CameraFollowUI.historicalMaxStreak;
-        let streakContentHtml = `<span style="color:#8a8070; font-weight:normal;">暂无记录</span>`;
+        let streakHeaderHtml = `<span>🔥 最高连胜</span>`;
+        let streakBodyHtml = `<span style="color:#8a8070; font-weight:normal;">暂无记录</span>`;
         let isStreakClickable = false;
         let streakArmyId = '';
         let streakArmyName = '';
@@ -696,13 +698,29 @@ export class CameraFollowUI {
             const aliveArmy = armies.find((a) => a.id === topRecord.armyId);
             const isAlive = !!aliveArmy;
 
+            // 第一行：显示连胜数额（精简标签防溢出）
+            streakHeaderHtml = `
+                <span>🔥 最高连胜</span>
+                <span style="color:#ff7733; font-weight:bold; font-size:11px; background:rgba(255,85,0,0.18); border:1px solid rgba(255,85,0,0.45); border-radius:3px; padding:0 4px; text-shadow:0 1px 2px #000;">🔥${topRecord.streak}连胜</span>
+            `;
+
+            // 第二行：格式为“武将率精锐/军团”（例：岳飞率背嵬军 / 源义经率奥州武士）
+            const gName = topRecord.generalName;
+            const lName = topRecord.legionName;
+            let pairTitle = '';
+            if (gName && lName && gName !== lName) {
+                pairTitle = `<span style="color:#ffe39f; font-weight:bold;">${gName}</span><span style="opacity:0.65; font-size:11px; margin:0 1px;">率</span><span style="color:#e8dccc;">${lName}</span>`;
+            } else {
+                pairTitle = `<span style="color:#ffe39f; font-weight:bold;">${gName || lName}</span>`;
+            }
+
+            const stateTag = isAlive ? '' : `<span style="color:#ff5555; font-size:10px; font-weight:normal; margin-left:3px;">(已覆灭)</span>`;
+            streakBodyHtml = `${pairTitle}${stateTag}`;
+
             if (isAlive) {
-                streakContentHtml = `<span style="color:#ffe39f; font-weight:bold;">${topRecord.generalName}</span> <span style="color:#ff7733; font-size:11px; font-weight:bold;">🔥${topRecord.streak}连胜</span>`;
                 isStreakClickable = true;
                 streakArmyId = topRecord.armyId;
-                streakArmyName = topRecord.legionName;
-            } else {
-                streakContentHtml = `<span style="color:#ffe39f; font-weight:bold;">${topRecord.generalName}</span> <span style="color:#ff5555; font-size:10px; font-weight:bold;">🔥${topRecord.streak}连胜 (已覆灭)</span>`;
+                streakArmyName = lName || gName;
             }
         }
 
@@ -716,32 +734,39 @@ export class CameraFollowUI {
             }
         }
 
-        let factionContentHtml = `<span style="color:#8a8070; font-weight:normal;">暂无</span>`;
+        let factionHeaderHtml = `<span>🏯 据点最多</span>`;
+        let factionBodyHtml = `<span style="color:#8a8070; font-weight:normal;">暂无</span>`;
+
         if (topFid && maxCities > 0) {
             const fName = this.factionManager?.getFactionName(topFid) ?? topFid;
             const fColor = this.factionManager?.getFactionColor(topFid) ?? '#ffffff';
-            factionContentHtml = `
+            
+            factionHeaderHtml = `
+                <span>🏯 据点最多</span>
+                <span style="color:#ffcf5a; font-weight:bold; font-size:11px; background:rgba(255,180,60,0.15); border:1px solid rgba(255,180,60,0.45); border-radius:3px; padding:0 4px; text-shadow:0 1px 2px #000;">${maxCities}城</span>
+            `;
+
+            factionBodyHtml = `
                 <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(255,255,255,0.3); margin-right:4px; flex-shrink:0;"></span>
-                <span style="color:#f0e6d2; font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${fName}</span> 
-                <span style="color:#ffcf5a; font-size:11px; font-weight:bold; margin-left:3px; flex-shrink:0;">🏯${maxCities}城</span>
+                <span style="color:#f0e6d2; font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${fName}</span>
             `;
         }
 
         this.topStatsContainer.innerHTML = `
-            <div id="top-streak-card" style="flex:1; background:rgba(40,22,12,0.6); border:1px solid rgba(255,120,40,0.35); border-radius:5px; padding:5px 8px; transition:all 0.15s; ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该历史连胜王者' : '传奇历史最高纪录'}">
-                <div style="font-size:10px; color:#ff9955; margin-bottom:2px; display:flex; align-items:center; gap:3px;">
-                    <span>🔥 历史最高连胜</span>
-                </div>
-                <div style="font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                    ${streakContentHtml}
-                </div>
-            </div>
-            <div style="flex:1; background:rgba(20,30,20,0.6); border:1px solid rgba(255,200,60,0.35); border-radius:5px; padding:5px 8px; transition:all 0.15s;">
-                <div style="font-size:10px; color:#ffcf5a; margin-bottom:2px; display:flex; align-items:center; gap:3px;">
-                    <span>🏯 据点最多势力</span>
+            <div id="top-streak-card" style="flex:1; min-width:0; background:rgba(40,22,12,0.6); border:1px solid rgba(255,120,40,0.35); border-radius:5px; padding:6px 8px; transition:all 0.15s; ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该历史连胜王者' : '传奇历史最高纪录'}">
+                <div style="font-size:10px; color:#ff9955; margin-bottom:3px; display:flex; align-items:center; justify-content:space-between; white-space:nowrap;">
+                    ${streakHeaderHtml}
                 </div>
                 <div style="font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center;">
-                    ${factionContentHtml}
+                    ${streakBodyHtml}
+                </div>
+            </div>
+            <div style="flex:1; min-width:0; background:rgba(20,30,20,0.6); border:1px solid rgba(255,200,60,0.35); border-radius:5px; padding:6px 8px; transition:all 0.15s;">
+                <div style="font-size:10px; color:#ffcf5a; margin-bottom:3px; display:flex; align-items:center; justify-content:space-between; white-space:nowrap;">
+                    ${factionHeaderHtml}
+                </div>
+                <div style="font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center;">
+                    ${factionBodyHtml}
                 </div>
             </div>
         `;
