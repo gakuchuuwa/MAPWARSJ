@@ -714,7 +714,7 @@ export class CameraFollowUI {
                 pairTitle = `<span style="color:#ffe39f; font-weight:bold;">${gName || lName}</span>`;
             }
 
-            const stateTag = isAlive ? '' : `<span style="color:#ff5555; font-size:10px; font-weight:normal; margin-left:3px;">(已覆灭)</span>`;
+            const stateTag = isAlive ? '' : `<span style="color:#ff5555; font-size:10px; font-weight:bold; background:rgba(255,50,50,0.18); border:1px solid rgba(255,80,80,0.4); border-radius:3px; padding:0 3px; margin-left:4px; line-height:1.2; display:inline-block; vertical-align:middle;" title="该传奇军团已阵亡覆灭">殁</span>`;
             streakBodyHtml = `${pairTitle}${stateTag}`;
 
             if (isAlive) {
