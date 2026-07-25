@@ -5512,11 +5512,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 21
         },
-        "/assets/NORTHEAST/maomingan_suoetu.png": {
-            "scale": 0.97,
-            "offsetX": 6,
-            "offsetY": -9
-        },
         "/assets/STEPPE/__闲置__STEPPE_43.png": {
             "scale": 0.91,
             "offsetX": 0,
@@ -5976,6 +5971,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_37.png": {
+            "scale": 0.97,
+            "offsetX": 6,
+            "offsetY": -9
+        },
+        "/assets/manqing/maomingan_suoetu.png": {
+            "scale": 1,
+            "offsetX": 13,
+            "offsetY": -25
         }
     },
     "folderGuides": {
