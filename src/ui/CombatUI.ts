@@ -1068,10 +1068,14 @@ export class CombatUI {
 
             const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
             const commander = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
-            // 过滤掉指挥官与城池驻军单位，侧栏第 3 行严格只展现真正的大地图增援军团（须有合兵 JoinLuck 记录）
+            const primaryBattler = this.getPrimaryBattler(side);
+
+            // 过滤掉已在侧栏第二行展示的主战单位、指挥官与城池设施，第 3 行严格只展现额外的第二/第三支援军
             const reinfUnits = units.filter(u => {
                 if (u.isDestroyed || u.troops <= 0) return false;
-                if (u.id === commander?.id || u.unitType === 'city') return false;
+                if (u.unitType === 'city') return false;
+                if (commander && u.id === commander.id) return false;
+                if (primaryBattler && u.id === primaryBattler.id) return false; // 绝不重复展示第二行已展示的主部队！
                 const joinLuck = bf.getReinforcementJoinLuck(u.id);
                 return joinLuck !== null && joinLuck !== undefined;
             });
@@ -1794,8 +1798,15 @@ export class CombatUI {
             : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
         const bot3 = renderBadge('命运运气', '运', fateLuck);
 
+        const reinfLuck = this.getReinforcementJoinLuckForUnit(unit);
+        let bot4 = '';
+        if (reinfLuck !== null && Math.abs(reinfLuck - 1.0) > 0.001) {
+            const reinfChar = reinfLuck > 1.001 ? '得' : '掣';
+            bot4 = renderBadge('合兵协同', reinfChar, reinfLuck);
+        }
+
         const topSlots = [top1, top2, top3, top4, top5];
-        const botSlots = [bot1, bot2, bot3];
+        const botSlots = [bot1, bot2, bot3, bot4];
 
         const orderedTop = isAtt ? topSlots : [...topSlots].reverse();
         const orderedBot = isAtt ? botSlots : [...botSlots].reverse();

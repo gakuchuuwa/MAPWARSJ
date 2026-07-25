@@ -4643,9 +4643,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/WESTERN/saman_yisimayi.png": {
-            "scale": 1.32,
+            "scale": 1.28,
             "offsetX": 0,
-            "offsetY": 9
+            "offsetY": 11
         },
         "/assets/LINGNAN/__闲置__LINGNAN_25.png": {
             "scale": 1.06,
