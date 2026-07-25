@@ -56,7 +56,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'xin': 'city_shangdang',
 'liangzhou': 'city_wuwei',
 'juqu_d': 'city_biaoshi',
-    'tufa_d': 'city_qingtang',
+'tufa_d': 'city_qingtang',
 'qiuchi': 'city_qiuchi',
 'helian': 'city_tongwancheng',
     'xiongnu': 'city_toumancheng',
@@ -800,6 +800,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'cangsong': 'city_chiwubao',
 'aertai': 'city_aertaishan',
 'manghuti': 'city_wulihong',
+    'xingwei': 'city_mubang',
 };
 
 // @ts-ignore

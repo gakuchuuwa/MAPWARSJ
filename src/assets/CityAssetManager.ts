@@ -103,7 +103,7 @@ export class CityAssetManager {
 'dian': '白',
 'xin': '上党',
 'juqu_d': '沮渠',
-        'tufa_d': '秃发',
+'tufa_d': '秃发',
 'qiuchi': '仇池',
 'helian': '赫连',
         'xiongnu': '匈奴',
@@ -835,6 +835,7 @@ export class CityAssetManager {
 'cangsong': '苍松',
 'aertai': '阿尔',
 'manghuti': '忙忽',
+        'xingwei': '兴威',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

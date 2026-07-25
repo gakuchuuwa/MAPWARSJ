@@ -75,4 +75,5 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     jinchuan_g: { name: '嘉绒碉锋', tier: 3 },
     shanzhou: { name: '陇右骁骑', tier: 1 },
     yeli: { name: '擒生军', tier: 3 },
+    tufa_d: { name: '南凉铁骑', tier: 4 },
 };

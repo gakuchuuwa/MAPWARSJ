@@ -4847,11 +4847,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -28
         },
-        "/assets/DIANQIAN/__闲置__DIANQIAN_13.png": {
-            "scale": 0.99,
-            "offsetX": 0,
-            "offsetY": -26
-        },
         "/assets/DIANQIAN/pagan_anultuo.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5991,6 +5986,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.19,
             "offsetX": 21,
             "offsetY": -34
+        },
+        "/assets/DIANQIAN/xingwei_hanba.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -26
         }
     },
     "folderGuides": {

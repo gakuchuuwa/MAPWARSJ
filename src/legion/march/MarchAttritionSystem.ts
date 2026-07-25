@@ -45,7 +45,12 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     // 免费补给时间窗：FREE_SUPPLY_SEC 游戏秒 = 1 季度携行粮
     if (army.timeSinceSupply <= cfg.FREE_SUPPLY_SEC) return 0;
 
-    army.attritionChunkSec += deltaTime;
+    // 刚跨过免费期首帧：种子化为满 chunk，立刻触发第一次扣减（断粮即损，不等下一轮攒满）
+    if (army.attritionChunkSec === 0) {
+        army.attritionChunkSec = cfg.ATTRITION_CHUNK_SEC + deltaTime;
+    } else {
+        army.attritionChunkSec += deltaTime;
+    }
     if (army.attritionChunkSec < cfg.ATTRITION_CHUNK_SEC) return 0;
     army.attritionChunkSec -= cfg.ATTRITION_CHUNK_SEC;
     const loss = Math.min(

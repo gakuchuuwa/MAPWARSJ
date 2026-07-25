@@ -74,7 +74,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'xin': '上党',
 'liangzhou': '凉',
 'juqu_d': '沮渠',
-    'tufa_d': '秃发',
+'tufa_d': '秃发',
 'qiuchi': '仇池',
 'helian': '赫连',
     'xiongnu': '匈奴',
@@ -868,6 +868,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'cangsong': '苍松',
 'aertai': '阿尔',
 'manghuti': '忙忽',
+    'xingwei': '兴威',
 };
 
 // @ts-ignore
