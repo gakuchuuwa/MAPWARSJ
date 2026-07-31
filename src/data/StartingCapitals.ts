@@ -3,6 +3,23 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+  'habusibao': 'city_weiyeena',
+  'boximiya': 'city_bulage',
+  'mazhaer': 'city_budapeisi',
+  'falanji': 'city_kelong',
+  'jialuolin': 'city_yachen',
+  'rierman': 'city_meiyinci',
+  'shiwaben': 'city_aogesibao',
+  'asikanani': 'city_bolandengbao',
+  'wende': 'city_magedebao',
+  'bafaliya': 'city_leigensibao',
+  'huohengsuolun': 'city_niulunbao',
+  'mozeer': 'city_teerier',
+  'ruishi': 'city_basaier',
+  'aersasi': 'city_sitelasibao',
+  'molaweiya': 'city_aoermuci',
+  'damolaweiya': 'city_buernuo',
+
   'luosi': 'city_jifu',
   'liulike': 'city_nuofugeerdede',
   'mosike_gongguo': 'city_mosike',

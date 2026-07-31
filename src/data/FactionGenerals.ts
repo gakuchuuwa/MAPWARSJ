@@ -37,6 +37,23 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    habusibao: { generalId: 'gen_maximilian', generalName: '马克西米利安', portrait: '/assets/generals/gen_maximilian.png' },
+    boximiya: { generalId: 'gen_jan_zizka', generalName: '扬杰斯卡', portrait: '/assets/generals/gen_jan_zizka.png' },
+    mazhaer: { generalId: 'gen_arpad', generalName: '阿尔帕德', portrait: '/assets/generals/gen_arpad.png' },
+    falanji: { generalId: 'gen_charles_martel', generalName: '查理马特', portrait: '/assets/generals/gen_charles_martel.png' },
+    jialuolin: { generalId: 'gen_charlemagne', generalName: '查理大帝', portrait: '/assets/generals/gen_charlemagne.png' },
+    rierman: { generalId: 'gen_otto_great', generalName: '奥托一世', portrait: '/assets/generals/gen_otto_great.png' },
+    shiwaben: { generalId: 'gen_henry_fowler', generalName: '亨利一世', portrait: '/assets/generals/gen_henry_fowler.png' },
+    asikanani: { generalId: 'gen_albrecht_bear', generalName: '阿尔布雷希特', portrait: '/assets/generals/gen_albrecht_bear.png' },
+    wende: { generalId: 'gen_gero_margrave', generalName: '杰罗伯爵', portrait: '/assets/generals/gen_gero_margrave.png' },
+    bafaliya: { generalId: 'gen_tassilo_iii', generalName: '塔西洛三世', portrait: '/assets/generals/gen_tassilo_iii.png' },
+    huohengsuolun: { generalId: 'gen_frederick_i_nuremberg', generalName: '腓特烈一世', portrait: '/assets/generals/gen_frederick_i_nuremberg.png' },
+    mozeer: { generalId: 'gen_constantine_great', generalName: '君士坦丁大帝', portrait: '/assets/generals/gen_constantine_great.png' },
+    ruishi: { generalId: 'gen_arnold_winkelried', generalName: '阿诺德', portrait: '/assets/generals/gen_arnold_winkelried.png' },
+    aersasi: { generalId: 'gen_julian_apostate', generalName: '尤里安', portrait: '/assets/generals/gen_julian_apostate.png' },
+    molaweiya: { generalId: 'gen_swatopluk', generalName: '斯瓦托普鲁克', portrait: '/assets/generals/gen_swatopluk.png' },
+    damolaweiya: { generalId: 'gen_mojmir_i', generalName: '莫伊米尔一世', portrait: '/assets/generals/gen_mojmir_i.png' },
+
     luosi: { generalId: 'gen_yaroslav', generalName: '雅罗斯拉夫', portrait: '/assets/generals/gen_yaroslav.png' },
     liulike: { generalId: 'gen_alexander_nef', generalName: '亚历山大', portrait: '/assets/generals/gen_alexander_nef.png' },
     mosike_gongguo: { generalId: 'gen_dmitry_donskoy', generalName: '德米特里', portrait: '/assets/generals/gen_dmitry_donskoy.png' },
