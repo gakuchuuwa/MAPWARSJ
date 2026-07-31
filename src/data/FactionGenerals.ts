@@ -37,6 +37,22 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    maixiya: { generalId: 'gen_offa_mercia', generalName: '奥法', portrait: '/assets/generals/gen_offa_mercia.png' },
+    weijing_bergen: { generalId: 'gen_sverre_norway', generalName: '斯维尔', portrait: '/assets/generals/gen_sverre_norway.png' },
+    nidelan: { generalId: 'gen_william_silent', generalName: '威廉一世', portrait: '/assets/generals/gen_william_silent.png' },
+    boumeilaniyan: { generalId: 'gen_casimir_iv', generalName: '卡西米尔', portrait: '/assets/generals/gen_casimir_iv.png' },
+    langgeduoke: { generalId: 'gen_raymond_v', generalName: '雷蒙五世', portrait: '/assets/generals/gen_raymond_v.png' },
+    aermolika: { generalId: 'gen_gilles_de_rais', generalName: '吉尔德雷斯', portrait: '/assets/generals/gen_gilles_de_rais.png' },
+    tuosikana: { generalId: 'gen_lorenzo_medici', generalName: '洛伦佐', portrait: '/assets/generals/gen_lorenzo_medici.png' },
+    yadelaiya: { generalId: 'gen_dandolo', generalName: '丹多洛', portrait: '/assets/generals/gen_dandolo.png' },
+    kanpaniya: { generalId: 'gen_charles_i_naples', generalName: '卡洛一世', portrait: '/assets/generals/gen_charles_i_naples.png' },
+    jiatailuoniya: { generalId: 'gen_wifred_hairy', generalName: '威弗雷德', portrait: '/assets/generals/gen_wifred_hairy.png' },
+    nasier: { generalId: 'gen_muhammad_i', generalName: '穆罕默德一世', portrait: '/assets/generals/gen_muhammad_i.png' },
+    liguliya: { generalId: 'gen_andrea_doria', generalName: '安德烈亚', portrait: '/assets/generals/gen_andrea_doria.png' },
+    seleisi: { generalId: 'gen_simeon_great', generalName: '西美昂大帝', portrait: '/assets/generals/gen_simeon_great.png' },
+    bolisiya: { generalId: 'gen_gastold', generalName: '加斯托尔德', portrait: '/assets/generals/gen_gastold.png' },
+    zhituo: { generalId: 'gen_zhytomyr', generalName: '日托米尔', portrait: '/assets/generals/gen_zhytomyr.png' },
+
     pufaerci: { generalId: 'gen_ludwig_iv', generalName: '路德维希', portrait: '/assets/generals/gen_ludwig_iv.png' },
     hansa: { generalId: 'gen_stortebeker', generalName: '克劳斯', portrait: '/assets/generals/gen_stortebeker.png' },
     batawei: { generalId: 'gen_civilis', generalName: '西维利斯', portrait: '/assets/generals/gen_civilis.png' },

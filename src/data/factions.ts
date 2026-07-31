@@ -8,6 +8,22 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
+  { id: 'maixiya', name: '麦西亚' },
+  { id: 'weijing_bergen', name: '霍达兰' },
+  { id: 'nidelan', name: '尼德兰' },
+  { id: 'boumeilaniyan', name: '波美拉尼亚' },
+  { id: 'langgeduoke', name: '朗格多克' },
+  { id: 'aermolika', name: '阿尔摩里卡' },
+  { id: 'tuosikana', name: '托斯卡纳' },
+  { id: 'yadelaiya', name: '亚得里亚' },
+  { id: 'kanpaniya', name: '坎帕尼亚' },
+  { id: 'jiatailuoniya', name: '加泰罗尼亚' },
+  { id: 'nasier', name: '纳斯尔' },
+  { id: 'liguliya', name: '利古里亚' },
+  { id: 'seleisi', name: '色雷斯' },
+  { id: 'bolisiya', name: '波利西亚' },
+  { id: 'zhituo', name: '日托' },
+
   { id: 'pufaerci', name: '普法尔茨' },
   { id: 'hansa', name: '汉萨' },
   { id: 'batawei', name: '巴塔维' },
