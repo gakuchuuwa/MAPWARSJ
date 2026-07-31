@@ -3,6 +3,16 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+  'nuosi': 'city_wupusala',
+  'feiniqi': 'city_jiadisi',
+  'xila': 'city_yadian',
+  'xilagu': 'city_syracuse',
+  'lading': 'city_luoma',
+  'fulandesi': 'city_calais',
+  'gaolu': 'city_bali',
+  'anggelu': 'city_lundun',
+  'piketai': 'city_aidingbao',
+  'gaer': 'city_dublin',
   'aierlan': 'city_dublin',
   'jialai': 'city_calais',
   'bulietani': 'city_rennes',
