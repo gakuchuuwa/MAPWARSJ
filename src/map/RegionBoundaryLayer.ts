@@ -62,7 +62,9 @@ export class RegionBoundaryLayer {
     }
 
     private syncVisibility(): void {
-        const show = Math.floor(this.map.getZoom()) === REGION_BOUNDARY_ZOOM;
+        // zoom 6-7 均显示界线（7 为宏观浏览：界线 + 城名；6 为界线视图）
+        const floor = Math.floor(this.map.getZoom());
+        const show = floor >= REGION_BOUNDARY_ZOOM && floor <= REGION_BOUNDARY_ZOOM + 1;
         if (show) {
             if (!this.map.hasLayer(this.layerGroup)) {
                 this.layerGroup.addTo(this.map);

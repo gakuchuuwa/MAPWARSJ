@@ -35,8 +35,6 @@ import {
 } from './city-marker/CityExclusiveIcons';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import {
-    FACTION_ONLY_HIDDEN_PANES,
-    isFactionOnlyZoom,
     isMacroMapZoom,
     MACRO_HIDDEN_INFRA_PANES,
 } from '../config/StrategicView';
@@ -1477,16 +1475,19 @@ export class TerritorySystem {
         }
     }
 
-    /** 按缩放档位切换图层：6 界线无势力色；7 仅势力色；8 据点+势力色；≥9 常规 */
+    /** 按缩放档位切换图层：6 界线无势力色；7 界线+城名；8 据点+势力色；≥9 常规 */
     public applyZoomLayerVisibility(zoom: number): void {
         const leafletMap = this.map.getLeafletMap();
-        const hideCities = isFactionOnlyZoom(zoom);
+        const floorZoom = Math.floor(zoom);
         const hideInfra = isMacroMapZoom(zoom);
 
-        FACTION_ONLY_HIDDEN_PANES.forEach((paneName) => {
-            const pane = leafletMap.getPane(paneName);
-            if (pane) pane.style.display = hideCities ? 'none' : '';
-        });
+        // 据点旗（cityPane）：zoom ≤ 7 宏观视图隐藏，zoom ≥ 8 显示
+        const cityPane = leafletMap.getPane('cityPane');
+        if (cityPane) cityPane.style.display = (floorZoom >= 8) ? '' : 'none';
+
+        // 城名（labelsPane）：zoom 6 界线视图隐藏；zoom 7 宏观浏览显示城名；zoom ≥ 8 显示
+        const labelsPane = leafletMap.getPane('labelsPane');
+        if (labelsPane) labelsPane.style.display = (floorZoom === 6) ? 'none' : '';
 
         MACRO_HIDDEN_INFRA_PANES.forEach((paneName) => {
             const pane = leafletMap.getPane(paneName);
