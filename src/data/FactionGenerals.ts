@@ -37,6 +37,13 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    aierlan: { generalId: 'gen_brian_boru', generalName: '布赖恩', portrait: '/assets/generals/gen_brian_boru.png' },
+    jialai: { generalId: 'gen_du_guesclin', generalName: '德盖克兰', portrait: '/assets/generals/gen_du_guesclin.png' },
+    bulietani: { generalId: 'gen_alain_i', generalName: '阿兰一世', portrait: '/assets/generals/gen_alain_i.png' },
+    xixili: { generalId: 'gen_agathocles', generalName: '阿加索克利斯', portrait: '/assets/generals/gen_agathocles.png' },
+    luomaniya: { generalId: 'gen_michael_brave', generalName: '米歇尔', portrait: '/assets/generals/gen_michael_brave.png' },
+    saierweiya: { generalId: 'gen_stefan_dusan', generalName: '斯蒂芬杜尚', portrait: '/assets/generals/gen_stefan_dusan.png' },
+
     sugelan: { generalId: 'gen_robert_bruce', generalName: '罗伯特', portrait: '/assets/generals/gen_robert_bruce.png' },
     ruidian: { generalId: 'gen_gustav_vasa', generalName: '古斯塔夫', portrait: '/assets/generals/gen_gustav_vasa.png' },
     yinggelan: { generalId: 'gen_edward_iii', generalName: '爱德华三世', portrait: '/assets/generals/gen_edward_iii.png' },
