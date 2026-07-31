@@ -12,7 +12,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   wangyan: { name: '八字军', tier: 2 },     // 飞狐·王彦八字军（民间抗金义军，降T2）
   // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
-    heng1: { name: '杨无敌军', tier: 1 },
+    heng1: { name: '无敌军', tier: 1 },
   huan: { name: '神臂弓手', tier: 2 },      // 宋军最倚仗的跨时代战术兵种，屡次在野战击退重骑兵，升入T2战术
     qingyuan_bd: { name: '白马突骑', tier: 3 },
 
@@ -74,4 +74,6 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     shizhou: { name: '离石胡骑', tier: 3 },
     yanchuan_d: { name: '背嵬军', tier: 0 },
     yuwen: { name: '武川镇军', tier: 0 },
+    kai: { name: '武田赤备', tier: 2 },
+    ssangseong: { name: '和宁戍骑', tier: 4 },
 };

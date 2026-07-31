@@ -33,7 +33,16 @@ Thumbs.db
 *.swp
 
 # Large resource folders (not needed in version control)
+# 本地 Google Terrain 瓦片金字塔（zoom 8–11，合计约 3.2GB / 11 万个文件）。
+# 缺失时 GameMap 透明兜底、由 HillshadeLayer 补位，线上从来就没有这批瓦片。
+# 【2026-08-01】10/11dixingtu 于 7-26 误入库，造出单个 2.4GB 提交，直接推爆 GitHub 上限
+# 并撑爆 Vercel 上传，导致异地备份与线上部署同时停摆 6 天。四级一律不入库。
+public/8dixingtu/
 public/9dixingtu/
+public/10dixingtu/
+public/11dixingtu/
+# 根目录 map/ 是同四套瓦片的重复副本（另 3.2GB），src 无任何引用、Vite 也不 serve，同样不入库
+map/
 san10pk_99026/
 
 .vercel

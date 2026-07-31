@@ -49,8 +49,26 @@ let selectedFolder = '';
 let selectedImage = '';
 let draft: Required<PortraitAdjustValues> = { ...PORTRAIT_ADJUST_NEUTRAL };
 let dirty = false;
+/**
+ * draft 每改一次 +1。保存要跨两次 await（先拉盘再写盘），期间用户完全可能继续按方向键；
+ * 若保存结束时无条件 dirty=false，就会把这段时间的改动当成"已保存"静默丢掉
+ * （屏幕上还显示着新位置，切走再切回就变回去了）。所以只在版本号没变时才清 dirty。
+ */
+let editVersion = 0;
 
-type GeneralEntry = { generalId: string; generalName: string; factionId: string; portrait: string };
+/**
+ * 串行闸：保存 / 切图 / 切文件夹都是异步的，并发跑会互相踩
+ * （快速连按 [ ] 时，先发起的那次在 await 后又把 selectedImage 写回自己的旧目标）。
+ * 所有会改全局状态的异步操作一律排队执行。
+ */
+let opQueue: Promise<unknown> = Promise.resolve();
+function serialize<T>(task: () => Promise<T>): Promise<T> {
+    const run = opQueue.then(task, task);
+    opQueue = run.catch(() => { /* 失败不阻断后续排队 */ });
+    return run;
+}
+
+type GeneralEntry = { generalId: string; generalName: string; factionId: string; portrait: string; region: string; cityName: string };
 let generals: GeneralEntry[] = [];
 let selectedGeneralId = '';
 
@@ -59,8 +77,9 @@ app.innerHTML = `
 <header class="pt-header">
   <div class="pt-title">MAPWAR 立绘调校</div>
   <div class="pt-header-actions">
-    <span class="pt-hint">快捷键：[ ] 上/下一张，方向键平移，W/S 缩放（Shift 加速）</span>
+    <span class="pt-hint">快捷键：A 自动对齐，[ ] 上/下一张，方向键平移，W/S 缩放（Shift 加速）</span>
     <a href="/" class="pt-link">← 返回游戏</a>
+    <button type="button" id="pt-auto-align" class="pt-btn pt-btn-ghost" title="按检测到的眼睛位置自动设置垂直偏移；缩放不动">🎯 自动对齐 (A)</button>
     <button type="button" id="pt-reload" class="pt-btn pt-btn-ghost">重新加载</button>
     <button type="button" id="pt-save-file" class="pt-btn pt-btn-primary">保存 (Ctrl+S)</button>
   </div>
@@ -83,6 +102,10 @@ app.innerHTML = `
       <button type="button" id="pt-bind-btn" class="pt-btn pt-btn-primary" style="width:100%;" disabled>绑定选中图给该武将</button>
       <div id="pt-bind-status" style="font-size:12px;margin-top:6px;min-height:16px;"></div>
     </div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid #2a2620;">
+      <div style="font-weight:600;margin-bottom:6px;">⚠️ 立绘重复检测</div>
+      <div id="pt-dup-list" style="font-size:12px;color:#e8c878;max-height:200px;overflow-y:auto;"></div>
+    </div>
   </aside>
   <main class="pt-main">
     <div class="pt-grid" id="pt-grid"></div>
@@ -104,6 +127,7 @@ const els = {
     genPortrait: document.getElementById('pt-gen-portrait')!,
     bindBtn: document.getElementById('pt-bind-btn') as HTMLButtonElement,
     bindStatus: document.getElementById('pt-bind-status')!,
+    dupList: document.getElementById('pt-dup-list')!,
 };
 
 function injectStyles(): void {
@@ -348,7 +372,17 @@ function showSaveToast(message: string, isError = false): void {
 }
 
 function commitDraftToAdjustData(): void {
+    // 没选中图时绝不落键：否则会往调校表里写入 "" 这种垃圾键
+    if (!selectedImage) return;
     adjustData.images = adjustData.images ?? {};
+    // 内容完全相同的立绘一起写：同一张图的正确缩放位移必然相同，
+    // 分别调会出现「同一张图在两个夹里显示效果不同」（实测 41 组重复里 25 组不一致）。
+    // 注意与 2026-06-27 废弃的 canonical 共享不同：那个是多文件抢同一个槽位，
+    // 会互相覆盖；这里是各写各的键，只是值相同，谁也不会把谁挤掉。
+    for (const sib of duplicateSiblings.get(selectedImage) ?? []) {
+        adjustData.images[sib] = { scale: draft.scale, offsetX: draft.offsetX, offsetY: draft.offsetY };
+        dirtyKeys.add(sib);
+    }
     // 每张立绘按自身路径各存各的（与 F2、resolvePortraitAdjust 完全一致）。
     // 不再按「内容相同」自动扩写到其他文件——那会把独立立绘互相覆盖（调了又丢）。
     // 想让多个武将共享调校：让他们指向同一个文件（同一路径），自然共享。
@@ -356,12 +390,24 @@ function commitDraftToAdjustData(): void {
     dirtyKeys.add(selectedImage);
 }
 
-async function selectImageAndAutoSave(newImagePath: string): Promise<void> {
+function selectImageAndAutoSave(newImagePath: string): Promise<void> {
+    // 排队执行：连按 [ ] 时若并发跑，先发起的那次会在 await 之后
+    // 把 selectedImage 覆写回它自己的旧目标，导致选中项往回跳、draft 与选中图错配。
+    return serialize(() => selectImageAndAutoSaveInner(newImagePath));
+}
+
+async function selectImageAndAutoSaveInner(newImagePath: string): Promise<void> {
     if (newImagePath === selectedImage) return;
 
     if (dirty) {
         commitDraftToAdjustData();
-        await saveAdjustToServer(false);
+        try {
+            await saveAdjustToServer(false);
+        } catch (e) {
+            // 保存失败就别切走：draft 会被下一张覆盖，改动就真没了
+            showSaveToast(`保存失败，已留在当前图：${e}`, true);
+            return;
+        }
     }
 
     selectedImage = newImagePath;
@@ -379,22 +425,26 @@ async function selectImageAndAutoSave(newImagePath: string): Promise<void> {
 }
 
 async function saveAdjustToServer(showToast = true): Promise<void> {
+    // 本次保存覆盖哪些键、基于哪个编辑版本，都在发起 await 之前定格。
+    const versionAtStart = editVersion;
+    const keysBeingSaved = [...dirtyKeys];
+
     // 先取磁盘最新数据，只覆盖本页改过的键（与游戏内 F2 的保存策略一致）；
     // 直接整份写回会把 F2 / 其它 tuner 标签页在本页打开后保存的调校覆盖掉。
-    let payload: PortraitAdjustData = adjustData;
-    try {
-        const fresh = await fetch('/api/portrait-adjust');
-        if (fresh.ok) {
-            const disk: PortraitAdjustData = await fresh.json();
-            disk.images = disk.images ?? {};
-            for (const k of dirtyKeys) {
-                const v = adjustData.images?.[k];
-                if (v) disk.images[k] = { ...v };
-            }
-            if (!disk.folderGuides) disk.folderGuides = {};
-            payload = disk;
-        }
-    } catch { /* 取盘失败时退回整份保存（旧行为兜底） */ }
+    const fresh = await fetch('/api/portrait-adjust');
+    if (!fresh.ok) {
+        // 拉不到盘上最新数据就不能写：旧行为是退回整份覆盖，那会把本页打开之后
+        // F2 / 其它标签页存的调校全部抹掉。宁可保存失败让用户重试。
+        throw new Error(`读取磁盘数据失败（HTTP ${fresh.status}），已中止保存以免覆盖他处改动`);
+    }
+    const payload: PortraitAdjustData = await fresh.json();
+    payload.images = payload.images ?? {};
+    for (const k of keysBeingSaved) {
+        const v = adjustData.images?.[k];
+        if (v) payload.images[k] = { ...v };
+    }
+    if (!payload.folderGuides) payload.folderGuides = {};
+
     const res = await fetch('/api/save-portrait-adjust', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -406,29 +456,105 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
     }
     const result = await res.json();
     if (!result.ok) throw new Error(result.error || '保存失败');
+
     adjustData = payload;
-    dirtyKeys.clear();
-    dirty = false;
-    
+    // 只消掉本次确实写进去的键；保存期间新产生的脏键必须留着
+    for (const k of keysBeingSaved) dirtyKeys.delete(k);
+    // 保存期间用户又动了 draft → 版本号变了 → 保持 dirty，交给下一次保存
+    if (editVersion === versionAtStart) dirty = false;
+
     if (showToast) {
-        showSaveToast('✓ 保存成功');
+        showSaveToast(dirty ? '✓ 已保存（保存期间的新改动待下次写入）' : '✓ 保存成功');
     }
 
-    const targetCard = document.getElementById(`card-${safeCardId(selectedImage)}`);
-    if (targetCard) targetCard.classList.add('is-tuned');
+    // 标记刚写进去的那几张，而不是"当前选中"——切图/切夹时选中项可能已经变了
+    for (const k of keysBeingSaved) {
+        document.getElementById(`card-${safeCardId(k)}`)?.classList.add('is-tuned');
+    }
+}
+
+/**
+ * 一键自动垂直对齐（只改 offsetY，scale / offsetX 一律不动）。
+ * 结果先落到 draft 让你当场看，觉得不对可以继续用方向键微调或直接切走放弃。
+ * 依据见 tools/PortraitAlign/align_one.py：5 折交叉验证误差中位 2.08px、86% 在 ±5px 内。
+ */
+function autoAlignSelected(): Promise<void> {
+    return serialize(async () => {
+        if (!selectedImage) {
+            showSaveToast('请先选中一张立绘', true);
+            return;
+        }
+        showSaveToast('检测中…');
+        try {
+            const res = await fetch(`/api/portrait-auto-align?path=${encodeURIComponent(selectedImage)}`);
+            const j = await res.json();
+            if (!j.ok) {
+                showSaveToast(`自动对齐失败：${j.reason ?? '未知'}`, true);
+                return;
+            }
+            const before = draft.offsetY;
+            draft.offsetY = j.offsetY;
+            dirty = true;
+            editVersion++;
+            updateSingleGridTransform(selectedImage);
+            showSaveToast(`🎯 offsetY ${before} → ${j.offsetY}（置信度 ${j.score}）`);
+        } catch (e) {
+            showSaveToast(`自动对齐失败：${e}`, true);
+        }
+    });
+}
+
+/** 内容完全相同的立绘分组：path → 同组其它文件 */
+const duplicateSiblings = new Map<string, string[]>();
+
+async function loadDuplicates(): Promise<void> {
+    try {
+        const res = await fetch('/api/portrait-duplicates');
+        if (!res.ok) return;
+        const groups: string[][] = await res.json();
+        duplicateSiblings.clear();
+        for (const g of groups) {
+            for (const p of g) duplicateSiblings.set(p, g.filter((q) => q !== p));
+        }
+    } catch { /* 拿不到就退化成不联动，不影响主流程 */ }
+}
+
+/** 手动保存入口（按钮 / Ctrl+S）：排队 + 统一报错 */
+function requestSave(): Promise<void> {
+    return serialize(async () => {
+        if (!selectedImage) {
+            showSaveToast('当前没有选中的立绘', true);
+            return;
+        }
+        commitDraftToAdjustData();
+        try {
+            await saveAdjustToServer(true);
+        } catch (e) {
+            showSaveToast(String(e), true);
+        }
+    });
 }
 
 function bindEvents(): void {
     els.folder.addEventListener('change', () => {
-        if (dirty) {
-            commitDraftToAdjustData();
-            saveAdjustToServer(false).catch(console.error);
-        }
-        selectedFolder = els.folder.value;
-        const cat = portraitCatalog.find((c) => c.folder === selectedFolder);
-        selectedImage = cat?.images[0]?.path ?? '';
-        loadDraftForSelected();
-        renderGrid();
+        const nextFolder = els.folder.value;
+        void serialize(async () => {
+            // 必须等保存完成再换夹：旧版不 await 就同步改 selectedImage，
+            // 保存内部再去读 selectedImage 就已经是新夹的图了。
+            if (dirty) {
+                commitDraftToAdjustData();
+                try {
+                    await saveAdjustToServer(false);
+                } catch (e) {
+                    showSaveToast(`保存失败：${e}`, true);
+                }
+            }
+            selectedFolder = nextFolder;
+            const cat = portraitCatalog.find((c) => c.folder === selectedFolder);
+            selectedImage = cat?.images[0]?.path ?? '';
+            loadDraftForSelected();
+            renderGrid();
+        });
     });
 
     els.search.addEventListener('input', () => renderGrid());
@@ -440,13 +566,12 @@ function bindEvents(): void {
     });
     els.bindBtn.addEventListener('click', () => { void bindSelectedImageToGeneral(); });
 
-    document.getElementById('pt-save-file')!.addEventListener('click', async () => {
-        commitDraftToAdjustData();
-        try {
-            await saveAdjustToServer(true);
-        } catch (e) {
-            showSaveToast(String(e), true);
-        }
+    document.getElementById('pt-save-file')!.addEventListener('click', () => {
+        void requestSave();
+    });
+
+    document.getElementById('pt-auto-align')!.addEventListener('click', () => {
+        void autoAlignSelected();
     });
 
     document.getElementById('pt-reload')!.addEventListener('click', () => {
@@ -463,12 +588,17 @@ function bindEvents(): void {
 
         if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
-            commitDraftToAdjustData();
-            saveAdjustToServer(true).catch(e => showSaveToast(String(e), true));
+            void requestSave();
             return;
         }
 
         if (!selectedImage) return;
+
+        if (e.key === 'a' || e.key === 'A') {
+            e.preventDefault();
+            void autoAlignSelected();
+            return;
+        }
 
         let changed = false;
         const speed = e.shiftKey ? 10 : 1;
@@ -528,12 +658,14 @@ function bindEvents(): void {
 
         if (changed) {
             dirty = true;
+            editVersion++;   // 让进行中的保存知道"这之后还有新改动"，别把 dirty 清掉
             updateSingleGridTransform(selectedImage);
         }
     });
 
     window.addEventListener('beforeunload', (e) => {
-        if (dirty) {
+        // dirtyKeys 非空 = 已提交但上次保存失败，同样不能让用户无提示地关掉
+        if (dirty || dirtyKeys.size > 0) {
             e.preventDefault();
             e.returnValue = '';
         }
@@ -572,14 +704,41 @@ async function loadGenerals(): Promise<void> {
         const res = await fetch('/api/entity-data');
         if (!res.ok) return;
         const data = await res.json();
+
+        // 构建 factionId → cityId → region 查找链
+        const capitals: Record<string, string> = data.capitals ?? {};
+        const cityById: Map<string, { name: string; region?: string }> = new Map(
+            (data.cities ?? []).map((c: any) => [c.id, { name: c.name, region: c.region }]),
+        );
+
+        const REGION_LABELS: Record<string, string> = {
+            CENTRAL: '中原', NORTH: '北方', JIANGNAN: '江南', BASHU: '川蜀',
+            LINGNAN: '岭南', HEXI: '河西', STEPPE: '草原', NORTHEAST: '东北',
+            KOREA: '朝鲜', JAPAN: '日本', XIYU: '西域', QINGZANG: '青藏',
+            DIANMIAN: '滇缅', CENTRAL_ASIA: '中亚',
+        };
+
         generals = Object.entries((data.generals ?? {}) as Record<string, { generalId: string; generalName: string; portrait: string }>)
-            .map(([factionId, g]) => ({
-                generalId: g.generalId,
-                generalName: g.generalName,
-                factionId,
-                portrait: g.portrait,
-            }))
-            .sort((a, b) => a.generalName.localeCompare(b.generalName, 'zh-CN'));
+            .map(([factionId, g]) => {
+                const cityId = capitals[factionId];
+                const city = cityId ? cityById.get(cityId) : null;
+                const rawRegion = city?.region ?? '';
+                const region = (REGION_LABELS[rawRegion] ?? rawRegion) || '未知';
+                return {
+                    generalId: g.generalId,
+                    generalName: g.generalName,
+                    factionId,
+                    portrait: g.portrait,
+                    region,
+                    cityName: city?.name ?? (cityId ?? ''),
+                };
+            })
+            .sort((a, b) => {
+                // 先按区域排，再按武将名排
+                const r = a.region.localeCompare(b.region, 'zh-CN');
+                if (r !== 0) return r;
+                return a.generalName.localeCompare(b.generalName, 'zh-CN');
+            });
         renderGeneralOptions();
     } catch (e) {
         console.warn('[PortraitTuner] 加载武将列表失败', e);
@@ -591,10 +750,24 @@ function renderGeneralOptions(): void {
     const list = q
         ? generals.filter((g) => g.generalName.toLowerCase().includes(q) || g.generalId.toLowerCase().includes(q))
         : generals;
-    els.genSelect.innerHTML = list
-        .slice(0, 500)
-        .map((g) => `<option value="${g.generalId}">${g.generalName}（${g.generalId}）</option>`)
+
+    // 按区域分组
+    const groups = new Map<string, GeneralEntry[]>();
+    for (const g of list) {
+        const arr = groups.get(g.region) || [];
+        arr.push(g);
+        groups.set(g.region, arr);
+    }
+
+    els.genSelect.innerHTML = Array.from(groups.entries())
+        .map(([region, gens]) => {
+            const opts = gens
+                .map((g) => `<option value="${g.generalId}">${g.generalName}（${g.generalId}）</option>`)
+                .join('');
+            return `<optgroup label="${region}（${gens.length} 将）">${opts}</optgroup>`;
+        })
         .join('');
+
     if (list.some((g) => g.generalId === selectedGeneralId)) {
         els.genSelect.value = selectedGeneralId;
     } else {
@@ -620,7 +793,12 @@ function updateBindPanel(): void {
     els.bindBtn.disabled = !(gen && selectedImage);
 }
 
-async function bindSelectedImageToGeneral(): Promise<void> {
+function bindSelectedImageToGeneral(): Promise<void> {
+    // 绑定会改名源图并迁移调校键，必须与保存/切图串行，不能并发
+    return serialize(() => bindSelectedImageToGeneralInner());
+}
+
+async function bindSelectedImageToGeneralInner(): Promise<void> {
     const gen = generals.find((g) => g.generalId === selectedGeneralId);
     if (!gen || !selectedImage) return;
     if (!selectedImage.toLowerCase().endsWith('.png')) {
@@ -677,12 +855,59 @@ async function bindSelectedImageToGeneral(): Promise<void> {
     }
 }
 
+function checkDuplicatePortraits(): void {
+    // 从已加载的立绘目录建立 hash → paths 索引
+    const hashToPaths = new Map<string, string[]>();
+    const pathToHash = new Map<string, string>();
+    for (const cat of portraitCatalog) {
+        for (const img of cat.images) {
+            pathToHash.set(img.path, img.hash);
+            const arr = hashToPaths.get(img.hash) || [];
+            arr.push(img.path);
+            hashToPaths.set(img.hash, arr);
+        }
+    }
+
+    // 按内容 hash 分组所有武将
+    const byHash = new Map<string, GeneralEntry[]>();
+    for (const g of generals) {
+        if (!g.portrait) continue;
+        const hash = pathToHash.get(g.portrait);
+        if (!hash) continue; // 立绘不在目录中（可能是未扫描到）
+        const arr = byHash.get(hash) || [];
+        arr.push(g);
+        byHash.set(hash, arr);
+    }
+
+    // 筛出重复：同一 hash 下有 ≥2 个武将
+    const dups = [...byHash.entries()].filter(([, v]) => v.length > 1);
+
+    if (dups.length === 0) {
+        els.dupList.innerHTML = '<span style="color:#7cb87c">✓ 无重复立绘</span>';
+        return;
+    }
+
+    els.dupList.innerHTML = dups.map(([hash, gens]) => {
+        const names = gens.map(g => `${g.generalName}（${g.region}·${g.cityName}）`).join('、');
+        // 查该 hash 对应的所有文件名
+        const files = (hashToPaths.get(hash) || []).map(p => p.split('/').pop()).join(', ');
+        return `<div style="margin-bottom:6px;padding:4px 6px;background:#2a2010;border-radius:3px;">
+          <div style="color:#f0c060;">📋 ${files}</div>
+          <div style="color:#e8c878;">${names}</div>
+          <div style="color:#a08060;font-size:10px;">hash: ${hash.slice(0,12)}</div>
+        </div>`;
+    }).join('');
+    els.dupList.innerHTML += `<div style="margin-top:4px;color:#c08050;">共 ${dups.length} 组重复</div>`;
+}
+
 async function boot(): Promise<void> {
     bindEvents();
 
     await loadCatalogFromServer();
     populateFolders();
     await loadGenerals();
+    checkDuplicatePortraits();
+    await loadDuplicates();
 
     try {
         await loadAdjustFromServer();

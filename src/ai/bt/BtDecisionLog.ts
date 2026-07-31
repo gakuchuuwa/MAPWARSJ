@@ -26,6 +26,7 @@ export function setStrategicTarget(
     ctx.strategicTargetCityId = cityId;
     ctx.targetCityId = cityId;
     ctx.targetPosition = position;
+    ctx.huntBlockedSinceMs = null;
 }
 
 export function setStrategicArmyTarget(
@@ -37,6 +38,7 @@ export function setStrategicArmyTarget(
     ctx.strategicTargetCityId = null;
     ctx.targetCityId = null;
     ctx.targetPosition = position;
+    ctx.huntBlockedSinceMs = null; // 换了追击对象，卡住计时重新开始
 }
 
 export function clearStrategicTarget(ctx: BTContext): void {
@@ -44,6 +46,7 @@ export function clearStrategicTarget(ctx: BTContext): void {
     ctx.strategicTargetCityId = null;
     ctx.targetCityId = null;
     ctx.targetPosition = null;
+    ctx.huntBlockedSinceMs = null;
 }
 
 export function markTargetCooldown(ctx: BTContext, targetId: string, _reason: string): void {

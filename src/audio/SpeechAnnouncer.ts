@@ -159,6 +159,8 @@ const SIEGE_FAIL_PHRASE: Record<CaptureJu, string> = { advantage: "丢盔弃甲"
 const SIEGE_FAIL_VERB: Record<CaptureJu, string> = { advantage: "惨败", balance: "兵败", disadvantage: "败于" };
 
 export class SpeechAnnouncer {
+  /** 语音清单诊断本会话是否已打印过（清单只在加载完变一次，逐句重打纯刷屏） */
+  private static voiceDiagLogged = false;
   private enabled = true;
   // 当前偏好的声音
   private preferredVoice: "Yunxi" | "Yunjian" = "Yunjian";
@@ -805,17 +807,24 @@ export class SpeechAnnouncer {
         }
         if (candidates.length === 0 && fallback) candidates.push(fallback);
 
-        const allZh = voicesNow.filter((v) => v.lang.toLowerCase().startsWith("zh"));
-        const zhNames = allZh.map((v) => {
-          const eff = this.getVoiceEffectiveName(v);
-          const bad = this.isVoiceNameCorrupt(v) ? "⚠坏名" : "";
-          return `${bad}${eff}[${v.lang}]`;
-        }).join(" | ");
-        console.log(
-          `[Speech] 诊断 | 总${voicesNow.length} 中文${allZh.length} 男声候选${maleCandidates.length}`,
-          `\n  中文: ${zhNames || "（空）"}`,
-          `\n  候选: ${candidates.map((c) => this.getVoiceEffectiveName(c.voice)).join(" → ") || "（无）"}`,
-        );
+        // [2026-07-27] 语音清单诊断改为每会话只打一次。
+        // 原来每说一句话就遍历全部 324 个语音拼长串打印，一场战斗刷屏好几屏，
+        // 控制台里别的日志根本看不见（排查缩放卡顿时被它淹了好几轮）。
+        // 清单只在浏览器加载完语音后变一次，逐句重打没有任何信息量。
+        if (!SpeechAnnouncer.voiceDiagLogged) {
+          SpeechAnnouncer.voiceDiagLogged = true;
+          const allZh = voicesNow.filter((v) => v.lang.toLowerCase().startsWith("zh"));
+          const zhNames = allZh.map((v) => {
+            const eff = this.getVoiceEffectiveName(v);
+            const bad = this.isVoiceNameCorrupt(v) ? "⚠坏名" : "";
+            return `${bad}${eff}[${v.lang}]`;
+          }).join(" | ");
+          console.log(
+            `[Speech] 诊断（本会话仅此一次）| 总${voicesNow.length} 中文${allZh.length} 男声候选${maleCandidates.length}`,
+            `\n  中文: ${zhNames || "（空）"}`,
+            `\n  候选: ${candidates.map((c) => this.getVoiceEffectiveName(c.voice)).join(" → ") || "（无）"}`,
+          );
+        }
 
         this.beginSpeechDuckSession();
         const duckSafetyMs = Math.min(15000, 1500 + text.length * 400);

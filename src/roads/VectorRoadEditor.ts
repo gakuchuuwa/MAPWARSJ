@@ -130,7 +130,7 @@ export class VectorRoadEditor implements IEditor {
     private static readonly REGION_CENTER_WEIGHT = 0.9;
     private static readonly MAX_CONNECTION_DIST_KM = 500;
     /** 智能候选池上限 */
-    private static readonly MAX_ROUTE_CANDIDATES = 6;
+    private static readonly MAX_ROUTE_CANDIDATES = 7;  // 6+1 保底直线
     private static readonly WATER_VARIANTS_PER_MODE = 3;
     private static readonly LAND_VARIANTS_PER_MODE = 3;
     private static readonly WATER_TRUNK_MIN_RATIO = 0.35;
@@ -522,38 +522,6 @@ export class VectorRoadEditor implements IEditor {
         row2.appendChild(singleRoadBtn);
         row2.appendChild(distanceLabel);
 
-        // [2026-05-30] 区选择器 — 自动连只处理指定区, 不再全世界一起跑
-        this.regionSelect = document.createElement('select');
-        this.regionSelect.style.cssText = `
-            background: rgba(0,0,0,0.4); color: #ffd700; border: 2px solid rgba(255,215,0,0.5);
-            border-radius: 10px; padding: 10px 16px; font-size: 16px; font-weight: bold;
-            cursor: pointer; width: 200px; flex-shrink: 0;
-        `;
-        this.regionSelect.title = '只连指定区, 选"全部"则跨区都连';
-        const optAll = document.createElement('option');
-        optAll.value = 'ALL';
-        optAll.textContent = '🌐 全部 14 区';
-        this.regionSelect.appendChild(optAll);
-        for (const r of REGION_ORDER) {
-            const opt = document.createElement('option');
-            opt.value = r;
-            opt.textContent = `${REGION_LABELS[r]} (${r})`;
-            this.regionSelect.appendChild(opt);
-        }
-        this.regionSelect.addEventListener('change', () => {
-            this.selectedRegion = this.regionSelect.value === 'ALL' ? null : this.regionSelect.value as RegionType;
-            const label = this.selectedRegion ? REGION_LABELS[this.selectedRegion] : '全部';
-            this.setStatus(`📍 自动连区已切为: ${label}`);
-            // [2026-05-30] 视觉警告: 选"全部"时 自动连按钮变红 + 加 ⚠️
-            this.updateAutoConnectBtnStyle();
-        });
-        row2.appendChild(this.regionSelect);
-
-        // autoConnectBtn — 批量自动连接（batchAutoConnect）
-        // [2026-05-30] 引用存类成员, 方便区切换时动态更新颜色
-        this.autoConnectBtn = this.createButton('3️⃣ 🔗 自动连', '#4caf50', () => this.batchAutoConnectGuarded());
-        row2.appendChild(this.autoConnectBtn);
-
         // [2026-05-30] 问题路导航 — 配合 1️⃣ 全面审查 用
         const prevProblemBtn = this.createButton('◀ 上问题', '#9c27b0', () => this.selectAdjacentProblem(-1));
         const nextProblemBtn = this.createButton('下问题 ▶', '#9c27b0', () => this.selectAdjacentProblem(1));
@@ -567,9 +535,6 @@ export class VectorRoadEditor implements IEditor {
         this.panel.appendChild(row2);
         // 保存引用以便 togglePanelMinimized 切换
         this.panelRows = { row1, row2 };
-
-        // [2026-05-30] 初始化"全部"红色警告 (默认选 ALL)
-        this.updateAutoConnectBtnStyle();
 
         // [2026-05-30] Row 3: 报告区 — 自动连/审计的详细报告显示在这里 (不再用 alert)
         this.reportArea = document.createElement('div');
@@ -589,10 +554,6 @@ export class VectorRoadEditor implements IEditor {
     }
 
     private reportArea!: HTMLDivElement;
-    private regionSelect!: HTMLSelectElement;
-    private autoConnectBtn!: HTMLButtonElement;
-    /** [2026-05-30] 当前选中的文化区, null = 全部跨区 */
-    private selectedRegion: RegionType | null = null;
     /** [2026-05-30] 上次审查的问题路 id 队列, 供 [◀ 上问题/下问题 ▶] 导航 */
     private problemRoadIds: string[] = [];
     private problemRoadIdx: number = -1;
@@ -613,42 +574,6 @@ export class VectorRoadEditor implements IEditor {
         this.setStatus(`🔍 问题 [${nextIdx + 1}/${this.problemRoadIds.length}] ${roadId}`);
     }
 
-    /** [2026-05-30] 根据选中区动态改 自动连按钮 颜色/文字, 防误点全部 */
-    private updateAutoConnectBtnStyle(): void {
-        if (!this.autoConnectBtn) return;
-        if (this.selectedRegion === null) {
-            // 全部 → 危险红 + ⚠ 警告
-            this.autoConnectBtn.style.background = '#d32f2f';
-            this.autoConnectBtn.textContent = '4️⃣ ⚠️ 全部自动连 (慢!)';
-            this.autoConnectBtn.title = '⚠ 警告: 将处理全部 618 城, 可能卡死页面 30-90 秒!\n建议: 选具体区, 一区一区跑';
-        } else {
-            // 某区 → 正常绿
-            this.autoConnectBtn.style.background = '#4caf50';
-            this.autoConnectBtn.textContent = `4️⃣ 🔗 自动连 (${REGION_LABELS[this.selectedRegion]})`;
-            this.autoConnectBtn.title = `只连 ${REGION_LABELS[this.selectedRegion]} 区内据点`;
-        }
-    }
-
-    /**
-     * [2026-05-30] 带"全部"二次确认的包装
-     * 防误点全部自动连
-     */
-    private async batchAutoConnectGuarded(): Promise<void> {
-        if (this.selectedRegion === null) {
-            const ok = window.confirm(
-                '⚠️ 即将自动连「全部 14 区」\n\n' +
-                '将处理全部 618 个据点, 计算时间 30-90 秒.\n' +
-                '期间页面可能卡顿/无响应.\n\n' +
-                '推荐: 选具体区 (日本/朝鲜/中亚 等) 一区一区跑.\n\n' +
-                '确定继续吗?'
-            );
-            if (!ok) {
-                this.setStatus('❌ 已取消全部自动连');
-                return;
-            }
-        }
-        await this.batchAutoConnect();
-    }
     /** [2026-05-30] 面板最小化状态 (true = 只显示状态栏) */
     private panelMinimized: boolean = false;
     /** Row 引用, 用于 togglePanelMinimized */
@@ -1041,16 +966,29 @@ export class VectorRoadEditor implements IEditor {
 
         try {
             const basePath = import.meta.env.BASE_URL || '/';
-            const [resRoads, resWater] = await Promise.all([
-                fetch(`${basePath}assets/roads_filtered.geojson`),
-                fetch(`${basePath}assets/ne_10m_rivers_lake_centerlines.geojson`)
-            ]);
-            
-            if (!resRoads.ok || !resWater.ok) throw new Error('HTTP Fetch failed');
-            
-            const geojsonRoads = await resRoads.json();
-            const geojsonWater = await resWater.json();
-            
+            const roadsUrl = `${basePath}assets/roads_filtered.geojson`;
+            const waterUrl = `${basePath}assets/ne_10m_rivers_lake_centerlines.geojson`;
+
+            const resRoads = await fetch(roadsUrl);
+            if (!resRoads.ok) throw new Error(`取 ${roadsUrl} 失败：HTTP ${resRoads.status}`);
+            const textRoads = await resRoads.text();
+            let geojsonRoads: any;
+            try {
+                geojsonRoads = JSON.parse(textRoads);
+            } catch (e: any) {
+                throw new Error(`解析道路 GeoJSON 失败(${roadsUrl})：${e.message}`);
+            }
+
+            const resWater = await fetch(waterUrl);
+            if (!resWater.ok) throw new Error(`取 ${waterUrl} 失败：HTTP ${resWater.status}`);
+            const textWater = await resWater.text();
+            let geojsonWater: any;
+            try {
+                geojsonWater = JSON.parse(textWater);
+            } catch (e: any) {
+                throw new Error(`解析水系 GeoJSON 失败(${waterUrl})：${e.message}`);
+            }
+
             this.cachedGeoJSON = geojsonRoads;  // [FIX] 缓存道路底图以便二次开启重用
 
             this.setStatus('⏳ 构建水陆混合图...');
@@ -1073,8 +1011,11 @@ export class VectorRoadEditor implements IEditor {
             console.log(`🛤️ [VectorRoadEditor] Graph built: ${this.geoNodes.length} nodes, ${edgeCount} edges`);
 
         } catch (err) {
+            // 别把原因吞掉：面板上直接显示真实报错，否则只能看到一句笼统的 ❌，
+            // 排查时必须开 console 才知道是取文件失败、JSON 解析失败还是建图/画层出错。
+            const reason = err instanceof Error ? err.message : String(err);
             console.error('[VectorRoadEditor] Failed to load GeoJSON:', err);
-            this.setStatus('❌ 加载路网失败');
+            this.setStatus(`❌ 加载路网失败：${reason}`);
         }
     }
 
@@ -2637,14 +2578,16 @@ export class VectorRoadEditor implements IEditor {
             }
         }
         const straight = straightRaw[0];
-        if (straight && merged.length < VectorRoadEditor.MAX_ROUTE_CANDIDATES) {
-            if (!this.isCandidateDuplicate(straight, merged)) {
-                straight.score = this.scoreRouteCandidate(straight, directDist, merged);
-                merged.push(straight);
-            }
+        if (straight && !this.isCandidateDuplicate(straight, merged)) {
+            straight.score = this.scoreRouteCandidate(straight, directDist, merged);
+            merged.push(straight);
         }
 
         const finalList = merged.slice(0, VectorRoadEditor.MAX_ROUTE_CANDIDATES);
+        // 直线始终保底：若被 slice 切掉，替换最后一位
+        if (straight && !finalList.some(c => c.mode === 'straight')) {
+            finalList[finalList.length - 1] = straight;
+        }
 
         for (const c of finalList) {
             const wr = Math.round((c.waterRatio ?? 0) * 100);
@@ -4468,9 +4411,9 @@ export class VectorRoadEditor implements IEditor {
         const maxDistKm = this.connectDistanceKm;
         const LIMIT = VectorRoadEditor.BATCH_AUTO_CONNECT_LIMIT;
 
-        // [2026-05-30] 区过滤: 只处理选中的区, null = 全部
-        const targetRegion = this.selectedRegion;
-        const regionLabel = targetRegion ? REGION_LABELS[targetRegion] : '全部跨区';
+        // 区过滤: 全部跨区（自动连按钮已移除）
+        const targetRegion: RegionType | null = null;
+        const regionLabel = '全部跨区';
 
         // 把每个城贴上区标签 (按坐标 / 显式 region 字段)
         const cityRegion = new Map<string, RegionType>();

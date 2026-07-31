@@ -1,4 +1,4 @@
-import { resolveBattleDurationByPowerRatio, GameConfig } from '../config/GameConfig';
+import { GameConfig } from '../config/GameConfig';
 import { sumCultureAdjustedTroops } from '../systems/CultureCombat';
 import {
     rollSideEffectivePowerWithOpeningFate,
@@ -80,6 +80,8 @@ export interface IBattleUnit {
     battleOverriddenSkillId?: string | null;
     /** 被对抗系(混战计)看破/夺走的原战术技id — 仅供卡片显示"技名·被看破",不参与战斗机制 */
     negatedSkillId?: string | null;
+    /** 夺来的敌方战术技id — 战斗机制用此技，卡片仍显示本方原技名 */
+    stolenSkillId?: string | null;
     isFirstSortieSinceDepart?: boolean;
 }
 
@@ -183,10 +185,9 @@ export class Battle {
 
         // 3. Calculate Combat Duration (Physics Pacing)
         const bothHaveGeneral = !!(this.attacker.generalId && this.defender.generalId);
-        // 双将战：按八环乘完的有效战力比取两档（均势 45 / 优势·劣势 30）
-        // 其余：固定 9 秒（不存在双方纯兵对打——守城城防必然带将）
+        // 双将战固定 30 秒；其余固定 9 秒（不存在双方纯兵对打——守城城防必然带将）
         let calculatedDuration = bothHaveGeneral
-            ? resolveBattleDurationByPowerRatio(attPower / Math.max(1, defPower))
+            ? GameConfig.COMBAT.BATTLE_DURATION_BOTH_GENERALS_SEC
             : GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
 
 

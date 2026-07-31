@@ -44,6 +44,8 @@ import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视�
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
 import { YuefeiExpedition } from './YuefeiExpedition'; // 岳飞北伐黄龙 圆梦脚本
 import { HuoQubingExpedition } from './HuoQubingExpedition'; // 霍去病封狼居胥 脚本
+import { ZoomController } from './ZoomController'; // 自动缩放控制
+import { ZoomPerfProbe } from '../debug/ZoomPerfProbe'; // 缩放卡顿自动采样（仅 DEV）
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { initUnattendedStream } from './UnattendedStream'; // 无人值守直播（?stream=1）
 import { GameSaveManager } from './GameSaveManager'; // 世界存档（跨天续摊）
@@ -105,9 +107,10 @@ export class GameApp {
     public brawlFeedPanel!: BrawlFeedPanel; // 远征播报（ExpeditionUI/行为树）经 window.game 调用
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
-    public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥4万解锁）
+    public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥5万解锁）
     public yuefeiExpedition!: YuefeiExpedition; // 岳飞北伐黄龙 圆梦脚本
     public huoqubingExpedition!: HuoQubingExpedition; // 霍去病封狼居胥 脚本
+    public zoomController!: ZoomController; // 自动缩放控制（行军 9 / 战斗 10）
     public audioManager: AudioManager = audioManager;
     public saveManager!: GameSaveManager; // 世界存档（跨天续摊）
 
@@ -526,11 +529,18 @@ export class GameApp {
                                 if (battle.attacker.id !== armyId && battle.defender.id !== armyId) continue;
                                 try {
                                     this.combatUI.show(battle);
+                                    found = true;
                                 } catch (err) {
                                     console.error('[GameApp] 切换跟随弹出 1v1 战斗 UI 失败：', err);
                                 }
                                 break;
                             }
+                        }
+                        // 新目标不在任何战斗中 → 必须收掉上一场的面板：
+                        // 否则旧战斗的立绘/名牌会一直挂到那场仗自己打完（十几秒），
+                        // 而战斗面板的全部入口都以「跟随军团参战」为前提，留着就是错的。
+                        if (!found) {
+                            this.combatUI.hide();
                         }
                     }
                 },
@@ -600,6 +610,16 @@ export class GameApp {
 
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
+
+            // 自动缩放：行军 9 / 战斗 10，每次至少 15 秒；换跟随目标时先拉远到 8 转场
+            this.zoomController = new ZoomController(this.map, () => {
+                const id = this.cameraFollowUI.getFollowedArmyId();
+                return id ? legionManager.getLegionById(id) ?? null : null;
+            });
+
+            // [诊断] 缩放卡顿自动采样（仅 DEV）：每次缩放落盘 scratch/zoom_perf_latest.json，
+            // 免得排查时还要主人在控制台敲命令。不改变任何游戏行为。
+            ZoomPerfProbe.install(this);
 
             // 世界存档（跨天续摊）：存/读由人主动点，刷新绝不自动读档；自动存档每 10 分钟覆盖当天档。
             this.saveManager = new GameSaveManager(this);

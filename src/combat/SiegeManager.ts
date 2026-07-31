@@ -11,9 +11,10 @@ import { BattleField } from './BattleField';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
 import { getFactionGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getGeneralProfile } from '../data/general-skills/profiles';
 import { getUnitEliteTier } from '../systems/CultureCombat';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
-import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx } from './GeneralSkillCombat';
+import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, pickRandomStrategicSkill, setStrategicSkillOverride, getEffectiveStrategicSkillId, emitStrategicSkillSwapFx } from './GeneralSkillCombat';
 import { applyLegionSpawnTierToArmy } from '../legion/LegionSpawnTier';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 
@@ -876,6 +877,7 @@ export class SiegeManager {
                 targetCity.spawnGeneralUsed = true;
                 targetCity.spawnEliteUsed = true;
                 army.markPendingPostBattleDiplomacyFx('sabotage_garrison');
+                emitFollowedGeneralStrategicMapFx(army, 'sabotage_garrison', cityPos.lat, cityPos.lng, 'pulse');
                 siegeLog(`[纵横] 纵横捭阖触发：【${targetCity.name}】将/精出场配额已消耗`);
             }
         }
@@ -886,6 +888,7 @@ export class SiegeManager {
             if (Math.random() < chance) {
                 targetCity.spawnGeneralUsed = true;
                 army.markPendingPostBattleDiplomacyFx('sabotage_general');
+                emitFollowedGeneralStrategicMapFx(army, 'sabotage_general', cityPos.lat, cityPos.lng, 'pulse');
                 siegeLog(`[纵横] 飞箝擒王触发：【${targetCity.name}】守将出场配额已消耗`);
             }
         }
@@ -896,6 +899,7 @@ export class SiegeManager {
             if (Math.random() < chance) {
                 targetCity.spawnEliteUsed = true;
                 army.markPendingPostBattleDiplomacyFx('sabotage_elite');
+                emitFollowedGeneralStrategicMapFx(army, 'sabotage_elite', cityPos.lat, cityPos.lng, 'pulse');
                 siegeLog(`[纵横] 转丸破军触发：【${targetCity.name}】精锐出场配额已消耗`);
             }
         }
@@ -983,6 +987,20 @@ export class SiegeManager {
 
                 army.ignoreCityCollision = false;
                 army.ignoreUnitCollision = false;
+
+                // 战后随机换技：仅【跟拍 + 名将】攻城胜后，从活跃池随机抽一个新战略技。
+                //   · 限名将：普将也随机拿技会冲淡「三闸定名将」的分级；且镜头本就优先跟拍名将。
+                //   · 排除当前技：否则 1/14≈7% 抽回原技，观众看到换技却毫无变化。
+                //   · 换完立刻脉冲：池里有些技整个循环都可能不触发，不报一次观众不知道换了啥。
+                if (army.id === getFollowedArmyId() && army.generalId
+                    && getGeneralProfile(army.generalId)?.tier === 'famous') {
+                    const curId = getEffectiveStrategicSkillId(army.id, army.generalId);
+                    const newSkillId = pickRandomStrategicSkill(curId);
+                    setStrategicSkillOverride(army.id, newSkillId);
+                    const p = army.getPosition();
+                    emitStrategicSkillSwapFx(army.id, newSkillId, p.lat, p.lng);
+                    siegeLog(`🎲 [战略技] ${army.name} 战后换技 ${curId ?? '(无)'} → ${newSkillId}`);
+                }
 
                 // 延迟执行战后逻辑（留1秒给视觉展示）
                 setTimeout(() => {
@@ -1099,13 +1117,13 @@ export class SiegeManager {
 
         const finalTitle = siegeData.title || `${targetCity.name} 攻防战`;
 
-        // ── 威慑·先声夺人：战前削守方城防（仅据点，不动附近援军）──
+        // ── 威慑·望风披靡：战前削守方城防（仅据点，不动附近援军）──
         if (generalHasStrategicEffect(army, 'pre_battle_intimidate')) {
             const pct = getGeneralStrategicMagnitude(army, 'pre_battle_intimidate', 0.10);
             const before = finalDefender.troops;
             const after = Math.max(1, Math.floor(before * (1 - pct)));
             finalDefender.setTroops(after);
-            siegeLog(`[威慑] 先声夺人：${finalDefender.name} ${before} → ${after} (-${Math.round(pct * 100)}%)`);
+            siegeLog(`[威慑] 望风披靡：${finalDefender.name} ${before} → ${after} (-${Math.round(pct * 100)}%)`);
             const pos = army.getPosition();
             emitFollowedGeneralStrategicMapFx(army, 'pre_battle_intimidate', pos.lat, pos.lng, 'pulse');
         }
@@ -1115,7 +1133,7 @@ export class SiegeManager {
             const myTroops = army.getTroops();
             const enemyTroops = targetCity.troops;
             if (myTroops > enemyTroops) {
-                const chance = getGeneralStrategicMagnitude(army, 'intimidate_instant_win', 0.01);
+                const chance = getGeneralStrategicMagnitude(army, 'intimidate_instant_win', 0.05);
                 if (Math.random() < chance) {
                     siegeLog(`[威慑] 不战而屈触发！${army.name} 不战而胜，占【${targetCity.name}】`);
                     const pos = army.getPosition();

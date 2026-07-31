@@ -105,7 +105,7 @@ export type StrategicEffect =
 
     | 'intimidate_instant_win'       // 兵力优势时概率不战而胜（不战而屈）
 
-    | 'pre_battle_intimidate'        // 攻城前削守军（先声夺人）
+    | 'pre_battle_intimidate'        // 攻城前削守军（望风披靡；2026-07-31 由「先声夺人」改名，避与战术技 ts_021 重名）
 
     | 'skip_disadvantaged_siege'     // 劣势时概率跳过此城（越城而走）
 
@@ -122,7 +122,9 @@ export type StrategicEffect =
     | 'post_battle_recruit_enemy_pct' // 胜后收编敌方开战总兵
 
     // ⚠️ S②因地制宜 已从 catalogs.ts 注释移除（战略技=大地图、战术技=战斗）。
-    | 'terrain_tactical_double';       // 地形匹配时战术技翻倍
+    | 'terrain_tactical_double'       // 地形匹配时战术技翻倍
+
+    | 'full_draft_resupply';          // 过己方城补兵比例 100%（尽发城兵）
 
 
 
@@ -164,39 +166,24 @@ export interface TacticalSkillDef {
  */
 
 export type StrategicCategory =
-
     | 'speed'       // 加速类
-
     | 'supply'      // 加兵类
-
     | 'vision'      // 视野类
-
     | 'deterrence'  // 威慑类
-
     | 'diplomacy'   // 纵横类
-
-    | 'defense'     // 防务类
-
+    | 'defense'     // 防务类（已封印退役）
+    | 'expedition'  // 远征技能类（远征机制专用，非武将战略技）
     | 'tactical';   // 战术类（战斗面板乘区）
 
-
-
 export const STRATEGIC_CATEGORY_LABEL: Readonly<Record<StrategicCategory, string>> = {
-
     speed: '加速类',
-
     supply: '加兵类',
-
     vision: '视野类',
-
     deterrence: '威慑类',
-
     diplomacy: '纵横类',
-
     defense: '防务类',
-
+    expedition: '远征技能',
     tactical: '战术类',
-
 };
 
 
@@ -213,9 +200,9 @@ export interface StrategicSkillDef {
 
     magnitude: number;
 
-    /** 引擎接线状态：ready=真实生效；new=数据就位、Step2 接引擎前不生效（诚实标注，audit 依赖） */
+    /** 引擎接线状态：ready=真实生效；new=数据就位；retired=已封印退役（禁止分配） */
 
-    engineStatus: 'ready' | 'new';
+    engineStatus: 'ready' | 'new' | 'retired';
 
     /** 战略六大类（见 STRATEGIC_CATEGORY_LABEL） */
 

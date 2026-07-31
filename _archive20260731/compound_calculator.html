@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>复利追赶计算器</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "Microsoft YaHei", sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #1a1a3e, #24243e);
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.container {
+  max-width: 960px;
+  width: 100%;
+  background: rgba(20,20,50,0.85);
+  border-radius: 20px;
+  padding: 36px 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 80px rgba(80,80,200,0.08);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+h1 {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #8ec5fc, #e0c3fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle {
+  text-align: center;
+  font-size: 13px;
+  color: #8888aa;
+  margin-bottom: 28px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+@media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+.card {
+  background: rgba(30,30,60,0.7);
+  border-radius: 14px;
+  padding: 20px 24px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.card h2 {
+  font-size: 16px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card .dot {
+  width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+}
+.input-group {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.input-row {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.input-row label { font-size: 13px; color: #aab; }
+.input-row input, .input-row select {
+  width: 140px; padding: 6px 10px; border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(10,10,30,0.6); color: #e0e0e0;
+  font-size: 14px; text-align: right;
+  font-family: inherit;
+}
+.input-row input:focus { outline: none; border-color: #8ec5fc; }
+.middle-card {
+  background: rgba(40,40,80,0.6);
+  border-radius: 14px;
+  padding: 18px 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 20px;
+}
+.middle-card h2 { font-size: 16px; margin-bottom: 12px; }
+.middle-row {
+  display: flex; gap: 20px; flex-wrap: wrap;
+}
+.middle-row .input-row { flex: 1; min-width: 160px; }
+.result-area {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+@media (max-width: 640px) { .result-area { grid-template-columns: 1fr 1fr; } }
+.result-box {
+  background: rgba(30,30,60,0.7);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.result-box .label {
+  font-size: 12px; color: #8888aa; margin-bottom: 6px;
+}
+.result-box .value {
+  font-size: 28px; font-weight: 700;
+  background: linear-gradient(135deg, #f6d365, #fda085);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.result-box .unit {
+  font-size: 13px; color: #888;
+}
+.result-box.warn .value {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.chart-wrap {
+  background: rgba(30,30,60,0.5);
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.chart-wrap canvas { max-height: 360px; }
+.note {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin-top: 10px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📈 复利追赶计算器</h1>
+  <p class="subtitle">甲先投 · 乙晚一年起投 · 追赶分析</p>
+
+  <div class="cards">
+    <!-- 甲：第一个人 -->
+    <div class="card">
+      <h2><span class="dot" style="background:#8ec5fc;"></span> 第一个人（甲）</h2>
+      <div class="input-group">
+        <div class="input-row">
+          <label>初始本金</label>
+          <input type="number" id="p1Principal" value="100" step="1" min="1">
+        </div>
+        <div class="input-row">
+          <label>日利率 (%)</label>
+          <input type="number" id="p1Rate" value="0.01" step="0.0001" min="0">
+        </div>
+        <div class="input-row">
+          <label>投资天数</label>
+          <input type="number" id="p1Days" value="3650" step="1" min="1">
+        </div>
+        <div class="input-row">
+          <label>第 1 天最终金额</label>
+          <input type="text" id="p1Final" readonly style="color:#8ec5fc;font-weight:600;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 乙：第二个人 -->
+    <div class="card">
+      <h2><span class="dot" style="background:#f6d365;"></span> 第二个人（乙）</h2>
+      <div class="input-group">
+        <div class="input-row">
+          <label>初始本金</label>
+          <input type="number" id="p2Principal" value="100" step="1" min="1">
+        </div>
+        <div class="input-row">
+          <label>日利率 (%)</label>
+          <input type="number" id="p2Rate" value="0.01" step="0.0001" min="0">
+        </div>
+        <div class="input-row">
+          <label>晚开始 (天)</label>
+          <input type="number" id="delayDays" value="365" step="1" min="0">
+        </div>
+        <div class="input-row">
+          <label>第 1 天最终金额</label>
+          <input type="text" id="p2Final" readonly style="color:#f6d365;font-weight:600;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 追赶分析 -->
+  <div class="middle-card">
+    <h2>🎯 追赶分析（乙追上甲的金额）</h2>
+    <div class="middle-row">
+      <div class="input-row">
+        <label>观察天数上限</label>
+        <input type="number" id="maxDays" value="7300" step="100" min="10">
+      </div>
+      <div class="input-row">
+        <label>乙追上需投天数</label>
+        <input type="text" id="catchDays" readonly style="color:#fda085;font-weight:600;">
+      </div>
+      <div class="input-row">
+        <label>乙追上时甲已投天数</label>
+        <input type="text" id="catchTotalDays" readonly style="color:#8ec5fc;font-weight:600;">
+      </div>
+    </div>
+  </div>
+
+  <!-- 结果 -->
+  <div class="result-area">
+    <div class="result-box" id="boxExtraDays">
+      <div class="label">乙需要多投的天数</div>
+      <div class="value" id="valExtraDays">—</div>
+      <div class="unit">天</div>
+    </div>
+    <div class="result-box" id="boxExtraPercent">
+      <div class="label">多投天数占甲天数的 %</div>
+      <div class="value" id="valExtraPercent">—</div>
+      <div class="unit">%</div>
+    </div>
+    <div class="result-box" id="boxExtraRate">
+      <div class="label">同天数追上所需日利率</div>
+      <div class="value" id="valExtraRate">—</div>
+      <div class="unit">%/天</div>
+    </div>
+  </div>
+
+  <!-- 图表 -->
+  <div class="chart-wrap">
+    <canvas id="chart"></canvas>
+  </div>
+  <p class="note">💡 甲从第 0 天开始投 · 乙从第 N 天（晚开始天数）开始投 · 日复利 (1+r)^n</p>
+</div>
+
+<script>
+// ========== 工具函数 ==========
+function fmtNum(n) { return n.toFixed(2); }
+function fmtRate(r) { return (r * 100).toFixed(4); }
+
+// ========== 紧耦合 DOM ==========
+const $ = id => document.getElementById(id);
+const p1P = $('p1Principal'), p1R = $('p1Rate'), p1D = $('p1Days');
+const p2P = $('p2Principal'), p2R = $('p2Rate'), delayD = $('delayDays');
+const maxD = $('maxDays');
+const p1F = $('p1Final'), p2F = $('p2Final');
+const catchD = $('catchDays'), catchTD = $('catchTotalDays');
+const vED = $('valExtraDays'), vEP = $('valExtraPercent'), vER = $('valExtraRate');
+
+let chart = null;
+
+// ========== 核心计算 ==========
+function compound(p, r, n) {
+  // p: 本金, r: 日利率(小数), n: 天数
+  return p * Math.pow(1 + r, n);
+}
+
+function compute() {
+  const p1Principal = parseFloat(p1P.value) || 100;
+  const p1Rate = (parseFloat(p1R.value) || 0.01) / 100;
+  const p1Days = parseInt(p1D.value) || 3650;
+
+  const p2Principal = parseFloat(p2P.value) || 100;
+  const p2Rate = (parseFloat(p2R.value) || 0.01) / 100;
+  const delay = parseInt(delayD.value) || 365;
+  const maxDays = parseInt(maxD.value) || 7300;
+
+  // 甲投了 p1Days 天后的金额
+  const p1Final = compound(p1Principal, p1Rate, p1Days);
+  p1F.value = '¥ ' + fmtNum(p1Final);
+
+  // 乙从第 delay 天开始投，到第 p1Days 天时，乙只投了 (p1Days - delay) 天
+  // 如果 delay > p1Days，乙还没开始
+  const p2InvestDays = Math.max(0, p1Days - delay);
+  const p2Final = compound(p2Principal, p2Rate, p2InvestDays);
+  p2F.value = p2InvestDays > 0 ? '¥ ' + fmtNum(p2Final) : '（尚未开始）';
+
+  // ===== 追赶分析：乙追上甲的金额（甲投了 p1Days 天后达到的金额）=====
+  // 甲目标金额 = p1Final
+  // 乙需要投 catchDays 天：p2Principal * (1+p2Rate)^catchDays = p1Final
+  // catchDays = ln(p1Final / p2Principal) / ln(1 + p2Rate)
+  let catchDaysNum = null;
+  let catchTotalDays = null;
+  if (p2Rate > 0 && p2Principal > 0) {
+    catchDaysNum = Math.log(p1Final / p2Principal) / Math.log(1 + p2Rate);
+    catchDaysNum = Math.ceil(catchDaysNum * 100) / 100;
+    catchTotalDays = delay + catchDaysNum;
+  } else if (p1Final <= p2Principal) {
+    catchDaysNum = 0;
+    catchTotalDays = delay;
+  }
+
+  if (catchDaysNum !== null && catchDaysNum <= maxDays) {
+    catchD.value = catchDaysNum + ' 天';
+    catchTD.value = fmtNum(catchTotalDays) + ' 天';
+
+    // 额外天数 = catchDaysNum - (p1Days - delay)
+    // 即乙需要投的总天数 减去 甲在乙开始后继续投的天数
+    // 实际上：乙多用的时间 = 乙追上需要的总天数 - 甲达到同金额需要的天数（从乙开始算）
+    // 换个说法：乙需要多投入的天数 = catchDaysNum - (p1Days - delay)
+    // 但如果 p1Days - delay < 0（乙还没开始甲就结束了），则比较不同
+    const overlapDays = Math.max(0, p1Days - delay);
+    const extraDays = Math.max(0, catchDaysNum - overlapDays);
+    const extraPercent = overlapDays > 0 ? (extraDays / overlapDays * 100) : (catchDaysNum > 0 ? Infinity : 0);
+
+    vED.textContent = extraDays >= 1e6 ? '∞' : fmtNum(extraDays);
+    vEP.textContent = extraPercent >= 1e6 ? '∞' : (extraPercent.toFixed(2) + '%');
+    document.getElementById('boxExtraDays').classList.remove('warn');
+  } else {
+    catchD.value = catchDaysNum !== null ? '> ' + maxDays + ' 天（超出）' : '无法计算';
+    catchTD.value = '—';
+    vED.textContent = '追不上';
+    vEP.textContent = '追不上';
+    document.getElementById('boxExtraDays').classList.add('warn');
+  }
+
+  // ===== 同天数追上所需日利率 =====
+  // 乙从delay天开始投，到第p1Days天时也只投了overlapDays天
+  // 需要 p2Principal * (1+r)^overlapDays = p1Final
+  // r = (p1Final / p2Principal)^(1/overlapDays) - 1
+  const overlapDays2 = Math.max(0, p1Days - delay);
+  if (overlapDays2 > 0 && p2Principal > 0) {
+    const requiredRate = Math.pow(p1Final / p2Principal, 1 / overlapDays2) - 1;
+    vER.textContent = fmtRate(requiredRate) + '%';
+    if (requiredRate <= p2Rate) {
+      document.getElementById('boxExtraRate').classList.remove('warn');
+    } else {
+      document.getElementById('boxExtraRate').classList.add('warn');
+    }
+  } else {
+    vER.textContent = '—';
+  }
+
+  // ===== 画图 =====
+  drawChart(p1Principal, p1Rate, p2Principal, p2Rate, delay, maxDays, p1Final, catchDaysNum);
+}
+
+// ========== 图表 ==========
+function drawChart(p1P, r1, p2P, r2, delay, maxDays, p1Target, catchDNum) {
+  const labels = [];
+  const data1 = [];
+  const data2 = [];
+
+  const step = Math.max(1, Math.floor(maxDays / 200));
+  for (let d = 0; d <= maxDays; d += step) {
+    labels.push(d);
+    data1.push(compound(p1P, r1, d));
+    const invest2 = Math.max(0, d - delay);
+    data2.push(compound(p2P, r2, invest2));
+  }
+
+  if (chart) chart.destroy();
+  const ctx = $('chart').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: '甲（第一个人）',
+          data: data1,
+          borderColor: '#8ec5fc',
+          backgroundColor: 'rgba(142,197,252,0.08)',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.1,
+          fill: false,
+        },
+        {
+          label: '乙（第二个人）',
+          data: data2,
+          borderColor: '#f6d365',
+          backgroundColor: 'rgba(246,211,101,0.08)',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.1,
+          fill: false,
+          borderDash: [6, 3],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      animation: false,
+      plugins: {
+        legend: {
+          labels: { color: '#aaa', usePointStyle: true, padding: 20, font: { size: 12 } },
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const v = ctx.parsed.y;
+              return ctx.dataset.label + ': ¥' + fmtNum(v);
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          title: { display: true, text: '天数 (从甲开始计算)', color: '#888' },
+          ticks: { color: '#666', maxTicksLimit: 12 },
+          grid: { color: 'rgba(255,255,255,0.04)' },
+        },
+        y: {
+          title: { display: true, text: '金额 (元)', color: '#888' },
+          ticks: { color: '#666', callback: v => '¥' + (v >= 1000 ? (v/1000).toFixed(1)+'k' : v.toFixed(0)) },
+          grid: { color: 'rgba(255,255,255,0.04)' },
+        },
+      },
+    },
+  });
+}
+
+// ========== 绑定 ==========
+[p1P, p1R, p1D, p2P, p2R, delayD, maxD].forEach(el => {
+  el.addEventListener('input', compute);
+});
+compute();
+</script>
+</body>
+</html>

@@ -70,7 +70,6 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   jiaodong: { name: '即墨火牛阵', tier: 2 },  // 即墨·田单火牛阵大破燕军（一次性战术奇谋）
   guo: { name: '果州戍兵', tier: 4 },  // 南充·唐果州戍兵
   zi: { name: '资州戍兵', tier: 4 },  // 盘石·唐资州戍兵
-  jibei: { name: '赤眉余部', tier: 3 },  // 摧毁王莽新朝的绝对主力赤眉军，名震天下的农民起义符号，升入T3知名
   gouding: { name: '句町部兵', tier: 4 },  // 广南·西南夷句町国部兵
   quanrong: { name: '西戎骑兵', tier: 4 },  // 威戎·犬戎部落武装
 qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐军（常规番号，降T3）
@@ -81,7 +80,9 @@ qiufu: { name: '剡城义军', tier: 4 },     // 剡城·裘甫起义大破唐�
     gumie: { name: '衢州镇标', tier: 4 },
     wang_s: { name: '新安兵', tier: 4 },
     wuyue: { name: '安国衣锦军', tier: 3 },
-    shaozhou_d: { name: '银枪效节军', tier: 2 },
+    shaozhou_d: { name: '武安军', tier: 2 }, // 邵陵·马殷：其武安军节度本部，907 年遣吕师周取邵州即此军。
+                                            // 原挂「银枪效节军」——那是杨师厚的魏博银枪效节都，属河北魏博（已在 tianxiong「魏博牙兵」），
+                                            // 与湖南邵州及马殷无相关性，违 §268，已撤
     ming_zheng: { name: '郑氏铁人军', tier: 2 },
     dayu: { name: '南赣标军', tier: 3 },
     sui: { name: '骁果军', tier: 2 },

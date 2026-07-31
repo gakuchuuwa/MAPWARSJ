@@ -10,13 +10,14 @@ function resolvePath(path: string): string {
 
 // 1. Definition of Regions and Styles
 // ============================================================
-// [REFACTOR 2026-05-28] 14 文化区方案 (MIN 并入 LINGNAN)
+// [REFACTOR 2026-05-28] 15 文化区方案 (MIN 并入 LINGNAN)
 // 福建并入岭南 — 闽据点少 (5个), 历史上五代闽国虽独立但语言/宗族与岭南互动密
 // ----------
 // 中国汉地核心 4: CENTRAL / NORTH / JIANGNAN / LINGNAN
 // 中国西南     2: BASHU / DIANQIAN
 // 中国西部边疆 3: HEXI / WESTERN / TIBET
 // 塞外+邻邦 5: STEPPE / NORTHEAST / KOREA / JAPAN / CENTRAL_ASIA
+// 西方         1: WEST_ASIA（2026-07-29 新增：安纳托利亚/黎凡特/阿拉伯/埃及/两河）
 // ============================================================
 export type RegionType =
     | 'CENTRAL'       // 中原 (豫、关中、晋南)
@@ -32,14 +33,15 @@ export type RegionType =
     | 'NORTHEAST'     // 东北 (满洲、通古斯)
     | 'KOREA'         // 朝鲜
     | 'JAPAN'         // 日本
-    | 'CENTRAL_ASIA'; // 中亚伊斯兰 (粟特、河中、大食)
+    | 'CENTRAL_ASIA' // 中亚伊斯兰 (粟特、河中、大食)
+    | 'WEST_ASIA';   // 西亚 (安纳托利亚、黎凡特、阿拉伯、埃及、两河)
 
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
     'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
     'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN',
     'CENTRAL_ASIA', 'NORTHEAST', 'TIBET', 'WESTERN',
-    'KOREA', 'DIANQIAN'
+    'KOREA', 'DIANQIAN', 'WEST_ASIA'
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -58,7 +60,8 @@ export const REGION_LABELS: Record<RegionType, string> = {
     NORTHEAST: '东北',
     KOREA: '朝鲜',
     JAPAN: '日本',
-    CENTRAL_ASIA: '中亚'
+    CENTRAL_ASIA: '中亚',
+    WEST_ASIA: '西亚'
 };
 
 /**
@@ -81,6 +84,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     TIBET: '青藏',
     WESTERN: '西域',
     CENTRAL_ASIA: '中亚',
+    WEST_ASIA: '西亚',
     DIANQIAN: '滇缅',
     KOREA: '朝鲜',
     JAPAN: '日本',
@@ -125,7 +129,7 @@ type Polygon = Point[];
 
 // 3. Region Deterministic Logic
 // ============================================================
-// [REFACTOR 2026-05-29 v4] 14 文化区判定流程
+// [REFACTOR 2026-05-29 v4] 15 文化区判定流程
 //
 // v4 修正:
 //   - TIBET lat 上限 38→37 (让出武威 37.93 给 HEXI)
@@ -186,7 +190,7 @@ type Polygon = Point[];
 //   饶乐水        city_raoleshui      NORTHEAST   西拉木伦河/昌黎旧境
 //   扜泥城        city_loulan         WESTERN     楼兰故城（罗布泊西）
 //
-// 14 区环线标准（主人 2026-06-11 定稿，zoom=6 绘线唯一来源）:
+// 15 区环线标准（主人 2026-06-11 定稿，zoom=6 绘线唯一来源；2026-07-29 补西亚）:
 //   1 中原  汉中→襄阳→广陵→威海卫→肤施→皋兰
 //   2 北方  威海卫→肤施→归化→襄平
 //   3 东北  襄平→宗谷→白主→诺托罗→囊哈儿→奴儿干→雅克萨→格尔必齐→尼布楚
@@ -201,24 +205,26 @@ type Polygon = Point[];
 //  12 青藏  加德满都→阿托克→塔什库尔干→龙木错→卡克里克→姑臧→兰州→打箭炉→大研
 //  13 中亚  石头城→阿托克→坎大哈→博斯特→法拉→尼沙布尔→玉龙杰赤→养吉干→石头城
 //  14 西域  哈密→楼兰→卡克里克→龙木错→养吉干→弓月
+//  15 西亚  苏萨→库塔伊西→君士坦丁堡→佩尔加蒙→以弗所→亚历山大→瓦塞特→麦加→苏萨
 //
-// 绘线: RegionBoundaryLayer @ zoom=6（REGION_BOUNDARY_ZOOM），共 14 区
+// 绘线: RegionBoundaryLayer @ zoom=6（REGION_BOUNDARY_ZOOM），共 15 区
 // ============================================================
 export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] = [
     { region: 'CENTRAL', cityIds: ['city_hanzhong', 'city_xiangyang', 'city_yangzhou', 'city_wendeng', 'city_fushi', 'city_lanzhou'] },
     { region: 'NORTH', cityIds: ['city_wendeng', 'city_fushi', 'city_guihua', 'city_liaoyang'] },
     { region: 'NORTHEAST', cityIds: ['city_liaoyang', 'city_zonggu', 'city_baizhu', 'city_nuotuoluo', 'city_nanghar', 'city_nuergan', 'city_yakesa', 'city_geerbiqi', 'city_nibuchu'] },
     { region: 'KOREA', cityIds: ['city_liaoyang', 'city_wendeng', 'city_yangzhou', 'city_xingzhuting', 'city_zonggu'] },
-    { region: 'JAPAN', cityIds: ['city_diaoyudao', 'city_gugudao', 'city_shuri', 'city_edo', 'city_genjo', 'city_zonggu', 'city_xingzhuting'] },
-    { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_tacheng', 'city_wubusabo', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu'] },
+    { region: 'JAPAN', cityIds: ['city_gugudao', 'city_shuri', 'city_edo', 'city_genjo', 'city_zonggu', 'city_xingzhuting', 'city_gugudao'] },
+    { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_urgench', 'city_kutayixi', 'city_yidier', 'city_salaichuke', 'city_tacheng', 'city_wubusabo', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu', 'city_liaoyang'] },
     { region: 'HEXI', cityIds: ['city_lanzhou', 'city_wuwei', 'city_ruoqiang', 'city_loulan', 'city_hamiwei', 'city_guihua', 'city_fushi'] },
     { region: 'BASHU', cityIds: ['city_xiangyang', 'city_linzheng', 'city_shimenguan', 'city_dajianlu', 'city_lanzhou', 'city_hanzhong'] },
-    { region: 'JIANGNAN', cityIds: ['city_yangzhou', 'city_xiangyang', 'city_linzheng', 'city_mudan', 'city_diaoyudao', 'city_xingzhuting'] },
+    { region: 'JIANGNAN', cityIds: ['city_yangzhou', 'city_xiangyang', 'city_linzheng', 'city_mudan', 'city_gugudao', 'city_xingzhuting', 'city_yangzhou'] },
     { region: 'LINGNAN', cityIds: ['city_shimenguan', 'city_linzheng', 'city_mudan', 'city_bangdun', 'city_sanpu', 'city_angkor'] },
-    { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_bago', 'city_thaton', 'city_ayutthaya', 'city_angkor', 'city_shimenguan'] },
-    { region: 'TIBET', cityIds: ['city_kathmandu', 'city_atuoke', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan'] },
-    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_atuoke', 'city_kandaha', 'city_bosite', 'city_fala', 'city_nishabuer', 'city_urgench', 'city_yangjigan', 'city_hepancheng'] },
-    { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_yangjigan', 'city_almaliq'] },
+    { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_laheer', 'city_agela', 'city_ayutthaya', 'city_angkor', 'city_shimenguan', 'city_dajianlu'] },
+    { region: 'TIBET', cityIds: ['city_kathmandu', 'city_laheer', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan', 'city_kathmandu'] },
+    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_laheer', 'city_bosibolisi', 'city_susa', 'city_kutayixi', 'city_urgench', 'city_hepancheng'] },
+    { region: 'WEST_ASIA', cityIds: ['city_susa', 'city_kutayixi', 'city_junshitandingbao', 'city_peierjiameng', 'city_yifusuo', 'city_yalishanda', 'city_wasaite', 'city_maijia', 'city_susa'] },
+    { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_urgench', 'city_almaliq', 'city_hamiwei'] },
 ];
 
 /** 界城环线配色（与 REGION_LABELS 对应，zoom=6 虚线） */
@@ -237,6 +243,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     KOREA: '#7b1fa2',
     JAPAN: '#c2185b',
     CENTRAL_ASIA: '#455a64',
+    WEST_ASIA: '#283593', // 深靛；原 #8d6e63 与 CENTRAL 完全撞色，zoom=6 界线分不出来
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -391,6 +398,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         medium: resolvePath('/cities/central_asia_medium.png'),
         big: resolvePath('/cities/central_asia_big.png'),
         pass: resolvePath('/cities/central_asia_pass.png')
+    },
+    WEST_ASIA: {
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
     }
 };
 
@@ -452,9 +465,9 @@ export function getCityImage(city: { lat?: number; lng?: number; latitude?: numb
 
 
 // ═══════════════════════════════════════════════════════════════
-// 【14 区中心 — 2026-05-30 立（2026-06-28 中原改单核洛阳）】
+// 【15 区中心 — 2026-05-30 立（2026-06-28 中原改单核洛阳）】
 //
-// 14 文化区 = 14 个中心。
+// 15 文化区 = 14 个中心。
 //
 // 用途:
 //   1. 道路骨架: 同区据点向中心连接 (build_region_skeleton.mjs 待写)
@@ -486,6 +499,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     KOREA:        ['city_kaesong'],                  // 开城 (高丽都)
     JAPAN:        ['city_kyoto'],                    // 京都 (平安京)
     CENTRAL_ASIA: ['city_urgench'],                  // 玉龙杰赤 (花剌子模都城; 主人 2026-07-05 改, 原撒马尔罕)
+    WEST_ASIA:    ['city_junshitandingbao'],           // 君士坦丁堡 (拜占庭/东罗马都城)
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

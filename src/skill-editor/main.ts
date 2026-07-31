@@ -408,7 +408,7 @@ function renderNewForm(): void {
         'ally_power_mult', 'first_sortie_power_mult', 'enemy_sub_troops_opening', 'ally_add_troops_opening',
         'dual_sub_troops_opening', 'negate_enemy_skill', 'partial_negate_enemy_skill', 'steal_enemy_skill',
         'luck_variance_self', 'luck_variance_enemy', 'win_casualty_reduction', 'elite_casualty_reduction',
-        'lose_enemy_casualty_boost', 'post_recovery_rate', 'battle_duration_mult',
+        'lose_enemy_casualty_boost', 'post_recovery_rate',
     ] : [];
     panel.style.display = 'block';
     panel.innerHTML = `
@@ -431,7 +431,7 @@ function renderNewForm(): void {
             negate_enemy_skill: 'negate', partial_negate_enemy_skill: 'negate', steal_enemy_skill: 'steal',
             luck_variance_self: 'luck', luck_variance_enemy: 'luck',
             win_casualty_reduction: 'casualty', elite_casualty_reduction: 'casualty',
-            lose_enemy_casualty_boost: 'bite', post_recovery_rate: 'recovery', battle_duration_mult: 'duration',
+            lose_enemy_casualty_boost: 'bite', post_recovery_rate: 'recovery',
         };
         const fam = famMap[eff];
         ($('n-tier') as HTMLSelectElement).innerHTML =
@@ -761,7 +761,7 @@ async function loadSixSlotData() {
     const gidToName: Record<string,string> = {};
     for (const g of generals) gidToName[g.generalId] = g.name;
     const skillMap: Record<string, {displayName:string, baseEffect:string, condition:string, sixClass:string, ownerName:string|null}> = {};
-    const SIX: Record<string,string> = {'ally_power_mult':'攻战计','first_sortie_power_mult':'攻战计','enemy_mult_0_8':'攻战计','enemy_sub_troops_opening':'胜战计','dual_sub_troops_opening':'胜战计','ally_add_troops_opening':'胜战计','self_casualty_reduction':'胜战计','lose_enemy_casualty_boost':'敌战计','win_casualty_reduction':'敌战计','elite_casualty_reduction':'敌战计','post_recovery_rate':'敌战计','battle_duration_mult':'敌战计','steal_enemy_skill':'混战计','negate_enemy_skill':'混战计','partial_negate_enemy_skill':'混战计','reflect_enemy_opening_cut':'混战计','nullify_enemy_opening_cut':'混战计','cancel_enemy_terrain_buff':'混战计','halve_enemy_terrain_buff':'混战计','luck_variance_self':'并战计','luck_variance_enemy':'并战计','luck_lock_self':'并战计','recompute_comeback':'败战计','lose_zero_enemy_recovery':'败战计','ally_add_troops_comeback':'败战计','first_sortie_comeback_mult':'败战计'};
+    const SIX: Record<string,string> = {'ally_power_mult':'攻战计','first_sortie_power_mult':'攻战计','enemy_mult_0_8':'攻战计','enemy_sub_troops_opening':'胜战计','dual_sub_troops_opening':'胜战计','ally_add_troops_opening':'胜战计','self_casualty_reduction':'胜战计','lose_enemy_casualty_boost':'敌战计','win_casualty_reduction':'敌战计','elite_casualty_reduction':'敌战计','post_recovery_rate':'敌战计','steal_enemy_skill':'混战计','negate_enemy_skill':'混战计','partial_negate_enemy_skill':'混战计','reflect_enemy_opening_cut':'混战计','nullify_enemy_opening_cut':'混战计','cancel_enemy_terrain_buff':'混战计','halve_enemy_terrain_buff':'混战计','luck_variance_self':'并战计','luck_variance_enemy':'并战计','luck_lock_self':'并战计','recompute_comeback':'败战计','lose_zero_enemy_recovery':'败战计','ally_add_troops_comeback':'败战计','first_sortie_comeback_mult':'败战计'};
     const UD=new Set(['ratio_underdog','self_troops_below_enemy_pct','side_comeback','lose_as_underdog']);
     const VE=new Set(['luck_variance_self','luck_lock_self','recompute_comeback']);
     for (const s of skills) {

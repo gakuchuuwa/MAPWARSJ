@@ -18,7 +18,7 @@ import type { GameTimeHUD } from '../ui/GameTimeHUD';
 import { StreamModeToggle } from '../ui/StreamModeToggle';
 import { gameLog } from '../utils/GameLogger';
 
-const AUTO_START_DELAY_MS = 3_000;
+const AUTO_START_DELAY_MS = 10_000;
 const CHECK_INTERVAL_MS = 60_000;
 const UNIFIED_HOLD_MS = 5 * 60_000;
 const DAILY_RELOAD_HOUR = 4;

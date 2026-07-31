@@ -23,25 +23,33 @@ export class VectorRiverLayer extends L.FeatureGroup {
     private wgs84Group: L.FeatureGroup;
     private gcj02Group: L.FeatureGroup;
     private currentOffsetMode: boolean = false;
+    /** 上次设定样式用的 zoom 档位；换组时据此补刷新组 */
+    private lastStyledZoom: number | null = null;
 
     constructor(data: any, options?: L.LayerOptions) {
         super([], options); // Initialize empty FeatureGroup
 
+        // [SMOOTHING] 对 GeoJSON 坐标应用 Chaikin 拐角曲线平滑算法，消除硬直角折线感
+        //
+        // [PERF 2026-07-27] 迭代次数 2 → 1。每轮 Chaikin 顶点数约翻倍，2 轮 ≈ 原始的 4 倍，
+        // 而 Leaflet 在每次 zoomend 都要把全部顶点重新投影（实测 330~600ms，缩放卡顿的剩余大头）。
+        // Chaikin 收敛很快：1 轮已把直角切成圆角，第 2 轮的增量在 2~4px 线宽下肉眼难辨。
+        const smoothedData = VectorRiverLayer.applyChaikinSmoothing(data, 1);
+
         // 1. 初始化 WGS84 组 (Create WGS84 Group)
-        this.wgs84Group = this.createRiverGroup(data, options?.pane);
+        this.wgs84Group = this.createRiverGroup(smoothedData, options?.pane);
 
         // 2. 预计算偏移数据 (Pre-calculate GCJ02 Data)
         // [PERFORMANCE] Done once at startup, zero runtime cost later.
-        const offsetData = VectorRiverLayer.applyGCJ02Offset(data);
+        const offsetData = VectorRiverLayer.applyGCJ02Offset(smoothedData);
 
         // 3. 初始化 GCJ02 组 (Create GCJ02 Group)
         this.gcj02Group = this.createRiverGroup(offsetData, options?.pane);
 
         // 4. Default: Show WGS84 (Standard)
         this.addLayer(this.wgs84Group);
-        // this.addLayer(this.gcj02Group); // Don't add yet
 
-        gameLog('startup', '[VectorRiverLayer] Initialized with Dual-Buffer (WGS84 + GCJ02) ready.');
+        gameLog('startup', '[VectorRiverLayer] Initialized with Chaikin Curve Smoothing & Dual-Buffer ready.');
     }
 
     /**
@@ -51,19 +59,19 @@ export class VectorRiverLayer extends L.FeatureGroup {
     private createRiverGroup(data: any, pane?: string): L.FeatureGroup {
         const group = new L.FeatureGroup();
 
-        // 1. Border Layer (Bottom)
+        // 1. 底层描边（Border/Casing Layer）：深墨蓝，切断山谷杂乱阴影，提升山间河流辨识度
         const border = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getBorderStyle(feature, 9),
             pane: pane
         });
-        (border as any).riverType = 'border'; // Tag for updates
+        (border as any).riverType = 'border';
 
-        // 2. Water Layer (Top)
+        // 2. 顶层水体线（Water Layer）：纯正浅蓝，亮丽不透明
         const water = new L.GeoJSON(data, {
             style: (feature) => VectorRiverLayer.getWaterStyle(feature, 9),
             pane: pane
         });
-        (water as any).riverType = 'water'; // Tag for updates
+        (water as any).riverType = 'water';
 
         group.addLayer(border);
         group.addLayer(water);
@@ -81,16 +89,12 @@ export class VectorRiverLayer extends L.FeatureGroup {
         if (!force && this.currentOffsetMode === enable) return;
         this.currentOffsetMode = enable;
 
-        // Fast Switch
+        // [注意 2026-07-27] 这里并不是"零计算"。clearLayers + addLayer 会让 Leaflet
+        // 把新组每条河的每个顶点重新投影并重建 SVG 路径，实测一次约 327ms。
+        // 所以调用方必须避免在高频路径（行军↔战斗）上跨越坐标系分界。
         this.clearLayers(); // Remove current visible
-
-        if (enable) {
-            // Show GCJ-02 (Offset)
-            this.addLayer(this.gcj02Group);
-        } else {
-            // Show WGS-84 (Standard)
-            this.addLayer(this.wgs84Group);
-        }
+        this.addLayer(enable ? this.gcj02Group : this.wgs84Group);
+        this.styleLiveGroup();
     }
 
     /**
@@ -99,11 +103,8 @@ export class VectorRiverLayer extends L.FeatureGroup {
      */
     public refresh() {
         this.clearLayers();
-        if (this.currentOffsetMode) {
-            this.addLayer(this.gcj02Group);
-        } else {
-            this.addLayer(this.wgs84Group);
-        }
+        this.addLayer(this.currentOffsetMode ? this.gcj02Group : this.wgs84Group);
+        this.styleLiveGroup();
     }
 
     /**
@@ -111,64 +112,70 @@ export class VectorRiverLayer extends L.FeatureGroup {
      * 确保切换过去时样式也是正确的。
      */
     public updateStyle(zoom: number) {
-        const updateGroup = (group: L.FeatureGroup) => {
-            group.eachLayer((layer: any) => {
-                if (layer.riverType === 'border') {
-                    layer.setStyle((feature: any) => VectorRiverLayer.getBorderStyle(feature, zoom));
-                } else if (layer.riverType === 'water') {
-                    layer.setStyle((feature: any) => VectorRiverLayer.getWaterStyle(feature, zoom));
-                }
-            });
-        };
+        if (this.lastStyledZoom === zoom) return; // 档位没变不必重设样式
+        this.lastStyledZoom = zoom;
+        // [PERF 2026-07-27] 原来对 wgs84/gcj02 两组都重设样式，其中一组根本不在地图上，
+        // 白花一半时间（实测两组合计约 465ms）。改为只刷当前显示的那组，
+        // 换组时由 setOffsetMode/refresh 补刷，视觉结果完全一致。
+        this.styleLiveGroup();
+    }
 
-        updateGroup(this.wgs84Group);
-        updateGroup(this.gcj02Group);
+    /** 只给当前挂在地图上的那一组重设样式 */
+    private styleLiveGroup(): void {
+        const zoom = this.lastStyledZoom;
+        if (zoom === null) return;
+        const group = this.currentOffsetMode ? this.gcj02Group : this.wgs84Group;
+        group.eachLayer((layer: any) => {
+            if (layer.riverType === 'border') {
+                layer.setStyle((feature: any) => VectorRiverLayer.getBorderStyle(feature, zoom));
+            } else if (layer.riverType === 'water') {
+                layer.setStyle((feature: any) => VectorRiverLayer.getWaterStyle(feature, zoom));
+            }
+        });
     }
 
     // --- Styling Logic ---
 
-    // 读取 scalerank 并转换为渲染等级
-    // NE scalerank: 0-3=大江大河(长江/黄河), 4-6=中等, 7-10=支流
-    private static getRiverTier(feature: any): number {
-        const rank = feature?.properties?.scalerank ?? 7;
-        if (rank <= 3) return 0;  // 大江大河
-        if (rank <= 6) return 1;  // 中等河流
-        return 2;                  // 小河支流
+    // 1. Border Style — 底层深墨蓝描边，切断山谷阴影，让山间水系清晰显现
+    private static getBorderStyle(feature: any, zoom: number): L.PathOptions {
+        const featureCla = feature?.properties?.featurecla;
+        if (featureCla === 'Lake Centerline') {
+            return {
+                stroke: false,
+                opacity: 0
+            };
+        }
+
+        const zoomMult = VectorRiverLayer.getScaleMultiplier(zoom);
+        const waterWeight = Math.max(2.0 * zoomMult, 1.0);
+        return {
+            color: 'rgba(20, 38, 60, 0.75)',
+            weight: waterWeight + 1.8,
+            opacity: 0.85,
+            lineCap: 'round',
+            lineJoin: 'round',
+            className: 'vector-river-border'
+        };
     }
 
-    // 1. Water Style — 统一宽度, 仅颜色按等级分化
-    // 大江深蓝(水量足/主干), 支流浅蓝(源头清浅)
+    // 2. Water Style — 顶层浅蓝水流主体
     private static getWaterStyle(feature: any, zoom: number): L.PathOptions {
-        const tier = VectorRiverLayer.getRiverTier(feature);
+        const featureCla = feature?.properties?.featurecla;
+        if (featureCla === 'Lake Centerline') {
+            return {
+                stroke: false,
+                opacity: 0
+            };
+        }
+
         const zoomMult = VectorRiverLayer.getScaleMultiplier(zoom);
-        const colors = ['#3E7FAF', '#5A95C0', '#7BB8D4'];
-
-        let weight = Math.max(3.0 * zoomMult, 1.5);
-
         return {
-            color: colors[tier],
-            weight: weight,
+            color: '#6496C8',
+            weight: Math.max(2.0 * zoomMult, 1.0),
             opacity: 1.0,
             lineCap: 'round',
             lineJoin: 'round',
             className: 'vector-river-water'
-        };
-    }
-
-    // 2. Border Style — 统一宽度, 软化颜色配合 sage 调色板
-    private static getBorderStyle(feature: any, zoom: number): L.PathOptions {
-        const tier = VectorRiverLayer.getRiverTier(feature);
-        const zoomMult = VectorRiverLayer.getScaleMultiplier(zoom);
-        let waterWeight = Math.max(3.0 * zoomMult, 1.5);
-        let borderWeight = waterWeight + 1.0;
-
-        return {
-            color: '#2E4A5F',
-            weight: borderWeight,
-            opacity: 0.8,
-            lineCap: 'round',
-            lineJoin: 'round',
-            className: 'vector-river-border'
         };
     }
 
@@ -231,6 +238,57 @@ export class VectorRiverLayer extends L.FeatureGroup {
                         }
                     };
                     traverse(feature.geometry.coordinates);
+                }
+            }
+        }
+        return newData;
+    }
+
+    /**
+     * [Chaikin Smoothing Algorithm]
+     * 对 GeoJSON 的折线坐标做角点切削平滑，把生硬的直角折线转成自然水流曲线。
+     * 轮数由调用方给（当前 1 轮，见构造函数处的性能说明），每轮顶点数约翻倍。
+     */
+    private static applyChaikinSmoothing(geojson: any, iterations: number = 1): any {
+        if (!geojson) return geojson;
+        const newData = JSON.parse(JSON.stringify(geojson));
+
+        const smoothLine = (coords: [number, number][]): [number, number][] => {
+            if (!coords || coords.length <= 2) return coords;
+            let current = coords;
+            for (let it = 0; it < iterations; it++) {
+                const smoothed: [number, number][] = [];
+                smoothed.push(current[0]);
+                for (let i = 0; i < current.length - 1; i++) {
+                    const p0 = current[i];
+                    const p1 = current[i + 1];
+
+                    const q: [number, number] = [
+                        0.75 * p0[0] + 0.25 * p1[0],
+                        0.75 * p0[1] + 0.25 * p1[1]
+                    ];
+                    const r: [number, number] = [
+                        0.25 * p0[0] + 0.75 * p1[0],
+                        0.25 * p0[1] + 0.75 * p1[1]
+                    ];
+                    smoothed.push(q);
+                    smoothed.push(r);
+                }
+                smoothed.push(current[current.length - 1]);
+                current = smoothed;
+            }
+            return current;
+        };
+
+        if (newData.type === 'FeatureCollection' && Array.isArray(newData.features)) {
+            for (const feature of newData.features) {
+                if (feature.geometry && feature.geometry.coordinates) {
+                    const geomType = feature.geometry.type;
+                    if (geomType === 'LineString') {
+                        feature.geometry.coordinates = smoothLine(feature.geometry.coordinates);
+                    } else if (geomType === 'MultiLineString') {
+                        feature.geometry.coordinates = feature.geometry.coordinates.map((line: any) => smoothLine(line));
+                    }
                 }
             }
         }

@@ -574,6 +574,7 @@ function updateStats(): void {
 // ── Table Rendering ──
 
 const COLUMNS: Array<{ key: string; label: string; width?: string }> = [
+    { key: '_actions', label: '', width: '36px' },
     { key: 'id', label: 'ID', width: '120px' },
     { key: 'name', label: '势力' },
     { key: 'cityRegion', label: '文化区', width: '90px' },
@@ -587,7 +588,6 @@ const COLUMNS: Array<{ key: string; label: string; width?: string }> = [
     { key: 'eliteName', label: '精锐' },
     { key: 'eliteTier', label: 'T', width: '30px' },
     { key: 'completeness', label: '完整度', width: '80px' },
-    { key: '_actions', label: '', width: '36px' },
 ];
 
 function renderTable(): void {
@@ -601,6 +601,7 @@ function renderTable(): void {
     const tbody = filteredRows.map(r => {
         const selected = r.id === editingFactionId ? ' class="selected"' : '';
         return `<tr${selected} data-fid="${r.id}">
+            <td><button class="bm-copy-btn" data-copy-fid="${r.id}" title="复制为快速录入格式">📋</button></td>
             <td class="cell-id">${r.id}</td>
             <td>${r.name}</td>
             <td class="cell-region">${r.cityRegion ?? ''}</td>
@@ -614,7 +615,6 @@ function renderTable(): void {
             <td>${r.eliteName ? `<span class="cell-ok">${r.eliteName}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${r.eliteTier != null ? `T${r.eliteTier}` : ''}</td>
             <td>${renderBar(r.completeness)}</td>
-            <td><button class="bm-copy-btn" data-copy-fid="${r.id}" title="复制为快速录入格式">📋</button></td>
         </tr>`;
     }).join('');
 
@@ -757,7 +757,7 @@ const REGION_LABELS: Record<string, string> = {
     CENTRAL: '中原', NORTH: '北方', JIANGNAN: '江南', LINGNAN: '岭南',
     BASHU: '川蜀', DIANQIAN: '滇缅', HEXI: '河西', WESTERN: '西域',
     TIBET: '青藏', STEPPE: '草原', NORTHEAST: '东北', KOREA: '朝鲜',
-    JAPAN: '日本', CENTRAL_ASIA: '中亚',
+    JAPAN: '日本', CENTRAL_ASIA: '中亚', WEST_ASIA: '西亚',
 };
 
 async function openEditPanel(factionId: string | null): Promise<void> {
@@ -1100,31 +1100,23 @@ async function openEditPanel(factionId: string | null): Promise<void> {
 
     document.getElementById('bm-panel-close')!.addEventListener('click', closePanel);
     document.getElementById('bm-edit-form')!.addEventListener('submit', handleFormSubmit);
-    // 换将：改武将名 → 自动重算 generalId + 清空旧立绘（旧图=前一位的脸），防 id/技能/立绘错位
+    // 换将：改武将名 → 自动重算 generalId；立绘不变（主人要求：改名字不丢立绘）
     if (!isNew && row) {
         const gName = document.getElementById('bm-edit-genname') as HTMLInputElement | null;
         const gIdHidden = document.getElementById('bm-edit-genid') as HTMLInputElement | null;
         const gIdView = document.getElementById('bm-edit-genid-view') as HTMLInputElement | null;
         const gHint = document.getElementById('bm-edit-general-hint');
-        const pInput = document.getElementById('bm-edit-portrait') as HTMLInputElement | null;
         const origName = row.generalName ?? '';
         const origId = row.generalId ?? '';
-        const origPortrait = row.portrait ?? '';
         gName?.addEventListener('input', () => {
             const nm = gName.value.trim();
             const changed = !!nm && nm !== origName;
-            // 名字没变（或改了又删回原名）→ 保持原 ID。历史手工 ID（如 leloi/agui）不符合
-            // {势力}_{拼音} 规则，若无条件重算会把没换将的保存也当成换将，断掉远征目标/技能档。
             const newId = changed ? `${row!.id}_${toPinyinId(nm)}` : origId;
             if (gIdHidden) gIdHidden.value = newId;
             if (gIdView) gIdView.value = newId;
-            if (changed && pInput && pInput.value === origPortrait && origPortrait) {
-                pInput.value = '';
-                pInput.dispatchEvent(new Event('input'));
-            }
             if (gHint) {
                 gHint.style.display = changed ? 'block' : 'none';
-                if (changed) gHint.textContent = `换将 → 新 ID：${newId}。请为「${nm}」重设战术技/战略技；立绘已清空（留空=文化夹随机脸，或另选/F2绑图）。旧武将「${origName}」的技能档会被清理。`;
+                if (changed) gHint.textContent = `换将 → 新 ID：${newId}。请为「${nm}」重设战术技/战略技。旧武将「${origName}」的技能档会被清理。`;
             }
         });
     }
@@ -1211,6 +1203,7 @@ const REGION_ALIAS: Record<string, string> = {
     '草原': 'STEPPE', '蒙古': 'STEPPE',
     '西域': 'WESTERN',
     '中亚': 'CENTRAL_ASIA',
+    '西亚': 'WEST_ASIA',
     '吐蕃': 'TIBET', '青藏': 'TIBET', '羌藏': 'TIBET',
     '滇黔': 'DIANQIAN', '滇缅': 'DIANQIAN',
     '岭南': 'LINGNAN',
@@ -1860,7 +1853,7 @@ async function runSkillCoverageCheck(): Promise<void> {
             },
             {
                 level: 'info',
-                msg: '排除系统技能：长驱深入（远征）、据险而守（关隘）、守土继绝（文化中心）',
+                msg: '排除：远征技 str_11、关隘/文化中心系统技、不在册战术技（随机池）、已封存战略技（str_05/17/18/25/26/27）',
             },
         ];
 

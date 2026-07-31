@@ -32,6 +32,7 @@ import { NORTHEAST_EXPEDITION_ELITE_LEGIONS } from './NortheastExpeditionLegions
 import { STEPPE_EXPEDITION_ELITE_LEGIONS } from './SteppeExpeditionLegions';
 import { WESTERN_EXPEDITION_ELITE_LEGIONS } from './WesternExpeditionLegions';
 import { CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS } from './CentralAsiaExpeditionLegions';
+import { WEST_ASIA_EXPEDITION_ELITE_LEGIONS } from './WestAsiaExpeditionLegions';
 import { TIBET_EXPEDITION_ELITE_LEGIONS } from './TibetExpeditionLegions';
 import { DIANQIAN_EXPEDITION_ELITE_LEGIONS } from './DianQianExpeditionLegions';
 import { LINGNAN_EXPEDITION_ELITE_LEGIONS } from './LingnanExpeditionLegions';
@@ -57,6 +58,7 @@ const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
   ...STEPPE_EXPEDITION_ELITE_LEGIONS,
   ...WESTERN_EXPEDITION_ELITE_LEGIONS,
   ...CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS,
+  ...WEST_ASIA_EXPEDITION_ELITE_LEGIONS,
   ...TIBET_EXPEDITION_ELITE_LEGIONS,
   ...DIANQIAN_EXPEDITION_ELITE_LEGIONS,
   ...LINGNAN_EXPEDITION_ELITE_LEGIONS,

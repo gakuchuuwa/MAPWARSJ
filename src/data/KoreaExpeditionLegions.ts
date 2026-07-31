@@ -12,7 +12,7 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   tier: 0 | 1 | 2 | 3 | 4;
 }>> = {
   // === 初始/默认（1） ===
-  lelang: { name: '乐浪材官', tier: 4 },    // 息城·王颀乐浪材官
+    lelang: { name: '乐浪材官', tier: 4 },
   donghui: { name: '檀弓猎手', tier: 3 },  // “楛矢石砮，檀弓角弓”，先秦古籍中极其出名的东夷/东北夷标志性兵种，升入T3知名
     gaogouli: { name: '萨水精兵', tier: 2 }, // 因萨水之战水淹三十万隋军这一特定战役而名留青史，缺乏长久野战军建制，符合T2战术
   xuantu: { name: '皂衣先人', tier: 2 },     // 前燕慕容恪廉台之战克制冉闵的连环马战术鼻祖，极其明确的战术阵法，升入T2战术
@@ -28,13 +28,12 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
   danluo: { name: '三别抄', tier: 2 },        // 星主厅·高丽武人抗蒙（最终战败，T2）
     zhen: { name: '完山虎贲', tier: 3 },
   woju: { name: '别武班', tier: 2 },            // 咸兴·尹瓘别武班（征女真九城即退还，T2）
-  ssangseong: { name: '和宁戍骑', tier: 4 }, // 铁岭关·李子春（缺乏极其著名的战术高光，降T3）
   hui: { name: '濊族步卒', tier: 4 },          // 何瑟罗·不耐侯（缺乏极其著名的战术高光，降T3）
     chungju_d: { name: '幸州天字铳', tier: 2 },
   gaya: { name: '金官伽倻兵', tier: 3 },         // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     naju_d: { name: '罗州精兵', tier: 4 },
     sabeol: { name: '沙伐义兵', tier: 3 },
-  xingliao: { name: '龙湾戍军', tier: 4 },      // 龙湾·兴辽边防
+    xingliao: { name: '龙湾戍军', tier: 4 },
     jingcheng_d: { name: '镜城突骑', tier: 3 },
   // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
 };

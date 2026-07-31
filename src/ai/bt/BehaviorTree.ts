@@ -59,11 +59,21 @@ export interface BTContext {
     /**
      * 战略追击目标：附近敌军团 id（与 city 目标互斥）。
      * 有值时优先野战追击，不走攻城链。
+     * ⚠️ 优先级 ≠ 频率：本字段多数时候是 null（半径 0.8°≈89km 内没有敌军团），
+     *    实机约 90% 的战斗是攻城战。见 AGENTS.md「战斗构成：90% 是攻城战」。
      */
     strategicTargetArmyId: string | null;
 
     /** 当前锁定的目标位置（终目标坐标） */
     targetPosition: { lat: number; lng: number } | null;
+
+    /**
+     * 追击目标「因对方交战中而打不起来」的连续起始时刻（performance.now），null = 当前没被卡住。
+     * 用于给 HoldForFieldContact 兜底：该节点会 stopMovement 并返回 SUCCESS，
+     * 行为树不会继续往下走攻城分支，所以只要目标一直处于交战中，军团就永远停在原地。
+     * 对方若在攻城（攻城串行、且站着不动），既不会被打死也不会跑出放弃半径，无人能把它救出来。
+     */
+    huntBlockedSinceMs: number | null;
 
     /** 最近一次移动的结果 */
     lastMoveResult: 'success' | 'failure' | 'blocked' | null;

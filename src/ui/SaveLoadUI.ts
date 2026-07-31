@@ -140,18 +140,36 @@ export class SaveLoadUI {
 
         const info = document.createElement('div');
         const t = new Date(s.savedAt);
-        const hhmm = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
-        const title = s.isAuto ? `自动存档 <span class="sl-meta">${s.date}</span>` : s.date;
+        const p2 = (n: number) => String(n).padStart(2, '0');
+        // 存档时刻写全：轮转后同时存在多个自动档，只有「时:分」分不清是哪天哪一份
+        const stamp = `${t.getFullYear()}-${p2(t.getMonth() + 1)}-${p2(t.getDate())}`
+            + ` ${p2(t.getHours())}:${p2(t.getMinutes())}:${p2(t.getSeconds())}`;
+        // 距今多久，一眼看出新旧
+        const mins = Math.max(0, Math.round((Date.now() - t.getTime()) / 60000));
+        const ago = mins < 1 ? '刚刚'
+            : mins < 60 ? `${mins} 分钟前`
+                : mins < 60 * 24 ? `${Math.floor(mins / 60)} 小时前`
+                    : `${Math.floor(mins / 1440)} 天前`;
+        // 轮转档位号（auto-3 → #3），便于对应日志
+        const slotNo = s.isAuto ? (s.key.match(/auto-(\d+)$/)?.[1] ?? '') : '';
+        const title = s.isAuto
+            ? `自动存档${slotNo ? ` #${slotNo}` : ''} <span class="sl-meta">${ago}</span>`
+            : s.date;
         info.innerHTML = `<div class="sl-date">${title}</div>`
-            + `<div class="sl-meta">${hhmm} · 纪年 ${s.year} · 据点 ${s.cityCount} · 军团 ${s.armyCount}</div>`;
+            + `<div class="sl-meta">存于 ${stamp} · 纪年 ${s.year} · 据点 ${s.cityCount} · 军团 ${s.armyCount}</div>`;
         row.appendChild(info);
+
+        // 轮转后会同时存在多个同日期的自动档，确认框只报日期会分不清读的是哪一份
+        const label = s.isAuto
+            ? `自动存档${slotNo ? ` #${slotNo}` : ''}（存于 ${stamp}，纪年 ${s.year}）`
+            : `${s.date}（存于 ${stamp}，纪年 ${s.year}）`;
 
         const acts = document.createElement('div');
         const load = document.createElement('button');
         load.className = 'sl-act';
         load.textContent = '读取';
         load.onclick = () => {
-            if (!window.confirm(`读取 ${s.date} 的存档？\n当前世界会被完全替换。`)) return;
+            if (!window.confirm(`读取 ${label}？\n当前世界会被完全替换。`)) return;
             try {
                 this.mgr.restore(this.mgr.loadSlot(s.key));
                 this.closePanel();
@@ -165,7 +183,7 @@ export class SaveLoadUI {
         del.className = 'sl-act sl-del';
         del.textContent = '删';
         del.onclick = () => {
-            if (!window.confirm(`删除 ${s.date} 的存档？`)) return;
+            if (!window.confirm(`删除 ${label}？`)) return;
             this.mgr.deleteSlot(s.key);
             this.renderPanel();
         };

@@ -1,8 +1,8 @@
 /** zoom = 7：仅势力色，隐藏据点（zoom 6 见 REGION_BOUNDARY_ZOOM，不显示势力色） */
 export const FACTION_ONLY_MAX_ZOOM = 7;
 
-/** zoom ≤ 8：宏观视图（zoom 8 = 据点 + 势力色；隐藏军队/道路/河流） */
-export const MACRO_VIEW_MAX_ZOOM = 8;
+/** zoom ≤ 7：宏观视图（zoom 8 起显示军团/道路/河流） */
+export const MACRO_VIEW_MAX_ZOOM = 7;
 
 /** zoom = 6：文化区界城环线（RegionBoundaryLayer） */
 export const REGION_BOUNDARY_ZOOM = 6;

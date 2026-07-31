@@ -752,7 +752,112 @@ const _FIXED: Record<string, string> = {
     'xiazhou': '#D6D2CB', // 夏州（李继迁·夏系党项白）
     'cangsong': '#2E7D38', // 苍松（马超·蜀绿）
     'dingzhou': '#887043', // 定州（慕容垂·黄龙金褐）
-    'qianqin': '#3A6A5A', // 前秦（苻坚·木德尚青）
+    'qianqin': '#3A6A5A',
+    'aiji': '#D09B2C',
+    'xibolai': '#245580',
+    'womaya': '#E4E0D6',
+    'aertai': '#255855',
+    'sailiugu': '#8A2035',
+
+    // ── 2026-07-27 新增据点势力专属史地配色 ──
+    'wuyue': '#2A6B56',
+    'chaozhou_d': '#B04828',
+    'taizhou': '#3A7888',
+    'shaozhou_d': '#4A7854',
+    'zizhou': '#3B6E4A',
+    'cangzhou': '#385A70',
+    'minyue': '#1E6852',
+    'shuizu': '#2E506B',
+    'liuzhou': '#487A58',
+    'shizhou': '#8A6030',
+    'yingzhou_d2': '#4A5869',
+    'yuezhi': '#D8A840',
+    'funan': '#C26E28',
+    'lancang': '#E09A18',
+    'ahaomu': '#984028',
+    'elunchunzu': '#5A4838',
+    'wazu': '#2D3033',
+    'tajikezu': '#854030',
+    'jingpozu': '#6B3828',
+    'aertaishan': '#2B585C',
+    'manghuti': '#A57830',
+    'xingwei': '#5A7A38',
+    'baha': '#5C4E3C',
+    'hali': '#8C6E40',
+    'kalan': '#4A2E58',
+    'xisi': '#B56B28',
+    'delan': '#7A3A20',
+    'dulan_d': '#6E4A30',
+    'huluo': '#885028',
+    'aba': '#2E5B70',
+    'najie': '#9E7038',
+    'pangzha': '#B58A28',
+    'saerbadaer': '#386B48',
+    'kumisi': '#884058',
+    'ribale': '#784028',
+    'safawei': '#1B5E83',
+    'yilihanguo': '#A83020',
+    'asaibaijiang': '#7B2E48',
+    'yilihanguo_d': '#80283A',
+    'wulaertu': '#8C5A28',
+    'gelujiya': '#A52028',
+    'bendou': '#1E4E6B',
+    'keerjisi': '#386850',
+    'bendou_d': '#245678',
+    'heti': '#955020',
+    'fulijiya': '#A06828',
+    'ldiya': '#B88820',
+    'pajiama': '#285E7B',
+    'bitiniya': '#486078',
+    'baizhanting': '#6A1B6D',
+    'luomu': '#2D6A4F',
+
+    // ── 西亚区补全（2026-07-30）──
+    // 该区原有 9 家已固定色（bendou/bendou_d/heti/fulijiya/ldiya/pajiama/bitiniya/baizhanting/luomu），
+    // 其余 19 家此前走 FactionManager 随机池；按史地特征补齐，红/黄/蓝/紫/褐/青分散不扎堆。
+    'abasi': '#1E2A3C', // 阿拔斯（黑旗革命，史料尚黑；避 wazhai 玄黑撞色取蓝黑）
+    'youfaladi': '#D4A017', // 幼发拉底·马穆鲁克（苏丹旗黄底狮徽）
+    'jialedi': '#2B5FA8', // 迦勒底·新巴比伦（伊什塔尔门釉蓝）
+    'sumeier': '#2D3A8C', // 苏美尔（乌鲁克·青金石深蓝）
+    'yashu': '#7A2E3C', // 亚述（尼尼微·王室赭紫）
+    'guyashu': '#5C2230', // 古亚述（同族更暗，与新亚述区分）
+    'nabatai': '#A8474F', // 纳巴泰（佩特拉玫瑰砂岩）
+    'paermila': '#A6642F', // 帕尔米拉（沙漠绿洲石灰岩土橙；压暗以离开旗字阈值 128）
+    'ayoubu': '#0E5230', // 阿尤布（萨拉丁·伊斯兰深绿）
+    'maidina': '#2A8A63', // 麦地那（先知清真寺绿穹顶）
+    'gulaishi': '#332B22', // 古莱什·麦加（天房帷幕黑金）
+    'dedan': '#C09A3A', // 德丹·泰马绿洲（北阿拉伯沙金）
+    'beileinisi': '#0E6C9A', // 贝雷尼斯（红海港埠水师海蓝）
+    'dibisi': '#7A5E14', // 底比斯·阿蒙军团（阿蒙神殿金）
+    'xikesuosi': '#4A3560', // 喜克索斯（外族征服者·战车紫褐）
+    'tuolemi': '#0F7B6C', // 托勒密（亚历山大港·希腊化绿松石）
+    'qiliqiya': '#8E2B2B', // 奇里乞亚（罗马行省驻军深红）
+    'aiaoniya': '#1B6E78', // 爱奥尼亚·以弗所（爱琴海青）
+    'jialatai': '#3C7A55', // 加拉太（凯尔特青绿）
+
+    // ── 草原·里海·伊朗·印度 补全（2026-07-30）──
+    // expedition:audit 长期报「缺固定色」的 20 家，全部按史地／宗教尚色补齐。
+    'xiemian': '#8A6A3C', // 萨维尔·谢缅杰尔（达吉斯坦草原土褐）
+    'yidier': '#26708E', // 伊蒂尔汗国（伏尔加河口·可萨都城水蓝）
+    'salai': '#C0A24E', // 诺盖·萨莱楚克（金帐系驼金）
+    'mangshi': '#96302A', // 土库曼·曼格什拉克（土库曼地毯红）
+    'kesa': '#3A4E96', // 可萨·打耳班（可萨改宗犹太教·大卫蓝）
+    'xierwan': '#B45A18', // 希尔万·巴库（火之国·拜火教火橙）
+    'midi': '#7A2A54', // 米底·哈马丹（米底服色赭紫）
+    'aqimeinide': '#5A2B86', // 阿契美尼德·波斯波利斯（波斯帝王紫）
+    'safawei_d': '#B02436', // 萨法维·伊斯法罕（红头军 Qizilbash 朱红帽）
+    'ailan': '#2A7268', // 埃兰·苏萨（苏萨釉陶青绿）
+    'ansxi': '#8C3A44', // 安息·尼萨（帕提亚深绛）
+    'xike': '#D98324', // 锡克帝国·拉合尔（锡克教藏红花橙）
+    'deli': '#166B4A', // 德里苏丹国（伊斯兰苏丹深绿）
+    'mowoer': '#1D4E9C', // 莫卧儿·阿格拉（莫卧儿宫廷蓝宝石）
+    'jieri': '#9E5E1E', // 戒日·曲女城（印度教赭黄）
+    'jiashi_d': '#96422E', // 迦尸·瓦拉纳西（恒河圣城赭红）
+    'mojietuo': '#6E4420', // 摩揭陀·王舍城（恒河中游深赭）
+    'boluo': '#A0521E', // 波罗帝国·高达城（佛教王朝袈裟橙褐）
+    'sumo': '#186A82', // 苏摩·耽摩栗底（孟加拉湾港埠海蓝）
+    'kongque': '#22378C', // 孔雀帝国·华氏城（阿育王法轮深蓝）
+ // 前秦（苻坚·木德尚青）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

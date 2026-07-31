@@ -105,7 +105,8 @@ export class SiegeEffectRenderer {
     constructor(map: GameMap) {
         this.map = map;
         this.createEffectsPane();
-        this.map.getLeafletMap().on('zoom', this.updateEffectScales.bind(this));
+        // [PERF] zoomend 而非 zoom：缩放仅在停稳后重算火焰 bounds 一次，避免动画中间帧密集 DOM 写
+        this.map.getLeafletMap().on('zoomend', this.updateEffectScales.bind(this));
     }
 
     private createEffectsPane(): void {
@@ -379,6 +380,16 @@ export class SiegeEffectRenderer {
     }
 
     private updateEffectScales(): void {
+        const zoom = this.map.getLeafletMap().getZoom();
+        const pane = this.map.getLeafletMap().getPane('effectsPane');
+
+        // zoom 8（俯瞰行军）不显示火焰/烟雾特效
+        if (zoom <= 8) {
+            if (pane) pane.style.display = 'none';
+            return;
+        }
+        if (pane) pane.style.display = '';
+
         this.activeEffects.forEach((effect) => {
             for (const patch of effect.patches) {
                 patch.overlay.setBounds(

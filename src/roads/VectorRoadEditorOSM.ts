@@ -496,8 +496,10 @@ export class VectorRoadEditorOSM implements IEditor {
             console.log(`🌐 [VectorRoadEditorOSM] Graph built: ${this.geoNodes.length} nodes, ${edgeCount} edges`);
 
         } catch (err) {
+            // 同 VectorRoadEditor：面板直接显示真实原因，不要只给一句笼统的 ❌
+            const reason = err instanceof Error ? err.message : String(err);
             console.error('[VectorRoadEditorOSM] Failed to load GeoJSON:', err);
-            this.setStatus('❌ 加载路网失败');
+            this.setStatus(`❌ 加载路网失败：${reason}`);
         }
     }
 

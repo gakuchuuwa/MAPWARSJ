@@ -946,11 +946,18 @@ export class LegionPhalanxDrawer {
 
         // --- 4. FLUSH ---
         activeItems.sort((a, b) => a.y - b.y);
+        // [FIX 2026-07-28] 原来是「设成 p.alpha，再硬重置成 1.0」，两处都错：
+        //   · 设值时覆盖了外层透明度，而不是与之相乘
+        //   · 重置成 1.0 而非恢复原值 ⇒ 一旦有一个兵 alpha<1，其后所有兵都被拉回全不透明
+        // 外层调用方是会设 globalAlpha 的（GlobalUnitRenderer 的尸体渐隐、器械渐隐），
+        // 这样写会把外层的淡出整个抹掉。改为先存基准、按基准相乘、再恢复基准。
+        // 目前 p.alpha<1 只出现在出场动画，与尸体渐隐碰不到一起，属提前堵住的隐患。
+        const baseAlpha = ctx.globalAlpha;
         for (let i = 0; i < activeItems.length; i++) {
             const p = activeItems[i].drawParams;
-            if (p.alpha < 1) ctx.globalAlpha = p.alpha;
+            if (p.alpha < 1) ctx.globalAlpha = baseAlpha * p.alpha;
             ctx.drawImage(p.img, p.sx, p.sy, p.sw, p.sh, p.dx, p.dy, p.dw, p.dh);
-            if (p.alpha < 1) ctx.globalAlpha = 1.0; // Reset
+            if (p.alpha < 1) ctx.globalAlpha = baseAlpha;
         }
     }
 

@@ -250,7 +250,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'jingmen', name: '荆门' },
-    { id: 'jibei', name: '济北' },
+    { id: 'jibei', name: '泰山' },
     { id: 'wusun', name: '乌孙' },
     { id: 'dayuan', name: '大宛' },
     { id: 'gouding', name: '句町' },
@@ -275,7 +275,10 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 日本重置：京都改挂室町（足利旗）──
     { id: 'ashikaga', name: '室町' },
     { id: 'quanrong', name: '犬戎' },
-    { id: 'suzhou', name: '肃州' },
+    { id: 'suzhou', name: '酒泉' },
+
+
+
 
 
     { id: 'sushen', name: '肃慎' },
@@ -312,6 +315,7 @@ export const FACTIONS: Faction[] = [
     { id: 'aki', name: '安艺' },
     { id: 'echigo', name: '越后' },
     { id: 'kai', name: '甲斐' },
+
     { id: 'chosokabe', name: '土佐' },
     { id: 'hashiba', name: '播磨' },
 
@@ -1102,7 +1106,7 @@ export const FACTIONS: Faction[] = [
               // 山海关·临榆
     { id: 'loufan', name: '楼烦' },
              // 宁武关·楼烦族
-    { id: 'xianyu', name: '井陉' },
+    { id: 'xianyu', name: '土门' },
 
 
              // 井陉关·中山国（原鲜虞）
@@ -1111,6 +1115,7 @@ export const FACTIONS: Faction[] = [
 
                 // 居庸关·幽州
     { id: 'heng1', name: '元岳' },
+
 
 
               // 雁门关·元岳（旗=元岳，避恒州「恒」撞旗）
@@ -1438,6 +1443,7 @@ export const FACTIONS: Faction[] = [
     { id: 'kangba', name: '康巴' },
     { id: 'nvguo', name: '女国' },
     { id: 'jiashi', name: '迦湿弥罗' },
+
     { id: 'wuhu', name: '乌护' },
     
     
@@ -1532,7 +1538,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'xiyuduhu', name: '西域都护' },
-    { id: 'shaozhou_d', name: '邵州' },
+    { id: 'shaozhou_d', name: '邵陵' }, // 三国吴宝鼎元年置邵陵郡治此（原名「邵州」与据点名相同，违 §266 严格不等）
 
     { id: 'zizhou', name: '昌城' },
 
@@ -1580,39 +1586,75 @@ export const FACTIONS: Faction[] = [
 
     { id: 'manghuti', name: '忙忽惕' },
     { id: 'xingwei', name: '兴威' },
+    { id: 'saerbadaer', name: '萨尔巴达尔' },
+    { id: 'kumisi', name: '库米斯' },
+    { id: 'ribale', name: '日巴勒' },
+    { id: 'safawei', name: '吉兰' },
+
+
+    { id: 'yilihanguo', name: '阿杰姆' },
 
 
 
+    { id: 'yilihanguo_d', name: '伊利汗国' },
+    { id: 'asaibaijiang', name: '阿塞拜疆' },
+    { id: 'wulaertu', name: '乌拉尔图' },
+    { id: 'gelujiya', name: '格鲁吉亚' },
+    { id: 'bendou', name: '科穆宁' },
 
+    { id: 'keerjisi', name: '科尔基斯' },
+    { id: 'bendou_d', name: '本都' },
+    { id: 'heti', name: '赫梯' },
+    { id: 'fulijiya', name: '弗里吉亚' },
+    { id: 'ldiya', name: '吕底亚' },
+    { id: 'pajiama', name: '帕加马' },
+    { id: 'bitiniya', name: '比提尼亚' },
+    { id: 'baizhanting', name: '拜占庭' },
+    { id: 'luomu', name: '罗姆' },
+    { id: 'sailiugu', name: '塞琉古' },
+    { id: 'womaya', name: '倭马亚' },
+    { id: 'xibolai', name: '希伯来' },
+    { id: 'aiji', name: '埃及' },
+    { id: 'dibisi', name: '底比斯' },
+    { id: 'tuolemi', name: '托勒密' },
+    { id: 'jialedi', name: '迦勒底' },
+    { id: 'paermila', name: '帕尔米拉' },
+    { id: 'abasi', name: '阿拔斯' },
+    { id: 'xikesuosi', name: '喜克索斯' },
+    { id: 'yashu', name: '亚述' },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    { id: 'youfaladi', name: '幼发拉底' },
+    { id: 'midi', name: '米底' },
+    { id: 'qiliqiya', name: '奇里乞亚' },
+    { id: 'aqimeinide', name: '阿契美尼德' },
+    { id: 'ailan', name: '埃兰' },
+    { id: 'safawei_d', name: '萨法维' },
+    { id: 'sumeier', name: '苏美尔' },
+    { id: 'ayoubu', name: '阿尤布' },
+    { id: 'kesa', name: '可萨' },
+    { id: 'aiaoniya', name: '爱奥尼亚' },
+    { id: 'jialatai', name: '加拉太' },
+    { id: 'guyashu', name: '古亚述' },
+    { id: 'ansxi', name: '安息帝国' },
+    { id: 'nabatai', name: '纳巴泰王国' },
+    { id: 'xike', name: '锡克帝国' },
+    { id: 'deli', name: '德里苏丹国' },
+    { id: 'mowoer', name: '莫卧儿帝国' },
+    { id: 'jieri', name: '戒日帝国' },
+    { id: 'kongque', name: '孔雀帝国' },
+    { id: 'mojietuo', name: '摩揭陀王国' },
+    { id: 'boluo', name: '波罗帝国' },
+    { id: 'sumo', name: '苏摩国' },
+    { id: 'beileinisi', name: '红海' }, // 托勒密二世所建红海舰队基地（原名与据点名相同，违 §266）
+    { id: 'dedan', name: '德丹王国' },
+    { id: 'maidina', name: '拉希顿' }, // 正统哈里发国建都麦地那，武将哈立德为其统帅（原名与据点名相同，违 §266）
+    { id: 'gulaishi', name: '古莱什部落' },
+    { id: 'jiashi_d', name: '迦尸国' },
+    { id: 'xierwan', name: '希尔万王国' },
+    { id: 'xiemian', name: '萨维尔' }, // 达吉斯坦萨维尔人（谢缅杰尔一带突厥语族，后并入可萨）（原名与据点名相同，违 §266）
+    { id: 'yidier', name: '伊蒂尔汗国' },
+    { id: 'salai', name: '诺盖' }, // 埃迪古所建诺盖汗国以萨莱楚克为都（原名与据点名相同，违 §266）
+    { id: 'mangshi', name: '土库曼' }, // 曼格什拉克为乌古斯／土库曼牧地，恰格里贝格出自其中（原名与据点名相同，违 §266）
     ];
 
 // @ts-ignore

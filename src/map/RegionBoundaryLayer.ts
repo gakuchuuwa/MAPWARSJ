@@ -48,9 +48,8 @@ export class RegionBoundaryLayer {
             const color = REGION_BOUNDARY_COLORS[loop.region];
             const polyline = L.polyline(latlngs, {
                 color,
-                weight: 2.5,
-                opacity: 0.85,
-                dashArray: '8 6',
+                weight: 4,
+                opacity: 1.0,
                 interactive: false,
             });
             polyline.bindTooltip(REGION_LABELS[loop.region], {

@@ -2,15 +2,22 @@ import type L from 'leaflet';
 import type { LatLng } from '../../types/core';
 import { ElevationSampler, latLngToTilePixel } from './ElevationSampler';
 import { DEM_ZOOM, TERRARIUM_TILE_SIZE, decodeTerrariumElevation, isSeaElevation } from './TerrariumCodec';
+import { WaterMaskSampler } from './WaterMaskSampler';
 
 type LandSeaKind = 'land' | 'sea';
 
 /**
- * 陆海判定：Terrarium DEM 海拔 < 0 = 海域。
- * 与 HillshadeLayer 渲染同源，不依赖 DOM 像素猜色。
+ * 陆海判定：以 ESRI 底图的水域掩膜为准（即画海岸线描边用的那份数据）。
+ *
+ * [2026-07-28] 原判据是「Terrarium DEM 海拔 < 0 = 海」，遇到低于海平面的陆地必错：
+ * 里海低地（伊蒂尔 -27m）、吐鲁番盆地（高昌 -51m）都被判成海，骑兵在那里显示成船。
+ * 里海区域 12000 点抽样，旧判据正确率仅 71.0%。原因见 WaterMask.ts。
+ *
+ * 海拔判据保留为**兜底**：掩膜瓦片尚未到达时沿用旧行为，避免断网/慢网时全图变陆地。
  */
 export class LandSeaSystem {
     private static sampler = new ElevationSampler();
+    private static waterSampler = new WaterMaskSampler();
     private static resultCache = new Map<string, boolean>();
     private static readonly maxResultCache = 8000;
     private static mapBound = false;
@@ -19,12 +26,19 @@ export class LandSeaSystem {
         return this.sampler;
     }
 
+    static getWaterSampler(): WaterMaskSampler {
+        return this.waterSampler;
+    }
+
     static initialize(): void {
         if (this.mapBound) return;
-        this.sampler.onTileLoaded(() => {
+        const onTiles = () => {
             this.resultCache.clear();
             window.dispatchEvent(new CustomEvent('land-sea-tiles-updated'));
-        });
+        };
+        this.sampler.onTileLoaded(onTiles);
+        // 掩膜瓦片到达后同样要清缓存：此前用海拔兜底算出的结果需要被订正
+        this.waterSampler.onTileLoaded(onTiles);
         this.mapBound = true;
     }
 
@@ -33,6 +47,7 @@ export class LandSeaSystem {
         const prefetch = () => {
             const b = map.getBounds();
             this.sampler.prefetchBounds(b.getNorth(), b.getSouth(), b.getWest(), b.getEast());
+            this.waterSampler.prefetchBounds(b.getNorth(), b.getSouth(), b.getWest(), b.getEast());
         };
         map.on('moveend', prefetch);
         map.on('zoomend', prefetch);
@@ -42,6 +57,7 @@ export class LandSeaSystem {
     static prefetchViewport(map: L.Map): void {
         const b = map.getBounds();
         this.sampler.prefetchBounds(b.getNorth(), b.getSouth(), b.getWest(), b.getEast());
+        this.waterSampler.prefetchBounds(b.getNorth(), b.getSouth(), b.getWest(), b.getEast());
     }
 
     private static cacheKey(lat: number, lng: number): string {
@@ -63,11 +79,33 @@ export class LandSeaSystem {
         const cached = this.resultCache.get(key);
         if (cached !== undefined) return cached;
 
+        // 「海」= 掩膜说是水 **且** 海拔低于 0，两个条件缺一不可。
+        //
+        // [2026-07-28] 单用任何一条都错，两类错误正好互补：
+        //   只看海拔 → 低于海平面的「陆地」被判成海
+        //              （伊蒂尔 -27m、高昌 -51m，骑兵变船）
+        //   只看掩膜 → 海平面以上的「内陆水」被判成海
+        //              （两河/湖泊；巴格达周边 6800 点里 234 个点 +28~+100m 被判成海，
+        //                沿河行军全变船。这是 2026-07-28 改坏又改回来的真实教训）
+        // 取交集后判定域只会比两者都小，因此**不可能新增**误判为海的地方。
+        const water = this.waterSampler.isWaterSync(latLng.lat, latLng.lng);
+
+        // 掩膜明确说不是水 → 一定不是海，无需再问海拔，可安全入缓存
+        if (water === false) return this.rememberResult(key, false);
+
         const elev = this.sampler.getElevationSync(latLng.lat, latLng.lng);
         if (elev === null) {
             this.sampler.scheduleFetch(latLng.lat, latLng.lng);
             return false;
         }
+
+        if (water === null) {
+            // 掩膜瓦片还没到：暂用海拔判据维持旧行为。
+            // 刻意**不写入 resultCache**——否则里海/吐鲁番会被这个错误答案锁死。
+            this.waterSampler.scheduleFetch(latLng.lat, latLng.lng);
+            return isSeaElevation(elev);
+        }
+
         return this.rememberResult(key, isSeaElevation(elev));
     }
 

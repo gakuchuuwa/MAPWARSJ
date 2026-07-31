@@ -142,6 +142,10 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             if (followedId && legionManager) {
                 const lMap = app.map.getLeafletMap();
                 const followedArmy = legionManager.getLegionById(followedId);
+
+                // ── 自动缩放（ZoomController）：行军 8↔9，战斗 10↔11，≥15s ──
+                app.zoomController.tick();
+
                 app.audioManager.syncFollowedLegionAudio({
                     armyId: followedArmy && !followedArmy.isDestroyed ? followedId : null,
                     marching: followedArmy?.isMarching?.() ?? false,

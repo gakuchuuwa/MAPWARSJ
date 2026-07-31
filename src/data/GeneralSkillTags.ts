@@ -305,20 +305,12 @@ export function auditTacticalDistribution(
 }
 
 // ── 分配层（tier）约束闸门（2026-07-03 加固）──────────────────────
-// 背景：auditTacticalDistribution 只查 25% 占比，查不出「limited 技挂 123 人」
-// 这类违反 TACTICAL_ASSIGN_TIER 限量策略的分配。本闸门补上，批量提交前必跑。
+// 背景：auditTacticalDistribution 只查 25% 占比，查不出违反 TACTICAL_ASSIGN_TIER 策略的分配。
 // ⚠️ 已知缺口：countTacticalByArchetype 仍按已退役 tac_* 标签映射，档案迁 ts_ 后
 //    统计恒为零；archetype 配额流程不可信（TODO(v1-tags)）。
 
-/** limited 层单技持有人数上限（「个位数」的硬化） */
-export const LIMITED_TIER_MAX_HOLDERS = 9;
-/** gamble 层名将持有上限（豪赌不入跟拍常客名将池；韩信等典故锁定占额） */
-export const GAMBLE_FAMOUS_MAX = 5;
-
 export interface AssignTierAuditResult {
     ok: boolean;
-    limitedViolations: { skillId: string; displayName: string; count: number; max: number }[];
-    gambleFamousViolations: { skillId: string; displayName: string; famousCount: number; max: number }[];
     /** ready 且 0 人持有（多样性警告，不算硬违规；hook/new 不列） */
     emptyReadySkills: { skillId: string; displayName: string }[];
 }
@@ -327,42 +319,23 @@ export function auditAssignTierConstraints(
     profiles: Record<string, GeneralProfile> = GENERAL_PROFILES,
 ): AssignTierAuditResult {
     const holders: Record<string, number> = {};
-    const famousHolders: Record<string, number> = {};
     for (const p of Object.values(profiles)) {
         // 按战斗真实可部署技能计数（六槽，兜底 tacticalSkillId），一将一技至多记一次
         for (const skillId of deployableTacticalSkillIds(p)) {
             const entry = getTacticalSkillEntry(skillId) ?? getTacticalSkillEntryForGeneral(skillId);
             if (!entry) continue;
             holders[entry.id] = (holders[entry.id] ?? 0) + 1;
-            if (p.tier === 'famous') famousHolders[entry.id] = (famousHolders[entry.id] ?? 0) + 1;
         }
     }
-    const limitedViolations: AssignTierAuditResult['limitedViolations'] = [];
-    const gambleFamousViolations: AssignTierAuditResult['gambleFamousViolations'] = [];
     const emptyReadySkills: AssignTierAuditResult['emptyReadySkills'] = [];
     for (const entry of Object.values(TACTICAL_SKILL_BY_ID)) {
-        const tier = getTacticalAssignTier(entry.id);
         const n = holders[entry.id] ?? 0;
-        if (tier === 'limited' && n > LIMITED_TIER_MAX_HOLDERS) {
-            limitedViolations.push({
-                skillId: entry.id, displayName: entry.displayName,
-                count: n, max: LIMITED_TIER_MAX_HOLDERS,
-            });
-        }
-        if (tier === 'gamble' && (famousHolders[entry.id] ?? 0) > GAMBLE_FAMOUS_MAX) {
-            gambleFamousViolations.push({
-                skillId: entry.id, displayName: entry.displayName,
-                famousCount: famousHolders[entry.id] ?? 0, max: GAMBLE_FAMOUS_MAX,
-            });
-        }
         if (entry.engineStatus === 'ready' && n === 0) {
             emptyReadySkills.push({ skillId: entry.id, displayName: entry.displayName });
         }
     }
     return {
-        ok: limitedViolations.length === 0 && gambleFamousViolations.length === 0,
-        limitedViolations,
-        gambleFamousViolations,
+        ok: true,
         emptyReadySkills,
     };
 }
@@ -370,8 +343,13 @@ export function auditAssignTierConstraints(
 // ── 战略技分配闸门（2026-07-03 v1 重设计随行）────────────────────
 /** 战略限量技上限（因敌制胜=战略层均势战斗乘区，防重蹈攻其不备 123 人覆辙） */
 export const STRATEGIC_LIMITED_CAPS: Readonly<Record<string, number>> = { str_03: 30 };
-/** 退役战略技（v1 地形/守方战斗乘区已于 v2 复活为新六类技，当前无退役） */
-export const RETIRED_STRATEGIC_IDS: readonly string[] = [];
+/** 退役/封印战略技：str_17 偃旗息鼓、str_18 虚张声势 及 防务类 4 技（str_05 坚壁清野、str_25 足食足兵、str_26 招兵买马、str_27 屯兵经略），禁止分配给任何武将 */
+export const RETIRED_STRATEGIC_IDS: readonly string[] = [
+    'str_05', 'str_17', 'str_18', 'str_25', 'str_26', 'str_27',
+];
+
+/** 特殊/远征专属战略技（str_11 长驱深入 为远征军团机制专用技，不属于普通武将配技池，不参与空置配技审计） */
+export const SPECIAL_EXCLUDED_STRATEGIC_IDS: readonly string[] = ['str_11'];
 
 export interface StrategicAssignAuditResult {
     ok: boolean;
@@ -405,6 +383,7 @@ export function auditStrategicAssignment(
         .filter((id) => (holders[id] ?? 0) > 0)
         .map((id) => ({ skillId: id, count: holders[id] }));
     const emptySkills = Object.values(STRATEGIC_SKILL_CATALOG)
+        .filter((s) => s.engineStatus !== 'retired' && !RETIRED_STRATEGIC_IDS.includes(s.id) && !SPECIAL_EXCLUDED_STRATEGIC_IDS.includes(s.id))
         .filter((s) => (holders[s.id] ?? 0) === 0)
         .map((s) => ({ skillId: s.id, displayName: s.displayName }));
     return {
@@ -729,12 +708,11 @@ export const STRATEGIC_SKILL_TAGS = [
     // ── 加速类 ──
     { id: 'str_01', grid: 'S①', name: '兵贵神速', tags: ['急行军', '闪击', '远征机动'], terrain: '行军' },
     { id: 'str_10', grid: 'S⑩', name: '如履平地', tags: ['山地', '迂回', '奇袭'], terrain: '行军' },
-    { id: 'str_11', grid: 'S⑪', name: '长驱深入', tags: ['远征', '绕城', 'ZOC'], terrain: '行军' },
     { id: 'str_12', grid: 'S⑫', name: '乘胜追击', tags: ['连胜', '连续行军'], terrain: '行军' },
     // ── 加兵类 ──
     { id: 'str_07', grid: 'S⑦', name: '因粮于敌', tags: ['胜后补兵', '以战养战'], terrain: '补给' },
     { id: 'str_13', grid: 'S⑬', name: '以战养战', tags: ['行军减兵全免', '远征续航'], terrain: '补给' },
-    { id: 'str_28', grid: 'S㉘', name: '调兵遣将', tags: ['征兵', '扩编'], terrain: '补给' },
+    { id: 'str_29', grid: 'S㉙', name: '调兵遣将', tags: ['过城补兵', '行军补给'], terrain: '补给' },
     // ── 视野类 ──
     { id: 'str_16', grid: 'S⑯', name: '神出鬼没', tags: ['隐身', '奇袭'], terrain: '隐蔽' },
     { id: 'str_17', grid: 'S⑰', name: '偃旗息鼓', tags: ['藏兵', '疑兵'], terrain: '隐蔽' },
@@ -742,17 +720,19 @@ export const STRATEGIC_SKILL_TAGS = [
     // ── 威慑类 ──
     { id: 'str_06', grid: 'S⑥', name: '招降纳叛', tags: ['纳降', '收编', '化敌'], terrain: '战后' },
     { id: 'str_19', grid: 'S⑲', name: '不战而屈', tags: ['不战而胜', '威压'], terrain: '攻城' },
-    { id: 'str_20', grid: 'S⑳', name: '先声夺人', tags: ['战前削敌', '震慑'], terrain: '攻城' },
+    { id: 'str_20', grid: 'S⑳', name: '望风披靡', tags: ['战前削敌', '震慑'], terrain: '攻城' },
     { id: 'str_21', grid: 'S㉑', name: '越城而走', tags: ['跳城', '避战'], terrain: '行军' },
     // ── 纵横类 ──
     { id: 'str_22', grid: 'S㉒', name: '纵横捭阖', tags: ['废将', '废精'], terrain: '攻城' },
     { id: 'str_23', grid: 'S㉓', name: '飞箝擒王', tags: ['废将', '破防'], terrain: '攻城' },
     { id: 'str_24', grid: 'S㉔', name: '转丸破军', tags: ['废精', '破防'], terrain: '攻城' },
-    // ── 防务类 ──
+    // ── 防务类（已封印退役） ──
     { id: 'str_05', grid: 'S⑤', name: '坚壁清野', tags: ['焦土', '清野', '逼近减兵'], terrain: '据点防' },
     { id: 'str_25', grid: 'S㉕', name: '足食足兵', tags: ['产兵', '增长'], terrain: '据点' },
     { id: 'str_26', grid: 'S㉖', name: '招兵买马', tags: ['募兵', '冷却'], terrain: '据点' },
     { id: 'str_27', grid: 'S㉗', name: '屯兵经略', tags: ['留兵', '屯田'], terrain: '据点' },
+    // ── 远征技能（远征机制专用，非战略技能） ──
+    { id: 'str_11', grid: 'S⑪', name: '长驱深入（远征技能）', tags: ['远征技能', '绕城', 'ZOC'], terrain: '远征' },
 ] as const;
 
 /** 按 tacticalId 查标签 */

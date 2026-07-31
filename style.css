@@ -9,8 +9,8 @@ body {
 #map {
     width: 100%;
     height: 100%;
-    background: #1a1a1a;
-    /* Dark background while loading */
+    background: #96B287;
+    /* 海拔平原绿兜底：与 HillshadeWorker 低地 Sage 绿同源对齐，替代米黄大板砖 */
 }
 
 /* City Flag 4-Frame Animation */

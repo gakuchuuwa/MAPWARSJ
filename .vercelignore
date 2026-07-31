@@ -16,5 +16,12 @@ scratch/*
 !scratch/county_seat_audit.json
 *.pdf
 san10pk_99026
+# 本地瓦片金字塔 zoom 8–11（约 3.2GB）。线上靠 HillshadeLayer 补位，从未依赖它们；
+# 2026-07-26 起 10/11dixingtu 混进上传目录，撑爆 CLI 部署（8 分钟超时），故四级一并排除。
+public/8dixingtu
 public/9dixingtu
+public/10dixingtu
+public/11dixingtu
+# 根目录 map/ 是同四套瓦片的重复副本，纯本地资料，不上传
+map/
 close_cities_report.json

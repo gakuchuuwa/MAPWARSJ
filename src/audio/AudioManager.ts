@@ -77,9 +77,9 @@ const FADE = {
 const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     ui_click: sound('ui', 'ui_click', 0.35, 120),
     ui_confirm: sound('ui', 'ui_confirm', 0.45, 160),
-    march_loop: sound('battle', 'march_loop', 0.32, 0),
+    march_loop: sound('battle', 'march_loop', 0.28, 0),
     // 纯骑部队（草原/青藏/中亚）专用行军音效，与步骑 march_loop 分开
-    cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.32, 0),
+    cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.28, 0),
     battle_loop: sound('battle', 'battle_loop', 0.8, 0),
     battle_start: sound('battle', 'battle_start', 0.65, 1600),
     battle_end: sound('battle', 'battle_end', 0.55, 1600),

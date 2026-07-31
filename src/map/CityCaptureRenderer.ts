@@ -54,6 +54,10 @@ export class CityCaptureRenderer {
     }
 
     public playCaptureEffect(lat: number, lng: number, _factionColor: string) {
+        // [USER REQUEST] zoom <= 8（俯瞰全景）全局不生成任何占领烟雾粒子，与 SiegeEffectRenderer 的火焰/攻城烟雾保持一致
+        const currentZoom = (this.map as any).getLeafletMap?.()?.getZoom?.() ?? 9;
+        if (currentZoom <= 8) return;
+
         const particles: Particle[] = [];
         const particleCount = 70; // 2026-07-18 主人定：再浓一点（60→70，与 draw 的 0.5 alpha 配套）
 
@@ -99,6 +103,15 @@ export class CityCaptureRenderer {
     }
 
     private update() {
+        // [USER REQUEST] zoom <= 8 时清空所有活动特效，防止放大时半路冒出幽灵烟雾
+        const currentZoom = (this.map as any).getLeafletMap?.()?.getZoom?.() ?? 9;
+        if (currentZoom <= 8) {
+            if (this.activeEffects.length > 0) {
+                this.activeEffects = [];
+            }
+            return;
+        }
+
         // Update particles
         for (const effect of this.activeEffects) {
             for (const p of effect.particles) {
@@ -125,6 +138,10 @@ export class CityCaptureRenderer {
 
     private draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // [USER REQUEST] zoom <= 8（俯瞰全景）不显示占领烟雾特效，与 SiegeEffectRenderer 的火焰/攻城烟雾保持一致
+        const currentZoom = (this.map as any).getLeafletMap?.()?.getZoom?.() ?? 9;
+        if (currentZoom <= 8) return;
 
         // Use 'source-over' for normal alpha blending
         this.ctx.globalCompositeOperation = 'source-over';

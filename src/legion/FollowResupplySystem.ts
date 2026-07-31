@@ -13,7 +13,7 @@ import { GameConfig } from '../config/GameConfig';
 import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
-import { generalHasStrategicEffect, generalIdHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../combat/GeneralSkillCombat';
+import { generalIdHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../combat/GeneralSkillCombat';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 
 export class FollowResupplySystem {
@@ -21,8 +21,6 @@ export class FollowResupplySystem {
     /** armyId -> 当前在半径内且本段停留已补过的 cityId */
     private suppliedThisVisit = new Map<string, Set<string>>();
     private lastScanAt = 0;
-    /** 以战养战：军团累积待补兵力（小数部分保留） */
-    private fieldResupplyAccum = new Map<string, number>();
 
     constructor(cityManager: CityManager) {
         this.cityManager = cityManager;
@@ -30,59 +28,6 @@ export class FollowResupplySystem {
 
     public clearForArmy(armyId: string): void {
         this.suppliedThisVisit.delete(armyId);
-        this.fieldResupplyAccum.delete(armyId);
-    }
-
-    /**
-     * S⑬以战养战：远离己方据点时缓慢回血（全军团，不限跟拍）
-     * 速率 = 军团上限 × GameConfig.COMBAT.FIELD_RESUPPLY_RATE_PER_CAP_PER_SEC × 游戏秒
-     * 连战模拟 tick 窗口 = TIME.POST_BATTLE_REST（战后驻留 5 秒，无地图行军时）
-     */
-    public tickStrategicFieldResupply(army: Army, deltaTimeSec: number): void {
-        if (!GameConfig.SYSTEM.SANDBOX_MODE) return;
-        if (army.isDestroyed || army.getTroops() <= 0) return;
-        if (!generalIdHasStrategicEffect(army.generalId, 'field_resupply')) return;
-
-        const armyMax = getLegionTroopCap(army);
-        if (army.getTroops() >= armyMax) return;
-
-        const factionId = army.getFactionId();
-        if (!factionId || factionId === 'neutral' || factionId === 'panjun') return;
-
-        const pos = army.getPosition();
-        const radius = GameConfig.FOLLOW_RESUPPLY.PASS_RADIUS;
-        const nearFriendly = this.cityManager.getCitiesByFaction(factionId).some((city) => {
-            const dist = getEuclideanDistance(pos, {
-                lat: city.latitude,
-                lng: city.longitude,
-            });
-            return dist <= radius;
-        });
-        if (nearFriendly) return;
-
-        // S⑤坚壁清野（已迁移至 LegionManager.tickApproachAttrition，此处原 supply_halved 效果已废止）
-        let resupplyMult = 1;
-
-        const ratePerSec = armyMax * GameConfig.COMBAT.FIELD_RESUPPLY_RATE_PER_CAP_PER_SEC * resupplyMult;
-        const accum = (this.fieldResupplyAccum.get(army.id) ?? 0) + ratePerSec * deltaTimeSec;
-        if (accum < 1) {
-            this.fieldResupplyAccum.set(army.id, accum);
-            return;
-        }
-        const add = Math.floor(accum);
-        this.fieldResupplyAccum.set(army.id, accum - add);
-        army.setTroops(Math.min(armyMax, army.getTroops() + add));
-
-        // S十三以战养战 累积满 1000 发一次；飘字只给跟拍军团、只飘四字技名
-        const uiAccum = ((army as any).fieldResupplyUiAccum ?? 0) + add;
-        if (uiAccum >= 1000) {
-            (army as any).fieldResupplyUiAccum = 0;
-            gameLog('battle', `〔以战养战〕${army.generalId || '将领'}沿途就粮，恢复 +1,000`);
-            const pos = army.getPosition();
-            emitFollowedGeneralStrategicMapFx(army, 'field_resupply', pos.lat, pos.lng, 'float', { dedupeMs: 2000, dedupeKey: `${army.id}|field_resupply` });
-        } else {
-            (army as any).fieldResupplyUiAccum = uiAccum;
-        }
     }
 
     public update(army: Army): void {
@@ -138,6 +83,11 @@ export class FollowResupplySystem {
                     'followResupply',
                     `🎒 [补兵] ${army.name} 经【${city.name}】+${transferred}（军 ${army.getTroops()} / 城 ${city.troops}）`
                 );
+                // 调兵遣将脉冲（有技时比例 100% → 脉冲）
+                if (generalIdHasStrategicEffect(army.generalId, 'full_draft_resupply', army.id)) {
+                    const pos = army.getPosition();
+                    emitFollowedGeneralStrategicMapFx(army, 'full_draft_resupply', pos.lat, pos.lng, 'pulse', { dedupeMs: 3000, dedupeKey: `${army.id}|full_draft` });
+                }
             } else {
                 supplied.add(cityId);
             }
@@ -155,8 +105,10 @@ export class FollowResupplySystem {
 
         if (cityTroops <= minCity) return 0;
 
-        const half = Math.floor(cityTroops * cfg.TRANSFER_RATIO);
-        const maxFromCity = Math.min(half, cityTroops - minCity);
+        const ratio = generalIdHasStrategicEffect(army.generalId, 'full_draft_resupply', army.id)
+            ? 1.0
+            : cfg.TRANSFER_RATIO;
+        const maxFromCity = Math.min(Math.floor(cityTroops * ratio), cityTroops - minCity);
         const armyRoom = armyMax - army.getTroops();
         const amount = Math.min(maxFromCity, armyRoom);
 
