@@ -3,6 +3,13 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+  'aierlan': 'city_dublin',
+  'jialai': 'city_calais',
+  'bulietani': 'city_rennes',
+  'xixili': 'city_syracuse',
+  'luomaniya': 'city_bucharest',
+  'saierweiya': 'city_belgrade',
+
   'sugelan': 'city_aidingbao',
   'ruidian': 'city_wupusala',
   'yinggelan': 'city_lundun',

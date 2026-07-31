@@ -1939,6 +1939,13 @@ export const RESTORED_CITIES: CityDataV2[] = [
 // 汇总导出
 // ============================================================
 export const CITIES_V2: CityDataV2[] = [
+    { id: 'city_dublin', name: '都柏林', factionId: 'aierlan', lat: 53.34, lng: -6.26, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_calais', name: '加莱', factionId: 'jialai', lat: 50.95, lng: 1.85, type: 'small_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'small_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xixili', lat: 37.07, lng: 15.28, type: 'small_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'luomaniya', lat: 44.43, lng: 26.1, type: 'medium_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'medium_city', troops: 30000, region: 'SLAVIC' },
+
     { id: 'city_aidingbao', name: '爱丁堡', factionId: 'sugelan', lat: 55.95, lng: -3.18, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_wupusala', name: '乌普萨拉', factionId: 'ruidian', lat: 59.85, lng: 17.63, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
     { id: 'city_lundun', name: '伦敦', factionId: 'yinggelan', lat: 51.5, lng: -0.12, type: 'big_city', troops: 30000, region: 'GERMANIC' },
