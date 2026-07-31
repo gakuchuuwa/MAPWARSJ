@@ -37,6 +37,16 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    nuosi: { generalId: 'gen_city_wupusala', generalName: '乌普萨拉守将', portrait: '/assets/generals/city_wupusala.png' },
+    feiniqi: { generalId: 'gen_city_jiadisi', generalName: '加的斯守将', portrait: '/assets/generals/city_jiadisi.png' },
+    xila: { generalId: 'gen_city_yadian', generalName: '雅典守将', portrait: '/assets/generals/city_yadian.png' },
+    xilagu: { generalId: 'gen_city_syracuse', generalName: '锡拉库萨守将', portrait: '/assets/generals/city_syracuse.png' },
+    lading: { generalId: 'gen_city_luoma', generalName: '罗马守将', portrait: '/assets/generals/city_luoma.png' },
+    fulandesi: { generalId: 'gen_city_calais', generalName: '加莱守将', portrait: '/assets/generals/city_calais.png' },
+    gaolu: { generalId: 'gen_city_bali', generalName: '巴黎守将', portrait: '/assets/generals/city_bali.png' },
+    anggelu: { generalId: 'gen_city_lundun', generalName: '伦敦守将', portrait: '/assets/generals/city_lundun.png' },
+    piketai: { generalId: 'gen_city_aidingbao', generalName: '爱丁堡守将', portrait: '/assets/generals/city_aidingbao.png' },
+    gaer: { generalId: 'gen_city_dublin', generalName: '都柏林守将', portrait: '/assets/generals/city_dublin.png' },
     aierlan: { generalId: 'gen_brian_boru', generalName: '布赖恩', portrait: '/assets/generals/gen_brian_boru.png' },
     jialai: { generalId: 'gen_du_guesclin', generalName: '德盖克兰', portrait: '/assets/generals/gen_du_guesclin.png' },
     bulietani: { generalId: 'gen_alain_i', generalName: '阿兰一世', portrait: '/assets/generals/gen_alain_i.png' },

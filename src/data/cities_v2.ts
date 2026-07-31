@@ -1939,20 +1939,20 @@ export const RESTORED_CITIES: CityDataV2[] = [
 // 汇总导出
 // ============================================================
 export const CITIES_V2: CityDataV2[] = [
-    { id: 'city_dublin', name: '都柏林', factionId: 'aierlan', lat: 53.34, lng: -6.26, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_calais', name: '加莱', factionId: 'jialai', lat: 50.95, lng: 1.85, type: 'small_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_dublin', name: '都柏林', factionId: 'gaer', lat: 53.34, lng: -6.26, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_calais', name: '加莱', factionId: 'fulandesi', lat: 50.95, lng: 1.85, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'small_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xixili', lat: 37.07, lng: 15.28, type: 'small_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'luomaniya', lat: 44.43, lng: 26.1, type: 'medium_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xilagu', lat: 37.07, lng: 15.28, type: 'small_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_bucharest', name: '布加勒斯特', factionId: 'dajiya', lat: 44.43, lng: 26.1, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'medium_city', troops: 30000, region: 'SLAVIC' },
 
-    { id: 'city_aidingbao', name: '爱丁堡', factionId: 'sugelan', lat: 55.95, lng: -3.18, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_wupusala', name: '乌普萨拉', factionId: 'ruidian', lat: 59.85, lng: 17.63, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_lundun', name: '伦敦', factionId: 'yinggelan', lat: 51.5, lng: -0.12, type: 'big_city', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_bali', name: '巴黎', factionId: 'falanxi', lat: 48.85, lng: 2.35, type: 'big_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_luoma', name: '罗马', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_yadian', name: '雅典', factionId: 'yadian_chengbang', lat: 37.98, lng: 23.72, type: 'big_city', troops: 30000, region: 'LATIN' },
-    { id: 'city_jiadisi', name: '加的斯', factionId: 'keduowa', lat: 36.52, lng: -6.28, type: 'small_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_wupusala', name: '乌普萨拉', factionId: 'nuosi', lat: 59.85, lng: 17.63, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_lundun', name: '伦敦', factionId: 'anggelu', lat: 51.5, lng: -0.12, type: 'big_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_bali', name: '巴黎', factionId: 'gaolu', lat: 48.85, lng: 2.35, type: 'big_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_luoma', name: '罗马', factionId: 'lading', lat: 41.9, lng: 12.49, type: 'big_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'big_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_jiadisi', name: '加的斯', factionId: 'feiniqi', lat: 36.52, lng: -6.28, type: 'small_city', troops: 30000, region: 'LATIN' },
     { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', troops: 30000, region: 'LATIN' },
 
     { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'big_city', troops: 30000, region: 'GERMANIC' },
