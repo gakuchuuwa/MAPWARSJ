@@ -37,6 +37,22 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    pufaerci: { generalId: 'gen_ludwig_iv', generalName: '路德维希', portrait: '/assets/generals/gen_ludwig_iv.png' },
+    hansa: { generalId: 'gen_stortebeker', generalName: '克劳斯', portrait: '/assets/generals/gen_stortebeker.png' },
+    batawei: { generalId: 'gen_civilis', generalName: '西维利斯', portrait: '/assets/generals/gen_civilis.png' },
+    weijing_york: { generalId: 'gen_eric_bloodaxe', generalName: '血斧埃里克', portrait: '/assets/generals/gen_eric_bloodaxe.png' },
+    kanbuliya: { generalId: 'gen_uther_pendragon', generalName: '乌瑟', portrait: '/assets/generals/gen_uther_pendragon.png' },
+    nuowei: { generalId: 'gen_olaf_ii', generalName: '奥拉夫二世', portrait: '/assets/generals/gen_olaf_ii.png' },
+    gaolu_luoma: { generalId: 'gen_clovis_i', generalName: '克洛维一世', portrait: '/assets/generals/gen_clovis_i.png' },
+    aquidan: { generalId: 'gen_black_prince', generalName: '黑太子', portrait: '/assets/generals/gen_black_prince.png' },
+    puluowangsi: { generalId: 'gen_raymond_iv', generalName: '雷蒙四世', portrait: '/assets/generals/gen_raymond_iv.png' },
+    lunbadi: { generalId: 'gen_sforza', generalName: '斯福尔扎', portrait: '/assets/generals/gen_sforza.png' },
+    donggete: { generalId: 'gen_theodoric_great', generalName: '狄奥多里克', portrait: '/assets/generals/gen_theodoric_great.png' },
+    xigete: { generalId: 'gen_alfonso_vi', generalName: '阿方索六世', portrait: '/assets/generals/gen_alfonso_vi.png' },
+    andaluoxiya: { generalId: 'gen_abd_al_rahman_iii', generalName: '阿卜杜拉赫曼', portrait: '/assets/generals/gen_abd_al_rahman_iii.png' },
+    alagong: { generalId: 'gen_james_i_aragon', generalName: '海梅一世', portrait: '/assets/generals/gen_james_i_aragon.png' },
+    shaiyue: { generalId: 'gen_dobo_istvan', generalName: '多博伊', portrait: '/assets/generals/gen_dobo_istvan.png' },
+
     nuosi: { generalId: 'gen_city_wupusala', generalName: '乌普萨拉守将', portrait: '/assets/generals/city_wupusala.png' },
     feiniqi: { generalId: 'gen_city_jiadisi', generalName: '加的斯守将', portrait: '/assets/generals/city_jiadisi.png' },
     xila: { generalId: 'gen_city_yadian', generalName: '雅典守将', portrait: '/assets/generals/city_yadian.png' },
