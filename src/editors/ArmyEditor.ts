@@ -51,6 +51,9 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     JAPAN:        'ashikaga',  // 室町-京都 → 足利
     CENTRAL_ASIA: 'seljuq',    // 中亚-木鹿(梅尔夫) → 塞尔柱
     WEST_ASIA:    'baizhanting', // 西亚-君士坦丁堡 → 拜占庭
+    SLAVIC:       'luosi',       // 斯拉夫-基辅 → 罗斯
+    GERMANIC:     'falanji',     // 日耳曼-巴黎 → 法兰克
+    LATIN:        'luoma_diguo', // 拉丁-罗马 → 罗马帝国
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

@@ -72,6 +72,17 @@ function markBatchSaveWrite(): void {
     batchSaveSuppressReloadUntil = Date.now() + 5000;
 }
 
+// ── 直播闸门（2026-08-01 主人定）────────────────────────────────────────────
+// 左下角「直播」开着 → 改文件不整页刷新；主人手动点关直播 → 改文件立刻刷新，
+// 并把直播期间积压的那一次立即补上。状态由页面每 5 秒续期上报（src/dev/ReloadGate.ts）。
+// 用「续期到期时间」而不是布尔值：页面关掉后没人续期，15 秒后自动开闸，
+// 否则关掉浏览器就等于把 dev server 的刷新永久焊死。
+let liveGateUntil = 0;
+let liveGateQueuedReload = false;
+function isLiveGateClosed(): boolean {
+    return Date.now() < liveGateUntil;
+}
+
 // ============================================================
 // [NEW 2026-05-29] 自动 git 备份: 一天 1 次
 //   策略:
@@ -194,9 +205,45 @@ export default defineConfig({
                         return;
                     }
                     pendingBatchReloadTimer = null;
+                    // 直播中则不补发，转交直播闸门排队，等主人点关直播再刷
+                    if (isLiveGateClosed()) {
+                        liveGateQueuedReload = true;
+                        console.log('[HMR-Suppress] 批量保存窗口结束，但直播中 → 转由直播闸门排队');
+                        return;
+                    }
                     console.log('[HMR-Suppress] 批量保存窗口结束，自动补发整页刷新');
                     origSend({ type: 'full-reload' });
                 };
+                // 直播闸门：页面上报「现在能不能刷」。block=true 续期 15 秒，false 立即开闸补发。
+                const openLiveGate = (): void => {
+                    liveGateUntil = 0;
+                    if (liveGateQueuedReload) {
+                        liveGateQueuedReload = false;
+                        console.log('[HMR-Suppress] 直播已关闭，补发直播期间积压的整页刷新');
+                        origSend({ type: 'full-reload' });
+                    }
+                };
+                server.middlewares.use('/__dev/reload-gate', (req, res) => {
+                    let body = '';
+                    req.on('data', (chunk) => { body += chunk; });
+                    req.on('end', () => {
+                        let block = false;
+                        try {
+                            block = JSON.parse(body || '{}').block === true;
+                        } catch {
+                            // 上报体损坏时按「放行」处理，宁可多刷一次也别焊死闸门
+                        }
+                        if (block) liveGateUntil = Date.now() + 15_000;
+                        else openLiveGate();
+                        res.statusCode = 204;
+                        res.end();
+                    });
+                });
+                // 页面被关掉/崩了就没人续期了，到期后把积压的那次补发出去
+                setInterval(() => {
+                    if (liveGateQueuedReload && !isLiveGateClosed()) openLiveGate();
+                }, 2000).unref?.();
+
                 server.ws.send = (payload: unknown) => {
                     if (
                         typeof payload === 'object'
@@ -206,6 +253,11 @@ export default defineConfig({
                         const now = Date.now();
                         const inPortrait = now < portraitDevSuppressReloadUntil;
                         const inBatch = now < batchSaveSuppressReloadUntil;
+                        if (!inPortrait && !inBatch && isLiveGateClosed()) {
+                            liveGateQueuedReload = true;
+                            console.log('[HMR-Suppress] 已拦截整页刷新（直播中；点关左下角「直播」即刷新）');
+                            return;
+                        }
                         if (inPortrait || inBatch) {
                             if (inBatch && !inPortrait) {
                                 if (pendingBatchReloadTimer) clearTimeout(pendingBatchReloadTimer);

@@ -7,9 +7,18 @@
  *   保留：播放/倍速、日期条、军情面板、军团列表、势力榜、跟拍横幅、远征 UI
  *
  * 状态存 localStorage（mapwar-stream-mode），刷新后保持。
+ *
+ * 【2026-08-01 主人定】这个按钮同时兼任「开发期自动刷新」的总开关：
+ *   直播开着 → 改文件不整页刷新（刷新会炸掉正在播的画面）
+ *   手动点关 → 改文件立刻刷新
+ * 选择写进 DEV_AUTOREFRESH_KEY 并跨刷新保留，否则 UnattendedStream 会在 10 秒后
+ * 自动把直播点回来（见该文件 autoStart），开关等于永远锁死。
+ * 闸门的实际拦截在 vite.config.ts 的 suppress-portrait-dev-hmr 里，由 src/dev/ReloadGate.ts 上报。
  */
 
 const STORAGE_KEY = 'mapwar-stream-mode';
+/** '1' = 开发期允许自动整页刷新（即主人手动关掉了直播） */
+export const DEV_AUTOREFRESH_KEY = 'mapwar-dev-autorefresh';
 const STYLE_ID = 'stream-mode-style';
 const BTN_ID = 'stream-mode-btn';
 
@@ -59,6 +68,8 @@ export class StreamModeToggle {
     private static apply(on: boolean): void {
         document.body.classList.toggle('stream-mode', on);
         localStorage.setItem(STORAGE_KEY, on ? '1' : '0');
+        // 直播关掉 = 主人在改东西，放行自动刷新；直播开着 = 别打扰画面
+        localStorage.setItem(DEV_AUTOREFRESH_KEY, on ? '0' : '1');
         if (this.button) {
             this.button.textContent = on ? '📺 直播中' : '直播';
             this.button.style.color = on ? '#e8b25a' : '';
