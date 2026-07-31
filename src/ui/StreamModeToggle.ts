@@ -56,14 +56,6 @@ export class StreamModeToggle {
         return document.body.classList.contains('stream-mode');
     }
 
-    /**
-     * 刷新前是否处于直播态（localStorage 持久，apply 时写入）。
-     * 用于刷新后自动恢复开播——边修边播时刷新页面不必再手点「直播」，避免被观众当挂机。
-     */
-    public static wasActive(): boolean {
-        return localStorage.getItem(STORAGE_KEY) === '1';
-    }
-
     private static apply(on: boolean): void {
         document.body.classList.toggle('stream-mode', on);
         localStorage.setItem(STORAGE_KEY, on ? '1' : '0');
@@ -73,7 +65,6 @@ export class StreamModeToggle {
         }
         if (on) {
             const game = (window as any).game;
-            game?.map?.getLeafletMap?.()?.setZoom(10);
             game?.cameraFollowUI?.openList?.();
             if (game?.historicalEventManager) {
                 const isPlaying = game.historicalEventManager.togglePlayback();

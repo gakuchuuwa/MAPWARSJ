@@ -62,8 +62,9 @@ export function setupGameAppMapListeners(app: GameApp): void {
 
     const leaflet = app.map?.getLeafletMap?.();
     if (leaflet) {
+        // move 期间仍需通知（使镜头跟随途中旗号也能上色）；zoom 迁到 zoomend 避免动画中间帧密集扫全城
         leaflet.on('move', () => CityAssetManager.notifyMapInteraction());
-        leaflet.on('zoom', () => CityAssetManager.notifyMapInteraction());
+        leaflet.on('zoomend', () => CityAssetManager.notifyMapInteraction());
     }
 
     // UI 点击仅用于解锁音频上下文，不播放音效

@@ -80,6 +80,26 @@ export const HISTORICAL_REGIONS: HistoricalRegion[] = [
         blendStrength: 0.55,
         elevMin: 900, elevMax: 2000
     },
+    {
+        id: 'qattara_depression',
+        name: '卡塔拉洼地',
+        type: 'desert',
+        center: [29.5, 27.5],
+        radii: [1.2, 2.2],
+        color: [225, 205, 155],  // 撒哈拉沙漠低地沙黄
+        blendStrength: 0.85,
+        elevMin: -150, elevMax: 0
+    },
+    {
+        id: 'turpan_depression',
+        name: '吐鲁番盆地',
+        type: 'desert',
+        center: [42.7, 89.2],
+        radii: [0.6, 1.2],
+        color: [230, 210, 160],  // 西域吐鲁番干旱盆地色
+        blendStrength: 0.85,
+        elevMin: -160, elevMax: 200
+    },
 
     // === 湿地/古湖 ===
     {

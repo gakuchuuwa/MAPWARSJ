@@ -97,7 +97,9 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     wang_d: { name: '却月阵兵', tier: 2 },
     yansui: { name: '榆林铁骑', tier: 4 },
     wudu: { name: '阴平先锋', tier: 2 },
-    daxi_ming: { name: '大西老营', tier: 1 },
+    daxi_ming: { name: '大西老营', tier: 2 },
     pingnan: { name: '平南镇营', tier: 3 },
     li_s: { name: '大汉伏波', tier: 2 },
+    jibei: { name: '泰山兵', tier: 3 },
+    yangguan: { name: '西凉锐骑', tier: 2 },
 };

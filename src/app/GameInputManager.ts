@@ -135,7 +135,7 @@ export class GameInputManager {
                 case 'd': map.panBy([step, 0]); break;
                 case 'p': PerformanceMonitor.getInstance().logSnapshot(); break;
                 case 'x':
-                    // [DEV] 快速测试远征：把当前跟随军团补到 4.5 万（生产构建自动剔除）
+                    // [DEV] 快速测试远征：把当前跟随军团补到 5.5 万（生产构建自动剔除）
                     if (import.meta.env.DEV) this.devBoostFollowedArmyForExpedition();
                     break;
                 case 'v':
@@ -176,7 +176,7 @@ export class GameInputManager {
     }
 
     /**
-     * [DEV ONLY] 按 X：把当前跟随的军团补到 4.5 万（只增兵、不代设目标），用于观察是否自动远征。
+     * [DEV ONLY] 按 X：把当前跟随的军团补到 5.5 万（只增兵、不代设目标），用于观察是否自动远征。
      * 仅在开发模式生效；生产构建时 import.meta.env.DEV 为 false，此调用被 Rollup 剔除。
      */
     private devBoostFollowedArmyForExpedition(): void {

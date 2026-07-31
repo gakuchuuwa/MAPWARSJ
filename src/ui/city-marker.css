@@ -2,6 +2,10 @@
 
 .city-image-container {
     position: relative;
+    /* [PERF] 缩放由父级 cityPane 的 --city-scale 变量驱动，
+       避免 updateCityScales 每帧对 600+ marker 逐个写 transform */
+    transform: scale(var(--city-scale, 1));
+    transform-origin: 50% 50%;
 }
 
 .city-image-container .city-building-stack {

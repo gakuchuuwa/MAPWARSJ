@@ -5,6 +5,8 @@
  * [OPTIMIZED] 使用 OffscreenCanvas 在 Worker 中读取像素，避免主线程阻塞
  */
 
+import { isWaterPixel } from '../world/land-sea/WaterMask';
+
 export interface RiverWorkerRequest {
     id: number;
     width: number;
@@ -44,14 +46,11 @@ self.onmessage = (e: MessageEvent<RiverWorkerRequest>) => {
     const isRiver = new Uint8Array(width * height);
 
     // 1. 识别水域像素
-    // [FIX] 收紧水域检测条件，防止山体阴影被误判为水域
-    // 条件：蓝色差值 +8，最低蓝色值 80，亮度范围 70-210
+    // [REFINE 2026-07-27] 精进微调水色彩度(Blue Dominance > 15)，彻底净化欧洲与日本阴影死角
+    // [2026-07-28] 判据搬到 WaterMask.ts 共用：游戏的海陆判定（骑兵走不走水路）现在读同一份
+    // 数据，这里画出来的描边就是那条分界线。要调阈值只改 WaterMask.ts，别在这里另写一套。
     for (let i = 0; i < len; i += 4) {
-        const r = esriData[i], g = esriData[i + 1], b = esriData[i + 2];
-        const brightness = (r + g + b) / 3;
-
-        // 水域特征：蓝色占优，亮度适中（非阴影），非纯白
-        if (b > r + 8 && b > g + 8 && b > 80 && brightness > 70 && brightness < 210 && (r < 250 || g < 250 || b < 250)) {
+        if (isWaterPixel(esriData[i], esriData[i + 1], esriData[i + 2])) {
             isRiver[i / 4] = 1;
         }
     }

@@ -27,6 +27,27 @@ export class GameMap {
     private isVectorRiverEnabled: boolean = true; // [FIX] Track explicit enabled state
     private useGCJ02: boolean = true; // [NEW] Default to true for offset logic
     private currentYear: number = -236; // [NEW] Track year for temporal filtering
+    /** 山体 zoom：单级立刻 apply；连滚 250ms 内合并，停稳再对齐最终级（同 zoom 不 redraw） */
+    private hillshadeZoomDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+    private hillshadeZoomBurstActive = false;
+    private lastHillshadeAppliedZoom: number | null = null;
+    private static readonly HILLSHADE_ZOOM_DEBOUNCE_MS = 250;
+    /**
+     * 河流用 GCJ-02 偏移组的最大 zoom（超过则用 WGS-84 原始组）。
+     *
+     * [PERF 2026-07-27] 原值 9 —— 而行军是 9、战斗是 10，**每一次战斗切换都正好跨过这条分界**，
+     * 触发 VectorRiverLayer 整层换组：clearLayers + addLayer 让 Leaflet 把每条河的每个顶点
+     * 重新投影并重建 SVG 路径。探针实测这一下 792ms（换组 327ms + 两组重设样式 465ms），
+     * 就是"缩放一瞬间卡"的主因。
+     *
+     * 改为 12 后 8/9/10/11 全用同一组，热路径不再换组。
+     * 底图是 Google 中国地形图（GCJ-02），所以偏移组才是对齐正确的那一组。
+     * 若觉得 zoom 10+ 的河流位置变了不好看，把这里改回 9 即可复原（代价是卡顿回来）。
+     */
+    private static readonly RIVER_OFFSET_MAX_ZOOM = 12;
+    private hillshadePrefetchTimer: ReturnType<typeof setTimeout> | null = null;
+    /** 预取要等镜头稳下来再发，别和当前层级的可见瓦片抢同一个域的连接 */
+    private static readonly HILLSHADE_PREFETCH_DELAY_MS = 2500;
 
     constructor(containerId: string) {
         this.containerId = containerId;
@@ -40,7 +61,7 @@ export class GameMap {
         // 初始化
         this.map = L.map(containerId, {
             center: [lat, lng],
-            zoom: 9,
+            zoom: 8,
             minZoom: 4,  // [UPDATE] Macro view enabled
             maxZoom: 13, // [UPDATE] Detailed view enabled
             zoomSnap: 1,
@@ -50,17 +71,19 @@ export class GameMap {
             doubleClickZoom: false // [FIX] 禁用双击放大
         });
 
-        const updateZFactor = () => {
+        const applyHillshadeForZoom = () => {
             if (!this.hillshadeLayer) return;
             const zoom = this.map.getZoom();
+            // 同级再调（单级 trailing）→ setParams 本也不 redraw；此处直接跳过，避免无意义日志/UI 写
+            if (this.lastHillshadeAppliedZoom === zoom) return;
+
             const targetZ = this.getZFactor(zoom);
             const targetAlt = this.getAltitude(zoom);
             const targetOpacity = this.getShadowOpacity(zoom);
 
-            // Apply to layer
             this.hillshadeLayer.setParams({ zFactor: targetZ, altitude: targetAlt, shadowOpacity: targetOpacity });
+            this.lastHillshadeAppliedZoom = zoom;
 
-            // Sync UI
             const rngZ = document.getElementById('rng-z') as HTMLInputElement;
             const valZ = document.getElementById('val-z');
             if (rngZ) rngZ.value = targetZ.toFixed(1);
@@ -79,8 +102,31 @@ export class GameMap {
             console.log(`🏔️ Auto-adjusted Hillshade (Zoom:${zoom}) Z=${targetZ} Alt=${targetAlt}° Opacity=${targetOpacity}`);
         };
 
-        // [NEW] Auto-adjust Hillshade Z-Factor based on Zoom
-        this.map.on('zoomend', updateZFactor);
+        // 领先立刻 + 拖尾合并：单级不在 250ms 后再炸一次；连滚只在首击与停稳各最多一次 redraw
+        const updateZFactor = () => {
+            if (!this.hillshadeZoomBurstActive) {
+                this.hillshadeZoomBurstActive = true;
+                applyHillshadeForZoom();
+            }
+            if (this.hillshadeZoomDebounceTimer != null) {
+                clearTimeout(this.hillshadeZoomDebounceTimer);
+            }
+            this.hillshadeZoomDebounceTimer = setTimeout(() => {
+                this.hillshadeZoomDebounceTimer = null;
+                this.hillshadeZoomBurstActive = false;
+                applyHillshadeForZoom(); // 连滚最终级；若与领先时同 zoom 则内部直接 return
+            }, GameMap.HILLSHADE_ZOOM_DEBOUNCE_MS);
+        };
+
+        this.map.on('zoomend', () => {
+            updateZFactor();
+            // 后台预取相邻 zoom 的高程数据：延后到镜头稳定，避免和当前层级的可见瓦片抢连接
+            if (this.hillshadePrefetchTimer != null) clearTimeout(this.hillshadePrefetchTimer);
+            this.hillshadePrefetchTimer = setTimeout(() => {
+                this.hillshadePrefetchTimer = null;
+                this.hillshadeLayer?.prefetchAdjacentZoom(this.map.getZoom(), this.map);
+            }, GameMap.HILLSHADE_PREFETCH_DELAY_MS);
+        });
 
         // 缩放控件已并入左下 #game-time-hud（GameTimeHUD）
 
@@ -104,8 +150,8 @@ export class GameMap {
         const vectorRiverPane = this.map.getPane('vectorRiverPane');
         if (vectorRiverPane) {
             vectorRiverPane.style.zIndex = '335'; // 低于 riverPane(340)
-            // [VISUAL FIX] Revert blend mode for visibility, keep slight transparency
-            vectorRiverPane.style.opacity = '0.85';
+            // 半透明融入 ESRI 宽河道，脊线效果
+            vectorRiverPane.style.opacity = '0.80';
         }
 
 
@@ -182,10 +228,8 @@ export class GameMap {
 
     private getZFactor(zoom: number): number {
         if (zoom <= 7) return 15.0;
-        else if (zoom <= 8) return 25.0;
-        else if (zoom <= 9) return 30.0;
-        else if (zoom <= 10) return 35.0;
-        else if (zoom <= 11) return 40.0;
+        // 8-11 统一 30：避免 zoom 切换时 zFactor 变化触发 HillshadeLayer 全量瓦片重建
+        else if (zoom <= 11) return 30.0;
         else if (zoom <= 12) return 45.0;
         else return 50.0;
     }
@@ -262,15 +306,25 @@ export class GameMap {
         };
 
         if (sourceKey === 'LOCAL') {
-            // [OPTIMIZED] Pure Procedural Mode
-            // No local image tiles are loaded. The map relies entirely on HillshadeLayer (elevation data).
-            // This offers the best performance and "clean historical" look.
-
             this.currentSourceKey = sourceKey;
 
-            // We don't add any L.tileLayer here. 
-            // The visual content will be provided by HillshadeLayer (zIndex 2).
-            // Leaflet handles panning/zooming via its internal container.
+            // 加载本地 Google Terrain 512px 瓦片（zoom 8–11，四级全覆盖）
+            // 瓦片缺失时透明兜底，不显示裂图，由 HillshadeLayer 补位
+            const terrainPath = 'Google Terrain Maps without labels  roads and POI  512px';
+            this.currentTileLayer = L.tileLayer(
+                `/{z}dixingtu/${terrainPath}/{x}/{y}.jpg`,
+                {
+                    tileSize: 512,
+                    minZoom: 8,
+                    maxZoom: 11,
+                    minNativeZoom: 8,
+                    maxNativeZoom: 11,
+                    keepBuffer: 4,            // [OPTIMIZATION] 缓存上下左右 4 级瓦片，消除频繁切换与飞行的白块
+                    updateWhenZooming: false, // [OPTIMIZATION] 缩放动画中保留上一层级瓦片不立刻释放，维持连续性
+                    errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+                }
+            );
+            this.currentTileLayer.addTo(this.map);
         } else {
             this.currentSourceKey = sourceKey;
             this.currentTileLayer = L.tileLayer(tileUrl, layerOptions);
@@ -309,7 +363,9 @@ export class GameMap {
                 this.hillshadeLayer = new HillshadeLayer({
                     zIndex: 2,
                     maxZoom: 18,
-                    azimuth: 305  // 偏西光照，更好突出东亚东西向山脉（秦岭、昆仑）
+                    azimuth: 305,  // 偏西光照，更好突出东亚东西向山脉（秦岭、昆仑）
+                    altitude: 45,  // 与 getAltitude() 对齐，避免首次 zoomend 触发全量重建
+                    zFactor: 30,   // 与 getZFactor(8-11) 对齐，避免开机即 redraw
                 });
             }
             if (!this.map.hasLayer(this.hillshadeLayer)) {
@@ -346,7 +402,7 @@ export class GameMap {
         if (!this.vectorRiverLayer || !this.isVectorRiverEnabled) return;
 
         const zoom = Math.floor(this.map.getZoom());
-        const shouldShow = !isMacroMapZoom(zoom) && zoom >= 9 && zoom <= 12;
+        const shouldShow = !isMacroMapZoom(zoom) && zoom >= 8 && zoom <= 12;
 
         if (shouldShow) {
             if (!this.map.hasLayer(this.vectorRiverLayer)) {
@@ -358,7 +414,7 @@ export class GameMap {
                 if (this.riverLayer) this.riverLayer.bringToFront();
             }
             this.vectorRiverLayer.updateStyle(zoom);
-            this.vectorRiverLayer.setOffsetMode(zoom <= 9);
+            this.vectorRiverLayer.setOffsetMode(zoom <= GameMap.RIVER_OFFSET_MAX_ZOOM);
         } else {
             if (this.map.hasLayer(this.vectorRiverLayer)) {
                 this.map.removeLayer(this.vectorRiverLayer);
@@ -455,6 +511,7 @@ export class GameMap {
                 div.style.fontFamily = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
                 div.style.color = '#5b7a66';
                 div.style.maxHeight = '85vh';
+                div.style.width = '150px';
                 div.style.overflowY = 'auto';
                 
                 let html = `
@@ -569,6 +626,11 @@ export class GameMap {
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#795548;margin-top:4px;">
                         <input type="checkbox" id="chk-city-texture" checked> 
                         <b>🏯 开启城市贴图</b>
+                    </label>
+
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#e65100;margin-top:4px;">
+                        <input type="checkbox" id="chk-auto-zoom" checked> 
+                        <b>🔍 自动缩放</b>
                     </label>
 
 
@@ -824,6 +886,16 @@ export class GameMap {
                     window.dispatchEvent(new CustomEvent('toggle-city-texture', {
                         detail: { visible: e.target.checked }
                     }));
+                });
+            }
+
+            const chkAutoZoom = document.getElementById('chk-auto-zoom') as HTMLInputElement;
+            if (chkAutoZoom) {
+                chkAutoZoom.addEventListener('change', (e: any) => {
+                    const game = (window as any).game;
+                    if (game?.zoomController) {
+                        game.zoomController.enabled = !!e.target.checked;
+                    }
                 });
             }
 

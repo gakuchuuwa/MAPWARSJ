@@ -78,6 +78,13 @@ export class SimpleVectorRoadRenderer {
     }
 
     public render(): void {
+        // 隐藏时 layerGroup 已从地图摘下，重建出来的 polyline 没人看得见。
+        // 线上默认关闭道路层，却仍在每次 zoomend 全量重绘（自注释 ~40ms）。
+        if (!this.visible) {
+            this.layerGroup.clearLayers();
+            this.lastRenderedYearSignature = null; // 下次显示时强制重绘
+            return;
+        }
         this.layerGroup.clearLayers();
         // 记录本次重绘对应的可见路网签名，供 setYear 判断「年份变了但路网没变」跳过重绘
         this.lastRenderedYearSignature = this.computeYearSignature(this.currentYear);
@@ -138,11 +145,14 @@ export class SimpleVectorRoadRenderer {
 
 
     public toggle(show: boolean): void {
+        const wasVisible = this.visible;
         this.visible = show;
         if (show) {
             if (!this.map.hasLayer(this.layerGroup)) {
                 this.map.addLayer(this.layerGroup);
             }
+            // 隐藏期间 render() 是空转，图层里没有内容——重新显示时补画一次
+            if (!wasVisible) this.render();
         } else {
             if (this.map.hasLayer(this.layerGroup)) {
                 this.map.removeLayer(this.layerGroup);

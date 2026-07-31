@@ -4,7 +4,7 @@
  * 用途：直播若干小时打下一片江山后存档，次日读档接着打，而非从头重开。
  *
  * 【设计要点】
- * 1. 档名只用日期（YYYY-MM-DD），同一天覆盖同一个档；自动存档每 10 分钟覆盖当天档。
+ * 1. 档名只用日期（YYYY-MM-DD），同一天覆盖同一个档；自动存档最小间隔 10 分钟，全图无战斗时才存。
  * 2. 恢复永远由人主动触发——绝不在刷新时自动读档（修 bug 的刷新就是要干净重开）。
  * 3. 军团重建【不走 LegionManager.createArmy】：那是募兵生成函数，内含
  *    军团上限拦截 / 兵力钳制 / MIN_ARMY_SIZE 丢弃 / 精锐与将领重掷，
@@ -20,6 +20,7 @@ import { Army } from '../legion/Army';
 import { SpatialRegistry } from '../world/SpatialRegistry';
 import { gameLog } from '../utils/GameLogger';
 import { applyLegionCultureComposition } from '../types/CultureFormations';
+import { CameraFollowUI, type HistoricalStreakRecord } from '../ui/CameraFollowUI';
 
 const SAVE_PREFIX = 'mapwar-save-';
 const SAVE_VERSION = 1;
@@ -30,6 +31,18 @@ const AUTO_SAVE_INTERVAL_MS = 10 * 60_000;
  * 会在 10 分钟内把当天辛苦打下的手动存档覆盖成空世界。手动存档必须只由人点「存档」才写。
  */
 const AUTO_SLOT_KEY = SAVE_PREFIX + 'auto';
+/**
+ * 自动存档【轮转档位】（主人 2026-07-31 定）：auto-1 … auto-5 轮流写，每次挑最旧的覆盖。
+ * 原来只有 AUTO_SLOT_KEY 一个位，写坏一次就没了 —— 边修边播时重启频繁，
+ * 一个刚重启的空世界就能把几小时的成果盖掉。轮转后即使连踩 4 次，最老那份仍在。
+ * 存档是纯 JSON（几百据点 + 若干军团，几十 KB），5 份对 localStorage 毫无压力。
+ */
+const AUTO_SLOT_COUNT = 5;
+const autoSlotKey = (i: number): string => `${AUTO_SLOT_KEY}-${i}`;
+/** 启动后多久内不自动存档：给"改代码→刷新→再改"的循环留出窗口 */
+const AUTO_SAVE_STARTUP_GRACE_MS = AUTO_SAVE_INTERVAL_MS;
+/** 超过此时长仍因"有战斗"存不上，就强制存一次（战斗中存档允许不精确还原） */
+const AUTO_SAVE_FORCE_AFTER_MS = 30 * 60_000;
 
 export interface CitySnapshot {
     id: string;
@@ -69,6 +82,8 @@ export interface GameSave {
     season: number;
     cities: CitySnapshot[];
     armies: ArmySnapshot[];
+    /** 全局历史最高连胜纪录（即使军团阵亡也永久保留） */
+    maxWinStreak?: HistoricalStreakRecord | null;
 }
 
 export interface SaveMeta {
@@ -130,6 +145,7 @@ export class GameSaveManager {
             season: app.timeSystem.getSeason(),
             cities,
             armies,
+            maxWinStreak: CameraFollowUI.historicalMaxStreak,
         };
     }
 
@@ -145,6 +161,9 @@ export class GameSaveManager {
         // 1. 纪年
         app.timeSystem.setYear(save.year);
         if (save.season !== undefined) app.timeSystem.setSeason(save.season);
+
+        // 1.5 恢复全局历史最高连胜纪录（比军团重建更早，避免 updateTopStats 覆盖）
+        CameraFollowUI.historicalMaxStreak = save.maxWinStreak ?? null;
 
         // 2. 据点归属与驻军（读档非占城，抑制特效；据点已从数据中移除的条目跳过）
         let cityHit = 0;
@@ -222,14 +241,65 @@ export class GameSaveManager {
     public saveToSlot(): string {
         const save = this.snapshot();
         localStorage.setItem(SAVE_PREFIX + save.date, JSON.stringify(save));
-        gameLog('world', `💾 [存档] ${save.date}：据点 ${save.cities.length} · 军团 ${save.armies.length}`);
+        const t = new Date(save.savedAt);
+        const hhmmss = t.toTimeString().slice(0, 8);
+        gameLog('world',
+            `💾 [手动存档] ${save.date} ${hhmmss} | 纪年 ${save.year} · ` +
+            `据点 ${save.cities.length} · 军团 ${save.armies.length}`);
         return save.date;
     }
 
-    /** 【自动】写独立自动档位，永不触碰手动日期档（防刷新后的空世界覆盖当天江山）。 */
-    private saveToAutoSlot(): void {
+    /** 读某个自动档位的元信息（坏档/空位返回 null） */
+    private readAutoSlot(key: string): GameSave | null {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? (JSON.parse(raw) as GameSave) : null;
+        } catch { return null; }
+    }
+
+    /** 世界进度序（纪年 × 4 + 季），用于判断"是不是倒退了" */
+    private static progressOrd(s: Pick<GameSave, 'year' | 'season'>): number {
+        return s.year * 4 + (s.season ?? 0);
+    }
+
+    /**
+     * 【自动】轮转写入 auto-1…auto-5，挑最旧的位覆盖，永不触碰手动日期档。
+     * 另加「进度倒退保护」：若最新自动档的纪年明显领先当前世界，说明这是刚重启的新局，
+     * 直接跳过本次写入，避免几小时的成果被空世界盖掉。等这局打过旧档进度后自动恢复覆盖。
+     */
+    private saveToAutoSlot(): boolean {
         const save = this.snapshot();
-        localStorage.setItem(AUTO_SLOT_KEY, JSON.stringify(save));
+
+        // ── 进度倒退保护 ──
+        let newest: { key: string; save: GameSave } | null = null;
+        const slots: { key: string; save: GameSave | null }[] = [];
+        for (let i = 1; i <= AUTO_SLOT_COUNT; i++) {
+            const key = autoSlotKey(i);
+            const s = this.readAutoSlot(key);
+            slots.push({ key, save: s });
+            if (s && (!newest || s.savedAt > newest.save.savedAt)) newest = { key, save: s };
+        }
+        if (newest) {
+            const ahead = GameSaveManager.progressOrd(newest.save) - GameSaveManager.progressOrd(save);
+            if (ahead > 0) {
+                gameLog('world',
+                    `⏭️ [自动存档] 跳过：现有自动档已到 ${newest.save.year} 年，` +
+                    `当前世界才 ${save.year} 年（疑似刚重启的新局，不覆盖）`);
+                return false;
+            }
+        }
+
+        // ── 挑最旧的位写（空位优先） ──
+        const empty = slots.find((s) => !s.save);
+        const target = empty
+            ?? slots.reduce((a, b) => (a.save!.savedAt <= b.save!.savedAt ? a : b));
+        localStorage.setItem(target.key, JSON.stringify(save));
+        const t = new Date(save.savedAt);
+        const hhmm = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+        gameLog('world',
+            `💾 [自动存档] ${save.date} ${hhmm} → ${target.key.replace(SAVE_PREFIX, '')}` +
+            ` | 纪年 ${save.year} · 据点 ${save.cities.length} · 军团 ${save.armies.length}`);
+        return true;
     }
 
     /** 列出全部存档（按日期倒序，新的在前） */
@@ -247,13 +317,15 @@ export class GameSaveManager {
                     year: s.year,
                     cityCount: s.cities?.length ?? 0,
                     armyCount: s.armies?.length ?? 0,
-                    isAuto: key === AUTO_SLOT_KEY,
+                    // 认 auto / auto-1…auto-5（含旧版单档位，读旧档不丢）
+                    isAuto: key.startsWith(AUTO_SLOT_KEY),
                 });
             } catch { /* 坏档跳过，不阻断列表 */ }
         }
-        // 自动档恒排最前（最近状态），其余手动日期档按日期倒序
+        // 自动档恒排最前（最近状态）；自动档之间按存档时刻倒序，手动档按日期倒序
         return out.sort((a, b) => {
             if (a.isAuto !== b.isAuto) return a.isAuto ? -1 : 1;
+            if (a.isAuto) return (b.savedAt ?? '').localeCompare(a.savedAt ?? '');
             return b.date.localeCompare(a.date);
         });
     }
@@ -289,18 +361,47 @@ export class GameSaveManager {
         return save;
     }
 
-    // ── 自动存档（10 分钟覆盖当天档；只存不读） ──────────────
+    // ── 自动存档（最小间隔 10 分钟；只在全图无战斗时存） ──────
+
+    /** 天下太平？全图无军团在交战、无攻城在进行 */
+    private isWorldAtPeace(): boolean {
+        // 野战
+        const fields = this.app.combatSystem?.getActiveBattleFields?.();
+        if (fields && fields.length > 0) return false;
+        // 攻城（含排队中）
+        const lm = this.getLegionManager();
+        if (lm) {
+            for (const a of lm.getArmies()) {
+                if (!a.isDestroyed && a.getIsInCombat()) return false;
+            }
+        }
+        return true;
+    }
 
     public startAutoSave(): void {
         if (this.autoTimer !== null) return;
+        // ⚠️ 必须初始化成"现在"，不能是 0。
+        //    原来是 0 → Date.now()-0 是个天文数字 → 第一次 tick（启动后 5 秒）必定通过间隔闸；
+        //    而刚重启时全图必然无战斗，于是空世界在 5 秒内就把自动档盖了。
+        let lastSave = Date.now();
         this.autoTimer = window.setInterval(() => {
             try {
-                this.saveToAutoSlot();
+                const now = Date.now();
+                if (now - lastSave < AUTO_SAVE_INTERVAL_MS) return;
+                // 90% 的战斗是攻城战，若一直有仗打，「全图无战斗」可能几小时都不成立 →
+                // 超过 FORCE 时长就不再等太平，直接存（战斗中存档允许不精确还原，见文件头说明）
+                const forced = now - lastSave >= AUTO_SAVE_FORCE_AFTER_MS;
+                if (!forced && !this.isWorldAtPeace()) return;
+                if (this.saveToAutoSlot()) lastSave = now;
+                else lastSave = now;   // 被倒退保护跳过也要重置，避免每 5 秒刷一次日志
             } catch (e) {
                 gameLog('world', `⚠️ [自动存档] 失败：${(e as Error).message}`);
             }
-        }, AUTO_SAVE_INTERVAL_MS);
-        gameLog('startup', `💾 [存档] 自动存档已启动（每 ${AUTO_SAVE_INTERVAL_MS / 60_000} 分钟覆盖【自动档】，不动手动日期档）`);
+        }, 5000); // 每 5 秒扫一次是否有战斗，大于最小间隔且太平才存
+        gameLog('startup',
+            `💾 [存档] 自动存档已启动：启动后 ${AUTO_SAVE_STARTUP_GRACE_MS / 60_000} 分钟内不存` +
+            `（留给改代码-刷新循环）；之后每 ${AUTO_SAVE_INTERVAL_MS / 60_000} 分钟一次，` +
+            `轮转 ${AUTO_SLOT_COUNT} 个档位，超过 ${AUTO_SAVE_FORCE_AFTER_MS / 60_000} 分钟未存则不再等太平`);
     }
 
     public stopAutoSave(): void {

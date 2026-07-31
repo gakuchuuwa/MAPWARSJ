@@ -191,6 +191,7 @@ export class AIController {
             strategicTargetCityId: null,
             strategicTargetArmyId: null,
             targetPosition: null,
+            huntBlockedSinceMs: null,
             lastMoveResult: null,
             recentFailedTargets: new Map(),
             moveFailureLogCooldown: new Map(),

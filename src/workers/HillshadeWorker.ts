@@ -3,6 +3,29 @@
  * Offloads heavy terrain math to a background thread
  */
 
+import { buildWaterMask, isDefectGrayTile } from '../world/land-sea/WaterMask';
+
+/** 水域掩膜取图超时 (ms)；超时即放弃掩膜，绝不拖住山体瓦片出图 */
+const WATER_MASK_TIMEOUT_MS = 4000;
+
+/**
+ * 本瓦片是否存在海平面以下的像素。
+ *
+ * 掩膜只用来修正「海拔<0 却是陆地」的上色，整块都在海平面以上时它毫无用处。
+ * 游戏地图绝大部分是内陆（中原/西域/草原），先做这个判断能让多数瓦片
+ * **完全不发** ESRI 请求，避免把晕渲层的网络量翻倍。
+ *
+ * Terrarium 编码 elev = r*256 + g + b/256 - 32768，故 elev < 0 ⟺ r*256+g+b/256 < 32768。
+ * r ≤ 127 时最大值 127*256+255+0.996 < 32768 恒成立；r ≥ 128 时最小值 32768 ⇒ elev ≥ 0。
+ * 所以判据精确等价于 **r < 128**，一次比较即可，无需解码。
+ */
+function hasBelowSeaPixel(data: Uint8ClampedArray, pixelCount: number): boolean {
+    for (let i = 0, p = 0; p < pixelCount; i += 4, p++) {
+        if (data[i] < 128) return true;
+    }
+    return false;
+}
+
 // Define message types
 export interface HillshadeRegion {
     center: [number, number];   // [lat, lng]
@@ -15,9 +38,16 @@ export interface HillshadeRegion {
 
 export interface HillshadeRequest {
     id: number;
+    /** 高程瓦片 URL：由 Worker 自己 fetch + 解码，主线程全程不碰像素 */
+    url: string;
+    /**
+     * 水域掩膜瓦片 URL（ESRI 晕渲底图，同一 z/x/y）。
+     * 用途：高程 < 0 但实际是陆地的地方（里海低地、吐鲁番盆地）不再涂成海洋色。
+     * 取不到时按 null 处理，颜色退回纯高程判据——不阻塞出图。
+     */
+    waterMaskUrl?: string;
     width: number;
     height: number;
-    data: Uint8ClampedArray; // Heightmap pixels
     params: {
         azimuth: number;
         altitude: number;
@@ -38,7 +68,10 @@ export interface HillshadeRequest {
 
 export interface HillshadeResponse {
     id: number;
-    data: Uint8ClampedArray; // Processed pixels
+    /** 算好的瓦片位图（transferable）；主线程只需 drawImage，零像素拷贝 */
+    bitmap?: ImageBitmap;
+    /** 取图/解码失败：主线程平涂兜底色 */
+    error?: string;
 }
 
 // Pre-allocate LUTs in Worker Scope
@@ -122,11 +155,30 @@ function initLUTs() {
     noiseLUT = nLut;
 }
 
-self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
-    initLUTs();
-    if (!colorLUT || !noiseLUT) return;
+/**
+ * 高程像素 → 山体着色像素（纯计算，不碰 IO）。
+ * 返回类型显式带 ArrayBuffer：ImageData 构造签名要求 Uint8ClampedArray<ArrayBuffer>，
+ * 写成裸 Uint8ClampedArray 会退化成 ArrayBufferLike（含 SharedArrayBuffer）而对不上。
+ */
+/**
+ * 低于海平面、但实际是陆地的地方，按这个高度取色（米）。
+ * 里海低地 -17~-27m、吐鲁番盆地 -50~-154m 都属此类：它们是平坦的草原/戈壁盆地，
+ * 取低地平原色最贴近实况。地形起伏仍由光照阴影体现，不会变成一块死板平涂。
+ */
+const LAND_BELOW_SEA_COLOR_ELEV = 10;
 
-    const { id, width, height, data, params, tileBounds, regions } = e.data;
+function renderHillshade(
+    data: Uint8ClampedArray,
+    req: HillshadeRequest,
+    waterMask: Uint8Array | null = null,
+): Uint8ClampedArray<ArrayBuffer> {
+    // LUT 在调用前由 initLUTs() 建好；取成局部常量，让类型收窄在本函数内成立
+    initLUTs();
+    const colorLut = colorLUT;
+    const noiseLut = noiseLUT;
+    if (!colorLut || !noiseLut) throw new Error('LUT init failed');
+
+    const { width, height, params, tileBounds, regions } = req;
     const output = new Uint8ClampedArray(width * height * 4);
 
     // [REGION-PREP] 预解析区域用于逐像素查询
@@ -232,22 +284,29 @@ self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
                 const shadeFactor = ambientBase + hillshade * shadowStrength;
                 //const shadeFactor = Math.min(1.0, ambientBase + hillshade * shadowStrength);
 
-                let noise = 0;
-                if (zC > 0) {
-                    noise = noiseLUT[noiseYRow + (x & 255)];
-                    if (zC + noise <= 0) noise = -zC + 0.1;
+                // [2026-07-28] 取色高度：低于海平面但掩膜说不是水 → 按低地陆上色。
+                // 只改颜色，不改 zC 本身，光照/坡度计算完全不受影响。
+                let colorZ = zC;
+                if (waterMask !== null && zC < 0 && waterMask[yM + x] === 0) {
+                    colorZ = LAND_BELOW_SEA_COLOR_ELEV;
                 }
 
-                let elevIndex = Math.floor(zC + noise) + LUT_OFFSET;
+                let noise = 0;
+                if (colorZ > 0) {
+                    noise = noiseLut[noiseYRow + (x & 255)];
+                    if (colorZ + noise <= 0) noise = -colorZ + 0.1;
+                }
+
+                let elevIndex = Math.floor(colorZ + noise) + LUT_OFFSET;
                 if (elevIndex < 0) elevIndex = 0;
                 else if (elevIndex > LUT_MAX_ELEV + LUT_OFFSET) elevIndex = LUT_MAX_ELEV + LUT_OFFSET;
 
                 const lIdx = elevIndex * 3;
-                let r = colorLUT[lIdx];
-                let g = colorLUT[lIdx + 1];
-                let b = colorLUT[lIdx + 2];
+                let r = colorLut[lIdx];
+                let g = colorLut[lIdx + 1];
+                let b = colorLut[lIdx + 2];
 
-                if (zC > 0 && zC < 1500) {
+                if (colorZ > 0 && colorZ < 1500) {
                     const grain = 1.0 + (noise * 0.03);
                     r *= grain; g *= grain; b *= grain;
                 }
@@ -258,12 +317,12 @@ self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
                 }
                 // [OCEAN-TEXTURE] 海面极轻微噪声,破除"死板纯色",模拟水面光斑
                 if (zC < 0) {
-                    const oceanNoise = noiseLUT[noiseYRow + (x & 255)];
+                    const oceanNoise = noiseLut[noiseYRow + (x & 255)];
                     const oceanGrain = 1.0 + (oceanNoise * 0.006); // ±0.6% 亮度微扰
                     r *= oceanGrain; g *= oceanGrain; b *= oceanGrain;
                 }
-                // [HISTORICAL-REGIONS] 沙漠/湿地/古湖等历史地理特殊区域着色
-                if (hasRegions && zC > 0) {
+                // [HISTORICAL-REGIONS] 沙漠/湿地/古湖/内陆低洼等历史地理特殊区域着色
+                if (hasRegions && (zC > 0 || zC >= -500)) {
                     const lat = tileBounds!.north + y * regionLatStep;
                     const lng = tileBounds!.west + x * regionLngStep;
                     for (let ri = 0; ri < regions!.length; ri++) {
@@ -359,7 +418,78 @@ self.onmessage = (e: MessageEvent<HillshadeRequest>) => {
         }
     }
 
-    // Return result (transferable)
-    // Cast to any to avoid TS matching Window.postMessage instead of Worker.postMessage
-    (self as any).postMessage({ id, data: output } as HillshadeResponse, [output.buffer]);
+    return output;
+}
+
+/**
+ * 取图 → 解码 → 着色 → 回传位图，全在 Worker 内完成。
+ *
+ * [PERF 2026-07-27] 旧实现在主线程 new Image() + drawImage + getImageData 逐块回读像素，
+ * 再把 256KB 缓冲拷给 Worker：一次换 zoom 上百块瓦片的 onload 回调挤在同一帧，
+ * 实测单帧阻塞近 1 秒。现在主线程只剩一句 drawImage(bitmap)。
+ */
+/**
+ * 取 ESRI 瓦片并转成水域掩膜。
+ * 任何失败（无 URL / 网络错 / 解码错）都返回 null，调用方按纯高程判据出图——
+ * 掩膜是锦上添花，绝不能因为它拿不到就让整块瓦片画不出来。
+ */
+async function fetchWaterMask(
+    url: string | undefined,
+    width: number,
+    height: number,
+): Promise<Uint8Array | null> {
+    if (!url) return null;
+    try {
+        // [必须有超时] 本请求与高程瓦片一起 Promise.all，掩膜挂住 = 整块山体永远画不出来 ⇒ 地图空白。
+        // 掩膜只是锦上添花，宁可不要也不能拖住出图。
+        const resp = await fetch(url, { mode: 'cors', signal: AbortSignal.timeout(WATER_MASK_TIMEOUT_MS) });
+        if (!resp.ok) return null;
+        const bmp = await createImageBitmap(await resp.blob());
+        const canvas = new OffscreenCanvas(width, height);
+        const ctx = canvas.getContext('2d', { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D | null;
+        if (!ctx) { bmp.close(); return null; }
+        ctx.drawImage(bmp, 0, 0, width, height);
+        bmp.close();
+        const rgba = ctx.getImageData(0, 0, width, height).data;
+        // ESRI 该级瓦片缓存烤坏（整块纯灰）→ 会被误读成「整块都是陆地」，
+        // 拿去改上色会把那片海刷成陆地色。弃用，退回纯高程判据。
+        if (isDefectGrayTile(rgba, width, height)) return null;
+        return buildWaterMask(rgba, width * height);
+    } catch {
+        return null;
+    }
+}
+
+self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
+    const req = e.data;
+    try {
+        initLUTs();
+        if (!colorLUT || !noiseLUT) throw new Error('LUT init failed');
+
+        const resp = await fetch(req.url, { mode: 'cors' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+        const srcBitmap = await createImageBitmap(await resp.blob());
+        const canvas = new OffscreenCanvas(req.width, req.height);
+        const ctx = canvas.getContext('2d', { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D | null;
+        if (!ctx) throw new Error('OffscreenCanvas 2d context unavailable');
+        ctx.drawImage(srcBitmap, 0, 0, req.width, req.height);
+        srcBitmap.close();
+
+        const src = ctx.getImageData(0, 0, req.width, req.height).data;
+
+        // 只有本瓦片确实含海平面以下像素时才去取掩膜。内陆瓦片（地图主体）直接跳过，
+        // 一整轮 ESRI 请求都省掉；沿海/海域瓦片才多等一次，且有超时兜底。
+        const mask = hasBelowSeaPixel(src, req.width * req.height)
+            ? await fetchWaterMask(req.waterMaskUrl, req.width, req.height)
+            : null;
+
+        const output = renderHillshade(src, req, mask);
+        const bitmap = await createImageBitmap(new ImageData(output, req.width, req.height));
+
+        // Cast to any to avoid TS matching Window.postMessage instead of Worker.postMessage
+        (self as any).postMessage({ id: req.id, bitmap } as HillshadeResponse, [bitmap]);
+    } catch (err) {
+        (self as any).postMessage({ id: req.id, error: String(err) } as HillshadeResponse);
+    }
 };

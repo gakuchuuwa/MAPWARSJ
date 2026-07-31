@@ -115,7 +115,7 @@ export function applyLegionSpawnTierToArmy(
     if (!eliteName) return;
 
     const state = tierState ?? {};
-    const threshold = GameConfig.EXPEDITION.UNLOCK_TROOPS;
+    const threshold = GameConfig.LEGION_TIER.PROMOTE_TROOPS; // 大军线 4 万（与远征无关）
     const cityId = army.homeCityId ?? army.getSourceCityId();
     const anchorFactionId = getCityAnchorFactionId(cityId);
     const hasGeneral = !!getCityAnchoredGeneral(cityId);

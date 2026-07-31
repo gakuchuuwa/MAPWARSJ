@@ -9,11 +9,16 @@ export interface TargetAnchorCityAccess {
     getCitiesByFaction(factionId: string): City[];
 }
 
-/** homeCityId 已不属于本势力（含不存在） */
+/**
+ * homeCityId 已不属于本势力（含不存在）。
+ * 入参只要求 getCity —— 这样行为树和 ExpeditionUI 能共用同一判据。
+ * 【务必共用】两边各写一份"家城失守"判断，会出现一边取消远征、另一边
+ * 立刻重发的活锁（2026-07-30 修：军情面板「誓师远征」每 0.5 秒刷一条）。
+ */
 export function isHomeCityLost(
     homeCityId: string,
     factionId: string,
-    cityManager: TargetAnchorCityAccess
+    cityManager: { getCity(id: string): { factionId: string } | undefined }
 ): boolean {
     const home = cityManager.getCity(homeCityId);
     if (!home) return true;

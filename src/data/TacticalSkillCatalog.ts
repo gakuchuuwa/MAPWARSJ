@@ -53,7 +53,6 @@ export type TacticalBaseEffect =
     | 'cancel_enemy_terrain_buff'
     | 'halve_enemy_terrain_buff'
     | 'nullify_enemy_opening_cut'
-    | 'battle_duration_mult'    // 战斗时长乘区：<1=加速结束，>1=拖延
     | 'first_sortie_power_mult'
     | 'first_sortie_comeback_mult'
     | 'self_casualty_reduction'  // 减己损（胜战计·全：避实就虚保全自己）
@@ -193,7 +192,6 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
     win_casualty_reduction: 'dizhan',
     elite_casualty_reduction: 'dizhan',
     post_recovery_rate: 'dizhan',
-    battle_duration_mult: 'dizhan',
     // 混战·乱（纯克夺反）
     steal_enemy_skill: 'hunzhan',
     negate_enemy_skill: 'hunzhan',
@@ -280,10 +278,10 @@ const ENHANCE: TacticalSkillEntry[] = [
         magnitude: 1.2, engineStatus: 'ready',
     },
     {
-        id: 'ts_006', ownerName: '蒯通', usageTag: '防御', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 6,
+        id: 'ts_006', ownerName: '蒯通', usageTag: '防御', situationTag: '劣势', layer: 'tactical', series: 'enhance', index: 6,
         displayName: '金城汤池', sourceQuote: '《汉书·蒯通传》：“皆为金城汤池，不可攻也。”',
-        baseEffect: 'enemy_mult_0_8', condition: 'always', phase: 'opening_roll',
-        magnitude: 0.8, engineStatus: 'ready',
+        baseEffect: 'luck_variance_enemy', condition: 'always', phase: 'opening_roll',
+        magnitude: 1, luckMin: 0.7, luckMax: 1.3, engineStatus: 'ready', note: '并战·借：敌方运气 [0.7, 1.3]（不在册通用技：凭坚城要塞扰乱敌军攻势）',
     },
     {
         id: 'ts_007', ownerName: '项羽', ownerGeneralId: 'xichu_xiangyu', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'enhance', index: 7,
@@ -408,7 +406,7 @@ const FATE: TacticalSkillEntry[] = [
 const TROOP: TacticalSkillEntry[] = [
     {
         id: 'ts_021', ownerName: '王通', layer: 'tactical', series: 'troop', index: 21,
-        displayName: '先声夺人', sourceQuote: '《左传·襄公二十六年》：“先人有夺人之心。”',
+        displayName: '迎头痛击', situationTag: '优势', sourceQuote: '《左传·襄公二十六年》：“先人有夺人之心。”',
         baseEffect: 'enemy_sub_troops_opening', condition: 'always', phase: 'pre_opening_troops',
         magnitude: 0.18, engineStatus: 'ready', legacyTacId: 'tac_02',
     },
@@ -1197,8 +1195,8 @@ const UNIQUE_T1: TacticalSkillEntry[] = [
     {
         id: 'ts_161', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'enhance', index: 161,
         displayName: '摧锋夺气', sourceQuote: '败局中摧毁敌锋锐夺回战场士气，多将皆有。',
-        baseEffect: 'recompute_comeback', condition: 'ratio_underdog', phase: 'mid_battle_passive', comebackThreshold: 0.8,
-        magnitude: 1, engineStatus: 'ready', note: '同源：张辽·摧锋夺气',
+        baseEffect: 'recompute_comeback', condition: 'ratio_underdog', phase: 'mid_battle_comeback', comebackThreshold: 0.8,
+        magnitude: 1, engineStatus: 'ready', note: '同源：张辽·摧锋夺气。2026-07-27 修：phase 原为 mid_battle_passive，与逆局闸门（GeneralSkillCombat 要求 mid_battle_comeback）对不上，786 条里唯一一条静默失效的技能',
     },
     {
         id: 'ts_162', usageTag: '攻击', situationTag: '优势', layer: 'tactical', series: 'enhance', index: 162,
@@ -5315,7 +5313,6 @@ export type SkillUsageTag = '双行' | '攻击' | '防御';
     ts_018: '孙膑',
     ts_019: '谢玄',
     ts_020: '秦穆公',
-    ts_021: '王通',
     ts_023: '狄青',
     ts_024: '姬发',
     ts_025: '刘邦',
@@ -6024,4 +6021,59 @@ export function getSkillCharacter(skillId: string): string | undefined {
     const entry = getTacticalSkillEntry(skillId);
     if (entry?.ownerName) return entry.ownerName;
     return SKILL_CHARACTER[skillId];
+}
+
+// ── 不在册随机池（2026-07-26 立）──
+// 不在册 = 无 ownerGeneralId 的通用技（三十六计等）
+// 按六计分类，惰性构建，供 resolveSituationalSkillId 运行时随机替换使用
+
+let _unregisteredPoolBySix: Record<string, string[]> | undefined;
+
+function buildUnregisteredPoolBySix(): Record<string, string[]> {
+    const pool: Record<string, string[]> = {
+        gongzhan: [], shengzhan: [], dizhan: [],
+        hunzhan: [], bingzhan: [], baizhan: [],
+    };
+    for (const e of TACTICAL_SKILL_ENTRIES_V1) {
+        if (e.ownerGeneralId) continue; // 有主的在册技不入通用池
+        const six = (EFFECT_TO_SIX_SET[e.baseEffect] as string) ?? null;
+        if (six && pool[six]) {
+            pool[six].push(e.id);
+        }
+    }
+    return pool;
+}
+
+function getUnregisteredPoolBySix(): Record<string, string[]> {
+    if (!_unregisteredPoolBySix) {
+        _unregisteredPoolBySix = buildUnregisteredPoolBySix();
+    }
+    return _unregisteredPoolBySix;
+}
+
+/**
+ * 从不在册池中按六计随机取一个技能 ID
+ * @param sixClass 六计内部键（gongzhan/shengzhan/dizhan/hunzhan/bingzhan/baizhan）
+ * @param excludeIds 排除的技能 ID（防攻守同技），可选
+ */
+export function getRandomUnregisteredSkill(sixClass: string, excludeIds?: string[]): string | null {
+    const pool = getUnregisteredPoolBySix();
+    const candidates = pool[sixClass];
+    if (!candidates || candidates.length === 0) return null;
+    const available = excludeIds && excludeIds.length > 0
+        ? candidates.filter(id => !excludeIds.includes(id))
+        : candidates;
+    if (available.length === 0) {
+        return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+    return available[Math.floor(Math.random() * available.length)];
+}
+
+/**
+ * 判断某技能是否对指定武将「在册」（ownerGeneralId 精确匹配）
+ */
+export function isSkillRegisteredFor(skillId: string, generalId: string): boolean {
+    const entry = getTacticalSkillEntry(skillId);
+    if (!entry || !entry.ownerGeneralId) return false;
+    return entry.ownerGeneralId === generalId;
 }

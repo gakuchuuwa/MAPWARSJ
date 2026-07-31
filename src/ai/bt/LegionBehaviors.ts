@@ -9,7 +9,11 @@
  *       仅「非战斗状态」的军团回援（交战中不脱离；排队攻城算在路上，可回）；敌军仅在途/迫近不触发。
  *     · 本城已失守（易主）→ 强制回师收复（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
  *     · 否则 → 先扫附近敌军团（野战追击）→ 无则推进锚点近 3 敌城抽签
- *   远征军团：目标锁死、家城被攻城/失守均不回（shouldSkipHomeRecapture），直至占领/兵败或全军覆没
+ *       ⚠️ 这里说的是【优先级顺序】，不是【发生频率】。追击半径只有
+ *          HUNT_ENEMY_LEGION_RADIUS = 0.8°(≈89km)，圈内多数时候没有敌军团，
+ *          所以实机约 90% 的战斗是攻城战、野战很少（AGENTS.md「战斗构成」节）。
+ *          曾有 AI 把这行读成"野战比攻城多"而误判，勿重蹈。
+ *   远征军团：目标锁死、绝不回头 —— 家城被攻城不回援、失守也不回师，直至占领目标或全军覆没
  */
 
 import { BTNode, BTStatus, BTContext, Condition, Action, Sequence, Selector } from './BehaviorTree';
@@ -28,6 +32,7 @@ import {
 import { TargetEvaluator } from '../TargetEvaluator';
 import {
     getArmyOriginCityId,
+    isHomeCityLost,
     resolveForwardAnchor,
     resolveRecaptureTarget,
 } from '../TargetAnchorResolver';
@@ -61,8 +66,8 @@ function homeNeedsHelp(ctx: BTContext): boolean {
     if (shouldSkipHomeRecapture(ctx.army)) return false; // 远征军团不回
     const homeId = getArmyOriginCityId(ctx.army);
     if (!homeId) return false;
-    const home = ctx.cityManager.getCity(homeId);
-    if (!home || home.factionId !== ctx.army.getFactionId()) return true; // 已失守 → 收复
+    // 已失守 → 收复（判据统一走 isHomeCityLost，勿再内联手写）
+    if (isHomeCityLost(homeId, ctx.army.getFactionId(), ctx.cityManager)) return true;
     return ctx.legionManager.isCityBeingSieged(homeId);                   // 仍我方且正被攻城 → 回援（在途/迫近不算）
 }
 
@@ -119,6 +124,8 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
         return 'done';
     }
 
+    // ⚠ 出发点失守也不取消远征（会让军团在目标和老家之间来回徘徊）。禁止加回失守取消分支。
+
     // 远征锁定：每 tick 幂等重设战略目标（setStrategicTarget 只写黑板 targetCityId/targetPosition，无副作用）。
     // 关键：不能再用「目标 id 未变就跳过」的旧守卫——野战/攻城/休整会把军团挪到新位置、并可能清空黑板目标；
     // 若战后仍奔同一城（如弓庐水战后仍去狼居胥山，id 未变），旧守卫会跳过重设 → 军团失去有效移动目标、
@@ -148,16 +155,9 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
         !enemy ||
         enemy.isDestroyed ||
         enemy.getTroops() <= 0 ||
-        enemy.getFactionId() === ctx.army.getFactionId() ||
-        enemy.getFactionId() === 'neutral'
+        enemy.getFactionId() === ctx.army.getFactionId()
     ) {
         markTargetCooldown(ctx, `army:${huntId}`, 'hunt_invalid');
-        clearStrategicTarget(ctx);
-        return null;
-    }
-    // 敌已在交战：贴脸也无法再开战，必须放弃，否则永久 HoldForFieldContact
-    if (enemy.getIsInCombat?.()) {
-        markTargetCooldown(ctx, `army:${huntId}`, 'hunt_in_combat');
         clearStrategicTarget(ctx);
         return null;
     }
@@ -168,12 +168,34 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
         clearStrategicTarget(ctx);
         return null;
     }
+
+    // 对方交战中 → 打不起来，只能等残局。计时防止永久趴窝：
+    // HoldForFieldContact 会 stopMovement 并返回 SUCCESS，行为树不再往下走攻城分支，
+    // 而对方若在攻城则既不会被打死也不会跑出放弃半径，没有别的出口。
+    if (enemy.getIsInCombat?.()) {
+        const now = performance.now();
+        if (ctx.huntBlockedSinceMs === null) {
+            ctx.huntBlockedSinceMs = now;
+        } else if (now - ctx.huntBlockedSinceMs > GameConfig.AI.HUNT_BLOCKED_TIMEOUT_MS) {
+            btLog(
+                ctx,
+                `hunt_blocked_timeout:${huntId}`,
+                `[AI] ${ctx.army.name} 等【${enemy.name}】脱战超时，放弃追击改打据点`,
+            );
+            markTargetCooldown(ctx, `army:${huntId}`, 'hunt_blocked_timeout');
+            clearStrategicTarget(ctx);
+            return null;
+        }
+    } else {
+        ctx.huntBlockedSinceMs = null; // 对方脱战，卡住计时清零
+    }
+
     ctx.targetPosition = { lat: ePos.lat, lng: ePos.lng };
     return enemy;
 }
 
 /**
- * 在寻敌半径内找最近可野战敌军团（排除冷却、交战中、排队攻城）。
+ * 在寻敌半径内找最近可野战敌军团（排除冷却中的目标）。
  * 收复本城优先于本函数；本函数优先于近敌城抽签。
  */
 function pickNearbyEnemyLegion(ctx: BTContext, excludeTargetIds: Set<string>): Army | null {
@@ -190,9 +212,6 @@ function pickNearbyEnemyLegion(ctx: BTContext, excludeTargetIds: Set<string>): A
     for (const other of nearby) {
         if (!other || other === ctx.army || other.isDestroyed || other.getTroops() <= 0) continue;
         if (other.getFactionId() === myFaction) continue;
-        if (other.getFactionId() === 'neutral') continue;
-        if (other.getIsInCombat?.()) continue;
-        if (ctx.legionManager.isArmyWaitingSiege?.(other.id)) continue;
         const key = `army:${other.id}`;
         if (excludeTargetIds.has(key)) continue;
 
@@ -363,6 +382,8 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     }
 
     // ① 先找附近敌军团（野战追击）；无则再选据点
+    //    注意：这是优先级不是频率 —— 半径 0.8°(≈89km) 内多数时候没有敌军团，
+    //    实机约 90% 的战斗是攻城战（见 AGENTS.md「战斗构成：90% 是攻城战」）。
     const nearbyEnemy = pickNearbyEnemyLegion(ctx, excludeTargetIds);
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();

@@ -3,11 +3,12 @@
  *
  * 语义：timeSinceSupply = 「最后一次途经己方据点至今的游戏秒数」（形成军团即起算；
  *   攻下敌城后该城即己方城，途经即复位；战斗胜利 = 就地进行补给，亦复位）。
- *   · 计时：LegionManager 主循环每帧 += deltaTime（战斗中照走、扣减暂停；战后休整停表停扣；远征豁免军团不走表）；
+ *   · 计时：LegionManager 主循环每帧 += deltaTime（战斗中照走、扣减暂停；战后休整停表停扣；
+ *     远征军团 2026-07-27 起同样走表，见 GameConfig.MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS）；
  *   · 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（不要求驻停，静止军团也生效）；
  *   · 整跳扣减：超过 FREE_SUPPLY_SEC（15 游戏秒 = 1 季度携行粮）后，每 ATTRITION_CHUNK_SEC（15 游戏秒）
- *     对当前兵力扣 ATTRITION_CHUNK_RATE（7.5% = 0.5%/秒 × 15 秒，与旧涓流曲线等效），保底 MIN_TROOPS_FLOOR；
- *   · 豁免：战斗中暂停扣减 / 远征军团整体豁免（含岳飞脚本军）/ str_13 以战养战全免；
+ *     对当前兵力扣 ATTRITION_CHUNK_RATE（当前 15%，实际值以 GameConfig 为准），保底 MIN_TROOPS_FLOOR；
+ *   · 豁免：战斗中暂停扣减 / 战后休整停表 / str_13 以战养战全免（远征军团已不再豁免）；
  *   · 一视同仁：不分步骑水陆——同样的时间窗，速度快者走得更远，速度优势自动转为后勤优势
  *     （骑兵得补偿；海运快捷但长途航海同样断粮）。
  *
@@ -15,7 +16,7 @@
  */
 import { GameConfig } from '../../config/GameConfig';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
-import { generalHasStrategicEffect } from '../../combat/GeneralSkillCombat';
+import { generalHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../../combat/GeneralSkillCombat';
 import type { Army } from '../Army';
 
 /**
@@ -40,7 +41,11 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     if (troops <= cfg.MIN_TROOPS_FLOOR) return 0;
 
     // str_13 以战养战：行军减兵全免（写法照抄 Army.updateTerrainSpeed 查 mountain_march_immunity）
-    if (generalHasStrategicEffect(army, 'march_attrition_immunity')) return 0;
+    if (generalHasStrategicEffect(army, 'march_attrition_immunity')) {
+        const pos = army.getPosition();
+        emitFollowedGeneralStrategicMapFx(army, 'march_attrition_immunity', pos.lat, pos.lng, 'pulse', { dedupeMs: 8000, dedupeKey: `${army.id}|march_attrition_immunity` });
+        return 0;
+    }
 
     // 免费补给时间窗：FREE_SUPPLY_SEC 游戏秒 = 1 季度携行粮
     if (army.timeSinceSupply <= cfg.FREE_SUPPLY_SEC) return 0;

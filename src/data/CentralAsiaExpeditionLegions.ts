@@ -14,8 +14,10 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   qincha: { name: '康里精骑', tier: 3 },              // 花剌子模和早期蒙古帝国中极其出名的突击力量，文化辨识度高，升入T3知名
   qiepantuo: { name: '护密镇军', tier: 4 },   // 护密城·瓦罕走廊戍卫
     tiemuer: { name: '察合台突骑', tier: 1 },
-  kazakh: { name: '哈萨克骑', tier: 1 },     // 哈萨克汗国的绝对主力，长达几个世纪维持中亚草原霸权，升入T1战略
-  seljuq: { name: '塞尔柱突骑', tier: 1 },     // 木鹿·生擒拜占庭皇帝的塞尔柱帝国主力
+  kazakh: { name: '哈萨克骑', tier: 2 },     // 哈萨克汗国主力，普将配T2
+  seljuq: { name: '塞尔柱突骑', tier: 0 },     // 木鹿·桑贾尔：1040 丹丹纳康之战即在木鹿近郊，图格里勒／恰格里以约两万突骑
+                                               // 破马苏德五万伽色尼大军，夺呼罗珊、开创塞尔柱帝国 —— 以少胜多且直接重写中亚版图，合 T0。
+                                               // （原注「生擒拜占庭皇帝」系误记：曼齐克特 1071 为阿尔普·阿尔斯兰，桑贾尔生于 1086，且该役不在木鹿）
     xiliao: { name: '斡耳朵亲卫', tier: 1 },
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
     guishuang: { name: '贵霜铁骑', tier: 2 },
@@ -39,7 +41,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     shi_clan: { name: '柘枝胡骑', tier: 4 },
   guzgan: { name: '古兹根卫队', tier: 4 },       // 法里亚布·古兹根戍卫
   badakhshan: { name: '达克游骑', tier: 4 },     // 法扎巴德·达克边防
-  kawusi: { name: '卡乌斯铁卫', tier: 4 },     // 吉扎克·粟特要塞
+    kawusi: { name: '卡乌斯铁卫', tier: 4 },
   xianhai: { name: '咸海骁锐', tier: 4 },        // 养吉干·花剌子模北境
   wuhu: { name: '乌护游骑', tier: 4 },           // 真珠河·乌古斯游牧（1040丹达内克胜伽色尼）
   jie: { name: '柘羯勇士', tier: 3 },            // 粟特城邦极其著名的职业重装雇佣兵/死士，文化辨识度极高，升入T3知名
@@ -59,4 +61,35 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     huluo: { name: '古尔重骑', tier: 1 },
   aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·萨珊波斯抗击罗马帝国的战略主力
     kala: { name: '古拉姆近卫', tier: 3 },
+    saerbadaer: { name: '伏魔骑', tier: 3 },
+    kumisi: { name: '瑟尔柱重骑', tier: 3 },
+    ribale: { name: '代尔木重步', tier: 2 },
+    safawei: { name: '吉兰步卒', tier: 3 },
+    yilihanguo: { name: '奇兹尔巴什', tier: 2 },
+    yilihanguo_d: { name: '伊利怯薛', tier: 2 },
+    asaibaijiang: { name: '蒙古怯薛', tier: 1 },
+    wulaertu: { name: '乌拉尔图骑', tier: 3 },
+    gelujiya: { name: '莫纳斯帕', tier: 2 },
+    keerjisi: { name: '伊梅列季兵', tier: 2 },
+    midi: { name: '不死军团', tier: 3 },
+    aqimeinide: { name: '长生军', tier: 1 },
+    safawei_d: { name: '红头军', tier: 2 },
+    // 2026-07-27 补中东四城+苏萨
+    ailan: { name: '埃兰战车', tier: 3 },
+    kesa: { name: '可萨弓骑', tier: 3 },
+    ansxi: { name: '尼萨弓骑', tier: 3 },
+    xike: { name: '卡尔萨战士', tier: 2 },
+    deli: { name: '德里苏丹骑', tier: 3 },
+    mowoer: { name: '莫卧铁骑', tier: 2 },
+    jieri: { name: '戒日象军', tier: 3 },
+    jiashi_d: { name: '迦尸象兵', tier: 4 },
+    mojietuo: { name: '摩揭陀象军', tier: 3 },
+    boluo: { name: '波罗象军', tier: 3 },
+    sumo: { name: '耽摩水师', tier: 4 },
+    xierwan: { name: '希尔万骑卫', tier: 4 },
+    // ── 2026-07-30 迁出：28 支已随首都归入 WEST_ASIA 区，唯一权威见
+    //    WestAsiaExpeditionLegions.ts（原条目与西亚版番号/tier 冲突，靠展开顺序静默覆盖，故清出）──
+    //    bendou bendou_d heti fulijiya ldiya pajiama bitiniya baizhanting xibolai aiji dibisi
+    //    jialedi paermila abasi xikesuosi yashu youfaladi qiliqiya sumeier ayoubu aiaoniya
+    //    jialatai guyashu nabatai beileinisi dedan maidina gulaishi
 };

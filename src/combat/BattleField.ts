@@ -27,13 +27,12 @@ function getFollowedArmyId(): string | null {
 }
 import {
     clampBattleDurationSec,
-    resolveBattleDurationByPowerRatio,
     GameConfig,
     rollCombatLuckMultiplier,
 } from '../config/GameConfig';
 import { sumCultureAdjustedTroops, getUnitBattlePowerMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import { getGeneralProfile, POST_BATTLE_RECOVERY_SKILL } from '../data/GeneralSkills';
-import { COMEBACK_LUCK_RANGE, COMEBACK_LUCK_RANGE_GENERIC, resolveSituationKind } from './TacticalConstants';
+import { COMEBACK_LUCK_RANGE, COMEBACK_LUCK_RANGE_GENERIC } from './TacticalConstants';
 import {
     applyGeneralSkillSideRollMultipliers,
     applyOpeningTacticalPreRoll,
@@ -43,7 +42,6 @@ import {
     applyStrategicRollMultipliersOnly,
     applyComebackRollMultipliersForSide,
     tryApplyComebackTacticalForSide,
-    sideHasBattleDurationExtend,
     tryEmitOpeningTacticalOnReinforcementJoin,
     resolveSideOpeningFateLuck,
     sideBasePower,
@@ -52,7 +50,7 @@ import {
     resolvePostBattleCasualtyOutcome,
     applySkillCountersToUnits,
     setBattleTargetDurationForSkillUi,
-    resolveSituationalSkillId,
+    getSituationalSkillPool,
     getSkillSixClass,
     scheduleStalemateSkillShowcasePulses,
     setActiveOpeningPulseSink,
@@ -163,8 +161,11 @@ export class BattleField implements IOpeningPulseSink {
     private effectivePowerRatio = 1;
     /** 最近一次逆局触发技是否在册——败战翻盘重掷按此选区间 */
     private comebackTriggerOwnerSkill = false;
-    /** 本场是否由导演/剧本指定时长（指定则不套 45/30 两档） */
+    /** 本场是否由导演/剧本指定时长（指定则不套固定 30/9） */
     private hasDirectorDuration = false;
+    /** [防重] 本场已用掉的技能 ID / 六计类别，开局与援军共用，保证攻守不撞技 */
+    private usedBattleSkillIds: Set<string> = new Set();
+    private usedBattleSixClasses: Set<string> = new Set();
 
     // 伤害系数现在从 GameConfig 读取
 
@@ -251,8 +252,24 @@ export class BattleField implements IOpeningPulseSink {
 
     private durationFloorSec(): number {
         return this.bothSidesHaveGeneral()
-            ? GameConfig.COMBAT.BATTLE_DURATION_MIN_WITH_GENERAL_SEC
+            ? GameConfig.COMBAT.BATTLE_DURATION_BOTH_GENERALS_SEC
             : GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
+    }
+
+    /** 本场已编入的援军只数（waveIndex ≥ 1 = 援军波次，0 是初始主力） */
+    private reinforcementCount(): number {
+        let n = 0;
+        for (const bu of this.attackerGroup.units) if (bu.waveIndex >= 1) n++;
+        for (const bu of this.defenderGroup.units) if (bu.waveIndex >= 1) n++;
+        return n;
+    }
+
+    /** 双将战时长：30 秒基础 + 每只援军 10 秒（攻守双方都算），封顶 60 秒 */
+    private bothGeneralsDurationSec(): number {
+        const c = GameConfig.COMBAT;
+        const raw = c.BATTLE_DURATION_BOTH_GENERALS_SEC
+            + this.reinforcementCount() * c.BATTLE_DURATION_REINFORCEMENT_BONUS_SEC;
+        return Math.min(c.BATTLE_DURATION_MAX_SEC, raw);
     }
 
     /** 开局脉冲用：双将按基础时长、否则固定 9 秒 */
@@ -265,9 +282,9 @@ export class BattleField implements IOpeningPulseSink {
 
     /**
      * 定强弱后敲定时长：
-     *   非双将战 → 固定 9 秒
-     *   导演指定 → 尊重剧本，只钳制
-     *   双将战   → 按开战有效战力比取两档：均势 45 / 优势·劣势 30
+     *   双将战   → 30 秒 + 每只援军 10 秒（攻守双方都算），封顶 60 秒
+     *   其余一切 → 固定 9 秒
+     *   导演指定 → 尊重剧本，只钳制（上限跟着援军放宽，不强行抬高剧本时长）
      */
     private resolveFinalTargetDuration(): number {
         if (!this.bothSidesHaveGeneral()) {
@@ -276,39 +293,31 @@ export class BattleField implements IOpeningPulseSink {
         if (this.hasDirectorDuration) {
             return this.clampDuration(this.targetDuration);
         }
-        let seconds = resolveBattleDurationByPowerRatio(this.effectivePowerRatio);
-        // 并战·借「拖长一档」：任一侧局技为 battle_duration_mult → 已定档 30s 抬回 45s（等援军）
-        if (seconds === GameConfig.COMBAT.BATTLE_DURATION_DECIDED_SEC) {
-            const attUnits = this.attackerGroup.units.map((bu) => bu.unit);
-            const defUnits = this.defenderGroup.units.map((bu) => bu.unit);
-            if (sideHasBattleDurationExtend(attUnits) || sideHasBattleDurationExtend(defUnits)) {
-                seconds = GameConfig.COMBAT.BATTLE_DURATION_BALANCE_SEC;
-                gameLog('battle', `⚔️ [并战·借] 拖长一档：此战成胶着 30s→${seconds}s（多撑一会儿等援军）`);
-            }
-        }
+        const seconds = this.bothGeneralsDurationSec();
+        const reinforcements = this.reinforcementCount();
         gameLog(
             'battle',
-            `⚔️ [BattleField] 双将战 · 有效战力比 攻/守=${this.effectivePowerRatio.toFixed(2)} ` +
-            `→ ${resolveSituationKind(this.effectivePowerRatio) === 'balance' ? '均势' : '胜负已定'} ${seconds}s`,
+            reinforcements > 0
+                ? `⚔️ [BattleField] 双将战 → ${seconds}s（基础 ${GameConfig.COMBAT.BATTLE_DURATION_BOTH_GENERALS_SEC}s + 援军 ${reinforcements} 只 ×${GameConfig.COMBAT.BATTLE_DURATION_REINFORCEMENT_BONUS_SEC}s）`
+                : `⚔️ [BattleField] 双将战 → ${seconds}s`,
         );
         return seconds;
     }
 
     private clampDuration(seconds: number): number {
-        return clampBattleDurationSec(seconds, this.durationFloorSec());
+        return clampBattleDurationSec(seconds, this.durationFloorSec(), this.bothGeneralsDurationSec());
     }
 
     private calculateTargetDuration() {
-        // 导演时长：尊重事件配置，只钳 9–60（不强制有将地板，避免剧本短战被抬）
+        // 导演时长：尊重事件配置，只钳制（不强制有将地板，避免剧本短战被抬）
         if (this.customDuration !== undefined && this.customDuration > 0) {
             this.hasDirectorDuration = true;
-            this.targetDuration = clampBattleDurationSec(this.customDuration);
-            gameLog('battle', `🎬 [BattleField] 导演时长: ${this.targetDuration.toFixed(1)}s (钳制 9–60)`);
+            const ceil = this.bothGeneralsDurationSec();
+            this.targetDuration = clampBattleDurationSec(this.customDuration, undefined, ceil);
+            gameLog('battle', `🎬 [BattleField] 导演时长: ${this.targetDuration.toFixed(1)}s (钳制 ${GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC}–${ceil})`);
             return;
         }
 
-        const totalTroops =
-            this.attackerGroup.initialTotalTroops + this.defenderGroup.initialTotalTroops;
         // 并非双方都有将（纯兵 / 一方有将）→ 固定 9 秒
         if (!this.bothSidesHaveGeneral()) {
             this.targetDuration = GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
@@ -316,11 +325,8 @@ export class BattleField implements IOpeningPulseSink {
             return;
         }
 
-        // 此处只给「开局技能 UI 脉冲对齐」用的暂定值——真正的时长在 pickPredictedSides
-        // 拿到有效战力比之后由 resolveFinalTargetDuration 敲定（均势 45 / 已定 30）。
-        // 暂定值取 45：两档中较长者，脉冲宁可偏早也不要冲出战斗尾部。
-        this.targetDuration = GameConfig.COMBAT.BATTLE_DURATION_BALANCE_SEC;
-        gameLog('battle', `⚔️ [BattleField] 双将战 · 暂定 ${this.targetDuration}s（待有效战力比敲定）`);
+        this.targetDuration = this.bothGeneralsDurationSec();
+        gameLog('battle', `⚔️ [BattleField] 双将战 → ${this.targetDuration}s`);
     }
 
     /**
@@ -388,36 +394,57 @@ export class BattleField implements IOpeningPulseSink {
         const at = sumCultureAdjustedTroops(attUnits) || this.attackerGroup.initialTotalTroops;
         const dt = sumCultureAdjustedTroops(defUnits) || this.defenderGroup.initialTotalTroops;
         this.situationalAttDefRatio = at / Math.max(1, dt);
-        for (const g of [this.attackerGroup, this.defenderGroup]) {
-            const my = g === this.attackerGroup ? at : dt;
-            const opp = g === this.attackerGroup ? dt : at;
-            const r = my / Math.max(1, opp);
-            const sit: 'advantage'|'balance'|'disadvantage' = r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
-            for (const bu of g.units) {
+
+        // [防重 2026-07-27] 全场统一避让：攻守双方**所有**带将单位排一条队依次挑技，
+        // 后挑的避开前面已用掉的技能 ID 和六计类别。
+        //
+        // 旧实现三个洞：①只给「每边第一个将」做重抽（多军团混战其余将互撞没人管）；
+        // ②排除表只对不在册技生效，在册技原样返回，重抽多少次都是同一个；
+        // ③五次抽不中就默默带着重复开打，没有任何日志。
+        const situationOf = (self: number, other: number): 'advantage' | 'balance' | 'disadvantage' => {
+            const r = self / Math.max(1, other);
+            return r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
+        };
+        const attSit = situationOf(at, dt);
+        const defSit = situationOf(dt, at);
+
+        const usedSkillIds = new Set<string>();
+        const usedSixClasses = new Set<string>();
+
+        const assignSide = (units: typeof this.attackerGroup.units, sit: 'advantage' | 'balance' | 'disadvantage', sideName: string) => {
+            for (const bu of units) {
                 const u = bu.unit;
                 if (!u.generalId) continue;
-                const result = resolveSituationalSkillId(u, sit as any, g === this.attackerGroup);
-                if (result.skillId) {
-                    u.battleOverriddenSkillId = result.skillId;
-                }
-            }
-        }
 
-        // 六计防重：攻守双方的主将技不能同六类，同则守方重抽（最多 5 次）
-        const attUnit = this.attackerGroup.units.find(bu => bu.unit.generalId && bu.unit.battleOverriddenSkillId)?.unit;
-        const defUnit = this.defenderGroup.units.find(bu => bu.unit.generalId && bu.unit.battleOverriddenSkillId)?.unit;
-        if (attUnit && defUnit) {
-            const attCls = getSkillSixClass(attUnit.battleOverriddenSkillId);
-            for (let i = 0; i < 5; i++) {
-                const defCls = getSkillSixClass(defUnit.battleOverriddenSkillId);
-                if (!defCls || defCls !== attCls) break;
-                const sit = dt / Math.max(1, at) > 1.5 ? 'advantage' : dt / Math.max(1, at) < 0.67 ? 'disadvantage' : 'balance';
-                const rr = resolveSituationalSkillId(defUnit, sit as any, false);
-                if (rr.skillId) {
-                    defUnit.battleOverriddenSkillId = rr.skillId;
+                // 把已用 ID 一并传下去：不在册技那条路会直接跳过这些，池子自带避让
+                const pool = getSituationalSkillPool(u, sit as any, [...usedSkillIds]);
+                if (pool.length === 0) continue;
+
+                const clsOf = (id: string) => getSkillSixClass(id) ?? `__nocls__${id}`;
+
+                // 首选：技能 ID 和六计类别都没被用过
+                let pick = pool.find(id => !usedSkillIds.has(id) && !usedSixClasses.has(clsOf(id)));
+                // 次选：至少技能本身不重复（六计撞车可以接受，观感上是两个不同技能）
+                if (!pick) pick = pool.find(id => !usedSkillIds.has(id));
+                // 兜底：这将的整池都被占了（池子小 + 场上将多），只能重复，但要留痕
+                if (!pick) {
+                    pick = pool[Math.floor(Math.random() * pool.length)];
+                    gameLog('battle', `⚠️ [防重] ${sideName} ${u.generalId} 候选池 ${pool.length} 个全被占用，只能重复出 ${pick}`);
                 }
+
+                u.battleOverriddenSkillId = pick;
+                usedSkillIds.add(pick);
+                usedSixClasses.add(clsOf(pick));
             }
-        }
+        };
+
+        // 攻方先挑（与原实现一致：攻方无排除、守方避让攻方）
+        assignSide(this.attackerGroup.units, attSit, '攻方');
+        assignSide(this.defenderGroup.units, defSit, '守方');
+
+        // 供援军中途加入时继续避让
+        this.usedBattleSkillIds = usedSkillIds;
+        this.usedBattleSixClasses = usedSixClasses;
     }
 
     /** 技能脉冲先放哪一侧：优势方先；均势（及无法判势）攻方先 */
@@ -1280,9 +1307,26 @@ export class BattleField implements IOpeningPulseSink {
             if (rs && rw) {
                 const rr = rs.initialTotalTroops / Math.max(1, rw.initialTotalTroops);
                 const rsit = rr < 1.5 ? 'balance' : ((isAttacker ? this.attackerGroup : this.defenderGroup) === rs ? 'advantage' : 'disadvantage');
-                const rresult = resolveSituationalSkillId(unit, rsit as any, isAttacker);
-                if (rresult.skillId) {
-                    unit.battleOverriddenSkillId = rresult.skillId;
+                // [防重] 与开局同一套避让：现场重扫一遍已用技能（开局那份可能还没建/已过期）
+                const usedIds = new Set<string>(this.usedBattleSkillIds);
+                for (const bu of [...this.attackerGroup.units, ...this.defenderGroup.units]) {
+                    if (bu.unit.battleOverriddenSkillId) usedIds.add(bu.unit.battleOverriddenSkillId);
+                }
+                const usedClasses = new Set<string>(this.usedBattleSixClasses);
+                for (const id of usedIds) usedClasses.add(getSkillSixClass(id) ?? `__nocls__${id}`);
+
+                const pool = getSituationalSkillPool(unit, rsit as any, [...usedIds]);
+                if (pool.length > 0) {
+                    const clsOf = (id: string) => getSkillSixClass(id) ?? `__nocls__${id}`;
+                    let pick = pool.find(id => !usedIds.has(id) && !usedClasses.has(clsOf(id)));
+                    if (!pick) pick = pool.find(id => !usedIds.has(id));
+                    if (!pick) {
+                        pick = pool[Math.floor(Math.random() * pool.length)];
+                        gameLog('battle', `⚠️ [防重] 援军 ${unit.generalId} 候选池全被占用，只能重复出 ${pick}`);
+                    }
+                    unit.battleOverriddenSkillId = pick;
+                    this.usedBattleSkillIds.add(pick);
+                    this.usedBattleSixClasses.add(clsOf(pick));
                 }
             }
         }

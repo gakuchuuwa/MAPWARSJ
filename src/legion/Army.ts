@@ -28,6 +28,7 @@ import {
     emitFollowedGeneralStrategicMapFx,
     emitFollowedVisionStrategicFxOnMarch,
     tryEmitPostBattleResumeStrategicFx,
+    clearStrategicSkillOverride,
 } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
@@ -132,7 +133,7 @@ export class Army implements IBattleUnit {
 
     /**
      * 远征目标城（GAME_DIRECTION「远征细则」2026-06-11）：
-     * 非 null = 远征军团——目标锁死该城、断粮不回师，直至占领或全军覆没；
+     * 非 null = 远征军团——目标锁死该城、绝不回头（家城被打/失守都不回），直至占领或全军覆没；
      * null = 据点军团（近 3 敌城抽签；家城正被攻城则回援、已失守则强制回师收复）。
      * 仅跟拍军团可被玩家下达远征指令（ExpeditionUI），AI 不会自行远征。
      */
@@ -141,7 +142,7 @@ export class Army implements IBattleUnit {
     public expeditionSavedName: string | null = null;
     /**
      * 远征资格滞回锁（2026-07-06 修复"按钮一闪就没"）：
-     * 跟拍军团兵力达到过 UNLOCK_TROOPS 即置 true，此后即便战斗掉破 4 万仍保留可远征资格，
+     * 跟拍军团兵力达到过 UNLOCK_TROOPS（5 万）即置 true，此后即便战斗掉破仍保留可远征资格，
      * 直至真正发起远征 / 全军覆没 / 被打到低于半数（见 ExpeditionUI.eligibleArmy）才重置。
      * 解决"军团边打边掉血、瞬时判定让远征按钮反复闪现、点不到"的问题。
      */
@@ -459,9 +460,9 @@ export class Army implements IBattleUnit {
                 if (this.id === getFollowedArmyId()) {
                     const { lat, lng } = this.position;
                     if (generalHasStrategicEffect(this, 'march_speed_mult')) {
-                        emitFollowedGeneralStrategicMapFx(this, 'march_speed_mult', lat, lng, 'float', { dedupeMs: 5000, dedupeKey: `${this.id}|march_speed|rest_end` });
+                        emitFollowedGeneralStrategicMapFx(this, 'march_speed_mult', lat, lng, 'pulse', { dedupeMs: 5000, dedupeKey: `${this.id}|march_speed|rest_end` });
                     } else if (generalHasStrategicEffect(this, 'mountain_march_immunity')) {
-                        emitFollowedGeneralStrategicMapFx(this, 'mountain_march_immunity', lat, lng, 'float', { dedupeMs: 5000, dedupeKey: `${this.id}|mountain|rest_end` });
+                        emitFollowedGeneralStrategicMapFx(this, 'mountain_march_immunity', lat, lng, 'pulse', { dedupeMs: 5000, dedupeKey: `${this.id}|mountain|rest_end` });
                     }
                     this.tryEmitPostBattleResumeFx();
                 }
@@ -758,6 +759,9 @@ export class Army implements IBattleUnit {
 
     public destroy(): void {
         this.isDestroyed = true;
+        // 清掉运行时战略技 override 与「已脉冲」记录：否则 Map/Set 只增不减，
+        // 且军团 id 若被复用，新军团会继承前任随机到的技。
+        clearStrategicSkillOverride(this.id);
         this.isExternalCombat = false;
         this.isAttacking = false;
         this.currentBattleType = null;

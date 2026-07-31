@@ -1,6 +1,6 @@
 /**
  * Culture Formations
- * 14 文化区 → 各自军队阵型 (CompositionTier 复用)
+ * 15 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
  * [2026-05-30 立] 用户拍板的 14 区阵型 + 12 兵种映射
  * [2026-07-09] 行军四系 MovementClass（史地定案）：
@@ -40,13 +40,14 @@ export type FormationMode = 'square' | 'triangle';
  */
 export type MovementClass = 'CAVALRY' | 'MIXED' | 'INFANTRY' | 'ELEPHANT';
 
-/** 14 文化 → 行军大类（单一真理；改速度/上限逻辑只改这里） */
+/** 15 文化 → 行军大类（单一真理；改速度/上限逻辑只改这里） */
 export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     STEPPE:       'CAVALRY',
     TIBET:        'CAVALRY',
     CENTRAL_ASIA: 'CAVALRY',
-    CENTRAL:      'MIXED',
+    WEST_ASIA:    'MIXED',
     NORTH:        'MIXED',
+    CENTRAL:      'MIXED',
     NORTHEAST:    'MIXED',
     KOREA:        'MIXED',
     HEXI:         'MIXED',
@@ -62,7 +63,7 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
     return CULTURE_MOVEMENT_CLASS[culture] ?? 'MIXED';
 }
 
-/** 14 文化默认阵型（可被军队编辑器覆盖保存） */
+/** 15 文化默认阵型（可被军队编辑器覆盖保存） */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CENTRAL:      'square',
     NORTH:        'square',
@@ -77,6 +78,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     DIANQIAN:     'square',
     TIBET:        'triangle',
     CENTRAL_ASIA: 'triangle',
+    WEST_ASIA:    'square',
     WESTERN:      'square',
 };
 
@@ -230,7 +232,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
 }
 
 // ============================================================
-// 14 文化区阵型 (用户 2026-05-30 拍板)
+// 15 文化区阵型 (用户 2026-05-30 拍板)
 // ============================================================
 
 /** 1. 中原 步骑 盾+轻+弩 */
@@ -405,8 +407,23 @@ export const WESTERN_TIERS: CompositionTier[] = [
         ]
     }
 ];
+/** 15. 西亚 盾阵弓骑（前大盾中弓骑后弓手）— MovementClass=MIXED */
+export const WEST_ASIA_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'shield', count: 3 },
+            { type: 'horse_archer', count: 1 },
+            { type: 'general_cavalry', count: 1 },
+            { type: 'horse_archer', count: 1 },
+            { type: 'archer', count: 3 }
+        ]
+    }
+];
 // ============================================================
-// 14 文化 → CompositionTier[] 映射
+// 15 文化 → CompositionTier[] 映射
 // ============================================================
 
 export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
@@ -423,6 +440,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     DIANQIAN:     DIANQIAN_TIERS,
     TIBET:        TIBET_TIERS,
     CENTRAL_ASIA: CENTRAL_ASIA_TIERS,
+    WEST_ASIA:    WEST_ASIA_TIERS,
     WESTERN:      WESTERN_TIERS,
 };
 
@@ -477,7 +495,7 @@ export function isCultureCavalryOnly(culture: RegionType): boolean {
 export { getArmyMaxTroops } from '../systems/CultureTroopCaps';
 
 /**
- * 与军队编辑器一致：外观由 cultureSlots（14 区阵型）决定；
+ * 与军队编辑器一致：外观由 cultureSlots（15 区阵型）决定；
  * legionType 仅用于阵型骨架（三角 vs 3×3 步骑）。
  */
 export function getLegionTypeForCulture(culture: RegionType): LegionType {

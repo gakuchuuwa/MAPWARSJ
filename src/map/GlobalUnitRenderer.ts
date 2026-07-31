@@ -132,8 +132,8 @@ export class GlobalUnitRenderer {
     /** [2026-07-18] 攻城视觉补偿(px)：城图标只向上出墨（旗区到锚点上方约75~95px，贴图下缘仅37~52px），
      *  从城上方(北面)攻时前排会视觉钻进旗区、且攻城单位画在城图层下层会被盖住。
      *  按接近方向把攻城方阵沿"背离城"方向外推：正上方推满、斜向按角度递减、侧面/下方不推。
-     *  只动渲染，战斗逻辑坐标不变。数值≈上下出墨差(~40px)+下层遮挡余量。 */
-    private static readonly SIEGE_NORTH_VISUAL_COMP_PX = 50;
+     *  只动渲染，战斗逻辑坐标不变。优化为 18px 黄金紧凑透视距离，消除脱节感的悬空距离。 */
+    private static readonly SIEGE_NORTH_VISUAL_COMP_PX = 18;
 
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
     private static assetsPromise: Promise<void> | null = null;
@@ -422,7 +422,14 @@ export class GlobalUnitRenderer {
             if (unit.isDestroyed) {
                 const t0 = unit.destroyTime ?? Date.now();
                 if (!unit.destroyTime) unit.destroyTime = t0;
-                if (Date.now() - t0 <= corpseMs) hasVisibleCorpses = true;
+                // [PERF 2026-07-28] 必须判「在不在视口内」。
+                // 原来只看时间：地图任意角落死一支军团，接下来整整 CORPSE_DISPLAY_MS(15s)
+                // 全画布都在满帧重绘，哪怕镜头根本没看那边；战事密集时几乎等于常态重绘。
+                // 屏外尸体不驱动重绘——镜头挪过去时 moveend/zoomend 会置 mapNeedsRedraw，
+                // 该画的一帧不会漏。
+                if (Date.now() - t0 <= corpseMs && this.isUnitInContainerView(unit)) {
+                    hasVisibleCorpses = true;
+                }
                 continue;
             }
 
@@ -635,18 +642,35 @@ export class GlobalUnitRenderer {
                             currentPos.lat + startJitterLat + BODY_HEIGHT_OFFSET,
                             currentPos.lng + startJitterLng
                         );
-                        const baseEnd = L.latLng(unit.targetPos.lat, unit.targetPos.lng);
-
-                        const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
-                        if (useNavalVisual) {
-                            // 舰队 10 支箭
-                            this.projectileSystem.spawnVolley(baseStart, baseEnd, {
-                                count: 10,
-                                spreadFactor: 0.04,
-                            });
-                        } else {
-                            this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 5, spreadFactor: 0.025 });
+                        // 计算目标城池的视觉中心高程偏置与四位偏置
+                        let targetLat = unit.targetPos.lat;
+                        let targetLng = unit.targetPos.lng;
+                        
+                        // 若攻击目标为城池（攻城战），施加城墙主体视觉高度偏置
+                        if ((unit as any).isSiegeAttacker || unit.currentBattleType === 'siege') {
+                            const cityId = (unit as any).targetCityId || (unit as any).targetId;
+                            const targetCity = cityId ? (window as any).game?.cityManager?.getCity?.(cityId) : null;
+                            
+                            let cityHeightOffset = 0.018; // 默认小城
+                            if (targetCity) {
+                                if (targetCity.type === 'big_city') cityHeightOffset = 0.038;
+                                else if (targetCity.type === 'medium_city') cityHeightOffset = 0.028;
+                                else if (targetCity.type === 'pass') cityHeightOffset = 0.026;
+                                else cityHeightOffset = 0.020;
+                            }
+                            
+                            // 沿着进攻方向向量，将落点引导至近侧城墙，防穿透落到背山处
+                            const dLat = targetLat - currentPos.lat;
+                            const dLng = targetLng - currentPos.lng;
+                            const len = Math.hypot(dLat, dLng) || 0.001;
+                            
+                            targetLat = targetLat + cityHeightOffset - (dLat / len) * 0.006;
+                            targetLng = targetLng - (dLng / len) * 0.006;
                         }
+
+                        const baseEnd = L.latLng(targetLat, targetLng);
+
+                        this.projectileSystem.spawnVolley(baseStart, baseEnd, { count: 5, spreadFactor: 0.025 });
 
                         // 攻城方额外发射石弹（投石机）
                         if ((unit as any).isSiegeAttacker && unit.currentBattleType === 'siege') {

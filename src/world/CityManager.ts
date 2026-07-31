@@ -89,7 +89,7 @@ export class CityManager {
 
         const leafletMap = this.map.getLeafletMap();
         const onStrategicZoom = () => this.applyStrategicMapView(leafletMap.getZoom());
-        leafletMap.on('zoom', onStrategicZoom);
+        // [PERF] zoom 动画期 Math.floor(zoom) 不变，仅在 zoomend 触发一次即可
         leafletMap.on('zoomend', onStrategicZoom);
     }
 

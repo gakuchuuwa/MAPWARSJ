@@ -35,7 +35,7 @@ import {
     resolveSkillCountersForSide,
     type TacticalSkillEntry,
 } from './TacticalSkillResolver';
-import { getTacticalSkillEntry, EFFECT_TO_SIX_SET } from '../data/TacticalSkillCatalog';
+import { getTacticalSkillEntry, EFFECT_TO_SIX_SET, getRandomUnregisteredSkill, isSkillRegisteredFor, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
 import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT, FAMOUS_GENERAL_MULT } from './TacticalConstants';
@@ -45,6 +45,7 @@ import { spawnMapFloatingText, spawnMapPulse, getFollowedArmyId } from '../utils
 export { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT, FAMOUS_GENERAL_MULT };
 
 export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
+    if (unit.stolenSkillId) return unit.stolenSkillId;
     if (unit.battleOverriddenSkillId !== undefined) {
         return unit.battleOverriddenSkillId;
     }
@@ -69,10 +70,33 @@ export interface SituationalSkillResult {
  *   均势 → 全六计随机
  * 攻守双方同池，_isAttacker 已作废（攻守数值差归第四层攻防环，不在技能层重复表达）。
  */
-export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation, _isAttacker: boolean): SituationalSkillResult {
-    if (!unit.generalId) return { skillId: null };
+export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSituation, _isAttacker: boolean, excludeSkillIds?: string[]): SituationalSkillResult {
+    const available = getSituationalSkillPool(unit, situation, excludeSkillIds);
+    if (available.length === 0) return { skillId: null };
+    // 池内等概率取一，同将同势也能打出不同花样
+    return { skillId: available[Math.floor(Math.random() * available.length)] };
+}
+
+/**
+ * 取该武将在当前局势下的**全部**候选技（与 resolveSituationalSkillId 同一套三势选池规则）。
+ *
+ * [2026-07-27] 拆出来给防重用：调用方拿到整池后可以自己挑一个不与全场冲突的，
+ * 而不是反复随机重抽碰运气——在册技会原样返回（见 resolveSlot），
+ * 单靠 excludeSkillIds 重抽是抽不掉同名在册技的。
+ */
+export function getSituationalSkillPool(unit: IBattleUnit, situation: BattleSituation, excludeSkillIds?: string[]): string[] {
+    if (!unit.generalId) return [];
     const p = getGeneralProfile(unit.generalId);
-    if (!p) return { skillId: null };
+    if (!p) return [];
+
+    const gid = unit.generalId;
+    // 助记：六格各绑一个六计子类（攻战/胜战/敌战/混战/并战/败战）
+    // 在册技保留原 ID；不在册技 → 从该六计不在册池随机取（2026-07-26 立）
+    function resolveSlot(skillId: string | undefined, sixClass: string): string | undefined {
+        if (!skillId) return undefined;
+        if (isSkillRegisteredFor(skillId, gid)) return skillId;
+        return getRandomUnregisteredSkill(sixClass, excludeSkillIds) ?? skillId;
+    }
 
     // 三势选池·四/四/六（2026-07-20 主人定稿）：六格一格一计，按势分三组。
     //   优势组=攻战/胜战、均势组=敌战/混战、劣势组=并战/败战。
@@ -80,9 +104,18 @@ export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSi
     //   劣势 = 劣势组 + 均势组（四计随机；不含优势组）
     //   均势 = 全六计随机
     // 攻守双方同池，_isAttacker 不参与选技（字段前缀 atk/def 是攻防六槽时代遗留，选技已不分攻防）。
-    const advGrp = [p.atkAdvantageSkillId, p.defAdvantageSkillId];       // 攻战 / 胜战
-    const balGrp = [p.atkBalanceSkillId, p.defBalanceSkillId];           // 敌战 / 混战
-    const disGrp = [p.atkDisadvantageSkillId, p.defDisadvantageSkillId]; // 并战 / 败战
+    const advGrp = [
+        resolveSlot(p.atkAdvantageSkillId, 'gongzhan'),       // 攻战
+        resolveSlot(p.defAdvantageSkillId, 'shengzhan'),       // 胜战
+    ];
+    const balGrp = [
+        resolveSlot(p.atkBalanceSkillId, 'dizhan'),           // 敌战
+        resolveSlot(p.defBalanceSkillId, 'hunzhan'),           // 混战
+    ];
+    const disGrp = [
+        resolveSlot(p.atkDisadvantageSkillId, 'bingzhan'),     // 并战
+        resolveSlot(p.defDisadvantageSkillId, 'baizhan'),      // 败战
+    ];
     const bySituation: Record<BattleSituation, (string | undefined)[]> = {
         advantage: [...advGrp, ...balGrp],
         balance: [...advGrp, ...balGrp, ...disGrp],
@@ -93,12 +126,9 @@ export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSi
     const available = pool.length > 0
         ? pool
         : ([...advGrp, ...balGrp].filter(Boolean) as string[]);
-    if (available.length === 0) return { skillId: null };
 
-    // 池内等概率取一，同将同势也能打出不同花样
-    const skillId = available[Math.floor(Math.random() * available.length)];
-
-    return { skillId };
+    // 同一格可能解析出相同 ID（在册技重复配置），去重后再交给调用方挑
+    return [...new Set(available)];
 }
 
 /** 查技能六类（攻战/胜战/敌战/混战/并战/败战），不在目录返回 null */
@@ -874,8 +904,7 @@ export function getAttackStylePowerMult(unit: IBattleUnit | null, isAttacker: bo
 }
 
 /**
- * 第五层·名将光环（2026-07-16 · 第 8 环）
- * 名将 (tier='famous') ×1.20，普将 ×1.00。
+ * 第 6 环·名将光环 —— 名将 (tier='famous') ×1.30，普将 ×1.00（值见 TacticalConstants.FAMOUS_GENERAL_MULT）。
  */
 export function getFamousGeneralMult(unit: IBattleUnit | null): number {
     if (!unit?.generalId) return 1;
@@ -890,19 +919,6 @@ export function getElitePowerMult(unit: IBattleUnit): number {
     const tier = getUnitEliteTier(unit);
     if (tier === null) return 1;
     return GameConfig.COMBAT.ELITE_TIER_MULT[tier] ?? 1;
-}
-
-/**
- * 并战·借「拖长一档」（2026-07-19 定稿）：该侧任一带将单位的当前局技为 battle_duration_mult
- * → 胜负已定档 30s 抬回均势档 45s。收益在地图层：援军圈每 0.2s 轮询，多撑 15s 等友军编入。
- * 不碰胜负判定（并战计不改胜负，六计中只有败战计能翻盘）。
- */
-export function sideHasBattleDurationExtend(units: IBattleUnit[]): boolean {
-    return units.some((u) => {
-        if (!u.generalId) return false;
-        const entry = resolveGeneralTacticalEntry(getActiveTacticalSkillId(u) ?? '');
-        return entry?.baseEffect === 'battle_duration_mult';
-    });
 }
 
 /**
@@ -921,8 +937,87 @@ export function getStrategicBattlePowerMultiplier(
     return 1;
 }
 
-/** 军团/城防单位当前战略技定义（无则 null） */
+// ━━━ 战略技运行时随机池与 override ━━━
+
+/** 活跃战略技池（剔除退役技、远征专用技 str_11）；战后随机换技从此抽取 */
+export const ACTIVE_STRATEGIC_SKILL_POOL: string[] = [
+    'str_01', 'str_06', 'str_07', 'str_10', 'str_12', 'str_13',
+    'str_16', 'str_19', 'str_20', 'str_21', 'str_22', 'str_23',
+    'str_24', 'str_29',
+];
+
+/** 随机取一个战略技 ID */
+export function pickRandomStrategicSkill(excludeId?: string): string {
+    const pool = ACTIVE_STRATEGIC_SKILL_POOL;
+    // 排除当前技：14 选 1 均匀抽有 1/14≈7% 会抽回原技，观众看到「换技」却毫无变化，
+    // 对直播是纯损失。剔掉当前技后保证每次都真的换。
+    const usable = excludeId ? pool.filter((id) => id !== excludeId) : pool;
+    const from = usable.length > 0 ? usable : pool;
+    return from[Math.floor(Math.random() * from.length)];
+}
+
+/** unitId → 战略技 override（战后随机换技写入，优先级高于 general 档案） */
+const strategicOverrideByUnitId = new Map<string, string>();
+
+/** 「本次持有期内已脉冲过」的记录：key = `${unitId}|${skillId}`，换技/退场时清 */
+const strategicFxShownOnce = new Set<string>();
+
+
+function resetStrategicFxOnce(unitId: string): void {
+    const prefix = `${unitId}|`;
+    for (const key of strategicFxShownOnce) {
+        if (key.startsWith(prefix)) strategicFxShownOnce.delete(key);
+    }
+}
+
+export function setStrategicSkillOverride(unitId: string, skillId: string): void {
+    strategicOverrideByUnitId.set(unitId, skillId);
+    resetStrategicFxOnce(unitId);
+}
+
+/** 查询运行时 override 的战略技 ID（供 UI 显示）；无 override 返回 undefined */
+export function getStrategicSkillOverride(unitId: string): string | undefined {
+    return strategicOverrideByUnitId.get(unitId);
+}
+
+/** 该军团此刻实际生效的战略技 ID：override 优先，否则档案；都没有则 undefined */
+export function getEffectiveStrategicSkillId(
+    unitId: string,
+    generalId: string | undefined,
+): string | undefined {
+    return strategicOverrideByUnitId.get(unitId)
+        ?? (generalId ? getGeneralProfile(generalId)?.strategicSkillId : undefined);
+}
+
+/** 军团覆没/退场时清掉 override，避免 Map 无限增长、以及 id 复用时继承前任的技 */
+export function clearStrategicSkillOverride(unitId: string): void {
+    strategicOverrideByUnitId.delete(unitId);
+    resetStrategicFxOnce(unitId);
+}
+
+/**
+ * 「换技」瞬间的大地图脉冲（战后随机换技专用）。
+ * 池里有些技（以战养战=行军减兵全免、越城而走=仅劣势触发）整个循环都可能不触发，
+ * 不在换技当下报一次，观众根本不知道换成了什么 —— 与「技能必须有可见演出」相悖。
+ */
+export function emitStrategicSkillSwapFx(
+    unitId: string,
+    skillId: string,
+    lat: number,
+    lng: number,
+): boolean {
+    if (unitId !== getFollowedArmyId()) return false;
+    const skill = getStrategicSkillDef(skillId);
+    if (!skill) return false;
+    return false; // [2026-07-31] 禁用换技能地图脉冲
+}
+
+/** 军团/城防单位当前战略技定义（无则 null）。
+ *  优先读运行时 override（战后随机换技写入）；无 override 才读 general 档案。 */
 export function getGeneralStrategicSkillDef(unit: IBattleUnit) {
+    // 运行时 override 优先（不依赖 canUnitUseGeneralSkills，确保换技后立即生效）
+    const overrideId = strategicOverrideByUnitId.get(unit.id);
+    if (overrideId) return getStrategicSkillDef(overrideId) ?? null;
     if (!canUnitUseGeneralSkills(unit)) return null;
     const profile = getGeneralProfile(unit.generalId);
     if (!profile?.strategicSkillId) return null;
@@ -931,12 +1026,29 @@ export function getGeneralStrategicSkillDef(unit: IBattleUnit) {
 
 /** 是否持有指定战略效果 */
 export function generalHasStrategicEffect(unit: IBattleUnit, effect: StrategicEffect): boolean {
+    // 平衡规则：仅跟拍军团可以使用武将战略技
+    if (unit.id !== getFollowedArmyId()) return false;
     const skill = getGeneralStrategicSkillDef(unit);
     return skill?.effect === effect;
 }
 
-/** 轻量版：仅需 generalId（供渲染层等无 IBattleUnit 的调用方使用） */
-export function generalIdHasStrategicEffect(generalId: string | undefined, effect: StrategicEffect): boolean {
+/** 轻量版：仅需 generalId（供渲染层等无 IBattleUnit 的调用方使用）。
+ *  可选 unitId：传入时校验是否跟拍军团；不传则维持旧行为（适合退役技调用方）。 */
+export function generalIdHasStrategicEffect(
+    generalId: string | undefined,
+    effect: StrategicEffect,
+    unitId?: string,
+): boolean {
+    // 平衡规则：仅跟拍军团可以使用武将战略技
+    if (unitId !== undefined && unitId !== getFollowedArmyId()) return false;
+    // 运行时 override 优先
+    if (unitId) {
+        const overrideId = strategicOverrideByUnitId.get(unitId);
+        if (overrideId) {
+            const skill = getStrategicSkillDef(overrideId);
+            return skill?.effect === effect;
+        }
+    }
     if (!generalId) return false;
     const profile = getGeneralProfile(generalId);
     if (!profile?.strategicSkillId) return false;
@@ -963,7 +1075,7 @@ const STRATEGIC_PULSE_COLORS: Record<string, string> = {
     str_17: '#8888cc', // 偃旗息鼓 视野
     str_18: '#8888cc', // 虚张声势 视野
     str_19: '#cc8844', // 不战而屈 威慑
-    str_20: '#cc8844', // 先声夺人 威慑
+    str_20: '#cc8844', // 望风披靡 威慑
     str_21: '#cc8844', // 越城而走 威慑
     str_22: '#ccaadd', // 纵横捭阖 纵横
     str_23: '#ccaadd', // 飞箝擒王 纵横
@@ -1001,7 +1113,17 @@ function getGameSeasonDedupeTag(): string | null {
 function resolveGeneralStrategicSkillForEffect(
     generalId: string | null | undefined,
     expectedEffect: StrategicEffect,
+    unitId?: string,
 ) {
+    // 运行时 override 优先
+    if (unitId) {
+        const overrideId = strategicOverrideByUnitId.get(unitId);
+        if (overrideId) {
+            const skill = getStrategicSkillDef(overrideId);
+            if (skill && skill.effect === expectedEffect) return skill;
+            return null; // override 不匹配该 effect → 不该脉冲
+        }
+    }
     if (!generalId) return null;
     const profile = getGeneralProfile(generalId);
     if (!profile?.strategicSkillId) return null;
@@ -1023,16 +1145,16 @@ export function emitFollowedGeneralStrategicMapFx(
     opts?: { dedupeMs?: number; dedupeKey?: string },
 ): boolean {
     if (unit.id !== getFollowedArmyId()) return false;
-    const skill = resolveGeneralStrategicSkillForEffect(unit.generalId, expectedEffect);
+    const skill = resolveGeneralStrategicSkillForEffect(unit.generalId, expectedEffect, unit.id);
     if (!skill) return false;
 
-    const dedupeMs = opts?.dedupeMs ?? 0;
-    if (dedupeMs > 0) {
-        const key = opts?.dedupeKey ?? `${unit.id}|${expectedEffect}`;
-        const now = Date.now();
-        if (now - (strategicMapFxDedupe.get(key) ?? 0) < dedupeMs) return false;
-        strategicMapFxDedupe.set(key, now);
-    }
+    // 【每个技只脉冲一次】主人 2026-07-31 定：不要频繁刷屏。
+    // 原来靠各调用点自带 dedupeMs（2~8 秒）去重，行军类技会每 5~8 秒重复弹一次，很吵。
+    // 现在统一改为「同一军团 + 同一个技，本次持有期内只报一次」——
+    // 战后随机换技时 setStrategicSkillOverride 会清掉该军团的记录，新技自然又能报一次。
+    const onceKey = `${unit.id}|${skill.id}`;
+    if (strategicFxShownOnce.has(onceKey)) return false;
+    strategicFxShownOnce.add(onceKey);
 
     const color = getStrategicPulseColor(skill.id);
     if (style === 'pulse') spawnMapPulse(lat, lng, skill.displayName, color);
@@ -1083,6 +1205,8 @@ export function emitFollowedCityAnchoredDefensePulse(
     const anchored = getCityAnchoredGeneral(cityId);
     const skill = resolveGeneralStrategicSkillForEffect(anchored?.generalId, expectedEffect);
     if (!skill) return false;
+    if (strategicFxShownOnce.has(`${contextArmy.id}|${skill.id}`)) return false;
+    strategicFxShownOnce.add(`${contextArmy.id}|${skill.id}`);
 
     const intervalKey = opts?.dedupeKey ?? `${cityId}|${expectedEffect}`;
     const minInterval = opts?.dedupeMs ?? DEFENSE_PULSE_MIN_INTERVAL_MS;
@@ -1161,10 +1285,10 @@ export function emitFollowedVisionStrategicFxOnMarch(
     lat: number,
     lng: number,
 ): void {
-    const profile = getGeneralProfile(unit.generalId);
-    const skill = profile?.strategicSkillId
-        ? getStrategicSkillDef(profile.strategicSkillId)
-        : null;
+    // 运行时 override 优先
+    const overrideId = strategicOverrideByUnitId.get(unit.id);
+    const skillId = overrideId ?? getGeneralProfile(unit.generalId)?.strategicSkillId;
+    const skill = skillId ? getStrategicSkillDef(skillId) : null;
     if (!skill || !VISION_STRATEGIC_EFFECTS.includes(skill.effect)) return;
     emitFollowedGeneralStrategicMapFx(
         unit,
@@ -1249,27 +1373,20 @@ export function getLongDriveDeepBypassChance(
 
 /** 跟拍：长驱深入绕小城 pulse（不占用将 profile 的 strategicSkillId；坐标取军团脚下） */
 export function emitFollowedLongDriveDeepBypassFx(
-    army: Pick<Army, 'id'>,
+    army: { id: string },
     lat: number,
     lng: number,
-    opts?: { dedupeMs?: number; dedupeKey?: string },
+    _opts?: { dedupeMs?: number; dedupeKey?: string },
 ): boolean {
     if (army.id !== getFollowedArmyId()) return false;
     const skill = getStrategicSkillDef('str_11');
     if (!skill) return false;
 
-    const dedupeMs = opts?.dedupeMs ?? 6000;
-    const key = opts?.dedupeKey ?? `${army.id}|str_11`;
-    if (dedupeMs > 0) {
-        const now = Date.now();
-        if (now - (strategicMapFxDedupe.get(key) ?? 0) < dedupeMs) return false;
-    }
+    const onceKey = `${army.id}|str_11`;
+    if (strategicFxShownOnce.has(onceKey)) return false;
+    strategicFxShownOnce.add(onceKey);
 
-    const shown = spawnMapPulse(lat, lng, skill.displayName, getStrategicPulseColor(skill.id));
-    if (shown && dedupeMs > 0) {
-        strategicMapFxDedupe.set(key, Date.now());
-    }
-    return shown;
+    return spawnMapPulse(lat, lng, skill.displayName, getStrategicPulseColor(skill.id));
 }
 
 export function unitQualifiesForPassGarrisonDefenseSkill(unit: IBattleUnit): boolean {
@@ -1336,7 +1453,7 @@ export function getGeneralSkillDisplayTags(
         return TAC_MAP[cls];
     };
 
-    const tacId = getActiveTacticalSkillId(unit);
+    const tacId = unit.battleOverriddenSkillId ?? null;
     const tac = tacId ? getTacticalSkillDef(tacId) : null;
     if (tac) {
         tags.push({
@@ -1988,7 +2105,7 @@ export function applyOpeningTacticalToRolls(
     outAtt *= getAttackStylePowerMult(attGen, true);
     outDef *= getAttackStylePowerMult(defGen, false);
 
-    // 第6环·名将光环（tier='famous' ×1.20，普将 ×1.00）
+    // 第6环·名将光环（tier='famous' ×1.30，普将 ×1.00）
     outAtt *= getFamousGeneralMult(attGen);
     outDef *= getFamousGeneralMult(defGen);
 
@@ -2163,7 +2280,7 @@ function applyPostBattleTroopPct(
         const army = getArmyEntity(unit);
         if (army) {
             const pos = army.getPosition();
-            emitFollowedGeneralStrategicMapFx(unit, 'post_battle_troop_pct', pos.lat, pos.lng, 'float', { dedupeMs: 3000, dedupeKey: `${unit.id}|post_battle_troop` });
+            emitFollowedGeneralStrategicMapFx(unit, 'post_battle_troop_pct', pos.lat, pos.lng, 'pulse', { dedupeMs: 3000, dedupeKey: `${unit.id}|post_battle_troop` });
         }
     }
     return bonus;
@@ -2212,9 +2329,11 @@ export function applyPostBattleStrategicBonus(
     const army = getArmyEntity(unit);
 
     if (canUnitUseGeneralSkills(unit)) {
-        const profile = getGeneralProfile(unit.generalId);
-        if (profile?.strategicSkillId) {
-            const profileSkill = getStrategicSkillDef(profile.strategicSkillId);
+        // 必须走 getGeneralStrategicSkillDef（内置 override 优先）——直接读 profile 会与
+        // emitFollowedGeneralStrategicMapFx 的判据不一致：战后随机换技后，因粮于敌/招降纳叛
+        // 会「按旧档案补兵却不出脉冲」，或「抽到了却完全不生效」。
+        const profileSkill = getGeneralStrategicSkillDef(unit);
+        if (profileSkill) {
             if (profileSkill && profileSkill.effect === 'post_battle_troop_pct') {
                 // S⑦因粮于敌：攻城胜后按守方城型补兵；无城型表时回退 magnitude 固定比例
                 if (isAttacker && battleType === 'siege' && profileSkill.postBattlePctByCityType && defenderCityType) {
@@ -2235,7 +2354,7 @@ export function applyPostBattleStrategicBonus(
                                     'post_battle_troop_pct',
                                     pos.lat,
                                     pos.lng,
-                                    'float',
+                                    'pulse',
                                 );
                             }
                         }
@@ -2257,7 +2376,7 @@ export function applyPostBattleStrategicBonus(
                             'post_battle_recruit_enemy_pct',
                             pos.lat,
                             pos.lng,
-                            'float',
+                            'pulse',
                         );
                     }
                 }
@@ -2325,7 +2444,7 @@ export function applySkillCountersToUnits(
         attUnit.negatedSkillId = attSkillId;
         attUnit.battleOverriddenSkillId = null;
         if (defCounter.isStolen && defUnit) {
-            defUnit.battleOverriddenSkillId = attSkillId;
+            defUnit.stolenSkillId = attSkillId;
         }
         gameLog('battle', `⚔️ [对抗系] ${defUnit?.generalId} 触发【${defCounter.entry?.displayName}】，看破了攻方战术技！`);
         if (defUnit && defCounter.entry) {
@@ -2338,7 +2457,7 @@ export function applySkillCountersToUnits(
         defUnit.negatedSkillId = defSkillId;
         defUnit.battleOverriddenSkillId = null;
         if (attCounter.isStolen && attUnit) {
-            attUnit.battleOverriddenSkillId = defSkillId;
+            attUnit.stolenSkillId = defSkillId;
         }
         gameLog('battle', `⚔️ [对抗系] ${attUnit?.generalId} 触发【${attCounter.entry?.displayName}】，看破了守方战术技！`);
         if (attUnit && attCounter.entry) {

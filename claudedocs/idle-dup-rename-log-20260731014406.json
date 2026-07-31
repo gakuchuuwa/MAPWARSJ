@@ -1,0 +1,77 @@
+[
+  {
+    "folder": "DIANQIAN",
+    "from": "__多余__DIANQIAN_01.png",
+    "to": "__闲置__DIANQIAN_27.png"
+  },
+  {
+    "folder": "DIANQIAN",
+    "from": "c4bd7574-3610-4824-8df7-7e056e35bcee.png",
+    "to": "__多余__DIANQIAN_07.png"
+  },
+  {
+    "folder": "HEXI",
+    "from": "donghu_tuiyin.png",
+    "to": "__多余__HEXI_02.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "huo_songlaosheng.png",
+    "to": "__多余__LINGNAN_14.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "kuai_kuaiyue.png",
+    "to": "__多余__LINGNAN_15.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "qianhui_baiyanhu.png",
+    "to": "__多余__LINGNAN_16.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "qingyi_fanchangsheng.png",
+    "to": "__多余__LINGNAN_17.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "ranwei_d_ranmin.png",
+    "to": "__闲置__LINGNAN_15.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "shu_liubei.png",
+    "to": "__多余__LINGNAN_18.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "xiang_d_xiangdakun.png",
+    "to": "__多余__LINGNAN_19.png"
+  },
+  {
+    "folder": "LINGNAN",
+    "from": "yue_goujian.png",
+    "to": "__多余__LINGNAN_20.png"
+  },
+  {
+    "folder": "NORTH",
+    "from": "shanrong_lanyu.png",
+    "to": "__闲置__NORTH_04.png"
+  },
+  {
+    "folder": "WESTERN",
+    "from": "anxi_guoxin.png",
+    "to": "__闲置__WESTERN_34.png"
+  },
+  {
+    "folder": "wuzhou",
+    "from": "__多余__wuzhou_01.png",
+    "to": "__闲置__wuzhou_25.png"
+  },
+  {
+    "folder": "xianqin",
+    "from": "huo_songlaosheng.png",
+    "to": "__多余__xianqin_02.png"
+  }
+]

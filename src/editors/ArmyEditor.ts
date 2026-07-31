@@ -50,6 +50,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     KOREA:        'xinluo',    // 朝鲜-庆州(金城) → 新罗
     JAPAN:        'ashikaga',  // 室町-京都 → 足利
     CENTRAL_ASIA: 'seljuq',    // 中亚-木鹿(梅尔夫) → 塞尔柱
+    WEST_ASIA:    'baizhanting', // 西亚-君士坦丁堡 → 拜占庭
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */

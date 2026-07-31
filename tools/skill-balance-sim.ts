@@ -12,7 +12,7 @@
  */
 
 import {
-    LUCK_MIN, LUCK_MAX, ELITE_TIER_MULT, CAMPAIGN_LEGION_MULT, PASS_GARRISON_MULT,
+    LUCK_MIN, LUCK_MAX, ELITE_TIER_MULT, PASS_GARRISON_MULT,
     REGION_CENTER_GARRISON_MULT, TIER_TABLE,
     STRATEGIC_SKILL_CATALOG, simConfig, winRate,
     type UnitSpec,
@@ -87,7 +87,6 @@ function main(): void {
     for (let t = 0; t <= 4; t++) {
         row(`T${t} (×${ELITE_TIER_MULT[t]})`, winRate([base({ eliteTier: t })], [base()], T));
     }
-    row('远征军(非精锐)', winRate([base({ campaign: true })], [base()], T), `×${CAMPAIGN_LEGION_MULT}`);
 
     header('【3】文化区 / 关隘 / 中心（等兵力）');
     row('草原野战 vs 中原', winRate([base({ region: 'STEPPE' })], [base()], T),

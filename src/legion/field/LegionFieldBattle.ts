@@ -31,8 +31,8 @@ export interface LegionFieldBattleDeps {
     getCombatSystem(): CombatSystem | null;
     removeArmy(army: Army): void;
     triggerSiege(army: Army, city: City): void;
-    /** 攻城第三方排队中：不参与野战碰撞 */
-    isArmyWaitingSiege?(armyId: string): boolean;
+    /** 将军团移出攻城第三方排队（入野战前调用，避免攻城事件队列卡死） */
+    dequeueArmyFromThirdPartyWaiters?(armyId: string): boolean;
 }
 
 function collectLegionsNearBattleCenter(
@@ -49,7 +49,6 @@ function collectLegionsNearBattleCenter(
         if (excludeArmyIds.has(legion.id)) return false;
         if (legion.type !== 'legion' || legion.isDestroyed) return false;
         if (legion.getIsInCombat()) return false;
-        if (deps.isArmyWaitingSiege?.(legion.id)) return false;
         if (legion.getTroops() < minTroops) return false;
         return getEuclideanDistance(legion.getPosition(), center) <= radius;
     });
@@ -137,14 +136,12 @@ export function tryEngageFieldBattle(
     for (const otherArmy of nearbyArmies) {
         if (otherArmy === army || otherArmy.isDestroyed || otherArmy.getTroops() <= 0) continue;
         if (otherArmy.getFactionId() === army.getFactionId()) continue;
-        if (otherArmy.getFactionId() === 'neutral') continue;
 
         const opPos = otherArmy.getPosition();
         if (!areArmiesInFieldContact(marchSegment, opPos)) continue;
 
         if (otherArmy.getIsInCombat()) continue;
         if (isArmyInActiveSandboxFieldBattle(deps, otherArmy.id)) continue;
-        if (deps.isArmyWaitingSiege?.(otherArmy.id)) continue;
 
         let otherIsGarrison = false;
         const nearestCity = cityManager.getNearestCity(null, {
@@ -228,6 +225,7 @@ function startFieldBattleBetween(
     );
 
     for (const legion of allLegions) {
+        deps.dequeueArmyFromThirdPartyWaiters?.(legion.id);
         legion.stopMovement(true);
         legion.setCombatState(true, 'field', center);
     }

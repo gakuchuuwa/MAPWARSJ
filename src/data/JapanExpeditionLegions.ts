@@ -17,7 +17,6 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     satsuma: { name: '萨摩隼人', tier: 2 },
     iga_d: { name: '伊贺众', tier: 3 },
     hashiba: { name: '黄母衣众', tier: 3 },
-  kai: { name: '武田赤备', tier: 2 },          // 标准明确列为T2代表（地方特色兵种/战术尖刀），降回T2
   jinchuan: { name: '骏河弓取', tier: 3 },      // 骏河·今川义元（无重大战略级胜利，T2）
   owari: { name: '织田马廻众', tier: 1 },     // 织田信长亲卫，虽参与众多大战，但"马廻众"本身作为建制未能独立达成灭国，更偏向T1战略主力或T2战术尖刀。归入T1。
     totomi: { name: '三河武士', tier: 2 },

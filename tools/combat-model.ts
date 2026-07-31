@@ -57,7 +57,7 @@ export type { GeneralProfile, GeneralTier };
 export { APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT, FAMOUS_GENERAL_MULT };
 
 // ────────────────────────── 常量（全部来自游戏源） ──────────────────────────
-export const { LUCK_MIN, LUCK_MAX, ELITE_TIER_MULT, CAMPAIGN_LEGION_MULT } = GameConfig.COMBAT;
+export const { LUCK_MIN, LUCK_MAX, ELITE_TIER_MULT } = GameConfig.COMBAT;
 export const TIER_TABLE = GameConfig.CULTURE_COMBAT.TIER_TABLE;
 export const PASS_GARRISON_MULT = GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT;
 export const REGION_CENTER_GARRISON_MULT = GameConfig.CULTURE_COMBAT.REGION_CENTER_GARRISON_MULT;
@@ -85,8 +85,7 @@ export interface UnitSpec {
     role?: Role;              // field=野战单位 / garrison=守城单位
     pass?: boolean;           // 关隘据点（仅 garrison 生效 ×PASS_GARRISON_MULT）
     regionCenter?: boolean;     // 14 文化中心（仅 garrison 生效 ×REGION_CENTER_GARRISON_MULT）
-    eliteTier?: number | null;// 0..4 → ELITE_TIER_MULT；null=非精锐
-    campaign?: boolean;       // 非精锐远征军团 ×CAMPAIGN_LEGION_MULT
+    eliteTier?: number | null;// 0..4 → ELITE_TIER_MULT；null=非精锐（精锐环只有这 5 档）
     general?: InlineGeneral | string | null; // 内联档 或 真实 GENERAL_PROFILES 键
     multOverride?: number;    // 直接指定固定系数（标定用，跳过文化/精锐推导）
     /** 对齐 Army.isFirstSortieSinceDepart；封狼居胥等首战技门控 */
@@ -128,12 +127,10 @@ function cultureMult(region: string | undefined, role: Role): number {
     return role === 'field' ? t[0] : t[1];
 }
 
+/** 精锐环：T0~T4 → ELITE_TIER_MULT，其余一律 1.0（与游戏 getEliteCombatMultiplier 同表） */
 function eliteMult(spec: UnitSpec): number {
-    if (spec.eliteTier !== null && spec.eliteTier !== undefined) {
-        return ELITE_TIER_MULT[spec.eliteTier] ?? CAMPAIGN_LEGION_MULT;
-    }
-    if (spec.campaign && spec.role !== 'garrison') return CAMPAIGN_LEGION_MULT;
-    return 1;
+    if (spec.eliteTier === null || spec.eliteTier === undefined) return 1;
+    return ELITE_TIER_MULT[spec.eliteTier] ?? 1;
 }
 
 export function makeUnit(spec: UnitSpec): Unit {
@@ -708,16 +705,15 @@ function applyComebackEffect(
     }
 }
 
-function calcDuration(totalTroops: number, hasGeneral = false): number {
+/**
+ * 战斗时长（2026-07-27 起只有两个值，与引擎 BattleField 同源）：
+ *   双方都有将 → 30 秒；其余一切 → 9 秒。兵力不再参与时长。
+ */
+function calcDuration(_totalTroops: number, hasGeneral = false): number {
     const c = GameConfig.COMBAT;
-    const minSec = hasGeneral
-        ? c.BATTLE_DURATION_MIN_WITH_GENERAL_SEC
-        : c.BATTLE_DURATION_MIN_SEC;
-    const ratio = Math.min(1, Math.max(0, totalTroops) / c.BATTLE_DURATION_TROOPS_SCALE);
-    const raw =
-        c.BATTLE_DURATION_MIN_SEC +
-        (c.BATTLE_DURATION_MAX_SEC - c.BATTLE_DURATION_MIN_SEC) * ratio;
-    return Math.min(c.BATTLE_DURATION_MAX_SEC, Math.max(minSec, raw));
+    return hasGeneral
+        ? c.BATTLE_DURATION_BOTH_GENERALS_SEC
+        : c.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
 }
 
 // ────────────────────────── 蒙特卡洛聚合 ──────────────────────────

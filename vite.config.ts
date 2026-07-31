@@ -14,6 +14,51 @@ function serverToPinyinId(chinese: string): string {
         .replace(/[^a-z0-9]/g, '');
 }
 
+/**
+ * 带重试的写盘（2026-07-31 加）
+ * ------------------------------------------------------------------
+ * Windows 上写 src/data/*.ts 偶发 `UNKNOWN: unknown error, open '...'`：
+ * 文件刚被写过时，杀软扫描 / 编辑器 / git 都可能短暂持有句柄，此刻再写就撞上共享冲突。
+ * 实测症状：同一次绑定请求，隔几分钟重试就成功（读始终正常，只有写会中招）。
+ * 这类锁只持续几十到几百毫秒，退避重试即可，无需搞清具体是哪个进程占的。
+ */
+function serverSafeWriteFileSync(file: string, content: string): void {
+    const TRANSIENT = new Set(['EBUSY', 'EPERM', 'EACCES', 'UNKNOWN', 'EMFILE']);
+    let lastErr: any;
+    for (let i = 0; i < 12; i++) {
+        try {
+            fs.writeFileSync(file, content, 'utf-8');
+            if (i > 0) console.log(`  ↻ [SafeWrite] ${path.basename(file)} 第 ${i + 1} 次尝试成功`);
+            return;
+        } catch (e: any) {
+            lastErr = e;
+            if (!TRANSIENT.has(e?.code)) throw e;
+            // 20/40/60… ms 递增退避，总计约 1.5s
+            const until = Date.now() + 20 * (i + 1);
+            while (Date.now() < until) { /* 同步阻塞：这些 API 本身就是同步流程 */ }
+        }
+    }
+    throw new Error(
+        `写入 ${path.basename(file)} 连续失败（${lastErr?.code}）：文件被其它程序占用。` +
+        `常见原因是杀毒软件实时扫描或编辑器占用，稍后重试即可。原始错误：${lastErr?.message}`,
+    );
+}
+
+/** 写前预检：能否真的写进去。用于在做破坏性改名之前提前失败，避免半途而废。 */
+function serverAssertWritable(file: string): void {
+    let fd: number | undefined;
+    try {
+        fd = fs.openSync(file, 'r+');
+    } catch (e: any) {
+        throw new Error(
+            `${path.basename(file)} 当前不可写（${e?.code}），已中止绑定、未改动任何文件。` +
+            `请关闭占用该文件的程序后重试。`,
+        );
+    } finally {
+        if (fd !== undefined) fs.closeSync(fd);
+    }
+}
+
 // F2 立绘写盘后短暂拦截 Vite 整页 full-reload（Esc 保存不打断对局）
 let portraitDevSuppressReloadUntil = 0;
 function markPortraitDevWrite(): void {
@@ -209,6 +254,26 @@ export default defineConfig({
                             // [2026-07-17] 同时追加一行到 jsonl：多标签页各自的账单都留痕，便于分清真实 Chrome vs 预览
                             fs.appendFileSync(path.resolve(__dirname, 'scratch/boot_timing_log.jsonl'), body + '\n', 'utf-8');
                             console.log('[BootTiming] 已记录本次启动耗时 → scratch/boot_timing_latest.json (+log.jsonl)');
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // [2026-07-27] 缩放卡顿采样落盘：ZoomPerfProbe 每次缩放后 POST 一条，
+                // 写 scratch/zoom_perf_latest.json + 追加 zoom_perf_log.jsonl。
+                // 目的：主人只管玩，不必在控制台敲任何东西，排查方直接读文件。
+                server.middlewares.use('/api/zoom-perf', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    let body = '';
+                    req.on('data', (chunk: string) => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            fs.writeFileSync(path.resolve(__dirname, 'scratch/zoom_perf_latest.json'), body, 'utf-8');
+                            fs.appendFileSync(path.resolve(__dirname, 'scratch/zoom_perf_log.jsonl'), body + '\n', 'utf-8');
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
                         } catch (err: any) {
@@ -723,7 +788,7 @@ export default defineConfig({
                                 }
                             }
 
-                            fs.writeFileSync(portraitAdjustPath, content, 'utf-8');
+                            serverSafeWriteFileSync(portraitAdjustPath, content);
                             markPortraitDevWrite();
                             console.log(`✅ [PortraitAdjust] Saved to ${portraitAdjustPath}`);
                             res.setHeader('Content-Type', 'application/json');
@@ -735,6 +800,67 @@ export default defineConfig({
                             res.end(JSON.stringify({ ok: false, error: err.message }));
                         }
                     });
+                });
+
+                // ────────────────────────────────────────────────────────
+                // 立绘自动垂直对齐（2026-07-31）
+                //   只算 offsetY。scale 经 400 张留一法验证不可自动（见 align_one.py 注释）。
+                // ────────────────────────────────────────────────────────
+                server.middlewares.use('/api/portrait-auto-align', (req, res) => {
+                    const send = (code: number, obj: unknown) => {
+                        res.statusCode = code;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify(obj));
+                    };
+                    const q = new URL(req.url ?? '', 'http://x').searchParams.get('path') ?? '';
+                    if (!/^\/assets\/[^/]+\/[^/]+\.png$/i.test(q)) {
+                        send(400, { ok: false, reason: '非法图片路径' });
+                        return;
+                    }
+                    const abs = path.resolve(__dirname, 'public', q.replace(/^\//, ''));
+                    if (!abs.startsWith(path.resolve(__dirname, 'public', 'assets'))) {
+                        send(400, { ok: false, reason: '路径越界' });
+                        return;
+                    }
+                    const script = path.resolve(__dirname, 'tools/PortraitAlign/align_one.py');
+                    execFile('py', [script, abs], { timeout: 30000 }, (err, stdout, stderr) => {
+                        if (err && !stdout) {
+                            send(500, { ok: false, reason: `检测器调用失败: ${err.message}`, stderr: String(stderr).slice(0, 300) });
+                            return;
+                        }
+                        try {
+                            send(200, JSON.parse(String(stdout).trim().split('\n').pop() || '{}'));
+                        } catch {
+                            send(500, { ok: false, reason: '检测器输出无法解析', raw: String(stdout).slice(0, 300) });
+                        }
+                    });
+                });
+
+                // 内容完全相同的立绘分组（供「调好一张，重复图自动跟随」）
+                // 同一张图的正确缩放位移必然相同，所以同步是可证明正确的，不是启发式。
+                server.middlewares.use('/api/portrait-duplicates', (_req, res) => {
+                    const skip = new Set(['avg', 'chongfu', 'inbox', 'bgm_backup']);
+                    const root = path.resolve(__dirname, 'public/assets');
+                    const byHash = new Map<string, string[]>();
+                    try {
+                        for (const d of fs.readdirSync(root, { withFileTypes: true })) {
+                            if (!d.isDirectory() || skip.has(d.name)) continue;
+                            for (const f of fs.readdirSync(path.join(root, d.name))) {
+                                if (!/\.png$/i.test(f)) continue;
+                                const abs = path.join(root, d.name, f);
+                                const sha = crypto.createHash('sha256').update(fs.readFileSync(abs)).digest('hex');
+                                const web = `/assets/${d.name}/${f}`;
+                                if (!byHash.has(sha)) byHash.set(sha, []);
+                                byHash.get(sha)!.push(web);
+                            }
+                        }
+                        const groups = [...byHash.values()].filter((g) => g.length > 1);
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify(groups));
+                    } catch (e: any) {
+                        res.statusCode = 500;
+                        res.end(JSON.stringify({ error: e?.message }));
+                    }
                 });
 
                 const publicAssetsRoot = path.resolve(__dirname, 'public/assets');
@@ -1845,7 +1971,7 @@ function serverUpdateFactionGeneralPortraitFile(
         throw new Error(`FactionGenerals.ts 中未找到 generalId: ${generalId}`);
     }
     text = text.replace(blockRe, `$1'${portraitPath}'`);
-    fs.writeFileSync(filePath, text, 'utf-8');
+    serverSafeWriteFileSync(filePath, text);
 }
 
 /** 读取 FactionGenerals.ts 中当前绑定的 portrait 路径 */
@@ -1860,26 +1986,89 @@ function serverGetCurrentPortraitPath(filePath: string, generalId: string): stri
     return m?.[1] ?? null;
 }
 
-/** 取某夹下一个空闲的 __闲置__{token}_{NN}.png 名（token 沿用夹内已有闲置图，否则用夹名） */
-function serverNextIdleName(dirAbs: string): string {
-    let maxNum = 0;
-    let token = path.basename(dirAbs);
-    let tokenFromMax = '';
-    for (const f of fs.readdirSync(dirAbs)) {
-        const m = f.match(/^__闲置__(.+)_(\d+)\.png$/i);
-        if (m) {
-            const n = parseInt(m[2], 10);
-            if (n > maxNum) { maxNum = n; tokenFromMax = m[1]; }
+// 立绘分类改名的口径与 TOOL/rename_duplicate_idle_portraits.mjs 保持一致：
+//   未引用 + 内容重复 → __多余__（主人审阅后手删）  未引用 + 独一无二 → __闲置__（库存随机池）
+const PORTRAIT_SCAN_EXCLUDE_TOP = new Set(['avg', 'bgm_backup', 'inbox']);
+
+/** 遍历 public/assets 下参与比对的立绘（排除 avg/bgm_backup/inbox 与 _prev_ 备份） */
+function serverForEachPortraitFile(
+    publicAssetsRoot: string,
+    fn: (folder: string, file: string, abs: string) => void,
+): void {
+    for (const ent of fs.readdirSync(publicAssetsRoot, { withFileTypes: true })) {
+        if (!ent.isDirectory() || PORTRAIT_SCAN_EXCLUDE_TOP.has(ent.name)) continue;
+        const dir = path.join(publicAssetsRoot, ent.name);
+        for (const f of fs.readdirSync(dir)) {
+            if (!/\.png$/i.test(f)) continue;
+            if (/_prev_/i.test(f)) continue; // 备份不算重复来源
+            fn(ent.name, f, path.join(dir, f));
         }
     }
-    if (tokenFromMax) token = tokenFromMax;
+}
+
+/**
+ * 全库内容重复检测：库内除自己外是否还有另一份字节完全相同的图。
+ * 先按文件大小筛（重复必同尺寸），只对同尺寸的少数候选算 SHA-256，1200 张库 ≈ 几十毫秒。
+ */
+function serverHasDuplicateInLibrary(publicAssetsRoot: string, fileAbs: string): boolean {
+    try {
+        const self = path.resolve(fileAbs);
+        const size = fs.statSync(self).size;
+        const candidates: string[] = [];
+        serverForEachPortraitFile(publicAssetsRoot, (_folder, _file, abs) => {
+            if (path.resolve(abs) === self) return;
+            try {
+                if (fs.statSync(abs).size === size) candidates.push(abs);
+            } catch { /* 扫描期文件消失，忽略 */ }
+        });
+        if (candidates.length === 0) return false;
+        const selfSha = crypto.createHash('sha256').update(fs.readFileSync(self)).digest('hex');
+        for (const abs of candidates) {
+            try {
+                const sha = crypto.createHash('sha256').update(fs.readFileSync(abs)).digest('hex');
+                if (sha === selfSha) return true;
+            } catch { /* 同上 */ }
+        }
+        return false;
+    } catch (e) {
+        console.warn('  ⚠ [BindPortrait] 重复检测失败，按「闲置」处理:', e);
+        return false;
+    }
+}
+
+/**
+ * 取某夹下一个空闲的 __{前缀}__{夹名}_{NN}.png 名。
+ * 编号取全库（同前缀 + 同 token）最大值 +1，保证跨夹不重名——与启动期分类脚本同一口径。
+ */
+function serverNextClassifiedName(
+    publicAssetsRoot: string,
+    dirAbs: string,
+    prefix: '闲置' | '多余',
+): string {
+    const token = path.basename(dirAbs);
+    const key = `${prefix}|${token.toLowerCase()}`;
+    let maxNum = 0;
+    const NUM_RE = /^__(闲置|多余)__(.+)_(\d+)\.png$/i;
+    serverForEachPortraitFile(publicAssetsRoot, (_folder, f) => {
+        const m = f.match(NUM_RE);
+        if (!m) return;
+        if (`${m[1]}|${m[2].toLowerCase()}` !== key) return;
+        const n = parseInt(m[3], 10);
+        if (n > maxNum) maxNum = n;
+    });
     let n = maxNum;
     let name: string;
     do {
         n++;
-        name = `__闲置__${token}_${String(n).padStart(2, '0')}.png`;
+        name = `__${prefix}__${token}_${String(n).padStart(2, '0')}.png`;
     } while (fs.existsSync(path.join(dirAbs, name)));
     return name;
+}
+
+/** 被顶下来的旧立绘该叫什么：库内还有同内容副本 → __多余__，否则 → __闲置__ */
+function serverNextDemotedName(publicAssetsRoot: string, dirAbs: string, fileAbs: string): string {
+    const prefix = serverHasDuplicateInLibrary(publicAssetsRoot, fileAbs) ? '多余' : '闲置';
+    return serverNextClassifiedName(publicAssetsRoot, dirAbs, prefix);
 }
 
 /** 读 portrait_canonical.ts，把某路径解析成它的内容代表键（无映射则返回自身） */
@@ -1917,6 +2106,9 @@ function serverBindGeneralPortrait(
     if (!fs.existsSync(srcAbs)) {
         throw new Error(`源文件不存在：${sourceWebPath}`);
     }
+    // 写盘预检必须在任何改名之前：下面第 ①②③ 步会把旧立绘改名、把源图认领走，
+    // 若等到最后写 FactionGenerals.ts 时才失败，武将就还指着已被改名的旧路径 = 立绘丢失。
+    serverAssertWritable(factionGeneralsPath);
 
     const folderWeb = serverNormalizeAssetFolderWeb(
         targetFolderWeb || sourceWebPath.replace(/\/[^/]+$/i, '/'),
@@ -1939,7 +2131,7 @@ function serverBindGeneralPortrait(
     // 文件改名清单：调校记录（portrait_adjust images 键）随文件新名字迁移，不留孤儿
     const adjustMoves: Array<{ from: string; to: string }> = [];
     if (path.resolve(srcAbs) !== path.resolve(destAbs)) {
-        // ① 旧绑定文件（可能在其他文件夹）→ 转为闲置命名 __闲置__，并入随机池（不删不丢）
+        // ① 旧绑定文件（可能在其他文件夹）→ 按内容分类改名（重复=__多余__ / 独有=__闲置__），不删不丢
         const oldPortraitWeb = serverGetCurrentPortraitPath(factionGeneralsPath, generalId);
         if (oldPortraitWeb && oldPortraitWeb.startsWith('/assets/')) {
             const oldAbs = serverWebPathToAbs(publicAssetsRoot, oldPortraitWeb);
@@ -1949,18 +2141,18 @@ function serverBindGeneralPortrait(
                 path.resolve(oldAbs) !== path.resolve(srcAbs)
             ) {
                 const oldDir = path.dirname(oldAbs);
-                const backupName = serverNextIdleName(oldDir);
+                const backupName = serverNextDemotedName(publicAssetsRoot, oldDir, oldAbs);
                 fs.renameSync(oldAbs, path.join(oldDir, backupName));
                 adjustMoves.push({ from: oldPortraitWeb, to: oldPortraitWeb.replace(/\/[^/]+$/, '/') + backupName });
-                console.log(`  🗂️  [BindPortrait] 旧立绘转闲置 → ${backupName}`);
+                console.log(`  🗂️  [BindPortrait] 旧立绘退役 → ${backupName}`);
             }
         }
-        // ② 目标位置已有文件（同文件夹覆盖场景）→ 转为闲置命名（旧图不丢，进随机池）
+        // ② 目标位置已有文件（同文件夹覆盖场景）→ 按内容分类改名（旧图不丢）
         if (fs.existsSync(destAbs)) {
-            const backupName = serverNextIdleName(folderAbs);
+            const backupName = serverNextDemotedName(publicAssetsRoot, folderAbs, destAbs);
             fs.renameSync(destAbs, path.join(folderAbs, backupName));
             adjustMoves.push({ from: destWeb, to: `${folderWeb}${backupName}` });
-            console.log(`  🗂️  [BindPortrait] 目标位置旧立绘转闲置 → ${backupName}`);
+            console.log(`  🗂️  [BindPortrait] 目标位置旧立绘退役 → ${backupName}`);
         }
         // ③ 源图 → 目标（始终在源图自己的文件夹内，不跨文化区）：
         //    闲置图(__闲置__) 直接改名「认领」，不留重复；其它图复制（可能被他人共用，不夺走源图）。
@@ -2005,7 +2197,7 @@ function serverBindGeneralPortrait(
             }
             if (changed) {
                 const content = serverFormatPortraitAdjustFile(adjData);
-                fs.writeFileSync(portraitAdjustPath, content, 'utf-8');
+                serverSafeWriteFileSync(portraitAdjustPath, content);
             }
         }
     } catch (e) {
@@ -2052,6 +2244,7 @@ const REGION_TO_ELITE_FILE: Record<string, { file: string; varName: string }> = 
     STEPPE: { file: 'SteppeExpeditionLegions.ts', varName: 'STEPPE_EXPEDITION_ELITE_LEGIONS' },
     WESTERN: { file: 'WesternExpeditionLegions.ts', varName: 'WESTERN_EXPEDITION_ELITE_LEGIONS' },
     CENTRAL_ASIA: { file: 'CentralAsiaExpeditionLegions.ts', varName: 'CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS' },
+    WEST_ASIA: { file: 'WestAsiaExpeditionLegions.ts', varName: 'WEST_ASIA_EXPEDITION_ELITE_LEGIONS' },
     TIBET: { file: 'TibetExpeditionLegions.ts', varName: 'TIBET_EXPEDITION_ELITE_LEGIONS' },
     DIANQIAN: { file: 'DianQianExpeditionLegions.ts', varName: 'DIANQIAN_EXPEDITION_ELITE_LEGIONS' },
     LINGNAN: { file: 'LingnanExpeditionLegions.ts', varName: 'LINGNAN_EXPEDITION_ELITE_LEGIONS' },
@@ -2220,7 +2413,7 @@ function serverReadAllEntityData() {
         lose_zero_enemy_recovery: 'disadvantage', ally_add_troops_comeback: 'disadvantage',
         first_sortie_comeback_mult: 'disadvantage',
     };
-    const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string; sixClass?: string }> = [];
+    const tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string; sixClass?: string; ownerGeneralId?: string }> = [];
     {
         const idPositions: Array<{ id: string; idx: number }> = [];
         for (const m of tscText.matchAll(/id:\s*'(ts_\d+)'/g)) idPositions.push({ id: m[1], idx: m.index! });
@@ -2234,12 +2427,12 @@ function serverReadAllEntityData() {
             const eff = seg.match(/baseEffect:\s*'(\w+)'/)?.[1];
             const tri = eff ? EFFECT_TO_TRI[eff] : undefined;
             // 六计【只按 baseEffect】查表（AGENTS.md 铁律一）——condition 覆盖属三势轴，禁止改判六计。
-            // 当前 forceUnderTri 命中的技恰好全是败战计效果（矛盾技已迁 recompute_comeback、
-            // luck_variance_self/luck_lock_self 为幽灵效果 0 条），但一旦新建此类技就会配错格，故判据分轴。
             const six = eff ? SIX_CLASS_BY_EFFECT[eff]?.label : undefined;
+            const oid = seg.match(/ownerGeneralId:\s*'([^']+)'/)?.[1];
             tacticalSkills.push({
                 id, grid: circledNum(parseInt(index)), displayName: dn,
                 assignTier: assignTierById.get(id), triClass: tri, sixClass: six,
+                ownerGeneralId: oid,
             });
         }
     }
@@ -2455,11 +2648,12 @@ function serverSaveEliteLegion(data: {
  */
 const REQUIRED_STRATEGIC_SKILL_IDS = [
     'str_01', 'str_10', 'str_12',            // 加速
-    'str_06', 'str_07', 'str_13', 'str_28',  // 续航
-    'str_16', 'str_17', 'str_18',            // 视野
+    'str_06', 'str_07', 'str_13', 'str_29',  // 续航
+    'str_16',                                // 视野（神出鬼没）
     'str_19', 'str_20', 'str_21',            // 威慑
     'str_22', 'str_23', 'str_24',            // 纵横
-    // 防务四技 str_05/str_25/str_26/str_27 全部封存为储备技（2026-07-22 主人裁定），不入 REQUIRED、不要求覆盖，见下方 CANONICAL_STRATEGIC_IDS。
+    // 防务四技 str_05/str_25/str_26/str_27 全部封存为储备技（2026-07-22 主人裁定）
+    // 视野技 str_17 偃旗息鼓 / str_18 虚张声势 封存（2026-07-27 主人裁定）
 ] as const;
 
 function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
@@ -2484,7 +2678,7 @@ function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
 
     const strategicNames = new Map(data.strategicSkills.map(s => [s.id, s.displayName]));
     const unusedTactical = data.tacticalSkills
-        .filter(s => (tacticalWearers.get(s.id) ?? 0) === 0)
+        .filter(s => s.ownerGeneralId && (tacticalWearers.get(s.id) ?? 0) === 0) // 仅检查在册技；不在册技走随机池不需要佩戴者
         .map(s => ({ id: s.id, displayName: s.displayName }));
     const unusedStrategic = REQUIRED_STRATEGIC_SKILL_IDS
         .filter(id => (strategicWearers.get(id) ?? 0) === 0)
@@ -2492,8 +2686,8 @@ function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
 
     return {
         tactical: {
-            total: data.tacticalSkills.length,
-            used: data.tacticalSkills.length - unusedTactical.length,
+            total: data.tacticalSkills.filter(s => s.ownerGeneralId).length,
+            used: data.tacticalSkills.filter(s => s.ownerGeneralId && (tacticalWearers.get(s.id) ?? 0) > 0).length,
         },
         strategic: {
             total: REQUIRED_STRATEGIC_SKILL_IDS.length,
@@ -2919,6 +3113,7 @@ function serverValidateEntities(): {
     const issues: Array<{ level: string; msg: string; factionId?: string }> = [];
 
     const cityById = new Map(data.cities.map(c => [c.id, c]));
+    const factionById = new Map(data.factions.map(f => [f.id, f]));
     const factionSet = new Set(data.factions.map(f => f.id));
     const skipFactions = new Set(['panjun']);
     const validAttackStyles = new Set(['attack', 'defense', 'balanced']);
@@ -3037,17 +3232,21 @@ function serverValidateEntities(): {
     // 11. 立绘缺失/文件不存在
     //   注意空路径必须单判：path.resolve('public', '') = public 目录本身，existsSync 恒 true 会漏检
     for (const [fId, g] of Object.entries(data.generals)) {
+        const faction = factionById.get(fId);
+        const cityId = data.capitals[fId];
+        const city = cityId ? cityById.get(cityId) : null;
+        const loc = `势力 "${faction?.name ?? fId}" 据点 "${city?.name ?? (cityId ?? '未知')}"`;
         if (!g.portrait || !g.portrait.trim()) {
-            issues.push({ level: 'error', msg: `武将 "${g.generalName}" (${g.generalId}) 立绘路径为空`, factionId: fId });
+            issues.push({ level: 'error', msg: `${loc} 武将 "${g.generalName}" 立绘路径为空`, factionId: fId });
             continue;
         }
         const absPath = path.resolve(__dirname, 'public', g.portrait.replace(/^\//, ''));
         if (!fs.existsSync(absPath) || !fs.statSync(absPath).isFile()) {
-            issues.push({ level: 'error', msg: `武将 "${g.generalName}" 立绘不存在: ${g.portrait}`, factionId: fId });
+            issues.push({ level: 'error', msg: `${loc} 武将 "${g.generalName}" 立绘不存在: ${g.portrait}`, factionId: fId });
         }
         // 立绘路径必须以 .png 结尾
         if (!g.portrait.toLowerCase().endsWith('.png')) {
-            issues.push({ level: 'error', msg: `武将 "${g.generalName}" 立绘路径不是 PNG: ${g.portrait}`, factionId: fId });
+            issues.push({ level: 'error', msg: `${loc} 武将 "${g.generalName}" 立绘路径不是 PNG: ${g.portrait}`, factionId: fId });
         }
     }
 

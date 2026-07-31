@@ -1,6 +1,4 @@
 export { SPRITE_PATHS } from './UnitAssets';
-// TacticalConstants 是零依赖叶子模块，此处引入不产生循环依赖
-import { SITUATION_ADVANTAGE_RATIO, SITUATION_DISADVANTAGE_RATIO } from '../combat/TacticalConstants';
 
 export class GameConfig {
     static SYSTEM = {        ENABLE_HISTORY_LOG: true,
@@ -72,7 +70,7 @@ export class GameConfig {
         /** 军团战败后尸体/阵亡动画保留时长 (ms) */
         CORPSE_DISPLAY_MS: 15000,
         /** 尸体消失前最后 N ms 逐渐淡出（0 = 不淡出，直接消失） */
-        CORPSE_FADE_OUT_MS: 3000,
+        CORPSE_FADE_OUT_MS: 5000,
         /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms) */
         FOLLOW_SWITCH_DELAY_MS: 5000,
         /** 各类型据点最低出兵阈值（armySize = 驻军 × 0.9，须 ≥ 此值才可出兵）。文化中心优先：若据点属 REGION_CENTERS，用 region_center 阈值覆盖。 */
@@ -108,19 +106,21 @@ export class GameConfig {
     };
     static COMBAT = {
         /**
-         * 双方都有武将时的时长下限（游戏秒）。
-         * 三幕墙钟预算 12+12+6（开战句 / 双方技能 / 溃败），比例 40/40/20 → 下限 30。
+         * 战斗时长只有两个值，没有第三种情况（2026-07-27 主人定）：
+         *   双方都有将 → 30 秒（三幕墙钟预算 12+12+6：开战句 / 双方技能 / 溃败）
+         *   其余一切   →  9 秒（一方有将、纯兵对砍）
+         * 导演/剧本时长也钳制在 [9, 30]。
          */
-        BATTLE_DURATION_MIN_WITH_GENERAL_SEC: 30,
-        /** 导演时长钳制上限（游戏秒） */
-        BATTLE_DURATION_MAX_SEC: 60,
-        /**
-         * 双将战固定 30 秒。
-         */
-        BATTLE_DURATION_BALANCE_SEC: 30,
-        BATTLE_DURATION_DECIDED_SEC: 30,
-        /** 一方有将（非双将战）：固定 9 秒 */
+        BATTLE_DURATION_BOTH_GENERALS_SEC: 30,
         BATTLE_DURATION_PARTIAL_GENERAL_SEC: 9,
+        /**
+         * 每编入一只援军给双将战加的秒数（2026-07-27 主人定）。
+         * 累加：来 N 只 = 30 + 10×N，攻守双方的援军都算，封顶 BATTLE_DURATION_MAX_SEC。
+         * 只作用于双将战；9 秒的非双将战不加（但援军带将把战斗变成双将战时，按双将走）。
+         */
+        BATTLE_DURATION_REINFORCEMENT_BONUS_SEC: 10,
+        /** 时长封顶（游戏秒）：援军加时最多加到这里，3 只即到顶 */
+        BATTLE_DURATION_MAX_SEC: 60,
         THRESHOLD_SMALL: 20000,
         THRESHOLD_LARGE: 100000,
         /**
@@ -142,9 +142,12 @@ export class GameConfig {
         LUCK_MAX: 1.2,
         /** 开战编入半径（经纬度欧氏距离，约 0.3 ≈ 30km；开战瞬间 + 每 0.2s 圈内扫描，可随时加入） */
         BATTLE_JOIN_RADIUS: 0.3,
-        /** 远征军团有效战力 ×1.2（与文化系数相乘，见 CultureCombat） */
-        CAMPAIGN_LEGION_MULT: 1.2,
-        /** 精锐 tier 战力乘数 T0→T4（AGENTS.md §12.3.1；CultureCombat 读取） */
+        /**
+         * 精锐环（第 7 环）战力乘数 T0→T4，无精锐 ×1.0（AGENTS.md §12.3.1）。
+         * 引擎 GeneralSkillCombat.getElitePowerMult 与面板 CultureCombat.getEliteCombatMultiplier 同读此表。
+         * ⚠️ 精锐环只有这 5 个档：2026-08-01 删除了并列的 CAMPAIGN_LEGION_MULT=1.2（远征/兜底），
+         *    它自 2026-07-24 起就不进引擎、只在面板角标显示，属纯误导。禁止再加任何第 6 个乘数进本环。
+         */
         ELITE_TIER_MULT: [1.5, 1.4, 1.3, 1.2, 1.1] as const,
         /**
          * 以战养战：远离己方据点时，每秒恢复 = 军团上限 × 此系数（游戏秒）。
@@ -159,7 +162,7 @@ export class GameConfig {
      *   途经任一己方据点 RESET_RADIUS_KM 内即复位（不要求驻停；攻下敌城变己方城后途经即复位）；
      *   战斗胜利 = 就地进行补给，timeSinceSupply 与整跳计时双双清零（重新计算）；
      *   战斗中照走表（扣减暂停，围城断粮题中之义）；战后休整停表停扣；
-     *   远征军团（expeditionTargetCityId 非空，含岳飞脚本军）整体豁免、不走表；
+     *   远征军团（expeditionTargetCityId 非空，含岳飞脚本军）同样走表（2026-07-27 主人改：原为整体豁免）；
      *   保底 MIN_TROOPS_FLOOR，衰减永不会把军团扣到 0。
      *   一视同仁：不分步骑水陆——同样的时间窗，速度快者走得更远，速度优势自动转为后勤优势。
      */
@@ -173,66 +176,82 @@ export class GameConfig {
         ATTRITION_CHUNK_RATE: 0.15,
         /** 途经复位半径（km）：距任一己方（同 factionId）据点 ≤ 此值即 timeSinceSupply 清零（不要求驻停） */
         RESET_RADIUS_KM: 20,
-        /** 远征军团整体豁免开关（expeditionTargetCityId 非空即豁免，含岳飞脚本军） */
-        EXEMPT_CAMPAIGN_LEGIONS: true,
+        /**
+         * 远征军团整体豁免开关（expeditionTargetCityId 非空即豁免，含岳飞脚本军）。
+         * 2026-07-27 主人改为 false：远征军也吃行军减兵。孤军深入本就该断粮，
+         * 途经己方据点仍会复位，所以只有真正扎进敌境那段才会掉兵。
+         * 若发现远征军到不了目标，先看这里。
+         */
+        EXEMPT_CAMPAIGN_LEGIONS: false,
         /** 兵力保底：衰减扣减后不得低于此值 */
         MIN_TROOPS_FLOOR: 1,
         /** 经纬换算：1 度 ≈ 111 km（全图约定 0.1°≈10–11km；编辑器内联 *111 同源） */
         KM_PER_DEGREE: 111,
     };
     /**
-     * 14文化六维属性（2026-07-10 四维定稿，2026-07-11 扩六维）
+     * 15 文化六维属性（2026-07-31 按战绩排名重排，加权严格递减）
      *   TIER_TABLE:             [军团攻, 据点防]
      *   SPEED_TABLE:            军团速
      *   RECRUIT_TABLE:          据点兵（季产驻军乘数）
      *   LEGION_TROOP_CAP_TABLE: 军团兵上限
      *   CITY_TROOP_CAP_TABLE:   据点兵上限
      *   "军团"属性绑军团（legion），"据点"属性绑城池（city），不随攻守方切换。
+     *
+     * ── 改表前必读的两条约束（2026-07-29 立，2026-07-31 废除规则③）──
+     *
+     * ① **邻区不得出现严格支配**：排名相邻的两个文化不存在「A 六维逐项 ≥ B 且至少一项 >」。
+     *    跨区支配是高位综合强的自然结果，不违规。
+     *
+     * ② **每个文化必须有真实短板**：至少一项 ≤0.95 且不能只落在「据点兵上限」上——
+     *    这一维是六维里影响最小的，拿它当短板等于没有短板。
+     *
+     *    六维各是一环，速度在 MOVEMENT_MATRIX 的行军大类，与六维无关。
+     *    一环是一环，文化特征的攻/防/速/产/军上限/城上限各自独立，不互相补偿。
      */
     static CULTURE_COMBAT = {
         /** region → [军团攻, 据点防] */
         TIER_TABLE: {
-            STEPPE: [1.10, 0.80], TIBET: [0.90, 1.20], CENTRAL_ASIA: [1.10, 1.00],
+            STEPPE: [1.20, 0.85], TIBET: [1.05, 1.10], CENTRAL_ASIA: [1.10, 1.00],
             NORTHEAST: [1.10, 0.90], HEXI: [1.10, 1.00], NORTH: [1.10, 1.00],
-            CENTRAL: [1.00, 0.95], WESTERN: [1.00, 1.00],
-            JAPAN: [1.15, 1.05], KOREA: [0.90, 1.20], JIANGNAN: [0.80, 1.00],
-            LINGNAN: [0.95, 1.10], DIANQIAN: [1.00, 1.10], BASHU: [0.95, 1.20],
+            CENTRAL: [1.00, 0.95], WESTERN: [0.90, 1.15], WEST_ASIA: [1.05, 1.10],
+            JAPAN: [1.05, 1.05], KOREA: [0.90, 1.20], JIANGNAN: [0.80, 1.00],
+            LINGNAN: [0.90, 1.10], DIANQIAN: [1.00, 1.10], BASHU: [0.95, 1.20],
         } as Record<string, readonly [number, number]>,
         /** region → 军团速 */
         SPEED_TABLE: {
-            STEPPE: 1.04, TIBET: 0.92, CENTRAL_ASIA: 1.04,
+            STEPPE: 1.04, TIBET: 0.92, CENTRAL_ASIA: 1.00,
             NORTHEAST: 1.00, HEXI: 1.00, NORTH: 1.00,
-            CENTRAL: 0.88, WESTERN: 1.00,
+            CENTRAL: 0.88, WESTERN: 1.00, WEST_ASIA: 1.00,
             JAPAN: 0.88, KOREA: 0.92, JIANGNAN: 0.88,
             LINGNAN: 0.92, DIANQIAN: 0.92, BASHU: 0.85,
         } as Record<string, number>,
         /** region → 据点兵 */
         RECRUIT_TABLE: {
-            STEPPE: 0.80, TIBET: 1.00, CENTRAL_ASIA: 0.95,
-            NORTHEAST: 0.90, HEXI: 0.95, NORTH: 0.95,
-            CENTRAL: 1.15, WESTERN: 1.00,
-            JAPAN: 0.95, KOREA: 1.10, JIANGNAN: 1.15,
-            LINGNAN: 1.10, DIANQIAN: 1.10, BASHU: 1.10,
+            STEPPE: 0.85, TIBET: 0.90, CENTRAL_ASIA: 0.90,
+            NORTHEAST: 0.95, HEXI: 0.95, NORTH: 0.90,
+            CENTRAL: 1.05, WESTERN: 0.90, WEST_ASIA: 0.95,
+            JAPAN: 0.95, KOREA: 1.00, JIANGNAN: 1.05,
+            LINGNAN: 1.00, DIANQIAN: 1.00, BASHU: 1.00,
         } as Record<string, number>,
         /** region → 军团兵上限 */
         LEGION_TROOP_CAP_TABLE: {
-            STEPPE: 1.20, TIBET: 0.90, CENTRAL_ASIA: 0.95,
-            NORTHEAST: 1.20, HEXI: 0.95, NORTH: 1.10,
-            CENTRAL: 1.15, WESTERN: 0.90,
-            JAPAN: 1.05, KOREA: 0.90, JIANGNAN: 1.20,
-            LINGNAN: 1.00, DIANQIAN: 0.90, BASHU: 0.95,
+            STEPPE: 1.20, TIBET: 0.85, CENTRAL_ASIA: 1.05,
+            NORTHEAST: 1.10, HEXI: 0.85, NORTH: 1.00,
+            CENTRAL: 1.00, WESTERN: 0.85, WEST_ASIA: 0.90,
+            JAPAN: 0.85, KOREA: 0.85, JIANGNAN: 1.05,
+            LINGNAN: 0.85, DIANQIAN: 0.85, BASHU: 0.85,
         } as Record<string, number>,
         /** region → 据点兵上限 */
         CITY_TROOP_CAP_TABLE: {
-            STEPPE: 0.90, TIBET: 1.10, CENTRAL_ASIA: 0.80,
-            NORTHEAST: 0.90, HEXI: 0.90, NORTH: 0.85,
-            CENTRAL: 0.90, WESTERN: 0.95,
-            JAPAN: 0.95, KOREA: 1.00, JIANGNAN: 1.00,
-            LINGNAN: 0.95, DIANQIAN: 1.00, BASHU: 1.00,
+            STEPPE: 0.80, TIBET: 0.95, CENTRAL_ASIA: 0.95,
+            NORTHEAST: 0.90, HEXI: 0.85, NORTH: 0.85,
+            CENTRAL: 1.00, WESTERN: 0.90, WEST_ASIA: 0.95,
+            JAPAN: 0.95, KOREA: 1.00, JIANGNAN: 0.95,
+            LINGNAN: 0.90, DIANQIAN: 0.95, BASHU: 0.95,
         } as Record<string, number>,
         /** 关隘据点守军额外系数（与系统技「据险而守」对应） */
         PASS_GARRISON_MULT: 1.2,
-        /** 14 文化中心据点守军额外系数（与系统技「守土继绝」对应） */
+        /** 15 文化中心据点守军额外系数（与系统技「守土继绝」对应） */
         REGION_CENTER_GARRISON_MULT: 1.2,
     };
     // [2026-06-12 删除] static MORALE（士气衰减 + FLANKING 侧翼系数）——全项目零引用的死配置。
@@ -261,6 +280,20 @@ export class GameConfig {
         HUNT_ENEMY_LEGION_RADIUS: 0.8,
         /** 追击中敌军团跑出此半径则放弃，改选据点（略大于寻敌半径，防边界抖） */
         HUNT_ENEMY_LEGION_ABANDON_RADIUS: 1.1,
+        /**
+         * 追击目标一直处于交战中、打不起来的最长忍耐时长（毫秒，**墙钟**）。
+         *
+         * 背景：AI 现在允许把交战中的敌军选为追击目标（闻着血腥味去等残局），但
+         * HoldForFieldContact 会 stopMovement 并返回 SUCCESS，行为树不再往下走攻城分支。
+         * 若对方在攻城（攻城串行、且原地不动），它既不会被打死也不会跑出放弃半径，
+         * 追击方就会永远停在旁边——src/ai/bt 下没有任何超时机制会把它救出来。
+         *
+         * 取 45s 的依据：双将战固定 30 游戏秒，1x 倍速下等一场打完还有富余。
+         * 注意战斗计时是游戏秒（受 timeScale 影响）而本超时是墙钟（与 recentFailedTargets
+         * 冷却同源）：低于 1x 倍速时可能在对方打完前就放弃。这是可接受的——
+         * 放弃后只是改去打城，目标进 60s 冷却，之后还能再追。
+         */
+        HUNT_BLOCKED_TIMEOUT_MS: 45000,
         /** 行军首段超过此距离（LatLng 单位）时打诊断日志 */
         MARCH_DIAG_FIRST_LEG: 0.35,
         /** 距出兵/驻地据点超过此距离时，寻路优先用当前位置最近城作道路起点（避免野战后折返首都） */
@@ -282,13 +315,12 @@ export class GameConfig {
         SCAN_INTERVAL_MS: 250,
     };
     /**
-     * 远征（主人 2026-06-11 拍板，GAME_DIRECTION「远征细则」）：
-     * 跟拍军团兵力 ≥ UNLOCK_TROOPS 解锁；目标仅 15 文化中心城；
-     * 选择面板 SELECT_TIMEOUT_MS 倒计时，超时自动选最近异文化中心；
-     * 远征中断粮不回师，直至占领目标城或全军覆没。
+     * 远征：跟拍军团兵力 ≥ UNLOCK_TROOPS 自动出征，目标 = 全图据点最多的敌对势力首都。
+     * 出征后不回头：家城被打、失守都不回，直至占领目标城或全军覆没。
      */
     static EXPEDITION = {
-        UNLOCK_TROOPS: 40_000,
+        /** 远征解锁线：5 万 */
+        UNLOCK_TROOPS: 50_000,
         SELECT_TIMEOUT_MS: 15_000,
         /** UI 状态扫描间隔（ms） */
         SCAN_INTERVAL_MS: 500,
@@ -296,10 +328,12 @@ export class GameConfig {
 
     /**
      * 军团分层（GAME_DIRECTION 改进 B′，2026-06-16）：
-     *   有番号据点、&lt;4万：四档各 25%（在仍可用档位中等概率）；据点将领/精锐各只能出一次。
-     *   ≥4万：在据点配额允许时补精锐/将领（大军规则）。
+     *   有番号据点、&lt;PROMOTE_TROOPS：四档各 25%（在仍可用档位中等概率）；据点将领/精锐各只能出一次。
+     *   ≥PROMOTE_TROOPS：在据点配额允许时补精锐/将领（大军规则）。
      */
     static LEGION_TIER = {
+        /** 大军线（4 万）：军团长到此线，在据点配额内补精锐番号/将领。与远征无关 */
+        PROMOTE_TROOPS: 40_000,
         SPAWN_PLAIN_CHANCE: 0.25,
         SPAWN_ELITE_CHANCE: 0.25,
         SPAWN_GENERAL_ONLY_CHANCE: 0.25,
@@ -314,16 +348,15 @@ export class GameConfig {
 }
 
 /**
- * 钳制到 [floor, MAX] 游戏秒（导演时长 / 事件配置均须走此函数）。
- * @param minSec 可选下限；双将战传 WITH_GENERAL(30)，默认非双将 9s。
+ * 钳制到 [floor, 30] 游戏秒（导演时长 / 事件配置均须走此函数）。
+ * @param minSec 可选下限；双将战传 30，默认非双将 9s。
  */
-export function clampBattleDurationSec(seconds: number, minSec?: number): number {
+export function clampBattleDurationSec(seconds: number, minSec?: number, maxSec?: number): number {
     const c = GameConfig.COMBAT;
     const floor = minSec ?? c.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
-    return Math.min(
-        c.BATTLE_DURATION_MAX_SEC,
-        Math.max(floor, seconds)
-    );
+    // 上限默认 30；有援军时由调用方传入放宽后的上限（30 + 10×援军数），否则加时会被这里削回去
+    const ceil = maxSec ?? c.BATTLE_DURATION_BOTH_GENERALS_SEC;
+    return Math.min(ceil, Math.max(floor, seconds));
 }
 
 /** 运气环档距：只出 0.1 的整数档，不出中间小数 */
@@ -360,17 +393,6 @@ export function rollCombatEffectivePower(troops: number): number {
     return troops * rollCombatLuckMultiplier();
 }
 
-/**
- * 双将战目标时长（游戏秒）：均势 45，优势/劣势 30。
- * @param selfOverOpponent 开战有效战力比（八环乘完之后的攻/守），非兵力比。
- */
-export function resolveBattleDurationByPowerRatio(selfOverOpponent: number): number {
-    const c = GameConfig.COMBAT;
-    const inBalance =
-        selfOverOpponent <= SITUATION_ADVANTAGE_RATIO
-        && selfOverOpponent >= SITUATION_DISADVANTAGE_RATIO;
-    return inBalance ? c.BATTLE_DURATION_BALANCE_SEC : c.BATTLE_DURATION_DECIDED_SEC;
-}
 
 export const PLAYER_SPEED_TIERS = {
     UNIFIED_MARCH_SPEED: 0.2

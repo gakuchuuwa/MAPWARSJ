@@ -96,4 +96,8 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     manghuti: { name: '忙忽惕勇士', tier: 4 },
     dzungar: { name: '绰罗斯精骑', tier: 1 },
     dada_ming: { name: '鞑靼铁骑', tier: 1 },
+    xiemian: { name: '谢缅骑卫', tier: 4 },
+    yidier: { name: '伊蒂尔弓骑', tier: 4 },
+    salai: { name: '萨莱骑卫', tier: 4 },
+    mangshi: { name: '曼格骑卫', tier: 4 },
 };

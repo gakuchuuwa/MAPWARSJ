@@ -86,7 +86,7 @@ export class LegionManager {
             getCombatSystem: () => this.combatSystem,
             removeArmy: (a) => this.removeArmy(a),
             triggerSiege: (a, c) => this.triggerSiege(a, c),
-            isArmyWaitingSiege: (armyId) => this.isArmyWaitingSiege(armyId),
+            dequeueArmyFromThirdPartyWaiters: (armyId) => this.dequeueArmyFromThirdPartyWaiters(armyId),
         };
 
         // [HEX GRID] 将所有城市注册为静态障碍物
@@ -328,7 +328,7 @@ export class LegionManager {
      * 由 RecruitmentSystem 每季调用一次。
      */
     public tickLegionTiers(): void {
-        const threshold = GameConfig.EXPEDITION.UNLOCK_TROOPS;
+        const threshold = GameConfig.LEGION_TIER.PROMOTE_TROOPS; // 大军线 4 万（与远征无关）
         for (const army of this.armies) {
             if (army.isDestroyed || army.type !== 'legion') continue;
             if (army.getTroops() < threshold) continue;
@@ -385,6 +385,7 @@ export class LegionManager {
     }
 
     public removeArmy(army: Army): void {
+        this.siegeManager?.dequeueArmyFromThirdPartyWaiters?.(army.id);
         this.followResupplySystem?.clearForArmy(army.id);
         this.armies = this.armies.filter(a => a !== army);
 
@@ -414,14 +415,6 @@ export class LegionManager {
                 !army.getIsInCombat()
             ) {
                 this.followResupplySystem.update(army);
-            }
-
-            if (
-                this.followResupplySystem &&
-                army.type === 'legion' &&
-                !army.getIsInCombat()
-            ) {
-                this.followResupplySystem.tickStrategicFieldResupply(army, deltaTime);
             }
 
             // 坚壁清野：本城被攻击（含沿途/排队/已开战）时来犯军每秒减兵，技挂录入锚将
@@ -962,7 +955,7 @@ export class LegionManager {
 
     /**
      * 行军减兵（远输困境）管线（2026-07-21 主人定稿 v2：时间口径·一视同仁）：
-     *   ① 计时：timeSinceSupply 每帧 += deltaTime（战斗中照走；战后休整停表；远征豁免军团不走表）；
+     *   ① 计时：timeSinceSupply 每帧 += deltaTime（战斗中照走；战后休整停表；远征军团 2026-07-27 起同样走表）；
      *   ② 途经复位：距任一己方（同 factionId）据点 ≤ RESET_RADIUS_KM 即清零（计时器为 0 时不查城，省每帧全表过滤）；
      *   ③ 扣减：免费窗/战斗/休整/远征/str_13 豁免与保底 1 等守卫全在 MarchAttritionSystem 内。
      */
@@ -971,7 +964,7 @@ export class LegionManager {
         if (army.isDestroyed || army.getTroops() <= 0) return;
 
         // ① 计时（一视同仁：不分步骑水陆；战斗中照走——围城断粮题中之义，扣减在战斗内暂停；
-        //    战后休整停表；远征豁免军团不走表）
+        //    战后休整停表；远征军团是否走表由 EXEMPT_CAMPAIGN_LEGIONS 决定，现为走表）
         if (!(army.isPostBattleResting?.() ?? false)
             && !(GameConfig.MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null)) {
             army.timeSinceSupply += deltaTime;

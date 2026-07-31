@@ -1,0 +1,10 @@
+import fs from 'fs';
+const text = fs.readFileSync('src/data/SandboxDisplayNames.ts', 'utf8');
+const declIdx = text.indexOf('SANDBOX_DISPLAY_NAMES');
+const block = text.slice(declIdx);
+const keys = new Set();
+const re = /['"]?(\w+)['"]?\s*:\s*['"][^'"]+['"]/g;
+let m;
+while ((m = re.exec(block)) !== null) keys.add(m[1]);
+console.log('heishui:', keys.has('heishui'));
+console.log('Count:', keys.size);

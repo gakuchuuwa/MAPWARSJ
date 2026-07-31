@@ -1,23 +1,24 @@
 /**
  * 开战有效战力（固定系数，只影响掷色，不改显示兵力）
  *
- * 五级文化攻防（主人 2026-06-11 拍板，表在 GameConfig.CULTURE_COMBAT.TIER_TABLE）：
- *   高攻 草原/青藏/东北：野战 ×1.2，守军 ×0.8
- *   低攻 西域/河西/北方：野战 ×1.1，守军 ×0.9
- *   中性 中原/中亚：×1.0
- *   低防 日本/朝鲜/江南：野战 ×0.9，守军 ×1.1
- *   高防 岭南/滇缅/川蜀：野战 ×0.8，守军 ×1.2
+ * 文化攻防表 = `GameConfig.CULTURE_COMBAT.TIER_TABLE`（15 文化 × [野战, 守军]，那里有改表约束）。
+ *
+ * ⚠️ 此处**不再复述具体数值**：原先这段写着一套「五级、攻+防恒等于 2.00」的旧设计，
+ *    早已与实表脱节且方向相反（注释说青藏高攻 1.2/0.8，实表是 0.90/1.20；说日本低攻
+ *    0.9/1.1，实表是 1.15/1.05），先后误导过多次判断。数值只认 GameConfig，别在这里抄。
+ *    —— 2026-07-29 清理，同日重配平：青藏改进攻型、日本削野战、西域给坚城、西亚定型。
  *
  * 关隘（type===pass 的守军）：再 × 拒险而守（`GameConfig.CULTURE_COMBAT.PASS_GARRISON_MULT`，默认 1.2），与文化区相乘。
  *   例：岭南关隘守军 = 1.2（文化）× 1.2（关隘）= 1.44，不是 1.2³。
  *
  * 一侧合算后再 × 总 luck [0.9, 1.1] 掷一次（与上述固定系数独立）。
  *
- * 远征军团（LegionSpawnPolicy.isCampaignLegion，expeditionTargetCityId 非空）：
- *   野战单位再 × CAMPAIGN_LEGION_MULT（默认 1.2），与文化系数相乘。
- *
- * 精锐 tier 加成（GameConfig.COMBAT.ELITE_TIER_MULT）：
- *   T0 ×1.5 | T1 ×1.4 | T2 ×1.3 | T3 ×1.2 | T4 ×1.1
+ * 精锐环（第 7 环，GameConfig.COMBAT.ELITE_TIER_MULT）：
+ *   T0 ×1.5 | T1 ×1.4 | T2 ×1.3 | T3 ×1.2 | T4 ×1.1，无精锐 ×1.0。
+ *   ⚠️ 精锐环**只有这 5 个档**。2026-08-01 清理：原先还有一个 CAMPAIGN_LEGION_MULT=1.2
+ *   （"是远征军团 / 精锐但查不到 tier"就给 1.2）挂在这一环，引擎侧 2026-07-24 起就不再乘它，
+ *   只有面板角标还在显示，长期误导。常量与全部兜底分支已删除，别再加回来：
+ *   **远征身份不进战力环**，精锐档由 CITY_ELITE_LEGIONS 的 tier 唯一决定。
  */
 
 import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';
@@ -32,7 +33,6 @@ import {
 } from './CultureRegion';
 import { type EliteTier, getCityEliteConfig, getLegionEliteConfig } from '../data/ExpeditionLegions';
 import { readSiegeGarrisonElite } from '../combat/SiegeGarrisonTier';
-import { isCampaignLegion } from '../legion/LegionSpawnPolicy';
 
 /** 文化区判定已抽至 CultureRegion（叶子模块，破循环依赖）；此处重新导出兼容旧引用 */
 export { type CultureCombatRole, resolveUnitCultureRegion } from './CultureRegion';
@@ -55,7 +55,7 @@ function getPassGarrisonMultiplier(unit: IBattleUnit): number {
     return 1;
 }
 
-/** 14 文化中心据点守军「守土继绝」系数（非中心或非城防恒为 1） */
+/** 15 文化中心据点守军「守土继绝」系数（非中心或非城防恒为 1） */
 function getRegionCenterGarrisonMultiplier(unit: IBattleUnit): number {
     if (!isGarrisonUnit(unit)) return 1;
     const city = unit.getEntity?.() as { id?: string } | undefined;
@@ -77,7 +77,7 @@ export function getPassGarrisonCombatMultiplier(unit: IBattleUnit): number {
     return getPassGarrisonMultiplier(unit);
 }
 
-/** 14 文化中心守军「守土继绝」系数（非中心或非城防恒为 1） */
+/** 15 文化中心守军「守土继绝」系数（非中心或非城防恒为 1） */
 export function getRegionCenterCombatMultiplier(unit: IBattleUnit): number {
     return getRegionCenterGarrisonMultiplier(unit);
 }
@@ -86,7 +86,7 @@ export function getRegionCenterCombatMultiplier(unit: IBattleUnit): number {
  * 单单位固定战力系数 = 文化环 × 据点环
  *   文化环：文化区攻防表
  *   据点环：关隘「据险而守」与文化中心「守土继绝」**取最大值**，不相乘 —— 焊死据点环上限 1.2。
- *     当前数据两者零重叠（149 关隘 / 14 文化中心），取 max 与相乘结果一致；
+ *     当前数据两者零重叠（149 关隘 / 15 文化中心），取 max 与相乘结果一致；
  *     此写法是为了防止日后把某个文化中心改成关隘时，1.44 悄悄出现且无任何报错。
  */
 export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
@@ -98,37 +98,15 @@ export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
     return cultureRing * siteRing;
 }
 
-/** 远征军团 / 远征精锐 tier 加成；城防本场掷出精锐时同样乘 tier */
-export function getCampaignLegionCombatMultiplier(unit: IBattleUnit): number {
-    if (isGarrisonUnit(unit)) {
-        const city = unit.getEntity?.() as { id?: string } | undefined;
-        if (city?.id && readSiegeGarrisonElite(city)) {
-            const config = getCityEliteConfig(city.id);
-            if (config) {
-                const mult = GameConfig.COMBAT.ELITE_TIER_MULT[config.tier];
-                if (mult !== undefined) return mult;
-            }
-            return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT;
-        }
-        return 1;
-    }
-    const army = unit.getEntity?.() as Army | undefined;
-    if (!army) return 1;
-    
-    // 如果是精锐，根据配置的 tier 返回阶梯乘数
-    if (army.isElite) {
-        const config = getLegionEliteConfig(army);
-        if (config) {
-            const mult = GameConfig.COMBAT.ELITE_TIER_MULT[config.tier];
-            if (mult !== undefined) return mult;
-        }
-        return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT; // 兜底 1.2
-    }
-    
-    // 非精锐的远征军团（据点军团无 expeditionTargetCityId → 不加成）
-    if (isCampaignLegion(army)) return GameConfig.COMBAT.CAMPAIGN_LEGION_MULT;
-    
-    return 1;
+/**
+ * 精锐环（第 7 环）系数：T0 ×1.5 / T1 ×1.4 / T2 ×1.3 / T3 ×1.2 / T4 ×1.1，无精锐 ×1.0。
+ * 军团（isElite）与城防（本场掷出精锐）同表。档位唯一来源 = getUnitEliteTier。
+ * 面板角标与引擎 环7（GeneralSkillCombat.getElitePowerMult）必须同表，勿再引入任何兜底常量。
+ */
+export function getEliteCombatMultiplier(unit: IBattleUnit): number {
+    const tier = getUnitEliteTier(unit);
+    if (tier === null) return 1;
+    return GameConfig.COMBAT.ELITE_TIER_MULT[tier] ?? 1;
 }
 
 /** 单位精锐档（T0=0 … T4=4）；无精锐返回 null。守军本场掷出精锐时同样计。 */

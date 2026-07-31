@@ -1,13 +1,12 @@
 import type { LatLng } from '../../types/core';
-import { isSeaElevation } from './TerrariumCodec';
 import { LandSeaSystem } from './LandSeaSystem';
 import { latLngToTilePixel } from './ElevationSampler';
 
 export type LandTerrainKind = 'sea' | 'plain' | 'mountain';
 
 /**
- * 陆地地形：海拔 + 坡度（方案 B）
- * - 海：elev < 0
+ * 陆地地形：海陆判定 + 坡度
+ * - 海：交给 LandSeaSystem.isSeaAt（掩膜 AND 海拔<0），务必与海陆贴图同源
  * - 山地：slope ≥ MOUNTAIN_SLOPE_DEG
  * - 平原：其余陆地
  */
@@ -21,10 +20,13 @@ export class LandTerrainSystem {
 
     static initialize(): void {
         if (this.initialized) return;
-        LandSeaSystem.getSampler().onTileLoaded(() => {
+        const onTiles = () => {
             this.resultCache.clear();
             window.dispatchEvent(new CustomEvent('land-terrain-tiles-updated'));
-        });
+        };
+        LandSeaSystem.getSampler().onTileLoaded(onTiles);
+        // [2026-07-28] 水域掩膜到达后同样要清：海陆判定变了，'sea' 的分类结果就过期了
+        LandSeaSystem.getWaterSampler().onTileLoaded(onTiles);
         this.initialized = true;
     }
 
@@ -54,8 +56,11 @@ export class LandTerrainSystem {
             return null;
         }
 
-        const { elevationM, slopeDeg } = sample;
-        if (isSeaElevation(elevationM)) {
+        const { slopeDeg } = sample;
+        // [2026-07-28] 必须走 LandSeaSystem 的组合判据（掩膜 AND 海拔<0），不能单看海拔。
+        // 单看海拔会把里海低地(-27m)、吐鲁番盆地(-51m)判成 'sea'；而 Army 里 'sea' 既非
+        // 'plain' 也非 'mountain'，会落到兜底的 'mountain' ⇒ 军团在平坦草原上按山地速度行军。
+        if (LandSeaSystem.isSeaAt(latLng)) {
             return this.remember(key, 'sea');
         }
         if (slopeDeg >= MOUNTAIN_SLOPE_DEG) {

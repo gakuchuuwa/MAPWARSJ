@@ -29,9 +29,9 @@ import {
     type PortraitAdjustData,
     type PortraitAdjustValues,
 } from '../data/portrait_adjust';
-import { COMBAT_UI_TOKENS, uiPx } from '../config/combat-ui-tokens';
+import { COMBAT_UI_TOKENS, COMBAT_UI_SCALE, uiPx } from '../config/combat-ui-tokens';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
-import { getUnitCultureCombatMultiplier, getCampaignLegionCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
+import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
 import { resolveGeneralTacticalEntry } from '../combat/TacticalSkillResolver';
 import { EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
@@ -53,6 +53,7 @@ import {
     getAttackStylePowerMult,
     getAptitudePowerMult,
     getFamousGeneralMult,
+    getActiveTacticalSkillId,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -62,7 +63,101 @@ import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
 const T = COMBAT_UI_TOKENS;
 
-/** 战报技能条/系数链：精锐或远征 ×1.2 用番号专名作标签（去「军团」等尾缀） */
+/**
+ * 拉锯条交界安全带（2026-07-31 修）——兵力悬殊时交界线连同落后方血槽整段滑进立绘底下的修复。
+ *
+ * 【几何】全部由 tokens 推导，改立绘槽宽/血条宽自动跟随，不留裸数字：
+ *   立绘内缘 **不是** 立绘槽的内缘——`createPortraitFrame` 是 overflow: visible，
+ *   而 `createPortraitClip` 只钉死高度（550）、宽度由图片长宽比撑出来，
+ *   所以真正压住血条的是「绘制宽度 = 550 × 长宽比 × 滑入/脉冲放大」。
+ *   [2026-07-31 实测] 立绘统一 768×1024 → 长宽比 0.75，绘制宽 431 设计 px，
+ *   立绘内缘落在拉锯条的 80.5%（按槽宽算会得到 83.0%，偏乐观 22 屏 px，曾据此定过一版没救住）。
+ *
+ * 【标尺剧本（2026-07-31 主人定稿·逐字规格）】战斗 30 秒 = 12 / 12 / 6：
+ *   开局        标尺在**正中 50**（铁律，见 memory: bar-opening-always-centered），
+ *               再用 2 秒按兵力比"进入"到位
+ *   第一阶段    相持 12 秒，标尺停在真实兵力比上，**不封顶**
+ *   第二阶段    一边倒 12 秒，标尺移到 **80%** 左右（悬殊局是往回退，均势局是往外推）
+ *   第三阶段    6 秒 = 在 80% 左右**大幅摇摆**相持 5 秒 + 断崖 1 秒**直接到底结束**
+ *   80/20 与断崖终点**都不看兵力比**；只有第一阶段看。
+ *   12/12/6 恰好等于三幕常量 0.4/0.8，故血条与攻城火、武将技脉冲天然同步，不另起时间轴。
+ *
+ * 【为什么原来的 75/25 没救到】那条线写成 `Math.max(75, r0)`，只防回拉不防越界；
+ *   悬殊局 r0 本身就是 90+，僵持线跟着停在 90+，**整个僵持段都在血条尾端的立绘底下**。
+ *   现在第二、三阶段的落点是常数，与兵力比无关，再悬殊也不会退到尾端。
+ *   注：主人明确要求第一阶段不封顶，故 10万:1万 那 10 秒标尺仍在 90.9%（立绘后），这是既定取舍。
+ *
+ * 【只改血条】三幕常量 PHASE_STALEMATE_START / PHASE_COLLAPSE_START（0.4/0.8）继续管
+ *   攻城三坨火与武将技脉冲，**不动**；血条走自己下面这套三等分时间轴。
+ */
+const PORTRAIT_CLIP_HEIGHT_DESIGN = 550;
+/** 立绘长宽比（宽/高）：2026-07-31 抽样 80 张，全部 768×1024 或 765×1024 → 0.75 */
+const PORTRAIT_ASPECT_W_OVER_H = 0.75;
+/** 滑入/技能脉冲把立绘框放大到 1.045（transform-origin: center bottom），最宽时刻按这个算 */
+const PORTRAIT_MAX_SCALE = 1.045;
+/** 第二、三阶段的落点（主人定 80% 左右），与兵力比无关 */
+const CLASH_STALEMATE_PCT = 80;
+/** 第三阶段内部切分：前 5/6 相持（5 秒），后 1/6 断崖（1 秒） */
+const BAR_CLIFF_START = 5 / 6;
+/**
+ * 「按兵力比进入」占第一阶段的比例 = 1，即**整个第一阶段 12 秒**都在从正中往兵力比爬。
+ * 接上第二阶段的 12 秒（兵力比 → 80%），就是主人要的「24 秒逐步进入」一气呵成。
+ * 曾取 1/6（2 秒）——太快，开局居中那一下几乎看不见，被主人当场否掉。
+ */
+const BAR_ENTER_RATIO_OF_ACT1 = 1;
+/**
+ * 第一阶段的缓动幂次：越大越"黏"。2 = 半程只走完 1/4，前 6 秒基本还在中间附近磨，
+ * 后 6 秒才明显拉开——这才是「相持」。1 = 匀速，3 = 末段过于突兀。
+ */
+const BAR_ACT1_EASE_POWER = 2;
+/** 第一阶段摆幅（小幅角力，不与开战语音抢戏） */
+const BAR_SWING_ACT1 = 1;
+/** 第二阶段摆幅：起手拉满 4 → 收束到 1，与「一边倒」的推进叠加 */
+const BAR_SWING_ACT2_FROM = 4;
+const BAR_SWING_ACT2_TO = 1;
+/** 第三阶段相持的摆幅（主人要「大浮动摇摆」，故远大于前两阶段的收束值） */
+const BAR_SWING_ACT3 = 4;
+
+/**
+ * 文化标签文案表：技能条上那枚「能征惯战 / 山河险固」样式的名牌。
+ *
+ * 键 = `GameConfig.CULTURE_COMBAT.TIER_TABLE` 里的系数档（野战取 [0]，守军取 [1]）。
+ *
+ * ⚠️ **改六维表时必须同步这里**：2026-07-29 把青藏/日本野战改成 1.05、西域守军改成 1.15，
+ *    而当时这两张表没有对应档位，`LABELS[round] ?? ''` 直接返回空串 → 文化标签整枚消失且零报错。
+ *    西亚野战 1.05 更是从加入那天起就一直没标签。教训：查不到不能静默吞掉。
+ *    现已改为**就近取档兜底**（下面的 resolveCultureTagLabel），并由 `npm run culture:audit`
+ *    校验六维表里每个攻/防档位都能精确命中一个标签。
+ */
+const CULTURE_TAG_ATK_LABELS: Record<number, string> = {
+    1.20: '侵略如火', 1.15: '骁勇善战', 1.10: '能征惯战', 1.05: '士马精强',
+    1.00: '习于行阵', 0.95: '缮甲厉兵', 0.90: '据阵自保', 0.85: '力战自守', 0.80: '堪以一战',
+};
+const CULTURE_TAG_DEF_LABELS: Record<number, string> = {
+    1.20: '山河险固', 1.15: '金城汤池', 1.10: '城池为固', 1.05: '堡山而立',
+    1.00: '据城而守', 0.95: '凭城为守', 0.90: '山城自顾', 0.85: '土垣自蔽', 0.80: '无遮无蔽',
+};
+
+/** 取文化标签；档位未精确命中时就近取档（绝不返回空串让标签凭空消失） */
+export function resolveCultureTagLabel(mult: number, isGarrison: boolean): string {
+    const table = isGarrison ? CULTURE_TAG_DEF_LABELS : CULTURE_TAG_ATK_LABELS;
+    const exact = table[mult];
+    if (exact) return exact;
+    let best = '';
+    let bestGap = Infinity;
+    for (const k of Object.keys(table)) {
+        const gap = Math.abs(parseFloat(k) - mult);
+        if (gap < bestGap) { bestGap = gap; best = table[parseFloat(k)]; }
+    }
+    return best;
+}
+
+/** 供审计脚本核对覆盖率：该系数档是否在文案表里有**精确**对应（就近兜底不算命中） */
+export function hasCultureTagLabel(mult: number, isGarrison: boolean): boolean {
+    return !!(isGarrison ? CULTURE_TAG_DEF_LABELS : CULTURE_TAG_ATK_LABELS)[mult];
+}
+
+/** 战报技能条/系数链：精锐（第 7 环）用番号专名作标签（去「军团」等尾缀） */
 function getLegionEliteBadgeName(unit: IBattleUnit): string {
     if (unit.unitType === 'city') {
         const eliteName = readSiegeGarrisonEliteName(unit.getEntity?.());
@@ -156,6 +251,8 @@ export class CombatUI {
     private centerPanel!: HTMLDivElement;
     private topInfoRow!: HTMLDivElement;
     private healthBarContainer!: HTMLDivElement;
+    private leftTotalMultBadge!: HTMLSpanElement;
+    private rightTotalMultBadge!: HTMLSpanElement;
     private attackerBar!: HTMLDivElement;
     private defenderBar!: HTMLDivElement;
     private clashEffect!: HTMLDivElement;
@@ -349,14 +446,16 @@ export class CombatUI {
                 80% { transform: translate(-50%, 3px); }
                 100% { transform: translate(-50%, 0); }
             }
-            /* 立绘外框进场：左从左→右，右从右→左 */
+            /* 立绘外框进场：左从左→右，右从右→左；overshoot 越位再弹回 */
             @keyframes portrait-frame-enter-left {
-                0% { opacity: 0; transform: translateX(-72px) scale(1.045); }
-                100% { opacity: 1; transform: translateX(0) scale(1.045); }
+                0%   { opacity: 0; transform: translateX(-150px) scale(1.045); }
+                70%  { opacity: 1; transform: translateX(6px)   scale(1.045); }
+                100% { opacity: 1; transform: translateX(0)     scale(1.045); }
             }
             @keyframes portrait-frame-enter-right {
-                0% { opacity: 0; transform: translateX(72px) scale(1.045); }
-                100% { opacity: 1; transform: translateX(0) scale(1.045); }
+                0%   { opacity: 0; transform: translateX(150px) scale(1.045); }
+                70%  { opacity: 1; transform: translateX(-6px)  scale(1.045); }
+                100% { opacity: 1; transform: translateX(0)     scale(1.045); }
             }
             /* 胜负定格（2026-07-18 主人定 P0）：「XX 勝」标题弹出 */
             @keyframes outcome-title-pop {
@@ -625,6 +724,52 @@ export class CombatUI {
         this.skillsRow.appendChild(this.leftSkillsBox);
         this.skillsRow.appendChild(this.rightSkillsBox);
 
+        this.leftTotalMultBadge = document.createElement('span');
+        this.leftTotalMultBadge.style.cssText = `
+            position: absolute;
+            right: ${uiPx(64)};
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            display: none;
+            padding: 2px 8px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(14)};
+            font-weight: 900;
+            line-height: 1.15;
+            border: 1px solid rgba(253, 185, 49, 0.9);
+            color: #FFD700;
+            background: rgba(35, 12, 4, 0.85);
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(255, 215, 0, 0.4);
+            white-space: nowrap;
+            pointer-events: auto;
+            cursor: help;
+        `;
+
+        this.rightTotalMultBadge = document.createElement('span');
+        this.rightTotalMultBadge.style.cssText = `
+            position: absolute;
+            left: calc(50% + ${uiPx(36)});
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            display: none;
+            padding: 2px 8px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: ${uiPx(14)};
+            font-weight: 900;
+            line-height: 1.15;
+            border: 1px solid rgba(90, 170, 190, 0.9);
+            color: #70E0FF;
+            background: rgba(5, 20, 30, 0.85);
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(90, 170, 190, 0.4);
+            white-space: nowrap;
+            pointer-events: auto;
+            cursor: help;
+        `;
+
         this.healthBarContainer = document.createElement('div');
         this.healthBarContainer.style.cssText = `
             width: 100%;
@@ -667,10 +812,13 @@ export class CombatUI {
                 repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px),
                 linear-gradient(90deg, #7a1528 0%, #b04818 30%, #d47020 60%, #f0a830 100%);
             z-index: 2;
-            transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
             clip-path: polygon(0 0, 100% 0, calc(100% - ${uiPx(T.clashBar.clipPx)}) 100%, 0% 100%);
             box-shadow: inset 0 -3px 10px rgba(255, 200, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         `;
+
+        // 左牌挂 attackerBar 内部自然跟随；右牌挂 healthBarContainer（attackerBar 有 clip-path 会切掉外部子节点）
+        this.attackerBar.appendChild(this.leftTotalMultBadge);
 
         this.clashEffect = document.createElement('div');
         this.clashEffect.style.cssText = `
@@ -685,7 +833,7 @@ export class CombatUI {
             left: 50%;
             margin-left: -${uiPx(T.clashBar.clashWidth / 2 + 2)};
             pointer-events: none;
-            transition: left 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: left 0.45s cubic-bezier(0.16, 1, 0.3, 1);
             animation: clash-pulse 1.2s infinite ease-in-out;
             mix-blend-mode: screen; /* 滤色模式，使其在底层上爆亮 */
         `;
@@ -727,6 +875,7 @@ export class CombatUI {
         this.healthBarContainer.appendChild(this.defenderBar);
         this.healthBarContainer.appendChild(this.attackerBar);
         this.healthBarContainer.appendChild(this.clashEffect);
+        this.healthBarContainer.appendChild(this.rightTotalMultBadge);
 
 
         // 军团信息：以「区域冲突」中线为界，左右各占一半；外缘避开立绘。
@@ -863,7 +1012,7 @@ export class CombatUI {
         `;
         row.appendChild(nameSpan);
 
-        // 标签组：文化 + 技能，紧挨排列，整组推到对侧顶头
+        // 标签组：总加成 + 文化 + 技能，紧挨排列
         const badgeGroup = document.createElement('div');
         badgeGroup.style.cssText = `
             display: flex;
@@ -873,6 +1022,10 @@ export class CombatUI {
             flex-shrink: 0;
         `;
 
+        const multBadge = document.createElement('span');
+        multBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(multBadge);
+
         const cultureBadge = document.createElement('span');
         cultureBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
         badgeGroup.appendChild(cultureBadge);
@@ -880,10 +1033,6 @@ export class CombatUI {
         const skillBadge = document.createElement('span');
         skillBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
         badgeGroup.appendChild(skillBadge);
-
-        const legionBadge = document.createElement('span');
-        legionBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
-        badgeGroup.appendChild(legionBadge);
 
         row.appendChild(badgeGroup);
 
@@ -894,20 +1043,20 @@ export class CombatUI {
         if (isAtt) {
             this.leftFactionNameSpan = nameSpan;
             this.leftFactionMultSpan = multSpan;
+            this.leftMultBadge = multBadge;
             this.leftCultureBadge = cultureBadge;
             this.leftSkillBadge = skillBadge;
-            this.leftLegionBadge = legionBadge;
         } else {
             this.rightFactionNameSpan = nameSpan;
             this.rightFactionMultSpan = multSpan;
+            this.rightMultBadge = multBadge;
             this.rightCultureBadge = cultureBadge;
             this.rightSkillBadge = skillBadge;
-            this.rightLegionBadge = legionBadge;
         }
         return row;
     }
 
-    /** 第二层：军队名 + 兵力（左/右顶头），运气标签（对侧顶头，攻方靠右，守方靠左） */
+    /** 第二层：军队名 + 兵力（左/右顶头），精锐(军)+适性+运气标签（对侧顶头，攻方靠右，守方靠左） */
     private buildSideLabel(side: 'attacker' | 'defender'): HTMLDivElement {
         const isAtt = side === 'attacker';
         const label = document.createElement('div');
@@ -927,7 +1076,7 @@ export class CombatUI {
             text-align: ${isAtt ? 'left' : 'right'};
         `;
 
-        // 标签组：三势 + 运气，紧挨排列，整组推到对侧顶头
+        // 标签组：精锐(军) + 三势 + 运气，紧挨排列
         const badgeGroup = document.createElement('div');
         badgeGroup.style.cssText = `
             display: flex;
@@ -936,6 +1085,10 @@ export class CombatUI {
             gap: ${uiPx(2)};
             flex-shrink: 0;
         `;
+
+        const legionBadge = document.createElement('span');
+        legionBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(legionBadge);
 
         const aptitudeBadge = document.createElement('span');
         aptitudeBadge.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
@@ -952,21 +1105,17 @@ export class CombatUI {
         label.appendChild(nameSpan);
         label.appendChild(badgeGroup);
 
-        // multBadge 保留引用（其他标签层之后独立挂载）
-        const multBadge = document.createElement('span');
-        multBadge.style.display = 'none';
-
         if (isAtt) {
             this.leftSideNameSpan = nameSpan;
             this.leftSideTroopsSpan = document.createElement('span');
-            this.leftMultBadge = multBadge;
+            this.leftLegionBadge = legionBadge;
             this.leftLuckBadge = luckBadge;
             this.leftAptitudeBadge = aptitudeBadge;
             this.leftReinfJoinBadge = reinfJoinBadge;
         } else {
             this.rightSideNameSpan = nameSpan;
             this.rightSideTroopsSpan = document.createElement('span');
-            this.rightMultBadge = multBadge;
+            this.rightLegionBadge = legionBadge;
             this.rightLuckBadge = luckBadge;
             this.rightAptitudeBadge = aptitudeBadge;
             this.rightReinfJoinBadge = reinfJoinBadge;
@@ -975,7 +1124,7 @@ export class CombatUI {
         return label;
     }
 
-    /** 第三行：援军名与兵力（左/右顶头），援军标签（得×N.N / 掣×N.N，对侧顶头；无援军时隐藏） */
+    /** 第四行：独立援军专行（左/右顶头），援军标签（得×N.N / 掣×N.N，对侧顶头；无援军时隐藏） */
     private buildReinforcementRow(side: 'attacker' | 'defender'): HTMLDivElement {
         const isAtt = side === 'attacker';
         const row = document.createElement('div');
@@ -986,13 +1135,15 @@ export class CombatUI {
         row.style.justifyContent = 'space-between';
         row.style.flexWrap = 'nowrap';
         row.style.width = '100%';
-        row.style.marginTop = uiPx(4);
+        row.style.marginTop = uiPx(6);
+        row.style.paddingTop = uiPx(4);
+        row.style.borderTop = '1px dashed rgba(255, 255, 255, 0.18)';
 
         const nameSpan = document.createElement('span');
         nameSpan.style.cssText = `
             white-space: nowrap;
             line-height: 1.15;
-            color: rgba(255, 230, 180, 0.9);
+            color: rgba(255, 230, 180, 0.95);
             text-align: ${isAtt ? 'left' : 'right'};
         `;
 
@@ -1001,7 +1152,7 @@ export class CombatUI {
             display: flex;
             flex-direction: ${isAtt ? 'row' : 'row-reverse'};
             align-items: center;
-            gap: ${uiPx(2)};
+            gap: ${uiPx(4)};
             flex-shrink: 0;
         `;
 
@@ -1025,11 +1176,12 @@ export class CombatUI {
         return row;
     }
 
-    /** 战力八环标签：第一行5标签(名,城,文,技,军) + 第二行3标签(势,攻/防,运)，第三行援军兵力+标签 */
+    /** 战力八环标签：第一行5标签(名,城,文,技,军) + 第二行3标签(势,攻/防,运)，援军专行兵力+标签 */
     private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
         const applySideBadges = (
             multSpan: HTMLSpanElement,
             multBadge: HTMLSpanElement | null,
+            totalBadge: HTMLSpanElement | null,
             unit: IBattleUnit | null,
             opponent: IBattleUnit | null,
             side: 'attacker' | 'defender',
@@ -1037,9 +1189,10 @@ export class CombatUI {
             if (!unit) {
                 multSpan.style.display = 'none';
                 if (multBadge) multBadge.style.display = 'none';
+                if (totalBadge) totalBadge.style.display = 'none';
                 return;
             }
-            const { topChain, bottomChain, title } = this.renderEightRingBadges(unit, opponent, side);
+            const { topChain, bottomChain, title, totalMult, totalTitle } = this.renderEightRingBadges(unit, opponent, side);
 
             if (topChain) {
                 multSpan.innerHTML = topChain;
@@ -1050,14 +1203,17 @@ export class CombatUI {
             }
 
             if (multBadge) {
-                if (bottomChain) {
-                    multBadge.innerHTML = bottomChain;
-                    multBadge.title = title;
-                    multBadge.style.display = 'inline-grid';
-                } else {
-                    multBadge.style.display = 'none';
-                }
+                const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
+                multBadge.innerHTML = `总×${fmtTotalStr}`;
+                multBadge.title = totalTitle;
+                const isBuff = totalMult > 1.001;
+                const isAtt = side === 'attacker';
+                const borderColor = isBuff ? (isAtt ? 'rgba(253, 185, 49, 0.85)' : 'rgba(90, 170, 190, 0.85)') : 'rgba(235, 85, 75, 0.85)';
+                const color = isBuff ? (isAtt ? '#FFD700' : '#70E0FF') : '#FFAA99';
+                const bg = isBuff ? (isAtt ? 'rgba(50, 20, 5, 0.9)' : 'rgba(10, 30, 45, 0.9)') : 'rgba(50, 10, 10, 0.9)';
+                multBadge.style.cssText = `display:inline-block;padding:1px 4px;margin:0 1px;font-size:11.5px;font-weight:800;line-height:1.15;border:1px solid ${borderColor};color:${color};background:${bg};border-radius:3px;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,0.4);cursor:help;`;
             }
+            // totalBadge 现在专门由 renderSideLabel 写入兵力数值，此处不再覆盖
         };
 
         const updateReinforcements = (side: 'attacker' | 'defender') => {
@@ -1079,75 +1235,43 @@ export class CombatUI {
             const units = side === 'attacker' ? bf.getAttackerUnits() : bf.getDefenderUnits();
             const commander = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
 
-            // 确定第 2 行已展示的主力单位，避免第 3 行重复
+            // 主力乘区行绝不展示援军合兵标签，统一强制隐藏
+            joinBadgeEl.style.display = 'none';
+
+            // 确定主力乘区行已展示的主力单位，避免援军行重复
             const primaryBattler = this.pickPrimaryDisplayUnit(units);
 
-            // 若主力单位自身有合兵记录，标签归位到第 2 行
-            if (primaryBattler && !primaryBattler.isDestroyed && primaryBattler.troops > 0) {
-                const primaryJoinLuck = bf.getReinforcementJoinLuck(primaryBattler.id);
-                if (primaryJoinLuck !== null && primaryJoinLuck !== undefined) {
-                    const fmtVal = primaryJoinLuck.toFixed(1);
-                    const isBuff = primaryJoinLuck > 1.001;
-                    const isNerf = primaryJoinLuck < 0.999;
-                    let borderColor: string, color: string, bg: string;
-                    let label = '增';
-                    if (isBuff) {
-                        label = '得';
-                        borderColor = 'rgba(253, 185, 49, 0.65)';
-                        color = 'rgba(255, 230, 160, 1)';
-                        bg = 'rgba(50, 20, 5, 0.85)';
-                    } else if (isNerf) {
-                        label = '掣';
-                        borderColor = 'rgba(235, 85, 75, 0.75)';
-                        color = 'rgba(255, 170, 160, 1)';
-                        bg = 'rgba(50, 10, 10, 0.85)';
-                    } else {
-                        label = '增';
-                        borderColor = 'rgba(160, 160, 160, 0.5)';
-                        color = 'rgba(200, 200, 200, 0.9)';
-                        bg = 'rgba(30, 30, 30, 0.85)';
-                    }
-                    applyBadgeStyleToElement(joinBadgeEl, label, fmtVal, borderColor, color, bg, `合兵协同：×${fmtVal}`);
-                } else {
-                    joinBadgeEl.style.display = 'none';
-                }
-            } else {
-                joinBadgeEl.style.display = 'none';
-            }
-
-            // 过滤掉第 2 行已展示的主力单位
-            // 侧栏第 3 行展现该侧额外的野外援军或据点城防驻军（分行显示各自的名字与兵力）
+            // 过滤掉主力乘区行已展示的主力单位
+            // 侧栏援军行展现该侧额外的野外援军或据点城防驻军（分行显示各自的名字与兵力）
             const reinfUnits = units.filter(u => {
                 if (u.isDestroyed || u.troops <= 0) return false;
                 if (primaryBattler && u.id === primaryBattler.id) return false;
                 return true;
             });
-            
-            if (reinfUnits.length === 0) {
-                rowEl.style.display = 'none';
-                return;
-            }
 
-            // 逐行显示每个单位的独立名字与兵力
+            // 逐行/分隔显示每个单位的独立名字与兵力
             const lines: string[] = [];
             for (const u of reinfUnits) {
                 const dName = u.name || (u.unitType === 'city' ? '据点驻军' : '援军');
                 const t = Math.floor(u.troops);
                 const tStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
-                const ns = `<span style="white-space: nowrap;">${dName}</span>`;
+                const ns = `<span style="white-space: nowrap; color: rgba(255, 235, 200, 0.95);">${dName}</span>`;
                 const ts = `<span style="font-weight: 700; color: #ffd700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap;">${tStr}</span>`;
                 const line = isAtt
-                    ? `${ns}<span style="margin-left: 8px;">${ts}</span>`
-                    : `<span style="margin-right: 8px;">${ts}</span>${ns}`;
+                    ? `${ns}<span style="margin-left: 6px;">${ts}</span>`
+                    : `<span style="margin-right: 6px;">${ts}</span>${ns}`;
                 lines.push(`<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; white-space: nowrap;">${line}</div>`);
             }
-            nameEl.innerHTML = lines.join('');
+            const sep = `<span style="margin: 0 6px; opacity: 0.45; color: #ffd700; font-size: 10px;">•</span>`;
+            nameEl.innerHTML = lines.join(sep);
 
-            // 取第一个有合兵记录的单位显示标签
-            const luckUnit = reinfUnits.find(u => {
+            // 全局查找该侧任意有合兵记录的存活单位（无论是主力还是援军），统一在援军行对齐展示标签
+            const activeUnits = units.filter(u => !u.isDestroyed && u.troops > 0);
+            const luckUnit = activeUnits.find(u => {
                 const l = bf.getReinforcementJoinLuck(u.id);
                 return l !== null && l !== undefined;
             });
+
             if (luckUnit) {
                 const joinLuck = bf.getReinforcementJoinLuck(luckUnit.id)!;
                 const fmtVal = joinLuck.toFixed(1);
@@ -1176,7 +1300,11 @@ export class CombatUI {
                 badgeEl.style.display = 'none';
             }
 
-            rowEl.style.display = 'flex';
+            if (reinfUnits.length > 0 || luckUnit) {
+                rowEl.style.display = 'flex';
+            } else {
+                rowEl.style.display = 'none';
+            }
         };
 
         const applyBadgeStyleToElement = (badge: HTMLSpanElement, shortName: string, fmtVal: string, borderColor: string, color: string, bg: string, title: string) => {
@@ -1274,7 +1402,7 @@ export class CombatUI {
             if (!unit) { badge.style.display = 'none'; return; }
 
             const resolved = this.resolvePowerBadgeUnit(unit, side);
-            const legionMult = getCampaignLegionCombatMultiplier(resolved);
+            const legionMult = getEliteCombatMultiplier(resolved);
             const fmtVal = legionMult.toFixed(1);
 
             const isBuff = legionMult > 1.001;
@@ -1376,7 +1504,12 @@ export class CombatUI {
                 if (!unit) return null;
                 const resolved = this.resolvePowerBadgeUnit(unit, side);
                 if (resolved.generalId) {
-                    const skillId = resolved.battleOverriddenSkillId ?? resolved.negatedSkillId ?? null;
+                    // [2026-07-31 修] 必须与引擎同源：getActiveTacticalSkillId = 夺来技 → 局技(已定义即用) → 招牌技兜底。
+                    // 原来直接读 battleOverriddenSkillId：局技未分配（assignSituationalSkills 里 pool 为空会 continue，
+                    // 援军入场走懒分配）时该字段是 undefined，引擎照常拿招牌技结算、技能条也照常显示技名，
+                    // 唯独这枚角标空着；夺取系技能生效后也认不出新类别。
+                    // 末尾保留 negatedSkillId：技被看破时 battleOverriddenSkillId=null，仍按原技类别显示。
+                    const skillId = getActiveTacticalSkillId(resolved) ?? resolved.negatedSkillId ?? null;
                     const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
                     if (entry) {
                         const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
@@ -1437,8 +1570,8 @@ export class CombatUI {
             applyCenterBadge(this.rightCenterSixBadge, defChar, false);
         };
 
-        applySideBadges(this.leftFactionMultSpan, this.leftMultBadge, attacker, defender, 'attacker');
-        applySideBadges(this.rightFactionMultSpan, this.rightMultBadge, defender, attacker, 'defender');
+        applySideBadges(this.leftFactionMultSpan, this.leftMultBadge, this.leftTotalMultBadge, attacker, defender, 'attacker');
+        applySideBadges(this.rightFactionMultSpan, this.rightMultBadge, this.rightTotalMultBadge, defender, attacker, 'defender');
         updateCultureBadge(attacker, 'attacker');
         updateCultureBadge(defender, 'defender');
         updateStyleBadge(attacker, 'attacker');
@@ -1500,16 +1633,21 @@ export class CombatUI {
 
     private scoreBattleDisplayUnit(u: IBattleUnit): number {
         let score = 0;
-        if (u.unitType === 'legion' || u.unitType === 'army') score += 10_000;
+        // 守城精锐优先于援军军团：据点本位，守城精锐是这座城的「主人」
+        if (u.unitType === 'city' && readSiegeGarrisonEliteName(u.getEntity?.())) score += 20_000;
+        else if (u.unitType === 'legion' || u.unitType === 'army') score += 10_000;
         if (u.generalId && getGeneralProfile(u.generalId)) score += 1_000;
         const army = u.getEntity?.() as Army | undefined;
         if (army?.isElite) score += 500;
-        if (u.unitType === 'city' && readSiegeGarrisonEliteName(u.getEntity?.())) score += 500;
         score += Math.min(Math.max(0, u.troops) / 1000, 99);
         return score;
     }
 
     private updateSkillBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
+        // 技能条与系数链/六计角标同源：一律落到开战锁定的指挥官（见 resolvePowerBadgeUnit）。
+        // 此前各调用点传进来的单位各挑各的，才会出现「技能条有技、中央角标空」。
+        if (attacker) attacker = this.resolvePowerBadgeUnit(attacker, 'attacker');
+        if (defender) defender = this.resolvePowerBadgeUnit(defender, 'defender');
         this.leftSkillsBox.innerHTML = '';
         this.rightSkillsBox.innerHTML = '';
 
@@ -1663,7 +1801,7 @@ export class CombatUI {
             // if (regionCenterSkill) add(regionCenterSkill.name, regionCenterSkill.effectLabel, false, 'pass');
 
             const addElite = () => {
-                const legionMult = getCampaignLegionCombatMultiplier(unit);
+                const legionMult = getEliteCombatMultiplier(unit);
                 if (Math.abs(legionMult - 1) > 0.001) {
                     add(getLegionEliteBadgeName(unit), '', true, 'elite');
                 }
@@ -1672,16 +1810,8 @@ export class CombatUI {
             const addCulture = () => {
                 const cultureMult = getCultureOnlyCombatMultiplier(unit);
                 const round = Math.round(cultureMult * 100) / 100;
-                const ATK_LABELS: Record<number, string> = {
-                    1.20: '侵略如火', 1.15: '骁勇善战', 1.10: '能征惯战', 1.00: '习于行阵',
-                    0.95: '缮甲厉兵', 0.90: '据阵自保', 0.80: '堪以一战',
-                };
-                const DEF_LABELS: Record<number, string> = {
-                    1.20: '山河险固', 1.10: '城池为固', 1.05: '堡山而立',
-                    1.00: '据城而守', 0.95: '凭城为守', 0.90: '山城自顾', 0.80: '无遮无蔽',
-                };
                 const isGarrison = unit.unitType === 'city';
-                const label = isGarrison ? (DEF_LABELS[round] ?? '') : (ATK_LABELS[round] ?? '');
+                const label = resolveCultureTagLabel(round, isGarrison);
                 if (label) add(label, '', false, 'culture');
             };
 
@@ -1747,9 +1877,20 @@ export class CombatUI {
     }
 
     /**
-     * 战力徽章/标签同源单位：读引擎锁定的指挥官（与滚点一致）。
-     * 文化·精锐·势·攻防风格全读同一 unit，避免援军入场/原将阵亡后张冠李戴。
+     * 面板主将唯一入口（2026-07-31 主人定：援军是后来的，只显示初始的）。
+     *
+     * 读引擎开战时锁定的指挥官——引擎结算也只认这个单位
+     * （`getOpeningTacticalPowerMultiplier` → `findEligibleGeneralUnit(units, commander)`），
+     * 所以立绘 / 名牌 / 技能条 / 系数链 / 六计角标必须全走这里，否则面板会
+     * 「用甲的脸配乙的数字」：观众看到的将和实际决定胜负的将不是同一个人。
+     *
+     * 曾经的三套口径（已废）：
+     *   ① `pickGeneralDisplayUnit` —— 立绘/名牌，实时挑，援军编入时被 syncRegionalParticipants 换掉；
+     *   ② `getPrimaryBattler` —— 技能条，另一套评分 + 摄像机跟随覆盖，同一批单位都可能挑出不同的将；
+     *   ③ 本函数 —— 系数链。
+     * 无战场 / 指挥官未锁定时才退回实时挑选。
      */
+
     private resolvePowerBadgeUnit(fallback: IBattleUnit, side: 'attacker' | 'defender'): IBattleUnit {
         const bf = this.boundRegionalBattleField;
         if (bf) {
@@ -1764,7 +1905,7 @@ export class CombatUI {
         unit: IBattleUnit,
         opponent: IBattleUnit | null,
         side: 'attacker' | 'defender',
-    ): { topChain: string; bottomChain: string; title: string } {
+    ): { topChain: string; bottomChain: string; title: string; totalMult: number; totalTitle: string } {
         unit = this.resolvePowerBadgeUnit(unit, side);
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
@@ -1808,7 +1949,8 @@ export class CombatUI {
 
         let tacChar = '技';
         if (unit.generalId) {
-            const skillId = unit.battleOverriddenSkillId ?? unit.negatedSkillId ?? null;
+            // 与中央六计角标、引擎同源（见 updateCenterSixSetBadges 内同款注释）
+            const skillId = getActiveTacticalSkillId(unit) ?? unit.negatedSkillId ?? null;
             const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
             if (entry) {
                 const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
@@ -1826,7 +1968,7 @@ export class CombatUI {
         );
         const top4 = renderBadge('战术技能', tacChar, tacMult);
 
-        const legionMult = getCampaignLegionCombatMultiplier(unit);
+        const legionMult = getEliteCombatMultiplier(unit);
         const top5 = renderBadge('精锐部队', '军', legionMult);
 
         // ========== 第二行 3 标签: 势, 攻/防, 运 ==========
@@ -1877,9 +2019,16 @@ export class CombatUI {
             { label: '命运运气', shortName: '运', val: fateLuck },
         ].filter(f => Math.abs(f.val - 1) > 0.001);
 
-        const title = `战力加成明细：\n` + allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(1))}`).join('\n');
+        const effectiveReinfLuck = (reinfLuck !== null && reinfLuck !== undefined) ? reinfLuck : 1;
+        const totalMult = famousMult * (passMult * regionMult) * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck * effectiveReinfLuck;
+        const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
 
-        return { topChain, bottomChain, title };
+        const title = `战力加成明细：\n` + allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n');
+        const totalTitle = `综合战力加成（八环连乘）：×${fmtTotalStr}\n` + (allDetail.length > 0
+            ? allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n')
+            : '• 无额外增减益（均势 1.00）');
+
+        return { topChain, bottomChain, title, totalMult, totalTitle };
     }
 
     /** 返回当前战场中指定 side 自己的单位数组（= 对手的对手；与 getOpponentUnitsFor 同源） */
@@ -1926,9 +2075,15 @@ export class CombatUI {
      */
     private renderSideLabel(side: 'attacker' | 'defender', name: string, troops: number): void {
         const nameEl = side === 'attacker' ? this.leftSideNameSpan : this.rightSideNameSpan;
-        const troopsEl = side === 'attacker' ? this.leftSideTroopsSpan : this.rightSideTroopsSpan;
+        const totalBadge = side === 'attacker' ? this.leftTotalMultBadge : this.rightTotalMultBadge;
         nameEl.innerHTML = name;
-        troopsEl.textContent = '';
+        if (totalBadge) {
+            const t = Math.max(0, Math.floor(troops));
+            const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
+            totalBadge.innerHTML = troopStr;
+            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}现役兵力：${t} 人`;
+            totalBadge.style.display = 'inline-block';
+        }
     }
 
     private resolveFactionLabel(factionId: string | null): string {
@@ -2060,12 +2215,12 @@ export class CombatUI {
     }
 
     private playPortraitEntrance(): void {
-        // 滑入（结束时略大 1.045），不沉降
+        // 面板落位后立绘再滑入，分层有节奏
         // 缩放只动外框 transform，绝不碰 img 的调校 transform（F2 位置/缩放数据）。
         this.leftPortraitFrame.style.animation =
-            'portrait-frame-enter-left 0.55s ease-out 0.12s both';
+            'portrait-frame-enter-left 0.5s ease-out 0.50s both';
         this.rightPortraitFrame.style.animation =
-            'portrait-frame-enter-right 0.55s ease-out 0.18s both';
+            'portrait-frame-enter-right 0.5s ease-out 0.55s both';
         // 蓄力收缩状态复位（换场重新蓄力；清上一场残留的内联缩放与 --pre-scale）
         for (const side of ['attacker', 'defender'] as const) {
             this.portraitWind[side] = { driving: false, pulsed: false, scale: 1 };
@@ -2127,11 +2282,21 @@ export class CombatUI {
             // [2026-07-18] 第三幕锚点仅换场清：镜头切进一场已过 80% 的战斗时，
             // 若沿用上一场锚点，崩溃/断崖方向可能画反（进度<80% 的自愈清零覆盖不到这条路径）
             this.collapseStartAttPct = null;
+            // 「开局标尺在中间」：无缓动地归位到 50%，下一帧写入兵力比时才靠 0.45s 缓动滑进去。
+            // 不归位的话新场会从上一场的收尾位置（可能是 100%）起步。
+            this.attackerBar.style.transition = 'none';
+            this.clashEffect.style.transition = 'none';
+            this.rightTotalMultBadge.style.transition = 'none';
+            this.attackerBar.style.width = '50%';
+            this.clashEffect.style.left = 'calc(50% - 8px)';
+            this.rightTotalMultBadge.style.left = `calc(50% + ${uiPx(36)})`;
+            void this.attackerBar.offsetWidth; // 强制回流，让归位与随后的缓动分成两帧
         }
-        // P0 终态复位：恢复拉锯条/交界的缓动与呼吸、标题动画（showBattleOutcome 改过）
+        // P0 终态复位：恢复拉锯条/交界/兵力牌同频 0.45s 缓动与呼吸、标题动画
         this.outcomeLocked = false;
-        this.attackerBar.style.transition = 'width 0.55s cubic-bezier(0.22, 1, 0.36, 1)';
-        this.clashEffect.style.transition = 'left 0.55s cubic-bezier(0.22, 1, 0.36, 1)';
+        this.attackerBar.style.transition = 'width 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+        this.clashEffect.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+        this.rightTotalMultBadge.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
         this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
         this.battleTitle.style.animation = '';
         this.skillPulseLastAt = 0;
@@ -2153,8 +2318,10 @@ export class CombatUI {
         const slam = '0.2s cubic-bezier(0.55, 0, 0.9, 0.4)';
         this.attackerBar.style.transition = `width ${slam}`;
         this.clashEffect.style.transition = `left ${slam}`;
+        this.rightTotalMultBadge.style.transition = `left ${slam}`;
         this.attackerBar.style.width = `${finalPct}%`;
         this.clashEffect.style.left = `calc(${finalPct}% - 8px)`;
+        this.rightTotalMultBadge.style.left = `calc(${finalPct}% + ${uiPx(36)})`;
         // ② 交界爆闪：撞底同刻起闪，0.6s 后交还呼吸循环
         this.clashEffect.style.animation = 'clash-burst-flash 0.6s ease-out';
         window.setTimeout(() => {
@@ -2258,8 +2425,13 @@ export class CombatUI {
 
         const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
-        const attacker = this.pickGeneralDisplayUnit(attackers) ?? attBattler;
-        const defender = this.pickGeneralDisplayUnit(defenders) ?? defBattler;
+        // 立绘单位：跟随军团优先（切换跟拍后立绘立即换新主角）；否则退回指挥官锁定。
+        // 与 updateStats 的 getPrimaryBattler 同口径——此前用纯分数 pickPrimaryDisplayUnit +
+        // resolvePowerBadgeUnit 的锁定指挥官，切跟拍到同场另一军团时立绘仍显示旧指挥官。
+        const attacker = this.getPrimaryBattler('attacker')
+            ?? this.resolvePowerBadgeUnit(this.pickGeneralDisplayUnit(attackers) ?? attBattler, 'attacker');
+        const defender = this.getPrimaryBattler('defender')
+            ?? this.resolvePowerBadgeUnit(this.pickGeneralDisplayUnit(defenders) ?? defBattler, 'defender');
 
         const attName = this.buildWaveGroupedSideName(attackers, 'attacker');
         const defName = this.buildWaveGroupedSideName(defenders, 'defender');
@@ -2545,8 +2717,10 @@ export class CombatUI {
 
         const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
-        const attGeneral = this.pickGeneralDisplayUnit(attackers) ?? attBattler;
-        const defGeneral = this.pickGeneralDisplayUnit(defenders) ?? defBattler;
+        // 【关键】援军编入不换立绘/名牌/技能：一律沿用开战锁定的指挥官。
+        // 这里原本重挑一次，援军带来更强的将时会当场把主将顶掉，而引擎仍按锁定指挥官结算 → 脸和数字对不上。
+        const attGeneral = this.resolvePowerBadgeUnit(this.pickGeneralDisplayUnit(attackers) ?? attBattler, 'attacker');
+        const defGeneral = this.resolvePowerBadgeUnit(this.pickGeneralDisplayUnit(defenders) ?? defBattler, 'defender');
 
         this.updateMultiplierBadges(attBattler, defBattler);
         this.updateSkillBadges(attGeneral, defGeneral);
@@ -2599,18 +2773,10 @@ export class CombatUI {
         const displayName = this.resolveBattleUnitListName(primary);
         if (!displayName) return '';
 
-        const t = Math.max(0, Math.floor(primary.troops));
-        const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
-
         const isAtt = side === 'attacker';
         const nameSpan = `<span style="white-space: nowrap;">${displayName}</span>`;
-        const troopSpan = `<span style="font-weight: 700; color: #ffd700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap;">${troopStr}</span>`;
 
-        const lineHtml = isAtt
-            ? `${nameSpan}<span style="margin-left: 8px;">${troopSpan}</span>`
-            : `<span style="margin-right: 8px;">${troopSpan}</span>${nameSpan}`;
-
-        return `<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'};">${lineHtml}</div>`;
+        return `<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'};">${nameSpan}</div>`;
     }
 
     // ============================================================
@@ -3659,7 +3825,7 @@ export class CombatUI {
         );
 
         const total = attCurrent + defCurrent;
-        const baseAttPct = total > 0 ? (attCurrent / total) * 100 : 50;
+        const realAttPct = total > 0 ? (attCurrent / total) * 100 : 50;
 
         // 视觉微摆：配合 BattleField 三阶段节奏（40%/80%/100%）
         let progress = 0;
@@ -3672,59 +3838,54 @@ export class CombatUI {
             progress = 1;
         }
 
-        const phase2Span = PHASE_COLLAPSE_START - PHASE_STALEMATE_START;
+        // 落后方（=标尺要倒向的反面）：兵力多的一方在标尺上占大头
+        const lead = realAttPct >= 50 ? 1 : -1;
+        /** 第二、三阶段的落点：恒定 80/20，不看兵力比 */
+        const stalematePct = 50 + lead * (CLASH_STALEMATE_PCT - 50);
+
+        // 摇摆周期放慢 3 倍，拉锯显得厚重沉稳（三个阶段共用同一波形，只换振幅）
+        const swingT = performance.now() / 1200;
+        const swingUnit = Math.sin(swingT) * 0.8 + Math.sin(swingT * 1.4) * 0.2;
+
         let attPct: number;
-        if (progress < PHASE_COLLAPSE_START) {
-            this.collapseStartAttPct = null; // 未进第三幕（含新场开局），清锚点
-            let swingAmp: number;
-            if (progress < PHASE_STALEMATE_START) {
-                // 第一幕胶着：小幅角力，不与相持段技能脉冲抢戏（开战语音时段）
-                swingAmp = 1;
-            } else {
-                // 第二幕相持（≈40% 武将技脉冲）：摆幅拉满后渐收，与亮相同刻起大幅拉锯
-                swingAmp = 4 - 3 * ((progress - PHASE_STALEMATE_START) / phase2Span); // 4 → 1
-            }
-            // 摇摆周期放慢 3 倍，使得拉锯显得厚重沉稳
-            const t = performance.now() / 1200;
-            const swing = (Math.sin(t) * 0.8 + Math.sin(t * 1.4) * 0.2) * swingAmp;
-            // 【防碰壁静止】：动态收缩基准线，确保 swingAmp 完整的摇摆空间不被 98/2 硬墙切平
-            const safeBase = Math.max(2 + swingAmp, Math.min(98 - swingAmp, baseAttPct));
-            attPct = safeBase + swing;
+        if (progress < PHASE_STALEMATE_START) {
+            // 第一阶段（12 秒）：开局标尺在**正中**（铁律，勿改），整段 12 秒逐步爬向真实兵力比，
+            // 到本阶段末刚好到位；**不封顶**。与第二阶段的 12 秒接起来 = 24 秒连续逐步移动。
+            this.collapseStartAttPct = null;
+            const enterK = Math.min(1, progress / Math.max(0.0001, PHASE_STALEMATE_START * BAR_ENTER_RATIO_OF_ACT1));
+            // 「相持」= 前期几乎黏在中间，越往后拉得越开（幂次缓入，不是匀速也不是 smoothstep）。
+            // smoothstep 在半程就走完一半，看着像匀速滑——相持感不够，主人否掉了。
+            const eased = Math.pow(enterK, BAR_ACT1_EASE_POWER);
+            attPct = 50 + (realAttPct - 50) * eased + swingUnit * BAR_SWING_ACT1;
+        } else if (progress < PHASE_COLLAPSE_START) {
+            // 第二阶段·一边倒（12 秒）：从兵力比位置移到 80%（悬殊局是往回退，均势局是往外推）
+            this.collapseStartAttPct = null;
+            const k = (progress - PHASE_STALEMATE_START) / (PHASE_COLLAPSE_START - PHASE_STALEMATE_START);
+            const eased = k * k * (3 - 2 * k); // smoothstep：两端柔和，中段果断
+            const swingAmp = BAR_SWING_ACT2_FROM + (BAR_SWING_ACT2_TO - BAR_SWING_ACT2_FROM) * k;
+            attPct = realAttPct + (stalematePct - realAttPct) * eased + swingUnit * swingAmp;
         } else {
-            // 第三幕·三段式剧本（2026-07-18 主人定）：崩溃 → 僵持 → 断崖。
-            if (this.collapseStartAttPct === null) {
-                // 【防碰壁静止】：为最后阶段的颤动（振幅 1.2）和断崖（97/3）预留空间，最大 95.5，绝不碰 98 墙
-                this.collapseStartAttPct = Math.max(4.5, Math.min(95.5, baseAttPct));
-            }
-            const r0 = this.collapseStartAttPct;
-            const attackerAhead = r0 >= 50;
-            // 僵持线不回拉：入幕已越线（如 90%）就原地僵持，防"败方回光"的倒放假象
-            const r1 = attackerAhead ? Math.max(78, r0) : Math.min(22, r0);
-            const rCliff = attackerAhead ? 97 : 3;
+            // 第三阶段（6 秒）：在 80% 大幅摇摆相持 5 秒 + 最后 1 秒断崖直接到底。
+            // 落点在进入本阶段时锁定：败战计中途翻盘换边时，条子不会在最后 6 秒里横穿中线。
+            if (this.collapseStartAttPct === null) this.collapseStartAttPct = stalematePct;
+            const hold = this.collapseStartAttPct;
             const s = Math.min(1, (progress - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
-            if (s < 0.4) {
-                // 崩溃段：加速滑向僵持线，同时保留微弱的角力感防止碾压局画面静止
-                // 双频叠加：/600 慢波出厚重感，/300 快波与僵持段同频——冻结窗口（约 1.36s）
-                // 即使恰好对齐慢波波峰，快波也保证窗口内必有肉眼可见的摆动
-                const u = s / 0.4;
-                attPct = r0 + (r1 - r0) * u * u
-                    + Math.sin(performance.now() / 600) * 0.8
-                    + Math.sin(performance.now() / 300) * 0.4;
-            } else if (s < 0.75) {
-                // 僵持段：最后抵抗——细颤不推进
-                attPct = r1 + Math.sin(performance.now() / 300) * 1.2;
+            if (s < BAR_CLIFF_START) {
+                attPct = hold + swingUnit * BAR_SWING_ACT3;
             } else {
-                // 断崖段：u^4 陡降
-                const u = (s - 0.75) / 0.25;
-                attPct = r1 + (rCliff - r1) * Math.pow(u, 4);
+                // 断崖段：u^6 瞬间崩塌，直接推到底（100/0），不再留给宣判撞底。
+                // 摇摆按 (1-u) 淡出，否则崩塌起点会从摆动中的任意位置突跳回 hold。
+                const u = (s - BAR_CLIFF_START) / (1 - BAR_CLIFF_START);
+                const cliff = hold >= 50 ? 100 : 0;
+                attPct = hold + (cliff - hold) * Math.pow(u, 6) + swingUnit * BAR_SWING_ACT3 * (1 - u);
             }
-            // 这里作为绝对兜底，由于上方已有安全边距预留，理论上不再会切平波峰波谷
-            attPct = Math.max(2, Math.min(98, attPct));
         }
+        attPct = Math.max(0, Math.min(100, attPct));
 
         if (!this.outcomeLocked) {
             this.attackerBar.style.width = `${attPct}%`;
             this.clashEffect.style.left = `calc(${attPct}% - 8px)`;
+            this.rightTotalMultBadge.style.left = `calc(${attPct}% + ${uiPx(36)})`;
         }
 
         // 溃败预兆（2026-07-18 主人定 P2）：第三幕起，落后方立绘渐染血红+变暗、名牌闪烁——高潮前的情绪铺垫；

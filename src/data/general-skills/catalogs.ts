@@ -91,7 +91,9 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_10: { id: 'str_10', grid: 'S⑩', displayName: '如履平地', effect: 'mountain_march_immunity', magnitude: 1, engineStatus: 'ready', category: 'speed', note: '山地按平原速度走（均势·迂回奇袭）' },
 
-    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', category: 'speed', note: '远征军团默认：50% 概率绕过 small_city ZOC（不占武将战略格；非远征时仅 str_11 将可触发）' },
+    // ── 远征技能（非战略技能；远征系统专用，禁止混入战略技能） ──
+
+    str_11: { id: 'str_11', grid: 'S⑪', displayName: '长驱深入', effect: 'ignore_small_city_zoc', magnitude: 0.5, engineStatus: 'ready', category: 'expedition', note: '【远征技能】50% 概率绕过 small_city ZOC（远征机制专用，非战略技能）' },
 
     str_12: { id: 'str_12', grid: 'S⑫', displayName: '乘胜追击', effect: 'skip_post_battle_rest', magnitude: 0, engineStatus: 'ready', category: 'speed', note: '胜后休整置 0（造势）' },
 
@@ -101,29 +103,35 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_07: { id: 'str_07', grid: 'S⑦', displayName: '因粮于敌', effect: 'post_battle_troop_pct', magnitude: 0, engineStatus: 'ready', category: 'supply', postBattlePctByCityType: { pass: 0.01, small_city: 0.02, medium_city: 0.03, big_city: 0.04 }, note: '攻城胜后按城型补兵（逆势·以战养战）' },
 
-    str_28: { id: 'str_28', grid: 'S㉘', displayName: '调兵遣将', effect: 'recruit_troops_mult', magnitude: 1.10, engineStatus: 'ready', category: 'supply', note: '征兵时出征兵力 ×1.1（造势）' },
+    // str_28 已退役（2026-07-31）：原「调兵遣将（征兵×1.1）」已被 str_29 调兵遣将（过城补兵100%）取代
+
+    str_29: { id: 'str_29', grid: 'S㉙', displayName: '调兵遣将', effect: 'full_draft_resupply', magnitude: 1, engineStatus: 'ready', category: 'supply', note: '过己方城补兵比例 100%（代 50%），留 1000 底' },
 
     str_06: { id: 'str_06', grid: 'S⑥', displayName: '招降纳叛', effect: 'post_battle_recruit_enemy_pct', magnitude: 0.10, engineStatus: 'ready', category: 'supply', note: '胜后收编敌10%（造势）' },
 
     // ── 威慑类 ──
 
-    // ── 防务类 ──
+    // ── 防务类（⚠️ 封印退役技：大地图军团战略不使用据点防务技，禁止分配给任何武将）──
 
-    str_05: { id: 'str_05', grid: 'S⑤', displayName: '坚壁清野', effect: 'siege_approach_attrition', magnitude: 0.10, engineStatus: 'ready', category: 'defense', note: '本城被攻击（含沿途）时来犯军每秒减10%（逆势，录入锚将）' },
+    str_05: { id: 'str_05', grid: 'S⑤', displayName: '坚壁清野', effect: 'siege_approach_attrition', magnitude: 0.10, engineStatus: 'retired', category: 'defense', note: '本城被攻击（含沿途）时来犯军每秒减10%（逆势，已封印退役）' },
 
     // ── 视野类 ──
 
     str_16: { id: 'str_16', grid: 'S⑯', displayName: '神出鬼没', effect: 'hide_during_peacetime', magnitude: 1, engineStatus: 'ready', category: 'vision', note: '非战斗不可见（均势）' },
 
-    str_17: { id: 'str_17', grid: 'S⑰', displayName: '偃旗息鼓', effect: 'hide_troop_count', magnitude: 1, engineStatus: 'ready', category: 'vision', note: '非战斗隐藏武将名、精锐番号与兵力（逆势）' },
+    str_17: { id: 'str_17', grid: 'S⑰', displayName: '偃旗息鼓', effect: 'hide_troop_count', magnitude: 1, engineStatus: 'retired', category: 'vision', note: '非战斗隐藏武将名、精锐番号与兵力（已封印退役）' },
 
-    str_18: { id: 'str_18', grid: 'S⑱', displayName: '虚张声势', effect: 'bluff_troop_count', magnitude: 2, engineStatus: 'ready', category: 'vision', note: '非战斗兵力×2（造势）' },
+    str_18: { id: 'str_18', grid: 'S⑱', displayName: '虚张声势', effect: 'bluff_troop_count', magnitude: 2, engineStatus: 'retired', category: 'vision', note: '非战斗兵力×2（已封印退役）' },
 
     // ── 威慑类 ──
 
-    str_19: { id: 'str_19', grid: 'S⑲', displayName: '不战而屈', effect: 'intimidate_instant_win', magnitude: 0.01, engineStatus: 'ready', category: 'deterrence', note: '优势1%不战占城（造势）' },
+    str_19: { id: 'str_19', grid: 'S⑲', displayName: '不战而屈', effect: 'intimidate_instant_win', magnitude: 0.05, engineStatus: 'ready', category: 'deterrence', note: '兵力优势5%不战占城（造势）' },
 
-    str_20: { id: 'str_20', grid: 'S⑳', displayName: '先声夺人', effect: 'pre_battle_intimidate', magnitude: 0.10, engineStatus: 'ready', category: 'deterrence', note: '攻城前削守军10%（均势）' },
+    // 【2026-07-31 改名】原名「先声夺人」与战术技 ts_021 完全重名。
+    //   ts_021 已挂《左传·襄公二十六年》「先人有夺人之心」的出处，且它作用于【开局阶段】，
+    //   与"抢先动手夺其心志"的典故本义对应，故保留原名；本技作用于【攻城开打之前】，
+    //   守军望见来势即先垮一成，属纯威慑，改用《上林赋》「应风披靡」之典。
+    str_20: { id: 'str_20', grid: 'S⑳', displayName: '望风披靡', effect: 'pre_battle_intimidate', magnitude: 0.10, engineStatus: 'ready', category: 'deterrence', note: '攻城前削守军10%（均势）' },
 
     str_21: { id: 'str_21', grid: 'S㉑', displayName: '越城而走', effect: 'skip_disadvantaged_siege', magnitude: 0.10, engineStatus: 'ready', category: 'deterrence', note: '劣势10%跳城重选（逆势）' },
 
@@ -135,13 +143,13 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_24: { id: 'str_24', grid: 'S㉔', displayName: '转丸破军', effect: 'sabotage_elite', magnitude: 0.15, engineStatus: 'ready', category: 'diplomacy', note: '15%的几率，攻城战封杀精锐（逆势）' },
 
-    // ── 防务类 ──
+    // ── 防务类（⚠️ 封印退役技：大地图军团战略不使用据点防务技，禁止分配给任何武将）──
 
-    str_25: { id: 'str_25', grid: 'S㉕', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2.0, engineStatus: 'ready', category: 'defense', note: '产兵加速×2（造势）' },
+    str_25: { id: 'str_25', grid: 'S㉕', displayName: '足食足兵', effect: 'city_growth_mult', magnitude: 2.0, engineStatus: 'retired', category: 'defense', note: '产兵加速×2（已封印退役）' },
 
-    str_26: { id: 'str_26', grid: 'S㉖', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'ready', category: 'defense', note: '军团离城即可再募（造势）' },
+    str_26: { id: 'str_26', grid: 'S㉖', displayName: '招兵买马', effect: 'recruit_cooldown_mult', magnitude: 0.5, engineStatus: 'retired', category: 'defense', note: '军团离城即可再募（已封印退役）' },
 
-    str_27: { id: 'str_27', grid: 'S㉗', displayName: '屯兵经略', effect: 'garrison_reserve_troops', magnitude: 2000, engineStatus: 'ready', category: 'defense', note: '征兵后留兵≥2000（均势）' },
+    str_27: { id: 'str_27', grid: 'S㉗', displayName: '屯兵经略', effect: 'garrison_reserve_troops', magnitude: 2000, engineStatus: 'retired', category: 'defense', note: '征兵后留兵≥2000（已封印退役）' },
 
 };
 
