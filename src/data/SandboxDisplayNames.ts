@@ -828,7 +828,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'xianhai': '咸海',
 'nandou': '难兜',
 'yanda': '阿洪',
-    'qincha': '钦察',
 'anxi': '安西',
 'konbaung': '贡榜',
 'qi_d': '横水',

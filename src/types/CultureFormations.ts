@@ -57,6 +57,9 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     JIANGNAN:     'INFANTRY',
     LINGNAN:      'ELEPHANT',
     DIANQIAN:     'ELEPHANT',
+    SLAVIC:       'MIXED',   // 东欧步骑
+    GERMANIC:     'INFANTRY', // 中欧重步
+    LATIN:        'INFANTRY', // 西欧重步/军团
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -80,6 +83,9 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CENTRAL_ASIA: 'triangle',
     WEST_ASIA:    'square',
     WESTERN:      'square',
+    SLAVIC:       'square',   // 东欧：方阵
+    GERMANIC:     'square',   // 中欧：方阵
+    LATIN:        'square',   // 西欧：方阵（罗马龟甲阵）
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
@@ -442,6 +448,9 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CENTRAL_ASIA: CENTRAL_ASIA_TIERS,
     WEST_ASIA:    WEST_ASIA_TIERS,
     WESTERN:      WESTERN_TIERS,
+    SLAVIC:       WEST_ASIA_TIERS,   // 暂借西亚配置
+    GERMANIC:     WEST_ASIA_TIERS,   // 暂借西亚配置
+    LATIN:        WEST_ASIA_TIERS,   // 暂借西亚配置
 };
 
 /** 编辑器保存后立刻写入内存（不依赖 HMR 才生效） */

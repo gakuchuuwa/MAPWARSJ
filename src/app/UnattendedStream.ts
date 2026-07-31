@@ -15,7 +15,7 @@
  */
 import type { GameApp } from './GameApp';
 import type { GameTimeHUD } from '../ui/GameTimeHUD';
-import { StreamModeToggle } from '../ui/StreamModeToggle';
+import { StreamModeToggle, DEV_AUTOREFRESH_KEY } from '../ui/StreamModeToggle';
 import { gameLog } from '../utils/GameLogger';
 
 const AUTO_START_DELAY_MS = 10_000;
@@ -71,6 +71,15 @@ export function initUnattendedStream(app: GameApp, gameTimeHUD: GameTimeHUD): vo
 
 function autoStart(app: GameApp, gameTimeHUD: GameTimeHUD): void {
     if (StreamModeToggle.isActive()) return;
+    // 【2026-08-01 主人定】本机开发时若主人手动关掉了直播（= 要边改边看自动刷新），
+    // 就别再 10 秒后把直播点回来，否则刷新闸门刚打开又被锁死。
+    // 只对本机 dev 生效：云机 ?stream=1 与线上构建照旧无条件自动开播。
+    if (import.meta.env.DEV
+        && !isUnattendedStream()
+        && localStorage.getItem(DEV_AUTOREFRESH_KEY) === '1') {
+        gameLog('startup', '📺 [直播] 已手动关闭直播（自动刷新模式），跳过自动开播');
+        return;
+    }
     const btn = document.getElementById('stream-mode-btn');
     if (btn) {
         btn.click();

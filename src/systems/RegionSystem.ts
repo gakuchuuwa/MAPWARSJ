@@ -23,7 +23,7 @@ export type RegionType =
     | 'SLAVIC'        // 斯拉夫
     | 'GERMANIC'      // 日耳曼
     | 'LATIN'         // 拉丁
-    | | 'CENTRAL'       // 中原 (豫、关中、晋南)
+    | 'CENTRAL'       // 中原 (豫、关中、晋南)
     | 'NORTH'         // 北方 (河北、山东、晋北)
     | 'JIANGNAN'      // 江南 (长江中下游、湘鄂赣浙)
     | 'LINGNAN'       // 岭南 (粤、桂、海南、福建)    ← 已含原 MIN
@@ -80,6 +80,9 @@ export const REGION_LABELS: Record<RegionType, string> = {
  * 改其中一套不影响另一套，这是主人明确要求的分离。
  */
 export const CULTURE_NAMES: Record<RegionType, string> = {
+    SLAVIC: '斯拉夫',
+    GERMANIC: '日耳曼',
+    LATIN: '拉丁',
     CENTRAL: '中原',
     NORTH: '河朔',
     JIANGNAN: '江南',
@@ -418,6 +421,26 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         medium: resolvePath('/cities/west_asia_medium.png'),
         big: resolvePath('/cities/west_asia_big.png'),
         pass: resolvePath('/cities/west_asia_pass.png')
+    },
+
+    // === 欧洲三区（2026-08-01 新增；暂无专属素材，暂借风格相近区兜底） ===
+    SLAVIC: { // 东欧/斯拉夫：暂借 STEPPE 游牧风格
+        small: resolvePath('/cities/nomadic_small.png'),
+        medium: resolvePath('/cities/nomadic_medium.png'),
+        big: resolvePath('/cities/nomadic_big.png'),
+        pass: resolvePath('/cities/nomadic_pass.png')
+    },
+    GERMANIC: { // 中欧/日耳曼：暂借 WEST_ASIA 风格
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
+    },
+    LATIN: { // 西欧/拉丁：暂借 WEST_ASIA 风格
+        small: resolvePath('/cities/west_asia_small.png'),
+        medium: resolvePath('/cities/west_asia_medium.png'),
+        big: resolvePath('/cities/west_asia_big.png'),
+        pass: resolvePath('/cities/west_asia_pass.png')
     }
 };
 
@@ -514,6 +537,9 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     JAPAN:        ['city_kyoto'],                    // 京都 (平安京)
     CENTRAL_ASIA: ['city_urgench'],                  // 玉龙杰赤 (花剌子模都城; 主人 2026-07-05 改, 原撒马尔罕)
     WEST_ASIA:    ['city_junshitandingbao'],           // 君士坦丁堡 (拜占庭/东罗马都城)
+    SLAVIC:       ['city_jifu'],                       // 基辅 (罗斯都城)
+    GERMANIC:     ['city_bali'],                       // 巴黎 (法兰克/法兰西核心)
+    LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

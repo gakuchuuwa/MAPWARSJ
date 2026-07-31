@@ -611,6 +611,12 @@ export class GameApp {
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
 
+            // 开发期整页刷新闸门：把「直播开着没有」上报给 dev server，决定改文件后刷不刷新。
+            // 动态 import 保证生产构建整块剔除。
+            if (import.meta.env.DEV) {
+                void import('../dev/ReloadGate').then((m) => m.initReloadGate()).catch(() => {});
+            }
+
             // 自动缩放：行军 9 / 战斗 10，每次至少 15 秒；换跟随目标时先拉远到 8 转场
             this.zoomController = new ZoomController(this.map, () => {
                 const id = this.cameraFollowUI.getFollowedArmyId();
