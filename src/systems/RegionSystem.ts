@@ -20,7 +20,10 @@ function resolvePath(path: string): string {
 // 西方         1: WEST_ASIA（2026-07-29 新增：安纳托利亚/黎凡特/阿拉伯/埃及/两河）
 // ============================================================
 export type RegionType =
-    | 'CENTRAL'       // 中原 (豫、关中、晋南)
+    | 'SLAVIC'        // 斯拉夫
+    | 'GERMANIC'      // 日耳曼
+    | 'LATIN'         // 拉丁
+    | | 'CENTRAL'       // 中原 (豫、关中、晋南)
     | 'NORTH'         // 北方 (河北、山东、晋北)
     | 'JIANGNAN'      // 江南 (长江中下游、湘鄂赣浙)
     | 'LINGNAN'       // 岭南 (粤、桂、海南、福建)    ← 已含原 MIN
@@ -38,6 +41,7 @@ export type RegionType =
 
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
+    'SLAVIC', 'GERMANIC', 'LATIN',
     'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
     'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN',
     'CENTRAL_ASIA', 'NORTHEAST', 'TIBET', 'WESTERN',
@@ -47,6 +51,9 @@ export const REGION_ORDER: RegionType[] = [
 // [UI] Display labels (Chinese + English code)
 // 用于 CityEditor 等 UI 动态生成 region 下拉
 export const REGION_LABELS: Record<RegionType, string> = {
+    SLAVIC: '斯拉夫',
+    GERMANIC: '日耳曼',
+    LATIN: '拉丁',
     CENTRAL: '中原',
     NORTH: '北方',
     JIANGNAN: '江南',
@@ -210,6 +217,10 @@ type Polygon = Point[];
 // 绘线: RegionBoundaryLayer @ zoom=6（REGION_BOUNDARY_ZOOM），共 15 区
 // ============================================================
 export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] = [
+    { region: 'SLAVIC', cityIds: ['city_liga', 'city_nuofugeerdede', 'city_kashan', 'city_salai', 'city_heersongniesi', 'city_saermizerhetusha', 'city_jialiqi', 'city_huasha', 'city_liga'] },
+    { region: 'GERMANIC', cityIds: ['city_aidingbao', 'city_wupusala', 'city_kenisibao', 'city_bolandengbao', 'city_weiyeena', 'city_basaier', 'city_kelong', 'city_lundun', 'city_aidingbao'] },
+    { region: 'LATIN', cityIds: ['city_bali', 'city_sitelasibao', 'city_luoma', 'city_yadian', 'city_jiadisi', 'city_lisiben', 'city_bali'] },
+
     { region: 'CENTRAL', cityIds: ['city_hanzhong', 'city_xiangyang', 'city_yangzhou', 'city_wendeng', 'city_fushi', 'city_lanzhou'] },
     { region: 'NORTH', cityIds: ['city_wendeng', 'city_fushi', 'city_guihua', 'city_liaoyang'] },
     { region: 'NORTHEAST', cityIds: ['city_liaoyang', 'city_zonggu', 'city_baizhu', 'city_nuotuoluo', 'city_nanghar', 'city_nuergan', 'city_yakesa', 'city_geerbiqi', 'city_nibuchu'] },
@@ -229,6 +240,9 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
 
 /** 界城环线配色（与 REGION_LABELS 对应，zoom=6 虚线） */
 export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
+    SLAVIC: '#3949ab',
+    GERMANIC: '#455a64',
+    LATIN: '#6a1b9a',
     CENTRAL: '#8d6e63',
     NORTH: '#5d4037',
     JIANGNAN: '#1565c0',
