@@ -1,3 +1,6 @@
+# 本地构建产物：Vercel 在云端跑 buildCommand 自己生成 dist，本地这份不必上传。
+# （vite build 会把 public/ 整个复制进 dist，含 3.2GB 瓦片，上传时必然出错）
+dist
 # 本地参考资料，不参与线上运行（且含 >100MB PDF 会阻断 Vercel 上传）
 史料
 output_imgs
@@ -22,6 +25,8 @@ public/8dixingtu
 public/9dixingtu
 public/10dixingtu
 public/11dixingtu
-# 根目录 map/ 是同四套瓦片的重复副本，纯本地资料，不上传
-map/
+# 根目录 map/ 是同四套瓦片的重复副本，纯本地资料，不上传。
+# 必须写成 /map 锁死根目录——写 map/ 会把 src/map/ 也排除掉，远端构建会报
+# Could not resolve "../map/GameMap"（2026-08-01 踩过）。
+/map
 close_cities_report.json

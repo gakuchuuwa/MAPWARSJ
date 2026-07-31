@@ -41,8 +41,9 @@ public/8dixingtu/
 public/9dixingtu/
 public/10dixingtu/
 public/11dixingtu/
-# 根目录 map/ 是同四套瓦片的重复副本（另 3.2GB），src 无任何引用、Vite 也不 serve，同样不入库
-map/
+# 根目录 map/ 是同四套瓦片的重复副本（另 3.2GB），src 无任何引用、Vite 也不 serve，同样不入库。
+# 必须写成 /map/ 锁死根目录——写 map/ 会连 src/map/ 一起匹配掉（2026-08-01 踩过）。
+/map/
 san10pk_99026/
 
 .vercel
