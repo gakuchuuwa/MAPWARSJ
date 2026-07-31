@@ -3,6 +3,22 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+  'pufaerci': 'city_heidelberg',
+  'hansa': 'city_hamburg',
+  'batawei': 'city_utrecht',
+  'weijing_york': 'city_york',
+  'kanbuliya': 'city_carlisle',
+  'nuowei': 'city_trondheim',
+  'gaolu_luoma': 'city_lyon',
+  'aquidan': 'city_bordeaux',
+  'puluowangsi': 'city_avignon',
+  'lunbadi': 'city_milan',
+  'donggete': 'city_ravenna',
+  'xigete': 'city_toledo',
+  'andaluoxiya': 'city_cordoba',
+  'alagong': 'city_zaragoza',
+  'shaiyue': 'city_eger',
+
   'nuosi': 'city_wupusala',
   'feiniqi': 'city_jiadisi',
   'xila': 'city_yadian',
