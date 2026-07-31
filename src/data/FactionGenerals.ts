@@ -37,6 +37,15 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    sugelan: { generalId: 'gen_robert_bruce', generalName: '罗伯特', portrait: '/assets/generals/gen_robert_bruce.png' },
+    ruidian: { generalId: 'gen_gustav_vasa', generalName: '古斯塔夫', portrait: '/assets/generals/gen_gustav_vasa.png' },
+    yinggelan: { generalId: 'gen_edward_iii', generalName: '爱德华三世', portrait: '/assets/generals/gen_edward_iii.png' },
+    falanxi: { generalId: 'gen_philip_augustus', generalName: '腓力二世', portrait: '/assets/generals/gen_philip_augustus.png' },
+    luoma_diguo: { generalId: 'gen_julius_caesar', generalName: '恺撒', portrait: '/assets/generals/gen_julius_caesar.png' },
+    yadian_chengbang: { generalId: 'gen_miltiades', generalName: '米尔提亚德', portrait: '/assets/generals/gen_miltiades.png' },
+    keduowa: { generalId: 'gen_abd_al_rahman', generalName: '拉赫曼一世', portrait: '/assets/generals/gen_abd_al_rahman.png' },
+    putaoya: { generalId: 'gen_afonso_henriques', generalName: '阿方索一世', portrait: '/assets/generals/gen_afonso_henriques.png' },
+
     habusibao: { generalId: 'gen_maximilian', generalName: '马克西米利安', portrait: '/assets/generals/gen_maximilian.png' },
     boximiya: { generalId: 'gen_jan_zizka', generalName: '扬杰斯卡', portrait: '/assets/generals/gen_jan_zizka.png' },
     mazhaer: { generalId: 'gen_arpad', generalName: '阿尔帕德', portrait: '/assets/generals/gen_arpad.png' },
