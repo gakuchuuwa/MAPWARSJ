@@ -15,7 +15,7 @@ import type { EliteLegionConfig } from './ExpeditionLegions';
 export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
     // ── T1 功勋之兵：独立主力取得重大战略级胜利 + 建制延续性强 ──
     yashu: { name: '亚述战车', tier: 1 },          // 尼尼微·萨尔贡：新亚述战略主力，战车＋攻城工程重塑近东版图，建制延续数百年
-    baizhanting: { name: '铁甲圣骑', tier: 1 },    // 君士坦丁堡·贝利撒留：亲统铁甲骑（kataphraktoi）收复北非与意大利
+    baizanting: { name: '铁甲圣骑', tier: 1 },    // 君士坦丁堡·贝利撒留：亲统铁甲骑（kataphraktoi）收复北非与意大利
     luomu: { name: '古拉姆军', tier: 1 },          // 伊科尼乌姆·基利杰：罗姆苏丹国建都于此的古拉姆常备军。基利杰·阿尔斯兰二世
                                                   // 1176 密列奥塞法隆伏歼曼努埃尔一世亲征军，永久终结拜占庭收复安纳托利亚之望。
                                                   // （原注「曼齐克特生擒拜占庭皇帝」系我误记：那是 1071 大塞尔柱阿尔普·阿尔斯兰，非罗姆基利杰）
