@@ -37,6 +37,19 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    dixia: { generalId: 'gen_periander', generalName: '培里安德', portrait: '/assets/generals/gen_periander.png' },
+    boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/generals/gen_epaminondas.png' },
+    luodesi: { generalId: 'gen_demetrius', generalName: '德米特里', portrait: '/assets/generals/gen_demetrius.png' },
+    kelite: { generalId: 'gen_minos', generalName: '米诺斯', portrait: '/assets/generals/gen_minos.png' },
+    neisuosi: { generalId: 'gen_constantine', generalName: '君士坦丁', portrait: '/assets/generals/gen_constantine.png' },
+    leangongguo: { generalId: 'gen_alfonso_ix', generalName: '阿方索', portrait: '/assets/generals/gen_alfonso_ix.png' },
+    malagajun: { generalId: 'gen_zahir', generalName: '查希尔', portrait: '/assets/generals/gen_zahir.png' },
+    lifu: { generalId: 'gen_abdelkrim', generalName: '阿卜杜克', portrait: '/assets/generals/gen_abdelkrim.png' },
+    bohepingyuan: { generalId: 'gen_theodoric', generalName: '狄奥多里克', portrait: '/assets/generals/gen_theodoric.png' },
+    xixiliwangguo: { generalId: 'gen_frederic_ii', generalName: '腓特烈', portrait: '/assets/generals/gen_frederic_ii.png' },
+    yadeliyahai: { generalId: 'gen_belisarius', generalName: '贝利萨留', portrait: '/assets/generals/gen_belisarius.png' },
+    weixi: { generalId: 'gen_ansgar', generalName: '安斯加尔', portrait: '/assets/generals/gen_ansgar.png' },
+
     lagoniya: { generalId: 'gen_leonidas', generalName: '列奥尼达', portrait: '/assets/generals/gen_leonidas.png' },
     maqidun: { generalId: 'gen_alexander', generalName: '亚历山大', portrait: '/assets/generals/gen_alexander.png' },
     lagusa: { generalId: 'gen_dragan', generalName: '德拉甘', portrait: '/assets/generals/gen_dragan.png' },
