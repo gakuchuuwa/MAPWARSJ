@@ -16,6 +16,8 @@
  *     禁止自造截字（后百）、地名代国号（兰）、姓代国号（甄）、后缀国/族/人（黎国）。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+  ayinu_ezo: '阿伊',
+
   boootiya: '波奥',
   luodesi: '罗得',
   kelite: '克里',
