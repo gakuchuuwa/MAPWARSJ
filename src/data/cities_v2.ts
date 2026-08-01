@@ -1939,10 +1939,22 @@ export const RESTORED_CITIES: CityDataV2[] = [
 // 汇总导出
 // ============================================================
 export const CITIES_V2: CityDataV2[] = [
+    { id: 'city_corinth', name: '科林斯', factionId: 'dixia', lat: 37.93, lng: 22.93, type: 'pass', troops: 20000, region: 'LATIN' },
+    { id: 'city_thebes', name: '底比斯', factionId: 'boootiya', lat: 38.32, lng: 23.31, type: 'small_city', troops: 8000, region: 'LATIN' },
+    { id: 'city_rhodes', name: '罗得岛', factionId: 'luodesi', lat: 36.44, lng: 28.22, type: 'small_city', troops: 8000, region: 'LATIN' },
+    { id: 'city_knossos', name: '诺索斯', factionId: 'kelite', lat: 35.33, lng: 25.13, type: 'small_city', troops: 8000, region: 'LATIN' },
+    { id: 'city_nis', name: '尼什', factionId: 'neisuosi', lat: 43.32, lng: 21.89, type: 'small_city', troops: 8000, region: 'SLAVIC' },
+    { id: 'city_salamanca', name: '萨拉曼卡', factionId: 'leangongguo', lat: 40.96, lng: -5.66, type: 'small_city', troops: 8000, region: 'LATIN' },
+    { id: 'city_malaga', name: '马拉加', factionId: 'malagajun', lat: 36.72, lng: -4.42, type: 'medium_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_melilla', name: '梅利利亚', factionId: 'lifu', lat: 35.29, lng: -2.93, type: 'pass', troops: 20000, region: 'LATIN' },
+    { id: 'city_verona', name: '维罗纳', factionId: 'bohepingyuan', lat: 45.43, lng: 10.99, type: 'medium_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_palermo', name: '巴勒莫', factionId: 'xixiliwangguo', lat: 38.11, lng: 13.36, type: 'medium_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_ancona', name: '安科纳', factionId: 'yadeliyahai', lat: 43.61, lng: 13.51, type: 'small_city', troops: 8000, region: 'LATIN' },
+    { id: 'city_bremen', name: '不莱梅', factionId: 'weixi', lat: 53.07, lng: 8.8, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
+
     { id: 'city_sparta', name: '斯巴达', factionId: 'lagoniya', lat: 37.07, lng: 22.42, type: 'small_city', troops: 8000, region: 'LATIN' },
     { id: 'city_salonica', name: '萨洛尼卡', factionId: 'maqidun', lat: 40.64, lng: 22.94, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_ragusa', name: '拉古萨', factionId: 'lagusa', lat: 42.65, lng: 18.09, type: 'small_city', troops: 8000, region: 'SLAVIC' },
-    { id: 'city_mycenae', name: '迈锡尼', factionId: 'akaiya', lat: 37.72, lng: 22.75, type: 'small_city', troops: 8000, region: 'LATIN' },
 
     { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_yota', lat: 57.7, lng: 11.97, type: 'small_city', troops: 8000, region: 'GERMANIC' },
     { id: 'city_rostock', name: '罗斯托克', factionId: 'meikelunbao', lat: 54.09, lng: 12.13, type: 'small_city', troops: 8000, region: 'GERMANIC' },
