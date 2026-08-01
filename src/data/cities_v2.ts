@@ -1939,6 +1939,21 @@ export const RESTORED_CITIES: CityDataV2[] = [
 // 汇总导出
 // ============================================================
 export const CITIES_V2: CityDataV2[] = [
+    { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_yota', lat: 57.7, lng: 11.97, type: 'small_city', troops: 8000, region: 'GERMANIC' },
+    { id: 'city_rostock', name: '罗斯托克', factionId: 'meikelunbao', lat: 54.09, lng: 12.13, type: 'small_city', troops: 8000, region: 'GERMANIC' },
+    { id: 'city_bruges', name: '布鲁日', factionId: 'didi', lat: 51.21, lng: 3.22, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_antwerp', name: '安特卫普', factionId: 'bulabante', lat: 51.22, lng: 4.4, type: 'medium_city', troops: 30000, region: 'GERMANIC' },
+    { id: 'city_groningen', name: '格罗宁根', factionId: 'fulisilan', lat: 53.22, lng: 6.56, type: 'small_city', troops: 8000, region: 'GERMANIC' },
+    { id: 'city_pisa', name: '比萨', factionId: 'anuo', lat: 43.72, lng: 10.4, type: 'small_city', troops: 8000, region: 'LATIN' },
+    { id: 'city_seville', name: '塞维利亚', factionId: 'guadaer', lat: 37.38, lng: -5.98, type: 'medium_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_valencia', name: '巴伦西亚', factionId: 'balunxiya', lat: 39.47, lng: -0.37, type: 'medium_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_messina', name: '梅西纳', factionId: 'moxina', lat: 38.19, lng: 15.55, type: 'pass', troops: 20000, region: 'LATIN' },
+    { id: 'city_cagliari', name: '卡利亚里', factionId: 'sading', lat: 39.22, lng: 9.12, type: 'small_city', troops: 8000, region: 'LATIN' },
+    { id: 'city_feisi', name: '非斯', factionId: 'yidelisi', lat: 34.03, lng: -5, type: 'medium_city', troops: 30000, region: 'LATIN' },
+    { id: 'city_cherkasy', name: '切尔卡瑟', factionId: 'qiekase', lat: 49.44, lng: 32.06, type: 'small_city', troops: 8000, region: 'SLAVIC' },
+    { id: 'city_sofia', name: '索非亚', factionId: 'saierdika', lat: 42.7, lng: 23.32, type: 'medium_city', troops: 30000, region: 'SLAVIC' },
+    { id: 'city_sarajevo', name: '萨拉热窝', factionId: 'bosiniya', lat: 43.85, lng: 18.41, type: 'small_city', troops: 8000, region: 'SLAVIC' },
+
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 30000, region: 'LATIN' },
 
     { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'pass', troops: 20000, region: 'LATIN' },
