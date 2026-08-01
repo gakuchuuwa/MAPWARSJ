@@ -37,6 +37,8 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    mulabite: { generalId: 'gen_tashfin', generalName: '塔什芬', portrait: '/assets/generals/gen_tashfin.png' },
+
     zhibuluotuo: { generalId: 'gen_henry_navigator', generalName: '恩里克', portrait: '/assets/generals/gen_henry_navigator.png' },
     tingjitana: { generalId: 'gen_ibn_battuta', generalName: '伊本白图泰', portrait: '/assets/generals/gen_ibn_battuta.png' },
     zhayan: { generalId: 'gen_yaghmurasen', generalName: '亚里摩罗', portrait: '/assets/generals/gen_yaghmurasen.png' },

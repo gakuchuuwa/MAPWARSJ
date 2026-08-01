@@ -1939,6 +1939,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
 // 汇总导出
 // ============================================================
 export const CITIES_V2: CityDataV2[] = [
+    { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 30000, region: 'LATIN' },
+
     { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'pass', troops: 20000, region: 'LATIN' },
     { id: 'city_danjier', name: '丹吉尔', factionId: 'tingjitana', lat: 35.75, lng: -5.92, type: 'small_city', troops: 8000, region: 'LATIN' },
     { id: 'city_teleimusen', name: '特莱姆森', factionId: 'zhayan', lat: 34.88, lng: -1.32, type: 'medium_city', troops: 30000, region: 'LATIN' },
@@ -1971,7 +1973,6 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_utrecht', name: '乌特勒支', factionId: 'batawei', lat: 52.09, lng: 5.12, type: 'small_city', troops: 8000, region: 'GERMANIC' },
     { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 8000, region: 'GERMANIC' },
     { id: 'city_carlisle', name: '卡莱尔', factionId: 'kanbuliya', lat: 54.89, lng: -2.93, type: 'pass', troops: 30000, region: 'GERMANIC' },
-    { id: 'city_trondheim', name: '特隆赫姆', factionId: 'nuowei', lat: 63.43, lng: 10.39, type: 'small_city', troops: 8000, region: 'GERMANIC' },
     { id: 'city_lyon', name: '里昂', factionId: 'gaolu_luoma', lat: 45.76, lng: 4.83, type: 'small_city', troops: 8000, region: 'LATIN' },
     { id: 'city_bordeaux', name: '波尔多', factionId: 'aquidan', lat: 44.83, lng: -0.57, type: 'small_city', troops: 8000, region: 'LATIN' },
     { id: 'city_avignon', name: '阿维尼翁', factionId: 'puluowangsi', lat: 43.94, lng: 4.8, type: 'small_city', troops: 8000, region: 'LATIN' },
