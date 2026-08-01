@@ -809,7 +809,7 @@ const _FIXED: Record<string, string> = {
     'ldiya': '#B88820',
     'pajiama': '#285E7B',
     'bitiniya': '#486078',
-    'baizhanting': '#6A1B6D',
+    'baizanting': '#6A1B6D',
     'luomu': '#2D6A4F',
 
     // ── 西亚区补全（2026-07-30）──

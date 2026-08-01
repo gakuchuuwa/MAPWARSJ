@@ -7761,6 +7761,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 11,
             "offsetY": 1
+        },
+        "/assets/NORTHEAST/dcba1754-eaf2-4b8d-acd6-075aecc90445.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 52
+        },
+        "/assets/NORTHEAST/ayinu_ezo_keshamayin.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 52
         }
     },
     "folderGuides": {

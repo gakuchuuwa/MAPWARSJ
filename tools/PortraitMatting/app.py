@@ -428,7 +428,7 @@ def _color_key(img, img_f, kind, bg_bgr, tolerance, feather, shrink, despeckle_a
 def smart_remove(img_bytes, bg_mode="自动识别", tolerance=22, feather=1.0,
                  shrink=0.0, despeckle_area=48, spill=True, spill_radius=2,
                  ai_mode=AI_MODES[0], model_name="birefnet-general",
-                 island_ratio=ISLAND_TOL_RATIO, bright_eq=True,
+                 island_ratio=ISLAND_TOL_RATIO, bright_eq=False,
                  bright_target=BRIGHT_TARGET, bright_strength=1.0):
     """
     统一抠图入口。返回 (png_bytes, 诊断文本)
@@ -643,7 +643,7 @@ with gr.Blocks(title="智能抠图工具", theme=gr.themes.Soft()) as demo:
 
     with gr.Accordion("💡 亮度均衡 (让整批图亮度一致)", open=True):
         with gr.Row():
-            bright_cb = gr.Checkbox(value=True, label="启用 (只按主体像素测亮度，背景不参与)")
+            bright_cb = gr.Checkbox(value=False, label="启用 (只按主体像素测亮度，背景不参与)")
             bright_t = gr.Slider(70, 190, value=BRIGHT_TARGET, step=1,
                                  label="目标亮度 (整批想更亮就调大；诊断栏会报每张的原始亮度，"
                                        "照着定值最准)")
