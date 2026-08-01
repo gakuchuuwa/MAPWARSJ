@@ -994,7 +994,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   'cangzhou': '沧',
 'yuezhi': '月氏',
   'minyue': '闽越',
-  'funan': '扶南',
+'funan': '扶南',
   'lancang': '澜沧',
   'ahaomu': '阿萨',
 'elunchunzu': '鄂伦',

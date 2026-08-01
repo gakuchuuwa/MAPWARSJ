@@ -423,24 +423,24 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/west_asia_pass.png')
     },
 
-    // === 欧洲三区（2026-08-01 新增；暂无专属素材，暂借风格相近区兜底） ===
-    SLAVIC: { // 东欧/斯拉夫：暂借 STEPPE 游牧风格
-        small: resolvePath('/cities/nomadic_small.png'),
-        medium: resolvePath('/cities/nomadic_medium.png'),
-        big: resolvePath('/cities/nomadic_big.png'),
-        pass: resolvePath('/cities/nomadic_pass.png')
+    // === 欧洲三区（2026-08-01 新增；专属据点图已就位） ===
+    SLAVIC: { // ✅ 斯拉夫
+        small: resolvePath('/cities/slavic_small.png'),
+        medium: resolvePath('/cities/slavic_medium.png'),
+        big: resolvePath('/cities/slavic_big.png'),
+        pass: resolvePath('/cities/slavic_pass.png')
     },
-    GERMANIC: { // 中欧/日耳曼：暂借 WEST_ASIA 风格
-        small: resolvePath('/cities/west_asia_small.png'),
-        medium: resolvePath('/cities/west_asia_medium.png'),
-        big: resolvePath('/cities/west_asia_big.png'),
-        pass: resolvePath('/cities/west_asia_pass.png')
+    GERMANIC: { // ✅ 日耳曼
+        small: resolvePath('/cities/germanic_small.png'),
+        medium: resolvePath('/cities/germanic_medium.png'),
+        big: resolvePath('/cities/germanic_big.png'),
+        pass: resolvePath('/cities/germanic_pass.png')
     },
-    LATIN: { // 西欧/拉丁：暂借 WEST_ASIA 风格
-        small: resolvePath('/cities/west_asia_small.png'),
-        medium: resolvePath('/cities/west_asia_medium.png'),
-        big: resolvePath('/cities/west_asia_big.png'),
-        pass: resolvePath('/cities/west_asia_pass.png')
+    LATIN: { // ✅ 拉丁
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
     }
 };
 

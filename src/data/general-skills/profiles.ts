@@ -2765,7 +2765,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    funan_fanman: { generalId: 'funan_fanman', tier: 'ordinary', tacticalSkillId: 'ts_342', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defDisadvantageSkillId: 'ts_730', atkAdvantageSkillId: 'ts_158', atkBalanceSkillId: 'ts_034', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_775', aptitude: 'create' , attackStyle: 'attack'},
+    funan_fanman: { generalId: 'funan_fanman', tier: 'ordinary', tacticalSkillId: 'ts_158', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_158', atkBalanceSkillId: 'ts_034', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_775', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
 
 
 
