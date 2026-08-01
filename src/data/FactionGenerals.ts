@@ -37,6 +37,21 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    ruidian_yota: { generalId: 'gen_charles_ix', generalName: '卡尔', portrait: '/assets/generals/gen_charles_ix.png' },
+    meikelunbao: { generalId: 'gen_henry_borwin', generalName: '亨利波罗', portrait: '/assets/generals/gen_henry_borwin.png' },
+    didi: { generalId: 'gen_philip_good', generalName: '菲利普', portrait: '/assets/generals/gen_philip_good.png' },
+    bulabante: { generalId: 'gen_antoine_brabant', generalName: '安托万', portrait: '/assets/generals/gen_antoine_brabant.png' },
+    fulisilan: { generalId: 'gen_radbod', generalName: '拉德博德', portrait: '/assets/generals/gen_radbod.png' },
+    anuo: { generalId: 'gen_ulisse', generalName: '乌利切', portrait: '/assets/generals/gen_ulisse.png' },
+    guadaer: { generalId: 'gen_fernando_iii', generalName: '费尔南多', portrait: '/assets/generals/gen_fernando_iii.png' },
+    balunxiya: { generalId: 'gen_el_cid', generalName: '熙德', portrait: '/assets/generals/gen_el_cid.png' },
+    moxina: { generalId: 'gen_roger_i', generalName: '罗杰', portrait: '/assets/generals/gen_roger_i.png' },
+    sading: { generalId: 'gen_alaison', generalName: '阿莱松', portrait: '/assets/generals/gen_alaison.png' },
+    yidelisi: { generalId: 'gen_idris_i', generalName: '伊德里斯', portrait: '/assets/generals/gen_idris_i.png' },
+    qiekase: { generalId: 'gen_wisniowiecki', generalName: '维什尼奥维', portrait: '/assets/generals/gen_wisniowiecki.png' },
+    saierdika: { generalId: 'gen_krum', generalName: '克鲁姆', portrait: '/assets/generals/gen_krum.png' },
+    bosiniya: { generalId: 'gen_tvrtko', generalName: '特夫尔特科', portrait: '/assets/generals/gen_tvrtko.png' },
+
     mulabite: { generalId: 'gen_tashfin', generalName: '塔什芬', portrait: '/assets/generals/gen_tashfin.png' },
 
     zhibuluotuo: { generalId: 'gen_henry_navigator', generalName: '恩里克', portrait: '/assets/generals/gen_henry_navigator.png' },

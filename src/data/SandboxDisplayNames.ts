@@ -16,6 +16,21 @@
  *     禁止自造截字（后百）、地名代国号（兰）、姓代国号（甄）、后缀国/族/人（黎国）。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+  ruidian_yota: '约塔',
+  meikelunbao: '梅克',
+  didi: '低地',
+  bulabante: '布拉',
+  fulisilan: '弗里',
+  anuo: '阿诺',
+  guadaer: '瓜达',
+  balunxiya: '黎凡',
+  moxina: '墨西',
+  sading: '萨丁',
+  yidelisi: '伊德',
+  qiekase: '第中',
+  saierdika: '塞尔',
+  bosiniya: '波斯',
+
   mulabite: '穆',
 
   zhibuluotuo: '直布',
