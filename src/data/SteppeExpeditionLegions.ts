@@ -96,8 +96,14 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     manghuti: { name: '忙忽惕勇士', tier: 4 },
     dzungar: { name: '绰罗斯精骑', tier: 1 },
     dada_ming: { name: '鞑靼铁骑', tier: 1 },
+    jinzhang: { name: '金帐铁骑', tier: 1 },        // 萨莱·拔都：长子西征横扫东欧，金帐汗国两百年主力，升T1战略
     xiemian: { name: '谢缅骑卫', tier: 4 },
+    baojiaer: { name: '保加尔铁骑', tier: 2 },      // 喀山·兀鲁黑：1223卡玛河伏击全歼蒙古西征军残部，一战成名，T2战术
     yidier: { name: '伊蒂尔弓骑', tier: 4 },
+    fuerjia: { name: '阿斯特拉骑', tier: 4 },        // 察里津·阿斯特拉：阿斯特拉罕汗国骑兵，建制可考，T4存在
+    nuogai: { name: '诺盖突骑', tier: 3 },           // 萨马拉·欧拿斯汗：诺盖汗国骑射，民族辨识度，T3知名
+    bashekeer: { name: '巴什弓骑', tier: 3 },        // 乌法·卡拉萨卡尔：巴什基尔骑射手，乌拉尔骑射特色，T3知名
     salai: { name: '萨莱骑卫', tier: 4 },
+    xierhe: { name: '毡的弓骑', tier: 3 },            // 哲德·乌古斯后钦察要城：毡的(Jand)乌古斯骑射，T3知名
     mangshi: { name: '曼格骑卫', tier: 4 },
 };

@@ -33,6 +33,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 奄美岛勇除名（名称现代，无史载）
   anmei: { name: '奄美岛兵', tier: 4 }, // 赤木名城·与湾大亲奄美
   ayinu: { name: '阿伊努猎兵', tier: 3 },       // 虾夷/阿伊努人独特的狩猎与战斗文化代表，极具民族辨识度，升入T3知名
+  ayinu_ezo: { name: '鄂霍猎兵', tier: 3 },     // 莫约罗·柯沙玛因：鄂霍次克文化渔猎海兽兵，极北特色，T3知名       // 虾夷/阿伊努人独特的狩猎与战斗文化代表，极具民族辨识度，升入T3知名
   beihai: { name: '雪国斥候', tier: 4 },       // 宗谷界城·（原雪国斥候，避开越后地域错位）
   yamato: { name: '千早众', tier: 2 },       // 千早城·楠木正成笼城（特定战役防御高光，T2）
     sanada_d: { name: '真田赤备', tier: 2 },

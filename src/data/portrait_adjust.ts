@@ -7986,6 +7986,86 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/SLAVIC/5b4d6d2b-ca0e-48eb-940a-57bb49c7e290.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/SLAVIC/qiekase_weishenniao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/SLAVIC/7817726b-5819-4153-9c56-8b3a38ea8ef9.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/SLAVIC/saierdika_kelumu.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/LATIN/df51b8b8-666d-45c1-8aa5-71c8b161b63e.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/LATIN/bosiniya_tefuerteke.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/CENTRAL_ASIA/55abd67f-c30b-4b97-a708-23df87e67102.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/CENTRAL_ASIA/mulabite_tashenfen.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/CENTRAL_ASIA/daf33c92-2f69-4bfb-bdc4-26b070b85d60.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/CENTRAL_ASIA/zhibuluotuo_enlike.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/CENTRAL_ASIA/79b4c485-35e1-403a-8f9a-3568bbff4524.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/CENTRAL_ASIA/zhayan_yalimoluo.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/CENTRAL_ASIA/d3a34886-d3db-458d-975a-6ea697bd818e.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/CENTRAL_ASIA/babali_babaluosa.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/CENTRAL_ASIA/3962c1c6-16ad-43d3-990b-3cd268110138.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/CENTRAL_ASIA/hamade_hamade.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 14
         }
     },
     "folderGuides": {
