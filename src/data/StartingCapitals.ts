@@ -3,6 +3,11 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+  'lagoniya': 'city_sparta',
+  'maqidun': 'city_salonica',
+  'lagusa': 'city_ragusa',
+  'akaiya': 'city_mycenae',
+
   'ruidian_yota': 'city_gothenburg',
   'meikelunbao': 'city_rostock',
   'didi': 'city_bruges',
