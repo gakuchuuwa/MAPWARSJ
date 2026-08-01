@@ -45,7 +45,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     leangongguo: { generalId: 'gen_alfonso_ix', generalName: '阿方索九世', portrait: '/assets/LATIN/leangongguo_afangsuojiushi.png' },
     bohepingyuan: { generalId: 'gen_theodoric', generalName: '坎格兰德', portrait: '/assets/LATIN/bohepingyuan_diaoduolike.png' },
     xixiliwangguo: { generalId: 'gen_frederic_ii', generalName: '腓特烈二世', portrait: '/assets/LATIN/xixiliwangguo_feitelieershi.png' },
-    weixi: { generalId: 'gen_ansgar', generalName: '安斯加尔', portrait: '/assets/generals/gen_ansgar.png' },
+    weixi: { generalId: 'gen_ansgar', generalName: '安斯加尔', portrait: '/assets/GERMANIC/weixi_ansijiaer.png' },
 
     lagoniya: { generalId: 'gen_leonidas', generalName: '列奥尼达', portrait: '/assets/generals/gen_leonidas.png' },
     maqidun: { generalId: 'gen_alexander', generalName: '亚历山大', portrait: '/assets/generals/gen_alexander.png' },

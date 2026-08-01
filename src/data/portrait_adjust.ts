@@ -5098,7 +5098,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/manqing/xingan_hailancha.png": {
-            "scale": 1,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": -3
         },
@@ -6338,7 +6338,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/CENTRAL_ASIA/dulan_d_aihamaide.png": {
-            "scale": 0.95,
+            "scale": 0.99,
             "offsetX": 0,
             "offsetY": 3
         },
@@ -7243,7 +7243,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/CENTRAL_ASIA/fanyanna_xieer.png": {
-            "scale": 0.79,
+            "scale": 0.83,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -7548,7 +7548,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/CENTRAL_ASIA/guishuang_qiujiuque.png": {
-            "scale": 1.13,
+            "scale": 1.17,
             "offsetX": 0,
             "offsetY": -6
         },
@@ -7836,6 +7836,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 21
+        },
+        "/assets/GERMANIC/53d58882-072f-45fd-92f0-ea004ff107a5.png": {
+            "scale": 1.31,
+            "offsetX": -1,
+            "offsetY": 32
+        },
+        "/assets/GERMANIC/weixi_ansijiaer.png": {
+            "scale": 1.31,
+            "offsetX": -1,
+            "offsetY": 32
         }
     },
     "folderGuides": {
