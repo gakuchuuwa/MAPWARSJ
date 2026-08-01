@@ -220,9 +220,9 @@ type Polygon = Point[];
 // 绘线: RegionBoundaryLayer @ zoom=6（REGION_BOUNDARY_ZOOM），共 15 区
 // ============================================================
 export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] = [
-    { region: 'SLAVIC', cityIds: ['city_xianuofugeerdede', 'city_daerban', 'city_junshitandingbao', 'city_plovdiv', 'city_belgrade', 'city_budapeisi', 'city_weiyeena', 'city_bulage', 'city_talin', 'city_nuofugeerdede', 'city_xianuofugeerdede'] },
-    { region: 'GERMANIC', cityIds: ['city_budapeisi', 'city_weiyeena', 'city_basaier', 'city_dublin', 'city_aidingbao', 'city_bergen', 'city_wupusala', 'city_talin', 'city_kenisibao', 'city_budapeisi'] },
-    { region: 'LATIN', cityIds: ['city_junshitandingbao', 'city_plovdiv', 'city_belgrade', 'city_budapeisi', 'city_weiyeena', 'city_basaier', 'city_dublin', 'city_lisiben', 'city_malajiashen', 'city_banjiaxi', 'city_yadian', 'city_junshitandingbao'] },
+    { region: 'SLAVIC', cityIds: ['city_xianuofugeerdede', 'city_daerban', 'city_junshitandingbao', 'city_plovdiv', 'city_belgrade', 'city_budapeisi', 'city_bulage', 'city_talin', 'city_nuofugeerdede', 'city_xianuofugeerdede'] },
+    { region: 'GERMANIC', cityIds: ['city_budapeisi', 'city_bulage', 'city_talin', 'city_wupusala', 'city_bergen', 'city_aidingbao', 'city_dublin', 'city_basaier', 'city_budapeisi'] },
+    { region: 'LATIN', cityIds: ['city_junshitandingbao', 'city_plovdiv', 'city_belgrade', 'city_budapeisi', 'city_basaier', 'city_dublin', 'city_lisiben', 'city_malajiashen', 'city_banjiaxi', 'city_yadian', 'city_junshitandingbao'] },
 
     { region: 'CENTRAL', cityIds: ['city_hanzhong', 'city_xiangyang', 'city_yangzhou', 'city_wendeng', 'city_fushi', 'city_lanzhou'] },
     { region: 'NORTH', cityIds: ['city_wendeng', 'city_fushi', 'city_guihua', 'city_liaoyang'] },
