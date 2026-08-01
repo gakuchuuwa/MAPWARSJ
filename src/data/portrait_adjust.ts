@@ -7771,6 +7771,71 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 0,
             "offsetY": 52
+        },
+        "/assets/LATIN/a1848934-56ab-49f6-8d84-9e1f3509fec4.png": {
+            "scale": 1.3,
+            "offsetX": 0,
+            "offsetY": 51
+        },
+        "/assets/LATIN/boootiya_yibaminongda.png": {
+            "scale": 1.3,
+            "offsetX": 0,
+            "offsetY": 51
+        },
+        "/assets/LATIN/c4ae3b00-6a62-4cc1-96ed-26575379c036.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/LATIN/luodesi_boliaokete.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/LATIN/3d522cd8-662a-4bbc-8b30-a4997cb9bc9c.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/LATIN/kelite_minuosi.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/LATIN/f55e91bb-2025-4e21-9a90-15e8009372cc.png": {
+            "scale": 1.25,
+            "offsetX": 0,
+            "offsetY": 52
+        },
+        "/assets/LATIN/leangongguo_afangsuojiushi.png": {
+            "scale": 1.25,
+            "offsetX": 0,
+            "offsetY": 52
+        },
+        "/assets/LATIN/b107ad89-9af0-4a4f-9cb1-f275380f418e.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/LATIN/bohepingyuan_diaoduolike.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/LATIN/ae0e6d4a-baf6-4f59-bfb0-7754fd153c14.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/LATIN/9281f9dd-2e3d-4578-9bcf-79926a4102fe.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/LATIN/xixiliwangguo_feitelieershi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 21
         }
     },
     "folderGuides": {
