@@ -41,9 +41,9 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     tiele: { name: '铁勒九姓骑', tier: 3 },
     xibo_d: { name: '锡伯箭手', tier: 3 },
   tatar: { name: '塔塔儿勇士', tier: 4 },
-    merkit: { name: '岭北屯骑', tier: 3 },
+    merkit: { name: '蔑儿乞军', tier: 3 },
     chahar: { name: '哈剌赤军', tier: 2 },
-    da_yuan: { name: '北元怯薛', tier: 1 },
+    da_yuan: { name: '北元怯薛', tier: 0 },
     huyan: { name: '呼衍精骑', tier: 4 },
     yujiulu: { name: '柔然汗骑', tier: 4 },
     jalair: { name: '札剌亦儿军', tier: 3 },
@@ -65,7 +65,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     pugu: { name: '燕然黑砂', tier: 2 },
     pulei: { name: '蒲类落雕骑', tier: 3 },
   chechen: { name: '车臣汗骑', tier: 4 },       // 巴彦图门·车臣汗硕垒
-  zhuerqi: { name: '斡难河骑', tier: 4 },       // 斡难河·撒察别乞
+  zhuerqi: { name: '主儿乞军', tier: 4 },       // 温都尔汗·撒察别乞
   tumengken: { name: '赛音诺颜骑', tier: 4 },  // 拜达里克·图蒙肯抗卫拉特（缺乏极其著名的战术高光，降T3）
   bayegu: { name: '拔野古轻骑', tier: 4 },       // 稽落山·屈利失助唐灭薛延陀（缺乏极其著名的战术高光，降T3）
     zubu: { name: '特尔浑游骑', tier: 4 },

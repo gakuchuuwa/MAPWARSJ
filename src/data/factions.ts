@@ -11,10 +11,10 @@ export const FACTIONS: Faction[] = [
   { id: 'ayinu_ezo', name: '阿伊努' },
 
   { id: 'boootiya', name: '波奥蒂亚' },
-  { id: 'luodesi', name: '罗得斯' },
+  { id: 'luodesi', name: '多德卡尼斯' },
   { id: 'kelite', name: '克里特' },
   { id: 'leangongguo', name: '莱昂' },
-  { id: 'bohepingyuan', name: '波河平原' },
+  { id: 'bohepingyuan', name: '威尼托' },
   { id: 'xixiliwangguo', name: '西西里' },
   { id: 'weixi', name: '威悉' },
 
@@ -25,14 +25,14 @@ export const FACTIONS: Faction[] = [
 
   { id: 'ruidian_yota', name: '约塔' },
   { id: 'meikelunbao', name: '梅克伦堡' },
-  { id: 'didi', name: '低地' },
+  { id: 'didi', name: '佛兰德' },
   { id: 'anuo', name: '阿诺' },
   { id: 'guadaer', name: '瓜达尔' },
-  { id: 'balunxiya', name: '黎凡特' },
-  { id: 'moxina', name: '墨西拿' },
+  { id: 'balunxiya', name: '瓦伦西亚' },
+  { id: 'moxina', name: '墨西公国' },
   { id: 'sading', name: '萨丁' },
   { id: 'yidelisi', name: '伊德里斯' },
-  { id: 'qiekase', name: '第聂伯中游' },
+  { id: 'qiekase', name: '第聂伯' },
   { id: 'saierdika', name: '塞尔迪卡' },
   { id: 'bosiniya', name: '波斯尼亚' },
 
@@ -44,7 +44,7 @@ export const FACTIONS: Faction[] = [
   { id: 'hamade', name: '哈马德' },
   { id: 'buni', name: '布匿' },
   { id: 'aguelabu', name: '阿格拉布' },
-  { id: 'telibolisi', name: '特里波利斯' },
+  { id: 'telibolisi', name: '的黎波里塔' },
   { id: 'jileinaijia', name: '基雷奈加' },
 
   { id: 'maixiya', name: '麦西亚' },
@@ -61,12 +61,12 @@ export const FACTIONS: Faction[] = [
   { id: 'liguliya', name: '利古里亚' },
   { id: 'seleisi', name: '色雷斯' },
   { id: 'bolisiya', name: '波利西亚' },
-  { id: 'zhituo', name: '日托' },
+  { id: 'zhituo', name: '沃伦' },
 
   { id: 'pufaerci', name: '普法尔茨' },
   { id: 'hansa', name: '汉萨' },
   { id: 'batawei', name: '巴塔维' },
-  { id: 'weijing_york', name: '维京约克' },
+  { id: 'weijing_york', name: '约维克' },
   { id: 'kanbuliya', name: '坎布里亚' },
   { id: 'gaolu_luoma', name: '高卢罗曼' },
   { id: 'aquidan', name: '阿奎丹' },
@@ -80,11 +80,11 @@ export const FACTIONS: Faction[] = [
 
   { id: 'nuosi', name: '诺斯' },
   { id: 'feiniqi', name: '腓尼基' },
-  { id: 'xila', name: '希腊' },
-  { id: 'xilagu', name: '叙拉古' },
+  { id: 'xila', name: '阿提卡' },
+  { id: 'xilagu', name: '西西里东' },
   { id: 'lading', name: '拉丁' },
-  { id: 'fulandesi', name: '弗兰德斯' },
-  { id: 'gaolu', name: '高卢' },
+  { id: 'fulandesi', name: '阿图瓦' },
+  { id: 'gaolu', name: '法兰西' },
   { id: 'anggelu', name: '盎格鲁' },
   { id: 'piketai', name: '皮克特' },
   { id: 'gaer', name: '盖尔' },
@@ -109,7 +109,7 @@ export const FACTIONS: Faction[] = [
   { id: 'mazhaer', name: '马扎尔' },
   { id: 'falanji', name: '法兰克' },
   { id: 'jialuolin', name: '加洛林' },
-  { id: 'rierman', name: '日耳曼' },
+  { id: 'rierman', name: '莱茵兰' },
   { id: 'shiwaben', name: '施瓦本' },
   { id: 'asikanani', name: '阿斯坎尼' },
   { id: 'wende', name: '文德' },
@@ -123,24 +123,26 @@ export const FACTIONS: Faction[] = [
 
   { id: 'luosi', name: '罗斯' },
   { id: 'liulike', name: '留里克' },
-  { id: 'mosike_gongguo', name: '莫斯科公国' },
+  { id: 'mosike_gongguo', name: '莫斯公国' },
   { id: 'fulajimier_gongguo', name: '克利亚济马' },
-  { id: 'daniebo', name: '第聂伯' },
+  { id: 'daniebo', name: '斯摩公国' },
   { id: 'qiernigeweifu_gongguo', name: '杰斯纳' },
-  { id: 'jialixiya', name: '加利西亚' },
+  { id: 'jialixiya', name: '哈尔公国' },
   { id: 'pusikefu_gongheguo', name: '伟利卡亚' },
   { id: 'ouka', name: '奥卡' },
-  { id: 'xideweina', name: '西德维纳' },
+  { id: 'xideweina', name: '波洛公国' },
   { id: 'jinzhang', name: '金帐' },
   { id: 'baojiaer', name: '保加尔' },
   { id: 'baizanting', name: '拜占庭' },
+  { id: 'taolika', name: '陶里卡' },
   { id: 'kelimiya', name: '克里米亚' },
   { id: 'dajiya', name: '达基亚' },
+  { id: 'mengtainiya', name: '蒙泰尼亚' },
   { id: 'litaowan', name: '立陶宛' },
   { id: 'bolan', name: '波兰' },
   { id: 'piyasite', name: '皮雅斯特' },
   { id: 'baojian_qishi', name: '宝剑骑士' },
-  { id: 'teweier_gongguo', name: '特维尔公国' },
+  { id: 'teweier_gongguo', name: '特维公国' },
   { id: 'suzidaer', name: '苏兹达尔' },
   { id: 'gesake', name: '哥萨克' },
   { id: 'moerdaweiya', name: '摩尔达维亚' },
@@ -153,9 +155,9 @@ export const FACTIONS: Faction[] = [
   { id: 'fuerjia', name: '伏尔加' },
   { id: 'nuogai', name: '诺盖' },
   { id: 'bashekeer', name: '巴什基尔' },
-  { id: 'beisilafu', name: '北斯拉夫' },
+  { id: 'beisilafu', name: '塞维里亚' },
   { id: 'peilieya_gongguo', name: '佩列斯拉夫' },
-  { id: 'weijiebusike_gongguo', name: '西德维纳' },
+  { id: 'weijiebusike_gongguo', name: '维捷公国' },
 
   { id: 'heishui', name: '靺鞨' },
 
@@ -658,7 +660,7 @@ export const FACTIONS: Faction[] = [
              // 草原赭褐 - 克烈部(土兀剌河黑林)
     { id: 'naiman', name: '乃蛮' },              // 文明深紫 - 乃蛮部(科布多)
     { id: 'tatar', name: '塔塔尔' },
-    { id: 'merkit', name: '岭北' },
+    { id: 'merkit', name: '蔑儿乞' },
 
     { id: 'ongut', name: '汪古' },
     // 暗板岩灰 - 斡亦剌部(谦河之源/叶尼塞河上游)
@@ -739,7 +741,7 @@ export const FACTIONS: Faction[] = [
     { id: 'lujian', name: '鲁监' },
 
     // 第三类：蒙古诸部
-    { id: 'chahar', name: '兴和' },
+    { id: 'chahar', name: '察哈尔' },
 
 
 
@@ -1631,6 +1633,7 @@ export const FACTIONS: Faction[] = [
 
           // 彭迪·穆尔加布绿洲边镇（Margiana）
     { id: 'wugu_d', name: '乌古斯' },
+    { id: 'xierhe', name: '锡尔河' },
               // 毡的·锡尔河下游乌古斯叶护国核心
     // ── 2026-06-19 新增：阿克苏道（昆岗军台）──
     { id: 'adao_d', name: '阿克苏道' },            // 昆岗·清代南疆驿路军台
@@ -1794,7 +1797,7 @@ export const FACTIONS: Faction[] = [
     { id: 'mojietuo', name: '摩揭陀王国' },
     { id: 'boluo', name: '波罗帝国' },
     { id: 'sumo', name: '苏摩国' },
-    { id: 'beileinisi', name: '红海' }, // 托勒密二世所建红海舰队基地（原名与据点名相同，违 §266）
+    { id: 'beileinisi', name: '红海港' }, // 托勒密二世所建红海舰队基地（原名与据点名相同，违 §266）
     { id: 'dedan', name: '德丹王国' },
     { id: 'maidina', name: '拉希顿' }, // 正统哈里发国建都麦地那，武将哈立德为其统帅（原名与据点名相同，违 §266）
     { id: 'gulaishi', name: '古莱什部落' },
