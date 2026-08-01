@@ -860,7 +860,7 @@ export class CityAssetManager {
 'womaya': '倭马',
         'xibolai': '希伯',
         'aiji': '埃及',
-        'dibisi': '底比',
+        'dibisi': '上埃',
         'kushen': '库什',
 'tuolemi': '托勒',
         'jialedi': '迦勒',

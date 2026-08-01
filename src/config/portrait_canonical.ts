@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/1 19:23:45（共 19 条）
+ * 生成时间：2026/8/2 06:46:28（共 26 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
@@ -12,6 +12,13 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_08.png": "/assets/DIANQIAN/luoyue_zhengce.png",
     "/assets/WESTERN/tuoming_tuomin.png": "/assets/DIANQIAN/__多余__DIANQIAN_04.png",
     "/assets/LINGNAN/xian_d_xianying.png": "/assets/DIANQIAN/__多余__DIANQIAN_06.png",
+    "/assets/GERMANIC/weixi_ansijiaer.png": "/assets/GERMANIC/__多余__GERMANIC_01.png",
+    "/assets/LATIN/bohepingyuan_diaoduolike.png": "/assets/LATIN/__多余__LATIN_04.png",
+    "/assets/LATIN/boootiya_yibaminongda.png": "/assets/LATIN/__多余__LATIN_03.png",
+    "/assets/LATIN/kelite_minuosi.png": "/assets/LATIN/__多余__LATIN_01.png",
+    "/assets/LATIN/leangongguo_afangsuojiushi.png": "/assets/LATIN/__多余__LATIN_06.png",
+    "/assets/LATIN/luodesi_boliaokete.png": "/assets/LATIN/__多余__LATIN_05.png",
+    "/assets/LATIN/xixiliwangguo_feitelieershi.png": "/assets/LATIN/__多余__LATIN_02.png",
     "/assets/LINGNAN/zhuang_d_washifuren.png": "/assets/LINGNAN/__多余__LINGNAN_11.png",
     "/assets/xianqin/__多余__xianqin_02.png": "/assets/NORTH/huo_songlaosheng.png",
     "/assets/TIBET/__多余__TIBET_02.png": "/assets/STEPPE/qidan_shulvping.png",

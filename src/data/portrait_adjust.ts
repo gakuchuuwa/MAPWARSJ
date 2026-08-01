@@ -5652,7 +5652,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 23
         },
-        "/assets/WEST_ASIA/baizhanting_beilisaliu.png": {
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_55.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 0
@@ -7772,7 +7772,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 52
         },
-        "/assets/LATIN/a1848934-56ab-49f6-8d84-9e1f3509fec4.png": {
+        "/assets/LATIN/__多余__LATIN_03.png": {
             "scale": 1.3,
             "offsetX": 0,
             "offsetY": 51
@@ -7782,7 +7782,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 51
         },
-        "/assets/LATIN/c4ae3b00-6a62-4cc1-96ed-26575379c036.png": {
+        "/assets/LATIN/__多余__LATIN_05.png": {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": 17
@@ -7792,7 +7792,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/LATIN/3d522cd8-662a-4bbc-8b30-a4997cb9bc9c.png": {
+        "/assets/LATIN/__多余__LATIN_01.png": {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": 33
@@ -7802,7 +7802,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 33
         },
-        "/assets/LATIN/f55e91bb-2025-4e21-9a90-15e8009372cc.png": {
+        "/assets/LATIN/__多余__LATIN_06.png": {
             "scale": 1.25,
             "offsetX": 0,
             "offsetY": 52
@@ -7812,7 +7812,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 52
         },
-        "/assets/LATIN/b107ad89-9af0-4a4f-9cb1-f275380f418e.png": {
+        "/assets/LATIN/__多余__LATIN_04.png": {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 5
@@ -7822,12 +7822,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/LATIN/ae0e6d4a-baf6-4f59-bfb0-7754fd153c14.png": {
+        "/assets/LATIN/__闲置__LATIN_03.png": {
             "scale": 1.17,
             "offsetX": 0,
             "offsetY": 14
         },
-        "/assets/LATIN/9281f9dd-2e3d-4578-9bcf-79926a4102fe.png": {
+        "/assets/LATIN/__多余__LATIN_02.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 21
@@ -7837,7 +7837,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 21
         },
-        "/assets/GERMANIC/53d58882-072f-45fd-92f0-ea004ff107a5.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_01.png": {
             "scale": 1.31,
             "offsetX": -1,
             "offsetY": 32
@@ -7846,6 +7846,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.31,
             "offsetX": -1,
             "offsetY": 32
+        },
+        "/assets/LATIN/acb0977d-bc06-496b-93cd-85086ab8a07e.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/LATIN/lagoniya_lieaonida.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/LATIN/b9a2d224-b206-43ea-8bec-df5afe890bda.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/LATIN/maqidun_yalishanda.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
         }
     },
     "folderGuides": {
