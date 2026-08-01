@@ -37,6 +37,17 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    zhibuluotuo: { generalId: 'gen_henry_navigator', generalName: '恩里克', portrait: '/assets/generals/gen_henry_navigator.png' },
+    tingjitana: { generalId: 'gen_ibn_battuta', generalName: '伊本白图泰', portrait: '/assets/generals/gen_ibn_battuta.png' },
+    zhayan: { generalId: 'gen_yaghmurasen', generalName: '亚里摩罗', portrait: '/assets/generals/gen_yaghmurasen.png' },
+    babali: { generalId: 'gen_barbarossa', generalName: '巴巴罗萨', portrait: '/assets/generals/gen_barbarossa.png' },
+    hamade: { generalId: 'gen_hammad', generalName: '哈马德', portrait: '/assets/generals/gen_hammad.png' },
+    buni: { generalId: 'gen_hannibal', generalName: '汉尼拔', portrait: '/assets/generals/gen_hannibal.png' },
+    aguelabu: { generalId: 'gen_uqba', generalName: '奥克巴', portrait: '/assets/generals/gen_uqba.png' },
+    telibolisi: { generalId: 'gen_dragut', generalName: '德拉古特', portrait: '/assets/generals/gen_dragut.png' },
+    jileinaijia: { generalId: 'gen_magas', generalName: '马加斯', portrait: '/assets/generals/gen_magas.png' },
+    among: { generalId: 'gen_amasis', generalName: '阿玛西斯', portrait: '/assets/generals/gen_amasis.png' },
+
     maixiya: { generalId: 'gen_offa_mercia', generalName: '奥法', portrait: '/assets/generals/gen_offa_mercia.png' },
     weijing_bergen: { generalId: 'gen_sverre_norway', generalName: '斯维尔', portrait: '/assets/generals/gen_sverre_norway.png' },
     nidelan: { generalId: 'gen_william_silent', generalName: '威廉一世', portrait: '/assets/generals/gen_william_silent.png' },

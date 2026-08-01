@@ -16,6 +16,17 @@
  *     禁止自造截字（后百）、地名代国号（兰）、姓代国号（甄）、后缀国/族/人（黎国）。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+  zhibuluotuo: '直布',
+  tingjitana: '廷吉',
+  zhayan: '扎扬',
+  babali: '巴巴',
+  hamade: '哈马',
+  buni: '布匿',
+  aguelabu: '阿格',
+  telibolisi: '特里',
+  jileinaijia: '基雷',
+  among: '阿蒙',
+
   maixiya: '麦西',
   weijing_bergen: '霍达',
   nidelan: '尼德',
