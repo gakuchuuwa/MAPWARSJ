@@ -237,7 +237,7 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_laheer', 'city_agela', 'city_ayutthaya', 'city_angkor', 'city_shimenguan', 'city_dajianlu'] },
     { region: 'TIBET', cityIds: ['city_kathmandu', 'city_laheer', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan', 'city_kathmandu'] },
     { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_laheer', 'city_bosibolisi', 'city_susa', 'city_kutayixi', 'city_urgench', 'city_hepancheng'] },
-    { region: 'WEST_ASIA', cityIds: ['city_susa', 'city_kutayixi', 'city_junshitandingbao', 'city_peierjiameng', 'city_yifusuo', 'city_yalishanda', 'city_wasaite', 'city_maijia', 'city_susa'] },
+    { region: 'WEST_ASIA', cityIds: ['city_susa', 'city_maijia', 'city_banjiaxi', 'city_yadian', 'city_junshitandingbao', 'city_daerban', 'city_duershelujin', 'city_susa'] },
     { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_urgench', 'city_almaliq', 'city_hamiwei'] },
 ];
 
