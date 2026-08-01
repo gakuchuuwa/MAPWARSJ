@@ -27,7 +27,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   aguelabu: '阿格',
   telibolisi: '特里',
   jileinaijia: '基雷',
-  among: '阿蒙',
 
   maixiya: '麦西',
   weijing_bergen: '霍达',
