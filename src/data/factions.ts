@@ -141,7 +141,7 @@ export const FACTIONS: Faction[] = [
   { id: 'deniesite', name: '德涅斯特' },
   { id: 'nieman', name: '涅曼' },
   { id: 'fuerjia', name: '伏尔加' },
-  { id: 'nuogai', name: '诺盖' },
+  { id: 'nuogai', name: '萨马拉河' },
   { id: 'bashekeer', name: '巴什基尔' },
   { id: 'beisilafu', name: '塞维里亚' },
   { id: 'peilieya_gongguo', name: '佩列斯拉夫' },
@@ -904,7 +904,7 @@ export const FACTIONS: Faction[] = [
     { id: 'ladakh', name: '玛域' },
 
     { id: 'tsangpa', name: '藏巴汗' },
-    { id: 'ganden', name: '格鲁' },
+    { id: 'ganden', name: '甘丹' },
                 // 金色 - 甘丹颇章(哲蚌寺/五世达赖政权)
 
     // 第二类：雪域土著与古老强族
@@ -989,7 +989,7 @@ export const FACTIONS: Faction[] = [
     // 阮氏(安南权阀/占城/广南)
     // 党项部族(拓跋氏/玛曲/黄河第一弯)
     // 雅隆部落(吐蕃前身/雅砻河谷/悉补野氏)
-    { id: 'cen_d', name: '泗城' },
+    { id: 'cen_d', name: '岑氏' },
 
                         // 岑氏(桂西土司/岑城/镇安)
 
@@ -1276,7 +1276,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'qiong', name: '邛人' },
 
-    { id: 'zhuoshi', name: '邛州' },
+    { id: 'zhuoshi', name: '卓氏' },
 
 
 
@@ -1404,7 +1404,7 @@ export const FACTIONS: Faction[] = [
     { id: 'eluoke', name: '鄂罗克' },                // 鄂罗克(库页岛东岸/诺托罗), Oroch
     { id: 'kuye', name: '库页' },                    // 库页(库页岛南部/白主), Gilyak/Kuye
     // ── 2026-06-11 新增：阿伊努（北海道）──
-    { id: 'ayinu', name: '阿伊努' },                 // 阿伊努(北海道南端/白老), Ainu；旗号「虾夷」
+    { id: 'ayinu', name: '虾夷' },                 // 阿伊努(北海道南端/白老), Ainu；旗号「虾夷」
     // ── 2026-06-11 新增：北海（宗谷界城·库页枢纽）──
     { id: 'beihai', name: '北海道' },                  // 北海(宗谷海峡界城)
     // ── 2026-06-11 新增：若敖（楚若敖氏/竟陵）、芈氏（楚王室/云梦）──
@@ -1719,7 +1719,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xiazhou', name: '夏州' },
     { id: 'yanzhou', name: '盐州' },
 
-    { id: 'shizhou', name: '石州' },
+    { id: 'shizhou', name: '西河' },
     { id: 'cangsong', name: '苍松' },
     { id: 'aertai', name: '阿尔泰' },
 
@@ -1738,7 +1738,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'yilihanguo_d', name: '伊利汗国' },
     { id: 'asaibaijiang', name: '阿塞拜疆' },
-    { id: 'wulaertu', name: '乌拉尔图' },
+    { id: 'wulaertu', name: '亚美尼亚' },
     { id: 'gelujiya', name: '格鲁吉亚' },
     { id: 'bendou', name: '科穆宁' },
 

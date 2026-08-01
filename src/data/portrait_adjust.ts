@@ -7866,6 +7866,126 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -7
+        },
+        "/assets/LATIN/708a7a18-9e0c-4fa8-9b1d-5bd4afd486bc.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/LATIN/lagusa_delagan.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/GERMANIC/7ec360ca-b338-441a-a32d-0cf31fe66d22.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/GERMANIC/ruidian_yota_kaerjiushi.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/GERMANIC/15532395-48e2-4e84-875a-47479b976230.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/GERMANIC/meikelunbao_hengliboluo.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/GERMANIC/aabee38b-8f69-4801-8cff-2741c126a56b.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/GERMANIC/c8bbf9d4-d22a-4a6c-8932-4f8c5031d865.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/GERMANIC/didi_weilianyishi.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/LATIN/8da9565c-606d-4461-860c-0343890fa25d.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/LATIN/anuo_wugelinuo.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/LATIN/5d4cb51c-9756-4c0e-acd2-23bade5d4e01.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/LATIN/guadaer_feiernanduo.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/LATIN/4ff55733-98d9-4b45-b8ca-d5fba93a2bdf.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/LATIN/balunxiya_xide.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/LATIN/__闲置__LATIN_01.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/LATIN/__闲置__LATIN_02.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 38
+        },
+        "/assets/LATIN/1a353e92-c700-4c5d-a8bc-923bcd4d1124.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/LATIN/6485ff4b-b9b8-42fd-92e7-ffd74146caa0.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/LATIN/moxina_luojie.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/LATIN/8a9a1b71-697c-4658-9a73-fd7e85695724.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/LATIN/sading_ailaiaonuola.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/CENTRAL_ASIA/e7fb7cf1-6279-43bd-b171-9381e7d31f7b.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/CENTRAL_ASIA/yidelisi_yidelisi.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {
