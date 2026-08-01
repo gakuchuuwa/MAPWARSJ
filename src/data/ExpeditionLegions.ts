@@ -41,6 +41,9 @@ import { NORTH_EXPEDITION_ELITE_LEGIONS } from './NorthExpeditionLegions';
 import { CENTRAL_EXPEDITION_ELITE_LEGIONS } from './CentralExpeditionLegions';
 import { BASHU_EXPEDITION_ELITE_LEGIONS } from './BashuExpeditionLegions';
 import { HEXI_EXPEDITION_ELITE_LEGIONS } from './HexiExpeditionLegions';
+import { SLAVIC_EXPEDITION_ELITE_LEGIONS } from './SlavicExpeditionLegions';
+import { GERMANIC_EXPEDITION_ELITE_LEGIONS } from './GermanicExpeditionLegions';
+import { LATIN_EXPEDITION_ELITE_LEGIONS } from './LatinExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
@@ -67,6 +70,9 @@ const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
   ...CENTRAL_EXPEDITION_ELITE_LEGIONS,
   ...BASHU_EXPEDITION_ELITE_LEGIONS,
   ...HEXI_EXPEDITION_ELITE_LEGIONS,
+  ...SLAVIC_EXPEDITION_ELITE_LEGIONS,
+  ...GERMANIC_EXPEDITION_ELITE_LEGIONS,
+  ...LATIN_EXPEDITION_ELITE_LEGIONS,
 };
 
 function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> {
