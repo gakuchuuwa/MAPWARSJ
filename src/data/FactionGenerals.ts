@@ -48,7 +48,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     aguelabu: { generalId: 'gen_uqba', generalName: '奥克巴', portrait: '/assets/generals/gen_uqba.png' },
     telibolisi: { generalId: 'gen_dragut', generalName: '德拉古特', portrait: '/assets/generals/gen_dragut.png' },
     jileinaijia: { generalId: 'gen_magas', generalName: '马加斯', portrait: '/assets/generals/gen_magas.png' },
-    among: { generalId: 'gen_amasis', generalName: '阿玛西斯', portrait: '/assets/generals/gen_amasis.png' },
 
     maixiya: { generalId: 'gen_offa_mercia', generalName: '奥法', portrait: '/assets/generals/gen_offa_mercia.png' },
     weijing_bergen: { generalId: 'gen_sverre_norway', generalName: '斯维尔', portrait: '/assets/generals/gen_sverre_norway.png' },

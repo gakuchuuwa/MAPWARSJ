@@ -222,7 +222,7 @@ type Polygon = Point[];
 export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] = [
     { region: 'SLAVIC', cityIds: ['city_kashan', 'city_daerban', 'city_plovdiv', 'city_belgrade', 'city_budapeisi', 'city_kenisibao', 'city_talin', 'city_nuofugeerdede', 'city_kashan'] },
     { region: 'GERMANIC', cityIds: ['city_budapeisi', 'city_weiyeena', 'city_basaier', 'city_dublin', 'city_aidingbao', 'city_bergen', 'city_wupusala', 'city_talin', 'city_kenisibao', 'city_budapeisi'] },
-    { region: 'LATIN', cityIds: ['city_calais', 'city_rennes', 'city_lisiben', 'city_jiadisi', 'city_danjier', 'city_malajiashen', 'city_xiuta', 'city_jiataji', 'city_deliboli', 'city_banjiaxi', 'city_yadian', 'city_bucharest', 'city_belgrade', 'city_budapeisi', 'city_weiyeena', 'city_basaier', 'city_sitelasibao', 'city_calais'] },
+    { region: 'LATIN', cityIds: ['city_dublin', 'city_lisiben', 'city_malajiashen', 'city_yalishanda', 'city_yifusuo', 'city_peierjiameng', 'city_junshitandingbao', 'city_plovdiv', 'city_belgrade', 'city_budapeisi', 'city_weiyeena', 'city_basaier', 'city_dublin'] },
 
     { region: 'CENTRAL', cityIds: ['city_hanzhong', 'city_xiangyang', 'city_yangzhou', 'city_wendeng', 'city_fushi', 'city_lanzhou'] },
     { region: 'NORTH', cityIds: ['city_wendeng', 'city_fushi', 'city_guihua', 'city_liaoyang'] },

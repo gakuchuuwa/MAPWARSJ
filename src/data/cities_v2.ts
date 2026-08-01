@@ -1950,7 +1950,6 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_deliboli', name: '的黎波里', factionId: 'telibolisi', lat: 32.88, lng: 13.19, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_banjiaxi', name: '班加西', factionId: 'jileinaijia', lat: 32.11, lng: 20.06, type: 'small_city', troops: 8000, region: 'LATIN' },
-    { id: 'city_xiwa', name: '锡瓦', factionId: 'among', lat: 29.2, lng: 25.51, type: 'pass', troops: 20000, region: 'LATIN' },
 
     { id: 'city_oxford', name: '牛津', factionId: 'maixiya', lat: 51.75, lng: -1.25, type: 'small_city', troops: 8000, region: 'GERMANIC' },
     { id: 'city_bergen', name: '卑尔根', factionId: 'weijing_bergen', lat: 60.39, lng: 5.32, type: 'small_city', troops: 8000, region: 'GERMANIC' },

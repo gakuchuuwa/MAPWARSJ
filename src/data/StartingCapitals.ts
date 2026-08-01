@@ -14,7 +14,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'aguelabu': 'city_kailuwan',
   'telibolisi': 'city_deliboli',
   'jileinaijia': 'city_banjiaxi',
-  'among': 'city_xiwa',
 
   'maixiya': 'city_oxford',
   'weijing_bergen': 'city_bergen',
