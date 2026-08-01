@@ -37,6 +37,15 @@ AI_MODES = ["自动 (色键搞不定时才用)", "强制开启", "关闭"]
 #   暗绿立绘)白跑 AI, 7 张城池图一次都不会白跑。
 SENS_THRESHOLD = 0.03
 
+# 亮度均衡: 把主体亮度对齐到的目标(Lab L 通道中位数, 0~255 尺度)。
+# 112 不是"中间调"(那是 128), 而是照着素材实测取的: 8 张 koutu 立绘主体亮度
+# 落在 82~116, 中位 89。若按 128 对齐, 整批要提亮 +24~+45 —— 是统一了, 但整体
+# 发灰发飘, 不是用户要的。112 取在实测区间上沿, 统一的同时不把画面拉爆。
+BRIGHT_TARGET = 112.0
+# gamma 限幅。原图与目标差太远时硬拉只会拉出噪点和色带, 到此为止。
+# 非对称: 提亮(g<1)放大暗部噪声, 卡得更紧; 压暗(g>1)风险小, 放宽一点。
+BRIGHT_GAMMA_RANGE = (0.45, 2.5)
+
 # 内部孤岛清除强度 0~1(0 = 一律保留)。具体阈值按背景类型换算, 见 _island_mask。
 # 0.5 为默认: 实测把真实绿幕立绘的内部残留从 0.89% 压到 ~0.02%,
 # 同时纯绿/黑底的城池图基本无损。
@@ -298,6 +307,50 @@ def _decontaminate(img_f, alpha, bg_bgr, f_ref, kind, spill_radius):
     return out
 
 
+def _equalize_brightness(img_f, alpha, target, strength):
+    """
+    把【主体】的亮度对齐到统一目标 —— 解决不同来源的素材有的暗有的亮。
+    必须放在抠图之后: 只有拿到 alpha 才知道哪些像素是主体。
+
+    三个刻意的选择:
+      · 只统计 alpha>0.5 的像素。把背景算进去的话, "主体占画面 20%" 和
+        "主体顶满画框" 的两张图基准会差出一大截, 越均衡越乱。
+      · 取中位数而非均值。大片高光铠甲或整身黑袍都会把均值拽走, 中位数不会。
+      · 用 gamma 而非加减常数。线性加亮会把高光压平成一块死白、把纯黑抬成灰;
+        gamma 保持 0 与 255 两端不动, 只重新分布中间调。
+      · gamma 施加在 Lab 的 L 通道上, a/b 原样保留。测量与施加同一空间, 结果
+        精确命中目标值; 且不会像逐 BGR 通道那样把偏色图越调越偏。
+
+    返回 (新图, 诊断行)
+    """
+    solid = alpha > 0.5
+    if int(solid.sum()) < 64:
+        return img_f, "亮度均衡: 主体像素太少, 跳过"
+
+    u8 = np.clip(img_f, 0, 255).astype(np.uint8)
+    lab = cv2.cvtColor(u8, cv2.COLOR_BGR2LAB)
+    cur = float(np.median(lab[:, :, 0][solid]))
+
+    # 主体整个贴在纯黑/纯白上时无从提取, gamma 会算出无穷大
+    if cur < 2.0 or cur > 253.0:
+        return img_f, f"亮度均衡: 主体亮度 {cur:.0f} 已到极值, 跳过"
+
+    g = np.log(max(float(target), 1.0) / 255.0) / np.log(cur / 255.0)
+    g = float(np.clip(g, *BRIGHT_GAMMA_RANGE))
+    g = 1.0 + (g - 1.0) * float(strength)
+    if abs(g - 1.0) < 0.02:
+        return img_f, f"亮度均衡: 主体亮度 {cur:.0f} → 已达标, 未调整"
+
+    lut = np.clip(np.power(np.arange(256, dtype=np.float32) / 255.0, g) * 255.0,
+                  0, 255).astype(np.uint8)
+    lab[:, :, 0] = lut[lab[:, :, 0]]
+    out = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR).astype(np.float32)
+
+    after = float(np.median(cv2.cvtColor(
+        np.clip(out, 0, 255).astype(np.uint8), cv2.COLOR_BGR2LAB)[:, :, 0][solid]))
+    return out, f"亮度均衡: 主体亮度 {cur:.0f} → {after:.0f} (目标 {target:.0f}, gamma {g:.2f})"
+
+
 def _color_key(img, img_f, kind, bg_bgr, tolerance, feather, shrink, despeckle_area,
                island_ratio=ISLAND_TOL_RATIO):
     """
@@ -375,7 +428,8 @@ def _color_key(img, img_f, kind, bg_bgr, tolerance, feather, shrink, despeckle_a
 def smart_remove(img_bytes, bg_mode="自动识别", tolerance=22, feather=1.0,
                  shrink=0.0, despeckle_area=48, spill=True, spill_radius=2,
                  ai_mode=AI_MODES[0], model_name="birefnet-general",
-                 island_ratio=ISLAND_TOL_RATIO):
+                 island_ratio=ISLAND_TOL_RATIO, bright_eq=True,
+                 bright_target=BRIGHT_TARGET, bright_strength=1.0):
     """
     统一抠图入口。返回 (png_bytes, 诊断文本)
     """
@@ -467,6 +521,11 @@ def smart_remove(img_bytes, bg_mode="自动识别", tolerance=22, feather=1.0,
         img_f = _decontaminate(img_f, alpha, bg_bgr, f_ref, kind,
                                spill_radius if spill else 0)
 
+    # 放在最后: 去污染完成后颜色才是主体的真实颜色, 此时测亮度才准
+    if bright_eq:
+        img_f, bnote = _equalize_brightness(img_f, alpha, bright_target, bright_strength)
+        notes.append(bnote)
+
     bgra = np.dstack([
         np.clip(img_f, 0, 255).astype(np.uint8),
         np.clip(alpha * 255.0, 0, 255).astype(np.uint8),
@@ -485,7 +544,7 @@ def smart_remove(img_bytes, bg_mode="自动识别", tolerance=22, feather=1.0,
 
 def process_single_image(image_pil, bg_mode, tolerance, feather, shrink,
                          despeckle_area, spill, spill_radius, ai_mode, model_name,
-                         island_ratio):
+                         island_ratio, bright_eq, bright_target, bright_strength):
     if image_pil is None:
         return None, "请先上传图片"
     try:
@@ -493,7 +552,8 @@ def process_single_image(image_pil, bg_mode, tolerance, feather, shrink,
         image_pil.convert("RGB").save(buf, format="PNG")
         out_bytes, info = smart_remove(
             buf.getvalue(), bg_mode, tolerance, feather, shrink,
-            despeckle_area, spill, spill_radius, ai_mode, model_name, island_ratio)
+            despeckle_area, spill, spill_radius, ai_mode, model_name, island_ratio,
+            bright_eq, bright_target, bright_strength)
         return Image.open(io.BytesIO(out_bytes)), info
     except Exception as e:
         print(f"Error processing image: {e}")
@@ -502,7 +562,8 @@ def process_single_image(image_pil, bg_mode, tolerance, feather, shrink,
 
 def process_batch(input_dir, output_dir, bg_mode, tolerance, feather, shrink,
                   despeckle_area, spill, spill_radius, ai_mode, model_name,
-                  island_ratio, progress=gr.Progress()):
+                  island_ratio, bright_eq, bright_target, bright_strength,
+                  progress=gr.Progress()):
     if not input_dir or not os.path.exists(input_dir):
         return f"❌ 错误：输入目录 '{input_dir}' 不存在。"
 
@@ -526,11 +587,14 @@ def process_batch(input_dir, output_dir, bg_mode, tolerance, feather, shrink,
                 data = f.read()
             out_bytes, info = smart_remove(
                 data, bg_mode, tolerance, feather, shrink,
-                despeckle_area, spill, spill_radius, ai_mode, model_name, island_ratio)
+                despeckle_area, spill, spill_radius, ai_mode, model_name, island_ratio,
+                bright_eq, bright_target, bright_strength)
             with open(output_path, 'wb') as f:
                 f.write(out_bytes)
             processed += 1
-            lines.append(f"✔ {filename}  |  {info.splitlines()[0]}")
+            # 亮度那行单独带出来: 批量的用途就是让整批看起来一致, 得能一眼核对
+            detail = [ln for ln in info.splitlines() if ln.startswith("亮度均衡")]
+            lines.append("  |  ".join([f"✔ {filename}", info.splitlines()[0]] + detail))
         except Exception as e:
             print(f"处理 {filename} 时出错: {e}")
             errors += 1
@@ -577,8 +641,17 @@ with gr.Blocks(title="智能抠图工具", theme=gr.themes.Soft()) as demo:
                 label="内部孤岛清除强度 (臂间缝隙等被主体包住的背景；调大更干净，"
                       "但城池图的绿树可能被误删)")
 
+    with gr.Accordion("💡 亮度均衡 (让整批图亮度一致)", open=True):
+        with gr.Row():
+            bright_cb = gr.Checkbox(value=True, label="启用 (只按主体像素测亮度，背景不参与)")
+            bright_t = gr.Slider(70, 190, value=BRIGHT_TARGET, step=1,
+                                 label="目标亮度 (整批想更亮就调大；诊断栏会报每张的原始亮度，"
+                                       "照着定值最准)")
+            bright_str = gr.Slider(0, 1, value=1.0, step=0.05,
+                                   label="强度 (1 = 完全对齐目标，0.5 = 只走一半、保留原图明暗风格)")
+
     params = [bg_mode_r, tol_s, feather_s, shrink_s, speck_s, spill_cb, spill_r,
-              ai_mode_r, model_dd, island_s]
+              ai_mode_r, model_dd, island_s, bright_cb, bright_t, bright_str]
 
     with gr.Tabs():
         with gr.TabItem("单张处理 & 预览"):
