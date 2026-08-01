@@ -108,7 +108,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     aierlan: { generalId: 'gen_brian_boru', generalName: '布赖恩', portrait: '/assets/generals/gen_brian_boru.png' },
     jialai: { generalId: 'gen_du_guesclin', generalName: '德盖克兰', portrait: '/assets/generals/gen_du_guesclin.png' },
     bulietani: { generalId: 'gen_alain_i', generalName: '阿兰', portrait: '/assets/generals/gen_alain_i.png' },
-    xixili: { generalId: 'gen_agathocles', generalName: '阿加索克利斯', portrait: '/assets/generals/gen_agathocles.png' },
+    xixili: { generalId: 'gen_agathocles', generalName: '阿加索克', portrait: '/assets/generals/gen_agathocles.png' },
     luomaniya: { generalId: 'gen_michael_brave', generalName: '米歇尔', portrait: '/assets/generals/gen_michael_brave.png' },
     saierweiya: { generalId: 'gen_stefan_dusan', generalName: '斯蒂芬杜尚', portrait: '/assets/generals/gen_stefan_dusan.png' },
 
@@ -167,7 +167,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     chude: { generalId: 'gen_vyacheslav_tartu', generalName: '维切斯拉夫', portrait: '/assets/generals/gen_vyacheslav_tartu.png' },
     deniesite: { generalId: 'gen_yuri_galitsky', generalName: '尤里', portrait: '/assets/generals/gen_yuri_galitsky.png' },
     nieman: { generalId: 'gen_vytautas_great', generalName: '维托夫特', portrait: '/assets/generals/gen_vytautas_great.png' },
-    fuerjia: { generalId: 'gen_astrakhan_khan', generalName: '阿斯特拉罕汗', portrait: '/assets/generals/gen_astrakhan_khan.png' },
+    fuerjia: { generalId: 'gen_astrakhan_khan', generalName: '阿斯特拉', portrait: '/assets/generals/gen_astrakhan_khan.png' },
     nuogai: { generalId: 'gen_onas_khan', generalName: '欧拿斯汗', portrait: '/assets/generals/gen_onas_khan.png' },
     bashekeer: { generalId: 'gen_karasakal', generalName: '卡拉萨卡尔', portrait: '/assets/generals/gen_karasakal.png' },
     beisilafu: { generalId: 'gen_sergey_belgorod', generalName: '谢尔盖', portrait: '/assets/generals/gen_sergey_belgorod.png' },
