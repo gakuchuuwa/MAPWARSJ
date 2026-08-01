@@ -18,6 +18,8 @@ export const CITY_EXCLUSIVE_ICON_BY_ID: Record<string, string> = {
     city_luoma: '/cities/latin/0luoma.png',
     city_jiataji: '/cities/latin/0jiataiji.png',
     city_ravenna: '/cities/latin/0lawenna.png',
+    city_xiuta: '/cities/latin/0xiuda.png',
+    city_carlisle: '/cities/germanic/0kalaier.png',
     city_duershelujin: '/cities/WEST_ASIA/0niniwei.png',
     city_salai: '/cities/STEPPE/0salai.png',
     city_panyu: '/cities/huaxia/0guangzhou.png',

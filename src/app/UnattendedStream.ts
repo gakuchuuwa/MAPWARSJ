@@ -1,8 +1,9 @@
 /**
  * UnattendedStream.ts — 直播自动接管（两种触发）
  *
- * ① 边修边播恢复：上次处于直播态（StreamModeToggle 存 localStorage）→ 刷新后仅自动重新开播，
- *    不开一统/每日刷新循环（免得开发中被自动整页刷新打断）。解决「刷新忘点直播被当挂机」。
+ * ① 本机开发：刷新后【无条件】5 秒自动开播（不开一统/每日刷新循环，免得开发中被
+ *    自动整页刷新打断）。解决「刷新忘点直播被当挂机」。要改东西就手点一下关掉直播，
+ *    这一次会话内不会再被点回来；改文件立刻整页刷新（闸门见 src/dev/ReloadGate.ts）。
  * ② 无人值守云机（URL 带 ?stream=1）：完整链路——
  *
  * 云机 24 小时直播链路（全程无人点击）：
@@ -15,10 +16,10 @@
  */
 import type { GameApp } from './GameApp';
 import type { GameTimeHUD } from '../ui/GameTimeHUD';
-import { StreamModeToggle, DEV_AUTOREFRESH_KEY } from '../ui/StreamModeToggle';
+import { StreamModeToggle } from '../ui/StreamModeToggle';
 import { gameLog } from '../utils/GameLogger';
 
-const AUTO_START_DELAY_MS = 10_000;
+const AUTO_START_DELAY_MS = 5_000;
 const CHECK_INTERVAL_MS = 60_000;
 const UNIFIED_HOLD_MS = 5 * 60_000;
 const DAILY_RELOAD_HOUR = 4;
@@ -31,10 +32,9 @@ export function isUnattendedStream(): boolean {
 export function initUnattendedStream(app: GameApp, gameTimeHUD: GameTimeHUD): void {
     const unattended = isUnattendedStream();
 
-    // 每次刷新自动开播（不再依赖 localStorage 残留）
     gameLog('startup', unattended
         ? '📺 [无人值守] ?stream=1 已激活：自动开播 + 一统重开 + 每日刷新'
-        : '📺 [直播] 自动开播');
+        : `📺 [直播] ${AUTO_START_DELAY_MS / 1000} 秒后自动开播`);
     window.setTimeout(() => autoStart(app, gameTimeHUD), AUTO_START_DELAY_MS);
 
     // 一统重开 / 每日刷新兜底：仅无人值守云机（?stream=1）启用；
@@ -70,21 +70,16 @@ export function initUnattendedStream(app: GameApp, gameTimeHUD: GameTimeHUD): vo
 }
 
 function autoStart(app: GameApp, gameTimeHUD: GameTimeHUD): void {
-    if (StreamModeToggle.isActive()) return;
-    // 【2026-08-01 主人定】本机开发时若主人手动关掉了直播（= 要边改边看自动刷新），
-    // 就别再 10 秒后把直播点回来，否则刷新闸门刚打开又被锁死。
-    // 只对本机 dev 生效：云机 ?stream=1 与线上构建照旧无条件自动开播。
-    if (import.meta.env.DEV
-        && !isUnattendedStream()
-        && localStorage.getItem(DEV_AUTOREFRESH_KEY) === '1') {
-        gameLog('startup', '📺 [直播] 已手动关闭直播（自动刷新模式），跳过自动开播');
-        return;
-    }
-    const btn = document.getElementById('stream-mode-btn');
-    if (btn) {
-        btn.click();
+    // 【2026-08-01 主人定】刷新后【无条件】自动开播，不看刷新前是开是关：
+    // 刷新完就该自己播起来，要停手点一下就行。这跟「改文件刷不刷新」是两件事 ——
+    // 后者只看【当前】是不是在直播（ReloadGate 读 isActive），跟本函数无关。
+    if (StreamModeToggle.hasStarted()) return;
+
+    if ((window as any).game) {
+        StreamModeToggle.activate();
     } else {
-        // 按钮缺失兜底：直接走播放链路（开局必为暂停态，toggle 即开始）
+        // window.game 尚未挂载的兜底：直接走播放链路（开局必为暂停态，toggle 即开始）
+        document.body.classList.add('stream-mode');
         const playing = app.historicalEventManager.togglePlayback();
         if (playing) app.recruitmentSystem.runInitialSpawn();
     }
