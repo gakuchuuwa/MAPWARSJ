@@ -3,6 +3,8 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+  'ayinu_ezo': 'city_moyoro',
+
   'boootiya': 'city_thebes',
   'luodesi': 'city_rhodes',
   'kelite': 'city_knossos',

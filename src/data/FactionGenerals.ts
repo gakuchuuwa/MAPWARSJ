@@ -37,6 +37,8 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    ayinu_ezo: { generalId: 'gen_koshamain', generalName: '柯沙玛因', portrait: '/assets/generals/gen_koshamain.png' },
+
     boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/generals/gen_epaminondas.png' },
     luodesi: { generalId: 'gen_demetrius', generalName: '德米特里', portrait: '/assets/generals/gen_demetrius.png' },
     kelite: { generalId: 'gen_minos', generalName: '米诺斯', portrait: '/assets/generals/gen_minos.png' },

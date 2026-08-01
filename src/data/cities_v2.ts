@@ -1939,6 +1939,8 @@ export const RESTORED_CITIES: CityDataV2[] = [
 // 汇总导出
 // ============================================================
 export const CITIES_V2: CityDataV2[] = [
+    { id: 'city_moyoro', name: '莫约罗', factionId: 'ayinu_ezo', lat: 44.02, lng: 144.27, type: 'pass', troops: 15000, region: 'JAPAN', note: '北海道东部阿伊努民族与鄂霍次克文化起源遗址莫约罗' },
+
 
     { id: 'city_thebes', name: '底比斯', factionId: 'boootiya', lat: 38.32, lng: 23.31, type: 'small_city', troops: 8000, region: 'LATIN' },
     { id: 'city_rhodes', name: '罗得岛', factionId: 'luodesi', lat: 36.44, lng: 28.22, type: 'small_city', troops: 8000, region: 'LATIN' },

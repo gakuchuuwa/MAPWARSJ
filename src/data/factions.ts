@@ -8,6 +8,8 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
+  { id: 'ayinu_ezo', name: '阿伊努' },
+
   { id: 'boootiya', name: '波奥蒂亚' },
   { id: 'luodesi', name: '罗得斯' },
   { id: 'kelite', name: '克里特' },
