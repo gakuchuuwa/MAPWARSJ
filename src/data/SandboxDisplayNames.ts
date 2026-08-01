@@ -16,6 +16,8 @@
  *     禁止自造截字（后百）、地名代国号（兰）、姓代国号（甄）、后缀国/族/人（黎国）。
  */
 export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
+  mulabite: '穆',
+
   zhibuluotuo: '直布',
   tingjitana: '廷吉',
   zhayan: '扎扬',
@@ -48,7 +50,6 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   batawei: '巴塔',
   weijing_york: '约克',
   kanbuliya: '坎布',
-  nuowei: '挪威',
   gaolu_luoma: '高罗',
   aquidan: '阿奎',
   puluowangsi: '普罗',

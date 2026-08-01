@@ -3,6 +3,8 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
+  'mulabite': 'city_malajiashen',
+
   'zhibuluotuo': 'city_xiuta',
   'tingjitana': 'city_danjier',
   'zhayan': 'city_teleimusen',
@@ -35,7 +37,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'batawei': 'city_utrecht',
   'weijing_york': 'city_york',
   'kanbuliya': 'city_carlisle',
-  'nuowei': 'city_trondheim',
   'gaolu_luoma': 'city_lyon',
   'aquidan': 'city_bordeaux',
   'puluowangsi': 'city_avignon',
