@@ -66,7 +66,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     ribale: { name: '代尔木重步', tier: 2 },
     safawei: { name: '吉兰步卒', tier: 3 },
     yilihanguo: { name: '奇兹尔巴什', tier: 2 },
-    yilihanguo_d: { name: '伊利怯薛', tier: 0 },
+    yilihanguo_d: { name: '伊利怯薛', tier: 2 },
     asaibaijiang: { name: '蒙古怯薛', tier: 0 },
     wulaertu: { name: '乌拉尔图骑', tier: 3 },
     gelujiya: { name: '莫纳斯帕', tier: 2 },

@@ -43,17 +43,17 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     jialixiya: { name: '加利西亚军', tier: 4 },          // 加利奇·丹尼尔
     ouka: { name: '梁赞军', tier: 4 },          // 梁赞·尤里
     xideweina: { name: '波洛茨克军', tier: 4 },          // 波洛茨克·布列斯拉夫
-    deniesite: { name: '白堡守军', tier: 4 },          // 阿克曼·穆罕默德·格里
-    nieman: { name: '格罗德诺军', tier: 4 },          // 格罗德诺·维托夫特
+    deniesite: { name: '白堡守军', tier: 3 },          // 阿克曼·穆罕默德·格里
+    nieman: { name: '格罗德诺军', tier: 3 },          // 格罗德诺·维托夫特
     beisilafu: { name: '白城军', tier: 4 },          // 别尔哥罗德·谢尔盖
-    weijiebusike_gongguo: { name: '维捷军', tier: 4 },          // 维捷布斯克·奥尔格尔德
-    peilieya_gongguo: { name: '佩列军', tier: 4 },          // 佩列亚斯拉夫·莫诺马赫
+    weijiebusike_gongguo: { name: '维捷军', tier: 3 },          // 维捷布斯克·奥尔格尔德
+    peilieya_gongguo: { name: '佩列军', tier: 2 },          // 佩列亚斯拉夫·莫诺马赫
     suzidaer: { name: '下诺守军', tier: 4 },          // 下诺城·德米特里
     taolika: { name: '赫尔松卫队', tier: 4 },          // 赫尔松涅斯·阿斯普尔格斯
     bolisiya: { name: '布列斯特军', tier: 4 },          // 布列斯特·加斯托尔德
     zhituo: { name: '日托米尔军', tier: 4 },          // 日托米尔·日托米尔
     bosiniya: { name: '波斯尼亚军', tier: 4 },          // 萨拉热窝·特夫尔特科
-    seleisi: { name: '普罗军', tier: 4 },          // 普罗夫迪夫·西美昂
+    seleisi: { name: '普罗军', tier: 3 },          // 普罗夫迪夫·西美昂
     chude: { name: '楚德湖军', tier: 2 },          // 尤里耶夫(塔尔图)·维切斯拉夫：1224守城抗条顿骑士；1242楚德湖(冰湖)之战抗条顿
     qiekase: { name: '第聂伯军', tier: 4 },          // 切尔卡瑟·维什尼奥：第聂伯哥萨克
 };
