@@ -8,17 +8,12 @@ import { Faction } from '../types/core';
 export type { Faction };
 
 export const FACTIONS: Faction[] = [
-  { id: 'dixia', name: '地峡' },
   { id: 'boootiya', name: '波奥蒂亚' },
   { id: 'luodesi', name: '罗得斯' },
   { id: 'kelite', name: '克里特' },
-  { id: 'neisuosi', name: '内苏斯' },
   { id: 'leangongguo', name: '莱昂' },
-  { id: 'malagajun', name: '安达卢西亚' },
-  { id: 'lifu', name: '里夫' },
   { id: 'bohepingyuan', name: '波河平原' },
   { id: 'xixiliwangguo', name: '西西里' },
-  { id: 'yadeliyahai', name: '亚得里亚' },
   { id: 'weixi', name: '威悉' },
 
   { id: 'lagoniya', name: '拉哥尼亚' },
@@ -29,8 +24,6 @@ export const FACTIONS: Faction[] = [
   { id: 'ruidian_yota', name: '约塔' },
   { id: 'meikelunbao', name: '梅克伦堡' },
   { id: 'didi', name: '低地' },
-  { id: 'bulabante', name: '布拉班特' },
-  { id: 'fulisilan', name: '弗里斯兰' },
   { id: 'anuo', name: '阿诺' },
   { id: 'guadaer', name: '瓜达尔' },
   { id: 'balunxiya', name: '黎凡特' },
@@ -44,7 +37,6 @@ export const FACTIONS: Faction[] = [
   { id: 'mulabite', name: '穆拉比特' },
 
   { id: 'zhibuluotuo', name: '直布罗陀' },
-  { id: 'tingjitana', name: '廷吉塔纳' },
   { id: 'zhayan', name: '扎扬' },
   { id: 'babali', name: '巴巴里' },
   { id: 'hamade', name: '哈马德' },

@@ -3,17 +3,12 @@
  * 由 FactionEditor /api/batch-import 与 cities_v2 同步维护。
  */
 export const STARTING_CAPITALS: Record<string, string> = {
-  'dixia': 'city_corinth',
   'boootiya': 'city_thebes',
   'luodesi': 'city_rhodes',
   'kelite': 'city_knossos',
-  'neisuosi': 'city_nis',
   'leangongguo': 'city_salamanca',
-  'malagajun': 'city_malaga',
-  'lifu': 'city_melilla',
   'bohepingyuan': 'city_verona',
   'xixiliwangguo': 'city_palermo',
-  'yadeliyahai': 'city_ancona',
   'weixi': 'city_bremen',
 
   'lagoniya': 'city_sparta',
@@ -24,8 +19,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'ruidian_yota': 'city_gothenburg',
   'meikelunbao': 'city_rostock',
   'didi': 'city_bruges',
-  'bulabante': 'city_antwerp',
-  'fulisilan': 'city_groningen',
   'anuo': 'city_pisa',
   'guadaer': 'city_seville',
   'balunxiya': 'city_valencia',
@@ -39,7 +32,6 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'mulabite': 'city_malajiashen',
 
   'zhibuluotuo': 'city_xiuta',
-  'tingjitana': 'city_danjier',
   'zhayan': 'city_teleimusen',
   'babali': 'city_aerjier',
   'hamade': 'city_bujiaya',
