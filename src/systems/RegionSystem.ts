@@ -220,7 +220,7 @@ type Polygon = Point[];
 // 绘线: RegionBoundaryLayer @ zoom=6（REGION_BOUNDARY_ZOOM），共 15 区
 // ============================================================
 export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] = [
-    { region: 'SLAVIC', cityIds: ['city_kashan', 'city_daerban', 'city_plovdiv', 'city_belgrade', 'city_budapeisi', 'city_kenisibao', 'city_talin', 'city_nuofugeerdede', 'city_kashan'] },
+    { region: 'SLAVIC', cityIds: ['city_xianuofugeerdede', 'city_daerban', 'city_junshitandingbao', 'city_plovdiv', 'city_belgrade', 'city_budapeisi', 'city_kenisibao', 'city_talin', 'city_nuofugeerdede', 'city_xianuofugeerdede'] },
     { region: 'GERMANIC', cityIds: ['city_budapeisi', 'city_weiyeena', 'city_basaier', 'city_dublin', 'city_aidingbao', 'city_bergen', 'city_wupusala', 'city_talin', 'city_kenisibao', 'city_budapeisi'] },
     { region: 'LATIN', cityIds: ['city_junshitandingbao', 'city_plovdiv', 'city_belgrade', 'city_budapeisi', 'city_weiyeena', 'city_basaier', 'city_dublin', 'city_lisiben', 'city_malajiashen', 'city_banjiaxi', 'city_yadian', 'city_junshitandingbao'] },
 
@@ -229,14 +229,14 @@ export const REGION_BOUNDARY_LOOPS: { region: RegionType; cityIds: string[] }[] 
     { region: 'NORTHEAST', cityIds: ['city_liaoyang', 'city_zonggu', 'city_baizhu', 'city_nuotuoluo', 'city_nanghar', 'city_nuergan', 'city_yakesa', 'city_geerbiqi', 'city_nibuchu'] },
     { region: 'KOREA', cityIds: ['city_liaoyang', 'city_wendeng', 'city_yangzhou', 'city_xingzhuting', 'city_zonggu'] },
     { region: 'JAPAN', cityIds: ['city_gugudao', 'city_shuri', 'city_edo', 'city_genjo', 'city_zonggu', 'city_xingzhuting', 'city_gugudao'] },
-    { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_urgench', 'city_daerban', 'city_kashan', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu', 'city_liaoyang'] },
+    { region: 'STEPPE', cityIds: ['city_liaoyang', 'city_guihua', 'city_hamiwei', 'city_almaliq', 'city_urgench', 'city_daerban', 'city_xianuofugeerdede', 'city_xiaoyenisei', 'city_chita', 'city_nibuchu', 'city_liaoyang'] },
     { region: 'HEXI', cityIds: ['city_lanzhou', 'city_wuwei', 'city_ruoqiang', 'city_loulan', 'city_hamiwei', 'city_guihua', 'city_fushi'] },
     { region: 'BASHU', cityIds: ['city_xiangyang', 'city_linzheng', 'city_shimenguan', 'city_dajianlu', 'city_lanzhou', 'city_hanzhong'] },
     { region: 'JIANGNAN', cityIds: ['city_yangzhou', 'city_xiangyang', 'city_linzheng', 'city_mudan', 'city_gugudao', 'city_xingzhuting', 'city_yangzhou'] },
     { region: 'LINGNAN', cityIds: ['city_shimenguan', 'city_linzheng', 'city_mudan', 'city_bangdun', 'city_sanpu', 'city_angkor'] },
     { region: 'DIANQIAN', cityIds: ['city_dajianlu', 'city_dayan', 'city_kathmandu', 'city_laheer', 'city_agela', 'city_ayutthaya', 'city_angkor', 'city_shimenguan', 'city_dajianlu'] },
     { region: 'TIBET', cityIds: ['city_kathmandu', 'city_laheer', 'city_hepancheng', 'city_longmucuo', 'city_ruoqiang', 'city_wuwei', 'city_lanzhou', 'city_dajianlu', 'city_dayan', 'city_kathmandu'] },
-    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_laheer', 'city_bosibolisi', 'city_susa', 'city_kutayixi', 'city_urgench', 'city_hepancheng'] },
+    { region: 'CENTRAL_ASIA', cityIds: ['city_hepancheng', 'city_laheer', 'city_bosibolisi', 'city_susa', 'city_duershelujin', 'city_daerban', 'city_urgench', 'city_hepancheng'] },
     { region: 'WEST_ASIA', cityIds: ['city_susa', 'city_maijia', 'city_banjiaxi', 'city_yadian', 'city_junshitandingbao', 'city_daerban', 'city_duershelujin', 'city_susa'] },
     { region: 'WESTERN', cityIds: ['city_hamiwei', 'city_loulan', 'city_ruoqiang', 'city_longmucuo', 'city_hepancheng', 'city_urgench', 'city_almaliq', 'city_hamiwei'] },
 ];

@@ -37,6 +37,11 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+    lagoniya: { generalId: 'gen_leonidas', generalName: '列奥尼达', portrait: '/assets/generals/gen_leonidas.png' },
+    maqidun: { generalId: 'gen_alexander', generalName: '亚历山大', portrait: '/assets/generals/gen_alexander.png' },
+    lagusa: { generalId: 'gen_dragan', generalName: '德拉甘', portrait: '/assets/generals/gen_dragan.png' },
+    akaiya: { generalId: 'gen_agamemnon', generalName: '阿伽门农', portrait: '/assets/generals/gen_agamemnon.png' },
+
     ruidian_yota: { generalId: 'gen_charles_ix', generalName: '卡尔九世', portrait: '/assets/generals/gen_charles_ix.png' },
     meikelunbao: { generalId: 'gen_henry_borwin', generalName: '亨利波罗', portrait: '/assets/generals/gen_henry_borwin.png' },
     didi: { generalId: 'gen_willem_juliette', generalName: '威廉', portrait: '/assets/generals/gen_philip_good.png' },
