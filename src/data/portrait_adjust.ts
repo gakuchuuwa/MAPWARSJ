@@ -8066,6 +8066,136 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 14
+        },
+        "/assets/LATIN/f65064fa-2e8f-4a02-9cb9-548e07cae1cc.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/LATIN/buni_hanniba.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_19.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_22.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_23.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_27.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_25.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 28
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_39.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_34.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_40.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_44.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_46.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_50.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 36
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_51.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_52.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 32
+        },
+        "/assets/CENTRAL_ASIA/9dff4fc7-850a-4d53-9fa8-66dec1f03e95.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/CENTRAL_ASIA/f9b676e9-a35d-4213-8e36-3faf4eeb33d3.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/CENTRAL_ASIA/aguelabu_aokeba.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/CENTRAL_ASIA/__闲置__WEST_ASIA_47.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/CENTRAL_ASIA/d9e6d154-7b28-4d4a-947f-09c70dec97cc.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/CENTRAL_ASIA/telibolisi_delagute.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/LATIN/f08b5503-e90e-46d9-8abc-2cee1b002f72.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/LATIN/jileinaijia_majiasi.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/GERMANIC/b47c3904-fa5e-401b-9267-4c687e01e2ab.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/LATIN/__多余__LATIN_07.png": {
+            "scale": 0.86,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/GERMANIC/maixiya_aofa.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 15
         }
     },
     "folderGuides": {

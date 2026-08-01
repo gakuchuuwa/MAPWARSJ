@@ -49,7 +49,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     gaolu_luoma: { name: '法兰西军', tier: 4 },          // 里昂·克洛维
     xigete: { name: '托莱多军', tier: 4 },          // 托莱多·阿方索六世
     nasier: { name: '格拉纳达军', tier: 4 },          // 格拉纳达·穆罕默德
-    feiniqi: { name: '腓尼基军', tier: 4 },          // 加的斯·哈米尔卡
+    feiniqi: { name: '腓尼基军', tier: 3 },          // 加的斯·哈米尔卡
     yidelisi: { name: '伊德里斯军', tier: 4 },          // 非斯·伊德里斯
     xilagu: { name: '叙拉古军', tier: 4 },          // 锡拉库萨·阿加索克利
     leangongguo: { name: '莱昂军', tier: 4 },          // 萨拉曼卡·阿方索九世
@@ -65,5 +65,5 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     bulietani: { name: '雷恩军', tier: 4 },          // 雷恩·阿兰
     puluowangsi: { name: '教皇军', tier: 4 },          // 阿维尼翁·雷蒙
     fulandesi: { name: '加莱军', tier: 4 },          // 加莱
-    mengtainiya: { name: '蒙泰尼亚军', tier: 4 },          // 布加勒斯特·巴萨拉布
+    mengtainiya: { name: '蒙泰尼亚军', tier: 2 },          // 布加勒斯特·巴萨拉布
 };
