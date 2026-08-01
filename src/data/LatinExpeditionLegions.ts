@@ -12,7 +12,7 @@ import type { EliteLegionConfig } from './ExpeditionLegions';
 export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
 
     // ── T1 功勋之兵 ──
-    lading: { name: '罗马军团', tier: 1 },          // 罗马：征服地中海，建制千年
+    luoma_diguo: { name: '罗马军团', tier: 1 },          // 罗马城·大西庇阿：征服地中海，建制千年
     maqidun: { name: '马其顿方阵', tier: 1 },          // 萨洛尼卡·亚历山大：征服波斯
 
     // ── T2 特色之兵 ──

@@ -54,6 +54,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     zhituo: { name: '日托米尔军', tier: 4 },          // 日托米尔·日托米尔
     bosiniya: { name: '波斯尼亚军', tier: 4 },          // 萨拉热窝·特夫尔特科
     seleisi: { name: '普罗军', tier: 4 },          // 普罗夫迪夫·西美昂
-    chude: { name: '尤里耶夫军', tier: 4 },          // 尤里耶夫·维切斯拉夫
+    chude: { name: '楚德湖军', tier: 2 },          // 尤里耶夫(塔尔图)·维切斯拉夫：1224守城抗条顿骑士；1242楚德湖(冰湖)之战抗条顿
     qiekase: { name: '第聂伯军', tier: 4 },          // 切尔卡瑟·维什尼奥：第聂伯哥萨克
 };

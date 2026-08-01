@@ -37,7 +37,7 @@ export interface FactionGeneral {
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
 export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
-    ayinu_ezo: { generalId: 'gen_koshamain', generalName: '柯沙玛因', portrait: '/assets/generals/gen_koshamain.png' },
+    ayinu_ezo: { generalId: 'gen_koshamain', generalName: '柯沙玛因', portrait: '/assets/NORTHEAST/ayinu_ezo_keshamayin.png' },
 
     boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/generals/gen_epaminondas.png' },
     luodesi: { generalId: 'gen_demetrius', generalName: '德米特里', portrait: '/assets/generals/gen_demetrius.png' },
@@ -50,7 +50,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     lagoniya: { generalId: 'gen_leonidas', generalName: '列奥尼达', portrait: '/assets/generals/gen_leonidas.png' },
     maqidun: { generalId: 'gen_alexander', generalName: '亚历山大', portrait: '/assets/generals/gen_alexander.png' },
     lagusa: { generalId: 'gen_dragan', generalName: '德拉甘', portrait: '/assets/generals/gen_dragan.png' },
-    akaiya: { generalId: 'gen_agamemnon', generalName: '阿伽门农', portrait: '/assets/generals/gen_agamemnon.png' },
 
     ruidian_yota: { generalId: 'gen_charles_ix', generalName: '卡尔九世', portrait: '/assets/generals/gen_charles_ix.png' },
     meikelunbao: { generalId: 'gen_henry_borwin', generalName: '亨利波罗', portrait: '/assets/generals/gen_henry_borwin.png' },
@@ -111,26 +110,15 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     feiniqi: { generalId: 'gen_hamilcar', generalName: '哈米尔卡', portrait: '/assets/generals/gen_hamilcar.png' },
     xila: { generalId: 'gen_themistocles', generalName: '地米斯托克利', portrait: '/assets/generals/gen_themistocles.png' },
     xilagu: { generalId: 'gen_city_syracuse', generalName: '阿加索克利', portrait: '/assets/generals/city_syracuse.png' },
-    lading: { generalId: 'gen_scipio', generalName: '大西庇阿', portrait: '/assets/generals/gen_scipio.png' },
     fulandesi: { generalId: 'gen_robert_ii', generalName: '罗贝尔二世', portrait: '/assets/generals/gen_robert_ii.png' },
     gaolu: { generalId: 'gen_charles_vii', generalName: '查理七世', portrait: '/assets/generals/gen_charles_vii.png' },
     anggelu: { generalId: 'gen_alfred_great', generalName: '阿尔弗雷德', portrait: '/assets/generals/gen_alfred_great.png' },
     piketai: { generalId: 'gen_onuist_i', generalName: '奥恩格斯', portrait: '/assets/generals/gen_onuist_i.png' },
     gaer: { generalId: 'gen_domhnall', generalName: '多姆纳尔', portrait: '/assets/generals/gen_domhnall.png' },
-    aierlan: { generalId: 'gen_brian_boru', generalName: '布赖恩', portrait: '/assets/generals/gen_brian_boru.png' },
-    jialai: { generalId: 'gen_du_guesclin', generalName: '德盖克兰', portrait: '/assets/generals/gen_du_guesclin.png' },
     bulietani: { generalId: 'gen_alain_i', generalName: '阿兰', portrait: '/assets/generals/gen_alain_i.png' },
-    xixili: { generalId: 'gen_agathocles', generalName: '阿加索克', portrait: '/assets/generals/gen_agathocles.png' },
-    luomaniya: { generalId: 'gen_michael_brave', generalName: '米歇尔', portrait: '/assets/generals/gen_michael_brave.png' },
     saierweiya: { generalId: 'gen_stefan_dusan', generalName: '斯蒂芬杜尚', portrait: '/assets/generals/gen_stefan_dusan.png' },
 
-    sugelan: { generalId: 'gen_robert_bruce', generalName: '罗伯特', portrait: '/assets/generals/gen_robert_bruce.png' },
-    ruidian: { generalId: 'gen_gustav_vasa', generalName: '古斯塔夫', portrait: '/assets/generals/gen_gustav_vasa.png' },
-    yinggelan: { generalId: 'gen_edward_iii', generalName: '爱德华', portrait: '/assets/generals/gen_edward_iii.png' },
-    falanxi: { generalId: 'gen_philip_augustus', generalName: '腓力', portrait: '/assets/generals/gen_philip_augustus.png' },
     luoma_diguo: { generalId: 'gen_julius_caesar', generalName: '恺撒', portrait: '/assets/generals/gen_julius_caesar.png' },
-    yadian_chengbang: { generalId: 'gen_miltiades', generalName: '米尔提亚德', portrait: '/assets/generals/gen_miltiades.png' },
-    keduowa: { generalId: 'gen_abd_al_rahman', generalName: '拉赫曼一世', portrait: '/assets/generals/gen_abd_al_rahman.png' },
     putaoya: { generalId: 'gen_afonso_henriques', generalName: '阿方索', portrait: '/assets/generals/gen_afonso_henriques.png' },
 
     habusibao: { generalId: 'gen_maximilian', generalName: '马克西米', portrait: '/assets/generals/gen_maximilian.png' },
@@ -968,7 +956,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     ldiya: { generalId: 'ldiya_keluoyisi', generalName: '克罗伊斯', portrait: '/assets/WEST_ASIA/ldiya_keluoyisi.png' },
     pajiama: { generalId: 'pajiama_oumainisi', generalName: '欧迈尼斯', portrait: '/assets/WEST_ASIA/pajiama_oumainisi.png' },
     bitiniya: { generalId: 'bitiniya_diaoduoer', generalName: '狄奥多尔', portrait: '/assets/WEST_ASIA/bitiniya_diaoduoer.png' },
-    baizhanting: { generalId: 'baizhanting_beilisaliu', generalName: '贝利撒留', portrait: '/assets/WEST_ASIA/baizhanting_beilisaliu.png' },
     luomu: { generalId: 'luomu_jilijie', generalName: '基利杰', portrait: '/assets/WEST_ASIA/luomu_jilijie.png' },
     sailiugu: { generalId: 'sailiugu_antiaoke', generalName: '安条克', portrait: '/assets/WEST_ASIA/sailiugu_antiaoke.png' },
     womaya: { generalId: 'womaya_muaweiye', generalName: '穆阿维叶', portrait: '/assets/WEST_ASIA/womaya_muaweiye.png' },
