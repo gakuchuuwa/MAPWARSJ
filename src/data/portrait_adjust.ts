@@ -2983,9 +2983,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/litang/bing_liji.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": -43
+            "scale": 0.91,
+            "offsetX": 1,
+            "offsetY": -40
         },
         "/assets/LINGNAN/5cd1cab7-d441-49ce-83b0-f56bf865de90.png": {
             "scale": 1,
@@ -4943,7 +4943,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
-            "scale": 0.87,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -5
         },
@@ -5468,8 +5468,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/CENTRAL_ASIA/safawei_aisimaier.png": {
-            "scale": 1.01,
-            "offsetX": 0,
+            "scale": 1.03,
+            "offsetX": 7,
             "offsetY": 2
         },
         "/assets/CENTRAL/56e93ff0-cc7b-4a6c-9946-3ec6a505245e.png": {
@@ -5498,7 +5498,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/CENTRAL_ASIA/saerbadaer_lazhake.png": {
-            "scale": 1.02,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 13
         },
@@ -5773,8 +5773,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 25
         },
         "/assets/WEST_ASIA/abasi_mansuer.png": {
-            "scale": 0.92,
-            "offsetX": 0,
+            "scale": 0.94,
+            "offsetX": 4,
             "offsetY": 25
         },
         "/assets/WEST_ASIA/fcebd5fa-0db1-4bba-b71f-e69501168d23.png": {
@@ -5818,8 +5818,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/WEST_ASIA/youfaladi_yehaiya.png": {
-            "scale": 1.04,
-            "offsetX": 1,
+            "scale": 1.1,
+            "offsetX": 4,
             "offsetY": 30
         },
         "/assets/WEST_ASIA/ef201210-c2e4-4b59-b6b3-955d9c1fe73e.png": {
@@ -9251,6 +9251,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.19,
             "offsetX": 7,
             "offsetY": 17
+        },
+        "/assets/CENTRAL_ASIA/pangzha_halixinge.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -3
         }
     },
     "folderGuides": {

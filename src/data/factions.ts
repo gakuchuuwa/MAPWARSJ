@@ -136,6 +136,8 @@ export const FACTIONS: Faction[] = [
   { id: 'moerdaweiya', name: '摩尔达维亚' },
   { id: 'walajiyia', name: '瓦拉几亚' },
   { id: 'tiaodun_qishi', name: '条顿骑士' },
+  { id: 'shengdian_qishi', name: '圣殿骑士' },
+  { id: 'maerta_qishi', name: '马耳他骑士' },
   { id: 'liwoniya', name: '利沃尼亚' },
   { id: 'chude', name: '楚德' },
   { id: 'deniesite', name: '德涅斯特' },

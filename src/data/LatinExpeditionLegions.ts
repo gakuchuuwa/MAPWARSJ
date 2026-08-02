@@ -25,6 +25,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     mulabite: { name: '穆拉比特军', tier: 2 },          // 马拉喀什·塔什芬
     aguelabu: { name: '阿拉伯军', tier: 2 },          // 凯鲁万·奥克巴：北非征服
     luodesi: { name: '医院骑士', tier: 2 },          // 罗得城·德米特里：1522守岛
+    maerta_qishi: { name: '马耳他骑士', tier: 2 },          // 马耳他·拉·瓦莱特：1565大围攻以少胜多
 
     // ── T3 风土之兵 ──
     liguliya: { name: '热那亚海军', tier: 3 },          // 热那亚·安德烈亚
@@ -32,7 +33,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     gaolu: { name: '法兰西骑士', tier: 3 },          // 巴黎·查理七世
     langgeduoke: { name: '图卢兹军', tier: 3 },          // 图卢兹·雷蒙四世
     jiatailuoniya: { name: '阿拉贡军', tier: 3 },          // 巴塞罗那·海梅
-    guadaer: { name: '卡斯蒂军', tier: 3 },          // 塞维利亚·费尔南多
+    guadaer: { name: '圣地亚哥', tier: 2 },          // 塞维利亚·费尔南多：1170卡斯蒂利亚军事修会，格拉纳达战争主力（2026-08-02 原卡斯蒂军T3升）
     andaluoxiya: { name: '安达卢军', tier: 3 },          // 科尔多瓦·阿卜杜拉
     putaoya: { name: '葡萄牙军', tier: 3 },          // 里斯本·阿方索·恩里克
     babali: { name: '巴巴里军', tier: 3 },          // 阿尔及尔·巴巴罗萨
