@@ -8236,6 +8236,76 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 22
+        },
+        "/assets/GERMANIC/773abe7d-b7db-4514-a41b-1d560914cd29.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/GERMANIC/langgeduoke_leimengwushi.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/GERMANIC/f498ba56-6216-48d9-a6fc-307b00e942b5.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/aermolika_jierdeleisi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/LATIN/0ac17e8d-d920-491d-823b-c62323d11152.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/LATIN/tuosikana_luolunzuo.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/LATIN/ef070afd-4c91-4589-939d-de10fbc2d3d7.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/LATIN/yadelaiya_danduoluo.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/LATIN/8a01f964-05d4-4e4e-8cfe-642d5b70f48d.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/LATIN/kanpaniya_kaluo.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/LATIN/4e1a54f4-5895-4758-b9cb-be4e534ae800.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/LATIN/jiatailuoniya_weifuleide.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/CENTRAL_ASIA/89d28590-b7cb-4913-9cd0-564b72d792e7.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/CENTRAL_ASIA/nasier_muhanmode.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 8
         }
     },
     "folderGuides": {
