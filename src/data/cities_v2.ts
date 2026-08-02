@@ -2081,7 +2081,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_samala', name: '萨马拉', factionId: 'nuogai', lat: 53.2, lng: 50.15, type: 'small_city', troops: 30000, region: 'STEPPE' },
     { id: 'city_wufa', name: '乌法', factionId: 'bashekeer', lat: 54.73, lng: 55.96, type: 'small_city', troops: 30000, region: 'STEPPE' },
     { id: 'city_bieergeleide', name: '别尔哥罗德', factionId: 'beisilafu', lat: 50.6, lng: 36.58, type: 'small_city', troops: 30000, region: 'SLAVIC' },
-    { id: 'city_peilieyasilafu', name: '佩列亚斯拉夫', factionId: 'peilieya_gongguo', lat: 50.07, lng: 31.45, type: 'small_city', troops: 30000, region: 'SLAVIC' },
+    { id: 'city_peilieyasilafu', name: '佩列斯拉夫', factionId: 'peilieya_gongguo', lat: 50.07, lng: 31.45, type: 'small_city', troops: 30000, region: 'SLAVIC' },
     { id: 'city_weijiebusike', name: '维捷布斯克', factionId: 'weijiebusike_gongguo', lat: 55.19, lng: 30.2, type: 'small_city', troops: 30000, region: 'SLAVIC' },
 
     ...T0_CAPITALS,

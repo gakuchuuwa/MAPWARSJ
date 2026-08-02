@@ -413,7 +413,7 @@ export const WESTERN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 15. 西亚 盾阵弓骑（前大盾中弓骑后弓手）— MovementClass=MIXED */
+/** 15. 西亚 盾阵铁骑（前大盾中斧骑后弓手：拜占庭/萨珊铁甲圣骑兵）— MovementClass=MIXED，2026-08-02 定稿 */
 export const WEST_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -421,12 +421,24 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'shield', count: 3 },
-            { type: 'horse_archer', count: 1 },
+            { type: 'heavy_cavalry', count: 1 },
             { type: 'general_cavalry', count: 1 },
-            { type: 'horse_archer', count: 1 },
+            { type: 'heavy_cavalry', count: 1 },
             { type: 'archer', count: 3 }
         ]
     }
+];
+/** 16. 斯拉夫 步骑 斧步+轻骑+弓（罗斯斧盾步兵传统）— MovementClass=MIXED，2026-08-02 专属定稿 */
+export const SLAVIC_TIERS: CompositionTier[] = [
+    build3x3('axe', 'lancer', 'archer')
+];
+/** 17. 日耳曼 纯步 重步+枪步+弩（日耳曼重步兵+德意志弩手）— MovementClass=INFANTRY，2026-08-02 专属定稿 */
+export const GERMANIC_TIERS: CompositionTier[] = [
+    build3x3('heavy_infantry', 'spear', 'crossbow')
+];
+/** 18. 拉丁 纯步 盾步+枪步+弩（罗马军团盾墙+长枪卫+弩手）— MovementClass=INFANTRY，2026-08-02 专属定稿 */
+export const LATIN_TIERS: CompositionTier[] = [
+    build3x3('shield', 'spear', 'crossbow')
 ];
 // ============================================================
 // 15 文化 → CompositionTier[] 映射
@@ -448,9 +460,9 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     CENTRAL_ASIA: CENTRAL_ASIA_TIERS,
     WEST_ASIA:    WEST_ASIA_TIERS,
     WESTERN:      WESTERN_TIERS,
-    SLAVIC:       WEST_ASIA_TIERS,   // 暂借西亚配置
-    GERMANIC:     WEST_ASIA_TIERS,   // 暂借西亚配置
-    LATIN:        WEST_ASIA_TIERS,   // 暂借西亚配置
+    SLAVIC:       SLAVIC_TIERS,
+    GERMANIC:     GERMANIC_TIERS,
+    LATIN:        LATIN_TIERS,
 };
 
 /** 编辑器保存后立刻写入内存（不依赖 HMR 才生效） */
