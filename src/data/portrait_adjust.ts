@@ -8761,6 +8761,141 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/LATIN/11db437f-581d-4a14-ac1b-52bcfc5fd3f0.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/LATIN/aersasi_youlian.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/LATIN/6db462c9-b60e-4f87-abbb-798bd03943ae.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/SLAVIC/4d276f93-21d3-4f40-b27d-3ba9504772e6.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -36
+        },
+        "/assets/SLAVIC/34c18491-0d56-4084-8f93-645ca7d40999.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/SLAVIC/5a42e000-7851-4146-b801-fbf584b7ce47.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/SLAVIC/6b32239c-672b-435b-8125-c8b52b265665.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -39
+        },
+        "/assets/SLAVIC/731f53f6-ae96-4ea5-a060-5003bd9a05bb.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -35
+        },
+        "/assets/SLAVIC/786c1a35-f027-4068-b5ba-82fa7cf04505.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/SLAVIC/8932432e-b783-4ff9-a842-a88c1abd6b94.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/SLAVIC/91ac2c80-4d9d-4358-ac03-8b8e00cfb41a.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -21
+        },
+        "/assets/SLAVIC/9e4ef1e7-a805-40bb-b671-8bbd4d9df897.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/SLAVIC/a2b12390-cc0c-422a-a6d7-f55ab975fef2.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/SLAVIC/ae63cb6a-de3c-4108-a8ce-544130701785.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/SLAVIC/dade9c95-95dd-4a73-865c-0fe2b5f1dcbc.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/SLAVIC/df35c86f-8513-468c-b132-e2041955d799.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/SLAVIC/molaweiya_siwatuo.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/SLAVIC/damolaweiya_moyimier.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/SLAVIC/df92503d-9ad7-4fc8-a2b3-581faf13ede7.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/SLAVIC/luosi_yaluosilafu.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/SLAVIC/fa2da427-6af8-4963-a0fa-8f4c206210e5.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/SLAVIC/liulike_niefusiji.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/SLAVIC/fulajimier_gongguo_andelie.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/SLAVIC/daniebo_luomushenlafu.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/SLAVIC/qiernigeweifu_gongguo_musidi.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/SLAVIC/jialixiya_dannier.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/SLAVIC/pusikefu_gongheguo_daomantasi.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -20
         }
     },
     "folderGuides": {
