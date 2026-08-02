@@ -5112,7 +5112,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -13
         },
-        "/assets/HEXI/__闲置__CENTRAL_23.png": {
+        "/assets/HEXI/__��置__CENTRAL_23.png": {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 0
@@ -7378,9 +7378,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_05.png": {
-            "scale": 1.05,
+            "scale": 1.01,
             "offsetX": 0,
-            "offsetY": -1
+            "offsetY": 14
         },
         "/assets/WESTERN/dayuan_wugua.png": {
             "scale": 0.85,
@@ -7838,16 +7838,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/GERMANIC/__多余__GERMANIC_01.png": {
-            "scale": 1.31,
+            "scale": 1.34,
             "offsetX": -1,
-            "offsetY": 32
+            "offsetY": 33
         },
         "/assets/GERMANIC/weixi_ansijiaer.png": {
-            "scale": 1.31,
+            "scale": 1.34,
             "offsetX": -1,
-            "offsetY": 32
+            "offsetY": 33
         },
-        "/assets/LATIN/acb0977d-bc06-496b-93cd-85086ab8a07e.png": {
+        "/assets/LATIN/__多余__LATIN_19.png": {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": -4
@@ -7857,7 +7857,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/LATIN/b9a2d224-b206-43ea-8bec-df5afe890bda.png": {
+        "/assets/LATIN/__多余__LATIN_21.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -7
@@ -7867,7 +7867,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/LATIN/708a7a18-9e0c-4fa8-9b1d-5bd4afd486bc.png": {
+        "/assets/LATIN/__多余__LATIN_14.png": {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 14
@@ -7877,7 +7877,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 14
         },
-        "/assets/GERMANIC/7ec360ca-b338-441a-a32d-0cf31fe66d22.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_10.png": {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 16
@@ -7887,7 +7887,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/GERMANIC/15532395-48e2-4e84-875a-47479b976230.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_02.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 26
@@ -7897,12 +7897,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 26
         },
-        "/assets/GERMANIC/aabee38b-8f69-4801-8cff-2741c126a56b.png": {
+        "/assets/GERMANIC/__闲置__GERMANIC_04.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 21
         },
-        "/assets/GERMANIC/c8bbf9d4-d22a-4a6c-8932-4f8c5031d865.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_18.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 13
@@ -7912,7 +7912,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/LATIN/8da9565c-606d-4461-860c-0343890fa25d.png": {
+        "/assets/LATIN/__多余__LATIN_17.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": 11
@@ -7922,7 +7922,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 11
         },
-        "/assets/LATIN/5d4cb51c-9756-4c0e-acd2-23bade5d4e01.png": {
+        "/assets/LATIN/__多余__LATIN_12.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 17
@@ -7932,7 +7932,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/LATIN/4ff55733-98d9-4b45-b8ca-d5fba93a2bdf.png": {
+        "/assets/LATIN/__多余__LATIN_11.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 15
@@ -7952,12 +7952,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 38
         },
-        "/assets/LATIN/1a353e92-c700-4c5d-a8bc-923bcd4d1124.png": {
+        "/assets/LATIN/__闲置__LATIN_04.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/LATIN/6485ff4b-b9b8-42fd-92e7-ffd74146caa0.png": {
+        "/assets/LATIN/__多余__LATIN_13.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 12
@@ -7967,7 +7967,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/LATIN/8a9a1b71-697c-4658-9a73-fd7e85695724.png": {
+        "/assets/LATIN/__多余__LATIN_16.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 24
@@ -7977,7 +7977,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 24
         },
-        "/assets/CENTRAL_ASIA/e7fb7cf1-6279-43bd-b171-9381e7d31f7b.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_13.png": {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 5
@@ -7987,7 +7987,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/SLAVIC/5b4d6d2b-ca0e-48eb-940a-57bb49c7e290.png": {
+        "/assets/SLAVIC/__多余__SLAVIC_01.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 10
@@ -7997,7 +7997,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/SLAVIC/7817726b-5819-4153-9c56-8b3a38ea8ef9.png": {
+        "/assets/SLAVIC/__多余__SLAVIC_02.png": {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": 2
@@ -8007,7 +8007,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/LATIN/df51b8b8-666d-45c1-8aa5-71c8b161b63e.png": {
+        "/assets/LATIN/__多余__LATIN_22.png": {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 13
@@ -8017,7 +8017,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/CENTRAL_ASIA/55abd67f-c30b-4b97-a708-23df87e67102.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_07.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 16
@@ -8027,7 +8027,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/CENTRAL_ASIA/daf33c92-2f69-4bfb-bdc4-26b070b85d60.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_12.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": -6
@@ -8037,7 +8037,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -6
         },
-        "/assets/CENTRAL_ASIA/79b4c485-35e1-403a-8f9a-3568bbff4524.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_08.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -10
@@ -8047,7 +8047,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/CENTRAL_ASIA/d3a34886-d3db-458d-975a-6ea697bd818e.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_10.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -1
@@ -8057,17 +8057,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -1
         },
-        "/assets/CENTRAL_ASIA/3962c1c6-16ad-43d3-990b-3cd268110138.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 14
-        },
         "/assets/CENTRAL_ASIA/hamade_hamade.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 14
         },
-        "/assets/LATIN/f65064fa-2e8f-4a02-9cb9-548e07cae1cc.png": {
+        "/assets/LATIN/__多余__LATIN_24.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 24
@@ -8142,12 +8137,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 32
         },
-        "/assets/CENTRAL_ASIA/9dff4fc7-850a-4d53-9fa8-66dec1f03e95.png": {
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_109.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/CENTRAL_ASIA/f9b676e9-a35d-4213-8e36-3faf4eeb33d3.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_14.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 13
@@ -8162,7 +8157,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/CENTRAL_ASIA/d9e6d154-7b28-4d4a-947f-09c70dec97cc.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_11.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -6
@@ -8182,7 +8177,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/GERMANIC/b47c3904-fa5e-401b-9267-4c687e01e2ab.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_15.png": {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 15
@@ -8197,7 +8192,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/GERMANIC/a677a388-ecc1-4e61-a9aa-f1441cbc0cc2.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_14.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -4
@@ -8207,7 +8202,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/GERMANIC/bf138f51-f859-46d3-9fc2-b225ae921a44.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_17.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 18
@@ -8217,7 +8212,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/GERMANIC/6d01e349-11a2-41c6-a04f-55faf306f32b.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_05.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 19
@@ -8227,7 +8222,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 19
         },
-        "/assets/GERMANIC/e96ff233-d71f-4124-80ba-ee6e948df3c6.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_20.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 22
@@ -8237,7 +8232,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 22
         },
-        "/assets/GERMANIC/773abe7d-b7db-4514-a41b-1d560914cd29.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_08.png": {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 10
@@ -8247,7 +8242,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/GERMANIC/f498ba56-6216-48d9-a6fc-307b00e942b5.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_22.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 9
@@ -8257,7 +8252,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/LATIN/0ac17e8d-d920-491d-823b-c62323d11152.png": {
+        "/assets/LATIN/__多余__LATIN_09.png": {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 7
@@ -8267,7 +8262,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 7
         },
-        "/assets/LATIN/ef070afd-4c91-4589-939d-de10fbc2d3d7.png": {
+        "/assets/LATIN/__多余__LATIN_23.png": {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -16
@@ -8277,7 +8272,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/LATIN/8a01f964-05d4-4e4e-8cfe-642d5b70f48d.png": {
+        "/assets/LATIN/__多余__LATIN_15.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 13
@@ -8287,7 +8282,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/LATIN/4e1a54f4-5895-4758-b9cb-be4e534ae800.png": {
+        "/assets/LATIN/__多余__LATIN_10.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 8
@@ -8297,7 +8292,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 8
         },
-        "/assets/CENTRAL_ASIA/89d28590-b7cb-4913-9cd0-564b72d792e7.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_09.png": {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 8
@@ -8307,7 +8302,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 8
         },
-        "/assets/LATIN/9084194f-9bb8-4e57-8ffd-063dfccd57e2.png": {
+        "/assets/LATIN/__多余__LATIN_18.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 25
@@ -8317,7 +8312,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 25
         },
-        "/assets/LATIN/b1962e29-c7cb-42c9-9bce-1a7bbf0e81fc.png": {
+        "/assets/LATIN/__多余__LATIN_20.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 19
@@ -8327,7 +8322,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 19
         },
-        "/assets/SLAVIC/9cbb33a8-9acb-4b21-b9a1-1c198c19a138.png": {
+        "/assets/SLAVIC/__多余__SLAVIC_04.png": {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": 11
@@ -8341,6 +8336,336 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": 11
+        },
+        "/assets/SLAVIC/__多余__SLAVIC_03.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/SLAVIC/zhituo_rituomier.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_07.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/GERMANIC/pufaerci_ludeweixi.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_06.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/GERMANIC/hansa_kelaosi.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 21
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_01.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_03.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_04.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 32
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_09.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_02.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 35
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_11.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_12.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_03.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 35
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_16.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_05.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_19.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 29
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_06.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 31
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_21.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_07.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_23.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/GERMANIC/batawei_xiweilisi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/GERMANIC/gaolu_luoma_keluowei.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/GERMANIC/kanbuliya_weilianhualaishi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 29
+        },
+        "/assets/GERMANIC/aquidan_heitaizi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GERMANIC/puluowangsi_leimengsishi.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/lunbadi_sifuerzha.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 32
+        },
+        "/assets/GERMANIC/donggete_diaoduolike.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/GERMANIC/xigete_afangsuoliushi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_06.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 29
+        },
+        "/assets/CENTRAL_ASIA/andaluoxiya_abudula.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 29
+        },
+        "/assets/GERMANIC/alagong_haimei.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/GERMANIC/__多余__GERMANIC_13.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/GERMANIC/shaiyue_duoboyi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/GERMANIC/21c13870-61fc-4a0b-b146-e8c551d9eea0.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/GERMANIC/301bfc9e-381f-4ed7-b20e-fee6e0181456.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/5051d229-a901-42b5-81b8-e6b3bfc17775.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/GERMANIC/weijing_york_xuefuailike.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/68f6fb1b-4516-471e-a9e9-d702ed007a2e.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/GERMANIC/89c552ba-a0af-4687-a22a-47fbf3fb3456.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/GERMANIC/8d6c1849-b501-4275-87ab-2af26e6ef774.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/GERMANIC/90bebf64-16b2-41cb-8487-fe5f6f27124d.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/GERMANIC/96cfe5dc-1bbd-414d-ad35-23a48dddd905.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 31
+        },
+        "/assets/GERMANIC/9762e291-f5ec-4538-98e9-0115a931ab7f.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/LATIN/00241691-380b-4ee1-b554-55c12aa09033.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 31
+        },
+        "/assets/LATIN/54da32e0-936c-491e-9787-2df0c7dcbfe3.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/LATIN/feiniqi_hamierka.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/LATIN/56102ba6-64dc-49d5-a072-b21de347d506.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/LATIN/a3070011-5785-45b2-ac27-66f8df4847d6.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/LATIN/xila_dimisituokeli.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/LATIN/aaff689f-6335-4d10-b368-7e7235e9e0bf.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/LATIN/adadff34-cef6-4068-87fe-91338380b468.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/LATIN/xilagu_ajiasuokeli.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/GERMANIC/13e8df90-c82b-46b1-b899-d32cd9c8aca8.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/GERMANIC/fulandesi_luobeierershi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/GERMANIC/b1a2e730-d609-4325-b43d-ff5a6e2f8f27.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/GERMANIC/gaolu_chaliqishi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/GERMANIC/a3070011-5785-45b2-ac27-66f8df4847d6.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/GERMANIC/b4182c25-46c1-4f00-8ce2-4db41e7aea54.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/LATIN/db8660a4-a7ef-487b-9dae-ccdb0fcedea3.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/db8660a4-a7ef-487b-9dae-ccdb0fcedea3.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/anggelu_aerfuleide.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/GERMANIC/piketai_aoengesi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/GERMANIC/dadd6d20-ac39-427c-92db-1a9c7ecb326e.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/GERMANIC/gaer_duomunaer.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/GERMANIC/bulietani_alan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
         }
     },
     "folderGuides": {
