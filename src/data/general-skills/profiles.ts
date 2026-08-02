@@ -42,6 +42,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
     leloi: { generalId: 'leloi', tier: 'famous', tacticalSkillId: 'ts_010', advantageSkillId: 'ts_558', balanceSkillId: 'ts_559', disadvantageSkillId: 'ts_560', strategicSkillId: 'str_12', atkAdvantageSkillId: 'ts_559', atkBalanceSkillId: 'ts_696', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_014', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse', attackStyle: 'attack' },
 
+    kejila_shulunbao: { generalId: 'kejila_shulunbao', tier: 'famous', tacticalSkillId: 'ts_015', strategicSkillId: 'str_20', atkAdvantageSkillId: 'ts_028', atkBalanceSkillId: 'ts_473', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_005', defBalanceSkillId: 'ts_299', defDisadvantageSkillId: 'ts_418', aptitude: 'reverse' , attackStyle: 'defense' },
+
 
 
     agui: { generalId: 'agui', tier: 'famous', strategicSkillId: 'str_01', tacticalSkillId: 'ts_714', advantageSkillId: 'ts_392', balanceSkillId: 'ts_001', disadvantageSkillId: 'ts_026', atkBalanceSkillId: 'ts_714', atkDisadvantageSkillId: 'ts_291', atkAdvantageSkillId: 'ts_001', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_043', defDisadvantageSkillId: 'ts_017', aptitude: 'create' , attackStyle: 'attack'},

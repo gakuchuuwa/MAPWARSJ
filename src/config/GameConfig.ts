@@ -211,7 +211,7 @@ export class GameConfig {
     static CULTURE_COMBAT = {
         /** region → [军团攻, 据点防] */
         TIER_TABLE: {
-            SLAVIC: [1.00, 1.10], GERMANIC: [1.10, 1.00], LATIN: [1.10, 1.15],
+            SLAVIC: [1.00, 1.10], GERMANIC: [1.10, 1.00], LATIN: [1.05, 1.10],
             STEPPE: [1.20, 0.85], TIBET: [1.05, 1.10], CENTRAL_ASIA: [1.10, 1.00],
             NORTHEAST: [1.10, 0.90], HEXI: [1.10, 1.00], NORTH: [1.10, 1.00],
             CENTRAL: [1.00, 0.95], WESTERN: [0.90, 1.15], WEST_ASIA: [1.05, 1.10],
@@ -229,7 +229,7 @@ export class GameConfig {
         } as Record<string, number>,
         /** region → 据点兵 */
         RECRUIT_TABLE: {
-            SLAVIC: 0.95, GERMANIC: 0.95, LATIN: 1.00,
+            SLAVIC: 0.95, GERMANIC: 0.95, LATIN: 0.95,
             STEPPE: 0.85, TIBET: 0.90, CENTRAL_ASIA: 0.90,
             NORTHEAST: 0.95, HEXI: 0.95, NORTH: 0.90,
             CENTRAL: 1.05, WESTERN: 0.90, WEST_ASIA: 0.95,
@@ -247,7 +247,7 @@ export class GameConfig {
         } as Record<string, number>,
         /** region → 据点兵上限 */
         CITY_TROOP_CAP_TABLE: {
-            SLAVIC: 0.95, GERMANIC: 1.00, LATIN: 1.05,
+            SLAVIC: 0.95, GERMANIC: 1.00, LATIN: 1.00,
             STEPPE: 0.80, TIBET: 0.95, CENTRAL_ASIA: 0.95,
             NORTHEAST: 0.90, HEXI: 0.85, NORTH: 0.85,
             CENTRAL: 1.00, WESTERN: 0.90, WEST_ASIA: 0.95,

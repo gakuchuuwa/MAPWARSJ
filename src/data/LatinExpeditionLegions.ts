@@ -38,6 +38,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     babali: { name: '巴巴里军', tier: 3 },          // 阿尔及尔·巴巴罗萨
     telibolisi: { name: '的黎波里军', tier: 3 },          // 的黎波里·德拉古特
     bohepingyuan: { name: '东哥特军', tier: 3 },          // 维罗纳·狄奥多里克
+    kejila: { name: '科基拉水军', tier: 3 },          // 科孚·舒伦堡：希腊仅次于雅典的第二海军强国（修昔底德），前433西波塔海战
     donggete: { name: '拉文纳军', tier: 3 },          // 拉文纳·狄奥多里克
     anuo: { name: '比萨海军', tier: 3 },          // 比萨·乌戈里诺
     balunxiya: { name: '瓦伦西亚军', tier: 3 },          // 巴伦西亚·熙德

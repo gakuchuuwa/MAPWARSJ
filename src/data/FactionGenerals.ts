@@ -119,6 +119,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     saierweiya: { generalId: 'gen_stefan_dusan', generalName: '斯蒂芬杜尚', portrait: '/assets/LATIN/saierweiya_sidifendushang.png' },
 
     luoma_diguo: { generalId: 'gen_julius_caesar', generalName: '恺撒', portrait: '/assets/LATIN/luoma_diguo_kaisa.png' },
+    kejila: { generalId: 'kejila_shulunbao', generalName: '舒伦堡', portrait: '/assets/LATIN/kejila_shulunbao.png' },
     putaoya: { generalId: 'gen_afonso_henriques', generalName: '阿方索', portrait: '/assets/GERMANIC/putaoya_afangsuo.png' },
 
     habusibao: { generalId: 'gen_maximilian', generalName: '马克西米', portrait: '/assets/GERMANIC/habusibao_makeximi.png' },

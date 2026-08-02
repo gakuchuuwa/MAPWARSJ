@@ -1002,6 +1002,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'yidier': 'city_yidier',
     'salai': 'city_salaichuke',
     'mangshi': 'city_mangshilake',
+    'kejila': 'city_kefu',
 };
 
 // @ts-ignore

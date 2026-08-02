@@ -10,6 +10,7 @@ import type { IBattleUnit } from '../core/CombatSystem';
 import type { Army } from '../core/Army';
 import type { City } from '../types/core';
 import { getCityRegion, getRegion, RegionType } from './RegionSystem';
+import { CITIES_V2 } from '../data/cities_v2';
 
 export type CultureCombatRole = 'field' | 'garrison';
 
@@ -46,6 +47,21 @@ export function resolveUnitCultureRegion(unit: IBattleUnit): RegionType {
             longitude: home.longitude,
             region: home.region,
         });
+    }
+
+    // 【2026-08-02 修】军团文化 = 势力文化（首都/出兵据点），不是当前位置坐标判定。
+    // 环线只覆盖大文化圈宏观轮廓，军团在野外行军/远征途中坐标判定常落进 CENTRAL，
+    // 导致斯拉夫/日耳曼/拉丁等新区无武将立绘抽到中原池（实测：斯拉夫据点出现中原武将）。
+    // 守军 entity 缺失时同样落到这里：factionId 首都解析比坐标判定可靠。
+    if (unit.factionId) {
+        const capital = CITIES_V2.find((c) => c.factionId === unit.factionId);
+        if (capital) {
+            return getCityRegion({
+                latitude: capital.lat,
+                longitude: capital.lng,
+                region: capital.region,
+            });
+        }
     }
 
     const pos = unit.getPosition();

@@ -8848,7 +8848,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/SLAVIC/damolaweiya_moyimier.png": {
-            "scale": 1.05,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -9113,7 +9113,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 14
         },
         "/assets/SLAVIC/piyasite_kaqimiri.png": {
-            "scale": 1.1,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 22
         },
