@@ -5068,7 +5068,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "塞兰-���������������������������罗斯",
+                name: "塞兰-����������������������������罗斯",
                 type: "road",
                 id: "road_city_sailan_city_talas_1780148257112",
                 startConnection: "city_sailan",
@@ -52287,24 +52287,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                 coordinates: [
                     [23.72, 37.98],
                     [28.22, 36.44],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "锡拉库萨-拉古萨",
-                type: "road",
-                id: "road_city_syracuse_city_ragusa_1785584029394",
-                startConnection: "city_syracuse",
-                endConnection: "city_ragusa"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [15.28, 37.07],
-                    [18.995361328125, 39.62684598486692],
-                    [18.09, 42.65],
                 ]
             }
         },

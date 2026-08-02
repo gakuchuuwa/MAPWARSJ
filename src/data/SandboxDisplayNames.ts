@@ -1067,6 +1067,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'yidier': '伊蒂',
     'salai': '诺盖',
     'mangshi': '土库',
+    'kejila': '科基',
 };
 
 // @ts-ignore
