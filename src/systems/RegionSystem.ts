@@ -538,7 +538,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     CENTRAL_ASIA: ['city_urgench'],                  // 玉龙杰赤 (花剌子模都城; 主人 2026-07-05 改, 原撒马尔罕)
     WEST_ASIA:    ['city_junshitandingbao'],           // 君士坦丁堡 (拜占庭/东罗马都城)
     SLAVIC:       ['city_jifu'],                       // 基辅 (罗斯都城)
-    GERMANIC:     ['city_bali'],                       // 巴黎 (法兰克/法兰西核心)
+    GERMANIC:     ['city_kelong'],                       // 科隆 (罗马日耳曼尼亚行省首府→法兰克重镇→德意志最大城市; 2026-08-02 原巴黎归拉丁改)
     LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
 };
 

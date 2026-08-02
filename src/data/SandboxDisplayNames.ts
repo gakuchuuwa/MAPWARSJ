@@ -125,6 +125,8 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   moerdaweiya: '摩尔',
   walajiyia: '瓦拉',
   tiaodun_qishi: '条顿',
+  shengdian_qishi: '圣殿',
+  maerta_qishi: '马耳',
   liwoniya: '利沃',
   chude: '楚德',
   deniesite: '德涅',
