@@ -76,9 +76,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jileinaijia: { generalId: 'gen_magas', generalName: '马加斯', portrait: '/assets/LATIN/jileinaijia_majiasi.png' },
 
     maixiya: { generalId: 'gen_offa_mercia', generalName: '奥法', portrait: '/assets/GERMANIC/maixiya_aofa.png' },
-    weijing_bergen: { generalId: 'gen_sverre_norway', generalName: '斯维尔', portrait: '/assets/generals/gen_sverre_norway.png' },
-    nidelan: { generalId: 'gen_william_silent', generalName: '威廉', portrait: '/assets/generals/gen_william_silent.png' },
-    boumeilaniyan: { generalId: 'gen_casimir_iv', generalName: '卡西米尔', portrait: '/assets/generals/gen_casimir_iv.png' },
+    weijing_bergen: { generalId: 'gen_sverre_norway', generalName: '斯维尔', portrait: '/assets/GERMANIC/weijing_bergen_siweier.png' },
+    nidelan: { generalId: 'gen_william_silent', generalName: '威廉', portrait: '/assets/GERMANIC/nidelan_weilian.png' },
+    boumeilaniyan: { generalId: 'gen_casimir_iv', generalName: '卡西米尔', portrait: '/assets/GERMANIC/boumeilaniyan_kaximier.png' },
     langgeduoke: { generalId: 'gen_raymond_v', generalName: '雷蒙五世', portrait: '/assets/generals/gen_raymond_v.png' },
     aermolika: { generalId: 'gen_gilles_de_rais', generalName: '吉尔德雷斯', portrait: '/assets/generals/gen_gilles_de_rais.png' },
     tuosikana: { generalId: 'gen_lorenzo_medici', generalName: '洛伦佐', portrait: '/assets/generals/gen_lorenzo_medici.png' },
@@ -175,7 +175,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xierhe: { generalId: 'xierhe_saerjue', generalName: '塞尔柱', portrait: '/assets/STEPPE/xierhe_saerjue.png' },
     beisilafu: { generalId: 'gen_sergey_belgorod', generalName: '谢尔盖', portrait: '/assets/generals/gen_sergey_belgorod.png' },
     peilieya_gongguo: { generalId: 'gen_vladimir_monomakh', generalName: '莫诺马赫', portrait: '/assets/generals/gen_vladimir_monomakh.png' },
-    weijiebusike_gongguo: { generalId: 'gen_algirdas', generalName: '奥尔格尔德', portrait: '/assets/generals/gen_algirdas.png' },
+    weijiebusike_gongguo: { generalId: 'gen_algirdas', generalName: '奥尔格尔德', portrait: '/assets/GERMANIC/weijiebusike_gongguo_aoergeerde.png' },
 
     qin: { generalId: 'qin_simacuo', generalName: '司马错', portrait: '/assets/yingqin/qin_simacuo.png' },
     tang: { generalId: 'tang_lishimin', generalName: '李世民', portrait: '/assets/litang/tang_lishimin.png' },
