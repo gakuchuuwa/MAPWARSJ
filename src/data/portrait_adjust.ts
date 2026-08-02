@@ -5112,7 +5112,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -13
         },
-        "/assets/HEXI/__��置__CENTRAL_23.png": {
+        "/assets/HEXI/__���置__CENTRAL_23.png": {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 0
@@ -7988,9 +7988,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/SLAVIC/__多余__SLAVIC_01.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 10
+            "scale": 1.15,
+            "offsetX": 9,
+            "offsetY": 2
         },
         "/assets/SLAVIC/qiekase_weishenniao.png": {
             "scale": 1,
@@ -7998,9 +7998,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/SLAVIC/__多余__SLAVIC_02.png": {
-            "scale": 1.16,
+            "scale": 1.14,
             "offsetX": 0,
-            "offsetY": 2
+            "offsetY": 0
         },
         "/assets/SLAVIC/saierdika_kelumu.png": {
             "scale": 1.16,
@@ -8892,10 +8892,345 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -22
         },
-        "/assets/SLAVIC/pusikefu_gongheguo_daomantasi.png": {
+        "/assets/SLAVIC/__多余__SLAVIC_05.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -20
+        },
+        "/assets/SLAVIC/__多余__SLAVIC_06.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/SLAVIC/__多余__SLAVIC_07.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/SLAVIC/pusikefu_gongheguo_daomantasi.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/SLAVIC/053a1031-2d73-4771-aadd-19510ea35eae.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 32
+        },
+        "/assets/SLAVIC/07dbdd4b-30dd-4a03-bb83-e6ac770b8bf1.png": {
+            "scale": 1.29,
+            "offsetX": 5,
+            "offsetY": 3
+        },
+        "/assets/SLAVIC/0ec89ba3-0b30-44b9-b47b-e97709b0cb7c.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/SLAVIC/0f0dbb0a-8404-4c59-a4f2-b2b3f6d66cec.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/SLAVIC/184997fc-5d26-4bcb-9011-0f110b7faf44.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/SLAVIC/1b6264a8-1b95-4896-ad07-cb04ddb5ebf4.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/SLAVIC/jinzhang_badou.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/SLAVIC/2f76f747-6f30-4664-89cd-08fa7341d66c.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/SLAVIC/3662b6a0-8bf2-478e-ba90-b14abe898bc4.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/SLAVIC/5165761b-a281-4d59-94fe-d5f9dd62a99d.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/SLAVIC/5baefc7c-6da9-4588-ab0b-820a1f9a5814.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/SLAVIC/63b676e8-a66a-431a-8b65-1c9b03f10038.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/SLAVIC/baojiaer_wuluhei.png": {
+            "scale": 1.19,
+            "offsetX": -6,
+            "offsetY": 18
+        },
+        "/assets/SLAVIC/63b8fa6b-8bdb-4fb3-91eb-792847f3e238.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/SLAVIC/68bdede6-5ba7-4648-9134-6250fa0a2bea.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/SLAVIC/72b9e8d7-7b14-439c-9263-9140d5757267.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/SLAVIC/76268763-35c0-48e4-89ae-255b9b9a0c0b.png": {
+            "scale": 1.21,
+            "offsetX": 13,
+            "offsetY": -11
+        },
+        "/assets/SLAVIC/77076c56-7d3a-487d-a58d-85b2e77baaae.png": {
+            "scale": 1.23,
+            "offsetX": 3,
+            "offsetY": 18
+        },
+        "/assets/SLAVIC/867221f8-b22d-4512-8273-d8adf84c4d78.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/SLAVIC/93280dcc-5cfa-4563-8040-368430c9d35b.png": {
+            "scale": 1.25,
+            "offsetX": 9,
+            "offsetY": -6
+        },
+        "/assets/SLAVIC/999189a8-4b19-4cc6-b9e1-003dcc418bbc.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/SLAVIC/9d80bb08-7afa-44d2-ac41-cfadcb4afa45.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/SLAVIC/a401aad0-f93a-426f-b583-249b2c70f72a.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/SLAVIC/a91feee1-c649-4fe6-9a96-0532bb927227.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/SLAVIC/cf61c6c7-2794-4d11-9f89-b10eefd170d7.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/SLAVIC/d272e36a-a8b6-4af7-a8b6-93fbe8dfdd43.png": {
+            "scale": 1.15,
+            "offsetX": 9,
+            "offsetY": 2
+        },
+        "/assets/SLAVIC/da3748b6-d082-4e82-8ead-5e37113cebc4.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/SLAVIC/baizanting_fulajimier.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/LATIN/053a1031-2d73-4771-aadd-19510ea35eae.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/LATIN/taolika_asipuergesi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/CENTRAL_ASIA/63b676e8-a66a-431a-8b65-1c9b03f10038.png": {
+            "scale": 1.19,
+            "offsetX": -6,
+            "offsetY": 18
+        },
+        "/assets/CENTRAL_ASIA/72b9e8d7-7b14-439c-9263-9140d5757267.png": {
+            "scale": 1.18,
+            "offsetX": 1,
+            "offsetY": 13
+        },
+        "/assets/CENTRAL_ASIA/77076c56-7d3a-487d-a58d-85b2e77baaae.png": {
+            "scale": 1.21,
+            "offsetX": 7,
+            "offsetY": 17
+        },
+        "/assets/CENTRAL_ASIA/kelimiya_hajigelai.png": {
+            "scale": 1.21,
+            "offsetX": 7,
+            "offsetY": 17
+        },
+        "/assets/SLAVIC/ec99b106-2d01-4634-addc-8abc6628e5f2.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/SLAVIC/edde2e70-3280-49c4-86ec-3ca751e64b6e.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/SLAVIC/dajiya_deqiebalusi.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/SLAVIC/eaa6823c-9d7c-4d35-837d-d9ad723f5183.png": {
+            "scale": 1.18,
+            "offsetX": 1,
+            "offsetY": 8
+        },
+        "/assets/SLAVIC/mengtainiya_basalabu.png": {
+            "scale": 1.18,
+            "offsetX": 1,
+            "offsetY": 8
+        },
+        "/assets/SLAVIC/litaowan_gediminasi.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/SLAVIC/bolan_yagaiwo.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/SLAVIC/piyasite_kaqimiri.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/SLAVIC/baojian_qishi_aerbote.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/SLAVIC/teweier_gongguo_mihayier.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/SLAVIC/suzidaer_kangsitandingnuo.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/SLAVIC/gesake_hemeili.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/SLAVIC/moerdaweiya_sidifendadi.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/SLAVIC/walajiyia_fuladesanshi.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/SLAVIC/tiaodun_qishi_wuerlixi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/SLAVIC/liwoniya_puleitebeige.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/SLAVIC/chude_weiqiesilafu.png": {
+            "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/CENTRAL_ASIA/deniesite_muhanmodegeli.png": {
+            "scale": 1.18,
+            "offsetX": 1,
+            "offsetY": 13
+        },
+        "/assets/SLAVIC/nieman_weituofute.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/STEPPE/76268763-35c0-48e4-89ae-255b9b9a0c0b.png": {
+            "scale": 1.16,
+            "offsetX": 9,
+            "offsetY": -10
+        },
+        "/assets/STEPPE/fuerjia_asitela.png": {
+            "scale": 1.16,
+            "offsetX": 9,
+            "offsetY": -10
+        },
+        "/assets/STEPPE/07dbdd4b-30dd-4a03-bb83-e6ac770b8bf1.png": {
+            "scale": 1.18,
+            "offsetX": 10,
+            "offsetY": 2
+        },
+        "/assets/STEPPE/nuogai_ounasihan.png": {
+            "scale": 1.18,
+            "offsetX": 10,
+            "offsetY": 2
+        },
+        "/assets/STEPPE/a401aad0-f93a-426f-b583-249b2c70f72a.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/STEPPE/bashekeer_kalasakaer.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/STEPPE/93280dcc-5cfa-4563-8040-368430c9d35b.png": {
+            "scale": 1.16,
+            "offsetX": 14,
+            "offsetY": -7
+        },
+        "/assets/STEPPE/xierhe_saierzhu.png": {
+            "scale": 1.16,
+            "offsetX": 14,
+            "offsetY": -7
+        },
+        "/assets/SLAVIC/beisilafu_xieergai.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/SLAVIC/peilieya_gongguo_monuomahe.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/SLAVIC/mosike_gongguo_dunsikeyi.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": 7
         }
     },
     "folderGuides": {
