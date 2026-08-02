@@ -7838,9 +7838,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/GERMANIC/__多余__GERMANIC_01.png": {
-            "scale": 1.34,
+            "scale": 1.01,
             "offsetX": -1,
-            "offsetY": 33
+            "offsetY": 1
         },
         "/assets/GERMANIC/weixi_ansijiaer.png": {
             "scale": 1.34,
@@ -8666,6 +8666,101 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 10
+        },
+        "/assets/LATIN/saierweiya_sidifendushang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 33
+        },
+        "/assets/LATIN/luoma_diguo_kaisa.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 31
+        },
+        "/assets/GERMANIC/boximiya_yangjiesika.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/GERMANIC/habusibao_makeximi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 31
+        },
+        "/assets/GERMANIC/mazhaer_aerpade.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
+        },
+        "/assets/GERMANIC/falanji_chalimate.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 26
+        },
+        "/assets/GERMANIC/0230b2c4-9a4d-4261-9dd7-e0bd1b739e01.png": {
+            "scale": 1.01,
+            "offsetX": -1,
+            "offsetY": 1
+        },
+        "/assets/GERMANIC/5c158346-2aca-427e-91fb-5510f711c278.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/GERMANIC/ruishi_anuode.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/LATIN/6ebb346b-2715-4ebe-8122-c7d50755c0e1.png": {
+            "scale": 1.13,
+            "offsetX": 2,
+            "offsetY": 29
+        },
+        "/assets/LATIN/mozeer_junshitanding.png": {
+            "scale": 1.13,
+            "offsetX": 2,
+            "offsetY": 29
+        },
+        "/assets/GERMANIC/6fdbad18-4fc5-46da-ae0c-ad541d03fa54.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/GERMANIC/huohengsuolun_feitelieyishi.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/GERMANIC/82d1ff2a-7840-4cdb-81d0-1c2a326b82a9.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/GERMANIC/bafaliya_taxiluosanshi.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/GERMANIC/68a9b726-070e-497a-9617-43d76982ca12.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 28
+        },
+        "/assets/GERMANIC/wende_jieluobojue.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 28
+        },
+        "/assets/GERMANIC/e638861c-c2e0-417b-91a4-62a1e9e47430.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/GERMANIC/rierman_aotuoyishi.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {
