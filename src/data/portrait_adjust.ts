@@ -4438,7 +4438,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/BASHU/qingqiang_jiangwei.png": {
-            "scale": 1.09,
+            "scale": 1.02,
             "offsetX": -13,
             "offsetY": -16
         },
@@ -8306,6 +8306,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 8
+        },
+        "/assets/LATIN/9084194f-9bb8-4e57-8ffd-063dfccd57e2.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/LATIN/liguliya_andelieya.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 25
+        },
+        "/assets/LATIN/b1962e29-c7cb-42c9-9bce-1a7bbf0e81fc.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/LATIN/seleisi_ximeiang.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/SLAVIC/9cbb33a8-9acb-4b21-b9a1-1c198c19a138.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/LATIN/__多余__LATIN_08.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/SLAVIC/bolisiya_jiasituoerde.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": 11
         }
     },
     "folderGuides": {
