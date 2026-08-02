@@ -8196,6 +8196,46 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 0,
             "offsetY": 15
+        },
+        "/assets/GERMANIC/a677a388-ecc1-4e61-a9aa-f1441cbc0cc2.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/GERMANIC/weijing_bergen_siweier.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/GERMANIC/bf138f51-f859-46d3-9fc2-b225ae921a44.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GERMANIC/weijiebusike_gongguo_aoergeerde.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GERMANIC/6d01e349-11a2-41c6-a04f-55faf306f32b.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/GERMANIC/nidelan_weilian.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/GERMANIC/e96ff233-d71f-4124-80ba-ee6e948df3c6.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/GERMANIC/boumeilaniyan_kaximier.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 22
         }
     },
     "folderGuides": {
