@@ -5068,7 +5068,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "塞兰-����������������������������罗斯",
+                name: "塞兰-�����������������������������罗斯",
                 type: "road",
                 id: "road_city_sailan_city_talas_1780148257112",
                 startConnection: "city_sailan",
@@ -48042,7 +48042,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "切尔卡瑟-佩列亚斯拉夫",
+                name: "切尔卡瑟-佩列斯拉夫",
                 type: "road",
                 id: "road_city_cherkasy_city_peilieyasilafu_1785581892612",
                 startConnection: "city_cherkasy",
@@ -51341,23 +51341,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "斯巴达-锡拉库萨",
-                type: "road",
-                id: "road_city_sparta_city_syracuse_1785583157069",
-                startConnection: "city_sparta",
-                endConnection: "city_syracuse"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [22.42, 37.07],
-                    [15.28, 37.07],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "迦太基-巴勒莫",
                 type: "road",
                 id: "road_city_jiataji_city_palermo_1785583175534",
@@ -52287,6 +52270,91 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                 coordinates: [
                     [23.72, 37.98],
                     [28.22, 36.44],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "拉古萨-科孚",
+                type: "road",
+                id: "road_city_ragusa_city_kefu_1785674143906",
+                startConnection: "city_ragusa",
+                endConnection: "city_kefu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [18.09, 42.65],
+                    [19.231567382812504, 41.74672584176937],
+                    [19.055786132812504, 40.59727063442027],
+                    [19.566650390625004, 40.052847601823984],
+                    [19.984130859375004, 39.829631721333755],
+                    [19.92, 39.62],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "科孚-锡拉库萨",
+                type: "road",
+                id: "road_city_kefu_city_syracuse_1785674205102",
+                startConnection: "city_kefu",
+                endConnection: "city_syracuse"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [19.92, 39.62],
+                    [15.28, 37.07],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "那不勒斯-巴勒莫",
+                type: "road",
+                id: "road_city_naples_city_palermo_1785674213715",
+                startConnection: "city_naples",
+                endConnection: "city_palermo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [14.26, 40.85],
+                    [14.178181818181818, 40.60090909090909],
+                    [14.096363636363636, 40.35181818181818],
+                    [14.014545454545454, 40.10272727272727],
+                    [13.932727272727272, 39.85363636363636],
+                    [13.85090909090909, 39.60454545454545],
+                    [13.76909090909091, 39.35545454545455],
+                    [13.687272727272727, 39.10636363636364],
+                    [13.605454545454545, 38.85727272727273],
+                    [13.523636363636363, 38.60818181818182],
+                    [13.441818181818181, 38.35909090909091],
+                    [13.36, 38.11],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "斯巴达-锡拉库萨",
+                type: "road",
+                id: "road_city_sparta_city_syracuse_1785674234931",
+                startConnection: "city_sparta",
+                endConnection: "city_syracuse"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [22.42, 37.07],
+                    [21.862792968750004, 36.59347887826919],
+                    [20.635, 37.07],
+                    [18.85, 37.07],
+                    [15.28, 37.07],
                 ]
             }
         },
