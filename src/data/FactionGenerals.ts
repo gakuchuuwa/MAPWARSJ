@@ -86,9 +86,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     kanpaniya: { generalId: 'gen_charles_i_naples', generalName: '卡洛', portrait: '/assets/LATIN/kanpaniya_kaluo.png' },
     jiatailuoniya: { generalId: 'gen_wifred_hairy', generalName: '威弗雷德', portrait: '/assets/LATIN/jiatailuoniya_weifuleide.png' },
     nasier: { generalId: 'gen_muhammad_i', generalName: '穆罕默德', portrait: '/assets/CENTRAL_ASIA/nasier_muhanmode.png' },
-    liguliya: { generalId: 'gen_andrea_doria', generalName: '安德烈亚', portrait: '/assets/generals/gen_andrea_doria.png' },
-    seleisi: { generalId: 'gen_simeon_great', generalName: '西美昂', portrait: '/assets/generals/gen_simeon_great.png' },
-    bolisiya: { generalId: 'gen_gastold', generalName: '加斯托尔德', portrait: '/assets/generals/gen_gastold.png' },
+    liguliya: { generalId: 'gen_andrea_doria', generalName: '安德烈亚', portrait: '/assets/LATIN/liguliya_andelieya.png' },
+    seleisi: { generalId: 'gen_simeon_great', generalName: '西美昂', portrait: '/assets/LATIN/seleisi_ximeiang.png' },
+    bolisiya: { generalId: 'gen_gastold', generalName: '加斯托尔德', portrait: '/assets/SLAVIC/bolisiya_jiasituoerde.png' },
     zhituo: { generalId: 'gen_zhytomyr', generalName: '日托米尔', portrait: '/assets/generals/gen_zhytomyr.png' },
 
     pufaerci: { generalId: 'gen_ludwig_iv', generalName: '路德维希', portrait: '/assets/generals/gen_ludwig_iv.png' },
