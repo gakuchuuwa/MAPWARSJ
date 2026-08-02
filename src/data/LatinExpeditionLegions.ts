@@ -13,7 +13,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T1 功勋之兵 ──
     luoma_diguo: { name: '罗马军团', tier: 1 },          // 罗马城·大西庇阿：征服地中海，建制千年
-    maqidun: { name: '马其顿方阵', tier: 1 },          // 萨洛尼卡·亚历山大：征服波斯
+    maqidun: { name: '马其顿方阵', tier: 2 },          // 萨洛尼卡·亚历山大：征服波斯
 
     // ── T2 特色之兵 ──
     buni: { name: '迦太基军', tier: 2 },          // 迦太基·汉尼拔：坎尼经典
@@ -38,34 +38,34 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     putaoya: { name: '葡萄牙军', tier: 3 },          // 里斯本·阿方索·恩里克
     babali: { name: '巴巴里军', tier: 3 },          // 阿尔及尔·巴巴罗萨
     telibolisi: { name: '的黎波里军', tier: 3 },          // 的黎波里·德拉古特
-    bohepingyuan: { name: '东哥特军', tier: 3 },          // 维罗纳·狄奥多里克
+    bohepingyuan: { name: '维罗纳军', tier: 3 },          // 维罗纳·狄奥多里克
     kejila: { name: '科基拉水军', tier: 3 },          // 科孚·舒伦堡：希腊仅次于雅典的第二海军强国（修昔底德），前433西波塔海战
     donggete: { name: '拉文纳军', tier: 3 },          // 拉文纳·狄奥多里克
     anuo: { name: '比萨海军', tier: 3 },          // 比萨·乌戈里诺
     balunxiya: { name: '瓦伦西亚军', tier: 3 },          // 巴伦西亚·熙德
 
     // ── T4 存在之兵 ──
-    kanpaniya: { name: '那不勒斯军', tier: 4 },          // 那不勒斯·卡洛
+    kanpaniya: { name: '那不勒斯军', tier: 3 },          // 那不勒斯·卡洛
     tuosikana: { name: '佛罗伦萨军', tier: 4 },          // 佛罗伦萨·洛伦佐
-    xixiliwangguo: { name: '西西里军', tier: 4 },          // 巴勒莫·腓特烈二世
-    gaolu_luoma: { name: '法兰西军', tier: 4 },          // 里昂·克洛维
-    xigete: { name: '托莱多军', tier: 4 },          // 托莱多·阿方索六世
+    xixiliwangguo: { name: '西西里军', tier: 3 },          // 巴勒莫·腓特烈二世
+    gaolu_luoma: { name: '法兰西军', tier: 3 },          // 里昂·克洛维
+    xigete: { name: '托莱多军', tier: 3 },          // 托莱多·阿方索六世
     nasier: { name: '格拉纳达军', tier: 4 },          // 格拉纳达·穆罕默德
     feiniqi: { name: '腓尼基军', tier: 3 },          // 加的斯·哈米尔卡
     yidelisi: { name: '伊德里斯军', tier: 4 },          // 非斯·伊德里斯
     xilagu: { name: '叙拉古军', tier: 4 },          // 锡拉库萨·阿加索克利
     leangongguo: { name: '莱昂军', tier: 4 },          // 萨拉曼卡·阿方索九世
-    moxina: { name: '梅西纳军', tier: 4 },          // 梅西纳·罗杰
-    alagong: { name: '萨拉戈萨军', tier: 4 },          // 萨拉戈萨·海梅
+    moxina: { name: '梅西纳军', tier: 3 },          // 梅西纳·罗杰
+    alagong: { name: '萨拉戈萨军', tier: 3 },          // 萨拉戈萨·海梅
     zhibuluotuo: { name: '休达军', tier: 4 },          // 休达·恩里克
     zhayan: { name: '扎扬军', tier: 4 },          // 特莱姆森·亚里摩罗
     hamade: { name: '哈马德军', tier: 4 },          // 布佳亚·哈马德
     sading: { name: '撒丁军', tier: 4 },          // 卡利亚里·埃莱奥诺拉
     jileinaijia: { name: '昔兰尼加军', tier: 4 },          // 班加西·马加斯
-    kelite: { name: '克里特军', tier: 4 },          // 诺索斯·米诺斯
+    kelite: { name: '克里特弓手', tier: 3 },          // 诺索斯·福卡斯：961收复克里特；克里特弓箭手为希腊世界最著名雇佣兵（色诺芬长征记），文化知名T3
     aermolika: { name: '南特军', tier: 4 },          // 南特·吉尔德雷斯
     bulietani: { name: '雷恩军', tier: 4 },          // 雷恩·阿兰
-    puluowangsi: { name: '教皇军', tier: 4 },          // 阿维尼翁·雷蒙
+    puluowangsi: { name: '教皇军', tier: 3 },          // 阿维尼翁·雷蒙
     fulandesi: { name: '加莱军', tier: 4 },          // 加莱
     mengtainiya: { name: '蒙泰尼亚军', tier: 2 },          // 布加勒斯特·巴萨拉布
 };

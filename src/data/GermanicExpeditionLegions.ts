@@ -48,7 +48,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     pufaerci: { name: '普法尔茨军', tier: 4 },          // 海德堡·路德维希
     asikanani: { name: '勃兰登堡军', tier: 4 },          // 勃兰登堡·阿尔布雷
     wende: { name: '马格德堡军', tier: 4 },          // 马格德堡·杰罗伯爵
-    molaweiya: { name: '摩拉维亚军', tier: 4 },          // 奥尔穆茨·斯瓦托
+    molaweiya: { name: '摩拉维亚军', tier: 3 },          // 奥尔穆茨·斯瓦托
     damolaweiya: { name: '摩拉卫队', tier: 4 },          // 布尔诺·莫伊米尔
     meikelunbao: { name: '梅克伦堡军', tier: 4 },          // 罗斯托克·亨利波罗
     kanbuliya: { name: '坎布里亚军', tier: 3 },          // 卡莱尔·威廉·华莱士
