@@ -133,6 +133,7 @@ app.innerHTML = `
     <button type="button" id="bm-reload" class="bm-btn">刷新数据</button>
     <button type="button" id="bm-export" class="bm-btn">导出名册</button>
     <button type="button" id="bm-skill-coverage" class="bm-btn bm-btn-warn" title="只检查武将可佩戴技能；不含长驱深入、据险而守、守土继绝">检查技能覆盖</button>
+    <button type="button" id="bm-name-audit" class="bm-btn bm-btn-warn" title="武将/精锐/势力/据点名称须 ≤5 字且全局不重名；武将名本名优先，重名用称呼">名称审计</button>
     <button type="button" id="bm-validate" class="bm-btn bm-btn-warn">运行校验</button>
   </div>
 </header>
@@ -1844,6 +1845,70 @@ async function runSkillCoverageCheck(): Promise<void> {
     }
 }
 
+/** 名称审计（2026-08-03 主人定）：武将/精锐/势力/据点名称 ≤5 字且全局不重名。
+ *  武将名规范：本名优先，重名避不开时用称呼（如「勇敢者」阿方索六世）。 */
+function runNameAudit(): void {
+    if (!entityData) { showToast('数据未加载，请先刷新', true); return; }
+    const ed = entityData; // 收窄引用（闭包内 entityData 不被 null 检查收窄）
+    const problems: ValidationIssue[] = [];
+    const over5 = (s: string) => s.length > 5;
+    const facNameOf = (fid: string) => ed.factions.find(f => f.id === fid)?.name ?? fid;
+
+    // 武将名
+    const genByName = new Map<string, string>();
+    for (const [fid, g] of Object.entries(ed.generals)) {
+        const n = g.generalName;
+        if (!n) continue;
+        if (over5(n)) problems.push({ level: 'error', msg: `武将名超5字: "${n}"(${n.length}字) @ ${fid}（${facNameOf(fid)}）` });
+        if (genByName.has(n)) problems.push({ level: 'error', msg: `武将名重复: "${n}" @ ${fid}（${facNameOf(fid)}） 与 ${genByName.get(n)}` });
+        else genByName.set(n, fid);
+    }
+
+    // 精锐番号
+    const eliteByName = new Map<string, string>();
+    for (const [fid, e] of Object.entries(ed.elites)) {
+        const n = e.name;
+        if (!n) continue;
+        if (over5(n)) problems.push({ level: 'error', msg: `精锐番号超5字: "${n}"(${n.length}字) @ ${fid}（${facNameOf(fid)}）` });
+        if (eliteByName.has(n)) problems.push({ level: 'error', msg: `精锐番号重复: "${n}" @ ${fid}（${facNameOf(fid)}） 与 ${eliteByName.get(n)}` });
+        else eliteByName.set(n, fid);
+    }
+
+    // 势力名
+    const facByName = new Map<string, string>();
+    for (const f of ed.factions) {
+        if (over5(f.name)) problems.push({ level: 'error', msg: `势力名超5字: "${f.name}"(${f.name.length}字) @ ${f.id}` });
+        if (facByName.has(f.name)) problems.push({ level: 'error', msg: `势力名重复: "${f.name}" @ ${f.id} 与 ${facByName.get(f.name)}` });
+        else facByName.set(f.name, f.id);
+    }
+
+    // 据点名
+    const cityByName = new Map<string, string>();
+    for (const c of ed.cities) {
+        if (over5(c.name)) problems.push({ level: 'error', msg: `据点名超5字: "${c.name}"(${c.name.length}字) @ ${c.id}` });
+        if (cityByName.has(c.name)) problems.push({ level: 'error', msg: `据点名重复: "${c.name}" @ ${c.id} 与 ${cityByName.get(c.name)}` });
+        else cityByName.set(c.name, c.id);
+    }
+
+    const errs = problems.filter(p => p.level === 'error').length;
+    problems.push({
+        level: errs === 0 ? 'info' : 'warn',
+        msg: `名称审计：武将 ${Object.keys(ed.generals).length} · 精锐 ${Object.keys(ed.elites).length} · 势力 ${ed.factions.length} · 据点 ${ed.cities.length}；上限 5 字、全局不重名${errs === 0 ? '，全部合规 ✓' : `，${errs} 处违规`}`,
+    });
+
+    issues = problems;
+    els.validationTitle.textContent = '名称审计（≤5 字 · 不重名）';
+    renderValidation();
+    els.validation.style.display = 'block';
+    applyFilter();
+    renderTable();
+    updateStats();
+    showToast(
+        errs === 0 ? '✓ 全部名称合规（≤5 字、无重名）' : `名称违规：${errs} 处（超5字/重名）`,
+        errs > 0,
+    );
+}
+
 function renderValidation(): void {
     const errors = issues.filter(i => i.level === 'error');
     const warns = issues.filter(i => i.level === 'warn');
@@ -2064,6 +2129,9 @@ function bindEvents(): void {
     });
     document.getElementById('bm-skill-coverage')!.addEventListener('click', () => {
         runSkillCoverageCheck();
+    });
+    document.getElementById('bm-name-audit')!.addEventListener('click', () => {
+        runNameAudit();
     });
     document.getElementById('bm-validate')!.addEventListener('click', () => {
         runValidation();

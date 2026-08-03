@@ -1014,32 +1014,65 @@ function checkDuplicatePortraits(): void {
 }
 
 /**
- * 悬空调校自检（2026-08-03 血训修复）：调校表里的 key 指向的图片文件不存在 = 失联。
- * 图片被改名/移动/删除而调校 key 没跟着走时，读图回落默认值 → "调好又变"。
- * tuner 打开时报告，绝不静默。
+ * 悬空调校自动清理（2026-08-03 主人定，取代同日早些时候的弹窗自检）：
+ * 调校 key 指向的图片文件不存在 = 死记录。如今改名场景全都自动迁移 key
+ * （F2/tuner 绑图改名、dev 启动三层分类改名），剩下的悬空基本都是主人删图后的残留，
+ * 弹窗警告只剩骚扰——改成启动时静默清掉，控制台留痕即可。
+ *
+ * 追回保险（万一清错）：清掉的 key 和值都打进控制台；portrait_adjust.ts 每日有
+ * git 自动备份，node tools/lib/portrait_adjust_recover.mjs 也还在（三层追回）。
  */
-function checkOrphanAdjustKeys(): number {
-    if (!adjustData?.images) return 0;
+async function cleanOrphanAdjustKeys(): Promise<void> {
+    if (!adjustData?.images) return;
     const diskPaths = new Set<string>();
     for (const cat of portraitCatalog) {
         for (const img of cat.images) diskPaths.add(img.path);
     }
-    const orphans: string[] = [];
-    for (const k of Object.keys(adjustData.images)) {
-        if (!diskPaths.has(k)) orphans.push(k);
+    // 目录快照空着 = 目录接口没加载成功，此时全表都会误判失联，绝不能清
+    if (diskPaths.size === 0) return;
+    const orphans = Object.keys(adjustData.images).filter((k) => !diskPaths.has(k));
+    if (orphans.length === 0) return;
+
+    console.warn(`[PortraitTuner] ${orphans.length} 条调校记录的图片已不在磁盘（删图残留），自动清理。清掉的值如下（git 历史可找回）：`);
+    for (const k of orphans) console.warn('   ', k, JSON.stringify(adjustData.images[k]));
+
+    // 与 saveAdjustToServer 同款乐观锁写盘：拉最新盘上数据 → 只删死键 → 带 mtime 写回，
+    // 409（读写间隙他处写盘）自动重拉重试，不会覆盖 F2 / 其它标签页刚存的调校。
+    for (let attempt = 0; ; attempt++) {
+        const fresh = await fetch('/api/portrait-adjust');
+        if (!fresh.ok) {
+            console.warn(`[PortraitTuner] 读盘失败（HTTP ${fresh.status}），本次不清理，下次打开再试`);
+            return;
+        }
+        const baseMtime = fresh.headers.get('X-Adjust-Mtime') ?? '';
+        const payload: PortraitAdjustData = await fresh.json();
+        payload.images = payload.images ?? {};
+        let removed = 0;
+        for (const k of orphans) {
+            if (k in payload.images) {
+                delete payload.images[k];
+                removed++;
+            }
+        }
+        if (removed === 0) break; // 盘上已经没有这些键（他处已清），本地同步一下即可
+        if (!payload.folderGuides) payload.folderGuides = {};
+        const res = await fetch('/api/save-portrait-adjust', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Adjust-Base-Mtime': baseMtime },
+            body: JSON.stringify(payload),
+        });
+        if (res.status === 409 && attempt < 2) {
+            console.warn(`[PortraitTuner] 清理死记录时写盘冲突，自动重拉重试 ${attempt + 1}/2`);
+            continue;
+        }
+        if (!res.ok) {
+            console.warn(`[PortraitTuner] 清理死记录写盘失败（HTTP ${res.status}），下次打开再试`);
+            return;
+        }
+        break;
     }
-    if (orphans.length === 0) return 0;
-    console.warn(`[PortraitTuner] ⚠ ${orphans.length} 条调校 key 指向不存在的文件（图片被改名/移动/删除）：`);
-    for (const k of orphans.slice(0, 15)) console.warn('   ', k);
-    if (orphans.length > 15) console.warn(`    … 其余 ${orphans.length - 15} 条`);
-    alert(
-        `⚠ 检测到 ${orphans.length} 条调校记录指向不存在的文件（失联）！\n\n` +
-        `原因：图片被改名/移动/删除，而调校 key 没跟着迁移。\n` +
-        `这些立绘的缩放/位置已回落默认值——就像上次"调好又变"。\n\n` +
-        `解决：node tools/lib/portrait_adjust_recover.mjs 追回（默认 dry-run 预览，加 --apply 写盘；\n` +
-        `内含改名日志 / git rename / MD5 内容匹配三层）。`
-    );
-    return orphans.length;
+    for (const k of orphans) delete adjustData.images[k];
+    console.log(`[PortraitTuner] ✅ 已清理 ${orphans.length} 条死记录`);
 }
 
 async function boot(): Promise<void> {
@@ -1058,7 +1091,7 @@ async function boot(): Promise<void> {
         adjustData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
     }
 
-    checkOrphanAdjustKeys();
+    await cleanOrphanAdjustKeys();
 
     loadDraftForSelected();
     renderGrid();

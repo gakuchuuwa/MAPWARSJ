@@ -4032,13 +4032,25 @@ export class CombatUI {
         unit: IBattleUnit,
         side: 'attacker' | 'defender',
     ): void {
-        const rec = unit.generalId ? getGeneralRecordByGeneralId(unit.generalId) : null;
+        let generalId = unit.generalId;
+        let rec = generalId ? getGeneralRecordByGeneralId(generalId) : null;
+        if (!rec) {
+            // 显示单位无在册将（典型：攻城战守方顶到前排的城防驻军）→ 名牌退回
+            // 开战锁定指挥官/放技将，与技能条同口径（resolvePowerBadgeUnit），
+            // 否则出现「技能条在放将技、名牌却空着」（2026-08-03 顺昌攻防战守方无名）。
+            const cmd = this.resolvePowerBadgeUnit(unit, side);
+            const cmdRec = cmd.generalId ? getGeneralRecordByGeneralId(cmd.generalId) : null;
+            if (cmdRec) {
+                generalId = cmd.generalId;
+                rec = cmdRec;
+            }
+        }
         const famousBadge = side === 'attacker' ? this.leftFamousBadge : this.rightFamousBadge;
         if (rec) {
             tag.textContent = rec.generalName;
             tag.style.display = 'block';
-            tag.dataset.generalId = unit.generalId!;
-            if (unit.generalId && getGeneralProfile(unit.generalId)?.tier === 'famous') {
+            tag.dataset.generalId = generalId!;
+            if (generalId && getGeneralProfile(generalId)?.tier === 'famous') {
                 famousBadge.style.display = 'block';
             } else {
                 famousBadge.style.display = 'none';
