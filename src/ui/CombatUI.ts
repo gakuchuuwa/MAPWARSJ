@@ -110,11 +110,11 @@ const BAR_ENTER_RATIO_OF_ACT1 = 1;
  * 后 6 秒才明显拉开——这才是「相持」。1 = 匀速，3 = 末段过于突兀。
  */
 const BAR_ACT1_EASE_POWER = 2;
-/** 第一阶段摆幅（小幅角力，不与开战语音抢戏） */
-const BAR_SWING_ACT1 = 1;
-/** 第二阶段摆幅：起手拉满 4 → 收束到 1，与「一边倒」的推进叠加 */
+/** 第一阶段摆幅（小幅角力，不与开战语音抢戏；2026-08-03 从 1 提到 3：±0.9% 太死，几乎看不出争斗感） */
+const BAR_SWING_ACT1 = 3;
+/** 第二阶段摆幅：起手拉满 4 → 收束到 3（2026-08-03 从 1 提到 3：收束太狠导致后半段几乎静止） */
 const BAR_SWING_ACT2_FROM = 4;
-const BAR_SWING_ACT2_TO = 1;
+const BAR_SWING_ACT2_TO = 3;
 /** 第三阶段相持的摆幅（主人要「大浮动摇摆」，故远大于前两阶段的收束值） */
 const BAR_SWING_ACT3 = 4;
 /** 溃败悬停（2026-08-03 主人定）：败方兵力数字减到初始的该比例即停住（残兵困守），
@@ -3896,9 +3896,10 @@ export class CombatUI {
         const stalematePct = 50 + lead * (CLASH_STALEMATE_PCT - 50);
 
         // 摇摆走战斗逻辑时钟（2026-08-03 主人定）：周期约 12.6s，平时沉稳缓慢，
-        // 只有崩溃段（u^6）才快速下落；暂停即停摆、倍速随战斗同频。谐波弱化去「碎动」。
+        // 只有崩溃段（u^6）才快速下落；暂停即停摆、倍速随战斗同频。谐波 0.2 提供拍频变化感
+        // （0.1 时调制太浅，摆动幅度几乎恒定，观感死板）。
         const swingT = battleClockSec / 2.0;
-        const swingUnit = Math.sin(swingT) * 0.8 + Math.sin(swingT * 1.4) * 0.1;
+        const swingUnit = Math.sin(swingT) * 0.8 + Math.sin(swingT * 1.4) * 0.2;
 
         let attPct: number;
         if (progress < PHASE_STALEMATE_START) {

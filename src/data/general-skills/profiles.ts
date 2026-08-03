@@ -1997,7 +1997,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    zhuozhou_anlushan: { generalId: 'zhuozhou_anlushan', tier: 'famous', tacticalSkillId: 'ts_226', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_226', atkAdvantageSkillId: 'ts_480', atkBalanceSkillId: 'ts_366', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_653', defDisadvantageSkillId: 'ts_006', aptitude: 'leverage' , attackStyle: 'attack'},
+    zhuozhou_anlushan: { generalId: 'zhuozhou_anlushan', tier: 'famous', tacticalSkillId: 'ts_480', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_480', atkBalanceSkillId: 'ts_366', atkDisadvantageSkillId: 'ts_226', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_653', defDisadvantageSkillId: 'ts_006', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
