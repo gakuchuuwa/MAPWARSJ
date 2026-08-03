@@ -23,17 +23,19 @@
 const ENDPOINT = '/__dev/reload-gate';
 const HEARTBEAT_MS = 5_000;
 
-/** 推演是否正在运行 —— 读 TimeSystem 的暂停位；未初始化 / 未开播 / 已暂停都算「没在跑」 */
-function isGameRunning(): boolean {
+function shouldBlock(): boolean {
     const timeSystem = (window as any).game?.timeSystem;
-    return timeSystem ? !timeSystem.isGamePaused() : false;
+    const running = timeSystem ? !timeSystem.isGamePaused() : false;
+    // F2 立绘校正打开时强制闸门关：校正需暂停推演，若按「暂停=可刷新」会让整页刷新打断校正
+    const correctorOpen = (window as any).__portraitCorrectorOpen === true;
+    return running || correctorOpen;
 }
 
 function report(): void {
     void fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ block: isGameRunning() }),
+        body: JSON.stringify({ block: shouldBlock() }),
         keepalive: true,
     }).catch(() => {
         /* dev server 正在重启或已关闭，忽略即可——服务端 15 秒后自动开闸 */
@@ -54,6 +56,8 @@ export function initReloadGate(): void {
         }
     };
     tryHookPauseChange();
+    // F2 校正器关闭后主动补报一次（若恢复后的暂停状态与打开前相同，setPaused 不触发 onPauseChange）
+    window.addEventListener('reload-gate-ping', () => report());
     window.setInterval(() => {
         tryHookPauseChange();
         report();

@@ -1846,7 +1846,9 @@ async function runSkillCoverageCheck(): Promise<void> {
 }
 
 /** 名称审计（2026-08-03 主人定）：武将/精锐/势力/据点名称 ≤5 字且全局不重名。
- *  武将名规范：本名优先，重名避不开时用称呼（如「勇敢者」阿方索六世）。 */
+ *  武将名分层标准：①本名/本名+序数（阿方索六世、腓特烈二世）——本身就是大众熟知叫法，用之；
+ *  ②通用历史符号型称呼（成吉思汗、熙德、黑太子、巴巴罗萨）——大众比本名更熟且称呼已成通用名，用之；
+ *  ③纯描述性绰号/封号（勇敢者、沉默者、救主、左贤王）——不像名字看不出是谁，必须用本名。 */
 function runNameAudit(): void {
     if (!entityData) { showToast('数据未加载，请先刷新', true); return; }
     const ed = entityData; // 收窄引用（闭包内 entityData 不被 null 检查收窄）
