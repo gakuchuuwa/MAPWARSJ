@@ -24,7 +24,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     yadelaiya: { name: '威尼斯舰队', tier: 2 },          // 威尼斯·丹多洛
     aquidan: { name: '黑太子军', tier: 2 },          // 波尔多·黑太子：普瓦捷
     mulabite: { name: '穆拉比特军', tier: 2 },          // 马拉喀什·塔什芬
-    aguelabu: { name: '阿拉伯军', tier: 2 },          // 凯鲁万·奥克巴：北非征服
+    aguelabu: { name: '奥克巴骑', tier: 2 },          // 凯鲁万·奥克巴：北非征服
     luodesi: { name: '医院骑士', tier: 2 },          // 罗得城·德米特里：1522守岛
     maerta_qishi: { name: '马耳他骑士', tier: 2 },          // 马耳他·拉·瓦莱特：1565大围攻以少胜多
 
@@ -32,55 +32,55 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     liguliya: { name: '热那亚海军', tier: 3 },          // 热那亚·安德烈亚
     lunbadi: { name: '米兰弩手', tier: 3 },          // 米兰·斯福尔扎
     gaolu: { name: '法兰西骑士', tier: 3 },          // 巴黎·查理七世
-    // 图卢兹·雷蒙五世：无专名精锐；十字军东征属雷蒙四世（见 puluowangsi 圣吉尔军）→ T4
-    langgeduoke: { name: '图卢兹军', tier: 4 },
-    jiatailuoniya: { name: '阿拉贡军', tier: 3 },          // 巴塞罗那·海梅
+    // 图卢兹·雷蒙五世：古名 Tolosa →「托洛萨骑」美化；无战役专名高光，档仍 T4（不抬）
+    langgeduoke: { name: '托洛萨骑', tier: 4 },
+    jiatailuoniya: { name: '阿拉贡骑', tier: 3 },          // 巴塞罗那·海梅
     guadaer: { name: '圣地亚哥', tier: 2 },          // 塞维利亚·费尔南多：1170卡斯蒂利亚军事修会，格拉纳达战争主力（2026-08-02 原卡斯蒂军T3升）
-    andaluoxiya: { name: '安达卢军', tier: 3 },          // 科尔多瓦·阿卜杜拉
-    putaoya: { name: '葡萄牙军', tier: 3 },          // 里斯本·阿方索·恩里克
-    babali: { name: '巴巴里军', tier: 3 },          // 阿尔及尔·巴巴罗萨
+    andaluoxiya: { name: '安达卢骑', tier: 3 },          // 科尔多瓦·阿卜杜拉
+    putaoya: { name: '葡萄牙骑', tier: 3 },          // 里斯本·阿方索·恩里克
+    babali: { name: '阿尔及骑', tier: 3 },          // 阿尔及尔·巴巴罗萨
     telibolisi: { name: '巴巴里海盗', tier: 3 },          // 的黎波里·德拉古特：北非海盗身份可考 → T3
     // 维罗纳·坎格兰德：斯卡拉家族治军，非「铁骑」专名 → T3
-    bohepingyuan: { name: '斯卡拉军', tier: 3 },
+    bohepingyuan: { name: '斯卡拉骑', tier: 3 },
     kejila: { name: '科基拉水军', tier: 3 },          // 科孚·舒伦堡：希腊仅次于雅典的第二海军强国（修昔底德），前433西波塔海战
     // 拉文纳·狄奥多里克：无史籍「东哥特重骑」专名 → T4 存在
-    donggete: { name: '东哥特军', tier: 4 },
+    donggete: { name: '狄奥多卫', tier: 4 },
     anuo: { name: '比萨海军', tier: 3 },          // 比萨·乌戈里诺
-    balunxiya: { name: '瓦伦西亚军', tier: 3 },          // 巴伦西亚·熙德
+    balunxiya: { name: '熙德骑', tier: 3 },          // 巴伦西亚·熙德
 
     // ── T4 存在之兵 ──
     // 那不勒斯·卡洛（安茹）：安茹骑士可考，无「重骑」专名高光 → T3
     kanpaniya: { name: '安茹骑士', tier: 3 },
     // 佛罗伦萨·洛伦佐：美第奇治下卫军/佣兵 → T4
     tuosikana: { name: '美第奇卫', tier: 4 },
-    xixiliwangguo: { name: '西西里军', tier: 3 },          // 巴勒莫·腓特烈二世
-    gaolu_luoma: { name: '法兰西军', tier: 3 },          // 里昂·克洛维
+    xixiliwangguo: { name: '西西里骑', tier: 3 },          // 巴勒莫·腓特烈二世
+    gaolu_luoma: { name: '克洛维骑', tier: 3 },          // 里昂·克洛维
     // 托莱多·阿方索六世：卡拉特拉瓦团1158建，晚于其卒年；收复托莱多卡斯蒂主力 → T4
-    xigete: { name: '卡斯蒂军', tier: 4 },
+    xigete: { name: '卡斯蒂骑', tier: 4 },
     // 格拉纳达·穆罕默德：纳斯里摩尔骑兵风土 → T3（禁造「阿兰布拉卫」）
     nasier: { name: '摩尔骑', tier: 3 },
-    feiniqi: { name: '腓尼基军', tier: 3 },          // 加的斯·哈米尔卡
-    yidelisi: { name: '伊德里斯军', tier: 4 },          // 非斯·伊德里斯
-    xilagu: { name: '叙拉古军', tier: 4 },          // 锡拉库萨·阿加索克利
-    leangongguo: { name: '莱昂军', tier: 4 },          // 萨拉曼卡·阿方索九世
+    feiniqi: { name: '腓尼基骑', tier: 3 },          // 加的斯·哈米尔卡
+    yidelisi: { name: '伊德里斯骑', tier: 4 },          // 非斯·伊德里斯
+    xilagu: { name: '叙拉古骑', tier: 4 },          // 锡拉库萨·阿加索克利
+    leangongguo: { name: '莱昂骑', tier: 4 },          // 萨拉曼卡·阿方索九世
     // 梅西纳·罗杰一世：诺曼骑士征服西西里海峡 → T2
     moxina: { name: '诺曼骑士', tier: 2 },
     // 萨拉戈萨·海梅一世：阿尔莫加瓦（Almogávares）突袭轻装 → T2
     alagong: { name: '阿尔莫加瓦', tier: 2 },
     // 休达·恩里克：基督骑士团大团长（非阿维斯）→ T2
     zhibuluotuo: { name: '基督骑士', tier: 2 },
-    zhayan: { name: '扎扬军', tier: 4 },          // 特莱姆森·亚格姆拉森
-    hamade: { name: '哈马德军', tier: 4 },          // 布佳亚·哈马德
-    sading: { name: '撒丁军', tier: 4 },          // 卡利亚里·埃莱奥诺拉
-    jileinaijia: { name: '昔兰尼加军', tier: 4 },          // 班加西·马加斯
+    zhayan: { name: '扎扬骑', tier: 4 },          // 特莱姆森·亚格姆拉森
+    hamade: { name: '哈马德骑', tier: 4 },          // 布佳亚·哈马德
+    sading: { name: '撒丁骑', tier: 4 },          // 卡利亚里·埃莱奥诺拉
+    jileinaijia: { name: '昔兰尼骑', tier: 4 },          // 班加西·马加斯
     kelite: { name: '克里特弓手', tier: 3 },          // 诺索斯·福卡斯：961收复克里特；克里特弓箭手为希腊世界最著名雇佣兵（色诺芬长征记），文化知名T3
     // 南特·吉尔德雷斯：无专名精锐 → T4
-    aermolika: { name: '南特军', tier: 4 },
+    aermolika: { name: '卢瓦尔骑', tier: 4 },
     // 雷恩·阿兰一世：布列塔尼地方军抗维京 → T4
-    bulietani: { name: '布列塔尼军', tier: 4 },
+    bulietani: { name: '阿莫里骑', tier: 4 },
     // 阿维尼翁·雷蒙四世（圣吉尔）：第一次十字军主力 → T2（勿挂「教皇军」，阿维尼翁教廷在14世纪）
     puluowangsi: { name: '圣吉尔军', tier: 2 },
     // 加莱·罗贝尔二世（佛兰德）：第一次十字军佛兰德骑从，非英格兰长弓 → T2
     fulandesi: { name: '佛兰德骑', tier: 2 },
-    mengtainiya: { name: '蒙泰尼亚军', tier: 2 },          // 布加勒斯特·巴萨拉布
+    mengtainiya: { name: '蒙泰骑', tier: 2 },          // 布加勒斯特·巴萨拉布
 };

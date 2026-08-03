@@ -6122,11 +6122,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/SLAVIC/__闲置__SLAVIC_01.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -36
-        },
         "/assets/SLAVIC/fulajimier_gongguo_andelie.png": {
             "scale": 1.11,
             "offsetX": 0,

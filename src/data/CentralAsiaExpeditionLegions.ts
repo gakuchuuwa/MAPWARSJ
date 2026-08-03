@@ -12,7 +12,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   saman: { name: '萨曼古拉姆', tier: 3 },     // 伊斯兰世界古拉姆制度的标志性代表，升入T3知名
     huarazim: { name: '钦察精骑', tier: 1 },          // 库曼/钦察草原的绝对霸主，后来马穆鲁克的核心兵源，战略地位极高，升入T1战略
   qincha: { name: '康里精骑', tier: 3 },              // 花剌子模和早期蒙古帝国中极其出名的突击力量，文化辨识度高，升入T3知名
-  qiepantuo: { name: '护密镇军', tier: 4 },   // 护密城·瓦罕走廊戍卫
+  qiepantuo: { name: '瓦罕戍骑', tier: 4 },   // 护密城·瓦罕走廊戍卫
     tiemuer: { name: '察合台突骑', tier: 1 },
   kazakh: { name: '哈萨克骑', tier: 2 },     // 哈萨克汗国主力，普将配T2
   seljuq: { name: '塞尔柱突骑', tier: 0 },     // 木鹿·桑贾尔：1040 丹丹纳康之战即在木鹿近郊，图格里勒／恰格里以约两万突骑

@@ -117,6 +117,9 @@ const BAR_SWING_ACT2_FROM = 4;
 const BAR_SWING_ACT2_TO = 1;
 /** 第三阶段相持的摆幅（主人要「大浮动摇摆」，故远大于前两阶段的收束值） */
 const BAR_SWING_ACT3 = 4;
+/** 溃败悬停（2026-08-03 主人定）：败方兵力数字减到初始的该比例即停住（残兵困守），
+ *  断崖 1 秒内随条子 u^6 同步崩到 0（兵败如山倒）。纯显示层，不碰引擎实际兵力。 */
+const LOSER_HOLD_PCT = 0.10;
 
 /**
  * 文化标签文案表：技能条上那枚「能征惯战 / 山河险固」样式的名牌。
@@ -3823,6 +3826,28 @@ export class CombatUI {
 
         // 蓄力收缩：会放技侧立绘随游戏时间缓缩，技能亮相时刻缩到底（脉冲从收缩值弹起）
         this.updatePortraitWinddown();
+
+        // 溃败悬停（2026-08-03 主人定）：第三阶段起败方兵力数字减到初始 10% 即停住，
+        // 断崖 1 秒内随条子 u^6 同步崩到 0——「残兵困守 → 兵败如山倒」的溃败感。
+        // 方向跟随 collapseStartAttPct（第三阶段锁定，与条子断崖同侧），翻盘不横穿。
+        // 纯显示层：只改渲染给玩家的数字，title 仍写引擎真实兵力。
+        if (this.collapseStartAttPct !== null) {
+            const bc: any = this.boundRegionalBattleField || this.currentBattle;
+            const prog = bc ? Math.min(1, (bc.elapsed || 0) / Math.max(1, bc.targetDuration || 17)) : 1;
+            if (prog >= PHASE_COLLAPSE_START) {
+                const s = Math.min(1, (prog - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
+                const attWins = this.collapseStartAttPct >= 50;
+                const applyLoserHold = (cur: number, max: number) => {
+                    const base = max * LOSER_HOLD_PCT;
+                    if (s < BAR_CLIFF_START) return Math.max(cur, base); // 相持段：减到 10% 即悬停
+                    const u = (s - BAR_CLIFF_START) / Math.max(0.0001, 1 - BAR_CLIFF_START);
+                    return base * (1 - Math.pow(u, 6)); // 断崖段：10% 随条子 u^6 崩到 0
+                };
+                if (!attWins) attCurrent = applyLoserHold(attCurrent, attMax);
+                else defCurrent = applyLoserHold(defCurrent, defMax);
+            }
+        }
+
         // 侧栏「名称: 兵力」+ 各自小血条；中央主条为双方兵力比
         this.renderSideLabel('attacker', this.attackerDisplayName, attCurrent);
         this.renderSideLabel('defender', this.defenderDisplayName, defCurrent);
