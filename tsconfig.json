@@ -24,6 +24,7 @@
     ],
     "exclude": [
         "scripts",
-        "node_modules"
+        "node_modules",
+        "src/data/portrait_adjust_backups"
     ]
 }

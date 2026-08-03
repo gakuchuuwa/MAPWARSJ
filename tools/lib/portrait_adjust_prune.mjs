@@ -15,7 +15,8 @@ const ADJ = path.join(ROOT, 'src', 'data', 'portrait_adjust.ts');
 const ASSETS = path.join(ROOT, 'public', 'assets');
 const BACKUP_DIR = path.join(ROOT, 'src', 'data', 'portrait_adjust_backups');
 
-const DRY = process.argv.includes('--dry-run');
+// 默认 dry-run：只有显式 --apply 才写盘（与顶部用法说明一致；改表脚本绝不默认动盘）
+const DRY = !process.argv.includes('--apply');
 
 const IMAGES_OPEN = '    "images": {';
 

@@ -80,7 +80,7 @@ app.innerHTML = `
     <span class="pt-hint">快捷键：A 自动对齐，[ ] 上/下一张，方向键平移，W/S 缩放（Shift 加速）</span>
     <a href="/" class="pt-link">← 返回游戏</a>
     <button type="button" id="pt-auto-align" class="pt-btn pt-btn-ghost" title="按检测自动设置 scale/offsetY（头部大小与上下位置），offsetX 交手动。三件套依据见 tools/PortraitAlign/align_one.py">🎯 自动对齐 (A)</button>
-    <button type="button" id="pt-batch-align" class="pt-btn pt-btn-ghost" title="当前文件夹全部立绘自动对齐（只写预览，不保存，满意再 Ctrl+S）">⚡ 批量对齐本夹</button>
+    <button type="button" id="pt-batch-align" class="pt-btn pt-btn-ghost" title="当前文件夹全部立绘自动对齐并直接落盘（服务端自动滚动备份，可回滚）；会覆盖本夹已有手调值">⚡ 批量对齐本夹</button>
     <button type="button" id="pt-reload" class="pt-btn pt-btn-ghost">重新加载</button>
     <button type="button" id="pt-save-file" class="pt-btn pt-btn-primary">保存 (Ctrl+S)</button>
   </div>
@@ -1012,8 +1012,8 @@ function checkOrphanAdjustKeys(): number {
         `⚠ 检测到 ${orphans.length} 条调校记录指向不存在的文件（失联）！\n\n` +
         `原因：图片被改名/移动/删除，而调校 key 没跟着迁移。\n` +
         `这些立绘的缩放/位置已回落默认值——就像上次"调好又变"。\n\n` +
-        `解决：跑 tools/lib/portrait_adjust_migrate.mjs 用改名日志追回，\n` +
-        `或让 AI 用 MD5 内容匹配重建 key 映射。`
+        `解决：node tools/lib/portrait_adjust_recover.mjs 追回（默认 dry-run 预览，加 --apply 写盘；\n` +
+        `内含改名日志 / git rename / MD5 内容匹配三层）。`
     );
     return orphans.length;
 }

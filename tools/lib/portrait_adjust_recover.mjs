@@ -20,7 +20,8 @@ const ADJ = path.join(ROOT, 'src', 'data', 'portrait_adjust.ts');
 const ASSETS = path.join(ROOT, 'public', 'assets');
 const BACKUP_DIR = path.join(ROOT, 'src', 'data', 'portrait_adjust_backups');
 
-const DRY = process.argv.includes('--dry-run');
+// 默认 dry-run：只有显式 --apply 才写盘（与顶部用法说明一致；改表脚本绝不默认动盘）
+const DRY = !process.argv.includes('--apply');
 
 // ── 1. 解析调校表 images 段 ──
 const IMAGES_OPEN = '    "images": {';
@@ -192,6 +193,23 @@ function main() {
                 md5Saved++;
             }
         } catch { /* 取不到就跳过 */ }
+    }
+
+    // 目标 key 上已有活记录（现值可能是主人更新的手调）→ 不追回、不顶掉，列出来人工裁决。
+    // 2026-08-03 血训：首跑没这层防护，355 个目标名撞了活记录被写成重复键，
+    // JSON round-trip 静默去重后 49 条较新手调被旧孤儿值顶掉。绝不再静默二选一。
+    const liveKeys = new Set(entries.filter((e) => diskPaths.has(e.key)).map((e) => e.key));
+    const conflicts = [];
+    for (const [from, to] of [...remap]) {
+        if (liveKeys.has(to)) {
+            conflicts.push({ from, to });
+            remap.delete(from);
+        }
+    }
+    if (conflicts.length > 0) {
+        console.log(`\n⚠ ${conflicts.length} 条目标 key 已有活调校，跳过不顶（如需用旧值请人工比对）：`);
+        for (const c of conflicts.slice(0, 10)) console.log(`  ${c.from}\n    ×> ${c.to}（已有活值）`);
+        if (conflicts.length > 10) console.log(`  … 其余 ${conflicts.length - 10} 条`);
     }
 
     console.log(`\n可追回: ${remap.size} 条（改名日志+git ${remap.size - md5Saved} | MD5 内容匹配 ${md5Saved}）`);
