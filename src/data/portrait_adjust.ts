@@ -7830,7 +7830,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/LATIN/__多余__LATIN_02.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": 21
+            "offsetY": 32
         },
         "/assets/LATIN/xixiliwangguo_feitelieershi.png": {
             "scale": 1,
@@ -8325,7 +8325,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/SLAVIC/__多余__SLAVIC_04.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": 33
+            "offsetY": 32
         },
         "/assets/LATIN/__多余__LATIN_08.png": {
             "scale": 1.03,
@@ -9053,9 +9053,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 33
         },
         "/assets/SLAVIC/taolika_asipuergesi.png": {
-            "scale": 1.08,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": 33
+            "offsetY": 32
         },
         "/assets/CENTRAL_ASIA/63b676e8-a66a-431a-8b65-1c9b03f10038.png": {
             "scale": 1.19,
