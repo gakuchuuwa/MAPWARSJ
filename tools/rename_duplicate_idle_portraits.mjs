@@ -240,7 +240,7 @@ function main() {
         // 2026-08-03 改为显式失败：绝不静默。迁移失败 = 主人的调校在失联，必须高亮。
         console.error('  ❌❌ 调校键迁移失败（严重：本次改名造成的调校失联无法自动恢复）:');
         console.error('     ' + (e?.message ?? e));
-        console.error('     补救：手动运行 node tools/lib/portrait_adjust_migrate.mjs 或重启 dev 前检查 portrait_adjust.ts 是否被占用');
+        console.error('     补救：node tools/lib/portrait_adjust_recover.mjs（默认 dry-run 预览，加 --apply 写盘）');
         // 不阻塞启动（dev 钩子语义），但失败可见
     }
 
