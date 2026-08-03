@@ -36,7 +36,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'zhayan': 'city_teleimusen',
   'babali': 'city_aerjier',
   'hamade': 'city_bujiaya',
-  'buni': 'city_jiataji',
+'buni': 'city_jiataji',
   'aguelabu': 'city_kailuwan',
   'telibolisi': 'city_deliboli',
   'jileinaijia': 'city_banjiaxi',

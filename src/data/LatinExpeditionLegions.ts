@@ -16,7 +16,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     maqidun: { name: '马其顿方阵', tier: 2 },          // 萨洛尼卡·亚历山大：征服波斯
 
     // ── T2 特色之兵 ──
-    buni: { name: '迦太基军', tier: 2 },          // 迦太基·汉尼拔：坎尼经典
+    buni: { name: '迦太基军', tier: 2 },
     xila: { name: '雅典海军', tier: 2 },          // 雅典·地米斯托克利：萨拉米斯
     lagoniya: { name: '斯巴达重装', tier: 2 },          // 斯巴达·列奥尼达：普拉提亚
     boootiya: { name: '底比斯圣队', tier: 2 },          // 底比斯·伊巴密浓达：留克特拉

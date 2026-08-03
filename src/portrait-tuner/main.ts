@@ -79,7 +79,8 @@ app.innerHTML = `
   <div class="pt-header-actions">
     <span class="pt-hint">快捷键：A 自动对齐，[ ] 上/下一张，方向键平移，W/S 缩放（Shift 加速）</span>
     <a href="/" class="pt-link">← 返回游戏</a>
-    <button type="button" id="pt-auto-align" class="pt-btn pt-btn-ghost" title="按检测到的眼睛位置自动设置垂直偏移；缩放不动">🎯 自动对齐 (A)</button>
+    <button type="button" id="pt-auto-align" class="pt-btn pt-btn-ghost" title="按检测自动设置 scale/offsetY（头部大小与上下位置），offsetX 交手动。三件套依据见 tools/PortraitAlign/align_one.py">🎯 自动对齐 (A)</button>
+    <button type="button" id="pt-batch-align" class="pt-btn pt-btn-ghost" title="当前文件夹全部立绘自动对齐（只写预览，不保存，满意再 Ctrl+S）">⚡ 批量对齐本夹</button>
     <button type="button" id="pt-reload" class="pt-btn pt-btn-ghost">重新加载</button>
     <button type="button" id="pt-save-file" class="pt-btn pt-btn-primary">保存 (Ctrl+S)</button>
   </div>
@@ -439,9 +440,26 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
     }
     const payload: PortraitAdjustData = await fresh.json();
     payload.images = payload.images ?? {};
+    // 2026-08-03 血训修复：保存前校验 key 指向的文件存在，防止把"失联 key"继续写回表里
+    // （图片被改名/删除后 key 悬空，保存会固化死键，下次读取回落默认 → 调好又变）
+    const diskPaths = new Set<string>();
+    try {
+        const cat = await (await fetch('/api/portrait-catalog')).json() as { images: { path: string }[] }[];
+        for (const c of cat) for (const img of c.images) diskPaths.add(img.path);
+    } catch { /* 拿不到 catalog 就跳过校验，不阻塞保存 */ }
+    let skippedOrphans = 0;
     for (const k of keysBeingSaved) {
         const v = adjustData.images?.[k];
-        if (v) payload.images[k] = { ...v };
+        if (!v) continue;
+        if (diskPaths.size > 0 && !diskPaths.has(k)) {
+            // 文件已不存在：不写死键，提示主人（防"调好又变"）
+            skippedOrphans++;
+            continue;
+        }
+        payload.images[k] = { ...v };
+    }
+    if (skippedOrphans > 0) {
+        showSaveToast(`⚠ ${skippedOrphans} 条调校指向不存在的文件，已跳过保存（防固化死键）`, true);
     }
     if (!payload.folderGuides) payload.folderGuides = {};
 
@@ -474,9 +492,12 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
 }
 
 /**
- * 一键自动垂直对齐（只改 offsetY，scale / offsetX 一律不动）。
+ * 一键自动对齐三件套：scale（头部大小）/ offsetY（上下）/ offsetX（横向，当前恒 0）。
  * 结果先落到 draft 让你当场看，觉得不对可以继续用方向键微调或直接切走放弃。
- * 依据见 tools/PortraitAlign/align_one.py：5 折交叉验证误差中位 2.08px、86% 在 ±5px 内。
+ * 依据见 tools/PortraitAlign/align_one.py（2026-08-03 全量 1291 张验证）：
+ *   scale  = 0.11676 / 检测脸高(眼→下巴) → 全库脸高 CV 0%（定义恒等），对照手调后 CV 8.5%
+ *   offsetY = -512 × (eyeY - 0.2344)     → 误差中位 1.9px，87.3% ≤5px
+ *   offsetX = 0（全库仅 13.4% 图手调过横向，拟合弱，交手动）
  */
 function autoAlignSelected(): Promise<void> {
     return serialize(async () => {
@@ -492,15 +513,64 @@ function autoAlignSelected(): Promise<void> {
                 showSaveToast(`自动对齐失败：${j.reason ?? '未知'}`, true);
                 return;
             }
-            const before = draft.offsetY;
-            draft.offsetY = j.offsetY;
+            const before = { ...draft };
+            if (typeof j.scale === 'number') draft.scale = j.scale;
+            if (typeof j.offsetX === 'number') draft.offsetX = j.offsetX;
+            if (typeof j.offsetY === 'number') draft.offsetY = j.offsetY;
             dirty = true;
             editVersion++;
             updateSingleGridTransform(selectedImage);
-            showSaveToast(`🎯 offsetY ${before} → ${j.offsetY}（置信度 ${j.score}）`);
+            const parts = [
+                `scale ${before.scale.toFixed(2)}→${j.scale.toFixed(2)}`,
+                `offsetY ${before.offsetY}→${j.offsetY}`,
+            ];
+            if (j.offsetX !== 0) parts.push(`offsetX ${before.offsetX}→${j.offsetX}`);
+            showSaveToast(`🎯 ${parts.join('  ')}（置信度 ${j.score}）`);
         } catch (e) {
             showSaveToast(`自动对齐失败：${e}`, true);
         }
+    });
+}
+
+/**
+ * 批量自动对齐当前文件夹：逐张调 /api/portrait-auto-align，结果写入 adjustData.images（内存预览），
+ * 不自动保存 —— 网格全部刷新成自动对齐效果，主人 Ctrl+S 才落盘。
+ * 检测失败/超时的图跳过并计数，绝不覆盖已有手调值之外的东西（只改检测成功的那几张）。
+ */
+function batchAlignSelected(): Promise<void> {
+    return serialize(async () => {
+        const images = getFilteredImages();
+        if (images.length === 0) {
+            showSaveToast('当前文件夹没有立绘', true);
+            return;
+        }
+        if (!confirm(`对当前文件夹 ${images.length} 张立绘执行自动对齐（只预览，不保存）？\n检测失败/无脸的图会跳过。`)) return;
+        showSaveToast(`⏳ 批量对齐中… 0/${images.length}`);
+        adjustData.images = adjustData.images ?? {};
+        let ok = 0, fail = 0;
+        for (let i = 0; i < images.length; i++) {
+            const p = images[i];
+            try {
+                const res = await fetch(`/api/portrait-auto-align?path=${encodeURIComponent(p)}`);
+                const j = await res.json();
+                if (j.ok) {
+                    adjustData.images[p] = { scale: j.scale, offsetX: j.offsetX ?? 0, offsetY: j.offsetY };
+                    ok++;
+                } else {
+                    fail++;
+                }
+            } catch {
+                fail++;
+            }
+            if ((i + 1) % 20 === 0 || i === images.length - 1) {
+                showSaveToast(`⏳ 批量对齐中… ${i + 1}/${images.length}（成功 ${ok}，跳过 ${fail}）`);
+            }
+        }
+        dirty = true;
+        editVersion++;
+        if (selectedImage) loadDraftForSelected();
+        renderGrid();
+        showSaveToast(`✅ 批量对齐完成：${ok} 张已更新预览，${fail} 张跳过。满意请 Ctrl+S 保存，不满意点「重新加载」还原。`);
     });
 }
 
@@ -572,6 +642,10 @@ function bindEvents(): void {
 
     document.getElementById('pt-auto-align')!.addEventListener('click', () => {
         void autoAlignSelected();
+    });
+
+    document.getElementById('pt-batch-align')!.addEventListener('click', () => {
+        void batchAlignSelected();
     });
 
     document.getElementById('pt-reload')!.addEventListener('click', () => {
@@ -900,6 +974,35 @@ function checkDuplicatePortraits(): void {
     els.dupList.innerHTML += `<div style="margin-top:4px;color:#c08050;">共 ${dups.length} 组重复</div>`;
 }
 
+/**
+ * 悬空调校自检（2026-08-03 血训修复）：调校表里的 key 指向的图片文件不存在 = 失联。
+ * 图片被改名/移动/删除而调校 key 没跟着走时，读图回落默认值 → "调好又变"。
+ * tuner 打开时报告，绝不静默。
+ */
+function checkOrphanAdjustKeys(): number {
+    if (!adjustData?.images) return 0;
+    const diskPaths = new Set<string>();
+    for (const cat of portraitCatalog) {
+        for (const img of cat.images) diskPaths.add(img.path);
+    }
+    const orphans: string[] = [];
+    for (const k of Object.keys(adjustData.images)) {
+        if (!diskPaths.has(k)) orphans.push(k);
+    }
+    if (orphans.length === 0) return 0;
+    console.warn(`[PortraitTuner] ⚠ ${orphans.length} 条调校 key 指向不存在的文件（图片被改名/移动/删除）：`);
+    for (const k of orphans.slice(0, 15)) console.warn('   ', k);
+    if (orphans.length > 15) console.warn(`    … 其余 ${orphans.length - 15} 条`);
+    alert(
+        `⚠ 检测到 ${orphans.length} 条调校记录指向不存在的文件（失联）！\n\n` +
+        `原因：图片被改名/移动/删除，而调校 key 没跟着迁移。\n` +
+        `这些立绘的缩放/位置已回落默认值——就像上次"调好又变"。\n\n` +
+        `解决：跑 tools/lib/portrait_adjust_migrate.mjs 用改名日志追回，\n` +
+        `或让 AI 用 MD5 内容匹配重建 key 映射。`
+    );
+    return orphans.length;
+}
+
 async function boot(): Promise<void> {
     bindEvents();
 
@@ -915,6 +1018,8 @@ async function boot(): Promise<void> {
         console.warn('[PortraitTuner] 使用内置默认配置', err);
         adjustData = structuredClone(DEFAULT_PORTRAIT_ADJUST);
     }
+
+    checkOrphanAdjustKeys();
 
     loadDraftForSelected();
     renderGrid();

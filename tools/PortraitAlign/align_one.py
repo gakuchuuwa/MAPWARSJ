@@ -1,25 +1,28 @@
 """
-单张立绘自动垂直对齐：给一张图，算出应该用的 offsetY。
+单张立绘自动对齐三件套：给一张图，算出应该用的 scale / offsetY / offsetX。
 供 tuner 的「自动对齐」按钮调用（vite 中间件 spawn 本脚本）。
 
 用法:
     python align_one.py <图片绝对路径>
 输出（stdout 一行 JSON）:
-    {"ok":true,"offsetY":-12,"eyeY":0.257,"score":0.93}
+    {"ok":true,"scale":1.12,"offsetX":0,"offsetY":-12,"eyeChin":0.104,"eyeY":0.257,"score":0.93}
     {"ok":false,"reason":"未检测到人脸"}
 
-【只算 offsetY，不算 scale】
-  scale 经 400 张留一法验证：文件夹默认 / 全局单值 / 按脸几何解算 三种方法命中率
-  都只有 44~46%（容差 ±0.05），谁也不比谁强 —— 主人的缩放带审美判断（头盔体积、
-  露多少身体），测不出来，故不自动。
+【公式与依据（2026-08-03 全量 1291 张验证）】
+  scale  = TARGET_FACE / 检测脸高(眼→下巴)
+    · TARGET_FACE = 0.11676 = 主人 1165 条手调「scale × 检测脸高」的中位数
+    · 自动后全库脸高 CV = 0%（定义恒等）；对照手调后 CV = 8.5%
+    · 自动 scale 范围 0.68~1.62，无超 [0.5, 2.0] 异常
+  offsetY = -512 × (眼睛Y - 0.2344)
+    · 5 折交叉验证误差中位 1.9px，87.3% ≤5px，98.3% ≤10px
+    · 512 = 立绘图高 1024 的一半；0.2344 ≈ 配置眼线 PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y = 0.23
+  offsetX = 0（不自动）
+    · 全库仅 13.4% 图手调过横向，线性拟合误差中位 6.3px —— 弱，交给手动
+    · 眼睛X 中位 0.62（立绘天然偏右构图），offsetX=0 是主人默认选择
 
-【offsetY 的公式与依据】
-  5 折交叉验证（每折只用其余 4 折拟合）：误差中位 2.08px，86% 落在 ±5px 内，
-  97.5% 落在 ±10px 内，五折系数稳定（a=-500~-528）。对照「文件夹默认」误差中位 12px。
-  拟合结果 offsetY ≈ -512 x (眼睛Y - 0.2344)：
-    · 512 = 立绘图高 1024 的一半
-    · 0.2344 几乎等于配置里的眼线 PORTRAIT_GUIDE_PREVIEW_EYE_LINE_Y = 0.23
-  算法没读过配置文件，却从主人一千多张手调值里把眼线位置反推了出来 —— 双向印证。
+旧结论「scale 不可自动」作废（2026-08-03 判定标准修正）：
+  之前 400 张留一法测的是「能否猜中你手调的那个数」（命中率 44~46%）；
+  但你要的是「头一样大」—— 按脸高归一化在定义上就把 CV 压到 0，手调残差 8.5%。
 """
 import json
 import os
@@ -29,11 +32,12 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from detect import detect_face   # noqa: E402
 
-# 见上方注释：由 1023 张手调值拟合并交叉验证得出
-COEF_A = -512.0
-EYE_LINE = 0.2344
-# 超过这个偏差就认为检测可疑（对照：训练集 p90 = 5.8px），交给主人手调
-SANE_ABS_MAX = 240
+# 全量 1291 张 + 1165 条手调对照得出（tools/PortraitAlign/auto_params.json）
+TARGET_FACE = 0.11676          # 目标脸高（眼→下巴，归一化到图高）
+COEF_A = -512.0                # offsetY 系数
+EYE_LINE = 0.2344              # 目标眼睛线
+SANE_ABS_MAX = 240             # offsetY 合理范围（训练集 p90 = 5.8px 的保守界）
+SCALE_MIN, SCALE_MAX = 0.5, 2.0  # scale 合理范围（全库自动值 0.68~1.62）
 
 
 def align(path):
@@ -46,13 +50,28 @@ def align(path):
     if r is None:
         return {"ok": False, "reason": "未检测到人脸"}
 
-    eye_y = float(r["eye_mid"][1])
-    offset = COEF_A * (eye_y - EYE_LINE)
-    if abs(offset) > SANE_ABS_MAX:
-        return {"ok": False, "reason": f"算出的偏移 {offset:.0f} 超出合理范围，请手动调整"}
+    eye_mid = r["eye_mid"]
+    mouth_mid = ((r["mouthR"][0] + r["mouthL"][0]) / 2, (r["mouthR"][1] + r["mouthL"][1]) / 2)
+    eye_y = float(eye_mid[1])
+    # 眼→下巴 = 1.8 × 眼→嘴（嘴下方 0.8 倍"眼→嘴"距离外推下巴，见 metric_head.py）
+    eye_chin = 1.8 * float(mouth_mid[1] - eye_mid[1])
+
+    # scale：目标脸高 ÷ 检测脸高（脸高 CV → 0）
+    scale = TARGET_FACE / eye_chin if eye_chin > 1e-4 else 1.0
+    if not (SCALE_MIN <= scale <= SCALE_MAX):
+        return {"ok": False, "reason": f"算出的缩放 {scale:.2f} 超出合理范围 [{SCALE_MIN}, {SCALE_MAX}]，请手动调整"}
+
+    # offsetY：眼睛拉到眼线（已验证）
+    offset_y = COEF_A * (eye_y - EYE_LINE)
+    if abs(offset_y) > SANE_ABS_MAX:
+        return {"ok": False, "reason": f"算出的垂直偏移 {offset_y:.0f} 超出合理范围，请手动调整"}
+
     return {
         "ok": True,
-        "offsetY": int(round(offset)),
+        "scale": round(scale, 4),
+        "offsetX": 0,
+        "offsetY": int(round(offset_y)),
+        "eyeChin": round(eye_chin, 4),
         "eyeY": round(eye_y, 4),
         "score": round(float(r["score"]), 3),
     }
