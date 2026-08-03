@@ -48,7 +48,9 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     pajiama: { name: '帕加玛骑卫', tier: 3 },      // 佩尔加蒙·欧迈尼斯：帕加马以卫城与图书馆闻名，骑卫为常规建制
     sailiugu: { name: '塞琉古方阵', tier: 3 },     // 安提俄基亚·安条克：塞琉古银盾方阵，希腊化重步代表
     womaya: { name: '倭马亚卫', tier: 3 },         // 大马士革·穆阿维叶：其建都之地的哈里发近卫，文化辨识度高
-    guyashu: { name: '亚述战车', tier: 3 },
+    guyashu: { name: '阿舒尔卫', tier: 3 },
+                                                  // 沙姆希阿达一世（前1809-1776）征服亚述城、建阿舒尔神庙；旧亚述战车未成建制，
+                                                  // 撤换原「亚述战车」以免与尼尼微新亚述（yashu·T1）番号重复
 
     // ── T4 存在之兵：史籍可考的常规建制／地方戍兵 ──
     youfaladi: { name: '阿纳特兵', tier: 4 },      // 阿纳特·叶海亚：幼发拉底中游戍堡守兵。原挂「马穆鲁克 T1」——

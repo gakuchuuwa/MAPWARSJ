@@ -6,6 +6,8 @@ import {
 } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getFactionGeneral } from '../data/FactionGenerals';
+import { getGeneralProfile } from '../data/general-skills/profiles';
+import { pickRandomStrategicSkill, setStrategicSkillOverride } from '../combat/GeneralSkillCombat';
 import { isGeneralOnCooldown, isEliteOnCooldown } from './DefeatCooldown';
 import type { Army } from './Army';
 
@@ -76,7 +78,8 @@ export function noteCitySpawnTierFromLegion(
     if (army.isElite) tierState.spawnEliteUsed = true;
 }
 
-/** 挂据点锚定将领（四位一体：据点、势力、武将、精锐随城走，谁占城谁得将） */
+/** 挂据点锚定将领（四位一体：据点、势力、武将、精锐随城走，谁占城谁得将）。
+ *  名将挂将即随机分配一个战略技 override（2026-08-03 主人定：名将无固定战略技，全部随机池）。 */
 export function attachFactionGeneralToArmy(army: Army): boolean {
     if (army.generalId) return false;
     const cityId = army.homeCityId ?? army.getSourceCityId();
@@ -85,6 +88,9 @@ export function attachFactionGeneralToArmy(army: Army): boolean {
     if (!general) return false;
     army.generalId = general.generalId;
     army.portraitPath = general.portrait;
+    if (getGeneralProfile(general.generalId)?.tier === 'famous') {
+        setStrategicSkillOverride(army.id, pickRandomStrategicSkill());
+    }
     return true;
 }
 

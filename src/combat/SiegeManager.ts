@@ -14,7 +14,7 @@ import { getFactionGeneral, getGeneralRecordByGeneralId } from '../data/FactionG
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { getUnitEliteTier } from '../systems/CultureCombat';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
-import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, pickRandomStrategicSkill, setStrategicSkillOverride, getEffectiveStrategicSkillId, emitStrategicSkillSwapFx } from './GeneralSkillCombat';
+import { generalHasStrategicEffect, getGeneralStrategicMagnitude, getCityAnchoredStrategicMagnitude, emitFollowedGeneralStrategicMapFx, pickRandomStrategicSkill, setStrategicSkillOverride, getEffectiveStrategicSkillId } from './GeneralSkillCombat';
 import { applyLegionSpawnTierToArmy } from '../legion/LegionSpawnTier';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 
@@ -991,14 +991,13 @@ export class SiegeManager {
                 // 战后随机换技：仅【跟拍 + 名将】攻城胜后，从活跃池随机抽一个新战略技。
                 //   · 限名将：普将也随机拿技会冲淡「三闸定名将」的分级；且镜头本就优先跟拍名将。
                 //   · 排除当前技：否则 1/14≈7% 抽回原技，观众看到换技却毫无变化。
-                //   · 换完立刻脉冲：池里有些技整个循环都可能不触发，不报一次观众不知道换了啥。
+                //   · 换技瞬间【不】脉冲（2026-07-31 主人定，禁换技专用脉冲）；
+                //     新技触发时经 setStrategicSkillOverride 清 strategicFxShownOnce 记录照常报一次。
                 if (army.id === getFollowedArmyId() && army.generalId
                     && getGeneralProfile(army.generalId)?.tier === 'famous') {
-                    const curId = getEffectiveStrategicSkillId(army.id, army.generalId);
+                    const curId = getEffectiveStrategicSkillId(army.id);
                     const newSkillId = pickRandomStrategicSkill(curId);
                     setStrategicSkillOverride(army.id, newSkillId);
-                    const p = army.getPosition();
-                    emitStrategicSkillSwapFx(army.id, newSkillId, p.lat, p.lng);
                     siegeLog(`🎲 [战略技] ${army.name} 战后换技 ${curId ?? '(无)'} → ${newSkillId}`);
                 }
 

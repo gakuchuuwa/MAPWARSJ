@@ -1049,7 +1049,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kesa': '可萨',
     'aiaoniya': '爱奥',
     'jialatai': '加拉',
-'guyashu': '古亚',
+'guyashu': '阿舒',
     'ansxi': '安息',
     'nabatai': '纳巴',
     'xike': '锡克',

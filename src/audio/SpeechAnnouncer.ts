@@ -47,10 +47,10 @@ function hasEliteName(name: string): boolean {
   return !!name && name !== "军团" && !name.startsWith("Army ");
 }
 
-/** 名将 = 拥有战略技（普将无 strategicSkillId）。用于攻城播报是否冠「名将」二字。 */
+/** 名将 = tier famous（2026-08-03 起战略技全随机，不再以 strategicSkillId 判名将）。用于攻城播报是否冠「名将」二字。 */
 function isFamousGeneral(generalId?: string | null): boolean {
   if (!generalId) return false;
-  return !!GENERAL_PROFILES[generalId]?.strategicSkillId;
+  return GENERAL_PROFILES[generalId]?.tier === 'famous';
 }
 
 // ───────────────────────────────────────────────────────────────
