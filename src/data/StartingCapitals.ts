@@ -236,7 +236,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'zhongshan': 'city_zhending',
 'wang_d': 'city_langya',
 'xiao_d': 'city_lanling',
-    'zhuozhou': 'city_fanyang',
+'zhuozhou': 'city_fanyang',
 'li_lx_d': 'city_longxi',
 'yuan_cj_d': 'city_xuanhu',
 'xie_cj_d': 'city_yiyang',

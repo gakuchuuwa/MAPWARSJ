@@ -349,7 +349,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'lu': '庐',
     'gaoqi_d': '高齐',
     'wuzhou_d': '武周',
-    'zhuozhou': '涿', // 范阳·避涿邪山旗号涿 §4.1
+'zhuozhou': '涿',
 'tujia_d': '土家',
     'zhuang_d': '壮',
 'xibo_d': '锡伯',

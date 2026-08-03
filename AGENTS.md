@@ -859,12 +859,12 @@ npm run skeleton:audit
 | 川蜀 | 成都 | `city_chengdu` | big_city | 蜀汉/前后蜀 92 年都 |
 | 岭南 | 番禺 | `city_panyu` | big_city | 广州古名, 南越国都 |
 | 河西 | 姑臧 | `city_wuwei` | medium | 五凉故都 (即凉州/武威) |
-| 草原 | 哈拉和林 | `city_karakorum` | big_city | 蒙古帝国首都 |
+| 草原 | 哈拉和林 | `city_karakorum` | small | 蒙古帝国首都 (2026-08-03 人口审查降级) |
 | 东北 | 龙泉府 | `city_ningan` | medium | 渤海上京 170 年都 |
 | 朝鲜 | 开城 | `city_kaesong` | medium | 高丽王朝 475 年都 |
 | 日本 | 京都 | `city_kyoto` | big_city | 平安京 1075 年都 |
-| 西域 | 伊逻卢城 | `city_yiluolucheng` | medium | 龟兹国都 (延城) |
-| 青藏 | 逻些 | `city_luoxie` | medium | 吐蕃国都 (即拉萨) |
+| 西域 | 伊逻卢城 | `city_yiluolucheng` | small | 龟兹国都 (延城) (2026-08-03 人口审查降级) |
+| 青藏 | 逻些 | `city_luoxie` | small | 吐蕃国都 (即拉萨) (2026-08-03 人口审查降级) |
 | 滇缅 | 蒲甘 | `city_pagan` | medium | 蒲甘王朝都城；远征中心（`RegionSystem` 2026-06-14 定；`city_ayutthaya` 仍为大城但非区中心） |
 | 中亚 | 玉龙杰赤 | `city_urgench` | small | 花剌子模都城 (主人 2026-07-05 改, 原撒马尔罕) |
 

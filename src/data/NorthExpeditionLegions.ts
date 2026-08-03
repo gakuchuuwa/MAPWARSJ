@@ -28,7 +28,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     ming_d: { name: '明军三大营', tier: 1 },
 
   // ── §1 中原表·地理偏北（用户指定）──
-  zhuozhou: { name: '曳落河', tier: 2 },     // 安禄山麾下八千胡人死士，属于安史叛军这支战略主力中的特种战术尖刀，符合T2战术
+    zhuozhou: { name: '曳落河', tier: 2 },
   shatuo: { name: '鸦儿军', tier: 1 },      // 光禄城·§1 #50 李克用沙陀铁骑（原草原#8改挂北方）
   lingzhou: { name: '朔方突骑', tier: 1 },  // 回乐·仆固怀恩朔方突骑
   dingxiang_d: { name: '定襄骁骑', tier: 0 }, // 恶阳岭·贞观四年李靖三千骁骑出恶阳岭夜袭定襄（神级进攻大捷，升T0）

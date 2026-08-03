@@ -226,7 +226,7 @@ export class CityAssetManager {
         'lu': '庐',
         'gaoqi_d': '高齐',
         'wuzhou_d': '武周',
-        'zhuozhou': '涿',
+'zhuozhou': '涿',
 'tujia_d': '土家',
         'zhuang_d': '壮',
 'xibo_d': '锡伯',
