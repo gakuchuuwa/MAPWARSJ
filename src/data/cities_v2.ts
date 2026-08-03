@@ -2976,7 +2976,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_daerban', name: '打耳班', factionId: 'kesa', lat: 42.06, lng: 48.3, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA' },
     { id: 'city_yifusuo', name: '以弗所', factionId: 'aiaoniya', lat: 37.94, lng: 27.34, type: 'medium_city', troops: 30000, region: 'WEST_ASIA', note: '亚细亚省府，爱琴海巨港' },
     { id: 'city_ankala', name: '安卡拉', factionId: 'jialatai', lat: 39.93, lng: 32.87, type: 'small_city', troops: 30000, region: 'WEST_ASIA' },
-    { id: 'city_yashucheng', name: '亚述城', factionId: 'guyashu', lat: 35.46, lng: 43.26, type: 'small_city', troops: 30000, region: 'WEST_ASIA' },
+    { id: 'city_yashucheng', name: '亚述城', factionId: 'guyashu', lat: 35.46, lng: 43.26, type: 'small_city', troops: 20000, region: 'WEST_ASIA' },
     { id: 'city_nisa', name: '尼萨', factionId: 'ansxi', lat: 37.9, lng: 58.2, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA', note: '安息（帕提亚）帝国第一个首都与皇家陵园，UNESCO世界遗产' },
     { id: 'city_peitra', name: '佩特拉', factionId: 'nabatai', lat: 30.3, lng: 35.4, type: 'small_city', troops: 30000, region: 'WEST_ASIA', note: '纳巴泰王国首都；公元363/551年大地震后彻底废弃沦为古城遗址，18世纪前无常住人口' },
     { id: 'city_laheer', name: '拉合尔', factionId: 'xike', lat: 31.55, lng: 74.35, type: 'medium_city', troops: 30000, region: 'DIANQIAN', note: '锡克帝国首都，兰季特·辛格"拉合尔之狮"，统一旁遮普' },

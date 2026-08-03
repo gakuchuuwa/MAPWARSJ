@@ -3831,7 +3831,9 @@ export class CombatUI {
         // 断崖 1 秒内随条子 u^6 同步崩到 0——「残兵困守 → 兵败如山倒」的溃败感。
         // 方向跟随 collapseStartAttPct（第三阶段锁定，与条子断崖同侧），翻盘不横穿。
         // 纯显示层：只改渲染给玩家的数字，title 仍写引擎真实兵力。
-        if (this.collapseStartAttPct !== null) {
+        // outcomeLocked 后停用：否则第三阶段中段被 forceResolve/城易主提前结束时，
+        // 败方引擎兵力已清零，数字却会被钳回 10% 一直挂着（正常流程 u≈1 已崩到 0，无碍）。
+        if (!this.outcomeLocked && this.collapseStartAttPct !== null) {
             const bc: any = this.boundRegionalBattleField || this.currentBattle;
             const prog = bc ? Math.min(1, (bc.elapsed || 0) / Math.max(1, bc.targetDuration || 17)) : 1;
             if (prog >= PHASE_COLLAPSE_START) {
@@ -3866,23 +3868,32 @@ export class CombatUI {
 
         // 视觉微摆：配合 BattleField 三阶段节奏（40%/80%/100%）
         let progress = 0;
+        let battleClockSec = 0; // 战斗逻辑秒（已乘 timeScale）：暂停即停摆、倍速同频
         if (this.currentBattle) {
             const b: any = this.currentBattle;
-            progress = Math.min(1, (b.elapsed || 0) / Math.max(1, b.targetDuration || 17));
+            battleClockSec = b.elapsed || 0;
+            progress = Math.min(1, battleClockSec / Math.max(1, b.targetDuration || 17));
         } else if (this.boundRegionalBattleField && !this.boundRegionalBattleField.isOver) {
-            progress = Math.min(1, this.boundRegionalBattleField.elapsed / Math.max(1, this.boundRegionalBattleField.targetDuration));
+            battleClockSec = this.boundRegionalBattleField.elapsed;
+            progress = Math.min(1, battleClockSec / Math.max(1, this.boundRegionalBattleField.targetDuration));
         } else {
             progress = 1;
         }
 
-        // 落后方（=标尺要倒向的反面）：兵力多的一方在标尺上占大头
-        const lead = realAttPct >= 50 ? 1 : -1;
+        // 占优方（=标尺要倒向的一面）：区域性战斗读引擎判定的强方（八环有效战力比，援军/败战翻盘会重算翻转），
+        // 与胜负一致——兵力少但名将局打赢时标尺不再向输家倾斜；均势局也不再 50% 临界反复突跳。
+        // 旧面板（currentBattle，无 BattleField）退回实时兵力比。
+        const attStronger = this.boundRegionalBattleField
+            ? this.boundRegionalBattleField.isAttackerPredictedStronger()
+            : realAttPct >= 50;
+        const lead = attStronger ? 1 : -1;
         /** 第二、三阶段的落点：恒定 80/20，不看兵力比 */
         const stalematePct = 50 + lead * (CLASH_STALEMATE_PCT - 50);
 
-        // 摇摆周期放慢 3 倍，拉锯显得厚重沉稳（三个阶段共用同一波形，只换振幅）
-        const swingT = performance.now() / 1200;
-        const swingUnit = Math.sin(swingT) * 0.8 + Math.sin(swingT * 1.4) * 0.2;
+        // 摇摆走战斗逻辑时钟（2026-08-03 主人定）：周期约 12.6s，平时沉稳缓慢，
+        // 只有崩溃段（u^6）才快速下落；暂停即停摆、倍速随战斗同频。谐波弱化去「碎动」。
+        const swingT = battleClockSec / 2.0;
+        const swingUnit = Math.sin(swingT) * 0.8 + Math.sin(swingT * 1.4) * 0.1;
 
         let attPct: number;
         if (progress < PHASE_STALEMATE_START) {
@@ -3895,7 +3906,8 @@ export class CombatUI {
             const eased = Math.pow(enterK, BAR_ACT1_EASE_POWER);
             attPct = 50 + (realAttPct - 50) * eased + swingUnit * BAR_SWING_ACT1;
         } else if (progress < PHASE_COLLAPSE_START) {
-            // 第二阶段·一边倒（12 秒）：从兵力比位置移到 80%（悬殊局是往回退，均势局是往外推）
+            // 第二阶段·一边倒（12 秒）：从兵力比位置移到强方落点 80/20（2026-08-03 起方向读引擎强方，
+            // 以少胜多局从兵力劣势侧往回退到强方侧；均势局从 50 附近往外推）
             this.collapseStartAttPct = null;
             const k = (progress - PHASE_STALEMATE_START) / (PHASE_COLLAPSE_START - PHASE_STALEMATE_START);
             const eased = k * k * (3 - 2 * k); // smoothstep：两端柔和，中段果断

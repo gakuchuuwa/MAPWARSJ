@@ -4203,7 +4203,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/WEST_ASIA/guyashu_shamuxiada.png": {
-            "scale": 0.98,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 11
         },
@@ -4918,7 +4918,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 33
         },
         "/assets/CENTRAL_ASIA/yilihanguo_d_hezan.png": {
-            "scale": 1.09,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -4928,7 +4928,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/CENTRAL_ASIA/asaibaijiang_xuliewu.png": {
-            "scale": 1.12,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 15
         },
@@ -6213,8 +6213,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/SLAVIC/moerdaweiya_sidifendadi.png": {
-            "scale": 1.18,
-            "offsetX": 0,
+            "scale": 1.22,
+            "offsetX": 11,
             "offsetY": 8
         },
         "/assets/SLAVIC/mosike_gongguo_dunsikeyi.png": {
@@ -6283,8 +6283,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/LATIN/mengtainiya_basalabu.png": {
-            "scale": 1.18,
-            "offsetX": 1,
+            "scale": 1.22,
+            "offsetX": 16,
             "offsetY": 8
         },
         "/assets/SLAVIC/deniesite_muhanmodegeli.png": {

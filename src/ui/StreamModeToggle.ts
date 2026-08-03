@@ -8,11 +8,9 @@
  *
  * 状态存 localStorage（mapwar-stream-mode），刷新后保持。
  *
- * 【2026-08-01 主人定】这个按钮同时兼任「开发期自动刷新」的总开关：
- *   直播开着 → 改文件不整页刷新（刷新会炸掉正在播的画面）
- *   手动点关 → 改文件立刻刷新，说明主人正在编辑，要立刻看到效果
- *
- * 闸门实时读 isActive()——【当前】在不在播，不读 localStorage 里的历史选择。
+ * 【2026-08-03 主人定】本按钮只管画面干不干净，不兼任「开发期自动刷新」开关：
+ * 改文件刷不刷新看的是【推演是否正在运行】（TimeSystem 暂停位）——
+ * 推演在跑不刷新（可能正在直播），推演暂停/未开播立刻刷新（主人在修游戏）。
  * （上报在 src/dev/ReloadGate.ts，实际拦截在 vite.config.ts 的 suppress-portrait-dev-hmr）
  *
  * 与「刷新后自动开播」无关：那个是无条件的，刷新完 5 秒必播（UnattendedStream.autoStart）。
@@ -118,7 +116,7 @@ export class StreamModeToggle {
         if (on) this.started = true;
         document.body.classList.toggle('stream-mode', on);
         // 这份状态管两件事：画面干不干净、刷新后画面要不要立刻恢复干净。
-        // 改文件刷不刷新读的是【当前】直播状态（ReloadGate 直接读 isActive）。
+        // 改文件刷不刷新与本按钮无关（ReloadGate 读的是推演运行状态）。
         localStorage.setItem(STORAGE_KEY, on ? '1' : '0');
         if (this.button) {
             this.button.textContent = on ? '📺 直播中' : '直播';
