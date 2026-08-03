@@ -178,8 +178,13 @@ function main() {
         if (n > (globalMax.get(key) ?? 0)) globalMax.set(key, n);
     }
 
-    const log = [];
-    let planned = 0;
+    // ── 4) 计划先行（2026-08-03 数据安全化）──
+    // ⚠ 血训：原来「改名→迁移调校键→写还原日志」顺序执行，日志最后才落盘：
+    //   中途崩溃 = 无日志可追；迁移抛异常 = 文件已改名而调校表没跟上，主人手调失联
+    //   （8/3 早 82 改名 73 键失联事故即此）。现在顺序定死：
+    //   ① 只算计划不动盘 → ② 还原日志先落盘 → ③ 执行改名 → ④ 迁移调校键
+    //   ④ 失败则把 ③ 全部改回去 —— 文件系统与调校表要么一起前进，要么一起原地。
+    const plan = [];
     for (const [folder, tasks] of planByFolder) {
         const dir = path.join(ASSETS, folder);
         const all = fs.readdirSync(dir).filter((f) => /\.png$/i.test(f));
@@ -194,65 +199,92 @@ function main() {
                 dest = `__${task.want}__${token}_${String(globalMax.get(gkey)).padStart(2, '0')}.png`;
             } while (existing.has(dest.toLowerCase()));
             existing.add(dest.toLowerCase());
-            planned++;
             console.log(`  [${folder}] ${task.file}  →  ${dest}`);
-            if (DRY) continue;
-            const toAbs = path.join(dir, dest);
-            if (fs.existsSync(toAbs)) {
-                console.error(`  ⚠ 目标已存在，跳过：${folder}/${dest}`);
-                continue;
-            }
-            fs.renameSync(path.join(dir, task.file), toAbs);
-            // 同步哈希缓存键，避免下次启动重算
-            const relOld = `${folder}/${task.file}`;
-            if (nextCache[relOld]) {
-                nextCache[`${folder}/${dest}`] = nextCache[relOld];
-                delete nextCache[relOld];
-            }
-            log.push({ folder, from: task.file, to: dest });
+            plan.push({ folder, from: task.file, to: dest });
         }
     }
 
     const secs = ((Date.now() - t0) / 1000).toFixed(1);
     console.log(
-        `[立绘分类改名] 重复组 ${dupGroups} | 待改 ${planned} | 实改 ${log.length}` +
+        `[立绘分类改名] 重复组 ${dupGroups} | 待改 ${plan.length}` +
         ` | 重新哈希 ${hashed} 张 | 耗时 ${secs}s${DRY ? '（--dry-run 未改盘）' : ''}`,
     );
-    if (DRY || log.length === 0) return;
+    if (DRY || plan.length === 0) return;
 
-    fs.writeFileSync(CACHE_PATH, JSON.stringify(nextCache), 'utf-8');
-
-    // ── 4.5) 调校键跟着改名走（主人 2026-07-31 定）──
-    // 不迁移会有两层后果：调好的位置缩放失联、回落文件夹默认值；且序号名被后来的图复用时，
-    // 新图会继承上一任遗留的调校（"调校串图"）。详见 TOOL/lib/portrait_adjust_migrate.mjs。
-    // ⚠ 2026-08-03 血训：此 try/catch 曾全吞异常导致 73 条调校失联且无任何提示。
-    //    失败必须可见 —— 迁移是「保主人调校成果」的关键环节，失败要让人知道并手动补跑。
-    try {
-        const mig = migratePortraitAdjustKeys(ROOT, log);
-        if (mig.migrated > 0) {
-            console.log(
-                `  🎯 调校键迁移 ${mig.migrated} 条` +
-                (mig.overwritten > 0 ? `（顶掉 ${mig.overwritten} 条同名遗留值）` : '') +
-                (mig.backupFile ? ` | 备份 ${path.relative(ROOT, mig.backupFile)}` : ''),
-            );
-        }
-    } catch (e) {
-        // 2026-08-03 改为显式失败：绝不静默。迁移失败 = 主人的调校在失联，必须高亮。
-        console.error('  ❌❌ 调校键迁移失败（严重：本次改名造成的调校失联无法自动恢复）:');
-        console.error('     ' + (e?.message ?? e));
-        console.error('     补救：node tools/lib/portrait_adjust_recover.mjs（默认 dry-run 预览，加 --apply 写盘）');
-        // 不阻塞启动（dev 钩子语义），但失败可见
-    }
-
-    // ── 5) 还原日志 ──
+    // ── 5) 还原日志【先】落盘：改名前就有账，中途断电/崩溃也能靠它追回 ──
     const ts = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
     const logDir = path.join(ROOT, 'claudedocs');
     fs.mkdirSync(logDir, { recursive: true });
     const logPath = path.join(logDir, `idle-dup-rename-log-${ts}.json`);
-    fs.writeFileSync(logPath, JSON.stringify(log, null, 2), 'utf-8');
-    console.log(`  还原日志: ${path.relative(ROOT, logPath)}`);
+    fs.writeFileSync(logPath, JSON.stringify(plan, null, 2), 'utf-8');
+    console.log(`  还原日志(先行): ${path.relative(ROOT, logPath)}`);
 
-    // ── 6) 重建内容去重映射：改名后的副本经 canonical 继续共享调校 ──
+    // ── 5.5) 执行改名 ──
+    const executed = [];
+    for (const mv of plan) {
+        const fromAbs = path.join(ASSETS, mv.folder, mv.from);
+        const toAbs = path.join(ASSETS, mv.folder, mv.to);
+        if (fs.existsSync(toAbs)) {
+            console.error(`  ⚠ 目标已存在，跳过：${mv.folder}/${mv.to}`);
+            continue;
+        }
+        try {
+            fs.renameSync(fromAbs, toAbs);
+        } catch (e) {
+            console.error(`  ⚠ 改名失败，跳过：${mv.folder}/${mv.from}（${e?.code ?? e}）`);
+            continue;
+        }
+        // 同步哈希缓存键，避免下次启动重算
+        const relOld = `${mv.folder}/${mv.from}`;
+        if (nextCache[relOld]) {
+            nextCache[`${mv.folder}/${mv.to}`] = nextCache[relOld];
+            delete nextCache[relOld];
+        }
+        executed.push(mv);
+    }
+    if (executed.length !== plan.length) {
+        // 日志收敛为实际发生的改名（跳过项不留在账上误导追回脚本）
+        fs.writeFileSync(logPath, JSON.stringify(executed, null, 2), 'utf-8');
+    }
+    console.log(`  实改 ${executed.length}/${plan.length}`);
+    if (executed.length === 0) return;
+
+    // ── 6) 调校键迁移；失败 = 整批回滚（主人 2026-08-03 定：手动调校永不失联）──
+    let mig;
+    try {
+        mig = migratePortraitAdjustKeys(ROOT, executed);
+    } catch (e) {
+        console.error('  ❌❌ 调校键迁移失败，正在回滚本次全部改名（保文件与调校表一致，主人手调零损失）:');
+        console.error(String(e?.stack ?? e));
+        let undone = 0, stuck = 0;
+        for (const mv of [...executed].reverse()) {
+            try {
+                fs.renameSync(path.join(ASSETS, mv.folder, mv.to), path.join(ASSETS, mv.folder, mv.from));
+                undone++;
+            } catch (e2) {
+                stuck++;
+                console.error(`  ⚠ 回滚失败：${mv.folder}/${mv.to} → ${mv.from}（${e2?.code ?? e2}）`);
+            }
+        }
+        if (stuck === 0) {
+            fs.writeFileSync(logPath, '[]', 'utf-8');   // 全部还原，无孤儿可追，日志清空
+            console.error(`  ✅ 已回滚 ${undone} 个改名，本次启动不分类，下次启动自动重试`);
+        } else {
+            console.error(`  ❌ 回滚 ${undone} 成功 / ${stuck} 卡住 —— 请跑: node tools/lib/portrait_adjust_recover.mjs（默认 dry-run，加 --apply 写盘）`);
+        }
+        return;   // 哈希缓存 / canonical 都不更新，保持与盘面一致
+    }
+    if (mig.migrated > 0) {
+        console.log(
+            `  🎯 调校键迁移 ${mig.migrated} 条` +
+            (mig.overwritten > 0 ? `（顶掉 ${mig.overwritten} 条同名遗留值）` : '') +
+            (mig.backupFile ? ` | 备份 ${path.relative(ROOT, mig.backupFile)}` : ''),
+        );
+    }
+
+    fs.writeFileSync(CACHE_PATH, JSON.stringify(nextCache), 'utf-8');
+
+    // ── 7) 重建内容去重映射：改名后的副本经 canonical 继续共享调校 ──
     try {
         execSync('node scratch/build_portrait_canonical.mjs', { cwd: ROOT, stdio: 'inherit' });
     } catch {

@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/3 15:16:06（共 33 条）
+ * 生成时间：2026/8/3 17:15:34（共 29 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
@@ -15,10 +15,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_08.png": "/assets/DIANQIAN/luoyue_zhengce.png",
     "/assets/WESTERN/tuoming_tuomin.png": "/assets/DIANQIAN/__多余__DIANQIAN_04.png",
     "/assets/LINGNAN/xian_d_xianying.png": "/assets/DIANQIAN/__多余__DIANQIAN_06.png",
-    "/assets/GERMANIC/maerta_qishi_lawalaite.png": "/assets/GERMANIC/__多余__GERMANIC_03.png",
-    "/assets/GERMANIC/ruishi_ciwenli.png": "/assets/GERMANIC/__多余__GERMANIC_04.png",
-    "/assets/GERMANIC/shengdian_qishi_demolai.png": "/assets/GERMANIC/__多余__GERMANIC_01.png",
-    "/assets/GERMANIC/shiwaben_shengwuerlixi.png": "/assets/GERMANIC/__多余__GERMANIC_02.png",
     "/assets/LATIN/kelite_fukasi.png": "/assets/LATIN/__多余__LATIN_02.png",
     "/assets/LATIN/maqidun_kashande.png": "/assets/LATIN/__多余__LATIN_01.png",
     "/assets/LINGNAN/zhuang_d_washifuren.png": "/assets/LINGNAN/__多余__LINGNAN_11.png",

@@ -432,6 +432,9 @@ async function selectImageAndAutoSaveInner(newImagePath: string): Promise<void> 
 }
 
 async function saveAdjustToServer(showToast = true): Promise<void> {
+    // [2026-08-03] 保存计时：主人反馈"保存后要等会才能读下一张"，服务端实测仅 ~9ms，
+    // 埋点找真凶——F12 控制台看这行日志，GET/POST 哪边毫秒数大就是哪边的问题。
+    const saveT0 = performance.now();
     // 本次保存覆盖哪些键、基于哪个编辑版本，都在发起 await 之前定格。
     const versionAtStart = editVersion;
     const keysBeingSaved = [...dirtyKeys];
@@ -448,11 +451,14 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
     payload.images = payload.images ?? {};
     // 2026-08-03 血训修复：保存前校验 key 指向的文件存在，防止把"失联 key"继续写回表里
     // （图片被改名/删除后 key 悬空，保存会固化死键，下次读取回落默认 → 调好又变）
+    // ⚠ 性能血训（同日）：这里原先每次保存都 fetch('/api/portrait-catalog')，而那个接口
+    //   会把全库 1.5GB PNG 完整读盘算 MD5（实测 2.3 秒/次）——就是主人反馈的
+    //   "保存一张要等会才能读下一张"。校验只需要文件名，用启动时已加载的目录快照即可；
+    //   代价是快照可能过期（本次会话中途删的图拦不住），下次打开 tuner 的自检弹窗会兜底。
     const diskPaths = new Set<string>();
-    try {
-        const cat = await (await fetch('/api/portrait-catalog')).json() as { images: { path: string }[] }[];
-        for (const c of cat) for (const img of c.images) diskPaths.add(img.path);
-    } catch { /* 拿不到 catalog 就跳过校验，不阻塞保存 */ }
+    for (const c of portraitCatalog) {
+        for (const img of c.images) diskPaths.add(img.path);
+    }
     let skippedOrphans = 0;
     for (const k of keysBeingSaved) {
         const v = adjustData.images?.[k];
@@ -480,6 +486,8 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
     }
     const result = await res.json();
     if (!result.ok) throw new Error(result.error || '保存失败');
+
+    console.log(`[PortraitTuner] 保存耗时 ${Math.round(performance.now() - saveT0)}ms（含读盘+写盘两次请求；正常应 <100ms）`);
 
     adjustData = payload;
     // 只消掉本次确实写进去的键；保存期间新产生的脏键必须留着
