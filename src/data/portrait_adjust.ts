@@ -3103,9 +3103,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/STEPPE/__多余__STEPPE_02.png": {
-            "scale": 1.01,
+            "scale": 1.07,
             "offsetX": 0,
-            "offsetY": -13
+            "offsetY": -8
         },
         "/assets/STEPPE/merkit_boyan.png": {
             "scale": 1.09,
@@ -4173,9 +4173,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_06.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 29
+            "scale": 1.22,
+            "offsetX": 1,
+            "offsetY": 14
         },
         "/assets/CENTRAL_ASIA/deli_alawuding.png": {
             "scale": 1.01,
@@ -4193,9 +4193,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 24
         },
         "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_05.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 14
+            "scale": 1.26,
+            "offsetX": -6,
+            "offsetY": 18
         },
         "/assets/CENTRAL_ASIA/ansxi_aershake.png": {
             "scale": 1.08,
@@ -5738,7 +5738,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/SLAVIC/baizanting_fulajimier.png": {
-            "scale": 1.15,
+            "scale": 1.17,
             "offsetX": 9,
             "offsetY": 2
         },
@@ -5928,9 +5928,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 33
         },
         "/assets/SLAVIC/bolisiya_jiasituoerde.png": {
-            "scale": 0.92,
+            "scale": 0.86,
             "offsetX": 0,
-            "offsetY": 11
+            "offsetY": 10
         },
         "/assets/SLAVIC/teweier_gongguo_mihayier.png": {
             "scale": 1.14,
@@ -5988,7 +5988,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 37
         },
         "/assets/GERMANIC/jialuolin_chalidadi.png": {
-            "scale": 1,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -6138,19 +6138,19 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -26
         },
         "/assets/SLAVIC/__闲置__SLAVIC_02.png": {
-            "scale": 0.95,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": -39
+            "offsetY": -31
         },
         "/assets/SLAVIC/__闲置__SLAVIC_03.png": {
-            "scale": 0.96,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": -35
+            "offsetY": -30
         },
         "/assets/SLAVIC/jialixiya_dannier.png": {
-            "scale": 0.97,
+            "scale": 0.95,
             "offsetX": 0,
-            "offsetY": -22
+            "offsetY": -21
         },
         "/assets/SLAVIC/qiernigeweifu_gongguo_musidi.png": {
             "scale": 0.97,
@@ -6158,17 +6158,17 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/SLAVIC/__闲置__SLAVIC_04.png": {
-            "scale": 1,
+            "scale": 0.97,
             "offsetX": 0,
-            "offsetY": -21
+            "offsetY": -19
         },
         "/assets/SLAVIC/__闲置__SLAVIC_05.png": {
-            "scale": 0.95,
+            "scale": 0.87,
             "offsetX": 0,
             "offsetY": -22
         },
         "/assets/SLAVIC/__闲置__SLAVIC_06.png": {
-            "scale": 0.97,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -20
         },
@@ -6198,19 +6198,19 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/SLAVIC/gesake_hemeili.png": {
-            "scale": 1.18,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": 19
         },
         "/assets/SLAVIC/beisilafu_xieergai.png": {
-            "scale": 1.17,
+            "scale": 1.2,
             "offsetX": 0,
             "offsetY": 3
         },
         "/assets/SLAVIC/jinzhang_badou.png": {
-            "scale": 1.03,
+            "scale": 1.07,
             "offsetX": 0,
-            "offsetY": -7
+            "offsetY": -8
         },
         "/assets/SLAVIC/suzidaer_kangsitandingnuo.png": {
             "scale": 1.2,
@@ -6233,7 +6233,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -4
         },
         "/assets/SLAVIC/baojiaer_wuluhei.png": {
-            "scale": 1.19,
+            "scale": 1.26,
             "offsetX": -6,
             "offsetY": 18
         },
@@ -6283,9 +6283,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/SLAVIC/bolan_yagaiwo.png": {
-            "scale": 1.12,
+            "scale": 1.13,
             "offsetX": 0,
-            "offsetY": 14
+            "offsetY": 15
         },
         "/assets/LATIN/mengtainiya_basalabu.png": {
             "scale": 1.18,
@@ -6293,9 +6293,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/SLAVIC/deniesite_muhanmodegeli.png": {
-            "scale": 1.18,
+            "scale": 1.22,
             "offsetX": 1,
-            "offsetY": 13
+            "offsetY": 14
         },
         "/assets/STEPPE/fuerjia_asitela.png": {
             "scale": 1.16,

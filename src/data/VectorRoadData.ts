@@ -5068,7 +5068,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "塞兰-�������������������������������罗斯",
+                name: "塞兰-���������������������������������罗斯",
                 type: "road",
                 id: "road_city_sailan_city_talas_1780148257112",
                 startConnection: "city_sailan",
@@ -46204,27 +46204,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "伦敦-加莱",
-                type: "road",
-                id: "road_city_lundun_city_calais_1785580775511",
-                startConnection: "city_lundun",
-                endConnection: "city_calais"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-0.12, 51.5],
-                    [0.41748046875000006, 51.449727928453115],
-                    [0.48889160156250006, 51.50190410761814],
-                    [0.789642333984375, 51.492499698989036],
-                    [1.4474487304687502, 51.431751825946115],
-                    [1.85, 50.95],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "伦敦-牛津",
                 type: "road",
                 id: "road_city_lundun_city_oxford_1785580826348",
@@ -52458,6 +52437,28 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [12.379999999999999, 36.375],
                     [11.074820149760473, 37.163769066999905],
                     [10.32, 36.85],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "加莱-伦敦",
+                type: "road",
+                id: "road_city_calais_city_lundun_1785751854091",
+                startConnection: "city_calais",
+                endConnection: "city_lundun"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [1.85, 50.95],
+                    [1.3375854492187502, 51.18020386644292],
+                    [1.0766601562500002, 51.07333122768277],
+                    [0.49575805664062506, 51.30657945585936],
+                    [0.31860351562500006, 51.32460477256678],
+                    [0.19226074218750003, 51.41890742069287],
+                    [-0.12, 51.5],
                 ]
             }
         },

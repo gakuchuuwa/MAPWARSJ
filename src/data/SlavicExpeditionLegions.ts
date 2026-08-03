@@ -28,32 +28,37 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
 
     // ── T1 功勋之兵 ──
     luosi: { name: '瓦兰吉卫队', tier: 1 },          // 基辅·雅罗斯拉夫：989巴西尔二世借基辅瓦良格兵组建，拜占庭皇帝斧兵卫队（克雷迪昂/曼齐刻尔特），2026-08-02 原亲卫队T3升
-    pusikefu_gongheguo: { name: '普斯科夫军', tier: 3 },          // 普斯科夫·道曼塔斯：冰湖之战参与
+    // 普斯科夫·道曼塔斯：守城抗条顿，无「卫」专名 → T3 风土/城邦军
+    pusikefu_gongheguo: { name: '普斯科夫军', tier: 3 },
     kelimiya: { name: '克里米亚军', tier: 3 },          // 卡法·哈吉格来：克里米亚鞑靼骑兵
     lagusa: { name: '拉古萨舰队', tier: 3 },          // 拉古萨·德拉甘：亚得里亚海商船共和国
     liwoniya: { name: '利沃尼亚军', tier: 3 },          // 塔林·普雷特贝格：波罗的海十字军
-    walajiyia: { name: '瓦拉几亚军', tier: 3 },          // 特尔城·弗拉德三世：德古拉抗土
+    walajiyia: { name: '瓦拉几亚军', tier: 3 },          // 特尔城·弗拉德：德古拉抗土
     bolan: { name: '波兰军', tier: 3 },          // 华沙·雅盖沃：波兰王国
 
     // ── T4 存在之兵 ──
-    teweier_gongguo: { name: '特维尔军', tier: 4 },          // 特维尔·米哈伊尔
+    teweier_gongguo: { name: '特维尔军', tier: 4 },          // 特维尔·米哈伊尔：抗衡莫斯科
     fulajimier_gongguo: { name: '苏兹达尔军', tier: 4 },          // 弗拉基米尔·安德烈
     daniebo: { name: '斯摩军', tier: 4 },          // 斯摩棱斯克·罗姆什拉夫
     qiernigeweifu_gongguo: { name: '切尔军', tier: 4 },          // 切尔尼戈夫·姆斯蒂
     jialixiya: { name: '加利西亚军', tier: 4 },          // 加利奇·丹尼尔
-    ouka: { name: '梁赞军', tier: 4 },          // 梁赞·尤里
+    // 梁赞·尤里：科洛夫拉特抗蒙传说/文学符号 → T3（勿造「死士」抬 T2）
+    ouka: { name: '科洛夫拉特', tier: 3 },
     xideweina: { name: '波洛茨克军', tier: 4 },          // 波洛茨克·布列斯拉夫
-    deniesite: { name: '白堡守军', tier: 3 },          // 阿克曼·穆罕默德·格里
-    nieman: { name: '格罗德诺军', tier: 3 },          // 格罗德诺·维托夫特
+    deniesite: { name: '白堡守军', tier: 3 },          // 阿克曼·迈赫迈德
+    // 格罗德诺·维托夫特：安置利普卡鞑靼骑从可考；禁造「立陶宛重骑」T1 → T3
+    nieman: { name: '利普卡骑', tier: 3 },
     beisilafu: { name: '白城军', tier: 4 },          // 别尔哥罗德·谢尔盖
     weijiebusike_gongguo: { name: '维捷军', tier: 3 },          // 维捷布斯克·奥尔格尔德
     peilieya_gongguo: { name: '佩列军', tier: 2 },          // 佩列亚斯拉夫·莫诺马赫
     suzidaer: { name: '下诺守军', tier: 4 },          // 下诺城·德米特里
     taolika: { name: '赫尔松卫队', tier: 4 },          // 赫尔松涅斯·阿斯普尔格斯
-    bolisiya: { name: '布列斯特军', tier: 4 },          // 布列斯特·加斯托尔德
-    zhituo: { name: '日托米尔军', tier: 4 },          // 日托米尔·日托米尔
+    // 布列斯特·加斯托尔德：边城戍军 → T4
+    bolisiya: { name: '布列斯特军', tier: 4 },
+    // 日托米尔：哥萨克已挂 gesake；此地无专名 → T4
+    zhituo: { name: '日托米尔军', tier: 4 },
     bosiniya: { name: '波斯尼亚军', tier: 4 },          // 萨拉热窝·特夫尔特科
     seleisi: { name: '普罗军', tier: 3 },          // 普罗夫迪夫·西美昂
     chude: { name: '楚德湖军', tier: 2 },          // 尤里耶夫(塔尔图)·维切斯拉夫：1224守城抗条顿骑士；1242楚德湖(冰湖)之战抗条顿
-    qiekase: { name: '第聂伯军', tier: 4 },          // 切尔卡瑟·维什尼奥：第聂伯哥萨克
+    qiekase: { name: '第聂伯军', tier: 4 },          // 切尔卡瑟·拜达：第聂伯哥萨克
 };
