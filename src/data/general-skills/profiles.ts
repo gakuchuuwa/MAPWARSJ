@@ -1597,7 +1597,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    wuxi_shamoke: { generalId: 'wuxi_shamoke', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_201', atkBalanceSkillId: 'ts_659', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_537', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage' , attackStyle: 'attack'},
+    wuxi_shamoke: { generalId: 'wuxi_shamoke', tier: 'ordinary', tacticalSkillId: 'ts_201', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_201', atkBalanceSkillId: 'ts_659', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_537', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
@@ -1677,7 +1677,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    dangzhou_qiangduan: { generalId: 'dangzhou_qiangduan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_167', atkAdvantageSkillId: 'ts_362', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_730', aptitude: 'leverage' , attackStyle: 'defense'},
+    dangzhou_qiangduan: { generalId: 'dangzhou_qiangduan', tier: 'ordinary', tacticalSkillId: 'ts_362', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_362', atkBalanceSkillId: 'ts_167', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_279', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_730', aptitude: 'leverage', attackStyle: 'defense' },
 
 
 

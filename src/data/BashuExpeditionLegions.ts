@@ -9,7 +9,6 @@
  */
 export const BASHU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     baishui: { name: '白水戍卒', tier: 4 },
-    dangzhou: { name: '阴平氐兵', tier: 2 }, // 邓艾偷渡阴平时临时征用的特种奇兵，单次战术奇迹的教科书代表，下调至T2战术
   //  miaomin: { name: '苗疆义军', tier: 4 },      // 平陇·石柳邓苗民 — 已迁 DianQianExpeditionLegions
   //  dongzu: { name: '侗家义军', tier: 4 },       // 雷公山·吴勉侗族 — 已迁 DianQianExpeditionLegions
   wuman: { name: '乌蛮山兵', tier: 4 },        // 乌蒙山·乌蛮部

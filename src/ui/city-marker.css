@@ -50,6 +50,17 @@
     transition: transform 5s cubic-bezier(0.25, 0.8, 0.35, 1);
 }
 
+/* 据点蓝边标记（2026-08-03 主人确认有用勿删）：city.image 暂无注入（历史遗留），
+   无贴图时画蓝边块替代——保留据点描边效果，同时避免 src="undefined" 破图 img。 */
+.city-image-container .city-building-placeholder {
+    box-shadow:
+        1px 0 0 rgba(62, 127, 175, 0.48),
+        -1px 0 0 rgba(62, 127, 175, 0.48),
+        0 1px 0 rgba(46, 74, 95, 0.5),
+        1px 1px 0 rgba(46, 74, 95, 0.34),
+        -1px 1px 0 rgba(46, 74, 95, 0.34);
+}
+
 /* 攻城时据点建筑放大 ×2（2026-07-18 主人定：2.0；停火后延迟缩回，见 CityManager.stopSiegeEffect）
    放大挂 .city-building-stack 容器而非 img：建筑 img 有行内 transform（镜像/朝向），
    行内样式优先于类规则会盖掉放大；容器无行内 transform，且不波及旗杆旗面。

@@ -1,10 +1,14 @@
 import { CityAssetManager } from '../../assets/CityAssetManager';
 import { getGlobalUnitRenderer } from '../../map/UnitRenderer';
 import { GameConfig } from '../../config/GameConfig';
+import { speechAnnouncer } from '../../audio/SpeechAnnouncer';
 import type { GameApp } from '../GameApp';
 
 /** 地图面板 toggle 与编辑器开关（从 GameApp 抽出）。 */
 export function setupGameAppMapListeners(app: GameApp): void {
+    // 启动同步：语音播报开关跟随音频总开关（localStorage 恢复的 enabled 可能为 false，刷新后播报不得自行开口）
+    speechAnnouncer.setEnabled(app.audioManager.isEnabled());
+
     window.addEventListener('toggle-faction-color', (e: Event) => {
         const detail = (e as CustomEvent<{ visible?: boolean }>).detail;
         if (app.cityManager) app.cityManager.toggleTerritoryLayer(!!detail?.visible);
@@ -32,7 +36,11 @@ export function setupGameAppMapListeners(app: GameApp): void {
 
     window.addEventListener('audio-settings-change', (e: Event) => {
         const detail = (e as CustomEvent<{ enabled?: boolean; masterVolume?: number }>).detail;
-        if (typeof detail?.enabled === 'boolean') app.audioManager.setEnabled(detail.enabled);
+        if (typeof detail?.enabled === 'boolean') {
+            app.audioManager.setEnabled(detail.enabled);
+            // 「开启音效」= 全局总开关：关闭时语音播报一并静音（GAKU 2026-08-04 定）
+            speechAnnouncer.setEnabled(detail.enabled);
+        }
         if (typeof detail?.masterVolume === 'number') app.audioManager.setMasterVolume(detail.masterVolume);
     });
 
