@@ -102,4 +102,5 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     li_s: { name: '大汉伏波', tier: 2 },
     jibei: { name: '泰山兵', tier: 3 },
     yangguan: { name: '西凉锐骑', tier: 2 },
+    yeli: { name: '擒生军', tier: 3 },
 };
