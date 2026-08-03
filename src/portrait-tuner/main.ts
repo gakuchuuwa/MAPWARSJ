@@ -550,7 +550,10 @@ function batchAlignSelected(): Promise<void> {
             showSaveToast('当前文件夹没有立绘', true);
             return;
         }
-        if (!confirm(`对当前文件夹 ${images.length} 张立绘执行自动对齐？\n结果会直接保存到磁盘（服务端自动备份，可回滚）。检测失败/无脸的图会跳过。`)) return;
+        // 2026-08-03 血训修正：批量对齐只写内存预览 + 标记脏键，绝不自动落盘。
+        // 之前改成"自动保存"导致点一下就把该夹手调值覆盖写进磁盘（主人实测后不满）。
+        // 现在：预览满意 → Ctrl+S 才写盘；不满意 → 重新加载还原。刷新页面会丢预览（预览的代价）。
+        if (!confirm(`对当前文件夹 ${images.length} 张立绘执行自动对齐？\n只预览不保存：满意请 Ctrl+S 写盘，不满意点「重新加载」还原。检测失败/无脸的图跳过。`)) return;
         showSaveToast(`⏳ 批量对齐中… 0/${images.length}`, false, true);
         adjustData.images = adjustData.images ?? {};
         let ok = 0, fail = 0;
@@ -561,7 +564,7 @@ function batchAlignSelected(): Promise<void> {
                 const j = await res.json();
                 if (j.ok) {
                     adjustData.images[p] = { scale: j.scale, offsetX: j.offsetX ?? 0, offsetY: j.offsetY };
-                    dirtyKeys.add(p); // ← 关键：标记脏键，保存时才会写盘
+                    dirtyKeys.add(p); // 标记脏键：Ctrl+S 时才会写盘
                     ok++;
                 } else {
                     fail++;
@@ -574,18 +577,11 @@ function batchAlignSelected(): Promise<void> {
         }
         dirty = true;
         editVersion++;
-        // 批量结果直接落盘（服务端写盘前自动滚动备份，可回滚）——刷新页面也不丢
-        try {
-            await saveAdjustToServer(false);
-            showSaveToast(`✅ 批量对齐完成并已保存：${ok} 张已写入磁盘，${fail} 张跳过。`, false, true);
-        } catch (e) {
-            showSaveToast(`⚠ 批量对齐完成但保存失败：${e}。请勿刷新页面，立即 Ctrl+S 重试！`, true, true);
-            return;
-        }
         if (selectedImage) loadDraftForSelected();
         renderGrid();
         // 全部卡片立即应用新调校，无需点击
         updateAllGridTransforms();
+        showSaveToast(`✅ 批量对齐预览完成：${ok} 张已更新，${fail} 张跳过（保留原值）。\n满意请 Ctrl+S 写盘；不满意点「重新加载」还原。`, false, true);
     });
 }
 

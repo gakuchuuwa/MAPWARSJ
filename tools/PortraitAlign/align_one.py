@@ -62,17 +62,42 @@ def robust_head_height(path, r):
     if x1 - x0 < 8:
         return None
     op = (alpha[:, x0:x1] > 16).sum(axis=1)
-    # 滤缨：不透明宽度不足 40% 脸宽的行不算头顶（羽缨/翎子/旗枪只占几像素宽）
-    rows = np.where(op >= 0.4 * bw * W)[0]
-    if rows.size == 0:
+    face_top_row = int(by * H)          # 脸框顶（YuNet 脸框上沿）
+    wide_w = 0.25 * bw * W              # "宽区"阈值：≥25% 脸宽 = 头/盔主体
+    thin_w = max(8, 0.06 * bw * W)      # "细缨"阈值：<6% 脸宽 = 羽缨/旗枪/细柄
+
+    # 头顶 = 脸框顶上方一个"合理头饰高度"范围内，最靠近脸框的连续宽区顶。
+    # 2026-08-03 修复（两层）：
+    #   ① 范围限制：头顶不得高于 脸框顶-1.2×脸高 —— 武器/旗杆从图顶斜伸下来时
+    #      （如 baishui_yanghuai 的斜武器柄，y=0~48 每行宽 95-100px 无空隙），
+    #      旧"遇空隙即停"抓不到，必须用距离约束排除图顶异物。
+    #      ⚠ k 值血训：曾用 0.6，把高盔/高冠/高头巾的真实头顶钳在 0.6 脸高处，
+    #      headH 系统性低估 17% → scale 系统性放大 17% → 自动后头变大（86% 的图）。
+    #      实测 k=1.2：headH 中位 0.3214≈目标 0.32738，自动 scale 中位 1.019≈手调 1.000。
+    #   ② 宽区锚定 + 向上吞并细行：锚定头/盔主体（≥25% 脸宽连续区）的顶，
+    #      再向上吞并帽尖/盔缨根部的窄过渡行（≥6% 脸宽且连续），不吞独立缨饰。
+    limit_row = max(0, int(face_top_row - 1.2 * bh * H))
+    top = None
+    for row in range(face_top_row, limit_row - 1, -1):
+        if op[row] >= wide_w:
+            top = row
+        else:
+            if top is not None:
+                break
+    if top is None:
         return None
-    top = rows[0] / H
+    for row in range(top - 1, limit_row - 1, -1):
+        if op[row] >= thin_w:
+            top = row
+        else:
+            break
+    top_y = top / H
     eye = float(np.array(r["eye_mid"])[1])
     mouth = float((np.array(r["mouthR"])[1] + np.array(r["mouthL"])[1]) / 2)
     chin = mouth + (mouth - eye) * 0.8
-    if chin <= top:
+    if chin <= top_y:
         return None
-    return float(chin - top)
+    return float(chin - top_y)
 
 
 def align(path):
