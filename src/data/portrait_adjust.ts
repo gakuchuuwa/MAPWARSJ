@@ -1102,11 +1102,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -31,
             "offsetY": 53
         },
-        "/assets/pugan/__��置__pugan_03.png": {
-            "scale": 0.89,
-            "offsetX": 0,
-            "offsetY": -30
-        },
         "/assets/DIANQIAN/__闲置__DIANQIAN_21.png": {
             "scale": 0.89,
             "offsetX": 0,
@@ -1226,11 +1221,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -9
-        },
-        "/assets/JAPAN/__闲置__JAPAN_01.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": -46
         },
         "/assets/JAPAN/totomi_jiujingzhongci.png": {
             "scale": 0.97,
@@ -1647,11 +1637,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -21
         },
-        "/assets/NORTH/you_gengyan.png": {
-            "scale": 1.17,
-            "offsetX": 0,
-            "offsetY": 12
-        },
         "/assets/NORTH/guzhu_tianyu.png": {
             "scale": 1.15,
             "offsetX": 0,
@@ -1766,11 +1751,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -6
-        },
-        "/assets/panjun/__闲置__PANJUN_19.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -30
         },
         "/assets/panjun/baibo_guotai.png": {
             "scale": 1,
@@ -2212,11 +2192,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/xianqin/__闲置__xianqin_01.png": {
-            "scale": 0.75,
-            "offsetX": 0,
-            "offsetY": -15
-        },
         "/assets/xianqin/__闲置__xianqin_06.png": {
             "scale": 0.94,
             "offsetX": 0,
@@ -2332,11 +2307,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 1
         },
-        "/assets/CENTRAL_ASIA/image (3).png": {
-            "scale": 1.04,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/TIBET/xiutu_jinridi.png": {
             "scale": 0.95,
             "offsetX": 15,
@@ -2367,11 +2337,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -19
         },
-        "/assets/BASHU/image (3).png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": -20
-        },
         "/assets/BASHU/tujia_d_qinliangyu.png": {
             "scale": 1.08,
             "offsetX": 0,
@@ -2387,11 +2352,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/CENTRAL/image (6).png": {
-            "scale": 1.41,
-            "offsetX": -42,
-            "offsetY": -25
-        },
         "/assets/xianqin/__闲置__xianqin_15.png": {
             "scale": 1.05,
             "offsetX": 0,
@@ -2401,11 +2361,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.32,
             "offsetX": -33,
             "offsetY": -30
-        },
-        "/assets/HEXI/__��置__HEXI_06.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": 0
         },
         "/assets/liuhan/__闲置__liuhan_13.png": {
             "scale": 1.03,
@@ -2447,11 +2402,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/BASHU/__闲置__BASHU_03.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": 8
-        },
         "/assets/BASHU/yidou_luxun.png": {
             "scale": 0.94,
             "offsetX": 0,
@@ -2461,11 +2411,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": -22
-        },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_01.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -30
         },
         "/assets/JIANGNAN/__闲置__JIANGNAN_01.png": {
             "scale": 0.83,
@@ -2572,11 +2517,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/xianqin/mi_chu_xionglv.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -8
-        },
         "/assets/JIANGNAN/hao_d_weirui.png": {
             "scale": 1.02,
             "offsetX": 6,
@@ -2657,11 +2597,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -32
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_02.png": {
-            "scale": 0.81,
-            "offsetX": 0,
-            "offsetY": -36
-        },
         "/assets/CENTRAL_ASIA/seljuq_sangjiaer.png": {
             "scale": 1.06,
             "offsetX": 0,
@@ -2697,11 +2632,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -22
         },
-        "/assets/daming/e8efd876-6d2c-4361-96a3-8ac51d086b9d.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": -18
-        },
         "/assets/daming/huai_zhuyuanzhang.png": {
             "scale": 0.96,
             "offsetX": 0,
@@ -2712,11 +2642,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/HEXI/b80a8ff1-565b-4bbd-b68e-2cb07949897b.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 11
-        },
         "/assets/HEXI/xiazhou_lijiqian.png": {
             "scale": 1.12,
             "offsetX": 0,
@@ -2726,11 +2651,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -1
-        },
-        "/assets/HEXI/__���������__HEXI_11.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": -23
         },
         "/assets/HEXI/dangxiang_liyuanhao.png": {
             "scale": 1.11,
@@ -2762,11 +2682,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -22
         },
-        "/assets/JIANGNAN/4d0dadb2-850d-4430-8635-dfd049badbbd.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": -21
-        },
         "/assets/LINGNAN/__闲置__LINGNAN_13.png": {
             "scale": 0.82,
             "offsetX": 10,
@@ -2777,20 +2692,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 1,
             "offsetY": -40
         },
-        "/assets/LINGNAN/5cd1cab7-d441-49ce-83b0-f56bf865de90.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/LINGNAN/dayue_chenguojun.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 3
-        },
-        "/assets/litang/6f7b4bd1-2624-47f0-9566-e72bab3383b7.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 11
         },
         "/assets/litang/loufan_xuerengui.png": {
             "scale": 1.07,
@@ -2867,11 +2772,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/STEPPE/__闲置__STEPPE_22.png": {
-            "scale": 0.82,
-            "offsetX": 0,
-            "offsetY": -32
-        },
         "/assets/STEPPE/wala_yexian.png": {
             "scale": 1.19,
             "offsetX": 0,
@@ -2889,16 +2789,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/JAPAN/nanbu_nanbuqingzheng.png": {
             "scale": 0.88,
-            "offsetX": 0,
-            "offsetY": -7
-        },
-        "/assets/STEPPE/__闲置__STEPPE_09.png": {
-            "scale": 1.15,
-            "offsetX": 0,
-            "offsetY": -19
-        },
-        "/assets/STEPPE/__闲���__STEPPE_11.png": {
-            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -3032,11 +2922,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_07.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": 21
-        },
         "/assets/litang/song2_houjunji.png": {
             "scale": 1.07,
             "offsetX": 0,
@@ -3057,30 +2942,15 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/STEPPE/__闲置__STEPPE_24.png": {
-            "scale": 0.85,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/STEPPE/tuoba_tuobagui.png": {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/STEPPE/__闲置__STEPPE_26.png": {
-            "scale": 0.78,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/STEPPE/yunzhong_tuobaliwei.png": {
             "scale": 1.22,
             "offsetX": -22,
             "offsetY": 30
-        },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_08.png": {
-            "scale": 0.88,
-            "offsetX": 0,
-            "offsetY": 0
         },
         "/assets/STEPPE/xianbei_tuobamao.png": {
             "scale": 1.23,
@@ -3093,11 +2963,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/litang/lingzhou_puguhuaien.png": {
-            "scale": 1.07,
-            "offsetX": 3,
-            "offsetY": -21
-        },
-        "/assets/litang/pugu_puguhuaien.png": {
             "scale": 1.07,
             "offsetX": 3,
             "offsetY": -21
@@ -3116,11 +2981,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.21,
             "offsetX": 0,
             "offsetY": -31
-        },
-        "/assets/STEPPE/c92a7393-bf14-403d-a90e-7f9671721d03.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 19
         },
         "/assets/NORTHEAST/__闲置__NORTHEAST_17.png": {
             "scale": 0.95,
@@ -3167,11 +3027,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 11
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_23.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": 21
-        },
         "/assets/daming/xuan_xuda.png": {
             "scale": 1.25,
             "offsetX": 0,
@@ -3201,21 +3056,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 6
-        },
-        "/assets/CENTRAL_ASIA/834bfad2-d9b4-437b-9b25-cdea395f3174.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -6
-        },
-        "/assets/CENTRAL_ASIA/37a789b9-c992-4ad7-8704-97c37ab07555.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -16
-        },
-        "/assets/CENTRAL_ASIA/cd31f427-daff-441f-8442-bb5f0f485fd5.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": -2
         },
         "/assets/CENTRAL_ASIA/kawusi_haidaer.png": {
             "scale": 1.01,
@@ -3257,11 +3097,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/STEPPE/__闲置__STEPPE_36.png": {
-            "scale": 1.41,
-            "offsetX": 0,
-            "offsetY": 42
-        },
         "/assets/liuhan/pulei_dougu.png": {
             "scale": 1.02,
             "offsetX": 0,
@@ -3292,11 +3127,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -1
         },
-        "/assets/liuhan/__闲置__liuhan_15.png": {
-            "scale": 0.86,
-            "offsetX": 12,
-            "offsetY": -79
-        },
         "/assets/STEPPE/xijue_zhizhichanyu.png": {
             "scale": 1.22,
             "offsetX": 0,
@@ -3308,7 +3138,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/BASHU/cuanshi_cuanlongyan.png": {
-            "scale": 1,
+            "scale": 0.8809,
             "offsetX": 0,
             "offsetY": 6
         },
@@ -3341,11 +3171,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -27
-        },
-        "/assets/JIANGNAN/43feabe5-8631-46c6-8142-cd21b9a55d9b.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": 13
         },
         "/assets/JIANGNAN/wang_d_liuyu.png": {
             "scale": 0.97,
@@ -3392,11 +3217,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 17
         },
-        "/assets/CENTRAL/beca0063-3022-4b61-9191-ef9d9ed760ae.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 10
-        },
         "/assets/CENTRAL/__闲置__CENTRAL_33.png": {
             "scale": 0.83,
             "offsetX": 0,
@@ -3426,11 +3246,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": -10
-        },
-        "/assets/litang/bdbe41bd-e912-42ac-8917-13c6fa83bdfc.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": -19
         },
         "/assets/litang/xinping_guoziyi.png": {
             "scale": 1.11,
@@ -3476,11 +3291,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -13
-        },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_24.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -3
         },
         "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png": {
             "scale": 1.16,
@@ -3537,11 +3347,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/daming/image (3).png": {
-            "scale": 1.07,
-            "offsetX": 10,
-            "offsetY": 6
-        },
         "/assets/daming/__闲置__daming_13.png": {
             "scale": 0.98,
             "offsetX": 9,
@@ -3586,11 +3391,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -22
-        },
-        "/assets/JIANGNAN/__闲�����������������__JIANGNAN_20.png": {
-            "scale": 0.98,
-            "offsetX": 5,
-            "offsetY": 0
         },
         "/assets/DIANQIAN/pagan_anultuo.png": {
             "scale": 1,
@@ -3677,26 +3477,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 30
         },
-        "/assets/zhaosong/shenshi_shenqingzhi.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 7
-        },
-        "/assets/NORTH/c425ce42-7fc4-4e93-abf1-7e5ad7fde4aa.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -25
-        },
-        "/assets/STEPPE/3113431b-d5dd-43bd-8493-333ad7a3738a.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -17
-        },
-        "/assets/STEPPE/10c6eef2-3174-4004-b7f9-ebaeaaae4f4b.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -10
-        },
         "/assets/STEPPE/dongdan_yelbei.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -3706,11 +3486,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -17
-        },
-        "/assets/STEPPE/image (3).png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": -20
         },
         "/assets/STEPPE/yel_yelxiuge.png": {
             "scale": 1.07,
@@ -3932,11 +3707,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 10,
             "offsetY": -18
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_31.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": 21
-        },
         "/assets/STEPPE/rouran_shelun.png": {
             "scale": 1.06,
             "offsetX": 0,
@@ -4037,11 +3807,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 1,
             "offsetY": -12
         },
-        "/assets/NORTH/__闲置__NORTH_05.png": {
-            "scale": 1.05,
-            "offsetX": 9,
-            "offsetY": -25
-        },
         "/assets/JAPAN/__闲置__JAPAN_27.png": {
             "scale": 0.93,
             "offsetX": 0,
@@ -4128,9 +3893,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -38
         },
         "/assets/BASHU/cong_puhu.png": {
-            "scale": 1.04,
-            "offsetX": 1,
-            "offsetY": -16
+            "scale": 0.9476,
+            "offsetX": 0,
+            "offsetY": -12
         },
         "/assets/JIANGNAN/ruochu_doulian.png": {
             "scale": 1.11,
@@ -4176,11 +3941,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -19
-        },
-        "/assets/JAPAN/__闲置__JAPAN_29.png": {
-            "scale": 0.88,
-            "offsetX": 0,
-            "offsetY": -41
         },
         "/assets/JAPAN/osumi_ganfujianxu.png": {
             "scale": 1.06,
@@ -4237,11 +3997,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -26
         },
-        "/assets/JAPAN/__闲���__JAPAN_31.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": -19
-        },
         "/assets/JAPAN/beihai_shamusheyun.png": {
             "scale": 1,
             "offsetX": 0,
@@ -4266,11 +4021,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 5,
             "offsetY": -2
-        },
-        "/assets/HEXI/__���置__CENTRAL_23.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": 0
         },
         "/assets/HEXI/yangguan_lihao.png": {
             "scale": 1.03,
@@ -4522,16 +4272,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/CENTRAL_ASIA/0c7b399b-4d49-4aa9-9b53-961a83773e0b.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": -8
-        },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_01.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/CENTRAL_ASIA/safawei_d_abasi.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -4542,20 +4282,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_32.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -6
-        },
         "/assets/WEST_ASIA/heti_muwatali.png": {
             "scale": 1.29,
             "offsetX": -9,
             "offsetY": 0
-        },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_34.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": -5
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_21.png": {
             "scale": 0.94,
@@ -4582,11 +4312,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_38.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -6
-        },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_55.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -4606,11 +4331,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.21,
             "offsetX": 0,
             "offsetY": -12
-        },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_41.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -6
         },
         "/assets/WEST_ASIA/womaya_muaweiye.png": {
             "scale": 0.91,
@@ -4786,11 +4506,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": 23
-        },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_10.png": {
-            "scale": 0.79,
-            "offsetX": 0,
-            "offsetY": -23
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_11.png": {
             "scale": 0.99,
@@ -5117,11 +4832,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 24
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_92.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": -5
-        },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_93.png": {
             "scale": 0.82,
             "offsetX": 0,
@@ -5141,11 +4851,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -14
-        },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_95.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": -2
         },
         "/assets/CENTRAL_ASIA/xisi_yakubu.png": {
             "scale": 1.01,
@@ -5167,20 +4872,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_100.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -5
-        },
         "/assets/CENTRAL_ASIA/huluo_jiyasiding.png": {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 5
-        },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_102.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -31
         },
         "/assets/CENTRAL_ASIA/najie_minande.png": {
             "scale": 1.02,
@@ -5237,11 +4932,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_110.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -31
-        },
         "/assets/CENTRAL_ASIA/wulaertu_ajishenti.png": {
             "scale": 1.14,
             "offsetX": 0,
@@ -5292,11 +4982,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -7,
             "offsetY": 0
         },
-        "/assets/BASHU/__闲置__BASHU_19.png": {
-            "scale": 0.96,
-            "offsetX": 5,
-            "offsetY": -41
-        },
         "/assets/LINGNAN/daozhou_yangzaixing.png": {
             "scale": 0.85,
             "offsetX": 0,
@@ -5326,11 +5011,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 16
-        },
-        "/assets/TIBET/__闲置__TIBET_19.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -35
         },
         "/assets/TIBET/nanjie_nanjiewangqiu.png": {
             "scale": 1,
@@ -5387,20 +5067,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_27.png": {
-            "scale": 1.15,
-            "offsetX": 0,
-            "offsetY": 33
-        },
         "/assets/WESTERN/loulan_suojie.png": {
             "scale": 1,
             "offsetX": -1,
             "offsetY": -12
-        },
-        "/assets/WESTERN/__多余__WESTERN_08.png": {
-            "scale": 1.17,
-            "offsetX": 0,
-            "offsetY": -7
         },
         "/assets/WESTERN/gaochang_quwentai.png": {
             "scale": 1.06,
@@ -5497,11 +5167,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 12,
             "offsetY": -1
         },
-        "/assets/TIBET/ada93ca5-cca5-4449-84af-500cad61c9de.png": {
-            "scale": 0.87,
-            "offsetX": 0,
-            "offsetY": 5
-        },
         "/assets/TIBET/gaxa_zhashenduanzhubu.png": {
             "scale": 0.87,
             "offsetX": 0,
@@ -5522,50 +5187,25 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 24
         },
-        "/assets/TIBET/31fa399f-d335-49f7-82d3-ee3a6fa97ed0.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 7
-        },
         "/assets/TIBET/xiangxiong_limixia.png": {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 7
-        },
-        "/assets/LINGNAN/42010cae-b4c8-42bc-a579-dc85d60c721f.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 22
         },
         "/assets/LINGNAN/miaomin_shiliudeng.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 22
         },
-        "/assets/LINGNAN/9ee78ada-78eb-4066-b92a-881f426877fa.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/LINGNAN/tian_sizhou_tianyougong.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/LINGNAN/89d0c0dd-168d-493e-b3c3-6addc40f1a30.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -3
-        },
         "/assets/LINGNAN/xinggu_cuanxi.png": {
             "scale": 0.87,
             "offsetX": 0,
             "offsetY": -3
-        },
-        "/assets/LINGNAN/7235b227-0924-4a2d-a109-f13827562adf.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": -19
         },
         "/assets/LINGNAN/guangping_ruanwenzhang.png": {
             "scale": 0.91,
@@ -5577,65 +5217,30 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -19
         },
-        "/assets/LINGNAN/c673c706-65e1-41c2-a466-7c28cfe46f95.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": 15
-        },
         "/assets/LINGNAN/yelang_duotong.png": {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 15
-        },
-        "/assets/LINGNAN/3ef743ec-0f9c-470e-9858-d677e7f72dfa.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 20
-        },
-        "/assets/LINGNAN/21c49b91-ecde-43fe-900c-6014004a757a.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": 5
         },
         "/assets/TIBET/__多余__TIBET_09.png": {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/TIBET/__多余__TIBET_06.png": {
-            "scale": 1.17,
-            "offsetX": 11,
-            "offsetY": -4
-        },
         "/assets/TIBET/hor_chisang.png": {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": 12
-        },
-        "/assets/LINGNAN/ece01d0f-1751-4255-93ad-2dd5139ea2a2.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -1
         },
         "/assets/LINGNAN/qian_songjingyang.png": {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": -1
         },
-        "/assets/LINGNAN/d5b5afa2-d2c1-4518-940c-493a6832ff04.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": -3
-        },
         "/assets/LINGNAN/geng_gengjingzhong.png": {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": -3
-        },
-        "/assets/LINGNAN/7389a06c-748b-4aac-a5e5-156572736709.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": 10
         },
         "/assets/DIANQIAN/__多余__DIANQIAN_06.png": {
             "scale": 1.11,
@@ -5647,20 +5252,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/LINGNAN/9cb5c3cc-f472-4eae-ad6d-9f11a27e057b.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 11
-        },
         "/assets/LINGNAN/lancang_faang.png": {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 11
-        },
-        "/assets/LINGNAN/6cf9d887-68d2-4d35-8172-9fbf2f2f28c1.png": {
-            "scale": 1.13,
-            "offsetX": 0,
-            "offsetY": -1
         },
         "/assets/LINGNAN/dengmaoqi_dengmaoqi.png": {
             "scale": 1.13,
@@ -5687,11 +5282,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 23,
             "offsetY": 2
         },
-        "/assets/WESTERN/__闲置__WESTERN_07.png": {
-            "scale": 0.78,
-            "offsetX": 0,
-            "offsetY": -19
-        },
         "/assets/WESTERN/__多余__WESTERN_01.png": {
             "scale": 0.95,
             "offsetX": 0,
@@ -5711,11 +5301,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.88,
             "offsetX": 0,
             "offsetY": -1
-        },
-        "/assets/JAPAN/917615c-91f4-46c6-bcb0-eb8e309fbbe4.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -18
         },
         "/assets/JAPAN/ryukyu_shangbazhi.png": {
             "scale": 1,
@@ -5752,11 +5337,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 11
         },
-        "/assets/WESTERN/__多余__WESTERN_11.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": 16
-        },
         "/assets/WESTERN/dayuan_wugua.png": {
             "scale": 0.85,
             "offsetX": 0,
@@ -5767,45 +5347,20 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 13,
             "offsetY": 19
         },
-        "/assets/TIBET/__多余__TIBET_10.png": {
-            "scale": 1.13,
-            "offsetX": 0,
-            "offsetY": -11
-        },
         "/assets/TIBET/khon_basiba.png": {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": -11
-        },
-        "/assets/WESTERN/__多余__WESTERN_13.png": {
-            "scale": 0.87,
-            "offsetX": 0,
-            "offsetY": 7
         },
         "/assets/WESTERN/weili_weilifan.png": {
             "scale": 0.87,
             "offsetX": 0,
             "offsetY": 7
         },
-        "/assets/WESTERN/__多余__WESTERN_10.png": {
-            "scale": 0.83,
-            "offsetX": 0,
-            "offsetY": 5
-        },
         "/assets/WESTERN/qiemo_anmoshenpan.png": {
             "scale": 0.83,
             "offsetX": 0,
             "offsetY": 5
-        },
-        "/assets/TIBET/__多余__TIBET_11.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 4
-        },
-        "/assets/TIBET/__多余__TIBET_07.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": 18
         },
         "/assets/TIBET/ganden_zongkaba.png": {
             "scale": 1,
@@ -5817,11 +5372,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/WESTERN/__多余__WESTERN_12.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 7
-        },
         "/assets/WESTERN/shanshan_weituqi.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5831,11 +5381,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 1
-        },
-        "/assets/WESTERN/__多余__WESTERN_14.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 3
         },
         "/assets/WESTERN/wusun_liejiaomi.png": {
             "scale": 1.06,
@@ -5852,11 +5397,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 2,
             "offsetY": 42
         },
-        "/assets/HEXI/__闲置__HEXI_19.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": -22
-        },
         "/assets/HEXI/juqu_d_juqumengxun.png": {
             "scale": 1.02,
             "offsetX": 0,
@@ -5871,11 +5411,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.32,
             "offsetX": 0,
             "offsetY": 32
-        },
-        "/assets/TIBET/46aea3be-5334-4887-b7dc-9215c94991a4.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": -25
         },
         "/assets/TIBET/qiuchi_yangnandang.png": {
             "scale": 0.95,
@@ -5952,11 +5487,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/WESTERN/__多余__WESTERN_15.png": {
-            "scale": 1.04,
-            "offsetX": 0,
-            "offsetY": -34
-        },
         "/assets/WESTERN/sai_gaijiayun.png": {
             "scale": 0.79,
             "offsetX": 0,
@@ -6031,11 +5561,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 11,
             "offsetY": 1
-        },
-        "/assets/NORTHEAST/dcba1754-eaf2-4b8d-acd6-075aecc90445.png": {
-            "scale": 1.22,
-            "offsetX": 0,
-            "offsetY": 52
         },
         "/assets/NORTHEAST/ayinu_ezo_keshamayin.png": {
             "scale": 1.22,
@@ -6117,30 +5642,15 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -1,
             "offsetY": 33
         },
-        "/assets/LATIN/__多余__LATIN_19.png": {
-            "scale": 1.13,
-            "offsetX": 0,
-            "offsetY": -4
-        },
         "/assets/LATIN/lagoniya_lieaonida.png": {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/LATIN/__多余__LATIN_21.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/LATIN/__闲置__LATIN_10.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -7
-        },
-        "/assets/LATIN/__多余__LATIN_14.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 14
         },
         "/assets/SLAVIC/lagusa_delagan.png": {
             "scale": 0.98,
@@ -6148,9 +5658,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 14
         },
         "/assets/GERMANIC/bafaliya_taxiluosanshi.png": {
-            "scale": 0.95,
+            "scale": 0.87,
             "offsetX": 0,
-            "offsetY": -10
+            "offsetY": -11
         },
         "/assets/GERMANIC/ruidian_yota_kaerjiushi.png": {
             "scale": 0.98,
@@ -6182,30 +5692,15 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/LATIN/__多余__LATIN_17.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": 11
-        },
         "/assets/LATIN/anuo_wugelinuo.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": 11
         },
-        "/assets/LATIN/__多余__LATIN_12.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 17
-        },
         "/assets/LATIN/guadaer_feiernanduo.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 17
-        },
-        "/assets/LATIN/__多余__LATIN_11.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 15
         },
         "/assets/LATIN/balunxiya_xide.png": {
             "scale": 0.96,
@@ -6227,20 +5722,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/LATIN/__多余__LATIN_13.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 12
-        },
         "/assets/LATIN/moxina_luojie.png": {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 12
-        },
-        "/assets/LATIN/__多余__LATIN_16.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": 24
         },
         "/assets/LATIN/sading_ailaiaonuola.png": {
             "scale": 0.97,
@@ -6272,11 +5757,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 2
         },
-        "/assets/LATIN/__多余__LATIN_22.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 13
-        },
         "/assets/SLAVIC/bosiniya_tefuerteke.png": {
             "scale": 1.12,
             "offsetX": 0,
@@ -6307,11 +5787,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 14
         },
-        "/assets/LATIN/__多余__LATIN_24.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 24
-        },
         "/assets/LATIN/buni_hanniba.png": {
             "scale": 0.96,
             "offsetX": 0,
@@ -6331,11 +5806,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -6
-        },
-        "/assets/LATIN/f08b5503-e90e-46d9-8abc-2cee1b002f72.png": {
-            "scale": 0.86,
-            "offsetX": 0,
-            "offsetY": 10
         },
         "/assets/LATIN/jileinaijia_majiasi.png": {
             "scale": 0.86,
@@ -6407,11 +5877,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/GERMANIC/__多余__GERMANIC_22.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 9
-        },
         "/assets/LATIN/aermolika_jierdeleisi.png": {
             "scale": 1,
             "offsetX": 0,
@@ -6427,30 +5892,15 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 7
         },
-        "/assets/LATIN/__多余__LATIN_23.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -16
-        },
         "/assets/LATIN/yadelaiya_danduoluo.png": {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/LATIN/__多余__LATIN_15.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": 13
-        },
         "/assets/LATIN/kanpaniya_kaluo.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 13
-        },
-        "/assets/LATIN/__多余__LATIN_10.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 8
         },
         "/assets/LATIN/jiatailuoniya_weifuleide.png": {
             "scale": 1,
@@ -6462,20 +5912,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 8
         },
-        "/assets/LATIN/__多余__LATIN_18.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 25
-        },
         "/assets/LATIN/liguliya_andelieya.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 25
-        },
-        "/assets/LATIN/__多余__LATIN_20.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 19
         },
         "/assets/SLAVIC/seleisi_ximeiang.png": {
             "scale": 1.03,
@@ -6523,9 +5963,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/GERMANIC/__闲置__GERMANIC_01.png": {
-            "scale": 1.07,
+            "scale": 1.1344,
             "offsetX": 0,
-            "offsetY": 5
+            "offsetY": 6
         },
         "/assets/GERMANIC/weijing_york_xuefuailike.png": {
             "scale": 1,
@@ -6533,9 +5973,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/GERMANIC/asikanani_aerbulei.png": {
-            "scale": 1.09,
+            "scale": 0.9492,
             "offsetX": 0,
-            "offsetY": 32
+            "offsetY": 0
         },
         "/assets/GERMANIC/huohengsuolun_feitelieyishi.png": {
             "scale": 0.89,
@@ -6543,9 +5983,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/GERMANIC/__闲置__GERMANIC_02.png": {
-            "scale": 1,
+            "scale": 1.082,
             "offsetX": 0,
-            "offsetY": 35
+            "offsetY": 37
         },
         "/assets/GERMANIC/jialuolin_chalidadi.png": {
             "scale": 1,
@@ -6553,9 +5993,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/GERMANIC/boximiya_yangjiesika.png": {
-            "scale": 1,
+            "scale": 0.9716,
             "offsetX": 0,
-            "offsetY": 19
+            "offsetY": 17
         },
         "/assets/GERMANIC/__闲置__GERMANIC_03.png": {
             "scale": 1,
@@ -6591,11 +6031,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 6
-        },
-        "/assets/GERMANIC/__多余__GERMANIC_23.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 16
         },
         "/assets/GERMANIC/batawei_xiweilisi.png": {
             "scale": 1,
@@ -6662,11 +6097,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/LATIN/a3070011-5785-45b2-ac27-66f8df4847d6.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 14
-        },
         "/assets/GERMANIC/__闲置__GERMANIC_09.png": {
             "scale": 1,
             "offsetX": 0,
@@ -6681,11 +6111,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": 5
-        },
-        "/assets/LATIN/db8660a4-a7ef-487b-9dae-ccdb0fcedea3.png": {
-            "scale": 0.87,
-            "offsetX": 0,
-            "offsetY": 9
         },
         "/assets/GERMANIC/__闲置__GERMANIC_08.png": {
             "scale": 1.01,
@@ -6782,21 +6207,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/SLAVIC/053a1031-2d73-4771-aadd-19510ea35eae.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 32
-        },
-        "/assets/SLAVIC/07dbdd4b-30dd-4a03-bb83-e6ac770b8bf1.png": {
-            "scale": 1.29,
-            "offsetX": 5,
-            "offsetY": 3
-        },
-        "/assets/SLAVIC/1b6264a8-1b95-4896-ad07-cb04ddb5ebf4.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/SLAVIC/jinzhang_badou.png": {
             "scale": 1.03,
             "offsetX": 0,
@@ -6822,11 +6232,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/SLAVIC/63b676e8-a66a-431a-8b65-1c9b03f10038.png": {
-            "scale": 1.2,
-            "offsetX": 0,
-            "offsetY": 18
-        },
         "/assets/SLAVIC/baojiaer_wuluhei.png": {
             "scale": 1.19,
             "offsetX": -6,
@@ -6842,40 +6247,15 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/SLAVIC/72b9e8d7-7b14-439c-9263-9140d5757267.png": {
-            "scale": 1.22,
-            "offsetX": 0,
-            "offsetY": 16
-        },
-        "/assets/SLAVIC/76268763-35c0-48e4-89ae-255b9b9a0c0b.png": {
-            "scale": 1.21,
-            "offsetX": 13,
-            "offsetY": -11
-        },
-        "/assets/SLAVIC/77076c56-7d3a-487d-a58d-85b2e77baaae.png": {
-            "scale": 1.23,
-            "offsetX": 3,
-            "offsetY": 18
-        },
         "/assets/GERMANIC/tiaodun_qishi_wuerlixi.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/SLAVIC/93280dcc-5cfa-4563-8040-368430c9d35b.png": {
-            "scale": 1.25,
-            "offsetX": 9,
-            "offsetY": -6
-        },
         "/assets/SLAVIC/litaowan_gediminasi.png": {
             "scale": 1.15,
             "offsetX": 0,
             "offsetY": 11
-        },
-        "/assets/SLAVIC/a401aad0-f93a-426f-b583-249b2c70f72a.png": {
-            "scale": 1.13,
-            "offsetX": 0,
-            "offsetY": 10
         },
         "/assets/SLAVIC/peilieya_gongguo_monuomahe.png": {
             "scale": 1.14,
@@ -6956,6 +6336,56 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": -4
+        },
+        "/assets/LATIN/09d57937-9d2c-47ee-af40-fa8b2bdd9223.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/LATIN/maqidun_kashande.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/GERMANIC/2e54b8d0-bb39-4a4f-93d9-27331d2bf05e.png": {
+            "scale": 1.0547,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/GERMANIC/1182a2ee-a78d-4951-93b4-de1efa10c138.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/GERMANIC/shiwaben_shengwuerlixi.png": {
+            "scale": 1.0547,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/GERMANIC/b5cff534-badd-450b-a3c7-7062dbeb2290.png": {
+            "scale": 0.8774,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/GERMANIC/b7ace094-f72b-48d7-bef1-4d78138d5346.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/GERMANIC/ruishi_ciwenli.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": 24
+        },
+        "/assets/GERMANIC/shengdian_qishi_demolai.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 13
+        },
+        "/assets/GERMANIC/maerta_qishi_lawalaite.png": {
+            "scale": 0.8774,
+            "offsetX": 0,
+            "offsetY": -7
         }
     },
     "folderGuides": {
