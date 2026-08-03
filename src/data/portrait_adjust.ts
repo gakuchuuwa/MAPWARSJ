@@ -573,7 +573,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/BASHU/chenghan_lite.png": {
-            "scale": 0.9062,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": 12
         },
@@ -773,24 +773,24 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/BASHU/ba_bamanzi.png": {
-            "scale": 0.8328,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": -12
         },
         "/assets/BASHU/baishui_yanghuai.png": {
-            "scale": 0.8467,
+            "scale": 0.8781,
             "offsetX": 0,
             "offsetY": -15
         },
         "/assets/BASHU/bandun_fanmu.png": {
-            "scale": 0.9729,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": 7
         },
         "/assets/BASHU/chenzhou_d_zhanghao.png": {
-            "scale": 0.94,
+            "scale": 0.92,
             "offsetX": 0,
-            "offsetY": 3
+            "offsetY": 2
         },
         "/assets/LINGNAN/jingjiang_qushisi.png": {
             "scale": 1.06,
@@ -883,7 +883,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/BASHU/__闲置__BASHU_01.png": {
-            "scale": 0.9097,
+            "scale": 0.85,
             "offsetX": 0,
             "offsetY": -16
         },
@@ -5088,9 +5088,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/BASHU/boren_ada.png": {
-            "scale": 1,
+            "scale": 0.9709,
             "offsetX": 0,
-            "offsetY": 2
+            "offsetY": 5
         },
         "/assets/daming/__闲置__daming_12.png": {
             "scale": 1.07,

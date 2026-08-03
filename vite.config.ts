@@ -777,9 +777,13 @@ export default defineConfig({
                         return;
                     }
                     try {
+                        // [2026-08-03 乐观锁] 先取 mtime 再读内容：万一两步之间有人写入，
+                        // 客户端拿到的是「新内容+旧版本号」，保存时版本必然对不上 → 409 重试，安全方向。
+                        const stat = fs.statSync(portraitAdjustPath);
                         const text = fs.readFileSync(portraitAdjustPath, 'utf-8');
                         const data = serverParsePortraitAdjustExport(text);
                         res.setHeader('Content-Type', 'application/json');
+                        res.setHeader('X-Adjust-Mtime', String(stat.mtimeMs));
                         res.end(JSON.stringify(data));
                     } catch (err: any) {
                         res.statusCode = 500;
@@ -814,7 +818,25 @@ export default defineConfig({
                     let body = '';
                     req.on('data', chunk => { body += chunk; });
                     req.on('end', () => {
+                        // [2026-08-03] 保存计时：主人反馈"保存后要等会"，实测正常仅 ~9ms；
+                        // 若控制台看到这里的毫秒数飙高（如杀毒/git 占用触发 SafeWrite 重试），即为卡顿元凶。
+                        const saveT0 = Date.now();
                         try {
+                            // [2026-08-03 乐观锁] 客户端把 GET 时拿到的 X-Adjust-Mtime 原样带回；
+                            // 与当前文件 mtime 不符 = 读盘到写盘之间有别人（另一个标签页/F2）写过，
+                            // 直接整份写会把对方的键顶掉 → 409 让客户端重拉重合并。
+                            // 本回调内从校验到写盘全程同步无 await，同一事件循环 tick 内原子，不会误放行。
+                            // 不带此头的旧客户端照旧放行（向后兼容）。
+                            const baseMtime = req.headers['x-adjust-base-mtime'];
+                            if (typeof baseMtime === 'string' && baseMtime !== '' && fs.existsSync(portraitAdjustPath)) {
+                                const curMtime = String(fs.statSync(portraitAdjustPath).mtimeMs);
+                                if (curMtime !== baseMtime) {
+                                    res.statusCode = 409;
+                                    res.setHeader('Content-Type', 'application/json');
+                                    res.end(JSON.stringify({ ok: false, conflict: true, error: '保存冲突：文件在读盘后被其它页面改过，请重试（客户端会自动重拉合并）' }));
+                                    return;
+                                }
+                            }
                             const payload = JSON.parse(body);
                             // backup 标志已废弃（兼容旧客户端仍剥离）：现在每次保存都滚动备份
                             const { backup: _legacyBackupFlag, ...data } = payload as { backup?: boolean; [k: string]: unknown };
@@ -831,18 +853,20 @@ export default defineConfig({
                                 if (!fs.existsSync(backupFile)) {
                                     fs.copyFileSync(portraitAdjustPath, backupFile);
                                     console.log(`📦 [PortraitAdjust] Backup → ${backupFile}`);
+                                    // [2026-08-03] 保留份数 30→120：主人手动逐张精调是主工作流，
+                                    // 30 份在密集调校时只够半小时史。120 份 ≈ 21MB，白菜价保险。
                                     const stale = fs.readdirSync(backupDir)
                                         .filter((f: string) => /^portrait_adjust_\d{12}\.ts$/.test(f))
                                         .sort()
                                         .reverse()
-                                        .slice(30);
+                                        .slice(120);
                                     for (const f of stale) fs.unlinkSync(path.join(backupDir, f));
                                 }
                             }
 
                             serverSafeWriteFileSync(portraitAdjustPath, content);
                             markPortraitDevWrite();
-                            console.log(`✅ [PortraitAdjust] Saved to ${portraitAdjustPath}`);
+                            console.log(`✅ [PortraitAdjust] Saved to ${portraitAdjustPath} (${Date.now() - saveT0}ms)`);
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true, backupFile }));
                         } catch (err: any) {
@@ -875,7 +899,9 @@ export default defineConfig({
                         return;
                     }
                     const script = path.resolve(__dirname, 'tools/PortraitAlign/align_one.py');
+                    const alignT0 = Date.now();   // 计时：正常 ~0.4s（py 冷启动+检测）；飙高说明 CPU 被挤或杀毒拦 py
                     execFile('py', [script, abs], { timeout: 30000 }, (err, stdout, stderr) => {
+                        console.log(`🎯 [AutoAlign] ${q} (${Date.now() - alignT0}ms)`);
                         if (err && !stdout) {
                             send(500, { ok: false, reason: `检测器调用失败: ${err.message}`, stderr: String(stderr).slice(0, 300) });
                             return;
