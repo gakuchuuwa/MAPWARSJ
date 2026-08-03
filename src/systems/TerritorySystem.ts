@@ -1081,17 +1081,19 @@ export class TerritorySystem {
                      transform-origin: center ${(baseSize + 80) / 2 + 4}px; position: relative;
                      ${ghostStyle}
                  ">
-                     <img src="${flagPole}" style="
+                     ${flagPole ? `<img src="${flagPole}" style="
                          position: absolute; top: 15px; left: 50%;
                          transform: translateX(-30%);
                          height: ${poleHeight}px; width: auto; z-index: -1;
-                     ">
-                     <div class="city-building-stack" style="display: ${this.showCityTextures ? 'inline-block' : 'none'};">
-                         <img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
-                             width: ${baseSize}px; height: auto;
-                             transform: ${transform};
-                         ">
-                     </div>
+                     ">` : ''}
+                     ${this.showCityTextures ? `<div class="city-building-stack" style="display: inline-block;">
+                         ${city.image
+                             ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
+                                 width: ${baseSize}px; height: auto;
+                                 transform: ${transform};
+                             ">`
+                             : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`}
+                     </div>` : ''}
                      ${flagBodyHtml}
                  </div>`,
             iconSize: [baseSize, baseSize + 80],

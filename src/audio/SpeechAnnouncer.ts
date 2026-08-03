@@ -389,7 +389,17 @@ export class SpeechAnnouncer {
     return null;
   }
 
-  public setEnabled(on: boolean): void { this.enabled = on; }
+  public setEnabled(on: boolean): void {
+    this.enabled = on;
+    if (!on) {
+      // 立即静音：停掉正在播的 Web Speech 与云健直连 Audio，清空技能队列（GAKU 2026-08-04 全局总开关）
+      this.clearSkillQueue();
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        try { window.speechSynthesis.cancel(); } catch { /* ignore */ }
+      }
+      this.stopActiveEdgeAudio();
+    }
+  }
   public isEnabled(): boolean { return this.enabled; }
 
   /** 技能语音队列是否空闲（下一句入队时是否会附带技能音效） */
@@ -752,6 +762,12 @@ export class SpeechAnnouncer {
 
   private speak(text: string, opts?: SpeakOptions): void {
     const now = Date.now();
+    // 播报总开关关闭：直接丢弃（不排队不开口；回调仍释放，避免技能队列卡死）
+    if (!this.enabled) {
+      opts?.onStart?.();
+      opts?.onDone?.();
+      return;
+    }
     // S 级播报期间，常规播报直接丢弃（不 cancel，不排队——慢直播宁缺毋滥）
     if (!opts?.sTier && now < this.sTierBusyUntilMs) {
       opts?.onStart?.();

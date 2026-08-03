@@ -1,17 +1,15 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/3 20:56:49（共 29 条）
+ * 生成时间：2026/8/4 07:10:48（共 27 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
+    "/assets/CENTRAL/ranwei_d_ranmin.png": "/assets/CENTRAL/__多余__CENTRAL_01.png",
     "/assets/WESTERN/__多余__WESTERN_04.png": "/assets/CENTRAL_ASIA/hali_gedaerzi.png",
     "/assets/TIBET/__多余__TIBET_04.png": "/assets/CENTRAL_ASIA/qincha_baqiman.png",
     "/assets/WESTERN/__多余__WESTERN_01.png": "/assets/CENTRAL_ASIA/qincha_baqiman.png",
     "/assets/WESTERN/__多余__WESTERN_02.png": "/assets/CENTRAL_ASIA/wuhu_dukake.png",
-    "/assets/SLAVIC/baojiaer_wuluhei.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_05.png",
-    "/assets/SLAVIC/deniesite_muhanmodegeli.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_06.png",
-    "/assets/SLAVIC/kelimiya_hajigelai.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_07.png",
     "/assets/LINGNAN/__多余__LINGNAN_08.png": "/assets/DIANQIAN/luoyue_zhengce.png",
     "/assets/WESTERN/tuoming_tuomin.png": "/assets/DIANQIAN/__多余__DIANQIAN_04.png",
     "/assets/LINGNAN/xian_d_xianying.png": "/assets/DIANQIAN/__多余__DIANQIAN_06.png",
