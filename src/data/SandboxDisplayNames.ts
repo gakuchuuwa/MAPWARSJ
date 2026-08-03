@@ -49,7 +49,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   zhayan: '扎扬',
   babali: '巴巴',
   hamade: '哈马',
-  buni: '布匿',
+'buni': '布匿',
   aguelabu: '阿格',
   telibolisi: '的黎',
   jileinaijia: '基雷',

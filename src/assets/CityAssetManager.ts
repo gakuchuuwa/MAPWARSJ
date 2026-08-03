@@ -900,6 +900,7 @@ export class CityAssetManager {
         'salai': '诺盖',
         'mangshi': '曼格',
         'kejila': '科基',
+        'buni': '布匿',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

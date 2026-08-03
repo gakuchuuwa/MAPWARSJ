@@ -225,6 +225,8 @@ function main() {
     // ── 4.5) 调校键跟着改名走（主人 2026-07-31 定）──
     // 不迁移会有两层后果：调好的位置缩放失联、回落文件夹默认值；且序号名被后来的图复用时，
     // 新图会继承上一任遗留的调校（"调校串图"）。详见 TOOL/lib/portrait_adjust_migrate.mjs。
+    // ⚠ 2026-08-03 血训：此 try/catch 曾全吞异常导致 73 条调校失联且无任何提示。
+    //    失败必须可见 —— 迁移是「保主人调校成果」的关键环节，失败要让人知道并手动补跑。
     try {
         const mig = migratePortraitAdjustKeys(ROOT, log);
         if (mig.migrated > 0) {
@@ -235,7 +237,11 @@ function main() {
             );
         }
     } catch (e) {
-        console.error('  ⚠ 调校键迁移失败（不阻塞启动）:', e?.message ?? e);
+        // 2026-08-03 改为显式失败：绝不静默。迁移失败 = 主人的调校在失联，必须高亮。
+        console.error('  ❌❌ 调校键迁移失败（严重：本次改名造成的调校失联无法自动恢复）:');
+        console.error('     ' + (e?.message ?? e));
+        console.error('     补救：手动运行 node tools/lib/portrait_adjust_migrate.mjs 或重启 dev 前检查 portrait_adjust.ts 是否被占用');
+        // 不阻塞启动（dev 钩子语义），但失败可见
     }
 
     // ── 5) 还原日志 ──
