@@ -361,14 +361,20 @@ function loadDraftForSelected(): void {
     draft = { ...resolvePortraitAdjust(selectedImage, adjustData) };
 }
 
-function showSaveToast(message: string, isError = false): void {
+/** toast 自动清除定时器：每次调用先清旧的，避免批量进度被旧定时器提前清掉 */
+let toastTimer: ReturnType<typeof setTimeout> | null = null;
+
+function showSaveToast(message: string, isError = false, persist = false): void {
+    if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
     els.saveToast.textContent = message;
     els.saveToast.className = isError ? 'pt-save-toast is-error' : 'pt-save-toast';
-    setTimeout(() => { 
+    if (persist) return; // 持久显示：批量进度/完成信息不自动清空，等下次操作覆盖
+    toastTimer = setTimeout(() => {
         if (els.saveToast.textContent === message) {
-            els.saveToast.textContent = ''; 
-            els.saveToast.className = 'pt-save-toast'; 
+            els.saveToast.textContent = '';
+            els.saveToast.className = 'pt-save-toast';
         }
+        toastTimer = null;
     }, 3000);
 }
 
@@ -544,8 +550,8 @@ function batchAlignSelected(): Promise<void> {
             showSaveToast('当前文件夹没有立绘', true);
             return;
         }
-        if (!confirm(`对当前文件夹 ${images.length} 张立绘执行自动对齐（只预览，不保存）？\n检测失败/无脸的图会跳过。`)) return;
-        showSaveToast(`⏳ 批量对齐中… 0/${images.length}`);
+        if (!confirm(`对当前文件夹 ${images.length} 张立绘执行自动对齐？\n结果会直接保存到磁盘（服务端自动备份，可回滚）。检测失败/无脸的图会跳过。`)) return;
+        showSaveToast(`⏳ 批量对齐中… 0/${images.length}`, false, true);
         adjustData.images = adjustData.images ?? {};
         let ok = 0, fail = 0;
         for (let i = 0; i < images.length; i++) {
@@ -555,6 +561,7 @@ function batchAlignSelected(): Promise<void> {
                 const j = await res.json();
                 if (j.ok) {
                     adjustData.images[p] = { scale: j.scale, offsetX: j.offsetX ?? 0, offsetY: j.offsetY };
+                    dirtyKeys.add(p); // ← 关键：标记脏键，保存时才会写盘
                     ok++;
                 } else {
                     fail++;
@@ -562,15 +569,23 @@ function batchAlignSelected(): Promise<void> {
             } catch {
                 fail++;
             }
-            if ((i + 1) % 20 === 0 || i === images.length - 1) {
-                showSaveToast(`⏳ 批量对齐中… ${i + 1}/${images.length}（成功 ${ok}，跳过 ${fail}）`);
-            }
+            // 持久进度：每张都刷新（不清空），完成后显示最终结果
+            showSaveToast(`⏳ 批量对齐中… ${i + 1}/${images.length}（成功 ${ok}，跳过 ${fail}）`, false, true);
         }
         dirty = true;
         editVersion++;
+        // 批量结果直接落盘（服务端写盘前自动滚动备份，可回滚）——刷新页面也不丢
+        try {
+            await saveAdjustToServer(false);
+            showSaveToast(`✅ 批量对齐完成并已保存：${ok} 张已写入磁盘，${fail} 张跳过。`, false, true);
+        } catch (e) {
+            showSaveToast(`⚠ 批量对齐完成但保存失败：${e}。请勿刷新页面，立即 Ctrl+S 重试！`, true, true);
+            return;
+        }
         if (selectedImage) loadDraftForSelected();
         renderGrid();
-        showSaveToast(`✅ 批量对齐完成：${ok} 张已更新预览，${fail} 张跳过。满意请 Ctrl+S 保存，不满意点「重新加载」还原。`);
+        // 全部卡片立即应用新调校，无需点击
+        updateAllGridTransforms();
     });
 }
 
