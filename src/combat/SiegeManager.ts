@@ -813,6 +813,11 @@ export class SiegeManager {
             if (myFaction === attackerFaction || myFaction === defenderFaction) {
                 const cityPos = cityToLatLng(targetCity);
                 const isAttacker = myFaction === attackerFaction;
+                // triggerSiege 在进本函数前已把本军标成在战（siege 占位），而援军资格检查
+                // 拒收「已在战」单位——不先撤掉占位标志，抵达路径的同旗加入永远失败，
+                // 军团被清目标后掉头走人（观感即「到了城下不打就走」）。先撤占位再试加入；
+                // 成功时 tryJoinLegionToBattle 会重设真实在战状态（含战场类型与中心）。
+                army.setCombatState(false);
                 if (tryJoinLegionToBattle(activeBattle, army, isAttacker, cityPos, this.getReinforcementJoinDeps())) {
                     siegeLog(`📯 [SiegeManager] ${army.name} 中途加入【${targetCity.name}】攻城战`);
                     onSiegeComplete?.();

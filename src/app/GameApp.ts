@@ -39,6 +39,7 @@ import { GameTimeHUD } from '../ui/GameTimeHUD';
 import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
 import { isRegionCenter, REGION_LABELS, type RegionType } from '../systems/RegionSystem';
 import { Army } from '../legion/Army';
+import { setDefeatCooldownTimeSource } from '../legion/DefeatCooldown';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
@@ -212,6 +213,8 @@ export class GameApp {
             // Managers & Systems
             // this.contactEngine ... moved down
             this.timeSystem = new TimeSystem();
+            // 战败冷却时间源：游戏秒（暂停冻结、倍速加速）
+            setDefeatCooldownTimeSource(() => this.timeSystem.getElapsedGameSeconds());
 
             // [NEW] Sync Time to Map Visuals (Roads/Rivers filtering)
             this.timeSystem.onYearChange((year) => {

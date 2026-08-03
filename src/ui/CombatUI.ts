@@ -2915,6 +2915,8 @@ export class CombatUI {
         this.correctorOpen = true;
         this.setCorrectorMapKeyboardSuppressed(true);
         this.correctorPrevPaused = this.pauseHook?.isGamePaused() ?? false;
+        // F2 校正标志：ReloadGate 据此在暂停期间也关闸（防整页刷新打断校正）
+        (window as any).__portraitCorrectorOpen = true;
         this.pauseHook?.setPaused(true);
         if (!this.correctorPanel) this.correctorPanel = this.buildCorrectorPanel();
         this.correctorPanel.style.display = 'flex';
@@ -3070,6 +3072,9 @@ export class CombatUI {
         // 自动保存模式下改动即所见即所得（已写入 correctorData/DEFAULT），无需回退重绘
         // 仅当进入校正前游戏在运行时才恢复运行（尊重用户原本的暂停）
         if (!this.correctorPrevPaused) this.pauseHook?.setPaused(false);
+        // 清 F2 校正标志并补报一次闸门状态（恢复后暂停状态与打开前相同时 setPaused 不触发回调）
+        (window as any).__portraitCorrectorOpen = false;
+        window.dispatchEvent(new CustomEvent('reload-gate-ping'));
     }
 
     private loadCorrectorDraft(): void {

@@ -16,6 +16,8 @@ export class TimeSystem {
     private year: number;
     private season: Season;
     private accumulatedTime: number = 0;
+    /** 累计游戏秒（2026-08-03 加）：暂停不累计、倍速自然加速；供战败冷却等绝对时间戳使用 */
+    private elapsedGameSeconds: number = 0;
     public timeScale: number = 1.0;
     private isPaused: boolean = true;
 
@@ -45,6 +47,7 @@ export class TimeSystem {
     public update(gameDelta: number): void {
         if (this.isPaused || gameDelta <= 0) return;
 
+        this.elapsedGameSeconds += gameDelta;
         this.accumulatedTime += gameDelta;
 
         const seasonDuration = GameTime.SEASON_DURATION;
@@ -119,6 +122,11 @@ export class TimeSystem {
 
     public isGamePaused(): boolean {
         return this.isPaused;
+    }
+
+    /** 累计游戏秒（暂停冻结、倍速加速）；供战败冷却等绝对时间戳使用 */
+    public getElapsedGameSeconds(): number {
+        return this.elapsedGameSeconds;
     }
 
     private onPauseChangeCallbacks: ((paused: boolean) => void)[] = [];
