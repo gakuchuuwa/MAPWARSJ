@@ -278,9 +278,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/CENTRAL/chanzhou_chairong.png": {
-            "scale": 0.94,
+            "scale": 0.85,
             "offsetX": 0,
-            "offsetY": -26
+            "offsetY": -20
         },
         "/assets/CENTRAL/zhuozhou_anlushan.png": {
             "scale": 1.14,
@@ -378,7 +378,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 18
         },
         "/assets/CENTRAL/huang_d_jiakui.png": {
-            "scale": 1.01,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": 1
         },
@@ -478,7 +478,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/CENTRAL/cao_d_caocao.png": {
-            "scale": 1.04,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -5
         },
@@ -713,7 +713,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/CENTRAL/pizhou_lvbu.png": {
-            "scale": 1.07,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": -30
         },
@@ -743,7 +743,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -35
         },
         "/assets/CENTRAL/lu_zhangliao.png": {
-            "scale": 1.03,
+            "scale": 0.99,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -768,7 +768,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/CENTRAL/long2_weixiaokuan.png": {
-            "scale": 1.21,
+            "scale": 1.2,
             "offsetX": 3,
             "offsetY": 1
         },
@@ -1008,7 +1008,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -14
         },
         "/assets/CENTRAL/__闲置__CENTRAL_43.png": {
-            "scale": 1.02,
+            "scale": 0.94,
             "offsetX": 3,
             "offsetY": 7
         },
@@ -1018,12 +1018,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/CENTRAL/mi_mizhu.png": {
-            "scale": 1.13,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 16
         },
         "/assets/CENTRAL/__闲置__CENTRAL_40.png": {
-            "scale": 0.97,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": -14
         },
@@ -1038,9 +1038,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/CENTRAL/__闲置__CENTRAL_41.png": {
-            "scale": 0.85,
+            "scale": 0.78,
             "offsetX": 0,
-            "offsetY": -6
+            "offsetY": -3
         },
         "/assets/NORTH/zhe_d_zheyuqing.png": {
             "scale": 1.02,
@@ -1058,7 +1058,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/CENTRAL/gaoqi_d_gaohuan.png": {
-            "scale": 0.97,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": -6
         },
@@ -2328,7 +2328,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/CENTRAL/bozhou_d_yujin.png": {
-            "scale": 1.11,
+            "scale": 1.03,
             "offsetX": 7,
             "offsetY": 27
         },
@@ -2343,7 +2343,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -20
         },
         "/assets/CENTRAL/__闲置__CENTRAL_42.png": {
-            "scale": 1.32,
+            "scale": 1.28,
             "offsetX": 0,
             "offsetY": -8
         },
@@ -2583,7 +2583,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/CENTRAL/fushi_wangmeng.png": {
-            "scale": 1.03,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -20
         },
@@ -2723,7 +2723,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/CENTRAL/chuzhou_d_huangfuhui.png": {
-            "scale": 1.47,
+            "scale": 1.43,
             "offsetX": 10,
             "offsetY": 27
         },
@@ -2733,7 +2733,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/CENTRAL/__闲置__CENTRAL_25.png": {
-            "scale": 1.09,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 11
         },
@@ -2753,7 +2753,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -34
         },
         "/assets/CENTRAL/__闲置__CENTRAL_31.png": {
-            "scale": 1.23,
+            "scale": 1.3,
             "offsetX": 0,
             "offsetY": -11
         },
@@ -3168,7 +3168,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/CENTRAL/__闲置__CENTRAL_32.png": {
-            "scale": 0.92,
+            "scale": 0.86,
             "offsetX": 0,
             "offsetY": -27
         },
@@ -3187,7 +3187,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -1,
             "offsetY": -3
         },
-        "/assets/xianqin/__多余__xianqin_01.png": {
+        "/assets/xianqin/__����余__xianqin_01.png": {
             "scale": 1.2,
             "offsetX": -7,
             "offsetY": -47
@@ -3218,12 +3218,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/CENTRAL/__闲置__CENTRAL_33.png": {
-            "scale": 0.83,
+            "scale": 0.73,
             "offsetX": 0,
             "offsetY": -19
         },
         "/assets/CENTRAL/hongnong_jun_yangsu.png": {
-            "scale": 1.03,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -3493,7 +3493,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -20
         },
         "/assets/CENTRAL/__闲置__CENTRAL_36.png": {
-            "scale": 1.11,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": 11
         },
@@ -3733,7 +3733,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/CENTRAL/__闲置__CENTRAL_39.png": {
-            "scale": 1,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": 1
         },
@@ -4028,7 +4028,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/CENTRAL/__闲置__CENTRAL_44.png": {
-            "scale": 0.78,
+            "scale": 0.76,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -4083,7 +4083,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 29
         },
         "/assets/CENTRAL/__闲置__CENTRAL_45.png": {
-            "scale": 1.15,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": -9
         },
@@ -4243,12 +4243,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/CENTRAL/__闲置__CENTRAL_46.png": {
-            "scale": 1.04,
+            "scale": 0.98,
             "offsetX": 13,
             "offsetY": 7
         },
         "/assets/CENTRAL/__闲置__CENTRAL_47.png": {
-            "scale": 1,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -8
         },
@@ -4413,7 +4413,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 30
         },
         "/assets/CENTRAL/__闲置__CENTRAL_57.png": {
-            "scale": 1.04,
+            "scale": 0.95,
             "offsetX": 2,
             "offsetY": 7
         },
@@ -6366,6 +6366,61 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1771,
             "offsetX": 0,
             "offsetY": -10
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_26.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_49.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -8
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_51.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_52.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 1
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_53.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_54.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_56.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_55.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_58.png": {
+            "scale": 1.55,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/CENTRAL/8d993b42-a394-478e-be82-9855da22bb93.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/CENTRAL/e8948457-b002-4ced-87ee-fe046d09afd8.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -18
         }
     },
     "folderGuides": {

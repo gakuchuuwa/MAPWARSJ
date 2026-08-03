@@ -463,7 +463,6 @@ function buildRows(): void {
             portrait: gen?.portrait,
             tier: profile?.tier,
             tacticalSkillId: profile?.tacticalSkillId,
-            strategicSkillId: profile?.strategicSkillId,
             advantageSkillId: profile?.advantageSkillId,
             balanceSkillId: profile?.balanceSkillId,
             disadvantageSkillId: profile?.disadvantageSkillId,
@@ -611,7 +610,7 @@ function renderTable(): void {
             <td>${r.lng != null ? r.lng.toFixed(1) : ''}</td>
             <td>${r.generalName ? `<span class="cell-ok">${r.generalName}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${r.tacticalSkillId ? formatSkill(r.tacticalSkillId) : (r.generalName ? '<span class="cell-miss">✗</span>' : '')}</td>
-            <td>${r.strategicSkillId ? formatSkill(r.strategicSkillId) : (r.tier === 'famous' ? '<span class="cell-miss">✗</span>' : '')}</td>
+            <td>${r.strategicSkillId ? formatSkill(r.strategicSkillId) : '—'}</td>
             <td>${r.eliteName ? `<span class="cell-ok">${r.eliteName}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${r.eliteTier != null ? `T${r.eliteTier}` : ''}</td>
             <td>${renderBar(r.completeness)}</td>
@@ -801,9 +800,6 @@ async function openEditPanel(factionId: string | null): Promise<void> {
         }
         return html;
     };
-    const strOptions = (entityData?.strategicSkills ?? []).map(s =>
-        `<option value="${s.id}" ${s.id === (row?.strategicSkillId ?? '') ? 'selected' : ''}>${s.grid} ${s.displayName}</option>`
-    ).join('');
     const currentRegion = row?.cityRegion ?? row?.eliteRegion ?? '';
     const regionOptions = (entityData?.regions ?? []).map(r =>
         `<option value="${r}" ${r === currentRegion ? 'selected' : ''}>${REGION_LABELS[r] ?? r}</option>`
@@ -857,12 +853,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <div class="portrait-info"><div><b>立绘预览</b></div><div style="margin-top:4px">从筛选下拉点选后显示；留空提交时随机</div></div>
           </div>
           <div class="form-row" style="margin-top:8px">
-            <label><span>战略技 (+1，仅名将，留空 → 随机)</span>
-              <select id="bm-quick-str" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
-                <option value="">随机 (名将) / 无 (普将)</option>
-                ${strOptions}
-              </select>
-            </label>
+            <p style="font-size:12px;color:#9a9080;margin:4px 0">战略技已全随机（2026-08-03 起名将战略技由运行时随机池分配，不写入档案）。</p>
           </div>
           <p style="font-size:12px;color:#9a9080;margin:4px 0">战术六槽提交时按<strong>六计各一</strong>自动配齐（攻守互补；仅 common 档）；不单独选「战术技」。</p>
           <h3 style="margin-top:14px">③ 精锐（可选）</h3>
@@ -897,7 +888,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             'bm-quick-genname', 'bm-quick-elite']) {
             document.getElementById(id)!.addEventListener('input', () => updateQuickPreview());
         }
-        for (const id of ['bm-quick-region', 'bm-quick-tier', 'bm-quick-tac', 'bm-quick-str', 'bm-quick-elitetier']) {
+        for (const id of ['bm-quick-region', 'bm-quick-tier', 'bm-quick-tac', 'bm-quick-elitetier']) {
             document.getElementById(id)!.addEventListener('change', () => updateQuickPreview());
         }
 
@@ -1011,14 +1002,8 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             </select>
           </label>
           <p style="font-size:12px;color:#9a9080;margin:4px 0 8px;line-height:1.5">
-            下方是技能配置区：战术 <b>6+1</b> = <b>攻防六槽（6）</b> + 名将 <b>1 战略技</b>。攻守风格不属于三势或技能；保存时 tacticalSkillId 自动取自六槽（优先攻·优势）。
+            下方是技能配置区：战术 <b>6+1</b> = <b>攻防六槽（6）</b> + 名将 <b>1 战略技</b>（2026-08-03 起全随机，不在此配置）。攻守风格不属于三势或技能；保存时 tacticalSkillId 自动取自六槽（优先攻·优势）。
           </p>
-          <label><span>战略技 (+1，仅名将)</span>
-            <select name="strategicSkillId">
-              <option value="">无</option>
-              ${strOptions}
-            </select>
-          </label>
           <h4 style="margin:10px 0 6px;font-size:13px;color:#c9a86c">攻方三槽 · 攻城</h4>
           <div class="form-row">
             <label><span>攻·优势（攻战/胜战）</span>
@@ -1310,7 +1295,6 @@ function readQuickFields() {
         genName: val('bm-quick-genname'),
         genTier: (val('bm-quick-tier') === 'famous' ? 'famous' : 'ordinary') as 'famous' | 'ordinary',
         portrait: val('bm-quick-portrait'),
-        strategicSkillId: val('bm-quick-str'),
         eliteName: val('bm-quick-elite'),
         eliteTier: parseInt(val('bm-quick-elitetier') || '2', 10),
     };
@@ -1406,14 +1390,7 @@ function updateQuickPreview(): void {
             ? `<span class="id-label">立绘:</span> <span class="id-value">${f.portrait}</span> (已选择)`
             : `<span class="id-label">立绘:</span> 未选 → <span class="id-value">提交时从未占用立绘中随机</span>`);
         lines.push(`<span class="id-label">战术:</span> <span class="id-value">提交时按六计各一配齐攻防六槽（攻守互补）</span>`);
-        if (f.genTier === 'famous') {
-            const strName = entityData?.strategicSkills.find(s => s.id === f.strategicSkillId)?.displayName;
-            lines.push(f.strategicSkillId
-                ? `<span class="id-label">战略技:</span> <span class="id-value">${strName ?? f.strategicSkillId}</span>`
-                : `<span class="id-label">战略技:</span> 未选 → <span class="id-value">提交时随机（名将必有）</span>`);
-        } else if (f.strategicSkillId) {
-            lines.push(`<span class="id-dup">⚠ 普将不应有战略技，提交时将忽略所选战略技</span>`);
-        }
+        lines.push(`<span class="id-label">战略技:</span> <span class="id-value">全随机（2026-08-03 起名将战略技由运行时随机池分配，不写入档案）</span>`);
     }
     if (f.eliteName) {
         lines.push(`<span class="id-label">精锐:</span> ${f.eliteName} T${f.eliteTier}`);
@@ -1460,7 +1437,8 @@ async function handleQuickSubmit(): Promise<void> {
         showToast(`立绘路径必须是 .png: ${portrait}`, true);
         return;
     }
-    let strategicSkillId = f.strategicSkillId;
+    // 2026-08-03 主人定：名将战略技全随机（运行时随机池），不再写入档案 strategicSkillId
+    const strategicSkillId = '';
     const randomNotes: string[] = [];
     type SixSlotKey = 'atkAdvantageSkillId' | 'atkBalanceSkillId' | 'atkDisadvantageSkillId'
         | 'defAdvantageSkillId' | 'defBalanceSkillId' | 'defDisadvantageSkillId';
@@ -1479,16 +1457,6 @@ async function handleQuickSubmit(): Promise<void> {
         randomNotes.push('攻防六槽已按六计各一配齐');
         aptitude = pickRandom(['create', 'leverage', 'reverse'] as const) ?? 'leverage';
         randomNotes.push(`三势=${aptitude}`);
-        if (f.genTier === 'famous' && !strategicSkillId) {
-            const s = pickRandomStrategicSkill();
-            if (!s) { showToast('随机战略技失败：清单为空，请手动选择', true); return; }
-            strategicSkillId = s.id;
-            randomNotes.push(`战略技=${s.displayName}`);
-        }
-        if (f.genTier === 'ordinary' && strategicSkillId) {
-            showToast('⚠ 普将不应有战略技，已忽略所选战略技', true);
-            strategicSkillId = '';
-        }
         if (!portrait) {
             const p = await pickRandomUnusedPortrait();
             if (!p) { showToast('随机立绘失败：立绘清单为空，请手动选择', true); return; }
@@ -1700,7 +1668,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
         return;
     }
     const tier = get('tier');
-    const strategicSkillId = get('strategicSkillId');
+    const strategicSkillId = ''; // 2026-08-03 起名将战略技全随机，不写入档案
     const sixSlots = readSixSlotsFromForm(form);
     const tacticalSkillId = deriveTacticalSkillIdFromSix(sixSlots);
     if (generalName && !tier) {

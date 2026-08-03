@@ -43,8 +43,9 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 维罗纳·坎格兰德：斯卡拉家族治军，非「铁骑」专名 → T3
     bohepingyuan: { name: '斯卡拉骑', tier: 3 },
     kejila: { name: '科基拉水军', tier: 3 },          // 科孚·舒伦堡：希腊仅次于雅典的第二海军强国（修昔底德），前433西波塔海战
-    // 拉文纳·狄奥多里克：无史籍「东哥特重骑」专名 → T4 存在
-    donggete: { name: '狄奥多卫', tier: 4 },
+    // 拉文纳·狄奥多里克：493 年攻陷拉文纳、杀奥多亚塞，建东哥特王国，亲卫为其征服主力；
+    // 狄奥多里克为日耳曼英雄文学符号（《尼伯龙根之歌》迪特里希），文化知名 → T3（2026-08-03 名将互配升）
+    donggete: { name: '狄奥多卫', tier: 3 },
     anuo: { name: '比萨海军', tier: 3 },          // 比萨·乌戈里诺
     balunxiya: { name: '熙德骑', tier: 3 },          // 巴伦西亚·熙德
 
@@ -55,8 +56,9 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     tuosikana: { name: '美第奇卫', tier: 4 },
     xixiliwangguo: { name: '西西里骑', tier: 3 },          // 巴勒莫·腓特烈二世
     gaolu_luoma: { name: '克洛维骑', tier: 3 },          // 里昂·克洛维
-    // 托莱多·阿方索六世：卡拉特拉瓦团1158建，晚于其卒年；收复托莱多卡斯蒂主力 → T4
-    xigete: { name: '卡斯蒂骑', tier: 4 },
+    // 托莱多·阿方索六世：1085 收复托莱多，卡斯蒂利亚骑兵为收复失地运动核心兵种，
+    // 文化知名（对标葡萄牙骑/阿拉贡骑 T3）；卡拉特拉瓦团 1158 建晚于其卒年，不挂 → T3（2026-08-03 名将互配升）
+    xigete: { name: '卡斯蒂骑', tier: 3 },
     // 格拉纳达·穆罕默德：纳斯里摩尔骑兵风土 → T3（禁造「阿兰布拉卫」）
     nasier: { name: '摩尔骑', tier: 3 },
     feiniqi: { name: '腓尼基骑', tier: 3 },          // 加的斯·哈米尔卡

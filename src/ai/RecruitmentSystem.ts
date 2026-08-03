@@ -22,8 +22,6 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, REGION_ORDER, RegionType, isRegionCenter } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
-import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
-import { getGeneralProfile, getStrategicSkillDef } from '../data/GeneralSkills';
 import { getCityAnchoredStrategicMagnitude, emitFollowedCityAnchoredDefensePulse } from '../combat/GeneralSkillCombat';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getEuclideanDistance } from '../core/DistanceUtils';
@@ -396,24 +394,9 @@ export class RecruitmentSystem {
         });
         if (activeFromCity.length === 0) return false;
 
-        const anchored = getCityAnchoredGeneral(cityId);
-        const profile = anchored?.generalId ? getGeneralProfile(anchored.generalId) : null;
-        const skill = profile?.strategicSkillId
-            ? getStrategicSkillDef(profile.strategicSkillId)
-            : null;
-        if (skill?.effect !== 'recruit_cooldown_mult') return true;
-
-        const city = this.cityManager.getCity(cityId);
-        if (!city) return true;
-        const cityPos = { lat: city.latitude, lng: city.longitude };
-        const departRadius = GameConfig.FOLLOW_RESUPPLY.PASS_RADIUS;
-
-        // 募兵有道：绑定该城的军团均已离城 → 视为出征在外，可再募
-        const allDeparted = activeFromCity.every((a) => {
-            const dist = getEuclideanDistance(a.getPosition(), cityPos);
-            return dist > departRadius;
-        });
-        return !allDeparted;
+        // 2026-08-03 档案战略技删除：str_26 招兵买马（recruit_cooldown_mult）已退役封印，
+        // 无任何持有者，「军团离城可再募」豁免不复存在，有活跃军团即视为不可再募
+        return true;
     }
 
     /**

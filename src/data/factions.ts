@@ -1775,7 +1775,7 @@ export const FACTIONS: Faction[] = [
     { id: 'kesa', name: '可萨' },
     { id: 'aiaoniya', name: '爱奥尼亚' },
     { id: 'jialatai', name: '加拉太' },
-    { id: 'guyashu', name: '古亚述' },
+    { id: 'guyashu', name: '阿舒尔' },
     { id: 'ansxi', name: '安息帝国' },
     { id: 'nabatai', name: '纳巴泰王国' },
     { id: 'xike', name: '锡克帝国' },

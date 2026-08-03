@@ -980,13 +980,9 @@ export function getStrategicSkillOverride(unitId: string): string | undefined {
     return strategicOverrideByUnitId.get(unitId);
 }
 
-/** 该军团此刻实际生效的战略技 ID：override 优先，否则档案；都没有则 undefined */
-export function getEffectiveStrategicSkillId(
-    unitId: string,
-    generalId: string | undefined,
-): string | undefined {
-    return strategicOverrideByUnitId.get(unitId)
-        ?? (generalId ? getGeneralProfile(generalId)?.strategicSkillId : undefined);
+/** 该军团此刻实际生效的战略技 ID（2026-08-03 起无档案固定技，只读随机 override；无则 undefined） */
+export function getEffectiveStrategicSkillId(unitId: string): string | undefined {
+    return strategicOverrideByUnitId.get(unitId);
 }
 
 /** 军团覆没/退场时清掉 override，避免 Map 无限增长、以及 id 复用时继承前任的技 */
@@ -995,33 +991,20 @@ export function clearStrategicSkillOverride(unitId: string): void {
     resetStrategicFxOnce(unitId);
 }
 
-/**
- * 「换技」瞬间的大地图脉冲（战后随机换技专用）。
- * 池里有些技（以战养战=行军减兵全免、越城而走=仅劣势触发）整个循环都可能不触发，
- * 不在换技当下报一次，观众根本不知道换成了什么 —— 与「技能必须有可见演出」相悖。
- */
-export function emitStrategicSkillSwapFx(
-    unitId: string,
-    skillId: string,
-    lat: number,
-    lng: number,
-): boolean {
-    if (unitId !== getFollowedArmyId()) return false;
-    const skill = getStrategicSkillDef(skillId);
-    if (!skill) return false;
-    return false; // [2026-07-31] 禁用换技能地图脉冲
-}
-
 /** 军团/城防单位当前战略技定义（无则 null）。
- *  优先读运行时 override（战后随机换技写入）；无 override 才读 general 档案。 */
+ *  随机 override 唯一来源（2026-08-03 起无档案固定技）。
+ *  惰性兜底：存量名将军团（创建早于随机分配逻辑）首次查询时补一次随机分配，之后恒读 override，不会逐帧闪变。 */
 export function getGeneralStrategicSkillDef(unit: IBattleUnit) {
-    // 运行时 override 优先（不依赖 canUnitUseGeneralSkills，确保换技后立即生效）
-    const overrideId = strategicOverrideByUnitId.get(unit.id);
-    if (overrideId) return getStrategicSkillDef(overrideId) ?? null;
-    if (!canUnitUseGeneralSkills(unit)) return null;
-    const profile = getGeneralProfile(unit.generalId);
-    if (!profile?.strategicSkillId) return null;
-    return getStrategicSkillDef(profile.strategicSkillId) ?? null;
+    let overrideId = strategicOverrideByUnitId.get(unit.id);
+    if (!overrideId && canUnitUseGeneralSkills(unit)) {
+        const profile = getGeneralProfile(unit.generalId);
+        if (profile?.tier === 'famous') {
+            overrideId = pickRandomStrategicSkill();
+            strategicOverrideByUnitId.set(unit.id, overrideId);
+        }
+    }
+    if (!overrideId) return null;
+    return getStrategicSkillDef(overrideId) ?? null;
 }
 
 /** 是否持有指定战略效果 */
@@ -1049,11 +1032,8 @@ export function generalIdHasStrategicEffect(
             return skill?.effect === effect;
         }
     }
-    if (!generalId) return false;
-    const profile = getGeneralProfile(generalId);
-    if (!profile?.strategicSkillId) return false;
-    const skill = getStrategicSkillDef(profile.strategicSkillId);
-    return skill?.effect === effect;
+    // 2026-08-03 起无档案固定技：无 unitId 的调用方（渲染层，均查已退役视野技）恒 false
+    return false;
 }
 
 /** 26 战略技大地图配色（绑 skill.id，禁止硬编码技名） */
@@ -1115,25 +1095,17 @@ function resolveGeneralStrategicSkillForEffect(
     expectedEffect: StrategicEffect,
     unitId?: string,
 ) {
-    // 运行时 override 优先
-    if (unitId) {
-        const overrideId = strategicOverrideByUnitId.get(unitId);
-        if (overrideId) {
-            const skill = getStrategicSkillDef(overrideId);
-            if (skill && skill.effect === expectedEffect) return skill;
-            return null; // override 不匹配该 effect → 不该脉冲
-        }
-    }
-    if (!generalId) return null;
-    const profile = getGeneralProfile(generalId);
-    if (!profile?.strategicSkillId) return null;
-    const skill = getStrategicSkillDef(profile.strategicSkillId);
+    // 运行时 override 唯一来源（2026-08-03 起无档案固定技）；无 unitId（锚将场景）不脉冲
+    if (!unitId) return null;
+    const overrideId = strategicOverrideByUnitId.get(unitId);
+    if (!overrideId) return null;
+    const skill = getStrategicSkillDef(overrideId);
     if (!skill || skill.effect !== expectedEffect) return null;
     return skill;
 }
 
 /**
- * 跟拍名将战略技大地图展示：机制 effect 须与 profile.strategicSkillId 一致才上屏。
+ * 跟拍名将战略技大地图展示：机制 effect 须与当前生效技（随机 override）一致才上屏。
  * 保证「释放时机」与「脉冲技名」始终对应该将战略格。
  */
 export function emitFollowedGeneralStrategicMapFx(
@@ -1285,9 +1257,9 @@ export function emitFollowedVisionStrategicFxOnMarch(
     lat: number,
     lng: number,
 ): void {
-    // 运行时 override 优先
+    // 运行时 override 唯一来源（2026-08-03 起无档案固定技）
     const overrideId = strategicOverrideByUnitId.get(unit.id);
-    const skillId = overrideId ?? getGeneralProfile(unit.generalId)?.strategicSkillId;
+    const skillId = overrideId;
     const skill = skillId ? getStrategicSkillDef(skillId) : null;
     if (!skill || !VISION_STRATEGIC_EFFECTS.includes(skill.effect)) return;
     emitFollowedGeneralStrategicMapFx(
@@ -1320,17 +1292,14 @@ export function tryEmitPostBattleResumeStrategicFx(
     }
 }
 
+/** 据点锚将战略效果 magnitude。
+ *  2026-08-03 档案战略技删除：防务类（str_05/25/26/27）早已退役封印，无任何持有者，
+ *  本函数恒返回 fallback（1）；调用点（募兵/产兵/攻城防务加成）保留以待随防务技系统整体清理。 */
 export function getCityAnchoredStrategicMagnitude(
-    cityId: string,
-    effect: StrategicEffect,
+    _cityId: string,
+    _effect: StrategicEffect,
 ): number {
-    const anchored = getCityAnchoredGeneral(cityId);
-    if (!anchored?.generalId) return 1;
-    const profile = getGeneralProfile(anchored.generalId);
-    if (!profile?.strategicSkillId) return 1;
-    const skill = getStrategicSkillDef(profile.strategicSkillId);
-    if (!skill || skill.effect !== effect) return 1;
-    return skill.magnitude;
+    return 1;
 }
 
 /** 名将 S① 兵贵神速：行军速度乘区；视野技（S⑯⑰⑱）自带 ×1.1 加速 */
@@ -1371,7 +1340,7 @@ export function getLongDriveDeepBypassChance(
     return getGeneralStrategicMagnitude(army, 'ignore_small_city_zoc', catalogChance);
 }
 
-/** 跟拍：长驱深入绕小城 pulse（不占用将 profile 的 strategicSkillId；坐标取军团脚下） */
+/** 跟拍：长驱深入绕小城 pulse（远征专属技 str_11，不入随机池；坐标取军团脚下） */
 export function emitFollowedLongDriveDeepBypassFx(
     army: { id: string },
     lat: number,
