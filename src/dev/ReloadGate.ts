@@ -1,12 +1,12 @@
 /**
  * ReloadGate.ts —— 开发期整页刷新闸门（客户端上报侧，仅 DEV）
  *
- * 【2026-08-01 主人定】改文件后到底刷不刷新，由左下角「直播」按钮的【当前状态】决定：
- *   正在直播     → 闸门关，改文件不整页刷新，免得炸掉正在播的画面；
- *   没在直播     → 说明主人正在编辑，闸门开，改文件立刻刷新，
- *                  且直播关着期间积压的那一次会立即补上。
- * 手点关掉后，本次会话不会再被自动开播点回来，可以连着改、连着刷；
- * 整页刷新之后照旧 5 秒自动开播（两件事互不相干，见 UnattendedStream.autoStart）。
+ * 【2026-08-03 主人定】改文件后到底刷不刷新，由【推演是否正在运行】决定：
+ *   推演在跑（点了播放且没暂停）→ 闸门关：游戏在跑说明可能正在直播，
+ *                                  整页刷新会搅乱直播画面；
+ *   推演没在跑（未开播 / 已暂停）→ 说明主人正在修游戏，闸门开，改文件立刻刷新，
+ *                                  且闸门关着期间积压的那一次会立即补上。
+ * （08-01 曾错按左下角「直播」按钮判定——那只是画面开关，不代表游戏在不在跑，已废。）
  *
  * 本模块只负责「把闸门状态告诉 dev server」，真正的拦截在 vite.config.ts 的
  * suppress-portrait-dev-hmr 插件里（那里才拿得到 ws.send）。
@@ -19,18 +19,21 @@
  * 生产构建不会包含本模块：唯一的引用点在 GameApp 的 import.meta.env.DEV 分支内，
  * 走动态 import，Rollup 会整块剔除。
  */
-import { StreamModeToggle } from '../ui/StreamModeToggle';
 
 const ENDPOINT = '/__dev/reload-gate';
 const HEARTBEAT_MS = 5_000;
+
+/** 推演是否正在运行 —— 读 TimeSystem 的暂停位；未初始化 / 未开播 / 已暂停都算「没在跑」 */
+function isGameRunning(): boolean {
+    const timeSystem = (window as any).game?.timeSystem;
+    return timeSystem ? !timeSystem.isGamePaused() : false;
+}
 
 function report(): void {
     void fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // 读当前画面的真实状态, 不读 localStorage 里的历史选择 ——
-        // 在播就是在播, 没在播就该让主人立刻看到改动
-        body: JSON.stringify({ block: StreamModeToggle.isActive() }),
+        body: JSON.stringify({ block: isGameRunning() }),
         keepalive: true,
     }).catch(() => {
         /* dev server 正在重启或已关闭，忽略即可——服务端 15 秒后自动开闸 */
@@ -39,7 +42,20 @@ function report(): void {
 
 export function initReloadGate(): void {
     report();
-    window.setInterval(report, HEARTBEAT_MS);
-    // 点「直播」按钮后立刻上报，不必等下一次心跳
-    window.addEventListener('stream-mode-change', report);
+    // 播放/暂停一切换就立刻上报，不必等下一次心跳。
+    // timeSystem 可能晚于本模块就绪：没等到就先靠心跳兜着，等到了再挂钩。
+    let hooked = false;
+    const tryHookPauseChange = (): void => {
+        if (hooked) return;
+        const timeSystem = (window as any).game?.timeSystem;
+        if (timeSystem?.onPauseChange) {
+            hooked = true;
+            timeSystem.onPauseChange(() => report());
+        }
+    };
+    tryHookPauseChange();
+    window.setInterval(() => {
+        tryHookPauseChange();
+        report();
+    }, HEARTBEAT_MS);
 }

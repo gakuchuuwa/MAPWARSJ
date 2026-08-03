@@ -611,7 +611,7 @@ export class GameApp {
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
 
-            // 开发期整页刷新闸门：把「直播开着没有」上报给 dev server，决定改文件后刷不刷新。
+            // 开发期整页刷新闸门：把「推演在不在跑」上报给 dev server，决定改文件后刷不刷新。
             // 动态 import 保证生产构建整块剔除。
             if (import.meta.env.DEV) {
                 void import('../dev/ReloadGate').then((m) => m.initReloadGate()).catch(() => {});

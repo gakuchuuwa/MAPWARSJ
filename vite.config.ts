@@ -72,15 +72,16 @@ function markBatchSaveWrite(): void {
     batchSaveSuppressReloadUntil = Date.now() + 5000;
 }
 
-// ── 直播闸门（2026-08-01 主人定）────────────────────────────────────────────
-// 左下角「直播」开着 → 改文件不整页刷新；主人手动点关直播 → 改文件立刻刷新，
-// 并把直播期间积压的那一次立即补上。状态由页面每 5 秒续期上报（src/dev/ReloadGate.ts）。
+// ── 运行闸门（2026-08-03 主人定，取代 08-01 错定的「直播按钮」判据）─────────
+// 推演正在运行 → 改文件不整页刷新（游戏在跑=可能正在直播，刷新会搅乱直播画面）；
+// 推演暂停/未开播 → 说明主人正在修游戏，改文件立刻刷新，
+// 并把闸门关着期间积压的那一次立即补上。状态由页面每 5 秒续期上报（src/dev/ReloadGate.ts）。
 // 用「续期到期时间」而不是布尔值：页面关掉后没人续期，15 秒后自动开闸，
 // 否则关掉浏览器就等于把 dev server 的刷新永久焊死。
-let liveGateUntil = 0;
-let liveGateQueuedReload = false;
-function isLiveGateClosed(): boolean {
-    return Date.now() < liveGateUntil;
+let runGateUntil = 0;
+let runGateQueuedReload = false;
+function isRunGateClosed(): boolean {
+    return Date.now() < runGateUntil;
 }
 
 // ============================================================
@@ -205,21 +206,21 @@ export default defineConfig({
                         return;
                     }
                     pendingBatchReloadTimer = null;
-                    // 直播中则不补发，转交直播闸门排队，等主人点关直播再刷
-                    if (isLiveGateClosed()) {
-                        liveGateQueuedReload = true;
-                        console.log('[HMR-Suppress] 批量保存窗口结束，但直播中 → 转由直播闸门排队');
+                    // 推演运行中则不补发，转交运行闸门排队，等推演暂停再刷
+                    if (isRunGateClosed()) {
+                        runGateQueuedReload = true;
+                        console.log('[HMR-Suppress] 批量保存窗口结束，但推演运行中 → 转由运行闸门排队');
                         return;
                     }
                     console.log('[HMR-Suppress] 批量保存窗口结束，自动补发整页刷新');
                     origSend({ type: 'full-reload' });
                 };
-                // 直播闸门：页面上报「现在能不能刷」。block=true 续期 15 秒，false 立即开闸补发。
-                const openLiveGate = (): void => {
-                    liveGateUntil = 0;
-                    if (liveGateQueuedReload) {
-                        liveGateQueuedReload = false;
-                        console.log('[HMR-Suppress] 直播已关闭，补发直播期间积压的整页刷新');
+                // 运行闸门：页面上报「现在能不能刷」。block=true 续期 15 秒，false 立即开闸补发。
+                const openRunGate = (): void => {
+                    runGateUntil = 0;
+                    if (runGateQueuedReload) {
+                        runGateQueuedReload = false;
+                        console.log('[HMR-Suppress] 推演已暂停，补发闸门关闭期间积压的整页刷新');
                         origSend({ type: 'full-reload' });
                     }
                 };
@@ -233,15 +234,15 @@ export default defineConfig({
                         } catch {
                             // 上报体损坏时按「放行」处理，宁可多刷一次也别焊死闸门
                         }
-                        if (block) liveGateUntil = Date.now() + 15_000;
-                        else openLiveGate();
+                        if (block) runGateUntil = Date.now() + 15_000;
+                        else openRunGate();
                         res.statusCode = 204;
                         res.end();
                     });
                 });
                 // 页面被关掉/崩了就没人续期了，到期后把积压的那次补发出去
                 setInterval(() => {
-                    if (liveGateQueuedReload && !isLiveGateClosed()) openLiveGate();
+                    if (runGateQueuedReload && !isRunGateClosed()) openRunGate();
                 }, 2000).unref?.();
 
                 server.ws.send = (payload: unknown) => {
@@ -253,9 +254,9 @@ export default defineConfig({
                         const now = Date.now();
                         const inPortrait = now < portraitDevSuppressReloadUntil;
                         const inBatch = now < batchSaveSuppressReloadUntil;
-                        if (!inPortrait && !inBatch && isLiveGateClosed()) {
-                            liveGateQueuedReload = true;
-                            console.log('[HMR-Suppress] 已拦截整页刷新（直播中；点关左下角「直播」即刷新）');
+                        if (!inPortrait && !inBatch && isRunGateClosed()) {
+                            runGateQueuedReload = true;
+                            console.log('[HMR-Suppress] 已拦截整页刷新（推演运行中；暂停推演即刷新）');
                             return;
                         }
                         if (inPortrait || inBatch) {

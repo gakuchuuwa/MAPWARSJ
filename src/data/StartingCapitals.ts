@@ -984,7 +984,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kesa': 'city_daerban',
     'aiaoniya': 'city_yifusuo',
     'jialatai': 'city_ankala',
-    'guyashu': 'city_yashucheng',
+'guyashu': 'city_yashucheng',
     'ansxi': 'city_nisa',
     'nabatai': 'city_peitra',
     'xike': 'city_laheer',

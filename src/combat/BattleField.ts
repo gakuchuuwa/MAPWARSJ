@@ -1207,6 +1207,12 @@ export class BattleField implements IOpeningPulseSink {
         return this.situationalAttDefRatio;
     }
 
+    /** 引擎判定的占优方是否攻方（开战掷色锁定；援军编入/败战翻盘重掷后随 refreshPredictedSidesFromTotals 翻转）。
+     *  标尺方向单一真理：八环有效战力比 > 兵力比，避免「兵力少但名将局打赢、标尺却向输家倾斜」。 */
+    public isAttackerPredictedStronger(): boolean {
+        return this.predictedStrongerGroup === this.attackerGroup;
+    }
+
     /** 战场参考坐标（未溃败单位的重心，用于邻近增援判定） */
     public getReferencePosition(): { lat: number; lng: number } {
         let lat = 0;

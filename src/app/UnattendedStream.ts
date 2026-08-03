@@ -2,8 +2,8 @@
  * UnattendedStream.ts — 直播自动接管（两种触发）
  *
  * ① 本机开发：刷新后【无条件】5 秒自动开播（不开一统/每日刷新循环，免得开发中被
- *    自动整页刷新打断）。解决「刷新忘点直播被当挂机」。要改东西就手点一下关掉直播，
- *    这一次会话内不会再被点回来；改文件立刻整页刷新（闸门见 src/dev/ReloadGate.ts）。
+ *    自动整页刷新打断）。解决「刷新忘点直播被当挂机」。要改东西就点暂停把推演停下，
+ *    改文件立刻整页刷新（闸门看推演运行状态，见 src/dev/ReloadGate.ts）。
  * ② 无人值守云机（URL 带 ?stream=1）：完整链路——
  *
  * 云机 24 小时直播链路（全程无人点击）：
@@ -72,7 +72,7 @@ export function initUnattendedStream(app: GameApp, gameTimeHUD: GameTimeHUD): vo
 function autoStart(app: GameApp, gameTimeHUD: GameTimeHUD): void {
     // 【2026-08-01 主人定】刷新后【无条件】自动开播，不看刷新前是开是关：
     // 刷新完就该自己播起来，要停手点一下就行。这跟「改文件刷不刷新」是两件事 ——
-    // 后者只看【当前】是不是在直播（ReloadGate 读 isActive），跟本函数无关。
+    // 后者只看【推演当前在不在跑】（ReloadGate 读 TimeSystem 暂停位），跟本函数无关。
     if (StreamModeToggle.hasStarted()) return;
 
     if ((window as any).game) {
