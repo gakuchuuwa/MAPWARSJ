@@ -1619,6 +1619,59 @@ export class CombatUI {
         return pickSideSkillGeneralUnit(units) ?? this.pickPrimaryDisplayUnit(units);
     }
 
+    /** 跟拍军团在本场该侧参战时，立绘/名牌以它为主角（切跟拍立即换脸） */
+    private getFollowedUnitInBattle(units: IBattleUnit[]): IBattleUnit | null {
+        const followedId = (window as unknown as { game?: { cameraFollowUI?: { getFollowedArmyId(): string | null } } })
+            .game?.cameraFollowUI?.getFollowedArmyId();
+        if (!followedId) return null;
+        return units.find((u) => u.id === followedId && !u.isDestroyed && u.troops > 0) ?? null;
+    }
+
+    /** 显示等级：带在册武将 2 > 精锐番号 1 > 其余 0 */
+    private displayClassOf(u: IBattleUnit): number {
+        if (u.generalId && getGeneralRecordByGeneralId(u.generalId)) return 2;
+        const army = u.getEntity?.() as Army | undefined;
+        if (army?.isElite) return 1;
+        if (u.unitType === 'city' && readSiegeGarrisonEliteName(u.getEntity?.())) return 1;
+        return 0;
+    }
+
+    /**
+     * 立绘/名牌/番号显示单位（2026-08-03 主人定）：
+     * 有援军时优先显示带武将的单位，其次精锐番号单位，再次其余部队；
+     * 同级看先来后到——开战主力是第 0 波，援军按入场波次排，先到者不被后来者顶掉。
+     * 带武将同级同波若含开战锁定指挥官则用指挥官：技能条/乘区读的是他，脸和数字必须同源
+     * （2026-07 血训：援军换脸而引擎仍按指挥官结算 → 脸和数字对不上）。
+     */
+    private pickArrivalDisplayUnit(units: IBattleUnit[], side: 'attacker' | 'defender'): IBattleUnit | null {
+        const alive = units.filter((u) => !u.isDestroyed && u.troops > 0);
+        if (alive.length === 0) return null;
+        const bf = this.boundRegionalBattleField;
+        const waveOf = (u: IBattleUnit): number => bf?.getUnitWaveIndex?.(u.id) ?? 0;
+
+        let best = alive[0];
+        for (const u of alive.slice(1)) {
+            const clsDiff = this.displayClassOf(u) - this.displayClassOf(best);
+            if (clsDiff > 0) { best = u; continue; }
+            if (clsDiff < 0) continue;
+            const waveDiff = waveOf(u) - waveOf(best);
+            if (waveDiff < 0) { best = u; continue; }
+            if (waveDiff > 0) continue;
+            if (this.scoreBattleDisplayUnit(u) > this.scoreBattleDisplayUnit(best)) best = u;
+        }
+
+        if (this.displayClassOf(best) === 2 && bf) {
+            const cmd = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
+            if (
+                cmd && !cmd.isDestroyed && cmd.troops > 0 && alive.includes(cmd)
+                && this.displayClassOf(cmd) === 2 && waveOf(cmd) === waveOf(best)
+            ) {
+                return cmd;
+            }
+        }
+        return best;
+    }
+
     /** 侧栏立绘/技能/系数：优先带将+精锐的军团，避免攻城时城防「驻军」盖住守城军团 */
     private pickPrimaryDisplayUnit(units: IBattleUnit[]): IBattleUnit | null {
         if (units.length === 0) return null;
@@ -2428,13 +2481,14 @@ export class CombatUI {
 
         const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
-        // 立绘单位：跟随军团优先（切换跟拍后立绘立即换新主角）；否则退回指挥官锁定。
-        // 与 updateStats 的 getPrimaryBattler 同口径——此前用纯分数 pickPrimaryDisplayUnit +
-        // resolvePowerBadgeUnit 的锁定指挥官，切跟拍到同场另一军团时立绘仍显示旧指挥官。
-        const attacker = this.getPrimaryBattler('attacker')
-            ?? this.resolvePowerBadgeUnit(this.pickGeneralDisplayUnit(attackers) ?? attBattler, 'attacker');
-        const defender = this.getPrimaryBattler('defender')
-            ?? this.resolvePowerBadgeUnit(this.pickGeneralDisplayUnit(defenders) ?? defBattler, 'defender');
+        // 立绘单位：跟随军团优先（切换跟拍后立绘立即换新主角）；
+        // 否则按显示优先级选（带武将 > 精锐番号 > 其余，同级先来后到，见 pickArrivalDisplayUnit）。
+        const attacker = this.getFollowedUnitInBattle(attackers)
+            ?? this.pickArrivalDisplayUnit(attackers, 'attacker')
+            ?? attBattler;
+        const defender = this.getFollowedUnitInBattle(defenders)
+            ?? this.pickArrivalDisplayUnit(defenders, 'defender')
+            ?? defBattler;
 
         const attName = this.buildWaveGroupedSideName(attackers, 'attacker');
         const defName = this.buildWaveGroupedSideName(defenders, 'defender');
@@ -2443,7 +2497,7 @@ export class CombatUI {
         this.defenderFactionId = defender.factionId;
         this.currentBattleKey = this.buildPortraitConfigKey(displayTitle, attacker, defender);
 
-        this.updateMultiplierBadges(attBattler, defBattler);
+        this.updateMultiplierBadges(attacker, defender);
         this.updateSkillBadges(attacker, defender);
         this.updateInfoDirect(attName, defName, displayTitle, displayYear, description, defenders);
 
@@ -2720,12 +2774,17 @@ export class CombatUI {
 
         const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
-        // 【关键】援军编入不换立绘/名牌/技能：一律沿用开战锁定的指挥官。
-        // 这里原本重挑一次，援军带来更强的将时会当场把主将顶掉，而引擎仍按锁定指挥官结算 → 脸和数字对不上。
-        const attGeneral = this.resolvePowerBadgeUnit(this.pickGeneralDisplayUnit(attackers) ?? attBattler, 'attacker');
-        const defGeneral = this.resolvePowerBadgeUnit(this.pickGeneralDisplayUnit(defenders) ?? defBattler, 'defender');
+        // 【2026-08-03 主人定】援军编入后按显示优先级重选：带武将 > 精锐番号 > 其余，
+        // 同级先来后到（开战主力第 0 波不会被后来的援军顶掉）。带武将同级同波仍锁指挥官，
+        // 技能条/乘区读的是他——先到的将不换脸，只有「开局无将、武将援军赶到」才切换。
+        const attGeneral = this.getFollowedUnitInBattle(attackers)
+            ?? this.pickArrivalDisplayUnit(attackers, 'attacker')
+            ?? attBattler;
+        const defGeneral = this.getFollowedUnitInBattle(defenders)
+            ?? this.pickArrivalDisplayUnit(defenders, 'defender')
+            ?? defBattler;
 
-        this.updateMultiplierBadges(attBattler, defBattler);
+        this.updateMultiplierBadges(attGeneral, defGeneral);
         this.updateSkillBadges(attGeneral, defGeneral);
         this.setPortrait(this.leftPortrait, attGeneral, attGeneral.generalId, attGeneral.factionId, attGeneral.portraitPath, 'attacker');
         this.setPortrait(
@@ -2768,10 +2827,8 @@ export class CombatUI {
         const activeUnits = units.filter(u => !u.isDestroyed && u.troops > 0);
         if (activeUnits.length === 0) return '';
 
-        // 优先挑选带将/精锐/移动军团的主力部队；若只有城池单位，则取城池单位作守防主力
-        const primary = [...activeUnits].sort(
-            (a, b) => this.scoreBattleDisplayUnit(b) - this.scoreBattleDisplayUnit(a),
-        )[0] ?? activeUnits[0];
+        // 番号与立绘同源：带武将 > 精锐番号 > 其余，同级先来后到（pickArrivalDisplayUnit）
+        const primary = this.pickArrivalDisplayUnit(activeUnits, side) ?? activeUnits[0];
 
         const displayName = this.resolveBattleUnitListName(primary);
         if (!displayName) return '';

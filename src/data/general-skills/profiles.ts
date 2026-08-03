@@ -1732,7 +1732,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    yeli_yeliwangrong: { generalId: 'yeli_yeliwangrong', tier: 'famous', tacticalSkillId: 'ts_315', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_504', atkBalanceSkillId: 'ts_743', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_758', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage' , attackStyle: 'attack'},
+    yeli_yeliwangrong: { generalId: 'yeli_yeliwangrong', tier: 'famous', tacticalSkillId: 'ts_504', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_504', atkBalanceSkillId: 'ts_743', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_758', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
