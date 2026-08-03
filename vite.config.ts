@@ -2740,7 +2740,6 @@ const REQUIRED_STRATEGIC_SKILL_IDS = [
 
 function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
     const tacticalWearers = new Map<string, number>();
-    const strategicWearers = new Map<string, number>();
 
     for (const prof of Object.values(data.profiles)) {
         // 只认现行攻防六槽。tacticalSkillId 与旧三槽仅是兼容回退，不算实际覆盖。
@@ -2750,21 +2749,15 @@ function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
         ]) {
             if (id) tacticalWearers.set(id, (tacticalWearers.get(id) ?? 0) + 1);
         }
-        if (prof.strategicSkillId) {
-            strategicWearers.set(
-                prof.strategicSkillId,
-                (strategicWearers.get(prof.strategicSkillId) ?? 0) + 1,
-            );
-        }
     }
 
-    const strategicNames = new Map(data.strategicSkills.map(s => [s.id, s.displayName]));
+    // 2026-08-03 名将战略技全随机：无档案佩戴概念，14 个活跃技全部在 ACTIVE_STRATEGIC_SKILL_POOL
+    // 随机池中必然被使用（开局随机 + 攻城胜后随机换），覆盖检查恒满。
+    const unusedStrategic: { id: string; displayName: string }[] = [];
+
     const unusedTactical = data.tacticalSkills
         .filter(s => s.ownerGeneralId && (tacticalWearers.get(s.id) ?? 0) === 0) // 仅检查在册技；不在册技走随机池不需要佩戴者
         .map(s => ({ id: s.id, displayName: s.displayName }));
-    const unusedStrategic = REQUIRED_STRATEGIC_SKILL_IDS
-        .filter(id => (strategicWearers.get(id) ?? 0) === 0)
-        .map(id => ({ id, displayName: strategicNames.get(id) ?? id }));
 
     return {
         tactical: {
@@ -2773,7 +2766,7 @@ function serverCheckGeneralSkillCoverage(data = serverReadAllEntityData()) {
         },
         strategic: {
             total: REQUIRED_STRATEGIC_SKILL_IDS.length,
-            used: REQUIRED_STRATEGIC_SKILL_IDS.length - unusedStrategic.length,
+            used: REQUIRED_STRATEGIC_SKILL_IDS.length,
         },
         unusedTactical,
         unusedStrategic,
@@ -3341,9 +3334,8 @@ function serverValidateEntities(): {
         if (!prof.tacticalSkillId?.trim()) {
             issues.push({ level: 'error', msg: `武将 "${g.generalName}"(${g.generalId}) 缺战术技`, factionId: fId });
         }
-        if (prof.tier === 'famous' && !prof.strategicSkillId) {
-            issues.push({ level: 'error', msg: `名将 "${g.generalName}"(${g.generalId}) 缺战略技（名将应为战略技+战术技）`, factionId: fId });
-        }
+        // 2026-08-03 名将战略技全随机：不再要求名将档案佩戴战略技（运行时随机池分配），
+        // 仅保留「普将不得有战略技」防旧数据残留。
         if (prof.tier === 'ordinary' && prof.strategicSkillId) {
             issues.push({ level: 'warn', msg: `普将 "${g.generalName}"(${g.generalId}) 不应有战略技（普将仅战术技）`, factionId: fId });
         }
@@ -3425,7 +3417,7 @@ function serverValidateEntities(): {
         }
     }
 
-    // 11.8. 技能覆盖：当前攻防六槽中的每个 ts_*，以及 20 个可分配战略技，都必须有人佩戴。
+    // 11.8. 技能覆盖：当前攻防六槽中的每个 ts_* 都必须有人佩戴；战略技由随机池驱动（见 serverCheckGeneralSkillCoverage）。
     // 排除：长驱深入（远征）、据险而守（关隘）、守土继绝（文化中心）。
     // tacticalSkillId 与旧三槽只是兼容回退，不计作“有人使用”，避免废弃字段造成假通过。
     {
