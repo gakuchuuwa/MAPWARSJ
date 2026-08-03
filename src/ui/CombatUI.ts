@@ -3474,22 +3474,34 @@ export class CombatUI {
         }
         if (!onExit) this.setCorrectorStatus(autoTrigger ? '自动写盘中…' : '保存中…');
         try {
-            const res = await fetch('/api/portrait-adjust');
-            const disk: PortraitAdjustData = res.ok ? await res.json() : structuredClone(DEFAULT_PORTRAIT_ADJUST);
-            disk.images = disk.images ?? {};
-            for (const path of this.correctorDirtyPaths) {
-                const adj = this.correctorData.images?.[path];
-                if (adj) disk.images[path] = { ...adj };
+            // [2026-08-03 乐观锁] 与 tuner 同款：GET 带回 X-Adjust-Mtime，POST 原样交回；
+            // 读写间隙有别的页面写盘 → 服务端 409 → 自动重拉重合并（最多 3 次），谁也不覆盖谁。
+            let disk!: PortraitAdjustData;
+            let result!: { ok: boolean; error?: string; backupFile?: string };
+            for (let attempt = 0; ; attempt++) {
+                const res = await fetch('/api/portrait-adjust');
+                const baseMtime = res.ok ? (res.headers.get('X-Adjust-Mtime') ?? '') : '';
+                disk = res.ok ? await res.json() : structuredClone(DEFAULT_PORTRAIT_ADJUST);
+                disk.images = disk.images ?? {};
+                for (const path of this.correctorDirtyPaths) {
+                    const adj = this.correctorData.images?.[path];
+                    if (adj) disk.images[path] = { ...adj };
+                }
+                const save = await fetch('/api/save-portrait-adjust', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Adjust-Base-Mtime': baseMtime },
+                    // autoTrigger 时附带 backup:true，让服务端额外存一份带时间戳的备份
+                    body: JSON.stringify(autoTrigger ? { ...disk, backup: true } : disk),
+                });
+                if (save.status === 409 && attempt < 2) {
+                    console.warn(`[F2] 保存冲突（他处刚写盘），自动重拉合并重试 ${attempt + 1}/2`);
+                    continue;
+                }
+                if (!save.ok) throw new Error(`HTTP ${save.status}`);
+                result = await save.json() as { ok: boolean; error?: string; backupFile?: string };
+                if (!result.ok) throw new Error(result.error || '保存失败');
+                break;
             }
-            const save = await fetch('/api/save-portrait-adjust', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                // autoTrigger 时附带 backup:true，让服务端额外存一份带时间戳的备份
-                body: JSON.stringify(autoTrigger ? { ...disk, backup: true } : disk),
-            });
-            if (!save.ok) throw new Error(`HTTP ${save.status}`);
-            const result = await save.json() as { ok: boolean; error?: string; backupFile?: string };
-            if (!result.ok) throw new Error(result.error || '保存失败');
             this.mergePortraitAdjustInto(this.correctorData, disk);
             this.mergePortraitAdjustInto(DEFAULT_PORTRAIT_ADJUST, disk);
             this.applyBothCorrectorPortraits();
