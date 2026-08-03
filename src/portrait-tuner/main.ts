@@ -441,51 +441,63 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
 
     // 先取磁盘最新数据，只覆盖本页改过的键（与游戏内 F2 的保存策略一致）；
     // 直接整份写回会把 F2 / 其它 tuner 标签页在本页打开后保存的调校覆盖掉。
-    const fresh = await fetch('/api/portrait-adjust');
-    if (!fresh.ok) {
-        // 拉不到盘上最新数据就不能写：旧行为是退回整份覆盖，那会把本页打开之后
-        // F2 / 其它标签页存的调校全部抹掉。宁可保存失败让用户重试。
-        throw new Error(`读取磁盘数据失败（HTTP ${fresh.status}），已中止保存以免覆盖他处改动`);
-    }
-    const payload: PortraitAdjustData = await fresh.json();
-    payload.images = payload.images ?? {};
-    // 2026-08-03 血训修复：保存前校验 key 指向的文件存在，防止把"失联 key"继续写回表里
-    // （图片被改名/删除后 key 悬空，保存会固化死键，下次读取回落默认 → 调好又变）
-    // ⚠ 性能血训（同日）：这里原先每次保存都 fetch('/api/portrait-catalog')，而那个接口
-    //   会把全库 1.5GB PNG 完整读盘算 MD5（实测 2.3 秒/次）——就是主人反馈的
-    //   "保存一张要等会才能读下一张"。校验只需要文件名，用启动时已加载的目录快照即可；
-    //   代价是快照可能过期（本次会话中途删的图拦不住），下次打开 tuner 的自检弹窗会兜底。
-    const diskPaths = new Set<string>();
-    for (const c of portraitCatalog) {
-        for (const img of c.images) diskPaths.add(img.path);
-    }
+    // [2026-08-03 乐观锁] GET 时带回 X-Adjust-Mtime，POST 原样交回；服务端发现读写间隙
+    // 有别人写盘会回 409，这里自动重拉重合并（最多 3 次）——两个页面同时保存谁也不丢。
+    let payload!: PortraitAdjustData;
     let skippedOrphans = 0;
-    for (const k of keysBeingSaved) {
-        const v = adjustData.images?.[k];
-        if (!v) continue;
-        if (diskPaths.size > 0 && !diskPaths.has(k)) {
-            // 文件已不存在：不写死键，提示主人（防"调好又变"）
-            skippedOrphans++;
+    for (let attempt = 0; ; attempt++) {
+        const fresh = await fetch('/api/portrait-adjust');
+        if (!fresh.ok) {
+            // 拉不到盘上最新数据就不能写：旧行为是退回整份覆盖，那会把本页打开之后
+            // F2 / 其它标签页存的调校全部抹掉。宁可保存失败让用户重试。
+            throw new Error(`读取磁盘数据失败（HTTP ${fresh.status}），已中止保存以免覆盖他处改动`);
+        }
+        const baseMtime = fresh.headers.get('X-Adjust-Mtime') ?? '';
+        payload = await fresh.json();
+        payload.images = payload.images ?? {};
+        // 2026-08-03 血训修复：保存前校验 key 指向的文件存在，防止把"失联 key"继续写回表里
+        // （图片被改名/删除后 key 悬空，保存会固化死键，下次读取回落默认 → 调好又变）
+        // ⚠ 性能血训（同日）：这里原先每次保存都 fetch('/api/portrait-catalog')，而那个接口
+        //   会把全库 1.5GB PNG 完整读盘算 MD5（实测 2.3 秒/次）——就是主人反馈的
+        //   "保存一张要等会才能读下一张"。校验只需要文件名，用启动时已加载的目录快照即可；
+        //   代价是快照可能过期（本次会话中途删的图拦不住），下次打开 tuner 的自检弹窗会兜底。
+        const diskPaths = new Set<string>();
+        for (const c of portraitCatalog) {
+            for (const img of c.images) diskPaths.add(img.path);
+        }
+        skippedOrphans = 0;
+        for (const k of keysBeingSaved) {
+            const v = adjustData.images?.[k];
+            if (!v) continue;
+            if (diskPaths.size > 0 && !diskPaths.has(k)) {
+                // 文件已不存在：不写死键，提示主人（防"调好又变"）
+                skippedOrphans++;
+                continue;
+            }
+            payload.images[k] = { ...v };
+        }
+        if (!payload.folderGuides) payload.folderGuides = {};
+
+        const res = await fetch('/api/save-portrait-adjust', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Adjust-Base-Mtime': baseMtime },
+            body: JSON.stringify(payload),
+        });
+        if (res.status === 409 && attempt < 2) {
+            console.warn(`[PortraitTuner] 保存冲突（读写间隙他处写盘），自动重拉合并重试 ${attempt + 1}/2`);
             continue;
         }
-        payload.images[k] = { ...v };
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text || `HTTP ${res.status}`);
+        }
+        const result = await res.json();
+        if (!result.ok) throw new Error(result.error || '保存失败');
+        break;
     }
     if (skippedOrphans > 0) {
         showSaveToast(`⚠ ${skippedOrphans} 条调校指向不存在的文件，已跳过保存（防固化死键）`, true);
     }
-    if (!payload.folderGuides) payload.folderGuides = {};
-
-    const res = await fetch('/api/save-portrait-adjust', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || `HTTP ${res.status}`);
-    }
-    const result = await res.json();
-    if (!result.ok) throw new Error(result.error || '保存失败');
 
     console.log(`[PortraitTuner] 保存耗时 ${Math.round(performance.now() - saveT0)}ms（含读盘+写盘两次请求；正常应 <100ms）`);
 
