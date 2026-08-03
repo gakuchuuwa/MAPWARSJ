@@ -79,8 +79,8 @@ app.innerHTML = `
   <div class="pt-header-actions">
     <span class="pt-hint">快捷键：A 自动对齐，[ ] 上/下一张，方向键平移，W/S 缩放（Shift 加速）</span>
     <a href="/" class="pt-link">← 返回游戏</a>
-    <button type="button" id="pt-auto-align" class="pt-btn pt-btn-ghost" title="按检测自动设置 scale/offsetY（头部大小与上下位置），offsetX 交手动。三件套依据见 tools/PortraitAlign/align_one.py">🎯 自动对齐 (A)</button>
-    <button type="button" id="pt-batch-align" class="pt-btn pt-btn-ghost" title="当前文件夹全部立绘自动对齐并直接落盘（服务端自动滚动备份，可回滚）；会覆盖本夹已有手调值">⚡ 批量对齐本夹</button>
+    <button type="button" id="pt-auto-align" class="pt-btn pt-btn-ghost" title="按含盔头高自动设置 scale/offsetY（头部大小与上下位置），offsetX 交手动。纯预览：Ctrl+S 才写盘，重新加载放弃">🎯 自动对齐 (A)</button>
+    <button type="button" id="pt-batch-align" class="pt-btn pt-btn-ghost" title="当前文件夹全部立绘自动对齐。纯预览不落盘：满意 Ctrl+S 写盘（会覆盖本夹已有手调值），不满意点重新加载还原">⚡ 批量对齐本夹</button>
     <button type="button" id="pt-reload" class="pt-btn pt-btn-ghost">重新加载</button>
     <button type="button" id="pt-save-file" class="pt-btn pt-btn-primary">保存 (Ctrl+S)</button>
   </div>
@@ -498,12 +498,13 @@ async function saveAdjustToServer(showToast = true): Promise<void> {
 }
 
 /**
- * 一键自动对齐三件套：scale（头部大小）/ offsetY（上下）/ offsetX（横向，当前恒 0）。
- * 结果先落到 draft 让你当场看，觉得不对可以继续用方向键微调或直接切走放弃。
- * 依据见 tools/PortraitAlign/align_one.py（2026-08-03 全量 1291 张验证）：
- *   scale  = 0.11676 / 检测脸高(眼→下巴) → 全库脸高 CV 0%（定义恒等），对照手调后 CV 8.5%
- *   offsetY = -512 × (eyeY - 0.2344)     → 误差中位 1.9px，87.3% ≤5px
- *   offsetX = 0（全库仅 13.4% 图手调过横向，拟合弱，交手动）
+ * 一键自动对齐三件套：scale（头部大小·按含盔头高）/ offsetY（上下）/ offsetX（横向，当前恒 0）。
+ * 依据见 tools/PortraitAlign/align_one.py（判据=含盔头高，脸高兜底）。
+ *
+ * 2026-08-03 主人定：自动对齐一律【纯预览】——结果写入内存 + 标脏键，
+ * 绝不置 dirty（置了它，切图/换夹的自动保存就会把预览悄悄写盘）。
+ * 满意 Ctrl+S 落盘；不满意点「重新加载」还原。切图预览不丢（已写入 adjustData）。
+ * 注意：预览期间再手动微调（dirty 变 true），切图会连预览一起存盘。
  */
 function autoAlignSelected(): Promise<void> {
     return serialize(async () => {
@@ -523,7 +524,10 @@ function autoAlignSelected(): Promise<void> {
             if (typeof j.scale === 'number') draft.scale = j.scale;
             if (typeof j.offsetX === 'number') draft.offsetX = j.offsetX;
             if (typeof j.offsetY === 'number') draft.offsetY = j.offsetY;
-            dirty = true;
+            // 预览语义：写内存 + 脏键（Ctrl+S 才落盘），不置 dirty（防切图自动保存）
+            adjustData.images = adjustData.images ?? {};
+            adjustData.images[selectedImage] = { scale: draft.scale, offsetX: draft.offsetX, offsetY: draft.offsetY };
+            dirtyKeys.add(selectedImage);
             editVersion++;
             updateSingleGridTransform(selectedImage);
             const parts = [
@@ -531,7 +535,8 @@ function autoAlignSelected(): Promise<void> {
                 `offsetY ${before.offsetY}→${j.offsetY}`,
             ];
             if (j.offsetX !== 0) parts.push(`offsetX ${before.offsetX}→${j.offsetX}`);
-            showSaveToast(`🎯 ${parts.join('  ')}（置信度 ${j.score}）`);
+            const metricTag = j.metric === 'face' ? '｜按脸兜底' : '';
+            showSaveToast(`🎯 ${parts.join('  ')}（置信度 ${j.score}${metricTag}）未保存：Ctrl+S 写盘 / 重新加载放弃`);
         } catch (e) {
             showSaveToast(`自动对齐失败：${e}`, true);
         }
@@ -575,7 +580,10 @@ function batchAlignSelected(): Promise<void> {
             // 持久进度：每张都刷新（不清空），完成后显示最终结果
             showSaveToast(`⏳ 批量对齐中… ${i + 1}/${images.length}（成功 ${ok}，跳过 ${fail}）`, false, true);
         }
-        dirty = true;
+        // ⚠ 不置 dirty：切图/换夹的自动保存只认 dirty 标志，置了它预览就会在
+        // 下一次点卡片时被悄悄写盘，"等主人确认再保存"被绕过。dirtyKeys 已标好，
+        // Ctrl+S（requestSave → saveAdjustToServer）不看 dirty、只看 dirtyKeys，照常能存。
+        // 注意：预览期间若再手动微调任何一张（dirty 会变 true），切图就会连预览一起存盘。
         editVersion++;
         if (selectedImage) loadDraftForSelected();
         renderGrid();
