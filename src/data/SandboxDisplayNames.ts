@@ -99,7 +99,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   mengtainiya: '蒙泰',
   saierweiya: '拉什',
   nuosi: '诺斯',
-  luosi: '罗斯',
+'luosi': '罗斯',
   liulike: '留里',
   mosike_gongguo: '莫斯',
   fulajimier_gongguo: '弗拉',

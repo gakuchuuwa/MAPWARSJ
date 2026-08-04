@@ -27,7 +27,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     dajiya: { name: '达契亚军', tier: 2 },          // 萨尔米泽·德切巴鲁斯：图拉真战争抗罗马
 
     // ── T1 功勋之兵 ──
-    luosi: { name: '瓦兰吉卫队', tier: 1 },          // 基辅·雅罗斯拉夫：989巴西尔二世借基辅瓦良格兵组建，拜占庭皇帝斧兵卫队（克雷迪昂/曼齐刻尔特），2026-08-02 原亲卫队T3升
+    luosi: { name: '瓦兰吉卫队', tier: 1 },
     // 普斯科夫·道曼塔斯：守城抗条顿，无「卫」专名 → T3 风土/城邦军
     pusikefu_gongheguo: { name: '圣三一卫', tier: 3 },
     kelimiya: { name: '克里米骑', tier: 3 },          // 卡法·哈吉格来：克里米亚鞑靼骑兵

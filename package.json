@@ -25,6 +25,7 @@
     "portrait:idle-preview": "node tools/rename_idle_portraits.mjs --dry-run",
     "portrait:dup-rename": "node tools/rename_duplicate_idle_portraits.mjs",
     "portrait:dup-preview": "node tools/rename_duplicate_idle_portraits.mjs --dry-run",
+    "portrait:surplus-audit": "node tools/audit_surplus_deletable.mjs",
     "culture:audit": "node tools/culture_audit.mjs",
     "portrait:folder-audit": "node scratch/dedupe_portraits_within_folder.mjs --audit",
     "portrait:folder-dedupe": "node scratch/dedupe_portraits_within_folder.mjs",
