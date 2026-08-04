@@ -130,12 +130,14 @@ const BGM_REGION_GAIN: Record<string, number> = {
     CENTRAL_ASIA: 0.92,  // -20.2
     conquest_of_paradise: 0.56, // -15.85 → 最响，大幅压低（2026-08-04 通用随机曲）
     fallen_army: 0.61,   // -16.57 → 大幅压低（2026-08-04 通用随机曲）
+    game_of_thrones: 0.72, // -17.99 → 压低（2026-08-04 通用随机曲）
     GERMANIC: 0.60,      // -16.53 → 大幅压低（2026-08-04 新增 The Mass）
     daming: 0.95,        // -20.5
     DIANQIAN: 1.0,       // -20.9
     HEXI: 0.97,          // -20.6
     helmet_to_helmet: 0.68, // -17.55 → 压低（2026-08-04 通用随机曲）
     hes_a_pirate: 0.70,  // -17.86 → 压低（2026-08-04 通用随机曲）
+    india: 0.95,         // = daming Nijamena（2026-08-04 印度首选）
     JAPAN: 1.03,         // -21.2
     JIANGNAN: 0.89,      // -19.9
     KOREA: 0.92,         // -20.2
@@ -171,6 +173,7 @@ const BGM_ROTATION_FOLDERS: readonly string[] = [
     'daming', 'litang', 'liuhan', 'manqing', 'pugan', 'wuzhou', 'xianqin', 'yingqin', 'zhaosong',
     // 无文化首选的通用随机曲（2026-08-04 GAKU 加：只进轮播池，永不作首选）
     'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet', 'hes_a_pirate', 'conquest_of_paradise',
+    'game_of_thrones',
 ];
 
 function mergeSettings(raw: unknown): AudioSettings {
