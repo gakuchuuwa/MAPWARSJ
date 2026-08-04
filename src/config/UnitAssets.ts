@@ -528,6 +528,15 @@ export const SPRITE_PATHS = {
             SHOOT: [382, 383, 384, 385, 386, 387, 388, 389].map(id => `/SUCAI/S10DB/${id}-1.png`),
             DEATH: [390, 391, 392, 393, 394, 395, 396, 397].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
+        // 床弩兵 401-456（单兵操作大弩，帧结构同 crossbow；2026-08-04 盘活，拉丁区蝎子弩）
+        'ballista': {
+            MOVE: [401, 402, 403, 404, 405, 406, 407, 408].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            ATTACK: [409, 410, 411, 412, 413, 414, 415, 416].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            IDLE: [425, 426, 427, 428, 429, 430, 431, 432].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            DAMAGE: [433, 434, 435, 436, 437, 438, 439, 440].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            SHOOT: [441, 442, 443, 444, 445, 446, 447, 448].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            DEATH: [449, 450, 451, 452, 453, 454, 455, 456].map(id => `/SUCAI/S10DB/${id}-1.png`),
+        },
         'archer': {
             MOVE: [283, 284, 285, 286, 287, 288, 289, 290].map(id => `/SUCAI/S10DB/${id}-1.png`),
             ATTACK: [291, 292, 293, 294, 295, 296, 297, 298].map(id => `/SUCAI/S10DB/${id}-1.png`),

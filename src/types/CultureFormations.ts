@@ -58,7 +58,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     LINGNAN:      'ELEPHANT',
     DIANQIAN:     'ELEPHANT',
     SLAVIC:       'MIXED',   // 东欧步骑
-    GERMANIC:     'INFANTRY', // 中欧重步
+    GERMANIC:     'MIXED', // 中欧步骑（重步+骑士）
     LATIN:        'INFANTRY', // 西欧重步/军团
 };
 
@@ -299,14 +299,14 @@ export const STEPPE_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 7. 河西 步骑 斧+斧骑+弩 */
+/** 7. 河西 步骑 长刀+斧骑+弩（横山步跋子击刺长刀 + 凉州大马铁骑）— 2026-08-04 拍板定稿 */
 export const HEXI_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'axe', count: 3 },
+            { type: 'spear', count: 3 },
             { type: 'heavy_cavalry', count: 1 },
             { type: 'general_cavalry', count: 1 },
             { type: 'heavy_cavalry', count: 1 },
@@ -344,14 +344,14 @@ export const JIANGNAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 10. 岭南 纯步 2斧+1弓 */
+/** 10. 岭南 步象 轻步+象+弓（俚僚轻装步 + 交趾象兵）— 2026-08-04 拍板定稿 */
 export const LINGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'axe', count: 3 },
+            { type: 'light_infantry', count: 3 },
             { type: 'elephant', count: 1 },
             { type: 'general_cavalry', count: 1, scale: 1.2 },
             { type: 'elephant', count: 1 },
@@ -428,17 +428,17 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 16. 斯拉夫 步骑 斧步+轻骑+弓（罗斯斧盾步兵传统）— MovementClass=MIXED，2026-08-02 专属定稿 */
+/** 16. 斯拉夫 步骑 斧步+斧骑+弓（罗斯斧军：双手斧步 + 长斧骑 + 弓手）— MovementClass=MIXED，2026-08-04 拍板定稿 */
 export const SLAVIC_TIERS: CompositionTier[] = [
-    build3x3('axe', 'lancer', 'archer')
+    build3x3('axe', 'heavy_cavalry', 'archer')
 ];
-/** 17. 日耳曼 纯步 重步+枪步+弩（日耳曼重步兵+德意志弩手）— MovementClass=INFANTRY，2026-08-02 专属定稿 */
+/** 17. 日耳曼 步骑 斧盾+斧骑+弩（法兰克重步+条顿骑士+德意志弩手）— MovementClass=MIXED，2026-08-04 拍板定稿 */
 export const GERMANIC_TIERS: CompositionTier[] = [
-    build3x3('heavy_infantry', 'spear', 'crossbow')
+    build3x3('heavy_infantry', 'heavy_cavalry', 'crossbow')
 ];
-/** 18. 拉丁 纯步 盾步+枪步+弩（罗马军团盾墙+长枪卫+弩手）— MovementClass=INFANTRY，2026-08-02 专属定稿 */
+/** 18. 拉丁 纯步 盾步+枪步+床弩（罗马军团盾墙+长枪卫+蝎子弩 scorpio）— MovementClass=INFANTRY，2026-08-04 拍板定稿 */
 export const LATIN_TIERS: CompositionTier[] = [
-    build3x3('shield', 'spear', 'crossbow')
+    build3x3('shield', 'spear', 'ballista')
 ];
 // ============================================================
 // 15 文化 → CompositionTier[] 映射

@@ -61,19 +61,24 @@
         -1px 1px 0 rgba(46, 74, 95, 0.34);
 }
 
-/* 攻城时据点建筑放大 ×4（仅跟拍军团参战那场；停火后延迟缩回，见 CityManager.stopSiegeEffect）
-   放大挂 .city-building-stack 容器而非 img：建筑 img 有行内 transform（镜像/朝向），
-   行内样式优先于类规则会盖掉放大；容器无行内 transform，且不波及旗杆旗面。
-   放大原点 = 中心（2026-07-18 主人定）：南北攻城视觉对称；兵力标签在上层不怕被埋，
-   攻军与城体重叠可接受（谁在打看战斗面板）。
-   倍数须与站位外推 / 火箭发射点 cityVisualZoom 保持一致。 */
+/* 跟拍攻城放大（平时大/中/小底宽不动）：zoom10 时屏幕宽 = 原图1024×0.4，各城型同一视觉尺寸。
+   公式：base × stackScale × paneScale(1.5@z10) = 1024×0.4
+   → big 140 → ≈1.9505；中 120 → ≈2.2756；小/关 100 → ≈2.7307
+   放大挂 .city-building-stack；原点中心；须与 getSiegeCityBuildingStackScale / 外推半宽同步。 */
 .city-image-container.city-under-siege .city-building-stack {
-    transform: scale(4);
     transform-origin: center center;
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform;
-    /* 静态烽火橙光：不循环、不呼吸（火焰 APNG 已负责"动"） */
     filter: drop-shadow(0 10px 18px rgba(255, 110, 30, 0.38));
+}
+.city-image-container.city-icon--size-big.city-under-siege .city-building-stack {
+    transform: scale(1.950476190);
+}
+.city-image-container.city-icon--size-medium.city-under-siege .city-building-stack {
+    transform: scale(2.275555556);
+}
+.city-image-container.city-icon--size-small.city-under-siege .city-building-stack {
+    transform: scale(2.730666667);
 }
 
 /* 攻城态建筑描边加强 + 地面投影 */
