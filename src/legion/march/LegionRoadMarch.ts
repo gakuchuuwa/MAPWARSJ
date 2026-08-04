@@ -1,6 +1,6 @@
 import { GameConfig } from '../../config/GameConfig';
 import { PerformanceMonitor } from '../../debug/PerformanceMonitor';
-import { getEuclideanDistance, distanceAlongPolyline } from '../../core/DistanceUtils';
+import { getEuclideanDistance, distanceAlongPolyline, dedupeLatLngPath, nearestPointOnPolyline } from '../../core/DistanceUtils';
 import { roadRegistry } from '../../roads/RoadRegistry';
 import { City, LatLng } from '../../types/core';
 import { gameLog } from '../../utils/GameLogger';
@@ -187,6 +187,51 @@ export function moveLegionToCity(
     if (tryResumeRoadMarch(deps, army, targetCityId, hopForResume, currentPos)) {
         notePathfinding();
         return true;
+    }
+
+    // ── 来路折返（2026-08-04 GAKU 定）──────────────────────────────
+    // 攻城战后军团停在攻城圈边（来路终点附近），若新目标在来路起点方向（北返/回程），
+    // 直接沿 lastPath 倒序返回——不先绕回城锚点接入路网（旧逻辑：路网路径从城锚点出发，
+    // 军团在城周非目标方向时投影 = 城锚点 → 先回城再折返，白走 2×圈半径回头路）。
+    const retreatTarget = deps.cityManager.getCity(targetCityId);
+    if (army.lastPath.length >= 3 && retreatTarget) {
+        const startPos = army.lastPath[0];
+        const tailPos = army.lastPath[army.lastPath.length - 2] ?? army.lastPath[army.lastPath.length - 1];
+        const atTail =
+            getEuclideanDistance(currentPos, tailPos) < GameConfig.SIEGE.COMBAT_RADIUS * 2;
+        const targetTowardStart =
+            getEuclideanDistance(
+                { lat: retreatTarget.lat, lng: retreatTarget.lng },
+                startPos
+            ) <
+            getEuclideanDistance(
+                { lat: retreatTarget.lat, lng: retreatTarget.lng },
+                currentPos
+            );
+        if (atTail && targetTowardStart) {
+            // 折返段：当前位置 → 来路倒序（跳过「军团与城锚点之间」的尾部点——
+            // 收位后军团停在来路延长线上，来路末两段（城锚点前一/城锚点）在回城方向，必须跳过）
+            const proj = nearestPointOnPolyline(currentPos, army.lastPath);
+            const back = [currentPos];
+            const startIdx = proj ? Math.max(0, proj.segmentIndex - 1) : army.lastPath.length - 2;
+            for (let idx = startIdx; idx >= 0; idx--) {
+                back.push(army.lastPath[idx]);
+            }
+            // 续接段：到来路起点后继续寻路到目标
+            const rest = roadRegistry.getFullPathToCity(startPos, targetCityId, undefined);
+            const restBody = rest.length >= 2 ? rest.slice(1) : [];
+            const full = dedupeLatLngPath([...back, ...restBody]);
+            if (full.length >= 2) {
+                army.setTargetCity(retreatTarget);
+                gameLog(
+                    'legionMarch',
+                    `🛤️ ${army.name} 来路折返 →【${retreatTarget.name}】路径点 ${full.length}（跳过城锚点回头路）`
+                );
+                army.moveAlongPath(full);
+                notePathfinding();
+                return true;
+            }
+        }
     }
 
     const startCandidates = orderRoadMarchStartCandidates(

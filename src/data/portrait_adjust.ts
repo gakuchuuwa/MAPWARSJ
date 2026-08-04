@@ -198,7 +198,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -49
         },
         "/assets/wuzhou/wuzhou_d_wuzetian.png": {
-            "scale": 1.44,
+            "scale": 1.38,
             "offsetX": 1,
             "offsetY": 23
         },
@@ -3198,7 +3198,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/CENTRAL/hongnong_jun_yangsu.png": {
-            "scale": 0.92,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": 8
         },
@@ -3698,7 +3698,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -2
         },
         "/assets/xianqin/wei_wuqi.png": {
-            "scale": 1.3,
+            "scale": 1.28,
             "offsetX": 0,
             "offsetY": -14
         },
@@ -5668,7 +5668,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/LATIN/tuosikana_luolunzuo.png": {
-            "scale": 1.02,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 7
         },
@@ -5843,7 +5843,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 32
         },
         "/assets/LATIN/donggete_diaoduolike.png": {
-            "scale": 1,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 17
         },
