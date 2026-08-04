@@ -40,6 +40,9 @@ export class Army implements IBattleUnit {
     private position: LatLng;
     private destination: LatLng;
     private targetCity: any;
+    /** 攻城目标城 id（SiegeManager 攻城开始时对主攻+参战攻方设置；战斗结束不清——城破后 5s 城图缩回窗口
+     *  外推仍需反查城图，残留由 isCitySiegeZoomed 判定自然兜底；GlobalUnitRenderer 攻城外推反查城图用，2026-08-04 修复外推死代码） */
+    public siegeTargetCityId: string | null = null;
     public troops: number; // [IBattleUnit] Must be public
     private _factionId: string;
     private onArrive: (army: Army) => void;
@@ -204,7 +207,13 @@ export class Army implements IBattleUnit {
         this.isExternalCombat = isFighting;
         this.isAttacking = isFighting; // Sync IAnimatedUnit property
         this.currentBattleType = isFighting ? (battleType || 'field') : null;
-        if (!isFighting) this.isSiegeAttacker = false; // 战斗结束清器械标记
+        if (!isFighting) {
+            this.isSiegeAttacker = false; // 战斗结束清器械标记
+            // 注意：siegeTargetCityId 不清——城破后 5s 城图缩回窗口内，GlobalUnitRenderer 外推
+            // 仍需它反查城图（城图放大态判定），避免军团压进放大中的城图（2026-08-04 主人截图实锤）。
+            // 残留无害：外推的 siegeActive 分支要 currentBattleType==='siege'，cityZoomed 分支要
+            // isCitySiegeZoomed=true，两者都不满足时自然失效。
+        }
         const validTarget = targetPos
             && Number.isFinite(targetPos.lat)
             && Number.isFinite(targetPos.lng)
@@ -282,6 +291,7 @@ export class Army implements IBattleUnit {
         this.isAttacking = false;
         this.currentBattleType = null;
         this.targetPos = null;
+        // siegeTargetCityId 不清（理由见 setCombatState：城破后 5s 外推仍需反查城图）
         if (this.marker) {
             const element = this.marker.getElement();
             if (element) element.classList.remove('army-combat');

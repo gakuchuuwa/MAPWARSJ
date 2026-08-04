@@ -119,6 +119,13 @@ export class UnitRenderer implements IAnimatedUnit {
         return !!(this.unit as any).isSiegeAttacker;
     }
 
+    /** 攻城目标城 id（只读底层 Army.siegeTargetCityId——SiegeManager 仅对主攻+参战攻方设置，守方/野战为 null；
+     *  GlobalUnitRenderer 攻城外推反查城图用。不 fallback targetCity：守方军团自己的目标城会误判攻方）。
+     *  2026-08-04 修复：渲染层原先无此字段 → 外推判定 siegeCityId 恒为 undefined → 外推死代码从未生效 */
+    public get targetCityId(): string | null {
+        return (this.unit as any).siegeTargetCityId ?? null;
+    }
+
     // IRenderable implementation
     public getPosition(): { lat: number; lng: number } {
         return this.unit.getPosition();

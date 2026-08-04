@@ -638,7 +638,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/xianqin/zhao_lianpo.png": {
-            "scale": 0.95,
+            "scale": 0.91,
             "offsetX": 8,
             "offsetY": 5
         },
@@ -818,7 +818,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -8
         },
         "/assets/BASHU/ran_d_ranshouzhong.png": {
-            "scale": 1.05,
+            "scale": 0.99,
             "offsetX": 0,
             "offsetY": 23
         },
@@ -4788,8 +4788,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -43
         },
         "/assets/LINGNAN/wuxi_shamoke.png": {
-            "scale": 1.01,
-            "offsetX": 0,
+            "scale": 1.07,
+            "offsetX": 16,
             "offsetY": 13
         },
         "/assets/NORTH/linhu_mafang.png": {

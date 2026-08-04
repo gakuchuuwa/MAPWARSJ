@@ -849,18 +849,29 @@ export class GlobalUnitRenderer {
 
             // ── [2026-08-04] 攻城视觉外推：整支方阵沿「背离城」方向推到据点图外缘 + 空隙 ──
             // 按城型图宽（跟拍场 ×4 / 非跟拍 ×1、city-scale 随 zoom）+ 4:3 方向加权（东西宽/南北窄），
-            // 全方向生效。**判定放宽**：凡目标为城（主攻/参战/排队/接近）都外推——2026-08-04 实测
-            // 多军团攻城时只有主攻 isSiegeAttacker，参战军团不设 → 旧判定压城。野战打军团 targetId 查不到城 → 不外推。
+            // 全方向生效。**判定收紧为攻城方**（主攻 + 参战攻方 isSiegeAttacker=true，SiegeManager 均显式设置）：
+            // 守方军团留在城内（守军出城阵列观感已取消）；野战打军团 currentBattleType='field' 不外推。
+            // [2026-08-04 修复] 原判定读 (unit as any).targetCityId 但 Army/UnitRenderer 均无此字段
+            // → siegeTargetCity 恒为 null → 外推死代码从未生效 → 攻城方整个方阵压进 4 倍城图内（主人截图实锤）。
+            // 城坐标用 siegeTargetCity 自身坐标（不依赖 targetPos——战斗结束 targetPos 即清，城对象更持久）。
             // 只动渲染，战斗逻辑坐标不变。
             const unitIdForGear = unit.id || 'unknown';
-            // 器械只给真正的攻城方（外推判定已放宽到"目标是城"，器械保持严格，参战/接近中不画器械）
+            // 器械只给真正的攻城方（外推判定收紧后同源：isSiegeAttacker=true）
             const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker === true;
             const siegeCityId = (unit as any).targetCityId || (unit as any).targetId;
             const siegeTargetCity = siegeCityId
                 ? (window as any).game?.cityManager?.getCity?.(siegeCityId)
                 : null;
-            if (!useNavalVisual && siegeTargetCity && unit.targetPos && isValidMapCoord(unit.targetPos)) {
-                const cityPt = this.map.latLngToContainerPoint([unit.targetPos.lat, unit.targetPos.lng]);
+            // 城破后 5s 窗口：战斗态已清（currentBattleType=null → siegeActive 失效）但城图还在放大
+            // （isCitySiegeZoomed=true）→ 仍需外推，否则军团回 36px 攻城圈逻辑位置压进放大城图
+            // （2026-08-04 主人截图实锤「根本不在图片边缘」）。城图 5s 缩回后 isCitySiegeZoomed=false → 自然失效。
+            const cityZoomed = !!siegeTargetCity
+                && (window as any).game?.cityManager?.getTerritorySystem?.()?.isCitySiegeZoomed?.(siegeTargetCity.id)
+                    === true;
+            if (!useNavalVisual
+                && siegeTargetCity
+                && (activelySieging || cityZoomed)) {
+                const cityPt = this.map.latLngToContainerPoint([siegeTargetCity.latitude, siegeTargetCity.longitude]);
                 const dx = centerPoint.x - cityPt.x;
                 const dy = centerPoint.y - cityPt.y;
                 const len = Math.hypot(dx, dy);

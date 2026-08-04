@@ -1823,7 +1823,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
     // ── 2026-05-27 新增：青衣(雅州) ──
     // ── 2026-05-27 新增：五溪(八面山) ──
-    { id: 'city_bamian', name: '八面山', factionId: 'wuxi', lat: 28.83, lng: 109.28, type: 'pass', troops: 20000, region: 'TIBET' },
+    { id: 'city_bamian', name: '八面山', factionId: 'wuxi', lat: 28.83, lng: 109.28, type: 'pass', troops: 20000, region: 'STEPPE' },
 
 
 

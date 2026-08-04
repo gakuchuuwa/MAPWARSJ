@@ -34,55 +34,55 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     gaolu: { name: '法兰西骑士', tier: 3 },          // 巴黎·查理七世
     // 图卢兹·雷蒙五世：古名 Tolosa →「托洛萨骑」美化；无战役专名高光，档仍 T4（不抬）
     langgeduoke: { name: '托洛萨军团', tier: 4 },
-    jiatailuoniya: { name: '阿拉贡军', tier: 3 },          // 巴塞罗那·海梅
+    jiatailuoniya: { name: '加泰轻步', tier: 3 },          // 巴塞罗那·海梅：加泰轻装（佣兵团偏罗杰弗洛尔，不同代；阿尔莫加瓦已挂萨拉戈萨）
     guadaer: { name: '圣地亚哥团', tier: 2 },
-    andaluoxiya: { name: '安达卢军', tier: 3 },          // 科尔多瓦·阿卜杜拉
-    putaoya: { name: '葡萄牙军', tier: 3 },          // 里斯本·阿方索·恩里克
-    babali: { name: '阿尔及军', tier: 3 },          // 阿尔及尔·巴巴罗萨
+    andaluoxiya: { name: '安达卢军团', tier: 3 },          // 科尔多瓦·阿卜杜拉
+    putaoya: { name: '阿维斯骑士', tier: 3 },          // 里斯本·阿方索·恩里克侧阿维斯团（基督骑士已挂休达）
+    babali: { name: '阿尔及军团', tier: 3 },          // 阿尔及尔·巴巴罗萨
     telibolisi: { name: '巴巴里海盗', tier: 3 },          // 的黎波里·德拉古特：北非海盗身份可考 → T3
     // 维罗纳·坎格兰德：斯卡拉家族治军，非「铁骑」专名 → T3
-    bohepingyuan: { name: '斯卡拉军', tier: 3 },
+    bohepingyuan: { name: '斯卡拉军团', tier: 3 },
     kejila: { name: '科基拉水军', tier: 3 },          // 科孚·舒伦堡：希腊仅次于雅典的第二海军强国（修昔底德），前433西波塔海战
     // 拉文纳·狄奥多里克：493 年攻陷拉文纳、杀奥多亚塞，建东哥特王国，亲卫为其征服主力；
     // 狄奥多里克为日耳曼英雄文学符号（《尼伯龙根之歌》迪特里希），文化知名 → T3（2026-08-03 名将互配升）
     donggete: { name: '狄奥多卫', tier: 3 },
     anuo: { name: '比萨海军', tier: 3 },          // 比萨·乌戈里诺
-    balunxiya: { name: '图里亚军', tier: 3 },          // 巴伦西亚·熙德：图里亚河畔都城骑兵（避将名熙德）
+    balunxiya: { name: '图里亚军团', tier: 3 },          // 巴伦西亚·熙德：图里亚河畔都城骑兵（避将名熙德）
 
     // ── T4 存在之兵 ──
     // 那不勒斯·卡洛（安茹）：安茹骑士可考，无「重骑」专名高光 → T3
     kanpaniya: { name: '安茹骑士', tier: 3 },
     // 佛罗伦萨·洛伦佐：美第奇治下卫军/佣兵 → T4
     tuosikana: { name: '美第奇卫', tier: 4 },
-    xixiliwangguo: { name: '西西里军', tier: 3 },          // 巴勒莫·腓特烈二世
-    gaolu_luoma: { name: '墨洛军', tier: 3 },          // 里昂·克洛维：墨洛温王朝骑兵（避将名）
+    xixiliwangguo: { name: '西西里军团', tier: 3 },          // 巴勒莫·腓特烈二世
+    gaolu_luoma: { name: '墨洛温卫', tier: 3 },          // 里昂·克洛维：墨洛温王庭卫军（避将名）
     // 托莱多·阿方索六世：1085 收复托莱多，卡斯蒂利亚骑士/骑从为收复失地核心；
     // 文化知名；卡拉特拉瓦团 1158 建晚于其卒年，不挂 → T3（2026-08-03 名将互配升）
     xigete: { name: '卡斯蒂骑士', tier: 3 },
     // 格拉纳达·穆罕默德：纳斯里摩尔骑兵风土 → T3（禁造「阿兰布拉卫」）
     nasier: { name: '摩尔骑', tier: 3 },
-    feiniqi: { name: '腓尼基军', tier: 3 },          // 加的斯·哈米尔卡
+    feiniqi: { name: '腓尼基军团', tier: 3 },          // 加的斯·哈米尔卡
     yidelisi: { name: '非斯卫', tier: 4 },          // 非斯·伊德里斯：都城卫军（避将名/王朝名叠字）
-    xilagu: { name: '叙拉古军', tier: 4 },          // 锡拉库萨·阿加索克利
-    leangongguo: { name: '莱昂军', tier: 4 },          // 萨拉曼卡·阿方索九世
+    xilagu: { name: '叙拉古军团', tier: 4 },          // 锡拉库萨·阿加索克利
+    leangongguo: { name: '莱昂军团', tier: 4 },          // 萨拉曼卡·阿方索九世
     // 梅西纳·罗杰一世：诺曼骑士征服西西里海峡 → T2
     moxina: { name: '诺曼骑士', tier: 2 },
     // 萨拉戈萨·海梅一世：阿尔莫加瓦（Almogávares）突袭轻装 → T2
     alagong: { name: '阿尔莫加瓦', tier: 2 },
     // 休达·恩里克：基督骑士团大团长（非阿维斯）→ T2
     zhibuluotuo: { name: '基督骑士', tier: 2 },
-    zhayan: { name: '扎扬军', tier: 4 },          // 特莱姆森·亚格姆拉森
-    hamade: { name: '卡拉阿军', tier: 4 },          // 布佳亚·哈马德：卡拉阿·贝尼·哈马德（避将名）
-    sading: { name: '撒丁军', tier: 4 },          // 卡利亚里·埃莱奥诺拉
-    jileinaijia: { name: '昔兰尼军', tier: 4 },          // 班加西·马加斯
+    zhayan: { name: '扎扬军团', tier: 4 },          // 特莱姆森·亚格姆拉森
+    hamade: { name: '卡拉阿军团', tier: 4 },          // 布佳亚·哈马德：卡拉阿·贝尼·哈马德（避将名）
+    sading: { name: '撒丁军团', tier: 4 },          // 卡利亚里·埃莱奥诺拉
+    jileinaijia: { name: '昔兰尼军团', tier: 4 },          // 班加西·马加斯
     kelite: { name: '克里特弓手', tier: 3 },          // 诺索斯·福卡斯：961收复克里特；克里特弓箭手为希腊世界最著名雇佣兵（色诺芬长征记），文化知名T3
     // 南特·吉尔德雷斯：无专名精锐 → T4
-    aermolika: { name: '卢瓦尔军', tier: 4 },
+    aermolika: { name: '卢瓦尔军团', tier: 4 },
     // 雷恩·阿兰一世：布列塔尼地方军抗维京 → T4
-    bulietani: { name: '阿莫里军', tier: 4 },
-    // 阿维尼翁·雷蒙四世（圣吉尔）：第一次十字军主力 → T2（勿挂「教皇军」，阿维尼翁教廷在14世纪）
-    puluowangsi: { name: '圣吉尔军', tier: 2 },
+    bulietani: { name: '阿莫里军团', tier: 4 },
+    // 阿维尼翁·雷蒙四世（圣吉尔）：第一次十字军主力；专名偏弱 → T3（勿挂「教皇军」）
+    puluowangsi: { name: '圣吉尔骑', tier: 3 },
     // 加莱·罗贝尔二世（佛兰德）：第一次十字军；金马刺步兵已挂 didi「佛兰德军」，此处不夺步兵符号
-    fulandesi: { name: '加莱军', tier: 2 },
-    mengtainiya: { name: '蒙泰军', tier: 2 },          // 布加勒斯特·巴萨拉布
+    fulandesi: { name: '加莱军团', tier: 2 },
+    mengtainiya: { name: '蒙泰军团', tier: 2 },          // 布加勒斯特·巴萨拉布
 };
