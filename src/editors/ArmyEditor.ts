@@ -74,6 +74,7 @@ const UNIT_TYPES: { id: string; label: string; category: '步' | '骑' | '远' |
     // 远程类
     { id: 'archer',         label: '弓兵',       category: '远' },
     { id: 'crossbow',       label: '弩兵',       category: '远' },
+    { id: 'ballista',       label: '床弩兵',     category: '远' },
     // 船只类
     { id: 'ship_small',     label: '小船',       category: '船' },
     { id: 'ship_medium',    label: '中船',       category: '船' },

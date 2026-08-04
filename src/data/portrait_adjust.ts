@@ -1467,11 +1467,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/KOREA/xingliao_dayanlin.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -13
-        },
         "/assets/LINGNAN/buyi_d_weichaoyuan.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -3893,7 +3888,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 14
         },
         "/assets/KOREA/goryeo_jianghanzan.png": {
-            "scale": 0.91,
+            "scale": 0.87,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -6361,6 +6356,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/KOREA/__闲置__KOREA_11.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/KOREA/xingliao_dayanlin.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": -21
         }
     },
     "folderGuides": {

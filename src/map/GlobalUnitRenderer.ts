@@ -14,6 +14,12 @@ import { BanditDrawer, BanditState } from './BanditDrawer';
 import { LegionType } from '../types/UnitTypes';
 
 import { GameConfig, SPRITE_PATHS } from '../config/GameConfig';
+import {
+    CITY_ART_NATIVE_HEIGHT_PX,
+    CITY_ART_NATIVE_WIDTH_PX,
+    getCityMarkerBaseWidthPx,
+    getSiegeCityScreenWidthPx,
+} from '../config/city-marker-tokens';
 import { FACTIONS } from '../data/factions';
 import { gameLog } from '../utils/GameLogger';
 import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG, getStrategicSkillDef } from '../data/GeneralSkills';
@@ -140,13 +146,9 @@ export class GlobalUnitRenderer {
     private static readonly SIEGE_PUSH_LERP_TAU_MS = 56;
     private static readonly SIEGE_PUSH_EPS_PX = 0.5;
 
-    /** [2026-08-04] 攻城视觉外推：据点图按城型 100/120/140px 宽（CSS），跟拍场攻城放大 ×4、city-scale 随 zoom；
-     *  非跟拍场不放大（倍率 1）。图 4:3（1024×765）东西宽/南北窄。按接近方向把攻城方阵沿「背离城」方向推到图边缘（阵心对齐图片边缘，2026-08-04 主人定稿）。
-     *  全方向生效（旧版仅北面 18px 补偿，2026-07-18）。只动渲染，战斗逻辑坐标不变。 */
-    private static readonly CITY_ICON_WIDTH_BY_TYPE: Record<string, number> = {
-        big_city: 140, medium_city: 120, small_city: 100, pass: 100,
-    };
-    private static readonly CITY_ICON_HW_RATIO = 765 / 1024;
+    /** [2026-08-04] 攻城视觉外推：跟拍放大态各城型统一为「原图1024×0.4@zoom10」屏幕宽；
+     *  非跟拍不放大，按平时城型底宽。图 4:3。阵心对齐图片边缘。只动渲染。 */
+    private static readonly CITY_ICON_HW_RATIO = CITY_ART_NATIVE_HEIGHT_PX / CITY_ART_NATIVE_WIDTH_PX;
 
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
     private static assetsPromise: Promise<void> | null = null;
@@ -639,7 +641,7 @@ export class GlobalUnitRenderer {
         if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
             const lType = unit.legionType || 'infantry';
             const hasRangedSlots = ((unit as any).cultureSlots as string[] | undefined)?.some(
-                (s) => s === 'archer' || s === 'crossbow' || s.includes('archer')
+                (s) => s === 'archer' || s === 'crossbow' || s === 'ballista' || s.includes('archer')
             );
             const isRanged = hasRangedSlots || lType.includes('archer') || lType === 'mixed' || lType === 'infantry';
 
@@ -729,7 +731,6 @@ export class GlobalUnitRenderer {
     private applySiegeVisualPush(
         unit: IAnimatedUnit,
         centerPoint: L.Point,
-        useNavalVisual: boolean,
     ): L.Point {
         const cacheKey = unit.id;
         const cachedPush = cacheKey ? this.siegePushCache.get(cacheKey) : undefined;
@@ -741,7 +742,8 @@ export class GlobalUnitRenderer {
         const cityZoomed = !!siegeTargetCity
             && (window as any).game?.cityManager?.getTerritorySystem?.()?.isCitySiegeZoomed?.(siegeTargetCity.id)
                 === true;
-        const wantEdgePush = !useNavalVisual && !!siegeTargetCity && (activelySieging || cityZoomed);
+        // 水军与陆军同一套贴边外推（2026-08-04）：原先排除水军会压进放大城图
+        const wantEdgePush = !!siegeTargetCity && (activelySieging || cityZoomed);
         const settlingOut = !wantEdgePush && !!cachedPush
             && cachedPush.push > GlobalUnitRenderer.SIEGE_PUSH_EPS_PX;
 
@@ -759,11 +761,13 @@ export class GlobalUnitRenderer {
             const dy = centerPoint.y - cityPt.y;
             const len = Math.hypot(dx, dy);
             if (len > 1) {
-                const baseW = GlobalUnitRenderer.CITY_ICON_WIDTH_BY_TYPE[siegeTargetCity.type] ?? 100;
                 const zoom = this.map.getZoom();
                 const cityScale = Math.max(0, 1 + (zoom - 9) * 0.5);
-                const siegeZoom = cityZoomed ? 4 : 1;
-                const halfW = (baseW / 2) * cityScale * siegeZoom;
+                // 跟拍放大：统一屏幕宽（1024×0.4@z10）；非跟拍攻城：平时城型底宽×pane scale
+                const screenW = cityZoomed
+                    ? getSiegeCityScreenWidthPx(zoom)
+                    : getCityMarkerBaseWidthPx(siegeTargetCity.type) * cityScale;
+                const halfW = screenW / 2;
                 const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;
                 const cosA = Math.abs(dx) / len;
                 const sinA = Math.abs(dy) / len;
@@ -806,7 +810,7 @@ export class GlobalUnitRenderer {
             const pos = unit.getPosition();
             if (!isValidMapCoord(pos)) continue;
             const pt = this.map.latLngToContainerPoint([pos.lat, pos.lng]);
-            this.applySiegeVisualPush(unit, pt, !!(unit.isOnSea || unit.forceNavalVisual));
+            this.applySiegeVisualPush(unit, pt);
         }
     }
 
@@ -827,10 +831,9 @@ export class GlobalUnitRenderer {
         const effectiveZoom = Math.min(currentZoom, 10);
         const scale = Math.pow(2, effectiveZoom - 9) * 0.7;
 
-        const useNavalVisualEarly = !!(unit.isOnSea || unit.forceNavalVisual);
-        // 非匪军：先做攻城外推再裁剪，保证离战收推在屏外也能逐帧推进，且按视觉位置判可见
+        // 非匪军：先做攻城外推再裁剪（含水军，与陆军同一套贴边）
         if (!isBandit) {
-            centerPoint = this.applySiegeVisualPush(unit, centerPoint, useNavalVisualEarly);
+            centerPoint = this.applySiegeVisualPush(unit, centerPoint);
         }
 
         const m = GlobalUnitRenderer.VIEW_CULL_MARGIN_PX;

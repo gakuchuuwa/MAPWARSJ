@@ -9,6 +9,54 @@ export const CITY_MARKER_SIZE_BIG_CLASS = 'city-icon--size-big';
 export const CITY_MARKER_SIZE_MEDIUM_CLASS = 'city-icon--size-medium';
 export const CITY_MARKER_SIZE_SMALL_CLASS = 'city-icon--size-small';
 
+/** 平时据点建筑图宽（px）：大 140 / 中 120 / 小与关 100 —— 攻城统一放大不改此表 */
+export const CITY_MARKER_BASE_WIDTH_BY_TYPE: Readonly<Record<string, number>> = {
+    big_city: 140,
+    medium_city: 120,
+    small_city: 100,
+    pass: 100,
+};
+
+/** 据点素材常见原图宽（多数 1024×765） */
+export const CITY_ART_NATIVE_WIDTH_PX = 1024;
+export const CITY_ART_NATIVE_HEIGHT_PX = 765;
+
+/**
+ * 跟拍攻城放大：以 zoom=10 为基准，屏幕上显示为「原图宽 × 此倍数」。
+ * 大/中/小平时底宽不同，但攻城态用分档 CSS scale 收到同一屏幕宽 → 对齐容易。
+ * 例 0.4 → zoom10 上约 409.6px 宽。平时尺寸表不动。
+ */
+export const SIEGE_CITY_NATIVE_SCALE_AT_ZOOM10 = 0.4;
+
+/** 与 TerritorySystem.updateCityScales 一致：zoom10 时 --city-scale = 1.5 */
+export const CITY_MARKER_PANE_SCALE_AT_ZOOM10 = 1.5;
+
+export function getCityMarkerBaseWidthPx(cityType: string): number {
+    return CITY_MARKER_BASE_WIDTH_BY_TYPE[cityType] ?? 100;
+}
+
+/** zoom10 目标屏幕宽 = 原图宽 × 0.4（随地图 zoom 按 pane scale 比例伸缩，各城型相同） */
+export function getSiegeCityScreenWidthPx(mapZoom: number): number {
+    const paneScale = Math.max(0, 1 + (mapZoom - 9) * 0.5);
+    return (
+        CITY_ART_NATIVE_WIDTH_PX
+        * SIEGE_CITY_NATIVE_SCALE_AT_ZOOM10
+        * (paneScale / CITY_MARKER_PANE_SCALE_AT_ZOOM10)
+    );
+}
+
+/**
+ * 攻城时 .city-building-stack 的 CSS scale：使 baseWidth × scale × 1.5(zoom10) = 1024×0.4。
+ * 火箭外推等与此同步。
+ */
+export function getSiegeCityBuildingStackScale(cityType: string): number {
+    const base = getCityMarkerBaseWidthPx(cityType);
+    return (
+        (CITY_ART_NATIVE_WIDTH_PX * SIEGE_CITY_NATIVE_SCALE_AT_ZOOM10)
+        / (base * CITY_MARKER_PANE_SCALE_AT_ZOOM10)
+    );
+}
+
 export function getCityMarkerSizeClass(cityType: string): string {
     switch (cityType) {
         case 'big_city':

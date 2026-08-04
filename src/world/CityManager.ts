@@ -14,6 +14,7 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { isMacroMapZoom, isRegionBoundaryZoom } from '../config/StrategicView';
 import { audioManager } from '../audio/AudioManager';
+import { getSiegeCityBuildingStackScale } from '../config/city-marker-tokens';
 
 export interface CityUpdateOptions {
     skipCaptureLog?: boolean;
@@ -682,7 +683,7 @@ export class CityManager {
                 city.type,
                 getAttackerPos,
                 battleDurationSec,
-                enableCityZoom ? 4 : 1,
+                enableCityZoom ? getSiegeCityBuildingStackScale(city.type) : 1,
             );
             // 新攻城开始：取消上一场未走的"延迟还原"
             const pending = this.siegeZoomRestoreTimers.get(cityId);
