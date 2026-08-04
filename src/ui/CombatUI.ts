@@ -2833,14 +2833,29 @@ export class CombatUI {
 
         // 番号与立绘同源：带武将 > 精锐番号 > 其余，同级先来后到（pickArrivalDisplayUnit）
         const primary = this.pickArrivalDisplayUnit(activeUnits, side) ?? activeUnits[0];
-
-        const displayName = this.resolveBattleUnitListName(primary);
-        if (!displayName) return '';
+        const primaryName = this.resolveBattleUnitListName(primary);
+        if (!primaryName) return '';
 
         const isAtt = side === 'attacker';
-        const nameSpan = `<span style="white-space: nowrap;">${displayName}</span>`;
 
-        return `<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'};">${nameSpan}</div>`;
+        // 2026-08-04 守军/援军同列：主将行列出本侧全部存活部队名（主力在前），与总兵力对应——
+        // 避免「带将援军顶替无将守军 → 面板看起来只有一支军队」（文登案例：完山虎贲 7991 + 文登驻军 403）。
+        // 同名（同番号多支军团）只列一次，兵力已在总兵力中体现。
+        const uniqueRest = [
+            ...new Set(
+                activeUnits
+                    .filter(u => u.id !== primary.id)
+                    .map(u => this.resolveBattleUnitListName(u))
+                    .filter((n): n is string => !!n),
+            ),
+        ];
+
+        const spans = [primaryName, ...uniqueRest].map(n =>
+            `<span style="white-space: nowrap;">${n}</span>`,
+        );
+        const sep = `<span style="margin: 0 5px; opacity: 0.5; color: #ffd700; font-size: 10px;">·</span>`;
+
+        return `<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; flex-wrap: wrap;">${spans.join(sep)}</div>`;
     }
 
     // ============================================================
