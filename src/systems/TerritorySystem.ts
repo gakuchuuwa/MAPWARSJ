@@ -1352,6 +1352,11 @@ export class TerritorySystem {
         }
     }
 
+    /** 该据点是否处于攻城建筑放大态（仅跟拍军团参战那场会开） */
+    public isCitySiegeZoomed(cityId: string): boolean {
+        return this.siegeZoomedCities.has(cityId);
+    }
+
     // Helper: Merge hexes into polygon paths
     private getMergedPaths(hexList: { q: number, r: number, key: number }[]): L.LatLng[][] {
         if (hexList.length === 0) return [];

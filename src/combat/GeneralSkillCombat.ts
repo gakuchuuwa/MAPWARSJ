@@ -35,7 +35,7 @@ import {
     resolveSkillCountersForSide,
     type TacticalSkillEntry,
 } from './TacticalSkillResolver';
-import { getTacticalSkillEntry, EFFECT_TO_SIX_SET, getRandomUnregisteredSkill, isSkillRegisteredFor, type TacticalSixSet } from '../data/TacticalSkillCatalog';
+import { getTacticalSkillEntry, EFFECT_TO_SIX_SET, TACTICAL_SKILL_ENTRIES_V1, getUnregisteredPoolBySix, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 import { sumCultureAdjustedTroops, getUnitEliteTier } from '../systems/CultureCombat';
 import { LandSeaSystem, LandTerrainSystem, type LandTerrainKind } from '../world/land-sea';
 import { COMEBACK_TROOP_THRESHOLD, APTITUDE_POWER_MULT, APTITUDE_LOSER_BITE_FLOOR, ATTACK_STYLE_POWER_MULT, FAMOUS_GENERAL_MULT } from './TacticalConstants';
@@ -80,9 +80,9 @@ export function resolveSituationalSkillId(unit: IBattleUnit, situation: BattleSi
 /**
  * 取该武将在当前局势下的**全部**候选技（与 resolveSituationalSkillId 同一套三势选池规则）。
  *
- * [2026-07-27] 拆出来给防重用：调用方拿到整池后可以自己挑一个不与全场冲突的，
- * 而不是反复随机重抽碰运气——在册技会原样返回（见 resolveSlot），
- * 单靠 excludeSkillIds 重抽是抽不掉同名在册技的。
+ * [2026-08-04 主人定稿] 选池 = 【当前势】对应六计的全部不在册通用技 + 本人专属在册技（ownerGeneralId 匹配）。
+ * 六槽字段（atk/def 六槽）不再驱动选技。优势=攻战/胜战/敌战/混战、劣势=并战/败战/敌战/混战、均势=全六计。
+ * 专属技进池后因池大稀释为稀有彩蛋（专属出现率 ≈ 专属数/池大小），属设计意图。
  */
 export function getSituationalSkillPool(unit: IBattleUnit, situation: BattleSituation, excludeSkillIds?: string[]): string[] {
     if (!unit.generalId) return [];
@@ -90,45 +90,65 @@ export function getSituationalSkillPool(unit: IBattleUnit, situation: BattleSitu
     if (!p) return [];
 
     const gid = unit.generalId;
-    // 助记：六格各绑一个六计子类（攻战/胜战/敌战/混战/并战/败战）
-    // 在册技保留原 ID；不在册技 → 从该六计不在册池随机取（2026-07-26 立）
-    function resolveSlot(skillId: string | undefined, sixClass: string): string | undefined {
-        if (!skillId) return undefined;
-        if (isSkillRegisteredFor(skillId, gid)) return skillId;
-        return getRandomUnregisteredSkill(sixClass, excludeSkillIds) ?? skillId;
-    }
-
-    // 三势选池·四/四/六（2026-07-20 主人定稿）：六格一格一计，按势分三组。
-    //   优势组=攻战/胜战、均势组=敌战/混战、劣势组=并战/败战。
-    //   优势 = 优势组 + 均势组（四计随机；不含劣势组 → 优势方摸不到败战翻盘计，保悬念铁律）
-    //   劣势 = 劣势组 + 均势组（四计随机；不含优势组）
-    //   均势 = 全六计随机
-    // 攻守双方同池，_isAttacker 不参与选技（字段前缀 atk/def 是攻防六槽时代遗留，选技已不分攻防）。
-    const advGrp = [
-        resolveSlot(p.atkAdvantageSkillId, 'gongzhan'),       // 攻战
-        resolveSlot(p.defAdvantageSkillId, 'shengzhan'),       // 胜战
-    ];
-    const balGrp = [
-        resolveSlot(p.atkBalanceSkillId, 'dizhan'),           // 敌战
-        resolveSlot(p.defBalanceSkillId, 'hunzhan'),           // 混战
-    ];
-    const disGrp = [
-        resolveSlot(p.atkDisadvantageSkillId, 'bingzhan'),     // 并战
-        resolveSlot(p.defDisadvantageSkillId, 'baizhan'),      // 败战
-    ];
-    const bySituation: Record<BattleSituation, (string | undefined)[]> = {
+    // 三势选池·四/四/六（2026-07-20 主人定稿，2026-08-04 改为全池混合）：
+    //   优势 = 攻战/胜战/敌战/混战（不含劣势组 → 优势方摸不到败战翻盘计，保悬念铁律）
+    //   劣势 = 并战/败战/敌战/混战（不含优势组）
+    //   均势 = 全六计
+    // 攻守双方同池，_isAttacker 不参与选技（攻守数值差由第四层攻防环负责）。
+    const advGrp = ['gongzhan', 'shengzhan'] as const;
+    const balGrp = ['dizhan', 'hunzhan'] as const;
+    const disGrp = ['bingzhan', 'baizhan'] as const;
+    const bySituation: Record<BattleSituation, readonly string[]> = {
         advantage: [...advGrp, ...balGrp],
         balance: [...advGrp, ...balGrp, ...disGrp],
         disadvantage: [...disGrp, ...balGrp],
     };
-    const pool = bySituation[situation].filter(Boolean) as string[];
-    // 兜底：该势池全空（数据不合规）→ 退回优势+均势组（不含劣势组，守「优势方不得摸败战计」红线）
-    const available = pool.length > 0
-        ? pool
-        : ([...advGrp, ...balGrp].filter(Boolean) as string[]);
+    const sixClasses = bySituation[situation];
+    const sixSet = new Set(sixClasses);
 
-    // 同一格可能解析出相同 ID（在册技重复配置），去重后再交给调用方挑
-    return [...new Set(available)];
+    // 1) 本人专属在册技（按当前势的六计过滤；惰性缓存 gid → 专属技列表）
+    const own = getOwnSkillsForGeneral(gid).filter(id => {
+        const cls = getSkillSixClass(id);
+        return cls ? sixSet.has(cls) : false;
+    });
+
+    // 2) 不在册通用池（按当前势的六计取全部）
+    const unregPool = getUnregisteredPoolBySix();
+    const generic: string[] = [];
+    for (const c of sixClasses) {
+        const list = unregPool[c];
+        if (list) generic.push(...list);
+    }
+
+    // 合并：专属在前（等概率随机由调用方保证，顺序无关）
+    let pool = [...own, ...generic];
+
+    // 防重兜底：排除已用 ID（调用方 BattleField 还会二次 filter，这里是双保险）
+    if (excludeSkillIds && excludeSkillIds.length > 0) {
+        const ex = new Set(excludeSkillIds);
+        pool = pool.filter(id => !ex.has(id));
+    }
+
+    // 去重（专属与通用池无交集，防御性保留）
+    return [...new Set(pool)];
+}
+
+let _ownSkillsByGid: Map<string, string[]> | undefined;
+
+/** 惰性构建「武将 gid → 全部专属在册技 ID」映射（2026-08-04 新选池用） */
+function getOwnSkillsForGeneral(gid: string): string[] {
+    if (!_ownSkillsByGid) {
+        const m = new Map<string, string[]>();
+        for (const e of TACTICAL_SKILL_ENTRIES_V1) {
+            if (e.ownerGeneralId) {
+                const arr = m.get(e.ownerGeneralId);
+                if (arr) arr.push(e.id);
+                else m.set(e.ownerGeneralId, [e.id]);
+            }
+        }
+        _ownSkillsByGid = m;
+    }
+    return _ownSkillsByGid.get(gid) ?? [];
 }
 
 /** 查技能六类（攻战/胜战/敌战/混战/并战/败战），不在目录返回 null */

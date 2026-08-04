@@ -6044,7 +6044,7 @@ function buildUnregisteredPoolBySix(): Record<string, string[]> {
     return pool;
 }
 
-function getUnregisteredPoolBySix(): Record<string, string[]> {
+export function getUnregisteredPoolBySix(): Record<string, string[]> {
     if (!_unregisteredPoolBySix) {
         _unregisteredPoolBySix = buildUnregisteredPoolBySix();
     }

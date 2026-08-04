@@ -28,13 +28,15 @@ interface ActiveSiegeEffect {
     igniteOffsetsMs: number[];
     /** 本场单坨火的渐显时长（ms）；短战会被压缩以免越过战斗结束 */
     fadeInDurationMs: number;
+    /** 据点建筑视觉放大倍数：跟拍场=4，其它场=1（火箭发射点同步） */
+    cityVisualZoom: number;
 }
 
 /**
  * 攻城战视觉：火焰 APNG 叠层 + 守军向进攻军团射箭。
  * 2026-07-18 主人定：火焰不随据点放大同步放大——改为 3-4 片小火随机落在城内
  * （位置/大小/透明度/翻转各自随机，每场攻城火势布局都不同），像城中多处起火；
- * 火箭发射点仍按放大后的城墙外推（箭从墙上来）。
+ * 火箭发射点：跟拍放大场按放大后城墙外推；非跟拍场按原尺寸（cityVisualZoom=1）。
  */
 export class SiegeEffectRenderer {
     private map: GameMap;
@@ -51,8 +53,6 @@ export class SiegeEffectRenderer {
     private static readonly ARROWS_PER_VOLLEY = 5;
     private static readonly WALL_INSET = 0.014;
     private static readonly LAUNCH_HEIGHT = 0.032;
-    /** 攻城态据点建筑视觉放大倍数：与 city-marker.css 的 scale(2) 同步（仅火箭发射点用；火焰不随城放大） */
-    private static readonly SIEGE_CITY_VISUAL_ZOOM = 2.0;
     /** 火焰片散布半径（相对基准半径比例，<1 保证火落在城内） */
     private static readonly FIRE_SPREAD_RATIO = 0.7;
     /** 火苗群在贴图中的实测重心偏下 0.067H（2026-07-18 像素级测量：cx=0.46W、cy=0.57H）：
@@ -123,7 +123,8 @@ export class SiegeEffectRenderer {
         location: { lat: number; lng: number },
         cityType: string = 'small_city',
         getTarget?: TargetResolver,
-        battleDurationSec?: number
+        battleDurationSec?: number,
+        cityVisualZoom: number = 1,
     ): void {
         // 连锁攻城（2026-07-18 主人定）：同城连战火势延续——不清场、不重新渐显；
         // 只换攻击目标、重排齐射，并把（可能正在淡出的）旧火快速升回各自峰值
@@ -131,6 +132,7 @@ export class SiegeEffectRenderer {
         if (existing) {
             gameLog('siegeEffect', `🔥 [SiegeEffect] 城市 ${cityId} 连战，火势延续`);
             existing.getTarget = getTarget;
+            existing.cityVisualZoom = cityVisualZoom;
             if (existing.volleyIntervalId) {
                 clearInterval(existing.volleyIntervalId);
                 existing.volleyIntervalId = undefined;
@@ -165,6 +167,7 @@ export class SiegeEffectRenderer {
             getTarget,
             igniteOffsetsMs,
             fadeInDurationMs,
+            cityVisualZoom,
         };
 
         // 风向全场统一 + 随机起始角（每次攻城火布局完全不同）
@@ -352,7 +355,7 @@ export class SiegeEffectRenderer {
         const renderer = getGlobalUnitRenderer();
         if (!renderer) return;
 
-        const origin = this.launchPoint(effect.cityLocation, target);
+        const origin = this.launchPoint(effect.cityLocation, target, effect.cityVisualZoom);
         const end = L.latLng(target.lat, target.lng);
 
         renderer.spawnProjectileVolley(origin, end, {
@@ -366,13 +369,14 @@ export class SiegeEffectRenderer {
 
     private launchPoint(
         city: { lat: number; lng: number },
-        target: { lat: number; lng: number }
+        target: { lat: number; lng: number },
+        cityVisualZoom: number,
     ): L.LatLng {
         const dx = target.lng - city.lng;
         const dy = target.lat - city.lat;
         const len = Math.hypot(dx, dy) || 1;
-        // 发射点按放大后的城墙外推（火焰不随城放大，火箭仍从城墙来）
-        const visualZoom = SiegeEffectRenderer.SIEGE_CITY_VISUAL_ZOOM;
+        // 发射点：跟拍放大场按放大城墙外推；非跟拍 = 1
+        const visualZoom = cityVisualZoom > 0 ? cityVisualZoom : 1;
         return L.latLng(
             city.lat + (dy / len) * SiegeEffectRenderer.WALL_INSET * visualZoom + SiegeEffectRenderer.LAUNCH_HEIGHT * visualZoom,
             city.lng + (dx / len) * SiegeEffectRenderer.WALL_INSET * visualZoom

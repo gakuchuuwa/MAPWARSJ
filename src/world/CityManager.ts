@@ -666,11 +666,13 @@ export class CityManager {
     /** 攻城放大还原的延迟定时器：同城新攻城重开时取消未走的还原（防陈旧定时器把新城缩回去） */
     private readonly siegeZoomRestoreTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
-    /** @param battleDurationSec 本场攻城战目标时长，用于把三坨火的渐显节奏摊到整场战斗 */
+    /** @param battleDurationSec 本场攻城战目标时长，用于把三坨火的渐显节奏摊到整场战斗
+     *  @param enableCityZoom 是否放大据点建筑——仅跟拍军团参战的那场（2026-08-04） */
     public playSiegeEffect(
         cityId: string,
         getAttackerPos?: () => { lat: number; lng: number } | null | undefined,
-        battleDurationSec?: number
+        battleDurationSec?: number,
+        enableCityZoom = false,
     ): void {
         const city = this.getCity(cityId);
         if (city) {
@@ -679,7 +681,8 @@ export class CityManager {
                 { lat: city.latitude, lng: city.longitude },
                 city.type,
                 getAttackerPos,
-                battleDurationSec
+                battleDurationSec,
+                enableCityZoom ? 4 : 1,
             );
             // 新攻城开始：取消上一场未走的"延迟还原"
             const pending = this.siegeZoomRestoreTimers.get(cityId);
@@ -687,19 +690,18 @@ export class CityManager {
                 clearTimeout(pending);
                 this.siegeZoomRestoreTimers.delete(cityId);
             }
-            // 据点建筑贴图放大 ×2（2026-07-18）
-            this.territorySystem.setCitySiegeZoom(cityId, true);
+            // 仅跟拍军团参战才放大；非跟拍场立即关掉可能残留的放大态
+            this.territorySystem.setCitySiegeZoom(cityId, enableCityZoom);
         }
     }
 
     /**
      * @param immediate true=立即清场（中止/复国等），不等延迟
-     * @param restoreDelayMs 非立即时据点缩回延迟：攻方胜 1s（缩小藏进城破烟雾）；守方胜 2s（城未破无烟雾，等溃灭/回城动画收尾）
+     * @param restoreDelayMs 非立即时据点缩回延迟：正常分出胜负 5s（2026-08-04）
      */
-    public stopSiegeEffect(cityId: string, immediate = false, restoreDelayMs = 1000): void {
+    public stopSiegeEffect(cityId: string, immediate = false, restoreDelayMs = 5000): void {
         this.siegeEffectRenderer.stopEffect(cityId, immediate);
-        // 据点建筑还原（2026-07-18 主人定）：非立即场景延迟——火焰淡出（0.8s）+
-        // 城破尘爆起来之后再缩，缩小动作藏进烟雾里；immediate（中止/复国）不等，直接还原。
+        // 据点建筑还原：非立即场景延迟后再摘类缩回；immediate（中止/复国）不等，直接还原。
         const pending = this.siegeZoomRestoreTimers.get(cityId);
         if (pending) {
             clearTimeout(pending);

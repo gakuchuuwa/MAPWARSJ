@@ -1269,10 +1269,14 @@ export class SiegeManager {
         };
 
         this.activeSieges.set(targetCity.id, battleField);
+        // 据点建筑放大仅跟拍军团参与的那场（其它攻城仍播火/箭，不缩放城）
+        const followedId = getFollowedArmyId();
+        const enableCityZoom = !!followedId && battleField.hasParticipant(followedId);
         this.cityManager.playSiegeEffect(
             targetCity.id,
             () => army.getPosition(),
             battleField.targetDuration,
+            enableCityZoom,
         );
     }
 

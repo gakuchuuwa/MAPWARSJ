@@ -5478,7 +5478,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/LATIN/moxina_luojie.png": {
-            "scale": 0.96,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": 12
         },
@@ -5648,7 +5648,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/LATIN/kanpaniya_kaluo.png": {
-            "scale": 0.97,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": 13
         },
@@ -6143,7 +6143,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/LATIN/baizanting_fulajimier.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 6
         },

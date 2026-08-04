@@ -99,7 +99,7 @@ export class BattleField implements IOpeningPulseSink {
     public readonly siegeCityId: string | null;
     /** 由 SiegeManager 注册：区域战 resolve 时必停火焰/齐射，不依赖 onBattleComplete 赋值时机。
      *  immediate=true 立刻清场（中止/换场/复国）；false 火焰淡出 + 据点延迟缩回（正常分出胜负）。
-     *  restoreDelayMs：据点缩回延迟——守方胜 2s（城未破无烟雾，等动画收尾），攻方胜 1s（缩小藏进城破烟雾） */
+     *  restoreDelayMs：据点缩回延迟——正常分出胜负默认 5s（2026-08-04） */
     private static siegeVisualStopHandler: ((cityId: string, immediate: boolean, restoreDelayMs?: number) => void) | null = null;
 
     public static setSiegeVisualStopHandler(handler: ((cityId: string, immediate: boolean, restoreDelayMs?: number) => void) | null): void {
@@ -447,10 +447,16 @@ export class BattleField implements IOpeningPulseSink {
 
                 const clsOf = (id: string) => getSkillSixClass(id) ?? `__nocls__${id}`;
 
-                // 首选：技能 ID 和六计类别都没被用过
-                let pick = pool.find(id => !usedSkillIds.has(id) && !usedSixClasses.has(clsOf(id)));
+                // 首选：技能 ID 和六计类别都没被用过 → 候选内等概率随机取一
+                // [2026-08-04 修] 原 pool.find 取首项 = 永远吃到池首技（帖木儿案：优势池首固定 ts_115 横扫西陲，连放 N 次），
+                // 违反「三势选池·四/四/六」等概率抽一技规则。filter 后随机，防重语义不变。
+                let candidates = pool.filter(id => !usedSkillIds.has(id) && !usedSixClasses.has(clsOf(id)));
+                let pick = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : undefined;
                 // 次选：至少技能本身不重复（六计撞车可以接受，观感上是两个不同技能）
-                if (!pick) pick = pool.find(id => !usedSkillIds.has(id));
+                if (!pick) {
+                    candidates = pool.filter(id => !usedSkillIds.has(id));
+                    pick = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : undefined;
+                }
                 // 兜底：这将的整池都被占了（池子小 + 场上将多），只能重复，但要留痕
                 if (!pick) {
                     pick = pool[Math.floor(Math.random() * pool.length)];
@@ -1032,10 +1038,9 @@ export class BattleField implements IOpeningPulseSink {
         }
 
         // 正常分出胜负：火焰淡出 + 据点延迟缩回。
-        // 攻方胜（城破）：1s 后缩回，缩小藏进城破烟雾；守方胜（城未破）：无烟雾，延 2s 等溃灭/回城动画收尾再从容缩回
+        // 2026-08-04 主人定：战斗结束后 5s 再缩回（原攻方胜 1s / 守方胜 2s）
         if (this.siegeCityId && BattleField.siegeVisualStopHandler) {
-            const defenderWon = winnerGroup === this.defenderGroup;
-            BattleField.siegeVisualStopHandler(this.siegeCityId, false, defenderWon ? 2000 : 1000);
+            BattleField.siegeVisualStopHandler(this.siegeCityId, false, 5000);
         }
 
         gameLog('battle', `🏆 [BattleField] 战斗结束! 胜者: ${winnerGroup.factionId}`);
@@ -1349,8 +1354,13 @@ export class BattleField implements IOpeningPulseSink {
                 const pool = getSituationalSkillPool(unit, rsit as any, [...usedIds]);
                 if (pool.length > 0) {
                     const clsOf = (id: string) => getSkillSixClass(id) ?? `__nocls__${id}`;
-                    let pick = pool.find(id => !usedIds.has(id) && !usedClasses.has(clsOf(id)));
-                    if (!pick) pick = pool.find(id => !usedIds.has(id));
+                    // [2026-08-04 修] 与开局同规则：候选内等概率随机，禁用 find 首项（帖木儿案同源）
+                    let candidates = pool.filter(id => !usedIds.has(id) && !usedClasses.has(clsOf(id)));
+                    let pick = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : undefined;
+                    if (!pick) {
+                        candidates = pool.filter(id => !usedIds.has(id));
+                        pick = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : undefined;
+                    }
                     if (!pick) {
                         pick = pool[Math.floor(Math.random() * pool.length)];
                         gameLog('battle', `⚠️ [防重] 援军 ${unit.generalId} 候选池全被占用，只能重复出 ${pick}`);
