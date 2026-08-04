@@ -117,6 +117,11 @@ export function tryJoinLegionToBattle(
     legion.stopMovement(true);
     legion.setCombatState(true, battleField.type, center);
     legion.isSiegeAttacker = isAttacker; // 援军按攻守方正确设置器械标记
+    // 攻方增援也挂攻城目标城 id：GlobalUnitRenderer 攻城外推反查城图用（2026-08-04 修复——
+    // 漏设则增援军团不外推，渲染停在 JOIN_RADIUS 圈内逻辑位置，离城图边缘很远/压城，主人截图实锤）
+    if (battleField.type === 'siege' && isAttacker && deps.siegeCityId) {
+        legion.siegeTargetCityId = deps.siegeCityId;
+    }
 
     const side: 'attacker' | 'defender' = isAttacker ? 'attacker' : 'defender';
     const battleCityName = deps.resolveBattleCityName?.(center) ?? '未知';
