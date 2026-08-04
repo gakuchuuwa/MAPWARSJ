@@ -79,8 +79,9 @@ export class SiegeManager {
     /** 看门狗超时：160 秒真实时间（主人 2026-07-17 定；正常"唤醒者走向城下开新战"的空窗只有几秒到十几秒，160s 远在其外） */
     private static readonly WAITER_WATCHDOG_MS = 160_000;
 
-    /** 等待环基准：比开战圈稍外（攻城军停在 COMBAT_RADIUS≈0.1，等待者最近停 0.2） */
-    private static readonly WAIT_RING_BASE = GameConfig.SIEGE.COMBAT_RADIUS + 0.1;
+    /** 等待环基准：2026-08-04 0.2→0.25（大城图半径≈70px=0.19°，0.25°=91px 图外留空）；
+     *  攻城军停在 COMBAT_RADIUS≈0.1，等待者最近停 0.25 */
+    private static readonly WAIT_RING_BASE = 0.25;
     /** 同城每多一个等待者，停步环外推一档（同路来的自然前后排开，不同路来的方向本就不同） */
     /** 第三方排队间距：2026-08-04 0.05→0.10（≈阵列宽度 42px/0.12°），同路排队不重叠 */
     private static readonly WAIT_RING_SPACING = 0.10;
@@ -246,6 +247,18 @@ export class SiegeManager {
             if (dist <= entry.stopDist || army.isIdle()) {
                 // 到环（或已自行停步）→ 正式停步排队
                 army.stopMovement(true);
+                // [2026-08-04] 越线收位：高速军团一步跨过 stopDist 会停进据点图内（实测李升军走进城里）——
+                // 沿「城→军团」方向收回停步环（stop 后再 setPosition，避免清行军路径毁战前存档；同 clampArmyToSiegeRing 观感）
+                const pos = army.getPosition();
+                const dLat = pos.lat - center.lat;
+                const dLng = pos.lng - center.lng;
+                const plen = Math.hypot(dLat, dLng);
+                if (plen > 1e-9 && plen < entry.stopDist - 0.02) {
+                    army.setPosition(
+                        center.lat + (dLat / plen) * entry.stopDist,
+                        center.lng + (dLng / plen) * entry.stopDist,
+                    );
+                }
                 army.setTargetCity(null);
                 army.setCombatState(false);
                 entry.approaching = false;

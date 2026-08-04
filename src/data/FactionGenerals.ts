@@ -428,7 +428,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     yanda: { generalId: 'yanda_touluoman', generalName: '头罗曼', portrait: '/assets/CENTRAL_ASIA/yanda_touluoman.png' },
     yada: { generalId: 'yada_ahexiong', generalName: '阿赫雄', portrait: '/assets/CENTRAL_ASIA/yada_ahexiong.png' },
     anushidgin: { generalId: 'anushidgin_yile', generalName: '伊勒', portrait: '/assets/CENTRAL_ASIA/anushidgin_yile.png' },
-    qincha: { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/CENTRAL_ASIA/qincha_baqiman.png' },
+    qincha: { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png' },
     dayuan: { generalId: 'dayuan_wugua', generalName: '毋寡', portrait: '/assets/WESTERN/dayuan_wugua.png' },
     kokand: { generalId: 'kokand_alimukuli', generalName: '阿里木库力', portrait: '/assets/CENTRAL_ASIA/kokand_alimukuli.png' },
     dayuzi: { generalId: 'dayuzi_yinalechihei', generalName: '亦纳勒赤黑', portrait: '/assets/CENTRAL_ASIA/dayuzi_yinalechihei.png' },

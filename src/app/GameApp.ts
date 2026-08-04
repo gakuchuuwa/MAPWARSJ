@@ -9,6 +9,7 @@ import { FactionManager } from '../world/FactionManager';
 import { initializeGlobalUnitRenderer } from '../map/UnitRenderer';
 import { GlobalUnitRenderer } from '../map/GlobalUnitRenderer';
 import { SpeedOverlayRenderer } from '../map/SpeedOverlayRenderer';
+import { LandSeaBoundaryLayer } from '../map/LandSeaBoundaryLayer';
 import { TerrainSpeedSystem } from '../core/TerrainSpeedSystem';
 import { TerrainOverrideManager } from '../editors/TerrainOverrideManager';
 import { LandSeaSystem, LandTerrainSystem } from '../world/land-sea';
@@ -92,6 +93,8 @@ export class GameApp {
     public timeSystem!: TimeSystem;
     public historicalEventManager!: HistoricalEventManager;
     public speedOverlay!: SpeedOverlayRenderer;
+    /** 海陆分界调试图层（默认关闭，调试面板 🧭 海陆分界线） */
+    public landSeaBoundary!: LandSeaBoundaryLayer;
     private overrideManager!: TerrainOverrideManager;
 
     // [AI System]
@@ -475,6 +478,7 @@ export class GameApp {
             legionManager.syncCitySpawnTierConsumption();
 
             this.speedOverlay = new SpeedOverlayRenderer(this.map, this.overrideManager);
+            this.landSeaBoundary = new LandSeaBoundaryLayer(this.map);
 
             this.uiManager = new GameUIManager(
                 this.timeSystem,
