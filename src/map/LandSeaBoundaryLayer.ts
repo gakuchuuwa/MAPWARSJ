@@ -11,10 +11,12 @@ import { gameLog } from '../utils/GameLogger';
  * 作用：把游戏**真正在用**的海陆判定画出来——蓝色=海（军团在此变船、按统一海速），
  * 透明=陆，灰色=瓦片没到（游戏此刻当陆走，但其实还不知道），亮青线=分界线本身。
  *
- * 与既有「🌊 陆海视图」的区别：那个走 SpeedOverlayRenderer 的六边形网格，硬性要求
- * zoom≥9 且视野内 hex<1000，战略视角下什么都不画；且它判的是 hex 中心点，而军团
- * 实际是按连续经纬度判的。本图层逐屏幕像素采样，任何缩放级别都能看，判据与
- * Army.updateTerrainSpeed 完全同源（LandSeaSystem，见 WaterMask.ts）。
+ * 本图层逐屏幕像素采样，任何缩放级别都能看，判据与 Army.updateTerrainSpeed 完全同源
+ * （LandSeaSystem，见 WaterMask.ts）。
+ *
+ * [2026-08-04] 面板上原有的「🌊 陆海视图」已删：那个走 SpeedOverlayRenderer 的六边形网格，
+ * 硬性要求 zoom≥9 且视野内 hex<1000，默认 zoom 8 的战略视角下什么都不画；且它判的是 hex
+ * 中心点，与军团实际用的连续经纬度判定不是一回事。功能已被本图层完全覆盖，别再加回去。
  *
  * 性能：默认关闭；开启后按 SAMPLE_STEP_PX 粗粒度采样（一屏约 3~4 万点），
  * 拖动期间限流重绘，停下再出完整结果。采样走 LandSeaSystem.probeLandSea——
@@ -28,15 +30,15 @@ export class LandSeaBoundaryLayer {
 
     /** 采样粒度（屏幕像素）：4px 在视觉上已看不出锯齿，采样量比逐像素少 16 倍 */
     private static readonly SAMPLE_STEP_PX = 4;
-    /** 拖动期间最短重绘间隔；停下后 moveend 一定会补一次完整重绘 */
-    private static readonly MOVE_REDRAW_MIN_INTERVAL_MS = 120;
+    /** 地图移动期间最短重绘间隔（一次重绘实测 ~14ms，80ms 一帧足够跟得上跟拍） */
+    private static readonly MOVE_REDRAW_MIN_INTERVAL_MS = 80;
 
     private static readonly COLOR_SEA = 'rgba(0, 122, 255, 0.30)';
     private static readonly COLOR_PENDING = 'rgba(130, 130, 130, 0.35)';
     private static readonly COLOR_COAST = '#00E5FF';
 
     private lastRedrawAt = 0;
-    private rafPending = false;
+    private redrawTimer: ReturnType<typeof setTimeout> | null = null;
     private lastSampleMs = 0;
 
     constructor(gameMap: GameMap) {
@@ -80,28 +82,22 @@ export class LandSeaBoundaryLayer {
     private onMapMove = (): void => {
         if (!this.visible) return;
         this.updateCanvasPosition();
-        const now = performance.now();
-        if (now - this.lastRedrawAt >= LandSeaBoundaryLayer.MOVE_REDRAW_MIN_INTERVAL_MS) {
-            this.scheduleRedraw();
-        } else {
-            // 限流窗口内先清屏，避免旧图残留在错位的位置上误导判读
-            this.clear();
-        }
+        this.requestRedraw();
     };
 
     private onMapSettled = (): void => {
         if (!this.visible) return;
         this.updateCanvasPosition();
-        this.scheduleRedraw();
+        this.requestRedraw();
     };
 
     private onResize = (): void => {
         this.resizeCanvas();
-        if (this.visible) this.scheduleRedraw();
+        if (this.visible) this.requestRedraw();
     };
 
     private onTilesUpdated = (): void => {
-        if (this.visible) this.scheduleRedraw();
+        if (this.visible) this.requestRedraw();
     };
 
     public isVisible(): boolean {
@@ -115,8 +111,13 @@ export class LandSeaBoundaryLayer {
         if (visible) {
             this.resizeCanvas();
             this.updateCanvasPosition();
-            this.scheduleRedraw();
+            this.lastRedrawAt = 0;      // 开启即刻出图，不受上一次重绘的限流影响
+            this.requestRedraw();
         } else {
+            if (this.redrawTimer !== null) {
+                clearTimeout(this.redrawTimer);
+                this.redrawTimer = null;
+            }
             this.clear();
         }
         console.log(`🌊 海陆分界: ${visible ? '开启' : '关闭'}`);
@@ -142,13 +143,23 @@ export class LandSeaBoundaryLayer {
         this.ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    private scheduleRedraw(): void {
-        if (this.rafPending) return;
-        this.rafPending = true;
-        requestAnimationFrame(() => {
-            this.rafPending = false;
+    /**
+     * 合并重绘请求，绝不「只清屏不重画」。
+     *
+     * [2026-08-04 修] 旧实现在限流窗口内直接 clear()：游戏的跟拍/自动缩放会让地图持续移动，
+     * move 事件不断落进窗口里，画布就几乎一直是空的——主人反馈「海陆分界线看不出来」正是此因。
+     * 现在改为合并到一个定时器：期间画面保留上一帧（拖动时最多滞后一个间隔），到点重画。
+     */
+    private requestRedraw(): void {
+        if (this.redrawTimer !== null) return;
+        const wait = Math.max(
+            0,
+            LandSeaBoundaryLayer.MOVE_REDRAW_MIN_INTERVAL_MS - (performance.now() - this.lastRedrawAt),
+        );
+        this.redrawTimer = setTimeout(() => {
+            this.redrawTimer = null;
             if (this.visible) this.render();
-        });
+        }, wait);
     }
 
     private render(): void {
@@ -316,6 +327,7 @@ export class LandSeaBoundaryLayer {
     }
 
     public destroy(): void {
+        if (this.redrawTimer !== null) clearTimeout(this.redrawTimer);
         this.map.off('move', this.onMapMove);
         this.map.off('zoom', this.onMapMove);
         this.map.off('moveend', this.onMapSettled);

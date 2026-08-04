@@ -4,7 +4,6 @@ import { GameMap } from '../map/GameMap';
 import { GridSystem, Hex } from '../systems/GridSystem';
 import { TerrainSpeedSystem, TerrainSpeed } from '../core/TerrainSpeedSystem';
 import { TerrainOverrideManager } from '../core/TerrainOverrideManager';
-import { LandSeaSystem } from '../world/land-sea';
 import { gameLog } from '../utils/GameLogger';
 
 interface HistoryEntry {
@@ -21,8 +20,6 @@ export class SpeedOverlayRenderer {
     private highlightLayer: any;
     private canvasRenderer: L.Canvas; // [OPTIMIZATION] Shared Canvas Renderer
     private isVisible: boolean = false;
-    /** 陆海二元视图：只突出显示海域 hex，陆地 hex 隐藏 */
-    private landSeaViewMode: boolean = false;
     private centerPoint = { lat: 34.26, lng: 108.94 };
 
     private isEditMode: boolean = false;
@@ -54,13 +51,8 @@ export class SpeedOverlayRenderer {
             }
         });
 
-        window.addEventListener('land-sea-tiles-updated', () => {
-            if (this.isVisible && this.landSeaViewMode) {
-                this.render();
-            }
-        });
         window.addEventListener('land-terrain-tiles-updated', () => {
-            if (this.isVisible && !this.landSeaViewMode) {
+            if (this.isVisible) {
                 this.render();
             }
         });
@@ -111,22 +103,6 @@ export class SpeedOverlayRenderer {
 
     public isShowing(): boolean {
         return this.isVisible;
-    }
-
-    public isLandSeaView(): boolean {
-        return this.landSeaViewMode;
-    }
-
-    /** 开启/关闭陆海视图（自动打开覆盖层） */
-    public setLandSeaViewMode(enabled: boolean): void {
-        this.landSeaViewMode = enabled;
-        if (enabled && !this.isVisible) {
-            this.setVisible(true);
-        }
-        if (this.isVisible) {
-            this.render();
-        }
-        console.log(`🌊 陆海视图: ${enabled ? '开启' : '关闭'}`);
     }
 
     public setToolType(type: ToolType): void {
@@ -252,40 +228,26 @@ export class SpeedOverlayRenderer {
 
         let greenCount = 0, orangeCount = 0, blueCount = 0, darkBlueCount = 0;
 
-        if (this.landSeaViewMode) {
-            LandSeaSystem.prefetchViewport(this.map);
-        }
-
         hexCenters.forEach(center => {
             const hex = GridSystem.latLngToAxial(center.lat, center.lng);
 
-            let hexColor = '#00FF00';
-            let fillOpacity = 0.25;
-            let strokeOpacity = 0.3;
+            const fillOpacity = 0.25;
+            const strokeOpacity = 0.3;
 
-            if (this.landSeaViewMode) {
-                if (!LandSeaSystem.isSeaAt(center)) {
-                    return;
-                }
+            let hexColor = '#00FF00';
+            const speed = TerrainSpeedSystem.getHexSpeed(center, hex);
+            if (speed === TerrainSpeed.NORMAL) {
+                hexColor = '#00FF00';
+                greenCount++;
+            } else if (speed === TerrainSpeed.WATER) {
                 hexColor = '#0088FF';
-                fillOpacity = 0.45;
-                strokeOpacity = 0.55;
                 blueCount++;
+            } else if (speed === TerrainSpeed.OCEAN) {
+                hexColor = '#00008B';
+                darkBlueCount++;
             } else {
-                const speed = TerrainSpeedSystem.getHexSpeed(center, hex);
-                if (speed === TerrainSpeed.NORMAL) {
-                    hexColor = '#00FF00';
-                    greenCount++;
-                } else if (speed === TerrainSpeed.WATER) {
-                    hexColor = '#0088FF';
-                    blueCount++;
-                } else if (speed === TerrainSpeed.OCEAN) {
-                    hexColor = '#00008B';
-                    darkBlueCount++;
-                } else {
-                    hexColor = '#FF8800';
-                    orangeCount++;
-                }
+                hexColor = '#FF8800';
+                orangeCount++;
             }
 
             const polygon = L.polygon(

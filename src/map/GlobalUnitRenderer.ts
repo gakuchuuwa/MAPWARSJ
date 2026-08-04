@@ -12,8 +12,6 @@ import { LegionFlagDrawer } from './legion/LegionFlagDrawer'; // [AI FLAG SYSTEM
 import { ProjectileRenderer } from './ProjectileRenderer'; // [NEW] Arrow System
 import { BanditDrawer, BanditState } from './BanditDrawer';
 import { LegionType } from '../types/UnitTypes';
-import { getCultureFormationMode, getDefaultSlotsForMode } from '../types/CultureFormations';
-import { expandCompositionSlots } from '../types/LegionComposition';
 
 import { GameConfig, SPRITE_PATHS } from '../config/GameConfig';
 import { FACTIONS } from '../data/factions';
@@ -104,17 +102,6 @@ export class GlobalUnitRenderer {
     private sortedUnitsCache: IAnimatedUnit[] = [];
     private needsSort: boolean = false;
 
-    /** [2026-08-04] 守军出城阵列：战斗中的城前阵列参数（供战终渐隐冻结最后位置/方向） */
-    private activeGarrisonState = new Map<string, {
-        lat: number; lng: number; dir: number; slots: string[];
-        factionId: string; troops: number;
-    }>();
-    /** [2026-08-04] 战终渐隐中的守军阵列（无论输赢、不出征即消失，5s 淡出同器械） */
-    private garrisonFades = new Map<string, {
-        lat: number; lng: number; dir: number; slots: string[];
-        factionId: string; troops: number; fadeStart: number;
-    }>();
-
     private unitFightingStates: Map<string, boolean> = new Map();
     private lastMapCenter: L.LatLng | null = null;
     private unitVisualAngles: Map<string, number> = new Map();
@@ -150,10 +137,6 @@ export class GlobalUnitRenderer {
     };
     private static readonly CITY_ICON_HW_RATIO = 765 / 1024;
     private static readonly SIEGE_GAP_PX = 21;
-    /** [2026-08-04] 守军出城阵列时攻方额外外推：守军半深22 + 两军间距44 + 攻方半深22 */
-    private static readonly SIEGE_GARRISON_GAP_PX = 88;
-    /** [2026-08-04] 守军阵列战终渐隐时长（同器械 FADE_OUT 5s 节奏，与城缩回/火焰渐熄同步） */
-    private static readonly GARRISON_FADE_MS = 5000;
 
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
     private static assetsPromise: Promise<void> | null = null;
@@ -391,138 +374,6 @@ export class GlobalUnitRenderer {
         this.projectileSystem.spawnVolley(L.latLng(from), L.latLng(to), options);
     }
 
-    /** 攻城视觉外推辅助：城图半宽/半高（方向加权，攻城 ×2 + city-scale）像素 */
-    private computeSiegeHalfPx(
-        city: { type: string; region?: string },
-        dLat: number,
-        dLng: number,
-        len: number,
-        zoom: number,
-    ): number {
-        const baseW = GlobalUnitRenderer.CITY_ICON_WIDTH_BY_TYPE[city.type] ?? 100;
-        const cityScale = Math.max(0, 1 + (zoom - 9) * 0.5);
-        const halfW = (baseW / 2) * cityScale * 2; // 攻城 .city-under-siege scale(2)
-        const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;
-        const cosA = Math.abs(dLng) / len;
-        const sinA = Math.abs(dLat) / len;
-        return halfW * cosA + halfH * sinA;
-    }
-
-    /**
-     * [2026-08-04] 守军出城阵列：攻城战斗中有驻军将的城，城前（面向攻方）渲染守军阵列。
-     * 纯观感——数据/战斗逻辑/战斗面板零改动；空城（无驻军将）不画，保持打城观感。
-     * 战终（无论输赢、不出征）→ 阵列冻结最后位置/方向，5s 渐隐消失（同器械节奏）。
-     */
-    private renderGarrisonArrays(ctx: CanvasRenderingContext2D, scale: number): void {
-        const game = (window as any).game;
-        const siegeMgr = game?.siegeManager;
-        const cityMgr = game?.cityManager;
-        const zoom = this.map.getZoom();
-        const pxPerDeg = 364 * Math.pow(2, zoom - 9);
-        const projectFn = (lat: number, lng: number) => {
-            const p = this.map.latLngToContainerPoint([lat, lng]);
-            return { x: p.x, y: p.y };
-        };
-        const unprojectFn = (x: number, y: number) => {
-            const ll = this.map.containerPointToLatLng([x, y]);
-            return { lat: ll.lat, lng: ll.lng };
-        };
-        const tick = Date.now();
-
-        // 1. 战终渐隐中的守军阵列（战斗已结束）：alpha 递减，走完清除
-        for (const [cityId, f] of this.garrisonFades) {
-            const elapsed = tick - f.fadeStart;
-            const alpha = Math.max(0, 1 - elapsed / GlobalUnitRenderer.GARRISON_FADE_MS);
-            if (alpha <= 0) { this.garrisonFades.delete(cityId); continue; }
-            this.drawGarrisonArray(ctx, scale, tick, projectFn, unprojectFn, f.lat, f.lng, f.dir, f.slots, f.factionId, f.troops, alpha);
-        }
-
-        // 2. 进行中的攻城：有驻军将的城画守军阵列 + 记录活跃状态
-        const activeNow = new Set<string>();
-        if (siegeMgr?.activeSieges?.size && cityMgr) {
-            for (const [cityId, battle] of siegeMgr.activeSieges as Map<string, any>) {
-                const city = cityMgr.getCity(cityId);
-                if (!city || !(city as any)._siegeGarrisonGeneralId) continue; // 无驻军将：保持打城观感
-                const attacker = battle?.attackerGroup?.units?.[0]?.unit;
-                const aPos = attacker?.getPosition?.();
-                if (!aPos) continue;
-                const dLat = aPos.lat - city.latitude;
-                const dLng = aPos.lng - city.longitude;
-                const len = Math.hypot(dLat, dLng);
-                if (len < 1e-9) continue;
-                // 守军中心：图外缘 + 半阵深(22) + 空隙(21)
-                const halfPx = this.computeSiegeHalfPx(city, dLat, dLng, len, zoom);
-                const pushDeg = (halfPx + 22 + GlobalUnitRenderer.SIEGE_GAP_PX) / pxPerDeg;
-                const centerLat = city.latitude + (dLat / len) * pushDeg;
-                const centerLng = city.longitude + (dLng / len) * pushDeg;
-                // 阵型：城文化默认（3×3 或 123 三角）
-                const mode = getCultureFormationMode(city.region as any);
-                const slots = expandCompositionSlots(getDefaultSlotsForMode(mode));
-                const dir = OrientationSystem.get8DirectionIndex(
-                    { lat: centerLat, lng: centerLng },
-                    { lat: aPos.lat, lng: aPos.lng },
-                );
-                this.drawGarrisonArray(ctx, scale, tick, projectFn, unprojectFn, centerLat, centerLng, dir, slots, city.factionId, city.troops, 1);
-                this.activeGarrisonState.set(cityId, {
-                    lat: centerLat, lng: centerLng, dir, slots,
-                    factionId: city.factionId, troops: city.troops,
-                });
-                activeNow.add(cityId);
-            }
-        }
-
-        // 3. 战斗结束检测：上一帧活跃、本帧不再战斗 → 入渐隐（无论输赢；不出征即消失）
-        for (const [cityId, state] of this.activeGarrisonState) {
-            if (!activeNow.has(cityId) && !this.garrisonFades.has(cityId)) {
-                this.garrisonFades.set(cityId, { ...state, fadeStart: tick });
-            }
-        }
-        // 状态记录只保留仍在战斗中的城（其余已入渐隐或彻底消失）
-        this.activeGarrisonState = new Map(
-            [...this.activeGarrisonState].filter(([cid]) => activeNow.has(cid)),
-        );
-    }
-
-    /** 画守军阵列（alpha 用 ctx.globalAlpha 淡入淡出，同尸体渐隐方式） */
-    private drawGarrisonArray(
-        ctx: CanvasRenderingContext2D,
-        scale: number,
-        tick: number,
-        projectFn: (lat: number, lng: number) => { x: number, y: number },
-        unprojectFn: (x: number, y: number) => { lat: number, lng: number },
-        centerLat: number,
-        centerLng: number,
-        dir: number,
-        slots: string[],
-        factionId: string,
-        troops: number,
-        alpha: number,
-    ): void {
-        const cp = this.map.latLngToContainerPoint([centerLat, centerLng]);
-        const prevAlpha = ctx.globalAlpha;
-        ctx.globalAlpha = prevAlpha * alpha;
-        LegionPhalanxDrawer.draw(
-            `garrison_${tick}_${Math.round(centerLat * 1000)}_${Math.round(centerLng * 1000)}`,
-            ctx,
-            { x: cp.x, y: cp.y },
-            'ATTACK',
-            dir,
-            scale,
-            troops,
-            tick,
-            true,
-            true,
-            projectFn,
-            unprojectFn,
-            'infantry',
-            factionId,
-            slots,
-            'infantry',
-            false,
-            null,
-        );
-        ctx.globalAlpha = prevAlpha;
-    }
 
     private animate(time: number): void {
         if (!this.isRunning) return;
@@ -706,10 +557,6 @@ export class GlobalUnitRenderer {
         const currentZoom = this.map.getZoom();
         const effectiveZoom = Math.min(currentZoom, 10);
         const scale = Math.pow(2, effectiveZoom - 9) * 0.7;
-
-        // ── [2026-08-04] 守军出城阵列（GAKU 定）：攻城战斗中有驻军将的城，城前渲染守军阵列 ──
-        // 纯观感：数据/战斗逻辑/战斗面板零改动。城图保持攻城放大 ×2，守军阵列画在城前（面向攻方）。
-        this.renderGarrisonArrays(ctx, scale);
 
         this.projectileSystem.draw(this.ctx, scale);
 
@@ -1025,13 +872,10 @@ export class GlobalUnitRenderer {
                     const cosA = Math.abs(dx) / len; // 东西占比 → 图宽侧
                     const sinA = Math.abs(dy) / len; // 南北占比 → 图高侧
                     const halfPx = halfW * cosA + halfH * sinA;
-                    // [2026-08-04] 城有驻军将 → 守军出城列阵，攻方再外推一档（守军+间距+攻方半深），两军对垒不重叠
-                    const hasGarrison = !!(siegeTargetCity as any)._siegeGarrisonGeneralId;
                     const push = Math.max(
                         0,
                         halfPx
                             + GlobalUnitRenderer.SIEGE_GAP_PX
-                            + (hasGarrison ? GlobalUnitRenderer.SIEGE_GARRISON_GAP_PX : 0)
                             - len
                     );
                     if (push > 0) {

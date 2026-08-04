@@ -236,10 +236,21 @@ export default defineConfig({
                     req.on('data', (chunk) => { body += chunk; });
                     req.on('end', () => {
                         let block = false;
+                        let fresh = false;
                         try {
-                            block = JSON.parse(body || '{}').block === true;
+                            const parsed = JSON.parse(body || '{}');
+                            block = parsed.block === true;
+                            fresh = parsed.fresh === true;
                         } catch {
                             // 上报体损坏时按「放行」处理，宁可多刷一次也别焊死闸门
+                        }
+                        // [2026-08-04 修] 页面刚加载 = 已经是磁盘上的最新代码，闸门关闭期间积压的
+                        // 那次整页刷新就是过期的，补发只会让刚进地图的页面再白烧一次启动（10~80s）。
+                        // 症状：主人反馈「刚进入地图就又重启」；boot_timing_log.jsonl 里是连着 2~3 次。
+                        // 注意必须在 openRunGate() 之前丢弃，否则开闸那一下就把它发出去了。
+                        if (fresh && runGateQueuedReload) {
+                            runGateQueuedReload = false;
+                            console.log('[HMR-Suppress] 页面已重新加载（自带最新代码），丢弃积压的过期刷新');
                         }
                         if (block) runGateUntil = Date.now() + 15_000;
                         else openRunGate();

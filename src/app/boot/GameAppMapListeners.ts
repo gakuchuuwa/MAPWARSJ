@@ -24,11 +24,6 @@ export function setupGameAppMapListeners(app: GameApp): void {
         if (app.speedOverlay) app.speedOverlay.setVisible(!!detail?.visible);
     });
 
-    window.addEventListener('toggle-land-sea-layer', (e: Event) => {
-        const detail = (e as CustomEvent<{ visible?: boolean }>).detail;
-        if (app.speedOverlay) app.speedOverlay.setLandSeaViewMode(!!detail?.visible);
-    });
-
     window.addEventListener('toggle-land-sea-boundary', (e: Event) => {
         const detail = (e as CustomEvent<{ visible?: boolean }>).detail;
         if (app.landSeaBoundary) app.landSeaBoundary.setVisible(!!detail?.visible);
