@@ -1721,6 +1721,14 @@ export class SiegeManager {
     }
 
     /**
+     * 本城攻城场（含刚结束 isOver=true 仍在 map 内）。
+     * 占城烟判定用：BattleField.resolve 先置 isOver，再走占城 updateCity，getActiveSiege 会滤掉。
+     */
+    public getSiegeField(cityId: string): BattleField | undefined {
+        return this.activeSieges.get(cityId);
+    }
+
+    /**
      * 残兵撤回本城：若本城正在守城战中，作为守方援军中途加入；成功返回 true。
      * 无活跃战场（敌军仅在途/排队、尚未开打）时返回 false，由调用方决定待命。
      */

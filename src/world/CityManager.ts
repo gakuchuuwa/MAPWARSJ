@@ -15,6 +15,7 @@ import { gameLog } from '../utils/GameLogger';
 import { isMacroMapZoom, isRegionBoundaryZoom } from '../config/StrategicView';
 import { audioManager } from '../audio/AudioManager';
 import { getSiegeCityBuildingStackScale } from '../config/city-marker-tokens';
+import { getFollowedArmyId } from '../utils/MapFloatingText';
 
 export interface CityUpdateOptions {
     skipCaptureLog?: boolean;
@@ -496,8 +497,13 @@ export class CityManager {
                 }
                 if (!options?.skipCaptureLog) {
                     gameLog('world', `[CityManager] City ${oldCity.name} captured by ${data.factionId}!`);
-                    const color = this.factionManager.getFactionColor(data.factionId);
-                    this.map.getCityCaptureRenderer()?.playCaptureEffect(oldCity.latitude, oldCity.longitude, color);
+                    // 占城烟雾：仅跟拍军团参与的那一仗（与据点放大同口径，2026-08-04）
+                    if (this.shouldPlayFollowedCaptureSmoke(id, options)) {
+                        const color = this.factionManager.getFactionColor(data.factionId);
+                        this.map.getCityCaptureRenderer()?.playCaptureEffect(
+                            oldCity.latitude, oldCity.longitude, color,
+                        );
+                    }
 
                     if (this.onCityCapturedCallback) {
                         this.onCityCapturedCallback({
@@ -527,6 +533,22 @@ export class CityManager {
         } else {
             console.warn('⚠️ [CityManager] City not found:', id);
         }
+    }
+
+    /**
+     * 占城烟雾是否播出：仅跟拍军团相关。
+     * - 跟拍军为本城攻城战参战者；或
+     * - 跟拍军即占城军团（含不战而屈等未进 BattleField 的路径）
+     */
+    private shouldPlayFollowedCaptureSmoke(cityId: string, options?: CityUpdateOptions): boolean {
+        const followedId = getFollowedArmyId();
+        if (!followedId) return false;
+        if (options?.captorLegionId === followedId) return true;
+        const siegeMgr = (window as any).game?.siegeManager
+            ?? (window as any).game?.historicalEventManager?.getSiegeManager?.();
+        // 须用 getSiegeField：结算瞬间 isOver 已 true，getActiveSiege 会返回空
+        const battle = siegeMgr?.getSiegeField?.(cityId) ?? siegeMgr?.getActiveSiege?.(cityId);
+        return !!battle?.hasParticipant?.(followedId);
     }
 
     /** 占城后：取消过期重绘 → 补载旗号 CSS → 轻量 patch（失败则全量 refresh） */
@@ -716,11 +738,11 @@ export class CityManager {
 
     /**
      * @param immediate true=立即清场（中止/复国等），不等延迟
-     * @param restoreDelayMs 非立即时据点缩回延迟：正常分出胜负 5s（2026-08-04）
+     * @param restoreDelayMs 非立即时：再过多久开始渐变缩回（跟拍战胜 0 / 跟拍战败 5000，2026-08-04）
      */
     public stopSiegeEffect(cityId: string, immediate = false, restoreDelayMs = 5000): void {
         this.siegeEffectRenderer.stopEffect(cityId, immediate);
-        // 据点建筑还原：非立即场景延迟后再摘类缩回；immediate（中止/复国）不等，直接还原。
+        // 据点建筑还原：摘 .city-under-siege 后由 CSS ~5s transform 渐变缩小
         const pending = this.siegeZoomRestoreTimers.get(cityId);
         if (pending) {
             clearTimeout(pending);
@@ -730,10 +752,15 @@ export class CityManager {
             this.territorySystem.setCitySiegeZoom(cityId, false);
             return;
         }
-        const timer = setTimeout(() => {
+        const startRestore = () => {
             this.siegeZoomRestoreTimers.delete(cityId);
             this.territorySystem.setCitySiegeZoom(cityId, false);
-        }, restoreDelayMs);
+        };
+        if (restoreDelayMs <= 0) {
+            startRestore();
+            return;
+        }
+        const timer = setTimeout(startRestore, restoreDelayMs);
         this.siegeZoomRestoreTimers.set(cityId, timer);
     }
 
