@@ -1,4 +1,4 @@
-import L from 'leaflet';
+﻿import L from 'leaflet';
 import { GameMap } from './GameMap';
 import { OrientationSystem } from '../core/OrientationSystem';
 import { GridSystem } from '../systems/GridSystem';
@@ -129,8 +129,8 @@ export class GlobalUnitRenderer {
     /** [2026-07-18] 攻城器械渐隐锚点：军团乘胜开拔后器械留在城下原地淡出（经纬度+冻结朝向） */
     private siegeGearAnchors = new Map<string, { lat: number; lng: number; dir: number }>();
 
-    /** [2026-08-04] 攻城视觉外推：据点图按城型 100/120/140px 宽（CSS），攻城放大 ×2、city-scale 随 zoom；
-     *  图 4:3（1024×765）东西宽/南北窄。按接近方向把攻城方阵沿「背离城」方向推到图外缘 + 半兵牌空隙。
+    /** [2026-08-04] 攻城视觉外推：据点图按城型 100/120/140px 宽（CSS），跟拍场攻城放大 ×4、city-scale 随 zoom；
+     *  非跟拍场不放大（倍率 1）。图 4:3（1024×765）东西宽/南北窄。按接近方向把攻城方阵沿「背离城」方向推到图外缘 + 半兵牌空隙。
      *  全方向生效（旧版仅北面 18px 补偿，2026-07-18）。只动渲染，战斗逻辑坐标不变。 */
     private static readonly CITY_ICON_WIDTH_BY_TYPE: Record<string, number> = {
         big_city: 140, medium_city: 120, small_city: 100, pass: 100,
@@ -848,7 +848,7 @@ export class GlobalUnitRenderer {
             const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
 
             // ── [2026-08-04] 攻城视觉外推：整支方阵沿「背离城」方向推到据点图外缘 + 空隙 ──
-            // 按城型图宽（攻城放大 ×2、city-scale 随 zoom）+ 4:3 方向加权（东西宽/南北窄），
+            // 按城型图宽（跟拍场 ×4 / 非跟拍 ×1、city-scale 随 zoom）+ 4:3 方向加权（东西宽/南北窄），
             // 全方向生效。**判定放宽**：凡目标为城（主攻/参战/排队/接近）都外推——2026-08-04 实测
             // 多军团攻城时只有主攻 isSiegeAttacker，参战军团不设 → 旧判定压城。野战打军团 targetId 查不到城 → 不外推。
             // 只动渲染，战斗逻辑坐标不变。
@@ -868,7 +868,11 @@ export class GlobalUnitRenderer {
                     const baseW = GlobalUnitRenderer.CITY_ICON_WIDTH_BY_TYPE[siegeTargetCity.type] ?? 100;
                     const zoom = this.map.getZoom();
                     const cityScale = Math.max(0, 1 + (zoom - 9) * 0.5); // 与 TerritorySystem.updateCityScales 一致
-                    const halfW = (baseW / 2) * cityScale * 2; // 攻城 .city-under-siege scale(2)
+                    const siegeZoom =
+                        (window as any).game?.cityManager?.getTerritorySystem?.()?.isCitySiegeZoomed?.(siegeTargetCity.id)
+                            ? 4
+                            : 1;
+                    const halfW = (baseW / 2) * cityScale * siegeZoom; // 跟拍 .city-under-siege scale(4)
                     const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;
                     const cosA = Math.abs(dx) / len; // 东西占比 → 图宽侧
                     const sinA = Math.abs(dy) / len; // 南北占比 → 图高侧
