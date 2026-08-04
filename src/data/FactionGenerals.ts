@@ -986,7 +986,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     sumeier: { generalId: 'sumeier_lugaerbanda', generalName: '卢伽尔班达', portrait: '/assets/WEST_ASIA/sumeier_jierjiameishen.png' },
     ayoubu: { generalId: 'ayoubu_salaheding', generalName: '萨拉赫丁', portrait: '/assets/WEST_ASIA/ayoubu_salaheding.png' },
     // ── 2026-08-04 新增：鲍德温（埃德萨伯国首任伯爵，后为耶路撒冷国王）──
-    aosiruowen: { generalId: 'aosiruowen_baodewen', generalName: '鲍德温', portrait: '/assets/WEST_ASIA/aosiruowen_baodewen.png' },
+    aosiruowen: { generalId: 'aosiruowen_baodewen', generalName: '鲍德温', portrait: '/assets/LATIN/aosiruowen_baodewen.png' },
     // 2026-07-27 补：打耳班/以弗所/安卡拉/亚述城 + 苏萨补将
     ailan: { generalId: 'ailan_shuteluke', generalName: '舒特鲁克', portrait: '/assets/WEST_ASIA/ailan_shuteluke.png' },
     kesa: { generalId: 'kesa_bulan', generalName: '布兰', portrait: '/assets/STEPPE/kesa_bulankehan.png' },
