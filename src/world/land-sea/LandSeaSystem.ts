@@ -1,7 +1,12 @@
 import type L from 'leaflet';
 import type { LatLng } from '../../types/core';
 import { ElevationSampler, latLngToTilePixel } from './ElevationSampler';
-import { DEM_ZOOM, TERRARIUM_TILE_SIZE, decodeTerrariumElevation, isSeaElevation } from './TerrariumCodec';
+import {
+    DEM_ZOOM,
+    TERRARIUM_TILE_SIZE,
+    decodeTerrariumElevation,
+    isSeaElevation,
+} from './TerrariumCodec';
 import { WaterMaskSampler } from './WaterMaskSampler';
 
 type LandSeaKind = 'land' | 'sea';
@@ -138,6 +143,52 @@ export class LandSeaSystem {
 
     static getLandSeaKind(latLng: LatLng): LandSeaKind {
         return this.isSeaAt(latLng) ? 'sea' : 'land';
+    }
+
+    /**
+     * 调试图层专用的**批量**探测器：入参是 DEM 全局像素坐标（用 lngToDemGlobalX /
+     * latToDemGlobalY 按行列预算好），内部只在跨瓦片时才解析一次瓦片数组。
+     *
+     * 为什么不逐点调 probeLandSea：采样器的 LRU touch 是 O(缓存条数) 的数组线性扫描，
+     * 逐点调用时一屏 5.8 万点实测 651ms（1800 万次字符串比较）；按瓦片解析后同一屏
+     * 只需几十次瓦片查找。判据与 isSeaAt / probeLandSea 逐条一致。
+     *
+     * 返回的函数不是线程安全的，也不要跨帧复用——每次重绘新建一个。
+     */
+    static createBlockProber(
+        zoom = DEM_ZOOM,
+    ): (globalPxX: number, globalPxY: number) => 'sea' | 'land' | 'pending' {
+        const S = TERRARIUM_TILE_SIZE;
+        let curTX = Number.NaN;
+        let curTY = Number.NaN;
+        let elevTile: Uint8ClampedArray | null = null;
+        let maskTile: Uint8Array | null = null;
+        let maskUsable = false;
+
+        return (globalPxX: number, globalPxY: number) => {
+            const tx = Math.floor(globalPxX / S);
+            const ty = Math.floor(globalPxY / S);
+            if (tx !== curTX || ty !== curTY) {
+                curTX = tx;
+                curTY = ty;
+                elevTile = this.sampler.getTileDataSync(zoom, tx, ty);
+                const m = this.waterSampler.getTileMaskSync(zoom, tx, ty);
+                maskTile = m?.mask ?? null;
+                maskUsable = !!m && m.mask !== null;   // 未缓存或坏瓦片都不可用
+            }
+
+            const px = Math.floor(globalPxX) % S;
+            const py = Math.floor(globalPxY) % S;
+            const idx = py * S + px;
+
+            // 掩膜明确说不是水 → 一定不是海（与 isSeaAt 同）
+            if (maskUsable && maskTile![idx] !== 1) return 'land';
+            // 高程未到 → 「不知道」，别画成陆地骗人
+            if (!elevTile) return 'pending';
+            const e = idx * 4;
+            const elev = decodeTerrariumElevation(elevTile[e], elevTile[e + 1], elevTile[e + 2]);
+            return isSeaElevation(elev) ? 'sea' : 'land';
+        };
     }
 
     static async isSeaAtAsync(latLng: LatLng): Promise<boolean> {
