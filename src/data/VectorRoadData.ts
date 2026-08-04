@@ -5068,7 +5068,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "塞兰-�������������������������������������������罗斯",
+                name: "塞兰-�����������������������������������������罗斯",
                 type: "road",
                 id: "road_city_sailan_city_talas_1780148257112",
                 startConnection: "city_sailan",
@@ -28239,7 +28239,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "澎湖-龙溪",
+                name: "澎湖-��溪",
                 type: "road",
                 id: "road_city_penghu_city_zhangzhou_1781961342533",
                 startConnection: "city_penghu",
