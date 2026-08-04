@@ -129,11 +129,14 @@ export class GlobalUnitRenderer {
     /** [2026-07-18] 攻城器械渐隐锚点：军团乘胜开拔后器械留在城下原地淡出（经纬度+冻结朝向） */
     private siegeGearAnchors = new Map<string, { lat: number; lng: number; dir: number }>();
 
-    /** [2026-07-18] 攻城视觉补偿(px)：城图标只向上出墨（旗区到锚点上方约75~95px，贴图下缘仅37~52px），
-     *  从城上方(北面)攻时前排会视觉钻进旗区、且攻城单位画在城图层下层会被盖住。
-     *  按接近方向把攻城方阵沿"背离城"方向外推：正上方推满、斜向按角度递减、侧面/下方不推。
-     *  只动渲染，战斗逻辑坐标不变。优化为 18px 黄金紧凑透视距离，消除脱节感的悬空距离。 */
-    private static readonly SIEGE_NORTH_VISUAL_COMP_PX = 18;
+    /** [2026-08-04] 攻城视觉外推：据点图按城型 100/120/140px 宽（CSS），攻城放大 ×2、city-scale 随 zoom；
+     *  图 4:3（1024×765）东西宽/南北窄。按接近方向把攻城方阵沿「背离城」方向推到图外缘 + 半兵牌空隙。
+     *  全方向生效（旧版仅北面 18px 补偿，2026-07-18）。只动渲染，战斗逻辑坐标不变。 */
+    private static readonly CITY_ICON_WIDTH_BY_TYPE: Record<string, number> = {
+        big_city: 140, medium_city: 120, small_city: 100, pass: 100,
+    };
+    private static readonly CITY_ICON_HW_RATIO = 765 / 1024;
+    private static readonly SIEGE_GAP_PX = 21;
 
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
     private static assetsPromise: Promise<void> | null = null;
@@ -841,7 +844,9 @@ export class GlobalUnitRenderer {
 
             const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
 
-            // ── [2026-07-18] 攻城视觉补偿：从城上方攻时整支方阵沿接近线外推（见常量注释）──
+            // ── [2026-08-04] 攻城视觉外推：整支方阵沿「背离城」方向推到据点图外缘 + 空隙 ──
+            // 按城型图宽（攻城放大 ×2、city-scale 随 zoom）+ 4:3 方向加权（东西宽/南北窄），
+            // 全方向生效（旧版 2026-07-18 仅北面 18px）。只动渲染，战斗逻辑坐标不变。
             const unitIdForGear = unit.id || 'unknown';
             const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker === true;
             if (!useNavalVisual && activelySieging && unit.targetPos && isValidMapCoord(unit.targetPos)) {
@@ -849,12 +854,25 @@ export class GlobalUnitRenderer {
                 const dx = centerPoint.x - cityPt.x;
                 const dy = centerPoint.y - cityPt.y;
                 const len = Math.hypot(dx, dy);
-                if (len > 1 && dy < 0) {
-                    const comp = GlobalUnitRenderer.SIEGE_NORTH_VISUAL_COMP_PX * (-dy / len);
-                    centerPoint = L.point(
-                        centerPoint.x + (dx / len) * comp,
-                        centerPoint.y + (dy / len) * comp,
-                    );
+                if (len > 1) {
+                    const cityType = (window as any).game?.cityManager?.getCity?.(
+                        (unit as any).targetCityId || (unit as any).targetId
+                    )?.type as string | undefined;
+                    const baseW = GlobalUnitRenderer.CITY_ICON_WIDTH_BY_TYPE[cityType ?? 'small_city'] ?? 100;
+                    const zoom = this.map.getLeafletMap().getZoom();
+                    const cityScale = Math.max(0, 1 + (zoom - 9) * 0.5); // 与 TerritorySystem.updateCityScales 一致
+                    const halfW = (baseW / 2) * cityScale * 2; // 攻城 .city-under-siege scale(2)
+                    const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;
+                    const cosA = Math.abs(dx) / len; // 东西占比 → 图宽侧
+                    const sinA = Math.abs(dy) / len; // 南北占比 → 图高侧
+                    const halfPx = halfW * cosA + halfH * sinA;
+                    const push = Math.max(0, halfPx + GlobalUnitRenderer.SIEGE_GAP_PX - len);
+                    if (push > 0) {
+                        centerPoint = L.point(
+                            centerPoint.x + (dx / len) * push,
+                            centerPoint.y + (dy / len) * push,
+                        );
+                    }
                 }
             }
 
