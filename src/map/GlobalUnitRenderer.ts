@@ -128,16 +128,25 @@ export class GlobalUnitRenderer {
 
     /** [2026-07-18] 攻城器械渐隐锚点：军团乘胜开拔后器械留在城下原地淡出（经纬度+冻结朝向） */
     private siegeGearAnchors = new Map<string, { lat: number; lng: number; dir: number }>();
+    /**
+     * [2026-08-04] 攻城外推量平滑缓存：unitId → { push px, 背离城单位方向 }。
+     * 开战/停火/城缩回时目标外推量突变，直接套用 = 渲染瞬移（主人红线）。
+     * 按真实时间常数向目标逼近；离战仍用缓存方向把 push 收到 0，避免「突然弹回逻辑点」。
+     */
+    private siegePushCache = new Map<string, { push: number; nx: number; ny: number }>();
+    /** 本帧 animate 的 dt（ms），供外推时间基 lerp；无则退回 16.7 */
+    private frameDeltaMs = 1000 / 60;
+    /** 外推指数逼近时间常数（ms）：约 0.13s 收到 ~90%（与原「每帧 25%@60fps」同量级，且不跟帧率绑） */
+    private static readonly SIEGE_PUSH_LERP_TAU_MS = 56;
+    private static readonly SIEGE_PUSH_EPS_PX = 0.5;
 
     /** [2026-08-04] 攻城视觉外推：据点图按城型 100/120/140px 宽（CSS），跟拍场攻城放大 ×4、city-scale 随 zoom；
-     *  非跟拍场不放大（倍率 1）。图 4:3（1024×765）东西宽/南北窄。按接近方向把攻城方阵沿「背离城」方向推到图外缘 + 半兵牌空隙。
+     *  非跟拍场不放大（倍率 1）。图 4:3（1024×765）东西宽/南北窄。按接近方向把攻城方阵沿「背离城」方向推到图边缘（阵心对齐图片边缘，2026-08-04 主人定稿）。
      *  全方向生效（旧版仅北面 18px 补偿，2026-07-18）。只动渲染，战斗逻辑坐标不变。 */
     private static readonly CITY_ICON_WIDTH_BY_TYPE: Record<string, number> = {
         big_city: 140, medium_city: 120, small_city: 100, pass: 100,
     };
     private static readonly CITY_ICON_HW_RATIO = 765 / 1024;
-    /** 据点图边缘 ↔ 方阵**边缘**的真实空隙（像素）。[2026-08-04 修] 以前量到方阵中心，等于没有空隙 */
-    private static readonly SIEGE_GAP_PX = 21;
 
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
     private static assetsPromise: Promise<void> | null = null;
@@ -268,6 +277,7 @@ export class GlobalUnitRenderer {
             LegionPhalanxStateManager.dispose(id);
             LegionPhalanxDrawer.disposeUnit(id); // 注销：方阵 + 攻城器械状态全清
             this.siegeGearAnchors.delete(id);
+            this.siegePushCache.delete(id); // 外推量平滑缓存随单位注销清理
         }
         this.units.delete(unit);
         this.needsSort = true;
@@ -385,6 +395,8 @@ export class GlobalUnitRenderer {
         const endCanvasTiming = () => pm?.noteCanvasFrameEnd?.(performance.now());
         const deltaTime = time - this.lastTime;
         this.lastTime = time;
+        // 夹紧异常大 dt（切后台回来），避免外推一步跳满
+        this.frameDeltaMs = Math.max(0, Math.min(deltaTime || 1000 / 60, 100));
 
         if (isMacroMapZoom(this.map.getZoom())) {
             if (this.canvas.width > 0 && this.canvas.height > 0) {
@@ -454,13 +466,22 @@ export class GlobalUnitRenderer {
 
         const projectilesActive = this.projectileSystem.hasActive();
         const hasArmyEditorPreview = this.hasArmyEditorPreview();
+        // 外推收推未完成时必须继续重绘，否则 idle 跳帧会卡住半截再突然到位
+        let hasSiegePushSmoothing = false;
+        for (const e of this.siegePushCache.values()) {
+            if (e.push > GlobalUnitRenderer.SIEGE_PUSH_EPS_PX) {
+                hasSiegePushSmoothing = true;
+                break;
+            }
+        }
         const shouldDraw =
             hasActiveAnimation ||
             projectilesActive ||
             this.mapNeedsRedraw ||
             this.pendingViewRedraw ||
             hasVisibleCorpses ||
-            hasArmyEditorPreview;
+            hasArmyEditorPreview ||
+            hasSiegePushSmoothing;
 
         if (!shouldDraw) {
             this.idlePollAccumulator += deltaTime;
@@ -483,6 +504,9 @@ export class GlobalUnitRenderer {
         if (projectilesActive) {
             this.projectileSystem.update(deltaTime);
         }
+
+        // 屏外单位不进 drawList，但仍要推进离战收推，否则半截 push 会冻住
+        this.tickOffscreenSiegePushCaches();
 
         const visibleInView = this.collectVisibleUnitsInView();
         const useBatch =
@@ -698,6 +722,94 @@ export class GlobalUnitRenderer {
         }
     }
 
+    /**
+     * 攻城视觉外推（方案 A：阵心对齐城型图框边缘）。
+     * 只改返回的屏幕坐标；开战/城放大时推向框缘，离战按时间常数收到 0（缓存方向），防瞬移。
+     */
+    private applySiegeVisualPush(
+        unit: IAnimatedUnit,
+        centerPoint: L.Point,
+        useNavalVisual: boolean,
+    ): L.Point {
+        const cacheKey = unit.id;
+        const cachedPush = cacheKey ? this.siegePushCache.get(cacheKey) : undefined;
+        const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker === true;
+        const siegeCityId = (unit as any).targetCityId || (unit as any).targetId;
+        const siegeTargetCity = siegeCityId
+            ? (window as any).game?.cityManager?.getCity?.(siegeCityId)
+            : null;
+        const cityZoomed = !!siegeTargetCity
+            && (window as any).game?.cityManager?.getTerritorySystem?.()?.isCitySiegeZoomed?.(siegeTargetCity.id)
+                === true;
+        const wantEdgePush = !useNavalVisual && !!siegeTargetCity && (activelySieging || cityZoomed);
+        const settlingOut = !wantEdgePush && !!cachedPush
+            && cachedPush.push > GlobalUnitRenderer.SIEGE_PUSH_EPS_PX;
+
+        if (!wantEdgePush && !settlingOut) {
+            return centerPoint;
+        }
+
+        let targetPush = 0;
+        let nx = cachedPush?.nx ?? 0;
+        let ny = cachedPush?.ny ?? 0;
+
+        if (wantEdgePush && siegeTargetCity) {
+            const cityPt = this.map.latLngToContainerPoint([siegeTargetCity.latitude, siegeTargetCity.longitude]);
+            const dx = centerPoint.x - cityPt.x;
+            const dy = centerPoint.y - cityPt.y;
+            const len = Math.hypot(dx, dy);
+            if (len > 1) {
+                const baseW = GlobalUnitRenderer.CITY_ICON_WIDTH_BY_TYPE[siegeTargetCity.type] ?? 100;
+                const zoom = this.map.getZoom();
+                const cityScale = Math.max(0, 1 + (zoom - 9) * 0.5);
+                const siegeZoom = cityZoomed ? 4 : 1;
+                const halfW = (baseW / 2) * cityScale * siegeZoom;
+                const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;
+                const cosA = Math.abs(dx) / len;
+                const sinA = Math.abs(dy) / len;
+                const halfPx = halfW * cosA + halfH * sinA;
+                targetPush = Math.max(0, halfPx - len);
+                nx = dx / len;
+                ny = dy / len;
+            }
+        }
+
+        const alpha = 1 - Math.exp(-this.frameDeltaMs / GlobalUnitRenderer.SIEGE_PUSH_LERP_TAU_MS);
+        const prev = cachedPush?.push ?? 0;
+        let settledPush = prev + (targetPush - prev) * alpha;
+        if (settledPush < GlobalUnitRenderer.SIEGE_PUSH_EPS_PX) settledPush = 0;
+
+        if (cacheKey) {
+            if (settledPush <= 0 && targetPush <= 0) {
+                this.siegePushCache.delete(cacheKey);
+            } else {
+                this.siegePushCache.set(cacheKey, { push: settledPush, nx, ny });
+            }
+        }
+
+        if (settledPush > GlobalUnitRenderer.SIEGE_PUSH_EPS_PX && (nx !== 0 || ny !== 0)) {
+            return L.point(
+                centerPoint.x + nx * settledPush,
+                centerPoint.y + ny * settledPush,
+            );
+        }
+        return centerPoint;
+    }
+
+    /** 屏外单位不进本帧 drawList，单独推进外推缓存（离战收推） */
+    private tickOffscreenSiegePushCaches(): void {
+        if (this.siegePushCache.size === 0) return;
+        for (const unit of this.sortedUnitsCache) {
+            const id = unit.id;
+            if (!id || !this.siegePushCache.has(id)) continue;
+            if (this.isUnitInContainerView(unit)) continue;
+            const pos = unit.getPosition();
+            if (!isValidMapCoord(pos)) continue;
+            const pt = this.map.latLngToContainerPoint([pos.lat, pos.lng]);
+            this.applySiegeVisualPush(unit, pt, !!(unit.isOnSea || unit.forceNavalVisual));
+        }
+    }
+
     private renderUnit(unit: IAnimatedUnit, ctx: CanvasRenderingContext2D): void {
         // ... (Checks for Bandit remain same)
         const banditTypes = ['bandit', 'raider', 'outlaw', 'barbarian', 'rebel', 'mercenary', 'cult', 'righteous', 'warlord'];
@@ -710,9 +822,16 @@ export class GlobalUnitRenderer {
 
         // 军团一律画在自身真实坐标，绝不做任何屏幕错开/位移——重叠就重叠，也不允许瞬移（不真实）。
         // 下面 scale 仅供贴图/方阵尺寸计算使用（不参与定位）。
+        // 例外：攻城视觉外推只改渲染点（逻辑坐标不动），见 applySiegeVisualPush。
         const currentZoom = this.map.getZoom();
         const effectiveZoom = Math.min(currentZoom, 10);
         const scale = Math.pow(2, effectiveZoom - 9) * 0.7;
+
+        const useNavalVisualEarly = !!(unit.isOnSea || unit.forceNavalVisual);
+        // 非匪军：先做攻城外推再裁剪，保证离战收推在屏外也能逐帧推进，且按视觉位置判可见
+        if (!isBandit) {
+            centerPoint = this.applySiegeVisualPush(unit, centerPoint, useNavalVisualEarly);
+        }
 
         const m = GlobalUnitRenderer.VIEW_CULL_MARGIN_PX;
         if (
@@ -847,69 +966,9 @@ export class GlobalUnitRenderer {
 
             const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
 
-            // ── [2026-08-04] 攻城视觉外推：整支方阵沿「背离城」方向推到据点图外缘 + 空隙 ──
-            // 按城型图宽（跟拍场 ×4 / 非跟拍 ×1、city-scale 随 zoom）+ 4:3 方向加权（东西宽/南北窄），
-            // 全方向生效。**判定收紧为攻城方**（主攻 + 参战攻方 isSiegeAttacker=true，SiegeManager 均显式设置）：
-            // 守方军团留在城内（守军出城阵列观感已取消）；野战打军团 currentBattleType='field' 不外推。
-            // [2026-08-04 修复] 原判定读 (unit as any).targetCityId 但 Army/UnitRenderer 均无此字段
-            // → siegeTargetCity 恒为 null → 外推死代码从未生效 → 攻城方整个方阵压进 4 倍城图内（主人截图实锤）。
-            // 城坐标用 siegeTargetCity 自身坐标（不依赖 targetPos——战斗结束 targetPos 即清，城对象更持久）。
-            // 只动渲染，战斗逻辑坐标不变。
+            // 攻城外推已在裁剪前 applySiegeVisualPush 做过（含离战收推）
             const unitIdForGear = unit.id || 'unknown';
-            // 器械只给真正的攻城方（外推判定收紧后同源：isSiegeAttacker=true）
             const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker === true;
-            const siegeCityId = (unit as any).targetCityId || (unit as any).targetId;
-            const siegeTargetCity = siegeCityId
-                ? (window as any).game?.cityManager?.getCity?.(siegeCityId)
-                : null;
-            // 城破后 5s 窗口：战斗态已清（currentBattleType=null → siegeActive 失效）但城图还在放大
-            // （isCitySiegeZoomed=true）→ 仍需外推，否则军团回 36px 攻城圈逻辑位置压进放大城图
-            // （2026-08-04 主人截图实锤「根本不在图片边缘」）。城图 5s 缩回后 isCitySiegeZoomed=false → 自然失效。
-            const cityZoomed = !!siegeTargetCity
-                && (window as any).game?.cityManager?.getTerritorySystem?.()?.isCitySiegeZoomed?.(siegeTargetCity.id)
-                    === true;
-            if (!useNavalVisual
-                && siegeTargetCity
-                && (activelySieging || cityZoomed)) {
-                const cityPt = this.map.latLngToContainerPoint([siegeTargetCity.latitude, siegeTargetCity.longitude]);
-                const dx = centerPoint.x - cityPt.x;
-                const dy = centerPoint.y - cityPt.y;
-                const len = Math.hypot(dx, dy);
-                if (len > 1) {
-                    const baseW = GlobalUnitRenderer.CITY_ICON_WIDTH_BY_TYPE[siegeTargetCity.type] ?? 100;
-                    const zoom = this.map.getZoom();
-                    const cityScale = Math.max(0, 1 + (zoom - 9) * 0.5); // 与 TerritorySystem.updateCityScales 一致
-                    const siegeZoom =
-                        (window as any).game?.cityManager?.getTerritorySystem?.()?.isCitySiegeZoomed?.(siegeTargetCity.id)
-                            ? 4
-                            : 1;
-                    const halfW = (baseW / 2) * cityScale * siegeZoom; // 跟拍 .city-under-siege scale(4)
-                    const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;
-                    const cosA = Math.abs(dx) / len; // 东西占比 → 图宽侧
-                    const sinA = Math.abs(dy) / len; // 南北占比 → 图高侧
-                    const halfPx = halfW * cosA + halfH * sinA;
-                    // [2026-08-04 修] 必须再减掉方阵自身半径，否则 SIEGE_GAP_PX 量的是
-                    // 「城图边缘 → 方阵中心」，前排士兵会压进城图 60~76px（zoom10 实测）。
-                    const ext = LegionPhalanxDrawer.getPhalanxHalfExtent(
-                        scale * (unit.previewScale ?? 1),
-                        unit.cultureSlots,
-                    );
-                    const unitHalfPx = ext.x * cosA + ext.y * sinA;
-                    const push = Math.max(
-                        0,
-                        halfPx
-                            + unitHalfPx
-                            + GlobalUnitRenderer.SIEGE_GAP_PX
-                            - len
-                    );
-                    if (push > 0) {
-                        centerPoint = L.point(
-                            centerPoint.x + (dx / len) * push,
-                            centerPoint.y + (dy / len) * push,
-                        );
-                    }
-                }
-            }
 
             // 1. Draw Flag Pole (Behind Soldiers / Ship)
             LegionFlagDrawer.drawPole(
