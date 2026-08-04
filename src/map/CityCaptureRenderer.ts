@@ -31,10 +31,10 @@ export class CityCaptureRenderer {
     private textureCache: Map<string, HTMLCanvasElement> = new Map();
 
     /**
-     * 占城烟延迟：与据点建筑战后缩回（5s）对齐——约 4s 起烟，盖住缩回那一下。
-     * 2026-08-04：勿再靠拉长粒子寿命同步（寿命长 → 飘得太远）。
+     * 占城烟：与攻方胜后「立刻渐变缩回」同步，不再延迟。
+     * （攻方败无占城烟；缩回另等 5s 切镜头，2026-08-04）
      */
-    private static readonly CAPTURE_SMOKE_DELAY_MS = 4000;
+    private static readonly CAPTURE_SMOKE_DELAY_MS = 0;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -64,8 +64,11 @@ export class CityCaptureRenderer {
         const currentZoom = (this.map as any).getLeafletMap?.()?.getZoom?.() ?? 9;
         if (currentZoom <= 8) return;
 
+        if (CityCaptureRenderer.CAPTURE_SMOKE_DELAY_MS <= 0) {
+            this.spawnCaptureSmoke(lat, lng);
+            return;
+        }
         window.setTimeout(() => {
-            // 延迟后若已俯瞰，仍不播
             const z = (this.map as any).getLeafletMap?.()?.getZoom?.() ?? 9;
             if (z <= 8) return;
             this.spawnCaptureSmoke(lat, lng);
@@ -93,7 +96,7 @@ export class CityCaptureRenderer {
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 life: 1.0,
-                // 浓密期~2.5s，余尘最长~8s；与 4s 起烟 + 5s 缩回对齐
+                // 浓密期~2.5s，余尘最长~8s；与攻方胜后立刻缩回同步盖烟
                 decay: 0.002 + Math.random() * 0.006,
                 size: size,
                 color: dustColor,
