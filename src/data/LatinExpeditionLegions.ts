@@ -35,7 +35,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 图卢兹·雷蒙五世：古名 Tolosa →「托洛萨骑」美化；无战役专名高光，档仍 T4（不抬）
     langgeduoke: { name: '托洛萨骑', tier: 4 },
     jiatailuoniya: { name: '阿拉贡骑', tier: 3 },          // 巴塞罗那·海梅
-    guadaer: { name: '圣地亚哥', tier: 2 },          // 塞维利亚·费尔南多：1170卡斯蒂利亚军事修会，格拉纳达战争主力（2026-08-02 原卡斯蒂军T3升）
+    guadaer: { name: '圣地亚哥团', tier: 2 },
     andaluoxiya: { name: '安达卢骑', tier: 3 },          // 科尔多瓦·阿卜杜拉
     putaoya: { name: '葡萄牙骑', tier: 3 },          // 里斯本·阿方索·恩里克
     babali: { name: '阿尔及骑', tier: 3 },          // 阿尔及尔·巴巴罗萨

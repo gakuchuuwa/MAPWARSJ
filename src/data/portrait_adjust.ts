@@ -5678,7 +5678,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/LATIN/guadaer_feiernanduo.png": {
-            "scale": 0.96,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -5753,7 +5753,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/LATIN/zhayan_yalimoluo.png": {
-            "scale": 1.03,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": -10
         },

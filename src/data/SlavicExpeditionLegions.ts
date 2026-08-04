@@ -22,7 +22,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     moerdaweiya: { name: '瓦斯卢伊军', tier: 2 },          // 雅西·斯蒂芬大帝：1475以少胜多
     piyasite: { name: '波兰骑士', tier: 2 },          // 克拉科夫·卡齐米日：格伦瓦尔德主力
     litaowan: { name: '格迪米骑', tier: 2 },          // 维尔纽斯·格迪米纳斯：格伦瓦尔德
-    baojian_qishi: { name: '宝剑骑士团', tier: 2 },          // 里加·阿尔伯特：利沃尼亚十字军
+    baojian_qishi: { name: '宝剑骑士', tier: 2 },
     shaiyue: { name: '埃格尔卫', tier: 2 },          // 埃格尔·多博伊：1552以少胜多
     dajiya: { name: '达契亚军', tier: 2 },          // 萨尔米泽·德切巴鲁斯：图拉真战争抗罗马
 
