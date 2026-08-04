@@ -1077,6 +1077,7 @@ export class SiegeManager {
         // Army stays visible during siege
         // 主攻军团：siege 姿态 + 攻城目标（自身发箭前提），并标记带器械（投石机石弹发射条件）
         army.isSiegeAttacker = true;
+        army.siegeTargetCityId = targetCity.id; // 攻城外推反查城图（2026-08-04 修复外推死代码）
         army.setCombatState(true, 'siege', cityPos);
         // Use adapters directly - no player participation
         const finalAttacker: IBattleUnit = attackerAdapter;
@@ -1116,6 +1117,7 @@ export class SiegeManager {
             // 开战前已统一 stopMovement(true)
             legion.setCombatState(true, 'siege', cityPos);
             legion.isSiegeAttacker = true; // 攻方带器械
+            legion.siegeTargetCityId = targetCity.id; // 攻城外推反查城图（2026-08-04 修复外推死代码）
             const legionAdapter = BattleUnitFactory.createAdapter(
                 legion.id,
                 legion.name || '攻军',
