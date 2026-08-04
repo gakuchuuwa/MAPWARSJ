@@ -198,7 +198,7 @@ export function nearestPointOnPolyline(
     };
 }
 
-function dedupeLatLngPath(path: LatLng[], eps = 0.0001): LatLng[] {
+export function dedupeLatLngPath(path: LatLng[], eps = 0.0001): LatLng[] {
     const out: LatLng[] = [];
     for (const p of path) {
         if (out.length === 0) {
