@@ -488,7 +488,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/NORTHEAST/dajin_wanyanaguda.png": {
-            "scale": 0.99,
+            "scale": 0.95,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -673,7 +673,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/CENTRAL/sima_d_simayi.png": {
-            "scale": 1.14,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": -8
         },
@@ -1428,7 +1428,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/KOREA/joseon_lichenggui.png": {
-            "scale": 1.07,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": 15
         },
@@ -2988,7 +2988,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/NORTHEAST/mohe_wanyanzonghan.png": {
-            "scale": 1.01,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": 11
         },

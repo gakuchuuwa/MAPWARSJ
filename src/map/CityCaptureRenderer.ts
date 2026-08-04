@@ -30,6 +30,12 @@ export class CityCaptureRenderer {
     // [PERF] Cache for pre-rendered gradient textures by color
     private textureCache: Map<string, HTMLCanvasElement> = new Map();
 
+    /**
+     * 占城烟延迟：与据点建筑战后缩回（5s）对齐——约 4s 起烟，盖住缩回那一下。
+     * 2026-08-04：勿再靠拉长粒子寿命同步（寿命长 → 飘得太远）。
+     */
+    private static readonly CAPTURE_SMOKE_DELAY_MS = 4000;
+
     constructor(map: GameMap) {
         this.map = map;
         this.canvas = document.createElement('canvas');
@@ -58,6 +64,15 @@ export class CityCaptureRenderer {
         const currentZoom = (this.map as any).getLeafletMap?.()?.getZoom?.() ?? 9;
         if (currentZoom <= 8) return;
 
+        window.setTimeout(() => {
+            // 延迟后若已俯瞰，仍不播
+            const z = (this.map as any).getLeafletMap?.()?.getZoom?.() ?? 9;
+            if (z <= 8) return;
+            this.spawnCaptureSmoke(lat, lng);
+        }, CityCaptureRenderer.CAPTURE_SMOKE_DELAY_MS);
+    }
+
+    private spawnCaptureSmoke(lat: number, lng: number): void {
         const particles: Particle[] = [];
         const particleCount = 70; // 2026-07-18 主人定：再浓一点（60→70，与 draw 的 0.5 alpha 配套）
 
@@ -69,10 +84,8 @@ export class CityCaptureRenderer {
             const angle = Math.random() * Math.PI * 2;
             // [TUNED] Slower speed (User: "Too fast")
             const speed = 1.0 + Math.random() * 4.0;
-            // const spread = Math.random() * 20; // Initial random spread
 
-            // 2026-08-04：缩回改为战后 5s，烟须拖到缩回时尚有余罩；
-            // 仍不学火焰「满 5s 浓密」——城破爽点是新旗从烟里显出来，闷满会糊住换旗
+            // 2026-07-18 主人定：烟雾加大——城破烟要盖得住据点缩回（寿命保持原档，勿拉长）
             const size = 30 + Math.random() * 40;
             particles.push({
                 x: (Math.random() - 0.5) * 40,
@@ -80,9 +93,8 @@ export class CityCaptureRenderer {
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 life: 1.0,
-                // 原 0.002–0.008（浓~2.5s / 余尘~8s，对 1–2s 缩回）；
-                // 现 0.0014–0.0028：约 3s 仍较浓，5s 缩回时多数粒 life≈0.2–0.6 能罩一下，余尘 ~6–12s
-                decay: 0.0014 + Math.random() * 0.0014,
+                // 浓密期~2.5s，余尘最长~8s；与 4s 起烟 + 5s 缩回对齐
+                decay: 0.002 + Math.random() * 0.006,
                 size: size,
                 color: dustColor,
                 texture: this.getOrCreateTexture(dustColor, Math.ceil(size * 2))
