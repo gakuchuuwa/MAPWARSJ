@@ -618,13 +618,10 @@ export class GameMap {
                         <input type="checkbox" id="chk-tree"> 
                         <b>🌲 开启植被图层</b>
                     </label>
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#1565c0;margin-top:4px;">
-                        <input type="checkbox" id="chk-land-sea">
-                        <b>🌊 陆海视图</b>
-                    </label>
-
                     <!-- 逐像素海陆分界（默认关）：与军团变船用的判定同源，任何缩放级别都能看。
-                         区别于上面的「陆海视图」——那个是六边形网格且 zoom<9 不显示 -->
+                         [2026-08-04] 原「🌊 陆海视图」已删：它走 SpeedOverlayRenderer 六边形网格，
+                         硬限制 zoom≥9 且视野内 hex<1000，默认 zoom 8 下什么都不画；且判的是 hex 中心点，
+                         与军团实际用的连续经纬度判定不是一回事。功能已被本图层完全覆盖。 -->
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#00838f;margin-top:4px;">
                         <input type="checkbox" id="chk-land-sea-boundary">
                         <b>🧭 海陆分界线</b>
@@ -873,15 +870,6 @@ export class GameMap {
             if (chkTerrain) {
                 chkTerrain.addEventListener('change', (e: any) => {
                     window.dispatchEvent(new CustomEvent('toggle-terrain-layer', {
-                        detail: { visible: e.target.checked }
-                    }));
-                });
-            }
-
-            const chkLandSea = document.getElementById('chk-land-sea') as HTMLInputElement;
-            if (chkLandSea) {
-                chkLandSea.addEventListener('change', (e: any) => {
-                    window.dispatchEvent(new CustomEvent('toggle-land-sea-layer', {
                         detail: { visible: e.target.checked }
                     }));
                 });

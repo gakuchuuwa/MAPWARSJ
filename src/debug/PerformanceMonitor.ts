@@ -1073,7 +1073,7 @@ export class PerformanceMonitor {
         const armyCount = (game?.legionManager?.getArmies?.()?.filter(
             (a: { isDestroyed?: boolean; type?: string }) => !a.isDestroyed && a.type === 'legion'
         )?.length) ?? 0;
-        const activeSiegeCount = (game?.siegeManager?.hasActiveSieges?.() as boolean) ? 1 : 0;
+        const activeSiegeCount = ((window as any).siegeManager?.hasActiveSieges?.() as boolean) ? 1 : 0;
 
         const t = this.getMainLoopTimes();
         const renderTime = this.counts['renderDrawMs'] ?? 0;

@@ -2913,7 +2913,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -46
         },
         "/assets/litang/jiashi_wangxuance.png": {
-            "scale": 1.08,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 3
         },
@@ -4828,7 +4828,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -63
         },
         "/assets/TIBET/nandou_sushili.png": {
-            "scale": 0.97,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -5723,7 +5723,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/GERMANIC/asikanani_aerbulei.png": {
-            "scale": 0.9492,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -5998,8 +5998,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/SLAVIC/bolan_yagaiwo.png": {
-            "scale": 1.13,
-            "offsetX": 0,
+            "scale": 1.17,
+            "offsetX": 17,
             "offsetY": 15
         },
         "/assets/LATIN/mengtainiya_basalabu.png": {

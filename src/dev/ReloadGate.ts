@@ -31,11 +31,23 @@ function shouldBlock(): boolean {
     return running || correctorOpen;
 }
 
+/**
+ * 本页面实例是否还没上报过。
+ *
+ * [2026-08-04 修] 首次上报要带 fresh=true，让服务端把闸门关闭期间积压的那次整页刷新丢掉：
+ * 积压的刷新是「让页面拿到最新代码」，而新页面本来就是从磁盘读的最新代码——补发给它纯属
+ * 白烧一次启动（本项目一次启动 10~80s）。实测症状即「刚进入地图就又重启一次」，
+ * 启动打点 scratch/boot_timing_log.jsonl 里表现为连着 2~3 次、间隔≈一次启动耗时。
+ */
+let firstReport = true;
+
 function report(): void {
+    const fresh = firstReport;
+    firstReport = false;
     void fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ block: shouldBlock() }),
+        body: JSON.stringify({ block: shouldBlock(), fresh }),
         keepalive: true,
     }).catch(() => {
         /* dev server 正在重启或已关闭，忽略即可——服务端 15 秒后自动开闸 */
