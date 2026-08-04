@@ -119,8 +119,16 @@ export function getUnitEliteTier(unit: IBattleUnit): EliteTier | null {
         return null;
     }
     const army = unit.getEntity?.() as Army | undefined;
-    if (army?.isElite) {
-        return getLegionEliteConfig(army)?.tier ?? null;
+    if (army) {
+        if (army.isElite) {
+            return getLegionEliteConfig(army)?.tier ?? null;
+        }
+        // 2026-08-04 防御：名字已是精锐番号（远征改名/守城精锐）但缺 isElite 标记的军团，
+        // 仍按番号回退精锐环——避免「番号有、军×1.0、标签消失」的不一致。
+        const cfg = getLegionEliteConfig(army);
+        if (cfg && (army.name ?? '').trim() === cfg.name) {
+            return cfg.tier;
+        }
     }
     return null;
 }

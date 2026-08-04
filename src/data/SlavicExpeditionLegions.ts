@@ -35,6 +35,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     liwoniya: { name: '利沃骑', tier: 3 },          // 塔林·普雷特贝格：波罗的海十字军
     walajiyia: { name: '瓦拉几骑', tier: 3 },          // 特尔城·弗拉德：德古拉抗土
     bolan: { name: '翼骑兵', tier: 3 },          // 华沙·雅盖沃：波兰王国
+    dabolan: { name: '瓦尔塔骑', tier: 3 },
 
     // ── T4 存在之兵 ──
     teweier_gongguo: { name: '伏尔加骑', tier: 4 },          // 特维尔·米哈伊尔：抗衡莫斯科
@@ -49,6 +50,8 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     // 格罗德诺·维托夫特：安置利普卡鞑靼骑从可考；禁造「立陶宛重骑」T1 → T3
     nieman: { name: '利普卡骑', tier: 3 },
     beisilafu: { name: '白城骑', tier: 4 },          // 别尔哥罗德·谢尔盖
+    siluoboda: { name: '洛潘骑', tier: 3 },          // 哈尔科夫·多涅茨：洛潘河畔斯洛博达团骑
+    yedi: { name: '穆拉夫骑', tier: 3 },          // 沃罗涅日·萨布罗夫：守穆拉夫小道南疆骑戍
     weijiebusike_gongguo: { name: '维捷布骑', tier: 3 },          // 维捷布斯克·奥尔格尔德
     peilieya_gongguo: { name: '佩列雅骑', tier: 2 },          // 佩列亚斯拉夫·莫诺马赫
     suzidaer: { name: '下诺卫', tier: 4 },          // 下诺城·德米特里

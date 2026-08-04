@@ -121,6 +121,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'dajiya': 'city_saermizerhetusha',
   'litaowan': 'city_weierniwusi',
   'bolan': 'city_huasha',
+'dabolan': 'city_poznan',
   'piyasite': 'city_kelakefu',
 'baojian_qishi': 'city_liga',
   'teweier_gongguo': 'city_teweier',
@@ -139,6 +140,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'nuogai': 'city_samala',
   'bashekeer': 'city_wufa',
   'beisilafu': 'city_bieergeleide',
+  'siluoboda': 'city_haerkefu',
+  'yedi': 'city_woluonerizh',
   'peilieya_gongguo': 'city_peilieyasilafu',
   'weijiebusike_gongguo': 'city_weijiebusike',
 
@@ -580,7 +583,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // ── 2026-05-31 新增：补齐缺失的初始首都 ──
     'weiwuer': 'city_yuergun',
 
-    'anushidgin': 'city_khiva',
+'anushidgin': 'city_khiva',
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
 'gandenpozhang': 'city_zhadunzong',
 'dawoer': 'city_moergen',
@@ -981,6 +984,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'safawei_d': 'city_yisifahan',
     'sumeier': 'city_wuluke',
     'ayoubu': 'city_alepo',
+    'aosiruowen': 'city_aidesa',
     'kesa': 'city_daerban',
     'aiaoniya': 'city_yifusuo',
     'jialatai': 'city_ankala',

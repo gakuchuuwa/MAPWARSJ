@@ -10,7 +10,7 @@
 export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     yanda: { name: '阿尔洪铁骑', tier: 2 }, // 白匈奴重要分支，摧毁印度笈多帝国的战术尖刀，升入T2战术
   saman: { name: '萨曼古拉姆', tier: 3 },     // 伊斯兰世界古拉姆制度的标志性代表，升入T3知名
-    huarazim: { name: '钦察精骑', tier: 1 },          // 库曼/钦察草原的绝对霸主，后来马穆鲁克的核心兵源，战略地位极高，升入T1战略
+    huarazim: { name: '钦察精骑', tier: 1 },
   qincha: { name: '康里精骑', tier: 3 },              // 花剌子模和早期蒙古帝国中极其出名的突击力量，文化辨识度高，升入T3知名
   qiepantuo: { name: '瓦罕戍骑', tier: 4 },   // 护密城·瓦罕走廊戍卫
     tiemuer: { name: '察合台突骑', tier: 1 },
@@ -25,7 +25,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   kokand: { name: '浩罕轻骑', tier: 4 },
   sogdian: { name: '瓦拉赫沙卫', tier: 4 },
   kangju: { name: '康卡控弦', tier: 4 },              // 缺乏知名度支撑，降T3
-  anushidgin: { name: '希瓦铁骑', tier: 4 },
+    anushidgin: { name: '希瓦铁骑', tier: 4 },
     dayuzi: { name: '讹答剌卫队', tier: 4 },
     zhaowu: { name: '忽毡勇士', tier: 4 },
     yada: { name: '嚈哒重骑', tier: 2 },

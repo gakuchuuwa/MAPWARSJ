@@ -151,13 +151,15 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xideweina: { generalId: 'gen_breslav', generalName: '布列斯拉夫', portrait: '/assets/SLAVIC/xideweina_buliesilafu.png' },
     jinzhang: { generalId: 'gen_batu', generalName: '拔都', portrait: '/assets/SLAVIC/jinzhang_badou.png' },
     baojiaer: { generalId: 'gen_ulugh_muhammad', generalName: '兀鲁黑', portrait: '/assets/SLAVIC/baojiaer_wuluhei.png' },
-    baizanting: { generalId: 'gen_vladimir_great', generalName: '弗拉基米尔', portrait: '/assets/SLAVIC/baizanting_fulajimier.png' },
+    baizanting: { generalId: 'gen_vladimir_great', generalName: '弗拉基米尔', portrait: '/assets/LATIN/baizanting_fulajimier.png' },
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
     kelimiya: { generalId: 'gen_haci_giray', generalName: '哈吉格来', portrait: '/assets/SLAVIC/kelimiya_hajigelai.png' },
     dajiya: { generalId: 'gen_decebalus', generalName: '德切巴鲁斯', portrait: '/assets/SLAVIC/dajiya_deqiebalusi.png' },
     mengtainiya: { generalId: 'gen_basarab_i', generalName: '巴萨拉布', portrait: '/assets/LATIN/mengtainiya_basalabu.png' },
     litaowan: { generalId: 'gen_gediminas', generalName: '格迪米纳斯', portrait: '/assets/SLAVIC/litaowan_gediminasi.png' },
     bolan: { generalId: 'gen_jogaila', generalName: '雅盖沃', portrait: '/assets/SLAVIC/bolan_yagaiwo.png' },
+    // ── 2026-08-04 新增：普热梅斯二世（波兹南公爵/大波兰公/波兰国王）──
+    dabolan: { generalId: 'gen_przemysl_ii', generalName: '普热梅斯', portrait: '/assets/SLAVIC/dabolan_puremeisi.png' },
     piyasite: { generalId: 'gen_casimir_great', generalName: '卡齐米日', portrait: '/assets/SLAVIC/piyasite_kaqimiri.png' },
     baojian_qishi: { generalId: 'gen_albert_riga', generalName: '阿尔伯特', portrait: '/assets/SLAVIC/baojian_qishi_aerbote.png' },
     teweier_gongguo: { generalId: 'gen_mikhail_tver', generalName: '米哈伊尔', portrait: '/assets/SLAVIC/teweier_gongguo_mihayier.png' },
@@ -175,6 +177,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     bashekeer: { generalId: 'gen_karasakal', generalName: '卡拉萨卡尔', portrait: '/assets/STEPPE/bashekeer_kalasakaer.png' },
     xierhe: { generalId: 'xierhe_saerjue', generalName: '塞尔柱', portrait: '/assets/STEPPE/xierhe_saierzhu.png' },
     beisilafu: { generalId: 'gen_sergey_belgorod', generalName: '谢尔盖', portrait: '/assets/SLAVIC/beisilafu_xieergai.png' },
+    // ── 2026-08-04 新增：多涅茨（哈尔科夫团上校，抗鞑靼、扩建团境）──
+    siluoboda: { generalId: 'gen_grigory_donets', generalName: '多涅茨', portrait: '/assets/SLAVIC/siluoboda_duonieci.png' },
+    // ── 2026-08-04 新增：萨布罗夫（沃罗涅日首任督军，主持建堡）──
+    yedi: { generalId: 'gen_semyon_saburov', generalName: '萨布罗夫', portrait: '/assets/SLAVIC/yedi_sabuluofu.png' },
     peilieya_gongguo: { generalId: 'gen_vladimir_monomakh', generalName: '莫诺马赫', portrait: '/assets/SLAVIC/peilieya_gongguo_monuomahe.png' },
     weijiebusike_gongguo: { generalId: 'gen_algirdas', generalName: '奥尔格尔德', portrait: '/assets/SLAVIC/weijiebusike_gongguo_aoergeerde.png' },
 
@@ -979,6 +985,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
     sumeier: { generalId: 'sumeier_lugaerbanda', generalName: '卢伽尔班达', portrait: '/assets/WEST_ASIA/sumeier_jierjiameishen.png' },
     ayoubu: { generalId: 'ayoubu_salaheding', generalName: '萨拉赫丁', portrait: '/assets/WEST_ASIA/ayoubu_salaheding.png' },
+    // ── 2026-08-04 新增：鲍德温（埃德萨伯国首任伯爵，后为耶路撒冷国王）──
+    aosiruowen: { generalId: 'aosiruowen_baodewen', generalName: '鲍德温', portrait: '/assets/WEST_ASIA/aosiruowen_baodewen.png' },
     // 2026-07-27 补：打耳班/以弗所/安卡拉/亚述城 + 苏萨补将
     ailan: { generalId: 'ailan_shuteluke', generalName: '舒特鲁克', portrait: '/assets/WEST_ASIA/ailan_shuteluke.png' },
     kesa: { generalId: 'kesa_bulan', generalName: '布兰', portrait: '/assets/STEPPE/kesa_bulankehan.png' },
