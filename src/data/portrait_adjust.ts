@@ -4218,7 +4218,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/WEST_ASIA/tuolemi_tuolemi.png": {
-            "scale": 1.49,
+            "scale": 1.51,
             "offsetX": 0,
             "offsetY": 34
         },
@@ -4288,9 +4288,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/WEST_ASIA/qiliqiya_pangpei.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
-            "offsetY": 0
+            "offsetY": -1
         },
         "/assets/STEPPE/__闲置__STEPPE_50.png": {
             "scale": 1.06,
@@ -6256,6 +6256,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -15
+        },
+        "/assets/LATIN/luodesi_weilalei.png": {
+            "scale": 0.98,
+            "offsetX": 4,
+            "offsetY": 0
         }
     },
     "folderGuides": {
