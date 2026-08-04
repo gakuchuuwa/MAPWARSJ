@@ -16,8 +16,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     tiemuer: { name: '察合台突骑', tier: 1 },
   kazakh: { name: '哈萨克骑', tier: 2 },     // 哈萨克汗国主力，普将配T2
   seljuq: { name: '丹丹纳骑', tier: 1 },     // 木鹿·桑贾尔：1040丹丹纳康之战奠基大塞尔柱；T1功勋（避「塞尔柱」撞将名）
-                                               // 破马苏德五万伽色尼大军，夺呼罗珊、开创塞尔柱帝国 —— 以少胜多且直接重写中亚版图，合 T0。
-                                               // （原注「生擒拜占庭皇帝」系误记：曼齐克特 1071 为阿尔普·阿尔斯兰，桑贾尔生于 1086，且该役不在木鹿）
+                                               // （原注「生擒拜占庭皇帝」系误记：曼齐克特1071为阿尔普·阿尔斯兰，非桑贾尔）
     xiliao: { name: '斡耳朵亲卫', tier: 1 },
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
     guishuang: { name: '贵霜铁骑', tier: 2 },

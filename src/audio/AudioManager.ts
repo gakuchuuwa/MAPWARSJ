@@ -54,8 +54,10 @@ const DEFAULT_SETTINGS: AudioSettings = {
 const DUCK = {
     /** 播报时音乐压到 35%（衬托不抢） */
     bgmUnderSpeech: 0.35,
-    /** 仅音效循环(行军/战斗)时音乐压到 15% */
+    /** 战斗音效循环时音乐压到 30%（战斗不动，2026-08-04 GAKU 定：战斗原样） */
     bgmUnderSfx: 0.30,
+    /** 行军音效循环时音乐压到 50%（2026-08-04 GAKU 反馈行军几乎听不到 BGM：0.30 叠加 bgm 层 0.55 后音乐仅剩音效一半） */
+    bgmUnderMarch: 0.50,
     /** 播报时音效压到 12%（微弱衬托，不抢语音） */
     sfxUnderSpeech: 0.28,
 } as const;
@@ -824,7 +826,10 @@ export class AudioManager {
     private duckFactor(category: AudioCategory): number {
         if (category === 'bgm') {
             if (this.speechDucking) return DUCK.bgmUnderSpeech;
-            if (this.isSfxLoopActive()) return DUCK.bgmUnderSfx;
+            if (this.wantedLoops.has('battle_loop')) return DUCK.bgmUnderSfx;   // 战斗：0.30 原样
+            if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')) {
+                return DUCK.bgmUnderMarch;                                        // 行军：0.50（GAKU 2026-08-04）
+            }
             return 1;
         }
         // 音效层：ui / battle / feed——播报时静音，播报结束后恢复
