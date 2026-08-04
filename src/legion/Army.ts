@@ -118,10 +118,32 @@ export class Army implements IBattleUnit {
     public lastPath: { lat: number; lng: number }[] = []; // [Siege Fix] Path history
     /** 当前位置是否在海域 hex（WATER/OCEAN），用于海上船贴图（已去抖，见 updateTerrainSpeed） */
     public isOnSea: boolean = false;
-    /** 与当前 isOnSea 相反的判定已连续出现几帧；攒满 SEA_FLIP_CONFIRM_FRAMES 才真正翻转 */
-    private seaFlipFrames: number = 0;
-    /** 海陆贴图翻转确认帧数：军团骑在海岸线上时判定会逐帧抖动，需连续确认这么多帧才切换，压掉闪烁 */
-    private static readonly SEA_FLIP_CONFIRM_FRAMES = 8;
+    /** 反向判定已累计走过的距离（度）；见 updateTerrainSpeed 的翻转闸 */
+    private seaFlipDist: number = 0;
+    /** 反向判定已持续的游戏秒（原地不动时的兜底） */
+    private seaFlipElapsed: number = 0;
+    /** 上一次海陆采样时的位置，用来算每帧位移 */
+    private prevSeaCheckPos: { lat: number; lng: number } | null = null;
+    /**
+     * 海陆翻转确认距离（度，≈22km）——「频繁水军陆军切换」的主闸。
+     *
+     * [2026-08-04 按实际行军速度标定] 军团速度 UNIFIED_MARCH_SPEED=0.2 **度/游戏秒**，
+     * 即约 22km/游戏秒。原判据是「连续 8 帧」：60fps 下仅 0.13 游戏秒 ≈ 2.9km，
+     * 于是海岸线附近只要出现超过 3km 的连续水域就翻一次 ⇒ 方阵↔船来回横跳。
+     *
+     * 改用「距离」而非帧数/时间：既不受帧率影响，也不受时间倍率影响——军团必须**真的走进**
+     * 新介质这么远才认账。沿岸行军时那种几百米~几公里的海陆交替（掩膜 z9 精度约 300m）
+     * 永远攒不满，一次都不会翻。
+     *
+     * 代价：短于此距离的渡海（<22km 的窄海峡）不会变水军，军团按陆军样式走过去。
+     * 主人 2026-08-04 定：宁可这样，也不要频繁切换。要更早变船就调小这个值。
+     */
+    private static readonly SEA_FLIP_CONFIRM_DEG = 0.20;
+    /**
+     * 时间兜底（游戏秒）：原地不动/极慢移动的军团攒不出距离，靠它保证最终仍会翻。
+     * 对行军中的军团不起作用（22km/游戏秒 下，距离闸远早于它满足）。
+     */
+    private static readonly SEA_FLIP_CONFIRM_SEC = 3.0;
     /**
      * 海上船型锁（2026-07-06）：登船那一刻按兵力定好小/中/大船，锁定整个航程；
      * 上岸清空，下次登船再按当时兵力重定。避免航行中折损跨过兵力档位、船贴图当场缩水的怪象。
@@ -586,16 +608,31 @@ export class Army implements IBattleUnit {
         const pos = { lat: this.position.lat, lng: this.position.lng };
         const wasOnSea = this.isOnSea;
 
-        // 海陆贴图去抖：军团沿海岸线行军时 isSeaAt 会在海/陆 hex 边界逐帧抖动，
-        // 直接赋值会让贴图在陆军方阵↔三船阵之间闪烁。改为「翻转判定需连续确认 N 帧」才切换：
-        // 与当前状态一致 → 计数清零（稳定态不累积、无延迟）；只有持续 N 帧的反向判定才真正翻转。
-        // 骑在海岸线上（海陆交替）时永远攒不满 N 帧 → 锁定先到的状态不闪；真正下海/上岸才切。
+        // 海陆贴图去抖（主人 2026-08-04 定：宁可迟钝也不要频繁切换）：
+        // 军团沿海岸线行军时 isSeaAt 会在海/陆边界反复变化，直接赋值会让贴图在陆军方阵↔三船阵
+        // 之间来回横跳。改为「反向判定必须累计走出 SEA_FLIP_CONFIRM_DEG 的路程」才翻转，
+        // 外加一个纯时间兜底给原地不动的军团。判据本身（哪里是海）一点没动，只改多久才认账。
+        const step = this.prevSeaCheckPos
+            ? Math.hypot(pos.lat - this.prevSeaCheckPos.lat, pos.lng - this.prevSeaCheckPos.lng)
+            : 0;
+        this.prevSeaCheckPos = { lat: pos.lat, lng: pos.lng };
+
         const rawSea = LandSeaSystem.isSeaAt(pos);
         if (rawSea === this.isOnSea) {
-            this.seaFlipFrames = 0;
-        } else if (++this.seaFlipFrames >= Army.SEA_FLIP_CONFIRM_FRAMES) {
-            this.isOnSea = rawSea;
-            this.seaFlipFrames = 0;
+            // 判定与当前状态一致 → 清零（稳定态不累积，真正下海/上岸时无额外延迟）
+            this.seaFlipDist = 0;
+            this.seaFlipElapsed = 0;
+        } else {
+            this.seaFlipDist += step;
+            this.seaFlipElapsed += Math.max(0, deltaTime);
+            if (
+                this.seaFlipDist >= Army.SEA_FLIP_CONFIRM_DEG
+                || this.seaFlipElapsed >= Army.SEA_FLIP_CONFIRM_SEC
+            ) {
+                this.isOnSea = rawSea;
+                this.seaFlipDist = 0;
+                this.seaFlipElapsed = 0;
+            }
         }
 
         // 船型锁：登船（上岸→海）当刻按兵力定船，锁定整航程；上岸清空。
@@ -1023,9 +1060,18 @@ export class Army implements IBattleUnit {
             this.winStreak = 0;
         }
         if (this.isDestroyed) return;
+        // 攻城战后：战前存档路径的终点 = 刚打完的城锚点，恢复它 = 打完先进城再走。
+        // 必须清存档让行为树重新选目标 → moveLegionToCity 走「来路折返」直接去下一个目标。
+        // （currentBattleType 会在 setCombatState(false) 时被清空，须先读。）
+        const wasSiegeBattle = this.currentBattleType === 'siege';
         if (result === 'victory') {
             this.setCombatState(false);
-            this.resumeMovement();
+            if (wasSiegeBattle) {
+                this.clearSavedMarchState();
+                gameLog('army', `[Army] ${this.name} 攻城胜后清战前路径存档，由行为树重新选目标（不再先进城）`);
+            } else {
+                this.resumeMovement();
+            }
         } else {
             this.clearExternalCombatState();
             this.resumeMovement();

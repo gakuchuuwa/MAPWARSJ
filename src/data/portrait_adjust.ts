@@ -5434,8 +5434,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/LATIN/putaoya_afangsuo.png": {
             "scale": 1,
-            "offsetX": 0,
-            "offsetY": 26
+            "offsetX": 4,
+            "offsetY": 2
         },
         "/assets/GERMANIC/meikelunbao_hengliboluo.png": {
             "scale": 1,
@@ -5658,7 +5658,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/LATIN/nasier_muhanmode.png": {
-            "scale": 1.04,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": 8
         },
@@ -5828,7 +5828,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 29
         },
         "/assets/LATIN/alagong_haimei.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 11
         },

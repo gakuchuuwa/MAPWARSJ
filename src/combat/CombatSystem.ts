@@ -130,7 +130,8 @@ export class Battle {
     }
 
     /**
-     * 非双将战固定 9 秒，双将战按有效战力比取 30/45 秒。
+     * 遗留 1v1 Battle（当前无活跃调用路径，主战斗走 BattleField 区域战）。
+     * 双将战时长请读 BattleField.ratioBasedDurationSec：兵力比动态 10–30 秒 + 援军加时。
      */
     private calculateBattleParameters(): {
         targetDuration: number;

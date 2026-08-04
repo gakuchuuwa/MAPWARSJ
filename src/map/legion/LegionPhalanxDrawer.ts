@@ -410,6 +410,29 @@ export class LegionPhalanxDrawer {
         gameLog('unit', '⛵ 船贴图懒加载完成（<2万 / 2-5万 / ≥5万 三档）');
     }
 
+    /**
+     * 方阵在屏幕上的自身半径（像素，东西/南北分开）。
+     *
+     * [2026-08-04] 攻城外推必须把它算进去：外推只保证「据点图边缘 → 方阵**中心**」有空隙，
+     * 而方阵自身半径 zoom10 下就有 84(东西)/97(南北) px，不减掉的话前排士兵会压进城图里
+     * 60~76px（主人反馈「离得很近」的实测根因）。
+     *
+     * 尺寸口径与 drawPhalanx 内部严格一致（baseHeight 75、估算宽高比 0.8、
+     * spacingX=宽×0.5、spacingY=高×0.42、贴图以格心为中心绘制），改那边必须同步改这里。
+     */
+    public static getPhalanxHalfExtent(
+        scale: number,
+        cultureSlots: string[] | null | undefined,
+    ): { x: number; y: number } {
+        const count = cultureSlots?.length ?? 9;
+        const gridSize = count === 6 ? 3 : Math.ceil(Math.sqrt(count));
+        const renderH = 75 * scale;
+        const renderW = renderH * 0.8;
+        const halfSpanX = ((gridSize - 1) / 2) * (renderW * 0.50);
+        const halfSpanY = ((gridSize - 1) / 2) * (renderH * 0.42);
+        return { x: halfSpanX + renderW / 2, y: halfSpanY + renderH / 2 };
+    }
+
     private static processImage(img: HTMLImageElement): Promise<HTMLImageElement> {
         return new Promise((resolve) => {
             if (!img.complete || img.naturalWidth === 0) { resolve(img); return; }

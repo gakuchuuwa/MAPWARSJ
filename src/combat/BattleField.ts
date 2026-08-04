@@ -252,7 +252,7 @@ export class BattleField implements IOpeningPulseSink {
 
     private durationFloorSec(): number {
         return this.bothSidesHaveGeneral()
-            ? GameConfig.COMBAT.BATTLE_DURATION_BOTH_GENERALS_SEC
+            ? GameConfig.COMBAT.BATTLE_DURATION_MIN_RATIO_SEC
             : GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
     }
 
@@ -264,11 +264,32 @@ export class BattleField implements IOpeningPulseSink {
         return n;
     }
 
-    /** 双将战时长：30 秒基础 + 每只援军 10 秒（攻守双方都算），封顶 60 秒 */
+    /**
+     * 双将战时长上限（钳制用）：30 秒基础 + 每只援军 10 秒（攻守双方都算），封顶 60 秒。
+     * 实际时长走 ratioBasedDurationSec（兵力比动态 10–30s + 援军加时）。
+     */
     private bothGeneralsDurationSec(): number {
         const c = GameConfig.COMBAT;
         const raw = c.BATTLE_DURATION_BOTH_GENERALS_SEC
             + this.reinforcementCount() * c.BATTLE_DURATION_REINFORCEMENT_BONUS_SEC;
+        return Math.min(c.BATTLE_DURATION_MAX_SEC, raw);
+    }
+
+    /**
+     * 双将战时长（2026-08-04 主人定：按兵力比动态 10–30 秒，取代固定 30 秒）：
+     *   兵力比 1:1 → 30 秒（均势拉锯满时长）
+     *   兵力每翻一倍 → −6.7 秒；≥8:1 → 贴 10 秒地板（1万 vs 5万 ≈ 14.5 秒）
+     *   再叠加援军加时（每只 +10s），封顶 60 秒
+     */
+    private ratioBasedDurationSec(): number {
+        const c = GameConfig.COMBAT;
+        const att = this.attackerGroup.totalTroops;
+        const def = this.defenderGroup.totalTroops;
+        const ratio = Math.max(att, def) / Math.max(1, Math.min(att, def));
+        const span = c.BATTLE_DURATION_BOTH_GENERALS_SEC - c.BATTLE_DURATION_MIN_RATIO_SEC;
+        const base = c.BATTLE_DURATION_BOTH_GENERALS_SEC
+            - span * Math.min(1, Math.log2(Math.max(1, ratio)) / 3);
+        const raw = base + this.reinforcementCount() * c.BATTLE_DURATION_REINFORCEMENT_BONUS_SEC;
         return Math.min(c.BATTLE_DURATION_MAX_SEC, raw);
     }
 
@@ -282,7 +303,7 @@ export class BattleField implements IOpeningPulseSink {
 
     /**
      * 定强弱后敲定时长：
-     *   双将战   → 30 秒 + 每只援军 10 秒（攻守双方都算），封顶 60 秒
+     *   双将战   → 兵力比动态 10–30 秒 + 每只援军 10 秒（攻守双方都算），封顶 60 秒
      *   其余一切 → 固定 9 秒
      *   导演指定 → 尊重剧本，只钳制（上限跟着援军放宽，不强行抬高剧本时长）
      */
@@ -293,13 +314,17 @@ export class BattleField implements IOpeningPulseSink {
         if (this.hasDirectorDuration) {
             return this.clampDuration(this.targetDuration);
         }
-        const seconds = this.bothGeneralsDurationSec();
+        const seconds = this.ratioBasedDurationSec();
+        const c = GameConfig.COMBAT;
+        const att = this.attackerGroup.totalTroops;
+        const def = this.defenderGroup.totalTroops;
+        const ratio = Math.max(att, def) / Math.max(1, Math.min(att, def));
         const reinforcements = this.reinforcementCount();
         gameLog(
             'battle',
             reinforcements > 0
-                ? `⚔️ [BattleField] 双将战 → ${seconds}s（基础 ${GameConfig.COMBAT.BATTLE_DURATION_BOTH_GENERALS_SEC}s + 援军 ${reinforcements} 只 ×${GameConfig.COMBAT.BATTLE_DURATION_REINFORCEMENT_BONUS_SEC}s）`
-                : `⚔️ [BattleField] 双将战 → ${seconds}s`,
+                ? `⚔️ [BattleField] 双将战 → ${seconds}s（兵力比 ${ratio.toFixed(2)}:1 基础 ${(seconds - reinforcements * c.BATTLE_DURATION_REINFORCEMENT_BONUS_SEC).toFixed(1)}s + 援军 ${reinforcements} 只 ×${c.BATTLE_DURATION_REINFORCEMENT_BONUS_SEC}s）`
+                : `⚔️ [BattleField] 双将战 → ${seconds}s（兵力比 ${ratio.toFixed(2)}:1，10–30s 动态）`,
         );
         return seconds;
     }
