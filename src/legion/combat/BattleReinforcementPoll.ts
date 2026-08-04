@@ -119,8 +119,9 @@ export function tryJoinLegionToBattle(
     legion.isSiegeAttacker = isAttacker; // 援军按攻守方正确设置器械标记
     // 攻方增援也挂攻城目标城 id：GlobalUnitRenderer 攻城外推反查城图用（2026-08-04 修复——
     // 漏设则增援军团不外推，渲染停在 JOIN_RADIUS 圈内逻辑位置，离城图边缘很远/压城，主人截图实锤）
-    if (battleField.type === 'siege' && isAttacker && deps.siegeCityId) {
-        legion.siegeTargetCityId = deps.siegeCityId;
+    const siegeCityId = deps.siegeCityId ?? battleField.siegeCityId ?? null;
+    if (battleField.type === 'siege' && isAttacker && siegeCityId) {
+        legion.siegeTargetCityId = siegeCityId;
     }
 
     const side: 'attacker' | 'defender' = isAttacker ? 'attacker' : 'defender';
@@ -145,6 +146,10 @@ export function tryJoinLegionToBattle(
             ju: brJu,
             battleSkillId: adapter.battleOverriddenSkillId ?? null,
         });
+        // 跟拍作为援军中途入场：补开据点放大（开战时跟拍不在则未放大）
+        if (battleField.type === 'siege' && siegeCityId) {
+            (window as any).game?.cityManager?.enableSiegeCityZoom?.(siegeCityId);
+        }
     }
 
     return true;

@@ -79,11 +79,13 @@ export class SiegeManager {
     /** 看门狗超时：160 秒真实时间（主人 2026-07-17 定；正常"唤醒者走向城下开新战"的空窗只有几秒到十几秒，160s 远在其外） */
     private static readonly WAITER_WATCHDOG_MS = 160_000;
 
-    /** 等待环基准：2026-08-04 0.2→0.25（大城图半径≈70px=0.19°，0.25°=91px 图外留空）；
-     *  攻城军停在 COMBAT_RADIUS≈0.1，等待者最近停 0.25 */
-    private static readonly WAIT_RING_BASE = 0.25;
+    /**
+     * 等待环基准：须 > COMBAT_RADIUS，且 ≤ JOIN_RADIUS−0.02。
+     * 2026-08-04：0.25→0.28（攻城军停在 0.15，等待者最近 0.28）。
+     */
+    private static readonly WAIT_RING_BASE = 0.28;
     /** 同城每多一个等待者，停步环外推一档（同路来的自然前后排开，不同路来的方向本就不同） */
-    /** 第三方排队间距：2026-08-04 0.05→0.10（≈阵列宽度 42px/0.12°），同路排队不重叠 */
+    /** 第三方排队间距：2026-08-04 0.05→0.10（≈阵列宽度），同路排队不重叠 */
     private static readonly WAIT_RING_SPACING = 0.10;
 
     private getReinforcementJoinDeps(): ReinforcementJoinDeps {

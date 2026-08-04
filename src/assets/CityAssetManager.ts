@@ -441,7 +441,7 @@ export class CityAssetManager {
         'shengmiao': '生苗',
 
 
-        'tuerhute': '土尔',
+'tuerhute': '土尔',
 
 'kuai': '房',
         'yong': '庸',
@@ -806,7 +806,7 @@ export class CityAssetManager {
 'haikou': '寇',
         'shanshan': '鄯善',
 'wuyue': '吴越',
-        'xiyuduhu': '都护',
+'xiyuduhu': '都护',
 'zizhou': '梓',
         'cangzhou': '沧',
 'yuezhi': '月氏',

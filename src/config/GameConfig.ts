@@ -38,7 +38,12 @@ export class GameConfig {
         MIN_GARRISON: 1000
     };
     static SIEGE = {
-        COMBAT_RADIUS: 0.1,
+        /**
+         * 攻城停步 / 敌城 ZOC（经纬度欧氏°）。
+         * 2026-08-04：0.1→0.15（略拉远，减轻叠进放大城图；勿再抬到 0.38 档）。
+         * 连带 PASS_RADIUS / 路网截尾 / AI 抵达圈。
+         */
+        COMBAT_RADIUS: 0.15,
         DEFAULT_CITY_TROOPS: 1000
     };
     /** 离路行军：当前位置接入道路折线的距离阈值（LatLng 欧氏，约 5.5 km） */
@@ -143,8 +148,11 @@ export class GameConfig {
         /** 有效战力随机系数 [0.8, 1.2]：开战整侧掷一次；援军编入再掷一次（系统技「合兵一处」） */
         LUCK_MIN: 0.8,
         LUCK_MAX: 1.2,
-        /** 开战编入半径（经纬度欧氏距离，约 0.3 ≈ 30km；开战瞬间 + 每 0.2s 圈内扫描，可随时加入） */
-        BATTLE_JOIN_RADIUS: 0.3,
+        /**
+         * 开战编入半径（经纬度欧氏°；开战瞬间 + 每 0.2s 圈内扫描）。
+         * 2026-08-04：0.3→0.35，略大于 COMBAT_RADIUS(0.15) 与排队环。
+         */
+        BATTLE_JOIN_RADIUS: 0.35,
         /**
          * 精锐环（第 7 环）战力乘数 T0→T4，无精锐 ×1.0（AGENTS.md §12.3.1）。
          * 引擎 GeneralSkillCombat.getElitePowerMult 与面板 CultureCombat.getEliteCombatMultiplier 同读此表。

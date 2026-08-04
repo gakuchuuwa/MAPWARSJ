@@ -586,7 +586,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-05-27 新增：且兰 ──
 
     // ── 2026-05-27 新增：土尔扈特、索、伊吾 ──
-    'tuerhute': '土尔',
+'tuerhute': '土尔',
 
     // ── 2026-05-27 新增：白马、蒯、庸、申、叟 ──
 'kuai': '房',
@@ -981,7 +981,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'wenling': '温陵',
   qianzhou: '乾',
 'wuyue': '吴越',
-  xiyuduhu: '都护',
+'xiyuduhu': '都护',
   shaozhou_d: '邵',
 'zizhou': '梓',
   'cangzhou': '沧',

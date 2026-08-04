@@ -212,6 +212,12 @@ export class SiegeEffectRenderer {
         this.fadeIn(cityId);
     }
 
+    /** 中途跟拍援军编入：只抬火箭发射半宽，不重点火势 */
+    public setCityVisualZoom(cityId: string, cityVisualZoom: number): void {
+        const effect = this.activeEffects.get(cityId);
+        if (effect) effect.cityVisualZoom = cityVisualZoom;
+    }
+
     public stopEffect(cityId: string, immediate = false): void {
         const effect = this.activeEffects.get(cityId);
         if (!effect) return;
