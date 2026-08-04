@@ -22,9 +22,9 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     lagoniya: { name: '斯巴达重装', tier: 2 },          // 斯巴达·列奥尼达：普拉提亚
     boootiya: { name: '底比斯圣队', tier: 2 },          // 底比斯·伊巴密浓达：留克特拉
     yadelaiya: { name: '威尼斯舰队', tier: 2 },          // 威尼斯·丹多洛
-    aquidan: { name: '黑太子军', tier: 2 },          // 波尔多·黑太子：普瓦捷
+    aquidan: { name: '普瓦捷骑', tier: 2 },          // 波尔多·黑太子：1356普瓦捷之战
     mulabite: { name: '穆拉比特军', tier: 2 },          // 马拉喀什·塔什芬
-    aguelabu: { name: '奥克巴骑', tier: 2 },          // 凯鲁万·奥克巴：北非征服
+    aguelabu: { name: '易弗里骑', tier: 2 },          // 凯鲁万·奥克巴：征服易弗里基叶（Ifriqiya）
     luodesi: { name: '医院骑士', tier: 2 },          // 罗得城·德米特里：1522守岛
     maerta_qishi: { name: '马耳他骑士', tier: 2 },          // 马耳他·拉·瓦莱特：1565大围攻以少胜多
 
@@ -47,7 +47,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 狄奥多里克为日耳曼英雄文学符号（《尼伯龙根之歌》迪特里希），文化知名 → T3（2026-08-03 名将互配升）
     donggete: { name: '狄奥多卫', tier: 3 },
     anuo: { name: '比萨海军', tier: 3 },          // 比萨·乌戈里诺
-    balunxiya: { name: '熙德骑', tier: 3 },          // 巴伦西亚·熙德
+    balunxiya: { name: '图里亚骑', tier: 3 },          // 巴伦西亚·熙德：图里亚河畔都城骑兵（避将名熙德）
 
     // ── T4 存在之兵 ──
     // 那不勒斯·卡洛（安茹）：安茹骑士可考，无「重骑」专名高光 → T3
@@ -55,14 +55,14 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 佛罗伦萨·洛伦佐：美第奇治下卫军/佣兵 → T4
     tuosikana: { name: '美第奇卫', tier: 4 },
     xixiliwangguo: { name: '西西里骑', tier: 3 },          // 巴勒莫·腓特烈二世
-    gaolu_luoma: { name: '克洛维骑', tier: 3 },          // 里昂·克洛维
+    gaolu_luoma: { name: '墨洛骑', tier: 3 },          // 里昂·克洛维：墨洛温王朝骑兵（避将名）
     // 托莱多·阿方索六世：1085 收复托莱多，卡斯蒂利亚骑兵为收复失地运动核心兵种，
     // 文化知名（对标葡萄牙骑/阿拉贡骑 T3）；卡拉特拉瓦团 1158 建晚于其卒年，不挂 → T3（2026-08-03 名将互配升）
     xigete: { name: '卡斯蒂骑', tier: 3 },
     // 格拉纳达·穆罕默德：纳斯里摩尔骑兵风土 → T3（禁造「阿兰布拉卫」）
     nasier: { name: '摩尔骑', tier: 3 },
     feiniqi: { name: '腓尼基骑', tier: 3 },          // 加的斯·哈米尔卡
-    yidelisi: { name: '伊德里斯骑', tier: 4 },          // 非斯·伊德里斯
+    yidelisi: { name: '非斯卫', tier: 4 },          // 非斯·伊德里斯：都城卫军（避将名/王朝名叠字）
     xilagu: { name: '叙拉古骑', tier: 4 },          // 锡拉库萨·阿加索克利
     leangongguo: { name: '莱昂骑', tier: 4 },          // 萨拉曼卡·阿方索九世
     // 梅西纳·罗杰一世：诺曼骑士征服西西里海峡 → T2
@@ -72,7 +72,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 休达·恩里克：基督骑士团大团长（非阿维斯）→ T2
     zhibuluotuo: { name: '基督骑士', tier: 2 },
     zhayan: { name: '扎扬骑', tier: 4 },          // 特莱姆森·亚格姆拉森
-    hamade: { name: '哈马德骑', tier: 4 },          // 布佳亚·哈马德
+    hamade: { name: '卡拉阿骑', tier: 4 },          // 布佳亚·哈马德：卡拉阿·贝尼·哈马德（避将名）
     sading: { name: '撒丁骑', tier: 4 },          // 卡利亚里·埃莱奥诺拉
     jileinaijia: { name: '昔兰尼骑', tier: 4 },          // 班加西·马加斯
     kelite: { name: '克里特弓手', tier: 3 },          // 诺索斯·福卡斯：961收复克里特；克里特弓箭手为希腊世界最著名雇佣兵（色诺芬长征记），文化知名T3
