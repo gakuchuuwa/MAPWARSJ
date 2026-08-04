@@ -1498,7 +1498,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -33
         },
         "/assets/LINGNAN/cen_d_cenmeng.png": {
-            "scale": 1.15,
+            "scale": 1.13,
             "offsetX": 0,
             "offsetY": 14
         },
@@ -1513,7 +1513,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/LINGNAN/guangzhou_liuyin.png": {
-            "scale": 1.06,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": -9
         },
@@ -2528,9 +2528,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 26
         },
         "/assets/LINGNAN/nong2_nongzhigao.png": {
-            "scale": 1.11,
+            "scale": 1.01,
             "offsetX": 0,
-            "offsetY": -9
+            "offsetY": 21
         },
         "/assets/HEXI/__闲置__HEXI_07.png": {
             "scale": 0.97,
@@ -2693,8 +2693,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -40
         },
         "/assets/LINGNAN/dayue_chenguojun.png": {
-            "scale": 0.97,
-            "offsetX": 0,
+            "scale": 1.01,
+            "offsetX": 4,
             "offsetY": 3
         },
         "/assets/litang/loufan_xuerengui.png": {
@@ -4548,9 +4548,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 37
         },
         "/assets/india/__闲置__CENTRAL_ASIA_24.png": {
-            "scale": 1.09,
+            "scale": 1.11,
             "offsetX": 0,
-            "offsetY": 16
+            "offsetY": 18
         },
         "/assets/india/__闲置__CENTRAL_ASIA_26.png": {
             "scale": 0.95,
@@ -6206,6 +6206,56 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/india/boluo_damoboluo.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/india/fanyanna_xieer.png": {
+            "scale": 0.85,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/india/deli_alawuding.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/india/jiashi_d_jiashiwang.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -20
+        },
+        "/assets/india/jieri_jieriwang.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/india/kongque_zhantuoluojiduo.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 15
+        },
+        "/assets/india/mojietuo_pinpisuoluo.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/india/mowoer_akeba.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/india/xike_lanjite.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 14
+        },
+        "/assets/india/sumo_sumowang.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {
