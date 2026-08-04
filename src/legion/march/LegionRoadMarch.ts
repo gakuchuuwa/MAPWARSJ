@@ -66,6 +66,17 @@ function resolveMarchTarget(
     currentPos: LatLng,
 ): string {
     let marchTargetId = targetCityId;
+
+    // 目标为己方城（回援守城 / 残兵撤退回家）：直取，不做「逐段清障」。
+    // 否则回家路径 ZOC 内第一个敌城会被解析为行军目标——回援军团被派去攻打敌城，
+    // 走到敌城脚下后 findFirstHostileAlongPolyline 的 fallback 仍指向该城（无脚下过滤兜底），
+    // moveLegionToCity 判定 ≤siegeReach 直接 triggerSiege，反复冲击回不了家 = 原地摇摆
+    // （2026-08-04 实测 2~3.5% 截胡）。收复失地（目标被敌方占着）不受影响：factionId 非己方仍走清障。
+    const targetCity = deps.cityManager.getCity(targetCityId);
+    if (targetCity && targetCity.factionId === factionId) {
+        return targetCityId;
+    }
+
     // 远征军团：直取战略目标，不从路网起点重扫身后敌城
     if (startCityId && !isCampaignLegion(army)) {
         marchTargetId = resolveMarchTargetOnPath(
