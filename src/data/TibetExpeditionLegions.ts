@@ -66,7 +66,7 @@ export const TIBET_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   nanjie: { name: '日土铁卫', tier: 4 },          // 日土宗·南杰旺秋拉达克边军
   niang: { name: '琼结卫', tier: 4 },                // 缺乏知名度支撑，降T3
   dalung: { name: '达隆寺僧兵', tier: 4 },
-  dong: { name: '囊谦千户兵', tier: 4 },               // 缺乏知名度支撑，降T3
+  dong: { name: '玉树土兵', tier: 4 },               // 囊谦宗·隆庆：玉树土兵，避将名囊谦
   hor: { name: '霍尔部勇士', tier: 4 },
     ganden: { name: '格鲁僧兵', tier: 3 }, // 格鲁派（黄教）的武装僧兵，近现代西藏绝对政教核心力量，升入T3知名,
     xianlingqiang: { name: '先零突骑', tier: 3 },

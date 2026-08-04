@@ -53,7 +53,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   // 齐莱锐士除名（无典）
   yin: { name: '殷商多射', tier: 3 },          // 甲骨文实锤的最古老精锐，中华武力活化石，文化地位极高，不应沦为常规T4，提拔至T3知名。
   // 蔡国劲卒除名（无此部队）
-  shen: { name: '申伯亲卫', tier: 4 },         // 安康·西周申国
+  shen: { name: '安康卫', tier: 4 },         // 安康·申国：都城卫军，避将名申伯
   // 汴河戍旅除名（无此编制）
     yuzhou: { name: '义勇北伐军', tier: 3 },
     xin: { name: '上党锐骑', tier: 2 },

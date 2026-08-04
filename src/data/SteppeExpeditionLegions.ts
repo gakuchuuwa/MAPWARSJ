@@ -71,7 +71,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     zubu: { name: '特尔浑游骑', tier: 4 },
   wuzhumuqin: { name: '赛堪轻骑', tier: 4 },    // 乌珠穆沁·多尔济随征噶尔丹（缺乏极其著名的战术高光，降T3）
     xingan: { name: '索伦营', tier: 2 },             // 索伦鄂温克达斡尔精锐，清朝极具特色的边疆建制，升T2
-  baidi: { name: '白狄徒兵', tier: 3 },          // 春秋白狄徒兵，北方游牧中步兵独树一帜，兵种特色鲜明，升T2
+  baidi: { name: '阴山徒兵', tier: 3 },          // 集宁·白狄：阴山一带狄人徒兵，避将名/族名叠字
   shiwei: { name: '室韦猎骑', tier: 4 },         // 俱轮泊·室韦都督府部众
   sunite: { name: '苏尼特骑', tier: 4 },         // 赛汉塔拉·苏尼特旗武装
   bulat: { name: '布拉特猎兵', tier: 3 },      // 布里亚特（布拉特）人，西伯利亚极具辨识度的民族武装符号，升入T3知名
@@ -91,7 +91,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     juqu_d: { name: '卢水胡兵', tier: 3 },
     yuezhi: { name: '折兰骑', tier: 3 },
     lushui: { name: '飞熊军', tier: 2 },
-    xijue: { name: '郅支精骑', tier: 4 },
+    xijue: { name: '康居精骑', tier: 4 },          // 郅支城：郅支远遁康居，避将名/据点叠字
     aertai: { name: '阿尔泰狼骑', tier: 3 },
     manghuti: { name: '忙忽惕勇士', tier: 4 },
     dzungar: { name: '绰罗斯精骑', tier: 1 },
@@ -100,7 +100,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     xiemian: { name: '谢缅骑卫', tier: 4 },
     baojiaer: { name: '保加尔铁骑', tier: 2 },      // 喀山·兀鲁黑：1223卡玛河伏击全歼蒙古西征军残部，一战成名，T2战术
     yidier: { name: '伊蒂尔弓骑', tier: 4 },
-    fuerjia: { name: '阿斯特拉骑', tier: 4 },        // 察里津·阿斯特拉：阿斯特拉罕汗国骑兵，建制可考，T4存在
+    fuerjia: { name: '塔尔汗骑', tier: 4 },        // 察里津·阿斯特拉：阿斯特拉罕古称塔尔汗（Hajji Tarkhan）骑兵，T4存在
     nuogai: { name: '诺盖突骑', tier: 3 },           // 萨马拉·欧拿斯汗：诺盖汗国骑射，民族辨识度，T3知名
     bashekeer: { name: '巴什弓骑', tier: 3 },        // 乌法·卡拉萨卡尔：巴什基尔骑射手，乌拉尔骑射特色，T3知名
     salai: { name: '萨莱骑卫', tier: 4 },

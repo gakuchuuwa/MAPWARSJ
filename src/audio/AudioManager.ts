@@ -132,7 +132,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     fallen_army: 0.61,   // -16.57 → 大幅压低（2026-08-04 通用随机曲）
     game_of_thrones: 0.72, // -17.99 → 压低（2026-08-04 通用随机曲）
     GERMANIC: 0.60,      // -16.53 → 大幅压低（2026-08-04 新增 The Mass）
-    daming: 0.95,        // -20.5
+    daming: 0.78,        // -18.70（2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
     DIANQIAN: 1.0,       // -20.9
     HEXI: 0.97,          // -20.6
     helmet_to_helmet: 0.68, // -17.55 → 压低（2026-08-04 通用随机曲）

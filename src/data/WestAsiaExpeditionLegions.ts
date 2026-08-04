@@ -26,10 +26,10 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     tuolemi: { name: '希腊方阵', tier: 2 },        // 亚历山大·托勒密：拉菲亚之战与塞琉古银盾对决
     heti: { name: '赫梯战车', tier: 2 },           // 哈图沙·穆瓦塔利：亲统三千战车卡迭石突袭埃及先头军团
     qiliqiya: { name: '行省军团', tier: 2 },       // 阿达纳·庞培：前 67 年肃清奇里乞亚海盗、置行省，即其麾下行省军团
-    xibolai: { name: '大卫勇士', tier: 2 },        // 耶路撒冷·大卫：撒下 23 载三十勇士，攻取锡安堡、破非利士人
+    xibolai: { name: '锡安卫', tier: 2 },        // 耶路撒冷·大卫：攻取锡安堡；番号取锡安，避将名、避「三十」编制感
     jialedi: { name: '迦勒底战车', tier: 2 },      // 巴比伦·尼布甲尼撒：卡尔基米什之战（前 605）大破埃及军
     xikesuosi: { name: '喜克索战车', tier: 2 },    // 阿瓦里斯·萨利蒂：复合弓＋战车征服并统治下埃及百余年
-    abasi: { name: '阿拔斯卫', tier: 2 },          // 巴格达·曼苏尔：其亲建都城的哈里发近卫；扎卜河大捷属呼罗珊军非本部，故不占 T1
+    abasi: { name: '黑衣卫', tier: 2 },          // 巴格达·曼苏尔：黑衣大食近卫，避「阿拔斯」撞将名
     bendou: { name: '阿克里泰', tier: 2 },         // 特拉布宗·阿历克塞：科穆宁边防军史载专名，长期抗突厥袭扰有实绩
     bendou_d: { name: '本都铁骑', tier: 2 },       // 阿马西亚·密特里达梯：本都旧都，其骑兵泽拉之战击破罗马军
     paermila: { name: '帕尔米拉骑', tier: 2 },     // 塔德莫尔·芝诺比娅：亲统重装弓骑（clibanarii）夺取埃及与小亚

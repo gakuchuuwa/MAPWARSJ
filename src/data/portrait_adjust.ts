@@ -4132,47 +4132,47 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/CENTRAL_ASIA/jiashi_d_jiashiwang.png": {
+        "/assets/india/jiashi_d_jiashiwang.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -19
         },
-        "/assets/CENTRAL_ASIA/sumo_sumowang.png": {
+        "/assets/india/sumo_sumowang.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": -15
         },
-        "/assets/CENTRAL_ASIA/boluo_damoboluo.png": {
+        "/assets/india/boluo_damoboluo.png": {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/CENTRAL_ASIA/mojietuo_pinpisuoluo.png": {
+        "/assets/india/mojietuo_pinpisuoluo.png": {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 10
         },
-        "/assets/CENTRAL_ASIA/kongque_zhantuoluojiduo.png": {
+        "/assets/india/kongque_zhantuoluojiduo.png": {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/CENTRAL_ASIA/jieri_jieriwang.png": {
+        "/assets/india/jieri_jieriwang.png": {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": 1
         },
-        "/assets/CENTRAL_ASIA/mowoer_akeba.png": {
+        "/assets/india/mowoer_akeba.png": {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": 7
         },
-        "/assets/CENTRAL_ASIA/deli_alawuding.png": {
+        "/assets/india/deli_alawuding.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/CENTRAL_ASIA/xike_lanjite.png": {
+        "/assets/india/xike_lanjite.png": {
             "scale": 1.18,
             "offsetX": 0,
             "offsetY": 12
@@ -5252,7 +5252,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 16
         },
-        "/assets/CENTRAL_ASIA/fanyanna_xieer.png": {
+        "/assets/india/fanyanna_xieer.png": {
             "scale": 0.82,
             "offsetX": 0,
             "offsetY": -21
@@ -6297,7 +6297,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -5,
             "offsetY": 4
         },
-        "/assets/CENTRAL_ASIA/pangzha_halixinge.png": {
+        "/assets/india/pangzha_halixinge.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": -3
