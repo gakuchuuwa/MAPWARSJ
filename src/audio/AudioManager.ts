@@ -131,6 +131,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     CENTRAL: 1.0,        // -20.9 基准
     CENTRAL_ASIA: 0.92,  // -20.2
     conquest_of_paradise: 0.56, // -15.85 → 最响，大幅压低（2026-08-04 通用随机曲）
+    age_of_kings: 0.43,      // -13.6 LUFS → 比基准响约 7.3dB，大幅压低（2026-08-04 通用随机曲·帝国时代2主题）
     fallen_army: 0.61,   // -16.57 → 大幅压低（2026-08-04 通用随机曲）
     game_of_thrones: 0.72, // -17.99 → 压低（2026-08-04 通用随机曲）
     shadow_assassin: 0.63, // -16.89 → 压低（2026-08-04 通用随机曲·暗影刺客）
@@ -166,9 +167,9 @@ const BGM_REGION_GAIN: Record<string, number> = {
 };
 
 /**
- * 随机轮播池：全部 BGM（18 文化区 + 9 势力专属 = 27 首，folder 名 = 文化区/势力夹名）。
+ * 随机轮播池：全部 BGM（文化区 + 势力专属 + 通用随机曲；folder 名 = 文化区/势力/曲名片）。
  * 主人 2026-08-04 定：首选 = 跟随军团立绘文件夹对应曲（文化区或势力夹，区域优先）；
- * 放完后不循环单曲，在全部 27 首里洗牌随机轮播（不立刻重复同一首）；
+ * 放完后不循环单曲，在全部曲目里洗牌随机轮播（不立刻重复同一首）；
  * 镜头进入新文化区/势力范围则区域优先立刻切歌。
  */
 const BGM_ROTATION_FOLDERS: readonly string[] = [
@@ -177,7 +178,7 @@ const BGM_ROTATION_FOLDERS: readonly string[] = [
     'daming', 'litang', 'liuhan', 'manqing', 'pugan', 'wuzhou', 'xianqin', 'yingqin', 'zhaosong', 'india',
     // 无文化首选的通用随机曲（2026-08-04 GAKU 加：只进轮播池，永不作首选）
     'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet', 'hes_a_pirate', 'conquest_of_paradise',
-    'game_of_thrones', 'shadow_assassin',
+    'game_of_thrones', 'shadow_assassin', 'age_of_kings',
 ];
 
 function mergeSettings(raw: unknown): AudioSettings {

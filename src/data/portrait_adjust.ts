@@ -758,7 +758,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/CENTRAL/long2_weixiaokuan.png": {
-            "scale": 1.2,
+            "scale": 1.14,
             "offsetX": 3,
             "offsetY": 1
         },
@@ -3768,7 +3768,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/zhaosong/didao_wangshao.png": {
-            "scale": 0.96,
+            "scale": 0.92,
             "offsetX": 19,
             "offsetY": 0
         },
@@ -5243,7 +5243,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -1
         },
         "/assets/HEXI/qifu_d_qifuchipan.png": {
-            "scale": 1.02,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": -5
         },

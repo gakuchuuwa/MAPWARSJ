@@ -679,7 +679,7 @@ export const DefendHome = new Action('DefendHome', (ctx) => {
     if (!homeId) return BTStatus.FAILURE;
     if (ctx.legionManager.tryJoinCityDefense(army, homeId)) {
         const homeName = ctx.cityManager.getCity(homeId)?.name ?? homeId;
-        btLog(ctx, `defend_home:${homeId}`, `[AI] ${army.name} 回援【${homeName}】守城战`);
+        btLog(ctx, `defend_home:${homeId}`, `[AI] ${army.name} 加入【${homeName}】守城战`);
         return BTStatus.SUCCESS;
     }
     army.stopMovement?.(); // 敌军在途、尚未开打 → 原地待命，不解散
@@ -704,7 +704,7 @@ export const MarchHome = new Action('MarchHome', (ctx) => {
 
     if (ctx.legionManager.moveLegionToCity(army, homeId)) {
         const homeName = ctx.cityManager.getCity(homeId)?.name ?? homeId;
-        btLog(ctx, `march_home:${homeId}`, `[AI] ${army.name} 回援本城【${homeName}】`);
+        btLog(ctx, `march_home:${homeId}`, `[AI] ${army.name} 返回本城【${homeName}】`);
         return BTStatus.SUCCESS;
     }
     return BTStatus.FAILURE;
