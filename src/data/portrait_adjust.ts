@@ -5502,16 +5502,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/LATIN/__闲置__LATIN_01.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 17
-        },
-        "/assets/LATIN/__闲置__LATIN_02.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 38
-        },
         "/assets/LATIN/__闲置__LATIN_04.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5907,11 +5897,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -1,
             "offsetY": 1
         },
-        "/assets/LATIN/__闲置__LATIN_05.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 13
-        },
         "/assets/SLAVIC/fulajimier_gongguo_andelie.png": {
             "scale": 1.11,
             "offsetX": 0,
@@ -5922,16 +5907,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -26
         },
-        "/assets/SLAVIC/__闲置__SLAVIC_02.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": -31
-        },
-        "/assets/SLAVIC/__闲置__SLAVIC_03.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": -30
-        },
         "/assets/SLAVIC/jialixiya_dannier.png": {
             "scale": 0.95,
             "offsetX": 0,
@@ -5941,16 +5916,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -19
-        },
-        "/assets/SLAVIC/__闲置__SLAVIC_05.png": {
-            "scale": 0.87,
-            "offsetX": 0,
-            "offsetY": -22
-        },
-        "/assets/SLAVIC/__闲置__SLAVIC_06.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -20
         },
         "/assets/GERMANIC/damolaweiya_moyimier.png": {
             "scale": 1.09,
@@ -6212,11 +6177,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/SLAVIC/__闲置__SLAVIC_07.png": {
-            "scale": 1.17,
-            "offsetX": 9,
-            "offsetY": 2
-        },
         "/assets/LATIN/baizanting_fulajimier.png": {
             "scale": 1,
             "offsetX": 0,
@@ -6226,6 +6186,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": -19
+        },
+        "/assets/SLAVIC/siluoboda_duonieci.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -31
+        },
+        "/assets/SLAVIC/yedi_sabuluofu.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/LATIN/31be0674-de3f-4c62-8762-6341c572af47.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/LATIN/aosiruowen_baodewen.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {
