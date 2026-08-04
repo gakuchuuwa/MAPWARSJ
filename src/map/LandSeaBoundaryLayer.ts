@@ -1,7 +1,7 @@
 import L from 'leaflet';
 
 import { GameMap } from './GameMap';
-import { LandSeaSystem } from '../world/land-sea';
+import { LandSeaSystem, latToDemGlobalY, lngToDemGlobalX } from '../world/land-sea';
 import { MAP_LAYER_ZINDEX, MAP_PANES } from '../config/MapLayers';
 import { gameLog } from '../utils/GameLogger';
 
@@ -171,23 +171,25 @@ export class LandSeaBoundaryLayer {
         const rows = Math.ceil(h / step) + 1;
 
         // Web Mercator 下纬度只随 y 变、经度只随 x 变 ⇒ 行列各投影一次即可，
-        // 比逐点 containerPointToLatLng 少算两个数量级（3 万次 → 几百次）。
-        const lats = new Float64Array(rows);
+        // 比逐点 containerPointToLatLng 少算两个数量级（数万次 → 几百次）。
+        // 直接算成 DEM 全局像素坐标，让探测器纯整数取值，不再逐点做三角运算。
+        const demY = new Float64Array(rows);
         for (let r = 0; r < rows; r++) {
-            lats[r] = this.map.containerPointToLatLng([0, Math.min(r * step, h)]).lat;
+            demY[r] = latToDemGlobalY(this.map.containerPointToLatLng([0, Math.min(r * step, h)]).lat);
         }
-        const lngs = new Float64Array(cols);
+        const demX = new Float64Array(cols);
         for (let c = 0; c < cols; c++) {
-            lngs[c] = this.map.containerPointToLatLng([Math.min(c * step, w), 0]).lng;
+            demX[c] = lngToDemGlobalX(this.map.containerPointToLatLng([Math.min(c * step, w), 0]).lng);
         }
 
         // 0=陆 1=海 2=未到
+        const probe = LandSeaSystem.createBlockProber();
         const grid = new Uint8Array(cols * rows);
         for (let r = 0; r < rows; r++) {
-            const lat = lats[r];
+            const gy = demY[r];
             const rowBase = r * cols;
             for (let c = 0; c < cols; c++) {
-                const kind = LandSeaSystem.probeLandSea(lat, lngs[c]);
+                const kind = probe(demX[c], gy);
                 grid[rowBase + c] = kind === 'sea' ? 1 : kind === 'pending' ? 2 : 0;
             }
         }

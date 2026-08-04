@@ -4068,7 +4068,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/WEST_ASIA/ailan_shuteluke.png": {
-            "scale": 0.91,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": 20
         },
@@ -5443,7 +5443,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 26
         },
         "/assets/GERMANIC/__闲置__GERMANIC_04.png": {
-            "scale": 1,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": 21
         },
@@ -5713,7 +5713,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/GERMANIC/__闲置__GERMANIC_01.png": {
-            "scale": 1.1344,
+            "scale": 1.13,
             "offsetX": 0,
             "offsetY": 6
         },
@@ -5733,7 +5733,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/GERMANIC/__闲置__GERMANIC_02.png": {
-            "scale": 1.082,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": 37
         },
@@ -5748,7 +5748,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/GERMANIC/__闲置__GERMANIC_03.png": {
-            "scale": 1.1,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": 38
         },
@@ -5778,18 +5778,18 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/GERMANIC/__闲置__GERMANIC_07.png": {
-            "scale": 1,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": 6
         },
         "/assets/GERMANIC/batawei_xiweilisi.png": {
-            "scale": 1.17,
+            "scale": 1.16,
             "offsetX": 0,
-            "offsetY": 16
+            "offsetY": 20
         },
         "/assets/LATIN/gaolu_luoma_keluowei.png": {
-            "scale": 1,
-            "offsetX": 0,
+            "scale": 1.04,
+            "offsetX": 5,
             "offsetY": 12
         },
         "/assets/GERMANIC/kanbuliya_weilianhualaishi.png": {
@@ -5853,7 +5853,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/GERMANIC/__闲置__GERMANIC_12.png": {
-            "scale": 0.93,
+            "scale": 0.9,
             "offsetX": 0,
             "offsetY": 13
         },
@@ -5863,7 +5863,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/GERMANIC/__闲置__GERMANIC_08.png": {
-            "scale": 1.01,
+            "scale": 0.98,
             "offsetX": -1,
             "offsetY": 1
         },

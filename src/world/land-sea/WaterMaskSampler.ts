@@ -79,6 +79,19 @@ export class WaterMaskSampler {
         return mask[pixelY * TERRARIUM_TILE_SIZE + pixelX] === 1;
     }
 
+    /**
+     * 整块掩膜（批量采样用）：调用方自己按像素索引取值，避免逐点走 isWaterSync
+     * ——那条路每次都要 touchCache 做 O(缓存条数) 的线性扫描。
+     *
+     * 返回 undefined = 瓦片未缓存；{ mask: null } = 已知的坏瓦片（纯灰块，判定不可用）。
+     */
+    getTileMaskSync(zoom: number, x: number, y: number): { mask: Uint8Array | null } | undefined {
+        const key = tileCacheKey(zoom, x, y);
+        if (!this.cache.has(key)) return undefined;
+        this.touchCache(key);
+        return { mask: this.cache.get(key) ?? null };
+    }
+
     scheduleFetch(lat: number, lng: number, zoom = DEM_ZOOM): void {
         const { tileX, tileY } = latLngToTilePixel(lat, lng, zoom);
         void this.ensureTile(zoom, tileX, tileY);

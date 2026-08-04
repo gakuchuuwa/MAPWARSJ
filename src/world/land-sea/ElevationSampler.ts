@@ -36,6 +36,26 @@ export function latLngToTilePixel(lat: number, lng: number, zoom = DEM_ZOOM): Ti
     return { tileX, tileY, pixelX, pixelY, zoom };
 }
 
+/**
+ * 经度 → DEM 全局像素 X（zoom 级整幅世界的像素坐标）。
+ * Web Mercator 下 X 只与经度有关、Y 只与纬度有关，故可按行列各算一次再复用——
+ * 批量采样（海陆分界调试层）靠这条性质把逐点三角运算降两个数量级。公式与
+ * latLngToTilePixel 完全一致，改这里必须同步改那里。
+ */
+export function lngToDemGlobalX(lng: number, zoom = DEM_ZOOM): number {
+    const n = Math.pow(2, zoom);
+    return ((lng + 180) / 360) * n * TERRARIUM_TILE_SIZE;
+}
+
+/** 纬度 → DEM 全局像素 Y；同上 */
+export function latToDemGlobalY(lat: number, zoom = DEM_ZOOM): number {
+    const n = Math.pow(2, zoom);
+    const latRad = (lat * Math.PI) / 180;
+    const yFrac =
+        ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n;
+    return yFrac * TERRARIUM_TILE_SIZE;
+}
+
 function tileCacheKey(zoom: number, x: number, y: number): string {
     return `${zoom}/${x}/${y}`;
 }
