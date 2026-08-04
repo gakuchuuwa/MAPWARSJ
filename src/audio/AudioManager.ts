@@ -93,7 +93,7 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     expedition: sound('feed', 'expedition', 0.75, 1400),
     pass_siege: sound('feed', 'pass_siege', 0.45, 4000),
     general_skill: sound('battle', 'general_skill', 0.45, 1800),
-    bgm_main: { category: 'bgm', sources: ['/assets/CENTRAL/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
+    bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 
 function sound(
@@ -128,12 +128,18 @@ const BGM_REGION_GAIN: Record<string, number> = {
     BASHU: 0.84,         // -19.4 → 压低 1.5dB
     CENTRAL: 1.0,        // -20.9 基准
     CENTRAL_ASIA: 0.92,  // -20.2
+    conquest_of_paradise: 0.56, // -15.85 → 最响，大幅压低（2026-08-04 通用随机曲）
+    fallen_army: 0.61,   // -16.57 → 大幅压低（2026-08-04 通用随机曲）
+    GERMANIC: 0.60,      // -16.53 → 大幅压低（2026-08-04 新增 The Mass）
     daming: 0.95,        // -20.5
     DIANQIAN: 1.0,       // -20.9
     HEXI: 0.97,          // -20.6
+    helmet_to_helmet: 0.68, // -17.55 → 压低（2026-08-04 通用随机曲）
+    hes_a_pirate: 0.70,  // -17.86 → 压低（2026-08-04 通用随机曲）
     JAPAN: 1.03,         // -21.2
     JIANGNAN: 0.89,      // -19.9
     KOREA: 0.92,         // -20.2
+    LATIN: 0.63,         // -16.95 → 大幅压低（2026-08-04 新增 Star Sky）
     LINGNAN: 0.76,       // -18.5 → 最响，大幅压低
     litang: 0.98,        // -20.7
     liuhan: 1.08,        // -21.6
@@ -141,9 +147,13 @@ const BGM_REGION_GAIN: Record<string, number> = {
     NORTH: 1.0,          // -20.9
     NORTHEAST: 0.98,     // -20.7
     pugan: 1.0,          // -20.9
+    rock_house_jail: 0.73, // -18.17 → 压低（2026-08-04 通用随机曲）
+    SLAVIC: 0.69,        // -17.73 → 压低（2026-08-04 新增 Hall om mig）
     STEPPE: 1.15,        // -22.1 → 最轻，大幅提升
     TIBET: 0.97,         // -20.6
     WESTERN: 1.01,       // -21.0
+    WEST_ASIA: 0.59,     // -16.35 → 大幅压低（2026-08-04 新增 出埃及记）
+    victory: 0.59,       // -16.36 → 大幅压低（2026-08-04 通用随机曲）
     wuzhou: 1.0,         // -20.9
     xianqin: 0.97,       // -20.6
     yingqin: 0.97,       // -20.6
@@ -151,12 +161,17 @@ const BGM_REGION_GAIN: Record<string, number> = {
 };
 
 /**
- * 随机轮播池：14 文化区 BGM（folder 名 = region）。
- * 主人 2026-07-06 定：第一首按镜头文化区放；放完后不循环单曲，
- * 在这 14 首里洗牌随机轮播（不立刻重复同一首）；镜头进入新文化区则区域优先立刻切歌。
- * 势力专属夹（daming/manqing 等）只作区域优先覆盖，不进随机池。
+ * 随机轮播池：全部 BGM（18 文化区 + 9 势力专属 = 27 首，folder 名 = 文化区/势力夹名）。
+ * 主人 2026-08-04 定：首选 = 跟随军团立绘文件夹对应曲（文化区或势力夹，区域优先）；
+ * 放完后不循环单曲，在全部 27 首里洗牌随机轮播（不立刻重复同一首）；
+ * 镜头进入新文化区/势力范围则区域优先立刻切歌。
  */
-const BGM_ROTATION_FOLDERS: readonly string[] = REGION_ORDER;
+const BGM_ROTATION_FOLDERS: readonly string[] = [
+    ...REGION_ORDER,
+    'daming', 'litang', 'liuhan', 'manqing', 'pugan', 'wuzhou', 'xianqin', 'yingqin', 'zhaosong',
+    // 无文化首选的通用随机曲（2026-08-04 GAKU 加：只进轮播池，永不作首选）
+    'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet', 'hes_a_pirate', 'conquest_of_paradise',
+];
 
 function mergeSettings(raw: unknown): AudioSettings {
     const settings: AudioSettings = {
@@ -204,7 +219,7 @@ export class AudioManager {
     private failedBgmFolders = new Set<string>();
     /** 镜头当前所在文化区对应的 BGM folder（区域优先：此值变化 = 立刻切歌）*/
     private cameraRegionFolder: string = '';
-    /** 14 文化区随机轮播队列（洗牌袋，空了重洗）*/
+    /** 全部 BGM 随机轮播队列（洗牌袋，空了重洗）*/
     private bgmShuffleQueue: string[] = [];
     /** BGM 异步加载令牌：切歌 / 停歌时自增，作废旧的 fetch 回调 */
     private bgmLoadToken = 0;
@@ -622,9 +637,10 @@ export class AudioManager {
         }
     }
 
-    /** 播放某文化区/势力夹 BGM；单曲不循环，放完随机轮播下一文化（14 洗牌循环） */
+    /** 播放某文化区/势力夹 BGM；单曲不循环，放完随机轮播下一曲（27 全曲洗牌循环）。
+     *  集中目录：public/assets/bgm/{folder}_bgm.aud（2026-08-04 集中管理，原分散各立绘夹） */
     private playBgmFolder(folder: string): void {
-        const src = `/assets/${folder}/${folder}_bgm.aud`;
+        const src = `/assets/bgm/${folder}_bgm.aud`;
         // 同一首已在播 → 跳过（dedup 用逻辑路径，blob URL 无法比对）
         if (this.currentBgmSrc === src && this.bgmAudio && !this.bgmAudio.paused) return;
         this.currentBgmFolder = folder;
@@ -676,10 +692,10 @@ export class AudioManager {
         });
     }
 
-    /** 洗牌袋取下一首文化 BGM folder；避免与刚放完的紧挨重复 */
+    /** 洗牌袋取下一首 BGM folder；避免与刚放完的紧挨重复 */
     private nextRotationFolder(exclude: string): string {
         if (this.bgmShuffleQueue.length === 0) {
-            this.bgmShuffleQueue = this.shuffledRegionFolders();
+            this.bgmShuffleQueue = this.shuffledBgmFolders();
         }
         let next = this.bgmShuffleQueue.shift()!;
         if (next === exclude && this.bgmShuffleQueue.length > 0) {
@@ -689,8 +705,8 @@ export class AudioManager {
         return next;
     }
 
-    /** Fisher–Yates 洗牌 14 文化区 folder */
-    private shuffledRegionFolders(): string[] {
+    /** Fisher–Yates 洗牌全部 BGM folder（18 文化区 + 9 势力专属） */
+    private shuffledBgmFolders(): string[] {
         const arr = [...BGM_ROTATION_FOLDERS];
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
