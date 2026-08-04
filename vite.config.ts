@@ -2104,8 +2104,11 @@ function serverHasDuplicateInLibrary(publicAssetsRoot: string, fileAbs: string):
         const self = path.resolve(fileAbs);
         const size = fs.statSync(self).size;
         const candidates: string[] = [];
-        serverForEachPortraitFile(publicAssetsRoot, (_folder, _file, abs) => {
+        serverForEachPortraitFile(publicAssetsRoot, (_folder, file, abs) => {
             if (path.resolve(abs) === self) return;
+            // 留活口（2026-08-04）：同为 __多余__ 的副本不算"安全副本"——都标多余=主人批量清理时删绝。
+            // 只有被引用正本 / __闲置__ / chongfu 对照能兜底，才允许把本张标成可删的 __多余__。
+            if (/^__多余__/i.test(file)) return;
             try {
                 if (fs.statSync(abs).size === size) candidates.push(abs);
             } catch { /* 扫描期文件消失，忽略 */ }
@@ -2154,7 +2157,7 @@ function serverNextClassifiedName(
     return name;
 }
 
-/** 被顶下来的旧立绘该叫什么：库内还有同内容副本 → __多余__，否则 → __闲置__ */
+/** 被顶下来的旧立绘该叫什么：库内还有【非多余的】同内容副本 → __多余__，否则 → __闲置__（留活口） */
 function serverNextDemotedName(publicAssetsRoot: string, dirAbs: string, fileAbs: string): string {
     const prefix = serverHasDuplicateInLibrary(publicAssetsRoot, fileAbs) ? '多余' : '闲置';
     return serverNextClassifiedName(publicAssetsRoot, dirAbs, prefix);

@@ -398,7 +398,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -37
         },
         "/assets/KOREA/baiji_jiebo.png": {
-            "scale": 0.99,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -5
         },
@@ -446,11 +446,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -42
-        },
-        "/assets/KOREA/gaogouli_yizhiwende.png": {
-            "scale": 1.17,
-            "offsetX": -5,
-            "offsetY": 0
         },
         "/assets/WESTERN/wulianghai_chelingwubashen.png": {
             "scale": 1.04,
@@ -541,11 +536,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -3
-        },
-        "/assets/liuhan/lanzhou_zhaochongguo.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": -30
         },
         "/assets/panjun/bailian_wangconger.png": {
             "scale": 1.41,
@@ -753,12 +743,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/KOREA/sheng_d_liyiqi.png": {
-            "scale": 1.03,
+            "scale": 0.99,
             "offsetX": -2,
             "offsetY": -3
         },
         "/assets/KOREA/zhen_zhenxuan.png": {
-            "scale": 1.02,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -16
         },
@@ -1327,11 +1317,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -15
         },
-        "/assets/JAPAN/yamato_nanmuzhengcheng.png": {
-            "scale": 0.95,
-            "offsetX": 0,
-            "offsetY": 30
-        },
         "/assets/JAPAN/zhuqian_shaoerzineng.png": {
             "scale": 0.94,
             "offsetX": 0,
@@ -1433,24 +1418,24 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/KOREA/gaya_jinshoulu.png": {
-            "scale": 0.93,
+            "scale": 0.85,
             "offsetX": 0,
             "offsetY": 0
         },
         "/assets/KOREA/hui_bunaihou.png": {
-            "scale": 1,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -25
         },
         "/assets/KOREA/jingcheng_d_yuyouzhao.png": {
-            "scale": 1.03,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -9
         },
         "/assets/KOREA/joseon_lichenggui.png": {
-            "scale": 1.13,
+            "scale": 1.07,
             "offsetX": 0,
-            "offsetY": 12
+            "offsetY": 15
         },
         "/assets/KOREA/lelang_wangqi.png": {
             "scale": 0.98,
@@ -1468,7 +1453,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/KOREA/sabeol_jinshimin.png": {
-            "scale": 0.85,
+            "scale": 0.81,
             "offsetX": 0,
             "offsetY": -9
         },
@@ -1478,7 +1463,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/KOREA/ssangseong_cuiying.png": {
-            "scale": 0.99,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": -29
         },
@@ -1488,7 +1473,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/KOREA/xingliao_dayanlin.png": {
-            "scale": 0.99,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -13
         },
@@ -1567,23 +1552,18 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 1,
             "offsetY": -11
         },
-        "/assets/liuhan/xiyuduhu_banchao.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -3
-        },
         "/assets/liuhan/ningkou_liling.png": {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 16
         },
         "/assets/liuhan/dongsheng_weishang.png": {
-            "scale": 1.42,
+            "scale": 1.35,
             "offsetX": 0,
             "offsetY": -76
         },
         "/assets/liuhan/dixiang_wangmang.png": {
-            "scale": 1,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": 6
         },
@@ -2293,9 +2273,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 25
         },
         "/assets/liuhan/chagatai_genggong.png": {
-            "scale": 0.92,
+            "scale": 0.82,
             "offsetX": 0,
-            "offsetY": 18
+            "offsetY": 15
         },
         "/assets/yingqin/wazhai_zhanghan.png": {
             "scale": 1.06,
@@ -2538,12 +2518,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/liuhan/ganzhou_dourong.png": {
-            "scale": 1.08,
+            "scale": 1.02,
             "offsetX": 9,
             "offsetY": -30
         },
         "/assets/liuhan/li_lx_d_liguang.png": {
-            "scale": 1.03,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 3
         },
@@ -2943,7 +2923,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/STEPPE/tuoba_tuobagui.png": {
-            "scale": 1.13,
+            "scale": 1.11,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -3513,9 +3493,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/KOREA/chen3_jizhun.png": {
-            "scale": 1,
+            "scale": 0.91,
             "offsetX": 0,
-            "offsetY": -59
+            "offsetY": -54
         },
         "/assets/JAPAN/__闲置__JAPAN_26.png": {
             "scale": 0.84,
@@ -3913,7 +3893,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/KOREA/xinluo_jinyuxin.png": {
-            "scale": 0.96,
+            "scale": 0.93,
             "offsetX": 2,
             "offsetY": 0
         },
@@ -3923,7 +3903,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 14
         },
         "/assets/KOREA/goryeo_jianghanzan.png": {
-            "scale": 0.96,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -4803,9 +4783,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/liuhan/__闲置__liuhan_19.png": {
-            "scale": 1.01,
+            "scale": 0.96,
             "offsetX": 0,
-            "offsetY": -33
+            "offsetY": -30
         },
         "/assets/liuhan/__闲置__liuhan_20.png": {
             "scale": 1.25,
@@ -4943,7 +4923,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/KOREA/woju_yinguan.png": {
-            "scale": 1.01,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": -14
         },
@@ -5813,7 +5793,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/GERMANIC/batawei_xiweilisi.png": {
-            "scale": 1.05,
+            "scale": 1.17,
             "offsetX": 0,
             "offsetY": 16
         },
@@ -6038,12 +6018,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/SLAVIC/deniesite_muhanmodegeli.png": {
-            "scale": 1.22,
+            "scale": 1.26,
             "offsetX": 1,
             "offsetY": 14
         },
         "/assets/STEPPE/fuerjia_asitela.png": {
-            "scale": 1.16,
+            "scale": 1.2,
             "offsetX": 9,
             "offsetY": -10
         },
@@ -6167,15 +6147,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/LATIN/90b1e9ef-8783-4dc9-9e60-0a37e6bc0595.png": {
+        "/assets/LATIN/__闲置__LATIN_11.png": {
             "scale": 1.09,
             "offsetX": 0,
             "offsetY": 0
-        },
-        "/assets/LATIN/eb091176-b58f-49f3-9414-f73923e75489.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 6
         },
         "/assets/LATIN/baizanting_fulajimier.png": {
             "scale": 1,
@@ -6191,16 +6166,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": -31
-        },
-        "/assets/SLAVIC/yedi_sabuluofu.png": {
-            "scale": 0.87,
-            "offsetX": 0,
-            "offsetY": -22
-        },
-        "/assets/LATIN/31be0674-de3f-4c62-8762-6341c572af47.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": 0
         },
         "/assets/LATIN/aosiruowen_baodewen.png": {
             "scale": 1.02,
@@ -6261,6 +6226,106 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 4,
             "offsetY": 0
+        },
+        "/assets/SLAVIC/d81ef97f-71a6-4982-9d97-7496b5655828.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/SLAVIC/__闲置__SLAVIC_01.png": {
+            "scale": 0.87,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/SLAVIC/yedi_sabuluofu.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/JAPAN/__闲置__JAPAN_29.png": {
+            "scale": 0.82,
+            "offsetX": 0,
+            "offsetY": -36
+        },
+        "/assets/JAPAN/__闲置__JAPAN_31.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/JAPAN/eccf0c01-03ad-4854-8153-e2513ce22408.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/JAPAN/__闲置__JAPAN_34.png": {
+            "scale": 0.95,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/JAPAN/yamato_nanmuzhengcheng.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/KOREA/0043bc9d-ebd6-4245-a83c-fef40a44a84a.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": -18
+        },
+        "/assets/KOREA/1fd7b62d-78b2-4348-b330-b0f05eb00e18.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/KOREA/__闲置__KOREA_10.png": {
+            "scale": 1.17,
+            "offsetX": -5,
+            "offsetY": 0
+        },
+        "/assets/liuhan/2e9846ef-9783-458d-ab5a-dc985750e1f9.png": {
+            "scale": 1.23,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/liuhan/3732678a-ee99-4efd-8362-6828aafe9527.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/liuhan/392125b8-699b-47a5-acdd-601adaaf7350.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/liuhan/ba20afd9-e03b-4011-8d8f-1781048a4107.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/liuhan/d710022d-3018-469d-93a0-40f7bd322a80.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/liuhan/__闲置__liuhan_25.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -30
+        },
+        "/assets/liuhan/lanzhou_zhaochongguo.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/liuhan/__闲置__liuhan_26.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/liuhan/xiyuduhu_banchao.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {

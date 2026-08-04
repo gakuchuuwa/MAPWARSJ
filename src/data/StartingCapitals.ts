@@ -104,7 +104,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'molaweiya': 'city_aoermuci',
   'damolaweiya': 'city_buernuo',
 
-  'luosi': 'city_jifu',
+'luosi': 'city_jifu',
   'liulike': 'city_nuofugeerdede',
   'mosike_gongguo': 'city_mosike',
   'fulajimier_gongguo': 'city_fulajimier',

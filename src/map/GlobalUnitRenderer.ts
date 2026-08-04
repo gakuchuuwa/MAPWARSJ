@@ -846,20 +846,24 @@ export class GlobalUnitRenderer {
 
             // ── [2026-08-04] 攻城视觉外推：整支方阵沿「背离城」方向推到据点图外缘 + 空隙 ──
             // 按城型图宽（攻城放大 ×2、city-scale 随 zoom）+ 4:3 方向加权（东西宽/南北窄），
-            // 全方向生效（旧版 2026-07-18 仅北面 18px）。只动渲染，战斗逻辑坐标不变。
+            // 全方向生效。**判定放宽**：凡目标为城（主攻/参战/排队/接近）都外推——2026-08-04 实测
+            // 多军团攻城时只有主攻 isSiegeAttacker，参战军团不设 → 旧判定压城。野战打军团 targetId 查不到城 → 不外推。
+            // 只动渲染，战斗逻辑坐标不变。
             const unitIdForGear = unit.id || 'unknown';
+            // 器械只给真正的攻城方（外推判定已放宽到"目标是城"，器械保持严格，参战/接近中不画器械）
             const activelySieging = unit.currentBattleType === 'siege' && (unit as any).isSiegeAttacker === true;
-            if (!useNavalVisual && activelySieging && unit.targetPos && isValidMapCoord(unit.targetPos)) {
+            const siegeCityId = (unit as any).targetCityId || (unit as any).targetId;
+            const siegeTargetCity = siegeCityId
+                ? (window as any).game?.cityManager?.getCity?.(siegeCityId)
+                : null;
+            if (!useNavalVisual && siegeTargetCity && unit.targetPos && isValidMapCoord(unit.targetPos)) {
                 const cityPt = this.map.latLngToContainerPoint([unit.targetPos.lat, unit.targetPos.lng]);
                 const dx = centerPoint.x - cityPt.x;
                 const dy = centerPoint.y - cityPt.y;
                 const len = Math.hypot(dx, dy);
                 if (len > 1) {
-                    const cityType = (window as any).game?.cityManager?.getCity?.(
-                        (unit as any).targetCityId || (unit as any).targetId
-                    )?.type as string | undefined;
-                    const baseW = GlobalUnitRenderer.CITY_ICON_WIDTH_BY_TYPE[cityType ?? 'small_city'] ?? 100;
-                    const zoom = this.map.getLeafletMap().getZoom();
+                    const baseW = GlobalUnitRenderer.CITY_ICON_WIDTH_BY_TYPE[siegeTargetCity.type] ?? 100;
+                    const zoom = this.map.getZoom();
                     const cityScale = Math.max(0, 1 + (zoom - 9) * 0.5); // 与 TerritorySystem.updateCityScales 一致
                     const halfW = (baseW / 2) * cityScale * 2; // 攻城 .city-under-siege scale(2)
                     const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;

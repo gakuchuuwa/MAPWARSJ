@@ -7,9 +7,12 @@
  *   未引用 + 内容重复（跨夹全库）→ __多余__{token}_{NN}.png   ← 主人审阅后手动删除的暂存标签
  *   未引用 + 独一无二           → __闲置__{token}_{NN}.png   ← 库存资源，随机池继续抽用
  *
+ * 留活口铁律（主人 2026-08-04 定）：重复组若没有安全副本（无被引用正本、chongfu 也没有），
+ *   推选一份留守标 __闲置__，其余才标 __多余__ ——保证把全部 __多余__ 删光也绝不丢图。
+ *
  * 每次启动自动重归类（含存量迁移）：
- *   · __闲置__ 名但内容重复 → 改 __多余__（如另一份后来入库）
- *   · __多余__ 名但已无重复 → 改回 __闲置__（如主人删掉了另一份副本）
+ *   · __闲置__ 名但内容重复（组内已有留守/安全副本）→ 改 __多余__（如另一份后来入库）
+ *   · __多余__ 名但已无重复，或被推选为留守 → 改回 __闲置__（如主人删掉了另一份副本）
  *
  * 铁律（AGENTS.md 立绘保护条款，绝对红线）：
  *   · 只 renameSync 同夹改名——没有任何删除/覆盖代码路径
@@ -112,6 +115,8 @@ function main() {
 
     /** @type {Map<string, number>} sha256 → 库内份数（含 chongfu 对照） */
     const hashCount = new Map();
+    /** @type {Set<string>} 组内有"安全副本"（被引用 or chongfu 只读夹）的 sha */
+    const protectedSha = new Set();
     /** @type {{folder:string, file:string, sha:string}[]} 可改名候选（非只读夹） */
     const candidates = [];
     /** 全库（含 chongfu）所有 png 文件名：编号全库唯一用 */
@@ -139,6 +144,7 @@ function main() {
             nextCache[rel] = { size: st.size, mtimeMs: st.mtimeMs, sha256: sha };
             hashCount.set(sha, (hashCount.get(sha) ?? 0) + 1);
             allNamesGlobal.push(f);
+            if (readonly || isReferenced(folder, f)) protectedSha.add(sha);
             if (!readonly) candidates.push({ folder, file: f, sha });
         }
     }
@@ -151,9 +157,32 @@ function main() {
     let dupGroups = 0;
     for (const n of hashCount.values()) if (n >= 2) dupGroups++;
 
+    // ── 3.5) 留活口（主人 2026-08-04 定）──
+    // 一组重复图若【没有任何安全副本】（无被引用正本、chongfu 里也没有），
+    // 全标 __多余__ = 主人按"多余可删"批量清理时会把该图删绝——做图心血白费。
+    // 现在这种组推选一名"留守"标 __闲置__，只把真正多出来的标 __多余__，
+    // 保证铁律：凡是名带 __多余__ 的，删光后库里必仍有一份相同内容存活。
+    // 留守推选（确定性）：优先已是 __闲置__ 名的（少一次改名），再按 夹名/文件名 排序取首个。
+    /** @type {Map<string, {folder:string, file:string}>} sha → 留守者 */
+    const keeperBySha = new Map();
+    for (const c of candidates) {
+        if (isReferenced(c.folder, c.file)) continue;
+        if ((hashCount.get(c.sha) ?? 0) < 2 || protectedSha.has(c.sha)) continue;
+        const cur = keeperBySha.get(c.sha);
+        const curIdle = cur ? IDLE_RE.test(cur.file) : false;
+        const cIdle = IDLE_RE.test(c.file);
+        const better = !cur
+            || (cIdle && !curIdle)
+            || (cIdle === curIdle
+                && `${c.folder}/${c.file}`.localeCompare(`${cur.folder}/${cur.file}`) < 0);
+        if (better) keeperBySha.set(c.sha, { folder: c.folder, file: c.file });
+    }
+
     for (const c of candidates) {
         if (isReferenced(c.folder, c.file)) continue; // 被引用 → 铁律不动
-        const isDup = (hashCount.get(c.sha) ?? 0) >= 2;
+        const keeper = keeperBySha.get(c.sha);
+        const isKeeper = !!keeper && keeper.folder === c.folder && keeper.file === c.file;
+        const isDup = (hashCount.get(c.sha) ?? 0) >= 2 && !isKeeper;
         const want = isDup ? '多余' : '闲置';
         const isIdleNamed = IDLE_RE.test(c.file);
         const isSurplusNamed = SURPLUS_RE.test(c.file);

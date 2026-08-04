@@ -1,40 +1,18 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/8/4 11:03:43（共 45 条）
+ * 生成时间：2026/8/4 14:35:26（共 22 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LINGNAN/__多余__LINGNAN_19.png": "/assets/BASHU/xiang_d_xiangdakun.png",
-    "/assets/CENTRAL/ranwei_d_ranmin.png": "/assets/CENTRAL/__多余__CENTRAL_01.png",
     "/assets/WESTERN/__多余__WESTERN_04.png": "/assets/CENTRAL_ASIA/hali_gedaerzi.png",
     "/assets/TIBET/__多余__TIBET_04.png": "/assets/CENTRAL_ASIA/qincha_baqiman.png",
     "/assets/WESTERN/__多余__WESTERN_01.png": "/assets/CENTRAL_ASIA/qincha_baqiman.png",
     "/assets/india/__多余__india_06.png": "/assets/CENTRAL_ASIA/safawei_d_abasi.png",
     "/assets/WESTERN/__多余__WESTERN_02.png": "/assets/CENTRAL_ASIA/wuhu_dukake.png",
     "/assets/india/__多余__india_07.png": "/assets/CENTRAL_ASIA/xisi_yakubu.png",
-    "/assets/india/__多余__india_01.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_05.png",
-    "/assets/india/__多余__india_02.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_06.png",
-    "/assets/india/__多余__india_03.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_07.png",
-    "/assets/india/__多余__india_04.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_08.png",
-    "/assets/india/__多余__india_05.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_09.png",
-    "/assets/india/boluo_damoboluo.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_10.png",
-    "/assets/india/deli_alawuding.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_11.png",
-    "/assets/india/fanyanna_xieer.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_12.png",
-    "/assets/india/jiashi_d_jiashiwang.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_13.png",
-    "/assets/india/jieri_jieriwang.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_14.png",
-    "/assets/india/kongque_zhantuoluojiduo.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_15.png",
-    "/assets/india/mojietuo_pinpisuoluo.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_16.png",
-    "/assets/india/mowoer_akeba.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_17.png",
-    "/assets/india/pangzha_halixinge.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_18.png",
-    "/assets/india/sumo_sumowang.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_19.png",
-    "/assets/india/xike_lanjite.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_20.png",
     "/assets/LINGNAN/__多余__LINGNAN_08.png": "/assets/DIANQIAN/luoyue_zhengce.png",
-    "/assets/WESTERN/tuoming_tuomin.png": "/assets/DIANQIAN/__多余__DIANQIAN_04.png",
-    "/assets/LINGNAN/xian_d_xianying.png": "/assets/DIANQIAN/__多余__DIANQIAN_06.png",
-    "/assets/LATIN/kelite_fukasi.png": "/assets/LATIN/__多余__LATIN_02.png",
-    "/assets/LATIN/maqidun_kashande.png": "/assets/LATIN/__多余__LATIN_01.png",
     "/assets/LINGNAN/zhuang_d_washifuren.png": "/assets/LINGNAN/__多余__LINGNAN_11.png",
-    "/assets/xianqin/__多余__xianqin_02.png": "/assets/NORTH/huo_songlaosheng.png",
     "/assets/STEPPE/__多余__STEPPE_02.png": "/assets/SLAVIC/jinzhang_badou.png",
     "/assets/STEPPE/bashekeer_kalasakaer.png": "/assets/STEPPE/__多余__STEPPE_05.png",
     "/assets/STEPPE/fuerjia_asitela.png": "/assets/STEPPE/__多余__STEPPE_03.png",
@@ -47,6 +25,5 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/WESTERN/__多余__WESTERN_05.png": "/assets/TIBET/__多余__CENTRAL_ASIA_04.png",
     "/assets/TIBET/kangba_suonuomugunbu.png": "/assets/TIBET/__多余__WESTERN_08.png",
     "/assets/TIBET/nvguo_mojie.png": "/assets/TIBET/__多余__TIBET_09.png",
-    "/assets/xianqin/quanrong_yiquhai.png": "/assets/xianqin/__多余__xianqin_01.png",
-    "/assets/zhaosong/shenshi_wentianxiang.png": "/assets/zhaosong/__多余__zhaosong_01.png"
+    "/assets/xianqin/quanrong_yiquhai.png": "/assets/xianqin/__多余__xianqin_01.png"
 };

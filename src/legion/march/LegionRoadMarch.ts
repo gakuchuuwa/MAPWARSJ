@@ -201,11 +201,11 @@ export function moveLegionToCity(
             getEuclideanDistance(currentPos, tailPos) < GameConfig.SIEGE.COMBAT_RADIUS * 2;
         const targetTowardStart =
             getEuclideanDistance(
-                { lat: retreatTarget.lat, lng: retreatTarget.lng },
+                { lat: retreatTarget.latitude, lng: retreatTarget.longitude },
                 startPos
             ) <
             getEuclideanDistance(
-                { lat: retreatTarget.lat, lng: retreatTarget.lng },
+                { lat: retreatTarget.latitude, lng: retreatTarget.longitude },
                 currentPos
             );
         if (atTail && targetTowardStart) {

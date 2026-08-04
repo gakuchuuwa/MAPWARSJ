@@ -911,6 +911,7 @@ export class CityAssetManager {
         'siluoboda': '斯洛',
         // ── 2026-08-04 新增：野地 @ 沃罗涅日 ──
         'yedi': '野地',
+        'luosi': '罗斯',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts
