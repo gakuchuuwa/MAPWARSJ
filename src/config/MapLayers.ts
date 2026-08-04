@@ -14,6 +14,10 @@ export const MAP_LAYER_ZINDEX = {
     GRID_LINES: 300,
     TERRITORY_POLYGON: 350,  // Below standard overlay? Default is 400.
 
+    // 海陆分界调试图层：压在势力色块之上（否则被涂满的地方看不清岸线），
+    // 但低于道路/据点/军团，开着也不挡战况
+    LAND_SEA_DEBUG: 360,
+
     // Infrastructure
     CONNECTIONS: 450,        // Above territory, below markers
 
@@ -46,6 +50,7 @@ export const MAP_LAYER_ZINDEX = {
 } as const;
 
 export const MAP_PANES = {
+    LAND_SEA_DEBUG: 'landSeaDebugPane',
     UNITS: 'unitsPane',
     UNITS_LOW: 'unitsLowPane',
     EFFECTS: 'effectsPane',

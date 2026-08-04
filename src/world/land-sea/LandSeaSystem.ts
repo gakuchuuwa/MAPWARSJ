@@ -113,6 +113,29 @@ export class LandSeaSystem {
         return !this.isSeaAt(latLng);
     }
 
+    /**
+     * 调试可视化专用：**不读写 resultCache、不触发拉瓦片**的海陆探测。
+     *
+     * 为什么不能直接用 isSeaAt：分界线图层一屏要采上万点，每点都是不同的缓存键，
+     * resultCache 上限 8000 且满了就整表 clear ⇒ 一次重绘能把军团行军正在用的判定结果
+     * 冲掉十几遍。此方法只读采样器，判据与 isSeaAt 逐条一致（掩膜 AND 海拔<0）。
+     *
+     * 返回 'pending' = 高程瓦片还没到，游戏此刻按「陆」处理但其实并不知道；
+     * 分界图层据此画灰色，避免主人把「还没加载」误读成「这里是陆地」。
+     */
+    static probeLandSea(lat: number, lng: number): 'sea' | 'land' | 'pending' {
+        const water = this.waterSampler.isWaterSync(lat, lng);
+        // 掩膜明确说不是水 → 一定不是海（与 isSeaAt 同）
+        if (water === false) return 'land';
+
+        const elev = this.sampler.getElevationSync(lat, lng);
+        // 高程未到：isSeaAt 此时返回 false(陆)，但那是「不知道」而非「是陆」
+        if (elev === null) return 'pending';
+
+        // water === null（掩膜未到）时 isSeaAt 回退纯海拔判据，这里如实反映同一答案
+        return isSeaElevation(elev) ? 'sea' : 'land';
+    }
+
     static getLandSeaKind(latLng: LatLng): LandSeaKind {
         return this.isSeaAt(latLng) ? 'sea' : 'land';
     }
