@@ -106,16 +106,19 @@ export class GameConfig {
     };
     static COMBAT = {
         /**
-         * 战斗时长只有两个值，没有第三种情况（2026-07-27 主人定）：
-         *   双方都有将 → 30 秒（三幕墙钟预算 12+12+6：开战句 / 双方技能 / 溃败）
-         *   其余一切   →  9 秒（一方有将、纯兵对砍）
+         * 战斗时长（2026-08-04 主人定：双将战按兵力比动态 10–30 秒，取代固定 30 秒）：
+         *   双方都有将 → 兵力比动态：1:1 = 30 秒（三幕墙钟预算 12+12+6：开战句 / 双方技能 / 溃败），
+         *                 兵力每翻一倍 −6.7 秒，≥8:1 贴 10 秒地板（1万 vs 5万 ≈ 14.5 秒）。
+         *   其余一切   →  9 秒（一方有将、纯兵对砍）。
          * 导演/剧本时长也钳制在 [9, 30]。
          */
         BATTLE_DURATION_BOTH_GENERALS_SEC: 30,
+        /** 双将战时长地板：兵力比再悬殊也至少打 10 秒（2026-08-04 主人定） */
+        BATTLE_DURATION_MIN_RATIO_SEC: 10,
         BATTLE_DURATION_PARTIAL_GENERAL_SEC: 9,
         /**
          * 每编入一只援军给双将战加的秒数（2026-07-27 主人定）。
-         * 累加：来 N 只 = 30 + 10×N，攻守双方的援军都算，封顶 BATTLE_DURATION_MAX_SEC。
+         * 累加：来 N 只 = 兵力比基础(10–30) + 10×N，攻守双方的援军都算，封顶 BATTLE_DURATION_MAX_SEC。
          * 只作用于双将战；9 秒的非双将战不加（但援军带将把战斗变成双将战时，按双将走）。
          */
         BATTLE_DURATION_REINFORCEMENT_BONUS_SEC: 10,
@@ -353,8 +356,8 @@ export class GameConfig {
 }
 
 /**
- * 钳制到 [floor, 30] 游戏秒（导演时长 / 事件配置均须走此函数）。
- * @param minSec 可选下限；双将战传 30，默认非双将 9s。
+ * 钳制到 [floor, 上限] 游戏秒（导演时长 / 事件配置均须走此函数）。
+ * @param minSec 可选下限；双将战传 10（BATTLE_DURATION_MIN_RATIO_SEC），默认非双将 9s。
  */
 export function clampBattleDurationSec(seconds: number, minSec?: number, maxSec?: number): number {
     const c = GameConfig.COMBAT;

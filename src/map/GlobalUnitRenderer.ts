@@ -136,6 +136,7 @@ export class GlobalUnitRenderer {
         big_city: 140, medium_city: 120, small_city: 100, pass: 100,
     };
     private static readonly CITY_ICON_HW_RATIO = 765 / 1024;
+    /** 据点图边缘 ↔ 方阵**边缘**的真实空隙（像素）。[2026-08-04 修] 以前量到方阵中心，等于没有空隙 */
     private static readonly SIEGE_GAP_PX = 21;
 
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
@@ -872,9 +873,17 @@ export class GlobalUnitRenderer {
                     const cosA = Math.abs(dx) / len; // 东西占比 → 图宽侧
                     const sinA = Math.abs(dy) / len; // 南北占比 → 图高侧
                     const halfPx = halfW * cosA + halfH * sinA;
+                    // [2026-08-04 修] 必须再减掉方阵自身半径，否则 SIEGE_GAP_PX 量的是
+                    // 「城图边缘 → 方阵中心」，前排士兵会压进城图 60~76px（zoom10 实测）。
+                    const ext = LegionPhalanxDrawer.getPhalanxHalfExtent(
+                        scale * (unit.previewScale ?? 1),
+                        unit.cultureSlots,
+                    );
+                    const unitHalfPx = ext.x * cosA + ext.y * sinA;
                     const push = Math.max(
                         0,
                         halfPx
+                            + unitHalfPx
                             + GlobalUnitRenderer.SIEGE_GAP_PX
                             - len
                     );
