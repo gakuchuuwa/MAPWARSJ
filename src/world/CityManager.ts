@@ -697,6 +697,24 @@ export class CityManager {
     }
 
     /**
+     * 跟拍军中途作为援军编入已开打的攻城：补开据点放大（开战时跟拍不在场则未放大）。
+     * 已在放大态则 noop；取消未走的延迟缩回。
+     */
+    public enableSiegeCityZoom(cityId: string): void {
+        const city = this.getCity(cityId);
+        if (!city) return;
+        if (this.territorySystem.isCitySiegeZoomed(cityId)) return;
+        const pending = this.siegeZoomRestoreTimers.get(cityId);
+        if (pending) {
+            clearTimeout(pending);
+            this.siegeZoomRestoreTimers.delete(cityId);
+        }
+        const scale = getSiegeCityBuildingStackScale(city.type);
+        this.territorySystem.setCitySiegeZoom(cityId, true);
+        this.siegeEffectRenderer.setCityVisualZoom(cityId, scale);
+    }
+
+    /**
      * @param immediate true=立即清场（中止/复国等），不等延迟
      * @param restoreDelayMs 非立即时据点缩回延迟：正常分出胜负 5s（2026-08-04）
      */

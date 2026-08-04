@@ -526,7 +526,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'chu_d': 'city_qianshan',
 'hu_d': 'city_ninghai',
     'pishan': 'city_pishan',
-    'tuerhute': 'city_yingsuochuan',
+'tuerhute': 'city_yingsuochuan',
     'weili': 'city_weili',
 
 'qingyi': 'city_yandao',
@@ -915,7 +915,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'wenling': 'city_penghu',
     'qianzhou': 'city_fengtian',
 'wuyue': 'city_hangzhou',
-    'xiyuduhu': 'city_taqian',
+'xiyuduhu': 'city_taqian',
     'taizhou': 'city_hailing',
     // ── 2026-06-29 新增：邵州 ──
 'shaozhou_d': 'city_shaozhou',

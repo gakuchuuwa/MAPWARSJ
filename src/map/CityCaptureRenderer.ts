@@ -71,7 +71,8 @@ export class CityCaptureRenderer {
             const speed = 1.0 + Math.random() * 4.0;
             // const spread = Math.random() * 20; // Initial random spread
 
-            // 2026-07-18 主人定：烟雾加大拖长——城破烟要盖得住据点缩回
+            // 2026-08-04：缩回改为战后 5s，烟须拖到缩回时尚有余罩；
+            // 仍不学火焰「满 5s 浓密」——城破爽点是新旗从烟里显出来，闷满会糊住换旗
             const size = 30 + Math.random() * 40;
             particles.push({
                 x: (Math.random() - 0.5) * 40,
@@ -79,9 +80,9 @@ export class CityCaptureRenderer {
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 life: 1.0,
-                // 2026-07-18 主人定：拖尾拉长（浓密期~2→2.5s，余尘最长~6.7→8.3s）；
-                // 勿学火焰拉满5秒——城破的爽点是新旗从烟里显出来，烟太持久会闷住换旗
-                decay: 0.002 + Math.random() * 0.006,
+                // 原 0.002–0.008（浓~2.5s / 余尘~8s，对 1–2s 缩回）；
+                // 现 0.0014–0.0028：约 3s 仍较浓，5s 缩回时多数粒 life≈0.2–0.6 能罩一下，余尘 ~6–12s
+                decay: 0.0014 + Math.random() * 0.0014,
                 size: size,
                 color: dustColor,
                 texture: this.getOrCreateTexture(dustColor, Math.ceil(size * 2))
