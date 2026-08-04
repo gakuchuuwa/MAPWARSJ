@@ -1241,8 +1241,10 @@ export class CombatUI {
             // 主力乘区行绝不展示援军合兵标签，统一强制隐藏
             joinBadgeEl.style.display = 'none';
 
-            // 确定主力乘区行已展示的主力单位，避免援军行重复
-            const primaryBattler = this.pickPrimaryDisplayUnit(units);
+            // 确定主力乘区行已展示的主力单位，避免援军行重复——
+            // 必须与主将行同源（pickArrivalDisplayUnit，带将>精锐>其余），
+            // 否则按分数选（pickPrimaryDisplayUnit）会漏掉主将行已显示的单位，造成重复（2026-08-04）。
+            const primaryBattler = this.pickArrivalDisplayUnit(units, side) ?? units[0];
 
             // 过滤掉主力乘区行已展示的主力单位
             // 侧栏援军行展现该侧额外的野外援军或据点城防驻军（分行显示各自的名字与兵力）
@@ -1252,9 +1254,12 @@ export class CombatUI {
                 return true;
             });
 
-            // 逐行/分隔显示每个单位的独立名字与兵力
+            // 逐行显示每个单位的独立名字与兵力——一行只显示一支部队（GAME_DIRECTION L570「列出主力 + 各路援军名」，
+            // 过多时显示前几个 + 「余 X 部」，2026-08-04 主人重申；勿改回 • 横排挤一行）
+            const MAX_REINF_LINES = 3;
             const lines: string[] = [];
-            for (const u of reinfUnits) {
+            const shown = reinfUnits.slice(0, MAX_REINF_LINES);
+            for (const u of shown) {
                 const dName = u.name || (u.unitType === 'city' ? '据点驻军' : '援军');
                 const t = Math.floor(u.troops);
                 const tStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
@@ -1263,10 +1268,14 @@ export class CombatUI {
                 const line = isAtt
                     ? `${ns}<span style="margin-left: 6px;">${ts}</span>`
                     : `<span style="margin-right: 6px;">${ts}</span>${ns}`;
-                lines.push(`<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; white-space: nowrap;">${line}</div>`);
+                lines.push(`<div style="display: flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; white-space: nowrap; line-height: 1.35;">${line}</div>`);
             }
-            const sep = `<span style="margin: 0 6px; opacity: 0.45; color: #ffd700; font-size: 10px;">•</span>`;
-            nameEl.innerHTML = lines.join(sep);
+            const extra = reinfUnits.length - shown.length;
+            if (extra > 0) {
+                const more = `<span style="opacity: 0.65; color: rgba(255, 235, 200, 0.9);">余 ${extra} 部</span>`;
+                lines.push(`<div style="display: flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; white-space: nowrap; line-height: 1.35; margin-top: 1px;">${more}</div>`);
+            }
+            nameEl.innerHTML = lines.join('');
 
             // 全局查找该侧任意有合兵记录的存活单位（无论是主力还是援军），统一在援军行对齐展示标签
             const activeUnits = units.filter(u => !u.isDestroyed && u.troops > 0);
@@ -2137,7 +2146,7 @@ export class CombatUI {
             const t = Math.max(0, Math.floor(troops));
             const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
             totalBadge.innerHTML = troopStr;
-            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}现役兵力：${t} 人`;
+            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}主将部队兵力：${t} 人（援军/驻军见下行）`;
             totalBadge.style.display = 'inline-block';
         }
     }
@@ -2832,30 +2841,17 @@ export class CombatUI {
         if (activeUnits.length === 0) return '';
 
         // 番号与立绘同源：带武将 > 精锐番号 > 其余，同级先来后到（pickArrivalDisplayUnit）
+        // 一行只显示一支部队（GAME_DIRECTION L570「列出主力 + 各路援军名」，2026-08-04 主人重申）——
+        // 主将行 = 主力一支；其余部队由 updateReinforcements 援军行逐行列出。
         const primary = this.pickArrivalDisplayUnit(activeUnits, side) ?? activeUnits[0];
-        const primaryName = this.resolveBattleUnitListName(primary);
-        if (!primaryName) return '';
+
+        const displayName = this.resolveBattleUnitListName(primary);
+        if (!displayName) return '';
 
         const isAtt = side === 'attacker';
+        const nameSpan = `<span style="white-space: nowrap;">${displayName}</span>`;
 
-        // 2026-08-04 守军/援军同列：主将行列出本侧全部存活部队名（主力在前），与总兵力对应——
-        // 避免「带将援军顶替无将守军 → 面板看起来只有一支军队」（文登案例：完山虎贲 7991 + 文登驻军 403）。
-        // 同名（同番号多支军团）只列一次，兵力已在总兵力中体现。
-        const uniqueRest = [
-            ...new Set(
-                activeUnits
-                    .filter(u => u.id !== primary.id)
-                    .map(u => this.resolveBattleUnitListName(u))
-                    .filter((n): n is string => !!n),
-            ),
-        ];
-
-        const spans = [primaryName, ...uniqueRest].map(n =>
-            `<span style="white-space: nowrap;">${n}</span>`,
-        );
-        const sep = `<span style="margin: 0 5px; opacity: 0.5; color: #ffd700; font-size: 10px;">·</span>`;
-
-        return `<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'}; flex-wrap: wrap;">${spans.join(sep)}</div>`;
+        return `<div style="display: inline-flex; align-items: center; justify-content: ${isAtt ? 'flex-start' : 'flex-end'};">${nameSpan}</div>`;
     }
 
     // ============================================================
@@ -3931,9 +3927,24 @@ export class CombatUI {
             }
         }
 
-        // 侧栏「名称: 兵力」+ 各自小血条；中央主条为双方兵力比
-        this.renderSideLabel('attacker', this.attackerDisplayName, attCurrent);
-        this.renderSideLabel('defender', this.defenderDisplayName, defCurrent);
+        // 侧栏「名称: 兵力」+ 各自小血条；中央主条为双方兵力比。
+        // 主将行名字 = 单支部队（buildWaveGroupedSideName 的 primary），兵力徽章必须同源显示该部队自己的兵力——
+        // 否则出现「名字是完山虎贲、数字却是全队总和」的名字兵力错位（2026-08-04 文登/悉万斤案例）。
+        // 其余部队（援军/驻军）由 updateReinforcements 援军行逐行列出，各自兵力齐全。
+        const attUnitsNow = this.boundRegionalBattleField
+            ? this.boundRegionalBattleField.getAttackerUnits()
+            : (this.currentRegionalUnits?.attackers ?? []);
+        const defUnitsNow = this.boundRegionalBattleField
+            ? this.boundRegionalBattleField.getDefenderUnits()
+            : (this.currentRegionalUnits?.defenders ?? []);
+        const attPrimary = attUnitsNow.length > 0
+            ? (this.pickArrivalDisplayUnit(attUnitsNow, 'attacker') ?? attUnitsNow[0])
+            : null;
+        const defPrimary = defUnitsNow.length > 0
+            ? (this.pickArrivalDisplayUnit(defUnitsNow, 'defender') ?? defUnitsNow[0])
+            : null;
+        this.renderSideLabel('attacker', this.attackerDisplayName, attPrimary?.troops ?? attCurrent);
+        this.renderSideLabel('defender', this.defenderDisplayName, defPrimary?.troops ?? defCurrent);
         this.updateFactionDisplay();
         this.updateMultiplierBadges(
             this.getPrimaryBattler('attacker'),
