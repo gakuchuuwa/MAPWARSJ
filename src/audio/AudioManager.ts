@@ -133,6 +133,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     conquest_of_paradise: 0.56, // -15.85 → 最响，大幅压低（2026-08-04 通用随机曲）
     fallen_army: 0.61,   // -16.57 → 大幅压低（2026-08-04 通用随机曲）
     game_of_thrones: 0.72, // -17.99 → 压低（2026-08-04 通用随机曲）
+    shadow_assassin: 0.63, // -16.89 → 压低（2026-08-04 通用随机曲·暗影刺客）
     GERMANIC: 0.60,      // -16.53 → 大幅压低（2026-08-04 新增 The Mass）
     daming: 0.78,        // -18.70（2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
     DIANQIAN: 1.0,       // -20.9
@@ -172,10 +173,11 @@ const BGM_REGION_GAIN: Record<string, number> = {
  */
 const BGM_ROTATION_FOLDERS: readonly string[] = [
     ...REGION_ORDER,
-    'daming', 'litang', 'liuhan', 'manqing', 'pugan', 'wuzhou', 'xianqin', 'yingqin', 'zhaosong',
+    // 势力夹专属曲（9） + 印度首选（india=Nijamena，2026-08-04 GAKU 定）
+    'daming', 'litang', 'liuhan', 'manqing', 'pugan', 'wuzhou', 'xianqin', 'yingqin', 'zhaosong', 'india',
     // 无文化首选的通用随机曲（2026-08-04 GAKU 加：只进轮播池，永不作首选）
     'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet', 'hes_a_pirate', 'conquest_of_paradise',
-    'game_of_thrones',
+    'game_of_thrones', 'shadow_assassin',
 ];
 
 function mergeSettings(raw: unknown): AudioSettings {

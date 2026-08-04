@@ -2723,6 +2723,10 @@ export class CombatUI {
         const opponentHasGeneral = battleSide === 'attacker'
             ? !!this.rightGeneralNameTag.dataset.generalId
             : !!this.leftGeneralNameTag.dataset.generalId;
+        // 2026-08-04 GAKU 拍板：非双将战（对手无将）战斗仅 9 秒，完整技能句
+        // （武将+技名+精锐+八字诀 ≈5s）念不完——只保留视觉（Cut-in/标签/音效），不念语音。
+        // 双将战（30s 起）照常播报。false = 不播，调用方自排视觉脉冲。
+        if (!opponentHasGeneral) return false;
         // 技能八字诀按兵力比势选，与该侧视角一致
         const bfRatio = bf.getInitialAttDefRatio();
         const sideR = battleSide === 'attacker' ? bfRatio : (1 / Math.max(bfRatio, 0.001));

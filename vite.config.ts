@@ -72,6 +72,13 @@ function markBatchSaveWrite(): void {
     batchSaveSuppressReloadUntil = Date.now() + 5000;
 }
 
+// 道路编辑器保存（/api/save-roads）：只拦不补——编辑道路时常连续保存，
+// 每次整页刷新都会打断编辑（2026-08-04 GAKU 反馈「编辑道路时游戏突然刷新」）。
+let roadSaveSuppressReloadUntil = 0;
+function markRoadSaveWrite(): void {
+    roadSaveSuppressReloadUntil = Date.now() + 8000;
+}
+
 // ── 运行闸门（2026-08-03 主人定，取代 08-01 错定的「直播按钮」判据）─────────
 // 推演正在运行 → 改文件不整页刷新（游戏在跑=可能正在直播，刷新会搅乱直播画面）；
 // 推演暂停/未开播 → 说明主人正在修游戏，改文件立刻刷新，
@@ -200,7 +207,7 @@ export default defineConfig({
                 let pendingBatchReloadTimer: ReturnType<typeof setTimeout> | null = null;
                 const sendQueuedFullReload = (): void => {
                     // 若任一抑制窗仍开着（期间又有保存顺延了窗口），继续等到全部关闭
-                    const wait = Math.max(portraitDevSuppressReloadUntil, batchSaveSuppressReloadUntil) - Date.now();
+                    const wait = Math.max(portraitDevSuppressReloadUntil, batchSaveSuppressReloadUntil, roadSaveSuppressReloadUntil) - Date.now();
                     if (wait > 0) {
                         pendingBatchReloadTimer = setTimeout(sendQueuedFullReload, wait + 250);
                         return;
@@ -254,18 +261,19 @@ export default defineConfig({
                         const now = Date.now();
                         const inPortrait = now < portraitDevSuppressReloadUntil;
                         const inBatch = now < batchSaveSuppressReloadUntil;
-                        if (!inPortrait && !inBatch && isRunGateClosed()) {
+                        const inRoad = now < roadSaveSuppressReloadUntil;
+                        if (!inPortrait && !inBatch && !inRoad && isRunGateClosed()) {
                             runGateQueuedReload = true;
                             console.log('[HMR-Suppress] 已拦截整页刷新（推演运行中；暂停推演即刷新）');
                             return;
                         }
-                        if (inPortrait || inBatch) {
-                            if (inBatch && !inPortrait) {
+                        if (inPortrait || inBatch || inRoad) {
+                            if (inBatch && !inPortrait && !inRoad) {
                                 if (pendingBatchReloadTimer) clearTimeout(pendingBatchReloadTimer);
                                 pendingBatchReloadTimer = setTimeout(sendQueuedFullReload, batchSaveSuppressReloadUntil - now + 250);
                                 console.log('[HMR-Suppress] 已拦截写盘触发的整页刷新（批量窗口，结束后自动补发）');
                             } else {
-                                console.log('[HMR-Suppress] 已拦截写盘触发的整页刷新（立绘窗口，不补发）');
+                                console.log('[HMR-Suppress] 已拦截写盘触发的整页刷新（立绘/道路窗口，不补发）');
                             }
                             return;
                         }
@@ -349,6 +357,8 @@ export default defineConfig({
                         try {
                             const filePath = path.resolve(__dirname, 'src/data/VectorRoadData.ts');
                             fs.writeFileSync(filePath, body, 'utf-8');
+                            // 2026-08-04：道路保存只拦不补——编辑道路时不整页刷新（刷新会丢编辑器状态）
+                            markRoadSaveWrite();
                             const bytes = Buffer.byteLength(body, 'utf-8');
                             console.log(`✅ [SaveRoads] Saved ${bytes} bytes to ${filePath}`);
                             res.setHeader('Content-Type', 'application/json');

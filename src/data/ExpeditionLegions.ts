@@ -206,6 +206,7 @@ export function applyExpeditionEliteRename(
   army: LegionEliteLookup & {
     name: string;
     expeditionSavedName: string | null;
+    isElite?: boolean;
   },
 ): boolean {
   const elite = getLegionEliteLegionName(army);
@@ -216,6 +217,9 @@ export function applyExpeditionEliteRename(
     }
     army.name = elite;
   }
+  // 2026-08-04 修复：远征军团必为精锐——改名时必须标 isElite，
+  // 否则精锐环（第 7 环）与战斗面板精锐标签不生效（名字=番号但军×1.0）。
+  army.isElite = true;
   // 将领不在此处绑定：档案在 FactionGenerals.ts，出场限 STARTING_CAPITALS 锚点据点
   applyLegionCultureComposition(army as unknown as LegionCompositionTarget);
   return true;

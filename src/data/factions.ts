@@ -128,11 +128,17 @@ export const FACTIONS: Faction[] = [
   { id: 'mengtainiya', name: '蒙泰尼亚' },
   { id: 'litaowan', name: '立陶宛' },
   { id: 'bolan', name: '波兰' },
+  // ── 2026-08-04 新增：大波兰（波兹南，大波兰公国/王国核心）──
+  { id: 'dabolan', name: '波兰亚' },
   { id: 'piyasite', name: '皮雅斯特' },
   { id: 'baojian_qishi', name: '宝剑骑士' },
   { id: 'teweier_gongguo', name: '特维公国' },
   { id: 'suzidaer', name: '苏兹达尔' },
   { id: 'gesake', name: '哥萨克' },
+  // ── 2026-08-04 新增：斯洛博达（哈尔科夫，斯洛博达乌克兰·哈尔科夫团治所）──
+  { id: 'siluoboda', name: '斯洛博达' },
+  // ── 2026-08-04 新增：野地（沃罗涅日，狄野南疆要塞）──
+  { id: 'yedi', name: '野地' },
   { id: 'moerdaweiya', name: '摩尔达维亚' },
   { id: 'walajiyia', name: '瓦拉几亚' },
   { id: 'tiaodun_qishi', name: '条顿骑士' },
@@ -1109,7 +1115,8 @@ export const FACTIONS: Faction[] = [
     { id: 'feiyaka', name: '费雅喀' },                     // 费雅喀(黑龙江/奇集), Feiyaka
     // 尼夫赫(黑龙江/努托), Nivkh
 
-    { id: 'anushidgin', name: '伊勒巴斯' },                 // 伊勒巴斯(希瓦), Ilbars/Anush Tegin
+    { id: 'anushidgin', name: '伊勒巴斯' },
+                 // 伊勒巴斯(希瓦), Ilbars/Anush Tegin
     { id: 'nanjie', name: '南杰' },                         // 南杰(日土宗), Nanjie
 
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
@@ -1772,6 +1779,8 @@ export const FACTIONS: Faction[] = [
     { id: 'safawei_d', name: '萨法维' },
     { id: 'sumeier', name: '苏美尔' },
     { id: 'ayoubu', name: '阿尤布' },
+    // ── 2026-08-04 新增：奥斯若恩（埃德萨，奥斯若恩国都／十字军伯国）──
+    { id: 'aosiruowen', name: '奥斯若恩' },
     { id: 'kesa', name: '可萨' },
     { id: 'aiaoniya', name: '爱奥尼亚' },
     { id: 'jialatai', name: '加拉太' },

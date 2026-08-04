@@ -482,7 +482,7 @@ export class CityAssetManager {
         'nanai': '那乃',
         'feiyaka': '费雅',
 
-        'anushidgin': '阿努',
+'anushidgin': '阿努',
         'nanjie': '南杰',
 'gandenpozhang': '冈底',
 'dawoer': '嫩江',
@@ -876,6 +876,8 @@ export class CityAssetManager {
         'safawei_d': '萨法',
         'sumeier': '苏美',
         'ayoubu': '阿尤',
+        // ── 2026-08-04 新增：奥斯若恩 @ 埃德萨 ──
+        'aosiruowen': '奥斯',
         'kesa': '可萨',
         'aiaoniya': '爱奥',
         'jialatai': '加拉',
@@ -903,6 +905,12 @@ export class CityAssetManager {
         'buni': '布匿',
         'guadaer': '瓜达',
         'baojian_qishi': '宝剑',
+        // ── 2026-08-04 新增：大波兰 @ 波兹南 ──
+'dabolan': '大波',
+        // ── 2026-08-04 新增：斯洛博达 @ 哈尔科夫 ──
+        'siluoboda': '斯洛',
+        // ── 2026-08-04 新增：野地 @ 沃罗涅日 ──
+        'yedi': '野地',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts
