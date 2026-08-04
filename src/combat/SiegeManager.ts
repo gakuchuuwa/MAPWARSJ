@@ -82,7 +82,8 @@ export class SiegeManager {
     /** 等待环基准：比开战圈稍外（攻城军停在 COMBAT_RADIUS≈0.1，等待者最近停 0.2） */
     private static readonly WAIT_RING_BASE = GameConfig.SIEGE.COMBAT_RADIUS + 0.1;
     /** 同城每多一个等待者，停步环外推一档（同路来的自然前后排开，不同路来的方向本就不同） */
-    private static readonly WAIT_RING_SPACING = 0.05;
+    /** 第三方排队间距：2026-08-04 0.05→0.10（≈阵列宽度 42px/0.12°），同路排队不重叠 */
+    private static readonly WAIT_RING_SPACING = 0.10;
 
     private getReinforcementJoinDeps(): ReinforcementJoinDeps {
         return {
