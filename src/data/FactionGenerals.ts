@@ -420,10 +420,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     babuer: { generalId: 'babuer_babuer', generalName: '巴布尔', portrait: '/assets/CENTRAL_ASIA/babuer_babuer.png' },
     danmai: { generalId: 'danmai_abusalong', generalName: '阿布萨隆', portrait: '/assets/GERMANIC/danmai_abusalong.png' },
     ruidian_si: { generalId: 'ruidian_si_biergeyaer', generalName: '比尔格·雅尔', portrait: '/assets/GERMANIC/ruidian_si_biergeyaer.png' },
-    kasidiliya: { generalId: 'kasidiliya_afangsuoshiyi', generalName: '阿方索十一世', portrait: '/assets/LATIN/kasidiliya_afangsuoshiyi.png' },
-    duluo: { generalId: 'duluo_sangqiao', generalName: '桑乔一世', portrait: '/assets/LATIN/duluo_sangqiao.png' },
-    teluoyi: { generalId: 'teluoyi_heketuoer', generalName: '赫克托耳', portrait: '/assets/WEST_ASIA/teluoyi_heketuoer.png' },
-    alabo: { generalId: 'alabo_qiyade', generalName: '齐亚德', portrait: '/assets/WEST_ASIA/alabo_qiyade.png' },
+    kasidiliya: { generalId: 'kasidiliya_afangsuoshiyi', generalName: '阿方索十一世', portrait: '/assets/LATIN/kasidiliya_afangsuoshiyishi.png' },
+    duluo: { generalId: 'duluo_sangqiao', generalName: '桑乔一世', portrait: '/assets/LATIN/duluo_sangqiaoyishi.png' },
+    teluoyi: { generalId: 'teluoyi_heketuoer', generalName: '赫克托耳', portrait: '/assets/LATIN/teluoyi_heketuoer.png' },
+    alabo: { generalId: 'alabo_qiyade', generalName: '齐亚德', portrait: '/assets/CENTRAL_ASIA/alabo_qiyade.png' },
     xijue: { generalId: 'xijue_ganyanshou', generalName: '郅支', portrait: '/assets/STEPPE/xijue_zhizhichanyu.png' },
     // 养吉干·咸海 / 真珠河·乌护 宁缺毋滥
 

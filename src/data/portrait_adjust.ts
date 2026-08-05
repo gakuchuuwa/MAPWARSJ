@@ -5308,7 +5308,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/LATIN/boootiya_yibaminongda.png": {
-            "scale": 1.3,
+            "scale": 1.36,
             "offsetX": 0,
             "offsetY": 51
         },
@@ -5330,7 +5330,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/LATIN/__闲置__LATIN_08.png": {
             "scale": 1.07,
             "offsetX": 0,
-            "offsetY": 33
+            "offsetY": 35
         },
         "/assets/LATIN/xila_dimisituokeli.png": {
             "scale": 1,
@@ -5348,12 +5348,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/LATIN/bohepingyuan_diaoduolike.png": {
-            "scale": 1.11,
+            "scale": 1.19,
             "offsetX": 0,
             "offsetY": 5
         },
         "/assets/LATIN/__闲置__LATIN_03.png": {
-            "scale": 1.17,
+            "scale": 1.19,
             "offsetX": 0,
             "offsetY": 14
         },
@@ -5443,7 +5443,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/LATIN/__闲置__LATIN_04.png": {
-            "scale": 1,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -5518,7 +5518,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/LATIN/aguelabu_aokeba.png": {
-            "scale": 0.96,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": 13
         },
@@ -5803,7 +5803,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/LATIN/bulietani_alan.png": {
-            "scale": 1,
+            "scale": 0.99,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -6376,6 +6376,81 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 8
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_17.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/CENTRAL_ASIA/c30e386a-35e2-4e44-8c30-ff68bbc6bbe2.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/CENTRAL_ASIA/babuer_babuer.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/GERMANIC/b4137680-f659-4e14-b6f7-2c052db96360.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/GERMANIC/ba5fa2bb-b221-4e04-8ce4-205ee6f3df97.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/GERMANIC/danmai_abusalong.png": {
+            "scale": 0.99,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/GERMANIC/ruidian_si_biergeyaer.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/LATIN/762029ef-008c-4952-83f5-bb31f65a59ef.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/LATIN/8edc4081-7858-4796-9963-add740e86e91.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/LATIN/kasidiliya_afangsuoshiyishi.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/LATIN/duluo_sangqiaoyishi.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/LATIN/f24ed8a0-04f9-45ce-b620-c6f9c1fec2e7.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/LATIN/teluoyi_heketuoer.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/CENTRAL_ASIA/f4161a40-491d-4edc-a118-e602b3d6a575.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/CENTRAL_ASIA/alabo_qiyade.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": 9
         }
     },
     "folderGuides": {
