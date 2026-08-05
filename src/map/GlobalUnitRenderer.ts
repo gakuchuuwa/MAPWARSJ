@@ -313,7 +313,8 @@ export class GlobalUnitRenderer {
         const list: IAnimatedUnit[] = [];
         for (let i = 0; i < this.sortedUnitsCache.length; i++) {
             const unit = this.sortedUnitsCache[i];
-            if ((unit as any).visible === false) continue;
+            // 阵亡尸体必须画出（神出鬼没等可能在 destroy 前把 visible 关掉）
+            if ((unit as any).visible === false && !unit.isDestroyed) continue;
             if (!isValidMapCoord(unit.getPosition())) continue;
             if (!this.isUnitInContainerView(unit)) continue;
             list.push(unit);
@@ -602,12 +603,12 @@ export class GlobalUnitRenderer {
             unit.lastDirection = Math.floor(Math.random() * 8);
         }
 
-        // [NEW] Check for battle end signal to clear corpses
+        // 战斗结束：胜军清方阵战损格；阵亡军须留尸体（对齐水军 drawNaval 对 DEATH 不 reset）
         const id = unit.id || 'unknown';
-        const isFighting = unit.currentBattleType !== null; // OR unit.isAttacking?
+        const isFighting = unit.currentBattleType !== null;
         const wasFighting = this.unitFightingStates.get(id) || false;
 
-        if (wasFighting && !isFighting) {
+        if (wasFighting && !isFighting && !unit.isDestroyed) {
             // 只重置方阵/额外弓步状态；器械 Map 保留给战后 4s 渐隐
             LegionPhalanxDrawer.resetUnit(id);
         }

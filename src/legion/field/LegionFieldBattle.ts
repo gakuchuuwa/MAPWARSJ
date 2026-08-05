@@ -75,8 +75,8 @@ function legionToFieldAdapter(
         },
         () => {
             markLegionAnnihilationFeed(legion, side, battleCityName, 'field');
+            // 尸体由 Army.destroy + LegionManager 延迟 removeArmy（CORPSE_DISPLAY_MS）统一处理
             legion.destroy();
-            deps.removeArmy(legion);
         }
     );
 }

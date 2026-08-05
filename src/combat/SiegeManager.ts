@@ -1108,8 +1108,8 @@ export class SiegeManager {
                 () => { siegeLog(`[Siege] Defender Legion ${legion.name} Victory`); },
                 () => {
                     markLegionAnnihilationFeed(legion, 'defender', targetCity.name, 'siege', legionAdapter.battleOverriddenSkillId);
+                    // 尸体由 Army.destroy + LegionManager 延迟 removeArmy（CORPSE_DISPLAY_MS）统一处理
                     legion.destroy();
-                    this.legionManager.removeArmy(legion);
                 }
             );
             defenderUnits.push(legionAdapter);
@@ -1130,8 +1130,8 @@ export class SiegeManager {
                 () => { siegeLog(`[Siege] Attacker Legion ${legion.name} Victory`); },
                 () => {
                     markLegionAnnihilationFeed(legion, 'attacker', targetCity.name, 'siege', legionAdapter.battleOverriddenSkillId);
+                    // 尸体由 Army.destroy + LegionManager 延迟 removeArmy（CORPSE_DISPLAY_MS）统一处理
                     legion.destroy();
-                    this.legionManager.removeArmy(legion);
                 }
             );
             attackerUnits.push(legionAdapter);
@@ -1410,9 +1410,8 @@ export class SiegeManager {
      */
     private resolveChain(siegeData: SiegeData, city: any, army: Army): void {
         if (siegeData.destroyAfterBattle) {
-            siegeLog(`[SiegeManager] destroyAfterBattle，解散 ${army.name}`);
+            siegeLog(`[SiegeManager] destroyAfterBattle，覆灭 ${army.name}（留 15s 尸体）`);
             army.destroy();
-            this.legionManager.removeArmy(army);
             return;
         }
         // [FIX] 任务目标未达（途中敌城拦截被迫先打 hop 城）：胜利后继续向最终目标推进，

@@ -834,7 +834,10 @@ export class Army implements IBattleUnit {
         }
         if (this.renderer) {
             const rendererRef = this.renderer;
+            // 尸体必须可见：战败前 resume/神出鬼没可能已把 visible 关掉
+            rendererRef.visible = true;
             rendererRef.destroyTime = Date.now();
+            getGlobalUnitRenderer()?.invalidateView();
             const corpseMs = GameConfig.LEGION.CORPSE_DISPLAY_MS;
             setTimeout(() => {
                 rendererRef.destroy();
@@ -1083,8 +1086,8 @@ export class Army implements IBattleUnit {
                 this.resumeMovement();
             }
         } else {
+            // 战败：只清战斗态。即将 destroy 留 15s 尸体，禁止 resume（会触发隐身/清档）
             this.clearExternalCombatState();
-            this.resumeMovement();
         }
     };
 

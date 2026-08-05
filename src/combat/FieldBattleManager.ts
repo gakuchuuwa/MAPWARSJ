@@ -218,10 +218,9 @@ export class FieldBattleManager {
             army.setOnArriveCallback(() => { });
             onActionComplete?.();
         } else if (action === 'destroy') {
-            // 解散 = 军团销毁
-            battleLog(`[FieldBattle] Army ${army.name} executing destroy (Immediate Disband).`);
+            // 覆灭 = 留 15s 尸体后渐隐；移出管理器由 LegionManager 延迟处理
+            battleLog(`[FieldBattle] Army ${army.name} executing destroy (corpse retain).`);
             army.destroy();
-            this.legionManager.removeArmy(army);
             onActionComplete?.();
         } else {
             // Unknown action

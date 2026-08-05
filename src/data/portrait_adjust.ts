@@ -4253,9 +4253,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 7
         },
         "/assets/WEST_ASIA/qiliqiya_pangpei.png": {
-            "scale": 1.02,
+            "scale": 1.08,
             "offsetX": 0,
-            "offsetY": -1
+            "offsetY": -3
         },
         "/assets/STEPPE/__闲置__STEPPE_50.png": {
             "scale": 0.97,
@@ -6212,11 +6212,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 4,
             "offsetY": 0
         },
-        "/assets/SLAVIC/d81ef97f-71a6-4982-9d97-7496b5655828.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 19
-        },
         "/assets/SLAVIC/__闲置__SLAVIC_01.png": {
             "scale": 0.87,
             "offsetX": 0,
@@ -6237,11 +6232,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -19
         },
-        "/assets/JAPAN/eccf0c01-03ad-4854-8153-e2513ce22408.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 6
-        },
         "/assets/JAPAN/__闲置__JAPAN_34.png": {
             "scale": 0.95,
             "offsetX": 0,
@@ -6252,40 +6242,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/KOREA/0043bc9d-ebd6-4245-a83c-fef40a44a84a.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": -18
-        },
-        "/assets/KOREA/1fd7b62d-78b2-4348-b330-b0f05eb00e18.png": {
-            "scale": 1.18,
-            "offsetX": 0,
-            "offsetY": -11
-        },
         "/assets/KOREA/__闲置__KOREA_10.png": {
             "scale": 1.17,
             "offsetX": -5,
             "offsetY": 0
-        },
-        "/assets/liuhan/2e9846ef-9783-458d-ab5a-dc985750e1f9.png": {
-            "scale": 1.23,
-            "offsetX": 0,
-            "offsetY": 16
-        },
-        "/assets/liuhan/392125b8-699b-47a5-acdd-601adaaf7350.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": -5
-        },
-        "/assets/liuhan/ba20afd9-e03b-4011-8d8f-1781048a4107.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": -5
-        },
-        "/assets/liuhan/d710022d-3018-469d-93a0-40f7bd322a80.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": -5
         },
         "/assets/liuhan/__闲置__liuhan_25.png": {
             "scale": 1.06,
@@ -6327,25 +6287,10 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/STEPPE/29713ef6-38a3-4bd0-85c5-b935e0a970e3.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 7
-        },
-        "/assets/STEPPE/783c838b-17d1-4121-8661-593029821223.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": -39
-        },
         "/assets/STEPPE/dafeichuan_murongnuohebo.png": {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": -7
-        },
-        "/assets/STEPPE/efdd3692-72f7-4aea-9e2e-19c00aa40e00.png": {
-            "scale": 1.13,
-            "offsetX": 0,
-            "offsetY": -3
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_110.png": {
             "scale": 0.86,
@@ -6356,11 +6301,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": -3
-        },
-        "/assets/KOREA/__闲置__KOREA_11.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -13
         },
         "/assets/KOREA/xingliao_dayanlin.png": {
             "scale": 1.23,
