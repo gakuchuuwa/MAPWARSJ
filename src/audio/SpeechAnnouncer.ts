@@ -167,7 +167,7 @@ export class SpeechAnnouncer {
   /** S 级播报占用截止时间戳：期间常规播报直接丢弃（S 级大事不被小事打断） */
   private sTierBusyUntilMs = 0;
 
-  /** 技能释放播报串行队列（入队顺序=亮相顺序：优势先/均势攻先；不互相打断）；onStart 在 TTS 开口时触发 */
+  /** 技能释放播报串行队列（入队顺序=亮相顺序：劣势先/均势攻先；不互相打断）；onStart 在 TTS 开口时触发 */
   private skillSpeakQueue: {
     text: string;
     skipGlobalNameReplace?: boolean;
@@ -699,7 +699,7 @@ export class SpeechAnnouncer {
     this.endSpeechDuckSessionIfIdle();
   }
 
-  /** 串行出队：按入队顺序依次念（BattleField 已排优势先/均势攻先）；onStart 在 TTS 开口时触发 */
+  /** 串行出队：按入队顺序依次念（BattleField 已排劣势先/均势攻先）；onStart 在 TTS 开口时触发 */
   private drainSkillQueue(): void {
     if (this.skillSpeaking) return;
     const next = this.skillSpeakQueue.shift();

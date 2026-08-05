@@ -2398,7 +2398,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_salhu', name: '萨尔浒', factionId: 'manzhou', lat: 41.841, lng: 124.046, type: 'pass', troops: 30000, region: 'NORTHEAST' },
 
-    { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.530000, lng: 114.320000, type: 'small_city', region: 'JIANGNAN', troops: 30000, tier: 1, note: '孙吴武昌督治，与春秋吴姑苏区分' },
+    { id: 'city_wuchang', name: '武昌', factionId: 'sunwu_d', lat: 30.53, lng: 114.32, type: 'small_city', troops: 20000, region: 'JIANGNAN', mirror: true },
     { id: 'city_quwo', name: '曲沃', factionId: 'jin', lat: 35.631000, lng: 111.474000, type: 'small_city', region: 'CENTRAL', troops: 30000, note: '晋国曲沃，太原让位柴周' },
     { id: 'city_tacheng', name: '塔城', factionId: 'dzungar', lat: 46.746, lng: 82.983, type: 'small_city', troops: 30000, region: 'STEPPE' },
 

@@ -2247,7 +2247,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    sunwu_d_sunquan: { generalId: 'sunwu_d_sunquan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_761', atkAdvantageSkillId: 'ts_480', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_631', defDisadvantageSkillId: 'ts_822', aptitude: 'leverage' , attackStyle: 'defense'},
+    sunwu_d_sunquan: { generalId: 'sunwu_d_sunquan', tier: 'ordinary', tacticalSkillId: 'ts_480', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_480', atkBalanceSkillId: 'ts_761', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_631', defDisadvantageSkillId: 'ts_822', aptitude: 'leverage', attackStyle: 'defense' },
 
 
 

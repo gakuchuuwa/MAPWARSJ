@@ -409,9 +409,45 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     /**
+     * 从候选池抽一技：全场六计硬分开（一边已是败战，另一边不得再败战；胜战等同理）。
+     * 优先：未用技能 ID + 未用六计 → 仅未用六计 → 池内已无其它六计时才允许撞计（打日志）。
+     */
+    private pickSkillAvoidingUsedSixClass(
+        pool: string[],
+        usedSkillIds: Set<string>,
+        usedSixClasses: Set<string>,
+        logLabel: string,
+    ): string | undefined {
+        if (pool.length === 0) return undefined;
+        const clsOf = (id: string) => getSkillSixClass(id) ?? `__nocls__${id}`;
+        const roll = (ids: string[]) => ids[Math.floor(Math.random() * ids.length)];
+
+        let candidates = pool.filter(id => !usedSkillIds.has(id) && !usedSixClasses.has(clsOf(id)));
+        if (candidates.length > 0) return roll(candidates);
+
+        // 六计硬分开优先于「技能 ID 不重复」：宁可同名技号以外的别计，也不要两边同败战/同胜战
+        candidates = pool.filter(id => !usedSixClasses.has(clsOf(id)));
+        if (candidates.length > 0) return roll(candidates);
+
+        candidates = pool.filter(id => !usedSkillIds.has(id));
+        if (candidates.length > 0) {
+            const pick = roll(candidates);
+            gameLog(
+                'battle',
+                `⚠️ [六计] ${logLabel} 池内无剩余六计可错开，只能与已出场计撞车：${pick}（${clsOf(pick)}）`,
+            );
+            return pick;
+        }
+
+        const pick = roll(pool);
+        gameLog('battle', `⚠️ [六计] ${logLabel} 候选池全被占用，只能重复出 ${pick}`);
+        return pick;
+    }
+
+    /**
      * 六计随机：开局定强弱后，给每个带将单位从攻/守三槽随机抽一个局技，写入 battleOverriddenSkillId。
      * 阈值：文化修正后有效兵力比 >1.5 优势 / <0.67 劣势 / 其间均势。
-     * 同时锁定 situationalAttDefRatio，供相持段技能释放排序（优势先 / 均势攻先）。
+     * 同时锁定 situationalAttDefRatio，供相持段技能释放排序（劣势先 / 均势攻先）。
      */
     private assignSituationalSkills(): void {
         const attUnits = this.attackerGroup.units.filter(bu => !bu.isDefeated && bu.unit.troops > 0).map(bu => bu.unit);
@@ -420,12 +456,8 @@ export class BattleField implements IOpeningPulseSink {
         const dt = sumCultureAdjustedTroops(defUnits) || this.defenderGroup.initialTotalTroops;
         this.situationalAttDefRatio = at / Math.max(1, dt);
 
-        // [防重 2026-07-27] 全场统一避让：攻守双方**所有**带将单位排一条队依次挑技，
-        // 后挑的避开前面已用掉的技能 ID 和六计类别。
-        //
-        // 旧实现三个洞：①只给「每边第一个将」做重抽（多军团混战其余将互撞没人管）；
-        // ②排除表只对不在册技生效，在册技原样返回，重抽多少次都是同一个；
-        // ③五次抽不中就默默带着重复开打，没有任何日志。
+        // [防重 2026-07-27；六计硬分开 2026-08-05] 全场带将依次挑技：后挑避已用技能 ID + 六计类别。
+        // 不再「次选允许六计撞车」——避免攻守双方都出败战/胜战。
         const situationOf = (self: number, other: number): 'advantage' | 'balance' | 'disadvantage' => {
             const r = self / Math.max(1, other);
             return r > 1.5 ? 'advantage' : r < 0.67 ? 'disadvantage' : 'balance';
@@ -441,48 +473,34 @@ export class BattleField implements IOpeningPulseSink {
                 const u = bu.unit;
                 if (!u.generalId) continue;
 
-                // 把已用 ID 一并传下去：不在册技那条路会直接跳过这些，池子自带避让
                 const pool = getSituationalSkillPool(u, sit as any, [...usedSkillIds]);
-                if (pool.length === 0) continue;
-
-                const clsOf = (id: string) => getSkillSixClass(id) ?? `__nocls__${id}`;
-
-                // 首选：技能 ID 和六计类别都没被用过 → 候选内等概率随机取一
-                // [2026-08-04 修] 原 pool.find 取首项 = 永远吃到池首技（帖木儿案：优势池首固定 ts_115 横扫西陲，连放 N 次），
-                // 违反「三势选池·四/四/六」等概率抽一技规则。filter 后随机，防重语义不变。
-                let candidates = pool.filter(id => !usedSkillIds.has(id) && !usedSixClasses.has(clsOf(id)));
-                let pick = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : undefined;
-                // 次选：至少技能本身不重复（六计撞车可以接受，观感上是两个不同技能）
-                if (!pick) {
-                    candidates = pool.filter(id => !usedSkillIds.has(id));
-                    pick = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : undefined;
-                }
-                // 兜底：这将的整池都被占了（池子小 + 场上将多），只能重复，但要留痕
-                if (!pick) {
-                    pick = pool[Math.floor(Math.random() * pool.length)];
-                    gameLog('battle', `⚠️ [防重] ${sideName} ${u.generalId} 候选池 ${pool.length} 个全被占用，只能重复出 ${pick}`);
-                }
+                const pick = this.pickSkillAvoidingUsedSixClass(
+                    pool,
+                    usedSkillIds,
+                    usedSixClasses,
+                    `${sideName} ${u.generalId}`,
+                );
+                if (!pick) continue;
 
                 u.battleOverriddenSkillId = pick;
                 usedSkillIds.add(pick);
-                usedSixClasses.add(clsOf(pick));
+                usedSixClasses.add(getSkillSixClass(pick) ?? `__nocls__${pick}`);
             }
         };
 
-        // 攻方先挑（与原实现一致：攻方无排除、守方避让攻方）
+        // 攻方先挑；守方避让攻方已占用的六计
         assignSide(this.attackerGroup.units, attSit, '攻方');
         assignSide(this.defenderGroup.units, defSit, '守方');
 
-        // 供援军中途加入时继续避让
         this.usedBattleSkillIds = usedSkillIds;
         this.usedBattleSixClasses = usedSixClasses;
     }
 
-    /** 技能脉冲先放哪一侧：优势方先；均势（及无法判势）攻方先 */
+    /** 技能脉冲先放哪一侧：劣势方先；均势（及无法判势）攻方先（2026-08-05 主人定） */
     private resolveSkillPulseFirstSide(): 'attacker' | 'defender' {
         const r = this.situationalAttDefRatio;
-        if (r > 1.5) return 'attacker';
-        if (r < 0.67) return 'defender';
+        if (r > 1.5) return 'defender'; // 攻优 → 守劣先放
+        if (r < 0.67) return 'attacker'; // 攻劣 → 攻方先放
         return 'attacker';
     }
 
@@ -749,7 +767,7 @@ export class BattleField implements IOpeningPulseSink {
         );
         setActiveOpeningPulseSink(null);
 
-        // 脉冲/播报顺序：优势方先放；均势时攻方先放（用开局定势锁定的兵力比，勿用削兵后兵力）
+        // 脉冲/播报顺序：劣势方先放；均势时攻方先放（用开局定势锁定的兵力比，勿用削兵后兵力）
         const attGeneralIds = new Set(
             this.getAttackerUnits().map((u) => u.generalId).filter((id): id is string => !!id),
         );
@@ -764,7 +782,7 @@ export class BattleField implements IOpeningPulseSink {
         gameLog(
             'battle',
             `✨ [SkillPulse] 释放顺序: ${firstSide === 'attacker' ? '攻方' : '守方'}先` +
-                `（开局兵力比攻/守=${this.situationalAttDefRatio.toFixed(2)}）` +
+                `（开局兵力比攻/守=${this.situationalAttDefRatio.toFixed(2)}，劣先/均攻先）` +
                 ` → ${ordered.map((o) => o.trigger.generalId || '?').join(' → ')}`,
         );
         for (const item of ordered) {
@@ -1354,22 +1372,16 @@ export class BattleField implements IOpeningPulseSink {
                 for (const id of usedIds) usedClasses.add(getSkillSixClass(id) ?? `__nocls__${id}`);
 
                 const pool = getSituationalSkillPool(unit, rsit as any, [...usedIds]);
-                if (pool.length > 0) {
-                    const clsOf = (id: string) => getSkillSixClass(id) ?? `__nocls__${id}`;
-                    // [2026-08-04 修] 与开局同规则：候选内等概率随机，禁用 find 首项（帖木儿案同源）
-                    let candidates = pool.filter(id => !usedIds.has(id) && !usedClasses.has(clsOf(id)));
-                    let pick = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : undefined;
-                    if (!pick) {
-                        candidates = pool.filter(id => !usedIds.has(id));
-                        pick = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : undefined;
-                    }
-                    if (!pick) {
-                        pick = pool[Math.floor(Math.random() * pool.length)];
-                        gameLog('battle', `⚠️ [防重] 援军 ${unit.generalId} 候选池全被占用，只能重复出 ${pick}`);
-                    }
+                const pick = this.pickSkillAvoidingUsedSixClass(
+                    pool,
+                    usedIds,
+                    usedClasses,
+                    `援军 ${unit.generalId}`,
+                );
+                if (pick) {
                     unit.battleOverriddenSkillId = pick;
                     this.usedBattleSkillIds.add(pick);
-                    this.usedBattleSixClasses.add(clsOf(pick));
+                    this.usedBattleSixClasses.add(getSkillSixClass(pick) ?? `__nocls__${pick}`);
                 }
             }
         }

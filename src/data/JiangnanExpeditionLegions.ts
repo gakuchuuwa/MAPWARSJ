@@ -17,7 +17,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   she_ethnic: { name: '畲族山兵', tier: 3 },  // 具有极强东南丘陵风土特色与民族凝聚力的武装力量，升入T3知名
   shanyue: { name: '丹阳兵', tier: 2 },      // 三国精锐步兵兵源，战术素养极高，但未像虎豹骑主导大势，下调至T2战术
     chu: { name: '荆州校刀手', tier: 3 },
-  sunwu_d: { name: '解烦兵', tier: 2 },      // 武昌·孙吴禁卫
+    sunwu_d: { name: '解烦兵', tier: 2 },
   jinling: { name: '量沙军', tier: 2 },     // 南朝宋檀道济唱筹量沙，中国古代心理战与战术欺骗的极致代表，升入T2战术
   zhong: { name: '北府兵', tier: 0 },        // 寿春·§9 #5 谢玄刘牢之（旗=寿·寿州）
   yang_zhou: { name: '黑云长剑都', tier: 2 },   // 广陵·杨行密黑云长剑都（扬州）
