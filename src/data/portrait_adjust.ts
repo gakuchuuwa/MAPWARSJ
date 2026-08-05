@@ -1097,11 +1097,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/DIANQIAN/luchuan_sirenfa.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -66
-        },
         "/assets/DIANQIAN/__闲置__DIANQIAN_26.png": {
             "scale": 0.9,
             "offsetX": 0,
@@ -2286,11 +2281,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.13,
             "offsetX": 12,
             "offsetY": -31
-        },
-        "/assets/JIANGNAN/__闲置__LINGNAN_04.png": {
-            "scale": 0.78,
-            "offsetX": 0,
-            "offsetY": -6
         },
         "/assets/CENTRAL/bozhou_d_yujin.png": {
             "scale": 1.03,
@@ -3551,11 +3541,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.81,
             "offsetX": 0,
             "offsetY": 6
-        },
-        "/assets/JIANGNAN/__闲置__JIANGNAN_23.png": {
-            "scale": 1.16,
-            "offsetX": 0,
-            "offsetY": 11
         },
         "/assets/manqing/__闲置__NORTHEAST_30.png": {
             "scale": 0.86,
@@ -6471,6 +6456,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -48
+        },
+        "/assets/LINGNAN/2c2bf030-6ee6-4d8d-b19a-865aa87c3e93.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_29.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -66
+        },
+        "/assets/LINGNAN/luchuan_sirenfa.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": 10
         }
     },
     "folderGuides": {

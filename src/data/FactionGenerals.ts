@@ -525,7 +525,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     dai: { generalId: 'dai_daoyingmeng', generalName: '刀应勐', portrait: '/assets/DIANQIAN/dai_daoyingmeng.png' },
     taiyuan: { generalId: 'taiyuan_menglai', generalName: '孟莱', portrait: '/assets/DIANQIAN/taiyuan_menglai.png' },
     suke: { generalId: 'suke_langanheng', generalName: '兰甘亨', portrait: '/assets/DIANQIAN/suke_langanheng.png' },
-    luchuan: { generalId: 'luchuan_sirenfa', generalName: '思任发', portrait: '/assets/DIANQIAN/luchuan_sirenfa.png' },
+    luchuan: { generalId: 'luchuan_sirenfa', generalName: '思任发', portrait: '/assets/LINGNAN/luchuan_sirenfa.png' },
     kunming_yi: { generalId: 'kunming_yi_lucheng', generalName: '卤承', portrait: '/assets/DIANQIAN/kunming_yi_lucheng.png' },
     cuanshi: { generalId: 'cuanshi_cuanlongyan', generalName: '爨龙颜', portrait: '/assets/BASHU/cuanshi_cuanlongyan.png' },
     baiman: { generalId: 'baiman_gaoshengtai', generalName: '高升泰', portrait: '/assets/DIANQIAN/baiman_gaoshengtai.png' },
