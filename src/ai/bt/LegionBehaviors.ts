@@ -266,8 +266,16 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
                 }
                 clearStrategicTarget(ctx);
                 ctx.army.setTargetCity(null);
+                // 目标确实变了：立即停步，让 FindTarget 马上改道收复，别走完旧路径（2026-08-05）
+                ctx.army.stopMovement?.();
+                
+                // 已经清空了目标，必须返回 false 让行为树进入 FindTarget 重新寻找路径
+                return false;
             }
-            return false;
+            // 目标已是收复城 → 保持（true），不再每帧进 FindTarget 重复决策
+            // [2026-08-05] 修复：原无条件 return false + FindTarget 无 stopMovement，
+            // 本城失守时军团会先走完旧目标剩余路程才回头（延误收复）。
+            return true;
         }
     }
 
@@ -286,6 +294,8 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
         }
         clearStrategicTarget(ctx);
         ctx.army.setTargetCity(null);
+        // 目标已失效：立即停步，别继续冲向已变友军/消失的旧城（2026-08-05）
+        ctx.army.stopMovement?.();
         return false;
     }
 
@@ -383,6 +393,8 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
                 lat: recaptureCity.latitude,
                 lng: recaptureCity.longitude,
             });
+            // 停掉旧目标残留路径，立即改道收复（2026-08-05）
+            ctx.army.stopMovement?.();
             btLog(
                 ctx,
                 `recapture:${recaptureId}`,
@@ -400,6 +412,8 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         const ePos = nearbyEnemy.getPosition();
         setStrategicArmyTarget(ctx, nearbyEnemy.id, { lat: ePos.lat, lng: ePos.lng });
         ctx.army.setTargetCity(null);
+        // 停掉旧目标残留路径，立即改追（2026-08-05）
+        ctx.army.stopMovement?.();
         const distKm = getEuclideanDistance(ctx.army.getPosition(), ePos) * 111;
         btLog(
             ctx,
@@ -455,14 +469,15 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     }
 
     setStrategicTarget(ctx, target.id, { lat: target.latitude, lng: target.longitude });
+    // 停掉旧目标残留路径，立即改道新目标（2026-08-05）
+    ctx.army.stopMovement?.();
 
-    const poolN = GameConfig.AI.TARGET_NEAR_POOL;
     const anchorName = ctx.cityManager.getCity(anchorId)?.name ?? anchorId;
     btLog(
         ctx,
         `pick:${target.id}`,
         `[AI] ${ctx.army.name} 战略目标【${target.name}】` +
-            `（自【${anchorName}】沿路 ${picked.distanceKm.toFixed(0)} km，近 ${poolN} 敌城抽签）`
+            `（自【${anchorName}】沿路 ${picked.distanceKm.toFixed(0)} km，方向池抽签）`
     );
     return BTStatus.SUCCESS;
 });

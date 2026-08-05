@@ -61,14 +61,13 @@ export class TargetEvaluator {
             pool = reachable.slice(0, Math.min(poolSize, reachable.length));
         }
 
-        // 枪打出头鸟（反雪球）：领先势力过大时，概率改打它（见 GameConfig.AI.LEADER_HUNT）。
-        // [2026-08-05] 先在推进方向池里挑，挑不到才允许回头——原实现直接在全表取最近的领先城，
-        // 绕开了方向池和回头路检查，军团会毫无征兆地掉头往老家方向打，观感像 AI 抽风。
-        // 领先势力据点数已 ≥ CITY_THRESHOLD，方向池里多半就有，掉头是罕见兜底。
+        // 枪打出头鸟（反雪球）：候选池（方向池，军团挨着的 2-3 座可选城）里有全图据点最多的势力 → 必打它。
+        // [2026-08-05 GAKU 定] 确定性、无门槛：只有挨着的才打，不挨着的不打——方向池里没有领头城，
+        // 就不回头（原 anywhere 兜底已删），正常随机抽签。
         const hunt = GameConfig.AI.LEADER_HUNT;
-        if (hunt?.ENABLED && Math.random() < hunt.PROBABILITY) {
+        if (hunt?.ENABLED) {
             const leader = TargetEvaluator.findLeaderFaction(cities);
-            if (leader && leader.factionId !== factionId && leader.count >= hunt.CITY_THRESHOLD) {
+            if (leader && leader.factionId !== factionId) {
                 const factionById = new Map(cities.map((c) => [c.id, c.factionId]));
                 const isLeaderCity = (s: TargetScore) =>
                     factionById.get(s.targetId) === leader.factionId;
@@ -80,9 +79,6 @@ export class TargetEvaluator {
                         null
                     );
                 if (inPool) return inPool;
-                // 推进方向上完全没有领先势力 → 才允许回头去打（reachable 已按道路距离升序）
-                const anywhere = reachable.find(isLeaderCity);
-                if (anywhere) return anywhere;
             }
         }
 
