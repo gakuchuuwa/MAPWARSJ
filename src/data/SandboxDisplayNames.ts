@@ -364,7 +364,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'zu_d': '严',
 
     'aisin_d': '爱新', // 建女真皇族；≠大清(manzhou_d)
-    'sunwu_d': '孙吴',
+'sunwu_d': '孙吴',
 
     // ── 2026-05-25 新增：隋朝核对追加势力 ──
 'wazhai': '济阴',

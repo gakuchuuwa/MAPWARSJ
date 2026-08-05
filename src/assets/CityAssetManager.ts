@@ -237,7 +237,7 @@ export class CityAssetManager {
 'zu_d': '严',
 
         'aisin_d': '爱新',
-        'sunwu_d': '孙吴',
+'sunwu_d': '孙吴',
 
 'wazhai': '济阴',
 'liangshidu': '绥',
