@@ -119,28 +119,30 @@ export class LegionFlagDrawer {
             // Load pole (shared by all factions)
             this.pole = this.processImage(await loadImg(SPRITE_PATHS.PHALANX.FLAG.POLE));
 
-            // Ensure CityAssetManager flags are preloaded
-            await CityAssetManager.preloadFlags();
-
-            // Load General Portraits（缺省键走文化区随机池）
-            if (SPRITE_PATHS.GENERAL_PORTRAITS) {
-                for (const [genId, url] of Object.entries(SPRITE_PATHS.GENERAL_PORTRAITS)) {
+            // [PERF 2026-08-05] 立绘和旗号互不依赖，并发起跑。
+            // 原先 23 张立绘（共 23.6MB，均 1MB/张）排在 preloadFlags 之后逐张 await，
+            // 一张没解码完不动下一张，整段横跨启动全程和主链抢主线程。
+            const portraitEntries = Object.entries(SPRITE_PATHS.GENERAL_PORTRAITS ?? {});
+            const portraitsReady = Promise.all([
+                ...portraitEntries.map(async ([genId, url]) => {
                     try {
-                        const resolved = resolvePortraitAssetPath(
-                            url,
-                        );
-                        this.generalPortraits.set(genId, await loadImg(resolved));
+                        this.generalPortraits.set(genId, await loadImg(resolvePortraitAssetPath(url)));
                     } catch (err) {
                         console.warn(`Failed to load portrait for ${genId}`, err);
                     }
-                }
-            }
-            try {
-                const defaultPath = getRandomRegionPortraitPath('CENTRAL');
-                this.generalPortraits.set('default', await loadImg(defaultPath));
-            } catch (err) {
-                console.warn('Failed to load default culture portrait pool fallback', err);
-            }
+                }),
+                (async () => {
+                    try {
+                        this.generalPortraits.set('default', await loadImg(getRandomRegionPortraitPath('CENTRAL')));
+                    } catch (err) {
+                        console.warn('Failed to load default culture portrait pool fallback', err);
+                    }
+                })(),
+            ]);
+
+            // Ensure CityAssetManager flags are preloaded
+            await CityAssetManager.preloadFlags();
+            await portraitsReady;
 
             // Warm up cache for default fallback flags
             const qinUrl = CityAssetManager.getProcessedFlag('qin');

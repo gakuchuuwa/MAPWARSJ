@@ -138,7 +138,8 @@ export class LegionPhalanxStateManager {
 
         if (isFighting && !state.isFighting) {
             state.isFighting = true;
-            state.maxTroops = troops;
+            // 整军 DEATH 可能以 troops=0 再进入「交战态」保尸体，禁止把 maxTroops 刷成 0
+            if (troops > 0) state.maxTroops = troops;
         } else if (!isFighting && state.isFighting) {
             state.isFighting = false;
         }

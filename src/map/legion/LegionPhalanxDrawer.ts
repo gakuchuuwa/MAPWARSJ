@@ -410,7 +410,29 @@ export class LegionPhalanxDrawer {
         gameLog('unit', '⛵ 船贴图懒加载完成（<2万 / 2-5万 / ≥5万 三档）');
     }
 
+    /**
+     * 抠绿结果按源图 URL 缓存。
+     * [PERF 2026-08-05] S10DB 帧被多个 unit type 共用（如 154-161 被 8 个单位各引一次），
+     * 开局 42 个单位共发起 2416 次 processImage，去重后只有 600 张不同的图 —— 75% 是重复劳动，
+     * 每次都要 getImageData + 像素环 + putImageData + toDataURL + 二次 decode。
+     * AssetLoader 只对下载去重、不对处理结果去重，所以缓存放在这一层。
+     * 产物只作 drawImage 源使用（只读），多处共享同一个 HTMLImageElement 是安全的。
+     */
+    private static processedBySrc = new Map<string, Promise<HTMLImageElement>>();
+
     private static processImage(img: HTMLImageElement): Promise<HTMLImageElement> {
+        // 未就绪的图走原路返回且不入缓存 —— 否则会把没抠绿的原图永久钉死在缓存里
+        if (!img.complete || img.naturalWidth === 0) return Promise.resolve(img);
+        const key = img.src;
+        if (!key) return this.doProcessImage(img);
+        const hit = this.processedBySrc.get(key);
+        if (hit) return hit;
+        const pending = this.doProcessImage(img);
+        this.processedBySrc.set(key, pending);
+        return pending;
+    }
+
+    private static doProcessImage(img: HTMLImageElement): Promise<HTMLImageElement> {
         return new Promise((resolve) => {
             if (!img.complete || img.naturalWidth === 0) { resolve(img); return; }
             const canvas = document.createElement('canvas');
@@ -642,20 +664,37 @@ export class LegionPhalanxDrawer {
         const spacingY = renderH * 0.42;
 
         // --- 2. UPDATE STATE ---
+        // 全局 DEATH（整军覆灭尸体）：对齐水军——不因 isFighting=false 走和平补员/清态；
+        // 用 isFighting=true 保住战中槽位，由下方 DEATH 分支画尸体，保留 CORPSE_DISPLAY_MS。
         const currentState = LegionPhalanxStateManager.update(
-            unitId, troops, rows, cols, count, direction, tick, isFighting, center, unprojectFn,
+            unitId, troops, rows, cols, count, direction, tick,
+            isFighting || state === 'DEATH',
+            center, unprojectFn,
             (idx) => this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, isTriangleFormation)
         );
+
+        // 整军 DEATH 且兵力归零：残留 ALIVE 格一并标死，避免只画「活着的站桩」
+        if (state === 'DEATH' && troops <= 0) {
+            for (const slot of currentState.slots) {
+                if (slot.state === 'ALIVE') {
+                    slot.state = 'DYING';
+                    if (slot.deathDirection === undefined) {
+                        slot.deathDirection = Math.floor(Math.random() * 8);
+                    }
+                    slot.stateStartTime = tick;
+                }
+            }
+        }
 
         this.resetPool();
         const activeItems: { y: number, drawParams: any }[] = [];
         const totalSlots = currentState.slots.length;
 
         // --- 3. RENDER LOOP ---
-        // [NEW] Spawn Animation Progress
+        // [NEW] Spawn Animation Progress（整军 DEATH 尸体不走出场渐显，避免「先全透明」像直接消失）
         const spawnDuration = 800;
         const timeAlive = tick - (currentState.spawnTick || 0);
-        const isSpawning = timeAlive < spawnDuration && timeAlive >= 0;
+        const isSpawning = state !== 'DEATH' && timeAlive < spawnDuration && timeAlive >= 0;
 
         // B. Select Sprite Set & Identify Unit Type (Moved Up for Logic)
         for (let i = 0; i < totalSlots; i++) {

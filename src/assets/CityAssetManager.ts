@@ -1472,8 +1472,24 @@ export class CityAssetManager {
         setTimeout(cb, mode === 'background' ? 16 : 0);
     }
 
+    /**
+     * 叛军旗装载串行闸。
+     * [FIX 2026-08-05] 有两个入口会同时触发补载：preloadRebelFlagsForBoot 的 3 秒定时器，
+     * 和 LegionFlagDrawer.preload → preloadFlags() 链尾的 ensureFullPanjunRebelFlags。
+     * 而 panjunRebelsFullyLoaded 要跑完才置位、中途没有在途标记，两条线会各自按进入时的
+     * processedRebelFlags.length 算起点、同时往同一个数组里 push —— 52 面旗被抠两遍、
+     * 数组里还会塞进重复项，且正好砸在启动最堵的窗口。串起来跑，后一条自然从断点续载。
+     */
+    private static panjunFlagChain: Promise<void> = Promise.resolve();
+
+    private static processPanjunFlags(preferIdleYield = false, maxCount?: number): Promise<void> {
+        const next = this.panjunFlagChain.then(() => this.runProcessPanjunFlags(preferIdleYield, maxCount));
+        this.panjunFlagChain = next.catch(() => { /* 失败不阻断后续补载 */ });
+        return next;
+    }
+
     /** 叛军 S10QZ 7–58 共 52 面；可断点续载（processedRebelFlags.length） */
-    private static async processPanjunFlags(preferIdleYield = false, maxCount?: number): Promise<void> {
+    private static async runProcessPanjunFlags(preferIdleYield = false, maxCount?: number): Promise<void> {
         if (this.panjunRebelsFullyLoaded) return;
         const _PANJUN = 'pan' + 'jun';
         const minId = PANJUN_REBEL_FLAG_ID_MIN;
