@@ -728,8 +728,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/zhaosong/yingzhou_d_liuqi.png": {
-            "scale": 1.16,
-            "offsetX": 11,
+            "scale": 1.08,
+            "offsetX": -2,
             "offsetY": -35
         },
         "/assets/CENTRAL/lu_zhangliao.png": {

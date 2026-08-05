@@ -152,7 +152,7 @@ export const FACTIONS: Faction[] = [
   { id: 'nuogai', name: '萨马拉河' },
   { id: 'bashekeer', name: '巴什基尔' },
   { id: 'beisilafu', name: '塞维里亚' },
-  { id: 'peilieya_gongguo', name: '佩列斯拉夫' },
+  { id: 'peilieya_gongguo', name: '佩列斯拉夫公国' },
   { id: 'weijiebusike_gongguo', name: '维捷公国' },
 
   { id: 'heishui', name: '靺鞨' },
