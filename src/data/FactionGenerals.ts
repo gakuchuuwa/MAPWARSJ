@@ -387,7 +387,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
         // ── 西域关隘 ──
     hepan: { generalId: 'hepan_gaoxianzhi', generalName: '高仙芝', portrait: '/assets/litang/hepan_gaoxianzhi.png' },
     yiwu: { generalId: 'yiwu_hanshen', generalName: '罕慎', portrait: '/assets/WESTERN/yiwu_hanshen.png' },
-    kepantuo: { generalId: 'kepantuo_dulimi', generalName: '阇梨密', portrait: '/assets/WESTERN/kepantuo_dulimi.png' },
+    kepantuo: { generalId: 'kepantuo_dulimi', generalName: '阇梨密', portrait: '/assets/wuzhou/kepantuo_dulimi.png' },
     huite: { generalId: 'huite_amuersana', generalName: '阿睦尔撒纳', portrait: '/assets/STEPPE/huite_amuersana.png' },
     tuoming: { generalId: 'tuoming_tuomin', generalName: '妥明', portrait: '/assets/WESTERN/tuoming_tuomin.png' },
     chuyue: { generalId: 'chuyue_shatuonasu', generalName: '沙陀那速', portrait: '/assets/WESTERN/chuyue_shatuonasu.png' },
