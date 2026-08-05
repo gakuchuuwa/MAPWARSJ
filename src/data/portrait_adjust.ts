@@ -5678,7 +5678,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/GERMANIC/weijing_york_xuefuailike.png": {
-            "scale": 1,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": 9
         },
@@ -5723,9 +5723,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 28
         },
         "/assets/GERMANIC/anggelu_aerfuleide.png": {
-            "scale": 0.87,
+            "scale": 0.91,
             "offsetX": 0,
-            "offsetY": 9
+            "offsetY": 6
         },
         "/assets/GERMANIC/__闲置__GERMANIC_06.png": {
             "scale": 1.0318,
