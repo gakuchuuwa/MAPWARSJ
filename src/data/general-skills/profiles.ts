@@ -2507,7 +2507,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    beihai_shamusheyun: { generalId: 'beihai_shamusheyun', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_781', atkAdvantageSkillId: 'ts_654', atkBalanceSkillId: 'ts_385', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_641', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'defense' },
+    beihai_shamusheyun: { generalId: 'beihai_shamusheyun', tier: 'ordinary', tacticalSkillId: 'ts_654', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_654', atkBalanceSkillId: 'ts_385', atkDisadvantageSkillId: 'ts_781', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_641', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'defense' },
 
 
 

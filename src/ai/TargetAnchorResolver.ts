@@ -74,8 +74,10 @@ export function resolveForwardAnchor(
     let bestDist = Infinity;
 
     for (const city of friendly) {
-        // 跳过出生城：≥2万已出发，锚点必须在前沿
-        if (city.id === homeCityId) continue;
+        // [FIX 2026-08-05] 不再跳过出生城：新编军团出生坐标 = 老家，跳过老家会把锚点
+        // 推到另一条战线的己方城（实测 洛阳新军 → 开封 207km 外），新军团被派去跨区
+        // 打另一条战线（交叉换线）。距离最近者自然当选：在老家 = 老家(0km)、
+        // 在前线城脚下 = 前线城、深入敌境 = 最近己方城。飞地仍由 roadDistances 排除。
         let dist: number;
         if (roadDistances) {
             const roadKm = roadDistances.get(city.id);

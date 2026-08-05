@@ -619,7 +619,7 @@ export class CityAssetManager {
 'iyo_d': '伊予',
         'otomo_d': '大友',
         'suwa_d': '诹访',
-        'beihai': '北海',
+'beihai': '北海',
         'hui': '濊',
         'luzhou': '渌',
         'xuantu': '玄菟',
