@@ -920,7 +920,6 @@ const _FIXED: Record<string, string> = {
     'rierman': '#8C6A1A', // 神圣罗马·美因茨（神罗金黑）
     'tiaodun_qishi': '#2E2E32', // 条顿骑士·柯尼斯堡（白底黑十字）
     'hansa': '#C31E2E', // 汉萨·汉堡（汉萨红白）
-    'weijing_bergen': '#8B1A1A', // 挪威维京·卑尔根（维京战红）
     'weijing_york': '#8B2E4E', // 维京约克·约克（维京紫红）
     'anggelu': '#AF2030', // 盎格鲁-撒克逊·伦敦（英格兰红白）
     'nuosi': '#2E5FA8', // 北欧·乌普萨拉（北欧蓝）
@@ -995,6 +994,12 @@ const _FIXED: Record<string, string> = {
     'aosiruowen': '#A0282E', // 埃德萨·埃德萨（十字军红）
     'shengdian_qishi': '#B81E2E', // 圣殿骑士·阿卡（圣殿红底白十字）
     'babuer': '#1D509C', // 阿富汗·喀布尔（莫卧儿蓝系，帖木儿后裔）
+    'danmai': '#C0202E', // 丹麦·哥本哈根（红底白十字）
+    'ruidian_si': '#1E63AC', // 瑞典·斯德哥尔摩（瑞典蓝金）
+    'kasidiliya': '#C2102E', // 卡斯蒂利亚·马德里（金塔红旗）
+    'duluo': '#1E7A4A', // 杜罗·波尔图（葡萄牙绿系）
+    'teluoyi': '#8E6A3C', // 特洛伊·特洛伊（青铜）
+    'alabo': '#207A3C', // 阿拉伯·巴士拉（伊斯兰绿）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

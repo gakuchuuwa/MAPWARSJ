@@ -30,8 +30,9 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     // ── T3 风土之兵 ──
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）
     weijing_york: { name: '约维克卫', tier: 3 },          // 约克·血斧埃里克：丹法区约维克卫戍
-    weijing_bergen: { name: '挪威维京军', tier: 3 },          // 卑尔根·斯维尔
     nuosi: { name: '诺斯战团', tier: 3 },          // 乌普萨拉·奥拉夫
+    danmai: { name: '丹斧兵', tier: 3 },          // 哥本哈根·阿布萨隆（名将亲兵，维京战斧）
+    ruidian_si: { name: '斯韦阿卫队', tier: 2 },          // 斯德哥尔摩·比尔格雅尔（斯韦阿核心部族重步）
     hansa: { name: '汉萨卫队', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫
     mozeer: { name: '摩泽尔卫队', tier: 3 },          // 特里尔·君士坦丁
     batawei: { name: '巴达维辅', tier: 3 },          // 乌特勒支·西维利斯：巴达维辅助军/之乱
