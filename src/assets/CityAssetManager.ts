@@ -142,7 +142,7 @@ export class CityAssetManager {
 'kong_d': '鲁',
 'cao_d': '亳',
         'jiujiang': '浔',
-        'quanrong': '犬戎',
+'quanrong': '犬戎',
 'suzhou': '肃',
         'sushen': '肃慎',
 'guishuang': '贵霜',

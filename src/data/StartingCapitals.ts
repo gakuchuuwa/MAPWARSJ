@@ -259,7 +259,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'gouding': 'city_guangnan',
 
     'jiujiang': 'city_chaisang',
-    'quanrong': 'city_weirong',
+'quanrong': 'city_weirong',
 'suzhou': 'city_jiuquan',
     'sushen': 'city_dongkang',
 'guishuang': 'city_lanshi',

@@ -107,4 +107,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     mangshi: { name: '曼格骑卫', tier: 4 },
     wuxi: { name: '武陵弓蛮', tier: 3 },
     tuerhute: { name: '鹰娑川铁骑', tier: 3 },
+    quanrong: { name: '西戎骑兵', tier: 4 },
 };

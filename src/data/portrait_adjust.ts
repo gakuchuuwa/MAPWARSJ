@@ -4648,7 +4648,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/CENTRAL_ASIA/delan_sulun.png": {
-            "scale": 1.04,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 2
         },
