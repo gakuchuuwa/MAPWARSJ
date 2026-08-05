@@ -25,7 +25,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     piketai: { name: '苏格兰军团', tier: 2 },          // 爱丁堡·奥恩格斯
     aersasi: { name: '莱茵军团', tier: 2 },          // 斯特拉斯堡·尤里安：357大捷
     ruishi: { name: '瑞士长枪', tier: 2 },          // 巴塞尔·阿诺德：森帕赫长枪方阵
-    tiaodun_qishi: { name: '条顿骑士', tier: 2 },          // 柯尼斯堡·乌尔里希
+    tiaodun_qishi: { name: '条顿骑士团', tier: 2 },          // 柯尼斯堡·乌尔里希
 
     // ── T3 风土之兵 ──
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）
@@ -46,7 +46,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     boumeilaniyan: { name: '波美军团', tier: 4 },          // 格但斯克·卡西米尔
     bafaliya: { name: '巴伐军团', tier: 4 },          // 雷根斯堡·塔西洛
     // 纽伦堡·霍亨索伦伯：家族专名可考 → T3（禁造「法兰克重骑」）
-    huohengsuolun: { name: '霍亨索伦', tier: 3 },
+    huohengsuolun: { name: '黑鹰军团', tier: 3 },
     pufaerci: { name: '普法军团', tier: 4 },          // 海德堡·路德维希
     // 勃兰登堡·阿尔布雷（大熊）：北边疆侯，非条顿骑士团 → T3 边疆军
     asikanani: { name: '边疆军团', tier: 3 },

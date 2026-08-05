@@ -172,9 +172,7 @@ function getLegionEliteBadgeName(unit: IBattleUnit): string {
     const elite = army ? getLegionEliteLegionName(army) : null;
     const raw = (live || elite || unit.name || '').trim();
     if (!raw) return '精锐';
-    const match = raw.match(/(军团|驻军|守军)$/);
-    const stripped = match ? raw.substring(0, match.index).trim() : raw;
-    return stripped || raw;
+    return raw;
 }
 
 /** 精锐五级 → 二字标签（2026-07-16）。按 unit 所属据点查精锐，不依赖 army.isElite */

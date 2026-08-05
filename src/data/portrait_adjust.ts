@@ -428,7 +428,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -11
         },
         "/assets/STEPPE/borjigin_tuolei.png": {
-            "scale": 1.17,
+            "scale": 1.15,
             "offsetX": 11,
             "offsetY": -14
         },
@@ -3298,7 +3298,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -34
         },
         "/assets/STEPPE/jalair_muhuali.png": {
-            "scale": 0.93,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -7
         },
