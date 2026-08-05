@@ -801,7 +801,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'eluoke': 'city_nuotuoluo',
     'kuye': 'city_baizhu',
     'ayinu': 'city_bailao',
-    'beihai': 'city_zonggu',
+'beihai': 'city_zonggu',
     'ruochu': 'city_jingling',
 'mi_chu': 'city_yunmeng',
 'maomingan': 'city_geerbiqi',

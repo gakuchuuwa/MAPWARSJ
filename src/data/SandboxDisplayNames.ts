@@ -792,7 +792,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'iyo_d': '伊予',
     'otomo_d': '大友',
     'suwa_d': '诹访',
-    'beihai': '北海',
+'beihai': '北海',
     'hui': '濊',
     'luzhou': '渌',
     'xuantu': '玄菟',
