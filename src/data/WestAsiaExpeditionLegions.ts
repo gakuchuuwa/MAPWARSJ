@@ -26,7 +26,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     // ── T2 特色之兵：特定战役有明确战术高光 ──
     tuolemi: { name: '希腊方阵', tier: 2 },        // 亚历山大·托勒密：拉菲亚之战与塞琉古银盾对决
     heti: { name: '赫梯战车', tier: 2 },           // 哈图沙·穆瓦塔利：亲统三千战车卡迭石突袭埃及先头军团
-    qiliqiya: { name: '行省军团', tier: 2 },       // 阿达纳·庞培：前 67 年肃清奇里乞亚海盗、置行省，即其麾下行省军团
+    qiliqiya: { name: '行省辅军', tier: 2 },       // 阿达纳·庞培：前 67 年肃清奇里乞亚海盗、置行省，即其麾下行省军团
     xibolai: { name: '基伯利姆', tier: 2 },        // 耶路撒冷·大卫：希伯来语 gibborim「勇士」，撒下载勇士团；避将名
     jialedi: { name: '迦勒底战车', tier: 2 },      // 巴比伦·尼布甲尼撒：卡尔基米什之战（前 605）大破埃及军
     xikesuosi: { name: '喜克索战车', tier: 2 },    // 阿瓦里斯·萨利蒂：复合弓＋战车征服并统治下埃及百余年
@@ -34,7 +34,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     bendou: { name: '阿克里泰', tier: 2 },         // 特拉布宗·阿历克塞：科穆宁边防军史载专名，长期抗突厥袭扰有实绩
     bendou_d: { name: '本都铁骑', tier: 2 },       // 阿马西亚·密特里达梯：本都旧都，其骑兵泽拉之战击破罗马军
     paermila: { name: '帕尔米拉骑', tier: 2 },     // 塔德莫尔·芝诺比娅：亲统重装弓骑（clibanarii）夺取埃及与小亚
-    dibisi: { name: '阿蒙军团', tier: 2 },         // 瓦塞特（上埃及·底比斯）·图特摩斯：以阿蒙神命名的新王国常备军团，底比斯即阿蒙信仰中心；
+    dibisi: { name: '阿蒙神卫队', tier: 2 },         // 瓦塞特（上埃及·底比斯）·图特摩斯：以阿蒙神命名的新王国常备军团，底比斯即阿蒙信仰中心；
                                                   // 图特摩斯三世自此出征、阿鲁纳山道奇袭破米吉多。
                                                   // （原注称其为「四军团之首·米吉多主力」不确：阿蒙/拉/普塔/苏泰克四分军见于拉美西斯二世卡迭石，非图特摩斯朝）
 

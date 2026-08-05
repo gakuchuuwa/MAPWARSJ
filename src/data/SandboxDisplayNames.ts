@@ -35,7 +35,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   didi: '佛兰',
   anuo: '阿诺',
 'guadaer': '瓜达',
-  balunxiya: '瓦伦',
+  balunxiya: '巴伦',
   moxina: '墨西',
   sading: '萨丁',
   yidelisi: '伊德',
