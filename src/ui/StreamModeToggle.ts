@@ -86,7 +86,7 @@ export class StreamModeToggle {
         btn.id = BTN_ID;
         btn.type = 'button';
         btn.className = 'game-time-btn';
-        btn.title = '直播模式：隐藏调试面板等开发界面';
+        btn.title = '画面开关：隐藏调试面板等开发界面，不影响推演运行（播放/暂停只归「播放」按钮）';
         btn.textContent = '直播';
         btn.addEventListener('click', () => {
             this.apply(!document.body.classList.contains('stream-mode'));
@@ -123,12 +123,11 @@ export class StreamModeToggle {
             this.button.style.color = on ? '#e8b25a' : '';
         }
         if (on) {
+            // 直播 = 纯画面开关（2026-08-05 分离）：只隐藏开发 UI、打开跟拍列表，
+            // 不碰推演运行状态（ReloadGate 08-01 已定「直播按钮只是画面开关，不代表游戏在不在跑」；
+            // 开播推演由 UnattendedStream.autoStart 显式做，播放/暂停只归「播放」按钮）。
             const game = (window as any).game;
             game?.cameraFollowUI?.openList?.();
-            if (game?.historicalEventManager) {
-                const isPlaying = game.historicalEventManager.togglePlayback();
-                if (isPlaying) game.recruitmentSystem?.runInitialSpawn();
-            }
         }
         // 通知其他 UI：直播模式已变更
         window.dispatchEvent(new CustomEvent('stream-mode-change', { detail: { on } }));

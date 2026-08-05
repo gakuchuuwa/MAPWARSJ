@@ -20,7 +20,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   wulianghai: { name: '乌梁海巡骑', tier: 4 }, // 布尔根·车凌乌巴什
   qiuci: { name: '龟兹精兵', tier: 3 },   // 丝路第一大国龟兹，鸠摩罗什故国，显著文化知名度，升T2
   yuchi: { name: '于阗精兵', tier: 2 },       // 尉迟王族抗击黑汗四十载，独立坚守的特色王牌，升T2
-  an: { name: '昭武精骑', tier: 3 },        // “昭武九姓”粟特人，垄断丝路贸易，安禄山叛军核心精锐，极其著名的历史与文化符号，升入T3知名
   yiduhu: { name: '西州回鹘', tier: 3 },      // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   shule: { name: '阿兰斯近卫', tier: 3 },     // 元代著名的“阿速回军”（阿兰人近卫军），深度介入元廷斗争的异族卫队，知名度极高，升入T3知名
     yanqi: { name: '焉耆龙骑兵', tier: 4 },

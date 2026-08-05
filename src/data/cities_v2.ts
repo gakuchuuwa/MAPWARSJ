@@ -1554,9 +1554,7 @@ export const PERIPHERY: CityDataV2[] = [
     // ── 2026-05-26 新增：西域/中亚城池（14个）──
     { id: 'city_talas', name: '怛罗斯', factionId: 'tujishi', lat: 42.885995, lng: 71.347961, type: 'pass', troops: 30000, region: 'WESTERN' },
 
-    {
-        id: 'city_bukhara', name: '蒲华', factionId: 'an',
-        lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 30000, region: 'CENTRAL_ASIA', note: '昭武九姓安国故地（布哈拉）；昭武精骑' },
+    { id: 'city_bukhara', name: '布哈拉', factionId: 'an', lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 20000, region: 'CENTRAL_ASIA' },
     { id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan', lat: 41.3, lng: 69.3, type: 'small_city', troops: 30000, region: 'WESTERN' },
 
     // ── 2026-05-26 新增：青藏高原势力城市（24个）──

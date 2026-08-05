@@ -4,22 +4,11 @@ import { getRegion, REGION_ORDER, type RegionType } from '../systems/RegionSyste
 import { extractPortraitFolder } from '../config/PortraitAdjust';
 
 export type SoundKey =
-    | 'ui_click'
-    | 'ui_confirm'
     | 'march_loop'
     | 'cavalry_march_loop'
     | 'battle_loop'
-    | 'battle_start'
-    | 'battle_end'
     | 'battle_victory'
     | 'battle_defeat'
-    | 'battle_reinforcement'
-    | 'city_capture'
-    | 'faction_fall'
-    | 'legion_wipe'
-    | 'restoration'
-    | 'expedition'
-    | 'pass_siege'
     | 'general_skill'
     | 'bgm_main';
 
@@ -77,23 +66,12 @@ const FADE = {
 } as const;
 
 const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
-    ui_click: sound('ui', 'ui_click', 0.35, 120),
-    ui_confirm: sound('ui', 'ui_confirm', 0.45, 160),
-    march_loop: sound('battle', 'march_loop', 0.28, 0),
+    march_loop: sound('battle', 'march_loop', 0.25, 0),
     // 纯骑部队（草原/青藏/中亚）专用行军音效，与步骑 march_loop 分开
     cavalry_march_loop: sound('battle', 'cavalry_march_loop', 0.28, 0),
-    battle_loop: sound('battle', 'battle_loop', 0.8, 0),
-    battle_start: sound('battle', 'battle_start', 0.65, 1600),
-    battle_end: sound('battle', 'battle_end', 0.55, 1600),
+    battle_loop: sound('battle', 'battle_loop', 0.7, 0),
     battle_victory: sound('battle', 'battle_victory', 0.5, 1800),
     battle_defeat: sound('battle', 'battle_defeat', 0.4, 1800),
-    battle_reinforcement: sound('battle', 'battle_reinforcement', 0.5, 2200),
-    city_capture: sound('feed', 'city_capture', 0.7, 1200),
-    faction_fall: sound('feed', 'faction_fall', 0.85, 1800),
-    legion_wipe: sound('feed', 'legion_wipe', 0.65, 1200),
-    restoration: sound('feed', 'restoration', 0.65, 1200),
-    expedition: sound('feed', 'expedition', 0.75, 1400),
-    pass_siege: sound('feed', 'pass_siege', 0.45, 4000),
     general_skill: sound('battle', 'general_skill', 0.45, 1800),
     bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
@@ -739,7 +717,11 @@ export class AudioManager {
         }
         if (this.bgmAudio) {
             const def = SOUND_DEFINITIONS['bgm_main'];
-            if (def) this.setVolume(this.bgmAudio, this.resolveVolume(def), durationMs);
+            if (def) {
+                // 带 regionGain 响度补偿（与 playBgmFolder 一致），防主音量/分类音量调整时补偿丢失
+                const regionGain = BGM_REGION_GAIN[this.currentBgmFolder] ?? 1.0;
+                this.setVolume(this.bgmAudio, this.resolveVolume(def) * regionGain, durationMs);
+            }
         }
     }
 
@@ -853,7 +835,11 @@ export class AudioManager {
     private updateBgmDuckVolume(durationMs = 0): void {
         if (!this.bgmAudio) return;
         const def = SOUND_DEFINITIONS['bgm_main'];
-        if (def) this.setVolume(this.bgmAudio, this.resolveVolume(def), durationMs);
+        if (def) {
+            // 必须带 regionGain 响度补偿（与 playBgmFolder 一致），否则音效起停会丢失补偿、BGM 响度跳变
+            const regionGain = BGM_REGION_GAIN[this.currentBgmFolder] ?? 1.0;
+            this.setVolume(this.bgmAudio, this.resolveVolume(def) * regionGain, durationMs);
+        }
     }
 
     private warnMissingOnce(key: SoundKey, error: unknown): void {
