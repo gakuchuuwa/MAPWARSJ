@@ -346,15 +346,28 @@ function updateSingleGridTransform(path: string): void {
     }
 }
 
+/** 选中图 + 它的内容重复兄弟，一起刷新（兄弟保存时写的就是同一份值，预览必须一致） */
+function updateGridTransformWithSiblings(path: string): void {
+    updateSingleGridTransform(path);
+    for (const sib of duplicateSiblings.get(path) ?? []) {
+        updateSingleGridTransform(sib);
+    }
+}
+
 function getPreviewAdjustData(): PortraitAdjustData {
     const draftCopy = { ...draft };
-    return {
-        ...adjustData,
-        images: {
-            ...adjustData.images,
-            [selectedImage]: draftCopy,
-        },
+    const images: Record<string, PortraitAdjustValues> = {
+        ...adjustData.images,
+        [selectedImage]: draftCopy,
     };
+    // [FIX 2026-08-05] 内容重复的兄弟图一并按 draft 预览。
+    // commitDraftToAdjustData 保存时本来就会把同一份值写进每个兄弟的键，
+    // 但预览这里只映射了 selectedImage、刷新也只刷选中格 —— 于是「数据同步了、画面没动」，
+    // 看起来就像联动根本没生效（主人反馈"调一张另一张不跟着变"的直接原因）。
+    for (const sib of duplicateSiblings.get(selectedImage) ?? []) {
+        images[sib] = { ...draftCopy };
+    }
+    return { ...adjustData, images };
 }
 
 function loadDraftForSelected(): void {
@@ -427,7 +440,7 @@ async function selectImageAndAutoSaveInner(newImagePath: string): Promise<void> 
         targetCard.classList.add('is-active');
     }
 
-    updateSingleGridTransform(selectedImage);
+    updateGridTransformWithSiblings(selectedImage);
     updateBindPanel();
 }
 
@@ -549,7 +562,7 @@ function autoAlignSelected(): Promise<void> {
             adjustData.images[selectedImage] = { scale: draft.scale, offsetX: draft.offsetX, offsetY: draft.offsetY };
             dirtyKeys.add(selectedImage);
             editVersion++;
-            updateSingleGridTransform(selectedImage);
+            updateGridTransformWithSiblings(selectedImage);
             const parts = [
                 `scale ${before.scale.toFixed(2)}→${j.scale.toFixed(2)}`,
                 `offsetY ${before.offsetY}→${j.offsetY}`,
@@ -772,7 +785,7 @@ function bindEvents(): void {
         if (changed) {
             dirty = true;
             editVersion++;   // 让进行中的保存知道"这之后还有新改动"，别把 dirty 清掉
-            updateSingleGridTransform(selectedImage);
+            updateGridTransformWithSiblings(selectedImage);
         }
     });
 

@@ -111,12 +111,12 @@ const BAR_ENTER_RATIO_OF_ACT1 = 1;
  */
 const BAR_ACT1_EASE_POWER = 2;
 /** 第一阶段摆幅（小幅角力，不与开战语音抢戏；2026-08-03 从 1 提到 3：±0.9% 太死，几乎看不出争斗感） */
-const BAR_SWING_ACT1 = 3;
+const BAR_SWING_ACT1 = 4;
 /** 第二阶段摆幅：起手拉满 4 → 收束到 3（2026-08-03 从 1 提到 3：收束太狠导致后半段几乎静止） */
-const BAR_SWING_ACT2_FROM = 4;
-const BAR_SWING_ACT2_TO = 3;
+const BAR_SWING_ACT2_FROM = 6;
+const BAR_SWING_ACT2_TO = 4;
 /** 第三阶段相持的摆幅（主人要「大浮动摇摆」，故远大于前两阶段的收束值） */
-const BAR_SWING_ACT3 = 4;
+const BAR_SWING_ACT3 = 7;
 /** 溃败悬停（2026-08-03 主人定）：败方兵力数字减到初始的该比例即停住（残兵困守），
  *  断崖 1 秒内随条子 u^6 同步崩到 0（兵败如山倒）。纯显示层，不碰引擎实际兵力。 */
 const LOSER_HOLD_PCT = 0.10;
@@ -227,6 +227,8 @@ export class CombatUI {
     private outcomeLocked = false;
     /** 第三幕剧本锚点（2026-07-18 主人定）：进入第三幕瞬间的真实攻方%，崩溃/僵持/断崖从此起算 */
     private collapseStartAttPct: number | null = null;
+    /** 平滑过渡的目标锚点：防止引擎翻盘时标尺跨半屏瞬间闪现 */
+    private smoothedStalematePct: number = 50;
     private skillPulseLastAt = 0;
     private skillPulseTimers: number[] = [];
     /** 同场双方技能连放时仅首句插技能音效（无语音兜底路径） */
@@ -2347,6 +2349,7 @@ export class CombatUI {
             // [2026-07-18] 第三幕锚点仅换场清：镜头切进一场已过 80% 的战斗时，
             // 若沿用上一场锚点，崩溃/断崖方向可能画反（进度<80% 的自愈清零覆盖不到这条路径）
             this.collapseStartAttPct = null;
+            this.smoothedStalematePct = 50;
             // 「开局标尺在中间」：无缓动地归位到 50%，下一帧写入兵力比时才靠 0.45s 缓动滑进去。
             // 不归位的话新场会从上一场的收尾位置（可能是 100%）起步。
             this.attackerBar.style.transition = 'none';
@@ -3980,12 +3983,16 @@ export class CombatUI {
             : realAttPct >= 50;
         const lead = attStronger ? 1 : -1;
         /** 第二、三阶段的落点：恒定 80/20，不看兵力比 */
-        const stalematePct = 50 + lead * (CLASH_STALEMATE_PCT - 50);
+        const targetStalematePct = 50 + lead * (CLASH_STALEMATE_PCT - 50);
+        
+        // 平滑追踪目标落点，防止翻盘时标尺瞬间闪现
+        this.smoothedStalematePct += (targetStalematePct - this.smoothedStalematePct) * 0.05;
+        const stalematePct = this.smoothedStalematePct;
 
         // 摇摆走战斗逻辑时钟（2026-08-03 主人定）：周期约 12.6s，平时沉稳缓慢，
         // 只有崩溃段（u^6）才快速下落；暂停即停摆、倍速随战斗同频。谐波 0.2 提供拍频变化感
         // （0.1 时调制太浅，摆动幅度几乎恒定，观感死板）。
-        const swingT = battleClockSec / 2.0;
+        const swingT = battleClockSec * 0.8;
         const swingUnit = Math.sin(swingT) * 0.8 + Math.sin(swingT * 1.4) * 0.2;
 
         let attPct: number;
@@ -4008,8 +4015,10 @@ export class CombatUI {
             attPct = realAttPct + (stalematePct - realAttPct) * eased + swingUnit * swingAmp;
         } else {
             // 第三阶段（6 秒）：在 80% 大幅摇摆相持 5 秒 + 最后 1 秒断崖直接到底。
-            // 落点在进入本阶段时锁定：败战计中途翻盘换边时，条子不会在最后 6 秒里横穿中线。
-            if (this.collapseStartAttPct === null) this.collapseStartAttPct = stalematePct;
+            // 落点在进入本阶段时锁定：败战计中途翻盘换边时，允许弹性解锁，防止最后 1 秒崩向错误的输家。
+            if (this.collapseStartAttPct === null || (this.collapseStartAttPct > 50) !== (stalematePct > 50)) {
+                this.collapseStartAttPct = stalematePct;
+            }
             const hold = this.collapseStartAttPct;
             const s = Math.min(1, (progress - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
             if (s < BAR_CLIFF_START) {
