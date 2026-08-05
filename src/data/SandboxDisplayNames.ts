@@ -264,7 +264,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'cao_d': '亳',
     'jiujiang': '浔',
 
-    'quanrong': '犬戎',
+'quanrong': '犬戎',
 'suzhou': '肃',
     'sushen': '肃慎',
 'chile': '敕勒',

@@ -1068,9 +1068,7 @@ export const PERIPHERY: CityDataV2[] = [
         note: '室町幕府足利将军治所；大城门槛放宽至约40万——大坂宽永/江户盛期约40万够大，京都按同档升 big_city' },
     { id: 'city_tainan', name: '承天', factionId: 'ming_zheng', lat: 22.99, lng: 120.2, type: 'small_city', troops: 30000, region: 'JIANGNAN' },
 
-    { id: 'city_weirong', name: '威戎', factionId: 'quanrong', lat: 35.585841, lng: 105.512695, type: 'pass', region: 'CENTRAL', troops: 30000,
-        note: '威戎；犬戎小城',
-    },
+    { id: 'city_weirong', name: '威戎', factionId: 'quanrong', lat: 35.585841, lng: 105.512695, type: 'pass', troops: 20000, region: 'STEPPE' },
     { id: 'city_xingtai', name: '邢台', factionId: 'shizhao_d', lat: 37.07, lng: 114.50, type: 'small_city', troops: 30000, region: 'NORTH' },
 
     { id: 'city_shengle', name: '盛乐', factionId: 'yunzhong', lat: 40.38, lng: 111.82, type: 'small_city', troops: 30000, region: 'NORTH' },
@@ -1731,7 +1729,7 @@ export const RESTORED_CITIES: CityDataV2[] = [
 
 
 
-{ id: 'city_xingqing', name: '合水', factionId: 'qing', lat: 36.01, lng: 107.87, type: 'pass', troops: 30000, region: 'CENTRAL' },
+{ id: 'city_xingqing', name: '合水', factionId: 'qing', lat: 36.01, lng: 107.87, type: 'pass', troops: 20000, region: 'CENTRAL', mirror: true },
 
 
 
