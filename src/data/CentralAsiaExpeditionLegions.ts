@@ -90,5 +90,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     //    WestAsiaExpeditionLegions.ts（原条目与西亚版番号/tier 冲突，靠展开顺序静默覆盖，故清出）──
     //    bendou bendou_d heti fulijiya ldiya pajiama bitiniya baizhanting xibolai aiji dibisi
     //    jialedi paermila abasi xikesuosi yashu youfaladi qiliqiya sumeier ayoubu aiaoniya
-    //    jialatai guyashu nabatai beileinisi dedan maidina gulaishi
+    //    jialatai guyashu nabatai beileinisi dedan maidina gulaishi,
+    an: { name: '昭武精骑', tier: 3 },
 };

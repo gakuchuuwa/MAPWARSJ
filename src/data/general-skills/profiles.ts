@@ -903,7 +903,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    an_xibanni: { generalId: 'an_xibanni', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defBalanceSkillId: 'ts_045', atkAdvantageSkillId: 'ts_624', atkBalanceSkillId: 'ts_659', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_392', defDisadvantageSkillId: 'ts_822', aptitude: 'leverage', attackStyle: 'attack' },
+    an_xibanni: { generalId: 'an_xibanni', tier: 'famous', tacticalSkillId: 'ts_624', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_624', atkBalanceSkillId: 'ts_659', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_045', defDisadvantageSkillId: 'ts_822', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 

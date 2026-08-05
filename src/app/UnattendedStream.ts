@@ -75,14 +75,11 @@ function autoStart(app: GameApp, gameTimeHUD: GameTimeHUD): void {
     // 后者只看【推演当前在不在跑】（ReloadGate 读 TimeSystem 暂停位），跟本函数无关。
     if (StreamModeToggle.hasStarted()) return;
 
-    if ((window as any).game) {
-        StreamModeToggle.activate();
-    } else {
-        // window.game 尚未挂载的兜底：直接走播放链路（开局必为暂停态，toggle 即开始）
-        document.body.classList.add('stream-mode');
-        const playing = app.historicalEventManager.togglePlayback();
-        if (playing) app.recruitmentSystem.runInitialSpawn();
-    }
+    // 一键链路（2026-08-05 分离后显式补全）：直播按钮已只管画面开关（不再隐式开播），
+    // 这里显式完成「进直播画面 + 开始推演 + 初始刷兵 + 同步播放按钮」。
+    StreamModeToggle.activate();
+    const playing = app.historicalEventManager.togglePlayback();
+    if (playing) app.recruitmentSystem?.runInitialSpawn();
     gameTimeHUD.setPlayingState(true);
     gameLog('startup', '📺 [无人值守] 已自动开播');
 }

@@ -303,7 +303,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -24
         },
         "/assets/BASHU/chu_guanyu.png": {
-            "scale": 1.06,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 13
         },
@@ -638,7 +638,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/xianqin/zhao_lianpo.png": {
-            "scale": 0.91,
+            "scale": 0.89,
             "offsetX": 8,
             "offsetY": 5
         },
@@ -858,8 +858,8 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/NORTH/yuzhou_zuti.png": {
-            "scale": 0.96,
-            "offsetX": 0,
+            "scale": 0.9,
+            "offsetX": 1,
             "offsetY": 4
         },
         "/assets/BASHU/xiang_d_xiangdakun.png": {
@@ -6312,16 +6312,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -18
         },
-        "/assets/STEPPE/2e1566c5-c2d8-462f-b9e7-8eea322c307e.png": {
-            "scale": 1.04,
-            "offsetX": 0,
-            "offsetY": 6
-        },
-        "/assets/STEPPE/44635336-f5ff-4e27-9084-d2c3bd2fd316.png": {
-            "scale": 1.25,
-            "offsetX": 0,
-            "offsetY": -16
-        },
         "/assets/STEPPE/kangju_chebishi.png": {
             "scale": 1.04,
             "offsetX": 0,
@@ -6357,11 +6347,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 7
         },
-        "/assets/JAPAN/a1c7682c-07c0-45a9-81f3-d00460466797.png": {
-            "scale": 1.14,
-            "offsetX": 0,
-            "offsetY": 9
-        },
         "/assets/JAPAN/__闲置__JAPAN_35.png": {
             "scale": 1,
             "offsetX": 0,
@@ -6371,11 +6356,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 9
-        },
-        "/assets/LINGNAN/003f75f2-823d-4a6f-83ff-9b28de38affc.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": -2
         },
         "/assets/LINGNAN/__闲置__LINGNAN_16.png": {
             "scale": 0.85,

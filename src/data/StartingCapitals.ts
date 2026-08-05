@@ -564,7 +564,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     // ── 2026-05-28 新增：南部(根城)、萨曼(阿母城)、西域四政权 ──
     'nanbu': 'city_genjo',
-    'an': 'city_bukhara',
+'an': 'city_bukhara',
     'saman': 'city_amucheng',
 'hepan': 'city_hepancheng',
 'humi': 'city_hunduduo',

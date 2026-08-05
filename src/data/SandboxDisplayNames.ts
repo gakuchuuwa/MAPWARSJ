@@ -501,7 +501,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'kangju': '康居',
     'geluolu': '葛逻',
     'yuchi': '尉迟',
-    'an': '安',
+'an': '安',
 'shi_clan': '石',
 
     
