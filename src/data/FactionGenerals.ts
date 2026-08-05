@@ -455,7 +455,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 
 // ── 青藏区 2026-06-18 ──
     song2: { generalId: 'song2_houjunji', generalName: '侯君集', portrait: '/assets/litang/song2_houjunji.png' },
-    gurkha: { generalId: 'gurkha_baduersaye', generalName: '巴都尔萨野', portrait: '/assets/TIBET/gurkha_baduersaye.png' },
+    gurkha: { generalId: 'gurkha_baduersaye', generalName: '巴都尔萨野', portrait: '/assets/TIBET/gurkha_badouersaye.png' },
     gongbu: { generalId: 'gongbu_gongbumangbuzhi', generalName: '工布莽布支', portrait: '/assets/TIBET/gongbu_gongbumangbuzhi.png' },
     khon: { generalId: 'khon_basiba', generalName: '八思巴', portrait: '/assets/TIBET/khon_basiba.png' },
     xiadun: { generalId: 'xiadun_xiazhongawanglangjie', generalName: '阿旺朗杰', portrait: '/assets/TIBET/xiadun_awanglangjie.png' },
