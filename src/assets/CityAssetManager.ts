@@ -1339,23 +1339,7 @@ export class CityAssetManager {
         appendBootPlaceholderFlagRulesByFaction(placeholderByFaction);
     }
 
-    /**
-     * @deprecated 使用 prepareDeferredFlagQueue + onBootMapReady；保留兼容旧调用。
-     */
-    public static preloadFlagsProgressive(
-        allFactions: string[],
-        _cities: Array<{ lat: number; lng: number; factionId: string; region?: string }>
-    ): { priority: Promise<void>; background: Promise<void> } {
-        this.deferredDrainUnlocked = false;
-        this.prepareDeferredFlagQueue(allFactions);
-        const resolved = Promise.resolve();
-        return { priority: resolved, background: resolved };
-    }
-
-    /**
-     * Preload and process all flag images with chroma key and dynamic faction color tinting.
-     */
-    /** 等待旗号就绪（优先复用 preloadFlagsProgressive 的 loadingPromise） */
+    /** 等待全部旗号就绪（正规势力全表 + 叛军 52 面）；启动主链不走这里，见 prepareDeferredFlagQueue */
     public static async preloadFlags(neededFactions?: string[]): Promise<void> {
         if (this.flagsLoaded) return;
         if (this.loadingPromise) {
@@ -1423,7 +1407,11 @@ export class CityAssetManager {
     /** [诊断 2026-07-17] 旗帜管线耗时分解（图片加载/像素工作/让步等待），finishBoot 随 boot-timing 上报 */
     public static readonly flagPerf = { imgLoadMs: 0, sliceMs: 0, yieldMs: 0, flags: 0 };
 
-    /** 画据点前加载叛军旗：S10QZ 编号 PANJUN_REBEL_FLAG_ID_MIN–MAX（52 面）。AGENTS.md §10.3 */
+    /**
+     * 画据点前加载叛军旗兜底面。S10QZ 编号 PANJUN_REBEL_FLAG_ID_MIN–MAX 共 52 面，
+     * 但**开局只 await 第 1 面**（开局全图皆叛军城，全量 await 是白等），
+     * 其余 3 秒后后台断点续载补满。AGENTS.md §10.3
+     */
     public static async preloadRebelFlagsForBoot(): Promise<void> {
         (window as any).__flagPerf = this.flagPerf;
         this.resetRebelFlagAssignments();

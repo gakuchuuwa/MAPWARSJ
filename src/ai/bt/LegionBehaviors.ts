@@ -195,6 +195,26 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
 }
 
 /**
+ * 冷却名单：过期项顺手清理。
+ * 【务必共用】HasTarget 的「途中改追击」和 FindTarget 的「选目标」必须用同一份名单——
+ * 2026-08-05 修：HasTarget 那侧原先传 `new Set()`（等于没有冷却），
+ * 于是 hunt_blocked_timeout 刚把打不动的敌军拉黑、下一 tick 就又被追回去，
+ * 军团被一支交战中的敌军永久钉住、45 秒空转一轮，几乎不再攻城。
+ */
+function buildExcludeTargetIds(ctx: BTContext): Set<string> {
+    const now = performance.now();
+    const excludeTargetIds = new Set<string>();
+    for (const [targetId, failedAt] of ctx.recentFailedTargets.entries()) {
+        if (now - failedAt <= FAILED_TARGET_COOLDOWN_MS) {
+            excludeTargetIds.add(targetId);
+        } else {
+            ctx.recentFailedTargets.delete(targetId);
+        }
+    }
+    return excludeTargetIds;
+}
+
+/**
  * 在寻敌半径内找最近可野战敌军团（排除冷却中的目标）。
  * 收复本城优先于本函数；本函数优先于近敌城抽签。
  */
@@ -271,7 +291,7 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
 
     // 关键：已锁定据点时 EnsureTarget 不会再进 FindTarget，同屏新刷敌军团会被无视。
     // 非收复/非远征的攻城途中，若寻敌半径内出现可打敌军团 → 清城目标并立刻改追（勿 stopMovement 空窗卡死）。
-    const nearbyEnemy = pickNearbyEnemyLegion(ctx, new Set());
+    const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx));
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();
         btLog(
@@ -344,16 +364,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     if (expedition === 'locked') return BTStatus.SUCCESS;
 
     const myFaction = ctx.army.getFactionId();
-    const now = performance.now();
-    const excludeTargetIds = new Set<string>();
-
-    for (const [targetId, failedAt] of ctx.recentFailedTargets.entries()) {
-        if (now - failedAt <= FAILED_TARGET_COOLDOWN_MS) {
-            excludeTargetIds.add(targetId);
-        } else {
-            ctx.recentFailedTargets.delete(targetId);
-        }
-    }
+    const excludeTargetIds = buildExcludeTargetIds(ctx);
 
     const originCityId = getArmyOriginCityId(ctx.army);
     if (!originCityId) {
@@ -400,9 +411,24 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     }
 
     const useHomeAnchor = ctx.army.getTroops() < GameConfig.LEGION.HOME_ANCHOR_TROOP_THRESHOLD;
-    const anchorId = useHomeAnchor
-        ? originCityId
-        : resolveForwardAnchor(ctx.army.getPosition(), myFaction, originCityId, ctx.cityManager);
+    let anchorId: string;
+    if (useHomeAnchor) {
+        anchorId = originCityId;
+    } else {
+        // 锚点按「军团所在路网城」出发的道路距离选，隔海飞地不会被误选（见 resolveForwardAnchor）
+        const armyPos = ctx.army.getPosition();
+        const standCityId = roadRegistry.getNearestCityId(armyPos.lat, armyPos.lng);
+        const roadDistances = standCityId
+            ? roadRegistry.getRoadDistancesKmFrom(standCityId)
+            : undefined;
+        anchorId = resolveForwardAnchor(
+            armyPos,
+            myFaction,
+            originCityId,
+            ctx.cityManager,
+            roadDistances
+        );
+    }
 
     const picked = TargetEvaluator.pickTarget(
         myFaction,
@@ -762,11 +788,14 @@ const reinforceHome = new Sequence('ReinforceHome', [
 ]);
 
 export function createLegionBehaviorTree(): BTNode {
+    // 顺序即优先级。[2026-08-05] IsPostBattleResting 从 reinforceHome 之前挪到之后：
+    // 铁律 2「在路上行军、待命均可回援」，战后休整本质是待命，原顺序会让休整中的军团
+    // 眼看着老家被攻城而不动。IsInCombat 仍在最前，交战中绝不脱离（铁律 1）不受影响。
     return new Selector('RootSelector', [
         IsInCombat,
         IsWaitingSiege,
-        IsPostBattleResting,
         reinforceHome,
+        IsPostBattleResting,
         retreatWeakLegion,
         attackSequence,
         Idle,

@@ -440,7 +440,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     mamon: { generalId: 'mamon_mameng', generalName: '马蒙', portrait: '/assets/CENTRAL_ASIA/mamon_mameng.png' },
     khoja: { generalId: 'khoja_apakehezhuo', generalName: '阿帕克和卓', portrait: '/assets/WESTERN/khoja_apakehezhuo.png' },
     fanyanna: { generalId: 'fanyanna_xieer', generalName: '谢尔', portrait: '/assets/india/fanyanna_xieer.png' },
-    kangju: { generalId: 'kangju_chebishi', generalName: '车鼻施', portrait: '/assets/CENTRAL_ASIA/kangju_chebishi.png' },
+    kangju: { generalId: 'kangju_chebishi', generalName: '车鼻施', portrait: '/assets/STEPPE/kangju_chebishi.png' },
     zhaowu: { generalId: 'zhaowu_timuermieli', generalName: '帖木儿灭里', portrait: '/assets/CENTRAL_ASIA/zhaowu_timuermieli.png' },
     qiepantuo: { generalId: 'qiepantuo_luozhentan', generalName: '罗真檀', portrait: '/assets/CENTRAL_ASIA/qiepantuo_luozhentan.png' },
     jie: { generalId: 'jie_sijinti', generalName: '斯谨提', portrait: '/assets/CENTRAL_ASIA/jie_sijinti.png' },

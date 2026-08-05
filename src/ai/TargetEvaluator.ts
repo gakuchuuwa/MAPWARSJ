@@ -25,12 +25,6 @@ export interface TargetEvaluateOptions {
 }
 
 export class TargetEvaluator {
-    /** @deprecated 目标选择已改为近敌池抽签，UI 锁定暂不生效 */
-    public static playerStrategicTargetId: string | null = null;
-
-    /** @deprecated */
-    public static playerFactionId: string = 'qin';
-
     /**
      * 列出从 anchorCityId 出发所有可达敌方城（按道路距离升序）
      */
@@ -61,24 +55,37 @@ export class TargetEvaluator {
         );
         if (reachable.length === 0) return null;
 
-        // 枪打出头鸟（反雪球）：领先势力过大时，概率改打它最近的城（见 GameConfig.AI.LEADER_HUNT）
-        const hunt = GameConfig.AI.LEADER_HUNT;
-        if (hunt?.ENABLED && Math.random() < hunt.PROBABILITY) {
-            const leader = TargetEvaluator.findLeaderFaction(cities);
-            if (leader && leader.factionId !== factionId && leader.count >= hunt.CITY_THRESHOLD) {
-                const factionById = new Map(cities.map((c) => [c.id, c.factionId]));
-                const leaderTarget = reachable.find(
-                    (s) => factionById.get(s.targetId) === leader.factionId
-                );
-                if (leaderTarget) return leaderTarget; // reachable 已按道路距离升序 → 最近的领先城
-            }
-        }
-
         let pool = TargetEvaluator.buildDirectionalPool(anchorCityId, reachable, homeCityId, cities);
         if (pool.length === 0) {
             const poolSize = Math.max(1, GameConfig.AI.TARGET_NEAR_POOL);
             pool = reachable.slice(0, Math.min(poolSize, reachable.length));
         }
+
+        // 枪打出头鸟（反雪球）：领先势力过大时，概率改打它（见 GameConfig.AI.LEADER_HUNT）。
+        // [2026-08-05] 先在推进方向池里挑，挑不到才允许回头——原实现直接在全表取最近的领先城，
+        // 绕开了方向池和回头路检查，军团会毫无征兆地掉头往老家方向打，观感像 AI 抽风。
+        // 领先势力据点数已 ≥ CITY_THRESHOLD，方向池里多半就有，掉头是罕见兜底。
+        const hunt = GameConfig.AI.LEADER_HUNT;
+        if (hunt?.ENABLED && Math.random() < hunt.PROBABILITY) {
+            const leader = TargetEvaluator.findLeaderFaction(cities);
+            if (leader && leader.factionId !== factionId && leader.count >= hunt.CITY_THRESHOLD) {
+                const factionById = new Map(cities.map((c) => [c.id, c.factionId]));
+                const isLeaderCity = (s: TargetScore) =>
+                    factionById.get(s.targetId) === leader.factionId;
+                // 方向池内最近的领先城（池按方向排列、未按距离排序，故取最小值而非 find）
+                const inPool = pool
+                    .filter(isLeaderCity)
+                    .reduce<TargetScore | null>(
+                        (best, s) => (!best || s.distanceKm < best.distanceKm ? s : best),
+                        null
+                    );
+                if (inPool) return inPool;
+                // 推进方向上完全没有领先势力 → 才允许回头去打（reachable 已按道路距离升序）
+                const anywhere = reachable.find(isLeaderCity);
+                if (anywhere) return anywhere;
+            }
+        }
+
         return pool[Math.floor(Math.random() * pool.length)];
     }
 
@@ -96,7 +103,6 @@ export class TargetEvaluator {
         const neighbors = roadRegistry.getConnectedCities(anchorCityId);
         if (neighbors.length === 0) return [];
 
-        const reachableById = new Map(reachable.map((s) => [s.targetId, s]));
         const pool: TargetScore[] = [];
         const seen = new Set<string>();
 
@@ -123,32 +129,27 @@ export class TargetEvaluator {
                 : 0;
         };
 
-        for (const neighborId of neighbors) {
-            const directEnemy = reachableById.get(neighborId);
-            if (directEnemy && !seen.has(directEnemy.targetId)) {
-                // 回头路检查
-                const d = computeDistFromCity(directEnemy.targetId);
-                if (d >= anchorToHome * 0.9) {
-                    pool.push(directEnemy);
-                    seen.add(directEnemy.targetId);
-                }
-                continue;
+        // [PERF 2026-08-05] 每座敌城的「最短路第一跳」只算一次，按第一跳归组取该方向最近的一座。
+        // 原实现对每条直连道路都把全部可达敌城重扫一遍（≈ 路数 × 敌城数 次寻路回溯，约 4 倍冗余）。
+        // 邻城自身是敌城的情况天然被覆盖：该方向所有城都要过它，它必是本组最近的。
+        const bestByFirstHop = new Map<string, TargetScore>();
+        for (const score of reachable) {
+            const path = roadRegistry.findCityPath(anchorCityId, score.targetId);
+            if (!path || path.length < 2) continue;
+            const hop = path[1];
+            const cur = bestByFirstHop.get(hop);
+            if (!cur || score.distanceKm < cur.distanceKm) {
+                bestByFirstHop.set(hop, score);
             }
+        }
 
-            let best: TargetScore | null = null;
-            for (const score of reachable) {
-                const path = roadRegistry.findCityPath(anchorCityId, score.targetId);
-                if (!path || path.length < 2 || path[1] !== neighborId) continue;
-                if (!best || score.distanceKm < best.distanceKm) {
-                    best = score;
-                }
-            }
-            if (best && !seen.has(best.targetId)) {
-                const d = computeDistFromCity(best.targetId);
-                if (d >= anchorToHome * 0.9) {
-                    pool.push(best);
-                    seen.add(best.targetId);
-                }
+        for (const neighborId of neighbors) {
+            const best = bestByFirstHop.get(neighborId);
+            if (!best || seen.has(best.targetId)) continue;
+            // 回头路检查：目标离老家不比锚点离老家更远 → 跳过该方向
+            if (computeDistFromCity(best.targetId) >= anchorToHome * 0.9) {
+                pool.push(best);
+                seen.add(best.targetId);
             }
         }
 

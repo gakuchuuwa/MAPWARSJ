@@ -983,13 +983,22 @@ npm run skeleton:audit
 ### 10.4 启动旗号加载顺序（`GameApp.start`）
 
 1. `FactionManager` 初始化  
-2. `seedBootPlaceholderFlags`（正规势力中性透明占位，**不含 panjun**）  
-3. `preloadFlagsProgressive`：**后台** 分批染色正规势力（**不要** `await` 全表）  
-4. `preloadRebelFlagsForBoot`：**await**，52 面叛军旗  
-5. `renderCitiesOnly`（**不要** 与全图领土 BFS 绑在同一 await 链上）  
-6. `completeLateBoot` 等其余系统延后，主循环尽早 `requestAnimationFrame`
+2. `prepareDeferredFlagQueue`：登记全表待染队列，**首次拖图前不消化**  
+3. `seedBootPlaceholderFlags`（正规势力中性透明占位，**不含 panjun**）  
+4. `preloadRebelFlagsForBoot`：**只 await 兜底 1 面**叛军旗；其余 51 面 3s 后后台断点续载  
+5. `onBootMapReady`：视口势力旗**不 await**，交给 onDemand 队列后台逐面上色  
+6. `renderCitiesOnly`（**不要** 与全图领土 BFS 绑在同一 await 链上）  
+7. `completeLateBoot` 等其余系统延后，主循环尽早 `requestAnimationFrame`
 
-军团贴图 `LegionPhalanxDrawer.preload` 与旗号 **分开**，勿在启动 peak 与旗号 chromaKey 抢主线程。
+军团贴图 `GlobalUnitRenderer.preloadAssets` 不阻塞启动（`void` 起飞、不 await），但它**整个启动期都在跑**，
+必须自己控制主线程占用，否则会把主链每一步的 `await` 续点全部撑长——2026-08-05 修掉了
+`processImage` 重复抠图（2416 次未去重，实际只有 600 张不同的图），后台标签页同条件实测
+9.3s→5.4s；**前台效果尚未取到干净样本**，勿引用未标条件的加速比。
+
+⚠️ **对比启动耗时必须先分 `hidden` 字段**：后台标签页不渲染地图，本身就比前台快一个量级
+（8-04 同日同代码：后台中位 9.3s、前台中位 20.4s）。拿后台样本比前台样本会得出假的加速比。
+诊断判据：`sessionPeaks` 里 `bootLongTask` 笔数/总时长，以及 `flagPerf.imgLoadMs`
+（它量的是**主线程排队**，不是网络——dev server 已实测排除）。
 
 ### 10.5 改代码前自检（旗号/领土）
 
@@ -1495,6 +1504,14 @@ _本文件以中文写作，方便项目维护者快速理解。日后版本若�
   - ⚠️ **禁止**再加回任何「远征军回救本城」的分支：症状是军团在远征目标与老家之间**来回徘徊**，目标永远打不到。
 - **只救本军出发城** —— 回援 / 收复只针对本军 `homeCityId`，**不救本势力其他城**；其他城的战斗仅当军团恰好在开战圈（`BATTLE_JOIN_RADIUS` ≈ 30 km）内路过才被动卷入。
 - **后果认账** —— 严格执行后，深入敌境连续攻城的军团多半正卡在战斗里，回援触发会明显变少。这是规则的必然推论，**不是 bug**。
+
+**行为树根节点顺序（即优先级，`createLegionBehaviorTree`）**：
+
+`IsInCombat` → `IsWaitingSiege` → `reinforceHome` → `IsPostBattleResting` → `retreatWeakLegion` → `attackSequence` → `Idle`
+
+- `IsWaitingSiege` 排在回援前**不违反铁律 2**：它内部 `homeNeedsHelp` 命中时会主动退出排队并返回 false，让位给回援/收复。
+- `IsPostBattleResting` 必须排在 `reinforceHome` **之后**（2026-08-05 调整）——休整本质是「待命」，按铁律 2 可回援；
+  排在前面会让休整中的军团眼看老家被攻城而不动。
 
 **代码锚点**：
 
