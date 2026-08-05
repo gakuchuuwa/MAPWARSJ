@@ -16,7 +16,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     // ── T2 特色之兵 ──
     liulike: { name: '诺城民兵', tier: 2 },          // 诺夫哥罗德·亚历山大：冰湖之战主力
     mosike_gongguo: { name: '莫斯科卫队', tier: 2 },          // 莫斯科·德米特里：库利科沃决战核心
-    gesake: { name: '哥萨克', tier: 2 },          // 塞契·赫梅利：扎波罗热哥萨克
+    gesake: { name: '哥萨克骑兵', tier: 2 },          // 塞契·赫梅利：扎波罗热哥萨克
     saierdika: { name: '普利斯卡军', tier: 2 },          // 索非亚·克鲁姆：811普利斯卡歼灭拜占庭军
     saierweiya: { name: '塞尔维亚军', tier: 2 },          // 贝尔格莱德·斯蒂芬杜尚：巴尔干霸主
     moerdaweiya: { name: '瓦斯卢伊军', tier: 2 },          // 雅西·斯蒂芬大帝：1475以少胜多

@@ -60,14 +60,14 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     huluo: { name: '古尔重骑', tier: 1 },
   aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·萨珊波斯抗击罗马帝国的战略主力
     kala: { name: '古拉姆近卫', tier: 3 },
-    saerbadaer: { name: '萨尔巴达军团', tier: 3 },  // 白哈格·拉扎克：萨尔巴达尔平民/民兵抗蒙，非骑兵
+    saerbadaer: { name: '萨尔巴达军', tier: 3 },  // 白哈格·拉扎克：萨尔巴达尔平民/民兵抗蒙，非骑兵
     kumisi: { name: '瑟尔柱重骑', tier: 3 },
     ribale: { name: '代尔木重步', tier: 2 },
     safawei: { name: '吉兰步卒', tier: 3 },
     yilihanguo: { name: '奇兹尔巴什', tier: 2 },
     yilihanguo_d: { name: '伊利怯薛', tier: 2 },
     asaibaijiang: { name: '蒙古怯薛', tier: 0 },
-    wulaertu: { name: '乌拉尔图军团', tier: 3 },  // 埃里温·阿吉什提：乌拉尔图山地堡垒国，步兵/战车为主，非游牧骑兵
+    wulaertu: { name: '乌拉尔图卫', tier: 3 },  // 埃里温·阿吉什提：乌拉尔图山地堡垒国，步兵/战车为主，非游牧骑兵
     gelujiya: { name: '莫纳斯帕', tier: 2 },
     keerjisi: { name: '伊梅列季兵', tier: 2 },
     midi: { name: '不死军团', tier: 3 },
@@ -91,5 +91,5 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     //    bendou bendou_d heti fulijiya ldiya pajiama bitiniya baizhanting xibolai aiji dibisi
     //    jialedi paermila abasi xikesuosi yashu youfaladi qiliqiya sumeier ayoubu aiaoniya
     //    jialatai guyashu nabatai beileinisi dedan maidina gulaishi,
-    an: { name: '昭武精骑', tier: 3 },
+    an: { name: '乌兹别克骑', tier: 3 },
 };

@@ -131,7 +131,7 @@ export const FACTIONS: Faction[] = [
   // ── 2026-08-04 新增：大波兰（波兹南，大波兰公国/王国核心）──
   { id: 'dabolan', name: '波兰亚' },
   { id: 'piyasite', name: '皮雅斯特' },
-  { id: 'baojian_qishi', name: '宝剑骑士' },
+  { id: 'baojian_qishi', name: '宝剑骑士团' },
   { id: 'teweier_gongguo', name: '特维公国' },
   { id: 'suzidaer', name: '苏兹达尔' },
   { id: 'gesake', name: '哥萨克' },
@@ -142,8 +142,8 @@ export const FACTIONS: Faction[] = [
   { id: 'moerdaweiya', name: '摩尔达维亚' },
   { id: 'walajiyia', name: '瓦拉几亚' },
   { id: 'tiaodun_qishi', name: '条顿骑士' },
-  { id: 'shengdian_qishi', name: '圣殿骑士' },
-  { id: 'maerta_qishi', name: '马耳他骑士' },
+  { id: 'shengdian_qishi', name: '圣殿骑士团' },
+  { id: 'maerta_qishi', name: '马耳他骑士团' },
   { id: 'liwoniya', name: '利沃尼亚' },
   { id: 'chude', name: '楚德' },
   { id: 'deniesite', name: '德涅斯特' },
@@ -862,7 +862,7 @@ export const FACTIONS: Faction[] = [
 { id: 'geluolu', name: '葛逻禄' },      // 高原栗 - 葛逻禄(怛罗斯/中亚名城)
 { id: 'yuchi', name: '尉迟' },          // 于阗紫 - 尉迟氏/伏阇氏(于阗王族/丹丹乌里克)
 // 西域沙金 - 麴氏(高昌汉人王族/柏孜克里克)
-{ id: 'an', name: '安氏' },
+{ id: 'an', name: '乌兹别克' },
 { id: 'shi_clan', name: '石氏' },
 
 

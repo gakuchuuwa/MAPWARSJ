@@ -87,7 +87,7 @@ export class StreamModeToggle {
         btn.type = 'button';
         btn.className = 'game-time-btn';
         btn.title = '画面开关：隐藏调试面板等开发界面，不影响推演运行（播放/暂停只归「播放」按钮）';
-        btn.textContent = '直播';
+        btn.textContent = '画面';
         btn.addEventListener('click', () => {
             this.apply(!document.body.classList.contains('stream-mode'));
         });
@@ -119,7 +119,7 @@ export class StreamModeToggle {
         // 改文件刷不刷新与本按钮无关（ReloadGate 读的是推演运行状态）。
         localStorage.setItem(STORAGE_KEY, on ? '1' : '0');
         if (this.button) {
-            this.button.textContent = on ? '📺 直播中' : '直播';
+            this.button.textContent = on ? '📺 直播中' : '画面';
             this.button.style.color = on ? '#e8b25a' : '';
         }
         if (on) {
