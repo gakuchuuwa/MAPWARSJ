@@ -50,13 +50,20 @@ export function resolveRecaptureTarget(
 }
 
 /**
- * 推进锚点 A：距军团当前位置最近的己方据点；若无 → homeCityId
+ * 推进锚点 A：距军团最近的己方据点；若无 → homeCityId。
+ *
+ * [FIX 2026-08-05] 传 roadDistances（军团所在路网城出发的道路距离表）时按**道路**距离选，
+ * 不在表里的城 = 走不到 → 直接排除。原先只比直线距离，会把隔海飞地（如日本的城）
+ * 选成大陆军团的锚点，于是从飞地周边挑出一座实际根本走不到的目标城，
+ * 白跑一轮决策（有 giveUpUnreachable 兜底，不会卡死，但行军路线会绕）。
+ * 不传则退回直线距离（保留旧行为，供不便取路网的调用方）。
  */
 export function resolveForwardAnchor(
     armyPos: { lat: number; lng: number },
     factionId: string,
     homeCityId: string,
-    cityManager: TargetAnchorCityAccess
+    cityManager: TargetAnchorCityAccess,
+    roadDistances?: ReadonlyMap<string, number>
 ): string {
     const friendly = cityManager.getCitiesByFaction(factionId);
     if (friendly.length === 0) {
@@ -69,10 +76,17 @@ export function resolveForwardAnchor(
     for (const city of friendly) {
         // 跳过出生城：≥2万已出发，锚点必须在前沿
         if (city.id === homeCityId) continue;
-        const dist = getEuclideanDistance(armyPos, {
-            lat: city.latitude,
-            lng: city.longitude,
-        });
+        let dist: number;
+        if (roadDistances) {
+            const roadKm = roadDistances.get(city.id);
+            if (roadKm === undefined) continue; // 路网不可达（飞地/断路）→ 不能当锚点
+            dist = roadKm;
+        } else {
+            dist = getEuclideanDistance(armyPos, {
+                lat: city.latitude,
+                lng: city.longitude,
+            });
+        }
         if (dist < bestDist) {
             bestDist = dist;
             bestId = city.id;

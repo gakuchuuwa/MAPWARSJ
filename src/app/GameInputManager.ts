@@ -7,7 +7,6 @@ import { CityManager } from '../world/CityManager';
 import { GameUIManager } from './GameUIManager';
 import { GridSystem } from '../systems/GridSystem';
 import * as L from 'leaflet';
-import { TargetEvaluator } from '../ai/TargetEvaluator';
 
 export class GameInputManager {
     private map: GameMap;
@@ -112,12 +111,10 @@ export class GameInputManager {
             // For now, let's replicate the basic move logic here or call a delegate.
             // Since "handleCityClickMove" was just moving player, we implementation it here.
 
-            // 大乱斗沙盒模式：点击敌对城池设为 AI 战略攻坚目标（自动战斗模式无 UI 提示）
-            const playerFaction = TargetEvaluator.playerFactionId;
-            if (city.factionId !== playerFaction) {
-                TargetEvaluator.playerStrategicTargetId = city.id;
-                console.log(`⚔️ 战略目标已设定: ${city.name}`);
-            }
+            // [2026-08-05] 原先这里把点中的敌城写进一个「玩家战略目标」静态字段
+            // 并打印「战略目标已设定」，但该字段自改成近敌池抽签后就再没被读过 ——
+            // 点了没有任何效果，日志纯属误导，连同字段一起删除。
+            // 本作是无玩家操作的观赏推演，军团目标一律由行为树决定，不接受点击指派。
         });
 
         // 5. Keyboard Shortcuts

@@ -255,9 +255,11 @@ export class GameApp {
             setLoadingProgress(65);
             this.cityManager = new CityManager(this.map, this.factionManager);
             loadGameAppCityData(this);
-            // 叛军：S10QZ 7–58 共 52 面，画据点前 await。见 AGENTS.md §10.3
+            // 叛军旗：画据点前只 await 兜底 1 面，其余 52 面 3s 后后台补满。见 AGENTS.md §10.3
+            // 阶段名别再写「52面」——这一相只装 1 面，历史上多次被误读成「叛军旗在干活」，
+            // 实际它慢是因为 await 续点被别的长任务插队背锅。
             await CityAssetManager.preloadRebelFlagsForBoot();
-            this.perfMonitor.markBootPhase('叛军旗52面');
+            this.perfMonitor.markBootPhase('叛军旗兜底1面');
             await CityAssetManager.onBootMapReady();
             this.perfMonitor.markBootPhase('视口势力旗染色');
             this.cityManager.bindViewportCitySync();

@@ -16,8 +16,6 @@ interface RiverWorkerResponse {
 
 export class RiverOverlayLayer extends L.GridLayer {
     private esriUrl: string;
-    private localUrlZoom9: string;
-    private localUrlZoom11: string;
 
     private worker: Worker;
     private msgIdCounter: number = 0;
@@ -38,12 +36,8 @@ export class RiverOverlayLayer extends L.GridLayer {
         this.worker.onmessage = this.handleWorkerMessage.bind(this);
         gameLog('startup', '💧 [RiverOverlayLayer] Web Worker Initialized.');
 
-        // ESRI World Shaded Relief URL (256px tiles)
+        // ESRI World Shaded Relief URL (256px tiles)——buildTileUrl 只用这一个源
         this.esriUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}';
-
-        // 本地 Google Terrain 瓦片 (512px tiles)
-        this.localUrlZoom9 = '/9dixingtu/terrain_512/{x}/{y}.jpg';
-        this.localUrlZoom11 = '/11dixingtu/Google Terrain Maps without labels  roads and POI  512px/terrain_512/{x}/{y}.jpg';
     }
 
     private handleWorkerMessage(e: MessageEvent<RiverWorkerResponse>) {
