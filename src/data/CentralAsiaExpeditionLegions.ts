@@ -17,7 +17,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   kazakh: { name: '哈萨克骑', tier: 2 },     // 哈萨克汗国主力，普将配T2
   seljuq: { name: '丹丹纳骑', tier: 1 },     // 木鹿·桑贾尔：1040丹丹纳康之战奠基大塞尔柱；T1功勋（避「塞尔柱」撞将名）
                                                // （原注「生擒拜占庭皇帝」系误记：曼齐克特1071为阿尔普·阿尔斯兰，非桑贾尔）
-    xiliao: { name: '斡耳朵亲卫', tier: 1 },
   // ── 2026-06-16 新增：中亚大区平衡补全（12支，精锐随据点） ──
     guishuang: { name: '贵霜铁骑', tier: 2 },
     muer: { name: '呼罗珊义从', tier: 4 },
@@ -31,6 +30,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     yada: { name: '嚈哒重骑', tier: 2 },
   jiazini: { name: '伽色尼禁卫', tier: 2 },       // 马哈茂德的古拉姆近卫军，十七次远征印度战无不胜，升入T2战术
     jibin: { name: '迦毕试梵骑', tier: 2 },
+    babuer: { name: '阿富汗游骑', tier: 3 },       // 喀布尔·巴布尔：帖木儿王朝喀布尔政权主力（突厥-蒙古+阿富汗部落骑兵）
   fanyanna: { name: '梵衍那僧兵', tier: 4 },      // 巴米扬·梵衍那王率僧兵御大食（缺乏极其著名的战术高光，降T3）
   // ── 2026-06-19 新增：彭迪·马尔 / 毡的·乌古斯 ──
     maer_d: { name: '骆驼突骑', tier: 3 },

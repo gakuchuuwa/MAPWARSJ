@@ -39,7 +39,7 @@ name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   heng: { name: '衡州义军', tier: 4 },         // 临烝·何腾蛟南明衡州抗清
     yezongliu: { name: '处州矿徒', tier: 4 },
   jinan: { name: '神牌弩手', tier: 2 },   // 历下·铁铉固守济南（防御战术铁壁）
-  wu: { name: '句吴利趾', tier: 1 },        // 阊门·孙武句吴利趾
+    wu: { name: '句吴利趾', tier: 1 },
   // 六卒精锐除名（非正式番号，《吴子》军事术语）
     xushouhui: { name: '双刀水师', tier: 4 },         // 常规番号，降T3
   // §9 #12 八字军 → 北方 wangyan@飞狐（太行地名旗号；非衡州临烝）

@@ -12,7 +12,7 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   bailong: { name: '白龙堆卫营', tier: 4 }, // 三陇沙·班勇西域长史平车师（缺乏极其著名的战术高光，降T3）
   kepantuo: { name: '公主堡铁卫', tier: 3 }, // 公主堡汉日天种王传奇，名号极具传奇色彩，升T2
   zhasaketu: { name: '札萨克图骑', tier: 4 }, // 扎布汗·策旺扎布
-  huite: { name: '辉特部骑', tier: 4 }, // 金山·阿睦尔撒纳叛清大军（缺乏极其著名的战术高光，降T3）
+  huite: { name: '辉特部骑', tier: 4 }, // 额尔齐斯·阿睦尔撒纳叛清大军（缺乏极其著名的战术高光，降T3）
   tuoming: { name: '回民团练', tier: 4 },  // 达坂城·妥明清真王
   keerkezi: { name: '柯尔克孜骑', tier: 3 }, // 柯尔克孜族英雄玛纳斯史诗，显著文化知名度，升T2
   pisha: { name: '毗沙都督卫', tier: 4 }, // 麻扎塔格·毗沙
@@ -52,4 +52,5 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     shanshan: { name: '楼兰弓手', tier: 3 },
     tajikezu: { name: '帕米尔山民', tier: 4 },
     anxi: { name: '安西陌刀军', tier: 2 },
+    xiliao: { name: '斡耳朵亲卫', tier: 1 },
 };
