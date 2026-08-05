@@ -5,7 +5,8 @@
  * 1. 以推进锚点 anchorCityId 为路网中心（见 TargetAnchorResolver.resolveForwardAnchor；兵力 <2 万用出发点，≥2 万用推进锚点）
  * 2. 只考虑从该点沿路可达的非己方据点
  * 3. 锚点每条直连道路各取该方向最近 1 座敌城，组成方向池
- * 4. 在方向池内均匀随机抽 1 座进攻（无直连或无方向敌城时回退「全局最近 N」）
+ * 4. 方向池内若有「全图据点最多的势力」的城 → 必打（枪打出头鸟，确定性无门槛，见 pickTarget）
+ * 5. 否则在方向池内均匀随机抽 1 座进攻（无直连或无方向敌城时回退「全局最近 N」）
  */
 import { City } from '../types/core';
 import { GameConfig } from '../config/GameConfig';
@@ -87,8 +88,7 @@ export class TargetEvaluator {
 
     /**
      * 锚点每条直连边 = 一个方向；该方向取最短路上第一跳经此邻城、且最近的敌城。
-     * 邻城本身若为敌城则直接入选。
-     * 排除「回头路」：目标离老家不比锚点离老家远 → 跳过该方向。
+     * 保留「回头路」检查：目标离老家 ≥ 锚点离老家的 0.9 倍才入池（即只朝远离老家的方向推进）。
      */
     private static buildDirectionalPool(
         anchorCityId: string,
@@ -100,7 +100,6 @@ export class TargetEvaluator {
         if (neighbors.length === 0) return [];
 
         const pool: TargetScore[] = [];
-        const seen = new Set<string>();
 
         // 城ID → City 索引
         const cityById = new Map(cities.map((c) => [c.id, c]));
@@ -125,34 +124,47 @@ export class TargetEvaluator {
                 : 0;
         };
 
-        // [PERF 2026-08-05] 每座敌城的「最短路第一跳」只算一次，按第一跳归组取该方向最近的一座。
-        // 原实现对每条直连道路都把全部可达敌城重扫一遍（≈ 路数 × 敌城数 次寻路回溯，约 4 倍冗余）。
-        // 邻城自身是敌城的情况天然被覆盖：该方向所有城都要过它，它必是本组最近的。
+        // [PERF 2026-08-05] 每座敌城的「最短路第一跳」只算一次，按第一跳归组，每组留最近的一座。
+        // 原实现对每条直连道路都把全部可达敌城重扫一遍（≈ 路数 × 敌城数 次寻路回溯）。
+        //
+        // reachable 已按道路距离升序，故**每组第一次命中的就是该组最小值**，无需比距离；
+        // 所有方向都填上后即可收工——开局全图 900+ 座敌城全可达，不提前退出就要为每座城
+        // 调一次 findCityPath，而 buildPathResult 每次都会把整条路径的全部坐标点拼出来（跨图路径上千点）。
+        //
+        // 注意：邻城本身是敌城时**通常**（而非必然）落在自己那组——若锚点到它的直连路又长又绕、
+        // Dijkstra 绕经别的邻城更短，它的第一跳就不是自己，可能被挤出池。方向数不受影响，
+        // 只是偶尔挑的不是那座贴脸的城，观感无异常。
+        const neighborSet = new Set(neighbors);
         const bestByFirstHop = new Map<string, TargetScore>();
         for (const score of reachable) {
+            if (bestByFirstHop.size >= neighborSet.size) break; // 各方向均已定案
             const path = roadRegistry.findCityPath(anchorCityId, score.targetId);
             if (!path || path.length < 2) continue;
             const hop = path[1];
-            const cur = bestByFirstHop.get(hop);
-            if (!cur || score.distanceKm < cur.distanceKm) {
-                bestByFirstHop.set(hop, score);
-            }
+            if (!neighborSet.has(hop) || bestByFirstHop.has(hop)) continue;
+            bestByFirstHop.set(hop, score);
         }
 
         for (const neighborId of neighbors) {
             const best = bestByFirstHop.get(neighborId);
-            if (!best || seen.has(best.targetId)) continue;
-            // 回头路检查：目标离老家不比锚点离老家更远 → 跳过该方向
+            if (!best) continue;
+            // 回头路检查：目标离老家 ≥ 锚点离老家的 0.9 倍才入池（否则是朝老家方向回头，跳过）
             if (computeDistFromCity(best.targetId) >= anchorToHome * 0.9) {
                 pool.push(best);
-                seen.add(best.targetId);
             }
         }
 
         return pool;
     }
 
-    /** 当前据点最多的势力（排除无主/叛军 panjun） */
+    /**
+     * 当前据点最多的势力（排除无主/叛军 panjun）；**须严格多于次名**，平局一律返回 null。
+     *
+     * [2026-08-05] 平局守卫不可删：开局 922 座城 = 922 个势力、人人恰好 1 城，
+     * 没有平局判据时 `n > bestN` 会保留遍历到的首个势力（= cities 数组首城的 tang/长安），
+     * 于是长安在开局被所有邻近军团确定性合击——它并不领先，纯属取值假象。
+     * 实测见 scratch/verify_leader_tie.mts。
+     */
     private static findLeaderFaction(cities: City[]): { factionId: string; count: number } | null {
         const counts = new Map<string, number>();
         for (const c of cities) {
@@ -161,8 +173,18 @@ export class TargetEvaluator {
         }
         let bestId = '';
         let bestN = 0;
-        counts.forEach((n, f) => { if (n > bestN) { bestN = n; bestId = f; } });
-        return bestId ? { factionId: bestId, count: bestN } : null;
+        let secondN = 0;
+        counts.forEach((n, f) => {
+            if (n > bestN) {
+                secondN = bestN;
+                bestN = n;
+                bestId = f;
+            } else if (n > secondN) {
+                secondN = n;
+            }
+        });
+        if (!bestId || bestN <= secondN) return null; // 并列第一 = 无人领先
+        return { factionId: bestId, count: bestN };
     }
 
     private static collectReachableEnemies(
