@@ -442,11 +442,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/STEPPE/menggu_d_chengjisihan.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -42
-        },
         "/assets/WESTERN/wulianghai_chelingwubashen.png": {
             "scale": 1.04,
             "offsetX": 0,
@@ -1748,7 +1743,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/STEPPE/ashina_ashinayandou.png": {
-            "scale": 0.91,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": -26
         },
@@ -1828,9 +1823,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 19
         },
         "/assets/STEPPE/__闲置__HEXI_19.png": {
-            "scale": 0.99,
+            "scale": 0.96,
             "offsetX": 0,
-            "offsetY": -22
+            "offsetY": -23
         },
         "/assets/STEPPE/kiyad_yesugai.png": {
             "scale": 0.88,
@@ -2793,7 +2788,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/STEPPE/ashide_ashidejieli.png": {
-            "scale": 1,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -4
         },
@@ -2913,7 +2908,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 36
         },
         "/assets/STEPPE/__闲置__STEPPE_56.png": {
-            "scale": 1.22,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -4688,7 +4683,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/STEPPE/__闲置__STEPPE_52.png": {
-            "scale": 0.83,
+            "scale": 0.76,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -5108,7 +5103,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/STEPPE/__闲置__STEPPE_59.png": {
-            "scale": 0.78,
+            "scale": 0.77,
             "offsetX": 2,
             "offsetY": -25
         },
@@ -5233,7 +5228,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/STEPPE/__闲置__STEPPE_60.png": {
-            "scale": 1.17,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -6233,9 +6228,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/STEPPE/__闲置__STEPPE_58.png": {
-            "scale": 1,
+            "scale": 0.97,
             "offsetX": 0,
-            "offsetY": 3
+            "offsetY": 1
         },
         "/assets/STEPPE/dafeichuan_murongnuohebo.png": {
             "scale": 0.93,
@@ -6285,12 +6280,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/STEPPE/__闲置__STEPPE_63.png": {
             "scale": 1,
             "offsetX": 0,
-            "offsetY": -18
+            "offsetY": -16
         },
         "/assets/STEPPE/kangju_chebishi.png": {
-            "scale": 1.04,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": 6
+            "offsetY": 7
         },
         "/assets/JAPAN/__多余__JAPAN_01.png": {
             "scale": 0.98,
@@ -6471,6 +6466,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": 10
+        },
+        "/assets/STEPPE/__多余__STEPPE_02.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/STEPPE/__闲置__STEPPE_64.png": {
+            "scale": 1.26,
+            "offsetX": 0,
+            "offsetY": -17
+        },
+        "/assets/STEPPE/3b6230f4-0f5b-4b29-ae6b-1e07241c75e3.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": -26
+        },
+        "/assets/STEPPE/6d3b0fc1-b67f-46dd-94bf-43468953c6de.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -24
+        },
+        "/assets/STEPPE/969fe0a4-0461-4f4f-9ac8-8386ee92a162.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -13
+        },
+        "/assets/STEPPE/__闲置__STEPPE_65.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -42
+        },
+        "/assets/STEPPE/menggu_d_chengjisihan.png": {
+            "scale": 1.07,
+            "offsetX": 0,
+            "offsetY": -24
         }
     },
     "folderGuides": {
