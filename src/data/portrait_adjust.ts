@@ -3667,7 +3667,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 12,
             "offsetY": -15
         },
-        "/assets/STEPPE/aertai_baibuhua.png": {
+        "/assets/STEPPE/__闲置__STEPPE_69.png": {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 33
@@ -5477,7 +5477,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/GERMANIC/weijing_bergen_siweier.png": {
+        "/assets/GERMANIC/__闲置__GERMANIC_17.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -1
@@ -6208,9 +6208,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -21
         },
         "/assets/STEPPE/__多余__STEPPE_01.png": {
-            "scale": 1.1,
+            "scale": 1.07,
             "offsetX": 0,
-            "offsetY": -3
+            "offsetY": -24
         },
         "/assets/STEPPE/__闲置__HEXI_11.png": {
             "scale": 1,
@@ -6302,7 +6302,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/CENTRAL_ASIA/c30e386a-35e2-4e44-8c30-ff68bbc6bbe2.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_05.png": {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": -4
@@ -6312,12 +6312,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/GERMANIC/b4137680-f659-4e14-b6f7-2c052db96360.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_01.png": {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/GERMANIC/ba5fa2bb-b221-4e04-8ce4-205ee6f3df97.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_02.png": {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": 10
@@ -6332,12 +6332,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/LATIN/762029ef-008c-4952-83f5-bb31f65a59ef.png": {
+        "/assets/LATIN/__多余__LATIN_01.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": -2
         },
-        "/assets/LATIN/8edc4081-7858-4796-9963-add740e86e91.png": {
+        "/assets/LATIN/__多余__LATIN_02.png": {
             "scale": 1.03,
             "offsetX": 0,
             "offsetY": 3
@@ -6352,7 +6352,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -2
         },
-        "/assets/LATIN/f24ed8a0-04f9-45ce-b620-c6f9c1fec2e7.png": {
+        "/assets/LATIN/__多余__LATIN_03.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -10
@@ -6362,7 +6362,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -10
         },
-        "/assets/CENTRAL_ASIA/f4161a40-491d-4edc-a118-e602b3d6a575.png": {
+        "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_06.png": {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 9
@@ -6402,7 +6402,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -48
         },
-        "/assets/LINGNAN/2c2bf030-6ee6-4d8d-b19a-865aa87c3e93.png": {
+        "/assets/LINGNAN/__多余__LINGNAN_21.png": {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": 10
@@ -6427,17 +6427,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/STEPPE/3b6230f4-0f5b-4b29-ae6b-1e07241c75e3.png": {
+        "/assets/STEPPE/__闲置__STEPPE_67.png": {
             "scale": 0.83,
             "offsetX": 0,
             "offsetY": -26
         },
-        "/assets/STEPPE/6d3b0fc1-b67f-46dd-94bf-43468953c6de.png": {
-            "scale": 1.07,
-            "offsetX": 0,
-            "offsetY": -24
-        },
-        "/assets/STEPPE/969fe0a4-0461-4f4f-9ac8-8386ee92a162.png": {
+        "/assets/STEPPE/__闲置__STEPPE_68.png": {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": -13
