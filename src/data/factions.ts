@@ -143,7 +143,7 @@ export const FACTIONS: Faction[] = [
   { id: 'walajiyia', name: '瓦拉几亚' },
   { id: 'tiaodun_qishi', name: '条顿骑士' },
   { id: 'shengdian_qishi', name: '圣殿骑士团' },
-  { id: 'maerta_qishi', name: '马耳他骑士团' },
+  { id: 'maerta_qishi', name: '圣约翰' },
   { id: 'liwoniya', name: '利沃尼亚' },
   { id: 'chude', name: '楚德' },
   { id: 'deniesite', name: '德涅斯特' },
@@ -152,7 +152,7 @@ export const FACTIONS: Faction[] = [
   { id: 'nuogai', name: '萨马拉河' },
   { id: 'bashekeer', name: '巴什基尔' },
   { id: 'beisilafu', name: '塞维里亚' },
-  { id: 'peilieya_gongguo', name: '佩列斯拉夫公国' },
+  { id: 'peilieya_gongguo', name: '佩列公国' },
   { id: 'weijiebusike_gongguo', name: '维捷公国' },
 
   { id: 'heishui', name: '靺鞨' },
@@ -239,7 +239,7 @@ export const FACTIONS: Faction[] = [
 
 
     { id: 'jin', name: '晋国' },
-    { id: 'chu', name: '江陵' },
+    { id: 'chu', name: '荆州' },
 
 
     { id: 'wu', name: '吴国' },
@@ -422,7 +422,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-06-11 日本重置：京都改挂室町（足利旗）──
     { id: 'ashikaga', name: '室町' },
     { id: 'quanrong', name: '犬戎' },
-    { id: 'suzhou', name: '酒泉' },
+    { id: 'suzhou', name: '肃州' },
 
 
 
@@ -850,6 +850,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'jiazini', name: '伽色尼' },      // 伽色尼王朝(哥疾宁/马哈茂德), Ghaznavid
     { id: 'jibin', name: '罽宾' },
+    { id: 'babuer', name: '阿富汗' },
 
 
           // 罽宾/迦毕试(丘就却/贵霜), Kapisa/Kushan
@@ -1320,7 +1321,7 @@ export const FACTIONS: Faction[] = [
    // 淮阳郡治宛丘(陈州)
     { id: 'cai', name: '蔡州' },
 
-    { id: 'changshaguo', name: '长沙' },
+    { id: 'changshaguo', name: '湘州' },
 
     { id: 'shangzhou', name: '商州' },   // 旗号上洛(商邑=商州治；避与商字重)
     { id: 'ying', name: '郢州' },
@@ -1731,7 +1732,6 @@ export const FACTIONS: Faction[] = [
 
     { id: 'shizhou', name: '西河' },
     { id: 'cangsong', name: '苍松' },
-    { id: 'aertai', name: '阿尔泰' },
 
 
     { id: 'manghuti', name: '忙忽惕' },

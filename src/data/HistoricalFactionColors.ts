@@ -756,7 +756,6 @@ const _FIXED: Record<string, string> = {
     'aiji': '#D09B2C',
     'xibolai': '#245580',
     'womaya': '#E4E0D6',
-    'aertai': '#255855',
     'sailiugu': '#8A2035',
 
     // ── 2026-07-27 新增据点势力专属史地配色 ──
@@ -779,7 +778,6 @@ const _FIXED: Record<string, string> = {
     'wazu': '#2D3033',
     'tajikezu': '#854030',
     'jingpozu': '#6B3828',
-    'aertaishan': '#2B585C',
     'manghuti': '#A57830',
     'xingwei': '#5A7A38',
     'baha': '#5C4E3C',
@@ -990,6 +988,13 @@ const _FIXED: Record<string, string> = {
     'fulajimier_gongguo': '#C74040', // 弗拉基米尔·弗拉基米尔（弗拉基米尔红）
     'daniebo': '#A73737', // 斯摩棱斯克·斯摩棱斯克（斯摩棱斯克红）
     'qiernigeweifu_gongguo': '#3A6E4A', // 切尔尼戈夫·切尔尼戈夫（切尔尼戈夫绿）
+    'dabolan': '#C2142E', // 大波兰·波兹南（波兰白鹰红底，大波兰红）
+    'siluoboda': '#1E6BA4', // 斯洛博达·哈尔科夫（乌克兰草原蓝）
+    'yedi': '#8A6E3C', // 野地·沃罗涅日（荒原土褐）
+    'maerta_qishi': '#C51E31', // 圣约翰·马耳他（医院骑士白底红十字）
+    'aosiruowen': '#A0282E', // 埃德萨·埃德萨（十字军红）
+    'shengdian_qishi': '#B81E2E', // 圣殿骑士·阿卡（圣殿红底白十字）
+    'babuer': '#1D509C', // 阿富汗·喀布尔（莫卧儿蓝系，帖木儿后裔）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

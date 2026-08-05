@@ -92,7 +92,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     yuezhi: { name: '折兰骑', tier: 3 },
     lushui: { name: '飞熊军', tier: 2 },
     xijue: { name: '康居精骑', tier: 4 },          // 郅支城：郅支远遁康居，避将名/据点叠字
-    aertai: { name: '阿尔泰狼骑', tier: 3 },
     manghuti: { name: '忙忽惕勇士', tier: 4 },
     dzungar: { name: '绰罗斯精骑', tier: 1 },
     dada_ming: { name: '鞑靼铁骑', tier: 1 },

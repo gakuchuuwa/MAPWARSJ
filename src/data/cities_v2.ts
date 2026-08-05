@@ -346,7 +346,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         note: '夷陵；宜都小城',
     },
 
-    { id: 'city_ying', name: '金鳞', factionId: 'chu', lat: 30.35, lng: 112.18, type: 'small_city', troops: 30000, region: 'JIANGNAN' },
+    { id: 'city_ying', name: '江陵', factionId: 'chu', lat: 30.35, lng: 112.18, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
 
 
 
@@ -364,7 +364,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         troops: 30000,
         
         note: '柴桑；柴桑小城', region: 'JIANGNAN' },
-    { id: 'city_changsha', name: '临湘', factionId: 'changshaguo', lat: 28.19, lng: 112.97, type: 'small_city', troops: 30000, region: 'JIANGNAN' },
+    { id: 'city_changsha', name: '长沙', factionId: 'changshaguo', lat: 28.19, lng: 112.97, type: 'small_city', troops: 20000, region: 'JIANGNAN' },
 
 
     {
@@ -377,17 +377,7 @@ export const T1_MEDIUM_CITIES: CityDataV2[] = [
         troops: 30000,
         note: '延陵；大周小城',
     },
-    {
-        id: 'city_gusu',
-        name: '阊门',
-        factionId: 'wu',
-        lat: 31.30, lng: 120.62,
-        type: 'big_city',
-        region: 'JIANGNAN',
-        troops: 30000,
-        tier: 1,
-        note: '阊门；吴国治所/重镇',
-    },
+    { id: 'city_gusu', name: '姑苏', factionId: 'wu', lat: 31.3, lng: 120.62, type: 'big_city', troops: 20000, region: 'JIANGNAN' },
     { id: 'city_jiaxing', name: '嘉兴', factionId: 'qian_d', lat: 30.75, lng: 120.76, type: 'small_city', troops: 30000, region: 'JIANGNAN' },
 
     { id: 'city_shanxian', name: '剡城', factionId: 'qiufu', lat: 29.556746, lng: 120.822144, type: 'small_city', region: 'JIANGNAN', troops: 30000, mirror: true,
@@ -1226,7 +1216,7 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
-    { id: 'city_suiye', name: '屈耽', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 30000, region: 'WESTERN' },
+    { id: 'city_suiye', name: '碎叶', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'small_city', troops: 20000, region: 'WESTERN' },
 
 
     { id: 'city_nieduo', name: '孽多', factionId: 'nandou', lat: 35.92, lng: 74.3, type: 'small_city', region: 'TIBET', troops: 30000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处' },
@@ -1237,8 +1227,8 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     
-    { id: 'city_jinshan', name: '金山', factionId: 'huite', lat: 46.939014, lng: 89.598999, type: 'pass', region: 'STEPPE', troops: 30000,
-        note: '金山；辉特关隘',
+    { id: 'city_jinshan', name: '额尔齐斯', factionId: 'huite', lat: 46.939014, lng: 89.598999, type: 'pass', region: 'STEPPE', troops: 30000,
+        note: '额尔齐斯；辉特关隘',
     },
     { id: 'city_dafang', name: '大方城', factionId: 'luodian', lat: 27.046910, lng: 105.707703, type: 'small_city', region: 'LINGNAN', troops: 30000,
         note: '大方城；罗甸小城',
@@ -2682,8 +2672,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jiaseni', name: '哥疾宁', factionId: 'jiazini', lat: 33.55, lng: 68.42, type: 'medium_city', region: 'CENTRAL_ASIA', troops: 30000, tier: 1,
         note: '哥疾宁；伽色尼治所/重镇',
     },
-    // ── 2026-06-20 替换：喀布尔→迦毕试（罽宾）──
-    { id: 'city_gaofu', name: '迦毕试', factionId: 'jibin', lat: 34.55, lng: 69.2, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA' },
+    // ── 2026-08-05 罽宾迁白沙瓦；喀布尔归还巴布尔（1504 发迹地）──
+    { id: 'city_gaofu', name: '喀布尔', factionId: 'babuer', lat: 34.55, lng: 69.2, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA', note: '喀布尔；巴布尔发迹地（帖木儿王朝后裔 1504 占城）' },
+    { id: 'city_baishawa', name: '白沙瓦', factionId: 'jibin', lat: 34.01, lng: 71.52, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA', note: '白沙瓦；罽宾（迦腻色迦贵霜都，犍陀罗核心）' },
 
 
 
@@ -2921,7 +2912,6 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_lishi', name: '离石', factionId: 'shizhou', lat: 37.48, lng: 111.09, type: 'small_city', troops: 30000, region: 'NORTH' },
     { id: 'city_chiwubao', name: '赤乌堡', factionId: 'cangsong', lat: 37.477, lng: 102.8815, type: 'pass', troops: 30000, region: 'HEXI' },
-    { id: 'city_aertaishan', name: '阿尔泰山', factionId: 'aertai', lat: 46.37, lng: 96.27, type: 'pass', troops: 30000, region: 'STEPPE' },
 
 
     { id: 'city_wulihong', name: '乌利洪', factionId: 'manghuti', lat: 49.53, lng: 112.54, type: 'small_city', troops: 30000, region: 'STEPPE' },

@@ -919,7 +919,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        xiliao_yelvdashi: { generalId: 'xiliao_yelvdashi', tier: 'famous', tacticalSkillId: 'ts_645', advantageSkillId: 'ts_645', balanceSkillId: 'ts_646', disadvantageSkillId: 'ts_647', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_742', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_635', aptitude: 'create' , attackStyle: 'attack'},
+    xiliao_yelvdashi: { generalId: 'xiliao_yelvdashi', tier: 'famous', tacticalSkillId: 'ts_679', advantageSkillId: 'ts_645', balanceSkillId: 'ts_646', disadvantageSkillId: 'ts_647', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_742', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_635', aptitude: 'create', attackStyle: 'attack' },
 
 
 
@@ -928,6 +928,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     jibin_jianisejia: { generalId: 'jibin_jianisejia', tier: 'famous', tacticalSkillId: 'ts_401', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_795', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_743', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
+    babuer_babuer: { generalId: 'babuer_babuer', tier: 'famous', tacticalSkillId: 'ts_401', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_795', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_743', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
 
 
 
@@ -1545,7 +1546,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    chu_guanyu: { generalId: 'chu_guanyu', tier: 'famous', tacticalSkillId: 'ts_257', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_005', atkBalanceSkillId: 'ts_710', atkDisadvantageSkillId: 'ts_193', defAdvantageSkillId: 'ts_257', defBalanceSkillId: 'ts_427', defDisadvantageSkillId: 'ts_756', aptitude: 'create' , attackStyle: 'attack'},
+    chu_guanyu: { generalId: 'chu_guanyu', tier: 'famous', tacticalSkillId: 'ts_005', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_005', atkBalanceSkillId: 'ts_710', atkDisadvantageSkillId: 'ts_193', defAdvantageSkillId: 'ts_257', defBalanceSkillId: 'ts_427', defDisadvantageSkillId: 'ts_756', aptitude: 'create', attackStyle: 'attack' },
 
 
 
@@ -2267,7 +2268,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    changshaguo_xinqiji: { generalId: 'changshaguo_xinqiji', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_176', atkAdvantageSkillId: 'ts_525', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_617', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'attack' },
+    changshaguo_xinqiji: { generalId: 'changshaguo_xinqiji', tier: 'ordinary', tacticalSkillId: 'ts_525', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_525', atkBalanceSkillId: 'ts_176', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_617', defDisadvantageSkillId: 'ts_635', aptitude: 'reverse', attackStyle: 'attack' },
 
 
 
@@ -2279,7 +2280,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        wu_sunwu: { generalId: 'wu_sunwu', tier: 'famous', tacticalSkillId: 'ts_633', advantageSkillId: 'ts_633', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_634', atkAdvantageSkillId: 'ts_011', atkBalanceSkillId: 'ts_041', atkDisadvantageSkillId: 'ts_123', defAdvantageSkillId: 'ts_633', defDisadvantageSkillId: 'ts_920', defBalanceSkillId: 'ts_686', aptitude: 'reverse' , attackStyle: 'attack'},
+    wu_sunwu: { generalId: 'wu_sunwu', tier: 'famous', tacticalSkillId: 'ts_011', advantageSkillId: 'ts_633', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_634', atkAdvantageSkillId: 'ts_011', atkBalanceSkillId: 'ts_041', atkDisadvantageSkillId: 'ts_123', defAdvantageSkillId: 'ts_633', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_920', aptitude: 'reverse', attackStyle: 'attack' },
 
 
 
@@ -2879,7 +2880,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
     yuan_cj_d_lishuo: { generalId: 'yuan_cj_d_lishuo', tier: 'famous', tacticalSkillId: 'ts_911', atkAdvantageSkillId: 'ts_911', atkBalanceSkillId: 'ts_260', atkDisadvantageSkillId: 'ts_181', defAdvantageSkillId: 'ts_913', defBalanceSkillId: 'ts_910', defDisadvantageSkillId: 'ts_912', aptitude: 'leverage', attackStyle: 'defense' },
     cangsong_machao: { generalId: 'cangsong_machao', tier: 'ordinary', tacticalSkillId: 'ts_124', atkDisadvantageSkillId: 'ts_376', atkAdvantageSkillId: 'ts_525', atkBalanceSkillId: 'ts_742', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_705', defDisadvantageSkillId: 'ts_294', aptitude: 'create', attackStyle: 'attack' },
-    aertai_baibuhua: { generalId: 'aertai_baibuhua', tier: 'ordinary', tacticalSkillId: 'ts_021', defBalanceSkillId: 'ts_014', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_043', atkDisadvantageSkillId: 'ts_412', defAdvantageSkillId: 'ts_071', defDisadvantageSkillId: 'ts_017', aptitude: 'reverse', attackStyle: 'attack' },
     manghuti_weidaer: { generalId: 'manghuti_weidaer', tier: 'ordinary', tacticalSkillId: 'ts_765', atkAdvantageSkillId: 'ts_570', atkBalanceSkillId: 'ts_794', atkDisadvantageSkillId: 'ts_413', defAdvantageSkillId: 'ts_077', defBalanceSkillId: 'ts_045', defDisadvantageSkillId: 'ts_048', aptitude: 'create', attackStyle: 'attack' },
     chenli_d_zuoxianwang: { generalId: 'chenli_d_zuoxianwang', tier: 'ordinary', tacticalSkillId: 'ts_390', atkDisadvantageSkillId: 'ts_414', atkAdvantageSkillId: 'ts_624', atkBalanceSkillId: 'ts_795', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_286', defDisadvantageSkillId: 'ts_098', aptitude: 'leverage', attackStyle: 'defense' },
     weiming_weiminglinggong: { generalId: 'weiming_weiminglinggong', tier: 'ordinary', tacticalSkillId: 'ts_399', atkAdvantageSkillId: 'ts_654', atkBalanceSkillId: 'ts_809', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_385', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage', attackStyle: 'attack' },
