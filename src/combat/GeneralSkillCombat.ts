@@ -367,7 +367,7 @@ function getActiveTacticalSkillDisplayName(unit: IBattleUnit): { displayName: st
 /**
  * 相持阶段保底脉冲：机制未触发 UI 时，仍按侧栏当前战术技亮相（与开局比例延迟对齐）。
  * 与效果路径重复时由 CombatUI 按「侧+技名」去重。
- * @param firstSide 先放侧（劣势方 / 均势攻方）；入队顺序与 BattleField 排序一致。
+ * @param firstSide 先放侧（劣势方 / 均势随机一侧）；入队顺序与 BattleField 排序一致。
  * @param skipSides 该侧已有存活武将的机制/援军脉冲在队时跳过保底（一将一战一技：
  *        防止援军换将后，同侧既放原将真技、又放新将保底技的双亮相）
  * @param openingUiShown 保底亮相同样占用本侧「开局已亮相」名额，

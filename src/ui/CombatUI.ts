@@ -2681,7 +2681,7 @@ export class CombatUI {
         };
 
         // [语音播报] 技能释放：语音入队成功则由「开口那一刻」驱动 Cut-in（念谁弹谁，声画同刻；
-        // 入队顺序由 BattleField 排：劣势先放，均势攻方先放。不播 → 走下方错开计时兜底。
+        // 入队顺序由 BattleField 排：劣先；均势随机。不播 → 走下方错开计时兜底。
         const voiceWillPlaySfx = speechAnnouncer.isSkillVoiceIdle();
         if (this.announceSkillReleaseVoice(pulseSide, displayName, runUi, generalId, skillId, audioUnitId)) {
             if (voiceWillPlaySfx) this.skillBurstSfxPlayed = true;

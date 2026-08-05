@@ -157,6 +157,11 @@ export class BattleField implements IOpeningPulseSink {
      * 勿用释放时的 initialTotalTroops——开局削兵后会把均势误判成优劣。
      */
     private situationalAttDefRatio = 1;
+    /**
+     * 本场技能先放侧（开局锁定）：优劣→劣势方；均势→随机攻/守一侧。
+     * 抽技顺序与亮相顺序共用，避免两处各掷一次不一致。
+     */
+    private skillPulseFirstSide: 'attacker' | 'defender' = 'attacker';
     /** 开战有效战力比（攻/守，六环乘完）；在 pickPredictedSides 中写入，供时长判定 */
     private effectivePowerRatio = 1;
     /** 最近一次逆局触发技是否在册——败战翻盘重掷按此选区间 */
@@ -410,11 +415,10 @@ export class BattleField implements IOpeningPulseSink {
 
     /**
      * 从候选池抽一技：全场六计硬分开（一边已是败战，另一边不得再败战；胜战等同理）。
-     * 优先：未用技能 ID + 未用六计 → 仅未用六计 → 池内已无其它六计时才允许撞计（打日志）。
+     * pool 已由上游 getSituationalSkillPool 排除过已用技能 ID，此处只需避让已用六计类别。
      */
     private pickSkillAvoidingUsedSixClass(
         pool: string[],
-        usedSkillIds: Set<string>,
         usedSixClasses: Set<string>,
         logLabel: string,
     ): string | undefined {
@@ -422,32 +426,20 @@ export class BattleField implements IOpeningPulseSink {
         const clsOf = (id: string) => getSkillSixClass(id) ?? `__nocls__${id}`;
         const roll = (ids: string[]) => ids[Math.floor(Math.random() * ids.length)];
 
-        let candidates = pool.filter(id => !usedSkillIds.has(id) && !usedSixClasses.has(clsOf(id)));
+        // 优先：六计类别没被用过的候选
+        const candidates = pool.filter(id => !usedSixClasses.has(clsOf(id)));
         if (candidates.length > 0) return roll(candidates);
 
-        // 六计硬分开优先于「技能 ID 不重复」：宁可同名技号以外的别计，也不要两边同败战/同胜战
-        candidates = pool.filter(id => !usedSixClasses.has(clsOf(id)));
-        if (candidates.length > 0) return roll(candidates);
-
-        candidates = pool.filter(id => !usedSkillIds.has(id));
-        if (candidates.length > 0) {
-            const pick = roll(candidates);
-            gameLog(
-                'battle',
-                `⚠️ [六计] ${logLabel} 池内无剩余六计可错开，只能与已出场计撞车：${pick}（${clsOf(pick)}）`,
-            );
-            return pick;
-        }
-
+        // 兜底：池里剩下的技能都会六计撞车，随便抽一个并打警告
         const pick = roll(pool);
-        gameLog('battle', `⚠️ [六计] ${logLabel} 候选池全被占用，只能重复出 ${pick}`);
+        gameLog('battle', `⚠️ [六计] ${logLabel} 池内无剩余六计可错开，只能与已出场计撞车：${pick}（${clsOf(pick)}）`);
         return pick;
     }
 
     /**
      * 六计随机：开局定强弱后，给每个带将单位从攻/守三槽随机抽一个局技，写入 battleOverriddenSkillId。
      * 阈值：文化修正后有效兵力比 >1.5 优势 / <0.67 劣势 / 其间均势。
-     * 同时锁定 situationalAttDefRatio，供相持段技能释放排序（劣势先 / 均势攻先）。
+     * 同时锁定 situationalAttDefRatio 与 skillPulseFirstSide（劣先；均势随机）。
      */
     private assignSituationalSkills(): void {
         const attUnits = this.attackerGroup.units.filter(bu => !bu.isDefeated && bu.unit.troops > 0).map(bu => bu.unit);
@@ -465,6 +457,15 @@ export class BattleField implements IOpeningPulseSink {
         const attSit = situationOf(at, dt);
         const defSit = situationOf(dt, at);
 
+        // 先放侧：优劣→劣势；均势→随机（与亮相同锁）
+        if (attSit === 'disadvantage') {
+            this.skillPulseFirstSide = 'attacker';
+        } else if (defSit === 'disadvantage') {
+            this.skillPulseFirstSide = 'defender';
+        } else {
+            this.skillPulseFirstSide = Math.random() < 0.5 ? 'attacker' : 'defender';
+        }
+
         const usedSkillIds = new Set<string>();
         const usedSixClasses = new Set<string>();
 
@@ -476,7 +477,6 @@ export class BattleField implements IOpeningPulseSink {
                 const pool = getSituationalSkillPool(u, sit as any, [...usedSkillIds]);
                 const pick = this.pickSkillAvoidingUsedSixClass(
                     pool,
-                    usedSkillIds,
                     usedSixClasses,
                     `${sideName} ${u.generalId}`,
                 );
@@ -488,20 +488,22 @@ export class BattleField implements IOpeningPulseSink {
             }
         };
 
-        // 攻方先挑；守方避让攻方已占用的六计
-        assignSide(this.attackerGroup.units, attSit, '攻方');
-        assignSide(this.defenderGroup.units, defSit, '守方');
+        // 与脉冲亮相顺序一致：先放侧先抽技（六计选择面更广）
+        if (this.skillPulseFirstSide === 'attacker') {
+            assignSide(this.attackerGroup.units, attSit, '攻方');
+            assignSide(this.defenderGroup.units, defSit, '守方');
+        } else {
+            assignSide(this.defenderGroup.units, defSit, '守方');
+            assignSide(this.attackerGroup.units, attSit, '攻方');
+        }
 
         this.usedBattleSkillIds = usedSkillIds;
         this.usedBattleSixClasses = usedSixClasses;
     }
 
-    /** 技能脉冲先放哪一侧：劣势方先；均势（及无法判势）攻方先（2026-08-05 主人定） */
+    /** 技能脉冲先放哪一侧：开局已锁定（劣先；均势随机） */
     private resolveSkillPulseFirstSide(): 'attacker' | 'defender' {
-        const r = this.situationalAttDefRatio;
-        if (r > 1.5) return 'defender'; // 攻优 → 守劣先放
-        if (r < 0.67) return 'attacker'; // 攻劣 → 攻方先放
-        return 'attacker';
+        return this.skillPulseFirstSide;
     }
 
     /** 预设结果或「初始兵力 × 随机系数」一次定胜负走向 */
@@ -767,7 +769,7 @@ export class BattleField implements IOpeningPulseSink {
         );
         setActiveOpeningPulseSink(null);
 
-        // 脉冲/播报顺序：劣势方先放；均势时攻方先放（用开局定势锁定的兵力比，勿用削兵后兵力）
+        // 脉冲/播报顺序：开局锁定（劣先；均势随机）；勿用削兵后兵力重判
         const attGeneralIds = new Set(
             this.getAttackerUnits().map((u) => u.generalId).filter((id): id is string => !!id),
         );
@@ -779,10 +781,14 @@ export class BattleField implements IOpeningPulseSink {
         const ordered = [...this.openingPulseQueue].sort(
             (a, b) => sideRank(a.trigger.generalId) - sideRank(b.trigger.generalId),
         );
+        const sitLabel =
+            this.situationalAttDefRatio > 1.5 || this.situationalAttDefRatio < 0.67
+                ? '劣先'
+                : '均势随机';
         gameLog(
             'battle',
             `✨ [SkillPulse] 释放顺序: ${firstSide === 'attacker' ? '攻方' : '守方'}先` +
-                `（开局兵力比攻/守=${this.situationalAttDefRatio.toFixed(2)}，劣先/均攻先）` +
+                `（开局兵力比攻/守=${this.situationalAttDefRatio.toFixed(2)}，${sitLabel}）` +
                 ` → ${ordered.map((o) => o.trigger.generalId || '?').join(' → ')}`,
         );
         for (const item of ordered) {
@@ -1374,7 +1380,6 @@ export class BattleField implements IOpeningPulseSink {
                 const pool = getSituationalSkillPool(unit, rsit as any, [...usedIds]);
                 const pick = this.pickSkillAvoidingUsedSixClass(
                     pool,
-                    usedIds,
                     usedClasses,
                     `援军 ${unit.generalId}`,
                 );
