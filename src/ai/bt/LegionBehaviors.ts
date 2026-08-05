@@ -1,14 +1,16 @@
 /**
  * LegionBehaviors.ts
  *
- * 军团 AI 行为树节点（收复发出点 → 附近敌军团追击 → 推进锚点近敌池抽签 → 沿路推进 → 攻城）
+ * 军团 AI 行为树节点（收复发出点 → 附近敌军团追击 → 推进锚点方向池抽签 → 沿路推进 → 攻城）
  *
  * 双模式（GAME_DIRECTION 2026-06-11；回援规则见 AGENTS.md「军团回援与收复规则」2026-07-11）：
  *   据点军团：
  *     · 本城正被攻城（真打起来的攻城战）且仍属己方 → 回援守城（reinforceHome）。
  *       仅「非战斗状态」的军团回援（交战中不脱离；排队攻城算在路上，可回）；敌军仅在途/迫近不触发。
  *     · 本城已失守（易主）→ 强制回师收复（HasTarget/FindTarget 内的 resolveRecaptureTarget，所有文化无豁免）
- *     · 否则 → 先扫附近敌军团（野战追击）→ 无则推进锚点近 3 敌城抽签
+ *     · 否则 → 先扫附近敌军团（野战追击）→ 无则推进锚点**方向池**抽签
+ *       （每条直连道路各取该方向最近 1 座敌城；池内有全图据点最多的势力则必打它；
+ *        无直连/无方向敌城才回退「全局最近 3」，见 TargetEvaluator）
  *       ⚠️ 这里说的是【优先级顺序】，不是【发生频率】。追击半径只有
  *          HUNT_ENEMY_LEGION_RADIUS = 0.8°(≈89km)，圈内多数时候没有敌军团，
  *          所以实机约 90% 的战斗是攻城战、野战很少（AGENTS.md「战斗构成」节）。
@@ -216,7 +218,7 @@ function buildExcludeTargetIds(ctx: BTContext): Set<string> {
 
 /**
  * 在寻敌半径内找最近可野战敌军团（排除冷却中的目标）。
- * 收复本城优先于本函数；本函数优先于近敌城抽签。
+ * 收复本城优先于本函数；本函数优先于方向池抽签。
  */
 function pickNearbyEnemyLegion(ctx: BTContext, excludeTargetIds: Set<string>): Army | null {
     const huntR = GameConfig.AI.HUNT_ENEMY_LEGION_RADIUS;
@@ -369,7 +371,7 @@ export const IsNearTarget = new Condition('IsNearTarget', (ctx) => {
 // =====================
 
 export const FindTarget = new Action('FindTarget', (ctx) => {
-    // 远征模式：目标只有一个，不进近 3 敌城抽签、不回师
+    // 远征模式：目标只有一个，不进方向池抽签、不回师
     const expedition = resolveExpeditionState(ctx);
     if (expedition === 'locked') return BTStatus.SUCCESS;
 

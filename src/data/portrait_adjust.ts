@@ -1382,11 +1382,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -13
         },
-        "/assets/KOREA/__闲置__KOREA_02.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": -22
-        },
         "/assets/KOREA/chungju_d_quanli.png": {
             "scale": 1.04,
             "offsetX": 0,
@@ -1436,11 +1431,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 17
-        },
-        "/assets/KOREA/sabeol_jinshimin.png": {
-            "scale": 0.81,
-            "offsetX": 0,
-            "offsetY": -9
         },
         "/assets/KOREA/sambyeol_lishunchen.png": {
             "scale": 1.02,
@@ -1681,11 +1671,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 15
-        },
-        "/assets/NORTHEAST/dongxia_puxianwannu.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -14
         },
         "/assets/NORTHEAST/ewenki_gentemuer.png": {
             "scale": 0.96,
@@ -3447,11 +3432,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 9
         },
-        "/assets/KOREA/chen3_jizhun.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -54
-        },
         "/assets/JAPAN/__闲置__JAPAN_26.png": {
             "scale": 0.84,
             "offsetX": 7,
@@ -3821,11 +3801,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 13,
             "offsetY": -25
-        },
-        "/assets/KOREA/__闲置__KOREA_08.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 5
         },
         "/assets/KOREA/xinluo_jinyuxin.png": {
             "scale": 0.93,
@@ -6282,11 +6257,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_15.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -5
-        },
         "/assets/NORTHEAST/__闲置__NORTHEAST_33.png": {
             "scale": 0.91,
             "offsetX": 0,
@@ -6501,6 +6471,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": -15
+        },
+        "/assets/KOREA/__闲置__KOREA_13.png": {
+            "scale": 0.81,
+            "offsetX": 0,
+            "offsetY": -9
+        },
+        "/assets/KOREA/sabeol_jinshimin.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/KOREA/__闲置__KOREA_14.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -54
+        },
+        "/assets/KOREA/chen3_jizhun.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_40.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/NORTHEAST/dongxia_puxianwannu.png": {
+            "scale": 1.04,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {
