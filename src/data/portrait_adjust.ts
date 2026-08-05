@@ -173,7 +173,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/litang/tang_lishimin.png": {
-            "scale": 1.1,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": -11
         },
@@ -2067,11 +2067,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 35
         },
-        "/assets/WESTERN/kepantuo_dulimi.png": {
-            "scale": 0.8,
-            "offsetX": 0,
-            "offsetY": -15
-        },
         "/assets/WESTERN/ruoqiang_quhulai.png": {
             "scale": 0.9,
             "offsetX": 0,
@@ -2096,11 +2091,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -29
-        },
-        "/assets/wuzhou/__闲置__wuzhou_06.png": {
-            "scale": 0.93,
-            "offsetX": 0,
-            "offsetY": -15
         },
         "/assets/NORTHEAST/__闲置__wuzhou_07.png": {
             "scale": 0.83,
@@ -5197,11 +5187,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -2
         },
-        "/assets/WESTERN/weiwuer_yusubu.png": {
-            "scale": 1.16,
-            "offsetX": 0,
-            "offsetY": 18
-        },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_108.png": {
             "scale": 1.02,
             "offsetX": 0,
@@ -5216,11 +5201,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": 13
-        },
-        "/assets/WESTERN/__闲置__WESTERN_32.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 16
         },
         "/assets/WESTERN/__闲置__WESTERN_33.png": {
             "scale": 1.07,
@@ -6501,6 +6481,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": -24
+        },
+        "/assets/WESTERN/__闲置__WESTERN_38.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": 18
+        },
+        "/assets/WESTERN/weiwuer_yusubu.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/WESTERN/__闲置__WESTERN_39.png": {
+            "scale": 0.8,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/wuzhou/kepantuo_dulimi.png": {
+            "scale": 0.93,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {
