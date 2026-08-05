@@ -27,6 +27,8 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     tuolemi: { name: '希腊方阵', tier: 2 },        // 亚历山大·托勒密：拉菲亚之战与塞琉古银盾对决
     heti: { name: '赫梯战车', tier: 2 },           // 哈图沙·穆瓦塔利：亲统三千战车卡迭石突袭埃及先头军团
     qiliqiya: { name: '行省辅军', tier: 2 },       // 阿达纳·庞培：前 67 年肃清奇里乞亚海盗、置行省，即其麾下行省军团
+    teluoyi: { name: '特洛伊卫队', tier: 3 },          // 特洛伊·赫克托耳：青铜时代传奇卫戍
+    alabo: { name: '海湾游骑', tier: 3 },          // 巴士拉·齐亚德：波斯湾阿拉伯骑兵
     xibolai: { name: '基伯利姆', tier: 2 },        // 耶路撒冷·大卫：希伯来语 gibborim「勇士」，撒下载勇士团；避将名
     jialedi: { name: '迦勒底战车', tier: 2 },      // 巴比伦·尼布甲尼撒：卡尔基米什之战（前 605）大破埃及军
     xikesuosi: { name: '喜克索战车', tier: 2 },    // 阿瓦里斯·萨利蒂：复合弓＋战车征服并统治下埃及百余年

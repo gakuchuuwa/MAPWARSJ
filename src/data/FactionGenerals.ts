@@ -76,7 +76,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jileinaijia: { generalId: 'gen_magas', generalName: '马加斯', portrait: '/assets/LATIN/jileinaijia_majiasi.png' },
 
     maixiya: { generalId: 'gen_offa_mercia', generalName: '奥法', portrait: '/assets/GERMANIC/maixiya_aofa.png' },
-    weijing_bergen: { generalId: 'gen_sverre_norway', generalName: '斯维尔', portrait: '/assets/GERMANIC/weijing_bergen_siweier.png' },
     nidelan: { generalId: 'gen_william_silent', generalName: '威廉奥兰治', portrait: '/assets/GERMANIC/nidelan_weilian.png' },
     boumeilaniyan: { generalId: 'gen_casimir_iv', generalName: '卡西米尔', portrait: '/assets/GERMANIC/boumeilaniyan_kaximier.png' },
     langgeduoke: { generalId: 'gen_raymond_v', generalName: '雷蒙五世', portrait: '/assets/LATIN/langgeduoke_leimengwushi.png' },
@@ -419,6 +418,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jiazini: { generalId: 'jiazini_mahamaode', generalName: '马哈茂德', portrait: '/assets/CENTRAL_ASIA/jiazini_mahamaode.png' },
     jibin: { generalId: 'jibin_jianisejia', generalName: '迦腻色迦', portrait: '/assets/CENTRAL_ASIA/jibin_jianisejia.png' },
     babuer: { generalId: 'babuer_babuer', generalName: '巴布尔', portrait: '/assets/CENTRAL_ASIA/babuer_babuer.png' },
+    danmai: { generalId: 'danmai_abusalong', generalName: '阿布萨隆', portrait: '/assets/GERMANIC/danmai_abusalong.png' },
+    ruidian_si: { generalId: 'ruidian_si_biergeyaer', generalName: '比尔格·雅尔', portrait: '/assets/GERMANIC/ruidian_si_biergeyaer.png' },
+    kasidiliya: { generalId: 'kasidiliya_afangsuoshiyi', generalName: '阿方索十一世', portrait: '/assets/LATIN/kasidiliya_afangsuoshiyi.png' },
+    duluo: { generalId: 'duluo_sangqiao', generalName: '桑乔一世', portrait: '/assets/LATIN/duluo_sangqiao.png' },
+    teluoyi: { generalId: 'teluoyi_heketuoer', generalName: '赫克托耳', portrait: '/assets/WEST_ASIA/teluoyi_heketuoer.png' },
+    alabo: { generalId: 'alabo_qiyade', generalName: '齐亚德', portrait: '/assets/WEST_ASIA/alabo_qiyade.png' },
     xijue: { generalId: 'xijue_ganyanshou', generalName: '郅支', portrait: '/assets/STEPPE/xijue_zhizhichanyu.png' },
     // 养吉干·咸海 / 真珠河·乌护 宁缺毋滥
 
