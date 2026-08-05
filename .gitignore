@@ -62,6 +62,17 @@ scratch/*
 !scratch/regime_capital_audit.json
 !scratch/family_state_audit.json
 !scratch/county_seat_audit.json
+# 例外：目标选择 / 反雪球的验证与跑分脚本（结论都靠它们复现，别再丢）
+!scratch/verify_leader_hunt.mts
+!scratch/verify_leader_tie.mts
+!scratch/verify_pool_pathcalls.mts
+!scratch/bench_picktarget_real.mts
+!scratch/verify_recapture_return.mts
+!scratch/verify_six_class_separation.mts
+# ⚠️ 这条不带斜杠前缀，匹配**任意层级**的 scripts 目录（含 src/scripts、AnimationTools/scripts）。
+# 别改成 scripts/*：那样只匹配根目录，另外两个会被放出来一并提交（2026-08-05 踩过）。
+# 无头推演器 scripts/sim/headless.ts 是调参唯一可靠的标尺，已用 `git add -f` 纳入跟踪——
+# 文件一旦被跟踪，忽略规则就不再生效，无需在此开白名单。
 scripts/
 /*.cjs
 /*.mjs

@@ -272,7 +272,10 @@ export class RoadRegistry {
     // ===== 寻路 (Dijkstra) =====
 
     /** 单源最短路缓存：按起点 LRU 多条；多军团不同起点不再互相冲掉、反复重算 Dijkstra */
-    private static readonly DIJKSTRA_CACHE_MAX = 24;
+    // [2026-08-05] 寻路缓存扩容：游戏军团上限为 30 支，每支选目标时需要从脚下城和锚点城两个不同起点分别计算，
+    // 因此需要至少 60 条缓存容量才能避免在同一帧内缓存打满并相互挤占。
+    // 这是一种用内存换 CPU 的设计（每条缓存约 922 城的距离表 + 前驱表），对于推演速度至关重要。
+    private static readonly DIJKSTRA_CACHE_MAX = 60;
     private dijkstraCache: Map<string, {
         distances: Map<string, number>;
         prev: Map<string, { nodeId: string; edge: GraphEdge }>;
