@@ -754,6 +754,7 @@ function checkNameDuplicates(cityName: string, factionName: string, generalName:
 
 /** 文化区代码 → 中文名（下拉显示用；option value 仍存代码，与 cities_v2 的 region 字段一致，不影响保存/解析） */
 const REGION_LABELS: Record<string, string> = {
+    SLAVIC: '斯拉夫', GERMANIC: '日耳曼', LATIN: '拉丁',
     CENTRAL: '中原', NORTH: '北方', JIANGNAN: '江南', LINGNAN: '岭南',
     BASHU: '川蜀', DIANQIAN: '滇缅', HEXI: '河西', WESTERN: '西域',
     TIBET: '青藏', STEPPE: '草原', NORTHEAST: '东北', KOREA: '朝鲜',
@@ -1183,6 +1184,9 @@ interface ParsedEntity {
 }
 
 const REGION_ALIAS: Record<string, string> = {
+    '斯拉夫': 'SLAVIC',
+    '日耳曼': 'GERMANIC',
+    '拉丁': 'LATIN',
     '日本': 'JAPAN',
     '朝鲜': 'KOREA', '韩国': 'KOREA',
     '东北': 'NORTHEAST',

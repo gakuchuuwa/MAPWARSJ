@@ -54,6 +54,27 @@ export function getActiveTacticalSkillId(unit: IBattleUnit): string | null {
     return profile?.tacticalSkillId ?? null;
 }
 
+/**
+ * [2026-08-06] 六计角标专用：本方**自己**放的那一计，**不认夺来的敌技**。
+ *
+ * 与 getActiveTacticalSkillId 的唯一差别 = 跳过 stolenSkillId。
+ * 夺取系（混战计）把敌技挂到自己身上当「效果载荷」，但本方出的计始终是自己那记混战计。
+ * 角标若跟着夺来技走，攻守双方必然显示同一个字（夺谁的就显示谁的类别），
+ * 看上去像违反了「攻守六计硬分开」（BattleField.assignSituationalSkills），
+ * 实际分配是分开的（例：攻方 ts_366 夜渡袭城=混战 夺走 守方 ts_293 壅水灌垒=胜战 → 旧角标 胜/胜）。
+ *
+ * 技被看破时 battleOverriddenSkillId=null，回落 negatedSkillId，仍按本方原技类别显示。
+ * 局技未分配（undefined）时回落招牌技，保持 2026-07-31「角标不留空」的修复。
+ */
+export function getOwnSixSetSkillId(unit: IBattleUnit): string | null {
+    if (unit.battleOverriddenSkillId) return unit.battleOverriddenSkillId;
+    if (unit.negatedSkillId) return unit.negatedSkillId;
+    if (unit.battleOverriddenSkillId === null) return null; // 被看破且无原技记录
+    if (!unit.generalId) return null;
+    const profile = getGeneralProfile(unit.generalId);
+    return profile?.tacticalSkillId ?? null;
+}
+
 /** 战斗局势（开局按兵力比判定） */
 export type BattleSituation = 'advantage' | 'balance' | 'disadvantage';
 
