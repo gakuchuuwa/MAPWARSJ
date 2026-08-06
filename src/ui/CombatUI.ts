@@ -2173,7 +2173,7 @@ export class CombatUI {
             const t = Math.max(0, Math.floor(troops));
             const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
             totalBadge.innerHTML = troopStr;
-            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}第二行部队兵力：${t} 人（援军见第三行）`;
+            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}总兵力：${t} 人`;
             totalBadge.style.display = 'inline-block';
         }
     }
@@ -3956,8 +3956,8 @@ export class CombatUI {
         const defPrimary = defUnitsNow.length > 0
             ? (this.pickSideNameUnit(defUnitsNow, 'defender') ?? defUnitsNow[0])
             : null;
-        this.renderSideLabel('attacker', this.attackerDisplayName, attPrimary?.troops ?? attCurrent);
-        this.renderSideLabel('defender', this.defenderDisplayName, defPrimary?.troops ?? defCurrent);
+        this.renderSideLabel('attacker', this.attackerDisplayName, attCurrent);
+        this.renderSideLabel('defender', this.defenderDisplayName, defCurrent);
         this.updateFactionDisplay();
         const attTag = attUnitsNow.length > 0 ? this.pickPortraitTagUnit(attUnitsNow, 'attacker') : null;
         const defTag = defUnitsNow.length > 0 ? this.pickPortraitTagUnit(defUnitsNow, 'defender') : null;
