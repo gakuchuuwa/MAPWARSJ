@@ -1039,9 +1039,12 @@ export class CombatUI {
 
         row.appendChild(badgeGroup);
 
-        // multSpan 保留引用（其他标签层之后独立挂载）
+        // 名/城/技 三环徽章（其余五环各有独立 badge，见 renderEightRingBadges 内去重说明）。
+        // [2026-08-06 修] 原注释写「其他标签层之后独立挂载」，但全文件从未 appendChild ——
+        // 孤儿节点，每帧算完 innerHTML 就扔，名将环 ×1.3 从来没显示过。现挂进 badgeGroup。
         const multSpan = document.createElement('span');
-        multSpan.style.display = 'none';
+        multSpan.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
+        badgeGroup.appendChild(multSpan);
 
         if (isAtt) {
             this.leftFactionNameSpan = nameSpan;
@@ -1195,12 +1198,14 @@ export class CombatUI {
                 if (totalBadge) totalBadge.style.display = 'none';
                 return;
             }
-            const { topChain, bottomChain, title, totalMult, totalTitle } = this.renderEightRingBadges(unit, opponent, side);
+            const { topChain, title, totalMult, totalTitle } = this.renderEightRingBadges(unit, opponent, side);
 
             if (topChain) {
                 multSpan.innerHTML = topChain;
                 multSpan.title = title;
-                multSpan.style.display = 'inline-grid';
+                // [2026-08-06] 原为 inline-grid —— 那是节点还没挂载时写的，真挂上去会把三枚徽章
+                // 竖着摞成一列。与相邻 badge 同为横排，用 inline-flex。
+                multSpan.style.display = 'inline-flex';
             } else {
                 multSpan.style.display = 'none';
             }
@@ -1991,9 +1996,13 @@ export class CombatUI {
         const bf = this.boundRegionalBattleField;
         if (bf) {
             const cmd = side === 'attacker' ? bf.getAttackerCommander() : bf.getDefenderCommander();
-            if (cmd) return cmd;
+            // [2026-08-06] 必须校验：city 的 generalId 是动态 getter，城防将被 reconcile 剥离后
+            // 锁着的指挥官会当场变无将。空壳指挥官照单全收 → 整侧技能卡/角标/三势适性全空
+            // （实机：阿尔及尔攻防战守方只剩文化卡）。BattleField 侧已有 replaceCommanderIfInvalidated
+            // 兜底，这里是第二道闸，两处都留着。
+            if (cmd && canUnitUseGeneralSkills(cmd)) return cmd;
         }
-        // 无战场 / 指挥官未锁定 → 退回到当前最优将
+        // 无战场 / 指挥官未锁定或已失效 → 退回到当前最优将
         return pickSideSkillGeneralUnit(this.getUnitsForSide(side)) ?? fallback;
     }
 
@@ -2001,7 +2010,7 @@ export class CombatUI {
         unit: IBattleUnit,
         opponent: IBattleUnit | null,
         side: 'attacker' | 'defender',
-    ): { topChain: string; bottomChain: string; title: string; totalMult: number; totalTitle: string } {
+    ): { topChain: string; title: string; totalMult: number; totalTitle: string } {
         unit = this.resolvePowerBadgeUnit(unit, side);
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
@@ -2041,7 +2050,6 @@ export class CombatUI {
         const top2 = renderBadge('据点城池', '城', passMult * regionMult);
 
         const cultureMult = getUnitCultureCombatMultiplier(unit);
-        const top3 = renderBadge('文化加成', '文', cultureMult);
 
         let tacChar = '技';
         if (unit.generalId) {
@@ -2065,9 +2073,8 @@ export class CombatUI {
         const top4 = renderBadge('战术技能', tacChar, tacMult);
 
         const legionMult = getEliteCombatMultiplier(unit);
-        const top5 = renderBadge('精锐部队', '军', legionMult);
 
-        // ========== 第二行 3 标签: 势, 攻/防, 运 ==========
+        // ========== 其余五环：只算数值，不在此拼徽章 ==========
         let aptChar = '势';
         if (unit.generalId) {
             const profile = getGeneralProfile(unit.generalId);
@@ -2077,32 +2084,21 @@ export class CombatUI {
             }
         }
         const aptMult = getAptitudePowerMult(myUnits, oppUnits, unit, cachedMyTroops, cachedOppTroops);
-        const bot1 = renderBadge('三势适性', aptChar, aptMult);
-
         const styleChar = side === 'attacker' ? '攻' : '防';
         const styleMult = getAttackStylePowerMult(unit, side === 'attacker');
-        const bot2 = renderBadge('攻防风格', styleChar, styleMult);
-
         const fateLuck = side === 'attacker'
             ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
             : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
-        const bot3 = renderBadge('命运运气', '运', fateLuck);
-
         const reinfLuck = this.getReinforcementJoinLuckForUnit(unit);
-        let bot4 = '';
-        if (reinfLuck !== null && Math.abs(reinfLuck - 1.0) > 0.001) {
-            const reinfChar = reinfLuck > 1.001 ? '得' : '掣';
-            bot4 = renderBadge('合兵协同', reinfChar, reinfLuck);
-        }
 
-        const topSlots = [top1, top2, top3, top4, top5];
-        const botSlots = [bot1, bot2, bot3, bot4];
-
-        const orderedTop = isAtt ? topSlots : [...topSlots].reverse();
-        const orderedBot = isAtt ? botSlots : [...botSlots].reverse();
-
-        const topChain = orderedTop.join('');
-        const bottomChain = orderedBot.join('');
+        // [2026-08-06] chain 只放「没有独立 badge 元素」的三环：名 / 城 / 技。
+        //   文=cultureBadge、军=legionBadge、势=aptitudeBadge、攻防=skillBadge、运=luckBadge、
+        //   得掣=援军行，六者各有自己**已挂载**的元素每帧更新；放进 chain 会在同一行各显示两遍。
+        //   —— 此前 multSpan 是孤儿节点（创建后全文件零处 appendChild），chain 拼好就扔，
+        //   所以 名/城/技 三环虽然计入 totalMult，徽章却从来没人见过（名将 ×1.3 一直是隐形的）。
+        //   原来的 bottomChain（势/攻防/运/得掣）同理是死代码，已整条删除。
+        const topSlots = [top1, top2, top4];
+        const topChain = (isAtt ? topSlots : [...topSlots].reverse()).join('');
 
         const allDetail = [
             { label: '名将光环', shortName: '名', val: famousMult },
@@ -2124,7 +2120,7 @@ export class CombatUI {
             ? allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n')
             : '• 无额外增减益（均势 1.00）');
 
-        return { topChain, bottomChain, title, totalMult, totalTitle };
+        return { topChain, title, totalMult, totalTitle };
     }
 
     /** 返回当前战场中指定 side 自己的单位数组（= 对手的对手；与 getOpponentUnitsFor 同源） */

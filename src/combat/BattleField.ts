@@ -61,6 +61,7 @@ import {
     type IOpeningPulseSink,
     type TacticalSkillTrigger,
     pickSideSkillGeneralUnit,
+    canUnitUseGeneralSkills,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 import {
@@ -230,6 +231,17 @@ export class BattleField implements IOpeningPulseSink {
         // 注入与发射同 tick 同步完成，多场战斗并发也不会互相污染。
         setBattleTargetDurationForSkillUi(this.estimateSkillUiTargetDuration());
         // 三势适性：须在 pickPredictedSides 之前——先按兵力比给带将单位选局技，让开局脉冲/战力/卡片都用局技(否则局技未设,三处不一致且战力用招牌)
+        // [2026-08-06 顺序修复] 城防剥离必须排在**选技与锁指挥官之前**。
+        //   原顺序是 选技(233) → 锁指挥官(236) → 剥离(241)，三个 bug 叠在一起：
+        //   ① BattleUnitFactory 里 city 的 generalId 是**动态 getter**
+        //      （readSiegeGarrisonGeneralId(entity) ?? entity.generalId），
+        //      reconcile 一 delete `_siegeGarrisonGeneralId`，那个城防单位当场变无将；
+        //   ② 于是「锁定的指挥官」瞬间成了空壳——技能卡/六计角标/三势适性全部读它，全空，
+        //      而名牌立绘走 pickPortraitTagUnit 另挑一个，两边对不上（实机：阿尔及尔攻防战）；
+        //   ③ 更糟的是选技先跑，城防会被写入 battleOverriddenSkillId，剥将后残留，
+        //      角标会显示一个「无将单位」的技。
+        //   先剥再选技再锁将，三条一起消掉。怛罗斯那种守方军团自带将的局不受影响。
+        this.reconcileSiegeGarrisonBoostWithDefenders();
         this.assignSituationalSkills();
         // 锁定指挥官：assignSituationalSkills 已设局技，此后 pickSideSkillGeneralUnit 选的将是带着局技的单位
         this.attackerCommander = pickSideSkillGeneralUnit(attackerUnits);
@@ -238,8 +250,7 @@ export class BattleField implements IOpeningPulseSink {
         // 定强弱后重算战损减免
         this.recomputeStrongerCasualtyReduction();
         this.targetDuration = this.resolveFinalTargetDuration();
-        this.reconcileSiegeGarrisonBoostWithDefenders();
-        
+
         this.notifyBattleStart();
 
         gameLog('battle', `🏟️ [BattleField] 区域战斗开始!${presetResult ? ` [预设结果: ${presetResult}]` : ''}`);
@@ -1408,6 +1419,8 @@ export class BattleField implements IOpeningPulseSink {
         );
 
         this.reconcileSiegeGarrisonBoostForJoinedUnit(unit, isAttacker);
+        // 剥离可能把当前指挥官（城防）掏空 → 只在它「已失效」时补选，不是每来一支援军就改选
+        this.replaceCommanderIfInvalidated(isAttacker);
 
         gameLog(
             'battle',
@@ -1461,6 +1474,28 @@ export class BattleField implements IOpeningPulseSink {
             if (army) out.push(army);
         }
         return out;
+    }
+
+    /**
+     * [2026-08-06] 指挥官**失效**时才补选一次；有效就绝不动。
+     *
+     * 「指挥官开战即锁定、援军入场不改」的铁律照旧（掷点/乘区/亮相权全读它，改选会让高分援军抢 Cut-in）。
+     * 但援军带将入场会触发 reconcileSiegeGarrisonBoostForJoinedUnit 删掉城防的 `_siegeGarrisonGeneralId`，
+     * 而 city 的 generalId 是动态 getter —— 锁着的城防指挥官当场变无将，整侧技能卡/角标/三势全空。
+     * 空壳指挥官比换人更糟，故只在 canUnitUseGeneralSkills 已经判否时补选。
+     */
+    private replaceCommanderIfInvalidated(isAttacker: boolean): void {
+        const cur = isAttacker ? this.attackerCommander : this.defenderCommander;
+        if (cur && canUnitUseGeneralSkills(cur)) return; // 仍有效 → 铁律优先，不动
+        const units = isAttacker ? this.getAttackerUnits() : this.getDefenderUnits();
+        const next = pickSideSkillGeneralUnit(units);
+        if (!next || next === cur) return;
+        if (isAttacker) this.attackerCommander = next;
+        else this.defenderCommander = next;
+        gameLog(
+            'battle',
+            `🎖️ [BattleField] ${isAttacker ? '攻方' : '守方'}指挥官已失效（城防将被剥离），补选 → ${next.name}`,
+        );
     }
 
     private reconcileSiegeGarrisonBoostWithDefenders(): void {
