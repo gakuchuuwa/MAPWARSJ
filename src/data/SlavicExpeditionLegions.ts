@@ -23,7 +23,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     piyasite: { name: '波兰骑士', tier: 2 },          // 克拉科夫·卡齐米日：格伦瓦尔德主力
     litaowan: { name: '格迪米骑', tier: 2 },          // 维尔纽斯·格迪米纳斯：格伦瓦尔德
     baojian_qishi: { name: '宝剑骑士', tier: 2 },
-    shaiyue: { name: '马扎尔骑兵', tier: 2 },
+    shaiyue: { name: '马扎尔骠骑', tier: 2 },
     dajiya: { name: '达契亚弯刀', tier: 3 },          // 萨尔米泽·德切巴鲁斯：falx 兵种文化；终为罗马所灭 → T3
 
     // ── T1 功勋之兵 ──

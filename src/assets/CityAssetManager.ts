@@ -776,7 +776,7 @@ export class CityAssetManager {
 'ruidian_si': '瑞典',
 'kasidiliya': '卡斯',
 'duluo': '杜罗',
-'teluoyi': '特洛',
+'teluoyi': '达尔',
 'alabo': '大食',
 'dulan_d': '杜兰',
         'baha': '巴哈',
@@ -918,10 +918,11 @@ export class CityAssetManager {
         // ── 2026-08-04 新增：野地 @ 沃罗涅日 ──
         'yedi': '野地',
         'luosi': '罗斯',
-        'shaiyue': '喀尔',
+'shaiyue': '喀尔',
         'meikelunbao': '文德',
 'wende': '萨克',
         'boumeilaniyan': '卡舒',
+'mazhaer': '匈牙',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

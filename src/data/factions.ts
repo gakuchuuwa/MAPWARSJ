@@ -93,7 +93,7 @@ export const FACTIONS: Faction[] = [
 
   { id: 'habusibao', name: '哈布斯堡' },
   { id: 'boximiya', name: '波西米亚' },
-  { id: 'mazhaer', name: '马扎尔' },
+  { id: 'mazhaer', name: '匈牙利' },
   { id: 'falanji', name: '法兰克' },
   { id: 'jialuolin', name: '加洛林' },
   { id: 'rierman', name: '莱茵兰' },
@@ -147,7 +147,7 @@ export const FACTIONS: Faction[] = [
   { id: 'ruidian_si', name: '瑞典' },
   { id: 'kasidiliya', name: '卡斯蒂利亚' },
   { id: 'duluo', name: '杜罗' },
-  { id: 'teluoyi', name: '特洛伊' },
+  { id: 'teluoyi', name: '达尔达尼亚' },
   { id: 'alabo', name: '阿拉伯' },
   { id: 'liwoniya', name: '利沃尼亚' },
   { id: 'chude', name: '楚德' },

@@ -88,7 +88,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
   'habusibao': 'city_weiyeena',
   'boximiya': 'city_bulage',
-  'mazhaer': 'city_budapeisi',
+'mazhaer': 'city_budapeisi',
   'falanji': 'city_kelong',
   'jialuolin': 'city_yachen',
   'rierman': 'city_meiyinci',
@@ -135,7 +135,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'ruidian_si': 'city_sidedegelmo',
 'kasidiliya': 'city_madeli',
   'duluo': 'city_boertu',
-  'teluoyi': 'city_teluoyi',
+'teluoyi': 'city_teluoyi',
   'alabo': 'city_bashila',
   'liwoniya': 'city_talin',
   'chude': 'city_youliyefu',
