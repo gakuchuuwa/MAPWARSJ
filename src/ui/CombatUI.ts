@@ -96,7 +96,7 @@ const PORTRAIT_ASPECT_W_OVER_H = 0.75;
 /** 滑入/技能脉冲把立绘框放大到 1.045（transform-origin: center bottom），最宽时刻按这个算 */
 const PORTRAIT_MAX_SCALE = 1.045;
 /** 第二、三阶段的落点（主人定 80% 左右），与兵力比无关 */
-const CLASH_STALEMATE_PCT = 80;
+const CLASH_STALEMATE_PCT = 77;
 /** 第三阶段内部切分：前 5/6 相持（5 秒），后 1/6 断崖（1 秒） */
 const BAR_CLIFF_START = 5 / 6;
 /**
@@ -284,8 +284,6 @@ export class CombatUI {
     private rightMultBadge: HTMLSpanElement | null = null;
     private leftFactionNameSpan!: HTMLSpanElement;
     private rightFactionNameSpan!: HTMLSpanElement;
-    private leftFactionMultSpan!: HTMLSpanElement;
-    private rightFactionMultSpan!: HTMLSpanElement;
     private leftCultureBadge!: HTMLSpanElement;
     private rightCultureBadge!: HTMLSpanElement;
     private leftSkillBadge!: HTMLSpanElement;
@@ -1039,22 +1037,13 @@ export class CombatUI {
 
         row.appendChild(badgeGroup);
 
-        // 名/城/技 三环徽章（其余五环各有独立 badge，见 renderEightRingBadges 内去重说明）。
-        // [2026-08-06 修] 原注释写「其他标签层之后独立挂载」，但全文件从未 appendChild ——
-        // 孤儿节点，每帧算完 innerHTML 就扔，名将环 ×1.3 从来没显示过。现挂进 badgeGroup。
-        const multSpan = document.createElement('span');
-        multSpan.style.cssText = `display:none;flex-shrink:0;white-space:nowrap;`;
-        badgeGroup.appendChild(multSpan);
-
         if (isAtt) {
             this.leftFactionNameSpan = nameSpan;
-            this.leftFactionMultSpan = multSpan;
             this.leftMultBadge = multBadge;
             this.leftCultureBadge = cultureBadge;
             this.leftSkillBadge = skillBadge;
         } else {
             this.rightFactionNameSpan = nameSpan;
-            this.rightFactionMultSpan = multSpan;
             this.rightMultBadge = multBadge;
             this.rightCultureBadge = cultureBadge;
             this.rightSkillBadge = skillBadge;
@@ -1182,10 +1171,9 @@ export class CombatUI {
         return row;
     }
 
-    /** 战力八环标签：第一行5标签(名,城,文,技,军) + 第二行3标签(势,攻/防,运)，援军专行兵力+标签 */
+    /** 战力八环：总×徽章（factionRow 第一行），明细走 title 悬停；其余各环各有独立 badge 元素 */
     private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
         const applySideBadges = (
-            multSpan: HTMLSpanElement,
             multBadge: HTMLSpanElement | null,
             totalBadge: HTMLSpanElement | null,
             unit: IBattleUnit | null,
@@ -1193,22 +1181,11 @@ export class CombatUI {
             side: 'attacker' | 'defender',
         ) => {
             if (!unit) {
-                multSpan.style.display = 'none';
                 if (multBadge) multBadge.style.display = 'none';
                 if (totalBadge) totalBadge.style.display = 'none';
                 return;
             }
-            const { topChain, title, totalMult, totalTitle } = this.renderEightRingBadges(unit, opponent, side);
-
-            if (topChain) {
-                multSpan.innerHTML = topChain;
-                multSpan.title = title;
-                // [2026-08-06] 原为 inline-grid —— 那是节点还没挂载时写的，真挂上去会把三枚徽章
-                // 竖着摞成一列。与相邻 badge 同为横排，用 inline-flex。
-                multSpan.style.display = 'inline-flex';
-            } else {
-                multSpan.style.display = 'none';
-            }
+            const { totalMult, totalTitle } = this.renderEightRingBadges(unit, opponent, side);
 
             if (multBadge) {
                 const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
@@ -1584,8 +1561,8 @@ export class CombatUI {
             applyCenterBadge(this.rightCenterSixBadge, defChar, false);
         };
 
-        applySideBadges(this.leftFactionMultSpan, this.leftMultBadge, this.leftTotalMultBadge, attacker, defender, 'attacker');
-        applySideBadges(this.rightFactionMultSpan, this.rightMultBadge, this.rightTotalMultBadge, defender, attacker, 'defender');
+        applySideBadges(this.leftMultBadge, this.leftTotalMultBadge, attacker, defender, 'attacker');
+        applySideBadges(this.rightMultBadge, this.rightTotalMultBadge, defender, attacker, 'defender');
         updateCultureBadge(attacker, 'attacker');
         updateCultureBadge(defender, 'defender');
         updateStyleBadge(attacker, 'attacker');
@@ -1942,12 +1919,7 @@ export class CombatUI {
         renderSide(this.rightSkillsBox, defender, false);
     }
 
-    private getReinforcementJoinLuckForUnit(unit: IBattleUnit): number | null {
-        return this.boundRegionalBattleField?.getReinforcementJoinLuck(unit.id) ?? null;
-    }
-
-    /**
-     * 本侧全体援军（wave≥1）的兵力加权合兵 luck；无援军返回 null。
+    /** 本侧全体援军（wave≥1）的兵力加权合兵 luck；无援军返回 null。
      * buildWaveGroupedSideName 中按单位粒度显示「得助/掣肘」标签（紧跟援军名后）。
      */
     private getSideReinforcementJoinLuck(side: 'attacker' | 'defender'): number | null {
@@ -2010,7 +1982,7 @@ export class CombatUI {
         unit: IBattleUnit,
         opponent: IBattleUnit | null,
         side: 'attacker' | 'defender',
-    ): { topChain: string; title: string; totalMult: number; totalTitle: string } {
+    ): { totalMult: number; totalTitle: string } {
         unit = this.resolvePowerBadgeUnit(unit, side);
         const battleType = this.boundRegionalBattleField?.type ?? this.currentBattleType;
         const terrain = this.getBattleTerrainForUi();
@@ -2020,36 +1992,16 @@ export class CombatUI {
         const cachedMyTroops = side === 'attacker' ? bf?.getCachedAttackerTroops() : bf?.getCachedDefenderTroops();
         const cachedOppTroops = side === 'attacker' ? bf?.getCachedDefenderTroops() : bf?.getCachedAttackerTroops();
 
-        const isAtt = side === 'attacker';
-        const renderBadge = (label: string, shortName: string, mult: number) => {
-            const isBuff = mult > 1.001;
-            const fmtVal = String(parseFloat(mult.toFixed(1)));
-            if (Math.abs(mult - 1) <= 0.001 || fmtVal === '1' || fmtVal === '1.0') {
-                return `<span style="display:inline-block;width:${uiPx(36)};height:1px;visibility:hidden;flex-shrink:0;"></span>`;
-            }
-
-            const borderColor = isBuff
-                ? (isAtt ? 'rgba(253, 185, 49, 0.65)' : 'rgba(90, 170, 190, 0.65)')
-                : 'rgba(235, 85, 75, 0.75)';
-            const color = isBuff
-                ? (isAtt ? 'rgba(255, 230, 160, 1)' : 'rgba(190, 240, 255, 1)')
-                : 'rgba(255, 170, 160, 1)';
-            const bg = isBuff
-                ? (isAtt ? 'rgba(50, 20, 5, 0.85)' : 'rgba(10, 30, 45, 0.85)')
-                : 'rgba(50, 10, 10, 0.85)';
-
-            return `<span style="display:inline-block;padding:1px 4px;margin:0 1px;font-size:11.5px;font-weight:800;line-height:1.15;flex-shrink:0;border:1px solid ${borderColor};color:${color};background:${bg};border-radius:3px;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,0.4);" title="${label}：×${fmtVal}">${shortName}×${fmtVal}</span>`;
-        };
-
-        // ========== 第一行 5 标签: 名, 城, 文, 技, 军 ==========
+        // ========== 只算各环数值（总×徽章 + title 悬停明细）；不再拼名/城/技 徽章（08-06 用户否决挂载，规则无此三枚） ==========
         const famousMult = getFamousGeneralMult(unit);
-        const top1 = renderBadge('名将光环', '名', famousMult);
 
         const passMult = getPassGarrisonCombatMultiplier(unit);
         const regionMult = getRegionCenterCombatMultiplier(unit);
-        const top2 = renderBadge('据点城池', '城', passMult * regionMult);
 
-        const cultureMult = getUnitCultureCombatMultiplier(unit);
+        // [2026-08-06 修] cultureMult 用**纯文化环**（getCultureOnlyCombatMultiplier），据点环由下方
+        // passMult×regionMult 独立乘——此前用 getUnitCultureCombatMultiplier（文化×据点）导致据点环乘两遍，
+        // 守关隘/文化中心时面板总× 虚高 20%（引擎 getUnitBattlePowerMultiplier 只乘一次）。
+        const cultureMult = getCultureOnlyCombatMultiplier(unit);
 
         let tacChar = '技';
         if (unit.generalId) {
@@ -2070,8 +2022,6 @@ export class CombatUI {
             side === 'attacker' ? bf?.getDefenderCommander() : bf?.getAttackerCommander(),
             cachedMyTroops, cachedOppTroops,
         );
-        const top4 = renderBadge('战术技能', tacChar, tacMult);
-
         const legionMult = getEliteCombatMultiplier(unit);
 
         // ========== 其余五环：只算数值，不在此拼徽章 ==========
@@ -2089,17 +2039,12 @@ export class CombatUI {
         const fateLuck = side === 'attacker'
             ? (this.boundRegionalBattleField?.getAttackerCurrentFateLuck() ?? 1)
             : (this.boundRegionalBattleField?.getDefenderCurrentFateLuck() ?? 1);
-        const reinfLuck = this.getReinforcementJoinLuckForUnit(unit);
 
-        // [2026-08-06] chain 只放「没有独立 badge 元素」的三环：名 / 城 / 技。
-        //   文=cultureBadge、军=legionBadge、势=aptitudeBadge、攻防=skillBadge、运=luckBadge、
-        //   得掣=援军行，六者各有自己**已挂载**的元素每帧更新；放进 chain 会在同一行各显示两遍。
-        //   —— 此前 multSpan 是孤儿节点（创建后全文件零处 appendChild），chain 拼好就扔，
-        //   所以 名/城/技 三环虽然计入 totalMult，徽章却从来没人见过（名将 ×1.3 一直是隐形的）。
-        //   原来的 bottomChain（势/攻防/运/得掣）同理是死代码，已整条删除。
-        const topSlots = [top1, top2, top4];
-        const topChain = (isAtt ? topSlots : [...topSlots].reverse()).join('');
+        // [2026-08-06 修] 总× 为固定乘区连乘，**不含合兵 luck**（引擎胜负判定 per-unit 加权，
+        // 合兵信息由第三行「得/掣×」徽章承载；此前把指挥官单位的 joinLuck 乘进整侧总×，与引擎口径不一致）。
 
+        // [2026-08-06 撤回] multSpan 挂载已被用户否决（名×/城×/技× 不在规则设计内）——
+        // topChain 生成逻辑整段删除；各环只算数值供 totalMult / title 悬停明细使用。
         const allDetail = [
             { label: '名将光环', shortName: '名', val: famousMult },
             { label: '据点城池', shortName: '城', val: passMult * regionMult },
@@ -2111,16 +2056,14 @@ export class CombatUI {
             { label: '命运运气', shortName: '运', val: fateLuck },
         ].filter(f => Math.abs(f.val - 1) > 0.001);
 
-        const effectiveReinfLuck = (reinfLuck !== null && reinfLuck !== undefined) ? reinfLuck : 1;
-        const totalMult = famousMult * (passMult * regionMult) * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck * effectiveReinfLuck;
+        const totalMult = famousMult * (passMult * regionMult) * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck;
         const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
 
-        const title = `战力加成明细：\n` + allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n');
         const totalTitle = `综合战力加成（八环连乘）：×${fmtTotalStr}\n` + (allDetail.length > 0
             ? allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n')
             : '• 无额外增减益（均势 1.00）');
 
-        return { topChain, title, totalMult, totalTitle };
+        return { totalMult, totalTitle };
     }
 
     /** 返回当前战场中指定 side 自己的单位数组（= 对手的对手；与 getOpponentUnitsFor 同源） */

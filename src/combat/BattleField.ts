@@ -231,17 +231,6 @@ export class BattleField implements IOpeningPulseSink {
         // 注入与发射同 tick 同步完成，多场战斗并发也不会互相污染。
         setBattleTargetDurationForSkillUi(this.estimateSkillUiTargetDuration());
         // 三势适性：须在 pickPredictedSides 之前——先按兵力比给带将单位选局技，让开局脉冲/战力/卡片都用局技(否则局技未设,三处不一致且战力用招牌)
-        // [2026-08-06 顺序修复] 城防剥离必须排在**选技与锁指挥官之前**。
-        //   原顺序是 选技(233) → 锁指挥官(236) → 剥离(241)，三个 bug 叠在一起：
-        //   ① BattleUnitFactory 里 city 的 generalId 是**动态 getter**
-        //      （readSiegeGarrisonGeneralId(entity) ?? entity.generalId），
-        //      reconcile 一 delete `_siegeGarrisonGeneralId`，那个城防单位当场变无将；
-        //   ② 于是「锁定的指挥官」瞬间成了空壳——技能卡/六计角标/三势适性全部读它，全空，
-        //      而名牌立绘走 pickPortraitTagUnit 另挑一个，两边对不上（实机：阿尔及尔攻防战）；
-        //   ③ 更糟的是选技先跑，城防会被写入 battleOverriddenSkillId，剥将后残留，
-        //      角标会显示一个「无将单位」的技。
-        //   先剥再选技再锁将，三条一起消掉。怛罗斯那种守方军团自带将的局不受影响。
-        this.reconcileSiegeGarrisonBoostWithDefenders();
         this.assignSituationalSkills();
         // 锁定指挥官：assignSituationalSkills 已设局技，此后 pickSideSkillGeneralUnit 选的将是带着局技的单位
         this.attackerCommander = pickSideSkillGeneralUnit(attackerUnits);
@@ -250,6 +239,12 @@ export class BattleField implements IOpeningPulseSink {
         // 定强弱后重算战损减免
         this.recomputeStrongerCasualtyReduction();
         this.targetDuration = this.resolveFinalTargetDuration();
+        // [2026-08-06 撤回挪位] 城防剥离保留在原时序（选技→锁将→定胜负→算时长之后）：
+        //   挪到前面会改变 pickPredictedSides 与战斗时长看到的守方阵容（城防将/精提前被剥）= 改战斗结果，未量过，撤。
+        //   治「守方只剩文化卡」由 UI 侧两道闸负责，不碰引擎时序：
+        //   ① CombatUI.resolvePowerBadgeUnit 的 canUnitUseGeneralSkills 校验 ② BattleField.replaceCommanderIfInvalidated（援军入场后指挥官失效才补选）。
+        //   ⚠️ 城防此时带着选技阶段写入的 battleOverriddenSkillId 残留——UI 选角被①挡住不会显示，引擎侧行为与修复前一致。
+        this.reconcileSiegeGarrisonBoostWithDefenders();
 
         this.notifyBattleStart();
 
