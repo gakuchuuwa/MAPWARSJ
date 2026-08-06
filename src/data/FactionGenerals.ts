@@ -103,7 +103,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xigete: { generalId: 'gen_alfonso_vi', generalName: '阿方索六世', portrait: '/assets/LATIN/xigete_afangsuoliushi.png' },
     andaluoxiya: { generalId: 'gen_abd_al_rahman_iii', generalName: '阿卜杜拉', portrait: '/assets/LATIN/andaluoxiya_abudula.png' },
     alagong: { generalId: 'gen_james_i_aragon', generalName: '海梅', portrait: '/assets/LATIN/alagong_haimei.png' },
-    shaiyue: { generalId: 'gen_dobo_istvan', generalName: '多博伊', portrait: '/assets/SLAVIC/shaiyue_duoboyi.png' },
+    shaiyue: { generalId: 'shaiyue_aerpade', generalName: '阿尔帕德', portrait: '/assets/SLAVIC/shaiyue_duoboyi.png' },
 
     nuosi: { generalId: 'gen_olaf_skotkonung', generalName: '奥拉夫', portrait: '/assets/GERMANIC/nuosi_aolafu.png' },
     feiniqi: { generalId: 'gen_hamilcar', generalName: '哈米尔卡', portrait: '/assets/LATIN/feiniqi_hamierka.png' },
