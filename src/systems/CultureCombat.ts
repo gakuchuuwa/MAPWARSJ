@@ -113,6 +113,11 @@ export function getEliteCombatMultiplier(unit: IBattleUnit): number {
 export function getUnitEliteTier(unit: IBattleUnit): EliteTier | null {
     if (isGarrisonUnit(unit)) {
         const city = unit.getEntity?.() as { id?: string } | undefined;
+        // ⚠️ 语义：`_siegeGarrisonElite`（布尔，本场掷出）与 `_siegeGarrisonEliteName`（番号名）
+        // 是两个独立字段——reconcileSiegeGarrisonBoostWithLegion 会**删布尔、保留名字**
+        // （守方军团已承担精锐 → 城防不再叠一份环）。于是城防可能「有番号、无战力环」：
+        // 面板第二行仍显番号、此处返回 null → 军×1.0，这是防叠加的预期结果，不是 bug。
+        // 名字判级请用 readSiegeGarrisonEliteName（displayClassOf / resolveBattleUnitListName）。
         if (city?.id && readSiegeGarrisonElite(city)) {
             return getCityEliteConfig(city.id)?.tier ?? null;
         }

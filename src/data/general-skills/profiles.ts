@@ -174,7 +174,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    kai_wutianxinxuan: { generalId: 'kai_wutianxinxuan', tier: 'famous', tacticalSkillId: 'ts_322', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_171', defBalanceSkillId: 'ts_156', atkAdvantageSkillId: 'ts_325', atkDisadvantageSkillId: 'ts_759', defAdvantageSkillId: 'ts_389', defDisadvantageSkillId: 'ts_712', aptitude: 'create', attackStyle: 'attack' },
+    kai_wutianxinxuan: { generalId: 'kai_wutianxinxuan', tier: 'famous', tacticalSkillId: 'ts_325', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_325', atkBalanceSkillId: 'ts_171', atkDisadvantageSkillId: 'ts_759', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_156', defDisadvantageSkillId: 'ts_712', aptitude: 'create', attackStyle: 'attack' },
 
 
 

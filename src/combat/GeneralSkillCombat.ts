@@ -1463,7 +1463,15 @@ export function getGeneralSkillDisplayTags(
         return TAC_MAP[cls];
     };
 
-    const tacId = unit.battleOverriddenSkillId ?? null;
+    // [2026-08-06] 局技未分配（undefined）时回落招牌技，与角标 getOwnSixSetSkillId 对齐。
+    //   原来直接 `battleOverriddenSkillId ?? null`：援军入场走懒分配、predictedStronger/Weaker
+    //   未就绪时该字段停在 undefined，于是引擎照常拿招牌技结算、六计角标也照常显字，
+    //   唯独技能卡返回空数组——同一单位「角标有字、卡片空白」。实测见
+    //   scratch/verify_defender_tags_missing.mts。
+    //   注意 null（技被看破）≠ undefined（没分配）：null 仍走下方 negatedSkillId 分支显示「克夺反」。
+    const tacId = unit.battleOverriddenSkillId === undefined
+        ? (profile.tacticalSkillId ?? null)
+        : unit.battleOverriddenSkillId;
     const tac = tacId ? getTacticalSkillDef(tacId) : null;
     if (tac) {
         tags.push({

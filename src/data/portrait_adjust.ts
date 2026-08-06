@@ -888,9 +888,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/CENTRAL_ASIA/wuhu_dukake.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": 3
+            "scale": 0.94,
+            "offsetX": 2,
+            "offsetY": 5
         },
         "/assets/CENTRAL_ASIA/yada_ahexiong.png": {
             "scale": 0.89,
@@ -1066,11 +1066,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": -28
-        },
-        "/assets/daming/yansui_wangwei.png": {
-            "scale": 1.29,
-            "offsetX": 0,
-            "offsetY": -16
         },
         "/assets/DIANQIAN/basha_d_daogengmeng.png": {
             "scale": 1.29,
@@ -3286,11 +3281,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.76,
             "offsetX": 0,
             "offsetY": -34
-        },
-        "/assets/daming/__闲置__JIANGNAN_19.png": {
-            "scale": 1.13,
-            "offsetX": 0,
-            "offsetY": -28
         },
         "/assets/daming/zu_d_yuanchonghuan.png": {
             "scale": 1.07,
@@ -6516,6 +6506,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.85,
             "offsetX": 13,
             "offsetY": 26
+        },
+        "/assets/WESTERN/__多余__WESTERN_02.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 5
+        },
+        "/assets/daming/__闲置__daming_15.png": {
+            "scale": 1.29,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/daming/yansui_wangwei.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": -28
         }
     },
     "folderGuides": {
