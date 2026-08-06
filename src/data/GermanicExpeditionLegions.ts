@@ -44,18 +44,18 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     weixi: { name: '不莱梅步兵', tier: 4 },          // 不莱梅·安斯加尔；避势力「威悉」叠字
     maixiya: { name: '奥法盾墙', tier: 4 },          // 牛津·奥法；避势力「麦西亚」叠字
     gaer: { name: '芬尼亚勇士', tier: 4 },          // 都柏林·多姆纳尔
-    boumeilaniyan: { name: '格里芬卫队', tier: 4 },
+    boumeilaniyan: { name: '格里芬军团', tier: 4 },
     bafaliya: { name: '塔西洛军团', tier: 4 },          // 雷根斯堡·塔西洛；避势力「巴伐利亚」叠字
     // 纽伦堡·霍亨索伦伯：家族专名可考 → T3（禁造「法兰克重骑」）
     huohengsuolun: { name: '黑鹰军团', tier: 3 },
-    pufaerci: { name: '宫相卫队', tier: 4 },          // 海德堡·路德维希
+    pufaerci: { name: '普法尔军团', tier: 4 },          // 海德堡·路德维希；普法尔茨，避空泛「宫相卫队」
     // 勃兰登堡·阿尔布雷（大熊）：北边疆侯，非条顿骑士团 → T3 边疆军
     asikanani: { name: '边境巡骑', tier: 3 },
     // 马格德堡·杰罗：萨克森东扩边疆 → T4
     wende: { name: '文德战团', tier: 4 },
     molaweiya: { name: '斯瓦托军团', tier: 3 },          // 奥尔穆茨·斯瓦托普卢克；避势力「摩拉维亚」叠字
     damolaweiya: { name: '布尔诺营', tier: 4 },          // 布尔诺·莫伊米尔；避「摩拉」截字叠势力
-    meikelunbao: { name: '梅克伦卫队', tier: 4 },
+    meikelunbao: { name: '梅克伦军团', tier: 4 },
     kanbuliya: { name: '长弓游击兵', tier: 3 },          // 卡莱尔·华莱士
     shiwaben: { name: '士瓦本剑士', tier: 4 },          // 奥格斯堡·乌尔里希
     rierman: { name: '莱茵选侯军', tier: 3 },          // 美因茨·奥托；避据点「美因茨」叠字

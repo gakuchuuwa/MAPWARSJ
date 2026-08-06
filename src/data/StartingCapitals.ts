@@ -820,7 +820,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'qincha': 'city_salatuofu',
   'mengtainiya': 'city_bucharest',
   'xierhe': 'city_qihe',
-  'taolika': 'city_heersongniesi',
+'taolika': 'city_heersongniesi',
 'anxi': 'city_bohuancheng',
 'konbaung': 'city_shwebo',
 'qi_d': 'city_hengyu',
