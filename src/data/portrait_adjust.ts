@@ -403,7 +403,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/CENTRAL_ASIA/tiemuer_tiemuer.png": {
-            "scale": 1.01,
+            "scale": 0.97,
             "offsetX": 4,
             "offsetY": -7
         },
@@ -6193,7 +6193,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/STEPPE/kangju_chebishi.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": 7
         },

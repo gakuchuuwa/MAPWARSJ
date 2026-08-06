@@ -1415,7 +1415,7 @@ export class BattleField implements IOpeningPulseSink {
 
         this.reconcileSiegeGarrisonBoostForJoinedUnit(unit, isAttacker);
         // 剥离可能把当前指挥官（城防）掏空 → 只在它「已失效」时补选，不是每来一支援军就改选
-        this.replaceCommanderIfInvalidated(isAttacker);
+        if (!(globalThis as any).__HOLLOW_NULL__) this.replaceCommanderIfInvalidated(isAttacker); // 仅无头 A/B 测试钩子，生产恒不设置
 
         gameLog(
             'battle',
