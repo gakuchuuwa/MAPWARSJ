@@ -354,7 +354,9 @@ export function pickSideSkillGeneralUnit(units: IBattleUnit[]): IBattleUnit | nu
 
 function findEligibleGeneralUnit(units: IBattleUnit[], commander?: IBattleUnit | null): IBattleUnit | null {
     if (commander && canUnitUseGeneralSkills(commander)) return commander;
-    if (commander && !canUnitUseGeneralSkills(commander)) return null;
+    // [2026-08-06 修] 指挥官失效（reconcile 剥将致空壳）时**回退扫描**侧内带将单位，不再直接 return null——
+    //   此前空壳指挥官让整侧 三势/攻防/名将/精锐/战术技 全部 ×1（引擎真少算战力，面板闸却回退显示加成 = 虚报）。
+    //   修复后引擎与 UI（resolvePowerBadgeUnit 同判据）同源：有效锁指挥官，失效回退。
     let best: IBattleUnit | null = null;
     let bestScore = Number.NEGATIVE_INFINITY;
     for (const u of units) {
