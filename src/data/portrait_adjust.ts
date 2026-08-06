@@ -5273,12 +5273,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/GERMANIC/piketai_aoengesi.png": {
-            "scale": 1,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": 20
         },
         "/assets/GERMANIC/weixi_ansijiaer.png": {
-            "scale": 1.39,
+            "scale": 1.42,
             "offsetX": -1,
             "offsetY": 33
         },
@@ -5458,7 +5458,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/GERMANIC/__闲置__GERMANIC_17.png": {
-            "scale": 0.94,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": -1
         },
@@ -5488,7 +5488,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -4
         },
         "/assets/GERMANIC/boumeilaniyan_kaximier.png": {
-            "scale": 1.03,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": 22
         },
@@ -5593,9 +5593,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/GERMANIC/weijing_york_xuefuailike.png": {
-            "scale": 0.98,
+            "scale": 0.95,
             "offsetX": 0,
-            "offsetY": 9
+            "offsetY": 8
         },
         "/assets/GERMANIC/asikanani_aerbulei.png": {
             "scale": 1.01,
@@ -5618,7 +5618,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/GERMANIC/boximiya_yangjiesika.png": {
-            "scale": 0.95,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -5723,7 +5723,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/GERMANIC/__闲置__GERMANIC_09.png": {
-            "scale": 1,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": 11
         },
@@ -5763,7 +5763,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/GERMANIC/damolaweiya_moyimier.png": {
-            "scale": 1.09,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -5838,7 +5838,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/GERMANIC/tiaodun_qishi_wuerlixi.png": {
-            "scale": 1,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": 12
         },
@@ -6288,7 +6288,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -4
         },
         "/assets/GERMANIC/danmai_abusalong.png": {
-            "scale": 0.99,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -6496,6 +6496,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": -13
+        },
+        "/assets/GERMANIC/__闲置__GERMANIC_14.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {
