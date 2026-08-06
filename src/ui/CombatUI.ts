@@ -2047,7 +2047,7 @@ export class CombatUI {
         // topChain 生成逻辑整段删除；各环只算数值供 totalMult / title 悬停明细使用。
         const allDetail = [
             { label: '名将光环', shortName: '名', val: famousMult },
-            { label: '据点城池', shortName: '城', val: passMult * regionMult },
+            { label: '据点城池', shortName: '城', val: Math.max(passMult, regionMult) },
             { label: '文化加成', shortName: '文', val: cultureMult },
             { label: '战术技能', shortName: tacChar, val: tacMult },
             { label: '精锐部队', shortName: '军', val: legionMult },
@@ -2056,7 +2056,11 @@ export class CombatUI {
             { label: '命运运气', shortName: '运', val: fateLuck },
         ].filter(f => Math.abs(f.val - 1) > 0.001);
 
-        const totalMult = famousMult * (passMult * regionMult) * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck;
+        // [2026-08-06 修] 据点环与引擎同行为：Math.max（关隘/文化中心取大不叠加，焊死上限 1.2）——
+        // 此前用 × 相乘，与引擎 getUnitCultureCombatMultiplier 的 max 不同；数值上现无差（149 关隘/15 中心零重叠），
+        // 但将来若某文化中心 type 改 pass，引擎仍 1.2、面板会静默 1.44（同坑第二次）。
+        const siteMult = Math.max(passMult, regionMult);
+        const totalMult = famousMult * siteMult * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck;
         const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
 
         const totalTitle = `综合战力加成（八环连乘）：×${fmtTotalStr}\n` + (allDetail.length > 0
@@ -3924,15 +3928,18 @@ export class CombatUI {
             progress = 1;
         }
 
-        // 占优方（=标尺要倒向的一面）：区域性战斗读引擎判定的强方（八环有效战力比，援军/败战翻盘会重算翻转），
-        // 与胜负一致——兵力少但名将局打赢时标尺不再向输家倾斜；均势局也不再 50% 临界反复突跳。
-        // 旧面板（currentBattle，无 BattleField）退回实时兵力比。
+        // 占优方（=标尺最后崩塌要倒向的一面）：区域性战斗读引擎判定的强方
         const attStronger = this.boundRegionalBattleField
             ? this.boundRegionalBattleField.isAttackerPredictedStronger()
             : realAttPct >= 50;
-        const lead = attStronger ? 1 : -1;
-        /** 第二、三阶段的落点：恒定 80/20，不看兵力比 */
-        const targetStalematePct = 50 + lead * (CLASH_STALEMATE_PCT - 50);
+        
+        /** 
+         * 第二、三阶段的落点：严格按真实兵力比（realAttPct）显示，
+         * 但如果是兵力碾压局，为了防止看不到兵力数字，将标尺截断在 77%（或 23%）位置。
+         */
+        const lowerBound = 100 - CLASH_STALEMATE_PCT;
+        const upperBound = CLASH_STALEMATE_PCT;
+        const targetStalematePct = Math.max(lowerBound, Math.min(upperBound, realAttPct));
         
         // 平滑追踪目标落点，防止翻盘时标尺瞬间闪现
         this.smoothedStalematePct += (targetStalematePct - this.smoothedStalematePct) * 0.05;
@@ -3955,28 +3962,29 @@ export class CombatUI {
             const eased = Math.pow(enterK, BAR_ACT1_EASE_POWER);
             attPct = 50 + (realAttPct - 50) * eased + swingUnit * BAR_SWING_ACT1;
         } else if (progress < PHASE_COLLAPSE_START) {
-            // 第二阶段·一边倒（12 秒）：从兵力比位置移到强方落点 80/20（2026-08-03 起方向读引擎强方，
-            // 以少胜多局从兵力劣势侧往回退到强方侧；均势局从 50 附近往外推）
+            // 第二阶段（12 秒）：保持在真实兵力比位置，不提前回撤，仅逐步放大摇摆幅度
             this.collapseStartAttPct = null;
             const k = (progress - PHASE_STALEMATE_START) / (PHASE_COLLAPSE_START - PHASE_STALEMATE_START);
-            const eased = k * k * (3 - 2 * k); // smoothstep：两端柔和，中段果断
             const swingAmp = BAR_SWING_ACT2_FROM + (BAR_SWING_ACT2_TO - BAR_SWING_ACT2_FROM) * k;
-            attPct = realAttPct + (stalematePct - realAttPct) * eased + swingUnit * swingAmp;
+            attPct = realAttPct + swingUnit * swingAmp;
         } else {
-            // 第三阶段（6 秒）：在 80% 大幅摇摆相持 5 秒 + 最后 1 秒断崖直接到底。
-            // 落点在进入本阶段时锁定：败战计中途翻盘换边时，允许弹性解锁，防止最后 1 秒崩向错误的输家。
+            // 第三阶段（6 秒）：只在第三阶段初，如果是碾压局，才回撤到 77% (stalematePct) 保底线。
             if (this.collapseStartAttPct === null || (this.collapseStartAttPct > 50) !== (stalematePct > 50)) {
-                this.collapseStartAttPct = stalematePct;
+                this.collapseStartAttPct = realAttPct; // 从第二阶段末尾（真实兵力比）开始回撤
             }
-            const hold = this.collapseStartAttPct;
             const s = Math.min(1, (progress - PHASE_COLLAPSE_START) / Math.max(0.0001, 1 - PHASE_COLLAPSE_START));
+            
             if (s < BAR_CLIFF_START) {
+                // 在前 5 秒内，利用开头的 1 秒（s = 1/6）完成平滑回撤
+                const retreatK = Math.min(1, s / (1 / 6));
+                const easedRetreat = retreatK * retreatK * (3 - 2 * retreatK); // smoothstep
+                const hold = this.collapseStartAttPct + (stalematePct - this.collapseStartAttPct) * easedRetreat;
                 attPct = hold + swingUnit * BAR_SWING_ACT3;
             } else {
-                // 断崖段：u^6 瞬间崩塌，直接推到底（100/0），不再留给宣判撞底。
-                // 摇摆按 (1-u) 淡出，否则崩塌起点会从摆动中的任意位置突跳回 hold。
+                // 断崖段：u^6 瞬间崩塌，直接推到底（100/0），方向读真实胜负，不再留给宣判撞底。
                 const u = (s - BAR_CLIFF_START) / (1 - BAR_CLIFF_START);
-                const cliff = hold >= 50 ? 100 : 0;
+                const hold = this.collapseStartAttPct + (stalematePct - this.collapseStartAttPct); // 回撤终点
+                const cliff = attStronger ? 100 : 0;
                 attPct = hold + (cliff - hold) * Math.pow(u, 6) + swingUnit * BAR_SWING_ACT3 * (1 - u);
             }
         }
