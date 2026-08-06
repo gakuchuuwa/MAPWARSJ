@@ -1667,11 +1667,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/NORTHEAST/ewenki_gentemuer.png": {
-            "scale": 0.96,
-            "offsetX": 0,
-            "offsetY": -16
-        },
         "/assets/NORTHEAST/feiyaka_cemutehe.png": {
             "scale": 0.9,
             "offsetX": 0,
@@ -6496,6 +6491,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -1
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_41.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": -16
+        },
+        "/assets/manqing/ewenki_gentemuer.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -10
         }
     },
     "folderGuides": {

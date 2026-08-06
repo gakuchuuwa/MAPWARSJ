@@ -265,7 +265,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     sabeol: { generalId: 'sabeol_jinshimin', generalName: '金时敏', portrait: '/assets/KOREA/sabeol_jinshimin.png' },
         huimo: { generalId: 'huimo_gaoyanshou', generalName: '高延寿', portrait: '/assets/NORTHEAST/huimo_gaoyanshou.png' },
     aola: { generalId: 'aola_menglielun', generalName: '孟烈伦', portrait: '/assets/NORTHEAST/aola_menglielun.png' },
-    ewenki: { generalId: 'ewenki_gentemuer', generalName: '根特木尔', portrait: '/assets/NORTHEAST/ewenki_gentemuer.png' },
+    ewenki: { generalId: 'ewenki_gentemuer', generalName: '根特木尔', portrait: '/assets/manqing/ewenki_gentemuer.png' },
     haixi_nvzhen: { generalId: 'haixi_nvzhen_baiyindali', generalName: '拜音达里', portrait: '/assets/NORTHEAST/haixi_nvzhen_baiyindali.png' },
     dazhen: { generalId: 'dazhen_wanyantiege', generalName: '完颜铁哥', portrait: '/assets/NORTHEAST/dazhen_wanyantiege.png' },
     yehe: { generalId: 'yehe_jintaiji', generalName: '金台吉', portrait: '/assets/NORTHEAST/yehe_jintaiji.png' },
