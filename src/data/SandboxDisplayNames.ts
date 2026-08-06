@@ -111,7 +111,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   jinzhang: '金帐',
   baojiaer: '保加',
   baizanting: '拜占',
-  taolika: '陶里',
+'taolika': '陶里',
   kelimiya: '克里',
   qincha: '钦察',
   litaowan: '立陶',

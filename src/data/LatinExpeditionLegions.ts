@@ -13,15 +13,15 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
 
     // ── T1 功勋之兵 ──
     luoma_diguo: { name: '罗马军团', tier: 1 },          // 罗马城·大西庇阿：征服地中海，建制千年
-    maqidun: { name: '马其顿方阵', tier: 2 },          // 萨洛尼卡·亚历山大：征服波斯
+    maqidun: { name: '伙伴骑兵', tier: 2 },          // 萨洛尼卡·亚历山大：Hetairoi 伙伴骑兵；避势力「马其顿」叠字
 
     // ── T2 特色之兵 ──
     // 汉尼拔主力骑臂=努米底亚骑（坎尼等）；圣团属布匿早期，勿绑汉尼拔 → T2
     buni: { name: '努米底亚骑', tier: 2 },
-    xila: { name: '雅典海军', tier: 2 },          // 雅典·地米斯托克利：萨拉米斯
+    xila: { name: '萨拉米斯舰', tier: 2 },          // 雅典·地米斯托克利：萨拉米斯海战；避据点「雅典」叠字
     lagoniya: { name: '斯巴达重装', tier: 2 },          // 斯巴达·列奥尼达：普拉提亚
     boootiya: { name: '底比斯圣队', tier: 2 },          // 底比斯·伊巴密浓达：留克特拉
-    yadelaiya: { name: '威尼斯舰队', tier: 2 },          // 威尼斯·丹多洛
+    yadelaiya: { name: '圣马可舰', tier: 2 },          // 威尼斯·丹多洛：圣马可旗/兵工厂；避据点「威尼斯」叠字
     aquidan: { name: '法兰克甲士', tier: 2 },          // 波尔多·黑太子：1356普瓦捷——长弓+下马甲士为主（非骑兵专名；勿与732图尔/查理马特混淆）
     mulabite: { name: '穆拉比特军', tier: 2 },          // 马拉喀什·塔什芬
     aguelabu: { name: '易弗里军团', tier: 2 },          // 凯鲁万·奥克巴：征服易弗里基叶（Ifriqiya）；避势力「阿格拉布」叠字
@@ -31,9 +31,9 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     duluo: { name: '葡萄牙骑士', tier: 3 },          // 波尔图·桑乔一世：收复失地十字军骑士
 
     // ── T3 风土之兵 ──
-    liguliya: { name: '热那亚海军', tier: 3 },          // 热那亚·安德烈亚
+    liguliya: { name: '利古里亚弩', tier: 3 },          // 热那亚弩手专名；避据点「热那亚」叠字
     lunbadi: { name: '米兰弩手', tier: 3 },          // 米兰·斯福尔扎
-    gaolu: { name: '法兰西骑士', tier: 3 },          // 巴黎·查理七世
+    gaolu: { name: '敕令骑兵', tier: 3 },          // 巴黎·查理七世：compagnies d'ordonnance；避势力「法兰西」叠字
     // 图卢兹·雷蒙五世：古名 Tolosa →「托洛萨骑」美化；无战役专名高光，档仍 T4（不抬）
     langgeduoke: { name: '图卢兹骑士', tier: 4 },
     jiatailuoniya: { name: '加泰轻步', tier: 3 },          // 巴塞罗那·海梅：加泰轻装（佣兵团偏罗杰弗洛尔，不同代；阿尔莫加瓦已挂萨拉戈萨）
@@ -47,17 +47,17 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     kejila: { name: '西波塔舰', tier: 3 },          // 科孚·舒伦堡：前433西波塔海战；避势力「科基拉」叠字
     // 拉文纳·狄奥多里克：493 年攻陷拉文纳、杀奥多亚塞，建东哥特王国，亲卫为其征服主力；
     // 狄奥多里克为日耳曼英雄文学符号（《尼伯龙根之歌》迪特里希），文化知名 → T3（2026-08-03 名将互配升）
-    donggete: { name: '狄奥多卫', tier: 3 },
+    donggete: { name: '狄奥多军团', tier: 3 },
     anuo: { name: '比萨海军', tier: 3 },          // 比萨·乌戈里诺
     balunxiya: { name: '图里亚勇士', tier: 3 },          // 巴伦西亚·熙德：图里亚河畔都城骑兵（避将名熙德）
 
     // ── T4 存在之兵 ──
     // 那不勒斯·卡洛（安茹）：安茹骑士可考，无「重骑」专名高光 → T3
     kanpaniya: { name: '安茹骑士', tier: 3 },
-    // 佛罗伦萨·洛伦佐：美第奇治下卫军/佣兵 → T4
-    tuosikana: { name: '美第奇卫', tier: 4 },
+    // 佛罗伦萨：Bande Nere 黑带军团（乔凡尼·德·美第奇）→ T4
+    tuosikana: { name: '黑带军团', tier: 4 },          // 佛罗伦萨·洛伦佐侧：乔凡尼·德·美第奇 Bande Nere
     xixiliwangguo: { name: '西西里重骑', tier: 3 },          // 巴勒莫·腓特烈二世
-    gaolu_luoma: { name: '墨洛温卫', tier: 3 },          // 里昂·克洛维：墨洛温王庭卫军（避将名）
+    gaolu_luoma: { name: '克洛维军团', tier: 3 },          // 里昂·克洛维：墨洛温王庭军；避空泛「墨洛温卫」
     // 托莱多·阿方索六世：1085 收复托莱多，卡斯蒂利亚骑士/骑从为收复失地核心；
     // 文化知名；卡拉特拉瓦团 1158 建晚于其卒年，不挂 → T3（2026-08-03 名将互配升）
     xigete: { name: '卡斯蒂骑士', tier: 3 },
