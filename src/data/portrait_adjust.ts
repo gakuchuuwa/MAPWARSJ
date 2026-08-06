@@ -2553,7 +2553,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/HEXI/guazhou_zhangshougui.png": {
-            "scale": 0.97,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": -1
         },
@@ -4658,7 +4658,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/NORTH/linhu_mafang.png": {
-            "scale": 1.07,
+            "scale": 1.21,
             "offsetX": -7,
             "offsetY": 0
         },
@@ -5447,11 +5447,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 18
         },
-        "/assets/GERMANIC/mazhaer_aerpade.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 17
-        },
         "/assets/GERMANIC/nidelan_weilian.png": {
             "scale": 1,
             "offsetX": 0,
@@ -5686,11 +5681,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": 10
-        },
-        "/assets/SLAVIC/shaiyue_duoboyi.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 4
         },
         "/assets/GERMANIC/__闲置__GERMANIC_11.png": {
             "scale": 1,
@@ -6506,6 +6496,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.13,
             "offsetX": 0,
             "offsetY": -28
+        },
+        "/assets/GERMANIC/83876697-fe31-4502-8387-6c970089416b.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/GERMANIC/mazhaer_beilasishi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/SLAVIC/__闲置__SLAVIC_02.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/GERMANIC/shaiyue_aerpade.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 17
         }
     },
     "folderGuides": {

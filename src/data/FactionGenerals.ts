@@ -103,7 +103,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xigete: { generalId: 'gen_alfonso_vi', generalName: '阿方索六世', portrait: '/assets/LATIN/xigete_afangsuoliushi.png' },
     andaluoxiya: { generalId: 'gen_abd_al_rahman_iii', generalName: '阿卜杜拉', portrait: '/assets/LATIN/andaluoxiya_abudula.png' },
     alagong: { generalId: 'gen_james_i_aragon', generalName: '海梅', portrait: '/assets/LATIN/alagong_haimei.png' },
-    shaiyue: { generalId: 'shaiyue_aerpade', generalName: '阿尔帕德', portrait: '/assets/SLAVIC/shaiyue_duoboyi.png' },
+    shaiyue: { generalId: 'shaiyue_aerpade', generalName: '阿尔帕德', portrait: '/assets/GERMANIC/shaiyue_aerpade.png' },
 
     nuosi: { generalId: 'gen_olaf_skotkonung', generalName: '奥拉夫', portrait: '/assets/GERMANIC/nuosi_aolafu.png' },
     feiniqi: { generalId: 'gen_hamilcar', generalName: '哈米尔卡', portrait: '/assets/LATIN/feiniqi_hamierka.png' },
@@ -123,7 +123,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
 
     habusibao: { generalId: 'gen_maximilian', generalName: '马克西米', portrait: '/assets/GERMANIC/habusibao_makeximi.png' },
     boximiya: { generalId: 'gen_jan_zizka', generalName: '扬杰斯卡', portrait: '/assets/GERMANIC/boximiya_yangjiesika.png' },
-    mazhaer: { generalId: 'gen_arpad', generalName: '阿尔帕德', portrait: '/assets/GERMANIC/mazhaer_aerpade.png' },
+    mazhaer: { generalId: 'mazhaer_beilasishi', generalName: '贝拉四世', portrait: '/assets/GERMANIC/mazhaer_beilasishi.png' },
     falanji: { generalId: 'gen_charles_martel', generalName: '查理马特', portrait: '/assets/GERMANIC/falanji_chalimate.png' },
     jialuolin: { generalId: 'gen_charlemagne', generalName: '查理曼', portrait: '/assets/GERMANIC/jialuolin_chalidadi.png' },
     rierman: { generalId: 'gen_otto_great', generalName: '奥托一世', portrait: '/assets/GERMANIC/rierman_aotuoyishi.png' },

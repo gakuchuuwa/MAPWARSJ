@@ -27,7 +27,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     aguelabu: { name: '阿格拉布卫', tier: 2 },          // 凯鲁万·奥克巴：征服易弗里基叶（Ifriqiya）；政权远征军，非骑士团/骑兵专名
     luodesi: { name: '医院骑士', tier: 2 },          // 罗得城·德米特里：1522守岛
     maerta_qishi: { name: '马耳他骑士', tier: 2 },          // 马耳他·拉·瓦莱特：1565大围攻以少胜多
-    kasidiliya: { name: '卡斯蒂利亚骑', tier: 3 },
+    kasidiliya: { name: '卡斯蒂骑', tier: 3 },
     duluo: { name: '葡萄牙骑士', tier: 3 },          // 波尔图·桑乔一世：收复失地十字军骑士
 
     // ── T3 风土之兵 ──
