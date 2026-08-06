@@ -242,7 +242,11 @@ function buildExcludeTargetIds(ctx: BTContext): Set<string> {
  * 在寻敌半径内找最近可野战敌军团（排除冷却中的目标）。
  * 收复本城优先于本函数；本函数优先于方向池抽签。
  */
-function pickNearbyEnemyLegion(ctx: BTContext, excludeTargetIds: Set<string>): Army | null {
+function pickNearbyEnemyLegion(
+    ctx: BTContext,
+    excludeTargetIds: Set<string>,
+    corridorTarget?: { latitude: number; longitude: number },
+): Army | null {
     const huntR = GameConfig.AI.HUNT_ENEMY_LEGION_RADIUS;
     const myPos = ctx.army.getPosition();
     const myFaction = ctx.army.getFactionId();
@@ -259,8 +263,18 @@ function pickNearbyEnemyLegion(ctx: BTContext, excludeTargetIds: Set<string>): A
         const key = `army:${other.id}`;
         if (excludeTargetIds.has(key)) continue;
 
-        const d = getEuclideanDistance(myPos, other.getPosition());
+        const ePos = other.getPosition();
+        const d = getEuclideanDistance(myPos, ePos);
         if (d > huntR) continue;
+        // 打断路径的走廊过滤（2026-08-06 P2）：侧翼/身后/城后面的敌军不打断攻城
+        if (corridorTarget && !isEnemyInMarchCorridor(myPos, ePos, corridorTarget)) {
+            btLog(
+                ctx,
+                `skip_hunt:${other.id}`,
+                `[AI] ${ctx.army.name} 0.8° 内敌军【${other.name}】不在行军走廊，不打断攻城`
+            );
+            continue;
+        }
         if (d < bestDist) {
             bestDist = d;
             best = other;
@@ -291,6 +305,35 @@ function measureHuntDetour(
         lng: targetCity.longitude,
     });
     return { detour: toCity > 0 ? toEnemy / toCity : Infinity, offsetKm: toEnemy * 111 };
+}
+
+/**
+ * 追击走廊判据（2026-08-06 P2 主人拍板实装）：只有挡在行军方向上的敌军才值得打断攻城。
+ * 两个条件同时满足：
+ *   ① 敌距 ≤ 城距 × HUNT_MAX_DETOUR_RATIO —— 不追比目标城还远的（城后面/绕远路）；
+ *   ② 「我→敌」与「我→城」方向夹角 ≤ HUNT_CORRIDOR_HALF_ANGLE_DEG —— 侧翼（~90°）/身后（>90°）排除。
+ * 注：用 lat/lng 欧氏近似算夹角，追击半径 0.8° 内误差可忽略（与 getEuclideanDistance 同口径）。
+ */
+export function isEnemyInMarchCorridor(
+    myPos: { lat: number; lng: number },
+    ePos: { lat: number; lng: number },
+    cityPos: { latitude: number; longitude: number },
+): boolean {
+    const toCityLat = cityPos.latitude - myPos.lat;
+    const toCityLng = cityPos.longitude - myPos.lng;
+    const toEnemyLat = ePos.lat - myPos.lat;
+    const toEnemyLng = ePos.lng - myPos.lng;
+    const cityDist = Math.hypot(toCityLat, toCityLng);
+    const enemyDist = Math.hypot(toEnemyLat, toEnemyLng);
+    if (cityDist < 1e-9 || enemyDist < 1e-9) return false;
+
+    // ① 不绕远路：敌军不得比目标城更远
+    if (enemyDist > cityDist * GameConfig.AI.HUNT_MAX_DETOUR_RATIO) return false;
+
+    // ② 方向夹角
+    const cosAngle = (toCityLat * toEnemyLat + toCityLng * toEnemyLng) / (cityDist * enemyDist);
+    const angleDeg = (Math.acos(Math.min(1, Math.max(-1, cosAngle))) * 180) / Math.PI;
+    return angleDeg <= GameConfig.AI.HUNT_CORRIDOR_HALF_ANGLE_DEG;
 }
 
 export const HasTarget = new Condition('HasTarget', (ctx) => {
@@ -350,7 +393,7 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
 
     // 关键：已锁定据点时 EnsureTarget 不会再进 FindTarget，同屏新刷敌军团会被无视。
     // 非收复/非远征的攻城途中，若寻敌半径内出现可打敌军团 → 挂起城目标并立刻改追（城 id 保留，勿 stopMovement 空窗卡死）。
-    const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx));
+    const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx), city);
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();
         // 只测不拦（P2 待实机取数后再定，见 measureHuntDetour）

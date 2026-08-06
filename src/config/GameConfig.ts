@@ -307,6 +307,15 @@ export class GameConfig {
          * 放弃后只是改去打城，目标进 60s 冷却，之后还能再追。
          */
         HUNT_BLOCKED_TIMEOUT_MS: 45000,
+        /**
+         * 追击走廊（2026-08-06 主人拍板实装，替代「0.8° 内任何敌军都打断攻城」）：
+         * 只有挡在行军方向走廊上的敌军才打断攻城，侧翼/身后/城后面的小股不再拉走。
+         * 判据（两个同时满足）：① 敌距 ≤ 城距 × HUNT_MAX_DETOUR_RATIO（不绕远路、不追城后面的）；
+         * ② 「我→敌军」与「我→目标城」方向夹角 ≤ HUNT_CORRIDOR_HALF_ANGLE_DEG。
+         * 只作用于 HasTarget 的打断路径；FindTarget 主动追击（无城目标时）不过滤。
+         */
+        HUNT_CORRIDOR_HALF_ANGLE_DEG: 45,
+        HUNT_MAX_DETOUR_RATIO: 1.0,
         /** 行军首段超过此距离（LatLng 单位）时打诊断日志 */
         MARCH_DIAG_FIRST_LEG: 0.35,
         /** 距出兵/驻地据点超过此距离时，寻路优先用当前位置最近城作道路起点（避免野战后折返首都） */
