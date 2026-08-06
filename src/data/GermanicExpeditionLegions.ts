@@ -44,7 +44,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     weixi: { name: '威悉河步兵', tier: 4 },          // 不莱梅·安斯加尔
     maixiya: { name: '麦西亚卫队', tier: 4 },          // 牛津·奥法
     gaer: { name: '芬尼亚勇士', tier: 4 },          // 都柏林·多姆纳尔
-    boumeilaniyan: { name: '格里芬卫队', tier: 4 },          // 格但斯克·卡西米尔
+    boumeilaniyan: { name: '格里芬卫队', tier: 4 },
     bafaliya: { name: '巴伐利亚卫', tier: 4 },          // 雷根斯堡·塔西洛
     // 纽伦堡·霍亨索伦伯：家族专名可考 → T3（禁造「法兰克重骑」）
     huohengsuolun: { name: '黑鹰军团', tier: 3 },
@@ -55,7 +55,7 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     wende: { name: '文德战团', tier: 4 },
     molaweiya: { name: '摩拉维亚卫', tier: 3 },          // 奥尔穆茨·斯瓦托
     damolaweiya: { name: '摩拉卫队', tier: 4 },          // 布尔诺·莫伊米尔
-    meikelunbao: { name: '梅克伦卫队', tier: 4 },          // 罗斯托克·博尔温
+    meikelunbao: { name: '梅克伦卫队', tier: 4 },
     kanbuliya: { name: '长弓游击兵', tier: 3 },          // 卡莱尔·华莱士
     shiwaben: { name: '士瓦本剑士', tier: 4 },          // 奥格斯堡·乌尔里希
     rierman: { name: '美因茨卫队', tier: 3 },          // 美因茨·奥托

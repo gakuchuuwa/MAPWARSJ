@@ -919,6 +919,9 @@ export class CityAssetManager {
         'yedi': '野地',
         'luosi': '罗斯',
         'shaiyue': '喀尔',
+        'meikelunbao': '文德',
+'wende': '萨克',
+        'boumeilaniyan': '卡舒',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

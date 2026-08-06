@@ -31,7 +31,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   lagusa: '拉古',
 
   ruidian_yota: '约塔',
-  meikelunbao: '梅克',
+'meikelunbao': '文德',
   didi: '佛兰',
   anuo: '阿诺',
 'guadaer': '瓜达',
@@ -56,7 +56,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
   maixiya: '麦西',
   nidelan: '尼德',
-  boumeilaniyan: '波美',
+'boumeilaniyan': '卡舒',
   langgeduoke: '朗格',
   aermolika: '摩里',
   tuosikana: '托斯',
@@ -153,7 +153,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   rierman: '莱茵',
   shiwaben: '施瓦',
   asikanani: '阿斯',
-  wende: '文德',
+'wende': '萨克',
   bafaliya: '巴伐',
   huohengsuolun: '霍亨',
   mozeer: '摩泽',
