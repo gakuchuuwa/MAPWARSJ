@@ -554,7 +554,11 @@ export class RoadRegistry {
         const headIsStart =
             Math.abs(head.lat - startPos.lat) < 1e-6 && Math.abs(head.lng - startPos.lng) < 1e-6;
         if (headIsStart) {
-            return route.length >= 2 ? getEuclideanDistance(route[0], route[1]) : 0;
+            // 军团就在路径起点 = 已经贴在路上，离路距离是 0（2026-08-07 修）。
+            // 原实现返回「起点到下一个途径点的距离」（第一段长度），当第一段很长（> JOIN_EPS）
+            // 时会被误判为「偏离道路」，触发 buildPathViaNearestRoad 全网重投影，
+            // 产生先折返/绕行等异常路径（伊斯法罕三岔口折返案）。
+            return 0;
         }
         return getEuclideanDistance(startPos, head);
     }

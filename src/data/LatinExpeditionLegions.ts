@@ -24,7 +24,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     yadelaiya: { name: '威尼斯舰队', tier: 2 },          // 威尼斯·丹多洛
     aquidan: { name: '法兰克甲士', tier: 2 },          // 波尔多·黑太子：1356普瓦捷——长弓+下马甲士为主（非骑兵专名；勿与732图尔/查理马特混淆）
     mulabite: { name: '穆拉比特军', tier: 2 },          // 马拉喀什·塔什芬
-    aguelabu: { name: '阿格拉布卫', tier: 2 },          // 凯鲁万·奥克巴：征服易弗里基叶（Ifriqiya）；政权远征军，非骑士团/骑兵专名
+    aguelabu: { name: '易弗里军团', tier: 2 },          // 凯鲁万·奥克巴：征服易弗里基叶（Ifriqiya）；避势力「阿格拉布」叠字
     luodesi: { name: '医院骑士', tier: 2 },          // 罗得城·德米特里：1522守岛
     maerta_qishi: { name: '马耳他骑士', tier: 2 },          // 马耳他·拉·瓦莱特：1565大围攻以少胜多
     kasidiliya: { name: '卡斯蒂骑', tier: 3 },
@@ -44,7 +44,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     telibolisi: { name: '巴巴里海盗', tier: 3 },          // 的黎波里·德拉古特：北非海盗身份可考 → T3
     // 维罗纳·坎格兰德：斯卡拉家族治军，非「铁骑」专名 → T3
     bohepingyuan: { name: '斯卡拉骑士', tier: 3 },
-    kejila: { name: '科基拉水军', tier: 3 },          // 科孚·舒伦堡：希腊仅次于雅典的第二海军强国（修昔底德），前433西波塔海战
+    kejila: { name: '西波塔舰', tier: 3 },          // 科孚·舒伦堡：前433西波塔海战；避势力「科基拉」叠字
     // 拉文纳·狄奥多里克：493 年攻陷拉文纳、杀奥多亚塞，建东哥特王国，亲卫为其征服主力；
     // 狄奥多里克为日耳曼英雄文学符号（《尼伯龙根之歌》迪特里希），文化知名 → T3（2026-08-03 名将互配升）
     donggete: { name: '狄奥多卫', tier: 3 },
@@ -64,7 +64,7 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 格拉纳达·穆罕默德：纳斯里摩尔骑兵风土 → T3（禁造「阿兰布拉卫」）
     nasier: { name: '摩尔骑', tier: 3 },
     feiniqi: { name: '迦太基圣队', tier: 3 },          // 加的斯·哈米尔卡
-    yidelisi: { name: '非斯卫', tier: 4 },          // 非斯·伊德里斯：都城卫军（避将名/王朝名叠字）
+    yidelisi: { name: '伊德里斯团', tier: 4 },          // 非斯·伊德里斯：都城军；避据点「非斯」叠字
     xilagu: { name: '希腊重步兵', tier: 4 },          // 锡拉库萨·阿加索克利
     leangongguo: { name: '莱昂骑士', tier: 4 },          // 萨拉曼卡·阿方索九世
     // 梅西纳·罗杰一世：诺曼骑士征服西西里海峡 → T2
@@ -73,18 +73,18 @@ export const LATIN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     alagong: { name: '阿尔莫加瓦', tier: 2 },
     // 休达·恩里克：基督骑士团大团长（非阿维斯）→ T2
     zhibuluotuo: { name: '基督骑士', tier: 2 },
-    zhayan: { name: '扎扬卫队', tier: 4 },          // 特莱姆森·亚格姆拉森
-    hamade: { name: '哈马德卫队', tier: 4 },          // 布佳亚·哈马德：卡拉阿·贝尼·哈马德（避将名）
+    zhayan: { name: '特莱姆森骑', tier: 4 },          // 特莱姆森·亚格姆拉森；避势力「扎扬」叠字
+    hamade: { name: '贝尼哈马团', tier: 4 },          // 布佳亚·哈马德：卡拉阿·贝尼·哈马德；避势力「哈马德」叠字
     sading: { name: '岛屿佣兵', tier: 4 },          // 卡利亚里·埃莱奥诺拉
     jileinaijia: { name: '昔兰尼轻骑', tier: 4 },          // 班加西·马加斯
     kelite: { name: '克里特弓手', tier: 3 },          // 诺索斯·福卡斯：961收复克里特；克里特弓箭手为希腊世界最著名雇佣兵（色诺芬长征记），文化知名T3
     // 南特·吉尔德雷斯：无专名精锐 → T4
     aermolika: { name: '阿尔摩里骑', tier: 4 },
     // 雷恩·阿兰一世：布列塔尼地方军抗维京 → T4
-    bulietani: { name: '布列塔尼卫', tier: 4 },
+    bulietani: { name: '阿莫里卡团', tier: 4 },          // 雷恩·阿兰一世：Armorica 抗维京；避势力「布列塔尼」叠字
     // 阿维尼翁·雷蒙四世（圣吉尔）：第一次十字军主力；专名偏弱 → T3（勿挂「教皇军」）
     puluowangsi: { name: '圣吉尔骑', tier: 3 },
     // 加莱·罗贝尔二世（佛兰德）：第一次十字军；金马刺步兵已挂 didi「佛兰德军」，此处不夺步兵符号
     fulandesi: { name: '阿图瓦枪兵', tier: 2 },
-    mengtainiya: { name: '蒙泰尼亚卫', tier: 2 },          // 布加勒斯特·巴萨拉布
+    mengtainiya: { name: '巴萨拉布团', tier: 2 },          // 布加勒斯特·巴萨拉布；避势力「蒙泰尼亚」叠字
 };

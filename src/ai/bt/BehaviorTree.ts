@@ -76,16 +76,6 @@ export interface BTContext {
     huntBlockedSinceMs: number | null;
 
     /**
-     * 上次采用的推进锚点（迟滞用；null = 尚未选过）。
-     *
-     * [2026-08-06] resolveForwardAnchor 每次重算都取「离军团最近的己方城」，两座己方城
-     * 距离相近时会在两次 FindTarget 之间来回跳，方向池跟着整组换掉 → 观感是原地折返。
-     * 锁在这里做迟滞：旧锚点仍有效就留着，除非新候选**明显**更近（见 FindTarget）。
-     * 不是硬锁——军团亲自打下的城距离≈0，一定能顶掉旧锚点，推进不受影响。
-     */
-    marchAnchorCityId: string | null;
-
-    /**
      * 正在野战交手的那支敌军团 id（脱战即清）。
      *
      * [2026-08-06] 只为「打完别立刻再追同一支」服务：目标冷却只有 12s，双将野战 30s+，
