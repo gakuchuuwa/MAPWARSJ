@@ -420,7 +420,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     babuer: { generalId: 'babuer_babuer', generalName: '巴布尔', portrait: '/assets/CENTRAL_ASIA/babuer_babuer.png' },
     danmai: { generalId: 'danmai_abusalong', generalName: '阿布萨隆', portrait: '/assets/GERMANIC/danmai_abusalong.png' },
     ruidian_si: { generalId: 'ruidian_si_biergeyaer', generalName: '比尔格·雅尔', portrait: '/assets/GERMANIC/ruidian_si_biergeyaer.png' },
-    kasidiliya: { generalId: 'kasidiliya_afangsuoshiyi', generalName: '阿方索十一世', portrait: '/assets/LATIN/kasidiliya_afangsuoshiyishi.png' },
+    kasidiliya: { generalId: 'kasidiliya_afangsuoshiyi', generalName: '阿方索十一', portrait: '/assets/LATIN/kasidiliya_afangsuoshiyishi.png' },
     duluo: { generalId: 'duluo_sangqiao', generalName: '桑乔一世', portrait: '/assets/LATIN/duluo_sangqiaoyishi.png' },
     teluoyi: { generalId: 'teluoyi_heketuoer', generalName: '赫克托耳', portrait: '/assets/LATIN/teluoyi_heketuoer.png' },
     alabo: { generalId: 'alabo_qiyade', generalName: '齐亚德', portrait: '/assets/CENTRAL_ASIA/alabo_qiyade.png' },
@@ -759,7 +759,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     qingyuan_bd: { generalId: 'qingyuan_bd_zhoudewei', generalName: '周德威', portrait: '/assets/NORTH/qingyuan_bd_zhoudewei.png' },
     changshan: { generalId: 'changshan_yangyanzhao', generalName: '杨延昭', portrait: '/assets/zhaosong/changshan_yangyanzhao.png' },
     hejian: { generalId: 'hejian_gongsunzan', generalName: '公孙瓒', portrait: '/assets/NORTH/hejian_gongsunzan.png' }, // 文安·河间郡公孙瓒白马义从
-    liangshidu: { generalId: 'liangshidu_longjia', generalName: '龙贾', portrait: '/assets/NORTH/liangshidu_longjia.png' },
+    liangshidu: { generalId: 'liangshidu_longjia', generalName: '龙贾', portrait: '/assets/xianqin/liangshidu_longjia.png' },
     yangshe: { generalId: 'yangshe_yangshezhi', generalName: '羊舌职', portrait: '/assets/xianqin/yangshe_yangshezhi.png' }, // 铜鞮·晋羊舌氏封邑
     guzhu: { generalId: 'guzhu_tianyu', generalName: '田豫', portrait: '/assets/NORTH/guzhu_tianyu.png' },
     dizhou: { generalId: 'dizhou_wangyanzhang', generalName: '王彦章', portrait: '/assets/NORTH/dizhou_wangyanzhang.png' },

@@ -54,6 +54,7 @@ import {
     getAptitudePowerMult,
     getFamousGeneralMult,
     getActiveTacticalSkillId,
+    getOwnSixSetSkillId,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
@@ -1516,12 +1517,12 @@ export class CombatUI {
                 if (!unit) return null;
                 const resolved = this.resolvePowerBadgeUnit(unit, side);
                 if (resolved.generalId) {
-                    // [2026-07-31 修] 必须与引擎同源：getActiveTacticalSkillId = 夺来技 → 局技(已定义即用) → 招牌技兜底。
-                    // 原来直接读 battleOverriddenSkillId：局技未分配（assignSituationalSkills 里 pool 为空会 continue，
-                    // 援军入场走懒分配）时该字段是 undefined，引擎照常拿招牌技结算、技能条也照常显示技名，
-                    // 唯独这枚角标空着；夺取系技能生效后也认不出新类别。
-                    // 末尾保留 negatedSkillId：技被看破时 battleOverriddenSkillId=null，仍按原技类别显示。
-                    const skillId = getActiveTacticalSkillId(resolved) ?? resolved.negatedSkillId ?? null;
+                    // [2026-07-31 修] 局技未分配（assignSituationalSkills 里 pool 为空会 continue，援军入场走懒分配）
+                    //   时 battleOverriddenSkillId 是 undefined，引擎照常拿招牌技结算，唯独这枚角标空着 → 需兜底。
+                    // [2026-08-06 修] 但**不认夺来技**：夺取系（混战计）会把敌技挂到自己身上，
+                    //   角标若跟着夺来技走，攻守双方必显示同一个字，看上去像违反「攻守六计硬分开」。
+                    //   角标只表「本方出的哪一计」，故走 getOwnSixSetSkillId（跳过 stolenSkillId，内含 negated/招牌技兜底）。
+                    const skillId = getOwnSixSetSkillId(resolved);
                     const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
                     if (entry) {
                         const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;
@@ -2014,8 +2015,8 @@ export class CombatUI {
 
         let tacChar = '技';
         if (unit.generalId) {
-            // 与中央六计角标、引擎同源（见 updateCenterSixSetBadges 内同款注释）
-            const skillId = getActiveTacticalSkillId(unit) ?? unit.negatedSkillId ?? null;
+            // 与中央六计角标同源：只表「本方出的哪一计」，不认夺来技（见 updateCenterSixSetBadges 内同款注释）
+            const skillId = getOwnSixSetSkillId(unit);
             const entry = skillId ? resolveGeneralTacticalEntry(skillId) : null;
             if (entry) {
                 const cls = EFFECT_TO_SIX_SET[entry.baseEffect] as TacticalSixSet;

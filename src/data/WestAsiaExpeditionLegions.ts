@@ -62,5 +62,6 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     dedan: { name: '德丹驼兵', tier: 4 },          // 泰马·卡比里尔：北阿拉伯德丹／黎哈彦常规驼兵
     gulaishi: { name: '古莱驼兵', tier: 4 },       // 麦加·艾布苏富扬：古莱什部落常规驼兵
     bitiniya: { name: '比提尼卫', tier: 4 },       // 尼凯亚·狄奥多尔：尼凯亚位于比提尼亚故地，常规卫队
-    fulijiya: { name: '弗里吉卫', tier: 4 },       // 戈尔迪乌姆·迈达斯：弗里吉亚常规卫队
+    fulijiya: { name: '弗里吉卫', tier: 4 },       // 戈尔迪乌姆·迈达斯：弗里吉亚常规卫队,
+    ribale: { name: '代尔木重步', tier: 2 },
 };

@@ -36,7 +36,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     maer_d: { name: '骆驼突骑', tier: 3 },
     wugu_d: { name: '乌古斯弓骑', tier: 3 },
     mamon: { name: '呼罗珊之剑', tier: 2 },
-  khoja: { name: '白山派卫兵', tier: 4 },        // 休循·阿帕克和卓白山派（缺乏极其著名的战术高光，降T3）
     shi_clan: { name: '柘枝胡骑', tier: 4 },
   guzgan: { name: '古兹根卫队', tier: 4 },       // 法里亚布·古兹根戍卫
   badakhshan: { name: '达克游骑', tier: 4 },     // 法扎巴德·达克边防
@@ -62,7 +61,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     kala: { name: '古拉姆近卫', tier: 3 },
     saerbadaer: { name: '萨尔巴达军', tier: 3 },  // 白哈格·拉扎克：萨尔巴达尔平民/民兵抗蒙，非骑兵
     kumisi: { name: '瑟尔柱重骑', tier: 3 },
-    ribale: { name: '代尔木重步', tier: 2 },
     safawei: { name: '吉兰步卒', tier: 3 },
     yilihanguo: { name: '奇兹尔巴什', tier: 2 },
     yilihanguo_d: { name: '伊利怯薛', tier: 2 },
