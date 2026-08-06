@@ -2173,7 +2173,7 @@ export class CombatUI {
             const t = Math.max(0, Math.floor(troops));
             const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
             totalBadge.innerHTML = troopStr;
-            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}总兵力：${t} 人`;
+            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}总兵力：${t} 人（含各路援军）`;
             totalBadge.style.display = 'inline-block';
         }
     }
