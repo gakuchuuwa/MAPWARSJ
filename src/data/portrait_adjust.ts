@@ -1083,7 +1083,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -17
         },
         "/assets/DIANQIAN/__闲置__DIANQIAN_26.png": {
-            "scale": 0.9,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -25
         },
@@ -2373,7 +2373,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/DIANQIAN/wazu_banhongwang.png": {
-            "scale": 0.86,
+            "scale": 0.83,
             "offsetX": 0,
             "offsetY": -13
         },
@@ -2398,7 +2398,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/DIANQIAN/dongxu_mangruiti.png": {
-            "scale": 0.87,
+            "scale": 0.85,
             "offsetX": 0,
             "offsetY": -34
         },
@@ -4181,11 +4181,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.92,
             "offsetX": 0,
             "offsetY": -45
-        },
-        "/assets/WEST_ASIA/__��������������置__WEST_ASIA_53.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 17
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_03.png": {
             "scale": 0.88,
@@ -6298,7 +6293,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/DIANQIAN/__闲置__DIANQIAN_28.png": {
-            "scale": 1.02,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": -48
         },
@@ -6328,7 +6323,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -48
         },
         "/assets/LINGNAN/__多余__LINGNAN_21.png": {
-            "scale": 1.07,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -6338,7 +6333,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -66
         },
         "/assets/LINGNAN/luchuan_sirenfa.png": {
-            "scale": 1.07,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -6482,11 +6477,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_111.png": {
-            "scale": 0.89,
-            "offsetX": 0,
-            "offsetY": 20
-        },
         "/assets/CENTRAL_ASIA/dayuzi_yinalechihei.png": {
             "scale": 0.98,
             "offsetX": 0,
@@ -6511,11 +6501,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": 5
-        },
-        "/assets/daming/__闲置__daming_15.png": {
-            "scale": 1.29,
-            "offsetX": 0,
-            "offsetY": -16
         },
         "/assets/daming/yansui_wangwei.png": {
             "scale": 1.13,
