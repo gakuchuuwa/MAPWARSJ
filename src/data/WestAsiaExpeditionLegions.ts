@@ -46,7 +46,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     maidina: { name: '麦地那骑兵', tier: 3 },      // 麦地那·哈立德：其出征所本的早期穆斯林骑兵，文化符号显著
     sumeier: { name: '苏美尔方阵', tier: 3 },      // 乌鲁克·吉尔伽美什：乌尔军旗／鹰碑所载人类最早重装密集阵
     ldiya: { name: '吕底亚骑', tier: 3 },          // 斯法尔德·克罗伊斯：希罗多德称当时最强骑兵，铸币与其名同为符号
-    aiaoniya: { name: '爱奥尼亚卫', tier: 3 },     // 以弗所·阿里斯塔：爱奥尼亚起义自以弗所进军萨迪斯；卫队性质不入 T2
+    aiaoniya: { name: '爱奥尼亚团', tier: 3 },
     jialatai: { name: '加拉太卫', tier: 3 },       // 安卡拉·德奥塔鲁斯：加拉太凯尔特雇佣兵在希腊化世界赫赫有名
     pajiama: { name: '帕加玛骑卫', tier: 3 },      // 佩尔加蒙·欧迈尼斯：帕加马以卫城与图书馆闻名，骑卫为常规建制
     sailiugu: { name: '塞琉古方阵', tier: 3 },     // 安提俄基亚·安条克：塞琉古银盾方阵，希腊化重步代表

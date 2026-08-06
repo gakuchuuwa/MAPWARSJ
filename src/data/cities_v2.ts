@@ -1951,7 +1951,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_feisi', name: '非斯', factionId: 'yidelisi', lat: 34.03, lng: -5, type: 'medium_city', troops: 30000, region: 'LATIN' },
     { id: 'city_cherkasy', name: '切尔卡瑟', factionId: 'qiekase', lat: 49.44, lng: 32.06, type: 'small_city', troops: 30000, region: 'SLAVIC' },
     { id: 'city_sofia', name: '索非亚', factionId: 'saierdika', lat: 42.7, lng: 23.32, type: 'small_city', troops: 30000, region: 'SLAVIC' },
-    { id: 'city_sarajevo', name: '萨拉热窝', factionId: 'bosiniya', lat: 43.85, lng: 18.41, type: 'small_city', troops: 30000, region: 'SLAVIC' },
+    { id: 'city_sarajevo', name: '萨拉热窝', factionId: 'bosiniya', lat: 43.85, lng: 18.41, type: 'small_city', troops: 20000, region: 'SLAVIC' },
 
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 30000, region: 'LATIN' },
 
@@ -2961,7 +2961,7 @@ export const CITIES_V2: CityDataV2[] = [
     // ── 2026-08-04 新增：埃德萨（奥斯若恩国都；十字军埃德萨伯国首府）──
     { id: 'city_aidesa', name: '埃德萨', factionId: 'aosiruowen', lat: 37.1674, lng: 38.7955, type: 'small_city', troops: 30000, region: 'WEST_ASIA', note: '今土耳其乌尔法（Şanlıurfa）；塞琉古建城名埃德萨，奥斯若恩王国国都；叙利亚基督教中心；1098–1144十字军埃德萨伯国首府；与尼尼微—阿勒颇走廊十字路口' },
     { id: 'city_daerban', name: '打耳班', factionId: 'kesa', lat: 42.06, lng: 48.3, type: 'pass', troops: 30000, region: 'CENTRAL_ASIA' },
-    { id: 'city_yifusuo', name: '以弗所', factionId: 'aiaoniya', lat: 37.94, lng: 27.34, type: 'medium_city', troops: 30000, region: 'WEST_ASIA', note: '亚细亚省府，爱琴海巨港' },
+    { id: 'city_yifusuo', name: '以弗所', factionId: 'aiaoniya', lat: 37.94, lng: 27.34, type: 'medium_city', troops: 20000, region: 'WEST_ASIA' },
     { id: 'city_ankala', name: '安卡拉', factionId: 'jialatai', lat: 39.93, lng: 32.87, type: 'small_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_yashucheng', name: '亚述城', factionId: 'guyashu', lat: 35.46, lng: 43.26, type: 'small_city', troops: 20000, region: 'WEST_ASIA' },
     { id: 'city_nisa', name: '尼萨', factionId: 'ansxi', lat: 37.9, lng: 58.2, type: 'small_city', troops: 30000, region: 'CENTRAL_ASIA', note: '安息（帕提亚）帝国第一个首都与皇家陵园，UNESCO世界遗产' },

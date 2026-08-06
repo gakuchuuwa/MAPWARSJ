@@ -40,9 +40,9 @@ if (strat.ok) {
     for (const v of strat.retiredHolders) console.log(`  ❌ 退役技 ${v.skillId} 仍有 ${v.count} 人`);
     for (const id of strat.unknownIds) console.log(`  ❌ 未知战略技 ID: ${id}`);
 }
-if (strat.emptySkills.length > 0) {
-    console.log(`  ⚠️ 空置战略技: ${strat.emptySkills.map((s) => `${s.skillId}${s.displayName}`).join(', ')}`);
-}
+// 「空置战略技」提示已于 2026-08-07 删除：2026-08-03 起战略技全随机，不再写进武将档案
+// （strategicSkillId 恒空），运行时从 GeneralSkillCombat.ACTIVE_STRATEGIC_SKILL_POOL 抽取。
+// 该提示列出的正是这个活跃随机池本身，0 人持有是正常状态，判据是反的。
 
 const ok = dist.ok && tier.ok && strat.ok;
 console.log(ok ? '\n✅ 分配审计通过' : '\n❌ 分配审计不通过');

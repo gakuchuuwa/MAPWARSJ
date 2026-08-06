@@ -885,7 +885,7 @@ export class CityAssetManager {
         // ── 2026-08-04 新增：奥斯若恩 @ 埃德萨 ──
         'aosiruowen': '奥斯',
         'kesa': '可萨',
-        'aiaoniya': '爱奥',
+'aiaoniya': '爱奥',
         'jialatai': '加拉',
 'guyashu': '阿舒',
         'ansxi': '安息',
@@ -923,6 +923,7 @@ export class CityAssetManager {
 'wende': '萨克',
         'boumeilaniyan': '卡舒',
 'mazhaer': '匈牙',
+        'bosiniya': '波斯',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

@@ -383,6 +383,13 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     if (!city || city.factionId === ctx.army.getFactionId()) {
         if (strategicId) {
             markTargetCooldown(ctx, strategicId, 'friendly_or_missing');
+            btLog(
+                ctx,
+                `friendly_or_missing:${strategicId}`,
+                `[AI] ${ctx.army.name} 目标【${city ? city.name : strategicId}】已失效（${
+                    city ? '被己方占领' : '不存在'
+                }），冷却后重抽`,
+            );
         }
         clearStrategicTarget(ctx);
         ctx.army.setTargetCity(null);
@@ -463,40 +470,6 @@ export const IsNearTarget = new Condition('IsNearTarget', (ctx) => {
 // 动作节点
 // =====================
 
-/**
- * 推进锚点迟滞（2026-08-06）。
- *
- * resolveForwardAnchor 每次都取「离军团最近的己方城」。两座己方城距离相近时，军团走两步、
- * 名次就换一次，方向池整组翻掉 → 观感是原地折返/斜切换战线。这里加一道迟滞：
- * 旧锚点仍是己方且路网可达就留着，除非新候选**明显**更近（≤80%）。
- *
- * 不是硬锁（DS 建议的「开拔后钉死出发城」没采纳）：深入敌境的军团若锚点钉在几百公里外的老家，
- * 方向池会算成老家周边的敌城，反而把军团往回拉——那是比抖动更糟的折返。
- * 迟滞只压掉「名次抖动」这一类纯噪声：军团亲自打下的城距离≈0，一定顶得掉旧锚点，推进不受影响。
- */
-const ANCHOR_SWITCH_GAIN = 0.8;
-
-export function resolveStickyAnchor(
-    ctx: BTContext,
-    candidateId: string,
-    myFaction: string,
-    roadDistances?: ReadonlyMap<string, number>,
-): string {
-    const prevId = ctx.marchAnchorCityId;
-    if (!prevId || prevId === candidateId) return candidateId;
-
-    const prev = ctx.cityManager.getCity(prevId);
-    if (!prev || prev.factionId !== myFaction) return candidateId; // 旧锚点没了/易主
-    if (!roadDistances) return candidateId;                        // 拿不到路网表，无从比较
-
-    const prevKm = roadDistances.get(prevId);
-    if (prevKm === undefined) return candidateId;                  // 旧锚点已不可达（断路/失陷）
-    const candKm = roadDistances.get(candidateId);
-    if (candKm === undefined) return prevId;
-
-    return candKm <= prevKm * ANCHOR_SWITCH_GAIN ? candidateId : prevId;
-}
-
 export const FindTarget = new Action('FindTarget', (ctx) => {
     // 远征模式：目标只有一个，不进方向池抽签、不回师
     const expedition = resolveExpeditionState(ctx);
@@ -553,36 +526,35 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         return BTStatus.SUCCESS;
     }
 
+    // 锚点规则（2026-08-07 定稿）：
+    //   规则 A（兵力 < 2 万）：锚点 = 本军出发点，向外蚕食本城周边直连敌城。
+    //   规则 B（兵力 ≥ 2 万）：锚点 = 离军团道路距离最近的前线己方城（打完的城自动前移锚点）。
     const useHomeAnchor = ctx.army.getTroops() < GameConfig.LEGION.HOME_ANCHOR_TROOP_THRESHOLD;
     let anchorId: string;
     if (useHomeAnchor) {
         anchorId = originCityId;
-        ctx.marchAnchorCityId = null; // 小军团锁老家，不参与迟滞
     } else {
-        // 锚点按「军团所在路网城」出发的道路距离选，隔海飞地不会被误选（见 resolveForwardAnchor）
+        // 锚点按「军团所在路网城」出发的道路距离选，隔海飞地不会被误选（见 resolveForwardAnchor）。
         const armyPos = ctx.army.getPosition();
         const standCityId = roadRegistry.getNearestCityId(armyPos.lat, armyPos.lng);
         const roadDistances = standCityId
             ? roadRegistry.getRoadDistancesKmFrom(standCityId)
             : undefined;
-        const candidateId = resolveForwardAnchor(
+        anchorId = resolveForwardAnchor(
             armyPos,
             myFaction,
             originCityId,
             ctx.cityManager,
             roadDistances
         );
-        anchorId = resolveStickyAnchor(ctx, candidateId, myFaction, roadDistances);
-        ctx.marchAnchorCityId = anchorId;
     }
 
-    const fromPos = ctx.army.getPosition();
     const picked = TargetEvaluator.pickTarget(
         myFaction,
         anchorId,
         originCityId,
         ctx.cityManager.getCities(),
-        { excludeTargetIds, fromPosition: fromPos }
+        { excludeTargetIds }
     );
 
     if (!picked) {

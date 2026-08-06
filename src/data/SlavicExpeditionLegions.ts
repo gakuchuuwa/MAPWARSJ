@@ -40,8 +40,8 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     // ── T4 存在之兵 ──
     teweier_gongguo: { name: '伏尔加骑兵', tier: 4 },          // 特维尔·米哈伊尔：抗衡莫斯科
     fulajimier_gongguo: { name: '罗斯近卫', tier: 4 },          // 弗拉基米尔·安德烈
-    daniebo: { name: '斯摩棱卫', tier: 4 },          // 斯摩棱斯克·罗姆什拉夫
-    qiernigeweifu_gongguo: { name: '杰斯纳游骑', tier: 4 },          // 切尔尼戈夫·姆斯蒂
+    daniebo: { name: '罗姆什拉团', tier: 4 },          // 斯摩棱斯克·罗姆什拉夫；避据点/势力「斯摩棱」叠字
+    qiernigeweifu_gongguo: { name: '姆斯蒂骑', tier: 4 },          // 切尔尼戈夫·姆斯蒂；避势力「杰斯纳」叠字
     jialixiya: { name: '加利奇骑士', tier: 4 },          // 加利奇·丹尼尔
     // 梁赞·尤里：科洛夫拉特抗蒙传说/文学符号 → T3（勿造「死士」抬 T2）
     ouka: { name: '科洛夫拉特', tier: 3 },
@@ -49,19 +49,19 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     deniesite: { name: '白堡守军', tier: 3 },          // 阿克曼·迈赫迈德
     // 格罗德诺·维托夫特：安置利普卡鞑靼骑从可考；禁造「立陶宛重骑」T1 → T3
     nieman: { name: '利普卡骑', tier: 3 },
-    beisilafu: { name: '塞维里亚卫', tier: 4 },          // 别尔哥罗德·谢尔盖
+    beisilafu: { name: '谢尔盖军团', tier: 4 },          // 别尔哥罗德·谢尔盖；避势力「塞维里亚」叠字
     siluoboda: { name: '洛潘河巡骑', tier: 3 },          // 哈尔科夫·多涅茨：洛潘河畔斯洛博达驻军（非史载「洛潘骑」专名）
     yedi: { name: '穆拉夫卫队', tier: 3 },          // 沃罗涅日·萨布罗夫：守穆拉夫小道南疆骑戍
-    weijiebusike_gongguo: { name: '维捷卫', tier: 3 },          // 维捷布斯克·奥尔格尔德
-    peilieya_gongguo: { name: '佩列雅斯拉', tier: 2 },          // 佩列亚斯拉夫·莫诺马赫
-    suzidaer: { name: '下诺卫', tier: 4 },          // 下诺城·德米特里
-    taolika: { name: '赫尔松卫队', tier: 4 },          // 赫尔松涅斯·阿斯普尔格斯
+    weijiebusike_gongguo: { name: '奥尔格尔团', tier: 3 },          // 维捷布斯克·奥尔格尔德；避「维捷」叠字
+    peilieya_gongguo: { name: '莫诺马赫团', tier: 2 },          // 佩列亚斯拉夫·莫诺马赫；避「佩列」叠字
+    suzidaer: { name: '伏尔加营', tier: 4 },          // 下诺城·德米特里；避据点「下诺」叠字
+    taolika: { name: '阿斯普尔军团', tier: 4 },          // 赫尔松涅斯·阿斯普尔格斯；避据点「赫尔松」叠字
     // 布列斯特·加斯托尔德：边城戍军 → T4
     bolisiya: { name: '布格河游骑', tier: 4 },
     // 日托米尔：哥萨克已挂 gesake；此地无专名 → T4
     zhituo: { name: '沼泽猎手', tier: 4 },
-    bosiniya: { name: '波斯尼亚卫', tier: 4 },          // 萨拉热窝·特夫尔特科
-    seleisi: { name: '色雷斯勇士', tier: 3 },          // 普罗夫迪夫·西美昂
+    bosiniya: { name: '萨拉热窝营', tier: 4 },
+    seleisi: { name: '西美昂军团', tier: 3 },          // 普罗夫迪夫·西美昂；避势力「色雷斯」叠字
     chude: { name: '楚德湖兵', tier: 3 },          // 尤里耶夫(塔尔图)·维切斯拉夫：守城抗条顿；冰湖主力已挂诺城民兵 → 事件文化 T3
-    qiekase: { name: '第聂伯骑', tier: 4 },          // 切尔卡瑟·拜达：第聂伯哥萨克
+    qiekase: { name: '切尔卡瑟骑', tier: 4 },          // 切尔卡瑟·拜达；避势力「第聂伯」叠字
 };

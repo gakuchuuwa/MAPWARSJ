@@ -1,14 +1,14 @@
 /**
- * 三类六种审计（战术技分类 + 武将三格配对）
+ * 三类六种审计（战术技分类）
  * 运行：npm run tactical:triclass
  *
  * 检查项：
  *   1. 全目录逐条按 getTacticalSixSet / getTacticalTriClass 归类（分类只看
  *      baseEffect + 劣势 condition 覆盖，条文见 docs/02-design/武将技-分类逻辑说明.md）
- *   2. GENERAL_PROFILES 三格（advantage/balance/disadvantage SkillId）：
- *      引用必须存在于目录，且所配技的三类须与格子一致
- *   3. 输出当前真实分布（六种 / 三类 / 改判数），供同步进设计文档
+ *   2. 输出当前真实分布（六种 / 三类 / 改判数），供同步进设计文档
  * 任一违规 → exit(1)，接入 CI / 手跑均可
+ *
+ * 原「武将三格配对」检查已于 2026-08-07 删除，理由见文件末尾。
  */
 import {
     TACTICAL_SKILL_ENTRIES_V1,
@@ -22,7 +22,6 @@ import {
     type TacticalTriClass,
     type TacticalSixSet,
 } from '../src/data/TacticalSkillCatalog';
-import { GENERAL_PROFILES } from '../src/data/GeneralSkills';
 
 let failed = false;
 
@@ -52,46 +51,12 @@ console.log('六种分布: ' + [...sixCount].map(([k, v]) => `${SIX_SET_LABEL[k]
 console.log('三类分布: ' + [...triCount].map(([k, v]) => `${TRI_CLASS_LABEL[k]}${v}`).join(' / '));
 console.log(`劣势 condition 改判数: ${overrideCount}`);
 
-// ── 2. 武将三格配对审计 ──
-const SLOTS: Array<['advantageSkillId' | 'balanceSkillId' | 'disadvantageSkillId', TacticalTriClass, string]> = [
-    ['advantageSkillId', 'advantage', '优势格'],
-    ['balanceSkillId', 'balance', '均势格'],
-    ['disadvantageSkillId', 'disadvantage', '劣势格'],
-];
-let profileTotal = 0;
-let slotChecked = 0;
-const wrong: string[] = [];
-for (const [gid, p] of Object.entries(GENERAL_PROFILES)) {
-    if (!p.advantageSkillId && !p.balanceSkillId && !p.disadvantageSkillId) continue;
-    profileTotal++;
-    for (const [field, expect, label] of SLOTS) {
-        const skillId = p[field];
-        if (!skillId) {
-            wrong.push(`${gid}: 缺${label}`);
-            continue;
-        }
-        const entry = byId.get(skillId);
-        if (!entry) {
-            wrong.push(`${gid}: ${label}=${skillId} 目录中不存在`);
-            continue;
-        }
-        slotChecked++;
-        const tri = getTacticalTriClass(entry);
-        if (tri !== expect) {
-            wrong.push(
-                `${gid}: ${label}=${skillId}【${entry.displayName}】实为${TRI_CLASS_LABEL[tri]}` +
-                `（${SIX_SET_LABEL[getTacticalSixSet(entry)]}, effect=${entry.baseEffect}, cond=${entry.condition}）`,
-            );
-        }
-    }
-}
-console.log(`\n武将档案（含三格）: ${profileTotal}，已核对格数: ${slotChecked}`);
-if (wrong.length > 0) {
-    failed = true;
-    console.error(`❌ 三格违规 ${wrong.length} 条:`);
-    for (const w of wrong) console.error('  ' + w);
-} else {
-    console.log('✅ 三格配对全部正确');
-}
+// ── 2. 武将三格配对审计（2026-08-07 删除）──
+// 原先逐将核对 advantage/balance/disadvantageSkillId 是否与三类一致。
+// 2026-08-04 起选技改为「三势选池」：优势=攻战/胜战/敌战/混战、劣势=并战/败战/敌战/混战、
+// 均势=全六计，池子直接由六计 + 本人专属技构成（见 GeneralSkillCombat.getSituationalSkillPool），
+// 档案里的三格/六槽字段不再驱动选技，只剩 batch-manager 编辑器在读。
+// 对着不影响战斗的字段判 exit(1) 只会长期误报，故删除；
+// 槽位引用是否存在于目录仍由 general:ecology-audit 兜底。
 
 process.exit(failed ? 1 : 0);

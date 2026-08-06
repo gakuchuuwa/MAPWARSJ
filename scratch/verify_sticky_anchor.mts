@@ -1,61 +1,69 @@
-// 验证 2026-08-06「推进锚点迟滞」：压掉两座己方城距离相近时的锚点名次抖动，
-// 但不得挡住真正的推进（刚打下的城 ≈0km 必须顶掉旧锚点）。
+// 【2026-08-07 更新】「推进锚点迟滞」（resolveStickyAnchor）已按 GAKU 要求简化移除：
+// 锚点 = resolveForwardAnchor 直接取「离军团道路距离最近的己方城」，无跨帧状态、行为确定性。
+// 本脚本改验简化后的锚点选择 + 飞地排除。
 // 跑法: npx tsx --import ./tools/sim-preload.mjs scratch/verify_sticky_anchor.mts
-import { resolveStickyAnchor } from '../src/ai/bt/LegionBehaviors';
+import { CITIES_V2 } from '../src/data/cities_v2';
+import { roadRegistry } from '../src/roads/RoadRegistry';
+import { resolveForwardAnchor } from '../src/ai/TargetAnchorResolver';
+import type { City } from '../src/types/core';
 
-const cities: Record<string, { id: string; factionId: string }> = {
-  A_old: { id: 'A_old', factionId: 'me' },   // 旧锚点：出发方向的前线城
-  E_other: { id: 'E_other', factionId: 'me' }, // 另一条战线的己方飞地
-  N_new: { id: 'N_new', factionId: 'me' },   // 本军刚打下的城
-  A_lost: { id: 'A_lost', factionId: 'enemy' }, // 旧锚点易主
+roadRegistry.initialize(CITIES_V2 as any);
+
+const ME = 'yilihanguo';
+const ZANJAN = 'city_zanzhan';       // 老家（阿杰姆首都）
+const ISFAHAN = 'city_yisifahan';    // 刚打下的前线城
+const PERSEPOLIS = 'city_bosibolisi';
+
+const allCities: City[] = (CITIES_V2 as any[]).map((c) => ({ ...c, latitude: c.lat, longitude: c.lng } as City));
+const toCity = (id: string) => allCities.find((c) => c.id === id)!;
+
+// 阿杰姆占 [赞詹, 波斯波利斯, 伊斯法罕]
+const owned = new Set([ZANJAN, PERSEPOLIS, ISFAHAN]);
+const cm = {
+    getCity: (id: string) => {
+        const c = toCity(id);
+        return owned.has(c.id) ? { ...c, factionId: ME } : c;
+    },
+    getCitiesByFaction: (fid: string) => allCities.filter((c) => fid === ME ? owned.has(c.id) : c.factionId === fid),
 };
 
-const mkCtx = (prev: string | null): any => ({
-  marchAnchorCityId: prev,
-  cityManager: { getCity: (id: string) => cities[id] },
-});
+console.log('===== 简化后锚点选择（resolveForwardAnchor 直接取最近，无迟滞） =====');
 
-const run = (label: string, prev: string | null, candidate: string, dists: [string, number][], expect: string) => {
-  const ctx = mkCtx(prev);
-  const got = resolveStickyAnchor(ctx, candidate, 'me', new Map(dists));
-  console.log(`${got === expect ? '✅' : '❌'} ${label}\n     旧=${prev ?? '(无)'} 候选=${candidate} → 采用 ${got}（期望 ${expect}）`);
-};
-
-console.log('===== 推进锚点迟滞 =====');
-
-run('首次选锚点：无旧值，直接采用候选',
-  null, 'A_old', [['A_old', 12]], 'A_old');
-
-run('名次抖动：候选只近一点点（100→95km）→ 留旧锚点，方向池不翻',
-  'A_old', 'E_other', [['A_old', 100], ['E_other', 95]], 'A_old');
-
-run('真推进：刚打下的城 0km → 顶掉旧锚点',
-  'A_old', 'N_new', [['A_old', 100], ['N_new', 0]], 'N_new');
-
-run('明显更近（100→70km，≤80%）→ 换',
-  'A_old', 'E_other', [['A_old', 100], ['E_other', 70]], 'E_other');
-
-run('临界 80km = 100×0.8 → 换（含等号）',
-  'A_old', 'E_other', [['A_old', 100], ['E_other', 80]], 'E_other');
-
-run('临界 81km → 不换',
-  'A_old', 'E_other', [['A_old', 100], ['E_other', 81]], 'A_old');
-
-run('旧锚点易主 → 无条件换',
-  'A_lost', 'E_other', [['A_lost', 10], ['E_other', 999]], 'E_other');
-
-run('旧锚点路网不可达（断路/隔海）→ 无条件换',
-  'A_old', 'E_other', [['E_other', 999]], 'E_other');
-
-run('候选不可达但旧锚点还在 → 留旧锚点',
-  'A_old', 'E_other', [['A_old', 100]], 'A_old');
-
-run('军团站在旧锚点上（0km）→ 留旧锚点，不被任何候选顶掉',
-  'A_old', 'E_other', [['A_old', 0], ['E_other', 50]], 'A_old');
-
-// 无路网表 → 退回候选（保留旧行为）
+// 1. 军团在伊斯法罕（刚打下）→ 锚点应为伊斯法罕（0km）
 {
-  const ctx = mkCtx('A_old');
-  const got = resolveStickyAnchor(ctx, 'E_other', 'me', undefined);
-  console.log(`${got === 'E_other' ? '✅' : '❌'} 无路网表 → 退回候选（不做迟滞）\n     → 采用 ${got}（期望 E_other）`);
+    const pos = { lat: toCity(ISFAHAN).latitude, lng: toCity(ISFAHAN).longitude };
+    const stand = roadRegistry.getNearestCityId(pos.lat, pos.lng)!;
+    const rd = roadRegistry.getRoadDistancesKmFrom(stand);
+    const anchor = resolveForwardAnchor(pos, ME, ZANJAN, cm as any, rd);
+    console.log(`${anchor === ISFAHAN ? '✅' : '❌'} 军团在伊斯法罕 → 锚点=${toCity(anchor).name}（期望 伊斯法罕）`);
+}
+
+// 2. 军团在波斯波利斯 → 锚点应为波斯波利斯（0km）
+{
+    const pos = { lat: toCity(PERSEPOLIS).latitude, lng: toCity(PERSEPOLIS).longitude };
+    const stand = roadRegistry.getNearestCityId(pos.lat, pos.lng)!;
+    const rd = roadRegistry.getRoadDistancesKmFrom(stand);
+    const anchor = resolveForwardAnchor(pos, ME, ZANJAN, cm as any, rd);
+    console.log(`${anchor === PERSEPOLIS ? '✅' : '❌'} 军团在波斯波利斯 → 锚点=${toCity(anchor).name}（期望 波斯波利斯）`);
+}
+
+// 3. 深入敌境（伊斯法罕→雷伊路上，离所有己方城远）→ 锚点 = 道路距离最近的己方城 = 伊斯法罕
+{
+    const pos = { lat: 34.0, lng: 50.6 }; // 雷伊与伊斯法罕之间
+    const stand = roadRegistry.getNearestCityId(pos.lat, pos.lng)!;
+    const rd = roadRegistry.getRoadDistancesKmFrom(stand);
+    const anchor = resolveForwardAnchor(pos, ME, ZANJAN, cm as any, rd);
+    console.log(`${anchor === ISFAHAN ? '✅' : '❌'} 深入敌境(34.0,50.6) → 锚点=${toCity(anchor).name}（期望 伊斯法罕=最近己方城）`);
+}
+
+// 4. 飞地排除：若己方有隔海飞地（如日本方向城），道路距离表不含它 → 不被选为锚点
+{
+    const pos = { lat: 32.65, lng: 51.66 }; // 伊斯法罕
+    const stand = roadRegistry.getNearestCityId(pos.lat, pos.lng)!;
+    const rd = roadRegistry.getRoadDistancesKmFrom(stand);
+    // 把一座日本方向的城临时加入己方（模拟飞地）
+    const fly = allCities.find((c) => c.id === 'city_jianghu' || c.id === 'city_edo' || c.id === 'city_heian' || c.id === 'city_kyoto') ?? allCities.find((c) => c.lng > 135)!;
+    const rdClone = new Map(rd);
+    const flyKm = rdClone.get(fly.id);
+    console.log(`  飞地候选 ${fly.name}: ${flyKm === undefined ? '路网不可达（正确排除）' : `道路可达 ${flyKm.toFixed(0)}km（会参与比较）`}`);
 }

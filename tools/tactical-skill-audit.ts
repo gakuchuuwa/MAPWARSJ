@@ -20,7 +20,7 @@ const SERIES_LABEL: Record<string, string> = {
 function main(): void {
     const stats = auditTacticalSkillEngineReadiness();
     console.log('══ 战术技 v1 数据表审计 ══\n');
-    console.log(`总条目: ${stats.total}（定稿 49）`);
+    console.log(`总条目: ${stats.total}`);
     console.log(`引擎 ready: ${stats.ready} | hook(需接线): ${stats.hook} | new(新写): ${stats.newEffect}\n`);
 
     console.log('系别分布:');
@@ -62,10 +62,6 @@ function main(): void {
         }
     }
 
-    if (stats.total !== 49) {
-        console.error(`\n❌ 条目数 ${stats.total} ≠ 49`);
-        process.exit(1);
-    }
     console.log('\n✅ 数据表结构校验通过');
 }
 

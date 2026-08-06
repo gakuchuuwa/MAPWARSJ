@@ -28,7 +28,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'yidelisi': 'city_feisi',
   'qiekase': 'city_cherkasy',
   'saierdika': 'city_sofia',
-  'bosiniya': 'city_sarajevo',
+'bosiniya': 'city_sarajevo',
 
   'mulabite': 'city_malajiashen',
 
@@ -991,7 +991,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'ayoubu': 'city_alepo',
     'aosiruowen': 'city_aidesa',
     'kesa': 'city_daerban',
-    'aiaoniya': 'city_yifusuo',
+'aiaoniya': 'city_yifusuo',
     'jialatai': 'city_ankala',
 'guyashu': 'city_yashucheng',
     'ansxi': 'city_nisa',

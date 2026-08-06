@@ -41,7 +41,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   yidelisi: '伊德',
   qiekase: '第聂',
   saierdika: '索非',
-  bosiniya: '波斯',
+'bosiniya': '波斯',
 
   mulabite: '穆',
 
@@ -1056,7 +1056,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'ayoubu': '阿尤',
     'aosiruowen': '奥斯',
     'kesa': '可萨',
-    'aiaoniya': '爱奥',
+'aiaoniya': '爱奥',
     'jialatai': '加拉',
 'guyashu': '阿舒',
     'ansxi': '安息',

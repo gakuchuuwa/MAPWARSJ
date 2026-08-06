@@ -29,23 +29,23 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
 
     // ── T3 风土之兵 ──
     nidelan: { name: '海上乞丐', tier: 3 },          // 海牙·奥兰治侧 Geuzen（文化符号；战略连续性不足→T3）
-    weijing_york: { name: '约维克卫', tier: 3 },          // 约克·血斧埃里克：丹法区约维克卫戍
-    nuosi: { name: '诺斯战团', tier: 3 },          // 乌普萨拉·奥拉夫
+    weijing_york: { name: '丹法盾墙', tier: 3 },          // 约克·血斧埃里克：丹法区约维克戍军；避势力「约维克」叠字
+    nuosi: { name: '乌普萨拉团', tier: 3 },          // 乌普萨拉·奥拉夫；避势力「诺斯」叠字
     danmai: { name: '丹斧兵', tier: 3 },          // 哥本哈根·阿布萨隆（名将亲兵，维京战斧）
     ruidian_si: { name: '斯韦阿卫队', tier: 2 },          // 斯德哥尔摩·比尔格雅尔（斯韦阿核心部族重步）
-    hansa: { name: '汉萨卫队', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫
-    mozeer: { name: '摩泽尔卫队', tier: 3 },          // 特里尔·君士坦丁
+    hansa: { name: '商船护军', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫；避势力「汉萨」叠字
+    mozeer: { name: '特里尔步兵', tier: 3 },          // 特里尔·君士坦丁；避势力「摩泽尔」叠字
     batawei: { name: '巴达维辅', tier: 3 },          // 乌特勒支·西维利斯：巴达维辅助军/之乱
 
     // ── T4 存在之兵 ──
     habusibao: { name: '帝国禁卫', tier: 4 },          // 维也纳·马克西米
     // 哥德堡·卡尔九世：方阵革新多属古斯塔夫；卡尔马战争可考 → T4
     ruidian_yota: { name: '卡尔马盟', tier: 4 },
-    weixi: { name: '威悉河步兵', tier: 4 },          // 不莱梅·安斯加尔
-    maixiya: { name: '麦西亚卫队', tier: 4 },          // 牛津·奥法
+    weixi: { name: '不莱梅步兵', tier: 4 },          // 不莱梅·安斯加尔；避势力「威悉」叠字
+    maixiya: { name: '奥法盾墙', tier: 4 },          // 牛津·奥法；避势力「麦西亚」叠字
     gaer: { name: '芬尼亚勇士', tier: 4 },          // 都柏林·多姆纳尔
     boumeilaniyan: { name: '格里芬卫队', tier: 4 },
-    bafaliya: { name: '巴伐利亚卫', tier: 4 },          // 雷根斯堡·塔西洛
+    bafaliya: { name: '塔西洛军团', tier: 4 },          // 雷根斯堡·塔西洛；避势力「巴伐利亚」叠字
     // 纽伦堡·霍亨索伦伯：家族专名可考 → T3（禁造「法兰克重骑」）
     huohengsuolun: { name: '黑鹰军团', tier: 3 },
     pufaerci: { name: '宫相卫队', tier: 4 },          // 海德堡·路德维希
@@ -53,10 +53,10 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     asikanani: { name: '边境巡骑', tier: 3 },
     // 马格德堡·杰罗：萨克森东扩边疆 → T4
     wende: { name: '文德战团', tier: 4 },
-    molaweiya: { name: '摩拉维亚卫', tier: 3 },          // 奥尔穆茨·斯瓦托
-    damolaweiya: { name: '摩拉卫队', tier: 4 },          // 布尔诺·莫伊米尔
+    molaweiya: { name: '斯瓦托军团', tier: 3 },          // 奥尔穆茨·斯瓦托普卢克；避势力「摩拉维亚」叠字
+    damolaweiya: { name: '布尔诺营', tier: 4 },          // 布尔诺·莫伊米尔；避「摩拉」截字叠势力
     meikelunbao: { name: '梅克伦卫队', tier: 4 },
     kanbuliya: { name: '长弓游击兵', tier: 3 },          // 卡莱尔·华莱士
     shiwaben: { name: '士瓦本剑士', tier: 4 },          // 奥格斯堡·乌尔里希
-    rierman: { name: '美因茨卫队', tier: 3 },          // 美因茨·奥托
+    rierman: { name: '莱茵选侯军', tier: 3 },          // 美因茨·奥托；避据点「美因茨」叠字
 };
