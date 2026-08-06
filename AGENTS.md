@@ -1569,7 +1569,7 @@ _本文件以中文写作，方便项目维护者快速理解。日后版本若�
 | 锚点迟滞 | `LegionBehaviors.resolveStickyAnchor`（GAIN=0.8） | 旧锚点仍是己方且路网可达就留着，除非新候选 ≤80% 距离。**⚠️ 不许改成「开拔后钉死出发城」**——深入敌境的军团锚点钉在几百公里外老家，方向池会算成老家周边敌城，反把军团往回拉，比抖动更糟 |
 | 野战冷却续期 | `IsInCombat` + `ctx.postBattleFoeArmyId` | `FAILED_TARGET_COOLDOWN_MS` 只有 12s，双将野战 30s+，开战盖一次章仗没打完就过期、脱战瞬间再追同一支。故交战中每帧续期，冷却实际从**脱战那刻**起算 |
 
-**P2「收紧追击触发」= 主人 2026-08-06 拍板暂不做。** 现状仍是 0.8° 内任何可打敌军都能打断攻城。理由：P0 挂起落地后「拉扯」已从 bug 降级为观感取舍，没实测数据就调阈值属盲调。已在 `retarget_hunt` 日志里埋了 `detour=`（敌距÷城距）和 `偏离 xx km`，攒够几局按分布再定。**别在没数据时自作主张加门槛。**
+**P2「收紧追击触发」= 已实装（2026-08-06 晚，主人拍板「我没说不做」）。** 原「0.8° 内任何可打敌军都打断攻城」改为**追击走廊过滤**：只有挡在行军方向上的敌军才打断攻城。判据（`LegionBehaviors.isEnemyInMarchCorridor`，两个同时满足）：① 敌距 ≤ 城距 × `HUNT_MAX_DETOUR_RATIO`（1.0——不追比目标城还远的，城后面的排除）② 「我→敌」与「我→城」方向夹角 ≤ `HUNT_CORRIDOR_HALF_ANGLE_DEG`（45°——侧翼/身后排除）。只作用于 `HasTarget` 打断路径；`FindTarget` 主动追击（无城目标时）不过滤。`retarget_hunt` 日志的 `detour=`/`偏离 xx km` 埋点保留，被走廊挡掉的敌军记 `skip_hunt:*`。验证：`scratch/verify_hunt_corridor.mts`（判据 9 场景 + HasTarget 集成 4 场景全绿 + tsc + build）。
 
 **诊断日志键**：`retarget_hunt:*`（被拉走，带 detour）、`abandon:*` / `pick:*`（重抽）、`hunt_blocked_timeout:*`（等脱战超时）。若又见折返，先看 `pick:*` 是否出现在**没有** `retarget_hunt` 的场景 —— 那就不是追击这条链了。
 
