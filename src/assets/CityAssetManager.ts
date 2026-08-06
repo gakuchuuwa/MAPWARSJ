@@ -918,6 +918,7 @@ export class CityAssetManager {
         // ── 2026-08-04 新增：野地 @ 沃罗涅日 ──
         'yedi': '野地',
         'luosi': '罗斯',
+        'shaiyue': '喀尔',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

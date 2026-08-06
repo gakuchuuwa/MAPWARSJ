@@ -74,7 +74,7 @@ export const FACTIONS: Faction[] = [
   { id: 'xigete', name: '西哥特' },
   { id: 'andaluoxiya', name: '安达卢西亚' },
   { id: 'alagong', name: '阿拉贡' },
-  { id: 'shaiyue', name: '沙约' },
+  { id: 'shaiyue', name: '喀尔巴阡' },
 
   { id: 'nuosi', name: '诺斯' },
   { id: 'feiniqi', name: '腓尼基' },

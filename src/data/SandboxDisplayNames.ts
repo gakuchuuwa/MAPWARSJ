@@ -82,7 +82,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   xigete: '西哥',
   andaluoxiya: '安达',
   alagong: '阿拉',
-  shaiyue: '沙约',
+'shaiyue': '喀尔',
 
   gaer: '盖尔',
   piketai: '皮克',

@@ -53,7 +53,6 @@ import {
     getAttackStylePowerMult,
     getAptitudePowerMult,
     getFamousGeneralMult,
-    getActiveTacticalSkillId,
     getOwnSixSetSkillId,
 } from '../combat/GeneralSkillCombat';
 import { PASS_GARRISON_DEFENSE_SKILL, REGION_CENTER_DEFENSE_SKILL, getGeneralProfile } from '../data/GeneralSkills';
@@ -1242,16 +1241,13 @@ export class CombatUI {
             // 主力乘区行绝不展示援军合兵标签，统一强制隐藏
             joinBadgeEl.style.display = 'none';
 
-            // 确定主力乘区行已展示的主力单位，避免援军行重复——
-            // 必须与主将行同源（pickArrivalDisplayUnit，带将>精锐>其余），
-            // 否则按分数选（pickPrimaryDisplayUnit）会漏掉主将行已显示的单位，造成重复（2026-08-04）。
-            const primaryBattler = this.pickArrivalDisplayUnit(units, side) ?? units[0];
+            // 第三行只剔除「第二行文字主位」（pickSideNameUnit），不剔立绘主位——
+            // 援军将可占立绘/标签，名字与兵力仍留在援军行（2026-08-06）。
+            const namePrimary = this.pickSideNameUnit(units, side) ?? units[0];
 
-            // 过滤掉主力乘区行已展示的主力单位
-            // 侧栏援军行展现该侧额外的野外援军或据点城防驻军（分行显示各自的名字与兵力）
             const reinfUnits = units.filter(u => {
                 if (u.isDestroyed || u.troops <= 0) return false;
-                if (primaryBattler && u.id === primaryBattler.id) return false;
+                if (namePrimary && u.id === namePrimary.id) return false;
                 return true;
             });
 
@@ -1261,7 +1257,7 @@ export class CombatUI {
             const lines: string[] = [];
             const shown = reinfUnits.slice(0, MAX_REINF_LINES);
             for (const u of shown) {
-                const dName = u.name || (u.unitType === 'city' ? '据点驻军' : '援军');
+                const dName = this.resolveBattleUnitListName(u) || (u.unitType === 'city' ? '据点驻军' : '援军');
                 const t = Math.floor(u.troops);
                 const tStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
                 const ns = `<span style="white-space: nowrap; color: rgba(255, 235, 200, 0.95);">${dName}</span>`;
@@ -1647,11 +1643,32 @@ export class CombatUI {
     }
 
     /**
-     * 立绘/名牌/番号显示单位（2026-08-03 主人定）：
-     * 有援军时优先显示带武将的单位，其次精锐番号单位，再次其余部队；
-     * 同级看先来后到——开战主力是第 0 波，援军按入场波次排，先到者不被后来者顶掉。
-     * 带武将同级同波若含开战锁定指挥官则用指挥官：技能条/乘区读的是他，脸和数字必须同源
-     * （2026-07 血训：援军换脸而引擎仍按指挥官结算 → 脸和数字对不上）。
+     * 血槽下第二行文字主位（2026-08-06，与立绘解耦）：
+     * 守方钉据点城防；攻方钉开战波次 0。不因武将/精锐把援军提到第二行。
+     * 文案（精锐番号 vs 据点+驻军）由 resolveBattleUnitListName 决定。
+     */
+    private pickSideNameUnit(units: IBattleUnit[], side: 'attacker' | 'defender'): IBattleUnit | null {
+        const alive = units.filter((u) => !u.isDestroyed && u.troops > 0);
+        if (alive.length === 0) return null;
+        const bf = this.boundRegionalBattleField;
+        const waveOf = (u: IBattleUnit): number => bf?.getUnitWaveIndex?.(u.id) ?? 0;
+
+        if (side === 'defender') {
+            const city = alive.find((u) => u.unitType === 'city');
+            if (city) return city;
+        }
+        const wave0 = alive.filter((u) => waveOf(u) === 0);
+        if (wave0.length > 0) {
+            const city = wave0.find((u) => u.unitType === 'city');
+            return city ?? wave0[0];
+        }
+        return alive[0];
+    }
+
+    /**
+     * 立绘 / 武将名牌 / 状态链标签选角（2026-08-03；2026-08-06 与第二行文字解耦）：
+     * 带武将 > 精锐 > 其余；同级先来后到（本城/开局有将则不被后来援军顶掉）。
+     * 本城无将而援军有将 → 立绘与标签可借用援军将；第二行队名仍走 pickSideNameUnit。
      */
     private pickArrivalDisplayUnit(units: IBattleUnit[], side: 'attacker' | 'defender'): IBattleUnit | null {
         const alive = units.filter((u) => !u.isDestroyed && u.troops > 0);
@@ -1699,14 +1716,27 @@ export class CombatUI {
 
     private scoreBattleDisplayUnit(u: IBattleUnit): number {
         let score = 0;
-        // 守城精锐优先于援军军团：据点本位，守城精锐是这座城的「主人」
-        if (u.unitType === 'city' && readSiegeGarrisonEliteName(u.getEntity?.())) score += 20_000;
-        else if (u.unitType === 'legion' || u.unitType === 'army') score += 10_000;
+        // 据点城防一律高于野战军团；有精锐再小幅加（同级 tie-break，不决定第二行文字）
+        if (u.unitType === 'city') {
+            score += 20_000;
+            if (readSiegeGarrisonEliteName(u.getEntity?.())) score += 2_000;
+        } else if (u.unitType === 'legion' || u.unitType === 'army') {
+            score += 10_000;
+        }
         if (u.generalId && getGeneralProfile(u.generalId)) score += 1_000;
         const army = u.getEntity?.() as Army | undefined;
         if (army?.isElite) score += 500;
         score += Math.min(Math.max(0, u.troops) / 1000, 99);
         return score;
+    }
+
+    /** 立绘/标签主角：跟拍优先，否则 pickArrivalDisplayUnit */
+    private pickPortraitTagUnit(units: IBattleUnit[], side: 'attacker' | 'defender'): IBattleUnit | null {
+        if (units.length === 0) return null;
+        return this.getFollowedUnitInBattle(units)
+            ?? this.pickArrivalDisplayUnit(units, side)
+            ?? this.pickPrimaryDisplayUnit(units)
+            ?? units[0];
     }
 
     private updateSkillBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
@@ -2147,7 +2177,7 @@ export class CombatUI {
             const t = Math.max(0, Math.floor(troops));
             const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
             totalBadge.innerHTML = troopStr;
-            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}主将部队兵力：${t} 人（援军/驻军见下行）`;
+            totalBadge.title = `${side === 'attacker' ? '攻方' : '守方'}第二行部队兵力：${t} 人（援军见第三行）`;
             totalBadge.style.display = 'inline-block';
         }
     }
@@ -2492,14 +2522,9 @@ export class CombatUI {
 
         const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
-        // 立绘单位：跟随军团优先（切换跟拍后立绘立即换新主角）；
-        // 否则按显示优先级选（带武将 > 精锐番号 > 其余，同级先来后到，见 pickArrivalDisplayUnit）。
-        const attacker = this.getFollowedUnitInBattle(attackers)
-            ?? this.pickArrivalDisplayUnit(attackers, 'attacker')
-            ?? attBattler;
-        const defender = this.getFollowedUnitInBattle(defenders)
-            ?? this.pickArrivalDisplayUnit(defenders, 'defender')
-            ?? defBattler;
+        // 立绘/标签：跟拍优先，否则带武将 > 精锐 > 其余（本城有将不换）；第二行队名另走 pickSideNameUnit。
+        const attacker = this.pickPortraitTagUnit(attackers, 'attacker') ?? attBattler;
+        const defender = this.pickPortraitTagUnit(defenders, 'defender') ?? defBattler;
 
         const attName = this.buildWaveGroupedSideName(attackers, 'attacker');
         const defName = this.buildWaveGroupedSideName(defenders, 'defender');
@@ -2789,15 +2814,9 @@ export class CombatUI {
 
         const attBattler = this.pickPrimaryDisplayUnit(attackers) ?? attackers[0];
         const defBattler = this.pickPrimaryDisplayUnit(defenders) ?? defenders[0];
-        // 【2026-08-03 主人定】援军编入后按显示优先级重选：带武将 > 精锐番号 > 其余，
-        // 同级先来后到（开战主力第 0 波不会被后来的援军顶掉）。带武将同级同波仍锁指挥官，
-        // 技能条/乘区读的是他——先到的将不换脸，只有「开局无将、武将援军赶到」才切换。
-        const attGeneral = this.getFollowedUnitInBattle(attackers)
-            ?? this.pickArrivalDisplayUnit(attackers, 'attacker')
-            ?? attBattler;
-        const defGeneral = this.getFollowedUnitInBattle(defenders)
-            ?? this.pickArrivalDisplayUnit(defenders, 'defender')
-            ?? defBattler;
+        // 立绘/标签与第二行队名解耦：脸可借援军将，队名仍钉本城/开局波次。
+        const attGeneral = this.pickPortraitTagUnit(attackers, 'attacker') ?? attBattler;
+        const defGeneral = this.pickPortraitTagUnit(defenders, 'defender') ?? defBattler;
 
         this.updateMultiplierBadges(attGeneral, defGeneral);
         this.updateSkillBadges(attGeneral, defGeneral);
@@ -2842,10 +2861,8 @@ export class CombatUI {
         const activeUnits = units.filter(u => !u.isDestroyed && u.troops > 0);
         if (activeUnits.length === 0) return '';
 
-        // 番号与立绘同源：带武将 > 精锐番号 > 其余，同级先来后到（pickArrivalDisplayUnit）
-        // 一行只显示一支部队（GAME_DIRECTION L570「列出主力 + 各路援军名」，2026-08-04 主人重申）——
-        // 主将行 = 主力一支；其余部队由 updateReinforcements 援军行逐行列出。
-        const primary = this.pickArrivalDisplayUnit(activeUnits, side) ?? activeUnits[0];
+        // 第二行 = 文字主位（本城 / 开局波次），与立绘选角解耦（2026-08-06）
+        const primary = this.pickSideNameUnit(activeUnits, side) ?? activeUnits[0];
 
         const displayName = this.resolveBattleUnitListName(primary);
         if (!displayName) return '';
@@ -3929,10 +3946,8 @@ export class CombatUI {
             }
         }
 
-        // 侧栏「名称: 兵力」+ 各自小血条；中央主条为双方兵力比。
-        // 主将行名字 = 单支部队（buildWaveGroupedSideName 的 primary），兵力徽章必须同源显示该部队自己的兵力——
-        // 否则出现「名字是完山虎贲、数字却是全队总和」的名字兵力错位（2026-08-04 文登/悉万斤案例）。
-        // 其余部队（援军/驻军）由 updateReinforcements 援军行逐行列出，各自兵力齐全。
+        // 第二行名字/兵力 = pickSideNameUnit（本城或开局波次）；立绘/标签 = pickPortraitTagUnit。
+        // 其余部队由 updateReinforcements 第三行列出。
         const attUnitsNow = this.boundRegionalBattleField
             ? this.boundRegionalBattleField.getAttackerUnits()
             : (this.currentRegionalUnits?.attackers ?? []);
@@ -3940,22 +3955,18 @@ export class CombatUI {
             ? this.boundRegionalBattleField.getDefenderUnits()
             : (this.currentRegionalUnits?.defenders ?? []);
         const attPrimary = attUnitsNow.length > 0
-            ? (this.pickArrivalDisplayUnit(attUnitsNow, 'attacker') ?? attUnitsNow[0])
+            ? (this.pickSideNameUnit(attUnitsNow, 'attacker') ?? attUnitsNow[0])
             : null;
         const defPrimary = defUnitsNow.length > 0
-            ? (this.pickArrivalDisplayUnit(defUnitsNow, 'defender') ?? defUnitsNow[0])
+            ? (this.pickSideNameUnit(defUnitsNow, 'defender') ?? defUnitsNow[0])
             : null;
         this.renderSideLabel('attacker', this.attackerDisplayName, attPrimary?.troops ?? attCurrent);
         this.renderSideLabel('defender', this.defenderDisplayName, defPrimary?.troops ?? defCurrent);
         this.updateFactionDisplay();
-        this.updateMultiplierBadges(
-            this.getPrimaryBattler('attacker'),
-            this.getPrimaryBattler('defender'),
-        );
-        this.updateSkillBadges(
-            this.getPrimaryBattler('attacker'),
-            this.getPrimaryBattler('defender'),
-        );
+        const attTag = attUnitsNow.length > 0 ? this.pickPortraitTagUnit(attUnitsNow, 'attacker') : null;
+        const defTag = defUnitsNow.length > 0 ? this.pickPortraitTagUnit(defUnitsNow, 'defender') : null;
+        this.updateMultiplierBadges(attTag, defTag);
+        this.updateSkillBadges(attTag, defTag);
 
         const total = attCurrent + defCurrent;
         const realAttPct = total > 0 ? (attCurrent / total) * 100 : 50;

@@ -69,7 +69,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'xigete': 'city_toledo',
   'andaluoxiya': 'city_cordoba',
   'alagong': 'city_zaragoza',
-  'shaiyue': 'city_eger',
+'shaiyue': 'city_eger',
 
   'nuosi': 'city_wupusala',
   'feiniqi': 'city_jiadisi',

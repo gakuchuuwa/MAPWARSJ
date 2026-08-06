@@ -1589,10 +1589,11 @@ pm run build 打包后的 /dist 目录中彻底没有这些文件。
 
 | # | 规则 | 说明 |
 |---|------|------|
-| 1 | **一行只显示一支部队** | 主将行 = 主力**一支**（带将 > 精锐 > 其余，同级先来后到）；其余部队由援军行**逐行**列出。**禁止**用 `·`/`•` 把多支部队挤进同一行 |
-| 2 | **名字兵力必须对应** | 主将行兵力徽章 = **该部队自己的兵力**（`pickArrivalDisplayUnit` 选中的单位），**不是**全队总和（`getInfo().defenderTroops`）。否则出现"名字完山虎贲、数字 8394=全队总和"的错位 |
+| 1 | **一行只显示一支部队** | 第二行 = 文字主位**一支**（守方钉据点城防，攻方钉波次 0）；其余由第三行援军**逐行**列出。**禁止**用 `·`/`•` 把多支部队挤进同一行 |
+| 2 | **名字兵力必须对应** | 第二行兵力徽章 = **`pickSideNameUnit` 选中部队自己的兵力**，**不是**全队总和（`getInfo().defenderTroops`）。否则出现"名字完山虎贲、数字 8394=全队总和"的错位 |
 | 3 | **援军行逐行列出** | 其余部队每行一支（名字+各自兵力）；超过 3 支时显示前 3 个 + 「余 X 部」 |
-| 4 | **援军行排除与主将行同源** | `updateReinforcements` 排除的单位必须用 `pickArrivalDisplayUnit`（与主将行同源）；**禁止**用 `pickPrimaryDisplayUnit`（按分数，会漏排除导致主将/援军重复显示） |
-| 5 | **中央拉锯条 = 总兵力** | 中央主条仍用双方总兵力比（引擎判定口径），与侧栏主将行兵力（单部队）并存，不算不一致 |
+| 4 | **援军行排除与第二行文字同源** | `updateReinforcements` 只剔除 `pickSideNameUnit`（第二行文字主位）；**禁止**按立绘主位（`pickArrivalDisplayUnit`）剔除——援军将可占立绘/标签，名字仍留第三行 |
+| 5 | **中央拉锯条 = 总兵力** | 中央主条仍用双方总兵力比（引擎判定口径），与侧栏第二行兵力（单部队）并存，不算不一致 |
+| 6 | **立绘/标签与第二行解耦** | 立绘与状态标签走 `pickPortraitTagUnit`（带将 > 精锐 > 波次；本城有将不换）；第二行队名永不因武将援军篡位 |
 
-**代码锚点**：`CombatUI.ts` → `buildWaveGroupedSideName`（主将行单名）、`updateStats` → `renderSideLabel`（兵力传 primary 单位 troops）、`updateReinforcements`（援军行逐行 + `MAX_REINF_LINES = 3` + 余 X 部）。
+**代码锚点**：`CombatUI.ts` → `pickSideNameUnit` / `buildWaveGroupedSideName`（第二行）、`pickPortraitTagUnit`（立绘/标签）、`updateReinforcements`（第三行剔除文字主位 + `MAX_REINF_LINES = 3` + 余 X 部）。
