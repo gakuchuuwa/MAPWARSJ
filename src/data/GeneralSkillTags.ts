@@ -261,14 +261,16 @@ export interface DistributionAuditViolation {
 }
 
 /**
- * 武将开战「可部署」的战术技集合（去重，一将一技至多记一次）。
+ * 六槽**数据面**的技能分布口径（去重，一将一技至多记一次）——供批量工具做占比/限量审计。
  *
- * ⚠️ 口径校正（2026-07-17）：战斗开局由 BattleField.assignSituationalSkills →
- * GeneralSkillCombat.resolveSituationalSkillId 决定放哪个技——攻方从 atk 三槽、
- * 守方从 def 三槽等概率抽；某侧三槽全空时才回退 tacticalSkillId（见
- * getActiveTacticalSkillId）。而 tacticalSkillId 单字段现已无一武将真正落到兜底
- * （717 将全配了六槽），继续按它统计会把 437 名挂 ts_001 兜底的普将误报成
- * 「单技 94.6% 占比 + 数百技 0 持有」的假违规。占比/限量/零持有一律按本函数口径。
+ * ⚠️⚠️ 别把本函数读成「战斗会放哪些技」（2026-08-06 改注释）。
+ * 原注释写的是「攻方从 atk 三槽、守方从 def 三槽等概率抽」——**那套已于 2026-08-04 作废**
+ * （AGENTS.md 铁律一）。现在战斗选池 = 当前势对应六计的全部不在册通用技 + 本人专属在册技，
+ * 见 GeneralSkillCombat.getSituationalSkillPool，**完全不读六槽**。
+ * 六槽字段仅保留数据兼容，由 six-slot.html / batch-manager 维护，本函数就是审计这份数据的。
+ *
+ * 保留 2026-07-17 的口径理由（仍成立）：按 tacticalSkillId 单字段统计，会把 437 名挂 ts_001
+ * 兜底的普将误报成「单技 94.6% 占比 + 数百技 0 持有」的假违规。占比/限量/零持有一律按本函数口径。
  */
 export function deployableTacticalSkillIds(p: GeneralProfile): string[] {
     const atk = [p.atkAdvantageSkillId, p.atkBalanceSkillId, p.atkDisadvantageSkillId].filter(Boolean) as string[];
