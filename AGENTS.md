@@ -45,16 +45,36 @@
 
 **六槽字段（atk*/def*）已废弃**：不再驱动选技，仅保留数据兼容（six-slot.html / batch-manager 工具仍可维护，后续清理）。判据唯一权威不变：`src/data/TacticalSkillCatalog.ts` 的 `EFFECT_TO_SIX_SET`（只按 `baseEffect` 查表；**禁止按 condition 改判六计**）。
 
+### 铁律一附则：攻守六计硬分开（2026-08-05 主人定）
+
+> **同一场战斗里，先后挑技的带将单位不得撞同一个六计类别。**一边已是败战，另一边就不许再败战；胜战等同理。
+
+- 实装：`BattleField.assignSituationalSkills` + `pickSkillAvoidingUsedSixClass`。全场带将**依次**挑技，后挑者避开已用技能 id **和**已用六计类别；先放侧 = 劣势方（均势随机），与技能脉冲亮相同锁。
+- 援军中途入场走同一套避让（`joinReinforcement` 内），不是两套逻辑。
+- 池大（150–192），撞车兜底几乎不触发；真触发会打 `⚠️ [六计] …只能与已出场计撞车` 警告。
+- 验证：`scratch/verify_six_class_separation.mts`（5000 次 ×3 势，冲突 0%）。
+
+**⚠️ 分配层错开 ≠ 战斗面板两枚角标必不同字。**夺取系（混战计）夺来敌技后，若角标跟着夺来技走，攻守双方必然显示同一个字（夺谁的就显示谁的类别）——那是角标口径问题，不是错开逻辑坏了。故角标专走 `getOwnSixSetSkillId`（跳过 `stolenSkillId`），与引擎结算用的 `getActiveTacticalSkillId` **故意不同源，勿合并**。角标只回答「本方出的哪一计」。
+
 **六计机制与参数定稿（2026-07-19 主人拍板；在册=技有 ownerGeneralId，不在册=通用）**：
 
 | 计 | 机制 | 在册 | 不在册 |
 |----|------|------|--------|
 | 攻战·机 | 加己攻（战力乘区） | 1.2 | 1.1 |
 | 胜战·全 | 攻减敌兵 / 守加己兵 | 18% | 9% |
-| 敌战·衡 | 变随机（改运气区间） | [0.6,1.4] | [0.7,1.3] |
+| 敌战·衡 | 减己损 + 输了咬 | 0.2 | 0.1 |
 | 混战·乱 | 克夺反（否敌技/夺技/反弹/否地形） | 全否地形 | 半否地形 |
-| 并战·借 | 减己损 + 拖长一档（30s→45s 等援军） | 0.2 | 0.1 |
+| 并战·借 | 变随机（改运气区间，劣势制造混乱求翻盘） | [0.6,1.4] | [0.7,1.3] |
 | 败战·险 | 更翻盘（**六计中唯一能反转胜负**） | [0.25,0.45] | [0.30,0.40] |
+
+> **[2026-08-06 勘误]** 上表原先把 **敌战 / 并战 两行的机制写反了**（敌战写成「变随机」、并战写成「减己损」），
+> 并写了一个**代码里根本不存在的机制**「并战计拖长一档（30s→45s 等援军）」。已按代码订正。
+> 依据：`EFFECT_TO_SIX_SET`（AGENTS 自己声明的唯一权威）+ `SpeechAnnouncer.EFF_SUIJI/EFF_JIANJI` +
+> `skill-editor` 三处独立口径完全一致 —— `luck_variance_*` → 并战、`win_casualty_reduction` 等 → 敌战。
+> 也与 `SIX_SET_TO_TRI_CLASS` 自洽（并战属劣势，劣势方才要放大方差搏翻盘）。
+> 关于「45s」：全项目**没有 45 秒这一档**。实装时长 = 双将 10–30s（按兵力比）+ 每只援军 +10s、封顶 60s；
+> 非双将固定 9s（`BATTLE_DURATION_*`）。且**没有任何战术技能改战斗时长**，加时只由援军数决定。
+> 若当初的设计意图与此相反（即代码错、文档对），那是引擎 bug 不是文档 bug —— 请主人明示后再改代码。
 
 - 并战计不改胜负，收益在地图层（残兵多→连战；拖时间→援军圈 0.2s 轮询编入）。
 - `first_sortie_comeback_mult` 已废弃（矛盾技：优势格却只在劣势触发），15 条已全迁 `recompute_comeback`。
@@ -158,8 +178,8 @@
 
 | 位置 | 原文 | 正确读法 |
 |---|---|---|
-| `src/ai/bt/LegionBehaviors.ts` 文件头 / `SelectAttackTarget` | "先扫附近敌军团（野战追击）→ 无则推进锚点方向池抽签" | 只说明**排序**：有敌军团在 0.8°(≈89km) 内才追击。圈内多数时候是空的，所以实际绝大多数回合直接走攻城链。（"近 3 敌城"是旧说法，2026-08-05 起改为**方向池**——每条直连道路各取该方向最近 1 座；"最近 3 座"只是无方向池时的兜底） |
-| `src/ai/bt/BehaviorTree.ts` | "有值时优先野战追击，不走攻城链" | 同上，讲的是黑板有 huntTargetId 时的分支，不代表这个分支常被走到 |
+| `src/ai/bt/LegionBehaviors.ts` 文件头 / `HasTarget` / `FindTarget`（**2026-08-06 改**：原写的 `SelectAttackTarget` 这个节点**根本不存在**，别去找了） | "先扫附近敌军团（野战追击）→ 无则推进锚点方向池抽签" | 只说明**排序**：有敌军团在 0.8°(≈89km) 内才追击。圈内多数时候是空的，所以实际绝大多数回合直接走攻城链。（"近 3 敌城"是旧说法，2026-08-05 起改为**方向池**——每条直连道路各取该方向最近 1 座；"最近 3 座"只是无方向池时的兜底） |
+| `src/ai/bt/BehaviorTree.ts` → `strategicTargetArmyId` | "有值时优先野战追击，不走攻城链" | 同上，讲的是黑板有追击目标时的分支，不代表这个分支常被走到。（字段名是 `strategicTargetArmyId`，**没有** `huntTargetId` 这个字段） |
 
 **执行要求**：
 
@@ -1528,6 +1548,31 @@ _本文件以中文写作，方便项目维护者快速理解。日后版本若�
 - `IsPostBattleResting` 必须排在 `reinforceHome` **之后**（2026-08-05 调整）——休整本质是「待命」，按铁律 2 可回援；
   排在前面会让休整中的军团眼看老家被攻城而不动。
 
+### 追击打断攻城 = **暂停**，不是改主意（2026-08-06 修，别再改回去）
+
+> 症状：军团走一半掉头折返。**根因不是随机抽签坏，是追击把攻城目标写穿了。**
+
+旧行为：`setStrategicArmyTarget` 会把 `strategicTargetCityId` 置 null。于是追击一失败（跑出 1.1° / 目标失效 / 对方交战卡 45s 超时），军团就「失忆」，只能进 `FindTarget` 重抽 —— 原目标虽还在池里，但等概率抽签有很大机会抽到背后方向，**当场掉头**。
+
+现行语义：
+
+1. **挂起而非清空** —— `setStrategicArmyTarget` 只写 `strategicTargetArmyId`，**不动** `strategicTargetCityId`。
+2. **追击结束只清追击** —— 一律走 `clearHuntTarget`（清 armyId + 把 `targetPosition` 恢复到挂起城），**不许**在追击出口调 `clearStrategicTarget`。四个出口全覆盖：失效 / 出圈 / 交战超时 / 开战接触。
+3. **`HasTarget` 追击结束后往下落** —— 不许直接 `return false` 进 `FindTarget`；落到下方城目标检查，接着赶原城。
+4. **`AbandonTarget` 在追击中只弃追击** —— 保留挂起城，下一 tick 重新寻路。
+
+配套三条（都为「少一次不必要的重抽 / 重抽时别往回走」）：
+
+| 机制 | 位置 | 要点 |
+|------|------|------|
+| 行军惯性 | `TargetEvaluator.pickByMarchInertia` | 半路重抽时按「老家→当前位置」推进轴滤掉身后的城再取最近。**实测旧的等概率抽签有 34.6% 抽中身后城**（`scratch/verify_march_inertia.mts`）。出头鸟 LEADER_HUNT 仍优先于惯性 |
+| 锚点迟滞 | `LegionBehaviors.resolveStickyAnchor`（GAIN=0.8） | 旧锚点仍是己方且路网可达就留着，除非新候选 ≤80% 距离。**⚠️ 不许改成「开拔后钉死出发城」**——深入敌境的军团锚点钉在几百公里外老家，方向池会算成老家周边敌城，反把军团往回拉，比抖动更糟 |
+| 野战冷却续期 | `IsInCombat` + `ctx.postBattleFoeArmyId` | `FAILED_TARGET_COOLDOWN_MS` 只有 12s，双将野战 30s+，开战盖一次章仗没打完就过期、脱战瞬间再追同一支。故交战中每帧续期，冷却实际从**脱战那刻**起算 |
+
+**P2「收紧追击触发」= 主人 2026-08-06 拍板暂不做。** 现状仍是 0.8° 内任何可打敌军都能打断攻城。理由：P0 挂起落地后「拉扯」已从 bug 降级为观感取舍，没实测数据就调阈值属盲调。已在 `retarget_hunt` 日志里埋了 `detour=`（敌距÷城距）和 `偏离 xx km`，攒够几局按分布再定。**别在没数据时自作主张加门槛。**
+
+**诊断日志键**：`retarget_hunt:*`（被拉走，带 detour）、`abandon:*` / `pick:*`（重抽）、`hunt_blocked_timeout:*`（等脱战超时）。若又见折返，先看 `pick:*` 是否出现在**没有** `retarget_hunt` 的场景 —— 那就不是追击这条链了。
+
 **代码锚点**：
 
 | 环节 | 位置 |
@@ -1537,6 +1582,8 @@ _本文件以中文写作，方便项目维护者快速理解。日后版本若�
 | 城破收复 | `src/ai/TargetAnchorResolver.ts` → `resolveRecaptureTarget` |
 | 家城失守判据（**唯一**） | `src/ai/TargetAnchorResolver.ts` → `isHomeCityLost` |
 | 远征收尾（仅"目标已属己方=功成"一种） | `src/ai/bt/LegionBehaviors.ts` → `resolveExpeditionState` |
+| 攻城目标挂起 / 恢复 | `src/ai/bt/BtDecisionLog.ts` → `setStrategicArmyTarget` / `clearHuntTarget` |
+| 六计硬分开 | `src/combat/BattleField.ts` → `assignSituationalSkills` / `pickSkillAvoidingUsedSixClass` |
 | 远征发起（仅看兵力 ≥ `EXPEDITION.UNLOCK_TROOPS` = 5 万） | `src/ui/ExpeditionUI.ts` → `eligibleArmy` |
 
 ## 立绘独有文件保护（铁律，2026-06-27 立）

@@ -8,7 +8,7 @@
  * 纯只读（只喂 {generalId} 读 profile），不构造战斗、不碰核心战斗类 → 零风险。
  */
 import { getGeneralProfile, getTacticalSkillDef, getStrategicSkillDef } from '../data/GeneralSkills';
-import { resolveSituationalSkillId } from '../combat/GeneralSkillCombat';
+import { resolveSituationalSkillId, getSituationalSkillPool } from '../combat/GeneralSkillCombat';
 
 // 代表名将（覆盖各系改动：战斗str_03 / 补给 / 行军 / 爆兵保留 / 刚改的战略技 / 补齐的三技 / condition改always）
 const REPS: Array<[string, string]> = [
@@ -57,12 +57,12 @@ export function toggleSituationalSelfCheck(): void {
         const strat = p.strategicSkillId
             ? `${getStrategicSkillDef(p.strategicSkillId)?.displayName ?? p.strategicSkillId}(${STRAT_SYS[p.strategicSkillId] ?? '?'})`
             : '—';
-        // 招牌应落在某一局；若三局都没包含招牌=丢失(标红)
-        const sigOk = [
-            p.atkAdvantageSkillId, p.atkBalanceSkillId, p.atkDisadvantageSkillId,
-            p.defAdvantageSkillId, p.defBalanceSkillId, p.defDisadvantageSkillId,
-            p.advantageSkillId, p.balanceSkillId, p.disadvantageSkillId,
-        ].includes(p.tacticalSkillId);
+        // 招牌技在不在真实选池里；三势都摸不到=丢失(标红)
+        // [2026-08-06 修] 原来查的是六槽字段（atk*/def*/advantage*），而六槽自 2026-08-04 起
+        // 已不驱动选技（AGENTS.md 铁律一），那个红叉与实机毫无关系，看见了只会白查一轮。
+        // 改成问引擎真实的三势选池。
+        const sigOk = !!p.tacticalSkillId && (['advantage', 'balance', 'disadvantage'] as const)
+            .some(sit => getSituationalSkillPool(u as any, sit, []).includes(p.tacticalSkillId));
         return `<tr>
             <td style="color:#ffd27a">${name}</td>
             <td>${advA}</td><td>${advB}</td>

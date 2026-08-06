@@ -172,9 +172,11 @@ export const TRI_CLASS_LABEL: Readonly<Record<TacticalTriClass, string>> = {
  * 六计参数定稿（在册=有 ownerGeneralId / 不在册）：
  *   攻战·机  加己攻          1.2  / 1.1
  *   胜战·全  减敌兵/加己兵    0.18 / 0.09
- *   敌战·衡  变随机          [0.6,1.4] / [0.7,1.3]
+ *   敌战·衡  减己损+输了咬    0.2  / 0.1
  *   混战·乱  克夺反          全否地形 / 半否地形
- *   并战·借  减己损+拖长一档  0.2  / 0.1
+ *   并战·借  变随机          [0.6,1.4] / [0.7,1.3]
+ *   ⚠ [2026-08-06 勘误] 上面敌战/并战两行原先写反了，并写了个不存在的「拖长一档 30s→45s」。
+ *     以本文件下方的 EFFECT_TO_SIX_SET 为准（那才是唯一权威）；战斗时长与战术技无关。
  *   败战·险  更翻盘（唯一能改胜负） [0.25,0.45] / [0.30,0.40]
  */
 export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixSet>> = {

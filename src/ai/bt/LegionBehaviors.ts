@@ -269,6 +269,30 @@ function pickNearbyEnemyLegion(ctx: BTContext, excludeTargetIds: Set<string>): A
     return best;
 }
 
+/**
+ * 「攻城途中被拉走」的量化诊断（2026-08-06）—— **只测量，不改行为**。
+ *
+ * 主人 2026-08-06 拍板：P2 收紧追击触发**暂不做**，先实机取数。理由是 P0 挂起落地后
+ * 「拉扯」已从 bug 降级为观感取舍，没实测数据就调阈值属盲调
+ * （见 memory: claims-need-measurement）。故此处只往 retarget_hunt 日志里补两个数：
+ *   detour  = 敌军离我 ÷ 目标城离我。>1 表示为了这一架，绕的路比剩下的正事还长。
+ *   offset  = 敌军离我多少公里（偏离量）。
+ * 攒够几局后按 detour 分布再决定要不要设门槛、门槛设在哪 —— 那时才有依据。
+ */
+function measureHuntDetour(
+    ctx: BTContext,
+    targetCity: { latitude: number; longitude: number },
+    enemy: Army,
+): { detour: number; offsetKm: number } {
+    const myPos = ctx.army.getPosition();
+    const toEnemy = getEuclideanDistance(myPos, enemy.getPosition());
+    const toCity = getEuclideanDistance(myPos, {
+        lat: targetCity.latitude,
+        lng: targetCity.longitude,
+    });
+    return { detour: toCity > 0 ? toEnemy / toCity : Infinity, offsetKm: toEnemy * 111 };
+}
+
 export const HasTarget = new Condition('HasTarget', (ctx) => {
     // 远征模式：跳过回师检查（断粮不回），目标锁死
     const expedition = resolveExpeditionState(ctx);
@@ -329,11 +353,13 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx));
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();
-        const cityName = city.name;
+        // 只测不拦（P2 待实机取数后再定，见 measureHuntDetour）
+        const { detour, offsetKm } = measureHuntDetour(ctx, city, nearbyEnemy);
         btLog(
             ctx,
             `retarget_hunt:${nearbyEnemy.id}`,
-            `[AI] ${ctx.army.name} 途中发现敌军【${nearbyEnemy.name}】，暂停攻城【${cityName}】改追击`,
+            `[AI] ${ctx.army.name} 途中发现敌军【${nearbyEnemy.name}】，暂停攻城【${city.name}】改追击` +
+                `（偏离 ${offsetKm.toFixed(0)} km，detour=${detour.toFixed(2)}）`,
         );
         setStrategicArmyTarget(ctx, nearbyEnemy.id, { lat: ePos.lat, lng: ePos.lng });
         ctx.army.setTargetCity(null);

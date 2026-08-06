@@ -437,7 +437,9 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     /**
-     * 六计随机：开局定强弱后，给每个带将单位从攻/守三槽随机抽一个局技，写入 battleOverriddenSkillId。
+     * 六计随机：开局定强弱后，给每个带将单位从**三势选池**随机抽一个局技，写入 battleOverriddenSkillId。
+     * [2026-08-06 改注释] 原写「从攻/守三槽随机抽」——六槽 2026-08-04 起已不驱动选技（AGENTS.md 铁律一），
+     * 现在的池 = 当前势对应六计的全部不在册通用技 + 本人专属在册技，见 getSituationalSkillPool。
      * 阈值：文化修正后有效兵力比 >1.5 优势 / <0.67 劣势 / 其间均势。
      * 同时锁定 situationalAttDefRatio 与 skillPulseFirstSide（劣先；均势随机）。
      */
