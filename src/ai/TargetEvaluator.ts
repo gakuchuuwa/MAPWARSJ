@@ -6,7 +6,8 @@
  * 2. 只考虑从该点沿路可达的非己方据点
  * 3. 锚点每条直连道路各取该方向最近 1 座敌城，组成方向池
  * 4. 方向池内若有「全图据点最多的势力」的城 → 必打（枪打出头鸟，确定性无门槛，见 pickTarget）
- * 5. 否则在方向池内均匀随机抽 1 座进攻（无直连或无方向敌城时回退「全局最近 N」）
+ * 5. 否则：有 fromPosition 时按推进轴（老家→当前位置）滤掉身后的城再取最近（行军惯性）；否则均匀随机
+ *    （无直连或无方向敌城时回退「全局最近 N」）
  */
 import { City } from '../types/core';
 import { GameConfig } from '../config/GameConfig';
@@ -23,6 +24,12 @@ export interface TargetScore {
 export interface TargetEvaluateOptions {
     /** 忽略目标（例如刚失败进入冷却的城） */
     excludeTargetIds?: Set<string>;
+    /**
+     * 行军惯性（2026-08-06）：半路必须重抽时的当前坐标。
+     * 先按「老家 → 当前位置」这条推进轴过滤掉身后的城，再在剩下的里取最近；
+     * 轴上全被滤掉才退回全池最近。出头鸟仍优先于此。
+     */
+    fromPosition?: { lat: number; lng: number };
 }
 
 export class TargetEvaluator {
@@ -64,7 +71,7 @@ export class TargetEvaluator {
 
         // 枪打出头鸟（反雪球）：候选池（方向池，军团挨着的 2-3 座可选城）里有全图据点最多的势力 → 必打它。
         // [2026-08-05 GAKU 定] 确定性、无门槛：只有挨着的才打，不挨着的不打——方向池里没有领头城，
-        // 就不回头（原 anywhere 兜底已删），正常随机抽签。
+        // 就不回头（原 anywhere 兜底已删），正常抽签（有 fromPosition 时改惯性最近）。
         const hunt = GameConfig.AI.LEADER_HUNT;
         if (hunt?.ENABLED) {
             const leader = TargetEvaluator.findLeaderFaction(cities);
@@ -83,7 +90,62 @@ export class TargetEvaluator {
             }
         }
 
+        // 行军惯性：有当前位置时按推进轴择近（半路重抽少折返）；否则均匀随机
+        const from = options?.fromPosition;
+        if (from && pool.length > 1) {
+            const inertial = TargetEvaluator.pickByMarchInertia(pool, cities, from, homeCityId);
+            if (inertial) return inertial;
+        }
+
         return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    /**
+     * 行军惯性（2026-08-06）：在方向池里挑「不往回走的最近一座」。
+     *
+     * 推进轴 = 老家 → 军团当前位置。候选相对当前位置的位移在轴上的投影 ≥0 = 继续朝前（含侧向），
+     * <0 = 折回老家方向。先只在朝前的候选里取最近；朝前的一座都没有（军团已被打回老家附近、
+     * 或轴长几乎为 0 刚出城）才退回全池最近。
+     *
+     * 只用「老家 + 当前位置 + 候选坐标」，不需要新增状态；比原先的「全池欧氏最近」多挡住一类：
+     * 刚路过的背后城明明更近，却正是折返方向。
+     */
+    private static pickByMarchInertia(
+        pool: TargetScore[],
+        cities: City[],
+        from: { lat: number; lng: number },
+        homeCityId: string,
+    ): TargetScore | null {
+        const cityById = new Map(cities.map((c) => [c.id, c]));
+        const home = cityById.get(homeCityId);
+
+        // 推进轴（未归一化即可，只看投影符号）；老家缺失或军团几乎还在老家 → 无轴可依
+        const axisLat = home ? from.lat - home.latitude : 0;
+        const axisLng = home ? from.lng - home.longitude : 0;
+        const hasAxis = axisLat * axisLat + axisLng * axisLng > 1e-6;
+
+        let bestForward: TargetScore | null = null;
+        let bestForwardDist = Infinity;
+        let bestAny: TargetScore | null = null;
+        let bestAnyDist = Infinity;
+
+        for (const s of pool) {
+            const c = cityById.get(s.targetId);
+            if (!c) continue;
+            const d = getEuclideanDistance(from, { lat: c.latitude, lng: c.longitude });
+            if (d < bestAnyDist) {
+                bestAnyDist = d;
+                bestAny = s;
+            }
+            if (!hasAxis) continue;
+            const proj = (c.latitude - from.lat) * axisLat + (c.longitude - from.lng) * axisLng;
+            if (proj >= 0 && d < bestForwardDist) {
+                bestForwardDist = d;
+                bestForward = s;
+            }
+        }
+
+        return bestForward ?? bestAny;
     }
 
     /**

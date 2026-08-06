@@ -11,6 +11,8 @@
  *     · 否则 → 先扫附近敌军团（野战追击）→ 无则推进锚点**方向池**抽签
  *       （每条直连道路各取该方向最近 1 座敌城；池内有全图据点最多的势力则必打它；
  *        无直连/无方向敌城才回退「全局最近 3」，见 TargetEvaluator）
+ *       【2026-08-06】途中改追击只**挂起**攻城目标（不清 strategicTargetCityId），
+ *        追击结束/失败后恢复原城，禁止半路失忆重抽导致折返。
  *       ⚠️ 这里说的是【优先级顺序】，不是【发生频率】。追击半径只有
  *          HUNT_ENEMY_LEGION_RADIUS = 0.8°(≈89km)，圈内多数时候没有敌军团，
  *          所以实机约 90% 的战斗是攻城战、野战很少（AGENTS.md「战斗构成」节）。
@@ -22,6 +24,7 @@ import { BTNode, BTStatus, BTContext, Condition, Action, Sequence, Selector } fr
 import { gameLog } from '../../utils/GameLogger';
 import {
     btLog,
+    clearHuntTarget,
     clearStrategicTarget,
     formatTargetLabel,
     getStrategicTargetArmyId,
@@ -53,7 +56,23 @@ import type { Army } from '../../legion/Army';
 // 条件检查节点
 // =====================
 
-export const IsInCombat = new Condition('IsInCombat', (ctx) => ctx.army.getIsInCombat());
+/**
+ * 交战中（铁律 1：绝不脱离）。根节点第一位，故每帧必跑——顺带给野战对手的冷却续期。
+ *
+ * [2026-08-06] 续期是必需的，不是顺手：FAILED_TARGET_COOLDOWN_MS 只有 12s，
+ * 双将野战 30s+（见 memory: battle-duration-two-band），开战时盖一次章仗还没打完就过期，
+ * 脱战瞬间 HasTarget 又会挑中同一支残兵接着追，挂起的攻城目标被无限期拖着。
+ * 每帧续期 ⇒ 冷却实际从**脱战那刻**开始算 12s，够军团重新上路。
+ */
+export const IsInCombat = new Condition('IsInCombat', (ctx) => {
+    if (!ctx.army.getIsInCombat()) {
+        ctx.postBattleFoeArmyId = null; // 脱战：停止续期
+        return false;
+    }
+    const foe = ctx.postBattleFoeArmyId;
+    if (foe) markTargetCooldown(ctx, `army:${foe}`, 'field_battle_engaged');
+    return true;
+});
 
 export const IsPostBattleResting = new Condition('IsPostBattleResting', (ctx) => {
     return ctx.army.isPostBattleResting?.() ?? false;
@@ -147,7 +166,7 @@ function findArmyById(ctx: BTContext, armyId: string): Army | null {
     return armies.find((a) => a.id === armyId) ?? null;
 }
 
-/** 追击目标是否仍有效；有效时刷新黑板坐标 */
+/** 追击目标是否仍有效；有效时刷新黑板坐标。失效时只清追击、保留挂起攻城目标。 */
 function refreshHuntArmyTarget(ctx: BTContext): Army | null {
     const huntId = getStrategicTargetArmyId(ctx);
     if (!huntId) return null;
@@ -160,14 +179,16 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
         enemy.getFactionId() === ctx.army.getFactionId()
     ) {
         markTargetCooldown(ctx, `army:${huntId}`, 'hunt_invalid');
-        clearStrategicTarget(ctx);
+        clearHuntTarget(ctx);
+        ctx.army.stopMovement?.(false);
         return null;
     }
     const myPos = ctx.army.getPosition();
     const ePos = enemy.getPosition();
     if (getEuclideanDistance(myPos, ePos) > abandonR) {
         markTargetCooldown(ctx, `army:${huntId}`, 'hunt_out_of_range');
-        clearStrategicTarget(ctx);
+        clearHuntTarget(ctx);
+        ctx.army.stopMovement?.(false);
         return null;
     }
 
@@ -185,7 +206,8 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
                 `[AI] ${ctx.army.name} 等【${enemy.name}】脱战超时，放弃追击改打据点`,
             );
             markTargetCooldown(ctx, `army:${huntId}`, 'hunt_blocked_timeout');
-            clearStrategicTarget(ctx);
+            clearHuntTarget(ctx);
+            ctx.army.stopMovement?.(false);
             return null;
         }
     } else {
@@ -281,9 +303,10 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
         }
     }
 
-    // 追击敌军团：目标仍有效则保持
+    // 追击敌军团：仍有效则保持；已结束则落入下方，恢复挂起的攻城目标（勿直接 return false 进 FindTarget）
     if (getStrategicTargetArmyId(ctx)) {
-        return !!refreshHuntArmyTarget(ctx);
+        if (refreshHuntArmyTarget(ctx)) return true;
+        // 追击已清：继续检查挂起的据点目标
     }
 
     const strategicId = getStrategicTargetId(ctx);
@@ -302,14 +325,15 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     }
 
     // 关键：已锁定据点时 EnsureTarget 不会再进 FindTarget，同屏新刷敌军团会被无视。
-    // 非收复/非远征的攻城途中，若寻敌半径内出现可打敌军团 → 清城目标并立刻改追（勿 stopMovement 空窗卡死）。
+    // 非收复/非远征的攻城途中，若寻敌半径内出现可打敌军团 → 挂起城目标并立刻改追（城 id 保留，勿 stopMovement 空窗卡死）。
     const nearbyEnemy = pickNearbyEnemyLegion(ctx, buildExcludeTargetIds(ctx));
     if (nearbyEnemy) {
         const ePos = nearbyEnemy.getPosition();
+        const cityName = city.name;
         btLog(
             ctx,
             `retarget_hunt:${nearbyEnemy.id}`,
-            `[AI] ${ctx.army.name} 途中发现敌军【${nearbyEnemy.name}】，放弃据点【${city.name}】改追击`,
+            `[AI] ${ctx.army.name} 途中发现敌军【${nearbyEnemy.name}】，暂停攻城【${cityName}】改追击`,
         );
         setStrategicArmyTarget(ctx, nearbyEnemy.id, { lat: ePos.lat, lng: ePos.lng });
         ctx.army.setTargetCity(null);
@@ -369,6 +393,40 @@ export const IsNearTarget = new Condition('IsNearTarget', (ctx) => {
 // =====================
 // 动作节点
 // =====================
+
+/**
+ * 推进锚点迟滞（2026-08-06）。
+ *
+ * resolveForwardAnchor 每次都取「离军团最近的己方城」。两座己方城距离相近时，军团走两步、
+ * 名次就换一次，方向池整组翻掉 → 观感是原地折返/斜切换战线。这里加一道迟滞：
+ * 旧锚点仍是己方且路网可达就留着，除非新候选**明显**更近（≤80%）。
+ *
+ * 不是硬锁（DS 建议的「开拔后钉死出发城」没采纳）：深入敌境的军团若锚点钉在几百公里外的老家，
+ * 方向池会算成老家周边的敌城，反而把军团往回拉——那是比抖动更糟的折返。
+ * 迟滞只压掉「名次抖动」这一类纯噪声：军团亲自打下的城距离≈0，一定顶得掉旧锚点，推进不受影响。
+ */
+const ANCHOR_SWITCH_GAIN = 0.8;
+
+export function resolveStickyAnchor(
+    ctx: BTContext,
+    candidateId: string,
+    myFaction: string,
+    roadDistances?: ReadonlyMap<string, number>,
+): string {
+    const prevId = ctx.marchAnchorCityId;
+    if (!prevId || prevId === candidateId) return candidateId;
+
+    const prev = ctx.cityManager.getCity(prevId);
+    if (!prev || prev.factionId !== myFaction) return candidateId; // 旧锚点没了/易主
+    if (!roadDistances) return candidateId;                        // 拿不到路网表，无从比较
+
+    const prevKm = roadDistances.get(prevId);
+    if (prevKm === undefined) return candidateId;                  // 旧锚点已不可达（断路/失陷）
+    const candKm = roadDistances.get(candidateId);
+    if (candKm === undefined) return prevId;
+
+    return candKm <= prevKm * ANCHOR_SWITCH_GAIN ? candidateId : prevId;
+}
 
 export const FindTarget = new Action('FindTarget', (ctx) => {
     // 远征模式：目标只有一个，不进方向池抽签、不回师
@@ -430,6 +488,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     let anchorId: string;
     if (useHomeAnchor) {
         anchorId = originCityId;
+        ctx.marchAnchorCityId = null; // 小军团锁老家，不参与迟滞
     } else {
         // 锚点按「军团所在路网城」出发的道路距离选，隔海飞地不会被误选（见 resolveForwardAnchor）
         const armyPos = ctx.army.getPosition();
@@ -437,21 +496,24 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         const roadDistances = standCityId
             ? roadRegistry.getRoadDistancesKmFrom(standCityId)
             : undefined;
-        anchorId = resolveForwardAnchor(
+        const candidateId = resolveForwardAnchor(
             armyPos,
             myFaction,
             originCityId,
             ctx.cityManager,
             roadDistances
         );
+        anchorId = resolveStickyAnchor(ctx, candidateId, myFaction, roadDistances);
+        ctx.marchAnchorCityId = anchorId;
     }
 
+    const fromPos = ctx.army.getPosition();
     const picked = TargetEvaluator.pickTarget(
         myFaction,
         anchorId,
         originCityId,
         ctx.cityManager.getCities(),
-        { excludeTargetIds }
+        { excludeTargetIds, fromPosition: fromPos }
     );
 
     if (!picked) {
@@ -591,23 +653,38 @@ export const AbandonTarget = new Action('AbandonTarget', (ctx) => {
     markTargetCooldown(ctx, abandoned, 'abandon');
     const huntId = getStrategicTargetArmyId(ctx);
     const huntName = huntId ? (findArmyById(ctx, huntId)?.name ?? huntId) : null;
+
+    if (huntId) {
+        // 只放弃追击：挂起的攻城目标保留，下一 tick 恢复行军（2026-08-06）
+        clearHuntTarget(ctx);
+        ctx.army.stopMovement?.(false);
+        btLog(ctx, `abandon:${abandoned}`, `[AI] ${ctx.army.name} 放弃追击【${huntName}】，恢复攻城目标`);
+        return BTStatus.SUCCESS;
+    }
+
     clearStrategicTarget(ctx);
     ctx.army.setTargetCity(null);
     ctx.army.stopMovement();
 
-    const name = huntName ?? formatTargetLabel(ctx.cityManager, abandoned);
+    const name = formatTargetLabel(ctx.cityManager, abandoned);
     btLog(ctx, `abandon:${abandoned}`, `[AI] ${ctx.army.name} 放弃【${name}】`);
     return BTStatus.SUCCESS;
 });
 
 /** 追击贴身后：开战由碰撞系统负责；此处仅占位成功，避免误走攻城 */
 export const HoldForFieldContact = new Action('HoldForFieldContact', (ctx) => {
-    if (!getStrategicTargetArmyId(ctx)) return BTStatus.FAILURE;
+    const huntId = getStrategicTargetArmyId(ctx);
+    if (!huntId) return BTStatus.FAILURE;
     const enemy = refreshHuntArmyTarget(ctx);
     if (!enemy) return BTStatus.FAILURE;
-    // 已在战斗则清追击目标
+    // 已在战斗：只清追击，保留挂起攻城目标，战后继续赶路（2026-08-06）
     if (ctx.army.getIsInCombat()) {
-        clearStrategicTarget(ctx);
+        // [2026-08-06] 记下对手并盖冷却章：打完若对方没被歼灭且仍在 0.8° 内，HasTarget 下一帧
+        // 会立刻再追同一支，挂起的攻城目标被无限期拖着（旧代码就这样，非本次回归）。
+        // 章由 IsInCombat 每帧续期到脱战为止，中间那 12s 不会在仗打完前失效。
+        ctx.postBattleFoeArmyId = huntId;
+        markTargetCooldown(ctx, `army:${huntId}`, 'field_battle_engaged');
+        clearHuntTarget(ctx);
         return BTStatus.SUCCESS;
     }
     if (!ctx.army.isIdle()) ctx.army.stopMovement?.(false);

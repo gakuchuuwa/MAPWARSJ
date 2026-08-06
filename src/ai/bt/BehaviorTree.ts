@@ -57,8 +57,8 @@ export interface BTContext {
     strategicTargetCityId: string | null;
 
     /**
-     * 战略追击目标：附近敌军团 id（与 city 目标互斥）。
-     * 有值时优先野战追击，不走攻城链。
+     * 战术追击目标：附近敌军团 id。
+     * 有值时优先野战追击，不走攻城链；**不清除** strategicTargetCityId（攻城目标挂起，追击结束后恢复）。
      * ⚠️ 优先级 ≠ 频率：本字段多数时候是 null（半径 0.8°≈89km 内没有敌军团），
      *    实机约 90% 的战斗是攻城战。见 AGENTS.md「战斗构成：90% 是攻城战」。
      */
@@ -74,6 +74,24 @@ export interface BTContext {
      * 对方若在攻城（攻城串行、且站着不动），既不会被打死也不会跑出放弃半径，无人能把它救出来。
      */
     huntBlockedSinceMs: number | null;
+
+    /**
+     * 上次采用的推进锚点（迟滞用；null = 尚未选过）。
+     *
+     * [2026-08-06] resolveForwardAnchor 每次重算都取「离军团最近的己方城」，两座己方城
+     * 距离相近时会在两次 FindTarget 之间来回跳，方向池跟着整组换掉 → 观感是原地折返。
+     * 锁在这里做迟滞：旧锚点仍有效就留着，除非新候选**明显**更近（见 FindTarget）。
+     * 不是硬锁——军团亲自打下的城距离≈0，一定能顶掉旧锚点，推进不受影响。
+     */
+    marchAnchorCityId: string | null;
+
+    /**
+     * 正在野战交手的那支敌军团 id（脱战即清）。
+     *
+     * [2026-08-06] 只为「打完别立刻再追同一支」服务：目标冷却只有 12s，双将野战 30s+，
+     * 开战时盖一次章根本撑不到脱战。IsInCombat 每帧给它续期，等于冷却从**脱战那刻**才起算。
+     */
+    postBattleFoeArmyId: string | null;
 
     /** 最近一次移动的结果 */
     lastMoveResult: 'success' | 'failure' | 'blocked' | null;
