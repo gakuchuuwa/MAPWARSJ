@@ -18,7 +18,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'lagusa': 'city_ragusa',
 
   'ruidian_yota': 'city_gothenburg',
-  'meikelunbao': 'city_rostock',
+'meikelunbao': 'city_rostock',
   'didi': 'city_bruges',
   'anuo': 'city_pisa',
 'guadaer': 'city_seville',
@@ -43,7 +43,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
   'maixiya': 'city_oxford',
   'nidelan': 'city_hague',
-  'boumeilaniyan': 'city_gdansk',
+'boumeilaniyan': 'city_gdansk',
   'langgeduoke': 'city_toulouse',
   'aermolika': 'city_nantes',
   'tuosikana': 'city_florence',
@@ -94,7 +94,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'rierman': 'city_meiyinci',
   'shiwaben': 'city_aogesibao',
   'asikanani': 'city_bolandengbao',
-  'wende': 'city_magedebao',
+'wende': 'city_magedebao',
   'bafaliya': 'city_leigensibao',
   'huohengsuolun': 'city_niulunbao',
   'mozeer': 'city_teerier',
