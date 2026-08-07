@@ -27,6 +27,8 @@ import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredStrategicMagnitude, emitFollowedCityAnchoredDefensePulse } from '../combat/GeneralSkillCombat';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getEuclideanDistance } from '../core/DistanceUtils';
+import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getGeneralProfile } from '../data/general-skills/profiles';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -204,15 +206,49 @@ export class RecruitmentSystem {
         }
     }
 
-    /** 随机打乱候选顺序，确保每次开局军团来自不同的城 */
-    private static sortSpawnCandidates(
-        candidates: Array<{ city: { troops?: number }; armySize: number }>
-    ): void {
-        // Fisher-Yates 洗牌
-        for (let i = candidates.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+    /**
+     * 候选城排序：优先让「擅攻/双行」的武将（所在据点）出兵形成军团（2026-08-07 主人定）。
+     *
+     * 优先级（档越小越先出兵，档内随机洗牌保持画面多样性）：
+     *   名将 > 普将（无锚定将殿后）
+     *   擅攻/双行 > 擅守
+     *   造势 > 借势 > 逆势
+     * 即：名将·擅攻双行·造势 最先出兵；普将·擅守·逆势 最后出兵。
+     */
+    private static sortSpawnCandidates(candidates: SpawnCandidate[]): void {
+        const priorityOf = (c: SpawnCandidate): number => {
+            const general = getCityAnchoredGeneral(c.city.id);
+            const profile = general ? getGeneralProfile(general.generalId) : null;
+            // 名将 0 / 普将 1 / 无将 2
+            const tier = profile?.tier === 'famous' ? 0 : 1;
+            // 擅攻/双行 0 / 擅守 1 / 无将 2
+            const style = profile?.attackStyle === 'defense' ? 1 : 0;
+            // 造势 0 / 借势 1 / 逆势 2 / 无将 2
+            const apt = profile?.aptitude === 'create' ? 0
+                : profile?.aptitude === 'leverage' ? 1 : 2;
+            return tier * 100 + style * 10 + apt;
+        };
+
+        // 分档：同档内 Fisher-Yates 洗牌（随机），档间按优先级（小→大）
+        const buckets = new Map<number, SpawnCandidate[]>();
+        for (const c of candidates) {
+            const p = priorityOf(c);
+            let arr = buckets.get(p);
+            if (!arr) { arr = []; buckets.set(p, arr); }
+            arr.push(c);
         }
+        const keys = [...buckets.keys()].sort((a, b) => a - b);
+        const out: SpawnCandidate[] = [];
+        for (const k of keys) {
+            const arr = buckets.get(k)!;
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            out.push(...arr);
+        }
+        candidates.length = 0;
+        candidates.push(...out);
     }
 
     private getCityRegion(city: RecruitmentCity): RegionType {
