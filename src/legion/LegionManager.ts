@@ -575,10 +575,17 @@ export class LegionManager {
         if (army.getIsInCombat()) return 'siege'; // Already busy
         if (this.siegeManager?.isArmyWaitingSiege(army.id)) return 'siege';
 
+        // 【锁定目标不可跳，2026-08-07】收复老家 / 远征目标按军团选目标定稿①②「不重选」，
+        // HasTarget 的收复、远征分支都在越城而走检查之前 return true，跳过后没有重抽出口：
+        // 军团会停在城下，每帧 isSiegeSkipped 早退，空转满 60s 冷却再重掷，可无限续。
+        // 技能语义本就是「绕开去打别的城」，这两类目标无处可绕，既不触发也不受冷却名单影响。
+        const lockedTargetId = army.expeditionTargetCityId ?? army.homeCityId;
+        const isLockedTarget = !!lockedTargetId && targetCity.id === lockedTargetId;
+
         // 越城而走（str_21）跳过的城：冷却期内绝不开战（2026-08-07 修）。
         // 跳过后军团仍停在城 ZOC 内，ZOC 强制攻城路径（findHostileCityInZOC）每帧触发——
         // 若不在此拦截，下一帧 90% 概率不跳、直接开战 =「脉冲越城而走，然后开战了」。
-        if (army.isSiegeSkipped(targetCity.id)) {
+        if (!isLockedTarget && army.isSiegeSkipped(targetCity.id)) {
             return 'skipped';
         }
 
@@ -591,7 +598,7 @@ export class LegionManager {
         // ── 威慑·越城而走：仅小城可跳（2026-08-07 主人定）──
         // 险要（pass）挡在必经之路，跳过没意义必须打通；大/中城是要地，不跳则另选目标；
         // 只有小城值得「绕开打不过的城」继续前进。脉冲只在成功跳过时显示（失败不显示）。
-        if (targetCity.type === 'small_city' && generalHasStrategicEffect(army, 'skip_disadvantaged_siege')) {
+        if (!isLockedTarget && targetCity.type === 'small_city' && generalHasStrategicEffect(army, 'skip_disadvantaged_siege')) {
             const myTroops = army.getTroops();
             const enemyTroops = targetCity.troops ?? 0;
             if (myTroops < enemyTroops) {
