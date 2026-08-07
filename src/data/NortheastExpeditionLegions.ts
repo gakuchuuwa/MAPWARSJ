@@ -51,4 +51,5 @@ export const NORTHEAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name:
   dongping: { name: '东平镇营', tier: 4 },        // 锡尔喀·金代东平府,
     elunchunzu: { name: '鄂伦春猎骑', tier: 3 },
     yingzhou_ying_d: { name: '黄龙兵', tier: 1 },
+    pinghai: { name: '征东舟师', tier: 2 },
 };

@@ -106,9 +106,9 @@ export class CameraFollowUI {
 
     private autoFollowEnabled = true;
     private autoFollowCheckbox: HTMLInputElement | null = null;
-    /** 自动跟随计时：无目标时开始计时，10秒后触发 */
+    /** 自动跟随计时：无目标时开始计时，5秒后触发 */
     private autoFollowNoTargetSince = 0;
-    private static readonly AUTO_FOLLOW_DELAY_MS = 10000;
+    private static readonly AUTO_FOLLOW_DELAY_MS = 5000;
 
     /**
      * 注入依赖：军队列表、跟随回调、军团上限变更（写 GameConfig + 裁军）

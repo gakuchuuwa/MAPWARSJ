@@ -16,10 +16,11 @@ const ROAD_STYLE = {
 };
 
 // [PERF] 渲染降级阈值
-// zoom < MIN_RENDER_ZOOM: 完全不渲染（zoom≤8 宏观视图不显示道路）
+// zoom < MIN_RENDER_ZOOM: 完全不渲染（zoom≤7 宏观战略视图不显示道路）
+// zoom 8 起可见（2026-08-07 改：原阈值 9，调试面板在开机 zoom=8 点「道路显示」无反应）
 // zoom <= CASED_LINE_ZOOM: 只渲染 inner 一层（省一半 SVG 节点）
 // zoom > CASED_LINE_ZOOM: 渲染 outer + inner 双层 cased-line
-const MIN_RENDER_ZOOM = 9;
+const MIN_RENDER_ZOOM = 8;
 const CASED_LINE_ZOOM = 8;
 
 // [PERF] Chaikin 平滑迭代次数 (3 → 2: 顶点数从 ×8 降到 ×4)

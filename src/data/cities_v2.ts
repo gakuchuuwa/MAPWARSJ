@@ -884,16 +884,7 @@ export const T2_STRATEGIC: CityDataV2[] = [
     { id: 'city_xiayangdu', name: '龙门', factionId: 'xiayang_d', lat: 35.602, lng: 110.452, type: 'pass', troops: 30000, region: 'CENTRAL' },
 
     // ── 战略渡口 ──
-    {
-        id: 'city_piaoyujin',
-        name: '漂渝津',
-        factionId: 'pinghai',
-        lat: 39.02, lng: 117.60,
-        type: 'pass',
-        troops: 30000,
-        tier: 2,
-        region: 'NORTH',
-        note: '隋来护儿征东舟师出海口' },
+    { id: 'city_piaoyujin', name: '漂渝津', factionId: 'pinghai', lat: 39.02, lng: 117.6, type: 'small_city', troops: 20000, region: 'NORTHEAST' },
 
     // ── 太行陉关隘 ──
     { id: 'city_tianjinguan', name: '天井关', factionId: 'xiongding', lat: 35.27, lng: 112.93, type: 'pass', troops: 30000, region: 'CENTRAL', mirror: true },
