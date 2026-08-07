@@ -34,6 +34,8 @@ interface HillshadeOptions extends L.GridLayerOptions {
     zFactor?: number;
     shadowOpacity?: number;
     useElevationColor?: boolean;
+    /** 沙漠/湿地/古湖等历史区域涂色（HISTORICAL_REGIONS），默认开 */
+    useDesertColoring?: boolean;
 }
 
 const WORKER_POOL_SIZE = 3;
@@ -50,6 +52,7 @@ export class HillshadeLayer extends L.GridLayer {
     private zFactor: number;
     private shadowOpacity: number;
     private useElevationColor: boolean;
+    private useDesertColoring: boolean;
 
     private workers: Worker[] = [];
     private rrIndex: number = 0; // Worker 轮询下标
@@ -88,6 +91,7 @@ export class HillshadeLayer extends L.GridLayer {
         this.zFactor = options?.zFactor ?? 25.0;
         this.shadowOpacity = options?.shadowOpacity ?? 1.0;
         this.useElevationColor = options?.useElevationColor ?? true;
+        this.useDesertColoring = options?.useDesertColoring ?? true;
 
         this.ensureWorkers();
 
@@ -223,7 +227,7 @@ export class HillshadeLayer extends L.GridLayer {
         }
     }
 
-    public setParams(params: { zFactor?: number; shadowOpacity?: number; altitude?: number; useElevationColor?: boolean }) {
+    public setParams(params: { zFactor?: number; shadowOpacity?: number; altitude?: number; useElevationColor?: boolean; useDesertColoring?: boolean }) {
         let changed = false;
         if (params.zFactor !== undefined && params.zFactor !== this.zFactor) {
             this.zFactor = params.zFactor;
@@ -239,6 +243,10 @@ export class HillshadeLayer extends L.GridLayer {
         }
         if (params.useElevationColor !== undefined && params.useElevationColor !== this.useElevationColor) {
             this.useElevationColor = params.useElevationColor;
+            changed = true;
+        }
+        if (params.useDesertColoring !== undefined && params.useDesertColoring !== this.useDesertColoring) {
+            this.useDesertColoring = params.useDesertColoring;
             changed = true;
         }
 
@@ -307,14 +315,17 @@ export class HillshadeLayer extends L.GridLayer {
         const reqId = this.msgIdCounter++;
         const bounds = tileBoundsFromCoords(coords.z, coords.x, coords.y);
         // 仅传与当前瓦片相交的区域,减少 Worker 内逐像素检查的循环次数
-        const relevantRegions = REGIONS_FOR_WORKER.filter(r => {
-            const latMin = r.center[0] - r.radii[0];
-            const latMax = r.center[0] + r.radii[0];
-            const lngMin = r.center[1] - r.radii[1];
-            const lngMax = r.center[1] + r.radii[1];
-            return !(latMax < bounds.south || latMin > bounds.north ||
-                     lngMax < bounds.west || lngMin > bounds.east);
-        });
+        // 沙漠涂色关闭（调试开关）→ 不传任何区域，Worker 走纯海拔着色，可对比开关前后效果
+        const relevantRegions = this.useDesertColoring
+            ? REGIONS_FOR_WORKER.filter(r => {
+                const latMin = r.center[0] - r.radii[0];
+                const latMax = r.center[0] + r.radii[0];
+                const lngMin = r.center[1] - r.radii[1];
+                const lngMax = r.center[1] + r.radii[1];
+                return !(latMax < bounds.south || latMin > bounds.north ||
+                         lngMax < bounds.west || lngMin > bounds.east);
+            })
+            : [];
 
         const request: HillshadeRequest = {
             id: reqId,

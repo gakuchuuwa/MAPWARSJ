@@ -10,8 +10,10 @@
  *      家城失守仍强制回师（行为树 resolveRecaptureTarget，游戏原生行为，所有文化无豁免；
  *      例外：远征军团（shouldSkipHomeRecapture）不回师）。
  *   2. 大城/中城/小城/关隘检查是否可组建军团（总上限见 MAX_ACTIVE_LEGIONS）：
- *      每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）；14 文化区轮流出兵，
- *      从上一季停下的区开始逐个尝试，找到该区驻军最高的合格据点即出兵。
+ *      每季最多组建 MAX_LEGIONS_SPAWN_PER_SEASON 支（默认 1）；REGION_ORDER（18 个文化区）
+ *      轮流出兵，从上一季停下的区开始逐个尝试，在该区**随机**一座合格据点出兵
+ *      （候选表已被 sortSpawnCandidates 洗牌，不是按驻军高低排序）。
+ *      注意：这一步会被 trySpawnLegions 的「同屏保底」抢先——同屏军团 < 2 支时先在镜头内刷。
  */
 import { CityManager } from '../core/CityManager';
 import { LegionManager } from '../core/LegionManager';
@@ -43,7 +45,7 @@ export class RecruitmentSystem {
     /** 每季募兵后分批刷新城市标签，避免一帧更新 600+ DOM 卡顿 */
     private pendingLabelCityIds: Set<string> = new Set();
     private static readonly LABEL_UPDATES_PER_FRAME = 20;
-    /** 14 文化区轮流出兵：记录下一季从哪个区开始找 */
+    /** 18 文化区（REGION_ORDER）轮流出兵：记录下一季从哪个区开始找 */
     private nextSpawnRegionIndex = 0;
 
     constructor(
@@ -295,12 +297,12 @@ export class RecruitmentSystem {
 
         // 各区已有活跃军团数
         const regionLegionCounts = this.getActiveLegionRegions();
-        // 14 区是否全有至少 1 支（全有则允许第二轮）
+        // 18 区是否全有至少 1 支（全有则允许第二轮）
         const allRegionsHaveLegion = REGION_ORDER.every(
             (r) => (regionLegionCounts.get(r) ?? 0) >= 1
         );
 
-        // 14 文化区轮流出兵：从上次停下的区开始，逐区找候选直到用完配额
+        // 18 文化区轮流出兵：从上次停下的区开始，逐区找候选直到用完配额
         const selected: SpawnCandidate[] = [];
         const selectedCityIds = new Set<string>();
         const nRegions = REGION_ORDER.length;
@@ -405,8 +407,8 @@ export class RecruitmentSystem {
      * 优先级：
      *   1. 同屏保底：跟随镜头内活跃军团 < 2 支时，优先在同屏城池刷兵
      *      （保持跟随军团 + 至少 1 支其他军团的观赏性）
-     *   2. 文化轮转：同屏已 ≥ 2 支军团 → 14 区轮转扶贫（buildSpawnPlan）
-     *   3. 兵力排序：同组内按驻军从高到低（sortSpawnCandidates 已保证）
+     *   2. 文化轮转：同屏已 ≥ 2 支军团 → 18 区轮转扶贫（buildSpawnPlan）
+     *   3. 同组内**随机**取（sortSpawnCandidates 是 Fisher-Yates 洗牌，不按驻军排序）
      */
     private trySpawnLegions(cities: ReturnType<CityManager['getCities']>): void {
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
@@ -445,7 +447,7 @@ export class RecruitmentSystem {
                 ? viewportCandidates
                 : this.buildSpawnPlan(cities);
         } else {
-            // 同屏已 ≥ 2 支 → 14 区文化轮转（兵力从高到低）
+            // 同屏已 ≥ 2 支 → 18 区文化轮转（区内随机取一座合格城）
             candidates = this.buildSpawnPlan(cities);
         }
 

@@ -101,6 +101,178 @@ export const HISTORICAL_REGIONS: HistoricalRegion[] = [
         elevMin: -160, elevMax: 200
     },
 
+    // === 撒哈拉系（古代自然沙漠，非现代沙化带） ===
+    {
+        id: 'sahara_west',
+        name: '撒哈拉西部',
+        type: 'desert',
+        center: [23.0, -8.0],
+        radii: [6.0, 8.0],
+        color: [230, 208, 150],  // 亮沙金
+        blendStrength: 0.75,
+        elevMin: 0, elevMax: 500
+    },
+    {
+        id: 'sahara_central',
+        name: '撒哈拉中部',
+        type: 'desert',
+        center: [24.0, 4.0],
+        radii: [5.0, 7.0],
+        color: [228, 206, 150],
+        blendStrength: 0.75,
+        elevMin: 200, elevMax: 600
+    },
+    {
+        id: 'libyan_desert',
+        name: '利比亚沙漠',
+        type: 'desert',
+        center: [25.0, 22.0],
+        radii: [5.0, 8.0],
+        color: [230, 208, 152],
+        blendStrength: 0.75,
+        elevMin: 0, elevMax: 500
+    },
+    {
+        id: 'arabian_desert_egypt',
+        name: '阿拉伯沙漠',
+        type: 'desert',
+        center: [26.0, 33.0],
+        radii: [2.5, 4.0],
+        color: [225, 203, 148],  // 尼罗河以东荒漠
+        blendStrength: 0.7,
+        elevMin: 100, elevMax: 900
+    },
+    {
+        id: 'danakil',
+        name: '达纳基尔',
+        type: 'desert',
+        center: [13.5, 41.0],
+        radii: [1.5, 2.5],
+        color: [220, 200, 150],  // 非洲之角低地荒漠
+        blendStrength: 0.65,
+        elevMin: -120, elevMax: 400
+    },
+
+    // === 阿拉伯半岛 ===
+    {
+        id: 'rub_al_khali',
+        name: '鲁卜哈利',
+        type: 'desert',
+        center: [21.0, 51.0],
+        radii: [4.0, 8.0],
+        color: [233, 212, 155],  // 红沙区亮沙
+        blendStrength: 0.8,
+        elevMin: 50, elevMax: 400
+    },
+    {
+        id: 'an_nafud',
+        name: '内夫得',
+        type: 'desert',
+        center: [28.5, 41.0],
+        radii: [2.5, 4.5],
+        color: [228, 202, 150],  // 北阿拉伯红沙
+        blendStrength: 0.7,
+        elevMin: 600, elevMax: 1100
+    },
+    {
+        id: 'syrian_desert',
+        name: '叙利亚沙漠',
+        type: 'desert',
+        center: [33.0, 38.5],
+        radii: [3.0, 5.0],
+        color: [218, 198, 148],  // 两河以西半荒漠
+        blendStrength: 0.65,
+        elevMin: 400, elevMax: 900
+    },
+
+    // === 伊朗高原 ===
+    {
+        id: 'dash-e_kavir',
+        name: '卡维尔盐漠',
+        type: 'desert',
+        center: [34.0, 55.0],
+        radii: [3.0, 5.5],
+        color: [222, 202, 152],  // 盐漠偏灰沙
+        blendStrength: 0.7,
+        elevMin: 400, elevMax: 900
+    },
+    {
+        id: 'dash-e_lut',
+        name: '卢特沙漠',
+        type: 'desert',
+        center: [30.5, 58.5],
+        radii: [2.0, 4.0],
+        color: [228, 206, 152],
+        blendStrength: 0.7,
+        elevMin: 200, elevMax: 800
+    },
+
+    // === 中亚（咸海/里海东岸） ===
+    {
+        id: 'karakum',
+        name: '卡拉库姆',
+        type: 'desert',
+        center: [39.5, 60.5],
+        radii: [3.0, 5.0],
+        color: [230, 208, 152],  // 黑沙洲沙海
+        blendStrength: 0.75,
+        elevMin: 0, elevMax: 300
+    },
+    {
+        id: 'kyzylkum',
+        name: '克孜勒库姆',
+        type: 'desert',
+        center: [42.0, 64.5],
+        radii: [3.0, 4.5],
+        color: [226, 204, 152],  // 红沙洲
+        blendStrength: 0.7,
+        elevMin: 100, elevMax: 400
+    },
+
+    // === 南亚 ===
+    {
+        id: 'thar',
+        name: '塔尔沙漠',
+        type: 'desert',
+        center: [27.0, 71.0],
+        radii: [2.5, 4.5],
+        color: [226, 204, 152],  // 印度河以东沙海
+        blendStrength: 0.75,
+        elevMin: 50, elevMax: 400
+    },
+
+    // === 中国西北/蒙古（17 世纪前确定存在的古代沙漠，现代沙化带不录） ===
+    {
+        id: 'gurbantünggüt',
+        name: '古尔班通古特',
+        type: 'desert',
+        center: [45.2, 87.5],
+        radii: [2.0, 4.0],
+        color: [226, 204, 152],  // 准噶尔盆地沙海
+        blendStrength: 0.7,
+        elevMin: 300, elevMax: 800
+    },
+    {
+        id: 'qaidam_gobi',
+        name: '柴达木戈壁',
+        type: 'desert',
+        center: [37.5, 95.5],
+        radii: [2.5, 4.5],
+        color: [205, 195, 160],  // 高原荒漠偏灰
+        blendStrength: 0.65,
+        elevMin: 2600, elevMax: 3300
+    },
+    {
+        id: 'gobi_altai',
+        name: '外阿尔泰戈壁',
+        type: 'desert',
+        center: [44.5, 103.5],
+        radii: [2.0, 4.0],
+        color: [202, 192, 162],  // 蒙古戈壁灰调
+        blendStrength: 0.6,
+        elevMin: 900, elevMax: 1700
+    },
+
     // === 湿地/古湖 ===
     {
         id: 'yunmeng',

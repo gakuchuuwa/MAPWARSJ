@@ -6497,7 +6497,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -28
         },
-        "/assets/GERMANIC/83876697-fe31-4502-8387-6c970089416b.png": {
+        "/assets/GERMANIC/__多余__GERMANIC_01.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 8

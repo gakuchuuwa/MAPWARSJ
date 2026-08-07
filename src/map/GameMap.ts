@@ -563,6 +563,11 @@ export class GameMap {
                         <b>🎨 海拔分层着色</b>
                     </label>
 
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#a9742a;margin-top:2px;margin-bottom:8px;">
+                        <input type="checkbox" id="chk-desert-coloring" checked> 
+                        <b>🏜️ 沙漠涂色</b>
+                    </label>
+
                     <hr style="margin:8px 0;width:100%;border:0;border-top:1px solid #eee;">
                     
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#333;margin-bottom:4px;">
@@ -739,6 +744,14 @@ export class GameMap {
                             chkElevColor.dispatchEvent(new Event('change'));
                         }
                     }
+                });
+            }
+
+            // 沙漠涂色开关：关闭时 Worker 不传历史区域，沙漠回到纯海拔着色，用于对比效果
+            const chkDesert = document.getElementById('chk-desert-coloring') as HTMLInputElement;
+            if (chkDesert) {
+                chkDesert.addEventListener('change', (e: any) => {
+                    this.hillshadeLayer?.setParams({ useDesertColoring: e.target.checked });
                 });
             }
 
