@@ -99,7 +99,8 @@ function resolveMarchTarget(
             marchPath,
             marchTargetId,
             deps.cityManager,
-            polylineOpts,
+            // 越城而走（str_21）跳过的城不选为行军段目标 → 军团绕开它继续走（2026-08-07）
+            { ...polylineOpts, skipCityIds: army.getSkipSiegeCityIds() },
         );
     }
     return marchTargetId;

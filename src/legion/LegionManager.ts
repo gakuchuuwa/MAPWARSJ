@@ -557,29 +557,41 @@ export class LegionManager {
         return this.siegeManager?.dequeueArmyFromThirdPartyWaiters?.(armyId) ?? false;
     }
 
-    public triggerSiege(army: Army, targetCity: City): void {
+    /**
+     * 触发攻城。返回 'siege' = 正常开战；'skipped' = 越城而走（str_21）触发，已跳过此城。
+     */
+    public triggerSiege(army: Army, targetCity: City): 'siege' | 'skipped' {
         if (!this.siegeManager) {
             console.warn('[LegionManager] SiegeManager not linked! Cannot trigger siege.');
-            return;
+            return 'siege';
         }
 
         if (!targetCity) {
             console.error(`[LegionManager] Invalid targetCity passed to triggerSiege.`);
-            return;
+            return 'siege';
         }
 
-        if (army.isDestroyed || army.getTroops() <= 0) return;
-        if (army.getIsInCombat()) return; // Already busy
-        if (this.siegeManager?.isArmyWaitingSiege(army.id)) return;
+        if (army.isDestroyed || army.getTroops() <= 0) return 'siege';
+        if (army.getIsInCombat()) return 'siege'; // Already busy
+        if (this.siegeManager?.isArmyWaitingSiege(army.id)) return 'siege';
+
+        // 越城而走（str_21）跳过的城：冷却期内绝不开战（2026-08-07 修）。
+        // 跳过后军团仍停在城 ZOC 内，ZOC 强制攻城路径（findHostileCityInZOC）每帧触发——
+        // 若不在此拦截，下一帧 90% 概率不跳、直接开战 =「脉冲越城而走，然后开战了」。
+        if (army.isSiegeSkipped(targetCity.id)) {
+            return 'skipped';
+        }
 
         if (targetCity.factionId === army.getFactionId()) {
             army.setTargetCity(null);
             army.stopMovement(true);
-            return;
+            return 'siege';
         }
 
-        // ── 威慑·越城而走：兵力劣势时概率跳过此城（统一入口，覆盖 ZOC/idle/路网等所有调用路径）──
-        if (generalHasStrategicEffect(army, 'skip_disadvantaged_siege')) {
+        // ── 威慑·越城而走：仅小城可跳（2026-08-07 主人定）──
+        // 险要（pass）挡在必经之路，跳过没意义必须打通；大/中城是要地，不跳则另选目标；
+        // 只有小城值得「绕开打不过的城」继续前进。脉冲只在成功跳过时显示（失败不显示）。
+        if (targetCity.type === 'small_city' && generalHasStrategicEffect(army, 'skip_disadvantaged_siege')) {
             const myTroops = army.getTroops();
             const enemyTroops = targetCity.troops ?? 0;
             if (myTroops < enemyTroops) {
@@ -589,7 +601,14 @@ export class LegionManager {
                     const pos = army.getPosition();
                     emitFollowedGeneralStrategicMapFx(army, 'skip_disadvantaged_siege', pos.lat, pos.lng, 'pulse');
                     army.setTargetCity(null);
-                    return;
+                    // 越城而走（2026-08-07 修）：标记跳过冷却 + 停步等重决策。
+                    // 此前只清 targetCity：战略目标/行军段目标还在 → 军团反复走回该城，
+                    // 10% 假跳 / 90% 还是打它，技能实际无效。现在该城 60s 内被
+                    // findFirstHostileAlongPolyline（逐段清障）/ buildExcludeTargetIds（选目标）排除，
+                    // 军团绕开它去打别的城——「绕开打不过的城」名副其实。
+                    army.markSiegeSkipped(targetCity.id);
+                    army.stopMovement?.(false);
+                    return 'skipped';
                 }
             }
         }
@@ -608,6 +627,7 @@ export class LegionManager {
         };
 
         this.siegeManager.startSiegeWithArmy(army, siegeData);
+        return 'siege';
     }
 
     /**
