@@ -1015,8 +1015,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     gulaishi: { generalId: 'gulaishi_aibu', generalName: '艾布苏富扬', portrait: '/assets/WEST_ASIA/gulaishi_aibusufuyang.png' },
     xierwan: { generalId: 'xierwan_farukusha', generalName: '法鲁克沙', portrait: '/assets/WEST_ASIA/xierwan_falukesha.png' },
     xiemian: { generalId: 'xiemian_xiemianwang', generalName: '齐贝尔', portrait: '/assets/WEST_ASIA/xiemian_xiemianwang.png' },
-    yidier: { generalId: 'yidier_yidiewang', generalName: '约瑟夫', portrait: '/assets/STEPPE/yidier_yidierwang.png' },
-    salai: { generalId: 'salai_salaiwang', generalName: '埃迪古', portrait: '/assets/STEPPE/salai_salaiwang.png' },
+    yidier: { generalId: 'yidier_yidiewang', generalName: '约瑟夫', portrait: '/assets/STEPPE/yidier_yuesefu.png' },
+    salai: { generalId: 'salai_salaiwang', generalName: '埃迪古', portrait: '/assets/STEPPE/salai_aidigu.png' },
     mangshi: { generalId: 'mangshi_mangshiwang', generalName: '恰格里', portrait: '/assets/CENTRAL_ASIA/mangshi_mangewang.png' },
 
 };
