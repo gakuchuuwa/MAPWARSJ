@@ -23,6 +23,8 @@ alwaysApply: false
 
 录入顺序只能是：**据点 → 势力 → 武将 → 精锐**，不可倒推。
 
+武将显示名另见 **`.cursor/rules/general-name-city-fit.mdc`**（契合据点、知名优先、全局防重、≤5 字）。
+
 ---
 
 ## 铁律 B：武将/精锐只能同时出现在一个地方
