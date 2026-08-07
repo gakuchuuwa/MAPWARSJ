@@ -219,13 +219,18 @@ export class RecruitmentSystem {
         const priorityOf = (c: SpawnCandidate): number => {
             const general = getCityAnchoredGeneral(c.city.id);
             const profile = general ? getGeneralProfile(general.generalId) : null;
-            // 名将 0 / 普将 1 / 无将 2
-            const tier = profile?.tier === 'famous' ? 0 : 1;
-            // 擅攻/双行 0 / 擅守 1 / 无将 2
-            const style = profile?.attackStyle === 'defense' ? 1 : 0;
-            // 造势 0 / 借势 1 / 逆势 2 / 无将 2
-            const apt = profile?.aptitude === 'create' ? 0
-                : profile?.aptitude === 'leverage' ? 1 : 2;
+            // 无将（未录入档案）一律殿后：tier 取 2，整档 200+ 排在所有有将档之后。
+            // [2026-08-07 修] 原写法 `profile?.tier === 'famous' ? 0 : 1` 把无将当普将（tier=1），
+            // 又因 attackStyle 判空落到「擅攻」(style=0)，实际排进 102 档、插在 110/111/112 前面，
+            // 与本注释「殿后」矛盾。当前 922 城全部有将走不到，但新增未录入将的城会插队。
+            if (!profile) return 222;
+            // 名将 0 / 普将 1
+            const tier = profile.tier === 'famous' ? 0 : 1;
+            // 擅攻/双行 0 / 擅守 1
+            const style = profile.attackStyle === 'defense' ? 1 : 0;
+            // 造势 0 / 借势 1 / 逆势 2
+            const apt = profile.aptitude === 'create' ? 0
+                : profile.aptitude === 'leverage' ? 1 : 2;
             return tier * 100 + style * 10 + apt;
         };
 
