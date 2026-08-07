@@ -707,6 +707,16 @@ _本文件以中文写作，方便项目维护者快速理解。日后版本若�
 
 > **主人定调**：军团选进攻目标走**干净逻辑**——锚点 + 直连路方向池。此前叠加的复杂层（行军惯性、锚点迟滞、回头路检查）**已全部删除，禁止恢复**。
 
+**决策顺序（`FindTarget`，无目标时每帧执行）**：
+
+| 序 | 环节 | 规则 |
+|----|------|------|
+| ① | **远征锁目标** | `expeditionTargetCityId` 非空 → 不重选、不回师，直至占领目标或全军覆没 |
+| ② | **老家失守 → 收复** | `resolveRecaptureTarget` 最高优先：本军出发点被夺 → 先打回老家，打完再继续 |
+| ③ | **野战追击** | 0.8°(≈89km) 内敌军团 → 优先追击（只**挂起**城目标，结束后恢复） |
+| ④ | **选锚点** | 见下表 |
+| ⑤ | **选目标** | `pickTarget`，见下表 |
+
 **锚点规则**：
 
 | 兵力 | 锚点 | 语义 |
@@ -721,9 +731,26 @@ _本文件以中文写作，方便项目维护者快速理解。日后版本若�
 3. 否则池内**均匀随机抽一座**（多军团自然分散，不扎堆同一城）
 4. 池空（锚点直连均无敌城）→ 兜底「从锚点出发道路距离最近的敌城」取最近 3 座随机
 
-**保留的附加行为（行为树层，非目标选择）**：远征锁目标（`expeditionTargetCityId` 非空不重选）、老家失守→收复（`resolveRecaptureTarget` 最高优先）、野战追击优先于攻城（0.8° 内敌军团；追击只**挂起**城目标，结束后恢复）。
+**目标失效处理（`HasTarget`，有目标时每帧检查）**：
 
-**代码锚点**：`FindTarget`（`src/ai/bt/LegionBehaviors.ts`）/ `TargetEvaluator.pickTarget` + `buildDirectionalPool`（`src/ai/TargetEvaluator.ts`）。
+- 目标城**被己方占领/消失** → 12s 冷却 + 清目标重抽（`friendly_or_missing`）
+- 目标城在**越城而走冷却**中（60s）→ 清目标重抽别的城（`skip_siege`）
+- 途中遇可打敌军团（追击走廊：敌距 ≤ 城距 ×1.0 且夹角 ≤ 45°）→ 挂起城目标改追击，结束后恢复原城
+
+**冷却机制**：
+
+| 冷却 | 时长 | 触发 | 效果 |
+|------|------|------|------|
+| 失败冷却 | 12s | 寻路失败 / 目标失效 | 该城 12s 内不再被选为目标 |
+| 越城而走冷却 | 60s | str_21 触发跳过 | 该城 60s 内不再被选为目标/行军段目标 |
+
+**越城而走（str_21 威慑技）**：
+
+- 触发条件：目标城是**小城** + 我方兵力劣势 + 10% 概率（**成功跳过才显示脉冲**，失败不显示）
+- 效果：跳过该城 → 60s 冷却 → 逐段清障绕开（hop 选下一座，继续去原目标）或重抽别的城
+- **险要/中城/大城不触发**（险要挡在必经之路必须打通，2026-08-07 主人定）
+
+**代码锚点**：`FindTarget` / `HasTarget` / `TriggerSiege`（`src/ai/bt/LegionBehaviors.ts`）、`TargetEvaluator.pickTarget` + `buildDirectionalPool`（`src/ai/TargetEvaluator.ts`）、`resolveForwardAnchor` / `resolveRecaptureTarget`（`src/ai/TargetAnchorResolver.ts`）、越城而走冷却 `Army.skipSiegeUntil`（`src/legion/Army.ts`）。
 
 **已删除（2026-08-07，勿恢复）**：行军惯性（`pickByMarchInertia`）、锚点迟滞（`resolveStickyAnchor` / `marchAnchorCityId`）、方向池回头路检查（0.9 倍判据）。
 
