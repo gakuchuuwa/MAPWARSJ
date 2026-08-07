@@ -78,13 +78,13 @@ export class GameConfig {
         CORPSE_FADE_OUT_MS: 5000,
         /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms) */
         FOLLOW_SWITCH_DELAY_MS: 5000,
-        /** 各类型据点最低出兵阈值（armySize = 驻军 × 0.9，须 ≥ 此值才可出兵）。文化中心优先：若据点属 REGION_CENTERS，用 region_center 阈值覆盖。 */
+        /** 各类型据点最低出兵阈值（armySize = 驻军 × 0.9，须 ≥ 此值才可出兵）。2026-08-07 主人定：全部统一 20000。 */
         CITY_MIN_SPAWN_TROOPS: {
             small_city: 20000,
             medium_city: 20000,
             big_city: 20000,
-            pass: 40000,
-            region_center: 50000,
+            pass: 20000,
+            region_center: 20000,
         } as const,
         /** 可出兵据点：大城、中城、小城、关隘（关隘守城仍有 PASS_GARRISON_MULT 加成） */
         SPAWN_CITY_TYPES: ['big_city', 'medium_city', 'small_city', 'pass'] as const,

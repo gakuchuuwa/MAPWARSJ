@@ -901,7 +901,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'heisha_d': 'city_temermen',
 'xining': 'city_mahaitai',
 'kalun': 'city_gasinaoer',
-    'pinghai': 'city_piaoyujin',
+'pinghai': 'city_piaoyujin',
     'guangping': 'city_donghai',
 'nanzhong': 'city_wanwen',
 'yueyi': 'city_yuegui',

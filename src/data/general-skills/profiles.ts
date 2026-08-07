@@ -2024,7 +2024,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    pinghai_laihuer: { generalId: 'pinghai_laihuer', tier: 'famous', tacticalSkillId: 'ts_217', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_217', atkAdvantageSkillId: 'ts_525', atkBalanceSkillId: 'ts_020', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_403', defDisadvantageSkillId: 'ts_294', aptitude: 'create' , attackStyle: 'attack'},
+    pinghai_laihuer: { generalId: 'pinghai_laihuer', tier: 'famous', tacticalSkillId: 'ts_525', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_525', atkBalanceSkillId: 'ts_020', atkDisadvantageSkillId: 'ts_217', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_403', defDisadvantageSkillId: 'ts_294', aptitude: 'create', attackStyle: 'attack' },
 
 
 

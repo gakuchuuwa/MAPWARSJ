@@ -473,7 +473,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'taiping': '太平',
     'dacheng': '大成',
 'pingnan': '平南',
-    'pinghai': '平海',
+'pinghai': '平海',
     'qianhui': '回军',
 'miao_qing': '苗军',
     'tuoming': '清真',
