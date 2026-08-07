@@ -768,8 +768,15 @@ export const TriggerSiege = new Action('TriggerSiege', (ctx) => {
     const strategicId = getStrategicTargetId(ctx);
     const isMarchHop = !!(strategicId && targetCity.id !== strategicId);
 
-    ctx.legionManager.triggerSiege(ctx.army, targetCity);
+    const result = ctx.legionManager.triggerSiege(ctx.army, targetCity);
     ctx.army.setTargetCity(null);
+
+    // 越城而走（str_21）触发：军团已停步 + 该城进 60s 跳过冷却。
+    // 战略目标处理交给 HasTarget 兜底（hop 场景保留原目标、逐段清障绕开；
+    // 终极场景由 HasTarget 的 skip_siege 分支清目标重抽），此处不再重复判断。
+    if (result === 'skipped') {
+        return BTStatus.SUCCESS;
+    }
 
     if (isMarchHop) {
         return BTStatus.SUCCESS;

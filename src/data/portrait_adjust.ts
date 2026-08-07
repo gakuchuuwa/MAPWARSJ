@@ -3903,7 +3903,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/WEST_ASIA/xierwan_falukesha.png": {
-            "scale": 1.08,
+            "scale": 1.12,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -4078,7 +4078,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/WEST_ASIA/jialedi_nibujianisa.png": {
-            "scale": 1.12,
+            "scale": 1.14,
             "offsetX": 0,
             "offsetY": -6
         },
@@ -4258,7 +4258,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/WEST_ASIA/sumeier_jierjiameishen.png": {
-            "scale": 1,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 29
         },
