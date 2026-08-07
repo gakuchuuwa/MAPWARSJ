@@ -240,6 +240,8 @@ export const CITY_EXCLUSIVE_ICON_BY_ID: Record<string, string> = {
     city_gaodacheng: '/cities/CENTRAL_ASIA/0gaodacheng.png',
     city_wangshecheng: '/cities/CENTRAL_ASIA/0wangshecheng.png',
     city_alepo: '/cities/WEST_ASIA/0alepo.png',
+    city_ake: '/cities/WEST_ASIA/0aka.png',
+    ake: '/cities/WEST_ASIA/0aka.png',
     city_yelusaleng: '/cities/WEST_ASIA/0yelusaleng.png',
     yelusaleng: '/cities/WEST_ASIA/0yelusaleng.png',
     city_maidina: '/cities/WEST_ASIA/0maidina.png',

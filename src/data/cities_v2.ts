@@ -2931,7 +2931,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_damasikusi', name: '大马士革', factionId: 'womaya', lat: 33.51, lng: 36.29, type: 'big_city', troops: 30000, region: 'WEST_ASIA', note: '倭马亚都，西亚千年都会' },
 
     { id: 'city_yelusaleng', name: '耶路撒冷', factionId: 'xibolai', lat: 31.77, lng: 35.21, type: 'small_city', troops: 30000, region: 'WEST_ASIA' },
-    { id: 'city_ake', name: '阿卡', factionId: 'shengdian_qishi', lat: 32.93, lng: 35.08, type: 'pass', troops: 30000, region: 'WEST_ASIA', cityImage: '/cities/WEST_ASIA/0aka.png', note: '十字军王国都城要塞，圣殿骑士团总部（1187-1291），1291阿卡陷落' },
+    { id: 'city_ake', name: '阿卡', factionId: 'shengdian_qishi', lat: 32.93, lng: 35.08, type: 'pass', troops: 20000, region: 'WEST_ASIA', mirror: true },
     { id: 'city_mengfeisi', name: '孟菲斯', factionId: 'aiji', lat: 29.85, lng: 31.25, type: 'small_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_wasaite', name: '瓦塞特', factionId: 'dibisi', lat: 25.7, lng: 32.64, type: 'small_city', troops: 30000, region: 'WEST_ASIA' },
     { id: 'city_yalishanda', name: '亚历山大', factionId: 'tuolemi', lat: 31.2, lng: 29.91, type: 'big_city', troops: 30000, region: 'WEST_ASIA', mirror: true },

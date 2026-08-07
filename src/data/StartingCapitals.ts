@@ -129,7 +129,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'moerdaweiya': 'city_yaxi',
   'walajiyia': 'city_teergewishite',
   'tiaodun_qishi': 'city_kenisibao',
-  'shengdian_qishi': 'city_ake',
+'shengdian_qishi': 'city_ake',
   'maerta_qishi': 'city_malta',
   'danmai': 'city_gebenhagen',
   'ruidian_si': 'city_sidedegelmo',
