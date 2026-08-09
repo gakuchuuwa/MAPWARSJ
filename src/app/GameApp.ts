@@ -36,6 +36,7 @@ import { RebellionSystem } from '../systems/RebellionSystem';
 import { GameUIManager } from './GameUIManager';
 import { GameInputManager } from './GameInputManager';
 import { CombatUI } from '../ui/CombatUI'; // [NEW]
+import { BattleSceneLayer } from '../ui/BattleSceneLayer'; // [2026-08-09] 独立战斗场景（空壳）
 import { GameTimeHUD } from '../ui/GameTimeHUD';
 import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
 import { isRegionCenter, REGION_LABELS, type RegionType } from '../systems/RegionSystem';
@@ -107,6 +108,7 @@ export class GameApp {
     private uiManager!: GameUIManager;
     private inputManager!: GameInputManager;
     public combatUI!: CombatUI; // [NEW]
+    public battleScene!: BattleSceneLayer; // [2026-08-09] 独立战斗场景（空壳）：上层画布 + 下层冻结地图背景
     private gameTimeHUD!: GameTimeHUD;
     public brawlFeedPanel!: BrawlFeedPanel; // 远征播报（ExpeditionUI/行为树）经 window.game 调用
     public roadRenderer!: SimpleVectorRoadRenderer;
@@ -299,6 +301,10 @@ export class GameApp {
             this.combatUI = new CombatUI();
             // 游戏内立绘校正（战斗中 F2）需要暂停推演
             this.combatUI.pauseHook = this.timeSystem;
+
+            // [2026-08-09] 独立战斗场景（空壳）：战斗触发时地图冻住 + 上层画布两个色块。
+            // 挂点在 GameAppCombatHooks（跟拍军团参与的 1v1/区域战 开始/结束）。
+            this.battleScene = new BattleSceneLayer();
 
             this.gameTimeHUD = new GameTimeHUD();
             this.gameTimeHUD.init();

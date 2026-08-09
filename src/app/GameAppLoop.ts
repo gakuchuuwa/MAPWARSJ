@@ -139,7 +139,9 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             perfMonitor.startTimer('camera');
             const legionManager = app.historicalEventManager?.getLegionManager();
             const followedId = app.cameraFollowUI.getFollowedArmyId();
-            if (followedId && legionManager) {
+            // [2026-08-09 独立战斗场景空壳] 场景激活 → 地图冻结：不自动切 zoom、不跟拍（下层地图当静止背景）
+            const sceneActive = !!app.battleScene?.isActive();
+            if (followedId && legionManager && !sceneActive) {
                 const lMap = app.map.getLeafletMap();
                 const followedArmy = legionManager.getLegionById(followedId);
 
