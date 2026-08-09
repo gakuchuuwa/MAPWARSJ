@@ -4003,7 +4003,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/WEST_ASIA/fulijiya_maidasi.png": {
-            "scale": 1.01,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 21
         },

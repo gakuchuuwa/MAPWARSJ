@@ -827,17 +827,16 @@ export class CameraFollowUI {
         return GENERAL_PROFILES[gid]?.tier === 'famous';
     }
 
-    /** 跟随优先级：① 名将 ② 兵力（高者优先） */
-    private compareLegionsForFollowPriority(a: any, b: any): number {
-        const famousA = this.isFamousGeneralLegion(a) ? 1 : 0;
-        const famousB = this.isFamousGeneralLegion(b) ? 1 : 0;
-        if (famousB !== famousA) return famousB - famousA;
-        return (b.getTroops?.() || 0) - (a.getTroops?.() || 0);
-    }
-
+    /**
+     * [2026-08-09 主人定] 自动跟随：名将优先保留，同档随机。
+     * 开局兵力全相同 → "兵力高者优先"恒等无意义（此前导致总跟第一支生成的军团，如莫斯科）。
+     * 实现：名将池非空 → 名将池随机取一；否则全场随机取一。不走 sort（随机比较器有风险）。
+     */
     private pickBestAutoFollowLegion(armies: any[]): any | null {
         if (armies.length === 0) return null;
-        return [...armies].sort((a, b) => this.compareLegionsForFollowPriority(a, b))[0];
+        const famous = armies.filter((a) => this.isFamousGeneralLegion(a));
+        const pool = famous.length > 0 ? famous : armies;
+        return pool[Math.floor(Math.random() * pool.length)];
     }
 
     private formatTroops(n: number): string {
