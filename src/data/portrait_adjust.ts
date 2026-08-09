@@ -6143,9 +6143,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -21
         },
         "/assets/STEPPE/__多余__STEPPE_01.png": {
-            "scale": 1.07,
+            "scale": 0.94,
             "offsetX": 0,
-            "offsetY": -24
+            "offsetY": -32
         },
         "/assets/STEPPE/__闲置__HEXI_11.png": {
             "scale": 1,
@@ -6512,12 +6512,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -19
         },
-        "/assets/STEPPE/5901ceca-947a-4174-b69d-721ae82b51be.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -32
-        },
-        "/assets/STEPPE/d0e425d7-ac93-489a-b780-84a2e77056fc.png": {
+        "/assets/STEPPE/__多余__STEPPE_02.png": {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -19
@@ -6551,11 +6546,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.25,
             "offsetX": -23,
             "offsetY": 18
-        },
-        "/assets/liuhan/__多余__liuhan_02.png": {
-            "scale": 1.1,
-            "offsetX": 0,
-            "offsetY": -5
         }
     },
     "folderGuides": {
