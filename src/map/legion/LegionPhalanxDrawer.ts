@@ -591,8 +591,7 @@ export class LegionPhalanxDrawer {
         cultureSlots: string[] | null = null,
         unitAssetsId: string = 'light_infantry',
         isPlayer: boolean = false, // [NEW] Identify plain player units
-        cultureScales: number[] | null = null, // [NEW] Custom scales
-        microFormation: boolean = false // [P1 千军万马] zoom13 微观：9×9 大方阵（81 精灵）
+        cultureScales: number[] | null = null // [NEW] Custom scales
     ): void {
         if (!this.isLoaded) return;
 
@@ -602,12 +601,6 @@ export class LegionPhalanxDrawer {
         let gridSize = 3; // Default 3x3
         let isTriangleFormation = false;
 
-        // [P1 千军万马] zoom13 微观：9×9 大方阵（81 精灵）覆盖 3×3/123，走统一主兵种（P1b 再分层）
-        if (microFormation) {
-            count = 81;
-            gridSize = 9;
-            isTriangleFormation = false;
-        } else
         // Priority 1: Use cultureSlots length (from editor / CultureFormations.ts)
         if (cultureSlots && cultureSlots.length > 0) {
             count = cultureSlots.length;
@@ -667,9 +660,8 @@ export class LegionPhalanxDrawer {
 
         // Spacing based on estimated width
         // [3x3 TUNED] Balanced spacing - not too dense, not too loose
-        // [P1 千军万马] 微观密集档：阵宽 ~360px（9 列 × 40px 中心距），P1a 实测微调
-        const spacingX = microFormation ? renderH * 1.2 : estRenderW * 0.50;
-        const spacingY = microFormation ? renderH * 1.35 : renderH * 0.42;
+        const spacingX = estRenderW * 0.50;
+        const spacingY = renderH * 0.42;
 
         // --- 2. UPDATE STATE ---
         // 全局 DEATH（整军覆灭尸体）：对齐水军——不因 isFighting=false 走和平补员/清态；

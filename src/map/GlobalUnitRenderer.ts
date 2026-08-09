@@ -1063,19 +1063,13 @@ export class GlobalUnitRenderer {
                         ? rawType
                         : 'mixed';
 
-                // [P1 千军万马] zoom13 微观：野战 + 带将（P4 自动飞 13 才严格双将判定，渲染层宽松版）
-                // ⚠️ __microForce 是 P1a 临时验证开关（强制任意带将军团微观化，方便看效果），验证完删除
-                const microForce = (window as any).__microForce === true;
-                const microFormation = currentZoom >= 13 && !!unit.generalId && (unit.currentBattleType === 'field' || microForce);
-                const drawScale = microFormation ? 0.5 : scale * (unit.previewScale ?? 1);
-
                 LegionPhalanxDrawer.draw(
                     unit.id || 'unknown',
                     ctx,
                     { x: centerPoint.x, y: centerPoint.y },
                     state,
                     directionIndex,
-                    drawScale,
+                    scale * (unit.previewScale ?? 1),
                     troops,
                     Date.now(),
                     false,
@@ -1093,8 +1087,7 @@ export class GlobalUnitRenderer {
                     unit.cultureSlots || null,
                     assetsId,
                     unit.isPlayer || false,
-                    unit.cultureScales || null,
-                    microFormation
+                    unit.cultureScales || null
                 );
             }
 
