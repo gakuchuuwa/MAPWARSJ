@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let mapReady = false;
             let zcOff = false;
+            let followed = false;
             let tries = 0;
 
             const tick = (): void => {
@@ -67,7 +68,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     zcOff = true;
                     console.info('[micro] 已关闭 ZoomController 自动缩放');
                 }
-                if (leaflet.getZoom() < MICRO_ZOOM) {
+                // zoom 13 视野只有约 30km，镜头不跟人就只能看到空地——
+                // 军团散布全图，光把缩放锁到 13 是看不到方阵的。跟到最大军团为止。
+                if (!followed) {
+                    const lm = (app as any).aiController?.legionManager;
+                    const hasArmies = (lm?.armies?.size ?? 0) > 0;
+                    if (hasArmies && app.cameraFollowUI?.followLargestLegion) {
+                        app.cameraFollowUI.followLargestLegion();
+                        if (lm.followedLegionId) {
+                            followed = true;
+                            console.info('[micro] 已跟拍最大军团：', lm.followedLegionId);
+                        }
+                    } else if (tries % 10 === 0) {
+                        console.warn(`[micro] 等待军团生成…（第 ${tries} 次，当前 ${lm?.armies?.size ?? 0} 支）`);
+                    }
+                }
+                // 硬锁镜头到被跟军团：不依赖 tickFollowCamera 的平滑逻辑，
+                // 保证 zoom 13 下一定对准有兵的地方（临时开关，图省事不图优雅）。
+                const lmNow = (app as any).aiController?.legionManager;
+                const followedArmy = lmNow?.followedLegionId
+                    ? Array.from(lmNow.armies?.values?.() ?? []).find(
+                        (a: any) => a.id === lmNow.followedLegionId,
+                    ) as any
+                    : null;
+                const pos = followedArmy?.getPosition?.();
+                if (pos && Number.isFinite(pos.lat) && Number.isFinite(pos.lng)) {
+                    leaflet.setView([pos.lat, pos.lng], MICRO_ZOOM, { animate: false });
+                } else if (leaflet.getZoom() < MICRO_ZOOM) {
                     leaflet.setView(leaflet.getCenter(), MICRO_ZOOM, { animate: false });
                 }
             };

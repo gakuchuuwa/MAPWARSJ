@@ -8,9 +8,11 @@
  * 目标选择（A/B 相同）：
  * 1. 候选池 = 锚点每条直连路的最近 1 座敌城（方向池；无回头路检查——打下的城即变己方，
  *    朝老家方向的敌城同样是扩张目标）
- * 2. 池内有「全图据点最多的势力」的城 → 必打（反雪球，主人 2026-08-05 定，防最强势力滚雪球）
- * 3. 否则池内均匀随机抽一座
- * 4. 池空（锚点直连均无敌城）→ 回退「从锚点出发道路距离最近的敌城」取最近 N 随机
+ * 2. 沿推进方向过滤（2026-08-09）：锚点 = 老家（兵力 < 2 万）且军团不在老家时，方向池
+ *    只保留「从锚点出发的最短路径经过军团所在城」的目标——不绕回老家换方向
+ * 3. 池内有「全图据点最多的势力」的城 → 必打（反雪球，主人 2026-08-05 定，防最强势力滚雪球）
+ * 4. 否则池内均匀随机抽一座
+ * 5. 池空（锚点直连均无敌城）→ 回退「从锚点出发道路距离最近的敌城」取最近 N 随机
  */
 import { City } from '../types/core';
 import { GameConfig } from '../config/GameConfig';
@@ -26,6 +28,12 @@ export interface TargetScore {
 export interface TargetEvaluateOptions {
     /** 忽略目标（例如刚失败进入冷却的城） */
     excludeTargetIds?: Set<string>;
+    /**
+     * 军团当前位置最近城（路网城）。当锚点 = 老家（兵力 < 2 万）且军团已在前哨
+     * （刚打完城/在路上）时，方向池只保留「从锚点出发的最短路径经过此城」的目标
+     * —— 即沿当前推进方向继续蚕食，不绕回老家换方向（2026-08-09 主人拍板）。
+     */
+    armyStandCityId?: string;
 }
 
 export class TargetEvaluator {
@@ -63,6 +71,26 @@ export class TargetEvaluator {
         if (pool.length === 0) {
             const poolSize = Math.max(1, GameConfig.AI.TARGET_NEAR_POOL);
             pool = reachable.slice(0, Math.min(poolSize, reachable.length));
+        }
+
+        // [2026-08-09 主人拍板] 沿推进方向过滤（统一判据，覆盖兵力两档）：
+        //   方向池目标须「从锚点出发的最短路径（findCityPath）经过军团所在城」= 沿当前推进
+        //   方向继续蚕食；且当锚点 ≠ 老家（兵力 ≥ 2 万，锚点 = 刚打下的前线城）时，路径
+        //   不得绕经老家——否则打完城后可能抽中「先回己方城再出去」的方向（实测：雅典为
+        //   锚点时萨洛尼卡路径 = 雅典→底比斯→萨洛尼卡，~20% 概率绕回老家）。
+        //   <2 万（锚点 = 老家）时「经过老家」= 起点本身恒真，判据自然退化为仅查推进方向。
+        //   过滤后池空 → 退回原方向池，保证有目标可选。
+        const standCityId = options?.armyStandCityId;
+        if (standCityId && pool.length > 1) {
+            const kept: TargetScore[] = [];
+            for (const s of pool) {
+                const path = roadRegistry.findCityPath(anchorCityId, s.targetId);
+                if (!path) continue;
+                const throughStand = path.includes(standCityId);
+                const throughHome = path.includes(homeCityId);
+                if (throughStand && (anchorCityId === homeCityId || !throughHome)) kept.push(s);
+            }
+            if (kept.length > 0) pool = kept;
         }
 
         // 枪打出头鸟（反雪球）：候选池（方向池，军团挨着的 2-3 座可选城）里有全图据点最多的势力 → 必打它。

@@ -2198,7 +2198,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/zhaosong/chaozhou_d_zhangshijie.png": {
-            "scale": 1.25,
+            "scale": 1.19,
             "offsetX": 0,
             "offsetY": 25
         },
@@ -3518,7 +3518,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/yingqin/nanyue_zhaotuo.png": {
-            "scale": 0.98,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": -42
         },
@@ -5713,7 +5713,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -21
         },
         "/assets/SLAVIC/qiernigeweifu_gongguo_musidi.png": {
-            "scale": 0.97,
+            "scale": 0.95,
             "offsetX": 0,
             "offsetY": -19
         },
@@ -5733,7 +5733,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/SLAVIC/luosi_yaluosilafu.png": {
-            "scale": 1.13,
+            "scale": 1.15,
             "offsetX": 0,
             "offsetY": 10
         },
