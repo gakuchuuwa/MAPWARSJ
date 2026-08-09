@@ -550,14 +550,14 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     // 锚点规则（2026-08-07 定稿）：
     //   规则 A（兵力 < 2 万）：锚点 = 本军出发点，向外蚕食本城周边直连敌城。
     //   规则 B（兵力 ≥ 2 万）：锚点 = 离军团道路距离最近的前线己方城（打完的城自动前移锚点）。
-    const armyPos = ctx.army.getPosition();
-    const standCityId = roadRegistry.getNearestCityId(armyPos.lat, armyPos.lng);
     const useHomeAnchor = ctx.army.getTroops() < GameConfig.LEGION.HOME_ANCHOR_TROOP_THRESHOLD;
     let anchorId: string;
     if (useHomeAnchor) {
         anchorId = originCityId;
     } else {
         // 锚点按「军团所在路网城」出发的道路距离选，隔海飞地不会被误选（见 resolveForwardAnchor）。
+        const armyPos = ctx.army.getPosition();
+        const standCityId = roadRegistry.getNearestCityId(armyPos.lat, armyPos.lng);
         const roadDistances = standCityId
             ? roadRegistry.getRoadDistancesKmFrom(standCityId)
             : undefined;
@@ -575,7 +575,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         anchorId,
         originCityId,
         ctx.cityManager.getCities(),
-        { excludeTargetIds, armyStandCityId: standCityId ?? undefined }
+        { excludeTargetIds }
     );
 
     if (!picked) {
