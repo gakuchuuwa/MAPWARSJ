@@ -5848,9 +5848,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/STEPPE/nuogai_ounasihan.png": {
-            "scale": 1.18,
-            "offsetX": 10,
-            "offsetY": 2
+            "scale": 1.3,
+            "offsetX": 5,
+            "offsetY": 1
         },
         "/assets/STEPPE/bashekeer_kalasakaer.png": {
             "scale": 1.16,
@@ -6133,7 +6133,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/STEPPE/qincha_baqiman.png": {
-            "scale": 1.1,
+            "scale": 1.12,
             "offsetX": 0,
             "offsetY": -3
         },
@@ -6509,11 +6509,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/STEPPE/__闲置__STEPPE_71.png": {
             "scale": 1,
-            "offsetX": 0,
-            "offsetY": -19
-        },
-        "/assets/STEPPE/__多余__STEPPE_02.png": {
-            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -19
         },

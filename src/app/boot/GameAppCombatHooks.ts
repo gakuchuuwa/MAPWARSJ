@@ -15,6 +15,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         if (!isInvolved) return;
         gameLog('startup', '⚔️ [GameApp] Battle Started (followed army involved) - showing Combat UI');
         app.combatUI.show(battle);
+        // [2026-08-09 独立战斗场景空壳] 战斗开始 → 进场景（地图冻结 + 上层画布）
+        app.battleScene?.enter();
     };
 
 
@@ -38,6 +40,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         );
         const dur = battleField?.targetDuration ?? 17;
         const scale = app.timeSystem.getSpeed();
+        // [2026-08-09 独立战斗场景空壳] 区域战开始 → 进场景（地图冻结 + 上层画布）
+        app.battleScene?.enter();
         try {
             app.combatUI.showRegional(
                 attackers,
@@ -61,6 +65,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         if (!followedId || !app.combatUI.isRegionalVisible()) return;
         const oursEnded = endedFields.some((bf) => bf.hasParticipant(followedId));
         if (!oursEnded) return;
+        // [2026-08-09 独立战斗场景空壳] 战斗结束 → 退场景（淡出后恢复地图）
+        app.battleScene?.exit();
         app.combatUI.notifyRegionalBattlesEnded(endedFields);
     };
 
