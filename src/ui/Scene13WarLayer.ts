@@ -233,7 +233,7 @@ const ARROW_DUR = 0.42;
  */
 const ARROW_SCALE = 0.7;
 /**
- * 每方同屏人数上限（精灵，1 = 10 兵）。满了就停出兵，**死一个补一个**。
+ * 每方同屏人数上限（精灵，1 = SPRITE_TROOPS 兵）。满了就停出兵，**死一个补一个**。
  * 🔴 主人 2026-08-11「双方兵力会在中间形成拥挤」的解法。
  *    根因是出兵速度 > 死人速度：出兵口按固定间隔一直吐人，前线只有最前面几十个够得着敌人，
  *    后面全堵着，越堵越厚。设上限后前线厚度自动稳定，不会堵成一坨。
@@ -242,6 +242,14 @@ const ARROW_SCALE = 0.7;
  *    调大 = 战线更厚更挤，调小 = 更稀疏、仗打得更久。
  */
 const FIELD_CAP = 500;
+/**
+ * 1 精灵 = 多少兵（2026-08-13：10 → 20，修「三万兵演出 168s 超 120s 看门狗」）。
+ * 🔴 只改总量语义，**画面不变**：同屏上限 FIELD_CAP=500 精灵不动 → 同屏密度一模一样，
+ *    只是总池子 3000→1500 精灵、增援批次减半 → 战斗时长 168s→90s（1:20 实测，留 25% 余量）。
+ *    不碰出兵速率、不碰打口系数、不碰引擎。回写兵力的乘数（getLiveTroops 等）用本常数。
+ *    别调 1:30（池子 1000 太小，对称性难打破，实测有死锁种子）。
+ */
+const SPRITE_TROOPS = 20;
 /**
  * 成批增援（2026-08-11 主人定，取代原来「一个一个补」）。
  * 🔴 一个一个补的毛病：双方速率一样、损失立刻被填平，谁也推不动谁 ——
@@ -641,7 +649,7 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 演出的实时兵力（人，不是精灵）：场上活着的 + 出兵口没出的，1 精灵 = 10 兵。
+     * 演出的实时兵力（人，不是精灵）：场上活着的 + 出兵口没出的，1 精灵 = SPRITE_TROOPS 兵。
      * 供战斗面板显示用 —— 13 期间引擎被冻结，`unit.troops` 是不动的，
      * 面板不接这里就会出现「屏幕上人一直在死、血槽数字纹丝不动」（主人 2026-08-11 提）。
      */
@@ -652,7 +660,7 @@ export class Scene13WarLayer {
         const n = [0, 0];
         for (const sp of this.spawns) n[sp.f] += Math.max(0, sp.pool);
         for (const m of this.men) if (m.hp > 0) n[m.f]++;
-        return { attacker: Math.round(n[0] * 10), defender: Math.round(n[1] * 10) };
+        return { attacker: Math.round(n[0] * SPRITE_TROOPS), defender: Math.round(n[1] * SPRITE_TROOPS) };
     }
 
     /**
@@ -661,8 +669,8 @@ export class Scene13WarLayer {
      */
     public getInitialTroops(): { attacker: number; defender: number; total: number } | null {
         if (!this.active && !this.lingering) return null;
-        const a = Math.round(this.initPool[0] * 10);
-        const d = Math.round(this.initPool[1] * 10);
+        const a = Math.round(this.initPool[0] * SPRITE_TROOPS);
+        const d = Math.round(this.initPool[1] * SPRITE_TROOPS);
         return { attacker: a, defender: d, total: a + d };
     }
 
@@ -726,8 +734,8 @@ export class Scene13WarLayer {
                 const lanes = this.slotsOf(side.region);
                 const n = lanes.length;
                 const pureCav = PURE_CAV.has(side.region);
-                // 兵力按总量平分到各口（1 精灵 = 10 兵；口少的一边每口出得快）
-                const poolPer = Math.max(1, Math.round(side.troops / 10 / n));
+                // 兵力按总量平分到各口（1 精灵 = SPRITE_TROOPS 兵；口少的一边每口出得快）
+                const poolPer = Math.max(1, Math.round(side.troops / SPRITE_TROOPS / n));
                 lanes.forEach((lane, idx) => {
                     const key = lane.key;
                     this.ensureType(key);
@@ -793,7 +801,7 @@ export class Scene13WarLayer {
         console.warn(`🏁 [Scene13War] 防死锁判负：攻 ${alive[0]} 守 ${alive[1]}（守方×${homeDiscount}）→ ${attackerWins ? '攻方胜' : '守方胜'}`);
         this.onDecision(
             attackerWins ? 'attacker' : 'defender',
-            { attacker: Math.round(alive[0] * 10), defender: Math.round(alive[1] * 10) },
+            { attacker: Math.round(alive[0] * SPRITE_TROOPS), defender: Math.round(alive[1] * SPRITE_TROOPS) },
         );
     }
 
@@ -1532,7 +1540,7 @@ export class Scene13WarLayer {
             console.warn(`🏁 [Scene13War] 演出判负：攻方余 ${alive[0]} 守方余 ${alive[1]} 精灵（1精灵=10兵）`);
             this.onDecision?.(
                 attackerLost ? 'defender' : 'attacker',
-                { attacker: Math.round(alive[0] * 10), defender: Math.round(alive[1] * 10) },
+                { attacker: Math.round(alive[0] * SPRITE_TROOPS), defender: Math.round(alive[1] * SPRITE_TROOPS) },
             );
         }
     }
