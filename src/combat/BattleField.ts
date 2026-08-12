@@ -167,14 +167,23 @@ export class BattleField implements IOpeningPulseSink {
      * 而 13 里兵力已经体现为精灵数量，不除就算两遍。
      * 除完剩下的是纯「非兵力优势」：将领、精锐、武将技、文化、命运运气。
      *
-     * 🔴 夹在 ±15%：消耗战是兰彻斯特平方律，伤害差 15% 打到最后就是压倒性的，
-     *    再宽就变成强的一方零伤碾压，双将战没有悬念可看。
+     * 🔴 [2026-08-13 修「名将优势兑现不了」，最终方案] k = sqrt(nonTroop) + 钳制 [0.85, 1.35]。
+     *    sqrt 是**精确还原**：k² = nonTroop = 八环非兵力比（攻 ×k、守 ×1/k，实际伤害比 = k²）。
+     *    病史：耶律大石（面板总×2.59 vs 1.48，非兵力优势 1.75）打十箭（STEPPE 纯骑 1 虎豹 + 5 突骑）输。
+     *    ① 原钳制 ±15% 把 k 1.32 压到 1.15（白扔真实优势）；② 且 sqrt 真值 1.32 也赢不了纯突骑
+     *    风筝守方（6 口三角 5 口突骑克制混编攻方，实测要 k≥1.5）——**根因是突骑风筝无解，不是公式**。
+     *    曾试 ^0.75 超发（k² = nonTroop^1.5，1.75 兑现成 2.25）——全局拉大强弱差补单单位超模，
+     *    被否：八环不诚实、悬念变少、突骑调平后超发残留。最终分两层修：
+     *    ① 钳制放宽到 1.35（不再白扔真实优势；1.35² = 1.82，nonTroop ≤ 1.82 的仗全部精确兑现）；
+     *    ② 突骑 kite 100→60（Scene13WarLayer，kite < 接战 65 = 被贴脸不能再后撤）——纯突骑守军
+     *    不再能无视名将优势。实测 kite 60 不破坏「弓骑略强」：突骑打步兵照赢（损 ~75-82%）、
+     *    被骑兵克照旧；混编攻 vs 纯突骑守 k=1.32 → 攻方 3/3 赢。纯 13 层，8/9/10 不读本函数。
      */
     public getScene13PowerBonus(): { attacker: number; defender: number } {
         const attT = Math.max(1, this.attackerGroup.initialTotalTroops);
         const defT = Math.max(1, this.defenderGroup.initialTotalTroops);
         const nonTroop = this.effectivePowerRatio / (attT / defT);
-        const k = Math.min(1.15, Math.max(0.85, Math.sqrt(Math.max(0.01, nonTroop))));
+        const k = Math.min(1.35, Math.max(0.85, Math.sqrt(Math.max(0.01, nonTroop))));
         return { attacker: k, defender: 1 / k };
     }
 
