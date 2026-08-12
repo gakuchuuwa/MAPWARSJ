@@ -3863,6 +3863,17 @@ export class CombatUI {
             }
         }
 
+        // [2026-08-11 13 v2] 13 出兵口互攻期间引擎被冻结（unit.troops 不动），
+        // 血槽数字必须改接演出的实时兵力，否则「屏幕上人一直在死、数字纹丝不动」。
+        // 只覆盖 current，不动 max —— 血条的三阶段标尺算法（开局居中是铁律）不受影响。
+        const liveWar = (window as any).game?.scene13War?.getLiveTroops?.();
+        if (liveWar) {
+            attCurrent = liveWar.attacker;
+            defCurrent = liveWar.defender;
+            attMax = Math.max(attMax, attCurrent);
+            defMax = Math.max(defMax, defCurrent);
+        }
+
         // 蓄力收缩：会放技侧立绘随游戏时间缓缩，技能亮相时刻缩到底（脉冲从收缩值弹起）
         this.updatePortraitWinddown();
 
@@ -3872,7 +3883,11 @@ export class CombatUI {
         // 纯显示层：只改渲染给玩家的数字，title 仍写引擎真实兵力。
         // outcomeLocked 后停用：否则第三阶段中段被 forceResolve/城易主提前结束时，
         // 败方引擎兵力已清零，数字却会被钳回 10% 一直挂着（正常流程 u≈1 已崩到 0，无碍）。
-        if (!this.outcomeLocked && this.collapseStartAttPct !== null) {
+        // 🔴 [2026-08-12 修「兵没死光数字已归零」] 13 期间**整段跳过**这套溃败表演。
+        //    它是给 8/9/10 引擎战斗做戏剧化的（把败方数字钉在 10% 再按 u^6 崩到 0），
+        //    可 13 里屏幕上摆着真实精灵，数字必须等于场上实数 —— 两套一起跑就会出现
+        //    「地图上兵还在打、数字已经 0」（主人实锤）。演出在跑时 liveWar 即唯一真相。
+        if (!liveWar && !this.outcomeLocked && this.collapseStartAttPct !== null) {
             const bc: any = this.boundRegionalBattleField || this.currentBattle;
             const prog = bc ? Math.min(1, (bc.elapsed || 0) / Math.max(1, bc.targetDuration || 17)) : 1;
             if (prog >= PHASE_COLLAPSE_START) {
@@ -3926,6 +3941,19 @@ export class CombatUI {
             progress = Math.min(1, battleClockSec / Math.max(1, this.boundRegionalBattleField.targetDuration));
         } else {
             progress = 1;
+        }
+
+        // 🔴 [2026-08-12 修「只有数字动、条子不动」] 13 期间引擎被冻结，`elapsed` 永远是 0，
+        //    上面算出的 progress 就恒为 0 → 血条一辈子停在第一幕（开局居中），只有数字在跳。
+        //    改用**演出自己的进度**：双方已消耗的兵力占开局总量的比例。
+        //    ✅「开局标尺永远居中」的铁律不破：开战一兵未损 → progress=0 → 仍是第一幕居中，
+        //       差距完全靠打出来，和引擎战斗的三幕节奏语义一致。
+        if (liveWar) {
+            const live0 = (window as any).game?.scene13War?.getInitialTroops?.();
+            const spent = live0 && live0.total > 0
+                ? 1 - (liveWar.attacker + liveWar.defender) / live0.total
+                : 0;
+            progress = Math.min(1, Math.max(0, spent));
         }
 
         // 占优方（=标尺最后崩塌要倒向的一面）：区域性战斗读引擎判定的强方

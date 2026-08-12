@@ -64,6 +64,12 @@ import {
     canUnitUseGeneralSkills,
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
+
+/**
+ * 13 冻结的看门狗上限（真实毫秒）。一场 13 演出 ≤60s + 战败停留 5s，留足余量取 120s。
+ * 超过就说明演出已经退场却没判负 —— 自动解冻，绝不让一场战斗永久卡死（见 update()）。
+ */
+const SCENE13_FREEZE_MAX_MS = 120_000;
 import {
     reconcileSiegeGarrisonBoostWithLegion,
     reconcileSiegeGarrisonBoostWithLegions,
@@ -114,6 +120,63 @@ export class BattleField implements IOpeningPulseSink {
     public elapsed: number = 0;
     public type: BattleType;
     public targetDuration: number = 0; // [NEW] Public property
+    /**
+     * [2026-08-10 13 战术层固定时长] 非 null = 本场进了 13 战术层，时长固定为此值（秒），
+     * 覆盖兵力比动态(10–30)、援军加时、导演时长。战术层的 delta 走**真实秒**（见 GameAppLoop），
+     * 所以这里填 60 就是墙钟整 1 分钟，与游戏倍速无关。
+     * 血条/三幕火/脉冲全部按 elapsed÷targetDuration 的比例算，自动铺满 60 秒，无需另调。
+     */
+    public sceneFixedDurationSec: number | null = null;
+
+    /** 进 13 战术层时调用：把本场时长钉死为 sec 秒（立即生效，援军重算也改不动） */
+    public applySceneFixedDuration(sec: number): void {
+        this.sceneFixedDurationSec = sec;
+        this.targetDuration = sec;
+    }
+
+    /**
+     * [2026-08-11 13 v2 出兵口互攻] 13 期间引擎冻结标志。
+     * true = 本场战斗完全由 13 演出（Scene13WarLayer）接管：update 不推进、不结算，
+     * 胜负等演出判负后经 forceScene13Result 写回。8/9/10 永不置位，行为不变。
+     */
+    public scene13Frozen = false;
+    /** 冻结起始时刻（performance.now()，0 = 未冻结）。看门狗用，见 update() */
+    private scene13FrozenAt = 0;
+
+    /**
+     * [2026-08-11 13 v2] 演出判负 → 写死胜负并立即结算（跳过八环推演，走 presetResult + forceResolve 通道）。
+     * @param winnerTroops 演出里胜方**实际剩下的人数**。传了就写回胜方单位 ——
+     *   🔴 不传的话 forceResolve 只清零败方、**胜方兵力原封不动**，
+     *      于是屏幕上打到只剩两成、回大地图却还是满编（主人 2026-08-11 实锤「剩余兵力应该和战略地图一致」）。
+     */
+    public forceScene13Result(winner: 'attacker' | 'defender', winnerTroops?: number): void {
+        this.scene13Frozen = false;
+        this.presetResult = winner === 'attacker' ? 'attacker_win' : 'defender_win';
+        this.scene13WinnerTroops = winnerTroops ?? null;
+        this.forceResolve();
+    }
+
+    /** 演出胜方实际残兵（人）；null = 不写回（非 13 路径） */
+    private scene13WinnerTroops: number | null = null;
+
+    /**
+     * [2026-08-11 13 v2] 给 13 演出的**每兵总加成**（攻/守各一个乘数，作用在伤害上）。
+     *
+     * 来源 = 八环有效战力比（`effectivePowerRatio`，在构造函数的 pickPredictedSides 里就算好了，
+     * 冻结只挡 update 所以拿得到），**再把兵力除掉**——八环里已经含兵力，
+     * 而 13 里兵力已经体现为精灵数量，不除就算两遍。
+     * 除完剩下的是纯「非兵力优势」：将领、精锐、武将技、文化、命运运气。
+     *
+     * 🔴 夹在 ±15%：消耗战是兰彻斯特平方律，伤害差 15% 打到最后就是压倒性的，
+     *    再宽就变成强的一方零伤碾压，双将战没有悬念可看。
+     */
+    public getScene13PowerBonus(): { attacker: number; defender: number } {
+        const attT = Math.max(1, this.attackerGroup.initialTotalTroops);
+        const defT = Math.max(1, this.defenderGroup.initialTotalTroops);
+        const nonTroop = this.effectivePowerRatio / (attT / defT);
+        const k = Math.min(1.15, Math.max(0.85, Math.sqrt(Math.max(0.01, nonTroop))));
+        return { attacker: k, defender: 1 / k };
+    }
 
     private attackerGroup: FactionGroup;
     private defenderGroup: FactionGroup;
@@ -289,7 +352,7 @@ export class BattleField implements IOpeningPulseSink {
     /**
      * 双将战时长（2026-08-04 主人定：按兵力比动态 10–30 秒，取代固定 30 秒）：
      *   兵力比 1:1 → 30 秒（均势拉锯满时长）
-     *   兵力每翻一倍 → −6.7 秒；≥8:1 → 贴 10 秒地板（1万 vs 5万 ≈ 14.5 秒）
+     *   兵力每翻一倍 → −6.7 秒；≥8:1 → 贴 10 秒地板
      *   再叠加援军加时（每只 +10s），封顶 60 秒
      */
     private ratioBasedDurationSec(): number {
@@ -314,11 +377,14 @@ export class BattleField implements IOpeningPulseSink {
 
     /**
      * 定强弱后敲定时长：
-     *   双将战   → 兵力比动态 10–30 秒 + 每只援军 10 秒（攻守双方都算），封顶 60 秒
+     *   双将战   → 兵力比动态 30–60 秒 + 每只援军 10 秒（攻守双方都算），封顶 90 秒
      *   其余一切 → 固定 9 秒
      *   导演指定 → 尊重剧本，只钳制（上限跟着援军放宽，不强行抬高剧本时长）
      */
     private resolveFinalTargetDuration(): number {
+        // [2026-08-10 13 战术层固定时长] 主人定：进 13 的战斗固定打满 1 分钟。
+        // 放在最前面拦截，援军入场重算（enrollUnit 里的 resolveFinalTargetDuration）也钉不动它。
+        if (this.sceneFixedDurationSec !== null) return this.sceneFixedDurationSec;
         if (!this.bothSidesHaveGeneral()) {
             return GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
         }
@@ -811,6 +877,28 @@ export class BattleField implements IOpeningPulseSink {
     public update(deltaTime: number): void {
         if (this.isOver) return;
 
+        // [2026-08-11 13 v2] 13 演出接管：引擎不推进不结算（胜负由演出判负写回）
+        // 🔴 [2026-08-12 修永久冻结] 看门狗：冻结只该持续一场演出（≤60s + 停留）。
+        //   超时仍没等到 forceScene13Result 就自己解冻，让引擎按八环把这仗打完。
+        //   病史：scene13Frozen **只有 forceScene13Result 一条清除路径**，而退场有别的路
+        //   （BattleSceneLayer.exit → scene13War.stop 完全不碰引擎）。跟拍目标一换，
+        //   自愈判据 hasParticipant(新 followedId) 为假 → 判定"没仗打了"→ exit，
+        //   可这场仗根本没结束，只是被冻住 → **永远不结束**，参战双方永久 isExternalCombat，
+        //   军团不再行军、城永远打不下（主人 2026-08-12 截图实锤：地图回 zoom8、
+        //   战斗面板还挂着、兵力一兵不减、军团从 30 掉到 8）。
+        if (this.scene13Frozen) {
+            if (this.scene13FrozenAt === 0) this.scene13FrozenAt = performance.now();
+            if (performance.now() - this.scene13FrozenAt > SCENE13_FREEZE_MAX_MS) {
+                console.warn('⏰ [BattleField] 13 冻结超时，自动解冻交还引擎推演（演出未判负）');
+                this.scene13Frozen = false;
+                this.scene13FrozenAt = 0;
+            } else {
+                return;
+            }
+        } else if (this.scene13FrozenAt !== 0) {
+            this.scene13FrozenAt = 0;
+        }
+
         // deltaTime = gameDelta（GameApp 已乘 timeScale）
         this.elapsed += deltaTime;
         this.tryReleaseStalemateSkillUi();
@@ -1239,6 +1327,27 @@ export class BattleField implements IOpeningPulseSink {
             u.unit.setTroops(0);
             u.isDefeated = true;
         });
+
+        // [2026-08-11 13 v2] 胜方按演出实际残兵写回，让大地图和你在 13 里看到的一致。
+        // 多支部队（含援军）按各自当前兵力**等比例**分摊，至少留 1 人不至于把胜方也抹掉。
+        if (this.scene13WinnerTroops !== null) {
+            const alive = winnerGroup.units.filter(u => !u.isDefeated && u.unit.troops > 0);
+            const before = alive.reduce((sum, u) => sum + u.unit.troops, 0);
+            const target = Math.max(1, Math.round(this.scene13WinnerTroops));
+            if (before > 0 && target < before) {
+                const k = target / before;
+                let given = 0;
+                alive.forEach((u, i) => {
+                    const t = (i === alive.length - 1)
+                        ? Math.max(1, target - given)             // 最后一支吃掉取整误差
+                        : Math.max(1, Math.round(u.unit.troops * k));
+                    given += t;
+                    u.unit.setTroops(t);
+                });
+                gameLog('battle', `🩸 [BattleField] 13 演出残兵写回：胜方 ${before} → ${target}`);
+            }
+            this.scene13WinnerTroops = null;
+        }
 
         // 调用原有结算
         this.resolve(winnerGroup, loserGroup);

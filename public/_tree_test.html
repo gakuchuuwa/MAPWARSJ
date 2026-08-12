@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>tree test</title></head>
+<body style="background:#333;margin:0">
+<canvas id="c" width="1280" height="760"></canvas>
+<script>
+// 模拟 Scene13WarLayer 树/湖渲染：湖贴地最底、树按比例缩放底部对齐、随机镜像
+const ctx = document.getElementById('c').getContext('2d');
+const TREE_PX = 110, TREE_MAX_W = 240;
+const LAKE_W = 400, LAKE_H = 265;
+// 深色草地背景，模拟冻结地图
+ctx.fillStyle = '#3a4a2e';
+ctx.fillRect(0, 0, 1280, 760);
+ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+for (let x = 0; x < 1280; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 760); ctx.stroke(); }
+for (let y = 0; y < 760; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1280, y); ctx.stroke(); }
+
+// 季节选择器：?s=1 夏 / 2 秋 / 3 冬，默认全季展示
+const s = parseInt(location.search.match(/[?&]s=(\d)/)?.[1] ?? '0', 10) || 0;
+const seasons = s ? [s] : [1, 2, 3];
+
+let done = 0;
+const jobs = [];
+for (const k of seasons) {
+  // 湖（本季 1.png，贴地）
+  const lk = new Image();
+  lk.onload = () => {
+    const x = 200 + (k - 1) * 380;
+    const y = 640 - LAKE_H / 2;
+    ctx.drawImage(lk, x - LAKE_W / 2, y - LAKE_H / 2, LAKE_W, LAKE_H);
+    ctx.fillStyle = '#0ff'; ctx.fillRect(x - 3, 640 - 3, 6, 6);
+    ctx.font = '16px sans-serif'; ctx.fillStyle = '#fff';
+    ctx.fillText('湖/季' + k + ' (' + lk.naturalWidth + 'x' + lk.naturalHeight + ')', x - 60, 640 + 34);
+    jobs.push(1);
+    if (++done === jobs.length) seedTrees();
+  };
+  lk.src = '/sanguoqunying/湖/' + k + '/1.png';
+}
+let seeded = false;
+function seedTrees() {
+  if (seeded) return; seeded = true;
+  // 树：三季各 3 变体，底部对齐 640（树脚），湖下方
+  for (const k of seasons) {
+    for (let v = 1; v <= 3; v++) {
+      const im = new Image();
+      im.onload = () => {
+        const iw = im.naturalWidth, ih = im.naturalHeight;
+        const w = Math.min(TREE_MAX_W, iw / ih * TREE_PX);
+        const h = w * ih / iw;
+        const x = 90 + (k - 1) * 380 + (v - 1) * 110;
+        const y = 700 - h;
+        ctx.drawImage(im, x, y, w, h);
+        ctx.fillStyle = '#ff0'; ctx.fillRect(x - 3, 700 - 3, 6, 6);
+        ctx.fillStyle = '#fff';
+        ctx.fillText('树/季' + k + 'v' + v + ' (' + iw + 'x' + ih + ')', x - 40, y - 8);
+      };
+      im.src = '/sanguoqunying/樹/' + k + '/' + v + '.png';
+    }
+  }
+}
+</script>
+</body>
+</html>

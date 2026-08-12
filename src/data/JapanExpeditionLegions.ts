@@ -18,7 +18,7 @@ export const JAPAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     iga_d: { name: '伊贺众', tier: 3 },
     hashiba: { name: '黄母衣众', tier: 3 },
   jinchuan: { name: '骏河弓取', tier: 3 },      // 骏河·今川义元（无重大战略级胜利，T2）
-  owari: { name: '织田马廻众', tier: 1 },     // 织田信长亲卫，虽参与众多大战，但"马廻众"本身作为建制未能独立达成灭国，更偏向T1战略主力或T2战术尖刀。归入T1。
+    owari: { name: '织田马廻众', tier: 1 },
     totomi: { name: '三河武士', tier: 2 },
   echigo: { name: '毘沙門衆', tier: 3 },         // 上杉谦信亲卫队，属于“顶级近卫”，降回T2
   aki: { name: '村上水军', tier: 1 },          // 吉田郡山·§5 #13 冷兵接舷（毛利氏水军主力）

@@ -28,6 +28,9 @@ export const CITY_ART_NATIVE_HEIGHT_PX = 765;
  */
 export const SIEGE_CITY_NATIVE_SCALE_AT_ZOOM10 = 0.4;
 
+/** [2026-08-10 13 城图 6 折] zoom13 战斗场景（攻守编队对垒 + 守军锚点贴城图边缘）城图放大到原图 0.6。 */
+export const SIEGE_CITY_NATIVE_SCALE_AT_ZOOM13 = 0.6;
+
 /** 与 TerritorySystem.updateCityScales 一致：zoom10 时 --city-scale = 1.5 */
 export const CITY_MARKER_PANE_SCALE_AT_ZOOM10 = 1.5;
 
@@ -35,12 +38,15 @@ export function getCityMarkerBaseWidthPx(cityType: string): number {
     return CITY_MARKER_BASE_WIDTH_BY_TYPE[cityType] ?? 100;
 }
 
-/** zoom10 目标屏幕宽 = 原图宽 × 0.4（随地图 zoom 按 pane scale 比例伸缩，各城型相同） */
+/** zoom10 目标屏幕宽 = 原图宽 × 0.4（随地图 zoom 按 pane scale 比例伸缩，各城型相同）；13 战斗场景 ×0.6 */
 export function getSiegeCityScreenWidthPx(mapZoom: number): number {
     const paneScale = Math.max(0, 1 + (mapZoom - 9) * 0.5);
+    // [2026-08-10] 13 战斗场景城图 6 折（0.6 原图，守军锚点/攻方外推按放大后城图算）；
+    // 非 13 保持 4 折（0.4）。13 下实际宽 = 1024×0.6×(3.0/1.5) = 1228.8px。
+    const nativeScale = mapZoom >= 13 ? SIEGE_CITY_NATIVE_SCALE_AT_ZOOM13 : SIEGE_CITY_NATIVE_SCALE_AT_ZOOM10;
     return (
         CITY_ART_NATIVE_WIDTH_PX
-        * SIEGE_CITY_NATIVE_SCALE_AT_ZOOM10
+        * nativeScale
         * (paneScale / CITY_MARKER_PANE_SCALE_AT_ZOOM10)
     );
 }

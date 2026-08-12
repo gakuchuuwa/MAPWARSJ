@@ -379,7 +379,13 @@ export class VectorRoadEditorOSM implements IEditor {
         if (!this.roadSelect) return;
         const filterText = (this.roadFilter?.value || '').toLowerCase().trim();
         this.roadSelect.innerHTML = '<option value="">-- 已有道路 --</option>';
-        for (const feature of VECTOR_ROAD_DATA.features) {
+        // 按照坐标点数降序排列（最长的道路排在最前面）
+        const features = VECTOR_ROAD_DATA.features.slice().sort((a, b) => {
+            const lenA = a.geometry?.coordinates?.length || 0;
+            const lenB = b.geometry?.coordinates?.length || 0;
+            return lenB - lenA; // 降序
+        });
+        for (const feature of features) {
             if (!feature || !feature.properties || !feature.geometry) continue;
             const name = (feature.properties.name || '未命名').toLowerCase();
             const id = feature.properties.id.toLowerCase();

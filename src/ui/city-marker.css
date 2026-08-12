@@ -81,6 +81,21 @@
     transform: scale(2.730666667);
 }
 
+/* [2026-08-10 13 战斗场景城图 6 折] 攻守编队对垒 + 守军锚点在城图边缘，13 城图放大到原图 0.6
+   （0.4 基准 ×1.5 = 0.6）。class 由 TerritorySystem.updateCityScales 在 zoom≥13 时对攻城放大中的
+   据点动态加/摘（marker 重建时 renderSingleCity/全量重绘补回）。配合 --city-scale(3.0@z13) pane 缩放：
+   13 屏幕宽 = base × scale×1.5 × 3.0 = 1024×0.6×2 = 1228.8px，与 getSiegeCityScreenWidthPx /
+   守军锚点 / 攻方外推几何一致。非 13 无此 class → 逐像素不变。 */
+.city-image-container.city-icon--size-big.city-under-siege.scene13-zoom .city-building-stack {
+    transform: scale(2.925714285);
+}
+.city-image-container.city-icon--size-medium.city-under-siege.scene13-zoom .city-building-stack {
+    transform: scale(3.413333334);
+}
+.city-image-container.city-icon--size-small.city-under-siege.scene13-zoom .city-building-stack {
+    transform: scale(4.096);
+}
+
 /* 攻城态建筑描边加强 + 地面投影 */
 .city-image-container.city-under-siege img.city-building-sprite {
     filter:

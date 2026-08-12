@@ -62,6 +62,5 @@ qianzhong: { name: '乾嘉苗兵', tier: 4 },     // 芷江·吴八月攻克沅�
     wuling: { name: '五溪藤甲', tier: 3 },            // 三国藤甲兵文化符号（火烧藤甲），显著文化知名度，升T2
     weizhou: { name: '奉义军', tier: 1 },
     haikou: { name: '五岛水军', tier: 4 },
-    wenling: { name: '福建水师', tier: 3 },
     qiong: { name: '邛谷锐骑', tier: 4 },
 };

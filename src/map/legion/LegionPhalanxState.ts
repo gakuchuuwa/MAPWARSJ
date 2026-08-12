@@ -84,7 +84,11 @@ export class LegionPhalanxStateManager {
         isFighting: boolean,
         center?: { x: number, y: number },
         unprojectFn?: (x: number, y: number) => { lat: number, lng: number },
-        getOffsetFn?: (index: number) => { x: number, y: number }
+        getOffsetFn?: (index: number) => { x: number, y: number },
+        /** [2026-08-09 编队级阵亡] 13 场景：槽位死亡改由编队级（squadStates[i]='DEATH'）接管，
+         *  跳过整军随机侵蚀（否则两套死亡逻辑打架：整军按比例随机杀槽位 + 编队按轮询扣光）。
+         *  默认 false → 8/9/10 整军侵蚀逐像素不变。 */
+        skipErosion: boolean = false
     ): LegionUnitState {
         let state = this.states.get(unitId);
 
@@ -145,6 +149,12 @@ export class LegionPhalanxStateManager {
         }
 
         // Revival Logic（战损侵蚀的逆操作，2026-07-16）：
+        // 【2026-08-10 修】必须与侵蚀同一个门控 —— 只关侵蚀不关复活，两套死亡逻辑照样打架：
+        // 13 场景槽位由 squadStates[i]='DEATH' 杀（编队级轮询），复活却还按整军比例算，
+        // targetAlive = ceil(9 × troops/maxTroops) 与「编队 i 扣光」的判据不同源（ceil 边界 +
+        // 残兵不均分 + maxTroops/squadBaseTroops 捕获时机不同）→ 刚死的槽位下一帧被复活，
+        // 再下一帧又被编队级杀掉，且每次重新 Math.random() 死亡朝向 → 尸体逐帧抽搐。
+        if (!skipErosion)
         // 旧 bug：DEAD 格永不复活——打残过的军团补满兵后地图上仍缺人，直到缩放触发重建。
         // 按同一比例公式复活：① 新战斗开始 maxTroops 重置 → ratio=1 满员归位；
         // ② 和平期补员/伤兵归队 → 逐步复活。内圈先活（与"外圈先死"对称）。
@@ -173,7 +183,7 @@ export class LegionPhalanxStateManager {
         }
 
         // Erosion Logic
-        if (state.isFighting && troops < state.lastTroops) {
+        if (state.isFighting && troops < state.lastTroops && !skipErosion) {
             const healthRatio = Math.max(0, troops / Math.max(1, state.maxTroops));
             const totalSlots = state.slots.length;
             const targetAlive = Math.ceil(totalSlots * healthRatio);

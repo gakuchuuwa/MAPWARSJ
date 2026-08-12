@@ -1,0 +1,652 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>13 · 千军万马原型</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #2b2d24; overflow: hidden;
+    font: 12px/1.5 system-ui, sans-serif; color: #ddd; }
+  canvas { display: block; }
+  #hud { position: fixed; left: 10px; top: 10px; background: rgba(0,0,0,.70);
+    padding: 10px 12px; border-radius: 4px; width: 250px; }
+  #hud h2 { margin: 0 0 6px; font-size: 13px; color: #8cf; }
+  .row { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+  .row label { width: 62px; color: #aaa; }
+  .row input[type=range] { flex: 1; min-width: 0; }
+  .row .v { width: 48px; text-align: right; color: #fd8; }
+  #stat { margin-top: 8px; padding-top: 8px; border-top: 1px solid #444; color: #bbb; }
+  #stat b { color: #fff; }
+  #lanes { margin-top: 6px; font-size: 11px; color: #999; }
+  #lanes div { display: flex; justify-content: space-between; }
+  .red { color: #f77; } .blue { color: #7af; }
+  #over { position: fixed; inset: 0; display: none; place-items: center;
+    background: rgba(0,0,0,.55); font-size: 34px; letter-spacing: 4px; }
+</style>
+<canvas id="cv"></canvas>
+<div id="hud">
+  <h2>13 · 千军万马原型</h2>
+  <div class="row"><label>单兵尺寸</label><input id="sSize" type="range" min="8" max="120" value="30"><span class="v" id="vSize"></span></div>
+  <div class="row"><label>出兵间隔</label><input id="sRate" type="range" min="20" max="600" value="110"><span class="v" id="vRate"></span></div>
+  <div class="row"><label>每方兵力 ×10</label><input id="sPool" type="range" min="0" max="6000" step="100" value="3000"><span class="v" id="vPool"></span></div>
+  <div class="row"><label>接敌半径</label><input id="sEng" type="range" min="20" max="160" value="65"><span class="v" id="vEng"></span></div>
+  <div class="row"><label>出手间隔</label><input id="sSwing" type="range" min="4" max="40" value="15"><span class="v" id="vSwing"></span></div>
+  <div class="row"><label class="red">红方文化</label><select id="cA"></select></div>
+  <div class="row"><label class="blue">蓝方文化</label><select id="cB"></select></div>
+  <div id="stat"></div>
+  <div id="lanes"></div>
+</div>
+<div id="over"></div>
+<script>
+// ─────────────────────────────────────────────────────────────────
+// 13 千军万马原型（2026-08-11 主人定的模式）
+//   多个出兵点 → 各自出兵 → 走向正对面的敌方出兵点 → 路上遇敌就砍
+//   → 无时限，**直至一方全部出兵口被打空**（见下）。
+//   **1 个精灵 = 10 个兵**（2026-08-11 主人定：3 万兵 = 3000 精灵，人太多看不清）。
+//   没有编队、没有阵型、没有波次、没有镜头操作。
+//   「遇敌」是半径内的局部判定，不是寻路——没有 MAPF，不会死锁。
+//
+//   🔴 出兵口规则（2026-08-11 主人定稿）：
+//     出兵口固定归属——红口只出红兵、蓝口只出蓝兵，**打下来不换主人**（真实战斗：营寨打残是废了，不是换旗）
+//     兵打口 = 扣池，池打空 = 死口（停出兵、保持原色、暗显）
+//     胜负 = 一方全部出兵口被打空
+//     中军不出战只待命，非中军全灭才转正（保证战斗必有结束）
+//
+//   兵种差异只有四个数：速度 / 接敌半径 / 伤害 / 血量。不加技能、不加分支。
+//   唯一的例外规则是弓骑放风筝（敌人贴脸就后撤），它同样是局部判定。
+// ─────────────────────────────────────────────────────────────────
+
+// ── 帧结构：权威表见 docs/03-runtime/s10db-frame-layout.md（主人 2026-08-11 口述定稿）──
+//   标准 6 动作 48 张：移动+0 攻击+8 投石+16 待命+24 受伤+32 阵亡+40
+//     └ 第三组是**投石**（守城从城上往下扔石头），不是 "Unused"，别再当空块
+//   骑兵 5 动作 40 张：移动+0 攻击+8 待命+16 受伤+24 阵亡+32（骑兵不上城，没有投石组）
+//   远程 7 动作 56 张：标准六组 + **近战+40**（被贴身时的白刃），阵亡顺延到 +48
+//   弓骑 7 动作 56 张：标准六组 + **冲锋+40**，阵亡 +48
+//   井阑 3 动作 24 张：移动+0 攻击+8 阵亡+16
+// 🔴 不许再靠块数推测动作含义——不懂就问主人。
+const FAM = {
+  INF: { move: 0, atk: 8, die: 40, throw: 16, idle: 24, hurt: 32 },              // 步兵/象兵 48
+  CAV: { move: 0, atk: 8, die: 32, idle: 16, hurt: 24 },                         // 骑兵/冲车/投石/船 40
+  // 🔴 远程三兵种（弓手/弩手/弓骑）的两个攻击组是**反的**，2026-08-11 逐张开图核对：
+  //      +8  = 近战（弓手举弓抡砸 291 / 弩手抡砸 350 / 弓骑挺枪突刺 672）
+  //      +40 = 射击（弓手拉满弓 323 / 弩手平端弩 382 / 弓骑拉弓骑射 704）
+  //    按「第 2 组必是攻击」推出来的 atk:8 是错的，害得远程兵放箭时全在抡砸。
+  RNG: { move: 0, atk: 40, melee: 8, die: 48, throw: 16, idle: 24, hurt: 32 },   // 弓/弩/元戎弩 56
+  HA:  { move: 0, atk: 40, melee: 8, die: 48, throw: 16, idle: 24, hurt: 32 },   // 弓骑 56
+  SG3: { move: 0, atk: 8, die: 16 },                                             // 井阑 24
+};
+
+// 兵种表：base=起始id  fam=帧族  spd=速度  rng=接敌半径(0=用全局近战半径)
+//         dmg=伤害/秒  hp=血  sz=尺寸倍率  aoe=范围伤  kite=放风筝
+// 名字按三国志 10 正名（素材就是 San10PK 的 GrpBtlUn，931 张）。
+// 属性只有四个数（速度/接敌半径/伤害/血），不加别的。
+//
+// 参战 17 种 = 21 − 3 船 − 1 粮草车。分两类（主人 2026-08-11 定）：
+//   近战 11：六步兵 + 三骑兵 + 象兵 + **冲车**
+//   远程  6：弓兵 / 弩兵 / 元戎弩 + 突骑兵 + **井栏** + **霹雳车**
+// 🔴 全部能移动，没有不动的兵（井栏是移动箭楼，慢但会走）。
+// 🔴 2026-08-11 主人定的两条铁律：
+//   ① **同类之间属性一样**，不分谁比谁厉害 —— 区别只在贴图和块头，不在强弱。
+//   ② **不同类之间相克要小**：近战和骑兵连伤害都一样，差别只有「骑兵血少一点、快很多」。
+//      快是骑兵的全部价值，别的地方不占便宜。
+// 只分三类（主人 2026-08-11 定）：
+//   近战 8：六步兵 + 象兵 + 冲车        血150 伤45 速55
+//   骑兵 4：轻骑 重骑 虎豹骑 突骑兵      血130 伤45 速130（突骑兵改用射的）
+//   远程 5：弓 弩 元戎弩 井栏 霹雳车     血 70 伤15 速50 射程160
+// 三角：骑兵克远程（快，挨箭时间短）→ 远程克近战（近战慢，挨箭时间是骑兵两倍多）
+//       → 近战克骑兵（贴身纯拼血×伤，速度用不上，近战血厚 15%）
+const TYPES = {
+  // ── 近战 8 ──（血×伤 = 6750）
+  light_inf:  { name: '轻步兵', base: 1,   fam: 'INF', spd: 55, rng: 0, dmg: 45, hp: 150, sz: 1 },
+  axe_shield: { name: '重步兵', base: 52,  fam: 'INF', spd: 55, rng: 0, dmg: 45, hp: 150, sz: 1 },
+  big_shield: { name: '近卫兵', base: 103, fam: 'INF', spd: 55, rng: 0, dmg: 45, hp: 150, sz: 1 },
+  long_blade: { name: '青州兵', base: 460, fam: 'INF', spd: 55, rng: 0, dmg: 45, hp: 150, sz: 1 },
+  great_axe:  { name: '蛮族兵', base: 511, fam: 'INF', spd: 55, rng: 0, dmg: 45, hp: 150, sz: 1 },
+  sword_sh:   { name: '藤甲兵', base: 562, fam: 'INF', spd: 55, rng: 0, dmg: 45, hp: 150, sz: 1 },
+  elephant:   { name: '象兵',   base: 613, fam: 'INF', spd: 55, rng: 0, dmg: 45, hp: 150, sz: 1.6, aoe: 1 },
+  ram:        { name: '冲车',   base: 723, fam: 'CAV', spd: 55, rng: 0, dmg: 45, hp: 150, sz: 1 },
+
+  // ── 骑兵 4 ──（血×伤 = 5850，比近战低 13%；速度是它的全部优势）
+  lance_cav:  { name: '轻骑兵', base: 154, fam: 'CAV', spd: 130, rng: 0, dmg: 45, hp: 130, sz: 1.15 },
+  axe_cav:    { name: '重骑兵', base: 197, fam: 'CAV', spd: 130, rng: 0, dmg: 45, hp: 130, sz: 1.15 },
+  blade_cav:  { name: '虎豹骑', base: 240, fam: 'CAV', spd: 130, rng: 0, dmg: 45, hp: 130, sz: 1.15 },
+  // 突骑兵是骑兵，只是攻击方式是射的：速度/血与骑兵同，伤害与射程随远程
+  horse_arch: { name: '突骑兵', base: 664, fam: 'HA',  spd: 130, rng: 160, dmg: 15, hp: 130, sz: 1.15, kite: 70 },
+
+  // ── 远程 5 ──（全部能移动，井栏是移动箭楼，慢但会走）
+  archer:     { name: '弓兵',   base: 283, fam: 'RNG', spd: 50, rng: 160, dmg: 15, hp: 70, sz: 1 },
+  crossbow:   { name: '弩兵',   base: 342, fam: 'RNG', spd: 50, rng: 160, dmg: 15, hp: 70, sz: 1 },
+  ballista:   { name: '元戎弩', base: 401, fam: 'RNG', spd: 50, rng: 160, dmg: 15, hp: 70, sz: 1 },
+  tower:      { name: '井栏',   base: 766, fam: 'SG3', spd: 50, rng: 160, dmg: 15, hp: 70, sz: 1 },
+  catapult:   { name: '霹雳车', base: 793, fam: 'CAV', spd: 50, rng: 160, dmg: 15, hp: 70, sz: 1 },
+};
+
+// ── 18 文化区阵型（核对自 src/types/CultureFormations.ts，2026-08-11）──
+// ⚠️ 配置里的内部名与贴图内容对不上（spear 其实是长刀贴图 460、heavy_infantry 是斧盾 52、
+//    armored 是刀盾 562）。这里一律按**贴图内容**命名，不按配置名。
+// 每个文化三档：front 前排 / mid 中排（骑兵位）/ back 后排（远程位）。
+// 冲车/井阑/投石不属于任何文化——它们是纯攻城器械，本来就不进野战阵型。
+// 🔴 文化**只决定哪三种兵上场**，不乘任何系数（主人 2026-08-11 定）。
+//    强弱从兵种构成里自然长出来：草原全骑就是快，中原盾+弩就是硬。
+//    属性永远只有四个数，都在 TYPES 里；这里不许再加第二层乘数。
+const CULTURES = {
+  CENTRAL:      { name: '中原',   front: 'big_shield', mid: 'lance_cav',  back: 'crossbow',   note: '近卫兵+轻骑+弩' },
+  NORTH:        { name: '北方',   front: 'long_blade', mid: 'horse_arch', back: 'crossbow',   note: '青州兵+突骑+弩' },
+  NORTHEAST:    { name: '东北',   front: 'axe_shield', mid: 'horse_arch', back: 'archer',     note: '重步+突骑+弓' },
+  KOREA:        { name: '朝鲜',   front: 'sword_sh',   mid: 'axe_cav',    back: 'archer',     note: '藤甲+重骑+弓' },
+  JAPAN:        { name: '日本',   front: 'sword_sh',   mid: 'long_blade', back: 'archer',     note: '纯步：藤甲+青州兵+弓' },
+  STEPPE:       { name: '草原',   front: 'blade_cav',  mid: 'horse_arch', back: 'horse_arch', note: '纯骑：虎豹骑+突骑' },
+  HEXI:         { name: '河西',   front: 'long_blade', mid: 'axe_cav',    back: 'crossbow',   note: '青州兵+重骑+弩' },
+  BASHU:        { name: '川蜀',   front: 'axe_shield', mid: 'archer',     back: 'crossbow',   note: '纯步：重步+弓弩' },
+  JIANGNAN:     { name: '江南',   front: 'big_shield', mid: 'crossbow',   back: 'archer',     note: '纯步：近卫兵+双层远程' },
+  LINGNAN:      { name: '岭南',   front: 'light_inf',  mid: 'elephant',   back: 'archer',     note: '轻步+象兵+弓' },
+  DIANQIAN:     { name: '滇缅',   front: 'sword_sh',   mid: 'elephant',   back: 'crossbow',   note: '藤甲+象阵+弩' },
+  TIBET:        { name: '青藏',   front: 'axe_cav',    mid: 'axe_cav',    back: 'horse_arch', note: '纯骑：重骑+突骑' },
+  CENTRAL_ASIA: { name: '中亚',   front: 'lance_cav',  mid: 'lance_cav',  back: 'horse_arch', note: '纯骑：轻骑+突骑' },
+  WESTERN:      { name: '西域',   front: 'light_inf',  mid: 'lance_cav',  back: 'archer',     note: '轻步+轻骑+弓' },
+  WEST_ASIA:    { name: '西亚',   front: 'big_shield', mid: 'axe_cav',    back: 'archer',     note: '近卫兵+重骑+弓' },
+  SLAVIC:       { name: '斯拉夫', front: 'great_axe',  mid: 'axe_cav',    back: 'archer',     note: '蛮族兵+重骑+弓' },
+  GERMANIC:     { name: '日耳曼', front: 'axe_shield', mid: 'axe_cav',    back: 'crossbow',   note: '重步+重骑+弩' },
+  LATIN:        { name: '拉丁',   front: 'big_shield', mid: 'long_blade', back: 'ballista',   note: '纯步：近卫兵+青州兵+元戎弩' },
+};
+
+/** 纯骑文化：大地图上是 6 槽 1-2-3 三角（LegionPhalanxDrawer 靠 count===6 判三角） */
+const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
+
+/**
+ * 文化 → 出兵口。**出兵口 = 大地图的编制槽位**（主人 2026-08-11 定），不另编一套：
+ *   常规 15 文化 = 9 口，排成 3×3：
+ *     排 0（最靠前）前排兵 ×3 / 排 1 骑兵-虎豹骑-骑兵 / 排 2（最靠后）远程 ×3
+ *   纯骑 3 文化 = 6 口，排成 1-2-3 三角：尖端 1 口最靠前，其后 2 口、3 口
+ * 兵一出生就在正确的层次上 —— 战线自动形成，不需要任何阵型逻辑。
+ * 返回 [{ key, col, row, cols }]，row 0 = 最靠近敌方。
+ */
+function slotsOf(cultureKey) {
+  const c = CULTURES[cultureKey];
+  if (PURE_CAV.has(cultureKey)) {
+    // 三角：tip = front，第二排 front，第三排 back（与 STEPPE/TIBET/C.ASIA 的槽序一致）
+    const seq = cultureKey === 'STEPPE'
+      ? [c.front, c.mid, c.mid, c.back, c.back, c.back]      // 虎豹骑 1 + 突骑 2 + 突骑 3
+      : [c.front, c.front, c.front, c.back, c.back, c.back]; // 重骑/轻骑 3 + 突骑 3
+    return [
+      { key: seq[0], col: 0, row: 0, cols: 1 },
+      { key: seq[1], col: 0, row: 1, cols: 2 }, { key: seq[2], col: 1, row: 1, cols: 2 },
+      { key: seq[3], col: 0, row: 2, cols: 3 }, { key: seq[4], col: 1, row: 2, cols: 3 },
+      { key: seq[5], col: 2, row: 2, cols: 3 },
+    ];
+  }
+  const seq = [
+    c.front, c.front, c.front,
+    c.mid, 'blade_cav', c.mid,     // 中心格永远是虎豹骑（大地图的 general_cavalry）
+    c.back, c.back, c.back,
+  ];
+  return seq.map((key, i) => ({ key, col: i % 3, row: (i / 3) | 0, cols: 3 }));
+}
+
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d', { alpha: false });
+let VW = 0, VH = 0;
+
+// ── 素材：按需加载 + 去绿幕 + 势力染色 ──
+const TINT = ['rgba(200,45,45,0.50)', 'rgba(45,85,215,0.50)'];
+const bank = {};        // key -> { ready, fw, fh, sets: {move,atk,die}[faction][dir] }
+let pending = 0;
+
+function dechroma(img) {
+  const c = document.createElement('canvas');
+  c.width = img.naturalWidth; c.height = img.naturalHeight;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0);
+  const d = g.getImageData(0, 0, c.width, c.height), p = d.data;
+  // 素材是绿幕底（角点 rgb(0,248,0)），游戏加载时也是这样抠的
+  for (let i = 0; i < p.length; i += 4) {
+    if (p[i + 1] > 150 && p[i] < 110 && p[i + 2] < 110) p[i + 3] = 0;
+  }
+  g.putImageData(d, 0, 0);
+  return c;
+}
+function tinted(base, color) {
+  const c = document.createElement('canvas');
+  c.width = base.width; c.height = base.height;
+  const g = c.getContext('2d');
+  g.drawImage(base, 0, 0);
+  g.globalCompositeOperation = 'source-atop';
+  g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
+  return c;
+}
+function ensureType(key) {
+  if (bank[key]) return bank[key];
+  const T = TYPES[key], F = FAM[T.fam];
+  const b = bank[key] = { fw: 84, fh: 84, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []] } };
+  const slots = [['move', F.move], ['atk', F.atk], ['die', F.die]];
+  // 远程被贴身时播「近战」组（+8 抡砸/突刺）；平时 atk 组 = 射击（+40）
+  if (F.melee !== undefined) slots.push(['melee', F.melee]);
+  for (const [slot, off] of slots) {
+    for (let d = 0; d < 8; d++) {
+      pending++;
+      const im = new Image();
+      im.onload = () => {
+        b.fw = im.naturalWidth / 8; b.fh = im.naturalHeight;
+        const base = dechroma(im);
+        b.sets[slot][0][d] = tinted(base, TINT[0]);
+        b.sets[slot][1][d] = tinted(base, TINT[1]);
+        pending--;
+      };
+      im.onerror = () => { pending--; };
+      im.src = `/SUCAI/S10DB/${T.base + off + d}-1.png`;
+    }
+  }
+  return b;
+}
+
+// 精灵朝向：0=NE 顺时针（与 OrientationSystem.get8DirectionFromAngle 同一套）
+function dir8(dx, dy) {
+  let a = Math.atan2(-dy, dx) * 180 / Math.PI;
+  a = ((a % 360) + 360) % 360;
+  return (9 - Math.floor(((a + 22.5) % 360) / 45)) % 8;
+}
+
+// ── 可调参数 ──
+// swing = 出手间隔（秒/次）：攻击动画播一轮的时间。伤害仍按秒结算，改它不影响强弱，只改观感。
+const MARCH_R = 300;   // 行军索敌半径（700 太贵：扫 81 格 → 21ms/帧；300 只扫 25 格）
+const P = { size: 30, rate: 110, pool: 1500, eng: 65, swing: 1.5 };
+function bind(sid, vid, key, unit, after) {
+  const s = document.getElementById(sid), v = document.getElementById(vid);
+  const sync = () => { P[key] = +s.value; v.textContent = P[key] + unit; if (after) after(); };
+  s.addEventListener('input', sync); sync();
+}
+
+// ── 世界 = 屏幕 ──
+let spawns = [], men = [], corpses = [], arrows = [], over = '';
+const ARROW_DUR = 0.42;   // 飞行 420ms + 抛物线，照抄大地图（之前 150ms 直线像曳光弹）
+const SIDE = ['CENTRAL', 'STEPPE'];   // 红方 / 蓝方 文化
+const GUARD_R = 400;    // 中军护卫半径：敌人进自家口这个圈就出击迎战（含对面弩兵 260 射程）
+const SEP_DIST = 17;    // 软推挤距离（贴这么近就互相推开；不是瞬移，每帧只推几像素）
+const SEP_SPD = 120;    // 推开速度 px/s（要能顶得住 130 的行军速度，太小挤不开）
+const CELL_S = 20;      // 推挤哈希格
+const CELL_M = 80;      // 近战哈希格
+const CELL_R = 220;     // 远程哈希格（射程最大 520，扫 ±3 格够）
+
+function reset() {
+  spawns = []; men = []; corpses = []; arrows = []; over = '';
+  document.getElementById('over').style.display = 'none';
+  // 出兵口按编制槽位摆成 3×3（或 1-2-3 三角）：row 0 最靠前，row 越大越靠己方后方
+  const mx = Math.max(60, VW * 0.07);       // 最后排出兵口离屏幕边
+  const depth = Math.min(150, VW * 0.075);  // 排间纵深
+  const midY = VH / 2, spanY = VH * 0.80;
+  for (const f of [0, 1]) {
+    const lanes = slotsOf(SIDE[f]);
+    const n = lanes.length;
+    const pureCav = PURE_CAV.has(SIDE[f]);
+    lanes.forEach((s, idx) => {
+      ensureType(s.key);
+      const back = mx + (2 - s.row) * depth;               // row0 最靠中线
+      const x = f === 0 ? back : VW - back;
+      const y = midY + (s.col - (s.cols - 1) / 2) * (spanY / 3);
+      // 🔴 兵力按**总量**平分到各口，不是每口固定——否则纯骑文化 6 口凭空少三分之一兵力。
+      //    大地图上军团兵力与槽位数无关，这里必须一致。
+      // rateMul：口少的一方每口出得快，保证两方**每秒投入人数相同**
+      // 中军 = 3×3 中心格（idx 4）/ 纯骑尖刀（idx 0）：不出战只待命，除非己方非中军全灭
+      const center = pureCav ? idx === 0 : idx === 4;
+      spawns.push({ f, key: s.key, x, y, pool: P.pool / n, acc: 0, rateMul: n / 9, center,
+        owner: f, maxPool: P.pool / n });   // owner = 固定归属（胜负判定用）；maxPool = 初始池（已无补给）
+    });
+  }
+  repairTargets();
+}
+
+/**
+ * 口对口交错配对：按 y 排序均匀分配，每口一个专属目标口（兵力分散打所有敌方口）。
+ * 口固定归属（红口红兵/蓝口蓝兵），目标只按 f 划分，不随战斗变化。
+ */
+function repairTargets() {
+  for (const f of [0, 1]) {
+    const mine = spawns.filter(s => s.f === f).sort((a, b) => a.y - b.y);
+    // 🔴 只配活口（pool>0）——死口打不了，配了兵会原地打转
+    const foes = spawns.filter(s => s.f !== f && s.pool > 0).sort((a, b) => a.y - b.y);
+    if (!foes.length) continue;
+    mine.forEach((s, i) => {
+      s.tgt = foes[Math.min(foes.length - 1, Math.floor(i * foes.length / mine.length))];
+    });
+  }
+}
+
+/** 口被打空 = 死口：停出兵、保持原色（2026-08-11 主人定：红口只出红兵、蓝口只出蓝兵，口不换主人） */
+function resize() { VW = cv.width = innerWidth; VH = cv.height = innerHeight; reset(); }
+addEventListener('resize', resize);
+
+bind('sSize', 'vSize', 'size', 'px');
+bind('sRate', 'vRate', 'rate', 'ms');
+bind('sEng',  'vEng',  'eng',  'px');
+// 滑杆是 0.1 秒一档（4~40 → 0.4~4.0 秒），所以单独绑，不走 bind 的整数路径
+(() => {
+  const s = document.getElementById('sSwing'), v = document.getElementById('vSwing');
+  const sync = () => { P.swing = +s.value / 10; v.textContent = P.swing.toFixed(1) + 's'; };
+  s.addEventListener('input', sync); sync();
+})();
+bind('sPool', 'vPool', 'pool', '', () => reset());
+
+// 文化下拉：换文化 = 换 7 条路的兵种构成
+[['cA', 0], ['cB', 1]].forEach(([id, f]) => {
+  const sel = document.getElementById(id);
+  sel.innerHTML = Object.entries(CULTURES)
+    .map(([k, c]) => `<option value="${k}">${c.name} · ${c.note}</option>`).join('');
+  sel.value = SIDE[f];
+  sel.addEventListener('change', () => { SIDE[f] = sel.value; reset(); });
+});
+
+/** 目标 = 最近的敌方出兵点（正对面那个），不是全场同一个，避免所有人挤成一坨。
+ *  🔴 只认「活口」（pool>0）——死口打不了，走过去只会原地打转（2026-08-11 主人「全口打空才胜」
+ *     与实测不符的根因：删占领后忘了恢复 pool 过滤，兵目标全是死口 → 活口没人打 → 永不判负） */
+function nearestEnemySpawn(s) {
+  let best = null, bd = Infinity;
+  for (const t of spawns) {
+    if (t.f === s.f || t.pool <= 0) continue;   // 己方口 + 死口
+    const d = (t.x - s.x) ** 2 + (t.y - s.y) ** 2;
+    if (d < bd) { bd = d; best = t; }
+  }
+  return best;
+}
+
+function spawnTick(dt) {
+  for (const s of spawns) {
+    if (s.pool <= 0) continue;
+    // 被围口不停产出：抵抗来自口持续出兵（2026-08-11 主人设计）。曾因「新兵出生秒死」改成停产出，
+    // 实测被围即断兵 → 前线一击即溃（北方 vs 河西 35 秒全灭）。恢复持续出兵 = 口被围仍有兵涌出绞肉。
+    const iv = P.rate * (s.rateMul ?? 1);
+    s.acc += dt * 1000;
+    while (s.acc >= iv && s.pool > 0) {
+      s.acc -= iv;
+      let tgt = s.tgt ?? nearestEnemySpawn(s);
+      if (!tgt || tgt.f === s.f || tgt.pool <= 0) tgt = s.tgt = nearestEnemySpawn(s);   // 死口/己方口 → 换活口
+      // 敌口全空 → 新兵直接扑向敌军重心。没有这条，本方口会因「找不到目标」停产，
+      // 池子永远清不空 → 胜负判定（池+场上=0）永不成立 → 僵持（2026-08-11）
+      if (!tgt) tgt = enemyCen[1 - s.f];
+      if (!tgt) { s.acc = 0; break; }
+      s.pool--;
+      const T = TYPES[s.key];
+      men.push({
+        f: s.f, key: s.key, x: s.x + (Math.random() - .5) * 40, y: s.y + (Math.random() - .5) * 90,
+        tx: tgt.x, ty: tgt.y, hp: T.hp, dir: 0, ph: Math.random() * 8, st: 0,
+        foe: null, next: Math.random() * 0.2,
+        guard: s.center, homeX: s.x, homeY: s.y,   // 中军队：回口待命，非中军全灭才转正出战
+      });
+    }
+  }
+}
+
+// 双层空间哈希：近战一层、远程一层，各自只扫必要的格 → 全程 O(n)
+let gm = new Map(), gr = new Map(), gs = new Map();
+const HKEY = (gx, gy) => (gx + 4096) * 8192 + (gy + 4096);   // 数字键：字符串拼键每帧两万次分配，是推挤慢的元凶
+function put(map, cell, m) {
+  const k = HKEY((m.x / cell) | 0, (m.y / cell) | 0);
+  let a = map.get(k); if (!a) map.set(k, a = []);
+  a.push(m);
+}
+function separate(dt) {
+  const push = SEP_SPD * dt, d2 = SEP_DIST * SEP_DIST;
+  for (const m of men) {
+    if (m.hp <= 0) continue;
+    const cx = (m.x / CELL_S) | 0, cy = (m.y / CELL_S) | 0;
+    let ox = 0, oy = 0, seen = 0;
+    for (let gx = cx - 1; gx <= cx + 1 && seen < 6; gx++)
+      for (let gy = cy - 1; gy <= cy + 1 && seen < 6; gy++) {
+        const a = gs.get(HKEY(gx, gy)); if (!a) continue;
+        for (let i = 0; i < a.length && seen < 6; i++) {
+          const o = a[i];
+          if (o === m || o.hp <= 0) continue;
+          const dx = m.x - o.x, dy = m.y - o.y, dd = dx * dx + dy * dy;
+          if (dd >= d2) continue;
+          seen++;
+          if (dd < 1e-4) { ox += Math.random() - .5; oy += Math.random() - .5; continue; }
+          const inv = 1 / Math.sqrt(dd); ox += dx * inv; oy += dy * inv;
+        }
+      }
+    if (!seen) continue;
+    const l = Math.hypot(ox, oy) || 1;
+    m.x += ox / l * push; m.y += oy / l * push;
+  }
+}
+
+function rebuild() {
+  gm = new Map(); gr = new Map(); gs = new Map();
+  for (const m of men) { put(gm, CELL_M, m); put(gr, CELL_R, m); put(gs, CELL_S, m); }
+}
+function search(m, radius) {
+  // 🔴 找到就停，不求「最近」：兵挤成一团后每个格子有几百人，求最近要翻完所有格子
+  //    （实测 37ms/帧，占全部模拟耗时的 92%）。射程内随便逮一个打，画面上看不出区别。
+  const useR = radius > CELL_M;
+  const map = useR ? gr : gm, cell = useR ? CELL_R : CELL_M;
+  const span = Math.max(1, Math.ceil(radius / cell));
+  const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
+  const r2 = radius * radius;
+  for (let gx = cx - span; gx <= cx + span; gx++) for (let gy = cy - span; gy <= cy + span; gy++) {
+    const a = map.get(HKEY(gx, gy)); if (!a) continue;
+    for (let i = 0; i < a.length; i++) {
+      const o = a[i];
+      if (o.f === m.f || o.hp <= 0) continue;
+      if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 < r2) return o;
+    }
+  }
+  return null;
+}
+/** 象兵范围伤：半径内所有敌人一起扣血 */
+function splash(m, radius, dmg) {
+  const span = Math.max(1, Math.ceil(radius / CELL_M));
+  const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
+  for (let gx = cx - span; gx <= cx + span; gx++) for (let gy = cy - span; gy <= cy + span; gy++) {
+    const a = gm.get(HKEY(gx, gy)); if (!a) continue;
+    for (const o of a) {
+      if (o.f === m.f || o.hp <= 0) continue;
+      if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
+      o.hp -= dmg;
+      if (o.hp <= 0) corpses.push({ x: o.x, y: o.y, f: o.f, key: o.key, dir: o.dir, t: 0 });
+    }
+  }
+}
+
+/**
+ * 兵该往哪走：**优先敌方兵力**（主人 2026-08-11 定「以消灭敌方兵力为首要目标」）。
+ * 敌方还有活口 → 打最近的活口（路上遇敌自然交战）；
+ * 敌口全空 → 走向**敌军重心**。
+ * 🔴 没有后半条就会僵持：旧代码找目标时过滤掉了空口，敌口一全空，兵找不到任何目标
+ *    → 原地不动 → 双方都有人却谁也不打 → 胜负判定要求「场上打光」，永远结束不了
+ *    （主人实锤「打完刀骑就不动了」）。
+ */
+let enemyCen = [null, null];
+function aimAt(m) {
+  const near = search(m, MARCH_R);        // 视野内最近的敌兵
+  if (near) return { x: near.x, y: near.y };
+  const cen = enemyCen[1 - m.f];
+  if (cen) return cen;
+  let best = null, bd = Infinity;         // 开局场上无人 → 朝敌方口方向当路标
+  for (const s of spawns) {
+    if (s.f === m.f) continue;
+    const dd = (s.x - m.x) ** 2 + (s.y - m.y) ** 2;
+    if (dd < bd) { bd = dd; best = { x: s.x, y: s.y }; }
+  }
+  return best;
+}
+
+function step(dt) {
+  if (over) return;
+  spawnTick(dt);
+  // 敌军重心（每帧一次 O(n)，供 aimAt 兜底用）
+  const cx = [0, 0], cy = [0, 0], cn = [0, 0];
+  for (const m of men) { cx[m.f] += m.x; cy[m.f] += m.y; cn[m.f]++; }
+  enemyCen = [0, 1].map(f => cn[f] ? { x: cx[f] / cn[f], y: cy[f] / cn[f] } : null);
+  rebuild();
+  for (const m of men) {
+    if (m.hp <= 0) continue;
+    const T = TYPES[m.key];
+    const R = T.rng || P.eng;
+
+    // （旧的「攻城只拆点、不理人」分支已删：2026-08-11 主人定「冲车算近战、其余攻城算远程」，
+    //   攻城器械就是普通兵，不再有专属分支。）
+
+    // 目标只每 0.2s 重找一次（错开相位），不是每帧——省掉 90% 的邻域查询
+    m.next -= dt;
+    const keep = m.foe && m.foe.hp > 0
+      && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < R * R * 1.44;
+    if (!keep && m.next <= 0) {
+      m.foe = search(m, R);
+      // 没在打架就重新瞄一个敌人走过去（0.5s 一次，比打架索敌慢一档——它贵得多）
+      if (!m.foe) {
+        m.aimT = (m.aimT ?? 0) - 0.2;
+        if (m.aimT <= 0) { const aim = aimAt(m); if (aim) { m.tx = aim.x; m.ty = aim.y; } m.aimT = 0.5; }
+      }
+      m.next = 0.2;
+    }
+    else if (!keep) m.foe = null;
+    const foe = m.foe;
+
+    if (foe) {
+      // 缠斗计时：砍满 4 秒挣脱，继续走向目标口（防中场无限绞肉 → 口永远打不到 → 双方兵耗尽后全场静止无终局）
+      // 挣脱后 2 秒内不重新缠斗（冲一段路再打），战线靠「打 4 秒冲 2 秒」的节奏向前蠕动推进
+      m.fightT = (m.fightT || 0) + dt;
+      // 主动脱离：不留出手锁（这是自己收手往前冲，不是被打断）。
+      // 只有「目标突然没了」才需要把这一刀挥完 —— 否则 27% 的兵会卡在原地挥空刀（实测）。
+      if (m.fightT > 4) { m.foe = null; m.fightT = 0; m.next = 2; m.lock = 0; }
+      // 远程被贴身（进近战半径）→ 播「近战」组，不再是隔空放箭姿势
+      const close = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2 < P.eng * P.eng;
+      m.st = (T.rng && close && bank[m.key] && bank[m.key].sets.melee[0].length) ? 2 : 1;
+      m.dir = dir8(foe.x - m.x, foe.y - m.y);
+      // 出手锁：一轮动作必须播完（帧从 0 起，走满 P.swing 秒）。
+      // 没有它，目标一死状态立刻切回走路，动作断在半路 —— 主人实锤「弩手刚攻击就恢复了」。
+      m.lock = (m.lock ?? 0) - dt;
+      if (m.lock <= 0) {
+        m.lock = P.swing; m.ph = 0;
+        // 一轮出手开始 = 射一支箭（只有真在放箭那轮才有；被贴身改白刃 st=2 不射）
+        if ((T.rng || 0) > 65 && m.st === 1) {
+          const ax = foe.x - m.x, ay = foe.y - m.y, ad = Math.hypot(ax, ay) || 1;
+          arrows.push({ x: m.x, y: m.y - P.size * 0.45, dx: ax / ad, dy: ay / ad,
+            len: ad, t: 0, dur: ARROW_DUR + Math.random() * 0.06, f: m.f });
+        }
+      }
+      m.atkSt = m.st;
+      if (T.aoe) splash(m, R, T.dmg * dt);
+      else {
+        foe.hp -= T.dmg * dt;
+        if (foe.hp <= 0) corpses.push({ x: foe.x, y: foe.y, f: foe.f, key: foe.key, dir: foe.dir, t: 0 });
+      }
+      // 弓骑放风筝：敌人贴脸就后撤（唯一的兵种特殊规则，仍是局部判定，不会死锁）
+      if (T.kite) {
+        const dx = m.x - foe.x, dy = m.y - foe.y, d = Math.hypot(dx, dy) || 1;
+        if (d < T.kite) { m.x += dx / d * T.spd * dt; m.y += dy / d * T.spd * dt; }
+      }
+    } else {
+      // 出手锁未走完 → 把这一刀挥完再说：保持攻击动作、原地不动、不重新找敌。
+      // （目标中途死掉/跑出射程时，动作不会断在半路）
+      if ((m.lock ?? 0) > 0) {
+        m.lock -= dt;
+        m.st = m.atkSt || 1;
+        m.ph += dt * 8 / P.swing;
+        continue;
+      }
+      m.st = 0;
+      m.fightT = 0;   // 非缠斗状态重置计时
+      // 所有兵一个规矩：朝目标（最近的敌兵 / 敌军重心）走。目标只有一个——杀光对方。
+      // 出兵口不再是攻击目标（打口伤害、中军待命、口对口配对已整段删除）。
+      const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy) || 1;
+      if (T.spd > 0) { m.x += dx / d * T.spd * dt; m.y += dy / d * T.spd * dt; m.dir = dir8(dx, dy); }
+    }
+    // 走路 8 帧/秒；出手按 P.swing 秒一轮（原来两者共用 8 帧/秒 = 所有兵种每秒一次攻击，太急）
+    m.ph += dt * (m.st ? 8 / P.swing : 8);
+  }
+  separate(dt);
+  men = men.filter(m => m.hp > 0);
+  for (const a of arrows) a.t += dt;
+  arrows = arrows.filter(a => a.t < a.dur);
+  for (const c of corpses) c.t += dt;
+  corpses = corpses.filter(c => c.t < 6);
+
+  // 胜负：**一方兵力枯竭**——没兵可出（口全空）而且场上人也打光了，全军覆没才算输。
+  // 🔴 只判「口空」是错的：口空只代表没新兵可出，场上的人还在打。
+  //    实测中原 vs 草原 40 秒时红方普通口已全空、场上却有 951 人正压着蓝方 411 打，
+  //    全靠中军口那 303 预备兵撑着才没被误判成输（2026-08-11）。
+  const alive = [0, 0];
+  for (const s of spawns) alive[s.owner] += Math.max(0, s.pool);   // 还没出的
+  for (const m of men) if (m.hp > 0) alive[m.f]++;                 // 场上的
+  const allDead = [alive[0] <= 0, alive[1] <= 0];
+  if (allDead[0] || allDead[1]) {
+    const redLose = allDead[0];
+    over = redLose ? '蓝 军 胜' : '红 军 胜';
+    const o = document.getElementById('over');
+    o.textContent = over; o.style.display = 'grid';
+    o.style.color = redLose ? '#7af' : '#f77';
+  }
+}
+
+// ── 绘制 ──
+let drawCalls = 0;
+function render() {
+  ctx.fillStyle = '#2b2d24'; ctx.fillRect(0, 0, VW, VH);
+  drawCalls = 0;
+
+  // 出兵口 UI 不画（主人 2026-08-11 定：只显示精灵图）
+
+  const vis = [];
+  for (const c of corpses) vis.push({ y: c.y, x: c.x, f: c.f, key: c.key, dir: c.dir, set: 'die',
+    fr: Math.min(7, (c.t * 6) | 0), a: c.t > 4 ? 1 - (c.t - 4) / 2 : 1 });
+  for (const m of men) vis.push({ y: m.y, x: m.x, f: m.f, key: m.key, dir: m.dir,
+    set: m.st === 2 ? 'melee' : (m.st ? 'atk' : 'move'), fr: (m.ph | 0) % 8, a: 1 });
+  vis.sort((a, b) => a.y - b.y);   // 远的先画
+
+  for (const v of vis) {
+    const b = bank[v.key]; if (!b) continue;
+    const img = b.sets[v.set][v.f][v.dir]; if (!img) continue;
+    // 尺寸按「帧高/64」自然缩放——攻城 112 帧自动比步兵 64 帧大 1.75 倍，与游戏同一套
+    const px = P.size * TYPES[v.key].sz * (b.fh / 64);
+    if (v.a < 1) ctx.globalAlpha = v.a;
+    ctx.drawImage(img, v.fr * b.fw, 0, b.fw, b.fh, v.x - px / 2, v.y - px * 0.9, px, px);
+    if (v.a < 1) ctx.globalAlpha = 1;
+    drawCalls++;
+  }
+  if (arrows.length) {   // 箭矢：画法逐笔照抄大地图 ProjectileRenderer（杆+头+尾羽，沿切线旋转）
+    ctx.save(); ctx.lineCap = 'round';
+    const S = 0.7;
+    for (const a of arrows) {
+      const p = a.t / a.dur, d = a.len * p;
+      const arcH = Math.min(a.len * 0.3, 100), arc = 4 * arcH * p * (1 - p);
+      const x = a.x + a.dx * d, y = a.y + a.dy * d - arc;
+      const angle = Math.atan2(a.dy * a.len - 4 * arcH * (1 - 2 * p), a.dx * a.len);
+      ctx.translate(x, y); ctx.rotate(angle);
+      ctx.strokeStyle = '#2c3e50'; ctx.lineWidth = 1.5 * S;
+      ctx.beginPath(); ctx.moveTo(-12 * S, 0); ctx.lineTo(6 * S, 0); ctx.stroke();
+      ctx.fillStyle = '#95a5a6';
+      ctx.beginPath(); ctx.moveTo(6 * S, 0); ctx.lineTo(3 * S, -2.5 * S); ctx.lineTo(3 * S, 2.5 * S); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = '#8b4513'; ctx.lineWidth = 1 * S;
+      ctx.beginPath(); ctx.moveTo(-12 * S, 0); ctx.lineTo(-15 * S, -3 * S); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-12 * S, 0); ctx.lineTo(-15 * S, 3 * S); ctx.stroke();
+      ctx.rotate(-angle); ctx.translate(-x, -y);
+    }
+    ctx.restore();
+  }
+}
+
+// ── 主循环 ──
+let last = performance.now(), fps = 60, acc = 0;
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  fps += ((1 / Math.max(1e-3, dt)) - fps) * 0.08;
+  if (pending === 0) { step(dt); render(); }
+  acc += dt;
+  if (acc > 0.25) {
+    acc = 0;
+    const alive = [0, 0], left = [0, 0];
+    for (const m of men) alive[m.f]++;
+    for (const s of spawns) left[s.f] += Math.max(0, s.pool);
+    document.getElementById('stat').innerHTML =
+      `在场 <b>${(men.length * 10).toLocaleString()}</b>　<span class="red">红 ${alive[0] * 10}</span> / <span class="blue">蓝 ${alive[1] * 10}</span><br>`
+      + `余兵 <span class="red">${(left[0] * 10).toLocaleString()}</span> : <span class="blue">${(left[1] * 10).toLocaleString()}</span>　尸体 ${corpses.length}<br>`
+      + `drawImage <b>${drawCalls.toLocaleString()}</b>（墙约 4000）　FPS <b>${fps.toFixed(0)}</b>`
+      + (pending ? `<br>素材加载中… 剩 ${pending}` : '');
+    const byLane = {};
+    for (const m of men) { (byLane[m.key] = byLane[m.key] || [0, 0])[m.f]++; }
+    const keys = [...new Set([...slotsOf(SIDE[0]), ...slotsOf(SIDE[1])].map(s => s.key))];
+    document.getElementById('lanes').innerHTML = keys.map(k =>
+      `<div><span>${TYPES[k].name}</span><span><span class="red">${(byLane[k] || [0, 0])[0] * 10}</span>`
+      + ` : <span class="blue">${(byLane[k] || [0, 0])[1] * 10}</span></span></div>`).join('');
+  }
+  requestAnimationFrame(loop);
+}
+resize();
+requestAnimationFrame(loop);
+</script>

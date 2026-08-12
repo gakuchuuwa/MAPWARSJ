@@ -9,7 +9,6 @@
  */
 export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   // ── 太行/河北（§1 交叉 + 明末）──
-  wangyan: { name: '八字军', tier: 2 },     // 飞狐·王彦八字军（民间抗金义军，降T2）
   // tianxiong 已迁 CentralExpeditionLegions
   // 宣毅军除名（泛称非专属，与方渠无关）
     heng1: { name: '无敌军', tier: 1 },

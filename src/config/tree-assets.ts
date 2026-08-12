@@ -11,6 +11,8 @@ export const FOREST_TEXTURES_BY_REGION: Partial<Record<RegionType, readonly stri
     NORTH: ['/trees/north_forest_a.png'],
     /** 中原：Stitch 阔叶林簇 */
     CENTRAL: ['/trees/central_forest_a.png'],
+    /** 蒙古高原：春秋色混合林（金黄秋树与土黄底色协调，2026-08-12 主人定） */
+    STEPPE: ['/trees/north_forest_a.png'],
 };
 
 /** 各文化区森林密度系数（>1 更密，全局已压低） */
@@ -19,6 +21,8 @@ export const FOREST_DENSITY_BY_REGION: Partial<Record<RegionType, number>> = {
     KOREA: 0.7,
     NORTH: 0.55,
     CENTRAL: 0.4,
+    /** 草原疏林：蒙古高原以草原为主，树稀 */
+    STEPPE: 0.3,
 };
 
 /** 显示放大（浅地形可读性） */
@@ -27,6 +31,7 @@ export const FOREST_SCALE_BY_REGION: Partial<Record<RegionType, number>> = {
     KOREA: 1.15,
     NORTH: 1.1,
     CENTRAL: 1.0,
+    STEPPE: 1.0,
 };
 
 export function getForestTextures(region: RegionType): readonly string[] | undefined {

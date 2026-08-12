@@ -505,6 +505,8 @@ export class TerritorySystem {
             const marker = this.cityMarkers.get(cityId);
             const root = marker?.getElement()?.querySelector('.city-image-container');
             root?.classList.add('city-under-siege');
+            // [2026-08-10 13 城图 6 折] 13 战斗场景中全量重绘的 marker 补 scene13-zoom
+            if (this.map.getLeafletMap().getZoom() >= 13) root?.classList.add('scene13-zoom');
         }
         this.updateCityScales(true);
     }
@@ -1136,6 +1138,8 @@ export class TerritorySystem {
         if (this.siegeZoomedCities.has(city.id)) {
             const root = marker.getElement()?.querySelector('.city-image-container');
             root?.classList.add('city-under-siege');
+            // [2026-08-10 13 城图 6 折] 13 战斗场景中重建的 marker 补 scene13-zoom
+            if (this.map.getLeafletMap().getZoom() >= 13) root?.classList.add('scene13-zoom');
         }
 
         scheduleCityMarkerTerrainSample(city.id, displayLat, displayLng, (id) => this.getCityImageContainer(id));
@@ -1473,6 +1477,16 @@ export class TerritorySystem {
         const scale = Math.round(rawScale * 20) / 20;
         if (!force && this.lastAppliedCityScale === scale) return;
         this.lastAppliedCityScale = scale;
+
+        // [2026-08-10 13 城图 6 折] zoom≥13（13 战斗场景）时给攻城放大中的据点加 scene13-zoom
+        // （CSS .city-building-stack ×1.5 → 0.6 原图），非 13 摘除。zoom 变化才走到这里
+        // （scale 未变早退），flyTo 途中 zoom<13 不加 → 13 锁死铁律（非 13 逐像素不变）。
+        const scene13 = currentZoom >= 13;
+        for (const cityId of this.siegeZoomedCities) {
+            const marker13 = this.cityMarkers.get(cityId);
+            const root13 = marker13?.getElement()?.querySelector('.city-image-container');
+            root13?.classList.toggle('scene13-zoom', scene13);
+        }
 
         // [PERF] 用 CSS 自定义属性驱动全部 marker 缩放，替代 600+ 次 forEach DOM 写。
         // .city-image-container { transform: scale(var(--city-scale, 1)); }

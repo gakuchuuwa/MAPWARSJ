@@ -194,7 +194,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        owari_zhitianxinchang: { generalId: 'owari_zhitianxinchang', tier: 'famous', tacticalSkillId: 'ts_114', advantageSkillId: 'ts_114', balanceSkillId: 'ts_580', disadvantageSkillId: 'ts_581', atkBalanceSkillId: 'ts_114', atkAdvantageSkillId: 'ts_362', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_650', aptitude: 'create' , attackStyle: 'balanced'}, // 征伐美浓等 + 长筱阵地守 → 双行
+    owari_zhitianxinchang: { generalId: 'owari_zhitianxinchang', tier: 'famous', tacticalSkillId: 'ts_362', advantageSkillId: 'ts_114', balanceSkillId: 'ts_580', disadvantageSkillId: 'ts_581', atkAdvantageSkillId: 'ts_362', atkBalanceSkillId: 'ts_114', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_650', aptitude: 'create', attackStyle: 'balanced' }, // 征伐美浓等 + 长筱阵地守 → 双行
 
 
 
@@ -561,7 +561,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        jiluo_d_douxian: { generalId: 'jiluo_d_douxian', tier: 'famous', tacticalSkillId: 'ts_534', advantageSkillId: 'ts_534', balanceSkillId: 'ts_535', disadvantageSkillId: 'ts_536', atkAdvantageSkillId: 'ts_535', atkDisadvantageSkillId: 'ts_534', defAdvantageSkillId: 'ts_536', atkBalanceSkillId: 'ts_035', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_730', aptitude: 'create' , attackStyle: 'attack'},
+    jiluo_d_douxian: { generalId: 'jiluo_d_douxian', tier: 'famous', tacticalSkillId: 'ts_535', advantageSkillId: 'ts_534', balanceSkillId: 'ts_535', disadvantageSkillId: 'ts_536', atkAdvantageSkillId: 'ts_535', atkBalanceSkillId: 'ts_035', atkDisadvantageSkillId: 'ts_534', defAdvantageSkillId: 'ts_536', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
 
 
 
@@ -931,7 +931,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     babuer_babuer: { generalId: 'babuer_babuer', tier: 'famous', tacticalSkillId: 'ts_401', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_795', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_743', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
     danmai_abusalong: { generalId: 'danmai_abusalong', tier: 'famous', tacticalSkillId: 'ts_401', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_795', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_743', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
     kasidiliya_afangsuoshiyi: { generalId: 'kasidiliya_afangsuoshiyi', tier: 'famous', tacticalSkillId: 'ts_003', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_795', atkDisadvantageSkillId: 'ts_016', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_743', defDisadvantageSkillId: 'ts_730', aptitude: 'create', attackStyle: 'attack' },
-    ruidian_si_biergeyaer: { generalId: 'ruidian_si_biergeyaer', tier: 'ordinary', tacticalSkillId: 'ts_124', atkAdvantageSkillId: 'ts_031', defAdvantageSkillId: 'ts_021', atkBalanceSkillId: 'ts_757', defBalanceSkillId: 'ts_758', atkDisadvantageSkillId: 'ts_810', defDisadvantageSkillId: 'ts_161', aptitude: 'leverage', attackStyle: 'defense' },
+    ruidian_si_biergeyaer: { generalId: 'ruidian_si_biergeyaer', tier: 'ordinary', tacticalSkillId: 'ts_031', atkAdvantageSkillId: 'ts_031', atkBalanceSkillId: 'ts_757', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_758', defDisadvantageSkillId: 'ts_161', aptitude: 'leverage', attackStyle: 'defense' },
     duluo_sangqiao: { generalId: 'duluo_sangqiao', tier: 'ordinary', tacticalSkillId: 'ts_124', atkAdvantageSkillId: 'ts_031', defAdvantageSkillId: 'ts_021', atkBalanceSkillId: 'ts_757', defBalanceSkillId: 'ts_758', atkDisadvantageSkillId: 'ts_810', defDisadvantageSkillId: 'ts_161', aptitude: 'create', attackStyle: 'attack' },
     teluoyi_heketuoer: { generalId: 'teluoyi_heketuoer', tier: 'ordinary', tacticalSkillId: 'ts_031', atkAdvantageSkillId: 'ts_031', atkBalanceSkillId: 'ts_757', atkDisadvantageSkillId: 'ts_810', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_758', defDisadvantageSkillId: 'ts_161', aptitude: 'leverage', attackStyle: 'defense' },
     alabo_qiyade: { generalId: 'alabo_qiyade', tier: 'ordinary', tacticalSkillId: 'ts_124', atkAdvantageSkillId: 'ts_031', defAdvantageSkillId: 'ts_021', atkBalanceSkillId: 'ts_757', defBalanceSkillId: 'ts_758', atkDisadvantageSkillId: 'ts_810', defDisadvantageSkillId: 'ts_161', aptitude: 'leverage', attackStyle: 'attack' },
@@ -2135,7 +2135,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    wangyan_wangyan: { generalId: 'wangyan_wangyan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_201', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_759', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage' , attackStyle: 'attack'},
+    wangyan_wangyan: { generalId: 'wangyan_wangyan', tier: 'ordinary', tacticalSkillId: 'ts_201', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_201', atkBalanceSkillId: 'ts_394', atkDisadvantageSkillId: 'ts_759', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_767', defDisadvantageSkillId: 'ts_017', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
@@ -2630,7 +2630,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    kawusi_haidaer: { generalId: 'kawusi_haidaer', tier: 'ordinary', tacticalSkillId: 'ts_402', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_043', defDisadvantageSkillId: 'ts_730', aptitude: 'leverage', attackStyle: 'attack' },
+    kawusi_haidaer: { generalId: 'kawusi_haidaer', tier: 'ordinary', tacticalSkillId: 'ts_355', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_355', atkBalanceSkillId: 'ts_397', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_043', defDisadvantageSkillId: 'ts_730', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
@@ -2646,7 +2646,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    dongping_langtan: { generalId: 'dongping_langtan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_816', atkBalanceSkillId: 'ts_628', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_399', defBalanceSkillId: 'ts_403', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage' , attackStyle: 'attack'},
+    dongping_langtan: { generalId: 'dongping_langtan', tier: 'ordinary', tacticalSkillId: 'ts_816', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_816', atkBalanceSkillId: 'ts_628', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_399', defBalanceSkillId: 'ts_403', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
@@ -2730,7 +2730,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    wenling_shilang: { generalId: 'wenling_shilang', tier: 'famous', tacticalSkillId: 'ts_287', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_001', atkBalanceSkillId: 'ts_745', atkDisadvantageSkillId: 'ts_727', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_587', defDisadvantageSkillId: 'ts_376', aptitude: 'leverage' , attackStyle: 'attack'},
+    wenling_shilang: { generalId: 'wenling_shilang', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_001', atkBalanceSkillId: 'ts_745', atkDisadvantageSkillId: 'ts_727', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_587', defDisadvantageSkillId: 'ts_376', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 
@@ -3023,6 +3023,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_gero_margrave: { generalId: 'gen_gero_margrave', tier: 'ordinary', tacticalSkillId: 'ts_154', atkAdvantageSkillId: 'ts_154', atkBalanceSkillId: 'ts_951', atkDisadvantageSkillId: 'ts_048', defAdvantageSkillId: 'ts_293', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_294', aptitude: 'leverage', attackStyle: 'attack' },
     gen_gilles_de_rais: { generalId: 'gen_gilles_de_rais', tier: 'ordinary', tacticalSkillId: 'ts_001', defBalanceSkillId: 'ts_682', atkAdvantageSkillId: 'ts_158', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_098', defAdvantageSkillId: 'ts_357', defDisadvantageSkillId: 'ts_513', aptitude: 'leverage', attackStyle: 'attack' },
     gen_haci_giray: { generalId: 'gen_haci_giray', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_185', atkBalanceSkillId: 'ts_742', atkDisadvantageSkillId: 'ts_161', defAdvantageSkillId: 'ts_389', defBalanceSkillId: 'ts_743', defDisadvantageSkillId: 'ts_635', aptitude: 'leverage', attackStyle: 'attack' },
+    gen_nikola_zrinski: { generalId: 'gen_nikola_zrinski', tier: 'famous', tacticalSkillId: 'ts_474', atkAdvantageSkillId: 'ts_474', atkBalanceSkillId: 'ts_018', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_077', defBalanceSkillId: 'ts_045', defDisadvantageSkillId: 'ts_161', aptitude: 'reverse', attackStyle: 'defense' },
     gen_hammad: { generalId: 'gen_hammad', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_201', atkBalanceSkillId: 'ts_794', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_745', defDisadvantageSkillId: 'ts_650', aptitude: 'leverage', attackStyle: 'attack' },
     gen_hannibal: { generalId: 'gen_hannibal', tier: 'famous', tacticalSkillId: 'ts_208', atkAdvantageSkillId: 'ts_208', atkBalanceSkillId: 'ts_795', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_757', defDisadvantageSkillId: 'ts_730', aptitude: 'leverage', attackStyle: 'balanced' }, // 坎尼/意大利长期攻守 → 双行
     gen_henry_borwin: { generalId: 'gen_henry_borwin', tier: 'ordinary', tacticalSkillId: 'ts_242', atkAdvantageSkillId: 'ts_242', atkBalanceSkillId: 'ts_148', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_760', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage', attackStyle: 'attack' },
@@ -3058,6 +3059,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_grigory_donets: { generalId: 'gen_grigory_donets', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_474', atkBalanceSkillId: 'ts_109', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage', attackStyle: 'attack' },
     // ── 2026-08-04 新增：萨布罗夫 @ 沃罗涅日／野地 ──
     gen_semyon_saburov: { generalId: 'gen_semyon_saburov', tier: 'ordinary', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_528', atkBalanceSkillId: 'ts_143', atkDisadvantageSkillId: 'ts_179', defAdvantageSkillId: 'ts_816', defBalanceSkillId: 'ts_631', defDisadvantageSkillId: 'ts_730', aptitude: 'leverage', attackStyle: 'attack' },
+    gen_mikhail_tatarinov: { generalId: 'gen_mikhail_tatarinov', tier: 'famous', tacticalSkillId: 'ts_001', defBalanceSkillId: 'ts_045', atkAdvantageSkillId: 'ts_474', atkBalanceSkillId: 'ts_018', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_077', defDisadvantageSkillId: 'ts_161', aptitude: 'create', attackStyle: 'attack' },
     gen_sforza: { generalId: 'gen_sforza', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_570', atkBalanceSkillId: 'ts_167', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_021', defBalanceSkillId: 'ts_634', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage', attackStyle: 'attack' },
     gen_simeon_great: { generalId: 'gen_simeon_great', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_624', atkBalanceSkillId: 'ts_190', atkDisadvantageSkillId: 'ts_361', defAdvantageSkillId: 'ts_029', defBalanceSkillId: 'ts_686', defDisadvantageSkillId: 'ts_416', aptitude: 'create', attackStyle: 'attack' },
     gen_stefan_dusan: { generalId: 'gen_stefan_dusan', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_654', atkBalanceSkillId: 'ts_204', atkDisadvantageSkillId: 'ts_384', defAdvantageSkillId: 'ts_071', defBalanceSkillId: 'ts_707', defDisadvantageSkillId: 'ts_417', aptitude: 'leverage', attackStyle: 'attack' },

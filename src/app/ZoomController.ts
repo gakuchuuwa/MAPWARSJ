@@ -45,6 +45,13 @@ export class ZoomController {
 
     public tick(): void {
         if (!this.enabled) return;
+        // [2026-08-10 13 锁死·双保险] 13 战斗场景激活期间（含 flyTo(13) 动画途中）ZoomController
+        // 完全让位：GameAppLoop 场景激活分支已冻结本 tick（唯一调用点），这里再兜一层——
+        // 用裸 isActive()（不是 active && zoom≥13）：flyTo 途中 zoom<13 若被误调 trySwitch(10)
+        // 会 setZoom(10) 打断 flyTo 动画 → 又卡在中间 zoom → 编队永不展开（7.99 惨案同源）。
+        // 未来若新增任何旁路调用点，13 也绝不被 ZoomController 改写。
+        const sceneActive = (window as any).game?.battleScene?.isActive?.() === true;
+        if (sceneActive) return;
         const army = this.getFollowedArmy();
         const armyId = army?.id ?? null;
 

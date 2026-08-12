@@ -595,10 +595,14 @@ export class LegionManager {
             return 'siege';
         }
 
-        // ── 威慑·越城而走：仅小城可跳（2026-08-07 主人定）──
-        // 险要（pass）挡在必经之路，跳过没意义必须打通；大/中城是要地，不跳则另选目标；
-        // 只有小城值得「绕开打不过的城」继续前进。脉冲只在成功跳过时显示（失败不显示）。
-        if (!isLockedTarget && targetCity.type === 'small_city' && generalHasStrategicEffect(army, 'skip_disadvantaged_siege')) {
+        // ── 威慑·越城而走：**险要之外都可跳**（2026-08-12 主人拍板，纠正 08-07 的反向逻辑）──
+        // 🔴 旧规则是「仅小城可跳」，方向正好反了：现实里该绕开的恰恰是**啃不动的坚城**
+        //    （避实击虚、避坚城取要害是常规操作），而软柿子没有理由绕。
+        // 🔴 唯一保留的例外是**险要（pass）**：它挡在必经之路上，绕过去没有意义，必须打通
+        //    （这一条是 08-07 定的，地形上成立，予以保留）。
+        // 触发前提仍是「我方兵力劣势」+ 概率，所以"绕"永远只发生在打不过的时候。
+        // 脉冲只在成功跳过时显示（失败不显示）。
+        if (!isLockedTarget && targetCity.type !== 'pass' && generalHasStrategicEffect(army, 'skip_disadvantaged_siege')) {
             const myTroops = army.getTroops();
             const enemyTroops = targetCity.troops ?? 0;
             if (myTroops < enemyTroops) {

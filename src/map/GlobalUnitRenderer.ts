@@ -1,4 +1,4 @@
-﻿import L from 'leaflet';
+import L from 'leaflet';
 import { GameMap } from './GameMap';
 import { OrientationSystem } from '../core/OrientationSystem';
 import { GridSystem } from '../systems/GridSystem';
@@ -8,6 +8,9 @@ import { PlayerPhalanxDrawer } from './player/PlayerPhalanxDrawer'; // [NEW] Pre
 import { LegionPhalanxDrawer, PhalanxAnimState } from './legion/LegionPhalanxDrawer'; // [AI SYSTEM]
 import type { NavalShipAssetId } from '../types/NavalShipTiers';
 import { LegionPhalanxStateManager } from './legion/LegionPhalanxState';
+import {
+    actAt, blockOffsetAt, slotPlanAt, easeInOut, SCENE13_CONTACT_RATIO,
+} from './legion/Scene13Choreographer'; // [2026-08-10 剧本法]
 import { LegionFlagDrawer } from './legion/LegionFlagDrawer'; // [AI FLAG SYSTEM]
 import { ProjectileRenderer } from './ProjectileRenderer'; // [NEW] Arrow System
 import { BanditDrawer, BanditState } from './BanditDrawer';
@@ -25,6 +28,22 @@ import { gameLog } from '../utils/GameLogger';
 import { GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG, getStrategicSkillDef } from '../data/GeneralSkills';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { generalIdHasStrategicEffect } from '../combat/GeneralSkillCombat';
+import {
+    expandCompositionScales,
+    expandCompositionSlots,
+} from '../types/LegionComposition';
+import { getCultureTier } from '../types/CultureFormations';
+
+/** [2026-08-10 编队外框] 命中查询结果：目标编队的位置 + 算它外框所需的全部参数 */
+interface SquadHit {
+    pt: { x: number; y: number };
+    type: string;
+    /** 目标所属阵型的旋转角（rad） */
+    angle: number;
+    /** 目标方的单兵渲染宽 / 高（像素） */
+    dw: number;
+    dh: number;
+}
 
 /** 虚张声势倍率：从武将的战略技 catalog 读取 magnitude，fallback 2 */
 function getBluffMagnitude(generalId: string | undefined): number {
@@ -115,6 +134,343 @@ export class GlobalUnitRenderer {
     private lastTime: number = 0;
     private isRunning: boolean = false;
     private showLabels: boolean = true; // [NEW] Toggle for text labels
+
+    // ── [2026-08-09 编队独立移动] 13 场景：9 个格位编队各自推进 ──
+    // key = `${unitId}:${squadIndex}` → 当前屏幕偏移（旋转前空间，像素，相对军团锚点）
+    private squadMoveState = new Map<string, { x: number; y: number }>();
+    /** [2026-08-10 重做·统一战斗核心] 编队目标锁：`selfKey:i` → 敌编队认领键。
+     *  锁定目标阵亡/过期才重选最近的（防每帧换目标转圈）。场景退出随 squadMoveState 一并清。 */
+    private squadTargetLock = new Map<string, string>();
+    /** [2026-08-10 战线时间轴] 本场战斗的「幕一·列阵」起点（进 13 场景第一帧）。
+     *  0~1.5s 列阵对峙（IDLE）→ 之后幕二·冲锋（MOVE，时间轴驱动，无逐帧积分零抖动）。 */
+    private battlePhaseStart = 0;
+
+    // ── [2026-08-09 就近咬住·第二段] 双方编队屏幕位置共享表 ──
+    // 攻守两侧在各自推进函数里发布本帧编队绝对屏幕坐标，对面读它找最近敌人。
+    // 两侧计算时机不同（攻方先、守方后），先算的一方读到的是**上一帧**数据 —— 60fps 下
+    // 一帧延迟肉眼不可见，换来不必重排渲染顺序。frame 戳用于剔除已结束战斗的陈旧条目。
+    private squadPosRegistry = new Map<string, {
+        frame: number;
+        factionId: string;
+        pts: ({ x: number; y: number } | null)[];
+        types: string[];
+        /** [2026-08-10 编队外框] 本方阵型旋转角（rad，= (direction+1)·π/4）：
+         *  对面要用它把「我→敌」的世界方向转进**敌方本地坐标**，才能算敌方外框的支撑半径。 */
+        angle: number;
+        /** 单兵渲染宽 / 高（像素）：外框尺寸按发布方自己的精灵算，不再拿我方尺寸套敌方 */
+        dw: number;
+        dh: number;
+    }>();
+    private squadRegistryFrame = 0;
+    /** [2026-08-10 帧级共享认领] 本帧所有参战军团（攻方×N + 守军）共用的认领计数——
+     *  取代「每军团独立 claims」：独立计数会让多军团编队拿重复 slot → 多个编队瞄同一
+     *  目标点 → 撞车 → 友军防重叠互挡 → 绕行抖动（主人实锤「士兵颤抖」）。
+     *  animate 渲染循环前清一次，整帧共享。 */
+    private frameClaims = new Map<string, number>();
+    /** [2026-08-10 阵亡单调] 编队兵力已扣光的最大损失（key = unitId / def_cityId）：
+     *  引擎兵力回升（胜战计加兵等）不清算已阵亡编队，防 DEATH/ALIVE 反复 = 横躺颤抖 */
+    private squadMaxLoss = new Map<string, number>();
+    // ── [2026-08-09 编队级阵亡] 每编队独立兵力（key = `${unitId}`；守军 = `def_${cityId}`）──
+    /** 初始兵力（进 13 战斗时按槽位均分，残兵给前几个编队） */
+    private squadBaseTroops = new Map<string, number[]>();
+    /** 编队接触距离系数：× 格位间距。
+     *  0.90 ≈ 两编队边缘刚好挨上（0.55 会穿模 35%——主人核对：步兵半宽 1.81×2 = 3.625 单兵宽 = 0.91×spacing） */
+    // 【2026-08-09 废弃】统一接触系数已被「按双方编队实际宽度」取代
+    // （见 getSquadOffsets / getDefenderSquadOffsets 里的 unitWpx + getSquadWidthFactor）。
+    // 保留常量只为记录历史值，勿再引用；要调接触松紧请改 getSquadWidthFactor 的系数。
+    /** 同一敌方编队最多被几个我方编队咬住（软上限，防全部叠到一个敌人身上） */
+    private static readonly SQUAD_CLAIM_CAP = 2;
+
+    /** 发布本方编队屏幕坐标，供对面就近查找。死亡编队以 null 占位（保持索引对齐，对面自动跳过） */
+    private publishSquadPositions(
+        key: string,
+        factionId: string,
+        pts: ({ x: number; y: number } | null)[],
+        types: string[],
+        angle: number,
+        dw: number,
+        dh: number,
+    ): void {
+        this.squadPosRegistry.set(key, {
+            frame: this.squadRegistryFrame, factionId, pts, types, angle, dw, dh,
+        });
+    }
+
+    /** 按「军团:格位」取敌方编队当前坐标 + 外框参数；条目过期/越界返回 null（目标已阵亡或战斗结束） */
+    /**
+     * [2026-08-10 编队外框] 两个编队「外框刚好贴上」的中心距。
+     * = 支撑半径_我(d) + 支撑半径_敌(−d)，d = 我→敌 的世界单位方向。
+     * 各自把 d 转进自己的本地坐标（世界→本地与 tx/ty 同一套逆旋转），所以不管
+     * 双方朝向差多少、从哪个方位压上来，算出来的都是那个方向上真实的外框间距。
+     * 🔴 [2026-08-10 修·隔空战斗] 判定用**士兵真实占位**（支撑半径，不再乘视觉框收缩系数）：
+     * 原实现乘 0.7/0.55（debugDrawSquadBox 的调试框）→ 框相切时士兵之间还有缝 →
+     * 近战隔空挥砍（主人实锤）。真实占位相切 = 最前排士兵模型边缘接触 = 贴身；视觉调试框保持原样。
+     */
+    private squadContactDistance(
+        from: { x: number; y: number },
+        myType: string,
+        myAngle: number,
+        myDw: number,
+        myDh: number,
+        enemy: SquadHit,
+    ): number {
+        const wx = enemy.pt.x - from.x;
+        const wy = enemy.pt.y - from.y;
+        const len = Math.hypot(wx, wy) || 1;
+        const dx = wx / len;
+        const dy = wy / len;
+        // 世界 → 我方本地
+        const mc = Math.cos(myAngle);
+        const ms = Math.sin(myAngle);
+        const myR = LegionPhalanxDrawer.getSquadSupportRadius(
+            myType, dx * mc + dy * ms, -dx * ms + dy * mc, myDw, myDh,
+        );
+        // 世界 → 敌方本地（方向取反：从敌方看过来）
+        const ec = Math.cos(enemy.angle);
+        const es = Math.sin(enemy.angle);
+        const enR = LegionPhalanxDrawer.getSquadSupportRadius(
+            enemy.type, -dx * ec - dy * es, dx * es - dy * ec, enemy.dw, enemy.dh,
+        );
+        // [2026-08-10 主人定稿·边框 = 唯一开战标准] 判定与视觉边框同源：
+        // 双方支撑半径各乘 debugDrawSquadBox 同一组收缩系数（骑 0.55 / 其他 0.70 /
+        // 据点 1.0）——**边框相切 = 判定碰到 = 开战**。此前判定用「士兵真实占位」
+        // （不乘系数，且素材含透明边距算得虚大）→ 边框还没碰就开打（主人实锤
+        // 「前排都没有碰到就开始战斗」）。改边框松紧只调 shrink，两处必须同步。
+        const shrinkOf = (t: string): number => {
+            if (t === 'city') return 1.0; // 城图是本体，不缩——攻方停在城图边缘
+            return LegionPhalanxDrawer.isCavalryType(t) ? 0.55 : 0.70;
+        };
+        return myR * shrinkOf(myType) + enR * shrinkOf(enemy.type);
+    }
+
+    /**
+     * [2026-08-10 编队外框·防重叠] 本编队走到 next 后，会不会压进**自己人**的外框里？
+     *
+     * 主人定：每个形状不能重叠。友军之间不该互相穿模——但 🔴 绝不能靠「事后推开」实现
+     * （屏幕错开/去叠是铁律禁止项）。这里只做**前进否决**：会重叠就本帧不走，
+     * 停在原地等前面的让开，位置永远是自己走出来的，没有任何外力位移。
+     *
+     * 友军坐标取上一帧发布的（与敌方共享表同一套，60fps 下一帧延迟肉眼不可见），
+     * 免得为了本帧顺序去重排渲染。
+     */
+    /**
+     * [2026-08-10 据点外框·主人定稿] 据点也有边框，编队不许和它重叠。
+     *
+     * 城图外框 = 以城中心为心、halfW × halfH 的矩形（与 computeSiegeDefenderAnchor
+     * 用的是同一套尺寸，唯一来源 getSiegeCityScreenWidthPx + CITY_ICON_HW_RATIO）。
+     * 允许的最小中心距 = 城框支撑半径 + 编队外框支撑半径，两者都沿「城→编队」方向取。
+     *
+     * 效果：攻方压上来会被挡在**据点边缘**开打，不会踩进城图里；守方是从城边缘往外走的，
+     * 不受影响（只否决「更靠近城」的移动，见调用处）。
+     *
+     * @returns 允许的最小「编队中心 ↔ 城中心」像素距离；据点不可解析时返回 null（不设限）
+     */
+    private cityKeepOutDistance(
+        city: { latitude: number; longitude: number },
+        squadPt: { x: number; y: number },
+        myType: string,
+        myAngle: number,
+        myDw: number,
+        myDh: number,
+    ): { cityPt: L.Point; minDist: number } | null {
+        const zoom = this.map.getZoom();
+        const cityPt = this.map.latLngToContainerPoint([city.latitude, city.longitude]);
+        const halfW = getSiegeCityScreenWidthPx(zoom) / 2;
+        const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;
+        const wx = squadPt.x - cityPt.x;
+        const wy = squadPt.y - cityPt.y;
+        const len = Math.hypot(wx, wy);
+        if (len < 1e-6) return { cityPt, minDist: halfW + halfH };
+        const dx = wx / len;
+        const dy = wy / len;
+        // 城框（屏幕轴对齐矩形）沿该方向的支撑半径
+        const cityR = halfW * Math.abs(dx) + halfH * Math.abs(dy);
+        // 编队外框沿「城 → 我」的反方向（即从我看向城）的支撑半径：世界 → 我方本地
+        const mc = Math.cos(myAngle);
+        const ms = Math.sin(myAngle);
+        const squadR = LegionPhalanxDrawer.getSquadSupportRadius(
+            myType, -dx * mc - dy * ms, dx * ms - dy * mc, myDw, myDh,
+        );
+        return { cityPt, minDist: cityR + squadR };
+    }
+
+
+
+    /**
+     * [2026-08-10 主人定稿·编队占位独立] 本编队走到 next 后会不会压进**任何友军编队**
+     * 的边框（跨军团、含守军/城图）？边框重叠 = 禁走（前进否决，本帧原地），阵亡编队
+     * （null 占位）不挡路。边框几何与交战判定同源（squadContactDistance）——
+     * 「不重叠」和「相切开战」用的是同一个框。
+     */
+    private squadBlockedByAlly(
+        myFactionId: string,
+        selfKey: string,
+        selfIndex: number,
+        next: { x: number; y: number },
+        myType: string,
+        myAngle: number,
+        myDw: number,
+        myDh: number,
+    ): boolean {
+        for (const [key, entry] of this.squadPosRegistry) {
+            if (entry.factionId !== myFactionId) continue; // 敌军由 stopDist（相切开战）管
+            // [2026-08-10 修·守军被自己的城挡住] 城图是以**守方势力**发布的一个编队
+            // （publishSquadPositions(`city_${id}`, city.factionId)），外框 = 整张城图，
+            // 支撑半径六七百到九百多 px。守军就站在城图上/城图边，永远落在这个巨框里 →
+            // 本函数每帧都判「被友军挡住」→ 守军全体 IDLE 一步不出（主人实锤「防守方不动」，
+            // 邢台/邯郸/马格德堡/番禺四场样本全中，全是攻城战）。
+            // 城对**敌方**照旧是障碍（由 stopDist 相切管，那条路径不受影响）；
+            // 但它绝不能挡住自己的守军出城迎战。
+            if (key.startsWith('city_')) continue;
+            if (this.squadRegistryFrame - entry.frame > 1) continue;
+            for (let j = 0; j < entry.pts.length; j++) {
+                if (key === selfKey && j === selfIndex) continue;
+                const p = entry.pts[j];
+                if (!p) continue; // 阵亡编队不占位
+                const need = this.squadContactDistance(next, myType, myAngle, myDw, myDh, {
+                    pt: p,
+                    type: entry.types[j] ?? 'mixed',
+                    angle: entry.angle,
+                    dw: entry.dw,
+                    dh: entry.dh,
+                });
+                if (Math.hypot(p.x - next.x, p.y - next.y) < need) return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 找最近的敌方编队。claims 记录每个敌方编队已被咬住的次数，达到 SQUAD_CLAIM_CAP 就跳过找次近的。
+     * 返回 { 认领键, 屏幕坐标, slot }；slot = 本编队在该敌人身上的**认领序号**（0 = 正面第一个，
+     * 1、2… = 后到的，由调用方让开一个编队宽站侧翼）。
+     * 找不到（对面还没发布/战斗刚开始）返回 null，调用方退回原目标。
+     */
+    private findNearestEnemySquad(
+        myFactionId: string,
+        from: { x: number; y: number },
+        claims: Map<string, number>,
+    ): (SquadHit & { key: string; slot: number }) | null {
+        let best: SquadHit | null = null;
+        let bestKey = '';
+        let bestDist = Infinity;
+        let fallback: SquadHit | null = null;
+        let fallbackKey = '';
+        let fallbackDist = Infinity;
+        for (const [key, entry] of this.squadPosRegistry) {
+            if (entry.factionId === myFactionId) continue; // 同势力 = 友军，跳过
+            // 只认本帧或上一帧发布的（战斗结束后条目会自然过期）
+            if (this.squadRegistryFrame - entry.frame > 1) continue;
+            for (let i = 0; i < entry.pts.length; i++) {
+                const p = entry.pts[i];
+                if (!p) continue; // 死亡编队占位 null，跳过（不吸引新目标）
+                const d = Math.hypot(p.x - from.x, p.y - from.y);
+                const ck = `${key}:${i}`;
+                const hit: SquadHit = {
+                    pt: p,
+                    type: entry.types[i] ?? 'mixed',
+                    angle: entry.angle,
+                    dw: entry.dw,
+                    dh: entry.dh,
+                };
+                if (d < fallbackDist) { fallbackDist = d; fallback = hit; fallbackKey = ck; }
+                if ((claims.get(ck) ?? 0) >= GlobalUnitRenderer.SQUAD_CLAIM_CAP) continue;
+                if (d < bestDist) { bestDist = d; best = hit; bestKey = ck; }
+            }
+        }
+        if (best) {
+            const slot = claims.get(bestKey) ?? 0;
+            claims.set(bestKey, slot + 1);
+            return { ...best, key: bestKey, slot };
+        }
+        // 全部敌方编队都满员 → 退回最近的那个（宁可挤，也好过没目标呆立）
+        // 这里也照常记认领：slot 递增 → 挤上来的编队按序号往两侧排开，不会全叠在同一点
+        if (!fallback) return null;
+        const fslot = claims.get(fallbackKey) ?? 0;
+        claims.set(fallbackKey, fslot + 1);
+        return { ...fallback, key: fallbackKey, slot: fslot };
+    }
+
+    /**
+     * [2026-08-09 编队级阵亡] 每编队独立兵力：按军团当前总兵力轮询扣减。
+     * - 初始：进 13 战斗首帧按槽位均分（残兵给前几个编队），记录在 squadBaseTroops
+     * - 每帧：总损失 = 初始总和 − 当前军团 troops，从编队 0 开始逐个扣光（先满编队先倒，逐个倒下）
+     * - 返回每编队当前兵力数组；扣光（≤0）的编队由调用方标 DEATH
+     * 纯视觉层分配，不写回引擎；8/9/10 不调用此方法。
+     */
+    private computeSquadTroops(key: string, totalTroops: number, count: number): number[] {
+        let base = this.squadBaseTroops.get(key);
+        if (!base || base.length !== count) {
+            // 首帧初始化：均分，残兵给前几个编队（如 10000/9 → [1112,1112,…,1111]）
+            const each = Math.floor(totalTroops / count);
+            const rem = totalTroops - each * count;
+            base = Array.from({ length: count }, (_, i) => each + (i < rem ? 1 : 0));
+            this.squadBaseTroops.set(key, base);
+        }
+        const baseTotal = base.reduce((a, b) => a + b, 0);
+        // 总损失：初始总和 − 当前总兵力（夹到 [0, baseTotal]）
+        let loss = Math.min(baseTotal, Math.max(0, baseTotal - totalTroops));
+        // [2026-08-10 阵亡单调] 损失只增不减：引擎兵力可能回升（胜战计「守加己兵」等），
+        // 回升不清算已阵亡编队——否则死编队复活 → DEATH/ALIVE 反复 = 横躺颤抖（主人实锤）。
+        const prevLoss = this.squadMaxLoss.get(key) ?? 0;
+        if (loss < prevLoss) loss = prevLoss;
+        else this.squadMaxLoss.set(key, loss);
+        const cur = base.slice();
+        // 轮询扣减：从编队 0 开始扣，扣光一个再扣下一个（先满编队先倒，逐个倒下）
+        for (let i = 0; i < cur.length && loss > 0; i++) {
+            const take = Math.min(cur[i], loss);
+            cur[i] -= take;
+            loss -= take;
+        }
+        return cur;
+    }
+
+    /** 编队停止距离（px）：近战 = 接触；远程 = 射程（主人 2026-08-09 定稿：井阑投石床弩弓骑都到射程停） */
+    private static readonly SQUAD_STOP_DIST_PX: Record<string, number> = {
+        // 远程：推进到射程边界就停
+        // 【2026-08-09 主人定稿·射程重排】旧值（弓 400 / 弩 350 / 床弩 450 / 井阑 550 / 投石 750）
+        // 是编队还是「一个点」时定的。现在一个编队本身就 209~400px 宽，近战接触距离约 396px，
+        // 与旧弓射程 400 仅差 4px → 远程和肉搏线完全重合，分不出谁在放风筝（主人实锤）。
+        // 新值按「射程 ≈ 近战接触的 2~3.5 倍」重排，纵深拉开：近战 → 弩 → 弓 → 床弩 → 井阑 → 投石。
+        // ⚠️ 射程 > 攻守阵距（SCENE13_ATTACKER_GAP_PX，现 650）→ 开局即在射程内、原地站桩不推进。
+        //    2026-08-10 器械统一 600 后三种器械都在阵距之内，开局会先推进一小段再开打。
+        // 【2026-08-09 二次修正】① horse_archer 已移出本表 —— 主人早已定「弓骑是骑兵」，
+        //    它按骑兵 1-2-3 编队展开，停止距离却留在远程表当远程用，两套标准打架；
+        //    草原/河西/中亚/西域/突厥主力都是弓骑，6 格里 5 格站 750px 外不上前 → 战场空着。
+        //    移出后按近战冲到接触距离，与「弓骑是骑兵」一致。
+        // ② 其余射程整体压近：上一版 650~1400 远超近战接触（209~400px），远程脱节成另一拨。
+        // [2026-08-10 主人定·射程只剩两档] 弓手/弩手统一 500；床弩/井阑/投石统一 600
+        //    （原 600 / 700 / 850 三档并档，同「为什么远程的距离还不一样」）。
+        //    取 600 而非 700/850：只有它小于攻守阵距 650，三种器械开局都会向前推进一小段再开打，
+        //    不会像 700/850 那样一开场就已在射程内、全程站桩与近战部队脱节。
+        //    ⚠️ 层次现在是「近战接触 → 弓弩 500 → 器械 600」，不再有器械内部的纵深分档。
+        archer: 500, crossbow: 500, ballista: 600,
+        well_lan: 600, well_lan_r: 600, catapult_l: 600, catapult_r: 600,
+    };
+
+    /**
+     * [2026-08-10 到位容差] 距停止线 ≤ 此值 = 已到位（推进结束，不再计停滞）。
+     * 修复「改了好几天还是隔空战斗」：双方都快到位时相对距离下降变慢（step 趋近
+     * stopDist − dist），低于 stallEps 阈值 → 停滞兜底误判 → 最后 30–60px 被截停，
+     * 恰好吃掉 SQUAD_HITBOX_SHRINK 的咬合量 → 观感隔空挥刀。
+     */
+    private static readonly SQUAD_ARRIVE_EPS_PX = 14;
+
+    /** [2026-08-09 齐头并进·第一段] 冲锋阶段统一速度（px/s）——9 编队一条线压上，
+     *  不分兵种快慢（主人定：全面战争式齐头并进，接触后再各自找对手）。
+     *  2026-08-09 主人实锤「隔着老远交战」= 主力冲锋路上太久（750px/110 ≈ 7s，占满 10-30s 战斗）→ 140px/s */
+    private static readonly SCENE13_CHARGE_SPEED_PX = 140;
+    /** [2026-08-09 视觉对垒] 13 场景攻方阵心距城图框缘的外侧空隙（px）：守军在框缘内侧，攻方贴外侧对峙
+     *  （2026-08-09 主人：攻方应与据点拉开距离——550 仍显近，定稿 750px；
+     *   同日再调 750→650：配合冲锋提速，接触更快、画面更紧凑不贴脸） */
+    private static readonly SCENE13_ATTACKER_GAP_PX = 650;
+    /** [2026-08-10 野战开场] 两军最前缘之间保留的净空（px）。
+     * 阵心距不能再写死：13 的 3×3 格位会随兵种贴图/文化倍率变化，固定 650px 小于两军
+     * 实际半深之和时，第一帧就会互相穿插。现按双方真实编队投影半径 + 本净空动态计算。
+     * 幕二双方各冲锋 120px 后仍余 120px，再由当前交战排推进至贴身。 */
+    private static readonly SCENE13_FIELD_CLEAR_LANE_PX = 360;
+    /** 资源尚未加载、无法计算编队投影时的安全阵心距；宁可多留空地，不允许开场交叉。 */
+    private static readonly SCENE13_FIELD_FALLBACK_GAP_PX = 1200;
     /** 地图拖动/缩放后需重绘（可跨帧分批） */
     private mapNeedsRedraw = true;
     private pendingViewRedraw = false;
@@ -140,6 +496,15 @@ export class GlobalUnitRenderer {
      * 按真实时间常数向目标逼近；离战仍用缓存方向把 push 收到 0，避免「突然弹回逻辑点」。
      */
     private siegePushCache = new Map<string, { push: number; nx: number; ny: number }>();
+    /**
+     * [2026-08-10 野战出场对齐·三国群英传式] 野战参战军团对位缓存（key = unit.id）：
+     * aligned = 本军团对位渲染点（屏幕）、enemy = 对方军团对位渲染点、mid = 战场中点。
+     * 每帧 animate 开头清空重算（两军位置会变）；同帧内 renderUnit → draw(getSquadOffsets)
+     * → BattleSceneLayer.tick 三处读的是同一个本帧值。
+     */
+    private fieldSceneAlignCache = new Map<string, {
+        aligned: L.Point; enemy: L.Point; mid: L.Point;
+    }>();
     /** 本帧 animate 的 dt（ms），供外推时间基 lerp；无则退回 16.7 */
     private frameDeltaMs = 1000 / 60;
     /** 外推指数逼近时间常数（ms）：约 0.13s 收到 ~90%（与原「每帧 25%@60fps」同量级，且不跟帧率绑） */
@@ -149,6 +514,53 @@ export class GlobalUnitRenderer {
     /** [2026-08-04] 攻城视觉外推：跟拍放大态各城型统一为「原图1024×0.4@zoom10」屏幕宽；
      *  非跟拍不放大，按平时城型底宽。图 4:3。阵心对齐图片边缘。只动渲染。 */
     private static readonly CITY_ICON_HW_RATIO = CITY_ART_NATIVE_HEIGHT_PX / CITY_ART_NATIVE_WIDTH_PX;
+
+    /**
+     * 攻城团复制偏移（单位 = 攻城间距格，随军团 direction 一起旋转）。
+     *
+     * 一个「攻城团」= 5 件器械（冲车 ×1 / 井阑 ×2 / 投石 ×2）+ 2 个弓步兵 = 7 个单位。
+     * 团在阵内的占位约：横向 ±1.7（井阑最外）、纵向 -2.0 ~ +1.9（冲车最前 ~ 投石最后）。
+     *
+     * - 非战斗场景（zoom13 以外）：返回单个 {0,0} → 与改动前逐像素一致，其他层级不受影响。
+     * - zoom13 战斗场景：返回 4 个偏移 → 4 个攻城团（2×2 排布，团间留约 1.4 格缝）。
+     *
+     * 想改 4 个团的疏密，只调这里的 GX / GY，不要动器械自身的 posOffset（那张表全 zoom 共用）。
+     */
+    private static getSiegeGroupOffsets(
+        unit: IAnimatedUnit,
+        directionIndex: number,
+        siegeScale: number,
+    ): readonly { x: number; y: number }[] {
+        const sceneActive = GlobalUnitRenderer.isBattleScene13();
+        if (!sceneActive) return GlobalUnitRenderer.SIEGE_GROUP_SINGLE;
+
+        // 与 LegionPhalanxDrawer.draw 同一套资源 id 归一（不同 id → 不同 refSprite → 间距对不上）
+        const rawType = unit.legionType || 'mixed';
+        const assetsId: LegionType =
+            rawType === 'cavalry' || rawType === 'archer_cavalry' || rawType === 'mixed' || rawType === 'infantry'
+                ? rawType
+                : 'mixed';
+
+        const sp = LegionPhalanxDrawer.getDenseSquadSpacing(
+            assetsId,
+            unit.legionType || 'infantry',
+            directionIndex,
+            siegeScale,
+            unit.cultureScales || null,
+        );
+        // 资源未就绪：退回单团原行为，不自己猜数值
+        if (!sp) return GlobalUnitRenderer.SIEGE_GROUP_SINGLE;
+
+        // 「井」字四个交叉点 = 3×3 格位的四个格缝中心 = 相对阵心 ±0.5 格
+        const hx = sp.x * 0.5;
+        const hy = sp.y * 0.5;
+        return [
+            { x: -hx, y: -hy }, { x: +hx, y: -hy },
+            { x: -hx, y: +hy }, { x: +hx, y: +hy },
+        ];
+    }
+
+    private static readonly SIEGE_GROUP_SINGLE: readonly { x: number; y: number }[] = [{ x: 0, y: 0 }];
 
     // [OPTIMIZATION] Static preload to start loading assets before Map exists
     private static assetsPromise: Promise<void> | null = null;
@@ -299,6 +711,11 @@ export class GlobalUnitRenderer {
     }
 
     private isUnitInContainerView(unit: IAnimatedUnit): boolean {
+        // [2026-08-09 13裁剪·第二处] 13 场景参战军团直接放行：它们的绘制位置由场景决定
+        // （攻城外推 750px + 编队推进 530px），逻辑坐标已与画面解耦——镜头每帧对准渲染位置，
+        // 逻辑位置必然甩出屏幕；拿逻辑坐标裁剪必误杀整军（主人实锤攻方消失，第一处修复根本没被执行到）。
+        // 场景外 Set 恒空 → has 恒 false → 原判据一字不动（8/9/10 性能不受影响）。
+        if (this.battleSceneCombatantIds.has(unit.id ?? '')) return true;
         const pos = unit.getPosition();
         if (!isValidMapCoord(pos)) return false;
         const pt = this.map.latLngToContainerPoint([pos.lat, pos.lng]);
@@ -308,8 +725,36 @@ export class GlobalUnitRenderer {
         return pt.x >= -m && pt.x <= w + m && pt.y >= -m && pt.y <= h + m;
     }
 
+    /** [2026-08-09 13裁剪·第二处] 13 场景参战单位 id 集合（跟拍军团 + 对手；每帧刷新） */
+    private battleSceneCombatantIds = new Set<string>();
+
+    /** 刷新参战集合：仅 13 场景收集（活跃攻城/野战/1v1 的攻守双方），其余清空 */
+    private refreshBattleSceneCombatants(): void {
+        this.battleSceneCombatantIds.clear();
+        if (!this.isBattleScene13()) return;
+        const game = (window as any).game;
+        const fields: any[] = game?.combatSystem?.getActiveBattleFields?.() ?? [];
+        for (const f of fields) {
+            for (const u of (f?.getAttackerUnits?.() ?? [])) if (u?.id) this.battleSceneCombatantIds.add(u.id);
+            for (const u of (f?.getDefenderUnits?.() ?? [])) if (u?.id) this.battleSceneCombatantIds.add(u.id);
+        }
+        const battles: any[] = game?.combatSystem?.getActiveBattles?.() ?? [];
+        for (const b of battles) {
+            if (b?.attacker?.id) this.battleSceneCombatantIds.add(b.attacker.id);
+            if (b?.defender?.id) this.battleSceneCombatantIds.add(b.defender.id);
+        }
+    }
+
     /** 视口内可见单位（已做屏幕裁剪 + 战略视野技判定） */
     private collectVisibleUnitsInView(): IAnimatedUnit[] {
+        // [2026-08-09 13裁剪·第二处] 每帧刷新参战集合（13 场景攻守双方放行裁剪）
+        this.refreshBattleSceneCombatants();
+        // [2026-08-11 13 v2] 出兵口互攻演出接管：地图上**任何军团都不画**（参战 + 非参战全跳过，
+        // 只留冻结地图背景：城池/地形/道路）。全部精灵由 Scene13WarLayer 全屏画布负责——
+        // 主人实锤「13 战斗模式还显示之前大战略的军团」（薛仁贵天山飞骑 28500 出现在背景）。
+        // 8/9/10 永不进此分支（演出只在 13 激活）。
+        const warActive = (window as any).game?.scene13War?.isActive?.() === true;
+        if (warActive) return [];
         const list: IAnimatedUnit[] = [];
         for (let i = 0; i < this.sortedUnitsCache.length; i++) {
             const unit = this.sortedUnitsCache[i];
@@ -389,8 +834,74 @@ export class GlobalUnitRenderer {
     }
 
 
+    /**
+     * [2026-08-09 13锁死] 战斗场景视觉生效判定：仅当场景激活 **且 zoom 已到 13**。
+     * flyTo(13) 是 1.6s 动画，途中 zoom 10–12 不得展开 9 编队 / 禁箭 / 强制待命 /
+     * 画守军 / 编队推进——13 战斗模式与其他 zoom 完全隔离（主人铁律，非 13 保持原样）。
+     *
+     * [2026-08-11 13 v2] 出兵口互攻演出激活时返回 false：旧剧本法 13 分支（编队展开/
+     * 剧本走位/守军 9 编队）整体停用，背景军团退回普通渲染——13 演出完全替换旧剧本法，
+     * 避免地图上旧编队与新演出画布叠加。8/9/10 永不进此分支（演出只在 13 激活）。
+     */
+    private isBattleScene13(): boolean {
+        const game = (window as any).game;
+        if (game?.battleScene?.isActive?.() !== true) return false;
+        if (game?.scene13War?.isActive?.() === true) return false;
+        // [2026-08-12 修复] 防止 5 秒战败停留期间（新演出已停、但大地图仍锁在 zoom13 时），
+        // 引擎误判定并把旧 13 模式的幽灵方阵给放出来乱跑。
+        if (game?.battleScene?.isLingering?.() === true) return false;
+        return this.map.getZoom() >= 13;
+    }
+
+    /**
+     * [2026-08-09 13锁死] 静态版判定（static 方法无 this.map，走 window.gameMap）。
+     */
+    private static isBattleScene13(): boolean {
+        const game = (window as any).game;
+        if (game?.battleScene?.isActive?.() !== true) return false;
+        if (game?.scene13War?.isActive?.() === true) return false;
+        if (game?.battleScene?.isLingering?.() === true) return false;
+        const zoom = (window as any).gameMap?.getLeafletMap?.().getZoom?.() ?? 0;
+        return zoom >= 13;
+    }
+
     private animate(time: number): void {
         if (!this.isRunning) return;
+
+        // [2026-08-09 编队独立移动] 场景退出/非激活 → 清空编队推进状态，防下次战斗残留
+        const sceneActiveNow = (window as any).game?.battleScene?.isActive?.() === true;
+        const scene13ReadyNow = this.isBattleScene13();
+        // [2026-08-10 战线时间轴] 必须从 zoom 真正到 13、编队首次可见时才开始计时。
+        // battleScene.active 在 flyTo(13) 开始前就已置 true；若从 active 时计时，1.6s 飞入动画/
+        // 后台节流/首帧加载会提前吃掉列阵期，第一帧可见时 charge 已推进甚至封顶，攻守看起来
+        // 就是「刚一开战已经交叉」。zoom<13 时保持 0，保证首个 13 帧一定从列阵原位开始。
+        if (scene13ReadyNow && this.battlePhaseStart === 0) {
+            this.battlePhaseStart = Date.now();
+        } else if (!scene13ReadyNow) {
+            this.battlePhaseStart = 0;
+        }
+        if (!sceneActiveNow && this.squadMoveState.size > 0) {
+            this.squadMoveState.clear();
+            // [2026-08-10 统一战斗核心] 目标锁同清（防跨战斗残留）
+            this.squadTargetLock.clear();
+            // [2026-08-09 编队级阵亡] 每编队兵力分配同清（防跨战斗残留）
+            this.squadBaseTroops.clear();
+            // [2026-08-10 阵亡单调] 最大损失同清（防跨战斗残留）
+            this.squadMaxLoss.clear();
+        }
+        // [2026-08-10 帧级共享认领] 渲染前清一次：本帧所有参战军团共用一套认领计数
+        this.frameClaims.clear();
+        // [2026-08-09 就近咬住·第二段] 帧戳自增（跨帧读取只认本帧/上一帧，陈旧条目自动失效）；
+        // 场景退出一并清空，防下次战斗读到上一场的编队坐标。
+        this.squadRegistryFrame++;
+        if (!sceneActiveNow && this.squadPosRegistry.size > 0) {
+            this.squadPosRegistry.clear();
+        }
+        // [2026-08-10 野战出场对齐] 每帧重算对位（两军位置会变，缓存只服务本帧内三处读取）；
+        // 场景退出 size 归零，无残留
+        if (this.fieldSceneAlignCache.size > 0) this.fieldSceneAlignCache.clear();
+        // [2026-08-10 临时诊断] 13 编队探针自动落盘（详见 recordScene13Probe 上方说明）
+        this.flushScene13Probe();
 
         const pm = (window as any).perfMonitor;
         const frameStart = performance.now();
@@ -400,6 +911,8 @@ export class GlobalUnitRenderer {
         this.lastTime = time;
         // 夹紧异常大 dt（切后台回来），避免外推一步跳满
         this.frameDeltaMs = Math.max(0, Math.min(deltaTime || 1000 / 60, 100));
+        // [2026-08-10 剧本法] 战斗时钟必须在 frameDeltaMs 算好之后推进，否则用的是上一帧的 dt
+        this.tickScene13Clock();
 
         if (isMacroMapZoom(this.map.getZoom())) {
             if (this.canvas.width > 0 && this.canvas.height > 0) {
@@ -581,12 +1094,24 @@ export class GlobalUnitRenderer {
             }
         }
 
+        // [2026-08-09 独立战斗场景] 攻城战守军 9 编队（城图边缘，面向攻方）：
+        // 守方是 city 单位不注册渲染，须在此补画。仅场景激活时渲染，非 13 保持原样（守军不画士兵）。
+        if (this.isBattleScene13()) {
+            this.renderSiegeDefenders(this.ctx);
+        }
+
         // [NEW] Draw Projectiles AFTER units
         const currentZoom = this.map.getZoom();
         const effectiveZoom = Math.min(currentZoom, 10);
         const scale = Math.pow(2, effectiveZoom - 9) * 0.7;
 
-        this.projectileSystem.draw(this.ctx, scale);
+        // [2026-08-11 13 v2] 出兵口互攻演出接管：地图上不画箭矢特效（主人实锤「射箭的特效还在」）。
+        // 背景军团已被 collectVisibleUnitsInView 过滤，箭矢是独立渲染链，必须同门控。
+        // 演出画布（Scene13WarLayer）自己的精灵不带箭矢，13 期间地图保持纯背景。
+        const warActiveNow = (window as any).game?.scene13War?.isActive?.() === true;
+        if (!warActiveNow) {
+            this.projectileSystem.draw(this.ctx, scale);
+        }
 
         this.lastFrameDrawMs = performance.now() - frameStart;
         if (pm?.reportCount) {
@@ -639,6 +1164,8 @@ export class GlobalUnitRenderer {
 
         // [NEW] Projectile Spawner Logic
         // If attacking AND is ranged/mixed AND has target
+        // [2026-08-10 主人纠正] 13 场景不禁箭矢——远程编队攻击照常发射（旧的
+        // sceneActiveNoArrows 禁用门是 AI 擅自加的，主人从未要求，已删）。
         if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
             const lType = unit.legionType || 'infantry';
             const hasRangedSlots = ((unit as any).cultureSlots as string[] | undefined)?.some(
@@ -773,9 +1300,26 @@ export class GlobalUnitRenderer {
                 const cosA = Math.abs(dx) / len;
                 const sinA = Math.abs(dy) / len;
                 const halfPx = halfW * cosA + halfH * sinA;
-                targetPush = Math.max(0, halfPx - len);
+                // [2026-08-09 13锁死+视觉对垒] 13 战斗场景：攻方恒贴城图框缘外侧——
+                // 真实距离无论多远（攻城军团可能在 20km+ 外开战）都视觉拉近到城图旁，
+                // 与守军（城图边缘）同屏对垒。旧公式 max(0, halfPx - len) 只处理
+                // 「军团在城图内」的推出；且下方 settledPush 负值被 EPS 归零 → 拉近永不生效，
+                // 城图+守军屏外不显示（主人实锤）。13 场景直接对位定位，不走缓动/缓存系统。
+                // 非 13 保持原样：阵心对齐框缘（halfPx - len 非负部分）。
                 nx = dx / len;
                 ny = dy / len;
+                if (this.isBattleScene13()) {
+                    // [2026-08-10 攻城开场留距] 动态阵心距（与野战同源）：城图半投影 +
+                    // 守军 keepOut + 守军前缘 + 净空 + 攻方前缘——阵型多大都不交叉。
+                    const dist = this.getScene13SiegeAttackerDist(
+                        unit, siegeTargetCity, nx, ny, halfPx,
+                    );
+                    return L.point(
+                        cityPt.x + nx * dist,
+                        cityPt.y + ny * dist,
+                    );
+                }
+                targetPush = Math.max(0, halfPx - len);
             }
         }
 
@@ -799,6 +1343,435 @@ export class GlobalUnitRenderer {
             );
         }
         return centerPoint;
+    }
+
+    /**
+     * [2026-08-10 野战出场对齐·三国群英传式] 13 场景**野战**：参战军团对位到
+     * 「战场中点 ± 阵心距/2」——攻守镜像对称列阵、面对面，短冲锋即接战（主人：
+     * 「攻守双方战斗出场对齐，像三国群英传一样」）。
+     *
+     * 背景：野战双方都是 Army，此前按真实经纬度渲染、无任何视觉拉近（攻城有
+     * applySiegeVisualPush 的 650px 外推，野战没有）。真实距离几公里 → 屏幕几百到
+     * 上千 px，骑兵冲锋十几秒「只移动不攻击」（主人实锤）；且双方各自朝对方真实
+     * 位置冲，无对垒观感。
+     *
+     * 几何：找含本单位的活跃 field battlefield → 对方 = 阵营相反单位（优先带将）→
+     * 屏幕空间 dir = normalize(对方真实位置 − 我真实位置)、mid = 两点中点 →
+     * 我方渲染点 = mid − dir×(GAP/2)，对方渲染点 = mid + dir×(GAP/2)（攻守对称）。
+     * 结果存 fieldSceneAlignCache（本帧统一），getSquadOffsets 野战目标 / 镜头落点共用。
+     *
+     * 🔴 13 锁死（active && zoom≥13）：攻城战 bf.type === 'siege' 直接排除，走原有
+     * applySiegeVisualPush；8/9/10 本函数直接返回原样，逐像素不变。
+     */
+    /**
+     * [2026-08-10 攻城开场留距·与野战同源] 13 攻城战攻方阵心距城中心的距离。
+     * 旧版 = 城图半投影 + 固定 650px：没扣除守军出城列阵（keepOut + 守军阵深）与
+     * 攻方自身阵深，阵型一大开场就嵌进守军（主人实锤「攻城也交叉」）。
+     * 现 = 城图半投影 + 守军 keepOut + 守军前缘半径 + 净空 + 攻方前缘半径，
+     * 与野战 applySceneFieldAlign 的动态阵心距同一公式结构。
+     * 资源未就绪 → 退回旧 650（此时编队也未展开，不会交叉）。
+     */
+    private getScene13SiegeAttackerDist(
+        unit: IAnimatedUnit,
+        city: any,
+        nx: number,
+        ny: number,
+        halfPx: number,
+    ): number {
+        const fallback = halfPx + GlobalUnitRenderer.SCENE13_ATTACKER_GAP_PX;
+        const atkPos = unit.getPosition();
+        if (!atkPos) return fallback;
+        const cityPos = { lat: city.latitude, lng: city.longitude };
+        const scale = Math.pow(2, Math.min(this.map.getZoom(), 10) - 9) * 0.7;
+
+        // 守军：城文化区 9 槽（与 renderSiegeDefenders 同源），面向攻方
+        const tier = getCultureTier((city.region ?? 'CENTRAL') as any, city.troops);
+        const slots = tier?.slots;
+        if (!slots || slots.length === 0) return fallback;
+        const defSlots = expandCompositionSlots(slots);
+        const defScales = expandCompositionScales(slots);
+        const defDir = OrientationSystem.get8DirectionIndex(cityPos, atkPos);
+        // 守军整片沿攻方方向外推 keepOut（getDefenderSquadOffsets 同源：1.1×sp.y）
+        const defSp = LegionPhalanxDrawer.getDenseSquadSpacing(
+            'mixed', defSlots[0] ?? 'infantry', defDir, scale, defScales,
+        );
+        if (!defSp) return fallback;
+        const keepOut = defSp.y * 1.1;
+        // 守军前缘半径：沿「城→攻方」屏幕方向 (nx, ny)
+        const defRadius = this.scene13FrontRadiusCore(
+            defSlots, defScales, 'mixed', defDir, nx, ny, scale,
+        );
+        // 攻方前缘半径：面向城，沿「攻方→城」屏幕方向 (-nx, -ny)
+        const atkDir = OrientationSystem.get8DirectionIndex(atkPos, cityPos);
+        const atkRadius = this.getScene13FormationFrontRadius(unit, atkDir, -nx, -ny);
+        if (defRadius === null || atkRadius === null) return fallback;
+        return halfPx + keepOut + defRadius
+            + GlobalUnitRenderer.SCENE13_FIELD_CLEAR_LANE_PX + atkRadius;
+    }
+
+    /** 13 场景通用：一个 3×3 军阵（9 编队）从阵心沿指定屏幕方向伸出的真实半径。
+     *  野战/攻城同源——攻城守军（城文化区 9 槽）也走这里算纵深，开场留距一套公式。 */
+    private scene13FrontRadiusCore(
+        slots: string[],
+        cultureScales: number[] | null,
+        legionType: string,
+        directionIndex: number,
+        screenDx: number,
+        screenDy: number,
+        scale: number,
+    ): number | null {
+        if (slots.length === 0) return null;
+        const sp = LegionPhalanxDrawer.getDenseSquadSpacing(
+            legionType || 'mixed',
+            legionType || 'infantry',
+            directionIndex,
+            scale,
+            cultureScales,
+        );
+        if (!sp) return null;
+
+        const angle = (directionIndex + 1) * Math.PI / 4;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        // 屏幕方向 → 阵内方向（与 getSquadOffsets 同一套逆旋转）。
+        const dlx = screenDx * cos + screenDy * sin;
+        const dly = -screenDx * sin + screenDy * cos;
+        const unitWpx = sp.x / (4.375 * 1.10);
+        const unitHpx = sp.y / (2.25 * 1.10);
+        let radius = 0;
+        for (let i = 0; i < slots.length; i++) {
+            const r = Math.floor(i / 3);
+            const c = i % 3;
+            const gridX = (c - 1) * sp.x;
+            const gridY = (r - 1) * sp.y;
+            const support = LegionPhalanxDrawer.getSquadSupportRadius(
+                slots[i] ?? 'mixed', dlx, dly, unitWpx, unitHpx,
+            );
+            radius = Math.max(radius, gridX * dlx + gridY * dly + support);
+        }
+        return radius;
+    }
+
+    /** 军团（Army 渲染单位）版：从 cultureSlots 取阵型。 */
+    private getScene13FormationFrontRadius(
+        unit: IAnimatedUnit,
+        directionIndex: number,
+        screenDx: number,
+        screenDy: number,
+    ): number | null {
+        const scale = Math.pow(2, Math.min(this.map.getZoom(), 10) - 9) * 0.7
+            * (unit.previewScale ?? 1);
+        return this.scene13FrontRadiusCore(
+            unit.cultureSlots ?? [],
+            unit.cultureScales || null,
+            unit.legionType || 'mixed',
+            directionIndex,
+            screenDx,
+            screenDy,
+            scale,
+        );
+    }
+
+    private applySceneFieldAlign(unit: IAnimatedUnit, centerPoint: L.Point): L.Point {
+        if (!this.isBattleScene13()) return centerPoint;
+        // 同帧缓存命中（renderUnit 每帧每单位一次；跨帧由 animate 开头 clear 重算）
+        const cached = this.fieldSceneAlignCache.get(unit.id ?? '');
+        if (cached) return cached.aligned;
+        // 未命中 → 把**整场战斗**一次性解算并写进缓存（本单位若不在任何 13 野战里则返回 false）
+        if (!this.solveSceneFieldAlign(unit)) return centerPoint;
+        return this.fieldSceneAlignCache.get(unit.id ?? '')?.aligned ?? centerPoint;
+    }
+
+    // ── [2026-08-10 临时诊断] 13 编队状态探针 ──────────────────────────
+    // 查两个问题：① 后排远程只有左右两格不动 ② 防守方整体不动。
+    // 只在 13 场景的编队循环里写入（其余 zoom 根本不进那段代码），无 IO / 无日志 / 不改行为。
+    // 用法：浏览器控制台敲 `__scene13Probe()`，打印本帧全体参战编队的状态表。
+    // 🔴 结论出来后，本块连同 getSquadOffsets 里的两个 recordScene13Probe 调用点一起删除。
+    private scene13Probe = new Map<string, {
+        squadKey: string; faction: string; slot: number; type: string; state: string;
+        dist: number | null; range: number | null; target: string | null; dtSec: number;
+    }>();
+    private scene13ProbeHooked = false;
+
+    // ── [2026-08-10 剧本法] ─────────────────────────────────────────
+    /** 本场 13 战斗的进度 0~1（三幕按它切）。用户真按暂停时不累加；场景退出归零 */
+    private scene13Progress = 0;
+    /** 每军团开战时算死的位移（px），全程不重算。key = selfKey
+     *  advance = 沿阵型正前方压上多少；lateral = 横向对齐要挪多少（本地 +x 为右） */
+    private squadAdvanceCache = new Map<string, { advance: number; lateral: number }>();
+
+    /** 每帧推进 13 战斗时钟。13 独立时钟：大战略暂停不算暂停，用户按的暂停才算 */
+    private tickScene13Clock(): void {
+        if (!this.isBattleScene13()) {
+            if (this.scene13Progress !== 0) this.scene13Progress = 0;
+            if (this.squadAdvanceCache.size > 0) this.squadAdvanceCache.clear();
+            return;
+        }
+        const scene = (window as any).game?.battleScene;
+        const userPaused = scene?.pauseHook?.isGamePaused?.() === true
+            && scene?.isStrategyPausedByScene?.() !== true;
+        if (userPaused) return;
+        const totalMs = Math.max(1000, GameConfig.COMBAT.SCENE13_BATTLE_DURATION_SEC * 1000);
+        this.scene13Progress = Math.min(1, this.scene13Progress + this.frameDeltaMs / totalMs);
+    }
+
+    private recordScene13Probe(
+        selfKey: string, faction: string, slot: number, type: string, state: string,
+        dist: number | null, range: number | null, target: string | null, dtSec: number,
+    ): void {
+        if (!this.scene13ProbeHooked) {
+            this.scene13ProbeHooked = true;
+            (window as any).__scene13Probe = () => this.dumpScene13Probe();
+        }
+        this.scene13Probe.set(`${selfKey}:${slot}`, {
+            squadKey: selfKey, faction, slot, type, state,
+            dist: dist === null ? null : Math.round(dist),
+            range: range === null ? null : Math.round(range),
+            target, dtSec: Math.round(dtSec * 1000) / 1000,
+        });
+    }
+
+    private scene13ProbeLastFlushAt = 0;
+    private static readonly SCENE13_PROBE_INTERVAL_MS = 2000;
+
+    /**
+     * [2026-08-10 临时诊断] 每 2 秒把本帧编队状态 POST 到 /api/scene13-probe，
+     * 落盘 scratch/scene13_probe_latest.json + 追加 scene13_probe_log.jsonl。
+     * 与 ZoomPerfProbe 同一套路：主人只管玩，不必在控制台敲任何东西，排查方直接读文件。
+     * 仅 DEV + 仅 13 场景；非 13 时 probe 为空，直接返回不发请求。
+     */
+    private flushScene13Probe(): void {
+        if (!import.meta.env.DEV) return;
+        if (this.scene13Probe.size === 0) return;
+        if (!this.isBattleScene13()) { this.scene13Probe.clear(); return; }
+        const now = performance.now();
+        if (now - this.scene13ProbeLastFlushAt < GlobalUnitRenderer.SCENE13_PROBE_INTERVAL_MS) return;
+        this.scene13ProbeLastFlushAt = now;
+
+        const rows = [...this.scene13Probe.values()];
+        const payload = {
+            t: new Date().toISOString(),
+            zoom: this.map.getZoom(),
+            总编队: rows.length,
+            无目标: rows.filter((r) => r.target === null).length,
+            想走但被友军挡住: rows.filter(
+                (r) => r.state === 'IDLE' && r.dist !== null && r.range !== null && r.dist > r.range,
+            ).length,
+            dt为0: rows.filter((r) => r.dtSec === 0).length,
+            各军团: [...new Set(rows.map((r) => r.squadKey))].map((k) => {
+                const g = rows.filter((r) => r.squadKey === k);
+                return {
+                    军团: k,
+                    势力: g[0]?.faction ?? '',
+                    状态分布: g.reduce((m: Record<string, number>, r) => {
+                        m[r.state] = (m[r.state] ?? 0) + 1;
+                        return m;
+                    }, {}),
+                    编队: g.sort((a, b) => a.slot - b.slot).map((r) => ({
+                        格位: r.slot, 兵种: r.type, 状态: r.state,
+                        距目标: r.dist, 停止线: r.range,
+                        差值: r.dist !== null && r.range !== null ? r.dist - r.range : null,
+                        目标: r.target,
+                    })),
+                };
+            }),
+        };
+        void fetch('/api/scene13-probe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload, null, 2),
+        }).catch(() => { /* 落盘失败不打扰游戏 */ });
+    }
+
+    /** 控制台导出：按军团分组打印每个编队的状态/距离/停止线/目标，并给出一行判读提示 */
+    public dumpScene13Probe(): void {
+        const rows = [...this.scene13Probe.values()].sort(
+            (a, b) => (a.squadKey === b.squadKey ? a.slot - b.slot : a.squadKey < b.squadKey ? -1 : 1),
+        );
+        if (rows.length === 0) {
+            console.log('[13探针] 空 —— 当前不在 13 战斗场景，或编队循环没跑到。');
+            return;
+        }
+        console.table(rows.map((r) => ({
+            军团: r.squadKey, 格位: r.slot, 兵种: r.type, 状态: r.state,
+            距目标: r.dist, 停止线: r.range,
+            差值: r.dist !== null && r.range !== null ? r.dist - r.range : null,
+            目标: r.target, dt: r.dtSec,
+        })));
+        // 判读：无目标 / 被挡（想走却 IDLE）/ dt=0（列阵或暂停）各有多少
+        const noTarget = rows.filter((r) => r.target === null).length;
+        const blocked = rows.filter(
+            (r) => r.state === 'IDLE' && r.dist !== null && r.range !== null && r.dist > r.range,
+        ).length;
+        const frozen = rows.filter((r) => r.dtSec === 0).length;
+        console.log(
+            `[13探针] 共 ${rows.length} 编队 | 无目标 ${noTarget} | 想走但被友军挡住 ${blocked} | dt=0（列阵/暂停）${frozen}`,
+        );
+    }
+
+    /** 取参战 id 对应的**渲染单位**（BattleUnit 是战斗适配器，无 cultureSlots，不能拿来算编队投影） */
+    private findRenderUnitById(id: string | null | undefined): IAnimatedUnit | null {
+        if (!id) return null;
+        return this.sortedUnitsCache.find((u) => u.id === id) ?? null;
+    }
+
+    /**
+     * [2026-08-10 修·开场交叉] 13 野战对位：**整场战斗一次解算**，不再逐单位各算各的。
+     *
+     * 旧写法的两个毛病（主人实锤「刚一开始两军就交叉」）：
+     *  ① 每个单位拿**自己的**真实位置和敌方主将算中点 → 三支以上军团参战时，
+     *     每支算出各自的中点、各自的中轴，退开的方向和落点互不相干 → 阵列交叉。
+     *  ② 阵心距要「我方前缘半径 + 敌方前缘半径」，任一侧算不出就整体退回兜底 1200，
+     *     而这个判断是**各算各的** → 一边用动态 600、一边用兜底 1200，两个落点不再互为
+     *     镜像 → 一边贴脸一边空一大块。
+     *
+     * 现在的解算（一帧一次，结果写进 fieldSceneAlignCache 供全体参战单位共用）：
+     *  1. 攻守双方各取**质心**，中轴 = 两质心连线，中点 = 两质心中点 —— 全场唯一一条轴；
+     *  2. 阵心距 = 攻方最大前缘半径 + 守方最大前缘半径 + 净空；**任一单位算不出半径，
+     *     两侧一起用兜底**，保证永远对称（修 ②）；
+     *  3. 同侧多支军团沿**垂直于中轴**的方向依次排开（按 id 排序保证稳定），
+     *     铺成一条战线而不是叠在一个点上；
+     *  4. 每支军团的推进目标 = 自己正对面（aligned ± dir×阵心距），各打各的正面。
+     *
+     * 🔴 只在 13 生效（调用方 applySceneFieldAlign 已判 isBattleScene13）；攻城战不走这里
+     *    （bf.type === 'siege' 由 applySiegeVisualPush 处理）。8/9/10 逐像素不变。
+     */
+    private solveSceneFieldAlign(unit: IAnimatedUnit): boolean {
+        const game = (window as any).game;
+        let attIds: string[] = [];
+        let defIds: string[] = [];
+        const fields: any[] = game?.combatSystem?.getActiveBattleFields?.() ?? [];
+        const bf = fields.find(
+            (f: any) => !f?.isOver && f?.type === 'field' && f?.hasParticipant?.(unit.id),
+        );
+        if (bf) {
+            attIds = (bf.getAttackerUnits?.() ?? []).map((u: any) => u.id).filter(Boolean);
+            defIds = (bf.getDefenderUnits?.() ?? []).map((u: any) => u.id).filter(Boolean);
+        } else {
+            // 1v1 野战（沙盒碰撞战 Battle）不在 getActiveBattleFields 里，走同一套对位。
+            // 碰撞开战 = 两军已贴身，不对位的话开局就是交叉的。
+            const battles: any[] = game?.combatSystem?.getActiveBattles?.() ?? [];
+            const b = battles.find(
+                (x: any) => !x?.isOver && x?.type === 'field'
+                    && (x?.attacker?.id === unit.id || x?.defender?.id === unit.id),
+            );
+            if (!b) return false;
+            attIds = b.attacker?.id ? [b.attacker.id] : [];
+            defIds = b.defender?.id ? [b.defender.id] : [];
+        }
+
+        // id 排序：同侧排开顺序必须逐帧稳定，否则军团每帧换位 = 瞬移
+        const atts = attIds.sort().map((id) => this.findRenderUnitById(id)).filter((u): u is IAnimatedUnit => !!u);
+        const defs = defIds.sort().map((id) => this.findRenderUnitById(id)).filter((u): u is IAnimatedUnit => !!u);
+        if (atts.length === 0 || defs.length === 0) return false;
+
+        const centroid = (us: IAnimatedUnit[]): L.Point | null => {
+            let sx = 0;
+            let sy = 0;
+            let n = 0;
+            for (const u of us) {
+                const p = u.getPosition();
+                if (!p || !isValidMapCoord(p)) continue;
+                const pt = this.map.latLngToContainerPoint([p.lat, p.lng]);
+                sx += pt.x;
+                sy += pt.y;
+                n++;
+            }
+            return n === 0 ? null : L.point(sx / n, sy / n);
+        };
+        const PA = centroid(atts);
+        const PD = centroid(defs);
+        if (!PA || !PD) return false;
+
+        const dx = PD.x - PA.x;
+        const dy = PD.y - PA.y;
+        const len = Math.hypot(dx, dy);
+        // 两质心重合（已完全叠在一起）→ 没有可用的中轴方向，保持原样，不硬造一个
+        if (len < 1e-6) return false;
+        const dirX = dx / len;
+        const dirY = dy / len;
+        const mid = L.point((PA.x + PD.x) / 2, (PA.y + PD.y) / 2);
+        // 垂直于中轴（同侧多军团沿它排开）
+        const perpX = -dirY;
+        const perpY = dirX;
+        // 双方各自面向对面质心（8 向档），供编队投影半径使用
+        const attFacing = OrientationSystem.get8DirectionFromAngle(
+            Math.atan2(-dirY, dirX) * (180 / Math.PI),
+        );
+        const defFacing = OrientationSystem.get8DirectionFromAngle(
+            Math.atan2(dirY, -dirX) * (180 / Math.PI),
+        );
+
+        /** 沿给定屏幕方向的编队投影半径；任一单位算不出 → 记 null 让全场一起退兜底 */
+        let radiusUnavailable = false;
+        const radiusOf = (u: IAnimatedUnit, facing: number, sx: number, sy: number): number => {
+            const r = this.getScene13FormationFrontRadius(u, facing, sx, sy);
+            if (r === null) {
+                radiusUnavailable = true;
+                return GlobalUnitRenderer.SCENE13_FIELD_FALLBACK_GAP_PX / 4;
+            }
+            return r;
+        };
+
+        // 纵深（决定阵心距）与横宽（决定同侧排开间距）分开量
+        const attFront = atts.map((u) => radiusOf(u, attFacing, dirX, dirY));
+        const defFront = defs.map((u) => radiusOf(u, defFacing, -dirX, -dirY));
+        const sideWidth = (us: IAnimatedUnit[], facing: number): number[] => us.map((u) =>
+            radiusOf(u, facing, perpX, perpY) + radiusOf(u, facing, -perpX, -perpY));
+        const attWidth = sideWidth(atts, attFacing);
+        const defWidth = sideWidth(defs, defFacing);
+
+        // 阵心距：任一侧任一单位算不出投影 → 两侧一起用兜底（修 ②，保证镜像对称）
+        const gap = radiusUnavailable
+            ? GlobalUnitRenderer.SCENE13_FIELD_FALLBACK_GAP_PX
+            : Math.max(...attFront) + Math.max(...defFront)
+                + GlobalUnitRenderer.SCENE13_FIELD_CLEAR_LANE_PX;
+        const half = gap / 2;
+
+        /** 同侧沿 perp 依次排开，返回每支军团的侧向偏移（整条线以中轴居中） */
+        const lateral = (widths: number[]): number[] => {
+            const lane = GlobalUnitRenderer.SCENE13_FIELD_CLEAR_LANE_PX;
+            const total = widths.reduce((a, b) => a + b, 0) + lane * Math.max(0, widths.length - 1);
+            const out: number[] = [];
+            let cursor = -total / 2;
+            for (const w of widths) {
+                out.push(cursor + w / 2);
+                cursor += w + lane;
+            }
+            return out;
+        };
+        const attLat = lateral(attWidth);
+        const defLat = lateral(defWidth);
+
+        const write = (us: IAnimatedUnit[], lat: number[], sign: number): void => {
+            for (let i = 0; i < us.length; i++) {
+                const id = us[i].id ?? '';
+                if (!id) continue;
+                const bx = mid.x + dirX * half * sign + perpX * lat[i];
+                const by = mid.y + dirY * half * sign + perpY * lat[i];
+                this.fieldSceneAlignCache.set(id, {
+                    aligned: L.point(bx, by),
+                    // 推进目标 = 自己的正对面（同一条侧向位置），各打各的正面
+                    enemy: L.point(bx - dirX * gap * sign, by - dirY * gap * sign),
+                    mid,
+                });
+            }
+        };
+        write(atts, attLat, -1); // 攻方在中点的「后方」（−dir 侧）
+        write(defs, defLat, 1);  // 守方在 +dir 侧，与攻方镜像
+
+        return this.fieldSceneAlignCache.has(unit.id ?? '');
+    }
+
+    /**
+     * [2026-08-10 野战出场对齐] 野战战场中点（两军对位中轴中点），供 BattleSceneLayer
+     * 镜头同屏取景（三国群英传式：两军都在画面里）。查不到返回 null。
+     */
+    public getFieldSceneCenter(unitId: string): { lat: number; lng: number } | null {
+        const align = this.fieldSceneAlignCache.get(unitId);
+        if (!align) return null;
+        const ll = this.map.containerPointToLatLng(align.mid);
+        return { lat: ll.lat, lng: ll.lng };
     }
 
     /** 屏外单位不进本帧 drawList，单独推进外推缓存（离战收推） */
@@ -835,14 +1808,32 @@ export class GlobalUnitRenderer {
         // 非匪军：先做攻城外推再裁剪（含水军，与陆军同一套贴边）
         if (!isBandit) {
             centerPoint = this.applySiegeVisualPush(unit, centerPoint);
+            // [2026-08-10 野战出场对齐] 野战 13 场景对位（攻城由 applySiegeVisualPush 处理，
+            // 本函数只动无城的野战；非 13 / 非参战军团返回原样，8/9/10 逐像素不变）
+            centerPoint = this.applySceneFieldAlign(unit, centerPoint);
         }
 
-        const m = GlobalUnitRenderer.VIEW_CULL_MARGIN_PX;
+        // [2026-08-09 13裁剪修复] 13 场景裁剪余量 = 基础余量 + 本军团编队最大偏移：
+        // 编队独立推进可到中心点外 ~530px，攻方中心被 750px 外推推到屏幕边缘时，
+        // 若仍用 100px 余量判中心点 → 整军被误裁，而编队其实已推进进画面（主人实锤攻方整块消失）。
+        // 用「+」而非「max」：中心点在屏外 550px、编队偏移 530px 时，余量 630 > 550 才不裁
+        // （max(100, 530)=530 < 550 仍会裁掉半个精灵露头的编队——边界窄缝，主人核对指出）。
+        // 场景闸门：仅 13 走新判据，8/9/10 保持原中心点判据（性能不受影响）。
+        // 旋转保距：squadMoveState 是旋转前空间偏移，模长 = 屏幕偏移距离。
+        let cullMargin = GlobalUnitRenderer.VIEW_CULL_MARGIN_PX;
+        if (this.isBattleScene13()) {
+            const prefix = `${unit.id}:`;
+            for (const [key, off] of this.squadMoveState) {
+                if (key.startsWith(prefix)) {
+                    cullMargin = GlobalUnitRenderer.VIEW_CULL_MARGIN_PX + Math.hypot(off.x, off.y);
+                }
+            }
+        }
         if (
-            centerPoint.x < -m ||
-            centerPoint.x > this.canvas.width + m ||
-            centerPoint.y < -m ||
-            centerPoint.y > this.canvas.height + m
+            centerPoint.x < -cullMargin ||
+            centerPoint.x > this.canvas.width + cullMargin ||
+            centerPoint.y < -cullMargin ||
+            centerPoint.y > this.canvas.height + cullMargin
         ) {
             return;
         }
@@ -968,7 +1959,10 @@ export class GlobalUnitRenderer {
                 state = 'MOVE';
             }
 
-            const useNavalVisual = !!(unit.isOnSea || unit.forceNavalVisual);
+            // [2026-08-09 13锁死] 13 战斗模式没有水军：船/登陆部队一律按陆地方阵渲染
+            // （主人定：13 是陆战演出档，不画船贴图；非 13 照旧按 isOnSea/forceNavalVisual 走水军视觉）
+            const useNavalVisual = !this.isBattleScene13()
+                && !!(unit.isOnSea || unit.forceNavalVisual);
 
             // 攻城外推已在裁剪前 applySiegeVisualPush 做过（含离战收推）
             const unitIdForGear = unit.id || 'unknown';
@@ -1011,6 +2005,7 @@ export class GlobalUnitRenderer {
                     ramSpacingY,
                     unitIdForGear,
                     troops,
+                    GlobalUnitRenderer.getSiegeGroupOffsets(unit, gearDir, siegeScale),
                 );
                 // 渐隐走完（drawSiegeGear 内部已清器械状态）→ 锚点同步清除
                 if (!activelySieging && !LegionPhalanxDrawer.wasSiegeUnit(unitIdForGear)) {
@@ -1027,18 +2022,24 @@ export class GlobalUnitRenderer {
                 const rH = baseH * siegeScale;
                 const sX = rH * 0.8 * 0.50;
                 const sY = rH * 0.42;
-                LegionPhalanxDrawer.drawSiegeSoldier(
-                    ctx, { x: centerPoint.x, y: centerPoint.y },
-                    state, directionIndex, siegeScale, Date.now(), sX, sY,
-                    'archer', -1.2, -1.0, unit.id || 'unknown',
-                    unit.factionId || 'panjun', troops,
-                );
-                LegionPhalanxDrawer.drawSiegeSoldier(
-                    ctx, { x: centerPoint.x, y: centerPoint.y },
-                    state, directionIndex, siegeScale, Date.now(), sX, sY,
-                    'archer', +1.2, -1.0, unit.id || 'unknown',
-                    unit.factionId || 'panjun', troops,
-                );
+                // 两个弓步兵属于攻城团的一部分，跟器械一起整团复制。
+                // 团偏移是像素，drawSiegeSoldier 的 offset 是 sX/sY 格 → 除回格数再传。
+                for (const g of GlobalUnitRenderer.getSiegeGroupOffsets(unit, directionIndex, siegeScale)) {
+                    const gxCells = sX !== 0 ? g.x / sX : 0;
+                    const gyCells = sY !== 0 ? g.y / sY : 0;
+                    LegionPhalanxDrawer.drawSiegeSoldier(
+                        ctx, { x: centerPoint.x, y: centerPoint.y },
+                        state, directionIndex, siegeScale, Date.now(), sX, sY,
+                        'archer', -1.2 + gxCells, -1.0 + gyCells, unit.id || 'unknown',
+                        unit.factionId || 'panjun', troops,
+                    );
+                    LegionPhalanxDrawer.drawSiegeSoldier(
+                        ctx, { x: centerPoint.x, y: centerPoint.y },
+                        state, directionIndex, siegeScale, Date.now(), sX, sY,
+                        'archer', +1.2 + gxCells, -1.0 + gyCells, unit.id || 'unknown',
+                        unit.factionId || 'panjun', troops,
+                    );
+                }
             }
 
 
@@ -1062,6 +2063,23 @@ export class GlobalUnitRenderer {
                     rawType === 'cavalry' || rawType === 'archer_cavalry' || rawType === 'mixed' || rawType === 'infantry'
                         ? rawType
                         : 'mixed';
+
+                // [2026-08-09 13场景阵型] 场景激活（跟拍双将战进 13）→ 第一排 3 步兵 → 3 组 2×4（每组 8 人）
+                const sceneActive = this.isBattleScene13();
+                // [2026-08-09 编队独立移动/战斗] 每编队独立推进 + 独立动作/朝向（就近咬住）
+                const squadInfo = sceneActive
+                    ? this.getSquadOffsets(unit, centerPoint, directionIndex, scale * (unit.previewScale ?? 1))
+                    : null;
+                // [2026-08-09 13战斗动作] 13 场景：整军兜底状态——编队级状态由
+                // squadInfo.states 逐编队覆盖（draw 内取编队级优先）；squadInfo 为 null
+                // （无目标/未就绪）时兜底静止 ATTACK（三幕制：时间轴驱动，无"整军 MOVE"兜底）
+                // [2026-08-10 修·兜底空打] 13 场景整军兜底 = IDLE（持械待命）——
+                // squadInfo 为 null（无目标/数据未就绪）时无编队级状态覆盖，旧兜底
+                // ATTACK 让全军原地挥砍 = 「边框不挨着也空打」（主人实锤）。
+                // 攻击动作只允许由编队级判定给出：边框相切（近战）/ 射程内（远程）。
+                if (sceneActive) {
+                    state = 'IDLE';
+                }
 
                 LegionPhalanxDrawer.draw(
                     unit.id || 'unknown',
@@ -1087,7 +2105,11 @@ export class GlobalUnitRenderer {
                     unit.cultureSlots || null,
                     assetsId,
                     unit.isPlayer || false,
-                    unit.cultureScales || null
+                    unit.cultureScales || null,
+                    sceneActive,
+                    squadInfo?.offsets ?? null,
+                    squadInfo?.states ?? null,
+                    squadInfo?.directions ?? null,
                 );
             }
 
@@ -1195,5 +2217,722 @@ export class GlobalUnitRenderer {
         this.stop();
         this.canvas.remove();
         this.canvasLow.remove();
+    }
+
+    /**
+     * [2026-08-09 镜头跟随·将领编队] 攻击方将领编队实时位置 = 军团渲染中心（含外推）
+     * + 中心格（将领格）的编队推进偏移。编队推进后将领格离开锚点，镜头若只跟锚点
+     * 会把将领编队甩出画面中心（主人：镜头要跟随将领编队）。
+     */
+    public getGeneralSquadCenter(unitId: string): { lat: number; lng: number } | null {
+        const base = this.getRenderedCenter(unitId);
+        if (!base) return null;
+        const unit = this.sortedUnitsCache.find((u) => u.id === unitId);
+        const count = unit?.cultureSlots?.length ?? 0;
+        if (!unit || count === 0) return base;
+        const mid = Math.floor(count / 2); // 3×3 中心格 = 将领格
+        const off = this.squadMoveState.get(`${unitId}:${mid}`);
+        if (!off) return base;
+        const basePt = this.map.latLngToContainerPoint([base.lat, base.lng]);
+        const directionIndex = unit.lastDirection ?? 0;
+        const angle = (directionIndex + 1) * Math.PI / 4;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const sx = off.x * cos - off.y * sin;
+        const sy = off.x * sin + off.y * cos;
+        const ll = this.map.containerPointToLatLng(L.point(basePt.x + sx, basePt.y + sy));
+        return { lat: ll.lat, lng: ll.lng };
+    }
+
+    /**
+     * [2026-08-09 镜头跟随] 单位实际渲染中心（含攻城视觉外推），供战斗场景镜头对准将领编队。
+     * 返回经纬度（逻辑坐标不动，只把屏幕外推换算回去）；查不到返回 null。
+     */
+    public getRenderedCenter(unitId: string): { lat: number; lng: number } | null {
+        const unit = this.sortedUnitsCache.find((u) => u.id === unitId);
+        if (!unit) return null;
+        const pos = unit.getPosition();
+        if (!pos || !isValidMapCoord(pos)) return null;
+        let pt = this.map.latLngToContainerPoint([pos.lat, pos.lng]);
+        pt = this.applySiegeVisualPush(unit, pt);
+        const ll = this.map.containerPointToLatLng(pt);
+        return { lat: ll.lat, lng: ll.lng };
+    }
+
+    /**
+     * [2026-08-09 视觉对垒] 战场中心 = 攻方渲染中心与守军阵线锚点的中点。
+     * 13 场景攻方已与城图拉开距离（SCENE13_ATTACKER_GAP_PX），镜头若仍跟攻方，
+     * 城图+守军会偏出画面——镜头对准中点，攻守分居画面两侧对峙。
+     * 野战无守军锚点 → 退回跟攻方渲染中心。
+     */
+    public getBattleSceneCenter(unitId: string): { lat: number; lng: number } | null {
+        const attCenter = this.getRenderedCenter(unitId);
+        if (!attCenter) return null;
+        const game = (window as any).game;
+        // 城从活跃攻城战取（与 renderSiegeDefenders 同源）——军团字段 targetCityId 是
+        // 行军目标，攻城战开始后可能指向别的城，不能拿来找守军城（主人实锤：
+        // 镜头跟攻方 → 守军+城图出画，须对准攻守中点让两军同屏）。
+        const fields: any[] = game?.combatSystem?.getActiveBattleFields?.() ?? [];
+        const bf = fields.find(
+            (f: any) => !f?.isOver && f?.type === 'siege' && f?.hasParticipant?.(unitId),
+        );
+        const cityId = bf?.siegeCityId ?? null;
+        if (!cityId) return attCenter; // 野战无城 → 退回跟攻方
+        const city = game?.cityManager?.getCity?.(cityId);
+        if (!city) return attCenter;
+        const unit = this.sortedUnitsCache.find((u) => u.id === unitId);
+        const pos = unit?.getPosition?.();
+        if (!pos) return attCenter;
+        const anchor = this.computeSiegeDefenderAnchor(city, pos);
+        if (!anchor) return attCenter;
+        const ll = this.map.containerPointToLatLng(anchor);
+        return {
+            lat: (attCenter.lat + ll.lat) / 2,
+            lng: (attCenter.lng + ll.lng) / 2,
+        };
+    }
+
+    /**
+     * [2026-08-10 重做·千军万马统一战斗核心] 攻守共用的 9 编队战斗规则（主人拍板）：
+     *  1. 每帧无条件发布本方编队位置——双方永远互相可见，无兜底攻击、无死锁；
+     *  2. 每编队独立锁定最近的敌编队（目标阵亡/消失才换锁，防转圈）；
+     *  3. 距离驱动三态：边框未贴上 → MOVE 走向目标；边框相切（远程 = 射程线）→ ATTACK；
+     *     无敌可打 → IDLE 持械待命；
+     *  4. 走到哪死到哪（阵亡保留最后位置）；被友军边框挡住 → 原地等让路（不推挤）；
+     *     前排阵亡后路自然让开，后排自己压上——无排号轮换、无冲锋时间轴、无多层兜底。
+     *  开场 1.5s 列阵（IDLE 对峙），之后全由距离驱动。攻守/野战/攻城同一套。
+     */
+    private computeSquadBattle(
+        selfKey: string,
+        moveKeyPrefix: string,
+        factionId: string,
+        origin: L.Point,
+        directionIndex: number,
+        sp: { x: number; y: number },
+        slots: string[],
+        squadTroops: number[],
+        baseOff: { x: number; y: number },
+    ): { offsets: { x: number; y: number }[]; states: string[]; directions: number[] } {
+        // [2026-08-10 剧本法] 编队走位改由 Scene13Choreographer 接管：整军刚体平移，
+        // 三状态（待命/移动/攻击），无寻敌、无碰撞、无运行时决策。
+        // 规范：docs/02-design/scene13-choreography-spec.md
+        return this.computeChoreographedSquads(
+            selfKey, moveKeyPrefix, factionId, origin, directionIndex, sp, slots, squadTroops,
+        );
+    }
+
+    /**
+     * [2026-08-10 剧本法] 13 编队走位：**整个军团当一个刚体平移**，九个编队共用同一位移。
+     *
+     * 位置 = f(战斗进度)，单值函数 —— 同样的输入永远同样的输出，
+     * 所以死锁在数学上不可能发生（旧的自主寻敌+硬碰撞是 MAPF，死锁是常态）。
+     *
+     * 推进量在**开战时算一次**并缓存，之后全程不重算；停止位置让两军前缘
+     * 重叠 SCENE13_INTERLOCK_PX，从根上消灭「隔空空砍」。
+     */
+    private computeChoreographedSquads(
+        selfKey: string,
+        moveKeyPrefix: string,
+        factionId: string,
+        origin: L.Point,
+        directionIndex: number,
+        sp: { x: number; y: number },
+        slots: string[],
+        squadTroops: number[],
+    ): { offsets: { x: number; y: number }[]; states: string[]; directions: number[] } {
+        const count = slots.length;
+        const angle = (directionIndex + 1) * Math.PI / 4;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const unitWpx = sp.x / (4.375 * 1.10);
+        const unitHpx = sp.y / (2.25 * 1.10);
+
+        // 推进量：开战算一次就锁死（敌方本帧还没发布坐标时先按 0，下一帧再算）
+        let plan = this.squadAdvanceCache.get(selfKey);
+        if (plan === undefined) {
+            const solved = this.solveScene13Advance(
+                factionId, origin, angle, cos, sin, sp, slots, unitWpx, unitHpx,
+            );
+            if (solved !== null) {
+                plan = solved;
+                this.squadAdvanceCache.set(selfKey, solved);
+            }
+        }
+        const adv = plan?.advance ?? 0;
+        const lat = plan?.lateral ?? 0;
+
+        const { act, t } = actAt(this.scene13Progress);
+        const raw = blockOffsetAt(act, t, adv);
+        // 横向对齐与前压同一条时间轴（幕二一起走完），幕三保持
+        const latNow = act === 'DEPLOY' ? 0 : (act === 'CHARGE' ? lat * easeInOut(t) : lat);
+        const block = { x: raw.x + latNow, y: raw.y };
+        // 「有没有在位移」要把横向对齐也算进去，否则只横移不前压的军团会被判成原地开打
+        const motion = Math.max(adv, Math.abs(lat));
+
+        const offsets: { x: number; y: number }[] = [];
+        const states: string[] = [];
+        const directions: number[] = [];
+        const absPts: ({ x: number; y: number } | null)[] = [];
+        const absTypes: string[] = [];
+
+        for (let i = 0; i < count; i++) {
+            const row = Math.floor(i / 3);
+            const col = i % 3;
+            const gridX = (col - 1) * sp.x;
+            const gridY = (row - 1) * sp.y;
+            const type = slots[i] ?? 'mixed';
+            const dead = (squadTroops[i] ?? 0) <= 0;
+
+            // [2026-08-11 按格位查表] 前排咬 / 弓弩放箭 / 两翼骑兵递次投入 / 主将压阵。
+            // 主将格（4）的 offset 恒等于刚体位移 → 镜头跟拍不受侧翼补间影响。
+            const plan13 = slotPlanAt(act, t, i, block, sp, motion);
+            const off = plan13.offset;
+
+            offsets.push(off);
+            states.push(dead ? 'DEATH' : plan13.state);
+            // 朝向只有一个来源：阵型正前方（旧版「移动沿正前方、脸朝目标」两个信号源打架）
+            directions.push(directionIndex);
+            // 🔴 用 moveKeyPrefix 不是 selfKey：getGeneralSquadCenter 按 `<unitId>:4` 查将领格
+            // 偏移给镜头用，写成 `atk_<unitId>:4` 会让镜头跟丢（2026-08-10 接线时踩过）
+            this.squadMoveState.set(`${moveKeyPrefix}:${i}`, off);
+
+            const ax = origin.x + ((gridX + off.x) * cos - (gridY + off.y) * sin);
+            const ay = origin.y + ((gridX + off.x) * sin + (gridY + off.y) * cos);
+            absPts.push(dead ? null : { x: ax, y: ay }); // 阵亡不占位
+            absTypes.push(type);
+
+            this.recordScene13Probe(
+                selfKey, factionId, i, type, dead ? 'DEATH' : plan13.state,
+                null, null, `${act}:${adv.toFixed(0)}`, this.scene13Progress,
+            );
+        }
+
+        this.publishSquadPositions(selfKey, factionId, absPts, absTypes, angle, unitWpx, unitHpx);
+        return { offsets, states, directions };
+    }
+
+    /**
+     * [2026-08-10 剧本法] 开战一次性求「整军该往前压多少 px」。
+     * 让**我方前排**与**正前方最近的敌方编队**外框重叠 SCENE13_INTERLOCK_PX。
+     * 正前方查不到敌人（对面本帧未发布）→ 返回 null，调用方下一帧再试。
+     */
+    private solveScene13Advance(
+        factionId: string,
+        origin: L.Point,
+        angle: number,
+        cos: number,
+        sin: number,
+        sp: { x: number; y: number },
+        slots: string[],
+        unitWpx: number,
+        unitHpx: number,
+    ): { advance: number; lateral: number } | null {
+        const frontType = slots[1] ?? slots[0] ?? 'mixed';
+        const frontLocalY = -sp.y; // 前排（row 0）在本地坐标的纵深
+        // 本地 (0, frontLocalY) → 屏幕：x = ox + (lx·cos − ly·sin)、y = oy + (lx·sin + ly·cos)
+        const frontAbs = {
+            x: origin.x - frontLocalY * sin,
+            y: origin.y + frontLocalY * cos,
+        };
+
+        let bestEy: number | null = null;
+        let bestHit: SquadHit | null = null;
+        // [2026-08-10 修·两军不在一条水平线上] 只做「沿正前方推进」而不做横向对齐，
+        // 两军左右错开多少就一直错开多少（野战有 solveSceneFieldAlign 镜像对位，攻城完全没有）。
+        // 这里统计正前方敌军的横向中心，双方各挪一半，在中轴上对齐。
+        let exSum = 0;
+        let exCount = 0;
+        for (const [key, entry] of this.squadPosRegistry) {
+            if (entry.factionId === factionId) continue;
+            if (this.squadRegistryFrame - entry.frame > 1) continue;
+            if (key.startsWith('city_')) continue; // 城图不是「敌方战线」，攻城由守军编队定线
+            for (let i = 0; i < entry.pts.length; i++) {
+                const p = entry.pts[i];
+                if (!p) continue;
+                const ey = -(p.x - origin.x) * sin + (p.y - origin.y) * cos;
+                if (ey >= frontLocalY) continue; // 只认正前方（身后/齐平的不算战线）
+                exSum += (p.x - origin.x) * cos + (p.y - origin.y) * sin;
+                exCount++;
+                if (bestEy === null || ey > bestEy) {
+                    bestEy = ey;
+                    bestHit = {
+                        pt: p, type: entry.types[i] ?? 'mixed',
+                        angle: entry.angle, dw: entry.dw, dh: entry.dh,
+                    };
+                }
+            }
+        }
+        if (bestEy === null || !bestHit) return null;
+
+        // 两个外框「刚好相切」的中心距 → 再减咬合量 = 我们要停的中心距
+        const contact = this.squadContactDistance(
+            frontAbs, frontType, angle, unitWpx, unitHpx, bestHit,
+        );
+        // 🔴 各走一半（纵向和横向都是）：双方都在压上，各按「整段距离」走就会**对穿过去**，
+        // 攻方走到守方的位置、守方走到攻方的位置，然后两边对着空气砍
+        // （2026-08-10 实锤，我第一版只把横向减半、纵向忘了减）。
+        // 合起来正好闭合整段间隙，停在两军前缘重叠 SCENE13_INTERLOCK_PX 的位置。
+        const closing = (frontLocalY - bestEy) - contact * SCENE13_CONTACT_RATIO;
+        const lateral = exCount > 0 ? (exSum / exCount) * 0.5 : 0;
+        return { advance: Math.max(0, closing * 0.5), lateral };
+    }
+
+    /** @deprecated 2026-08-10 剧本法接管后不再调用；确认新版稳定后整段删除 */
+    private computeSquadBattleLegacy(
+        selfKey: string,
+        moveKeyPrefix: string,
+        factionId: string,
+        origin: L.Point,
+        directionIndex: number,
+        sp: { x: number; y: number },
+        slots: string[],
+        squadTroops: number[],
+        baseOff: { x: number; y: number },
+    ): { offsets: { x: number; y: number }[]; states: string[]; directions: number[] } {
+        const count = slots.length;
+        const angle = (directionIndex + 1) * Math.PI / 4;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const unitWpx = sp.x / (4.375 * 1.10);
+        const unitHpx = sp.y / (2.25 * 1.10);
+        const claims = this.frameClaims;
+        const scene = (window as any).game?.battleScene;
+        const paused = scene?.pauseHook?.isGamePaused?.() === true
+            && scene?.isStrategyPausedByScene?.() !== true;
+        const deploying = (Date.now() - this.battlePhaseStart) / 1000 < 1.5;
+        // 列阵/暂停期不移动（dt=0），状态照常判定（已贴身的可以打，没贴身的站着）
+        const dtSec = (paused || deploying) ? 0 : this.frameDeltaMs / 1000;
+
+        const out: { x: number; y: number }[] = [];
+        const states: string[] = [];
+        const directions: number[] = [];
+        const absPts: ({ x: number; y: number } | null)[] = [];
+        const absTypes: string[] = [];
+
+        // 朝向：本地方向 → 屏幕 → 官方 8 向映射（与整军朝向同一套，勿手搓镜像）
+        const faceLocal = (ldx: number, ldy: number): number => {
+            const sx2 = ldx * cos - ldy * sin;
+            const sy2 = ldx * sin + ldy * cos;
+            if (Math.abs(sx2) < 1e-6 && Math.abs(sy2) < 1e-6) return directionIndex;
+            return OrientationSystem.get8DirectionFromAngle(
+                Math.atan2(-sy2, sx2) * (180 / Math.PI),
+            );
+        };
+
+        // [2026-08-10 修·一路不动] 敌方**战线**在本阵型本地坐标里的纵深位置（取最靠近我方的那个，
+        // 即 local y 最大者）。推进距离一律用它量，**不用各自目标量**——
+        // 病根：上一版拿「我的目标」的正前方投影当剩余行程，而目标是就近咬的、常常偏在侧翼
+        // （实测一帧里 4 个编队同咬 def:8），偏侧的目标投影 ≤ 0 → step ≤ 0 → 整路编队钉死
+        // （主人实锤「有一路不动」）。打谁（target）和走多远（战线）本来就是两件事，就此分开。
+        const enemyLocalYs: number[] = [];
+        for (const [, entry] of this.squadPosRegistry) {
+            if (entry.factionId === factionId) continue;
+            if (this.squadRegistryFrame - entry.frame > 1) continue;
+            for (const p of entry.pts) {
+                if (!p) continue; // 阵亡编队不算战线
+                enemyLocalYs.push(-(p.x - origin.x) * sin + (p.y - origin.y) * cos);
+            }
+        }
+        /** 「我正前方最近的那个敌人」的纵深（本地 −y 为前）；正前方无敌人返回 null。
+         *  🔴 必须只看正前方：攻城时守军绕城铺开，总有几队在攻方**侧后方**，它们的 local y
+         *  比我还大。上一版取全体最大值当战线 → 一个绕到背后的敌人就把整支军队的推进额度
+         *  污染成负数 → 全军 step≤0 站死（实测马格德堡 18 编队里 13 个卡住）。 */
+        const frontLineY = (myY: number): number | null => {
+            let best: number | null = null;
+            for (const ey of enemyLocalYs) {
+                if (ey >= myY) continue; // 在我身后/齐平的不算战线
+                if (best === null || ey > best) best = ey;
+            }
+            return best;
+        };
+
+        for (let i = 0; i < count; i++) {
+            const r = Math.floor(i / 3);
+            const c = i % 3;
+            const gridX = (c - 1) * sp.x;
+            const gridY = (r - 1) * sp.y;
+            const type = slots[i] ?? 'mixed';
+            const moveKey = `${moveKeyPrefix}:${i}`;
+            const prev = this.squadMoveState.get(moveKey) ?? { x: baseOff.x, y: baseOff.y };
+
+            // 阵亡：走到哪死到哪（保留最后位置），不发布（对面不再咬它）
+            if (squadTroops[i] <= 0) {
+                out.push(prev);
+                states.push('DEATH');
+                directions.push(directionIndex);
+                absPts.push(null);
+                absTypes.push(type);
+                this.squadTargetLock.delete(`${selfKey}:${i}`);
+                continue;
+            }
+
+            let offX = prev.x;
+            let offY = prev.y;
+            let state = 'IDLE';
+            let dirIdx = directionIndex;
+
+            const absX = origin.x + ((gridX + offX) * cos - (gridY + offY) * sin);
+            const absY = origin.y + ((gridX + offX) * sin + (gridY + offY) * cos);
+
+            // 目标锁：锁着的还活着就继续咬，死了/过期才重新找最近的
+            const lockKey = `${selfKey}:${i}`;
+            let target: SquadHit | null = null;
+            const lockedCk = this.squadTargetLock.get(lockKey);
+            if (lockedCk) target = this.lookupSquad(lockedCk, factionId);
+            if (!target) {
+                const found = this.findNearestEnemySquad(factionId, { x: absX, y: absY }, claims);
+                if (found) {
+                    target = found;
+                    this.squadTargetLock.set(lockKey, found.key);
+                } else {
+                    this.squadTargetLock.delete(lockKey);
+                }
+            }
+
+            if (target) {
+                const pickedKey = this.squadTargetLock.get(lockKey) ?? null; // 探针用，见下方说明
+                // 停止线：近战 = 双方边框相切（与视觉框同源）；远程 = 射程
+                const range = LegionPhalanxDrawer.isRangedType(type)
+                    ? (GlobalUnitRenderer.SQUAD_STOP_DIST_PX[type] ?? 500)
+                    : this.squadContactDistance(
+                        { x: absX, y: absY }, type, angle, unitWpx, unitHpx, target,
+                    );
+                const dist = Math.hypot(target.pt.x - absX, target.pt.y - absY);
+                const tlx = (target.pt.x - origin.x) * cos + (target.pt.y - origin.y) * sin;
+                const tly = -(target.pt.x - origin.x) * sin + (target.pt.y - origin.y) * cos;
+                const dxT = tlx - (gridX + offX);
+                const dyT = tly - (gridY + offY);
+                const lenT = Math.hypot(dxT, dyT) || 1;
+                dirIdx = faceLocal(dxT / lenT, dyT / lenT); // 永远面向自己的目标
+                // [2026-08-10 修·斜对着挤成一团] 推进方向 = **阵型正前方**（本地 −y），
+                // 不再是「朝自己目标的连续方向」。野战攻城同一套，13 不分战型。
+                //
+                // 病根（主人实锤「正对着还好，斜对着就不行，只有一组编队在打」+ 探针实测）：
+                //   阵型格位按 8 向**量化**朝向铺（angle = (dir+1)×π/4），但推进却走连续方向，
+                //   两者最多差 22.5°。探针实测行进距离 1000~1900px →
+                //   1500 × sin(22.5°) ≈ 574px 侧向漂移 > 一个格位间距（两三百 px）→
+                //   每个编队都横着挤进邻居的格子 → squadBlockedByAlly 恒真 →
+                //   18 个编队里 5~11 个集体站死（守军最惨 9 格里 6 格 IDLE = 「防守方整体不动」）。
+                //   正对着时量化误差≈0，各走各的道，所以没事——这就是「斜的才坏」的由来。
+                //
+                // 现在：九个编队沿同一条轴一线压上，各走各的道，永不串道。
+                // 目标只决定**打谁**和**出帧朝哪面**（dirIdx 上面已按目标算好），不再决定行进方向。
+                /** 沿阵型正前方还能压多少（本地 −y 为前）：量的是**敌方战线**，不是我这个目标。
+                 *  战线查不到（对面本帧没发布）时退回用目标投影，保持旧行为不至于原地不动。 */
+                const lineY = frontLineY(gridY + offY);
+                const forwardRemain = lineY !== null ? (gridY + offY) - lineY : -dyT;
+                if (dist <= range + GlobalUnitRenderer.SQUAD_ARRIVE_EPS_PX) {
+                    state = 'ATTACK'; // 边框相切 / 射程内 → 开战
+                } else if (dtSec > 0) {
+                    // 两个上限取小：① 直线距离还差多少 ② 沿推进轴还能压多少（不越过战线）
+                    const room = Math.min(dist - range, forwardRemain - range);
+                    const step = Math.min(GlobalUnitRenderer.SCENE13_CHARGE_SPEED_PX * dtSec, room);
+                    if (step <= 0) {
+                        // 已经压到敌方战线上，边框却还没贴上 → 说明咬的目标偏在侧翼、够不着。
+                        // [2026-08-10 修·目标锁固化] 解锁重选：squadTargetLock 原本只在目标阵亡时
+                        // 才放，开局挤到同一个目标上就固化一整场——实测邯郸守军 9 格里 6 格全咬
+                        // atk:8（1000px 外的侧翼弩兵），集体够不着又不换人 = 主人实锤「防守方全不动」。
+                        // 认领上限 2 拦不住这种情况：锁着的编队不再消耗认领配额。
+                        this.squadTargetLock.delete(lockKey);
+                        state = 'IDLE'; // 本帧原地待命，下一帧按最近重选
+                    } else {
+                        const ny = offY - step; // 本地 −y = 阵型正前方
+                        const nextAbs = {
+                            x: origin.x + ((gridX + offX) * cos - (gridY + ny) * sin),
+                            y: origin.y + ((gridX + offX) * sin + (gridY + ny) * cos),
+                        };
+                        if (this.squadBlockedByAlly(
+                            factionId, selfKey, i, nextAbs, type, angle, unitWpx, unitHpx,
+                        )) {
+                            // [2026-08-10 修·后排远程站死] 远程被自家前排挡住 = 它已经在
+                            // 该待的阵位上了 → 原地放箭。弓手本来就该站阵后射，不该挤前排；
+                            // 旧写法一律 IDLE，等的是一个永远不会让开的前排（主人实锤后排弓手不动）。
+                            state = LegionPhalanxDrawer.isRangedType(type) ? 'ATTACK' : 'IDLE';
+                        } else {
+                            state = 'MOVE'; // 一线压上（走路动画）
+                            offY = ny;
+                            dirIdx = directionIndex; // [2026-08-10 修] 移动时强制面向正前方，解决侧身平移的视觉 Bug
+                        }
+                    }
+                }
+                // dtSec = 0（列阵/暂停）→ 未贴身保持 IDLE，位置不动
+                // 目标键要在**进入推进分支之前**取：那里够不着会 delete 掉锁，
+                // 取晚了探针会把「本帧刚解锁重选」误报成「无目标」（自己坑过一次）
+                this.recordScene13Probe(selfKey, factionId, i, type, state, dist, range,
+                    pickedKey, dtSec);
+            } else {
+                this.recordScene13Probe(selfKey, factionId, i, type, state, null, null,
+                    null, dtSec);
+            }
+
+            out.push({ x: offX, y: offY });
+            this.squadMoveState.set(moveKey, { x: offX, y: offY });
+            states.push(state);
+            directions.push(dirIdx);
+            absPts.push({
+                x: origin.x + ((gridX + offX) * cos - (gridY + offY) * sin),
+                y: origin.y + ((gridX + offX) * sin + (gridY + offY) * cos),
+            });
+            absTypes.push(type);
+        }
+        // 无条件发布：双方永远互相可见（死锁从根上消除）
+        this.publishSquadPositions(selfKey, factionId, absPts, absTypes, angle, unitWpx, unitHpx);
+        return { offsets: out, states, directions };
+    }
+
+    /** 按锁定键取敌方编队当前数据；过期/阵亡/同势力返回 null（触发重选目标） */
+    private lookupSquad(ck: string, myFactionId: string): SquadHit | null {
+        const idx = ck.lastIndexOf(':');
+        if (idx <= 0) return null;
+        const entry = this.squadPosRegistry.get(ck.slice(0, idx));
+        if (!entry || entry.factionId === myFactionId) return null;
+        if (this.squadRegistryFrame - entry.frame > 1) return null;
+        const si = Number(ck.slice(idx + 1));
+        const p = entry.pts[si];
+        if (!p) return null;
+        return {
+            pt: p,
+            type: entry.types[si] ?? 'mixed',
+            angle: entry.angle,
+            dw: entry.dw,
+            dh: entry.dh,
+        };
+    }
+
+    /** 攻方/野战军团：9 编队战斗（统一核心的军团入口） */
+    private getSquadOffsets(
+        unit: IAnimatedUnit,
+        centerPoint: L.Point,
+        directionIndex: number,
+        scale: number,
+    ): { offsets: { x: number; y: number }[]; states: string[]; directions: number[] } | null {
+        if (!this.isBattleScene13()) return null;
+        const count = unit.cultureSlots?.length ?? 0;
+        if (count === 0) return null;
+        const squadTroops = this.computeSquadTroops(unit.id ?? 'unknown', unit.getTroops(), count);
+        const sp = LegionPhalanxDrawer.getDenseSquadSpacing(
+            unit.legionType || 'mixed',
+            unit.legionType || 'infantry',
+            directionIndex,
+            scale,
+            unit.cultureScales || null,
+        );
+        if (!sp) return null;
+        return this.computeSquadBattle(
+            `atk_${unit.id}`,
+            `${unit.id}`,
+            unit.factionId || 'unknown',
+            centerPoint,
+            directionIndex,
+            sp,
+            unit.cultureSlots ?? [],
+            squadTroops,
+            { x: 0, y: 0 },
+        );
+    }
+
+    /** 攻城守军：9 编队战斗（统一核心的守军入口；keepOut = 整片站到城图外） */
+    private getDefenderSquadOffsets(
+        key: string,
+        anchor: L.Point,
+        directionIndex: number,
+        scale: number,
+        cultureSlots: string[],
+        cultureScales: number[] | null,
+        targetPoint: L.Point | null,
+        defFactionId: string,
+        defTroops: number,
+    ): { offsets: { x: number; y: number }[]; states: string[]; directions: number[] } | null {
+        const count = cultureSlots.length;
+        if (count === 0) return null;
+        const squadTroops = this.computeSquadTroops(key, defTroops, count);
+        const sp = LegionPhalanxDrawer.getDenseSquadSpacing(
+            'mixed', cultureSlots[0] ?? 'infantry', directionIndex, scale, cultureScales,
+        );
+        if (!sp) return null;
+        // keepOut：守军初始整片外推出城图（沿面向攻方方向）；开战后位置交给统一核心。
+        const keepOut = sp.y * 1.1;
+        let bx = keepOut;
+        let by = 0;
+        if (targetPoint) {
+            const angle = (directionIndex + 1) * Math.PI / 4;
+            const cosA = Math.cos(angle);
+            const sinA = Math.sin(angle);
+            const rx = targetPoint.x - anchor.x;
+            const ry = targetPoint.y - anchor.y;
+            const tx = rx * cosA + ry * sinA;
+            const ty = -rx * sinA + ry * cosA;
+            const len = Math.hypot(tx, ty) || 1;
+            bx = (tx / len) * keepOut;
+            by = (ty / len) * keepOut;
+        }
+        return this.computeSquadBattle(
+            `def_${key}`,
+            key,
+            defFactionId,
+            anchor,
+            directionIndex,
+            sp,
+            cultureSlots,
+            squadTroops,
+            { x: bx, y: by },
+        );
+    }
+
+    /**
+     * 攻城守军阵线锚点：**据点边缘线上**（中心锚点 = 城图框缘，主人 2026-08-09 定稿）。
+     * 供守军 9 编队渲染 + 攻方编队推进目标共用。
+     * dir = 城中心 → 攻方方向；锚点 = 城心 + dir × halfPx（正好在面向攻方那侧的城图边缘）。
+     * （🔴 2026-08-09 修：原代码「城心 - dir×…」= 城图背对攻方侧，守军永远不显示；
+     *   后改 0.82 内收 = 锚点在城内 85px，主人定稿改为 1.0 = 中心锚点在据点边缘。）
+     */
+    private computeSiegeDefenderAnchor(
+        city: { latitude: number; longitude: number; troops?: number },
+        atkPos: { lat: number; lng: number },
+        /** [2026-08-10 据点外框] 额外外推像素：守军 3×3 的**半个阵深**，
+         *  让守军整片站在城图之外而不是压在城墙上（主人定：防守方也不和据点重叠）。
+         *  中心格因此正好离城一个半阵深，最后一排贴着城边缘。 */
+        extraOutPx = 0,
+    ): L.Point | null {
+        const zoom = this.map.getZoom();
+        const cityPt = this.map.latLngToContainerPoint([city.latitude, city.longitude]);
+        const screenW = getSiegeCityScreenWidthPx(zoom);
+        const halfW = screenW / 2;
+        const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;
+        const dx = atkPos.lng - city.longitude;
+        const dy = atkPos.lat - city.latitude;
+        const len = Math.hypot(dx, dy) || 1;
+        const cosA = Math.abs(dx) / len;
+        const sinA = Math.abs(dy) / len;
+        const halfPx = halfW * cosA + halfH * sinA; // 沿攻方方向的城图半投影
+        const dirX = dx / len;
+        const dirY = dy / len;
+        const out = halfPx + extraOutPx;
+        return L.point(
+            cityPt.x + dirX * out,
+            cityPt.y + dirY * out,
+        );
+    }
+
+    /**
+     * [2026-08-09 独立战斗场景] 攻城战守军 9 编队渲染（城图边缘，面向攻方）。
+     * 守方是 city 单位，不注册到 GlobalUnitRenderer → 平时不画士兵；
+     * 仅场景激活（进 13）时由渲染循环补画：按城市文化区生成 9 槽编队，
+     * 锚点在城图边缘内侧（攻方方向的反侧，贴城墙），朝向攻方军团。
+     */
+    private renderSiegeDefenders(ctx: CanvasRenderingContext2D): void {
+        const game = (window as any).game;
+        if (!game?.combatSystem || !game?.cityManager) return;
+        const followedId = game.cameraFollowUI?.getFollowedArmyId?.();
+        if (!followedId) return;
+
+        // 找跟拍军团参与的活跃攻城战
+        const fields: any[] = game.combatSystem.getActiveBattleFields?.() ?? [];
+        for (const bf of fields) {
+            if (bf?.type !== 'siege' || !bf.siegeCityId) continue;
+            if (!bf.hasParticipant?.(followedId)) continue;
+
+            const city = game.cityManager.getCity?.(bf.siegeCityId);
+            if (!city || city.troops <= 0) continue;
+
+            // 攻方军团位置（决定守军朝向与城图哪侧）
+            const attackerUnits: any[] = bf.getAttackerUnits?.() ?? [];
+            const attacker = attackerUnits.find((u: any) => u.id === followedId)
+                ?? attackerUnits[0];
+            const atkPos = attacker?.getPosition?.();
+            if (!atkPos) continue;
+
+            // 守军锚点：城图边缘内侧（贴城墙），面向攻方（攻方编队推进共用同一锚点）
+            const anchor = this.computeSiegeDefenderAnchor(city, atkPos);
+            if (!anchor) continue;
+
+            // 守军编队：按城市文化区生成 9 槽（与攻方军团同一套）
+            const region = (city.region ?? 'CENTRAL') as any;
+            const tier = getCultureTier(region, city.troops);
+            const slots = tier?.slots;
+            if (!slots || slots.length === 0) continue;
+            const cultureSlots = expandCompositionSlots(slots);
+            const cultureScales = expandCompositionScales(slots);
+
+            const zoom = this.map.getZoom();
+            const scale = Math.pow(2, Math.min(zoom, 10) - 9) * 0.7;
+            // 守军面向攻方 = 城中心 → 攻方方向
+            const directionIndex = OrientationSystem.get8DirectionIndex(
+                { lat: city.latitude, lng: city.longitude },
+                { lat: atkPos.lat, lng: atkPos.lng },
+            );
+
+            // [2026-08-09 守军推进] 守军目标 = 攻方将领编队实时位置（双方对攻，城图只是背景图）
+            const generalCenter = this.getGeneralSquadCenter(followedId);
+            const defTarget = generalCenter
+                ? this.map.latLngToContainerPoint([generalCenter.lat, generalCenter.lng])
+                : null;
+            const defKey = `def_${city.id}`;
+            const defOffsets = this.getDefenderSquadOffsets(
+                defKey, anchor, directionIndex, scale, cultureSlots, cultureScales, defTarget,
+                city.factionId || 'unknown',
+                city.troops, // [2026-08-09 编队级阵亡] 守军总兵力 → 每编队独立扣减
+            );
+            // 守军动作兜底：编队级状态由 defOffsets.states 逐编队覆盖（draw 内取编队级优先）；
+            // [2026-08-10 修·兜底空打] defOffsets 为 null（无目标）时兜底 IDLE 持械待命——
+            // 旧兜底 ATTACK = 守军全队原地挥砍（边框不挨着也空打）。攻击动作只由编队级判定给。
+            const defState: PhalanxAnimState = 'IDLE';
+
+            LegionPhalanxDrawer.draw(
+                `siege_defender_${city.id}`,
+                ctx,
+                { x: anchor.x, y: anchor.y },
+                defState,
+                directionIndex,
+                scale,
+                city.troops,
+                Date.now(),
+                false,
+                true,
+                (lat: number, lng: number) => {
+                    const p = this.map.latLngToContainerPoint([lat, lng]);
+                    return { x: p.x, y: p.y };
+                },
+                (x: number, y: number) => {
+                    const ll = this.map.containerPointToLatLng([x, y]);
+                    return { lat: ll.lat, lng: ll.lng };
+                },
+                'mixed',
+                city.factionId || 'panjun',
+                cultureSlots,
+                'mixed',
+                false,
+                cultureScales,
+                true, // denseFront → 9 编队展开
+                defOffsets?.offsets ?? null,
+                defOffsets?.states ?? null,
+                defOffsets?.directions ?? null,
+            );
+
+            // [2026-08-10 据点 = 守方编队] 城图外框 + 发布城图编队：
+            //  1) 城图外框（13 场景调试可视化，与编队框同款青色）：尺寸 = 城图实际大小
+            //     （halfW×halfH 与 cityKeepOutDistance / computeSiegeDefenderAnchor 同源），
+            //     攻方咬城 / 防重叠都以它为准——框相切 = 编队碰上城图边缘。
+            //  2) 城图发布为「守方一个不可动的编队」（独立 key `city_${cityId}`）：
+            //     攻方 findNearest 可咬城（守军全灭后城图成为最近目标 → 攻方打城）；
+            //     守军按势力跳过自己的城（city.factionId === 守军势力）→ 不咬自己。
+            //     城图位置固定（城中心，不移动）；dw/dh = 城图全尺寸，type='city' 支撑
+            //     半径 = 城图矩形投影（getSquadSupportRadius city 分支）。
+            const cityPt = this.map.latLngToContainerPoint([city.latitude, city.longitude]);
+            const halfW = getSiegeCityScreenWidthPx(zoom) / 2;
+            const halfH = halfW * GlobalUnitRenderer.CITY_ICON_HW_RATIO;
+            if (import.meta.env.DEV) {
+                ctx.save();
+                ctx.strokeStyle = 'rgba(0, 230, 255, 0.85)';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(cityPt.x - halfW, cityPt.y - halfH, halfW * 2, halfH * 2);
+                ctx.restore();
+            }
+            this.publishSquadPositions(
+                `city_${city.id}`, city.factionId || 'unknown',
+                [cityPt], ['city'], 0, halfW * 2, halfH * 2,
+            );
+            break; // 一场跟拍攻城战只画一次守军
+        }
     }
 }
