@@ -29,9 +29,11 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
 const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer']);
 
-// ── 兵种属性（2026-08-11 主人定稿：同类一样、异类相克小；只分近战/骑兵/远程三类）──
-//   近战 8：血150 伤45 速55    骑兵 4：血130 伤45 速130（快是全部价值）
-//   远程 5：血 70 伤15 速50 射程160    弓骑 = 骑兵属性 + 远程射击 + 放风筝
+// ── 兵种属性 ──
+//   三类基准（CLS_STATS）：近战 150/45/55、骑兵 130/45/130、远程 90/28/50 射程160
+//   步兵族已差异化（2026-08-13，以轻步 150/45/55 为基准）：
+//     重步 158/45/52、近卫 176/42/47、青州 120/58/52、蛮斧 98/70/55、藤甲 168/42/50、象兵 aoe+spd40
+//   弓骑 = 骑兵属性 + 远程射击（dmg 15 是平衡值勿改，见 horse_archer 行注释锁死）
 interface WarType {
     name: string;
     /** 近战 / 骑兵 / 远程（决定属性组） */
@@ -51,23 +53,30 @@ interface WarType {
      */
     rng?: number;
     dmg?: number;
+    /** 单项覆盖生命（2026-08-13 步兵族差异化：重甲/藤甲/禁军血厚，青州/蛮族血薄） */
+    hp?: number;
     /** 单项覆盖移动速度（重武器用：象兵笨重、床弩拖拽，都比同类慢） */
     spd?: number;
 }
 
 const WAR_TYPES: Record<string, WarType> = {
-    // ── 近战 8 ──
+    // ── 近战 8 ──（2026-08-13 步兵族差异化定稿：以轻步 150/45/55 为基准，血厚=防护、攻按武器、速按装备轻重）
     light_infantry: { name: '轻步兵', cls: 'melee', sz: 1 },
-    heavy_infantry: { name: '重步兵', cls: 'melee', sz: 1 },
-    shield:         { name: '近卫兵', cls: 'melee', sz: 1 },
-    spear:          { name: '青州兵', cls: 'melee', sz: 1 },
-    axe:            { name: '蛮族兵', cls: 'melee', sz: 1 },
-    armored:        { name: '藤甲兵', cls: 'melee', sz: 1 },
+    heavy_infantry: { name: '重步兵', cls: 'melee', sz: 1, hp: 158, spd: 52 },         // 重甲：血厚同攻，略慢
+    shield:         { name: '近卫兵', cls: 'melee', sz: 1, hp: 176, dmg: 42, spd: 47 },// 禁军：极肉城墙，最慢
+    spear:          { name: '青州兵', cls: 'melee', sz: 1, hp: 120, dmg: 58, spd: 52 },// 精锐枪兵：攻高脆
+    axe:            { name: '蛮族兵', cls: 'melee', sz: 1, hp: 98, dmg: 70, spd: 55 }, // 蛮族：极攻·脆
+    armored:        { name: '藤甲兵', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 藤甲：肉，藤编轻便
     elephant:       { name: '象兵',   cls: 'melee', sz: 1.6, aoe: true, spd: 40 },
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
     lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
     heavy_cavalry:  { name: '重骑兵', cls: 'cav', sz: 1.15 },
     general_cavalry:{ name: '虎豹骑', cls: 'cav', sz: 1.15 },
+    // 🔴🔴 dmg: 15 是平衡值，不是漏改（2026-08-13 锁死，防按旧注释「修正」）：
+    //    08-12 远程组 15→28 时突骑的内联 15 刻意不动——主人 08-11 定「弓骑兵厉害，略强」。
+    //    实测（war_sim，3 万兵 vs 近战余兵）：dmg 15→5820（惨胜）/ 20→11840（压制）/ 28→17780（碾压）。
+    //    改成 28 = 「略强」当场作废。上面接口注释「射程/伤害必须走远程组」指射程必须显式覆盖（否则 65px 贴身抽搐），
+    //    不指伤害数值要跟远程组同步。
     horse_archer:   { name: '突骑兵', cls: 'cav', sz: 1.15, kite: 100, rng: 160, dmg: 15 },
     // ── 远程 5 ──
     archer:         { name: '弓兵',   cls: 'ranged', sz: 1 },
@@ -86,7 +95,7 @@ const CLS_STATS = {
 function statsOf(key: string): { hp: number; dmg: number; spd: number; rng: number } {
     const wt = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
     const base = CLS_STATS[wt.cls];
-    return { hp: base.hp, spd: wt.spd ?? base.spd, dmg: wt.dmg ?? base.dmg, rng: wt.rng ?? base.rng };
+    return { hp: wt.hp ?? base.hp, spd: wt.spd ?? base.spd, dmg: wt.dmg ?? base.dmg, rng: wt.rng ?? base.rng };
 }
 
 /** 纯骑文化（三角 1-2-3 六口；与 CULTURE_FORMATION_MODE === 'triangle' 一致） */
