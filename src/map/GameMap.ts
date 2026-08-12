@@ -331,13 +331,12 @@ export class GameMap {
             this.currentTileLayer.addTo(this.map);
         }
 
-        // 保持之前的滤镜
-        const chkAncient = document.getElementById('chk-ancient') as HTMLInputElement;
+        // 保持之前的滤镜：LOCAL 源恢复默认古纸滤镜；其他源（ESRI 晕渲）不用滤镜。
+        // [FIX 2026-08-12] 旧逻辑读不存在的 chk-ancient → 永远走 filter='none'，
+        // 运行中切回 LOCAL 后 sepia 永久丢失（applyDefaultMapVisuals 只在构造时执行）。
         const tilesPane = document.querySelector('.leaflet-tile-pane') as HTMLElement;
-        if (tilesPane && chkAncient) {
-            this.toggleAncientStyle(chkAncient.checked);
-        } else if (tilesPane) {
-            tilesPane.style.filter = 'none';
+        if (tilesPane) {
+            tilesPane.style.filter = sourceKey === 'LOCAL' ? 'sepia(10%) saturate(100%) contrast(110%)' : 'none';
         }
 
         // 保持河流和地形的顺序
@@ -482,16 +481,6 @@ export class GameMap {
     // toggleHistoryRoad and toggleGlobalRoad methods removed
 
 
-
-    public toggleAncientStyle(enable: boolean) {
-        const tilesPane = document.querySelector('.leaflet-tile-pane') as HTMLElement;
-        if (!tilesPane) return;
-        if (enable) {
-            tilesPane.style.filter = 'sepia(0.6) contrast(1.2) brightness(0.95) hue-rotate(-10deg)';
-        } else {
-            tilesPane.style.filter = 'none';
-        }
-    }
 
     private addStyleControl() {
         // 创建一个简单的自定义控件

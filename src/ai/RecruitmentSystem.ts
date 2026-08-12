@@ -29,6 +29,8 @@ import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile } from '../data/general-skills/profiles';
+import { isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
+import { isGeneralOnCooldown, isEliteOnCooldown } from '../legion/DefeatCooldown';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -89,12 +91,16 @@ export class RecruitmentSystem {
 
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
         const candidates = this.buildSpawnPlan(cities);
+        // [2026-08-10 开场零等待跟随] 把一支「必出名将」的候选提到第一 tick（见下方判据）。
+        RecruitmentSystem.hoistFamousGeneralCandidate(candidates);
 
         // 错峰生成：每隔 INITIAL_SPAWN_INTERVAL_MS 放行 INITIAL_SPAWN_PER_TICK 支，
         // 让军团陆续登场而非同帧爆出（直播观感 + 避免 INP 卡顿）。
         const perTick = Math.max(1, GameConfig.LEGION.INITIAL_SPAWN_PER_TICK);
         const intervalMs = GameConfig.LEGION.INITIAL_SPAWN_INTERVAL_MS;
         let idx = 0;
+        /** 本批是否已挂上开场跟随（只挂一次，后续名将军团不抢镜头） */
+        let followHooked = false;
 
         const spawnTick = () => {
             let spawnedThisTick = 0;
@@ -109,7 +115,17 @@ export class RecruitmentSystem {
                 const newLegion = this.spawnCandidate(city, armySize);
                 if (!newLegion) continue;
                 spawnedThisTick++;
-                (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
+
+                // [2026-08-10 开场零等待跟随] 第一支名将军团一落地就挂跟随，不等整批出完。
+                // 原先只在下方「全部出完」分支挂钩：30 支 × 200ms ≈ 5.8s；实际先触发的是
+                // CameraFollowUI 的 5 秒无目标兜底（AUTO_FOLLOW_DELAY_MS）——两条都让主人
+                // 开场干等 5 秒空地图。上面的 hoist 已把「必出名将」的候选排到第一 tick，
+                // 所以这里通常在开播后 ~0ms 命中。
+                // 判据用**实际落地结果**（newLegion.generalId）而非预测，预测落空也不会挂错人。
+                if (!followHooked && RecruitmentSystem.isFamousGeneralArmy(newLegion)) {
+                    followHooked = true;
+                    (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
+                }
             }
 
             // 还有剩余候选且未达上限，错峰等待下一批
@@ -204,6 +220,50 @@ export class RecruitmentSystem {
             this.pendingLabelCityIds.delete(cityId);
             n++;
         }
+    }
+
+    /** 该军团是否名将军团（与 CameraFollowUI.isFamousGeneralLegion 同口径） */
+    private static isFamousGeneralArmy(army: { generalId?: string }): boolean {
+        const gid = army.generalId;
+        return !!gid && getGeneralProfile(gid)?.tier === 'famous';
+    }
+
+    /**
+     * [2026-08-10 开场零等待跟随] 「必出名将」判据 —— 与 applyLegionSpawnTierToArmy
+     * 的 <4万 分支同口径（`LegionSpawnTier.ts` 中「有将/精必出（不再随机）」那段）：
+     * 将档与精档**都**可用时不掷色，直接 elite_general，名将必贴。任一档已消耗或在冷却，
+     * 就回落到四档等概率掷色 → 出不出将不确定，不能拿来当"排第一"的依据，一律排除。
+     *
+     * 开局兵力统一 3 万（< PROMOTE_TROOPS 4 万），所以走的就是这条 <4万 分支。
+     */
+    private static willSpawnFamousGeneral(city: RecruitmentCity): boolean {
+        if (!isCityGeneralEliteAnchor(city.id)) return false;   // 非将/精锚点城：attachFactionGeneralToArmy 直接拒
+        if (city.spawnGeneralUsed || city.spawnEliteUsed) return false;
+        if (isGeneralOnCooldown(city.id) || isEliteOnCooldown(city.id)) return false;
+        const general = getCityAnchoredGeneral(city.id);
+        return !!general && getGeneralProfile(general.generalId)?.tier === 'famous';
+    }
+
+    /**
+     * [2026-08-10 开场零等待跟随] 从候选里**随机**挑一支「必出名将」的排到队首，
+     * 让它在第一个 spawn tick 落地，`runInitialSpawn` 随即挂上跟随。
+     *
+     * 🔴 必须随机、不能取第一个：CameraFollowUI 08-09 定的规则是「名将池非空 → 池内随机」，
+     * 理由写在 `CameraFollowUI.ts:831` —— 开局兵力全相同，任何确定性排序都会退化成
+     * 「每局都跟同一支军团」（主人当时点名的莫斯科问题）。
+     *
+     * 只改**出场先后**，不改出兵集合，也不动 buildSpawnPlan 已算好的 18 区轮转指针。
+     */
+    private static hoistFamousGeneralCandidate(candidates: SpawnCandidate[]): void {
+        const hits: number[] = [];
+        for (let i = 0; i < candidates.length; i++) {
+            if (RecruitmentSystem.willSpawnFamousGeneral(candidates[i].city)) hits.push(i);
+        }
+        if (hits.length === 0) return;  // 本批没有必出名将的城 → 保持原序，走原有兜底
+        const pick = hits[Math.floor(Math.random() * hits.length)];
+        if (pick === 0) return;
+        const [chosen] = candidates.splice(pick, 1);
+        candidates.unshift(chosen);
     }
 
     /**

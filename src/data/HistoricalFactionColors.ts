@@ -33,7 +33,7 @@ const _FIXED: Record<string, string> = {
     yang_aner: '#B84838', // 登(杨安儿)
     dashun: '#9A3030', // 大顺
     daxi_ming: '#943228', // 大西
-    xiqin: '#AE3434', // 西秦
+    xiqin: '#2A2626', // 西秦（乞伏鲜卑尚黑）
     longwu: '#B43434', // 隆武
     duanzhou_d: '#3D7A5A', // 端州（肇庆·摧锋军）
 
@@ -198,7 +198,7 @@ const _FIXED: Record<string, string> = {
     dayue: '#D4B830', // 大越·白藤江水师（安南黄）
     jing: '#4878A8', // 京·铁突军（华闾青）
     leloi: '#D4AF37', // 后黎金
-    nguyen_guangnan: '#C85030', // 广南·禁兵（顺化橙）
+    nguyen_guangnan: '#D0B02A', // 广南·禁兵（金龙城黄）
 
     ming_zheng: '#284868', // 明郑·铁人军（东宁深蓝）
     paiwan: '#6A5840', // 排湾·出草勇士（山地褐）
@@ -242,7 +242,7 @@ const _FIXED: Record<string, string> = {
     ganzhou: '#C41E31', // 甘州（窦融·汉系赤红）
     suzhou: '#C41E20', // 肃州（霍去病·汉系赤红）
     'qing': '#DC4863', // 庆州·忠孝军（陇东琥珀；安化治）
-    weiming: '#A89888', // 嵬名·步跋子（党项灰褐）
+    weiming: '#D2CEC4', // 嵬名·步跋子（西夏尚白）
     yeli: '#586878', // 野利·擒生军（贺兰青灰）
     guiyi: '#C8A868', // 归义·沙州义军（敦煌沙金）
     xianlingqiang: '#688850', // 先零·凉州大马（允吾青绿）
@@ -256,7 +256,7 @@ const _FIXED: Record<string, string> = {
     bandun: '#6A8858', // 板楯·賨人勇士（汉昌巴人绿）
     kui: '#789868', // 夔·白毦兵（白帝城青绿）
     langzhou: '#2E7D34', // 阆州（张飞·蜀绿）
-    'zhuoshi': '#F0CC60', // 卓·连弩士（临邛弩阵绿）
+    'zhuoshi': '#2E7D39', // 卓·连弩士（临邛·蜀汉绿）
     boren: '#4A6858', // 僰·悬棺武士（僰道苔绿）
     chenghan: '#26221C', // 成汉·六夷突骑（鹿头关；据成都水德尚黑）
     shuixi: '#527088', // 水西·罗罗兵（毕节青灰）
@@ -291,7 +291,7 @@ const _FIXED: Record<string, string> = {
     qidan: '#36322C', // 契丹
 
     // ── 补全中城随机势力专属色（2026-06-12） ──
-    ba: '#326850', // 巴国（巴山青，巴渝劲卒@重庆）
+    ba: '#B83A3E', // 巴国（姬姓宗周尚赤，巴渝劲卒@重庆）
     'hezhou': '#DC4856', // 合州（钓鱼青灰，兴戎军@钓鱼城）
     'liang_d': '#F0CC41', // 梁国（梁土赭，睢阳戍卒·张巡）
     min: '#664A6A', // 闽国·亲从（冶城紫）
@@ -339,7 +339,7 @@ const _FIXED: Record<string, string> = {
     chen3: '#8F6E8F', // 月支（月支紫褐，击刹兵）
     danluo: '#325272', // 耽罗（耽罗海蓝，三别抄）
     dengmaoqi: '#9C4A3A', // 铲平（铲平起义红，铲平军）
-    dazhen: '#737A6A', // 大真（大真冷灰绿，渤海八猛安）
+    dazhen: '#CAC6BE', // 大真（女真尚白，恤品路）
     helian: '#3D4E5B', // 赫连（铁弗钢蓝，铁弗卫队）
     kiyad: '#70593B', // 乞颜（乞颜草原黄，那可儿）
     kumo: '#6B5C4D', // 奚族（奚族皮甲褐，楮特奥隗部）
@@ -372,11 +372,11 @@ const _FIXED: Record<string, string> = {
     baiyang: '#1C1C1E', // 白羊（蒙恬·秦系玄黑）
     baidi: '#D0D3D4', // 白狄（灰白）
     duomi: '#8A6848', // 多弥（羌褐）
-    wumeng: '#D96A18', // 乌蒙（橙褐；避 gaochang #E67E22）
+    wumeng: '#2A2624', // 乌蒙·石门关（彝族尚黑）
     lelang: '#E0A010', // 乐浪（黄；避 daozhou #F39C12）
     huite: '#34495E', // 辉特（深蓝灰）
     zubu: '#2C3E50', // 阻卜（暗蓝）
-    kangba: '#B43228', // 康巴（深红；避 taira #C0392B）
+    kangba: '#7C6043', // 康巴（康区土金）
     nvguo: '#8A6849', // 女国（羌褐）
     'jiashi': '#F0CC59', // 迦湿弥罗（翠绿）
     wuhu: '#16A085', // 乌护（孔雀绿）
@@ -512,7 +512,7 @@ const _FIXED: Record<string, string> = {
     'choros': '#4DAA4A', // 自动分配 (邻域相斥)
     'ladakh': '#5C2820', // 拉达克（暗绛褐，僧格朗杰）
     'ganden': '#C89830', // 格鲁（黄帽派，宗喀巴）
-    'bailan': '#4C3470', // 察木多/白兰（帕巴拉）
+    'bailan': '#C89832', // 察木多/白兰（帕巴拉·格鲁金黄）
     'supi': '#4A3072', // 苏毗（悉诺逻）
     'monpa': '#4A7040', // 门巴（深绿，梅惹洛珠嘉措）
     'lopi': '#4A7041', // 珞巴（深绿，阿波）
@@ -557,7 +557,7 @@ const _FIXED: Record<string, string> = {
     'li_s': '#C41E2A', // 扶风马氏（马援·汉系赤红）
     'leizhou': '#73B7BE', // 自动分配 (邻域相斥)
     'golog': '#7E6041', // 果洛（土金，完德扎西）
-    'tushetu': '#3C5A7B', // 土谢图（草原蓝）
+    'tushetu': '#C4A032', // 土谢图·库伦（喀尔喀黄旗）
     tumed: '#B8A060', // 土默特·精骑（草原金）
     'she': '#C36DA6', // 自动分配 (邻域相斥)
     'liao': '#C565D9',
@@ -869,9 +869,9 @@ const _FIXED: Record<string, string> = {
     'xila': '#2E6DA4', // 雅典·雅典城（爱琴海蓝白）
     'buni': '#7A2E6E', // 迦太基·迦太基（腓尼基紫，推罗紫渊源）
     'maqidun': '#C9A227', // 马其顿·萨洛尼卡（亚历山大金）
-    'yadelaiya': '#20539B', // 威尼斯·威尼斯城（圣马可金狮蓝）
+    'yadelaiya': '#901C26', // 威尼斯·威尼斯城（圣马可暗红）
     'gaolu': '#2A4B8F', // 法兰西·巴黎（王室蓝 fleur-de-lis）
-    'putaoya': '#1B7A4A', // 葡萄牙·里斯本（阿方索绿）
+    'putaoya': '#284B9E', // 葡萄牙·里斯本（王国蓝盾）
     'guadaer': '#C8102E', // 卡斯蒂利亚·塞维利亚（金塔红旗）
     'andaluoxiya': '#1E7A3C', // 安达卢西亚·科尔多瓦（伊斯兰绿）
     'mulabite': '#A03028', // 穆拉比特·马拉喀什（马拉喀什红城）
@@ -926,10 +926,10 @@ const _FIXED: Record<string, string> = {
     'maixiya': '#B8850B', // 麦西亚·牛津（盎格鲁金）
     'kanbuliya': '#2F7E33', // 坎布里亚·卡莱尔（凯尔特绿）
     'piketai': '#2E4E8F', // 苏格兰·爱丁堡（苏格兰蓝）
-    'gaer': '#1E6E3C', // 盖尔·都柏林（爱尔兰绿）
+    'gaer': '#1C4E8C', // 盖尔·都柏林（圣帕特里克蓝）
     'habusibao': '#8B6A1A', // 哈布斯堡·维也纳（哈布斯堡金黑）
     'boximiya': '#C8A227', // 波西米亚·布拉格（波西米亚金）
-    'mazhaer': '#4A8C3A', // 匈牙利·布达佩斯（马扎尔绿）
+    'mazhaer': '#D0D0D8', // 匈牙利·布达佩斯（阿尔帕德银白）
     'weixi': '#C03030', // 不来梅·不来梅（汉萨红白）
     'ruidian_yota': '#1E5FA8', // 瑞典·哥德堡（瑞典蓝金）
     'meikelunbao': '#2E5E8C', // 梅克伦堡·罗斯托克（梅克伦堡蓝红）
@@ -954,7 +954,7 @@ const _FIXED: Record<string, string> = {
     'mosike_gongguo': '#8A1A1A', // 莫斯科公国·莫斯科（莫斯科红）
     'liulike': '#3A6DA8', // 诺夫哥罗德·诺夫哥罗德（诺夫哥罗德蓝）
     'bolisiya': '#B73030', // 布列斯特·布列斯特（罗斯红白）
-    'saierdika': '#2D7D32', // 保加利亚·索非亚（保加利亚绿）
+    'saierdika': '#D89028', // 保加利亚·索非亚（金狮橙金）
     'saierweiya': '#9F2020', // 塞尔维亚·贝尔格莱德（塞尔维亚红）
     'bosiniya': '#8A6A2E', // 波斯尼亚·萨拉热窝（波斯尼亚金）
     'qiekase': '#6A4A2E', // 切尔卡瑟·切尔卡瑟（哥萨克褐）
@@ -968,12 +968,14 @@ const _FIXED: Record<string, string> = {
     'xideweina': '#3A5E9E', // 波洛茨克·波洛茨克（波洛茨克蓝）
     'kelimiya': '#1D6FA8', // 克里米亚·卡法（黑海蓝）
     'dajiya': '#A02F30', // 达契亚·萨尔米泽（达契亚红）
-    'litaowan': '#3A7D3A', // 立陶宛·维尔纽斯（立陶宛绿）
+    'litaowan': '#8E1E28', // 立陶宛·维尔纽斯（大公国暗红）
     'piyasite': '#B01F20', // 克拉科夫·克拉科夫（克拉科夫红）
     'baojian_qishi': '#6A6A72', // 宝剑骑士·里加（骑士团银灰）
     'teweier_gongguo': '#B8902E', // 特维尔·特维尔（特维尔金）
     'suzidaer': '#2D5E9E', // 苏兹达尔·下诺城（苏兹达尔蓝）
-    'gesake': '#2D2E34', // 塞契·塞契（哥萨克黑）
+    'gesake': '#96284B', // 塞契·塞契（哥萨克猩红）
+    'keluodiya': '#A32638', // 格拉代茨·克罗地亚（克罗地亚红）
+    'dunhe': '#2F5FA5', // 阿速城·顿河（顿河哥萨克蓝）
     'moerdaweiya': '#AF3030', // 摩尔达维亚·雅西（摩尔达维亚红）
     'walajiyia': '#3A6EA7', // 瓦拉几亚·特尔城（瓦拉几亚蓝）
     'liwoniya': '#3E7A4A', // 利沃尼亚·塔林（利沃尼亚绿）
@@ -997,7 +999,7 @@ const _FIXED: Record<string, string> = {
     'danmai': '#C0202E', // 丹麦·哥本哈根（红底白十字）
     'ruidian_si': '#1E63AC', // 瑞典·斯德哥尔摩（瑞典蓝金）
     'kasidiliya': '#C2102E', // 卡斯蒂利亚·马德里（金塔红旗）
-    'duluo': '#1E7A4A', // 杜罗·波尔图（葡萄牙绿系）
+    'duluo': '#2850A4', // 杜罗·波尔图（王国蓝系）
     'teluoyi': '#8E6A3C', // 特洛伊·特洛伊（青铜）
     'alabo': '#207A3C', // 阿拉伯·巴士拉（伊斯兰绿）
 };

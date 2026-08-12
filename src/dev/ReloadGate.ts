@@ -25,7 +25,11 @@ const HEARTBEAT_MS = 5_000;
 
 function shouldBlock(): boolean {
     const timeSystem = (window as any).game?.timeSystem;
-    const running = timeSystem ? !timeSystem.isGamePaused() : false;
+    // [2026-08-10 13 独立时钟] 13 战术层期间 timeSystem 是**暂停**的（大战略冻结），
+    // 但战斗正在打、观众正在看 —— 按「暂停=可刷新」会在每场双将战开打时放行整页刷新，
+    // 直播看到一半被刷掉。战术层激活 = 照样算「在跑」。
+    const inBattleScene = (window as any).game?.battleScene?.isActive?.() === true;
+    const running = inBattleScene || (timeSystem ? !timeSystem.isGamePaused() : false);
     // F2 立绘校正打开时强制闸门关：校正需暂停推演，若按「暂停=可刷新」会让整页刷新打断校正
     const correctorOpen = (window as any).__portraitCorrectorOpen === true;
     return running || correctorOpen;

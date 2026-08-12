@@ -254,6 +254,7 @@ function pickNearbyEnemyLegion(
     const huntR = GameConfig.AI.HUNT_ENEMY_LEGION_RADIUS;
     const myPos = ctx.army.getPosition();
     const myFaction = ctx.army.getFactionId();
+    const myTroops = Math.max(1, ctx.army.getTroops());
     const registry = ctx.legionManager?.getSpatialRegistry?.();
     if (!registry?.getArmiesInRadius) return null;
 
@@ -266,6 +267,18 @@ function pickNearbyEnemyLegion(
         if (other.getFactionId() === myFaction) continue;
         const key = `army:${other.id}`;
         if (excludeTargetIds.has(key)) continue;
+
+        // 「打不打得过」闸门（2026-08-12）：修前只判死没死/同不同阵营/距离，
+        // 5 千残兵会去追 3 万大军 —— 追击的前提本来就是我打得过。
+        // 只挡**主动挑衅**；被动接敌、收复、远征都不走这条路径，不受影响。
+        if (other.getTroops() > myTroops * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO) {
+            btLog(
+                ctx,
+                `skip_hunt_strong:${other.id}`,
+                `[AI] ${ctx.army.name}(${myTroops}) 打不过敌军【${other.name}】(${other.getTroops()})，不追`,
+            );
+            continue;
+        }
 
         const ePos = other.getPosition();
         const d = getEuclideanDistance(myPos, ePos);
@@ -449,6 +462,14 @@ export const IsMoving = new Condition('IsMoving', (ctx) => !ctx.army.isIdle());
 
 const SIEGE_REACH_RADIUS = GameConfig.SIEGE.COMBAT_RADIUS + 0.1;
 /** 与 LegionFieldBattle 接触半径一致：追到此距离内等碰撞开战 */
+/**
+ * 锚点切换滞回带（乘在 HOME_ANCHOR_TROOP_THRESHOLD 上）。
+ * 上阈 1.1 = 2.2 万才切前线锚点，下阈 0.9 = 掉到 1.8 万才切回老家锚点。
+ * 中间 1.8~2.2 万维持原状 —— 行军减兵的抖动不足以让战役方向翻转。
+ */
+const ANCHOR_HYSTERESIS_HI = 1.1;
+const ANCHOR_HYSTERESIS_LO = 0.9;
+
 const FIELD_HUNT_CONTACT_RADIUS = 0.2;
 const FAILED_TARGET_COOLDOWN_MS = GameConfig.AI.FAILED_TARGET_COOLDOWN_MS;
 const MOVE_FAILURE_LOG_COOLDOWN_MS = 10_000;
@@ -552,7 +573,17 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     //   规则 B（兵力 ≥ 2 万）：锚点 = 离军团道路距离最近的前线己方城（打完的城自动前移锚点）。
     const armyPos = ctx.army.getPosition();
     const standCityId = roadRegistry.getNearestCityId(armyPos.lat, armyPos.lng);
-    const useHomeAnchor = ctx.army.getTroops() < GameConfig.LEGION.HOME_ANCHOR_TROOP_THRESHOLD;
+    // 🔴 [2026-08-12 加滞回] 硬阈值会让军团**中途变卦**：行军减兵让 2.1 万的军团跌破 2 万，
+    //    战略取向当场翻转（从"继续向外推"变成"回老家周边转悠"），可能直接掉头。
+    //    真实军队不会因为损失几百人就改变战役方向。改成双阈值：
+    //      涨过 上阈(×1.1) 才切「前线锚点」，掉到 下阈(×0.9) 才切回「老家锚点」，中间维持原状。
+    const thr = GameConfig.LEGION.HOME_ANCHOR_TROOP_THRESHOLD;
+    const troopsNow = ctx.army.getTroops();
+    const prevHomeAnchor = ctx.army.usingHomeAnchor ?? (troopsNow < thr);
+    const useHomeAnchor = prevHomeAnchor
+        ? troopsNow < thr * ANCHOR_HYSTERESIS_HI      // 之前用老家：涨过上阈才切前线
+        : troopsNow < thr * ANCHOR_HYSTERESIS_LO;     // 之前用前线：掉破下阈才切回老家
+    ctx.army.usingHomeAnchor = useHomeAnchor;
     let anchorId: string;
     if (useHomeAnchor) {
         anchorId = originCityId;
@@ -575,7 +606,11 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         anchorId,
         originCityId,
         ctx.cityManager.getCities(),
-        { excludeTargetIds, armyStandCityId: standCityId ?? undefined }
+        {
+            excludeTargetIds,
+            armyStandCityId: standCityId ?? undefined,
+            myTroops: ctx.army.getTroops(),   // 启用「打不打得过」闸门
+        }
     );
 
     if (!picked) {

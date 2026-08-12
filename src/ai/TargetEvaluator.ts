@@ -35,6 +35,12 @@ export interface TargetEvaluateOptions {
      * 子集为空（支线尽头无推进目标）时自然回落全池，不剔除不锁死。
      */
     armyStandCityId?: string;
+    /**
+     * 本军团兵力。给了就启用「打不打得过」闸门：守军 > 本兵力 × ENEMY_STRENGTH_MAX_RATIO 的城
+     * 不进抽签池（2026-08-12 主人批准）。
+     * 🔴 **筛空自动回落全池**——四周全是硬骨头时照样得挑一个打，绝不让军团卡死不动。
+     */
+    myTroops?: number;
 }
 
 export class TargetEvaluator {
@@ -98,6 +104,19 @@ export class TargetEvaluator {
                 if (!path || !path.slice(1).includes(homeCityId)) noHomePass.push(s);
             }
             if (noHomePass.length > 0) pool = noHomePass;
+        }
+
+        // 「打不打得过」闸门（2026-08-12 主人批准）：把明显啃不动的城从抽签池里摘掉。
+        // 🔴 修前**整个文件里 troops/garrison 一次都没出现**——3 万守军的雄关和 5 千残城
+        //    被抽中的概率完全一样，军团等于闭着眼点菜。
+        // 🔴 放在方向池筛选之后、出头鸟之前：出头鸟是「反雪球必打」，它该在能打得动的城里选，
+        //    但**不受本闸门否决**（下面单独取池，若领头城被摘掉就正常抽签，不强行送死）。
+        // 🔴 筛空回落全池：绝不因为四周都是硬骨头就不动。
+        if (options?.myTroops && options.myTroops > 0) {
+            const cap = options.myTroops * GameConfig.AI.ENEMY_STRENGTH_MAX_RATIO;
+            const troopsById = new Map(cities.map((c) => [c.id, c.troops ?? 0]));
+            const beatable = pool.filter((s) => (troopsById.get(s.targetId) ?? 0) <= cap);
+            if (beatable.length > 0) pool = beatable;
         }
 
         // 枪打出头鸟（反雪球）：候选池（方向池，军团挨着的 2-3 座可选城）里有全图据点最多的势力 → 必打它。
@@ -202,6 +221,11 @@ export class TargetEvaluator {
             }
         });
         if (!bestId || bestN <= secondN) return null; // 并列第一 = 无人领先
+        // 🔴 [2026-08-12 主人批准] 必须**明显**领先才算出头鸟，不是多一座城就被全图围攻。
+        //    旧判据 bestN > secondN：开局阶段谁先打下第二座城，立刻被所有邻居确定性合击，
+        //    观感上是"莫名其妙的全图公敌"。合纵的前提是对方已经明显坐大，不是刚冒头。
+        const lead = GameConfig.AI.LEADER_HUNT?.MIN_LEAD_RATIO ?? 1;
+        if (bestN < secondN * lead) return null;
         return { factionId: bestId, count: bestN };
     }
 

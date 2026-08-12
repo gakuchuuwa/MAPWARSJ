@@ -30,8 +30,259 @@ export class LegionPhalanxDrawer {
 
     private static readonly PURE_CAVALRY_LEGION_TYPES: LegionType[] = ['cavalry', 'archer_cavalry'];
 
+    /**
+     * [2026-08-09 13场景阵型] 步兵类型判定：是否展开为 4×2 小阵。
+     * 与 UnitAssets.ts / CultureFormations.ts 的步兵分类一致
+     * （light_infantry/heavy_infantry/shield/spear/armored/axe + 华夏步兵）。
+     * 骑兵（lancer/heavy_cavalry/general_cavalry/horse_archer/huihui_cavalry）、
+     * 远程（archer/crossbow/ballista）、象兵（elephant）不是步兵，保持单格。
+     */
+    private static readonly INFANTRY_TYPES: ReadonlySet<string> = new Set([
+        'light_infantry',
+        'heavy_infantry',
+        'shield',
+        'spear',
+        'armored',
+        'axe',
+        'huaxia_infantry',
+    ]);
+
+    private static isInfantryType(type: string): boolean {
+        return LegionPhalanxDrawer.INFANTRY_TYPES.has(type);
+    }
+
+    /**
+     * [2026-08-09 13场景阵型] 骑兵类型判定：是否展开为 1-2-3 六人小三角。
+     * 与 LegionComposition.getDefaultScaleForUnitType 的骑兵分类一致：
+     * lancer/heavy_cavalry/general_cavalry/horse_archer/huihui_cavalry + 任何含 cavalry 的兵种。
+     * public：GlobalUnitRenderer 的编队判定（视觉框收缩系数）也用它，两处必须同源。
+     */
+    public static isCavalryType(type: string): boolean {
+        return (
+            type === 'lancer' ||
+            type === 'heavy_cavalry' ||
+            type === 'general_cavalry' ||
+            type === 'horse_archer' ||
+            type === 'huihui_cavalry' ||
+            type.includes('cavalry')
+        );
+    }
+
+    /**
+     * [2026-08-09 13场景阵型] 远程类型判定：是否展开为远程方阵。
+     * archer（弓兵）/ crossbow（弩兵）。床弩 ballista 已划入攻城类（主人 2026-08-09 定）。
+     * public：GlobalUnitRenderer 的后排射击判定也用它（两处必须同源）。
+     */
+    public static isRangedType(type: string): boolean {
+        return type === 'archer' || type === 'crossbow';
+    }
+
+    /**
+     * [2026-08-09 13场景阵型] 攻城类型判定：是否展开为 2×2 四人小阵。
+     * 主人 2026-08-09 定：象兵/床弩/冲车/井阑/投石均属攻城类。
+     * 在槽位数据中实际出现的是 elephant（象兵）与 ballista（床弩兵，拉丁蝎子弩）；
+     * 冲车/井阑/投石为独立器械系统（SIEGE_GEAR_DEFS），不占编队槽位。
+     */
+    private static isSiegeType(type: string): boolean {
+        return type === 'elephant' || type === 'ballista';
+    }
+
     /** S10DB 多数步兵/弩弓条带行高 64px；长枪、骑兵条带为 84px。绘制时按 64 归一化，避免同 scale 下 84px 素材显小。 */
     private static readonly S10DB_REF_FRAME_H = 64;
+
+    /**
+     * [2026-08-09 接触距离] 各类编队的**横向占位宽度**（单位：单兵宽，含两端各半个精灵）。
+     * 与四支展开分支的子间距一一对应，改子间距务必同步改这里：
+     *   步兵 4×2 交错 = 3.5 列 × 0.75 + 1 = 3.625  ← 最宽，格位间距按它定
+     *   骑兵 1-2-3    = 4 × 0.32 × 0.7 + 1 ≈ 1.90
+     *   远程 3×3      = 2 × 0.75 + 1 = 2.50
+     *   攻城 2×2      = 1 × 1.20 + 1 = 2.20
+     * 用途：**并肩让位**（squadEngagePoint 侧移一个编队宽）。
+     * 🔴 2026-08-10 起不再用于接触距离 —— 接触距离改由 getSquadSupportRadius 按**真实外框形状**
+     *    （步兵长方形 / 骑兵三角形）沿接敌方向算。用宽度当接触距离会让步兵停在两个多编队
+     *    深度之外（主人实锤「步兵隔着一大段距离」），用纵深又只是换一个标量近似，都不对。
+     */
+    public static getSquadWidthFactor(type: string): number {
+        // [2026-08-10 5×2 交错方阵] 步兵/远程统一 5 列交错：并集 = 4.5×0.75 + 1 = 4.375
+        if (this.isInfantryType(type)) return 4.375;
+        if (this.isCavalryType(type)) return 1.90;
+        if (this.isRangedType(type)) return 4.375;
+        if (this.isSiegeType(type)) return 3.25; // 攻城 1×4 = 3 × 0.75 + 1（2026-08-10 一排同步，原 2×2 = 2.20 已废弃）
+        return 3.625; // 未知兵种按最宽算，宁可留缝也不穿模
+    }
+
+    /**
+     * [2026-08-10 调试可视化] 画编队外框（DEV 专用，生产剥离）：旋转矩形 = 编队占位
+     * （宽 = getSquadWidthFactor×单兵宽，深 = 纵深 factor×单兵高），红短线 = 编队朝向。
+     * 供主人直观核对编队间距 / 接触线 / 「隔空」到底隔多远。仅 denseFront(13) 下由 draw 调用，
+     * 攻方与守军（renderSiegeDefenders 也走 draw）自动全覆盖。
+     */
+    public static debugDrawSquadBox(
+        ctx: CanvasRenderingContext2D,
+        cx: number,
+        cy: number,
+        direction: number,
+        dw: number,
+        dh: number,
+        type: string,
+    ): void {
+        // [2026-08-10 主人定] 外框要比编队本身小（交战判定框语义）——占位矩形收进编队
+        // 视觉内。骑兵是 1-2-3 三角阵、矩形框四角空，观感框特大 → 骑兵单独再缩（主人
+        // 2026-08-10「把骑兵边框再次缩小」）。**判定与视觉同源**（squadContactDistance
+        // 用同一组系数），框相切 = 判定碰到 = 开战（主人：「边框碰到才能开战」）。
+        const SHRINK = this.isCavalryType(type) ? 0.55 : 0.70;
+        const w = dw * LegionPhalanxDrawer.getSquadWidthFactor(type) * SHRINK;
+        let depth: number;
+        // [2026-08-10 5×2 十人方阵] 步兵/远程 2 排：深度 = 1×0.4 + 1 = 1.4 兵高
+        if (this.isInfantryType(type)) depth = 1.40;
+        else if (this.isCavalryType(type)) depth = 1.70;
+        else if (this.isRangedType(type)) depth = 1.40;
+        else if (this.isSiegeType(type)) depth = 1.00; // 攻城 1×4 单排深 = 1 精灵高（2026-08-10 一排同步）
+        else depth = 1.50;
+        const h = dh * depth * SHRINK;
+        const angle = (direction + 1) * Math.PI / 4;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle);
+        ctx.strokeStyle = 'rgba(0, 230, 255, 0.85)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-w / 2, -h / 2, w, h);
+        ctx.restore();
+    }
+
+    /**
+     * [2026-08-10 接触距离] 各类编队的**纵深占位**（单位：单兵**高**，含两端各半个精灵）。
+     * 两队正面对撞时，挨上的是双方的前排 —— 中心距 = (己方纵深 + 敌方纵深) / 2 × 单兵高，
+     * 与横向宽度无关。数值由四支展开分支的 localY 跨度反算，改子间距务必同步改这里：
+     *   步兵 4×2   localY=(sr-0.5)×dh×0.50, sr∈{0,1} → 1×0.50+1 = 1.50
+     *   骑兵 1-2-3 localY=(r-1.0)×dh×0.35, r∈{0,1,2} → 2×0.35+1 = 1.70
+     *   远程 3×3   localY=(sr-1.0)×dh×0.50, sr∈{0,1,2} → 2×0.50+1 = 2.00 ← 最深，格位纵距按它定
+     *   攻城 2×2   localY=(sr-0.5)×dh×0.80, sr∈{0,1} → 1×0.80+1 = 1.80
+     * 单兵高从格位纵距反解：unitH = sp.y / (2.00 × 1.10)（与 computeDenseSpacing 同一套常数）。
+     */
+    /**
+     * [2026-08-10 编队外框·主人定稿] 编队外框沿某方向的「支撑半径」——
+     * 从编队中心出发、沿 dl 方向走到外框边缘的距离（凸集支撑函数）。
+     *
+     * 外框形状：**步兵/远程/攻城 = 长方形，骑兵 = 三角形（尖端朝前）**，与各自的
+     * 子兵展开一一对应。两个编队「外框刚好贴上」的中心距 =
+     *     支撑半径_我(d) + 支撑半径_敌(−d)      （d = 我 → 敌 的单位方向）
+     * 这比旧的「一个标量停止距离」准得多：编队是扁的/尖的，从正面压上来和从侧面
+     * 包过来，该停的距离本就不同，标量做不到（旧写法步兵一律停在最宽的 3.625 外）。
+     *
+     * 数学：外框 = 子兵中心点的凸包 ⊕ 单个精灵矩形（Minkowski 和），
+     * 而凸集的支撑函数可加，所以直接把两段支撑相加即可：
+     *   点阵凸包：矩形阵 = halfSpanX|dx| + halfSpanY|dy|；三角阵 = 三顶点投影取最大
+     *   精灵矩形：(dw/2)|dx| + (dh/2)|dy|
+     *
+     * 各阵的点阵半跨（与四支展开分支的子间距逐项对应，改子间距务必同步改这里）：
+     *   步兵 4×2   x ±1.75×0.75 = ±1.3125 dw   y ±0.5×0.50 = ±0.25 dh
+     *   远程 3×3   x ±1.0 ×0.75 = ±0.75   dw   y ±1.0×0.50 = ±0.50 dh
+     *   攻城 2×2   x ±0.5 ×1.20 = ±0.60   dw   y ±0.5×0.80 = ±0.40 dh
+     *   骑兵三角   顶点 (0,−0.35dh) / (±2×0.32×0.7 dw, +0.35dh) = (±0.448dw, +0.35dh)
+     * 校验：加回一个精灵后总宽 = 3.625/1.896/2.50/2.20 兵宽（与 getSquadWidthFactor 一致），
+     *       总深 = 1.50/1.70/2.00/1.80 兵高。
+     *
+     * @param dlx,dly 单位方向，**编队本地坐标**（+x = 阵型横向，+y = 阵型纵深/后方）
+     * @param dw,dh   单兵渲染宽 / 高（像素）
+     */
+    public static getSquadSupportRadius(
+        type: string,
+        dlx: number,
+        dly: number,
+        dw: number,
+        dh: number,
+    ): number {
+        // [2026-08-10 据点编队] 城图（据点）＝守方一个不可动的编队：外框 = 城图矩形本体，
+        // dw/dh 由发布方传城图全宽/全高（halfW×2 / halfH×2），支撑半径 = 矩形方向投影。
+        // 城图不可缩（本体），无精灵加成段。
+        if (type === 'city') {
+            return (dw / 2) * Math.abs(dlx) + (dh / 2) * Math.abs(dly);
+        }
+        // 单个精灵那一段（所有兵种共用）
+        const sprite = (dw / 2) * Math.abs(dlx) + (dh / 2) * Math.abs(dly);
+
+        if (this.isCavalryType(type)) {
+            // 三角形：尖端 (0,−0.35dh) 在前，底边两角 (±0.448dw, +0.35dh)
+            const tipY = -0.35 * dh;
+            const baseX = 0.448 * dw;
+            const baseY = 0.35 * dh;
+            const hull = Math.max(tipY * dly, baseX * Math.abs(dlx) + baseY * dly);
+            return hull + sprite;
+        }
+
+        let halfX: number;
+        let halfY: number;
+        // [2026-08-10 5×2 交错方阵] 步兵/远程统一 5 列 2 排交错：halfX = 2.25×0.75 列距半跨、
+        // halfY = 0.5×0.4 排距半跨
+        if (this.isInfantryType(type)) { halfX = 1.6875 * dw; halfY = 0.20 * dh; }
+        else if (this.isRangedType(type)) { halfX = 1.6875 * dw; halfY = 0.20 * dh; }
+        else if (this.isSiegeType(type)) { halfX = 1.125 * dw; halfY = 0; } // 1×4 单排：1.5×0.75 / 无纵深（2026-08-10 一排同步）
+        else { halfX = 1.3125 * dw; halfY = 0.25 * dh; } // 未知按步兵（最宽）
+        return halfX * Math.abs(dlx) + halfY * Math.abs(dly) + sprite;
+    }
+
+
+    /**
+     * 密集编队（zoom13 战斗场景）的 3×3 格位间距 —— 唯一实现，draw() 与外部对齐都走这里。
+     *
+     * 格位间距必须由「单兵实际绘制尺寸」推导，不能用估计常数：
+     *   dw = SPRITE_BASE_H * scale * slotScale * (frameH / S10DB_REF_FRAME_H) * (frameW / frameH)
+     * 编队占位需含两端各半个精灵，不能只算中心点跨度：
+     *   步兵 4×2 交错 横向 3.5×0.75+1 = 3.625 兵宽 ← 最宽
+     *   远程 3×3      纵深 2×0.50+1  = 2.00 兵高 ← 最深
+     */
+    private static computeDenseSpacing(
+        refSprite: HTMLImageElement,
+        refTotalFrames: number,
+        scale: number,
+        cultureScales: number[] | null,
+    ): { x: number; y: number } {
+        const SPRITE_BASE_H = 60;      // 与 draw() 循环内 baseHeight 一致
+        // [2026-08-10 修·编队挤团] 5×2 交错方阵并集宽 = 4.5 列距 + 两端半兵 = 4.375 兵宽
+        // （与 getSquadWidthFactor 步兵同源）。原 3.625 是 4×2 时代旧值 → 编队实际宽 > 格距
+        // → 相邻编队横向压叠（主人实锤「一上来就重叠/挤成一团」）。
+        const INFANTRY_SPAN_W = 4.375; // 最宽编队（步兵/远程 5×2 交错）横向占位（兵宽）
+        // [2026-08-10 修·出场交叉] 格距参考素材是 64px，但中排重骑素材是 84px；
+        // 骑兵阵深实际需 1.70×84/64 = 2.231 个参考兵高。旧 2.00 不足，导致同一军团
+        // 中排骑兵刚出场就侵入前后排（主人连续实锤「一出来两军就交叉」）。
+        const DEEPEST_SPAN_H = 2.25;   // 向上取整覆盖 84px 骑兵真实阵深
+        const GAP = 1.10;              // 编队之间留 10% 缝
+
+        const refFrameW = refSprite.width / refTotalFrames;
+        const refFrameH = refSprite.height;
+        const maxSlotScale = cultureScales && cultureScales.length
+            ? Math.max(...cultureScales)
+            : 1;
+        const unitH = SPRITE_BASE_H * scale * maxSlotScale
+            * (refFrameH / LegionPhalanxDrawer.S10DB_REF_FRAME_H);
+        const unitW = unitH * (refFrameW / refFrameH);
+
+        return { x: unitW * INFANTRY_SPAN_W * GAP, y: unitH * DEEPEST_SPAN_H * GAP };
+    }
+
+    /**
+     * 供外部（攻城团锚点等）对齐 3×3 格位用：按与 draw() 同一套资源解析算出密集格位间距。
+     * 资源未就绪返回 null —— 调用方应退回原行为，不要自己猜数值。
+     */
+    public static getDenseSquadSpacing(
+        unitAssetsId: string,
+        legionType: string,
+        direction: number,
+        scale: number,
+        cultureScales: number[] | null,
+    ): { x: number; y: number } | null {
+        const assets = this.unitSpriteCache.get(unitAssetsId)
+            ?? this.unitSpriteCache.get(legionType)
+            ?? this.unitSpriteCache.get('mixed')
+            ?? this.unitSpriteCache.get('light_infantry');
+        if (!assets) return null;
+        const refSprite = assets.IDLE[direction] || assets.IDLE[0];
+        if (!refSprite) return null;
+        return this.computeDenseSpacing(
+            refSprite, this.getFrameCount(refSprite), scale, cultureScales,
+        );
+    }
 
     // [DYNAMIC ASSET SYSTEM]
     // Key: unitAssetId (e.g. 'huaxia_infantry') -> Local Sprite Cache
@@ -111,12 +362,15 @@ export class LegionPhalanxDrawer {
         },
     } as const;
 
-    /** 每场攻城随机交换井阑/投石机位置 */
+    /** 每场攻城随机交换井阑/投石机位置：key = unitId（+ 团索引，13 场景 4 团各自独立随机） */
     private static gearShuffle = new Map<string, Record<string, 'well' | 'catapult'>>();
     private static readonly SHUFFLE_GEAR_KEYS = ['well_lan', 'well_lan_r', 'catapult_l', 'catapult_r'] as const;
 
-    private static ensureGearShuffle(unitId: string): Record<string, 'well' | 'catapult'> {
-        let s = this.gearShuffle.get(unitId);
+    private static ensureGearShuffle(unitId: string, groupIndex = 0): Record<string, 'well' | 'catapult'> {
+        // [2026-08-09 主人定] 4 个攻城团完全一样 → 每团独立随机（key 含团索引），
+        // 团与团之间的井阑/投石分布不再相同。
+        const key = `${unitId}|${groupIndex}`;
+        let s = this.gearShuffle.get(key);
         if (!s) {
             const types: ('well' | 'catapult')[] = ['well', 'well', 'catapult', 'catapult'];
             for (let i = types.length - 1; i > 0; i--) {
@@ -127,7 +381,7 @@ export class LegionPhalanxDrawer {
             for (let i = 0; i < this.SHUFFLE_GEAR_KEYS.length; i++) {
                 s[this.SHUFFLE_GEAR_KEYS[i]] = types[i];
             }
-            this.gearShuffle.set(unitId, s);
+            this.gearShuffle.set(key, s);
         }
         return s;
     }
@@ -591,7 +845,17 @@ export class LegionPhalanxDrawer {
         cultureSlots: string[] | null = null,
         unitAssetsId: string = 'light_infantry',
         isPlayer: boolean = false, // [NEW] Identify plain player units
-        cultureScales: number[] | null = null // [NEW] Custom scales
+        cultureScales: number[] | null = null, // [NEW] Custom scales
+        denseFront: boolean = false, // [2026-08-09 13场景阵型] 第一排 3 步兵 → 3 组 2×4（每组 8 个），贴图/动画沿用原 slot
+        /** [2026-08-09 编队独立移动] 9 个格位（编队）各自的额外屏幕偏移（像素），旋转前叠加随 direction 转。
+         *  每个编队独立推进时由渲染层传入，静止/非场景为 null → 与改动前逐像素一致。 */
+        squadOffsets: readonly { x: number; y: number }[] | null = null,
+        /** [2026-08-09 编队独立战斗] 9 个格位各自的动作状态（MOVE/ATTACK/IDLE）；null = 整军 state。
+         *  仅覆盖常规动作选择，整军 DEATH/DAMAGE 仍优先（编队级不覆盖死亡/受击）。 */
+        squadStates: readonly (string | null)[] | null = null,
+        /** [2026-08-09 编队级朝向] 9 个格位各自的朝向（0-7，面向自己的目标）；null = 整军 direction。
+         *  默认不传 → 其他 zoom 与改动前逐像素一致。 */
+        squadDirections: readonly number[] | null = null
     ): void {
         if (!this.isLoaded) return;
 
@@ -660,17 +924,47 @@ export class LegionPhalanxDrawer {
 
         // Spacing based on estimated width
         // [3x3 TUNED] Balanced spacing - not too dense, not too loose
-        const spacingX = estRenderW * 0.50;
-        const spacingY = renderH * 0.42;
+        let spacingX = estRenderW * 0.50;
+        let spacingY = renderH * 0.42;
+
+        // [2026-08-09 13场景阵型] 主阵 3×3 间距放大到「编队占位尺寸」：
+        // 9 个格位 = 9 个编队锚点，按比例分开，避免 8人/6人编队互相重叠（主人截图实锤「9个编队挤在一起」）。
+        // 步兵编队最宽（4 列交错并集 ≈ 3.5×0.75 = 2.625 兵宽），主阵间距须大于它并留缝：
+        //   squadW = 4.0 兵宽（编队 2.625 + 缝 ≈ 1.4 兵宽）
+        //   squadH = 1.6 兵高（编队 2 排深 1.0 + 缝 ≈ 0.6）
+        if (denseFront) {
+            const dense = LegionPhalanxDrawer.computeDenseSpacing(
+                refSprite, refTotalFrames, scale, cultureScales,
+            );
+            spacingX = dense.x;
+            spacingY = dense.y;
+        }
 
         // --- 2. UPDATE STATE ---
         // 全局 DEATH（整军覆灭尸体）：对齐水军——不因 isFighting=false 走和平补员/清态；
         // 用 isFighting=true 保住战中槽位，由下方 DEATH 分支画尸体，保留 CORPSE_DISPLAY_MS。
+        // [2026-08-09 阵亡位置] 位置回调叠加编队推进偏移（squadOffsets 旋转前 → 转屏幕）：
+        // 否则编队推进后阵亡，deadLat/deadLng 还是「原地」位置，尸体倒在没推进的原地（主人实锤）。
         const currentState = LegionPhalanxStateManager.update(
             unitId, troops, rows, cols, count, direction, tick,
             isFighting || state === 'DEATH',
             center, unprojectFn,
-            (idx) => this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, isTriangleFormation)
+            (idx) => {
+                const baseOff = this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, isTriangleFormation);
+                const squadOff = squadOffsets && squadOffsets[idx];
+                if (!squadOff) return baseOff;
+                const sa = (direction + 1) * Math.PI / 4;
+                const sc = Math.cos(sa);
+                const ss = Math.sin(sa);
+                return {
+                    x: baseOff.x + squadOff.x * sc - squadOff.y * ss,
+                    y: baseOff.y + squadOff.x * ss + squadOff.y * sc,
+                };
+            },
+            // [2026-08-09 编队级阵亡] 13 场景（denseFront）：关闭整军随机侵蚀，
+            // 槽位死亡改由 squadStates[i]='DEATH' 逐编队驱动（见下方 effState==='DEATH' 分支）。
+            // 8/9/10 denseFront=false → skipErosion=false → 整军侵蚀逐像素不变。
+            denseFront,
         );
 
         // 整军 DEATH 且兵力归零：残留 ALIVE 格一并标死，避免只画「活着的站桩」
@@ -699,6 +993,25 @@ export class LegionPhalanxDrawer {
         // B. Select Sprite Set & Identify Unit Type (Moved Up for Logic)
         for (let i = 0; i < totalSlots; i++) {
             const slot = currentState.slots[i];
+            // [2026-08-09 编队独立战斗] 编队级动作/朝向：squadStates/squadDirections 逐格位覆盖；
+            // 整军 DEATH/DAMAGE 仍优先（编队级不覆盖死亡/受击）。默认 null → 整军 state/direction，其他 zoom 不变。
+            const effState: PhalanxAnimState = (state === 'DEATH' || state === 'DAMAGE')
+                ? state
+                : ((squadStates?.[i] ?? state) as PhalanxAnimState);
+            const effDir = squadDirections?.[i] ?? direction;
+            // [2026-08-10] 13 场景槽位生死的**唯一权威**是编队级 squadStates（整军侵蚀/复活已门控关闭）。
+            // 这里补上「编队活着但槽位还是尸体」的回正：进 13 之前在 8/9/10 被整军侵蚀杀掉的槽位，
+            // 若不回正就永远缺人（复活逻辑已随侵蚀一起关掉，不会再帮忙补）。
+            if (denseFront && squadStates && squadStates[i] && squadStates[i] !== 'DEATH'
+                && state !== 'DEATH' && slot.state !== 'ALIVE') {
+                slot.state = 'ALIVE';
+                slot.stateStartTime = tick;
+                slot.deathDirection = undefined;
+                slot.deadOffsetX = undefined;
+                slot.deadOffsetY = undefined;
+                slot.deadLat = undefined;
+                slot.deadLng = undefined;
+            }
             let currentSet = assets;
             let resolvedUnitType = unitAssetsId; // Default
             let isMixed = false; // [FIX] Declared at loop scope for combat crowding logic
@@ -757,8 +1070,21 @@ export class LegionPhalanxDrawer {
             if (dynamicAlpha <= 0.01) continue;
 
             const baseOffset = this.getFormationOffset(i, spacingX, spacingY, direction, legionType, rows, isTriangleFormation);
-            drawX = center.x + baseOffset.x;
-            drawY = center.y + baseOffset.y;
+            // [2026-08-09 编队独立移动] 每编队独立推进偏移（像素，旋转前叠加随 direction 转）：
+            // getFormationOffset 有缓存（key 不含偏移），返回的是共享对象 → 只读，另建新对象叠加。
+            let drawOffset = baseOffset;
+            const squadOff = squadOffsets && squadOffsets[i];
+            if (squadOff) {
+                const sa = (direction + 1) * Math.PI / 4;
+                const sc = Math.cos(sa);
+                const ss = Math.sin(sa);
+                drawOffset = {
+                    x: baseOffset.x + squadOff.x * sc - squadOff.y * ss,
+                    y: baseOffset.y + squadOff.x * ss + squadOff.y * sc,
+                };
+            }
+            drawX = center.x + drawOffset.x;
+            drawY = center.y + drawOffset.y;
 
             if ((slot.state === 'DEAD' || slot.state === 'DYING') && slot.deadLat && slot.deadLng && projectFn) {
                 const proj = projectFn(slot.deadLat, slot.deadLng);
@@ -766,6 +1092,9 @@ export class LegionPhalanxDrawer {
                 drawY = proj.y;
             } else if (isFighting && slot.state !== 'DEAD' && slot.state !== 'DYING') {
 
+                // [2026-08-09 13场景阵型] 13 战斗场景不要骑兵冲锋位移特效（主人定）：
+                // 全军待命定格，骑兵不许前后 surge 位移。跳过 2. CAVALRY CHARGE 整段。
+                if (!denseFront) {
                 // 2. CAVALRY CHARGE (Refined with resolvedUnitType)
                 // Identify if this unit IS a cavalry type unit
                 const isCavalryUnit =
@@ -812,11 +1141,17 @@ export class LegionPhalanxDrawer {
                         dynamicScale = 1.0 + (surgeFactor * 0.10);
                     }
                 }
+                }
 
                 // 3. JITTER
+                // 【2026-08-10 修】13 场景（denseFront）跳过 jitter：主阵间距被放大到编队占位
+                // （spacingX ≈ 4 兵宽 ≈ 400px）后，jitterAmt = 8×(spacingX/35) ≈ 91px，
+                // 比步兵列距（75px）还大 → 子兵被随机打散、兵与兵交叉重叠，
+                // 编队视觉中心偏离锚点（主人实锤「锚点交叉」）。
+                // 13 演出档要的是围绕编队中心的严格对称排列；8/9/10 denseFront=false 不变。
+                const jitterAmt = denseFront ? 0 : 8 * (spacingX / 35);
                 const seed = (i * 9301 + 49297) % 233280;
                 const rnd = seed / 233280.0;
-                const jitterAmt = 8 * (spacingX / 35);
                 drawX += (rnd - 0.5) * jitterAmt;
                 drawY += ((1.0 - rnd) - 0.5) * jitterAmt;
             }
@@ -824,7 +1159,8 @@ export class LegionPhalanxDrawer {
             // 3.5 方阵微动（2026-07-18 主人定：行军 bob + 待机 sway，全项目只此一处）
             // 仅活体士兵；尸体保持静止，出生渐显期不叠加（缩放入场本身已足够动感）
             if (slot.state === 'ALIVE' && !isSpawning) {
-                const mm = LegionPhalanxDrawer.getMicroMotion(i, state, resolvedUnitType, tick, scale);
+                // [2026-08-09 编队独立战斗] 微动按编队级状态（推进中走 bob，到位 sway）
+                const mm = LegionPhalanxDrawer.getMicroMotion(i, effState, resolvedUnitType, tick, scale);
                 drawX += mm.dx;
                 drawY += mm.dy;
             }
@@ -848,33 +1184,75 @@ export class LegionPhalanxDrawer {
                 }
                 rawSprite = currentSet.DEATH[slot.deathDirection] || currentSet.DEATH[0];
                 animState = 'DEATH';
-            } else if (state === 'DAMAGE') {
-                rawSprite = currentSet.DAMAGE[direction] || currentSet.DAMAGE[0];
-            } else if (state === 'ATTACK') {
-                if ((currentSet as any).SHOOT?.length > 0 && (currentSet as any).CHARGE?.length > 0) {
-                    const cycleDuration = 4000;
-                    const cyclePhase = (tick % cycleDuration) / cycleDuration;
-                    if (cyclePhase < 0.25) rawSprite = (currentSet as any).SHOOT[direction] || (currentSet as any).SHOOT[0];
-                    else if (cyclePhase < 0.50) rawSprite = (currentSet as any).CHARGE[direction] || (currentSet as any).CHARGE[0];
-                    else if (cyclePhase < 0.75) rawSprite = currentSet.ATTACK[direction] || currentSet.ATTACK[0];
-                    else rawSprite = (currentSet as any).SHOOT[direction] || (currentSet as any).SHOOT[0];
-                } else if ((currentSet as any).SHOOT && (currentSet as any).SHOOT.length > 0) {
-                    rawSprite = (currentSet as any).SHOOT[direction] || (currentSet as any).SHOOT[0];
-                } else {
-                    rawSprite = currentSet.ATTACK[direction] || currentSet.ATTACK[0];
+            } else if (effState === 'DEATH') {
+                // [2026-08-09 编队级阵亡] 编队独立死亡：首次进入把槽位转 DYING
+                // （设死亡朝向/起始帧），后续帧走 slot DYING/DEAD 分支播死亡动画 +
+                // 尸体保留——与整军侵蚀死亡同构。死亡位置 = 当前位置（drawX/drawY 已含
+                // squadOffsets 推进偏移，未设 deadLat 时 950 行直接用当前坐标画尸体）。
+                if (slot.state === 'ALIVE') {
+                    slot.state = 'DYING';
+                    slot.stateStartTime = tick;
+                    slot.deathDirection = Math.floor(Math.random() * 8);
+                    // 【2026-08-10 修】尸体必须钉在**地面世界坐标**，与侵蚀死亡同一套（见 LegionPhalanxState
+                    // 的 deadLat/deadLng）。原来只改 slot.state，954 行的锚定条件不成立 → 尸体退回
+                    // 「军团 center + 冻结偏移」，军团一动尸体就跟着飘走（主人此前实锤过同类问题）。
+                    // drawX/drawY 已含本编队推进偏移，倒在推进到的位置，不是出发点。
+                    if (unprojectFn) {
+                        const world = unprojectFn(drawX, drawY);
+                        slot.deadLat = world.lat;
+                        slot.deadLng = world.lng;
+                        slot.deadOffsetX = drawX - center.x;
+                        slot.deadOffsetY = drawY - center.y;
+                    }
                 }
-            } else if (state === 'MOVE') {
-                rawSprite = currentSet.MOVE[direction] || currentSet.MOVE[0];
+                const deathDir = slot.deathDirection ?? direction;
+                rawSprite = currentSet.DEATH[deathDir] || currentSet.DEATH[0];
+                animState = 'DEATH';
+            } else if (effState === 'DAMAGE') {
+                animState = 'DAMAGE';
+                rawSprite = currentSet.DAMAGE[effDir] || currentSet.DAMAGE[0];
+            } else if (effState === 'ATTACK') {
+                // [2026-08-10 修·动作定格] animState 必须跟随编队级状态——它驱动下方帧循环，
+                // 漏设时整军兜底 IDLE 会把攻击/移动动画锁死在第 0 帧（主人实锤「没有动作」）。
+                animState = 'ATTACK';
+                // [2026-08-09 消失修复·进入条件] 轮播只在 SHOOT/CHARGE「本方向帧真实可用」时进——
+                // 原来只看数组非空，元素未加载完(complete=false)时取到无效帧 → 1037 跳过整格消失（主人实锤弓骑闪没）。
+                const shootFrame = (currentSet as any).SHOOT?.[effDir] ?? (currentSet as any).SHOOT?.[0];
+                const chargeFrame = (currentSet as any).CHARGE?.[effDir] ?? (currentSet as any).CHARGE?.[0];
+                if (shootFrame && chargeFrame && shootFrame.complete && chargeFrame.complete) {
+                    const cycleDuration = 4000;
+                    // [2026-08-10 每个编队单独] 13 场景（denseFront）：轮播加格位相位，
+                    // 9 编队按 450ms 间隔铺满一圈，各自节奏；8/9/10 denseFront=false → 纯全局 tick 逐像素不变。
+                    const cyclePhase = ((tick + (denseFront ? i * 450 : 0)) % cycleDuration) / cycleDuration;
+                    if (cyclePhase < 0.25) rawSprite = shootFrame;
+                    else if (cyclePhase < 0.50) rawSprite = chargeFrame;
+                    else if (cyclePhase < 0.75) rawSprite = currentSet.ATTACK[effDir] || currentSet.ATTACK[0];
+                    else rawSprite = shootFrame;
+                } else if ((currentSet as any).SHOOT && (currentSet as any).SHOOT.length > 0) {
+                    rawSprite = (currentSet as any).SHOOT[effDir] || (currentSet as any).SHOOT[0];
+                } else {
+                    rawSprite = currentSet.ATTACK[effDir] || currentSet.ATTACK[0];
+                }
+            } else if (effState === 'MOVE') {
+                animState = 'MOVE';
+                rawSprite = currentSet.MOVE[effDir] || currentSet.MOVE[0];
             } else {
-                rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
+                animState = 'IDLE';
+                rawSprite = currentSet.IDLE[effDir] || currentSet.IDLE[0];
             }
 
             // Fallback to IDLE if specific action missing
-            if (!rawSprite && state !== 'IDLE') {
-                rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
+            if (!rawSprite && effState !== 'IDLE') {
+                rawSprite = currentSet.IDLE[effDir] || currentSet.IDLE[0];
             }
 
-            if (!rawSprite || !rawSprite.complete || rawSprite.naturalWidth === 0) continue;
+            // [2026-08-09 消失修复·兜底] 素材未加载完(complete=false / naturalWidth=0)时
+            // 退待命帧再试一次——原 1033 兜底只处理「空」，漏掉「加载中」→ 整格消失（主人实锤）。
+            // 加载完成自动恢复攻击帧，观众几乎察觉不到。
+            if (!rawSprite || !rawSprite.complete || rawSprite.naturalWidth === 0) {
+                rawSprite = currentSet.IDLE[direction] || currentSet.IDLE[0];
+                if (!rawSprite || !rawSprite.complete || rawSprite.naturalWidth === 0) continue;
+            }
 
             // D. Tinting (Apply Tint)
             // Ideally we cache this, but SpriteTinter has internal cache
@@ -895,7 +1273,9 @@ export class LegionPhalanxDrawer {
                     currentFrameIndex = Math.min(deathFrame, spriteTotalFrames - 1);
                 } else if (animState === 'MOVE' || animState === 'ATTACK' || animState === 'DAMAGE') {
                     // 帧循环
-                    const stagger = i * 2;
+                    // [2026-08-10 每个编队单独] 13 场景（denseFront）：stagger = i（步长 1 与任何帧数互质，
+                    // 相邻编队必不同相，9 格全铺满）；8/9/10 denseFront=false → 原 i*2（4 帧素材只有 2 种相位）逐像素不变。
+                    const stagger = denseFront ? i : i * 2;
                     currentFrameIndex = Math.floor((tick / 150) + stagger) % spriteTotalFrames;
                 } else {
                     // IDLE: Force Frame 0
@@ -980,7 +1360,182 @@ export class LegionPhalanxDrawer {
                 if (i === 6) (LegionPhalanxDrawer as any)._debugLogDone = true;
             }
 
-            activeItems.push(item);
+            // [2026-08-10 调试可视化] 13 场景显示编队外框（DEV 门控，生产剥离）：
+            // 青色旋转矩形 = 编队占位（宽×纵深按兵种），红短线 = 朝向。
+            // 用途：直观检查编队间距 / 接触线 / 「隔空」到底隔多远。
+            if (denseFront && import.meta.env.DEV) {
+                LegionPhalanxDrawer.debugDrawSquadBox(
+                    ctx, drawX, drawY, direction,
+                    item.drawParams.dw, item.drawParams.dh, resolvedUnitType,
+                );
+            }
+
+            // [2026-08-09 13场景阵型] 步兵格 → 4×2 小阵（8 人）/ 骑兵格 → 1-2-3 三角（6 人）/ 远程格 → 2×3（6 人）
+            // 克隆同一 slot 的绘制参数（共享状态：同生同死同动画），各自独立战斗单位。
+            // 按兵种类型判定：步兵展开 4 列×2 排；骑兵展开 1-2-3 三角；远程展开 2 排×3 列；象兵保持单格。
+            if (denseFront && LegionPhalanxDrawer.isInfantryType(resolvedUnitType)) {
+                // [2026-08-10 主人：步兵 5×2 十人方阵] 5 列 × 2 排（10 人），排距 0.4（第二排往前）。
+                // 🔴 改这里必须同步 getSquadSupportRadius（步兵 halfX/halfY）、
+                //    getSquadWidthFactor（= 列并集）、debug depth（= 排并集）。
+                const SUB_ROWS = 2; // 2 排（纵深，第二排往前：排距 0.4）
+                const SUB_COLS = 5; // 5 列（横向）
+                // 子间距：横向列距 = 兵宽 × 0.75，纵深排距 = 兵高 × 0.4（紧凑）
+                const subSpacingX = item.drawParams.dw * 0.75;
+                const subSpacingY = item.drawParams.dh * 0.4;
+                // 锚点 = 本格位中心（item.drawParams.dx/dy 已含 baseOffset 偏移）。
+                // 🔴 不再减 baseOffset：item.drawParams.dx 本身就 = center + baseOffset - w/2，
+                //    再减 baseOffset 会把 9 个编队全部拉回军团中心重叠（主人实锤「步兵挤成一团」根因，2026-08-09 修）。
+                // 🔴 子偏移必须先按「阵内坐标」算，再用 direction 旋转到屏幕——
+                //    直接沿屏幕 X 轴排会在军团朝东西时变成纵向（主人截图实锤「竖着」）。
+                // 旋转矩阵（与 getFormationOffset 同款：angle = (direction+1)*π/4）
+                const fAngle = (direction + 1) * Math.PI / 4;
+                const fCos = Math.cos(fAngle);
+                const fSin = Math.sin(fAngle);
+                const toScreen = (ox: number, oy: number) => ({
+                    x: ox * fCos - oy * fSin,
+                    y: ox * fSin + oy * fCos,
+                });
+                for (let sub = 0; sub < SUB_ROWS * SUB_COLS; sub++) {
+                    const sr = Math.floor(sub / SUB_COLS); // 0..1
+                    const sc = sub % SUB_COLS;             // 0..3
+                    const subItem = this.getPooledItem();
+                    const dp = subItem.drawParams;
+                    dp.img = item.drawParams.img;
+                    dp.sx = item.drawParams.sx;
+                    dp.sy = item.drawParams.sy;
+                    dp.sw = item.drawParams.sw;
+                    dp.sh = item.drawParams.sh;
+                    // [2026-08-10 5×2 十人方阵·交错] 第二排插第一排间隙（主人 08-09 定的交错，
+                    // 5×2 改成对齐后被主人否：「怎么前后对齐啦」）。
+                    // 对称交错：排 0 起点 -2.25、排 1 起点 -1.75（偏 +0.5 插缝），并集 ±2.25 列距
+                    const localX = ((sr === 0 ? -2.25 : -1.75) + sc) * subSpacingX;
+                    const localY = (sr - 0.5) * subSpacingY;
+                    const scr = toScreen(localX, localY);
+                    dp.dx = item.drawParams.dx + scr.x;
+                    dp.dy = item.drawParams.dy + scr.y;
+                    subItem.y = item.y + scr.y;
+                    dp.dw = item.drawParams.dw;
+                    dp.dh = item.drawParams.dh;
+                    dp.alpha = item.drawParams.alpha;
+                    dp.scale = item.drawParams.scale;
+                    activeItems.push(subItem);
+                }
+            } else if (denseFront && LegionPhalanxDrawer.isCavalryType(resolvedUnitType)) {
+                // 1-2-3 等腰三角（6 人）：尖端在前（排 0 单骑），两翼展开（排 1 双骑 / 排 2 三骑）
+                // 子间距：翼展(上下) = 兵宽 × 0.32，纵深(前后) = 兵高 × 0.35（2026-08-09 主人定：
+                // 「不是前后密集度，是上下密集度」——上下/翼展再收紧，前后保持第一次密集的 0.35）
+                const triSpacingX = item.drawParams.dw * 0.32;
+                const triSpacingY = item.drawParams.dh * 0.35;
+                // 旋转矩阵（与 getFormationOffset 同款）：三角偏移按阵内坐标算，再转到屏幕
+                const cAngle = (direction + 1) * Math.PI / 4;
+                const cCos = Math.cos(cAngle);
+                const cSin = Math.sin(cAngle);
+                const toScreenC = (ox: number, oy: number) => ({
+                    x: ox * cCos - oy * cSin,
+                    y: ox * cSin + oy * cCos,
+                });
+                for (let sub = 0; sub < 6; sub++) {
+                    const pos = LegionPhalanxDrawer.TRIANGLE_LAYOUT[sub] ?? LegionPhalanxDrawer.TRIANGLE_LAYOUT[0];
+                    const subItem = this.getPooledItem();
+                    const dp = subItem.drawParams;
+                    dp.img = item.drawParams.img;
+                    dp.sx = item.drawParams.sx;
+                    dp.sy = item.drawParams.sy;
+                    dp.sw = item.drawParams.sw;
+                    dp.sh = item.drawParams.sh;
+                    // 阵内坐标：X = c × 0.7×triSpacingX（横向），Y = (r-1) × triSpacingY（纵深，尖端 r=0 在前）
+                    const scrC = toScreenC(pos.c * triSpacingX * 0.7, (pos.r - 1.0) * triSpacingY);
+                    dp.dx = item.drawParams.dx + scrC.x;
+                    dp.dy = item.drawParams.dy + scrC.y;
+                    subItem.y = item.y + scrC.y;
+                    dp.dw = item.drawParams.dw;
+                    dp.dh = item.drawParams.dh;
+                    dp.alpha = item.drawParams.alpha;
+                    dp.scale = item.drawParams.scale;
+                    activeItems.push(subItem);
+                }
+            } else if (denseFront && LegionPhalanxDrawer.isRangedType(resolvedUnitType)) {
+                // [2026-08-10 主人：远程弓手/弩手改为和步兵一样] 5×2 十人方阵（同步兵）。
+                // 🔴 改这里必须同步 getSquadSupportRadius（远程 halfX/halfY）、
+                //    getSquadWidthFactor、debug depth。
+                const subSpacingX = item.drawParams.dw * 0.75;
+                const subSpacingY = item.drawParams.dh * 0.4;
+                // 旋转矩阵（与步兵/骑兵同款）：方阵随军团 direction 转向，斜向行军不滑步
+                const rAngle = (direction + 1) * Math.PI / 4;
+                const rCos = Math.cos(rAngle);
+                const rSin = Math.sin(rAngle);
+                const toScreenR = (ox: number, oy: number) => ({
+                    x: ox * rCos - oy * rSin,
+                    y: ox * rSin + oy * rCos,
+                });
+                const R_COLS = 5;
+                const R_ROWS = 2;
+                for (let sub = 0; sub < R_ROWS * R_COLS; sub++) {
+                    const sr = Math.floor(sub / R_COLS); // 0..1
+                    const sc = sub % R_COLS;             // 0..4
+                    const subItem = this.getPooledItem();
+                    const dp = subItem.drawParams;
+                    dp.img = item.drawParams.img;
+                    dp.sx = item.drawParams.sx;
+                    dp.sy = item.drawParams.sy;
+                    dp.sw = item.drawParams.sw;
+                    dp.sh = item.drawParams.sh;
+                    // 阵内相对坐标（5 列交错：排 0 起点 -2.25 / 排 1 起点 -1.75 插缝；2 排 ±0.5）
+                    const localX = ((sr === 0 ? -2.25 : -1.75) + sc) * subSpacingX;
+                    const localY = (sr - 0.5) * subSpacingY;
+                    const scr = toScreenR(localX, localY);
+                    dp.dx = item.drawParams.dx + scr.x;
+                    dp.dy = item.drawParams.dy + scr.y;
+                    subItem.y = item.y + scr.y;
+                    dp.dw = item.drawParams.dw;
+                    dp.dh = item.drawParams.dh;
+                    dp.alpha = item.drawParams.alpha;
+                    dp.scale = item.drawParams.scale;
+                    activeItems.push(subItem);
+                }
+            } else if (denseFront && LegionPhalanxDrawer.isSiegeType(resolvedUnitType)) {
+                // 1×4 一字横排（2026-08-10 主人「把大象排成一排不要2*2了」——与冲车
+                // 4 台一排同风格）。子间距横向 = 兵宽 × 0.75（步兵同款，紧凑）。
+                // 🔴 改这里必须同步 getSquadSupportRadius 的攻城 halfX（= 1.5×间距）
+                //    与 getSquadWidthFactor（= 3×间距 + 1 精灵）。
+                const subSpacingX = item.drawParams.dw * 0.75;
+                const subSpacingY = item.drawParams.dh * 0.5;
+                // 旋转矩阵（与步兵/骑兵同款）：器械方阵随军团 direction 转向
+                const sAngle = (direction + 1) * Math.PI / 4;
+                const sCos = Math.cos(sAngle);
+                const sSin = Math.sin(sAngle);
+                const toScreenS = (ox: number, oy: number) => ({
+                    x: ox * sCos - oy * sSin,
+                    y: ox * sSin + oy * sCos,
+                });
+                const S_COLS = 4;
+                const S_ROWS = 1;
+                for (let sub = 0; sub < S_ROWS * S_COLS; sub++) {
+                    const sr = Math.floor(sub / S_COLS); // 0
+                    const sc = sub % S_COLS;             // 0..3
+                    const subItem = this.getPooledItem();
+                    const dp = subItem.drawParams;
+                    dp.img = item.drawParams.img;
+                    dp.sx = item.drawParams.sx;
+                    dp.sy = item.drawParams.sy;
+                    dp.sw = item.drawParams.sw;
+                    dp.sh = item.drawParams.sh;
+                    // 阵内相对坐标（单排居中：y = 0）→ 旋转到屏幕；y 深度排序用旋转后 y
+                    const localX = (sc - 1.5) * subSpacingX;
+                    const localY = (sr - 0) * subSpacingY;
+                    const scr = toScreenS(localX, localY);
+                    dp.dx = item.drawParams.dx + scr.x;
+                    dp.dy = item.drawParams.dy + scr.y;
+                    subItem.y = item.y + scr.y;
+                    dp.dw = item.drawParams.dw;
+                    dp.dh = item.drawParams.dh;
+                    dp.alpha = item.drawParams.alpha;
+                    dp.scale = item.drawParams.scale;
+                    activeItems.push(subItem);
+                }
+            } else {
+                activeItems.push(item);
+            }
         }
 
         // --- 4. FLUSH ---
@@ -1178,7 +1733,23 @@ export class LegionPhalanxDrawer {
         spacingY: number,
         unitId: string,
         troops: number,
+        /**
+         * 攻城团整体复制偏移，**单位是像素**（阵内坐标，旋转前叠加，随 direction 一起转）。
+         * 用像素是为了能和 3×3 编队格位对齐——两边的「格」不是同一个单位
+         * （器械走 ramSpacing≈30px，编队格位走 getDenseSquadSpacing）。
+         * 默认单个 {0,0} = 与改动前逐像素一致，其他 zoom 不受影响。
+         */
+        groupOffsets: readonly { x: number; y: number }[] = [{ x: 0, y: 0 }],
     ): void {
+        // [2026-08-09 13锁死] 13 战斗场景：编队推进 state=MOVE / 交战 ATTACK，战斗仍在进行——
+        // 器械不得因非 ATTACK 状态误判「胜利渐隐」而淡出消失（主人实锤 13 看不到冲车）。
+        // 13 下器械一律定格攻击姿态（与士兵同节奏），仅 zoom 已到 13 才生效。
+        const scene13 = (window as any).game?.battleScene?.isActive?.() === true
+            && ((window as any).gameMap?.getLeafletMap?.().getZoom?.() ?? 0) >= 13;
+        if (scene13 && state !== 'DEATH') {
+            state = 'ATTACK';
+            LegionPhalanxDrawer.gearFadeOutStarts.delete(unitId);
+        }
         // 多器械类型共用 unitId 的 spawn/fade 标记；整轮画完后再删，避免同帧后几种器械重开渐隐
         let fadeFullyDone = false;
         for (const gearType of Object.keys(LegionPhalanxDrawer.SIEGE_GEAR_DEFS) as string[]) {
@@ -1189,26 +1760,44 @@ export class LegionPhalanxDrawer {
         }
 
         function drawSingleGear(origType: string): void {
-            // 井阑/投石 4 个位置随机交换：用互换类型的精灵帧，保持原坐标
-            let type = origType;
-            let extraPosOverride: { x?: number; y?: number } = {};
-            if ((LegionPhalanxDrawer.SHUFFLE_GEAR_KEYS as readonly string[]).includes(origType)) {
-                const shuffle = LegionPhalanxDrawer.ensureGearShuffle(unitId);
-                if (shuffle[origType] !== (origType.startsWith('catapult') ? 'catapult' : 'well')) {
-                    type = origType.startsWith('catapult')
-                        ? (origType === 'catapult_l' ? 'well_lan' : 'well_lan_r')
-                        : (origType === 'well_lan' ? 'catapult_l' : 'catapult_r');
-                    const rawDef = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[origType];
-                    extraPosOverride = { x: rawDef.posOffsetX, y: rawDef.posOffsetY };
+            // 冲车独立编队（13 场景，主人 2026-08-09 定）：不随 4 攻城团复制，
+            // 4 台一字横排顶在最前排中央——冲车攻城门，后排够不到城门，只能一排 4 个。
+            // 横向间距 2.5 格（≈105px，冲车宽 ≈103px，几乎不重叠）；
+            // 偏移单位 = 格（×spacingX/Y），叠加在 ram 自身「第一排前」posOffset 之上；
+            // 其余器械仍走 groupOffsets（像素，整团复制）。
+            const ramFrontExtra = [
+                { x: -3.75, y: -1.2 }, { x: -1.25, y: -1.2 },
+                { x: +1.25, y: -1.2 }, { x: +3.75, y: -1.2 },
+            ] as const;
+            const useRamFront = origType === 'ram'
+                && (window as any).game?.battleScene?.isActive?.() === true
+                // 13 锁死：仅 zoom 已到 13 才独立排冲车（flyTo 途中/非 13 保持整团复制）
+                && ((window as any).gameMap?.getLeafletMap?.().getZoom?.() ?? 0) >= 13;
+            const offsets = useRamFront ? ramFrontExtra : groupOffsets;
+            // [2026-08-09 主人定] 4 个攻城团各自独立随机：井阑/投石互换按团索引取映射，
+            // 团与团之间的器械分布不再相同。
+            for (let gi = 0; gi < offsets.length; gi++) {
+                const g = offsets[gi];
+                // 井阑/投石 4 个位置随机交换：用互换类型的精灵帧，保持原坐标
+                let type = origType;
+                let extraPosOverride: { x?: number; y?: number } = {};
+                if ((LegionPhalanxDrawer.SHUFFLE_GEAR_KEYS as readonly string[]).includes(origType)) {
+                    const shuffle = LegionPhalanxDrawer.ensureGearShuffle(unitId, gi);
+                    if (shuffle[origType] !== (origType.startsWith('catapult') ? 'catapult' : 'well')) {
+                        type = origType.startsWith('catapult')
+                            ? (origType === 'catapult_l' ? 'well_lan' : 'well_lan_r')
+                            : (origType === 'well_lan' ? 'catapult_l' : 'catapult_r');
+                        const rawDef = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[origType];
+                        extraPosOverride = { x: rawDef.posOffsetX, y: rawDef.posOffsetY };
+                    }
                 }
-            }
-            const cache = LegionPhalanxDrawer.getGearCache(type);
-            const def = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[type];
+                const cache = LegionPhalanxDrawer.getGearCache(type);
+                const def = (LegionPhalanxDrawer.SIEGE_GEAR_DEFS as any)[type];
 
-            if (!cache.loaded) {
-                void LegionPhalanxDrawer.ensureSiegeGearLoaded(type);
-                return;
-            }
+                if (!cache.loaded) {
+                    void LegionPhalanxDrawer.ensureSiegeGearLoaded(type);
+                    continue;
+                }
 
             // 战斗结束 + 兵力 > 0 = 胜利，器械渐隐
             if (state !== 'ATTACK' && state !== 'DEATH' && troops > 0) {
@@ -1222,7 +1811,7 @@ export class LegionPhalanxDrawer {
                     cache.deathStarts.delete(unitId);
                     cache.deathThresholds.delete(unitId);
                     fadeFullyDone = true;
-                    return;
+                    continue;
                 }
                 // 继续画，alpha 由下面统一处理
             } else {
@@ -1267,7 +1856,7 @@ export class LegionPhalanxDrawer {
 
             if (state === 'DEATH' || gearDead) {
                 sprite = cache.deathSprites[dirIdx] ?? null;
-                if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return;
+                if (!sprite || !sprite.complete || sprite.naturalWidth === 0) continue;
                 frameCount = Math.floor(sprite.width / sprite.height);
                 let deathStart = cache.deathStarts.get(unitId);
                 if (deathStart === undefined) {
@@ -1280,13 +1869,13 @@ export class LegionPhalanxDrawer {
                 // [修复 2026-07-18] 胜利渐隐期 state 已非 ATTACK，原先掉进末尾 return 导致器械瞬间消失
                 // （4 秒渐隐计时空转、无物可画）。渐隐期继续画攻击贴图，帧定格在战斗结束瞬间。
                 sprite = cache.attackSprites[dirIdx] ?? null;
-                if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return;
+                if (!sprite || !sprite.complete || sprite.naturalWidth === 0) continue;
                 frameCount = Math.floor(sprite.width / sprite.height);
                 const speed = def.frameSpeed ?? 150;
                 const animTick = fadeOutStart !== undefined ? fadeOutStart : tick;
                 frameIndex = (Math.floor((animTick / speed)) + (def.frameStagger ?? 0)) % frameCount;
             } else {
-                return;
+                continue;
             }
 
             const frameW = sprite.width / frameCount;
@@ -1296,10 +1885,8 @@ export class LegionPhalanxDrawer {
             const angle = (direction + 1) * Math.PI / 4;
             const cos = Math.cos(angle);
             const sin = Math.sin(angle);
-            const origX = (extraPosOverride.x ?? def.posOffsetX) * spacingX;
-            const origY = (extraPosOverride.y ?? def.posOffsetY) * spacingY;
-            const gx = center.x + (origX * cos - origY * sin);
-            const gy = center.y + (origX * sin + origY * cos);
+            const baseOffX = extraPosOverride.x ?? def.posOffsetX;
+            const baseOffY = extraPosOverride.y ?? def.posOffsetY;
 
             // ── 尺寸 ──
             const baseHeight = 60;
@@ -1311,12 +1898,26 @@ export class LegionPhalanxDrawer {
             const sx = frameIndex * frameW;
             const prevAlpha = ctx.globalAlpha;
             ctx.globalAlpha = prevAlpha * gearAlpha;
+
+            // 攻城团整体复制：团偏移在旋转前加到器械自身偏移上，整团随 direction 一起转。
+            // groupOffsets 默认单元素 {0,0} → 与改动前逐像素一致。
+            // 冲车（useRamFront）不走团复制：4 台一字横排顶最前，偏移是格单位 ×spacing。
+            // 当前团 = 外层 gi 循环的 g（每团独立随机器械分布）。
+            const origX = useRamFront
+                ? (baseOffX + g.x) * spacingX
+                : baseOffX * spacingX + g.x;
+            const origY = useRamFront
+                ? (baseOffY + g.y) * spacingY
+                : baseOffY * spacingY + g.y;
+            const gx = center.x + (origX * cos - origY * sin);
+            const gy = center.y + (origX * sin + origY * cos);
             ctx.drawImage(
                 sprite,
                 sx, 0, frameW, frameH,
                 gx - targetW / 2, gy - targetH * 0.5, targetW, targetH,
             );
             ctx.globalAlpha = prevAlpha;
+            } // end for gi（攻城团循环）
         }
     }
 

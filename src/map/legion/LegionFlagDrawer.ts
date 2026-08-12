@@ -204,7 +204,19 @@ export class LegionFlagDrawer {
         ctx: CanvasRenderingContext2D,
         center: { x: number, y: number },
         scale: number,
-        factionId: string = 'panjun'
+        factionId: string = 'panjun',
+        /**
+         * [2026-08-12] 旗杆高度系数。**默认 1 = 原行为，大地图一个像素不变。**
+         * 只缩杆、不缩旗面（粗细随高度按图片宽高比自动缩，不需要第二个参数）。
+         * 🔴 传了这个就必须给 drawFlag 传**同一个值**：旗面是贴在算出来的杆顶上的，
+         *    两边不一致会让旗面悬空、杆够不着。
+         */
+        poleRatio: number = 1,
+        /**
+         * [2026-08-12] 整面旗上移系数（默认 0 = 原行为）。上移量 = flagRenderHeight × 本系数，
+         * 用于杆缩短后把旗面一起抬回去。同样必须与 drawFlag 传**同一个值**。
+         */
+        poleLift: number = 0
     ): void {
         if (!this.isLoaded) return;
 
@@ -216,11 +228,11 @@ export class LegionFlagDrawer {
         const frameHeight = body.height / this.FRAME_ROWS;
         const flagRenderHeight = baseSize * scale;
 
-        const poleRenderHeight = flagRenderHeight * (this.pole.height / frameHeight);
+        const poleRenderHeight = flagRenderHeight * (this.pole.height / frameHeight) * poleRatio;
         const poleRenderWidth = poleRenderHeight * (this.pole.width / this.pole.height);
 
         const poleX = center.x - poleRenderWidth / 2;
-        const poleY = center.y - poleRenderHeight;
+        const poleY = center.y - poleRenderHeight - flagRenderHeight * poleLift;
 
         ctx.drawImage(
             this.pole,
@@ -238,7 +250,16 @@ export class LegionFlagDrawer {
         scale: number,
         tick: number,
         factionId: string = 'panjun',
-        year: number = -999 // [NEW] Year parameter for conditional text
+        year: number = -999, // [NEW] Year parameter for conditional text
+        /**
+         * [2026-08-12] 旗杆高度系数，**只影响旗面贴在哪个高度，不改旗面自身大小**。
+         * 默认 1 = 原行为，大地图一个像素不变。必须与 drawPole 传同一个值（见那边的说明）。
+         */
+        poleRatio: number = 1,
+        /**
+         * [2026-08-12] 整面旗上移系数（默认 0 = 原行为）。与 drawPole 传同一个值，旗面跟着杆一起抬。
+         */
+        poleLift: number = 0
     ): void {
         if (!this.isLoaded) return;
 
@@ -256,10 +277,10 @@ export class LegionFlagDrawer {
         const flagRenderHeight = baseSize * scale;
         const flagRenderWidth = flagRenderHeight * (frameWidth / frameHeight);
 
-        const poleRenderHeight = flagRenderHeight * (this.pole.height / frameHeight);
+        const poleRenderHeight = flagRenderHeight * (this.pole.height / frameHeight) * poleRatio;
         const poleRenderWidth = poleRenderHeight * (this.pole.width / this.pole.height);
         const poleX = center.x - poleRenderWidth / 2;
-        const poleY = center.y - poleRenderHeight;
+        const poleY = center.y - poleRenderHeight - flagRenderHeight * poleLift;
 
         // === Draw Flag Body ===
         const facingLeft = direction >= 4 && direction <= 6;

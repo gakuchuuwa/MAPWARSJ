@@ -81,7 +81,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   nuoyan_d: { name: '漠北驿骑', tier: 4 },      // 赛音山达·清代大漠驿站护军
   wuli_d: { name: '喀尔喀劲骑', tier: 3 },      // 扎布汗·乌里雅苏台喀尔喀骑兵（缺乏极其著名的战术高光，降T3）
   heisha_d: { name: '黑沙精骑', tier: 3 },  // 后突厥黑沙道，突厥复兴运动核心，专属名号特色鲜明，升T2
-  jiluo_d: { name: '北征突骑', tier: 1 },       // 燕然勒石彻底击灭北匈奴，独立战略主力，升T1,
     chagatai: { name: '戊己屯军', tier: 2 },
     dongsheng: { name: '云中彀骑', tier: 3 },
     murong: { name: '龙城甲骑', tier: 2 },

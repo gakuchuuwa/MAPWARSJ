@@ -350,14 +350,9 @@ export const SPRITE_PATHS = {
                 DEATH: [331, 332, 333, 334, 335, 336, 337, 338].map(id => `/SUCAI/S10DB/${id}-1.png`),
             }
         },
-        'riben_infantry': {
-            // Riben Infantry: All same assets (No Back Row split)
-            MOVE: [562, 563, 564, 565, 566, 567, 568, 569].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            ATTACK: [570, 571, 572, 573, 574, 575, 576, 577].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            IDLE: [586, 587, 588, 589, 590, 591, 592, 593].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            DAMAGE: [594, 595, 596, 597, 598, 599, 600, 601].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            DEATH: [602, 603, 604, 605, 606, 607, 608, 609].map(id => `/SUCAI/S10DB/${id}-1.png`),
-        },
+        // [2026-08-12 删] 'riben_infantry' 已移除：帧号与 'armored'（藤甲兵 562-609）完全相同，
+        // 且全项目除自身定义外无任何引用。日本编制走的是 armored，所以日本兵 = 藤甲兵 = 朝鲜兵，
+        // 三家共用同一套斗笠刀盾素材（主人 2026-08-12 确认后清理）。
         'e_infantry': {
             // E Infantry (Huaxia 3x3)
             // Front (Primary): 103.. (Custom Infantry)
@@ -622,15 +617,18 @@ export const SPRITE_PATHS = {
             // [USER REQUEST] 象兵: 613-660 (8 frames per action, 6 actions total)
             // Block 1 (MOVE): 613-620
             // Block 2 (ATTACK): 621-628
-            // Block 3 (Unused): 629-636
-            // Block 4 (IDLE): 637-644
+            // Block 3 (IDLE):   629-636 = 待命
+            // Block 4 (CHARGE): 637-644 = 冲锋
             // Block 5 (DAMAGE): 645-652
-            // Block 6 (DEATH): 653-660
+            // Block 6 (DEATH):  653-660
+            // 🔴 [2026-08-12 修错标] IDLE 原本指向 637（= 冲锋组），所以象兵「待命」一直在播冲锋动作。
+            //    主人 2026-08-12 复述并授权修正：629-636 才是待命。此改动同时影响 8/9/10 与 13。
             MOVE: [613, 614, 615, 616, 617, 618, 619, 620].map(id => `/SUCAI/S10DB/${id}-1.png`),
             ATTACK: [621, 622, 623, 624, 625, 626, 627, 628].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            IDLE: [637, 638, 639, 640, 641, 642, 643, 644].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            IDLE: [629, 630, 631, 632, 633, 634, 635, 636].map(id => `/SUCAI/S10DB/${id}-1.png`),
             DAMAGE: [645, 646, 647, 648, 649, 650, 651, 652].map(id => `/SUCAI/S10DB/${id}-1.png`),
             DEATH: [653, 654, 655, 656, 657, 658, 659, 660].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            CHARGE: [637, 638, 639, 640, 641, 642, 643, 644].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
         'ship_small': {
             // 【船贴图三档】按军团兵力选档（NavalShipTiers.ts）：

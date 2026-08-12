@@ -211,6 +211,11 @@ export class AudioManager {
     private bgmLoadToken = 0;
     /** 源路径 → blob 对象 URL（用 fetch 取 blob 绕开 IDM 等下载器按扩展名抓取）*/
     private objectUrlCache = new Map<string, string>();
+    /**
+     * 最后一次 BGM 请求（无论当时成没成功）。解锁 / 重新启用音频后据此补播。
+     * 只留最后一次：BGM 本来就是「当前该放哪首」的单值状态，不是队列。
+     */
+    private lastBgmRequest: { portraitPath?: string; lat: number; lng: number } | null = null;
     /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
     private wantedLoops = new Set<SoundKey>();
     /** 正在播放的一次性音效克隆元素（暂停时一并停掉）*/
@@ -236,6 +241,42 @@ export class AudioManager {
 
         window.addEventListener('pointerdown', unlock, { once: true, passive: true });
         window.addEventListener('keydown', unlock, { once: true });
+
+        // 🔴 [2026-08-12 修「每次刷新都要点一下才有声」] 开局先乐观试一次，别干等手势。
+        //   浏览器自动播放策略：一次真实播放需要用户手势 **或** 本站媒体互动分够高
+        //   （Chrome MEI —— 常玩的站点会攒够）。攒够的情况下这一试就直接出声，用户什么都不用点。
+        //   这在开发期尤其要紧：改一次文件 → dev server 刷新页面 → 音频锁重新锁上 → 又要点一次。
+        void this.tryAutoUnlock();
+    }
+
+    /**
+     * 不靠用户手势地试探能否播放；成功才算解锁。
+     *
+     * 🔴 **必须真播一次来验证，不能直接把 unlocked 置 true**：置了但实际被拦，
+     *    手势监听器会被撤掉，声音就永远回不来了（比现在更糟）。
+     * 🔴 探针用 `volume = 0` 而不是 `muted = true`：Chrome 的策略只看 muted 属性，
+     *    静音元素**永远允许**自动播放 —— 拿它当探针会得到假通过。volume=0 仍算可发声媒体，
+     *    该拦的照样拦，所以它测的才是真结果。
+     */
+    private async tryAutoUnlock(): Promise<void> {
+        if (this.unlocked || !this.settings.enabled) return;
+        const key = (Object.keys(SOUND_DEFINITIONS) as SoundKey[])
+            .find((k) => SOUND_DEFINITIONS[k].category !== 'bgm');
+        if (!key) return;
+        const audio = await this.ensureAudioElement(key, SOUND_DEFINITIONS[key]);
+        if (!audio || this.unlocked) return;
+        const prevVolume = audio.volume;
+        try {
+            audio.volume = 0;
+            await audio.play();
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = prevVolume;
+            this.unlock();          // 真的能播 → 走正常解锁（预取 SFX + 补播音效 + 补播 BGM）
+        } catch {
+            audio.volume = prevVolume;
+            // 被策略拦下 —— 什么都不做，等用户手势那条路兜底
+        }
     }
 
     public unlock(): void {
@@ -248,7 +289,22 @@ export class AudioManager {
             void this.ensureAudioElement(key, def);
         }
         this.reapplyFollowedLegionAudio();
-        // BGM 不在解锁时自动启动，由 syncRegionBgm 在跟随军团后触发
+        // [2026-08-12] BGM 补播：解锁前记下的那次请求在这里兑现。
+        // 老注释写「BGM 不在解锁时自动启动，由 syncRegionBgm 在跟随军团后触发」——
+        // 但跟拍军团在解锁前就定了，syncPortraitBgm 只在**切换军团**时才调，
+        // 于是那一次空转之后再没有下一次，整局无音乐。
+        this.flushPendingBgm();
+    }
+
+    /**
+     * 解锁 / 音频重新启用后，按最后一次请求补播 BGM。
+     * 🔴 不能依赖调用方再来一次：GameAppLoop 只在**切换跟拍军团**时才请求 BGM，
+     *    不换军团就永远没有下一次。
+     */
+    private flushPendingBgm(): void {
+        const req = this.lastBgmRequest;
+        if (!req) return;
+        this.syncPortraitBgm(req.portraitPath, req.lat, req.lng);
     }
 
     /**
@@ -382,7 +438,9 @@ export class AudioManager {
             this.stopBgm();
         } else {
             this.reapplyFollowedLegionAudio();
-            // BGM 由 syncRegionBgm 在跟随军团时按区域恢复，不在此强开
+            // [2026-08-12] BGM 同样要补播。老注释说「由 syncRegionBgm 在跟随军团时恢复」，
+            // 但不换军团就没有下一次请求 —— 关了音频再开，音乐就再也不响（与解锁那条同病）。
+            this.flushPendingBgm();
         }
         this.saveSettings();
     }
@@ -580,8 +638,15 @@ export class AudioManager {
 
     /** 每帧调用：以地理区域 BGM 为基础，有专属 BGM 的势力文件夹才覆盖 */
     public syncPortraitBgm(portraitPath?: string, lat?: number, lng?: number): void {
-        if (!this.settings.enabled || !this.unlocked) return;
         if (lat === undefined || lng === undefined) return;
+        // 🔴 [2026-08-12 修「有时候整局没音乐」] 无论这次成不成功都把请求**记下来**，供解锁 /
+        //   重新启用音频后补播（flushPendingBgm）。
+        //   病根：BGM 只在跟拍军团切换的那一帧请求一次（GameAppLoop「followedId !== lastBgmFollowedId」），
+        //   而浏览器自动播放策略下，用户第一次点击/按键之前 unlocked=false —— 老代码在这里直接 return，
+        //   调用方却已经把 lastBgmFollowedId 写死了，于是**这个军团被换掉之前永远没有音乐**，
+        //   期间打的所有 13 战斗全程无 BGM。音效没这个病，因为 unlock() 里有 reapplyFollowedLegionAudio 补播。
+        this.lastBgmRequest = { portraitPath, lat, lng };
+        if (!this.settings.enabled || !this.unlocked) return;
 
         // 先按地理区域确定基础 BGM
         const region: RegionType = getRegion(lat, lng);

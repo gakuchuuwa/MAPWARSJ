@@ -7,6 +7,9 @@ import {
 import { gameLog, gameWarn } from '../utils/GameLogger';
 import { readSiegeGarrisonElite } from './SiegeGarrisonTier';
 
+/** 13 冻结看门狗上限（真实毫秒）。与 BattleField 同值同因，见那边的说明。 */
+const SCENE13_FREEZE_MAX_MS = 120_000;
+
 const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
 const battleTickLog = (...args: unknown[]) => gameLog('battleTick', ...args);
 import type { LegionManager } from '../legion/LegionManager';
@@ -102,6 +105,38 @@ export class Battle {
     private winnerDPS: number; // Damage per second to winner
     private predictedLoser: IBattleUnit;
     private predictedWinner: IBattleUnit;
+
+    /**
+     * [2026-08-10 13 战术层固定时长] 进 13 的 1v1 野战同样打满固定时长（主人定：1 分钟）。
+     * DPS 按剩余时间反推（update 里的 troops/timeLeft），拉长时长不会让谁提前打光。
+     */
+    public applySceneFixedDuration(sec: number): void {
+        this.targetDuration = sec;
+    }
+
+    /**
+     * [2026-08-11 13 v2 出兵口互攻] 13 期间引擎冻结标志。
+     * true = 本场战斗完全由 13 演出（Scene13WarLayer）接管：update 不推进、不结算，
+     * 胜负等演出判负后经 forceScene13Result 写回。8/9/10 永不置位，行为不变。
+     */
+    public scene13Frozen = false;
+    /** 冻结起始时刻（performance.now()，0 = 未冻结）。看门狗用，见 update() */
+    private scene13FrozenAt = 0;
+
+    /**
+     * [2026-08-11 13 v2] 演出判负 → 写死胜负并立即结算（跳过八环推演）。
+     * @param winnerTroops 演出里胜方实际剩下的人数；传了就写回，让大地图与 13 里看到的一致。
+     */
+    public forceScene13Result(winner: 'attacker' | 'defender', winnerTroops?: number): void {
+        this.scene13Frozen = false;
+        this.presetResult = winner === 'attacker' ? 'attacker_win' : 'defender_win';
+        const win = winner === 'attacker' ? this.attacker : this.defender;
+        const lose = winner === 'attacker' ? this.defender : this.attacker;
+        if (winnerTroops !== undefined && winnerTroops < win.troops) {
+            win.setTroops(Math.max(1, Math.round(winnerTroops)));
+        }
+        this.resolve(win, lose);
+    }
 
     constructor(attacker: IBattleUnit, defender: IBattleUnit, presetResult?: 'attacker_win' | 'defender_win') {
         this.attacker = attacker;
@@ -218,6 +253,23 @@ export class Battle {
         if (this.isOver) {
             battleTickLog(`[Battle] Skipping update - battle already over`);
             return;
+        }
+
+        // [2026-08-11 13 v2] 13 演出接管：引擎不推进不结算（胜负由演出判负写回）
+        // 🔴 [2026-08-12 修永久冻结] 看门狗，与 BattleField.update 同款同因，理由见那边长注释：
+        //   scene13Frozen 只有 forceScene13Result 一条清除路径，退场却有别的路，
+        //   漏网的战斗会永久冻结、参战单位永久卡在战斗态。超时就交还引擎自己打完。
+        if (this.scene13Frozen) {
+            if (this.scene13FrozenAt === 0) this.scene13FrozenAt = performance.now();
+            if (performance.now() - this.scene13FrozenAt > SCENE13_FREEZE_MAX_MS) {
+                console.warn('⏰ [Battle] 13 冻结超时，自动解冻交还引擎推演（演出未判负）');
+                this.scene13Frozen = false;
+                this.scene13FrozenAt = 0;
+            } else {
+                return;
+            }
+        } else if (this.scene13FrozenAt !== 0) {
+            this.scene13FrozenAt = 0;
         }
 
         // [STABILITY] Check if units were destroyed externally
@@ -518,12 +570,25 @@ export class CombatSystem {
     /** [NEW] 跳过按钮回调，供 HistoricalEventManager 注册 */
     public onForceResolve?: () => void;
 
-    public update(deltaTime: number): void {
+    /**
+     * @param focusUnitId [2026-08-10 13 独立时钟] 传军团 id = **只推进它参与的那场战斗**，
+     *   其余战场本帧原地冻结。13 战术层期间（大战略已暂停）用，让镜头里这一场按自己的
+     *   时钟打完，天下其他战斗不跟着偷跑。不传 = 照常推进全部（8/9/10 与平时行为不变）。
+     */
+    public update(deltaTime: number, focusUnitId?: string | null): void {
         // Update all 1v1 battles
-        this.battles.forEach(battle => battle.update(deltaTime));
+        this.battles.forEach(battle => {
+            if (focusUnitId
+                && battle.attacker.id !== focusUnitId
+                && battle.defender.id !== focusUnitId) return;
+            battle.update(deltaTime);
+        });
 
         // Update all regional battles
-        this.battleFields.forEach(bf => bf.update(deltaTime));
+        this.battleFields.forEach(bf => {
+            if (focusUnitId && !bf.hasParticipant(focusUnitId)) return;
+            bf.update(deltaTime);
+        });
 
         // Remove finished battles (notify once per battle)
         this.battles = this.battles.filter(battle => {

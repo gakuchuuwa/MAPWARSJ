@@ -123,6 +123,7 @@ export const FACTIONS: Faction[] = [
   { id: 'baizanting', name: '拜占庭' },
   { id: 'taolika', name: '陶里卡' },
   { id: 'kelimiya', name: '克里米亚' },
+  { id: 'keluodiya', name: '克罗地亚' },
   { id: 'dajiya', name: '达基亚' },
   { id: 'mengtainiya', name: '蒙泰尼亚' },
   { id: 'litaowan', name: '立陶宛' },
@@ -255,6 +256,7 @@ export const FACTIONS: Faction[] = [
 { id: 'guangping', name: '广平' },     // 洞海城·阮文张象兵水师               // 广州@番禺（州府/广南核心）
     // ── 2026-06-19 新增：端州@肇庆（摧锋军；旗号端≠据点名肇庆）──
     { id: 'duanzhou_d', name: '端州' },
+    { id: 'dunhe', name: '顿河' },
 
 
     { id: 'qin', name: '秦国' },
@@ -1432,7 +1434,8 @@ export const FACTIONS: Faction[] = [
     { id: 'ewenki', name: '鄂温克' },
   // 鄂温克(尼布楚/石勒喀河上游), Ewenki
     // ── 2026-06-11 新增：东平（州郡·黑龙江下游）──
-    { id: 'dongping', name: '东平' },                // 东平(乌苏里江下游/尼满), 州名旗号
+    { id: 'dongping', name: '东平' },
+                // 东平(乌苏里江下游/尼满), 州名旗号
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
     { id: 'maomingan', name: '额尔古纳' },
              // 茂明安(尼布楚), 蒙古部族
@@ -1473,7 +1476,8 @@ export const FACTIONS: Faction[] = [
     { id: 'qi_d', name: '横水' },
 
 
-    { id: 'wangyan', name: '太行' }, // 王彦八字军@飞狐；旗号取地名太行（禁人名「彦」）
+    { id: 'wangyan', name: '太行' },
+ // 王彦八字军@飞狐；旗号取地名太行（禁人名「彦」）
     // ── 2026-06-11 新增：明末精锐（天雄/潼津）──
     { id: 'tianxiong', name: '魏博' },
            // 卢象升天雄军@大名（贾庄标志战；旗号魏博≠番号天雄军）
@@ -1652,7 +1656,8 @@ export const FACTIONS: Faction[] = [
               // 姑衍山·匈奴祭天（撑犁=天）
     { id: 'nuoyan_d', name: '诺颜' },              // 赛音山达·赛音诺颜部
     { id: 'wuli_d', name: '乌里' },                // 扎布汗·乌里雅苏台辖区
-    { id: 'jiluo_d', name: '涿涂' },               // 涿邪山·窦宪北征突骑
+    { id: 'jiluo_d', name: '涿涂' },
+               // 涿邪山·窦宪北征突骑
     { id: 'heisha_d', name: '黑沙' },              // 特尔门·漠北黑沙/后突厥境
   { id: 'sanada_d', name: '信浓' },
 

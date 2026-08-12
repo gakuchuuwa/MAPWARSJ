@@ -113,6 +113,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   baizanting: '拜占',
 'taolika': '陶里',
   kelimiya: '克里',
+'keluodiya': '克罗',
   qincha: '钦察',
   litaowan: '立陶',
   bolan: '波兰',
@@ -128,7 +129,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'shengdian_qishi': '圣殿',
   maerta_qishi: '马耳',
   'danmai': '丹麦',
-  'ruidian_si': '瑞典',
+'ruidian_si': '瑞典',
 'kasidiliya': '卡斯',
   'duluo': '杜罗',
 'teluoyi': '达尔',
@@ -209,6 +210,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'guangzhou': '广',
     'guangping': '广平',
 'duanzhou_d': '端',
+    'dunhe': '顿河',
 'qin': '秦',
 'song': '宋',
     'yan': '燕',
@@ -709,7 +711,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jibei2': '备中',
     'jinchuan': '骏河',
 'totomi': '远江',
-    'owari': '尾张',
+'owari': '尾张',
     'xuan': '宣府',
     'yangshe': '羊舌',
 'sima_d': '河内',
@@ -856,7 +858,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     // ── 2026-06-11 新增：水达达（黑龙江下游）──
 'ewenki': '鄂温',
     // ── 2026-06-11 新增：东平（郡·黑龙江下游）──
-    'dongping': '东',
+'dongping': '东平',
     // ── 2026-06-11 新增：外兴安岭/外贝加尔边境 ──
 'maomingan': '额尔',
     'aola': '敖拉',
@@ -869,7 +871,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'anxi': '安西',
 'konbaung': '贡榜',
 'qi_d': '横水',
-    'wangyan': '太行',
+'wangyan': '太行',
 'tianxiong': '魏博',
     'sunqin': '潼津',
 'yingzhou_d': '颍',
@@ -965,7 +967,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 'chenli_d': '姑衍',
     'nuoyan_d': '赛',   // 赛音山达·赛音诺颜部
     'wuli_d': '扎布',     // 扎布汗·乌里雅苏台
-    'jiluo_d': '涿邪',    // 涿邪山·窦宪出涿邪
+'jiluo_d': '涿邪',
     'heisha_d': '黑沙',  // 特尔门·漠北黑沙境
     // ── Phase 1 Missing Flags ──
     'kumoxi': '奚',

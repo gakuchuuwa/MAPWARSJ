@@ -258,9 +258,20 @@ export default defineConfig({
                         res.end();
                     });
                 });
-                // 页面被关掉/崩了就没人续期了，到期后把积压的那次补发出去
+                // 页面被关掉/崩了/正在重新加载就没人续期了 → 闸门到期时**丢弃**积压刷新，不补发。
+                // [2026-08-10 修·双重启根因] 原来这里到期即补发，理由是「页面崩了要补上」——
+                // 但这理由不成立，与 08-04 的 fresh 规则是同一个道理：
+                //   页面真没了 → 没有刷新对象，发了也是空放；
+                //   页面回来了 → 它是从磁盘读的最新代码，补发纯属白烧一次启动（10~80s）。
+                // 而积压刷新最常见的去处恰恰是第三种：主人手动 F5，新页面还在 boot（11s 起），
+                // 老页面心跳早断（+15s 到期）→ 看门狗抢在新页面发出 fresh 上报之前补发 →
+                // 主人反馈的「刷新页面要重启两次」。真正需要刷新时，页面上报 block=false 走
+                // openRunGate() 即可，那条路径不受影响。
                 setInterval(() => {
-                    if (runGateQueuedReload && !isRunGateClosed()) openRunGate();
+                    if (runGateQueuedReload && !isRunGateClosed()) {
+                        runGateQueuedReload = false;
+                        console.log('[HMR-Suppress] 闸门到期且无页面续期 → 丢弃积压的过期刷新（不补发）');
+                    }
                 }, 2000).unref?.();
 
                 server.ws.send = (payload: unknown) => {
@@ -346,6 +357,30 @@ export default defineConfig({
                         try {
                             fs.writeFileSync(path.resolve(__dirname, 'scratch/zoom_perf_latest.json'), body, 'utf-8');
                             fs.appendFileSync(path.resolve(__dirname, 'scratch/zoom_perf_log.jsonl'), body + '\n', 'utf-8');
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                        } catch (err: any) {
+                            res.statusCode = 500;
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // [2026-08-10 临时诊断] 13 编队状态探针落盘：GlobalUnitRenderer 每 2 秒 POST 一条，
+                // 写 scratch/scene13_probe_latest.json + 追加 scene13_probe_log.jsonl。
+                // 查「防守方整体不动 / 后排远程只有左右两格不动」用；结论出来后连同客户端探针一起删。
+                server.middlewares.use('/api/scene13-probe', (req, res) => {
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end('{}'); return; }
+                    let body = '';
+                    req.on('data', (chunk: string) => { body += chunk; });
+                    req.on('end', () => {
+                        try {
+                            fs.writeFileSync(path.resolve(__dirname, 'scratch/scene13_probe_latest.json'), body, 'utf-8');
+                            fs.appendFileSync(
+                                path.resolve(__dirname, 'scratch/scene13_probe_log.jsonl'),
+                                JSON.stringify(JSON.parse(body)) + '\n',
+                                'utf-8',
+                            );
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
                         } catch (err: any) {

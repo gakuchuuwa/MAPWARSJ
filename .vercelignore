@@ -3,6 +3,10 @@
 dist
 # 本地参考资料，不参与线上运行（且含 >100MB PDF 会阻断 Vercel 上传）
 史料
+# 音乐素材原始工程：src 无任何引用（线上音频只走 public/sfx）。
+# 2026-08-04 在此建了 demucs 的 Python 虚拟环境 .demucs-venv（17462 个文件 / 605MB），
+# 把 CLI 上传顶过 Vercel 单次部署 15000 文件上限，自动部署自当日起连续失败 9 天。整目录排除。
+音乐素材
 output_imgs
 input_imgs
 juji

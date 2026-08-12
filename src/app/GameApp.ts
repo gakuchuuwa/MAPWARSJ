@@ -37,6 +37,7 @@ import { GameUIManager } from './GameUIManager';
 import { GameInputManager } from './GameInputManager';
 import { CombatUI } from '../ui/CombatUI'; // [NEW]
 import { BattleSceneLayer } from '../ui/BattleSceneLayer'; // [2026-08-09] 独立战斗场景（空壳）
+import { Scene13WarLayer } from '../ui/Scene13WarLayer'; // [2026-08-11 13 v2] 出兵口互攻演出层
 import { GameTimeHUD } from '../ui/GameTimeHUD';
 import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
 import { isRegionCenter, REGION_LABELS, type RegionType } from '../systems/RegionSystem';
@@ -109,6 +110,8 @@ export class GameApp {
     private inputManager!: GameInputManager;
     public combatUI!: CombatUI; // [NEW]
     public battleScene!: BattleSceneLayer; // [2026-08-09] 独立战斗场景（空壳）：上层画布 + 下层冻结地图背景
+    /** [2026-08-11 13 v2] 出兵口互攻演出层（替代旧剧本法编队演出，只画精灵） */
+    public scene13War!: Scene13WarLayer;
     private gameTimeHUD!: GameTimeHUD;
     public brawlFeedPanel!: BrawlFeedPanel; // 远征播报（ExpeditionUI/行为树）经 window.game 调用
     public roadRenderer!: SimpleVectorRoadRenderer;
@@ -150,6 +153,18 @@ export class GameApp {
         try {
             gameLog('startup', 'Game starting...');
             this.perfMonitor.markBootPhase('GameApp.start');
+
+            // 开发期整页刷新闸门：必须在 boot **最前面**上报，不能等 boot 走完。
+            // [2026-08-10 修·双重启根因] 原挂在 boot 末尾（约 11s 后才发出首次 fresh 上报），
+            // 而 vite.config 的看门狗在「老页面最后一次心跳 +15s」就把积压刷新补发出来
+            // （心跳 5s 一次 → 实际只剩 10~15s）。两个数字贴着，boot 慢一点就输 →
+            // 手动 F5 后又被补发刷一次 = 主人反馈的「刷新页面要重启两次」。
+            // 不依赖 game/timeSystem：shouldBlock 读不到就返回 false，
+            // timeSystem 由 ReloadGate 心跳里的 tryHookPauseChange 后补挂钩。
+            // 动态 import 保证生产构建整块剔除。
+            if (import.meta.env.DEV) {
+                void import('../dev/ReloadGate').then((m) => m.initReloadGate()).catch(() => {});
+            }
 
             // [FIX] FactionManager 必须先初始化，preloadFlags 内部会读 factionManager.getFactionColor
             // 否则 getFactionColor 在染色前不可用。
@@ -302,9 +317,16 @@ export class GameApp {
             // 游戏内立绘校正（战斗中 F2）需要暂停推演
             this.combatUI.pauseHook = this.timeSystem;
 
-            // [2026-08-09] 独立战斗场景（空壳）：战斗触发时地图冻住 + 上层画布两个色块。
+            // [2026-08-09] 独立战斗场景（第一步：切 13 + 背景固定）：战斗触发时镜头飞 13、地图冻结。
             // 挂点在 GameAppCombatHooks（跟拍军团参与的 1v1/区域战 开始/结束）。
             this.battleScene = new BattleSceneLayer();
+            this.battleScene.bindMap(this.map);
+            // 进 13 先暂停游戏、军队待命（主人 2026-08-09 定），退出恢复原状态
+            this.battleScene.pauseHook = this.timeSystem;
+
+            // [2026-08-11 13 v2] 出兵口互攻演出层：全屏 canvas 叠在地图上（透明背景，冻结地图透出）
+            this.scene13War = new Scene13WarLayer();
+            this.scene13War.attach();
 
             this.gameTimeHUD = new GameTimeHUD();
             this.gameTimeHUD.init();
@@ -327,7 +349,13 @@ export class GameApp {
                 if (paused) {
                     gameLog('startup', '⏸️ [GameApp] Pause detected.');
                 }
-                this.audioManager.setGamePaused(paused);
+                // 🔴 [2026-08-12 13 音效修复] 13 场景接管暂停（大战略暂停、战斗继续）≠ 用户真暂停：
+                //   enter() 已先置 strategyPausedByScene 再 setPaused，这里能识别——场景暂停时
+                //   不调 setGamePaused(true)，battle_loop/BGM 照常响，只有用户手动暂停才全停。
+                //   修前：13 一进场 audioManager.gamePaused=true → startLoop('battle_loop') 被
+                //   `if (this.gamePaused) return` 挡住 → 13 战斗只有语音播报、没有战斗音效（主人实锤）。
+                const scenePause = paused && this.battleScene?.isStrategyPausedByScene?.() === true;
+                this.audioManager.setGamePaused(scenePause ? false : paused);
             });
 
             setupGameAppVisibilityHandler(() => {
@@ -625,12 +653,6 @@ export class GameApp {
 
             StreamModeToggle.init();
             SpeechVoiceToggle.init();
-
-            // 开发期整页刷新闸门：把「推演在不在跑」上报给 dev server，决定改文件后刷不刷新。
-            // 动态 import 保证生产构建整块剔除。
-            if (import.meta.env.DEV) {
-                void import('../dev/ReloadGate').then((m) => m.initReloadGate()).catch(() => {});
-            }
 
             // 自动缩放：行军 9 / 战斗 10，每次至少 15 秒；换跟随目标时先拉远到 8 转场
             this.zoomController = new ZoomController(this.map, () => {

@@ -132,6 +132,11 @@ export class Army implements IBattleUnit {
      * 军团绕开它继续打别的城（2026-08-07 修：此前跳完不冷却、目标没清，军团反复走回该城，
      * 10% 假跳 / 90% 还是打它，技能实际无效）。
      */
+    /**
+     * 锚点滞回状态：上一次决策用的是「老家锚点」吗（见 LegionBehaviors 的 ANCHOR_HYSTERESIS_*）。
+     * undefined = 还没决策过，按当前兵力直接判。
+     */
+    public usingHomeAnchor?: boolean;
     public skipSiegeUntil: Map<string, number> = new Map();
 
     /** 越城而走触发：标记该城进入跳过冷却 */

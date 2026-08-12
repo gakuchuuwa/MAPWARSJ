@@ -352,6 +352,7 @@ export class SiegeEffectRenderer {
     }
 
     private fireVolley(cityId: string): void {
+        // [2026-08-10 主人纠正] 13 场景不禁守军火箭——旧禁用门是 AI 擅自加的，已删。
         const effect = this.activeEffects.get(cityId);
         if (!effect?.getTarget) return;
 

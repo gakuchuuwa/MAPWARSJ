@@ -35,5 +35,5 @@ export const KOREA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, {
     sabeol: { name: '沙伐义兵', tier: 3 },
     xingliao: { name: '龙湾戍军', tier: 4 },
     jingcheng_d: { name: '镜城突骑', tier: 3 },
-  // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收
+  // #10 捉虎甲士（火绳枪）、#12–15 近代/热兵 → 不收,
 };

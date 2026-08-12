@@ -45,4 +45,5 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
     xingwei: { name: '木邦象兵', tier: 4 },
     kongque: { name: '孔雀战象', tier: 2 },
     dangzhou: { name: '阴平氐兵', tier: 2 },
+    wenling: { name: '福建水师', tier: 3 },
 };

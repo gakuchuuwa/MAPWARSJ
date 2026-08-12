@@ -27,6 +27,8 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     dajiya: { name: '达契亚弯刀', tier: 3 },          // 萨尔米泽·德切巴鲁斯：falx 兵种文化；终为罗马所灭 → T3
 
     // ── T1 功勋之兵 ──
+    dunhe: { name: '亚速哥萨克', tier: 1 },          // 阿速城·塔塔里诺夫：1637攻占亚速 / 1641亚速围城战以少胜多
+    keluodiya: { name: '边境禁卫', tier: 3 },
     luosi: { name: '瓦兰吉卫队', tier: 1 },
     // 普斯科夫·道曼塔斯：守城抗条顿，无「卫」专名 → T3 风土/城邦军
     pusikefu_gongheguo: { name: '圣三一军团', tier: 3 },          // 普斯科夫·道曼塔斯：守城抗条顿；无「卫」专名
