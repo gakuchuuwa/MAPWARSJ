@@ -336,6 +336,10 @@ const ARRIVE_EPS = 8;
 const LANE_W = 6;
 /** 行军索敌半径：视野内找不到敌兵才退回敌军重心（所有兵一个规矩，无中军特权） */
 const MARCH_R = 300;
+/** 两翼抄后：绕到敌军重心后方多少 px（攻方在左则 +，守方在右则 -，见 aimAt） */
+const WING_BACK = 240;
+/** 两翼抄后：翼侧偏移多少 px（上翼 -，下翼 +） */
+const WING_SIDE = 330;
 /**
  * 移动时冲锋/移动**逐轮交替**（主人 2026-08-12 拍板，取代原先按距离切的「最后冲刺段」方案）。
  * 一轮 = 一个 8 帧循环（≈1 秒）：走一轮 → 冲一轮 → 走一轮…… 只有有冲锋组的兵种（象兵/突骑）受影响。
@@ -386,6 +390,8 @@ interface WarSpawn {
     x: number;
     y: number;
     pool: number;
+    /** 两翼标记：0=中央，1=上翼，-1=下翼（两翼兵抄后绕行用） */
+    wing: number;
 }
 
 interface WarMan {
@@ -422,6 +428,8 @@ interface WarMan {
     atkNext: number;
     lock: number;
     atkSt: number;
+    /** 两翼标记：0=中央，1=上翼，-1=下翼（继承自出兵口，aimAt 抄后绕行用） */
+    wing: number;
 }
 
 /** 箭矢：远程每出一次手射一支（纯画面，伤害仍按秒结算，不改平衡） */
@@ -750,6 +758,7 @@ export class Scene13WarLayer {
                     this.spawns.push({
                         f: side.f, key, x, y,
                         pool: poolPer,
+                        wing: pureCav ? 0 : (cell.col === 0 ? 1 : cell.col === 4 ? -1 : 0),
                     });
                 });
             }
@@ -1205,6 +1214,7 @@ export class Scene13WarLayer {
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                     flag: bearer, fo: Math.random() * 600,
                     atkers: 0, atkNext: 0, fadeT: FADE_IN,
+                    wing: s.wing,
                 });
             }
         }
@@ -1330,6 +1340,16 @@ export class Scene13WarLayer {
      * 出兵口不再是攻击目标，只是「敌人在那边」的路标。
      */
     private aimAt(m: WarMan): { x: number; y: number } | null {
+        // 两翼兵（上翼/下翼）：绕到敌军侧后包抄，不是朝最近敌兵/敌口走。
+        // 打完本路的敌人后不退而求其次去中央，而是绕到敌军重心侧后夹击。
+        if (m.wing !== 0) {
+            const cen = this.enemyCen[1 - m.f];
+            if (cen) {
+                const backX = m.f === 0 ? WING_BACK : -WING_BACK;   // 攻方绕到守方右后，守方绕到攻方左后
+                return { x: cen.x + backX, y: cen.y + (m.wing > 0 ? -WING_SIDE : WING_SIDE) };
+            }
+            return null;
+        }
         // ① 视野内最近的敌兵（找最近，不是逮到就算）
         const near = this.search(m, MARCH_R, true);
         if (near) return { x: near.x, y: near.y };
