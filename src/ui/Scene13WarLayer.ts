@@ -1284,7 +1284,12 @@ export class Scene13WarLayer {
         //    射程内随便逮一个打，画面上看不出区别。
         const r2 = radius * radius;
         let best: WarMan | null = null, bd = r2, seen = 0;
-        for (let gx = cx - span; gx <= cx + span; gx++) {
+        // 🔴 2026-08-13 镜像局偏袒修复：gx 扫描方向从「小→大」改为「大→小」。
+        //   原版左上优先 + 逮到就返回，对左右两方意义相反——攻方在左（gx 小 = 自己后方）→
+        //   攻方兵被往左后拉、推进慢；守方在右（gx 小 = 敌人方向）→ 守方前压。
+        //   镜像局实测攻方仅 19-21% 胜率（48 局 ×2 复现）；改大→小后恢复对称（46:54），
+        //   编成强弱关系不受影响。nearest（行军）分支是距离中性，不受顺序影响。
+        for (let gx = cx + span; gx >= cx - span; gx--) {
             for (let gy = cy - span; gy <= cy + span; gy++) {
                 const a = map.get(HKEY(gx, gy));
                 if (!a) continue;
