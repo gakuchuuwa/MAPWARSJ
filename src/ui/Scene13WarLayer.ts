@@ -744,19 +744,26 @@ export class Scene13WarLayer {
                     const key = lane.key;
                     this.ensureType(key);
                     // 布局同原型 __war.html：row 0 最靠中线（越靠前越深入敌阵）
-                    //   3×3：row = floor(i/3)、col = i%3、cols = 3
+                    //   普通文化 = 两翼 5 通道（2026-08-13 主人定：步兵居中、骑兵两翼、弓弩在后）：
+                    //     上翼骑 / 前排中央 步×3 / 中军虎豹骑 / 后排中央 弩×3 / 下翼骑
                     //   三角（1-2-3）：查找表（col/row/cols），尖刀 1 口 → 第二排 2 口 → 第三排 3 口
                     const tri = [
                         { col: 0, row: 0, cols: 1 },
                         { col: 0, row: 1, cols: 2 }, { col: 1, row: 1, cols: 2 },
                         { col: 0, row: 2, cols: 3 }, { col: 1, row: 2, cols: 3 }, { col: 2, row: 2, cols: 3 },
                     ];
+                    const FLANK5 = [
+                        { col: 1, row: 0, cols: 5 }, { col: 2, row: 0, cols: 5 }, { col: 3, row: 0, cols: 5 },   // 前排中央 步×3
+                        { col: 0, row: 1, cols: 5 }, { col: 2, row: 1, cols: 5 }, { col: 4, row: 1, cols: 5 },   // 上翼骑 / 中军虎 / 下翼骑
+                        { col: 1, row: 2, cols: 5 }, { col: 2, row: 2, cols: 5 }, { col: 3, row: 2, cols: 5 },   // 后排中央 弩×3
+                    ];
                     const cell = pureCav
                         ? tri[idx]
-                        : { col: idx % 3, row: Math.floor(idx / 3), cols: 3 };
+                        : FLANK5[idx];
                     const back = mx + (2 - cell.row) * depth;
                     const x = side.f === 0 ? back : VW - back;
-                    const y = midY + (cell.col - (cell.cols - 1) / 2) * (spanY / 3);
+                    // 5 通道间距 spanY/5；三角阵保持原型 spanY/3
+                    const y = midY + (cell.col - (cell.cols - 1) / 2) * (spanY / (cell.cols === 5 ? 5 : 3));
                     this.spawns.push({
                         f: side.f, key, x, y,
                         pool: poolPer,
