@@ -237,23 +237,18 @@ const ARROW_DUR = 0.42;
  */
 const ARROW_SCALE = 0.7;
 /**
- * 同屏人数总上限（精灵，1 = SPRITE_TROOPS 兵）——**双方合计**，每方取一半见 SIDE_CAP。
- * 🔴 主人 2026-08-11「双方兵力会在中间形成拥挤」的解法。
- *    根因是出兵速度 > 死人速度：出兵口按固定间隔一直吐人，前线只有最前面几十个够得着敌人，
- *    后面全堵着，越堵越厚。设上限后前线厚度自动稳定，不会堵成一坨。
- *    比「分批投入（第一批死光再上第二批）」好：波次之间会空场，看着像刷怪；
- *    真实战争里后队是顶上去补缺口，不是等前队全灭再整批出发。
- *    调大 = 战线更厚更挤，调小 = 更稀疏、仗打得更久。
+ * 每方开局数 + 每次补兵批量 = 300（2026-08-13 主人定）。
+ * 成批补：开局双方各出 300；之后一方场上 < 150 才再补 300（见 TRIGGER）。
  */
-const FIELD_CAP = 600;
+const SIDE_CAP = 300;
 /**
- * 每方补兵触发线 + 批量 = 总上限的一半 = 300（2026-08-13 主人定）。
- * 成批补：弱方场上 < 300 才补，一次补 300（固定批量），一次只补一边。
+ * 补兵触发线 = 150（2026-08-13 主人定）：一方场上掉到 150 以下才再补一波 300。
+ * 成批补制造「兵力波次」：一方打掉一半（300→150）才补，战线来回摆动，尸体沿途铺开。
  */
-const SIDE_CAP = FIELD_CAP / 2;
+const TRIGGER = 150;
 /**
  * 1 精灵 = 多少兵（2026-08-13：10 → 20，修「三万兵演出 168s 超 120s 看门狗」）。
- * 🔴 只改总量语义，**画面不变**：同屏上限 FIELD_CAP=600 精灵不动 → 同屏密度一模一样，
+ * 🔴 只改总量语义，**画面不变**：每方开局 300 精灵不动 → 同屏密度一模一样，
  *    只是总池子 3000→1500 精灵、增援批次减半 → 战斗时长 168s→90s（1:20 实测，留 25% 余量）。
  *    不碰出兵速率、不碰打口系数、不碰引擎。回写兵力的乘数（getLiveTroops 等）用本常数。
  *    别调 1:30（池子 1000 太小，对称性难打破，实测有死锁种子）。
@@ -1169,47 +1164,49 @@ export class Scene13WarLayer {
             if (m.flag) flagsHave[m.f]++;
         }
 
-        // 【2026-08-13 主人定·成批补】弱方场上 < 300 才补，一次补 300（固定批量），
-        //   一次只补一边。成批补（不是死一个补一个、也不是补到 300 的缺口），弱方靠成批的兵反推战线。
+        // 【2026-08-13 主人定·成批补】开局双方各出 300；之后一方场上 < 150 才再补 300。
+        //   成批补（不是死一个补一个），一方打掉一半才补一波，靠成批的兵反推战线。
         this.batchCd -= dt;
         if (this.batchCd > 0) return;
 
-        const weak = onField[0] < onField[1] ? 0 : 1;
-        if (onField[weak] >= SIDE_CAP) return;   // 弱方已满 300，无需补
+        // 每一方独立判断：场上 < 150 才补 300（开局双方 0 → 各补 300，一帧同时出）
+        for (let f = 0; f < 2; f++) {
+            if (onField[f] >= TRIGGER) continue;   // 场上 >= 150 不补
 
-        const ports = this.spawns.filter(s => s.f === weak && s.pool > 0);
-        if (!ports.length) return;
-        let batch = SIDE_CAP;                    // 一次补 300（固定批量），不是补到 300 的缺口
+            const ports = this.spawns.filter(s => s.f === f && s.pool > 0);
+            if (!ports.length) continue;
+            let batch = SIDE_CAP;                  // 一次补 300（固定批量）
 
-        // 从**所有还有兵的出兵口**一起涌出，不是一个点
-        let pi = 0;
-        while (batch > 0) {
-            const s = ports[pi % ports.length];
-            pi++;
-            if (s.pool <= 0) {
-                if (ports.every(p => p.pool <= 0)) break;
-                continue;
+            // 从**所有还有兵的出兵口**一起涌出，不是一个点
+            let pi = 0;
+            while (batch > 0) {
+                const s = ports[pi % ports.length];
+                pi++;
+                if (s.pool <= 0) {
+                    if (ports.every(p => p.pool <= 0)) break;
+                    continue;
+                }
+                s.pool--;
+                batch--;
+                const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f];
+                if (!tgt) break;
+                // 旗手身份出生时定死（勿改成每帧现挑，见 FLAG_EVERY）。
+                // want = 本方该有几面旗（含正在出生的这一批），少了就让这个兵扛旗 ——
+                // 一条式子同时完成「均匀分配」和「旗手战死后补位」，不需要额外的计数器。
+                onField[s.f]++;
+                const wantFlags = Math.floor(onField[s.f] / FLAG_EVERY);
+                const bearer = flagsHave[s.f] < wantFlags;
+                if (bearer) flagsHave[s.f]++;
+                this.men.push({
+                    f: s.f, key: s.key,
+                    x: s.x + (Math.random() - .5) * 60, y: s.y + (Math.random() - .5) * 110,
+                    tx: tgt.x, ty: tgt.y, hp: statsOf(s.key).hp, dir: 0,
+                    ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
+                    fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
+                    flag: bearer, fo: Math.random() * 600,
+                    atkers: 0, atkNext: 0, fadeT: FADE_IN,
+                });
             }
-            s.pool--;
-            batch--;
-            const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f];
-            if (!tgt) break;
-            // 旗手身份出生时定死（勿改成每帧现挑，见 FLAG_EVERY）。
-            // want = 本方该有几面旗（含正在出生的这一批），少了就让这个兵扛旗 ——
-            // 一条式子同时完成「均匀分配」和「旗手战死后补位」，不需要额外的计数器。
-            onField[s.f]++;
-            const wantFlags = Math.floor(onField[s.f] / FLAG_EVERY);
-            const bearer = flagsHave[s.f] < wantFlags;
-            if (bearer) flagsHave[s.f]++;
-            this.men.push({
-                f: s.f, key: s.key,
-                x: s.x + (Math.random() - .5) * 60, y: s.y + (Math.random() - .5) * 110,
-                tx: tgt.x, ty: tgt.y, hp: statsOf(s.key).hp, dir: 0,
-                ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
-                fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
-                flag: bearer, fo: Math.random() * 600,
-                atkers: 0, atkNext: 0, fadeT: FADE_IN,
-            });
         }
         this.batchCd = BATCH_COOLDOWN;
     }
