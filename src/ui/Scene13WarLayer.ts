@@ -1274,22 +1274,18 @@ export class Scene13WarLayer {
         }
     }
 
-    private search(m: { x: number; y: number; f: number }, radius: number, nearest = false): WarMan | null {
+    private search(m: { x: number; y: number; f: number }, radius: number): WarMan | null {
         const useR = radius > CELL_M;
         const map: Map<number, WarMan[]> = useR ? this.gr : this.gm; const cell = useR ? CELL_R : CELL_M;
         const span = Math.max(1, Math.ceil(radius / cell));
         const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
-        // 🔴 找到就停，不求「最近」：所有兵都扑向敌军后会挤成一团，每个哈希格里几百人，
-        //    求最近必须翻完全部格子 —— 原型实测 37ms/帧，占模拟总耗时 92%，直接超 60fps 预算。
-        //    射程内随便逮一个打，画面上看不出区别。
+        // 🔴 2026-08-13 定稿：打架也走 nearest（按距离取最近，与扫描顺序无关 → 天然对称）。
+        //   原「逮到就返回」依赖扫描顺序，而扫描方向对左右两方意义相反 → 镜像局系统性偏袒
+        //   （war_sim 实测：原版小→大 A10% 偏守方、翻转大→小 A95% 偏攻方，两向都极端）。
+        //   性能：原 37ms/帧 是行军半径 700 的数；打架半径 65、span=1 只扫 3×3，另有 seen>=24 封顶，够快。
         const r2 = radius * radius;
         let best: WarMan | null = null, bd = r2, seen = 0;
-        // 🔴 2026-08-13 镜像局偏袒修复：gx 扫描方向从「小→大」改为「大→小」。
-        //   原版左上优先 + 逮到就返回，对左右两方意义相反——攻方在左（gx 小 = 自己后方）→
-        //   攻方兵被往左后拉、推进慢；守方在右（gx 小 = 敌人方向）→ 守方前压。
-        //   镜像局实测攻方仅 19-21% 胜率（48 局 ×2 复现）；改大→小后恢复对称（46:54），
-        //   编成强弱关系不受影响。nearest（行军）分支是距离中性，不受顺序影响。
-        for (let gx = cx + span; gx >= cx - span; gx--) {
+        for (let gx = cx - span; gx <= cx + span; gx++) {
             for (let gy = cy - span; gy <= cy + span; gy++) {
                 const a = map.get(HKEY(gx, gy));
                 if (!a) continue;
@@ -1298,9 +1294,8 @@ export class Scene13WarLayer {
                     if (o.f === m.f || o.hp <= 0) continue;
                     const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                     if (d >= r2) continue;
-                    if (!nearest) return o;              // 打架：逮到就打，别翻完
                     if (d < bd) { bd = d; best = o; }
-                    if (++seen >= 24) return best;       // 行军：找最近，但最多看 24 个（防回到 37ms）
+                    if (++seen >= 24) return best;       // 最多看 24 个（防回到 37ms）
                 }
             }
         }
@@ -1342,7 +1337,7 @@ export class Scene13WarLayer {
      */
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // ① 视野内最近的敌兵（找最近，不是逮到就算）
-        const near = this.search(m, MARCH_R, true);
+        const near = this.search(m, MARCH_R);
         if (near) return { x: near.x, y: near.y };
         // ② 身边没人 → 朝**还在出兵的敌口**走（纵向加权 = 同一路优先）。
         //    3×3 排布下上路兵最近的活口就是对面上路那个，所以各走各的路，不会汇到中间。
