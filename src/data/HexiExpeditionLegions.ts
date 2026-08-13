@@ -38,10 +38,10 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     helian: { name: '铁弗宿卫', tier: 3 },
     xiazhou: { name: '平夏部骑', tier: 3 },
     yanzhou: { name: '步跋子', tier: 3 },
-    ashide: { name: '阿史德骑', tier: 4 },
     cangsong: { name: '西凉铁骑', tier: 2 },
     suzhou: { name: '轻勇骑', tier: 0 },
     xiyuduhu: { name: '西域都护军', tier: 1 },
     anxi: { name: '安西陌刀军', tier: 2 },
     jiluo_d: { name: '北征突骑', tier: 1 },
+    pulei: { name: '蒲类落雕骑', tier: 3 },
 };

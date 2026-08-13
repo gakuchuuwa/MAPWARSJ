@@ -697,7 +697,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    ashide_ashidejieli: { generalId: 'ashide_ashidejieli', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defDisadvantageSkillId: 'ts_294', atkAdvantageSkillId: 'ts_519', atkBalanceSkillId: 'ts_736', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_300', aptitude: 'create', attackStyle: 'attack' },
+    ashide_ashidejieli: { generalId: 'ashide_ashidejieli', tier: 'ordinary', tacticalSkillId: 'ts_519', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_519', atkBalanceSkillId: 'ts_736', atkDisadvantageSkillId: 'ts_376', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_300', defDisadvantageSkillId: 'ts_294', aptitude: 'create', attackStyle: 'attack' },
 
 
 
@@ -745,7 +745,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    pulei_dougu: { generalId: 'pulei_dougu', tier: 'famous', tacticalSkillId: 'ts_239', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_239', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_428', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_299', defDisadvantageSkillId: 'ts_822', aptitude: 'create' , attackStyle: 'attack'},
+    pulei_dougu: { generalId: 'pulei_dougu', tier: 'famous', tacticalSkillId: 'ts_239', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_239', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_428', defAdvantageSkillId: 'ts_357', defBalanceSkillId: 'ts_299', defDisadvantageSkillId: 'ts_822', aptitude: 'create', attackStyle: 'attack' },
 
 
 
