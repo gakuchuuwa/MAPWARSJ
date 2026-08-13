@@ -152,8 +152,8 @@ const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
 
 /**
  * 文化 → 出兵口。**出兵口 = 大地图的编制槽位**（主人 2026-08-11 定），不另编一套：
- *   常规 15 文化 = 9 口，排成 3×3：
- *     排 0（最靠前）前排兵 ×3 / 排 1 骑兵-虎豹骑-骑兵 / 排 2（最靠后）远程 ×3
+ *   常规 15 文化 = 9 口，排成两翼 5 通道（2026-08-13 主人定：步兵居中、骑兵两翼、弓弩在后）：
+ *     上翼骑 / 前排中央 前排兵×3 / 中军虎豹骑 / 后排中央 远程×3 / 下翼骑
  *   纯骑 3 文化 = 6 口，排成 1-2-3 三角：尖端 1 口最靠前，其后 2 口、3 口
  * 兵一出生就在正确的层次上 —— 战线自动形成，不需要任何阵型逻辑。
  * 返回 [{ key, col, row, cols }]，row 0 = 最靠近敌方。
@@ -177,7 +177,13 @@ function slotsOf(cultureKey) {
     c.mid, 'blade_cav', c.mid,     // 中心格永远是虎豹骑（大地图的 general_cavalry）
     c.back, c.back, c.back,
   ];
-  return seq.map((key, i) => ({ key, col: i % 3, row: (i / 3) | 0, cols: 3 }));
+  // 两翼 5 通道：idx 0-2 前排中央步 / idx 3 上翼骑 / idx 4 中军虎 / idx 5 下翼骑 / idx 6-8 后排中央
+  const FLANK5 = [
+    { col: 1, row: 0 }, { col: 2, row: 0 }, { col: 3, row: 0 },
+    { col: 0, row: 1 }, { col: 2, row: 1 }, { col: 4, row: 1 },
+    { col: 1, row: 2 }, { col: 2, row: 2 }, { col: 3, row: 2 },
+  ];
+  return seq.map((key, i) => ({ key, ...FLANK5[i], cols: 5 }));
 }
 
 const cv = document.getElementById('cv');
@@ -267,7 +273,7 @@ const CELL_R = 220;     // 远程哈希格（射程最大 520，扫 ±3 格够�
 function reset() {
   spawns = []; men = []; corpses = []; arrows = []; over = '';
   document.getElementById('over').style.display = 'none';
-  // 出兵口按编制槽位摆成 3×3（或 1-2-3 三角）：row 0 最靠前，row 越大越靠己方后方
+  // 出兵口按编制槽位摆成两翼 5 通道（或 1-2-3 三角）：row 0 最靠前，row 越大越靠己方后方
   const mx = Math.max(60, VW * 0.07);       // 最后排出兵口离屏幕边
   const depth = Math.min(150, VW * 0.075);  // 排间纵深
   const midY = VH / 2, spanY = VH * 0.80;
@@ -279,7 +285,8 @@ function reset() {
       ensureType(s.key);
       const back = mx + (2 - s.row) * depth;               // row0 最靠中线
       const x = f === 0 ? back : VW - back;
-      const y = midY + (s.col - (s.cols - 1) / 2) * (spanY / 3);
+      // 5 通道间距 spanY/5（三角阵保持 spanY/3，cols 居中偏移各自生效）
+      const y = midY + (s.col - (s.cols - 1) / 2) * (spanY / (s.cols === 5 ? 5 : 3));
       // 🔴 兵力按**总量**平分到各口，不是每口固定——否则纯骑文化 6 口凭空少三分之一兵力。
       //    大地图上军团兵力与槽位数无关，这里必须一致。
       // rateMul：口少的一方每口出得快，保证两方**每秒投入人数相同**

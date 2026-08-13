@@ -6542,30 +6542,15 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -16
         },
-        "/assets/GERMANIC/__多余__GERMANIC_01.png": {
-            "scale": 1.04,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/GERMANIC/keluodiya_zilinsiji.png": {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/SLAVIC/__多余__SLAVIC_01.png": {
-            "scale": 1.16,
-            "offsetX": 0,
-            "offsetY": 31
-        },
         "/assets/SLAVIC/dunhe_tatalinuofu.png": {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": 31
-        },
-        "/assets/STEPPE/__闲置__STEPPE_78.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": 0
         },
         "/assets/STEPPE/tujue_ashinatumen.png": {
             "scale": 1.2,
