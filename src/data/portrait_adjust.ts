@@ -1698,12 +1698,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/STEPPE/bayegu_qulishi.png": {
-            "scale": 0.9,
+            "scale": 0.88,
             "offsetX": 0,
             "offsetY": -26
         },
         "/assets/STEPPE/bulat_beiduanchaer.png": {
-            "scale": 0.95,
+            "scale": 0.92,
             "offsetX": 0,
             "offsetY": -26
         },
@@ -1713,9 +1713,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/STEPPE/chechen_chechenhanshuolei.png": {
-            "scale": 0.86,
+            "scale": 0.83,
             "offsetX": 0,
-            "offsetY": 13
+            "offsetY": 11
         },
         "/assets/STEPPE/dingling_weilu.png": {
             "scale": 1.22,
@@ -1733,7 +1733,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/STEPPE/gaoche_afuzhiluo.png": {
-            "scale": 0.91,
+            "scale": 0.84,
             "offsetX": 0,
             "offsetY": -32
         },
@@ -1743,9 +1743,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/STEPPE/heisha_d_houlihu.png": {
-            "scale": 0.94,
+            "scale": 0.9,
             "offsetX": 8,
-            "offsetY": -9
+            "offsetY": 2
         },
         "/assets/STEPPE/hongirad_dexuechan.png": {
             "scale": 0.84,
@@ -2738,7 +2738,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 37
         },
         "/assets/STEPPE/baidi_baidizi.png": {
-            "scale": 1.07,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": -11
         },
@@ -3493,7 +3493,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/STEPPE/dzungar_galedanceling.png": {
-            "scale": 1.01,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -28
         },
@@ -4088,7 +4088,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/STEPPE/__闲置__STEPPE_50.png": {
-            "scale": 0.97,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": -26
         },
@@ -4203,7 +4203,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/STEPPE/__闲置__WEST_ASIA_20.png": {
-            "scale": 1.11,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": 6
         },
@@ -4958,7 +4958,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/STEPPE/__闲置__STEPPE_59.png": {
-            "scale": 0.77,
+            "scale": 0.76,
             "offsetX": 2,
             "offsetY": -25
         },
@@ -6088,7 +6088,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/STEPPE/__闲置__STEPPE_61.png": {
-            "scale": 1.09,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 8
         },
@@ -6554,6 +6554,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/STEPPE/tujue_ashinatumen.png": {
             "scale": 1.2,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/STEPPE/__闲置__STEPPE_77.png": {
+            "scale": 0.86,
             "offsetX": 0,
             "offsetY": -7
         }

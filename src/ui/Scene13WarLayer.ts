@@ -1274,15 +1274,15 @@ export class Scene13WarLayer {
         }
     }
 
-    private search(m: { x: number; y: number; f: number }, radius: number): WarMan | null {
+    private search(m: { x: number; y: number; f: number }, radius: number, nearest = false): WarMan | null {
         const useR = radius > CELL_M;
         const map: Map<number, WarMan[]> = useR ? this.gr : this.gm; const cell = useR ? CELL_R : CELL_M;
         const span = Math.max(1, Math.ceil(radius / cell));
         const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
-        // 🔴 2026-08-13 定稿：打架也走 nearest（按距离取最近，与扫描顺序无关 → 天然对称）。
-        //   原「逮到就返回」依赖扫描顺序，而扫描方向对左右两方意义相反 → 镜像局系统性偏袒
-        //   （war_sim 实测：原版小→大 A10% 偏守方、翻转大→小 A95% 偏攻方，两向都极端）。
-        //   性能：原 37ms/帧 是行军半径 700 的数；打架半径 65、span=1 只扫 3×3，另有 seen>=24 封顶，够快。
+        // 🔴 2026-08-13 回退到 08-11 原状（打架逮到就返回 + 行军 nearest 24 上限）：
+        //   nearest 全翻虽让镜像对称（A55%），但破坏「骑克弩」克制边（cav vs ranged 92%→25%，
+        //   远程集群集中集火最近骑兵 + 围殴放大）。克制三边是 08-11 主人拍板的核心，优先保住。
+        //   镜像偏袒（攻方 10% 偏守方）作为已知遗留，与「哪边兵少补哪边」的平衡诉求一并另议。
         const r2 = radius * radius;
         let best: WarMan | null = null, bd = r2, seen = 0;
         for (let gx = cx - span; gx <= cx + span; gx++) {
@@ -1294,8 +1294,9 @@ export class Scene13WarLayer {
                     if (o.f === m.f || o.hp <= 0) continue;
                     const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                     if (d >= r2) continue;
+                    if (!nearest) return o;              // 打架：逮到就打，别翻完
                     if (d < bd) { bd = d; best = o; }
-                    if (++seen >= 24) return best;       // 最多看 24 个（防回到 37ms）
+                    if (++seen >= 24) return best;       // 行军：找最近，但最多看 24 个
                 }
             }
         }
@@ -1337,7 +1338,7 @@ export class Scene13WarLayer {
      */
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // ① 视野内最近的敌兵（找最近，不是逮到就算）
-        const near = this.search(m, MARCH_R);
+        const near = this.search(m, MARCH_R, true);
         if (near) return { x: near.x, y: near.y };
         // ② 身边没人 → 朝**还在出兵的敌口**走（纵向加权 = 同一路优先）。
         //    3×3 排布下上路兵最近的活口就是对面上路那个，所以各走各的路，不会汇到中间。

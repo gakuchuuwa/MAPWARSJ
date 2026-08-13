@@ -419,13 +419,12 @@ function rebuild() {
 function search(m, radius) {
   // 🔴 找到就停，不求「最近」：兵挤成一团后每个格子有几百人，求最近要翻完所有格子
   //    （实测 37ms/帧，占全部模拟耗时的 92%）。射程内随便逮一个打，画面上看不出区别。
+  //    2026-08-13 注：nearest（距离取最近）虽让镜像对称，但破坏「骑克弩」克制边，已回退原状。
   const useR = radius > CELL_M;
   const map = useR ? gr : gm, cell = useR ? CELL_R : CELL_M;
   const span = Math.max(1, Math.ceil(radius / cell));
   const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
   const r2 = radius * radius;
-  // 🔴 2026-08-13 search 偏袒修复已回滚（同步主游戏）：大→小在完整逻辑下证伪（攻方 95% 碾压），
-  //   当前保持 08-11 原版小→大；nearest 候选待主人拍板
   for (let gx = cx - span; gx <= cx + span; gx++) for (let gy = cy - span; gy <= cy + span; gy++) {
     const a = map.get(HKEY(gx, gy)); if (!a) continue;
     for (let i = 0; i < a.length; i++) {
