@@ -186,6 +186,23 @@ function slotsOf(cultureKey) {
   return seq.map((key, i) => ({ key, ...FLANK5[i], cols: 5 }));
 }
 
+// 排级随机互换（主人 2026-08-13 定）：把出兵口按「排」分组随机换纵深顺序，双方独立随机。
+//   横向 col 结构按新 row 固定重铺（前排中央3 / 中排两翼+中央 / 后排中央3），
+//   只换「哪类兵在哪排」——前排可能变骑兵（中央突破）或弩兵（克制循环制衡）。
+function shuffleRows(lanes, pureCav) {
+  const groups = pureCav
+    ? [lanes.slice(0, 1), lanes.slice(1, 3), lanes.slice(3, 6)]
+    : [lanes.slice(0, 3), lanes.slice(3, 6), lanes.slice(6, 9)];
+  for (let i = groups.length - 1; i > 0; i--) {
+    const j = (Math.random() * (i + 1)) | 0;
+    [groups[i], groups[j]] = [groups[j], groups[i]];
+  }
+  const layout = pureCav
+    ? [[{ col: 0, cols: 1 }], [{ col: 0, cols: 2 }, { col: 1, cols: 2 }], [{ col: 0, cols: 3 }, { col: 1, cols: 3 }, { col: 2, cols: 3 }]]
+    : [[{ col: 1, cols: 5 }, { col: 2, cols: 5 }, { col: 3, cols: 5 }], [{ col: 0, cols: 5 }, { col: 2, cols: 5 }, { col: 4, cols: 5 }], [{ col: 1, cols: 5 }, { col: 2, cols: 5 }, { col: 3, cols: 5 }]];
+  return groups.flatMap((group, row) => group.map((o, i) => ({ key: o.key, ...layout[row][i], row })));
+}
+
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d', { alpha: false });
 let VW = 0, VH = 0;
@@ -278,9 +295,9 @@ function reset() {
   const depth = Math.min(150, VW * 0.075);  // 排间纵深
   const midY = VH / 2, spanY = VH * 0.80;
   for (const f of [0, 1]) {
-    const lanes = slotsOf(SIDE[f]);
-    const n = lanes.length;
     const pureCav = PURE_CAV.has(SIDE[f]);
+    const lanes = shuffleRows(slotsOf(SIDE[f]), pureCav);
+    const n = lanes.length;
     lanes.forEach((s, idx) => {
       ensureType(s.key);
       const back = mx + (2 - s.row) * depth;               // row0 最靠中线
