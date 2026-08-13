@@ -63,7 +63,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     yaoluoge: { name: '娑陵鹰骑', tier: 4 },
     huihu: { name: '回鹘骑兵', tier: 3 },
     pugu: { name: '燕然黑砂', tier: 2 },
-    pulei: { name: '蒲类落雕骑', tier: 3 },
   chechen: { name: '车臣汗骑', tier: 4 },       // 巴彦图门·车臣汗硕垒
   zhuerqi: { name: '主儿乞军', tier: 4 },       // 温都尔汗·撒察别乞
   tumengken: { name: '赛音诺颜骑', tier: 4 },  // 拜达里克·图蒙肯抗卫拉特（缺乏极其著名的战术高光，降T3）
@@ -107,4 +106,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     wuxi: { name: '武陵弓蛮', tier: 3 },
     tuerhute: { name: '鹰娑川铁骑', tier: 3 },
     quanrong: { name: '西戎骑兵', tier: 4 },
+    ashide: { name: '阿史德骑', tier: 4 },
 };
