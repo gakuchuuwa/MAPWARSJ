@@ -338,7 +338,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/STEPPE/tiele_qibiheli.png": {
-            "scale": 0.84,
+            "scale": 0.82,
             "offsetX": 0,
             "offsetY": -12
         },
@@ -518,7 +518,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 1
         },
         "/assets/STEPPE/pugu_ashinaguduolu.png": {
-            "scale": 1.16,
+            "scale": 1.13,
             "offsetX": 0,
             "offsetY": 14
         },
@@ -658,7 +658,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/STEPPE/kaerka_abadaihan.png": {
-            "scale": 1.08,
+            "scale": 0.99,
             "offsetX": 1,
             "offsetY": -23
         },
@@ -1633,7 +1633,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 22
         },
         "/assets/STEPPE/xibo_d_tubote.png": {
-            "scale": 0.88,
+            "scale": 0.85,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -1748,12 +1748,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/STEPPE/hongirad_dexuechan.png": {
-            "scale": 0.84,
+            "scale": 0.82,
             "offsetX": 0,
-            "offsetY": 26
+            "offsetY": 23
         },
         "/assets/STEPPE/huyan_peicen.png": {
-            "scale": 1.08,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": -28
         },
@@ -1768,17 +1768,17 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 19
         },
         "/assets/STEPPE/kiyad_yesugai.png": {
-            "scale": 0.88,
+            "scale": 0.84,
             "offsetX": 0,
             "offsetY": -24
         },
         "/assets/STEPPE/kumo_xiwanghuilibao.png": {
             "scale": 1.05,
             "offsetX": 0,
-            "offsetY": -19
+            "offsetY": -24
         },
         "/assets/STEPPE/kumoxi_ahuihui.png": {
-            "scale": 0.82,
+            "scale": 0.78,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -1788,12 +1788,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/STEPPE/naiman_taiyanghan.png": {
-            "scale": 1,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": -2
         },
         "/assets/STEPPE/nuoyan_d_sanyinnuoyan.png": {
-            "scale": 0.93,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": 22
         },
@@ -1803,22 +1803,22 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 32
         },
         "/assets/STEPPE/ongut_alawusi.png": {
-            "scale": 1,
+            "scale": 0.99,
             "offsetX": 0,
             "offsetY": -25
         },
         "/assets/STEPPE/qidan_shulvping.png": {
-            "scale": 1,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -10
         },
         "/assets/STEPPE/shiwei_saihou.png": {
-            "scale": 1.09,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 1
         },
         "/assets/STEPPE/sunite_sousai.png": {
-            "scale": 1,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -29
         },
@@ -1833,12 +1833,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/STEPPE/tumengken_tumengken.png": {
-            "scale": 0.98,
+            "scale": 1.01,
             "offsetX": 0,
             "offsetY": 21
         },
         "/assets/STEPPE/tushetu_tuxietuhan.png": {
-            "scale": 0.93,
+            "scale": 0.9,
             "offsetX": 0,
             "offsetY": -16
         },
@@ -1858,7 +1858,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/STEPPE/wuzhumuqin_duoerji.png": {
-            "scale": 0.96,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -35
         },
@@ -1878,7 +1878,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -25
         },
         "/assets/STEPPE/yuan_d_hubilie.png": {
-            "scale": 1.15,
+            "scale": 1.13,
             "offsetX": 4,
             "offsetY": -14
         },
@@ -2638,12 +2638,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/STEPPE/oirat_ming_gaerdan.png": {
-            "scale": 1.19,
+            "scale": 1.21,
             "offsetX": 0,
             "offsetY": 12
         },
         "/assets/STEPPE/wala_yexian.png": {
-            "scale": 1.19,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": -5
         },
@@ -2668,9 +2668,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/STEPPE/shizhao_d_shihu.png": {
-            "scale": 0.95,
+            "scale": 0.88,
             "offsetX": 0,
-            "offsetY": -7
+            "offsetY": -4
         },
         "/assets/STEPPE/shizhou_liucong.png": {
             "scale": 1.12,
@@ -2678,7 +2678,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/STEPPE/yingzhou_ying_d_muronghuang.png": {
-            "scale": 0.95,
+            "scale": 0.91,
             "offsetX": 0,
             "offsetY": -26
         },
@@ -2733,7 +2733,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/STEPPE/xiongding_murongyong.png": {
-            "scale": 1,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": 37
         },
@@ -2808,14 +2808,14 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/STEPPE/tuoba_tuobagui.png": {
-            "scale": 1.11,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": -7
         },
         "/assets/STEPPE/yunzhong_tuobaliwei.png": {
-            "scale": 1.16,
+            "scale": 1.13,
             "offsetX": -22,
-            "offsetY": 30
+            "offsetY": 28
         },
         "/assets/STEPPE/xianbei_tuobamao.png": {
             "scale": 1.23,
@@ -2833,7 +2833,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -21
         },
         "/assets/STEPPE/yao_liuyuan.png": {
-            "scale": 1.12,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -2848,7 +2848,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -36
         },
         "/assets/STEPPE/xiliao_yeldashi.png": {
-            "scale": 1.05,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 19
         },
@@ -2958,7 +2958,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -23
         },
         "/assets/STEPPE/merkit_boyan.png": {
-            "scale": 1.09,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -2968,17 +2968,17 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/STEPPE/jiyuan_huluguang.png": {
-            "scale": 0.92,
+            "scale": 0.87,
             "offsetX": 0,
             "offsetY": -5
         },
         "/assets/STEPPE/kelie_zhaheganbu.png": {
-            "scale": 0.94,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": -1
         },
         "/assets/STEPPE/xijue_zhizhichanyu.png": {
-            "scale": 1.22,
+            "scale": 1.13,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -3473,7 +3473,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -18
         },
         "/assets/STEPPE/rouran_shelun.png": {
-            "scale": 1.06,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": -13
         },
@@ -3603,9 +3603,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/STEPPE/manghuti_weidaer.png": {
-            "scale": 1.42,
+            "scale": 1.34,
             "offsetX": 0,
-            "offsetY": -1
+            "offsetY": 1
         },
         "/assets/STEPPE/chenli_d_zuoxianwang.png": {
             "scale": 1.04,
@@ -3893,7 +3893,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/STEPPE/kesa_bulankehan.png": {
-            "scale": 1,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": 4
         },
@@ -4618,7 +4618,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 21
         },
         "/assets/STEPPE/xiajiasi_are.png": {
-            "scale": 1.05,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -5788,7 +5788,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -10
         },
         "/assets/STEPPE/nuogai_ounasihan.png": {
-            "scale": 1.3,
+            "scale": 1.34,
             "offsetX": 5,
             "offsetY": 1
         },
@@ -5798,7 +5798,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 10
         },
         "/assets/STEPPE/xierhe_saierzhu.png": {
-            "scale": 1.16,
+            "scale": 1.23,
             "offsetX": 14,
             "offsetY": -7
         },
@@ -6103,7 +6103,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -16
         },
         "/assets/STEPPE/kangju_chebishi.png": {
-            "scale": 1.04,
+            "scale": 1.09,
             "offsetX": 0,
             "offsetY": 7
         },
@@ -6268,9 +6268,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -37
         },
         "/assets/STEPPE/menggu_d_chengjisihan.png": {
-            "scale": 1.07,
+            "scale": 1.13,
             "offsetX": 0,
-            "offsetY": -24
+            "offsetY": -26
         },
         "/assets/WESTERN/__闲置__WESTERN_38.png": {
             "scale": 1.16,
@@ -6453,7 +6453,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/STEPPE/salai_aidigu.png": {
-            "scale": 0.94,
+            "scale": 0.97,
             "offsetX": 0,
             "offsetY": -32
         },
@@ -6488,7 +6488,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/STEPPE/ogodei_chuoermahan.png": {
-            "scale": 1.1,
+            "scale": 1.08,
             "offsetX": 22,
             "offsetY": -6
         },
@@ -6553,7 +6553,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 31
         },
         "/assets/STEPPE/tujue_ashinatumen.png": {
-            "scale": 1.2,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -6561,6 +6561,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.86,
             "offsetX": 0,
             "offsetY": -7
+        },
+        "/assets/TIBET/__多余__TIBET_02.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -10
+        },
+        "/assets/STEPPE/tuva_qinggunzabu.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/TIBET/__多余__TIBET_01.png": {
+            "scale": 0.85,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {
