@@ -424,7 +424,9 @@ function search(m, radius) {
   const span = Math.max(1, Math.ceil(radius / cell));
   const cx = (m.x / cell) | 0, cy = (m.y / cell) | 0;
   const r2 = radius * radius;
-  for (let gx = cx - span; gx <= cx + span; gx++) for (let gy = cy - span; gy <= cy + span; gy++) {
+  // 🔴 2026-08-13 镜像局偏袒修复：gx 大→小（同主游戏 Scene13WarLayer.search）——
+  //   原版左上优先 + 逮到就返回令攻方（左）兵被往左后拉、守方前压，镜像局攻方仅 ~20% 胜率
+  for (let gx = cx + span; gx >= cx - span; gx--) for (let gy = cy - span; gy <= cy + span; gy++) {
     const a = map.get(HKEY(gx, gy)); if (!a) continue;
     for (let i = 0; i < a.length; i++) {
       const o = a[i];
