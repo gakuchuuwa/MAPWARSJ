@@ -453,7 +453,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/STEPPE/huige_gulipeiluo.png": {
-            "scale": 0.88,
+            "scale": 0.84,
             "offsetX": 0,
             "offsetY": 2
         },

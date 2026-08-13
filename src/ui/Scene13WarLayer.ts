@@ -237,7 +237,7 @@ const ARROW_DUR = 0.42;
  */
 const ARROW_SCALE = 0.7;
 /**
- * 每方同屏人数上限（精灵，1 = SPRITE_TROOPS 兵）。满了就停出兵，**死一个补一个**。
+ * 同屏人数总上限（精灵，1 = SPRITE_TROOPS 兵）——**双方合计**，每方取一半见 SIDE_CAP。
  * 🔴 主人 2026-08-11「双方兵力会在中间形成拥挤」的解法。
  *    根因是出兵速度 > 死人速度：出兵口按固定间隔一直吐人，前线只有最前面几十个够得着敌人，
  *    后面全堵着，越堵越厚。设上限后前线厚度自动稳定，不会堵成一坨。
@@ -246,6 +246,11 @@ const ARROW_SCALE = 0.7;
  *    调大 = 战线更厚更挤，调小 = 更稀疏、仗打得更久。
  */
 const FIELD_CAP = 500;
+/**
+ * 每方场上人数 = 总上限的一半（2026-08-13 主人定）。
+ * 开局两边各 250，谁场上少谁补兵、补到 250 为止——死多少补多少，双方场上人数始终持平。
+ */
+const SIDE_CAP = FIELD_CAP / 2;
 /**
  * 1 精灵 = 多少兵（2026-08-13：10 → 20，修「三万兵演出 168s 超 120s 看门狗」）。
  * 🔴 只改总量语义，**画面不变**：同屏上限 FIELD_CAP=500 精灵不动 → 同屏密度一模一样，
@@ -261,27 +266,17 @@ const SPRITE_TROOPS = 20;
  *    成批投入制造「空档」：一批打光后场上变薄、战线被推着走，新一批涌上来再反推回去，
  *    战线来回摆动，尸体沿途铺开。
  */
-const BATCH_MIN = 50;          // 一批最少多少人
-const BATCH_MAX = 100;         // 一批最多多少人
-const BATCH_TRIGGER = 220;     // 场上掉到这个数以下才增援（不是一掉就补，要留出被推动的时间）
+// ⚠️ 以下三个 2026-08-13 起**已停用**（补兵改为「补到 SIDE_CAP=250 为止」，见 spawnTick）。
+//    留着只为记录旧档位，读代码时别当成还在生效的参数。
+const BATCH_MIN = 50;          // 【已停用】一批最少多少人
+const BATCH_MAX = 100;         // 【已停用】一批最多多少人
+const BATCH_TRIGGER = 220;     // 【已停用】场上掉到这个数以下才增援
 /**
- * 触发线的**优劣势缩放**（2026-08-12 主人「为什么从来没有碾压局」→ 方案③）。
- *
- * 🔴 病根：双方共用一条 220 的触发线，是个**负反馈闸**——强方杀得快 → 对面场上变少 →
- *    对面立刻补满回 220 → **场上人数被强行拉平**。兰彻斯特平方律的雪球（人多 → 死得少 →
- *    人更多）就此被掐死，1.32 倍的伤害优势（sideBonus 夹在 [0.85,1.15]，攻 k / 守 1/k）
- *    无处转化成人数优势，只能转化成「池子消耗快一点」= 血条快一点。
- *    而战线是两团**恒等量**人群的接触面 → 永远钉在中间 → 弱方池子见底，戛然而止。
- *
- * 解法：触发线 ×= clamp(本方剩余兵力占比 ÷ 对方剩余兵力占比, MIN, MAX)。
- *    「占比」= (场上 + 池子) / 本方开局总量，所以**开局双方恒为 1:1、触发线都是 220**，
- *    「开局标尺永远居中」的铁律不破；差距是打出来的，不是发下来的。
- *
- * ⚠️ 这会让优势方赢得更快、战斗更短。胜负方向不变（同一个 sideBonus 决定的），
- *    但过程会从「一路胶着」变成「中段开始倾斜」。嫌碾压太早就把 MAX 往 1.0 收。
+ * 触发线的优劣势缩放 —— **2026-08-13 起已停用**（主人定：改为两边各补到 SIDE_CAP=250）。
+ * 留档：曾用 `clamp(本方剩余占比 ÷ 对方剩余占比, MIN, MAX)` 让优势方场上留更多人。
  */
-const LEAD_SCALE_MIN = 0.5;
-const LEAD_SCALE_MAX = 1.5;
+const LEAD_SCALE_MIN = 0.5;    // 【已停用】
+const LEAD_SCALE_MAX = 1.5;    // 【已停用】
 /**
  * 烙进地面的尸体保留比例（主人 2026-08-12：先「减半」，同日改 30%）。
  * 嫌尸体推挤堆叠、盖住活人才要减。调这个数即可，`bakeCorpse` 的累加器会自动均匀取样。
@@ -738,9 +733,13 @@ export class Scene13WarLayer {
                 const lanes = this.slotsOf(side.region);
                 const n = lanes.length;
                 const pureCav = PURE_CAV.has(side.region);
+                // 🔴 排级随机互换（主人 2026-08-13 定）：步/骑/弩三类在「前后中」三排随机换序，
+                //    双方独立随机。横向 col 结构不变（前排中央3 / 中排两翼+中央 / 后排中央3），
+                //    只换「哪类兵在哪排」——前排可能变骑兵（中央突破）或弩兵（克制循环制衡）。
+                const lanes2 = this.shuffleRows(lanes, pureCav);
                 // 兵力按总量平分到各口（1 精灵 = SPRITE_TROOPS 兵；口少的一边每口出得快）
                 const poolPer = Math.max(1, Math.round(side.troops / SPRITE_TROOPS / n));
-                lanes.forEach((lane, idx) => {
+                lanes2.forEach((lane, idx) => {
                     const key = lane.key;
                     this.ensureType(key);
                     // 布局同原型 __war.html：row 0 最靠中线（越靠前越深入敌阵）
@@ -909,6 +908,23 @@ export class Scene13WarLayer {
             { key: 'lancer' }, { key: 'general_cavalry' }, { key: 'lancer' },
             { key: 'archer' }, { key: 'archer' }, { key: 'archer' },
         ];
+    }
+
+    /**
+     * 排级洗牌（主人 2026-08-13 定）：把出兵口按「排」分组随机换纵深顺序。
+     *   - 混编 9 口 = 前3 / 中3 / 后3 三组随机换序（步/骑/弩谁在前谁在后随机）
+     *   - 纯骑 6 口 = 尖刀1 / 第二排2 / 第三排3 三组随机换序（近战骑 vs 突骑前后随机）
+     *   横向 col 结构不变（FLANK5 / tri 查找表按 idx 固定），只换「哪类兵在哪排」。
+     */
+    private shuffleRows(lanes: { key: string }[], pureCav: boolean): { key: string }[] {
+        const groups = pureCav
+            ? [lanes.slice(0, 1), lanes.slice(1, 3), lanes.slice(3, 6)]
+            : [lanes.slice(0, 3), lanes.slice(3, 6), lanes.slice(6, 9)];
+        for (let i = groups.length - 1; i > 0; i--) {
+            const j = (Math.random() * (i + 1)) | 0;
+            [groups[i], groups[j]] = [groups[j], groups[i]];
+        }
+        return groups.flat();
     }
 
     // ── 场景树/湖：随机布景 + 加载（纯装饰，不参与战斗逻辑，也不进 pending）──
@@ -1168,21 +1184,14 @@ export class Scene13WarLayer {
         for (const f of [0, 1] as const) {
             this.batchCd[f] -= dt;
             if (this.batchCd[f] > 0) continue;
-            // 触发线 = 基线 × 随机抖动 × 优劣势缩放。
-            //   抖动：两方永远同步涨落的话还是原地对称，战线推不动。
-            //   缩放：优势方场上留更多人、劣势方越打越薄 —— 战线因此被推着走（见 LEAD_SCALE_MIN）。
-            const lead = Math.min(LEAD_SCALE_MAX, Math.max(LEAD_SCALE_MIN,
-                remain[f] / Math.max(0.01, remain[1 - f])));
-            const trigger = BATCH_TRIGGER * (0.8 + Math.random() * 0.4) * lead;
-            if (onField[f] > trigger) continue;
+            // 【2026-08-13 主人定】总上限 FIELD_CAP=500，两边各 SIDE_CAP=250；
+            //   谁场上少谁补兵，补到 250 为止。死多少补多少，双方场上人数始终持平。
+            const batchCap = SIDE_CAP - onField[f];
+            if (batchCap <= 0) continue;
 
             const ports = this.spawns.filter(s => s.f === f && s.pool > 0);
             if (!ports.length) continue;
-            let batch = Math.min(
-                BATCH_MIN + Math.floor(Math.random() * (BATCH_MAX - BATCH_MIN + 1)),
-                FIELD_CAP - onField[f],
-            );
-            if (batch <= 0) continue;
+            let batch = batchCap;
 
             // 从**所有还有兵的出兵口**一起涌出，不是一个点
             let pi = 0;
