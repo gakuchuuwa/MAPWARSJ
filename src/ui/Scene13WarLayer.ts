@@ -247,10 +247,15 @@ const ARROW_SCALE = 0.7;
  */
 const FIELD_CAP = 500;
 /**
- * 每方场上人数 = 总上限的一半（2026-08-13 主人定）。
- * 开局两边各 250，谁场上少谁补兵、补到 250 为止——死多少补多少，双方场上人数始终持平。
+ * 每方场上份额的基准 = 总上限的一半 = 250（2026-08-13 主人定）。
+ * 2026-08-13 份额浮动：份额按战线位置浮动，被压方上浮到最多 350、占优方下调到最少 150，
+ * 总量恒 500（同屏密度不变）。开局战线居中 → 两边各 250（「开局标尺居中」铁律不破）。
  */
 const SIDE_CAP = FIELD_CAP / 2;
+/** 份额浮动幅度（±100）：SIDE_CAP=250 时单方份额夹在 [150, 350] */
+const SHARE_SWING = 100;
+/** 战线偏移归一化半宽（px）：战线偏移达此值 → 份额到满 350。150 = 与份额下限 150 呼应 */
+const SHARE_SPAN = 150;
 /**
  * 1 精灵 = 多少兵（2026-08-13：10 → 20，修「三万兵演出 168s 超 120s 看门狗」）。
  * 🔴 只改总量语义，**画面不变**：同屏上限 FIELD_CAP=500 精灵不动 → 同屏密度一模一样，
@@ -1175,18 +1180,35 @@ export class Scene13WarLayer {
     private spawnTick(dt: number): void {
         const onField = [0, 0];
         const flagsHave = [0, 0];
-        for (const m of this.men) if (m.hp > 0) { onField[m.f]++; if (m.flag) flagsHave[m.f]++; }
+        const sumX = [0, 0], cntX = [0, 0];
+        for (const m of this.men) if (m.hp > 0) {
+            onField[m.f]++;
+            if (m.flag) flagsHave[m.f]++;
+            sumX[m.f] += m.x;
+            cntX[m.f]++;
+        }
         // 剩余兵力占比（场上 + 池子，除以本方开局总量）：开局恒为 1，差距全靠打出来
         const poolLeft = [0, 0];
         for (const s of this.spawns) poolLeft[s.f] += Math.max(0, s.pool);
         const remain = [0, 1].map(f => (onField[f] + poolLeft[f]) / this.initPool[f]);
 
+        // 【2026-08-13 主人定·份额浮动】总量 FIELD_CAP=500 恒定，双方份额按战线位置浮动：
+        //   战线 = 双方存活单位平均 x 的中点（贴合「退回战线」），偏向谁谁被压；
+        //   被压方掏池子多上人（最多 350）、占优方同步下调（最少 150）。开局战线居中 → 250:250。
+        const VW = this.canvas?.width ?? 1920;
+        const share = [SIDE_CAP, SIDE_CAP];
+        if (cntX[0] > 0 && cntX[1] > 0) {
+            const midX = (sumX[0] / cntX[0] + sumX[1] / cntX[1]) / 2;
+            const t = Math.max(-1, Math.min(1, (midX - VW / 2) / SHARE_SPAN));   // 正 = 偏守方 = 守方被压
+            share[1] = SIDE_CAP + t * SHARE_SWING;
+            share[0] = FIELD_CAP - share[1];
+        }
+
         for (const f of [0, 1] as const) {
             this.batchCd[f] -= dt;
             if (this.batchCd[f] > 0) continue;
-            // 【2026-08-13 主人定】总上限 FIELD_CAP=500，两边各 SIDE_CAP=250；
-            //   谁场上少谁补兵，补到 250 为止。死多少补多少，双方场上人数始终持平。
-            const batchCap = SIDE_CAP - onField[f];
+            // 谁场上少谁补兵，补到本方浮动份额为止（被压方份额高 → 能掏池子多上人顶回战线）
+            const batchCap = share[f] - onField[f];
             if (batchCap <= 0) continue;
 
             const ports = this.spawns.filter(s => s.f === f && s.pool > 0);

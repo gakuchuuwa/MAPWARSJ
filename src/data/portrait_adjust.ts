@@ -1853,7 +1853,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/STEPPE/wuli_d_celeng.png": {
-            "scale": 1,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -6268,7 +6268,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -37
         },
         "/assets/STEPPE/menggu_d_chengjisihan.png": {
-            "scale": 1.13,
+            "scale": 1.19,
             "offsetX": 0,
             "offsetY": -26
         },
