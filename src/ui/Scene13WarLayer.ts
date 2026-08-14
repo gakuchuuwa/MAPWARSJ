@@ -1467,11 +1467,8 @@ export class Scene13WarLayer {
                 // [2026-08-13 主人定稿方向] 循环克制：弓克骑 → 骑克步 → 步克弓。
                 //   我克你 ×C、你克我 ÷C、同类/无关 ×1 —— 三条边强度一样，一个 COUNTER_C 调松紧。
                 //   象兵（aoe）同一张表：范围伤也乘克制系数（CC 实锤「象兵完全不吃相克」已修）。
-                //   突骑（horse_archer）**射人算远程、被射算骑兵**（主人 2026-08-11：弓骑兵厉害，略强）：
-                //     射骑兵按弓克骑 ×C（骑射克重骑），被远程射仍按骑兵吃 ÷C 减伤。
-                const shooterCls = (m.key === 'horse_archer' && stats.rng > 65)
-                    ? 'ranged'                                  // 突骑射击 = 远程
-                    : (WAR_TYPES[m.key]?.cls ?? 'melee');
+                //   弓骑算骑兵（2026-08-14 主人定稿）：克制统一按骑兵算，不再「射人算远程」。
+                const shooterCls = (WAR_TYPES[m.key]?.cls ?? 'melee');
                 const targetCls = WAR_TYPES[foe.key]?.cls ?? 'melee';
                 const accMul = counterMul(shooterCls, targetCls);
                 if (wt.aoe) this.splash(m, R, stats.dmg * this.sideBonus[m.f] * dt, shooterCls);
