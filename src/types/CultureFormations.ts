@@ -271,14 +271,14 @@ export const KOREA_TIERS: CompositionTier[] = [
     build3x3('armored', 'heavy_cavalry', 'archer')
 ];
 
-/** 5. 日本 纯步 2藤+1弓 (中心仍刀骑) */
+/** 5. 日本 纯步 2藤+1弓 (中心仍刀骑)；前列主兵已换日本武士视觉（2026-08-14） */
 export const JAPAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'armored', count: 3 },
+            { type: 'samurai', count: 3 },
             { type: 'spear', count: 1 },
             { type: 'general_cavalry', count: 1, scale: 1.2 },
             { type: 'spear', count: 1 },
