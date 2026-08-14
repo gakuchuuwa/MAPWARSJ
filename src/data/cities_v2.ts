@@ -1201,7 +1201,7 @@ export const PERIPHERY: CityDataV2[] = [
 
 
     // ── 2026-05-25 唐朝势力新增周边据点(续) ──
-    { id: 'city_suiye', name: '碎叶', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'medium_city', troops: 30000, region: 'WESTERN' },
+    { id: 'city_suiye', name: '碎叶', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'medium_city', troops: 20000, region: 'STEPPE' },
 
 
     { id: 'city_nieduo', name: '孽多', factionId: 'nandou', lat: 35.92, lng: 74.3, type: 'small_city', region: 'TIBET', troops: 30000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处' },
@@ -2377,7 +2377,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.8, lng: 93.5, type: 'pass', troops: 30000, region: 'WESTERN', note: '草原环线西南锚点；文化西域；明羁縻军事卫所' },
-    { id: 'city_bieshibali', name: '务涂城', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'pass', troops: 30000, region: 'STEPPE' },
+    { id: 'city_bieshibali', name: '务涂城', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'pass', troops: 20000, region: 'WESTERN' },
 
 
     { id: 'city_balikun', name: '巴里坤', factionId: 'pulei', lat: 43.6, lng: 93, type: 'small_city', troops: 20000, region: 'HEXI' },
