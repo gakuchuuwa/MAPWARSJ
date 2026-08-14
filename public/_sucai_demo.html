@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SUCAI 素材动画对比 Demo</title>
+<style>
+  body { background:#1a1f26; margin:0; font-family: sans-serif; color:#ddd; }
+  h1 { font-size:18px; padding:14px 20px; margin:0; background:#11151a; }
+  .desc { padding:6px 20px; font-size:13px; color:#9ab; }
+  .row { display:flex; flex-wrap:wrap; gap:14px; padding:10px 20px; }
+  .cell { background:#232a33; border:1px solid #333c47; border-radius:6px; padding:10px; text-align:center; }
+  .cell canvas { background:
+      conic-gradient(#2a3038 90deg,#20252c 90deg 180deg,#2a3038 180deg 270deg,#20252c 270deg) 0 0/24px 24px;
+      border-radius:4px; display:block; }
+  .cell .label { font-size:12px; margin-top:6px; color:#cde; }
+  .cell .meta { font-size:11px; color:#789; }
+  .act-tabs { padding:0 20px 8px; }
+  .act-tabs button { background:#2a323d; color:#cde; border:1px solid #3a4553; border-radius:4px;
+    padding:6px 14px; margin-right:6px; cursor:pointer; font-size:13px; }
+  .act-tabs button.on { background:#3d6fb4; color:#fff; border-color:#5b8ad0; }
+</style>
+</head>
+<body>
+<h1>SUCAI 兵种素材 — 动画播放 Demo（单朝向 128×128 序列帧）</h1>
+<div class="desc">来源：0 A.D. 3D 模型预渲染 2D sprite（用户下载）。透明背景，每动作 8 帧循环。棋盘格 = 透明区。</div>
+<div class="act-tabs" id="tabs"></div>
+<div class="row" id="grid"></div>
+
+<script>
+// ── 兵种清单 ──
+const UNITS = [
+  ['COMPANION_CAVALRY',  '伙伴骑兵（马其顿）'],
+  ['CRETAN_ARCHER',      '克里特弓手'],
+  ['MACEDON',            '马其顿长枪方阵'],
+  ['ROMAN_LEGION',       '罗马军团'],
+  ['HUAXIA_CROSSBOW',    '华夏弩兵'],
+  ['HUAXIA_IRON_CAVALRY','华夏铁骑'],
+  ['STEPPE_HORSE_ARCHER','草原弓骑'],
+  ['WAR_ELEPHANT',       '战象'],
+];
+const ACTS = ['idle','move','attack','damage','death'];
+let curAct = 'idle';
+let fps = 10;
+
+// 加载某兵种某动作的全部帧
+function loadFrames(dir, act) {
+  const imgs = [];
+  for (let i = 0; i < 8; i++) {
+    const im = new Image();
+    im.src = `/SUCAI/${dir}/${act}_${i}.png`;
+    imgs.push(im);
+  }
+  return imgs;
+}
+
+const cells = [];   // {dir, canvas, ctx, frames, act}
+function build() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  cells.length = 0;
+  const tab = document.getElementById('tabs');
+  tab.innerHTML = '';
+  ACTS.forEach(a => {
+    const b = document.createElement('button');
+    b.textContent = a;
+    b.className = a === curAct ? 'on' : '';
+    b.onclick = () => { curAct = a; build(); };
+    tab.appendChild(b);
+  });
+  UNITS.forEach(([dir, name]) => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const cv = document.createElement('canvas');
+    cv.width = 128; cv.height = 128;
+    cell.appendChild(cv);
+    const lb = document.createElement('div');
+    lb.className = 'label'; lb.textContent = name;
+    cell.appendChild(lb);
+    const mt = document.createElement('div');
+    mt.className = 'meta'; mt.textContent = dir;
+    cell.appendChild(mt);
+    grid.appendChild(cell);
+    cells.push({ dir, ctx: cv.getContext('2d'), frames: loadFrames(dir, curAct), act: curAct });
+  });
+}
+
+// 动画循环：每个 cell 独立相位
+let t = 0;
+function loop() {
+  t += 1;
+  const frameIdx = Math.floor(t * fps / 60) % 8;
+  for (const c of cells) {
+    if (c.act !== curAct) continue;
+    const im = c.frames[frameIdx];
+    if (im.complete && im.naturalWidth) c.ctx.drawImage(im, 0, 0, 128, 128);
+  }
+  requestAnimationFrame(loop);
+}
+build();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
