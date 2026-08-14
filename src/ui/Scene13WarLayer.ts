@@ -1339,17 +1339,22 @@ export class Scene13WarLayer {
         if (m.wing !== 0) {
             const cen = this.enemyCen[1 - m.f];
             if (cen) {
-                // 🔴 包抄点随距离收敛（2026-08-13 修「边路军无法向中间移动」）：
-                //    原目标恒为重心 + 固定偏移（√240²+330²≈408px 空地），两翼骑兵绕到侧后
-                //    就停在敌军外围够不着任何敌人，永远不打中间。改为离重心越近偏移越小，
-                //    最终直扑重心 → 「绕后 → 收拢 → 夹击中间」的钳形，不是卡在外围打转。
+                // 🔴 两翼包抄（2026-08-13 立，2026-08-14 修成两段式）：
+                //    绕后点 = 重心 + 固定偏移（√240²+330²≈408px）。骑兵先绕到敌军侧后，
+                //    一进包抄圈（离重心 ≤408px）就直扑重心 → 「绕后 → 夹击中间」的钳形。
+                //    ⚠️ 不能用「偏移 × 收敛系数」：目标点到重心距离 = 408 × converge，
+                //    而 converge 被 min(1,…) 钳住——只要 dist ≥ reach 就恒为 1，目标恒是固定 408px 空地，
+                //    骑兵绕到侧后即停死，永远打不到中间（08-14 线性/平方两版均实测卡死在 408px）。
+                //    两段式保证骑兵持续向内收拢，最终贴脸接敌。禁止改回收敛系数版。
                 const dx = cen.x - m.x, dy = cen.y - m.y;
                 const dist = Math.hypot(dx, dy) || 1;
-                const reach = Math.hypot(WING_BACK, WING_SIDE);   // 包抄点离重心的基准距离
-                const converge = Math.min(1, dist / reach);        // 离重心越近越收拢
-                const backX = (m.f === 0 ? WING_BACK : -WING_BACK) * converge;   // 攻方绕守方右后，守方绕攻方左后
-                const sideY = (m.wing > 0 ? -WING_SIDE : WING_SIDE) * converge;
-                return { x: cen.x + backX, y: cen.y + sideY };
+                const reach = Math.hypot(WING_BACK, WING_SIDE);   // 包抄圈半径（≈408px）
+                if (dist > reach) {
+                    const backX = (m.f === 0 ? WING_BACK : -WING_BACK);   // 攻方绕守方右后，守方绕攻方左后
+                    const sideY = (m.wing > 0 ? -WING_SIDE : WING_SIDE);  // 上翼绕上、下翼绕下
+                    return { x: cen.x + backX, y: cen.y + sideY };
+                }
+                return cen;   // 进了包抄圈 → 直扑重心，与中央敌军接战
             }
             return null;
         }
