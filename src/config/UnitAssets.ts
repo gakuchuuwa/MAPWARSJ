@@ -582,6 +582,13 @@ export const SPRITE_PATHS = {
             DAMAGE: [594, 595, 596, 597, 598, 599, 600, 601].map(id => `/SUCAI/S10DB/${id}-1.png`),
             DEATH: [602, 603, 604, 605, 606, 607, 608, 609].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
+        // 【日本武士】Samurai（8方向，AoE2 原版素材提取，2026-08-14 替换日本文化藤甲兵视觉）
+        'samurai': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/death_${dir}.png`),
+        },
         'lancer': {
             // [User Request] Simple 'lancer' mapped to light cavalry assets
             MOVE: [154, 155, 156, 157, 158, 159, 160, 161].map(id => `/SUCAI/S10DB/${id}-1.png`),

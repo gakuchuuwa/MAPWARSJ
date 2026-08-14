@@ -67,6 +67,7 @@ const WAR_TYPES: Record<string, WarType> = {
     spear:          { name: '青州兵', cls: 'melee', sz: 1, hp: 120, dmg: 58, spd: 52 },// 精锐枪兵：攻高脆
     axe:            { name: '蛮族兵', cls: 'melee', sz: 1, hp: 98, dmg: 70, spd: 55 }, // 蛮族：极攻·脆
     armored:        { name: '藤甲兵', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 藤甲：肉，藤编轻便
+    samurai:        { name: '日本武士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 视觉替换藤甲兵，数值不变
     elephant:       { name: '象兵',   cls: 'melee', sz: 1.6, aoe: true, spd: 40 },
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
     lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
