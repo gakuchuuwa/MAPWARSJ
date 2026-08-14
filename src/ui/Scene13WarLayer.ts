@@ -1376,6 +1376,18 @@ export class Scene13WarLayer {
         return null;
     }
 
+    /**
+     * 战场边界 = 屏幕：兵的任何移动（追目标 / 风筝后撤 / 软推挤）都不许走出屏幕。
+     * 🔴 2026-08-13 修「寻敌走出屏幕」：三处移动原本都不 clamp，两翼包抄点（敌军重心 + 固定
+     *    偏移 WING_BACK/WING_SIDE）常在屏外，骑兵一路走出去。统一在此收口，margin = 半身 UNIT_PX/2。
+     */
+    private fieldBound(x: number, y: number): [number, number] {
+        const vw = this.canvas?.width ?? 0, vh = this.canvas?.height ?? 0;
+        if (vw <= 0 || vh <= 0) return [x, y];
+        const mx = UNIT_PX * 0.5, my = UNIT_PX * 0.5;
+        return [Math.min(Math.max(x, mx), vw - mx), Math.min(Math.max(y, my), vh - my)];
+    }
+
     private step(dt: number): void {
         if (this.over) return;
         this.spawnTick(dt);
@@ -1404,7 +1416,7 @@ export class Scene13WarLayer {
                     m.aimT = (m.aimT ?? 0) - 0.2;
                     if (m.aimT <= 0) {
                         const aim = this.aimAt(m);
-                        if (aim) { m.tx = aim.x; m.ty = aim.y; }
+                        if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
                         m.aimT = 0.5;
                     }
                 }
@@ -1515,6 +1527,8 @@ export class Scene13WarLayer {
         for (const m of this.men) { m.atkers = m.atkNext; m.atkNext = 0; }
 
         this.separate(dt);
+        // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
+        for (const m of this.men) { [m.x, m.y] = this.fieldBound(m.x, m.y); }
         // 旗手战死 → 原地留下一面倒下的军旗。men 数组只在这一处出人，死亡侦测放这里最稳。
         for (const m of this.men) {
             if (m.hp <= 0 && m.flag) this.fallenFlags.push({ x: m.x, y: m.y, f: m.f, t: 0, fo: m.fo });

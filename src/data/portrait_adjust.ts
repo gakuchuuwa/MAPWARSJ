@@ -6183,7 +6183,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 18
         },
         "/assets/LATIN/kasidiliya_afangsuoshiyishi.png": {
-            "scale": 1.03,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 3
         },

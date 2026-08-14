@@ -51,6 +51,6 @@ export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
   weiwuer: { name: '回部伯克卫', tier: 4 },   // 玉尔滚·回部伯克
     shanshan: { name: '楼兰弓手', tier: 3 },
     tajikezu: { name: '帕米尔山民', tier: 4 },
-    xiliao: { name: '斡耳朵亲卫', tier: 1 },
     khoja: { name: '白山派卫兵', tier: 4 },
+    chagatai: { name: '戊己屯军', tier: 2 },
 };

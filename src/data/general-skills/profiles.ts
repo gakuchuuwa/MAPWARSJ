@@ -729,7 +729,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-            chagatai_genggong: { generalId: 'chagatai_genggong', tier: 'ordinary', tacticalSkillId: 'ts_368', advantageSkillId: 'ts_012', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_368', atkAdvantageSkillId: 'ts_135', atkBalanceSkillId: 'ts_713', atkDisadvantageSkillId: 'ts_100', defAdvantageSkillId: 'ts_783', defBalanceSkillId: 'ts_368', defDisadvantageSkillId: 'ts_386', aptitude: 'reverse' , attackStyle: 'defense'},
+    chagatai_genggong: { generalId: 'chagatai_genggong', tier: 'ordinary', tacticalSkillId: 'ts_135', advantageSkillId: 'ts_012', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_368', atkAdvantageSkillId: 'ts_135', atkBalanceSkillId: 'ts_713', atkDisadvantageSkillId: 'ts_100', defAdvantageSkillId: 'ts_783', defBalanceSkillId: 'ts_368', defDisadvantageSkillId: 'ts_386', aptitude: 'reverse', attackStyle: 'defense' },
 
 
 
