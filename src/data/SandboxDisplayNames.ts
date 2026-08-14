@@ -712,7 +712,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
     'jinchuan': '骏河',
 'totomi': '远江',
 'owari': '尾张',
-    'xuan': '宣府',
+'xuan': '宣',
     'yangshe': '羊舌',
 'sima_d': '河内',
 'liguo': '潞',

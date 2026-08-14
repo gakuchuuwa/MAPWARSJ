@@ -2288,15 +2288,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_hamamatsu', name: '浜松城', factionId: 'totomi', lat: 34.71, lng: 137.73, type: 'pass', troops: 30000, region: 'JAPAN' },
 
     { id: 'city_atsuta', name: '热田城', factionId: 'owari', lat: 35.12, lng: 136.95, type: 'small_city', troops: 20000, region: 'JAPAN' },
-    {
-        id: 'city_xuanhua',
-        name: '宣化',
-        factionId: 'xuan',
-        lat: 40.6090, lng: 115.0520,
-        type: 'medium_city',
-        troops: 30000,
-        
-        note: '徐达宣府筑城防守', region: 'NORTH' },
+    { id: 'city_xuanhua', name: '宣化', factionId: 'xuan', lat: 40.609, lng: 115.052, type: 'medium_city', troops: 20000, region: 'NORTH' },
     { id: 'city_xinghe', name: '兴和城', factionId: 'chahar', lat: 41.15, lng: 114.7, type: 'small_city', troops: 30000, region: 'STEPPE', note: '明兴和守御千户所/张北古城；元高原县·兴和路故地' },
 
 

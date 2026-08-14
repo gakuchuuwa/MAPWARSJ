@@ -2091,7 +2091,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        xuan_xuda: { generalId: 'xuan_xuda', tier: 'famous', tacticalSkillId: 'ts_654', advantageSkillId: 'ts_654', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_655', atkAdvantageSkillId: 'ts_089', atkBalanceSkillId: 'ts_1000', atkDisadvantageSkillId: 'ts_999', defAdvantageSkillId: 'ts_656', defBalanceSkillId: 'ts_246', defDisadvantageSkillId: 'ts_998', aptitude: 'create' , attackStyle: 'attack'},
+    xuan_xuda: { generalId: 'xuan_xuda', tier: 'famous', tacticalSkillId: 'ts_089', advantageSkillId: 'ts_654', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_655', atkAdvantageSkillId: 'ts_089', atkBalanceSkillId: 'ts_1000', atkDisadvantageSkillId: 'ts_999', defAdvantageSkillId: 'ts_656', defBalanceSkillId: 'ts_246', defDisadvantageSkillId: 'ts_998', aptitude: 'create', attackStyle: 'attack' },
 
 
 

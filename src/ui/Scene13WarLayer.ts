@@ -1341,12 +1341,20 @@ export class Scene13WarLayer {
      */
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // 两翼兵（上翼/下翼）：绕到敌军侧后包抄，不是朝最近敌兵/敌口走。
-        // 打完本路的敌人后不退而求其次去中央，而是绕到敌军重心侧后夹击。
         if (m.wing !== 0) {
             const cen = this.enemyCen[1 - m.f];
             if (cen) {
-                const backX = m.f === 0 ? WING_BACK : -WING_BACK;   // 攻方绕到守方右后，守方绕到攻方左后
-                return { x: cen.x + backX, y: cen.y + (m.wing > 0 ? -WING_SIDE : WING_SIDE) };
+                // 🔴 包抄点随距离收敛（2026-08-13 修「边路军无法向中间移动」）：
+                //    原目标恒为重心 + 固定偏移（√240²+330²≈408px 空地），两翼骑兵绕到侧后
+                //    就停在敌军外围够不着任何敌人，永远不打中间。改为离重心越近偏移越小，
+                //    最终直扑重心 → 「绕后 → 收拢 → 夹击中间」的钳形，不是卡在外围打转。
+                const dx = cen.x - m.x, dy = cen.y - m.y;
+                const dist = Math.hypot(dx, dy) || 1;
+                const reach = Math.hypot(WING_BACK, WING_SIDE);   // 包抄点离重心的基准距离
+                const converge = Math.min(1, dist / reach);        // 离重心越近越收拢
+                const backX = (m.f === 0 ? WING_BACK : -WING_BACK) * converge;   // 攻方绕守方右后，守方绕攻方左后
+                const sideY = (m.wing > 0 ? -WING_SIDE : WING_SIDE) * converge;
+                return { x: cen.x + backX, y: cen.y + sideY };
             }
             return null;
         }

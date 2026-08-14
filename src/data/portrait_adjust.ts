@@ -192,11 +192,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -36
         },
-        "/assets/DIANQIAN/chenla_duyebamoqishi.png": {
-            "scale": 0.84,
-            "offsetX": 0,
-            "offsetY": -44
-        },
         "/assets/wuzhou/wuzhou_d_wuzetian.png": {
             "scale": 1.38,
             "offsetX": 1,
@@ -1692,11 +1687,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/STEPPE/ashina_ashinayandou.png": {
-            "scale": 0.88,
-            "offsetX": 0,
-            "offsetY": -25
-        },
         "/assets/STEPPE/bayegu_qulishi.png": {
             "scale": 0.88,
             "offsetX": 0,
@@ -2706,11 +2696,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 11
-        },
-        "/assets/STEPPE/ashide_ashidejieli.png": {
-            "scale": 0.94,
-            "offsetX": 0,
-            "offsetY": -4
         },
         "/assets/NORTHEAST/huimo_gaoyanshou.png": {
             "scale": 1.12,
@@ -4621,11 +4606,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": -7
-        },
-        "/assets/STEPPE/duolu_ashinahelu.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 19
         },
         "/assets/TIBET/shaodang_mitang.png": {
             "scale": 1.07,
@@ -6552,11 +6532,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 31
         },
-        "/assets/STEPPE/tujue_ashinatumen.png": {
-            "scale": 1.18,
-            "offsetX": 0,
-            "offsetY": -7
-        },
         "/assets/STEPPE/__闲置__STEPPE_77.png": {
             "scale": 0.86,
             "offsetX": 0,
@@ -6576,6 +6551,81 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.85,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/STEPPE/033d6e40-aca6-4885-9964-6474f48045b6.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/STEPPE/28f06a6a-acfd-4c5f-8810-410d8069b827.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/STEPPE/3f65b26c-592e-43de-8a86-2267cab3fdbb.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/STEPPE/db5c6c7c-40da-4557-8065-d6cd60c115fe.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -11
+        },
+        "/assets/STEPPE/__闲置__STEPPE_79.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/STEPPE/ashide_ashidejieli.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -2
+        },
+        "/assets/STEPPE/__闲置__STEPPE_80.png": {
+            "scale": 0.88,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/STEPPE/ashina_ashinayandou.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/STEPPE/__闲置__STEPPE_81.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 19
+        },
+        "/assets/STEPPE/duolu_ashinahelu.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 3
+        },
+        "/assets/STEPPE/__闲置__STEPPE_82.png": {
+            "scale": 1.18,
+            "offsetX": 0,
+            "offsetY": -7
+        },
+        "/assets/STEPPE/tujue_ashinatumen.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 20
+        },
+        "/assets/DIANQIAN/bee5f838-b4e8-432c-8a3a-9c9eb23aed78.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -22
+        },
+        "/assets/DIANQIAN/__闲置__DIANQIAN_31.png": {
+            "scale": 0.84,
+            "offsetX": 0,
+            "offsetY": -44
+        },
+        "/assets/DIANQIAN/chenla_duyebamo.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": -22
         }
     },
     "folderGuides": {

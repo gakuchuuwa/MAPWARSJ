@@ -658,7 +658,7 @@ export class CityAssetManager {
 'qing': '庆',
         'jingmen': '荆门',
         'pingyuan': '高唐',
-        'xuan': '宣府',
+'xuan': '宣',
         'yiwu': '伊吾',
 
 'ningkou': '居延',

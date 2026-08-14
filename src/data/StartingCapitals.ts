@@ -650,7 +650,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'jinchuan': 'city_junfucheng',
 'totomi': 'city_hamamatsu',
 'owari': 'city_atsuta',
-    'xuan': 'city_xuanhua',
+'xuan': 'city_xuanhua',
     'yangshe': 'city_tongdi',
 'sima_d': 'city_huojia',
 'liguo': 'city_eyu',
