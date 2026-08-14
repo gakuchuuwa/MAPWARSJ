@@ -215,7 +215,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xinluo: { generalId: 'xinluo_jinyuxin', generalName: '金庾信', portrait: '/assets/KOREA/xinluo_jinyuxin.png' },
     edo: { generalId: 'edo_dechuanjiakang', generalName: '德川家康', portrait: '/assets/JAPAN/edo_dechuanjiakang.png' },
     seljuq: { generalId: 'seljuq_sangjiaer', generalName: '桑贾尔', portrait: '/assets/CENTRAL_ASIA/seljuq_sangjiaer.png' },
-    chenla: { generalId: 'chenla_duyebamo', generalName: '阇耶跋摩', portrait: '/assets/DIANQIAN/chenla_duyebamoqishi.png' },
+    chenla: { generalId: 'chenla_duyebamo', generalName: '阇耶跋摩', portrait: '/assets/DIANQIAN/chenla_duyebamo.png' },
     sizhou: { generalId: 'sizhou_hanshizhong', generalName: '韩世忠', portrait: '/assets/zhaosong/sizhou_hanshizhong.png' },
     // ── 日本区 2026-06-18 ──
     kai: { generalId: 'kai_wutianxinxuan', generalName: '武田信玄', portrait: '/assets/JAPAN/kai_wutianxinxuan.png' },

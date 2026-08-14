@@ -46,7 +46,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   // 恒山军除名（泛称无固定番号）
   dai_d: { name: '左射军', tier: 4 },         // 灵仙·石敬瑭嫡系（缺乏极其著名的战术高光，降T3）
   dongdan: { name: '东丹卫兵', tier: 4 },       // 敖东城·耶律倍东丹国（缺乏极其著名的战术高光，降T3）
-  xuan: { name: '宣大劲骑', tier: 1 },          // 宣大（宣府大同）是明代九边最核心防线，抵御蒙古的最核心野战/戍卫主力，升入T1战略
+    xuan: { name: '宣大劲骑', tier: 1 },
     zhe_d: { name: '折家将兵', tier: 3 },
     shanrong: { name: '蓟镇标营', tier: 3 },
   pingyuan: { name: '平原义军', tier: 3 },      // 颜真卿首倡义兵，无战术突击高光，属于常规义军，降回T3
