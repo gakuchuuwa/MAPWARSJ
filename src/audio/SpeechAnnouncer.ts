@@ -596,14 +596,6 @@ export class SpeechAnnouncer {
     this.speak(text);
   }
 
-  /** 全军覆没 */
-  public announceAnnihilation(factionId: string, _legionName: string, cityName: string, _generalId?: string): void {
-    if (!this.enabled) return;
-    const text = `${getFactionNameForSpeech(factionId)}军于${cityName}外，全军覆没`;
-    console.log("[Speech] 覆没:", text);
-    this.speak(text);
-  }
-
   /** 排队旁观（第三方攻城等待）：跟随军团固定有武将和精锐。 */
   public announceQueueWait(opts: {
     generalName: string;
