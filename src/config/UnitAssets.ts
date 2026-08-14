@@ -657,6 +657,70 @@ export const SPRITE_PATHS = {
             DAMAGE: [973, 974, 975, 976, 977, 978, 979, 980].map(id => `/SUCAI/S10DB/${id}-1.png`),
             DEATH: [981, 982, 983, 984, 985, 986, 987, 988].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
+        // 【马其顿方阵】Macedonian Phalanx（8方向萨里沙超长矛方阵）
+        'macedon_phalanx': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/damage_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDON/death_${dir}.png`),
+        },
+        // 【马其顿伙友重骑兵】Companion Cavalry（8方向突骑）
+        'companion_cavalry': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/damage_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPANION_CAVALRY/death_${dir}.png`),
+        },
+        // 【克里特弓箭手 / 希腊轻步兵】Cretan Archer
+        'cretan_archer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRETAN_ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRETAN_ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRETAN_ARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRETAN_ARCHER/damage_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRETAN_ARCHER/death_${dir}.png`),
+        },
+        // 【罗马军团步兵】Roman Legionary（8方向方盾重步兵）
+        'roman_legionary': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/damage_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ROMAN_LEGION/death_${dir}.png`),
+        },
+        // 【华夏具装铁骑 / 玄甲军】Huaxia Iron Cavalry（8方向具装重骑）
+        'huaxia_iron_cavalry': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/damage_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_IRON_CAVALRY/death_${dir}.png`),
+        },
+        // 【草原游牧骑射手 / 曼古歹】Steppe Horse Archer（8方向回身射箭弓骑）
+        'steppe_horse_archer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/damage_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_HORSE_ARCHER/death_${dir}.png`),
+        },
+        // 【华夏神臂弩手 / 强弩兵】Huaxia Crossbow（8方向重弩）
+        'huaxia_crossbow': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/damage_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/death_${dir}.png`),
+        },
+        // 【古代装甲战象】War Elephant（8方向披甲战象与象兜箭塔）
+        'war_elephant': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/damage_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/death_${dir}.png`),
+        },
     },
     // 旧 public/assets/avg/NPC 与 /assets/NPC/ 三帧 PNG 已废弃（勿引用 avg/）。
     // 沙盒/map 军团贴图统一走 LEGION + UNIT_ASSETS（S10DB 八向）。
