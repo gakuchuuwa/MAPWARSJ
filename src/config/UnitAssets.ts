@@ -587,6 +587,8 @@ export const SPRITE_PATHS = {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/attack_${dir}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/idle_${dir}.png`),
+            // AoE2 原版武士无受击动画，DAMAGE 复用攻击帧（受击时表现挥刀姿态）
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/death_${dir}.png`),
         },
         'lancer': {
