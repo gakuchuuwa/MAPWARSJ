@@ -183,7 +183,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -9
         },
         "/assets/xianqin/yin_dixin.png": {
-            "scale": 1.03,
+            "scale": 0.97,
             "offsetX": 20,
             "offsetY": -35
         },
@@ -198,7 +198,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 23
         },
         "/assets/zhaosong/song_zhaokuangyin.png": {
-            "scale": 0.93,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -11
         },
@@ -453,7 +453,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 2
         },
         "/assets/NORTHEAST/bohai_dazuorong.png": {
-            "scale": 1.04,
+            "scale": 1,
             "offsetX": 11,
             "offsetY": 14
         },
@@ -1622,11 +1622,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/NORTHEAST/yilou_naoya.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": 22
-        },
         "/assets/STEPPE/xibo_d_tubote.png": {
             "scale": 0.85,
             "offsetX": 0,
@@ -2771,11 +2766,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": 4,
             "offsetY": -30
-        },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_32.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 13
         },
         "/assets/litang/song2_houjunji.png": {
             "scale": 1.04,
@@ -6626,6 +6616,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": -22
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_42.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 22
+        },
+        "/assets/NORTHEAST/yilou_naoya.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 13
         }
     },
     "folderGuides": {
