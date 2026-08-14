@@ -283,8 +283,10 @@ const CORPSE_FADE = 5.0;
  * 信息层**——高于人头、竖直、成色块。这几轮改的都是「让战线动起来」，动了要看得见才算数。
  *
  * 🔴 旗手身份在**出生时**定死，不是每帧按比例现挑：现挑会让旗子每帧跳到不同的人身上 = 闪烁乱窜。
- *    每 FLAG_EVERY 个精灵一面旗，于是两方旗数之比天然 = 实时兵力比，不需要额外的比例逻辑；
- *    旗手战死后由后续出生的兵自动补位（见 spawnTick 的 want/have 计数）。
+ *    🔴 按出兵口独立计数（2026-08-14 主人修「旗帜分布不平均」）：每口每出满 FLAG_EVERY 个精灵出一面旗，
+ *       旗帜天然平均铺在每个出兵口，而不是按全局出生顺序落在固定偏移的少数口
+ *       （旧逻辑 want/have 全局计数：纯骑 6 口时 20%6=2，旗手只落 {0,2,4}，一半的口永远没旗）。
+ *    旗手战死后由本口后续出兵自然补位（spawned 跨批累计，不重置）。
  */
 const FLAG_EVERY = 20;
 /**
@@ -387,6 +389,8 @@ interface WarSpawn {
     x: number;
     y: number;
     pool: number;
+    /** 本口累计已出生精灵数（旗手判定：每满 FLAG_EVERY 出一面旗，按口平均分布，跨批不重置） */
+    spawned: number;
     /** 两翼标记：0=中央，1=上翼，-1=下翼（两翼兵抄后绕行用） */
     wing: number;
 }
@@ -755,6 +759,7 @@ export class Scene13WarLayer {
                     this.spawns.push({
                         f: side.f, key, x, y,
                         pool: poolPer,
+                        spawned: 0,
                         wing: pureCav ? 0 : (cell.col === 0 ? 1 : cell.col === 4 ? -1 : 0),
                     });
                 });
@@ -1164,11 +1169,7 @@ export class Scene13WarLayer {
 
     private spawnTick(dt: number): void {
         const onField = [0, 0];
-        const flagsHave = [0, 0];
-        for (const m of this.men) if (m.hp > 0) {
-            onField[m.f]++;
-            if (m.flag) flagsHave[m.f]++;
-        }
+        for (const m of this.men) if (m.hp > 0) onField[m.f]++;
 
         // 【2026-08-13 主人定·成批补】开局双方各出 300；之后一方场上 < 150 才再补 300。
         //   成批补（不是死一个补一个），一方打掉一半才补一波，靠成批的兵反推战线。
@@ -1197,12 +1198,9 @@ export class Scene13WarLayer {
                 const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f];
                 if (!tgt) break;
                 // 旗手身份出生时定死（勿改成每帧现挑，见 FLAG_EVERY）。
-                // want = 本方该有几面旗（含正在出生的这一批），少了就让这个兵扛旗 ——
-                // 一条式子同时完成「均匀分配」和「旗手战死后补位」，不需要额外的计数器。
-                onField[s.f]++;
-                const wantFlags = Math.floor(onField[s.f] / FLAG_EVERY);
-                const bearer = flagsHave[s.f] < wantFlags;
-                if (bearer) flagsHave[s.f]++;
+                // 每个出兵口独立计数：本口每出满 FLAG_EVERY 个精灵出一面旗 → 旗帜按口平均分布。
+                s.spawned++;
+                const bearer = (s.spawned % FLAG_EVERY === 0);
                 this.men.push({
                     f: s.f, key: s.key,
                     x: s.x + (Math.random() - .5) * 60, y: s.y + (Math.random() - .5) * 110,
