@@ -29,6 +29,15 @@ public/8dixingtu
 public/9dixingtu
 public/10dixingtu
 public/11dixingtu
+# 本地士兵精灵原始素材（提取/下载自商业游戏：要塞/帝国时代/0 A.D.），运行时已用精简精灵替代。
+# STRONGHOLD_RESOURCES(17348)/_downloads(3053) 是解压/下载的原始资源，src 零引用，混进 public/SUCAI
+# 把 CLI 上传顶过 Vercel 15000 文件上限（2026-08-14 自动部署停摆根因）。整批排除，本地素材保留不动。
+public/SUCAI/STRONGHOLD_RESOURCES
+public/SUCAI/_downloads
+public/SUCAI/0AD_UNITS
+public/SUCAI/samurai_sprites
+public/SUCAI/STRONGHOLD_EUROPE
+public/SUCAI/AOE1_DE_UNITS
 # 根目录 map/ 是同四套瓦片的重复副本，纯本地资料，不上传。
 # 必须写成 /map 锁死根目录——写 map/ 会把 src/map/ 也排除掉，远端构建会报
 # Could not resolve "../map/GameMap"（2026-08-01 踩过）。
