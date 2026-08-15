@@ -241,24 +241,35 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
 // 15 文化区阵型 (用户 2026-05-30 拍板)
 // ============================================================
 
-/** 1. 中原 步骑 盾+轻+弩 */
+/** 1. 中原 火矛兵+诸葛弩+虎豹骑（2026-08-15 主人定：全决定版，中间刀骑取消→诸葛弩，风格统一） */
 export const CENTRAL_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'shield', count: 3 },
-            { type: 'lancer', count: 1 },
-            { type: 'general_cavalry', count: 1 },
-            { type: 'lancer', count: 1 },
-            { type: 'crossbow', count: 3 }
+            { type: 'fire_lancer', count: 3 },   // Row 0 前 = 火矛兵 步兵（帝国决定）
+            { type: 'chukonu', count: 1 },       // Row 1 左 = 诸葛弩 弩手（帝国决定）
+            { type: 'chukonu', count: 1 },       // Row 1 中 = 诸葛弩（原刀骑将领，取消）
+            { type: 'chukonu', count: 1 },       // Row 1 右 = 诸葛弩 弩手（帝国决定）
+            { type: 'tiger_rider', count: 3 }    // Row 2 后 = 虎豹骑 骑兵（帝国决定）
         ]
     }
 ];
-/** 2. 北方 步骑 枪+弓骑+弩 */
+/** 2. 北方 辽刀+火矛兵+鲜卑掠骑兵（2026-08-15 主人定：全决定版，中间刀骑取消→火矛兵，风格统一） */
 export const NORTH_TIERS: CompositionTier[] = [
-    build3x3('spear', 'horse_archer', 'crossbow')
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'liao_dao', count: 3 },      // Row 0 前 = 辽刀 步兵（帝国决定）
+            { type: 'fire_lancer', count: 1 },   // Row 1 左 = 火矛兵 步兵（帝国决定）
+            { type: 'fire_lancer', count: 1 },   // Row 1 中 = 火矛兵（原刀骑将领，取消）
+            { type: 'fire_lancer', count: 1 },   // Row 1 右 = 火矛兵 步兵（帝国决定）
+            { type: 'xianbei_raider', count: 3 } // Row 2 后 = 鲜卑掠骑兵 骑兵（帝国决定）
+        ]
+    }
 ];
 
 /** 3. 东北 铁浮图+钦察+精锐长弓兵（2026-08-15 主人定：全决定版，中间刀骑取消→钦察，风格统一） */
@@ -308,16 +319,16 @@ export const JAPAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 6. 草原 纯骑 刀骑1+弓骑5 123（骑射云：尖刀骑领，中后排全弓骑） */
+/** 6. 草原 蒙古突骑+怯薛军（2026-08-15 主人定：全决定版，纯骑 1-2-3 三角，怯薛军尖刀领前 + 蒙古突骑骑射中后） */
 export const STEPPE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'general_cavalry', count: 1, scale: 1.2 },
-            { type: 'horse_archer', count: 2 },
-            { type: 'horse_archer', count: 3 }
+            { type: 'keshik', count: 1 },      // Row 0 尖刀 = 怯薛军 近战骑（帝国决定，原刀骑位置）
+            { type: 'mangudai', count: 2 },    // Row 1 中 = 蒙古突骑 弓骑（帝国决定，原弓骑位置）
+            { type: 'mangudai', count: 3 }     // Row 2 后 = 蒙古突骑 弓骑（帝国决定）
         ]
     }
 ];
@@ -366,33 +377,33 @@ export const JIANGNAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 10. 岭南 步象 轻步+象+弓（俚僚轻装步 + 交趾象兵）— 2026-08-04 拍板定稿 */
+/** 10. 岭南 刀剑手+帝王掷矛手+藤弓兵（2026-08-15 主人定：全决定版，中间刀骑取消→帝王掷矛手，风格统一；无「精锐刀剑手」一说） */
 export const LINGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'light_infantry', count: 3 },
-            { type: 'elephant', count: 1 },
-            { type: 'general_cavalry', count: 1, scale: 1.2 },
-            { type: 'elephant', count: 1 },
-            { type: 'archer', count: 3 }
+            { type: 'jian_swordsman', count: 3 },     // Row 0 前 = 刀剑手 步兵（帝国决定，吴国 Jian Swordsman）
+            { type: 'imperial_skirmisher', count: 1 },// Row 1 左 = 帝王掷矛手 掷矛手（帝国决定）
+            { type: 'imperial_skirmisher', count: 1 },// Row 1 中 = 帝王掷矛手（原刀骑将领，取消）
+            { type: 'imperial_skirmisher', count: 1 },// Row 1 右 = 帝王掷矛手 掷矛手（帝国决定）
+            { type: 'rattan_archer', count: 3 }       // Row 2 后 = 藤弓兵 弓手（帝国决定）
         ]
     }
 ];
-/** 11. 滇缅 纯步 2藤+1弩 */
+/** 11. 滇缅 象兵+爪刀勇士+飞镖骑兵（2026-08-15 主人定：全决定版，中间刀骑取消→爪刀勇士，风格统一） */
 export const DIANQIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'armored', count: 3 },
-            { type: 'elephant', count: 1 },
-            { type: 'general_cavalry', count: 1, scale: 1.2 },
-            { type: 'elephant', count: 1 },
-            { type: 'crossbow', count: 3 }
+            { type: 'war_elephant', count: 3 },   // Row 0 前 = 象兵 冲阵（帝国决定，DE 素材自带尺寸）
+            { type: 'karambit_warrior', count: 1 },// Row 1 左 = 爪刀勇士 步兵（帝国决定）
+            { type: 'karambit_warrior', count: 1 },// Row 1 中 = 爪刀勇士（原刀骑将领，取消）
+            { type: 'karambit_warrior', count: 1 },// Row 1 右 = 爪刀勇士 步兵（帝国决定）
+            { type: 'arambai', count: 3 }         // Row 2 后 = 飞镖骑兵 弓骑（帝国决定）
         ]
     }
 ];
@@ -408,15 +419,15 @@ export const TIBET_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 13. 中亚 纯骑三角（轻骑前锋 + 弓骑后排）— MovementClass=CAVALRY */
+/** 13. 中亚 贵族铁骑+精锐钦察（2026-08-15 主人定：全决定版，纯骑 3+3，贵族铁骑前锋 + 精锐钦察弓骑后排）— MovementClass=CAVALRY */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'lancer', count: 3 },
-            { type: 'horse_archer', count: 3 }
+            { type: 'boyar', count: 3 },         // Row 0 前 = 贵族铁骑 近战重骑（帝国决定）
+            { type: 'elite_kipchak', count: 3 }  // Row 1 后 = 精锐钦察 弓骑（帝国决定）
         ]
     }
 ];
@@ -435,32 +446,65 @@ export const WESTERN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 15. 西亚 盾阵铁骑（前大盾中斧骑后弓手：拜占庭/萨珊铁甲圣骑兵）— MovementClass=MIXED，2026-08-02 定稿 */
+/** 15. 西亚 精锐复合弓箭手+东方剑士+重装骆驼兵（2026-08-15 主人定：全决定版，中间刀骑取消→重装骆驼兵，风格统一） */
 export const WEST_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'shield', count: 3 },
-            { type: 'heavy_cavalry', count: 1 },
-            { type: 'general_cavalry', count: 1 },
-            { type: 'heavy_cavalry', count: 1 },
-            { type: 'archer', count: 3 }
+            { type: 'eastern_swordsman', count: 3 },     // Row 0 前 = 东方剑士 步兵（帝国决定）
+            { type: 'camel_heavy', count: 1 },           // Row 1 左 = 重装骆驼兵 骑兵（帝国决定）
+            { type: 'camel_heavy', count: 1 },           // Row 1 中 = 重装骆驼兵（原刀骑将领，取消）
+            { type: 'camel_heavy', count: 1 },           // Row 1 右 = 重装骆驼兵 骑兵（帝国决定）
+            { type: 'elite_composite_bowman', count: 3 } // Row 2 后 = 精锐复合弓箭手 弓手（帝国决定）
         ]
     }
 ];
-/** 16. 斯拉夫 步骑 斧步+斧骑+弓（罗斯斧军：双手斧步 + 长斧骑 + 弓手）— MovementClass=MIXED，2026-08-04 拍板定稿 */
+/** 16. 斯拉夫 复合弓箭手+精锐草原枪兵+掷斧兵（2026-08-15 主人定：全决定版，中间刀骑取消→精锐草原枪兵，风格统一） */
 export const SLAVIC_TIERS: CompositionTier[] = [
-    build3x3('axe', 'heavy_cavalry', 'archer')
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'throwing_axeman', count: 3 },     // Row 0 前 = 掷斧兵 步兵（帝国决定）
+            { type: 'elite_steppe_lancer', count: 1 }, // Row 1 左 = 精锐草原枪兵 骑兵（帝国决定）
+            { type: 'elite_steppe_lancer', count: 1 }, // Row 1 中 = 精锐草原枪兵（原刀骑将领，取消）
+            { type: 'elite_steppe_lancer', count: 1 }, // Row 1 右 = 精锐草原枪兵 骑兵（帝国决定）
+            { type: 'composite_bowman', count: 3 }     // Row 2 后 = 复合弓箭手 弓手（帝国决定）
+        ]
+    }
 ];
-/** 17. 日耳曼 步骑 斧盾+斧骑+弩（法兰克重步+条顿骑士+德意志弩手）— MovementClass=MIXED，2026-08-04 拍板定稿 */
+/** 17. 日耳曼 冠军剑士+弩手+游侠（2026-08-15 主人定：全决定版，中间刀骑取消→游侠，风格统一） */
 export const GERMANIC_TIERS: CompositionTier[] = [
-    build3x3('heavy_infantry', 'heavy_cavalry', 'crossbow')
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'champion', count: 3 },          // Row 0 前 = 冠军剑士 步兵（帝国决定）
+            { type: 'paladin', count: 1 },           // Row 1 左 = 游侠 骑兵（帝国决定）
+            { type: 'paladin', count: 1 },           // Row 1 中 = 游侠（原刀骑将领，取消）
+            { type: 'paladin', count: 1 },           // Row 1 右 = 游侠 骑兵（帝国决定）
+            { type: 'crossbowman', count: 3 }        // Row 2 后 = 弩手 弩手（帝国决定）
+        ]
+    }
 ];
-/** 18. 拉丁 纯步 盾步+枪步+床弩（罗马军团盾墙+长枪卫+蝎子弩 scorpio）— MovementClass=INFANTRY，2026-08-04 拍板定稿 */
+/** 18. 拉丁 马上轻装兵+重装长枪兵+劲弩手（2026-08-15 主人定：全决定版，中间刀骑取消→马上轻装兵，风格统一） */
 export const LATIN_TIERS: CompositionTier[] = [
-    build3x3('shield', 'spear', 'ballista')
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'heavy_pikeman', count: 3 },     // Row 0 前 = 重装长枪兵 步兵（帝国决定）
+            { type: 'coustillier', count: 1 },       // Row 1 左 = 马上轻装兵 骑兵（帝国决定）
+            { type: 'coustillier', count: 1 },       // Row 1 中 = 马上轻装兵（原刀骑将领，取消）
+            { type: 'coustillier', count: 1 },       // Row 1 右 = 马上轻装兵 骑兵（帝国决定）
+            { type: 'arbalest', count: 3 }           // Row 2 后 = 劲弩手 弩手（帝国决定）
+        ]
+    }
 ];
 // ============================================================
 // 15 文化 → CompositionTier[] 映射
