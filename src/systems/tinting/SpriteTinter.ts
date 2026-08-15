@@ -17,7 +17,7 @@ import { TintColor, FactionTintSystem } from './FactionTintSystem';
  * 帝国征服原版（AoE2 原版 SLP）也有玩家色遮罩（调色板索引区域，二值 mask）。
  * 只有这些目录走 mask 精确染色；其余（三国志10 S10DB）一律走原有亮度染色，绝不改动它的既有逻辑。
  */
-const MASK_DIRS = ['/SUCAI/SAMURAI_ELITE/', '/SUCAI/ARCHER/', '/SUCAI/SAMURAI/'];
+const MASK_DIRS = ['/SUCAI/SAMURAI_ELITE/', '/SUCAI/ARCHER/', '/SUCAI/SAMURAI/', '/SUCAI/SAMURAI_DE/'];
 
 /**
  * 精灵染色器

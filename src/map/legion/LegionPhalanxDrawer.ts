@@ -18,7 +18,7 @@ import { NavalPhalanxStateManager } from './NavalPhalanxState';
 const LAZY_BOOT_UNIT_IDS = new Set(['ship_small', 'ship_medium', 'ship_large']);
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/'];
 
 export type PhalanxAnimState = 'IDLE' | 'MOVE' | 'ATTACK' | 'DAMAGE' | 'DEATH';
 
@@ -1310,7 +1310,12 @@ export class LegionPhalanxDrawer {
             // E. Frame Calculation
             // 🔴 AoE2 DE 动态帧框：帧数/box 尺寸/hotspot 从元数据读；无 dyn = S10DB 正方形帧（getFrameCount）。
             const dynEntry = currentSet.dyn?.[animState];
-            const dynDir = dynEntry?.dirs?.[String(effDir)];
+            // 🔴 [2026-08-15 尸体贴图错乱修复] 死亡动画的朝向是 slot.deathDirection（随机 0-7），
+            //    不是编队朝向 effDir。dyn 帧框必须跟着「实际贴图朝向」走——否则 frameW/frameH 用了
+            //    错方向的 box（东/西向 120×64 vs 南向 40×112），帧切片 sx=fr*frameW 错位、跨帧切到邻帧内容，
+            //    靠旗/身体被切碎、尸体贴图错乱（主人实锤「尸体贴图都不正确」）。
+            const dynSpriteDir = animState === 'DEATH' ? (slot.deathDirection ?? direction) : effDir;
+            const dynDir = dynEntry?.dirs?.[String(dynSpriteDir)];
             const spriteTotalFrames = dynEntry ? dynEntry.frames : this.getFrameCount(tintedSprite);
             let currentFrameIndex = 0;
 
