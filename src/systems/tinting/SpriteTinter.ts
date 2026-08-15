@@ -13,6 +13,13 @@
 import { TintColor, FactionTintSystem } from './FactionTintSystem';
 
 /**
+ * 帝国决定（AoE2 DE）有玩家色遮罩 `.pc.png` 的素材目录。
+ * 只有这些目录走 mask 精确染色；其余（三国志10 S10DB / 帝国征服原版 SLP）
+ * 一律走原有亮度染色，绝不改动它们的既有逻辑。
+ */
+const MASK_DIRS = ['/SUCAI/SAMURAI_ELITE/', '/SUCAI/ARCHER/'];
+
+/**
  * 精灵染色器
  */
 export class SpriteTinter {
@@ -50,11 +57,10 @@ export class SpriteTinter {
         }
 
         const tintHex = FactionTintSystem.getTintHex(factionId);
-        // 遮罩路径 = 主图 src 的 .png → .pc.png
-        const maskSrc = originalSprite.src.replace(/\.png$/, '.pc.png');
-
-        // 有 .pc.png 遮罩（帝国决定 DE）→ mask 染色；否则亮度染色
-        if (maskSrc !== originalSprite.src) {
+        // [2026-08-15] 只对「帝国决定 DE」目录走 mask 染色；三国志10/帝国征服原版走原有亮度染色（不动它们的逻辑）
+        const sourceUrl: string = (originalSprite as any).sourceUrl || originalSprite.src;
+        if (MASK_DIRS.some(d => sourceUrl.includes(d))) {
+            const maskSrc = sourceUrl.replace(/\.png$/, '.pc.png');
             return this.getMaskTinted(originalSprite, maskSrc, factionId, tintColor, tintHex);
         }
         return this.getLuminanceTinted(originalSprite, factionId, tintColor, tintHex);
@@ -140,10 +146,17 @@ export class SpriteTinter {
         const mCanvas = this.maskCanvas!;
         const mCtx = this.maskCtx!;
 
-        canvas.width = sprite.width;
-        canvas.height = sprite.height;
-        mCanvas.width = mask.width;
-        mCanvas.height = mask.height;
+        // 🔴 用 naturalWidth/Height（实际像素），不是 CSS width（可能被设 0 导致 getImageData 报「source width is 0」）
+        const sw = sprite.naturalWidth || sprite.width;
+        const sh = sprite.naturalHeight || sprite.height;
+        const mw = mask.naturalWidth || mask.width;
+        const mh = mask.naturalHeight || mask.height;
+        if (!sw || !sh || !mw || !mh) return sprite;
+
+        canvas.width = sw;
+        canvas.height = sh;
+        mCanvas.width = mw;
+        mCanvas.height = mh;
 
         // 主图像素
         ctx.clearRect(0, 0, canvas.width, canvas.height);

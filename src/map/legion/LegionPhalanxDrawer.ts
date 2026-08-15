@@ -702,6 +702,9 @@ export class LegionPhalanxDrawer {
             }
             ctx.putImageData(imageData, 0, 0);
             const newImg = new Image();
+            // [2026-08-15 玩家色遮罩] 抠绿后 src 变 data: URL，丢失原始路径；
+            // 保留 sourceUrl 供 SpriteTinter 推导同目录 `.pc.png` 遮罩（帝国决定 DE 素材）。
+            (newImg as any).sourceUrl = img.src;
             newImg.onload = () => resolve(newImg);
             newImg.src = canvas.toDataURL();
         });
