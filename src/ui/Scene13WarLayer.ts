@@ -103,6 +103,7 @@ const WAR_TYPES: Record<string, WarType> = {
     ninja:            { name: '忍者', cls: 'melee', sz: 1 },                                  // 视觉替换步弓手（archer），数值不变（近战步兵）
     // ── 剩余 10 文化全决定版（2026-08-15 主人定：北方/中原/岭南/滇缅/草原/中亚/西亚/斯拉夫/日耳曼/拉丁，数值照抄被替换兵种）──
     liao_dao:           { name: '辽刀', cls: 'melee', sz: 1 },                                // 视觉替换青州兵（spear），数值不变
+    elite_liao_dao:     { name: '精锐辽刀', cls: 'melee', sz: 1 },                            // 视觉替换辽刀（liao_dao），数值不变
     fire_lancer:        { name: '火矛兵', cls: 'melee', sz: 1 },                              // 视觉替换轻步兵（light_infantry），数值不变
     swordsman:          { name: '剑士', cls: 'melee', sz: 1 },                                // 视觉替换火矛兵（fire_lancer），数值不变（中原前排，AoE2 剑士）
     kamayuk:            { name: '印加枪兵长', cls: 'melee', sz: 1 },                          // 视觉替换火矛兵（fire_lancer），数值不变（北方后排，AoE2 印加枪兵长）
@@ -195,7 +196,7 @@ const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
@@ -407,6 +408,10 @@ const BATCH_COOLDOWN = 2;      // 批次冷却（秒），两批之间看得出�
 
 /** 出场渐显时长（秒）：新兵从透明淡入，不再凭空「啪」地出现（主人 2026-08-11） */
 const FADE_IN = 0.5;
+/** 开场列阵待命时长（秒）：双方整军渐显、静止对峙，之后才开打（主人 2026-08-16） */
+const DEPLOY_SECS = 2.5;
+/** 开场整军渐显时长（秒）：与待命同步，实现「双方缓缓显现」（主人 2026-08-16） */
+const DEPLOY_FADE = 2.0;
 /** 到达判定阈值（px）：离目标比这更近就停，防原地抖动 */
 const ARRIVE_EPS = 8;
 /**
@@ -504,6 +509,8 @@ interface WarMan {
     aimT: number;
     /** 出场渐显剩余时间（秒） */
     fadeT: number;
+    /** 出场渐显总时长（秒，出生时定死）：render 算 alpha 的分母，勿与 FADE_IN 硬编码混用 */
+    fadeMax: number;
     /** 攻击动作交替标志：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，两套攻击动作轮播 */
     atkFlip: boolean;
     /** 是否旗手（出生时定死，见 FLAG_EVERY）：头顶画一面势力旗，战死则军旗倒地 */
@@ -703,6 +710,8 @@ export class Scene13WarLayer {
     private sideBonus: [number, number] = [1, 1];
     /** 成批增援冷却（秒），一次只补一边所以单值 */
     private batchCd = 0;
+    /** 开场列阵待命剩余时间（秒）：阶段内全军静止渐显，结束才开打（主人 2026-08-16） */
+    private deployT = 0;
     /** 开局总兵力（精灵），攻/守各一 —— 补兵触发线按「剩余占比」缩放时当分母 */
     private initPool: [number, number] = [1, 1];
     /** 尸体保留累加器（攒够 1 留一具）：确定性均匀，不随机斑驳。见 CORPSE_KEEP */
@@ -807,6 +816,7 @@ export class Scene13WarLayer {
         this.sideFaction = nextFaction;
         this.sideBonus = [init.attackerBonus ?? 1, init.defenderBonus ?? 1];
         this.batchCd = 0;
+        this.deployT = DEPLOY_SECS;
         this.centerLat = init.centerLat;
         this.centerLng = init.centerLng;
 
@@ -1293,6 +1303,8 @@ export class Scene13WarLayer {
         //   成批补（不是死一个补一个），一方打掉一半才补一波，靠成批的兵反推战线。
         this.batchCd -= dt;
         if (this.batchCd > 0) return;
+        // 渐显时长：开场列阵待命阶段的兵拉长淡入（整军缓缓显现），中途补兵保持短淡入
+        const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
 
         // 每一方独立判断：场上 < 150 才补 300（开局双方 0 → 各补 300，一帧同时出）
         for (let f = 0; f < 2; f++) {
@@ -1326,7 +1338,7 @@ export class Scene13WarLayer {
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                     flag: bearer, fo: Math.random() * 600,
-                    atkers: 0, atkNext: 0, fadeT: FADE_IN,
+                    atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                     wing: s.wing,
                 });
             }
@@ -1517,6 +1529,9 @@ export class Scene13WarLayer {
     private step(dt: number): void {
         if (this.over) return;
         this.spawnTick(dt);
+        // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
+        if (this.deployT > 0) this.deployT -= dt;
+        const deploying = this.deployT > 0;
         // 敌军重心（每帧 O(n)，供 aimAt 兜底）
         const cx = [0, 0], cy = [0, 0], cn = [0, 0];
         for (const m of this.men) { cx[m.f] += m.x; cy[m.f] += m.y; cn[m.f]++; }
@@ -1525,6 +1540,15 @@ export class Scene13WarLayer {
         this.rebuild();
         for (const m of this.men) {
             if (m.hp <= 0) continue;
+            // 开场列阵待命：静止渐显，不索敌、不移动、不攻击（主人 2026-08-16）
+            if (deploying) {
+                m.st = 0;
+                m.foe = null;
+                m.fightT = 0;
+                if (m.fadeT > 0) m.fadeT -= dt;
+                m.ph += dt * 8 / 1.5;   // 待命动画（与残局待命同速）
+                continue;
+            }
             const wt = WAR_TYPES[m.key];
             const stats = statsOf(m.key);
             const R = stats.rng || 65;
@@ -1855,8 +1879,8 @@ export class Scene13WarLayer {
             // 其余兵种不受影响：赶路一律移动帧、攻击固定攻击帧。白刃（st=2）用近战帧。
             const hasChg = !!this.bank[m.key]?.sets.charge?.[0]?.length;
             let set: string;
-            // 残局待命：全军播待命帧（没有待命素材的退回移动帧，绝不留静止画面）
-            if (this.lingering) {
+            // 残局待命 / 开场列阵待命：全军播待命帧（没有待命素材的退回移动帧，绝不留静止画面）
+            if (this.lingering || this.deployT > 0) {
                 set = this.bank[m.key]?.sets.idle?.[0]?.length ? 'idle' : 'move';
             }
             else if (m.st === 0) {
@@ -1866,7 +1890,7 @@ export class Scene13WarLayer {
             else if (m.st === 2) set = 'melee';
             else if (m.atkFlip && hasChg) set = 'charge';
             else set = 'atk';
-            const fade = m.fadeT > 0 ? 1 - m.fadeT / FADE_IN : 1;
+            const fade = m.fadeT > 0 ? 1 - m.fadeT / (m.fadeMax || FADE_IN) : 1;
             vis.push({ y: m.y, x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: m.ph, a: fade });
         }
         vis.sort((a, b) => a.y - b.y);

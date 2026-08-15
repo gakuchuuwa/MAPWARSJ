@@ -386,16 +386,16 @@ export const DIANQIAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 12. 青藏 答剌罕骑兵+蒙古突骑+精锐白毦兵（2026-08-15 主人定：全决定版，三角 2+3+4，答剌罕近战尖刀 + 蒙古突骑弓骑中 + 精锐白毦兵后） */
+/** 12. 青藏 精锐白毦兵+答剌罕骑兵+蒙古突骑（2026-08-15 主人定：全决定版，三角 2+3+4，精锐白毦兵近战尖刀领前 + 答剌罕骑兵中 + 蒙古突骑后） */
 export const TIBET_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'tarkan', count: 2 },                 // Row 0 尖刀 = 答剌罕骑兵 近战骑（帝国决定）
-            { type: 'mangudai', count: 3 },               // Row 1 中 = 蒙古突骑 弓骑（帝国决定）
-            { type: 'elite_white_feather_guard', count: 4 } // Row 2 后 = 精锐白毦兵 步兵（帝国决定）
+            { type: 'elite_white_feather_guard', count: 2 }, // Row 0 尖刀 = 精锐白毦兵 步兵（帝国决定）
+            { type: 'tarkan', count: 3 },                 // Row 1 中 = 答剌罕骑兵 近战骑（帝国决定）
+            { type: 'mangudai', count: 4 }                // Row 2 后 = 蒙古突骑 弓骑（帝国决定）
         ]
     }
 ];

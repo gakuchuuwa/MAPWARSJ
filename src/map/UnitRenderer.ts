@@ -114,6 +114,11 @@ export class UnitRenderer implements IAnimatedUnit {
         return (this.unit as any).cultureScales || null;
     }
 
+    /** 三值阵型（square/triangle/echelon），委托底层 Army；渲染层据此定布局 */
+    public get formationMode(): 'square' | 'triangle' | 'echelon' | null {
+        return (this.unit as any).formationMode ?? null;
+    }
+
     /** 攻城方器械标记（委托底层 Army；GlobalUnitRenderer 石弹发射条件 reads 此值） */
     public get isSiegeAttacker(): boolean {
         return !!(this.unit as any).isSiegeAttacker;
