@@ -14,10 +14,10 @@ import { TintColor, FactionTintSystem } from './FactionTintSystem';
 
 /**
  * 帝国决定（AoE2 DE）有玩家色遮罩 `.pc.png` 的素材目录。
- * 只有这些目录走 mask 精确染色；其余（三国志10 S10DB / 帝国征服原版 SLP）
- * 一律走原有亮度染色，绝不改动它们的既有逻辑。
+ * 帝国征服原版（AoE2 原版 SLP）也有玩家色遮罩（调色板索引区域，二值 mask）。
+ * 只有这些目录走 mask 精确染色；其余（三国志10 S10DB）一律走原有亮度染色，绝不改动它的既有逻辑。
  */
-const MASK_DIRS = ['/SUCAI/SAMURAI_ELITE/', '/SUCAI/ARCHER/'];
+const MASK_DIRS = ['/SUCAI/SAMURAI_ELITE/', '/SUCAI/ARCHER/', '/SUCAI/SAMURAI/'];
 
 /**
  * 精灵染色器
@@ -134,9 +134,12 @@ export class SpriteTinter {
         mask: HTMLImageElement,
         tint: TintColor
     ): HTMLImageElement {
+        // 分别初始化主图/遮罩两个 canvas（applyTint 可能已初始化 tempCanvas 但未初始化 maskCanvas）
         if (!this.tempCanvas) {
             this.tempCanvas = document.createElement('canvas');
             this.tempCtx = this.tempCanvas.getContext('2d');
+        }
+        if (!this.maskCanvas) {
             this.maskCanvas = document.createElement('canvas');
             this.maskCtx = this.maskCanvas.getContext('2d');
         }
