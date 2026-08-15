@@ -27,7 +27,6 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   cuanshi: { name: '爨族部兵', tier: 3 },      // 统治云南四百年的爨氏文化象征，西南历史的丰碑，升入T3知名
     suke: { name: '素可泰兵', tier: 3 },
   ailao: { name: '哀牢山营', tier: 4 },       // 永昌·类牢反叛连破数城（缺乏极其著名的战术高光，降T3）
-    nanzhong: { name: '兴古戍锋', tier: 3 },
     yueyi: { name: '牦牛戍锋', tier: 3 },
   jingdong: { name: '景东象卫', tier: 4 },     // 银生城·陶洪屡退麓川（缺乏极其著名的战术高光，降T3）
   luohu: { name: '罗斛步卒', tier: 4 },        // 呵叻城·敢木丁驻守

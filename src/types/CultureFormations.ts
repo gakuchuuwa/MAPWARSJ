@@ -236,14 +236,14 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
 // 15 文化区阵型 (用户 2026-05-30 拍板)
 // ============================================================
 
-/** 1. 中原 火矛兵+虎豹骑+诸葛弩（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后） */
+/** 1. 中原 剑士+虎豹骑+诸葛弩（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后） */
 export const CENTRAL_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'fire_lancer', count: 3 },   // Row 0 前 = 火矛兵 步兵（帝国决定）
+            { type: 'swordsman', count: 3 },   // Row 0 前 = 剑士 步兵（帝国决定）
             { type: 'tiger_rider', count: 1 },   // Row 1 左 = 虎豹骑 骑兵（帝国决定）
             { type: 'tiger_rider', count: 1 },   // Row 1 中 = 虎豹骑（原刀骑将领，取消）
             { type: 'tiger_rider', count: 1 },   // Row 1 右 = 虎豹骑 骑兵（帝国决定）
@@ -251,7 +251,7 @@ export const CENTRAL_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 2. 北方 辽刀+鲜卑掠骑兵+火矛兵（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后） */
+/** 2. 北方 辽刀+鲜卑掠骑兵+印加枪兵长（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后） */
 export const NORTH_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -262,7 +262,7 @@ export const NORTH_TIERS: CompositionTier[] = [
             { type: 'xianbei_raider', count: 1 },// Row 1 左 = 鲜卑掠骑兵 骑兵（帝国决定）
             { type: 'xianbei_raider', count: 1 },// Row 1 中 = 鲜卑掠骑兵（原刀骑将领，取消）
             { type: 'xianbei_raider', count: 1 },// Row 1 右 = 鲜卑掠骑兵 骑兵（帝国决定）
-            { type: 'fire_lancer', count: 3 }    // Row 2 后 = 火矛兵 步兵（帝国决定）
+            { type: 'kamayuk', count: 3 }    // Row 2 后 = 印加枪兵长 步兵（帝国决定）
         ]
     }
 ];
