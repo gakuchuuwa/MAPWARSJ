@@ -266,9 +266,20 @@ export const NORTHEAST_TIERS: CompositionTier[] = [
     build3x3('heavy_infantry', 'horse_archer', 'archer')
 ];
 
-/** 4. 朝鲜 步骑 刀剑手+黑光铠骑兵+火焰弓箭手（2026-08-15 主人定：全决定版） */
+/** 4. 朝鲜 步骑 刀剑手+黑光铠骑兵+火焰弓箭手（2026-08-15 主人定：全决定版，中间刀骑取消→黑光铠骑兵，风格统一） */
 export const KOREA_TIERS: CompositionTier[] = [
-    build3x3('eastern_swordsman', 'hei_kuang', 'fire_archer')
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'eastern_swordsman', count: 3 },  // Row 0 前 = 刀剑手（帝国决定）
+            { type: 'hei_kuang', count: 1 },          // Row 1 左 = 黑光铠骑兵（帝国决定）
+            { type: 'hei_kuang', count: 1 },          // Row 1 中 = 黑光铠骑兵（原刀骑将领，取消）
+            { type: 'hei_kuang', count: 1 },          // Row 1 右 = 黑光铠骑兵（帝国决定）
+            { type: 'fire_archer', count: 3 }         // Row 2 后 = 火焰弓箭手（帝国决定）
+        ]
+    }
 ];
 
 /** 5. 日本 前日本武士/中精锐武士/后步弓手（2026-08-15 主人定：取消刀骑将领） */

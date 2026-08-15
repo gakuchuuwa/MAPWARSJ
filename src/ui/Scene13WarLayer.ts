@@ -72,7 +72,7 @@ const WAR_TYPES: Record<string, WarType> = {
     elephant:       { name: '象兵',   cls: 'melee', sz: 1.6, aoe: true, spd: 40 },
     // ── 朝鲜全决定版（2026-08-15 主人定：前排刀剑手/中排黑光铠骑兵/后排火焰弓箭手，数值照抄被替换兵种）──
     eastern_swordsman:{ name: '刀剑手', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 视觉替换藤甲兵（armored），数值不变
-    hei_kuang:      { name: '黑光铠骑兵', cls: 'cav', sz: 1.15 },                          // 视觉替换重骑兵（heavy_cavalry），数值不变
+    hei_kuang:      { name: '黑光铠骑兵', cls: 'cav', sz: 1 },                             // 视觉替换重骑兵（heavy_cavalry）；帝国决定版兵种 sz 统一=1
     fire_archer:    { name: '火焰弓箭手', cls: 'ranged', sz: 1 },                          // 视觉替换弓兵（archer），数值不变
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
     lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
