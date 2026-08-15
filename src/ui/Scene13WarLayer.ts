@@ -86,6 +86,7 @@ const WAR_TYPES: Record<string, WarType> = {
     chukonu:        { name: '诸葛弩', cls: 'ranged', sz: 1 },                                // 视觉替换弩兵（crossbow），数值不变
     // ── 川蜀全决定版（2026-08-15 主人定：前排白毦兵/中排诸葛弩/后排藤弓兵，数值照抄被替换兵种）──
     white_feather_guard: { name: '白毦兵', cls: 'melee', sz: 1 },                            // 视觉替换重步兵（heavy_infantry），数值不变
+    elite_white_feather_guard: { name: '精锐白毦兵', cls: 'melee', sz: 1 },                  // 视觉替换白毦兵（white_feather_guard），数值不变
     rattan_archer:  { name: '藤弓兵', cls: 'ranged', sz: 1 },                                // 视觉替换弩兵（crossbow），数值不变
     // ── 河西全决定版（2026-08-15 主人定：前排精锐火矛手/中排诸葛弩/后排黑光铠骑兵，数值照抄被替换兵种）──
     elite_fire_lancer: { name: '精锐火矛手', cls: 'melee', sz: 1 },                          // 视觉替换青州兵（spear），数值不变
@@ -194,7 +195,7 @@ const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
@@ -826,10 +827,9 @@ export class Scene13WarLayer {
                 const lanes = this.slotsOf(side.region);
                 const n = lanes.length;
                 const mode = this.formationModeOf(side.region);
-                // 🔴 排级随机互换（主人 2026-08-13 定）：步/骑/弩三类在「前后中」三排随机换序，
-                //    双方独立随机。横向 col 结构不变（三阵型各按 LAYOUT 查找表），
-                //    只换「哪类兵在哪排」——前排可能变骑兵（中央突破）或弩兵（克制循环制衡）。
-                const lanes2 = this.shuffleRows(lanes, mode);
+                // 🔴 前中后固定（主人 2026-08-15 定）：不再随机换序，出兵口顺序 = 编制槽位展开序
+                //    （鱼鳞 步骑弓 / 三角 近战+远程+近战 / 雁行 远程+近战+远程）。
+                const lanes2 = lanes;
                 // 兵力按总量平分到各口（1 精灵 = SPRITE_TROOPS 兵；口少的一边每口出得快）
                 const poolPer = Math.max(1, Math.round(side.troops / SPRITE_TROOPS / n));
                 lanes2.forEach((lane, idx) => {
@@ -1000,26 +1000,6 @@ export class Scene13WarLayer {
             console.warn('[Scene13WarLayer] 阵型推断失败，回退鱼鳞:', e);
         }
         return 'square';
-    }
-
-    /**
-     * 排级洗牌（主人 2026-08-13 定）：把出兵口按「排」分组随机换纵深顺序。
-     *   - square 9 口 = 前3 / 中3 / 后3 三组随机换序
-     *   - triangle 9 口 = 尖刀2 / 中坚3 / 后4 三组随机换序
-     *   - echelon 9 口 = 前4 / 中3 / 后2 三组随机换序
-     *   横向 col 结构不变（LAYOUT 查找表按 idx 固定），只换「哪类兵在哪排」。
-     */
-    private shuffleRows(lanes: { key: string }[], mode: FormationMode): { key: string }[] {
-        const groups = mode === 'triangle'
-            ? [lanes.slice(0, 2), lanes.slice(2, 5), lanes.slice(5, 9)]
-            : mode === 'echelon'
-              ? [lanes.slice(0, 4), lanes.slice(4, 7), lanes.slice(7, 9)]
-              : [lanes.slice(0, 3), lanes.slice(3, 6), lanes.slice(6, 9)];
-        for (let i = groups.length - 1; i > 0; i--) {
-            const j = (Math.random() * (i + 1)) | 0;
-            [groups[i], groups[j]] = [groups[j], groups[i]];
-        }
-        return groups.flat();
     }
 
     // ── 场景树/湖：随机布景 + 加载（纯装饰，不参与战斗逻辑，也不进 pending）──
