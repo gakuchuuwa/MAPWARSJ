@@ -679,6 +679,16 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER/death_${dir}.png`),
         },
+        // 【西亚重装骑射手】Heavy Cavalry Archer 重装弓骑（8方向，AoE2 DE SLD 素材，u_cav_archer_heavy；弓骑有射击，SHOOT 复用攻击帧）
+        'cav_archer_heavy': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER_HEAVY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER_HEAVY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER_HEAVY/idle_${dir}.png`),
+            // AoE2 重装骑射手无受击动画，DAMAGE/SHOOT 复用攻击帧（骑射）
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER_HEAVY/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER_HEAVY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER_HEAVY/death_${dir}.png`),
+        },
         // 【西域轻骑兵】Light Cavalry 轻骑兵（8方向，AoE2 DE SLD 素材）
         'light_riders': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHT_RIDERS/move_${dir}.png`),

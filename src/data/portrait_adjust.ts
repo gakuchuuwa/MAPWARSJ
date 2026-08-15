@@ -1632,11 +1632,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 15
         },
-        "/assets/NORTHEAST/feiyaka_cemutehe.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": 8
-        },
         "/assets/panjun/__闲置__panjun_24.png": {
             "scale": 0.88,
             "offsetX": 0,
@@ -2006,16 +2001,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.93,
             "offsetX": 0,
             "offsetY": 11
-        },
-        "/assets/NORTHEAST/__闲置__wuzhou_05.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -29
-        },
-        "/assets/NORTHEAST/__闲置__wuzhou_07.png": {
-            "scale": 0.83,
-            "offsetX": 0,
-            "offsetY": -23
         },
         "/assets/wuzhou/__闲置__wuzhou_08.png": {
             "scale": 0.99,
@@ -6596,6 +6581,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 13
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_43.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_44.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": -23
+        },
+        "/assets/NORTHEAST/feiyaka_cemutehe.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -29
         }
     },
     "folderGuides": {

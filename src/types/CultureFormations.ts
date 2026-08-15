@@ -427,7 +427,7 @@ export const WESTERN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 15. 西亚 精锐复合弓箭手+东方剑士+重装骆驼兵（2026-08-15 主人定：全决定版，中间刀骑取消→重装骆驼兵，风格统一） */
+/** 15. 西亚 东方剑士+重装骑射手+精锐复合弓箭手（2026-08-16 主人改：中排重装骆驼兵→重装骑射手，鱼鳞 3×3 步前骑中弓后） */
 export const WEST_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -435,9 +435,9 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'eastern_swordsman', count: 3 },     // Row 0 前 = 东方剑士 步兵（帝国决定）
-            { type: 'camel_heavy', count: 1 },           // Row 1 左 = 重装骆驼兵 骑兵（帝国决定）
-            { type: 'camel_heavy', count: 1 },           // Row 1 中 = 重装骆驼兵（原刀骑将领，取消）
-            { type: 'camel_heavy', count: 1 },           // Row 1 右 = 重装骆驼兵 骑兵（帝国决定）
+            { type: 'cav_archer_heavy', count: 1 },      // Row 1 左 = 重装骑射手 弓骑（帝国决定）
+            { type: 'cav_archer_heavy', count: 1 },      // Row 1 中 = 重装骑射手 弓骑（帝国决定）
+            { type: 'cav_archer_heavy', count: 1 },      // Row 1 右 = 重装骑射手 弓骑（帝国决定）
             { type: 'elite_composite_bowman', count: 3 } // Row 2 后 = 精锐复合弓箭手 弓手（帝国决定）
         ]
     }
