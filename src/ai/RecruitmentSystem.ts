@@ -97,8 +97,6 @@ export class RecruitmentSystem {
         const perTick = Math.max(1, GameConfig.LEGION.INITIAL_SPAWN_PER_TICK);
         const intervalMs = GameConfig.LEGION.INITIAL_SPAWN_INTERVAL_MS;
         let idx = 0;
-        /** 本批是否已挂上开场跟随（只挂一次，后续名将军团不抢镜头） */
-        let followHooked = false;
 
         const spawnTick = () => {
             let spawnedThisTick = 0;
@@ -113,19 +111,13 @@ export class RecruitmentSystem {
                 const newLegion = this.spawnCandidate(city, armySize);
                 if (!newLegion) continue;
                 spawnedThisTick++;
-
-                // 第一支名将军团一落地就挂跟随，不等整批出完（每区名将优先，第一 tick 通常即名将）。
-                // 判据用**实际落地结果**（newLegion.generalId）而非预测，预测落空也不会挂错人。
-                if (!followHooked && RecruitmentSystem.isFamousGeneralArmy(newLegion)) {
-                    followHooked = true;
-                    (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
-                }
             }
 
             // 还有剩余候选且未达上限，错峰等待下一批
             if (idx < candidates.length && this.legionManager.getActiveLegionCount() < maxLegions) {
                 setTimeout(spawnTick, intervalMs);
             } else {
+                // 全部 18 支出完后再挂跟随，确保随机池包含全部文化区军团（名将优先随机）
                 gameLog('recruitment', `💂 [募兵] 首次出兵完成，共 ${this.legionManager.getActiveLegionCount()} 支军团`);
                 (window as any).game?.cameraFollowUI?.tryAutoFollowOnStart();
             }

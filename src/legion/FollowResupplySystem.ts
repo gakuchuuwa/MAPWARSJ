@@ -35,6 +35,7 @@ export class FollowResupplySystem {
         if (!cfg.ENABLED || !GameConfig.SYSTEM.SANDBOX_MODE) return;
         if (army.isDestroyed || army.getTroops() <= 0) return;
         if (army.getIsInCombat()) return;
+        if (army.isRetreatingHome) return; // 撤退中的残兵不抽沿途城兵
 
         const factionId = army.getFactionId();
         if (!factionId || factionId === 'neutral' || factionId === 'panjun') return;

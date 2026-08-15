@@ -115,7 +115,7 @@ export class LegionPhalanxDrawer {
      * [2026-08-09 接触距离] 各类编队的**横向占位宽度**（单位：单兵宽，含两端各半个精灵）。
      * 与四支展开分支的子间距一一对应，改子间距务必同步改这里：
      *   步兵 4×2 交错 = 3.5 列 × 0.75 + 1 = 3.625  ← 最宽，格位间距按它定
-     *   骑兵 1-2-3    = 4 × 0.32 × 0.7 + 1 ≈ 1.90
+     *   骑兵 1-2-3    = 4 × 0.64 × 0.7 + 1 ≈ 2.79
      *   远程 3×3      = 2 × 0.75 + 1 = 2.50
      *   攻城 2×2      = 1 × 1.20 + 1 = 2.20
      * 用途：**并肩让位**（squadEngagePoint 侧移一个编队宽）。
@@ -126,7 +126,7 @@ export class LegionPhalanxDrawer {
     public static getSquadWidthFactor(type: string): number {
         // [2026-08-10 5×2 交错方阵] 步兵/远程统一 5 列交错：并集 = 4.5×0.75 + 1 = 4.375
         if (this.isInfantryType(type)) return 4.375;
-        if (this.isCavalryType(type)) return 1.90;
+        if (this.isCavalryType(type)) return 2.79;
         if (this.isRangedType(type)) return 4.375;
         if (this.isSiegeType(type)) return 3.25; // 攻城 1×4 = 3 × 0.75 + 1（2026-08-10 一排同步，原 2×2 = 2.20 已废弃）
         return 3.625; // 未知兵种按最宽算，宁可留缝也不穿模
@@ -156,7 +156,7 @@ export class LegionPhalanxDrawer {
         let depth: number;
         // [2026-08-10 5×2 十人方阵] 步兵/远程 2 排：深度 = 1×0.4 + 1 = 1.4 兵高
         if (this.isInfantryType(type)) depth = 1.40;
-        else if (this.isCavalryType(type)) depth = 1.70;
+        else if (this.isCavalryType(type)) depth = 2.20;
         else if (this.isRangedType(type)) depth = 1.40;
         else if (this.isSiegeType(type)) depth = 1.00; // 攻城 1×4 单排深 = 1 精灵高（2026-08-10 一排同步）
         else depth = 1.50;
@@ -176,7 +176,7 @@ export class LegionPhalanxDrawer {
      * 两队正面对撞时，挨上的是双方的前排 —— 中心距 = (己方纵深 + 敌方纵深) / 2 × 单兵高，
      * 与横向宽度无关。数值由四支展开分支的 localY 跨度反算，改子间距务必同步改这里：
      *   步兵 4×2   localY=(sr-0.5)×dh×0.50, sr∈{0,1} → 1×0.50+1 = 1.50
-     *   骑兵 1-2-3 localY=(r-1.0)×dh×0.35, r∈{0,1,2} → 2×0.35+1 = 1.70
+     *   骑兵 1-2-3 localY=(r-1.0)×dh×0.60, r∈{0,1,2} → 2×0.60+1 = 2.20
      *   远程 3×3   localY=(sr-1.0)×dh×0.50, sr∈{0,1,2} → 2×0.50+1 = 2.00 ← 最深，格位纵距按它定
      *   攻城 2×2   localY=(sr-0.5)×dh×0.80, sr∈{0,1} → 1×0.80+1 = 1.80
      * 单兵高从格位纵距反解：unitH = sp.y / (2.00 × 1.10)（与 computeDenseSpacing 同一套常数）。
@@ -224,10 +224,10 @@ export class LegionPhalanxDrawer {
         const sprite = (dw / 2) * Math.abs(dlx) + (dh / 2) * Math.abs(dly);
 
         if (this.isCavalryType(type)) {
-            // 三角形：尖端 (0,−0.35dh) 在前，底边两角 (±0.448dw, +0.35dh)
-            const tipY = -0.35 * dh;
-            const baseX = 0.448 * dw;
-            const baseY = 0.35 * dh;
+            // 三角形：尖端 (0,−0.60dh) 在前，底边两角 (±0.896dw, +0.60dh)
+            const tipY = -0.60 * dh;
+            const baseX = 0.896 * dw;
+            const baseY = 0.60 * dh;
             const hull = Math.max(tipY * dly, baseX * Math.abs(dlx) + baseY * dly);
             return hull + sprite;
         }
@@ -265,9 +265,10 @@ export class LegionPhalanxDrawer {
         // → 相邻编队横向压叠（主人实锤「一上来就重叠/挤成一团」）。
         const INFANTRY_SPAN_W = 4.375; // 最宽编队（步兵/远程 5×2 交错）横向占位（兵宽）
         // [2026-08-10 修·出场交叉] 格距参考素材是 64px，但中排重骑素材是 84px；
-        // 骑兵阵深实际需 1.70×84/64 = 2.231 个参考兵高。旧 2.00 不足，导致同一军团
+        // 骑兵阵深实际需 2.20×84/64 = 2.8875 个参考兵高。旧 2.00 不足，导致同一军团
         // 中排骑兵刚出场就侵入前后排（主人连续实锤「一出来两军就交叉」）。
-        const DEEPEST_SPAN_H = 2.25;   // 向上取整覆盖 84px 骑兵真实阵深
+        // 🔴 2026-08-16 随骑兵三角间距 0.35→0.60 同步放大（骑兵阵深 1.70→2.20）。
+        const DEEPEST_SPAN_H = 2.90;   // 向上取整覆盖 84px 骑兵真实阵深
         const GAP = 1.10;              // 编队之间留 10% 缝
 
         const refFrameW = refSprite.width / refTotalFrames;
@@ -1503,10 +1504,11 @@ export class LegionPhalanxDrawer {
                 }
             } else if (denseFront && LegionPhalanxDrawer.isCavalryType(resolvedUnitType)) {
                 // 1-2-3 等腰三角（6 人）：尖端在前（排 0 单骑），两翼展开（排 1 双骑 / 排 2 三骑）
-                // 子间距：翼展(上下) = 兵宽 × 0.32，纵深(前后) = 兵高 × 0.35（2026-08-09 主人定：
-                // 「不是前后密集度，是上下密集度」——上下/翼展再收紧，前后保持第一次密集的 0.35）
-                const triSpacingX = item.drawParams.dw * 0.32;
-                const triSpacingY = item.drawParams.dh * 0.35;
+                // 子间距：翼展(上下) = 兵宽 × 0.64，纵深(前后) = 兵高 × 0.60。
+                // 🔴 2026-08-16 主人改：原 0.32/0.35 太挤 → 6 骑叠成圆团、1-2-3 楔形被压没（实机截图实锤）。
+                //    放大到 0.64/0.60 让楔形肉眼可见。改此值须同步 getSquadSupportRadius / getSquadWidthFactor / debug depth。
+                const triSpacingX = item.drawParams.dw * 0.64;
+                const triSpacingY = item.drawParams.dh * 0.60;
                 // 旋转矩阵（与 getFormationOffset 同款）：三角偏移按阵内坐标算，再转到屏幕
                 const cAngle = (direction + 1) * Math.PI / 4;
                 const cCos = Math.cos(cAngle);
