@@ -74,15 +74,15 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
  *  三角 = 骑兵为主（≥2 骑，含弓骑）；雁行 = 远程为主（≥2 远程）；鱼鳞 = 其余 */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CENTRAL:      'square',
-    NORTH:        'square',
-    NORTHEAST:    'triangle',   // 铁浮图(骑)+钦察(弓骑)+精锐长弓兵 = 2骑 → 三角
+    NORTH:        'triangle',   // 辽刀+印加枪兵长+鲜卑掠骑兵
+    NORTHEAST:    'echelon',    // 精锐长弓兵+铁浮图+钦察
     KOREA:        'square',
-    JAPAN:        'square',
+    JAPAN:        'triangle',   // 忍者+日本武士+精锐武士
     STEPPE:       'triangle',
-    HEXI:         'square',
-    BASHU:        'echelon',    // 白毦兵+精锐诸葛弩+藤弓兵 = 2远程 → 雁行
-    JIANGNAN:     'echelon',    // 刀剑手+诸葛弩+精锐火焰弓箭手 = 2远程 → 雁行
-    LINGNAN:      'echelon',    // 皮甲战象+帝王掷矛手+精锐藤弓兵 = 2远程 → 雁行
+    HEXI:         'triangle',   // 精锐火矛手+精锐辽刀+黑光铠骑兵
+    BASHU:        'echelon',    // 精锐诸葛弩+白毦兵+藤弓兵
+    JIANGNAN:     'echelon',    // 精锐火焰弓箭手+剑士+诸葛弩
+    LINGNAN:      'echelon',    // 精锐藤弓兵+帝王掷矛手+皮甲战象
     DIANQIAN:     'triangle',   // 象兵+精锐爪刀勇士+步弓手 = 象+刀近战前中 + 弓远程后 → 三角
     TIBET:        'triangle',
     CENTRAL_ASIA: 'triangle',
@@ -251,32 +251,30 @@ export const CENTRAL_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 2. 北方 辽刀+鲜卑掠骑兵+印加枪兵长（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后） */
+/** 2. 北方 辽刀+印加枪兵长+鲜卑掠骑兵（2026-08-15 主人定：全决定版，三角 2+3+4，辽刀近战尖刀领前 + 印加枪兵长中 + 鲜卑掠骑兵后） */
 export const NORTH_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'liao_dao', count: 3 },      // Row 0 前 = 辽刀 步兵（帝国决定）
-            { type: 'xianbei_raider', count: 1 },// Row 1 左 = 鲜卑掠骑兵 骑兵（帝国决定）
-            { type: 'xianbei_raider', count: 1 },// Row 1 中 = 鲜卑掠骑兵（原刀骑将领，取消）
-            { type: 'xianbei_raider', count: 1 },// Row 1 右 = 鲜卑掠骑兵 骑兵（帝国决定）
-            { type: 'kamayuk', count: 3 }    // Row 2 后 = 印加枪兵长 步兵（帝国决定）
+            { type: 'liao_dao', count: 2 },      // Row 0 尖刀 = 辽刀 步兵（帝国决定）
+            { type: 'kamayuk', count: 3 },       // Row 1 中 = 印加枪兵长 步兵（帝国决定）
+            { type: 'xianbei_raider', count: 4 } // Row 2 后 = 鲜卑掠骑兵 骑兵（帝国决定）
         ]
     }
 ];
 
-/** 3. 东北 铁浮图+钦察+精锐长弓兵（2026-08-15 主人定：全决定版，三角 2+3+4，铁浮图重骑尖刀领前 + 钦察弓骑中 + 长弓兵后） */
+/** 3. 东北 精锐长弓兵+铁浮图+钦察（2026-08-15 主人定：全决定版，雁行 4+3+2，精锐长弓兵远程顶前 + 铁浮图中 + 钦察后） */
 export const NORTHEAST_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'iron_pagoda', count: 2 },     // Row 0 尖刀 = 铁浮图 重骑兵（帝国决定）
-            { type: 'kipchak', count: 3 },         // Row 1 中 = 钦察 弓骑兵（帝国决定）
-            { type: 'longbowman_elite', count: 4 } // Row 2 后 = 精锐长弓兵 弓手（帝国决定）
+            { type: 'longbowman_elite', count: 4 }, // Row 0 前 = 精锐长弓兵 弓手（帝国决定）
+            { type: 'iron_pagoda', count: 3 },      // Row 1 中 = 铁浮图 重骑兵（帝国决定）
+            { type: 'kipchak', count: 2 }           // Row 2 后 = 钦察 弓骑兵（帝国决定）
         ]
     }
 ];
@@ -297,85 +295,81 @@ export const KOREA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 5. 日本 前日本武士/中精锐武士/后忍者（2026-08-15 主人修订：后排步弓手→忍者） */
+/** 5. 日本 忍者+日本武士+精锐武士（2026-08-15 主人定：全决定版，三角 2+3+4，忍者近战尖刀领前 + 日本武士中 + 精锐武士后） */
 export const JAPAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'samurai', count: 3 },          // Row 0 前 = 日本武士（帝国决定）
-            { type: 'samurai_elite', count: 1 },     // Row 1 左 = 精锐武士（帝国决定）
-            { type: 'samurai_elite', count: 1 },     // Row 1 中 = 精锐武士（原刀骑将领，取消）
-            { type: 'samurai_elite', count: 1 },     // Row 1 右 = 精锐武士（帝国决定）
-            { type: 'ninja', count: 3 }              // Row 2 后 = 忍者（帝国决定）
+            { type: 'ninja', count: 2 },          // Row 0 尖刀 = 忍者 步兵（帝国决定）
+            { type: 'samurai', count: 3 },        // Row 1 中 = 日本武士 步兵（帝国决定）
+            { type: 'samurai_elite', count: 4 }   // Row 2 后 = 精锐武士 步兵（帝国决定）
         ]
     }
 ];
-/** 6. 草原 精锐蒙古突骑+草原枪兵+怯薛（2026-08-15 主人定：全决定版，三角 2+3+4，怯薛近战尖刀领前 + 草原枪兵中 + 精锐蒙古突骑骑射后） */
+/** 6. 草原 草原枪兵+怯薛+精锐蒙古突骑（2026-08-15 主人定：全决定版，三角 2+3+4，草原枪兵近战尖刀领前 + 怯薛中 + 精锐蒙古突骑骑射后） */
 export const STEPPE_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'keshik', count: 2 },         // Row 0 尖刀 = 怯薛军 近战骑（帝国决定，原刀骑位置）
-            { type: 'steppe_lancer', count: 3 },  // Row 1 中 = 草原枪兵 近战骑（帝国决定）
+            { type: 'steppe_lancer', count: 2 },  // Row 0 尖刀 = 草原枪兵 近战骑（帝国决定）
+            { type: 'keshik', count: 3 },         // Row 1 中 = 怯薛军 近战骑（帝国决定）
             { type: 'mangudai_elite', count: 4 }  // Row 2 后 = 精锐蒙古突骑 弓骑（帝国决定）
         ]
     }
 ];
-/** 7. 河西 精锐火矛手+黑光铠骑兵+精锐辽刀（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后） */
+/** 7. 河西 精锐火矛手+精锐辽刀+黑光铠骑兵（2026-08-15 主人定：全决定版，三角 2+3+4，精锐火矛手近战尖刀领前 + 精锐辽刀中 + 黑光铠骑兵后） */
 export const HEXI_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'elite_fire_lancer', count: 3 },  // Row 0 前 = 精锐火矛手 步兵（帝国决定）
-            { type: 'hei_kuang', count: 1 },          // Row 1 左 = 黑光铠骑兵 骑兵（帝国决定）
-            { type: 'hei_kuang', count: 1 },          // Row 1 中 = 黑光铠骑兵（原刀骑将领，取消）
-            { type: 'hei_kuang', count: 1 },          // Row 1 右 = 黑光铠骑兵 骑兵（帝国决定）
-            { type: 'elite_liao_dao', count: 3 }      // Row 2 后 = 精锐辽刀 步兵（帝国决定）
+            { type: 'elite_fire_lancer', count: 2 },  // Row 0 尖刀 = 精锐火矛手 步兵（帝国决定）
+            { type: 'elite_liao_dao', count: 3 },     // Row 1 中 = 精锐辽刀 步兵（帝国决定）
+            { type: 'hei_kuang', count: 4 }           // Row 2 后 = 黑光铠骑兵 骑兵（帝国决定）
         ]
     }
 ];
-/** 8. 川蜀 白毦兵+精锐诸葛弩+藤弓兵（2026-08-15 主人定：全决定版，雁行 4+3+2，白毦兵步兵顶前 + 精锐诸葛弩中 + 藤弓兵后） */
+/** 8. 川蜀 精锐诸葛弩+白毦兵+藤弓兵（2026-08-15 主人定：全决定版，雁行 4+3+2，精锐诸葛弩远程顶前 + 白毦兵中 + 藤弓兵后） */
 export const BASHU_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'white_feather_guard', count: 4 },  // Row 0 前 = 白毦兵 步兵（帝国决定）
-            { type: 'elite_chukonu', count: 3 },        // Row 1 中 = 精锐诸葛弩 弩手（帝国决定）
+            { type: 'elite_chukonu', count: 4 },        // Row 0 前 = 精锐诸葛弩 弩手（帝国决定）
+            { type: 'white_feather_guard', count: 3 },  // Row 1 中 = 白毦兵 步兵（帝国决定）
             { type: 'rattan_archer', count: 2 }         // Row 2 后 = 藤弓兵 弓手（帝国决定）
         ]
     }
 ];
-/** 9. 江南 刀剑手+诸葛弩+精锐火焰弓箭手（2026-08-15 主人定：全决定版，雁行 4+3+2，刀剑手步兵顶前 + 诸葛弩中 + 精锐火焰弓箭手后） */
+/** 9. 江南 精锐火焰弓箭手+剑士+诸葛弩（2026-08-15 主人定：全决定版，雁行 4+3+2，精锐火焰弓箭手远程顶前 + 剑士中 + 诸葛弩后） */
 export const JIANGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'jian_swordsman', count: 4 },     // Row 0 前 = 刀剑手 步兵（帝国决定，吴国 Jian Swordsman）
-            { type: 'chukonu', count: 3 },            // Row 1 中 = 诸葛弩 弩手（帝国决定）
-            { type: 'elite_fire_archer', count: 2 }   // Row 2 后 = 精锐火焰弓箭手 弓手（帝国决定）
+            { type: 'elite_fire_archer', count: 4 },  // Row 0 前 = 精锐火焰弓箭手 弓手（帝国决定）
+            { type: 'swordsman', count: 3 },          // Row 1 中 = 剑士 步兵（帝国决定）
+            { type: 'chukonu', count: 2 }             // Row 2 后 = 诸葛弩 弩手（帝国决定）
         ]
     }
 ];
-/** 10. 岭南 皮甲战象+帝王掷矛手+精锐藤弓兵（2026-08-15 主人定：全决定版，雁行 4+3+2，皮甲战象顶前 + 帝王掷矛手中 + 精锐藤弓兵后） */
+/** 10. 岭南 精锐藤弓兵+帝王掷矛手+皮甲战象（2026-08-15 主人定：全决定版，雁行 4+3+2，精锐藤弓兵远程顶前 + 帝王掷矛手中 + 皮甲战象后） */
 export const LINGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'armored_elephant', count: 4 },   // Row 0 前 = 皮甲战象 冲阵（帝国决定，DE 素材自带尺寸）
-            { type: 'imperial_skirmisher', count: 3 },// Row 1 中 = 帝王掷矛手 掷矛手（帝国决定）
-            { type: 'rattan_archer_elite', count: 2 } // Row 2 后 = 精锐藤弓兵 弓手（帝国决定）
+            { type: 'rattan_archer_elite', count: 4 }, // Row 0 前 = 精锐藤弓兵 弓手（帝国决定）
+            { type: 'imperial_skirmisher', count: 3 }, // Row 1 中 = 帝王掷矛手 掷矛手（帝国决定）
+            { type: 'armored_elephant', count: 2 }     // Row 2 后 = 皮甲战象 冲阵（帝国决定，DE 素材自带尺寸）
         ]
     }
 ];

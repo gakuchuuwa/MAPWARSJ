@@ -1098,7 +1098,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/TIBET/humi_zhentan.png": {
-            "scale": 1.1,
+            "scale": 1.06,
             "offsetX": 4,
             "offsetY": -4
         },
@@ -6258,7 +6258,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -13
         },
         "/assets/wuzhou/kepantuo_dulimi.png": {
-            "scale": 0.93,
+            "scale": 0.89,
             "offsetX": 0,
             "offsetY": -15
         },
