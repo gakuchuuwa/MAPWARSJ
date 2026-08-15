@@ -140,15 +140,14 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const defHasGen = defenders.some((u) => !!u.generalId);
         const attHasElite = attackers.some(unitHasElite);
         const defHasElite = defenders.some(unitHasElite);
-        // [2026-08-10 兵力门槛] 双方兵力都 ≥ SCENE13_MIN_TROOPS 才进 13。
-        // [2026-08-11 修正口径] 判定 = 每个参战单位（军团/城）都 ≥1万，与 1v1 onBattleStart 同口径。
-        //   原实现用「每方合计」（reduce 求和）——多军团会战里单军团 <1万（如 2×6000、城+协防军团）
-        //   合计却 ≥1万 → 误进 13（主人实锤「对方兵力不足一万也进13」）。
+        // [2026-08-16 主人改·含援军] 兵力门槛看每方**合计**（含所有已编入的援军），
+        //   不再是「每个单位单独 ≥1万」。因为 13 冻结引擎暂停游戏，开战时编入的援军
+        //   就是全部、不会有中途加入的援军——开战时看双方总兵力即可。
         const minTroops = GameConfig.COMBAT.SCENE13_MIN_TROOPS;
-        const attTroops = attackers.reduce((s, u) => s + (u.troops ?? 0), 0); // 合计仅作渲染层总兵力显示
-        const defTroops = defenders.reduce((s, u) => s + (u.troops ?? 0), 0);
-        const attBigEnough = attackers.every((u) => (u.troops ?? 0) >= minTroops);
-        const defBigEnough = defenders.every((u) => (u.troops ?? 0) >= minTroops);
+        const attTroops = attackers.reduce((s, u) => s + (u.troops ?? 0), 0); // 攻方合计（含援军）
+        const defTroops = defenders.reduce((s, u) => s + (u.troops ?? 0), 0); // 守方合计（含援军）
+        const attBigEnough = attTroops >= minTroops;
+        const defBigEnough = defTroops >= minTroops;
         const bigEnough = attBigEnough && defBigEnough;
         // 🔴 三条件全满足才进 13（主人 2026-08-11 定稿）：武将 + 精锐 + 兵力
         if (bigEnough && attHasGen && defHasGen && attHasElite && defHasElite) {

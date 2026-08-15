@@ -118,6 +118,7 @@ const WAR_TYPES: Record<string, WarType> = {
     mangudai:           { name: '蒙古突骑', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 }, // 视觉替换突骑兵（horse_archer），数值不变（弓骑）
     keshik:             { name: '怯薛军', cls: 'cav', sz: 1 },                                // 视觉替换重骑兵（heavy_cavalry），数值不变
     boyar:              { name: '贵族铁骑', cls: 'cav', sz: 1 },                              // 视觉替换重骑兵（heavy_cavalry），数值不变
+    savar:              { name: '萨瓦尔', cls: 'cav', sz: 1 },                                // 视觉替换重骑兵（heavy_cavalry），数值不变（波斯精锐重骑）
     elite_kipchak:      { name: '精锐钦察', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 },// 视觉替换突骑兵（horse_archer），数值不变（弓骑）
     elite_composite_bowman: { name: '精锐复合弓箭手', cls: 'ranged', sz: 1 },                // 视觉替换弓兵（archer），数值不变
     camel_heavy:        { name: '重装骆驼兵', cls: 'cav', sz: 1 },                            // 视觉替换重骑兵（heavy_cavalry），数值不变
@@ -196,7 +197,7 @@ const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/SAVAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
@@ -357,17 +358,12 @@ const SPRITE_TROOPS = 20;
  */
 const CORPSE_KEEP = 0.3;
 /**
- * 没被留下的那 70% 尸体的渐隐时长（秒，主人 2026-08-12「其他尸体消失的时候可以渐隐吗」
- * → 同日「1 秒不行，怎么也 5 秒，或者 10 秒」：1.0 → 5.0）。
- * 🔴 修前它们在死亡动画播完那一帧**直接凭空消失**，满地尸体一具具「啪」地不见，很跳。
- *    现在多活这么久，停在死亡末帧上把透明度拉到 0。留下的那 30% 不走这条路——
- *    它们烙进地面图后就不再逐帧重画了，本来就没有消失这回事。
- * ⚠️ 这个数和 CORPSE_KEEP=0.3 是一对矛盾：当初砍到 30% 就是嫌尸体堆叠盖住活人，
- *    而渐隐拉长又把那 70% 的可见时间加回来了。调大之前先想清楚要的是哪一头。
- *    性能不是约束：实测阵亡速率约 35 精灵/秒，×70%×5s ≈ 同屏多 120 具，
- *    离 drawImage 4000 次/帧的墙还很远，10 秒也只有约 240 具。
+ * 溃逃（主人 2026-08-16）：不保留尸体的那 70% 兵不再播死亡动画，改为反向移动 + 渐隐，
+ * 模拟兵败溃逃。速度比正常移动快（近战 55 / 骑兵 130）。跑完 FLEE_DUR 秒即消失。
  */
-const CORPSE_FADE = 5.0;
+const FLEE_SPD = 150;
+/** 溃逃总时长（秒）：反向移动 + 渐隐，跑完即消失 */
+const FLEE_DUR = 1.5;
 /**
  * 旗帜（2026-08-12 主人拍板加入）——**复用战略地图那面旗**（`LegionFlagDrawer`：
  * 旗杆 + 按势力染色的旗面 + 4 帧飘动，与据点旗号同源），13 不画任何新素材。
@@ -612,10 +608,22 @@ interface WarCorpse {
     dir: number;
     t: number;
     /**
-     * 死亡动画播完时由累加器裁定：true = 烙进地面永久保留，false = 渐隐消失。
-     * undefined = 还在播死亡动画，尚未裁定。见 CORPSE_KEEP / CORPSE_FADE。
+     * 已烙标记：true = 已烙进地面（待移除）。corpses 里只剩「确定保留」的尸体，
+     * 死亡动画播完即烙。留不留由 pushCorpse 在死亡时裁定。见 CORPSE_KEEP。
      */
     keep?: boolean;
+}
+
+/** 溃逃兵（不保留尸体的那部分）：反向移动 + 渐隐，模拟逃跑（主人 2026-08-16） */
+interface WarFleer {
+    x: number; y: number;
+    f: 0 | 1;
+    key: string;
+    dir: number;   // 逃跑朝向（背离战场）
+    ph: number;    // 跑动动画相位
+    t: number;     // 已逃跑时间
+    vx: number;    // 逃跑速度向量
+    vy: number;
 }
 
 /** 帧素材缓存：key -> { fh, frames, sets: {move,atk,die,melee}[faction][dir] } */
@@ -668,6 +676,7 @@ export class Scene13WarLayer {
     private spawns: WarSpawn[] = [];
     private men: WarMan[] = [];
     private corpses: WarCorpse[] = [];
+    private fleers: WarFleer[] = [];
     private arrows: WarArrow[] = [];
     private sparks: WarSpark[] = [];
     private fallenFlags: WarFallenFlag[] = [];
@@ -784,6 +793,7 @@ export class Scene13WarLayer {
         this.spawns = [];
         this.men = [];
         this.corpses = [];
+        this.fleers = [];
         this.arrows = [];
         this.fallenFlags = [];
         this.trees = [];
@@ -930,9 +940,23 @@ export class Scene13WarLayer {
     private lingerStep(dt: number): void {
         // 待命动作（8 帧循环，与战斗时同速）
         for (const m of this.men) m.ph += dt * 8 / 1.5;
-        // 尸体照常渐隐，别在残局里僵住
-        for (const c of this.corpses) c.t += dt;
-        this.corpses = this.corpses.filter(c => c.keep !== true && c.t < DEATH_ANIM + CORPSE_FADE);
+        // 尸体照常推进：死亡动画播完烙地面
+        for (const c of this.corpses) {
+            c.t += dt;
+            if (c.keep !== true && c.t >= DEATH_ANIM) {
+                this.bakeCorpse(c);
+                c.keep = true;
+            }
+        }
+        this.corpses = this.corpses.filter(c => c.keep !== true);
+        // 溃逃兵继续跑 + 渐隐
+        for (const f of this.fleers) {
+            f.t += dt;
+            f.x += f.vx * dt;
+            f.y += f.vy * dt;
+            f.ph += dt * 8;
+        }
+        this.fleers = this.fleers.filter(f => f.t < FLEE_DUR);
         // 倒下的军旗继续淡出
         for (const ff of this.fallenFlags) ff.t += dt;
         this.fallenFlags = this.fallenFlags.filter(ff => ff.t < FLAG_FALL);
@@ -960,6 +984,7 @@ export class Scene13WarLayer {
         this.spawns = [];
         this.men = [];
         this.corpses = [];
+        this.fleers = [];
         this.arrows = [];
         this.fallenFlags = [];
         this.trees = [];
@@ -1451,7 +1476,7 @@ export class Scene13WarLayer {
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
                     o.atkNext++;
                     o.hp -= dmg * counterMul(shooterCls, WAR_TYPES[o.key]?.cls) * gangMul(o);
-                    if (o.hp <= 0) this.corpses.push({ x: o.x, y: o.y, f: o.f, key: o.key, dir: o.dir, t: 0 });
+                    if (o.hp <= 0) this.pushCorpse(o);
                 }
             }
         }
@@ -1617,7 +1642,7 @@ export class Scene13WarLayer {
                 else {
                     foe.atkNext++;
                     foe.hp -= stats.dmg * accMul * this.sideBonus[m.f] * gangMul(foe) * dt;
-                    if (foe.hp <= 0) this.corpses.push({ x: foe.x, y: foe.y, f: foe.f, key: foe.key, dir: foe.dir, t: 0 });
+                    if (foe.hp <= 0) this.pushCorpse(foe);
                 }
                 // 兵刃交界处火花微特效（仅近战贴身接触时概率产生）
                 if (close && Math.random() < 0.06) {
@@ -1701,17 +1726,23 @@ export class Scene13WarLayer {
                 if (c.x > vw + w) c.x = -w;
             }
         }
-        // 死亡动画播完 → 累加器裁定：留下的烙进地面图（不再逐帧重画、不再参与排序），
-        // 没留下的不立刻消失，改为停在死亡末帧渐隐 CORPSE_FADE 秒（见 CORPSE_FADE）。
+        // 留下的尸体：死亡动画播完 → 烙进地面图永久保留（不再逐帧重画、不再参与排序）
         for (const c of this.corpses) {
             c.t += dt;
-            if (c.keep === undefined && c.t >= DEATH_ANIM) {
-                c.keep = this.takeCorpseSlot();
-                if (c.keep) this.bakeCorpse(c);
+            if (c.keep !== true && c.t >= DEATH_ANIM) {
+                this.bakeCorpse(c);
+                c.keep = true;
             }
         }
-        // keep=true 已烙进地面，本帧起就交给地面图了；keep=false 渐隐完才移除
-        this.corpses = this.corpses.filter(c => c.keep !== true && c.t < DEATH_ANIM + CORPSE_FADE);
+        this.corpses = this.corpses.filter(c => c.keep !== true);
+        // 溃逃兵：反向移动 + 渐隐，跑完即消失（主人 2026-08-16）
+        for (const f of this.fleers) {
+            f.t += dt;
+            f.x += f.vx * dt;
+            f.y += f.vy * dt;
+            f.ph += dt * 8;
+        }
+        this.fleers = this.fleers.filter(f => f.t < FLEE_DUR);
 
         // 胜负：一方兵力枯竭（池 + 场上全灭）才算输（2026-08-11 主人修复后口径）
         const alive = [0, 0];
@@ -1735,6 +1766,22 @@ export class Scene13WarLayer {
         if (this.ground && this.groundCtx) {
             this.groundCtx.clearRect(0, 0, this.ground.width, this.ground.height);
         }
+    }
+
+    /** 兵阵亡去向：累加器裁定留尸体（死亡动画→烙地面）还是溃逃（反向移动渐隐）——主人 2026-08-16 */
+    private pushCorpse(m: WarMan): void {
+        if (this.takeCorpseSlot()) {
+            this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: m.dir, t: 0 });
+            return;
+        }
+        const back = m.f === 0 ? -1 : 1;   // 攻方在左往左逃、守方在右往右逃
+        this.fleers.push({
+            x: m.x, y: m.y, f: m.f, key: m.key,
+            dir: this.dir8(back, (Math.random() - 0.5) * 0.8),
+            ph: Math.random() * 8, t: 0,
+            vx: back * FLEE_SPD * (0.9 + Math.random() * 0.2),
+            vy: (Math.random() - 0.5) * FLEE_SPD * 0.6,
+        });
     }
 
     /**
@@ -1866,11 +1913,17 @@ export class Scene13WarLayer {
         }
         // 已烙的尸体：一张图搞定（在所有活人之下）
         if (this.ground) ctx.drawImage(this.ground, 0, 0);
-        // 正在播死亡动画的（1.3 秒内）逐帧画；之后是没被留下的那 70%，停在末帧渐隐
+        // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
         for (const c of this.corpses) vis.push({
             y: c.y, x: c.x, f: c.f, key: c.key, dir: c.dir, set: 'die',
             fr: c.t,
-            a: c.t <= DEATH_ANIM ? 1 : Math.max(0, 1 - (c.t - DEATH_ANIM) / CORPSE_FADE),
+            a: 1,
+        });
+        // 溃逃兵：跑动帧 + 反向移动 + 渐隐（主人 2026-08-16）
+        for (const f of this.fleers) vis.push({
+            y: f.y, x: f.x, f: f.f, key: f.key, dir: f.dir, set: 'move',
+            fr: f.ph,
+            a: Math.max(0, 1 - f.t / FLEE_DUR),
         });
         for (const m of this.men) {
             // 有冲锋组的兵种（象兵/弓骑）两处用冲锋帧（主人 2026-08-12 拍板「两者都要」）：

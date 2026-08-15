@@ -399,7 +399,7 @@ export const TIBET_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 13. 中亚 贵族铁骑+精锐答剌罕骑兵+精锐钦察（2026-08-15 主人定：全决定版，三角 2+3+4，贵族铁骑近战尖刀 + 精锐答剌罕近骑中 + 精锐钦察弓骑后） — MovementClass=CAVALRY */
+/** 13. 中亚 贵族铁骑+萨瓦尔+精锐钦察（2026-08-16 主人改：三角 2+3+4，贵族铁骑近战尖刀 + 萨瓦尔重骑中 + 精锐钦察弓骑后） — MovementClass=CAVALRY */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -407,7 +407,7 @@ export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'boyar', count: 2 },         // Row 0 尖刀 = 贵族铁骑 近战重骑（帝国决定）
-            { type: 'elite_tarkan', count: 3 },  // Row 1 中 = 精锐答剌罕骑兵 近战骑（帝国决定）
+            { type: 'savar', count: 3 },         // Row 1 中 = 萨瓦尔 重骑（帝国决定）
             { type: 'elite_kipchak', count: 4 }  // Row 2 后 = 精锐钦察 弓骑（帝国决定）
         ]
     }
