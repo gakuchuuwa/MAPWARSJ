@@ -1408,7 +1408,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/KOREA/ssangseong_cuiying.png": {
-            "scale": 0.98,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": -29
         },
