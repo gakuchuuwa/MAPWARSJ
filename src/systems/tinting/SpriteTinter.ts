@@ -13,11 +13,11 @@
 import { TintColor, FactionTintSystem } from './FactionTintSystem';
 
 /**
- * 帝国决定（AoE2 DE）有玩家色遮罩 `.pc.png` 的素材目录。
- * 帝国征服原版（AoE2 原版 SLP）也有玩家色遮罩（调色板索引区域，二值 mask）。
- * 只有这些目录走 mask 精确染色；其余（三国志10 S10DB）一律走原有亮度染色，绝不改动它的既有逻辑。
+ * 有玩家色遮罩 `.pc.png` 的素材目录（AoE2 DE SLD 提取，全部 58 个）。
+ * 这些目录走 mask 精确染色（玩家色 × 遮罩灰度）；其余（三国志10 S10DB / 帝国征服原版）走原有亮度染色，绝不改动它们的既有逻辑。
+ * ⚠️ 新增 DE 兵种提取后必须同步加进这里，否则会误走亮度染色把金属/脸/马全染成势力色。
  */
-const MASK_DIRS = ['/SUCAI/SAMURAI_ELITE/', '/SUCAI/ARCHER/', '/SUCAI/SAMURAI/', '/SUCAI/SAMURAI_DE/'];
+const MASK_DIRS = ['/SUCAI/ARAMBAI/', '/SUCAI/ARBALEST/', '/SUCAI/ARCHER/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/BOYAR/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/CAV_ARCHER/', '/SUCAI/CHAMPION/', '/SUCAI/CHUKONU/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/COUSTILLIER/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/FIRE_LANCER/', '/SUCAI/GRENADIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/HEI_KUANG/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/IRON_PAGODA/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/KESHIK/', '/SUCAI/KIPCHAK/', '/SUCAI/LEGIONARY/', '/SUCAI/LIAO_DAO/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/MANGUDAI/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/NINJA/', '/SUCAI/PALADIN/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/PIKEMAN/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/SAMURAI/', '/SUCAI/SAMURAI_DE/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/TARKAN/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/TIGER_RIDER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/XIANBEI_RAIDER/'];
 
 /**
  * 精灵染色器
@@ -126,8 +126,9 @@ export class SpriteTinter {
     }
 
     /**
-     * mask 精确染色：玩家色遮罩非零像素 → 保留主图亮度、色相换成势力色（luminance-preserving hue shift），
-     * 按遮罩强度与主图混合（mask=255 纯玩家色 / mask=0 主图原色）——与 AoE2 DE 游戏内渲染一致。
+     * mask 精确染色：玩家色遮罩非零像素 → 玩家色 × 遮罩灰度（乘法混合，AoE2 DE 原生）：
+     *   遮罩白(255)=纯玩家色、遮罩灰=变暗（布料褶皱/图案明暗已烘焙在遮罩灰度里），
+     *   非玩家色区域（脸/皮肤/金属/武器/马）保持 main 原色 —— 与 AoE2 DE 游戏内渲染一致。
      */
     private static applyMaskTint(
         sprite: HTMLImageElement,
@@ -173,26 +174,18 @@ export class SpriteTinter {
         const maskImageData = mCtx.getImageData(0, 0, mCanvas.width, mCanvas.height);
         const maskData = maskImageData.data;
 
-        // 势力色色相/饱和度（亮度用主图像素自身的，保留明暗）
-        const [tH, tS] = rgbToHsl(tint.r, tint.g, tint.b);
-
         const n = Math.min(main.length, maskData.length);
         for (let i = 0; i < n; i += 4) {
             const strength = maskData[i + 3];
-            if (strength === 0) continue; // 非玩家色区域，保持原样
+            if (strength === 0) continue; // 非玩家色区域，保持 main 原样
 
-            const r = main[i];
-            const g = main[i + 1];
-            const b = main[i + 2];
-            // luminance-preserving hue shift：保留主图像素亮度，色相/饱和度换成势力色
-            const [, , l] = rgbToHsl(r, g, b);
-            const [pr, pg, pb] = hslToRgb(tH, tS, l);
-
-            const m = strength / 255; // 遮罩强度
-            main[i] = Math.round(r * (1 - m) + pr * m);
-            main[i + 1] = Math.round(g * (1 - m) + pg * m);
-            main[i + 2] = Math.round(b * (1 - m) + pb * m);
-            // Alpha 保持不变
+            // AoE2 DE 原生玩家色 = 玩家色 × 遮罩灰度（乘法混合）：
+            //   遮罩白(255)=纯玩家色、遮罩灰=玩家色变暗（布料明暗烘焙在遮罩里），
+            //   不用 main 占位色（黑/灰）的亮度——那亮度不含布料明暗，hue shift 会染成一片死色。
+            main[i] = Math.round(tint.r * strength / 255);
+            main[i + 1] = Math.round(tint.g * strength / 255);
+            main[i + 2] = Math.round(tint.b * strength / 255);
+            // Alpha 保持 main 的 alpha（不透明/抗锯齿边缘）
         }
 
         ctx.putImageData(mainImageData, 0, 0);
@@ -343,39 +336,4 @@ export class SpriteTinter {
         await Promise.all(promises);
         console.log('🎨 [SpriteTinter] Preloaded tinted sprites for', factionIds.length, 'factions');
     }
-}
-
-// ── HSL 工具（luminance-preserving hue shift 用）──
-// h ∈ [0,1], s ∈ [0,1], l ∈ [0,1]
-function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
-    r /= 255; g /= 255; b /= 255;
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const l = (max + min) / 2;
-    if (max === min) return [0, 0, l]; // 灰，无色相
-    const d = max - min;
-    const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    let h: number;
-    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
-    else if (max === g) h = ((b - r) / d + 2) / 6;
-    else h = ((r - g) / d + 4) / 6;
-    return [h, s, l];
-}
-
-function hslToRgb(h: number, s: number, l: number): [number, number, number] {
-    if (s === 0) {
-        const v = l * 255;
-        return [v, v, v];
-    }
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    const hue2rgb = (t: number): number => {
-        if (t < 0) t += 1;
-        if (t > 1) t -= 1;
-        if (t < 1 / 6) return p + (q - p) * 6 * t;
-        if (t < 1 / 2) return q;
-        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-        return p;
-    };
-    return [hue2rgb(h + 1 / 3) * 255, hue2rgb(h) * 255, hue2rgb(h - 1 / 3) * 255];
 }

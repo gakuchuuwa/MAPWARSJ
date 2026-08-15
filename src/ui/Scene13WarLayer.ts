@@ -960,17 +960,16 @@ export class Scene13WarLayer {
     // ── 出兵口 = 编制槽位（getCultureTier(...).slots 展开）──
     /**
      * 返回出兵口序列（主游戏编制槽位展开，不手抄）：
-     *   - 3×3 方阵文化：9 口，展开序 = 前排3 / 中排（骑-虎豹骑-骑）/ 后排3（与大地图 3×3 槽位一致）
-     *   - 纯骑文化（三角 1-2-3）：6 口，展开序 = 尖刀1 / 第二排2 / 第三排3
-     * 口内 key 为兵种 id（如 'shield' / 'lancer' / 'crossbow'），与 UNIT_ASSETS 键一致。
+     *   - 三阵型（鱼鳞 3×3 / 三角 2+3+4 / 雁行 4+3+2）展开后均为 9 口，展开序 = 前/中/后三排
+     * 口内 key 为兵种 id，与 UNIT_ASSETS 键一致。
      */
     private slotsOf(region: string): { key: string }[] {
         try {
             const tier = getCultureTier(region as any, 50000);
             if (tier?.slots?.length) {
                 const types = expandCompositionSlots(tier.slots);
-                // 3×3：5 组槽位展开 = 9 兵种；三角：3 组 = 6 兵种（与原型 __war.html 结构一致）
-                if (types.length === 9 || types.length === 6) {
+                // 三阵型展开均为 9 口
+                if (types.length === 9) {
                     // 🔴 防御：WAR_TYPES 没有的兵种（势力专属/新兵种）替换成轻步，防运行时 wt.cls 崩溃
                     return types.map((key) => ({
                         key: WAR_TYPES[key] ? key : 'light_infantry',
@@ -987,16 +986,32 @@ export class Scene13WarLayer {
         ];
     }
 
+    /** 从编制槽位结构推断阵型（鱼鳞/三角/雁行）；与 slotsOf 用同一 tier，保证布局一致 */
+    private formationModeOf(region: string): FormationMode {
+        try {
+            const tier = getCultureTier(region as any, 50000);
+            if (tier?.slots?.length) {
+                return inferFormationModeFromSlots(tier.slots);
+            }
+        } catch (e) {
+            console.warn('[Scene13WarLayer] 阵型推断失败，回退鱼鳞:', e);
+        }
+        return 'square';
+    }
+
     /**
      * 排级洗牌（主人 2026-08-13 定）：把出兵口按「排」分组随机换纵深顺序。
-     *   - 混编 9 口 = 前3 / 中3 / 后3 三组随机换序（步/骑/弩谁在前谁在后随机）
-     *   - 纯骑 6 口 = 尖刀1 / 第二排2 / 第三排3 三组随机换序（近战骑 vs 突骑前后随机）
-     *   横向 col 结构不变（FLANK5 / tri 查找表按 idx 固定），只换「哪类兵在哪排」。
+     *   - square 9 口 = 前3 / 中3 / 后3 三组随机换序
+     *   - triangle 9 口 = 尖刀2 / 中坚3 / 后4 三组随机换序
+     *   - echelon 9 口 = 前4 / 中3 / 后2 三组随机换序
+     *   横向 col 结构不变（LAYOUT 查找表按 idx 固定），只换「哪类兵在哪排」。
      */
-    private shuffleRows(lanes: { key: string }[], pureCav: boolean): { key: string }[] {
-        const groups = pureCav
-            ? [lanes.slice(0, 1), lanes.slice(1, 3), lanes.slice(3, 6)]
-            : [lanes.slice(0, 3), lanes.slice(3, 6), lanes.slice(6, 9)];
+    private shuffleRows(lanes: { key: string }[], mode: FormationMode): { key: string }[] {
+        const groups = mode === 'triangle'
+            ? [lanes.slice(0, 2), lanes.slice(2, 5), lanes.slice(5, 9)]
+            : mode === 'echelon'
+              ? [lanes.slice(0, 4), lanes.slice(4, 7), lanes.slice(7, 9)]
+              : [lanes.slice(0, 3), lanes.slice(3, 6), lanes.slice(6, 9)];
         for (let i = groups.length - 1; i > 0; i--) {
             const j = (Math.random() * (i + 1)) | 0;
             [groups[i], groups[j]] = [groups[j], groups[i]];

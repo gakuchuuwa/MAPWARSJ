@@ -292,8 +292,9 @@ export class ArmyEditor {
             <label style="display:flex;align-items:center;gap:6px;color:#ffd700;font-weight:bold;">
                 阵型:
                 <select id="ae-formation-mode" style="background:#2a2a3a;color:#ffd700;border:1px solid #555;border-radius:6px;padding:6px 10px;font-size:14px;font-weight:bold;">
-                    <option value="square"${this.currentFormationMode === 'square' ? ' selected' : ''}>3×3 方阵 (9人，中心刀骑固定)</option>
-                    <option value="triangle"${this.currentFormationMode === 'triangle' ? ' selected' : ''}>1-2-3 三角 (6人)</option>
+                    <option value="square"${this.currentFormationMode === 'square' ? ' selected' : ''}>3×3 鱼鳞 (9人)</option>
+                    <option value="triangle"${this.currentFormationMode === 'triangle' ? ' selected' : ''}>2+3+4 三角 (9人)</option>
+                    <option value="echelon"${this.currentFormationMode === 'echelon' ? ' selected' : ''}>4+3+2 雁行 (9人)</option>
                 </select>
             </label>
             <span style="color:#aaa;font-size:12px;">每格下拉可选 15 兵种</span>
@@ -308,48 +309,40 @@ export class ArmyEditor {
 
     /** 渲染阵型兵种格子 (3×3 或 三角) */
     private renderFormationGrid(container: HTMLDivElement): void {
-        const isTriangle = this.currentFormationMode === 'triangle';
+        const mode = this.currentFormationMode;
         container.innerHTML = '';
 
         const grid = document.createElement('div');
 
-        if (isTriangle) {
-            // Check fallback for old draft data
-            if (this.currentSlots.length < 3) {
-                const baseType = this.currentSlots[0]?.type || 'horse_archer';
-                this.currentSlots = [
-                    { type: baseType, count: 1 },
-                    { type: baseType, count: 2 },
-                    { type: baseType, count: 3 }
-                ];
+        if (mode === 'triangle' || mode === 'echelon') {
+            // 三角 2+3+4 / 雁行 4+3+2（3 组 slot，每排 count 动态渲染）
+            const counts = mode === 'triangle' ? [2, 3, 4] : [4, 3, 2];
+            const labels = mode === 'triangle' ? ['尖刀', '中坚', '后'] : ['前', '中', '后'];
+            // 兼容旧草稿（slot 数不足或 count 分布不符）→ 按阵型重建
+            if (this.currentSlots.length < 3 || this.currentSlots.map(s => s.count).join(',') !== counts.join(',')) {
+                const baseType = this.currentSlots[0]?.type || (mode === 'triangle' ? 'horse_archer' : 'shield');
+                this.currentSlots = counts.map(c => ({ type: baseType, count: c }));
             }
+            grid.style.cssText = 'display:flex; flex-direction:column; gap:8px;';
 
-            const [row1, row2, row3] = this.currentSlots;
-            grid.style.cssText = 'display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; align-items:center;';
-            
             const scaleHtml = (val: number, dataSlots: string) => `
-                <div style="display:flex;align-items:center;font-size:12px;color:#fff;justify-content:center;">
-                    比例:<input type="number" step="0.1" value="${val}" class="ae-scale" data-slots="${dataSlots}" style="background:#222;color:#fff;border:1px solid #444;border-radius:4px;padding:4px;width:50px;margin-left:4px;text-align:center;">
+                <div style="display:flex;align-items:center;font-size:12px;color:#fff;justify-content:center;width:70px;">
+                    比例:<input type="number" step="0.1" value="${val}" class="ae-scale" data-slots="${dataSlots}" style="background:#222;color:#fff;border:1px solid #444;border-radius:4px;padding:4px;width:44px;margin-left:4px;text-align:center;">
                 </div>
             `;
 
-            grid.innerHTML = `
-                <div></div>
-                ${this.cellHtml(0, row1?.type || 'horse_archer')}
-                <div></div>
-                ${scaleHtml(row1 ? getEffectiveSlotScale(row1) : 1.0, '0')}
-
-                <div style="grid-column: span 3; display:flex; justify-content:center; gap:6px;">
-                    ${this.cellHtml(1, row2?.type || 'horse_archer')}
-                    ${this.cellHtml(1, row2?.type || 'horse_archer')}
-                </div>
-                ${scaleHtml(row2 ? getEffectiveSlotScale(row2) : 1.0, '1')}
-
-                ${this.cellHtml(2, row3?.type || 'horse_archer')}
-                ${this.cellHtml(2, row3?.type || 'horse_archer')}
-                ${this.cellHtml(2, row3?.type || 'horse_archer')}
-                ${scaleHtml(row3 ? getEffectiveSlotScale(row3) : 1.0, '2')}
-            `;
+            grid.innerHTML = counts.map((_, i) => {
+                const slot = this.currentSlots[i];
+                const fallbackType = mode === 'triangle' ? 'horse_archer' : 'shield';
+                const cells = Array.from({ length: counts[i] }, () => this.cellHtml(i, slot?.type || fallbackType)).join('');
+                return `
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <span style="color:#aaa;font-size:11px;width:36px;text-align:right;">${labels[i]}</span>
+                        <div style="display:flex;gap:6px;flex:1;justify-content:center;">${cells}</div>
+                        ${scaleHtml(slot ? getEffectiveSlotScale(slot) : 1.0, String(i))}
+                    </div>
+                `;
+            }).join('');
         } else {
             // 3×3 网格 (5 slots: 前3, 中左, 中心, 中右, 后3)
             grid.style.cssText = 'display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; align-items:center;';
