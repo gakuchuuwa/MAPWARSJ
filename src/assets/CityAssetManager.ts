@@ -862,7 +862,7 @@ export class CityAssetManager {
         'pajiama': '帕加',
 'bitiniya': '比提',
         'luomu': '罗姆',
-        'baizanting': '拜占',
+'baizanting': '拜占',
 'sailiugu': '塞琉',
 'womaya': '倭马',
         'xibolai': '希伯',
@@ -928,6 +928,7 @@ export class CityAssetManager {
         'bosiniya': '波斯',
         'taolika': '陶里',
         'shengdian_qishi': '圣殿',
+        'mozeer': '摩泽',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

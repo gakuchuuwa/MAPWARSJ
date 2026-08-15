@@ -907,6 +907,14 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOYAR/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOYAR/death_${dir}.png`),
         },
+        // 【中亚萨瓦尔】Savar 波斯精锐重骑兵（8方向，AoE2 DE SLD 素材，山丘之王 DLC）
+        'savar': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/death_${dir}.png`),
+        },
         // 【中亚精锐钦察】Elite Kipchak 库曼精锐弓骑（8方向，AoE2 DE SLD 素材，u_cav_kipchak_elite）
         'elite_kipchak': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/move_${dir}.png`),

@@ -34,7 +34,6 @@ export const GERMANIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLeg
     danmai: { name: '丹斧兵', tier: 3 },          // 哥本哈根·阿布萨隆（名将亲兵，维京战斧）
     ruidian_si: { name: '斯韦阿卫队', tier: 2 },
     hansa: { name: '商船护军', tier: 3 },          // 汉堡·克劳斯：汉萨商船护卫；避势力「汉萨」叠字
-    mozeer: { name: '特里尔步兵', tier: 3 },          // 特里尔·君士坦丁；避势力「摩泽尔」叠字
     batawei: { name: '巴达维辅', tier: 3 },          // 乌特勒支·西维利斯：巴达维辅助军/之乱
 
     // ── T4 存在之兵 ──
