@@ -27,7 +27,7 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'elite_kipchak']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'rattan_archer_elite']);
 
 // ── 兵种属性 ──
 //   三类基准（CLS_STATS）：近战 150/45/55、骑兵 130/45/130、远程 90/28/50 射程160
@@ -125,6 +125,14 @@ const WAR_TYPES: Record<string, WarType> = {
     coustillier:        { name: '马上轻装兵', cls: 'cav', sz: 1 },                            // 视觉替换轻骑兵（lancer），数值不变
     heavy_pikeman:      { name: '重装长枪兵', cls: 'melee', sz: 1 },                          // 视觉替换青州兵（spear），数值不变
     arbalest:           { name: '劲弩手', cls: 'ranged', sz: 1 },                             // 视觉替换弩兵（crossbow），数值不变
+    // ── 阵型重构新增（2026-08-15 主人定：鱼鳞/三角/雁行三阵型，新兵种数值照抄被替换兵种）──
+    hei_kuang_heavy:      { name: '精锐黑光铠骑兵', cls: 'cav', sz: 1 },                      // 视觉替换黑光铠骑兵（hei_kuang），数值不变
+    mangudai_elite:       { name: '精锐蒙古突骑', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 },// 视觉替换蒙古突骑（mangudai），数值不变（弓骑）
+    pattiyoda_longbowman: { name: '帕提尤达长弓手', cls: 'ranged', sz: 1 },                   // 视觉替换精锐长弓兵（longbowman_elite），数值不变
+    armored_elephant:     { name: '皮甲战象', cls: 'melee', sz: 1, aoe: true, spd: 40 },      // 视觉替换象兵（war_elephant），数值不变（DE 素材自带尺寸）
+    ballista_elephant:    { name: '重弩战象', cls: 'ranged', sz: 1, spd: 40 },                // 视觉替换弩兵（crossbow），数值不变（象背远程，慢）
+    elephant_archer:      { name: '骑象射手', cls: 'ranged', sz: 1, spd: 40 },                // 视觉替换弓兵（archer），数值不变（象背远程，慢）
+    rattan_archer_elite:  { name: '精锐藤弓兵', cls: 'ranged', sz: 1 },                       // 视觉替换藤弓兵（rattan_archer），数值不变
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
     lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
     heavy_cavalry:  { name: '重骑兵', cls: 'cav', sz: 1.15 },
@@ -163,7 +171,7 @@ const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。

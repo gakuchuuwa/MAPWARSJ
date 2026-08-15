@@ -993,6 +993,67 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/death_${dir}.png`),
         },
+        // 【朝鲜精锐黑光铠骑兵】Heavy Hei Kuang 重装黑光铠（8方向，AoE2 DE SLD 素材，u_cav_hei_kuang_heavy）
+        'hei_kuang_heavy': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/death_${dir}.png`),
+        },
+        // 【草原精锐蒙古突骑】Elite Mangudai 精锐蒙古弓骑（8方向，AoE2 DE SLD 素材，u_cav_mangudai_elite；弓骑有射击）
+        'mangudai_elite': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/death_${dir}.png`),
+        },
+        // 【西域帕提尤达长弓手】Pattiyodha Longbowman 斯里兰卡长弓手（8方向，AoE2 DE SLD 素材，u_arc_pattiyoda_longbowman）
+        'pattiyoda_longbowman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PATTIYODA_LONGBOWMAN/death_${dir}.png`),
+        },
+        // 【岭南皮甲战象】Armored Elephant 装甲战象（8方向，AoE2 DE SLD 素材，u_ele_armored_elephant）
+        'armored_elephant': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARMORED_ELEPHANT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARMORED_ELEPHANT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARMORED_ELEPHANT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARMORED_ELEPHANT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARMORED_ELEPHANT/death_${dir}.png`),
+        },
+        // 【滇缅重弩战象】Ballista Elephant 弩炮战象（8方向，AoE2 DE SLD 素材，u_ele_ballista_elephant；远程弩炮）
+        'ballista_elephant': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BALLISTA_ELEPHANT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BALLISTA_ELEPHANT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BALLISTA_ELEPHANT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BALLISTA_ELEPHANT/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BALLISTA_ELEPHANT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BALLISTA_ELEPHANT/death_${dir}.png`),
+        },
+        // 【滇缅骑象射手】Elephant Archer 象背弓手（8方向，AoE2 DE SLD 素材，u_ele_elephant_archer；远程象背射击）
+        'elephant_archer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELEPHANT_ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELEPHANT_ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELEPHANT_ARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELEPHANT_ARCHER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELEPHANT_ARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELEPHANT_ARCHER/death_${dir}.png`),
+        },
+        // 【岭南精锐藤弓兵】Elite Rattan Archer 精锐藤甲弓手（8方向，AoE2 DE SLD 素材，u_arc_rattanarcher_elite）
+        'rattan_archer_elite': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER_ELITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER_ELITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER_ELITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER_ELITE/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER_ELITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER_ELITE/death_${dir}.png`),
+        },
         'lancer': {
             // [User Request] Simple 'lancer' mapped to light cavalry assets
             MOVE: [154, 155, 156, 157, 158, 159, 160, 161].map(id => `/SUCAI/S10DB/${id}-1.png`),

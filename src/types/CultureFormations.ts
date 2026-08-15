@@ -31,8 +31,12 @@ import { RegionType } from '../systems/RegionSystem';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
 import type { LegionType } from './UnitTypes';
 
-/** 军队编辑器可选阵型：3×3 方阵 (9人) 或 1-2-3 三角 (6人) */
-export type FormationMode = 'square' | 'triangle';
+/** 军队编辑器可选阵型（2026-08-15 主人定稿三阵型）：
+ *  square  鱼鳞阵 = 3×3（前3/中3/后3，9人）
+ *  triangle 三角阵 = 2+3+4（前2/中3/后4，9人，楔形突击）
+ *  echelon  雁行阵 = 4+3+2（前4/中3/后2，9人，宽正面两翼展开）
+ */
+export type FormationMode = 'square' | 'triangle' | 'echelon';
 
 /**
  * 行军兵种大类（与阵型骨架相关但独立映射；速度查表用此，勿仅靠 triangle 布尔）
@@ -66,39 +70,47 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
     return CULTURE_MOVEMENT_CLASS[culture] ?? 'MIXED';
 }
 
-/** 15 文化默认阵型（可被军队编辑器覆盖保存） */
+/** 15 文化默认阵型（可被军队编辑器覆盖保存）——2026-08-15 主人定稿三阵型：
+ *  三角 = 骑兵为主（≥2 骑，含弓骑）；雁行 = 远程为主（≥2 远程）；鱼鳞 = 其余 */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     CENTRAL:      'square',
     NORTH:        'square',
-    NORTHEAST:    'square',
+    NORTHEAST:    'triangle',   // 铁浮图(骑)+钦察(弓骑)+精锐长弓兵 = 2骑 → 三角
     KOREA:        'square',
     JAPAN:        'square',
     STEPPE:       'triangle',
     HEXI:         'square',
-    BASHU:        'square',
-    JIANGNAN:     'square',
-    LINGNAN:      'square',
-    DIANQIAN:     'square',
+    BASHU:        'echelon',    // 白毦兵+精锐诸葛弩+藤弓兵 = 2远程 → 雁行
+    JIANGNAN:     'echelon',    // 刀剑手+诸葛弩+精锐火焰弓箭手 = 2远程 → 雁行
+    LINGNAN:      'echelon',    // 皮甲战象+帝王掷矛手+精锐藤弓兵 = 2远程 → 雁行
+    DIANQIAN:     'echelon',    // 象兵+重弩战象+骑象射手 = 2远程 → 雁行
     TIBET:        'triangle',
     CENTRAL_ASIA: 'triangle',
     WEST_ASIA:    'square',
     WESTERN:      'square',
-    SLAVIC:       'square',   // 东欧：方阵
-    GERMANIC:     'square',   // 中欧：方阵
-    LATIN:        'square',   // 西欧：方阵（罗马龟甲阵）
+    SLAVIC:       'square',
+    GERMANIC:     'square',
+    LATIN:        'square',
 };
 
 export function getCultureFormationMode(culture: RegionType): FormationMode {
     return CULTURE_FORMATION_MODE[culture] ?? 'square';
 }
 
-/** 按阵型生成默认 slot 结构 */
+/** 按阵型生成默认 slot 结构（2026-08-15 三阵型：鱼鳞3×3 / 三角2+3+4 / 雁行4+3+2，均 9 人） */
 export function getDefaultSlotsForMode(mode: FormationMode): CompositionSlot[] {
     if (mode === 'triangle') {
         return [
-            { type: 'horse_archer', count: 1 },
             { type: 'horse_archer', count: 2 },
             { type: 'horse_archer', count: 3 },
+            { type: 'horse_archer', count: 4 },
+        ];
+    }
+    if (mode === 'echelon') {
+        return [
+            { type: 'shield', count: 4 },
+            { type: 'crossbow', count: 3 },
+            { type: 'crossbow', count: 2 },
         ];
     }
     return [
@@ -110,15 +122,22 @@ export function getDefaultSlotsForMode(mode: FormationMode): CompositionSlot[] {
     ];
 }
 
-/** 从 slot 结构推断阵型（兼容旧草稿） */
+/** 从 slot 结构推断阵型（兼容旧草稿；三阵型均为 9 人，靠各排 count 分布区分） */
 export function inferFormationModeFromSlots(slots: CompositionSlot[]): FormationMode {
-    const total = slots.reduce((s, x) => s + x.count, 0);
-    if (total === 6 && slots.length === 3) return 'triangle';
+    const counts = slots.map(s => s.count);
+    const total = counts.reduce((s, x) => s + x, 0);
+    // 三角 2+3+4（三排）
+    if (slots.length === 3 && counts[0] === 2 && counts[1] === 3 && counts[2] === 4) return 'triangle';
+    // 雁行 4+3+2（三排）
+    if (slots.length === 3 && counts[0] === 4 && counts[1] === 3 && counts[2] === 2) return 'echelon';
+    // 旧 1-2-3 三角（6 人，兼容历史草稿）
+    if (slots.length === 3 && counts[0] === 1 && counts[1] === 2 && counts[2] === 3) return 'triangle';
+    // 鱼鳞 3×3（5 slot：3 + 1+1+1 + 3）
     if (total === 9 && slots.length === 5) return 'square';
     return slots.length <= 3 ? 'triangle' : 'square';
 }
 
-/** 切换阵型时转换 slot（尽量保留已有兵种选择） */
+/** 切换阵型时转换 slot（尽量保留已有兵种选择；三阵型 2026-08-15） */
 export function convertSlotsToMode(slots: CompositionSlot[], mode: FormationMode): CompositionSlot[] {
     if (inferFormationModeFromSlots(slots) === mode) {
         return slots.map(s => ({ ...s }));
@@ -130,9 +149,18 @@ export function convertSlotsToMode(slots: CompositionSlot[], mode: FormationMode
         const base = frontType.includes('cavalry') || frontType === 'lancer' || frontType === 'elephant'
             ? frontType : 'horse_archer';
         return [
-            { type: base, count: 1 },
             { type: base, count: 2 },
             { type: base, count: 3 },
+            { type: base, count: 4 },
+        ];
+    }
+    if (mode === 'echelon') {
+        const midBase = sideType.includes('cavalry') || sideType === 'lancer' ? sideType : 'crossbow';
+        const backBase = backType.includes('cavalry') || backType === 'lancer' ? backType : 'crossbow';
+        return [
+            { type: frontType, count: 4 },
+            { type: midBase, count: 3 },
+            { type: backBase, count: 2 },
         ];
     }
     return [
