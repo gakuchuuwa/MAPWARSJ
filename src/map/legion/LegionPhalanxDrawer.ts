@@ -767,8 +767,8 @@ export class LegionPhalanxDrawer {
         if (!img || img.naturalWidth === 0) return 1;
         // If width approx equals height (< 2x), it's single frame (S10DB/NPC)
         if (img.naturalWidth < img.naturalHeight * 2) return 1;
-        // Standard convention: 8 frames
-        return 8;
+        // 帧数 = 宽/高（每帧正方形）：S10DB 8 帧不变；AoE2 全帧（30~60）也支持（2026-08-15 修「少帧」）
+        return Math.max(1, Math.round(img.naturalWidth / img.naturalHeight));
     }
 
     /**

@@ -533,12 +533,15 @@ export const SPRITE_PATHS = {
             DEATH: [449, 450, 451, 452, 453, 454, 455, 456].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
         'archer': {
-            MOVE: [283, 284, 285, 286, 287, 288, 289, 290].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            ATTACK: [291, 292, 293, 294, 295, 296, 297, 298].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            IDLE: [307, 308, 309, 310, 311, 312, 313, 314].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            DAMAGE: [315, 316, 317, 318, 319, 320, 321, 322].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            SHOOT: [323, 324, 325, 326, 327, 328, 329, 330].map(id => `/SUCAI/S10DB/${id}-1.png`),
-            DEATH: [331, 332, 333, 334, 335, 336, 337, 338].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            // 【步弓手】AoE2 DE 素材（u_arc_archer），2026-08-15 换血 S10DB
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARCHER/idle_${dir}.png`),
+            // AoE2 无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARCHER/attack_${dir}.png`),
+            // AoE2 弓手 attack 即拉弓射箭，无独立 SHOOT，复用
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARCHER/death_${dir}.png`),
         },
         'light_infantry': {
             MOVE: [1, 2, 3, 4, 5, 6, 7, 8].map(id => `/SUCAI/S10DB/${id}-1.png`),
