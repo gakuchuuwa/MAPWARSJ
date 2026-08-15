@@ -603,6 +603,34 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/death_${dir}.png`),
         },
+        // 【朝鲜火焰弓箭手】Fire Archer（8方向，AoE2 DE SLD 素材，2026-08-15 朝鲜全决定版）
+        'fire_archer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_ARCHER/idle_${dir}.png`),
+            // AoE2 火焰弓箭手无受击动画，DAMAGE/SHOOT 复用攻击帧（拉弓射火箭）
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_ARCHER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_ARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_ARCHER/death_${dir}.png`),
+        },
+        // 【朝鲜黑光铠骑兵】Hei Kuang（8方向，AoE2 DE SLD 素材，2026-08-15 朝鲜全决定版）
+        'hei_kuang': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG/idle_${dir}.png`),
+            // AoE2 黑光铠骑兵无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG/death_${dir}.png`),
+        },
+        // 【朝鲜刀剑手】Eastern Swordsman（8方向，AoE2 DE SLD 素材，2026-08-15 朝鲜全决定版）
+        'eastern_swordsman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EASTERN_SWORDSMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EASTERN_SWORDSMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EASTERN_SWORDSMAN/idle_${dir}.png`),
+            // AoE2 刀剑手无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EASTERN_SWORDSMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EASTERN_SWORDSMAN/death_${dir}.png`),
+        },
         'lancer': {
             // [User Request] Simple 'lancer' mapped to light cavalry assets
             MOVE: [154, 155, 156, 157, 158, 159, 160, 161].map(id => `/SUCAI/S10DB/${id}-1.png`),
