@@ -278,7 +278,7 @@ export const JAPAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'samurai', count: 3 },          // Row 0 前 = 日本武士（帝国征服）
+            { type: 'samurai', count: 3 },          // Row 0 前 = 日本武士（帝国决定）
             { type: 'samurai_elite', count: 1 },     // Row 1 左 = 精锐武士（帝国决定）
             { type: 'samurai_elite', count: 1 },     // Row 1 中 = 精锐武士（原刀骑将领，取消）
             { type: 'samurai_elite', count: 1 },     // Row 1 右 = 精锐武士（帝国决定）

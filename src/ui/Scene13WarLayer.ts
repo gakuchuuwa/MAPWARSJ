@@ -67,7 +67,7 @@ const WAR_TYPES: Record<string, WarType> = {
     spear:          { name: '青州兵', cls: 'melee', sz: 1, hp: 120, dmg: 58, spd: 52 },// 精锐枪兵：攻高脆
     axe:            { name: '蛮族兵', cls: 'melee', sz: 1, hp: 98, dmg: 70, spd: 55 }, // 蛮族：极攻·脆
     armored:        { name: '藤甲兵', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 藤甲：肉，藤编轻便
-    samurai:        { name: '日本武士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 视觉替换藤甲兵，数值不变；sz=1 统一（2026-08-15）
+    samurai:        { name: '日本武士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// AoE2 DE 日本武士，视觉替换藤甲兵，数值不变；sz=1 统一（2026-08-15 日本全决定版）
     samurai_elite:  { name: '精锐武士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// AoE2 DE 精锐武士，视觉替换藤甲兵，数值不变；sz=1 统一
     elephant:       { name: '象兵',   cls: 'melee', sz: 1.6, aoe: true, spd: 40 },
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
@@ -108,7 +108,7 @@ const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。

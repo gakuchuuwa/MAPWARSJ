@@ -585,14 +585,14 @@ export const SPRITE_PATHS = {
             DAMAGE: [594, 595, 596, 597, 598, 599, 600, 601].map(id => `/SUCAI/S10DB/${id}-1.png`),
             DEATH: [602, 603, 604, 605, 606, 607, 608, 609].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
-        // 【日本武士】Samurai（8方向，AoE2 原版素材提取，2026-08-14 替换日本文化藤甲兵视觉）
+        // 【日本武士】Samurai（8方向，AoE2 DE SLD 素材提取，2026-08-15 日本文化全决定版）
         'samurai': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/idle_${dir}.png`),
-            // AoE2 原版武士无受击动画，DAMAGE 复用攻击帧（受击时表现挥刀姿态）
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI/death_${dir}.png`),
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/idle_${dir}.png`),
+            // AoE2 DE 武士无受击动画，DAMAGE 复用攻击帧（受击时表现挥刀姿态）
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/death_${dir}.png`),
         },
         // 【精锐日本武士】Elite Samurai（8方向，AoE2 DE SLD 素材提取，2026-08-15 套用）
         'samurai_elite': {
