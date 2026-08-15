@@ -7,7 +7,7 @@ import { LegionPhalanxStateManager, LegionUnitState } from './LegionPhalanxState
 import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import { FactionTintSystem } from '../../systems/tinting/FactionTintSystem';
-import { getCompositionTier, CompositionTier, expandCompositionSlots, isCavalryUnitType } from '../../types/LegionComposition';
+import { getCompositionTier, CompositionTier, expandCompositionSlots } from '../../types/LegionComposition';
 import type { FormationMode } from '../../types/CultureFormations';
 import { getNavalShipDrawScale, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
@@ -73,16 +73,36 @@ export class LegionPhalanxDrawer {
     }
 
     /**
+     * [2026-08-16 DE 骑兵识别] DE 兵种（AoE2 DE SLD 素材）的骑兵类型集合。
+     * 旧判定只认 cavalry 后缀 / lancer / horse_archer，DE 骑兵名（kipchak/mangudai/cav_archer 等）
+     * 全漏判 → 被当成步兵（方阵 / 步兵颠簸 / 不冲锋）。此集合补齐 DE 骑兵识别。
+     * 注意：与 LegionComposition.getDefaultScaleForUnitType（scale 1.2）**故意不同源**——
+     * 1.2 是 S10DB 素材补偿，DE 素材用自身 sz/hotspot，scale 保持 1.0 不动；这里只管阵型/冲锋/微动作的骑兵识别。
+     */
+    private static readonly DE_CAVALRY_TYPES: ReadonlySet<string> = new Set([
+        'hei_kuang', 'iron_pagoda', 'kipchak', 'cav_archer', 'cav_archer_heavy',
+        'light_riders', 'tarkan', 'elite_tarkan', 'steppe_lancer', 'xianbei_raider',
+        'tiger_rider', 'arambai', 'mangudai', 'keshik', 'boyar', 'savar',
+        'elite_kipchak', 'camel_heavy', 'elite_steppe_lancer', 'paladin', 'coustillier',
+        'hei_kuang_heavy', 'mangudai_elite', 'steppe_horse_archer',
+    ]);
+
+    /**
      * [2026-08-09 13场景阵型] 骑兵类型判定：是否展开为 1-2-3 六人小三角。
-     * 与 LegionComposition.getDefaultScaleForUnitType 的骑兵分类一致：
-     * lancer/heavy_cavalry/general_cavalry/horse_archer/huihui_cavalry + 任何含 cavalry 的兵种。
+     * 旧 S10DB 骑兵（lancer/heavy_cavalry/general_cavalry/horse_archer/huihui_cavalry + 任何含 cavalry 的兵种）
+     * + DE 骑兵（DE_CAVALRY_TYPES）。
      * public：GlobalUnitRenderer 的编队判定（视觉框收缩系数）也用它，两处必须同源。
      */
     public static isCavalryType(type: string): boolean {
-        // 🔴 2026-08-16 改：骑兵判定统一走 LegionComposition.isCavalryUnitType（含 DE 骑兵），
-        //    与 getDefaultScaleForUnitType 同源。旧版只认 lancer/horse_archer/cavalry 后缀，
-        //    骑射手（cav_archer）/钦察/tarkan/mangudai 等 DE 骑兵全漏判，按步兵方阵渲染。
-        return isCavalryUnitType(type);
+        return (
+            type === 'lancer' ||
+            type === 'heavy_cavalry' ||
+            type === 'general_cavalry' ||
+            type === 'horse_archer' ||
+            type === 'huihui_cavalry' ||
+            type.includes('cavalry') ||
+            LegionPhalanxDrawer.DE_CAVALRY_TYPES.has(type)
+        );
     }
 
     /**
@@ -864,10 +884,8 @@ export class LegionPhalanxDrawer {
 
         if (state === 'MOVE') {
             const isElephant = unitType.includes('elephant');
-            // 与上方骑兵冲锋同一判定：弓骑/枪骑算骑，步弓/弩不算。
-            // 🔴 2026-08-16 改走 isCavalryUnitType（含 DE 骑兵）——旧硬编码漏判 cav_archer/tarkan/mangudai 等，
-            //    骑射手移动用步兵颠簸振幅（BOB_INF_AMP）而非骑兵（BOB_CAV_AMP），像步兵走路。
-            const isCavalry = !isElephant && isCavalryUnitType(unitType) && unitType !== 'archer' && unitType !== 'crossbow';
+            // 复用 isCavalryType（含 DE 骑兵）；象兵单独判（isElephant 独立振幅）
+            const isCavalry = LegionPhalanxDrawer.isCavalryType(unitType);
             const amp = isElephant ? MM.BOB_ELE_AMP : isCavalry ? MM.BOB_CAV_AMP : MM.BOB_INF_AMP;
             const speed = isElephant ? MM.BOB_ELE_SPEED : isCavalry ? MM.BOB_CAV_SPEED : MM.BOB_INF_SPEED;
             return { dx: 0, dy: Math.sin(tick * speed + phase) * -amp * scale };
@@ -1155,13 +1173,7 @@ export class LegionPhalanxDrawer {
                 if (!denseFront) {
                 // 2. CAVALRY CHARGE (Refined with resolvedUnitType)
                 // Identify if this unit IS a cavalry type unit
-                const isCavalryUnit =
-                    (resolvedUnitType.includes('cavalry') ||
-                    resolvedUnitType === 'lancer' ||
-                    resolvedUnitType === 'general_cavalry' ||
-                    resolvedUnitType === 'horse_archer') &&
-                    resolvedUnitType !== 'archer' &&
-                    resolvedUnitType !== 'crossbow';
+                const isCavalryUnit = LegionPhalanxDrawer.isCavalryType(resolvedUnitType);
 
                 // Only charge if it IS cavalry, AND we are in a mixed/cavalry context
                 // (Pure infantry shouldn't charge even if they have cavalry name? No, sticking to intent)

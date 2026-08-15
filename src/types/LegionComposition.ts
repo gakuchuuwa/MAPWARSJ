@@ -104,33 +104,16 @@ export function getEffectiveSlotScale(slot: { type: string; scale?: number }): n
     return slot.scale ?? getDefaultScaleForUnitType(slot.type);
 }
 
-/**
- * 骑兵兵种集合（含 AoE2 DE 骑兵）。🔴 战略地图渲染比例（getDefaultScaleForUnitType）+
- * 13 战斗阵型判定（LegionPhalanxDrawer.isCavalryType）同源，勿只改一处。
- * 旧判定只认 lancer/horse_archer/cavalry 后缀，DE 兵种名（kipchak/cav_archer/tarkan/...）全漏，
- * 导致骑射手等 DE 骑兵在大地图按步兵比例（1.0 而非 1.2）/步兵方阵渲染（2026-08-16 补）。
- */
-export const CAVALRY_UNIT_TYPES: ReadonlySet<string> = new Set([
-    // 旧兵种
-    'lancer', 'heavy_cavalry', 'general_cavalry', 'horse_archer', 'huihui_cavalry',
-    // DE 弓骑（cav + kite/rng）
-    'kipchak', 'elite_kipchak', 'cav_archer', 'cav_archer_heavy',
-    'mangudai', 'mangudai_elite', 'arambai', 'steppe_horse_archer',
-    // DE 纯骑（cav）
-    'hei_kuang', 'hei_kuang_heavy', 'iron_pagoda', 'light_riders',
-    'tarkan', 'elite_tarkan', 'steppe_lancer', 'elite_steppe_lancer',
-    'xianbei_raider', 'tiger_rider', 'keshik', 'boyar', 'savar',
-    'camel_heavy', 'paladin', 'coustillier',
-]);
-
-/** 骑兵判定（含 DE）：精确白名单 + cavalry 后缀兜底。 */
-export function isCavalryUnitType(type: string): boolean {
-    return CAVALRY_UNIT_TYPES.has(type) || type.includes('cavalry');
-}
-
 /** 军队编辑器 / 地图渲染默认比例：步兵与弓弩 1.0，骑兵 1.2（2026-06-01 军队编辑器拍板） */
 export function getDefaultScaleForUnitType(type: string): number {
-    if (isCavalryUnitType(type) || type === 'elephant') {
+    if (
+        type === 'lancer' ||
+        type === 'horse_archer' ||
+        type === 'heavy_cavalry' ||
+        type === 'general_cavalry' ||
+        type === 'elephant' ||
+        type.includes('cavalry')
+    ) {
         return 1.2;
     }
     return 1.0;
