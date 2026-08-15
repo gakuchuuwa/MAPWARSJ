@@ -17,7 +17,7 @@ import { TintColor, FactionTintSystem } from './FactionTintSystem';
  * 这些目录走 mask 精确染色（玩家色 × 遮罩灰度）；其余（三国志10 S10DB / 帝国征服原版）走原有亮度染色，绝不改动它们的既有逻辑。
  * ⚠️ 新增 DE 兵种提取后必须同步加进这里，否则会误走亮度染色把金属/脸/马全染成势力色。
  */
-const MASK_DIRS = ['/SUCAI/ARAMBAI/', '/SUCAI/ARBALEST/', '/SUCAI/ARCHER/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/BOYAR/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/CAV_ARCHER/', '/SUCAI/CHAMPION/', '/SUCAI/CHUKONU/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/COUSTILLIER/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/FIRE_LANCER/', '/SUCAI/GRENADIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/HEI_KUANG/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/IRON_PAGODA/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/KESHIK/', '/SUCAI/KIPCHAK/', '/SUCAI/LEGIONARY/', '/SUCAI/LIAO_DAO/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/MANGUDAI/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/NINJA/', '/SUCAI/PALADIN/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/PIKEMAN/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/SAMURAI/', '/SUCAI/SAMURAI_DE/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SWORDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/TARKAN/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/TIGER_RIDER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/XIANBEI_RAIDER/'];
+const MASK_DIRS = ['/SUCAI/ARAMBAI/', '/SUCAI/ARBALEST/', '/SUCAI/ARCHER/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/BOYAR/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/CAV_ARCHER/', '/SUCAI/CHAMPION/', '/SUCAI/CHUKONU/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/COUSTILLIER/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/FIRE_LANCER/', '/SUCAI/GRENADIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/HEI_KUANG/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/IRON_PAGODA/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/', '/SUCAI/KESHIK/', '/SUCAI/KIPCHAK/', '/SUCAI/LEGIONARY/', '/SUCAI/LIAO_DAO/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/MANGUDAI/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/NINJA/', '/SUCAI/PALADIN/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/PIKEMAN/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/SAMURAI/', '/SUCAI/SAMURAI_DE/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SWORDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/TARKAN/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/TIGER_RIDER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/XIANBEI_RAIDER/'];
 
 /**
  * 精灵染色器
@@ -174,24 +174,23 @@ export class SpriteTinter {
         const maskImageData = mCtx.getImageData(0, 0, mCanvas.width, mCanvas.height);
         const maskData = maskImageData.data;
 
-        // 势力色柔和化：降饱和到 75%（AoE2 玩家色非纯色——黄 214,214,27 / 绿 0,169,27；
-        //   100% 饱和纯色乘遮罩会显荧光塑料感，75% 才贴近游戏里染料布料的自然柔和感）
-        const gray = 0.299 * tint.r + 0.587 * tint.g + 0.114 * tint.b;
-        const sr = Math.round(gray + (tint.r - gray) * 0.75);
-        const sg = Math.round(gray + (tint.g - gray) * 0.75);
-        const sb = Math.round(gray + (tint.b - gray) * 0.75);
-
+        // AoE2 DE 原生玩家色渲染 = 玩家色 × main 图灰阶（明暗烘焙在 main 玩家色区的灰阶里）：
+        //   main 玩家色区是「有明暗的灰色占位」（褶皱高光→灰白、阴影→灰黑），
+        //   玩家色遮罩（.pc.png alpha）只标记「哪些像素是玩家色」，不是明暗来源。
+        //   ⚠️ 之前误用遮罩 alpha 做明暗 → 披风变成无褶皱的纯色方块（血训 08-15）。
+        //   增益 2.2：main 灰阶整体偏暗（均值 ~42），×2.2 提亮到接近 AoE2「高光耀眼/阴影分明」的对比度。
+        const GAIN = 2.2;
         const n = Math.min(main.length, maskData.length);
         for (let i = 0; i < n; i += 4) {
-            const strength = maskData[i + 3];
-            if (strength === 0) continue; // 非玩家色区域，保持 main 原样
+            const isPlayerColor = maskData[i + 3] > 0;
+            if (!isPlayerColor) continue; // 非玩家色区域（脸/皮肤/金属/武器/马），保持 main 原样
 
-            // AoE2 DE 原生玩家色 = 玩家色 × 遮罩灰度（乘法混合）：
-            //   遮罩白(255)=玩家色满值、遮罩灰=玩家色变暗（布料明暗烘焙在遮罩里），
-            //   不用 main 占位色（黑/灰）的亮度——那亮度不含布料明暗，hue shift 会染成一片死色。
-            main[i] = Math.round(sr * strength / 255);
-            main[i + 1] = Math.round(sg * strength / 255);
-            main[i + 2] = Math.round(sb * strength / 255);
+            // main 灰阶 = 布料明暗（褶皱），作为玩家色的亮度调制
+            const lum = 0.299 * main[i] + 0.587 * main[i + 1] + 0.114 * main[i + 2];
+            const s = Math.min(255, lum * GAIN);
+            main[i] = Math.round(tint.r * s / 255);
+            main[i + 1] = Math.round(tint.g * s / 255);
+            main[i + 2] = Math.round(tint.b * s / 255);
             // Alpha 保持 main 的 alpha（不透明/抗锯齿边缘）
         }
 
