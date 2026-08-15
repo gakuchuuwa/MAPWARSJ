@@ -474,7 +474,7 @@ export class SpeechAnnouncer {
    * 攻占城池（仅跟随军团）。攻方只报势力军（武将+精锐刚放过技，不重复），势=跟随军团这一仗的势：
    *   无将 → 「秦国军，攻占邯郸」（守方无武将，不续守方句）
    *   有将 → 「秦国军，{胜法}，攻占邯郸。{守将}，{败象}，{降服}」（优/均/劣三套词）
-   * 文化中心（regionLabel 有值）额外走 S 级：慢语速 + 「中原中心」前缀 + 易主横幅。
+   * 文化中心（regionLabel 有值）额外走 S 级：慢语速 + 「中原中心」前缀。
    */
   public announceCityCapture(opts: {
     attackerFactionId: string;
@@ -482,7 +482,7 @@ export class SpeechAnnouncer {
     ju: CaptureJu;                        // 攻方这一仗的势（兵力比判定）
     attackerSkillId?: string | null;     // 保留
     defenderGeneralId?: string | null;   // 守方武将（无=无将，不续守方句）
-    regionLabel?: string | null;         // 文化中心时传（S 级 + 前缀 + 横幅）
+    regionLabel?: string | null;         // 文化中心时传（S 级 + 前缀）
   }): void {
     if (!this.enabled) return;
     this.clearSkillQueue(); // 攻占是战斗收尾，清掉未念完的技能脉冲
@@ -501,7 +501,7 @@ export class SpeechAnnouncer {
     }
     console.log("[Speech] 攻占:", text);
     if (isCenter) {
-      this.speak(text, { sTier: true, rate: 0.92, banner: `${opts.regionLabel}易主 · ${opts.cityName}归${att}` });
+      this.speak(text, { sTier: true, rate: 0.92 });
     } else {
       this.speak(text);
     }
