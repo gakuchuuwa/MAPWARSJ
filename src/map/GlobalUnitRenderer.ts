@@ -100,6 +100,7 @@ export interface IAnimatedUnit extends IRenderable {
     destroyTime?: number;
     cultureSlots?: string[] | null; // [NEW] 14-culture formation slots
     cultureScales?: number[] | null; // [NEW] Scales for each slot
+    formationMode?: 'square' | 'triangle' | 'echelon' | null; // [NEW] 三值阵型（渲染层据此定布局）
     /** 海域 hex：渲染船贴图而非陆地方阵 */
     isOnSea?: boolean;
     /** 登船时锁定的船型（小/中/大）；null/缺省=按实时兵力算 */
@@ -2016,7 +2017,7 @@ export class GlobalUnitRenderer {
             // ── 攻城额外士兵：三角形尖兵左右各一弓步兵（仅陆战）──
             if (!useNavalVisual
                 && (unit as any).isSiegeAttacker && unit.currentBattleType === 'siege'
-                && (unit.cultureSlots?.length ?? 0) === 6) {
+                && unit.formationMode === 'triangle') {
                 const siegeScale = scale * (unit.previewScale ?? 1);
                 const baseH = 75;
                 const rH = baseH * siegeScale;
@@ -2110,6 +2111,7 @@ export class GlobalUnitRenderer {
                     squadInfo?.offsets ?? null,
                     squadInfo?.states ?? null,
                     squadInfo?.directions ?? null,
+                    unit.formationMode ?? null,
                 );
             }
 
