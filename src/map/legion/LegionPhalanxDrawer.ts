@@ -1331,8 +1331,13 @@ export class LegionPhalanxDrawer {
                     // [2026-08-10 每个编队单独] 13 场景（denseFront）：stagger = i（步长 1 与任何帧数互质，
                     // 相邻编队必不同相，9 格全铺满）；8/9/10 denseFront=false → 原 i*2（4 帧素材只有 2 种相位）逐像素不变。
                     const stagger = denseFront ? i : i * 2;
-                    // [2026-08-15 主人：攻击速度提高一倍] 攻击动画帧率 ×2（150ms→75ms/帧），移动/受击保持原速。
-                    const frameMs = animState === 'ATTACK' ? 75 : 150;
+                    // [2026-08-15 主人：ZOOM10 动作太慢] 根因：固定 frameMs（150/75）是 S10DB 8 帧素材时代的遗留，
+                    //   DE 全帧素材（30~60 帧）按固定值播 → 移动慢 5 倍、攻击慢 2 倍。
+                    //   改为对齐 zoom13 已定稿节奏 + AoE2 DE 原生（DAT frame_duration 实测 walk≈30ms / attack≈37ms）：
+                    //   DE 素材按帧数动态算（移动整轮 1s / 攻击整轮 1.5s）；S10DB 8 帧素材保持原速不动。
+                    const frameMs = dynEntry
+                        ? (animState === 'ATTACK' ? 1500 / spriteTotalFrames : 1000 / spriteTotalFrames)
+                        : (animState === 'ATTACK' ? 75 : 150);
                     currentFrameIndex = Math.floor((tick / frameMs) + stagger) % spriteTotalFrames;
                 } else {
                     // IDLE: Force Frame 0
