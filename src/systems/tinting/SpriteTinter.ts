@@ -174,17 +174,24 @@ export class SpriteTinter {
         const maskImageData = mCtx.getImageData(0, 0, mCanvas.width, mCanvas.height);
         const maskData = maskImageData.data;
 
+        // 势力色柔和化：降饱和到 75%（AoE2 玩家色非纯色——黄 214,214,27 / 绿 0,169,27；
+        //   100% 饱和纯色乘遮罩会显荧光塑料感，75% 才贴近游戏里染料布料的自然柔和感）
+        const gray = 0.299 * tint.r + 0.587 * tint.g + 0.114 * tint.b;
+        const sr = Math.round(gray + (tint.r - gray) * 0.75);
+        const sg = Math.round(gray + (tint.g - gray) * 0.75);
+        const sb = Math.round(gray + (tint.b - gray) * 0.75);
+
         const n = Math.min(main.length, maskData.length);
         for (let i = 0; i < n; i += 4) {
             const strength = maskData[i + 3];
             if (strength === 0) continue; // 非玩家色区域，保持 main 原样
 
             // AoE2 DE 原生玩家色 = 玩家色 × 遮罩灰度（乘法混合）：
-            //   遮罩白(255)=纯玩家色、遮罩灰=玩家色变暗（布料明暗烘焙在遮罩里），
+            //   遮罩白(255)=玩家色满值、遮罩灰=玩家色变暗（布料明暗烘焙在遮罩里），
             //   不用 main 占位色（黑/灰）的亮度——那亮度不含布料明暗，hue shift 会染成一片死色。
-            main[i] = Math.round(tint.r * strength / 255);
-            main[i + 1] = Math.round(tint.g * strength / 255);
-            main[i + 2] = Math.round(tint.b * strength / 255);
+            main[i] = Math.round(sr * strength / 255);
+            main[i + 1] = Math.round(sg * strength / 255);
+            main[i + 2] = Math.round(sb * strength / 255);
             // Alpha 保持 main 的 alpha（不透明/抗锯齿边缘）
         }
 
