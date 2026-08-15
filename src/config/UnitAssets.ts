@@ -746,6 +746,51 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/death_${dir}.png`),
         },
+        // 【青藏答剌罕骑兵】Tarkan 骑兵（8方向，AoE2 DE SLD 素材，u_cav_tarkan）
+        'tarkan': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARKAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARKAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARKAN/idle_${dir}.png`),
+            // AoE2 答剌罕骑兵无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARKAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TARKAN/death_${dir}.png`),
+        },
+        // 【青藏精锐答剌罕骑兵】Elite Tarkan 精锐骑兵（8方向，AoE2 DE SLD 素材，u_cav_tarkan_elite）
+        'elite_tarkan': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TARKAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TARKAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TARKAN/idle_${dir}.png`),
+            // AoE2 精锐答剌罕骑兵无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TARKAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TARKAN/death_${dir}.png`),
+        },
+        // 【西域精锐近卫军】Elite Guardsman 精锐步兵（8方向，AoE2 DE SLD 素材，u_inf_elite_guardsman）
+        'elite_guardsman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GUARDSMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GUARDSMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GUARDSMAN/idle_${dir}.png`),
+            // AoE2 精锐近卫军无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GUARDSMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GUARDSMAN/death_${dir}.png`),
+        },
+        // 【西域草原枪兵】Steppe Lancer 草原枪骑兵（8方向，AoE2 DE SLD 素材，u_cav_steppe_lancer）
+        'steppe_lancer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/idle_${dir}.png`),
+            // AoE2 草原枪兵无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/death_${dir}.png`),
+        },
+        // 【日本忍者】Ninja 忍者近战步兵（8方向，AoE2 DE SLD 素材，u_inf_ninja）
+        'ninja': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NINJA/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NINJA/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NINJA/idle_${dir}.png`),
+            // AoE2 忍者无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NINJA/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NINJA/death_${dir}.png`),
+        },
         'lancer': {
             // [User Request] Simple 'lancer' mapped to light cavalry assets
             MOVE: [154, 155, 156, 157, 158, 159, 160, 161].map(id => `/SUCAI/S10DB/${id}-1.png`),
