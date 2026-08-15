@@ -271,18 +271,18 @@ export const KOREA_TIERS: CompositionTier[] = [
     build3x3('armored', 'heavy_cavalry', 'archer')
 ];
 
-/** 5. 日本 纯步 2藤+1弓 (中心仍刀骑)；前列主兵已换日本武士视觉（2026-08-14）；2026-08-15 换精锐武士（AoE2 DE） */
+/** 5. 日本 前日本武士/中精锐武士/后步弓手（2026-08-15 主人定：取消刀骑将领） */
 export const JAPAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'samurai_elite', count: 3 },
-            { type: 'spear', count: 1 },
-            { type: 'general_cavalry', count: 1, scale: 1.2 },
-            { type: 'spear', count: 1 },
-            { type: 'archer', count: 3 }
+            { type: 'samurai', count: 3 },          // Row 0 前 = 日本武士（帝国征服）
+            { type: 'samurai_elite', count: 1 },     // Row 1 左 = 精锐武士（帝国决定）
+            { type: 'samurai_elite', count: 1 },     // Row 1 中 = 精锐武士（原刀骑将领，取消）
+            { type: 'samurai_elite', count: 1 },     // Row 1 右 = 精锐武士（帝国决定）
+            { type: 'archer', count: 3 }             // Row 2 后 = 步弓手（帝国决定）
         ]
     }
 ];

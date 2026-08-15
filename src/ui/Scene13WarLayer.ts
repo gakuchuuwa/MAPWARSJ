@@ -1124,6 +1124,8 @@ export class Scene13WarLayer {
                             //    它保护高光（金属不发假）、保护黑色轮廓（兵不隐身）、用灰度混合去掉素材底色。
                             const base = this.dechroma(im);
                             const clean = new Image();
+                            // [2026-08-15 玩家色遮罩] 抠绿后 src 变 data: URL，保留源路径供 SpriteTinter 推导 `.pc.png`。
+                            (clean as any).sourceUrl = url;
                             clean.onload = () => {
                                 try {
                                     b.fh = clean.naturalHeight;
