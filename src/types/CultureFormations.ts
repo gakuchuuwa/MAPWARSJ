@@ -236,7 +236,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
 // 15 文化区阵型 (用户 2026-05-30 拍板)
 // ============================================================
 
-/** 1. 中原 火矛兵+诸葛弩+虎豹骑（2026-08-15 主人定：全决定版，中间刀骑取消→诸葛弩，风格统一） */
+/** 1. 中原 火矛兵+虎豹骑+诸葛弩（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后） */
 export const CENTRAL_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -244,14 +244,14 @@ export const CENTRAL_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'fire_lancer', count: 3 },   // Row 0 前 = 火矛兵 步兵（帝国决定）
-            { type: 'chukonu', count: 1 },       // Row 1 左 = 诸葛弩 弩手（帝国决定）
-            { type: 'chukonu', count: 1 },       // Row 1 中 = 诸葛弩（原刀骑将领，取消）
-            { type: 'chukonu', count: 1 },       // Row 1 右 = 诸葛弩 弩手（帝国决定）
-            { type: 'tiger_rider', count: 3 }    // Row 2 后 = 虎豹骑 骑兵（帝国决定）
+            { type: 'tiger_rider', count: 1 },   // Row 1 左 = 虎豹骑 骑兵（帝国决定）
+            { type: 'tiger_rider', count: 1 },   // Row 1 中 = 虎豹骑（原刀骑将领，取消）
+            { type: 'tiger_rider', count: 1 },   // Row 1 右 = 虎豹骑 骑兵（帝国决定）
+            { type: 'chukonu', count: 3 }        // Row 2 后 = 诸葛弩 弩手（帝国决定）
         ]
     }
 ];
-/** 2. 北方 辽刀+火矛兵+鲜卑掠骑兵（2026-08-15 主人定：全决定版，中间刀骑取消→火矛兵，风格统一） */
+/** 2. 北方 辽刀+鲜卑掠骑兵+火矛兵（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后） */
 export const NORTH_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -259,10 +259,10 @@ export const NORTH_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'liao_dao', count: 3 },      // Row 0 前 = 辽刀 步兵（帝国决定）
-            { type: 'fire_lancer', count: 1 },   // Row 1 左 = 火矛兵 步兵（帝国决定）
-            { type: 'fire_lancer', count: 1 },   // Row 1 中 = 火矛兵（原刀骑将领，取消）
-            { type: 'fire_lancer', count: 1 },   // Row 1 右 = 火矛兵 步兵（帝国决定）
-            { type: 'xianbei_raider', count: 3 } // Row 2 后 = 鲜卑掠骑兵 骑兵（帝国决定）
+            { type: 'xianbei_raider', count: 1 },// Row 1 左 = 鲜卑掠骑兵 骑兵（帝国决定）
+            { type: 'xianbei_raider', count: 1 },// Row 1 中 = 鲜卑掠骑兵（原刀骑将领，取消）
+            { type: 'xianbei_raider', count: 1 },// Row 1 右 = 鲜卑掠骑兵 骑兵（帝国决定）
+            { type: 'fire_lancer', count: 3 }    // Row 2 后 = 火矛兵 步兵（帝国决定）
         ]
     }
 ];
@@ -325,7 +325,7 @@ export const STEPPE_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 7. 河西 精锐火矛手+诸葛弩+黑光铠骑兵（2026-08-15 主人定：全决定版，中间刀骑取消→诸葛弩，风格统一） */
+/** 7. 河西 精锐火矛手+黑光铠骑兵+精锐辽刀（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后） */
 export const HEXI_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -333,10 +333,10 @@ export const HEXI_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'elite_fire_lancer', count: 3 },  // Row 0 前 = 精锐火矛手 步兵（帝国决定）
-            { type: 'elite_liao_dao', count: 1 },     // Row 1 左 = 精锐辽刀 步兵（帝国决定）
-            { type: 'elite_liao_dao', count: 1 },     // Row 1 中 = 精锐辽刀（原刀骑将领，取消）
-            { type: 'elite_liao_dao', count: 1 },     // Row 1 右 = 精锐辽刀 步兵（帝国决定）
-            { type: 'hei_kuang', count: 3 }           // Row 2 后 = 黑光铠骑兵 骑兵（帝国决定）
+            { type: 'hei_kuang', count: 1 },          // Row 1 左 = 黑光铠骑兵 骑兵（帝国决定）
+            { type: 'hei_kuang', count: 1 },          // Row 1 中 = 黑光铠骑兵（原刀骑将领，取消）
+            { type: 'hei_kuang', count: 1 },          // Row 1 右 = 黑光铠骑兵 骑兵（帝国决定）
+            { type: 'elite_liao_dao', count: 3 }      // Row 2 后 = 精锐辽刀 步兵（帝国决定）
         ]
     }
 ];
@@ -405,7 +405,7 @@ export const TIBET_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 13. 中亚 贵族铁骑+精锐钦察+精锐答剌罕骑兵（2026-08-15 主人定：全决定版，三角 2+3+4，贵族铁骑近战尖刀 + 精锐钦察弓骑中 + 精锐答剌罕后） — MovementClass=CAVALRY */
+/** 13. 中亚 贵族铁骑+精锐答剌罕骑兵+精锐钦察（2026-08-15 主人定：全决定版，三角 2+3+4，贵族铁骑近战尖刀 + 精锐答剌罕近骑中 + 精锐钦察弓骑后） — MovementClass=CAVALRY */
 export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -413,8 +413,8 @@ export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'boyar', count: 2 },         // Row 0 尖刀 = 贵族铁骑 近战重骑（帝国决定）
-            { type: 'elite_kipchak', count: 3 }, // Row 1 中 = 精锐钦察 弓骑（帝国决定）
-            { type: 'elite_tarkan', count: 4 }   // Row 2 后 = 精锐答剌罕骑兵 近战骑（帝国决定）
+            { type: 'elite_tarkan', count: 3 },  // Row 1 中 = 精锐答剌罕骑兵 近战骑（帝国决定）
+            { type: 'elite_kipchak', count: 4 }  // Row 2 后 = 精锐钦察 弓骑（帝国决定）
         ]
     }
 ];
@@ -448,14 +448,14 @@ export const WEST_ASIA_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 16. 斯拉夫 复合弓箭手+精锐草原枪兵+掷斧兵（2026-08-15 主人定：全决定版，中间刀骑取消→精锐草原枪兵，风格统一） */
+/** 16. 斯拉夫 罗马军+精锐草原枪兵+复合弓箭手（2026-08-15 主人定：全决定版，鱼鳞 3×3 步前骑中弓后；罗马军=Legionary 军团步兵） */
 export const SLAVIC_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'throwing_axeman', count: 3 },     // Row 0 前 = 掷斧兵 步兵（帝国决定）
+            { type: 'legionary', count: 3 },           // Row 0 前 = 罗马军 步兵（帝国决定，u_inf_legionary）
             { type: 'elite_steppe_lancer', count: 1 }, // Row 1 左 = 精锐草原枪兵 骑兵（帝国决定）
             { type: 'elite_steppe_lancer', count: 1 }, // Row 1 中 = 精锐草原枪兵（原刀骑将领，取消）
             { type: 'elite_steppe_lancer', count: 1 }, // Row 1 右 = 精锐草原枪兵 骑兵（帝国决定）

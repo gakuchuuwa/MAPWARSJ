@@ -16,7 +16,7 @@
  * 渲染：全屏透明 canvas 叠在地图上，只画精灵/尸体；出兵口不画。
  */
 
-import { getCultureTier } from '../types/CultureFormations';
+import { getCultureTier, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
 import { expandCompositionSlots } from '../types/LegionComposition';
 import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
@@ -133,6 +133,7 @@ const WAR_TYPES: Record<string, WarType> = {
     ballista_elephant:    { name: '重弩战象', cls: 'ranged', sz: 1, spd: 40 },                // 视觉替换弩兵（crossbow），数值不变（象背远程，慢）
     elephant_archer:      { name: '骑象射手', cls: 'ranged', sz: 1, spd: 40 },                // 视觉替换弓兵（archer），数值不变（象背远程，慢）
     rattan_archer_elite:  { name: '精锐藤弓兵', cls: 'ranged', sz: 1 },                       // 视觉替换藤弓兵（rattan_archer），数值不变
+    legionary:            { name: '罗马军', cls: 'melee', sz: 1 },                            // 视觉替换掷斧兵（throwing_axeman），数值不变（近战步兵）
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
     lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
     heavy_cavalry:  { name: '重骑兵', cls: 'cav', sz: 1.15 },
@@ -164,14 +165,33 @@ function statsOf(key: string): { hp: number; dmg: number; spd: number; rng: numb
     return { hp: wt.hp ?? base.hp, spd: wt.spd ?? base.spd, dmg: wt.dmg ?? base.dmg, rng: wt.rng ?? base.rng };
 }
 
-/** 纯骑文化（三角 1-2-3 六口；与 CULTURE_FORMATION_MODE === 'triangle' 一致） */
-const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
+/** 三阵型 9 口布局查找表（row 0 最靠中线；idx = 出兵口展开序）：
+ *  square 鱼鳞 3×3 = 五通道（前中步3 / 上翼骑·中军·下翼骑 / 后中弓3）
+ *  triangle 三角 2+3+4 = 尖刀2 / 中坚3 / 后4（近战尖刀前、弓骑后）
+ *  echelon 雁行 4+3+2 = 前4 / 中3 / 后2（近战顶前、远程后） */
+const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]> = {
+    square: [
+        { col: 1, row: 0, cols: 5 }, { col: 2, row: 0, cols: 5 }, { col: 3, row: 0, cols: 5 },
+        { col: 0, row: 1, cols: 5 }, { col: 2, row: 1, cols: 5 }, { col: 4, row: 1, cols: 5 },
+        { col: 1, row: 2, cols: 5 }, { col: 2, row: 2, cols: 5 }, { col: 3, row: 2, cols: 5 },
+    ],
+    triangle: [
+        { col: 0, row: 0, cols: 2 }, { col: 1, row: 0, cols: 2 },
+        { col: 0, row: 1, cols: 3 }, { col: 1, row: 1, cols: 3 }, { col: 2, row: 1, cols: 3 },
+        { col: 0, row: 2, cols: 4 }, { col: 1, row: 2, cols: 4 }, { col: 2, row: 2, cols: 4 }, { col: 3, row: 2, cols: 4 },
+    ],
+    echelon: [
+        { col: 0, row: 0, cols: 4 }, { col: 1, row: 0, cols: 4 }, { col: 2, row: 0, cols: 4 }, { col: 3, row: 0, cols: 4 },
+        { col: 0, row: 1, cols: 3 }, { col: 1, row: 1, cols: 3 }, { col: 2, row: 1, cols: 3 },
+        { col: 0, row: 2, cols: 2 }, { col: 1, row: 2, cols: 2 },
+    ],
+};
 
 /** 单兵绘制尺寸（px，可调；2026-08-11 主人「单兵尺寸放大些」30 → 50） */
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
@@ -802,42 +822,27 @@ export class Scene13WarLayer {
             for (const side of sides) {
                 const lanes = this.slotsOf(side.region);
                 const n = lanes.length;
-                const pureCav = PURE_CAV.has(side.region);
+                const mode = this.formationModeOf(side.region);
                 // 🔴 排级随机互换（主人 2026-08-13 定）：步/骑/弩三类在「前后中」三排随机换序，
-                //    双方独立随机。横向 col 结构不变（前排中央3 / 中排两翼+中央 / 后排中央3），
+                //    双方独立随机。横向 col 结构不变（三阵型各按 LAYOUT 查找表），
                 //    只换「哪类兵在哪排」——前排可能变骑兵（中央突破）或弩兵（克制循环制衡）。
-                const lanes2 = this.shuffleRows(lanes, pureCav);
+                const lanes2 = this.shuffleRows(lanes, mode);
                 // 兵力按总量平分到各口（1 精灵 = SPRITE_TROOPS 兵；口少的一边每口出得快）
                 const poolPer = Math.max(1, Math.round(side.troops / SPRITE_TROOPS / n));
                 lanes2.forEach((lane, idx) => {
                     const key = lane.key;
                     this.ensureType(key);
-                    // 布局同原型 __war.html：row 0 最靠中线（越靠前越深入敌阵）
-                    //   普通文化 = 两翼 5 通道（2026-08-13 主人定：步兵居中、骑兵两翼、弓弩在后）：
-                    //     上翼骑 / 前排中央 步×3 / 中军虎豹骑 / 后排中央 弩×3 / 下翼骑
-                    //   三角（1-2-3）：查找表（col/row/cols），尖刀 1 口 → 第二排 2 口 → 第三排 3 口
-                    const tri = [
-                        { col: 0, row: 0, cols: 1 },
-                        { col: 0, row: 1, cols: 2 }, { col: 1, row: 1, cols: 2 },
-                        { col: 0, row: 2, cols: 3 }, { col: 1, row: 2, cols: 3 }, { col: 2, row: 2, cols: 3 },
-                    ];
-                    const FLANK5 = [
-                        { col: 1, row: 0, cols: 5 }, { col: 2, row: 0, cols: 5 }, { col: 3, row: 0, cols: 5 },   // 前排中央 步×3
-                        { col: 0, row: 1, cols: 5 }, { col: 2, row: 1, cols: 5 }, { col: 4, row: 1, cols: 5 },   // 上翼骑 / 中军虎 / 下翼骑
-                        { col: 1, row: 2, cols: 5 }, { col: 2, row: 2, cols: 5 }, { col: 3, row: 2, cols: 5 },   // 后排中央 弩×3
-                    ];
-                    const cell = pureCav
-                        ? tri[idx]
-                        : FLANK5[idx];
+                    // 布局：row 0 最靠中线（越靠前越深入敌阵）；三阵型 9 口走 LAYOUT 查找表
+                    const cell = LAYOUT[mode][idx];
                     const back = mx + (2 - cell.row) * depth;
                     const x = side.f === 0 ? back : VW - back;
-                    // 5 通道间距 spanY/5；三角阵保持原型 spanY/3
+                    // 5 通道间距 spanY/5；三角/雁行保持原型 spanY/3
                     const y = midY + (cell.col - (cell.cols - 1) / 2) * (spanY / (cell.cols === 5 ? 5 : 3));
                     this.spawns.push({
                         f: side.f, key, x, y,
                         pool: poolPer,
                         spawned: 0,
-                        wing: pureCav ? 0 : (cell.col === 0 ? 1 : cell.col === 4 ? -1 : 0),
+                        wing: mode === 'square' ? (cell.col === 0 ? 1 : cell.col === 4 ? -1 : 0) : 0,
                     });
                 });
             }
