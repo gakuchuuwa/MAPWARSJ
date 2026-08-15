@@ -83,7 +83,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     BASHU:        'echelon',    // 白毦兵+精锐诸葛弩+藤弓兵 = 2远程 → 雁行
     JIANGNAN:     'echelon',    // 刀剑手+诸葛弩+精锐火焰弓箭手 = 2远程 → 雁行
     LINGNAN:      'echelon',    // 皮甲战象+帝王掷矛手+精锐藤弓兵 = 2远程 → 雁行
-    DIANQIAN:     'echelon',    // 象兵+重弩战象+骑象射手 = 2远程 → 雁行
+    DIANQIAN:     'triangle',   // 象兵+精锐爪刀勇士+步弓手 = 象+刀近战前中 + 弓远程后 → 三角
     TIBET:        'triangle',
     CENTRAL_ASIA: 'triangle',
     WEST_ASIA:    'square',
@@ -379,16 +379,16 @@ export const LINGNAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 11. 滇缅 象兵+重弩战象+骑象射手（2026-08-15 主人定：全决定版，雁行 4+3+2，象兵顶前 + 重弩战象中 + 骑象射手后） */
+/** 11. 滇缅 象兵+精锐爪刀勇士+步弓手（2026-08-15 主人定：全决定版，三角 2+3+4，象兵近战尖刀 + 精锐爪刀勇士中 + 步弓手后） */
 export const DIANQIAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'war_elephant', count: 4 },   // Row 0 前 = 象兵 冲阵（帝国决定，DE 素材自带尺寸）
-            { type: 'ballista_elephant', count: 3 },// Row 1 中 = 重弩战象 弩炮（帝国决定）
-            { type: 'elephant_archer', count: 2 }   // Row 2 后 = 骑象射手 象背弓（帝国决定）
+            { type: 'war_elephant', count: 2 },   // Row 0 尖刀 = 象兵 冲阵（帝国决定，DE 素材自带尺寸）
+            { type: 'karambit_warrior_elite', count: 3 },// Row 1 中 = 精锐爪刀勇士 步兵（帝国决定）
+            { type: 'archer', count: 4 }           // Row 2 后 = 步弓手 弓手（帝国决定）
         ]
     }
 ];
