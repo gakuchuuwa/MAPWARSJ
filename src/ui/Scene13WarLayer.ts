@@ -800,6 +800,9 @@ export class Scene13WarLayer {
         this.lakes = [];
         this.clouds = [];
         this.clearGround();
+        // [2026-08-16 修·进 13 闪旧尸体] 主画布同步清空：stop 只隐藏 canvas 不清内容，
+        // start 后素材加载期 pending>0 → tick 不 render，会把上一场最后一帧（含尸体）亮出来。
+        if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.bank = {};
         this.pending = 0;
         this.pendingStartedAt = 0;   // 防死锁计时重置（新战斗重新计 10s）

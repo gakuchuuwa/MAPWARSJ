@@ -519,7 +519,7 @@ export class GlobalUnitRenderer {
     /**
      * 攻城团复制偏移（单位 = 攻城间距格，随军团 direction 一起旋转）。
      *
-     * 一个「攻城团」= 5 件器械（冲车 ×1 / 井阑 ×2 / 投石 ×2）+ 2 个弓步兵 = 7 个单位。
+     * 一个「攻城团」= 5 件器械（冲车 ×1 / 井阑 ×2 / 投石 ×2）。
      * 团在阵内的占位约：横向 ±1.7（井阑最外）、纵向 -2.0 ~ +1.9（冲车最前 ~ 投石最后）。
      *
      * - 非战斗场景（zoom13 以外）：返回单个 {0,0} → 与改动前逐像素一致，其他层级不受影响。
@@ -2014,34 +2014,7 @@ export class GlobalUnitRenderer {
                 }
             }
 
-            // ── 攻城额外士兵：三角形尖兵左右各一弓步兵（仅陆战）──
-            if (!useNavalVisual
-                && (unit as any).isSiegeAttacker && unit.currentBattleType === 'siege'
-                && unit.formationMode === 'triangle') {
-                const siegeScale = scale * (unit.previewScale ?? 1);
-                const baseH = 75;
-                const rH = baseH * siegeScale;
-                const sX = rH * 0.8 * 0.50;
-                const sY = rH * 0.42;
-                // 两个弓步兵属于攻城团的一部分，跟器械一起整团复制。
-                // 团偏移是像素，drawSiegeSoldier 的 offset 是 sX/sY 格 → 除回格数再传。
-                for (const g of GlobalUnitRenderer.getSiegeGroupOffsets(unit, directionIndex, siegeScale)) {
-                    const gxCells = sX !== 0 ? g.x / sX : 0;
-                    const gyCells = sY !== 0 ? g.y / sY : 0;
-                    LegionPhalanxDrawer.drawSiegeSoldier(
-                        ctx, { x: centerPoint.x, y: centerPoint.y },
-                        state, directionIndex, siegeScale, Date.now(), sX, sY,
-                        'archer', -1.2 + gxCells, -1.0 + gyCells, unit.id || 'unknown',
-                        unit.factionId || 'panjun', troops,
-                    );
-                    LegionPhalanxDrawer.drawSiegeSoldier(
-                        ctx, { x: centerPoint.x, y: centerPoint.y },
-                        state, directionIndex, siegeScale, Date.now(), sX, sY,
-                        'archer', +1.2 + gxCells, -1.0 + gyCells, unit.id || 'unknown',
-                        unit.factionId || 'panjun', troops,
-                    );
-                }
-            }
+            // ── 攻城额外士兵（弓步兵）已删除（2026-08-16 主人定：攻城只留 5 件器械，不要弓箭手）──
 
 
             if (useNavalVisual) {

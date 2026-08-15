@@ -804,7 +804,6 @@ export class LegionPhalanxDrawer {
 
     public static resetUnit(unitId: string): void {
         LegionPhalanxStateManager.reset(unitId);
-        this.clearSiegeSoldierMaps(unitId);
         // 攻城器械 deathThresholds / spawn / fade 故意保留：
         // 战终后仍靠 wasSiegeUnit 继续画 4s 渐隐；真正清理由 clearSiegeGearState。
     }
@@ -2003,133 +2002,7 @@ export class LegionPhalanxDrawer {
         }
     }
 
-    /** 攻城额外士兵阵亡起始 tick：key = unitId|offsetX（逐兵独立，对齐正规方阵格） */
-    private static siegeSoldierDeathStarts = new Map<string, number>();
-    /** 攻城额外士兵阵亡朝向（随机 0~8，设一次缓存，对齐正规方阵格） */
-    private static siegeSoldierDeathDirs = new Map<string, number>();
-    /** 攻城额外士兵阵亡阈值（0.05~0.95 存活率，与攻城器械同制） */
-    private static siegeSoldierDeathThresholds = new Map<string, number>();
-
-    /** 按 unitId 前缀清攻城额外士兵状态（reset/dispose 时调用） */
-    private static clearSiegeSoldierMaps(unitId: string): void {
-        const prefix = `${unitId}|`;
-        for (const map of [
-            this.siegeSoldierDeathStarts,
-            this.siegeSoldierDeathDirs,
-            this.siegeSoldierDeathThresholds,
-        ]) {
-            for (const key of [...map.keys()]) {
-                if (key.startsWith(prefix)) map.delete(key);
-            }
-        }
-    }
-
-    /**
-     * 攻城额外士兵：在方阵指定偏移位置画一个兵种精灵。
-     * 阵亡行为对齐正规方阵格（2026-07-22 修复）：
-     *   逐兵独立 key（unitId|offsetX）→ 随机阵亡阈值（0.05~0.95 存活率，与攻城器械同制）随战损逐个倒下、
-     *   随机阵亡朝向（0~8 缓存不闪）、独立计时播一次冻结末帧、死后标记保留不复活、SpriteTinter 染势力色。
-     */
-    public static drawSiegeSoldier(
-        ctx: CanvasRenderingContext2D,
-        center: { x: number, y: number },
-        state: PhalanxAnimState,
-        direction: number,
-        scale: number,
-        tick: number,
-        spacingX: number,
-        spacingY: number,
-        unitType: string,     // e.g. 'archer'
-        offsetX: number,      // in spacingX units
-        offsetY: number,      // in spacingY units
-        unitId: string,
-        factionId: string,
-        troops: number,
-    ): void {
-        const assets = this.unitSpriteCache.get(unitType);
-        if (!assets) return;
-
-        const slotKey = `${unitId}|${offsetX}`;
-
-        // 随机阵亡阈值（首次设置）：存活率跌破即死（随战损逐个倒下）；整军 DEATH 无条件死
-        if (!LegionPhalanxDrawer.siegeSoldierDeathThresholds.has(slotKey)) {
-            LegionPhalanxDrawer.siegeSoldierDeathThresholds.set(slotKey, 0.05 + Math.random() * 0.90);
-        }
-        const phState = LegionPhalanxStateManager.getState(unitId);
-        const maxT = phState?.maxTroops ?? troops;
-        const aliveRatio = maxT > 0 ? troops / maxT : 0;
-        const isDead =
-            state === 'DEATH' ||
-            aliveRatio <= (LegionPhalanxDrawer.siegeSoldierDeathThresholds.get(slotKey) ?? 0);
-
-        // 随机阵亡朝向（设一次缓存，对齐正规方阵格，不闪）
-        if (isDead && !LegionPhalanxDrawer.siegeSoldierDeathDirs.has(slotKey)) {
-            LegionPhalanxDrawer.siegeSoldierDeathDirs.set(slotKey, Math.floor(Math.random() * 8));
-        }
-
-        const dirIdx = ((direction % 8) + 8) % 8;
-        let sprite: HTMLImageElement | null = null;
-
-        if (isDead) {
-            const deathDir = LegionPhalanxDrawer.siegeSoldierDeathDirs.get(slotKey) ?? dirIdx;
-            sprite = assets.DEATH[deathDir] || assets.DEATH[0];
-        } else if (state === 'ATTACK') {
-            const shoot = (assets as any).SHOOT;
-            if (shoot && shoot.length > 0) {
-                sprite = shoot[dirIdx] || shoot[0];
-            } else {
-                sprite = assets.ATTACK[dirIdx] || assets.ATTACK[0];
-            }
-        } else if (state === 'MOVE') {
-            sprite = assets.MOVE[dirIdx] || assets.MOVE[0];
-        } else {
-            sprite = assets.IDLE[dirIdx] || assets.IDLE[0];
-        }
-
-        if (!sprite || !sprite.complete || sprite.naturalWidth === 0) return;
-
-        // 势力染色（与正规方阵同一 SpriteTinter；帧参数以染色后贴图为准）
-        const tinted = SpriteTinter.getTintedSprite(sprite, factionId);
-        if (!tinted) return;
-        const frameCount = Math.max(1, Math.floor(tinted.width / tinted.height));
-
-        let frameIndex: number;
-        if (isDead) {
-            // 阵亡：播一次冻结末帧（和正规方阵一致）；标记保留，状态切换不复活
-            if (!LegionPhalanxDrawer.siegeSoldierDeathStarts.has(slotKey)) {
-                LegionPhalanxDrawer.siegeSoldierDeathStarts.set(slotKey, tick);
-            }
-            const deathStart = LegionPhalanxDrawer.siegeSoldierDeathStarts.get(slotKey)!;
-            const elapsed = tick - deathStart;
-            frameIndex = Math.min(Math.floor(elapsed / 150), frameCount - 1);
-        } else {
-            frameIndex = Math.floor((tick / 150)) % frameCount;
-        }
-
-        const frameW = tinted.width / frameCount;
-        const frameH = tinted.height;
-
-        const angle = (direction + 1) * Math.PI / 4;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-        const origX = offsetX * spacingX;
-        const origY = offsetY * spacingY;
-        const gx = center.x + (origX * cos - origY * sin);
-        const gy = center.y + (origX * sin + origY * cos);
-
-        const baseHeight = 60;
-        const currentRatio = frameW / frameH;
-        const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
-        const targetH = baseHeight * scale * 1.0 * frameHeightNorm;
-        const targetW = targetH * currentRatio;
-
-        const sx = frameIndex * frameW;
-        ctx.drawImage(
-            tinted,
-            sx, 0, frameW, frameH,
-            gx - targetW / 2, gy - targetH * 0.5, targetW, targetH,
-        );
-    }
+    /** 攻城额外士兵（弓步兵）已删除（2026-08-16 主人定：攻城只留 5 件器械） */
 
     private static getFormationOffset(
         index: number,

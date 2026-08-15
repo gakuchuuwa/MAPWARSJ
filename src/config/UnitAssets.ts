@@ -840,13 +840,13 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TIGER_RIDER/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TIGER_RIDER/death_${dir}.png`),
         },
-        // 【岭南/朝鲜/江南刀剑手】Jian Swordsman 吴国刀剑手（8方向，AoE2 DE SLD 素材，u_inf_jian_swordman_shielded）
+        // 【朝鲜刀剑手】三国志10 剑士图（2026-08-16 主人改：朝鲜/中原/江南剑士统一三国志10 剑士士兵图，弃 DE 长剑士）
         'jian_swordsman': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/death_${dir}.png`),
+            MOVE: [1, 2, 3, 4, 5, 6, 7, 8].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            ATTACK: [9, 10, 11, 12, 13, 14, 15, 16].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            IDLE: [25, 26, 27, 28, 29, 30, 31, 32].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            DAMAGE: [33, 34, 35, 36, 37, 38, 39, 40].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            DEATH: [41, 42, 43, 44, 45, 46, 47, 48].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
         // 【岭南帝王掷矛手】Imperial Skirmisher 越南帝王掷矛手（8方向，AoE2 DE SLD 素材，u_arc_imperialskirmisher）
         'imperial_skirmisher': {
@@ -1086,13 +1086,13 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LEGIONARY/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LEGIONARY/death_${dir}.png`),
         },
-        // 【中原剑士】Swordsman 剑士步兵（8方向，AoE2 DE SLD 素材，u_inf_swordsman）
+        // 【中原/江南剑士】三国志10 剑士图（2026-08-16 主人改：朝鲜/中原/江南剑士统一三国志10 剑士士兵图，弃 DE 长剑士）
         'swordsman': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SWORDSMAN/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SWORDSMAN/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SWORDSMAN/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SWORDSMAN/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SWORDSMAN/death_${dir}.png`),
+            MOVE: [1, 2, 3, 4, 5, 6, 7, 8].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            ATTACK: [9, 10, 11, 12, 13, 14, 15, 16].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            IDLE: [25, 26, 27, 28, 29, 30, 31, 32].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            DAMAGE: [33, 34, 35, 36, 37, 38, 39, 40].map(id => `/SUCAI/S10DB/${id}-1.png`),
+            DEATH: [41, 42, 43, 44, 45, 46, 47, 48].map(id => `/SUCAI/S10DB/${id}-1.png`),
         },
         // 【北方印加枪兵长】Kamayuk 印加长枪步兵（8方向，AoE2 DE SLD 素材，u_inf_kamayuk）
         'kamayuk': {
