@@ -2084,7 +2084,7 @@ export const CITIES_V2: CityDataV2[] = [
         note: '根城；陆奥小城',
     },
     { id: 'city_amucheng', name: '阿母城', factionId: 'saman', lat: 39.0833, lng: 63.5786, type: 'small_city', region: 'CENTRAL_ASIA', troops: 30000, note: '阿姆河要冲；萨曼王朝域内重镇' },
-    { id: 'city_hepancheng', name: '石头城', factionId: 'hepan', lat: 37.7725, lng: 75.2264, type: 'pass', troops: 30000, region: 'WESTERN' },
+    { id: 'city_hepancheng', name: '石头城', factionId: 'hepan', lat: 37.7725, lng: 75.2264, type: 'pass', troops: 20000, region: 'HEXI' },
 
 
     { id: 'city_humicheng', name: '护密城', factionId: 'qiepantuo', lat: 36.7266, lng: 71.6133, type: 'small_city', region: 'CENTRAL_ASIA', troops: 30000, tier: 4, note: '青藏/中亚环线共用锚点' },

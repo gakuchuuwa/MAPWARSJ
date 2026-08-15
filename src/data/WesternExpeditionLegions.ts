@@ -8,7 +8,6 @@
  * - 依据 史料/古代精锐部队.md §14 #1–8；#10 喀喇契丹→中亚 xiliao@屈耽·斡耳朵亲卫
  */
 export const WESTERN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
-    hepan: { name: '葱岭守捉兵', tier: 3 },
   bailong: { name: '白龙堆卫营', tier: 4 }, // 三陇沙·班勇西域长史平车师（缺乏极其著名的战术高光，降T3）
   kepantuo: { name: '公主堡铁卫', tier: 3 }, // 公主堡汉日天种王传奇，名号极具传奇色彩，升T2
   zhasaketu: { name: '札萨克图骑', tier: 4 }, // 扎布汗·策旺扎布

@@ -808,6 +808,14 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIAO_DAO/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIAO_DAO/death_${dir}.png`),
         },
+        // 【河西精锐辽刀】Elite Liao Dao 精锐契丹长刀步兵（8方向，AoE2 DE SLD 素材）
+        'elite_liao_dao': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LIAO_DAO/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LIAO_DAO/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LIAO_DAO/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LIAO_DAO/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LIAO_DAO/death_${dir}.png`),
+        },
         // 【北方/中原火矛兵】Fire Lancer 火矛步兵（8方向，AoE2 DE SLD 素材，u_inf_fire_lancer）
         'fire_lancer': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_LANCER/move_${dir}.png`),
