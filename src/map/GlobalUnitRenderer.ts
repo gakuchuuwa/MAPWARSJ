@@ -755,7 +755,10 @@ export class GlobalUnitRenderer {
         // 主人实锤「13 战斗模式还显示之前大战略的军团」（薛仁贵天山飞骑 28500 出现在背景）。
         // 8/9/10 永不进此分支（演出只在 13 激活）。
         const warActive = (window as any).game?.scene13War?.isActive?.() === true;
-        if (warActive) return [];
+        // [2026-08-16 修·残局待命闪军团] 战斗结束后的 5 秒残局（battleScene.isLingering）同样保持纯背景，
+        // 否则大地图军团以 zoom10 样式叠在 13 待命画面上（主人实锤）。
+        const lingering = (window as any).game?.battleScene?.isLingering?.() === true;
+        if (warActive || lingering) return [];
         const list: IAnimatedUnit[] = [];
         for (let i = 0; i < this.sortedUnitsCache.length; i++) {
             const unit = this.sortedUnitsCache[i];
@@ -1110,7 +1113,9 @@ export class GlobalUnitRenderer {
         // 背景军团已被 collectVisibleUnitsInView 过滤，箭矢是独立渲染链，必须同门控。
         // 演出画布（Scene13WarLayer）自己的精灵不带箭矢，13 期间地图保持纯背景。
         const warActiveNow = (window as any).game?.scene13War?.isActive?.() === true;
-        if (!warActiveNow) {
+        // [2026-08-16 修·残局待命闪特效] lingering 期间箭矢特效同样不画（与军团门控一致）。
+        const lingeringNow = (window as any).game?.battleScene?.isLingering?.() === true;
+        if (!warActiveNow && !lingeringNow) {
             this.projectileSystem.draw(this.ctx, scale);
         }
 
