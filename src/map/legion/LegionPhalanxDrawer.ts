@@ -18,7 +18,7 @@ import { NavalPhalanxStateManager } from './NavalPhalanxState';
 const LAZY_BOOT_UNIT_IDS = new Set(['ship_small', 'ship_medium', 'ship_large']);
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/'];
 
 export type PhalanxAnimState = 'IDLE' | 'MOVE' | 'ATTACK' | 'DAMAGE' | 'DEATH';
 
@@ -1331,7 +1331,9 @@ export class LegionPhalanxDrawer {
                     // [2026-08-10 每个编队单独] 13 场景（denseFront）：stagger = i（步长 1 与任何帧数互质，
                     // 相邻编队必不同相，9 格全铺满）；8/9/10 denseFront=false → 原 i*2（4 帧素材只有 2 种相位）逐像素不变。
                     const stagger = denseFront ? i : i * 2;
-                    currentFrameIndex = Math.floor((tick / 150) + stagger) % spriteTotalFrames;
+                    // [2026-08-15 主人：攻击速度提高一倍] 攻击动画帧率 ×2（150ms→75ms/帧），移动/受击保持原速。
+                    const frameMs = animState === 'ATTACK' ? 75 : 150;
+                    currentFrameIndex = Math.floor((tick / frameMs) + stagger) % spriteTotalFrames;
                 } else {
                     // IDLE: Force Frame 0
                     currentFrameIndex = 0;

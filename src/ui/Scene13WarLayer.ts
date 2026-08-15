@@ -27,7 +27,7 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer']);
 
 // ── 兵种属性 ──
 //   三类基准（CLS_STATS）：近战 150/45/55、骑兵 130/45/130、远程 90/28/50 射程160
@@ -70,6 +70,10 @@ const WAR_TYPES: Record<string, WarType> = {
     samurai:        { name: '日本武士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// AoE2 DE 日本武士，视觉替换藤甲兵，数值不变；sz=1 统一（2026-08-15 日本全决定版）
     samurai_elite:  { name: '精锐武士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// AoE2 DE 精锐武士，视觉替换藤甲兵，数值不变；sz=1 统一
     elephant:       { name: '象兵',   cls: 'melee', sz: 1.6, aoe: true, spd: 40 },
+    // ── 朝鲜全决定版（2026-08-15 主人定：前排刀剑手/中排黑光铠骑兵/后排火焰弓箭手，数值照抄被替换兵种）──
+    eastern_swordsman:{ name: '刀剑手', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 视觉替换藤甲兵（armored），数值不变
+    hei_kuang:      { name: '黑光铠骑兵', cls: 'cav', sz: 1.15 },                          // 视觉替换重骑兵（heavy_cavalry），数值不变
+    fire_archer:    { name: '火焰弓箭手', cls: 'ranged', sz: 1 },                          // 视觉替换弓兵（archer），数值不变
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
     lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
     heavy_cavalry:  { name: '重骑兵', cls: 'cav', sz: 1.15 },
@@ -108,7 +112,7 @@ const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
@@ -1668,15 +1672,26 @@ export class Scene13WarLayer {
         const img = b.sets.die?.[c.f]?.[c.dir];
         if (!img) return;
         const wt = WAR_TYPES[c.key];
-        const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
         const dieN = b.frames.die ?? 8;
-        const dieFw = b.fh;   // 帧宽 = 帧高（每帧正方形）
 
         g.save();
         // [环境融入] 仅做轻微压暗。去除 sepia（战场底色因地貌多变），保持 100% 不透明
         g.filter = 'brightness(80%) contrast(95%)';
         g.globalAlpha = 1.0;
-        g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, c.x - px / 2, c.y - px * 0.9, px, px);
+        const dm = b.dyn?.die?.[c.dir];
+        if (dm) {
+            // 🔴 AoE2 DE 动态帧框（2026-08-15 修复「尸体一个都留不下」）：
+            //   之前走 S10DB 正方形假设（dieFw = b.fh = 84）切 DE 动态 sheet（fw 40~120 不等），
+            //   末帧切片错位/越界 → 烙进地面是空白或碎片 → 保留的 1/3 尸体视觉上全丢。
+            //   这里与渲染循环同一套 hotspot 对齐 + 动态帧框。
+            const s = UNIT_PX * (wt?.sz ?? 1) / 64;
+            g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, c.x - dm.hx * s, c.y - dm.hy * s, dm.fw * s, dm.fh * s);
+        } else {
+            // S10DB 正方形帧（原逻辑不变）
+            const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
+            const dieFw = b.fh;   // 帧宽 = 帧高（每帧正方形）
+            g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, c.x - px / 2, c.y - px * 0.9, px, px);
+        }
         g.restore();
     }
 

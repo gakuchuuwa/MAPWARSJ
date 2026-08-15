@@ -266,9 +266,9 @@ export const NORTHEAST_TIERS: CompositionTier[] = [
     build3x3('heavy_infantry', 'horse_archer', 'archer')
 ];
 
-/** 4. 朝鲜 步骑 藤+斧骑+弓 */
+/** 4. 朝鲜 步骑 刀剑手+黑光铠骑兵+火焰弓箭手（2026-08-15 主人定：全决定版） */
 export const KOREA_TIERS: CompositionTier[] = [
-    build3x3('armored', 'heavy_cavalry', 'archer')
+    build3x3('eastern_swordsman', 'hei_kuang', 'fire_archer')
 ];
 
 /** 5. 日本 前日本武士/中精锐武士/后步弓手（2026-08-15 主人定：取消刀骑将领） */
