@@ -323,11 +323,26 @@ function gangMul(victim: WarMan): number {
 /** 死亡动画时长（8 帧 × 6fps）。播完就把最后一帧烙进地面图，尸体永久保留 */
 const DEATH_ANIM = 8 / 6;
 const ARROW_DUR = 0.42;
+/** DE 抛射物缩放 = 士兵同款（UNIT_PX / 64）。DE 素材像素已反映真实比例（标枪 56px 是箭 28px 的 2 倍），统一缩放即可。 */
+const PROJ_SCALE = UNIT_PX / 64;
 /**
- * 箭矢笔画缩放：大地图在 zoom≥10 用 currentScale=1.4、单兵 138px；
- * 我们单兵 50px，按比例 50/138×1.4 ≈ 0.5 太细，取 0.7 让箭看得清。
+ * 远程兵 → DE 抛射物素材（缺省 = 箭 PROJ_ARROW）。只有 4 个兵种用特殊抛射物，其余弓弩共用箭。
+ * 箭：弓手/弩手/长弓/诸葛弩/骑射手/突骑/复合弓/藤弓/钦察；标枪：掷矛手；飞镖：阿兰拜；飞斧：掷斧兵；火箭：火弓。
  */
-const ARROW_SCALE = 0.7;
+const PROJ_TYPE: Record<string, string> = {
+    fire_archer: 'PROJ_ARROW_FIRE',
+    elite_fire_archer: 'PROJ_ARROW_FIRE',
+    imperial_skirmisher: 'PROJ_SPEAR',
+    arambai: 'PROJ_DART',
+    throwing_axeman: 'PROJ_THROWING_AXE',
+};
+/** 连弩连发箭数（AoE2 wiki：诸葛弩 3 支、精锐诸葛弩 5 支；其余远程每轮 1 支）。 */
+const PROJ_VOLLEY: Record<string, number> = {
+    chukonu: 3,
+    elite_chukonu: 5,
+};
+/** 连发每支箭的发射间隔（秒），诸葛弩 3/5 支依次射出。 */
+const PROJ_VOLLEY_DELAY = 0.08;
 /**
  * 每方开局数 + 每次补兵批量 = 300（2026-08-13 主人定）。
  * 成批补：开局双方各出 300；之后一方场上 < 150 才再补 300（见 TRIGGER）。
@@ -541,6 +556,23 @@ interface WarArrow {
     t: number;
     dur: number;
     f: 0 | 1;
+    /** 抛射物素材 key（PROJ_ARROW / PROJ_SPEAR / ...），决定画哪支箭 */
+    proj: string;
+    /** 连发发射延迟（秒）：t < delay 尚未射出（诸葛弩 3/5 支依次射）。 */
+    delay?: number;
+}
+
+/** DE 抛射物素材缓存：一张横排 fly_0.png + _meta.json 的帧框/hotspot。 */
+interface ProjAsset {
+    img: HTMLImageElement | null;
+    /** 帧数 */
+    n: number;
+    /** 每帧宽/高 */
+    fw: number;
+    fh: number;
+    /** hotspot（旋转中心）相对帧左上角 */
+    hx: number;
+    hy: number;
 }
 
 /** 倒下的军旗：旗手战死后原地转倒 + 淡出（t 走到 FLAG_FALL 即移除） */
@@ -702,6 +734,8 @@ export class Scene13WarLayer {
     private groundCtx: CanvasRenderingContext2D | null = null;
     private over = false;
     private bank: Record<string, WarBank> = {};
+    /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
+    private projBank: Record<string, ProjAsset> = {};
     private pending = 0;
     /** [2026-08-11 防死锁] 素材加载开始时间戳（pending 卡死 10s 强制判负用） */
     private pendingStartedAt = 0;
@@ -1306,6 +1340,37 @@ export class Scene13WarLayer {
         }
     }
 
+    /** 读 DE 抛射物 `_meta.json`（帧数 + 帧框 + hotspot）。 */
+    private async loadProjMeta(dir: string): Promise<{ frames: number; box_w: number; box_h: number; anchor_x: number; anchor_y: number } | null> {
+        try {
+            const res = await fetch(`${dir}_meta.json`);
+            if (!res.ok) return null;
+            return await res.json();
+        } catch { return null; }
+    }
+
+    /** 按需加载 DE 抛射物素材（透明底 fly_0.png，不抠绿不染色——箭/标枪/飞斧 DE 里无玩家色）。 */
+    private ensureProj(key: string): void {
+        if (this.projBank[key]) return;
+        const dir = `/SUCAI/${key}/`;
+        // 占位先立（img=null），防同一 key 重复加载；渲染时 img 未就绪就跳过不画。
+        this.projBank[key] = { img: null, n: 8, fw: 0, fh: 0, hx: 0, hy: 0 };
+        this.pending++;
+        this.loadProjMeta(dir).then(meta => {
+            if (meta) {
+                this.projBank[key].n = meta.frames;
+                this.projBank[key].fw = meta.box_w;
+                this.projBank[key].fh = meta.box_h;
+                this.projBank[key].hx = meta.anchor_x;
+                this.projBank[key].hy = meta.anchor_y;
+            }
+            const im = new Image();
+            im.onload = () => { this.projBank[key].img = im; this.pending--; };
+            im.onerror = () => { this.pending--; };
+            im.src = `${dir}fly_0.png`;
+        }).catch(() => { this.pending--; });
+    }
+
     private dir8(dx: number, dy: number): number {
         let a = Math.atan2(-dy, dx) * 180 / Math.PI;
         a = ((a % 360) + 360) % 360;
@@ -1621,16 +1686,25 @@ export class Scene13WarLayer {
                     // 攻击动作交替（主人 2026-08-11 拍板）：有冲锋组的兵种（象兵/弓骑）每轮出手翻转，
                     // 在「攻击帧/冲锋帧」两套动作间轮播，丰富表现；无冲锋组的兵种不受影响。
                     if (this.bank[m.key]?.sets.charge?.[0]?.length) m.atkFlip = !m.atkFlip;
-                    // 一轮出手开始 = 射出一支箭（主人 2026-08-11「每个远程应该拥有自己的弓箭」）。
+                    // 一轮出手开始 = 射箭（主人 2026-08-11「每个远程应该拥有自己的弓箭」）。
                     // 只有真正在放箭的那一轮才有箭：被贴身改白刃（st=2）时不射。
+                    // 🔴 2026-08-16 主人定：抛射物按兵种一一对应 DE 素材（箭/标枪/飞镖/飞斧/火箭），
+                    //    连弩（诸葛弩）连发多支（普通 3、精锐 5，AoE2 wiki），其余每轮 1 支。
                     if (stats.rng > 65 && m.st === 1) {
                         const ax = foe.x - m.x, ay = foe.y - m.y;
                         const ad = Math.hypot(ax, ay) || 1;
-                        this.arrows.push({
-                            x: m.x, y: m.y - UNIT_PX * 0.45,   // 从胸口高度射出，不是脚底
-                            dx: ax / ad, dy: ay / ad, len: ad,
-                            t: 0, dur: ARROW_DUR + Math.random() * 0.06, f: m.f,
-                        });
+                        const proj = PROJ_TYPE[m.key] ?? 'PROJ_ARROW';
+                        const volley = PROJ_VOLLEY[m.key] ?? 1;
+                        this.ensureProj(proj);
+                        for (let v = 0; v < volley; v++) {
+                            this.arrows.push({
+                                x: m.x, y: m.y - UNIT_PX * 0.45,   // 从胸口高度射出，不是脚底
+                                dx: ax / ad, dy: ay / ad, len: ad,
+                                t: 0, dur: ARROW_DUR + Math.random() * 0.06, f: m.f,
+                                proj,
+                                delay: v * PROJ_VOLLEY_DELAY,      // 连发：第 v 支延迟 v×80ms 射出
+                            });
+                        }
                     }
                 }
                 m.atkSt = m.st;
@@ -1713,7 +1787,8 @@ export class Scene13WarLayer {
         for (const ff of this.fallenFlags) ff.t += dt;
         this.fallenFlags = this.fallenFlags.filter(ff => ff.t < FLAG_FALL);
         for (const a of this.arrows) a.t += dt;
-        this.arrows = this.arrows.filter(a => a.t < a.dur);
+        // 🔴 连发延迟：t 走到 delay+dur 才移除（delay 内还没射出，不算飞行时间）。
+        this.arrows = this.arrows.filter(a => a.t < (a.delay ?? 0) + a.dur);
         for (const s of this.sparks) {
             s.t += dt;
             s.x += s.vx * dt;
@@ -2011,55 +2086,29 @@ export class Scene13WarLayer {
             ctx.restore();
         }
 
-        // 箭矢画在人上面。🔴 画法**逐笔照抄大地图**（ProjectileRenderer.draw 的 arrow 分支）：
-        //   箭杆 #2c3e50（-12→+6）+ 银色箭头三角（6 处，±2.5）+ 褐色尾羽两撇（-12→-15，±3），
-        //   并且**沿抛物线切线旋转**——飞出去时抬头、落下时低头。
-        //   之前我只抄了飞行时间和弧高，画法自己瞎编成一根深褐直线，所以不像箭（主人实锤）。
+        // 箭矢画在人上面。🔴 2026-08-16 主人定：抛射物统一用 DE 素材（箭/标枪/飞镖/飞斧/火箭），
+        //   水平朝向 rotate（箭朝目标方向）+ 帧序号内置俯仰/自转（箭/标枪/火箭=仰射→俯冲，飞斧=360°自转）。
+        //   抛物线位置照旧（420ms + 弧高 = 距离×0.3 封顶 100px），只换画法不换飞法。
         if (this.arrows.length) {
             ctx.save();
-            ctx.lineCap = 'round';
-            const S = ARROW_SCALE;
+            const S = PROJ_SCALE;
             for (const a of this.arrows) {
-                const p = a.t / a.dur;
+                const delay = a.delay ?? 0;
+                if (a.t < delay) continue;          // 连发尚未射出
+                const pa = this.projBank[a.proj];
+                if (!pa?.img || !pa.fw) continue;   // 素材未就绪（加载中跳过）
+                const p = (a.t - delay) / a.dur;
                 const d = a.len * p;
                 const arcH = Math.min(a.len * 0.3, 100);
                 const arc = 4 * arcH * p * (1 - p);
                 const x = a.x + a.dx * d;
                 const y = a.y + a.dy * d - arc;
-                // 切线：线性速度 + 抛物线的竖直分量
-                const vx = a.dx * a.len;
-                const vy = a.dy * a.len - 4 * arcH * (1 - 2 * p);
-                const angle = Math.atan2(vy, vx);
-
+                // 水平朝向（俯仰由帧序号内置，不再算抛物线切线）
+                const angle = Math.atan2(a.dy, a.dx);
+                const fr = Math.min(pa.n - 1, Math.round(p * (pa.n - 1)));
                 ctx.translate(x, y);
                 ctx.rotate(angle);
-
-                ctx.strokeStyle = '#2c3e50';          // 箭杆
-                ctx.lineWidth = 1.5 * S;
-                ctx.beginPath();
-                ctx.moveTo(-12 * S, 0);
-                ctx.lineTo(6 * S, 0);
-                ctx.stroke();
-
-                ctx.fillStyle = '#95a5a6';            // 箭头
-                ctx.beginPath();
-                ctx.moveTo(6 * S, 0);
-                ctx.lineTo(3 * S, -2.5 * S);
-                ctx.lineTo(3 * S, 2.5 * S);
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.strokeStyle = '#8b4513';          // 尾羽
-                ctx.lineWidth = 1 * S;
-                ctx.beginPath();
-                ctx.moveTo(-12 * S, 0);
-                ctx.lineTo(-15 * S, -3 * S);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(-12 * S, 0);
-                ctx.lineTo(-15 * S, 3 * S);
-                ctx.stroke();
-
+                ctx.drawImage(pa.img, fr * pa.fw, 0, pa.fw, pa.fh, -pa.hx * S, -pa.hy * S, pa.fw * S, pa.fh * S);
                 ctx.rotate(-angle);
                 ctx.translate(-x, -y);
             }
