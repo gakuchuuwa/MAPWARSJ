@@ -6542,26 +6542,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/STEPPE/033d6e40-aca6-4885-9964-6474f48045b6.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 20
-        },
-        "/assets/STEPPE/28f06a6a-acfd-4c5f-8810-410d8069b827.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 3
-        },
-        "/assets/STEPPE/3f65b26c-592e-43de-8a86-2267cab3fdbb.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 3
-        },
-        "/assets/STEPPE/db5c6c7c-40da-4557-8065-d6cd60c115fe.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -11
-        },
         "/assets/STEPPE/__闲置__STEPPE_79.png": {
             "scale": 0.94,
             "offsetX": 0,
@@ -6602,11 +6582,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 20
         },
-        "/assets/DIANQIAN/bee5f838-b4e8-432c-8a3a-9c9eb23aed78.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": -22
-        },
         "/assets/DIANQIAN/__闲置__DIANQIAN_31.png": {
             "scale": 0.84,
             "offsetX": 0,
@@ -6616,11 +6591,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": -22
-        },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_42.png": {
-            "scale": 1.09,
-            "offsetX": 0,
-            "offsetY": 22
         },
         "/assets/NORTHEAST/yilou_naoya.png": {
             "scale": 1.01,
