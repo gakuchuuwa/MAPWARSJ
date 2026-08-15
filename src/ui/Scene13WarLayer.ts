@@ -326,8 +326,9 @@ const ARROW_DUR = 0.42;
 /** DE 抛射物缩放 = 士兵同款（UNIT_PX / 64）。DE 素材像素已反映真实比例（标枪 56px 是箭 28px 的 2 倍），统一缩放即可。 */
 const PROJ_SCALE = UNIT_PX / 64;
 /**
- * 远程兵 → DE 抛射物素材（缺省 = 箭 PROJ_ARROW）。只有 4 个兵种用特殊抛射物，其余弓弩共用箭。
- * 箭：弓手/弩手/长弓/诸葛弩/骑射手/突骑/复合弓/藤弓/钦察；标枪：掷矛手；飞镖：阿兰拜；飞斧：掷斧兵；火箭：火弓。
+ * 远程兵 → DE 抛射物素材（缺省 = 箭 PROJ_ARROW）。
+ * 箭：弓手/弩手/长弓/诸葛弩/骑射手/突骑/复合弓/藤弓/钦察/象弓（默认，不必列）；
+ * 火箭：火弓；标枪：掷矛手；飞镖：阿兰拜；飞斧：掷斧兵；弩箭：元戎弩/重弩战象（平直穿透）。
  */
 const PROJ_TYPE: Record<string, string> = {
     fire_archer: 'PROJ_ARROW_FIRE',
@@ -335,7 +336,11 @@ const PROJ_TYPE: Record<string, string> = {
     imperial_skirmisher: 'PROJ_SPEAR',
     arambai: 'PROJ_DART',
     throwing_axeman: 'PROJ_THROWING_AXE',
+    ballista: 'PROJ_BOLT',
+    ballista_elephant: 'PROJ_BOLT',
 };
+/** 平直弹道抛射物（弩炮箭）：不抛弧、直线穿透，单帧不俯仰。 */
+const PROJ_FLAT = new Set(['PROJ_BOLT']);
 /** 连弩连发箭数（AoE2 wiki：诸葛弩 3 支、精锐诸葛弩 5 支；其余远程每轮 1 支）。 */
 const PROJ_VOLLEY: Record<string, number> = {
     chukonu: 3,
@@ -2100,7 +2105,8 @@ export class Scene13WarLayer {
                 const p = (a.t - delay) / a.dur;
                 const d = a.len * p;
                 const arcH = Math.min(a.len * 0.3, 100);
-                const arc = 4 * arcH * p * (1 - p);
+                // 🔴 弩炮箭平直穿透（不抛弧）；其余抛弧。帧序号自带俯仰，弩箭单帧恒平。
+                const arc = PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * p * (1 - p);
                 const x = a.x + a.dx * d;
                 const y = a.y + a.dy * d - arc;
                 // 水平朝向（俯仰由帧序号内置，不再算抛物线切线）
@@ -2108,7 +2114,12 @@ export class Scene13WarLayer {
                 const fr = Math.min(pa.n - 1, Math.round(p * (pa.n - 1)));
                 ctx.translate(x, y);
                 ctx.rotate(angle);
+                // 🔴 朝左半球（dx<0）俯仰取反：素材是「朝右」的俯仰帧（帧0仰射朝上、帧末俯冲朝下），
+                //    rotate 180° 会把仰射翻成俯冲（守方朝左射时箭头朝下扎，攻方朝右射正常）。
+                //    scale(1,-1) 把俯仰翻回来，仰射保持朝上。攻方（dx≥0）不受影响。
+                if (a.dx < 0) ctx.scale(1, -1);
                 ctx.drawImage(pa.img, fr * pa.fw, 0, pa.fw, pa.fh, -pa.hx * S, -pa.hy * S, pa.fw * S, pa.fh * S);
+                if (a.dx < 0) ctx.scale(1, -1);   // 撤销俯仰取反
                 ctx.rotate(-angle);
                 ctx.translate(-x, -y);
             }

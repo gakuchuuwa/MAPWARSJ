@@ -7,7 +7,7 @@ import { LegionPhalanxStateManager, LegionUnitState } from './LegionPhalanxState
 import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import { FactionTintSystem } from '../../systems/tinting/FactionTintSystem';
-import { getCompositionTier, CompositionTier, expandCompositionSlots } from '../../types/LegionComposition';
+import { getCompositionTier, CompositionTier, expandCompositionSlots, isCavalryUnitType } from '../../types/LegionComposition';
 import type { FormationMode } from '../../types/CultureFormations';
 import { getNavalShipDrawScale, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
@@ -79,14 +79,10 @@ export class LegionPhalanxDrawer {
      * public：GlobalUnitRenderer 的编队判定（视觉框收缩系数）也用它，两处必须同源。
      */
     public static isCavalryType(type: string): boolean {
-        return (
-            type === 'lancer' ||
-            type === 'heavy_cavalry' ||
-            type === 'general_cavalry' ||
-            type === 'horse_archer' ||
-            type === 'huihui_cavalry' ||
-            type.includes('cavalry')
-        );
+        // 🔴 2026-08-16 改：骑兵判定统一走 LegionComposition.isCavalryUnitType（含 DE 骑兵），
+        //    与 getDefaultScaleForUnitType 同源。旧版只认 lancer/horse_archer/cavalry 后缀，
+        //    骑射手（cav_archer）/钦察/tarkan/mangudai 等 DE 骑兵全漏判，按步兵方阵渲染。
+        return isCavalryUnitType(type);
     }
 
     /**
@@ -868,15 +864,10 @@ export class LegionPhalanxDrawer {
 
         if (state === 'MOVE') {
             const isElephant = unitType.includes('elephant');
-            // 与上方骑兵冲锋同一判定：弓骑/枪骑算骑，步弓/弩不算
-            const isCavalry = !isElephant && (
-                (unitType.includes('cavalry') ||
-                    unitType === 'lancer' ||
-                    unitType === 'general_cavalry' ||
-                    unitType === 'horse_archer') &&
-                unitType !== 'archer' &&
-                unitType !== 'crossbow'
-            );
+            // 与上方骑兵冲锋同一判定：弓骑/枪骑算骑，步弓/弩不算。
+            // 🔴 2026-08-16 改走 isCavalryUnitType（含 DE 骑兵）——旧硬编码漏判 cav_archer/tarkan/mangudai 等，
+            //    骑射手移动用步兵颠簸振幅（BOB_INF_AMP）而非骑兵（BOB_CAV_AMP），像步兵走路。
+            const isCavalry = !isElephant && isCavalryUnitType(unitType) && unitType !== 'archer' && unitType !== 'crossbow';
             const amp = isElephant ? MM.BOB_ELE_AMP : isCavalry ? MM.BOB_CAV_AMP : MM.BOB_INF_AMP;
             const speed = isElephant ? MM.BOB_ELE_SPEED : isCavalry ? MM.BOB_CAV_SPEED : MM.BOB_INF_SPEED;
             return { dx: 0, dy: Math.sin(tick * speed + phase) * -amp * scale };
