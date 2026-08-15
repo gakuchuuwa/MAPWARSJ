@@ -1,8 +1,13 @@
 /**
  * SpriteTinter.ts
- * 
+ *
  * Canvas精灵染色处理器。
  * 使用Canvas 2D API对精灵图应用颜色染色。
+ *
+ * [2026-08-15 三套素材分流] 按素材来源走不同染色，各自复刻原游戏（主人定）：
+ *   - 帝国决定 (AoE2 DE)：有 `.pc.png` 玩家色遮罩 → mask 染色
+ *     （luminance-preserving hue shift + mask 强度混合，openage/martondobos 权威算法）
+ *   - 三国志10 (S10DB) / 帝国征服 (AoE2 原版)：无遮罩 → 亮度染色（原 applyTint）
  */
 
 import { TintColor, FactionTintSystem } from './FactionTintSystem';
@@ -12,12 +17,17 @@ import { TintColor, FactionTintSystem } from './FactionTintSystem';
  */
 export class SpriteTinter {
     // 缓存染色后的精灵图，避免每帧重复处理
-    // Key: `${originalSrc}_${factionId}`
+    // Key: `${originalSrc}_${factionId}`；mask 染色的 key 前缀 `mask:` 区分
     private static tintedSpriteCache: Map<string, HTMLImageElement> = new Map();
+
+    // 玩家色遮罩缓存：maskSrc -> Image（加载中/完成）或 'none'（确认无遮罩）
+    private static maskCache: Map<string, HTMLImageElement | 'none'> = new Map();
 
     // 临时Canvas用于染色处理
     private static tempCanvas: HTMLCanvasElement | null = null;
     private static tempCtx: CanvasRenderingContext2D | null = null;
+    private static maskCanvas: HTMLCanvasElement | null = null;
+    private static maskCtx: CanvasRenderingContext2D | null = null;
 
     /**
      * 获取染色后的精灵图
@@ -40,26 +50,144 @@ export class SpriteTinter {
         }
 
         const tintHex = FactionTintSystem.getTintHex(factionId);
-        const cacheKey = `${originalSprite.src}_${factionId}_${tintHex ?? 'raw'}`;
-        const cached = this.tintedSpriteCache.get(cacheKey);
-        if (cached && cached.complete) {
-            return cached;
+        // 遮罩路径 = 主图 src 的 .png → .pc.png
+        const maskSrc = originalSprite.src.replace(/\.png$/, '.pc.png');
+
+        // 有 .pc.png 遮罩（帝国决定 DE）→ mask 染色；否则亮度染色
+        if (maskSrc !== originalSprite.src) {
+            return this.getMaskTinted(originalSprite, maskSrc, factionId, tintColor, tintHex);
         }
+        return this.getLuminanceTinted(originalSprite, factionId, tintColor, tintHex);
+    }
+
+    /**
+     * mask 染色入口（帝国决定 DE 素材，有玩家色遮罩）。
+     * 遮罩惰性加载：首帧返回原图（玩家色区域暂灰），遮罩就绪后精确染色并缓存。
+     */
+    private static getMaskTinted(
+        sprite: HTMLImageElement,
+        maskSrc: string,
+        factionId: string,
+        tint: TintColor,
+        tintHex: string | null
+    ): HTMLImageElement {
+        const cacheKey = `mask:${sprite.src}_${factionId}_${tintHex ?? 'raw'}`;
+        const cached = this.tintedSpriteCache.get(cacheKey);
+        if (cached && cached.complete) return cached;
+
+        const maskState = this.maskCache.get(maskSrc);
+        if (maskState === 'none') {
+            // 确认无遮罩（onerror 过）→ 回亮度染色
+            return this.getLuminanceTinted(sprite, factionId, tint, tintHex);
+        }
+        if (maskState && maskState.complete) {
+            // 遮罩就绪 → mask 精确染色
+            if (!sprite.complete || sprite.naturalWidth === 0) return sprite;
+            const tinted = this.applyMaskTint(sprite, maskState, tint);
+            this.tintedSpriteCache.set(cacheKey, tinted);
+            return tinted;
+        }
+        // 首次：发起遮罩加载，本帧返回原图（不染全身，避免脸/皮肤被亮度染色误伤）
+        if (!maskState) {
+            const m = new Image();
+            m.onload = () => this.maskCache.set(maskSrc, m);
+            m.onerror = () => this.maskCache.set(maskSrc, 'none');
+            m.src = maskSrc;
+            this.maskCache.set(maskSrc, m);
+        }
+        return sprite;
+    }
+
+    /**
+     * 亮度染色入口（三国志10 / 帝国征服原版素材，无遮罩）。
+     */
+    private static getLuminanceTinted(
+        sprite: HTMLImageElement,
+        factionId: string,
+        tint: TintColor,
+        tintHex: string | null
+    ): HTMLImageElement {
+        const cacheKey = `${sprite.src}_${factionId}_${tintHex ?? 'raw'}`;
+        const cached = this.tintedSpriteCache.get(cacheKey);
+        if (cached && cached.complete) return cached;
 
         // 如果原图未加载完成，返回原图
-        if (!originalSprite.complete || originalSprite.naturalWidth === 0) {
-            return originalSprite;
-        }
+        if (!sprite.complete || sprite.naturalWidth === 0) return sprite;
 
-        // 创建染色后的精灵
-        const tintedSprite = this.applyTint(originalSprite, tintColor);
+        const tintedSprite = this.applyTint(sprite, tint);
         this.tintedSpriteCache.set(cacheKey, tintedSprite);
-
         return tintedSprite;
     }
 
     /**
-     * 应用染色到精灵图
+     * mask 精确染色：玩家色遮罩非零像素 → 保留主图亮度、色相换成势力色（luminance-preserving hue shift），
+     * 按遮罩强度与主图混合（mask=255 纯玩家色 / mask=0 主图原色）——与 AoE2 DE 游戏内渲染一致。
+     */
+    private static applyMaskTint(
+        sprite: HTMLImageElement,
+        mask: HTMLImageElement,
+        tint: TintColor
+    ): HTMLImageElement {
+        if (!this.tempCanvas) {
+            this.tempCanvas = document.createElement('canvas');
+            this.tempCtx = this.tempCanvas.getContext('2d');
+            this.maskCanvas = document.createElement('canvas');
+            this.maskCtx = this.maskCanvas.getContext('2d');
+        }
+
+        const canvas = this.tempCanvas!;
+        const ctx = this.tempCtx!;
+        const mCanvas = this.maskCanvas!;
+        const mCtx = this.maskCtx!;
+
+        canvas.width = sprite.width;
+        canvas.height = sprite.height;
+        mCanvas.width = mask.width;
+        mCanvas.height = mask.height;
+
+        // 主图像素
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(sprite, 0, 0);
+        const mainImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const main = mainImageData.data;
+
+        // 遮罩像素（alpha = 玩家色强度 0-255）
+        mCtx.clearRect(0, 0, mCanvas.width, mCanvas.height);
+        mCtx.drawImage(mask, 0, 0);
+        const maskImageData = mCtx.getImageData(0, 0, mCanvas.width, mCanvas.height);
+        const maskData = maskImageData.data;
+
+        // 势力色色相/饱和度（亮度用主图像素自身的，保留明暗）
+        const [tH, tS] = rgbToHsl(tint.r, tint.g, tint.b);
+
+        const n = Math.min(main.length, maskData.length);
+        for (let i = 0; i < n; i += 4) {
+            const strength = maskData[i + 3];
+            if (strength === 0) continue; // 非玩家色区域，保持原样
+
+            const r = main[i];
+            const g = main[i + 1];
+            const b = main[i + 2];
+            // luminance-preserving hue shift：保留主图像素亮度，色相/饱和度换成势力色
+            const [, , l] = rgbToHsl(r, g, b);
+            const [pr, pg, pb] = hslToRgb(tH, tS, l);
+
+            const m = strength / 255; // 遮罩强度
+            main[i] = Math.round(r * (1 - m) + pr * m);
+            main[i + 1] = Math.round(g * (1 - m) + pg * m);
+            main[i + 2] = Math.round(b * (1 - m) + pb * m);
+            // Alpha 保持不变
+        }
+
+        ctx.putImageData(mainImageData, 0, 0);
+
+        const tintedImage = new Image();
+        tintedImage.src = canvas.toDataURL('image/png');
+        return tintedImage;
+    }
+
+    /**
+     * 应用染色到精灵图（亮度染色，S10DB / 帝国征服原版素材）
      */
     private static applyTint(
         sprite: HTMLImageElement,
@@ -168,6 +296,7 @@ export class SpriteTinter {
      */
     public static clearCache(): void {
         this.tintedSpriteCache.clear();
+        this.maskCache.clear();
         console.log('🎨 [SpriteTinter] Cache cleared');
     }
 
@@ -198,4 +327,39 @@ export class SpriteTinter {
         await Promise.all(promises);
         console.log('🎨 [SpriteTinter] Preloaded tinted sprites for', factionIds.length, 'factions');
     }
+}
+
+// ── HSL 工具（luminance-preserving hue shift 用）──
+// h ∈ [0,1], s ∈ [0,1], l ∈ [0,1]
+function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    if (max === min) return [0, 0, l]; // 灰，无色相
+    const d = max - min;
+    const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    let h: number;
+    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+    else if (max === g) h = ((b - r) / d + 2) / 6;
+    else h = ((r - g) / d + 4) / 6;
+    return [h, s, l];
+}
+
+function hslToRgb(h: number, s: number, l: number): [number, number, number] {
+    if (s === 0) {
+        const v = l * 255;
+        return [v, v, v];
+    }
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    const hue2rgb = (t: number): number => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+    };
+    return [hue2rgb(h + 1 / 3) * 255, hue2rgb(h) * 255, hue2rgb(h - 1 / 3) * 255];
 }
