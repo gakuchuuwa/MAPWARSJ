@@ -791,6 +791,208 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NINJA/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NINJA/death_${dir}.png`),
         },
+        // ============ 2026-08-15 主人定：15 区全决定版剩余 10 文化 ============
+        // 【北方辽刀】Liao Dao 契丹长刀步兵（8方向，AoE2 DE SLD 素材，u_inf_liao_dao）
+        'liao_dao': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIAO_DAO/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIAO_DAO/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIAO_DAO/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIAO_DAO/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIAO_DAO/death_${dir}.png`),
+        },
+        // 【北方/中原火矛兵】Fire Lancer 火矛步兵（8方向，AoE2 DE SLD 素材，u_inf_fire_lancer）
+        'fire_lancer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_LANCER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_LANCER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_LANCER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_LANCER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FIRE_LANCER/death_${dir}.png`),
+        },
+        // 【北方鲜卑掠骑兵】Xianbei Raider 鲜卑骑兵（8方向，AoE2 DE SLD 素材，u_cav_xianbei_raider）
+        'xianbei_raider': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/death_${dir}.png`),
+        },
+        // 【中原虎豹骑】Tiger Cavalry 曹魏精锐骑兵（8方向，AoE2 DE SLD 素材，u_cav_tiger_rider）
+        'tiger_rider': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TIGER_RIDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TIGER_RIDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TIGER_RIDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TIGER_RIDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TIGER_RIDER/death_${dir}.png`),
+        },
+        // 【岭南/朝鲜/江南刀剑手】Jian Swordsman 吴国刀剑手（8方向，AoE2 DE SLD 素材，u_inf_jian_swordman_shielded）
+        'jian_swordsman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIAN_SWORDSMAN/death_${dir}.png`),
+        },
+        // 【岭南帝王掷矛手】Imperial Skirmisher 越南帝王掷矛手（8方向，AoE2 DE SLD 素材，u_arc_imperialskirmisher）
+        'imperial_skirmisher': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_SKIRMISHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_SKIRMISHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_SKIRMISHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_SKIRMISHER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_SKIRMISHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIAL_SKIRMISHER/death_${dir}.png`),
+        },
+        // 【滇缅象兵】War Elephant 战象（8方向，AoE2 DE SLD 素材，u_ele_war_elephant）
+        'war_elephant': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/death_${dir}.png`),
+        },
+        // 【滇缅爪刀勇士】Karambit Warrior 马来爪刀兵（8方向，AoE2 DE SLD 素材，u_inf_karambitwarrior）
+        'karambit_warrior': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR/death_${dir}.png`),
+        },
+        // 【滇缅飞镖骑兵】Arambai 缅甸飞镖骑兵（8方向，AoE2 DE SLD 素材，u_cav_arambai）
+        'arambai': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARAMBAI/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARAMBAI/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARAMBAI/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARAMBAI/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARAMBAI/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARAMBAI/death_${dir}.png`),
+        },
+        // 【草原蒙古突骑】Mangudai 蒙古弓骑（8方向，AoE2 DE SLD 素材，u_cav_mangudai）
+        'mangudai': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI/death_${dir}.png`),
+        },
+        // 【草原怯薛军】Keshik 蒙古怯薛骑兵（8方向，AoE2 DE SLD 素材，u_cav_keshik）
+        'keshik': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KESHIK/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KESHIK/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KESHIK/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KESHIK/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KESHIK/death_${dir}.png`),
+        },
+        // 【中亚贵族铁骑】Boyar 斯拉夫贵族骑兵（8方向，AoE2 DE SLD 素材，u_cav_boyar）
+        'boyar': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOYAR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOYAR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOYAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOYAR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOYAR/death_${dir}.png`),
+        },
+        // 【中亚精锐钦察】Elite Kipchak 库曼精锐弓骑（8方向，AoE2 DE SLD 素材，u_cav_kipchak_elite）
+        'elite_kipchak': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/death_${dir}.png`),
+        },
+        // 【西亚精锐复合弓箭手】Elite Composite Bowman 亚美尼亚复合弓手（8方向，AoE2 DE SLD 素材，u_arc_composite_bowman_elite）
+        'elite_composite_bowman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/death_${dir}.png`),
+        },
+        // 【西亚重装骆驼兵】Heavy Camel Rider 重装骆驼骑兵（8方向，AoE2 DE SLD 素材，u_cam_camel_heavy）
+        'camel_heavy': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/death_${dir}.png`),
+        },
+        // 【斯拉夫复合弓箭手】Composite Bowman 亚美尼亚弓手（8方向，AoE2 DE SLD 素材，u_arc_composite_bowman）
+        'composite_bowman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPOSITE_BOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPOSITE_BOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPOSITE_BOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPOSITE_BOWMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPOSITE_BOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COMPOSITE_BOWMAN/death_${dir}.png`),
+        },
+        // 【斯拉夫精锐草原枪兵】Elite Steppe Lancer 库曼精锐枪骑兵（8方向，AoE2 DE SLD 素材，u_cav_steppe_lancer_elite）
+        'elite_steppe_lancer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/death_${dir}.png`),
+        },
+        // 【斯拉夫掷斧兵】Throwing Axeman 法兰克掷斧兵（8方向，AoE2 DE SLD 素材，u_inf_throwingaxeman）
+        'throwing_axeman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THROWING_AXEMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THROWING_AXEMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THROWING_AXEMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THROWING_AXEMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THROWING_AXEMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THROWING_AXEMAN/death_${dir}.png`),
+        },
+        // 【日耳曼冠军剑士】Champion 冠军剑士（8方向，AoE2 DE SLD 素材，u_inf_champion）
+        'champion': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/death_${dir}.png`),
+        },
+        // 【日耳曼弩手】Crossbowman 弩手（8方向，AoE2 DE SLD 素材，u_arc_crossbowman）
+        'crossbowman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/death_${dir}.png`),
+        },
+        // 【日耳曼游侠】Paladin 圣骑士（8方向，AoE2 DE SLD 素材，u_cav_paladin）
+        'paladin': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/death_${dir}.png`),
+        },
+        // 【拉丁马上轻装兵】Coustillier 勃艮第轻装骑兵（8方向，AoE2 DE SLD 素材，u_cav_coustillier）
+        'coustillier': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COUSTILLIER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COUSTILLIER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COUSTILLIER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COUSTILLIER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/COUSTILLIER/death_${dir}.png`),
+        },
+        // 【拉丁重装长枪兵】Heavy Pikeman 重装枪兵（8方向，AoE2 DE SLD 素材，u_inf_heavypikeman）
+        'heavy_pikeman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_PIKEMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_PIKEMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_PIKEMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_PIKEMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_PIKEMAN/death_${dir}.png`),
+        },
+        // 【拉丁劲弩手】Arbalester 劲弩手（8方向，AoE2 DE SLD 素材，u_arc_arbalest）
+        'arbalest': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/death_${dir}.png`),
+        },
         'lancer': {
             // [User Request] Simple 'lancer' mapped to light cavalry assets
             MOVE: [154, 155, 156, 157, 158, 159, 160, 161].map(id => `/SUCAI/S10DB/${id}-1.png`),
@@ -921,14 +1123,6 @@ export const SPRITE_PATHS = {
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/idle_${dir}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/damage_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUAXIA_CROSSBOW/death_${dir}.png`),
-        },
-        // 【古代装甲战象】War Elephant（8方向披甲战象与象兜箭塔）
-        'war_elephant': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/damage_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WAR_ELEPHANT/death_${dir}.png`),
         },
     },
     // 旧 public/assets/avg/NPC 与 /assets/NPC/ 三帧 PNG 已废弃（勿引用 avg/）。

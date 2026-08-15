@@ -284,7 +284,7 @@ export const KOREA_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'eastern_swordsman', count: 3 },  // Row 0 前 = 刀剑手（帝国决定）
+            { type: 'jian_swordsman', count: 3 },     // Row 0 前 = 刀剑手（帝国决定，吴国 Jian Swordsman）
             { type: 'hei_kuang', count: 1 },          // Row 1 左 = 黑光铠骑兵（帝国决定）
             { type: 'hei_kuang', count: 1 },          // Row 1 中 = 黑光铠骑兵（原刀骑将领，取消）
             { type: 'hei_kuang', count: 1 },          // Row 1 右 = 黑光铠骑兵（帝国决定）
@@ -358,7 +358,7 @@ export const JIANGNAN_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'eastern_swordsman', count: 3 },  // Row 0 前 = 刀剑手 步兵（帝国决定）
+            { type: 'jian_swordsman', count: 3 },     // Row 0 前 = 刀剑手 步兵（帝国决定，吴国 Jian Swordsman）
             { type: 'chukonu', count: 1 },            // Row 1 左 = 诸葛弩 弩手（帝国决定）
             { type: 'chukonu', count: 1 },            // Row 1 中 = 诸葛弩（原刀骑将领，取消）
             { type: 'chukonu', count: 1 },            // Row 1 右 = 诸葛弩 弩手（帝国决定）

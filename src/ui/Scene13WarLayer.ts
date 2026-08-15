@@ -27,7 +27,7 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'elite_kipchak']);
 
 // ── 兵种属性 ──
 //   三类基准（CLS_STATS）：近战 150/45/55、骑兵 130/45/130、远程 90/28/50 射程160
@@ -71,7 +71,7 @@ const WAR_TYPES: Record<string, WarType> = {
     samurai_elite:  { name: '精锐武士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// AoE2 DE 精锐武士，视觉替换藤甲兵，数值不变；sz=1 统一
     elephant:       { name: '象兵',   cls: 'melee', sz: 1.6, aoe: true, spd: 40 },
     // ── 朝鲜全决定版（2026-08-15 主人定：前排刀剑手/中排黑光铠骑兵/后排火焰弓箭手，数值照抄被替换兵种）──
-    eastern_swordsman:{ name: '刀剑手', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 视觉替换藤甲兵（armored），数值不变
+    eastern_swordsman:{ name: '东方剑士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 视觉替换藤甲兵（armored），数值不变（中东东方剑士）
     hei_kuang:      { name: '黑光铠骑兵', cls: 'cav', sz: 1 },                             // 视觉替换重骑兵（heavy_cavalry）；帝国决定版兵种 sz 统一=1
     fire_archer:    { name: '火焰弓箭手', cls: 'ranged', sz: 1 },                          // 视觉替换弓兵（archer），数值不变
     // ── 东北全决定版（2026-08-15 主人定：前排铁浮图/中排钦察/后排精锐长弓兵，数值照抄被替换兵种）──
@@ -100,6 +100,31 @@ const WAR_TYPES: Record<string, WarType> = {
     steppe_lancer:    { name: '草原枪兵', cls: 'cav', sz: 1 },                                // 视觉替换轻骑兵（light_riders），数值不变
     // ── 日本修订（2026-08-15 主人定：后排步弓手→忍者）──
     ninja:            { name: '忍者', cls: 'melee', sz: 1 },                                  // 视觉替换步弓手（archer），数值不变（近战步兵）
+    // ── 剩余 10 文化全决定版（2026-08-15 主人定：北方/中原/岭南/滇缅/草原/中亚/西亚/斯拉夫/日耳曼/拉丁，数值照抄被替换兵种）──
+    liao_dao:           { name: '辽刀', cls: 'melee', sz: 1 },                                // 视觉替换青州兵（spear），数值不变
+    fire_lancer:        { name: '火矛兵', cls: 'melee', sz: 1 },                              // 视觉替换轻步兵（light_infantry），数值不变
+    xianbei_raider:     { name: '鲜卑掠骑兵', cls: 'cav', sz: 1 },                            // 视觉替换重骑兵（heavy_cavalry），数值不变
+    tiger_rider:        { name: '虎豹骑', cls: 'cav', sz: 1 },                                // 视觉替换重骑兵（heavy_cavalry），数值不变
+    jian_swordsman:     { name: '刀剑手', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },   // 视觉替换藤甲兵（armored），数值不变（吴国刀剑手）
+    imperial_skirmisher:{ name: '帝王掷矛手', cls: 'ranged', sz: 1 },                         // 视觉替换弩兵（crossbow），数值不变
+    war_elephant:       { name: '象兵', cls: 'melee', sz: 1, aoe: true, spd: 40 },            // 视觉替换象兵（elephant），数值不变（DE 素材自带尺寸）
+    karambit_warrior:   { name: '爪刀勇士', cls: 'melee', sz: 1 },                            // 视觉替换藤甲兵（armored），数值不变
+    arambai:            { name: '飞镖骑兵', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 }, // 视觉替换突骑兵（horse_archer），数值不变（弓骑）
+    mangudai:           { name: '蒙古突骑', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 }, // 视觉替换突骑兵（horse_archer），数值不变（弓骑）
+    keshik:             { name: '怯薛军', cls: 'cav', sz: 1 },                                // 视觉替换重骑兵（heavy_cavalry），数值不变
+    boyar:              { name: '贵族铁骑', cls: 'cav', sz: 1 },                              // 视觉替换重骑兵（heavy_cavalry），数值不变
+    elite_kipchak:      { name: '精锐钦察', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 },// 视觉替换突骑兵（horse_archer），数值不变（弓骑）
+    elite_composite_bowman: { name: '精锐复合弓箭手', cls: 'ranged', sz: 1 },                // 视觉替换弓兵（archer），数值不变
+    camel_heavy:        { name: '重装骆驼兵', cls: 'cav', sz: 1 },                            // 视觉替换重骑兵（heavy_cavalry），数值不变
+    composite_bowman:   { name: '复合弓箭手', cls: 'ranged', sz: 1 },                         // 视觉替换弓兵（archer），数值不变
+    elite_steppe_lancer:{ name: '精锐草原枪兵', cls: 'cav', sz: 1 },                          // 视觉替换重骑兵（heavy_cavalry），数值不变
+    throwing_axeman:    { name: '掷斧兵', cls: 'ranged', sz: 1 },                             // 视觉替换弓兵（archer），数值不变（远程掷斧）
+    champion:           { name: '冠军剑士', cls: 'melee', sz: 1 },                            // 视觉替换重步兵（heavy_infantry），数值不变
+    crossbowman:        { name: '弩手', cls: 'ranged', sz: 1 },                               // 视觉替换弩兵（crossbow），数值不变
+    paladin:            { name: '游侠', cls: 'cav', sz: 1 },                                  // 视觉替换重骑兵（heavy_cavalry），数值不变
+    coustillier:        { name: '马上轻装兵', cls: 'cav', sz: 1 },                            // 视觉替换轻骑兵（lancer），数值不变
+    heavy_pikeman:      { name: '重装长枪兵', cls: 'melee', sz: 1 },                          // 视觉替换青州兵（spear），数值不变
+    arbalest:           { name: '劲弩手', cls: 'ranged', sz: 1 },                             // 视觉替换弩兵（crossbow），数值不变
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
     lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
     heavy_cavalry:  { name: '重骑兵', cls: 'cav', sz: 1.15 },
@@ -138,7 +163,7 @@ const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
