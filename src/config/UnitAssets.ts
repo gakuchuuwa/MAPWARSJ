@@ -688,6 +688,64 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHT_RIDERS/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHT_RIDERS/death_${dir}.png`),
         },
+        // 【江南诸葛弩】Chu Ko Nu 连弩兵（8方向，AoE2 DE SLD 素材；弩手有射击，SHOOT 复用攻击帧）
+        'chukonu': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHUKONU/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHUKONU/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHUKONU/idle_${dir}.png`),
+            // AoE2 诸葛弩无受击动画，DAMAGE/SHOOT 复用攻击帧（连射）
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHUKONU/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHUKONU/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHUKONU/death_${dir}.png`),
+        },
+        // 【川蜀白毦兵】White Feather Guard 白羽精兵（8方向，AoE2 DE SLD 素材，u_inf_ji_infantry）
+        'white_feather_guard': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WHITE_FEATHER_GUARD/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WHITE_FEATHER_GUARD/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WHITE_FEATHER_GUARD/idle_${dir}.png`),
+            // AoE2 白毦兵无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WHITE_FEATHER_GUARD/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WHITE_FEATHER_GUARD/death_${dir}.png`),
+        },
+        // 【川蜀藤弓兵】Rattan Archer 藤甲弓手（8方向，AoE2 DE SLD 素材；弓手有射击，SHOOT 复用攻击帧）
+        'rattan_archer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER/idle_${dir}.png`),
+            // AoE2 藤弓兵无受击动画，DAMAGE/SHOOT 复用攻击帧（拉弓）
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/RATTAN_ARCHER/death_${dir}.png`),
+        },
+        // 【河西精锐火矛手】Elite Fire Lancer 精锐火矛步兵（8方向，AoE2 DE SLD 素材，u_inf_fire_lancer_elite）
+        'elite_fire_lancer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_LANCER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_LANCER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_LANCER/idle_${dir}.png`),
+            // AoE2 火矛手无受击动画，DAMAGE 复用攻击帧
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_LANCER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_LANCER/death_${dir}.png`),
+        },
+        // 【江南精锐火焰弓箭手】Elite Fire Archer 精锐火焰弓手（8方向，AoE2 DE SLD 素材，u_arc_fire_archer_elite）
+        'elite_fire_archer': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/idle_${dir}.png`),
+            // AoE2 火焰弓箭手无受击动画，DAMAGE/SHOOT 复用攻击帧（射火箭）
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/death_${dir}.png`),
+        },
+        // 【川蜀精锐诸葛弩】Elite Chu Ko Nu 精锐连弩兵（8方向，AoE2 DE SLD 素材，u_arc_chukonu_elite）
+        'elite_chukonu': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/idle_${dir}.png`),
+            // AoE2 诸葛弩无受击动画，DAMAGE/SHOOT 复用攻击帧（连射）
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/death_${dir}.png`),
+        },
         'lancer': {
             // [User Request] Simple 'lancer' mapped to light cavalry assets
             MOVE: [154, 155, 156, 157, 158, 159, 160, 161].map(id => `/SUCAI/S10DB/${id}-1.png`),
