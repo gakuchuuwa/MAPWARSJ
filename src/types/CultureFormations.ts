@@ -321,48 +321,48 @@ export const STEPPE_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 7. 河西 步骑 长刀+斧骑+弩（横山步跋子击刺长刀 + 凉州大马铁骑）— 2026-08-04 拍板定稿 */
+/** 7. 河西 精锐火矛手+诸葛弩+黑光铠骑兵（2026-08-15 主人定：全决定版，中间刀骑取消→诸葛弩，风格统一） */
 export const HEXI_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'spear', count: 3 },
-            { type: 'heavy_cavalry', count: 1 },
-            { type: 'general_cavalry', count: 1 },
-            { type: 'heavy_cavalry', count: 1 },
-            { type: 'crossbow', count: 3 }
+            { type: 'elite_fire_lancer', count: 3 },  // Row 0 前 = 精锐火矛手 步兵（帝国决定）
+            { type: 'chukonu', count: 1 },            // Row 1 左 = 诸葛弩 弩手（帝国决定）
+            { type: 'chukonu', count: 1 },            // Row 1 中 = 诸葛弩（原刀骑将领，取消）
+            { type: 'chukonu', count: 1 },            // Row 1 右 = 诸葛弩 弩手（帝国决定）
+            { type: 'hei_kuang', count: 3 }           // Row 2 后 = 黑光铠骑兵 骑兵（帝国决定）
         ]
     }
 ];
-/** 8. 川蜀 纯步 2盾+1弩 */
+/** 8. 川蜀 白毦兵+精锐诸葛弩+藤弓兵（2026-08-15 主人修订：中排诸葛弩→精锐诸葛弩） */
 export const BASHU_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'heavy_infantry', count: 3 },
-            { type: 'archer', count: 1 },
-            { type: 'general_cavalry', count: 1, scale: 1.2 },
-            { type: 'archer', count: 1 },
-            { type: 'crossbow', count: 3 }
+            { type: 'white_feather_guard', count: 3 },  // Row 0 前 = 白毦兵 步兵（帝国决定）
+            { type: 'elite_chukonu', count: 1 },        // Row 1 左 = 精锐诸葛弩 弩手（帝国决定）
+            { type: 'elite_chukonu', count: 1 },        // Row 1 中 = 精锐诸葛弩（原刀骑将领，取消）
+            { type: 'elite_chukonu', count: 1 },        // Row 1 右 = 精锐诸葛弩 弩手（帝国决定）
+            { type: 'rattan_archer', count: 3 }         // Row 2 后 = 藤弓兵 弓手（帝国决定）
         ]
     }
 ];
-/** 9. 江南 纯步 1轻步+2弓 (前1排步, 后2排弓) */
+/** 9. 江南 刀剑手+诸葛弩+精锐火焰弓箭手（2026-08-15 主人修订：后排火焰弓箭手→精锐火焰弓箭手） */
 export const JIANGNAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'shield', count: 3 },
-            { type: 'crossbow', count: 1 },
-            { type: 'general_cavalry', count: 1 },
-            { type: 'crossbow', count: 1 },
-            { type: 'archer', count: 3 }
+            { type: 'eastern_swordsman', count: 3 },  // Row 0 前 = 刀剑手 步兵（帝国决定）
+            { type: 'chukonu', count: 1 },            // Row 1 左 = 诸葛弩 弩手（帝国决定）
+            { type: 'chukonu', count: 1 },            // Row 1 中 = 诸葛弩（原刀骑将领，取消）
+            { type: 'chukonu', count: 1 },            // Row 1 右 = 诸葛弩 弩手（帝国决定）
+            { type: 'elite_fire_archer', count: 3 }   // Row 2 后 = 精锐火焰弓箭手 弓手（帝国决定）
         ]
     }
 ];

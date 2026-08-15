@@ -27,7 +27,7 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu']);
 
 // ── 兵种属性 ──
 //   三类基准（CLS_STATS）：近战 150/45/55、骑兵 130/45/130、远程 90/28/50 射程160
@@ -82,6 +82,16 @@ const WAR_TYPES: Record<string, WarType> = {
     pikeman:        { name: '长枪兵', cls: 'melee', sz: 1 },                                 // 视觉替换轻步兵（light_infantry），数值不变
     cav_archer:     { name: '骑射手', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 },      // 视觉替换突骑兵（horse_archer），数值不变（弓骑算骑兵+风筝）
     light_riders:   { name: '轻骑兵', cls: 'cav', sz: 1 },                                   // 视觉替换轻骑兵（lancer）；帝国决定版兵种 sz 统一=1
+    // ── 江南全决定版（2026-08-15 主人定：前排刀剑手/中排诸葛弩/后排火焰弓箭手，数值照抄被替换兵种）──
+    chukonu:        { name: '诸葛弩', cls: 'ranged', sz: 1 },                                // 视觉替换弩兵（crossbow），数值不变
+    // ── 川蜀全决定版（2026-08-15 主人定：前排白毦兵/中排诸葛弩/后排藤弓兵，数值照抄被替换兵种）──
+    white_feather_guard: { name: '白毦兵', cls: 'melee', sz: 1 },                            // 视觉替换重步兵（heavy_infantry），数值不变
+    rattan_archer:  { name: '藤弓兵', cls: 'ranged', sz: 1 },                                // 视觉替换弩兵（crossbow），数值不变
+    // ── 河西全决定版（2026-08-15 主人定：前排精锐火矛手/中排诸葛弩/后排黑光铠骑兵，数值照抄被替换兵种）──
+    elite_fire_lancer: { name: '精锐火矛手', cls: 'melee', sz: 1 },                          // 视觉替换青州兵（spear），数值不变
+    // ── 江南/川蜀精英版（2026-08-15 主人修订：江南后排精锐火焰弓箭手、川蜀中排精锐诸葛弩）──
+    elite_fire_archer: { name: '精锐火焰弓箭手', cls: 'ranged', sz: 1 },                     // 视觉替换火焰弓箭手（fire_archer），数值不变
+    elite_chukonu:   { name: '精锐诸葛弩', cls: 'ranged', sz: 1 },                           // 视觉替换诸葛弩（chukonu），数值不变
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
     lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
     heavy_cavalry:  { name: '重骑兵', cls: 'cav', sz: 1.15 },
@@ -120,7 +130,7 @@ const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
