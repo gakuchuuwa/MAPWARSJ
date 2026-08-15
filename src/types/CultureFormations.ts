@@ -144,45 +144,6 @@ export function convertSlotsToMode(slots: CompositionSlot[], mode: FormationMode
     ];
 }
 
-/**
- * 构造 步骑 3×3 阵型的 helper:
- *   前3 + 中左 + 中心刀骑 + 中右 + 后3 = 9 人
- *   中心永远是 general_cavalry (刀骑)
- *   middleSide 可以是骑兵 (步骑) 或步兵 (纯步, 仿中原简化)
- */
-function build3x3(front: string, middleSide: string, back: string): CompositionTier {
-    return {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: front,             count: 3 }, // Row 0 (前)
-            { type: middleSide,        count: 1 }, // Row 1 左（骑兵类默认 scale 1.2，步兵 1.0）
-            { type: 'general_cavalry', count: 1 }, // Row 1 中 = 刀骑 (永远)
-            { type: middleSide,        count: 1 }, // Row 1 右
-            { type: back,              count: 3 }  // Row 2 (后)
-        ]
-    };
-}
-
-/**
- * 构造 纯骑 1-2-3 三角阵型的 helper:
- *   6 人三角, 全员同一兵种 (跟 huihui_cavalry 同模式)
- *   gridSize 3 是 LegionPhalanxDrawer 已有约定
- */
-function buildTriangleCavalry(unitType1: string, unitType2: string, unitType3: string): CompositionTier {
-    return {
-        minTroops: 0,
-        maxTroops: Infinity,
-        gridSize: 3,
-        slots: [
-            { type: unitType1, count: 1 },
-            { type: unitType2, count: 2 },
-            { type: unitType3, count: 3 }
-        ]
-    };
-}
-
 // ============================================================
 // 势力专属方阵（优先于文化区默认）
 // ============================================================
