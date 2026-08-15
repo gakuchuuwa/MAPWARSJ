@@ -521,10 +521,12 @@ interface WarCorpse {
     keep?: boolean;
 }
 
-/** 帧素材缓存：key -> { fw, fh, sets: {move,atk,die,melee}[faction][dir] } */
+/** 帧素材缓存：key -> { fh, frames, sets: {move,atk,die,melee}[faction][dir] } */
 interface WarBank {
-    fw: number;
+    /** 帧高（所有动作共享同一帧框高度） */
     fh: number;
+    /** 各动作的帧数（S10DB=8，AoE2 武士/弓手=30~60；缺失兜底 8） */
+    frames: Record<string, number>;
     /** 抠绿 + SpriteTinter 染色后的帧带（[阵营][朝向]） */
     sets: Record<string, CanvasImageSource[][]>;
 }
@@ -1086,8 +1088,8 @@ export class Scene13WarLayer {
         if (this.bank[key]) return;
         try {
             const assets = (SPRITE_PATHS.UNIT_ASSETS as Record<string, any>)[key];
-            if (!assets) { this.bank[key] = { fw: 84, fh: 84, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
-            const b: WarBank = { fw: 84, fh: 84, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            if (!assets) { this.bank[key] = { fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
+            const b: WarBank = { fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
             const ranged = RANGED_TYPES.has(key);
             // 远程：atk = SHOOT（射击 +40），melee = ATTACK（近战 +8）；近战/骑兵：atk = ATTACK
             // 冲锋组：**象兵 637-644 / 弓骑 688-695**（2026-08-11 主人口述）。
@@ -1124,8 +1126,10 @@ export class Scene13WarLayer {
                             const clean = new Image();
                             clean.onload = () => {
                                 try {
-                                    b.fw = clean.naturalWidth / 8;
                                     b.fh = clean.naturalHeight;
+                                    // [2026-08-15 全帧修复] 帧数 = 宽/高（每帧正方形），各动作独立：
+                                    //   S10DB 横排 8 帧不变；AoE2 武士/弓手 30~60 帧也正确切。
+                                    b.frames[slot] = clean.naturalWidth / clean.naturalHeight;
                                     b.sets[slot][0][d] = SpriteTinter.getTintedSprite(clean, this.sideFaction[0]);
                                     b.sets[slot][1][d] = SpriteTinter.getTintedSprite(clean, this.sideFaction[1]);
                                 } catch (e) {
@@ -1147,7 +1151,7 @@ export class Scene13WarLayer {
             this.bank[key] = b;
         } catch (e) {
             console.warn('[Scene13WarLayer] 素材加载失败（回退空帧）:', key, e);
-            this.bank[key] = { fw: 84, fh: 84, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            this.bank[key] = { fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
         }
     }
 
@@ -1619,12 +1623,14 @@ export class Scene13WarLayer {
         if (!img) return;
         const wt = WAR_TYPES[c.key];
         const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
-        
+        const dieN = b.frames.die ?? 8;
+        const dieFw = b.fh;   // 帧宽 = 帧高（每帧正方形）
+
         g.save();
         // [环境融入] 仅做轻微压暗。去除 sepia（战场底色因地貌多变），保持 100% 不透明
         g.filter = 'brightness(80%) contrast(95%)';
         g.globalAlpha = 1.0;
-        g.drawImage(img, 7 * b.fw, 0, b.fw, b.fh, c.x - px / 2, c.y - px * 0.9, px, px);
+        g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, c.x - px / 2, c.y - px * 0.9, px, px);
         g.restore();
     }
 
@@ -1716,7 +1722,7 @@ export class Scene13WarLayer {
         // 正在播死亡动画的（1.3 秒内）逐帧画；之后是没被留下的那 70%，停在末帧渐隐
         for (const c of this.corpses) vis.push({
             y: c.y, x: c.x, f: c.f, key: c.key, dir: c.dir, set: 'die',
-            fr: Math.min(7, (c.t * 6) | 0),
+            fr: c.t,
             a: c.t <= DEATH_ANIM ? 1 : Math.max(0, 1 - (c.t - DEATH_ANIM) / CORPSE_FADE),
         });
         for (const m of this.men) {
@@ -1738,7 +1744,7 @@ export class Scene13WarLayer {
             else if (m.atkFlip && hasChg) set = 'charge';
             else set = 'atk';
             const fade = m.fadeT > 0 ? 1 - m.fadeT / FADE_IN : 1;
-            vis.push({ y: m.y, x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: (m.ph | 0) % 8, a: fade });
+            vis.push({ y: m.y, x: m.x, f: m.f, key: m.key, dir: m.dir, set, fr: m.ph, a: fade });
         }
         vis.sort((a, b) => a.y - b.y);
 
@@ -1758,8 +1764,15 @@ export class Scene13WarLayer {
             if (!img) continue;
             const wt = WAR_TYPES[v.key];
             const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
+            // [2026-08-15 全帧修复] 各动作帧数不同（S10DB=8，AoE2=30~60），
+            // 帧宽按该动作实际帧数算、帧号按「每秒 8 相位」换算，循环节奏与原 8 帧素材一致。
+            const n = b.frames[v.set] ?? 8;
+            const fw = b.fh;   // 帧宽 = 帧高（每帧正方形）
+            const fr = v.set === 'die'
+                ? Math.min(n - 1, Math.floor(v.fr / DEATH_ANIM * n))   // 死亡：DEATH_ANIM 内播完 n 帧，冻结末帧
+                : Math.floor(v.fr * n / 8) % n;                        // 活人：8 相位/秒 → 换算该动作帧号
             if (v.a < 1) ctx.globalAlpha = v.a;
-            ctx.drawImage(img, v.fr * b.fw, 0, b.fw, b.fh, v.x - px / 2, v.y - px * 0.9, px, px);
+            ctx.drawImage(img, fr * fw, 0, fw, b.fh, v.x - px / 2, v.y - px * 0.9, px, px);
             if (v.a < 1) ctx.globalAlpha = 1;
         }
 
