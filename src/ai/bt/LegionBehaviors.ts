@@ -827,16 +827,31 @@ export const Idle = new Action('Idle', () => BTStatus.SUCCESS);
 // 残兵撤退（据点军团兵力跌破阈值 → 回出发城解散、兵力并入驻军；远征军团不受此限）
 // =====================
 
-/** 兵力 < 阈值、非远征、出发城仍属己方 → 该撤回解散 */
+/** 兵力 < 阈值、非远征、出发城仍属己方 → 该撤回解散；已锁定撤退意图的军团途中补兵不掉头 */
 export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
     const army = ctx.army;
-    if (army.getTroops() >= GameConfig.LEGION.DISBAND_TROOP_THRESHOLD) return false;
     if (isCampaignLegion(army)) return false; // 远征军团不解散
+
     const homeId = getArmyOriginCityId(army);
     if (!homeId) return false;
     const home = ctx.cityManager.getCity(homeId);
-    // 出发城失守 → false，交回 attackSequence 的收复逻辑（打回来后才解散）
-    return !!home && home.factionId === army.getFactionId();
+    const homeAlive = !!home && home.factionId === army.getFactionId();
+
+    // 意图锁定：已决意撤退的军团，只要老家还在就继续撤退，不看兵力
+    if (army.isRetreatingHome) {
+        if (!homeAlive) {
+            army.isRetreatingHome = false; // 老家沦陷，解除撤退锁
+            return false;
+        }
+        return true;
+    }
+
+    // 首次触发：兵力低于阈值且老家仍在
+    if (army.getTroops() >= GameConfig.LEGION.DISBAND_TROOP_THRESHOLD) return false;
+    if (!homeAlive) return false;
+
+    army.isRetreatingHome = true; // 打上撤退意图锁
+    return true;
 });
 
 /** 已抵达出发城（到达/攻城半径内） */
@@ -871,6 +886,7 @@ export const DisbandIntoHome = new Action('DisbandIntoHome', (ctx) => {
     );
 
     clearStrategicTarget(ctx);
+    army.isRetreatingHome = false; // 清除撤退意图锁
     army.disband(); // 解散立即消失（不留尸体）
     ctx.legionManager.removeArmy(army);
     return BTStatus.SUCCESS;

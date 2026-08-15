@@ -462,6 +462,8 @@ export class Army implements IBattleUnit {
     public isElite: boolean = false;
     /** 解散标记（区别于战死 destroy）：disband() 设 true，removeArmy 据此判定是否触发战败冷却 */
     public wasDisbanded: boolean = false;
+    /** 撤退意图锁：兵力 < DISBAND_TROOP_THRESHOLD 后锁定，途中补兵不掉头，抵家解散或老家沦陷才解除 */
+    public isRetreatingHome: boolean = false;
 
     // [IBattleUnit Implementation]
     public get factionId(): string {

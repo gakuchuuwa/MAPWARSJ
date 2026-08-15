@@ -5088,7 +5088,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/LATIN/boootiya_yibaminongda.png": {
-            "scale": 1.38,
+            "scale": 1.39,
             "offsetX": 0,
             "offsetY": 51
         },
@@ -5118,7 +5118,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 18
         },
         "/assets/LATIN/leangongguo_afangsuojiushi.png": {
-            "scale": 1.25,
+            "scale": 1.28,
             "offsetX": 0,
             "offsetY": 52
         },
@@ -5128,7 +5128,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/LATIN/bohepingyuan_diaoduolike.png": {
-            "scale": 1.19,
+            "scale": 1.22,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -5158,7 +5158,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 33
         },
         "/assets/LATIN/lagoniya_lieaonida.png": {
-            "scale": 1.13,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": -4
         },
@@ -5223,7 +5223,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 15
         },
         "/assets/LATIN/__闲置__LATIN_04.png": {
-            "scale": 1.03,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": -7
         },
@@ -5308,7 +5308,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/LATIN/jileinaijia_majiasi.png": {
-            "scale": 0.86,
+            "scale": 0.81,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -5368,7 +5368,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 26
         },
         "/assets/LATIN/langgeduoke_leimengwushi.png": {
-            "scale": 0.89,
+            "scale": 0.87,
             "offsetX": 0,
             "offsetY": 10
         },
@@ -5398,7 +5398,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 13
         },
         "/assets/LATIN/jiatailuoniya_weifuleide.png": {
-            "scale": 1,
+            "scale": 1.08,
             "offsetX": 0,
             "offsetY": 8
         },
@@ -5408,7 +5408,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/LATIN/liguliya_andelieya.png": {
-            "scale": 1,
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": 25
         },
@@ -5558,7 +5558,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 32
         },
         "/assets/LATIN/donggete_diaoduolike.png": {
-            "scale": 1.06,
+            "scale": 1.07,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -5953,7 +5953,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/LATIN/luodesi_weilalei.png": {
-            "scale": 0.98,
+            "scale": 0.94,
             "offsetX": 4,
             "offsetY": 0
         },
@@ -6153,12 +6153,12 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 18
         },
         "/assets/LATIN/kasidiliya_afangsuoshiyishi.png": {
-            "scale": 1.07,
+            "scale": 1.1,
             "offsetX": 0,
             "offsetY": 3
         },
         "/assets/LATIN/duluo_sangqiaoyishi.png": {
-            "scale": 1.03,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": -2
         },
