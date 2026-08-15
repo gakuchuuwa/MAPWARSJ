@@ -261,9 +261,20 @@ export const NORTH_TIERS: CompositionTier[] = [
     build3x3('spear', 'horse_archer', 'crossbow')
 ];
 
-/** 3. 东北 步骑 重+弓骑+弓兵 */
+/** 3. 东北 铁浮图+钦察+精锐长弓兵（2026-08-15 主人定：全决定版，中间刀骑取消→钦察，风格统一） */
 export const NORTHEAST_TIERS: CompositionTier[] = [
-    build3x3('heavy_infantry', 'horse_archer', 'archer')
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'iron_pagoda', count: 3 },     // Row 0 前 = 铁浮图 重骑兵（帝国决定）
+            { type: 'kipchak', count: 1 },         // Row 1 左 = 钦察 弓骑兵（帝国决定）
+            { type: 'kipchak', count: 1 },         // Row 1 中 = 钦察（原刀骑将领，取消）
+            { type: 'kipchak', count: 1 },         // Row 1 右 = 钦察 弓骑兵（帝国决定）
+            { type: 'longbowman_elite', count: 3 } // Row 2 后 = 精锐长弓兵 弓手（帝国决定）
+        ]
+    }
 ];
 
 /** 4. 朝鲜 步骑 刀剑手+黑光铠骑兵+火焰弓箭手（2026-08-15 主人定：全决定版，中间刀骑取消→黑光铠骑兵，风格统一） */
@@ -409,18 +420,18 @@ export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 14. 西域 步骑（绿洲城郭）轻步+轻骑+弓 — MovementClass=MIXED */
+/** 14. 西域 长枪兵+骑射手+轻骑兵（2026-08-15 主人定：全决定版，中间刀骑取消→骑射手，风格统一） — MovementClass=MIXED */
 export const WESTERN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'light_infantry', count: 3 },
-            { type: 'lancer', count: 1 },
-            { type: 'general_cavalry', count: 1 },
-            { type: 'lancer', count: 1 },
-            { type: 'archer', count: 3 }
+            { type: 'pikeman', count: 3 },       // Row 0 前 = 长枪兵 步兵（帝国决定）
+            { type: 'cav_archer', count: 1 },    // Row 1 左 = 骑射手 弓骑（帝国决定）
+            { type: 'cav_archer', count: 1 },    // Row 1 中 = 骑射手（原刀骑将领，取消）
+            { type: 'cav_archer', count: 1 },    // Row 1 右 = 骑射手 弓骑（帝国决定）
+            { type: 'light_riders', count: 3 }   // Row 2 后 = 轻骑兵 骑兵（帝国决定）
         ]
     }
 ];
