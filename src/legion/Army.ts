@@ -32,7 +32,7 @@ import {
 } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
-import { getCultureMovementClass, isCultureCavalryOnly } from '../types/CultureFormations';
+import { getCultureMovementClass, isCultureCavalryOnly, type FormationMode } from '../types/CultureFormations';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 
 /**
@@ -451,6 +451,8 @@ export class Army implements IBattleUnit {
     public legionType: LegionType = 'infantry';
     public cultureSlots: string[] | null = null; // [NEW] 14 文化阵型 slot 类型列表
     public cultureScales: number[] | null = null; // [NEW] 自定义单位缩放列表
+    /** 三值阵型（square 鱼鳞 / triangle 三角 / echelon 雁行）；渲染层据此定布局 */
+    public formationMode: FormationMode | null = null;
     /** 军团文化区：用于三角纯骑行军加成（STEPPE/TIBET/CENTRAL_ASIA） */
     public cultureRegion: RegionType | null = null;
     public name: string; // [IBattleUnit]
@@ -813,6 +815,8 @@ export class Army implements IBattleUnit {
         newArmy.type = this.type; // Inherit type (legion/army)
         newArmy.cultureSlots = this.cultureSlots ? [...this.cultureSlots] : null; // [NEW] Inherit culture slots
         newArmy.cultureScales = this.cultureScales ? [...this.cultureScales] : null; // [NEW] Inherit culture scales
+        newArmy.formationMode = this.formationMode; // [NEW] Inherit formation mode
+        newArmy.cultureRegion = this.cultureRegion; // [NEW] Inherit culture region (三角纯骑加成)
         // 行军减兵：子军团继承父军团断粮计时（防拆分刷补给漏洞；小数累加器不复制，<1 兵无刷取空间）
         newArmy.timeSinceSupply = this.timeSinceSupply;
         newArmy.attritionChunkSec = this.attritionChunkSec;

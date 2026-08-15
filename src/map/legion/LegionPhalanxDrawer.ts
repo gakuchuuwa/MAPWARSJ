@@ -8,6 +8,7 @@ import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import { FactionTintSystem } from '../../systems/tinting/FactionTintSystem';
 import { getCompositionTier, CompositionTier, expandCompositionSlots } from '../../types/LegionComposition';
+import type { FormationMode } from '../../types/CultureFormations';
 import { getNavalShipDrawScale, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
 
@@ -24,11 +25,28 @@ export type PhalanxAnimState = 'IDLE' | 'MOVE' | 'ATTACK' | 'DAMAGE' | 'DEATH';
 
 export class LegionPhalanxDrawer {
 
-    /** 纯骑 1-2-3 等腰三角 (6 人): 草原 / 青藏 / 西域 */
+    /** 骑兵格位内部小三角（6 人 1+2+3）：denseFront 时每个骑兵编队内部展开成楔形。
+     *  2026-08-09 主人定，本次阵型重构**不动**（只改主阵 9 格位排布，编队内部保持 6 人小三角）。 */
     private static readonly TRIANGLE_LAYOUT = [
         { r: 0, c: 0 },
         { r: 1, c: -1 }, { r: 1, c: 1 },
         { r: 2, c: -2 }, { r: 2, c: 0 }, { r: 2, c: 2 },
+    ] as const;
+
+    /** 主阵·三角 2+3+4（9 格位）：尖端 2 在前（排 0），中 3，底边 4（排 2）。
+     *  c 为横向偏移（半格步），r 为纵深排（0=最前）。2026-08-15 主人定：1-2-3 → 2+3+4。 */
+    private static readonly TRIANGLE_9_LAYOUT = [
+        { r: 0, c: -0.5 }, { r: 0, c: 0.5 },
+        { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 },
+        { r: 2, c: -1.5 }, { r: 2, c: -0.5 }, { r: 2, c: 0.5 }, { r: 2, c: 1.5 },
+    ] as const;
+
+    /** 主阵·雁行 4+3+2（9 格位）：宽面 4 顶前（排 0），中 3，后收 2（排 2）。
+     *  2026-08-15 主人定：新增雁行阵（远程为主的两翼展开）。 */
+    private static readonly ECHELON_9_LAYOUT = [
+        { r: 0, c: -1.5 }, { r: 0, c: -0.5 }, { r: 0, c: 0.5 }, { r: 0, c: 1.5 },
+        { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 },
+        { r: 2, c: -0.5 }, { r: 2, c: 0.5 },
     ] as const;
 
     private static readonly PURE_CAVALRY_LEGION_TYPES: LegionType[] = ['cavalry', 'archer_cavalry'];
@@ -903,7 +921,9 @@ export class LegionPhalanxDrawer {
         squadStates: readonly (string | null)[] | null = null,
         /** [2026-08-09 编队级朝向] 9 个格位各自的朝向（0-7，面向自己的目标）；null = 整军 direction。
          *  默认不传 → 其他 zoom 与改动前逐像素一致。 */
-        squadDirections: readonly number[] | null = null
+        squadDirections: readonly number[] | null = null,
+        /** 三值阵型（square 鱼鳞 / triangle 三角 / echelon 雁行）；null = 靠 slots.length 兜底（旧 6 人=三角）。 */
+        formationMode: FormationMode | null = null
     ): void {
         if (!this.isLoaded) return;
 
@@ -911,16 +931,15 @@ export class LegionPhalanxDrawer {
         // [CLEANED] Data-driven: cultureSlots defines count. No more hardcoded legionType checks.
         let count = 9; // Default for 3x3
         let gridSize = 3; // Default 3x3
-        let isTriangleFormation = false;
+        // 三值阵型（2026-08-15）：三种阵型都是 9 人，不能再靠 count===6 区分，必须显式传 formationMode。
+        let formationKind: FormationMode = 'square';
 
         // Priority 1: Use cultureSlots length (from editor / CultureFormations.ts)
         if (cultureSlots && cultureSlots.length > 0) {
             count = cultureSlots.length;
-            isTriangleFormation = count === 6;
             gridSize = 3;
-            if (!isTriangleFormation) {
-                gridSize = Math.ceil(Math.sqrt(count));
-            }
+            // 显式 formationMode 优先；null 时兜底：6 人=三角（旧），9 人=鱼鳞
+            formationKind = formationMode ?? (count === 6 ? 'triangle' : 'square');
         } else {
             // Priority 2: Try legacy getCompositionTier fallback
             const tier = getCompositionTier(troops, legionType);
@@ -929,9 +948,9 @@ export class LegionPhalanxDrawer {
                 count = gridSize * gridSize;
             }
             if (LegionPhalanxDrawer.PURE_CAVALRY_LEGION_TYPES.includes(legionType)) {
-                count = 6;
-                isTriangleFormation = true;
+                count = 9;
                 gridSize = 3;
+                formationKind = 'triangle';
             }
         }
 
@@ -998,7 +1017,7 @@ export class LegionPhalanxDrawer {
             isFighting || state === 'DEATH',
             center, unprojectFn,
             (idx) => {
-                const baseOff = this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, isTriangleFormation);
+                const baseOff = this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, formationKind);
                 const squadOff = squadOffsets && squadOffsets[idx];
                 if (!squadOff) return baseOff;
                 const sa = (direction + 1) * Math.PI / 4;
@@ -1117,7 +1136,7 @@ export class LegionPhalanxDrawer {
             // Skip if invisible
             if (dynamicAlpha <= 0.01) continue;
 
-            const baseOffset = this.getFormationOffset(i, spacingX, spacingY, direction, legionType, rows, isTriangleFormation);
+            const baseOffset = this.getFormationOffset(i, spacingX, spacingY, direction, legionType, rows, formationKind);
             // [2026-08-09 编队独立移动] 每编队独立推进偏移（像素，旋转前叠加随 direction 转）：
             // getFormationOffset 有缓存（key 不含偏移），返回的是共享对象 → 只读，另建新对象叠加。
             let drawOffset = baseOffset;
@@ -1168,9 +1187,11 @@ export class LegionPhalanxDrawer {
                     // Rank Multiplier Logic
                     let rankMultiplier = 0.5;
                     // Simple heuristic: Further back = larger surge to pass front
-                    const rowIdx = isTriangleFormation
-                        ? (LegionPhalanxDrawer.TRIANGLE_LAYOUT[i]?.r ?? 2)
-                        : Math.floor(i / cols);
+                    const rowIdx = formationKind === 'triangle'
+                        ? (LegionPhalanxDrawer.TRIANGLE_9_LAYOUT[i]?.r ?? 2)
+                        : formationKind === 'echelon'
+                          ? (LegionPhalanxDrawer.ECHELON_9_LAYOUT[i]?.r ?? 2)
+                          : Math.floor(i / cols);
                     if (rowIdx === 0) rankMultiplier = 0.3;
                     else if (rowIdx === 1) rankMultiplier = 0.8;
                     else if (rowIdx >= 2) rankMultiplier = 1.2;
@@ -2117,9 +2138,9 @@ export class LegionPhalanxDrawer {
         direction: number,
         type: LegionType,
         gridSizeInput?: number,
-        useTriangle: boolean = false
+        formationMode: FormationMode = 'square'
     ): { x: number, y: number } {
-        const key = `${index}_${direction}_${spacingX.toFixed(2)}_${spacingY.toFixed(2)}_${type}_${gridSizeInput}_${useTriangle ? 'tri' : 'grid'}`;
+        const key = `${index}_${direction}_${spacingX.toFixed(2)}_${spacingY.toFixed(2)}_${type}_${gridSizeInput}_${formationMode}`;
 
         if (this.offsetCache.has(key)) {
             return this.offsetCache.get(key)!;
@@ -2129,8 +2150,12 @@ export class LegionPhalanxDrawer {
         let originalY = 0;
 
         // --- FORMATION LOGIC ---
-        if (useTriangle && index < 6) {
-            const pos = LegionPhalanxDrawer.TRIANGLE_LAYOUT[index] ?? LegionPhalanxDrawer.TRIANGLE_LAYOUT[0];
+        if (formationMode === 'triangle' && index < 9) {
+            const pos = LegionPhalanxDrawer.TRIANGLE_9_LAYOUT[index] ?? LegionPhalanxDrawer.TRIANGLE_9_LAYOUT[0];
+            originalY = (pos.r - 1.0) * spacingY;
+            originalX = pos.c * spacingX * 0.7;
+        } else if (formationMode === 'echelon' && index < 9) {
+            const pos = LegionPhalanxDrawer.ECHELON_9_LAYOUT[index] ?? LegionPhalanxDrawer.ECHELON_9_LAYOUT[0];
             originalY = (pos.r - 1.0) * spacingY;
             originalX = pos.c * spacingX * 0.7;
         } else {
