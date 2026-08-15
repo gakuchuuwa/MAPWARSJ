@@ -293,7 +293,7 @@ export const KOREA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 5. 日本 前日本武士/中精锐武士/后步弓手（2026-08-15 主人定：取消刀骑将领） */
+/** 5. 日本 前日本武士/中精锐武士/后忍者（2026-08-15 主人修订：后排步弓手→忍者） */
 export const JAPAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -304,7 +304,7 @@ export const JAPAN_TIERS: CompositionTier[] = [
             { type: 'samurai_elite', count: 1 },     // Row 1 左 = 精锐武士（帝国决定）
             { type: 'samurai_elite', count: 1 },     // Row 1 中 = 精锐武士（原刀骑将领，取消）
             { type: 'samurai_elite', count: 1 },     // Row 1 右 = 精锐武士（帝国决定）
-            { type: 'archer', count: 3 }             // Row 2 后 = 步弓手（帝国决定）
+            { type: 'ninja', count: 3 }              // Row 2 后 = 忍者（帝国决定）
         ]
     }
 ];
@@ -396,15 +396,15 @@ export const DIANQIAN_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 12. 青藏 纯骑三角 123 斧骑 + 456 弓骑 */
+/** 12. 青藏 答剌罕骑兵+精锐答剌罕骑兵（2026-08-15 主人定：全决定版，纯骑三角） */
 export const TIBET_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'heavy_cavalry', count: 3 },
-            { type: 'horse_archer', count: 3 }
+            { type: 'tarkan', count: 3 },
+            { type: 'elite_tarkan', count: 3 }
         ]
     }
 ];
@@ -420,18 +420,18 @@ export const CENTRAL_ASIA_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 14. 西域 长枪兵+骑射手+轻骑兵（2026-08-15 主人定：全决定版，中间刀骑取消→骑射手，风格统一） — MovementClass=MIXED */
+/** 14. 西域 精锐近卫军+骑射手+草原枪兵（2026-08-15 主人修订：前排长枪兵→精锐近卫军、后排轻骑兵→草原枪兵） — MovementClass=MIXED */
 export const WESTERN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'pikeman', count: 3 },       // Row 0 前 = 长枪兵 步兵（帝国决定）
-            { type: 'cav_archer', count: 1 },    // Row 1 左 = 骑射手 弓骑（帝国决定）
-            { type: 'cav_archer', count: 1 },    // Row 1 中 = 骑射手（原刀骑将领，取消）
-            { type: 'cav_archer', count: 1 },    // Row 1 右 = 骑射手 弓骑（帝国决定）
-            { type: 'light_riders', count: 3 }   // Row 2 后 = 轻骑兵 骑兵（帝国决定）
+            { type: 'elite_guardsman', count: 3 },  // Row 0 前 = 精锐近卫军 步兵（帝国决定）
+            { type: 'cav_archer', count: 1 },       // Row 1 左 = 骑射手 弓骑（帝国决定）
+            { type: 'cav_archer', count: 1 },       // Row 1 中 = 骑射手（原刀骑将领，取消）
+            { type: 'cav_archer', count: 1 },       // Row 1 右 = 骑射手 弓骑（帝国决定）
+            { type: 'steppe_lancer', count: 3 }     // Row 2 后 = 草原枪兵 骑兵（帝国决定）
         ]
     }
 ];

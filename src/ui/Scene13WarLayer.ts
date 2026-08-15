@@ -92,6 +92,14 @@ const WAR_TYPES: Record<string, WarType> = {
     // ── 江南/川蜀精英版（2026-08-15 主人修订：江南后排精锐火焰弓箭手、川蜀中排精锐诸葛弩）──
     elite_fire_archer: { name: '精锐火焰弓箭手', cls: 'ranged', sz: 1 },                     // 视觉替换火焰弓箭手（fire_archer），数值不变
     elite_chukonu:   { name: '精锐诸葛弩', cls: 'ranged', sz: 1 },                           // 视觉替换诸葛弩（chukonu），数值不变
+    // ── 青藏全决定版（2026-08-15 主人定：答剌罕骑兵+精锐答剌罕骑兵，纯骑三角）──
+    tarkan:           { name: '答剌罕骑兵', cls: 'cav', sz: 1 },                              // 视觉替换重骑兵（heavy_cavalry），数值不变
+    elite_tarkan:     { name: '精锐答剌罕骑兵', cls: 'cav', sz: 1 },                          // 视觉替换突骑兵（horse_archer），数值不变（纯骑，无风筝）
+    // ── 西域修订（2026-08-15 主人定：前排精锐近卫军/后排草原枪兵，骑射手不变）──
+    elite_guardsman:  { name: '精锐近卫军', cls: 'melee', sz: 1 },                            // 视觉替换长枪兵（pikeman），数值不变
+    steppe_lancer:    { name: '草原枪兵', cls: 'cav', sz: 1 },                                // 视觉替换轻骑兵（light_riders），数值不变
+    // ── 日本修订（2026-08-15 主人定：后排步弓手→忍者）──
+    ninja:            { name: '忍者', cls: 'melee', sz: 1 },                                  // 视觉替换步弓手（archer），数值不变（近战步兵）
     // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
     lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
     heavy_cavalry:  { name: '重骑兵', cls: 'cav', sz: 1.15 },
@@ -130,7 +138,7 @@ const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
