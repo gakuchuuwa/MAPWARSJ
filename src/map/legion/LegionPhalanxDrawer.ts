@@ -17,6 +17,9 @@ import { NavalPhalanxStateManager } from './NavalPhalanxState';
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
 const LAZY_BOOT_UNIT_IDS = new Set(['ship_small', 'ship_medium', 'ship_large']);
 
+/** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/'];
+
 export type PhalanxAnimState = 'IDLE' | 'MOVE' | 'ATTACK' | 'DAMAGE' | 'DEATH';
 
 export class LegionPhalanxDrawer {
@@ -292,6 +295,13 @@ export class LegionPhalanxDrawer {
         IDLE: HTMLImageElement[],
         DAMAGE: HTMLImageElement[],
         DEATH: HTMLImageElement[],
+        /**
+         * AoE2 DE 动态帧框元数据（有此项 = 走 hotspot 对齐渲染；无此项 = S10DB 正方形帧）。
+         * 键 = cacheEntry 字段名（MOVE/ATTACK/IDLE/DAMAGE/DEATH/SHOOT/CHARGE），
+         * 值 = { frames: 帧数, dirs: { [dir]: { fw, fh, hx, hy } } }，
+         * fw/fh = 该动作该方向 box 尺寸，hx/hy = hotspot(canvas中心) 在 box 里的位置。
+         */
+        dyn?: Record<string, { frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> }>;
         SECONDARY?: {
             MOVE: HTMLImageElement[],
             ATTACK: HTMLImageElement[],
@@ -309,6 +319,33 @@ export class LegionPhalanxDrawer {
             SHOOT: HTMLImageElement[]
         }
     }> = new Map();
+
+    /** AoE2 DE 元数据缓存（目录 → dyn，键 = cacheEntry 字段名） */
+    private static dynMetaCache: Map<string, Record<string, { frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> }>> = new Map();
+
+    /** 读 AoE2 DE 素材的 `_meta.json`（帧数 + 每方向 box 尺寸/hotspot 偏移），映射到 cacheEntry 字段名。 */
+    private static async loadDynMeta(dir: string): Promise<Record<string, { frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> }> | null> {
+        const cached = this.dynMetaCache.get(dir);
+        if (cached) return cached;
+        try {
+            const res = await fetch(`${dir}_meta.json`);
+            if (!res.ok) return null;
+            const meta: any = await res.json();
+            const dyn: Record<string, { frames: number; dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }> }> = {};
+            // _meta.json 的 action 键 → cacheEntry 字段名；DAMAGE/SHOOT/CHARGE 复用 attack。
+            const map: Record<string, string[]> = {
+                idle: ['IDLE'], move: ['MOVE'], attack: ['ATTACK', 'DAMAGE', 'SHOOT', 'CHARGE'], death: ['DEATH'],
+            };
+            for (const [act, slots] of Object.entries(map)) {
+                if (!meta[act]) continue;
+                for (const slot of slots) {
+                    dyn[slot] = { frames: meta[act].frames, dirs: meta[act].dirs };
+                }
+            }
+            this.dynMetaCache.set(dir, dyn);
+            return dyn;
+        } catch { return null; }
+    }
 
     // [RTS INTERFACE] Expose assets for RTS renderer
     public static getUnitAssets(unitAssetsId: string) {
@@ -538,6 +575,14 @@ export class LegionPhalanxDrawer {
                         SHOOT: [] as HTMLImageElement[]
                     } : undefined
                 };
+
+                // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + 每方向 box 尺寸/hotspot 偏移），渲染走 hotspot 对齐。
+                const _firstUrl: string = (config.MOVE?.[0] ?? config.ATTACK?.[0] ?? config.IDLE?.[0] ?? config.DEATH?.[0] ?? '') as string;
+                if (typeof _firstUrl === 'string' && DE_DYN_DIRS.some(dir => _firstUrl.includes(dir))) {
+                    const _dir = _firstUrl.substring(0, _firstUrl.lastIndexOf('/') + 1);
+                    const dyn = await LegionPhalanxDrawer.loadDynMeta(_dir);
+                    if (dyn) (cacheEntry as any).dyn = dyn;
+                }
 
                 const promises = [
                     loadBatch(config.MOVE, cacheEntry.MOVE),
@@ -1263,8 +1308,10 @@ export class LegionPhalanxDrawer {
             if (!tintedSprite) continue;
 
             // E. Frame Calculation
-            // Independent check per sprite
-            const spriteTotalFrames = this.getFrameCount(tintedSprite);
+            // 🔴 AoE2 DE 动态帧框：帧数/box 尺寸/hotspot 从元数据读；无 dyn = S10DB 正方形帧（getFrameCount）。
+            const dynEntry = currentSet.dyn?.[animState];
+            const dynDir = dynEntry?.dirs?.[String(effDir)];
+            const spriteTotalFrames = dynEntry ? dynEntry.frames : this.getFrameCount(tintedSprite);
             let currentFrameIndex = 0;
 
             if (slot.state === 'ALIVE') {
@@ -1301,8 +1348,10 @@ export class LegionPhalanxDrawer {
             }
 
             // F. Prepare Draw
-            const frameW = tintedSprite.width / spriteTotalFrames;
-            const frameH = tintedSprite.height;
+            // 🔴 AoE2 DE 动态帧框（hotspot 对齐）：帧宽/帧高/hotspot 从元数据读，统一缩放 s，hotspot 对齐单位位置。
+            //    S10DB 正方形帧：帧宽=宽/帧数，中心对齐（原逻辑不变）。
+            const frameW = dynDir ? dynDir.fw : tintedSprite.width / spriteTotalFrames;
+            const frameH = dynDir ? dynDir.fh : tintedSprite.height;
             const frameCol = currentFrameIndex;
 
             // Pool Item
@@ -1328,28 +1377,25 @@ export class LegionPhalanxDrawer {
             // Apply dynamic scale (spawn animation etc.) into the single scaling factor
             scalingFactor *= dynamicScale;
 
-            // Calculate Render Dimensions based on ACTUAL sprite aspect ratio.
-            // [FIX] Use height-based sizing to ensure all unit types (infantry/cavalry)
-            // appear at consistent visual heights regardless of aspect ratio.
-            const currentRatio = frameW / frameH;
-            
             const baseHeight = 60;
-
-            // Height is the primary constraint, width follows from aspect ratio.
-            // Normalize by source strip row height so spear (84px) matches crossbow (64px) at scale 1.
-            const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
-            let targetH = baseHeight * scale * scalingFactor * frameHeightNorm;
-            let targetW = targetH * currentRatio;
-
-            const scaledRenderW = targetW;
-            const scaledRenderH = targetH;
-            item.drawParams.dx = drawX - scaledRenderW / 2;
-
-            // Optimized Anchor: 0.5 (Center) default
-            // [USER REQUEST] All units should be centered on the hex, not feet-anchored
-            item.drawParams.dy = drawY - scaledRenderH * 0.5;
-            item.drawParams.dw = scaledRenderW;
-            item.drawParams.dh = scaledRenderH;
+            if (dynDir) {
+                // 🔴 DE：统一缩放 s（站立高度 64 参考），hotspot(canvas中心) 对齐单位位置，脚底随动作浮动。
+                const s = baseHeight * scale * scalingFactor / 64;
+                item.drawParams.dx = drawX - dynDir.hx * s;
+                item.drawParams.dy = drawY - dynDir.hy * s;
+                item.drawParams.dw = frameW * s;
+                item.drawParams.dh = frameH * s;
+            } else {
+                // S10DB：中心对齐（原逻辑，height-based sizing，脚底不参与）
+                const currentRatio = frameW / frameH;
+                const frameHeightNorm = frameH / this.S10DB_REF_FRAME_H;
+                const targetH = baseHeight * scale * scalingFactor * frameHeightNorm;
+                const targetW = targetH * currentRatio;
+                item.drawParams.dx = drawX - targetW / 2;
+                item.drawParams.dy = drawY - targetH * 0.5;
+                item.drawParams.dw = targetW;
+                item.drawParams.dh = targetH;
+            }
 
             // [DEBUG] One-time dimension check
             if (!(LegionPhalanxDrawer as any)._debugLogDone && unitAssetsId === 'huaxia_infantry' && (i === 0 || i === 6)) {

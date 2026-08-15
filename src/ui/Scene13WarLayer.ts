@@ -107,6 +107,9 @@ const PURE_CAV = new Set(['STEPPE', 'TIBET', 'CENTRAL_ASIA']);
 /** 单兵绘制尺寸（px，可调；2026-08-11 主人「单兵尺寸放大些」30 → 50） */
 const UNIT_PX = 50;
 
+/** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/'];
+
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
 // 🔴 2026-08-12 主人实机定的两条：
@@ -523,12 +526,19 @@ interface WarCorpse {
 
 /** 帧素材缓存：key -> { fh, frames, sets: {move,atk,die,melee}[faction][dir] } */
 interface WarBank {
-    /** 帧高（所有动作共享同一帧框高度） */
+    /** 帧高（S10DB 所有动作共享同一帧框高度；DE 动态帧框不依赖此值，见 dyn） */
     fh: number;
     /** 各动作的帧数（S10DB=8，AoE2 武士/弓手=30~60；缺失兜底 8） */
     frames: Record<string, number>;
     /** 抠绿 + SpriteTinter 染色后的帧带（[阵营][朝向]） */
     sets: Record<string, CanvasImageSource[][]>;
+    /**
+     * DE 动态帧框元数据（有此项 = 走 AoE2 DE 的 hotspot 对齐渲染，无此项 = S10DB 正方形帧）。
+     * 结构：{ slot: { dir: { fw, fh, hx, hy } } }，slot ∈ move/atk/die/idle/melee/charge，
+     * fw/fh = 该动作该方向的 box 尺寸，hx/hy = hotspot(canvas中心) 在 box 里的位置。
+     * 渲染时把 hotspot 对齐单位位置，脚底随动作浮动（AoE2 原生），不再脚底对齐。
+     */
+    dyn?: Record<string, Record<string, { fw: number; fh: number; hx: number; hy: number }>>;
 }
 
 export interface Scene13WarInit {
@@ -1084,12 +1094,43 @@ export class Scene13WarLayer {
     }
 
 
+    /** 读 AoE2 DE 素材的 `_meta.json`（帧数 + 每方向 box 尺寸/hotspot 偏移），映射到 slot。 */
+    private async loadDynMeta(dir: string): Promise<{ dyn: NonNullable<WarBank['dyn']>; frames: Record<string, number> } | null> {
+        try {
+            const res = await fetch(`${dir}_meta.json`);
+            if (!res.ok) return null;
+            const meta: any = await res.json();
+            const dyn: NonNullable<WarBank['dyn']> = {};
+            const frames: Record<string, number> = {};
+            // _meta.json 的 action 键 → slot；melee/charge 复用 attack 的元数据。
+            const map: Record<string, string[]> = {
+                idle: ['idle'], move: ['move'], attack: ['atk', 'melee', 'charge'], death: ['die'],
+            };
+            for (const [act, slots] of Object.entries(map)) {
+                if (!meta[act]) continue;
+                for (const slot of slots) { dyn[slot] = meta[act].dirs; frames[slot] = meta[act].frames; }
+            }
+            return { dyn, frames };
+        } catch { return null; }
+    }
+
     private ensureType(key: string): void {
         if (this.bank[key]) return;
         try {
             const assets = (SPRITE_PATHS.UNIT_ASSETS as Record<string, any>)[key];
             if (!assets) { this.bank[key] = { fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
             const b: WarBank = { fh: 84, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } };
+            // 🔴 AoE2 DE 动态帧框：读 `_meta.json`（帧数 + hotspot 偏移），渲染走 hotspot 对齐。
+            const _firstUrl: string = (assets.MOVE?.[0] ?? assets.ATTACK?.[0] ?? assets.IDLE?.[0] ?? assets.DEATH?.[0] ?? '') as string;
+            const isDE = DE_DYN_DIRS.some(dir => _firstUrl.includes(dir));
+            if (isDE) {
+                const dir = _firstUrl.substring(0, _firstUrl.lastIndexOf('/') + 1);
+                this.pending++;
+                this.loadDynMeta(dir).then(meta => {
+                    if (meta) { b.dyn = meta.dyn; Object.assign(b.frames, meta.frames); }
+                    this.pending--;
+                }).catch(() => { this.pending--; });
+            }
             const ranged = RANGED_TYPES.has(key);
             // 远程：atk = SHOOT（射击 +40），melee = ATTACK（近战 +8）；近战/骑兵：atk = ATTACK
             // 冲锋组：**象兵 637-644 / 弓骑 688-695**（2026-08-11 主人口述）。
@@ -1128,10 +1169,13 @@ export class Scene13WarLayer {
                             (clean as any).sourceUrl = url;
                             clean.onload = () => {
                                 try {
-                                    b.fh = clean.naturalHeight;
-                                    // [2026-08-15 全帧修复] 帧数 = 宽/高（每帧正方形），各动作独立：
-                                    //   S10DB 横排 8 帧不变；AoE2 武士/弓手 30~60 帧也正确切。
-                                    b.frames[slot] = clean.naturalWidth / clean.naturalHeight;
+                                    // DE 动态帧框：帧数/hotspot 已由 loadDynMeta 的 _meta.json 填好，这里不再从宽高推（非正方形 box 会算错）。
+                                    if (!isDE) {
+                                        b.fh = clean.naturalHeight;
+                                        // [2026-08-15 全帧修复] 帧数 = 宽/高（每帧正方形），各动作独立：
+                                        //   S10DB 横排 8 帧不变；AoE2 武士/弓手 30~60 帧也正确切。
+                                        b.frames[slot] = clean.naturalWidth / clean.naturalHeight;
+                                    }
                                     b.sets[slot][0][d] = SpriteTinter.getTintedSprite(clean, this.sideFaction[0]);
                                     b.sets[slot][1][d] = SpriteTinter.getTintedSprite(clean, this.sideFaction[1]);
                                 } catch (e) {
@@ -1765,16 +1809,25 @@ export class Scene13WarLayer {
             const img = b.sets[v.set]?.[v.f]?.[v.dir];
             if (!img) continue;
             const wt = WAR_TYPES[v.key];
-            const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
             // [2026-08-15 全帧修复] 各动作帧数不同（S10DB=8，AoE2=30~60），
             // 帧宽按该动作实际帧数算、帧号按「每秒 8 相位」换算，循环节奏与原 8 帧素材一致。
             const n = b.frames[v.set] ?? 8;
-            const fw = b.fh;   // 帧宽 = 帧高（每帧正方形）
             const fr = v.set === 'die'
                 ? Math.min(n - 1, Math.floor(v.fr / DEATH_ANIM * n))   // 死亡：DEATH_ANIM 内播完 n 帧，冻结末帧
                 : Math.floor(v.fr * n / 8) % n;                        // 活人：8 相位/秒 → 换算该动作帧号
             if (v.a < 1) ctx.globalAlpha = v.a;
-            ctx.drawImage(img, fr * fw, 0, fw, b.fh, v.x - px / 2, v.y - px * 0.9, px, px);
+            const dm = b.dyn?.[v.set]?.[v.dir];
+            if (dm) {
+                // 🔴 AoE2 DE 动态帧框（hotspot 对齐，2026-08-15 定稿）：
+                //   游戏里 hotspot = canvas 中心，渲染时 hotspot 对齐单位位置，脚底随动作浮动（倒地时大幅下移）。
+                //   这里把 box 里的 hotspot(dm.hx/dm.hy) 对齐 v.x/v.y，统一缩放 s —— 站立帧/横躺帧都完整，无裁切。
+                const s = UNIT_PX * (wt?.sz ?? 1) / 64;   // 统一缩放（站立高度 64 参考）
+                ctx.drawImage(img, fr * dm.fw, 0, dm.fw, dm.fh, v.x - dm.hx * s, v.y - dm.hy * s, dm.fw * s, dm.fh * s);
+            } else {
+                // S10DB 正方形帧（原逻辑不变）
+                const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
+                ctx.drawImage(img, fr * b.fh, 0, b.fh, b.fh, v.x - px / 2, v.y - px * 0.9, px, px);
+            }
             if (v.a < 1) ctx.globalAlpha = 1;
         }
 
