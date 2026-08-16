@@ -456,13 +456,33 @@ const PROJ_TYPE: Record<string, string> = {
     throwing_axeman: 'PROJ_THROWING_AXE',
     ballista: 'PROJ_BOLT',
     ballista_elephant: 'PROJ_BOLT',
+    // 热兵器（2026-08-16 主人定：火枪/火炮/掷弹兵用 DE 独立抛射物）
+    hand_cannoneer: 'PROJ_SHOT',
+    janissary: 'PROJ_SHOT',
+    elite_janissary: 'PROJ_SHOT',
+    royal_janissary: 'PROJ_SHOT',
+    conquistador: 'PROJ_SHOT',
+    elite_conquistador: 'PROJ_SHOT',
+    organ_gun: 'PROJ_SHOT',
+    elite_organ_gun: 'PROJ_SHOT',
+    bombard_cannon: 'PROJ_BALL',
+    houfnice: 'PROJ_BALL',
+    grenadier: 'PROJ_GRENADE',
 };
-/** 平直弹道抛射物（弩炮箭）：不抛弧、直线穿透，单帧不俯仰。 */
-const PROJ_FLAT = new Set(['PROJ_BOLT']);
+/** 平直弹道抛射物（弩炮箭/火枪弹）：不抛弧、直线飞行。 */
+const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT']);
+/** 高抛弧线抛射物（炮弹/手榴弹）：弧高翻倍（投石式高抛）。 */
+const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_GRENADE']);
+/** 抛射物基准朝向偏移（素材竖向朝上 vs 横向朝东）：火枪弹竖向，旋转需 +90°。 */
+const PROJ_ANGLE_OFFSET: Record<string, number> = {
+    PROJ_SHOT: Math.PI / 2,
+};
 /** 连弩连发箭数（AoE2 wiki：诸葛弩 3 支、精锐诸葛弩 5 支；其余远程每轮 1 支）。 */
 const PROJ_VOLLEY: Record<string, number> = {
     chukonu: 3,
     elite_chukonu: 5,
+    organ_gun: 5,        // 风琴炮一次齐射 5 弹（AoE2 DE）
+    elite_organ_gun: 5,
 };
 /** 连发每支箭的发射间隔（秒），诸葛弩 3/5 支依次射出。 */
 const PROJ_VOLLEY_DELAY = 0.08;
@@ -1035,7 +1055,10 @@ export class Scene13WarLayer {
                         f: side.f, key, x, y,
                         pool: poolPer,
                         spawned: 0,
-                        wing: mode === 'square' ? (cell.col === 0 ? 1 : cell.col === 4 ? -1 : 0) : 0,
+                        // 🔴 鱼鳞阵取消两翼绕后（主人 2026-08-16 定）：鱼鳞阵=厚阵三排平推，
+                        //    两翼步兵/骑兵脱离大范围迂回会拆散 3×3 方阵、慢步兵还追不上正面战斗。
+                        //    三阵型一律 wing=0，两翼绕后（wing）机制停用。
+                        wing: 0,
                     });
                 });
             }
@@ -1503,6 +1526,25 @@ export class Scene13WarLayer {
         }).catch(() => { this.pending--; });
     }
 
+    /** 炮弹/手榴弹落地爆炸：径向散开一片火星（2026-08-16 热兵器特效）。 */
+    private explode(x: number, y: number): void {
+        const colors = ['#FFD800', '#FF8C00', '#FF4500', '#FFF4D0'];
+        const count = 14;
+        for (let i = 0; i < count; i++) {
+            const ang = Math.random() * Math.PI * 2;
+            const spd = 20 + Math.random() * 60;
+            this.sparks.push({
+                x, y,
+                vx: Math.cos(ang) * spd,
+                vy: Math.sin(ang) * spd - 24,   // 略向上偏，模拟爆炸气浪
+                t: 0,
+                dur: 0.25 + Math.random() * 0.30,
+                color: colors[(Math.random() * colors.length) | 0],
+                size: 1.5 + Math.random() * 2.0,
+            });
+        }
+    }
+
     private dir8(dx: number, dy: number): number {
         let a = Math.atan2(-dy, dx) * 180 / Math.PI;
         a = ((a % 360) + 360) % 360;
@@ -1920,6 +1962,12 @@ export class Scene13WarLayer {
         this.fallenFlags = this.fallenFlags.filter(ff => ff.t < FLAG_FALL);
         for (const a of this.arrows) a.t += dt;
         // 🔴 连发延迟：t 走到 delay+dur 才移除（delay 内还没射出，不算飞行时间）。
+        // 炮弹/手榴弹落地瞬间 → 爆炸火花（径向散开，2026-08-16 热兵器特效）。
+        for (const a of this.arrows) {
+            if ((a.t >= (a.delay ?? 0) + a.dur) && (a.proj === 'PROJ_BALL' || a.proj === 'PROJ_GRENADE')) {
+                this.explode(a.x + a.dx * a.len, a.y + a.dy * a.len);
+            }
+        }
         this.arrows = this.arrows.filter(a => a.t < (a.delay ?? 0) + a.dur);
         for (const s of this.sparks) {
             s.t += dt;
@@ -2231,8 +2279,8 @@ export class Scene13WarLayer {
                 if (!pa?.img || !pa.fw) continue;   // 素材未就绪（加载中跳过）
                 const p = (a.t - delay) / a.dur;
                 const d = a.len * p;
-                const arcH = Math.min(a.len * 0.3, 100);
-                // 🔴 弩炮箭平直穿透（不抛弧）；其余抛弧。帧序号自带俯仰，弩箭单帧恒平。
+                // 高抛（炮弹/手榴弹）弧高翻倍；平直（弩炮/火枪弹）无弧。
+                const arcH = PROJ_HIGH_ARC.has(a.proj) ? Math.min(a.len * 0.5, 160) : Math.min(a.len * 0.3, 100);
                 const arc = PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * p * (1 - p);
                 const x = a.x + a.dx * d;
                 const y = a.y + a.dy * d - arc;
@@ -2241,7 +2289,7 @@ export class Scene13WarLayer {
                 // 彻底解决朝北/朝南射击时帧序俯仰变横向摆头、箭头左右晃动或反转倒插的 Bug。
                 const vx = a.dx * a.len;
                 const vy = a.dy * a.len - (PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * (1 - 2 * p));
-                const angle = Math.atan2(vy, vx);
+                const angle = Math.atan2(vy, vx) + (PROJ_ANGLE_OFFSET[a.proj] ?? 0);
 
                 let fr = 0;
                 if (a.proj === 'PROJ_THROWING_AXE') {
