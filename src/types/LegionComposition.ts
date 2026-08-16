@@ -104,18 +104,8 @@ export function getEffectiveSlotScale(slot: { type: string; scale?: number }): n
     return slot.scale ?? getDefaultScaleForUnitType(slot.type);
 }
 
-/** 军队编辑器 / 地图渲染默认比例：步兵与弓弩 1.0，骑兵 1.2（2026-06-01 军队编辑器拍板） */
-export function getDefaultScaleForUnitType(type: string): number {
-    if (
-        type === 'lancer' ||
-        type === 'horse_archer' ||
-        type === 'heavy_cavalry' ||
-        type === 'general_cavalry' ||
-        type === 'elephant' ||
-        type.includes('cavalry')
-    ) {
-        return 1.2;
-    }
+/** 所有兵种默认比例统一为 1.0 */
+export function getDefaultScaleForUnitType(_type: string): number {
     return 1.0;
 }
 
