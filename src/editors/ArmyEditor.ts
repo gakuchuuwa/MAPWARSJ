@@ -55,6 +55,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     GERMANIC:     'falanji',     // 日耳曼-巴黎 → 法兰克
     LATIN:        'luoma_diguo', // 拉丁-罗马 → 罗马帝国
     GREEK:        'xila',        // 希腊-雅典 → 雅典
+    NUERGAN:      'nuergan',     // 奴儿干-特林 → 奴儿干
 };
 
 /** 15 兵种 (跟 UnitAssets.ts / CultureFormations 一致) */
