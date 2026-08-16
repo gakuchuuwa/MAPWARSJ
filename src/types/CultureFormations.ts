@@ -137,38 +137,49 @@ export function inferFormationModeFromSlots(slots: CompositionSlot[]): Formation
     return slots.length <= 3 ? 'triangle' : 'square';
 }
 
-/** 切换阵型时转换 slot（尽量保留已有兵种选择；三阵型 2026-08-15） */
+/** 切换阵型时转换 slot（100% 保留已有前排、中坚、后排兵种与缩放；三阵型 2026-08-15） */
 export function convertSlotsToMode(slots: CompositionSlot[], mode: FormationMode): CompositionSlot[] {
-    if (inferFormationModeFromSlots(slots) === mode) {
-        return slots.map(s => ({ ...s }));
+    const r0 = { type: slots[0]?.type || 'swordsman', scale: slots[0]?.scale };
+    let r1 = { type: 'lancer', scale: 1.0 as number | undefined };
+    let r2 = { type: 'archer', scale: 1.0 as number | undefined };
+
+    if (slots.length === 5) {
+        // square: 0(前3), 1,2,3(中坚), 4(后3)
+        r1 = { type: slots[1]?.type || slots[2]?.type || slots[3]?.type || 'lancer', scale: slots[1]?.scale };
+        r2 = { type: slots[4]?.type || 'archer', scale: slots[4]?.scale };
+    } else if (slots.length >= 3) {
+        // triangle or echelon: 0(前), 1(中), 2(后)
+        r1 = { type: slots[1]?.type || 'lancer', scale: slots[1]?.scale };
+        r2 = { type: slots[2]?.type || 'archer', scale: slots[2]?.scale };
+    } else if (slots.length === 2) {
+        r1 = { type: slots[1]?.type || 'lancer', scale: slots[1]?.scale };
+        r2 = { type: slots[1]?.type || 'archer', scale: slots[1]?.scale };
+    } else if (slots.length === 1) {
+        r1 = { type: slots[0]?.type || 'lancer', scale: slots[0]?.scale };
+        r2 = { type: slots[0]?.type || 'archer', scale: slots[0]?.scale };
     }
-    const frontType = slots[0]?.type || 'shield';
-    const sideType = slots[1]?.type || slots[0]?.type || 'lancer';
-    const backType = slots[slots.length - 1]?.type || 'crossbow';
+
     if (mode === 'triangle') {
-        const base = frontType.includes('cavalry') || frontType === 'lancer' || frontType === 'elephant'
-            ? frontType : 'horse_archer';
         return [
-            { type: base, count: 2 },
-            { type: base, count: 3 },
-            { type: base, count: 4 },
+            { type: r0.type, count: 2, scale: r0.scale },
+            { type: r1.type, count: 3, scale: r1.scale },
+            { type: r2.type, count: 4, scale: r2.scale },
         ];
     }
     if (mode === 'echelon') {
-        const midBase = sideType.includes('cavalry') || sideType === 'lancer' ? sideType : 'crossbow';
-        const backBase = backType.includes('cavalry') || backType === 'lancer' ? backType : 'crossbow';
         return [
-            { type: frontType, count: 4 },
-            { type: midBase, count: 3 },
-            { type: backBase, count: 2 },
+            { type: r0.type, count: 4, scale: r0.scale },
+            { type: r1.type, count: 3, scale: r1.scale },
+            { type: r2.type, count: 2, scale: r2.scale },
         ];
     }
+    // square
     return [
-        { type: frontType, count: 3 },
-        { type: sideType, count: 1 },
-        { type: sideType, count: 1 },   // 中中 = 与左右同兵种（08-15 取消刀骑将领，勿再写死 general_cavalry）
-        { type: sideType, count: 1 },
-        { type: backType, count: 3 },
+        { type: r0.type, count: 3, scale: r0.scale },
+        { type: r1.type, count: 1, scale: r1.scale },
+        { type: r1.type, count: 1, scale: r1.scale },
+        { type: r1.type, count: 1, scale: r1.scale },
+        { type: r2.type, count: 3, scale: r2.scale },
     ];
 }
 
@@ -480,7 +491,7 @@ export const GERMANIC_TIERS: CompositionTier[] = [
         ]
     }
 ];
-/** 18. 拉丁 马上轻装兵+重装长枪兵+劲弩手（2026-08-15 主人定：全决定版，中间刀骑取消→马上轻装兵，风格统一） */
+/** 18. 拉丁 重装长枪兵+骑士(重装骑士)+劲弩手（鱼鳞阵） */
 export const LATIN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -488,9 +499,9 @@ export const LATIN_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'heavy_pikeman', count: 3 },     // Row 0 前 = 重装长枪兵 步兵（帝国决定）
-            { type: 'coustillier', count: 1 },       // Row 1 左 = 马上轻装兵 骑兵（帝国决定）
-            { type: 'coustillier', count: 1 },       // Row 1 中 = 马上轻装兵（原刀骑将领，取消）
-            { type: 'coustillier', count: 1 },       // Row 1 右 = 马上轻装兵 骑兵（帝国决定）
+            { type: 'knight', count: 1 },            // Row 1 左 = 骑士/重装骑士 骑兵（帝国决定）
+            { type: 'knight', count: 1 },            // Row 1 中 = 骑士/重装骑士
+            { type: 'knight', count: 1 },            // Row 1 右 = 骑士/重装骑士 骑兵（帝国决定）
             { type: 'arbalest', count: 3 }           // Row 2 后 = 劲弩手 弩手（帝国决定）
         ]
     }
