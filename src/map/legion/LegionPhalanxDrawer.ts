@@ -998,10 +998,9 @@ export class LegionPhalanxDrawer {
         const renderH = baseHeight * scale;
         const estRenderW = renderH * estRatio;
 
-        // Spacing based on estimated width
-        // [3x3 TUNED] Balanced spacing - not too dense, not too loose
+        // [3x3 TUNED] 前后排距拉开为长方形军阵（0.60 兵高），三排层次分明不遮挡
         let spacingX = estRenderW * 0.50;
-        let spacingY = renderH * 0.42;
+        let spacingY = renderH * 0.60;
 
         // [2026-08-09 13场景阵型] 主阵 3×3 间距放大到「编队占位尺寸」：
         // 9 个格位 = 9 个编队锚点，按比例分开，避免 8人/6人编队互相重叠（主人截图实锤「9个编队挤在一起」）。
