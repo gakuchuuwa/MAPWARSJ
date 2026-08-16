@@ -1166,54 +1166,6 @@ export class LegionPhalanxDrawer {
                 drawX = proj.x;
                 drawY = proj.y;
             } else if (isFighting && slot.state !== 'DEAD' && slot.state !== 'DYING') {
-
-                // [2026-08-09 13场景阵型] 13 战斗场景不要骑兵冲锋位移特效（主人定）：
-                // 全军待命定格，骑兵不许前后 surge 位移。跳过 2. CAVALRY CHARGE 整段。
-                if (!denseFront) {
-                // 2. CAVALRY CHARGE (Refined with resolvedUnitType)
-                // Identify if this unit IS a cavalry type unit
-                const isCavalryUnit = LegionPhalanxDrawer.isCavalryType(resolvedUnitType);
-
-                // Only charge if it IS cavalry, AND we are in a mixed/cavalry context
-                // (Pure infantry shouldn't charge even if they have cavalry name? No, sticking to intent)
-                // The intent: "Cavalry rows in mixed formations or pure cavalry should charge"
-
-                if (isCavalryUnit) {
-                    const cycleDur = 2000;
-                    const unitPhase = (i * 0.35) * 1000;
-                    const phase = ((tick + unitPhase) % cycleDur) / cycleDur;
-
-                    const formationAngle = (direction + 1) * Math.PI / 4;
-                    const chargeAngle = formationAngle - Math.PI / 2;
-
-                    // Rank Multiplier Logic
-                    let rankMultiplier = 0.5;
-                    // Simple heuristic: Further back = larger surge to pass front
-                    const rowIdx = formationKind === 'triangle'
-                        ? (LegionPhalanxDrawer.TRIANGLE_9_LAYOUT[i]?.r ?? 2)
-                        : formationKind === 'echelon'
-                          ? (LegionPhalanxDrawer.ECHELON_9_LAYOUT[i]?.r ?? 2)
-                          : Math.floor(i / cols);
-                    if (rowIdx === 0) rankMultiplier = 0.3;
-                    else if (rowIdx === 1) rankMultiplier = 0.8;
-                    else if (rowIdx >= 2) rankMultiplier = 1.2;
-
-                    const baseSurge = spacingY * 1.2;
-                    const chargeRange = baseSurge * rankMultiplier;
-
-                    const rawSin = Math.sin(phase * Math.PI * 2);
-                    let surgeFactor = rawSin;
-                    if (surgeFactor < 0) surgeFactor *= 0.2;
-
-                    drawX += Math.cos(chargeAngle) * (surgeFactor * chargeRange);
-                    drawY += Math.sin(chargeAngle) * (surgeFactor * chargeRange);
-
-                    if (surgeFactor > 0) {
-                        dynamicScale = 1.0 + (surgeFactor * 0.10);
-                    }
-                }
-                }
-
                 // 3. JITTER
                 // 【2026-08-10 修】13 场景（denseFront）跳过 jitter：主阵间距被放大到编队占位
                 // （spacingX ≈ 4 兵宽 ≈ 400px）后，jitterAmt = 8×(spacingX/35) ≈ 91px，
