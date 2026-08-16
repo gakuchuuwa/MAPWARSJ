@@ -1629,7 +1629,15 @@ export class Scene13WarLayer {
                 //    实测两档在真实对局（近战 vs 骑兵）里铺开度几乎一样（855px vs 954px），
                 //    但 4s/2s 的打走切换 1.01 次/人·秒、原地打转 1.3%，都是最低的一档 —— 改回来。
                 //    （当初测出 1.5s 更开，是拿同族对镜测的；那种势均局战线本来就不动，不代表实战。）
-                if (m.fightT > 4) { m.foe = null; m.fightT = 0; m.next = 2; m.lock = 0; }
+                if (m.fightT > 4) {
+                    m.foe = null; m.fightT = 0; m.next = 2; m.lock = 0;
+                    // 🔴 [2026-08-16 主人报「几个兵卡住」] 脱离本帧必须立即结束：
+                    //    下面 `m.lock -= dt` 后 `if (lock <= 0) lock = 1.5` 会把刚清零的 lock 重新设回 1.5
+                    //    并多打一下（局部 foe 仍是旧值），脱离后兵就带着 lock=1.5 残留，
+                    //    在 else 分支 `if (lock > 0) continue` 里僵住 1.5 秒；叠加 next=2 两秒不索敌，
+                    //    兵长期原地不动 = 卡住。continue 跳过本帧剩余，下一帧正常走 else 移动。
+                    continue;
+                }
                 const close = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2 < 65 * 65;
                 m.st = (stats.rng && close && this.bank[m.key]?.sets.melee[0].length) ? 2 : 1;
                 m.dir = this.dir8(foe.x - m.x, foe.y - m.y);
@@ -2061,13 +2069,17 @@ export class Scene13WarLayer {
                 // 🔴 朝左半球（dx<0）：AoE2 朝左帧 = 朝右帧的**水平镜像**（仰射仍朝屏幕上方），
                 //    不是 rotate 180°（那会把仰射翻成俯冲）。故 scale(-1,1) 水平镜像后，
                 //    从「朝西」转到目标方向的旋转角 = angle - π。
+                //    🔴 [2026-08-16 主人报长弓兵/守方朝左斜射箭头反向] Canvas 后写的变换先应用，
+                //    scale 必须写在 rotate **之后**，镜像才会先于旋转生效。之前写在 rotate 之前，
+                //    实际先旋转再镜像 → 朝左斜向（西北/西南）箭头水平翻反，守方远程兵全中招
+                //    （正左 180° 碰巧对，所以普通箭/连弩/长弓兵斜射一个接一个暴露）。
                 const rot = a.dx < 0 ? angle - Math.PI : angle;
                 ctx.translate(x, y);
-                if (a.dx < 0) ctx.scale(-1, 1);
                 ctx.rotate(rot);
-                ctx.drawImage(pa.img, fr * pa.fw, 0, pa.fw, pa.fh, -pa.hx * S, -pa.hy * S, pa.fw * S, pa.fh * S);
-                ctx.rotate(-rot);
                 if (a.dx < 0) ctx.scale(-1, 1);
+                ctx.drawImage(pa.img, fr * pa.fw, 0, pa.fw, pa.fh, -pa.hx * S, -pa.hy * S, pa.fw * S, pa.fh * S);
+                if (a.dx < 0) ctx.scale(-1, 1);
+                ctx.rotate(-rot);
                 ctx.translate(-x, -y);
             }
             ctx.restore();
