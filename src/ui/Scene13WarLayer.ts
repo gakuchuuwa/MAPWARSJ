@@ -587,10 +587,6 @@ const ARRIVE_EPS = 8;
 const LANE_W = 6;
 /** 行军索敌半径：视野内找不到敌兵才退回敌军重心（所有兵一个规矩，无中军特权） */
 const MARCH_R = 300;
-/** 两翼抄后：绕到敌军重心后方多少 px（攻方在左则 +，守方在右则 -，见 aimAt） */
-const WING_BACK = 240;
-/** 两翼抄后：翼侧偏移多少 px（上翼 -，下翼 +） */
-const WING_SIDE = 330;
 /**
  * 移动时冲锋/移动**逐轮交替**（主人 2026-08-12 拍板，取代原先按距离切的「最后冲刺段」方案）。
  * 一轮 = 一个 8 帧循环（≈1 秒）：走一轮 → 冲一轮 → 走一轮…… 只有有冲锋组的兵种（象兵/突骑）受影响。
@@ -643,8 +639,6 @@ interface WarSpawn {
     pool: number;
     /** 本口累计已出生精灵数（旗手判定：每满 FLAG_EVERY 出一面旗，按口平均分布，跨批不重置） */
     spawned: number;
-    /** 两翼标记：0=中央，1=上翼，-1=下翼（两翼兵抄后绕行用） */
-    wing: number;
 }
 
 interface WarMan {
@@ -683,8 +677,6 @@ interface WarMan {
     atkNext: number;
     lock: number;
     atkSt: number;
-    /** 两翼标记：0=中央，1=上翼，-1=下翼（继承自出兵口，aimAt 抄后绕行用） */
-    wing: number;
 }
 
 /** 箭矢：远程每出一次手射一支（纯画面，伤害仍按秒结算，不改平衡） */
@@ -1055,10 +1047,6 @@ export class Scene13WarLayer {
                         f: side.f, key, x, y,
                         pool: poolPer,
                         spawned: 0,
-                        // 🔴 鱼鳞阵取消两翼绕后（主人 2026-08-16 定）：鱼鳞阵=厚阵三排平推，
-                        //    两翼步兵/骑兵脱离大范围迂回会拆散 3×3 方阵、慢步兵还追不上正面战斗。
-                        //    三阵型一律 wing=0，两翼绕后（wing）机制停用。
-                        wing: 0,
                     });
                 });
             }
@@ -1607,7 +1595,6 @@ export class Scene13WarLayer {
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
                     flag: bearer, fo: Math.random() * 600,
                     atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
-                    wing: s.wing,
                 });
             }
         }
@@ -1731,34 +1718,6 @@ export class Scene13WarLayer {
      * 出兵口不再是攻击目标，只是「敌人在那边」的路标。
      */
     private aimAt(m: WarMan): { x: number; y: number } | null {
-        // 两翼兵（上翼/下翼）：绕到敌军侧后包抄，不是朝最近敌兵/敌口走。
-        if (m.wing !== 0) {
-            // 🔴 修复 1：两翼骑兵若视野内（MARCH_R）有可见敌人，优先就近接战，不再跑死巡航点
-            const near = this.search(m, MARCH_R, true);
-            if (near) return { x: near.x, y: near.y };
-
-            const cen = this.enemyCen[1 - m.f];
-            if (cen) {
-                // 🔴 两翼包抄：
-                //    绕后点 = 重心 + 固定偏移（√240²+330²≈408px）。骑兵先绕到敌军侧后，
-                //    一进包抄圈（离重心 ≤408px 或到达边界限制点 ≤30px）就直扑重心 → 「绕后 → 夹击中间」的钳形。
-                const dx = cen.x - m.x, dy = cen.y - m.y;
-                const dist = Math.hypot(dx, dy) || 1;
-                const reach = Math.hypot(WING_BACK, WING_SIDE);   // 包抄圈半径（≈408px）
-                if (dist > reach) {
-                    const backX = (m.f === 0 ? WING_BACK : -WING_BACK);   // 攻方绕守方右后，守方绕攻方左后
-                    const sideY = (m.wing > 0 ? -WING_SIDE : WING_SIDE);  // 上翼绕上、下翼绕下
-                    const flankTarget = { x: cen.x + backX, y: cen.y + sideY };
-                    const [bx, by] = this.fieldBound(flankTarget.x, flankTarget.y);
-                    // 🔴 修复 2：如果骑兵已到达屏幕边界限制的目标点（距离 ≤ 30px），强制结束第一阶段直扑重心，不再停死在边界
-                    if (Math.hypot(bx - m.x, by - m.y) < 30) {
-                        return cen;
-                    }
-                    return { x: bx, y: by };
-                }
-                return cen;   // 进了包抄圈 → 直扑重心，与中央敌军接战
-            }
-        }
         // ① 视野内最近的敌兵（找最近，不是逮到就算）
         const near = this.search(m, MARCH_R, true);
         if (near) return { x: near.x, y: near.y };
@@ -1787,8 +1746,8 @@ export class Scene13WarLayer {
 
     /**
      * 战场边界 = 屏幕：兵的任何移动（追目标 / 风筝后撤 / 软推挤）都不许走出屏幕。
-     * 🔴 2026-08-13 修「寻敌走出屏幕」：三处移动原本都不 clamp，两翼包抄点（敌军重心 + 固定
-     *    偏移 WING_BACK/WING_SIDE）常在屏外，骑兵一路走出去。统一在此收口，margin = 半身 UNIT_PX/2。
+     * 🔴 2026-08-13 修「寻敌走出屏幕」：三处移动原本都不 clamp，追目标/风筝/推挤都可能把兵推出屏幕。
+     *    统一在此收口，margin = 半身 UNIT_PX/2。
      */
     private fieldBound(x: number, y: number): [number, number] {
         const vw = this.canvas?.width ?? 0, vh = this.canvas?.height ?? 0;
