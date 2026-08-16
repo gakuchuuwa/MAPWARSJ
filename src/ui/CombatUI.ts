@@ -2279,6 +2279,8 @@ export class CombatUI {
     private updatePortraitWinddown(): void {
         const bf = this.boundRegionalBattleField;
         if (!bf || bf.isOver) return;
+        // 【2026-08-16 用户指令】单方有将立绘不缩放：仅双将战才进行蓄力收缩
+        if (!bf.bothSidesHaveGeneral()) return;
         const threshold = resolveStalemateUiThresholdSec(bf.targetDuration);
         const startSec = 0.7; // 滑入结束即刻蓄力
         if (bf.elapsed <= startSec) return;
@@ -2551,6 +2553,8 @@ export class CombatUI {
         // 如果战斗已经结束（胜负已分），不再响应任何新的脉冲（例如致死一击触发的逆局技）
         if (this.boundRegionalBattleField?.isOver) return;
         const bf = this.boundRegionalBattleField;
+        // 【2026-08-16 用户指令】单方有将不放技能、不脉冲、不立绘缩放：仅双将战才触发技能脉冲与 Cut-in
+        if (bf && !bf.bothSidesHaveGeneral()) return;
         const addFlash = (badge: HTMLSpanElement | null) => {
             if (!badge || !badge.textContent?.includes(displayName)) return;
             badge.style.animation = 'none';
@@ -2727,6 +2731,9 @@ export class CombatUI {
     /** 武将技释放的立绘脉冲：快起慢落（0.15s 放大到 1.08 → 缓缓落回），只动外框 transform。
      *  起点接蓄力收缩值（--pre-scale）：缩到 0.94 后弹到 1.08，一收一放；无蓄力时同旧版从 1 弹起。 */
     private pulsePortraitForSkill(side: 'attacker' | 'defender'): void {
+        const bf = this.boundRegionalBattleField;
+        // 【2026-08-16 用户指令】单方有将立绘不缩放
+        if (bf && !bf.bothSidesHaveGeneral()) return;
         const frame = side === 'attacker' ? this.leftPortraitFrame : this.rightPortraitFrame;
         const st = this.portraitWind[side];
         frame.style.setProperty('--pre-scale', st.scale.toFixed(4));

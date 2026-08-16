@@ -320,7 +320,7 @@ export class BattleField implements IOpeningPulseSink {
     }
 
     /** 攻守双方各至少一侧有 generalId */
-    private bothSidesHaveGeneral(): boolean {
+    public bothSidesHaveGeneral(): boolean {
         const attHasGen = this.attackerGroup.units.some((bu) => !!bu.unit.generalId);
         const defHasGen = this.defenderGroup.units.some((bu) => !!bu.unit.generalId);
         return attHasGen && defHasGen;
@@ -518,6 +518,11 @@ export class BattleField implements IOpeningPulseSink {
      * 同时锁定 situationalAttDefRatio 与 skillPulseFirstSide（劣先；均势随机）。
      */
     private assignSituationalSkills(): void {
+        // 【2026-08-16 用户指令】单方有将不放技能：仅双方都有武将才分配战术技能
+        if (!this.bothSidesHaveGeneral()) {
+            return;
+        }
+
         const attUnits = this.attackerGroup.units.filter(bu => !bu.isDefeated && bu.unit.troops > 0).map(bu => bu.unit);
         const defUnits = this.defenderGroup.units.filter(bu => !bu.isDefeated && bu.unit.troops > 0).map(bu => bu.unit);
         const at = sumCultureAdjustedTroops(attUnits) || this.attackerGroup.initialTotalTroops;
@@ -806,6 +811,7 @@ export class BattleField implements IOpeningPulseSink {
 
     /** 开战战术脉冲入队：等游戏内 elapsed 达相持段阈值再统一释放 */
     public queueOpeningSkillPulse(trigger: TacticalSkillTrigger, audioUnitId?: string): void {
+        if (!this.bothSidesHaveGeneral()) return;
         this.openingPulseQueue.push({ trigger, audioUnitId });
     }
 
@@ -813,6 +819,7 @@ export class BattleField implements IOpeningPulseSink {
      * 相持第二幕（≈ targetDuration×40%）释放已排队脉冲；战斗 UI 晚开时由 showRegional 补调。
      */
     public tryReleaseStalemateSkillUi(): void {
+        if (!this.bothSidesHaveGeneral()) return;
         if (this.stalemateSkillUiReleased || this.isOver) return;
         const threshold = resolveStalemateUiThresholdSec(this.targetDuration);
         if (this.elapsed < threshold) return;
