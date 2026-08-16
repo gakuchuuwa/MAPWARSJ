@@ -37,7 +37,8 @@ export type RegionType =
     | 'KOREA'         // 朝鲜
     | 'JAPAN'         // 日本
     | 'CENTRAL_ASIA' // 中亚伊斯兰 (粟特、河中、大食)
-    | 'WEST_ASIA';   // 西亚 (安纳托利亚、黎凡特、阿拉伯、埃及、两河)
+    | 'WEST_ASIA'    // 西亚 (安纳托利亚、黎凡特、阿拉伯、埃及、两河)
+    | 'GREEK';       // 希腊 (爱琴海、巴尔干南部、希腊化半岛)
 
 // Valid region list for validation
 export const REGION_ORDER: RegionType[] = [
@@ -45,7 +46,7 @@ export const REGION_ORDER: RegionType[] = [
     'CENTRAL', 'NORTH', 'JIANGNAN', 'BASHU',
     'HEXI', 'LINGNAN', 'STEPPE', 'JAPAN',
     'CENTRAL_ASIA', 'NORTHEAST', 'TIBET', 'WESTERN',
-    'KOREA', 'DIANQIAN', 'WEST_ASIA'
+    'KOREA', 'DIANQIAN', 'WEST_ASIA', 'GREEK'
 ];
 
 // [UI] Display labels (Chinese + English code)
@@ -68,7 +69,8 @@ export const REGION_LABELS: Record<RegionType, string> = {
     KOREA: '朝鲜',
     JAPAN: '日本',
     CENTRAL_ASIA: '中亚',
-    WEST_ASIA: '西亚'
+    WEST_ASIA: '西亚',
+    GREEK: '希腊'
 };
 
 /**
@@ -98,6 +100,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     DIANQIAN: '滇缅',
     KOREA: '朝鲜',
     JAPAN: '日本',
+    GREEK: '希腊',
 };
 
 /** 取文化正式名（未知区兜底中原） */
@@ -261,6 +264,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     JAPAN: '#c2185b',
     CENTRAL_ASIA: '#455a64',
     WEST_ASIA: '#283593', // 深靛；原 #8d6e63 与 CENTRAL 完全撞色，zoom=6 界线分不出来
+    GREEK: '#2E6DA4',     // 爱琴海蓝
 };
 
 let REGIONS_CACHE: { id: RegionType; polygon: {lat:number,lng:number}[] }[] | null = null;
@@ -441,6 +445,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         medium: resolvePath('/cities/latin_medium.png'),
         big: resolvePath('/cities/latin_big.png'),
         pass: resolvePath('/cities/latin_pass.png')
+    },
+    GREEK: { // ✅ 希腊
+        small: resolvePath('/cities/latin_small.png'),
+        medium: resolvePath('/cities/latin_medium.png'),
+        big: resolvePath('/cities/latin_big.png'),
+        pass: resolvePath('/cities/latin_pass.png')
     }
 };
 
@@ -540,6 +550,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     SLAVIC:       ['city_jifu'],                       // 基辅 (罗斯都城)
     GERMANIC:     ['city_kelong'],                       // 科隆 (罗马日耳曼尼亚行省首府→法兰克重镇→德意志最大城市; 2026-08-02 原巴黎归拉丁改)
     LATIN:        ['city_luoma'],                      // 罗马 (罗马帝国都城)
+    GREEK:        ['city_yadian'],                     // 雅典 (希腊城邦核心)
 };
 
 /** 辅助: 判断某城是否为某区的核心城 */

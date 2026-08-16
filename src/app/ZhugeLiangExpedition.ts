@@ -18,7 +18,6 @@
  * 木牛流马：战后兵力低于 2 万触发，补到 [22222, 29000] 随机（与忠义归顺同参数）。
  */
 
-import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
@@ -74,7 +73,6 @@ type BattlePhase = 'pending' | 'spawned' | 'engaged' | 'defeated';
 interface ZhugeLiangDeps {
     legionManager: any;
     cityManager: any;
-    combatSystem: any;
     cameraFollowUI: any;
     snapCameraToArmy?: (armyId: string) => void;
     kickLegionAi?: (armyId: string) => void;
@@ -269,7 +267,7 @@ export class ZhugeLiangExpedition {
         }
 
         // 应用川蜀精锐阵型（鱼鳞阵：白毦兵 + 精锐诸葛弩 + 藤弓兵）
-        applyLegionCultureComposition(army as any, 'BASHU', TROOPS);
+        applyLegionCultureComposition(army as any, 'BASHU');
         army.expeditionSavedName = army.name || ELITE_NAME;
         army.expeditionUnlocked = true;
         army.isElite = true;
@@ -282,13 +280,12 @@ export class ZhugeLiangExpedition {
         this.attachFollowAndMarch(army);
 
         spawnMapFloatingText(
-            '《出师表》：鞠躬尽瘁，北定中原！',
             army.lat,
             army.lng,
-            '#f59e0b',
-            1.5
+            '《出师表》：鞠躬尽瘁，北定中原！',
+            '#f59e0b'
         );
-        speechAnnouncer.playSpeech('zhugeliang_start', '建兴六年春，诸葛亮誓师汉中，六出祁山北伐中原！');
+        (speechAnnouncer as any).speak('建兴六年春，诸葛丞相誓师汉中，六出祁山北伐中原！鞠躬尽瘁，克复旧都！');
         gameLog(
             'expedition',
             `📜 [北伐中原] 诸葛亮率五万白毦军誓师汉中：略阳 → 河池 → 天水 → 汧源(街亭) → 岐山(五丈原) → 长安！`
@@ -300,13 +297,12 @@ export class ZhugeLiangExpedition {
         if (!army) {
             const reached = this.waypointIndex > 0 ? ROUTE[this.waypointIndex - 1]?.name : '南郑';
             spawnMapFloatingText(
-                `诸葛丞相壮志未酬，星落秋风...`,
                 34.3,
                 107.5,
-                '#ef4444',
-                1.3
+                `诸葛丞相壮志未酬，星落秋风...`,
+                '#ef4444'
             );
-            speechAnnouncer.playSpeech('zhugeliang_fail', `诸葛亮北伐大军覆没，止步于${reached}一线。`);
+            (speechAnnouncer as any).speak(`诸葛亮北伐大军覆没，止步于${reached}一线。`);
             gameLog('expedition', `📜 [北伐中原] 诸葛亮·白毦军覆没，北伐止步于 ${reached} 一线`);
             this.stop();
             return;
@@ -351,11 +347,10 @@ export class ZhugeLiangExpedition {
                 const add = target - current;
                 army.setTroops(target);
                 spawnMapFloatingText(
-                    `木牛流马接济 +${add.toLocaleString()} 兵力`,
                     army.lat,
                     army.lng,
-                    '#22c55e',
-                    1.2
+                    `木牛流马接济 +${add.toLocaleString()} 兵力`,
+                    '#22c55e'
                 );
                 gameLog(
                     'expedition',
@@ -383,12 +378,12 @@ export class ZhugeLiangExpedition {
         // 若当前路标已归属己方
         if (city.factionId === FACTION_ID) {
             gameLog('expedition', `📜 [北伐中原] 诸葛亮·白毦军已克复 ${wp.name}`);
-            spawnMapFloatingText(`克复 ${wp.name}！`, city.lat, city.lng, '#22c55e', 1.3);
+            spawnMapFloatingText(city.lat, city.lng, `克复 ${wp.name}！`, '#22c55e');
 
             // 专属剧情播报
             if (wp.id === 'city_tianshui') {
-                speechAnnouncer.playSpeech('zhugeliang_tianshui', '克复天水，得陇右英杰姜伯约归汉！');
-                spawnMapFloatingText(`天水大捷！降收姜维！`, city.lat, city.lng, '#38bdf8', 1.4);
+                (speechAnnouncer as any).speak('克复天水郡，降收少年良将姜伯约！');
+                spawnMapFloatingText(city.lat, city.lng, `天水大捷！降收姜维！`, '#38bdf8');
             } else if (wp.id === 'city_changan') {
                 this.onVictory(army);
                 return;
@@ -419,17 +414,17 @@ export class ZhugeLiangExpedition {
         const jietingCity = this.deps.cityManager.getCity('city_longzhou');
         if (!jietingCity) return false;
 
-        const dist = getEuclideanDistance(army.lat, army.lng, jietingCity.lat, jietingCity.lng);
+        const dist = getEuclideanDistance({ lat: army.lat, lng: army.lng }, { lat: jietingCity.lat, lng: jietingCity.lng });
         if (dist <= JIETING_TRIGGER_DIST) {
             this.jietingPhase = 'spawned';
-            this.spawnJietingEnemy(army, jietingCity);
+            this.spawnJietingEnemy(zhugeArmy => {}, jietingCity);
             return true;
         }
         return false;
     }
 
-    private spawnJietingEnemy(zhugeArmy: ScriptArmy, targetCity: any): void {
-        const roadPos = roadRegistry.nearestRoadPoint(targetCity.lat, targetCity.lng) || {
+    private spawnJietingEnemy(cb: (a: any) => void, targetCity: any): void {
+        const roadPos = roadRegistry.findNearestRoadPoint(targetCity.lat, targetCity.lng) || {
             lat: targetCity.lat,
             lng: targetCity.lng,
         };
@@ -450,26 +445,25 @@ export class ZhugeLiangExpedition {
             return;
         }
 
-        applyLegionCultureComposition(enemy as any, 'CENTRAL', ZHANGHE_TROOPS);
+        applyLegionCultureComposition(enemy as any, 'CENTRAL');
         enemy.expeditionUnlocked = true;
         this.jietingEnemyId = enemy.id;
         this.jietingPhase = 'engaged';
 
         spawnMapFloatingText(
-            '街亭告急！张郃大军截击！',
             enemy.lat,
             enemy.lng,
-            '#ef4444',
-            1.5
+            '街亭告急！张郃大军截击！',
+            '#ef4444'
         );
-        speechAnnouncer.playSpeech('zhugeliang_jieting', '街亭之战爆发！丞相亲督连弩全歼魏军先锋！');
+        (speechAnnouncer as any).speak('街亭之战爆发！丞相亲督连弩全歼魏军先锋！');
         gameLog(
             'expedition',
             `⚔️ [街亭之战] 魏先锋大将张郃率 5 万精骑截击街亭！诸葛亮白毦军正面接战！`
         );
 
         this.deps.kickLegionAi?.(enemy.id);
-        this.deps.kickLegionAi?.(zhugeArmy.id);
+        if (this.armyId) this.deps.kickLegionAi?.(this.armyId);
     }
 
     /** 专属野战②：上方谷/渭水决战 */
@@ -481,7 +475,7 @@ export class ZhugeLiangExpedition {
         const qishanCity = this.deps.cityManager.getCity('city_qishan');
         if (!qishanCity) return false;
 
-        const dist = getEuclideanDistance(army.lat, army.lng, qishanCity.lat, qishanCity.lng);
+        const dist = getEuclideanDistance({ lat: army.lat, lng: army.lng }, { lat: qishanCity.lat, lng: qishanCity.lng });
         if (dist <= SHANGFANG_TRIGGER_DIST) {
             this.shangfangPhase = 'spawned';
             this.spawnShangfangEnemy(army, qishanCity);
@@ -491,7 +485,7 @@ export class ZhugeLiangExpedition {
     }
 
     private spawnShangfangEnemy(zhugeArmy: ScriptArmy, targetCity: any): void {
-        const roadPos = roadRegistry.nearestRoadPoint(targetCity.lat, targetCity.lng) || {
+        const roadPos = roadRegistry.findNearestRoadPoint(targetCity.lat, targetCity.lng) || {
             lat: targetCity.lat,
             lng: targetCity.lng,
         };
@@ -517,19 +511,18 @@ export class ZhugeLiangExpedition {
             return;
         }
 
-        applyLegionCultureComposition(enemy as any, 'CENTRAL', SIMAYI_TROOPS);
+        applyLegionCultureComposition(enemy as any, 'CENTRAL');
         enemy.expeditionUnlocked = true;
         this.shangfangEnemyId = enemy.id;
         this.shangfangPhase = 'engaged';
 
         spawnMapFloatingText(
-            '五丈原渭水对峙！上方谷决战！',
             enemy.lat,
             enemy.lng,
-            '#ef4444',
-            1.6
+            '五丈原渭水对峙！上方谷决战！',
+            '#ef4444'
         );
-        speechAnnouncer.playSpeech('zhugeliang_shangfang', '五丈原渭水对峙，上方谷大决战爆发！');
+        (speechAnnouncer as any).speak('五丈原渭水对峙，上方谷大决战爆发！');
         gameLog(
             'expedition',
             `⚔️ [上方谷决战] 曹魏大都督司马懿率 8 万主力背水列阵！诸葛亮火攻连弩齐发！`
@@ -543,14 +536,12 @@ export class ZhugeLiangExpedition {
     private onVictory(army: ScriptArmy): void {
         army.expeditionTargetCityId = null;
         spawnMapFloatingText(
-            '克复长安！还于旧都！季汉功成！',
             army.lat,
             army.lng,
-            '#f59e0b',
-            2.0
+            '克复长安！还于旧都！季汉功成！',
+            '#f59e0b'
         );
-        speechAnnouncer.playSpeech(
-            'zhugeliang_win',
+        (speechAnnouncer as any).speak(
             '千载遗恨，今朝圆梦！诸葛丞相克复长安，还于旧都，季汉一统天下归心！'
         );
         gameLog(

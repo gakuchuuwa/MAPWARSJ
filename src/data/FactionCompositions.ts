@@ -22,10 +22,19 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         formationMode: 'square',
         slots: [
             { type: 'spear', count: 3 },
-            { type: 'lancer', count: 1, scale: 1.2 },
+            { type: 'lancer', count: 1 },
             { type: 'general_cavalry', count: 1 },
-            { type: 'lancer', count: 1, scale: 1.2 },
+            { type: 'lancer', count: 1 },
             { type: 'crossbow', count: 3 },
+        ],
+    },
+    // 马其顿·亚历山大帝国军团（希腊支文化下的子文化，三角阵 2+3+4：希腊重装步兵 + 伙伴骑兵 + 克里特弓手）
+    maqidun: {
+        formationMode: 'triangle',
+        slots: [
+            { type: 'hoplite', count: 2 },            // Row 0 尖刀 = 希腊重装步兵
+            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵
+            { type: 'cretan_archer', count: 4 },      // Row 2 底边 = 克里特弓手
         ],
     },
 };

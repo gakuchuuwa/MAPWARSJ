@@ -64,6 +64,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     SLAVIC:       'MIXED',   // 东欧步骑
     GERMANIC:     'MIXED', // 中欧步骑（重步+骑士）
     LATIN:        'INFANTRY', // 西欧重步/军团
+    GREEK:        'INFANTRY', // 希腊古典方阵重步
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -75,12 +76,13 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
  *  三角阵（triangle 2+3+4，9人）: 岭南、滇缅、朝鲜、东北、拉丁、中原
  *  雁行阵（echelon 4+3+2，9人）: 北方、西域、河西、青藏、西亚、斯拉夫、日耳曼 */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
-    // 鱼鳞阵 (5区)
+    // 鱼鳞阵 (6区)
     JAPAN:        'square',
     STEPPE:       'square',
     BASHU:        'square',
     JIANGNAN:     'square',
     CENTRAL_ASIA: 'square',
+    GREEK:        'square',
 
     // 三角阵 (6区)
     LINGNAN:      'triangle',
@@ -206,9 +208,9 @@ import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
  */
 export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
     { type: 'spear', count: 3 },
-    { type: 'lancer', count: 1, scale: 1.2 },
+    { type: 'lancer', count: 1 },
     { type: 'general_cavalry', count: 1 },
-    { type: 'lancer', count: 1, scale: 1.2 },
+    { type: 'lancer', count: 1 },
     { type: 'crossbow', count: 3 },
 ];
 
@@ -523,6 +525,36 @@ export const LATIN_TIERS: CompositionTier[] = [
         ]
     }
 ];
+
+/** 19. 希腊 希腊重装步兵+底比斯圣队+罗得岛投石兵（鱼鳞阵 3×3：希腊重装步兵前 + 底比斯圣队中 + 罗得岛投石兵后） */
+export const GREEK_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'hoplite', count: 3 },          // Row 0 前排 = 希腊重装步兵 步兵
+            { type: 'sacred_band', count: 1 },      // Row 1 左 = 底比斯圣队 步兵
+            { type: 'sacred_band', count: 1 },      // Row 1 中 = 底比斯圣队 步兵
+            { type: 'sacred_band', count: 1 },      // Row 1 右 = 底比斯圣队 步兵
+            { type: 'rhodian_slinger', count: 3 }   // Row 2 后排 = 罗得岛投石兵 远程
+        ]
+    }
+];
+
+/** 亚历山大·马其顿帝国军团（三角阵 2+3+4：希腊重装步兵尖刀前 + 伙伴骑兵中坚 + 克里特弓手底边） */
+export const ALEXANDER_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'hoplite', count: 2 },            // Row 0 尖刀 = 希腊重装步兵 步兵
+            { type: 'companion_cavalry', count: 3 },  // Row 1 中坚 = 伙伴骑兵 骑兵
+            { type: 'cretan_archer', count: 4 }       // Row 2 底边 = 克里特弓手 弓手
+        ]
+    }
+];
 // ============================================================
 // 15 文化 → CompositionTier[] 映射
 // ============================================================
@@ -546,6 +578,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     SLAVIC:       SLAVIC_TIERS,
     GERMANIC:     GERMANIC_TIERS,
     LATIN:        LATIN_TIERS,
+    GREEK:        GREEK_TIERS,
 };
 
 /** 编辑器保存后立刻写入内存（不依赖 HMR 才生效） */
