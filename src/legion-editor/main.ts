@@ -331,11 +331,13 @@ let clipboardLegion: CustomFactionLegion | null = null;
 let searchQuery = '';
 let selectedRegionFilter: string = 'all';
 let selectedStatusFilter: 'all' | 'custom' | 'default' = 'all';
-let animState: 'idle' | 'move' = 'idle';
-let animDirection: number = 0; // 0=南, 2=东, 4=北, 6=西
+let animState: 'idle' | 'move' | 'attack' = 'idle';
+let animDirection: number = 3; // 默认朝南 (3=正南, 0=东北, 1=东, 2=东南, 4=西南, 5=西, 6=西北, 7=北)
 let animTimer: number | null = null;
 let previewViewMode: 'single' | 'three' | 'phalanx' = 'single';
 let singlePreviewRow: number = 0; // 0=前排, 1=中坚, 2=后排
+let sortCol: string = 'region';
+let sortAsc: boolean = true;
 
 // ============================================================
 // 3. UI 初始化与注入
@@ -657,6 +659,28 @@ function buildRows(): void {
     });
 }
 
+function sortRows(): void {
+    filteredRows.sort((a, b) => {
+        if (sortCol === 'region') {
+            const ia = REGION_ORDER.indexOf(a.region as RegionType);
+            const ib = REGION_ORDER.indexOf(b.region as RegionType);
+            if (ia !== -1 && ib !== -1 && ia !== ib) {
+                return sortAsc ? ia - ib : ib - ia;
+            }
+            return sortAsc ? a.regionLabel.localeCompare(b.regionLabel, 'zh-CN') : b.regionLabel.localeCompare(a.regionLabel, 'zh-CN');
+        }
+        if (sortCol === 'isCustom') {
+            const na = a.isCustom ? 1 : 0;
+            const nb = b.isCustom ? 1 : 0;
+            return sortAsc ? na - nb : nb - na;
+        }
+        let va: any = (a as any)[sortCol] ?? '';
+        let vb: any = (b as any)[sortCol] ?? '';
+        if (typeof va === 'number' && typeof vb === 'number') return sortAsc ? va - vb : vb - va;
+        return sortAsc ? String(va).localeCompare(String(vb), 'zh-CN') : String(vb).localeCompare(String(va), 'zh-CN');
+    });
+}
+
 function applyFilter(): void {
     const q = searchQuery.toLowerCase().trim();
     filteredRows = allRows.filter(r => {
@@ -673,6 +697,8 @@ function applyFilter(): void {
         return true;
     });
 
+    sortRows();
+
     const customCount = allRows.filter(r => r.isCustom).length;
     els.stats.innerHTML = `已定制势力: <b style="color:#7cd688">${customCount}</b> / ${allRows.length} | 当前显示: <b>${filteredRows.length}</b>`;
 }
@@ -683,19 +709,21 @@ function renderTable(): void {
         return;
     }
 
+    const sortArrow = (col: string) => sortCol === col ? (sortAsc ? ' <span style="color:#e0c888;">▲</span>' : ' <span style="color:#e0c888;">▼</span>') : '';
+
     const html = `
     <table class="le-table">
       <thead>
         <tr>
-          <th style="width:50px;">旗号</th>
-          <th>势力名称</th>
-          <th>据点首都</th>
-          <th>文化区</th>
-          <th>阵型</th>
-          <th>前排</th>
-          <th>中坚</th>
-          <th>后排</th>
-          <th style="width:70px;">状态</th>
+          <th data-col="flagText" style="width:50px;">旗号${sortArrow('flagText')}</th>
+          <th data-col="factionName">势力名称${sortArrow('factionName')}</th>
+          <th data-col="capitalCityName">据点首都${sortArrow('capitalCityName')}</th>
+          <th data-col="region" style="color:#f5e6c8;background:#24201a;">文化区${sortArrow('region')}</th>
+          <th data-col="formationMode">阵型${sortArrow('formationMode')}</th>
+          <th data-col="row1Type">前排${sortArrow('row1Type')}</th>
+          <th data-col="row2Type">中坚${sortArrow('row2Type')}</th>
+          <th data-col="row3Type">后排${sortArrow('row3Type')}</th>
+          <th data-col="isCustom" style="width:70px;">状态${sortArrow('isCustom')}</th>
         </tr>
       </thead>
       <tbody>
@@ -704,7 +732,7 @@ function renderTable(): void {
             <td><span class="cell-flag" style="background:${r.flagColor}">${r.flagText}</span></td>
             <td><b>${r.factionName}</b></td>
             <td>${r.capitalCityName}</td>
-            <td><span style="color:#a89f8f;font-size:11px;">${r.regionLabel}</span></td>
+            <td><span style="color:#e0c888;font-size:11px;font-weight:bold;">${r.regionLabel}</span></td>
             <td><span class="cell-mode">${getFormationModeLabel(r.formationMode)}</span></td>
             <td><span class="cell-unit">${getUnitDisplayName(r.row1Type)}</span></td>
             <td><span class="cell-unit">${getUnitDisplayName(r.row2Type)}</span></td>
@@ -716,6 +744,20 @@ function renderTable(): void {
     </table>
     `;
     els.tableWrap.innerHTML = html;
+
+    els.tableWrap.querySelectorAll('th[data-col]').forEach(th => {
+        th.addEventListener('click', () => {
+            const col = (th as HTMLElement).dataset.col!;
+            if (sortCol === col) {
+                sortAsc = !sortAsc;
+            } else {
+                sortCol = col;
+                sortAsc = true;
+            }
+            sortRows();
+            renderTable();
+        });
+    });
 
     els.tableWrap.querySelectorAll('tr[data-fid]').forEach(tr => {
         tr.addEventListener('click', () => {
@@ -886,6 +928,7 @@ function renderEditPanel(row: FactionLegionRow): void {
       <div class="le-preview-controls">
         <button type="button" class="le-btn le-btn-sm ${animState === 'idle' ? 'le-btn-primary' : ''}" id="le-anim-idle">🧍 待机</button>
         <button type="button" class="le-btn le-btn-sm ${animState === 'move' ? 'le-btn-primary' : ''}" id="le-anim-move">🚶 移动</button>
+        <button type="button" class="le-btn le-btn-sm ${animState === 'attack' ? 'le-btn-primary' : ''}" id="le-anim-attack">⚔️ 攻击</button>
         
         ${previewViewMode === 'single' ? `
         <div style="display:flex;gap:4px;margin-left:8px;">
@@ -897,14 +940,14 @@ function renderEditPanel(row: FactionLegionRow): void {
 
         <span style="font-size:12px;color:#a89f8f;margin-left:auto;">朝向:</span>
         <select id="le-anim-dir" class="le-select" style="padding:2px 6px;font-size:12px;">
-          <option value="0" ${animDirection === 0 ? 'selected' : ''}>南 (0)</option>
-          <option value="1" ${animDirection === 1 ? 'selected' : ''}>东南 (1)</option>
-          <option value="2" ${animDirection === 2 ? 'selected' : ''}>东 (2)</option>
-          <option value="3" ${animDirection === 3 ? 'selected' : ''}>东北 (3)</option>
-          <option value="4" ${animDirection === 4 ? 'selected' : ''}>北 (4)</option>
-          <option value="5" ${animDirection === 5 ? 'selected' : ''}>西北 (5)</option>
-          <option value="6" ${animDirection === 6 ? 'selected' : ''}>西 (6)</option>
-          <option value="7" ${animDirection === 7 ? 'selected' : ''}>西南 (7)</option>
+          <option value="3" ${animDirection === 3 ? 'selected' : ''}>南 (3)</option>
+          <option value="2" ${animDirection === 2 ? 'selected' : ''}>东南 (2)</option>
+          <option value="1" ${animDirection === 1 ? 'selected' : ''}>东 (1)</option>
+          <option value="0" ${animDirection === 0 ? 'selected' : ''}>东北 (0)</option>
+          <option value="7" ${animDirection === 7 ? 'selected' : ''}>北 (7)</option>
+          <option value="6" ${animDirection === 6 ? 'selected' : ''}>西北 (6)</option>
+          <option value="5" ${animDirection === 5 ? 'selected' : ''}>西 (5)</option>
+          <option value="4" ${animDirection === 4 ? 'selected' : ''}>西南 (4)</option>
         </select>
       </div>
     </div>
@@ -964,10 +1007,12 @@ function bindPanelEvents(row: FactionLegionRow): void {
     // 动画切换
     const btnIdle = document.getElementById('le-anim-idle');
     const btnMove = document.getElementById('le-anim-move');
+    const btnAttack = document.getElementById('le-anim-attack');
     const selDir = document.getElementById('le-anim-dir') as HTMLSelectElement;
 
     btnIdle?.addEventListener('click', () => { animState = 'idle'; renderEditPanel(row); });
     btnMove?.addEventListener('click', () => { animState = 'move'; renderEditPanel(row); });
+    btnAttack?.addEventListener('click', () => { animState = 'attack'; renderEditPanel(row); });
     selDir?.addEventListener('change', () => { animDirection = parseInt(selDir.value, 10); startCanvasPreview(); });
 
     // 视图模式切换
@@ -1303,10 +1348,27 @@ function startCanvasPreview(): void {
         unitPositions.push({ x: cx,       y: cy - 10, type: t1, scale: s1, label: `中坚 · ${getUnitDisplayName(t1)}` });
         unitPositions.push({ x: cx + 140, y: cy - 10, type: t2, scale: s2, label: `后排 · ${getUnitDisplayName(t2)}` });
     } else {
-        // 9 人方阵排布模式
+        // 9 人方阵排布模式（根据 animDirection 朝向自然旋转阵型）
         const spacingX = 52;
         const spacingY = 66; // 前后排距拉开为 60% 长方形军阵
         const pScale = 1.15;
+
+        // 旋转角度与游戏主引擎 LegionPhalanxDrawer 完全统一：angle = (animDirection + 1) * π / 4
+        const fAngle = (animDirection + 1) * Math.PI / 4;
+        const cos = Math.cos(fAngle);
+        const sin = Math.sin(fAngle);
+
+        const addUnitWithRot = (ox: number, oy: number, type: string, scale: number, label: string) => {
+            const rx = ox * cos - oy * sin;
+            const ry = ox * sin + oy * cos;
+            unitPositions.push({
+                x: cx + rx,
+                y: cy - 10 + ry,
+                type,
+                scale,
+                label,
+            });
+        };
 
         if (mode === 'triangle') {
             const t0 = slots[0]?.type || 'swordsman';
@@ -1316,15 +1378,18 @@ function startCanvasPreview(): void {
             const t2 = slots[2]?.type || 'archer';
             const s2 = (slots[2]?.scale ?? 1.0) * pScale;
 
-            unitPositions.push({ x: cx - spacingX * 0.5, y: cy - spacingY - 10, type: t0, scale: s0, label: '' });
-            unitPositions.push({ x: cx + spacingX * 0.5, y: cy - spacingY - 10, type: t0, scale: s0, label: '' });
-            unitPositions.push({ x: cx - spacingX, y: cy - 10, type: t1, scale: s1, label: '' });
-            unitPositions.push({ x: cx, y: cy - 10, type: t1, scale: s1, label: '' });
-            unitPositions.push({ x: cx + spacingX, y: cy - 10, type: t1, scale: s1, label: '' });
-            unitPositions.push({ x: cx - spacingX * 1.5, y: cy + spacingY - 10, type: t2, scale: s2, label: '' });
-            unitPositions.push({ x: cx - spacingX * 0.5, y: cy + spacingY - 10, type: t2, scale: s2, label: '' });
-            unitPositions.push({ x: cx + spacingX * 0.5, y: cy + spacingY - 10, type: t2, scale: s2, label: '' });
-            unitPositions.push({ x: cx + spacingX * 1.5, y: cy + spacingY - 10, type: t2, scale: s2, label: '' });
+            // 前2 (r=0, c=-0.5, 0.5)
+            addUnitWithRot(-0.5 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(0.5 * spacingX, -spacingY, t0, s0, '');
+            // 中3 (r=1, c=-1, 0, 1)
+            addUnitWithRot(-1.0 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(0, 0, t1, s1, '');
+            addUnitWithRot(1.0 * spacingX, 0, t1, s1, '');
+            // 后4 (r=2, c=-1.5, -0.5, 0.5, 1.5)
+            addUnitWithRot(-1.5 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(-0.5 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(0.5 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(1.5 * spacingX, spacingY, t2, s2, '');
         } else if (mode === 'echelon') {
             const t0 = slots[0]?.type || 'swordsman';
             const s0 = (slots[0]?.scale ?? 1.0) * pScale;
@@ -1333,15 +1398,18 @@ function startCanvasPreview(): void {
             const t2 = slots[2]?.type || 'archer';
             const s2 = (slots[2]?.scale ?? 1.0) * pScale;
 
-            unitPositions.push({ x: cx - spacingX * 1.5, y: cy - spacingY - 10, type: t0, scale: s0, label: '' });
-            unitPositions.push({ x: cx - spacingX * 0.5, y: cy - spacingY - 10, type: t0, scale: s0, label: '' });
-            unitPositions.push({ x: cx + spacingX * 0.5, y: cy - spacingY - 10, type: t0, scale: s0, label: '' });
-            unitPositions.push({ x: cx + spacingX * 1.5, y: cy - spacingY - 10, type: t0, scale: s0, label: '' });
-            unitPositions.push({ x: cx - spacingX, y: cy - 10, type: t1, scale: s1, label: '' });
-            unitPositions.push({ x: cx, y: cy - 10, type: t1, scale: s1, label: '' });
-            unitPositions.push({ x: cx + spacingX, y: cy - 10, type: t1, scale: s1, label: '' });
-            unitPositions.push({ x: cx - spacingX * 0.5, y: cy + spacingY - 10, type: t2, scale: s2, label: '' });
-            unitPositions.push({ x: cx + spacingX * 0.5, y: cy + spacingY - 10, type: t2, scale: s2, label: '' });
+            // 前4 (r=0, c=-1.5, -0.5, 0.5, 1.5)
+            addUnitWithRot(-1.5 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(-0.5 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(0.5 * spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(1.5 * spacingX, -spacingY, t0, s0, '');
+            // 中3 (r=1, c=-1, 0, 1)
+            addUnitWithRot(-1.0 * spacingX, 0, t1, s1, '');
+            addUnitWithRot(0, 0, t1, s1, '');
+            addUnitWithRot(1.0 * spacingX, 0, t1, s1, '');
+            // 后2 (r=2, c=-0.5, 0.5)
+            addUnitWithRot(-0.5 * spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(0.5 * spacingX, spacingY, t2, s2, '');
         } else {
             const t0 = slots[0]?.type || 'swordsman';
             const s0 = (slots[0]?.scale ?? 1.0) * pScale;
@@ -1352,15 +1420,18 @@ function startCanvasPreview(): void {
             const t2 = slots[4]?.type || 'archer';
             const s2 = (slots[4]?.scale ?? 1.0) * pScale;
 
-            unitPositions.push({ x: cx - spacingX, y: cy - spacingY - 10, type: t0, scale: s0, label: '' });
-            unitPositions.push({ x: cx, y: cy - spacingY - 10, type: t0, scale: s0, label: '' });
-            unitPositions.push({ x: cx + spacingX, y: cy - spacingY - 10, type: t0, scale: s0, label: '' });
-            unitPositions.push({ x: cx - spacingX, y: cy - 10, type: t1, scale: s1, label: '' });
-            unitPositions.push({ x: cx, y: cy - 10, type: t1c, scale: s1c, label: '' });
-            unitPositions.push({ x: cx + spacingX, y: cy - 10, type: t1, scale: s1, label: '' });
-            unitPositions.push({ x: cx - spacingX, y: cy + spacingY - 10, type: t2, scale: s2, label: '' });
-            unitPositions.push({ x: cx, y: cy + spacingY - 10, type: t2, scale: s2, label: '' });
-            unitPositions.push({ x: cx + spacingX, y: cy + spacingY - 10, type: t2, scale: s2, label: '' });
+            // 前3 (r=0)
+            addUnitWithRot(-spacingX, -spacingY, t0, s0, '');
+            addUnitWithRot(0, -spacingY, t0, s0, '');
+            addUnitWithRot(spacingX, -spacingY, t0, s0, '');
+            // 中3 (r=1)
+            addUnitWithRot(-spacingX, 0, t1, s1, '');
+            addUnitWithRot(0, 0, t1c, s1c, '');
+            addUnitWithRot(spacingX, 0, t1, s1, '');
+            // 后3 (r=2)
+            addUnitWithRot(-spacingX, spacingY, t2, s2, '');
+            addUnitWithRot(0, spacingY, t2, s2, '');
+            addUnitWithRot(spacingX, spacingY, t2, s2, '');
         }
     }
 
@@ -1385,7 +1456,7 @@ function startCanvasPreview(): void {
 
         sorted.forEach(u => {
             const prefix = getUnitPathPrefix(u.type);
-            const actionName = animState === 'move' ? 'move' : 'idle';
+            const actionName = animState === 'attack' ? 'attack' : (animState === 'move' ? 'move' : 'idle');
             const imgUrl = `${prefix}${actionName}_${animDirection}.png`;
 
             if (!metaCache.has(prefix)) {
@@ -1418,8 +1489,9 @@ function startCanvasPreview(): void {
                     hy = fh / 2;
                 }
 
-                // 动画帧索引
-                const curFrame = Math.floor(frame / 6) % totalFrames;
+                // 动画帧索引（大幅加快动作播放速度：移动/攻击 30fps 敏捷干脆，待机 20fps 自然舒展）
+                const speedDivisor = animState === 'idle' ? 3 : 2;
+                const curFrame = Math.floor(frame / speedDivisor) % totalFrames;
                 const sx = curFrame * fw;
                 const sy = 0;
                 const sw = fw;
@@ -1428,9 +1500,8 @@ function startCanvasPreview(): void {
                 const s = u.scale;
                 const dw = fw * s;
                 const dh = fh * s;
-                const bounce = animState === 'move' ? Math.sin(frame * 0.25 + u.x) * 2.5 : 0;
                 const dx = u.x - hx * s;
-                const dy = u.y - hy * s + bounce;
+                const dy = u.y - hy * s;
 
                 // 绘制单帧
                 ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);

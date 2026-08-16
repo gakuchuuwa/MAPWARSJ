@@ -1862,7 +1862,7 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
     lines.push(` * 由独立军团编辑器 (http://localhost:5173/legion-editor.html) 生成与维护。`);
     lines.push(` */`);
     lines.push(``);
-    lines.push(`import type { FormationMode } from '../types/CultureFormations';`);\r
+    lines.push(`import type { FormationMode } from '../types/CultureFormations';`);
     lines.push(`import type { CompositionSlot } from '../types/LegionComposition';`);
     lines.push(``);
     lines.push(`export interface CustomFactionLegion {`);
