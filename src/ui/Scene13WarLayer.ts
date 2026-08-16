@@ -27,7 +27,7 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'rattan_archer_elite']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_kamayuk', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'hoplite', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mercenary_hoplite', 'mounted_trebuchet', 'onager', 'organ_gun', 'phalangite', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'sacred_band', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon']);
 
 // ── 兵种属性 ──
 //   全面套用 AoE2 DE 真实数据（2026-08-16 主人定）：五维 = 血 hp / 攻 atk / 防(近防+远防) / 射程 rng / 射速 reload。
@@ -148,6 +148,174 @@ const WAR_TYPES: Record<string, WarType> = {
     archer: { name: '弓兵', cls: 'ranged', sz: 1, hp: 30, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 3 }, armorTags: [15, 31] },
     crossbow: { name: '弩兵', cls: 'ranged', sz: 1, hp: 35, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 3 }, armorTags: [15, 31] },
     ballista: { name: '元戎弩', cls: 'ranged', sz: 1, hp: 40, atk: 11, meleeArmor: 0, pierceArmor: 7, rng: 280, reload: 3.6, spd: 35, dmgType: 'pierce', bonus: { 1: 1, 5: 7, 11: 3, 17: 1 }, armorTags: [20, 31] },
+    amazon_archer: { name: '亚马逊弓手', cls: 'ranged', sz: 1, hp: 45, atk: 5, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 1.9, spd: 50, dmgType: 'pierce', bonus: { 1: 1, 27: 2 }, armorTags: [15, 31] },
+    amazon_warrior: { name: '亚马逊战士', cls: 'melee', sz: 1, hp: 45, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
+    bactrian_archer: { name: '巴克特里亚弓手', cls: 'ranged', sz: 1, hp: 60, atk: 6, meleeArmor: 3, pierceArmor: 1, rng: 200, reload: 1.8, spd: 50, dmgType: 'pierce', bonus: { 8: 5, 27: 2 }, armorTags: [15, 31] },
+    battering_ram: { name: '攻城槌', cls: 'melee', sz: 1, hp: 175, atk: 2, meleeArmor: -3, pierceArmor: 180, rng: 0, reload: 5.0, spd: 55, dmgType: 'melee', bonus: { 11: 150, 20: 40 }, armorTags: [17, 20, 31] },
+    berserk: { name: '狂战士', cls: 'melee', sz: 1, hp: 54, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    blackwood_archer: { name: '黑木弓手', cls: 'ranged', sz: 1, hp: 20, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 1.5, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    bolas_rider: { name: '流星锤骑手', cls: 'cav', sz: 1, kite: 60, hp: 55, atk: 5, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 8: 2, 17: 2, 30: 2 }, armorTags: [19, 28, 15, 8, 31] },
+    bombard_cannon: { name: '火炮', cls: 'ranged', sz: 1, hp: 80, atk: 40, meleeArmor: 2, pierceArmor: 5, rng: 480, reload: 6.5, spd: 50, dmgType: 'melee', bonus: { 11: 200, 13: 40, 16: 40, 20: 20, 37: 40 }, armorTags: [20, 23, 31] },
+    camel_archer: { name: '骆驼弓骑兵', cls: 'cav', sz: 1, kite: 60, hp: 55, atk: 7, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 28: 4 }, armorTags: [19, 28, 30, 15, 31, 39] },
+    camel_raider: { name: '骆驼突袭者', cls: 'cav', sz: 1, hp: 90, atk: 10, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 18, 16: 9, 30: 9, 35: 7 }, armorTags: [30, 31, 39] },
+    camel_rider: { name: '骆驼兵', cls: 'cav', sz: 1, hp: 100, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 9, 16: 5, 30: 5 }, armorTags: [30, 31, 39] },
+    camel_scout: { name: '骆驼斥候', cls: 'cav', sz: 1, hp: 70, atk: 2, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [30, 31, 39] },
+    capped_ram: { name: '覆甲攻城槌', cls: 'melee', sz: 1, hp: 200, atk: 3, meleeArmor: -2, pierceArmor: 190, rng: 0, reload: 5.0, spd: 55, dmgType: 'melee', bonus: { 11: 160, 20: 50 }, armorTags: [17, 20, 31] },
+    cataphract: { name: '甲胄骑兵', cls: 'cav', sz: 1, hp: 110, atk: 9, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 1: 9 }, armorTags: [8, 19, 31] },
+    centurion: { name: '百夫长', cls: 'cav', sz: 1, hp: 110, atk: 13, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    chakram_thrower: { name: 'ChakramThrower', cls: 'ranged', sz: 1, hp: 40, atk: 3, meleeArmor: 1, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 1, 29: 1 }, armorTags: [1, 19, 31] },
+    champion_runner: { name: '冠军剑士', cls: 'melee', sz: 1, hp: 40, atk: 5, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 20: 2, 29: 1 }, armorTags: [1, 31] },
+    champion_scout: { name: '冠军剑士', cls: 'melee', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 8: 1, 20: 2, 29: 3, 30: 1 }, armorTags: [1, 31] },
+    companion_cavalry: { name: '伙伴骑兵', cls: 'cav', sz: 1, hp: 90, atk: 11, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 19: 5 }, armorTags: [8, 31, 19] },
+    condottiero: { name: '雇佣军', cls: 'melee', sz: 1, hp: 80, atk: 10, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 1.9, spd: 55, dmgType: 'melee', bonus: { 21: 2, 23: 10 }, armorTags: [1, 19, 31, 32] },
+    conquistador: { name: '征服者', cls: 'cav', sz: 1, kite: 60, hp: 55, atk: 16, meleeArmor: 2, pierceArmor: 1, rng: 240, reload: 2.9, spd: 130, dmgType: 'pierce', bonus: { 17: 4 }, armorTags: [15, 8, 19, 23, 28, 31] },
+    cretan_archer: { name: '克里特弓手', cls: 'ranged', sz: 1, hp: 45, atk: 8, meleeArmor: 0, pierceArmor: 1, rng: 240, reload: 2.1, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    eagle_scout: { name: '鹰斥候', cls: 'melee', sz: 1, hp: 50, atk: 4, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 20: 3, 25: 8 }, armorTags: [29, 1, 31] },
+    eagle_warrior: { name: '鹰勇士', cls: 'melee', sz: 1, hp: 55, atk: 7, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 8: 3, 16: 1, 20: 3, 25: 8, 30: 2 }, armorTags: [29, 1, 31] },
+    ekdromos: { name: '埃克德罗摩斯', cls: 'melee', sz: 1, hp: 80, atk: 13, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 6 }, armorTags: [1, 31] },
+    elite_arambai: { name: '精锐阿兰拜', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 14, meleeArmor: 0, pierceArmor: 2, rng: 200, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 17: 2 }, armorTags: [19, 28, 15, 8, 31] },
+    elite_ballista_elephant: { name: 'EliteBallistaElephant', cls: 'cav', sz: 1, kite: 60, aoe: true, hp: 280, atk: 10, meleeArmor: 0, pierceArmor: 3, rng: 200, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 11: 4, 13: 4, 16: 8, 18: 100, 21: 4 }, armorTags: [8, 19, 5, 20, 31, 37] },
+    elite_battle_elephant: { name: 'EliteBattleElephant', cls: 'cav', sz: 1, aoe: true, hp: 300, atk: 14, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 11: 7, 13: 7 }, armorTags: [5, 8, 31] },
+    elite_berserk: { name: '精锐狂战士', cls: 'melee', sz: 1, hp: 62, atk: 14, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
+    elite_blackwood_archer: { name: '精锐黑木弓手', cls: 'ranged', sz: 1, hp: 25, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 1.5, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    elite_bolas_rider: { name: '精锐流星锤骑手', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 6, meleeArmor: 0, pierceArmor: 2, rng: 200, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 8: 3, 17: 2, 30: 3 }, armorTags: [19, 28, 15, 8, 31] },
+    elite_boyar: { name: 'EliteBoyar', cls: 'cav', sz: 1, hp: 130, atk: 14, meleeArmor: 8, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    elite_camel_archer: { name: '精锐骆驼弓骑兵', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 8, meleeArmor: 1, pierceArmor: 1, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 28: 6 }, armorTags: [19, 28, 30, 15, 31, 39] },
+    elite_cataphract: { name: '精锐甲胄骑兵', cls: 'cav', sz: 1, hp: 150, atk: 12, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 1.7, spd: 130, dmgType: 'melee', bonus: { 1: 12 }, armorTags: [8, 19, 31] },
+    elite_centurion: { name: '精锐百夫长', cls: 'cav', sz: 1, hp: 155, atk: 15, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    elite_chakram_thrower: { name: 'EliteChakramThrower', cls: 'ranged', sz: 1, hp: 50, atk: 4, meleeArmor: 1, pierceArmor: 0, rng: 240, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 1: 1, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    elite_champi_warrior: { name: 'EliteChampiWarrior', cls: 'melee', sz: 1, hp: 65, atk: 11, meleeArmor: 0, pierceArmor: 4, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 20: 3, 21: 3, 29: 1 }, armorTags: [1, 31] },
+    elite_conquistador: { name: '精锐征服者', cls: 'cav', sz: 1, kite: 60, hp: 70, atk: 19, meleeArmor: 2, pierceArmor: 2, rng: 240, reload: 2.9, spd: 130, dmgType: 'pierce', bonus: { 11: 2, 17: 6 }, armorTags: [15, 8, 19, 23, 28, 31] },
+    elite_coustillier: { name: 'EliteCoustillier', cls: 'cav', sz: 1, hp: 145, atk: 11, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    elite_eagle_warrior: { name: '精锐鹰勇士', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 4, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 8: 4, 16: 2, 20: 5, 25: 10, 30: 3 }, armorTags: [29, 1, 31] },
+    elite_elephant_archer: { name: 'EliteElephantArcher', cls: 'cav', sz: 1, kite: 60, hp: 450, atk: 15, meleeArmor: 0, pierceArmor: 3, rng: 200, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 13: 4, 21: 4 }, armorTags: [15, 8, 19, 5, 28, 31, 36] },
+    elite_gbeto: { name: '精锐格贝托', cls: 'ranged', sz: 1, hp: 50, atk: 13, meleeArmor: 0, pierceArmor: 0, rng: 240, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 29: 1 }, armorTags: [1, 19, 31] },
+    elite_genitour: { name: '精锐杰尼图', cls: 'cav', sz: 1, kite: 60, hp: 55, atk: 4, meleeArmor: 0, pierceArmor: 4, rng: 160, reload: 3.0, spd: 130, dmgType: 'pierce', bonus: { 15: 5, 27: 3, 28: 2, 35: 2 }, armorTags: [15, 8, 28, 19, 31, 38] },
+    elite_genoese_crossbowman: { name: '精锐热那亚弩手', cls: 'ranged', sz: 1, hp: 50, atk: 6, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 5: 7, 8: 7, 16: 5, 30: 6 }, armorTags: [15, 19, 31] },
+    elite_ghulam: { name: '精锐古拉姆', cls: 'melee', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 6, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 6, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    elite_guecha_warrior: { name: '精锐格查战士', cls: 'ranged', sz: 1, hp: 60, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 4, 27: 2, 28: 2 }, armorTags: [15, 31, 38, 19] },
+    elite_huskarl: { name: '精锐哥特近卫军', cls: 'melee', sz: 1, hp: 70, atk: 12, meleeArmor: 0, pierceArmor: 8, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 10, 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
+    elite_hussite_wagon: { name: '精锐胡斯战车', cls: 'ranged', sz: 1, hp: 230, atk: 13, meleeArmor: 1, pierceArmor: 10, rng: 240, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 11: 2, 17: 3 }, armorTags: [20, 19, 23, 31, 37] },
+    elite_ibirapema_warrior: { name: 'EliteIbirapemaWarrior', cls: 'melee', sz: 1, hp: 90, atk: 11, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 3 }, armorTags: [1, 19, 31] },
+    elite_iron_pagoda: { name: 'EliteIronPagoda', cls: 'cav', sz: 1, hp: 140, atk: 13, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 2.15, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    elite_jaguar_warrior: { name: '精锐美洲豹勇士', cls: 'melee', sz: 1, hp: 75, atk: 19, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 1: 6, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    elite_janissary: { name: '精锐苏丹亲兵', cls: 'ranged', sz: 1, hp: 40, atk: 22, meleeArmor: 2, pierceArmor: 0, rng: 320, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 17: 3 }, armorTags: [15, 19, 23, 31] },
+    elite_kamayuk: { name: 'EliteKamayuk', cls: 'ranged', sz: 1, hp: 80, atk: 8, meleeArmor: 1, pierceArmor: 1, rng: 40, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 5: 20, 8: 12, 30: 10 }, armorTags: [1, 19, 31] },
+    elite_keshik: { name: 'EliteKeshik', cls: 'cav', sz: 1, hp: 230, atk: 19, meleeArmor: 7, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31, 36] },
+    elite_kona: { name: '精锐科纳', cls: 'cav', sz: 1, hp: 145, atk: 11, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 23: 5 }, armorTags: [8, 19, 31] },
+    elite_konnik: { name: '精锐骑士', cls: 'cav', sz: 1, hp: 120, atk: 14, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    elite_konnik_foot: { name: '精锐下马骑士', cls: 'melee', sz: 1, hp: 50, atk: 13, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
+    elite_leitis: { name: '精锐列提斯', cls: 'cav', sz: 1, hp: 130, atk: 16, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    elite_mameluke: { name: '精锐马穆鲁克', cls: 'cav', sz: 1, kite: 60, hp: 80, atk: 10, meleeArmor: 1, pierceArmor: 0, rng: 120, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 12 }, armorTags: [35, 30, 19, 31, 39] },
+    elite_monaspa: { name: '精锐莫纳斯帕', cls: 'cav', sz: 1, hp: 80, atk: 14, meleeArmor: 5, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    elite_obuch: { name: '精锐奥布奇', cls: 'melee', sz: 1, hp: 95, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 6, 29: 3 }, armorTags: [1, 19, 31] },
+    elite_organ_gun: { name: '精锐风琴炮', cls: 'ranged', sz: 1, hp: 70, atk: 8, meleeArmor: 2, pierceArmor: 6, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 2, 11: 1, 17: 1, 38: 2 }, armorTags: [20, 19, 23, 31] },
+    elite_plumed_archer: { name: '精锐羽箭手', cls: 'ranged', sz: 1, hp: 65, atk: 5, meleeArmor: 0, pierceArmor: 2, rng: 200, reload: 1.9, spd: 50, dmgType: 'pierce', bonus: { 1: 2, 27: 2 }, armorTags: [15, 19, 31] },
+    elite_ratha_melee: { name: '精锐拉塔战车', cls: 'cav', sz: 1, hp: 115, atk: 12, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 15, 19, 28, 31] },
+    elite_ratha_ranged: { name: '精锐拉塔战车（弓）', cls: 'cav', sz: 1, kite: 60, hp: 115, atk: 6, meleeArmor: 3, pierceArmor: 3, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [8, 15, 19, 28, 31] },
+    elite_scythian_horse_archer: { name: '精锐斯基泰骑射手', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 8, meleeArmor: 0, pierceArmor: 1, rng: 240, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 4 }, armorTags: [28, 15, 8, 31] },
+    elite_serjeant: { name: '精锐军士长', cls: 'melee', sz: 1, hp: 85, atk: 11, meleeArmor: 6, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
+    elite_shotel_warrior: { name: '精锐弯刀勇士', cls: 'melee', sz: 1, hp: 50, atk: 18, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31, 39] },
+    elite_shrivamsha_rider: { name: '精锐什里瓦姆沙骑手', cls: 'cav', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    elite_skirmisher: { name: '精锐掷矛手', cls: 'ranged', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 4, rng: 200, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 4, 27: 4, 28: 2, 35: 2 }, armorTags: [15, 31, 38] },
+    elite_temple_guard: { name: '精锐神庙守卫', cls: 'melee', sz: 1, hp: 115, atk: 14, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 16: 6, 21: 2, 30: 6 }, armorTags: [1, 19, 31, 29] },
+    elite_teutonic_knight: { name: '精锐条顿骑士', cls: 'melee', sz: 1, hp: 110, atk: 17, meleeArmor: 10, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 4 }, armorTags: [1, 19, 31] },
+    elite_throwing_axeman: { name: 'EliteThrowingAxeman', cls: 'ranged', sz: 1, hp: 70, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    elite_tiger_cavalry: { name: 'EliteTigerCavalry', cls: 'cav', sz: 1, hp: 125, atk: 13, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 7 }, armorTags: [8, 19, 31] },
+    elite_urumi_swordsman: { name: '精锐乌拉米剑士', cls: 'melee', sz: 1, hp: 65, atk: 11, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 3 }, armorTags: [1, 19, 31] },
+    elite_war_chariot: { name: '精锐战车', cls: 'cav', sz: 1, hp: 125, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 8 }, armorTags: [8, 19, 31] },
+    elite_war_dog: { name: '精锐军犬', cls: 'melee', sz: 1, hp: 55, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.7, spd: 55, dmgType: 'melee', armorTags: [29, 31] },
+    elite_war_elephant: { name: 'EliteWarElephant', cls: 'cav', sz: 1, aoe: true, hp: 600, atk: 20, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 11: 30, 13: 30 }, armorTags: [5, 8, 19, 31] },
+    elite_war_wagon: { name: '精锐战车', cls: 'cav', sz: 1, kite: 60, hp: 200, atk: 9, meleeArmor: 0, pierceArmor: 4, rng: 200, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
+    elite_woad_raider: { name: '精锐靛蓝突袭者', cls: 'melee', sz: 1, hp: 85, atk: 15, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
+    flaming_camel: { name: '火焰骆驼', cls: 'melee', sz: 1, hp: 55, atk: 20, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 130, 8: 50, 11: 200, 20: 25, 30: 50 }, armorTags: [19, 30, 31, 39] },
+    flemish_pikeman: { name: '佛兰德长枪兵', cls: 'melee', sz: 1, hp: 40, atk: 5, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 6, 8: 6, 16: 4, 29: 2, 30: 4 }, armorTags: [1, 19, 31] },
+    flemish_pikeman_f: { name: '佛兰德长枪兵F', cls: 'melee', sz: 1, hp: 40, atk: 5, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 6, 8: 6, 16: 4, 29: 2, 30: 4 }, armorTags: [1, 19, 31] },
+    gbeto: { name: '格贝托', cls: 'ranged', sz: 1, hp: 40, atk: 10, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 29: 1 }, armorTags: [1, 19, 31] },
+    genitour: { name: '杰尼图', cls: 'cav', sz: 1, kite: 60, hp: 50, atk: 3, meleeArmor: 0, pierceArmor: 4, rng: 160, reload: 3.0, spd: 130, dmgType: 'pierce', bonus: { 15: 4, 27: 3, 35: 2 }, armorTags: [15, 8, 28, 19, 31, 38] },
+    genoese_crossbowman: { name: '热那亚弩手', cls: 'ranged', sz: 1, hp: 50, atk: 10, meleeArmor: 1, pierceArmor: 4, rng: 240, reload: 4.2, spd: 50, dmgType: 'pierce', bonus: { 27: 6 }, armorTags: [15, 31] },
+    ghulam: { name: '古拉姆', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 5, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    greek_noble_cavalry: { name: '希腊贵族骑兵', cls: 'cav', sz: 1, hp: 150, atk: 10, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
+    grenadier: { name: '掷弹兵', cls: 'ranged', sz: 1, hp: 40, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 240, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 9, 17: 3, 21: 4, 27: 1 }, armorTags: [15, 19, 31, 23] },
+    guecha_warrior: { name: '格查战士', cls: 'ranged', sz: 1, hp: 55, atk: 6, meleeArmor: 0, pierceArmor: 3, rng: 120, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 3, 27: 2, 28: 2 }, armorTags: [15, 31, 38, 19] },
+    hand_cannoneer: { name: '手炮手', cls: 'ranged', sz: 1, hp: 40, atk: 17, meleeArmor: 1, pierceArmor: 0, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 10, 17: 2, 27: 1 }, armorTags: [15, 23, 31] },
+    heavy_rocket_cart: { name: '重型火箭车', cls: 'ranged', sz: 1, hp: 65, atk: 5, meleeArmor: 0, pierceArmor: 8, rng: 320, reload: 5.35, spd: 50, dmgType: 'melee', bonus: { 11: 12, 20: 2, 22: 7, 26: 7, 37: 5 }, armorTags: [20, 31, 23] },
+    heavy_scorpion: { name: '重型弩炮', cls: 'ranged', sz: 1, hp: 60, atk: 14, meleeArmor: 1, pierceArmor: 8, rng: 280, reload: 3.6, spd: 50, dmgType: 'pierce', bonus: { 1: 2, 5: 10, 11: 6, 17: 2 }, armorTags: [20, 31] },
+    hill_tribesman: { name: '山地部落民', cls: 'melee', sz: 1, hp: 55, atk: 9, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 5, 29: 6 }, armorTags: [1, 19, 31] },
+    hippeus: { name: '希皮乌斯', cls: 'melee', sz: 1, hp: 90, atk: 9, meleeArmor: 2, pierceArmor: 4, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
+    hoplite: { name: '希腊重装步兵', cls: 'ranged', sz: 1, hp: 55, atk: 10, meleeArmor: 1, pierceArmor: 1, rng: 20, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 2 }, armorTags: [1, 19, 31] },
+    houfnice: { name: '榴弹炮', cls: 'ranged', sz: 1, hp: 90, atk: 50, meleeArmor: 2, pierceArmor: 6, rng: 480, reload: 6.5, spd: 50, dmgType: 'melee', bonus: { 11: 250, 13: 50, 16: 50, 20: 20, 37: 50 }, armorTags: [20, 23, 31] },
+    huskarl: { name: '哥特近卫军', cls: 'melee', sz: 1, hp: 60, atk: 10, meleeArmor: 0, pierceArmor: 6, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 15: 6, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    hussar: { name: '骠骑兵', cls: 'cav', sz: 1, hp: 75, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 25: 12 }, armorTags: [8, 31] },
+    hussite_wagon: { name: '胡斯战车', cls: 'ranged', sz: 1, hp: 160, atk: 10, meleeArmor: 0, pierceArmor: 7, rng: 240, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 11: 1, 17: 3 }, armorTags: [20, 19, 23, 31, 37] },
+    ibirapema_warrior: { name: 'IbirapemaWarrior', cls: 'melee', sz: 1, hp: 80, atk: 8, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
+    immortal: { name: '不死军', cls: 'melee', sz: 1, hp: 50, atk: 10, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 1.8, spd: 55, dmgType: 'melee', armorTags: [15, 19, 31, 1] },
+    immortal_ranged: { name: '不死军弓手', cls: 'ranged', sz: 1, hp: 50, atk: 5, meleeArmor: 0, pierceArmor: 3, rng: 160, reload: 1.8, spd: 50, dmgType: 'pierce', armorTags: [15, 19, 31, 1] },
+    imperial_camel_rider: { name: '帝王骆驼兵', cls: 'cav', sz: 1, hp: 140, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 18, 16: 9, 30: 9, 35: 7 }, armorTags: [30, 31, 39] },
+    imperial_centurion: { name: '帝王百夫长', cls: 'cav', sz: 1, hp: 150, atk: 12, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 1.7, spd: 130, dmgType: 'melee', bonus: { 1: 12 }, armorTags: [8, 19, 31] },
+    indian_tribesman: { name: '印度部落民', cls: 'melee', sz: 1, hp: 70, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.5, spd: 55, dmgType: 'melee', bonus: { 5: 20, 8: 8, 21: 1, 29: 1 }, armorTags: [27, 1, 31] },
+    iroquois_warrior: { name: '易洛魁战士', cls: 'melee', sz: 1, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    jaguar_warrior: { name: '美洲豹勇士', cls: 'melee', sz: 1, hp: 65, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 1: 5, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    janissary: { name: '苏丹亲兵', cls: 'ranged', sz: 1, hp: 35, atk: 17, meleeArmor: 1, pierceArmor: 0, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 17: 2 }, armorTags: [15, 19, 23, 31] },
+    knight: { name: '骑士', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
+    kona: { name: '科纳', cls: 'cav', sz: 1, hp: 125, atk: 9, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 23: 5 }, armorTags: [19, 8, 31] },
+    konnik: { name: '骑士', cls: 'cav', sz: 1, hp: 100, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    konnik_foot: { name: '下马骑士', cls: 'melee', sz: 1, hp: 45, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
+    leitis: { name: '列提斯', cls: 'cav', sz: 1, hp: 100, atk: 13, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    longbowman: { name: '长弓兵', cls: 'ranged', sz: 1, hp: 35, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    magyar_huszar: { name: '马扎尔骠骑', cls: 'cav', sz: 1, hp: 90, atk: 11, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 17: 2, 20: 8 }, armorTags: [8, 19, 31] },
+    mameluke: { name: '马穆鲁克', cls: 'cav', sz: 1, kite: 60, hp: 80, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 120, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 9 }, armorTags: [35, 30, 19, 31, 39] },
+    mangonel: { name: '投石车', cls: 'ranged', sz: 1, hp: 50, atk: 40, meleeArmor: 0, pierceArmor: 6, rng: 280, reload: 6.0, spd: 50, dmgType: 'melee', bonus: { 11: 35, 20: 12, 37: 40 }, armorTags: [20, 31] },
+    mercenary_hoplite: { name: '雇佣重装步兵', cls: 'ranged', sz: 1, hp: 70, atk: 10, meleeArmor: 3, pierceArmor: 1, rng: 12, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
+    militia: { name: '民兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
+    monaspa: { name: '莫纳斯帕', cls: 'cav', sz: 1, hp: 70, atk: 12, meleeArmor: 3, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    mounted_trebuchet: { name: '骑乘投石机', cls: 'cav', sz: 1, kite: 60, hp: 75, atk: 30, meleeArmor: 2, pierceArmor: 4, rng: 400, reload: 6.5, spd: 130, dmgType: 'melee', bonus: { 11: 10, 20: 30, 37: 30 }, armorTags: [20, 31, 19, 37, 30, 39] },
+    obuch: { name: '奥布奇', cls: 'melee', sz: 1, hp: 80, atk: 8, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 2 }, armorTags: [1, 19, 31] },
+    onager: { name: '轻型投石车', cls: 'ranged', sz: 1, hp: 60, atk: 50, meleeArmor: 0, pierceArmor: 7, rng: 320, reload: 6.0, spd: 50, dmgType: 'melee', bonus: { 11: 45, 20: 12, 37: 50 }, armorTags: [20, 31] },
+    organ_gun: { name: '风琴炮', cls: 'ranged', sz: 1, hp: 50, atk: 6, meleeArmor: 2, pierceArmor: 4, rng: 280, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 1: 2, 17: 1, 38: 2 }, armorTags: [20, 19, 23, 31] },
+    petard: { name: '爆破兵', cls: 'melee', sz: 1, hp: 50, atk: 25, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 11: 500, 20: 60, 22: 900, 26: 100 }, armorTags: [31] },
+    phalangite: { name: '马其顿方阵兵', cls: 'ranged', sz: 1, hp: 50, atk: 6, meleeArmor: 1, pierceArmor: 0, rng: 72, reload: 2.5, spd: 50, dmgType: 'melee', bonus: { 5: 20, 8: 6, 30: 4 }, armorTags: [1, 19, 31] },
+    plumed_archer: { name: '羽箭手', cls: 'ranged', sz: 1, hp: 50, atk: 5, meleeArmor: 0, pierceArmor: 1, rng: 160, reload: 1.9, spd: 50, dmgType: 'pierce', bonus: { 1: 1, 27: 2 }, armorTags: [15, 19, 31] },
+    qizilbash_warrior: { name: '克孜尔巴什', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 15: 2 }, armorTags: [8, 31] },
+    ratha_melee: { name: '拉塔战车', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 15, 19, 28, 31] },
+    ratha_ranged: { name: '拉塔战车（弓）', cls: 'cav', sz: 1, kite: 60, hp: 100, atk: 5, meleeArmor: 3, pierceArmor: 1, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [8, 15, 19, 28, 31] },
+    rhodian_slinger: { name: '罗得岛投石兵', cls: 'ranged', sz: 1, hp: 40, atk: 1, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 1: 15, 27: 1 }, armorTags: [15, 19, 31] },
+    rhomphaia_warrior: { name: '龙牙战士', cls: 'melee', sz: 1, hp: 60, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 8: 14, 21: 6, 29: 2, 30: 12 }, armorTags: [1, 19, 31] },
+    rocket_cart: { name: '火箭车', cls: 'ranged', sz: 1, hp: 45, atk: 5, meleeArmor: 0, pierceArmor: 6, rng: 280, reload: 5.5, spd: 50, dmgType: 'melee', bonus: { 11: 7, 20: 2, 22: 6, 26: 7, 37: 5 }, armorTags: [20, 31, 23] },
+    royal_janissary: { name: '皇家苏丹亲兵', cls: 'ranged', sz: 1, hp: 55, atk: 22, meleeArmor: 2, pierceArmor: 0, rng: 320, reload: 3.45, spd: 50, dmgType: 'pierce', bonus: { 17: 3 }, armorTags: [15, 19, 23, 31] },
+    sacred_band: { name: '圣队', cls: 'ranged', sz: 1, hp: 65, atk: 13, meleeArmor: 3, pierceArmor: 1, rng: 20, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 2 }, armorTags: [1, 19, 31] },
+    sannahya: { name: '桑纳亚', cls: 'cav', sz: 1, aoe: true, hp: 300, atk: 10, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 13: 4, 21: 4 }, armorTags: [5, 8, 31, 19] },
+    scorpion: { name: '弩炮', cls: 'ranged', sz: 1, hp: 40, atk: 11, meleeArmor: 0, pierceArmor: 7, rng: 280, reload: 3.6, spd: 50, dmgType: 'pierce', bonus: { 1: 1, 5: 7, 11: 3, 17: 1 }, armorTags: [20, 31] },
+    scythian_axe_cavalry: { name: '斯基泰斧骑', cls: 'cav', sz: 1, hp: 130, atk: 10, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
+    scythian_horse_archer: { name: '斯基泰骑射手', cls: 'cav', sz: 1, kite: 60, hp: 50, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [28, 15, 8, 31] },
+    serjeant: { name: '军士长', cls: 'melee', sz: 1, hp: 50, atk: 5, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    shotel_warrior: { name: '弯刀勇士', cls: 'melee', sz: 1, hp: 45, atk: 16, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 29: 2 }, armorTags: [1, 19, 31, 39] },
+    shrivamsha_rider: { name: '什里瓦姆沙骑手', cls: 'cav', sz: 1, hp: 55, atk: 8, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    sickle_warrior: { name: '镰刀战士', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.33, spd: 55, dmgType: 'melee', bonus: { 29: 2 }, armorTags: [1, 19, 31, 39] },
+    siege_onager: { name: '重型投石车', cls: 'ranged', sz: 1, hp: 70, atk: 75, meleeArmor: 0, pierceArmor: 8, rng: 320, reload: 6.0, spd: 50, dmgType: 'melee', bonus: { 11: 60, 20: 12, 37: 50 }, armorTags: [20, 31] },
+    siege_ram: { name: '攻城槌', cls: 'melee', sz: 1, hp: 270, atk: 4, meleeArmor: -1, pierceArmor: 195, rng: 0, reload: 5.0, spd: 55, dmgType: 'melee', bonus: { 11: 200, 20: 65 }, armorTags: [17, 20, 31] },
+    skirmisher: { name: '掷矛手', cls: 'ranged', sz: 1, hp: 30, atk: 2, meleeArmor: 0, pierceArmor: 3, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 3, 27: 3, 35: 2 }, armorTags: [15, 31, 38] },
+    slinger: { name: '投石兵', cls: 'ranged', sz: 1, hp: 35, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 1: 4, 20: 3, 25: 4, 27: 1 }, armorTags: [15, 31, 38] },
+    sogdian_cataphract: { name: '粟特甲胄骑兵', cls: 'cav', sz: 1, hp: 110, atk: 12, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 15: 6 }, armorTags: [8, 19, 31] },
+    sparabara: { name: '斯帕拉巴拉', cls: 'melee', sz: 1, hp: 70, atk: 7, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31, 36] },
+    spearman: { name: '长矛兵', cls: 'melee', sz: 1, hp: 45, atk: 3, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 15, 8: 15, 16: 9, 21: 1, 29: 1, 30: 12 }, armorTags: [27, 1, 31] },
+    strategos: { name: '将军卫队', cls: 'melee', sz: 1, hp: 60, atk: 15, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 19, 31] },
+    takabara: { name: '塔卡巴拉', cls: 'melee', sz: 1, hp: 80, atk: 9, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 6 }, armorTags: [1, 19, 31, 36] },
+    tarantine_cavalry: { name: '塔兰丁骑兵', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 240, reload: 2.7, spd: 130, dmgType: 'pierce', bonus: { 1: 3, 15: 4, 27: 4, 28: 2 }, armorTags: [15, 8, 28, 19, 31, 38] },
+    temple_guard: { name: '神庙守卫', cls: 'melee', sz: 1, hp: 100, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 5, 8: 5, 16: 4, 30: 4 }, armorTags: [1, 19, 31, 29] },
+    teutonic_knight: { name: '条顿骑士', cls: 'melee', sz: 1, hp: 90, atk: 14, meleeArmor: 7, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 4 }, armorTags: [1, 19, 31] },
+    thracian_peltast: { name: '色雷斯轻装兵', cls: 'ranged', sz: 1, hp: 40, atk: 7, meleeArmor: 0, pierceArmor: 3, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 27: 3, 28: 3 }, armorTags: [15, 31, 38] },
+    traction_trebuchet: { name: '牵引投石机', cls: 'ranged', sz: 1, hp: 115, atk: 50, meleeArmor: 1, pierceArmor: 8, rng: 560, reload: 11.0, spd: 50, dmgType: 'melee', bonus: { 11: 230 }, armorTags: [17, 20, 31] },
+    two_handed_swordsman: { name: '双手剑士', cls: 'melee', sz: 1, hp: 65, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
+    urumi_swordsman: { name: '乌拉米剑士', cls: 'melee', sz: 1, hp: 55, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
+    war_chariot: { name: '战车', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 5 }, armorTags: [8, 19, 31] },
+    war_chariot_ranged: { name: '远程战车', cls: 'cav', sz: 1, kite: 60, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 130, dmgType: 'pierce', bonus: { 11: 2 }, armorTags: [8, 20, 19, 31, 37] },
+    war_dog: { name: '军犬', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1.7, spd: 55, dmgType: 'melee', armorTags: [29, 31] },
+    war_wagon: { name: '战车', cls: 'cav', sz: 1, kite: 60, hp: 150, atk: 9, meleeArmor: 0, pierceArmor: 2, rng: 160, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
+    warrior_priest: { name: '战士祭司', cls: 'melee', sz: 1, hp: 80, atk: 11, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 25, 19, 31] },
+    winged_hussar: { name: '翼骑兵', cls: 'cav', sz: 1, hp: 80, atk: 9, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 23: 4, 25: 14 }, armorTags: [8, 31] },
+    woad_raider: { name: '靛蓝突袭者', cls: 'melee', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    xolotl_warrior: { name: 'XolotlWarrior', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
 };
 
 
@@ -194,7 +362,7 @@ const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]
 const UNIT_PX = 50;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
-const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/CAV_ARCHER_HEAVY/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/SAVAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/'];
+const DE_DYN_DIRS = ['/SUCAI/ARCHER/', '/SUCAI/SAMURAI_ELITE/', '/SUCAI/SAMURAI_DE/', '/SUCAI/FIRE_ARCHER/', '/SUCAI/HEI_KUANG/', '/SUCAI/EASTERN_SWORDSMAN/', '/SUCAI/IRON_PAGODA/', '/SUCAI/KIPCHAK/', '/SUCAI/LONGBOWMAN_ELITE/', '/SUCAI/PIKEMAN/', '/SUCAI/CAV_ARCHER/', '/SUCAI/CAV_ARCHER_HEAVY/', '/SUCAI/LIGHT_RIDERS/', '/SUCAI/CHUKONU/', '/SUCAI/WHITE_FEATHER_GUARD/', '/SUCAI/ELITE_WHITE_FEATHER_GUARD/', '/SUCAI/RATTAN_ARCHER/', '/SUCAI/ELITE_FIRE_LANCER/', '/SUCAI/ELITE_FIRE_ARCHER/', '/SUCAI/ELITE_CHUKONU/', '/SUCAI/TARKAN/', '/SUCAI/ELITE_TARKAN/', '/SUCAI/ELITE_GUARDSMAN/', '/SUCAI/STEPPE_LANCER/', '/SUCAI/NINJA/', '/SUCAI/LIAO_DAO/', '/SUCAI/ELITE_LIAO_DAO/', '/SUCAI/FIRE_LANCER/', '/SUCAI/XIANBEI_RAIDER/', '/SUCAI/TIGER_RIDER/', '/SUCAI/JIAN_SWORDSMAN/', '/SUCAI/IMPERIAL_SKIRMISHER/', '/SUCAI/WAR_ELEPHANT/', '/SUCAI/KARAMBIT_WARRIOR/', '/SUCAI/ARAMBAI/', '/SUCAI/MANGUDAI/', '/SUCAI/KESHIK/', '/SUCAI/BOYAR/', '/SUCAI/SAVAR/', '/SUCAI/ELITE_KIPCHAK/', '/SUCAI/ELITE_COMPOSITE_BOWMAN/', '/SUCAI/CAMEL_HEAVY/', '/SUCAI/COMPOSITE_BOWMAN/', '/SUCAI/ELITE_STEPPE_LANCER/', '/SUCAI/THROWING_AXEMAN/', '/SUCAI/CHAMPION/', '/SUCAI/CROSSBOWMAN/', '/SUCAI/PALADIN/', '/SUCAI/COUSTILLIER/', '/SUCAI/HEAVY_PIKEMAN/', '/SUCAI/ARBALEST/', '/SUCAI/HEI_KUANG_HEAVY/', '/SUCAI/MANGUDAI_ELITE/', '/SUCAI/PATTIYODA_LONGBOWMAN/', '/SUCAI/ARMORED_ELEPHANT/', '/SUCAI/BALLISTA_ELEPHANT/', '/SUCAI/ELEPHANT_ARCHER/', '/SUCAI/RATTAN_ARCHER_ELITE/', '/SUCAI/LEGIONARY/', '/SUCAI/SWORDSMAN/', '/SUCAI/KAMAYUK/', '/SUCAI/KARAMBIT_WARRIOR_ELITE/', '/SUCAI/AMAZONARCHER/', '/SUCAI/AMAZONWARRIOR/', '/SUCAI/BACTRIAN_ARCHER/', '/SUCAI/BATTERINGRAM/', '/SUCAI/BERSERK/', '/SUCAI/BLACKWOODARCHER/', '/SUCAI/BOLASRIDER/', '/SUCAI/BOMBARDCANNON/', '/SUCAI/CAMELARCHER/', '/SUCAI/CAMEL_RAIDER/', '/SUCAI/CAMELRIDER/', '/SUCAI/CAMELSCOUT/', '/SUCAI/CAPPEDRAM/', '/SUCAI/CATAPHRACT/', '/SUCAI/CENTURION/', '/SUCAI/CHAKRAMTHROWER/', '/SUCAI/CHAMPIRUNNER/', '/SUCAI/CHAMPISCOUT/', '/SUCAI/COMPANION_CAVALRY/', '/SUCAI/CONDOTTIERO/', '/SUCAI/CONQUISTADOR/', '/SUCAI/CRETAN_ARCHER/', '/SUCAI/EAGLESCOUT/', '/SUCAI/EAGLEWARRIOR/', '/SUCAI/EKDROMOS/', '/SUCAI/ELITEARAMBAI/', '/SUCAI/ELITEBALLISTAELEPHANT/', '/SUCAI/ELITEBATTLEELEPHANT/', '/SUCAI/ELITEBERSERK/', '/SUCAI/ELITEBLACKWOODARCHER/', '/SUCAI/ELITEBOLASRIDER/', '/SUCAI/ELITEBOYAR/', '/SUCAI/ELITECAMELARCHER/', '/SUCAI/ELITECATAPHRACT/', '/SUCAI/ELITECENTURION/', '/SUCAI/ELITECHAKRAMTHROWER/', '/SUCAI/ELITECHAMPIWARRIOR/', '/SUCAI/ELITECONQUISTADOR/', '/SUCAI/ELITECOUSTILLIER/', '/SUCAI/ELITEEAGLEWARRIOR/', '/SUCAI/ELITEELEPHANTARCHER/', '/SUCAI/ELITEGBETO/', '/SUCAI/ELITEGENITOUR/', '/SUCAI/ELITEGENOESECROSSBOWMAN/', '/SUCAI/ELITEGHULAM/', '/SUCAI/ELITEGUECHAWARRIOR/', '/SUCAI/ELITEHUSKARL/', '/SUCAI/ELITEHUSSITEWAGON/', '/SUCAI/ELITEIBIRAPEMAWARRIOR/', '/SUCAI/ELITEIRONPAGODA/', '/SUCAI/ELITEJAGUARWARRIOR/', '/SUCAI/ELITEJANISSARY/', '/SUCAI/ELITEKAMAYUK/', '/SUCAI/ELITEKESHIK/', '/SUCAI/ELITEKONA/', '/SUCAI/ELITEKONNIK/', '/SUCAI/ELITEFOOTKONNIK/', '/SUCAI/ELITELEITIS/', '/SUCAI/ELITEMAMELUKE/', '/SUCAI/ELITEMONASPA/', '/SUCAI/ELITEOBUCH/', '/SUCAI/ELITEORGANGUN/', '/SUCAI/ELITEPLUMEDARCHER/', '/SUCAI/ELITERATHAMELEE/', '/SUCAI/ELITERATHARANGED/', '/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/', '/SUCAI/ELITESERJEANT/', '/SUCAI/ELITESHOTELWARRIOR/', '/SUCAI/ELITESHRIVAMSHARIDER/', '/SUCAI/ELITESKIRMISHER/', '/SUCAI/ELITETEMPLEGUARD/', '/SUCAI/ELITETEUTONICKNIGHT/', '/SUCAI/ELITETHROWINGAXEMAN/', '/SUCAI/ELITETIGERCAVALRY/', '/SUCAI/ELITEURUMISWORDSMAN/', '/SUCAI/ELITE_WAR_CHARIOT/', '/SUCAI/ELITEWARDOG/', '/SUCAI/ELITEWARELEPHANT/', '/SUCAI/ELITEWARWAGON/', '/SUCAI/ELITEWOADRAIDER/', '/SUCAI/FLAMINGCAMEL/', '/SUCAI/FLEMISHPIKEMAN/', '/SUCAI/FLEMISHPIKEMAN_F/', '/SUCAI/GBETO/', '/SUCAI/GENITOUR/', '/SUCAI/GENOESECROSSBOWMAN/', '/SUCAI/GHULAM/', '/SUCAI/GREEK_NOBLE_CAVALRY/', '/SUCAI/GRENADIER/', '/SUCAI/GUECHAWARRIOR/', '/SUCAI/HANDCANNONEER/', '/SUCAI/HEAVYROCKETCART/', '/SUCAI/HEAVYSCORPION/', '/SUCAI/HILL_TRIBESMAN/', '/SUCAI/HIPPEUS/', '/SUCAI/HOPLITE/', '/SUCAI/HOUFNICE/', '/SUCAI/HUSKARL/', '/SUCAI/HUSSAR/', '/SUCAI/HUSSITEWAGON/', '/SUCAI/IBIRAPEMAWARRIOR/', '/SUCAI/IMMORTAL/', '/SUCAI/RANGED_IMMORTAL/', '/SUCAI/IMPERIALCAMELRIDER/', '/SUCAI/IMPERIALCENTURION/', '/SUCAI/INDIAN_TRIBESMAN/', '/SUCAI/IROQUOISWARRIOR/', '/SUCAI/JAGUARWARRIOR/', '/SUCAI/JANISSARY/', '/SUCAI/KNIGHT/', '/SUCAI/KONA/', '/SUCAI/KONNIK/', '/SUCAI/FOOTKONNIK/', '/SUCAI/LEITIS/', '/SUCAI/LONGBOWMAN/', '/SUCAI/MAGYARHUSZAR/', '/SUCAI/MAMELUKE/', '/SUCAI/MANGONEL/', '/SUCAI/ELITE_HOPLITE/', '/SUCAI/MILITIA/', '/SUCAI/MONASPA/', '/SUCAI/MOUNTEDTREBUCHET/', '/SUCAI/OBUCH/', '/SUCAI/ONAGER/', '/SUCAI/ORGANGUN/', '/SUCAI/PETARD/', '/SUCAI/PHALANGITE/', '/SUCAI/PLUMEDARCHER/', '/SUCAI/QIZILBASHWARRIOR/', '/SUCAI/RATHAMELEE/', '/SUCAI/RATHARANGED/', '/SUCAI/RHODIAN_SLINGER/', '/SUCAI/RHOMPHAIA_WARRIOR/', '/SUCAI/ROCKETCART/', '/SUCAI/ROYALJANISSARY/', '/SUCAI/SACRED_BAND/', '/SUCAI/SANNAHYA/', '/SUCAI/SCORPION/', '/SUCAI/SCYTHIAN_AXE_CAVALRY/', '/SUCAI/SCYTHIAN_HORSE_ARCHER/', '/SUCAI/SERJEANT/', '/SUCAI/SHOTELWARRIOR/', '/SUCAI/SHRIVAMSHARIDER/', '/SUCAI/SICKLE_WARRIOR/', '/SUCAI/SIEGEONAGER/', '/SUCAI/SIEGERAM/', '/SUCAI/SKIRMISHER/', '/SUCAI/SLINGER/', '/SUCAI/SOGDIANCATAPHRACT/', '/SUCAI/SPARABARA/', '/SUCAI/SPEARMAN/', '/SUCAI/STRATEGOS/', '/SUCAI/SAKAN_AXEMAN/', '/SUCAI/TARANTINE_CAVALRY/', '/SUCAI/TEMPLEGUARD/', '/SUCAI/TEUTONICKNIGHT/', '/SUCAI/THRACIAN_PELTAST/', '/SUCAI/TRACTIONTREBUCHET/', '/SUCAI/TWOHANDEDSWORDSMAN/', '/SUCAI/URUMISWORDSMAN/', '/SUCAI/WAR_CHARIOT/', '/SUCAI/WARCHARIOT/', '/SUCAI/WARDOG/', '/SUCAI/WARWAGON/', '/SUCAI/WARRIORPRIEST/', '/SUCAI/WINGEDHUSSAR/', '/SUCAI/WOADRAIDER/', '/SUCAI/XOLOTLWARRIOR/'];
 
 // ── 场景树装饰（三国群英传地形素材，2026-08-12 主人定：树1绿 / 树2橙 / 树3白）──
 // 素材自带 tRNS 透明通道（索引 0 = 透明），无需抠黑，直接 drawImage 即透明。
@@ -1890,8 +2058,8 @@ export class Scene13WarLayer {
             //    素材若 10 秒内没加载完（404/跨域/异常），强制判负退出，绝不永冻：
             //    按当前兵力比判（池+场上），守方（f=1）吃 0.85 城防/主场折扣。
             if (this.pendingStartedAt === 0) this.pendingStartedAt = performance.now();
-            if (performance.now() - this.pendingStartedAt > 10000) {
-                console.warn(`🏁 [Scene13War] 素材 10s 未就绪（pending=${this.pending}），强制判负防死锁`);
+            if (performance.now() - this.pendingStartedAt > 30000) {
+                console.warn(`🏁 [Scene13War] 素材 30s 未就绪（pending=${this.pending}），强制判负防死锁`);
                 this.forceResultByRatio(0.85);
             }
             return;
@@ -2072,23 +2240,26 @@ export class Scene13WarLayer {
                 const arc = PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * p * (1 - p);
                 const x = a.x + a.dx * d;
                 const y = a.y + a.dy * d - arc;
-                // 水平朝向（俯仰由帧序号内置，不再算抛物线切线）
-                const angle = Math.atan2(a.dy, a.dx);
-                const fr = Math.min(pa.n - 1, Math.round(p * (pa.n - 1)));
-                // 🔴 朝左半球（dx<0）：AoE2 朝左帧 = 朝右帧的**水平镜像**（仰射仍朝屏幕上方），
-                //    不是 rotate 180°（那会把仰射翻成俯冲）。故 scale(-1,1) 水平镜像后，
-                //    从「朝西」转到目标方向的旋转角 = angle - π。
-                //    🔴 [2026-08-16 主人报长弓兵/守方朝左斜射箭头反向] Canvas 后写的变换先应用，
-                //    scale 必须写在 rotate **之后**，镜像才会先于旋转生效。之前写在 rotate 之前，
-                //    实际先旋转再镜像 → 朝左斜向（西北/西南）箭头水平翻反，守方远程兵全中招
-                //    （正左 180° 碰巧对，所以普通箭/连弩/长弓兵斜射一个接一个暴露）。
-                const rot = a.dx < 0 ? angle - Math.PI : angle;
+                // 🔴 [2026-08-16 修复向北及全向弹道切线角]
+                // 用瞬时速度切线角（vx, vy - dArc/dp）驱动全 360° 旋转，
+                // 彻底解决朝北/朝南射击时帧序俯仰变横向摆头、箭头左右晃动或反转倒插的 Bug。
+                const vx = a.dx * a.len;
+                const vy = a.dy * a.len - (PROJ_FLAT.has(a.proj) ? 0 : 4 * arcH * (1 - 2 * p));
+                const angle = Math.atan2(vy, vx);
+
+                let fr = 0;
+                if (a.proj === 'PROJ_THROWING_AXE') {
+                    // 飞斧空中 360° 旋转
+                    fr = Math.floor(p * 24) % pa.n;
+                } else if (pa.n > 1) {
+                    // 箭矢/标枪/飞镖取正水平基准帧，由 rotate(angle) 切线角精确控制全 360° 俯仰与起伏
+                    fr = Math.floor(pa.n / 2);
+                }
+
                 ctx.translate(x, y);
-                ctx.rotate(rot);
-                if (a.dx < 0) ctx.scale(-1, 1);
+                ctx.rotate(angle);
                 ctx.drawImage(pa.img, fr * pa.fw, 0, pa.fw, pa.fh, -pa.hx * S, -pa.hy * S, pa.fw * S, pa.fh * S);
-                if (a.dx < 0) ctx.scale(-1, 1);
-                ctx.rotate(-rot);
+                ctx.rotate(-angle);
                 ctx.translate(-x, -y);
             }
             ctx.restore();
