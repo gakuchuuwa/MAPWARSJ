@@ -302,35 +302,35 @@ export class CameraFollowUI {
         panel.style.cssText = `
             position: fixed;
             top: ${CameraFollowUI.LIST_PANEL_TOP_PX}px;
-            left: ${CameraFollowUI.STACK_LEFT_PX}px;
+            left: 0;
             width: 320px;
             max-height: 72vh;
             overflow-y: auto;
             z-index: 10001;
-            background: linear-gradient(180deg, rgba(248, 242, 230, 0.62) 0%, rgba(235, 220, 198, 0.70) 100%);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(125, 111, 90, 0.22);
-            border-radius: 12px;
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            background: linear-gradient(to right, rgba(216, 197, 168, 0.6) 0%, rgba(235, 220, 195, 0.35) 70%, rgba(235, 220, 195, 0) 100%);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            border: none;
+            box-shadow: none;
             display: none;
             font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
-            color: #1a1612;
+            color: #2c241c;
+            padding: 0 10px 10px 0;
+            box-sizing: border-box;
         `;
 
         // 标题栏
         const header = document.createElement('div');
         header.style.cssText = `
             position: relative;
-            padding: 12px 16px 10px;
+            padding: 10px 14px 8px;
             font-size: 14px;
             font-weight: bold;
-            border-bottom: 1px solid rgba(125, 111, 90, 0.12);
-            background: rgba(255, 255, 255, 0.25);
-            color: #2c241c;
+            border-bottom: 1px dashed rgba(125, 111, 90, 0.35);
+            background: transparent;
+            color: #1d3326;
             letter-spacing: 2px;
             text-align: center;
-            border-radius: 12px 12px 0 0;
         `;
         const headerTitle = document.createElement('span');
         headerTitle.textContent = '⚔ 军团·势力榜 (0) ⚔';
@@ -411,11 +411,12 @@ export class CameraFollowUI {
         // 军团上限配置栏
         const limitContainer = document.createElement('div');
         limitContainer.style.cssText = `
-            padding: 8px 16px;
+            padding: 6px 14px;
             font-size: 12px;
             color: #5b7a66;
             font-weight: bold;
-            border-bottom: 1px solid rgba(125, 111, 90, 0.1);
+            border-bottom: 1px dashed rgba(125, 111, 90, 0.35);
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -454,11 +455,11 @@ export class CameraFollowUI {
         const topStatsContainer = document.createElement('div');
         topStatsContainer.id = 'army-top-stats';
         topStatsContainer.style.cssText = `
-            padding: 8px 12px;
-            border-bottom: 1px solid rgba(125, 111, 90, 0.1);
-            background: rgba(255, 255, 255, 0.18);
+            padding: 6px 10px;
+            border-bottom: 1px dashed rgba(125, 111, 90, 0.35);
+            background: transparent;
             display: flex;
-            gap: 8px;
+            gap: 6px;
         `;
         panel.appendChild(topStatsContainer);
         this.topStatsContainer = topStatsContainer;
@@ -646,17 +647,17 @@ export class CameraFollowUI {
                 const gColor = isEliteAndGeneral ? '#9c302f' : '#8a2b22';
                 titleHtml =
                     `<span style="color:${gColor}; font-weight:800; font-size:14px;">${generalRecord.generalName}</span>` +
-                    `<span style="opacity:0.75; font-size:11px; margin:0 2px; color:#5c4e3e; font-weight:bold;">率</span>${name}`;
+                    `<span style="opacity:0.75; font-size:11px; margin:0 2px; color:#7d6f5a; font-weight:bold;">率</span>${name}`;
             } else {
                 titleHtml = name;
             }
 
             let itemBg = isFollowed ? 'background: rgba(156,48,47,0.12); border-left: 3px solid #9c302f;' : '';
-            let nameStyle = 'color: #1a1612; font-weight: 700;';
+            let nameStyle = 'color: #2c241c; font-weight: 700;';
 
             if (isEliteAndGeneral) {
                 if (!isFollowed) {
-                    itemBg = 'background: linear-gradient(to right, rgba(156,48,47,0.08), transparent);';
+                    itemBg = 'background: linear-gradient(to right, rgba(156,48,47,0.06), transparent);';
                 }
                 nameStyle = 'color: #9c302f; font-weight: 800;';
             } else if (army.isElite) {
@@ -664,11 +665,11 @@ export class CameraFollowUI {
             }
 
             item.style.cssText = `
-                padding: 7px 12px;
-                margin: 2px 6px;
-                border-radius: 6px;
+                padding: 6px 10px;
+                margin: 0;
+                border-radius: 4px;
                 cursor: pointer;
-                border-bottom: 1px solid rgba(125,111,90,0.12);
+                border-bottom: 1px dashed rgba(125, 111, 90, 0.25);
                 transition: all 0.2s ease;
                 font-size: 13px;
                 ${itemBg}
@@ -703,7 +704,7 @@ export class CameraFollowUI {
 
             item.addEventListener('mouseenter', () => {
                 if (!isFollowed) {
-                    item.style.background = 'rgba(255, 255, 255, 0.5)';
+                    item.style.background = 'rgba(255, 255, 255, 0.28)';
                     item.style.transform = 'translateX(2px)';
                 }
             });
@@ -770,7 +771,7 @@ export class CameraFollowUI {
             }
 
             streakCardHtml = `
-                <div id="top-streak-card" style="flex:1.35; min-width:0; background:rgba(255,255,255,0.45); border:1px solid rgba(255,255,255,0.7); border-radius:8px; padding:6px 8px; box-sizing:border-box; box-shadow:0 2px 6px rgba(0,0,0,0.03); ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该历史连胜王者' : '传奇历史最高纪录'}">
+                <div id="top-streak-card" style="flex:1.35; min-width:0; background:rgba(255,255,255,0.22); border:1px solid rgba(125,111,90,0.25); border-radius:6px; padding:5px 7px; box-sizing:border-box; ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该历史连胜王者' : '传奇历史最高纪录'}">
                     <div style="display:flex; justify-content:space-between; align-items:center; line-height:1.3;">
                         <span style="color:#9c302f; font-size:11px; font-weight:bold; white-space:nowrap;">🔥 最高连胜</span>
                         <span style="color:#9c302f; font-weight:bold; font-size:10px; background:rgba(156,48,47,0.08); border:1px solid rgba(156,48,47,0.3); border-radius:10px; padding:0 5px; line-height:1.2; flex-shrink:0;">${topRecord.streak}连胜</span>
@@ -802,7 +803,7 @@ export class CameraFollowUI {
             const fTotal = factionTotals.get(topFid) ?? { troops: 0, cities: maxCities };
 
             factionCardHtml = `
-                <div style="flex:0.85; min-width:0; background:rgba(255,255,255,0.45); border:1px solid rgba(255,255,255,0.7); border-radius:8px; padding:6px 8px; box-sizing:border-box; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+                <div style="flex:0.85; min-width:0; background:rgba(255,255,255,0.22); border:1px solid rgba(125,111,90,0.25); border-radius:6px; padding:5px 7px; box-sizing:border-box;">
                     <div style="display:flex; justify-content:space-between; align-items:center; line-height:1.3;">
                         <span style="color:#1d3326; font-size:11px; font-weight:bold; white-space:nowrap;">🏯 据点最多</span>
                         <span style="color:#9c302f; font-size:10px; font-weight:bold; border:1px solid rgba(156,48,47,0.3); border-radius:10px; padding:0 5px; background:rgba(156,48,47,0.08); line-height:1.2; flex-shrink:0;">${maxCities}城</span>
