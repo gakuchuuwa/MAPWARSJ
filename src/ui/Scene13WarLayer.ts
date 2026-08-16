@@ -342,9 +342,9 @@ function dmgVs(shooter: WarType, target: WarType): number {
  *  echelon 雁行 4+3+2 = 前4 / 中3 / 后2（近战顶前、远程后） */
 const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]> = {
     square: [
-        { col: 1, row: 0, cols: 5 }, { col: 2, row: 0, cols: 5 }, { col: 3, row: 0, cols: 5 },
-        { col: 0, row: 1, cols: 5 }, { col: 2, row: 1, cols: 5 }, { col: 4, row: 1, cols: 5 },
-        { col: 1, row: 2, cols: 5 }, { col: 2, row: 2, cols: 5 }, { col: 3, row: 2, cols: 5 },
+        { col: 0, row: 0, cols: 3 }, { col: 1, row: 0, cols: 3 }, { col: 2, row: 0, cols: 3 },
+        { col: 0, row: 1, cols: 3 }, { col: 1, row: 1, cols: 3 }, { col: 2, row: 1, cols: 3 },
+        { col: 0, row: 2, cols: 3 }, { col: 1, row: 2, cols: 3 }, { col: 2, row: 2, cols: 3 },
     ],
     triangle: [
         { col: 0, row: 0, cols: 2 }, { col: 1, row: 0, cols: 2 },
@@ -1041,8 +1041,8 @@ export class Scene13WarLayer {
                     const cell = LAYOUT[mode][idx];
                     const back = mx + (2 - cell.row) * depth;
                     const x = side.f === 0 ? back : VW - back;
-                    // 5 通道间距 spanY/5；三角/雁行保持原型 spanY/3
-                    const y = midY + (cell.col - (cell.cols - 1) / 2) * (spanY / (cell.cols === 5 ? 5 : 3));
+                    // 阵型间距 spanY/3
+                    const y = midY + (cell.col - (cell.cols - 1) / 2) * (spanY / 3);
                     this.spawns.push({
                         f: side.f, key, x, y,
                         pool: poolPer,
