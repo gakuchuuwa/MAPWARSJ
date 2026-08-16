@@ -2,7 +2,7 @@
  * MAPWAR 军团方阵编辑器 (Legion Editor)
  * 访问：http://localhost:5173/legion-editor.html
  *
- * 功能：自由编辑和分配 923 势力的 AoE2 DE 决定版军团兵种、阵型与比例。
+ * 功能：自由编辑和分配 925 势力的 AoE2 DE 决定版军团兵种、阵型与比例。
  * 遵循与 batch-manager 相同的暗黑美学与高效交互规范。
  */
 
@@ -907,7 +907,10 @@ function updateRowScale(legion: CustomFactionLegion, rowIdx: number, scale: numb
     if (mode === 'square') {
         if (rowIdx === 0 && legion.slots[0]) legion.slots[0].scale = scale;
         else if (rowIdx === 1) {
+            // 🔴 [2026-08-16 修] 中坚三个槽（左/中/右）必须一起缩放，与 updateRowUnit 改兵种同口径。
+            //    之前漏了 slots[2]（中中），改缩放时中间那个兵不动、左右动，预览里中坚三兵大小不一。
             if (legion.slots[1]) legion.slots[1].scale = scale;
+            if (legion.slots[2]) legion.slots[2].scale = scale;
             if (legion.slots[3]) legion.slots[3].scale = scale;
         } else if (rowIdx === 2 && legion.slots[4]) legion.slots[4].scale = scale;
     } else {

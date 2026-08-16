@@ -116,7 +116,7 @@ export function getDefaultSlotsForMode(mode: FormationMode): CompositionSlot[] {
     return [
         { type: 'shield', count: 3 },
         { type: 'lancer', count: 1 },
-        { type: 'general_cavalry', count: 1 },
+        { type: 'lancer', count: 1 },   // 中中 = 与左右同兵种（08-15 取消刀骑将领，勿再写 general_cavalry）
         { type: 'lancer', count: 1 },
         { type: 'crossbow', count: 3 },
     ];
@@ -166,7 +166,7 @@ export function convertSlotsToMode(slots: CompositionSlot[], mode: FormationMode
     return [
         { type: frontType, count: 3 },
         { type: sideType, count: 1 },
-        { type: 'general_cavalry', count: 1 },
+        { type: sideType, count: 1 },   // 中中 = 与左右同兵种（08-15 取消刀骑将领，勿再写死 general_cavalry）
         { type: sideType, count: 1 },
         { type: backType, count: 3 },
     ];
