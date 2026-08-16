@@ -65,11 +65,6 @@ import {
 } from './GeneralSkillCombat';
 import { BattleUnitFactory } from './BattleUnitFactory';
 
-/**
- * 13 冻结的看门狗上限（真实毫秒）。一场 13 演出 ≤60s + 战败停留 5s，留足余量取 120s。
- * 超过就说明演出已经退场却没判负 —— 自动解冻，绝不让一场战斗永久卡死（见 update()）。
- */
-const SCENE13_FREEZE_MAX_MS = 120_000;
 import {
     reconcileSiegeGarrisonBoostWithLegion,
     reconcileSiegeGarrisonBoostWithLegions,
@@ -140,8 +135,6 @@ export class BattleField implements IOpeningPulseSink {
      * 胜负等演出判负后经 forceScene13Result 写回。8/9/10 永不置位，行为不变。
      */
     public scene13Frozen = false;
-    /** 冻结起始时刻（performance.now()，0 = 未冻结）。看门狗用，见 update() */
-    private scene13FrozenAt = 0;
 
     /**
      * [2026-08-11 13 v2] 演出判负 → 写死胜负并立即结算（跳过八环推演，走 presetResult + forceResolve 通道）。
@@ -886,26 +879,12 @@ export class BattleField implements IOpeningPulseSink {
     public update(deltaTime: number): void {
         if (this.isOver) return;
 
-        // [2026-08-11 13 v2] 13 演出接管：引擎不推进不结算（胜负由演出判负写回）
-        // 🔴 [2026-08-12 修永久冻结] 看门狗：冻结只该持续一场演出（≤60s + 停留）。
-        //   超时仍没等到 forceScene13Result 就自己解冻，让引擎按八环把这仗打完。
-        //   病史：scene13Frozen **只有 forceScene13Result 一条清除路径**，而退场有别的路
-        //   （BattleSceneLayer.exit → scene13War.stop 完全不碰引擎）。跟拍目标一换，
-        //   自愈判据 hasParticipant(新 followedId) 为假 → 判定"没仗打了"→ exit，
-        //   可这场仗根本没结束，只是被冻住 → **永远不结束**，参战双方永久 isExternalCombat，
-        //   军团不再行军、城永远打不下（主人 2026-08-12 截图实锤：地图回 zoom8、
-        //   战斗面板还挂着、兵力一兵不减、军团从 30 掉到 8）。
+        // [2026-08-11 13 v2] 13 演出接管：引擎不推进不结算（胜负由演出判负写回）。
+        // 🔴 [2026-08-16 主人取消时间限制] 去掉 120s 看门狗——演出自然打到全军覆没才判负，
+        //    引擎一直冻结，直到 forceScene13Result 解冻结算。永久冻结的兜底仍在：
+        //    BattleSceneLayer.unfreezeScene13Battle（退场解冻）+ Scene13WarLayer 自身防死锁（素材 10s/无回调）。
         if (this.scene13Frozen) {
-            if (this.scene13FrozenAt === 0) this.scene13FrozenAt = performance.now();
-            if (performance.now() - this.scene13FrozenAt > SCENE13_FREEZE_MAX_MS) {
-                console.warn('⏰ [BattleField] 13 冻结超时，自动解冻交还引擎推演（演出未判负）');
-                this.scene13Frozen = false;
-                this.scene13FrozenAt = 0;
-            } else {
-                return;
-            }
-        } else if (this.scene13FrozenAt !== 0) {
-            this.scene13FrozenAt = 0;
+            return;
         }
 
         // deltaTime = gameDelta（GameApp 已乘 timeScale）
