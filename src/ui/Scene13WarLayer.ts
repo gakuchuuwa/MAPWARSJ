@@ -29,6 +29,13 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
 const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon']);
 
+/** 🔴 上策（2026-08-16 主人定）：抠绿 + Base64 结果跨战斗缓存。
+ *  抠绿（getImageData 逐像素去绿幕）+ toDataURL（PNG 编码）是素材处理最耗时的一步，
+ *  且只去绿幕、与势力色无关 → 跨战斗、跨势力都能复用。第二次打同样素材跳过抠绿/编码，
+ *  只重做染色（势力色每局随机，走 SpriteTinter 现链路）。key = 源图 URL，value = 抠绿后 data URL。
+ */
+const DECROMA_CACHE = new Map<string, string>();
+
 // ── 兵种属性 ──
 //   全面套用 AoE2 DE 真实数据（2026-08-16 主人定）：五维 = 血 hp / 攻 atk / 防(近防+远防) / 射程 rng / 射速 reload。
 //   数值来自本机 empires2_x2_p1.dat（genieutils 实测抽取，非精锐基础档）。
@@ -1445,7 +1452,14 @@ export class Scene13WarLayer {
                             //    （主人 2026-08-11 截图实锤「色不正」，一军发紫一军发黄）。
                             //    SpriteTinter 才是正牌链路（主战场军团同款，LegionPhalanxDrawer:1259）：
                             //    它保护高光（金属不发假）、保护黑色轮廓（兵不隐身）、用灰度混合去掉素材底色。
-                            const base = this.dechroma(im);
+                            // 🔴 上策：抠绿 + Base64 跨战斗缓存（DECROMA_CACHE）。第二次同素材直接复用，
+                            //    跳过最耗时的 getImageData 逐像素抠绿 + PNG 编码；染色仍走现链路（势力色每局变）。
+                            let dataUrl = DECROMA_CACHE.get(url);
+                            if (!dataUrl) {
+                                const base = this.dechroma(im);
+                                dataUrl = base.toDataURL();
+                                DECROMA_CACHE.set(url, dataUrl);
+                            }
                             const clean = new Image();
                             // [2026-08-15 玩家色遮罩] 抠绿后 src 变 data: URL，保留源路径供 SpriteTinter 推导 `.pc.png`。
                             (clean as any).sourceUrl = url;
@@ -1466,7 +1480,7 @@ export class Scene13WarLayer {
                                 this.pending--;
                             };
                             clean.onerror = () => { this.pending--; };
-                            clean.src = base.toDataURL();
+                            clean.src = dataUrl;
                         } catch (e) {
                             console.warn('[Scene13WarLayer] 抠绿失败（回退空帧）:', key, e);
                             this.pending--;

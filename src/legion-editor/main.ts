@@ -586,8 +586,13 @@ function injectStyles(): void {
       .le-unit-card {
         background:#201d18; border:1px solid #363024; border-radius:4px;
         padding:8px 10px; cursor:pointer; transition:all 0.15s;
-        display:flex; flex-direction:column; gap:4px;
+        display:flex; flex-direction:row; align-items:center; gap:8px;
       }
+      .le-unit-thumb {
+        width:64px; height:64px; flex:0 0 64px; border-radius:3px;
+        background:#141210; image-rendering:pixelated;
+      }
+      .le-unit-card-text { display:flex; flex-direction:column; gap:4px; min-width:0; }
       .le-unit-card:hover {
         background:#302a20; border-color:#c8a84b; transform:translateY(-1px);
       }
@@ -1175,8 +1180,11 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
           <div class="le-modal-body">
             ${units.map(u => `
               <div class="le-unit-card" data-uid="${u.id}">
-                <div class="le-unit-card-name">${u.name}</div>
-                <div class="le-unit-card-cat">${u.categoryLabel}</div>
+                <canvas class="le-unit-thumb" data-uid="${u.id}" width="64" height="64"></canvas>
+                <div class="le-unit-card-text">
+                  <div class="le-unit-card-name">${u.name}</div>
+                  <div class="le-unit-card-cat">${u.categoryLabel}</div>
+                </div>
               </div>
             `).join('')}
           </div>
@@ -1218,6 +1226,11 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
                 }
                 closeModal();
             });
+        });
+
+        // 🔴 缩略图：异步加载 idle 第 0 方向第一帧，缩略显示（loadSprite/loadMeta 有缓存，切 tab/搜索不重复拉网）
+        overlay.querySelectorAll<HTMLCanvasElement>('.le-unit-thumb').forEach(c => {
+            drawUnitThumb(c, c.dataset.uid!);
         });
     };
 
@@ -1306,6 +1319,30 @@ async function loadMeta(pathPrefix: string): Promise<DynMeta | null> {
         metaCache.set(pathPrefix, null);
         return null;
     }
+}
+
+/** 兵种卡片缩略图：画 idle 朝南方向（dir=3，正对玩家）的第一帧，等比缩进 64×64 居中。 */
+async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise<void> {
+    const prefix = getUnitPathPrefix(unitId);
+    const imgUrl = `${prefix}idle_3.png`;
+    try {
+        const img = await loadSprite(imgUrl);
+        let meta = metaCache.get(prefix);
+        if (meta === undefined) meta = await loadMeta(prefix);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        const actMeta = meta?.idle;
+        const dirMeta = actMeta?.dirs?.['3'];
+        let fw: number, fh: number;
+        if (actMeta && dirMeta) { fw = dirMeta.fw; fh = dirMeta.fh; }
+        else { fw = img.naturalHeight; fh = img.naturalHeight; }   // 兜底：假设正方形帧
+        const size = canvas.width;
+        const scale = Math.min(size / fw, size / fh);
+        const dw = fw * scale, dh = fh * scale;
+        const dx = (size - dw) / 2, dy = (size - dh) / 2;
+        ctx.clearRect(0, 0, size, size);
+        ctx.drawImage(img, 0, 0, fw, fh, dx, dy, dw, dh);   // 第 0 帧（sx=0, sy=0）
+    } catch { /* 素材加载失败 → 留空占位，不拖累列表 */ }
 }
 
 function startCanvasPreview(): void {
