@@ -1738,7 +1738,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -28
         },
         "/assets/TIBET/ali_gandancaiwang.png": {
-            "scale": 0.97,
+            "scale": 0.93,
             "offsetX": 0,
             "offsetY": -21
         },
@@ -1963,7 +1963,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 9
         },
         "/assets/TIBET/yangtong_chisongdezan.png": {
-            "scale": 0.91,
+            "scale": 0.87,
             "offsetX": 0,
             "offsetY": -12
         },

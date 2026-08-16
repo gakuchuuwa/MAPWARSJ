@@ -70,6 +70,7 @@ export class CameraFollowUI {
     private static readonly STACK_LEFT_PX = 16;
     private static readonly YUEFEI_BTN_TOP_PX = 62;
     private static readonly HUOQUBING_BTN_TOP_PX = 104;
+    private static readonly ZHUGELIANG_BTN_TOP_PX = 146;
     private static readonly LIST_PANEL_TOP_PX = 62;
     /** 势力统计数据源（合并势力榜后，每行附带势力兵力/据点数） */
     private cityManager: { getCities(): any[] } | null = null;
@@ -79,11 +80,14 @@ export class CameraFollowUI {
     private onYuefeiExpedition: (() => void) | null = null;
     /** 「霍去病封狼居胥」按钮回调（由 GameApp 注入） */
     private onHuoQubingExpedition: (() => void) | null = null;
+    /** 「诸葛亮北伐中原」按钮回调（由 GameApp 注入） */
+    private onZhugeLiangExpedition: (() => void) | null = null;
 
     constructor() {
         this.createListButton();
         this.createYuefeiButton();
         this.createHuoQubingButton();
+        this.createZhugeLiangButton();
         this.createListPanel();
         this.createFollowBanner();
     }
@@ -96,6 +100,11 @@ export class CameraFollowUI {
     /** 注入「霍去病封狼居胥」按钮点击回调 */
     public setHuoQubingHandler(fn: () => void): void {
         this.onHuoQubingExpedition = fn;
+    }
+
+    /** 注入「诸葛亮北伐中原」按钮点击回调 */
+    public setZhugeLiangHandler(fn: () => void): void {
+        this.onZhugeLiangExpedition = fn;
     }
 
     /** 开局尚未手动选军团时，首次出现野战军团则自动跟随（名将优先，否则兵力最多） */
@@ -294,7 +303,53 @@ export class CameraFollowUI {
         document.body.appendChild(btn);
     }
 
-    // ─── 2. 军团列表面板（z-index 高于岳飞按钮，展开时盖住下层按钮） ────────
+    // ─── 1d. 诸葛亮北伐中原（固定于霍去病按钮下） ────────
+
+    private createZhugeLiangButton(): void {
+        const btn = document.createElement('button');
+        btn.id = 'zhugeliang-expedition-btn';
+        btn.title = '诸葛亮率白毦军，出汉中北伐：略阳 → 河池 → 天水 → 汧源(街亭) → 岐山(五丈原) → 长安';
+        btn.innerHTML = '⚔ 诸葛亮北伐中原';
+        btn.style.cssText = `
+            position: fixed;
+            top: ${CameraFollowUI.ZHUGELIANG_BTN_TOP_PX}px;
+            left: ${CameraFollowUI.STACK_LEFT_PX}px;
+            z-index: 10000;
+            padding: 7px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #fdfbf7;
+            background: linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(156, 48, 47, 0.45);
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25);
+            transition: all 0.25s ease;
+            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
+            letter-spacing: 2px;
+        `;
+
+        btn.addEventListener('mouseenter', () => {
+            btn.style.borderColor = '#d4a843';
+            btn.style.background = 'linear-gradient(135deg, rgba(184, 56, 54, 0.95) 0%, rgba(125, 32, 35, 0.95) 100%)';
+            btn.style.boxShadow = '0 4px 20px rgba(156,48,47,0.35), inset 0 1px 0 rgba(255,255,255,0.4)';
+            btn.style.transform = 'translateY(-1px)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.borderColor = 'rgba(156, 48, 47, 0.45)';
+            btn.style.background = 'linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%)';
+            btn.style.boxShadow = '0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25)';
+            btn.style.transform = 'none';
+        });
+
+        btn.addEventListener('click', () => this.onZhugeLiangExpedition?.());
+
+        document.body.appendChild(btn);
+    }
+
+    // ─── 2. 军团列表面板（z-index 高于岳飞/霍去病/诸葛亮按钮，展开时盖住下层按钮） ────────
 
     private createListPanel(): void {
         const panel = document.createElement('div');
