@@ -30,13 +30,13 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'rattan_archer_elite']);
 
 // ── 兵种属性 ──
-//   三类基准（CLS_STATS）：近战 150/45/55、骑兵 130/45/130、远程 90/28/50 射程160
-//   步兵族已差异化（2026-08-13，以轻步 150/45/55 为基准）：
-//     重步 158/45/52、近卫 176/42/47、青州 120/58/52、蛮斧 98/70/55、藤甲 168/42/50、象兵 aoe+spd40
-//   弓骑 = 骑兵属性 + 远程射击（dmg 15 是平衡值勿改，见 horse_archer 行注释锁死）
+//   全面套用 AoE2 DE 真实数据（2026-08-16 主人定）：五维 = 血 hp / 攻 atk / 防(近防+远防) / 射程 rng / 射速 reload。
+//   数值来自本机 empires2_x2_p1.dat（genieutils 实测抽取，非精锐基础档）。
+//   相克废弃旧 C=1.8 全局系数，改用 DE 加成伤害（bonus）+ 近/远防减法自然涌现。
+//   移速 spd 保留原值（「五维」不含移速）。
 interface WarType {
     name: string;
-    /** 近战 / 骑兵 / 远程（决定属性组） */
+    /** 近战 / 骑兵 / 远程（决定移动速度组、风筝等行为；伤害类型看 dmgType） */
     cls: 'melee' | 'cav' | 'ranged';
     /** 尺寸倍率（象兵大、骑兵略大） */
     sz: number;
@@ -44,132 +44,128 @@ interface WarType {
     aoe?: boolean;
     /** 放风筝距离（弓骑） */
     kite?: number;
-    /**
-     * 单项覆盖属性组（目前只有突骑兵用）。
-     * 🔴 突骑兵是**骑兵 + 用射的**：血/速走骑兵组，射程/伤害必须走远程组。
-     *    只写 cls:'cav' 会让它射程 = 0（65px 贴身），而 kite 是 70 —— 70 > 65，
-     *    它一接敌就后撤、退开又够不着，永远在原地抽搐，画面上却在播射击动作。
-     *    纯骑三文化（草原/青藏/中亚）后排全是它，必须覆盖。
-     */
-    rng?: number;
-    dmg?: number;
-    /** 单项覆盖生命（2026-08-13 步兵族差异化：重甲/藤甲/禁军血厚，青州/蛮族血薄） */
-    hp?: number;
-    /** 单项覆盖移动速度（重武器用：象兵笨重、床弩拖拽，都比同类慢） */
-    spd?: number;
+    /** 血（DE hit_points） */
+    hp: number;
+    /** 攻（DE displayed_attack，基础攻击） */
+    atk: number;
+    /** 近防（DE melee armor） */
+    meleeArmor: number;
+    /** 远防（DE pierce armor） */
+    pierceArmor: number;
+    /** 射程（px = DE max_range × 40；0 = 贴身白刃） */
+    rng: number;
+    /** 装填时间（秒，DE reload_time，即射速） */
+    reload: number;
+    /** 伤害类型（DE attack class：3=pierce / 4=melee） */
+    dmgType: 'melee' | 'pierce';
+    /** 移动速度（px/秒，保留原值） */
+    spd: number;
+    /** 加成伤害（DE attacks 非 3/4 类）：护甲类 → 额外攻击 */
+    bonus?: Record<number, number>;
+    /** 自身护甲类（DE armors 非 3/4 类，供被加成伤害命中判定） */
+    armorTags?: number[];
 }
 
+// ── 兵种属性（2026-08-16 全面套用 AoE2 DE 真实数据）──
+// 五维 = 血 hp / 攻 atk / 防（meleeArmor 近防 + pierceArmor 远防）/ 射程 rng / 射速 reload。
+// 数值一律来自本机 empires2_x2_p1.dat（genieutils 实测抽取），非精锐基础档。
+// 相克不再用全局 C=1.8：改用 DE 加成伤害（bonus：护甲类 → 额外攻击）+ 近/远防减法。
+// 移速 spd 保留原值（「五维」不含移速，主人未要求动，后续按需调）。
+// rng = DE max_range × 40（px）；0 = 贴身白刃。
 const WAR_TYPES: Record<string, WarType> = {
-    // ── 近战 8 ──（2026-08-13 步兵族差异化定稿：以轻步 150/45/55 为基准，血厚=防护、攻按武器、速按装备轻重）
-    light_infantry: { name: '轻步兵', cls: 'melee', sz: 1 },
-    heavy_infantry: { name: '重步兵', cls: 'melee', sz: 1, hp: 158, spd: 52 },         // 重甲：血厚同攻，略慢
-    shield:         { name: '近卫兵', cls: 'melee', sz: 1, hp: 176, dmg: 42, spd: 47 },// 禁军：极肉城墙，最慢
-    spear:          { name: '青州兵', cls: 'melee', sz: 1, hp: 120, dmg: 58, spd: 52 },// 精锐枪兵：攻高脆
-    axe:            { name: '蛮族兵', cls: 'melee', sz: 1, hp: 98, dmg: 70, spd: 55 }, // 蛮族：极攻·脆
-    armored:        { name: '藤甲兵', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 藤甲：肉，藤编轻便
-    samurai:        { name: '日本武士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// AoE2 DE 日本武士，视觉替换藤甲兵，数值不变；sz=1 统一（2026-08-15 日本全决定版）
-    samurai_elite:  { name: '精锐武士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// AoE2 DE 精锐武士，视觉替换藤甲兵，数值不变；sz=1 统一
-    elephant:       { name: '象兵',   cls: 'melee', sz: 1.6, aoe: true, spd: 40 },
-    // ── 朝鲜全决定版（2026-08-15 主人定：前排刀剑手/中排黑光铠骑兵/后排火焰弓箭手，数值照抄被替换兵种）──
-    eastern_swordsman:{ name: '东方剑士', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },// 视觉替换藤甲兵（armored），数值不变（中东东方剑士）
-    hei_kuang:      { name: '黑光铠骑兵', cls: 'cav', sz: 1 },                             // 视觉替换重骑兵（heavy_cavalry）；帝国决定版兵种 sz 统一=1
-    fire_archer:    { name: '火焰弓箭手', cls: 'ranged', sz: 1 },                          // 视觉替换弓兵（archer），数值不变
-    // ── 东北全决定版（2026-08-15 主人定：前排铁浮图/中排钦察/后排精锐长弓兵，数值照抄被替换兵种）──
-    iron_pagoda:      { name: '铁浮图', cls: 'cav', sz: 1 },                                // 视觉替换重骑兵（heavy_cavalry）；帝国决定版兵种 sz 统一=1
-    kipchak:          { name: '钦察', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 },     // 视觉替换突骑兵（horse_archer），数值不变（弓骑算骑兵+风筝）
-    longbowman_elite: { name: '精锐长弓兵', cls: 'ranged', sz: 1 },                         // 视觉替换弓兵（archer），数值不变
-    // ── 西域全决定版（2026-08-15 主人定：前排长枪兵/中排骑射手/后排轻骑兵，数值照抄被替换兵种）──
-    pikeman:        { name: '长枪兵', cls: 'melee', sz: 1 },                                 // 视觉替换轻步兵（light_infantry），数值不变
-    cav_archer:     { name: '骑射手', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 },      // 视觉替换突骑兵（horse_archer），数值不变（弓骑算骑兵+风筝）
-    light_riders:   { name: '轻骑兵', cls: 'cav', sz: 1 },                                   // 视觉替换轻骑兵（lancer）；帝国决定版兵种 sz 统一=1
-    // ── 江南全决定版（2026-08-15 主人定：前排刀剑手/中排诸葛弩/后排火焰弓箭手，数值照抄被替换兵种）──
-    chukonu:        { name: '诸葛弩', cls: 'ranged', sz: 1 },                                // 视觉替换弩兵（crossbow），数值不变
-    // ── 川蜀全决定版（2026-08-15 主人定：前排白毦兵/中排诸葛弩/后排藤弓兵，数值照抄被替换兵种）──
-    white_feather_guard: { name: '白毦兵', cls: 'melee', sz: 1 },                            // 视觉替换重步兵（heavy_infantry），数值不变
-    elite_white_feather_guard: { name: '精锐白毦兵', cls: 'melee', sz: 1 },                  // 视觉替换白毦兵（white_feather_guard），数值不变
-    rattan_archer:  { name: '藤弓兵', cls: 'ranged', sz: 1 },                                // 视觉替换弩兵（crossbow），数值不变
-    // ── 河西全决定版（2026-08-15 主人定：前排精锐火矛手/中排诸葛弩/后排黑光铠骑兵，数值照抄被替换兵种）──
-    elite_fire_lancer: { name: '精锐火矛手', cls: 'melee', sz: 1 },                          // 视觉替换青州兵（spear），数值不变
-    // ── 江南/川蜀精英版（2026-08-15 主人修订：江南后排精锐火焰弓箭手、川蜀中排精锐诸葛弩）──
-    elite_fire_archer: { name: '精锐火焰弓箭手', cls: 'ranged', sz: 1 },                     // 视觉替换火焰弓箭手（fire_archer），数值不变
-    elite_chukonu:   { name: '精锐诸葛弩', cls: 'ranged', sz: 1 },                           // 视觉替换诸葛弩（chukonu），数值不变
-    // ── 青藏全决定版（2026-08-15 主人定：答剌罕骑兵+精锐答剌罕骑兵，纯骑三角）──
-    tarkan:           { name: '答剌罕骑兵', cls: 'cav', sz: 1 },                              // 视觉替换重骑兵（heavy_cavalry），数值不变
-    elite_tarkan:     { name: '精锐答剌罕骑兵', cls: 'cav', sz: 1 },                          // 视觉替换突骑兵（horse_archer），数值不变（纯骑，无风筝）
-    // ── 西域修订（2026-08-15 主人定：前排精锐近卫军/后排草原枪兵，骑射手不变）──
-    elite_guardsman:  { name: '精锐近卫军', cls: 'melee', sz: 1 },                            // 视觉替换长枪兵（pikeman），数值不变
-    steppe_lancer:    { name: '草原枪兵', cls: 'cav', sz: 1 },                                // 视觉替换轻骑兵（light_riders），数值不变
-    // ── 日本修订（2026-08-15 主人定：后排步弓手→忍者）──
-    ninja:            { name: '忍者', cls: 'melee', sz: 1 },                                  // 视觉替换步弓手（archer），数值不变（近战步兵）
-    // ── 剩余 10 文化全决定版（2026-08-15 主人定：北方/中原/岭南/滇缅/草原/中亚/西亚/斯拉夫/日耳曼/拉丁，数值照抄被替换兵种）──
-    liao_dao:           { name: '辽刀', cls: 'melee', sz: 1 },                                // 视觉替换青州兵（spear），数值不变
-    elite_liao_dao:     { name: '精锐辽刀', cls: 'melee', sz: 1 },                            // 视觉替换辽刀（liao_dao），数值不变
-    fire_lancer:        { name: '火矛兵', cls: 'melee', sz: 1 },                              // 视觉替换轻步兵（light_infantry），数值不变
-    swordsman:          { name: '剑士', cls: 'melee', sz: 1 },                                // 视觉替换火矛兵（fire_lancer），数值不变（中原前排，AoE2 剑士）
-    kamayuk:            { name: '印加枪兵长', cls: 'melee', sz: 1 },                          // 视觉替换火矛兵（fire_lancer），数值不变（北方后排，AoE2 印加枪兵长）
-    xianbei_raider:     { name: '鲜卑掠骑兵', cls: 'cav', sz: 1 },                            // 视觉替换重骑兵（heavy_cavalry），数值不变
-    tiger_rider:        { name: '虎豹骑', cls: 'cav', sz: 1 },                                // 视觉替换重骑兵（heavy_cavalry），数值不变
-    jian_swordsman:     { name: '刀剑手', cls: 'melee', sz: 1, hp: 168, dmg: 42, spd: 50 },   // 视觉替换藤甲兵（armored），数值不变（吴国刀剑手）
-    imperial_skirmisher:{ name: '帝王掷矛手', cls: 'ranged', sz: 1 },                         // 视觉替换弩兵（crossbow），数值不变
-    war_elephant:       { name: '象兵', cls: 'melee', sz: 1, aoe: true, spd: 40 },            // 视觉替换象兵（elephant），数值不变（DE 素材自带尺寸）
-    karambit_warrior:   { name: '爪刀勇士', cls: 'melee', sz: 1 },                            // 视觉替换藤甲兵（armored），数值不变
-    karambit_warrior_elite: { name: '精锐爪刀勇士', cls: 'melee', sz: 1 },                   // 视觉替换爪刀勇士（karambit_warrior），数值不变
-    arambai:            { name: '飞镖骑兵', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 }, // 视觉替换突骑兵（horse_archer），数值不变（弓骑）
-    mangudai:           { name: '蒙古突骑', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 }, // 视觉替换突骑兵（horse_archer），数值不变（弓骑）
-    keshik:             { name: '怯薛军', cls: 'cav', sz: 1 },                                // 视觉替换重骑兵（heavy_cavalry），数值不变
-    boyar:              { name: '贵族铁骑', cls: 'cav', sz: 1 },                              // 视觉替换重骑兵（heavy_cavalry），数值不变
-    savar:              { name: '萨瓦尔', cls: 'cav', sz: 1 },                                // 视觉替换重骑兵（heavy_cavalry），数值不变（波斯精锐重骑）
-    elite_kipchak:      { name: '精锐钦察', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 },// 视觉替换突骑兵（horse_archer），数值不变（弓骑）
-    elite_composite_bowman: { name: '精锐复合弓箭手', cls: 'ranged', sz: 1 },                // 视觉替换弓兵（archer），数值不变
-    camel_heavy:        { name: '重装骆驼兵', cls: 'cav', sz: 1 },                            // 视觉替换重骑兵（heavy_cavalry），数值不变
-    cav_archer_heavy:   { name: '重装骑射手', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 }, // 视觉替换重装骆驼兵（camel_heavy），数值照弓骑（骑射+风筝）
-    composite_bowman:   { name: '复合弓箭手', cls: 'ranged', sz: 1 },                         // 视觉替换弓兵（archer），数值不变
-    elite_steppe_lancer:{ name: '精锐草原枪兵', cls: 'cav', sz: 1 },                          // 视觉替换重骑兵（heavy_cavalry），数值不变
-    throwing_axeman:    { name: '掷斧兵', cls: 'ranged', sz: 1 },                             // 视觉替换弓兵（archer），数值不变（远程掷斧）
-    champion:           { name: '冠军剑士', cls: 'melee', sz: 1 },                            // 视觉替换重步兵（heavy_infantry），数值不变
-    crossbowman:        { name: '弩手', cls: 'ranged', sz: 1 },                               // 视觉替换弩兵（crossbow），数值不变
-    paladin:            { name: '游侠', cls: 'cav', sz: 1 },                                  // 视觉替换重骑兵（heavy_cavalry），数值不变
-    coustillier:        { name: '马上轻装兵', cls: 'cav', sz: 1 },                            // 视觉替换轻骑兵（lancer），数值不变
-    heavy_pikeman:      { name: '重装长枪兵', cls: 'melee', sz: 1 },                          // 视觉替换青州兵（spear），数值不变
-    arbalest:           { name: '劲弩手', cls: 'ranged', sz: 1 },                             // 视觉替换弩兵（crossbow），数值不变
-    // ── 阵型重构新增（2026-08-15 主人定：鱼鳞/三角/雁行三阵型，新兵种数值照抄被替换兵种）──
-    hei_kuang_heavy:      { name: '精锐黑光铠骑兵', cls: 'cav', sz: 1 },                      // 视觉替换黑光铠骑兵（hei_kuang），数值不变
-    mangudai_elite:       { name: '精锐蒙古突骑', cls: 'cav', sz: 1, kite: 60, rng: 120, dmg: 22 },// 视觉替换蒙古突骑（mangudai），数值不变（弓骑）
-    pattiyoda_longbowman: { name: '帕提尤达长弓手', cls: 'ranged', sz: 1 },                   // 视觉替换精锐长弓兵（longbowman_elite），数值不变
-    armored_elephant:     { name: '皮甲战象', cls: 'melee', sz: 1, aoe: true, spd: 40 },      // 视觉替换象兵（war_elephant），数值不变（DE 素材自带尺寸）
-    ballista_elephant:    { name: '重弩战象', cls: 'ranged', sz: 1, spd: 40 },                // 视觉替换弩兵（crossbow），数值不变（象背远程，慢）
-    elephant_archer:      { name: '骑象射手', cls: 'ranged', sz: 1, spd: 40 },                // 视觉替换弓兵（archer），数值不变（象背远程，慢）
-    rattan_archer_elite:  { name: '精锐藤弓兵', cls: 'ranged', sz: 1 },                       // 视觉替换藤弓兵（rattan_archer），数值不变
-    legionary:            { name: '罗马军', cls: 'melee', sz: 1 },                            // 视觉替换掷斧兵（throwing_axeman），数值不变（近战步兵）
-    // ── 骑兵 4 ──（突骑 = 骑兵属性 + 远程射击 + 放风筝）
-    lancer:         { name: '轻骑兵', cls: 'cav', sz: 1.15 },
-    heavy_cavalry:  { name: '重骑兵', cls: 'cav', sz: 1.15 },
-    general_cavalry:{ name: '虎豹骑', cls: 'cav', sz: 1.15 },
-    // 🔴🔴 弓骑算骑兵（2026-08-14 主人定稿）：克制关系统一按骑兵（骑克步/被弓克），不再「射人算远程」。
-    //    dmg 15→22、rng 160→120（war_sim 实测，3 万兵、种子 7/11/23）：
-    //      弓骑克步兵 = 骑克步 ×1.8 + 风筝 → 克制方损失 25.8%（比纯骑兵 32% 更碾压，风筝天然优势）；
-    //      弓兵克弓骑 = 弓克骑 ×1.8，rng 120 < 弓兵 160 先手 → 克制方损失 30.1%（对齐基准 31%）。
-    //    dmg 22 = 远程 20 + 2（骑射略强于步射）；rng 120 = 弓兵 160 − 40（马背射程短于步弓）。
-    // 🔴 kite 100→60（2026-08-13 修「纯突骑守军风筝无解」）：60 < 接战距离 65 = 被贴脸不能再后撤。
-    horse_archer:   { name: '突骑兵', cls: 'cav', sz: 1.15, kite: 60, rng: 120, dmg: 22 },
-    // ── 远程 5 ──
-    archer:         { name: '弓兵',   cls: 'ranged', sz: 1 },
-    crossbow:       { name: '弩兵',   cls: 'ranged', sz: 1 },
-    ballista:       { name: '元戎弩', cls: 'ranged', sz: 1, spd: 35 },
+    light_infantry: { name: '轻步兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 31] },
+    heavy_infantry: { name: '重步兵', cls: 'melee', sz: 1, hp: 75, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 52, dmgType: 'melee', armorTags: [1, 31] },
+    shield: { name: '近卫兵', cls: 'melee', sz: 1, hp: 70, atk: 14, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 47, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
+    spear: { name: '青州兵', cls: 'melee', sz: 1, hp: 55, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 52, dmgType: 'melee', bonus: { 5: 25, 8: 22, 16: 16, 21: 1, 29: 1, 30: 18, 35: 7 }, armorTags: [27, 1, 31] },
+    axe: { name: '蛮族兵', cls: 'melee', sz: 1, hp: 54, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    armored: { name: '藤甲兵', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 3, 29: 6 }, armorTags: [1, 31] },
+    samurai: { name: '日本武士', cls: 'melee', sz: 1, hp: 70, atk: 10, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 50, dmgType: 'melee', bonus: { 19: 10, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    samurai_elite: { name: '精锐武士', cls: 'melee', sz: 1, hp: 80, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 50, dmgType: 'melee', bonus: { 19: 12, 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
+    elephant: { name: '象兵', cls: 'melee', sz: 1.6, aoe: true, hp: 450, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 30, 13: 30 }, armorTags: [5, 8, 19, 31] },
+    eastern_swordsman: { name: '东方剑士', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 29: 6 }, armorTags: [1, 31] },
+    hei_kuang: { name: '黑光铠骑兵', cls: 'cav', sz: 1, hp: 60, atk: 11, meleeArmor: 4, pierceArmor: 3, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
+    fire_archer: { name: '火焰弓箭手', cls: 'ranged', sz: 1, hp: 35, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 360, reload: 3.5, spd: 50, dmgType: 'pierce', bonus: { 16: 3, 20: 1, 21: 4, 27: 2 }, armorTags: [15, 19, 31] },
+    iron_pagoda: { name: '铁浮图', cls: 'cav', sz: 1, hp: 115, atk: 12, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.15, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    kipchak: { name: '钦察', cls: 'cav', sz: 1, kite: 60, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.2, spd: 130, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 19, 31] },
+    longbowman_elite: { name: '精锐长弓兵', cls: 'ranged', sz: 1, hp: 40, atk: 7, meleeArmor: 0, pierceArmor: 1, rng: 240, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    pikeman: { name: '长枪兵', cls: 'melee', sz: 1, hp: 55, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 25, 8: 22, 16: 16, 21: 1, 29: 1, 30: 18, 35: 7 }, armorTags: [27, 1, 31] },
+    cav_archer: { name: '骑射手', cls: 'cav', sz: 1, kite: 60, hp: 50, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [28, 15, 8, 31] },
+    light_riders: { name: '轻骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
+    chukonu: { name: '诸葛弩', cls: 'ranged', sz: 1, hp: 45, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    white_feather_guard: { name: '白毦兵', cls: 'melee', sz: 1, hp: 95, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 21: 2, 29: 4, 30: 6 }, armorTags: [1, 19, 31] },
+    elite_white_feather_guard: { name: '精锐白毦兵', cls: 'melee', sz: 1, hp: 100, atk: 8, meleeArmor: 0, pierceArmor: 3, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 8, 8: 8, 21: 2, 29: 4, 30: 7 }, armorTags: [1, 19, 31] },
+    rattan_archer: { name: '藤弓兵', cls: 'ranged', sz: 1, hp: 40, atk: 6, meleeArmor: 0, pierceArmor: 4, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    elite_fire_lancer: { name: '精锐火矛手', cls: 'melee', sz: 1, hp: 85, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 15, 8: 15, 16: 12, 21: 1, 30: 12 }, armorTags: [29, 1, 31, 23] },
+    elite_fire_archer: { name: '精锐火焰弓箭手', cls: 'ranged', sz: 1, hp: 40, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 400, reload: 3.5, spd: 50, dmgType: 'pierce', bonus: { 16: 4, 20: 1, 21: 4, 27: 2 }, armorTags: [15, 19, 31] },
+    elite_chukonu: { name: '精锐诸葛弩', cls: 'ranged', sz: 1, hp: 50, atk: 10, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    tarkan: { name: '答剌罕骑兵', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 11: 8, 13: 12, 22: 8, 26: 10 }, armorTags: [8, 19, 31] },
+    elite_tarkan: { name: '精锐答剌罕骑兵', cls: 'cav', sz: 1, hp: 150, atk: 11, meleeArmor: 1, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 11: 10, 13: 12, 22: 10, 26: 10 }, armorTags: [8, 19, 31] },
+    elite_guardsman: { name: '精锐近卫军', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 28, 8: 32, 16: 17, 21: 1, 29: 1, 30: 26, 35: 7 }, armorTags: [27, 1, 31] },
+    steppe_lancer: { name: '草原枪兵', cls: 'cav', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 40, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
+    ninja: { name: '忍者', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.8, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2, 36: 9 }, armorTags: [1, 31] },
+    liao_dao: { name: '辽刀', cls: 'melee', sz: 1, hp: 75, atk: 9, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
+    elite_liao_dao: { name: '精锐辽刀', cls: 'melee', sz: 1, hp: 85, atk: 13, meleeArmor: 3, pierceArmor: 1, rng: 0, reload: 2.4, spd: 55, dmgType: 'melee', bonus: { 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
+    fire_lancer: { name: '火矛兵', cls: 'melee', sz: 1, hp: 65, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 5, 8: 5, 16: 4, 21: 1, 30: 4 }, armorTags: [29, 1, 31, 23] },
+    swordsman: { name: '剑士', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
+    kamayuk: { name: '印加枪兵长', cls: 'melee', sz: 1, hp: 70, atk: 7, meleeArmor: 1, pierceArmor: 0, rng: 40, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 5: 20, 8: 8, 30: 6 }, armorTags: [1, 19, 31] },
+    xianbei_raider: { name: '鲜卑掠骑兵', cls: 'cav', sz: 1, hp: 30, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 1.8, spd: 130, dmgType: 'pierce', bonus: { 1: 1, 27: 3 }, armorTags: [28, 15, 8, 19, 31] },
+    tiger_rider: { name: '虎豹骑', cls: 'cav', sz: 1, hp: 110, atk: 11, meleeArmor: 0, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 6 }, armorTags: [8, 19, 31] },
+    jian_swordsman: { name: '刀剑手', cls: 'melee', sz: 1, hp: 70, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 15: 4, 21: 2 }, armorTags: [1, 31, 29, 19] },
+    imperial_skirmisher: { name: '帝王掷矛手', cls: 'ranged', sz: 1, hp: 35, atk: 4, meleeArmor: 0, pierceArmor: 5, rng: 200, reload: 3.0, spd: 50, dmgType: 'pierce', bonus: { 15: 5, 27: 4, 28: 3, 35: 3 }, armorTags: [15, 31, 38] },
+    war_elephant: { name: '象兵', cls: 'melee', sz: 1, aoe: true, hp: 450, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 30, 13: 30 }, armorTags: [5, 8, 19, 31] },
+    karambit_warrior: { name: '爪刀勇士', cls: 'melee', sz: 1, hp: 30, atk: 7, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 29: 2 }, armorTags: [1, 19, 31] },
+    karambit_warrior_elite: { name: '精锐爪刀勇士', cls: 'melee', sz: 1, hp: 40, atk: 8, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
+    arambai: { name: '飞镖骑兵', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 12, meleeArmor: 0, pierceArmor: 1, rng: 200, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 17: 2 }, armorTags: [19, 28, 15, 8, 31] },
+    mangudai: { name: '蒙古突骑', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.1, spd: 130, dmgType: 'pierce', bonus: { 20: 3, 27: 1 }, armorTags: [28, 15, 8, 19, 31] },
+    keshik: { name: '怯薛军', cls: 'cav', sz: 1, hp: 120, atk: 9, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    boyar: { name: '贵族铁骑', cls: 'cav', sz: 1, hp: 100, atk: 12, meleeArmor: 4, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    savar: { name: '萨瓦尔', cls: 'cav', sz: 1, hp: 145, atk: 14, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 15: 2 }, armorTags: [8, 31] },
+    elite_kipchak: { name: '精锐钦察', cls: 'cav', sz: 1, kite: 60, hp: 45, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.2, spd: 130, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 19, 31] },
+    elite_composite_bowman: { name: '精锐复合弓箭手', cls: 'ranged', sz: 1, hp: 50, atk: 4, meleeArmor: 2, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    camel_heavy: { name: '重装骆驼兵', cls: 'cav', sz: 1, hp: 120, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 18, 16: 9, 30: 9, 35: 7 }, armorTags: [30, 31, 39] },
+    cav_archer_heavy: { name: '重装骑射手', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 7, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 4 }, armorTags: [28, 15, 8, 31] },
+    composite_bowman: { name: '复合弓箭手', cls: 'ranged', sz: 1, hp: 40, atk: 4, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    elite_steppe_lancer: { name: '精锐草原枪兵', cls: 'cav', sz: 1, hp: 80, atk: 11, meleeArmor: 0, pierceArmor: 2, rng: 40, reload: 2.0, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
+    throwing_axeman: { name: '掷斧兵', cls: 'ranged', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 120, reload: 2.0, spd: 50, dmgType: 'melee', bonus: { 21: 1, 29: 1 }, armorTags: [1, 19, 31] },
+    champion: { name: '冠军剑士', cls: 'melee', sz: 1, hp: 70, atk: 14, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 31] },
+    crossbowman: { name: '弩手', cls: 'ranged', sz: 1, hp: 35, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 3 }, armorTags: [15, 31] },
+    paladin: { name: '游侠', cls: 'cav', sz: 1, hp: 160, atk: 14, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
+    coustillier: { name: '马上轻装兵', cls: 'cav', sz: 1, hp: 115, atk: 8, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
+    heavy_pikeman: { name: '重装长枪兵', cls: 'melee', sz: 1, hp: 75, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 55, dmgType: 'melee', bonus: { 5: 25, 8: 22, 16: 16, 21: 1, 29: 1, 30: 18, 35: 7 }, armorTags: [27, 1, 31] },
+    arbalest: { name: '劲弩手', cls: 'ranged', sz: 1, hp: 40, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 3 }, armorTags: [15, 31] },
+    hei_kuang_heavy: { name: '精锐黑光铠骑兵', cls: 'cav', sz: 1, hp: 90, atk: 12, meleeArmor: 4, pierceArmor: 3, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 1: 1 }, armorTags: [8, 31] },
+    mangudai_elite: { name: '精锐蒙古突骑', cls: 'cav', sz: 1, kite: 60, hp: 60, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 160, reload: 2.1, spd: 130, dmgType: 'pierce', bonus: { 20: 5, 27: 1 }, armorTags: [28, 15, 8, 19, 31] },
+    pattiyoda_longbowman: { name: '帕提尤达长弓手', cls: 'ranged', sz: 1, hp: 50, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.2, spd: 50, dmgType: 'pierce', bonus: { 5: 4, 27: 2 }, armorTags: [15, 19, 31] },
+    armored_elephant: { name: '皮甲战象', cls: 'melee', sz: 1, aoe: true, hp: 250, atk: 12, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 11: 4, 13: 4 }, armorTags: [5, 8, 31] },
+    ballista_elephant: { name: '重弩战象', cls: 'ranged', sz: 1, hp: 250, atk: 9, meleeArmor: 0, pierceArmor: 3, rng: 200, reload: 2.5, spd: 40, dmgType: 'pierce', bonus: { 11: 2, 13: 3, 16: 8, 18: 100, 21: 3 }, armorTags: [8, 19, 5, 20, 31, 37] },
+    elephant_archer: { name: '骑象射手', cls: 'ranged', sz: 1, hp: 230, atk: 6, meleeArmor: 0, pierceArmor: 2, rng: 160, reload: 2.0, spd: 40, dmgType: 'pierce', armorTags: [15, 8, 5, 28, 31] },
+    rattan_archer_elite: { name: '精锐藤弓兵', cls: 'ranged', sz: 1, hp: 45, atk: 7, meleeArmor: 0, pierceArmor: 6, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
+    legionary: { name: '罗马军', cls: 'melee', sz: 1, hp: 75, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
+    lancer: { name: '轻骑兵', cls: 'cav', sz: 1.15, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
+    heavy_cavalry: { name: '重骑兵', cls: 'cav', sz: 1.15, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', armorTags: [8, 31] },
+    general_cavalry: { name: '虎豹骑', cls: 'cav', sz: 1.15, hp: 110, atk: 11, meleeArmor: 0, pierceArmor: 4, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', bonus: { 15: 6 }, armorTags: [8, 19, 31] },
+    horse_archer: { name: '突骑兵', cls: 'cav', sz: 1.15, kite: 60, hp: 50, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [28, 15, 8, 31] },
+    archer: { name: '弓兵', cls: 'ranged', sz: 1, hp: 30, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 3 }, armorTags: [15, 31] },
+    crossbow: { name: '弩兵', cls: 'ranged', sz: 1, hp: 35, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 3 }, armorTags: [15, 31] },
+    ballista: { name: '元戎弩', cls: 'ranged', sz: 1, hp: 40, atk: 11, meleeArmor: 0, pierceArmor: 7, rng: 280, reload: 3.6, spd: 35, dmgType: 'pierce', bonus: { 1: 1, 5: 7, 11: 3, 17: 1 }, armorTags: [20, 31] },
 };
 
-/** 属性组（2026-08-14 主人定稿：弓克骑/骑克步/步克弓 三边均衡重算——骑兵 dmg 45→32、远程 dmg 28→20） */
-const CLS_STATS = {
-    melee:  { hp: 150, dmg: 45, spd: 55, rng: 0 },
-    cav:    { hp: 130, dmg: 32, spd: 130, rng: 0 },
-    ranged: { hp: 90,  dmg: 20, spd: 50, rng: 160 },
-} as const;
 
-/** 取某兵种的四个数：先按类取组，再套单项覆盖（突骑兵的射程/伤害走远程组） */
-function statsOf(key: string): { hp: number; dmg: number; spd: number; rng: number } {
-    const wt = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
-    const base = CLS_STATS[wt.cls];
-    return { hp: wt.hp ?? base.hp, spd: wt.spd ?? base.spd, dmg: wt.dmg ?? base.dmg, rng: wt.rng ?? base.rng };
+/** 取某兵种完整数据（WAR_TYPES 已是 DE 五维全量，无组别覆盖） */
+function statsOf(key: string): WarType {
+    return WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
+}
+
+/** 单次出手伤害（DE 公式）：max(1, 攻 + 加成伤害 − 近防/远防) */
+function dmgVs(shooter: WarType, target: WarType): number {
+    const armor = shooter.dmgType === 'melee' ? target.meleeArmor : target.pierceArmor;
+    let bonus = 0;
+    if (shooter.bonus && target.armorTags) {
+        for (const tag of target.armorTags) {
+            if (shooter.bonus[tag]) bonus += shooter.bonus[tag];
+        }
+    }
+    return Math.max(1, shooter.atk + bonus - armor);
 }
 
 /** 三阵型 9 口布局查找表（row 0 最靠中线；idx = 出兵口展开序）：
@@ -258,57 +254,11 @@ const LAKE_BASE_URL = '/sanguoqunying/湖/';
 const LAKE_W = 200;             // 渲染宽（px，原 334 × 0.6）
 const LAKE_H = 132;             // 渲染高（px，原 221 × 0.6）
 /**
- * 克制系数 C（2026-08-13 主人定稿方向，一个数调全三角松紧）。
- * 相克表（循环：弓克骑 → 骑克步 → 步克弓）：
- *   我克你 = ×C，你克我 = ÷C（=×1/C）。**机制对称，但结果强度不对称**——见下方判据。
- *
- * ─────────────── 调相克前必读：判据与读法（2026-08-12 CC/DS/ANTI 三方复核定） ───────────────
- *
- * ① **边强度闭式**。设 X 克 Y，边强度 = 双方击杀时间之比：
- *        TTK_X = hp_Y / (dmg_X × C)      TTK_Y = hp_X × C / dmg_Y
- *        边强度 = TTK_Y / TTK_X = C² × (dmg_X × hp_X) / (dmg_Y × hp_Y)
- *    决定边强度的是 **dmg × hp 这个乘积**（下称战力积 P），不是 dmg 单项。
- *
- * ② **三条边强度相乘恒等于 C⁶**（P 全约掉）→ 推论：
- *    **三条边强度完全相等 ⟺ 三类的 dmg × hp 相等。**
- *    所以「机制对称」不等于「结果对称」。08-11 注释里那句"三条边强度完全一样"，
- *    成立的只有机制那一半；只要三类基数不同，结果就必然悬殊，这是数学必然不是实现错。
- *    ⚠️ 别再把「三条边数值相等」当目标去追：要三边都落进 2~4 倍，P_ranged 必须 ∈ [4738, 8333]，
- *       即 hp70→dmg 要 68+，或 dmg15→hp 要 316+，折中解 dmg30/hp160 比近战还肉。
- *       **「三边数值拉平」和「远程是脆皮」不可兼得**，正确目标是「每条边都克得动、没有反向边」。
- *
- * ③ **读模拟输出要看「胜方损失」，不要看「余兵」**。三条边打到最后都是全歼（兰彻斯特雪球：
- *    赢方死得少→人更多→死得更少），所以"谁赢"没有信息量。2026-08-12 实测（war_sim.mjs，
- *    每方 3000 精灵）：余兵 26380/23680/22130，离散度只有 1.19 倍；换成损失
- *    3620/6320/7870，离散度 2.17 倍，且与闭式排序一致。
- *    ⚠️ 闭式能预测**排序**，预测不了**幅度**（最弱那条边会因为打得久、雪球跑满而被压缩：
- *       实测 2.17 倍 vs 闭式 6.20 倍）。**闭式筛方向，模拟定数值，两步都不能省。**
- *
- * ④ **镜像脚本 scratch/*.mts + war_sim.mjs 不含游戏层的放大器**（gangMul 围殴加成）。
- *    所以镜像结论**偏保守**：三边相对关系可信，绝对强度必须实机看。
- *    曾有人把镜像里的全歼归因为围殴加成——镜像里根本没有那东西。
- *
- * ⑤ **两病分治**：远程太强 → 动远程数值；整体太一边倒 → 动 GANG_K（全局放大器，三条边同时受影响）。
- *    别混着调，否则分不清是哪个在起作用。
- * ──────────────────────────────────────────────────────────────────────────
- *
- * 🔴 C 的取值是模拟实测定的：1.25/1.5 时「步克弓」不成立（近战血厚、远程射程先手，见下）；
- *    C=1.8 是成立的最小值（8 局换边实测：弓克骑 100%、骑克步 100%、步克弓 100%）。
- *    C=1.8 → 每条边约 1.8 倍差距，符合主人「相克不要太大」。
- *    [2026-08-12] 远程 15/70 → 28/90（修「弓克骑」断边，见 CLS_STATS）：1v1 白嫖 1.4~1.9s 后
- *    肉搏 50.4 DPS 打骑兵、骑兵 25 DPS 打 90 血 —— 远程实战胜（剩 ~50 血）。C 不动。
- *    ⚠️ [2026-08-13 方向反转] 上述 1.8 论证基于旧方向（近→骑→远），反转后四维重算中。
+ * 相克（2026-08-16 主人定：彻底废弃旧全局 C=1.8，全面套用 DE）——
+ * 不再有 COUNTER_C / COUNTERS / counterMul。克制改由 DE 加成伤害（bonus）+ 近/远防减法自然涌现：
+ *   枪兵系 +22/+32 vs 骑兵（步克骑）、掷矛系 vs 弓兵、弓兵射程 vs 步兵低远防（弓克步）、骑兵速度+远防 vs 弓兵（骑克弓）。
+ * 单次伤害公式见 dmgVs()；每秒伤害 = dmgVs / reload。
  */
-const COUNTER_C = 1.8;
-/** 循环克制表：我克谁。ranged→cav（弓克骑）、cav→melee（骑克步）、melee→ranged（步克弓）——2026-08-13 主人定稿方向 */
-const COUNTERS: Record<string, string> = { ranged: 'cav', cav: 'melee', melee: 'ranged' };
-/** 攻击方 cls + 目标 cls → 伤害系数（对称：我克你 ×C / 你克我 ÷C / 无关 ×1） */
-function counterMul(shooterCls: string | undefined, targetCls: string | undefined): number {
-    if (!shooterCls || !targetCls || shooterCls === targetCls) return 1;
-    if (COUNTERS[shooterCls] === targetCls) return COUNTER_C;          // 我克你
-    if (COUNTERS[targetCls] === shooterCls) return 1 / COUNTER_C;      // 你克我
-    return 1;
-}
 /** 围殴加成：被 N 人同时攻击的人受伤 ×(1 + K×min(N-1, CAP))。见 GANG_K 处的长注释 */
 function gangMul(victim: WarMan): number {
     return 1 + GANG_K * Math.min(GANG_CAP, Math.max(0, victim.atkers - 1));
@@ -1532,12 +1482,9 @@ export class Scene13WarLayer {
 
     /**
      * 范围伤（象兵）。
-     * 🔴 克制系数必须**逐个受害者**算，不能拿主目标那一个套全场：
-     *    象兵打一群混编敌人时，主目标是远程（象兵吃 ÷C）、旁边的骑兵本该被 ×C 打，
-     *    用同一个系数就差了 C² ≈ 3.2 倍（2026-08-11 复查 DS 实现时抓到）。
-     * @param dmg 已含总加成、**不含**克制系数
+     * 伤害按 DE 公式逐个受害者算：dmgVs(攻+加成−防) / reload，再乘八环 sideBonus 与围殴。
      */
-    private splash(m: WarMan, radius: number, dmg: number, shooterCls: string): void {
+    private splash(m: WarMan, radius: number, shooter: WarType, dt: number): void {
         const span = Math.max(1, Math.ceil(radius / CELL_M));
         const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
         for (let gx = cx - span; gx <= cx + span; gx++) {
@@ -1548,8 +1495,9 @@ export class Scene13WarLayer {
                     if (o.f === m.f || o.hp <= 0) continue;
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
+                    const dps = dmgVs(shooter, WAR_TYPES[o.key] ?? WAR_TYPES.light_infantry) / shooter.reload;
                     o.atkNext++;
-                    o.hp -= dmg * counterMul(shooterCls, WAR_TYPES[o.key]?.cls) * gangMul(o);
+                    o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * dt;
                     if (o.hp <= 0) this.pushCorpse(o);
                 }
             }
@@ -1714,17 +1662,15 @@ export class Scene13WarLayer {
                 }
                 m.atkSt = m.st;
                 // 总加成：把战略层强弱（将领/精锐/武将技/文化/运气）带进每一刀
-                // [2026-08-13 主人定稿方向] 循环克制：弓克骑 → 骑克步 → 步克弓。
-                //   我克你 ×C、你克我 ÷C、同类/无关 ×1 —— 三条边强度一样，一个 COUNTER_C 调松紧。
-                //   象兵（aoe）同一张表：范围伤也乘克制系数（CC 实锤「象兵完全不吃相克」已修）。
-                //   弓骑算骑兵（2026-08-14 主人定稿）：克制统一按骑兵算，不再「射人算远程」。
-                const shooterCls = (WAR_TYPES[m.key]?.cls ?? 'melee');
-                const targetCls = WAR_TYPES[foe.key]?.cls ?? 'melee';
-                const accMul = counterMul(shooterCls, targetCls);
-                if (wt.aoe) this.splash(m, R, stats.dmg * this.sideBonus[m.f] * dt, shooterCls);
+                // 伤害 = DE 公式 dmgVs(攻+加成−防) / reload（装填时间），再乘 sideBonus（八环）与围殴。
+                // 相克由 DE 加成伤害 + 近/远防自然涌现（步克骑/弓克步/骑克弓），无全局系数。
+                const shooter = WAR_TYPES[m.key] ?? WAR_TYPES.light_infantry;
+                const target = WAR_TYPES[foe.key] ?? WAR_TYPES.light_infantry;
+                const dps = dmgVs(shooter, target) / shooter.reload;
+                if (wt.aoe) this.splash(m, R, shooter, dt);
                 else {
                     foe.atkNext++;
-                    foe.hp -= stats.dmg * accMul * this.sideBonus[m.f] * gangMul(foe) * dt;
+                    foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * dt;
                     if (foe.hp <= 0) this.pushCorpse(foe);
                 }
                 // 兵刃交界处火花微特效（仅近战贴身接触时概率产生）

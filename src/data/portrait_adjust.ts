@@ -4142,7 +4142,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_14.png": {
+        "/assets/WEST_ASIA/__闲��__WEST_ASIA_14.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 3
@@ -6581,16 +6581,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.01,
             "offsetX": 0,
             "offsetY": 13
-        },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_43.png": {
-            "scale": 0.9,
-            "offsetX": 0,
-            "offsetY": 8
-        },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_44.png": {
-            "scale": 0.83,
-            "offsetX": 0,
-            "offsetY": -23
         },
         "/assets/NORTHEAST/feiyaka_cemutehe.png": {
             "scale": 1,
