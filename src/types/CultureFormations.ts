@@ -56,7 +56,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     KOREA:        'MIXED',
     HEXI:         'MIXED',
     WESTERN:      'MIXED',
-    JAPAN:        'INFANTRY',
+    JAPAN:        'MIXED',   // 日本战国步骑铁炮
     BASHU:        'INFANTRY',
     JIANGNAN:     'INFANTRY',
     LINGNAN:      'ELEPHANT',
@@ -76,15 +76,15 @@ export function getCultureMovementClass(culture: RegionType): MovementClass {
  *  三角阵（triangle 2+3+4，9人）: 岭南、滇缅、朝鲜、东北、拉丁、中原
  *  雁行阵（echelon 4+3+2，9人）: 北方、西域、河西、青藏、西亚、斯拉夫、日耳曼 */
 export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
-    // 鱼鳞阵 (6区)
-    JAPAN:        'square',
+    // 鱼鳞阵 (5区)
     STEPPE:       'square',
     BASHU:        'square',
     JIANGNAN:     'square',
     CENTRAL_ASIA: 'square',
     GREEK:        'square',
 
-    // 三角阵 (6区)
+    // 三角阵 (7区)
+    JAPAN:        'triangle', // 日本战国三角阵
     LINGNAN:      'triangle',
     DIANQIAN:     'triangle',
     KOREA:        'triangle',
@@ -320,21 +320,20 @@ export const KOREA_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 5. 日本 忍者+日本武士+精锐武士（鱼鳞阵 3×3：忍者前 + 日本武士中 + 精锐武士后） */
+/** 5. 日本战国 手炮手+黑光铠骑兵+精锐武士（三角阵 2+3+4：手炮手尖刀前 + 黑光铠骑兵中坚 + 精锐武士底边） */
 export const JAPAN_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-            { type: 'ninja', count: 3 },            // Row 0 前排 = 忍者 步兵
-            { type: 'samurai', count: 1 },          // Row 1 左 = 日本武士 步兵
-            { type: 'samurai', count: 1 },          // Row 1 中 = 日本武士 步兵
-            { type: 'samurai', count: 1 },          // Row 1 右 = 日本武士 步兵
-            { type: 'samurai_elite', count: 3 }     // Row 2 后排 = 精锐武士 步兵
+            { type: 'hand_cannoneer', count: 2 },   // Row 0 尖刀 = 手炮手 (铁炮前列齐射)
+            { type: 'hei_kuang', count: 3 },        // Row 1 中坚 = 黑光铠骑兵 (具足骑兵突击)
+            { type: 'samurai_elite', count: 4 }     // Row 2 底边 = 精锐武士 (大太刀精锐合围)
         ]
     }
 ];
+export const SENGOKU_TIERS = JAPAN_TIERS;
 
 /** 6. 草原 草原枪兵+怯薛+精锐蒙古突骑（鱼鳞阵 3×3：草原枪兵前 + 怯薛中 + 精锐蒙古突骑后） */
 export const STEPPE_TIERS: CompositionTier[] = [
