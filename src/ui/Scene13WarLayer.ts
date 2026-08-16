@@ -333,8 +333,8 @@ const CORPSE_KEEP = 0.3;
  * 模拟兵败溃逃。速度比正常移动快（近战 55 / 骑兵 130）。跑完 FLEE_DUR 秒即消失。
  */
 const FLEE_SPD = 150;
-/** 溃逃总时长（秒）：反向移动 + 渐隐，跑完即消失 */
-const FLEE_DUR = 1.5;
+/** 溃逃总时长（秒）：反向移动 + 渐隐，跑完即消失（2026-08-16 主人：渐隐距离加长 2 倍 1.5→3.0） */
+const FLEE_DUR = 3.0;
 /**
  * 旗帜（2026-08-12 主人拍板加入）——**复用战略地图那面旗**（`LegionFlagDrawer`：
  * 旗杆 + 按势力染色的旗面 + 4 帧飘动，与据点旗号同源），13 不画任何新素材。
@@ -2058,15 +2058,16 @@ export class Scene13WarLayer {
                 // 水平朝向（俯仰由帧序号内置，不再算抛物线切线）
                 const angle = Math.atan2(a.dy, a.dx);
                 const fr = Math.min(pa.n - 1, Math.round(p * (pa.n - 1)));
+                // 🔴 朝左半球（dx<0）：AoE2 朝左帧 = 朝右帧的**水平镜像**（仰射仍朝屏幕上方），
+                //    不是 rotate 180°（那会把仰射翻成俯冲）。故 scale(-1,1) 水平镜像后，
+                //    从「朝西」转到目标方向的旋转角 = angle - π。
+                const rot = a.dx < 0 ? angle - Math.PI : angle;
                 ctx.translate(x, y);
-                ctx.rotate(angle);
-                // 🔴 朝左半球（dx<0）俯仰取反：素材是「朝右」的俯仰帧（帧0仰射朝上、帧末俯冲朝下），
-                //    rotate 180° 会把仰射翻成俯冲（守方朝左射时箭头朝下扎，攻方朝右射正常）。
-                //    scale(1,-1) 把俯仰翻回来，仰射保持朝上。攻方（dx≥0）不受影响。
-                if (a.dx < 0) ctx.scale(1, -1);
+                if (a.dx < 0) ctx.scale(-1, 1);
+                ctx.rotate(rot);
                 ctx.drawImage(pa.img, fr * pa.fw, 0, pa.fw, pa.fh, -pa.hx * S, -pa.hy * S, pa.fw * S, pa.fh * S);
-                if (a.dx < 0) ctx.scale(1, -1);   // 撤销俯仰取反
-                ctx.rotate(-angle);
+                ctx.rotate(-rot);
+                if (a.dx < 0) ctx.scale(-1, 1);
                 ctx.translate(-x, -y);
             }
             ctx.restore();

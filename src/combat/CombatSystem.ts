@@ -7,9 +7,6 @@ import {
 import { gameLog, gameWarn } from '../utils/GameLogger';
 import { readSiegeGarrisonElite } from './SiegeGarrisonTier';
 
-/** 13 冻结看门狗上限（真实毫秒）。与 BattleField 同值同因，见那边的说明。 */
-const SCENE13_FREEZE_MAX_MS = 120_000;
-
 const battleLog = (...args: unknown[]) => gameLog('battle', ...args);
 const battleTickLog = (...args: unknown[]) => gameLog('battleTick', ...args);
 import type { LegionManager } from '../legion/LegionManager';
@@ -120,8 +117,6 @@ export class Battle {
      * 胜负等演出判负后经 forceScene13Result 写回。8/9/10 永不置位，行为不变。
      */
     public scene13Frozen = false;
-    /** 冻结起始时刻（performance.now()，0 = 未冻结）。看门狗用，见 update() */
-    private scene13FrozenAt = 0;
 
     /**
      * [2026-08-11 13 v2] 演出判负 → 写死胜负并立即结算（跳过八环推演）。
@@ -255,21 +250,12 @@ export class Battle {
             return;
         }
 
-        // [2026-08-11 13 v2] 13 演出接管：引擎不推进不结算（胜负由演出判负写回）
-        // 🔴 [2026-08-12 修永久冻结] 看门狗，与 BattleField.update 同款同因，理由见那边长注释：
-        //   scene13Frozen 只有 forceScene13Result 一条清除路径，退场却有别的路，
-        //   漏网的战斗会永久冻结、参战单位永久卡在战斗态。超时就交还引擎自己打完。
+        // [2026-08-11 13 v2] 13 演出接管：引擎不推进不结算（胜负由演出判负写回）。
+        // 🔴 [2026-08-16 主人取消时间限制] 去掉 120s 看门狗——演出自然打到全军覆没才判负，
+        //    引擎一直冻结，直到 forceScene13Result 解冻结算。永久冻结的兜底仍在：
+        //    BattleSceneLayer.unfreezeScene13Battle（退场解冻）+ Scene13WarLayer 自身防死锁。
         if (this.scene13Frozen) {
-            if (this.scene13FrozenAt === 0) this.scene13FrozenAt = performance.now();
-            if (performance.now() - this.scene13FrozenAt > SCENE13_FREEZE_MAX_MS) {
-                console.warn('⏰ [Battle] 13 冻结超时，自动解冻交还引擎推演（演出未判负）');
-                this.scene13Frozen = false;
-                this.scene13FrozenAt = 0;
-            } else {
-                return;
-            }
-        } else if (this.scene13FrozenAt !== 0) {
-            this.scene13FrozenAt = 0;
+            return;
         }
 
         // [STABILITY] Check if units were destroyed externally
