@@ -153,7 +153,7 @@ export class CameraFollowUI {
         return totals;
     }
 
-    // ─── 1. 入口按钮（右下角） ──────────────────────────
+    // ─── 1. 入口按钮（左上角） ──────────────────────────
 
     private createListButton(): void {
         const btn = document.createElement('button');
@@ -165,27 +165,35 @@ export class CameraFollowUI {
             top: 16px;
             left: 16px;
             z-index: 10000;
-            padding: 10px 18px;
-            font-size: 15px;
+            padding: 7px 18px;
+            font-size: 14px;
             font-weight: bold;
-            color: #f0e6d2;
-            background: linear-gradient(135deg, rgba(40,30,20,0.92), rgba(60,45,25,0.95));
-            border: 2px solid rgba(180,140,60,0.7);
-            border-radius: 8px;
+            color: #2c241c;
+            background: linear-gradient(135deg, rgba(246, 240, 228, 0.88) 0%, rgba(230, 218, 198, 0.92) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(125, 111, 90, 0.28);
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-            transition: all 0.2s ease;
-            font-family: 'SimSun', 'Songti SC', serif;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7);
+            transition: all 0.25s ease;
+            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
             letter-spacing: 2px;
         `;
 
         btn.addEventListener('mouseenter', () => {
-            btn.style.borderColor = 'rgba(220,180,80,0.9)';
-            btn.style.boxShadow = '0 4px 20px rgba(180,140,60,0.4), inset 0 1px 0 rgba(255,255,255,0.15)';
+            btn.style.borderColor = 'rgba(156, 48, 47, 0.55)';
+            btn.style.color = '#9c302f';
+            btn.style.background = 'linear-gradient(135deg, rgba(255, 250, 242, 0.96) 0%, rgba(242, 232, 216, 0.96) 100%)';
+            btn.style.boxShadow = '0 4px 20px rgba(156,48,47,0.2), inset 0 1px 0 rgba(255,255,255,0.9)';
+            btn.style.transform = 'translateY(-1px)';
         });
         btn.addEventListener('mouseleave', () => {
-            btn.style.borderColor = 'rgba(180,140,60,0.7)';
-            btn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)';
+            btn.style.borderColor = 'rgba(125, 111, 90, 0.28)';
+            btn.style.color = '#2c241c';
+            btn.style.background = 'linear-gradient(135deg, rgba(246, 240, 228, 0.88) 0%, rgba(230, 218, 198, 0.92) 100%)';
+            btn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.7)';
+            btn.style.transform = 'none';
         });
 
         btn.addEventListener('click', () => this.toggleList());
@@ -206,27 +214,33 @@ export class CameraFollowUI {
             top: ${CameraFollowUI.YUEFEI_BTN_TOP_PX}px;
             left: ${CameraFollowUI.STACK_LEFT_PX}px;
             z-index: 10000;
-            padding: 9px 16px;
-            font-size: 14px;
+            padding: 7px 16px;
+            font-size: 13px;
             font-weight: bold;
-            color: #ffe9c8;
-            background: linear-gradient(135deg, rgba(90,20,15,0.94), rgba(120,35,20,0.96));
-            border: 2px solid rgba(210,110,70,0.75);
-            border-radius: 8px;
+            color: #fdfbf7;
+            background: linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(156, 48, 47, 0.45);
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-            transition: all 0.2s ease;
-            font-family: 'SimSun', 'Songti SC', serif;
+            box-shadow: 0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25);
+            transition: all 0.25s ease;
+            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
             letter-spacing: 2px;
         `;
 
         btn.addEventListener('mouseenter', () => {
-            btn.style.borderColor = 'rgba(240,150,90,0.95)';
-            btn.style.boxShadow = '0 4px 20px rgba(210,110,70,0.45), inset 0 1px 0 rgba(255,255,255,0.15)';
+            btn.style.borderColor = '#d4a843';
+            btn.style.background = 'linear-gradient(135deg, rgba(184, 56, 54, 0.95) 0%, rgba(125, 32, 35, 0.95) 100%)';
+            btn.style.boxShadow = '0 4px 20px rgba(156,48,47,0.35), inset 0 1px 0 rgba(255,255,255,0.4)';
+            btn.style.transform = 'translateY(-1px)';
         });
         btn.addEventListener('mouseleave', () => {
-            btn.style.borderColor = 'rgba(210,110,70,0.75)';
-            btn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)';
+            btn.style.borderColor = 'rgba(156, 48, 47, 0.45)';
+            btn.style.background = 'linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%)';
+            btn.style.boxShadow = '0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25)';
+            btn.style.transform = 'none';
         });
 
         btn.addEventListener('click', () => this.onYuefeiExpedition?.());
@@ -246,27 +260,33 @@ export class CameraFollowUI {
             top: ${CameraFollowUI.HUOQUBING_BTN_TOP_PX}px;
             left: ${CameraFollowUI.STACK_LEFT_PX}px;
             z-index: 10000;
-            padding: 9px 16px;
-            font-size: 14px;
+            padding: 7px 16px;
+            font-size: 13px;
             font-weight: bold;
-            color: #ffe9c8;
-            background: linear-gradient(135deg, rgba(90,20,15,0.94), rgba(120,35,20,0.96));
-            border: 2px solid rgba(210,110,70,0.75);
-            border-radius: 8px;
+            color: #fdfbf7;
+            background: linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(156, 48, 47, 0.45);
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-            transition: all 0.2s ease;
-            font-family: 'SimSun', 'Songti SC', serif;
+            box-shadow: 0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25);
+            transition: all 0.25s ease;
+            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
             letter-spacing: 2px;
         `;
 
         btn.addEventListener('mouseenter', () => {
-            btn.style.borderColor = 'rgba(240,150,90,0.95)';
-            btn.style.boxShadow = '0 4px 20px rgba(210,110,70,0.45), inset 0 1px 0 rgba(255,255,255,0.15)';
+            btn.style.borderColor = '#d4a843';
+            btn.style.background = 'linear-gradient(135deg, rgba(184, 56, 54, 0.95) 0%, rgba(125, 32, 35, 0.95) 100%)';
+            btn.style.boxShadow = '0 4px 20px rgba(156,48,47,0.35), inset 0 1px 0 rgba(255,255,255,0.4)';
+            btn.style.transform = 'translateY(-1px)';
         });
         btn.addEventListener('mouseleave', () => {
-            btn.style.borderColor = 'rgba(210,110,70,0.75)';
-            btn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)';
+            btn.style.borderColor = 'rgba(156, 48, 47, 0.45)';
+            btn.style.background = 'linear-gradient(135deg, rgba(156, 48, 47, 0.85) 0%, rgba(110, 28, 30, 0.92) 100%)';
+            btn.style.boxShadow = '0 4px 16px rgba(156,48,47,0.22), inset 0 1px 0 rgba(255,255,255,0.25)';
+            btn.style.transform = 'none';
         });
 
         btn.addEventListener('click', () => this.onHuoQubingExpedition?.());
@@ -283,31 +303,34 @@ export class CameraFollowUI {
             position: fixed;
             top: ${CameraFollowUI.LIST_PANEL_TOP_PX}px;
             left: ${CameraFollowUI.STACK_LEFT_PX}px;
-            width: 305px;
-            max-height: 70vh;
+            width: 320px;
+            max-height: 72vh;
             overflow-y: auto;
             z-index: 10001;
-            background: rgba(20, 18, 16, 0.96);
-            border: 1px solid #6a5a30;
-            border-radius: 10px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.75);
+            background: linear-gradient(180deg, rgba(248, 242, 230, 0.62) 0%, rgba(235, 220, 198, 0.70) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(125, 111, 90, 0.22);
+            border-radius: 12px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.7);
             display: none;
-            font-family: 'SimSun', 'Songti SC', 'Microsoft YaHei', serif;
-            color: #e8e0d0;
+            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
+            color: #1a1612;
         `;
 
         // 标题栏
         const header = document.createElement('div');
         header.style.cssText = `
             position: relative;
-            padding: 10px 14px;
+            padding: 12px 16px 10px;
             font-size: 14px;
             font-weight: bold;
-            border-bottom: 1px solid rgba(138, 112, 56, 0.35);
-            background: rgba(30, 26, 22, 0.6);
-            color: #d4a843;
+            border-bottom: 1px solid rgba(125, 111, 90, 0.12);
+            background: rgba(255, 255, 255, 0.25);
+            color: #2c241c;
             letter-spacing: 2px;
             text-align: center;
+            border-radius: 12px 12px 0 0;
         `;
         const headerTitle = document.createElement('span');
         headerTitle.textContent = '⚔ 军团·势力榜 (0) ⚔';
@@ -329,7 +352,7 @@ export class CameraFollowUI {
         autoFollowCheckbox.type = 'checkbox';
         autoFollowCheckbox.checked = this.autoFollowEnabled;
         autoFollowCheckbox.style.cursor = 'pointer';
-        autoFollowCheckbox.style.accentColor = '#b48c3c';
+        autoFollowCheckbox.style.accentColor = '#9c302f';
         autoFollowCheckbox.addEventListener('change', (e) => {
             this.autoFollowEnabled = (e.target as HTMLInputElement).checked;
             this.autoFollowNoTargetSince = 0;
@@ -340,44 +363,47 @@ export class CameraFollowUI {
 
         panel.appendChild(header);
 
-        // 滚动条美化
+        // 滚动条与滑块美化
         const scrollStyle = document.createElement('style');
         scrollStyle.textContent = `
             #army-list-panel::-webkit-scrollbar {
                 width: 5px;
             }
             #army-list-panel::-webkit-scrollbar-track {
-                background: rgba(15, 12, 10, 0.5);
+                background: transparent;
             }
             #army-list-panel::-webkit-scrollbar-thumb {
-                background: #5a4a28;
-                border-radius: 3px;
+                background: rgba(125, 111, 90, 0.25);
+                border-radius: 4px;
             }
             #army-list-panel::-webkit-scrollbar-thumb:hover {
-                background: #8a7038;
+                background: rgba(125, 111, 90, 0.5);
             }
 
             #army-list-panel input[type=range] {
                 -webkit-appearance: none;
                 appearance: none;
-                background: #1a1814;
-                height: 5px;
-                border-radius: 3px;
+                background: rgba(125, 111, 90, 0.18);
+                height: 4px;
+                border-radius: 2px;
                 outline: none;
-                border: 1px solid #4a4238;
+                border: none;
             }
             #army-list-panel input[type=range]::-webkit-slider-thumb {
                 -webkit-appearance: none;
                 appearance: none;
-                width: 13px;
-                height: 13px;
+                width: 14px;
+                height: 14px;
                 border-radius: 50%;
-                background: #8a7038;
-                border: 1px solid #d4a843;
+                background: #9c302f;
+                border: 2px solid #fff;
+                box-shadow: 0 1px 4px rgba(156,48,47,0.4);
                 cursor: pointer;
+                transition: transform 0.15s ease;
             }
             #army-list-panel input[type=range]::-webkit-slider-thumb:hover {
-                background: #b48c3c;
+                transform: scale(1.15);
+                background: #b83836;
             }
         `;
         panel.appendChild(scrollStyle);
@@ -385,10 +411,11 @@ export class CameraFollowUI {
         // 军团上限配置栏
         const limitContainer = document.createElement('div');
         limitContainer.style.cssText = `
-            padding: 8px 14px;
-            font-size: 13px;
-            color: #d4a843;
-            border-bottom: 1px solid rgba(180,140,60,0.3);
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #5b7a66;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(125, 111, 90, 0.1);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -427,9 +454,9 @@ export class CameraFollowUI {
         const topStatsContainer = document.createElement('div');
         topStatsContainer.id = 'army-top-stats';
         topStatsContainer.style.cssText = `
-            padding: 7px 10px;
-            border-bottom: 1px solid rgba(138, 112, 56, 0.35);
-            background: rgba(15, 12, 10, 0.45);
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(125, 111, 90, 0.1);
+            background: rgba(255, 255, 255, 0.18);
             display: flex;
             gap: 8px;
         `;
@@ -613,80 +640,79 @@ export class CameraFollowUI {
             const generalRecord = army.generalId ? getGeneralRecordByGeneralId(army.generalId) : null;
             const isEliteAndGeneral = army.isElite && generalRecord;
 
-            // 标题：武将名率军团名（武将在前）；精锐仅以金色高亮区分，不再显示徽章
+            // 标题：武将名率军团名（武将在前）；精锐仅以朱砂高亮区分
             let titleHtml: string;
             if (generalRecord) {
-                const gColor = isEliteAndGeneral ? '#ffe39f' : '#d4af37';
+                const gColor = isEliteAndGeneral ? '#9c302f' : '#8a2b22';
                 titleHtml =
-                    `<span style="color:${gColor}; font-weight:bold; text-shadow:1px 1px 1px #000;">${generalRecord.generalName}</span>` +
-                    `<span style="opacity:0.6;">率</span>${name}`;
+                    `<span style="color:${gColor}; font-weight:800; font-size:14px;">${generalRecord.generalName}</span>` +
+                    `<span style="opacity:0.75; font-size:11px; margin:0 2px; color:#5c4e3e; font-weight:bold;">率</span>${name}`;
             } else {
                 titleHtml = name;
             }
 
-            let itemBg = isFollowed ? 'background: rgba(180,140,60,0.25);' : '';
-            let borderStyle = 'border-bottom: 1px solid rgba(100,80,40,0.25);';
-            let nameStyle = 'color: #e8dccc;';
+            let itemBg = isFollowed ? 'background: rgba(156,48,47,0.12); border-left: 3px solid #9c302f;' : '';
+            let nameStyle = 'color: #1a1612; font-weight: 700;';
 
             if (isEliteAndGeneral) {
                 if (!isFollowed) {
-                    itemBg = 'background: linear-gradient(to right, rgba(184,134,11,0.12), transparent);';
+                    itemBg = 'background: linear-gradient(to right, rgba(156,48,47,0.08), transparent);';
                 }
-                borderStyle = 'border-bottom: 1px solid rgba(184,134,11,0.4);';
-                nameStyle = 'color: #ffda75; font-weight: bold; text-shadow: 0px 0px 5px rgba(184,134,11,0.4);';
+                nameStyle = 'color: #9c302f; font-weight: 800;';
             } else if (army.isElite) {
-                nameStyle = 'color: #e2cfa3;';
+                nameStyle = 'color: #7d3826; font-weight: 800;';
             }
 
             item.style.cssText = `
-                padding: 7px 14px;
+                padding: 7px 12px;
+                margin: 2px 6px;
+                border-radius: 6px;
                 cursor: pointer;
-                ${borderStyle}
-                transition: background 0.15s;
+                border-bottom: 1px solid rgba(125,111,90,0.12);
+                transition: all 0.2s ease;
                 font-size: 13px;
                 ${itemBg}
             `;
 
             const winStreak = (army as any).winStreak || 0;
             const streakHtml = winStreak > 0
-                ? `<span style="display:inline-flex; align-items:center; margin-left:6px; padding:0 4px; font-size:10px; font-weight:bold; color:#ff7733; background:rgba(255,85,0,0.15); border:1px solid rgba(255,85,0,0.45); border-radius:3px; text-shadow:0 1px 2px #000; line-height:1.3; vertical-align:middle;">🔥${winStreak}连胜</span>`
+                ? `<span style="display:inline-flex; align-items:center; margin-left:6px; padding:0 5px; font-size:10px; font-weight:800; color:#9c302f; background:rgba(156,48,47,0.1); border:1px solid rgba(156,48,47,0.4); border-radius:10px; line-height:1.3; vertical-align:middle;">🔥${winStreak}连胜</span>`
                 : '';
 
             // 第一行：名次 + 军团名 + 连胜 + 军团兵力；第二行：势力色点 + 势力名 + 势力兵力 + 据点数
             item.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; ${nameStyle}">
-                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8a8070; font-weight:normal; text-shadow:none;">${idx + 1}.</span> ${titleHtml}${streakHtml}
+                        ${isFollowed ? '🎥 ' : ''}<span style="color:#8c7e6b; font-weight:normal; font-size:12px;">${idx + 1}.</span> ${titleHtml}${streakHtml}
                     </span>
-                    <span style="color:#e0c878; font-size:12px; margin-left:8px; white-space:nowrap;">
+                    <span style="color:#9c302f; font-size:12px; font-weight:bold; margin-left:8px; white-space:nowrap; font-family:'JetBrains Mono', serif;">
                         ${this.formatTroops(troops)}
                     </span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px; color:#9a8f7a;">
-                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:5px;">
-                        <span style="display:inline-block; width:9px; height:9px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(255,255,255,0.3);"></span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px; color:#5b7a66;">
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:5px; color:#4a3f35;">
+                        <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(0,0,0,0.15);"></span>
                         ${fName}
                     </span>
                     <span style="margin-left:8px; white-space:nowrap; display:flex; align-items:center; gap:6px;">
                         势力 ${this.formatTroops(fTotal.troops)}
-                        <span style="color:#ffcf5a; font-size:13px; font-weight:bold; border:1px solid rgba(255,180,60,0.55); border-radius:3px; padding:0 6px; background:rgba(255,180,60,0.14); text-shadow:1px 1px 1px #000;">🏯 ${fTotal.cities} 城</span>
+                        <span style="color:#9c302f; font-size:11px; font-weight:bold; border:1px solid rgba(156,48,47,0.3); border-radius:10px; padding:0 6px; background:rgba(156,48,47,0.06);">🏯 ${fTotal.cities} 城</span>
                     </span>
                 </div>
-
             `;
 
             item.addEventListener('mouseenter', () => {
                 if (!isFollowed) {
-                    item.style.background = isEliteAndGeneral 
-                        ? 'linear-gradient(to right, rgba(184,134,11,0.25), transparent)' 
-                        : 'rgba(180,140,60,0.15)';
+                    item.style.background = 'rgba(255, 255, 255, 0.5)';
+                    item.style.transform = 'translateX(2px)';
                 }
             });
             item.addEventListener('mouseleave', () => {
                 if (!isFollowed) {
                     item.style.background = isEliteAndGeneral 
-                        ? 'linear-gradient(to right, rgba(184,134,11,0.12), transparent)' 
+                        ? 'linear-gradient(to right, rgba(156,48,47,0.06), transparent)' 
                         : 'transparent';
+                    item.style.transform = 'none';
                 }
             });
 
@@ -730,12 +756,12 @@ export class CameraFollowUI {
             const lName = topRecord.legionName;
             let pairTitle = '';
             if (gName && lName && gName !== lName) {
-                pairTitle = `<span style="color:#ffe39f; font-weight:bold;">${gName}</span><span style="opacity:0.6; font-size:10px; margin:0 1px;">率</span>${lName}`;
+                pairTitle = `<span style="color:#9c302f; font-weight:bold;">${gName}</span><span style="opacity:0.6; font-size:10px; margin:0 1px;">率</span>${lName}`;
             } else {
-                pairTitle = `<span style="color:#ffe39f; font-weight:bold;">${gName || lName}</span>`;
+                pairTitle = `<span style="color:#9c302f; font-weight:bold;">${gName || lName}</span>`;
             }
 
-            const stateTag = isAlive ? '' : `<span style="color:#ff5555; font-size:9px; font-weight:bold; background:rgba(255,50,50,0.18); border:1px solid rgba(255,80,80,0.4); border-radius:3px; padding:0 2px; margin-left:3px; line-height:1; vertical-align:middle;" title="已阵亡覆灭">殁</span>`;
+            const stateTag = isAlive ? '' : `<span style="color:#9c302f; font-size:9px; font-weight:bold; background:rgba(156,48,47,0.1); border:1px solid rgba(156,48,47,0.3); border-radius:3px; padding:0 2px; margin-left:3px; line-height:1; vertical-align:middle;" title="已阵亡覆灭">殁</span>`;
 
             if (isAlive) {
                 isStreakClickable = true;
@@ -744,12 +770,12 @@ export class CameraFollowUI {
             }
 
             streakCardHtml = `
-                <div id="top-streak-card" style="flex:1.35; min-width:0; background:rgba(20,18,16,0.85); border:1px solid rgba(255,120,40,0.35); border-radius:5px; padding:5px 7px; box-sizing:border-box; ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该历史连胜王者' : '传奇历史最高纪录'}">
+                <div id="top-streak-card" style="flex:1.35; min-width:0; background:rgba(255,255,255,0.45); border:1px solid rgba(255,255,255,0.7); border-radius:8px; padding:6px 8px; box-sizing:border-box; box-shadow:0 2px 6px rgba(0,0,0,0.03); ${isStreakClickable ? 'cursor:pointer;' : ''}" title="${isStreakClickable ? '点击视角跟随该历史连胜王者' : '传奇历史最高纪录'}">
                     <div style="display:flex; justify-content:space-between; align-items:center; line-height:1.3;">
-                        <span style="color:#ff7733; font-size:11px; font-weight:bold; white-space:nowrap;">🔥 最高连胜</span>
-                        <span style="color:#ff7733; font-weight:bold; font-size:10px; background:rgba(255,85,0,0.18); border:1px solid rgba(255,85,0,0.45); border-radius:3px; padding:0 3px; line-height:1.2; flex-shrink:0;">🔥${topRecord.streak}连胜</span>
+                        <span style="color:#9c302f; font-size:11px; font-weight:bold; white-space:nowrap;">🔥 最高连胜</span>
+                        <span style="color:#9c302f; font-weight:bold; font-size:10px; background:rgba(156,48,47,0.08); border:1px solid rgba(156,48,47,0.3); border-radius:10px; padding:0 5px; line-height:1.2; flex-shrink:0;">${topRecord.streak}连胜</span>
                     </div>
-                    <div style="font-size:11px; color:#e8e0d0; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.3;">
+                    <div style="font-size:11px; color:#2c241c; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.3;">
                         ${pairTitle}${stateTag}
                     </div>
                 </div>
@@ -776,17 +802,17 @@ export class CameraFollowUI {
             const fTotal = factionTotals.get(topFid) ?? { troops: 0, cities: maxCities };
 
             factionCardHtml = `
-                <div style="flex:0.85; min-width:0; background:rgba(20,18,16,0.85); border:1px solid rgba(255,180,60,0.35); border-radius:5px; padding:5px 7px; box-sizing:border-box;">
+                <div style="flex:0.85; min-width:0; background:rgba(255,255,255,0.45); border:1px solid rgba(255,255,255,0.7); border-radius:8px; padding:6px 8px; box-sizing:border-box; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
                     <div style="display:flex; justify-content:space-between; align-items:center; line-height:1.3;">
-                        <span style="color:#ffcf5a; font-size:11px; font-weight:bold; white-space:nowrap;">🏯 据点最多</span>
-                        <span style="color:#ffcf5a; font-size:10px; font-weight:bold; border:1px solid rgba(255,180,60,0.4); border-radius:3px; padding:0 3px; background:rgba(255,180,60,0.12); line-height:1.2; flex-shrink:0;">${maxCities}城</span>
+                        <span style="color:#1d3326; font-size:11px; font-weight:bold; white-space:nowrap;">🏯 据点最多</span>
+                        <span style="color:#9c302f; font-size:10px; font-weight:bold; border:1px solid rgba(156,48,47,0.3); border-radius:10px; padding:0 5px; background:rgba(156,48,47,0.08); line-height:1.2; flex-shrink:0;">${maxCities}城</span>
                     </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px; color:#9a8f7a; line-height:1.3;">
-                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:4px; color:#e8e0d0; font-weight:bold;">
-                            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(255,255,255,0.3);"></span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px; font-size:11px; color:#5b7a66; line-height:1.3;">
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:4px; color:#2c241c; font-weight:bold;">
+                            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background-color:${fColor}; border:1px solid rgba(0,0,0,0.15);"></span>
                             ${fName}
                         </span>
-                        <span style="font-size:10px; margin-left:4px; flex-shrink:0;">
+                        <span style="font-size:10px; color:#9c302f; font-weight:bold; margin-left:4px; flex-shrink:0;">
                             ${this.formatTroops(fTotal.troops)}
                         </span>
                     </div>
@@ -806,12 +832,12 @@ export class CameraFollowUI {
             const streakCard = this.topStatsContainer.querySelector('#top-streak-card') as HTMLDivElement | null;
             if (streakCard) {
                 streakCard.addEventListener('mouseenter', () => {
-                    streakCard.style.background = 'rgba(40,25,15,0.95)';
-                    streakCard.style.borderColor = 'rgba(255,140,50,0.6)';
+                    streakCard.style.background = 'rgba(255,255,255,0.75)';
+                    streakCard.style.borderColor = 'rgba(156,48,47,0.4)';
                 });
                 streakCard.addEventListener('mouseleave', () => {
-                    streakCard.style.background = 'rgba(20,18,16,0.85)';
-                    streakCard.style.borderColor = 'rgba(255,120,40,0.35)';
+                    streakCard.style.background = 'rgba(255,255,255,0.45)';
+                    streakCard.style.borderColor = 'rgba(255,255,255,0.7)';
                 });
                 streakCard.addEventListener('click', () => {
                     this.setFollow(streakArmyId, streakArmyName);
@@ -854,16 +880,17 @@ export class CameraFollowUI {
             display: none;
             align-items: center;
             gap: 8px;
-            padding: 6px 16px;
+            padding: 6px 18px;
             font-size: 14px;
             font-weight: bold;
-            color: #f0e6d2;
-            background: linear-gradient(180deg, rgba(20, 18, 16, 0.94) 0%, rgba(32, 28, 24, 0.90) 100%);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(218, 165, 32, 0.4);
+            color: #1a1612;
+            background: linear-gradient(135deg, rgba(248, 242, 230, 0.68) 0%, rgba(235, 220, 198, 0.75) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(125, 111, 90, 0.22);
             border-radius: 20px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.1);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.7);
+            font-family: 'Noto Serif SC', 'SimSun', 'Songti SC', serif;
             letter-spacing: 0.5px;
             pointer-events: auto;
             white-space: nowrap;
@@ -877,24 +904,23 @@ export class CameraFollowUI {
         const closeBtn = document.createElement('button');
         closeBtn.textContent = '✕ 取消';
         closeBtn.style.cssText = `
-            background: rgba(180, 50, 50, 0.25);
-            border: 1px solid rgba(220, 90, 90, 0.45);
-            color: #ffcdd2;
-            padding: 3px 10px;
+            background: rgba(156, 48, 47, 0.1);
+            border: 1px solid rgba(156, 48, 47, 0.35);
+            color: #9c302f;
+            padding: 2px 9px;
             border-radius: 12px;
             cursor: pointer;
             font-size: 12px;
             font-family: inherit;
-            transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+            font-weight: bold;
+            transition: all 0.2s ease;
             margin-left: 4px;
         `;
         closeBtn.addEventListener('mouseenter', () => {
-            closeBtn.style.background = 'rgba(220, 60, 60, 0.5)';
-            closeBtn.style.borderColor = 'rgba(255, 120, 120, 0.7)';
+            closeBtn.style.background = 'rgba(156, 48, 47, 0.22)';
         });
         closeBtn.addEventListener('mouseleave', () => {
-            closeBtn.style.background = 'rgba(180, 50, 50, 0.25)';
-            closeBtn.style.borderColor = 'rgba(220, 90, 90, 0.45)';
+            closeBtn.style.background = 'rgba(156, 48, 47, 0.1)';
         });
         closeBtn.addEventListener('click', () => {
             this.cancelFollow();
@@ -902,24 +928,23 @@ export class CameraFollowUI {
         const renameBtn = document.createElement('button');
         renameBtn.textContent = '✎ 改名';
         renameBtn.style.cssText = `
-            background: rgba(40, 100, 160, 0.3);
-            border: 1px solid rgba(80, 150, 220, 0.45);
-            color: #b3e5fc;
-            padding: 3px 10px;
+            background: rgba(91, 122, 102, 0.12);
+            border: 1px solid rgba(91, 122, 102, 0.35);
+            color: #1d3326;
+            padding: 2px 9px;
             border-radius: 12px;
             cursor: pointer;
             font-size: 12px;
             font-family: inherit;
-            transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+            font-weight: bold;
+            transition: all 0.2s ease;
             margin-left: 6px;
         `;
         renameBtn.addEventListener('mouseenter', () => {
-            renameBtn.style.background = 'rgba(50, 120, 190, 0.6)';
-            renameBtn.style.borderColor = 'rgba(100, 180, 255, 0.7)';
+            renameBtn.style.background = 'rgba(91, 122, 102, 0.25)';
         });
         renameBtn.addEventListener('mouseleave', () => {
-            renameBtn.style.background = 'rgba(40, 100, 160, 0.3)';
-            renameBtn.style.borderColor = 'rgba(80, 150, 220, 0.45)';
+            renameBtn.style.background = 'rgba(91, 122, 102, 0.12)';
         });
         renameBtn.addEventListener('click', () => {
             if (!this.followedArmyId || !this.getArmiesFn) return;
@@ -1022,15 +1047,15 @@ export class CameraFollowUI {
         }
 
         const tagFaction = factionName
-            ? `<span style="color:#b0bec5;font-weight:600;margin-right:6px;font-size:13px;">${factionName}</span>`
+            ? `<span style="color:#2e6b48;font-weight:800;margin-right:6px;font-size:13px;">${factionName}</span>`
             : '';
         const tagGen = generalName
-            ? `<span style="color:#ffd700;font-weight:800;letter-spacing:0.5px;">${generalName}</span>`
+            ? `<span style="color:#9c302f;font-weight:900;letter-spacing:0.5px;font-size:15px;">${generalName}</span>`
             : '';
-        const tagShuai = `<span style="color:rgba(230,220,200,0.6);font-size:12px;margin:0 2px;">率</span>`;
-        const tagElite = `<span style="color:#ffab40;font-weight:700;">${label}</span>`;
-        const tagYuanZheng = `<span style="color:rgba(255,180,100,0.75);font-size:12px;margin:0 4px;">远征 →</span>`;
-        const tagTarget = `<span style="color:#80d8ff;font-weight:700;">${targetCityName}</span>`;
+        const tagShuai = `<span style="color:#5c4e3e;font-size:12px;margin:0 3px;font-weight:bold;">率</span>`;
+        const tagElite = `<span style="color:#1a1612;font-weight:800;font-size:14px;">${label}</span>`;
+        const tagYuanZheng = `<span style="color:#9c302f;font-size:12px;font-weight:bold;margin:0 4px;">远征 →</span>`;
+        const tagTarget = `<span style="color:#9c302f;font-weight:800;background:rgba(156,48,47,0.08);border:1px solid rgba(156,48,47,0.35);border-radius:4px;padding:1px 6px;">${targetCityName}</span>`;
 
         if (generalName && targetCityName) {
             return `${tagFaction}${tagGen}${tagShuai}${tagElite}${tagYuanZheng}${tagTarget}`;

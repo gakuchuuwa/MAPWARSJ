@@ -78,6 +78,15 @@ export class BattleSceneLayer {
         } else {
             this.strategyPausedByScene = false;
         }
+
+        // [2026-08-16 主人需求] 进入 13 战斗模式后，军团面板和军情面板自动收起
+        const game = (window as any).game;
+        if (game?.cameraFollowUI) {
+            game.cameraFollowUI.closeList();
+        }
+        if (game?.brawlFeedPanel) {
+            game.brawlFeedPanel.setExpanded(false);
+        }
         const lMap = this.map?.getLeafletMap();
         if (!lMap) return;
         // 记住进入前 zoom，退出时带回（ZoomController.currentZoom 不感知 flyTo）

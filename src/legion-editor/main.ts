@@ -1137,7 +1137,7 @@ function startCanvasPreview(): void {
     } else {
         // 9 人方阵排布模式
         const spacingX = 52;
-        const spacingY = 46;
+        const spacingY = 66; // 前后排距拉开为 60% 长方形军阵
         const pScale = 1.15;
 
         if (mode === 'triangle') {
