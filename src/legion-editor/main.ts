@@ -1140,6 +1140,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     overlay.className = 'le-modal-overlay';
 
     let currentTab: UnitCategory = 'infantry';
+    let unitSearch = '';
     const rowTitle = ['前排', '中坚', '后排'][rowIdx];
 
     const closeModal = () => {
@@ -1153,7 +1154,11 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     window.addEventListener('keydown', handleKey);
 
     const renderModalContent = () => {
-        const units = DE_UNITS_CATALOG.filter(u => u.category === currentTab);
+        const q = unitSearch.trim().toLowerCase();
+        // 🔴 搜索框非空 → 跨 tab 按名字/ID 搜；空 → 按当前 tab 过滤
+        const units = q
+            ? DE_UNITS_CATALOG.filter(u => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q))
+            : DE_UNITS_CATALOG.filter(u => u.category === currentTab);
         overlay.innerHTML = `
         <div class="le-modal">
           <div class="le-modal-header">
@@ -1166,6 +1171,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             <div class="le-modal-tab ${currentTab === 'ranged' ? 'active' : ''}" data-cat="ranged">🏹 远程 (${DE_UNITS_CATALOG.filter(u=>u.category==='ranged').length})</div>
             <div class="le-modal-tab ${currentTab === 'siege' ? 'active' : ''}" data-cat="siege">🐘 战象/攻城 (${DE_UNITS_CATALOG.filter(u=>u.category==='siege').length})</div>
           </div>
+          <input id="le-unit-search" class="le-input" type="search" placeholder="🔍 搜索兵种名称 / ID…" style="margin:8px 12px;width:calc(100% - 24px);box-sizing:border-box;" />
           <div class="le-modal-body">
             ${units.map(u => `
               <div class="le-unit-card" data-uid="${u.id}">
@@ -1188,6 +1194,18 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
                 currentTab = (tab as HTMLElement).dataset.cat as UnitCategory;
                 renderModalContent();
             });
+        });
+
+        // 🔴 兵种搜索：输入即过滤（重建 DOM 后恢复 value 并重新聚焦，避免每敲一字失焦清空）
+        overlay.querySelector('#le-unit-search')?.addEventListener('input', (e) => {
+            unitSearch = (e.target as HTMLInputElement).value;
+            renderModalContent();
+            const inp = overlay.querySelector('#le-unit-search') as HTMLInputElement | null;
+            if (inp) {
+                inp.value = unitSearch;
+                inp.focus();
+                inp.setSelectionRange(unitSearch.length, unitSearch.length);
+            }
         });
 
         overlay.querySelectorAll('.le-unit-card').forEach(card => {
