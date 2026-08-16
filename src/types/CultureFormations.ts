@@ -65,6 +65,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     GERMANIC:     'MIXED', // 中欧步骑（重步+骑士）
     LATIN:        'INFANTRY', // 西欧重步/军团
     GREEK:        'INFANTRY', // 希腊古典方阵重步
+    NUERGAN:      'MIXED',    // 奴儿干步骑混合
 };
 
 export function getCultureMovementClass(culture: RegionType): MovementClass {
@@ -91,6 +92,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     NORTHEAST:    'triangle',
     LATIN:        'triangle',
     CENTRAL:      'triangle',
+    NUERGAN:      'triangle',
 
     // 雁行阵 (7区)
     NORTH:        'echelon',
@@ -412,7 +414,7 @@ export const CENTRAL_TIERS: CompositionTier[] = [
     }
 ];
 
-/** 2. 北方 印加枪兵长+鲜卑掠骑兵+辽刀（雁行阵 4+3+2：印加枪兵长前 + 鲜卑掠骑兵中 + 辽刀后） */
+/** 2. 北方 印加枪兵长+精锐黑光铠骑兵+辽刀（雁行阵 4+3+2：印加枪兵长前 + 精锐黑光铠骑兵中 + 辽刀后） */
 export const NORTH_TIERS: CompositionTier[] = [
     {
         minTroops: 0,
@@ -420,7 +422,7 @@ export const NORTH_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'kamayuk', count: 4 },        // Row 0 前排 = 印加枪兵长 步兵
-            { type: 'xianbei_raider', count: 3 }, // Row 1 中排 = 鲜卑掠骑兵 骑兵
+            { type: 'hei_kuang_heavy', count: 3 }, // Row 1 中排 = 精锐黑光铠骑兵 骑兵
             { type: 'liao_dao', count: 2 }        // Row 2 后排 = 辽刀 步兵
         ]
     }
@@ -703,6 +705,20 @@ export const ALEXANDER_TIERS: CompositionTier[] = [
         ]
     }
 ];
+
+/** 20. 奴儿干 藤弓兵+鲜卑掠骑兵+答剌罕骑兵（三角阵 2+3+4：藤弓兵尖刀前 + 鲜卑掠骑兵中坚 + 答剌罕骑兵底边） */
+export const NUERGAN_TIERS: CompositionTier[] = [
+    {
+        minTroops: 0,
+        maxTroops: Infinity,
+        gridSize: 3,
+        slots: [
+            { type: 'rattan_archer', count: 2 },    // Row 0 尖刀 = 藤弓兵 弓手
+            { type: 'xianbei_raider', count: 3 },   // Row 1 中坚 = 鲜卑掠骑兵 骑兵
+            { type: 'tarkan', count: 4 }            // Row 2 底边 = 答剌罕骑兵 骑兵
+        ]
+    }
+];
 // ============================================================
 // 15 文化 → CompositionTier[] 映射
 // ============================================================
@@ -727,6 +743,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     GERMANIC:     GERMANIC_TIERS,
     LATIN:        LATIN_TIERS,
     GREEK:        GREEK_TIERS,
+    NUERGAN:      NUERGAN_TIERS,
 };
 
 /** 编辑器保存后立刻写入内存（不依赖 HMR 才生效） */

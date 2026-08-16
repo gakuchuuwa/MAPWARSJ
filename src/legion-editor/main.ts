@@ -590,6 +590,9 @@ function injectStyles(): void {
         width:520px; border-left:1px solid #2a2620; background:#12100e;
         overflow-y:auto; padding:16px; flex-shrink:0; display:flex; flex-direction:column;
       }
+      /* 只有图鉴视图才加宽到 620：单兵预览的统一比例尺需要这个宽度。
+         势力编排视图保持 520，免得把 925 行大表的九列挤没了。 */
+      .le-panel.is-units { width:620px; }
       .le-empty-hint {
         color:#7a7266; font-size:13px; text-align:center; padding:60px 20px;
       }
@@ -682,6 +685,9 @@ function injectStyles(): void {
         display:block; width:100%; height:260px; background:#141712;
         border-radius:4px;
       }
+      /* 图鉴单兵预览：统一比例尺后最大单位需要 640 高才放得下，见 UNIT_PREVIEW_SCALE。
+         pixelated 必须有——放大 2.8 倍的像素素材走默认平滑插值会糊成一团。 */
+      .le-unit-canvas { height:640px; image-rendering:pixelated; }
       .le-preview-controls {
         display:flex; gap:8px; align-items:center; margin-top:8px;
       }
@@ -1404,6 +1410,7 @@ function switchMainView(view: MainView): void {
     }
 
     const isUnits = view === 'units';
+    els.panel.classList.toggle('is-units', isUnits);
     els.toolbarFactions.style.display = isUnits ? 'none' : '';
     els.toolbarUnits.style.display = isUnits ? '' : 'none';
     els.tableWrap.style.display = isUnits ? 'none' : '';
@@ -1564,7 +1571,7 @@ function renderUnitPanel(unitId: string): void {
     <div class="le-form-section">
       <div class="le-section-title"><span>动作预览</span></div>
       <div class="le-preview-wrap">
-        <canvas id="le-unit-canvas" class="le-preview-canvas" width="480" height="260"></canvas>
+        <canvas id="le-unit-canvas" class="le-preview-canvas le-unit-canvas" width="540" height="640"></canvas>
       </div>
       <div class="le-preview-controls">
         <button type="button" class="le-btn le-btn-sm ${animState === 'idle' ? 'le-btn-primary' : ''}" id="le-u-idle">🧍 待机</button>
@@ -1618,6 +1625,19 @@ async function fillUnitMeta(u: DeUnitDef): Promise<void> {
     box.innerHTML = lines.join('<br/>');
 }
 
+/**
+ * 图鉴单兵预览的统一比例尺 —— 所有兵种、所有动作、所有朝向一律用这一个倍率。
+ *
+ * 🔴 [2026-08-17] 原来这里按帧尺寸自适应放大（让最大边占画布 72%），结果大小根本不统一：
+ *    同一个兵种 idle 是 24×52、move/attack 是 32×48，倍率跟着帧尺寸变，一切动作就跳大跳小；
+ *    兵种之间更是小兵被放大、战象被缩小，完全看不出体型差别。
+ *    现固定为 2.8：全库最大帧是 188×224（弩炮 attack / 桑纳亚 move），×2.8 = 526×627,
+ *    在 540×640 画布内刚好放得下；最小的 32×48 也有 90×134，细节看得很清。
+ *    ⚠️ 倍率上限由**最大帧宽**卡死（188 × 2.8 = 526 ≈ 画布宽 540）。想再放大就得同时加宽
+ *       右侧面板（.le-panel width）、画布 width 和这个数，只调这一个会把弩炮、桑纳亚裁掉两边。
+ */
+const UNIT_PREVIEW_SCALE = 2.8;
+
 /** 图鉴用单兵预览：与方阵预览共用 animTimer，切换时互斥。 */
 function startUnitCanvasPreview(unitId: string): void {
     if (animTimer !== null) {
@@ -1631,6 +1651,12 @@ function startUnitCanvasPreview(unitId: string): void {
     const prefix = getUnitPathPrefix(unitId);
     let frame = 0;
 
+    // 像素素材放大必须关掉平滑插值，否则 2.8 倍下边缘全糊
+    ctx.imageSmoothingEnabled = false;
+
+    // 各兵种统一踩这条地面线，配合固定倍率即可直接目测体型差
+    const groundY = canvas.height * 0.82;
+
     const loop = () => {
         ctx.fillStyle = '#141812';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1638,6 +1664,8 @@ function startUnitCanvasPreview(unitId: string): void {
         ctx.lineWidth = 1;
         for (let x = 0; x < canvas.width; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
         for (let y = 0; y < canvas.height; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+        ctx.strokeStyle = '#2e3a28';
+        ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
 
         const action = animState === 'attack' ? 'attack' : (animState === 'move' ? 'move' : 'idle');
         const imgUrl = `${prefix}${action}_${animDirection}.png`;
@@ -1659,16 +1687,26 @@ function startUnitCanvasPreview(unitId: string): void {
             const speedDivisor = animState === 'idle' ? 3 : 2;
             const cur = Math.floor(frame / speedDivisor) % totalFrames;
 
-            // 自适应放大：让最大边占到画布 72%，小兵种也看得清，大战象不会溢出画布
-            const s = Math.min(canvas.width * 0.72 / fw, canvas.height * 0.72 / fh);
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2 + fh * s * 0.15;
-            ctx.drawImage(img, cur * fw, 0, fw, fh, cx - hx * s, cy - hy * s, fw * s, fh * s);
+            const s = UNIT_PREVIEW_SCALE;
+            const dw = fw * s, dh = fh * s;
+
+            // 水平按整帧居中（不按锚点：器械类的 hx 常年偏在一侧，按锚点会左右乱跑）
+            const dx = (canvas.width - dw) / 2;
+            // 垂直让锚点踩在地面线上，使各兵种站在同一水平线便于比体型；
+            // 少数器械帧的锚点在帧外，会顶出画布，故再钳制回可视区。
+            let dy = groundY - hy * s;
+            if (dh >= canvas.height - 8) dy = (canvas.height - dh) / 2;
+            else dy = Math.max(4, Math.min(dy, canvas.height - dh - 4));
+
+            ctx.drawImage(img, cur * fw, 0, fw, fh, dx, dy, dw, dh);
 
             ctx.fillStyle = '#7a7266';
             ctx.font = '11px "Microsoft YaHei", sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText(`${action}_${animDirection}.png · 第 ${cur + 1}/${totalFrames} 帧`, 8, canvas.height - 8);
+            ctx.fillText(
+                `${action}_${animDirection}.png · 第 ${cur + 1}/${totalFrames} 帧 · 帧 ${Math.round(fw)}×${Math.round(fh)} · 统一 ${s}×`,
+                8, canvas.height - 8,
+            );
         } else {
             loadSprite(imgUrl).catch(() => {});
             ctx.fillStyle = '#7a7266';
